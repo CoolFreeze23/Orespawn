@@ -1,0 +1,282 @@
+/*
+ * Decompiled with CFR 0.152.
+ * 
+ * Could not load the following classes:
+ *  net.minecraft.client.model.ModelBase
+ *  net.minecraft.client.model.ModelRenderer
+ *  net.minecraft.entity.Entity
+ *  net.minecraft.util.MathHelper
+ */
+package danger.orespawn;
+
+import net.minecraft.client.model.ModelBase;
+import net.minecraft.client.model.ModelRenderer;
+import net.minecraft.entity.Entity;
+import net.minecraft.util.MathHelper;
+
+public class ModelCreepingHorror
+extends ModelBase {
+    ModelRenderer body;
+    ModelRenderer leg1;
+    ModelRenderer leg1part2;
+    ModelRenderer leg2;
+    ModelRenderer leg2part2;
+    ModelRenderer leg3;
+    ModelRenderer leg3part2;
+    ModelRenderer leg4;
+    ModelRenderer leg4part2;
+    ModelRenderer tailseg1;
+    ModelRenderer tailseg2;
+    ModelRenderer tailseg3;
+    ModelRenderer pincer1;
+    ModelRenderer pincer1part2;
+    ModelRenderer pincer2;
+    ModelRenderer pincer2part2;
+    ModelRenderer spike1;
+    ModelRenderer spike2;
+    ModelRenderer spike3;
+    ModelRenderer spike4;
+    ModelRenderer spike5;
+    ModelRenderer insides1;
+    ModelRenderer insides2;
+    ModelRenderer insides3;
+    ModelRenderer insides4;
+    ModelRenderer insides5;
+
+    public ModelCreepingHorror() {
+        this.field_78090_t = 128;
+        this.field_78089_u = 128;
+        this.body = new ModelRenderer((ModelBase)this, 0, 30);
+        this.body.func_78789_a(-4.0f, -5.0f, -4.0f, 8, 8, 8);
+        this.body.func_78793_a(0.0f, 20.0f, 0.0f);
+        this.body.func_78787_b(128, 128);
+        this.body.field_78809_i = true;
+        this.setRotation(this.body, 0.0f, 0.0f, 0.0f);
+        this.leg1 = new ModelRenderer((ModelBase)this, 65, 0);
+        this.leg1.func_78789_a(-1.0f, -1.0f, -1.0f, 16, 2, 2);
+        this.leg1.func_78793_a(4.0f, 18.0f, -2.0f);
+        this.leg1.func_78787_b(128, 128);
+        this.leg1.field_78809_i = true;
+        this.setRotation(this.leg1, 0.0f, 0.5759587f, 0.1919862f);
+        this.leg1part2 = new ModelRenderer((ModelBase)this, 37, 5);
+        this.leg1part2.func_78789_a(13.01f, -1.01f, -1.0f, 2, 5, 2);
+        this.leg1part2.func_78793_a(4.0f, 18.0f, -2.0f);
+        this.leg1part2.func_78787_b(128, 128);
+        this.leg1part2.field_78809_i = true;
+        this.setRotation(this.leg1part2, 0.0f, 0.5759587f, 0.1919862f);
+        this.leg2 = new ModelRenderer((ModelBase)this, 65, 0);
+        this.leg2.func_78789_a(-1.0f, -1.0f, -1.0f, 16, 2, 2);
+        this.leg2.func_78793_a(4.0f, 18.0f, 2.0f);
+        this.leg2.func_78787_b(128, 128);
+        this.leg2.field_78809_i = true;
+        this.setRotation(this.leg2, 0.0f, -0.5759587f, 0.1919862f);
+        this.leg2part2 = new ModelRenderer((ModelBase)this, 37, 5);
+        this.leg2part2.func_78789_a(13.01f, -1.01f, -1.0f, 2, 5, 2);
+        this.leg2part2.func_78793_a(4.0f, 18.0f, 2.0f);
+        this.leg2part2.func_78787_b(128, 128);
+        this.leg2part2.field_78809_i = true;
+        this.setRotation(this.leg2part2, 0.0f, -0.5759587f, 0.1919862f);
+        this.leg3 = new ModelRenderer((ModelBase)this, 28, 0);
+        this.leg3.func_78789_a(-15.0f, -1.0f, -1.0f, 16, 2, 2);
+        this.leg3.func_78793_a(-4.0f, 18.0f, -2.0f);
+        this.leg3.func_78787_b(128, 128);
+        this.leg3.field_78809_i = true;
+        this.setRotation(this.leg3, 0.0f, -0.5759587f, -0.1919862f);
+        this.leg3part2 = new ModelRenderer((ModelBase)this, 28, 5);
+        this.leg3part2.func_78789_a(-15.01f, -1.01f, -1.0f, 2, 5, 2);
+        this.leg3part2.func_78793_a(-4.0f, 18.0f, -2.0f);
+        this.leg3part2.func_78787_b(128, 128);
+        this.leg3part2.field_78809_i = true;
+        this.setRotation(this.leg3part2, 0.0f, -0.5759587f, -0.1919862f);
+        this.leg4 = new ModelRenderer((ModelBase)this, 28, 0);
+        this.leg4.func_78789_a(-15.0f, -1.0f, -1.0f, 16, 2, 2);
+        this.leg4.func_78793_a(-4.0f, 18.0f, 2.0f);
+        this.leg4.func_78787_b(128, 128);
+        this.leg4.field_78809_i = true;
+        this.setRotation(this.leg4, 0.0f, 0.5759587f, -0.1919862f);
+        this.leg4part2 = new ModelRenderer((ModelBase)this, 28, 5);
+        this.leg4part2.func_78789_a(-15.01f, -1.01f, -1.0f, 2, 5, 2);
+        this.leg4part2.func_78793_a(-4.0f, 18.0f, 2.0f);
+        this.leg4part2.func_78787_b(128, 128);
+        this.leg4part2.field_78809_i = true;
+        this.setRotation(this.leg4part2, 0.0f, 0.5759587f, -0.1919862f);
+        this.tailseg1 = new ModelRenderer((ModelBase)this, 0, 13);
+        this.tailseg1.func_78789_a(-2.0f, -1.0f, 0.0f, 4, 2, 7);
+        this.tailseg1.func_78793_a(0.0f, 17.0f, 3.0f);
+        this.tailseg1.func_78787_b(128, 128);
+        this.tailseg1.field_78809_i = true;
+        this.setRotation(this.tailseg1, -0.5576792f, 0.0f, 0.0f);
+        this.tailseg2 = new ModelRenderer((ModelBase)this, 0, 0);
+        this.tailseg2.func_78789_a(-1.0f, 3.0f, 7.0f, 2, 1, 11);
+        this.tailseg2.func_78793_a(0.0f, 17.0f, 3.0f);
+        this.tailseg2.func_78787_b(128, 128);
+        this.tailseg2.field_78809_i = true;
+        this.setRotation(this.tailseg2, -0.0349066f, 0.0f, 0.0f);
+        this.tailseg3 = new ModelRenderer((ModelBase)this, 0, 24);
+        this.tailseg3.func_78789_a(-1.5f, 1.0f, 6.0f, 3, 2, 2);
+        this.tailseg3.func_78793_a(0.0f, 17.0f, 3.0f);
+        this.tailseg3.func_78787_b(128, 128);
+        this.tailseg3.field_78809_i = true;
+        this.setRotation(this.tailseg3, -0.2230717f, 0.0f, 0.0f);
+        this.pincer1 = new ModelRenderer((ModelBase)this, 26, 30);
+        this.pincer1.func_78789_a(-0.5f, -0.5f, -5.0f, 1, 1, 5);
+        this.pincer1.func_78793_a(-3.0f, 19.0f, -3.0f);
+        this.pincer1.func_78787_b(128, 128);
+        this.pincer1.field_78809_i = true;
+        this.setRotation(this.pincer1, 0.0f, -0.2230717f, 0.0f);
+        this.pincer1part2 = new ModelRenderer((ModelBase)this, 26, 30);
+        this.pincer1part2.func_78789_a(-0.5f, -0.5f, -5.01f, 2, 1, 0);
+        this.pincer1part2.func_78793_a(-3.0f, 19.0f, -3.0f);
+        this.pincer1part2.func_78787_b(128, 128);
+        this.pincer1part2.field_78809_i = true;
+        this.setRotation(this.pincer1part2, 0.0f, -0.2230717f, 0.0f);
+        this.pincer2 = new ModelRenderer((ModelBase)this, 26, 30);
+        this.pincer2.func_78789_a(-0.5f, -0.5f, -5.0f, 1, 1, 5);
+        this.pincer2.func_78793_a(3.0f, 19.0f, -3.0f);
+        this.pincer2.func_78787_b(128, 128);
+        this.pincer2.field_78809_i = true;
+        this.setRotation(this.pincer2, 0.0f, 0.2230705f, 0.0f);
+        this.pincer2part2 = new ModelRenderer((ModelBase)this, 26, 28);
+        this.pincer2part2.func_78789_a(-1.5f, -0.5f, -5.01f, 2, 1, 0);
+        this.pincer2part2.func_78793_a(3.0f, 19.0f, -3.0f);
+        this.pincer2part2.func_78787_b(128, 128);
+        this.pincer2part2.field_78809_i = true;
+        this.setRotation(this.pincer2part2, 0.0f, 0.2230705f, 0.0f);
+        this.spike1 = new ModelRenderer((ModelBase)this, 26, 13);
+        this.spike1.func_78789_a(-0.5f, -0.5f, 0.0f, 1, 1, 6);
+        this.spike1.func_78793_a(-3.0f, 16.0f, -2.0f);
+        this.spike1.func_78787_b(128, 128);
+        this.spike1.field_78809_i = true;
+        this.setRotation(this.spike1, 0.7063936f, -0.2602503f, 0.0f);
+        this.spike2 = new ModelRenderer((ModelBase)this, 26, 13);
+        this.spike2.func_78789_a(-0.5f, -0.5f, 0.0f, 1, 1, 6);
+        this.spike2.func_78793_a(-1.0f, 16.0f, 1.0f);
+        this.spike2.func_78787_b(128, 128);
+        this.spike2.field_78809_i = true;
+        this.setRotation(this.spike2, 0.7063936f, -0.111544f, 0.0f);
+        this.spike3 = new ModelRenderer((ModelBase)this, 26, 13);
+        this.spike3.func_78789_a(-0.5f, -0.5f, 0.0f, 1, 1, 6);
+        this.spike3.func_78793_a(1.0f, 16.0f, 1.0f);
+        this.spike3.func_78787_b(128, 128);
+        this.spike3.field_78809_i = true;
+        this.setRotation(this.spike3, 0.7063936f, 0.1115358f, 0.0f);
+        this.spike4 = new ModelRenderer((ModelBase)this, 26, 13);
+        this.spike4.func_78789_a(-0.5f, -0.5f, 0.0f, 1, 1, 6);
+        this.spike4.func_78793_a(3.0f, 16.0f, -2.0f);
+        this.spike4.func_78787_b(128, 128);
+        this.spike4.field_78809_i = true;
+        this.setRotation(this.spike4, 0.7063936f, 0.260246f, 0.0f);
+        this.spike5 = new ModelRenderer((ModelBase)this, 26, 13);
+        this.spike5.func_78789_a(-0.5f, -0.5f, 0.0f, 1, 1, 6);
+        this.spike5.func_78793_a(0.0f, 16.0f, -3.0f);
+        this.spike5.func_78787_b(128, 128);
+        this.spike5.field_78809_i = true;
+        this.setRotation(this.spike5, 0.7063936f, 0.0f, 0.0f);
+        this.insides1 = new ModelRenderer((ModelBase)this, 0, 30);
+        this.insides1.func_78789_a(-2.0f, -3.0f, -3.0f, 4, 4, 0);
+        this.insides1.func_78793_a(0.0f, 20.0f, 0.0f);
+        this.insides1.func_78787_b(128, 128);
+        this.insides1.field_78809_i = true;
+        this.setRotation(this.insides1, 0.0f, 0.0f, 0.0f);
+        this.insides2 = new ModelRenderer((ModelBase)this, -1, 29);
+        this.insides2.func_78789_a(-2.0f, -3.0f, -4.0f, 4, 0, 1);
+        this.insides2.func_78793_a(0.0f, 20.0f, 0.0f);
+        this.insides2.func_78787_b(128, 128);
+        this.insides2.field_78809_i = true;
+        this.setRotation(this.insides2, 0.0f, 0.0f, 0.0f);
+        this.insides3 = new ModelRenderer((ModelBase)this, -1, 29);
+        this.insides3.func_78789_a(-2.0f, 1.0f, -4.0f, 4, 0, 1);
+        this.insides3.func_78793_a(0.0f, 20.0f, 0.0f);
+        this.insides3.func_78787_b(128, 128);
+        this.insides3.field_78809_i = true;
+        this.setRotation(this.insides3, 0.0f, 0.0f, 0.0f);
+        this.insides4 = new ModelRenderer((ModelBase)this, 0, 29);
+        this.insides4.func_78789_a(-2.0f, -3.0f, -4.0f, 0, 4, 1);
+        this.insides4.func_78793_a(0.0f, 20.0f, 0.0f);
+        this.insides4.func_78787_b(128, 128);
+        this.insides4.field_78809_i = true;
+        this.setRotation(this.insides4, 0.0f, 0.0f, 0.0f);
+        this.insides5 = new ModelRenderer((ModelBase)this, 0, 29);
+        this.insides5.func_78789_a(2.0f, -3.0f, -4.0f, 0, 4, 1);
+        this.insides5.func_78793_a(0.0f, 20.0f, 0.0f);
+        this.insides5.func_78787_b(128, 128);
+        this.insides5.field_78809_i = true;
+        this.setRotation(this.insides5, 0.0f, 0.0f, 0.0f);
+    }
+
+    public void func_78088_a(Entity entity, float f, float f1, float f2, float f3, float f4, float f5) {
+        super.func_78088_a(entity, f, f1, f2, f3, f4, f5);
+        this.func_78087_a(f, f1, f2, f3, f4, f5, entity);
+        float newangle = MathHelper.func_76134_b((float)(f2 * 1.25f)) * (float)Math.PI * 0.35f * f1;
+        this.leg1part2.field_78796_g = this.leg1.field_78796_g = 0.576f + newangle;
+        this.leg2part2.field_78796_g = this.leg2.field_78796_g = -0.576f - newangle;
+        this.leg3part2.field_78796_g = this.leg3.field_78796_g = -0.576f - newangle;
+        this.leg4part2.field_78796_g = this.leg4.field_78796_g = 0.576f + newangle;
+        this.pincer1.field_78796_g = newangle = MathHelper.func_76134_b((float)(f2 * 0.48f)) * (float)Math.PI * 0.15f;
+        this.pincer1part2.field_78796_g = newangle;
+        this.pincer2.field_78796_g = -newangle;
+        this.pincer2part2.field_78796_g = -newangle;
+        newangle = MathHelper.func_76134_b((float)(f2 * 0.11f)) * (float)Math.PI * 0.25f;
+        newangle = Math.abs(newangle);
+        this.tailseg1.field_78795_f = -0.55f + newangle;
+        this.tailseg3.field_78795_f = -0.22f + newangle;
+        this.tailseg2.field_78795_f = newangle;
+        newangle = MathHelper.func_76134_b((float)(f2 * 0.81f)) * (float)Math.PI * 0.08f;
+        this.spike1.field_78795_f = 0.7f + newangle;
+        newangle = MathHelper.func_76134_b((float)(f2 * 0.87f)) * (float)Math.PI * 0.08f;
+        this.spike2.field_78795_f = 0.7f + newangle;
+        newangle = MathHelper.func_76134_b((float)(f2 * 0.99f)) * (float)Math.PI * 0.08f;
+        this.spike3.field_78795_f = 0.7f + newangle;
+        newangle = MathHelper.func_76134_b((float)(f2 * 0.103f)) * (float)Math.PI * 0.08f;
+        this.spike4.field_78795_f = 0.7f + newangle;
+        newangle = MathHelper.func_76134_b((float)(f2 * 0.107f)) * (float)Math.PI * 0.08f;
+        this.spike5.field_78795_f = 0.7f + newangle;
+        this.spike1.field_78796_g = newangle = MathHelper.func_76134_b((float)(f2 * 1.11f)) * (float)Math.PI * 0.08f;
+        this.spike2.field_78796_g = newangle = MathHelper.func_76134_b((float)(f2 * 1.17f)) * (float)Math.PI * 0.08f;
+        this.spike3.field_78796_g = newangle = MathHelper.func_76134_b((float)(f2 * 1.25f)) * (float)Math.PI * 0.08f;
+        this.spike4.field_78796_g = newangle = MathHelper.func_76134_b((float)(f2 * 1.28f)) * (float)Math.PI * 0.08f;
+        this.spike5.field_78796_g = newangle = MathHelper.func_76134_b((float)(f2 * 1.31f)) * (float)Math.PI * 0.08f;
+        this.spike1.field_78808_h = newangle = MathHelper.func_76134_b((float)(f2 * 1.41f)) * (float)Math.PI * 0.08f;
+        this.spike2.field_78808_h = newangle = MathHelper.func_76134_b((float)(f2 * 1.47f)) * (float)Math.PI * 0.08f;
+        this.spike3.field_78808_h = newangle = MathHelper.func_76134_b((float)(f2 * 1.55f)) * (float)Math.PI * 0.08f;
+        this.spike4.field_78808_h = newangle = MathHelper.func_76134_b((float)(f2 * 1.58f)) * (float)Math.PI * 0.08f;
+        this.spike5.field_78808_h = newangle = MathHelper.func_76134_b((float)(f2 * 1.61f)) * (float)Math.PI * 0.08f;
+        this.body.func_78785_a(f5);
+        this.leg1.func_78785_a(f5);
+        this.leg1part2.func_78785_a(f5);
+        this.leg2.func_78785_a(f5);
+        this.leg2part2.func_78785_a(f5);
+        this.leg3.func_78785_a(f5);
+        this.leg3part2.func_78785_a(f5);
+        this.leg4.func_78785_a(f5);
+        this.leg4part2.func_78785_a(f5);
+        this.tailseg1.func_78785_a(f5);
+        this.tailseg2.func_78785_a(f5);
+        this.tailseg3.func_78785_a(f5);
+        this.pincer1.func_78785_a(f5);
+        this.pincer1part2.func_78785_a(f5);
+        this.pincer2.func_78785_a(f5);
+        this.pincer2part2.func_78785_a(f5);
+        this.spike1.func_78785_a(f5);
+        this.spike2.func_78785_a(f5);
+        this.spike3.func_78785_a(f5);
+        this.spike4.func_78785_a(f5);
+        this.spike5.func_78785_a(f5);
+        this.insides1.func_78785_a(f5);
+        this.insides2.func_78785_a(f5);
+        this.insides3.func_78785_a(f5);
+        this.insides4.func_78785_a(f5);
+        this.insides5.func_78785_a(f5);
+    }
+
+    private void setRotation(ModelRenderer model, float x, float y, float z) {
+        model.field_78795_f = x;
+        model.field_78796_g = y;
+        model.field_78808_h = z;
+    }
+
+    public void func_78087_a(float par1, float par2, float par3, float par4, float par5, float par6, Entity par7Entity) {
+        super.func_78087_a(par1, par2, par3, par4, par5, par6, par7Entity);
+    }
+}
+

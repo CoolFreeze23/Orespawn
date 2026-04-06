@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/cube_bottom_top",
+  "textures": {
+    "top": "orespawn:blocks/pizza_top",
+    "bottom": "orespawn:blocks/pizza_bottom",
+    "side": "orespawn:blocks/pizza_side"
+  }
+}

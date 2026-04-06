@@ -1,0 +1,228 @@
+package danger.orespawn.entity;
+
+import java.util.Comparator;
+import java.util.List;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.goal.FloatGoal;
+import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
+import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
+import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
+import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.monster.Monster;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.AABB;
+
+public class TRex extends Monster {
+    private static final EntityDataAccessor<Integer> DATA_ATTACKING =
+            SynchedEntityData.defineId(TRex.class, EntityDataSerializers.INT);
+
+    private final Comparator<Entity> targetSorter;
+    private final float moveSpeed = 0.38f;
+    private LivingEntity revengeTarget = null;
+
+    public TRex(EntityType<? extends TRex> type, Level level) {
+        super(type, level);
+        this.xpReward = 150;
+        this.targetSorter = Comparator.comparingDouble(this::distanceToSqr);
+    }
+
+    @Override
+    protected void registerGoals() {
+        this.goalSelector.addGoal(0, new FloatGoal(this));
+        this.goalSelector.addGoal(2, new WaterAvoidingRandomStrollGoal(this, 1.0));
+        this.goalSelector.addGoal(3, new LookAtPlayerGoal(this, Player.class, 8.0f));
+        this.goalSelector.addGoal(4, new RandomLookAroundGoal(this));
+        this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
+    }
+
+    public static AttributeSupplier.Builder createAttributes() {
+        return Monster.createMonsterAttributes()
+                .add(Attributes.MAX_HEALTH, 200.0)
+                .add(Attributes.MOVEMENT_SPEED, 0.38)
+                .add(Attributes.ATTACK_DAMAGE, 30.0)
+                .add(Attributes.FOLLOW_RANGE, 40.0)
+                .add(Attributes.KNOCKBACK_RESISTANCE, 0.8);
+    }
+
+    @Override
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(DATA_ATTACKING, 0);
+    }
+
+    @Override
+    public boolean removeWhenFarAway(double dist) {
+        return !this.isPersistenceRequired();
+    }
+
+    @Override
+    public void tick() {
+        this.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(this.moveSpeed);
+        super.tick();
+    }
+
+    public int mygetMaxHealth() {
+        return 200;
+    }
+
+    @Override
+    protected SoundEvent getAmbientSound() {
+        if (this.getRandom().nextInt(4) == 0) {
+            return SoundEvents.RAVAGER_ROAR;
+        }
+        return null;
+    }
+
+    @Override
+    protected SoundEvent getHurtSound(DamageSource source) {
+        return SoundEvents.RAVAGER_HURT;
+    }
+
+    @Override
+    protected SoundEvent getDeathSound() {
+        return SoundEvents.RAVAGER_DEATH;
+    }
+
+    @Override
+    protected float getSoundVolume() {
+        return 1.5f;
+    }
+
+    @Override
+    public float getVoicePitch() {
+        return 1.0f;
+    }
+
+    private void dropItemRand(ItemStack stack) {
+        double ox = this.getX() + this.getRandom().nextInt(4) - this.getRandom().nextInt(4);
+        double oy = this.getY() + 1.0;
+        double oz = this.getZ() + this.getRandom().nextInt(4) - this.getRandom().nextInt(4);
+        ItemEntity itemEntity = new ItemEntity(this.level(), ox, oy, oz, stack);
+        this.level().addFreshEntity(itemEntity);
+    }
+
+    @Override
+    protected void dropCustomDeathLoot(DamageSource source, int looting, boolean recentlyHit) {
+        super.dropCustomDeathLoot(source, looting, recentlyHit);
+        dropItemRand(new ItemStack(Items.BONE, 1));
+        dropItemRand(new ItemStack(Items.NAME_TAG, 1));
+        for (int i = 0; i < 7; i++) {
+            dropItemRand(new ItemStack(Items.BEEF, 1));
+        }
+        int count = 2 + this.getRandom().nextInt(4);
+        for (int i = 0; i < count; i++) {
+            dropItemRand(new ItemStack(Items.GOLD_NUGGET, 1));
+            dropItemRand(new ItemStack(Items.IRON_NUGGET, 1));
+        }
+    }
+
+    @Override
+    public boolean doHurtTarget(Entity target) {
+        if (super.doHurtTarget(target)) {
+            if (target instanceof LivingEntity living) {
+                double ks = 1.2;
+                double inair = 0.1;
+                float angle = (float) Math.atan2(target.getZ() - this.getZ(), target.getX() - this.getX());
+                if (target.isRemoved() || target instanceof Player) {
+                    inair *= 2.0;
+                }
+                target.push(Math.cos(angle) * ks, inair, Math.sin(angle) * ks);
+            }
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean hurt(DamageSource source, float amount) {
+        if (source.getMsgId().equals("cactus")) {
+            return false;
+        }
+        boolean ret = super.hurt(source, amount);
+        Entity e = source.getEntity();
+        if (e instanceof LivingEntity living) {
+            this.revengeTarget = living;
+        }
+        return ret;
+    }
+
+    @Override
+    protected void customServerAiStep() {
+        if (this.isRemoved()) return;
+        super.customServerAiStep();
+
+        if (this.getRandom().nextInt(5) == 1) {
+            LivingEntity target = this.revengeTarget;
+            if (target != null) {
+                if (!target.isAlive() || this.getRandom().nextInt(200) == 1) {
+                    target = null;
+                    this.revengeTarget = null;
+                }
+                if (target != null && !this.getSensing().hasLineOfSight(target)) {
+                    target = null;
+                }
+            }
+            if (target == null) {
+                target = findSomethingToAttack();
+            }
+            if (target != null) {
+                this.lookAt(target, 10.0f, 10.0f);
+                double distSq = this.distanceToSqr(target);
+                float attackRange = 4.0f + target.getBbWidth() / 2.0f;
+                if (distSq < attackRange * attackRange) {
+                    this.setAttacking(1);
+                    if (this.getRandom().nextInt(4) == 0 || this.getRandom().nextInt(5) == 1) {
+                        this.doHurtTarget(target);
+                    }
+                } else {
+                    this.getNavigation().moveTo(target, 1.25);
+                }
+            } else {
+                this.setAttacking(0);
+            }
+        }
+    }
+
+    private boolean isSuitableTarget(LivingEntity target) {
+        if (target == null || target == this || !target.isAlive()) return false;
+        if (!this.getSensing().hasLineOfSight(target)) return false;
+        if (target instanceof TRex) return false;
+        if (target instanceof Player player) {
+            if (player.getAbilities().instabuild) return false;
+        }
+        return true;
+    }
+
+    private LivingEntity findSomethingToAttack() {
+        AABB searchBox = this.getBoundingBox().inflate(20.0, 6.0, 20.0);
+        List<LivingEntity> entities = this.level().getEntitiesOfClass(LivingEntity.class, searchBox);
+        entities.sort(this.targetSorter);
+        for (LivingEntity entity : entities) {
+            if (isSuitableTarget(entity)) return entity;
+        }
+        return null;
+    }
+
+    public final int getAttacking() {
+        return this.entityData.get(DATA_ATTACKING);
+    }
+
+    public final void setAttacking(int value) {
+        this.entityData.set(DATA_ATTACKING, value);
+    }
+}

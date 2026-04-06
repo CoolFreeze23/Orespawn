@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    { "item": "orespawn:lettuce" },
+    { "item": "orespawn:tomato" },
+    { "item": "minecraft:bowl" }
+  ],
+  "result": {
+    "item": "orespawn:salad",
+    "count": 1
+  }
+}

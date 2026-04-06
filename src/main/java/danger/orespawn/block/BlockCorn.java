@@ -1,0 +1,65 @@
+package danger.orespawn.block;
+
+import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.BushBlock;
+import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.IntegerProperty;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.VoxelShape;
+import danger.orespawn.ModBlocks;
+
+/**
+ * Reed-like multi-block corn plant. Uses 4 block variants (stages 1-4)
+ * registered separately in ModBlocks. AGE property tracks growth delay.
+ */
+public class BlockCorn extends BushBlock {
+    public static final IntegerProperty AGE = IntegerProperty.create("age", 0, 15);
+    private static final VoxelShape SHAPE = Block.box(2, 0, 2, 14, 16, 14);
+
+    public BlockCorn(BlockBehaviour.Properties properties) {
+        super(properties);
+        this.registerDefaultState(this.stateDefinition.any().setValue(AGE, 0));
+    }
+
+    @Override
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+        builder.add(AGE);
+    }
+
+    @Override
+    public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+        return SHAPE;
+    }
+
+    @Override
+    protected boolean mayPlaceOn(BlockState state, BlockGetter level, BlockPos pos) {
+        Block block = state.getBlock();
+        return block == Blocks.GRASS_BLOCK || block == Blocks.DIRT || block == Blocks.FARMLAND
+                || isCornBlock(block);
+    }
+
+    private boolean isCornBlock(Block block) {
+        // TODO: Check against ModBlocks.CORN_PLANT_1..4
+        return block instanceof BlockCorn;
+    }
+
+    @Override
+    public boolean isRandomlyTicking(BlockState state) {
+        return true;
+    }
+
+    @Override
+    public void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
+        if (level.isClientSide()) return;
+        // TODO: Port multi-block corn growth logic
+        // The original grows upward through 4 block variants with metadata-encoded max height
+        // This needs integration with ModBlocks.CORN_PLANT_1 through CORN_PLANT_4
+    }
+}
