@@ -532,6 +532,18 @@ public class ModEntities {
             ENTITY_TYPES.register("water_ball", () -> EntityType.Builder.<WaterBall>of(WaterBall::new, MobCategory.MISC)
                     .sized(0.25f, 0.25f).clientTrackingRange(4).updateInterval(10).noSummon().build("water_ball"));
 
+    public static final DeferredHolder<EntityType<?>, EntityType<IceBall>> ICE_BALL =
+            ENTITY_TYPES.register("ice_ball", () -> EntityType.Builder.<IceBall>of(IceBall::new, MobCategory.MISC)
+                    .sized(0.25f, 0.25f).clientTrackingRange(4).updateInterval(10).noSummon().build("ice_ball"));
+
+    public static final DeferredHolder<EntityType<?>, EntityType<Acid>> ACID =
+            ENTITY_TYPES.register("acid", () -> EntityType.Builder.<Acid>of(Acid::new, MobCategory.MISC)
+                    .sized(0.25f, 0.25f).clientTrackingRange(4).updateInterval(10).noSummon().build("acid"));
+
+    public static final DeferredHolder<EntityType<?>, EntityType<DeadIrukandji>> DEAD_IRUKANDJI =
+            ENTITY_TYPES.register("dead_irukandji", () -> EntityType.Builder.<DeadIrukandji>of(DeadIrukandji::new, MobCategory.MISC)
+                    .sized(0.25f, 0.25f).clientTrackingRange(4).updateInterval(10).noSummon().build("dead_irukandji"));
+
     public static void register(IEventBus eventBus) {
         ENTITY_TYPES.register(eventBus);
     }
