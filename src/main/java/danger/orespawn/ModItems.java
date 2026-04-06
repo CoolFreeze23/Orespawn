@@ -1,6 +1,7 @@
 package danger.orespawn;
 
 import net.minecraft.world.food.FoodProperties;
+import danger.orespawn.item.ItemOreSpawnArmor;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.AxeItem;
 import net.minecraft.world.item.BlockItem;
@@ -398,6 +399,204 @@ public class ModItems {
     public static final DeferredItem<Item> SLIPPERS = ITEMS.registerSimpleItem("slippers");
     public static final DeferredItem<Item> BOOTS_SHOES = ITEMS.registerSimpleItem("boots_shoes");
     public static final DeferredItem<Item> GAME_CONTROLLER = ITEMS.registerSimpleItem("game_controller");
+
+
+    // ==================== ARMOR ====================
+    // Ultimate armor
+    public static final DeferredItem<Item> ULTIMATE_HELMET = ITEMS.register("ultimate_helmet",
+            () -> new ItemOreSpawnArmor(ModArmorMaterials.ULTIMATE, ArmorItem.Type.HELMET,
+                    new Item.Properties().durability(ArmorItem.Type.HELMET.getDurability(13)), "ultimate"));
+    public static final DeferredItem<Item> ULTIMATE_CHESTPLATE = ITEMS.register("ultimate_chestplate",
+            () -> new ItemOreSpawnArmor(ModArmorMaterials.ULTIMATE, ArmorItem.Type.CHESTPLATE,
+                    new Item.Properties().durability(ArmorItem.Type.CHESTPLATE.getDurability(13)), "ultimate"));
+    public static final DeferredItem<Item> ULTIMATE_LEGGINGS = ITEMS.register("ultimate_leggings",
+            () -> new ItemOreSpawnArmor(ModArmorMaterials.ULTIMATE, ArmorItem.Type.LEGGINGS,
+                    new Item.Properties().durability(ArmorItem.Type.LEGGINGS.getDurability(13)), "ultimate"));
+    public static final DeferredItem<Item> ULTIMATE_BOOTS_ARMOR = ITEMS.register("ultimate_boots",
+            () -> new ItemOreSpawnArmor(ModArmorMaterials.ULTIMATE, ArmorItem.Type.BOOTS,
+                    new Item.Properties().durability(ArmorItem.Type.BOOTS.getDurability(13)), "ultimate"));
+
+    // Mobzilla armor
+    public static final DeferredItem<Item> MOBZILLA_HELMET = ITEMS.register("mobzilla_helmet",
+            () -> new ItemOreSpawnArmor(ModArmorMaterials.MOBZILLA, ArmorItem.Type.HELMET,
+                    new Item.Properties().durability(ArmorItem.Type.HELMET.getDurability(63)), "mobzilla"));
+    public static final DeferredItem<Item> MOBZILLA_CHESTPLATE = ITEMS.register("mobzilla_chestplate",
+            () -> new ItemOreSpawnArmor(ModArmorMaterials.MOBZILLA, ArmorItem.Type.CHESTPLATE,
+                    new Item.Properties().durability(ArmorItem.Type.CHESTPLATE.getDurability(63)), "mobzilla"));
+    public static final DeferredItem<Item> MOBZILLA_LEGGINGS = ITEMS.register("mobzilla_leggings",
+            () -> new ItemOreSpawnArmor(ModArmorMaterials.MOBZILLA, ArmorItem.Type.LEGGINGS,
+                    new Item.Properties().durability(ArmorItem.Type.LEGGINGS.getDurability(63)), "mobzilla"));
+    public static final DeferredItem<Item> MOBZILLA_BOOTS = ITEMS.register("mobzilla_boots",
+            () -> new ItemOreSpawnArmor(ModArmorMaterials.MOBZILLA, ArmorItem.Type.BOOTS,
+                    new Item.Properties().durability(ArmorItem.Type.BOOTS.getDurability(63)), "mobzilla"));
+
+    // Lava Eel armor
+    public static final DeferredItem<Item> LAVAEEL_HELMET = ITEMS.register("lavaeel_helmet",
+            () -> new ItemOreSpawnArmor(ModArmorMaterials.LAVA_EEL, ArmorItem.Type.HELMET,
+                    new Item.Properties().durability(ArmorItem.Type.HELMET.getDurability(3)), "lavaeel"));
+    public static final DeferredItem<Item> LAVAEEL_CHESTPLATE = ITEMS.register("lavaeel_chestplate",
+            () -> new ItemOreSpawnArmor(ModArmorMaterials.LAVA_EEL, ArmorItem.Type.CHESTPLATE,
+                    new Item.Properties().durability(ArmorItem.Type.CHESTPLATE.getDurability(3)), "lavaeel"));
+    public static final DeferredItem<Item> LAVAEEL_LEGGINGS = ITEMS.register("lavaeel_leggings",
+            () -> new ItemOreSpawnArmor(ModArmorMaterials.LAVA_EEL, ArmorItem.Type.LEGGINGS,
+                    new Item.Properties().durability(ArmorItem.Type.LEGGINGS.getDurability(3)), "lavaeel"));
+    public static final DeferredItem<Item> LAVAEEL_BOOTS = ITEMS.register("lavaeel_boots",
+            () -> new ItemOreSpawnArmor(ModArmorMaterials.LAVA_EEL, ArmorItem.Type.BOOTS,
+                    new Item.Properties().durability(ArmorItem.Type.BOOTS.getDurability(3)), "lavaeel"));
+
+    // Moth Scale armor
+    public static final DeferredItem<Item> MOTHSCALE_HELMET = ITEMS.register("mothscale_helmet",
+            () -> new ItemOreSpawnArmor(ModArmorMaterials.MOTH_SCALE, ArmorItem.Type.HELMET,
+                    new Item.Properties().durability(ArmorItem.Type.HELMET.getDurability(3)), "mothscale"));
+    public static final DeferredItem<Item> MOTHSCALE_CHESTPLATE = ITEMS.register("mothscale_chestplate",
+            () -> new ItemOreSpawnArmor(ModArmorMaterials.MOTH_SCALE, ArmorItem.Type.CHESTPLATE,
+                    new Item.Properties().durability(ArmorItem.Type.CHESTPLATE.getDurability(3)), "mothscale"));
+    public static final DeferredItem<Item> MOTHSCALE_LEGGINGS = ITEMS.register("mothscale_leggings",
+            () -> new ItemOreSpawnArmor(ModArmorMaterials.MOTH_SCALE, ArmorItem.Type.LEGGINGS,
+                    new Item.Properties().durability(ArmorItem.Type.LEGGINGS.getDurability(3)), "mothscale"));
+    public static final DeferredItem<Item> MOTHSCALE_BOOTS = ITEMS.register("mothscale_boots",
+            () -> new ItemOreSpawnArmor(ModArmorMaterials.MOTH_SCALE, ArmorItem.Type.BOOTS,
+                    new Item.Properties().durability(ArmorItem.Type.BOOTS.getDurability(3)), "mothscale"));
+
+    // Emerald armor
+    public static final DeferredItem<Item> EMERALD_HELMET = ITEMS.register("emerald_helmet",
+            () -> new ItemOreSpawnArmor(ModArmorMaterials.EMERALD, ArmorItem.Type.HELMET,
+                    new Item.Properties().durability(ArmorItem.Type.HELMET.getDurability(4)), "emerald"));
+    public static final DeferredItem<Item> EMERALD_CHESTPLATE = ITEMS.register("emerald_chestplate",
+            () -> new ItemOreSpawnArmor(ModArmorMaterials.EMERALD, ArmorItem.Type.CHESTPLATE,
+                    new Item.Properties().durability(ArmorItem.Type.CHESTPLATE.getDurability(4)), "emerald"));
+    public static final DeferredItem<Item> EMERALD_LEGGINGS = ITEMS.register("emerald_leggings",
+            () -> new ItemOreSpawnArmor(ModArmorMaterials.EMERALD, ArmorItem.Type.LEGGINGS,
+                    new Item.Properties().durability(ArmorItem.Type.LEGGINGS.getDurability(4)), "emerald"));
+    public static final DeferredItem<Item> EMERALD_BOOTS_ARMOR = ITEMS.register("emerald_boots",
+            () -> new ItemOreSpawnArmor(ModArmorMaterials.EMERALD, ArmorItem.Type.BOOTS,
+                    new Item.Properties().durability(ArmorItem.Type.BOOTS.getDurability(4)), "emerald"));
+
+    // Experience armor
+    public static final DeferredItem<Item> EXPERIENCE_HELMET = ITEMS.register("experience_helmet",
+            () -> new ItemOreSpawnArmor(ModArmorMaterials.EXPERIENCE, ArmorItem.Type.HELMET,
+                    new Item.Properties().durability(ArmorItem.Type.HELMET.getDurability(5)), "experience"));
+    public static final DeferredItem<Item> EXPERIENCE_CHESTPLATE = ITEMS.register("experience_chestplate",
+            () -> new ItemOreSpawnArmor(ModArmorMaterials.EXPERIENCE, ArmorItem.Type.CHESTPLATE,
+                    new Item.Properties().durability(ArmorItem.Type.CHESTPLATE.getDurability(5)), "experience"));
+    public static final DeferredItem<Item> EXPERIENCE_LEGGINGS = ITEMS.register("experience_leggings",
+            () -> new ItemOreSpawnArmor(ModArmorMaterials.EXPERIENCE, ArmorItem.Type.LEGGINGS,
+                    new Item.Properties().durability(ArmorItem.Type.LEGGINGS.getDurability(5)), "experience"));
+    public static final DeferredItem<Item> EXPERIENCE_BOOTS = ITEMS.register("experience_boots",
+            () -> new ItemOreSpawnArmor(ModArmorMaterials.EXPERIENCE, ArmorItem.Type.BOOTS,
+                    new Item.Properties().durability(ArmorItem.Type.BOOTS.getDurability(5)), "experience"));
+
+    // Ruby armor
+    public static final DeferredItem<Item> RUBY_HELMET = ITEMS.register("ruby_helmet",
+            () -> new ItemOreSpawnArmor(ModArmorMaterials.RUBY, ArmorItem.Type.HELMET,
+                    new Item.Properties().durability(ArmorItem.Type.HELMET.getDurability(6)), "ruby"));
+    public static final DeferredItem<Item> RUBY_CHESTPLATE = ITEMS.register("ruby_chestplate",
+            () -> new ItemOreSpawnArmor(ModArmorMaterials.RUBY, ArmorItem.Type.CHESTPLATE,
+                    new Item.Properties().durability(ArmorItem.Type.CHESTPLATE.getDurability(6)), "ruby"));
+    public static final DeferredItem<Item> RUBY_LEGGINGS = ITEMS.register("ruby_leggings",
+            () -> new ItemOreSpawnArmor(ModArmorMaterials.RUBY, ArmorItem.Type.LEGGINGS,
+                    new Item.Properties().durability(ArmorItem.Type.LEGGINGS.getDurability(6)), "ruby"));
+    public static final DeferredItem<Item> RUBY_BOOTS_ARMOR = ITEMS.register("ruby_boots",
+            () -> new ItemOreSpawnArmor(ModArmorMaterials.RUBY, ArmorItem.Type.BOOTS,
+                    new Item.Properties().durability(ArmorItem.Type.BOOTS.getDurability(6)), "ruby"));
+
+    // Amethyst armor
+    public static final DeferredItem<Item> AMETHYST_HELMET = ITEMS.register("amethyst_helmet",
+            () -> new ItemOreSpawnArmor(ModArmorMaterials.AMETHYST, ArmorItem.Type.HELMET,
+                    new Item.Properties().durability(ArmorItem.Type.HELMET.getDurability(6)), "amethyst"));
+    public static final DeferredItem<Item> AMETHYST_CHESTPLATE = ITEMS.register("amethyst_chestplate",
+            () -> new ItemOreSpawnArmor(ModArmorMaterials.AMETHYST, ArmorItem.Type.CHESTPLATE,
+                    new Item.Properties().durability(ArmorItem.Type.CHESTPLATE.getDurability(6)), "amethyst"));
+    public static final DeferredItem<Item> AMETHYST_LEGGINGS = ITEMS.register("amethyst_leggings",
+            () -> new ItemOreSpawnArmor(ModArmorMaterials.AMETHYST, ArmorItem.Type.LEGGINGS,
+                    new Item.Properties().durability(ArmorItem.Type.LEGGINGS.getDurability(6)), "amethyst"));
+    public static final DeferredItem<Item> AMETHYST_BOOTS_ARMOR = ITEMS.register("amethyst_boots",
+            () -> new ItemOreSpawnArmor(ModArmorMaterials.AMETHYST, ArmorItem.Type.BOOTS,
+                    new Item.Properties().durability(ArmorItem.Type.BOOTS.getDurability(6)), "amethyst"));
+
+    // Crystal Pink armor
+    public static final DeferredItem<Item> PINK_HELMET = ITEMS.register("pink_helmet",
+            () -> new ItemOreSpawnArmor(ModArmorMaterials.PINK, ArmorItem.Type.HELMET,
+                    new Item.Properties().durability(ArmorItem.Type.HELMET.getDurability(3)), "pink"));
+    public static final DeferredItem<Item> PINK_CHESTPLATE = ITEMS.register("pink_chestplate",
+            () -> new ItemOreSpawnArmor(ModArmorMaterials.PINK, ArmorItem.Type.CHESTPLATE,
+                    new Item.Properties().durability(ArmorItem.Type.CHESTPLATE.getDurability(3)), "pink"));
+    public static final DeferredItem<Item> PINK_LEGGINGS = ITEMS.register("pink_leggings",
+            () -> new ItemOreSpawnArmor(ModArmorMaterials.PINK, ArmorItem.Type.LEGGINGS,
+                    new Item.Properties().durability(ArmorItem.Type.LEGGINGS.getDurability(3)), "pink"));
+    public static final DeferredItem<Item> PINK_BOOTS = ITEMS.register("pink_boots",
+            () -> new ItemOreSpawnArmor(ModArmorMaterials.PINK, ArmorItem.Type.BOOTS,
+                    new Item.Properties().durability(ArmorItem.Type.BOOTS.getDurability(3)), "pink"));
+
+    // Tigers Eye armor
+    public static final DeferredItem<Item> TIGERSEYE_HELMET = ITEMS.register("tigerseye_helmet",
+            () -> new ItemOreSpawnArmor(ModArmorMaterials.TIGERS_EYE, ArmorItem.Type.HELMET,
+                    new Item.Properties().durability(ArmorItem.Type.HELMET.getDurability(5)), "tigerseye"));
+    public static final DeferredItem<Item> TIGERSEYE_CHESTPLATE = ITEMS.register("tigerseye_chestplate",
+            () -> new ItemOreSpawnArmor(ModArmorMaterials.TIGERS_EYE, ArmorItem.Type.CHESTPLATE,
+                    new Item.Properties().durability(ArmorItem.Type.CHESTPLATE.getDurability(5)), "tigerseye"));
+    public static final DeferredItem<Item> TIGERSEYE_LEGGINGS = ITEMS.register("tigerseye_leggings",
+            () -> new ItemOreSpawnArmor(ModArmorMaterials.TIGERS_EYE, ArmorItem.Type.LEGGINGS,
+                    new Item.Properties().durability(ArmorItem.Type.LEGGINGS.getDurability(5)), "tigerseye"));
+    public static final DeferredItem<Item> TIGERSEYE_BOOTS = ITEMS.register("tigerseye_boots",
+            () -> new ItemOreSpawnArmor(ModArmorMaterials.TIGERS_EYE, ArmorItem.Type.BOOTS,
+                    new Item.Properties().durability(ArmorItem.Type.BOOTS.getDurability(5)), "tigerseye"));
+
+    // Peacock armor
+    public static final DeferredItem<Item> PEACOCK_HELMET = ITEMS.register("peacock_helmet",
+            () -> new ItemOreSpawnArmor(ModArmorMaterials.PEACOCK, ArmorItem.Type.HELMET,
+                    new Item.Properties().durability(ArmorItem.Type.HELMET.getDurability(3)), "peacock"));
+    public static final DeferredItem<Item> PEACOCK_CHESTPLATE = ITEMS.register("peacock_chestplate",
+            () -> new ItemOreSpawnArmor(ModArmorMaterials.PEACOCK, ArmorItem.Type.CHESTPLATE,
+                    new Item.Properties().durability(ArmorItem.Type.CHESTPLATE.getDurability(3)), "peacock"));
+    public static final DeferredItem<Item> PEACOCK_LEGGINGS = ITEMS.register("peacock_leggings",
+            () -> new ItemOreSpawnArmor(ModArmorMaterials.PEACOCK, ArmorItem.Type.LEGGINGS,
+                    new Item.Properties().durability(ArmorItem.Type.LEGGINGS.getDurability(3)), "peacock"));
+    public static final DeferredItem<Item> PEACOCK_BOOTS = ITEMS.register("peacock_boots",
+            () -> new ItemOreSpawnArmor(ModArmorMaterials.PEACOCK, ArmorItem.Type.BOOTS,
+                    new Item.Properties().durability(ArmorItem.Type.BOOTS.getDurability(3)), "peacock"));
+
+    // Royal Guardian armor
+    public static final DeferredItem<Item> ROYAL_HELMET = ITEMS.register("royal_helmet",
+            () -> new ItemOreSpawnArmor(ModArmorMaterials.ROYAL, ArmorItem.Type.HELMET,
+                    new Item.Properties().durability(ArmorItem.Type.HELMET.getDurability(125)), "royal"));
+    public static final DeferredItem<Item> ROYAL_CHESTPLATE = ITEMS.register("royal_chestplate",
+            () -> new ItemOreSpawnArmor(ModArmorMaterials.ROYAL, ArmorItem.Type.CHESTPLATE,
+                    new Item.Properties().durability(ArmorItem.Type.CHESTPLATE.getDurability(125)), "royal"));
+    public static final DeferredItem<Item> ROYAL_LEGGINGS = ITEMS.register("royal_leggings",
+            () -> new ItemOreSpawnArmor(ModArmorMaterials.ROYAL, ArmorItem.Type.LEGGINGS,
+                    new Item.Properties().durability(ArmorItem.Type.LEGGINGS.getDurability(125)), "royal"));
+    public static final DeferredItem<Item> ROYAL_BOOTS = ITEMS.register("royal_boots",
+            () -> new ItemOreSpawnArmor(ModArmorMaterials.ROYAL, ArmorItem.Type.BOOTS,
+                    new Item.Properties().durability(ArmorItem.Type.BOOTS.getDurability(125)), "royal"));
+
+    // Lapis armor
+    public static final DeferredItem<Item> LAPIS_HELMET = ITEMS.register("lapis_helmet",
+            () -> new ItemOreSpawnArmor(ModArmorMaterials.LAPIS, ArmorItem.Type.HELMET,
+                    new Item.Properties().durability(ArmorItem.Type.HELMET.getDurability(4)), "lapis"));
+    public static final DeferredItem<Item> LAPIS_CHESTPLATE = ITEMS.register("lapis_chestplate",
+            () -> new ItemOreSpawnArmor(ModArmorMaterials.LAPIS, ArmorItem.Type.CHESTPLATE,
+                    new Item.Properties().durability(ArmorItem.Type.CHESTPLATE.getDurability(4)), "lapis"));
+    public static final DeferredItem<Item> LAPIS_LEGGINGS = ITEMS.register("lapis_leggings",
+            () -> new ItemOreSpawnArmor(ModArmorMaterials.LAPIS, ArmorItem.Type.LEGGINGS,
+                    new Item.Properties().durability(ArmorItem.Type.LEGGINGS.getDurability(4)), "lapis"));
+    public static final DeferredItem<Item> LAPIS_BOOTS = ITEMS.register("lapis_boots",
+            () -> new ItemOreSpawnArmor(ModArmorMaterials.LAPIS, ArmorItem.Type.BOOTS,
+                    new Item.Properties().durability(ArmorItem.Type.BOOTS.getDurability(4)), "lapis"));
+
+    // Queen armor
+    public static final DeferredItem<Item> QUEEN_HELMET = ITEMS.register("queen_helmet",
+            () -> new ItemOreSpawnArmor(ModArmorMaterials.QUEEN, ArmorItem.Type.HELMET,
+                    new Item.Properties().durability(ArmorItem.Type.HELMET.getDurability(94)), "queen"));
+    public static final DeferredItem<Item> QUEEN_CHESTPLATE = ITEMS.register("queen_chestplate",
+            () -> new ItemOreSpawnArmor(ModArmorMaterials.QUEEN, ArmorItem.Type.CHESTPLATE,
+                    new Item.Properties().durability(ArmorItem.Type.CHESTPLATE.getDurability(94)), "queen"));
+    public static final DeferredItem<Item> QUEEN_LEGGINGS = ITEMS.register("queen_leggings",
+            () -> new ItemOreSpawnArmor(ModArmorMaterials.QUEEN, ArmorItem.Type.LEGGINGS,
+                    new Item.Properties().durability(ArmorItem.Type.LEGGINGS.getDurability(94)), "queen"));
+    public static final DeferredItem<Item> QUEEN_BOOTS = ITEMS.register("queen_boots",
+            () -> new ItemOreSpawnArmor(ModArmorMaterials.QUEEN, ArmorItem.Type.BOOTS,
+                    new Item.Properties().durability(ArmorItem.Type.BOOTS.getDurability(94)), "queen"));
 
     // Zoo cages
     public static final DeferredItem<Item> ZOO_CAGE_2 = ITEMS.registerSimpleItem("zoo_cage_2");

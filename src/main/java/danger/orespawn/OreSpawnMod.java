@@ -20,6 +20,7 @@ public class OreSpawnMod {
         ModBlockEntities.register(modEventBus);
         ModMenuTypes.register(modEventBus);
         ModSounds.register(modEventBus);
+        ModArmorMaterials.register(modEventBus);
         ModCreativeTabs.register(modEventBus);
         ModWorldGen.register(modEventBus);
 
