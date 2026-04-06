@@ -18,6 +18,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
+import danger.orespawn.util.MyUtils;
 import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -220,9 +221,9 @@ public class ThePrince extends TamableAnimal {
     private boolean isSuitableTarget(LivingEntity target) {
         if (target == null || target == this || !target.isAlive()) return false;
         if (!this.getSensing().hasLineOfSight(target)) return false;
-        // TODO: check MyUtils.isRoyalty
+        if (MyUtils.isRoyalty(target)) return false;
         if (target instanceof Monster) return true;
-        // TODO: check for Mothra, EntityButterfly, Cockateil, Dragonfly, EntityMosquito
+        if (target instanceof Mothra || target instanceof EntityButterfly || target instanceof Cockateil || target instanceof EntityDragonfly || target instanceof EntityMosquito) return false;
         return false;
     }
 

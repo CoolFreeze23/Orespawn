@@ -8,6 +8,9 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LeavesBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.item.ItemStack;
+import danger.orespawn.ModBlocks;
+import danger.orespawn.ModItems;
 
 public class BlockCrystalLeaves extends LeavesBlock {
     private static final int DEFAULT_FRUIT_ATTEMPT_ROLL_BOUND = 20;
@@ -35,7 +38,6 @@ public class BlockCrystalLeaves extends LeavesBlock {
         BlockState belowState = level.getBlockState(below);
 
         int fruitAttemptRollBound = DEFAULT_FRUIT_ATTEMPT_ROLL_BOUND;
-        // TODO: Increase chance in crystal dimension
 
         if (belowState.is(Blocks.AIR) && random.nextInt(fruitAttemptRollBound) == FRUIT_ATTEMPT_SUCCESS_INDEX) {
             dropCrystalProducts(level, below, random);
@@ -44,12 +46,10 @@ public class BlockCrystalLeaves extends LeavesBlock {
 
     private void dropCrystalProducts(ServerLevel level, BlockPos pos, RandomSource random) {
         if (random.nextInt(CRYSTAL_APPLE_ROLL_BOUND) == CRYSTAL_APPLE_SUCCESS_INDEX) {
-            // TODO: Drop CrystalApple
-            // Block.popResource(level, pos, new ItemStack(ModItems.CRYSTAL_APPLE.get()));
+            Block.popResource(level, pos, new ItemStack(ModItems.CRYSTAL_APPLE.get()));
         }
         if (random.nextInt(SAPLING_ROLL_BOUND) == SAPLING_SUCCESS_INDEX) {
-            // TODO: Drop CrystalPlant sapling based on which variant this leaves block is
-            // Block.popResource(level, pos, new ItemStack(ModBlocks.CRYSTAL_PLANT.get()));
+            Block.popResource(level, pos, new ItemStack(ModBlocks.CRYSTAL_SAPLING.get()));
         }
     }
 }

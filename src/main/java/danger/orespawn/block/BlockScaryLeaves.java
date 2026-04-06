@@ -8,6 +8,9 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LeavesBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.item.ItemStack;
+import danger.orespawn.ModBlocks;
+import danger.orespawn.ModItems;
 
 public class BlockScaryLeaves extends LeavesBlock {
 
@@ -41,8 +44,7 @@ public class BlockScaryLeaves extends LeavesBlock {
 
         // Scary leaves transform to apple leaves during daytime
         if (variant == Variant.SCARY && timeOfDayTicks < DAY_END_TICK) {
-            // TODO: Replace with AppleLeaves
-            // level.setBlock(pos, ModBlocks.APPLE_LEAVES.get().defaultBlockState(), 3);
+            level.setBlock(pos, ModBlocks.APPLE_LEAVES.get().defaultBlockState(), 3);
         }
 
         BlockPos below = pos.below();
@@ -55,10 +57,10 @@ public class BlockScaryLeaves extends LeavesBlock {
         if (random.nextInt(FRUIT_KIND_ROLL_BOUND) != FRUIT_KIND_SUCCESS_INDEX) return;
         switch (variant) {
             case CHERRY:
-                // TODO: Block.popResource(level, pos, new ItemStack(ModItems.CHERRY.get()));
+                Block.popResource(level, pos, new ItemStack(ModItems.CHERRIES.get()));
                 break;
             case PEACH:
-                // TODO: Block.popResource(level, pos, new ItemStack(ModItems.PEACH.get()));
+                Block.popResource(level, pos, new ItemStack(ModItems.PEACH.get()));
                 break;
             default:
                 break;

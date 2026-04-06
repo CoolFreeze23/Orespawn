@@ -5,6 +5,7 @@ import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.world.entity.Entity;
+import danger.orespawn.ModEntities;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.monster.Creeper;
@@ -34,7 +35,7 @@ public class Shoes extends ThrowableProjectile {
     }
 
     public Shoes(Level level, LivingEntity shooter, int shoeId) {
-        super(EntityType.SNOWBALL, level); // TODO: use registered type
+        super(ModEntities.SHOES.get(), level);
         this.setOwner(shooter);
         this.entityData.set(DATA_SHOE_ID, shoeId);
     }

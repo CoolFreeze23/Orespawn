@@ -1,5 +1,6 @@
 package danger.orespawn.item;
 
+import danger.orespawn.entity.Shoes;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
@@ -21,7 +22,9 @@ public class ItemShoes extends Item {
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
         if (!level.isClientSide) {
-            // TODO: Spawn Shoes projectile entity with shoeId when entity type is registered
+            Shoes projectile = new Shoes(level, player, this.shoeId);
+            projectile.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0F, 1.5F, 1.0F);
+            level.addFreshEntity(projectile);
             level.playSound(null, player.blockPosition(), SoundEvents.SNOWBALL_THROW, SoundSource.PLAYERS, 0.5F, 0.4F);
         }
         if (!player.getAbilities().instabuild) {

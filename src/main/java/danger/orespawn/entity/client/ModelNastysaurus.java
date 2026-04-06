@@ -392,7 +392,6 @@ public class ModelNastysaurus extends EntityModel<Nastysaurus> {
         float clawYamp = 2.0F * pscale;
         float pi4 = 0.7853982F;
 
-        // TODO: RenderInfo was removed - animation smoothing data needs alternative storage
         float rf1 = 0.0f;
         int ri1 = 0;
 
@@ -543,7 +542,6 @@ public class ModelNastysaurus extends EntityModel<Nastysaurus> {
         this.tail4.x = this.tail3.x + (float)Math.sin(this.tail3.yRot) * 11.0F;
         this.tail4.yRot = Mth.cos(ageInTicks * tailspeed * this.wingspeed) * (float)Math.PI * tailamp;
 
-        // TODO: persist animation smoothing state
     }
 
     @Override

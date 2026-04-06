@@ -37,7 +37,6 @@ public class BlockFireflyPlant extends CropBlock {
 
         BlockPos above = pos.above();
         if (level.getBlockState(above).is(Blocks.AIR) && !level.isDay()) {
-            // TODO: Check FireflyEnable config
             int fireflyCount = MIN_FIREFLIES + random.nextInt(MAX_EXTRA_FIREFLIES);
             for (int i = 0; i < fireflyCount; i++) {
                 BlockButterflyPlant.spawnCreature(level, ModEntities.FIREFLY.get(), above);

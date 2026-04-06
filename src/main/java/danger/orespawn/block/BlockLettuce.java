@@ -4,6 +4,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.BlockGetter;
+import danger.orespawn.ModBlocks;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.BushBlock;
@@ -64,8 +65,14 @@ public class BlockLettuce extends BushBlock {
 
         int age = state.getValue(AGE);
         if (age >= NEXT_STAGE_AGE_THRESHOLD) {
-            // TODO: Transition to next lettuce stage block variant
-            // level.setBlock(pos, ModBlocks.LETTUCE_PLANT_2.get().defaultBlockState(), 2);
+            Block thisBlock = state.getBlock();
+            if (thisBlock == ModBlocks.LETTUCE_0.get()) {
+                level.setBlock(pos, ModBlocks.LETTUCE_1.get().defaultBlockState(), 3);
+            } else if (thisBlock == ModBlocks.LETTUCE_1.get()) {
+                level.setBlock(pos, ModBlocks.LETTUCE_2.get().defaultBlockState(), 3);
+            } else if (thisBlock == ModBlocks.LETTUCE_2.get()) {
+                level.setBlock(pos, ModBlocks.LETTUCE_3.get().defaultBlockState(), 3);
+            }
         } else {
             level.setBlock(pos, state.setValue(AGE, age + 1), 2);
         }

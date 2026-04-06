@@ -82,7 +82,7 @@ public class Mothra extends EntityButterfly {
         if (this.wingSound > 30) {
             if (!this.level().isClientSide) {
                 this.playSound(SoundEvent.createVariableRangeEvent(
-                        ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "MothraWings")), 1.0f, 1.0f);
+                        ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "mothrawings")), 1.0f, 1.0f);
             }
             this.wingSound = 0;
         }

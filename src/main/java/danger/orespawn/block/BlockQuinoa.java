@@ -4,6 +4,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.BlockGetter;
+import danger.orespawn.ModBlocks;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.BushBlock;
@@ -47,8 +48,8 @@ public class BlockQuinoa extends BushBlock {
     protected boolean mayPlaceOn(BlockState state, BlockGetter level, BlockPos pos) {
         Block block = state.getBlock();
         return block == Blocks.GRASS_BLOCK || block == Blocks.DIRT || block == Blocks.FARMLAND
-                || block instanceof BlockQuinoa;
-        // TODO: Also allow CrystalGrass
+                || block instanceof BlockQuinoa
+                || block == ModBlocks.CRYSTAL_GRASS.get();
     }
 
     @Override
@@ -59,7 +60,23 @@ public class BlockQuinoa extends BushBlock {
     @Override
     public void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
         if (level.isClientSide()) return;
-        // TODO: Port multi-block quinoa growth logic
-        // Original grows upward through 4 block variants with metadata-encoded max height
+
+        int age = state.getValue(AGE);
+        if (age < 15) {
+            level.setBlock(pos, state.setValue(AGE, age + 1), 2);
+            return;
+        }
+
+        BlockPos above = pos.above();
+        if (!level.isEmptyBlock(above)) return;
+
+        Block thisBlock = state.getBlock();
+        if (thisBlock == ModBlocks.QUINOA_0.get()) {
+            level.setBlock(above, ModBlocks.QUINOA_1.get().defaultBlockState(), 3);
+        } else if (thisBlock == ModBlocks.QUINOA_1.get()) {
+            level.setBlock(above, ModBlocks.QUINOA_2.get().defaultBlockState(), 3);
+        } else if (thisBlock == ModBlocks.QUINOA_2.get()) {
+            level.setBlock(above, ModBlocks.QUINOA_3.get().defaultBlockState(), 3);
+        }
     }
 }

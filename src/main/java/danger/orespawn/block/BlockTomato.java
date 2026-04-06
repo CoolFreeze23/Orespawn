@@ -4,6 +4,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.BlockGetter;
+import danger.orespawn.ModBlocks;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.BushBlock;
@@ -58,7 +59,23 @@ public class BlockTomato extends BushBlock {
     @Override
     public void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
         if (level.isClientSide()) return;
-        // TODO: Port multi-block tomato growth logic
-        // Original grows upward through 4 block variants with metadata-encoded max height
+
+        int age = state.getValue(AGE);
+        if (age < 15) {
+            level.setBlock(pos, state.setValue(AGE, age + 1), 2);
+            return;
+        }
+
+        BlockPos above = pos.above();
+        if (!level.isEmptyBlock(above)) return;
+
+        Block thisBlock = state.getBlock();
+        if (thisBlock == ModBlocks.TOMATO_0.get()) {
+            level.setBlock(above, ModBlocks.TOMATO_1.get().defaultBlockState(), 3);
+        } else if (thisBlock == ModBlocks.TOMATO_1.get()) {
+            level.setBlock(above, ModBlocks.TOMATO_2.get().defaultBlockState(), 3);
+        } else if (thisBlock == ModBlocks.TOMATO_2.get()) {
+            level.setBlock(above, ModBlocks.TOMATO_3.get().defaultBlockState(), 3);
+        }
     }
 }

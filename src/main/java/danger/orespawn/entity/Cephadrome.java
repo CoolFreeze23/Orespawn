@@ -2,6 +2,7 @@ package danger.orespawn.entity;
 
 import java.util.Comparator;
 import java.util.List;
+import danger.orespawn.ModItems;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -98,7 +99,7 @@ public class Cephadrome extends PathfinderMob {
     protected SoundEvent getAmbientSound() {
         if (this.getActivity() != 1 && this.random.nextInt(6) == 1) {
             return SoundEvent.createVariableRangeEvent(
-                    ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "MothraWings"));
+                    ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "mothrawings"));
         }
         return null;
     }
@@ -195,7 +196,7 @@ public class Cephadrome extends PathfinderMob {
         if (!this.getSensing().hasLineOfSight(target)) return false;
         if (target instanceof Cephadrome) return false;
         if (target instanceof Monster) return true;
-        // TODO: check for Mothra, Leon, GammaMetroid, WaterDragon
+        if (target instanceof Mothra || target instanceof EntityLeon || target instanceof EntityGammaMetroid || target instanceof WaterDragon) return false;
         if (target instanceof Player player) {
             if (player.getAbilities().invulnerable) return false;
             return this.hitByPlayer != 0 || this.badmood != 0 || this.shouldattack > 0;
@@ -218,13 +219,11 @@ public class Cephadrome extends PathfinderMob {
         super.dropCustomDeathLoot(level, source, recentlyHit);
         int uraniumCount = 4 + this.random.nextInt(6);
         for (int i = 0; i < uraniumCount; i++) {
-            // TODO: drop OreSpawnMain.UraniumNugget
-            this.spawnAtLocation(new ItemStack(Items.GOLD_NUGGET, 1));
+            this.spawnAtLocation(new ItemStack(ModItems.URANIUM_NUGGET.get(), 1));
         }
         int titaniumCount = 4 + this.random.nextInt(6);
         for (int i = 0; i < titaniumCount; i++) {
-            // TODO: drop OreSpawnMain.TitaniumNugget
-            this.spawnAtLocation(new ItemStack(Items.IRON_NUGGET, 1));
+            this.spawnAtLocation(new ItemStack(ModItems.TITANIUM_NUGGET.get(), 1));
         }
     }
 

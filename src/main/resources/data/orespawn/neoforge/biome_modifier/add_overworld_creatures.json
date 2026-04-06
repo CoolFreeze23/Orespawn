@@ -1,0 +1,27 @@
+{
+  "type": "neoforge:add_spawns",
+  "biomes": "#minecraft:is_overworld",
+  "spawners": [
+    { "type": "orespawn:beaver", "weight": 8, "minCount": 1, "maxCount": 2 },
+    { "type": "orespawn:cassowary", "weight": 5, "minCount": 1, "maxCount": 2 },
+    { "type": "orespawn:chipmunk", "weight": 12, "minCount": 1, "maxCount": 3 },
+    { "type": "orespawn:cockateil", "weight": 8, "minCount": 1, "maxCount": 3 },
+    { "type": "orespawn:easter_bunny", "weight": 3, "minCount": 1, "maxCount": 2 },
+    { "type": "orespawn:frog", "weight": 10, "minCount": 1, "maxCount": 2 },
+    { "type": "orespawn:gazelle", "weight": 8, "minCount": 2, "maxCount": 4 },
+    { "type": "orespawn:lizard", "weight": 10, "minCount": 1, "maxCount": 2 },
+    { "type": "orespawn:ostrich", "weight": 6, "minCount": 1, "maxCount": 2 },
+    { "type": "orespawn:peacock", "weight": 8, "minCount": 1, "maxCount": 2 },
+    { "type": "orespawn:red_cow", "weight": 6, "minCount": 1, "maxCount": 2 },
+    { "type": "orespawn:ant", "weight": 12, "minCount": 1, "maxCount": 4 },
+    { "type": "orespawn:red_ant", "weight": 8, "minCount": 1, "maxCount": 3 },
+    { "type": "orespawn:cricket", "weight": 12, "minCount": 1, "maxCount": 3 },
+    { "type": "orespawn:stink_bug", "weight": 6, "minCount": 1, "maxCount": 2 },
+    { "type": "orespawn:worm_small", "weight": 10, "minCount": 1, "maxCount": 2 },
+    { "type": "orespawn:cliff_racer", "weight": 5, "minCount": 1, "maxCount": 2 },
+    { "type": "orespawn:camarasaurus", "weight": 2, "minCount": 1, "maxCount": 1 },
+    { "type": "orespawn:baryonyx", "weight": 3, "minCount": 1, "maxCount": 1 },
+    { "type": "orespawn:velocity_raptor", "weight": 4, "minCount": 1, "maxCount": 2 },
+    { "type": "orespawn:dragon", "weight": 1, "minCount": 1, "maxCount": 1 }
+  ]
+}

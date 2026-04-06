@@ -151,7 +151,7 @@ public class Alosaurus extends Monster {
     private boolean isSuitableTarget(LivingEntity target) {
         if (target == null || target == this || !target.isAlive()) return false;
         if (target instanceof Alosaurus) return false;
-        // TODO: check for Cryolophosaurus, VelocityRaptor
+        if (target instanceof Cryolophosaurus || target instanceof VelocityRaptor) return false;
         if (!this.getSensing().hasLineOfSight(target)) return false;
         if (target instanceof Player player) {
             return !player.getAbilities().invulnerable;

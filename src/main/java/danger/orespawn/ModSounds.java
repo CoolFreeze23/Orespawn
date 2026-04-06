@@ -143,8 +143,8 @@ public class ModSounds {
             () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "bb_happy5")));
     public static final DeferredHolder<SoundEvent, SoundEvent> BB_HAPPY6 = SOUND_EVENTS.register("bb_happy6",
             () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "bb_happy6")));
-    public static final DeferredHolder<SoundEvent, SoundEvent> BEEBUZZ = SOUND_EVENTS.register("Beebuzz",
-            () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "Beebuzz")));
+    public static final DeferredHolder<SoundEvent, SoundEvent> BEEBUZZ = SOUND_EVENTS.register("beebuzz",
+            () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "beebuzz")));
     public static final DeferredHolder<SoundEvent, SoundEvent> BIG_SPLAT = SOUND_EVENTS.register("big_splat",
             () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "big_splat")));
     public static final DeferredHolder<SoundEvent, SoundEvent> BIRDS1 = SOUND_EVENTS.register("birds1",
@@ -371,12 +371,12 @@ public class ModSounds {
             () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "molenoid_living3")));
     public static final DeferredHolder<SoundEvent, SoundEvent> MOSQUITO = SOUND_EVENTS.register("mosquito",
             () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "mosquito")));
-    public static final DeferredHolder<SoundEvent, SoundEvent> MOTHRAWINGS1 = SOUND_EVENTS.register("MothraWings1",
-            () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "MothraWings1")));
-    public static final DeferredHolder<SoundEvent, SoundEvent> MOTHRAWINGS2 = SOUND_EVENTS.register("MothraWings2",
-            () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "MothraWings2")));
-    public static final DeferredHolder<SoundEvent, SoundEvent> MOTHRAWINGS3 = SOUND_EVENTS.register("MothraWings3",
-            () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "MothraWings3")));
+    public static final DeferredHolder<SoundEvent, SoundEvent> MOTHRAWINGS1 = SOUND_EVENTS.register("mothrawings1",
+            () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "mothrawings1")));
+    public static final DeferredHolder<SoundEvent, SoundEvent> MOTHRAWINGS2 = SOUND_EVENTS.register("mothrawings2",
+            () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "mothrawings2")));
+    public static final DeferredHolder<SoundEvent, SoundEvent> MOTHRAWINGS3 = SOUND_EVENTS.register("mothrawings3",
+            () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "mothrawings3")));
     public static final DeferredHolder<SoundEvent, SoundEvent> O_DARK = SOUND_EVENTS.register("o_dark",
             () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "o_dark")));
     public static final DeferredHolder<SoundEvent, SoundEvent> O_DEATH_GIRLFRIEND = SOUND_EVENTS.register("o_death_girlfriend",

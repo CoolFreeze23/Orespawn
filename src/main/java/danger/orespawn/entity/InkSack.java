@@ -5,6 +5,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
+import danger.orespawn.ModEntities;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.monster.Creeper;
@@ -32,7 +33,7 @@ public class InkSack extends ThrowableProjectile {
     }
 
     public InkSack(Level level, LivingEntity shooter) {
-        super(EntityType.SNOWBALL, level); // TODO: use registered type
+        super(ModEntities.INK_SACK.get(), level);
         this.setOwner(shooter);
     }
 

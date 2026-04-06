@@ -6,6 +6,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
+import danger.orespawn.ModBlocks;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.BushBlock;
@@ -60,7 +61,7 @@ public class BlockExperiencePlant extends BushBlock {
         if (random.nextInt(GROWTH_ROLL_BOUND) != GROWTH_SUCCESS_INDEX) return;
 
         level.setBlock(pos, Blocks.AIR.defaultBlockState(), 2);
-        // TODO: Call OreSpawnTrees.ExperienceTree(level, pos.below())
+        generateExperienceTree(level, pos, random);
     }
 
     @Override
@@ -72,6 +73,35 @@ public class BlockExperiencePlant extends BushBlock {
                     pos.getY() + random.nextFloat(),
                     pos.getZ() + random.nextFloat(),
                     0, 0, 0);
+        }
+    }
+
+    private void generateExperienceTree(ServerLevel level, BlockPos pos, RandomSource random) {
+        int height = 6 + random.nextInt(4);
+        BlockState logState = Blocks.OAK_LOG.defaultBlockState();
+        BlockState leafState = ModBlocks.EXPERIENCE_LEAVES.get().defaultBlockState();
+
+        for (int y = 0; y < height; y++) {
+            BlockPos logPos = pos.above(y);
+            if (level.isEmptyBlock(logPos) || level.getBlockState(logPos).canBeReplaced()) {
+                level.setBlock(logPos, logState, 3);
+            }
+        }
+
+        int leafStart = height - 3;
+        for (int dy = leafStart; dy <= height + 1; dy++) {
+            int radius = (dy <= height - 1) ? 2 : 1;
+            if (dy == height + 1) radius = 0;
+            for (int dx = -radius; dx <= radius; dx++) {
+                for (int dz = -radius; dz <= radius; dz++) {
+                    if (dx == 0 && dz == 0 && dy < height) continue;
+                    if (Math.abs(dx) == radius && Math.abs(dz) == radius && random.nextBoolean()) continue;
+                    BlockPos leafPos = pos.above(dy).offset(dx, 0, dz);
+                    if (level.isEmptyBlock(leafPos) || level.getBlockState(leafPos).canBeReplaced()) {
+                        level.setBlock(leafPos, leafState, 3);
+                    }
+                }
+            }
         }
     }
 }

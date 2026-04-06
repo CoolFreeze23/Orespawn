@@ -1,5 +1,7 @@
 package danger.orespawn.item;
 
+import danger.orespawn.ModEntities;
+import danger.orespawn.entity.AttackSquid;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
@@ -19,7 +21,12 @@ public class ItemSquidZooka extends Item {
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
         if (!level.isClientSide) {
-            // TODO: Spawn AttackSquid entity when entity type is registered
+            AttackSquid squid = ModEntities.ATTACK_SQUID.get().create(level);
+            if (squid != null) {
+                squid.moveTo(player.getX(), player.getY(), player.getZ(), player.getYRot(), 0.0F);
+                squid.setTarget(null);
+                level.addFreshEntity(squid);
+            }
             player.push(
                     -Math.sin(Math.toRadians(player.getYRot())) * 0.5,
                     0.0,
