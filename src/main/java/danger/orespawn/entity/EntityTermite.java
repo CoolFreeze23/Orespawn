@@ -211,7 +211,8 @@ public class EntityTermite extends EntityAnt {
     @Override
     public boolean checkSpawnRules(LevelAccessor level, MobSpawnType spawnType) {
         if (this.getY() < MIN_SPAWN_Y) return false;
-        return findBuddies() <= MAX_NEARBY_CLUSTER;
+        return level.getEntitiesOfClass(EntityTermite.class,
+                this.getBoundingBox().inflate(20.0, 10.0, 20.0)).size() <= MAX_NEARBY_CLUSTER;
     }
 
     @Override

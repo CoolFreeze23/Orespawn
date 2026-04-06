@@ -132,6 +132,6 @@ public class Ghost extends AmbientCreature {
 
     @Override
     public boolean checkSpawnRules(LevelAccessor level, MobSpawnType spawnType) {
-        return !this.level().canSeeSky(this.blockPosition());
+        return !level.canSeeSky(this.blockPosition());
     }
 }

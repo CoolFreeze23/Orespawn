@@ -310,7 +310,7 @@ public class WaterDragon extends TamableAnimal {
     @Override
     public boolean checkSpawnRules(LevelAccessor level, MobSpawnType spawnType) {
         if (this.getY() < 50.0) return false;
-        return this.level().getEntitiesOfClass(WaterDragon.class,
+        return level.getEntitiesOfClass(WaterDragon.class,
                 this.getBoundingBox().inflate(16.0, 5.0, 16.0)).size() <= 1;
     }
 

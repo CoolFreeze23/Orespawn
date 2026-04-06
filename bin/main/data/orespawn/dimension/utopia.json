@@ -1,0 +1,11 @@
+{
+  "type": "orespawn:utopia",
+  "generator": {
+    "type": "orespawn:orespawn",
+    "biome_source": {
+      "type": "minecraft:fixed",
+      "biome": "minecraft:plains"
+    },
+    "settings": "minecraft:overworld"
+  }
+}

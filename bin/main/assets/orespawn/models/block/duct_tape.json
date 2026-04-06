@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/cube_bottom_top",
+  "textures": {
+    "top": "orespawn:blocks/ducttape_top",
+    "bottom": "orespawn:blocks/ducttape_bottom",
+    "side": "orespawn:blocks/ducttape_side"
+  }
+}

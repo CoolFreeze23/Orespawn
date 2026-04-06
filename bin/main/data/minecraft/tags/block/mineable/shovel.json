@@ -1,0 +1,8 @@
+{
+  "replace": false,
+  "values": [
+    "orespawn:mole_dirt",
+    "orespawn:crystal_grass",
+    "orespawn:lavafoam"
+  ]
+}

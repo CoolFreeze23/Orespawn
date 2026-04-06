@@ -404,6 +404,7 @@ public class Godzilla extends Monster {
         entities.sort(this.targetSorter);
         LivingEntity ret = null;
         boolean villagerFound = false;
+        this.headFound = 0;
         for (LivingEntity entity : entities) {
             if (entity instanceof GodzillaHead) { this.headFound = 1; }
             if (!villagerFound && entity instanceof Villager && entity.isAlive()

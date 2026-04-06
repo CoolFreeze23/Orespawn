@@ -22,7 +22,7 @@ public class ModelCoin extends EntityModel<Coin> {
                 CubeListBuilder.create().texOffs(0, 0)
                         .addBox(-8.0F, -8.0F, -2.0F, 16, 16, 4),
                 PartPose.offset(0.0F, 16.0F, 0.0F));
-        return LayerDefinition.create(mesh, 64, 32);
+        return LayerDefinition.create(mesh, 512, 512);
     }
 
     @Override

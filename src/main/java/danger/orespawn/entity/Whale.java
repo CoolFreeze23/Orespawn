@@ -194,18 +194,14 @@ public class Whale extends Animal {
         return 0;
     }
 
-    private int findBuddies() {
-        return this.level().getEntitiesOfClass(Whale.class,
-                this.getBoundingBox().inflate(32.0, 8.0, 32.0)).size();
-    }
-
     @Override
     public boolean checkSpawnRules(LevelAccessor level, MobSpawnType spawnType) {
         if (this.getY() < 50.0) return false;
-        long dayTime = this.level().getDayTime() % 24000L;
+        long dayTime = level.dayTime() % 24000L;
         if (dayTime >= 13000L) return false;
         if (this.random.nextInt(50) != 1) return false;
-        return this.findBuddies() <= 0;
+        return level.getEntitiesOfClass(Whale.class,
+                this.getBoundingBox().inflate(32.0, 8.0, 32.0)).size() <= 0;
     }
 
     @Nullable

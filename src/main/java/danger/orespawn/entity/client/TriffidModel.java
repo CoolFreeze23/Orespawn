@@ -7,38 +7,1601 @@ import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
+import net.minecraft.util.Mth;
 
-public class TriffidModel<T extends EntityTriffid> extends EntityModel<T> {
-    private final ModelPart base, stalk, head, jaw;
+public class TriffidModel extends EntityModel<EntityTriffid> {
+    private final ModelPart r9;
+    private final ModelPart b14;
+    private final ModelPart base;
+    private final ModelPart b3;
+    private final ModelPart l57;
+    private final ModelPart l30;
+    private final ModelPart b6;
+    private final ModelPart b7;
+    private final ModelPart b8;
+    private final ModelPart b9;
+    private final ModelPart b11;
+    private final ModelPart b16;
+    private final ModelPart h18;
+    private final ModelPart b13;
+    private final ModelPart b15;
+    private final ModelPart h8;
+    private final ModelPart h1;
+    private final ModelPart h13;
+    private final ModelPart h7;
+    private final ModelPart h3;
+    private final ModelPart h17;
+    private final ModelPart h16;
+    private final ModelPart h23;
+    private final ModelPart h4;
+    private final ModelPart h2;
+    private final ModelPart h21;
+    private final ModelPart h19;
+    private final ModelPart h20;
+    private final ModelPart b10;
+    private final ModelPart b17;
+    private final ModelPart h6;
+    private final ModelPart h11;
+    private final ModelPart h14;
+    private final ModelPart h15;
+    private final ModelPart h10;
+    private final ModelPart h9;
+    private final ModelPart h5;
+    private final ModelPart h12;
+    private final ModelPart c2;
+    private final ModelPart c11;
+    private final ModelPart c1;
+    private final ModelPart c5;
+    private final ModelPart c3;
+    private final ModelPart c4;
+    private final ModelPart c10;
+    private final ModelPart c6;
+    private final ModelPart c7;
+    private final ModelPart c8;
+    private final ModelPart c9;
+    private final ModelPart b1;
+    private final ModelPart l15;
+    private final ModelPart b2;
+    private final ModelPart l43;
+    private final ModelPart l1;
+    private final ModelPart l2;
+    private final ModelPart l3;
+    private final ModelPart leaf3;
+    private final ModelPart l4;
+    private final ModelPart l5;
+    private final ModelPart l6;
+    private final ModelPart l7;
+    private final ModelPart l8;
+    private final ModelPart l9;
+    private final ModelPart l10;
+    private final ModelPart l11;
+    private final ModelPart l12;
+    private final ModelPart l13;
+    private final ModelPart l14;
+    private final ModelPart b4;
+    private final ModelPart l31;
+    private final ModelPart l32;
+    private final ModelPart leaf32;
+    private final ModelPart l33;
+    private final ModelPart l34;
+    private final ModelPart l35;
+    private final ModelPart l36;
+    private final ModelPart l37;
+    private final ModelPart l38;
+    private final ModelPart l39;
+    private final ModelPart l40;
+    private final ModelPart l41;
+    private final ModelPart l42;
+    private final ModelPart l17;
+    private final ModelPart l18;
+    private final ModelPart l19;
+    private final ModelPart l20;
+    private final ModelPart l21;
+    private final ModelPart l22;
+    private final ModelPart l23;
+    private final ModelPart l24;
+    private final ModelPart l25;
+    private final ModelPart l26;
+    private final ModelPart l27;
+    private final ModelPart l28;
+    private final ModelPart l29;
+    private final ModelPart b5;
+    private final ModelPart l45;
+    private final ModelPart l46;
+    private final ModelPart l47;
+    private final ModelPart l48;
+    private final ModelPart l49;
+    private final ModelPart leaf49;
+    private final ModelPart l50;
+    private final ModelPart l51;
+    private final ModelPart l52;
+    private final ModelPart l53;
+    private final ModelPart l54;
+    private final ModelPart l55;
+    private final ModelPart l56;
+    private final ModelPart h22;
+    private final ModelPart t15;
+    private final ModelPart t14;
+    private final ModelPart t13;
+    private final ModelPart t12;
+    private final ModelPart t11;
+    private final ModelPart t10;
+    private final ModelPart t9;
+    private final ModelPart t6;
+    private final ModelPart t2;
+    private final ModelPart t8;
+    private final ModelPart t7;
+    private final ModelPart t5;
+    private final ModelPart t4;
+    private final ModelPart t3;
+    private final ModelPart t1;
+    private final ModelPart r47;
+    private final ModelPart r2;
+    private final ModelPart r6;
+    private final ModelPart r5;
+    private final ModelPart r10;
+    private final ModelPart r7;
+    private final ModelPart r12;
+    private final ModelPart r8;
+    private final ModelPart r11;
+    private final ModelPart r4;
+    private final ModelPart r40;
+    private final ModelPart r45;
+    private final ModelPart r49;
+    private final ModelPart r44;
+    private final ModelPart root43;
+    private final ModelPart r43;
+    private final ModelPart r46;
+    private final ModelPart r48;
+    private final ModelPart r35;
+    private final ModelPart r38;
+    private final ModelPart r42;
+    private final ModelPart r39;
+    private final ModelPart r41;
+    private final ModelPart r18;
+    private final ModelPart r3;
+    private final ModelPart r50;
+    private final ModelPart r31;
+    private final ModelPart r36;
+    private final ModelPart r37;
+    private final ModelPart r22;
+    private final ModelPart r30;
+    private final ModelPart r33;
+    private final ModelPart r34;
+    private final ModelPart r29;
+    private final ModelPart r20;
+    private final ModelPart r24;
+    private final ModelPart r28;
+    private final ModelPart r26;
+    private final ModelPart r25;
+    private final ModelPart r27;
+    private final ModelPart r23;
+    private final ModelPart r21;
+    private final ModelPart r1;
+    private final ModelPart r13;
+    private final ModelPart r16;
+    private final ModelPart r19;
+    private final ModelPart r15;
+    private final ModelPart r14;
+    private final ModelPart r17;
+    private final ModelPart r32;
+    private final ModelPart l16;
+    private final ModelPart l44;
+    private final ModelPart root;
 
     public TriffidModel(ModelPart root) {
+        this.r9 = root.getChild("r9");
+        this.b14 = root.getChild("b14");
         this.base = root.getChild("base");
-        this.stalk = root.getChild("stalk");
-        this.head = root.getChild("head");
-        this.jaw = root.getChild("jaw");
+        this.b3 = root.getChild("b3");
+        this.l57 = root.getChild("l57");
+        this.l30 = root.getChild("l30");
+        this.b6 = root.getChild("b6");
+        this.b7 = root.getChild("b7");
+        this.b8 = root.getChild("b8");
+        this.b9 = root.getChild("b9");
+        this.b11 = root.getChild("b11");
+        this.b16 = root.getChild("b16");
+        this.h18 = root.getChild("h18");
+        this.b13 = root.getChild("b13");
+        this.b15 = root.getChild("b15");
+        this.h8 = root.getChild("h8");
+        this.h1 = root.getChild("h1");
+        this.h13 = root.getChild("h13");
+        this.h7 = root.getChild("h7");
+        this.h3 = root.getChild("h3");
+        this.h17 = root.getChild("h17");
+        this.h16 = root.getChild("h16");
+        this.h23 = root.getChild("h23");
+        this.h4 = root.getChild("h4");
+        this.h2 = root.getChild("h2");
+        this.h21 = root.getChild("h21");
+        this.h19 = root.getChild("h19");
+        this.h20 = root.getChild("h20");
+        this.b10 = root.getChild("b10");
+        this.b17 = root.getChild("b17");
+        this.h6 = root.getChild("h6");
+        this.h11 = root.getChild("h11");
+        this.h14 = root.getChild("h14");
+        this.h15 = root.getChild("h15");
+        this.h10 = root.getChild("h10");
+        this.h9 = root.getChild("h9");
+        this.h5 = root.getChild("h5");
+        this.h12 = root.getChild("h12");
+        this.c2 = root.getChild("c2");
+        this.c11 = root.getChild("c11");
+        this.c1 = root.getChild("c1");
+        this.c5 = root.getChild("c5");
+        this.c3 = root.getChild("c3");
+        this.c4 = root.getChild("c4");
+        this.c10 = root.getChild("c10");
+        this.c6 = root.getChild("c6");
+        this.c7 = root.getChild("c7");
+        this.c8 = root.getChild("c8");
+        this.c9 = root.getChild("c9");
+        this.b1 = root.getChild("b1");
+        this.l15 = root.getChild("l15");
+        this.b2 = root.getChild("b2");
+        this.l43 = root.getChild("l43");
+        this.l1 = root.getChild("l1");
+        this.l2 = root.getChild("l2");
+        this.l3 = root.getChild("l3");
+        this.leaf3 = root.getChild("leaf3");
+        this.l4 = root.getChild("l4");
+        this.l5 = root.getChild("l5");
+        this.l6 = root.getChild("l6");
+        this.l7 = root.getChild("l7");
+        this.l8 = root.getChild("l8");
+        this.l9 = root.getChild("l9");
+        this.l10 = root.getChild("l10");
+        this.l11 = root.getChild("l11");
+        this.l12 = root.getChild("l12");
+        this.l13 = root.getChild("l13");
+        this.l14 = root.getChild("l14");
+        this.b4 = root.getChild("b4");
+        this.l31 = root.getChild("l31");
+        this.l32 = root.getChild("l32");
+        this.leaf32 = root.getChild("leaf32");
+        this.l33 = root.getChild("l33");
+        this.l34 = root.getChild("l34");
+        this.l35 = root.getChild("l35");
+        this.l36 = root.getChild("l36");
+        this.l37 = root.getChild("l37");
+        this.l38 = root.getChild("l38");
+        this.l39 = root.getChild("l39");
+        this.l40 = root.getChild("l40");
+        this.l41 = root.getChild("l41");
+        this.l42 = root.getChild("l42");
+        this.l17 = root.getChild("l17");
+        this.l18 = root.getChild("l18");
+        this.l19 = root.getChild("l19");
+        this.l20 = root.getChild("l20");
+        this.l21 = root.getChild("l21");
+        this.l22 = root.getChild("l22");
+        this.l23 = root.getChild("l23");
+        this.l24 = root.getChild("l24");
+        this.l25 = root.getChild("l25");
+        this.l26 = root.getChild("l26");
+        this.l27 = root.getChild("l27");
+        this.l28 = root.getChild("l28");
+        this.l29 = root.getChild("l29");
+        this.b5 = root.getChild("b5");
+        this.l45 = root.getChild("l45");
+        this.l46 = root.getChild("l46");
+        this.l47 = root.getChild("l47");
+        this.l48 = root.getChild("l48");
+        this.l49 = root.getChild("l49");
+        this.leaf49 = root.getChild("leaf49");
+        this.l50 = root.getChild("l50");
+        this.l51 = root.getChild("l51");
+        this.l52 = root.getChild("l52");
+        this.l53 = root.getChild("l53");
+        this.l54 = root.getChild("l54");
+        this.l55 = root.getChild("l55");
+        this.l56 = root.getChild("l56");
+        this.h22 = root.getChild("h22");
+        this.t15 = root.getChild("t15");
+        this.t14 = root.getChild("t14");
+        this.t13 = root.getChild("t13");
+        this.t12 = root.getChild("t12");
+        this.t11 = root.getChild("t11");
+        this.t10 = root.getChild("t10");
+        this.t9 = root.getChild("t9");
+        this.t6 = root.getChild("t6");
+        this.t2 = root.getChild("t2");
+        this.t8 = root.getChild("t8");
+        this.t7 = root.getChild("t7");
+        this.t5 = root.getChild("t5");
+        this.t4 = root.getChild("t4");
+        this.t3 = root.getChild("t3");
+        this.t1 = root.getChild("t1");
+        this.r47 = root.getChild("r47");
+        this.r2 = root.getChild("r2");
+        this.r6 = root.getChild("r6");
+        this.r5 = root.getChild("r5");
+        this.r10 = root.getChild("r10");
+        this.r7 = root.getChild("r7");
+        this.r12 = root.getChild("r12");
+        this.r8 = root.getChild("r8");
+        this.r11 = root.getChild("r11");
+        this.r4 = root.getChild("r4");
+        this.r40 = root.getChild("r40");
+        this.r45 = root.getChild("r45");
+        this.r49 = root.getChild("r49");
+        this.r44 = root.getChild("r44");
+        this.root43 = root.getChild("root43");
+        this.r43 = root.getChild("r43");
+        this.r46 = root.getChild("r46");
+        this.r48 = root.getChild("r48");
+        this.r35 = root.getChild("r35");
+        this.r38 = root.getChild("r38");
+        this.r42 = root.getChild("r42");
+        this.r39 = root.getChild("r39");
+        this.r41 = root.getChild("r41");
+        this.r18 = root.getChild("r18");
+        this.r3 = root.getChild("r3");
+        this.r50 = root.getChild("r50");
+        this.r31 = root.getChild("r31");
+        this.r36 = root.getChild("r36");
+        this.r37 = root.getChild("r37");
+        this.r22 = root.getChild("r22");
+        this.r30 = root.getChild("r30");
+        this.r33 = root.getChild("r33");
+        this.r34 = root.getChild("r34");
+        this.r29 = root.getChild("r29");
+        this.r20 = root.getChild("r20");
+        this.r24 = root.getChild("r24");
+        this.r28 = root.getChild("r28");
+        this.r26 = root.getChild("r26");
+        this.r25 = root.getChild("r25");
+        this.r27 = root.getChild("r27");
+        this.r23 = root.getChild("r23");
+        this.r21 = root.getChild("r21");
+        this.r1 = root.getChild("r1");
+        this.r13 = root.getChild("r13");
+        this.r16 = root.getChild("r16");
+        this.r19 = root.getChild("r19");
+        this.r15 = root.getChild("r15");
+        this.r14 = root.getChild("r14");
+        this.r17 = root.getChild("r17");
+        this.r32 = root.getChild("r32");
+        this.l16 = root.getChild("l16");
+        this.l44 = root.getChild("l44");
+        this.root = root.getChild("root");
     }
 
     public static LayerDefinition createBodyLayer() {
-        MeshDefinition mesh = new MeshDefinition();
-        PartDefinition root = mesh.getRoot();
-        root.addOrReplaceChild("base", CubeListBuilder.create().texOffs(0, 0).addBox(-6.0F, 0.0F, -6.0F, 12, 8, 12), PartPose.offset(0.0F, 16.0F, 0.0F));
-        root.addOrReplaceChild("stalk", CubeListBuilder.create().texOffs(0, 21).addBox(-3.0F, -20.0F, -3.0F, 6, 20, 6), PartPose.offset(0.0F, 16.0F, 0.0F));
-        root.addOrReplaceChild("head", CubeListBuilder.create().texOffs(0, 48).addBox(-5.0F, -8.0F, -5.0F, 10, 8, 10), PartPose.offset(0.0F, -4.0F, 0.0F));
-        root.addOrReplaceChild("jaw", CubeListBuilder.create().texOffs(0, 67).addBox(-4.0F, 0.0F, -6.0F, 8, 3, 6), PartPose.offset(0.0F, -4.0F, 0.0F));
-        return LayerDefinition.create(mesh, 128, 128);
+        MeshDefinition meshdefinition = new MeshDefinition();
+        PartDefinition partdefinition = meshdefinition.getRoot();
+
+        partdefinition.addOrReplaceChild("r9",
+                CubeListBuilder.create().texOffs(111, 0).mirror()
+                        .addBox(0.0F, 0.0F, 0.0F, 2, 2, 9),
+                PartPose.offsetAndRotation(-15.0F, 22.0F, -17.0F, -0.296706F, 1.151917F, 1.708151F));
+
+        partdefinition.addOrReplaceChild("b14",
+                CubeListBuilder.create().texOffs(0, 0).mirror()
+                        .addBox(-4.0F, -4.0F, -4.0F, 7, 7, 7),
+                PartPose.offsetAndRotation(0.0F, -22.0F, -2.5F, -0.4165037F, 1.689355F, 0.1948779F));
+
+        partdefinition.addOrReplaceChild("base",
+                CubeListBuilder.create().texOffs(150, 0).mirror()
+                        .addBox(0.0F, 0.0F, 0.0F, 9, 8, 9),
+                PartPose.offset(-5.0F, 16.0F, -5.0F));
+
+        partdefinition.addOrReplaceChild("b3",
+                CubeListBuilder.create().texOffs(0, 0).mirror()
+                        .addBox(-4.0F, -4.0F, -4.0F, 7, 8, 8),
+                PartPose.offsetAndRotation(-2.0F, 16.0F, -2.0F, 0.0523599F, 0.1745329F, -0.2094395F));
+
+        partdefinition.addOrReplaceChild("l57",
+                CubeListBuilder.create().texOffs(40, 0).mirror()
+                        .addBox(0.0F, 0.0F, 0.0F, 1, 1, 2),
+                PartPose.offsetAndRotation(0.0F, -24.0F, 6.0F, 2.286381F, 0.0F, 0.0F));
+
+        partdefinition.addOrReplaceChild("l30",
+                CubeListBuilder.create().texOffs(40, 0).mirror()
+                        .addBox(0.0F, 0.0F, 0.0F, 1, 1, 2),
+                PartPose.offsetAndRotation(-0.5F, -24.5F, -6.0F, -2.268928F, 0.0F, 0.0F));
+
+        partdefinition.addOrReplaceChild("b6",
+                CubeListBuilder.create().texOffs(0, 0).mirror()
+                        .addBox(-4.0F, -4.0F, -4.0F, 8, 8, 8),
+                PartPose.offsetAndRotation(-4.5F, 2.0F, -4.5F, -0.1047198F, -0.1396263F, -0.2617994F));
+
+        partdefinition.addOrReplaceChild("b7",
+                CubeListBuilder.create().texOffs(0, 0).mirror()
+                        .addBox(-4.0F, -4.0F, -4.0F, 8, 8, 8),
+                PartPose.offsetAndRotation(-3.0F, 4.0F, -4.5F, 0.4014257F, 0.3490659F, -0.6283185F));
+
+        partdefinition.addOrReplaceChild("b8",
+                CubeListBuilder.create().texOffs(0, 0).mirror()
+                        .addBox(-4.0F, -4.0F, -4.0F, 7, 8, 8),
+                PartPose.offsetAndRotation(-3.0F, -5.0F, -4.5F, -0.0818962F, -0.1342561F, -0.8513902F));
+
+        partdefinition.addOrReplaceChild("b9",
+                CubeListBuilder.create().texOffs(0, 0).mirror()
+                        .addBox(-4.0F, -4.0F, -4.0F, 8, 8, 8),
+                PartPose.offsetAndRotation(-3.0F, -5.0F, -5.5F, -0.0447176F, 1.208305F, -0.1449966F));
+
+        partdefinition.addOrReplaceChild("b11",
+                CubeListBuilder.create().texOffs(0, 0).mirror()
+                        .addBox(-3.0F, -3.0F, -3.0F, 6, 6, 6),
+                PartPose.offsetAndRotation(-3.0F, -12.0F, -5.5F, -0.0447176F, 1.208305F, -0.1449966F));
+
+        partdefinition.addOrReplaceChild("b16",
+                CubeListBuilder.create().texOffs(0, 0).mirror()
+                        .addBox(-4.0F, -4.0F, -4.0F, 7, 8, 7),
+                PartPose.offsetAndRotation(0.0F, -17.0F, -5.5F, -0.2306107F, 0.8365188F, -0.5911399F));
+
+        partdefinition.addOrReplaceChild("h18",
+                CubeListBuilder.create().texOffs(80, 0).mirror()
+                        .addBox(0.0F, 0.0F, 0.0F, 3, 3, 1),
+                PartPose.offsetAndRotation(2.0F, -40.5F, -3.0F, 0.0523599F, -0.4537856F, 0.0F));
+
+        partdefinition.addOrReplaceChild("b13",
+                CubeListBuilder.create().texOffs(0, 0).mirror()
+                        .addBox(-3.0F, -3.0F, -3.0F, 6, 6, 6),
+                PartPose.offsetAndRotation(0.0F, -28.0F, -1.5F, 0.3531968F, 1.505734F, -0.3308896F));
+
+        partdefinition.addOrReplaceChild("b15",
+                CubeListBuilder.create().texOffs(0, 0).mirror()
+                        .addBox(-3.0F, -3.0F, -3.0F, 5, 5, 5),
+                PartPose.offsetAndRotation(0.0F, -27.0F, -0.5F, 0.5205006F, 1.412787F, 0.8179294F));
+
+        partdefinition.addOrReplaceChild("h8",
+                CubeListBuilder.create().texOffs(80, 0).mirror()
+                        .addBox(0.0F, 0.0F, 0.0F, 3, 5, 1),
+                PartPose.offsetAndRotation(-1.0F, -35.0F, 0.5F, -0.296706F, 0.1745329F, 0.0F));
+
+        partdefinition.addOrReplaceChild("h1",
+                CubeListBuilder.create().texOffs(80, 0).mirror()
+                        .addBox(0.0F, 0.0F, 0.0F, 3, 5, 1),
+                PartPose.offsetAndRotation(-1.0F, -34.5F, -3.0F, 0.296706F, -0.1745329F, 0.0F));
+
+        partdefinition.addOrReplaceChild("h13",
+                CubeListBuilder.create().texOffs(80, 0).mirror()
+                        .addBox(0.0F, 0.0F, 0.0F, 1, 1, 2),
+                PartPose.offsetAndRotation(-2.0F, -41.0F, -2.5F, 0.5934119F, -0.0174533F, 0.0F));
+
+        partdefinition.addOrReplaceChild("h7",
+                CubeListBuilder.create().texOffs(80, 0).mirror()
+                        .addBox(0.0F, 0.0F, 0.0F, 3, 3, 1),
+                PartPose.offsetAndRotation(-1.0F, -37.5F, 1.0F, -0.1745329F, 0.2094395F, 0.0F));
+
+        partdefinition.addOrReplaceChild("h3",
+                CubeListBuilder.create().texOffs(80, 0).mirror()
+                        .addBox(0.0F, 0.0F, 0.0F, 3, 3, 1),
+                PartPose.offsetAndRotation(-1.0F, -40.5F, -3.5F, -0.0523599F, -0.2094395F, 0.0F));
+
+        partdefinition.addOrReplaceChild("h17",
+                CubeListBuilder.create().texOffs(80, 0).mirror()
+                        .addBox(0.0F, 0.0F, 0.0F, 3, 1, 3),
+                PartPose.offsetAndRotation(2.0F, -41.7F, -2.5F, 0.0F, 0.0F, 0.6806784F));
+
+        partdefinition.addOrReplaceChild("h16",
+                CubeListBuilder.create().texOffs(80, 0).mirror()
+                        .addBox(0.0F, 0.0F, 0.0F, 1, 3, 1),
+                PartPose.offsetAndRotation(-1.5F, -34.5F, -2.5F, 0.2617994F, 0.0F, 0.0F));
+
+        partdefinition.addOrReplaceChild("h23",
+                CubeListBuilder.create().texOffs(80, 0).mirror()
+                        .addBox(0.0F, 0.0F, 0.0F, 3, 3, 1),
+                PartPose.offsetAndRotation(2.0F, -40.5F, 0.0F, 0.0872665F, 0.7504916F, 0.0F));
+
+        partdefinition.addOrReplaceChild("h4",
+                CubeListBuilder.create().texOffs(80, 0).mirror()
+                        .addBox(0.0F, 0.0F, 0.0F, 3, 1, 3),
+                PartPose.offsetAndRotation(-1.0F, -40.5F, -3.5F, 0.6108652F, -0.0174533F, 0.0F));
+
+        partdefinition.addOrReplaceChild("h2",
+                CubeListBuilder.create().texOffs(80, 0).mirror()
+                        .addBox(0.0F, 0.0F, 0.0F, 3, 3, 1),
+                PartPose.offsetAndRotation(-1.0F, -37.5F, -3.5F, 0.1745329F, -0.2094395F, 0.0F));
+
+        partdefinition.addOrReplaceChild("h21",
+                CubeListBuilder.create().texOffs(80, 0).mirror()
+                        .addBox(-1.0F, 0.0F, 0.0F, 1, 3, 1),
+                PartPose.offsetAndRotation(3.0F, -34.5F, -0.5F, 0.1745329F, -0.7853982F, 0.3839724F));
+
+        partdefinition.addOrReplaceChild("h19",
+                CubeListBuilder.create().texOffs(80, 0).mirror()
+                        .addBox(-1.0F, 0.0F, 0.0F, 3, 3, 1),
+                PartPose.offsetAndRotation(3.0F, -37.5F, -2.0F, 0.1745329F, -0.7853982F, 0.0F));
+
+        partdefinition.addOrReplaceChild("h20",
+                CubeListBuilder.create().texOffs(80, 0).mirror()
+                        .addBox(-1.0F, 0.0F, 0.0F, 1, 3, 1),
+                PartPose.offsetAndRotation(3.0F, -34.5F, -1.5F, 0.5759587F, -0.7853982F, -0.2094395F));
+
+        partdefinition.addOrReplaceChild("b10",
+                CubeListBuilder.create().texOffs(0, 0).mirror()
+                        .addBox(-3.0F, -3.0F, -3.0F, 6, 6, 6),
+                PartPose.offsetAndRotation(0.0F, -12.0F, -6.5F, -0.2677893F, 0.7249829F, -0.4052469F));
+
+        partdefinition.addOrReplaceChild("b17",
+                CubeListBuilder.create().texOffs(0, 0).mirror()
+                        .addBox(-3.0F, -3.0F, -3.0F, 5, 5, 5),
+                PartPose.offsetAndRotation(0.0F, -20.5F, -2.5F, 0.7063936F, 1.896109F, 0.7435722F));
+
+        partdefinition.addOrReplaceChild("h6",
+                CubeListBuilder.create().texOffs(80, 0).mirror()
+                        .addBox(0.0F, 0.0F, 0.0F, 3, 3, 1),
+                PartPose.offsetAndRotation(-1.0F, -40.5F, 1.0F, 0.0523599F, 0.2094395F, 0.0F));
+
+        partdefinition.addOrReplaceChild("h11",
+                CubeListBuilder.create().texOffs(80, 0).mirror()
+                        .addBox(0.0F, 0.0F, 0.0F, 1, 3, 1),
+                PartPose.offsetAndRotation(-1.5F, -40.5F, 0.5F, 0.0523599F, 0.2094395F, 0.0F));
+
+        partdefinition.addOrReplaceChild("h14",
+                CubeListBuilder.create().texOffs(80, 0).mirror()
+                        .addBox(0.0F, 0.0F, 0.0F, 1, 3, 1),
+                PartPose.offsetAndRotation(-1.5F, -40.5F, -3.0F, -0.0349066F, 0.1396263F, 0.0F));
+
+        partdefinition.addOrReplaceChild("h15",
+                CubeListBuilder.create().texOffs(80, 0).mirror()
+                        .addBox(0.0F, 0.0F, 0.0F, 1, 3, 1),
+                PartPose.offsetAndRotation(-1.5F, -37.5F, -3.0F, 0.1919862F, 0.1396263F, 0.0F));
+
+        partdefinition.addOrReplaceChild("h10",
+                CubeListBuilder.create().texOffs(80, 0).mirror()
+                        .addBox(0.0F, 0.0F, 0.0F, 1, 3, 1),
+                PartPose.offsetAndRotation(-1.5F, -37.5F, 0.5F, -0.1919862F, 0.0F, 0.0F));
+
+        partdefinition.addOrReplaceChild("h9",
+                CubeListBuilder.create().texOffs(80, 0).mirror()
+                        .addBox(0.0F, 0.0F, 0.0F, 1, 3, 1),
+                PartPose.offsetAndRotation(-1.5F, -34.5F, -0.5F, -0.2617994F, 0.0F, 0.0F));
+
+        partdefinition.addOrReplaceChild("h5",
+                CubeListBuilder.create().texOffs(80, 0).mirror()
+                        .addBox(0.0F, 0.0F, 0.0F, 3, 1, 3),
+                PartPose.offsetAndRotation(-1.0F, -42.5F, -0.5F, -0.6108652F, 0.296706F, 0.0F));
+
+        partdefinition.addOrReplaceChild("h12",
+                CubeListBuilder.create().texOffs(80, 0).mirror()
+                        .addBox(0.0F, 0.0F, 0.0F, 1, 1, 2),
+                PartPose.offsetAndRotation(-2.0F, -42.0F, -0.5F, -0.6108652F, 0.296706F, 0.0F));
+
+        partdefinition.addOrReplaceChild("c2",
+                CubeListBuilder.create().texOffs(0, 0).mirror()
+                        .addBox(0.0F, 0.0F, 0.0F, 0, 5, 2),
+                PartPose.offsetAndRotation(-2.0F, -29.0F, -3.0F, 0.0F, -0.6632251F, 0.2792527F));
+
+        partdefinition.addOrReplaceChild("c11",
+                CubeListBuilder.create().texOffs(0, 0).mirror()
+                        .addBox(0.0F, 0.0F, 0.0F, 0, 5, 2),
+                PartPose.offsetAndRotation(-3.0F, -29.0F, 0.0F, 0.0713623F, 0.5948578F, 0.6335855F));
+
+        partdefinition.addOrReplaceChild("c1",
+                CubeListBuilder.create().texOffs(0, 0).mirror()
+                        .addBox(0.0F, 0.0F, 0.0F, 0, 5, 2),
+                PartPose.offsetAndRotation(-3.0F, -29.0F, -2.0F, 0.1745329F, 0.0F, 0.2792527F));
+
+        partdefinition.addOrReplaceChild("c5",
+                CubeListBuilder.create().texOffs(0, 0).mirror()
+                        .addBox(0.0F, 0.0F, 0.0F, 0, 5, 2),
+                PartPose.offsetAndRotation(2.5F, -29.0F, -2.5F, 0.0F, -2.617994F, 0.3700098F));
+
+        partdefinition.addOrReplaceChild("c3",
+                CubeListBuilder.create().texOffs(0, 0).mirror()
+                        .addBox(0.0F, 0.0F, 0.0F, 0, 5, 2),
+                PartPose.offsetAndRotation(0.0F, -29.0F, -3.533333F, 0.0F, -1.32645F, 0.2792527F));
+
+        partdefinition.addOrReplaceChild("c4",
+                CubeListBuilder.create().texOffs(0, 0).mirror()
+                        .addBox(0.0F, 0.0F, 0.0F, 0, 5, 2),
+                PartPose.offsetAndRotation(2.5F, -29.0F, -4.0F, 0.0F, -1.553343F, 0.2792527F));
+
+        partdefinition.addOrReplaceChild("c10",
+                CubeListBuilder.create().texOffs(0, 0).mirror()
+                        .addBox(0.0F, 0.0F, 0.0F, 0, 5, 2),
+                PartPose.offsetAndRotation(0.0F, -30.0F, 2.5F, 0.0F, -2.019315F, -0.5222769F));
+
+        partdefinition.addOrReplaceChild("c6",
+                CubeListBuilder.create().texOffs(0, 0).mirror()
+                        .addBox(0.0F, 0.0F, 0.0F, 0, 5, 2),
+                PartPose.offsetAndRotation(4.5F, -29.0F, -0.5F, 0.0F, -2.373648F, 0.3700098F));
+
+        partdefinition.addOrReplaceChild("c7",
+                CubeListBuilder.create().texOffs(0, 0).mirror()
+                        .addBox(0.0F, 0.0F, 0.0F, 0, 5, 2),
+                PartPose.offsetAndRotation(4.5F, -30.0F, -0.5F, 0.0F, -0.1801097F, -0.2992052F));
+
+        partdefinition.addOrReplaceChild("c8",
+                CubeListBuilder.create().texOffs(0, 0).mirror()
+                        .addBox(0.0F, 0.0F, 0.0F, 0, 5, 2),
+                PartPose.offsetAndRotation(4.0F, -30.0F, 0.5F, 0.1487144F, -0.866778F, -0.6709913F));
+
+        partdefinition.addOrReplaceChild("c9",
+                CubeListBuilder.create().texOffs(0, 0).mirror()
+                        .addBox(0.0F, 0.0F, 0.0F, 0, 5, 2),
+                PartPose.offsetAndRotation(2.0F, -30.0F, 2.0F, -0.2230717F, -1.573172F, -0.8197058F));
+
+        partdefinition.addOrReplaceChild("b1",
+                CubeListBuilder.create().texOffs(0, 0).mirror()
+                        .addBox(-4.0F, -4.0F, -4.0F, 9, 8, 9),
+                PartPose.offsetAndRotation(-1.0F, 13.0F, -5.0F, -0.2268928F, -0.3748843F, 0.3520608F));
+
+        partdefinition.addOrReplaceChild("l15",
+                CubeListBuilder.create().texOffs(0, 0).mirror()
+                        .addBox(0.0F, 0.0F, 0.0F, 1, 2, 1),
+                PartPose.offsetAndRotation(-5.5F, -31.0F, -5.0F, 0.0204482F, -0.065992F, 0.7831261F));
+
+        partdefinition.addOrReplaceChild("b2",
+                CubeListBuilder.create().texOffs(0, 0).mirror()
+                        .addBox(-4.0F, -4.0F, -4.0F, 9, 8, 9),
+                PartPose.offsetAndRotation(-2.0F, 8.0F, -4.0F, -0.2268928F, -0.3748843F, 0.3520608F));
+
+        partdefinition.addOrReplaceChild("l43",
+                CubeListBuilder.create().texOffs(40, 0).mirror()
+                        .addBox(0.0F, 0.0F, 0.0F, 1, 1, 1),
+                PartPose.offsetAndRotation(5.5F, -25.5F, -1.5F, 0.0F, 0.0F, -0.5722408F));
+
+        partdefinition.addOrReplaceChild("l1",
+                CubeListBuilder.create().texOffs(40, 0).mirror()
+                        .addBox(0.0F, 0.0F, 0.0F, 1, 5, 5),
+                PartPose.offsetAndRotation(-7.0F, 10.0F, -4.0F, 0.0F, -0.2230717F, -0.7435722F));
+
+        partdefinition.addOrReplaceChild("l2",
+                CubeListBuilder.create().texOffs(40, 0).mirror()
+                        .addBox(0.0F, 0.0F, 0.0F, 1, 3, 6),
+                PartPose.offsetAndRotation(-9.0F, 8.5F, -5.0F, 0.0698132F, -0.1707118F, -0.9006519F));
+
+        partdefinition.addOrReplaceChild("l3",
+                CubeListBuilder.create().texOffs(0, 0).mirror()
+                        .addBox(0.0F, 0.0F, 0.0F, 1, 4, 7),
+                PartPose.offsetAndRotation(-10.0F, 5.5F, -6.0F, 0.0698132F, -0.1532585F, -0.3801513F));
+
+        partdefinition.addOrReplaceChild("leaf3",
+                CubeListBuilder.create().texOffs(40, 0).mirror()
+                        .addBox(0.0F, 0.0F, 0.0F, 1, 4, 7),
+                PartPose.offsetAndRotation(-10.0F, 5.5F, -6.0F, 0.0698132F, -0.1532585F, -0.3801513F));
+
+        partdefinition.addOrReplaceChild("l4",
+                CubeListBuilder.create().texOffs(40, 0).mirror()
+                        .addBox(0.0F, 0.0F, 0.0F, 1, 4, 8),
+                PartPose.offsetAndRotation(-11.0F, 1.5F, -7.0F, 0.0698132F, -0.1532585F, -0.1942582F));
+
+        partdefinition.addOrReplaceChild("l5",
+                CubeListBuilder.create().texOffs(40, 0).mirror()
+                        .addBox(0.0F, 0.0F, 0.0F, 1, 4, 9),
+                PartPose.offsetAndRotation(-11.5F, -2.5F, -8.0F, 0.0698132F, -0.1008986F, -0.1418984F));
+
+        partdefinition.addOrReplaceChild("l6",
+                CubeListBuilder.create().texOffs(40, 0).mirror()
+                        .addBox(0.0F, 0.0F, 0.0F, 1, 6, 10),
+                PartPose.offsetAndRotation(-12.0F, -7.5F, -9.0F, 0.1047198F, -0.1532585F, -0.176805F));
+
+        partdefinition.addOrReplaceChild("l7",
+                CubeListBuilder.create().texOffs(40, 0).mirror()
+                        .addBox(0.0F, 0.0F, 0.0F, 1, 4, 9),
+                PartPose.offsetAndRotation(-13.0F, -11.5F, -9.0F, 0.0698132F, -0.1532585F, -0.2291648F));
+
+        partdefinition.addOrReplaceChild("l8",
+                CubeListBuilder.create().texOffs(40, 0).mirror()
+                        .addBox(0.0F, 0.0F, 0.0F, 1, 4, 8),
+                PartPose.offsetAndRotation(-13.0F, -15.5F, -8.5F, 0.0204482F, -0.1532585F, -0.0197253F));
+
+        partdefinition.addOrReplaceChild("l9",
+                CubeListBuilder.create().texOffs(40, 0).mirror()
+                        .addBox(0.0F, 0.0F, 0.0F, 1, 4, 7),
+                PartPose.offsetAndRotation(-12.5F, -19.5F, -8.0F, 0.0204482F, -0.1008986F, 0.1722609F));
+
+        partdefinition.addOrReplaceChild("l10",
+                CubeListBuilder.create().texOffs(40, 0).mirror()
+                        .addBox(0.0F, 0.0F, 0.0F, 1, 4, 6),
+                PartPose.offsetAndRotation(-11.0F, -23.3F, -7.5F, 0.0204482F, -0.065992F, 0.416607F));
+
+        partdefinition.addOrReplaceChild("l11",
+                CubeListBuilder.create().texOffs(40, 0).mirror()
+                        .addBox(0.0F, 0.0F, 0.0F, 1, 3, 5),
+                PartPose.offsetAndRotation(-9.5F, -26.0F, -7.0F, 0.0204482F, -0.065992F, 0.5038735F));
+
+        partdefinition.addOrReplaceChild("l12",
+                CubeListBuilder.create().texOffs(40, 0).mirror()
+                        .addBox(0.0F, 0.0F, 0.0F, 1, 3, 4),
+                PartPose.offsetAndRotation(-8.5F, -28.0F, -6.5F, 0.0204482F, -0.065992F, 0.5038735F));
+
+        partdefinition.addOrReplaceChild("l13",
+                CubeListBuilder.create().texOffs(40, 0).mirror()
+                        .addBox(0.0F, 0.0F, 0.0F, 1, 2, 3),
+                PartPose.offsetAndRotation(-7.5F, -29.0F, -6.0F, 0.0204482F, -0.065992F, 0.7482196F));
+
+        partdefinition.addOrReplaceChild("l14",
+                CubeListBuilder.create().texOffs(40, 0).mirror()
+                        .addBox(0.0F, 0.0F, 0.0F, 1, 2, 2),
+                PartPose.offsetAndRotation(-6.5F, -30.0F, -5.5F, 0.0204482F, -0.065992F, 0.7831261F));
+
+        partdefinition.addOrReplaceChild("b4",
+                CubeListBuilder.create().texOffs(0, 0).mirror()
+                        .addBox(0.0F, 0.0F, 0.0F, 8, 8, 8),
+                PartPose.offsetAndRotation(-4.5F, 9.0F, -4.5F, -0.2617994F, -0.1396263F, -0.2617994F));
+
+        partdefinition.addOrReplaceChild("l31",
+                CubeListBuilder.create().texOffs(40, 0).mirror()
+                        .addBox(0.0F, 0.0F, 0.0F, 1, 5, 5),
+                PartPose.offsetAndRotation(7.5F, 9.0F, -3.5F, 0.0F, 0.0F, 0.7086656F));
+
+        partdefinition.addOrReplaceChild("l32",
+                CubeListBuilder.create().texOffs(40, 0).mirror()
+                        .addBox(0.0F, 0.0F, 0.0F, 1, 3, 6),
+                PartPose.offsetAndRotation(9.0F, 6.5F, -4.0F, 0.0F, 0.0F, 0.5341327F));
+
+        partdefinition.addOrReplaceChild("leaf32",
+                CubeListBuilder.create().texOffs(40, 0).mirror()
+                        .addBox(0.0F, 0.0F, 0.0F, 1, 3, 7),
+                PartPose.offsetAndRotation(10.5F, 4.5F, -4.5F, 0.0F, 0.0F, 0.5864926F));
+
+        partdefinition.addOrReplaceChild("l33",
+                CubeListBuilder.create().texOffs(0, 0).mirror()
+                        .addBox(0.0F, 0.0F, 0.0F, 1, 3, 7),
+                PartPose.offsetAndRotation(10.5F, 4.5F, -4.5F, 0.0F, 0.0F, 0.5864926F));
+
+        partdefinition.addOrReplaceChild("l34",
+                CubeListBuilder.create().texOffs(40, 0).mirror()
+                        .addBox(0.0F, 0.0F, 0.0F, 1, 4, 8),
+                PartPose.offsetAndRotation(11.5F, 1.0F, -5.0F, 0.0F, 0.0F, 0.3004238F));
+
+        partdefinition.addOrReplaceChild("l35",
+                CubeListBuilder.create().texOffs(40, 0).mirror()
+                        .addBox(0.0F, 0.0F, 0.0F, 1, 4, 9),
+                PartPose.offsetAndRotation(12.5F, -2.5F, -5.5F, 0.0F, 0.0F, 0.248064F));
+
+        partdefinition.addOrReplaceChild("l36",
+                CubeListBuilder.create().texOffs(40, 0).mirror()
+                        .addBox(0.0F, 0.0F, 0.0F, 1, 5, 10),
+                PartPose.offsetAndRotation(12.5F, -7.5F, -6.0F, 0.0F, 0.0F, 0.0037179F));
+
+        partdefinition.addOrReplaceChild("l37",
+                CubeListBuilder.create().texOffs(40, 0).mirror()
+                        .addBox(0.0F, 0.0F, 0.0F, 1, 4, 9),
+                PartPose.offsetAndRotation(12.0F, -11.5F, -5.5F, 0.0F, 0.0F, -0.1184552F));
+
+        partdefinition.addOrReplaceChild("l38",
+                CubeListBuilder.create().texOffs(40, 0).mirror()
+                        .addBox(0.0F, 0.0F, 0.0F, 1, 4, 8),
+                PartPose.offsetAndRotation(11.0F, -15.0F, -5.0F, 0.0F, 0.0F, -0.2755348F));
+
+        partdefinition.addOrReplaceChild("l39",
+                CubeListBuilder.create().texOffs(40, 0).mirror()
+                        .addBox(0.0F, 0.0F, 0.0F, 1, 4, 7),
+                PartPose.offsetAndRotation(9.5F, -18.5F, -4.5F, 0.0F, 0.0F, -0.4151612F));
+
+        partdefinition.addOrReplaceChild("l40",
+                CubeListBuilder.create().texOffs(40, 0).mirror()
+                        .addBox(0.0F, 0.0F, 0.0F, 1, 3, 6),
+                PartPose.offsetAndRotation(8.5F, -21.0F, -4.0F, 0.0F, 0.0F, -0.4151612F));
+
+        partdefinition.addOrReplaceChild("l41",
+                CubeListBuilder.create().texOffs(40, 0).mirror()
+                        .addBox(0.0F, 0.0F, 0.0F, 1, 3, 4),
+                PartPose.offsetAndRotation(7.0F, -23.5F, -3.0F, 0.0F, 0.0F, -0.5373342F));
+
+        partdefinition.addOrReplaceChild("l42",
+                CubeListBuilder.create().texOffs(40, 0).mirror()
+                        .addBox(0.0F, 0.0F, 0.0F, 1, 2, 2),
+                PartPose.offsetAndRotation(6.0F, -25.0F, -2.0F, 0.0F, 0.0F, -0.5722408F));
+
+        partdefinition.addOrReplaceChild("l17",
+                CubeListBuilder.create().texOffs(40, 0).mirror()
+                        .addBox(0.0F, 0.0F, 0.0F, 6, 1, 3),
+                PartPose.offsetAndRotation(-2.5F, 8.5F, -11.0F, -0.6283185F, 0.0F, 0.0F));
+
+        partdefinition.addOrReplaceChild("l18",
+                CubeListBuilder.create().texOffs(40, 0).mirror()
+                        .addBox(0.0F, 0.0F, 0.0F, 7, 1, 3),
+                PartPose.offsetAndRotation(-3.0F, 7.0F, -13.0F, -0.6457718F, 0.0F, 0.0F));
+
+        partdefinition.addOrReplaceChild("l19",
+                CubeListBuilder.create().texOffs(40, 0).mirror()
+                        .addBox(0.0F, 0.0F, 0.0F, 8, 1, 4),
+                PartPose.offsetAndRotation(-3.5F, 4.5F, -16.0F, -0.6981317F, 0.0F, 0.0F));
+
+        partdefinition.addOrReplaceChild("l20",
+                CubeListBuilder.create().texOffs(40, 0).mirror()
+                        .addBox(0.0F, 0.0F, 0.0F, 9, 1, 4),
+                PartPose.offsetAndRotation(-4.0F, 2.0F, -18.0F, -0.9075712F, 0.0F, 0.0F));
+
+        partdefinition.addOrReplaceChild("l21",
+                CubeListBuilder.create().texOffs(40, 0).mirror()
+                        .addBox(0.0F, 0.0F, 0.0F, 10, 1, 5),
+                PartPose.offsetAndRotation(-4.5F, -2.0F, -19.0F, -1.291544F, 0.0F, 0.0F));
+
+        partdefinition.addOrReplaceChild("l22",
+                CubeListBuilder.create().texOffs(40, 0).mirror()
+                        .addBox(0.0F, 0.0F, 0.0F, 9, 1, 4),
+                PartPose.offsetAndRotation(-4.0F, -5.5F, -18.5F, -1.64061F, 0.0F, 0.0F));
+
+        partdefinition.addOrReplaceChild("l23",
+                CubeListBuilder.create().texOffs(40, 0).mirror()
+                        .addBox(0.0F, 0.0F, 0.0F, 8, 1, 4),
+                PartPose.offsetAndRotation(-4.0F, -8.5F, -17.5F, -1.850049F, 0.0F, 0.0F));
+
+        partdefinition.addOrReplaceChild("l24",
+                CubeListBuilder.create().texOffs(40, 0).mirror()
+                        .addBox(0.0F, 0.0F, 0.0F, 7, 1, 4),
+                PartPose.offsetAndRotation(-3.5F, -12.0F, -15.5F, -2.111848F, 0.0F, 0.0F));
+
+        partdefinition.addOrReplaceChild("l25",
+                CubeListBuilder.create().texOffs(40, 0).mirror()
+                        .addBox(0.0F, 0.0F, 0.0F, 6, 1, 4),
+                PartPose.offsetAndRotation(-3.0F, -15.0F, -13.0F, -2.234021F, 0.0F, 0.0F));
+
+        partdefinition.addOrReplaceChild("l26",
+                CubeListBuilder.create().texOffs(40, 0).mirror()
+                        .addBox(0.0F, 0.0F, 0.0F, 5, 1, 4),
+                PartPose.offsetAndRotation(-2.5F, -18.0F, -10.5F, -2.268928F, 0.0F, 0.0F));
+
+        partdefinition.addOrReplaceChild("l27",
+                CubeListBuilder.create().texOffs(40, 0).mirror()
+                        .addBox(0.0F, 0.0F, 0.0F, 4, 1, 3),
+                PartPose.offsetAndRotation(-2.0F, -20.0F, -9.0F, -2.268928F, 0.0F, 0.0F));
+
+        partdefinition.addOrReplaceChild("l28",
+                CubeListBuilder.create().texOffs(40, 0).mirror()
+                        .addBox(0.0F, 0.0F, 0.0F, 3, 1, 2),
+                PartPose.offsetAndRotation(-1.5F, -21.5F, -8.0F, -2.268928F, 0.0F, 0.0F));
+
+        partdefinition.addOrReplaceChild("l29",
+                CubeListBuilder.create().texOffs(40, 0).mirror()
+                        .addBox(0.0F, 0.0F, 0.0F, 2, 1, 2),
+                PartPose.offsetAndRotation(-1.0F, -23.0F, -7.0F, -2.268928F, 0.0F, 0.0F));
+
+        partdefinition.addOrReplaceChild("b5",
+                CubeListBuilder.create().texOffs(0, 0).mirror()
+                        .addBox(0.0F, 0.0F, 0.0F, 8, 8, 8),
+                PartPose.offsetAndRotation(-2.5F, 9.0F, -5.5F, 0.1919862F, -0.1396263F, 0.1745329F));
+
+        partdefinition.addOrReplaceChild("l45",
+                CubeListBuilder.create().texOffs(40, 0).mirror()
+                        .addBox(0.0F, 0.0F, 0.0F, 6, 1, 4),
+                PartPose.offsetAndRotation(-3.0F, 6.0F, 8.5F, 0.8901179F, 0.0F, 0.0F));
+
+        partdefinition.addOrReplaceChild("l46",
+                CubeListBuilder.create().texOffs(40, 0).mirror()
+                        .addBox(0.0F, 0.0F, 0.0F, 7, 1, 3),
+                PartPose.offsetAndRotation(-3.5F, 3.0F, 11.0F, 1.134464F, 0.0F, 0.0F));
+
+        partdefinition.addOrReplaceChild("l47",
+                CubeListBuilder.create().texOffs(40, 0).mirror()
+                        .addBox(0.0F, 0.0F, 0.0F, 8, 1, 4),
+                PartPose.offsetAndRotation(-4.0F, 1.0F, 12.0F, 1.343904F, 0.0F, 0.0F));
+
+        partdefinition.addOrReplaceChild("l48",
+                CubeListBuilder.create().texOffs(40, 0).mirror()
+                        .addBox(0.0F, 0.0F, 0.0F, 9, 1, 3),
+                PartPose.offsetAndRotation(-4.0F, -3.0F, 13.0F, 1.43117F, 0.0F, 0.0F));
+
+        partdefinition.addOrReplaceChild("l49",
+                CubeListBuilder.create().texOffs(40, 0).mirror()
+                        .addBox(0.0F, 0.0F, 0.0F, 10, 1, 5),
+                PartPose.offsetAndRotation(-4.5F, -6.0F, 13.5F, 1.53589F, 0.0F, 0.0F));
+
+        partdefinition.addOrReplaceChild("leaf49",
+                CubeListBuilder.create().texOffs(40, 0).mirror()
+                        .addBox(0.0F, 0.0F, 0.0F, 9, 1, 3),
+                PartPose.offsetAndRotation(-4.0F, -11.0F, 13.5F, 1.658063F, 0.0F, 0.0F));
+
+        partdefinition.addOrReplaceChild("l50",
+                CubeListBuilder.create().texOffs(0, 0).mirror()
+                        .addBox(0.0F, 0.0F, 0.0F, 9, 1, 3),
+                PartPose.offsetAndRotation(-4.0F, -11.0F, 13.5F, 1.658063F, 0.0F, 0.0F));
+
+        partdefinition.addOrReplaceChild("l51",
+                CubeListBuilder.create().texOffs(40, 0).mirror()
+                        .addBox(0.0F, 0.0F, 0.0F, 8, 1, 3),
+                PartPose.offsetAndRotation(-3.5F, -14.0F, 13.0F, 1.797689F, 0.0F, 0.0F));
+
+        partdefinition.addOrReplaceChild("l52",
+                CubeListBuilder.create().texOffs(40, 0).mirror()
+                        .addBox(0.0F, 0.0F, 0.0F, 7, 1, 3),
+                PartPose.offsetAndRotation(-3.0F, -16.5F, 12.5F, 2.146755F, 0.0F, 0.0F));
+
+        partdefinition.addOrReplaceChild("l53",
+                CubeListBuilder.create().texOffs(40, 0).mirror()
+                        .addBox(0.0F, 0.0F, 0.0F, 6, 1, 3),
+                PartPose.offsetAndRotation(-2.5F, -19.0F, 11.0F, 2.286381F, 0.0F, 0.0F));
+
+        partdefinition.addOrReplaceChild("l54",
+                CubeListBuilder.create().texOffs(40, 0).mirror()
+                        .addBox(0.0F, 0.0F, 0.0F, 5, 1, 2),
+                PartPose.offsetAndRotation(-2.0F, -21.0F, 9.0F, 2.286381F, 0.0F, 0.0F));
+
+        partdefinition.addOrReplaceChild("l55",
+                CubeListBuilder.create().texOffs(40, 0).mirror()
+                        .addBox(0.0F, 0.0F, 0.0F, 4, 1, 2),
+                PartPose.offsetAndRotation(-1.5F, -22.0F, 8.0F, 2.286381F, 0.0F, 0.0F));
+
+        partdefinition.addOrReplaceChild("l56",
+                CubeListBuilder.create().texOffs(40, 0).mirror()
+                        .addBox(0.0F, 0.0F, 0.0F, 2, 1, 2),
+                PartPose.offsetAndRotation(-0.5F, -23.0F, 7.0F, 2.286381F, 0.0F, 0.0F));
+
+        partdefinition.addOrReplaceChild("h22",
+                CubeListBuilder.create().texOffs(80, 0).mirror()
+                        .addBox(-1.0F, 0.0F, 0.0F, 3, 3, 1),
+                PartPose.offsetAndRotation(2.0F, -37.5F, 0.0F, -0.1745329F, 0.6108652F, 0.0F));
+
+        partdefinition.addOrReplaceChild("t15",
+                CubeListBuilder.create().texOffs(0, 40).mirror()
+                        .addBox(-6.0F, 0.0F, 0.0F, 6, 1, 1),
+                PartPose.offsetAndRotation(-1.0F, -40.5F, -1.0F, 0.0174533F, 0.0F, 0.0F));
+
+        partdefinition.addOrReplaceChild("t14",
+                CubeListBuilder.create().texOffs(0, 40).mirror()
+                        .addBox(-3.0F, 0.0F, 0.0F, 3, 1, 1),
+                PartPose.offsetAndRotation(-3.0F, -38.0F, -1.0F, 0.0F, 0.0349066F, -0.2443461F));
+
+        partdefinition.addOrReplaceChild("t13",
+                CubeListBuilder.create().texOffs(0, 40).mirror()
+                        .addBox(-3.0F, 0.0F, 0.0F, 3, 1, 1),
+                PartPose.offsetAndRotation(-5.5F, -36.8F, -1.0F, 0.0F, -0.1047198F, -0.3141593F));
+
+        partdefinition.addOrReplaceChild("t12",
+                CubeListBuilder.create().texOffs(0, 40).mirror()
+                        .addBox(-3.0F, 0.0F, 0.0F, 3, 1, 1),
+                PartPose.offsetAndRotation(-7.5F, -36.0F, -1.0F, 0.0F, -0.1396263F, -0.3665191F));
+
+        partdefinition.addOrReplaceChild("t11",
+                CubeListBuilder.create().texOffs(0, 40).mirror()
+                        .addBox(-3.0F, 0.0F, 0.0F, 3, 1, 1),
+                PartPose.offsetAndRotation(-10.0F, -35.5F, -1.5F, 0.0F, 0.0698132F, -0.2443461F));
+
+        partdefinition.addOrReplaceChild("t10",
+                CubeListBuilder.create().texOffs(0, 40).mirror()
+                        .addBox(-3.0F, 0.0F, 0.0F, 3, 1, 1),
+                PartPose.offsetAndRotation(-12.5F, -35.5F, -1.0F, -0.0174533F, -0.0174533F, -0.0174533F));
+
+        partdefinition.addOrReplaceChild("t9",
+                CubeListBuilder.create().texOffs(0, 40).mirror()
+                        .addBox(-6.0F, 0.0F, 0.0F, 6, 1, 1),
+                PartPose.offsetAndRotation(-14.5F, -35.5F, -1.0F, -0.0174533F, -0.0174533F, -0.0174533F));
+
+        partdefinition.addOrReplaceChild("t6",
+                CubeListBuilder.create().texOffs(0, 40).mirror()
+                        .addBox(-6.0F, 0.0F, 0.0F, 6, 1, 1),
+                PartPose.offsetAndRotation(-29.5F, -35.5F, -1.0F, -0.0174533F, -0.1396263F, 0.0872665F));
+
+        partdefinition.addOrReplaceChild("t2",
+                CubeListBuilder.create().texOffs(0, 50).mirror()
+                        .addBox(-3.0F, 0.0F, 0.0F, 3, 1, 1),
+                PartPose.offsetAndRotation(-46.5F, -32.0F, -1.5F, 0.0523599F, 0.2792527F, -0.4363323F));
+
+        partdefinition.addOrReplaceChild("t8",
+                CubeListBuilder.create().texOffs(0, 40).mirror()
+                        .addBox(-6.0F, 0.0F, 0.0F, 6, 1, 1),
+                PartPose.offsetAndRotation(-19.5F, -35.5F, -1.0F, -0.0174533F, -0.0349066F, 0.1745329F));
+
+        partdefinition.addOrReplaceChild("t7",
+                CubeListBuilder.create().texOffs(0, 40).mirror()
+                        .addBox(-6.0F, 0.0F, 0.0F, 6, 1, 1),
+                PartPose.offsetAndRotation(-24.5F, -36.0F, -1.0F, -0.0174533F, 0.2268928F, -0.0523599F));
+
+        partdefinition.addOrReplaceChild("t5",
+                CubeListBuilder.create().texOffs(0, 40).mirror()
+                        .addBox(-6.0F, 0.0F, 0.0F, 6, 1, 1),
+                PartPose.offsetAndRotation(-34.5F, -36.0F, -1.0F, -0.0174533F, 0.1396263F, -0.296706F));
+
+        partdefinition.addOrReplaceChild("t4",
+                CubeListBuilder.create().texOffs(0, 40).mirror()
+                        .addBox(-6.0F, 0.0F, 0.0F, 6, 1, 1),
+                PartPose.offsetAndRotation(-39.5F, -34.0F, -1.0F, -0.0174533F, 0.3839724F, -0.2094395F));
+
+        partdefinition.addOrReplaceChild("t3",
+                CubeListBuilder.create().texOffs(0, 40).mirror()
+                        .addBox(-3.0F, 0.0F, 0.0F, 3, 1, 1),
+                PartPose.offsetAndRotation(-44.5F, -33.0F, -1.0F, 0.1396263F, 0.122173F, -0.3839724F));
+
+        partdefinition.addOrReplaceChild("t1",
+                CubeListBuilder.create().texOffs(0, 50).mirror()
+                        .addBox(-3.0F, 0.0F, 0.0F, 3, 1, 1),
+                PartPose.offsetAndRotation(-46.5F, -32.0F, -0.5F, 0.1396263F, -0.2792527F, -0.4537856F));
+
+        partdefinition.addOrReplaceChild("r47",
+                CubeListBuilder.create().texOffs(111, 0).mirror()
+                        .addBox(0.0F, 0.0F, 0.0F, 2, 2, 5),
+                PartPose.offsetAndRotation(-12.0F, 22.0F, -0.4F, 0.0F, -0.0872665F, -0.2094395F));
+
+        partdefinition.addOrReplaceChild("r2",
+                CubeListBuilder.create().texOffs(0, 0).mirror()
+                        .addBox(0.0F, 0.0F, 0.0F, 2, 2, 5),
+                PartPose.offsetAndRotation(-11.0F, 22.0F, -11.0F, 0.418879F, 0.7330383F, 0.3817004F));
+
+        partdefinition.addOrReplaceChild("r6",
+                CubeListBuilder.create().texOffs(111, 0).mirror()
+                        .addBox(0.0F, 0.0F, 0.0F, 1, 1, 5),
+                PartPose.offsetAndRotation(-17.0F, 24.5F, -6.5F, 0.7330383F, 1.797689F, 0.7831261F));
+
+        partdefinition.addOrReplaceChild("r5",
+                CubeListBuilder.create().texOffs(111, 0).mirror()
+                        .addBox(0.0F, 0.0F, 0.0F, 2, 2, 6),
+                PartPose.offsetAndRotation(-16.0F, 22.0F, -11.0F, 0.5061455F, 1.151917F, 1.463804F));
+
+        partdefinition.addOrReplaceChild("r10",
+                CubeListBuilder.create().texOffs(111, 0).mirror()
+                        .addBox(0.0F, 0.0F, 0.0F, 1, 1, 5),
+                PartPose.offsetAndRotation(-18.0F, 24.0F, -13.5F, 0.5992297F, 1.27409F, 0.5759587F));
+
+        partdefinition.addOrReplaceChild("r7",
+                CubeListBuilder.create().texOffs(111, 0).mirror()
+                        .addBox(0.0F, 0.0F, 0.0F, 1, 1, 5),
+                PartPose.offsetAndRotation(-20.0F, 24.5F, -10.5F, 0.5061455F, 1.186824F, 0.416607F));
+
+        partdefinition.addOrReplaceChild("r12",
+                CubeListBuilder.create().texOffs(111, 0).mirror()
+                        .addBox(0.0F, 0.0F, 0.0F, 1, 1, 5),
+                PartPose.offsetAndRotation(-14.0F, 24.0F, -18.5F, 0.3665191F, 0.2268928F, -0.0349066F));
+
+        partdefinition.addOrReplaceChild("r8",
+                CubeListBuilder.create().texOffs(111, 0).mirror()
+                        .addBox(0.0F, 0.0F, 0.0F, 1, 1, 5),
+                PartPose.offsetAndRotation(-22.0F, 25.0F, -14.5F, 0.1396263F, 0.418879F, 0.0F));
+
+        partdefinition.addOrReplaceChild("r11",
+                CubeListBuilder.create().texOffs(111, 0).mirror()
+                        .addBox(0.0F, 0.0F, 0.0F, 1, 1, 5),
+                PartPose.offsetAndRotation(-18.0F, 24.0F, -19.5F, 0.3665191F, 0.4712389F, -0.0349066F));
+
+        partdefinition.addOrReplaceChild("r4",
+                CubeListBuilder.create().texOffs(111, 0).mirror()
+                        .addBox(0.0F, 0.0F, -3.0F, 1, 1, 5),
+                PartPose.offsetAndRotation(-7.5F, 21.5F, -15.0F, 0.0F, -0.0174533F, -0.3665191F));
+
+        partdefinition.addOrReplaceChild("r40",
+                CubeListBuilder.create().texOffs(111, 0).mirror()
+                        .addBox(0.0F, 0.0F, 1.0F, 1, 1, 5),
+                PartPose.offsetAndRotation(-13.0F, 21.0F, 14.6F, -0.0349066F, 2.530727F, 0.2268928F));
+
+        partdefinition.addOrReplaceChild("r45",
+                CubeListBuilder.create().texOffs(111, 0).mirror()
+                        .addBox(0.0F, 0.0F, 0.0F, 1, 1, 6),
+                PartPose.offsetAndRotation(-14.0F, 21.5F, -2.9F, -0.2443461F, -2.061864F, 0.122173F));
+
+        partdefinition.addOrReplaceChild("r49",
+                CubeListBuilder.create().texOffs(111, 0).mirror()
+                        .addBox(0.0F, 0.0F, 0.0F, 2, 2, 5),
+                PartPose.offsetAndRotation(-12.0F, 22.0F, 4.6F, 0.1919862F, 1.518436F, 0.1919862F));
+
+        partdefinition.addOrReplaceChild("r44",
+                CubeListBuilder.create().texOffs(111, 0).mirror()
+                        .addBox(0.0F, 0.0F, 0.0F, 2, 2, 5),
+                PartPose.offsetAndRotation(-16.0F, 22.0F, 6.6F, -0.0174533F, 2.007129F, 0.1396263F));
+
+        partdefinition.addOrReplaceChild("root43",
+                CubeListBuilder.create().texOffs(111, 0).mirror()
+                        .addBox(0.0F, 0.0F, 0.0F, 2, 2, 5),
+                PartPose.offsetAndRotation(-16.0F, 22.0F, 6.6F, -0.0174533F, 2.007129F, 0.1396263F));
+
+        partdefinition.addOrReplaceChild("r43",
+                CubeListBuilder.create().texOffs(111, 0).mirror()
+                        .addBox(0.0F, 0.0F, 0.0F, 1, 1, 6),
+                PartPose.offsetAndRotation(-22.0F, 22.5F, 8.1F, -0.0174533F, 1.902409F, 0.1396263F));
+
+        partdefinition.addOrReplaceChild("r46",
+                CubeListBuilder.create().texOffs(111, 0).mirror()
+                        .addBox(0.0F, 0.0F, 0.0F, 1, 1, 6),
+                PartPose.offsetAndRotation(-11.0F, 22.5F, 0.1F, 0.0872665F, -2.323663F, -0.0698132F));
+
+        partdefinition.addOrReplaceChild("r48",
+                CubeListBuilder.create().texOffs(111, 0).mirror()
+                        .addBox(0.0F, 0.0F, 0.0F, 1, 1, 6),
+                PartPose.offsetAndRotation(-11.0F, 22.5F, 3.1F, -0.296706F, -2.131677F, 0.1919862F));
+
+        partdefinition.addOrReplaceChild("r35",
+                CubeListBuilder.create().texOffs(111, 0).mirror()
+                        .addBox(0.0F, 0.0F, -0.5F, 1, 1, 4),
+                PartPose.offsetAndRotation(2.0F, 21.5F, 12.6F, -0.2435199F, 1.963237F, -0.1776311F));
+
+        partdefinition.addOrReplaceChild("r38",
+                CubeListBuilder.create().texOffs(111, 0).mirror()
+                        .addBox(0.0F, 0.0F, -1.0F, 1, 1, 5),
+                PartPose.offsetAndRotation(-3.0F, 21.5F, 10.6F, -0.3665191F, 1.064651F, 0.2443461F));
+
+        partdefinition.addOrReplaceChild("r42",
+                CubeListBuilder.create().texOffs(111, 0).mirror()
+                        .addBox(0.0F, 0.0F, 1.0F, 2, 2, 5),
+                PartPose.offsetAndRotation(-8.0F, 21.0F, 8.6F, 0.0F, 2.199115F, 0.1745329F));
+
+        partdefinition.addOrReplaceChild("r39",
+                CubeListBuilder.create().texOffs(111, 0).mirror()
+                        .addBox(0.0F, 0.0F, 0.0F, 2, 2, 5),
+                PartPose.offsetAndRotation(-8.0F, 21.0F, 8.6F, 0.0F, 1.117011F, 0.1570796F));
+
+        partdefinition.addOrReplaceChild("r41",
+                CubeListBuilder.create().texOffs(111, 0).mirror()
+                        .addBox(0.0F, 0.0F, 1.0F, 2, 2, 5),
+                PartPose.offsetAndRotation(-11.0F, 21.0F, 11.6F, 0.0F, 2.338741F, 0.1745329F));
+
+        partdefinition.addOrReplaceChild("r18",
+                CubeListBuilder.create().texOffs(111, 0).mirror()
+                        .addBox(0.0F, 0.0F, -5.0F, 1, 1, 6),
+                PartPose.offsetAndRotation(1.0F, 22.0F, -16.0F, 0.5304149F, -0.3531968F, -0.4848711F));
+
+        partdefinition.addOrReplaceChild("r3",
+                CubeListBuilder.create().texOffs(111, 0).mirror()
+                        .addBox(0.0F, 0.0F, 0.0F, 2, 2, 5),
+                PartPose.offsetAndRotation(-8.0F, 21.0F, -14.0F, 0.0F, -0.1396263F, 0.0F));
+
+        partdefinition.addOrReplaceChild("r50",
+                CubeListBuilder.create().texOffs(111, 0).mirror()
+                        .addBox(0.0F, 0.0F, 0.0F, 2, 2, 5),
+                PartPose.offsetAndRotation(-8.0F, 21.0F, 4.6F, 0.0F, 1.500983F, 0.1745329F));
+
+        partdefinition.addOrReplaceChild("r31",
+                CubeListBuilder.create().texOffs(111, 0).mirror()
+                        .addBox(2.0F, -2.0F, 0.0F, 1, 1, 4),
+                PartPose.offsetAndRotation(5.5F, 21.5F, 8.0F, 0.2230717F, 1.580091F, 0.6404016F));
+
+        partdefinition.addOrReplaceChild("r36",
+                CubeListBuilder.create().texOffs(111, 0).mirror()
+                        .addBox(0.0F, 0.0F, -4.0F, 1, 1, 5),
+                PartPose.offsetAndRotation(2.0F, 21.5F, 8.6F, 0.3141593F, -2.064859F, -0.418879F));
+
+        partdefinition.addOrReplaceChild("r37",
+                CubeListBuilder.create().texOffs(111, 0).mirror()
+                        .addBox(0.0F, 0.0F, -4.0F, 2, 2, 5),
+                PartPose.offsetAndRotation(0.0F, 21.0F, 4.6F, 0.0F, -2.658271F, 0.1570796F));
+
+        partdefinition.addOrReplaceChild("r22",
+                CubeListBuilder.create().texOffs(111, 0).mirror()
+                        .addBox(0.0F, 0.0F, 0.0F, 6, 2, 2),
+                PartPose.offsetAndRotation(9.0F, 21.0F, -5.0F, 0.1115358F, 2.189201F, 0.0F));
+
+        partdefinition.addOrReplaceChild("r30",
+                CubeListBuilder.create().texOffs(111, 0).mirror()
+                        .addBox(0.0F, 0.0F, -4.0F, 1, 1, 5),
+                PartPose.offsetAndRotation(9.5F, 20.5F, 5.0F, 0.669215F, -2.212127F, 0.5288657F));
+
+        partdefinition.addOrReplaceChild("r33",
+                CubeListBuilder.create().texOffs(111, 0).mirror()
+                        .addBox(0.0F, 0.0F, -4.0F, 1, 1, 5),
+                PartPose.offsetAndRotation(6.5F, 21.5F, 8.0F, 0.2230717F, 3.141593F, 0.6404016F));
+
+        partdefinition.addOrReplaceChild("r34",
+                CubeListBuilder.create().texOffs(111, 0).mirror()
+                        .addBox(0.0F, 0.0F, -4.0F, 2, 2, 6),
+                PartPose.offsetAndRotation(5.0F, 21.0F, 4.6F, 0.0F, -2.658271F, 0.1570796F));
+
+        partdefinition.addOrReplaceChild("r29",
+                CubeListBuilder.create().texOffs(111, 0).mirror()
+                        .addBox(0.0F, 0.0F, -4.0F, 5, 2, 2),
+                PartPose.offsetAndRotation(5.0F, 21.0F, 2.6F, 0.0F, 0.3665191F, 0.0F));
+
+        partdefinition.addOrReplaceChild("r20",
+                CubeListBuilder.create().texOffs(111, 0).mirror()
+                        .addBox(0.0F, 0.0F, 0.0F, 4, 1, 1),
+                PartPose.offsetAndRotation(6.0F, 21.5F, -10.5F, 2.509556F, -0.2788396F, 2.658271F));
+
+        partdefinition.addOrReplaceChild("r24",
+                CubeListBuilder.create().texOffs(111, 0).mirror()
+                        .addBox(0.0F, 0.0F, 0.0F, 6, 2, 2),
+                PartPose.offsetAndRotation(6.0F, 21.0F, -2.0F, 0.1115358F, 1.07219F, 0.0F));
+
+        partdefinition.addOrReplaceChild("r28",
+                CubeListBuilder.create().texOffs(111, 0).mirror()
+                        .addBox(0.0F, 0.0F, -4.0F, 5, 2, 2),
+                PartPose.offsetAndRotation(9.0F, 21.0F, 1.0F, 0.0F, 0.1055459F, 0.0F));
+
+        partdefinition.addOrReplaceChild("r26",
+                CubeListBuilder.create().texOffs(111, 0).mirror()
+                        .addBox(0.0F, 0.0F, -4.0F, 4, 1, 1),
+                PartPose.offsetAndRotation(12.0F, 21.5F, 0.5F, 0.0174533F, -0.4521332F, 0.4363323F));
+
+        partdefinition.addOrReplaceChild("r25",
+                CubeListBuilder.create().texOffs(111, 0).mirror()
+                        .addBox(0.0F, 0.0F, 0.0F, 4, 1, 1),
+                PartPose.offsetAndRotation(15.0F, 23.0F, -1.5F, -0.0371786F, 0.3194262F, -0.1532585F));
+
+        partdefinition.addOrReplaceChild("r27",
+                CubeListBuilder.create().texOffs(111, 0).mirror()
+                        .addBox(0.0F, 0.0F, 0.0F, 4, 1, 1),
+                PartPose.offsetAndRotation(11.0F, 22.5F, -2.5F, 0.3346075F, -1.019004F, 0.2557062F));
+
+        partdefinition.addOrReplaceChild("r23",
+                CubeListBuilder.create().texOffs(111, 0).mirror()
+                        .addBox(-1.0F, 0.0F, -1.0F, 5, 1, 1),
+                PartPose.offsetAndRotation(11.0F, 21.5F, -6.5F, 0.3346075F, 0.2078904F, 0.5903137F));
+
+        partdefinition.addOrReplaceChild("r21",
+                CubeListBuilder.create().texOffs(111, 0).mirror()
+                        .addBox(0.0F, 0.0F, 0.0F, 4, 1, 1),
+                PartPose.offsetAndRotation(6.0F, 21.5F, -10.5F, -3.141593F, -1.691627F, 2.658271F));
+
+        partdefinition.addOrReplaceChild("r1",
+                CubeListBuilder.create().texOffs(111, 0).mirror()
+                        .addBox(0.0F, 0.0F, 0.0F, 2, 2, 5),
+                PartPose.offsetAndRotation(-8.0F, 21.0F, -8.0F, 0.418879F, 0.6108652F, -0.2617994F));
+
+        partdefinition.addOrReplaceChild("r13",
+                CubeListBuilder.create().texOffs(111, 0).mirror()
+                        .addBox(0.0F, 0.0F, -5.0F, 2, 2, 5),
+                PartPose.offsetAndRotation(-1.0F, 20.0F, -6.0F, 0.418879F, 0.6108652F, -0.2617994F));
+
+        partdefinition.addOrReplaceChild("r16",
+                CubeListBuilder.create().texOffs(111, 0).mirror()
+                        .addBox(0.0F, 0.0F, -5.0F, 2, 2, 5),
+                PartPose.offsetAndRotation(-2.0F, 20.0F, -12.0F, 0.418879F, -0.4673145F, -0.2617994F));
+
+        partdefinition.addOrReplaceChild("r19",
+                CubeListBuilder.create().texOffs(111, 0).mirror()
+                        .addBox(0.0F, 0.0F, -7.0F, 1, 1, 7),
+                PartPose.offsetAndRotation(-2.0F, 20.0F, -12.0F, 0.5304149F, -1.508316F, -0.2617994F));
+
+        partdefinition.addOrReplaceChild("r15",
+                CubeListBuilder.create().texOffs(111, 0).mirror()
+                        .addBox(0.0F, 0.0F, -5.0F, 1, 1, 5),
+                PartPose.offsetAndRotation(-2.0F, 20.0F, -12.0F, 0.5304149F, 0.6108652F, -0.2617994F));
+
+        partdefinition.addOrReplaceChild("r14",
+                CubeListBuilder.create().texOffs(111, 0).mirror()
+                        .addBox(0.0F, 0.0F, -5.0F, 1, 1, 5),
+                PartPose.offsetAndRotation(-2.0F, 20.0F, -12.0F, 0.5304149F, 3.141593F, -0.2617994F));
+
+        partdefinition.addOrReplaceChild("r17",
+                CubeListBuilder.create().texOffs(111, 0).mirror()
+                        .addBox(0.0F, 0.0F, -5.0F, 1, 1, 5),
+                PartPose.offsetAndRotation(1.0F, 22.0F, -16.0F, 0.5304149F, 0.8365188F, -0.4848711F));
+
+        partdefinition.addOrReplaceChild("r32",
+                CubeListBuilder.create().texOffs(111, 0).mirror()
+                        .addBox(0.0F, 0.0F, -4.0F, 1, 1, 5),
+                PartPose.offsetAndRotation(6.5F, 21.5F, 8.0F, 0.669215F, -2.212127F, 0.5288657F));
+
+        partdefinition.addOrReplaceChild("l16",
+                CubeListBuilder.create().texOffs(40, 0).mirror()
+                        .addBox(0.0F, 0.0F, 0.0F, 5, 1, 5),
+                PartPose.offsetAndRotation(-2.0F, 10.0F, -9.0F, -0.5585054F, 0.0F, 0.0F));
+
+        partdefinition.addOrReplaceChild("l44",
+                CubeListBuilder.create().texOffs(40, 0).mirror()
+                        .addBox(0.0F, 0.0F, 0.0F, 5, 1, 5),
+                PartPose.offsetAndRotation(-2.5F, 9.0F, 4.5F, 0.6457718F, 0.0F, 0.0F));
+
+        partdefinition.addOrReplaceChild("root",
+                CubeListBuilder.create().texOffs(111, 0).mirror()
+                        .addBox(0.0F, 0.0F, 0.0F, 2, 2, 5),
+                PartPose.offsetAndRotation(-11.0F, 22.0F, -11.0F, 0.418879F, 0.7330383F, 0.3817004F));
+
+        return LayerDefinition.create(meshdefinition, 532, 715);
     }
 
     @Override
-    public void setupAnim(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
-        this.head.yRot = netHeadYaw * ((float) Math.PI / 180F);
-        this.jaw.yRot = this.head.yRot;
+    public void setupAnim(EntityTriffid entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
+        float newangle = 0.0f;
+        float delta = 0.0f;
+        newangle = entity.getOpenClosed() == 0 ? 0.122522116f : Mth.cos((float)(ageInTicks * 0.25f * limbSwingAmount)) * (float)Math.PI * 0.039f;
+        this.l1.zRot = -0.95f + newangle;
+        this.l1.y = (float)(10.0 - Math.cos(this.l1.zRot) * 5.0) + 3.0f;
+        this.l1.x = (float)(-7.0 + Math.sin(this.l1.zRot) * 5.0) + 3.0f;
+        this.leafpartA(newangle, this.l1, this.l2, 3);
+        this.leafpartA(newangle, this.l2, this.l3, 4);
+        this.leafpartA(newangle, this.l3, this.leaf3, 4);
+        this.leafpartA(newangle, this.leaf3, this.l4, 4);
+        this.leafpartA(newangle, this.l4, this.l5, 4);
+        this.leafpartA(newangle, this.l5, this.l6, 6);
+        this.leafpartA(newangle, this.l6, this.l7, 4);
+        this.leafpartA(newangle, this.l7, this.l8, 4);
+        this.leafpartA(newangle, this.l8, this.l9, 4);
+        this.leafpartA(newangle, this.l9, this.l10, 4);
+        this.leafpartA(newangle, this.l10, this.l11, 3);
+        this.leafpartA(newangle, this.l11, this.l12, 3);
+        this.leafpartA(newangle, this.l12, this.l13, 2);
+        this.leafpartA(newangle, this.l13, this.l14, 2);
+        this.leafpartA(newangle, this.l14, this.l15, 2);
+        this.l31.zRot = 0.95f - newangle;
+        this.l31.y = (float)(10.0 - Math.cos(this.l31.zRot) * 5.0) + 3.0f;
+        this.l31.x = (float)(7.0 + Math.sin(this.l31.zRot) * 5.0) - 3.0f;
+        this.leafpartC(-newangle, this.l31, this.l32, 3);
+        this.leafpartC(-newangle, this.l32, this.leaf32, 3);
+        this.leafpartC(-newangle, this.leaf32, this.l33, 3);
+        this.leafpartC(-newangle, this.l33, this.l34, 4);
+        this.leafpartC(-newangle, this.l34, this.l35, 4);
+        this.leafpartC(-newangle, this.l35, this.l36, 5);
+        this.leafpartC(-newangle, this.l36, this.l37, 4);
+        this.leafpartC(-newangle, this.l37, this.l38, 4);
+        this.leafpartC(-newangle, this.l38, this.l39, 4);
+        this.leafpartC(-newangle, this.l39, this.l40, 3);
+        this.leafpartC(-newangle, this.l40, this.l41, 3);
+        this.leafpartC(-newangle, this.l41, this.l42, 2);
+        this.leafpartC(-newangle, this.l42, this.l43, 1);
+        this.l16.xRot = -0.75f - newangle;
+        this.l16.y = (float)(10.0 + Math.cos(this.l16.xRot) * 5.0);
+        this.l16.z = (float)(-9.0 - Math.sin(this.l16.xRot) * 5.0) - 3.0f;
+        this.leafpartB(-newangle, this.l16, this.l17, 3);
+        this.leafpartB(-newangle, this.l17, this.l18, 3);
+        this.leafpartB(-newangle, this.l18, this.l19, 4);
+        this.leafpartB(-newangle, this.l19, this.l20, 4);
+        this.leafpartB(-newangle, this.l20, this.l21, 5);
+        this.leafpartB(-newangle, this.l21, this.l22, 4);
+        this.leafpartB(-newangle, this.l22, this.l23, 4);
+        this.leafpartB(-newangle, this.l23, this.l24, 4);
+        this.leafpartB(-newangle, this.l24, this.l25, 4);
+        this.leafpartB(-newangle, this.l25, this.l26, 4);
+        this.leafpartB(-newangle, this.l26, this.l27, 3);
+        this.leafpartB(-newangle, this.l27, this.l28, 2);
+        this.leafpartB(-newangle, this.l28, this.l29, 2);
+        this.leafpartB(-newangle, this.l29, this.l30, 2);
+        this.l44.xRot = 0.75f + newangle;
+        this.leafpartD(newangle, this.l44, this.l45, 5);
+        this.leafpartD(newangle, this.l45, this.l46, 4);
+        this.leafpartD(newangle, this.l46, this.l47, 3);
+        this.leafpartD(newangle, this.l47, this.l48, 4);
+        this.leafpartD(newangle, this.l48, this.l49, 3);
+        this.leafpartD(newangle, this.l49, this.leaf49, 5);
+        this.leafpartD(newangle, this.leaf49, this.l50, 3);
+        this.leafpartD(newangle, this.l50, this.l51, 3);
+        this.leafpartD(newangle, this.l51, this.l52, 3);
+        this.leafpartD(newangle, this.l52, this.l53, 3);
+        this.leafpartD(newangle, this.l53, this.l54, 3);
+        this.leafpartD(newangle, this.l54, this.l55, 2);
+        this.leafpartD(newangle, this.l55, this.l56, 2);
+        this.leafpartD(newangle, this.l56, this.l57, 2);
+        if (entity.getAttacking() != 0) {
+        newangle = Mth.cos((float)(ageInTicks * 0.25f * limbSwingAmount)) * (float)Math.PI * 0.5f;
+        newangle = Math.abs(newangle);
+        } else {
+        newangle = 1.5707964f;
+        }
+        delta = -0.6f;
+        this.t15.zRot = -newangle + delta;
+        this.t14.zRot = newangle + delta;
+        this.t14.y = (float)((double)this.t15.y - Math.sin(this.t15.zRot) * 6.0);
+        this.t14.x = (float)((double)this.t15.x - Math.cos(this.t15.zRot) * 6.0);
+        this.t13.zRot = -newangle + delta;
+        this.t13.y = (float)((double)this.t14.y - Math.sin(this.t14.zRot) * 3.0);
+        this.t13.x = (float)((double)this.t14.x - Math.cos(this.t14.zRot) * 3.0);
+        this.t12.zRot = newangle + delta;
+        this.t12.y = (float)((double)this.t13.y - Math.sin(this.t13.zRot) * 3.0);
+        this.t12.x = (float)((double)this.t13.x - Math.cos(this.t13.zRot) * 3.0);
+        this.t11.zRot = -newangle + delta;
+        this.t11.y = (float)((double)this.t12.y - Math.sin(this.t12.zRot) * 3.0);
+        this.t11.x = (float)((double)this.t12.x - Math.cos(this.t12.zRot) * 3.0);
+        this.t10.zRot = newangle + delta;
+        this.t10.y = (float)((double)this.t11.y - Math.sin(this.t11.zRot) * 3.0);
+        this.t10.x = (float)((double)this.t11.x - Math.cos(this.t11.zRot) * 3.0);
+        this.t9.zRot = -newangle + delta;
+        this.t9.y = (float)((double)this.t10.y - Math.sin(this.t10.zRot) * 3.0);
+        this.t9.x = (float)((double)this.t10.x - Math.cos(this.t10.zRot) * 3.0);
+        this.t8.zRot = newangle + delta;
+        this.t8.y = (float)((double)this.t9.y - Math.sin(this.t9.zRot) * 6.0);
+        this.t8.x = (float)((double)this.t9.x - Math.cos(this.t9.zRot) * 6.0);
+        this.t7.zRot = -newangle + delta;
+        this.t7.y = (float)((double)this.t8.y - Math.sin(this.t8.zRot) * 6.0);
+        this.t7.x = (float)((double)this.t8.x - Math.cos(this.t8.zRot) * 6.0);
+        this.t6.zRot = newangle + delta;
+        this.t6.y = (float)((double)this.t7.y - Math.sin(this.t7.zRot) * 6.0);
+        this.t6.x = (float)((double)this.t7.x - Math.cos(this.t7.zRot) * 6.0);
+        this.t5.zRot = -newangle + delta;
+        this.t5.y = (float)((double)this.t6.y - Math.sin(this.t6.zRot) * 6.0);
+        this.t5.x = (float)((double)this.t6.x - Math.cos(this.t6.zRot) * 6.0);
+        this.t4.zRot = newangle + delta;
+        this.t4.y = (float)((double)this.t5.y - Math.sin(this.t5.zRot) * 6.0);
+        this.t4.x = (float)((double)this.t5.x - Math.cos(this.t5.zRot) * 6.0);
+        this.t3.zRot = -newangle + delta;
+        this.t3.y = (float)((double)this.t4.y - Math.sin(this.t4.zRot) * 6.0);
+        this.t3.x = (float)((double)this.t4.x - Math.cos(this.t4.zRot) * 6.0);
+        this.t2.y = this.t1.y = (float)((double)this.t3.y - Math.sin(this.t3.zRot) * 3.0);
+        this.t2.x = this.t1.x = (float)((double)this.t3.x - Math.cos(this.t3.zRot) * 3.0);
+        this.t3.yRot = newangle = 0.0f;
+        this.t4.yRot = newangle;
+        this.t5.yRot = newangle;
+        this.t6.yRot = newangle;
+        this.t7.yRot = newangle;
+        this.t8.yRot = newangle;
+        this.t9.yRot = newangle;
+        this.t10.yRot = newangle;
+        this.t11.yRot = newangle;
+        this.t12.yRot = newangle;
+        this.t13.yRot = newangle;
+        this.t14.yRot = newangle;
+        this.t15.yRot = newangle;
     }
 
     @Override
-    public void renderToBuffer(PoseStack ps, VertexConsumer vc, int light, int overlay, int color) {
-        base.render(ps, vc, light, overlay, color);
-        stalk.render(ps, vc, light, overlay, color);
-        head.render(ps, vc, light, overlay, color);
-        jaw.render(ps, vc, light, overlay, color);
+    public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, int color) {
+        this.r9.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.b14.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.base.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.b3.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.l57.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.l30.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.b6.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.b7.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.b8.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.b9.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.b11.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.b16.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.h18.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.b13.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.b15.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.h8.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.h1.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.h13.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.h7.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.h3.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.h17.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.h16.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.h23.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.h4.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.h2.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.h21.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.h19.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.h20.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.b10.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.b17.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.h6.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.h11.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.h14.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.h15.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.h10.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.h9.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.h5.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.h12.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.c2.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.c11.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.c1.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.c5.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.c3.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.c4.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.c10.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.c6.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.c7.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.c8.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.c9.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.b1.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.l15.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.b2.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.l43.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.l1.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.l2.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.l3.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.leaf3.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.l4.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.l5.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.l6.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.l7.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.l8.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.l9.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.l10.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.l11.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.l12.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.l13.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.l14.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.b4.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.l31.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.l32.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.leaf32.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.l33.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.l34.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.l35.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.l36.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.l37.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.l38.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.l39.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.l40.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.l41.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.l42.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.l17.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.l18.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.l19.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.l20.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.l21.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.l22.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.l23.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.l24.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.l25.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.l26.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.l27.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.l28.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.l29.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.b5.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.l45.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.l46.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.l47.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.l48.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.l49.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.leaf49.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.l50.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.l51.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.l52.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.l53.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.l54.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.l55.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.l56.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.h22.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.t15.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.t14.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.t13.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.t12.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.t11.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.t10.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.t9.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.t6.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.t2.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.t8.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.t7.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.t5.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.t4.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.t3.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.t1.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.r47.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.r2.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.r6.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.r5.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.r10.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.r7.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.r12.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.r8.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.r11.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.r4.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.r40.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.r45.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.r49.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.r44.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.root43.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.r43.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.r46.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.r48.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.r35.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.r38.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.r42.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.r39.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.r41.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.r18.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.r3.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.r50.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.r31.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.r36.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.r37.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.r22.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.r30.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.r33.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.r34.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.r29.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.r20.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.r24.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.r28.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.r26.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.r25.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.r27.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.r23.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.r21.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.r1.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.r13.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.r16.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.r19.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.r15.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.r14.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.r17.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.r32.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.l16.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.l44.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.root.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+    }
+
+    private void leafpartA(float newangle, ModelPart l1, ModelPart l2, int j) {
+        l2.zRot = l1.zRot + newangle;
+        l2.y = (float)((double)l1.y - Math.cos(l1.zRot) * (double)j);
+        l2.x = (float)((double)l1.x + Math.sin(l1.zRot) * (double)j);
+    }
+
+    private void leafpartB(float newangle, ModelPart l1, ModelPart l2, int j) {
+        l2.xRot = l1.xRot + newangle;
+        l2.y = (float)((double)l1.y + Math.sin(l1.xRot) * (double)j);
+        l2.z = (float)((double)l1.z - Math.cos(l1.xRot) * (double)j);
+    }
+
+    private void leafpartC(float newangle, ModelPart l1, ModelPart l2, int j) {
+        l2.zRot = l1.zRot + newangle;
+        l2.y = (float)((double)l1.y - Math.cos(l1.zRot) * (double)j);
+        l2.x = (float)((double)l1.x + Math.sin(l1.zRot) * (double)j);
+    }
+
+    private void leafpartD(float newangle, ModelPart l1, ModelPart l2, int j) {
+        l2.xRot = l1.xRot + newangle;
+        l2.y = (float)((double)l1.y - Math.sin(l1.xRot) * (double)j);
+        l2.z = (float)((double)l1.z + Math.cos(l1.xRot) * (double)j);
     }
 }

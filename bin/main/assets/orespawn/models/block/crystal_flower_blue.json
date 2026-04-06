@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/cross",
+  "textures": {
+    "cross": "orespawn:blocks/crystalflower_blue"
+  }
+}

@@ -27,10 +27,20 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.resources.ResourceLocation;
 import danger.orespawn.OreSpawnMod;
+import danger.orespawn.entity.client.RenderSpiderRobotInfo;
 
 public class SpiderRobot extends Mob {
     private static final EntityDataAccessor<Integer> DATA_ATTACKING =
             SynchedEntityData.defineId(SpiderRobot.class, EntityDataSerializers.INT);
+
+    private static final int LEG_COUNT = 8;
+    private static final double[] LEG_Y_ANGLES = {
+        Math.toRadians(45), Math.toRadians(135), Math.toRadians(225), Math.toRadians(315),
+        Math.toRadians(22.5), Math.toRadians(157.5), Math.toRadians(202.5), Math.toRadians(337.5)
+    };
+    private static final float[] LEG_OFFSETS = {1.0f, 1.0f, 1.0f, 1.0f, 0.9f, 0.9f, 0.9f, 0.9f};
+    private static final float[] LEG_Y_OFFS = {0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
+    private final RenderSpiderRobotInfo renderInfo = new RenderSpiderRobotInfo(LEG_COUNT);
 
     private final Comparator<Entity> targetSorter;
     private final float moveSpeed = 0.35f;
@@ -186,5 +196,23 @@ public class SpiderRobot extends Mob {
         if (target == this.getFirstPassenger()) return false;
         if (target instanceof Player p && p.getAbilities().instabuild) return false;
         return true;
+    }
+
+    public RenderSpiderRobotInfo getRenderSpiderRobotInfo() {
+        renderInfo.gpcounter = this.tickCount;
+        float walkPhase = this.tickCount * 0.15f;
+        for (int i = 0; i < LEG_COUNT; i++) {
+            renderInfo.ymid[i] = LEG_Y_ANGLES[i];
+            renderInfo.ydisplayangle[i] = (float) LEG_Y_ANGLES[i];
+            renderInfo.legoff[i] = LEG_OFFSETS[i];
+            renderInfo.yoff[i] = LEG_Y_OFFS[i];
+            float phase = walkPhase + (float)(i * Math.PI / 4.0);
+            float swing = (float) Math.sin(phase) * 0.3f;
+            renderInfo.p1xangle[i] = -0.4 + swing;
+            renderInfo.p2xangle[i] = 0.6 + swing * 0.5;
+            renderInfo.p3xangle[i] = -0.2 - swing * 0.3;
+            renderInfo.uddisplayangle[i] = 0.0f;
+        }
+        return renderInfo;
     }
 }

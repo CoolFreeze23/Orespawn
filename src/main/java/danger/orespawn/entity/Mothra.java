@@ -207,8 +207,8 @@ public class Mothra extends EntityButterfly {
     @Override
     public boolean checkSpawnRules(LevelAccessor level, MobSpawnType spawnType) {
         if (this.getY() < 70.0) return false;
-        if (!this.level().canSeeSky(this.blockPosition())) return false;
-        List<Mothra> nearby = this.level().getEntitiesOfClass(Mothra.class,
+        if (!level.canSeeSky(this.blockPosition())) return false;
+        List<Mothra> nearby = level.getEntitiesOfClass(Mothra.class,
                 this.getBoundingBox().inflate(64.0, 32.0, 64.0));
         return nearby.isEmpty();
     }

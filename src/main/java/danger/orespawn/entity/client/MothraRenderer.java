@@ -3,6 +3,7 @@ package danger.orespawn.entity.client;
 import com.mojang.blaze3d.vertex.PoseStack;
 import danger.orespawn.OreSpawnMod;
 import danger.orespawn.entity.Mothra;
+import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.client.model.geom.ModelLayerLocation;
@@ -21,6 +22,11 @@ public class MothraRenderer extends MobRenderer<Mothra, ButterflyModel<Mothra>> 
     @Override
     protected void scale(Mothra entity, PoseStack poseStack, float partialTick) {
         poseStack.scale(5.0f, 5.0f, 5.0f);
+    }
+
+    @Override
+    public boolean shouldRender(Mothra entity, Frustum frustum, double x, double y, double z) {
+        return true;
     }
 
     @Override

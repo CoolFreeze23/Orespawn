@@ -62,7 +62,7 @@ public class EntitySpyro extends TamableAnimal {
     public EntitySpyro(EntityType<? extends EntitySpyro> type, Level level) {
         super(type, level);
         this.xpReward = 35;
-        this.noPhysics = true;
+        this.noPhysics = false;
         this.setOrderedToSit(false);
     }
 

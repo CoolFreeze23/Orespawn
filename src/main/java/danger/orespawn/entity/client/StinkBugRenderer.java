@@ -9,14 +9,14 @@ import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.resources.ResourceLocation;
 
-public class StinkBugRenderer extends MobRenderer<EntityStinkBug, StinkBugModel<EntityStinkBug>> {
+public class StinkBugRenderer extends MobRenderer<EntityStinkBug, StinkBugModel> {
     private static final ResourceLocation TEXTURE =
             ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "textures/entity/stinkbug.png");
     public static final ModelLayerLocation MODEL_LAYER =
             new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "stinkbug"), "main");
 
     public StinkBugRenderer(EntityRendererProvider.Context context) {
-        super(context, new StinkBugModel<>(context.bakeLayer(MODEL_LAYER)), 0.2f);
+        super(context, new StinkBugModel(context.bakeLayer(MODEL_LAYER)), 0.2f);
     }
 
     @Override

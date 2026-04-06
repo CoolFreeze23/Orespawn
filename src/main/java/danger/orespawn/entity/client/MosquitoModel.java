@@ -35,7 +35,7 @@ public class MosquitoModel<T extends EntityMosquito> extends EntityModel<T> {
         root.addOrReplaceChild("proboscis", CubeListBuilder.create().texOffs(8, 0)
                 .addBox(-0.0F, 0.0F, -3.0F, 0, 0, 2), PartPose.offset(0.0F, 23.0F, -1.5F));
 
-        return LayerDefinition.create(mesh, 32, 16);
+        return LayerDefinition.create(mesh, 32, 32);
     }
 
     @Override

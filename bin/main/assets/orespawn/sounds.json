@@ -1,0 +1,932 @@
+{
+  "alien_death": {
+    "sounds": ["orespawn:alien_death"]
+  },
+  "alien_hurt": {
+    "sounds": ["orespawn:alien_hurt"]
+  },
+  "alien_living": {
+    "sounds": ["orespawn:alien_living"]
+  },
+  "alo_death": {
+    "sounds": ["orespawn:alo_death"]
+  },
+  "alo_hurt": {
+    "sounds": ["orespawn:alo_hurt"]
+  },
+  "alo_living": {
+    "sounds": ["orespawn:alo_living"]
+  },
+  "b_dark": {
+    "sounds": ["orespawn:b_dark"]
+  },
+  "b_death_boyfriend": {
+    "sounds": ["orespawn:b_death_boyfriend"]
+  },
+  "b_death_single1": {
+    "sounds": ["orespawn:b_death_single1"]
+  },
+  "b_death_single2": {
+    "sounds": ["orespawn:b_death_single2"]
+  },
+  "b_fight1": {
+    "sounds": ["orespawn:b_fight1"]
+  },
+  "b_fight2": {
+    "sounds": ["orespawn:b_fight2"]
+  },
+  "b_fight3": {
+    "sounds": ["orespawn:b_fight3"]
+  },
+  "b_fight4": {
+    "sounds": ["orespawn:b_fight4"]
+  },
+  "b_fight5": {
+    "sounds": ["orespawn:b_fight5"]
+  },
+  "b_fight6": {
+    "sounds": ["orespawn:b_fight6"]
+  },
+  "b_fight7": {
+    "sounds": ["orespawn:b_fight7"]
+  },
+  "b_happy1": {
+    "sounds": ["orespawn:b_happy1"]
+  },
+  "b_happy2": {
+    "sounds": ["orespawn:b_happy2"]
+  },
+  "b_happy3": {
+    "sounds": ["orespawn:b_happy3"]
+  },
+  "b_happy4": {
+    "sounds": ["orespawn:b_happy4"]
+  },
+  "b_happy5": {
+    "sounds": ["orespawn:b_happy5"]
+  },
+  "b_happy6": {
+    "sounds": ["orespawn:b_happy6"]
+  },
+  "b_happy7": {
+    "sounds": ["orespawn:b_happy7"]
+  },
+  "b_happy8": {
+    "sounds": ["orespawn:b_happy8"]
+  },
+  "b_hurt1": {
+    "sounds": ["orespawn:b_hurt1"]
+  },
+  "b_hurt2": {
+    "sounds": ["orespawn:b_hurt2"]
+  },
+  "b_hurt3": {
+    "sounds": ["orespawn:b_hurt3"]
+  },
+  "b_hurt4": {
+    "sounds": ["orespawn:b_hurt4"]
+  },
+  "b_hurt5": {
+    "sounds": ["orespawn:b_hurt5"]
+  },
+  "b_hurt6": {
+    "sounds": ["orespawn:b_hurt6"]
+  },
+  "b_hurt7": {
+    "sounds": ["orespawn:b_hurt7"]
+  },
+  "b_hurt8": {
+    "sounds": ["orespawn:b_hurt8"]
+  },
+  "b_hurt9": {
+    "sounds": ["orespawn:b_hurt9"]
+  },
+  "b_hurt10": {
+    "sounds": ["orespawn:b_hurt10"]
+  },
+  "b_ow1": {
+    "sounds": ["orespawn:b_ow1"]
+  },
+  "b_ow2": {
+    "sounds": ["orespawn:b_ow2"]
+  },
+  "b_ow3": {
+    "sounds": ["orespawn:b_ow3"]
+  },
+  "b_ow4": {
+    "sounds": ["orespawn:b_ow4"]
+  },
+  "b_ow5": {
+    "sounds": ["orespawn:b_ow5"]
+  },
+  "b_ow6": {
+    "sounds": ["orespawn:b_ow6"]
+  },
+  "b_ow7": {
+    "sounds": ["orespawn:b_ow7"]
+  },
+  "b_ow8": {
+    "sounds": ["orespawn:b_ow8"]
+  },
+  "b_ow9": {
+    "sounds": ["orespawn:b_ow9"]
+  },
+  "b_rain1": {
+    "sounds": ["orespawn:b_rain1"]
+  },
+  "b_rain2": {
+    "sounds": ["orespawn:b_rain2"]
+  },
+  "b_taunt1": {
+    "sounds": ["orespawn:b_taunt1"]
+  },
+  "b_taunt2": {
+    "sounds": ["orespawn:b_taunt2"]
+  },
+  "b_taunt3": {
+    "sounds": ["orespawn:b_taunt3"]
+  },
+  "b_taunt4": {
+    "sounds": ["orespawn:b_taunt4"]
+  },
+  "b_taunt5": {
+    "sounds": ["orespawn:b_taunt5"]
+  },
+  "b_taunt6": {
+    "sounds": ["orespawn:b_taunt6"]
+  },
+  "b_thunder": {
+    "sounds": ["orespawn:b_thunder"]
+  },
+  "b_water1": {
+    "sounds": ["orespawn:b_water1"]
+  },
+  "b_water2": {
+    "sounds": ["orespawn:b_water2"]
+  },
+  "b_woohoo1": {
+    "sounds": ["orespawn:b_woohoo1"]
+  },
+  "b_woohoo2": {
+    "sounds": ["orespawn:b_woohoo2"]
+  },
+  "b_woohoo3": {
+    "sounds": ["orespawn:b_woohoo3"]
+  },
+  "b_woohoo4": {
+    "sounds": ["orespawn:b_woohoo4"]
+  },
+  "basilisk_living": {
+    "sounds": ["orespawn:basilisk_living"]
+  },
+  "bb_happy1": {
+    "sounds": ["orespawn:bb_happy1"]
+  },
+  "bb_happy2": {
+    "sounds": ["orespawn:bb_happy2"]
+  },
+  "bb_happy3": {
+    "sounds": ["orespawn:bb_happy3"]
+  },
+  "bb_happy4": {
+    "sounds": ["orespawn:bb_happy4"]
+  },
+  "bb_happy5": {
+    "sounds": ["orespawn:bb_happy5"]
+  },
+  "bb_happy6": {
+    "sounds": ["orespawn:bb_happy6"]
+  },
+  "beebuzz": {
+    "sounds": ["orespawn:beebuzz"]
+  },
+  "big_splat": {
+    "sounds": ["orespawn:big_splat"]
+  },
+  "birds1": {
+    "sounds": ["orespawn:birds1"]
+  },
+  "birds2": {
+    "sounds": ["orespawn:birds2"]
+  },
+  "birds3": {
+    "sounds": ["orespawn:birds3"]
+  },
+  "birds4": {
+    "sounds": ["orespawn:birds4"]
+  },
+  "birds5": {
+    "sounds": ["orespawn:birds5"]
+  },
+  "birds6": {
+    "sounds": ["orespawn:birds6"]
+  },
+  "birds7": {
+    "sounds": ["orespawn:birds7"]
+  },
+  "birds8": {
+    "sounds": ["orespawn:birds8"]
+  },
+  "birds9": {
+    "sounds": ["orespawn:birds9"]
+  },
+  "birds10": {
+    "sounds": ["orespawn:birds10"]
+  },
+  "birds11": {
+    "sounds": ["orespawn:birds11"]
+  },
+  "birds12": {
+    "sounds": ["orespawn:birds12"]
+  },
+  "birds13": {
+    "sounds": ["orespawn:birds13"]
+  },
+  "birds14": {
+    "sounds": ["orespawn:birds14"]
+  },
+  "birds15": {
+    "sounds": ["orespawn:birds15"]
+  },
+  "birds16": {
+    "sounds": ["orespawn:birds16"]
+  },
+  "birds17": {
+    "sounds": ["orespawn:birds17"]
+  },
+  "birds18": {
+    "sounds": ["orespawn:birds18"]
+  },
+  "birds19": {
+    "sounds": ["orespawn:birds19"]
+  },
+  "birds20": {
+    "sounds": ["orespawn:birds20"]
+  },
+  "birds21": {
+    "sounds": ["orespawn:birds21"]
+  },
+  "birds22": {
+    "sounds": ["orespawn:birds22"]
+  },
+  "birds23": {
+    "sounds": ["orespawn:birds23"]
+  },
+  "caterkiller_death": {
+    "sounds": ["orespawn:caterkiller_death"]
+  },
+  "caterkiller_hit1": {
+    "sounds": ["orespawn:caterkiller_hit1"]
+  },
+  "caterkiller_hit2": {
+    "sounds": ["orespawn:caterkiller_hit2"]
+  },
+  "caterkiller_hit3": {
+    "sounds": ["orespawn:caterkiller_hit3"]
+  },
+  "caterkiller_hit4": {
+    "sounds": ["orespawn:caterkiller_hit4"]
+  },
+  "caterkiller_living1": {
+    "sounds": ["orespawn:caterkiller_living1"]
+  },
+  "caterkiller_living2": {
+    "sounds": ["orespawn:caterkiller_living2"]
+  },
+  "caterkiller_living3": {
+    "sounds": ["orespawn:caterkiller_living3"]
+  },
+  "caterkiller_living4": {
+    "sounds": ["orespawn:caterkiller_living4"]
+  },
+  "chain_rattles": {
+    "sounds": ["orespawn:chain_rattles"]
+  },
+  "chainsaw": {
+    "sounds": ["orespawn:chainsaw"]
+  },
+  "chainsawshort": {
+    "sounds": ["orespawn:chainsawshort"]
+  },
+  "clatter1": {
+    "sounds": ["orespawn:clatter1"]
+  },
+  "clatter2": {
+    "sounds": ["orespawn:clatter2"]
+  },
+  "cliffracer": {
+    "sounds": ["orespawn:cliffracer"]
+  },
+  "creepinghorror_dead": {
+    "sounds": ["orespawn:creepinghorror_dead"]
+  },
+  "creepinghorror_hit": {
+    "sounds": ["orespawn:creepinghorror_hit"]
+  },
+  "creepinghorror_living": {
+    "sounds": ["orespawn:creepinghorror_living"]
+  },
+  "cricket": {
+    "sounds": ["orespawn:cricket"]
+  },
+  "crunch": {
+    "sounds": ["orespawn:crunch"]
+  },
+  "cryo_death": {
+    "sounds": ["orespawn:cryo_death"]
+  },
+  "cryo_hurt": {
+    "sounds": ["orespawn:cryo_hurt"]
+  },
+  "cryo_living": {
+    "sounds": ["orespawn:cryo_living"]
+  },
+  "dbdead": {
+    "sounds": ["orespawn:dbdead"]
+  },
+  "dbhit1": {
+    "sounds": ["orespawn:dbhit1"]
+  },
+  "dbhit2": {
+    "sounds": ["orespawn:dbhit2"]
+  },
+  "dbhit3": {
+    "sounds": ["orespawn:dbhit3"]
+  },
+  "dragonfly_death": {
+    "sounds": ["orespawn:dragonfly_death"]
+  },
+  "dragonfly_hurt": {
+    "sounds": ["orespawn:dragonfly_hurt"]
+  },
+  "dragonfly_living": {
+    "sounds": ["orespawn:dragonfly_living"]
+  },
+  "duck_hurt": {
+    "sounds": ["orespawn:duck_hurt"]
+  },
+  "emperorscorpion_death": {
+    "sounds": ["orespawn:emperorscorpion_death"]
+  },
+  "fart1": {
+    "sounds": ["orespawn:fart1"]
+  },
+  "fart2": {
+    "sounds": ["orespawn:fart2"]
+  },
+  "fart3": {
+    "sounds": ["orespawn:fart3"]
+  },
+  "fart4": {
+    "sounds": ["orespawn:fart4"]
+  },
+  "fart5": {
+    "sounds": ["orespawn:fart5"]
+  },
+  "fart6": {
+    "sounds": ["orespawn:fart6"]
+  },
+  "fart7": {
+    "sounds": ["orespawn:fart7"]
+  },
+  "fart8": {
+    "sounds": ["orespawn:fart8"]
+  },
+  "fart9": {
+    "sounds": ["orespawn:fart9"]
+  },
+  "frog1": {
+    "sounds": ["orespawn:frog1"]
+  },
+  "frog2": {
+    "sounds": ["orespawn:frog2"]
+  },
+  "ghost_sound": {
+    "sounds": ["orespawn:ghost_sound"]
+  },
+  "glassdead1": {
+    "sounds": ["orespawn:glassdead1"]
+  },
+  "glassdead2": {
+    "sounds": ["orespawn:glassdead2"]
+  },
+  "glasshit1": {
+    "sounds": ["orespawn:glasshit1"]
+  },
+  "glasshit2": {
+    "sounds": ["orespawn:glasshit2"]
+  },
+  "glasshit3": {
+    "sounds": ["orespawn:glasshit3"]
+  },
+  "glasshit4": {
+    "sounds": ["orespawn:glasshit4"]
+  },
+  "glasshit5": {
+    "sounds": ["orespawn:glasshit5"]
+  },
+  "godzilla_death": {
+    "sounds": ["orespawn:godzilla_death"]
+  },
+  "godzilla_living": {
+    "sounds": ["orespawn:godzilla_living"]
+  },
+  "hammerhead_death": {
+    "sounds": ["orespawn:hammerhead_death"]
+  },
+  "hammerhead_living1": {
+    "sounds": ["orespawn:hammerhead_living1"]
+  },
+  "hammerhead_living2": {
+    "sounds": ["orespawn:hammerhead_living2"]
+  },
+  "hercules_death": {
+    "sounds": ["orespawn:hercules_death"]
+  },
+  "hover1": {
+    "sounds": ["orespawn:hover1"]
+  },
+  "hover2": {
+    "sounds": ["orespawn:hover2"]
+  },
+  "hover3": {
+    "sounds": ["orespawn:hover3"]
+  },
+  "hover4": {
+    "sounds": ["orespawn:hover4"]
+  },
+  "hover5": {
+    "sounds": ["orespawn:hover5"]
+  },
+  "hover6": {
+    "sounds": ["orespawn:hover6"]
+  },
+  "king_hit": {
+    "sounds": ["orespawn:king_hit"]
+  },
+  "king_living": {
+    "sounds": ["orespawn:king_living"]
+  },
+  "kraken_living": {
+    "sounds": ["orespawn:kraken_living"]
+  },
+  "kyuubi_living": {
+    "sounds": ["orespawn:kyuubi_living"]
+  },
+  "leaves_death": {
+    "sounds": ["orespawn:leaves_death"]
+  },
+  "leaves_hit": {
+    "sounds": ["orespawn:leaves_hit"]
+  },
+  "leon_death": {
+    "sounds": ["orespawn:leon_death"]
+  },
+  "leon_hit1": {
+    "sounds": ["orespawn:leon_hit1"]
+  },
+  "leon_hit2": {
+    "sounds": ["orespawn:leon_hit2"]
+  },
+  "leon_hit3": {
+    "sounds": ["orespawn:leon_hit3"]
+  },
+  "leon_living": {
+    "sounds": ["orespawn:leon_living"]
+  },
+  "little_splat": {
+    "sounds": ["orespawn:little_splat"]
+  },
+  "lurkinghorror_dead": {
+    "sounds": ["orespawn:lurkinghorror_dead"]
+  },
+  "lurkinghorror_hit": {
+    "sounds": ["orespawn:lurkinghorror_hit"]
+  },
+  "lurkinghorror_living": {
+    "sounds": ["orespawn:lurkinghorror_living"]
+  },
+  "molenoid_death": {
+    "sounds": ["orespawn:molenoid_death"]
+  },
+  "molenoid_hit1": {
+    "sounds": ["orespawn:molenoid_hit1"]
+  },
+  "molenoid_hit2": {
+    "sounds": ["orespawn:molenoid_hit2"]
+  },
+  "molenoid_hit3": {
+    "sounds": ["orespawn:molenoid_hit3"]
+  },
+  "molenoid_hit4": {
+    "sounds": ["orespawn:molenoid_hit4"]
+  },
+  "molenoid_hit5": {
+    "sounds": ["orespawn:molenoid_hit5"]
+  },
+  "molenoid_hit6": {
+    "sounds": ["orespawn:molenoid_hit6"]
+  },
+  "molenoid_living1": {
+    "sounds": ["orespawn:molenoid_living1"]
+  },
+  "molenoid_living2": {
+    "sounds": ["orespawn:molenoid_living2"]
+  },
+  "molenoid_living3": {
+    "sounds": ["orespawn:molenoid_living3"]
+  },
+  "mosquito": {
+    "sounds": ["orespawn:mosquito"]
+  },
+  "mothrawings1": {
+    "sounds": ["orespawn:mothrawings1"]
+  },
+  "mothrawings2": {
+    "sounds": ["orespawn:mothrawings2"]
+  },
+  "mothrawings3": {
+    "sounds": ["orespawn:mothrawings3"]
+  },
+  "o_dark": {
+    "sounds": ["orespawn:o_dark"]
+  },
+  "o_death_girlfriend": {
+    "sounds": ["orespawn:o_death_girlfriend"]
+  },
+  "o_death_single": {
+    "sounds": ["orespawn:o_death_single"]
+  },
+  "o_fight1": {
+    "sounds": ["orespawn:o_fight1"]
+  },
+  "o_fight2": {
+    "sounds": ["orespawn:o_fight2"]
+  },
+  "o_fight3": {
+    "sounds": ["orespawn:o_fight3"]
+  },
+  "o_fight4": {
+    "sounds": ["orespawn:o_fight4"]
+  },
+  "o_fight5": {
+    "sounds": ["orespawn:o_fight5"]
+  },
+  "o_fight6": {
+    "sounds": ["orespawn:o_fight6"]
+  },
+  "o_fight7": {
+    "sounds": ["orespawn:o_fight7"]
+  },
+  "o_happy1": {
+    "sounds": ["orespawn:o_happy1"]
+  },
+  "o_happy2": {
+    "sounds": ["orespawn:o_happy2"]
+  },
+  "o_happy3": {
+    "sounds": ["orespawn:o_happy3"]
+  },
+  "o_happy4": {
+    "sounds": ["orespawn:o_happy4"]
+  },
+  "o_happy5": {
+    "sounds": ["orespawn:o_happy5"]
+  },
+  "o_happy6": {
+    "sounds": ["orespawn:o_happy6"]
+  },
+  "o_happy7": {
+    "sounds": ["orespawn:o_happy7"]
+  },
+  "o_hurt1": {
+    "sounds": ["orespawn:o_hurt1"]
+  },
+  "o_hurt2": {
+    "sounds": ["orespawn:o_hurt2"]
+  },
+  "o_hurt3": {
+    "sounds": ["orespawn:o_hurt3"]
+  },
+  "o_hurt4": {
+    "sounds": ["orespawn:o_hurt4"]
+  },
+  "o_hurt5": {
+    "sounds": ["orespawn:o_hurt5"]
+  },
+  "o_hurt6": {
+    "sounds": ["orespawn:o_hurt6"]
+  },
+  "o_hurt7": {
+    "sounds": ["orespawn:o_hurt7"]
+  },
+  "o_hurt8": {
+    "sounds": ["orespawn:o_hurt8"]
+  },
+  "o_hurt9": {
+    "sounds": ["orespawn:o_hurt9"]
+  },
+  "o_ow1": {
+    "sounds": ["orespawn:o_ow1"]
+  },
+  "o_ow2": {
+    "sounds": ["orespawn:o_ow2"]
+  },
+  "o_ow3": {
+    "sounds": ["orespawn:o_ow3"]
+  },
+  "o_ow4": {
+    "sounds": ["orespawn:o_ow4"]
+  },
+  "o_ow5": {
+    "sounds": ["orespawn:o_ow5"]
+  },
+  "o_ow6": {
+    "sounds": ["orespawn:o_ow6"]
+  },
+  "o_ow7": {
+    "sounds": ["orespawn:o_ow7"]
+  },
+  "o_ow8": {
+    "sounds": ["orespawn:o_ow8"]
+  },
+  "o_rain": {
+    "sounds": ["orespawn:o_rain"]
+  },
+  "o_taunt1": {
+    "sounds": ["orespawn:o_taunt1"]
+  },
+  "o_taunt2": {
+    "sounds": ["orespawn:o_taunt2"]
+  },
+  "o_taunt3": {
+    "sounds": ["orespawn:o_taunt3"]
+  },
+  "o_taunt4": {
+    "sounds": ["orespawn:o_taunt4"]
+  },
+  "o_thunder": {
+    "sounds": ["orespawn:o_thunder"]
+  },
+  "o_water1": {
+    "sounds": ["orespawn:o_water1"]
+  },
+  "o_water2": {
+    "sounds": ["orespawn:o_water2"]
+  },
+  "o_woohoo1": {
+    "sounds": ["orespawn:o_woohoo1"]
+  },
+  "o_woohoo2": {
+    "sounds": ["orespawn:o_woohoo2"]
+  },
+  "o_woohoo3": {
+    "sounds": ["orespawn:o_woohoo3"]
+  },
+  "o_woohoo4": {
+    "sounds": ["orespawn:o_woohoo4"]
+  },
+  "peacockdead": {
+    "sounds": ["orespawn:peacockdead"]
+  },
+  "peacockhit": {
+    "sounds": ["orespawn:peacockhit"]
+  },
+  "peacocklive": {
+    "sounds": ["orespawn:peacocklive"]
+  },
+  "pitchblack_dead": {
+    "sounds": ["orespawn:pitchblack_dead"]
+  },
+  "pitchblack_hit": {
+    "sounds": ["orespawn:pitchblack_hit"]
+  },
+  "pitchblack_living": {
+    "sounds": ["orespawn:pitchblack_living"]
+  },
+  "ratdead1": {
+    "sounds": ["orespawn:ratdead1"]
+  },
+  "ratdead2": {
+    "sounds": ["orespawn:ratdead2"]
+  },
+  "ratdead3": {
+    "sounds": ["orespawn:ratdead3"]
+  },
+  "rathit": {
+    "sounds": ["orespawn:rathit"]
+  },
+  "ratlive": {
+    "sounds": ["orespawn:ratlive"]
+  },
+  "roar1": {
+    "sounds": ["orespawn:roar1"]
+  },
+  "roar2": {
+    "sounds": ["orespawn:roar2"]
+  },
+  "roar3": {
+    "sounds": ["orespawn:roar3"]
+  },
+  "roar4": {
+    "sounds": ["orespawn:roar4"]
+  },
+  "roar5": {
+    "sounds": ["orespawn:roar5"]
+  },
+  "roar6": {
+    "sounds": ["orespawn:roar6"]
+  },
+  "robot1_death": {
+    "sounds": ["orespawn:robot1_death"]
+  },
+  "robot_death1": {
+    "sounds": ["orespawn:robot_death1"]
+  },
+  "robot_death2": {
+    "sounds": ["orespawn:robot_death2"]
+  },
+  "robot_death3": {
+    "sounds": ["orespawn:robot_death3"]
+  },
+  "robot_death4": {
+    "sounds": ["orespawn:robot_death4"]
+  },
+  "robot_death5": {
+    "sounds": ["orespawn:robot_death5"]
+  },
+  "robot_hurt1": {
+    "sounds": ["orespawn:robot_hurt1"]
+  },
+  "robot_hurt2": {
+    "sounds": ["orespawn:robot_hurt2"]
+  },
+  "robot_hurt3": {
+    "sounds": ["orespawn:robot_hurt3"]
+  },
+  "robot_hurt4": {
+    "sounds": ["orespawn:robot_hurt4"]
+  },
+  "robot_hurt5": {
+    "sounds": ["orespawn:robot_hurt5"]
+  },
+  "robot_hurt6": {
+    "sounds": ["orespawn:robot_hurt6"]
+  },
+  "robot_hurt7": {
+    "sounds": ["orespawn:robot_hurt7"]
+  },
+  "robot_hurt8": {
+    "sounds": ["orespawn:robot_hurt8"]
+  },
+  "robot_living1": {
+    "sounds": ["orespawn:robot_living1"]
+  },
+  "robot_living2": {
+    "sounds": ["orespawn:robot_living2"]
+  },
+  "robot_living3": {
+    "sounds": ["orespawn:robot_living3"]
+  },
+  "robot_living4": {
+    "sounds": ["orespawn:robot_living4"]
+  },
+  "robotspider1": {
+    "sounds": ["orespawn:robotspider1"]
+  },
+  "robotspider2": {
+    "sounds": ["orespawn:robotspider2"]
+  },
+  "robotspider3": {
+    "sounds": ["orespawn:robotspider3"]
+  },
+  "robotspider4": {
+    "sounds": ["orespawn:robotspider4"]
+  },
+  "robotspider5": {
+    "sounds": ["orespawn:robotspider5"]
+  },
+  "robotspider6": {
+    "sounds": ["orespawn:robotspider6"]
+  },
+  "robotspider7": {
+    "sounds": ["orespawn:robotspider7"]
+  },
+  "robotspider8": {
+    "sounds": ["orespawn:robotspider8"]
+  },
+  "robotspider9": {
+    "sounds": ["orespawn:robotspider9"]
+  },
+  "robotspider10": {
+    "sounds": ["orespawn:robotspider10"]
+  },
+  "robotspider11": {
+    "sounds": ["orespawn:robotspider11"]
+  },
+  "robotspidermount": {
+    "sounds": ["orespawn:robotspidermount"]
+  },
+  "rubybird": {
+    "sounds": ["orespawn:rubybird"]
+  },
+  "scorpion_attack": {
+    "sounds": ["orespawn:scorpion_attack"]
+  },
+  "scorpion_hit": {
+    "sounds": ["orespawn:scorpion_hit"]
+  },
+  "scorpion_living": {
+    "sounds": ["orespawn:scorpion_living"]
+  },
+  "seamonster_death": {
+    "sounds": ["orespawn:seamonster_death"]
+  },
+  "seamonster_hit": {
+    "sounds": ["orespawn:seamonster_hit"]
+  },
+  "seamonster_living1": {
+    "sounds": ["orespawn:seamonster_living1"]
+  },
+  "seamonster_living2": {
+    "sounds": ["orespawn:seamonster_living2"]
+  },
+  "seaviper_death": {
+    "sounds": ["orespawn:seaviper_death"]
+  },
+  "seaviper_hit1": {
+    "sounds": ["orespawn:seaviper_hit1"]
+  },
+  "seaviper_hit2": {
+    "sounds": ["orespawn:seaviper_hit2"]
+  },
+  "seaviper_hit3": {
+    "sounds": ["orespawn:seaviper_hit3"]
+  },
+  "seaviper_living": {
+    "sounds": ["orespawn:seaviper_living"]
+  },
+  "squid_death1": {
+    "sounds": ["orespawn:squid_death1"]
+  },
+  "squid_death2": {
+    "sounds": ["orespawn:squid_death2"]
+  },
+  "squid_hurt1": {
+    "sounds": ["orespawn:squid_hurt1"]
+  },
+  "squid_hurt2": {
+    "sounds": ["orespawn:squid_hurt2"]
+  },
+  "squid_hurt3": {
+    "sounds": ["orespawn:squid_hurt3"]
+  },
+  "squid_hurt4": {
+    "sounds": ["orespawn:squid_hurt4"]
+  },
+  "terribleterror_dead": {
+    "sounds": ["orespawn:terribleterror_dead"]
+  },
+  "terribleterror_hit": {
+    "sounds": ["orespawn:terribleterror_hit"]
+  },
+  "terribleterror_living": {
+    "sounds": ["orespawn:terribleterror_living"]
+  },
+  "trex_death": {
+    "sounds": ["orespawn:trex_death"]
+  },
+  "trex_living": {
+    "sounds": ["orespawn:trex_living"]
+  },
+  "triffid_dead": {
+    "sounds": ["orespawn:triffid_dead"]
+  },
+  "triffid_hit": {
+    "sounds": ["orespawn:triffid_hit"]
+  },
+  "triffid_living": {
+    "sounds": ["orespawn:triffid_living"]
+  },
+  "vortexlive": {
+    "sounds": ["orespawn:vortexlive"]
+  },
+  "waterdragon_death": {
+    "sounds": ["orespawn:waterdragon_death"]
+  },
+  "waterdragon_hurt1": {
+    "sounds": ["orespawn:waterdragon_hurt1"]
+  },
+  "waterdragon_hurt2": {
+    "sounds": ["orespawn:waterdragon_hurt2"]
+  },
+  "waterdragon_hurt3": {
+    "sounds": ["orespawn:waterdragon_hurt3"]
+  },
+  "wtf_hurt": {
+    "sounds": ["orespawn:wtf_hurt"]
+  },
+  "wtf_living": {
+    "sounds": ["orespawn:wtf_living"]
+  }
+}

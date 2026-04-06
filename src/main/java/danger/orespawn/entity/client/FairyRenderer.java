@@ -7,7 +7,7 @@ import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.resources.ResourceLocation;
 
-public class FairyRenderer extends MobRenderer<Fairy, FairyModel<Fairy>> {
+public class FairyRenderer extends MobRenderer<Fairy, FairyModel> {
     private static final ResourceLocation[] TEXTURES = {
             ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "textures/entity/fairytexture.png"),
             ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "textures/entity/fairytexture2.png"),
@@ -23,7 +23,7 @@ public class FairyRenderer extends MobRenderer<Fairy, FairyModel<Fairy>> {
             new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "fairy"), "main");
 
     public FairyRenderer(EntityRendererProvider.Context context) {
-        super(context, new FairyModel<>(context.bakeLayer(MODEL_LAYER)), 0.15f);
+        super(context, new FairyModel(context.bakeLayer(MODEL_LAYER)), 0.15f);
     }
 
     @Override

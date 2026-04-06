@@ -9,14 +9,14 @@ import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.resources.ResourceLocation;
 
-public class SpitBugRenderer extends MobRenderer<EntitySpitBug, SpitBugModel<EntitySpitBug>> {
+public class SpitBugRenderer extends MobRenderer<EntitySpitBug, SpitBugModel> {
     private static final ResourceLocation TEXTURE =
             ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "textures/entity/spitbug.png");
     public static final ModelLayerLocation MODEL_LAYER =
             new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "spitbug"), "main");
 
     public SpitBugRenderer(EntityRendererProvider.Context context) {
-        super(context, new SpitBugModel<>(context.bakeLayer(MODEL_LAYER)), 0.6f);
+        super(context, new SpitBugModel(context.bakeLayer(MODEL_LAYER)), 0.6f);
     }
 
     @Override

@@ -9,14 +9,14 @@ import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.resources.ResourceLocation;
 
-public class EmperorScorpionRenderer extends MobRenderer<EntityEmperorScorpion, EmperorScorpionModel<EntityEmperorScorpion>> {
+public class EmperorScorpionRenderer extends MobRenderer<EntityEmperorScorpion, EmperorScorpionModel> {
     private static final ResourceLocation TEXTURE =
             ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "textures/entity/emperorscorpion.png");
     public static final ModelLayerLocation MODEL_LAYER =
             new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "emperorscorpion"), "main");
 
     public EmperorScorpionRenderer(EntityRendererProvider.Context context) {
-        super(context, new EmperorScorpionModel<>(context.bakeLayer(MODEL_LAYER)), 1.2f);
+        super(context, new EmperorScorpionModel(context.bakeLayer(MODEL_LAYER)), 1.2f);
     }
 
     @Override

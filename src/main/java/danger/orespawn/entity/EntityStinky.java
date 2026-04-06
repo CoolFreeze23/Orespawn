@@ -66,7 +66,7 @@ public class EntityStinky extends TamableAnimal {
     public EntityStinky(EntityType<? extends EntityStinky> type, Level level) {
         super(type, level);
         this.xpReward = 35;
-        this.noPhysics = true;
+        this.noPhysics = false;
         this.setOrderedToSit(false);
     }
 
