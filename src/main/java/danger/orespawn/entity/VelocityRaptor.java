@@ -39,8 +39,8 @@ import danger.orespawn.ModEntities;
 import danger.orespawn.OreSpawnMod;
 
 public class VelocityRaptor extends TamableAnimal {
-    private int closest = 99999;
-    private int tx = 0, ty = 0, tz = 0;
+    private int closestPlantDistance = 99999;
+    private int targetX = 0, targetY = 0, targetZ = 0;
 
     public VelocityRaptor(EntityType<? extends VelocityRaptor> type, Level level) {
         super(type, level);
@@ -96,13 +96,13 @@ public class VelocityRaptor extends TamableAnimal {
             for (int j = -dz; j <= dz; j++) {
                 BlockState state = this.level().getBlockState(new BlockPos(x + dx, y + i, z + j));
                 if (isPlant(state)) {
-                    int d = dx * dx + j * j + i * i;
-                    if (d < this.closest) { this.closest = d; this.tx = x + dx; this.ty = y + i; this.tz = z + j; found++; }
+                    int distSq = dx * dx + j * j + i * i;
+                    if (distSq < this.closestPlantDistance) { this.closestPlantDistance = distSq; this.targetX = x + dx; this.targetY = y + i; this.targetZ = z + j; found++; }
                 }
                 state = this.level().getBlockState(new BlockPos(x - dx, y + i, z + j));
                 if (isPlant(state)) {
-                    int d = dx * dx + j * j + i * i;
-                    if (d < this.closest) { this.closest = d; this.tx = x - dx; this.ty = y + i; this.tz = z + j; found++; }
+                    int distSq = dx * dx + j * j + i * i;
+                    if (distSq < this.closestPlantDistance) { this.closestPlantDistance = distSq; this.targetX = x - dx; this.targetY = y + i; this.targetZ = z + j; found++; }
                 }
             }
         }
@@ -116,16 +116,16 @@ public class VelocityRaptor extends TamableAnimal {
         if (this.random.nextInt(200) == 1) this.setTarget(null);
 
         if (!this.isOrderedToSit() && (this.random.nextInt(20) == 0 && this.getHealth() < this.getMaxHealth() || this.random.nextInt(250) == 0)) {
-            this.closest = 99999; this.tx = 0; this.ty = 0; this.tz = 0;
+            this.closestPlantDistance = 99999; this.targetX = 0; this.targetY = 0; this.targetZ = 0;
             for (int i = 1; i < 10; i++) {
                 int j = Math.min(i, 2);
                 if (this.scanForPlants((int) this.getX(), (int) this.getY() + 1, (int) this.getZ(), i, j, i)) break;
                 if (i >= 5) i++;
             }
-            if (this.closest < 99999) {
-                this.getNavigation().moveTo(this.tx, this.ty, this.tz, 1.0);
-                if (this.closest < 12) {
-                    BlockPos targetPos = new BlockPos(this.tx, this.ty, this.tz);
+            if (this.closestPlantDistance < 99999) {
+                this.getNavigation().moveTo(this.targetX, this.targetY, this.targetZ, 1.0);
+                if (this.closestPlantDistance < 12) {
+                    BlockPos targetPos = new BlockPos(this.targetX, this.targetY, this.targetZ);
                     if (this.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)) {
                         this.level().setBlock(targetPos, Blocks.AIR.defaultBlockState(), 2);
                     }

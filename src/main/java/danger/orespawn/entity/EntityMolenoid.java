@@ -39,6 +39,10 @@ public class EntityMolenoid extends Monster {
     private static final EntityDataAccessor<Integer> DATA_ATTACKING =
             SynchedEntityData.defineId(EntityMolenoid.class, EntityDataSerializers.INT);
 
+    private static final double KNOCKBACK_STRENGTH = 0.8;
+    private static final double KNOCKBACK_VERTICAL = 0.1;
+    private static final double KNOCKBACK_VERTICAL_PLAYER_MULT = 2.0;
+
     private final float moveSpeed = 0.35f;
 
     public EntityMolenoid(EntityType<? extends EntityMolenoid> type, Level level) {
@@ -99,14 +103,16 @@ public class EntityMolenoid extends Monster {
     @Override
     public boolean doHurtTarget(Entity target) {
         boolean ret = super.doHurtTarget(target);
-        if (ret && target instanceof LivingEntity living) {
-            double ks = 0.8;
-            double inair = 0.1;
+        if (ret && target instanceof LivingEntity) {
+            double verticalKnockback = KNOCKBACK_VERTICAL;
             float angle = (float) Math.atan2(target.getZ() - this.getZ(), target.getX() - this.getX());
             if (target.isRemoved() || target instanceof Player) {
-                inair *= 2.0;
+                verticalKnockback *= KNOCKBACK_VERTICAL_PLAYER_MULT;
             }
-            target.push(Math.cos(angle) * ks, inair, Math.sin(angle) * ks);
+            target.push(
+                    Math.cos(angle) * KNOCKBACK_STRENGTH,
+                    verticalKnockback,
+                    Math.sin(angle) * KNOCKBACK_STRENGTH);
         }
         return ret;
     }

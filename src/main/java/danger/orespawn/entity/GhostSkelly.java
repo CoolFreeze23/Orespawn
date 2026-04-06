@@ -39,8 +39,8 @@ public class GhostSkelly extends AmbientCreature {
     public void tick() {
         if (this.isPersistenceRequired()) this.noPhysics = false;
         super.tick();
-        Vec3 mot = this.getDeltaMovement();
-        this.setDeltaMovement(mot.x, mot.y * 0.65, mot.z);
+        Vec3 motion = this.getDeltaMovement();
+        this.setDeltaMovement(motion.x, motion.y * 0.65, motion.z);
     }
 
     @Override
@@ -67,16 +67,23 @@ public class GhostSkelly extends AmbientCreature {
                         (int) (target.getY() + 1.0),
                         (int) target.getZ() + this.random.nextInt(3) - this.random.nextInt(3));
             } else {
-                int i = 0, j = 0;
-                for (i = 0; i < 3; i++) {
-                    if (this.level().getBlockState(new BlockPos((int) this.getX(), (int) this.getY() + i, (int) this.getZ())).isAir()) break;
+                int firstAirOffsetAbove;
+                for (firstAirOffsetAbove = 0; firstAirOffsetAbove < 3; firstAirOffsetAbove++) {
+                    if (this.level().getBlockState(new BlockPos((int) this.getX(),
+                            (int) this.getY() + firstAirOffsetAbove, (int) this.getZ())).isAir()) {
+                        break;
+                    }
                 }
-                for (j = -1; j >= -3; j--) {
-                    if (!this.level().getBlockState(new BlockPos((int) this.getX(), (int) this.getY() + j, (int) this.getZ())).isAir()) break;
+                int belowOffset;
+                for (belowOffset = -1; belowOffset >= -3; belowOffset--) {
+                    if (!this.level().getBlockState(new BlockPos((int) this.getX(),
+                            (int) this.getY() + belowOffset, (int) this.getZ())).isAir()) {
+                        break;
+                    }
                 }
                 this.currentFlightTarget = new BlockPos(
                         (int) this.getX() + this.random.nextInt(10) - this.random.nextInt(10),
-                        (int) this.getY() + i + j + this.random.nextInt(4) + 1,
+                        (int) this.getY() + firstAirOffsetAbove + belowOffset + this.random.nextInt(4) + 1,
                         (int) this.getZ() + this.random.nextInt(10) - this.random.nextInt(10));
             }
         }
@@ -84,10 +91,10 @@ public class GhostSkelly extends AmbientCreature {
         double dx = this.currentFlightTarget.getX() + 0.5 - this.getX();
         double dy = this.currentFlightTarget.getY() + 0.1 - this.getY();
         double dz = this.currentFlightTarget.getZ() + 0.5 - this.getZ();
-        Vec3 mot = this.getDeltaMovement();
-        double mx = mot.x + (Math.signum(dx) * 0.1 - mot.x) * 0.05;
-        double my = mot.y + (Math.signum(dy) * 0.7 - mot.y) * 0.1;
-        double mz = mot.z + (Math.signum(dz) * 0.1 - mot.z) * 0.05;
+        Vec3 motion = this.getDeltaMovement();
+        double mx = motion.x + (Math.signum(dx) * 0.1 - motion.x) * 0.05;
+        double my = motion.y + (Math.signum(dy) * 0.7 - motion.y) * 0.1;
+        double mz = motion.z + (Math.signum(dz) * 0.1 - motion.z) * 0.05;
         this.setDeltaMovement(mx, my, mz);
 
         float targetYaw = (float) (Math.atan2(mz, mx) * 180.0 / Math.PI) - 90.0f;
@@ -114,9 +121,9 @@ public class GhostSkelly extends AmbientCreature {
     @Override
     public boolean isPushable() { return false; }
     @Override
-    public boolean causeFallDamage(float d, float m, DamageSource s) { return false; }
+    public boolean causeFallDamage(float fallDistance, float multiplier, DamageSource source) { return false; }
     @Override
-    protected void checkFallDamage(double y, boolean g, BlockState st, BlockPos p) { }
+    protected void checkFallDamage(double y, boolean onGround, BlockState state, BlockPos pos) { }
 
     @Override
     public boolean removeWhenFarAway(double dist) {

@@ -1,14 +1,12 @@
 package danger.orespawn.entity;
 
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.ThrowableProjectile;
@@ -25,7 +23,16 @@ public class EntityCage extends ThrowableProjectile {
     private static final EntityDataAccessor<Integer> DATA_CAGE_INDEX =
             SynchedEntityData.defineId(EntityCage.class, EntityDataSerializers.INT);
 
-    private int cageIndex = 160;
+    private static final int DEFAULT_CAGE_INDEX = 160;
+    private static final int CAPTURE_SUCCESS_ROLL_RANGE = 10;
+    private static final int CAPTURE_SUCCESS_THRESHOLD = 2;
+    private static final int HIT_PARTICLE_BURST_COUNT = 4;
+    private static final double PARTICLE_OFFSET_Y = 0.25;
+    private static final float EXPLODE_SOUND_PITCH = 1.5f;
+    private static final float ROTATION_STEP_DEGREES = 30.0f;
+    private static final float FULL_ROTATION_DEGREES = 360.0f;
+
+    private int cageIndex = DEFAULT_CAGE_INDEX;
 
     public EntityCage(EntityType<? extends ThrowableProjectile> type, Level level) {
         super(type, level);
@@ -39,7 +46,7 @@ public class EntityCage extends ThrowableProjectile {
 
     @Override
     protected void defineSynchedData(SynchedEntityData.Builder builder) {
-        builder.define(DATA_CAGE_INDEX, 160);
+        builder.define(DATA_CAGE_INDEX, DEFAULT_CAGE_INDEX);
     }
 
     public int getCageIndex() { return this.entityData.get(DATA_CAGE_INDEX); }
@@ -55,21 +62,19 @@ public class EntityCage extends ThrowableProjectile {
         }
 
         if (target instanceof Mob mob) {
-            for (int i = 0; i < 4; ++i) {
+            for (int particleIndex = 0; particleIndex < HIT_PARTICLE_BURST_COUNT; ++particleIndex) {
                 this.level().addParticle(ParticleTypes.SMOKE,
-                        target.getX(), target.getY() + 0.25, target.getZ(), 0, 0, 0);
+                        target.getX(), target.getY() + PARTICLE_OFFSET_Y, target.getZ(), 0, 0, 0);
                 this.level().addParticle(ParticleTypes.EXPLOSION,
-                        target.getX(), target.getY() + 0.25, target.getZ(), 0, 0, 0);
+                        target.getX(), target.getY() + PARTICLE_OFFSET_Y, target.getZ(), 0, 0, 0);
             }
             if (this.getOwner() != null) {
-                this.playSound(SoundEvents.GENERIC_EXPLODE.value(), 1.0f, 1.5f);
+                this.playSound(SoundEvents.GENERIC_EXPLODE.value(), 1.0f, EXPLODE_SOUND_PITCH);
             }
 
-            if (this.random.nextInt(10) >= 2) {
+            if (this.random.nextInt(CAPTURE_SUCCESS_ROLL_RANGE) >= CAPTURE_SUCCESS_THRESHOLD) {
                 // TODO: Store the captured mob's type + data into a CritterCage item
                 // For now, just remove the entity
-                CompoundTag mobData = new CompoundTag();
-                mob.save(mobData);
                 mob.discard();
 
                 // TODO: Create and drop a CritterCage item containing the mob data
@@ -92,14 +97,14 @@ public class EntityCage extends ThrowableProjectile {
     @Override
     public void tick() {
         super.tick();
-        this.myRotation += 30.0f;
-        if (this.myRotation > 360.0f) this.myRotation -= 360.0f;
-        this.setXRot(this.myRotation);
+        this.visualRotationDegrees += ROTATION_STEP_DEGREES;
+        if (this.visualRotationDegrees > FULL_ROTATION_DEGREES) this.visualRotationDegrees -= FULL_ROTATION_DEGREES;
+        this.setXRot(this.visualRotationDegrees);
 
         if (this.level().isClientSide) {
             this.entityData.set(DATA_CAGE_INDEX, this.cageIndex);
         }
     }
 
-    private float myRotation = 0.0f;
+    private float visualRotationDegrees = 0.0f;
 }

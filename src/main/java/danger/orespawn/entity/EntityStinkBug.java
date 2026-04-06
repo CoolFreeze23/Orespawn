@@ -85,9 +85,9 @@ public class EntityStinkBug extends Animal {
         if (this.getHealth() <= 0.0f || this.isRemoved()) {
             List<LivingEntity> nearby = this.level().getEntitiesOfClass(LivingEntity.class,
                     this.getBoundingBox().inflate(8.0, 5.0, 8.0));
-            for (LivingEntity e : nearby) {
-                if (e != null) {
-                    e.addEffect(new MobEffectInstance(MobEffects.HUNGER, 300, 0));
+            for (LivingEntity nearbyEntity : nearby) {
+                if (nearbyEntity != null) {
+                    nearbyEntity.addEffect(new MobEffectInstance(MobEffects.HUNGER, 300, 0));
                 }
             }
         }

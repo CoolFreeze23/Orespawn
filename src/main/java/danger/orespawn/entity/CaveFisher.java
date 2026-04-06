@@ -81,9 +81,10 @@ public class CaveFisher extends Monster {
         if (this.random.nextInt(8) == 0) {
             LivingEntity target = this.getTarget();
             if (target == null) {
-                target = this.level().getNearestPlayer(this, 10.0);
-                if (target != null && !((Player) target).getAbilities().instabuild) {
-                    this.setTarget(target);
+                Player nearestPlayer = this.level().getNearestPlayer(this, 10.0);
+                target = nearestPlayer;
+                if (nearestPlayer != null && !nearestPlayer.getAbilities().instabuild) {
+                    this.setTarget(nearestPlayer);
                 }
             }
             if (target != null && target.isAlive()) {

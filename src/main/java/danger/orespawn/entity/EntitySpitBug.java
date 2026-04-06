@@ -30,6 +30,13 @@ public class EntitySpitBug extends Monster {
     private static final EntityDataAccessor<Integer> DATA_ATTACKING =
             SynchedEntityData.defineId(EntitySpitBug.class, EntityDataSerializers.INT);
 
+    private static final double KNOCKBACK_STRENGTH = 0.5;
+    private static final double KNOCKBACK_VERTICAL = 0.1;
+    private static final double KNOCKBACK_VERTICAL_PLAYER_MULT = 2.0;
+    private static final double JUMP_HORIZONTAL_MIN = 0.2f;
+    private static final double JUMP_HORIZONTAL_RANDOM = 0.45f;
+    private static final double JUMP_VERTICAL_BOOST = 0.75;
+
     private int hurtTimer = 0;
 
     public EntitySpitBug(EntityType<? extends EntitySpitBug> type, Level level) {
@@ -98,11 +105,11 @@ public class EntitySpitBug extends Monster {
     public void jumpFromGround() {
         Vec3 motion = this.getDeltaMovement();
         double yawRad = Math.toRadians(this.getYRot());
-        float f = 0.2f + Math.abs(this.random.nextFloat() * 0.45f);
+        float horizontalJumpStrength = (float) (JUMP_HORIZONTAL_MIN + Math.abs(this.random.nextFloat() * JUMP_HORIZONTAL_RANDOM));
         this.setDeltaMovement(
-                motion.x - f * Math.sin(yawRad),
-                motion.y + 0.75,
-                motion.z + f * Math.cos(yawRad));
+                motion.x - horizontalJumpStrength * Math.sin(yawRad),
+                motion.y + JUMP_VERTICAL_BOOST,
+                motion.z + horizontalJumpStrength * Math.cos(yawRad));
         this.setPos(this.getX(), this.getY() + 0.75, this.getZ());
         this.hasImpulse = true;
     }
@@ -111,11 +118,15 @@ public class EntitySpitBug extends Monster {
     public boolean doHurtTarget(Entity target) {
         if (super.doHurtTarget(target)) {
             if (target instanceof LivingEntity) {
-                double ks = 0.5;
-                double inair = 0.1;
+                double verticalKnockback = KNOCKBACK_VERTICAL;
                 float angle = (float) Math.atan2(target.getZ() - this.getZ(), target.getX() - this.getX());
-                if (target.isRemoved() || target instanceof Player) inair *= 2.0;
-                target.push(Math.cos(angle) * ks, inair, Math.sin(angle) * ks);
+                if (target.isRemoved() || target instanceof Player) {
+                    verticalKnockback *= KNOCKBACK_VERTICAL_PLAYER_MULT;
+                }
+                target.push(
+                        Math.cos(angle) * KNOCKBACK_STRENGTH,
+                        verticalKnockback,
+                        Math.sin(angle) * KNOCKBACK_STRENGTH);
             }
             return true;
         }
@@ -175,8 +186,8 @@ public class EntitySpitBug extends Monster {
         List<LivingEntity> entities = this.level().getEntitiesOfClass(LivingEntity.class,
                 this.getBoundingBox().inflate(12.0, 7.0, 12.0));
         entities.sort(Comparator.comparingDouble(this::distanceToSqr));
-        for (LivingEntity e : entities) {
-            if (isSuitableTarget(e)) return e;
+        for (LivingEntity candidate : entities) {
+            if (isSuitableTarget(candidate)) return candidate;
         }
         return null;
     }

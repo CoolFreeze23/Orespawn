@@ -12,6 +12,13 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
 public class SkateBow extends BowItem {
+    /** Vanilla-style divisor: charge ticks mapped to normalized pull strength. */
+    private static final float TICKS_FOR_FULL_DRAW = 20.0F;
+    private static final float MIN_PULL_STRENGTH = 0.1F;
+    private static final float MAX_PULL_STRENGTH = 1.75F;
+    private static final float ARROW_SPEED_MULTIPLIER = 2.0F;
+    private static final int CRIT_CHANCE_DENOMINATOR = 20;
+
     public SkateBow(Item.Properties properties) {
         super(properties);
     }
@@ -20,15 +27,15 @@ public class SkateBow extends BowItem {
     public void releaseUsing(ItemStack stack, Level level, LivingEntity entityLiving, int timeLeft) {
         if (!(entityLiving instanceof Player player)) return;
         int charge = this.getUseDuration(stack, entityLiving) - timeLeft;
-        float f = (float) charge / 20.0F;
-        f = (f * f + f * 2.0F) / 3.0F;
-        if (f < 0.1F) return;
-        if (f > 1.75F) f = 1.75F;
+        float pullStrength = (float) charge / TICKS_FOR_FULL_DRAW;
+        pullStrength = (pullStrength * pullStrength + pullStrength * 2.0F) / 3.0F;
+        if (pullStrength < MIN_PULL_STRENGTH) return;
+        if (pullStrength > MAX_PULL_STRENGTH) pullStrength = MAX_PULL_STRENGTH;
 
         if (!level.isClientSide) {
             Arrow arrow = new Arrow(level, player, stack, null);
-            arrow.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0F, f * 2.0F, 1.0F);
-            if (level.random.nextInt(20) == 1) {
+            arrow.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0F, pullStrength * ARROW_SPEED_MULTIPLIER, 1.0F);
+            if (level.random.nextInt(CRIT_CHANCE_DENOMINATOR) == 1) {
                 arrow.setCritArrow(true);
             }
             level.addFreshEntity(arrow);

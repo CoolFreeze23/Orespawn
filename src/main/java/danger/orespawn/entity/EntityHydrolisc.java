@@ -1,6 +1,5 @@
 package danger.orespawn.entity;
 
-import java.util.UUID;
 import javax.annotation.Nullable;
 
 import net.minecraft.core.BlockPos;
@@ -41,10 +40,12 @@ import danger.orespawn.ModItems;
 import danger.orespawn.OreSpawnMod;
 
 public class EntityHydrolisc extends TamableAnimal {
-    private int closest = 99999;
-    private int tx = 0;
-    private int ty = 0;
-    private int tz = 0;
+    private static final int NO_WATER_FOUND = 99999;
+
+    private int closestWaterDistSq = NO_WATER_FOUND;
+    private int targetWaterX = 0;
+    private int targetWaterY = 0;
+    private int targetWaterZ = 0;
 
     public EntityHydrolisc(EntityType<? extends EntityHydrolisc> type, Level level) {
         super(type, level);
@@ -107,19 +108,19 @@ public class EntityHydrolisc extends TamableAnimal {
     }
 
     private void seekWater() {
-        this.closest = 99999;
-        this.tx = 0;
-        this.ty = 0;
-        this.tz = 0;
+        this.closestWaterDistSq = NO_WATER_FOUND;
+        this.targetWaterX = 0;
+        this.targetWaterY = 0;
+        this.targetWaterZ = 0;
 
         for (int i = 1; i < 11; i++) {
             int j = Math.min(i, 4);
-            if (scan_it((int) this.getX(), (int) this.getY() - 1, (int) this.getZ(), i, j, i)) break;
+            if (scanVolumeForWater((int) this.getX(), (int) this.getY() - 1, (int) this.getZ(), i, j, i)) break;
             if (i >= 5) i++;
         }
 
-        if (this.closest < 99999) {
-            this.getNavigation().moveTo(this.tx, this.ty - 1, this.tz, 1.0);
+        if (this.closestWaterDistSq < NO_WATER_FOUND) {
+            this.getNavigation().moveTo(this.targetWaterX, this.targetWaterY - 1, this.targetWaterZ, 1.0);
             if (this.isInWater()) {
                 this.heal(1.0f);
                 this.playSound(SoundEvents.GENERIC_SPLASH, 1.0f,
@@ -128,36 +129,39 @@ public class EntityHydrolisc extends TamableAnimal {
         }
     }
 
-    private boolean scan_it(int x, int y, int z, int dx, int dy, int dz) {
+    private boolean scanVolumeForWater(int originX, int originY, int originZ, int radiusX, int radiusY, int radiusZ) {
         int found = 0;
-        for (int i = -dy; i <= dy; i++) {
-            for (int j = -dz; j <= dz; j++) {
-                found += checkWater(x + dx, y + i, z + j, dx * dx + j * j + i * i);
-                found += checkWater(x - dx, y + i, z + j, dx * dx + j * j + i * i);
+        for (int i = -radiusY; i <= radiusY; i++) {
+            for (int j = -radiusZ; j <= radiusZ; j++) {
+                int distSq = radiusX * radiusX + j * j + i * i;
+                found += considerWaterAt(originX + radiusX, originY + i, originZ + j, distSq);
+                found += considerWaterAt(originX - radiusX, originY + i, originZ + j, distSq);
             }
         }
-        for (int i = -dx; i <= dx; i++) {
-            for (int j = -dz; j <= dz; j++) {
-                found += checkWater(x + i, y + dy, z + j, dy * dy + j * j + i * i);
-                found += checkWater(x + i, y - dy, z + j, dy * dy + j * j + i * i);
+        for (int i = -radiusX; i <= radiusX; i++) {
+            for (int j = -radiusZ; j <= radiusZ; j++) {
+                int distSq = radiusY * radiusY + j * j + i * i;
+                found += considerWaterAt(originX + i, originY + radiusY, originZ + j, distSq);
+                found += considerWaterAt(originX + i, originY - radiusY, originZ + j, distSq);
             }
         }
-        for (int i = -dx; i <= dx; i++) {
-            for (int j = -dy; j <= dy; j++) {
-                found += checkWater(x + i, y + j, z + dz, dz * dz + j * j + i * i);
-                found += checkWater(x + i, y + j, z - dz, dz * dz + j * j + i * i);
+        for (int i = -radiusX; i <= radiusX; i++) {
+            for (int j = -radiusY; j <= radiusY; j++) {
+                int distSq = radiusZ * radiusZ + j * j + i * i;
+                found += considerWaterAt(originX + i, originY + j, originZ + radiusZ, distSq);
+                found += considerWaterAt(originX + i, originY + j, originZ - radiusZ, distSq);
             }
         }
         return found != 0;
     }
 
-    private int checkWater(int bx, int by, int bz, int d) {
-        BlockState state = this.level().getBlockState(new BlockPos(bx, by, bz));
-        if ((state.is(Blocks.WATER)) && d < this.closest) {
-            this.closest = d;
-            this.tx = bx;
-            this.ty = by;
-            this.tz = bz;
+    private int considerWaterAt(int blockX, int blockY, int blockZ, int distSq) {
+        BlockState state = this.level().getBlockState(new BlockPos(blockX, blockY, blockZ));
+        if (state.is(Blocks.WATER) && distSq < this.closestWaterDistSq) {
+            this.closestWaterDistSq = distSq;
+            this.targetWaterX = blockX;
+            this.targetWaterY = blockY;
+            this.targetWaterZ = blockZ;
             return 1;
         }
         return 0;

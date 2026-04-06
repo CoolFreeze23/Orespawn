@@ -12,7 +12,19 @@ import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 
 public class LaserBall extends ThrowableProjectile {
-    private float myRotation = 0.0f;
+    private static final int MAX_LIFETIME_TICKS = 200;
+    private static final float ROTATION_STEP_DEGREES = 50.0f;
+    private static final float FULL_ROTATION_DEGREES = 360.0f;
+    private static final float BASE_DAMAGE = 16.0f;
+    private static final int FIRE_DURATION_ON_HIT_SECONDS = 1;
+    private static final float EXPLOSION_POWER = 3.0f;
+    private static final float EXPLODE_SOUND_VOLUME = 0.5f;
+    private static final int PARTICLE_COUNT_SPECIAL = 10;
+    private static final int PARTICLE_COUNT_ICE = 2;
+    private static final int PARTICLE_COUNT_DEFAULT = 4;
+    private static final float IRUKANDJI_DAMAGE = 100.0f;
+
+    private float visualRotationDegrees = 0.0f;
     private boolean isSpecial = false;
     private boolean isIceball = false;
     private boolean isAcid = false;
@@ -37,7 +49,8 @@ public class LaserBall extends ThrowableProjectile {
     public void setIceBall() { this.isIceball = true; }
     public void setAcid() { this.isAcid = true; }
     public void setIrukandji() { this.isIrukandji = true; this.isAcid = true; }
-    public void setIceMaker(int i) { this.isIceball = true; }
+    /** Legacy parameter ignored; enables iceball behavior. */
+    public void setIceMaker(int unusedVariant) { this.isIceball = true; }
 
     @Override
     protected void defineSynchedData(net.minecraft.network.syncher.SynchedEntityData.Builder builder) {
@@ -49,15 +62,14 @@ public class LaserBall extends ThrowableProjectile {
         Entity target = result.getEntity();
 
         if (this.isIrukandji) {
-            target.hurt(this.damageSources().thrown(this, this.getOwner()), 100.0f);
+            target.hurt(this.damageSources().thrown(this, this.getOwner()), IRUKANDJI_DAMAGE);
             this.discard();
             return;
         }
 
-        float damage = 16.0f;
-        target.hurt(this.damageSources().thrown(this, this.getOwner()), damage);
+        target.hurt(this.damageSources().thrown(this, this.getOwner()), BASE_DAMAGE);
         if (!this.isIceball) {
-            target.igniteForSeconds(1);
+            target.igniteForSeconds(FIRE_DURATION_ON_HIT_SECONDS);
         }
     }
 
@@ -67,10 +79,10 @@ public class LaserBall extends ThrowableProjectile {
         if (!this.level().isClientSide && !this.isAcid) {
             if (this.isSpecial || this.isIceball) {
                 boolean canGrief = this.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING);
-                this.level().explode(this, this.getX(), this.getY(), this.getZ(), 3.0f,
+                this.level().explode(this, this.getX(), this.getY(), this.getZ(), EXPLOSION_POWER,
                         canGrief, Level.ExplosionInteraction.MOB);
             }
-            this.playSound(SoundEvents.GENERIC_EXPLODE.value(), 0.5f,
+            this.playSound(SoundEvents.GENERIC_EXPLODE.value(), EXPLODE_SOUND_VOLUME,
                     1.0f + (this.random.nextFloat() - this.random.nextFloat()) * 0.5f);
         }
         this.discard();
@@ -79,18 +91,19 @@ public class LaserBall extends ThrowableProjectile {
     @Override
     public void tick() {
         ++this.ticksAlive;
-        if (this.ticksAlive > 200) {
+        if (this.ticksAlive > MAX_LIFETIME_TICKS) {
             this.discard();
             return;
         }
         super.tick();
-        this.myRotation += 50.0f;
-        if (this.myRotation > 360.0f) this.myRotation -= 360.0f;
-        this.setXRot(this.myRotation);
+        this.visualRotationDegrees += ROTATION_STEP_DEGREES;
+        if (this.visualRotationDegrees > FULL_ROTATION_DEGREES) this.visualRotationDegrees -= FULL_ROTATION_DEGREES;
+        this.setXRot(this.visualRotationDegrees);
 
         if (this.level().isClientSide && !this.isAcid) {
-            int mx = this.isSpecial ? 10 : (this.isIceball ? 2 : 4);
-            for (int i = 0; i < mx; ++i) {
+            int particleCount = this.isSpecial ? PARTICLE_COUNT_SPECIAL
+                    : (this.isIceball ? PARTICLE_COUNT_ICE : PARTICLE_COUNT_DEFAULT);
+            for (int particleIndex = 0; particleIndex < particleCount; ++particleIndex) {
                 this.level().addParticle(ParticleTypes.FIREWORK,
                         this.getX(), this.getY(), this.getZ(),
                         this.random.nextGaussian() / 2.0,

@@ -12,6 +12,9 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 
 public class StepUp extends Item {
+    private static final int STAIRCASE_LENGTH = 33;
+    private static final int TORCH_INTERVAL = 3;
+
     public StepUp(Item.Properties properties) {
         super(properties);
     }
@@ -27,11 +30,11 @@ public class StepUp extends Item {
         BlockPos pos = context.getClickedPos().above();
         Direction facing = player.getDirection();
 
-        int dx = facing.getStepX();
-        int dz = facing.getStepZ();
+        int forwardX = facing.getStepX();
+        int forwardZ = facing.getStepZ();
 
-        for (int i = 0; i < 33; i++) {
-            BlockPos step = pos.offset(dx * i, i, dz * i);
+        for (int stepIndex = 0; stepIndex < STAIRCASE_LENGTH; stepIndex++) {
+            BlockPos step = pos.offset(forwardX * stepIndex, stepIndex, forwardZ * stepIndex);
             if (level.getBlockState(step).isAir()) {
                 level.setBlock(step, Blocks.COBBLESTONE.defaultBlockState(), 3);
             }
@@ -43,7 +46,7 @@ public class StepUp extends Item {
             if (level.getBlockState(aboveStep2).isAir()) {
                 level.setBlock(aboveStep2, Blocks.AIR.defaultBlockState(), 3);
             }
-            if (i % 3 == 0) {
+            if (stepIndex % TORCH_INTERVAL == 0) {
                 BlockPos torchPos = step.above();
                 if (level.getBlockState(torchPos).isAir()) {
                     level.setBlock(torchPos, Blocks.TORCH.defaultBlockState(), 3);

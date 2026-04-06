@@ -10,7 +10,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
@@ -105,10 +104,10 @@ public class EntityKyuubi extends Monster {
                 this.getNavigation().moveTo(target, 1.25);
                 if (this.distanceToSqr(target) < 64.0
                         && (this.random.nextInt(6) == 0 || this.random.nextInt(8) == 1)) {
-                    double dx = target.getX() - this.getX();
-                    double dy = target.getY() + 0.75 - (this.getY() + 1.25);
-                    double dz = target.getZ() - this.getZ();
-                    SmallFireball fireball = new SmallFireball(this.level(), this, new Vec3(dx, dy, dz));
+                    double dirX = target.getX() - this.getX();
+                    double dirY = target.getY() + 0.75 - (this.getY() + 1.25);
+                    double dirZ = target.getZ() - this.getZ();
+                    SmallFireball fireball = new SmallFireball(this.level(), this, new Vec3(dirX, dirY, dirZ));
                     fireball.setPos(this.getX(), this.getY() + 1.25, this.getZ());
                     this.level().addFreshEntity(fireball);
                     this.playSound(SoundEvents.ARROW_SHOOT, 0.75f,
@@ -123,8 +122,8 @@ public class EntityKyuubi extends Monster {
         List<LivingEntity> entities = this.level().getEntitiesOfClass(LivingEntity.class,
                 this.getBoundingBox().inflate(12.0, 4.0, 12.0));
         entities.sort(Comparator.comparingDouble(this::distanceToSqr));
-        for (LivingEntity e : entities) {
-            if (isSuitableTarget(e)) return e;
+        for (LivingEntity candidate : entities) {
+            if (isSuitableTarget(candidate)) return candidate;
         }
         return null;
     }

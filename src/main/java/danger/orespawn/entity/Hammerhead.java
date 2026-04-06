@@ -76,11 +76,11 @@ public class Hammerhead extends Monster {
     public boolean doHurtTarget(Entity target) {
         if (super.doHurtTarget(target)) {
             if (target instanceof LivingEntity living) {
-                double ks = 1.1;
-                double inair = 0.85;
-                float angle = (float) Math.atan2(target.getZ() - this.getZ(), target.getX() - this.getX());
-                if (target instanceof Player) inair *= 2.0;
-                target.push(Math.cos(angle) * ks, inair, Math.sin(angle) * ks);
+                double knockbackHorizontal = 1.1;
+                double knockbackVertical = 0.85;
+                float pushAngle = (float) Math.atan2(target.getZ() - this.getZ(), target.getX() - this.getX());
+                if (target instanceof Player) knockbackVertical *= 2.0;
+                target.push(Math.cos(pushAngle) * knockbackHorizontal, knockbackVertical, Math.sin(pushAngle) * knockbackHorizontal);
             }
             return true;
         }
@@ -91,8 +91,8 @@ public class Hammerhead extends Monster {
     public boolean hurt(DamageSource source, float amount) {
         if (source.type().msgId().equals("cactus")) return false;
         boolean ret = super.hurt(source, amount);
-        Entity e = source.getEntity();
-        if (e instanceof LivingEntity living) {
+        Entity attacker = source.getEntity();
+        if (attacker instanceof LivingEntity living) {
             this.revengeTarget = living;
         }
         return ret;
@@ -104,33 +104,33 @@ public class Hammerhead extends Monster {
         super.customServerAiStep();
 
         if (this.random.nextInt(3) == 1) {
-            LivingEntity e = this.revengeTarget;
-            if (e != null) {
-                if (!e.isAlive() || this.random.nextInt(250) == 1) {
-                    e = null;
+            LivingEntity currentTarget = this.revengeTarget;
+            if (currentTarget != null) {
+                if (!currentTarget.isAlive() || this.random.nextInt(250) == 1) {
+                    currentTarget = null;
                     this.revengeTarget = null;
                 }
             }
-            if (e == null) {
-                e = this.getTarget();
+            if (currentTarget == null) {
+                currentTarget = this.getTarget();
             }
-            if (e == null) {
+            if (currentTarget == null) {
                 Player nearest = this.level().getNearestPlayer(this, 18.0);
                 if (nearest != null && !nearest.getAbilities().instabuild) {
-                    e = nearest;
+                    currentTarget = nearest;
                 }
             }
-            if (e != null && e.isAlive()) {
-                this.lookAt(e, 10.0f, 10.0f);
-                double dist = this.distanceToSqr(e);
-                double range = (7.0 + e.getBbWidth() / 2.0) * (7.0 + e.getBbWidth() / 2.0);
-                if (dist < range) {
+            if (currentTarget != null && currentTarget.isAlive()) {
+                this.lookAt(currentTarget, 10.0f, 10.0f);
+                double distSq = this.distanceToSqr(currentTarget);
+                double meleeRangeSq = (7.0 + currentTarget.getBbWidth() / 2.0) * (7.0 + currentTarget.getBbWidth() / 2.0);
+                if (distSq < meleeRangeSq) {
                     this.setAttacking(1);
                     if (this.random.nextInt(3) == 1) {
-                        this.doHurtTarget(e);
+                        this.doHurtTarget(currentTarget);
                     }
                 } else {
-                    this.getNavigation().moveTo(e, 1.25);
+                    this.getNavigation().moveTo(currentTarget, 1.25);
                 }
             } else {
                 this.setAttacking(0);

@@ -24,6 +24,10 @@ import net.minecraft.world.phys.Vec3;
 
 public class GoldFish extends Animal {
     private static final int MAX_HEALTH = 6;
+    private static final int LOW_ALTITUDE_Y = 120;
+    private static final int HIGH_ALTITUDE_Y = 140;
+    private static final int ASCEND_BIAS_BLOCKS = 2;
+    private static final int DESCEND_BIAS_BLOCKS = -2;
 
     private BlockPos currentFlightTarget = null;
 
@@ -69,9 +73,9 @@ public class GoldFish extends Animal {
             this.currentFlightTarget = this.blockPosition();
         }
 
-        int updown = 0;
-        if ((int) this.getY() < 120) updown = 2;
-        if ((int) this.getY() > 140) updown = -2;
+        int verticalBiasBlocks = 0;
+        if ((int) this.getY() < LOW_ALTITUDE_Y) verticalBiasBlocks = ASCEND_BIAS_BLOCKS;
+        if ((int) this.getY() > HIGH_ALTITUDE_Y) verticalBiasBlocks = DESCEND_BIAS_BLOCKS;
 
         if (this.random.nextInt(300) == 0 || this.currentFlightTarget.closerToCenterThan(this.position(), 2.1)) {
             int keepTrying = 50;
@@ -83,7 +87,7 @@ public class GoldFish extends Animal {
                 if (this.random.nextInt(2) == 0) xdir = -xdir;
                 BlockPos newTarget = new BlockPos(
                         (int) this.getX() + xdir,
-                        (int) this.getY() + this.random.nextInt(11) - 5 + updown,
+                        (int) this.getY() + this.random.nextInt(11) - 5 + verticalBiasBlocks,
                         (int) this.getZ() + zdir);
                 if (this.level().getBlockState(newTarget).is(Blocks.AIR)) {
                     this.currentFlightTarget = newTarget;

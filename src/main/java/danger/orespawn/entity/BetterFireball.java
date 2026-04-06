@@ -2,7 +2,6 @@ package danger.orespawn.entity;
 
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -15,9 +14,17 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 
 public class BetterFireball extends LargeFireball {
+    private static final int MAX_LIFETIME_TICKS = 600;
+    private static final float LARGE_MOB_BB_AREA_THRESHOLD = 30.0f;
+    private static final float DAMAGE_SMALL = 5.0f;
+    private static final float DAMAGE_LARGE = 10.0f;
+    private static final int FIRE_SECONDS_ON_HIT = 5;
+    private static final double SMOKE_OFFSET_Y = 0.5;
+
     private int ticksAlive = 0;
     private int explosionPower = 1;
     private boolean small = false;
+    /** Reserved for callers; not read by this class (legacy / future use). */
     private boolean notme = false;
 
     public BetterFireball(EntityType<? extends LargeFireball> type, Level level) {
@@ -39,12 +46,12 @@ public class BetterFireball extends LargeFireball {
     public void tick() {
         super.tick();
         this.ticksAlive++;
-        if (this.ticksAlive >= 600) {
+        if (this.ticksAlive >= MAX_LIFETIME_TICKS) {
             this.discard();
             return;
         }
         if (this.level().isClientSide) {
-            this.level().addParticle(ParticleTypes.SMOKE, this.getX(), this.getY() + 0.5, this.getZ(), 0, 0, 0);
+            this.level().addParticle(ParticleTypes.SMOKE, this.getX(), this.getY() + SMOKE_OFFSET_Y, this.getZ(), 0, 0, 0);
         }
     }
 
@@ -55,15 +62,15 @@ public class BetterFireball extends LargeFireball {
         if (target == this.getOwner()) return;
 
         if (target instanceof LivingEntity living) {
-            float s = living.getBbHeight() * living.getBbWidth();
-            if (s > 30.0f) {
+            float boundingBoxArea = living.getBbHeight() * living.getBbWidth();
+            if (boundingBoxArea > LARGE_MOB_BB_AREA_THRESHOLD) {
                 living.setHealth(living.getHealth() / 2.0f);
             }
         }
 
-        float damage = this.small ? 5.0f : 10.0f;
+        float damage = this.small ? DAMAGE_SMALL : DAMAGE_LARGE;
         target.hurt(this.damageSources().fireball(this, this.getOwner()), damage);
-        target.igniteForSeconds(5);
+        target.igniteForSeconds(FIRE_SECONDS_ON_HIT);
     }
 
     @Override

@@ -215,8 +215,8 @@ public class EntityMantis extends Monster {
         List<LivingEntity> entities = this.level().getEntitiesOfClass(LivingEntity.class,
                 this.getBoundingBox().inflate(16.0, 8.0, 16.0));
         entities.sort(Comparator.comparingDouble(this::distanceToSqr));
-        for (LivingEntity e : entities) {
-            if (isSuitableTarget(e)) return e;
+        for (LivingEntity candidate : entities) {
+            if (isSuitableTarget(candidate)) return candidate;
         }
         return null;
     }

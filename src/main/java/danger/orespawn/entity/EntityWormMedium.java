@@ -7,7 +7,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
@@ -65,9 +64,9 @@ public class EntityWormMedium extends Monster {
         return true;
     }
 
-    public void pointAtEntity(LivingEntity e) {
-        double dx = e.getX() - this.getX();
-        double dz = e.getZ() - this.getZ();
+    public void pointAtEntity(LivingEntity targetEntity) {
+        double dx = targetEntity.getX() - this.getX();
+        double dz = targetEntity.getZ() - this.getZ();
         float angle = (float) (Math.atan2(dz, dx) * 180.0 / Math.PI) - 90.0f;
         this.setYRot(angle);
         this.yBodyRot = angle;
@@ -109,8 +108,8 @@ public class EntityWormMedium extends Monster {
                 BlockPos checkPos = BlockPos.containing(this.getX(), this.getY() + 0.25, this.getZ());
                 BlockState state = this.level().getBlockState(checkPos);
                 if (!state.isAir()) {
-                    Vec3 mot = this.getDeltaMovement();
-                    this.setDeltaMovement(mot.x, mot.y + 0.2, mot.z);
+                    Vec3 motion = this.getDeltaMovement();
+                    this.setDeltaMovement(motion.x, motion.y + 0.2, motion.z);
                     this.setPos(this.getX(), this.getY() + 0.1, this.getZ());
                 }
             } else {
@@ -122,8 +121,8 @@ public class EntityWormMedium extends Monster {
                 BlockPos checkPos = BlockPos.containing(this.getX(), this.getY() + 3, this.getZ());
                 BlockState state = this.level().getBlockState(checkPos);
                 if (!state.isAir()) {
-                    Vec3 mot = this.getDeltaMovement();
-                    this.setDeltaMovement(mot.x, mot.y + 0.1, mot.z);
+                    Vec3 motion = this.getDeltaMovement();
+                    this.setDeltaMovement(motion.x, motion.y + 0.1, motion.z);
                     this.setPos(this.getX(), this.getY() + 0.05, this.getZ());
                 }
             }
@@ -133,14 +132,14 @@ public class EntityWormMedium extends Monster {
             BlockPos checkPos = BlockPos.containing(this.getX(), this.getY() + 3, this.getZ());
             BlockState state = this.level().getBlockState(checkPos);
             if (!state.isAir()) {
-                Vec3 mot = this.getDeltaMovement();
-                this.setDeltaMovement(mot.x, mot.y + 0.1, mot.z);
+                Vec3 motion = this.getDeltaMovement();
+                this.setDeltaMovement(motion.x, motion.y + 0.1, motion.z);
                 this.setPos(this.getX(), this.getY() + 0.05, this.getZ());
             }
         }
 
-        Vec3 mot = this.getDeltaMovement();
-        this.setDeltaMovement(0, mot.y - 0.01, 0);
+        Vec3 motion = this.getDeltaMovement();
+        this.setDeltaMovement(0, motion.y - 0.01, 0);
     }
 
     @Override

@@ -9,7 +9,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
-import danger.orespawn.ModEntities;
 
 /**
  * Stone blocks that spawn creatures when broken (e.g. rat stone, fairy stone, ant troll stone).
@@ -17,6 +16,11 @@ import danger.orespawn.ModEntities;
 public class OreBasicStone extends Block {
 
     public enum StoneType { NORMAL, RAT, FAIRY, RED_ANT_TROLL, TERMITE_TROLL }
+
+    private static final int RAT_SPAWN_MAX_EXTRA = 10;
+    private static final int FAIRY_SPAWN_MAX_EXTRA = 6;
+    private static final int ANT_TROLL_SPAWN_BASE = 15;
+    private static final int ANT_TROLL_SPAWN_MAX_EXTRA = 6;
 
     private final StoneType stoneType;
 
@@ -38,29 +42,29 @@ public class OreBasicStone extends Block {
     }
 
     private void spawnOnBreak(ServerLevel level, BlockPos pos) {
-        int num;
+        int spawnCount;
         switch (stoneType) {
             case RAT:
-                num = 1 + level.random.nextInt(10);
-                for (int i = 0; i < num; i++) {
+                spawnCount = 1 + level.random.nextInt(RAT_SPAWN_MAX_EXTRA);
+                for (int i = 0; i < spawnCount; i++) {
                     // TODO: spawnCreature(level, ModEntities.RAT.get(), pos);
                 }
                 break;
             case FAIRY:
-                num = 1 + level.random.nextInt(6);
-                for (int i = 0; i < num; i++) {
+                spawnCount = 1 + level.random.nextInt(FAIRY_SPAWN_MAX_EXTRA);
+                for (int i = 0; i < spawnCount; i++) {
                     // TODO: spawnCreature(level, ModEntities.FAIRY.get(), pos);
                 }
                 break;
             case RED_ANT_TROLL:
-                num = 15 + level.random.nextInt(6);
-                for (int i = 0; i < num; i++) {
+                spawnCount = ANT_TROLL_SPAWN_BASE + level.random.nextInt(ANT_TROLL_SPAWN_MAX_EXTRA);
+                for (int i = 0; i < spawnCount; i++) {
                     // TODO: spawnCreature(level, ModEntities.RED_ANT.get(), pos);
                 }
                 break;
             case TERMITE_TROLL:
-                num = 15 + level.random.nextInt(6);
-                for (int i = 0; i < num; i++) {
+                spawnCount = ANT_TROLL_SPAWN_BASE + level.random.nextInt(ANT_TROLL_SPAWN_MAX_EXTRA);
+                for (int i = 0; i < spawnCount; i++) {
                     // TODO: spawnCreature(level, ModEntities.TERMITE.get(), pos);
                 }
                 break;

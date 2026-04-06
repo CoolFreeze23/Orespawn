@@ -17,12 +17,17 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 
 public class BlockDuctTape extends Block {
     public static final IntegerProperty USES = IntegerProperty.create("uses", 0, 5);
+    private static final int MAX_USES_BEFORE_GONE = 6;
+    private static final int REPAIR_FRACTION_DIVISOR = 6;
+    private static final int MIN_REPAIR_AMOUNT = 1;
+    private static final float TAPE_HEIGHT = 4;
+    private static final double EDGE_INSET = 1;
 
     private static final VoxelShape[] SHAPES = new VoxelShape[6];
     static {
-        for (int i = 0; i <= 5; i++) {
-            float f1 = (1 + i * 2) / 16.0f;
-            SHAPES[i] = Block.box(f1 * 16, 0, 1, 16 - 1, 4, 16 - 1);
+        for (int useIndex = 0; useIndex <= 5; useIndex++) {
+            float minXInSixteenths = (1 + useIndex * 2) / 16.0f;
+            SHAPES[useIndex] = Block.box(minXInSixteenths * 16, 0, EDGE_INSET, 16 - EDGE_INSET, TAPE_HEIGHT, 16 - EDGE_INSET);
         }
     }
 
@@ -56,8 +61,8 @@ public class BlockDuctTape extends Block {
         int maxDamage = held.getMaxDamage();
         if (maxDamage <= 0) return;
 
-        int repairAmount = maxDamage / 6;
-        if (repairAmount < 1) repairAmount = 1;
+        int repairAmount = maxDamage / REPAIR_FRACTION_DIVISOR;
+        if (repairAmount < MIN_REPAIR_AMOUNT) repairAmount = MIN_REPAIR_AMOUNT;
 
         int currentDamage = held.getDamageValue();
         if (currentDamage <= 0) return;
@@ -66,7 +71,7 @@ public class BlockDuctTape extends Block {
         held.setDamageValue(newDamage);
 
         int uses = state.getValue(USES) + 1;
-        if (uses >= 6) {
+        if (uses >= MAX_USES_BEFORE_GONE) {
             level.removeBlock(pos, false);
         } else {
             level.setBlock(pos, state.setValue(USES, uses), 2);

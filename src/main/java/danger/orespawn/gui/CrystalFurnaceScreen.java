@@ -11,23 +11,47 @@ public class CrystalFurnaceScreen extends AbstractContainerScreen<CrystalFurnace
     private static final ResourceLocation TEXTURE =
             ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "textures/gui/crystal_furnace.png");
 
+    private static final int FLAME_BLIT_X = 56;
+    private static final int FLAME_BLIT_BASE_Y = 36;
+    private static final int FLAME_TEXTURE_MAX_HEIGHT = 12;
+    private static final int FLAME_TEXTURE_U = 176;
+    private static final int FLAME_WIDTH = 14;
+    private static final int ARROW_BLIT_X = 79;
+    private static final int ARROW_BLIT_Y = 34;
+    private static final int ARROW_TEXTURE_U = 176;
+    private static final int ARROW_TEXTURE_V = 14;
+    private static final int ARROW_HEIGHT = 16;
+    private static final int ARROW_EXTRA_WIDTH = 1;
+
     public CrystalFurnaceScreen(CrystalFurnaceMenu menu, Inventory playerInventory, Component title) {
         super(menu, playerInventory, title);
     }
 
     @Override
     protected void renderBg(GuiGraphics guiGraphics, float partialTick, int mouseX, int mouseY) {
-        int x = (this.width - this.imageWidth) / 2;
-        int y = (this.height - this.imageHeight) / 2;
-        guiGraphics.blit(TEXTURE, x, y, 0, 0, this.imageWidth, this.imageHeight);
+        int panelLeft = (this.width - this.imageWidth) / 2;
+        int panelTop = (this.height - this.imageHeight) / 2;
+        guiGraphics.blit(TEXTURE, panelLeft, panelTop, 0, 0, this.imageWidth, this.imageHeight);
 
         if (this.menu.isLit()) {
-            int litProgress = this.menu.getLitProgress();
-            guiGraphics.blit(TEXTURE, x + 56, y + 36 + 12 - litProgress, 176, 12 - litProgress, 14, litProgress + 1);
+            int litHeight = this.menu.getLitProgress();
+            guiGraphics.blit(TEXTURE,
+                    panelLeft + FLAME_BLIT_X,
+                    panelTop + FLAME_BLIT_BASE_Y + FLAME_TEXTURE_MAX_HEIGHT - litHeight,
+                    FLAME_TEXTURE_U,
+                    FLAME_TEXTURE_MAX_HEIGHT - litHeight,
+                    FLAME_WIDTH,
+                    litHeight + ARROW_EXTRA_WIDTH);
         }
 
-        int burnProgress = this.menu.getBurnProgress();
-        guiGraphics.blit(TEXTURE, x + 79, y + 34, 176, 14, burnProgress + 1, 16);
+        int burnProgressWidth = this.menu.getBurnProgress();
+        guiGraphics.blit(TEXTURE,
+                panelLeft + ARROW_BLIT_X,
+                panelTop + ARROW_BLIT_Y,
+                ARROW_TEXTURE_U,
+                ARROW_TEXTURE_V,
+                burnProgressWidth + ARROW_EXTRA_WIDTH,
+                ARROW_HEIGHT);
     }
 
     @Override

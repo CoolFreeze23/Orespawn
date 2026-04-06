@@ -57,21 +57,21 @@ public class TheKing extends Monster {
 
     private BlockPos currentFlightTarget = null;
     private final Comparator<Entity> targetSorter;
-    private LivingEntity rt = null;
-    private double attdam = ATTACK_DAMAGE_VALUE;
-    private int hurt_timer = 0;
-    private int homex = 0;
-    private int homez = 0;
-    private int stream_count = 0;
-    private int stream_count_l = 0;
-    private int stream_count_i = 0;
+    private LivingEntity revengeTarget = null;
+    private double attackDamage = ATTACK_DAMAGE_VALUE;
+    private int hurtCooldown = 0;
+    private int homeX = 0;
+    private int homeZ = 0;
+    private int fireballStreamCount = 0;
+    private int lightningStreamCount = 0;
+    private int iceStreamCount = 0;
     private int ticker = 0;
-    private int player_hit_count = 0;
-    private int backoff_timer = 0;
-    private int guard_mode = 0;
-    private volatile int head_found = 0;
-    private int wing_sound = 0;
-    private int large_unknown_detected = 0;
+    private int playerHitCount = 0;
+    private int backoffTimer = 0;
+    private int guardModeTimer = 0;
+    private volatile int headEntityFound = 0;
+    private int wingSoundTimer = 0;
+    private int largeEntityDetected = 0;
     private int isEnd = 0;
     private int endCounter = 0;
 
@@ -200,42 +200,42 @@ public class TheKing extends Monster {
     @Override
     public void tick() {
         super.tick();
-        this.wing_sound++;
-        if (this.wing_sound > 30) {
+        this.wingSoundTimer++;
+        if (this.wingSoundTimer > 30) {
             if (!this.level().isClientSide) {
                 // TODO: Replace with custom SoundEvent "orespawn:MothraWings"
                 this.playSound(SoundEvents.ENDER_DRAGON_FLAP, 1.75f, 0.75f);
             }
-            this.wing_sound = 0;
+            this.wingSoundTimer = 0;
         }
 
         this.noPhysics = true;
         Vec3 motion = this.getDeltaMovement();
         this.setDeltaMovement(motion.x, motion.y * 0.6, motion.z);
 
-        if (this.player_hit_count < 10 && this.getHealth() < (float)(this.mygetMaxHealth() * 2 / 3)) {
-            this.attdam = ATTACK_DAMAGE_VALUE * 2;
+        if (this.playerHitCount < 10 && this.getHealth() < (float)(this.mygetMaxHealth() * 2 / 3)) {
+            this.attackDamage = ATTACK_DAMAGE_VALUE * 2;
         }
-        if (this.player_hit_count < 10 && this.getHealth() < (float)(this.mygetMaxHealth() / 2)) {
-            this.attdam = ATTACK_DAMAGE_VALUE * 4;
+        if (this.playerHitCount < 10 && this.getHealth() < (float)(this.mygetMaxHealth() / 2)) {
+            this.attackDamage = ATTACK_DAMAGE_VALUE * 4;
         }
-        if (this.player_hit_count < 10 && this.getHealth() < (float)(this.mygetMaxHealth() / 4)) {
-            this.attdam = ATTACK_DAMAGE_VALUE * 8;
+        if (this.playerHitCount < 10 && this.getHealth() < (float)(this.mygetMaxHealth() / 4)) {
+            this.attackDamage = ATTACK_DAMAGE_VALUE * 8;
         }
-        if (this.player_hit_count < 10 && this.getHealth() < (float)(this.mygetMaxHealth() / 8)) {
-            this.attdam = ATTACK_DAMAGE_VALUE * 16;
+        if (this.playerHitCount < 10 && this.getHealth() < (float)(this.mygetMaxHealth() / 8)) {
+            this.attackDamage = ATTACK_DAMAGE_VALUE * 16;
         }
 
         if (this.level().isClientSide) {
             this.isEnd = this.entityData.get(DATA_IS_END);
             if (this.isEnd != 0 && this.getRandom().nextInt(3) == 1) {
-                float f = 7.0f;
+                float particleOffset = 7.0f;
                 Vec3 mot = this.getDeltaMovement();
                 for (int i = 0; i < 10; i++) {
                     this.level().addParticle(ParticleTypes.FIREWORK,
-                            this.getX() - (double) f * Math.sin(Math.toRadians(this.getYRot())),
+                            this.getX() - (double) particleOffset * Math.sin(Math.toRadians(this.getYRot())),
                             this.getY() + 14.0,
-                            this.getZ() + (double) f * Math.cos(Math.toRadians(this.getYRot())),
+                            this.getZ() + (double) particleOffset * Math.cos(Math.toRadians(this.getYRot())),
                             (this.getRandom().nextGaussian() - this.getRandom().nextGaussian()) / 4.0 + mot.x * 6.0,
                             (this.getRandom().nextGaussian() - this.getRandom().nextGaussian()) / 4.0,
                             (this.getRandom().nextGaussian() - this.getRandom().nextGaussian()) / 4.0 + mot.z * 6.0);
@@ -246,12 +246,12 @@ public class TheKing extends Monster {
 
     @Override
     protected void customServerAiStep() {
-        int xdir;
-        int zdir;
-        int attrand = 5;
-        int which;
-        LivingEntity e;
-        LivingEntity f;
+        int randomXOffset;
+        int randomZOffset;
+        int attackChance = 5;
+        int attackChoice;
+        LivingEntity currentTarget;
+        LivingEntity nearbyTarget;
 
         if (this.isRemoved()) return;
         super.customServerAiStep();
@@ -264,18 +264,18 @@ public class TheKing extends Monster {
             this.endCounter++;
             this.noPhysics = true;
             this.setDeltaMovement(Vec3.ZERO);
-            this.hurt_timer = 10;
+            this.hurtCooldown = 10;
             if (this.isRemoved()) return;
 
-            Player p = this.findNearestPlayer();
-            if (p != null) {
-                this.lookAt(p, 10.0f, 10.0f);
-                p.setDeltaMovement(Vec3.ZERO);
-                double dd0 = this.getX() - p.getX();
-                double dd1 = this.getZ() - p.getZ();
-                float f2 = (float) (Math.atan2(dd1, dd0) * 180.0 / Math.PI) - 90.0f;
-                p.setYRot(f2);
-                p.setHealth(1.0f);
+            Player nearestPlayer = this.findNearestPlayer();
+            if (nearestPlayer != null) {
+                this.lookAt(nearestPlayer, 10.0f, 10.0f);
+                nearestPlayer.setDeltaMovement(Vec3.ZERO);
+                double deltaX = this.getX() - nearestPlayer.getX();
+                double deltaZ = this.getZ() - nearestPlayer.getZ();
+                float facingAngle = (float) (Math.atan2(deltaZ, deltaX) * 180.0 / Math.PI) - 90.0f;
+                nearestPlayer.setYRot(facingAngle);
+                nearestPlayer.setHealth(1.0f);
             }
 
             if (this.endCounter == 10) {
@@ -317,33 +317,33 @@ public class TheKing extends Monster {
 
         // ---- End-game phase 2: enraged ----
         if (this.isEnd == 2) {
-            this.hurt_timer = 10;
-            this.player_hit_count = 0;
-            this.stream_count = 10;
-            this.stream_count_l = 10;
-            this.stream_count_i = 10;
-            attrand = 3;
-            this.guard_mode = 0;
-            this.large_unknown_detected = 1;
-            if (this.backoff_timer > 0) this.backoff_timer--;
+            this.hurtCooldown = 10;
+            this.playerHitCount = 0;
+            this.fireballStreamCount = 10;
+            this.lightningStreamCount = 10;
+            this.iceStreamCount = 10;
+            attackChance = 3;
+            this.guardModeTimer = 0;
+            this.largeEntityDetected = 1;
+            if (this.backoffTimer > 0) this.backoffTimer--;
         }
 
-        if (this.hurt_timer > 0) this.hurt_timer--;
+        if (this.hurtCooldown > 0) this.hurtCooldown--;
 
-        if ((this.homex == 0 && this.homez == 0) || this.guard_mode == 0) {
-            this.homex = (int) this.getX();
-            this.homez = (int) this.getZ();
+        if ((this.homeX == 0 && this.homeZ == 0) || this.guardModeTimer == 0) {
+            this.homeX = (int) this.getX();
+            this.homeZ = (int) this.getZ();
         }
 
         this.ticker++;
         if (this.ticker > 30000) this.ticker = 0;
-        if (this.ticker % 80 == 0) this.stream_count = 10;
-        if (this.ticker % 90 == 0) this.stream_count_l = 5;
-        if (this.ticker % 70 == 0) this.stream_count_i = 8;
-        if (this.backoff_timer > 0) this.backoff_timer--;
+        if (this.ticker % 80 == 0) this.fireballStreamCount = 10;
+        if (this.ticker % 90 == 0) this.lightningStreamCount = 5;
+        if (this.ticker % 70 == 0) this.iceStreamCount = 8;
+        if (this.backoffTimer > 0) this.backoffTimer--;
 
-        if (this.player_hit_count < 10 && this.getHealth() < (float) (this.mygetMaxHealth() / 2)) {
-            attrand = 3;
+        if (this.playerHitCount < 10 && this.getHealth() < (float) (this.mygetMaxHealth() / 2)) {
+            attackChance = 3;
         }
 
         this.noPhysics = true;
@@ -353,102 +353,102 @@ public class TheKing extends Monster {
         }
 
         if (this.tooFarFromHome() || this.getRandom().nextInt(200) == 0 || this.flightTargetDistSqr() < 9.1) {
-            zdir = this.getRandom().nextInt(120);
-            xdir = this.getRandom().nextInt(120);
-            if (this.getRandom().nextInt(2) == 0) zdir = -zdir;
-            if (this.getRandom().nextInt(2) == 0) xdir = -xdir;
+            randomZOffset = this.getRandom().nextInt(120);
+            randomXOffset = this.getRandom().nextInt(120);
+            if (this.getRandom().nextInt(2) == 0) randomZOffset = -randomZOffset;
+            if (this.getRandom().nextInt(2) == 0) randomXOffset = -randomXOffset;
 
-            int altAdj = computeAltitudeAdjustment(this.homex, this.homez);
-            int targetY = Math.min((int) (this.getY() + altAdj), 230);
-            this.currentFlightTarget = new BlockPos(this.homex + xdir, targetY, this.homez + zdir);
+            int altAdj = computeAltitudeAdjustment(this.homeX, this.homeZ);
+            int flightY = Math.min((int) (this.getY() + altAdj), 230);
+            this.currentFlightTarget = new BlockPos(this.homeX + randomXOffset, flightY, this.homeZ + randomZOffset);
 
-        } else if (this.getRandom().nextInt(attrand) == 0) {
+        } else if (this.getRandom().nextInt(attackChance) == 0) {
             // ---- Target acquisition ----
-            e = this.rt;
+            currentTarget = this.revengeTarget;
 
-            if (e instanceof TheKing) {
+            if (currentTarget instanceof TheKing) {
                 // TODO: also check KingHead
-                this.rt = null;
-                e = null;
+                this.revengeTarget = null;
+                currentTarget = null;
             }
-            if (e != null) {
-                float d1 = (float) (e.getX() - this.homex);
-                float d2 = (float) (e.getZ() - this.homez);
-                float dist = (float) Math.sqrt(d1 * d1 + d2 * d2);
-                if (!e.isAlive() || this.getRandom().nextInt(250) == 1
-                        || (dist > 128.0f && this.guard_mode == 1)) {
-                    e = null;
-                    this.rt = null;
+            if (currentTarget != null) {
+                float deltaX = (float) (currentTarget.getX() - this.homeX);
+                float deltaZ = (float) (currentTarget.getZ() - this.homeZ);
+                float distFromHome = (float) Math.sqrt(deltaX * deltaX + deltaZ * deltaZ);
+                if (!currentTarget.isAlive() || this.getRandom().nextInt(250) == 1
+                        || (distFromHome > 128.0f && this.guardModeTimer == 1)) {
+                    currentTarget = null;
+                    this.revengeTarget = null;
                 }
-                if (e != null && !this.MyCanSee(e)) {
-                    e = null;
+                if (currentTarget != null && !this.MyCanSee(currentTarget)) {
+                    currentTarget = null;
                 }
             }
 
-            f = this.findSomethingToAttack();
+            nearbyTarget = this.findSomethingToAttack();
 
-            if (this.head_found == 0) {
+            if (this.headEntityFound == 0) {
                 // TODO: Spawn KingHead entity at this.getX(), this.getY() + 20, this.getZ()
             }
 
-            if (e == null) e = f;
+            if (currentTarget == null) currentTarget = nearbyTarget;
 
-            if (e != null) {
+            if (currentTarget != null) {
                 this.setAttacking(1);
 
-                if (this.backoff_timer == 0) {
-                    int targetDist = Math.min((int) (e.getY() + e.getBbHeight() / 2.0f + 1.0), 230);
-                    this.currentFlightTarget = new BlockPos((int) e.getX(), targetDist, (int) e.getZ());
+                if (this.backoffTimer == 0) {
+                    int flightY = Math.min((int) (currentTarget.getY() + currentTarget.getBbHeight() / 2.0f + 1.0), 230);
+                    this.currentFlightTarget = new BlockPos((int) currentTarget.getX(), flightY, (int) currentTarget.getZ());
                     if (this.getRandom().nextInt(70) == 1) {
-                        this.backoff_timer = 80 + this.getRandom().nextInt(80);
+                        this.backoffTimer = 80 + this.getRandom().nextInt(80);
                     }
                 } else if (this.flightTargetDistSqr() < 9.1) {
-                    zdir = this.getRandom().nextInt(20) + 30;
-                    xdir = this.getRandom().nextInt(20) + 30;
-                    if (this.getRandom().nextInt(2) == 0) zdir = -zdir;
-                    if (this.getRandom().nextInt(2) == 0) xdir = -xdir;
+                    randomZOffset = this.getRandom().nextInt(20) + 30;
+                    randomXOffset = this.getRandom().nextInt(20) + 30;
+                    if (this.getRandom().nextInt(2) == 0) randomZOffset = -randomZOffset;
+                    if (this.getRandom().nextInt(2) == 0) randomXOffset = -randomXOffset;
 
-                    int altAdj = computeAltitudeAdjustment((int) e.getX(), (int) e.getZ());
-                    int targetY = Math.min((int) (this.getY() + altAdj), 230);
-                    this.currentFlightTarget = new BlockPos((int) e.getX() + xdir, targetY, (int) e.getZ() + zdir);
+                    int altAdj = computeAltitudeAdjustment((int) currentTarget.getX(), (int) currentTarget.getZ());
+                    int flightY = Math.min((int) (this.getY() + altAdj), 230);
+                    this.currentFlightTarget = new BlockPos((int) currentTarget.getX() + randomXOffset, flightY, (int) currentTarget.getZ() + randomZOffset);
                 }
 
                 // Melee range area + direct attack
-                if (this.distanceToSqr(e) < 900.0) {
+                if (this.distanceToSqr(currentTarget) < 900.0) {
                     if (this.getRandom().nextInt(2) == 1) {
                         this.doJumpDamage(this.getX(), this.getY(), this.getZ(),
                                 15.0, ATTACK_DAMAGE_VALUE / 4, 0);
                     }
-                    this.doHurtTarget(e);
+                    this.doHurtTarget(currentTarget);
                 }
 
                 // Forward area damage
-                double dx = this.getX() + 20.0 * Math.sin(Math.toRadians(this.yHeadRot));
-                double dz = this.getZ() - 20.0 * Math.cos(Math.toRadians(this.yHeadRot));
+                double forwardX = this.getX() + 20.0 * Math.sin(Math.toRadians(this.yHeadRot));
+                double forwardZ = this.getZ() - 20.0 * Math.cos(Math.toRadians(this.yHeadRot));
                 if (this.getRandom().nextInt(3) == 1) {
-                    this.doJumpDamage(dx, this.getY() + 10.0, dz,
+                    this.doJumpDamage(forwardX, this.getY() + 10.0, forwardZ,
                             15.0, ATTACK_DAMAGE_VALUE / 2, 1);
                 }
 
                 // Ranged attacks when target is far
-                if (this.getHorizontalDistanceSqToEntity(e) > 900.0) {
-                    which = this.getRandom().nextInt(3);
-                    if (which == 0 && this.stream_count > 0) {
+                if (this.getHorizontalDistanceSqToEntity(currentTarget) > 900.0) {
+                    attackChoice = this.getRandom().nextInt(3);
+                    if (attackChoice == 0 && this.fireballStreamCount > 0) {
                         this.setAttacking(1);
-                        if (isAimedAt(e)) this.firecanon(e);
-                    } else if (which == 1 && this.stream_count_l > 0) {
+                        if (isAimedAt(currentTarget)) this.firecanon(currentTarget);
+                    } else if (attackChoice == 1 && this.lightningStreamCount > 0) {
                         this.setAttacking(1);
-                        if (isAimedAt(e)) this.firecanonl(e);
-                    } else if (this.stream_count_i > 0) {
+                        if (isAimedAt(currentTarget)) this.firecanonl(currentTarget);
+                    } else if (this.iceStreamCount > 0) {
                         this.setAttacking(1);
-                        if (isAimedAt(e)) this.firecanoni(e);
+                        if (isAimedAt(currentTarget)) this.firecanoni(currentTarget);
                     }
                 }
             } else {
                 this.setAttacking(0);
-                this.stream_count = 10;
-                this.stream_count_l = 5;
-                this.stream_count_i = 8;
+                this.fireballStreamCount = 10;
+                this.lightningStreamCount = 5;
+                this.iceStreamCount = 8;
             }
         }
 
@@ -489,11 +489,11 @@ public class TheKing extends Monster {
         // ---- Passive healing ----
         if (this.getRandom().nextInt(30) == 1 && this.getHealth() < this.mygetMaxHealth()) {
             this.heal(5.0f);
-            if (this.large_unknown_detected != 0) {
+            if (this.largeEntityDetected != 0) {
                 this.heal(200.0f);
             }
         }
-        if (this.player_hit_count < 10 && this.getHealth() < 2000.0f) {
+        if (this.playerHitCount < 10 && this.getHealth() < 2000.0f) {
             this.heal(2000.0f - this.getHealth());
         }
     }
@@ -505,36 +505,32 @@ public class TheKing extends Monster {
         if (target == null) return false;
 
         if (target instanceof LivingEntity living) {
-            float s = living.getBbHeight() * living.getBbWidth();
-            if (s > 30.0f
+            float entitySize = living.getBbHeight() * living.getBbWidth();
+            if (entitySize > 30.0f
                     // TODO: && !MyUtils.isRoyalty(living)
                     // TODO: Exclude Godzilla, GodzillaHead, PitchBlack, Kraken
                     && !(living instanceof EnderDragon)) {
                 living.setHealth(living.getHealth() / 2.0f);
-                living.hurt(this.damageSources().mobAttack(this), (float) this.attdam * 10.0f);
-                this.large_unknown_detected = 1;
+                living.hurt(this.damageSources().mobAttack(this), (float) this.attackDamage * 10.0f);
+                this.largeEntityDetected = 1;
             }
         }
 
         if (target instanceof EnderDragon dragon) {
             DamageSource genDmg = this.damageSources().generic();
-            if (this.getRandom().nextInt(6) == 1) {
-                dragon.head.hurt(genDmg, (float) this.attdam);
-            } else {
-                dragon.head.hurt(genDmg, (float) this.attdam);
-            }
+            dragon.head.hurt(genDmg, (float) this.attackDamage);
         }
 
-        boolean hit = target.hurt(this.damageSources().mobAttack(this), (float) this.attdam);
+        boolean hit = target.hurt(this.damageSources().mobAttack(this), (float) this.attackDamage);
         if (hit) {
-            double ks = 3.3;
-            double inair = 0.25;
-            float angle = (float) Math.atan2(target.getZ() - this.getZ(), target.getX() - this.getX());
-            inair += this.getRandom().nextFloat() * 0.25;
+            double knockbackStrength = 3.3;
+            double upwardKnockback = 0.25;
+            float angleToTarget = (float) Math.atan2(target.getZ() - this.getZ(), target.getX() - this.getX());
+            upwardKnockback += this.getRandom().nextFloat() * 0.25;
             if (target.isRemoved() || target instanceof Player) {
-                inair *= 1.5;
+                upwardKnockback *= 1.5;
             }
-            target.push(Math.cos(angle) * ks, inair, Math.sin(angle) * ks);
+            target.push(Math.cos(angleToTarget) * knockbackStrength, upwardKnockback, Math.sin(angleToTarget) * knockbackStrength);
         }
         return hit;
     }
@@ -542,41 +538,41 @@ public class TheKing extends Monster {
     @Override
     public boolean hurt(DamageSource source, float amount) {
         boolean ret = false;
-        if (this.hurt_timer > 0) return false;
+        if (this.hurtCooldown > 0) return false;
 
-        float dm = Math.min(amount, 750.0f);
+        float clampedDamage = Math.min(amount, 750.0f);
 
         if (source.getMsgId().equals("inWall")) return false;
 
         Entity attacker = source.getEntity();
         if (attacker instanceof LivingEntity living) {
-            float s = living.getBbHeight() * living.getBbWidth();
-            if (s > 30.0f
+            float entitySize = living.getBbHeight() * living.getBbWidth();
+            if (entitySize > 30.0f
                     // TODO: && !MyUtils.isRoyalty(living)
                     // TODO: Exclude Godzilla, GodzillaHead, PitchBlack, Kraken
                     ) {
-                dm /= 10.0f;
-                this.hurt_timer = 50;
-                this.large_unknown_detected = 1;
+                clampedDamage /= 10.0f;
+                this.hurtCooldown = 50;
+                this.largeEntityDetected = 1;
             }
-            if (living instanceof Monster && s < 3.0f) {
+            if (living instanceof Monster && entitySize < 3.0f) {
                 living.discard();
                 return false;
             }
         }
 
         if (!source.getMsgId().equals("cactus")) {
-            this.hurt_timer = 20;
-            ret = super.hurt(source, dm);
+            this.hurtCooldown = 20;
+            ret = super.hurt(source, clampedDamage);
             if (attacker instanceof Player) {
-                this.player_hit_count++;
+                this.playerHitCount++;
             }
             if (attacker instanceof LivingEntity living && this.currentFlightTarget != null
                     // TODO: && !MyUtils.isRoyalty(attacker)
                     ) {
-                this.rt = living;
-                int targetY = Math.min((int) attacker.getY(), 230);
-                this.currentFlightTarget = new BlockPos((int) attacker.getX(), targetY, (int) attacker.getZ());
+                this.revengeTarget = living;
+                int flightY = Math.min((int) attacker.getY(), 230);
+                this.currentFlightTarget = new BlockPos((int) attacker.getX(), flightY, (int) attacker.getZ());
             }
         }
         return ret;
@@ -584,12 +580,12 @@ public class TheKing extends Monster {
 
     @Override
     public int getArmorValue() {
-        if (this.large_unknown_detected != 0) return 25;
-        if (this.player_hit_count < 10 && this.getHealth() < (float) (this.mygetMaxHealth() * 2 / 3))
+        if (this.largeEntityDetected != 0) return 25;
+        if (this.playerHitCount < 10 && this.getHealth() < (float) (this.mygetMaxHealth() * 2 / 3))
             return DEFENSE_VALUE + 1;
-        if (this.player_hit_count < 10 && this.getHealth() < (float) (this.mygetMaxHealth() / 2))
+        if (this.playerHitCount < 10 && this.getHealth() < (float) (this.mygetMaxHealth() / 2))
             return DEFENSE_VALUE + 2;
-        if (this.player_hit_count < 10 && this.getHealth() < (float) (this.mygetMaxHealth() / 4))
+        if (this.playerHitCount < 10 && this.getHealth() < (float) (this.mygetMaxHealth() / 4))
             return DEFENSE_VALUE + 3;
         return DEFENSE_VALUE;
     }
@@ -602,7 +598,7 @@ public class TheKing extends Monster {
         double cx = this.getX() - xzoff * Math.sin(Math.toRadians(this.getYRot()));
         double cz = this.getZ() + xzoff * Math.cos(Math.toRadians(this.getYRot()));
 
-        if (this.stream_count > 0) {
+        if (this.fireballStreamCount > 0) {
             this.playSound(SoundEvents.TNT_PRIMED, 1.0f,
                     1.0f / (this.getRandom().nextFloat() * 0.4f + 0.8f));
 
@@ -635,7 +631,7 @@ public class TheKing extends Monster {
             this.level().playSound(null, cx, this.getY() + yoff, cz,
                     SoundEvents.ARROW_SHOOT, SoundSource.HOSTILE,
                     1.0f, 1.0f / (this.getRandom().nextFloat() * 0.4f + 0.8f));
-            this.stream_count--;
+            this.fireballStreamCount--;
         }
     }
 
@@ -645,7 +641,7 @@ public class TheKing extends Monster {
         double cx = this.getX() - xzoff * Math.sin(Math.toRadians(this.getYRot()));
         double cz = this.getZ() + xzoff * Math.cos(Math.toRadians(this.getYRot()));
 
-        if (this.stream_count_l > 0) {
+        if (this.lightningStreamCount > 0) {
             this.level().playSound(null, cx, this.getY() + yoff, cz,
                     SoundEvents.ARROW_SHOOT, SoundSource.HOSTILE,
                     1.0f, 1.0f / (this.getRandom().nextFloat() * 0.4f + 0.8f));
@@ -665,7 +661,7 @@ public class TheKing extends Monster {
             }
             */
 
-            this.stream_count_l--;
+            this.lightningStreamCount--;
         }
     }
 
@@ -675,7 +671,7 @@ public class TheKing extends Monster {
         double cx = this.getX() - xzoff * Math.sin(Math.toRadians(this.getYRot()));
         double cz = this.getZ() + xzoff * Math.cos(Math.toRadians(this.getYRot()));
 
-        if (this.stream_count_i > 0) {
+        if (this.iceStreamCount > 0) {
             this.level().playSound(null, cx, this.getY() + yoff, cz,
                     SoundEvents.ARROW_SHOOT, SoundSource.HOSTILE,
                     1.0f, 1.0f / (this.getRandom().nextFloat() * 0.4f + 0.8f));
@@ -696,7 +692,7 @@ public class TheKing extends Monster {
             }
             */
 
-            this.stream_count_i--;
+            this.iceStreamCount--;
         }
     }
 
@@ -717,10 +713,10 @@ public class TheKing extends Monster {
                     1.0f + (this.getRandom().nextFloat() - this.getRandom().nextFloat()) * 0.5f);
 
             if (knock != 0) {
-                double ks = 2.75;
-                double inair = 0.65;
-                float angle = (float) Math.atan2(target.getZ() - this.getZ(), target.getX() - this.getX());
-                target.push(Math.cos(angle) * ks, inair, Math.sin(angle) * ks);
+                double knockbackStrength = 2.75;
+                double upwardKnockback = 0.65;
+                float angleToTarget = (float) Math.atan2(target.getZ() - this.getZ(), target.getX() - this.getX());
+                target.push(Math.cos(angleToTarget) * knockbackStrength, upwardKnockback, Math.sin(angleToTarget) * knockbackStrength);
             }
         }
         return null;
@@ -731,12 +727,12 @@ public class TheKing extends Monster {
     private boolean isSuitableTarget(LivingEntity target) {
         if (target == null || target == this || !target.isAlive()) return false;
 
-        // TODO: if (target instanceof KingHead) { head_found = 1; return false; }
+        // TODO: if (target instanceof KingHead) { headEntityFound = 1; return false; }
         // TODO: if (MyUtils.isRoyalty(target)) return false;
 
-        float d1 = (float) (target.getX() - this.homex);
-        float d2 = (float) (target.getZ() - this.homez);
-        if (Math.sqrt(d1 * d1 + d2 * d2) > 144.0f) return false;
+        float deltaX = (float) (target.getX() - this.homeX);
+        float deltaZ = (float) (target.getZ() - this.homeZ);
+        if (Math.sqrt(deltaX * deltaX + deltaZ * deltaZ) > 144.0f) return false;
 
         // TODO: if (MyUtils.isIgnoreable(target)) return false;
 
@@ -766,7 +762,7 @@ public class TheKing extends Monster {
         if (this.isEnd == 2) {
             List<Player> players = this.level().getEntitiesOfClass(Player.class, searchBox);
             players.sort(this.targetSorter);
-            this.head_found = 1;
+            this.headEntityFound = 1;
             for (Player player : players) {
                 if (this.isSuitableTarget(player)) return player;
             }
@@ -775,12 +771,12 @@ public class TheKing extends Monster {
         List<LivingEntity> entities = this.level().getEntitiesOfClass(LivingEntity.class, searchBox);
         entities.sort(this.targetSorter);
         LivingEntity ret = null;
-        this.head_found = 0;
+        this.headEntityFound = 0;
         for (LivingEntity entity : entities) {
             if (ret == null && this.isSuitableTarget(entity)) {
                 ret = entity;
             }
-            if (ret != null && this.head_found != 0) break;
+            if (ret != null && this.headEntityFound != 0) break;
         }
         return ret;
     }
@@ -838,9 +834,9 @@ public class TheKing extends Monster {
     }
 
     private boolean tooFarFromHome() {
-        float d1 = (float) (this.getX() - this.homex);
-        float d2 = (float) (this.getZ() - this.homez);
-        return Math.sqrt(d1 * d1 + d2 * d2) > 120.0f;
+        float deltaX = (float) (this.getX() - this.homeX);
+        float deltaZ = (float) (this.getZ() - this.homeZ);
+        return Math.sqrt(deltaX * deltaX + deltaZ * deltaZ) > 120.0f;
     }
 
     private double flightTargetDistSqr() {
@@ -851,10 +847,10 @@ public class TheKing extends Monster {
         return dx * dx + dy * dy + dz * dz;
     }
 
-    private double getHorizontalDistanceSqToEntity(Entity e) {
-        double d1 = e.getZ() - this.getZ();
-        double d2 = e.getX() - this.getX();
-        return d1 * d1 + d2 * d2;
+    private double getHorizontalDistanceSqToEntity(Entity entity) {
+        double deltaZ = entity.getZ() - this.getZ();
+        double deltaX = entity.getX() - this.getX();
+        return deltaZ * deltaZ + deltaX * deltaX;
     }
 
     private int computeAltitudeAdjustment(int centerX, int centerZ) {
@@ -898,7 +894,7 @@ public class TheKing extends Monster {
     }
 
     public void setGuardMode(int i) {
-        this.guard_mode = i;
+        this.guardModeTimer = i;
     }
 
     public void setFree() {
@@ -950,10 +946,10 @@ public class TheKing extends Monster {
     @Override
     public void addAdditionalSaveData(CompoundTag tag) {
         super.addAdditionalSaveData(tag);
-        tag.putInt("KingHomeX", this.homex);
-        tag.putInt("KingHomeZ", this.homez);
-        tag.putInt("GuardMode", this.guard_mode);
-        tag.putInt("PlayerHits", this.player_hit_count);
+        tag.putInt("KingHomeX", this.homeX);
+        tag.putInt("KingHomeZ", this.homeZ);
+        tag.putInt("GuardMode", this.guardModeTimer);
+        tag.putInt("PlayerHits", this.playerHitCount);
         tag.putInt("IsEnd", this.isEnd);
         tag.putInt("EndCounter", this.endCounter);
     }
@@ -961,10 +957,10 @@ public class TheKing extends Monster {
     @Override
     public void readAdditionalSaveData(CompoundTag tag) {
         super.readAdditionalSaveData(tag);
-        this.homex = tag.getInt("KingHomeX");
-        this.homez = tag.getInt("KingHomeZ");
-        this.guard_mode = tag.getInt("GuardMode");
-        this.player_hit_count = tag.getInt("PlayerHits");
+        this.homeX = tag.getInt("KingHomeX");
+        this.homeZ = tag.getInt("KingHomeZ");
+        this.guardModeTimer = tag.getInt("GuardMode");
+        this.playerHitCount = tag.getInt("PlayerHits");
         this.isEnd = tag.getInt("IsEnd");
         this.endCounter = tag.getInt("EndCounter");
     }

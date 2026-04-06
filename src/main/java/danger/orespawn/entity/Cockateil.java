@@ -61,8 +61,8 @@ public class Cockateil extends Animal {
         return this.entityData.get(DATA_BIRD_TYPE);
     }
 
-    public void setBirdType(int val) {
-        this.entityData.set(DATA_BIRD_TYPE, val);
+    public void setBirdType(int birdTypeIndex) {
+        this.entityData.set(DATA_BIRD_TYPE, birdTypeIndex);
     }
 
     @Override
@@ -74,11 +74,11 @@ public class Cockateil extends Animal {
     public void tick() {
         super.tick();
         if (this.currentFlightTarget != null) {
-            Vec3 delta = this.getDeltaMovement();
+            Vec3 currentMotion = this.getDeltaMovement();
             if (this.getY() < this.currentFlightTarget.getY()) {
-                this.setDeltaMovement(delta.x, delta.y * 0.7, delta.z);
+                this.setDeltaMovement(currentMotion.x, currentMotion.y * 0.7, currentMotion.z);
             } else {
-                this.setDeltaMovement(delta.x, delta.y * 0.5, delta.z);
+                this.setDeltaMovement(currentMotion.x, currentMotion.y * 0.5, currentMotion.z);
             }
         }
     }
@@ -90,8 +90,8 @@ public class Cockateil extends Animal {
 
     @Override
     public boolean hurt(DamageSource source, float amount) {
-        Entity e = source.getEntity();
-        if (e instanceof Player) {
+        Entity attacker = source.getEntity();
+        if (attacker instanceof Player) {
             this.killedByPlayer = true;
         }
         return super.hurt(source, amount);
@@ -127,14 +127,14 @@ public class Cockateil extends Animal {
                     (int) this.getZ() + zdir);
         }
 
-        double dx = this.currentFlightTarget.getX() + 0.3 - this.getX();
-        double dy = this.currentFlightTarget.getY() + 0.1 - this.getY();
-        double dz = this.currentFlightTarget.getZ() + 0.3 - this.getZ();
-        Vec3 delta = this.getDeltaMovement();
+        double deltaX = this.currentFlightTarget.getX() + 0.3 - this.getX();
+        double deltaY = this.currentFlightTarget.getY() + 0.1 - this.getY();
+        double deltaZ = this.currentFlightTarget.getZ() + 0.3 - this.getZ();
+        Vec3 currentMotion = this.getDeltaMovement();
         this.setDeltaMovement(
-                delta.x + (Math.signum(dx) * 0.3 - delta.x) * 0.25,
-                delta.y + (Math.signum(dy) * 0.7 - delta.y) * 0.2,
-                delta.z + (Math.signum(dz) * 0.3 - delta.z) * 0.25);
+                currentMotion.x + (Math.signum(deltaX) * 0.3 - currentMotion.x) * 0.25,
+                currentMotion.y + (Math.signum(deltaY) * 0.7 - currentMotion.y) * 0.2,
+                currentMotion.z + (Math.signum(deltaZ) * 0.3 - currentMotion.z) * 0.25);
     }
 
     @Nullable

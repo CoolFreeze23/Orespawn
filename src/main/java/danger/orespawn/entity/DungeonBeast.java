@@ -67,8 +67,8 @@ public class DungeonBeast extends Monster {
         return this.entityData.get(DATA_ATTACKING);
     }
 
-    public final void setAttacking(int par1) {
-        this.entityData.set(DATA_ATTACKING, par1);
+    public final void setAttacking(int value) {
+        this.entityData.set(DATA_ATTACKING, value);
     }
 
     @Override
@@ -118,15 +118,15 @@ public class DungeonBeast extends Monster {
         super.customServerAiStep();
 
         if (this.getRandom().nextInt(8) == 0) {
-            LivingEntity e = findSomethingToAttack();
-            if (e != null) {
-                if (this.distanceToSqr(e) < 8.0) {
+            LivingEntity attackTarget = findSomethingToAttack();
+            if (attackTarget != null) {
+                if (this.distanceToSqr(attackTarget) < 8.0) {
                     this.setAttacking(1);
                     if (this.getRandom().nextInt(7) == 0) {
-                        this.doHurtTarget(e);
+                        this.doHurtTarget(attackTarget);
                     }
                 } else {
-                    this.getNavigation().moveTo(e, 1.2);
+                    this.getNavigation().moveTo(attackTarget, 1.2);
                 }
             } else {
                 this.setAttacking(0);
@@ -138,8 +138,8 @@ public class DungeonBeast extends Monster {
         List<LivingEntity> list = this.level().getEntitiesOfClass(LivingEntity.class,
                 this.getBoundingBox().inflate(16.0, 3.0, 16.0));
         list.sort(this.targetSorter);
-        for (LivingEntity e : list) {
-            if (isSuitableTarget(e)) return e;
+        for (LivingEntity candidate : list) {
+            if (isSuitableTarget(candidate)) return candidate;
         }
         return null;
     }

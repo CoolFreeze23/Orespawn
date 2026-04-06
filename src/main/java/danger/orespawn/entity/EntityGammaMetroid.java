@@ -43,10 +43,12 @@ import danger.orespawn.ModItems;
 import danger.orespawn.OreSpawnMod;
 
 public class EntityGammaMetroid extends TamableAnimal {
-    private int closest = 99999;
-    private int tx = 0;
-    private int ty = 0;
-    private int tz = 0;
+    private static final int NO_STONE_FOUND = 99999;
+
+    private int closestStoneDistSq = NO_STONE_FOUND;
+    private int targetStoneX = 0;
+    private int targetStoneY = 0;
+    private int targetStoneZ = 0;
 
     public EntityGammaMetroid(EntityType<? extends EntityGammaMetroid> type, Level level) {
         super(type, level);
@@ -109,22 +111,22 @@ public class EntityGammaMetroid extends TamableAnimal {
     }
 
     private void scanForStone() {
-        this.closest = 99999;
-        this.tx = 0;
-        this.ty = 0;
-        this.tz = 0;
+        this.closestStoneDistSq = NO_STONE_FOUND;
+        this.targetStoneX = 0;
+        this.targetStoneY = 0;
+        this.targetStoneZ = 0;
 
         for (int i = 1; i < 6; i++) {
             int j = Math.min(i, 2);
-            if (scan_it((int) this.getX(), (int) this.getY() + 1, (int) this.getZ(), i, j, i)) break;
+            if (scanVolumeForStone((int) this.getX(), (int) this.getY() + 1, (int) this.getZ(), i, j, i)) break;
             if (i >= 4) i++;
         }
 
-        if (this.closest < 99999) {
-            this.getNavigation().moveTo(this.tx, this.ty, this.tz, 1.0);
-            if (this.closest < 12) {
+        if (this.closestStoneDistSq < NO_STONE_FOUND) {
+            this.getNavigation().moveTo(this.targetStoneX, this.targetStoneY, this.targetStoneZ, 1.0);
+            if (this.closestStoneDistSq < 12) {
                 if (this.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)) {
-                    this.level().setBlock(new BlockPos(this.tx, this.ty, this.tz),
+                    this.level().setBlock(new BlockPos(this.targetStoneX, this.targetStoneY, this.targetStoneZ),
                             Blocks.AIR.defaultBlockState(), 2);
                 }
                 this.heal(1.0f);
@@ -134,36 +136,39 @@ public class EntityGammaMetroid extends TamableAnimal {
         }
     }
 
-    private boolean scan_it(int x, int y, int z, int dx, int dy, int dz) {
+    private boolean scanVolumeForStone(int originX, int originY, int originZ, int radiusX, int radiusY, int radiusZ) {
         int found = 0;
-        for (int i = -dy; i <= dy; i++) {
-            for (int j = -dz; j <= dz; j++) {
-                found += checkBlock(x + dx, y + i, z + j, dx * dx + j * j + i * i, found);
-                found += checkBlock(x - dx, y + i, z + j, dx * dx + j * j + i * i, found);
+        for (int i = -radiusY; i <= radiusY; i++) {
+            for (int j = -radiusZ; j <= radiusZ; j++) {
+                int distSq = radiusX * radiusX + j * j + i * i;
+                found += considerStoneAt(originX + radiusX, originY + i, originZ + j, distSq);
+                found += considerStoneAt(originX - radiusX, originY + i, originZ + j, distSq);
             }
         }
-        for (int i = -dx; i <= dx; i++) {
-            for (int j = -dz; j <= dz; j++) {
-                found += checkBlock(x + i, y + dy, z + j, dy * dy + j * j + i * i, found);
-                found += checkBlock(x + i, y - dy, z + j, dy * dy + j * j + i * i, found);
+        for (int i = -radiusX; i <= radiusX; i++) {
+            for (int j = -radiusZ; j <= radiusZ; j++) {
+                int distSq = radiusY * radiusY + j * j + i * i;
+                found += considerStoneAt(originX + i, originY + radiusY, originZ + j, distSq);
+                found += considerStoneAt(originX + i, originY - radiusY, originZ + j, distSq);
             }
         }
-        for (int i = -dx; i <= dx; i++) {
-            for (int j = -dy; j <= dy; j++) {
-                found += checkBlock(x + i, y + j, z + dz, dz * dz + j * j + i * i, found);
-                found += checkBlock(x + i, y + j, z - dz, dz * dz + j * j + i * i, found);
+        for (int i = -radiusX; i <= radiusX; i++) {
+            for (int j = -radiusY; j <= radiusY; j++) {
+                int distSq = radiusZ * radiusZ + j * j + i * i;
+                found += considerStoneAt(originX + i, originY + j, originZ + radiusZ, distSq);
+                found += considerStoneAt(originX + i, originY + j, originZ - radiusZ, distSq);
             }
         }
         return found != 0;
     }
 
-    private int checkBlock(int bx, int by, int bz, int d, int currentFound) {
-        BlockState state = this.level().getBlockState(new BlockPos(bx, by, bz));
-        if (state.is(Blocks.STONE) && d < this.closest) {
-            this.closest = d;
-            this.tx = bx;
-            this.ty = by;
-            this.tz = bz;
+    private int considerStoneAt(int blockX, int blockY, int blockZ, int distSq) {
+        BlockState state = this.level().getBlockState(new BlockPos(blockX, blockY, blockZ));
+        if (state.is(Blocks.STONE) && distSq < this.closestStoneDistSq) {
+            this.closestStoneDistSq = distSq;
+            this.targetStoneX = blockX;
+            this.targetStoneY = blockY;
+            this.targetStoneZ = blockZ;
             return 1;
         }
         return 0;
@@ -176,8 +181,8 @@ public class EntityGammaMetroid extends TamableAnimal {
         List<LivingEntity> entities = this.level().getEntitiesOfClass(LivingEntity.class,
                 this.getBoundingBox().inflate(10.0, 3.0, 10.0));
         entities.sort(Comparator.comparingDouble(this::distanceToSqr));
-        for (LivingEntity e : entities) {
-            if (isSuitableTarget(e)) return e;
+        for (LivingEntity candidate : entities) {
+            if (isSuitableTarget(candidate)) return candidate;
         }
         return null;
     }

@@ -88,12 +88,12 @@ public class ThePrincess extends TamableAnimal {
     }
 
     @Override
-    public boolean causeFallDamage(float f, float m, DamageSource s) { return false; }
+    public boolean causeFallDamage(float fallDistance, float multiplier, DamageSource source) { return false; }
 
     public int getActivity() { return this.entityData.get(DATA_ACTIVITY); }
-    public void setActivity(int v) { this.entityData.set(DATA_ACTIVITY, v); }
+    public void setActivity(int value) { this.entityData.set(DATA_ACTIVITY, value); }
     public int getAttacking() { return this.entityData.get(DATA_ATTACKING); }
-    public void setAttacking(int v) { this.entityData.set(DATA_ATTACKING, v); }
+    public void setAttacking(int value) { this.entityData.set(DATA_ATTACKING, value); }
     public int getHead1Ext() { return this.head1ext; }
     public int getHead2Ext() { return this.head2ext; }
     public int getHead3Ext() { return this.head3ext; }
@@ -129,9 +129,9 @@ public class ThePrincess extends TamableAnimal {
         if (this.random.nextInt(200) == 1 && this.getHealth() < this.getMaxHealth()) this.heal(1.0f);
 
         if (!this.isTame()) {
-            Player p = this.level().getNearestPlayer(this, 10.0);
-            if (p != null) {
-                this.tame(p);
+            Player nearestPlayer = this.level().getNearestPlayer(this, 10.0);
+            if (nearestPlayer != null) {
+                this.tame(nearestPlayer);
                 this.level().broadcastEntityEvent(this, (byte) 7);
                 this.heal(this.getMaxHealth() - this.getHealth());
             }

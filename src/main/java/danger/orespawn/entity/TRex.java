@@ -136,13 +136,13 @@ public class TRex extends Monster {
     public boolean doHurtTarget(Entity target) {
         if (super.doHurtTarget(target)) {
             if (target instanceof LivingEntity living) {
-                double ks = 1.2;
-                double inair = 0.1;
-                float angle = (float) Math.atan2(target.getZ() - this.getZ(), target.getX() - this.getX());
+                double knockbackStrength = 1.2;
+                double upwardKnockback = 0.1;
+                float angleToTarget = (float) Math.atan2(target.getZ() - this.getZ(), target.getX() - this.getX());
                 if (target.isRemoved() || target instanceof Player) {
-                    inair *= 2.0;
+                    upwardKnockback *= 2.0;
                 }
-                target.push(Math.cos(angle) * ks, inair, Math.sin(angle) * ks);
+                target.push(Math.cos(angleToTarget) * knockbackStrength, upwardKnockback, Math.sin(angleToTarget) * knockbackStrength);
             }
             return true;
         }
@@ -155,8 +155,8 @@ public class TRex extends Monster {
             return false;
         }
         boolean ret = super.hurt(source, amount);
-        Entity e = source.getEntity();
-        if (e instanceof LivingEntity living) {
+        Entity attacker = source.getEntity();
+        if (attacker instanceof LivingEntity living) {
             this.revengeTarget = living;
         }
         return ret;

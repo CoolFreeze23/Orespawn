@@ -130,12 +130,12 @@ public class EntityLurkingTerror extends Monster {
                 --keepTrying;
             }
         } else if (this.random.nextInt(9) == 0) {
-            LivingEntity e = findSomethingToAttack();
-            if (e != null) {
+            LivingEntity targetEntity = findSomethingToAttack();
+            if (targetEntity != null) {
                 this.setAttacking(1);
-                this.currentFlightTarget = e.blockPosition().above(1);
-                if (this.distanceToSqr(e) < 6.0) {
-                    this.doHurtTarget(e);
+                this.currentFlightTarget = targetEntity.blockPosition().above(1);
+                if (this.distanceToSqr(targetEntity) < 6.0) {
+                    this.doHurtTarget(targetEntity);
                 }
             } else {
                 this.setAttacking(0);
@@ -182,8 +182,8 @@ public class EntityLurkingTerror extends Monster {
         List<LivingEntity> entities = this.level().getEntitiesOfClass(LivingEntity.class,
                 this.getBoundingBox().inflate(12.0, 8.0, 12.0));
         entities.sort(Comparator.comparingDouble(this::distanceToSqr));
-        for (LivingEntity e : entities) {
-            if (isSuitableTarget(e)) return e;
+        for (LivingEntity candidate : entities) {
+            if (isSuitableTarget(candidate)) return candidate;
         }
         return null;
     }

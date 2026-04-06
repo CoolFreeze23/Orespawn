@@ -7,13 +7,15 @@ import net.minecraft.world.level.block.BushBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import com.mojang.serialization.MapCodec;
-import danger.orespawn.ModBlocks;
 
 /**
  * OreSpawn flower that transforms between day and night variants.
  * Pink ↔ Black, Blue ↔ Scary based on time of day.
  */
 public class MyBlockFlower extends BushBlock {
+    private static final long TICKS_PER_DAY = 24000L;
+    private static final long NIGHT_START_TICK = 12000L;
+
     @Override
     protected MapCodec<? extends MyBlockFlower> codec() {
         return simpleCodec(MyBlockFlower::new);
@@ -43,9 +45,9 @@ public class MyBlockFlower extends BushBlock {
     public void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
         if (level.isClientSide()) return;
 
-        long t = level.getDayTime() % 24000L;
+        long timeOfDayTicks = level.getDayTime() % TICKS_PER_DAY;
 
-        if (t > 12000L) {
+        if (timeOfDayTicks > NIGHT_START_TICK) {
             // Night time
             // TODO: Uncomment when ModBlocks has flower registrations
             // if (variant == FlowerVariant.PINK)

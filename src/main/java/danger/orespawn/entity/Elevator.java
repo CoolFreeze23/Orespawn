@@ -31,7 +31,6 @@ public class Elevator extends Mob {
     private static final EntityDataAccessor<Integer> DATA_COLOR =
             SynchedEntityData.defineId(Elevator.class, EntityDataSerializers.INT);
 
-    private int exploding = 0;
     private int color = 1;
     private int playing = 0;
 
@@ -59,15 +58,15 @@ public class Elevator extends Mob {
         builder.define(DATA_COLOR, 1);
     }
 
-    public void setDamageTaken(float f) { this.entityData.set(DATA_DAMAGE_TAKEN, f); }
+    public void setDamageTaken(float damageAccumulated) { this.entityData.set(DATA_DAMAGE_TAKEN, damageAccumulated); }
     public float getDamageTaken() { return this.entityData.get(DATA_DAMAGE_TAKEN); }
-    public void setTimeSinceHit(int v) { this.entityData.set(DATA_TIME_SINCE_HIT, v); }
+    public void setTimeSinceHit(int ticks) { this.entityData.set(DATA_TIME_SINCE_HIT, ticks); }
     public int getTimeSinceHit() { return this.entityData.get(DATA_TIME_SINCE_HIT); }
-    public void setForwardDirection(int v) { this.entityData.set(DATA_FORWARD_DIRECTION, v); }
+    public void setForwardDirection(int directionSign) { this.entityData.set(DATA_FORWARD_DIRECTION, directionSign); }
     public int getForwardDirection() { return this.entityData.get(DATA_FORWARD_DIRECTION); }
-    public void setExploding(int v) { this.entityData.set(DATA_EXPLODING, v); }
+    public void setExploding(int value) { this.entityData.set(DATA_EXPLODING, value); }
     public int getExploding() { return this.entityData.get(DATA_EXPLODING); }
-    public void setColor(int v) { this.entityData.set(DATA_COLOR, v); }
+    public void setColor(int colorIndex) { this.entityData.set(DATA_COLOR, colorIndex); }
     public int getColor() { return this.entityData.get(DATA_COLOR); }
 
     @Override

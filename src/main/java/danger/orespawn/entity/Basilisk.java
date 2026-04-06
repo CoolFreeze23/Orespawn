@@ -3,7 +3,6 @@ package danger.orespawn.entity;
 import java.util.Comparator;
 import java.util.List;
 import danger.orespawn.ModItems;
-import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -38,6 +37,10 @@ import net.minecraft.world.phys.AABB;
 public class Basilisk extends Monster {
     private static final EntityDataAccessor<Integer> DATA_ATTACKING =
             SynchedEntityData.defineId(Basilisk.class, EntityDataSerializers.INT);
+
+    private static final double KNOCKBACK_HORIZONTAL = 1.5;
+    private static final double KNOCKBACK_VERTICAL = 0.15;
+    private static final double PLAYER_OR_REMOVED_VERTICAL_MULTIPLIER = 2.0;
 
     private final Comparator<Entity> targetSorter;
     private int hurtTimer = 0;
@@ -125,10 +128,10 @@ public class Basilisk extends Monster {
     }
 
     private ItemStack dropItemRand(ItemStack stack) {
-        double ox = this.getX() + this.getRandom().nextInt(4) - this.getRandom().nextInt(4);
-        double oy = this.getY() + 1.0;
-        double oz = this.getZ() + this.getRandom().nextInt(4) - this.getRandom().nextInt(4);
-        ItemEntity itemEntity = new ItemEntity(this.level(), ox, oy, oz, stack);
+        double dropX = this.getX() + this.getRandom().nextInt(4) - this.getRandom().nextInt(4);
+        double dropY = this.getY() + 1.0;
+        double dropZ = this.getZ() + this.getRandom().nextInt(4) - this.getRandom().nextInt(4);
+        ItemEntity itemEntity = new ItemEntity(this.level(), dropX, dropY, dropZ, stack);
         this.level().addFreshEntity(itemEntity);
         return stack;
     }
@@ -148,40 +151,40 @@ public class Basilisk extends Monster {
         }
         int bonusCount = 3 + this.getRandom().nextInt(5);
         for (int i = 0; i < bonusCount; i++) {
-            int roll = this.getRandom().nextInt(15);
-            ItemStack is;
-            switch (roll) {
+            int lootRoll = this.getRandom().nextInt(15);
+            ItemStack droppedStack;
+            switch (lootRoll) {
                 case 1 -> dropItemRand(new ItemStack(Items.EMERALD, 1));
                 case 2 -> dropItemRand(new ItemStack(Items.EMERALD_BLOCK, 1));
                 case 3 -> {
-                    is = dropItemRand(new ItemStack(ModItems.EMERALD_SWORD.get()));
-                    if (this.getRandom().nextInt(6) == 1) enchantItem(is, Enchantments.SHARPNESS, 1 + this.getRandom().nextInt(5));
-                    if (this.getRandom().nextInt(6) == 1) enchantItem(is, Enchantments.SMITE, 1 + this.getRandom().nextInt(5));
-                    if (this.getRandom().nextInt(6) == 1) enchantItem(is, Enchantments.BANE_OF_ARTHROPODS, 1 + this.getRandom().nextInt(5));
-                    if (this.getRandom().nextInt(6) == 1) enchantItem(is, Enchantments.KNOCKBACK, 1 + this.getRandom().nextInt(5));
-                    if (this.getRandom().nextInt(2) == 1) enchantItem(is, Enchantments.UNBREAKING, 2 + this.getRandom().nextInt(4));
-                    if (this.getRandom().nextInt(6) == 1) enchantItem(is, Enchantments.FIRE_ASPECT, 1 + this.getRandom().nextInt(5));
+                    droppedStack = dropItemRand(new ItemStack(ModItems.EMERALD_SWORD.get()));
+                    if (this.getRandom().nextInt(6) == 1) enchantItem(droppedStack, Enchantments.SHARPNESS, 1 + this.getRandom().nextInt(5));
+                    if (this.getRandom().nextInt(6) == 1) enchantItem(droppedStack, Enchantments.SMITE, 1 + this.getRandom().nextInt(5));
+                    if (this.getRandom().nextInt(6) == 1) enchantItem(droppedStack, Enchantments.BANE_OF_ARTHROPODS, 1 + this.getRandom().nextInt(5));
+                    if (this.getRandom().nextInt(6) == 1) enchantItem(droppedStack, Enchantments.KNOCKBACK, 1 + this.getRandom().nextInt(5));
+                    if (this.getRandom().nextInt(2) == 1) enchantItem(droppedStack, Enchantments.UNBREAKING, 2 + this.getRandom().nextInt(4));
+                    if (this.getRandom().nextInt(6) == 1) enchantItem(droppedStack, Enchantments.FIRE_ASPECT, 1 + this.getRandom().nextInt(5));
                 }
                 case 4 -> {
-                    is = dropItemRand(new ItemStack(ModItems.EMERALD_SHOVEL.get()));
-                    if (this.getRandom().nextInt(2) == 1) enchantItem(is, Enchantments.UNBREAKING, 2 + this.getRandom().nextInt(4));
-                    if (this.getRandom().nextInt(6) == 1) enchantItem(is, Enchantments.EFFICIENCY, 1 + this.getRandom().nextInt(5));
+                    droppedStack = dropItemRand(new ItemStack(ModItems.EMERALD_SHOVEL.get()));
+                    if (this.getRandom().nextInt(2) == 1) enchantItem(droppedStack, Enchantments.UNBREAKING, 2 + this.getRandom().nextInt(4));
+                    if (this.getRandom().nextInt(6) == 1) enchantItem(droppedStack, Enchantments.EFFICIENCY, 1 + this.getRandom().nextInt(5));
                 }
                 case 5 -> {
-                    is = dropItemRand(new ItemStack(ModItems.EMERALD_PICKAXE.get()));
-                    if (this.getRandom().nextInt(2) == 1) enchantItem(is, Enchantments.UNBREAKING, 2 + this.getRandom().nextInt(4));
-                    if (this.getRandom().nextInt(6) == 1) enchantItem(is, Enchantments.EFFICIENCY, 1 + this.getRandom().nextInt(5));
-                    if (this.getRandom().nextInt(6) == 1) enchantItem(is, Enchantments.SILK_TOUCH, 1);
+                    droppedStack = dropItemRand(new ItemStack(ModItems.EMERALD_PICKAXE.get()));
+                    if (this.getRandom().nextInt(2) == 1) enchantItem(droppedStack, Enchantments.UNBREAKING, 2 + this.getRandom().nextInt(4));
+                    if (this.getRandom().nextInt(6) == 1) enchantItem(droppedStack, Enchantments.EFFICIENCY, 1 + this.getRandom().nextInt(5));
+                    if (this.getRandom().nextInt(6) == 1) enchantItem(droppedStack, Enchantments.SILK_TOUCH, 1);
                 }
                 case 6 -> {
-                    is = dropItemRand(new ItemStack(ModItems.EMERALD_AXE.get()));
-                    if (this.getRandom().nextInt(2) == 1) enchantItem(is, Enchantments.UNBREAKING, 2 + this.getRandom().nextInt(4));
-                    if (this.getRandom().nextInt(6) == 1) enchantItem(is, Enchantments.EFFICIENCY, 1 + this.getRandom().nextInt(5));
+                    droppedStack = dropItemRand(new ItemStack(ModItems.EMERALD_AXE.get()));
+                    if (this.getRandom().nextInt(2) == 1) enchantItem(droppedStack, Enchantments.UNBREAKING, 2 + this.getRandom().nextInt(4));
+                    if (this.getRandom().nextInt(6) == 1) enchantItem(droppedStack, Enchantments.EFFICIENCY, 1 + this.getRandom().nextInt(5));
                 }
                 case 7 -> {
-                    is = dropItemRand(new ItemStack(ModItems.EMERALD_HOE.get()));
-                    if (this.getRandom().nextInt(2) == 1) enchantItem(is, Enchantments.UNBREAKING, 2 + this.getRandom().nextInt(4));
-                    if (this.getRandom().nextInt(6) == 1) enchantItem(is, Enchantments.EFFICIENCY, 1 + this.getRandom().nextInt(5));
+                    droppedStack = dropItemRand(new ItemStack(ModItems.EMERALD_HOE.get()));
+                    if (this.getRandom().nextInt(2) == 1) enchantItem(droppedStack, Enchantments.UNBREAKING, 2 + this.getRandom().nextInt(4));
+                    if (this.getRandom().nextInt(6) == 1) enchantItem(droppedStack, Enchantments.EFFICIENCY, 1 + this.getRandom().nextInt(5));
                 }
                 // TODO: Cases 8-11 drop Emerald armor (helmet, chestplate, leggings, boots)
                 // with Protection, Projectile Protection, Fire Protection, Blast Protection,
@@ -199,13 +202,15 @@ public class Basilisk extends Monster {
                 if (this.getRandom().nextInt(3) == 0) {
                     living.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 200, 0));
                 }
-                double ks = 1.5;
-                double inair = 0.15;
-                float angle = (float) Math.atan2(target.getZ() - this.getZ(), target.getX() - this.getX());
+                double verticalKnockback = KNOCKBACK_VERTICAL;
+                float yawToTarget = (float) Math.atan2(target.getZ() - this.getZ(), target.getX() - this.getX());
                 if (target.isRemoved() || target instanceof Player) {
-                    inair *= 2.0;
+                    verticalKnockback *= PLAYER_OR_REMOVED_VERTICAL_MULTIPLIER;
                 }
-                target.push(Math.cos(angle) * ks, inair, Math.sin(angle) * ks);
+                target.push(
+                        Math.cos(yawToTarget) * KNOCKBACK_HORIZONTAL,
+                        verticalKnockback,
+                        Math.sin(yawToTarget) * KNOCKBACK_HORIZONTAL);
             }
             return true;
         }
@@ -244,9 +249,7 @@ public class Basilisk extends Monster {
                 } else {
                     this.getNavigation().moveTo(target, 1.25);
                 }
-                if (target instanceof LivingEntity) {
-                    target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 100, 5));
-                }
+                target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 100, 5));
             } else {
                 this.setAttacking(0);
             }

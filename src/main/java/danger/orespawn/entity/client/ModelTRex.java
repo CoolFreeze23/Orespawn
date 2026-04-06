@@ -12,27 +12,27 @@ import net.minecraft.util.Mth;
 public class ModelTRex extends EntityModel<TRex> {
     private static final float ANIM_SPEED = 1.0F;
 
-    private final ModelPart shape18;
-    private final ModelPart shape19;
-    private final ModelPart shape20;
-    private final ModelPart shape21;
-    private final ModelPart shape1;
-    private final ModelPart shape2;
-    private final ModelPart shape3;
-    private final ModelPart shape4;
-    private final ModelPart shape5;
-    private final ModelPart shape6;
+    private final ModelPart rightHeadSpike;
+    private final ModelPart leftHeadSpike;
+    private final ModelPart rightHipSpike;
+    private final ModelPart leftHipSpike;
+    private final ModelPart torso;
+    private final ModelPart hips;
+    private final ModelPart tail;
+    private final ModelPart neck;
+    private final ModelPart head;
+    private final ModelPart snout;
     private final ModelPart jaw;
     private final ModelPart leftleg;
     private final ModelPart leftleg2;
     private final ModelPart leftleg3;
-    private final ModelPart shape11;
+    private final ModelPart rightArm;
     private final ModelPart rightleg;
     private final ModelPart rightleg2;
     private final ModelPart rightleg3;
     private final ModelPart leftleg4;
     private final ModelPart rightleg4;
-    private final ModelPart shape17;
+    private final ModelPart leftArm;
     private final ModelPart tailExtension;
     private final ModelPart spine1;
     private final ModelPart spine2;
@@ -41,27 +41,27 @@ public class ModelTRex extends EntityModel<TRex> {
     private final ModelPart spine5;
 
     public ModelTRex(ModelPart root) {
-        this.shape18 = root.getChild("shape18");
-        this.shape19 = root.getChild("shape19");
-        this.shape20 = root.getChild("shape20");
-        this.shape21 = root.getChild("shape21");
-        this.shape1 = root.getChild("shape1");
-        this.shape2 = root.getChild("shape2");
-        this.shape3 = root.getChild("shape3");
-        this.shape4 = root.getChild("shape4");
-        this.shape5 = root.getChild("shape5");
-        this.shape6 = root.getChild("shape6");
+        this.rightHeadSpike = root.getChild("shape18");
+        this.leftHeadSpike = root.getChild("shape19");
+        this.rightHipSpike = root.getChild("shape20");
+        this.leftHipSpike = root.getChild("shape21");
+        this.torso = root.getChild("shape1");
+        this.hips = root.getChild("shape2");
+        this.tail = root.getChild("shape3");
+        this.neck = root.getChild("shape4");
+        this.head = root.getChild("shape5");
+        this.snout = root.getChild("shape6");
         this.jaw = root.getChild("jaw");
         this.leftleg = root.getChild("leftleg");
         this.leftleg2 = root.getChild("leftleg2");
         this.leftleg3 = root.getChild("leftleg3");
-        this.shape11 = root.getChild("shape11");
+        this.rightArm = root.getChild("shape11");
         this.rightleg = root.getChild("rightleg");
         this.rightleg2 = root.getChild("rightleg2");
         this.rightleg3 = root.getChild("rightleg3");
         this.leftleg4 = root.getChild("leftleg4");
         this.rightleg4 = root.getChild("rightleg4");
-        this.shape17 = root.getChild("shape17");
+        this.leftArm = root.getChild("shape17");
         this.tailExtension = root.getChild("tail_extension");
         this.spine1 = root.getChild("spine1");
         this.spine2 = root.getChild("spine2");
@@ -232,33 +232,33 @@ public class ModelTRex extends EntityModel<TRex> {
                 ? 0.52F + Mth.cos(ageInTicks * 0.45F) * (float) Math.PI * 0.18F
                 : 0.1F;
 
-        this.shape17.xRot = -0.523F + Mth.cos(ageInTicks * 0.1F) * (float) Math.PI * 0.05F;
-        this.shape11.xRot = -0.523F + Mth.cos(ageInTicks * 0.1F) * (float) Math.PI * 0.05F;
+        this.leftArm.xRot = -0.523F + Mth.cos(ageInTicks * 0.1F) * (float) Math.PI * 0.05F;
+        this.rightArm.xRot = -0.523F + Mth.cos(ageInTicks * 0.1F) * (float) Math.PI * 0.05F;
     }
 
     @Override
     public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, int color) {
-        this.shape18.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
-        this.shape19.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
-        this.shape20.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
-        this.shape21.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
-        this.shape1.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
-        this.shape2.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
-        this.shape3.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
-        this.shape4.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
-        this.shape5.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
-        this.shape6.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.rightHeadSpike.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.leftHeadSpike.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.rightHipSpike.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.leftHipSpike.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.torso.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.hips.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.tail.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.neck.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.head.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.snout.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
         this.jaw.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
         this.leftleg.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
         this.leftleg2.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
         this.leftleg3.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
-        this.shape11.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.rightArm.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
         this.rightleg.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
         this.rightleg2.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
         this.rightleg3.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
         this.leftleg4.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
         this.rightleg4.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
-        this.shape17.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.leftArm.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
         this.tailExtension.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
         this.spine1.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
         this.spine2.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);

@@ -34,8 +34,7 @@ public class SpiderRobot extends Mob {
 
     private final Comparator<Entity> targetSorter;
     private final float moveSpeed = 0.35f;
-    private int playing = 0;
-    private int rideTicker = 0;
+    private int soundCooldown = 0;
 
     public SpiderRobot(EntityType<? extends SpiderRobot> type, Level level) {
         super(type, level);
@@ -93,46 +92,45 @@ public class SpiderRobot extends Mob {
         super.tick();
         this.clearFire();
         if (!this.level().isClientSide() && this.getFirstPassenger() != null && this.getRandom().nextInt(15) == 0) {
-            LivingEntity e = findSomethingToAttack();
-            if (e != null) {
-                double meleeRange = (12.0f + e.getBbWidth() / 2.0f);
-                if (this.distanceToSqr(e) < meleeRange * meleeRange) {
+            LivingEntity target = findSomethingToAttack();
+            if (target != null) {
+                double meleeRange = (12.0f + target.getBbWidth() / 2.0f);
+                if (this.distanceToSqr(target) < meleeRange * meleeRange) {
                     this.setAttacking(1);
-                    this.doHurtTarget(e);
+                    this.doHurtTarget(target);
                 }
             } else {
                 this.setAttacking(0);
             }
         }
-        float f = 8.0f;
-        float dx = (float) (f * Math.cos(Math.toRadians(this.getYRot() - 90.0f)));
-        float dz = (float) (f * Math.sin(Math.toRadians(this.getYRot() - 90.0f)));
+        float exhaustOffset = 8.0f;
+        float exhaustX = (float) (exhaustOffset * Math.cos(Math.toRadians(this.getYRot() - 90.0f)));
+        float exhaustZ = (float) (exhaustOffset * Math.sin(Math.toRadians(this.getYRot() - 90.0f)));
         if (this.level().isClientSide()) {
             if (this.getRandom().nextInt(8) == 0) {
-                this.level().addParticle(ParticleTypes.FLAME, getX() + dx, getY() + 2.0, getZ() + dz, 0, 0, 0);
+                this.level().addParticle(ParticleTypes.FLAME, getX() + exhaustX, getY() + 2.0, getZ() + exhaustZ, 0, 0, 0);
             }
             if (this.getRandom().nextInt(2) == 0) {
-                this.level().addParticle(ParticleTypes.SMOKE, getX() + dx, getY() + 2.0, getZ() + dz, 0, 0, 0);
+                this.level().addParticle(ParticleTypes.SMOKE, getX() + exhaustX, getY() + 2.0, getZ() + exhaustZ, 0, 0, 0);
             }
         }
-        if (this.playing > 0) --this.playing;
-        if (this.getFirstPassenger() != null && this.playing == 0 && this.getRandom().nextInt(80) == 1) {
+        if (this.soundCooldown > 0) --this.soundCooldown;
+        if (this.getFirstPassenger() != null && this.soundCooldown == 0 && this.getRandom().nextInt(80) == 1) {
             this.playSound(SoundEvent.createVariableRangeEvent(
                     ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "robotspider")), 0.45f, 1.0f);
-            this.playing = 125;
+            this.soundCooldown = 125;
         }
-        this.rideTicker += this.getRandom().nextInt(3);
     }
 
     @Override
     public boolean doHurtTarget(Entity target) {
-        if (target instanceof LivingEntity le) {
-            double ks = 1.2;
-            double inair = 0.15;
-            float f3 = (float) Math.atan2(le.getZ() - this.getZ(), le.getX() - this.getX());
-            boolean ret = le.hurt(this.damageSources().mobAttack(this), 50.0f);
-            if (le.isRemoved() || le instanceof Player) inair *= 2.0;
-            if (ret) le.push(Math.cos(f3) * ks, inair, Math.sin(f3) * ks);
+        if (target instanceof LivingEntity livingTarget) {
+            double knockbackStrength = 1.2;
+            double upwardKnockback = 0.15;
+            float angleToTarget = (float) Math.atan2(livingTarget.getZ() - this.getZ(), livingTarget.getX() - this.getX());
+            boolean ret = livingTarget.hurt(this.damageSources().mobAttack(this), 50.0f);
+            if (livingTarget.isRemoved() || livingTarget instanceof Player) upwardKnockback *= 2.0;
+            if (ret) livingTarget.push(Math.cos(angleToTarget) * knockbackStrength, upwardKnockback, Math.sin(angleToTarget) * knockbackStrength);
             return ret;
         }
         return false;

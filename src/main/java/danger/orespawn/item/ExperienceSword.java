@@ -12,6 +12,9 @@ import net.minecraft.core.particles.ParticleTypes;
 import danger.orespawn.ModToolTiers;
 
 public class ExperienceSword extends SwordItem {
+    private static final float XP_ON_HIT = 10.0f;
+    private static final float XP_PER_PARTICLE_DIVISOR = 2.0f;
+
     public ExperienceSword(Item.Properties properties) {
         super(ModToolTiers.EMERALD, properties);
     }
@@ -28,27 +31,28 @@ public class ExperienceSword extends SwordItem {
     @Override
     public boolean hurtEnemy(ItemStack stack, LivingEntity target, LivingEntity attacker) {
         float xpBonus = 0;
-        Player player = null;
-        if (attacker instanceof Player p) {
-            player = p;
+        Player attackingPlayer = null;
+        if (attacker instanceof Player playerAttacker) {
+            attackingPlayer = playerAttacker;
         }
         if (target != null) {
-            xpBonus = 10.0f;
+            xpBonus = XP_ON_HIT;
         }
-        if (xpBonus > 0 && player != null) {
-            player.giveExperiencePoints((int) xpBonus);
+        if (xpBonus > 0 && attackingPlayer != null) {
+            attackingPlayer.giveExperiencePoints((int) xpBonus);
         }
-        if (player != null) {
-            float bonusDamage = player.experienceLevel / 2.0f;
+        if (attackingPlayer != null) {
+            float bonusDamage = attackingPlayer.experienceLevel / 2.0f;
             if (bonusDamage > 0 && target != null) {
-                target.hurt(target.damageSources().playerAttack(player), bonusDamage);
+                target.hurt(target.damageSources().playerAttack(attackingPlayer), bonusDamage);
             }
         }
-        if (target != null && target.level() instanceof Level clientLevel) {
-            for (int j = 0; j < (int)(xpBonus / 2.0f); j++) {
-                clientLevel.addParticle(ParticleTypes.PORTAL,
+        if (target != null && target.level() instanceof Level targetWorld) {
+            int particleCount = (int) (xpBonus / XP_PER_PARTICLE_DIVISOR);
+            for (int particleIndex = 0; particleIndex < particleCount; particleIndex++) {
+                targetWorld.addParticle(ParticleTypes.PORTAL,
                         target.getX(), target.getY() + 1.0, target.getZ(),
-                        clientLevel.random.nextGaussian(), clientLevel.random.nextGaussian(), clientLevel.random.nextGaussian());
+                        targetWorld.random.nextGaussian(), targetWorld.random.nextGaussian(), targetWorld.random.nextGaussian());
             }
         }
         stack.hurtAndBreak(1, attacker, EquipmentSlot.MAINHAND);

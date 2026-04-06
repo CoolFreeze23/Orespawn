@@ -11,6 +11,11 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 
 public class ItemMagicApple extends Item {
+    private static final int TRUNK_HEIGHT_MIN = 12;
+    private static final int TRUNK_HEIGHT_EXTRA_RANGE = 8;
+    private static final int LEAF_RADIUS_BASE = 5;
+    private static final int LEAF_RADIUS_EXTRA_RANGE = 3;
+
     public ItemMagicApple(Item.Properties properties) {
         super(properties);
     }
@@ -33,28 +38,29 @@ public class ItemMagicApple extends Item {
         return InteractionResult.SUCCESS;
     }
 
-    private void makeTree(Level level, int cx, int cy, int cz, boolean roundTree) {
-        int trunkHeight = 12 + level.random.nextInt(8);
-        int leafRadius = 5 + level.random.nextInt(3);
+    private void makeTree(Level level, int baseX, int baseY, int baseZ, boolean roundTree) {
+        int trunkHeight = TRUNK_HEIGHT_MIN + level.random.nextInt(TRUNK_HEIGHT_EXTRA_RANGE);
+        int leafRadius = LEAF_RADIUS_BASE + level.random.nextInt(LEAF_RADIUS_EXTRA_RANGE);
 
-        for (int y = 1; y <= trunkHeight; y++) {
-            level.setBlock(new BlockPos(cx, cy + y, cz), Blocks.OAK_LOG.defaultBlockState(), 3);
+        for (int trunkY = 1; trunkY <= trunkHeight; trunkY++) {
+            level.setBlock(new BlockPos(baseX, baseY + trunkY, baseZ), Blocks.OAK_LOG.defaultBlockState(), 3);
         }
 
-        int topY = cy + trunkHeight;
+        int topY = baseY + trunkHeight;
+        int leafVerticalHalfSpan = leafRadius / 2;
         for (int x = -leafRadius; x <= leafRadius; x++) {
             for (int z = -leafRadius; z <= leafRadius; z++) {
-                for (int y = -leafRadius / 2; y <= leafRadius / 2; y++) {
+                for (int leafOffsetY = -leafVerticalHalfSpan; leafOffsetY <= leafVerticalHalfSpan; leafOffsetY++) {
                     double dist;
                     if (roundTree) {
-                        dist = Math.sqrt(x * x + y * y + z * z);
+                        dist = Math.sqrt(x * x + leafOffsetY * leafOffsetY + z * z);
                     } else {
-                        dist = Math.max(Math.abs(x), Math.max(Math.abs(y), Math.abs(z)));
+                        dist = Math.max(Math.abs(x), Math.max(Math.abs(leafOffsetY), Math.abs(z)));
                     }
                     if (dist <= leafRadius) {
-                        BlockPos lp = new BlockPos(cx + x, topY + y, cz + z);
-                        if (level.getBlockState(lp).isAir()) {
-                            level.setBlock(lp, Blocks.OAK_LEAVES.defaultBlockState(), 3);
+                        BlockPos leafPos = new BlockPos(baseX + x, topY + leafOffsetY, baseZ + z);
+                        if (level.getBlockState(leafPos).isAir()) {
+                            level.setBlock(leafPos, Blocks.OAK_LEAVES.defaultBlockState(), 3);
                         }
                     }
                 }

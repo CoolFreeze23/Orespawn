@@ -50,6 +50,9 @@ public class EntitySpyro extends TamableAnimal {
     private static final EntityDataAccessor<Integer> DATA_SPYRO_FIRE =
             SynchedEntityData.defineId(EntitySpyro.class, EntityDataSerializers.INT);
 
+    private static final double OWNER_FAR_DIST_SQ = 256.0;
+    private static final float LOW_HEALTH_FRACTION = 0.25f;
+
     private BlockPos currentFlightTarget = null;
     public int activity = 1;
     private int ownerFlying = 0;
@@ -142,7 +145,7 @@ public class EntitySpyro extends TamableAnimal {
         }
 
         if (this.activity == 1 && this.isTame() && this.getOwner() != null &&
-                this.distanceToSqr(this.getOwner()) > 256.0) {
+                this.distanceToSqr(this.getOwner()) > OWNER_FAR_DIST_SQ) {
             this.setActivity(2);
         }
 
@@ -263,7 +266,7 @@ public class EntitySpyro extends TamableAnimal {
         if (this.random.nextInt(6) == 1 && this.level().getDifficulty() != Difficulty.PEACEFUL) {
             LivingEntity target = findSomethingToAttack();
             if (target != null) {
-                if (this.isTame() && this.getHealth() / 200.0f < 0.25f) {
+                if (this.isTame() && this.getHealth() / 200.0f < LOW_HEALTH_FRACTION) {
                     setActivity(2);
                     this.targetInSight = false;
                     doNew = false;

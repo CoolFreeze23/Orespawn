@@ -50,10 +50,14 @@ public class EntityRubberDucky extends TamableAnimal {
     private static final EntityDataAccessor<Integer> DATA_ATTACKING =
             SynchedEntityData.defineId(EntityRubberDucky.class, EntityDataSerializers.INT);
 
+    private static final int NO_CLOSEST_MATCH = 99999;
+
     private int killCount = 0;
     private int died = 0;
-    private int closest = 99999;
-    private int tx = 0, ty = 0, tz = 0;
+    private int closestWaterDistSq = NO_CLOSEST_MATCH;
+    private int targetX = 0;
+    private int targetY = 0;
+    private int targetZ = 0;
 
     public EntityRubberDucky(EntityType<? extends EntityRubberDucky> type, Level level) {
         super(type, level);
@@ -232,15 +236,15 @@ public class EntityRubberDucky extends TamableAnimal {
     }
 
     private void seekWater() {
-        this.closest = 99999;
-        this.tx = this.ty = this.tz = 0;
+        this.closestWaterDistSq = NO_CLOSEST_MATCH;
+        this.targetX = this.targetY = this.targetZ = 0;
         for (int i = 1; i < 14; i++) {
             int j = Math.min(i, 5);
             if (scanForWater((int) this.getX(), (int) this.getY() - 1, (int) this.getZ(), i, j, i)) break;
             if (i >= 5) i++;
         }
-        if (this.closest < 99999) {
-            this.getNavigation().moveTo(this.tx, this.ty - 1, this.tz, 1.33);
+        if (this.closestWaterDistSq < NO_CLOSEST_MATCH) {
+            this.getNavigation().moveTo(this.targetX, this.targetY - 1, this.targetZ, 1.33);
         }
     }
 
@@ -250,13 +254,25 @@ public class EntityRubberDucky extends TamableAnimal {
             for (int j = -dz; j <= dz; j++) {
                 BlockPos pos = new BlockPos(x + dx, y + i, z + j);
                 if (isWater(pos)) {
-                    int d = dx * dx + j * j + i * i;
-                    if (d < this.closest) { this.closest = d; this.tx = x + dx; this.ty = y + i; this.tz = z + j; found++; }
+                    int distSqToWater = dx * dx + j * j + i * i;
+                    if (distSqToWater < this.closestWaterDistSq) {
+                        this.closestWaterDistSq = distSqToWater;
+                        this.targetX = x + dx;
+                        this.targetY = y + i;
+                        this.targetZ = z + j;
+                        found++;
+                    }
                 }
                 pos = new BlockPos(x - dx, y + i, z + j);
                 if (isWater(pos)) {
-                    int d = dx * dx + j * j + i * i;
-                    if (d < this.closest) { this.closest = d; this.tx = x - dx; this.ty = y + i; this.tz = z + j; found++; }
+                    int distSqToWater = dx * dx + j * j + i * i;
+                    if (distSqToWater < this.closestWaterDistSq) {
+                        this.closestWaterDistSq = distSqToWater;
+                        this.targetX = x - dx;
+                        this.targetY = y + i;
+                        this.targetZ = z + j;
+                        found++;
+                    }
                 }
             }
         }
@@ -269,8 +285,8 @@ public class EntityRubberDucky extends TamableAnimal {
 
     @Override
     public boolean doHurtTarget(Entity target) {
-        float dmg = this.getKillCount() >= 5 ? 2.0f : 1.0f;
-        return target.hurt(this.damageSources().mobAttack(this), dmg);
+        float attackDamage = this.getKillCount() >= 5 ? 2.0f : 1.0f;
+        return target.hurt(this.damageSources().mobAttack(this), attackDamage);
     }
 
     private boolean isSuitableTarget(LivingEntity target) {

@@ -12,12 +12,12 @@ import danger.orespawn.entity.Robot2;
 public class ModelRobot2 extends EntityModel<Robot2> {
     private final ModelPart rleg1;
     private final ModelPart rleg2;
-    private final ModelPart Shape3;
+    private final ModelPart hipPlate;
     private final ModelPart lleg2;
     private final ModelPart lleg1;
-    private final ModelPart Shape6;
-    private final ModelPart Shape7;
-    private final ModelPart Shape8;
+    private final ModelPart waistCore;
+    private final ModelPart torsoPlate;
+    private final ModelPart upperFrame;
     private final ModelPart rarm3;
     private final ModelPart rarm2;
     private final ModelPart rarm1;
@@ -29,12 +29,12 @@ public class ModelRobot2 extends EntityModel<Robot2> {
     public ModelRobot2(ModelPart root) {
         this.rleg1 = root.getChild("rleg1");
         this.rleg2 = root.getChild("rleg2");
-        this.Shape3 = root.getChild("Shape3");
+        this.hipPlate = root.getChild("Shape3");
         this.lleg2 = root.getChild("lleg2");
         this.lleg1 = root.getChild("lleg1");
-        this.Shape6 = root.getChild("Shape6");
-        this.Shape7 = root.getChild("Shape7");
-        this.Shape8 = root.getChild("Shape8");
+        this.waistCore = root.getChild("Shape6");
+        this.torsoPlate = root.getChild("Shape7");
+        this.upperFrame = root.getChild("Shape8");
         this.rarm3 = root.getChild("rarm3");
         this.rarm2 = root.getChild("rarm2");
         this.rarm1 = root.getChild("rarm1");
@@ -151,12 +151,12 @@ public class ModelRobot2 extends EntityModel<Robot2> {
     public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, int color) {
         this.rleg1.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
         this.rleg2.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
-        this.Shape3.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.hipPlate.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
         this.lleg2.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
         this.lleg1.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
-        this.Shape6.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
-        this.Shape7.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
-        this.Shape8.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.waistCore.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.torsoPlate.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.upperFrame.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
         this.rarm3.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
         this.rarm2.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
         this.rarm1.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);

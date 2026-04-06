@@ -1,6 +1,5 @@
 package danger.orespawn.entity;
 
-import java.util.UUID;
 import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
@@ -39,11 +38,14 @@ import danger.orespawn.ModItems;
 
 public class Camarasaurus extends TamableAnimal {
     private static final int MAX_HEALTH = 20;
+    private static final int NO_FOOD_FOUND_SENTINEL = 99999;
+    private static final int GRAZE_INTERACTION_RANGE_SQ = 12;
+
     private final float moveSpeed = 0.2f;
-    private int closest = 99999;
-    private int tx = 0;
-    private int ty = 0;
-    private int tz = 0;
+    private int closestFoodDistSq = NO_FOOD_FOUND_SENTINEL;
+    private int targetFoodX = 0;
+    private int targetFoodY = 0;
+    private int targetFoodZ = 0;
 
     public Camarasaurus(EntityType<? extends Camarasaurus> type, Level level) {
         super(type, level);
@@ -119,11 +121,11 @@ public class Camarasaurus extends TamableAnimal {
     private int checkFoodAt(int x, int y, int z, int dist) {
         BlockPos pos = new BlockPos(x, y, z);
         Block block = this.level().getBlockState(pos).getBlock();
-        if (isEdibleBlock(block) && dist < this.closest) {
-            this.closest = dist;
-            this.tx = x;
-            this.ty = y;
-            this.tz = z;
+        if (isEdibleBlock(block) && dist < this.closestFoodDistSq) {
+            this.closestFoodDistSq = dist;
+            this.targetFoodX = x;
+            this.targetFoodY = y;
+            this.targetFoodZ = z;
             return 1;
         }
         return 0;
@@ -144,10 +146,10 @@ public class Camarasaurus extends TamableAnimal {
             boolean randomGraze = this.random.nextInt(250) == 0;
 
             if (needsFood || randomGraze) {
-                this.closest = 99999;
-                this.tx = 0;
-                this.ty = 0;
-                this.tz = 0;
+                this.closestFoodDistSq = NO_FOOD_FOUND_SENTINEL;
+                this.targetFoodX = 0;
+                this.targetFoodY = 0;
+                this.targetFoodZ = 0;
                 for (int i = 1; i < 11; ++i) {
                     int j = Math.min(i, 2);
                     if (this.scanForFood(
@@ -157,12 +159,12 @@ public class Camarasaurus extends TamableAnimal {
                     }
                     if (i >= 6) ++i;
                 }
-                if (this.closest < 99999) {
-                    this.getNavigation().moveTo(this.tx, this.ty, this.tz, 1.0);
-                    if (this.closest < 12) {
+                if (this.closestFoodDistSq < NO_FOOD_FOUND_SENTINEL) {
+                    this.getNavigation().moveTo(this.targetFoodX, this.targetFoodY, this.targetFoodZ, 1.0);
+                    if (this.closestFoodDistSq < GRAZE_INTERACTION_RANGE_SQ) {
                         if (this.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)) {
                             this.level().setBlock(
-                                    new BlockPos(this.tx, this.ty, this.tz),
+                                    new BlockPos(this.targetFoodX, this.targetFoodY, this.targetFoodZ),
                                     Blocks.AIR.defaultBlockState(), 2);
                         }
                         this.heal(1.0f);

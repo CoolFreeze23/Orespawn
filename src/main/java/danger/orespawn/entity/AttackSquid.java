@@ -1,7 +1,5 @@
 package danger.orespawn.entity;
 
-import danger.orespawn.ModEntities;
-import danger.orespawn.ModItems;
 import danger.orespawn.OreSpawnMod;
 import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
@@ -41,10 +39,13 @@ public class AttackSquid extends Monster {
     private static final int MAX_HEALTH = 30;
     private static final double MOVE_SPEED = 0.25;
     private static final double ATTACK_DAMAGE = 8.0;
+    private static final int NO_WATER_FOUND_SENTINEL = 99999;
 
     private int wasshot = 0;
-    private int closest = 99999;
-    private int tx = 0, ty = 0, tz = 0;
+    private int closestWaterDistSq = NO_WATER_FOUND_SENTINEL;
+    private int targetX = 0;
+    private int targetY = 0;
+    private int targetZ = 0;
 
     public AttackSquid(EntityType<? extends AttackSquid> type, Level level) {
         super(type, level);
@@ -99,9 +100,9 @@ public class AttackSquid extends Monster {
     @Override
     public boolean hurt(DamageSource source, float amount) {
         if (this.isRemoved()) return false;
-        Entity e = source.getEntity();
-        if (e instanceof AttackSquid) return false;
-        if (e instanceof Mob mob) {
+        Entity attacker = source.getEntity();
+        if (attacker instanceof AttackSquid) return false;
+        if (attacker instanceof Mob mob) {
             this.setTarget(mob);
             this.getNavigation().moveTo(mob, 1.2);
         }
@@ -122,15 +123,17 @@ public class AttackSquid extends Monster {
         }
 
         if (!this.isInWater() && this.random.nextInt(10) == 0) {
-            this.closest = 99999;
-            this.tx = 0; this.ty = 0; this.tz = 0;
+            this.closestWaterDistSq = NO_WATER_FOUND_SENTINEL;
+            this.targetX = 0;
+            this.targetY = 0;
+            this.targetZ = 0;
             for (int i = 1; i < 12; ++i) {
                 int j = Math.min(i, 5);
                 if (this.scanForWater((int) this.getX(), (int) this.getY() - 1, (int) this.getZ(), i, j, i)) break;
                 if (i >= 5) ++i;
             }
-            if (this.closest < 99999) {
-                this.getNavigation().moveTo(this.tx, this.ty - 1, this.tz, 1.33);
+            if (this.closestWaterDistSq < NO_WATER_FOUND_SENTINEL) {
+                this.getNavigation().moveTo(this.targetX, this.targetY - 1, this.targetZ, 1.33);
             } else {
                 if (this.random.nextInt(25) == 1) {
                     this.hurt(this.damageSources().dryOut(), 1.0f);
@@ -184,9 +187,11 @@ public class AttackSquid extends Monster {
 
     private int checkWaterAt(int x, int y, int z, int dist) {
         BlockState state = this.level().getBlockState(new BlockPos(x, y, z));
-        if (state.is(Blocks.WATER) && dist < this.closest) {
-            this.closest = dist;
-            this.tx = x; this.ty = y; this.tz = z;
+        if (state.is(Blocks.WATER) && dist < this.closestWaterDistSq) {
+            this.closestWaterDistSq = dist;
+            this.targetX = x;
+            this.targetY = y;
+            this.targetZ = z;
             return 1;
         }
         return 0;

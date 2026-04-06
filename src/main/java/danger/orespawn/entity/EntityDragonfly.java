@@ -114,8 +114,8 @@ public class EntityDragonfly extends Animal {
         List<LivingEntity> entities = this.level().getEntitiesOfClass(LivingEntity.class,
                 this.getBoundingBox().inflate(10.0, 6.0, 10.0));
         entities.sort(Comparator.comparingDouble(this::distanceToSqr));
-        for (LivingEntity e : entities) {
-            if (isSuitablePrey(e)) return e;
+        for (LivingEntity candidate : entities) {
+            if (isSuitablePrey(candidate)) return candidate;
         }
         return null;
     }

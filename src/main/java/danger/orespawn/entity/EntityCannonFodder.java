@@ -3,7 +3,6 @@ package danger.orespawn.entity;
 import java.util.Comparator;
 import java.util.List;
 import javax.annotation.Nullable;
-import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -12,7 +11,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -33,9 +31,11 @@ public class EntityCannonFodder extends TamableAnimal {
     private static final EntityDataAccessor<Integer> HAT_COLOR =
             SynchedEntityData.defineId(EntityCannonFodder.class, EntityDataSerializers.INT);
 
-    String nameOne = null;
-    String nameTwo = null;
-    private int px = 0, py = 0, pz = 0;
+    String trustedPlayerUuidPrimary = null;
+    String trustedPlayerUuidSecondary = null;
+    private int patrolBlockX = 0;
+    private int patrolBlockY = 0;
+    private int patrolBlockZ = 0;
     private final Comparator<Entity> localTargetSorter;
 
     public EntityCannonFodder(EntityType<? extends EntityCannonFodder> type, Level level) {
@@ -62,11 +62,11 @@ public class EntityCannonFodder extends TamableAnimal {
     public int getIsActivated() { return this.entityData.get(IS_ACTIVATED); }
     public void setIsActivated(int a) { this.entityData.set(IS_ACTIVATED, a); }
 
-    public void setStuff(int hc, int ia, String s1, String s2) {
-        this.setHatColor(hc);
-        this.setIsActivated(ia);
-        this.nameOne = s1;
-        this.nameTwo = s2;
+    public void setStuff(int hatColor, int activated, String trustedUuidPrimary, String trustedUuidSecondary) {
+        this.setHatColor(hatColor);
+        this.setIsActivated(activated);
+        this.trustedPlayerUuidPrimary = trustedUuidPrimary;
+        this.trustedPlayerUuidSecondary = trustedUuidSecondary;
     }
 
     @Override
@@ -75,7 +75,7 @@ public class EntityCannonFodder extends TamableAnimal {
 
         if (stack.is(Items.GOLDEN_APPLE) && this.distanceToSqr(player) < 16.0) {
             this.setHatColor(1);
-            if (this.nameOne == null) this.nameOne = player.getStringUUID();
+            if (this.trustedPlayerUuidPrimary == null) this.trustedPlayerUuidPrimary = player.getStringUUID();
             if (this.getIsActivated() == 0) this.setIsActivated(1);
             this.setTame(true, true);
             this.setOwnerUUID(player.getUUID());
@@ -86,7 +86,7 @@ public class EntityCannonFodder extends TamableAnimal {
 
         if (stack.is(Items.ENCHANTED_GOLDEN_APPLE) && this.distanceToSqr(player) < 16.0) {
             this.setHatColor(3);
-            if (this.nameOne == null) this.nameOne = player.getStringUUID();
+            if (this.trustedPlayerUuidPrimary == null) this.trustedPlayerUuidPrimary = player.getStringUUID();
             if (this.getIsActivated() == 0) this.setIsActivated(1);
             this.setTame(true, true);
             this.setOwnerUUID(player.getUUID());
@@ -100,9 +100,9 @@ public class EntityCannonFodder extends TamableAnimal {
                 this.setOrderedToSit(false);
             } else {
                 this.setOrderedToSit(true);
-                this.px = (int) this.getX();
-                this.py = (int) this.getY();
-                this.pz = (int) this.getZ();
+                this.patrolBlockX = (int) this.getX();
+                this.patrolBlockY = (int) this.getY();
+                this.patrolBlockZ = (int) this.getZ();
             }
             return InteractionResult.SUCCESS;
         }
@@ -115,20 +115,25 @@ public class EntityCannonFodder extends TamableAnimal {
         if (target == null || target == this || !target.isAlive()) return false;
 
         if (this.isOrderedToSit()) {
-            double dx2 = this.px - target.getX();
-            double dy2 = this.py - target.getY();
-            double dz2 = this.pz - target.getZ();
-            if (dx2 * dx2 + dy2 * dy2 + dz2 * dz2 > 144.0) return false;
+            double deltaXToSitAnchor = this.patrolBlockX - target.getX();
+            double deltaYToSitAnchor = this.patrolBlockY - target.getY();
+            double deltaZToSitAnchor = this.patrolBlockZ - target.getZ();
+            if (deltaXToSitAnchor * deltaXToSitAnchor + deltaYToSitAnchor * deltaYToSitAnchor
+                    + deltaZToSitAnchor * deltaZToSitAnchor > 144.0) return false;
         }
         if (target instanceof Monster) return true;
-        if (target instanceof EntityCannonFodder cf) {
-            int c = cf.getHatColor();
-            return c != 0 && c != this.getHatColor();
+        if (target instanceof EntityCannonFodder otherCannon) {
+            int otherHatColor = otherCannon.getHatColor();
+            return otherHatColor != 0 && otherHatColor != this.getHatColor();
         }
         if (target instanceof Player p) {
             if (p.getAbilities().instabuild) return false;
-            if (this.nameOne != null && this.nameOne.equals(p.getStringUUID())) return false;
-            if (this.nameTwo != null && this.nameTwo.equals(p.getStringUUID())) return false;
+            if (this.trustedPlayerUuidPrimary != null && this.trustedPlayerUuidPrimary.equals(p.getStringUUID())) {
+                return false;
+            }
+            if (this.trustedPlayerUuidSecondary != null && this.trustedPlayerUuidSecondary.equals(p.getStringUUID())) {
+                return false;
+            }
             return true;
         }
         return false;
@@ -138,8 +143,8 @@ public class EntityCannonFodder extends TamableAnimal {
         List<LivingEntity> entities = this.level().getEntitiesOfClass(LivingEntity.class,
                 this.getBoundingBox().inflate(10.0, 4.0, 10.0));
         entities.sort(this.localTargetSorter);
-        for (LivingEntity e : entities) {
-            if (this.isSuitableTarget(e)) return e;
+        for (LivingEntity candidate : entities) {
+            if (this.isSuitableTarget(candidate)) return candidate;
         }
         return null;
     }
@@ -152,14 +157,15 @@ public class EntityCannonFodder extends TamableAnimal {
         if (this.getIsActivated() != 2) return;
 
         if (this.level().getDifficulty() != Difficulty.PEACEFUL && this.random.nextInt(5) == 1) {
-            LivingEntity e = this.findSomethingToAttack();
-            if (e != null) {
-                this.getNavigation().moveTo(e, 1.25);
-                if (this.distanceToSqr(e) < 9.0 && (this.random.nextInt(8) == 0 || this.random.nextInt(7) == 1)) {
-                    e.hurt(this.damageSources().mobAttack(this), 4.0f);
+            LivingEntity attackTarget = this.findSomethingToAttack();
+            if (attackTarget != null) {
+                this.getNavigation().moveTo(attackTarget, 1.25);
+                if (this.distanceToSqr(attackTarget) < 9.0
+                        && (this.random.nextInt(8) == 0 || this.random.nextInt(7) == 1)) {
+                    attackTarget.hurt(this.damageSources().mobAttack(this), 4.0f);
                 }
             } else if (this.isOrderedToSit()) {
-                this.getNavigation().moveTo(this.px, this.py, this.pz, 0.65);
+                this.getNavigation().moveTo(this.patrolBlockX, this.patrolBlockY, this.patrolBlockZ, 0.65);
             }
         }
         if (this.random.nextInt(250) == 1) this.heal(1.0f);
@@ -168,28 +174,28 @@ public class EntityCannonFodder extends TamableAnimal {
     @Override
     public void addAdditionalSaveData(CompoundTag tag) {
         super.addAdditionalSaveData(tag);
-        tag.putString("NameOne", this.nameOne != null ? this.nameOne : "");
-        tag.putString("NameTwo", this.nameTwo != null ? this.nameTwo : "");
+        tag.putString("NameOne", this.trustedPlayerUuidPrimary != null ? this.trustedPlayerUuidPrimary : "");
+        tag.putString("NameTwo", this.trustedPlayerUuidSecondary != null ? this.trustedPlayerUuidSecondary : "");
         tag.putInt("IsActivated", this.getIsActivated());
         tag.putInt("HatColor", this.getHatColor());
-        tag.putInt("PatrolX", this.px);
-        tag.putInt("PatrolY", this.py);
-        tag.putInt("PatrolZ", this.pz);
+        tag.putInt("PatrolX", this.patrolBlockX);
+        tag.putInt("PatrolY", this.patrolBlockY);
+        tag.putInt("PatrolZ", this.patrolBlockZ);
     }
 
     @Override
     public void readAdditionalSaveData(CompoundTag tag) {
         super.readAdditionalSaveData(tag);
-        this.nameOne = tag.getString("NameOne");
-        if (this.nameOne.isEmpty()) this.nameOne = null;
-        this.nameTwo = tag.getString("NameTwo");
-        if (this.nameTwo.isEmpty()) this.nameTwo = null;
+        this.trustedPlayerUuidPrimary = tag.getString("NameOne");
+        if (this.trustedPlayerUuidPrimary.isEmpty()) this.trustedPlayerUuidPrimary = null;
+        this.trustedPlayerUuidSecondary = tag.getString("NameTwo");
+        if (this.trustedPlayerUuidSecondary.isEmpty()) this.trustedPlayerUuidSecondary = null;
         this.setIsActivated(tag.getInt("IsActivated"));
         this.setHatColor(tag.getInt("HatColor"));
-        this.px = tag.getInt("PatrolX");
-        this.py = tag.getInt("PatrolY");
-        this.pz = tag.getInt("PatrolZ");
-        if (this.nameOne != null) {
+        this.patrolBlockX = tag.getInt("PatrolX");
+        this.patrolBlockY = tag.getInt("PatrolY");
+        this.patrolBlockZ = tag.getInt("PatrolZ");
+        if (this.trustedPlayerUuidPrimary != null) {
             this.setTame(true, false);
         }
     }
