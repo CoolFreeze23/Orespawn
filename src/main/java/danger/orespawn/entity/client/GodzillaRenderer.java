@@ -3,6 +3,7 @@ package danger.orespawn.entity.client;
 import com.mojang.blaze3d.vertex.PoseStack;
 import danger.orespawn.OreSpawnMod;
 import danger.orespawn.entity.Godzilla;
+import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.client.model.geom.ModelLayerLocation;
@@ -21,6 +22,11 @@ public class GodzillaRenderer extends MobRenderer<Godzilla, ModelGodzilla> {
     @Override
     protected void scale(Godzilla entity, PoseStack poseStack, float partialTick) {
         poseStack.scale(3.0F, 3.0F, 3.0F);
+    }
+
+    @Override
+    public boolean shouldRender(Godzilla entity, Frustum frustum, double x, double y, double z) {
+        return true;
     }
 
     @Override

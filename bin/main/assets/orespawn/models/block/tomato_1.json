@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/crop",
+  "textures": {
+    "crop": "orespawn:blocks/tomato_1"
+  }
+}

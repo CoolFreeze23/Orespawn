@@ -1,0 +1,19 @@
+{
+  "type": "neoforge:add_spawns",
+  "biomes": "#minecraft:is_ocean",
+  "spawners": [
+    { "type": "orespawn:crab", "weight": 8, "minCount": 1, "maxCount": 3 },
+    { "type": "orespawn:flounder", "weight": 8, "minCount": 1, "maxCount": 3 },
+    { "type": "orespawn:gold_fish", "weight": 10, "minCount": 1, "maxCount": 3 },
+    { "type": "orespawn:whale", "weight": 2, "minCount": 1, "maxCount": 1 },
+    { "type": "orespawn:irukandji", "weight": 4, "minCount": 1, "maxCount": 2 },
+    { "type": "orespawn:hammerhead", "weight": 3, "minCount": 1, "maxCount": 1 },
+    { "type": "orespawn:skate", "weight": 6, "minCount": 1, "maxCount": 2 },
+    { "type": "orespawn:urchin", "weight": 6, "minCount": 1, "maxCount": 2 },
+    { "type": "orespawn:sea_viper", "weight": 4, "minCount": 1, "maxCount": 1 },
+    { "type": "orespawn:sea_monster", "weight": 1, "minCount": 1, "maxCount": 1 },
+    { "type": "orespawn:water_dragon", "weight": 2, "minCount": 1, "maxCount": 1 },
+    { "type": "orespawn:hydrolisc", "weight": 3, "minCount": 1, "maxCount": 1 },
+    { "type": "orespawn:kraken", "weight": 1, "minCount": 1, "maxCount": 1 }
+  ]
+}

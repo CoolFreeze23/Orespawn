@@ -145,7 +145,7 @@ public class EntityLunaMoth extends EntityButterfly {
     public boolean checkSpawnRules(LevelAccessor level, MobSpawnType spawnType) {
         BlockState state = level.getBlockState(this.blockPosition());
         if (!state.isAir()) return false;
-        if (this.level().canSeeSky(this.blockPosition())) return false;
+        if (level.canSeeSky(this.blockPosition())) return false;
         return this.getY() >= MIN_SPAWN_Y;
     }
 }

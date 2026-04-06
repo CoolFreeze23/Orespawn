@@ -35,7 +35,7 @@ public class ModelBoyfriend extends EntityModel<Boyfriend> {
         root.addOrReplaceChild("left_arm", CubeListBuilder.create().texOffs(24, 16).mirror().addBox(-1.0F, -2.0F, -2.0F, 4, 12, 4), PartPose.offset(5.0F, 2.0F, 0.0F));
         root.addOrReplaceChild("right_leg", CubeListBuilder.create().texOffs(40, 16).addBox(-2.0F, 0.0F, -2.0F, 4, 12, 4), PartPose.offset(-2.0F, 12.0F, 0.0F));
         root.addOrReplaceChild("left_leg", CubeListBuilder.create().texOffs(40, 16).mirror().addBox(-2.0F, 0.0F, -2.0F, 4, 12, 4), PartPose.offset(2.0F, 12.0F, 0.0F));
-        return LayerDefinition.create(mesh, 64, 64);
+        return LayerDefinition.create(mesh, 64, 32);
     }
 
     @Override

@@ -103,7 +103,7 @@ public class SpiderDriver extends Spider {
 
     @Override
     public boolean checkSpawnRules(LevelAccessor level, MobSpawnType spawnType) {
-        List<SpiderRobot> nearby = this.level().getEntitiesOfClass(SpiderRobot.class,
+        List<SpiderRobot> nearby = level.getEntitiesOfClass(SpiderRobot.class,
                 this.getBoundingBox().inflate(24.0, 12.0, 24.0));
         if (!nearby.isEmpty()) return true;
         return super.checkSpawnRules(level, spawnType);

@@ -178,15 +178,11 @@ public class Skate extends Monster {
     @Override
     protected float getSoundVolume() { return 0.33f; }
 
-    private int findBuddies() {
-        return this.level().getEntitiesOfClass(Skate.class,
-                this.getBoundingBox().inflate(16.0, 8.0, 16.0)).size();
-    }
-
     @Override
     public boolean checkSpawnRules(LevelAccessor level, MobSpawnType spawnType) {
         if (this.getY() < 50.0) return false;
         if (this.random.nextInt(30) != 1) return false;
-        return this.findBuddies() <= 6;
+        return level.getEntitiesOfClass(Skate.class,
+                this.getBoundingBox().inflate(16.0, 8.0, 16.0)).size() <= 6;
     }
 }

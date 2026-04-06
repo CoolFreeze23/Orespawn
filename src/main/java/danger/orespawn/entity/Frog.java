@@ -277,9 +277,10 @@ public class Frog extends Animal {
     @Override
     public boolean checkSpawnRules(LevelAccessor level, MobSpawnType spawnType) {
         if (this.getY() < 50.0) return false;
-        long dayTime = this.level().getDayTime() % 24000L;
+        long dayTime = level.dayTime() % 24000L;
         if (dayTime >= 13000L) return false;
-        return this.findBuddies() <= 5;
+        return level.getEntitiesOfClass(Frog.class,
+                this.getBoundingBox().inflate(20.0, 8.0, 20.0)).size() <= 5;
     }
 
     @Override

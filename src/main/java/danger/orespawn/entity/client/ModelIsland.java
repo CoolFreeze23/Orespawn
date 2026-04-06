@@ -35,7 +35,7 @@ public class ModelIsland extends EntityModel<Island> {
         part.addOrReplaceChild("leg2", CubeListBuilder.create().texOffs(72, 0).addBox(-3.0F, 0.0F, -3.0F, 6, 12, 6), PartPose.offset(8.0F, 12.0F, -8.0F));
         part.addOrReplaceChild("leg3", CubeListBuilder.create().texOffs(72, 0).addBox(-3.0F, 0.0F, -3.0F, 6, 12, 6), PartPose.offset(-8.0F, 12.0F, 8.0F));
         part.addOrReplaceChild("leg4", CubeListBuilder.create().texOffs(72, 0).addBox(-3.0F, 0.0F, -3.0F, 6, 12, 6), PartPose.offset(8.0F, 12.0F, 8.0F));
-        return LayerDefinition.create(mesh, 128, 64);
+        return LayerDefinition.create(mesh, 64, 32);
     }
 
     @Override

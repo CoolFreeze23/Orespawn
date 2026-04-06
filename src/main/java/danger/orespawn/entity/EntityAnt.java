@@ -88,7 +88,8 @@ public class EntityAnt extends Animal {
     @Override
     public boolean checkSpawnRules(LevelAccessor level, MobSpawnType spawnType) {
         if (this.getY() < 50.0) return false;
-        return findBuddies() <= 4;
+        return level.getEntitiesOfClass(EntityAnt.class,
+                this.getBoundingBox().inflate(20.0, 10.0, 20.0)).size() <= 4;
     }
 
     protected int findBuddies() {

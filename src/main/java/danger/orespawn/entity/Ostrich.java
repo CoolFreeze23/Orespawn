@@ -145,9 +145,9 @@ public class Ostrich extends TamableAnimal {
     @Override
     public boolean checkSpawnRules(LevelAccessor level, MobSpawnType spawnType) {
         if (this.getY() < 50.0) return false;
-        if (!this.level().canSeeSky(this.blockPosition())) return false;
+        if (!level.canSeeSky(this.blockPosition())) return false;
         if (this.random.nextInt(4) != 1) return false;
-        List<Ostrich> nearby = this.level().getEntitiesOfClass(Ostrich.class,
+        List<Ostrich> nearby = level.getEntitiesOfClass(Ostrich.class,
                 this.getBoundingBox().inflate(16.0, 6.0, 16.0));
         return nearby.isEmpty();
     }

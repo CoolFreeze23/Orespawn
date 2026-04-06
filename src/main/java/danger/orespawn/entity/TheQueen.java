@@ -889,6 +889,7 @@ public class TheQueen extends Monster {
         this.headFound = 0;
         LivingEntity ret = null;
         for (LivingEntity entity : entities) {
+            if (entity instanceof QueenHead) { this.headFound = 1; }
             if (isSuitableTarget(entity) && ret == null) {
                 ret = entity;
             }

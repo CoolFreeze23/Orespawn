@@ -215,7 +215,8 @@ public class Chipmunk extends TamableAnimal {
     @Override
     public boolean checkSpawnRules(LevelAccessor level, MobSpawnType spawnType) {
         if (this.getY() < 50.0) return false;
-        return this.findBuddies() <= 2;
+        return level.getEntitiesOfClass(Chipmunk.class,
+                this.getBoundingBox().inflate(20.0, 10.0, 20.0)).size() <= 2;
     }
 
     @Override

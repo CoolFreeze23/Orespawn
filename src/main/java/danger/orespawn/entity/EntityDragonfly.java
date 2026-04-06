@@ -156,7 +156,7 @@ public class EntityDragonfly extends Animal {
     @Override
     public boolean checkSpawnRules(net.minecraft.world.level.LevelAccessor level,
                                     net.minecraft.world.entity.MobSpawnType spawnType) {
-        return this.getY() >= 50.0 && this.level().isDay();
+        return this.getY() >= 50.0 && level.dayTime() % 24000L < 13000L;
     }
 
     @Override

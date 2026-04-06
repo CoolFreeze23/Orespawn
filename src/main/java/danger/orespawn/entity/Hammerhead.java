@@ -174,7 +174,7 @@ public class Hammerhead extends Monster {
     @Override
     public boolean checkSpawnRules(LevelAccessor level, MobSpawnType spawnType) {
         if (this.getY() < 50.0) return false;
-        return this.level().getEntitiesOfClass(Hammerhead.class,
+        return level.getEntitiesOfClass(Hammerhead.class,
                 this.getBoundingBox().inflate(16.0, 8.0, 16.0)).isEmpty();
     }
 }

@@ -217,7 +217,7 @@ public class Beaver extends Animal {
     public boolean checkSpawnRules(LevelAccessor level, MobSpawnType spawnType) {
         if (this.getY() < 50.0) return false;
         if (this.getY() > 100.0) return false;
-        BlockState below = this.level().getBlockState(this.blockPosition().below());
+        BlockState below = level.getBlockState(this.blockPosition().below());
         return below.is(Blocks.DIRT) || below.is(Blocks.GRASS_BLOCK)
                 || below.is(Blocks.SHORT_GRASS) || below.is(Blocks.OAK_LEAVES);
     }

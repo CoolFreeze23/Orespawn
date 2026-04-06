@@ -9,14 +9,14 @@ import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.resources.ResourceLocation;
 
-public class BrutalflyRenderer extends MobRenderer<EntityBrutalfly, BrutalflyModel<EntityBrutalfly>> {
+public class BrutalflyRenderer extends MobRenderer<EntityBrutalfly, BrutalflyModel> {
     private static final ResourceLocation TEXTURE =
             ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "textures/entity/brutalfly.png");
     public static final ModelLayerLocation MODEL_LAYER =
             new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "brutalfly"), "main");
 
     public BrutalflyRenderer(EntityRendererProvider.Context context) {
-        super(context, new BrutalflyModel<>(context.bakeLayer(MODEL_LAYER)), 1.5f);
+        super(context, new BrutalflyModel(context.bakeLayer(MODEL_LAYER)), 1.5f);
     }
 
     @Override

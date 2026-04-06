@@ -43,7 +43,7 @@ public class CannonFodderModel<T extends EntityCannonFodder> extends EntityModel
         root.addOrReplaceChild("leg_back_right", CubeListBuilder.create().texOffs(24, 30)
                 .addBox(-1.0F, 0.0F, -1.0F, 2, 9, 2), PartPose.offset(-3.0F, 15.0F, 7.0F));
 
-        return LayerDefinition.create(mesh, 64, 64);
+        return LayerDefinition.create(mesh, 128, 64);
     }
 
     @Override

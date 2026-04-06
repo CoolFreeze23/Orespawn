@@ -150,16 +150,12 @@ public class Flounder extends Animal {
         }
     }
 
-    private int findBuddies() {
-        return this.level().getEntitiesOfClass(Flounder.class,
-                this.getBoundingBox().inflate(16.0, 8.0, 16.0)).size();
-    }
-
     @Override
     public boolean checkSpawnRules(LevelAccessor level, MobSpawnType spawnType) {
         if (this.getY() < 50.0) return false;
         if (this.random.nextInt(20) != 1) return false;
-        return this.findBuddies() <= 10;
+        return level.getEntitiesOfClass(Flounder.class,
+                this.getBoundingBox().inflate(16.0, 8.0, 16.0)).size() <= 10;
     }
 
     @Nullable

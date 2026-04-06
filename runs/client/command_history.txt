@@ -1,0 +1,50 @@
+/gamemode/
+/
+/summon orespawn:ant
+/summon orespawn:bee
+/
+/summon orespawn:the_prince
+/give @p orespawn:bertha_blade
+/summon orespawn:lizard
+/summon orespawn:beaver
+/summon orespawn:ant
+/summon orespawn:rainbow_ant
+/summon orespawn:lizard
+/summon orespawn:basilisk
+/summon orespawn:attack_squid
+/summon orespawn:cater_killer
+/summon orespawn:lizard
+/summon orespawn:the_prince_teen
+/gamemode survival
+/gamemode creative
+/
+/kill @e
+/kill @e[type=orespawn:godzilla]
+/summon orespawn:ostrich
+/summon orespawn:bee
+/kill @e[type=orespawn:godzilla]
+/kill @e
+/summon orespawn:vortex
+/summon orespawn:worm_small
+/summon orespawn:worm_medium
+/summon orespawn:worm_large
+/summon orespawn:spyro
+/summon orespawn:stinky
+/gamemode survival
+/gamemode creative
+/summon orespawn:spyro
+/summon orespawn:kraken
+/summon orespawn:stink_bug
+/summon orespawn:stinky
+/tick rate 10
+/kill @e[type=orespawn:godzilla]
+/tick rate 20
+/tp ~1000 ~ 1000
+/kill @e
+/weather clear/
+/weather clear
+/time set day
+/summon orespawn:stink_bug
+/summon orespawn:stinky
+/summon orespawn:scorpion
+/summon orespawn:emperor_scorpion

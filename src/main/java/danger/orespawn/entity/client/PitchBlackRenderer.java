@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import danger.orespawn.OreSpawnMod;
 import danger.orespawn.entity.PitchBlack;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.client.model.geom.ModelLayerLocation;
@@ -26,6 +27,11 @@ public class PitchBlackRenderer extends MobRenderer<PitchBlack, ModelPitchBlack>
         poseStack.scale(1.0f, 1.0f, 1.0f);
         super.render(entity, entityYaw, partialTicks, poseStack, buffer, packedLight);
         poseStack.popPose();
+    }
+
+    @Override
+    public boolean shouldRender(PitchBlack entity, Frustum frustum, double x, double y, double z) {
+        return true;
     }
 
     @Override

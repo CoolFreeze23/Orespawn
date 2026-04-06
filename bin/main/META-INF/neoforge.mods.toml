@@ -1,0 +1,26 @@
+modLoader="javafml"
+loaderVersion="[1,)"
+license="All Rights Reserved"
+
+[[mods]]
+modId="orespawn"
+version="1.21.1-1.0.0"
+displayName="OreSpawn"
+description='''
+The OreSpawn Mod - Just plain fun! Adds tons of new mobs, ores, tools, armor, dimensions, and more!
+Originally by TheyCallMeDanger, ported to NeoForge 1.21.1.
+'''
+
+[[dependencies.orespawn]]
+modId="neoforge"
+type="required"
+versionRange="[21.1.223,)"
+ordering="NONE"
+side="BOTH"
+
+[[dependencies.orespawn]]
+modId="minecraft"
+type="required"
+versionRange="[1.21.1]"
+ordering="NONE"
+side="BOTH"

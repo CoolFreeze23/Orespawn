@@ -7,14 +7,14 @@ import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.resources.ResourceLocation;
 
-public class SpyroRenderer extends MobRenderer<EntitySpyro, SpyroModel<EntitySpyro>> {
+public class SpyroRenderer extends MobRenderer<EntitySpyro, SpyroModel> {
     private static final ResourceLocation TEXTURE =
             ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "textures/entity/spyro.png");
     public static final ModelLayerLocation MODEL_LAYER =
             new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "spyro"), "main");
 
     public SpyroRenderer(EntityRendererProvider.Context context) {
-        super(context, new SpyroModel<>(context.bakeLayer(MODEL_LAYER)), 0.5f);
+        super(context, new SpyroModel(context.bakeLayer(MODEL_LAYER)), 0.5f);
     }
 
     @Override

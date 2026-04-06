@@ -2,98 +2,134 @@ package danger.orespawn.entity.client;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import danger.orespawn.entity.EntityCricket;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.util.Mth;
+import net.minecraft.world.entity.Mob;
 
-public class CricketModel<T extends EntityCricket> extends EntityModel<T> {
+public class CricketModel<T extends Mob> extends EntityModel<T> {
     private final ModelPart body;
     private final ModelPart head;
-    private final ModelPart leg1;
-    private final ModelPart leg2;
-    private final ModelPart leg3;
-    private final ModelPart leg4;
-    private final ModelPart legBackLeft;
-    private final ModelPart legBackRight;
-    private final ModelPart antennaLeft;
-    private final ModelPart antennaRight;
+    private final ModelPart abdomen;
+    private final ModelPart lfleg;
+    private final ModelPart lrleg;
+    private final ModelPart rfleg;
+    private final ModelPart rrleg;
+    private final ModelPart lleg1;
+    private final ModelPart rleg1;
+    private final ModelPart lleg2;
+    private final ModelPart rleg2;
 
     public CricketModel(ModelPart root) {
         this.body = root.getChild("body");
         this.head = root.getChild("head");
-        this.leg1 = root.getChild("leg1");
-        this.leg2 = root.getChild("leg2");
-        this.leg3 = root.getChild("leg3");
-        this.leg4 = root.getChild("leg4");
-        this.legBackLeft = root.getChild("leg_back_left");
-        this.legBackRight = root.getChild("leg_back_right");
-        this.antennaLeft = root.getChild("antenna_left");
-        this.antennaRight = root.getChild("antenna_right");
+        this.abdomen = root.getChild("abdomen");
+        this.lfleg = root.getChild("lfleg");
+        this.lrleg = root.getChild("lrleg");
+        this.rfleg = root.getChild("rfleg");
+        this.rrleg = root.getChild("rrleg");
+        this.lleg1 = root.getChild("lleg1");
+        this.rleg1 = root.getChild("rleg1");
+        this.lleg2 = root.getChild("lleg2");
+        this.rleg2 = root.getChild("rleg2");
     }
 
     public static LayerDefinition createBodyLayer() {
-        MeshDefinition mesh = new MeshDefinition();
-        PartDefinition root = mesh.getRoot();
+        MeshDefinition meshdefinition = new MeshDefinition();
+        PartDefinition partdefinition = meshdefinition.getRoot();
 
-        root.addOrReplaceChild("body", CubeListBuilder.create().texOffs(0, 0)
-                .addBox(-1.0F, -1.0F, -2.0F, 2, 2, 4), PartPose.offset(0.0F, 22.5F, 0.0F));
-        root.addOrReplaceChild("head", CubeListBuilder.create().texOffs(0, 6)
-                .addBox(-1.0F, -1.0F, -1.5F, 2, 2, 2), PartPose.offset(0.0F, 22.0F, -2.0F));
+        partdefinition.addOrReplaceChild("body",
+                CubeListBuilder.create().texOffs(0, 25).mirror()
+                        .addBox(-1.0F, -1.0F, -3.0F, 3, 3, 6),
+                PartPose.offset(0.0F, 21.0F, 0.0F));
 
-        root.addOrReplaceChild("leg1", CubeListBuilder.create().texOffs(0, 10)
-                .addBox(-0.5F, 0.0F, -0.5F, 1, 1, 1), PartPose.offset(-1.0F, 23.5F, -1.0F));
-        root.addOrReplaceChild("leg2", CubeListBuilder.create().texOffs(0, 10)
-                .addBox(-0.5F, 0.0F, -0.5F, 1, 1, 1), PartPose.offset(1.0F, 23.5F, -1.0F));
-        root.addOrReplaceChild("leg3", CubeListBuilder.create().texOffs(0, 10)
-                .addBox(-0.5F, 0.0F, -0.5F, 1, 1, 1), PartPose.offset(-1.0F, 23.5F, 0.5F));
-        root.addOrReplaceChild("leg4", CubeListBuilder.create().texOffs(0, 10)
-                .addBox(-0.5F, 0.0F, -0.5F, 1, 1, 1), PartPose.offset(1.0F, 23.5F, 0.5F));
+        partdefinition.addOrReplaceChild("head",
+                CubeListBuilder.create().texOffs(0, 17).mirror()
+                        .addBox(-1.0F, -2.0F, -1.0F, 3, 4, 3),
+                PartPose.offsetAndRotation(0.0F, 21.0F, -5.0F, -0.1745329F, 0.0F, 0.0F));
 
-        root.addOrReplaceChild("leg_back_left", CubeListBuilder.create().texOffs(4, 10)
-                .addBox(-0.5F, 0.0F, -0.5F, 1, 2, 1), PartPose.offset(-1.0F, 23.0F, 1.5F));
-        root.addOrReplaceChild("leg_back_right", CubeListBuilder.create().texOffs(4, 10)
-                .addBox(-0.5F, 0.0F, -0.5F, 1, 2, 1), PartPose.offset(1.0F, 23.0F, 1.5F));
+        partdefinition.addOrReplaceChild("abdomen",
+                CubeListBuilder.create().texOffs(0, 36).mirror()
+                        .addBox(-0.5F, -1.0F, 3.0F, 2, 2, 3),
+                PartPose.offset(0.0F, 21.0F, 0.0F));
 
-        root.addOrReplaceChild("antenna_left", CubeListBuilder.create().texOffs(8, 10)
-                .addBox(-0.5F, -3.0F, 0.0F, 1, 3, 0), PartPose.offset(-0.5F, 21.0F, -3.5F));
-        root.addOrReplaceChild("antenna_right", CubeListBuilder.create().texOffs(10, 10)
-                .addBox(-0.5F, -3.0F, 0.0F, 1, 3, 0), PartPose.offset(0.5F, 21.0F, -3.5F));
+        partdefinition.addOrReplaceChild("lfleg",
+                CubeListBuilder.create().texOffs(25, 0).mirror()
+                        .addBox(2.0F, 0.0F, 0.0F, 5, 1, 1),
+                PartPose.offsetAndRotation(0.0F, 21.0F, -2.0F, 0.0F, 0.4712389F, 0.418879F));
 
-        return LayerDefinition.create(mesh, 64, 32);
+        partdefinition.addOrReplaceChild("lrleg",
+                CubeListBuilder.create().texOffs(23, 4).mirror()
+                        .addBox(1.0F, 0.0F, -2.0F, 6, 1, 1),
+                PartPose.offsetAndRotation(0.0F, 21.0F, 0.0F, 0.0F, -0.296706F, 0.418879F));
+
+        partdefinition.addOrReplaceChild("rfleg",
+                CubeListBuilder.create().texOffs(25, 8).mirror()
+                        .addBox(-7.0F, 0.0F, 0.0F, 5, 1, 1),
+                PartPose.offsetAndRotation(1.0F, 21.0F, -2.0F, 0.0F, -0.5410521F, -0.4363323F));
+
+        partdefinition.addOrReplaceChild("rrleg",
+                CubeListBuilder.create().texOffs(25, 12).mirror()
+                        .addBox(-7.0F, -1.0F, 0.0F, 5, 1, 1),
+                PartPose.offsetAndRotation(1.0F, 22.0F, -2.0F, 0.0F, 0.3839724F, -0.418879F));
+
+        partdefinition.addOrReplaceChild("lleg1",
+                CubeListBuilder.create().texOffs(40, 0).mirror()
+                        .addBox(-1.0F, -1.0F, 0.0F, 1, 2, 8),
+                PartPose.offsetAndRotation(2.0F, 22.0F, 0.0F, 0.5585054F, 0.4363323F, 0.0F));
+
+        partdefinition.addOrReplaceChild("rleg1",
+                CubeListBuilder.create().texOffs(40, 11).mirror()
+                        .addBox(0.0F, -1.0F, 0.0F, 1, 2, 8),
+                PartPose.offsetAndRotation(-1.0F, 22.0F, 0.0F, 0.5585054F, -0.4363323F, 0.0F));
+
+        partdefinition.addOrReplaceChild("lleg2",
+                CubeListBuilder.create().texOffs(21, 23).mirror()
+                        .addBox(-0.5F, -6.5F, 4.5F, 1, 1, 8),
+                PartPose.offsetAndRotation(2.0F, 22.0F, 0.0F, -0.3665191F, 0.3490659F, 0.0F));
+
+        partdefinition.addOrReplaceChild("rleg2",
+                CubeListBuilder.create().texOffs(21, 34).mirror()
+                        .addBox(-0.5F, -6.5F, 4.0F, 1, 1, 8),
+                PartPose.offsetAndRotation(-1.0F, 22.0F, 0.0F, -0.3665191F, -0.3490659F, 0.0F));
+
+        return LayerDefinition.create(meshdefinition, 64, 64);
     }
 
     @Override
     public void setupAnim(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
-        this.head.yRot = netHeadYaw * ((float) Math.PI / 180F);
-        this.head.xRot = headPitch * ((float) Math.PI / 180F);
+        float newangle = limbSwingAmount > 0.1F
+                ? Mth.cos(ageInTicks * 1.0F) * (float) Math.PI * 0.25F * limbSwingAmount
+                : 0.0F;
+        this.lfleg.yRot = 0.47F + newangle;
+        this.rfleg.yRot = -0.54F + newangle;
+        this.lrleg.yRot = -0.296F - newangle;
+        this.rrleg.yRot = 0.384F - newangle;
 
-        float legSwing = Mth.cos(limbSwing * 0.6662F) * 0.7F * limbSwingAmount;
-        this.leg1.xRot = legSwing;
-        this.leg2.xRot = -legSwing;
-        this.leg3.xRot = -legSwing;
-        this.leg4.xRot = legSwing;
-        this.legBackLeft.xRot = legSwing * 1.2F;
-        this.legBackRight.xRot = -legSwing * 1.2F;
-
-        float antennaWave = Mth.cos(ageInTicks * 0.1F) * 0.15F;
-        this.antennaLeft.zRot = -0.2F + antennaWave;
-        this.antennaRight.zRot = 0.2F - antennaWave;
+        this.lleg1.yRot = 0.436F;
+        this.lleg2.yRot = 0.349F;
+        this.rleg1.yRot = -0.436F;
+        this.rleg2.yRot = -0.349F;
+        this.lleg1.xRot = 0.558F;
+        this.lleg2.xRot = -0.366F;
+        this.rleg1.xRot = 0.558F;
+        this.rleg2.xRot = -0.366F;
     }
 
     @Override
-    public void renderToBuffer(PoseStack ps, VertexConsumer vc, int light, int overlay, int color) {
-        body.render(ps, vc, light, overlay, color);
-        head.render(ps, vc, light, overlay, color);
-        leg1.render(ps, vc, light, overlay, color);
-        leg2.render(ps, vc, light, overlay, color);
-        leg3.render(ps, vc, light, overlay, color);
-        leg4.render(ps, vc, light, overlay, color);
-        legBackLeft.render(ps, vc, light, overlay, color);
-        legBackRight.render(ps, vc, light, overlay, color);
-        antennaLeft.render(ps, vc, light, overlay, color);
-        antennaRight.render(ps, vc, light, overlay, color);
+    public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, int color) {
+        this.body.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.head.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.abdomen.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.lfleg.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.lrleg.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.rfleg.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.rrleg.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.lleg1.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.rleg1.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.lleg2.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.rleg2.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
     }
 }

@@ -772,6 +772,7 @@ public class TheKing extends Monster {
         LivingEntity ret = null;
         this.headEntityFound = 0;
         for (LivingEntity entity : entities) {
+            if (entity instanceof KingHead) { this.headEntityFound = 1; }
             if (ret == null && this.isSuitableTarget(entity)) {
                 ret = entity;
             }

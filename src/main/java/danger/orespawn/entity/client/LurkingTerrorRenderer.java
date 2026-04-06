@@ -7,12 +7,12 @@ import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.resources.ResourceLocation;
 
-public class LurkingTerrorRenderer extends MobRenderer<EntityLurkingTerror, LurkingTerrorModel<EntityLurkingTerror>> {
+public class LurkingTerrorRenderer extends MobRenderer<EntityLurkingTerror, LurkingTerrorModel> {
     private static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "textures/entity/lurkingterror.png");
     public static final ModelLayerLocation MODEL_LAYER = new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "lurkingterror"), "main");
 
     public LurkingTerrorRenderer(EntityRendererProvider.Context context) {
-        super(context, new LurkingTerrorModel<>(context.bakeLayer(MODEL_LAYER)), 1.0f);
+        super(context, new LurkingTerrorModel(context.bakeLayer(MODEL_LAYER)), 1.0f);
     }
 
     @Override

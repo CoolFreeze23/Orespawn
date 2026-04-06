@@ -166,7 +166,7 @@ public class Urchin extends Monster {
 
     @Override
     public boolean checkSpawnRules(LevelAccessor level, MobSpawnType spawnType) {
-        long timeOfDay = this.level().getDayTime() % 24000L;
+        long timeOfDay = level.dayTime() % 24000L;
         return timeOfDay >= 13000L;
     }
 }

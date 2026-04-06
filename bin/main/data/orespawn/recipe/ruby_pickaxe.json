@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "XXX",
+    " # ",
+    " # "
+  ],
+  "key": {
+    "#": { "item": "minecraft:stick" },
+    "X": { "item": "orespawn:ruby" }
+  },
+  "result": {
+    "item": "orespawn:ruby_pickaxe",
+    "count": 1
+  }
+}
