@@ -526,7 +526,6 @@ public class ModelThePrinceTeen extends EntityModel<ThePrinceTeen> {
     public void setupAnim(ThePrinceTeen entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
         float d3;
         float h3;
-        // TODO: RenderInfo was removed - animation smoothing data needs alternative storage
         float rf1 = 0.0f;
         float newangle;
         float newangle2;
@@ -834,7 +833,6 @@ public class ModelThePrinceTeen extends EntityModel<ThePrinceTeen> {
         this.jaw5R.x = this.head3R.x;
         this.headfinR.x = this.head3R.x;
 
-        // TODO: persist animation smoothing state
     }
 
     @Override

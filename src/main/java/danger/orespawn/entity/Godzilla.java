@@ -2,7 +2,10 @@ package danger.orespawn.entity;
 
 import java.util.Comparator;
 import java.util.List;
+import danger.orespawn.ModEntities;
+import danger.orespawn.ModBlocks;
 import danger.orespawn.ModItems;
+import danger.orespawn.util.MyUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -63,6 +66,7 @@ public class Godzilla extends Monster {
     private int ticker = 0;
     private int streamCount = 8;
     private int largeUnknownDetected = 0;
+    private int headFound = 0;
 
     public Godzilla(EntityType<? extends Godzilla> type, Level level) {
         super(type, level);
@@ -262,7 +266,12 @@ public class Godzilla extends Monster {
         if (block == Blocks.GOLD_BLOCK) return false;
         if (block == Blocks.ENDER_CHEST) return false;
         if (block == Blocks.COMMAND_BLOCK) return false;
-        // TODO: Also exclude OreSpawn custom blocks (amethyst block, ruby block, uranium block, titanium block, crystal stone, crystal grass)
+        if (block == ModBlocks.BLOCK_AMETHYST.get()) return false;
+        if (block == ModBlocks.BLOCK_RUBY.get()) return false;
+        if (block == ModBlocks.BLOCK_URANIUM.get()) return false;
+        if (block == ModBlocks.BLOCK_TITANIUM.get()) return false;
+        if (block == ModBlocks.CRYSTAL_STONE.get()) return false;
+        if (block == ModBlocks.CRYSTAL_GRASS.get()) return false;
         return true;
     }
 
@@ -289,7 +298,7 @@ public class Godzilla extends Monster {
         for (LivingEntity target : entities) {
             if (target == null || target == this || !target.isAlive()) continue;
             if (target instanceof Godzilla) continue;
-            // TODO: skip GodzillaHead, Ghost, GhostSkelly
+            if (target instanceof GodzillaHead || target instanceof Ghost || target instanceof GhostSkelly) continue;
 
             target.hurt(this.damageSources().mobAttack(this), (float) damage / 2.0f);
             target.hurt(this.damageSources().genericKill(), (float) damage / 2.0f);
@@ -307,11 +316,43 @@ public class Godzilla extends Monster {
     // ---- Combat: fire cannon ----
 
     private void fireCannon(LivingEntity targetEntity) {
-        // TODO: Implement BetterFireball projectile for fire cannon attack.
-        // Original fires a stream of fireballs (1 aimed + 5 spread) from mouth position
-        // at yoff=19, xzoff=22, offset from head rotation angle.
-        // Each volley decrements streamCount; resets to 8 every 100 ticks.
+        double yoff = 19.0;
+        double xzoff = 22.0;
+        double cx = this.getX() - xzoff * Math.sin(Math.toRadians(this.yHeadRot));
+        double cz = this.getZ() + xzoff * Math.cos(Math.toRadians(this.yHeadRot));
+
         if (this.streamCount > 0) {
+            this.level().playSound(null, cx, this.getY() + yoff, cz,
+                    SoundEvents.TNT_PRIMED, SoundSource.HOSTILE,
+                    1.0f, 1.0f / (this.getRandom().nextFloat() * 0.4f + 0.8f));
+
+            BetterFireball bf = new BetterFireball(this.level(), this,
+                    new Vec3(targetEntity.getX() - cx,
+                             targetEntity.getY() + targetEntity.getBbHeight() / 2.0f - (this.getY() + yoff),
+                             targetEntity.getZ() - cz));
+            bf.moveTo(cx, this.getY() + yoff, cz, this.getYRot(), 0.0f);
+            bf.setPos(cx, this.getY() + yoff, cz);
+            bf.setReallyBig();
+            this.level().addFreshEntity(bf);
+
+            for (int i = 0; i < 5; i++) {
+                float r1 = 5.0f * (this.getRandom().nextFloat() - this.getRandom().nextFloat());
+                float r2 = 3.0f * (this.getRandom().nextFloat() - this.getRandom().nextFloat());
+                float r3 = 5.0f * (this.getRandom().nextFloat() - this.getRandom().nextFloat());
+                bf = new BetterFireball(this.level(), this,
+                        new Vec3(targetEntity.getX() - cx + r1,
+                                 targetEntity.getY() + targetEntity.getBbHeight() / 2.0f - (this.getY() + yoff) + r2,
+                                 targetEntity.getZ() - cz + r3));
+                bf.moveTo(cx, this.getY() + yoff, cz, this.getYRot(), 0.0f);
+                bf.setPos(cx, this.getY() + yoff, cz);
+                bf.setBig();
+                if (this.getRandom().nextInt(2) == 1) bf.setSmall();
+                this.level().addFreshEntity(bf);
+            }
+
+            this.level().playSound(null, cx, this.getY() + yoff, cz,
+                    SoundEvents.ARROW_SHOOT, SoundSource.HOSTILE,
+                    1.0f, 1.0f / (this.getRandom().nextFloat() * 0.4f + 0.8f));
             this.streamCount--;
         }
     }
@@ -344,13 +385,13 @@ public class Godzilla extends Monster {
         if (target == null || target == this || !target.isAlive()) return false;
         if (!this.getSensing().hasLineOfSight(target)) return false;
         if (target instanceof Godzilla) return false;
-        // TODO: if (target instanceof GodzillaHead) return false;
+        if (target instanceof GodzillaHead) return false;
         if (target instanceof Creeper) return false;
         if (target instanceof Zombie) return false;
         if (target instanceof Spider) return false;
         if (target instanceof Skeleton) return false;
-        // TODO: if (target instanceof Ghost) return false;
-        // TODO: if (target instanceof GhostSkelly) return false;
+        if (target instanceof Ghost) return false;
+        if (target instanceof GhostSkelly) return false;
         if (target instanceof Player player) {
             if (player.getAbilities().instabuild) return false;
         }
@@ -364,7 +405,7 @@ public class Godzilla extends Monster {
         LivingEntity ret = null;
         boolean villagerFound = false;
         for (LivingEntity entity : entities) {
-            // TODO: track GodzillaHead presence for head_found flag
+            if (entity instanceof GodzillaHead) { this.headFound = 1; }
             if (!villagerFound && entity instanceof Villager && entity.isAlive()
                     && this.getSensing().hasLineOfSight(entity)) {
                 ret = entity;
@@ -430,15 +471,21 @@ public class Godzilla extends Monster {
                 if (!currentTarget.isAlive()) {
                     this.setTarget(null);
                     currentTarget = null;
-                } else if (currentTarget instanceof Godzilla) {
-                    // TODO: also check GodzillaHead
+                } else if (currentTarget instanceof Godzilla || currentTarget instanceof GodzillaHead) {
                     this.setTarget(null);
                     currentTarget = null;
                 }
             }
             if (currentTarget == null) {
                 currentTarget = this.findSomethingToAttack();
-                // TODO: spawn GodzillaHead companion if not already present
+                if (this.headFound == 0) {
+                    GodzillaHead head = ModEntities.GODZILLA_HEAD.get().create(this.level());
+                    if (head != null) {
+                        head.moveTo(this.getX(), this.getY() + 20, this.getZ(), 0.0F, 0.0F);
+                        this.level().addFreshEntity(head);
+                        this.headFound = 1;
+                    }
+                }
             }
 
             if (currentTarget != null) {
@@ -497,8 +544,8 @@ public class Godzilla extends Monster {
     public boolean doHurtTarget(Entity target) {
         if (target instanceof LivingEntity living) {
             float footprintArea = living.getBbHeight() * living.getBbWidth();
-            if (footprintArea > LARGE_ENTITY_AREA_THRESHOLD && !(target instanceof Godzilla)) {
-                // TODO: also skip GodzillaHead, PitchBlack, Kraken, check isRoyalty
+            if (footprintArea > LARGE_ENTITY_AREA_THRESHOLD && !(target instanceof Godzilla)
+                    && !MyUtils.isBigBoss(target) && !MyUtils.isRoyalty(target)) {
                 living.setHealth(living.getHealth() / 2.0f);
                 living.hurt(this.damageSources().mobAttack(this), 150.0f * 10.0f);
                 this.largeUnknownDetected = 1;
@@ -506,7 +553,6 @@ public class Godzilla extends Monster {
         }
 
         if (target instanceof net.minecraft.world.entity.boss.enderdragon.EnderDragon dragon) {
-            // TODO: implement part-specific EnderDragon damage
             dragon.hurt(this.damageSources().mobAttack(this), 75.0f);
         }
 
@@ -535,8 +581,8 @@ public class Godzilla extends Monster {
         Entity attacker = source.getEntity();
         if (attacker instanceof LivingEntity living) {
             float footprintArea = living.getBbHeight() * living.getBbWidth();
-            if (footprintArea > LARGE_ENTITY_AREA_THRESHOLD && !(living instanceof Godzilla)) {
-                // TODO: also skip GodzillaHead, PitchBlack, Kraken, check isRoyalty
+            if (footprintArea > LARGE_ENTITY_AREA_THRESHOLD && !(living instanceof Godzilla)
+                    && !MyUtils.isBigBoss(attacker) && !MyUtils.isRoyalty(attacker)) {
                 cappedDamage /= 10.0f;
                 this.hurtTimer = 50;
                 this.largeUnknownDetected = 1;
@@ -549,8 +595,8 @@ public class Godzilla extends Monster {
         this.hurtTimer = 20;
 
         attacker = source.getEntity();
-        if (attacker instanceof LivingEntity living && !(attacker instanceof Godzilla)) {
-            // TODO: also skip GodzillaHead
+        if (attacker instanceof LivingEntity living && !(attacker instanceof Godzilla)
+                && !(attacker instanceof GodzillaHead)) {
             this.setTarget(living);
             this.getNavigation().moveTo(living, 1.2);
         }
@@ -633,34 +679,34 @@ public class Godzilla extends Monster {
             case 40 -> dropItemRand(new ItemStack(Items.GOLD_BLOCK));
             case 41 -> dropItemRand(new ItemStack(Items.ENCHANTED_GOLDEN_APPLE));
             case 42 -> { is = dropItemRand(new ItemStack(ModItems.EXPERIENCE_SWORD.get())); enchantSword(is); }
-            // TODO: case 43 -> Experience Helmet + enchantHelmet (register ExperienceHelmet in ModItems)
-            // TODO: case 44 -> Experience Chestplate + enchantArmor (register ExperienceBody in ModItems)
-            // TODO: case 45 -> Experience Leggings + enchantArmor (register ExperienceLegs in ModItems)
-            // TODO: case 46 -> Experience Boots + enchantBoots (register ExperienceBoots in ModItems)
+            case 43 -> { is = dropItemRand(new ItemStack(ModItems.EXPERIENCE_HELMET.get())); enchantHelmet(is); }
+            case 44 -> { is = dropItemRand(new ItemStack(ModItems.EXPERIENCE_CHESTPLATE.get())); enchantArmor(is); }
+            case 45 -> { is = dropItemRand(new ItemStack(ModItems.EXPERIENCE_LEGGINGS.get())); enchantArmor(is); }
+            case 46 -> { is = dropItemRand(new ItemStack(ModItems.EXPERIENCE_BOOTS.get())); enchantBoots(is); }
             case 47 -> { is = dropItemRand(new ItemStack(ModItems.AMETHYST_SWORD.get())); enchantSword(is); }
             case 48 -> { is = dropItemRand(new ItemStack(ModItems.AMETHYST_SHOVEL.get())); enchantTool(is); }
             case 49 -> { is = dropItemRand(new ItemStack(ModItems.AMETHYST_PICKAXE.get())); enchantToolSilkTouch(is); }
             case 50 -> { is = dropItemRand(new ItemStack(ModItems.AMETHYST_AXE.get())); enchantTool(is); }
             case 51 -> { is = dropItemRand(new ItemStack(ModItems.AMETHYST_HOE.get())); enchantTool(is); }
             case 52 -> dropItemRand(new ItemStack(ModItems.BLOCK_AMETHYST_ITEM.get()));
-            // TODO: case 53 -> Amethyst Helmet + enchantHelmet (register AmethystHelmet in ModItems)
-            // TODO: case 54 -> Amethyst Chestplate + enchantArmor (register AmethystBody in ModItems)
-            // TODO: case 55 -> Amethyst Leggings + enchantArmor (register AmethystLegs in ModItems)
-            // TODO: case 56 -> Amethyst Boots + enchantBoots (register AmethystBoots in ModItems)
-            // TODO: case 57 -> Ruby Helmet + enchantHelmet (register RubyHelmet in ModItems)
-            // TODO: case 58 -> Ruby Chestplate + enchantArmor (register RubyBody in ModItems)
-            // TODO: case 59 -> Ruby Leggings + enchantArmor (register RubyLegs in ModItems)
-            // TODO: case 60 -> Ruby Boots + enchantBoots (register RubyBoots in ModItems)
+            case 53 -> { is = dropItemRand(new ItemStack(ModItems.AMETHYST_HELMET.get())); enchantHelmet(is); }
+            case 54 -> { is = dropItemRand(new ItemStack(ModItems.AMETHYST_CHESTPLATE.get())); enchantArmor(is); }
+            case 55 -> { is = dropItemRand(new ItemStack(ModItems.AMETHYST_LEGGINGS.get())); enchantArmor(is); }
+            case 56 -> { is = dropItemRand(new ItemStack(ModItems.AMETHYST_BOOTS_ARMOR.get())); enchantBoots(is); }
+            case 57 -> { is = dropItemRand(new ItemStack(ModItems.RUBY_HELMET.get())); enchantHelmet(is); }
+            case 58 -> { is = dropItemRand(new ItemStack(ModItems.RUBY_CHESTPLATE.get())); enchantArmor(is); }
+            case 59 -> { is = dropItemRand(new ItemStack(ModItems.RUBY_LEGGINGS.get())); enchantArmor(is); }
+            case 60 -> { is = dropItemRand(new ItemStack(ModItems.RUBY_BOOTS_ARMOR.get())); enchantBoots(is); }
             case 61 -> { is = dropItemRand(new ItemStack(ModItems.RUBY_SWORD.get())); enchantSword(is); }
             case 62 -> { is = dropItemRand(new ItemStack(ModItems.RUBY_SHOVEL.get())); enchantTool(is); }
             case 63 -> { is = dropItemRand(new ItemStack(ModItems.RUBY_PICKAXE.get())); enchantToolSilkTouch(is); }
             case 64 -> { is = dropItemRand(new ItemStack(ModItems.RUBY_AXE.get())); enchantTool(is); }
             case 65 -> { is = dropItemRand(new ItemStack(ModItems.RUBY_HOE.get())); enchantTool(is); }
             case 66 -> dropItemRand(new ItemStack(ModItems.BLOCK_RUBY_ITEM.get()));
-            // TODO: case 67 -> Ultimate Helmet + enchantHelmet (register UltimateHelmet in ModItems)
-            // TODO: case 68 -> Ultimate Chestplate + enchantArmor (register UltimateBody in ModItems)
-            // TODO: case 69 -> Ultimate Leggings + enchantArmor (register UltimateLegs in ModItems)
-            // TODO: case 70 -> Ultimate Boots + enchantBoots (register UltimateBoots in ModItems)
+            case 67 -> { is = dropItemRand(new ItemStack(ModItems.ULTIMATE_HELMET.get())); enchantHelmet(is); }
+            case 68 -> { is = dropItemRand(new ItemStack(ModItems.ULTIMATE_CHESTPLATE.get())); enchantArmor(is); }
+            case 69 -> { is = dropItemRand(new ItemStack(ModItems.ULTIMATE_LEGGINGS.get())); enchantArmor(is); }
+            case 70 -> { is = dropItemRand(new ItemStack(ModItems.ULTIMATE_BOOTS_ARMOR.get())); enchantBoots(is); }
             case 71 -> { is = dropItemRand(new ItemStack(ModItems.ULTIMATE_SHOVEL.get())); enchantTool(is); }
             case 73 -> { is = dropItemRand(new ItemStack(ModItems.ULTIMATE_PICKAXE.get())); enchantToolSilkTouch(is); }
             case 74 -> { is = dropItemRand(new ItemStack(ModItems.ULTIMATE_AXE.get())); enchantTool(is); }

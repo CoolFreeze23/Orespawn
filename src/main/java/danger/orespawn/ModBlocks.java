@@ -1,5 +1,6 @@
 package danger.orespawn;
 
+import danger.orespawn.block.BlockExperiencePlant;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
@@ -159,6 +160,8 @@ public class ModBlocks {
             () -> new Block(BlockBehaviour.Properties.of().strength(0.0f).noCollission().sound(SoundType.GRASS)));
 
     // Saplings / Plants
+    public static final DeferredBlock<Block> EXPERIENCE_PLANT = BLOCKS.register("experience_plant",
+            () -> new BlockExperiencePlant(BlockBehaviour.Properties.of().strength(0.0f).noCollission().instabreak().sound(SoundType.GRASS)));
     public static final DeferredBlock<Block> EXPERIENCE_SAPLING = BLOCKS.register("experience_sapling",
             () -> new Block(BlockBehaviour.Properties.of().strength(0.0f).noCollission().sound(SoundType.GRASS)));
     public static final DeferredBlock<Block> CRYSTAL_SAPLING = BLOCKS.register("crystal_sapling",

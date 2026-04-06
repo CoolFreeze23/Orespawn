@@ -130,8 +130,19 @@ public class Frog extends Animal {
                     1.0f, world.random.nextFloat() * 0.2f + 0.9f);
 
             if (!world.isClientSide) {
-                // TODO: When Boyfriend/Girlfriend entities are ported, spawn prince/princess here
-                // Original logic: 50% chance Boyfriend (prince), 50% chance Girlfriend (princess)
+                if (world.random.nextBoolean()) {
+                    Boyfriend prince = ModEntities.BOYFRIEND.get().create(world);
+                    if (prince != null) {
+                        prince.moveTo(this.getX(), this.getY(), this.getZ(), 0.0F, 0.0F);
+                        world.addFreshEntity(prince);
+                    }
+                } else {
+                    Girlfriend princess = ModEntities.GIRLFRIEND.get().create(world);
+                    if (princess != null) {
+                        princess.moveTo(this.getX(), this.getY(), this.getZ(), 0.0F, 0.0F);
+                        world.addFreshEntity(princess);
+                    }
+                }
             }
 
             if (world.isClientSide) {
@@ -237,8 +248,6 @@ public class Frog extends Animal {
 
     @Nullable
     private LivingEntity findInsectTarget() {
-        // TODO: When insect entities (Ant, Butterfly, Cricket, Mosquito, Firefly, WormSmall) 
-        // are ported, add target filtering here
         List<LivingEntity> entities = this.level().getEntitiesOfClass(LivingEntity.class,
                 this.getBoundingBox().inflate(8.0, 3.0, 8.0));
         entities.sort(Comparator.comparingDouble(this::distanceToSqr));
@@ -252,9 +261,12 @@ public class Frog extends Animal {
         if (entity == this) return false;
         if (!entity.isAlive()) return false;
         if (!this.getSensing().hasLineOfSight(entity)) return false;
-        // TODO: Check for specific insect entity types when ported
-        // Original targets: EntityAnt, EntityButterfly, Cricket, EntityMosquito, Firefly, WormSmall
-        return false;
+        return entity instanceof EntityAnt
+                || entity instanceof EntityButterfly
+                || entity instanceof EntityCricket
+                || entity instanceof EntityMosquito
+                || entity instanceof Firefly
+                || entity instanceof EntityWormSmall;
     }
 
     private int findBuddies() {

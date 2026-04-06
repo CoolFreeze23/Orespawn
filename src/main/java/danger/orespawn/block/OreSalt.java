@@ -6,6 +6,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
+import danger.orespawn.entity.EntityAnt;
 
 /**
  * Salt block that damages ant entities on contact.
@@ -28,9 +29,8 @@ public class OreSalt extends Block {
     }
 
     private void damageAnt(Level level, Entity entity) {
-        // TODO: Check if entity is an ant type (EntityAnt, RedAnt, etc.)
-        // if (entity instanceof EntityAnt) {
-        //     entity.hurt(level.damageSources().generic(), 5.0f);
-        // }
+        if (entity instanceof EntityAnt) {
+            entity.hurt(level.damageSources().generic(), 5.0f);
+        }
     }
 }

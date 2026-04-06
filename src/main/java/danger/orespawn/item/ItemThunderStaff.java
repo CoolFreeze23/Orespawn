@@ -1,5 +1,6 @@
 package danger.orespawn.item;
 
+import danger.orespawn.entity.ThunderBolt;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
@@ -25,7 +26,9 @@ public class ItemThunderStaff extends Item {
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
         if (!level.isClientSide) {
-            // TODO: Spawn ThunderBolt projectile entity when entity type is registered
+            ThunderBolt projectile = new ThunderBolt(level, player);
+            projectile.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0F, 1.5F, 1.0F);
+            level.addFreshEntity(projectile);
             player.push(
                     -Math.sin(Math.toRadians(player.getYRot())) * 0.2,
                     0.0,

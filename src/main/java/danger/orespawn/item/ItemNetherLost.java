@@ -5,8 +5,10 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
+import danger.orespawn.util.OreSpawnEnchantHelper;
 
 public class ItemNetherLost extends Item {
     public ItemNetherLost(Item.Properties properties) {
@@ -18,10 +20,9 @@ public class ItemNetherLost extends Item {
         if (level.isClientSide) return;
         if (!isSelected) return;
 
-        // TODO: Enchantments are data-driven in 1.21.1, need registry lookup
-        // if (stack.getEnchantmentLevel(Enchantments.SHARPNESS) <= 0) {
-        //     stack.enchant(Enchantments.SHARPNESS, 2);
-        // }
+        if (!OreSpawnEnchantHelper.hasAnyEnchantments(stack)) {
+            OreSpawnEnchantHelper.applyEnchantment(stack, level, Enchantments.SHARPNESS, 2);
+        }
 
         if (entity instanceof Player player && level.dimension() == Level.NETHER) {
             BlockPos below = player.blockPosition().below();

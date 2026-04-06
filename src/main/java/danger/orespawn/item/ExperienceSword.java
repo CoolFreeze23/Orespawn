@@ -7,9 +7,11 @@ import net.minecraft.world.item.SwordItem;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 import net.minecraft.core.particles.ParticleTypes;
 import danger.orespawn.ModToolTiers;
+import danger.orespawn.util.OreSpawnEnchantHelper;
 
 public class ExperienceSword extends SwordItem {
     private static final float XP_ON_HIT = 10.0f;
@@ -21,11 +23,10 @@ public class ExperienceSword extends SwordItem {
 
     @Override
     public void inventoryTick(ItemStack stack, Level level, Entity entity, int slotId, boolean isSelected) {
-        // TODO: Enchantments are data-driven in 1.21.1, need registry lookup
-        // if (!level.isClientSide && stack.getEnchantmentLevel(Enchantments.SHARPNESS) <= 0) {
-        //     stack.enchant(Enchantments.SHARPNESS, 2);
-        //     stack.enchant(Enchantments.LOOTING, 3);
-        // }
+        if (!level.isClientSide && !OreSpawnEnchantHelper.hasAnyEnchantments(stack)) {
+            OreSpawnEnchantHelper.applyEnchantment(stack, level, Enchantments.SHARPNESS, 2);
+            OreSpawnEnchantHelper.applyEnchantment(stack, level, Enchantments.LOOTING, 3);
+        }
     }
 
     @Override

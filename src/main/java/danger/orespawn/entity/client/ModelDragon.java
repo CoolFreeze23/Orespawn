@@ -415,7 +415,6 @@ public class ModelDragon extends EntityModel<Dragon> {
         float tailspeed = 0.76F;
         float tailamp = 0.45F;
 
-        // TODO: RenderInfo was removed - animation smoothing data needs alternative storage
         float rf1 = 0.0f;
 
         if (limbSwingAmount > 0.001F) {
@@ -605,7 +604,6 @@ public class ModelDragon extends EntityModel<Dragon> {
         newangle = Mth.cos(ageInTicks * 1.5F * ANIM_SPEED) * (float) Math.PI * 0.14F;
         this.mouth2.xRot = entity.getAttacking() != 0 ? 0.4F + newangle : 0.07F;
 
-        // TODO: persist animation smoothing state
     }
 
     @Override

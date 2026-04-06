@@ -9,6 +9,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
+import danger.orespawn.ModEntities;
 
 /**
  * Ant/termite spawner block. Different instances spawn different ant types.
@@ -43,21 +44,17 @@ public class CrystalAntBlock extends Block {
         for (int i = 0; i < antCount; i++) {
             EntityType<? extends Mob> entityType = getEntityType();
             if (entityType == null) continue;
-            // TODO: Check per-ant-type enable config
             BlockButterflyPlant.spawnCreature(level, entityType, above);
         }
     }
 
     private EntityType<? extends Mob> getEntityType() {
-        // TODO: Return the actual entity type from ModEntities based on antType
-        // switch (antType) {
-        //     case BLACK_ANT: return ModEntities.ANT.get();
-        //     case RED_ANT: return ModEntities.RED_ANT.get();
-        //     case UNSTABLE_ANT: return ModEntities.UNSTABLE_ANT.get();
-        //     case TERMITE: return ModEntities.TERMITE.get();
-        //     case CRYSTAL_TERMITE: return ModEntities.TERMITE.get();
-        //     case RAINBOW_ANT: return ModEntities.RAINBOW_ANT.get();
-        // }
-        return null;
+        return switch (antType) {
+            case BLACK_ANT -> ModEntities.ENTITY_ANT.get();
+            case RED_ANT -> ModEntities.ENTITY_RED_ANT.get();
+            case UNSTABLE_ANT -> ModEntities.ENTITY_UNSTABLE_ANT.get();
+            case TERMITE, CRYSTAL_TERMITE -> ModEntities.ENTITY_TERMITE.get();
+            case RAINBOW_ANT -> ModEntities.ENTITY_RAINBOW_ANT.get();
+        };
     }
 }

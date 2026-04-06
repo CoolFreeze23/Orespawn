@@ -10,6 +10,8 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LeavesBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
+import danger.orespawn.ModBlocks;
+import danger.orespawn.ModItems;
 
 public class BlockAppleLeaves extends LeavesBlock {
     private static final int FRUIT_ATTEMPT_ROLL_BOUND = 20;
@@ -49,8 +51,7 @@ public class BlockAppleLeaves extends LeavesBlock {
         // Night-time transformation in Danger Dimension
         long timeOfDayTicks = level.getDayTime() % TICKS_PER_DAY;
         if (timeOfDayTicks > NIGHT_START_TICK) {
-            // TODO: Check if in DimensionID4, then replace with ScaryLeaves
-            // level.setBlock(pos, ModBlocks.SCARY_LEAVES.get().defaultBlockState(), 3);
+            level.setBlock(pos, ModBlocks.SCARY_LEAVES.get().defaultBlockState(), 3);
         }
     }
 
@@ -65,8 +66,7 @@ public class BlockAppleLeaves extends LeavesBlock {
             Block.popResource(level, pos, new ItemStack(Items.ENCHANTED_GOLDEN_APPLE));
         }
         if (random.nextInt(MAGIC_APPLE_ROLL_BOUND) == MAGIC_APPLE_SUCCESS_INDEX) {
-            // TODO: Drop MagicApple from ModItems
-            // Block.popResource(level, pos, new ItemStack(ModItems.MAGIC_APPLE.get()));
+            Block.popResource(level, pos, new ItemStack(ModItems.MAGIC_APPLE.get()));
         }
     }
 }

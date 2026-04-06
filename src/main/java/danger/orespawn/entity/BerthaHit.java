@@ -1,6 +1,7 @@
 package danger.orespawn.entity;
 
 import net.minecraft.world.entity.Entity;
+import danger.orespawn.ModEntities;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.TamableAnimal;
@@ -26,7 +27,7 @@ public class BerthaHit extends ThrowableProjectile {
     }
 
     public BerthaHit(Level level, LivingEntity shooter) {
-        super(EntityType.SNOWBALL, level); // TODO: use registered type
+        super(ModEntities.BERTHA_HIT.get(), level);
         this.setOwner(shooter);
     }
 

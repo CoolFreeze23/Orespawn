@@ -1,11 +1,13 @@
 package danger.orespawn;
 
 import danger.orespawn.entity.client.*;
+import danger.orespawn.gui.CrystalFurnaceScreen;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
+import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 
 @Mod(value = OreSpawnMod.MOD_ID, dist = Dist.CLIENT)
 public class OreSpawnClient {
@@ -287,6 +289,11 @@ public class OreSpawnClient {
             event.registerLayerDefinition(RockBaseRenderer.MODEL_LAYER, ModelRockBase::createBodyLayer);
             event.registerLayerDefinition(SpiderRobotRenderer.MODEL_LAYER, ModelSpiderRobot::createBodyLayer);
             event.registerLayerDefinition(CephadromeRenderer.MODEL_LAYER, ModelCephadrome::createBodyLayer);
+        }
+
+        @SubscribeEvent
+        public static void registerScreens(RegisterMenuScreensEvent event) {
+            event.register(ModMenuTypes.CRYSTAL_FURNACE_MENU.get(), CrystalFurnaceScreen::new);
         }
     }
 }

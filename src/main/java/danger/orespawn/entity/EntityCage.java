@@ -1,16 +1,21 @@
 package danger.orespawn.entity;
 
+import danger.orespawn.ModItems;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.Entity;
+import danger.orespawn.ModEntities;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.ThrowableProjectile;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 
@@ -39,7 +44,7 @@ public class EntityCage extends ThrowableProjectile {
     }
 
     public EntityCage(Level level, Player thrower, int index) {
-        super(EntityType.SNOWBALL, level); // TODO: use registered type
+        super(ModEntities.ENTITY_CAGE.get(), level);
         this.setOwner(thrower);
         this.cageIndex = index;
     }
@@ -73,14 +78,9 @@ public class EntityCage extends ThrowableProjectile {
             }
 
             if (this.random.nextInt(CAPTURE_SUCCESS_ROLL_RANGE) >= CAPTURE_SUCCESS_THRESHOLD) {
-                // TODO: Store the captured mob's type + data into a CritterCage item
-                // For now, just remove the entity
                 mob.discard();
-
-                // TODO: Create and drop a CritterCage item containing the mob data
-                // ItemStack cage = new ItemStack(ModItems.CRITTER_CAGE.get());
-                // cage.getOrCreateTag().put("CapturedMob", mobData);
-                // Block.popResource(this.level(), this.blockPosition(), cage);
+                ItemStack cageItem = getCageItemForMob(mob);
+                Block.popResource(this.level(), this.blockPosition(), cageItem);
             }
         }
     }
@@ -89,7 +89,7 @@ public class EntityCage extends ThrowableProjectile {
     protected void onHit(HitResult result) {
         super.onHit(result);
         if (!this.level().isClientSide) {
-            // TODO: If hit block, drop empty critter cage
+            Block.popResource(this.level(), this.blockPosition(), new ItemStack(ModItems.CAGE_EMPTY.get()));
             this.discard();
         }
     }
@@ -107,4 +107,13 @@ public class EntityCage extends ThrowableProjectile {
     }
 
     private float visualRotationDegrees = 0.0f;
+
+    private ItemStack getCageItemForMob(Mob mob) {
+        if (mob instanceof EntityRat) return new ItemStack(ModItems.ZOO_CAGE_2.get());
+        if (mob instanceof Fairy) return new ItemStack(ModItems.ZOO_CAGE_4.get());
+        if (mob instanceof GoldFish) return new ItemStack(ModItems.ZOO_CAGE_6.get());
+        if (mob instanceof Chipmunk) return new ItemStack(ModItems.ZOO_CAGE_8.get());
+        if (mob instanceof Lizard) return new ItemStack(ModItems.ZOO_CAGE_10.get());
+        return new ItemStack(ModItems.CAGE_EMPTY.get());
+    }
 }

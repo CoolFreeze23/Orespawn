@@ -12,7 +12,7 @@ import net.minecraft.resources.ResourceLocation;
 public class ThePrinceTeenRenderer extends MobRenderer<ThePrinceTeen, ModelThePrinceTeen> {
 
     private static final ResourceLocation TEXTURE =
-            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "textures/entity/theprinceTeen.png");
+            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "textures/entity/theprince_teen.png");
 
     public static final ModelLayerLocation MODEL_LAYER =
             new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "theprinceteen"), "main");

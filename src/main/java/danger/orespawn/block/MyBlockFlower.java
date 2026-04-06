@@ -7,6 +7,7 @@ import net.minecraft.world.level.block.BushBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import com.mojang.serialization.MapCodec;
+import danger.orespawn.ModBlocks;
 
 /**
  * OreSpawn flower that transforms between day and night variants.
@@ -48,18 +49,15 @@ public class MyBlockFlower extends BushBlock {
         long timeOfDayTicks = level.getDayTime() % TICKS_PER_DAY;
 
         if (timeOfDayTicks > NIGHT_START_TICK) {
-            // Night time
-            // TODO: Uncomment when ModBlocks has flower registrations
-            // if (variant == FlowerVariant.PINK)
-            //     level.setBlock(pos, ModBlocks.FLOWER_BLACK.get().defaultBlockState(), 2);
-            // if (variant == FlowerVariant.BLUE)
-            //     level.setBlock(pos, ModBlocks.FLOWER_SCARY.get().defaultBlockState(), 2);
+            if (variant == FlowerVariant.PINK)
+                level.setBlock(pos, ModBlocks.FLOWER_BLACK.get().defaultBlockState(), 2);
+            if (variant == FlowerVariant.BLUE)
+                level.setBlock(pos, ModBlocks.FLOWER_SCARY.get().defaultBlockState(), 2);
         } else {
-            // Day time
-            // if (variant == FlowerVariant.BLACK)
-            //     level.setBlock(pos, ModBlocks.FLOWER_PINK.get().defaultBlockState(), 2);
-            // if (variant == FlowerVariant.SCARY)
-            //     level.setBlock(pos, ModBlocks.FLOWER_BLUE.get().defaultBlockState(), 2);
+            if (variant == FlowerVariant.BLACK)
+                level.setBlock(pos, ModBlocks.FLOWER_PINK.get().defaultBlockState(), 2);
+            if (variant == FlowerVariant.SCARY)
+                level.setBlock(pos, ModBlocks.FLOWER_BLUE.get().defaultBlockState(), 2);
         }
     }
 }

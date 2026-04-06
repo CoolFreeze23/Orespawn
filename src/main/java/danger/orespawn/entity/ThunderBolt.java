@@ -4,6 +4,7 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.Entity;
+import danger.orespawn.ModEntities;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LightningBolt;
 import net.minecraft.world.entity.LivingEntity;
@@ -28,12 +29,12 @@ public class ThunderBolt extends ThrowableProjectile {
     }
 
     public ThunderBolt(Level level, LivingEntity shooter) {
-        super(EntityType.SNOWBALL, level); // TODO: use registered type
+        super(ModEntities.THUNDER_BOLT.get(), level);
         this.setOwner(shooter);
     }
 
     public ThunderBolt(Level level, double x, double y, double z) {
-        super(EntityType.SNOWBALL, level); // TODO: use registered type
+        super(ModEntities.THUNDER_BOLT.get(), level);
         this.setPos(x, y, z);
     }
 

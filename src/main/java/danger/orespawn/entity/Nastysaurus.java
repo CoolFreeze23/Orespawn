@@ -13,6 +13,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
+import danger.orespawn.util.MyUtils;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
@@ -166,7 +167,7 @@ public class Nastysaurus extends Monster {
         if (target == null || target == this || !target.isAlive()) return false;
         if (target instanceof Nastysaurus) return false;
         if (target instanceof Cryolophosaurus) return false;
-        // TODO: check for VelocityRaptor, MyUtils.isIgnoreable
+        if (target instanceof VelocityRaptor || MyUtils.isIgnoreable(target)) return false;
         if (!this.getSensing().hasLineOfSight(target)) return false;
         if (target instanceof Player player) {
             return !player.getAbilities().invulnerable;

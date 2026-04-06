@@ -1,7 +1,13 @@
 package danger.orespawn;
 
 import net.minecraft.world.food.FoodProperties;
+import danger.orespawn.item.FairySword;
+import danger.orespawn.item.ItemElevator;
 import danger.orespawn.item.ItemOreSpawnArmor;
+import danger.orespawn.item.ItemRandomDungeon;
+import danger.orespawn.item.ItemSpiderRobotKit;
+import danger.orespawn.item.ItemWrench;
+import danger.orespawn.item.RatSword;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.AxeItem;
 import net.minecraft.world.item.BlockItem;
@@ -241,9 +247,9 @@ public class ModItems {
     public static final DeferredItem<Item> POISON_SWORD = ITEMS.register("poison_sword",
             () -> new SwordItem(ModToolTiers.EMERALD, new Item.Properties().attributes(SwordItem.createAttributes(ModToolTiers.EMERALD, 3, -2.4f))));
     public static final DeferredItem<Item> RAT_SWORD = ITEMS.register("rat_sword",
-            () -> new SwordItem(ModToolTiers.EMERALD, new Item.Properties().attributes(SwordItem.createAttributes(ModToolTiers.EMERALD, 3, -2.4f))));
+            () -> new RatSword(new Item.Properties().attributes(SwordItem.createAttributes(ModToolTiers.EMERALD, 3, -2.4f))));
     public static final DeferredItem<Item> FAIRY_SWORD = ITEMS.register("fairy_sword",
-            () -> new SwordItem(ModToolTiers.EMERALD, new Item.Properties().attributes(SwordItem.createAttributes(ModToolTiers.EMERALD, 3, -2.4f))));
+            () -> new FairySword(new Item.Properties().attributes(SwordItem.createAttributes(ModToolTiers.EMERALD, 3, -2.4f))));
     public static final DeferredItem<Item> MANTIS_CLAW = ITEMS.register("mantis_claw",
             () -> new SwordItem(ModToolTiers.EMERALD, new Item.Properties().attributes(SwordItem.createAttributes(ModToolTiers.EMERALD, 3, -2.4f))));
     public static final DeferredItem<Item> BIG_HAMMER = ITEMS.register("big_hammer",
@@ -259,7 +265,8 @@ public class ModItems {
     public static final DeferredItem<Item> THUNDER_STAFF = ITEMS.registerSimpleItem("thunder_staff");
     public static final DeferredItem<Item> SQUID_ZOOKA = ITEMS.registerSimpleItem("squid_zooka");
     public static final DeferredItem<Item> CREEPER_LAUNCHER = ITEMS.registerSimpleItem("creeper_launcher");
-    public static final DeferredItem<Item> WRENCH = ITEMS.registerSimpleItem("wrench");
+    public static final DeferredItem<Item> WRENCH = ITEMS.register("wrench",
+            () -> new ItemWrench(new Item.Properties().durability(256)));
 
     // Throwables
     public static final DeferredItem<Item> WATER_BALL = ITEMS.registerSimpleItem("water_ball");
@@ -377,15 +384,19 @@ public class ModItems {
     // Utility items
     public static final DeferredItem<Item> MAGIC_APPLE = ITEMS.registerSimpleItem("magic_apple");
     public static final DeferredItem<Item> MINERS_DREAM = ITEMS.registerSimpleItem("miners_dream");
-    public static final DeferredItem<Item> RANDOM_DUNGEON = ITEMS.registerSimpleItem("random_dungeon");
+    public static final DeferredItem<Item> RANDOM_DUNGEON = ITEMS.register("random_dungeon",
+            () -> new ItemRandomDungeon(new Item.Properties()));
     public static final DeferredItem<Item> EXPERIENCE_CATCHER = ITEMS.registerSimpleItem("experience_catcher");
     public static final DeferredItem<Item> SUNSPOT_URCHIN = ITEMS.registerSimpleItem("sunspot_urchin");
     public static final DeferredItem<Item> SIFTER = ITEMS.registerSimpleItem("sifter");
-    public static final DeferredItem<Item> SPIDER_ROBOT_KIT = ITEMS.registerSimpleItem("spider_robot_kit");
-    public static final DeferredItem<Item> ANT_ROBOT_KIT = ITEMS.registerSimpleItem("ant_robot_kit");
+    public static final DeferredItem<Item> SPIDER_ROBOT_KIT = ITEMS.register("spider_robot_kit",
+            () -> new ItemSpiderRobotKit(new Item.Properties(), () -> ModEntities.SPIDER_ROBOT.get()));
+    public static final DeferredItem<Item> ANT_ROBOT_KIT = ITEMS.register("ant_robot_kit",
+            () -> new ItemSpiderRobotKit(new Item.Properties(), () -> ModEntities.ANT_ROBOT.get()));
     public static final DeferredItem<Item> ZOO_KEEPER = ITEMS.registerSimpleItem("zoo_keeper");
     public static final DeferredItem<Item> NETHER_LOST = ITEMS.registerSimpleItem("nether_lost");
-    public static final DeferredItem<Item> ELEVATOR = ITEMS.registerSimpleItem("elevator");
+    public static final DeferredItem<Item> ELEVATOR = ITEMS.register("elevator",
+            () -> new ItemElevator(new Item.Properties()));
     public static final DeferredItem<Item> INSTANT_SHELTER = ITEMS.registerSimpleItem("instant_shelter");
     public static final DeferredItem<Item> INSTANT_GARDEN = ITEMS.registerSimpleItem("instant_garden");
     public static final DeferredItem<Item> DUCT_TAPE_ITEM = ITEMS.registerSimpleItem("duct_tape_item");
@@ -605,6 +616,9 @@ public class ModItems {
     public static final DeferredItem<Item> ZOO_CAGE_8 = ITEMS.registerSimpleItem("zoo_cage_8");
     public static final DeferredItem<Item> ZOO_CAGE_10 = ITEMS.registerSimpleItem("zoo_cage_10");
     public static final DeferredItem<Item> CAGE_EMPTY = ITEMS.registerSimpleItem("cage_empty");
+
+    // Misc items
+    public static final DeferredItem<Item> PRINCE_EGG = ITEMS.registerSimpleItem("prince_egg");
 
     public static void register(IEventBus eventBus) {
         ITEMS.register(eventBus);

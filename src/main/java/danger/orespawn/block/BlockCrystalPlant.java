@@ -6,6 +6,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
+import danger.orespawn.ModBlocks;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.BushBlock;
@@ -55,8 +56,8 @@ public class BlockCrystalPlant extends BushBlock {
     @Override
     protected boolean mayPlaceOn(BlockState state, BlockGetter level, BlockPos pos) {
         Block block = state.getBlock();
-        return block == Blocks.GRASS_BLOCK || block == Blocks.DIRT || block == Blocks.FARMLAND;
-        // TODO: Also check CrystalGrass
+        return block == Blocks.GRASS_BLOCK || block == Blocks.DIRT || block == Blocks.FARMLAND
+                || block == ModBlocks.CRYSTAL_GRASS.get();
     }
 
     @Override
@@ -97,18 +98,42 @@ public class BlockCrystalPlant extends BushBlock {
     }
 
     private void growTallCrystalTree(ServerLevel level, BlockPos pos, RandomSource random) {
-        // TODO: Port TallCrystalTree generation logic
-        // Places crystal tree log + crystal leaves in a tall columnar pattern
-        // Needs ModBlocks.CRYSTAL_TREE_LOG and ModBlocks.CRYSTAL_LEAVES
+        generateCrystalTree(level, pos, random, ModBlocks.CRYSTAL_LEAVES.get(), 7 + random.nextInt(4));
     }
 
     private void growScragglyCrystalTree(ServerLevel level, BlockPos pos, RandomSource random) {
-        // TODO: Port ScragglyCrystalTreeWithBranches generation logic
-        // Places crystal tree log + crystal leaves2 in a branching pattern
+        generateCrystalTree(level, pos, random, ModBlocks.CRYSTAL_LEAVES_2.get(), 5 + random.nextInt(3));
     }
 
     private void growBlueCrystalTree(ServerLevel level, BlockPos pos, RandomSource random) {
-        // TODO: Port TallCrystalTreeBlue generation logic
-        // Places crystal tree log + crystal leaves3 in a tall columnar pattern
+        generateCrystalTree(level, pos, random, ModBlocks.CRYSTAL_LEAVES_3.get(), 7 + random.nextInt(4));
+    }
+
+    private void generateCrystalTree(ServerLevel level, BlockPos pos, RandomSource random, Block leavesBlock, int height) {
+        BlockState logState = ModBlocks.CRYSTAL_TREE_LOG.get().defaultBlockState();
+        BlockState leafState = leavesBlock.defaultBlockState();
+
+        for (int y = 0; y < height; y++) {
+            BlockPos logPos = pos.above(y);
+            if (level.isEmptyBlock(logPos) || level.getBlockState(logPos).canBeReplaced()) {
+                level.setBlock(logPos, logState, 3);
+            }
+        }
+
+        int leafStart = height - 3;
+        for (int dy = leafStart; dy <= height + 1; dy++) {
+            int radius = (dy <= height - 1) ? 2 : 1;
+            if (dy == height + 1) radius = 0;
+            for (int dx = -radius; dx <= radius; dx++) {
+                for (int dz = -radius; dz <= radius; dz++) {
+                    if (dx == 0 && dz == 0 && dy < height) continue;
+                    if (Math.abs(dx) == radius && Math.abs(dz) == radius && random.nextBoolean()) continue;
+                    BlockPos leafPos = pos.above(dy).offset(dx, 0, dz);
+                    if (level.isEmptyBlock(leafPos) || level.getBlockState(leafPos).canBeReplaced()) {
+                        level.setBlock(leafPos, leafState, 3);
+                    }
+                }
+            }
+        }
     }
 }

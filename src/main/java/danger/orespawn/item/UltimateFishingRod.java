@@ -4,7 +4,9 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.FishingRodItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
+import danger.orespawn.util.OreSpawnEnchantHelper;
 
 public class UltimateFishingRod extends FishingRodItem {
     public UltimateFishingRod(Item.Properties properties) {
@@ -13,6 +15,8 @@ public class UltimateFishingRod extends FishingRodItem {
 
     @Override
     public void inventoryTick(ItemStack stack, Level level, Entity entity, int slotId, boolean isSelected) {
-        // TODO: Enchantments are data-driven in 1.21.1, need registry lookup
+        if (!level.isClientSide && !OreSpawnEnchantHelper.hasAnyEnchantments(stack)) {
+            OreSpawnEnchantHelper.applyEnchantment(stack, level, Enchantments.LOOTING, 2);
+        }
     }
 }

@@ -81,7 +81,6 @@ public class Gazelle extends TamableAnimal {
     }
 
     private boolean isGrazeBlock(Block block) {
-        // TODO: add OreSpawnMain.MyStrawberryPlant
         return block == Blocks.CARROTS
                 || block == Blocks.POTATOES
                 || block == Blocks.SHORT_GRASS

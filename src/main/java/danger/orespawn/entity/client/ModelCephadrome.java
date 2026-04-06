@@ -277,7 +277,6 @@ public class ModelCephadrome extends EntityModel<Cephadrome> {
 
     @Override
     public void setupAnim(Cephadrome entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
-        // TODO: RenderInfo was removed - animation smoothing data needs alternative storage
         float rf1 = 0.0f;
         float newangle = 0.0f;
         float lspeed = 0.0f;
@@ -418,7 +417,6 @@ public class ModelCephadrome extends EntityModel<Cephadrome> {
         newangle = Mth.cos(ageInTicks * 0.5f * this.wingspeed) * (float)Math.PI * 0.14f;
         this.mouth.xRot = entity.getAttacking() != 0 ? -0.61f + newangle : -0.87f;
 
-        // TODO: persist animation smoothing state
     }
 
     @Override

@@ -2,6 +2,7 @@ package danger.orespawn.entity;
 
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.world.entity.Entity;
+import danger.orespawn.ModEntities;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.monster.Creeper;
@@ -27,7 +28,7 @@ public class SunspotUrchin extends ThrowableProjectile {
     }
 
     public SunspotUrchin(Level level, LivingEntity shooter) {
-        super(EntityType.SNOWBALL, level); // TODO: use registered type
+        super(ModEntities.SUNSPOT_URCHIN.get(), level);
         this.setOwner(shooter);
     }
 
