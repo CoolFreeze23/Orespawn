@@ -43,11 +43,11 @@ public class ModArmorMaterials {
 
     public static final Holder<ArmorMaterial> LAVA_EEL = ARMOR_MATERIALS.register("lava_eel",
             () -> new ArmorMaterial(defenseMap(2, 5, 7, 2), 35,
-                    SoundEvents.ARMOR_EQUIP_GENERIC, () -> Ingredient.EMPTY, layer("lava_eel"), 0F, 0F));
+                    SoundEvents.ARMOR_EQUIP_GENERIC, () -> Ingredient.EMPTY, layer("lavaeel"), 0F, 0F));
 
     public static final Holder<ArmorMaterial> MOTH_SCALE = ARMOR_MATERIALS.register("moth_scale",
             () -> new ArmorMaterial(defenseMap(2, 5, 7, 2), 50,
-                    SoundEvents.ARMOR_EQUIP_GENERIC, () -> Ingredient.EMPTY, layer("moth_scale"), 0F, 0F));
+                    SoundEvents.ARMOR_EQUIP_GENERIC, () -> Ingredient.EMPTY, layer("mothscale"), 0F, 0F));
 
     public static final Holder<ArmorMaterial> EMERALD = ARMOR_MATERIALS.register("emerald",
             () -> new ArmorMaterial(defenseMap(3, 6, 8, 3), 40,
@@ -71,7 +71,7 @@ public class ModArmorMaterials {
 
     public static final Holder<ArmorMaterial> TIGERS_EYE = ARMOR_MATERIALS.register("tigers_eye",
             () -> new ArmorMaterial(defenseMap(4, 7, 8, 4), 55,
-                    SoundEvents.ARMOR_EQUIP_GENERIC, () -> Ingredient.EMPTY, layer("tigers_eye"), 1.0F, 0F));
+                    SoundEvents.ARMOR_EQUIP_GENERIC, () -> Ingredient.EMPTY, layer("tigerseye"), 1.0F, 0F));
 
     public static final Holder<ArmorMaterial> PEACOCK = ARMOR_MATERIALS.register("peacock",
             () -> new ArmorMaterial(defenseMap(2, 4, 5, 2), 30,

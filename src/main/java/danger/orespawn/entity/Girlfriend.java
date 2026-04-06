@@ -13,6 +13,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.AgeableMob;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.TamableAnimal;
@@ -21,11 +22,18 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
 import net.minecraft.world.entity.ai.goal.FollowOwnerGoal;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
+import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
 import net.minecraft.world.entity.ai.goal.PanicGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.TemptGoal;
 import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
+import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
+import net.minecraft.world.entity.ai.goal.target.OwnerHurtByTargetGoal;
+import net.minecraft.world.entity.ai.goal.target.OwnerHurtTargetGoal;
+import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.food.FoodProperties;
+import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
@@ -43,6 +51,7 @@ public class Girlfriend extends TamableAnimal {
 
     private static final int MAX_HEALTH = 80;
     private static final float MOVE_SPEED = 0.3f;
+    private static final int MAX_SKINS = 41;
     private int autoHeal = 200;
     private int forceSync = 50;
     public int whichGirl;
@@ -51,8 +60,9 @@ public class Girlfriend extends TamableAnimal {
 
     public Girlfriend(EntityType<? extends Girlfriend> type, Level level) {
         super(type, level);
-        this.whichGirl = this.random.nextInt(41);
+        this.whichGirl = this.random.nextInt(MAX_SKINS);
         this.voice = this.random.nextInt(10);
+        this.setTameSkin(this.whichGirl);
         this.setOrderedToSit(false);
     }
 
@@ -60,11 +70,15 @@ public class Girlfriend extends TamableAnimal {
     protected void registerGoals() {
         this.goalSelector.addGoal(1, new FollowOwnerGoal(this, 1.4, 12.0f, 1.5f));
         this.goalSelector.addGoal(2, new TemptGoal(this, 1.25, Ingredient.of(Blocks.RED_TULIP.asItem()), false));
+        this.goalSelector.addGoal(4, new MeleeAttackGoal(this, 1.25, true));
         this.goalSelector.addGoal(5, new FloatGoal(this));
-        this.goalSelector.addGoal(6, new PanicGoal(this, 1.5));
         this.goalSelector.addGoal(7, new LookAtPlayerGoal(this, Player.class, 6.0f));
         this.goalSelector.addGoal(8, new WaterAvoidingRandomStrollGoal(this, 0.75));
         this.goalSelector.addGoal(9, new RandomLookAroundGoal(this));
+
+        this.targetSelector.addGoal(1, new OwnerHurtByTargetGoal(this));
+        this.targetSelector.addGoal(2, new OwnerHurtTargetGoal(this));
+        this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, Monster.class, true));
     }
 
     public static AttributeSupplier.Builder createAttributes() {
@@ -133,6 +147,7 @@ public class Girlfriend extends TamableAnimal {
     @Override
     public InteractionResult mobInteract(Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
+
         if ((stack.is(Blocks.RED_TULIP.asItem()) || stack.is(Items.POPPY.asItem()))
                 && this.distanceToSqr(player) < 16.0) {
             if (!this.isTame()) {
@@ -154,12 +169,82 @@ public class Girlfriend extends TamableAnimal {
             if (!player.getAbilities().instabuild) stack.shrink(1);
             return InteractionResult.sidedSuccess(this.level().isClientSide);
         }
-        if (this.isTame() && this.isOwnedBy(player) && this.distanceToSqr(player) < 16.0) {
-            this.setOrderedToSit(!this.isOrderedToSit());
-            this.setInSittingPose(this.isOrderedToSit());
+
+        if (stack.is(Items.DANDELION) && this.distanceToSqr(player) < 16.0) {
+            if (!this.level().isClientSide) {
+                this.whichGirl = (this.whichGirl + 1) % MAX_SKINS;
+                this.setTameSkin(this.whichGirl);
+                this.level().broadcastEntityEvent(this, (byte) 7);
+            }
+            if (!player.getAbilities().instabuild) stack.shrink(1);
             return InteractionResult.sidedSuccess(this.level().isClientSide);
         }
+
+        if (this.isTame() && this.isOwnedBy(player) && this.distanceToSqr(player) < 16.0) {
+            if (!stack.isEmpty()) {
+                FoodProperties food = stack.getFoodProperties(this);
+                if (food != null) {
+                    if (!this.level().isClientSide && this.getHealth() < this.getMaxHealth()) {
+                        this.heal(food.nutrition() * 5);
+                        this.level().broadcastEntityEvent(this, (byte) 7);
+                    }
+                    if (!player.getAbilities().instabuild) stack.shrink(1);
+                    return InteractionResult.sidedSuccess(this.level().isClientSide);
+                }
+
+                if (!this.level().isClientSide) {
+                    if (stack.getItem() instanceof ArmorItem armorItem) {
+                        EquipmentSlot slot = armorItem.getEquipmentSlot();
+                        ItemStack existing = this.getItemBySlot(slot);
+                        this.setItemSlot(slot, stack.copy());
+                        if (!existing.isEmpty()) {
+                            player.setItemInHand(hand, existing);
+                        } else {
+                            stack.shrink(1);
+                        }
+                    } else {
+                        ItemStack currentWeapon = this.getMainHandItem();
+                        this.setItemSlot(EquipmentSlot.MAINHAND, stack.copy());
+                        if (!currentWeapon.isEmpty()) {
+                            player.setItemInHand(hand, currentWeapon);
+                        } else {
+                            stack.shrink(1);
+                        }
+                    }
+                    this.level().broadcastEntityEvent(this, (byte) 7);
+                }
+                return InteractionResult.sidedSuccess(this.level().isClientSide);
+            }
+
+            if (stack.isEmpty()) {
+                if (!this.level().isClientSide) {
+                    ItemStack toReturn = findEquippedItem();
+                    if (toReturn != null) {
+                        player.setItemInHand(hand, toReturn);
+                        this.level().broadcastEntityEvent(this, (byte) 6);
+                    } else {
+                        this.setOrderedToSit(!this.isOrderedToSit());
+                        this.setInSittingPose(this.isOrderedToSit());
+                    }
+                }
+                return InteractionResult.sidedSuccess(this.level().isClientSide);
+            }
+        }
         return super.mobInteract(player, hand);
+    }
+
+    @Nullable
+    private ItemStack findEquippedItem() {
+        EquipmentSlot[] slots = { EquipmentSlot.MAINHAND, EquipmentSlot.HEAD, EquipmentSlot.CHEST,
+                EquipmentSlot.LEGS, EquipmentSlot.FEET };
+        for (EquipmentSlot slot : slots) {
+            ItemStack item = this.getItemBySlot(slot);
+            if (!item.isEmpty()) {
+                this.setItemSlot(slot, ItemStack.EMPTY);
+                return item;
+            }
+        }
+        return null;
     }
 
     @Override
