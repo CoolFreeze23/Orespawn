@@ -1,11 +1,14 @@
 package danger.orespawn.item;
 
+import danger.orespawn.ModEntities;
+import danger.orespawn.ModToolTiers;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.SwordItem;
-import net.minecraft.world.entity.LivingEntity;
-import danger.orespawn.ModToolTiers;
+import net.minecraft.world.level.Level;
 
 public class FairySword extends SwordItem {
     public FairySword(Item.Properties properties) {
@@ -14,7 +17,19 @@ public class FairySword extends SwordItem {
 
     @Override
     public boolean hurtEnemy(ItemStack stack, LivingEntity target, LivingEntity attacker) {
-        // TODO: Spawn Fairy entities on hit when entity type is registered
+        Level level = target.level();
+        if (!level.isClientSide) {
+            for (int i = 0; i < 3; i++) {
+                Entity fairy = ModEntities.FAIRY.get().create(level);
+                if (fairy != null) {
+                    fairy.moveTo(target.getX() + level.random.nextGaussian(),
+                            target.getY() + 1.0,
+                            target.getZ() + level.random.nextGaussian(),
+                            level.random.nextFloat() * 360.0F, 0.0F);
+                    level.addFreshEntity(fairy);
+                }
+            }
+        }
         stack.hurtAndBreak(1, attacker, EquipmentSlot.MAINHAND);
         return true;
     }

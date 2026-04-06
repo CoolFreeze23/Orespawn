@@ -1,17 +1,21 @@
 package danger.orespawn.entity;
 
+import danger.orespawn.ModItems;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
+import danger.orespawn.ModEntities;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.ThrowableProjectile;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 
@@ -38,7 +42,7 @@ public class EntityThrownRock extends ThrowableProjectile {
     }
 
     public EntityThrownRock(Level level, LivingEntity shooter, int rockType) {
-        super(EntityType.SNOWBALL, level); // TODO: use registered type
+        super(ModEntities.ENTITY_THROWN_ROCK.get(), level);
         this.setOwner(shooter);
         this.rockType = rockType;
     }
@@ -115,7 +119,9 @@ public class EntityThrownRock extends ThrowableProjectile {
     @Override
     protected void onHit(HitResult result) {
         super.onHit(result);
-        // TODO: Drop corresponding rock item on ground impact
+        if (!this.level().isClientSide) {
+            Block.popResource(this.level(), this.blockPosition(), new ItemStack(ModItems.ROCK.get()));
+        }
         this.discard();
     }
 

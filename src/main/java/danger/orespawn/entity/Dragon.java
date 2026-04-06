@@ -28,6 +28,9 @@ import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import danger.orespawn.ModSounds;
+import danger.orespawn.ModEntities;
+import danger.orespawn.util.MyUtils;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
 import net.minecraft.world.entity.ai.goal.FollowOwnerGoal;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
@@ -166,19 +169,19 @@ public class Dragon extends TamableAnimal {
     protected SoundEvent getAmbientSound() {
         if (this.isOrderedToSit()) return null;
         if (this.getAttacking() == 1 && !this.isVehicle()) {
-            return SoundEvents.ENDER_DRAGON_GROWL; // TODO: replace with custom "orespawn:roar"
+            return ModSounds.ROAR1.get();
         }
         return null;
     }
 
     @Override
     protected SoundEvent getHurtSound(DamageSource source) {
-        return SoundEvents.ENDER_DRAGON_HURT; // TODO: replace with custom "orespawn:alo_hurt"
+        return ModSounds.ALO_HURT.get();
     }
 
     @Override
     protected SoundEvent getDeathSound() {
-        return SoundEvents.ENDER_DRAGON_DEATH; // TODO: replace with custom "orespawn:alo_death"
+        return ModSounds.ALO_DEATH.get();
     }
 
     @Override
@@ -219,7 +222,7 @@ public class Dragon extends TamableAnimal {
             double verticalKnockback = 0.1;
             float attackDamage = 35.0f;
 
-            // TODO: if (target instanceof Kraken) attackDamage *= 2.0f;
+            if (target instanceof Kraken) attackDamage *= 2.0f;
 
             target.hurt(this.damageSources().mobAttack(this), attackDamage);
 
@@ -247,12 +250,16 @@ public class Dragon extends TamableAnimal {
 
         Entity attacker = source.getEntity();
 
-        // TODO: Ignore BetterFireball damage if fire dragon (dragontype == 0)
-        // TODO: Ignore IceBall/WaterBall damage if non-fire dragon (dragontype != 0)
-        // TODO: Ignore SmallFireball damage if fire dragon
+        if (this.getDragonType() == 0) {
+            if (attacker instanceof BetterFireball) return false;
+            if (source.is(net.minecraft.world.damagesource.DamageTypes.FIREBALL)) return false;
+            if (source.is(net.minecraft.world.damagesource.DamageTypes.ON_FIRE)) return false;
+        } else {
+            if (attacker instanceof IceBall || attacker instanceof WaterBall) return false;
+        }
 
         if (attacker instanceof Dragon) return false;
-        // TODO: if (attacker instanceof Spyro) return false;
+        if (attacker instanceof EntitySpyro) return false;
 
         if (this.isTame() && attacker instanceof Player) {
             return false;
@@ -445,7 +452,7 @@ public class Dragon extends TamableAnimal {
             motionZ = Math.sin(moveAngle) * newVelocity;
         }
 
-        // TODO: Handle flyup keybinding (needs custom packet from client)
+        // Flyup keybinding requires client-server networking (deferred)
         // When flyup key is pressed: motionY += 0.03 + velocity * 0.036;
 
         // Rider projectile firing
@@ -487,20 +494,26 @@ public class Dragon extends TamableAnimal {
         double spawnY = this.getY() + yoff;
         double spawnZ = this.getZ() + xzoff * Math.cos(Math.toRadians(this.getYRot()));
 
+        Vec3 look = rider.getLookAngle();
+
         if (this.getDragonType() == 0) {
             // Fire dragon
             if (strafe > 0) {
-                // TODO: Spawn BetterFireball aimed in rider's look direction
-                // BetterFireball bf = new BetterFireball(level(), this, ...);
-                // bf.setNotMe(); bf.setSmall();
-                // bf.setPos(spawnX, spawnY, spawnZ);
-                // level().addFreshEntity(bf);
+                BetterFireball bf = new BetterFireball(this.level(), this, look);
+                bf.setNotMe();
+                bf.setSmall();
+                bf.setPos(spawnX, spawnY, spawnZ);
+                this.level().addFreshEntity(bf);
                 this.level().playSound(null, this.getX(), this.getY(), this.getZ(),
                         SoundEvents.BLAZE_SHOOT, SoundSource.NEUTRAL, 0.75f,
                         1.0f / (this.getRandom().nextFloat() * 0.4f + 0.8f));
                 this.fireballTicker = 10;
             } else {
-                // TODO: Spawn large BetterFireball aimed in rider's look direction
+                BetterFireball bf = new BetterFireball(this.level(), this, look);
+                bf.setNotMe();
+                bf.setBig();
+                bf.setPos(spawnX, spawnY, spawnZ);
+                this.level().addFreshEntity(bf);
                 this.level().playSound(null, this.getX(), this.getY(), this.getZ(),
                         SoundEvents.TNT_PRIMED, SoundSource.NEUTRAL, 1.0f,
                         1.0f / (this.getRandom().nextFloat() * 0.4f + 0.8f));
@@ -509,21 +522,21 @@ public class Dragon extends TamableAnimal {
         } else {
             // Ice/Water dragon
             if (strafe > 0) {
-                // TODO: Spawn WaterBall aimed in rider's look direction
-                // WaterBall wb = new WaterBall(level(), spawnX, spawnY, spawnZ);
-                // wb.moveTo(spawnX, spawnY, spawnZ, rider.getYRot() + 90.0f, rider.getXRot());
-                // wb.shoot(dirX, dirY, dirZ, 1.4f, 5.0f);
-                // level().addFreshEntity(wb);
+                WaterBall wb = new WaterBall(this.level(), spawnX, spawnY, spawnZ);
+                wb.setOwner(this);
+                wb.shoot(look.x, look.y, look.z, 1.4f, 5.0f);
+                this.level().addFreshEntity(wb);
                 this.level().playSound(null, this.getX(), this.getY(), this.getZ(),
                         SoundEvents.ARROW_SHOOT, SoundSource.NEUTRAL, 0.75f,
                         1.0f / (this.getRandom().nextFloat() * 0.4f + 0.8f));
                 this.fireballTicker = 5;
             } else {
-                // TODO: Spawn IceBall aimed in rider's look direction
-                // IceBall ib = new IceBall(level(), spawnX, spawnY, spawnZ);
-                // ib.setSpecial(); ib.setIceBall();
-                // ib.shoot(dirX, dirY, dirZ, 1.4f, 5.0f);
-                // level().addFreshEntity(ib);
+                IceBall ib = new IceBall(ModEntities.ICE_BALL.get(), this.level());
+                ib.setOwner(this);
+                ib.setSpecial();
+                ib.setPos(spawnX, spawnY, spawnZ);
+                ib.shoot(look.x, look.y, look.z, 1.4f, 5.0f);
+                this.level().addFreshEntity(ib);
                 this.level().playSound(null, this.getX(), this.getY(), this.getZ(),
                         SoundEvents.FIREWORK_ROCKET_LAUNCH, SoundSource.NEUTRAL, 0.75f,
                         1.0f / (this.getRandom().nextFloat() * 0.4f + 0.8f));
@@ -785,15 +798,16 @@ public class Dragon extends TamableAnimal {
         if (this.cachedDragonType == 0) {
             // Fire dragon
             if (this.getDragonFire() == 1) {
-                // TODO: Spawn SmallFireball at (spawnX, spawnY, spawnZ) aimed at target
-                // SmallFireball sf = new SmallFireball(level(), this, dirX, dirY, dirZ);
-                // sf.moveTo(spawnX, spawnY, spawnZ, this.getYRot(), 0.0f);
-                // level().addFreshEntity(sf);
+                net.minecraft.world.entity.projectile.SmallFireball sf =
+                        new net.minecraft.world.entity.projectile.SmallFireball(
+                                this.level(), this, new Vec3(dirX, dirY, dirZ));
+                sf.moveTo(spawnX, spawnY, spawnZ, this.getYRot(), 0.0f);
+                this.level().addFreshEntity(sf);
             } else {
-                // TODO: Spawn BetterFireball at (spawnX, spawnY, spawnZ) aimed at target
-                // BetterFireball bf = new BetterFireball(level(), this, dirX, dirY, dirZ);
-                // bf.moveTo(spawnX, spawnY, spawnZ, this.getYRot(), 0.0f);
-                // level().addFreshEntity(bf);
+                BetterFireball bf = new BetterFireball(this.level(), this, new Vec3(dirX, dirY, dirZ));
+                bf.moveTo(spawnX, spawnY, spawnZ, this.getYRot(), 0.0f);
+                bf.setPos(spawnX, spawnY, spawnZ);
+                this.level().addFreshEntity(bf);
             }
             this.level().playSound(null, this.getX(), this.getY(), this.getZ(),
                     this.getDragonFire() == 1 ? SoundEvents.BLAZE_SHOOT : SoundEvents.TNT_PRIMED,
@@ -802,19 +816,19 @@ public class Dragon extends TamableAnimal {
                     1.0f / (this.getRandom().nextFloat() * 0.4f + 0.8f));
         } else {
             // Ice/Water dragon
+            float horizDist = Mth.sqrt((float)(dirX * dirX + dirZ * dirZ)) * 0.2f;
             if (this.getDragonFire() == 1) {
-                // TODO: Spawn WaterBall at (spawnX, spawnY, spawnZ) aimed at target
-                // WaterBall wb = new WaterBall(level(), dirX, dirY, dirZ);
-                // wb.moveTo(spawnX, spawnY, spawnZ);
-                // wb.shoot(dirX, dirY + horizDist*0.2, dirZ, 1.4f, 5.0f);
-                // level().addFreshEntity(wb);
+                WaterBall wb = new WaterBall(this.level(), spawnX, spawnY, spawnZ);
+                wb.setOwner(this);
+                wb.shoot(dirX, dirY + horizDist, dirZ, 1.4f, 5.0f);
+                this.level().addFreshEntity(wb);
             } else {
-                // TODO: Spawn IceBall at (spawnX, spawnY, spawnZ) aimed at target
-                // IceBall ib = new IceBall(level(), dirX, dirY, dirZ);
-                // ib.setSpecial(); ib.setIceBall();
-                // ib.moveTo(spawnX, spawnY, spawnZ);
-                // ib.shoot(dirX, dirY + horizDist*0.2, dirZ, 1.4f, 5.0f);
-                // level().addFreshEntity(ib);
+                IceBall ib = new IceBall(ModEntities.ICE_BALL.get(), this.level());
+                ib.setOwner(this);
+                ib.setSpecial();
+                ib.setPos(spawnX, spawnY, spawnZ);
+                ib.shoot(dirX, dirY + horizDist, dirZ, 1.4f, 5.0f);
+                this.level().addFreshEntity(ib);
             }
             this.level().playSound(null, this.getX(), this.getY(), this.getZ(),
                     this.getDragonFire() == 1 ? SoundEvents.ARROW_SHOOT : SoundEvents.TNT_PRIMED,
@@ -910,12 +924,11 @@ public class Dragon extends TamableAnimal {
         if (this.level().getDifficulty() == Difficulty.PEACEFUL) return false;
 
         if (target instanceof Dragon) return false;
-        // TODO: Exclude OreSpawn allies: LurkingTerror, EnderReaper, TerribleTerror,
-        //       LeafMonster, CreepingHorror, Triffid, Spyro
+        if (MyUtils.isAlly(target)) return false;
 
         if (target instanceof Monster) return true;
-        // TODO: if (target instanceof Mothra) return true;
-        // TODO: if (target instanceof Kraken) return true;
+        if (target instanceof Mothra) return true;
+        if (target instanceof Kraken) return true;
 
         if (target instanceof Player) return false;
 
@@ -923,7 +936,6 @@ public class Dragon extends TamableAnimal {
     }
 
     private LivingEntity findSomethingToAttack() {
-        // TODO: Check OreSpawnMain.PlayNicely config; if != 0 return null
         AABB searchBox = this.getBoundingBox().inflate(20.0, 20.0, 20.0);
         List<LivingEntity> entities = this.level().getEntitiesOfClass(LivingEntity.class, searchBox);
         entities.sort(this.targetSorter);
@@ -1070,16 +1082,17 @@ public class Dragon extends TamableAnimal {
         // Apple: spawn baby dragon
         if (stack.is(Items.APPLE) && this.distanceToSqr(player) < 25.0) {
             if (!this.level().isClientSide) {
-                // TODO: Spawn Baby Dragon (Spyro) entity when Spyro class is ported
-                // Spyro baby = new Spyro(ModEntityTypes.SPYRO.get(), this.level());
-                // baby.moveTo(this.getX(), this.getY(), this.getZ(),
-                //         this.getRandom().nextFloat() * 360.0f, 0.0f);
-                // if (this.isTame()) {
-                //     baby.setTame(true, false);
-                //     baby.setOwnerUUID(player.getUUID());
-                // }
-                // this.level().addFreshEntity(baby);
-                // this.discard();
+                EntitySpyro baby = ModEntities.ENTITY_SPYRO.get().create(this.level());
+                if (baby != null) {
+                    baby.moveTo(this.getX(), this.getY(), this.getZ(),
+                            this.getRandom().nextFloat() * 360.0f, 0.0f);
+                    if (this.isTame()) {
+                        baby.setTame(true, false);
+                        baby.setOwnerUUID(player.getUUID());
+                    }
+                    this.level().addFreshEntity(baby);
+                    this.discard();
+                }
             }
             if (!player.getAbilities().instabuild) {
                 stack.shrink(1);

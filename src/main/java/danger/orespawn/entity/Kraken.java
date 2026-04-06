@@ -566,11 +566,10 @@ public class Kraken extends Monster {
                 case 40 -> dropItemRand(new ItemStack(Items.DIAMOND_BLOCK));
                 case 41 -> dropItemRand(new ItemStack(Items.ENCHANTED_GOLDEN_APPLE));
                 case 42 -> enchantSword(dropItemRand(new ItemStack(ModItems.EXPERIENCE_SWORD.get())));
-                // TODO: Cases 43-46 drop Experience armor; using diamond as placeholder
-                case 43 -> enchantHelmet(dropItemRand(new ItemStack(Items.DIAMOND_HELMET)));
-                case 44 -> enchantArmor(dropItemRand(new ItemStack(Items.DIAMOND_CHESTPLATE)));
-                case 45 -> enchantArmor(dropItemRand(new ItemStack(Items.DIAMOND_LEGGINGS)));
-                case 46 -> enchantBoots(dropItemRand(new ItemStack(Items.DIAMOND_BOOTS)));
+                case 43 -> enchantHelmet(dropItemRand(new ItemStack(ModItems.EXPERIENCE_HELMET.get())));
+                case 44 -> enchantArmor(dropItemRand(new ItemStack(ModItems.EXPERIENCE_CHESTPLATE.get())));
+                case 45 -> enchantArmor(dropItemRand(new ItemStack(ModItems.EXPERIENCE_LEGGINGS.get())));
+                case 46 -> enchantBoots(dropItemRand(new ItemStack(ModItems.EXPERIENCE_BOOTS.get())));
                 case 47 -> enchantSword(dropItemRand(new ItemStack(ModItems.AMETHYST_SWORD.get())));
                 case 48 -> enchantTool(dropItemRand(new ItemStack(ModItems.AMETHYST_SHOVEL.get())));
                 case 49 -> enchantToolSilk(dropItemRand(new ItemStack(ModItems.AMETHYST_PICKAXE.get())));

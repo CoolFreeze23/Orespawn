@@ -4,17 +4,21 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 
-public class ItemSpawnEgg extends Item {
-    private final int entityId;
+import java.util.function.Supplier;
 
-    public ItemSpawnEgg(Item.Properties properties, int entityId) {
+public class ItemSpawnEgg extends Item {
+    private final Supplier<EntityType<?>> entityTypeSupplier;
+
+    public ItemSpawnEgg(Item.Properties properties, Supplier<EntityType<?>> entityTypeSupplier) {
         super(properties);
-        this.entityId = entityId;
+        this.entityTypeSupplier = entityTypeSupplier;
     }
 
     @Override
@@ -26,14 +30,15 @@ public class ItemSpawnEgg extends Item {
         if (player == null) return InteractionResult.PASS;
 
         BlockPos pos = context.getClickedPos().above();
-        // TODO: Spawn entity based on entityId at pos when entity types are registered
+        Entity entity = this.entityTypeSupplier.get().create(level);
+        if (entity != null) {
+            entity.moveTo(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5,
+                    level.random.nextFloat() * 360.0F, 0.0F);
+            level.addFreshEntity(entity);
+        }
 
         level.playSound(null, player.blockPosition(), SoundEvents.CHICKEN_EGG, SoundSource.PLAYERS, 1.0F, 1.0F);
         context.getItemInHand().shrink(1);
         return InteractionResult.SUCCESS;
-    }
-
-    public int getEntityId() {
-        return entityId;
     }
 }

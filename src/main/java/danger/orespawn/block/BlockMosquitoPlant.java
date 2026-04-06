@@ -30,7 +30,6 @@ public class BlockMosquitoPlant extends CropBlock {
         super.randomTick(state, level, pos, random);
         if (level.isClientSide()) return;
 
-        // TODO: Check MosquitoEnable config
         int age = getAge(state);
         int spawnRollBound = MAX_CROP_AGE - age;
         if (spawnRollBound > 1 && random.nextInt(spawnRollBound) != 0) return;

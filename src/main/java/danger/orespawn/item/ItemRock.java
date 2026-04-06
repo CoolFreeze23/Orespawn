@@ -1,5 +1,9 @@
 package danger.orespawn.item;
 
+import danger.orespawn.ModEntities;
+import danger.orespawn.entity.EntityThrownRock;
+import danger.orespawn.entity.RockBase;
+import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
@@ -23,7 +27,9 @@ public class ItemRock extends Item {
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
         if (!level.isClientSide) {
-            // TODO: Spawn EntityThrownRock projectile with rockType when entity type is registered
+            EntityThrownRock projectile = new EntityThrownRock(level, player, this.rockType);
+            projectile.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0F, 1.5F, 1.0F);
+            level.addFreshEntity(projectile);
             level.playSound(null, player.blockPosition(), SoundEvents.SNOWBALL_THROW, SoundSource.PLAYERS, 0.5F, 0.4F);
         }
         if (!player.getAbilities().instabuild) {
@@ -37,7 +43,12 @@ public class ItemRock extends Item {
         Level level = context.getLevel();
         if (level.isClientSide) return InteractionResult.SUCCESS;
 
-        // TODO: Spawn RockBase entity at clicked pos when entity type is registered
+        BlockPos pos = context.getClickedPos().above();
+        RockBase rock = ModEntities.ROCK_BASE.get().create(level);
+        if (rock != null) {
+            rock.moveTo(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, 0.0F, 0.0F);
+            level.addFreshEntity(rock);
+        }
         context.getItemInHand().shrink(1);
         return InteractionResult.SUCCESS;
     }

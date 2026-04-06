@@ -9,6 +9,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
+import danger.orespawn.util.MyUtils;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
@@ -115,7 +116,7 @@ public class Cryolophosaurus extends Monster {
         if (target instanceof Alosaurus) return false;
         if (target instanceof TRex) return false;
         if (target instanceof Cryolophosaurus) return false;
-        // TODO: check for Ghost, GhostSkelly, CaveFisher, GammaMetroid, EntityButterfly, Firefly, EntityMosquito, RockBase
+        if (MyUtils.isIgnoreable(target) || target instanceof EntityGammaMetroid) return false;
         if (target instanceof Player player) {
             return !player.getAbilities().invulnerable;
         }

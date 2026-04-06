@@ -40,7 +40,11 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import danger.orespawn.ModEntities;
+import danger.orespawn.ModEntities;
 import danger.orespawn.ModItems;
+import danger.orespawn.ModSounds;
+import danger.orespawn.util.MyUtils;
 
 public class TheKing extends Monster {
     private static final EntityDataAccessor<Integer> DATA_ATTACKING =
@@ -157,20 +161,17 @@ public class TheKing extends Monster {
 
     @Override
     protected SoundEvent getAmbientSound() {
-        // TODO: Replace with custom SoundEvent "orespawn:king_living"
-        return SoundEvents.ENDER_DRAGON_AMBIENT;
+        return ModSounds.KING_LIVING.get();
     }
 
     @Override
     protected SoundEvent getHurtSound(DamageSource source) {
-        // TODO: Replace with custom SoundEvent "orespawn:king_hit"
-        return SoundEvents.ENDER_DRAGON_HURT;
+        return ModSounds.KING_HIT.get();
     }
 
     @Override
     protected SoundEvent getDeathSound() {
-        // TODO: Replace with custom SoundEvent "orespawn:trex_death"
-        return SoundEvents.ENDER_DRAGON_DEATH;
+        return ModSounds.TREX_DEATH.get();
     }
 
     @Override
@@ -203,8 +204,7 @@ public class TheKing extends Monster {
         this.wingSoundTimer++;
         if (this.wingSoundTimer > 30) {
             if (!this.level().isClientSide) {
-                // TODO: Replace with custom SoundEvent "orespawn:MothraWings"
-                this.playSound(SoundEvents.ENDER_DRAGON_FLAP, 1.75f, 0.75f);
+                this.playSound(ModSounds.MOTHRAWINGS1.get(), 1.75f, 0.75f);
             }
             this.wingSoundTimer = 0;
         }
@@ -366,8 +366,7 @@ public class TheKing extends Monster {
             // ---- Target acquisition ----
             currentTarget = this.revengeTarget;
 
-            if (currentTarget instanceof TheKing) {
-                // TODO: also check KingHead
+            if (currentTarget instanceof TheKing || currentTarget instanceof KingHead) {
                 this.revengeTarget = null;
                 currentTarget = null;
             }
@@ -388,7 +387,12 @@ public class TheKing extends Monster {
             nearbyTarget = this.findSomethingToAttack();
 
             if (this.headEntityFound == 0) {
-                // TODO: Spawn KingHead entity at this.getX(), this.getY() + 20, this.getZ()
+                KingHead head = ModEntities.KING_HEAD.get().create(this.level());
+                if (head != null) {
+                    head.moveTo(this.getX(), this.getY() + 20, this.getZ(), 0.0F, 0.0F);
+                    this.level().addFreshEntity(head);
+                    this.headEntityFound = 1;
+                }
             }
 
             if (currentTarget == null) currentTarget = nearbyTarget;
@@ -454,20 +458,20 @@ public class TheKing extends Monster {
 
         // Purple power in enraged mode
         if (this.getAttacking() != 0 && this.isEnd == 2) {
-            /* TODO: Spawn PurplePower entity
             double xzoff = 10.0;
             double yoff = 14.0;
-            PurplePower pwr = new PurplePower(this.level(), ...);
-            pwr.moveTo(
-                this.getX() - xzoff * Math.sin(Math.toRadians(this.getYRot())),
-                this.getY() + yoff,
-                this.getZ() + xzoff * Math.cos(Math.toRadians(this.getYRot())),
-                0, 0);
-            Vec3 mot = this.getDeltaMovement();
-            pwr.setDeltaMovement(mot.x * 3.0, 0, mot.z * 3.0);
-            pwr.setPurpleType(10);
-            this.level().addFreshEntity(pwr);
-            */
+            PurplePower pwr = ModEntities.PURPLE_POWER.get().create(this.level());
+            if (pwr != null) {
+                pwr.moveTo(
+                    this.getX() - xzoff * Math.sin(Math.toRadians(this.getYRot())),
+                    this.getY() + yoff,
+                    this.getZ() + xzoff * Math.cos(Math.toRadians(this.getYRot())),
+                    0, 0);
+                Vec3 mot = this.getDeltaMovement();
+                pwr.setDeltaMovement(mot.x * 3.0, 0, mot.z * 3.0);
+                pwr.setPurpleType(10);
+                this.level().addFreshEntity(pwr);
+            }
         }
 
         // ---- Flight movement ----
@@ -507,8 +511,8 @@ public class TheKing extends Monster {
         if (target instanceof LivingEntity living) {
             float entitySize = living.getBbHeight() * living.getBbWidth();
             if (entitySize > 30.0f
-                    // TODO: && !MyUtils.isRoyalty(living)
-                    // TODO: Exclude Godzilla, GodzillaHead, PitchBlack, Kraken
+                    && !MyUtils.isRoyalty(living)
+                    && !MyUtils.isBigBoss(living)
                     && !(living instanceof EnderDragon)) {
                 living.setHealth(living.getHealth() / 2.0f);
                 living.hurt(this.damageSources().mobAttack(this), (float) this.attackDamage * 10.0f);
@@ -548,8 +552,8 @@ public class TheKing extends Monster {
         if (attacker instanceof LivingEntity living) {
             float entitySize = living.getBbHeight() * living.getBbWidth();
             if (entitySize > 30.0f
-                    // TODO: && !MyUtils.isRoyalty(living)
-                    // TODO: Exclude Godzilla, GodzillaHead, PitchBlack, Kraken
+                    && !MyUtils.isRoyalty(living)
+                    && !MyUtils.isBigBoss(living)
                     ) {
                 clampedDamage /= 10.0f;
                 this.hurtCooldown = 50;
@@ -568,7 +572,7 @@ public class TheKing extends Monster {
                 this.playerHitCount++;
             }
             if (attacker instanceof LivingEntity living && this.currentFlightTarget != null
-                    // TODO: && !MyUtils.isRoyalty(attacker)
+                    && !MyUtils.isRoyalty(attacker)
                     ) {
                 this.revengeTarget = living;
                 int flightY = Math.min((int) attacker.getY(), 230);
@@ -602,11 +606,10 @@ public class TheKing extends Monster {
             this.playSound(SoundEvents.TNT_PRIMED, 1.0f,
                     1.0f / (this.getRandom().nextFloat() * 0.4f + 0.8f));
 
-            /* TODO: Spawn BetterFireball projectiles
             BetterFireball bf = new BetterFireball(this.level(), this,
-                    e.getX() - cx,
-                    e.getY() + e.getBbHeight() / 2.0f - (this.getY() + yoff),
-                    e.getZ() - cz);
+                    new Vec3(e.getX() - cx,
+                             e.getY() + e.getBbHeight() / 2.0f - (this.getY() + yoff),
+                             e.getZ() - cz));
             bf.moveTo(cx, this.getY() + yoff, cz, this.getYRot(), 0.0f);
             bf.setPos(cx, this.getY() + yoff, cz);
             bf.setReallyBig();
@@ -617,16 +620,15 @@ public class TheKing extends Monster {
                 float r2 = 3.0f * (this.getRandom().nextFloat() - this.getRandom().nextFloat());
                 float r3 = 5.0f * (this.getRandom().nextFloat() - this.getRandom().nextFloat());
                 bf = new BetterFireball(this.level(), this,
-                        e.getX() - cx + r1,
-                        e.getY() + e.getBbHeight() / 2.0f - (this.getY() + yoff) + r2,
-                        e.getZ() - cz + r3);
+                        new Vec3(e.getX() - cx + r1,
+                                 e.getY() + e.getBbHeight() / 2.0f - (this.getY() + yoff) + r2,
+                                 e.getZ() - cz + r3));
                 bf.moveTo(cx, this.getY() + yoff, cz, this.getYRot(), 0.0f);
                 bf.setPos(cx, this.getY() + yoff, cz);
                 bf.setBig();
                 if (this.getRandom().nextInt(2) == 1) bf.setSmall();
                 this.level().addFreshEntity(bf);
             }
-            */
 
             this.level().playSound(null, cx, this.getY() + yoff, cz,
                     SoundEvents.ARROW_SHOOT, SoundSource.HOSTILE,
@@ -646,9 +648,9 @@ public class TheKing extends Monster {
                     SoundEvents.ARROW_SHOOT, SoundSource.HOSTILE,
                     1.0f, 1.0f / (this.getRandom().nextFloat() * 0.4f + 0.8f));
 
-            /* TODO: Spawn ThunderBolt projectiles
             for (int i = 0; i < 3; i++) {
                 ThunderBolt lb = new ThunderBolt(this.level(), cx, this.getY() + yoff, cz);
+                lb.setOwner(this);
                 lb.moveTo(cx, this.getY() + yoff, cz, 0.0f, 0.0f);
                 double dx = e.getX() - lb.getX();
                 double dy = e.getY() + 0.25 - lb.getY();
@@ -659,7 +661,6 @@ public class TheKing extends Monster {
                 lb.setDeltaMovement(lbMot.x * 3.0, lbMot.y * 3.0, lbMot.z * 3.0);
                 this.level().addFreshEntity(lb);
             }
-            */
 
             this.lightningStreamCount--;
         }
@@ -676,10 +677,10 @@ public class TheKing extends Monster {
                     SoundEvents.ARROW_SHOOT, SoundSource.HOSTILE,
                     1.0f, 1.0f / (this.getRandom().nextFloat() * 0.4f + 0.8f));
 
-            /* TODO: Spawn IceBall projectiles
             for (int i = 0; i < 5; i++) {
-                IceBall lb = new IceBall(this.level(), cx, this.getY() + yoff, cz);
-                lb.setIceMaker(1);
+                IceBall lb = new IceBall(ModEntities.ICE_BALL.get(), this.level());
+                lb.setOwner(this);
+                lb.enableIceCreation();
                 lb.moveTo(cx, this.getY() + yoff, cz, 0.0f, 0.0f);
                 double dx = e.getX() - lb.getX();
                 double dy = e.getY() + 0.25 - lb.getY();
@@ -690,7 +691,6 @@ public class TheKing extends Monster {
                 lb.setDeltaMovement(lbMot.x * 3.0, lbMot.y * 3.0, lbMot.z * 3.0);
                 this.level().addFreshEntity(lb);
             }
-            */
 
             this.iceStreamCount--;
         }
@@ -703,8 +703,8 @@ public class TheKing extends Monster {
 
         for (LivingEntity target : entities) {
             if (target == this || !target.isAlive()) continue;
-            // TODO: if (MyUtils.isRoyalty(target)) continue;
-            // TODO: if (target instanceof Ghost || target instanceof GhostSkelly) continue;
+            if (MyUtils.isRoyalty(target)) continue;
+            if (target instanceof Ghost || target instanceof GhostSkelly) continue;
 
             target.hurt(this.damageSources().magic(), (float) damage / 2.0f);
             target.hurt(this.damageSources().generic(), (float) damage / 2.0f);
@@ -727,20 +727,20 @@ public class TheKing extends Monster {
     private boolean isSuitableTarget(LivingEntity target) {
         if (target == null || target == this || !target.isAlive()) return false;
 
-        // TODO: if (target instanceof KingHead) { headEntityFound = 1; return false; }
-        // TODO: if (MyUtils.isRoyalty(target)) return false;
+        if (target instanceof KingHead) { headEntityFound = 1; return false; }
+        if (MyUtils.isRoyalty(target)) return false;
 
         float deltaX = (float) (target.getX() - this.homeX);
         float deltaZ = (float) (target.getZ() - this.homeZ);
         if (Math.sqrt(deltaX * deltaX + deltaZ * deltaZ) > 144.0f) return false;
 
-        // TODO: if (MyUtils.isIgnoreable(target)) return false;
+        if (MyUtils.isIgnoreable(target)) return false;
 
         if (this.isEnd == 2) {
             if (target instanceof Player player) {
                 return !player.getAbilities().instabuild;
             }
-            // TODO: if (target instanceof Girlfriend || target instanceof Boyfriend) return true;
+            if (target instanceof Girlfriend || target instanceof Boyfriend) return true;
             if (target instanceof Villager) return true;
         }
 
@@ -752,8 +752,7 @@ public class TheKing extends Monster {
         if (target instanceof Horse) return true;
         if (target instanceof Monster) return true;
         if (target instanceof EnderDragon) return true;
-        // TODO: return MyUtils.isAttackableNonMob(target);
-        return false;
+        return MyUtils.isAttackableNonMob(target);
     }
 
     private LivingEntity findSomethingToAttack() {
@@ -915,10 +914,17 @@ public class TheKing extends Monster {
     protected void dropCustomDeathLoot(ServerLevel level, DamageSource source, boolean recentlyHit) {
         super.dropCustomDeathLoot(level, source, recentlyHit);
 
-        // TODO: Spawn "The Prince" entity at this.getX(), this.getY() + 10, this.getZ()
+        ThePrince prince = ModEntities.THE_PRINCE.get().create(this.level());
+        if (prince != null) {
+            prince.moveTo(this.getX(), this.getY() + 10, this.getZ(), 0.0F, 0.0F);
+            this.level().addFreshEntity(prince);
+        }
 
-        // TODO: Add royal guardian armor drops once armor items are registered
         dropItemRand(new ItemStack(ModItems.ROYAL_GUARDIAN_SWORD.get(), 1));
+        dropItemRand(new ItemStack(ModItems.ROYAL_HELMET.get(), 1));
+        dropItemRand(new ItemStack(ModItems.ROYAL_CHESTPLATE.get(), 1));
+        dropItemRand(new ItemStack(ModItems.ROYAL_LEGGINGS.get(), 1));
+        dropItemRand(new ItemStack(ModItems.ROYAL_BOOTS.get(), 1));
 
         int icount = BuiltInRegistries.ITEM.size();
         int j = 0;

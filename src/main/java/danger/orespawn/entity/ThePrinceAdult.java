@@ -18,6 +18,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
+import danger.orespawn.util.MyUtils;
 import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -196,7 +197,7 @@ public class ThePrinceAdult extends TamableAnimal {
         for (LivingEntity target : targets) {
             if (target == this || !target.isAlive()) continue;
             if (!this.getSensing().hasLineOfSight(target)) continue;
-            // TODO: check for royalty/allies
+            if (MyUtils.isRoyalty(target) || MyUtils.isAlly(target)) continue;
             if (target instanceof Monster) return target;
         }
         return null;

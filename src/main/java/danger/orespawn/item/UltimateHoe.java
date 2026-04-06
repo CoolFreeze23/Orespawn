@@ -14,7 +14,9 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.item.enchantment.Enchantments;
 import danger.orespawn.ModToolTiers;
+import danger.orespawn.util.OreSpawnEnchantHelper;
 
 public class UltimateHoe extends HoeItem {
     public UltimateHoe(Item.Properties properties) {
@@ -23,7 +25,9 @@ public class UltimateHoe extends HoeItem {
 
     @Override
     public void inventoryTick(ItemStack stack, Level level, Entity entity, int slotId, boolean isSelected) {
-        // TODO: Enchantments are data-driven in 1.21.1, need registry lookup
+        if (!level.isClientSide && !OreSpawnEnchantHelper.hasAnyEnchantments(stack)) {
+            OreSpawnEnchantHelper.applyEnchantment(stack, level, Enchantments.EFFICIENCY, 2);
+        }
     }
 
     @Override

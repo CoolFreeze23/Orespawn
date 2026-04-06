@@ -10,7 +10,9 @@ import net.minecraft.world.entity.projectile.Arrow;
 import net.minecraft.world.item.BowItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
+import danger.orespawn.util.OreSpawnEnchantHelper;
 
 public class UltimateBow extends BowItem {
     public UltimateBow(Item.Properties properties) {
@@ -19,13 +21,12 @@ public class UltimateBow extends BowItem {
 
     @Override
     public void inventoryTick(ItemStack stack, Level level, Entity entity, int slotId, boolean isSelected) {
-        // TODO: Enchantments are data-driven in 1.21.1, need registry lookup
-        // if (!level.isClientSide && stack.getEnchantmentLevel(Enchantments.INFINITY_ARROWS) <= 0) {
-        //     stack.enchant(Enchantments.POWER_ARROWS, 5);
-        //     stack.enchant(Enchantments.FLAMING_ARROWS, 3);
-        //     stack.enchant(Enchantments.PUNCH_ARROWS, 2);
-        //     stack.enchant(Enchantments.INFINITY_ARROWS, 1);
-        // }
+        if (!level.isClientSide && !OreSpawnEnchantHelper.hasAnyEnchantments(stack)) {
+            OreSpawnEnchantHelper.applyEnchantment(stack, level, Enchantments.POWER, 5);
+            OreSpawnEnchantHelper.applyEnchantment(stack, level, Enchantments.FLAME, 3);
+            OreSpawnEnchantHelper.applyEnchantment(stack, level, Enchantments.PUNCH, 2);
+            OreSpawnEnchantHelper.applyEnchantment(stack, level, Enchantments.INFINITY, 1);
+        }
     }
 
     @Override

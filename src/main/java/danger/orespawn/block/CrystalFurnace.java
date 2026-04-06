@@ -1,9 +1,12 @@
 package danger.orespawn.block;
 
+import danger.orespawn.ModBlockEntities;
+import danger.orespawn.gui.CrystalFurnaceBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -61,7 +64,10 @@ public class CrystalFurnace extends BaseEntityBlock {
     @Override
     public void setPlacedBy(Level level, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack) {
         if (stack.has(DataComponents.CUSTOM_NAME)) {
-            // TODO: if (be instanceof TileEntityCrystalFurnace furnace) furnace.setCustomName(stack.getHoverName());
+            BlockEntity be = level.getBlockEntity(pos);
+            if (be instanceof CrystalFurnaceBlockEntity furnace) {
+                furnace.setCustomName(stack.getHoverName());
+            }
         }
     }
 
@@ -69,10 +75,10 @@ public class CrystalFurnace extends BaseEntityBlock {
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
         if (level.isClientSide()) return InteractionResult.SUCCESS;
 
-        // TODO: Open crystal furnace GUI
-        // if (be instanceof TileEntityCrystalFurnace furnace) {
-        //     player.openMenu(furnace);
-        // }
+        BlockEntity be = level.getBlockEntity(pos);
+        if (be instanceof CrystalFurnaceBlockEntity furnace) {
+            player.openMenu(furnace);
+        }
         return InteractionResult.CONSUME;
     }
 
@@ -110,7 +116,10 @@ public class CrystalFurnace extends BaseEntityBlock {
     @Override
     public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
         if (!state.is(newState.getBlock())) {
-            // TODO: if (be instanceof TileEntityCrystalFurnace furnace) Containers.dropContents(level, pos, furnace);
+            BlockEntity be = level.getBlockEntity(pos);
+            if (be instanceof CrystalFurnaceBlockEntity furnace) {
+                Containers.dropContents(level, pos, furnace);
+            }
         }
         super.onRemove(state, level, pos, newState, movedByPiston);
     }
@@ -123,14 +132,13 @@ public class CrystalFurnace extends BaseEntityBlock {
     @Nullable
     @Override
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
-        // TODO: return new TileEntityCrystalFurnace(pos, state);
-        return null;
+        return new CrystalFurnaceBlockEntity(pos, state);
     }
 
     @Nullable
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
-        // TODO: return createTickerHelper(type, ModBlockEntities.CRYSTAL_FURNACE.get(), TileEntityCrystalFurnace::tick);
-        return null;
+        if (level.isClientSide()) return null;
+        return createTickerHelper(type, ModBlockEntities.CRYSTAL_FURNACE_BE.get(), CrystalFurnaceBlockEntity::serverTick);
     }
 }

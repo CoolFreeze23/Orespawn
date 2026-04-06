@@ -186,10 +186,41 @@ public class Basilisk extends Monster {
                     if (this.getRandom().nextInt(2) == 1) enchantItem(droppedStack, Enchantments.UNBREAKING, 2 + this.getRandom().nextInt(4));
                     if (this.getRandom().nextInt(6) == 1) enchantItem(droppedStack, Enchantments.EFFICIENCY, 1 + this.getRandom().nextInt(5));
                 }
-                // TODO: Cases 8-11 drop Emerald armor (helmet, chestplate, leggings, boots)
-                // with Protection, Projectile Protection, Fire Protection, Blast Protection,
-                // Unbreaking, Respiration, Aqua Affinity, Feather Falling enchants.
-                // Add when emerald armor items are registered in ModItems.
+                case 8 -> {
+                    droppedStack = dropItemRand(new ItemStack(ModItems.EMERALD_HELMET.get()));
+                    if (this.getRandom().nextInt(6) == 1) enchantItem(droppedStack, Enchantments.PROTECTION, 1 + this.getRandom().nextInt(5));
+                    if (this.getRandom().nextInt(6) == 1) enchantItem(droppedStack, Enchantments.PROJECTILE_PROTECTION, 1 + this.getRandom().nextInt(5));
+                    if (this.getRandom().nextInt(6) == 1) enchantItem(droppedStack, Enchantments.FIRE_PROTECTION, 1 + this.getRandom().nextInt(5));
+                    if (this.getRandom().nextInt(6) == 1) enchantItem(droppedStack, Enchantments.BLAST_PROTECTION, 1 + this.getRandom().nextInt(5));
+                    if (this.getRandom().nextInt(2) == 1) enchantItem(droppedStack, Enchantments.UNBREAKING, 2 + this.getRandom().nextInt(4));
+                    if (this.getRandom().nextInt(6) == 1) enchantItem(droppedStack, Enchantments.RESPIRATION, 1 + this.getRandom().nextInt(2));
+                    if (this.getRandom().nextInt(6) == 1) enchantItem(droppedStack, Enchantments.AQUA_AFFINITY, 1);
+                }
+                case 9 -> {
+                    droppedStack = dropItemRand(new ItemStack(ModItems.EMERALD_CHESTPLATE.get()));
+                    if (this.getRandom().nextInt(6) == 1) enchantItem(droppedStack, Enchantments.PROTECTION, 1 + this.getRandom().nextInt(5));
+                    if (this.getRandom().nextInt(6) == 1) enchantItem(droppedStack, Enchantments.PROJECTILE_PROTECTION, 1 + this.getRandom().nextInt(5));
+                    if (this.getRandom().nextInt(6) == 1) enchantItem(droppedStack, Enchantments.FIRE_PROTECTION, 1 + this.getRandom().nextInt(5));
+                    if (this.getRandom().nextInt(6) == 1) enchantItem(droppedStack, Enchantments.BLAST_PROTECTION, 1 + this.getRandom().nextInt(5));
+                    if (this.getRandom().nextInt(2) == 1) enchantItem(droppedStack, Enchantments.UNBREAKING, 2 + this.getRandom().nextInt(4));
+                }
+                case 10 -> {
+                    droppedStack = dropItemRand(new ItemStack(ModItems.EMERALD_LEGGINGS.get()));
+                    if (this.getRandom().nextInt(6) == 1) enchantItem(droppedStack, Enchantments.PROTECTION, 1 + this.getRandom().nextInt(5));
+                    if (this.getRandom().nextInt(6) == 1) enchantItem(droppedStack, Enchantments.PROJECTILE_PROTECTION, 1 + this.getRandom().nextInt(5));
+                    if (this.getRandom().nextInt(6) == 1) enchantItem(droppedStack, Enchantments.FIRE_PROTECTION, 1 + this.getRandom().nextInt(5));
+                    if (this.getRandom().nextInt(6) == 1) enchantItem(droppedStack, Enchantments.BLAST_PROTECTION, 1 + this.getRandom().nextInt(5));
+                    if (this.getRandom().nextInt(2) == 1) enchantItem(droppedStack, Enchantments.UNBREAKING, 2 + this.getRandom().nextInt(4));
+                }
+                case 11 -> {
+                    droppedStack = dropItemRand(new ItemStack(ModItems.EMERALD_BOOTS_ARMOR.get()));
+                    if (this.getRandom().nextInt(6) == 1) enchantItem(droppedStack, Enchantments.PROTECTION, 1 + this.getRandom().nextInt(5));
+                    if (this.getRandom().nextInt(6) == 1) enchantItem(droppedStack, Enchantments.PROJECTILE_PROTECTION, 1 + this.getRandom().nextInt(5));
+                    if (this.getRandom().nextInt(6) == 1) enchantItem(droppedStack, Enchantments.FIRE_PROTECTION, 1 + this.getRandom().nextInt(5));
+                    if (this.getRandom().nextInt(6) == 1) enchantItem(droppedStack, Enchantments.BLAST_PROTECTION, 1 + this.getRandom().nextInt(5));
+                    if (this.getRandom().nextInt(2) == 1) enchantItem(droppedStack, Enchantments.UNBREAKING, 2 + this.getRandom().nextInt(4));
+                    if (this.getRandom().nextInt(6) == 1) enchantItem(droppedStack, Enchantments.FEATHER_FALLING, 5 + this.getRandom().nextInt(5));
+                }
                 default -> dropItemRand(new ItemStack(Items.EMERALD, 1));
             }
         }

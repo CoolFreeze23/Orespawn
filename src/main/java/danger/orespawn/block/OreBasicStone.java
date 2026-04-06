@@ -8,6 +8,7 @@ import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockBehaviour;
+import danger.orespawn.ModEntities;
 import net.minecraft.world.level.block.state.BlockState;
 
 /**
@@ -47,25 +48,25 @@ public class OreBasicStone extends Block {
             case RAT:
                 spawnCount = 1 + level.random.nextInt(RAT_SPAWN_MAX_EXTRA);
                 for (int i = 0; i < spawnCount; i++) {
-                    // TODO: spawnCreature(level, ModEntities.RAT.get(), pos);
+                    spawnCreature(level, ModEntities.ENTITY_RAT.get(), pos);
                 }
                 break;
             case FAIRY:
                 spawnCount = 1 + level.random.nextInt(FAIRY_SPAWN_MAX_EXTRA);
                 for (int i = 0; i < spawnCount; i++) {
-                    // TODO: spawnCreature(level, ModEntities.FAIRY.get(), pos);
+                    spawnCreature(level, ModEntities.FAIRY.get(), pos);
                 }
                 break;
             case RED_ANT_TROLL:
                 spawnCount = ANT_TROLL_SPAWN_BASE + level.random.nextInt(ANT_TROLL_SPAWN_MAX_EXTRA);
                 for (int i = 0; i < spawnCount; i++) {
-                    // TODO: spawnCreature(level, ModEntities.RED_ANT.get(), pos);
+                    spawnCreature(level, ModEntities.ENTITY_RED_ANT.get(), pos);
                 }
                 break;
             case TERMITE_TROLL:
                 spawnCount = ANT_TROLL_SPAWN_BASE + level.random.nextInt(ANT_TROLL_SPAWN_MAX_EXTRA);
                 for (int i = 0; i < spawnCount; i++) {
-                    // TODO: spawnCreature(level, ModEntities.TERMITE.get(), pos);
+                    spawnCreature(level, ModEntities.ENTITY_TERMITE.get(), pos);
                 }
                 break;
             default:

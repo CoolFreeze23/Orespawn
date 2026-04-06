@@ -3,6 +3,7 @@ package danger.orespawn.entity;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.Entity;
+import danger.orespawn.ModEntities;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.monster.Creeper;
@@ -27,12 +28,12 @@ public class WaterBall extends ThrowableProjectile {
     }
 
     public WaterBall(Level level, LivingEntity shooter) {
-        super(EntityType.SNOWBALL, level); // TODO: use registered type
+        super(ModEntities.WATER_BALL.get(), level);
         this.setOwner(shooter);
     }
 
     public WaterBall(Level level, double x, double y, double z) {
-        super(EntityType.SNOWBALL, level); // TODO: use registered type
+        super(ModEntities.WATER_BALL.get(), level);
         this.setPos(x, y, z);
     }
 

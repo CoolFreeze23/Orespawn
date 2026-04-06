@@ -33,8 +33,8 @@ public class ItemExperienceTreeSeed extends Item {
         if (!validBlock) return InteractionResult.FAIL;
 
         BlockPos above = pos.above();
-        // TODO: Place experience plant block when ModBlocks.EXPERIENCE_PLANT is registered
-        // level.setBlock(above, ModBlocks.EXPERIENCE_PLANT.get().defaultBlockState(), 3);
+        if (!level.isEmptyBlock(above)) return InteractionResult.FAIL;
+        level.setBlock(above, ModBlocks.EXPERIENCE_PLANT.get().defaultBlockState(), 3);
 
         if (level instanceof ServerLevel serverLevel) {
             serverLevel.sendParticles(ParticleTypes.HAPPY_VILLAGER,

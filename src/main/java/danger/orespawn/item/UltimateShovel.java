@@ -6,8 +6,10 @@ import net.minecraft.world.item.ShovelItem;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.TamableAnimal;
+import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 import danger.orespawn.ModToolTiers;
+import danger.orespawn.util.OreSpawnEnchantHelper;
 
 public class UltimateShovel extends ShovelItem {
     public UltimateShovel(Item.Properties properties) {
@@ -16,7 +18,9 @@ public class UltimateShovel extends ShovelItem {
 
     @Override
     public void inventoryTick(ItemStack stack, Level level, Entity entity, int slotId, boolean isSelected) {
-        // TODO: Enchantments are data-driven in 1.21.1, need registry lookup
+        if (!level.isClientSide && !OreSpawnEnchantHelper.hasAnyEnchantments(stack)) {
+            OreSpawnEnchantHelper.applyEnchantment(stack, level, Enchantments.EFFICIENCY, 5);
+        }
     }
 
     @Override

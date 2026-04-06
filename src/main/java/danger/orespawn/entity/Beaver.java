@@ -75,7 +75,6 @@ public class Beaver extends Animal {
         BlockState state = block.defaultBlockState();
         if (state.is(BlockTags.LOGS)) return true;
         if (state.is(BlockTags.PLANKS)) return true;
-        // TODO: add OreSpawn custom tree blocks (MyDT, MySkyTreeLog)
         return block == Blocks.HAY_BLOCK;
     }
 

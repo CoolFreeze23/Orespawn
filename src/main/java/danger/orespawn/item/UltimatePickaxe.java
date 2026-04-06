@@ -6,9 +6,11 @@ import net.minecraft.world.item.PickaxeItem;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.TamableAnimal;
+import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import danger.orespawn.ModToolTiers;
+import danger.orespawn.util.OreSpawnEnchantHelper;
 
 public class UltimatePickaxe extends PickaxeItem {
     public UltimatePickaxe(Item.Properties properties) {
@@ -17,7 +19,10 @@ public class UltimatePickaxe extends PickaxeItem {
 
     @Override
     public void inventoryTick(ItemStack stack, Level level, Entity entity, int slotId, boolean isSelected) {
-        // TODO: Enchantments are data-driven in 1.21.1, need registry lookup
+        if (!level.isClientSide && !OreSpawnEnchantHelper.hasAnyEnchantments(stack)) {
+            OreSpawnEnchantHelper.applyEnchantment(stack, level, Enchantments.EFFICIENCY, 5);
+            OreSpawnEnchantHelper.applyEnchantment(stack, level, Enchantments.FORTUNE, 5);
+        }
     }
 
     @Override
