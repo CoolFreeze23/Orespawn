@@ -7,14 +7,14 @@ import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.resources.ResourceLocation;
 
-public class HydroliscRenderer extends MobRenderer<EntityHydrolisc, HydroliscModel<EntityHydrolisc>> {
+public class HydroliscRenderer extends MobRenderer<EntityHydrolisc, HydroliscModel> {
     private static final ResourceLocation TEXTURE =
             ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "textures/entity/hydrolisc.png");
     public static final ModelLayerLocation MODEL_LAYER =
             new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "hydrolisc"), "main");
 
     public HydroliscRenderer(EntityRendererProvider.Context context) {
-        super(context, new HydroliscModel<>(context.bakeLayer(MODEL_LAYER)), 0.25f);
+        super(context, new HydroliscModel(context.bakeLayer(MODEL_LAYER)), 0.25f);
     }
 
     @Override

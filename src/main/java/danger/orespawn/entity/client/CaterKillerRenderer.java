@@ -9,14 +9,14 @@ import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.resources.ResourceLocation;
 
-public class CaterKillerRenderer extends MobRenderer<EntityCaterKiller, CaterKillerModel<EntityCaterKiller>> {
+public class CaterKillerRenderer extends MobRenderer<EntityCaterKiller, CaterKillerModel> {
     private static final ResourceLocation TEXTURE =
             ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "textures/entity/caterkiller.png");
     public static final ModelLayerLocation MODEL_LAYER =
             new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "caterkiller"), "main");
 
     public CaterKillerRenderer(EntityRendererProvider.Context context) {
-        super(context, new CaterKillerModel<>(context.bakeLayer(MODEL_LAYER)), 1.2f);
+        super(context, new CaterKillerModel(context.bakeLayer(MODEL_LAYER)), 1.2f);
     }
 
     @Override

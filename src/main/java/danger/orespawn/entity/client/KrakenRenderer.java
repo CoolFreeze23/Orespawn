@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import danger.orespawn.OreSpawnMod;
 import danger.orespawn.entity.Kraken;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.client.model.geom.ModelLayerLocation;
@@ -30,6 +31,11 @@ public class KrakenRenderer extends MobRenderer<Kraken, ModelKraken> {
         poseStack.scale(SCALE, SCALE, SCALE);
         super.render(entity, entityYaw, partialTicks, poseStack, buffer, packedLight);
         poseStack.popPose();
+    }
+
+    @Override
+    public boolean shouldRender(Kraken entity, Frustum frustum, double x, double y, double z) {
+        return true;
     }
 
     @Override

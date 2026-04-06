@@ -192,7 +192,7 @@ public class VelocityRaptor extends TamableAnimal {
     @Override
     public boolean checkSpawnRules(LevelAccessor level, MobSpawnType spawnType) {
         if (this.getY() < 50.0) return false;
-        return this.level().canSeeSky(this.blockPosition());
+        return level.canSeeSky(this.blockPosition());
     }
 
     @Nullable

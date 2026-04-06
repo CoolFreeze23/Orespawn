@@ -7,14 +7,14 @@ import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.resources.ResourceLocation;
 
-public class FireflyRenderer extends MobRenderer<Firefly, FireflyModel<Firefly>> {
+public class FireflyRenderer extends MobRenderer<Firefly, FireflyModel> {
     private static final ResourceLocation TEXTURE =
             ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "textures/entity/fireflytexture.png");
     public static final ModelLayerLocation MODEL_LAYER =
             new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "firefly"), "main");
 
     public FireflyRenderer(EntityRendererProvider.Context context) {
-        super(context, new FireflyModel<>(context.bakeLayer(MODEL_LAYER)), 0.1f);
+        super(context, new FireflyModel(context.bakeLayer(MODEL_LAYER)), 0.1f);
     }
 
     @Override

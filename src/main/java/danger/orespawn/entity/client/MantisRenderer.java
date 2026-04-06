@@ -9,14 +9,14 @@ import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.resources.ResourceLocation;
 
-public class MantisRenderer extends MobRenderer<EntityMantis, MantisModel<EntityMantis>> {
+public class MantisRenderer extends MobRenderer<EntityMantis, MantisModel> {
     private static final ResourceLocation TEXTURE =
             ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "textures/entity/mantis.png");
     public static final ModelLayerLocation MODEL_LAYER =
             new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "mantis"), "main");
 
     public MantisRenderer(EntityRendererProvider.Context context) {
-        super(context, new MantisModel<>(context.bakeLayer(MODEL_LAYER)), 0.8f);
+        super(context, new MantisModel(context.bakeLayer(MODEL_LAYER)), 0.8f);
     }
 
     @Override

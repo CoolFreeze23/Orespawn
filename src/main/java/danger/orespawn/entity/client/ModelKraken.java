@@ -248,344 +248,344 @@ public class ModelKraken extends EntityModel<Kraken> {
 
         // Body parts (pivots have +90 X, +30 Y baked in from original constructor)
         p.addOrReplaceChild("Lefteye", CubeListBuilder.create().texOffs(56, 458).mirror()
-                .addBox(0.0F, -8.0F, -12.0F, 4, 16, 24), PartPose.offset(110.0F, 6.0F, -90.0F));
+                .addBox(0.0F, -8.0F, -12.0F, 4, 16, 24), PartPose.offset(20F, 6F, 0F));
         p.addOrReplaceChild("Backbody", CubeListBuilder.create().texOffs(320, 272).mirror()
-                .addBox(-24.0F, -24.0F, 0.0F, 48, 48, 48), PartPose.offset(90.0F, 6.0F, 28.0F));
+                .addBox(-24.0F, -24.0F, 0.0F, 48, 48, 48), PartPose.offset(0F, 6F, 118F));
         p.addOrReplaceChild("Centerbody", CubeListBuilder.create().texOffs(320, 176).mirror()
-                .addBox(-24.0F, -24.0F, -24.0F, 48, 48, 48), PartPose.offset(90.0F, 6.0F, 4.0F));
+                .addBox(-24.0F, -24.0F, -24.0F, 48, 48, 48), PartPose.offset(0F, 6F, 94F));
         p.addOrReplaceChild("Head", CubeListBuilder.create().texOffs(336, 0).mirror()
-                .addBox(-20.0F, -20.0F, -40.0F, 40, 40, 40), PartPose.offset(90.0F, 6.0F, -68.0F));
+                .addBox(-20.0F, -20.0F, -40.0F, 40, 40, 40), PartPose.offset(0F, 6F, 22F));
         p.addOrReplaceChild("Frontbody", CubeListBuilder.create().texOffs(320, 80).mirror()
-                .addBox(-20.0F, -20.0F, -47.0F, 48, 48, 48), PartPose.offset(86.0F, 2.0F, -21.0F));
+                .addBox(-20.0F, -20.0F, -47.0F, 48, 48, 48), PartPose.offset(-4F, 2F, 69F));
         p.addOrReplaceChild("Finright", CubeListBuilder.create().texOffs(0, 329).mirror()
-                .addBox(-40.0F, -8.0F, -32.0F, 40, 12, 104), PartPose.offset(78.0F, 9.0F, 83.0F));
+                .addBox(-40.0F, -8.0F, -32.0F, 40, 12, 104), PartPose.offset(-12F, 9F, 173F));
         p.addOrReplaceChild("Finleft", CubeListBuilder.create().texOffs(0, 201).mirror()
-                .addBox(0.0F, -8.0F, -32.0F, 40, 12, 104), PartPose.offset(102.0F, 9.0F, 83.0F));
+                .addBox(0.0F, -8.0F, -32.0F, 40, 12, 104), PartPose.offset(12F, 9F, 173F));
         p.addOrReplaceChild("Tailbase1", CubeListBuilder.create().texOffs(368, 368).mirror()
-                .addBox(-20.0F, -20.0F, 0.0F, 40, 40, 32), PartPose.offset(90.0F, 6.0F, 75.0F));
+                .addBox(-20.0F, -20.0F, 0.0F, 40, 40, 32), PartPose.offset(0F, 6F, 165F));
         p.addOrReplaceChild("Tail2", CubeListBuilder.create().texOffs(384, 440).mirror()
-                .addBox(-16.0F, -16.0F, 0.0F, 32, 32, 32), PartPose.offset(90.0F, 6.0F, 107.0F));
+                .addBox(-16.0F, -16.0F, 0.0F, 32, 32, 32), PartPose.offset(0F, 6F, 197F));
         p.addOrReplaceChild("Tailtip", CubeListBuilder.create().texOffs(272, 457).mirror()
-                .addBox(-12.0F, -12.0F, 0.0F, 24, 24, 32), PartPose.offset(90.0F, 6.0F, 139.0F));
+                .addBox(-12.0F, -12.0F, 0.0F, 24, 24, 32), PartPose.offset(0F, 6F, 229F));
         p.addOrReplaceChild("Jet", CubeListBuilder.create().texOffs(80, 42).mirror()
                 .addBox(-5.0F, -5.0F, -32.0F, 10, 10, 32),
-                PartPose.offsetAndRotation(90.0F, 23.0F, -64.0F, 0.3490659F, 0.0F, 0.0F));
+                PartPose.offsetAndRotation(0F, 23F, 26F, 0.3490659F, 0.0F, 0.0F));
         p.addOrReplaceChild("Righteye", CubeListBuilder.create().texOffs(0, 458).mirror()
-                .addBox(-4.0F, -8.0F, -12.0F, 4, 16, 24), PartPose.offset(70.0F, 6.0F, -90.0F));
+                .addBox(-4.0F, -8.0F, -12.0F, 4, 16, 24), PartPose.offset(-20F, 6F, 0F));
 
         // Mouth parts
         p.addOrReplaceChild("Mouth1", CubeListBuilder.create().texOffs(232, 160).mirror()
                 .addBox(-2.0F, -8.0F, -24.0F, 4, 16, 24),
-                PartPose.offsetAndRotation(101.0F, 2.0F, -104.0F, -0.3839724F, -0.3839724F, -0.7853982F));
+                PartPose.offsetAndRotation(11F, 2F, -14F, -0.3839724F, -0.3839724F, -0.7853982F));
         p.addOrReplaceChild("Mouth2", CubeListBuilder.create().texOffs(232, 92).mirror()
                 .addBox(-2.0F, -8.0F, -24.0F, 4, 16, 24),
-                PartPose.offsetAndRotation(78.0F, 2.0F, -104.0F, -0.3839724F, 0.3839724F, 0.7853982F));
+                PartPose.offsetAndRotation(-12F, 2F, -14F, -0.3839724F, 0.3839724F, 0.7853982F));
         p.addOrReplaceChild("Mouth3", CubeListBuilder.create().texOffs(232, 12).mirror()
                 .addBox(-2.0F, -8.0F, -24.0F, 4, 16, 24),
-                PartPose.offsetAndRotation(80.0F, 18.0F, -104.0F, 0.3839724F, 0.3839724F, -0.8004762F));
+                PartPose.offsetAndRotation(-10F, 18F, -14F, 0.3839724F, 0.3839724F, -0.8004762F));
         p.addOrReplaceChild("Mouth4", CubeListBuilder.create().texOffs(288, 427).mirror()
                 .addBox(-8.0F, -2.0F, -24.0F, 16, 4, 24),
-                PartPose.offsetAndRotation(90.0F, 21.0F, -104.0F, 0.3839724F, 0.0F, 0.0F));
+                PartPose.offsetAndRotation(0F, 21F, -14F, 0.3839724F, 0.0F, 0.0F));
         p.addOrReplaceChild("Mouth5", CubeListBuilder.create().texOffs(288, 387).mirror()
                 .addBox(-2.0F, -8.0F, -24.0F, 4, 16, 24),
-                PartPose.offsetAndRotation(101.0F, 18.0F, -104.0F, 0.3839724F, -0.3839724F, 0.7853982F));
+                PartPose.offsetAndRotation(11F, 18F, -14F, 0.3839724F, -0.3839724F, 0.7853982F));
         p.addOrReplaceChild("Mouth6", CubeListBuilder.create().texOffs(175, 160).mirror()
                 .addBox(-2.0F, -8.0F, -24.0F, 4, 16, 24),
-                PartPose.offsetAndRotation(100.0F, 9.0F, -104.0F, 0.0F, -0.3839724F, 0.0F));
+                PartPose.offsetAndRotation(10F, 9F, -14F, 0.0F, -0.3839724F, 0.0F));
         p.addOrReplaceChild("Mouth7", CubeListBuilder.create().texOffs(232, 52).mirror()
                 .addBox(-2.0F, -8.0F, -24.0F, 4, 16, 24),
-                PartPose.offsetAndRotation(80.0F, 9.0F, -104.0F, 0.0F, 0.3839724F, 0.0F));
+                PartPose.offsetAndRotation(-10F, 9F, -14F, 0.0F, 0.3839724F, 0.0F));
         p.addOrReplaceChild("Mouth8", CubeListBuilder.create().texOffs(232, 132).mirror()
                 .addBox(-8.0F, -2.0F, -24.0F, 16, 4, 24),
-                PartPose.offsetAndRotation(90.0F, -1.0F, -104.0F, -0.3839724F, 0.0F, 0.0F));
+                PartPose.offsetAndRotation(0F, -1F, -14F, -0.3839724F, 0.0F, 0.0F));
 
         // Suction cups
         p.addOrReplaceChild("Sucktioncupleft", CubeListBuilder.create().texOffs(80, 84).mirror()
                 .addBox(-8.0F, -4.0F, -32.0F, 16, 8, 32),
-                PartPose.offsetAndRotation(122.0F, 4.0F, -336.0F, 0.3490659F, 0.2617994F, 0.0F));
+                PartPose.offsetAndRotation(32F, 4F, -246F, 0.3490659F, 0.2617994F, 0.0F));
         p.addOrReplaceChild("Sucktioncupright", CubeListBuilder.create().texOffs(80, 84).mirror()
                 .addBox(-8.0F, -4.0F, -32.0F, 16, 8, 32),
-                PartPose.offsetAndRotation(76.0F, 0.0F, -336.0F, 0.3490659F, -0.2617994F, 0.0F));
+                PartPose.offsetAndRotation(-14F, 0F, -246F, 0.3490659F, -0.2617994F, 0.0F));
 
         // Tentacle 1: Tent11-Tent18
         p.addOrReplaceChild("Tent11", CubeListBuilder.create().texOffs(0, 162).mirror()
                 .addBox(-4.0F, -4.0F, -32.0F, 7, 7, 32),
-                PartPose.offsetAndRotation(76.0F, 7.0F, -105.0F, 0.0872665F, 0.4363323F, 0.0F));
+                PartPose.offsetAndRotation(-14F, 7F, -15F, 0.0872665F, 0.4363323F, 0.0F));
         p.addOrReplaceChild("Tent12", CubeListBuilder.create().texOffs(0, 162).mirror()
                 .addBox(-4.0F, -4.0F, -32.0F, 7, 7, 32),
-                PartPose.offsetAndRotation(64.0F, 10.0F, -132.0F, 0.0872665F, 0.3490659F, 0.0F));
+                PartPose.offsetAndRotation(-26F, 10F, -42F, 0.0872665F, 0.3490659F, 0.0F));
         p.addOrReplaceChild("Tent13", CubeListBuilder.create().texOffs(0, 162).mirror()
                 .addBox(-4.0F, -4.0F, -32.0F, 7, 7, 32),
-                PartPose.offsetAndRotation(54.0F, 13.0F, -160.0F, 0.0872665F, 0.2617994F, 0.0F));
+                PartPose.offsetAndRotation(-36F, 13F, -70F, 0.0872665F, 0.2617994F, 0.0F));
         p.addOrReplaceChild("Tent14", CubeListBuilder.create().texOffs(0, 125).mirror()
                 .addBox(-2.0F, -2.0F, -32.0F, 5, 5, 32),
-                PartPose.offsetAndRotation(46.0F, 15.0F, -188.0F, 0.0872665F, 0.4363323F, 0.0F));
+                PartPose.offsetAndRotation(-44F, 15F, -98F, 0.0872665F, 0.4363323F, 0.0F));
         p.addOrReplaceChild("Tent15", CubeListBuilder.create().texOffs(0, 125).mirror()
                 .addBox(-2.0F, -2.0F, -32.0F, 5, 5, 32),
-                PartPose.offsetAndRotation(33.0F, 18.0F, -217.0F, 0.0872665F, 0.2617994F, 0.0F));
+                PartPose.offsetAndRotation(-57F, 18F, -127F, 0.0872665F, 0.2617994F, 0.0F));
         p.addOrReplaceChild("Tent16", CubeListBuilder.create().texOffs(0, 90).mirror()
                 .addBox(-1.0F, -1.0F, -32.0F, 3, 3, 32),
-                PartPose.offsetAndRotation(25.0F, 21.0F, -246.0F, 0.0872665F, 0.0872665F, 0.0F));
+                PartPose.offsetAndRotation(-65F, 21F, -156F, 0.0872665F, 0.0872665F, 0.0F));
         p.addOrReplaceChild("Tent17", CubeListBuilder.create().texOffs(0, 90).mirror()
                 .addBox(-1.0F, -1.0F, -32.0F, 3, 3, 32),
-                PartPose.offsetAndRotation(22.0F, 24.0F, -277.0F, 0.0872665F, -0.1745329F, 0.0F));
+                PartPose.offsetAndRotation(-68F, 24F, -187F, 0.0872665F, -0.1745329F, 0.0F));
         p.addOrReplaceChild("Tent18", CubeListBuilder.create().texOffs(0, 57).mirror()
                 .addBox(-1.0F, -1.0F, -32.0F, 1, 1, 32),
-                PartPose.offsetAndRotation(28.0F, 27.0F, -307.0F, 0.0872665F, -0.1745329F, 0.0F));
+                PartPose.offsetAndRotation(-62F, 27F, -217F, 0.0872665F, -0.1745329F, 0.0F));
 
         // Tentacle 2: Tent21-Tent28
         p.addOrReplaceChild("Tent21", CubeListBuilder.create().texOffs(0, 162).mirror()
                 .addBox(-4.0F, -4.0F, -32.0F, 7, 7, 32),
-                PartPose.offsetAndRotation(76.0F, 22.0F, -105.0F, 0.2617994F, 0.2617994F, 0.0F));
+                PartPose.offsetAndRotation(-14F, 22F, -15F, 0.2617994F, 0.2617994F, 0.0F));
         p.addOrReplaceChild("Tent22", CubeListBuilder.create().texOffs(0, 162).mirror()
                 .addBox(-4.0F, -4.0F, -32.0F, 7, 7, 32),
-                PartPose.offsetAndRotation(69.0F, 30.0F, -133.0F, 0.2617994F, 0.1745329F, 0.0F));
+                PartPose.offsetAndRotation(-21F, 30F, -43F, 0.2617994F, 0.1745329F, 0.0F));
         p.addOrReplaceChild("Tent23", CubeListBuilder.create().texOffs(0, 162).mirror()
                 .addBox(-4.0F, -4.0F, -32.0F, 7, 7, 32),
-                PartPose.offsetAndRotation(64.0F, 38.0F, -161.0F, 0.3490659F, 0.0F, 0.0F));
+                PartPose.offsetAndRotation(-26F, 38F, -71F, 0.3490659F, 0.0F, 0.0F));
         p.addOrReplaceChild("Tent24", CubeListBuilder.create().texOffs(0, 125).mirror()
                 .addBox(-3.0F, -3.0F, -32.0F, 5, 5, 32),
-                PartPose.offsetAndRotation(64.0F, 49.0F, -191.0F, 0.3490659F, 0.0F, 0.0F));
+                PartPose.offsetAndRotation(-26F, 49F, -101F, 0.3490659F, 0.0F, 0.0F));
         p.addOrReplaceChild("Tent25", CubeListBuilder.create().texOffs(0, 125).mirror()
                 .addBox(-3.0F, -3.0F, -32.0F, 5, 5, 32),
-                PartPose.offsetAndRotation(64.0F, 59.0F, -219.0F, 0.2617994F, -0.0872665F, 0.0F));
+                PartPose.offsetAndRotation(-26F, 59F, -129F, 0.2617994F, -0.0872665F, 0.0F));
         p.addOrReplaceChild("Tent26", CubeListBuilder.create().texOffs(0, 90).mirror()
                 .addBox(-2.0F, -2.0F, -32.0F, 3, 3, 32),
-                PartPose.offsetAndRotation(66.0F, 67.0F, -248.0F, 0.2617994F, -0.0872665F, 0.0F));
+                PartPose.offsetAndRotation(-24F, 67F, -158F, 0.2617994F, -0.0872665F, 0.0F));
         p.addOrReplaceChild("Tent27", CubeListBuilder.create().texOffs(0, 90).mirror()
                 .addBox(-2.0F, -2.0F, -32.0F, 3, 3, 32),
-                PartPose.offsetAndRotation(68.0F, 75.0F, -277.0F, 0.1745329F, -0.1745329F, 0.0F));
+                PartPose.offsetAndRotation(-22F, 75F, -187F, 0.1745329F, -0.1745329F, 0.0F));
         p.addOrReplaceChild("Tent28", CubeListBuilder.create().texOffs(0, 57).mirror()
                 .addBox(-1.0F, -1.0F, -32.0F, 1, 1, 32),
-                PartPose.offsetAndRotation(73.0F, 80.0F, -307.0F, 0.0872665F, -0.1745329F, 0.0F));
+                PartPose.offsetAndRotation(-17F, 80F, -217F, 0.0872665F, -0.1745329F, 0.0F));
 
         // Tentacle 3: Tent31-Tent38
         p.addOrReplaceChild("Tent31", CubeListBuilder.create().texOffs(0, 162).mirror()
                 .addBox(-4.0F, -4.0F, -32.0F, 7, 7, 32),
-                PartPose.offsetAndRotation(106.0F, 22.0F, -105.0F, 0.2617994F, -0.2617994F, 0.0F));
+                PartPose.offsetAndRotation(16F, 22F, -15F, 0.2617994F, -0.2617994F, 0.0F));
         p.addOrReplaceChild("Tent32", CubeListBuilder.create().texOffs(0, 162).mirror()
                 .addBox(-4.0F, -4.0F, -32.0F, 7, 7, 32),
-                PartPose.offsetAndRotation(114.0F, 30.0F, -134.0F, 0.2617994F, -0.3490659F, 0.0F));
+                PartPose.offsetAndRotation(24F, 30F, -44F, 0.2617994F, -0.3490659F, 0.0F));
         p.addOrReplaceChild("Tent33", CubeListBuilder.create().texOffs(0, 161).mirror()
                 .addBox(-4.0F, -4.0F, -32.0F, 7, 7, 32),
-                PartPose.offsetAndRotation(124.0F, 38.0F, -162.0F, 0.3490659F, -0.2617994F, 0.0F));
+                PartPose.offsetAndRotation(34F, 38F, -72F, 0.3490659F, -0.2617994F, 0.0F));
         p.addOrReplaceChild("Tent34", CubeListBuilder.create().texOffs(0, 125).mirror()
                 .addBox(-2.0F, -2.0F, -32.0F, 5, 5, 32),
-                PartPose.offsetAndRotation(131.0F, 48.0F, -190.0F, 0.2617994F, -0.2617994F, 0.0F));
+                PartPose.offsetAndRotation(41F, 48F, -100F, 0.2617994F, -0.2617994F, 0.0F));
         p.addOrReplaceChild("Tent35", CubeListBuilder.create().texOffs(0, 125).mirror()
                 .addBox(-2.0F, -2.0F, -32.0F, 5, 5, 32),
-                PartPose.offsetAndRotation(139.0F, 56.0F, -218.0F, 0.1745329F, -0.1745329F, 0.0F));
+                PartPose.offsetAndRotation(49F, 56F, -128F, 0.1745329F, -0.1745329F, 0.0F));
         p.addOrReplaceChild("Tent36", CubeListBuilder.create().texOffs(0, 90).mirror()
                 .addBox(-1.0F, -1.0F, -32.0F, 3, 3, 32),
-                PartPose.offsetAndRotation(144.0F, 61.0F, -247.0F, 0.1745329F, -0.0872665F, 0.0F));
+                PartPose.offsetAndRotation(54F, 61F, -157F, 0.1745329F, -0.0872665F, 0.0F));
         p.addOrReplaceChild("Tent37", CubeListBuilder.create().texOffs(0, 90).mirror()
                 .addBox(-1.0F, -1.0F, -32.0F, 3, 3, 32),
-                PartPose.offsetAndRotation(147.0F, 66.0F, -276.0F, 0.0872665F, 0.0F, 0.0F));
+                PartPose.offsetAndRotation(57F, 66F, -186F, 0.0872665F, 0.0F, 0.0F));
         p.addOrReplaceChild("Tent38", CubeListBuilder.create().texOffs(0, 57).mirror()
-                .addBox(0.0F, 0.0F, -32.0F, 1, 1, 32), PartPose.offset(147.0F, 69.0F, -307.0F));
+                .addBox(0.0F, 0.0F, -32.0F, 1, 1, 32), PartPose.offset(57F, 69F, -217F));
 
         // Tentacle 4: Tent41-Tent48
         p.addOrReplaceChild("Tent41", CubeListBuilder.create().texOffs(0, 162).mirror()
                 .addBox(-4.0F, -4.0F, -32.0F, 7, 7, 32),
-                PartPose.offsetAndRotation(106.0F, 7.0F, -105.0F, 0.0872665F, -0.4363323F, 0.0F));
+                PartPose.offsetAndRotation(16F, 7F, -15F, 0.0872665F, -0.4363323F, 0.0F));
         p.addOrReplaceChild("Tent42", CubeListBuilder.create().texOffs(0, 162).mirror()
                 .addBox(-4.0F, -4.0F, -32.0F, 7, 7, 32),
-                PartPose.offsetAndRotation(118.0F, 9.0F, -132.0F, 0.0872665F, -0.5235988F, 0.0F));
+                PartPose.offsetAndRotation(28F, 9F, -42F, 0.0872665F, -0.5235988F, 0.0F));
         p.addOrReplaceChild("Tent43", CubeListBuilder.create().texOffs(0, 162).mirror()
                 .addBox(-4.0F, -4.0F, -32.0F, 7, 7, 32),
-                PartPose.offsetAndRotation(133.0F, 12.0F, -159.0F, 0.0872665F, -0.6108652F, 0.0F));
+                PartPose.offsetAndRotation(43F, 12F, -69F, 0.0872665F, -0.6108652F, 0.0F));
         p.addOrReplaceChild("Tent44", CubeListBuilder.create().texOffs(0, 125).mirror()
                 .addBox(-2.0F, -2.0F, -32.0F, 5, 5, 32),
-                PartPose.offsetAndRotation(150.0F, 14.0F, -185.0F, 0.0872665F, -0.4363323F, 0.0F));
+                PartPose.offsetAndRotation(60F, 14F, -95F, 0.0872665F, -0.4363323F, 0.0F));
         p.addOrReplaceChild("Tent45", CubeListBuilder.create().texOffs(0, 125).mirror()
                 .addBox(-2.0F, -2.0F, -32.0F, 5, 5, 32),
-                PartPose.offsetAndRotation(163.0F, 17.0F, -213.0F, 0.0872665F, -0.2617994F, 0.0F));
+                PartPose.offsetAndRotation(73F, 17F, -123F, 0.0872665F, -0.2617994F, 0.0F));
         p.addOrReplaceChild("Tent46", CubeListBuilder.create().texOffs(0, 90).mirror()
                 .addBox(-1.0F, -1.0F, -32.0F, 3, 3, 32),
-                PartPose.offsetAndRotation(171.0F, 20.0F, -242.0F, 0.0872665F, -0.0872665F, 0.0F));
+                PartPose.offsetAndRotation(81F, 20F, -152F, 0.0872665F, -0.0872665F, 0.0F));
         p.addOrReplaceChild("Tent47", CubeListBuilder.create().texOffs(0, 90).mirror()
                 .addBox(-1.0F, -1.0F, -32.0F, 3, 3, 32),
-                PartPose.offsetAndRotation(174.0F, 23.0F, -272.0F, 0.0872665F, 0.0872665F, 0.0F));
+                PartPose.offsetAndRotation(84F, 23F, -182F, 0.0872665F, 0.0872665F, 0.0F));
         p.addOrReplaceChild("Tent48", CubeListBuilder.create().texOffs(0, 57).mirror()
                 .addBox(0.0F, 0.0F, -32.0F, 1, 1, 32),
-                PartPose.offsetAndRotation(172.0F, 25.0F, -302.0F, 0.0872665F, 0.2617994F, 0.0F));
+                PartPose.offsetAndRotation(82F, 25F, -212F, 0.0872665F, 0.2617994F, 0.0F));
 
         // Tentacle 5: Tent51-Tent58
         p.addOrReplaceChild("Tent51", CubeListBuilder.create().texOffs(80, 161).mirror()
                 .addBox(-4.0F, -4.0F, -32.0F, 8, 8, 32),
-                PartPose.offsetAndRotation(104.0F, -8.0F, -105.0F, -0.2617994F, -0.2617994F, 0.0F));
+                PartPose.offsetAndRotation(14F, -8F, -15F, -0.2617994F, -0.2617994F, 0.0F));
         p.addOrReplaceChild("Tent52", CubeListBuilder.create().texOffs(80, 161).mirror()
                 .addBox(-4.0F, -4.0F, -32.0F, 8, 8, 32),
-                PartPose.offsetAndRotation(112.0F, -16.0F, -134.0F, -0.2617994F, -0.3490659F, -0.0523599F));
+                PartPose.offsetAndRotation(22F, -16F, -44F, -0.2617994F, -0.3490659F, -0.0523599F));
         p.addOrReplaceChild("Tent53", CubeListBuilder.create().texOffs(80, 161).mirror()
                 .addBox(-4.0F, -4.0F, -32.0F, 8, 8, 32),
-                PartPose.offsetAndRotation(122.0F, -24.0F, -161.0F, 0.0872665F, -0.1745329F, 0.0F));
+                PartPose.offsetAndRotation(32F, -24F, -71F, 0.0872665F, -0.1745329F, 0.0F));
         p.addOrReplaceChild("Tent54", CubeListBuilder.create().texOffs(80, 161).mirror()
                 .addBox(-4.0F, -4.0F, -32.0F, 8, 8, 32),
-                PartPose.offsetAndRotation(127.0F, -21.0F, -191.0F, 0.0872665F, -0.0872665F, 0.0F));
+                PartPose.offsetAndRotation(37F, -21F, -101F, 0.0872665F, -0.0872665F, 0.0F));
         p.addOrReplaceChild("Tent55", CubeListBuilder.create().texOffs(80, 124).mirror()
                 .addBox(-2.0F, -2.0F, -32.0F, 4, 4, 32),
-                PartPose.offsetAndRotation(130.0F, -19.0F, -219.0F, 0.0872665F, -0.0872665F, 0.0F));
+                PartPose.offsetAndRotation(40F, -19F, -129F, 0.0872665F, -0.0872665F, 0.0F));
         p.addOrReplaceChild("Tent56", CubeListBuilder.create().texOffs(80, 124).mirror()
                 .addBox(-2.0F, -2.0F, -32.0F, 4, 4, 32),
-                PartPose.offsetAndRotation(132.0F, -16.0F, -249.0F, 0.0872665F, -0.0872665F, 0.0F));
+                PartPose.offsetAndRotation(42F, -16F, -159F, 0.0872665F, -0.0872665F, 0.0F));
         p.addOrReplaceChild("Tent57", CubeListBuilder.create().texOffs(80, 124).mirror()
                 .addBox(-2.0F, -2.0F, -32.0F, 4, 4, 32),
-                PartPose.offsetAndRotation(135.0F, -14.0F, -279.0F, 0.2617994F, 0.1745329F, 0.0F));
+                PartPose.offsetAndRotation(45F, -14F, -189F, 0.2617994F, 0.1745329F, 0.0F));
         p.addOrReplaceChild("Tent58", CubeListBuilder.create().texOffs(80, 124).mirror()
                 .addBox(-2.0F, -2.0F, -32.0F, 4, 4, 32),
-                PartPose.offsetAndRotation(130.0F, -6.0F, -308.0F, 0.3490659F, 0.2617994F, 0.0F));
+                PartPose.offsetAndRotation(40F, -6F, -218F, 0.3490659F, 0.2617994F, 0.0F));
 
         // Tentacle 6: Tent61-Tent68
         p.addOrReplaceChild("Tent61", CubeListBuilder.create().texOffs(80, 161).mirror()
                 .addBox(-4.0F, -4.0F, -32.0F, 8, 8, 32),
-                PartPose.offsetAndRotation(76.0F, -8.0F, -105.0F, -0.2617994F, 0.2617994F, 0.0F));
+                PartPose.offsetAndRotation(-14F, -8F, -15F, -0.2617994F, 0.2617994F, 0.0F));
         p.addOrReplaceChild("Tent62", CubeListBuilder.create().texOffs(80, 161).mirror()
                 .addBox(-4.0F, -4.0F, -32.0F, 8, 8, 32),
-                PartPose.offsetAndRotation(69.0F, -16.0F, -133.0F, -0.2617994F, 0.3490659F, 0.0F));
+                PartPose.offsetAndRotation(-21F, -16F, -43F, -0.2617994F, 0.3490659F, 0.0F));
         p.addOrReplaceChild("Tent63", CubeListBuilder.create().texOffs(80, 161).mirror()
                 .addBox(-4.0F, -4.0F, -32.0F, 8, 8, 32),
-                PartPose.offsetAndRotation(59.0F, -24.0F, -159.5333F, -0.0872665F, 0.1745329F, 0.0F));
+                PartPose.offsetAndRotation(-31F, -24F, -69.5332946777344F, -0.0872665F, 0.1745329F, 0.0F));
         p.addOrReplaceChild("Tent64", CubeListBuilder.create().texOffs(80, 161).mirror()
                 .addBox(-4.0F, -4.0F, -32.0F, 8, 8, 32),
-                PartPose.offsetAndRotation(54.0F, -27.0F, -188.0F, 0.0872665F, -0.0872665F, 0.0F));
+                PartPose.offsetAndRotation(-36F, -27F, -98F, 0.0872665F, -0.0872665F, 0.0F));
         p.addOrReplaceChild("Tent65", CubeListBuilder.create().texOffs(80, 124).mirror()
                 .addBox(-2.0F, -2.0F, -32.0F, 4, 4, 32),
-                PartPose.offsetAndRotation(56.0F, -24.0F, -219.0F, 0.0872665F, -0.0872665F, 0.0F));
+                PartPose.offsetAndRotation(-34F, -24F, -129F, 0.0872665F, -0.0872665F, 0.0F));
         p.addOrReplaceChild("Tent66", CubeListBuilder.create().texOffs(80, 124).mirror()
                 .addBox(-2.0F, -2.0F, -32.0F, 4, 4, 32),
-                PartPose.offsetAndRotation(59.0F, -21.0F, -250.0F, 0.0872665F, -0.0872665F, 0.0F));
+                PartPose.offsetAndRotation(-31F, -21F, -160F, 0.0872665F, -0.0872665F, 0.0F));
         p.addOrReplaceChild("Tent67", CubeListBuilder.create().texOffs(80, 124).mirror()
                 .addBox(-2.0F, -2.0F, -32.0F, 4, 4, 32),
-                PartPose.offsetAndRotation(62.0F, -18.0F, -281.0F, 0.2617994F, -0.1745329F, 0.0F));
+                PartPose.offsetAndRotation(-28F, -18F, -191F, 0.2617994F, -0.1745329F, 0.0F));
         p.addOrReplaceChild("Tent68", CubeListBuilder.create().texOffs(80, 124).mirror()
                 .addBox(-2.0F, -2.0F, -32.0F, 4, 4, 32),
-                PartPose.offsetAndRotation(67.0F, -10.0F, -309.0F, 0.3490659F, -0.2617994F, 0.0F));
+                PartPose.offsetAndRotation(-23F, -10F, -219F, 0.3490659F, -0.2617994F, 0.0F));
 
         // Teeth
         p.addOrReplaceChild("Tooth1", CubeListBuilder.create().texOffs(0, 0).mirror()
                 .addBox(0.0F, 0.0F, -8.0F, 1, 1, 8),
-                PartPose.offsetAndRotation(83.0F, 23.0F, -119.0F, -0.1745329F, -0.3490659F, 0.0F));
+                PartPose.offsetAndRotation(-7F, 23F, -29F, -0.1745329F, -0.3490659F, 0.0F));
         p.addOrReplaceChild("Tooth2", CubeListBuilder.create().texOffs(0, 0).mirror()
                 .addBox(0.0F, 0.0F, -8.0F, 1, 1, 8),
-                PartPose.offsetAndRotation(87.0F, 24.0F, -117.0F, -0.3490659F, 0.0F, 0.0F));
+                PartPose.offsetAndRotation(-3F, 24F, -27F, -0.3490659F, 0.0F, 0.0F));
         p.addOrReplaceChild("Tooth3", CubeListBuilder.create().texOffs(0, 0).mirror()
                 .addBox(0.0F, 0.0F, -8.0F, 1, 1, 8),
-                PartPose.offsetAndRotation(89.0F, 24.0F, -117.0F, -0.3490659F, 0.0F, 0.0F));
+                PartPose.offsetAndRotation(-1F, 24F, -27F, -0.3490659F, 0.0F, 0.0F));
         p.addOrReplaceChild("Tooth4", CubeListBuilder.create().texOffs(0, 0).mirror()
                 .addBox(0.0F, 0.0F, -8.0F, 1, 1, 8),
-                PartPose.offsetAndRotation(91.0F, 24.0F, -117.0F, -0.3490659F, 0.0F, 0.0F));
+                PartPose.offsetAndRotation(1F, 24F, -27F, -0.3490659F, 0.0F, 0.0F));
         p.addOrReplaceChild("Tooth5", CubeListBuilder.create().texOffs(0, 0).mirror()
                 .addBox(0.0F, 0.0F, -8.0F, 1, 1, 8),
-                PartPose.offsetAndRotation(93.0F, 24.0F, -117.0F, -0.3490659F, 0.0F, 0.0F));
+                PartPose.offsetAndRotation(3F, 24F, -27F, -0.3490659F, 0.0F, 0.0F));
         p.addOrReplaceChild("Tooth6", CubeListBuilder.create().texOffs(0, 0).mirror()
                 .addBox(0.0F, 0.0F, -8.0F, 1, 1, 8),
-                PartPose.offsetAndRotation(95.0F, 24.0F, -117.0F, -0.3490659F, 0.0F, 0.0F));
+                PartPose.offsetAndRotation(5F, 24F, -27F, -0.3490659F, 0.0F, 0.0F));
         p.addOrReplaceChild("Tooth7", CubeListBuilder.create().texOffs(0, 0).mirror()
                 .addBox(0.0F, 0.0F, -8.0F, 1, 1, 8),
-                PartPose.offsetAndRotation(99.0F, 23.0F, -118.0F, -0.3490659F, 0.1745329F, 0.0F));
+                PartPose.offsetAndRotation(9F, 23F, -28F, -0.3490659F, 0.1745329F, 0.0F));
         p.addOrReplaceChild("Tooth8", CubeListBuilder.create().texOffs(0, 0).mirror()
                 .addBox(0.0F, 0.0F, -8.0F, 1, 1, 8),
-                PartPose.offsetAndRotation(100.0F, 21.0F, -119.0F, -0.3490659F, 0.1745329F, 0.0F));
+                PartPose.offsetAndRotation(10F, 21F, -29F, -0.3490659F, 0.1745329F, 0.0F));
         p.addOrReplaceChild("Tooth9", CubeListBuilder.create().texOffs(0, 0).mirror()
                 .addBox(0.0F, 0.0F, -8.0F, 1, 1, 8),
-                PartPose.offsetAndRotation(102.0F, 20.0F, -118.0F, -0.3490659F, 0.1745329F, 0.0F));
+                PartPose.offsetAndRotation(12F, 20F, -28F, -0.3490659F, 0.1745329F, 0.0F));
         p.addOrReplaceChild("Tooth10", CubeListBuilder.create().texOffs(0, 0).mirror()
                 .addBox(0.0F, 0.0F, -8.0F, 1, 1, 8),
-                PartPose.offsetAndRotation(104.0F, 19.0F, -118.0F, -0.3490659F, 0.1745329F, 0.0F));
+                PartPose.offsetAndRotation(14F, 19F, -28F, -0.3490659F, 0.1745329F, 0.0F));
         p.addOrReplaceChild("Tooth11", CubeListBuilder.create().texOffs(0, 0).mirror()
                 .addBox(0.0F, 0.0F, -8.0F, 1, 1, 8),
-                PartPose.offsetAndRotation(105.0F, 14.0F, -120.0F, 0.0F, 0.3490659F, 0.0F));
+                PartPose.offsetAndRotation(15F, 14F, -30F, 0.0F, 0.3490659F, 0.0F));
         p.addOrReplaceChild("Tooth12", CubeListBuilder.create().texOffs(0, 0).mirror()
                 .addBox(0.0F, 0.0F, -8.0F, 1, 1, 8),
-                PartPose.offsetAndRotation(105.0F, 12.0F, -120.0F, 0.0F, 0.3490659F, 0.0F));
+                PartPose.offsetAndRotation(15F, 12F, -30F, 0.0F, 0.3490659F, 0.0F));
         p.addOrReplaceChild("Tooth13", CubeListBuilder.create().texOffs(0, 0).mirror()
                 .addBox(0.0F, 0.0F, -8.0F, 1, 1, 8),
-                PartPose.offsetAndRotation(105.0F, 10.0F, -120.0F, 0.0F, 0.3490659F, 0.0F));
+                PartPose.offsetAndRotation(15F, 10F, -30F, 0.0F, 0.3490659F, 0.0F));
         p.addOrReplaceChild("Tooth14", CubeListBuilder.create().texOffs(0, 0).mirror()
                 .addBox(0.0F, 0.0F, -8.0F, 1, 1, 8),
-                PartPose.offsetAndRotation(105.0F, 8.0F, -120.0F, 0.0F, 0.3490659F, 0.0F));
+                PartPose.offsetAndRotation(15F, 8F, -30F, 0.0F, 0.3490659F, 0.0F));
         p.addOrReplaceChild("Tooth15", CubeListBuilder.create().texOffs(0, 0).mirror()
                 .addBox(0.0F, 0.0F, -8.0F, 1, 1, 8),
-                PartPose.offsetAndRotation(105.0F, 6.0F, -120.0F, 0.0F, 0.3490659F, 0.0F));
+                PartPose.offsetAndRotation(15F, 6F, -30F, 0.0F, 0.3490659F, 0.0F));
         p.addOrReplaceChild("Tooth16", CubeListBuilder.create().texOffs(0, 0).mirror()
                 .addBox(0.0F, 0.0F, -8.0F, 1, 1, 8),
-                PartPose.offsetAndRotation(105.0F, 4.0F, -120.0F, 0.0F, 0.3490659F, 0.0F));
+                PartPose.offsetAndRotation(15F, 4F, -30F, 0.0F, 0.3490659F, 0.0F));
         p.addOrReplaceChild("Tooth17", CubeListBuilder.create().texOffs(0, 0).mirror()
                 .addBox(0.0F, 0.0F, -8.0F, 1, 1, 8),
-                PartPose.offsetAndRotation(105.0F, 2.0F, -120.0F, 0.0F, 0.3490659F, 0.0F));
+                PartPose.offsetAndRotation(15F, 2F, -30F, 0.0F, 0.3490659F, 0.0F));
         p.addOrReplaceChild("Tooth18", CubeListBuilder.create().texOffs(0, 0).mirror()
                 .addBox(0.0F, 0.0F, -8.0F, 1, 1, 8),
-                PartPose.offsetAndRotation(103.0F, -1.0F, -122.0F, 0.1745329F, 0.3490659F, 0.0F));
+                PartPose.offsetAndRotation(13F, -1F, -32F, 0.1745329F, 0.3490659F, 0.0F));
         p.addOrReplaceChild("Tooth19", CubeListBuilder.create().texOffs(0, 0).mirror()
                 .addBox(-1.0F, 0.0F, -8.0F, 1, 1, 8),
-                PartPose.offsetAndRotation(101.0F, -3.0F, -122.0F, 0.1745329F, 0.3490659F, 0.0F));
+                PartPose.offsetAndRotation(11F, -3F, -32F, 0.1745329F, 0.3490659F, 0.0F));
         p.addOrReplaceChild("Tooth20", CubeListBuilder.create().texOffs(0, 0).mirror()
                 .addBox(-1.0F, 0.0F, -8.0F, 1, 1, 8),
-                PartPose.offsetAndRotation(99.0F, -5.0F, -122.0F, 0.1745329F, 0.3490659F, 0.0F));
+                PartPose.offsetAndRotation(9F, -5F, -32F, 0.1745329F, 0.3490659F, 0.0F));
         p.addOrReplaceChild("Tooth21", CubeListBuilder.create().texOffs(0, 0).mirror()
                 .addBox(-1.0F, 0.0F, -8.0F, 1, 1, 8),
-                PartPose.offsetAndRotation(99.0F, -5.0F, -122.0F, 0.1745329F, 0.3490659F, 0.0F));
+                PartPose.offsetAndRotation(9F, -5F, -32F, 0.1745329F, 0.3490659F, 0.0F));
         p.addOrReplaceChild("Tooth22", CubeListBuilder.create().texOffs(0, 0).mirror()
                 .addBox(-1.0F, 0.0F, -8.0F, 1, 1, 8),
-                PartPose.offsetAndRotation(95.0F, -7.0F, -122.0F, 0.3490659F, 0.0F, 0.0F));
+                PartPose.offsetAndRotation(5F, -7F, -32F, 0.3490659F, 0.0F, 0.0F));
         p.addOrReplaceChild("Tooth23", CubeListBuilder.create().texOffs(0, 0).mirror()
                 .addBox(-1.0F, 0.0F, -8.0F, 1, 1, 8),
-                PartPose.offsetAndRotation(93.0F, -7.0F, -122.0F, 0.3490659F, 0.0F, 0.0F));
+                PartPose.offsetAndRotation(3F, -7F, -32F, 0.3490659F, 0.0F, 0.0F));
         p.addOrReplaceChild("Tooth24", CubeListBuilder.create().texOffs(0, 0).mirror()
                 .addBox(-1.0F, 0.0F, -8.0F, 1, 1, 8),
-                PartPose.offsetAndRotation(91.0F, -7.0F, -122.0F, 0.3490659F, 0.0F, 0.0F));
+                PartPose.offsetAndRotation(1F, -7F, -32F, 0.3490659F, 0.0F, 0.0F));
         p.addOrReplaceChild("Tooth25", CubeListBuilder.create().texOffs(0, 0).mirror()
                 .addBox(-1.0F, 0.0F, -8.0F, 1, 1, 8),
-                PartPose.offsetAndRotation(89.0F, -7.0F, -122.0F, 0.3490659F, 0.0F, 0.0F));
+                PartPose.offsetAndRotation(-1F, -7F, -32F, 0.3490659F, 0.0F, 0.0F));
         p.addOrReplaceChild("Tooth26", CubeListBuilder.create().texOffs(0, 0).mirror()
                 .addBox(-1.0F, 0.0F, -8.0F, 1, 1, 8),
-                PartPose.offsetAndRotation(87.0F, -7.0F, -122.0F, 0.3490659F, 0.0F, 0.0F));
+                PartPose.offsetAndRotation(-3F, -7F, -32F, 0.3490659F, 0.0F, 0.0F));
         p.addOrReplaceChild("Tooth27", CubeListBuilder.create().texOffs(0, 0).mirror()
                 .addBox(-1.0F, 0.0F, -8.0F, 1, 1, 8),
-                PartPose.offsetAndRotation(85.0F, -7.0F, -122.0F, 0.3490659F, 0.0F, 0.0F));
+                PartPose.offsetAndRotation(-5F, -7F, -32F, 0.3490659F, 0.0F, 0.0F));
         p.addOrReplaceChild("Tooth28", CubeListBuilder.create().texOffs(0, 0).mirror()
                 .addBox(-1.0F, 0.0F, -8.0F, 1, 1, 8),
-                PartPose.offsetAndRotation(82.0F, -6.0F, -122.0F, 0.3490659F, -0.1745329F, 0.0F));
+                PartPose.offsetAndRotation(-8F, -6F, -32F, 0.3490659F, -0.1745329F, 0.0F));
         p.addOrReplaceChild("Tooth29", CubeListBuilder.create().texOffs(0, 0).mirror()
                 .addBox(0.0F, 0.0F, -8.0F, 1, 1, 8),
-                PartPose.offsetAndRotation(79.0F, -4.0F, -122.0F, 0.3490659F, -0.1745329F, 0.0F));
+                PartPose.offsetAndRotation(-11F, -4F, -32F, 0.3490659F, -0.1745329F, 0.0F));
         p.addOrReplaceChild("Tooth30", CubeListBuilder.create().texOffs(0, 0).mirror()
                 .addBox(0.0F, 0.0F, -8.0F, 1, 1, 8),
-                PartPose.offsetAndRotation(77.0F, -2.0F, -122.0F, 0.3490659F, -0.1745329F, 0.0F));
+                PartPose.offsetAndRotation(-13F, -2F, -32F, 0.3490659F, -0.1745329F, 0.0F));
         p.addOrReplaceChild("Tooth31", CubeListBuilder.create().texOffs(0, 0).mirror()
                 .addBox(0.0F, 0.0F, -8.0F, 1, 1, 8),
-                PartPose.offsetAndRotation(76.0F, 0.0F, -122.0F, 0.3490659F, -0.1745329F, 0.0F));
+                PartPose.offsetAndRotation(-14F, 0F, -32F, 0.3490659F, -0.1745329F, 0.0F));
         p.addOrReplaceChild("Tooth32", CubeListBuilder.create().texOffs(0, 0).mirror()
                 .addBox(0.0F, 0.0F, -8.0F, 1, 1, 8),
-                PartPose.offsetAndRotation(74.0F, 4.0F, -122.0F, 0.0F, -0.3490659F, 0.0F));
+                PartPose.offsetAndRotation(-16F, 4F, -32F, 0.0F, -0.3490659F, 0.0F));
         p.addOrReplaceChild("Tooth33", CubeListBuilder.create().texOffs(0, 0).mirror()
                 .addBox(0.0F, 0.0F, -8.0F, 1, 1, 8),
-                PartPose.offsetAndRotation(74.0F, 6.0F, -122.0F, 0.0F, -0.3490659F, 0.0F));
+                PartPose.offsetAndRotation(-16F, 6F, -32F, 0.0F, -0.3490659F, 0.0F));
         p.addOrReplaceChild("Tooth34", CubeListBuilder.create().texOffs(0, 0).mirror()
                 .addBox(0.0F, 0.0F, -8.0F, 1, 1, 8),
-                PartPose.offsetAndRotation(74.0F, 8.0F, -122.0F, 0.0F, -0.3490659F, 0.0F));
+                PartPose.offsetAndRotation(-16F, 8F, -32F, 0.0F, -0.3490659F, 0.0F));
         p.addOrReplaceChild("Tooth35", CubeListBuilder.create().texOffs(0, 0).mirror()
                 .addBox(0.0F, 0.0F, -8.0F, 1, 1, 8),
-                PartPose.offsetAndRotation(74.0F, 10.0F, -122.0F, 0.0F, -0.3490659F, 0.0F));
+                PartPose.offsetAndRotation(-16F, 10F, -32F, 0.0F, -0.3490659F, 0.0F));
         p.addOrReplaceChild("Tooth36", CubeListBuilder.create().texOffs(0, 0).mirror()
                 .addBox(0.0F, 0.0F, -8.0F, 1, 1, 8),
-                PartPose.offsetAndRotation(74.0F, 12.0F, -122.0F, 0.0F, -0.3490659F, 0.0F));
+                PartPose.offsetAndRotation(-16F, 12F, -32F, 0.0F, -0.3490659F, 0.0F));
         p.addOrReplaceChild("Tooth37", CubeListBuilder.create().texOffs(0, 0).mirror()
                 .addBox(0.0F, 0.0F, -8.0F, 1, 1, 8),
-                PartPose.offsetAndRotation(74.0F, 14.0F, -122.0F, 0.0F, -0.3490659F, 0.0F));
+                PartPose.offsetAndRotation(-16F, 14F, -32F, 0.0F, -0.3490659F, 0.0F));
         p.addOrReplaceChild("Tooth38", CubeListBuilder.create().texOffs(0, 0).mirror()
                 .addBox(0.0F, 0.0F, -8.0F, 1, 1, 8),
-                PartPose.offsetAndRotation(75.0F, 18.0F, -120.0F, -0.1745329F, -0.3490659F, 0.0F));
+                PartPose.offsetAndRotation(-15F, 18F, -30F, -0.1745329F, -0.3490659F, 0.0F));
         p.addOrReplaceChild("Tooth39", CubeListBuilder.create().texOffs(0, 0).mirror()
                 .addBox(0.0F, 0.0F, -8.0F, 1, 1, 8),
-                PartPose.offsetAndRotation(77.0F, 20.0F, -120.0F, -0.1745329F, -0.3490659F, 0.0F));
+                PartPose.offsetAndRotation(-13F, 20F, -30F, -0.1745329F, -0.3490659F, 0.0F));
         p.addOrReplaceChild("Tooth40", CubeListBuilder.create().texOffs(0, 0).mirror()
                 .addBox(0.0F, 0.0F, -8.0F, 1, 1, 8),
-                PartPose.offsetAndRotation(79.0F, 22.0F, -120.0F, -0.1745329F, -0.3490659F, 0.0F));
+                PartPose.offsetAndRotation(-11F, 22F, -30F, -0.1745329F, -0.3490659F, 0.0F));
         p.addOrReplaceChild("Tooth41", CubeListBuilder.create().texOffs(0, 0).mirror()
                 .addBox(0.0F, 0.0F, -8.0F, 1, 1, 8),
-                PartPose.offsetAndRotation(81.0F, 23.0F, -119.0F, -0.1745329F, -0.3490659F, 0.0F));
+                PartPose.offsetAndRotation(-9F, 23F, -29F, -0.1745329F, -0.3490659F, 0.0F));
 
         return LayerDefinition.create(meshdefinition, 512, 512);
     }
@@ -601,14 +601,14 @@ public class ModelKraken extends EntityModel<Kraken> {
         dangleTentacle(ageInTicks, 6, attacking, Tent61, Tent62, Tent63, Tent64, Tent65, Tent66, Tent67, Tent68);
 
         Sucktioncupleft.y = Tent58.y + (float) Math.sin(Tent58.xRot) * 30.0F * (float) Math.cos(Tent58.yRot);
-        Sucktioncupleft.x = Tent58.x - (float) Math.cos(Tent58.xRot) * 30.0F * (float) Math.cos(Tent58.yRot);
-        Sucktioncupleft.z = Tent58.z - (float) Math.sin(Tent58.yRot) * 30.0F * (float) Math.cos(Tent58.xRot);
+        Sucktioncupleft.z = Tent58.z - (float) Math.cos(Tent58.xRot) * 30.0F * (float) Math.cos(Tent58.yRot);
+        Sucktioncupleft.x = Tent58.x - (float) Math.sin(Tent58.yRot) * 30.0F * (float) Math.cos(Tent58.xRot);
         Sucktioncupleft.xRot = Tent58.xRot;
         Sucktioncupleft.yRot = Tent58.yRot;
 
         Sucktioncupright.y = Tent68.y + (float) Math.sin(Tent68.xRot) * 30.0F * (float) Math.cos(Tent68.yRot);
-        Sucktioncupright.x = Tent68.x - (float) Math.cos(Tent68.xRot) * 30.0F * (float) Math.cos(Tent68.yRot);
-        Sucktioncupright.z = Tent68.z - (float) Math.sin(Tent68.yRot) * 30.0F * (float) Math.cos(Tent68.xRot);
+        Sucktioncupright.z = Tent68.z - (float) Math.cos(Tent68.xRot) * 30.0F * (float) Math.cos(Tent68.yRot);
+        Sucktioncupright.x = Tent68.x - (float) Math.sin(Tent68.yRot) * 30.0F * (float) Math.cos(Tent68.xRot);
         Sucktioncupright.xRot = Tent68.xRot;
         Sucktioncupright.yRot = Tent68.yRot;
 
@@ -867,44 +867,44 @@ public class ModelKraken extends EntityModel<Kraken> {
         p1.yRot = yoff - Mth.cos(ageInTicks * ydiffer * ANIM_SPEED) * (float) Math.PI * amp;
 
         p2.y = p1.y + (float) Math.sin(p1.xRot) * dist * (float) Math.cos(p1.yRot);
-        p2.x = p1.x - (float) Math.cos(p1.xRot) * dist * (float) Math.cos(p1.yRot);
-        p2.z = p1.z - (float) Math.sin(p1.yRot) * dist * (float) Math.cos(p1.xRot);
+        p2.z = p1.z - (float) Math.cos(p1.xRot) * dist * (float) Math.cos(p1.yRot);
+        p2.x = p1.x - (float) Math.sin(p1.yRot) * dist * (float) Math.cos(p1.xRot);
         p2.xRot = xoff / 2.0F + s * Mth.cos(ageInTicks * differ * ANIM_SPEED - pi4) * (float) Math.PI * amp;
         p2.yRot = yoff / 2.0F - Mth.cos(ageInTicks * ydiffer * ANIM_SPEED - pi4) * (float) Math.PI * amp;
 
         p3.y = p2.y + (float) Math.sin(p2.xRot) * dist * (float) Math.cos(p2.yRot);
-        p3.x = p2.x - (float) Math.cos(p2.xRot) * dist * (float) Math.cos(p2.yRot);
-        p3.z = p2.z - (float) Math.sin(p2.yRot) * dist * (float) Math.cos(p2.xRot);
+        p3.z = p2.z - (float) Math.cos(p2.xRot) * dist * (float) Math.cos(p2.yRot);
+        p3.x = p2.x - (float) Math.sin(p2.yRot) * dist * (float) Math.cos(p2.xRot);
         p3.xRot = s * Mth.cos(ageInTicks * differ * ANIM_SPEED - 2.0F * pi4) * (float) Math.PI * amp;
         p3.yRot = -Mth.cos(ageInTicks * ydiffer * ANIM_SPEED - 2.0F * pi4) * (float) Math.PI * amp;
 
         p4.y = p3.y + (float) Math.sin(p3.xRot) * dist * (float) Math.cos(p3.yRot);
-        p4.x = p3.x - (float) Math.cos(p3.xRot) * dist * (float) Math.cos(p3.yRot);
-        p4.z = p3.z - (float) Math.sin(p3.yRot) * dist * (float) Math.cos(p3.xRot);
+        p4.z = p3.z - (float) Math.cos(p3.xRot) * dist * (float) Math.cos(p3.yRot);
+        p4.x = p3.x - (float) Math.sin(p3.yRot) * dist * (float) Math.cos(p3.xRot);
         p4.xRot = s * Mth.cos(ageInTicks * differ * ANIM_SPEED - 3.0F * pi4) * (float) Math.PI * amp;
         p4.yRot = -Mth.cos(ageInTicks * ydiffer * ANIM_SPEED - 3.0F * pi4) * (float) Math.PI * amp;
 
         p5.y = p4.y + (float) Math.sin(p4.xRot) * dist * (float) Math.cos(p4.yRot);
-        p5.x = p4.x - (float) Math.cos(p4.xRot) * dist * (float) Math.cos(p4.yRot);
-        p5.z = p4.z - (float) Math.sin(p4.yRot) * dist * (float) Math.cos(p4.xRot);
+        p5.z = p4.z - (float) Math.cos(p4.xRot) * dist * (float) Math.cos(p4.yRot);
+        p5.x = p4.x - (float) Math.sin(p4.yRot) * dist * (float) Math.cos(p4.xRot);
         p5.xRot = s * Mth.cos(ageInTicks * differ * ANIM_SPEED - 4.0F * pi4) * (float) Math.PI * amp;
         p5.yRot = -Mth.cos(ageInTicks * ydiffer * ANIM_SPEED - 4.0F * pi4) * (float) Math.PI * amp;
 
         p6.y = p5.y + (float) Math.sin(p5.xRot) * dist * (float) Math.cos(p5.yRot);
-        p6.x = p5.x - (float) Math.cos(p5.xRot) * dist * (float) Math.cos(p5.yRot);
-        p6.z = p5.z - (float) Math.sin(p5.yRot) * dist * (float) Math.cos(p5.xRot);
+        p6.z = p5.z - (float) Math.cos(p5.xRot) * dist * (float) Math.cos(p5.yRot);
+        p6.x = p5.x - (float) Math.sin(p5.yRot) * dist * (float) Math.cos(p5.xRot);
         p6.xRot = s * Mth.cos(ageInTicks * differ * ANIM_SPEED - 5.0F * pi4) * (float) Math.PI * amp;
         p6.yRot = -Mth.cos(ageInTicks * ydiffer * ANIM_SPEED - 5.0F * pi4) * (float) Math.PI * amp;
 
         p7.y = p6.y + (float) Math.sin(p6.xRot) * dist * (float) Math.cos(p6.yRot);
-        p7.x = p6.x - (float) Math.cos(p6.xRot) * dist * (float) Math.cos(p6.yRot);
-        p7.z = p6.z - (float) Math.sin(p6.yRot) * dist * (float) Math.cos(p6.xRot);
+        p7.z = p6.z - (float) Math.cos(p6.xRot) * dist * (float) Math.cos(p6.yRot);
+        p7.x = p6.x - (float) Math.sin(p6.yRot) * dist * (float) Math.cos(p6.xRot);
         p7.xRot = s * Mth.cos(ageInTicks * differ * ANIM_SPEED - 6.0F * pi4) * (float) Math.PI * amp;
         p7.yRot = -Mth.cos(ageInTicks * ydiffer * ANIM_SPEED - 6.0F * pi4) * (float) Math.PI * amp;
 
         p8.y = p7.y + (float) Math.sin(p7.xRot) * dist * (float) Math.cos(p7.yRot);
-        p8.x = p7.x - (float) Math.cos(p7.xRot) * dist * (float) Math.cos(p7.yRot);
-        p8.z = p7.z - (float) Math.sin(p7.yRot) * dist * (float) Math.cos(p7.xRot);
+        p8.z = p7.z - (float) Math.cos(p7.xRot) * dist * (float) Math.cos(p7.yRot);
+        p8.x = p7.x - (float) Math.sin(p7.yRot) * dist * (float) Math.cos(p7.xRot);
         p8.xRot = s * Mth.cos(ageInTicks * differ * ANIM_SPEED - 7.0F * pi4) * (float) Math.PI * amp;
         p8.yRot = -Mth.cos(ageInTicks * ydiffer * ANIM_SPEED - 7.0F * pi4) * (float) Math.PI * amp;
     }

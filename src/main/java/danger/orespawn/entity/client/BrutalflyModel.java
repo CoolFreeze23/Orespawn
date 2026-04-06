@@ -9,91 +9,146 @@ import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.util.Mth;
 
-public class BrutalflyModel<T extends EntityBrutalfly> extends EntityModel<T> {
+public class BrutalflyModel extends EntityModel<EntityBrutalfly> {
     private final ModelPart body;
+    private final ModelPart leftwing;
+    private final ModelPart rightwing;
+    private final ModelPart leftwing2;
+    private final ModelPart rightwing2;
+    private final ModelPart leftwing3;
+    private final ModelPart rightwing3;
     private final ModelPart head;
-    private final ModelPart wingLeft;
-    private final ModelPart wingRight;
-    private final ModelPart tail;
-    private final ModelPart leg1;
-    private final ModelPart leg2;
-    private final ModelPart leg3;
-    private final ModelPart leg4;
-    private final ModelPart leg5;
-    private final ModelPart leg6;
+    private final ModelPart leftwing4;
+    private final ModelPart rightwing4;
+    private final ModelPart leftwing5;
+    private final ModelPart leftwing6;
+    private final ModelPart rightwing5;
+    private final ModelPart rightwing6;
 
     public BrutalflyModel(ModelPart root) {
         this.body = root.getChild("body");
+        this.leftwing = root.getChild("leftwing");
+        this.rightwing = root.getChild("rightwing");
+        this.leftwing2 = root.getChild("leftwing2");
+        this.rightwing2 = root.getChild("rightwing2");
+        this.leftwing3 = root.getChild("leftwing3");
+        this.rightwing3 = root.getChild("rightwing3");
         this.head = root.getChild("head");
-        this.wingLeft = root.getChild("wing_left");
-        this.wingRight = root.getChild("wing_right");
-        this.tail = root.getChild("tail");
-        this.leg1 = root.getChild("leg1");
-        this.leg2 = root.getChild("leg2");
-        this.leg3 = root.getChild("leg3");
-        this.leg4 = root.getChild("leg4");
-        this.leg5 = root.getChild("leg5");
-        this.leg6 = root.getChild("leg6");
+        this.leftwing4 = root.getChild("leftwing4");
+        this.rightwing4 = root.getChild("rightwing4");
+        this.leftwing5 = root.getChild("leftwing5");
+        this.leftwing6 = root.getChild("leftwing6");
+        this.rightwing5 = root.getChild("rightwing5");
+        this.rightwing6 = root.getChild("rightwing6");
     }
 
     public static LayerDefinition createBodyLayer() {
-        MeshDefinition mesh = new MeshDefinition();
-        PartDefinition root = mesh.getRoot();
+        MeshDefinition meshdefinition = new MeshDefinition();
+        PartDefinition partdefinition = meshdefinition.getRoot();
 
-        root.addOrReplaceChild("body", CubeListBuilder.create().texOffs(0, 0)
-                .addBox(-8.0F, -5.0F, -12.0F, 16, 10, 24), PartPose.offset(0.0F, 12.0F, 0.0F));
-        root.addOrReplaceChild("head", CubeListBuilder.create().texOffs(0, 34)
-                .addBox(-5.0F, -5.0F, -8.0F, 10, 10, 8), PartPose.offset(0.0F, 10.0F, -12.0F));
-        root.addOrReplaceChild("wing_left", CubeListBuilder.create().texOffs(0, 52)
-                .addBox(0.0F, 0.0F, -6.0F, 20, 1, 16), PartPose.offset(8.0F, 7.0F, 0.0F));
-        root.addOrReplaceChild("wing_right", CubeListBuilder.create().texOffs(0, 52).mirror()
-                .addBox(-20.0F, 0.0F, -6.0F, 20, 1, 16), PartPose.offset(-8.0F, 7.0F, 0.0F));
-        root.addOrReplaceChild("tail", CubeListBuilder.create().texOffs(56, 0)
-                .addBox(-3.0F, -3.0F, 0.0F, 6, 6, 12), PartPose.offset(0.0F, 12.0F, 12.0F));
-        root.addOrReplaceChild("leg1", CubeListBuilder.create().texOffs(36, 34)
-                .addBox(-1.0F, 0.0F, -1.0F, 2, 6, 2), PartPose.offset(-5.0F, 17.0F, -8.0F));
-        root.addOrReplaceChild("leg2", CubeListBuilder.create().texOffs(36, 34)
-                .addBox(-1.0F, 0.0F, -1.0F, 2, 6, 2), PartPose.offset(5.0F, 17.0F, -8.0F));
-        root.addOrReplaceChild("leg3", CubeListBuilder.create().texOffs(36, 34)
-                .addBox(-1.0F, 0.0F, -1.0F, 2, 6, 2), PartPose.offset(-5.0F, 17.0F, 0.0F));
-        root.addOrReplaceChild("leg4", CubeListBuilder.create().texOffs(36, 34)
-                .addBox(-1.0F, 0.0F, -1.0F, 2, 6, 2), PartPose.offset(5.0F, 17.0F, 0.0F));
-        root.addOrReplaceChild("leg5", CubeListBuilder.create().texOffs(36, 34)
-                .addBox(-1.0F, 0.0F, -1.0F, 2, 6, 2), PartPose.offset(-5.0F, 17.0F, 8.0F));
-        root.addOrReplaceChild("leg6", CubeListBuilder.create().texOffs(36, 34)
-                .addBox(-1.0F, 0.0F, -1.0F, 2, 6, 2), PartPose.offset(5.0F, 17.0F, 8.0F));
+        partdefinition.addOrReplaceChild("body",
+                CubeListBuilder.create().texOffs(21, 19).mirror()
+                        .addBox(0.0F, 0.0F, -4.0F, 1, 1, 8),
+                PartPose.offset(0.0F, 17.0F, 0.0F));
 
-        return LayerDefinition.create(mesh, 128, 128);
+        partdefinition.addOrReplaceChild("leftwing",
+                CubeListBuilder.create().texOffs(43, 24).mirror()
+                        .addBox(0.0F, 0.0F, -4.0F, 1, 1, 5),
+                PartPose.offset(1.0F, 17.0F, 0.0F));
+
+        partdefinition.addOrReplaceChild("rightwing",
+                CubeListBuilder.create().texOffs(43, 17).mirror()
+                        .addBox(-1.0F, 0.0F, -4.0F, 1, 1, 5),
+                PartPose.offset(0.0F, 17.0F, 0.0F));
+
+        partdefinition.addOrReplaceChild("leftwing2",
+                CubeListBuilder.create().texOffs(0, 0).mirror()
+                        .addBox(1.0F, 0.0F, -6.0F, 6, 1, 7),
+                PartPose.offset(1.0F, 17.0F, 0.0F));
+
+        partdefinition.addOrReplaceChild("rightwing2",
+                CubeListBuilder.create().texOffs(29, 0).mirror()
+                        .addBox(-7.0F, 0.0F, -6.0F, 6, 1, 7),
+                PartPose.offset(0.0F, 17.0F, 0.0F));
+
+        partdefinition.addOrReplaceChild("leftwing3",
+                CubeListBuilder.create().texOffs(0, 9).mirror()
+                        .addBox(0.0F, 0.0F, 1.0F, 5, 1, 5),
+                PartPose.offset(1.0F, 17.0F, 0.0F));
+
+        partdefinition.addOrReplaceChild("rightwing3",
+                CubeListBuilder.create().texOffs(27, 9).mirror()
+                        .addBox(-5.0F, 0.0F, 1.0F, 5, 1, 5),
+                PartPose.offset(0.0F, 17.0F, 0.0F));
+
+        partdefinition.addOrReplaceChild("head",
+                CubeListBuilder.create().texOffs(21, 11).mirror()
+                        .addBox(0.0F, 0.0F, -6.0F, 1, 1, 1),
+                PartPose.offset(0.0F, 17.0F, 1.0F));
+
+        partdefinition.addOrReplaceChild("leftwing4",
+                CubeListBuilder.create().texOffs(2, 24).mirror()
+                        .addBox(0.0F, 0.0F, 6.0F, 2, 1, 7),
+                PartPose.offset(1.0F, 17.0F, 0.0F));
+
+        partdefinition.addOrReplaceChild("rightwing4",
+                CubeListBuilder.create().texOffs(2, 16).mirror()
+                        .addBox(-2.0F, 0.0F, 6.0F, 2, 1, 7),
+                PartPose.offset(0.0F, 17.0F, 0.0F));
+
+        partdefinition.addOrReplaceChild("leftwing5",
+                CubeListBuilder.create().texOffs(21, 16).mirror()
+                        .addBox(1.0F, 0.0F, -7.0F, 1, 1, 1),
+                PartPose.offset(1.0F, 17.0F, 0.0F));
+
+        partdefinition.addOrReplaceChild("leftwing6",
+                CubeListBuilder.create().texOffs(50, 10).mirror()
+                        .addBox(7.0F, 0.0F, -6.0F, 2, 1, 1),
+                PartPose.offset(1.0F, 17.0F, 0.0F));
+
+        partdefinition.addOrReplaceChild("rightwing5",
+                CubeListBuilder.create().texOffs(27, 16).mirror()
+                        .addBox(-2.0F, 0.0F, -7.0F, 1, 1, 1),
+                PartPose.offset(0.0F, 17.0F, 0.0F));
+
+        partdefinition.addOrReplaceChild("rightwing6",
+                CubeListBuilder.create().texOffs(50, 13).mirror()
+                        .addBox(-9.0F, 0.0F, -6.0F, 2, 1, 1),
+                PartPose.offset(0.0F, 17.0F, 0.0F));
+
+        return LayerDefinition.create(meshdefinition, 64, 32);
     }
 
     @Override
-    public void setupAnim(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
-        this.head.yRot = netHeadYaw * ((float) Math.PI / 180F);
-        this.head.xRot = headPitch * ((float) Math.PI / 180F);
-        float wingFlap = Mth.cos(ageInTicks * 1.5F) * 0.4F;
-        this.wingLeft.zRot = -0.2F + wingFlap;
-        this.wingRight.zRot = 0.2F - wingFlap;
-        float legSwing = Mth.cos(limbSwing * 0.6662F) * 0.5F * limbSwingAmount;
-        this.leg1.xRot = legSwing;
-        this.leg2.xRot = -legSwing;
-        this.leg3.xRot = -legSwing;
-        this.leg4.xRot = legSwing;
-        this.leg5.xRot = legSwing;
-        this.leg6.xRot = -legSwing;
+    public void setupAnim(EntityBrutalfly entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
+        this.rightwing2.zRot = this.rightwing.zRot = Mth.cos((float)(ageInTicks * 1.3f * limbSwingAmount)) * (float)Math.PI * 0.25f;
+        this.rightwing3.zRot = this.rightwing.zRot;
+        this.rightwing4.zRot = this.rightwing.zRot;
+        this.rightwing5.zRot = this.rightwing.zRot;
+        this.rightwing6.zRot = this.rightwing.zRot;
+        this.leftwing.zRot = -this.rightwing.zRot;
+        this.leftwing2.zRot = -this.rightwing.zRot;
+        this.leftwing3.zRot = -this.rightwing.zRot;
+        this.leftwing4.zRot = -this.rightwing.zRot;
+        this.leftwing5.zRot = -this.rightwing.zRot;
+        this.leftwing6.zRot = -this.rightwing.zRot;
     }
 
     @Override
-    public void renderToBuffer(PoseStack ps, VertexConsumer vc, int light, int overlay, int color) {
-        body.render(ps, vc, light, overlay, color);
-        head.render(ps, vc, light, overlay, color);
-        wingLeft.render(ps, vc, light, overlay, color);
-        wingRight.render(ps, vc, light, overlay, color);
-        tail.render(ps, vc, light, overlay, color);
-        leg1.render(ps, vc, light, overlay, color);
-        leg2.render(ps, vc, light, overlay, color);
-        leg3.render(ps, vc, light, overlay, color);
-        leg4.render(ps, vc, light, overlay, color);
-        leg5.render(ps, vc, light, overlay, color);
-        leg6.render(ps, vc, light, overlay, color);
+    public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, int color) {
+        this.head.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.body.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.leftwing.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.rightwing.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.leftwing2.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.rightwing2.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.leftwing3.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.rightwing3.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.leftwing4.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.rightwing4.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.leftwing5.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.rightwing5.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.leftwing6.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.rightwing6.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
     }
 }

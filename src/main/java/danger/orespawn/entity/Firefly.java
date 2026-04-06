@@ -118,8 +118,8 @@ public class Firefly extends AmbientCreature {
     @Override
     public boolean checkSpawnRules(LevelAccessor level, MobSpawnType spawnType) {
         if (!level.getBlockState(this.blockPosition()).isAir()) return false;
-        if (this.level().canSeeSky(this.blockPosition())) return false;
-        int buddies = this.level().getEntitiesOfClass(Firefly.class,
+        if (level.canSeeSky(this.blockPosition())) return false;
+        int buddies = level.getEntitiesOfClass(Firefly.class,
                 this.getBoundingBox().inflate(20.0, 8.0, 20.0)).size();
         if (buddies > 10) return false;
         return this.getY() >= 50.0;

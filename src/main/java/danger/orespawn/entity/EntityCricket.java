@@ -153,7 +153,8 @@ public class EntityCricket extends Animal {
     @Override
     public boolean checkSpawnRules(LevelAccessor level, MobSpawnType spawnType) {
         if (this.getY() < 30.0) return false;
-        return findBuddies() <= 5;
+        return level.getEntitiesOfClass(EntityCricket.class,
+                this.getBoundingBox().inflate(20.0, 10.0, 20.0)).size() <= 5;
     }
 
     private int findBuddies() {

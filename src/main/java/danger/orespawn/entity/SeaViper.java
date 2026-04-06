@@ -243,7 +243,7 @@ public class SeaViper extends Monster {
     @Override
     public boolean checkSpawnRules(LevelAccessor level, MobSpawnType spawnType) {
         if (this.getY() < 50.0) return false;
-        return this.level().getEntitiesOfClass(SeaViper.class,
+        return level.getEntitiesOfClass(SeaViper.class,
                 this.getBoundingBox().inflate(16.0, 5.0, 16.0)).size() <= 1;
     }
 }
