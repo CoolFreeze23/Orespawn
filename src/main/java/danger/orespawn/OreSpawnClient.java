@@ -47,6 +47,11 @@ public class OreSpawnClient {
             event.registerEntityRenderer(ModEntities.SKATE.get(), SkateRenderer::new);
             event.registerEntityRenderer(ModEntities.TREX.get(), TRexRenderer::new);
             event.registerEntityRenderer(ModEntities.URCHIN.get(), UrchinRenderer::new);
+            event.registerEntityRenderer(ModEntities.BASILISK.get(), BasiliskRenderer::new);
+            event.registerEntityRenderer(ModEntities.GODZILLA.get(), GodzillaRenderer::new);
+            event.registerEntityRenderer(ModEntities.KRAKEN.get(), KrakenRenderer::new);
+            event.registerEntityRenderer(ModEntities.THE_KING.get(), TheKingRenderer::new);
+            event.registerEntityRenderer(ModEntities.THE_QUEEN.get(), TheQueenRenderer::new);
             event.registerEntityRenderer(ModEntities.ENTITY_BEE.get(), BeeRenderer::new);
             event.registerEntityRenderer(ModEntities.ENTITY_BRUTALFLY.get(), BrutalflyRenderer::new);
             event.registerEntityRenderer(ModEntities.ENTITY_CATER_KILLER.get(), CaterKillerRenderer::new);
@@ -83,6 +88,8 @@ public class OreSpawnClient {
             event.registerEntityRenderer(ModEntities.ISLAND_TOO.get(), IslandTooRenderer::new);
             event.registerEntityRenderer(ModEntities.PEACOCK.get(), PeacockRenderer::new);
             event.registerEntityRenderer(ModEntities.WHALE.get(), WhaleRenderer::new);
+            event.registerEntityRenderer(ModEntities.FROG.get(), FrogRenderer::new);
+            event.registerEntityRenderer(ModEntities.GAZELLE.get(), GazelleRenderer::new);
             event.registerEntityRenderer(ModEntities.ENTITY_ANT.get(), AntRenderer::new);
             event.registerEntityRenderer(ModEntities.ENTITY_CLIFF_RACER.get(), CliffRacerRenderer::new);
             event.registerEntityRenderer(ModEntities.ENTITY_CRICKET.get(), CricketRenderer::new);
@@ -137,6 +144,21 @@ public class OreSpawnClient {
             event.registerEntityRenderer(ModEntities.CEPHADROME.get(), CephadromeRenderer::new);
             event.registerEntityRenderer(ModEntities.RED_COW.get(), RedCowRenderer::new);
             event.registerEntityRenderer(ModEntities.SPIDER_DRIVER.get(), SpiderDriverRenderer::new);
+
+            // Projectiles
+            event.registerEntityRenderer(ModEntities.BETTER_FIREBALL.get(), NoopProjectileRenderer::new);
+            event.registerEntityRenderer(ModEntities.BERTHA_HIT.get(), NoopProjectileRenderer::new);
+            event.registerEntityRenderer(ModEntities.ENTITY_CAGE.get(), NoopProjectileRenderer::new);
+            event.registerEntityRenderer(ModEntities.ENTITY_THROWN_ROCK.get(), NoopProjectileRenderer::new);
+            event.registerEntityRenderer(ModEntities.INK_SACK.get(), NoopProjectileRenderer::new);
+            event.registerEntityRenderer(ModEntities.LASER_BALL.get(), NoopProjectileRenderer::new);
+            event.registerEntityRenderer(ModEntities.SHOES.get(), NoopProjectileRenderer::new);
+            event.registerEntityRenderer(ModEntities.SUNSPOT_URCHIN.get(), NoopProjectileRenderer::new);
+            event.registerEntityRenderer(ModEntities.THUNDER_BOLT.get(), NoopProjectileRenderer::new);
+            event.registerEntityRenderer(ModEntities.WATER_BALL.get(), NoopProjectileRenderer::new);
+            event.registerEntityRenderer(ModEntities.ICE_BALL.get(), NoopProjectileRenderer::new);
+            event.registerEntityRenderer(ModEntities.ACID.get(), NoopProjectileRenderer::new);
+            event.registerEntityRenderer(ModEntities.DEAD_IRUKANDJI.get(), NoopProjectileRenderer::new);
         }
 
         @SubscribeEvent
@@ -170,6 +192,11 @@ public class OreSpawnClient {
             event.registerLayerDefinition(SkateRenderer.MODEL_LAYER, ModelSkate::createBodyLayer);
             event.registerLayerDefinition(TRexRenderer.MODEL_LAYER, ModelTRex::createBodyLayer);
             event.registerLayerDefinition(UrchinRenderer.MODEL_LAYER, ModelUrchin::createBodyLayer);
+            event.registerLayerDefinition(BasiliskRenderer.MODEL_LAYER, ModelBasilisk::createBodyLayer);
+            event.registerLayerDefinition(GodzillaRenderer.MODEL_LAYER, ModelGodzilla::createBodyLayer);
+            event.registerLayerDefinition(KrakenRenderer.MODEL_LAYER, ModelKraken::createBodyLayer);
+            event.registerLayerDefinition(TheKingRenderer.MODEL_LAYER, ModelTheKing::createBodyLayer);
+            event.registerLayerDefinition(TheQueenRenderer.MODEL_LAYER, ModelTheQueen::createBodyLayer);
             event.registerLayerDefinition(BeeRenderer.MODEL_LAYER, BeeModel::createBodyLayer);
             event.registerLayerDefinition(BrutalflyRenderer.MODEL_LAYER, BrutalflyModel::createBodyLayer);
             event.registerLayerDefinition(CaterKillerRenderer.MODEL_LAYER, CaterKillerModel::createBodyLayer);
@@ -206,6 +233,8 @@ public class OreSpawnClient {
             event.registerLayerDefinition(IslandTooRenderer.MODEL_LAYER, ModelIslandToo::createBodyLayer);
             event.registerLayerDefinition(PeacockRenderer.MODEL_LAYER, ModelPeacock::createBodyLayer);
             event.registerLayerDefinition(WhaleRenderer.MODEL_LAYER, ModelWhale::createBodyLayer);
+            event.registerLayerDefinition(FrogRenderer.MODEL_LAYER, ModelFrog::createBodyLayer);
+            event.registerLayerDefinition(GazelleRenderer.MODEL_LAYER, ModelGazelle::createBodyLayer);
             event.registerLayerDefinition(AntRenderer.MODEL_LAYER, AntModel::createBodyLayer);
             event.registerLayerDefinition(CliffRacerRenderer.MODEL_LAYER, CliffRacerModel::createBodyLayer);
             event.registerLayerDefinition(CricketRenderer.MODEL_LAYER, CricketModel::createBodyLayer);
