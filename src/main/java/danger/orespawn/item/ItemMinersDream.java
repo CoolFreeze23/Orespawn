@@ -12,6 +12,13 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 
 public class ItemMinersDream extends Item {
+    private static final int TUNNEL_LENGTH_BLOCKS = 64;
+    private static final int CROSS_AXIS_HALF_WIDTH = 2;
+    private static final int VERTICAL_CLEAR_HEIGHT = 5;
+    private static final int TORCH_PLACE_INTERVAL = 4;
+    private static final int TORCH_SIDE_OFFSET = 2;
+    private static final int TORCH_Y_OFFSET = 1;
+
     public ItemMinersDream(Item.Properties properties) {
         super(properties);
     }
@@ -27,27 +34,27 @@ public class ItemMinersDream extends Item {
         BlockPos pos = context.getClickedPos();
         Direction facing = player.getDirection();
 
-        int dx = facing.getStepX();
-        int dz = facing.getStepZ();
+        int forwardX = facing.getStepX();
+        int forwardZ = facing.getStepZ();
 
-        for (int i = 0; i < 64; i++) {
-            for (int w = -2; w <= 2; w++) {
-                for (int h = 0; h < 5; h++) {
+        for (int forwardStep = 0; forwardStep < TUNNEL_LENGTH_BLOCKS; forwardStep++) {
+            for (int crossOffset = -CROSS_AXIS_HALF_WIDTH; crossOffset <= CROSS_AXIS_HALF_WIDTH; crossOffset++) {
+                for (int heightOffset = 0; heightOffset < VERTICAL_CLEAR_HEIGHT; heightOffset++) {
                     BlockPos target;
-                    if (dx != 0) {
-                        target = new BlockPos(pos.getX() + dx * i, pos.getY() + h, pos.getZ() + w);
+                    if (forwardX != 0) {
+                        target = new BlockPos(pos.getX() + forwardX * forwardStep, pos.getY() + heightOffset, pos.getZ() + crossOffset);
                     } else {
-                        target = new BlockPos(pos.getX() + w, pos.getY() + h, pos.getZ() + dz * i);
+                        target = new BlockPos(pos.getX() + crossOffset, pos.getY() + heightOffset, pos.getZ() + forwardZ * forwardStep);
                     }
                     level.setBlock(target, Blocks.AIR.defaultBlockState(), 3);
                 }
             }
-            if (i % 4 == 0) {
+            if (forwardStep % TORCH_PLACE_INTERVAL == 0) {
                 BlockPos torchPos;
-                if (dx != 0) {
-                    torchPos = new BlockPos(pos.getX() + dx * i, pos.getY() + 1, pos.getZ() + 2);
+                if (forwardX != 0) {
+                    torchPos = new BlockPos(pos.getX() + forwardX * forwardStep, pos.getY() + TORCH_Y_OFFSET, pos.getZ() + TORCH_SIDE_OFFSET);
                 } else {
-                    torchPos = new BlockPos(pos.getX() + 2, pos.getY() + 1, pos.getZ() + dz * i);
+                    torchPos = new BlockPos(pos.getX() + TORCH_SIDE_OFFSET, pos.getY() + TORCH_Y_OFFSET, pos.getZ() + forwardZ * forwardStep);
                 }
                 level.setBlock(torchPos, Blocks.TORCH.defaultBlockState(), 3);
             }

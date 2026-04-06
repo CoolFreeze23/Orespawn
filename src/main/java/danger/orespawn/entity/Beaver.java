@@ -39,11 +39,13 @@ import net.minecraft.world.level.block.state.BlockState;
 public class Beaver extends Animal {
     private static final int MAX_HEALTH = 15;
     private static final double MOVE_SPEED = 0.2;
+    private static final int NO_WOOD_FOUND_SENTINEL = 99999;
+    private static final int WOOD_CHOP_RANGE_SQ = 12;
 
-    private int closest = 99999;
-    private int tx = 0;
-    private int ty = 0;
-    private int tz = 0;
+    private int closestWoodDistSq = NO_WOOD_FOUND_SENTINEL;
+    private int targetWoodX = 0;
+    private int targetWoodY = 0;
+    private int targetWoodZ = 0;
 
     public Beaver(EntityType<? extends Beaver> type, Level level) {
         super(type, level);
@@ -106,11 +108,11 @@ public class Beaver extends Animal {
 
     private int checkWoodAt(int x, int y, int z, int dist) {
         BlockPos pos = new BlockPos(x, y, z);
-        if (isWoodAt(pos) && dist < this.closest) {
-            this.closest = dist;
-            this.tx = x;
-            this.ty = y;
-            this.tz = z;
+        if (isWoodAt(pos) && dist < this.closestWoodDistSq) {
+            this.closestWoodDistSq = dist;
+            this.targetWoodX = x;
+            this.targetWoodY = y;
+            this.targetWoodZ = z;
             return 1;
         }
         return 0;
@@ -156,10 +158,10 @@ public class Beaver extends Animal {
         boolean randomChop = this.random.nextInt(350) == 1;
 
         if (needsFood || randomChop) {
-            this.closest = 99999;
-            this.tx = 0;
-            this.ty = 0;
-            this.tz = 0;
+            this.closestWoodDistSq = NO_WOOD_FOUND_SENTINEL;
+            this.targetWoodX = 0;
+            this.targetWoodY = 0;
+            this.targetWoodZ = 0;
             for (int i = 1; i < 11; ++i) {
                 int j = Math.min(i, 2);
                 if (this.scanForWood(
@@ -169,11 +171,11 @@ public class Beaver extends Animal {
                 }
                 if (i >= 6) ++i;
             }
-            if (this.closest < 99999) {
-                this.getNavigation().moveTo(this.tx, this.ty, this.tz, 1.0);
-                if (this.closest < 12) {
+            if (this.closestWoodDistSq < NO_WOOD_FOUND_SENTINEL) {
+                this.getNavigation().moveTo(this.targetWoodX, this.targetWoodY, this.targetWoodZ, 1.0);
+                if (this.closestWoodDistSq < WOOD_CHOP_RANGE_SQ) {
                     if (this.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)) {
-                        BlockPos targetPos = new BlockPos(this.tx, this.ty, this.tz);
+                        BlockPos targetPos = new BlockPos(this.targetWoodX, this.targetWoodY, this.targetWoodZ);
                         this.level().setBlock(targetPos, Blocks.AIR.defaultBlockState(), 2);
                         this.breakRecursor(this.level(), targetPos, targetPos, 0);
                     }
@@ -202,7 +204,7 @@ public class Beaver extends Animal {
                 this.getBoundingBox().inflate(16.0, 6.0, 16.0));
         buddies.sort(Comparator.comparingDouble(this::distanceToSqr));
         return buddies.stream()
-                .filter(b -> b != this)
+                .filter(otherBeaver -> otherBeaver != this)
                 .findFirst()
                 .orElse(null);
     }

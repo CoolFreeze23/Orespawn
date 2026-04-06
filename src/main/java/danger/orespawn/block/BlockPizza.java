@@ -3,7 +3,6 @@ package danger.orespawn.block;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -17,12 +16,17 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 
 public class BlockPizza extends Block {
     public static final IntegerProperty BITES = IntegerProperty.create("bites", 0, 5);
+    private static final int MAX_BITES_BEFORE_GONE = 6;
+    private static final int FOOD_NUTRITION = 4;
+    private static final float FOOD_SATURATION = 0.2f;
+    private static final float PIZZA_HEIGHT = 4;
+    private static final double EDGE_INSET = 1;
 
     private static final VoxelShape[] SHAPES = new VoxelShape[6];
     static {
-        for (int i = 0; i <= 5; i++) {
-            float f1 = (1 + i * 2) / 16.0f;
-            SHAPES[i] = Block.box(f1 * 16, 0, 1, 16 - 1, 4, 16 - 1);
+        for (int biteIndex = 0; biteIndex <= 5; biteIndex++) {
+            float minXInSixteenths = (1 + biteIndex * 2) / 16.0f;
+            SHAPES[biteIndex] = Block.box(minXInSixteenths * 16, 0, EDGE_INSET, 16 - EDGE_INSET, PIZZA_HEIGHT, 16 - EDGE_INSET);
         }
     }
 
@@ -52,10 +56,10 @@ public class BlockPizza extends Block {
     private void eatPizzaSlice(Level level, BlockPos pos, BlockState state, Player player) {
         if (!player.canEat(false)) return;
 
-        player.getFoodData().eat(4, 0.2f);
+        player.getFoodData().eat(FOOD_NUTRITION, FOOD_SATURATION);
 
         int bites = state.getValue(BITES) + 1;
-        if (bites >= 6) {
+        if (bites >= MAX_BITES_BEFORE_GONE) {
             level.removeBlock(pos, false);
         } else {
             level.setBlock(pos, state.setValue(BITES, bites), 2);

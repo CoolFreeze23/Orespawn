@@ -32,6 +32,14 @@ public class AntRobot extends Mob {
     private static final EntityDataAccessor<Integer> DATA_ATTACKING =
             SynchedEntityData.defineId(AntRobot.class, EntityDataSerializers.INT);
 
+    private static final double CHASE_SPEED = 0.2;
+    private static final double KNOCKBACK_HORIZONTAL = 0.7;
+    private static final double KNOCKBACK_VERTICAL = 0.1;
+    private static final double PLAYER_OR_REMOVED_VERTICAL_MULTIPLIER = 2.0;
+    private static final float STOMP_DAMAGE = 3.5f;
+    private static final double STOMP_KNOCKBACK = 0.6;
+    private static final float PARTICLE_OFFSET_BLOCKS = 4.0f;
+
     private final Comparator<Entity> targetSorter;
     private final float moveSpeed = 0.3f;
     private int playing = 0;
@@ -80,22 +88,28 @@ public class AntRobot extends Mob {
             if (this.getRandom().nextInt(20) == 0) {
                 feetFindSomethingToHit();
             }
-            LivingEntity e = this.getTarget();
+            LivingEntity currentTarget = this.getTarget();
             if (this.getRandom().nextInt(150) == 0) this.setTarget(null);
-            if (e != null && !e.isAlive()) { this.setTarget(null); e = null; }
-            if (e == null) e = findSomethingToAttack();
-            if (e != null) {
-                this.lookAt(e, 10.0f, 10.0f);
-                if (this.distanceToSqr(e) > 16.0) {
-                    double d1 = e.getZ() - this.getZ();
-                    double d2 = e.getX() - this.getX();
-                    double dd = Math.atan2(d1, d2);
-                    this.setDeltaMovement(0.2 * Math.cos(dd), this.getDeltaMovement().y, 0.2 * Math.sin(dd));
+            if (currentTarget != null && !currentTarget.isAlive()) {
+                this.setTarget(null);
+                currentTarget = null;
+            }
+            if (currentTarget == null) currentTarget = findSomethingToAttack();
+            if (currentTarget != null) {
+                this.lookAt(currentTarget, 10.0f, 10.0f);
+                if (this.distanceToSqr(currentTarget) > 16.0) {
+                    double deltaZ = currentTarget.getZ() - this.getZ();
+                    double deltaX = currentTarget.getX() - this.getX();
+                    double yawToTarget = Math.atan2(deltaZ, deltaX);
+                    this.setDeltaMovement(
+                            CHASE_SPEED * Math.cos(yawToTarget),
+                            this.getDeltaMovement().y,
+                            CHASE_SPEED * Math.sin(yawToTarget));
                 }
-                double meleeRange = (6.0f + e.getBbWidth() / 2.0f);
-                if (this.distanceToSqr(e) < meleeRange * meleeRange) {
+                double meleeRange = (6.0f + currentTarget.getBbWidth() / 2.0f);
+                if (this.distanceToSqr(currentTarget) < meleeRange * meleeRange) {
                     this.setAttacking(1);
-                    this.doHurtTarget(e);
+                    this.doHurtTarget(currentTarget);
                 } else {
                     this.setAttacking(0);
                 }
@@ -112,10 +126,10 @@ public class AntRobot extends Mob {
                 || source.getMsgId().equals("magic") || source.getMsgId().equals("starve")) {
             return false;
         }
-        Entity e = source.getEntity();
-        if (e instanceof LivingEntity le) {
-            this.setTarget(le);
-            this.lookAt(e, 20.0f, 20.0f);
+        Entity attacker = source.getEntity();
+        if (attacker instanceof LivingEntity livingAttacker) {
+            this.setTarget(livingAttacker);
+            this.lookAt(attacker, 20.0f, 20.0f);
         }
         return super.hurt(source, amount);
     }
@@ -131,26 +145,29 @@ public class AntRobot extends Mob {
         this.clearFire();
 
         if (!this.level().isClientSide() && this.getFirstPassenger() != null && this.getRandom().nextInt(9) == 0) {
-            LivingEntity e = findSomethingToAttack();
-            if (e != null) {
-                double meleeRange = (6.0f + e.getBbWidth() / 2.0f);
-                if (this.distanceToSqr(e) < meleeRange * meleeRange) {
+            LivingEntity riderTarget = findSomethingToAttack();
+            if (riderTarget != null) {
+                double meleeRange = (6.0f + riderTarget.getBbWidth() / 2.0f);
+                if (this.distanceToSqr(riderTarget) < meleeRange * meleeRange) {
                     this.setAttacking(1);
-                    this.doHurtTarget(e);
+                    this.doHurtTarget(riderTarget);
                 }
             } else {
                 this.setAttacking(0);
             }
         }
 
-        float f = 4.0f;
-        float dx = (float) (f * Math.cos(Math.toRadians(this.getYRot() - 80.0f)));
-        float dz = (float) (f * Math.sin(Math.toRadians(this.getYRot() - 80.0f)));
+        float particleOffsetX = (float) (PARTICLE_OFFSET_BLOCKS * Math.cos(Math.toRadians(this.getYRot() - 80.0f)));
+        float particleOffsetZ = (float) (PARTICLE_OFFSET_BLOCKS * Math.sin(Math.toRadians(this.getYRot() - 80.0f)));
         if (this.level().isClientSide()) {
-            if (this.getRandom().nextInt(18) == 0)
-                this.level().addParticle(ParticleTypes.FLAME, getX() + dx, getY() + 0.5, getZ() + dz, 0, 0, 0);
-            if (this.getRandom().nextInt(7) == 0)
-                this.level().addParticle(ParticleTypes.SMOKE, getX() + dx, getY() + 0.5, getZ() + dz, 0, 0, 0);
+            if (this.getRandom().nextInt(18) == 0) {
+                this.level().addParticle(ParticleTypes.FLAME,
+                        getX() + particleOffsetX, getY() + 0.5, getZ() + particleOffsetZ, 0, 0, 0);
+            }
+            if (this.getRandom().nextInt(7) == 0) {
+                this.level().addParticle(ParticleTypes.SMOKE,
+                        getX() + particleOffsetX, getY() + 0.5, getZ() + particleOffsetZ, 0, 0, 0);
+            }
         }
 
         if (this.playing > 0) --this.playing;
@@ -164,14 +181,20 @@ public class AntRobot extends Mob {
 
     @Override
     public boolean doHurtTarget(Entity target) {
-        if (target instanceof LivingEntity le) {
-            double ks = 0.7;
-            double inair = 0.1;
-            float f3 = (float) Math.atan2(le.getZ() - this.getZ(), le.getX() - this.getX());
-            boolean ret = le.hurt(this.damageSources().mobAttack(this), 35.0f);
-            if (le.isRemoved() || le instanceof Player) inair *= 2.0;
-            if (ret) le.push(Math.cos(f3) * ks, inair, Math.sin(f3) * ks);
-            return ret;
+        if (target instanceof LivingEntity livingTarget) {
+            float yawToTarget = (float) Math.atan2(livingTarget.getZ() - this.getZ(), livingTarget.getX() - this.getX());
+            boolean hurtApplied = livingTarget.hurt(this.damageSources().mobAttack(this), 35.0f);
+            double verticalKnockback = KNOCKBACK_VERTICAL;
+            if (livingTarget.isRemoved() || livingTarget instanceof Player) {
+                verticalKnockback *= PLAYER_OR_REMOVED_VERTICAL_MULTIPLIER;
+            }
+            if (hurtApplied) {
+                livingTarget.push(
+                        Math.cos(yawToTarget) * KNOCKBACK_HORIZONTAL,
+                        verticalKnockback,
+                        Math.sin(yawToTarget) * KNOCKBACK_HORIZONTAL);
+            }
+            return hurtApplied;
         }
         return false;
     }
@@ -221,11 +244,16 @@ public class AntRobot extends Mob {
     private void feetFindSomethingToHit() {
         AABB searchBox = this.getBoundingBox().inflate(10.0, 8.0, 10.0);
         List<LivingEntity> entities = this.level().getEntitiesOfClass(LivingEntity.class, searchBox);
-        for (LivingEntity e : entities) {
-            if (feetIsSuitableTarget(e)) {
-                float f3 = (float) Math.atan2(e.getZ() - this.getZ(), e.getX() - this.getX());
-                boolean ret = e.hurt(this.damageSources().mobAttack(this), 3.5f);
-                if (ret) e.push(Math.cos(f3) * 0.6, 0.1, Math.sin(f3) * 0.6);
+        for (LivingEntity stompTarget : entities) {
+            if (feetIsSuitableTarget(stompTarget)) {
+                float yawToTarget = (float) Math.atan2(stompTarget.getZ() - this.getZ(), stompTarget.getX() - this.getX());
+                boolean hurtApplied = stompTarget.hurt(this.damageSources().mobAttack(this), STOMP_DAMAGE);
+                if (hurtApplied) {
+                    stompTarget.push(
+                            Math.cos(yawToTarget) * STOMP_KNOCKBACK,
+                            0.1,
+                            Math.sin(yawToTarget) * STOMP_KNOCKBACK);
+                }
             }
         }
     }
@@ -236,15 +264,15 @@ public class AntRobot extends Mob {
         if (target == this.getFirstPassenger()) return false;
         double dist = this.distanceTo(target);
         if (dist > 9.0f || dist < 6.0f) return false;
-        if (target instanceof Player p && p.getAbilities().instabuild) return false;
+        if (target instanceof Player player && player.getAbilities().instabuild) return false;
         return true;
     }
 
     private LivingEntity findSomethingToAttack() {
         AABB searchBox = this.getBoundingBox().inflate(12.0, 12.0, 12.0);
         List<LivingEntity> entities = this.level().getEntitiesOfClass(LivingEntity.class, searchBox);
-        for (LivingEntity e : entities) {
-            if (isSuitableTarget(e)) return e;
+        for (LivingEntity candidate : entities) {
+            if (isSuitableTarget(candidate)) return candidate;
         }
         return null;
     }
@@ -253,7 +281,7 @@ public class AntRobot extends Mob {
         if (target == null || target == this || !target.isAlive()) return false;
         if (target instanceof AntRobot) return false;
         if (target == this.getFirstPassenger()) return false;
-        if (target instanceof Player p && p.getAbilities().instabuild) return false;
+        if (target instanceof Player player && player.getAbilities().instabuild) return false;
         return true;
     }
 }

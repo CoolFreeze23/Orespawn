@@ -30,14 +30,12 @@ public class Pointysaurus extends Monster {
     private static final EntityDataAccessor<Integer> DATA_ATTACKING =
             SynchedEntityData.defineId(Pointysaurus.class, EntityDataSerializers.INT);
 
-    private final Comparator<Entity> targetSorter;
     private final float moveSpeed = 0.35f;
     private LivingEntity revengeTarget = null;
 
     public Pointysaurus(EntityType<? extends Pointysaurus> type, Level level) {
         super(type, level);
         this.xpReward = 40;
-        this.targetSorter = Comparator.comparingDouble(this::distanceToSqr);
     }
 
     @Override
@@ -109,13 +107,13 @@ public class Pointysaurus extends Monster {
     public boolean doHurtTarget(Entity target) {
         if (super.doHurtTarget(target)) {
             if (target instanceof LivingEntity) {
-                double ks = 0.8;
-                double inair = 0.1;
-                float f3 = (float) Math.atan2(target.getZ() - this.getZ(), target.getX() - this.getX());
+                double knockbackHorizontal = 0.8;
+                double knockbackVertical = 0.1;
+                float pushAngle = (float) Math.atan2(target.getZ() - this.getZ(), target.getX() - this.getX());
                 if (target.isRemoved() || target instanceof Player) {
-                    inair *= 2.0;
+                    knockbackVertical *= 2.0;
                 }
-                target.push(Math.cos(f3) * ks, inair, Math.sin(f3) * ks);
+                target.push(Math.cos(pushAngle) * knockbackHorizontal, knockbackVertical, Math.sin(pushAngle) * knockbackHorizontal);
             }
             return true;
         }

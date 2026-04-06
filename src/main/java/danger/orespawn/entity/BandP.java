@@ -4,7 +4,6 @@ import java.util.Comparator;
 import java.util.List;
 
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -22,7 +21,6 @@ import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import danger.orespawn.OreSpawnMod;
 
 public class BandP extends Monster {
     private static final EntityDataAccessor<Integer> DATA_WHAT =
@@ -67,8 +65,8 @@ public class BandP extends Monster {
         return this.entityData.get(DATA_WHAT);
     }
 
-    public void setWhat(int par1) {
-        this.entityData.set(DATA_WHAT, par1);
+    public void setWhat(int value) {
+        this.entityData.set(DATA_WHAT, value);
     }
 
     @Override
@@ -130,15 +128,15 @@ public class BandP extends Monster {
         List<LivingEntity> list = this.level().getEntitiesOfClass(LivingEntity.class,
                 this.getBoundingBox().inflate(20.0, 6.0, 20.0));
         list.sort(this.targetSorter);
-        for (LivingEntity e : list) {
-            if (isSuitableTarget(e)) return e;
+        for (LivingEntity candidate : list) {
+            if (isSuitableTarget(candidate)) return candidate;
         }
         return null;
     }
 
     private boolean isSuitableTarget(LivingEntity target) {
         if (target == null || target == this || !target.isAlive()) return false;
-        if (target instanceof Player p) return !p.getAbilities().instabuild;
+        if (target instanceof Player player) return !player.getAbilities().instabuild;
         return false;
     }
 

@@ -80,8 +80,8 @@ public class EntityRotator extends Monster {
         }
 
         if (!this.level().isClientSide && !this.isPersistenceRequired() && this.busyFighting == 0) {
-            long t = this.level().getDayTime() % 24000L;
-            if (t < 12000L && this.random.nextInt(400) == 1) {
+            long dayTimeInCycle = this.level().getDayTime() % 24000L;
+            if (dayTimeInCycle < 12000L && this.random.nextInt(400) == 1) {
                 this.discard();
             }
         }

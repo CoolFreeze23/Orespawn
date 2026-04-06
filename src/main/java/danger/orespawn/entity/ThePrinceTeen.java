@@ -97,12 +97,12 @@ public class ThePrinceTeen extends TamableAnimal {
         builder.define(DATA_HEAD3, 0);
     }
 
-    @Override public boolean causeFallDamage(float f, float m, DamageSource s) { return false; }
+    @Override public boolean causeFallDamage(float fallDistance, float multiplier, DamageSource source) { return false; }
 
     public int getAttacking() { return this.entityData.get(DATA_ATTACKING); }
-    public void setAttacking(int v) { this.entityData.set(DATA_ATTACKING, v); }
+    public void setAttacking(int value) { this.entityData.set(DATA_ATTACKING, value); }
     public int getActivity() { return this.entityData.get(DATA_ACTIVITY); }
-    public void setActivity(int v) { this.entityData.set(DATA_ACTIVITY, v); }
+    public void setActivity(int value) { this.entityData.set(DATA_ACTIVITY, value); }
     public int getHead1Ext() { return this.entityData.get(DATA_HEAD1); }
     public int getHead2Ext() { return this.entityData.get(DATA_HEAD2); }
     public int getHead3Ext() { return this.entityData.get(DATA_HEAD3); }
@@ -142,8 +142,8 @@ public class ThePrinceTeen extends TamableAnimal {
         if (source.getMsgId().equals("cactus")) return false;
         boolean ret = super.hurt(source, amount);
         this.hurtTimer = 25;
-        Entity e = source.getEntity();
-        if (e instanceof LivingEntity living) {
+        Entity attacker = source.getEntity();
+        if (attacker instanceof LivingEntity living) {
             this.setTarget(living);
             this.getNavigation().moveTo(living, 1.2);
         }
@@ -163,8 +163,8 @@ public class ThePrinceTeen extends TamableAnimal {
                 this.getNavigation().moveTo(target, 1.5);
                 this.lookAt(target, 10.0f, 10.0f);
                 this.setAttacking(1);
-                double maxdist = 6.0 + target.getBbWidth() / 2.0;
-                if (this.distanceToSqr(target) < maxdist * maxdist) {
+                double meleeRange = 6.0 + target.getBbWidth() / 2.0;
+                if (this.distanceToSqr(target) < meleeRange * meleeRange) {
                     this.doHurtTarget(target);
                 }
             } else {

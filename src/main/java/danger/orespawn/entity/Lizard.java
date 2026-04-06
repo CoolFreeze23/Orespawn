@@ -52,8 +52,12 @@ public class Lizard extends TamableAnimal {
     public boolean shouldDespawn = true;
     private LivingEntity buddy = null;
     private int followTime = 0;
-    private int closest = 99999;
-    private int tx = 0, ty = 0, tz = 0;
+    private static final int NO_FIRE_FOUND_SENTINEL = 99999;
+
+    private int closestFireDistanceSq = NO_FIRE_FOUND_SENTINEL;
+    private int targetX = 0;
+    private int targetY = 0;
+    private int targetZ = 0;
 
     public Lizard(EntityType<? extends Lizard> type, Level level) {
         super(type, level);
@@ -93,8 +97,8 @@ public class Lizard extends TamableAnimal {
     public boolean hurt(DamageSource source, float amount) {
         if (source.getMsgId().equals("cactus")) return false;
         boolean ret = super.hurt(source, amount);
-        Entity e = source.getEntity();
-        if (e instanceof LivingEntity le) this.setLastHurtByMob(le);
+        Entity attacker = source.getEntity();
+        if (attacker instanceof LivingEntity livingAttacker) this.setLastHurtByMob(livingAttacker);
         this.followTime = 0;
         return ret;
     }
@@ -136,8 +140,8 @@ public class Lizard extends TamableAnimal {
         List<LivingEntity> entities = this.level().getEntitiesOfClass(LivingEntity.class,
                 this.getBoundingBox().inflate(12.0, 4.0, 12.0));
         entities.sort(this.targetSorter);
-        for (LivingEntity e : entities) {
-            if (this.isSuitableTarget(e)) return e;
+        for (LivingEntity targetEntity : entities) {
+            if (this.isSuitableTarget(targetEntity)) return targetEntity;
         }
         return null;
     }
@@ -148,13 +152,25 @@ public class Lizard extends TamableAnimal {
             for (int j = -dz; j <= dz; j++) {
                 BlockState state = this.level().getBlockState(new BlockPos(x + dx, y + i, z + j));
                 if (state.is(Blocks.LAVA) || state.is(Blocks.FIRE)) {
-                    int d = dx * dx + j * j + i * i;
-                    if (d < this.closest) { this.closest = d; this.tx = x + dx; this.ty = y + i; this.tz = z + j; found++; }
+                    int distSq = dx * dx + j * j + i * i;
+                    if (distSq < this.closestFireDistanceSq) {
+                        this.closestFireDistanceSq = distSq;
+                        this.targetX = x + dx;
+                        this.targetY = y + i;
+                        this.targetZ = z + j;
+                        found++;
+                    }
                 }
                 state = this.level().getBlockState(new BlockPos(x - dx, y + i, z + j));
                 if (state.is(Blocks.LAVA) || state.is(Blocks.FIRE)) {
-                    int d = dx * dx + j * j + i * i;
-                    if (d < this.closest) { this.closest = d; this.tx = x - dx; this.ty = y + i; this.tz = z + j; found++; }
+                    int distSq = dx * dx + j * j + i * i;
+                    if (distSq < this.closestFireDistanceSq) {
+                        this.closestFireDistanceSq = distSq;
+                        this.targetX = x - dx;
+                        this.targetY = y + i;
+                        this.targetZ = z + j;
+                        found++;
+                    }
                 }
             }
         }
@@ -170,30 +186,33 @@ public class Lizard extends TamableAnimal {
         else { this.shouldDespawn = true; }
 
         if (!this.isInWater() && this.random.nextInt(100) == 0) {
-            this.closest = 99999; this.tx = 0; this.ty = 0; this.tz = 0;
+            this.closestFireDistanceSq = NO_FIRE_FOUND_SENTINEL;
+            this.targetX = 0;
+            this.targetY = 0;
+            this.targetZ = 0;
             for (int i = 1; i < 14; i++) {
                 int j = Math.min(i, 5);
                 if (this.scanForFire((int) this.getX(), (int) this.getY() - 1, (int) this.getZ(), i, j, i)) break;
                 if (i >= 5) i++;
             }
-            if (this.closest < 99999) {
-                this.getNavigation().moveTo(this.tx, this.ty - 1, this.tz, 1.33);
+            if (this.closestFireDistanceSq < NO_FIRE_FOUND_SENTINEL) {
+                this.getNavigation().moveTo(this.targetX, this.targetY - 1, this.targetZ, 1.33);
             }
         }
 
         if (this.getHealth() < 30.0f && this.random.nextInt(300) == 1) this.heal(1.0f);
 
         if (this.level().getDifficulty() != Difficulty.PEACEFUL && this.random.nextInt(10) == 1) {
-            LivingEntity e = this.findSomethingToAttack();
-            if (e != null) {
+            LivingEntity prey = this.findSomethingToAttack();
+            if (prey != null) {
                 this.followTime = 0;
-                if (this.distanceToSqr(e) < 12.0) {
+                if (this.distanceToSqr(prey) < 12.0) {
                     this.setAttacking(1);
                     if (this.random.nextInt(4) == 0 || this.random.nextInt(5) == 1) {
-                        this.doHurtTarget(e);
+                        this.doHurtTarget(prey);
                     }
                 } else {
-                    this.getNavigation().moveTo(e, 1.2);
+                    this.getNavigation().moveTo(prey, 1.2);
                 }
             } else {
                 if (this.buddy != null && !this.buddy.isRemoved() && this.random.nextInt(15) == 1) {

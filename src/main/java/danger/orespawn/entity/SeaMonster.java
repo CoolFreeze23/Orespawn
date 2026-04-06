@@ -39,10 +39,10 @@ public class SeaMonster extends Monster {
     private static final double MOVE_SPEED = 0.25;
     private static final double ATTACK_DAMAGE = 15.0;
 
-    private int hurtTimer = 0;
+    private int hurtCooldown = 0;
     private float dynamicMoveSpeed = 0.25f;
-    private int closest = 99999;
-    private int tx = 0, ty = 0, tz = 0;
+    private int closestWaterDistance = 99999;
+    private int targetX = 0, targetY = 0, targetZ = 0;
 
     public SeaMonster(EntityType<? extends SeaMonster> type, Level level) {
         super(type, level);
@@ -90,11 +90,11 @@ public class SeaMonster extends Monster {
     public boolean doHurtTarget(Entity target) {
         if (super.doHurtTarget(target)) {
             if (target instanceof LivingEntity) {
-                double ks = 0.6;
-                double inair = 0.1;
-                float angle = (float) Math.atan2(target.getZ() - this.getZ(), target.getX() - this.getX());
-                if (target instanceof Player) inair *= 2.0;
-                target.push(Math.cos(angle) * ks, inair, Math.sin(angle) * ks);
+                double knockbackStrength = 0.6;
+                double upwardKnockback = 0.1;
+                float angleToTarget = (float) Math.atan2(target.getZ() - this.getZ(), target.getX() - this.getX());
+                if (target instanceof Player) upwardKnockback *= 2.0;
+                target.push(Math.cos(angleToTarget) * knockbackStrength, upwardKnockback, Math.sin(angleToTarget) * knockbackStrength);
             }
             return true;
         }
@@ -104,14 +104,14 @@ public class SeaMonster extends Monster {
     @Override
     public boolean hurt(DamageSource source, float amount) {
         if (source.type().msgId().equals("cactus")) return false;
-        Entity e = source.getEntity();
+        Entity attacker = source.getEntity();
         boolean ret = false;
-        if (this.hurtTimer <= 0) {
+        if (this.hurtCooldown <= 0) {
             ret = super.hurt(source, amount);
-            this.hurtTimer = 8;
+            this.hurtCooldown = 8;
         }
-        if (e instanceof Mob mob) {
-            if (e instanceof SeaMonster) return false;
+        if (attacker instanceof Mob mob) {
+            if (attacker instanceof SeaMonster) return false;
             this.setTarget(mob);
             this.getNavigation().moveTo(mob, 1.2);
         }
@@ -123,18 +123,18 @@ public class SeaMonster extends Monster {
         if (this.isRemoved()) return;
         super.customServerAiStep();
 
-        if (this.hurtTimer > 0) --this.hurtTimer;
+        if (this.hurtCooldown > 0) --this.hurtCooldown;
 
         if (!this.isInWater() && this.random.nextInt(25) == 0) {
-            this.closest = 99999;
-            this.tx = 0; this.ty = 0; this.tz = 0;
+            this.closestWaterDistance = 99999;
+            this.targetX = 0; this.targetY = 0; this.targetZ = 0;
             for (int i = 1; i < 12; ++i) {
                 int j = Math.min(i, 10);
                 if (this.scanForWater((int) this.getX(), (int) this.getY() - 1, (int) this.getZ(), i, j, i)) break;
                 if (i >= 5) ++i;
             }
-            if (this.closest < 99999) {
-                this.getNavigation().moveTo(this.tx, this.ty - 1, this.tz, 1.33);
+            if (this.closestWaterDistance < 99999) {
+                this.getNavigation().moveTo(this.targetX, this.targetY - 1, this.targetZ, 1.33);
             } else {
                 if (this.random.nextInt(40) == 1) {
                     this.hurt(this.damageSources().dryOut(), 1.0f);
@@ -196,8 +196,8 @@ public class SeaMonster extends Monster {
 
     private int checkWaterAt(int x, int y, int z, int dist) {
         BlockState state = this.level().getBlockState(new BlockPos(x, y, z));
-        if (state.is(Blocks.WATER) && dist < this.closest) {
-            this.closest = dist; this.tx = x; this.ty = y; this.tz = z;
+        if (state.is(Blocks.WATER) && dist < this.closestWaterDistance) {
+            this.closestWaterDistance = dist; this.targetX = x; this.targetY = y; this.targetZ = z;
             return 1;
         }
         return 0;

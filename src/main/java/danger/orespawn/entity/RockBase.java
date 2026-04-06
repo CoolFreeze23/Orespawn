@@ -43,9 +43,9 @@ public class RockBase extends Mob {
 
     public int getRockType() { return this.entityData.get(DATA_ROCK_TYPE); }
 
-    public void setRockType(int v) {
+    public void setRockType(int type) {
         if (this.level() == null || this.level().isClientSide()) return;
-        this.entityData.set(DATA_ROCK_TYPE, v);
+        this.entityData.set(DATA_ROCK_TYPE, type);
     }
 
     public void placeRock(int type) {
@@ -58,8 +58,8 @@ public class RockBase extends Mob {
     @Override
     public boolean hurt(DamageSource source, float amount) {
         if (source.getMsgId().equals("inWall")) return false;
-        Entity e = source.getEntity();
-        if (e instanceof LivingEntity) {
+        Entity attacker = source.getEntity();
+        if (attacker instanceof LivingEntity) {
             this.playSound(SoundEvents.ITEM_PICKUP, 0.75f, 2.25f);
         }
         return super.hurt(source, amount);

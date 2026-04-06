@@ -130,9 +130,9 @@ public class Ostrich extends TamableAnimal {
     public boolean isFood(ItemStack stack) { return stack.is(Items.WHEAT); }
 
     @Override
-    public boolean causeFallDamage(float d, float m, DamageSource s) { return false; }
+    public boolean causeFallDamage(float fallDistance, float multiplier, DamageSource source) { return false; }
     @Override
-    protected void checkFallDamage(double y, boolean g, BlockState st, BlockPos p) { }
+    protected void checkFallDamage(double y, boolean onGround, BlockState state, BlockPos pos) { }
 
     @Override
     public boolean removeWhenFarAway(double dist) {

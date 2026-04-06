@@ -90,10 +90,10 @@ public class Frog extends Animal {
         double newMotionY = motion.y + (0.75 + Math.abs(this.random.nextFloat() * 0.55f));
         this.setPos(this.getX(), this.getY() + 0.35, this.getZ());
 
-        float f = 0.7f + Math.abs(this.random.nextFloat() * 0.75f);
-        float d = (float) Math.toRadians(this.getYRot());
-        double newMotionX = motion.x - (double) f * Math.sin(d);
-        double newMotionZ = motion.z + (double) f * Math.cos(d);
+        float horizontalJumpStrength = 0.7f + Math.abs(this.random.nextFloat() * 0.75f);
+        float yawRadians = (float) Math.toRadians(this.getYRot());
+        double newMotionX = motion.x - (double) horizontalJumpStrength * Math.sin(yawRadians);
+        double newMotionZ = motion.z + (double) horizontalJumpStrength * Math.cos(yawRadians);
 
         this.setDeltaMovement(newMotionX, newMotionY, newMotionZ);
         this.hasImpulse = true;

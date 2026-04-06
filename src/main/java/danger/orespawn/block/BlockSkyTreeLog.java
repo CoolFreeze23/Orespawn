@@ -8,6 +8,8 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 
 public class BlockSkyTreeLog extends Block {
+    private static final int MAX_BREAK_RECURSION_DEPTH = 1000;
+
     public BlockSkyTreeLog(BlockBehaviour.Properties properties) {
         super(properties);
     }
@@ -15,35 +17,35 @@ public class BlockSkyTreeLog extends Block {
     @Override
     public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
         if (!state.is(newState.getBlock())) {
-            breakRecursor(level, pos, pos, 0);
+            breakAdjacentLogs(level, pos, pos, 0);
         }
         super.onRemove(state, level, pos, newState, movedByPiston);
     }
 
-    private void breakRecursor(Level level, BlockPos pos, BlockPos from, int recursion) {
-        if (recursion > 1000) return;
+    private void breakAdjacentLogs(Level level, BlockPos pos, BlockPos brokenFrom, int searchDepth) {
+        if (searchDepth > MAX_BREAK_RECURSION_DEPTH) return;
 
         for (int dx = -1; dx <= 1; dx++) {
             for (int dy = -1; dy <= 1; dy++) {
                 for (int dz = -1; dz <= 1; dz++) {
                     if (dx == 0 && dy == 0 && dz == 0) continue;
-                    BlockPos target = pos.offset(dx, dy, dz);
+                    BlockPos neighbor = pos.offset(dx, dy, dz);
 
-                    if (target.equals(from)) continue;
-                    if (recursion > 0 && isNear(target, from)) continue;
+                    if (neighbor.equals(brokenFrom)) continue;
+                    if (searchDepth > 0 && isAdjacent(neighbor, brokenFrom)) continue;
 
-                    BlockState targetState = level.getBlockState(target);
-                    if (targetState.is(this)) {
-                        level.setBlock(target, Blocks.AIR.defaultBlockState(), 2);
-                        Block.dropResources(targetState, level, target);
-                        breakRecursor(level, target, pos, recursion + 1);
+                    BlockState neighborState = level.getBlockState(neighbor);
+                    if (neighborState.is(this)) {
+                        level.setBlock(neighbor, Blocks.AIR.defaultBlockState(), 2);
+                        Block.dropResources(neighborState, level, neighbor);
+                        breakAdjacentLogs(level, neighbor, pos, searchDepth + 1);
                     }
                 }
             }
         }
     }
 
-    private boolean isNear(BlockPos a, BlockPos b) {
+    private boolean isAdjacent(BlockPos a, BlockPos b) {
         return Math.abs(a.getX() - b.getX()) <= 1
                 && Math.abs(a.getY() - b.getY()) <= 1
                 && Math.abs(a.getZ() - b.getZ()) <= 1;

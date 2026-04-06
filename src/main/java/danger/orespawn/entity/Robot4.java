@@ -75,8 +75,8 @@ public class Robot4 extends Monster {
 
     @Override
     public void jumpFromGround() {
-        Vec3 dm = this.getDeltaMovement();
-        this.setDeltaMovement(dm.x, dm.y + 0.25, dm.z);
+        Vec3 velocity = this.getDeltaMovement();
+        this.setDeltaMovement(velocity.x, velocity.y + 0.25, velocity.z);
         super.jumpFromGround();
     }
 
@@ -95,12 +95,12 @@ public class Robot4 extends Monster {
 
     @Override
     public boolean doHurtTarget(Entity target) {
-        if (target instanceof LivingEntity le) {
-            double ks = 2.0;
-            double inair = 0.12;
-            float f3 = (float) Math.atan2(le.getZ() - this.getZ(), le.getX() - this.getX());
-            if (le.isRemoved() || le instanceof Player) inair *= 2.0;
-            le.push(Math.cos(f3) * ks, inair, Math.sin(f3) * ks);
+        if (target instanceof LivingEntity livingTarget) {
+            double knockbackStrength = 2.0;
+            double upwardKnockback = 0.12;
+            float angleToTarget = (float) Math.atan2(livingTarget.getZ() - this.getZ(), livingTarget.getX() - this.getX());
+            if (livingTarget.isRemoved() || livingTarget instanceof Player) upwardKnockback *= 2.0;
+            livingTarget.push(Math.cos(angleToTarget) * knockbackStrength, upwardKnockback, Math.sin(angleToTarget) * knockbackStrength);
         }
         return super.doHurtTarget(target);
     }
@@ -112,20 +112,20 @@ public class Robot4 extends Monster {
         if (this.reloadTicker > 0) --this.reloadTicker;
         if (this.wasAttackedTicker > 0) --this.wasAttackedTicker;
         if (this.reloadTicker == 0 && this.getRandom().nextInt(8) == 1) {
-            LivingEntity e = this.getTarget();
+            LivingEntity target = this.getTarget();
             if (this.getRandom().nextInt(50) == 1) this.setTarget(null);
-            if (e != null && !e.isAlive()) { this.setTarget(null); e = null; }
-            if (e == null) e = findSomethingToAttack();
-            if (e != null) {
-                this.lookAt(e, 10.0f, 10.0f);
-                if (this.distanceToSqr(e) < 256.0) {
-                    double meleeRange = (3.0f + e.getBbWidth() / 2.0f);
-                    if (this.distanceToSqr(e) < meleeRange * meleeRange) {
-                        this.doHurtTarget(e);
+            if (target != null && !target.isAlive()) { this.setTarget(null); target = null; }
+            if (target == null) target = findSomethingToAttack();
+            if (target != null) {
+                this.lookAt(target, 10.0f, 10.0f);
+                if (this.distanceToSqr(target) < 256.0) {
+                    double meleeRange = (3.0f + target.getBbWidth() / 2.0f);
+                    if (this.distanceToSqr(target) < meleeRange * meleeRange) {
+                        this.doHurtTarget(target);
                     }
                     this.setAttacking(1);
                     this.reloadTicker = 10;
-                    this.getNavigation().moveTo(e, 0.75);
+                    this.getNavigation().moveTo(target, 0.75);
                 }
             }
         }
@@ -141,8 +141,8 @@ public class Robot4 extends Monster {
         this.wasAttackedTicker = 65;
         this.setAttacking(1);
         boolean ret = super.hurt(source, amount);
-        Entity e = source.getEntity();
-        if (e instanceof Mob mob) {
+        Entity attacker = source.getEntity();
+        if (attacker instanceof Mob mob) {
             this.setTarget(mob);
             this.getNavigation().moveTo(mob, 1.2);
         }

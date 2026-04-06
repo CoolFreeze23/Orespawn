@@ -17,6 +17,9 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 
 public class Firefly extends AmbientCreature {
+    private static final long DAY_LENGTH_TICKS = 24000L;
+    private static final long NIGHTFALL_START_TICK = 11000L;
+
     int myBlink = 20 + this.random.nextInt(20);
     int blinker = 0;
     private BlockPos currentFlightTarget = null;
@@ -39,13 +42,13 @@ public class Firefly extends AmbientCreature {
     @Override
     public void tick() {
         super.tick();
-        Vec3 mot = this.getDeltaMovement();
-        this.setDeltaMovement(mot.x, mot.y * 0.6, mot.z);
+        Vec3 motion = this.getDeltaMovement();
+        this.setDeltaMovement(motion.x, motion.y * 0.6, motion.z);
         this.blinker++;
         if (this.blinker > this.myBlink) this.blinker = 0;
         if (this.isPersistenceRequired()) return;
-        long t = this.level().getDayTime() % 24000L;
-        if (t > 11000L) return;
+        long dayTime = this.level().getDayTime() % DAY_LENGTH_TICKS;
+        if (dayTime > NIGHTFALL_START_TICK) return;
         if (this.random.nextInt(500) == 1) this.discard();
     }
 
@@ -75,10 +78,10 @@ public class Firefly extends AmbientCreature {
         double dx = this.currentFlightTarget.getX() + 0.5 - this.getX();
         double dy = this.currentFlightTarget.getY() + 0.1 - this.getY();
         double dz = this.currentFlightTarget.getZ() + 0.5 - this.getZ();
-        Vec3 mot = this.getDeltaMovement();
-        double mx = mot.x + (Math.signum(dx) * 0.2 - mot.x) * 0.1;
-        double my = mot.y + (Math.signum(dy) * 0.7 - mot.y) * 0.1;
-        double mz = mot.z + (Math.signum(dz) * 0.2 - mot.z) * 0.1;
+        Vec3 motion = this.getDeltaMovement();
+        double mx = motion.x + (Math.signum(dx) * 0.2 - motion.x) * 0.1;
+        double my = motion.y + (Math.signum(dy) * 0.7 - motion.y) * 0.1;
+        double mz = motion.z + (Math.signum(dz) * 0.2 - motion.z) * 0.1;
         this.setDeltaMovement(mx, my, mz);
 
         float targetYaw = (float) (Math.atan2(mz, mx) * 180.0 / Math.PI) - 90.0f;
@@ -101,10 +104,10 @@ public class Firefly extends AmbientCreature {
     public boolean isPushable() { return true; }
 
     @Override
-    public boolean causeFallDamage(float d, float m, DamageSource s) { return false; }
+    public boolean causeFallDamage(float fallDistance, float multiplier, DamageSource source) { return false; }
 
     @Override
-    protected void checkFallDamage(double y, boolean g, BlockState st, BlockPos p) { }
+    protected void checkFallDamage(double y, boolean onGround, BlockState state, BlockPos pos) { }
 
     @Override
     public boolean removeWhenFarAway(double dist) {

@@ -12,6 +12,9 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 
 public class StepAccross extends Item {
+    private static final int BRIDGE_LENGTH = 33;
+    private static final int TORCH_INTERVAL = 4;
+
     public StepAccross(Item.Properties properties) {
         super(properties);
     }
@@ -27,19 +30,15 @@ public class StepAccross extends Item {
         BlockPos pos = context.getClickedPos();
         Direction facing = player.getDirection();
 
-        int dx = facing.getStepX();
-        int dz = facing.getStepZ();
+        int forwardX = facing.getStepX();
+        int forwardZ = facing.getStepZ();
 
-        for (int i = 0; i < 33; i++) {
-            BlockPos step = pos.offset(dx * i, 0, dz * i);
+        for (int stepIndex = 0; stepIndex < BRIDGE_LENGTH; stepIndex++) {
+            BlockPos step = pos.offset(forwardX * stepIndex, 0, forwardZ * stepIndex);
             if (level.getBlockState(step).isAir() || !level.getBlockState(step).isSolidRender(level, step)) {
                 level.setBlock(step, Blocks.COBBLESTONE.defaultBlockState(), 3);
             }
-            BlockPos above = step.above();
-            if (level.getBlockState(above).isAir()) {
-                // keep air
-            }
-            if (i % 4 == 0) {
+            if (stepIndex % TORCH_INTERVAL == 0) {
                 BlockPos torchPos = step.above();
                 if (level.getBlockState(torchPos).isAir()) {
                     level.setBlock(torchPos, Blocks.TORCH.defaultBlockState(), 3);

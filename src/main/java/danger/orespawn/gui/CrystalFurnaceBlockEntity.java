@@ -20,7 +20,18 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 
 public class CrystalFurnaceBlockEntity extends BlockEntity implements MenuProvider {
-    private NonNullList<ItemStack> items = NonNullList.withSize(3, ItemStack.EMPTY);
+    private static final int INVENTORY_SIZE = 3;
+    private static final int SLOT_INPUT = 0;
+    private static final int SLOT_FUEL = 1;
+    /** Smelt completes in half the time of a vanilla furnace (200 -> 100 ticks). */
+    private static final int CRYSTAL_SMELT_DURATION_TICKS = 100;
+    private static final int CONTAINER_DATA_SIZE = 4;
+    private static final int DATA_INDEX_BURN_TIME = 0;
+    private static final int DATA_INDEX_MAX_BURN_TIME = 1;
+    private static final int DATA_INDEX_COOK_TIME = 2;
+    private static final int DATA_INDEX_MAX_COOK_TIME = 3;
+
+    private NonNullList<ItemStack> items = NonNullList.withSize(INVENTORY_SIZE, ItemStack.EMPTY);
     private int burnTime;
     private int maxBurnTime;
     private int cookTime;
@@ -30,10 +41,10 @@ public class CrystalFurnaceBlockEntity extends BlockEntity implements MenuProvid
         @Override
         public int get(int index) {
             return switch (index) {
-                case 0 -> CrystalFurnaceBlockEntity.this.burnTime;
-                case 1 -> CrystalFurnaceBlockEntity.this.maxBurnTime;
-                case 2 -> CrystalFurnaceBlockEntity.this.cookTime;
-                case 3 -> CrystalFurnaceBlockEntity.this.maxCookTime;
+                case DATA_INDEX_BURN_TIME -> CrystalFurnaceBlockEntity.this.burnTime;
+                case DATA_INDEX_MAX_BURN_TIME -> CrystalFurnaceBlockEntity.this.maxBurnTime;
+                case DATA_INDEX_COOK_TIME -> CrystalFurnaceBlockEntity.this.cookTime;
+                case DATA_INDEX_MAX_COOK_TIME -> CrystalFurnaceBlockEntity.this.maxCookTime;
                 default -> 0;
             };
         }
@@ -41,16 +52,16 @@ public class CrystalFurnaceBlockEntity extends BlockEntity implements MenuProvid
         @Override
         public void set(int index, int value) {
             switch (index) {
-                case 0 -> CrystalFurnaceBlockEntity.this.burnTime = value;
-                case 1 -> CrystalFurnaceBlockEntity.this.maxBurnTime = value;
-                case 2 -> CrystalFurnaceBlockEntity.this.cookTime = value;
-                case 3 -> CrystalFurnaceBlockEntity.this.maxCookTime = value;
+                case DATA_INDEX_BURN_TIME -> CrystalFurnaceBlockEntity.this.burnTime = value;
+                case DATA_INDEX_MAX_BURN_TIME -> CrystalFurnaceBlockEntity.this.maxBurnTime = value;
+                case DATA_INDEX_COOK_TIME -> CrystalFurnaceBlockEntity.this.cookTime = value;
+                case DATA_INDEX_MAX_COOK_TIME -> CrystalFurnaceBlockEntity.this.maxCookTime = value;
             }
         }
 
         @Override
         public int getCount() {
-            return 4;
+            return CONTAINER_DATA_SIZE;
         }
     };
 
@@ -81,7 +92,7 @@ public class CrystalFurnaceBlockEntity extends BlockEntity implements MenuProvid
     @Override
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
-        this.items = NonNullList.withSize(3, ItemStack.EMPTY);
+        this.items = NonNullList.withSize(INVENTORY_SIZE, ItemStack.EMPTY);
         ContainerHelper.loadAllItems(tag, this.items, registries);
         this.burnTime = tag.getInt("BurnTime");
         this.cookTime = tag.getInt("CookTime");
@@ -89,8 +100,6 @@ public class CrystalFurnaceBlockEntity extends BlockEntity implements MenuProvid
     }
 
     public static void serverTick(Level level, BlockPos pos, BlockState state, CrystalFurnaceBlockEntity blockEntity) {
-        // Crystal furnace smelts at 2x speed (100 ticks instead of 200)
-        boolean wasBurning = blockEntity.burnTime > 0;
         boolean changed = false;
 
         if (blockEntity.burnTime > 0) {
@@ -98,8 +107,8 @@ public class CrystalFurnaceBlockEntity extends BlockEntity implements MenuProvid
         }
 
         if (!level.isClientSide()) {
-            ItemStack fuel = blockEntity.items.get(1);
-            ItemStack input = blockEntity.items.get(0);
+            ItemStack fuel = blockEntity.items.get(SLOT_FUEL);
+            ItemStack input = blockEntity.items.get(SLOT_INPUT);
 
             if (blockEntity.burnTime == 0 && !fuel.isEmpty() && !input.isEmpty()) {
                 blockEntity.burnTime = fuel.getBurnTime(RecipeType.SMELTING);
@@ -112,7 +121,7 @@ public class CrystalFurnaceBlockEntity extends BlockEntity implements MenuProvid
 
             if (blockEntity.burnTime > 0 && !input.isEmpty()) {
                 blockEntity.cookTime++;
-                if (blockEntity.cookTime >= 100) {
+                if (blockEntity.cookTime >= CRYSTAL_SMELT_DURATION_TICKS) {
                     blockEntity.cookTime = 0;
                     changed = true;
                 }

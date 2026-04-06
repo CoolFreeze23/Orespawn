@@ -106,14 +106,14 @@ public class EntityEmperorScorpion extends Monster {
     public boolean doHurtTarget(Entity target) {
         if (super.doHurtTarget(target)) {
             if (target instanceof LivingEntity living) {
-                double ks = 3.0;
-                double inair = 0.2;
+                double knockbackStrength = 3.0;
+                double verticalKnockback = 0.2;
                 if (this.random.nextInt(3) == 1) {
                     living.addEffect(new MobEffectInstance(MobEffects.POISON, 90, 0));
                 }
                 float angle = (float) Math.atan2(target.getZ() - this.getZ(), target.getX() - this.getX());
-                if (target.isRemoved() || target instanceof Player) inair *= 2.0;
-                target.push(Math.cos(angle) * ks, inair, Math.sin(angle) * ks);
+                if (target.isRemoved() || target instanceof Player) verticalKnockback *= 2.0;
+                target.push(Math.cos(angle) * knockbackStrength, verticalKnockback, Math.sin(angle) * knockbackStrength);
             }
             return true;
         }
@@ -199,8 +199,8 @@ public class EntityEmperorScorpion extends Monster {
         List<LivingEntity> entities = this.level().getEntitiesOfClass(LivingEntity.class,
                 this.getBoundingBox().inflate(24.0, 6.0, 24.0));
         entities.sort(Comparator.comparingDouble(this::distanceToSqr));
-        for (LivingEntity e : entities) {
-            if (isSuitableTarget(e)) return e;
+        for (LivingEntity candidate : entities) {
+            if (isSuitableTarget(candidate)) return candidate;
         }
         return null;
     }

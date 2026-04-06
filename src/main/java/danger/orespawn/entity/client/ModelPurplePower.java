@@ -9,14 +9,14 @@ import net.minecraft.client.model.geom.builders.*;
 import danger.orespawn.entity.PurplePower;
 
 public class ModelPurplePower extends EntityModel<PurplePower> {
-    private final ModelPart Shape1;
-    private final ModelPart Shape2;
-    private final ModelPart Shape3;
+    private final ModelPart innerSpoke;
+    private final ModelPart middleSpoke;
+    private final ModelPart outerSpoke;
 
     public ModelPurplePower(ModelPart root) {
-        this.Shape1 = root.getChild("Shape1");
-        this.Shape2 = root.getChild("Shape2");
-        this.Shape3 = root.getChild("Shape3");
+        this.innerSpoke = root.getChild("Shape1");
+        this.middleSpoke = root.getChild("Shape2");
+        this.outerSpoke = root.getChild("Shape3");
     }
 
     public static LayerDefinition createBodyLayer() {
@@ -47,12 +47,12 @@ public class ModelPurplePower extends EntityModel<PurplePower> {
         float angle2 = (float) Math.toRadians(ageInTicks * 5.1F);
         float angle3 = (float) Math.toRadians(ageInTicks * 3.7F);
 
-        this.Shape1.zRot = angle1;
-        this.Shape1.xRot = angle2;
-        this.Shape2.zRot = angle2;
-        this.Shape2.yRot = angle3;
-        this.Shape3.zRot = angle3;
-        this.Shape3.xRot = angle1;
+        this.innerSpoke.zRot = angle1;
+        this.innerSpoke.xRot = angle2;
+        this.middleSpoke.zRot = angle2;
+        this.middleSpoke.yRot = angle3;
+        this.outerSpoke.zRot = angle3;
+        this.outerSpoke.xRot = angle1;
     }
 
     @Override
@@ -60,19 +60,19 @@ public class ModelPurplePower extends EntityModel<PurplePower> {
         for (int i = 0; i < 6; i++) {
             poseStack.pushPose();
             poseStack.mulPose(com.mojang.math.Axis.ZP.rotation(i * 1.0471976F));
-            this.Shape1.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+            this.innerSpoke.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
             poseStack.popPose();
         }
         for (int i = 0; i < 6; i++) {
             poseStack.pushPose();
             poseStack.mulPose(com.mojang.math.Axis.ZP.rotation(i * 1.0471976F));
-            this.Shape2.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+            this.middleSpoke.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
             poseStack.popPose();
         }
         for (int i = 0; i < 6; i++) {
             poseStack.pushPose();
             poseStack.mulPose(com.mojang.math.Axis.ZP.rotation(i * 1.0471976F));
-            this.Shape3.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+            this.outerSpoke.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
             poseStack.popPose();
         }
     }

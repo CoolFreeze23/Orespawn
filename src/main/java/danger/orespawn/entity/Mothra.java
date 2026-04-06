@@ -75,8 +75,8 @@ public class Mothra extends EntityButterfly {
     @Override
     public void tick() {
         super.tick();
-        Vec3 mot = this.getDeltaMovement();
-        this.setDeltaMovement(mot.x, mot.y * 0.6, mot.z);
+        Vec3 motion = this.getDeltaMovement();
+        this.setDeltaMovement(motion.x, motion.y * 0.6, motion.z);
 
         this.wingSound++;
         if (this.wingSound > 30) {
@@ -95,11 +95,11 @@ public class Mothra extends EntityButterfly {
 
     @Override
     public boolean hurt(DamageSource source, float amount) {
-        Entity e = source.getEntity();
-        if (e instanceof Mothra) return false;
+        Entity attacker = source.getEntity();
+        if (attacker instanceof Mothra) return false;
         boolean ret = super.hurt(source, amount);
-        if (e != null && this.currentFlightTarget != null) {
-            this.currentFlightTarget = new BlockPos((int) e.getX(), (int) e.getY() + 2, (int) e.getZ());
+        if (attacker != null && this.currentFlightTarget != null) {
+            this.currentFlightTarget = new BlockPos((int) attacker.getX(), (int) attacker.getY() + 2, (int) attacker.getZ());
         }
         return ret;
     }
@@ -116,8 +116,8 @@ public class Mothra extends EntityButterfly {
         List<LivingEntity> entities = this.level().getEntitiesOfClass(LivingEntity.class,
                 this.getBoundingBox().inflate(15.0, 20.0, 15.0));
         entities.sort(this.targetSorter);
-        for (LivingEntity e : entities) {
-            if (this.isSuitableTarget(e)) return e;
+        for (LivingEntity targetEntity : entities) {
+            if (this.isSuitableTarget(targetEntity)) return targetEntity;
         }
         return null;
     }
@@ -173,10 +173,10 @@ public class Mothra extends EntityButterfly {
                 if (this.random.nextInt(3) == 0) this.attackWithFireball(target);
             }
             if (target == null && this.random.nextInt(3) == 0) {
-                LivingEntity e = this.findSomethingToAttack();
-                if (e != null) {
-                    this.currentFlightTarget = new BlockPos((int) e.getX(), (int) e.getY() + 5, (int) e.getZ());
-                    if (this.random.nextInt(3) == 0) this.attackWithFireball(e);
+                LivingEntity hostile = this.findSomethingToAttack();
+                if (hostile != null) {
+                    this.currentFlightTarget = new BlockPos((int) hostile.getX(), (int) hostile.getY() + 5, (int) hostile.getZ());
+                    if (this.random.nextInt(3) == 0) this.attackWithFireball(hostile);
                 }
             }
         }
@@ -184,10 +184,10 @@ public class Mothra extends EntityButterfly {
         double dx = this.currentFlightTarget.getX() + 0.5 - this.getX();
         double dy = this.currentFlightTarget.getY() + 0.1 - this.getY();
         double dz = this.currentFlightTarget.getZ() + 0.5 - this.getZ();
-        Vec3 mot = this.getDeltaMovement();
-        double mx = mot.x + (Math.signum(dx) * 0.5 - mot.x) * 0.30001;
-        double my = mot.y + (Math.signum(dy) * 0.7 - mot.y) * 0.20001;
-        double mz = mot.z + (Math.signum(dz) * 0.5 - mot.z) * 0.30001;
+        Vec3 motion = this.getDeltaMovement();
+        double mx = motion.x + (Math.signum(dx) * 0.5 - motion.x) * 0.30001;
+        double my = motion.y + (Math.signum(dy) * 0.7 - motion.y) * 0.20001;
+        double mz = motion.z + (Math.signum(dz) * 0.5 - motion.z) * 0.30001;
         this.setDeltaMovement(mx, my, mz);
 
         float targetYaw = (float) (Math.atan2(mz, mx) * 180.0 / Math.PI) - 90.0f;

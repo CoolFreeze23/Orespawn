@@ -22,7 +22,6 @@ import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.resources.ResourceLocation;
@@ -102,11 +101,11 @@ public class PitchBlack extends Monster {
             float scale = this.getPitchBlackScale();
             boolean ret = le.hurt(this.damageSources().mobAttack(this), 50.0f * scale);
             if (ret) {
-                double ks = 1.15 * scale;
-                double inair = 0.08 * scale;
-                float f3 = (float) Math.atan2(le.getZ() - this.getZ(), le.getX() - this.getX());
-                if (le.isRemoved() || le instanceof Player) inair *= 2.0;
-                le.push(Math.cos(f3) * ks, inair, Math.sin(f3) * ks);
+                double knockbackHorizontal = 1.15 * scale;
+                double knockbackVertical = 0.08 * scale;
+                float pushAngle = (float) Math.atan2(le.getZ() - this.getZ(), le.getX() - this.getX());
+                if (le.isRemoved() || le instanceof Player) knockbackVertical *= 2.0;
+                le.push(Math.cos(pushAngle) * knockbackHorizontal, knockbackVertical, Math.sin(pushAngle) * knockbackHorizontal);
             }
             return ret;
         }
@@ -124,8 +123,8 @@ public class PitchBlack extends Monster {
             }
             this.wingSound = 0;
         }
-        Vec3 dm = this.getDeltaMovement();
-        this.setDeltaMovement(dm.x, dm.y * 0.6, dm.z);
+        Vec3 motion = this.getDeltaMovement();
+        this.setDeltaMovement(motion.x, motion.y * 0.6, motion.z);
     }
 
     @Override
@@ -134,8 +133,8 @@ public class PitchBlack extends Monster {
         if (this.getActivity() == 0) {
             super.customServerAiStep();
             if (this.getRandom().nextInt(10) == 1) {
-                Entity e = findSomethingToAttack();
-                if (e != null) {
+                LivingEntity spottedTarget = findSomethingToAttack();
+                if (spottedTarget != null) {
                     this.setActivity(1);
                     this.getNavigation().stop();
                 }
@@ -158,31 +157,31 @@ public class PitchBlack extends Monster {
                     (int) this.getY() + this.getRandom().nextInt(11) - 5,
                     (int) this.getZ() + zdir);
         } else if (this.getRandom().nextInt(8) == 0) {
-            Entity e = findSomethingToAttack();
-            if (e != null) {
-                double d1 = 5.0 + e.getBbWidth() / 2.0f + scale;
+            LivingEntity chaseTarget = findSomethingToAttack();
+            if (chaseTarget != null) {
+                double meleeRadius = 5.0 + chaseTarget.getBbWidth() / 2.0f + scale;
                 this.setAttacking(1);
-                this.currentFlightTarget = new BlockPos((int) e.getX(), (int) (e.getY() + 2), (int) e.getZ());
-                if (this.distanceToSqr(e) < d1 * d1) {
-                    this.doHurtTarget(e);
+                this.currentFlightTarget = new BlockPos((int) chaseTarget.getX(), (int) (chaseTarget.getY() + 2), (int) chaseTarget.getZ());
+                if (this.distanceToSqr(chaseTarget) < meleeRadius * meleeRadius) {
+                    this.doHurtTarget(chaseTarget);
                 }
             } else {
                 this.setAttacking(0);
             }
         }
-        double var1 = this.currentFlightTarget.getX() + 0.4 - this.getX();
-        double var3 = this.currentFlightTarget.getY() + 0.1 - this.getY();
-        double var5 = this.currentFlightTarget.getZ() + 0.4 - this.getZ();
-        double myspeed = 0.5f + scale / 10.0f;
-        Vec3 dm = this.getDeltaMovement();
+        double toTargetX = this.currentFlightTarget.getX() + 0.4 - this.getX();
+        double toTargetY = this.currentFlightTarget.getY() + 0.1 - this.getY();
+        double toTargetZ = this.currentFlightTarget.getZ() + 0.4 - this.getZ();
+        double flightSpeed = 0.5f + scale / 10.0f;
+        Vec3 motion = this.getDeltaMovement();
         this.setDeltaMovement(
-                dm.x + (Math.signum(var1) * myspeed - dm.x) * 0.33,
-                dm.y + (Math.signum(var3) * 0.7 - dm.y) * 0.2,
-                dm.z + (Math.signum(var5) * myspeed - dm.z) * 0.33
+                motion.x + (Math.signum(toTargetX) * flightSpeed - motion.x) * 0.33,
+                motion.y + (Math.signum(toTargetY) * 0.7 - motion.y) * 0.2,
+                motion.z + (Math.signum(toTargetZ) * flightSpeed - motion.z) * 0.33
         );
-        float var7 = (float) (Math.atan2(this.getDeltaMovement().z, this.getDeltaMovement().x) * 180.0 / Math.PI) - 90.0f;
-        float var8 = Mth.wrapDegrees(var7 - this.getYRot());
-        this.setYRot(this.getYRot() + var8 / 5.0f);
+        float motionYaw = (float) (Math.atan2(this.getDeltaMovement().z, this.getDeltaMovement().x) * 180.0 / Math.PI) - 90.0f;
+        float yawDelta = Mth.wrapDegrees(motionYaw - this.getYRot());
+        this.setYRot(this.getYRot() + yawDelta / 5.0f);
     }
 
     @Override
@@ -190,9 +189,9 @@ public class PitchBlack extends Monster {
         if (this.damageTicker > 0) return false;
         this.damageTicker = 20;
         boolean ret = super.hurt(source, amount);
-        Entity e = source.getEntity();
-        if (e != null && this.currentFlightTarget != null) {
-            this.currentFlightTarget = new BlockPos((int) e.getX(), (int) (e.getY() + 2), (int) e.getZ());
+        Entity attacker = source.getEntity();
+        if (attacker != null && this.currentFlightTarget != null) {
+            this.currentFlightTarget = new BlockPos((int) attacker.getX(), (int) (attacker.getY() + 2), (int) attacker.getZ());
         }
         this.setActivity(1);
         this.getNavigation().stop();
@@ -204,15 +203,15 @@ public class PitchBlack extends Monster {
         return false;
     }
 
-    private Entity findSomethingToAttack() {
+    private LivingEntity findSomethingToAttack() {
         float scale = this.getPitchBlackScale();
-        double d1 = 16.0 + scale * 6.0;
-        double d2 = 10.0 + scale * 4.0;
-        AABB searchBox = this.getBoundingBox().inflate(d1, d2, d1);
+        double horizontalReach = 16.0 + scale * 6.0;
+        double verticalReach = 10.0 + scale * 4.0;
+        AABB searchBox = this.getBoundingBox().inflate(horizontalReach, verticalReach, horizontalReach);
         List<LivingEntity> entities = this.level().getEntitiesOfClass(LivingEntity.class, searchBox);
         entities.sort(this.targetSorter);
-        for (LivingEntity e : entities) {
-            if (isSuitableTarget(e)) return e;
+        for (LivingEntity candidate : entities) {
+            if (isSuitableTarget(candidate)) return candidate;
         }
         return null;
     }

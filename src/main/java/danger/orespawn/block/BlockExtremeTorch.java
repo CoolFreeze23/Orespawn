@@ -2,28 +2,27 @@ package danger.orespawn.block;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.TorchBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
-import danger.orespawn.ModBlocks;
 
 public class BlockExtremeTorch extends TorchBlock {
+    private static final double FLAME_CENTER_XZ = 0.5;
+    private static final double FLAME_CENTER_Y = 0.7;
+
     public BlockExtremeTorch(BlockBehaviour.Properties properties) {
         super(ParticleTypes.FLAME, properties);
     }
 
     @Override
     public void animateTick(BlockState state, Level level, BlockPos pos, RandomSource random) {
-        double x = pos.getX() + 0.5;
-        double y = pos.getY() + 0.7;
-        double z = pos.getZ() + 0.5;
+        double x = pos.getX() + FLAME_CENTER_XZ;
+        double y = pos.getY() + FLAME_CENTER_Y;
+        double z = pos.getZ() + FLAME_CENTER_XZ;
 
         level.addParticle(ParticleTypes.SMOKE, x, y, z, 0, 0, 0);
         level.addParticle(ParticleTypes.FLAME, x, y, z, 0, 0, 0);

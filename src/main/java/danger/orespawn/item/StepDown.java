@@ -12,6 +12,9 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 
 public class StepDown extends Item {
+    private static final int STAIRCASE_LENGTH = 33;
+    private static final int TORCH_INTERVAL = 3;
+
     public StepDown(Item.Properties properties) {
         super(properties);
     }
@@ -27,11 +30,11 @@ public class StepDown extends Item {
         BlockPos pos = context.getClickedPos();
         Direction facing = player.getDirection();
 
-        int dx = facing.getStepX();
-        int dz = facing.getStepZ();
+        int forwardX = facing.getStepX();
+        int forwardZ = facing.getStepZ();
 
-        for (int i = 0; i < 33; i++) {
-            BlockPos step = pos.offset(dx * i, -i, dz * i);
+        for (int stepIndex = 0; stepIndex < STAIRCASE_LENGTH; stepIndex++) {
+            BlockPos step = pos.offset(forwardX * stepIndex, -stepIndex, forwardZ * stepIndex);
             if (!level.getBlockState(step).isAir()) {
                 level.setBlock(step, Blocks.COBBLESTONE.defaultBlockState(), 3);
             }
@@ -39,7 +42,7 @@ public class StepDown extends Item {
             level.setBlock(above, Blocks.AIR.defaultBlockState(), 3);
             level.setBlock(above.above(), Blocks.AIR.defaultBlockState(), 3);
             level.setBlock(above.above(2), Blocks.AIR.defaultBlockState(), 3);
-            if (i % 3 == 0) {
+            if (stepIndex % TORCH_INTERVAL == 0) {
                 BlockPos wallPos = step.above().relative(facing.getClockWise());
                 if (!level.getBlockState(wallPos).isAir()) {
                     level.setBlock(step.above(), Blocks.TORCH.defaultBlockState(), 3);

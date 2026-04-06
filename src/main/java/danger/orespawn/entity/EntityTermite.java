@@ -1,15 +1,9 @@
 package danger.orespawn.entity;
 
-import danger.orespawn.OreSpawnMod;
-import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.Difficulty;
-import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
@@ -23,14 +17,22 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 
-import java.util.List;
-
 public class EntityTermite extends EntityAnt {
-    private int attackDelay = 20;
-    private int closest = 99999;
-    private int tx = 0;
-    private int ty = 0;
-    private int tz = 0;
+    private static final int NO_CLOSEST_MATCH = 99999;
+    private static final int ATTACK_DELAY_TICKS = 20;
+    private static final int WOOD_SCAN_INTERVAL_CHANCE = 200;
+    private static final int WOOD_SCAN_MAX_RADIUS = 8;
+    private static final int WOOD_SCAN_VERTICAL_CAP = 4;
+    private static final int WOOD_SCAN_SKIP_AFTER = 5;
+    private static final int CLOSE_ENOUGH_TO_EAT_DIST_SQ = 6;
+    private static final int MIN_SPAWN_Y = 50;
+    private static final int MAX_NEARBY_CLUSTER = 4;
+
+    private int attackDelay = ATTACK_DELAY_TICKS;
+    private int closestWoodDistSq = NO_CLOSEST_MATCH;
+    private int targetX = 0;
+    private int targetY = 0;
+    private int targetZ = 0;
 
     public EntityTermite(EntityType<? extends EntityTermite> type, Level level) {
         super(type, level);
@@ -67,7 +69,7 @@ public class EntityTermite extends EntityAnt {
 
         if (this.attackDelay > 0) --this.attackDelay;
         if (this.attackDelay > 0) return;
-        this.attackDelay = 20;
+        this.attackDelay = ATTACK_DELAY_TICKS;
 
         if (this.level().getDifficulty() == Difficulty.PEACEFUL) return;
 
@@ -88,29 +90,29 @@ public class EntityTermite extends EntityAnt {
                 state.is(Blocks.CRAFTING_TABLE) || state.is(Blocks.CHEST);
     }
 
-    private boolean scanIt(int x, int y, int z, int dx, int dy, int dz) {
+    private boolean scanForWoodBlocks(int x, int y, int z, int dx, int dy, int dz) {
         int found = 0;
         for (int i = -dy; i <= dy; i++) {
             for (int j = -dz; j <= dz; j++) {
                 BlockState state = this.level().getBlockState(new BlockPos(x + dx, y + i, z + j));
                 if (isWood(state)) {
-                    int d = dx * dx + j * j + i * i;
-                    if (d < this.closest) {
-                        this.closest = d;
-                        this.tx = x + dx;
-                        this.ty = y + i;
-                        this.tz = z + j;
+                    int distSqToWood = dx * dx + j * j + i * i;
+                    if (distSqToWood < this.closestWoodDistSq) {
+                        this.closestWoodDistSq = distSqToWood;
+                        this.targetX = x + dx;
+                        this.targetY = y + i;
+                        this.targetZ = z + j;
                         found++;
                     }
                 }
                 state = this.level().getBlockState(new BlockPos(x - dx, y + i, z + j));
                 if (isWood(state)) {
-                    int d = dx * dx + j * j + i * i;
-                    if (d < this.closest) {
-                        this.closest = d;
-                        this.tx = x - dx;
-                        this.ty = y + i;
-                        this.tz = z + j;
+                    int distSqToWood = dx * dx + j * j + i * i;
+                    if (distSqToWood < this.closestWoodDistSq) {
+                        this.closestWoodDistSq = distSqToWood;
+                        this.targetX = x - dx;
+                        this.targetY = y + i;
+                        this.targetZ = z + j;
                         found++;
                     }
                 }
@@ -120,23 +122,23 @@ public class EntityTermite extends EntityAnt {
             for (int j = -dz; j <= dz; j++) {
                 BlockState state = this.level().getBlockState(new BlockPos(x + i, y + dy, z + j));
                 if (isWood(state)) {
-                    int d = dy * dy + j * j + i * i;
-                    if (d < this.closest) {
-                        this.closest = d;
-                        this.tx = x + i;
-                        this.ty = y + dy;
-                        this.tz = z + j;
+                    int distSqToWood = dy * dy + j * j + i * i;
+                    if (distSqToWood < this.closestWoodDistSq) {
+                        this.closestWoodDistSq = distSqToWood;
+                        this.targetX = x + i;
+                        this.targetY = y + dy;
+                        this.targetZ = z + j;
                         found++;
                     }
                 }
                 state = this.level().getBlockState(new BlockPos(x + i, y - dy, z + j));
                 if (isWood(state)) {
-                    int d = dy * dy + j * j + i * i;
-                    if (d < this.closest) {
-                        this.closest = d;
-                        this.tx = x + i;
-                        this.ty = y - dy;
-                        this.tz = z + j;
+                    int distSqToWood = dy * dy + j * j + i * i;
+                    if (distSqToWood < this.closestWoodDistSq) {
+                        this.closestWoodDistSq = distSqToWood;
+                        this.targetX = x + i;
+                        this.targetY = y - dy;
+                        this.targetZ = z + j;
                         found++;
                     }
                 }
@@ -146,23 +148,23 @@ public class EntityTermite extends EntityAnt {
             for (int j = -dy; j <= dy; j++) {
                 BlockState state = this.level().getBlockState(new BlockPos(x + i, y + j, z + dz));
                 if (isWood(state)) {
-                    int d = dz * dz + j * j + i * i;
-                    if (d < this.closest) {
-                        this.closest = d;
-                        this.tx = x + i;
-                        this.ty = y + j;
-                        this.tz = z + dz;
+                    int distSqToWood = dz * dz + j * j + i * i;
+                    if (distSqToWood < this.closestWoodDistSq) {
+                        this.closestWoodDistSq = distSqToWood;
+                        this.targetX = x + i;
+                        this.targetY = y + j;
+                        this.targetZ = z + dz;
                         found++;
                     }
                 }
                 state = this.level().getBlockState(new BlockPos(x + i, y + j, z - dz));
                 if (isWood(state)) {
-                    int d = dz * dz + j * j + i * i;
-                    if (d < this.closest) {
-                        this.closest = d;
-                        this.tx = x + i;
-                        this.ty = y + j;
-                        this.tz = z - dz;
+                    int distSqToWood = dz * dz + j * j + i * i;
+                    if (distSqToWood < this.closestWoodDistSq) {
+                        this.closestWoodDistSq = distSqToWood;
+                        this.targetX = x + i;
+                        this.targetY = y + j;
+                        this.targetZ = z - dz;
                         found++;
                     }
                 }
@@ -178,20 +180,20 @@ public class EntityTermite extends EntityAnt {
             this.setTarget(null);
         }
 
-        if (this.random.nextInt(200) == 1) {
-            this.closest = 99999;
-            this.tx = 0;
-            this.ty = 0;
-            this.tz = 0;
-            for (int i = 1; i < 8; i++) {
-                int j = Math.min(i, 4);
-                if (this.scanIt((int) this.getX(), (int) this.getY() + 1, (int) this.getZ(), i, j, i)) break;
-                if (i >= 5) i++;
+        if (this.random.nextInt(WOOD_SCAN_INTERVAL_CHANCE) == 1) {
+            this.closestWoodDistSq = NO_CLOSEST_MATCH;
+            this.targetX = 0;
+            this.targetY = 0;
+            this.targetZ = 0;
+            for (int i = 1; i < WOOD_SCAN_MAX_RADIUS; i++) {
+                int j = Math.min(i, WOOD_SCAN_VERTICAL_CAP);
+                if (this.scanForWoodBlocks((int) this.getX(), (int) this.getY() + 1, (int) this.getZ(), i, j, i)) break;
+                if (i >= WOOD_SCAN_SKIP_AFTER) i++;
             }
-            if (this.closest < 99999) {
-                this.getNavigation().moveTo(this.tx, this.ty, this.tz, 1.0);
-                if (this.closest < 6) {
-                    BlockPos targetPos = new BlockPos(this.tx, this.ty, this.tz);
+            if (this.closestWoodDistSq < NO_CLOSEST_MATCH) {
+                this.getNavigation().moveTo(this.targetX, this.targetY, this.targetZ, 1.0);
+                if (this.closestWoodDistSq < CLOSE_ENOUGH_TO_EAT_DIST_SQ) {
+                    BlockPos targetPos = new BlockPos(this.targetX, this.targetY, this.targetZ);
                     if (this.level().getGameRules().getBoolean(net.minecraft.world.level.GameRules.RULE_MOBGRIEFING)) {
                         if (this.random.nextInt(3) != 0) {
                             this.level().setBlock(targetPos, Blocks.DIRT.defaultBlockState(), 2);
@@ -200,9 +202,6 @@ public class EntityTermite extends EntityAnt {
                         }
                     }
                     this.heal(1.0f);
-                    int buddies = this.level().getEntitiesOfClass(EntityTermite.class,
-                            this.getBoundingBox().inflate(3.0, 3.0, 3.0)).size();
-                    // TODO: spawn more termites when termite entity type is registered
                 }
             }
         }
@@ -211,8 +210,8 @@ public class EntityTermite extends EntityAnt {
 
     @Override
     public boolean checkSpawnRules(LevelAccessor level, MobSpawnType spawnType) {
-        if (this.getY() < 50.0) return false;
-        return findBuddies() <= 4;
+        if (this.getY() < MIN_SPAWN_Y) return false;
+        return findBuddies() <= MAX_NEARBY_CLUSTER;
     }
 
     @Override

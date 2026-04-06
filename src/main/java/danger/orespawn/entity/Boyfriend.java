@@ -85,9 +85,9 @@ public class Boyfriend extends TamableAnimal {
         return this.entityData.get(DATA_SKIN);
     }
 
-    public void setTameSkin(int val) {
-        this.entityData.set(DATA_SKIN, val);
-        this.whichGuy = val;
+    public void setTameSkin(int skinIndex) {
+        this.entityData.set(DATA_SKIN, skinIndex);
+        this.whichGuy = skinIndex;
     }
 
     public int getVoice() {

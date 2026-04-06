@@ -14,13 +14,19 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import com.mojang.serialization.MapCodec;
-import danger.orespawn.ModBlocks;
 
 /**
  * Crystal plant sapling that grows into a crystal tree on random tick.
  * Three variants exist for different crystal tree types.
  */
 public class BlockCrystalPlant extends BushBlock {
+    /** Growth attempt: nextInt(bound) == this index triggers growth. */
+    private static final int GROWTH_ROLL_BOUND = 5;
+    private static final int GROWTH_SUCCESS_INDEX = 1;
+    private static final int ANIMATE_TICK_ROLL_BOUND = 30;
+    private static final int ANIMATE_SUCCESS_INDEX = 1;
+    private static final int HAPPY_VILLAGER_BURST_COUNT = 10;
+
     @Override
     protected MapCodec<? extends BlockCrystalPlant> codec() {
         return simpleCodec(BlockCrystalPlant::new);
@@ -61,7 +67,7 @@ public class BlockCrystalPlant extends BushBlock {
     @Override
     public void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
         if (level.isClientSide()) return;
-        if (random.nextInt(5) != 1) return;
+        if (random.nextInt(GROWTH_ROLL_BOUND) != GROWTH_SUCCESS_INDEX) return;
 
         level.setBlock(pos, Blocks.AIR.defaultBlockState(), 2);
 
@@ -80,8 +86,8 @@ public class BlockCrystalPlant extends BushBlock {
 
     @Override
     public void animateTick(BlockState state, Level level, BlockPos pos, RandomSource random) {
-        if (random.nextInt(30) != 1) return;
-        for (int i = 0; i < 10; i++) {
+        if (random.nextInt(ANIMATE_TICK_ROLL_BOUND) != ANIMATE_SUCCESS_INDEX) return;
+        for (int p = 0; p < HAPPY_VILLAGER_BURST_COUNT; p++) {
             level.addParticle(ParticleTypes.HAPPY_VILLAGER,
                     pos.getX() + random.nextFloat(),
                     pos.getY() + random.nextFloat(),

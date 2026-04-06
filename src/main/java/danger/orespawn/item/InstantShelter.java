@@ -14,6 +14,9 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.ChestBlockEntity;
 
 public class InstantShelter extends Item {
+    private static final int FLOOR_HALF_WIDTH = 2;
+    private static final int CEILING_RELATIVE_Y = 4;
+
     public InstantShelter(Item.Properties properties) {
         super(properties);
     }
@@ -31,13 +34,13 @@ public class InstantShelter extends Item {
         int baseY = pos.getY();
         int baseZ = pos.getZ();
 
-        for (int x = -2; x <= 2; x++) {
-            for (int z = -2; z <= 2; z++) {
-                for (int y = 0; y <= 4; y++) {
+        for (int x = -FLOOR_HALF_WIDTH; x <= FLOOR_HALF_WIDTH; x++) {
+            for (int z = -FLOOR_HALF_WIDTH; z <= FLOOR_HALF_WIDTH; z++) {
+                for (int y = 0; y <= CEILING_RELATIVE_Y; y++) {
                     BlockPos bp = new BlockPos(baseX + x, baseY + y, baseZ + z);
-                    boolean isWall = x == -2 || x == 2 || z == -2 || z == 2;
+                    boolean isWall = x == -FLOOR_HALF_WIDTH || x == FLOOR_HALF_WIDTH || z == -FLOOR_HALF_WIDTH || z == FLOOR_HALF_WIDTH;
                     boolean isFloor = y == 0;
-                    boolean isCeiling = y == 4;
+                    boolean isCeiling = y == CEILING_RELATIVE_Y;
 
                     if (isFloor || isCeiling) {
                         level.setBlock(bp, Blocks.OAK_PLANKS.defaultBlockState(), 3);

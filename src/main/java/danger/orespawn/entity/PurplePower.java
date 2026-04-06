@@ -72,8 +72,8 @@ public class PurplePower extends Mob {
     @Override
     public void tick() {
         super.tick();
-        Vec3 dm = this.getDeltaMovement();
-        this.setDeltaMovement(dm.x, dm.y * 0.6, dm.z);
+        Vec3 motion = this.getDeltaMovement();
+        this.setDeltaMovement(motion.x, motion.y * 0.6, motion.z);
 
         if (this.level().isClientSide()) {
             if (this.getPurpleType() == 0 && this.getRandom().nextInt(4) == 1) {
@@ -117,28 +117,28 @@ public class PurplePower extends Mob {
                     (int) this.getY() + this.getRandom().nextInt(20) - 10,
                     (int) this.getZ() + zdir);
         } else if (this.getRandom().nextInt(7) == 2) {
-            LivingEntity e = findSomethingToAttack();
-            if (e != null) {
-                this.currentFlightTarget = new BlockPos((int) e.getX(), (int) (e.getY() + e.getBbHeight() / 2.0f), (int) e.getZ());
-                double meleeRange = (4.0f + e.getBbWidth() / 2.0f);
-                if (this.distanceToSqr(e) < meleeRange * meleeRange) {
-                    this.doHurtTarget(e);
+            LivingEntity victim = findSomethingToAttack();
+            if (victim != null) {
+                this.currentFlightTarget = new BlockPos((int) victim.getX(), (int) (victim.getY() + victim.getBbHeight() / 2.0f), (int) victim.getZ());
+                double meleeRange = (4.0f + victim.getBbWidth() / 2.0f);
+                if (this.distanceToSqr(victim) < meleeRange * meleeRange) {
+                    this.doHurtTarget(victim);
                     this.discard();
                 }
             }
         }
-        double var1 = this.currentFlightTarget.getX() + 0.5 - this.getX();
-        double var3 = this.currentFlightTarget.getY() + 0.1 - this.getY();
-        double var5 = this.currentFlightTarget.getZ() + 0.5 - this.getZ();
-        Vec3 dm = this.getDeltaMovement();
+        double toTargetX = this.currentFlightTarget.getX() + 0.5 - this.getX();
+        double toTargetY = this.currentFlightTarget.getY() + 0.1 - this.getY();
+        double toTargetZ = this.currentFlightTarget.getZ() + 0.5 - this.getZ();
+        Vec3 motion = this.getDeltaMovement();
         this.setDeltaMovement(
-                dm.x + (Math.signum(var1) * 0.4 - dm.x) * 0.2,
-                dm.y + (Math.signum(var3) * 0.7 - dm.y) * 0.2,
-                dm.z + (Math.signum(var5) * 0.4 - dm.z) * 0.2
+                motion.x + (Math.signum(toTargetX) * 0.4 - motion.x) * 0.2,
+                motion.y + (Math.signum(toTargetY) * 0.7 - motion.y) * 0.2,
+                motion.z + (Math.signum(toTargetZ) * 0.4 - motion.z) * 0.2
         );
-        float var7 = (float) (Math.atan2(this.getDeltaMovement().z, this.getDeltaMovement().x) * 180.0 / Math.PI) - 90.0f;
-        float var8 = Mth.wrapDegrees(var7 - this.getYRot());
-        this.setYRot(this.getYRot() + var8 / 4.0f);
+        float motionYaw = (float) (Math.atan2(this.getDeltaMovement().z, this.getDeltaMovement().x) * 180.0 / Math.PI) - 90.0f;
+        float yawDelta = Mth.wrapDegrees(motionYaw - this.getYRot());
+        this.setYRot(this.getYRot() + yawDelta / 4.0f);
     }
 
     @Override
@@ -166,12 +166,12 @@ public class PurplePower extends Mob {
 
     @Override
     public boolean hurt(DamageSource source, float amount) {
-        Entity e = source.getEntity();
-        if (e instanceof Arrow) return false;
-        float dm = Math.min(amount, 10.0f);
-        boolean ret = super.hurt(source, dm);
-        if (e != null && this.currentFlightTarget != null) {
-            this.currentFlightTarget = new BlockPos((int) e.getX(), (int) (e.getY() + e.getBbHeight() / 2.0f), (int) e.getZ());
+        Entity attacker = source.getEntity();
+        if (attacker instanceof Arrow) return false;
+        float cappedDamage = Math.min(amount, 10.0f);
+        boolean ret = super.hurt(source, cappedDamage);
+        if (attacker != null && this.currentFlightTarget != null) {
+            this.currentFlightTarget = new BlockPos((int) attacker.getX(), (int) (attacker.getY() + attacker.getBbHeight() / 2.0f), (int) attacker.getZ());
         }
         return ret;
     }
@@ -185,8 +185,8 @@ public class PurplePower extends Mob {
         AABB searchBox = this.getBoundingBox().inflate(32.0, 24.0, 32.0);
         List<LivingEntity> entities = this.level().getEntitiesOfClass(LivingEntity.class, searchBox);
         entities.sort(this.targetSorter);
-        for (LivingEntity e : entities) {
-            if (isSuitableTarget(e)) return e;
+        for (LivingEntity candidate : entities) {
+            if (isSuitableTarget(candidate)) return candidate;
         }
         return null;
     }

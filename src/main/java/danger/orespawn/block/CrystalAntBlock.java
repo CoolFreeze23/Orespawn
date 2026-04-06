@@ -9,12 +9,13 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
-import danger.orespawn.ModEntities;
 
 /**
  * Ant/termite spawner block. Different instances spawn different ant types.
  */
 public class CrystalAntBlock extends Block {
+    private static final int MIN_ANTS_PER_TICK = 2;
+    private static final int MAX_EXTRA_ANTS = 6;
 
     public enum AntType { BLACK_ANT, RED_ANT, UNSTABLE_ANT, TERMITE, CRYSTAL_TERMITE, RAINBOW_ANT }
 
@@ -38,8 +39,8 @@ public class CrystalAntBlock extends Block {
         BlockPos above = pos.above();
         if (!level.getBlockState(above).is(Blocks.AIR)) return;
 
-        int howmany = random.nextInt(6) + 2;
-        for (int i = 0; i < howmany; i++) {
+        int antCount = random.nextInt(MAX_EXTRA_ANTS) + MIN_ANTS_PER_TICK;
+        for (int i = 0; i < antCount; i++) {
             EntityType<? extends Mob> entityType = getEntityType();
             if (entityType == null) continue;
             // TODO: Check per-ant-type enable config

@@ -10,7 +10,6 @@ import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
@@ -74,16 +73,16 @@ public class EntityLeafMonster extends Monster {
         super.tick();
 
         if (this.getAttacking() == 0) {
-            int px = (int) this.getX();
-            int py = (int) this.getY();
-            int pz = (int) this.getZ();
-            double newX = px;
-            double newZ = pz;
-            if (this.getX() > 0.0) newX += 0.5;
-            if (this.getZ() > 0.0) newZ += 0.5;
-            if (this.getX() < 0.0) newX -= 0.5;
-            if (this.getZ() < 0.0) newZ -= 0.5;
-            this.setPos(newX, py, newZ);
+            int blockX = (int) this.getX();
+            int blockY = (int) this.getY();
+            int blockZ = (int) this.getZ();
+            double alignedX = blockX;
+            double alignedZ = blockZ;
+            if (this.getX() > 0.0) alignedX += 0.5;
+            if (this.getZ() > 0.0) alignedZ += 0.5;
+            if (this.getX() < 0.0) alignedX -= 0.5;
+            if (this.getZ() < 0.0) alignedZ -= 0.5;
+            this.setPos(alignedX, blockY, alignedZ);
             this.setXRot(0.0f);
             int snappedYaw = (int) this.yBodyRot / 90 * 90;
             this.setYRot(snappedYaw);
@@ -131,8 +130,8 @@ public class EntityLeafMonster extends Monster {
         List<LivingEntity> entities = this.level().getEntitiesOfClass(LivingEntity.class,
                 this.getBoundingBox().inflate(4.0, 6.0, 4.0));
         entities.sort(Comparator.comparingDouble(this::distanceToSqr));
-        for (LivingEntity e : entities) {
-            if (isSuitableTarget(e)) return e;
+        for (LivingEntity candidate : entities) {
+            if (isSuitableTarget(candidate)) return candidate;
         }
         return null;
     }

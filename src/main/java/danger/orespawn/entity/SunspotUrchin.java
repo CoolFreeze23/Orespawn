@@ -12,7 +12,15 @@ import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 
 public class SunspotUrchin extends ThrowableProjectile {
-    private float myRotation = 0.0f;
+    private static final float DAMAGE_DEFAULT = 3.0f;
+    private static final float DAMAGE_VS_CREEPER = 6.0f;
+    private static final int IGNITE_DURATION_SECONDS = 5;
+    private static final int SELF_IGNITE_DURATION_SECONDS = 1;
+    private static final int CLIENT_SMOKE_BURST_COUNT = 5;
+    private static final float ROTATION_STEP_DEGREES = 30.0f;
+    private static final float FULL_ROTATION_DEGREES = 360.0f;
+
+    private float visualRotationDegrees = 0.0f;
 
     public SunspotUrchin(EntityType<? extends ThrowableProjectile> type, Level level) {
         super(type, level);
@@ -31,17 +39,17 @@ public class SunspotUrchin extends ThrowableProjectile {
     protected void onHitEntity(EntityHitResult result) {
         Entity target = result.getEntity();
         if (target instanceof Player) return;
-        float damage = 3.0f;
-        if (target instanceof Creeper) damage = 6.0f;
+        float damage = DAMAGE_DEFAULT;
+        if (target instanceof Creeper) damage = DAMAGE_VS_CREEPER;
         target.hurt(this.damageSources().thrown(this, this.getOwner()), damage);
-        if (!target.fireImmune()) target.igniteForSeconds(5);
+        if (!target.fireImmune()) target.igniteForSeconds(IGNITE_DURATION_SECONDS);
     }
 
     @Override
     protected void onHit(HitResult result) {
         super.onHit(result);
         if (this.level().isClientSide) {
-            for (int i = 0; i < 5; ++i) {
+            for (int particleIndex = 0; particleIndex < CLIENT_SMOKE_BURST_COUNT; ++particleIndex) {
                 this.level().addParticle(ParticleTypes.SMOKE, this.getX(), this.getY(), this.getZ(),
                         this.random.nextFloat(), this.random.nextFloat(), this.random.nextFloat());
             }
@@ -52,10 +60,10 @@ public class SunspotUrchin extends ThrowableProjectile {
     @Override
     public void tick() {
         super.tick();
-        this.igniteForSeconds(1);
-        this.myRotation += 30.0f;
-        if (this.myRotation > 360.0f) this.myRotation -= 360.0f;
-        this.setXRot(this.myRotation);
+        this.igniteForSeconds(SELF_IGNITE_DURATION_SECONDS);
+        this.visualRotationDegrees += ROTATION_STEP_DEGREES;
+        if (this.visualRotationDegrees > FULL_ROTATION_DEGREES) this.visualRotationDegrees -= FULL_ROTATION_DEGREES;
+        this.setXRot(this.visualRotationDegrees);
         if (this.level().isClientSide) {
             this.level().addParticle(ParticleTypes.SMOKE, this.getX(), this.getY(), this.getZ(), 0, 0, 0);
         }

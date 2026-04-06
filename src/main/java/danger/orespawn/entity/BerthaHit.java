@@ -12,6 +12,13 @@ import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 
 public class BerthaHit extends ThrowableProjectile {
+    private static final double CLOSE_RANGE_DAMAGE_SQ = 100.0;
+    private static final int HIT_TYPE_DEFAULT = 0;
+    private static final int HIT_TYPE_MEDIUM = 2;
+    private static final int HIT_TYPE_EXPLOSIVE = 3;
+    private static final float EXPLOSION_POWER = 2.1f;
+    private static final int IGNITE_SECONDS_DEFAULT = 10;
+
     private int hitType = 0;
 
     public BerthaHit(EntityType<? extends ThrowableProjectile> type, Level level) {
@@ -23,7 +30,7 @@ public class BerthaHit extends ThrowableProjectile {
         this.setOwner(shooter);
     }
 
-    public void setHitType(int i) { this.hitType = i; }
+    public void setHitType(int hitType) { this.hitType = hitType; }
 
     @Override
     protected void defineSynchedData(net.minecraft.network.syncher.SynchedEntityData.Builder builder) {
@@ -44,28 +51,28 @@ public class BerthaHit extends ThrowableProjectile {
 
         float damage;
         double knockback;
-        double airKnock;
+        double verticalKnock;
         switch (this.hitType) {
-            case 2 -> { damage = 150.0f; knockback = 1.5; airKnock = 0.25; }
-            case 3 -> { damage = 100.0f; knockback = 1.25; airKnock = 0.65; }
-            default -> { damage = 250.0f; knockback = 2.25; airKnock = 0.35; }
+            case HIT_TYPE_MEDIUM -> { damage = 150.0f; knockback = 1.5; verticalKnock = 0.25; }
+            case HIT_TYPE_EXPLOSIVE -> { damage = 100.0f; knockback = 1.25; verticalKnock = 0.65; }
+            default -> { damage = 250.0f; knockback = 2.25; verticalKnock = 0.35; }
         }
 
-        if (this.distanceToSqr(owner) < 100.0) {
+        if (this.distanceToSqr(owner) < CLOSE_RANGE_DAMAGE_SQ) {
             entity.hurt(this.damageSources().playerAttack((Player) owner), damage);
-            if (this.hitType == 0) entity.igniteForSeconds(10);
+            if (this.hitType == HIT_TYPE_DEFAULT) entity.igniteForSeconds(IGNITE_SECONDS_DEFAULT);
             float angle = (float) Math.atan2(entity.getZ() - owner.getZ(), entity.getX() - owner.getX());
-            if (entity.isRemoved()) airKnock *= 2.0;
-            entity.push(Math.cos(angle) * knockback, airKnock, Math.sin(angle) * knockback);
+            if (entity.isRemoved()) verticalKnock *= 2.0;
+            entity.push(Math.cos(angle) * knockback, verticalKnock, Math.sin(angle) * knockback);
         }
     }
 
     @Override
     protected void onHit(HitResult result) {
         super.onHit(result);
-        if (!this.level().isClientSide && this.hitType == 3) {
+        if (!this.level().isClientSide && this.hitType == HIT_TYPE_EXPLOSIVE) {
             boolean canGrief = this.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING);
-            this.level().explode(null, this.getX(), this.getY(), this.getZ(), 2.1f,
+            this.level().explode(null, this.getX(), this.getY(), this.getZ(), EXPLOSION_POWER,
                     canGrief, Level.ExplosionInteraction.MOB);
         }
         this.discard();

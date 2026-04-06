@@ -98,11 +98,11 @@ public class EntityCaterKiller extends Monster {
     public boolean doHurtTarget(Entity target) {
         if (super.doHurtTarget(target)) {
             if (target instanceof LivingEntity living) {
-                double ks = 1.2;
-                double inair = 0.1;
+                double knockbackStrength = 1.2;
+                double verticalKnockback = 0.1;
                 float angle = (float) Math.atan2(target.getZ() - this.getZ(), target.getX() - this.getX());
-                if (target.isRemoved() || target instanceof Player) inair *= 2.0;
-                target.push(Math.cos(angle) * ks, inair, Math.sin(angle) * ks);
+                if (target.isRemoved() || target instanceof Player) verticalKnockback *= 2.0;
+                target.push(Math.cos(angle) * knockbackStrength, verticalKnockback, Math.sin(angle) * knockbackStrength);
             }
             return true;
         }
@@ -181,8 +181,8 @@ public class EntityCaterKiller extends Monster {
         List<LivingEntity> entities = this.level().getEntitiesOfClass(LivingEntity.class,
                 this.getBoundingBox().inflate(20.0, 8.0, 20.0));
         entities.sort(Comparator.comparingDouble(this::distanceToSqr));
-        for (LivingEntity e : entities) {
-            if (isSuitableTarget(e)) return e;
+        for (LivingEntity candidate : entities) {
+            if (isSuitableTarget(candidate)) return candidate;
         }
         return null;
     }

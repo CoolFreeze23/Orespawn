@@ -34,9 +34,12 @@ import net.minecraft.world.level.block.state.BlockState;
 public class Flounder extends Animal {
     private static final int MAX_HEALTH = 5;
     private static final double MOVE_SPEED = 0.25;
+    private static final int NO_WATER_FOUND_SENTINEL = 99999;
 
-    private int closest = 99999;
-    private int tx = 0, ty = 0, tz = 0;
+    private int closestWaterDistanceSq = NO_WATER_FOUND_SENTINEL;
+    private int targetX = 0;
+    private int targetY = 0;
+    private int targetZ = 0;
 
     public Flounder(EntityType<? extends Flounder> type, Level level) {
         super(type, level);
@@ -76,15 +79,17 @@ public class Flounder extends Animal {
         }
 
         if (!this.isInWater() && this.random.nextInt(20) == 0) {
-            this.closest = 99999;
-            this.tx = 0; this.ty = 0; this.tz = 0;
+            this.closestWaterDistanceSq = NO_WATER_FOUND_SENTINEL;
+            this.targetX = 0;
+            this.targetY = 0;
+            this.targetZ = 0;
             for (int i = 1; i < 11; ++i) {
                 int j = Math.min(i, 4);
                 if (this.scanForWater((int) this.getX(), (int) this.getY() - 1, (int) this.getZ(), i, j, i)) break;
                 if (i >= 5) ++i;
             }
-            if (this.closest < 99999) {
-                this.getNavigation().moveTo(this.tx, this.ty - 1, this.tz, 1.0);
+            if (this.closestWaterDistanceSq < NO_WATER_FOUND_SENTINEL) {
+                this.getNavigation().moveTo(this.targetX, this.targetY - 1, this.targetZ, 1.0);
             } else {
                 if (this.random.nextInt(25) == 1) {
                     this.hurt(this.damageSources().dryOut(), 1.0f);
@@ -127,9 +132,11 @@ public class Flounder extends Animal {
 
     private int checkWaterAt(int x, int y, int z, int dist) {
         BlockState state = this.level().getBlockState(new BlockPos(x, y, z));
-        if (state.is(Blocks.WATER) && dist < this.closest) {
-            this.closest = dist;
-            this.tx = x; this.ty = y; this.tz = z;
+        if (state.is(Blocks.WATER) && dist < this.closestWaterDistanceSq) {
+            this.closestWaterDistanceSq = dist;
+            this.targetX = x;
+            this.targetY = y;
+            this.targetZ = z;
             return 1;
         }
         return 0;

@@ -9,35 +9,39 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 
 public class BlockTitanium extends Block {
+    private static final int FACE_COUNT = 6;
+    private static final double FACE_PARTICLE_EPSILON = 0.0625;
+    private static final int ANIMATE_TICK_ROLL_BOUND = 20;
+    private static final int PARTICLE_TYPE_COUNT = 3;
+
     public BlockTitanium(BlockBehaviour.Properties properties) {
         super(properties);
     }
 
     @Override
     public void animateTick(BlockState state, Level level, BlockPos pos, RandomSource random) {
-        if (random.nextInt(20) != 0) return;
+        if (random.nextInt(ANIMATE_TICK_ROLL_BOUND) != 0) return;
         sparkle(level, pos, random);
     }
 
     private void sparkle(Level level, BlockPos pos, RandomSource random) {
-        double offset = 0.0625;
-        for (int face = 0; face < 6; face++) {
-            double x = pos.getX() + random.nextFloat();
-            double y = pos.getY() + random.nextFloat();
-            double z = pos.getZ() + random.nextFloat();
+        for (int faceIndex = 0; faceIndex < FACE_COUNT; faceIndex++) {
+            double particleX = pos.getX() + random.nextFloat();
+            double particleY = pos.getY() + random.nextFloat();
+            double particleZ = pos.getZ() + random.nextFloat();
 
-            if (face == 0 && !level.getBlockState(pos.above()).canOcclude()) y = pos.getY() + 1 + offset;
-            if (face == 1 && !level.getBlockState(pos.below()).canOcclude()) y = pos.getY() - offset;
-            if (face == 2 && !level.getBlockState(pos.south()).canOcclude()) z = pos.getZ() + 1 + offset;
-            if (face == 3 && !level.getBlockState(pos.north()).canOcclude()) z = pos.getZ() - offset;
-            if (face == 4 && !level.getBlockState(pos.east()).canOcclude()) x = pos.getX() + 1 + offset;
-            if (face == 5 && !level.getBlockState(pos.west()).canOcclude()) x = pos.getX() - offset;
+            if (faceIndex == 0 && !level.getBlockState(pos.above()).canOcclude()) particleY = pos.getY() + 1 + FACE_PARTICLE_EPSILON;
+            if (faceIndex == 1 && !level.getBlockState(pos.below()).canOcclude()) particleY = pos.getY() - FACE_PARTICLE_EPSILON;
+            if (faceIndex == 2 && !level.getBlockState(pos.south()).canOcclude()) particleZ = pos.getZ() + 1 + FACE_PARTICLE_EPSILON;
+            if (faceIndex == 3 && !level.getBlockState(pos.north()).canOcclude()) particleZ = pos.getZ() - FACE_PARTICLE_EPSILON;
+            if (faceIndex == 4 && !level.getBlockState(pos.east()).canOcclude()) particleX = pos.getX() + 1 + FACE_PARTICLE_EPSILON;
+            if (faceIndex == 5 && !level.getBlockState(pos.west()).canOcclude()) particleX = pos.getX() - FACE_PARTICLE_EPSILON;
 
-            if (x < pos.getX() || x > pos.getX() + 1 || y < 0 || y > pos.getY() + 1 || z < pos.getZ() || z > pos.getZ() + 1) {
-                int which = random.nextInt(3);
-                if (which == 0) level.addParticle(ParticleTypes.FLAME, x, y, z, 0, 0, 0);
-                if (which == 1) level.addParticle(ParticleTypes.SMOKE, x, y, z, 0, 0, 0);
-                if (which == 2) level.addParticle(ParticleTypes.DUST_PLUME, x, y, z, 0, 0, 0);
+            if (particleX < pos.getX() || particleX > pos.getX() + 1 || particleY < 0 || particleY > pos.getY() + 1 || particleZ < pos.getZ() || particleZ > pos.getZ() + 1) {
+                int particleKind = random.nextInt(PARTICLE_TYPE_COUNT);
+                if (particleKind == 0) level.addParticle(ParticleTypes.FLAME, particleX, particleY, particleZ, 0, 0, 0);
+                if (particleKind == 1) level.addParticle(ParticleTypes.SMOKE, particleX, particleY, particleZ, 0, 0, 0);
+                if (particleKind == 2) level.addParticle(ParticleTypes.DUST_PLUME, particleX, particleY, particleZ, 0, 0, 0);
             }
         }
     }

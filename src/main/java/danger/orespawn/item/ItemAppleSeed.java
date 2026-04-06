@@ -12,6 +12,10 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 
 public class ItemAppleSeed extends Item {
+    private static final int TRUNK_HEIGHT_MIN = 5;
+    private static final int TRUNK_HEIGHT_EXTRA_RANGE = 3;
+    private static final int LEAF_RADIUS = 3;
+
     public ItemAppleSeed(Item.Properties properties) {
         super(properties);
     }
@@ -35,21 +39,20 @@ public class ItemAppleSeed extends Item {
         return InteractionResult.SUCCESS;
     }
 
-    private void makeTree(Level level, int cx, int cy, int cz) {
-        int trunkHeight = 5 + level.random.nextInt(3);
-        for (int y = 1; y <= trunkHeight; y++) {
-            level.setBlock(new BlockPos(cx, cy + y, cz), Blocks.OAK_LOG.defaultBlockState(), 3);
+    private void makeTree(Level level, int baseX, int baseY, int baseZ) {
+        int trunkHeight = TRUNK_HEIGHT_MIN + level.random.nextInt(TRUNK_HEIGHT_EXTRA_RANGE);
+        for (int trunkY = 1; trunkY <= trunkHeight; trunkY++) {
+            level.setBlock(new BlockPos(baseX, baseY + trunkY, baseZ), Blocks.OAK_LOG.defaultBlockState(), 3);
         }
-        int topY = cy + trunkHeight;
-        int leafRadius = 3;
-        for (int x = -leafRadius; x <= leafRadius; x++) {
-            for (int z = -leafRadius; z <= leafRadius; z++) {
-                for (int y = 0; y <= leafRadius; y++) {
-                    double dist = Math.sqrt(x * x + y * y + z * z);
-                    if (dist <= leafRadius) {
-                        BlockPos lp = new BlockPos(cx + x, topY + y, cz + z);
-                        if (level.getBlockState(lp).isAir()) {
-                            level.setBlock(lp, Blocks.OAK_LEAVES.defaultBlockState(), 3);
+        int topY = baseY + trunkHeight;
+        for (int x = -LEAF_RADIUS; x <= LEAF_RADIUS; x++) {
+            for (int z = -LEAF_RADIUS; z <= LEAF_RADIUS; z++) {
+                for (int leafOffsetY = 0; leafOffsetY <= LEAF_RADIUS; leafOffsetY++) {
+                    double dist = Math.sqrt(x * x + leafOffsetY * leafOffsetY + z * z);
+                    if (dist <= LEAF_RADIUS) {
+                        BlockPos leafPos = new BlockPos(baseX + x, topY + leafOffsetY, baseZ + z);
+                        if (level.getBlockState(leafPos).isAir()) {
+                            level.setBlock(leafPos, Blocks.OAK_LEAVES.defaultBlockState(), 3);
                         }
                     }
                 }

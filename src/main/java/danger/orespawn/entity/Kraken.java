@@ -116,10 +116,10 @@ public class Kraken extends Monster {
             this.currentFlightTarget = new BlockPos(
                     (int) this.getX(), (int) (this.getY() - 10.0), (int) this.getZ());
         } else {
-            Vec3 dm = this.getDeltaMovement();
+            Vec3 motion = this.getDeltaMovement();
             double dampedY = this.getY() < this.currentFlightTarget.getY()
-                    ? dm.y * 0.72 : dm.y * 0.5;
-            this.setDeltaMovement(dm.x, dampedY, dm.z);
+                    ? motion.y * 0.72 : motion.y * 0.5;
+            this.setDeltaMovement(motion.x, dampedY, motion.z);
         }
 
         if (this.weatherSet > 0) {
@@ -129,11 +129,6 @@ public class Kraken extends Monster {
                 this.weatherSet = 100;
             }
         }
-    }
-
-    @Override
-    public void aiStep() {
-        super.aiStep();
     }
 
     @Override
@@ -303,13 +298,13 @@ public class Kraken extends Monster {
     }
 
     private void applyFlightMovement() {
-        double var1 = this.currentFlightTarget.getX() + 0.3 - this.getX();
-        double var3 = this.currentFlightTarget.getY() + 0.1 - this.getY();
-        double var5 = this.currentFlightTarget.getZ() + 0.3 - this.getZ();
+        double toTargetX = this.currentFlightTarget.getX() + 0.3 - this.getX();
+        double toTargetY = this.currentFlightTarget.getY() + 0.1 - this.getY();
+        double toTargetZ = this.currentFlightTarget.getZ() + 0.3 - this.getZ();
         Vec3 motion = this.getDeltaMovement();
-        double mx = motion.x + (Math.signum(var1) * 0.45 - motion.x) * 0.15;
-        double my = motion.y + (Math.signum(var3) * 0.70999 - motion.y) * 0.202;
-        double mz = motion.z + (Math.signum(var5) * 0.45 - motion.z) * 0.15;
+        double mx = motion.x + (Math.signum(toTargetX) * 0.45 - motion.x) * 0.15;
+        double my = motion.y + (Math.signum(toTargetY) * 0.70999 - motion.y) * 0.202;
+        double mz = motion.z + (Math.signum(toTargetZ) * 0.45 - motion.z) * 0.15;
         this.setDeltaMovement(mx, my, mz);
 
         float targetYaw = (float) (Math.atan2(mz, mx) * 180.0 / Math.PI) - 90.0f;
@@ -349,12 +344,12 @@ public class Kraken extends Monster {
         List<Player> players = this.level().getEntitiesOfClass(Player.class, searchBox);
         Player nearest = null;
         double minDist = Double.MAX_VALUE;
-        for (Player p : players) {
-            if (p.getAbilities().instabuild) continue;
-            double d = this.distanceToSqr(p);
-            if (d < minDist) {
-                minDist = d;
-                nearest = p;
+        for (Player player : players) {
+            if (player.getAbilities().instabuild) continue;
+            double distSq = this.distanceToSqr(player);
+            if (distSq < minDist) {
+                minDist = distSq;
+                nearest = player;
             }
         }
         return nearest;
@@ -373,9 +368,9 @@ public class Kraken extends Monster {
         }
     }
 
-    public boolean canSeeTarget(double pX, double pY, double pZ) {
+    public boolean canSeeTarget(double targetX, double targetY, double targetZ) {
         Vec3 from = new Vec3(this.getX(), this.getY() + 0.75, this.getZ());
-        Vec3 to = new Vec3(pX, pY, pZ);
+        Vec3 to = new Vec3(targetX, targetY, targetZ);
         HitResult result = this.level().clip(new ClipContext(
                 from, to, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, this));
         return result.getType() == HitResult.Type.MISS;
@@ -383,12 +378,12 @@ public class Kraken extends Monster {
 
     @Override
     public boolean hurt(DamageSource source, float amount) {
-        Entity e = source.getEntity();
-        if (this.currentFlightTarget != null && e instanceof Player
+        Entity attacker = source.getEntity();
+        if (this.currentFlightTarget != null && attacker instanceof Player
                 && this.getHealth() > this.mygetMaxHealth() / 4.0f) {
             this.hitByPlayer = true;
             this.currentFlightTarget = new BlockPos(
-                    (int) e.getX(), (int) e.getY() + 15, (int) e.getZ());
+                    (int) attacker.getX(), (int) attacker.getY() + 15, (int) attacker.getZ());
         }
         if (this.hurtTimer > 0) return false;
         this.hurtTimer = 30;

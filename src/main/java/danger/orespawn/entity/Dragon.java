@@ -71,7 +71,8 @@ public class Dragon extends TamableAnimal {
     private int unstickTimer = 0;
     private int fireballTicker = 0;
     private float deltaSmooth = 0.0f;
-    private int dragontype = 0;
+    /** Local copy of dragon type (fire vs ice/water); synced with entity data and NBT. */
+    private int cachedDragonType = 0;
     @Nullable
     private BlockPos currentFlightTarget = null;
 
@@ -781,7 +782,7 @@ public class Dragon extends TamableAnimal {
         double dirY = target.getY() + (target.getBbHeight() / 2.0f) - spawnY;
         double dirZ = target.getZ() - spawnZ;
 
-        if (this.dragontype == 0) {
+        if (this.cachedDragonType == 0) {
             // Fire dragon
             if (this.getDragonFire() == 1) {
                 // TODO: Spawn SmallFireball at (spawnX, spawnY, spawnZ) aimed at target
@@ -1043,7 +1044,7 @@ public class Dragon extends TamableAnimal {
         // Water Bucket: change to ice/water dragon
         if (stack.is(Items.WATER_BUCKET) && this.distanceToSqr(player) < 25.0) {
             if (!this.level().isClientSide) {
-                this.dragontype = 1;
+                this.cachedDragonType = 1;
                 this.setDragonType(1);
                 this.level().broadcastEntityEvent(this, (byte) 7);
             }
@@ -1056,7 +1057,7 @@ public class Dragon extends TamableAnimal {
         // Lava Bucket: change to fire dragon
         if (stack.is(Items.LAVA_BUCKET) && this.distanceToSqr(player) < 25.0) {
             if (!this.level().isClientSide) {
-                this.dragontype = 0;
+                this.cachedDragonType = 0;
                 this.setDragonType(0);
                 this.level().broadcastEntityEvent(this, (byte) 7);
             }
@@ -1104,10 +1105,10 @@ public class Dragon extends TamableAnimal {
     @Override
     protected void positionRider(Entity passenger, Entity.MoveFunction callback) {
         if (!this.hasPassenger(passenger)) return;
-        float f = 0.65f;
-        double rx = this.getX() - f * Math.sin(Math.toRadians(this.getYRot()));
+        float mountForwardOffset = 0.65f;
+        double rx = this.getX() - mountForwardOffset * Math.sin(Math.toRadians(this.getYRot()));
         double ry = this.getY() + 1.3;
-        double rz = this.getZ() + f * Math.cos(Math.toRadians(this.getYRot()));
+        double rz = this.getZ() + mountForwardOffset * Math.cos(Math.toRadians(this.getYRot()));
         callback.accept(passenger, rx, ry, rz);
     }
 
@@ -1169,8 +1170,8 @@ public class Dragon extends TamableAnimal {
         this.setAttacking(tag.getInt("DragonAttacking"));
         this.setActivity(tag.getInt("DragonActivity"));
         this.setDragonFire(tag.getInt("DragonFire"));
-        this.dragontype = tag.getInt("DragonType");
-        this.setDragonType(this.dragontype);
+        this.cachedDragonType = tag.getInt("DragonType");
+        this.setDragonType(this.cachedDragonType);
     }
 
     // ==================== TamableAnimal / AgeableMob ====================

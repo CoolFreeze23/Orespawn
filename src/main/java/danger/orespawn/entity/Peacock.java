@@ -1,8 +1,5 @@
 package danger.orespawn.entity;
 
-import java.util.Comparator;
-import java.util.List;
-
 import javax.annotation.Nullable;
 
 import net.minecraft.resources.ResourceLocation;
@@ -10,9 +7,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.AgeableMob;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -37,13 +32,11 @@ public class Peacock extends Animal {
     private int myBlink = 20;
     private int blinkcount = 0;
     private int blinker = 0;
-    private final Comparator<Entity> targetSorter;
 
     public Peacock(EntityType<? extends Peacock> type, Level level) {
         super(type, level);
         this.xpReward = 8;
         this.myBlink = 20 + this.random.nextInt(50);
-        this.targetSorter = Comparator.comparingDouble(this::distanceToSqr);
     }
 
     @Override

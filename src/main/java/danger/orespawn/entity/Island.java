@@ -1,6 +1,5 @@
 package danger.orespawn.entity;
 
-import danger.orespawn.OreSpawnMod;
 import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -20,6 +19,9 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 
 public class Island extends Animal {
+    /** Radians stepped per iteration when sweeping a full circle for island placement (~6°). */
+    private static final double ISLAND_RING_ANGLE_STEP_RADIANS = 0.10471975333333333;
+    private static final double ISLAND_RING_RADIUS_STEP = 0.35;
     private float dir = 0.0f;
     private float speed = 0.1f;
     private int radius = 5;
@@ -109,12 +111,10 @@ public class Island extends Animal {
     }
 
     private void createIsland() {
-        double deltadir = 0.10471975333333333;
-        double deltamag = 0.35;
         for (int i = 0; i < this.depth; ++i) {
             double tradius = (double) this.radius / (i + 1);
-            for (double curdir = -Math.PI; curdir < Math.PI; curdir += deltadir) {
-                for (double h = 0.75; h < tradius; h += deltamag) {
+            for (double curdir = -Math.PI; curdir < Math.PI; curdir += ISLAND_RING_ANGLE_STEP_RADIANS) {
+                for (double h = 0.75; h < tradius; h += ISLAND_RING_RADIUS_STEP) {
                     int ix = (int) (this.getX() + Math.cos(curdir + this.dir) * h);
                     int iz = (int) (this.getZ() + Math.sin(curdir + this.dir) * h);
                     BlockPos pos = new BlockPos(ix, (int) this.getY() - i + 1, iz);
