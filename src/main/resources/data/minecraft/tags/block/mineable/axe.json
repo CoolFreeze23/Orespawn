@@ -1,0 +1,9 @@
+{
+  "replace": false,
+  "values": [
+    "orespawn:sky_tree_log",
+    "orespawn:duplicator_log",
+    "orespawn:crystal_tree_log",
+    "orespawn:crystal_planks"
+  ]
+}

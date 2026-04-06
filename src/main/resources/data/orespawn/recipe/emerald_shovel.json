@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "X",
+    "#",
+    "#"
+  ],
+  "key": {
+    "#": { "item": "minecraft:stick" },
+    "X": { "item": "minecraft:emerald" }
+  },
+  "result": {
+    "item": "orespawn:emerald_shovel",
+    "count": 1
+  }
+}

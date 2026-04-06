@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "XXX",
+    " # ",
+    " # "
+  ],
+  "key": {
+    "#": { "item": "minecraft:stick" },
+    "X": { "item": "orespawn:ingot_uranium" }
+  },
+  "result": {
+    "item": "orespawn:ultimate_pickaxe",
+    "count": 1
+  }
+}

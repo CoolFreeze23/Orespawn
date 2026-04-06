@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "X",
+    "#",
+    "#"
+  ],
+  "key": {
+    "#": { "item": "minecraft:stick" },
+    "X": { "item": "orespawn:amethyst_gem" }
+  },
+  "result": {
+    "item": "orespawn:amethyst_shovel",
+    "count": 1
+  }
+}

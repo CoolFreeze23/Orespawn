@@ -1,0 +1,10 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    { "item": "orespawn:block_amethyst" }
+  ],
+  "result": {
+    "item": "orespawn:amethyst_gem",
+    "count": 9
+  }
+}
