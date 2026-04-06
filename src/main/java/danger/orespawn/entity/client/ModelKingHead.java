@@ -6,9 +6,9 @@ import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
-import net.minecraft.world.entity.Entity;
+import danger.orespawn.entity.KingHead;
 
-public class ModelKingHead extends EntityModel<Entity> {
+public class ModelKingHead extends EntityModel<KingHead> {
     private final ModelPart hitbox;
 
     public ModelKingHead(ModelPart root) {
@@ -28,7 +28,7 @@ public class ModelKingHead extends EntityModel<Entity> {
     }
 
     @Override
-    public void setupAnim(Entity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
+    public void setupAnim(KingHead entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
     }
 
     @Override

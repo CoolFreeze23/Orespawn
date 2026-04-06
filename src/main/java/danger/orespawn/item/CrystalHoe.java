@@ -6,6 +6,6 @@ import danger.orespawn.ModToolTiers;
 
 public class CrystalHoe extends HoeItem {
     public CrystalHoe(Item.Properties properties) {
-        super(ModToolTiers.CRYSTAL, properties);
+        super(ModToolTiers.CRYSTAL_PINK, properties);
     }
 }

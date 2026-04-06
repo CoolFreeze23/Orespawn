@@ -13,12 +13,18 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import com.mojang.serialization.MapCodec;
 
 /**
  * Reed-like tomato plant with 4 growth stages (separate block variants).
  * AGE property tracks growth delay within a stage.
  */
 public class BlockTomato extends BushBlock {
+    @Override
+    protected MapCodec<? extends BlockTomato> codec() {
+        return simpleCodec(BlockTomato::new);
+    }
+
     public static final IntegerProperty AGE = IntegerProperty.create("age", 0, 15);
     private static final VoxelShape SHAPE = Block.box(2, 0, 2, 14, 16, 14);
 

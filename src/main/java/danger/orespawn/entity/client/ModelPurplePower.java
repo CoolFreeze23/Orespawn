@@ -6,9 +6,9 @@ import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
-import net.minecraft.world.entity.Entity;
+import danger.orespawn.entity.PurplePower;
 
-public class ModelPurplePower extends EntityModel<Entity> {
+public class ModelPurplePower extends EntityModel<PurplePower> {
     private final ModelPart Shape1;
     private final ModelPart Shape2;
     private final ModelPart Shape3;
@@ -42,7 +42,7 @@ public class ModelPurplePower extends EntityModel<Entity> {
     }
 
     @Override
-    public void setupAnim(Entity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
+    public void setupAnim(PurplePower entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
         float angle1 = (float) Math.toRadians(ageInTicks * 7.3F);
         float angle2 = (float) Math.toRadians(ageInTicks * 5.1F);
         float angle3 = (float) Math.toRadians(ageInTicks * 3.7F);

@@ -1,5 +1,6 @@
 package danger.orespawn.item;
 
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.SwordItem;
@@ -17,7 +18,7 @@ public class MantisClaw extends SwordItem {
             target.heal(-1.0f);
             attacker.heal(1.0f);
         }
-        stack.hurtAndBreak(1, attacker, e -> e.broadcastBreakEvent(attacker.getUsedItemHand()));
+        stack.hurtAndBreak(1, attacker, EquipmentSlot.MAINHAND);
         return true;
     }
 }

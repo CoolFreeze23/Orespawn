@@ -35,6 +35,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import danger.orespawn.ModEntities;
 import danger.orespawn.OreSpawnMod;
 
 public class VelocityRaptor extends TamableAnimal {
@@ -197,6 +198,6 @@ public class VelocityRaptor extends TamableAnimal {
     @Nullable
     @Override
     public AgeableMob getBreedOffspring(ServerLevel level, AgeableMob otherParent) {
-        return new VelocityRaptor(this.getType(), this.level());
+        return new VelocityRaptor(ModEntities.VELOCITY_RAPTOR.get(), this.level());
     }
 }

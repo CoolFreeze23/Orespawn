@@ -62,11 +62,6 @@ public class Flounder extends Animal {
     }
 
     @Override
-    public boolean canBreatheUnderwater() {
-        return true;
-    }
-
-    @Override
     public boolean isPushedByFluid() {
         return true;
     }
@@ -141,7 +136,7 @@ public class Flounder extends Animal {
     }
 
     @Override
-    protected void dropCustomDeathLoot(DamageSource source, int looting, boolean recentlyHit) {
+    protected void dropCustomDeathLoot(ServerLevel level, DamageSource source, boolean recentlyHit) {
         int count = 1 + this.random.nextInt(2);
         for (int i = 0; i < count; ++i) {
             this.spawnAtLocation(Items.COD);

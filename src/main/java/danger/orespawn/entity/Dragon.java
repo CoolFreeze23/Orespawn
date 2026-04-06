@@ -128,11 +128,6 @@ public class Dragon extends TamableAnimal {
     }
 
     @Override
-    public boolean canBreatheUnderwater() {
-        return true;
-    }
-
-    @Override
     public boolean removeWhenFarAway(double dist) {
         if (this.hasCustomName()) return false;
         if (this.isVehicle()) return false;
@@ -157,7 +152,7 @@ public class Dragon extends TamableAnimal {
     }
 
     @Override
-    protected void jumpFromGround() {
+    public void jumpFromGround() {
         super.jumpFromGround();
         Vec3 delta = this.getDeltaMovement();
         this.setDeltaMovement(delta.x, delta.y + 0.25, delta.z);
@@ -206,8 +201,8 @@ public class Dragon extends TamableAnimal {
     }
 
     @Override
-    protected void dropCustomDeathLoot(DamageSource source, int looting, boolean recentlyHit) {
-        super.dropCustomDeathLoot(source, looting, recentlyHit);
+    protected void dropCustomDeathLoot(ServerLevel level, DamageSource source, boolean recentlyHit) {
+        super.dropCustomDeathLoot(level, source, recentlyHit);
         int count = 1 + this.getRandom().nextInt(6);
         for (int i = 0; i < count; i++) {
             dropItemRand(new ItemStack(Items.BONE, 1));

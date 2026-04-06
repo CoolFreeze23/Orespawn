@@ -32,7 +32,7 @@ public class BlockMothPlant extends CropBlock {
         BlockPos above = pos.above();
         if (level.getBlockState(above).is(Blocks.AIR) && !level.isDay()) {
             // TODO: Check MothEnable config
-            BlockButterflyPlant.spawnCreature(level, ModEntities.MOTH.get(), above);
+            BlockButterflyPlant.spawnCreature(level, ModEntities.ENTITY_LUNA_MOTH.get(), above);
         }
     }
 }

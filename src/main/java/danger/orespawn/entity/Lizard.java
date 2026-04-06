@@ -41,6 +41,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import danger.orespawn.ModEntities;
 import danger.orespawn.OreSpawnMod;
 
 public class Lizard extends TamableAnimal {
@@ -242,6 +243,6 @@ public class Lizard extends TamableAnimal {
     @Nullable
     @Override
     public AgeableMob getBreedOffspring(ServerLevel level, AgeableMob otherParent) {
-        return new Lizard(this.getType(), this.level());
+        return new Lizard(ModEntities.LIZARD.get(), this.level());
     }
 }

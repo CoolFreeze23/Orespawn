@@ -7,9 +7,9 @@ import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.util.Mth;
-import net.minecraft.world.entity.Entity;
+import danger.orespawn.entity.PitchBlack;
 
-public class ModelPitchBlack extends EntityModel<Entity> {
+public class ModelPitchBlack extends EntityModel<PitchBlack> {
     private final ModelPart body;
     private final ModelPart body2;
     private final ModelPart neck1;
@@ -288,7 +288,7 @@ public class ModelPitchBlack extends EntityModel<Entity> {
     }
 
     @Override
-    public void setupAnim(Entity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
+    public void setupAnim(PitchBlack entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
         float wingAngle = Mth.cos(ageInTicks * 0.45F) * (float) Math.PI * 0.24F;
         this.wing1.zRot = wingAngle;
         this.mem1.zRot = wingAngle;

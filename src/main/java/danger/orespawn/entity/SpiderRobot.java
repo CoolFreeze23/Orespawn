@@ -163,11 +163,6 @@ public class SpiderRobot extends Mob {
     }
 
     @Override
-    public double getPassengersRidingOffset() {
-        return 2.625;
-    }
-
-    @Override
     public boolean shouldRiderSit() {
         return false;
     }

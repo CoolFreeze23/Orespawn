@@ -13,6 +13,7 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import com.mojang.serialization.MapCodec;
 import danger.orespawn.ModBlocks;
 
 /**
@@ -20,6 +21,15 @@ import danger.orespawn.ModBlocks;
  * Three variants exist for different crystal tree types.
  */
 public class BlockCrystalPlant extends BushBlock {
+    @Override
+    protected MapCodec<? extends BlockCrystalPlant> codec() {
+        return simpleCodec(BlockCrystalPlant::new);
+    }
+
+    public BlockCrystalPlant(BlockBehaviour.Properties properties) {
+        this(properties, TreeType.TALL);
+    }
+
     private static final VoxelShape SHAPE = Block.box(2, 0, 2, 14, 16, 14);
 
     public enum TreeType { TALL, SCRAGGLY, BLUE }

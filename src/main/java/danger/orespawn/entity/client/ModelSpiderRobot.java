@@ -6,9 +6,9 @@ import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
-import net.minecraft.world.entity.Entity;
+import danger.orespawn.entity.SpiderRobot;
 
-public class ModelSpiderRobot extends EntityModel<Entity> {
+public class ModelSpiderRobot extends EntityModel<SpiderRobot> {
     private final ModelPart bodyCenter;
     private final ModelPart abdomen;
     private final ModelPart head;
@@ -161,7 +161,7 @@ public class ModelSpiderRobot extends EntityModel<Entity> {
     }
 
     @Override
-    public void setupAnim(Entity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
+    public void setupAnim(SpiderRobot entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
     }
 
     @Override

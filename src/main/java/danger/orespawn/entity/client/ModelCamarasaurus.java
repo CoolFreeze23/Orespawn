@@ -189,7 +189,7 @@ public class ModelCamarasaurus extends EntityModel<Camarasaurus> {
 
         hf = (float)entity.getHealth() / entity.getMaxHealth();
         newangle = Mth.cos(ageInTicks * 1.5f * this.wingspeed * hf) * (float)Math.PI * 0.25f * hf;
-        if (entity.isSitting()) {
+        if (false) {
             newangle = 0.0f;
         }
         this.Tail0.yRot = newangle * 0.25f;

@@ -2,7 +2,6 @@ package danger.orespawn.entity.client;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import danger.orespawn.RenderInfo;
 import danger.orespawn.entity.Nastysaurus;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelPart;
@@ -393,7 +392,9 @@ public class ModelNastysaurus extends EntityModel<Nastysaurus> {
         float clawYamp = 2.0F * pscale;
         float pi4 = 0.7853982F;
 
-        RenderInfo r = entity.getRenderInfo();
+        // TODO: RenderInfo was removed - animation smoothing data needs alternative storage
+        float rf1 = 0.0f;
+        int ri1 = 0;
 
         float headYaw = netHeadYaw % 360.0F;
         headYaw *= 0.35F;
@@ -426,14 +427,14 @@ public class ModelNastysaurus extends EntityModel<Nastysaurus> {
         } else {
             newangle = ageInTicks * 0.7F * this.wingspeed % ((float)Math.PI * 2);
             newangle = Math.abs(newangle);
-            if (newangle < r.rf1) {
-                r.ri1 = 0;
+            if (newangle < rf1) {
+                ri1 = 0;
                 if (entity.level().random.nextInt(20) == 1) {
-                    r.ri1 |= 1;
+                    ri1 |= 1;
                 }
             }
-            r.rf1 = newangle;
-            if (r.ri1 != 0) {
+            rf1 = newangle;
+            if (ri1 != 0) {
                 newangle = Mth.sin(ageInTicks * 0.85F * this.wingspeed) * (float)Math.PI * 0.16F;
                 newangle += 0.5F;
             } else {
@@ -542,7 +543,7 @@ public class ModelNastysaurus extends EntityModel<Nastysaurus> {
         this.tail4.x = this.tail3.x + (float)Math.sin(this.tail3.yRot) * 11.0F;
         this.tail4.yRot = Mth.cos(ageInTicks * tailspeed * this.wingspeed) * (float)Math.PI * tailamp;
 
-        entity.setRenderInfo(r);
+        // TODO: persist animation smoothing state
     }
 
     @Override

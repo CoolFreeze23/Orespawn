@@ -150,7 +150,7 @@ public class EntityRubberDucky extends TamableAnimal {
                         BlockPos at = BlockPos.containing(this.getX() + i, this.getY() + j, this.getZ() + k);
                         if (this.level().getBlockState(above).isAir() && !this.level().getBlockState(at).isAir()) {
                             if (this.level() instanceof ServerLevel serverLevel) {
-                                EntityRubberDucky duck = ModEntities.RUBBER_DUCKY.get().create(serverLevel);
+                                EntityRubberDucky duck = ModEntities.ENTITY_RUBBER_DUCKY.get().create(serverLevel);
                                 if (duck != null) {
                                     duck.moveTo(this.getX() + i + 1, this.getY() + j + 1, this.getZ() + k,
                                             this.random.nextFloat() * 360.0f, 0.0f);
@@ -317,7 +317,7 @@ public class EntityRubberDucky extends TamableAnimal {
     @Nullable
     @Override
     public AgeableMob getBreedOffspring(ServerLevel level, AgeableMob otherParent) {
-        return new EntityRubberDucky(ModEntities.RUBBER_DUCKY.get(), level);
+        return new EntityRubberDucky(ModEntities.ENTITY_RUBBER_DUCKY.get(), level);
     }
 
     @Nullable

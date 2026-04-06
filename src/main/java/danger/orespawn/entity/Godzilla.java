@@ -190,7 +190,7 @@ public class Godzilla extends Monster {
     // ---- Jump mechanics ----
 
     @Override
-    protected void jumpFromGround() {
+    public void jumpFromGround() {
         while (this.getYRot() < 0.0f) this.setYRot(this.getYRot() + 360.0f);
         while (this.yHeadRot < 0.0f) this.yHeadRot += 360.0f;
         while (this.getYRot() > 360.0f) this.setYRot(this.getYRot() - 360.0f);
@@ -554,8 +554,8 @@ public class Godzilla extends Monster {
     // ---- Death loot ----
 
     @Override
-    protected void dropCustomDeathLoot(DamageSource source, int looting, boolean recentlyHit) {
-        super.dropCustomDeathLoot(source, looting, recentlyHit);
+    protected void dropCustomDeathLoot(ServerLevel level, DamageSource source, boolean recentlyHit) {
+        super.dropCustomDeathLoot(level, source, recentlyHit);
 
         dropItemRand(new ItemStack(Items.NETHER_STAR, 1));
 

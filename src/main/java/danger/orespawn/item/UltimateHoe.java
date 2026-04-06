@@ -5,12 +5,12 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.HoeItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
-import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
@@ -23,9 +23,7 @@ public class UltimateHoe extends HoeItem {
 
     @Override
     public void inventoryTick(ItemStack stack, Level level, Entity entity, int slotId, boolean isSelected) {
-        if (!level.isClientSide && stack.getEnchantmentLevel(Enchantments.EFFICIENCY) <= 0) {
-            stack.enchant(Enchantments.EFFICIENCY, 2);
-        }
+        // TODO: Enchantments are data-driven in 1.21.1, need registry lookup
     }
 
     @Override
@@ -52,7 +50,7 @@ public class UltimateHoe extends HoeItem {
                     }
                 }
             }
-            context.getItemInHand().hurtAndBreak(1, player, p -> p.broadcastBreakEvent(context.getHand()));
+            context.getItemInHand().hurtAndBreak(1, player, EquipmentSlot.MAINHAND);
             return InteractionResult.SUCCESS;
         }
         return super.useOn(context);
