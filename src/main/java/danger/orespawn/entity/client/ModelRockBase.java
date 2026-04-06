@@ -7,9 +7,7 @@ import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
-import net.minecraft.world.entity.Entity;
-
-public class ModelRockBase extends EntityModel<Entity> {
+public class ModelRockBase extends EntityModel<RockBase> {
     private final ModelPart RockShape1;
     private final ModelPart RockShape2;
     private final ModelPart RockShape3;
@@ -178,10 +176,8 @@ public class ModelRockBase extends EntityModel<Entity> {
     }
 
     @Override
-    public void setupAnim(Entity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
-        if (entity instanceof RockBase rb) {
-            this.rockType = rb.getRockType();
-        }
+    public void setupAnim(RockBase entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
+        this.rockType = entity.getRockType();
 
         setAllVisible(false);
 

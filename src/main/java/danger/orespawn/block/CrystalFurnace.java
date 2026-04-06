@@ -26,9 +26,16 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.phys.BlockHitResult;
+import com.mojang.serialization.MapCodec;
+import net.minecraft.core.component.DataComponents;
 import org.jetbrains.annotations.Nullable;
 
 public class CrystalFurnace extends BaseEntityBlock {
+    @Override
+    protected MapCodec<? extends CrystalFurnace> codec() {
+        return simpleCodec(CrystalFurnace::new);
+    }
+
     public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
     public static final BooleanProperty LIT = BlockStateProperties.LIT;
 
@@ -51,7 +58,7 @@ public class CrystalFurnace extends BaseEntityBlock {
 
     @Override
     public void setPlacedBy(Level level, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack) {
-        if (stack.hasCustomHoverName()) {
+        if (stack.has(DataComponents.CUSTOM_NAME)) {
             BlockEntity be = level.getBlockEntity(pos);
             // TODO: if (be instanceof TileEntityCrystalFurnace furnace) furnace.setCustomName(stack.getHoverName());
         }

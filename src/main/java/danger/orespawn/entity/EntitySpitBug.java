@@ -95,7 +95,7 @@ public class EntitySpitBug extends Monster {
     }
 
     @Override
-    protected void jumpFromGround() {
+    public void jumpFromGround() {
         Vec3 motion = this.getDeltaMovement();
         double yawRad = Math.toRadians(this.getYRot());
         float f = 0.2f + Math.abs(this.random.nextFloat() * 0.45f);

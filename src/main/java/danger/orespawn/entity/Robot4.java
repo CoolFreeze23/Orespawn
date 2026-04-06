@@ -74,7 +74,7 @@ public class Robot4 extends Monster {
     public void setShielding(int value) { this.entityData.set(DATA_SHIELDING, value); }
 
     @Override
-    protected void jumpFromGround() {
+    public void jumpFromGround() {
         Vec3 dm = this.getDeltaMovement();
         this.setDeltaMovement(dm.x, dm.y + 0.25, dm.z);
         super.jumpFromGround();

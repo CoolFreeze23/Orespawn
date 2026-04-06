@@ -177,11 +177,6 @@ public class Chipmunk extends TamableAnimal {
         return InteractionResult.PASS;
     }
 
-    @Override
-    public boolean canBreatheUnderwater() {
-        return true;
-    }
-
     @Nullable
     @Override
     protected SoundEvent getAmbientSound() {

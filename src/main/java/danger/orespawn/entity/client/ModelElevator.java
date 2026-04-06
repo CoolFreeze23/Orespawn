@@ -6,9 +6,9 @@ import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
-import net.minecraft.world.entity.Entity;
+import danger.orespawn.entity.Elevator;
 
-public class ModelElevator extends EntityModel<Entity> {
+public class ModelElevator extends EntityModel<Elevator> {
     private final ModelPart shape1;
     private final ModelPart shape2;
     private final ModelPart shape3;
@@ -56,7 +56,7 @@ public class ModelElevator extends EntityModel<Entity> {
     }
 
     @Override
-    public void setupAnim(Entity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
+    public void setupAnim(Elevator entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
     }
 
     @Override

@@ -110,11 +110,6 @@ public class Elevator extends Mob {
     }
 
     @Override
-    public double getPassengersRidingOffset() {
-        return 0.5;
-    }
-
-    @Override
     public void tick() {
         super.tick();
         this.clearFire();

@@ -183,11 +183,6 @@ public class TheKing extends Monster {
     }
 
     @Override
-    public boolean canBreatheUnderwater() {
-        return true;
-    }
-
-    @Override
     public boolean causeFallDamage(float fallDistance, float multiplier, DamageSource source) {
         return false;
     }
@@ -526,7 +521,7 @@ public class TheKing extends Monster {
             if (this.getRandom().nextInt(6) == 1) {
                 dragon.head.hurt(genDmg, (float) this.attdam);
             } else {
-                dragon.body.hurt(genDmg, (float) this.attdam);
+                dragon.head.hurt(genDmg, (float) this.attdam);
             }
         }
 
@@ -921,15 +916,12 @@ public class TheKing extends Monster {
     }
 
     @Override
-    protected void dropCustomDeathLoot(DamageSource source, int looting, boolean recentlyHit) {
-        super.dropCustomDeathLoot(source, looting, recentlyHit);
+    protected void dropCustomDeathLoot(ServerLevel level, DamageSource source, boolean recentlyHit) {
+        super.dropCustomDeathLoot(level, source, recentlyHit);
 
         // TODO: Spawn "The Prince" entity at this.getX(), this.getY() + 10, this.getZ()
 
-        dropItemRand(new ItemStack(ModItems.ROYAL_GUARDIAN_CHESTPLATE.get(), 1));
-        dropItemRand(new ItemStack(ModItems.ROYAL_GUARDIAN_HELMET.get(), 1));
-        dropItemRand(new ItemStack(ModItems.ROYAL_GUARDIAN_LEGGINGS.get(), 1));
-        dropItemRand(new ItemStack(ModItems.ROYAL_GUARDIAN_BOOTS.get(), 1));
+        // TODO: Add royal guardian armor drops once armor items are registered
         dropItemRand(new ItemStack(ModItems.ROYAL_GUARDIAN_SWORD.get(), 1));
 
         int icount = BuiltInRegistries.ITEM.size();

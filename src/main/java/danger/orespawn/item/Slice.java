@@ -1,9 +1,9 @@
 package danger.orespawn.item;
 
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.SwordItem;
-import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -17,10 +17,11 @@ public class Slice extends SwordItem {
 
     @Override
     public void inventoryTick(ItemStack stack, Level level, Entity entity, int slotId, boolean isSelected) {
-        if (!level.isClientSide && stack.getEnchantmentLevel(Enchantments.SHARPNESS) <= 0) {
-            stack.enchant(Enchantments.SHARPNESS, 5);
-            stack.enchant(Enchantments.BANE_OF_ARTHROPODS, 1);
-        }
+        // TODO: Enchantments are data-driven in 1.21.1, need registry lookup
+        // if (!level.isClientSide && stack.getEnchantmentLevel(Enchantments.SHARPNESS) <= 0) {
+        //     stack.enchant(Enchantments.SHARPNESS, 5);
+        //     stack.enchant(Enchantments.BANE_OF_ARTHROPODS, 1);
+        // }
     }
 
     @Override
@@ -30,7 +31,7 @@ public class Slice extends SwordItem {
 
     @Override
     public boolean hurtEnemy(ItemStack stack, LivingEntity target, LivingEntity attacker) {
-        stack.hurtAndBreak(1, attacker, e -> e.broadcastBreakEvent(attacker.getUsedItemHand()));
+        stack.hurtAndBreak(1, attacker, EquipmentSlot.MAINHAND);
         return true;
     }
 }

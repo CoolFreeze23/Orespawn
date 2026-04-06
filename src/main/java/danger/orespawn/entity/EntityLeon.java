@@ -155,11 +155,6 @@ public class EntityLeon extends TamableAnimal {
     }
 
     @Override
-    public double getPassengersRidingOffset() {
-        return 3.75;
-    }
-
-    @Override
     public boolean causeFallDamage(float dist, float mult, DamageSource source) {
         return false;
     }
@@ -622,8 +617,8 @@ public class EntityLeon extends TamableAnimal {
     }
 
     @Override
-    protected void dropCustomDeathLoot(DamageSource source, int looting, boolean recentlyHit) {
-        super.dropCustomDeathLoot(source, looting, recentlyHit);
+    protected void dropCustomDeathLoot(ServerLevel level, DamageSource source, boolean recentlyHit) {
+        super.dropCustomDeathLoot(level, source, recentlyHit);
         int count = 4 + this.random.nextInt(6);
         for (int i = 0; i < count; i++) {
             this.spawnAtLocation(Items.DIAMOND);

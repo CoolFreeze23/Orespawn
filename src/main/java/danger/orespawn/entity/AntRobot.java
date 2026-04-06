@@ -202,11 +202,6 @@ public class AntRobot extends Mob {
     }
 
     @Override
-    public double getPassengersRidingOffset() {
-        return 0.55;
-    }
-
-    @Override
     public boolean shouldRiderSit() {
         return true;
     }

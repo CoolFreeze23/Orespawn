@@ -3,7 +3,6 @@ package danger.orespawn.entity.client;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import danger.orespawn.entity.Chipmunk;
-import danger.orespawn.entity.EntityCannonFodder;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
@@ -171,15 +170,15 @@ public class ModelChipmunk extends EntityModel<Chipmunk> {
         this.hat1.yRot = headYawRad;
         this.hat2.yRot = headYawRad;
 
-        if (!entity.isSitting()) {
+        if (!entity.isInSittingPose()) {
             this.tail1.xRot = 0.306F + Mth.cos(ageInTicks * 0.25F) * (float) Math.PI * 0.06F;
             newangle = Mth.cos(ageInTicks * 1.3F * ANIM_SPEED) * (float) Math.PI * 0.25F * limbSwingAmount;
             this.tail1.xRot += newangle;
             this.tail2.xRot = 0.306F + this.tail1.xRot;
         }
 
-        this.hat1.visible = entity instanceof EntityCannonFodder cf && cf.getIsActivated() != 0;
-        this.hat2.visible = entity instanceof EntityCannonFodder cf && cf.getIsActivated() > 1;
+        this.hat1.visible = false;
+        this.hat2.visible = false;
     }
 
     @Override

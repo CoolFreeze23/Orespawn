@@ -13,11 +13,17 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import com.mojang.serialization.MapCodec;
 
 /**
  * Experience tree sapling. Grows into an experience tree on random tick.
  */
 public class BlockExperiencePlant extends BushBlock {
+    @Override
+    protected MapCodec<? extends BlockExperiencePlant> codec() {
+        return simpleCodec(BlockExperiencePlant::new);
+    }
+
     private static final VoxelShape SHAPE = Block.box(2, 0, 2, 14, 16, 14);
 
     public BlockExperiencePlant(BlockBehaviour.Properties properties) {

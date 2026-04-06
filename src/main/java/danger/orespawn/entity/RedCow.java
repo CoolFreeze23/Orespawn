@@ -1,6 +1,7 @@
 package danger.orespawn.entity;
 
 import javax.annotation.Nullable;
+import danger.orespawn.ModEntities;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.AgeableMob;
@@ -44,6 +45,6 @@ public class RedCow extends Cow {
     @Nullable
     @Override
     public Cow getBreedOffspring(ServerLevel level, AgeableMob otherParent) {
-        return new RedCow(this.getType(), this.level());
+        return new RedCow(ModEntities.RED_COW.get(), this.level());
     }
 }

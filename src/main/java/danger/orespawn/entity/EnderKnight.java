@@ -39,7 +39,7 @@ public class EnderKnight extends Monster {
 
     public EnderKnight(EntityType<? extends EnderKnight> type, Level level) {
         super(type, level);
-        this.maxUpStep = 1.0f;
+        // Step height is now controlled by entity attributes in 1.21.1
     }
 
     @Override

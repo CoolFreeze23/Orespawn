@@ -135,11 +135,11 @@ public class EntityWormLarge extends Monster {
             this.wormsSpawned = 1;
             if (this.level() instanceof ServerLevel serverLevel) {
                 for (int i = 0; i < 20; ++i) {
-                    spawnWorm(serverLevel, ModEntities.WORM_SMALL.get(),
+                    spawnWorm(serverLevel, ModEntities.ENTITY_WORM_SMALL.get(),
                             this.getX() + this.random.nextInt(6) - this.random.nextInt(6),
                             this.getY(),
                             this.getZ() + this.random.nextInt(6) - this.random.nextInt(6));
-                    spawnWorm(serverLevel, ModEntities.WORM_MEDIUM.get(),
+                    spawnWorm(serverLevel, ModEntities.ENTITY_WORM_MEDIUM.get(),
                             this.getX() + this.random.nextInt(5) - this.random.nextInt(5),
                             this.getY(),
                             this.getZ() + this.random.nextInt(5) - this.random.nextInt(5));
@@ -209,8 +209,8 @@ public class EntityWormLarge extends Monster {
     }
 
     @Override
-    protected void dropCustomDeathLoot(DamageSource source, int looting, boolean recentlyHit) {
-        super.dropCustomDeathLoot(source, looting, recentlyHit);
+    protected void dropCustomDeathLoot(ServerLevel level, DamageSource source, boolean recentlyHit) {
+        super.dropCustomDeathLoot(level, source, recentlyHit);
         this.spawnAtLocation(Items.NETHER_STAR);
         for (int i = 0; i < 6; i++) {
             this.spawnAtLocation(Items.ROTTEN_FLESH);

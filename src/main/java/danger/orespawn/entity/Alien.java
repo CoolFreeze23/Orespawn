@@ -44,7 +44,6 @@ public class Alien extends Monster {
 
     public Alien(EntityType<? extends Alien> type, Level level) {
         super(type, level);
-        this.setDimensions(1.1f, 3.25f);
         this.xpReward = 100;
         this.targetSorter = Comparator.comparingDouble(this::distanceToSqr);
     }
@@ -74,7 +73,7 @@ public class Alien extends Monster {
     }
 
     @Override
-    protected void jumpFromGround() {
+    public void jumpFromGround() {
         super.jumpFromGround();
         Vec3 delta = this.getDeltaMovement();
         this.setDeltaMovement(delta.x, delta.y + 0.25, delta.z);

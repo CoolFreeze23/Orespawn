@@ -2,15 +2,14 @@ package danger.orespawn.entity.client;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import danger.orespawn.OreSpawnMod;
-import danger.orespawn.entity.custom.BeaverEntity;
-import danger.orespawn.entity.model.BeaverModel;
+import danger.orespawn.entity.Beaver;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.resources.ResourceLocation;
 
-public class BeaverRenderer extends MobRenderer<BeaverEntity, BeaverModel<BeaverEntity>> {
+public class BeaverRenderer extends MobRenderer<Beaver, ModelBeaver> {
 
     private static final ResourceLocation TEXTURE =
             ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "textures/entity/beaver.png");
@@ -21,11 +20,11 @@ public class BeaverRenderer extends MobRenderer<BeaverEntity, BeaverModel<Beaver
     private static final float SCALE = 1.0f;
 
     public BeaverRenderer(EntityRendererProvider.Context context) {
-        super(context, new BeaverModel<>(context.bakeLayer(MODEL_LAYER)), 0.5f);
+        super(context, new ModelBeaver(context.bakeLayer(MODEL_LAYER)), 0.5f);
     }
 
     @Override
-    public void render(BeaverEntity entity, float entityYaw, float partialTicks,
+    public void render(Beaver entity, float entityYaw, float partialTicks,
                        PoseStack poseStack, MultiBufferSource buffer, int packedLight) {
         poseStack.pushPose();
         if (entity.isBaby()) {
@@ -38,7 +37,7 @@ public class BeaverRenderer extends MobRenderer<BeaverEntity, BeaverModel<Beaver
     }
 
     @Override
-    public ResourceLocation getTextureLocation(BeaverEntity entity) {
+    public ResourceLocation getTextureLocation(Beaver entity) {
         return TEXTURE;
     }
 }

@@ -1,5 +1,6 @@
 package danger.orespawn.item;
 
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.SwordItem;
@@ -16,7 +17,7 @@ public class BigHammer extends SwordItem {
         if (target != null && !target.level().isClientSide) {
             target.push(0.0, Math.abs(target.level().random.nextFloat() * 2.0f / 3.0f), 0.0);
         }
-        stack.hurtAndBreak(1, attacker, e -> e.broadcastBreakEvent(attacker.getUsedItemHand()));
+        stack.hurtAndBreak(1, attacker, EquipmentSlot.MAINHAND);
         return true;
     }
 }

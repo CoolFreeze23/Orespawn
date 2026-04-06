@@ -13,6 +13,7 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import com.mojang.serialization.MapCodec;
 import danger.orespawn.ModBlocks;
 
 /**
@@ -20,6 +21,11 @@ import danger.orespawn.ModBlocks;
  * registered separately in ModBlocks. AGE property tracks growth delay.
  */
 public class BlockCorn extends BushBlock {
+    @Override
+    protected MapCodec<? extends BlockCorn> codec() {
+        return simpleCodec(BlockCorn::new);
+    }
+
     public static final IntegerProperty AGE = IntegerProperty.create("age", 0, 15);
     private static final VoxelShape SHAPE = Block.box(2, 0, 2, 14, 16, 14);
 

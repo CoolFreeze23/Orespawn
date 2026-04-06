@@ -62,11 +62,6 @@ public class CloudShark extends Monster {
     }
 
     @Override
-    public boolean canBreatheUnderwater() {
-        return true;
-    }
-
-    @Override
     public boolean hurt(DamageSource source, float amount) {
         boolean ret = super.hurt(source, amount);
         Entity e = source.getEntity();

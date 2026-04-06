@@ -3,7 +3,6 @@ package danger.orespawn.entity.client;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import danger.orespawn.entity.Dragon;
-import danger.orespawn.entity.RenderInfo;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
@@ -416,7 +415,8 @@ public class ModelDragon extends EntityModel<Dragon> {
         float tailspeed = 0.76F;
         float tailamp = 0.45F;
 
-        RenderInfo r = entity.getRenderInfo();
+        // TODO: RenderInfo was removed - animation smoothing data needs alternative storage
+        float rf1 = 0.0f;
 
         if (limbSwingAmount > 0.001F) {
             lspeed = (float) ((entity.xOld - entity.getX()) * (entity.xOld - entity.getX())
@@ -517,7 +517,7 @@ public class ModelDragon extends EntityModel<Dragon> {
             tailspeed = 0.22F;
             tailamp = 0.22F;
         }
-        if (entity.isSitting()) {
+        if (entity.isPassenger()) {
             tailspeed = 0.0F;
             tailamp = 0.0F;
         }
@@ -568,10 +568,10 @@ public class ModelDragon extends EntityModel<Dragon> {
         if (entity.getActivity() == 1) {
             headYaw = (entity.yHeadRotO - entity.yBodyRot) * 8.0F;
             headYaw = -headYaw;
-            r.rf1 += (headYaw - r.rf1) / 60.0F;
-            if (r.rf1 > 50.0F) r.rf1 = 50.0F;
-            if (r.rf1 < -50.0F) r.rf1 = -50.0F;
-            headYaw = r.rf1;
+            rf1 += (headYaw - rf1) / 60.0F;
+            if (rf1 > 50.0F) rf1 = 50.0F;
+            if (rf1 < -50.0F) rf1 = -50.0F;
+            headYaw = rf1;
         } else {
             headYaw /= 2.0F;
         }
@@ -605,7 +605,7 @@ public class ModelDragon extends EntityModel<Dragon> {
         newangle = Mth.cos(ageInTicks * 1.5F * ANIM_SPEED) * (float) Math.PI * 0.14F;
         this.mouth2.xRot = entity.getAttacking() != 0 ? 0.4F + newangle : 0.07F;
 
-        entity.setRenderInfo(r);
+        // TODO: persist animation smoothing state
     }
 
     @Override

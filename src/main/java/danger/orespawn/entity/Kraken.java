@@ -83,11 +83,6 @@ public class Kraken extends Monster {
     }
 
     @Override
-    public boolean canBreatheUnderwater() {
-        return true;
-    }
-
-    @Override
     public boolean fireImmune() {
         return true;
     }
@@ -517,8 +512,8 @@ public class Kraken extends Monster {
     }
 
     @Override
-    protected void dropCustomDeathLoot(DamageSource source, int looting, boolean recentlyHit) {
-        super.dropCustomDeathLoot(source, looting, recentlyHit);
+    protected void dropCustomDeathLoot(ServerLevel level, DamageSource source, boolean recentlyHit) {
+        super.dropCustomDeathLoot(level, source, recentlyHit);
 
         dropItemRand(new ItemStack(ModItems.KRAKEN_TOOTH.get(), 1));
         dropItemRand(new ItemStack(Items.GOLDEN_APPLE, 1));

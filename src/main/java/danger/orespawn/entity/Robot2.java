@@ -72,7 +72,7 @@ public class Robot2 extends Monster {
     }
 
     @Override
-    protected void jumpFromGround() {
+    public void jumpFromGround() {
         Vec3 dm = this.getDeltaMovement();
         this.setDeltaMovement(dm.x, dm.y + 0.25, dm.z);
         super.jumpFromGround();

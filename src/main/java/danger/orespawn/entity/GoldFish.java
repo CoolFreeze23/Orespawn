@@ -61,11 +61,6 @@ public class GoldFish extends Animal {
     }
 
     @Override
-    public boolean canBreatheUnderwater() {
-        return true;
-    }
-
-    @Override
     protected void customServerAiStep() {
         if (this.isRemoved()) return;
         super.customServerAiStep();
