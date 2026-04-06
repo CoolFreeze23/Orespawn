@@ -1,6 +1,6 @@
 {
-  "parent": "minecraft:item/handheld",
-  "textures": {
-    "layer0": "orespawn:items/battleaxesmall"
-  }
+    "parent": "orespawn:item/large_handheld",
+    "textures": {
+        "layer0": "orespawn:items/battleaxesmall"
+    }
 }
