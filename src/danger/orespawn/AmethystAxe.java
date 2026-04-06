@@ -1,0 +1,47 @@
+/*
+ * Decompiled with CFR 0.152.
+ * 
+ * Could not load the following classes:
+ *  cpw.mods.fml.relauncher.Side
+ *  cpw.mods.fml.relauncher.SideOnly
+ *  net.minecraft.client.renderer.texture.IIconRegister
+ *  net.minecraft.creativetab.CreativeTabs
+ *  net.minecraft.entity.Entity
+ *  net.minecraft.item.Item$ToolMaterial
+ *  net.minecraft.item.ItemAxe
+ */
+package danger.orespawn;
+
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.Entity;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemAxe;
+
+public class AmethystAxe
+extends ItemAxe {
+    private int weaponDamage = 12;
+
+    public AmethystAxe(int par1, Item.ToolMaterial par2) {
+        super(par2);
+        this.field_77777_bU = 1;
+        this.func_77656_e(2000);
+        this.func_77637_a(CreativeTabs.field_78040_i);
+    }
+
+    public int getDamageVsEntity(Entity par1Entity) {
+        return this.weaponDamage;
+    }
+
+    public String getMaterialName() {
+        return "Amethyst";
+    }
+
+    @SideOnly(value=Side.CLIENT)
+    public void func_94581_a(IIconRegister iconRegister) {
+        this.field_77791_bV = iconRegister.func_94245_a("OreSpawn:" + this.func_77658_a().substring(5));
+    }
+}
+

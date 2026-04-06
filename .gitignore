@@ -1,0 +1,37 @@
+# Gradle
+.gradle/
+build/
+out/
+
+# IDE
+.idea/
+*.iml
+*.ipr
+*.iws
+.vscode/
+.settings/
+.project
+.classpath
+*.launch
+.metadata
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# NeoForge / Minecraft
+run/
+logs/
+*.log
+
+# Generated resources cache
+src/generated/resources/.cache/
+
+# Compiled
+*.class
+*.jar
+!gradle/wrapper/gradle-wrapper.jar
+
+# Misc
+repo/

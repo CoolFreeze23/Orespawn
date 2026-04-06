@@ -1,0 +1,7 @@
+{
+  "type": "minecraft:smelting",
+  "ingredient": { "item": "orespawn:raw_crab_meat" },
+  "result": { "id": "orespawn:cooked_crab_meat" },
+  "experience": 0.35,
+  "cookingtime": 200
+}
