@@ -31,7 +31,6 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import danger.orespawn.OreSpawnMod;
-import danger.orespawn.ModItems;
 
 public class Cephadrome extends PathfinderMob {
     private static final EntityDataAccessor<Integer> DATA_ATTACKING =
@@ -46,6 +45,12 @@ public class Cephadrome extends PathfinderMob {
     private int shouldattack = 0;
     private int hitByPlayer = 0;
     private int badmood = 0;
+
+    private static final float MELEE_DAMAGE = 70.0f;
+    private static final double KNOCKBACK_HORIZONTAL = 2.5;
+    private static final double KNOCKBACK_VERTICAL = 0.35;
+    private static final double PLAYER_OR_REMOVED_VERTICAL_MULTIPLIER = 2.0;
+    private static final float LOW_HEALTH_FRACTION_FOR_PLAYER_AGGRO = 9.0f / 10.0f;
 
     public Cephadrome(EntityType<? extends Cephadrome> type, Level level) {
         super(type, level);
@@ -117,18 +122,20 @@ public class Cephadrome extends PathfinderMob {
 
     @Override
     public boolean doHurtTarget(Entity target) {
-        double ks = 2.5;
-        double inair = 0.35;
-        boolean ret = false;
-        if (target instanceof LivingEntity living) {
-            ret = target.hurt(this.damageSources().mobAttack(this), 70.0f);
-            float f3 = (float) Math.atan2(target.getZ() - this.getZ(), target.getX() - this.getX());
-            if (target.isRemoved() || target instanceof Player) {
-                inair *= 2.0;
-            }
-            target.push(Math.cos(f3) * ks, inair, Math.sin(f3) * ks);
+        if (!(target instanceof LivingEntity)) {
+            return false;
         }
-        return ret;
+        boolean hurtApplied = target.hurt(this.damageSources().mobAttack(this), MELEE_DAMAGE);
+        double verticalKnockback = KNOCKBACK_VERTICAL;
+        float yawToTarget = (float) Math.atan2(target.getZ() - this.getZ(), target.getX() - this.getX());
+        if (target.isRemoved() || target instanceof Player) {
+            verticalKnockback *= PLAYER_OR_REMOVED_VERTICAL_MULTIPLIER;
+        }
+        target.push(
+                Math.cos(yawToTarget) * KNOCKBACK_HORIZONTAL,
+                verticalKnockback,
+                Math.sin(yawToTarget) * KNOCKBACK_HORIZONTAL);
+        return hurtApplied;
     }
 
     @Override
@@ -136,17 +143,17 @@ public class Cephadrome extends PathfinderMob {
         if (this.hurtTimer > 0) return false;
         if (source.getMsgId().equals("cactus")) return false;
 
-        boolean ret = super.hurt(source, amount);
+        boolean hurtApplied = super.hurt(source, amount);
         this.hurtTimer = 25;
-        Entity e = source.getEntity();
-        if (e instanceof LivingEntity living) {
-            this.setTarget(living);
-            this.getNavigation().moveTo(living, 1.2);
+        Entity attacker = source.getEntity();
+        if (attacker instanceof LivingEntity livingAttacker) {
+            this.setTarget(livingAttacker);
+            this.getNavigation().moveTo(livingAttacker, 1.2);
         }
-        if (e instanceof Player && this.getHealth() < this.getMaxHealth() * 9.0f / 10.0f) {
+        if (attacker instanceof Player && this.getHealth() < this.getMaxHealth() * LOW_HEALTH_FRACTION_FOR_PLAYER_AGGRO) {
             this.hitByPlayer = 1;
         }
-        return ret;
+        return hurtApplied;
     }
 
     @Override
@@ -173,8 +180,8 @@ public class Cephadrome extends PathfinderMob {
                 this.getNavigation().moveTo(target, 1.7);
                 this.lookAt(target, 10.0f, 10.0f);
                 this.setAttacking(1);
-                double maxdist = 6.0 + target.getBbWidth() / 2.0;
-                if (this.distanceToSqr(target) < maxdist * maxdist) {
+                double meleeRange = 6.0 + target.getBbWidth() / 2.0;
+                if (this.distanceToSqr(target) < meleeRange * meleeRange) {
                     this.doHurtTarget(target);
                 }
             } else if (this.getAttacking() != 0) {

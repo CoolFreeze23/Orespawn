@@ -44,11 +44,6 @@ public class EntityAnt extends Animal {
                 .add(Attributes.ATTACK_DAMAGE, 0.0);
     }
 
-    @Override
-    public void tick() {
-        super.tick();
-    }
-
     @Nullable
     @Override
     protected SoundEvent getAmbientSound() {

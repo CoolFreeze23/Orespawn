@@ -27,23 +27,23 @@ public class ZooCage extends Item {
         if (player == null) return InteractionResult.PASS;
 
         BlockPos pos = context.getClickedPos();
-        int cx = pos.getX();
-        int cy = pos.getY();
-        int cz = pos.getZ();
-        int r = cageSize;
-        int h = cageSize;
+        int originX = pos.getX();
+        int originY = pos.getY();
+        int originZ = pos.getZ();
+        int halfExtent = cageSize;
+        int ceilingHeight = cageSize;
 
-        for (int x = -r; x <= r; x++) {
-            for (int z = -r; z <= r; z++) {
-                for (int y = 0; y <= h; y++) {
-                    boolean isEdge = x == -r || x == r || z == -r || z == r;
+        for (int x = -halfExtent; x <= halfExtent; x++) {
+            for (int z = -halfExtent; z <= halfExtent; z++) {
+                for (int y = 0; y <= ceilingHeight; y++) {
+                    boolean isEdge = x == -halfExtent || x == halfExtent || z == -halfExtent || z == halfExtent;
                     boolean isFloor = y == 0;
-                    boolean isCeiling = y == h;
+                    boolean isCeiling = y == ceilingHeight;
 
                     if (isFloor || isCeiling) {
-                        level.setBlock(new BlockPos(cx + x, cy + y, cz + z), Blocks.GLASS.defaultBlockState(), 3);
+                        level.setBlock(new BlockPos(originX + x, originY + y, originZ + z), Blocks.GLASS.defaultBlockState(), 3);
                     } else if (isEdge) {
-                        level.setBlock(new BlockPos(cx + x, cy + y, cz + z), Blocks.IRON_BARS.defaultBlockState(), 3);
+                        level.setBlock(new BlockPos(originX + x, originY + y, originZ + z), Blocks.IRON_BARS.defaultBlockState(), 3);
                     }
                 }
             }

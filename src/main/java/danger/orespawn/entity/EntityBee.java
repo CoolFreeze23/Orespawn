@@ -1,7 +1,5 @@
 package danger.orespawn.entity;
 
-import danger.orespawn.ModEntities;
-import danger.orespawn.ModItems;
 import danger.orespawn.OreSpawnMod;
 import java.util.Comparator;
 import java.util.List;
@@ -41,7 +39,8 @@ public class EntityBee extends Monster {
     private int stuckCount = 0;
     private int lastX = 0;
     private int lastZ = 0;
-    private Entity retaliationTarget = null;
+    @Nullable
+    private LivingEntity retaliationTarget = null;
 
     public EntityBee(EntityType<? extends EntityBee> type, Level level) {
         super(type, level);
@@ -157,7 +156,7 @@ public class EntityBee extends Monster {
                 --keepTrying;
             }
         } else if (this.random.nextInt(15) == 0) {
-            LivingEntity target = (LivingEntity) this.retaliationTarget;
+            LivingEntity target = this.retaliationTarget;
             if (target != null && target.isRemoved()) target = null;
             if (target == null) target = findSomethingToAttack();
 
@@ -200,8 +199,8 @@ public class EntityBee extends Monster {
     public boolean hurt(DamageSource source, float amount) {
         boolean ret = super.hurt(source, amount);
         Entity attacker = source.getEntity();
-        if (attacker instanceof LivingEntity && this.currentFlightTarget != null) {
-            this.retaliationTarget = attacker;
+        if (attacker instanceof LivingEntity livingAttacker && this.currentFlightTarget != null) {
+            this.retaliationTarget = livingAttacker;
             this.currentFlightTarget = attacker.blockPosition();
         }
         return ret;
@@ -225,8 +224,8 @@ public class EntityBee extends Monster {
         List<LivingEntity> entities = this.level().getEntitiesOfClass(LivingEntity.class,
                 this.getBoundingBox().inflate(10.0, 6.0, 10.0));
         entities.sort(Comparator.comparingDouble(this::distanceToSqr));
-        for (LivingEntity e : entities) {
-            if (isSuitableTarget(e)) return e;
+        for (LivingEntity candidate : entities) {
+            if (isSuitableTarget(candidate)) return candidate;
         }
         return null;
     }

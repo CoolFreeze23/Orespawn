@@ -14,7 +14,6 @@ import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import com.mojang.serialization.MapCodec;
-import danger.orespawn.ModBlocks;
 
 /**
  * Reed-like quinoa plant with 4 growth stages (separate block variants).

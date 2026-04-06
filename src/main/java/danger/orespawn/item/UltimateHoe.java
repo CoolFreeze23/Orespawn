@@ -38,10 +38,10 @@ public class UltimateHoe extends HoeItem {
             if (level.isClientSide) return InteractionResult.SUCCESS;
 
             level.playSound(null, pos, SoundEvents.HOE_TILL, SoundSource.BLOCKS, 1.0F, 1.0F);
-            for (int i = -1; i <= 1; i++) {
-                for (int k = -1; k <= 1; k++) {
-                    for (int j = -1; j <= 1; j++) {
-                        BlockPos target = pos.offset(i, j, k);
+            for (int offsetX = -1; offsetX <= 1; offsetX++) {
+                for (int offsetZ = -1; offsetZ <= 1; offsetZ++) {
+                    for (int offsetY = -1; offsetY <= 1; offsetY++) {
+                        BlockPos target = pos.offset(offsetX, offsetY, offsetZ);
                         BlockState targetState = level.getBlockState(target);
                         boolean airAbove = level.isEmptyBlock(target.above());
                         if (airAbove && (targetState.is(Blocks.GRASS_BLOCK) || targetState.is(Blocks.DIRT))) {

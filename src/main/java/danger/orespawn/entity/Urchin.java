@@ -105,8 +105,8 @@ public class Urchin extends Monster {
     @Override
     public void tick() {
         super.tick();
-        long t = this.level().getDayTime() % 24000L;
-        if (t < 12000L && this.random.nextInt(400) == 1 && !this.level().isClientSide) {
+        long timeOfDay = this.level().getDayTime() % 24000L;
+        if (timeOfDay < 12000L && this.random.nextInt(400) == 1 && !this.level().isClientSide) {
             this.discard();
         }
     }
@@ -166,7 +166,7 @@ public class Urchin extends Monster {
 
     @Override
     public boolean checkSpawnRules(LevelAccessor level, MobSpawnType spawnType) {
-        long t = this.level().getDayTime() % 24000L;
-        return t >= 13000L;
+        long timeOfDay = this.level().getDayTime() % 24000L;
+        return timeOfDay >= 13000L;
     }
 }

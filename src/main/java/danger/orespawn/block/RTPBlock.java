@@ -18,6 +18,17 @@ import net.minecraft.world.level.block.state.BlockState;
  * Random Teleport Block - teleports players to a random nearby location on contact.
  */
 public class RTPBlock extends Block {
+    private static final int MAX_TELEPORT_SEARCH_ATTEMPTS = 1000;
+    /** Horizontal offset from block: base distance along one axis. */
+    private static final int TELEPORT_BASE_OFFSET = 16;
+    /** Random jitter applied on top of base offset (nextInt(n) - nextInt(n)). */
+    private static final int TELEPORT_JITTER_SPAN = 8;
+    /** Vertical search range above/below starting Y. */
+    private static final int VERTICAL_SEARCH_RADIUS = 4;
+    private static final int TELEPORT_EFFECT_BURST_COUNT = 6;
+    private static final double TELEPORT_PARTICLE_Y = 2.25;
+    private static final float EXPLODE_SOUND_PITCH = 1.5f;
+
     public RTPBlock(BlockBehaviour.Properties properties) {
         super(properties);
     }
@@ -27,47 +38,48 @@ public class RTPBlock extends Block {
         if (!(entity instanceof Player player)) return;
         if (level.isClientSide()) return;
 
-        ServerLevel serverLevel = (ServerLevel) level;
         int startX = pos.getX();
         int startY = pos.getY();
         int startZ = pos.getZ();
 
-        boolean found = false;
-        int x = startX, y = startY, z = startZ;
+        boolean foundValidSpot = false;
+        int targetX = startX;
+        int targetY = startY;
+        int targetZ = startZ;
 
-        for (int tries = 0; tries < 1000 && !found; tries++) {
-            x = level.random.nextInt(2) == 0
-                    ? startX + 16 + level.random.nextInt(8) - level.random.nextInt(8)
-                    : startX - 16 + level.random.nextInt(8) - level.random.nextInt(8);
-            z = level.random.nextInt(2) == 0
-                    ? startZ + 16 + level.random.nextInt(8) - level.random.nextInt(8)
-                    : startZ - 16 + level.random.nextInt(8) - level.random.nextInt(8);
+        for (int attempt = 0; attempt < MAX_TELEPORT_SEARCH_ATTEMPTS && !foundValidSpot; attempt++) {
+            targetX = level.random.nextInt(2) == 0
+                    ? startX + TELEPORT_BASE_OFFSET + level.random.nextInt(TELEPORT_JITTER_SPAN) - level.random.nextInt(TELEPORT_JITTER_SPAN)
+                    : startX - TELEPORT_BASE_OFFSET + level.random.nextInt(TELEPORT_JITTER_SPAN) - level.random.nextInt(TELEPORT_JITTER_SPAN);
+            targetZ = level.random.nextInt(2) == 0
+                    ? startZ + TELEPORT_BASE_OFFSET + level.random.nextInt(TELEPORT_JITTER_SPAN) - level.random.nextInt(TELEPORT_JITTER_SPAN)
+                    : startZ - TELEPORT_BASE_OFFSET + level.random.nextInt(TELEPORT_JITTER_SPAN) - level.random.nextInt(TELEPORT_JITTER_SPAN);
 
-            for (y = startY - 4; y <= startY + 4; y++) {
-                BlockPos target = new BlockPos(x, y, z);
-                BlockPos belowTarget = target.below();
-                if (level.getBlockState(belowTarget).isSolid()
-                        && level.getBlockState(target).is(Blocks.AIR)
-                        && level.getBlockState(target.above()).is(Blocks.AIR)) {
-                    found = true;
+            for (targetY = startY - VERTICAL_SEARCH_RADIUS; targetY <= startY + VERTICAL_SEARCH_RADIUS; targetY++) {
+                BlockPos candidateFeet = new BlockPos(targetX, targetY, targetZ);
+                BlockPos groundBelow = candidateFeet.below();
+                if (level.getBlockState(groundBelow).isSolid()
+                        && level.getBlockState(candidateFeet).is(Blocks.AIR)
+                        && level.getBlockState(candidateFeet.above()).is(Blocks.AIR)) {
+                    foundValidSpot = true;
                     break;
                 }
             }
         }
 
-        if (found) {
+        if (foundValidSpot) {
             if (player instanceof ServerPlayer serverPlayer) {
-                serverPlayer.connection.teleport(x + 0.5, y, z + 0.5, player.getYRot(), 0.0f);
+                serverPlayer.connection.teleport(targetX + 0.5, targetY, targetZ + 0.5, player.getYRot(), 0.0f);
             } else {
-                player.teleportTo(x + 0.5, y, z + 0.5);
+                player.teleportTo(targetX + 0.5, targetY, targetZ + 0.5);
             }
 
-            for (int i = 0; i < 6; i++) {
-                level.addParticle(ParticleTypes.SMOKE, x + 0.5, y + 2.25, z + 0.5, 0, 0, 0);
-                level.addParticle(ParticleTypes.EXPLOSION, x + 0.5, y + 2.25, z + 0.5, 0, 0, 0);
-                level.addParticle(ParticleTypes.DUST_PLUME, x + 0.5, y + 2.25, z + 0.5, 0, 0, 0);
+            for (int i = 0; i < TELEPORT_EFFECT_BURST_COUNT; i++) {
+                level.addParticle(ParticleTypes.SMOKE, targetX + 0.5, targetY + TELEPORT_PARTICLE_Y, targetZ + 0.5, 0, 0, 0);
+                level.addParticle(ParticleTypes.EXPLOSION, targetX + 0.5, targetY + TELEPORT_PARTICLE_Y, targetZ + 0.5, 0, 0, 0);
+                level.addParticle(ParticleTypes.DUST_PLUME, targetX + 0.5, targetY + TELEPORT_PARTICLE_Y, targetZ + 0.5, 0, 0, 0);
             }
-            level.playSound(null, new BlockPos(x, y, z), SoundEvents.GENERIC_EXPLODE.value(), SoundSource.BLOCKS, 1.0f, 1.5f);
+            level.playSound(null, new BlockPos(targetX, targetY, targetZ), SoundEvents.GENERIC_EXPLODE.value(), SoundSource.BLOCKS, 1.0f, EXPLODE_SOUND_PITCH);
         }
     }
 }

@@ -8,15 +8,25 @@ import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.entity.monster.Ghast;
 import net.minecraft.world.entity.monster.ZombifiedPiglin;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.pathfinder.Path;
 
 public abstract class MyEntityAITarget extends Goal {
+    private static final int MAX_TICKS_WITHOUT_LINE_OF_SIGHT = 60;
+    private static final int PATH_RECHECK_DELAY_MIN = 10;
+    private static final int PATH_RECHECK_DELAY_SPREAD = 5;
+    /** Squared horizontal distance from path end to target (1.5 blocks) considered reachable. */
+    private static final double REACHABLE_END_NODE_DIST_SQ = 2.25;
+    private static final int REACHABILITY_UNKNOWN = 0;
+    private static final int REACHABILITY_YES = 1;
+    private static final int REACHABILITY_NO = 2;
+
     protected Mob taskOwner;
     protected float targetDistance;
     protected boolean shouldCheckSight;
     private final boolean nearbyOnly;
-    private int targetSearchStatus = 0;
-    private int targetSearchDelay = 0;
-    private int unseenTicks = 0;
+    private int reachabilityState = REACHABILITY_UNKNOWN;
+    private int ticksUntilPathRecheck = 0;
+    private int ticksSinceLineOfSight = 0;
 
     public MyEntityAITarget(Mob owner, float distance, boolean checkSight) {
         this(owner, distance, checkSight, false);
@@ -37,7 +47,7 @@ public abstract class MyEntityAITarget extends Goal {
             this.taskOwner.setTarget(null);
             return false;
         }
-        if (this.taskOwner.distanceToSqr(target) > (double)(this.targetDistance * this.targetDistance)) {
+        if (this.taskOwner.distanceToSqr(target) > (double) (this.targetDistance * this.targetDistance)) {
             return false;
         }
         if (this.taskOwner instanceof TamableAnimal tame && tame.isTame()
@@ -46,8 +56,8 @@ public abstract class MyEntityAITarget extends Goal {
         }
         if (this.shouldCheckSight) {
             if (this.taskOwner.getSensing().hasLineOfSight(target)) {
-                this.unseenTicks = 0;
-            } else if (++this.unseenTicks > 60) {
+                this.ticksSinceLineOfSight = 0;
+            } else if (++this.ticksSinceLineOfSight > MAX_TICKS_WITHOUT_LINE_OF_SIGHT) {
                 return false;
             }
         }
@@ -56,9 +66,9 @@ public abstract class MyEntityAITarget extends Goal {
 
     @Override
     public void start() {
-        this.targetSearchStatus = 0;
-        this.targetSearchDelay = 0;
-        this.unseenTicks = 0;
+        this.reachabilityState = REACHABILITY_UNKNOWN;
+        this.ticksUntilPathRecheck = 0;
+        this.ticksSinceLineOfSight = 0;
     }
 
     @Override
@@ -84,25 +94,25 @@ public abstract class MyEntityAITarget extends Goal {
         }
 
         if (this.nearbyOnly) {
-            if (--this.targetSearchDelay <= 0) {
-                this.targetSearchStatus = 0;
+            if (--this.ticksUntilPathRecheck <= 0) {
+                this.reachabilityState = REACHABILITY_UNKNOWN;
             }
-            if (this.targetSearchStatus == 0) {
-                this.targetSearchStatus = canReach(target) ? 1 : 2;
+            if (this.reachabilityState == REACHABILITY_UNKNOWN) {
+                this.reachabilityState = canPathfindToTarget(target) ? REACHABILITY_YES : REACHABILITY_NO;
             }
-            if (this.targetSearchStatus == 2) return false;
+            if (this.reachabilityState == REACHABILITY_NO) return false;
         }
         return true;
     }
 
-    private boolean canReach(LivingEntity target) {
-        this.targetSearchDelay = 10 + this.taskOwner.getRandom().nextInt(5);
-        var path = this.taskOwner.getNavigation().createPath(target, 0);
+    private boolean canPathfindToTarget(LivingEntity target) {
+        this.ticksUntilPathRecheck = PATH_RECHECK_DELAY_MIN + this.taskOwner.getRandom().nextInt(PATH_RECHECK_DELAY_SPREAD);
+        Path path = this.taskOwner.getNavigation().createPath(target, 0);
         if (path == null) return false;
         var endNode = path.getEndNode();
         if (endNode == null) return false;
-        int dx = endNode.x - (int) target.getX();
-        int dz = endNode.z - (int) target.getZ();
-        return (double)(dx * dx + dz * dz) <= 2.25;
+        int deltaX = endNode.x - (int) target.getX();
+        int deltaZ = endNode.z - (int) target.getZ();
+        return (double) (deltaX * deltaX + deltaZ * deltaZ) <= REACHABLE_END_NODE_DIST_SQ;
     }
 }

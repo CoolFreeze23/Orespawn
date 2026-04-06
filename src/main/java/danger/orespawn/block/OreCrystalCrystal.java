@@ -14,6 +14,13 @@ import net.minecraft.world.level.block.state.BlockState;
  * CrystalCrystal variant has a chance to explode when broken.
  */
 public class OreCrystalCrystal extends Block {
+    private static final int ANIMATE_TICK_ROLL_BOUND = 20;
+    private static final float PARTICLE_CENTER_OFFSET = 0.5f;
+    private static final double PARTICLE_VELOCITY_SCALE = 4.0;
+    private static final int VOLATILE_EXPLODE_ROLL_BOUND = 10;
+    private static final int VOLATILE_EXPLODE_SUCCESS_INDEX = 1;
+    private static final float VOLATILE_EXPLOSION_POWER = 1.0f;
+
     private final boolean isVolatile;
     private final boolean useFlameParticle;
 
@@ -29,27 +36,24 @@ public class OreCrystalCrystal extends Block {
 
     @Override
     public void animateTick(BlockState state, Level level, BlockPos pos, RandomSource random) {
-        if (random.nextInt(20) != 0) return;
+        if (random.nextInt(ANIMATE_TICK_ROLL_BOUND) != 0) return;
 
-        float dx = 0.5f;
-        float dy = 0.5f;
-        float dz = 0.5f;
-        double vx = (random.nextFloat() - random.nextFloat()) / 4.0;
-        double vy = (random.nextFloat() - random.nextFloat()) / 4.0;
-        double vz = (random.nextFloat() - random.nextFloat()) / 4.0;
+        double vx = (random.nextFloat() - random.nextFloat()) / PARTICLE_VELOCITY_SCALE;
+        double vy = (random.nextFloat() - random.nextFloat()) / PARTICLE_VELOCITY_SCALE;
+        double vz = (random.nextFloat() - random.nextFloat()) / PARTICLE_VELOCITY_SCALE;
 
         if (useFlameParticle) {
-            level.addParticle(ParticleTypes.FLAME, pos.getX() + dx, pos.getY() + dy, pos.getZ() + dz, vx, vy, vz);
+            level.addParticle(ParticleTypes.FLAME, pos.getX() + PARTICLE_CENTER_OFFSET, pos.getY() + PARTICLE_CENTER_OFFSET, pos.getZ() + PARTICLE_CENTER_OFFSET, vx, vy, vz);
         } else {
-            level.addParticle(ParticleTypes.FIREWORK, pos.getX() + dx, pos.getY() + dy, pos.getZ() + dz, vx, vy, vz);
+            level.addParticle(ParticleTypes.FIREWORK, pos.getX() + PARTICLE_CENTER_OFFSET, pos.getY() + PARTICLE_CENTER_OFFSET, pos.getZ() + PARTICLE_CENTER_OFFSET, vx, vy, vz);
         }
     }
 
     @Override
     public BlockState playerWillDestroy(Level level, BlockPos pos, BlockState state, Player player) {
-        if (isVolatile && !level.isClientSide() && level.random.nextInt(10) == 1) {
+        if (isVolatile && !level.isClientSide() && level.random.nextInt(VOLATILE_EXPLODE_ROLL_BOUND) == VOLATILE_EXPLODE_SUCCESS_INDEX) {
             level.explode(null, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5,
-                    1.0f, Level.ExplosionInteraction.BLOCK);
+                    VOLATILE_EXPLOSION_POWER, Level.ExplosionInteraction.BLOCK);
         }
         return super.playerWillDestroy(level, pos, state, player);
     }

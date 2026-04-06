@@ -10,50 +10,50 @@ import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.util.Mth;
 
 public class ModelAlosaurus extends EntityModel<Alosaurus> {
-    private final ModelPart shape18;
-    private final ModelPart shape19;
-    private final ModelPart shape20;
-    private final ModelPart shape21;
-    private final ModelPart shape1;
-    private final ModelPart shape2;
-    private final ModelPart shape3;
-    private final ModelPart shape4;
-    private final ModelPart shape5;
-    private final ModelPart shape6;
+    private final ModelPart headSpikeLeft;
+    private final ModelPart headSpikeRight;
+    private final ModelPart flankSpikeLeft;
+    private final ModelPart flankSpikeRight;
+    private final ModelPart torso;
+    private final ModelPart hips;
+    private final ModelPart tail;
+    private final ModelPart neck;
+    private final ModelPart snoutUpper;
+    private final ModelPart snoutLower;
     private final ModelPart jaw;
     private final ModelPart leftleg;
     private final ModelPart leftleg2;
     private final ModelPart leftleg3;
-    private final ModelPart shape11;
+    private final ModelPart leftForelimb;
     private final ModelPart rightleg;
     private final ModelPart rightleg2;
     private final ModelPart rightleg3;
     private final ModelPart leftleg4;
     private final ModelPart rightleg4;
-    private final ModelPart shape17;
+    private final ModelPart rightForelimb;
 
     public ModelAlosaurus(ModelPart root) {
-        this.shape18 = root.getChild("shape18");
-        this.shape19 = root.getChild("shape19");
-        this.shape20 = root.getChild("shape20");
-        this.shape21 = root.getChild("shape21");
-        this.shape1 = root.getChild("shape1");
-        this.shape2 = root.getChild("shape2");
-        this.shape3 = root.getChild("shape3");
-        this.shape4 = root.getChild("shape4");
-        this.shape5 = root.getChild("shape5");
-        this.shape6 = root.getChild("shape6");
+        this.headSpikeLeft = root.getChild("shape18");
+        this.headSpikeRight = root.getChild("shape19");
+        this.flankSpikeLeft = root.getChild("shape20");
+        this.flankSpikeRight = root.getChild("shape21");
+        this.torso = root.getChild("shape1");
+        this.hips = root.getChild("shape2");
+        this.tail = root.getChild("shape3");
+        this.neck = root.getChild("shape4");
+        this.snoutUpper = root.getChild("shape5");
+        this.snoutLower = root.getChild("shape6");
         this.jaw = root.getChild("jaw");
         this.leftleg = root.getChild("leftleg");
         this.leftleg2 = root.getChild("leftleg2");
         this.leftleg3 = root.getChild("leftleg3");
-        this.shape11 = root.getChild("shape11");
+        this.leftForelimb = root.getChild("shape11");
         this.rightleg = root.getChild("rightleg");
         this.rightleg2 = root.getChild("rightleg2");
         this.rightleg3 = root.getChild("rightleg3");
         this.leftleg4 = root.getChild("leftleg4");
         this.rightleg4 = root.getChild("rightleg4");
-        this.shape17 = root.getChild("shape17");
+        this.rightForelimb = root.getChild("shape17");
     }
 
     public static LayerDefinition createBodyLayer() {
@@ -165,32 +165,32 @@ public class ModelAlosaurus extends EntityModel<Alosaurus> {
         this.jaw.xRot = entity.getAttacking() != 0
                 ? 0.52f + Mth.cos(ageInTicks * 0.45f) * (float) Math.PI * 0.18f
                 : 0.1f;
-        this.shape17.xRot = -0.523f + Mth.cos(ageInTicks * 0.1f) * (float) Math.PI * 0.05f;
-        this.shape11.xRot = -0.523f + Mth.cos(ageInTicks * 0.1f) * (float) Math.PI * 0.05f;
+        this.rightForelimb.xRot = -0.523f + Mth.cos(ageInTicks * 0.1f) * (float) Math.PI * 0.05f;
+        this.leftForelimb.xRot = -0.523f + Mth.cos(ageInTicks * 0.1f) * (float) Math.PI * 0.05f;
     }
 
     @Override
     public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, int color) {
-        shape18.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
-        shape19.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
-        shape20.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
-        shape21.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
-        shape1.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
-        shape2.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
-        shape3.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
-        shape4.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
-        shape5.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
-        shape6.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
-        jaw.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
-        leftleg.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
-        leftleg2.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
-        leftleg3.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
-        shape11.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
-        rightleg.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
-        rightleg2.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
-        rightleg3.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
-        leftleg4.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
-        rightleg4.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
-        shape17.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.headSpikeLeft.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.headSpikeRight.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.flankSpikeLeft.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.flankSpikeRight.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.torso.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.hips.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.tail.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.neck.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.snoutUpper.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.snoutLower.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.jaw.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.leftleg.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.leftleg2.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.leftleg3.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.leftForelimb.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.rightleg.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.rightleg2.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.rightleg3.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.leftleg4.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.rightleg4.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.rightForelimb.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
     }
 }

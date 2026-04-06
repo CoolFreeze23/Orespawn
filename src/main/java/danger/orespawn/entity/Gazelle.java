@@ -45,11 +45,13 @@ import net.minecraft.world.level.block.state.BlockState;
 public class Gazelle extends TamableAnimal {
     private static final int MAX_HEALTH = 15;
     private static final double MOVE_SPEED = 0.3;
+    private static final int NO_FOOD_FOUND_SENTINEL = 99999;
+    private static final int GRAZE_DISTANCE_THRESHOLD_SQ = 12;
 
-    private int closest = 99999;
-    private int tx = 0;
-    private int ty = 0;
-    private int tz = 0;
+    private int closestFoodDistanceSq = NO_FOOD_FOUND_SENTINEL;
+    private int targetX = 0;
+    private int targetY = 0;
+    private int targetZ = 0;
 
     public Gazelle(EntityType<? extends Gazelle> type, Level level) {
         super(type, level);
@@ -112,11 +114,11 @@ public class Gazelle extends TamableAnimal {
     private int checkFoodAt(int x, int y, int z, int dist) {
         BlockPos pos = new BlockPos(x, y, z);
         Block block = this.level().getBlockState(pos).getBlock();
-        if (isGrazeBlock(block) && dist < this.closest) {
-            this.closest = dist;
-            this.tx = x;
-            this.ty = y;
-            this.tz = z;
+        if (isGrazeBlock(block) && dist < this.closestFoodDistanceSq) {
+            this.closestFoodDistanceSq = dist;
+            this.targetX = x;
+            this.targetY = y;
+            this.targetZ = z;
             return 1;
         }
         return 0;
@@ -146,10 +148,10 @@ public class Gazelle extends TamableAnimal {
             boolean randomGraze = this.random.nextInt(750) == 1;
 
             if (needsFood || randomGraze) {
-                this.closest = 99999;
-                this.tx = 0;
-                this.ty = 0;
-                this.tz = 0;
+                this.closestFoodDistanceSq = NO_FOOD_FOUND_SENTINEL;
+                this.targetX = 0;
+                this.targetY = 0;
+                this.targetZ = 0;
                 for (int i = 1; i < 11; ++i) {
                     int j = Math.min(i, 2);
                     if (this.scanForFood(
@@ -159,12 +161,12 @@ public class Gazelle extends TamableAnimal {
                     }
                     if (i >= 6) ++i;
                 }
-                if (this.closest < 99999) {
-                    this.getNavigation().moveTo(this.tx, this.ty, this.tz, 1.0);
-                    if (this.closest < 12) {
+                if (this.closestFoodDistanceSq < NO_FOOD_FOUND_SENTINEL) {
+                    this.getNavigation().moveTo(this.targetX, this.targetY, this.targetZ, 1.0);
+                    if (this.closestFoodDistanceSq < GRAZE_DISTANCE_THRESHOLD_SQ) {
                         if (this.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)) {
                             this.level().setBlock(
-                                    new BlockPos(this.tx, this.ty, this.tz),
+                                    new BlockPos(this.targetX, this.targetY, this.targetZ),
                                     Blocks.AIR.defaultBlockState(), 2);
                         }
                         this.heal(1.0f);
@@ -195,7 +197,7 @@ public class Gazelle extends TamableAnimal {
                 this.getBoundingBox().inflate(16.0, 6.0, 16.0));
         buddies.sort(Comparator.comparingDouble(this::distanceToSqr));
         return buddies.stream()
-                .filter(g -> g != this)
+                .filter(otherGazelle -> otherGazelle != this)
                 .findFirst()
                 .orElse(null);
     }

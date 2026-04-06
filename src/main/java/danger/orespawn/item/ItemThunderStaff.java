@@ -12,7 +12,10 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
 public class ItemThunderStaff extends Item {
-    private int ticker = 0;
+    /** Rain repair: one durability restored after this many ticks while raining. */
+    private static final int RAIN_REPAIR_TICK_INTERVAL = 200;
+
+    private int rainRepairTickCounter = 0;
 
     public ItemThunderStaff(Item.Properties properties) {
         super(properties);
@@ -37,10 +40,10 @@ public class ItemThunderStaff extends Item {
     @Override
     public void inventoryTick(ItemStack stack, Level level, Entity entity, int slotId, boolean isSelected) {
         if (!level.isClientSide && level.isRaining()) {
-            ticker++;
-            if (ticker > 200 && stack.isDamaged()) {
+            rainRepairTickCounter++;
+            if (rainRepairTickCounter > RAIN_REPAIR_TICK_INTERVAL && stack.isDamaged()) {
                 stack.setDamageValue(stack.getDamageValue() - 1);
-                ticker = 0;
+                rainRepairTickCounter = 0;
             }
         }
     }

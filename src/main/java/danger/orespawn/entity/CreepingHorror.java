@@ -23,6 +23,10 @@ import net.minecraft.world.level.Level;
 import danger.orespawn.OreSpawnMod;
 
 public class CreepingHorror extends Monster {
+    private static final long DAYTIME_TICKS = 24000L;
+    /** Past this tick-of-day, the random daytime despawn logic does not run. */
+    private static final long DAYTIME_DESPAWN_CUTOFF = 11000L;
+
     private final Comparator<Entity> targetSorter;
     private static final float MOVE_SPEED = 0.25f;
     private static final int MAX_HEALTH = 20;
@@ -62,8 +66,8 @@ public class CreepingHorror extends Monster {
         this.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(MOVE_SPEED);
         super.tick();
         if (this.isPersistenceRequired()) return;
-        long t = this.level().getDayTime() % 24000L;
-        if (t > 11000L) return;
+        long timeOfDay = this.level().getDayTime() % DAYTIME_TICKS;
+        if (timeOfDay > DAYTIME_DESPAWN_CUTOFF) return;
         if (this.getRandom().nextInt(500) == 1) {
             this.discard();
         }
@@ -101,12 +105,12 @@ public class CreepingHorror extends Monster {
             this.setTarget(null);
         }
         if (this.getRandom().nextInt(5) == 1) {
-            LivingEntity e = findSomethingToAttack();
-            if (e != null) {
-                this.getNavigation().moveTo(e, 1.25);
-                if (this.distanceToSqr(e) < 5.0) {
+            LivingEntity currentTarget = findSomethingToAttack();
+            if (currentTarget != null) {
+                this.getNavigation().moveTo(currentTarget, 1.25);
+                if (this.distanceToSqr(currentTarget) < 5.0) {
                     if (this.random.nextInt(12) == 0 || this.random.nextInt(14) == 1) {
-                        this.doHurtTarget(e);
+                        this.doHurtTarget(currentTarget);
                     }
                 }
             }
@@ -117,8 +121,8 @@ public class CreepingHorror extends Monster {
         List<LivingEntity> list = this.level().getEntitiesOfClass(LivingEntity.class,
                 this.getBoundingBox().inflate(16.0, 4.0, 16.0));
         list.sort(this.targetSorter);
-        for (LivingEntity e : list) {
-            if (isSuitableTarget(e)) return e;
+        for (LivingEntity candidate : list) {
+            if (isSuitableTarget(candidate)) return candidate;
         }
         return null;
     }
@@ -126,7 +130,7 @@ public class CreepingHorror extends Monster {
     private boolean isSuitableTarget(LivingEntity target) {
         if (target == null || target == this || !target.isAlive()) return false;
         if (target instanceof CreepingHorror) return false;
-        if (target instanceof Player p) return !p.getAbilities().instabuild;
+        if (target instanceof Player player) return !player.getAbilities().instabuild;
         return true;
     }
 }

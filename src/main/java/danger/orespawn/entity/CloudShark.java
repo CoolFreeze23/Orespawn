@@ -10,8 +10,6 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -25,6 +23,10 @@ import net.minecraft.world.phys.Vec3;
 public class CloudShark extends Monster {
     private static final int MAX_HEALTH = 20;
     private static final double ATTACK_DAMAGE = 6.0;
+    private static final int MIN_CRUISE_ALTITUDE = 120;
+    private static final int MAX_CRUISE_ALTITUDE = 140;
+    private static final int ALTITUDE_BIAS_UP = 2;
+    private static final int ALTITUDE_BIAS_DOWN = -2;
 
     private BlockPos currentFlightTarget = null;
 
@@ -63,12 +65,12 @@ public class CloudShark extends Monster {
 
     @Override
     public boolean hurt(DamageSource source, float amount) {
-        boolean ret = super.hurt(source, amount);
-        Entity e = source.getEntity();
-        if (e != null && this.currentFlightTarget != null) {
-            this.currentFlightTarget = e.blockPosition();
+        boolean hurtApplied = super.hurt(source, amount);
+        Entity damageSourceEntity = source.getEntity();
+        if (damageSourceEntity != null && this.currentFlightTarget != null) {
+            this.currentFlightTarget = damageSourceEntity.blockPosition();
         }
-        return ret;
+        return hurtApplied;
     }
 
     @Override
@@ -80,27 +82,27 @@ public class CloudShark extends Monster {
             this.currentFlightTarget = this.blockPosition();
         }
 
-        int updown = 0;
-        if ((int) this.getY() < 120) updown = 2;
-        if ((int) this.getY() > 140) updown = -2;
+        int verticalAltitudeBias = 0;
+        if ((int) this.getY() < MIN_CRUISE_ALTITUDE) verticalAltitudeBias = ALTITUDE_BIAS_UP;
+        if ((int) this.getY() > MAX_CRUISE_ALTITUDE) verticalAltitudeBias = ALTITUDE_BIAS_DOWN;
 
         if (this.random.nextInt(300) == 0 || this.currentFlightTarget.closerToCenterThan(this.position(), 2.1)) {
-            int keepTrying = 50;
+            int pickNewTargetAttempts = 50;
             boolean found = false;
-            while (!found && keepTrying > 0) {
+            while (!found && pickNewTargetAttempts > 0) {
                 int xdir = this.random.nextInt(10) + 8;
                 int zdir = this.random.nextInt(10) + 8;
                 if (this.random.nextInt(2) == 0) zdir = -zdir;
                 if (this.random.nextInt(2) == 0) xdir = -xdir;
                 BlockPos newTarget = new BlockPos(
                         (int) this.getX() + xdir,
-                        (int) this.getY() + this.random.nextInt(5) - 2 + updown,
+                        (int) this.getY() + this.random.nextInt(5) - 2 + verticalAltitudeBias,
                         (int) this.getZ() + zdir);
                 if (this.level().getBlockState(newTarget).is(Blocks.AIR)) {
                     this.currentFlightTarget = newTarget;
                     found = true;
                 }
-                --keepTrying;
+                --pickNewTargetAttempts;
             }
         }
 
@@ -114,17 +116,17 @@ public class CloudShark extends Monster {
             }
         }
 
-        double dx = this.currentFlightTarget.getX() + 0.5 - this.getX();
-        double dy = this.currentFlightTarget.getY() + 0.1 - this.getY();
-        double dz = this.currentFlightTarget.getZ() + 0.5 - this.getZ();
+        double deltaX = this.currentFlightTarget.getX() + 0.5 - this.getX();
+        double deltaY = this.currentFlightTarget.getY() + 0.1 - this.getY();
+        double deltaZ = this.currentFlightTarget.getZ() + 0.5 - this.getZ();
         Vec3 motion = this.getDeltaMovement();
-        double mx = motion.x + (Math.signum(dx) * 0.5 - motion.x) * 0.3;
-        double my = motion.y + (Math.signum(dy) * 0.7 - motion.y) * 0.2;
-        double mz = motion.z + (Math.signum(dz) * 0.5 - motion.z) * 0.3;
+        double mx = motion.x + (Math.signum(deltaX) * 0.5 - motion.x) * 0.3;
+        double my = motion.y + (Math.signum(deltaY) * 0.7 - motion.y) * 0.2;
+        double mz = motion.z + (Math.signum(deltaZ) * 0.5 - motion.z) * 0.3;
         this.setDeltaMovement(mx, my, mz);
 
-        float yaw = (float) (Math.atan2(mz, mx) * 180.0 / Math.PI) - 90.0f;
-        float yawDelta = Mth.wrapDegrees(yaw - this.getYRot());
+        float targetYawDegrees = (float) (Math.atan2(mz, mx) * 180.0 / Math.PI) - 90.0f;
+        float yawDelta = Mth.wrapDegrees(targetYawDegrees - this.getYRot());
         this.setYRot(this.getYRot() + yawDelta / 4.0f);
     }
 

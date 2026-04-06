@@ -16,8 +16,13 @@ import net.minecraft.world.phys.BlockHitResult;
  * Uranium ore that sparkles with redstone particles when interacted with.
  */
 public class OreUranium extends Block {
+    private static final int FACE_COUNT = 6;
+    /** Particle offset from block face (1/16 block). */
+    private static final double FACE_PARTICLE_EPSILON = 0.0625;
+    private static final int GLOW_ANIMATION_TICKS = 10;
+
     private boolean glowing = false;
-    private int glowCount = 0;
+    private int glowTicksRemaining = 0;
 
     public OreUranium(BlockBehaviour.Properties properties) {
         super(properties);
@@ -37,7 +42,7 @@ public class OreUranium extends Block {
 
     private void glow(Level level, BlockPos pos) {
         this.glowing = true;
-        this.glowCount = 10;
+        this.glowTicksRemaining = GLOW_ANIMATION_TICKS;
         sparkle(level, pos, level.random);
     }
 
@@ -45,29 +50,28 @@ public class OreUranium extends Block {
     public void animateTick(BlockState state, Level level, BlockPos pos, RandomSource random) {
         if (!glowing) return;
         sparkle(level, pos, random);
-        if (glowCount > 0) {
-            glowCount--;
+        if (glowTicksRemaining > 0) {
+            glowTicksRemaining--;
         } else {
             glowing = false;
         }
     }
 
     private void sparkle(Level level, BlockPos pos, RandomSource random) {
-        double offset = 0.0625;
-        for (int face = 0; face < 6; face++) {
-            double x = pos.getX() + random.nextFloat();
-            double y = pos.getY() + random.nextFloat();
-            double z = pos.getZ() + random.nextFloat();
+        for (int faceIndex = 0; faceIndex < FACE_COUNT; faceIndex++) {
+            double particleX = pos.getX() + random.nextFloat();
+            double particleY = pos.getY() + random.nextFloat();
+            double particleZ = pos.getZ() + random.nextFloat();
 
-            if (face == 0 && !level.getBlockState(pos.above()).canOcclude()) y = pos.getY() + 1 + offset;
-            if (face == 1 && !level.getBlockState(pos.below()).canOcclude()) y = pos.getY() - offset;
-            if (face == 2 && !level.getBlockState(pos.south()).canOcclude()) z = pos.getZ() + 1 + offset;
-            if (face == 3 && !level.getBlockState(pos.north()).canOcclude()) z = pos.getZ() - offset;
-            if (face == 4 && !level.getBlockState(pos.east()).canOcclude()) x = pos.getX() + 1 + offset;
-            if (face == 5 && !level.getBlockState(pos.west()).canOcclude()) x = pos.getX() - offset;
+            if (faceIndex == 0 && !level.getBlockState(pos.above()).canOcclude()) particleY = pos.getY() + 1 + FACE_PARTICLE_EPSILON;
+            if (faceIndex == 1 && !level.getBlockState(pos.below()).canOcclude()) particleY = pos.getY() - FACE_PARTICLE_EPSILON;
+            if (faceIndex == 2 && !level.getBlockState(pos.south()).canOcclude()) particleZ = pos.getZ() + 1 + FACE_PARTICLE_EPSILON;
+            if (faceIndex == 3 && !level.getBlockState(pos.north()).canOcclude()) particleZ = pos.getZ() - FACE_PARTICLE_EPSILON;
+            if (faceIndex == 4 && !level.getBlockState(pos.east()).canOcclude()) particleX = pos.getX() + 1 + FACE_PARTICLE_EPSILON;
+            if (faceIndex == 5 && !level.getBlockState(pos.west()).canOcclude()) particleX = pos.getX() - FACE_PARTICLE_EPSILON;
 
-            if (x < pos.getX() || x > pos.getX() + 1 || y < 0 || y > pos.getY() + 1 || z < pos.getZ() || z > pos.getZ() + 1) {
-                level.addParticle(ParticleTypes.DUST_PLUME, x, y, z, 0, 0, 0);
+            if (particleX < pos.getX() || particleX > pos.getX() + 1 || particleY < 0 || particleY > pos.getY() + 1 || particleZ < pos.getZ() || particleZ > pos.getZ() + 1) {
+                level.addParticle(ParticleTypes.DUST_PLUME, particleX, particleY, particleZ, 0, 0, 0);
             }
         }
     }

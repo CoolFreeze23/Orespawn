@@ -10,13 +10,15 @@ import net.minecraft.world.level.block.state.BlockState;
 import danger.orespawn.ModEntities;
 
 public class BlockMothPlant extends CropBlock {
+    private static final int MAX_CROP_AGE = 7;
+
     public BlockMothPlant(BlockBehaviour.Properties properties) {
         super(properties);
     }
 
     @Override
     public int getMaxAge() {
-        return 7;
+        return MAX_CROP_AGE;
     }
 
     @Override
@@ -26,8 +28,8 @@ public class BlockMothPlant extends CropBlock {
         if (level.isRaining()) return;
 
         int age = getAge(state);
-        int rate = 7 - age;
-        if (rate > 1 && random.nextInt(rate) != 0) return;
+        int spawnRollBound = MAX_CROP_AGE - age;
+        if (spawnRollBound > 1 && random.nextInt(spawnRollBound) != 0) return;
 
         BlockPos above = pos.above();
         if (level.getBlockState(above).is(Blocks.AIR) && !level.isDay()) {

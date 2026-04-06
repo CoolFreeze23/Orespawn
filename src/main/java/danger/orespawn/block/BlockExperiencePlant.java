@@ -19,6 +19,14 @@ import com.mojang.serialization.MapCodec;
  * Experience tree sapling. Grows into an experience tree on random tick.
  */
 public class BlockExperiencePlant extends BushBlock {
+    /** ~10% chance per random tick to try growth (nextInt(10) == 1). */
+    private static final int GROWTH_ROLL_BOUND = 10;
+    private static final int GROWTH_SUCCESS_INDEX = 1;
+    /** Particle animation: roll bound and burst count for happy villager effect. */
+    private static final int ANIMATE_TICK_ROLL_BOUND = 20;
+    private static final int ANIMATE_SUCCESS_INDEX = 1;
+    private static final int HAPPY_VILLAGER_BURST_COUNT = 20;
+
     @Override
     protected MapCodec<? extends BlockExperiencePlant> codec() {
         return simpleCodec(BlockExperiencePlant::new);
@@ -49,7 +57,7 @@ public class BlockExperiencePlant extends BushBlock {
     @Override
     public void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
         if (level.isClientSide()) return;
-        if (random.nextInt(10) != 1) return;
+        if (random.nextInt(GROWTH_ROLL_BOUND) != GROWTH_SUCCESS_INDEX) return;
 
         level.setBlock(pos, Blocks.AIR.defaultBlockState(), 2);
         // TODO: Call OreSpawnTrees.ExperienceTree(level, pos.below())
@@ -57,8 +65,8 @@ public class BlockExperiencePlant extends BushBlock {
 
     @Override
     public void animateTick(BlockState state, Level level, BlockPos pos, RandomSource random) {
-        if (random.nextInt(20) != 1) return;
-        for (int i = 0; i < 20; i++) {
+        if (random.nextInt(ANIMATE_TICK_ROLL_BOUND) != ANIMATE_SUCCESS_INDEX) return;
+        for (int p = 0; p < HAPPY_VILLAGER_BURST_COUNT; p++) {
             level.addParticle(ParticleTypes.HAPPY_VILLAGER,
                     pos.getX() + random.nextFloat(),
                     pos.getY() + random.nextFloat(),

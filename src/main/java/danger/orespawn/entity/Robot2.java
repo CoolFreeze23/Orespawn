@@ -31,7 +31,7 @@ public class Robot2 extends Monster {
             SynchedEntityData.defineId(Robot2.class, EntityDataSerializers.INT);
 
     private final Comparator<Entity> targetSorter;
-    private int justForFun = 0;
+    private int idleAnimationTimer = 0;
     private final float moveSpeed = 0.3f;
 
     public Robot2(EntityType<? extends Robot2> type, Level level) {
@@ -73,8 +73,8 @@ public class Robot2 extends Monster {
 
     @Override
     public void jumpFromGround() {
-        Vec3 dm = this.getDeltaMovement();
-        this.setDeltaMovement(dm.x, dm.y + 0.25, dm.z);
+        Vec3 velocity = this.getDeltaMovement();
+        this.setDeltaMovement(velocity.x, velocity.y + 0.25, velocity.z);
         super.jumpFromGround();
     }
 
@@ -83,31 +83,31 @@ public class Robot2 extends Monster {
         if (this.isRemoved()) return;
         super.customServerAiStep();
         if (this.getRandom().nextInt(6) == 1) {
-            LivingEntity e = this.getTarget();
+            LivingEntity target = this.getTarget();
             if (this.getRandom().nextInt(50) == 1) this.setTarget(null);
-            if (e != null && !e.isAlive()) { this.setTarget(null); e = null; }
-            if (e == null) e = findSomethingToAttack();
-            if (e != null) {
-                this.lookAt(e, 10.0f, 10.0f);
-                double dist = this.distanceToSqr(e);
-                double meleeRange = (5.0f + e.getBbWidth() / 2.0f);
+            if (target != null && !target.isAlive()) { this.setTarget(null); target = null; }
+            if (target == null) target = findSomethingToAttack();
+            if (target != null) {
+                this.lookAt(target, 10.0f, 10.0f);
+                double dist = this.distanceToSqr(target);
+                double meleeRange = (5.0f + target.getBbWidth() / 2.0f);
                 if (dist < meleeRange * meleeRange) {
                     this.setAttacking(1);
                     if (this.getRandom().nextInt(5) == 0 || this.getRandom().nextInt(6) == 1) {
-                        this.doHurtTarget(e);
+                        this.doHurtTarget(target);
                     }
                 } else {
                     this.setAttacking(0);
                 }
-                this.getNavigation().moveTo(e, 1.0);
+                this.getNavigation().moveTo(target, 1.0);
             } else {
                 this.setAttacking(0);
             }
         }
         if (this.getAttacking() == 0) {
-            if (this.getRandom().nextInt(450) == 1) this.justForFun = 50;
-            if (this.justForFun > 0) --this.justForFun;
-            if (this.justForFun > 0) {
+            if (this.getRandom().nextInt(450) == 1) this.idleAnimationTimer = 50;
+            if (this.idleAnimationTimer > 0) --this.idleAnimationTimer;
+            if (this.idleAnimationTimer > 0) {
                 this.setAttacking(1);
             } else {
                 this.setAttacking(0);
@@ -119,8 +119,8 @@ public class Robot2 extends Monster {
     public boolean hurt(DamageSource source, float amount) {
         if (source.getMsgId().equals("cactus")) return false;
         boolean ret = super.hurt(source, amount);
-        Entity e = source.getEntity();
-        if (e instanceof Mob mob) {
+        Entity attacker = source.getEntity();
+        if (attacker instanceof Mob mob) {
             this.setTarget(mob);
             this.getNavigation().moveTo(mob, 1.2);
         }

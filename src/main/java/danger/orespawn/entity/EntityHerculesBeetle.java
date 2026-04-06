@@ -104,11 +104,13 @@ public class EntityHerculesBeetle extends Monster {
     public boolean doHurtTarget(Entity target) {
         if (super.doHurtTarget(target)) {
             if (target instanceof LivingEntity) {
-                double ks = 0.45;
-                double inair = 1.25;
+                double knockbackStrength = 0.45;
+                double verticalKnockback = 1.25;
                 float angle = (float) Math.atan2(target.getZ() - this.getZ(), target.getX() - this.getX());
-                if (target.isRemoved() || target instanceof Player) inair *= 2.0;
-                target.push(Math.cos(angle) * ks, inair * Math.abs(this.random.nextFloat()), Math.sin(angle) * ks);
+                if (target.isRemoved() || target instanceof Player) verticalKnockback *= 2.0;
+                target.push(Math.cos(angle) * knockbackStrength,
+                        verticalKnockback * Math.abs(this.random.nextFloat()),
+                        Math.sin(angle) * knockbackStrength);
             }
             return true;
         }
@@ -188,8 +190,8 @@ public class EntityHerculesBeetle extends Monster {
         List<LivingEntity> entities = this.level().getEntitiesOfClass(LivingEntity.class,
                 this.getBoundingBox().inflate(16.0, 6.0, 16.0));
         entities.sort(Comparator.comparingDouble(this::distanceToSqr));
-        for (LivingEntity e : entities) {
-            if (isSuitableTarget(e)) return e;
+        for (LivingEntity candidate : entities) {
+            if (isSuitableTarget(candidate)) return candidate;
         }
         return null;
     }

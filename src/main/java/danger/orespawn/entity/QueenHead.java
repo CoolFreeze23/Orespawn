@@ -31,8 +31,8 @@ public class QueenHead extends Mob {
     @Override
     public boolean hurt(DamageSource source, float amount) {
         if (source.getMsgId().equals("inWall")) return false;
-        Entity e = source.getEntity();
-        if (e instanceof TheQueen || e instanceof QueenHead) return false;
+        Entity attacker = source.getEntity();
+        if (attacker instanceof TheQueen || attacker instanceof QueenHead) return false;
         Entity direct = source.getDirectEntity();
         if (direct instanceof TheQueen || direct instanceof QueenHead) return false;
 

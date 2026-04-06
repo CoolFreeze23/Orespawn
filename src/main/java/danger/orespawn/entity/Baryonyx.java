@@ -31,11 +31,14 @@ import danger.orespawn.OreSpawnMod;
 import danger.orespawn.ModItems;
 
 public class Baryonyx extends Animal {
+    private static final int NO_GRASS_FOUND_SENTINEL = 99999;
+    private static final int GRASS_INTERACTION_RANGE_SQ = 12;
+
     private final float moveSpeed = 0.25f;
-    private int closest = 99999;
-    private int tx = 0;
-    private int ty = 0;
-    private int tz = 0;
+    private int closestGrassDistSq = NO_GRASS_FOUND_SENTINEL;
+    private int targetGrassX = 0;
+    private int targetGrassY = 0;
+    private int targetGrassZ = 0;
 
     public Baryonyx(EntityType<? extends Baryonyx> type, Level level) {
         super(type, level);
@@ -118,11 +121,11 @@ public class Baryonyx extends Animal {
     private int checkGrassAt(int x, int y, int z, int dist) {
         BlockPos pos = new BlockPos(x, y, z);
         Block block = this.level().getBlockState(pos).getBlock();
-        if (isGrassBlock(block) && dist < this.closest) {
-            this.closest = dist;
-            this.tx = x;
-            this.ty = y;
-            this.tz = z;
+        if (isGrassBlock(block) && dist < this.closestGrassDistSq) {
+            this.closestGrassDistSq = dist;
+            this.targetGrassX = x;
+            this.targetGrassY = y;
+            this.targetGrassZ = z;
             return 1;
         }
         return 0;
@@ -137,21 +140,21 @@ public class Baryonyx extends Animal {
             this.setTarget(null);
         }
         if (this.random.nextInt(60) == 0) {
-            this.closest = 99999;
-            this.tx = 0;
-            this.ty = 0;
-            this.tz = 0;
+            this.closestGrassDistSq = NO_GRASS_FOUND_SENTINEL;
+            this.targetGrassX = 0;
+            this.targetGrassY = 0;
+            this.targetGrassZ = 0;
             for (int i = 1; i < 11; ++i) {
                 int j = Math.min(i, 2);
                 if (this.scanForGrass((int) this.getX(), (int) this.getY() + 1, (int) this.getZ(), i, j, i))
                     break;
                 if (i >= 6) ++i;
             }
-            if (this.closest < 99999) {
-                this.getNavigation().moveTo(this.tx, this.ty, this.tz, 1.0);
-                if (this.closest < 12) {
+            if (this.closestGrassDistSq < NO_GRASS_FOUND_SENTINEL) {
+                this.getNavigation().moveTo(this.targetGrassX, this.targetGrassY, this.targetGrassZ, 1.0);
+                if (this.closestGrassDistSq < GRASS_INTERACTION_RANGE_SQ) {
                     if (this.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)) {
-                        this.level().setBlock(new BlockPos(this.tx, this.ty, this.tz),
+                        this.level().setBlock(new BlockPos(this.targetGrassX, this.targetGrassY, this.targetGrassZ),
                                 Blocks.DIRT.defaultBlockState(), 2);
                     }
                     this.heal(1.0f);

@@ -39,10 +39,10 @@ public class Whale extends Animal {
 
     private int spray = 0;
     private int sprayTimer = 0;
-    private int closest = 99999;
-    private int tx = 0;
-    private int ty = 0;
-    private int tz = 0;
+    private int closestWaterDistance = 99999;
+    private int targetX = 0;
+    private int targetY = 0;
+    private int targetZ = 0;
 
     public Whale(EntityType<? extends Whale> type, Level level) {
         super(type, level);
@@ -83,24 +83,24 @@ public class Whale extends Animal {
 
         if (this.level().isClientSide && this.spray > 0) {
             for (int i = 0; i < 20; ++i) {
-                double d = this.random.nextDouble() * 0.75;
-                d *= d;
-                double dir = this.random.nextDouble() * 2.0 * Math.PI;
-                double dx = Math.cos(dir - Math.PI) * d / 2.0;
-                double dz = Math.sin(dir - Math.PI) * d / 2.0;
-                dir += Math.PI / 2.0;
+                double sprayRadius = this.random.nextDouble() * 0.75;
+                sprayRadius *= sprayRadius;
+                double sprayAngle = this.random.nextDouble() * 2.0 * Math.PI;
+                double offsetX = Math.cos(sprayAngle - Math.PI) * sprayRadius / 2.0;
+                double offsetZ = Math.sin(sprayAngle - Math.PI) * sprayRadius / 2.0;
+                sprayAngle += Math.PI / 2.0;
                 if (i < 10) {
                     this.level().addParticle(ParticleTypes.BUBBLE,
-                            this.getX() + dx, this.getY() + 1.0 + d, this.getZ() + dz,
-                            Math.cos(dir) * this.random.nextFloat() / 4.0,
+                            this.getX() + offsetX, this.getY() + 1.0 + sprayRadius, this.getZ() + offsetZ,
+                            Math.cos(sprayAngle) * this.random.nextFloat() / 4.0,
                             this.random.nextFloat() * 2.0,
-                            Math.sin(dir) * this.random.nextFloat() / 4.0);
+                            Math.sin(sprayAngle) * this.random.nextFloat() / 4.0);
                 } else {
                     this.level().addParticle(ParticleTypes.SPLASH,
-                            this.getX() + dx, this.getY() + 1.0 + d, this.getZ() + dz,
-                            Math.cos(dir) * this.random.nextFloat() / 4.0,
+                            this.getX() + offsetX, this.getY() + 1.0 + sprayRadius, this.getZ() + offsetZ,
+                            Math.cos(sprayAngle) * this.random.nextFloat() / 4.0,
                             this.random.nextFloat() * 2.0,
-                            Math.sin(dir) * this.random.nextFloat() / 4.0);
+                            Math.sin(sprayAngle) * this.random.nextFloat() / 4.0);
                 }
             }
             --this.spray;
@@ -126,10 +126,10 @@ public class Whale extends Animal {
         }
 
         if (!this.isInWater() && this.random.nextInt(20) == 0) {
-            this.closest = 99999;
-            this.tx = 0;
-            this.ty = 0;
-            this.tz = 0;
+            this.closestWaterDistance = 99999;
+            this.targetX = 0;
+            this.targetY = 0;
+            this.targetZ = 0;
             for (int i = 1; i < 11; ++i) {
                 int j = Math.min(i, 4);
                 if (this.scanForWater(
@@ -139,8 +139,8 @@ public class Whale extends Animal {
                 }
                 if (i >= 5) ++i;
             }
-            if (this.closest < 99999) {
-                this.getNavigation().moveTo(this.tx, this.ty - 1, this.tz, 1.0);
+            if (this.closestWaterDistance < 99999) {
+                this.getNavigation().moveTo(this.targetX, this.targetY - 1, this.targetZ, 1.0);
             } else {
                 if (this.random.nextInt(25) == 1) {
                     this.hurt(this.damageSources().dryOut(), 4.0f);
@@ -184,11 +184,11 @@ public class Whale extends Animal {
 
     private int checkWaterAt(int x, int y, int z, int dist) {
         BlockState state = this.level().getBlockState(new BlockPos(x, y, z));
-        if (state.is(Blocks.WATER) && dist < this.closest) {
-            this.closest = dist;
-            this.tx = x;
-            this.ty = y;
-            this.tz = z;
+        if (state.is(Blocks.WATER) && dist < this.closestWaterDistance) {
+            this.closestWaterDistance = dist;
+            this.targetX = x;
+            this.targetY = y;
+            this.targetZ = z;
             return 1;
         }
         return 0;

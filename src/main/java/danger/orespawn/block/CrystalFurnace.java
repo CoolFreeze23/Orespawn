@@ -3,9 +3,7 @@ package danger.orespawn.block;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -31,6 +29,10 @@ import net.minecraft.core.component.DataComponents;
 import org.jetbrains.annotations.Nullable;
 
 public class CrystalFurnace extends BaseEntityBlock {
+    private static final double PARTICLE_Y_SPREAD = 6.0 / 16.0;
+    private static final double FURNACE_FACE_OUTSET = 0.52;
+    private static final double SIDE_JITTER_RANGE = 0.3;
+
     @Override
     protected MapCodec<? extends CrystalFurnace> codec() {
         return simpleCodec(CrystalFurnace::new);
@@ -59,7 +61,6 @@ public class CrystalFurnace extends BaseEntityBlock {
     @Override
     public void setPlacedBy(Level level, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack) {
         if (stack.has(DataComponents.CUSTOM_NAME)) {
-            BlockEntity be = level.getBlockEntity(pos);
             // TODO: if (be instanceof TileEntityCrystalFurnace furnace) furnace.setCustomName(stack.getHoverName());
         }
     }
@@ -68,7 +69,6 @@ public class CrystalFurnace extends BaseEntityBlock {
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
         if (level.isClientSide()) return InteractionResult.SUCCESS;
 
-        BlockEntity be = level.getBlockEntity(pos);
         // TODO: Open crystal furnace GUI
         // if (be instanceof TileEntityCrystalFurnace furnace) {
         //     player.openMenu(furnace);
@@ -81,27 +81,27 @@ public class CrystalFurnace extends BaseEntityBlock {
         if (!state.getValue(LIT)) return;
 
         Direction direction = state.getValue(FACING);
-        double x = pos.getX() + 0.5;
-        double y = pos.getY() + random.nextFloat() * 6.0 / 16.0;
-        double z = pos.getZ() + 0.5;
-        double offset = random.nextFloat() * 0.6 - 0.3;
+        double centerX = pos.getX() + 0.5;
+        double particleY = pos.getY() + random.nextFloat() * PARTICLE_Y_SPREAD;
+        double centerZ = pos.getZ() + 0.5;
+        double sideOffset = random.nextFloat() * 0.6 - SIDE_JITTER_RANGE;
 
         switch (direction) {
             case WEST -> {
-                level.addParticle(ParticleTypes.SMOKE, x - 0.52, y, z + offset, 0, 0, 0);
-                level.addParticle(ParticleTypes.FLAME, x - 0.52, y, z + offset, 0, 0, 0);
+                level.addParticle(ParticleTypes.SMOKE, centerX - FURNACE_FACE_OUTSET, particleY, centerZ + sideOffset, 0, 0, 0);
+                level.addParticle(ParticleTypes.FLAME, centerX - FURNACE_FACE_OUTSET, particleY, centerZ + sideOffset, 0, 0, 0);
             }
             case EAST -> {
-                level.addParticle(ParticleTypes.SMOKE, x + 0.52, y, z + offset, 0, 0, 0);
-                level.addParticle(ParticleTypes.FLAME, x + 0.52, y, z + offset, 0, 0, 0);
+                level.addParticle(ParticleTypes.SMOKE, centerX + FURNACE_FACE_OUTSET, particleY, centerZ + sideOffset, 0, 0, 0);
+                level.addParticle(ParticleTypes.FLAME, centerX + FURNACE_FACE_OUTSET, particleY, centerZ + sideOffset, 0, 0, 0);
             }
             case NORTH -> {
-                level.addParticle(ParticleTypes.SMOKE, x + offset, y, z - 0.52, 0, 0, 0);
-                level.addParticle(ParticleTypes.FLAME, x + offset, y, z - 0.52, 0, 0, 0);
+                level.addParticle(ParticleTypes.SMOKE, centerX + sideOffset, particleY, centerZ - FURNACE_FACE_OUTSET, 0, 0, 0);
+                level.addParticle(ParticleTypes.FLAME, centerX + sideOffset, particleY, centerZ - FURNACE_FACE_OUTSET, 0, 0, 0);
             }
             case SOUTH -> {
-                level.addParticle(ParticleTypes.SMOKE, x + offset, y, z + 0.52, 0, 0, 0);
-                level.addParticle(ParticleTypes.FLAME, x + offset, y, z + 0.52, 0, 0, 0);
+                level.addParticle(ParticleTypes.SMOKE, centerX + sideOffset, particleY, centerZ + FURNACE_FACE_OUTSET, 0, 0, 0);
+                level.addParticle(ParticleTypes.FLAME, centerX + sideOffset, particleY, centerZ + FURNACE_FACE_OUTSET, 0, 0, 0);
             }
             default -> {}
         }
@@ -110,7 +110,6 @@ public class CrystalFurnace extends BaseEntityBlock {
     @Override
     public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
         if (!state.is(newState.getBlock())) {
-            BlockEntity be = level.getBlockEntity(pos);
             // TODO: if (be instanceof TileEntityCrystalFurnace furnace) Containers.dropContents(level, pos, furnace);
         }
         super.onRemove(state, level, pos, newState, movedByPiston);

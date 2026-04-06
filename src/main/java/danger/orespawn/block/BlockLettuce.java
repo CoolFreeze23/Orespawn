@@ -20,6 +20,9 @@ import com.mojang.serialization.MapCodec;
  * AGE property tracks growth delay within a stage.
  */
 public class BlockLettuce extends BushBlock {
+    /** AGE at or above this transitions to the next block variant (when ported). */
+    private static final int NEXT_STAGE_AGE_THRESHOLD = 4;
+
     @Override
     protected MapCodec<? extends BlockLettuce> codec() {
         return simpleCodec(BlockLettuce::new);
@@ -60,7 +63,7 @@ public class BlockLettuce extends BushBlock {
         if (level.isClientSide()) return;
 
         int age = state.getValue(AGE);
-        if (age >= 4) {
+        if (age >= NEXT_STAGE_AGE_THRESHOLD) {
             // TODO: Transition to next lettuce stage block variant
             // level.setBlock(pos, ModBlocks.LETTUCE_PLANT_2.get().defaultBlockState(), 2);
         } else {

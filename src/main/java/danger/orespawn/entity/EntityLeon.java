@@ -42,7 +42,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
-import danger.orespawn.ModItems;
 import danger.orespawn.OreSpawnMod;
 
 public class EntityLeon extends TamableAnimal {
@@ -211,9 +210,9 @@ public class EntityLeon extends TamableAnimal {
         if (target instanceof LivingEntity living) {
             living.hurt(this.damageSources().mobAttack(this), 55.0f);
             float angle = (float) Math.atan2(target.getZ() - this.getZ(), target.getX() - this.getX());
-            double kb = 1.25;
-            double vertKb = target.isRemoved() || target instanceof Player ? 0.3 : 0.15;
-            target.push(Math.cos(angle) * kb, vertKb, Math.sin(angle) * kb);
+            double knockbackStrength = 1.25;
+            double verticalKnockback = target.isRemoved() || target instanceof Player ? 0.3 : 0.15;
+            target.push(Math.cos(angle) * knockbackStrength, verticalKnockback, Math.sin(angle) * knockbackStrength);
         }
         return true;
     }
@@ -377,18 +376,20 @@ public class EntityLeon extends TamableAnimal {
 
         if (this.random.nextInt(300) == 1) doNew = true;
 
-        boolean toofar = false;
-        double ox = this.getX(), oy = this.getY(), oz = this.getZ();
+        boolean tooFarFromOwner = false;
+        double ownerX = this.getX();
+        double ownerY = this.getY();
+        double ownerZ = this.getZ();
         boolean hasOwner = false;
 
         if (this.isTame() && this.getOwner() != null) {
             LivingEntity owner = this.getOwner();
             hasOwner = true;
-            ox = owner.getX();
-            oy = owner.getY();
-            oz = owner.getZ();
+            ownerX = owner.getX();
+            ownerY = owner.getY();
+            ownerZ = owner.getZ();
             if (this.distanceToSqr(owner) > 144.0) {
-                toofar = true;
+                tooFarFromOwner = true;
                 this.targetInSight = false;
                 this.setAttacking(0);
                 this.flyaway = 0;
@@ -398,7 +399,7 @@ public class EntityLeon extends TamableAnimal {
 
         if (this.flyaway > 0) --this.flyaway;
 
-        if (!toofar && this.unstickTimer == 0 && this.flyaway == 0
+        if (!tooFarFromOwner && this.unstickTimer == 0 && this.flyaway == 0
                 && this.level().getDifficulty() != Difficulty.PEACEFUL
                 && this.random.nextInt(8) == 1) {
             LivingEntity target = findSomethingToAttack();
@@ -442,9 +443,9 @@ public class EntityLeon extends TamableAnimal {
                 int xdir, zdir;
 
                 if (hasOwner && this.unstickTimer == 0) {
-                    gox = (int) ox;
-                    goy = (int) oy;
-                    goz = (int) oz;
+                    gox = (int) ownerX;
+                    goy = (int) ownerY;
+                    goz = (int) ownerZ;
                     if (this.ownerFlying == 0) {
                         xdir = this.random.nextInt(12) + 6;
                         zdir = this.random.nextInt(12) + 6;
@@ -503,8 +504,8 @@ public class EntityLeon extends TamableAnimal {
         List<LivingEntity> entities = this.level().getEntitiesOfClass(LivingEntity.class,
                 this.getBoundingBox().inflate(20.0, 20.0, 20.0));
         entities.sort(Comparator.comparingDouble(this::distanceToSqr));
-        for (LivingEntity e : entities) {
-            if (isSuitableTarget(e)) return e;
+        for (LivingEntity candidate : entities) {
+            if (isSuitableTarget(candidate)) return candidate;
         }
         return null;
     }

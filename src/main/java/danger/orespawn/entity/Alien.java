@@ -25,10 +25,7 @@ import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import danger.orespawn.OreSpawnMod;
 
@@ -41,6 +38,10 @@ public class Alien extends Monster {
     private static final double MOVE_SPEED = 0.65;
     private static final int MAX_HEALTH = 80;
     private static final int ATTACK_DAMAGE = 12;
+    private static final double KNOCKBACK_HORIZONTAL = 1.1;
+    private static final double KNOCKBACK_VERTICAL = 0.1;
+    private static final double PLAYER_KNOCKBACK_VERTICAL_MULTIPLIER = 2.0;
+    private static final double JUMP_BOOST = 0.25;
 
     public Alien(EntityType<? extends Alien> type, Level level) {
         super(type, level);
@@ -76,15 +77,15 @@ public class Alien extends Monster {
     public void jumpFromGround() {
         super.jumpFromGround();
         Vec3 delta = this.getDeltaMovement();
-        this.setDeltaMovement(delta.x, delta.y + 0.25, delta.z);
+        this.setDeltaMovement(delta.x, delta.y + JUMP_BOOST, delta.z);
     }
 
     public final int getAttacking() {
         return this.entityData.get(DATA_ATTACKING);
     }
 
-    public final void setAttacking(int par1) {
-        this.entityData.set(DATA_ATTACKING, par1);
+    public final void setAttacking(int value) {
+        this.entityData.set(DATA_ATTACKING, value);
     }
 
     @Override
@@ -131,13 +132,15 @@ public class Alien extends Monster {
                 if (this.getRandom().nextInt(5) == 1) {
                     living.addEffect(new MobEffectInstance(MobEffects.HUNGER, 30, 0));
                 }
-                double ks = 1.1;
-                double inair = 0.1;
-                float angle = (float) Math.atan2(target.getZ() - this.getZ(), target.getX() - this.getX());
+                double verticalKnockback = KNOCKBACK_VERTICAL;
+                float yawToTarget = (float) Math.atan2(target.getZ() - this.getZ(), target.getX() - this.getX());
                 if (target instanceof Player) {
-                    inair *= 2.0;
+                    verticalKnockback *= PLAYER_KNOCKBACK_VERTICAL_MULTIPLIER;
                 }
-                target.push(Math.cos(angle) * ks, inair, Math.sin(angle) * ks);
+                target.push(
+                        Math.cos(yawToTarget) * KNOCKBACK_HORIZONTAL,
+                        verticalKnockback,
+                        Math.sin(yawToTarget) * KNOCKBACK_HORIZONTAL);
             }
             return true;
         }
@@ -197,15 +200,15 @@ public class Alien extends Monster {
         List<LivingEntity> list = this.level().getEntitiesOfClass(LivingEntity.class,
                 this.getBoundingBox().inflate(12.0, 4.0, 12.0));
         list.sort(this.targetSorter);
-        for (LivingEntity e : list) {
-            if (isSuitableTarget(e)) return e;
+        for (LivingEntity candidate : list) {
+            if (isSuitableTarget(candidate)) return candidate;
         }
         return null;
     }
 
     private boolean isSuitableTarget(LivingEntity target) {
         if (target == null || target == this || !target.isAlive()) return false;
-        if (target instanceof Player p) return !p.getAbilities().instabuild;
+        if (target instanceof Player player) return !player.getAbilities().instabuild;
         return false;
     }
 }

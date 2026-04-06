@@ -8,13 +8,17 @@ import net.minecraft.world.entity.ai.util.DefaultRandomPos;
 import net.minecraft.world.phys.Vec3;
 
 public class MyEntityAIWanderALot extends Goal {
+    private static final int WANDER_ROLL_RANGE = 30;
+    private static final int VERTICAL_WANDER_RANGE = 7;
+
     private final PathfinderMob entity;
-    private double xPosition;
-    private double yPosition;
-    private double zPosition;
+    private double targetX;
+    private double targetY;
+    private double targetZ;
     private final double speed;
     private final int xzRange;
-    private int busy = 0;
+    /** Non-zero suppresses starting new wander paths (e.g. while busy with another action). */
+    private int wanderSuppressionFlag = 0;
 
     public MyEntityAIWanderALot(PathfinderMob mob, int xzRange, double speed) {
         this.entity = mob;
@@ -23,20 +27,20 @@ public class MyEntityAIWanderALot extends Goal {
         this.setFlags(EnumSet.of(Goal.Flag.MOVE));
     }
 
-    public void setBusy(int i) {
-        this.busy = i;
+    public void setBusy(int suppressionValue) {
+        this.wanderSuppressionFlag = suppressionValue;
     }
 
     @Override
     public boolean canUse() {
-        if (this.busy != 0) return false;
-        if (this.entity.getRandom().nextInt(30) != 0) return false;
+        if (this.wanderSuppressionFlag != 0) return false;
+        if (this.entity.getRandom().nextInt(WANDER_ROLL_RANGE) != 0) return false;
         if (this.entity instanceof TamableAnimal tamable && tamable.isOrderedToSit()) return false;
-        Vec3 target = DefaultRandomPos.getPos(this.entity, this.xzRange, 7);
-        if (target == null) return false;
-        this.xPosition = target.x;
-        this.yPosition = target.y;
-        this.zPosition = target.z;
+        Vec3 wanderTarget = DefaultRandomPos.getPos(this.entity, this.xzRange, VERTICAL_WANDER_RANGE);
+        if (wanderTarget == null) return false;
+        this.targetX = wanderTarget.x;
+        this.targetY = wanderTarget.y;
+        this.targetZ = wanderTarget.z;
         return true;
     }
 
@@ -47,6 +51,6 @@ public class MyEntityAIWanderALot extends Goal {
 
     @Override
     public void start() {
-        this.entity.getNavigation().moveTo(this.xPosition, this.yPosition, this.zPosition, this.speed);
+        this.entity.getNavigation().moveTo(this.targetX, this.targetY, this.targetZ, this.speed);
     }
 }

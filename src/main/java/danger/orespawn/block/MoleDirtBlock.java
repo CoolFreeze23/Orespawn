@@ -15,6 +15,9 @@ import net.minecraft.world.phys.Vec3;
  * Temporary dirt block left by moles. Disappears on random tick and slows entities.
  */
 public class MoleDirtBlock extends Block {
+    /** Horizontal movement multiplier while inside this block (sticky mud). */
+    private static final double HORIZONTAL_DRAG_FACTOR = 0.3;
+
     public MoleDirtBlock(BlockBehaviour.Properties properties) {
         super(properties);
     }
@@ -33,6 +36,6 @@ public class MoleDirtBlock extends Block {
     @Override
     public void entityInside(BlockState state, Level level, BlockPos pos, Entity entity) {
         Vec3 motion = entity.getDeltaMovement();
-        entity.setDeltaMovement(motion.x * 0.3, motion.y, motion.z * 0.3);
+        entity.setDeltaMovement(motion.x * HORIZONTAL_DRAG_FACTOR, motion.y, motion.z * HORIZONTAL_DRAG_FACTOR);
     }
 }

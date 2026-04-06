@@ -20,7 +20,6 @@ import net.minecraft.world.entity.ai.goal.FloatGoal;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
-import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -36,6 +35,9 @@ public class Alosaurus extends Monster {
 
     private final Comparator<Entity> targetSorter;
     private final float moveSpeed = 0.35f;
+    private static final double KNOCKBACK_HORIZONTAL = 1.2;
+    private static final double KNOCKBACK_VERTICAL = 0.1;
+    private static final double PLAYER_OR_REMOVED_VERTICAL_MULTIPLIER = 2.0;
 
     public Alosaurus(EntityType<? extends Alosaurus> type, Level level) {
         super(type, level);
@@ -107,13 +109,15 @@ public class Alosaurus extends Monster {
     public boolean doHurtTarget(Entity target) {
         if (super.doHurtTarget(target)) {
             if (target instanceof LivingEntity living) {
-                double ks = 1.2;
-                double inair = 0.1;
-                float f3 = (float) Math.atan2(target.getZ() - this.getZ(), target.getX() - this.getX());
+                double verticalKnockback = KNOCKBACK_VERTICAL;
+                float yawToTarget = (float) Math.atan2(target.getZ() - this.getZ(), target.getX() - this.getX());
                 if (target.isRemoved() || target instanceof Player) {
-                    inair *= 2.0;
+                    verticalKnockback *= PLAYER_OR_REMOVED_VERTICAL_MULTIPLIER;
                 }
-                target.push(Math.cos(f3) * ks, inair, Math.sin(f3) * ks);
+                target.push(
+                        Math.cos(yawToTarget) * KNOCKBACK_HORIZONTAL,
+                        verticalKnockback,
+                        Math.sin(yawToTarget) * KNOCKBACK_HORIZONTAL);
             }
             return true;
         }
@@ -176,10 +180,10 @@ public class Alosaurus extends Monster {
     @Override
     protected void dropCustomDeathLoot(ServerLevel level, DamageSource source, boolean recentlyHit) {
         super.dropCustomDeathLoot(level, source, recentlyHit);
-        for (int i = 0; i < 10; i++) {
+        for (int bone = 0; bone < 10; bone++) {
             this.spawnAtLocation(new ItemStack(Items.BONE, 1));
         }
-        for (int i = 0; i < 6; i++) {
+        for (int beef = 0; beef < 6; beef++) {
             this.spawnAtLocation(new ItemStack(Items.BEEF, 1));
         }
     }

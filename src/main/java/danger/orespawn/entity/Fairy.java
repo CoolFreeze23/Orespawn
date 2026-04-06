@@ -33,6 +33,13 @@ import net.minecraft.world.phys.Vec3;
 import danger.orespawn.OreSpawnMod;
 
 public class Fairy extends AmbientCreature {
+    private static final long DAY_LENGTH_TICKS = 24000L;
+    private static final long DAYTIME_BLINK_END_TICK = 12000L;
+    private static final double FLIGHT_SEARCH_RANGE = 8.0;
+    private static final double MELEE_RANGE_SQR = 6.0;
+    private static final double TELEPORT_OWNER_DISTANCE_SQR = 256.0;
+    private static final double FOLLOW_OWNER_DISTANCE_SQR = 64.0;
+
     private static final EntityDataAccessor<Integer> FAIRY_TYPE =
             SynchedEntityData.defineId(Fairy.class, EntityDataSerializers.INT);
     int myBlink = 20 + this.random.nextInt(20);
@@ -82,13 +89,13 @@ public class Fairy extends AmbientCreature {
     @Override
     public void tick() {
         super.tick();
-        Vec3 mot = this.getDeltaMovement();
-        this.setDeltaMovement(mot.x, mot.y * 0.6, mot.z);
+        Vec3 motion = this.getDeltaMovement();
+        this.setDeltaMovement(motion.x, motion.y * 0.6, motion.z);
         this.blinker++;
         if (this.blinker > this.myBlink) this.blinker = 0;
 
-        long t = this.level().getDayTime() % 24000L;
-        if (t < 12000L) return;
+        long dayTime = this.level().getDayTime() % DAY_LENGTH_TICKS;
+        if (dayTime < DAYTIME_BLINK_END_TICK) return;
 
         if (this.level().isClientSide && this.random.nextInt(5) == 0 && this.getBlink() > 1.0f) {
             this.level().addParticle(ParticleTypes.FIREWORK,
@@ -107,10 +114,10 @@ public class Fairy extends AmbientCreature {
 
     private LivingEntity findSomethingToAttack() {
         List<LivingEntity> entities = this.level().getEntitiesOfClass(LivingEntity.class,
-                this.getBoundingBox().inflate(8.0, 8.0, 8.0));
+                this.getBoundingBox().inflate(FLIGHT_SEARCH_RANGE, FLIGHT_SEARCH_RANGE, FLIGHT_SEARCH_RANGE));
         entities.sort(this.targetSorter);
-        for (LivingEntity e : entities) {
-            if (this.isSuitableTarget(e)) return e;
+        for (LivingEntity targetEntity : entities) {
+            if (this.isSuitableTarget(targetEntity)) return targetEntity;
         }
         return null;
     }
@@ -139,25 +146,26 @@ public class Fairy extends AmbientCreature {
                 }
             }
         } else if (this.random.nextInt(12) == 0 && this.level().getDifficulty() != Difficulty.PEACEFUL) {
-            LivingEntity e = this.findSomethingToAttack();
-            if (e != null) {
-                this.currentFlightTarget = new BlockPos((int) e.getX(), (int) e.getY() + 1, (int) e.getZ());
-                if (this.distanceToSqr(e) < 6.0) {
-                    this.doHurtTarget(e);
+            LivingEntity monsterTarget = this.findSomethingToAttack();
+            if (monsterTarget != null) {
+                this.currentFlightTarget = new BlockPos(
+                        (int) monsterTarget.getX(), (int) monsterTarget.getY() + 1, (int) monsterTarget.getZ());
+                if (this.distanceToSqr(monsterTarget) < MELEE_RANGE_SQR) {
+                    this.doHurtTarget(monsterTarget);
                 }
             }
         } else if (this.myowner != null) {
-            Player p = this.level().getPlayerByUUID(java.util.UUID.fromString(this.myowner));
-            if (p != null) {
-                if (this.distanceToSqr(p) > 64.0) {
+            Player owner = this.level().getPlayerByUUID(java.util.UUID.fromString(this.myowner));
+            if (owner != null) {
+                if (this.distanceToSqr(owner) > FOLLOW_OWNER_DISTANCE_SQR) {
                     this.currentFlightTarget = new BlockPos(
-                            (int) p.getX() + this.random.nextInt(3) - this.random.nextInt(3),
-                            (int) p.getY() + 1,
-                            (int) p.getZ() + this.random.nextInt(3) - this.random.nextInt(3));
+                            (int) owner.getX() + this.random.nextInt(3) - this.random.nextInt(3),
+                            (int) owner.getY() + 1,
+                            (int) owner.getZ() + this.random.nextInt(3) - this.random.nextInt(3));
                 }
-                if (this.distanceToSqr(p) > 256.0) {
-                    this.teleportTo(p.getX() + this.random.nextFloat() - this.random.nextFloat(),
-                            p.getY(), p.getZ() + this.random.nextFloat() - this.random.nextFloat());
+                if (this.distanceToSqr(owner) > TELEPORT_OWNER_DISTANCE_SQR) {
+                    this.teleportTo(owner.getX() + this.random.nextFloat() - this.random.nextFloat(),
+                            owner.getY(), owner.getZ() + this.random.nextFloat() - this.random.nextFloat());
                 }
             }
         }
@@ -167,10 +175,10 @@ public class Fairy extends AmbientCreature {
         double dx = this.currentFlightTarget.getX() + 0.5 - this.getX();
         double dy = this.currentFlightTarget.getY() + 0.1 - this.getY();
         double dz = this.currentFlightTarget.getZ() + 0.5 - this.getZ();
-        Vec3 mot = this.getDeltaMovement();
-        double mx = mot.x + (Math.signum(dx) * 0.2 - mot.x) * 0.1;
-        double my = mot.y + (Math.signum(dy) * 0.7 - mot.y) * 0.1;
-        double mz = mot.z + (Math.signum(dz) * 0.2 - mot.z) * 0.1;
+        Vec3 motion = this.getDeltaMovement();
+        double mx = motion.x + (Math.signum(dx) * 0.2 - motion.x) * 0.1;
+        double my = motion.y + (Math.signum(dy) * 0.7 - motion.y) * 0.1;
+        double mz = motion.z + (Math.signum(dz) * 0.2 - motion.z) * 0.1;
         this.setDeltaMovement(mx, my, mz);
 
         float targetYaw = (float) (Math.atan2(mz, mx) * 180.0 / Math.PI) - 90.0f;

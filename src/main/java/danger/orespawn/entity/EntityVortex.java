@@ -23,12 +23,19 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraft.util.Mth;
 
 public class EntityVortex extends Monster {
+    private static final long DAY_LENGTH_TICKS = 24000L;
+    private static final long DAYTIME_DESPAWN_BEFORE = 12000L;
+    private static final double PULL_RANGE_DIST_SQ = 81.0;
+    private static final double PULL_DISTANCE_SCALE = 10.0;
+    private static final double PLAYER_VERTICAL_PULL_MULT = 2.0;
+    private static final int WINDED_COOLDOWN_TICKS = 20;
+
     private BlockPos currentFlightTarget = null;
     private int lastX = 0;
     private int lastY = 0;
     private int lastZ = 0;
     private int stuckCount = 0;
-    private int winded = 0;
+    private int windedCooldownTicks = 0;
 
     public EntityVortex(EntityType<? extends EntityVortex> type, Level level) {
         super(type, level);
@@ -76,16 +83,16 @@ public class EntityVortex extends Monster {
         Vec3 motion = this.getDeltaMovement();
         this.setDeltaMovement(motion.x, motion.y * 0.6, motion.z);
 
-        LivingEntity e = findSomethingToAttack();
-        if (e != null && this.level().isClientSide) {
+        LivingEntity pullTarget = findSomethingToAttack();
+        if (pullTarget != null && this.level().isClientSide) {
             for (int i = 0; i < 20; ++i) {
-                double d = this.random.nextDouble() * 3.5;
-                d *= d;
+                double smokeRadius = this.random.nextDouble() * 3.5;
+                double smokeHeightOffset = smokeRadius * smokeRadius;
                 double dir = this.random.nextDouble() * 2.0 * Math.PI;
-                double dx = Math.cos(dir - Math.PI) * d / 2.0;
-                double dz = Math.sin(dir - Math.PI) * d / 2.0;
+                double dx = Math.cos(dir - Math.PI) * smokeHeightOffset / 2.0;
+                double dz = Math.sin(dir - Math.PI) * smokeHeightOffset / 2.0;
                 this.level().addParticle(ParticleTypes.SMOKE,
-                        this.getX() + dx, this.getY() + 0.75 + d, this.getZ() + dz,
+                        this.getX() + dx, this.getY() + 0.75 + smokeHeightOffset, this.getZ() + dz,
                         Math.cos(dir + Math.PI / 2.0) * this.random.nextFloat() / 4.0,
                         this.random.nextFloat() / 2.0,
                         Math.sin(dir + Math.PI / 2.0) * this.random.nextFloat() / 4.0);
@@ -97,8 +104,8 @@ public class EntityVortex extends Monster {
         }
 
         if (!this.level().isClientSide) {
-            long t = this.level().getDayTime() % 24000L;
-            if (t < 12000L && this.random.nextInt(500) == 1) {
+            long dayTimeInCycle = this.level().getDayTime() % DAY_LENGTH_TICKS;
+            if (dayTimeInCycle < DAYTIME_DESPAWN_BEFORE && this.random.nextInt(500) == 1) {
                 this.discard();
             }
         }
@@ -122,8 +129,8 @@ public class EntityVortex extends Monster {
             this.currentFlightTarget = this.blockPosition();
         }
 
-        if (this.winded > 0) {
-            --this.winded;
+        if (this.windedCooldownTicks > 0) {
+            --this.windedCooldownTicks;
         }
 
         double distSq = this.currentFlightTarget.distSqr(this.blockPosition());
@@ -148,22 +155,22 @@ public class EntityVortex extends Monster {
             }
         }
 
-        LivingEntity e = findSomethingToAttack();
-        if (e != null) {
-            this.currentFlightTarget = e.blockPosition();
-            double d = this.distanceToSqr(e);
-            if (d < 81.0 && this.winded == 0) {
-                double a = Math.atan2(this.getZ() - e.getZ(), this.getX() - e.getX());
-                double pm = (e instanceof Player) ? 2.0 : 1.0;
-                double pullStrength = (10.0 - Math.sqrt(d)) * 0.1;
-                e.push(
-                        Math.cos(a) * pullStrength,
-                        (10.0 - Math.sqrt(d)) * 0.05 * pm,
-                        Math.sin(a) * pullStrength);
+        LivingEntity currentTarget = findSomethingToAttack();
+        if (currentTarget != null) {
+            this.currentFlightTarget = currentTarget.blockPosition();
+            double distSqToTarget = this.distanceToSqr(currentTarget);
+            if (distSqToTarget < PULL_RANGE_DIST_SQ && this.windedCooldownTicks == 0) {
+                double angleAwayFromTarget = Math.atan2(this.getZ() - currentTarget.getZ(), this.getX() - currentTarget.getX());
+                double verticalPullMultiplier = (currentTarget instanceof Player) ? PLAYER_VERTICAL_PULL_MULT : 1.0;
+                double pullStrength = (PULL_DISTANCE_SCALE - Math.sqrt(distSqToTarget)) * 0.1;
+                currentTarget.push(
+                        Math.cos(angleAwayFromTarget) * pullStrength,
+                        (PULL_DISTANCE_SCALE - Math.sqrt(distSqToTarget)) * 0.05 * verticalPullMultiplier,
+                        Math.sin(angleAwayFromTarget) * pullStrength);
             }
-            double attackRange = (4.0 + e.getBbWidth() / 2.0);
-            if (d < attackRange * attackRange && this.random.nextInt(8) == 2) {
-                this.doHurtTarget(e);
+            double attackRange = (4.0 + currentTarget.getBbWidth() / 2.0);
+            if (distSqToTarget < attackRange * attackRange && this.random.nextInt(8) == 2) {
+                this.doHurtTarget(currentTarget);
             }
         }
 
@@ -198,7 +205,7 @@ public class EntityVortex extends Monster {
         if (attacker != null && this.currentFlightTarget != null) {
             this.currentFlightTarget = attacker.blockPosition();
         }
-        this.winded = 20;
+        this.windedCooldownTicks = WINDED_COOLDOWN_TICKS;
         return ret;
     }
 
@@ -207,8 +214,8 @@ public class EntityVortex extends Monster {
         List<LivingEntity> entities = this.level().getEntitiesOfClass(LivingEntity.class,
                 this.getBoundingBox().inflate(16.0, 10.0, 16.0));
         entities.sort(Comparator.comparingDouble(this::distanceToSqr));
-        for (LivingEntity e : entities) {
-            if (isSuitableTarget(e)) return e;
+        for (LivingEntity candidate : entities) {
+            if (isSuitableTarget(candidate)) return candidate;
         }
         return null;
     }

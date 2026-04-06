@@ -11,7 +11,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
@@ -33,7 +32,9 @@ public class EntityTriffid extends Monster {
     private static final EntityDataAccessor<Integer> DATA_OPEN_CLOSED =
             SynchedEntityData.defineId(EntityTriffid.class, EntityDataSerializers.INT);
 
-    private int hurt_timer = 0;
+    private static final int HURT_LOCKOUT_TICKS = 300;
+
+    private int hurtTimer = 0;
 
     public EntityTriffid(EntityType<? extends EntityTriffid> type, Level level) {
         super(type, level);
@@ -110,7 +111,7 @@ public class EntityTriffid extends Monster {
     @Override
     public void aiStep() {
         super.aiStep();
-        if (!this.level().isClientSide && this.hurt_timer > 0) {
+        if (!this.level().isClientSide && this.hurtTimer > 0) {
             Vec3 motion = this.getDeltaMovement();
             this.setDeltaMovement(0, motion.y, 0);
         }
@@ -123,11 +124,11 @@ public class EntityTriffid extends Monster {
             if (this.random.nextInt(100) == 1) {
                 this.getNavigation().moveTo(this.getX(), this.getY(), this.getZ(), 1.0);
             }
-            if (this.hurt_timer <= 0) {
-                LivingEntity e = findSomethingToAttack();
-                if (e != null) {
+            if (this.hurtTimer <= 0) {
+                LivingEntity targetEntity = findSomethingToAttack();
+                if (targetEntity != null) {
                     float yaw = (float) Math.toDegrees(
-                            Math.atan2(e.getZ() - this.getZ(), e.getX() - this.getX())) - 90.0f;
+                            Math.atan2(targetEntity.getZ() - this.getZ(), targetEntity.getX() - this.getX())) - 90.0f;
                     while (yaw < 0.0f) yaw += 360.0f;
                     this.setYRot(yaw);
                 }
@@ -137,13 +138,13 @@ public class EntityTriffid extends Monster {
 
     @Override
     public boolean hurt(DamageSource source, float amount) {
-        if (this.hurt_timer > 0 || this.getOpenClosed() == 0) {
-            this.hurt_timer = 300;
+        if (this.hurtTimer > 0 || this.getOpenClosed() == 0) {
+            this.hurtTimer = HURT_LOCKOUT_TICKS;
             this.setAttacking(0);
             return false;
         }
         boolean ret = super.hurt(source, amount);
-        this.hurt_timer = 300;
+        this.hurtTimer = HURT_LOCKOUT_TICKS;
         this.setOpenClosed(0);
         this.setAttacking(0);
         return ret;
@@ -154,8 +155,8 @@ public class EntityTriffid extends Monster {
         if (this.isRemoved()) return;
         super.customServerAiStep();
 
-        if (this.hurt_timer > 0) {
-            --this.hurt_timer;
+        if (this.hurtTimer > 0) {
+            --this.hurtTimer;
             this.clearFire();
             this.setOpenClosed(0);
         }
@@ -164,7 +165,7 @@ public class EntityTriffid extends Monster {
             this.heal(1.0f);
         }
 
-        if (this.random.nextInt(80) == 2 && this.hurt_timer <= 0) {
+        if (this.random.nextInt(80) == 2 && this.hurtTimer <= 0) {
             if (this.random.nextInt(8) == 1) {
                 this.setOpenClosed(1);
             } else {
@@ -172,17 +173,17 @@ public class EntityTriffid extends Monster {
             }
         }
 
-        if (this.random.nextInt(10) == 1 && this.hurt_timer <= 0) {
-            LivingEntity e = findSomethingToAttack();
-            if (e != null) {
+        if (this.random.nextInt(10) == 1 && this.hurtTimer <= 0) {
+            LivingEntity targetEntity = findSomethingToAttack();
+            if (targetEntity != null) {
                 this.setOpenClosed(1);
-                if (this.distanceToSqr(e) < 25.0) {
+                if (this.distanceToSqr(targetEntity) < 25.0) {
                     float yaw = (float) Math.toDegrees(
-                            Math.atan2(e.getZ() - this.getZ(), e.getX() - this.getX())) - 90.0f;
+                            Math.atan2(targetEntity.getZ() - this.getZ(), targetEntity.getX() - this.getX())) - 90.0f;
                     while (yaw < 0.0f) yaw += 360.0f;
                     this.setYRot(yaw);
                     this.setAttacking(1);
-                    this.doHurtTarget(e);
+                    this.doHurtTarget(targetEntity);
                 } else {
                     this.setAttacking(0);
                 }
@@ -205,8 +206,8 @@ public class EntityTriffid extends Monster {
         List<LivingEntity> entities = this.level().getEntitiesOfClass(LivingEntity.class,
                 this.getBoundingBox().inflate(10.0, 8.0, 10.0));
         entities.sort(Comparator.comparingDouble(this::distanceToSqr));
-        for (LivingEntity e : entities) {
-            if (isSuitableTarget(e)) return e;
+        for (LivingEntity candidate : entities) {
+            if (isSuitableTarget(candidate)) return candidate;
         }
         return null;
     }

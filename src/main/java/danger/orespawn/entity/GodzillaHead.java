@@ -31,8 +31,8 @@ public class GodzillaHead extends Mob {
     @Override
     public boolean hurt(DamageSource source, float amount) {
         if (source.getMsgId().equals("inWall")) return false;
-        Entity e = source.getEntity();
-        if (e instanceof Godzilla || e instanceof GodzillaHead) return false;
+        Entity attacker = source.getEntity();
+        if (attacker instanceof Godzilla || attacker instanceof GodzillaHead) return false;
         Entity direct = source.getDirectEntity();
         if (direct instanceof Godzilla || direct instanceof GodzillaHead) return false;
 

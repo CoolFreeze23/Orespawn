@@ -11,6 +11,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 
 public class InstantGarden extends Item {
+    private static final int GARDEN_RADIUS = 5;
+
     public InstantGarden(Item.Properties properties) {
         super(properties);
     }
@@ -26,12 +28,11 @@ public class InstantGarden extends Item {
         BlockPos pos = context.getClickedPos();
         int startX = pos.getX();
         int startZ = pos.getZ();
-        int y = pos.getY();
-        int radius = 5;
+        int groundY = pos.getY();
 
-        for (int x = -radius; x <= radius; x++) {
-            for (int z = -radius; z <= radius; z++) {
-                BlockPos ground = new BlockPos(startX + x, y, startZ + z);
+        for (int x = -GARDEN_RADIUS; x <= GARDEN_RADIUS; x++) {
+            for (int z = -GARDEN_RADIUS; z <= GARDEN_RADIUS; z++) {
+                BlockPos ground = new BlockPos(startX + x, groundY, startZ + z);
                 BlockPos above = ground.above();
                 level.setBlock(ground, Blocks.FARMLAND.defaultBlockState(), 3);
                 if (level.getBlockState(above).isAir()) {
@@ -46,10 +47,10 @@ public class InstantGarden extends Item {
             }
         }
 
-        for (int x = -radius; x <= radius; x++) {
-            for (int z = -radius; z <= radius; z++) {
-                if (x == -radius || x == radius || z == -radius || z == radius) {
-                    BlockPos fencePos = new BlockPos(startX + x, y + 1, startZ + z);
+        for (int x = -GARDEN_RADIUS; x <= GARDEN_RADIUS; x++) {
+            for (int z = -GARDEN_RADIUS; z <= GARDEN_RADIUS; z++) {
+                if (x == -GARDEN_RADIUS || x == GARDEN_RADIUS || z == -GARDEN_RADIUS || z == GARDEN_RADIUS) {
+                    BlockPos fencePos = new BlockPos(startX + x, groundY + 1, startZ + z);
                     level.setBlock(fencePos, Blocks.OAK_FENCE.defaultBlockState(), 3);
                 }
             }

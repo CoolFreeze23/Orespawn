@@ -46,6 +46,12 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
 public class Godzilla extends Monster {
+    private static final int CONFIGURED_MAX_HEALTH = 6000;
+    private static final double MELEE_PUSH_HORIZONTAL = 3.2;
+    private static final double MELEE_PUSH_VERTICAL = 0.3;
+    private static final float INCOMING_DAMAGE_CAP = 750.0f;
+    private static final int LARGE_ENTITY_AREA_THRESHOLD = 30;
+
     private static final EntityDataAccessor<Integer> DATA_ATTACKING =
             SynchedEntityData.defineId(Godzilla.class, EntityDataSerializers.INT);
 
@@ -104,7 +110,7 @@ public class Godzilla extends Monster {
     }
 
     public int mygetMaxHealth() {
-        return 6000;
+        return CONFIGURED_MAX_HEALTH;
     }
 
     @Override
@@ -196,43 +202,43 @@ public class Godzilla extends Monster {
         while (this.getYRot() > 360.0f) this.setYRot(this.getYRot() - 360.0f);
         while (this.yHeadRot > 360.0f) this.yHeadRot -= 360.0f;
 
-        Vec3 dm = this.getDeltaMovement();
-        float f = 0.2f + Math.abs(this.getRandom().nextFloat() * 0.45f);
-        double mx = dm.x + f * Math.cos(Math.toRadians(this.yHeadRot + 90.0f));
-        double mz = dm.z + f * Math.sin(Math.toRadians(this.yHeadRot + 90.0f));
-        this.setDeltaMovement(mx, dm.y + 0.45, mz);
+        Vec3 motion = this.getDeltaMovement();
+        float forwardBoost = 0.2f + Math.abs(this.getRandom().nextFloat() * 0.45f);
+        double mx = motion.x + forwardBoost * Math.cos(Math.toRadians(this.yHeadRot + 90.0f));
+        double mz = motion.z + forwardBoost * Math.sin(Math.toRadians(this.yHeadRot + 90.0f));
+        this.setDeltaMovement(mx, motion.y + 0.45, mz);
         this.getNavigation().stop();
     }
 
-    private void jumpAtEntity(LivingEntity e) {
-        Vec3 dm = this.getDeltaMovement();
-        double d1 = e.getX() - this.getX();
-        double d2 = e.getZ() - this.getZ();
-        float angle = (float) Math.atan2(d2, d1);
-        double dist = Math.sqrt(d1 * d1 + d2 * d2);
+    private void jumpAtEntity(LivingEntity targetEntity) {
+        Vec3 motion = this.getDeltaMovement();
+        double deltaX = targetEntity.getX() - this.getX();
+        double deltaZ = targetEntity.getZ() - this.getZ();
+        float angle = (float) Math.atan2(deltaZ, deltaX);
+        double horizontalDist = Math.sqrt(deltaX * deltaX + deltaZ * deltaZ);
         this.setDeltaMovement(
-                dm.x + dist * 0.05 * Math.cos(angle),
-                dm.y + 1.25,
-                dm.z + dist * 0.05 * Math.sin(angle)
+                motion.x + horizontalDist * 0.05 * Math.cos(angle),
+                motion.y + 1.25,
+                motion.z + horizontalDist * 0.05 * Math.sin(angle)
         );
         this.getNavigation().stop();
     }
 
     // ---- Distance helpers ----
 
-    private double getHorizontalDistanceSqToEntity(Entity e) {
-        double dx = e.getX() - this.getX();
-        double dz = e.getZ() - this.getZ();
+    private double getHorizontalDistanceSqToEntity(Entity entity) {
+        double dx = entity.getX() - this.getX();
+        double dz = entity.getZ() - this.getZ();
         return dx * dx + dz * dz;
     }
 
-    private double myGetDistanceSqToEntity(Entity e) {
-        double d0 = this.getX() - e.getX();
-        double d1 = e.getY() - this.getY();
-        double d2 = this.getZ() - e.getZ();
-        if (d1 > 0.0 && d1 < 20.0) d1 = 0.0;
-        if (d1 > 20.0) d1 -= 10.0;
-        return d0 * d0 + d1 * d1 + d2 * d2;
+    private double myGetDistanceSqToEntity(Entity entity) {
+        double deltaX = this.getX() - entity.getX();
+        double deltaY = entity.getY() - this.getY();
+        double deltaZ = this.getZ() - entity.getZ();
+        if (deltaY > 0.0 && deltaY < 20.0) deltaY = 0.0;
+        if (deltaY > 20.0) deltaY -= 10.0;
+        return deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ;
     }
 
     // ---- Block crushing ----
@@ -300,7 +306,7 @@ public class Godzilla extends Monster {
 
     // ---- Combat: fire cannon ----
 
-    private void fireCannon(LivingEntity e) {
+    private void fireCannon(LivingEntity targetEntity) {
         // TODO: Implement BetterFireball projectile for fire cannon attack.
         // Original fires a stream of fireballs (1 aimed + 5 spread) from mouth position
         // at yoff=19, xzoff=22, offset from head rotation angle.
@@ -312,18 +318,18 @@ public class Godzilla extends Monster {
 
     // ---- Combat: lightning attack ----
 
-    private void doLightningAttack(LivingEntity e) {
-        if (e == null) return;
-        e.hurt(this.damageSources().mobAttack(this), 100.0f);
-        e.igniteForSeconds(5);
+    private void doLightningAttack(LivingEntity targetEntity) {
+        if (targetEntity == null) return;
+        targetEntity.hurt(this.damageSources().mobAttack(this), 100.0f);
+        targetEntity.igniteForSeconds(5);
 
         if (this.level() instanceof ServerLevel serverLevel) {
             boolean griefing = serverLevel.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING);
-            serverLevel.explode(this, e.getX(), e.getY(), e.getZ(), 3.0f,
+            serverLevel.explode(this, targetEntity.getX(), targetEntity.getY(), targetEntity.getZ(), 3.0f,
                     griefing ? Level.ExplosionInteraction.MOB : Level.ExplosionInteraction.NONE);
 
             LightningBolt bolt1 = new LightningBolt(EntityType.LIGHTNING_BOLT, serverLevel);
-            bolt1.moveTo(e.getX(), e.getY() + 1.0, e.getZ());
+            bolt1.moveTo(targetEntity.getX(), targetEntity.getY() + 1.0, targetEntity.getZ());
             serverLevel.addFreshEntity(bolt1);
 
             LightningBolt bolt2 = new LightningBolt(EntityType.LIGHTNING_BOLT, serverLevel);
@@ -390,14 +396,14 @@ public class Godzilla extends Monster {
         }
 
         // --- Jump landing damage ---
-        Vec3 dm = this.getDeltaMovement();
-        if (dm.y < -0.95) this.jumped = 1;
-        if (dm.y < -1.5) this.jumped = 2;
-        if (this.jumped != 0 && dm.y > -0.1) {
-            double df = this.jumped == 2 ? 1.5 : 1.0;
-            this.doJumpDamage(this.getX(), this.getY(), this.getZ(), 10.0, 150.0 * df, 0);
-            this.doJumpDamage(this.getX(), this.getY(), this.getZ(), 15.0, 75.0 * df, 0);
-            this.doJumpDamage(this.getX(), this.getY(), this.getZ(), 25.0, 37.5 * df, 0);
+        Vec3 motion = this.getDeltaMovement();
+        if (motion.y < -0.95) this.jumped = 1;
+        if (motion.y < -1.5) this.jumped = 2;
+        if (this.jumped != 0 && motion.y > -0.1) {
+            double landingDamageMultiplier = this.jumped == 2 ? 1.5 : 1.0;
+            this.doJumpDamage(this.getX(), this.getY(), this.getZ(), 10.0, 150.0 * landingDamageMultiplier, 0);
+            this.doJumpDamage(this.getX(), this.getY(), this.getZ(), 15.0, 75.0 * landingDamageMultiplier, 0);
+            this.doJumpDamage(this.getX(), this.getY(), this.getZ(), 25.0, 37.5 * landingDamageMultiplier, 0);
             this.jumped = 0;
         }
 
@@ -419,53 +425,53 @@ public class Godzilla extends Monster {
 
         // --- Target acquisition and combat ---
         if (this.getRandom().nextInt(Math.max(1, 5 - this.largeUnknownDetected)) == 1) {
-            LivingEntity e = this.getTarget();
-            if (e != null) {
-                if (!e.isAlive()) {
+            LivingEntity currentTarget = this.getTarget();
+            if (currentTarget != null) {
+                if (!currentTarget.isAlive()) {
                     this.setTarget(null);
-                    e = null;
-                } else if (e instanceof Godzilla) {
+                    currentTarget = null;
+                } else if (currentTarget instanceof Godzilla) {
                     // TODO: also check GodzillaHead
                     this.setTarget(null);
-                    e = null;
+                    currentTarget = null;
                 }
             }
-            if (e == null) {
-                e = this.findSomethingToAttack();
+            if (currentTarget == null) {
+                currentTarget = this.findSomethingToAttack();
                 // TODO: spawn GodzillaHead companion if not already present
             }
 
-            if (e != null) {
-                this.lookAt(e, 10.0f, 10.0f);
+            if (currentTarget != null) {
+                this.lookAt(currentTarget, 10.0f, 10.0f);
 
-                if (this.getRandom().nextInt(65) == 1 && this.myGetDistanceSqToEntity(e) > 300.0) {
-                    this.doLightningAttack(e);
+                if (this.getRandom().nextInt(65) == 1 && this.myGetDistanceSqToEntity(currentTarget) > 300.0) {
+                    this.doLightningAttack(currentTarget);
 
                 } else if (this.getRandom().nextInt(Math.max(1, 20 - this.largeUnknownDetected * 5)) == 1
                         && this.jumpTimer == 0) {
-                    this.jumpAtEntity(e);
+                    this.jumpAtEntity(currentTarget);
                     this.jumpTimer = 30;
 
-                } else if (this.myGetDistanceSqToEntity(e)
-                        < (double) (300.0f + e.getBbWidth() / 2.0f * (e.getBbWidth() / 2.0f))) {
+                } else if (this.myGetDistanceSqToEntity(currentTarget)
+                        < (double) (300.0f + currentTarget.getBbWidth() / 2.0f * (currentTarget.getBbWidth() / 2.0f))) {
                     this.setAttacking(1);
-                    this.getNavigation().moveTo(e, 1.0);
+                    this.getNavigation().moveTo(currentTarget, 1.0);
                     if (this.getRandom().nextInt(Math.max(1, 4 - this.largeUnknownDetected)) == 0
                             || this.getRandom().nextInt(Math.max(1, 3 - this.largeUnknownDetected)) == 1) {
-                        this.doHurtTarget(e);
+                        this.doHurtTarget(currentTarget);
                     }
 
                 } else {
-                    this.getNavigation().moveTo(e, 1.0);
-                    if (this.getHorizontalDistanceSqToEntity(e) > 625.0) {
+                    this.getNavigation().moveTo(currentTarget, 1.0);
+                    if (this.getHorizontalDistanceSqToEntity(currentTarget) > 625.0) {
                         if (this.streamCount > 0) {
                             this.setAttacking(1);
-                            double rr = Math.atan2(e.getZ() - this.getZ(), e.getX() - this.getX());
-                            double rhdir = Math.toRadians((this.yHeadRot + 90.0f) % 360.0f);
-                            double rdd = Math.abs(rr - rhdir) % (Math.PI * 2.0);
-                            if (rdd > Math.PI) rdd -= Math.PI * 2.0;
-                            if (Math.abs(rdd) < 0.5) {
-                                this.fireCannon(e);
+                            double angleToTarget = Math.atan2(currentTarget.getZ() - this.getZ(), currentTarget.getX() - this.getX());
+                            double headYawRad = Math.toRadians((this.yHeadRot + 90.0f) % 360.0f);
+                            double angleDiff = Math.abs(angleToTarget - headYawRad) % (Math.PI * 2.0);
+                            if (angleDiff > Math.PI) angleDiff -= Math.PI * 2.0;
+                            if (Math.abs(angleDiff) < 0.5) {
+                                this.fireCannon(currentTarget);
                             }
                         } else {
                             this.setAttacking(0);
@@ -490,8 +496,8 @@ public class Godzilla extends Monster {
     @Override
     public boolean doHurtTarget(Entity target) {
         if (target instanceof LivingEntity living) {
-            float s = living.getBbHeight() * living.getBbWidth();
-            if (s > 30.0f && !(target instanceof Godzilla)) {
+            float footprintArea = living.getBbHeight() * living.getBbWidth();
+            if (footprintArea > LARGE_ENTITY_AREA_THRESHOLD && !(target instanceof Godzilla)) {
                 // TODO: also skip GodzillaHead, PitchBlack, Kraken, check isRoyalty
                 living.setHealth(living.getHealth() / 2.0f);
                 living.hurt(this.damageSources().mobAttack(this), 150.0f * 10.0f);
@@ -506,13 +512,13 @@ public class Godzilla extends Monster {
 
         if (super.doHurtTarget(target)) {
             if (target instanceof LivingEntity) {
-                double ks = 3.2;
-                double inair = 0.3;
-                float angle = (float) Math.atan2(target.getZ() - this.getZ(), target.getX() - this.getX());
+                double knockbackHorizontal = MELEE_PUSH_HORIZONTAL;
+                double knockbackVertical = MELEE_PUSH_VERTICAL;
+                float pushAngle = (float) Math.atan2(target.getZ() - this.getZ(), target.getX() - this.getX());
                 if (target.isRemoved() || target instanceof Player) {
-                    inair *= 2.0;
+                    knockbackVertical *= 2.0;
                 }
-                target.push(Math.cos(angle) * ks, inair, Math.sin(angle) * ks);
+                target.push(Math.cos(pushAngle) * knockbackHorizontal, knockbackVertical, Math.sin(pushAngle) * knockbackHorizontal);
             }
             return true;
         }
@@ -525,13 +531,13 @@ public class Godzilla extends Monster {
     public boolean hurt(DamageSource source, float amount) {
         if (this.hurtTimer > 0) return false;
 
-        float dm = Math.min(amount, 750.0f);
+        float cappedDamage = Math.min(amount, INCOMING_DAMAGE_CAP);
         Entity attacker = source.getEntity();
         if (attacker instanceof LivingEntity living) {
-            float s = living.getBbHeight() * living.getBbWidth();
-            if (s > 30.0f && !(living instanceof Godzilla)) {
+            float footprintArea = living.getBbHeight() * living.getBbWidth();
+            if (footprintArea > LARGE_ENTITY_AREA_THRESHOLD && !(living instanceof Godzilla)) {
                 // TODO: also skip GodzillaHead, PitchBlack, Kraken, check isRoyalty
-                dm /= 10.0f;
+                cappedDamage /= 10.0f;
                 this.hurtTimer = 50;
                 this.largeUnknownDetected = 1;
             }
@@ -539,7 +545,7 @@ public class Godzilla extends Monster {
 
         if (source.getMsgId().equals("cactus")) return false;
 
-        boolean ret = super.hurt(source, dm);
+        boolean ret = super.hurt(source, cappedDamage);
         this.hurtTimer = 20;
 
         attacker = source.getEntity();

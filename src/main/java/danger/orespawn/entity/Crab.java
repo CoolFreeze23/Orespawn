@@ -37,6 +37,9 @@ public class Crab extends Monster {
     private float moveSpeed = 0.55f;
     private static final int BASE_HEALTH = 100;
     private static final int BASE_ATTACK = 10;
+    private static final double KNOCKBACK_HORIZONTAL_SCALE = 1.15;
+    private static final double KNOCKBACK_VERTICAL_SCALE = 0.48;
+    private static final double PLAYER_VERTICAL_KNOCKBACK_MULTIPLIER = 2.0;
 
     public Crab(EntityType<? extends Crab> type, Level level) {
         super(type, level);
@@ -81,8 +84,8 @@ public class Crab extends Monster {
         return this.entityData.get(DATA_ATTACKING);
     }
 
-    public final void setAttacking(int par1) {
-        this.entityData.set(DATA_ATTACKING, par1);
+    public final void setAttacking(int value) {
+        this.entityData.set(DATA_ATTACKING, value);
     }
 
     @Override
@@ -102,11 +105,15 @@ public class Crab extends Monster {
         float damage = (float) BASE_ATTACK * this.getCrabScale();
         boolean hit = target.hurt(this.damageSources().mobAttack(this), damage);
         if (hit && target instanceof LivingEntity) {
-            double ks = 1.15 * this.getCrabScale();
-            double inair = 0.48 * this.getCrabScale();
-            float angle = (float) Math.atan2(target.getZ() - this.getZ(), target.getX() - this.getX());
-            if (target instanceof Player) inair *= 2.0;
-            target.push(Math.cos(angle) * ks, inair, Math.sin(angle) * ks);
+            float scale = this.getCrabScale();
+            double horizontalKnockback = KNOCKBACK_HORIZONTAL_SCALE * scale;
+            double verticalKnockback = KNOCKBACK_VERTICAL_SCALE * scale;
+            float yawToTarget = (float) Math.atan2(target.getZ() - this.getZ(), target.getX() - this.getX());
+            if (target instanceof Player) verticalKnockback *= PLAYER_VERTICAL_KNOCKBACK_MULTIPLIER;
+            target.push(
+                    Math.cos(yawToTarget) * horizontalKnockback,
+                    verticalKnockback,
+                    Math.sin(yawToTarget) * horizontalKnockback);
         }
         return hit;
     }
@@ -114,16 +121,16 @@ public class Crab extends Monster {
     @Override
     public boolean hurt(DamageSource source, float amount) {
         if (source.getMsgId().equals("cactus")) return false;
-        Entity e = source.getEntity();
-        if (e instanceof Crab) return false;
+        Entity attacker = source.getEntity();
+        if (attacker instanceof Crab) return false;
         if (this.hurtTimer <= 0) {
             this.hurtTimer = 8;
-            boolean ret = super.hurt(source, amount);
-            if (e instanceof LivingEntity living) {
-                this.setTarget(living);
-                this.getNavigation().moveTo(living, 1.2);
+            boolean hurtApplied = super.hurt(source, amount);
+            if (attacker instanceof LivingEntity livingAttacker) {
+                this.setTarget(livingAttacker);
+                this.getNavigation().moveTo(livingAttacker, 1.2);
             }
-            return ret;
+            return hurtApplied;
         }
         return false;
     }
@@ -135,22 +142,22 @@ public class Crab extends Monster {
         if (this.hurtTimer > 0) --this.hurtTimer;
 
         if (this.getRandom().nextInt(5) == 1) {
-            LivingEntity e = this.getTarget();
-            if (e != null && !e.isAlive()) {
+            LivingEntity currentTarget = this.getTarget();
+            if (currentTarget != null && !currentTarget.isAlive()) {
                 this.setTarget(null);
-                e = null;
+                currentTarget = null;
             }
-            if (e == null) e = findSomethingToAttack();
-            if (e != null) {
-                this.lookAt(e, 10.0f, 10.0f);
-                float attackRange = (6.0f + e.getBbWidth() / 2.0f) * this.getCrabScale();
-                if (this.distanceToSqr(e) < attackRange * attackRange) {
+            if (currentTarget == null) currentTarget = findSomethingToAttack();
+            if (currentTarget != null) {
+                this.lookAt(currentTarget, 10.0f, 10.0f);
+                float attackRange = (6.0f + currentTarget.getBbWidth() / 2.0f) * this.getCrabScale();
+                if (this.distanceToSqr(currentTarget) < attackRange * attackRange) {
                     this.setAttacking(1);
                     if (this.getRandom().nextInt(4) == 0) {
-                        this.doHurtTarget(e);
+                        this.doHurtTarget(currentTarget);
                     }
                 } else {
-                    this.getNavigation().moveTo(e, 1.0);
+                    this.getNavigation().moveTo(currentTarget, 1.0);
                 }
             } else {
                 this.setAttacking(0);
@@ -166,8 +173,8 @@ public class Crab extends Monster {
         List<LivingEntity> list = this.level().getEntitiesOfClass(LivingEntity.class,
                 this.getBoundingBox().inflate(16.0, 6.0, 16.0));
         list.sort(this.targetSorter);
-        for (LivingEntity e : list) {
-            if (isSuitableTarget(e)) return e;
+        for (LivingEntity candidate : list) {
+            if (isSuitableTarget(candidate)) return candidate;
         }
         return null;
     }
@@ -175,7 +182,7 @@ public class Crab extends Monster {
     private boolean isSuitableTarget(LivingEntity target) {
         if (target == null || target == this || !target.isAlive()) return false;
         if (target instanceof Crab) return false;
-        if (target instanceof Player p) return !p.getAbilities().instabuild;
+        if (target instanceof Player player) return !player.getAbilities().instabuild;
         if (target instanceof Monster) return true;
         return false;
     }

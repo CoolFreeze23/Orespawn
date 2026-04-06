@@ -36,8 +36,8 @@ public class Skate extends Monster {
     private static final double MOVE_SPEED = 0.25;
     private static final double ATTACK_DAMAGE = 4.0;
 
-    private int closest = 99999;
-    private int tx = 0, ty = 0, tz = 0;
+    private int closestWaterDistance = 99999;
+    private int targetX = 0, targetY = 0, targetZ = 0;
 
     public Skate(EntityType<? extends Skate> type, Level level) {
         super(type, level);
@@ -77,9 +77,9 @@ public class Skate extends Monster {
     @Override
     public boolean hurt(DamageSource source, float amount) {
         if (this.isRemoved()) return false;
-        Entity e = source.getEntity();
-        if (e instanceof Skate) return false;
-        if (e instanceof Mob mob) {
+        Entity attacker = source.getEntity();
+        if (attacker instanceof Skate) return false;
+        if (attacker instanceof Mob mob) {
             this.setTarget(mob);
             this.getNavigation().moveTo(mob, 1.2);
         }
@@ -92,15 +92,15 @@ public class Skate extends Monster {
         super.customServerAiStep();
 
         if (!this.isInWater() && this.random.nextInt(10) == 0) {
-            this.closest = 99999;
-            this.tx = 0; this.ty = 0; this.tz = 0;
+            this.closestWaterDistance = 99999;
+            this.targetX = 0; this.targetY = 0; this.targetZ = 0;
             for (int i = 1; i < 12; ++i) {
                 int j = Math.min(i, 5);
                 if (this.scanForWater((int) this.getX(), (int) this.getY() - 1, (int) this.getZ(), i, j, i)) break;
                 if (i >= 5) ++i;
             }
-            if (this.closest < 99999) {
-                this.getNavigation().moveTo(this.tx, this.ty - 1, this.tz, 1.33);
+            if (this.closestWaterDistance < 99999) {
+                this.getNavigation().moveTo(this.targetX, this.targetY - 1, this.targetZ, 1.33);
             } else {
                 if (this.random.nextInt(25) == 1) {
                     this.hurt(this.damageSources().dryOut(), 1.0f);
@@ -155,8 +155,8 @@ public class Skate extends Monster {
 
     private int checkWaterAt(int x, int y, int z, int dist) {
         BlockState state = this.level().getBlockState(new BlockPos(x, y, z));
-        if (state.is(Blocks.WATER) && dist < this.closest) {
-            this.closest = dist; this.tx = x; this.ty = y; this.tz = z;
+        if (state.is(Blocks.WATER) && dist < this.closestWaterDistance) {
+            this.closestWaterDistance = dist; this.targetX = x; this.targetY = y; this.targetZ = z;
             return 1;
         }
         return 0;

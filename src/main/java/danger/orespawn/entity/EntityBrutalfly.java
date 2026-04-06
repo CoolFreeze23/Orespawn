@@ -148,11 +148,11 @@ public class EntityBrutalfly extends Monster {
             }
 
             if (target == null && this.random.nextInt(3) == 0) {
-                LivingEntity e = findSomethingToAttack();
-                if (e != null) {
-                    this.currentFlightTarget = e.blockPosition().above(5);
-                    if (this.distanceToSqr(e) <= 25.0) {
-                        this.doHurtTarget(e);
+                LivingEntity mobTarget = findSomethingToAttack();
+                if (mobTarget != null) {
+                    this.currentFlightTarget = mobTarget.blockPosition().above(5);
+                    if (this.distanceToSqr(mobTarget) <= 25.0) {
+                        this.doHurtTarget(mobTarget);
                     }
                 }
             }
@@ -206,8 +206,8 @@ public class EntityBrutalfly extends Monster {
         List<LivingEntity> entities = this.level().getEntitiesOfClass(LivingEntity.class,
                 this.getBoundingBox().inflate(25.0, 20.0, 25.0));
         entities.sort(Comparator.comparingDouble(this::distanceToSqr));
-        for (LivingEntity e : entities) {
-            if (isSuitableTarget(e)) return e;
+        for (LivingEntity candidate : entities) {
+            if (isSuitableTarget(candidate)) return candidate;
         }
         return null;
     }

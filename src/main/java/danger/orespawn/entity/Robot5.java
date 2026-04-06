@@ -67,8 +67,8 @@ public class Robot5 extends Monster {
 
     @Override
     public void jumpFromGround() {
-        Vec3 dm = this.getDeltaMovement();
-        this.setDeltaMovement(dm.x, dm.y + 0.25, dm.z);
+        Vec3 velocity = this.getDeltaMovement();
+        this.setDeltaMovement(velocity.x, velocity.y + 0.25, velocity.z);
         super.jumpFromGround();
     }
 
@@ -81,17 +81,17 @@ public class Robot5 extends Monster {
             if (this.reloadTicker < 15) this.setAttacking(0);
         }
         if (this.reloadTicker == 0) {
-            LivingEntity e = this.getTarget();
+            LivingEntity target = this.getTarget();
             if (this.getRandom().nextInt(50) == 1) this.setTarget(null);
-            if (e != null && !e.isAlive()) { this.setTarget(null); e = null; }
-            if (e == null) e = findSomethingToAttack();
+            if (target != null && !target.isAlive()) { this.setTarget(null); target = null; }
+            if (target == null) target = findSomethingToAttack();
             this.reloadTicker = 20;
-            if (e != null) {
-                this.lookAt(e, 10.0f, 10.0f);
-                if (this.distanceToSqr(e) < 900.0) {
+            if (target != null) {
+                this.lookAt(target, 10.0f, 10.0f);
+                if (this.distanceToSqr(target) < 900.0) {
                     this.setAttacking(1);
-                    if (this.distanceToSqr(e) > 36.0) {
-                        this.getNavigation().moveTo(e, 0.5);
+                    if (this.distanceToSqr(target) > 36.0) {
+                        this.getNavigation().moveTo(target, 0.5);
                     }
                 }
             } else {

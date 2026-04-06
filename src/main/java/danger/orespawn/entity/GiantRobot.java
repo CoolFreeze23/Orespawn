@@ -27,6 +27,10 @@ import net.minecraft.resources.ResourceLocation;
 import danger.orespawn.OreSpawnMod;
 
 public class GiantRobot extends Monster {
+    private static final double MELEE_KNOCKBACK_HORIZONTAL = 2.2;
+    private static final double MELEE_KNOCKBACK_VERTICAL = 0.25;
+    private static final double LONG_RANGE_TARGET_DISTANCE_SQR = 256.0;
+
     private static final EntityDataAccessor<Integer> DATA_ATTACKING =
             SynchedEntityData.defineId(GiantRobot.class, EntityDataSerializers.INT);
 
@@ -68,20 +72,20 @@ public class GiantRobot extends Monster {
 
     @Override
     public void jumpFromGround() {
-        Vec3 dm = this.getDeltaMovement();
-        this.setDeltaMovement(dm.x, dm.y + 0.25, dm.z);
+        Vec3 motion = this.getDeltaMovement();
+        this.setDeltaMovement(motion.x, motion.y + 0.25, motion.z);
         super.jumpFromGround();
     }
 
     @Override
     public boolean doHurtTarget(Entity target) {
-        double ks = 2.2;
-        double inair = 0.25;
+        double knockbackHorizontal = MELEE_KNOCKBACK_HORIZONTAL;
+        double knockbackVertical = MELEE_KNOCKBACK_VERTICAL;
         if (super.doHurtTarget(target)) {
-            if (target instanceof LivingEntity le) {
-                float f3 = (float) Math.atan2(le.getZ() - this.getZ(), le.getX() - this.getX());
-                if (le.isRemoved() || le instanceof Player) inair *= 2.0;
-                le.push(Math.cos(f3) * ks, inair, Math.sin(f3) * ks);
+            if (target instanceof LivingEntity livingTarget) {
+                float pushAngle = (float) Math.atan2(livingTarget.getZ() - this.getZ(), livingTarget.getX() - this.getX());
+                if (livingTarget.isRemoved() || livingTarget instanceof Player) knockbackVertical *= 2.0;
+                livingTarget.push(Math.cos(pushAngle) * knockbackHorizontal, knockbackVertical, Math.sin(pushAngle) * knockbackHorizontal);
             }
             return true;
         }
@@ -94,21 +98,24 @@ public class GiantRobot extends Monster {
         super.customServerAiStep();
         if (this.reloadTicker > 0) --this.reloadTicker;
         if (this.getRandom().nextInt(5) == 0) {
-            LivingEntity e = this.getTarget();
+            LivingEntity currentTarget = this.getTarget();
             if (this.getRandom().nextInt(100) == 1) this.setTarget(null);
-            if (e != null && !e.isAlive()) { this.setTarget(null); e = null; }
-            if (e == null) e = findSomethingToAttack();
-            if (e != null) {
-                this.lookAt(e, 10.0f, 10.0f);
-                if (this.distanceToSqr(e) < 256.0) {
-                    double meleeRange = (8.0f + e.getBbWidth() / 2.0f);
-                    if (this.distanceToSqr(e) < meleeRange * meleeRange) {
+            if (currentTarget != null && !currentTarget.isAlive()) {
+                this.setTarget(null);
+                currentTarget = null;
+            }
+            if (currentTarget == null) currentTarget = findSomethingToAttack();
+            if (currentTarget != null) {
+                this.lookAt(currentTarget, 10.0f, 10.0f);
+                if (this.distanceToSqr(currentTarget) < LONG_RANGE_TARGET_DISTANCE_SQR) {
+                    double meleeRange = (8.0f + currentTarget.getBbWidth() / 2.0f);
+                    if (this.distanceToSqr(currentTarget) < meleeRange * meleeRange) {
                         this.setAttacking(1);
-                        this.doHurtTarget(e);
+                        this.doHurtTarget(currentTarget);
                     } else {
                         this.setAttacking(0);
                     }
-                    this.getNavigation().moveTo(e, 0.5);
+                    this.getNavigation().moveTo(currentTarget, 0.5);
                 } else {
                     this.setAttacking(0);
                 }
@@ -122,8 +129,8 @@ public class GiantRobot extends Monster {
     public boolean hurt(DamageSource source, float amount) {
         if (source.getMsgId().equals("cactus")) return false;
         boolean ret = super.hurt(source, amount);
-        Entity e = source.getEntity();
-        if (e instanceof Mob mob) {
+        Entity attacker = source.getEntity();
+        if (attacker instanceof Mob mob) {
             this.setTarget(mob);
         }
         return ret;
@@ -133,8 +140,8 @@ public class GiantRobot extends Monster {
         AABB searchBox = this.getBoundingBox().inflate(16.0, 12.0, 16.0);
         List<LivingEntity> entities = this.level().getEntitiesOfClass(LivingEntity.class, searchBox);
         entities.sort(this.targetSorter);
-        for (LivingEntity e : entities) {
-            if (isSuitableTarget(e)) return e;
+        for (LivingEntity targetEntity : entities) {
+            if (isSuitableTarget(targetEntity)) return targetEntity;
         }
         return null;
     }
@@ -142,7 +149,7 @@ public class GiantRobot extends Monster {
     private boolean isSuitableTarget(LivingEntity target) {
         if (target == null || target == this || !target.isAlive()) return false;
         if (target instanceof Monster) return false;
-        if (target instanceof Player p && p.getAbilities().instabuild) return false;
+        if (target instanceof Player player && player.getAbilities().instabuild) return false;
         return true;
     }
 

@@ -14,6 +14,14 @@ import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 
 public class ThunderBolt extends ThrowableProjectile {
+    private static final float TOTAL_DAMAGE = 40.0f;
+    private static final float THROWN_DAMAGE_FRACTION = 0.5f;
+    private static final int IGNITE_DURATION_SECONDS = 1;
+    private static final float EXPLOSION_POWER = 3.0f;
+    private static final double LIGHTNING_OFFSET_Y = 1.0;
+    private static final float EXPLODE_SOUND_VOLUME = 0.5f;
+    private static final int CLIENT_FIREWORK_PARTICLE_COUNT = 4;
+    private static final double PARTICLE_GAUSSIAN_SCALE = 10.0;
 
     public ThunderBolt(EntityType<? extends ThrowableProjectile> type, Level level) {
         super(type, level);
@@ -37,10 +45,10 @@ public class ThunderBolt extends ThrowableProjectile {
     protected void onHitEntity(EntityHitResult result) {
         if (this.level().isClientSide) return;
         Entity target = result.getEntity();
-        float damage = 40.0f;
-        target.hurt(this.damageSources().thrown(this, this.getOwner()), damage / 2.0f);
-        target.hurt(this.damageSources().mobAttack((LivingEntity) this.getOwner()), damage / 2.0f);
-        target.igniteForSeconds(1);
+        float halfDamage = TOTAL_DAMAGE * THROWN_DAMAGE_FRACTION;
+        target.hurt(this.damageSources().thrown(this, this.getOwner()), halfDamage);
+        target.hurt(this.damageSources().mobAttack((LivingEntity) this.getOwner()), halfDamage);
+        target.igniteForSeconds(IGNITE_DURATION_SECONDS);
     }
 
     @Override
@@ -48,17 +56,17 @@ public class ThunderBolt extends ThrowableProjectile {
         super.onHit(result);
         if (!this.level().isClientSide) {
             boolean canGrief = this.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING);
-            this.level().explode(this, this.getX(), this.getY(), this.getZ(), 3.0f,
+            this.level().explode(this, this.getX(), this.getY(), this.getZ(), EXPLOSION_POWER,
                     canGrief, Level.ExplosionInteraction.MOB);
             if (this.level() instanceof ServerLevel serverLevel) {
                 LightningBolt bolt = EntityType.LIGHTNING_BOLT.create(serverLevel);
                 if (bolt != null) {
-                    bolt.moveTo(this.getX(), this.getY() + 1.0, this.getZ());
+                    bolt.moveTo(this.getX(), this.getY() + LIGHTNING_OFFSET_Y, this.getZ());
                     serverLevel.addFreshEntity(bolt);
                 }
             }
         }
-        this.playSound(SoundEvents.GENERIC_EXPLODE.value(), 0.5f,
+        this.playSound(SoundEvents.GENERIC_EXPLODE.value(), EXPLODE_SOUND_VOLUME,
                 1.0f + (this.random.nextFloat() - this.random.nextFloat()) * 0.5f);
         this.discard();
     }
@@ -67,12 +75,12 @@ public class ThunderBolt extends ThrowableProjectile {
     public void tick() {
         super.tick();
         if (this.level().isClientSide) {
-            for (int i = 0; i < 4; ++i) {
+            for (int particleIndex = 0; particleIndex < CLIENT_FIREWORK_PARTICLE_COUNT; ++particleIndex) {
                 this.level().addParticle(ParticleTypes.FIREWORK,
                         this.getX(), this.getY(), this.getZ(),
-                        this.random.nextGaussian() / 10.0,
-                        this.random.nextGaussian() / 10.0,
-                        this.random.nextGaussian() / 10.0);
+                        this.random.nextGaussian() / PARTICLE_GAUSSIAN_SCALE,
+                        this.random.nextGaussian() / PARTICLE_GAUSSIAN_SCALE,
+                        this.random.nextGaussian() / PARTICLE_GAUSSIAN_SCALE);
             }
         }
     }

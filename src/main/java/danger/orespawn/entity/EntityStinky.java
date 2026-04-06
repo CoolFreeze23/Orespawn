@@ -53,6 +53,10 @@ public class EntityStinky extends TamableAnimal {
     private static final EntityDataAccessor<Integer> DATA_SKIN =
             SynchedEntityData.defineId(EntityStinky.class, EntityDataSerializers.INT);
 
+    private static final double OWNER_FAR_DIST_SQ = 256.0;
+    private static final float LOW_HEALTH_FRACTION = 0.25f;
+    private static final int SKIN_VARIANT_COUNT = 19;
+
     private BlockPos currentFlightTarget = null;
     public int activity = 1;
     private int ownerFlying = 0;
@@ -149,7 +153,7 @@ public class EntityStinky extends TamableAnimal {
             this.currentFlightTarget = this.blockPosition();
         }
         if (this.skinColor < 0) {
-            this.skinColor = this.random.nextInt(19);
+            this.skinColor = this.random.nextInt(SKIN_VARIANT_COUNT);
             this.setSkin(this.skinColor);
         }
 
@@ -159,7 +163,7 @@ public class EntityStinky extends TamableAnimal {
         }
 
         if (!this.level().isClientSide && this.random.nextInt(2000) == 1) {
-            this.setSkin(this.random.nextInt(19));
+            this.setSkin(this.random.nextInt(SKIN_VARIANT_COUNT));
         }
     }
 
@@ -243,7 +247,7 @@ public class EntityStinky extends TamableAnimal {
             }
 
             if (this.activity == 1 && this.isTame() && this.getOwner() != null &&
-                    this.distanceToSqr(this.getOwner()) > 256.0) {
+                    this.distanceToSqr(this.getOwner()) > OWNER_FAR_DIST_SQ) {
                 setActivity(2);
             }
 
@@ -299,7 +303,7 @@ public class EntityStinky extends TamableAnimal {
         if (this.random.nextInt(7) == 1 && this.level().getDifficulty() != Difficulty.PEACEFUL) {
             LivingEntity target = findSomethingToAttack();
             if (target != null) {
-                if (this.isTame() && this.getHealth() / 100.0f < 0.25f) {
+                if (this.isTame() && this.getHealth() / 100.0f < LOW_HEALTH_FRACTION) {
                     setActivity(2);
                     doNew = false;
                     this.currentFlightTarget = BlockPos.containing(
@@ -365,17 +369,17 @@ public class EntityStinky extends TamableAnimal {
     }
 
     private void dropItemFront(ItemStack stack) {
-        float f = 0.75f + Math.abs(this.random.nextFloat() * 0.75f);
-        double dx = this.getX() - (double) f * Math.sin(Math.toRadians(this.yBodyRot));
-        double dz = this.getZ() + (double) f * Math.cos(Math.toRadians(this.yBodyRot));
+        float dropOffset = 0.75f + Math.abs(this.random.nextFloat() * 0.75f);
+        double dx = this.getX() - (double) dropOffset * Math.sin(Math.toRadians(this.yBodyRot));
+        double dz = this.getZ() + (double) dropOffset * Math.cos(Math.toRadians(this.yBodyRot));
         ItemEntity item = new ItemEntity(this.level(), dx, this.getY() + 0.9, dz, stack);
         this.level().addFreshEntity(item);
     }
 
     private void dropItemRear(ItemStack stack) {
-        float f = 0.55f + Math.abs(this.random.nextFloat() * 0.55f);
-        double dx = this.getX() + (double) f * Math.sin(Math.toRadians(this.yBodyRot));
-        double dz = this.getZ() - (double) f * Math.cos(Math.toRadians(this.yBodyRot));
+        float dropOffset = 0.55f + Math.abs(this.random.nextFloat() * 0.55f);
+        double dx = this.getX() + (double) dropOffset * Math.sin(Math.toRadians(this.yBodyRot));
+        double dz = this.getZ() - (double) dropOffset * Math.cos(Math.toRadians(this.yBodyRot));
         ItemEntity item = new ItemEntity(this.level(), dx, this.getY() + 0.25, dz, stack);
         this.level().addFreshEntity(item);
     }

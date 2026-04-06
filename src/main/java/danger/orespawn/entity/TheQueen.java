@@ -1,6 +1,5 @@
 package danger.orespawn.entity;
 
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import net.minecraft.core.BlockPos;
@@ -56,10 +55,10 @@ public class TheQueen extends Monster {
     private final Comparator<Entity> targetSorter;
     private BlockPos currentFlightTarget = null;
     private LivingEntity revengeTarget = null;
-    private double attdam = ATTACK_DAMAGE_VALUE;
+    private double attackDamage = ATTACK_DAMAGE_VALUE;
     private int hurtTimer = 0;
-    private int homex = 0;
-    private int homez = 0;
+    private int homeX = 0;
+    private int homeZ = 0;
     private int streamCount = 0;
     private int streamCountL = 0;
     private int ticker = 0;
@@ -69,8 +68,8 @@ public class TheQueen extends Monster {
     private volatile int headFound = 0;
     private int wingSound = 0;
     private int attackLevel = 1;
-    private LivingEntity ev = null;
-    private float evh = 0.0f;
+    private LivingEntity healthTrackedEntity = null;
+    private float healthTrackedEntityHP = 0.0f;
     private int mood = 0;
     private int alwaysMad = 0;
 
@@ -240,29 +239,29 @@ public class TheQueen extends Monster {
         }
 
         this.noPhysics = true;
-        Vec3 dm = this.getDeltaMovement();
-        this.setDeltaMovement(dm.x, dm.y * 0.6, dm.z);
+        Vec3 velocity = this.getDeltaMovement();
+        this.setDeltaMovement(velocity.x, velocity.y * 0.6, velocity.z);
 
         if (this.playerHitCount < 10 && this.getHealth() < (float)(this.mygetMaxHealth() * 3 / 4)) {
-            this.attdam = ATTACK_DAMAGE_VALUE * 20;
+            this.attackDamage = ATTACK_DAMAGE_VALUE * 20;
         }
         if (this.playerHitCount < 10 && this.getHealth() < (float)(this.mygetMaxHealth() / 2)) {
-            this.attdam = ATTACK_DAMAGE_VALUE * 100;
+            this.attackDamage = ATTACK_DAMAGE_VALUE * 100;
         }
         if (this.playerHitCount < 10 && this.getHealth() < (float)(this.mygetMaxHealth() / 3)) {
-            this.attdam = ATTACK_DAMAGE_VALUE * 500;
+            this.attackDamage = ATTACK_DAMAGE_VALUE * 500;
         }
         if (this.playerHitCount < 10 && this.getHealth() < (float)(this.mygetMaxHealth() / 4)) {
-            this.attdam = ATTACK_DAMAGE_VALUE * 1000;
+            this.attackDamage = ATTACK_DAMAGE_VALUE * 1000;
         }
 
         if (this.level().isClientSide && this.getPower() > 800) {
-            float f = 7.0f;
+            float particleOffset = 7.0f;
             if (this.getRandom().nextInt(4) == 1) {
                 for (int i = 0; i < 10; i++) {
-                    double px = this.getX() - (double) f * Math.sin(Math.toRadians(this.getYRot()));
+                    double px = this.getX() - (double) particleOffset * Math.sin(Math.toRadians(this.getYRot()));
                     double py = this.getY() + 14.0;
-                    double pz = this.getZ() + (double) f * Math.cos(Math.toRadians(this.getYRot()));
+                    double pz = this.getZ() + (double) particleOffset * Math.cos(Math.toRadians(this.getYRot()));
                     Vec3 delta = this.getDeltaMovement();
                     this.level().addParticle(
                             net.minecraft.core.particles.ParticleTypes.FIREWORK,
@@ -280,44 +279,44 @@ public class TheQueen extends Monster {
     public boolean doHurtTarget(Entity target) {
         if (target != null && target instanceof LivingEntity living && !this.level().isClientSide) {
             if (!living.isRemoved()) {
-                if (this.ev == living) {
-                    if (this.evh < living.getHealth()) {
-                        living.setHealth(this.evh);
+                if (this.healthTrackedEntity == living) {
+                    if (this.healthTrackedEntityHP < living.getHealth()) {
+                        living.setHealth(this.healthTrackedEntityHP);
                     }
                 } else {
-                    this.ev = living;
+                    this.healthTrackedEntity = living;
                 }
                 if (living.getBbWidth() * living.getBbHeight() > 30.0f) {
                     living.setHealth(living.getHealth() * 3.0f / 4.0f);
-                    living.hurt(this.damageSources().mobAttack(this), (float) this.attdam);
+                    living.hurt(this.damageSources().mobAttack(this), (float) this.attackDamage);
                 }
-                this.evh = living.getHealth();
-                if (this.evh <= 0.0f) {
-                    this.ev.discard();
+                this.healthTrackedEntityHP = living.getHealth();
+                if (this.healthTrackedEntityHP <= 0.0f) {
+                    this.healthTrackedEntity.discard();
                 }
             } else {
-                this.ev = null;
-                this.evh = 0.0f;
+                this.healthTrackedEntity = null;
+                this.healthTrackedEntityHP = 0.0f;
             }
         }
 
         if (target != null && target instanceof EnderDragon dragon) {
             DamageSource explosionSource = this.damageSources().explosion(null, null);
-            dragon.hurt(explosionSource, (float) this.attdam);
+            dragon.hurt(explosionSource, (float) this.attackDamage);
         }
 
-        boolean var4 = target.hurt(this.damageSources().mobAttack(this), (float) this.attdam);
-        if (var4) {
-            double ks = 2.75;
-            double inair = 0.2;
-            float f3 = (float) Math.atan2(target.getZ() - this.getZ(), target.getX() - this.getX());
-            inair += this.getRandom().nextFloat() * 0.25;
+        boolean hit = target.hurt(this.damageSources().mobAttack(this), (float) this.attackDamage);
+        if (hit) {
+            double knockbackStrength = 2.75;
+            double upwardKnockback = 0.2;
+            float angleToTarget = (float) Math.atan2(target.getZ() - this.getZ(), target.getX() - this.getX());
+            upwardKnockback += this.getRandom().nextFloat() * 0.25;
             if (target.isRemoved() || target instanceof Player) {
-                inair *= 1.5;
+                upwardKnockback *= 1.5;
             }
-            target.push(Math.cos(f3) * ks, inair, Math.sin(f3) * ks);
+            target.push(Math.cos(angleToTarget) * knockbackStrength, upwardKnockback, Math.sin(angleToTarget) * knockbackStrength);
         }
-        return var4;
+        return hit;
     }
 
     @Override
@@ -325,7 +324,7 @@ public class TheQueen extends Monster {
         if (this.hurtTimer > 0) {
             return false;
         }
-        float dm = Math.min(amount, 750.0f);
+        float clampedDamage = Math.min(amount, 750.0f);
 
         if (source.getMsgId().equals("inWall")) {
             return false;
@@ -334,20 +333,20 @@ public class TheQueen extends Monster {
         this.mood = 1;
 
         if (source.is(DamageTypes.EXPLOSION)) {
-            float s = this.getHealth();
-            s += amount / 2.0f;
-            if (s > this.getMaxHealth()) {
-                s = this.getMaxHealth();
+            float healedHealth = this.getHealth();
+            healedHealth += amount / 2.0f;
+            if (healedHealth > this.getMaxHealth()) {
+                healedHealth = this.getMaxHealth();
             }
-            this.setHealth(s);
+            this.setHealth(healedHealth);
             return false;
         }
 
-        Entity e = source.getEntity();
-        if (e instanceof LivingEntity living) {
-            // TODO: if (e instanceof PurplePower) return false;
-            float s = living.getBbHeight() * living.getBbWidth();
-            if (living instanceof Monster && s < 3.0f) {
+        Entity attacker = source.getEntity();
+        if (attacker instanceof LivingEntity living) {
+            // TODO: if (attacker instanceof PurplePower) return false;
+            float entitySize = living.getBbHeight() * living.getBbWidth();
+            if (living instanceof Monster && entitySize < 3.0f) {
                 living.discard();
                 return false;
             }
@@ -355,15 +354,15 @@ public class TheQueen extends Monster {
 
         if (!source.getMsgId().equals("cactus")) {
             this.hurtTimer = 20;
-            boolean ret = super.hurt(source, dm);
-            if (e instanceof Player) {
+            boolean ret = super.hurt(source, clampedDamage);
+            if (attacker instanceof Player) {
                 this.playerHitCount++;
             }
-            if (e instanceof LivingEntity living && this.currentFlightTarget != null) {
-                // TODO: && !MyUtils.isRoyalty(e)
+            if (attacker instanceof LivingEntity living && this.currentFlightTarget != null) {
+                // TODO: && !MyUtils.isRoyalty(attacker)
                 this.revengeTarget = living;
-                int dist = Math.min((int) e.getY(), 230);
-                this.currentFlightTarget = new BlockPos((int) e.getX(), dist, (int) e.getZ());
+                int flightY = Math.min((int) attacker.getY(), 230);
+                this.currentFlightTarget = new BlockPos((int) attacker.getX(), flightY, (int) attacker.getZ());
             }
             return ret;
         }
@@ -371,16 +370,16 @@ public class TheQueen extends Monster {
     }
 
     private boolean tooFarFromHome() {
-        float d1 = (float) (this.getX() - (double) this.homex);
-        float d2 = (float) (this.getZ() - (double) this.homez);
-        float dist = (float) Math.sqrt(d1 * d1 + d2 * d2);
-        return dist > 120.0f;
+        float deltaX = (float) (this.getX() - (double) this.homeX);
+        float deltaZ = (float) (this.getZ() - (double) this.homeZ);
+        float distFromHome = (float) Math.sqrt(deltaX * deltaX + deltaZ * deltaZ);
+        return distFromHome > 120.0f;
     }
 
-    private double getHorizontalDistanceSqToEntity(Entity e) {
-        double d1 = e.getZ() - this.getZ();
-        double d2 = e.getX() - this.getX();
-        return d1 * d1 + d2 * d2;
+    private double getHorizontalDistanceSqToEntity(Entity entity) {
+        double deltaZ = entity.getZ() - this.getZ();
+        double deltaX = entity.getX() - this.getX();
+        return deltaZ * deltaZ + deltaX * deltaX;
     }
 
     @Override
@@ -388,30 +387,26 @@ public class TheQueen extends Monster {
         if (this.isRemoved()) return;
         super.customServerAiStep();
 
-        int xdir = 1;
-        int zdir = 1;
-        int attrand = 5;
-        LivingEntity e = null;
-        LivingEntity f = null;
-        double rr, rhdir, rdd;
-        double pi = Math.PI;
+        int randomXOffset = 1;
+        int randomZOffset = 1;
+        int attackChance = 5;
+        LivingEntity currentTarget = null;
+        LivingEntity nearbyTarget = null;
+        double angleToTarget, headingAngle, angleDiff;
 
-        double xzoff = 8.0;
-        double yoff = 14.0;
-
-        if (this.ev != null) {
-            if (this.distanceToSqr(this.ev) < 2000.0 && !this.ev.isRemoved()) {
-                if (this.evh < this.ev.getHealth()) {
-                    this.ev.setHealth(this.evh);
+        if (this.healthTrackedEntity != null) {
+            if (this.distanceToSqr(this.healthTrackedEntity) < 2000.0 && !this.healthTrackedEntity.isRemoved()) {
+                if (this.healthTrackedEntityHP < this.healthTrackedEntity.getHealth()) {
+                    this.healthTrackedEntity.setHealth(this.healthTrackedEntityHP);
                 } else {
-                    this.evh = this.ev.getHealth();
+                    this.healthTrackedEntityHP = this.healthTrackedEntity.getHealth();
                 }
-                if (this.evh <= 0.0f) {
-                    this.ev.discard();
+                if (this.healthTrackedEntityHP <= 0.0f) {
+                    this.healthTrackedEntity.discard();
                 }
             } else {
-                this.ev = null;
-                this.evh = 0.0f;
+                this.healthTrackedEntity = null;
+                this.healthTrackedEntityHP = 0.0f;
             }
         }
 
@@ -495,9 +490,9 @@ public class TheQueen extends Monster {
             this.hurtTimer--;
         }
 
-        if ((this.homex == 0 && this.homez == 0) || this.guardMode == 0) {
-            this.homex = (int) this.getX();
-            this.homez = (int) this.getZ();
+        if ((this.homeX == 0 && this.homeZ == 0) || this.guardMode == 0) {
+            this.homeX = (int) this.getX();
+            this.homeZ = (int) this.getZ();
         }
 
         if (this.getHealth() > (float) (this.mygetMaxHealth() - 2) && this.getRandom().nextInt(500) == 1) {
@@ -530,7 +525,7 @@ public class TheQueen extends Monster {
             this.backoffTimer--;
         }
         if (this.playerHitCount < 10 && this.getHealth() < (float) (this.mygetMaxHealth() / 2)) {
-            attrand = 3;
+            attackChance = 3;
         }
 
         this.noPhysics = true;
@@ -542,125 +537,125 @@ public class TheQueen extends Monster {
         double ftDistSq = this.currentFlightTarget.distSqr(new BlockPos((int) this.getX(), (int) this.getY(), (int) this.getZ()));
 
         if (this.tooFarFromHome() || this.getRandom().nextInt(200) == 0 || ftDistSq < 9.1) {
-            zdir = this.getRandom().nextInt(120);
-            xdir = this.getRandom().nextInt(120);
-            if (this.getRandom().nextInt(2) == 0) zdir = -zdir;
-            if (this.getRandom().nextInt(2) == 0) xdir = -xdir;
+            randomZOffset = this.getRandom().nextInt(120);
+            randomXOffset = this.getRandom().nextInt(120);
+            if (this.getRandom().nextInt(2) == 0) randomZOffset = -randomZOffset;
+            if (this.getRandom().nextInt(2) == 0) randomXOffset = -randomXOffset;
 
-            int dist = computeAltitudeOffset(this.homex, (int) this.getY(), this.homez);
-            if ((int) (this.getY() + dist) > 230) {
-                dist = 230 - (int) this.getY();
+            int altOffset = computeAltitudeOffset(this.homeX, (int) this.getY(), this.homeZ);
+            if ((int) (this.getY() + altOffset) > 230) {
+                altOffset = 230 - (int) this.getY();
             }
-            this.currentFlightTarget = new BlockPos(this.homex + xdir, (int) (this.getY() + dist), this.homez + zdir);
+            this.currentFlightTarget = new BlockPos(this.homeX + randomXOffset, (int) (this.getY() + altOffset), this.homeZ + randomZOffset);
 
             if (this.mood == 0) {
                 // TODO: Search for TheKing entities nearby and follow them
                 // List<TheKing> kinglist = level().getEntitiesOfClass(TheKing.class, getBoundingBox().inflate(64, 32, 64));
                 // if (kinglist != null && !kinglist.isEmpty()) { ... fly near king ... }
             }
-        } else if (this.getRandom().nextInt(attrand) == 0) {
-            e = this.revengeTarget;
+        } else if (this.getRandom().nextInt(attackChance) == 0) {
+            currentTarget = this.revengeTarget;
             if (this.isHappy()) {
-                e = null;
+                currentTarget = null;
             }
 
-            // TODO: if (e instanceof TheQueen || e instanceof QueenHead) { revengeTarget = null; e = null; }
-            if (e != null) {
-                float d1 = (float) (e.getX() - (double) this.homex);
-                float d2 = (float) (e.getZ() - (double) this.homez);
-                d1 = (float) Math.sqrt(d1 * d1 + d2 * d2);
-                if (!e.isAlive() || this.getRandom().nextInt(450) == 1 || (d1 > 128.0f && this.guardMode == 1)) {
-                    e = null;
+            // TODO: if (currentTarget instanceof TheQueen || currentTarget instanceof QueenHead) { revengeTarget = null; currentTarget = null; }
+            if (currentTarget != null) {
+                float deltaX = (float) (currentTarget.getX() - (double) this.homeX);
+                float deltaZ = (float) (currentTarget.getZ() - (double) this.homeZ);
+                float distFromHome = (float) Math.sqrt(deltaX * deltaX + deltaZ * deltaZ);
+                if (!currentTarget.isAlive() || this.getRandom().nextInt(450) == 1 || (distFromHome > 128.0f && this.guardMode == 1)) {
+                    currentTarget = null;
                     this.revengeTarget = null;
                 }
-                if (e != null && !myCanSee(e)) {
-                    e = null;
+                if (currentTarget != null && !myCanSee(currentTarget)) {
+                    currentTarget = null;
                 }
             }
 
-            f = findSomethingToAttack();
+            nearbyTarget = findSomethingToAttack();
 
             if (this.headFound == 0 && this.mood == 1) {
                 // TODO: Spawn QueenHead entity at getX(), getY()+20, getZ()
             }
 
-            if (e == null) {
-                e = f;
+            if (currentTarget == null) {
+                currentTarget = nearbyTarget;
             }
 
-            if (e != null) {
-                float eSize = e.getBbWidth() * e.getBbHeight();
+            if (currentTarget != null) {
+                float targetSize = currentTarget.getBbWidth() * currentTarget.getBbHeight();
                 if (this.attackLevel < 1000) {
                     this.attackLevel += 15;
                     if (this.getHealth() < (float) (this.mygetMaxHealth() / 2)) {
                         this.attackLevel += 15;
                     }
-                    if (eSize > 50.0f) this.attackLevel += 15;
-                    if (eSize > 100.0f) this.attackLevel += 15;
-                    if (eSize > 200.0f) this.attackLevel += 25;
+                    if (targetSize > 50.0f) this.attackLevel += 15;
+                    if (targetSize > 100.0f) this.attackLevel += 15;
+                    if (targetSize > 200.0f) this.attackLevel += 25;
                 }
 
                 this.setAttacking(1);
 
                 if (this.backoffTimer == 0) {
-                    int dist = Math.min((int) (e.getY() + e.getBbHeight() / 2.0f + 1.0), 230);
-                    this.currentFlightTarget = new BlockPos((int) e.getX(), dist, (int) e.getZ());
+                    int flightY = Math.min((int) (currentTarget.getY() + currentTarget.getBbHeight() / 2.0f + 1.0), 230);
+                    this.currentFlightTarget = new BlockPos((int) currentTarget.getX(), flightY, (int) currentTarget.getZ());
                     if (this.getRandom().nextInt(50) == 1) {
                         this.backoffTimer = 90 + this.getRandom().nextInt(90);
                     }
                 } else {
                     double bftDistSq = this.currentFlightTarget.distSqr(new BlockPos((int) this.getX(), (int) this.getY(), (int) this.getZ()));
                     if (bftDistSq < 9.1) {
-                        zdir = this.getRandom().nextInt(20) + 30;
-                        xdir = this.getRandom().nextInt(20) + 30;
-                        if (this.getRandom().nextInt(2) == 0) zdir = -zdir;
-                        if (this.getRandom().nextInt(2) == 0) xdir = -xdir;
+                        randomZOffset = this.getRandom().nextInt(20) + 30;
+                        randomXOffset = this.getRandom().nextInt(20) + 30;
+                        if (this.getRandom().nextInt(2) == 0) randomZOffset = -randomZOffset;
+                        if (this.getRandom().nextInt(2) == 0) randomXOffset = -randomXOffset;
 
-                        int dist = computeAltitudeOffset((int) e.getX(), (int) this.getY(), (int) e.getZ());
-                        if ((int) (this.getY() + dist) > 230) {
-                            dist = 230 - (int) this.getY();
+                        int altOffset = computeAltitudeOffset((int) currentTarget.getX(), (int) this.getY(), (int) currentTarget.getZ());
+                        if ((int) (this.getY() + altOffset) > 230) {
+                            altOffset = 230 - (int) this.getY();
                         }
-                        this.currentFlightTarget = new BlockPos((int) e.getX() + xdir, (int) (this.getY() + dist), (int) e.getZ() + zdir);
+                        this.currentFlightTarget = new BlockPos((int) currentTarget.getX() + randomXOffset, (int) (this.getY() + altOffset), (int) currentTarget.getZ() + randomZOffset);
                     }
                 }
 
-                if (this.distanceToSqr(e) < 900.0) {
+                if (this.distanceToSqr(currentTarget) < 900.0) {
                     if (this.getRandom().nextInt(2) == 1) {
                         doAreaDamage(this.getX(), this.getY(), this.getZ(), 15.0, ATTACK_DAMAGE_VALUE / 4.0, 0);
                     }
-                    this.doHurtTarget(e);
+                    this.doHurtTarget(currentTarget);
                 }
 
-                double dx = this.getX() + 20.0 * Math.sin(Math.toRadians(this.getYRot()));
-                double dz = this.getZ() - 20.0 * Math.cos(Math.toRadians(this.getYRot()));
+                double forwardX = this.getX() + 20.0 * Math.sin(Math.toRadians(this.getYRot()));
+                double forwardZ = this.getZ() - 20.0 * Math.cos(Math.toRadians(this.getYRot()));
                 if (this.getRandom().nextInt(3) == 1) {
-                    doAreaDamage(dx, this.getY() + 10.0, dz, 15.0, ATTACK_DAMAGE_VALUE / 2.0, 1);
+                    doAreaDamage(forwardX, this.getY() + 10.0, forwardZ, 15.0, ATTACK_DAMAGE_VALUE / 2.0, 1);
                 }
 
-                if (this.getHorizontalDistanceSqToEntity(e) > 900.0) {
-                    int which = this.getRandom().nextInt(2);
-                    if (which == 0) {
+                if (this.getHorizontalDistanceSqToEntity(currentTarget) > 900.0) {
+                    int attackChoice = this.getRandom().nextInt(2);
+                    if (attackChoice == 0) {
                         if (this.streamCount > 0) {
                             this.setAttacking(1);
-                            rr = Math.atan2(e.getZ() - this.getZ(), e.getX() - this.getX());
-                            rhdir = Math.toRadians((this.getYRot() + 90.0f) % 360.0f);
-                            rdd = Math.abs(rr - rhdir) % (pi * 2.0);
-                            if (rdd > pi) rdd -= pi * 2.0;
-                            rdd = Math.abs(rdd);
-                            if (rdd < 0.5) {
-                                fireFireballs(e);
+                            angleToTarget = Math.atan2(currentTarget.getZ() - this.getZ(), currentTarget.getX() - this.getX());
+                            headingAngle = Math.toRadians((this.getYRot() + 90.0f) % 360.0f);
+                            angleDiff = Math.abs(angleToTarget - headingAngle) % (Math.PI * 2.0);
+                            if (angleDiff > Math.PI) angleDiff -= Math.PI * 2.0;
+                            angleDiff = Math.abs(angleDiff);
+                            if (angleDiff < 0.5) {
+                                fireFireballs(currentTarget);
                             }
                         }
                     } else {
                         if (this.streamCountL > 0) {
                             this.setAttacking(1);
-                            rr = Math.atan2(e.getZ() - this.getZ(), e.getX() - this.getX());
-                            rhdir = Math.toRadians((this.getYRot() + 90.0f) % 360.0f);
-                            rdd = Math.abs(rr - rhdir) % (pi * 2.0);
-                            if (rdd > pi) rdd -= pi * 2.0;
-                            rdd = Math.abs(rdd);
-                            if (rdd < 0.5) {
-                                fireLightning(e);
+                            angleToTarget = Math.atan2(currentTarget.getZ() - this.getZ(), currentTarget.getX() - this.getX());
+                            headingAngle = Math.toRadians((this.getYRot() + 90.0f) % 360.0f);
+                            angleDiff = Math.abs(angleToTarget - headingAngle) % (Math.PI * 2.0);
+                            if (angleDiff > Math.PI) angleDiff -= Math.PI * 2.0;
+                            angleDiff = Math.abs(angleDiff);
+                            if (angleDiff < 0.5) {
+                                fireLightning(currentTarget);
                             }
                         }
                     }
@@ -672,20 +667,20 @@ public class TheQueen extends Monster {
             }
         }
 
-        double var1 = (double) this.currentFlightTarget.getX() + 0.5 - this.getX();
-        double var3 = (double) this.currentFlightTarget.getY() + 0.1 - this.getY();
-        double var5 = (double) this.currentFlightTarget.getZ() + 0.5 - this.getZ();
+        double goalX = (double) this.currentFlightTarget.getX() + 0.5 - this.getX();
+        double goalY = (double) this.currentFlightTarget.getY() + 0.1 - this.getY();
+        double goalZ = (double) this.currentFlightTarget.getZ() + 0.5 - this.getZ();
 
         Vec3 motion = this.getDeltaMovement();
-        double mx = motion.x + (Math.signum(var1) * 0.65 - motion.x) * 0.35;
-        double my = motion.y + (Math.signum(var3) * 0.69999 - motion.y) * 0.3;
-        double mz = motion.z + (Math.signum(var5) * 0.65 - motion.z) * 0.35;
-        this.setDeltaMovement(mx, my, mz);
+        double newMx = motion.x + (Math.signum(goalX) * 0.65 - motion.x) * 0.35;
+        double newMy = motion.y + (Math.signum(goalY) * 0.69999 - motion.y) * 0.3;
+        double newMz = motion.z + (Math.signum(goalZ) * 0.65 - motion.z) * 0.35;
+        this.setDeltaMovement(newMx, newMy, newMz);
 
-        float var7 = (float) (Math.atan2(mz, mx) * 180.0 / Math.PI) - 90.0f;
-        float var8 = Mth.wrapDegrees(var7 - this.getYRot());
+        float targetYaw = (float) (Math.atan2(newMz, newMx) * 180.0 / Math.PI) - 90.0f;
+        float yawDelta = Mth.wrapDegrees(targetYaw - this.getYRot());
         this.zza = 0.75f;
-        this.setYRot(this.getYRot() + var8 / 8.0f);
+        this.setYRot(this.getYRot() + yawDelta / 8.0f);
 
         if (this.getRandom().nextInt(32) == 1 && this.getHealth() < (float) this.mygetMaxHealth()) {
             this.heal(5.0f);
@@ -813,10 +808,10 @@ public class TheQueen extends Monster {
         // TODO: if (target instanceof QueenHead) { headFound = 1; return false; }
         // TODO: if (MyUtils.isRoyalty(target)) return false;
 
-        float d1 = (float) (target.getX() - (double) this.homex);
-        float d2 = (float) (target.getZ() - (double) this.homez);
-        float dist = (float) Math.sqrt(d1 * d1 + d2 * d2);
-        if (dist > 144.0f) return false;
+        float deltaX = (float) (target.getX() - (double) this.homeX);
+        float deltaZ = (float) (target.getZ() - (double) this.homeZ);
+        float distFromHome = (float) Math.sqrt(deltaX * deltaX + deltaZ * deltaZ);
+        if (distFromHome > 144.0f) return false;
 
         // TODO: if (MyUtils.isIgnoreable(target)) return false;
         if (!this.getSensing().hasLineOfSight(target)) return false;
@@ -868,10 +863,10 @@ public class TheQueen extends Monster {
                     1.0f + (this.getRandom().nextFloat() - this.getRandom().nextFloat()) * 0.5f);
 
             if (knock != 0) {
-                double ks = 2.75;
-                double inair = 0.65;
-                float f3 = (float) Math.atan2(target.getZ() - this.getZ(), target.getX() - this.getX());
-                target.push(Math.cos(f3) * ks, inair, Math.sin(f3) * ks);
+                double knockbackStrength = 2.75;
+                double upwardKnockback = 0.65;
+                float knockbackAngle = (float) Math.atan2(target.getZ() - this.getZ(), target.getX() - this.getX());
+                target.push(Math.cos(knockbackAngle) * knockbackStrength, upwardKnockback, Math.sin(knockbackAngle) * knockbackStrength);
             }
         }
     }
@@ -887,8 +882,8 @@ public class TheQueen extends Monster {
     @Override
     public void addAdditionalSaveData(CompoundTag tag) {
         super.addAdditionalSaveData(tag);
-        tag.putInt("KingHomeX", this.homex);
-        tag.putInt("KingHomeZ", this.homez);
+        tag.putInt("KingHomeX", this.homeX);
+        tag.putInt("KingHomeZ", this.homeZ);
         tag.putInt("GuardMode", this.guardMode);
         tag.putInt("PlayerHits", this.playerHitCount);
         tag.putInt("MeanMode", this.alwaysMad);
@@ -897,8 +892,8 @@ public class TheQueen extends Monster {
     @Override
     public void readAdditionalSaveData(CompoundTag tag) {
         super.readAdditionalSaveData(tag);
-        this.homex = tag.getInt("KingHomeX");
-        this.homez = tag.getInt("KingHomeZ");
+        this.homeX = tag.getInt("KingHomeX");
+        this.homeZ = tag.getInt("KingHomeZ");
         this.guardMode = tag.getInt("GuardMode");
         this.playerHitCount = tag.getInt("PlayerHits");
         this.alwaysMad = tag.getInt("MeanMode");

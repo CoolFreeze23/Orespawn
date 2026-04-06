@@ -1,6 +1,5 @@
 package danger.orespawn.entity;
 
-import danger.orespawn.OreSpawnMod;
 import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;

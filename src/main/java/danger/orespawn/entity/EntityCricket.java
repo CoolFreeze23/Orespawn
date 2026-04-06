@@ -70,10 +70,10 @@ public class EntityCricket extends Animal {
         double newY = motion.y + (0.55 + Math.abs(this.random.nextFloat() * 0.35f));
         this.setPos(this.getX(), this.getY() + 0.25, this.getZ());
 
-        float f = 0.3f + Math.abs(this.random.nextFloat() * 0.25f);
-        float d = (float) (this.random.nextFloat() * Math.PI * 2.0);
-        double newX = motion.x + f * Math.sin(d);
-        double newZ = motion.z + f * Math.cos(d);
+        float horizontalJumpSpeed = 0.3f + Math.abs(this.random.nextFloat() * 0.25f);
+        float randomYawRadians = (float) (this.random.nextFloat() * Math.PI * 2.0);
+        double newX = motion.x + horizontalJumpSpeed * Math.sin(randomYawRadians);
+        double newZ = motion.z + horizontalJumpSpeed * Math.cos(randomYawRadians);
 
         this.setDeltaMovement(newX, newY, newZ);
         this.hasImpulse = true;
