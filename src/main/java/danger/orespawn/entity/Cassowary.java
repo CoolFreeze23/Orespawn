@@ -89,8 +89,8 @@ public class Cassowary extends Animal {
     }
 
     @Override
-    protected void dropCustomDeathLoot(DamageSource source, int looting, boolean recentlyHit) {
-        super.dropCustomDeathLoot(source, looting, recentlyHit);
+    protected void dropCustomDeathLoot(ServerLevel level, DamageSource source, boolean recentlyHit) {
+        super.dropCustomDeathLoot(level, source, recentlyHit);
         int count = this.random.nextInt(3) + 2;
         for (int i = 0; i < count; i++) {
             this.spawnAtLocation(new ItemStack(Items.FEATHER, 1));

@@ -32,7 +32,6 @@ public class EnderReaper extends Monster {
 
     public EnderReaper(EntityType<? extends EnderReaper> type, Level level) {
         super(type, level);
-        this.maxUpStep = 1.0f;
     }
 
     @Override
@@ -51,7 +50,8 @@ public class EnderReaper extends Monster {
                 .add(Attributes.MAX_HEALTH, MAX_HEALTH)
                 .add(Attributes.MOVEMENT_SPEED, 0.37)
                 .add(Attributes.ATTACK_DAMAGE, ATTACK_DAMAGE)
-                .add(Attributes.FOLLOW_RANGE, 81.0);
+                .add(Attributes.FOLLOW_RANGE, 81.0)
+                .add(Attributes.STEP_HEIGHT, 1.0);
     }
 
     @Override

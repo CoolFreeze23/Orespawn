@@ -1,6 +1,5 @@
 package danger.orespawn.entity.client;
 
-import danger.orespawn.RenderInfo;
 import danger.orespawn.entity.ThePrinceTeen;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -527,7 +526,8 @@ public class ModelThePrinceTeen extends EntityModel<ThePrinceTeen> {
     public void setupAnim(ThePrinceTeen entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
         float d3;
         float h3;
-        RenderInfo r;
+        // TODO: RenderInfo was removed - animation smoothing data needs alternative storage
+        float rf1 = 0.0f;
         float newangle;
         float newangle2;
         float rnewangle;
@@ -537,8 +537,6 @@ public class ModelThePrinceTeen extends EntityModel<ThePrinceTeen> {
         float tailamp = 0.08f;
         float pi4 = 0.7853982f;
         int current_activity = entity.getActivity();
-
-        r = entity.getRenderInfo();
 
         newangle = (double)limbSwingAmount > 0.1 && current_activity == 0
             ? Mth.cos(ageInTicks * 1.3f * this.wingspeed) * (float)Math.PI * 0.2f * limbSwingAmount
@@ -683,14 +681,14 @@ public class ModelThePrinceTeen extends EntityModel<ThePrinceTeen> {
         if (entity.getActivity() == 1) {
             yaw = (entity.yHeadRotO - entity.yHeadRot) * 10.0f;
             yaw = -yaw;
-            r.rf1 += (yaw - r.rf1) / 50.0f;
-            if (r.rf1 > 50.0f) {
-                r.rf1 = 50.0f;
+            rf1 += (yaw - rf1) / 50.0f;
+            if (rf1 > 50.0f) {
+                rf1 = 50.0f;
             }
-            if (r.rf1 < -50.0f) {
-                r.rf1 = -50.0f;
+            if (rf1 < -50.0f) {
+                rf1 = -50.0f;
             }
-            yaw = r.rf1;
+            yaw = rf1;
         }
 
         float h2 = h3 = yaw * 2.0f / 3.0f;
@@ -836,7 +834,7 @@ public class ModelThePrinceTeen extends EntityModel<ThePrinceTeen> {
         this.jaw5R.x = this.head3R.x;
         this.headfinR.x = this.head3R.x;
 
-        entity.setRenderInfo(r);
+        // TODO: persist animation smoothing state
     }
 
     @Override

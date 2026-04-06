@@ -2,15 +2,14 @@ package danger.orespawn.entity.client;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import danger.orespawn.OreSpawnMod;
-import danger.orespawn.entity.custom.WhaleEntity;
-import danger.orespawn.entity.model.WhaleModel;
+import danger.orespawn.entity.Whale;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.resources.ResourceLocation;
 
-public class WhaleRenderer extends MobRenderer<WhaleEntity, WhaleModel<WhaleEntity>> {
+public class WhaleRenderer extends MobRenderer<Whale, ModelWhale> {
 
     private static final ResourceLocation TEXTURE =
             ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "textures/entity/whale.png");
@@ -21,11 +20,11 @@ public class WhaleRenderer extends MobRenderer<WhaleEntity, WhaleModel<WhaleEnti
     private static final float SCALE = 1.0f;
 
     public WhaleRenderer(EntityRendererProvider.Context context) {
-        super(context, new WhaleModel<>(context.bakeLayer(MODEL_LAYER)), 1.5f);
+        super(context, new ModelWhale(context.bakeLayer(MODEL_LAYER)), 1.5f);
     }
 
     @Override
-    public void render(WhaleEntity entity, float entityYaw, float partialTicks,
+    public void render(Whale entity, float entityYaw, float partialTicks,
                        PoseStack poseStack, MultiBufferSource buffer, int packedLight) {
         poseStack.pushPose();
         if (entity.isBaby()) {
@@ -38,7 +37,7 @@ public class WhaleRenderer extends MobRenderer<WhaleEntity, WhaleModel<WhaleEnti
     }
 
     @Override
-    public ResourceLocation getTextureLocation(WhaleEntity entity) {
+    public ResourceLocation getTextureLocation(Whale entity) {
         return TEXTURE;
     }
 }

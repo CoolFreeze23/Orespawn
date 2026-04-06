@@ -23,6 +23,7 @@ import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import javax.annotation.Nullable;
 import danger.orespawn.OreSpawnMod;
 
 public class Crab extends Monster {

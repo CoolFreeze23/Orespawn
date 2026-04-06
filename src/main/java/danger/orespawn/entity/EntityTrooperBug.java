@@ -8,6 +8,7 @@ import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
@@ -96,7 +97,7 @@ public class EntityTrooperBug extends Monster {
     }
 
     @Override
-    protected void jumpFromGround() {
+    public void jumpFromGround() {
         Vec3 motion = this.getDeltaMovement();
         double yawRad = Math.toRadians(this.getYRot());
         float f = 0.2f + Math.abs(this.random.nextFloat() * 0.45f);
@@ -194,8 +195,8 @@ public class EntityTrooperBug extends Monster {
     }
 
     @Override
-    protected void dropCustomDeathLoot(DamageSource source, int looting, boolean recentlyHit) {
-        super.dropCustomDeathLoot(source, looting, recentlyHit);
+    protected void dropCustomDeathLoot(ServerLevel level, DamageSource source, boolean recentlyHit) {
+        super.dropCustomDeathLoot(level, source, recentlyHit);
         this.spawnAtLocation(Items.NAME_TAG);
     }
 

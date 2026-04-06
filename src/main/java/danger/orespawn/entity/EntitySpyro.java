@@ -350,7 +350,7 @@ public class EntitySpyro extends TamableAnimal {
         double dx = target.getX() - this.getX();
         double dy = target.getY() + 0.25 - (this.getY() + 1.25);
         double dz = target.getZ() - this.getZ();
-        SmallFireball fireball = new SmallFireball(this.level(), this, dx, dy, dz);
+        SmallFireball fireball = new SmallFireball(this.level(), this, new Vec3(dx, dy, dz));
         fireball.setPos(this.getX(), this.getY() + 1.25, this.getZ());
         this.level().addFreshEntity(fireball);
     }

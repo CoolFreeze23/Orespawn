@@ -66,7 +66,7 @@ public class Robot5 extends Monster {
     public void setAttacking(int value) { this.entityData.set(DATA_ATTACKING, value); }
 
     @Override
-    protected void jumpFromGround() {
+    public void jumpFromGround() {
         Vec3 dm = this.getDeltaMovement();
         this.setDeltaMovement(dm.x, dm.y + 0.25, dm.z);
         super.jumpFromGround();

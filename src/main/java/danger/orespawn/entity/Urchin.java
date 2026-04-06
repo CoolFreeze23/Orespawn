@@ -18,7 +18,7 @@ import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
-import net.minecraft.world.entity.ai.goal.HurtByTargetGoal;
+import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.monster.Monster;
@@ -71,7 +71,7 @@ public class Urchin extends Monster {
 
     @Override
     public boolean doHurtTarget(Entity target) {
-        target.setSecondsOnFire(5);
+        target.igniteForSeconds(5);
         return super.doHurtTarget(target);
     }
 

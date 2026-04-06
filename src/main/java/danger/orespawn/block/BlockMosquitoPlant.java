@@ -33,7 +33,7 @@ public class BlockMosquitoPlant extends CropBlock {
         if (level.getBlockState(above).is(Blocks.AIR)) {
             int howmany = 2 + random.nextInt(5);
             for (int i = 0; i < howmany; i++) {
-                BlockButterflyPlant.spawnCreature(level, ModEntities.MOSQUITO.get(), above);
+                BlockButterflyPlant.spawnCreature(level, ModEntities.ENTITY_MOSQUITO.get(), above);
             }
         }
     }

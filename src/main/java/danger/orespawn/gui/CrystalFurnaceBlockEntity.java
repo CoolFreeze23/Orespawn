@@ -102,7 +102,7 @@ public class CrystalFurnaceBlockEntity extends BlockEntity implements MenuProvid
             ItemStack input = blockEntity.items.get(0);
 
             if (blockEntity.burnTime == 0 && !fuel.isEmpty() && !input.isEmpty()) {
-                blockEntity.burnTime = net.neoforged.neoforge.common.CommonHooks.getBurnTime(fuel, RecipeType.SMELTING);
+                blockEntity.burnTime = fuel.getBurnTime(RecipeType.SMELTING);
                 blockEntity.maxBurnTime = blockEntity.burnTime;
                 if (blockEntity.burnTime > 0) {
                     fuel.shrink(1);

@@ -2,14 +2,14 @@ package danger.orespawn.entity.client;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import danger.orespawn.entity.Whale;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.util.Mth;
-import net.minecraft.world.entity.Entity;
 
-public class ModelWhale extends EntityModel<Entity> {
+public class ModelWhale extends EntityModel<Whale> {
     private final ModelPart belly;
     private final ModelPart body;
     private final ModelPart back;
@@ -120,7 +120,7 @@ public class ModelWhale extends EntityModel<Entity> {
     }
 
     @Override
-    public void setupAnim(Entity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
+    public void setupAnim(Whale entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
         float newangle;
         newangle = limbSwingAmount > 0.1F
                 ? Mth.cos(ageInTicks * 0.3F) * (float) Math.PI * 0.2F * limbSwingAmount

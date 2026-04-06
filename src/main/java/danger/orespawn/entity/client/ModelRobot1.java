@@ -7,9 +7,9 @@ import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.util.Mth;
-import net.minecraft.world.entity.Entity;
+import danger.orespawn.entity.Robot1;
 
-public class ModelRobot1 extends EntityModel<Entity> {
+public class ModelRobot1 extends EntityModel<Robot1> {
     private final ModelPart Shape1;
     private final ModelPart Shape2;
     private final ModelPart Shape2a;
@@ -211,7 +211,7 @@ public class ModelRobot1 extends EntityModel<Entity> {
     }
 
     @Override
-    public void setupAnim(Entity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
+    public void setupAnim(Robot1 entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
         float walkAngle = limbSwingAmount > 0.1F
                 ? Mth.cos(limbSwing * 1.5F) * (float) Math.PI * 0.75F * limbSwingAmount
                 : 0.0F;

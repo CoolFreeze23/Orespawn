@@ -7,9 +7,9 @@ import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.util.Mth;
-import net.minecraft.world.entity.Entity;
+import danger.orespawn.entity.GiantRobot;
 
-public class ModelGiantRobot extends EntityModel<Entity> {
+public class ModelGiantRobot extends EntityModel<GiantRobot> {
     private final ModelPart hip;
     private final ModelPart thigh;
     private final ModelPart shin;
@@ -148,7 +148,7 @@ public class ModelGiantRobot extends EntityModel<Entity> {
     }
 
     @Override
-    public void setupAnim(Entity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
+    public void setupAnim(GiantRobot entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
         this.head.yRot = (float) Math.toRadians(netHeadYaw);
         this.head.xRot = (float) Math.toRadians(headPitch) / 3.0F;
     }

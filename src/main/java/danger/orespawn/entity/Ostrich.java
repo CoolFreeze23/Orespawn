@@ -33,6 +33,7 @@ import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.state.BlockState;
+import danger.orespawn.ModEntities;
 import danger.orespawn.OreSpawnMod;
 
 public class Ostrich extends TamableAnimal {
@@ -134,9 +135,6 @@ public class Ostrich extends TamableAnimal {
     protected void checkFallDamage(double y, boolean g, BlockState st, BlockPos p) { }
 
     @Override
-    public double getPassengersRidingOffset() { return 1.4; }
-
-    @Override
     public boolean removeWhenFarAway(double dist) {
         if (this.isBaby()) return false;
         if (this.getFirstPassenger() != null) return false;
@@ -157,6 +155,6 @@ public class Ostrich extends TamableAnimal {
     @Nullable
     @Override
     public AgeableMob getBreedOffspring(ServerLevel level, AgeableMob otherParent) {
-        return new Ostrich(this.getType(), this.level());
+        return new Ostrich(ModEntities.OSTRICH.get(), this.level());
     }
 }

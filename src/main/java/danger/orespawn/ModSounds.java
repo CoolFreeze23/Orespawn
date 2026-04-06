@@ -1,4 +1,4 @@
-﻿package danger.orespawn;
+package danger.orespawn;
 
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;

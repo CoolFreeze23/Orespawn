@@ -6,6 +6,6 @@ import danger.orespawn.ModToolTiers;
 
 public class CrystalSword extends SwordItem {
     public CrystalSword(Item.Properties properties) {
-        super(ModToolTiers.CRYSTAL, properties);
+        super(ModToolTiers.CRYSTAL_PINK, properties);
     }
 }

@@ -2,14 +2,14 @@ package danger.orespawn.entity.client;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import danger.orespawn.entity.Beaver;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.util.Mth;
-import net.minecraft.world.entity.Entity;
 
-public class ModelBeaver extends EntityModel<Entity> {
+public class ModelBeaver extends EntityModel<Beaver> {
     private static final float ANIM_SPEED = 1.0F;
 
     private final ModelPart head;
@@ -87,7 +87,7 @@ public class ModelBeaver extends EntityModel<Entity> {
     }
 
     @Override
-    public void setupAnim(Entity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
+    public void setupAnim(Beaver entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
         float newangle = Mth.cos(ageInTicks * 3.7F * ANIM_SPEED) * (float) Math.PI * 0.45F * limbSwingAmount;
         this.rff.xRot = newangle;
         this.lrf.xRot = newangle;

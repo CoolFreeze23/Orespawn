@@ -6,6 +6,7 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.BushBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
+import com.mojang.serialization.MapCodec;
 import danger.orespawn.ModBlocks;
 
 /**
@@ -13,6 +14,11 @@ import danger.orespawn.ModBlocks;
  * Pink ↔ Black, Blue ↔ Scary based on time of day.
  */
 public class MyBlockFlower extends BushBlock {
+    @Override
+    protected MapCodec<? extends MyBlockFlower> codec() {
+        return simpleCodec(MyBlockFlower::new);
+    }
+
 
     public enum FlowerVariant { PINK, BLACK, BLUE, SCARY, OTHER }
 

@@ -3,7 +3,6 @@ package danger.orespawn.entity.client;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import danger.orespawn.entity.Cephadrome;
-import danger.orespawn.RenderInfo;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
@@ -278,7 +277,8 @@ public class ModelCephadrome extends EntityModel<Cephadrome> {
 
     @Override
     public void setupAnim(Cephadrome entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
-        RenderInfo r = entity.getRenderInfo();
+        // TODO: RenderInfo was removed - animation smoothing data needs alternative storage
+        float rf1 = 0.0f;
         float newangle = 0.0f;
         float lspeed = 0.0f;
         float pi4 = 0.7853982f;
@@ -382,14 +382,14 @@ public class ModelCephadrome extends EntityModel<Cephadrome> {
         if (entity.getActivity() == 1) {
             headYaw = (entity.yHeadRotO - entity.yHeadRot) * 10.0f;
             headYaw = -headYaw;
-            r.rf1 += (headYaw - r.rf1) / 50.0f;
-            if (r.rf1 > 50.0f) {
-                r.rf1 = 50.0f;
+            rf1 += (headYaw - rf1) / 50.0f;
+            if (rf1 > 50.0f) {
+                rf1 = 50.0f;
             }
-            if (r.rf1 < -50.0f) {
-                r.rf1 = -50.0f;
+            if (rf1 < -50.0f) {
+                rf1 = -50.0f;
             }
-            headYaw = r.rf1;
+            headYaw = rf1;
         } else {
             headYaw /= 2.0f;
         }
@@ -418,7 +418,7 @@ public class ModelCephadrome extends EntityModel<Cephadrome> {
         newangle = Mth.cos(ageInTicks * 0.5f * this.wingspeed) * (float)Math.PI * 0.14f;
         this.mouth.xRot = entity.getAttacking() != 0 ? -0.61f + newangle : -0.87f;
 
-        entity.setRenderInfo(r);
+        // TODO: persist animation smoothing state
     }
 
     @Override

@@ -146,7 +146,7 @@ public class Frog extends Animal {
                             this.getY() + world.random.nextFloat(),
                             this.getZ() + world.random.nextFloat() - world.random.nextFloat(),
                             0.0, 0.0, 0.0);
-                    world.addParticle(ParticleTypes.DUST_COLOR_TRANSITION,
+                    world.addParticle(ParticleTypes.POOF,
                             this.getX() + world.random.nextFloat() - world.random.nextFloat(),
                             this.getY() + world.random.nextFloat(),
                             this.getZ() + world.random.nextFloat() - world.random.nextFloat(),
@@ -156,11 +156,6 @@ public class Frog extends Animal {
             return InteractionResult.sidedSuccess(world.isClientSide);
         }
         return InteractionResult.PASS;
-    }
-
-    @Override
-    public boolean canBreatheUnderwater() {
-        return true;
     }
 
     @Nullable

@@ -35,7 +35,7 @@ public class BlockButterflyPlant extends CropBlock {
         BlockPos above = pos.above();
         if (level.getBlockState(above).is(Blocks.AIR) && level.isDay()) {
             // TODO: Check ButterflyEnable config
-            spawnCreature(level, ModEntities.BUTTERFLY.get(), above);
+            spawnCreature(level, ModEntities.ENTITY_BUTTERFLY.get(), above);
         }
     }
 

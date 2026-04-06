@@ -1,5 +1,6 @@
 package danger.orespawn.entity;
 
+import danger.orespawn.ModEntities;
 import danger.orespawn.OreSpawnMod;
 import javax.annotation.Nullable;
 import net.minecraft.resources.ResourceLocation;
@@ -115,6 +116,6 @@ public class EntityStinkBug extends Animal {
     @Nullable
     @Override
     public AgeableMob getBreedOffspring(ServerLevel level, AgeableMob otherParent) {
-        return new EntityStinkBug(this.getType(), level);
+        return new EntityStinkBug(ModEntities.ENTITY_STINK_BUG.get(), level);
     }
 }

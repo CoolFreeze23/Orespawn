@@ -6,6 +6,6 @@ import danger.orespawn.ModToolTiers;
 
 public class CrystalPickaxe extends PickaxeItem {
     public CrystalPickaxe(Item.Properties properties) {
-        super(ModToolTiers.CRYSTAL, properties);
+        super(ModToolTiers.CRYSTAL_PINK, properties);
     }
 }

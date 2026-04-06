@@ -38,6 +38,7 @@ import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import danger.orespawn.ModEntities;
 import danger.orespawn.ModItems;
 import danger.orespawn.OreSpawnMod;
 
@@ -297,7 +298,7 @@ public class EntityGammaMetroid extends TamableAnimal {
     @Nullable
     @Override
     public AgeableMob getBreedOffspring(ServerLevel level, AgeableMob otherParent) {
-        EntityGammaMetroid baby = new EntityGammaMetroid(this.getType(), level);
+        EntityGammaMetroid baby = new EntityGammaMetroid(ModEntities.ENTITY_GAMMA_METROID.get(), level);
         UUID ownerUUID = this.getOwnerUUID();
         if (ownerUUID != null) {
             baby.setOwnerUUID(ownerUUID);
