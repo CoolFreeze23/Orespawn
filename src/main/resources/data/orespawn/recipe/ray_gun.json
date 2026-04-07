@@ -1,0 +1,6 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": ["  X", " X ", "X  "],
+  "key": { "X": { "item": "orespawn:ingot_uranium" } },
+  "result": { "id": "orespawn:ray_gun", "count": 1 }
+}

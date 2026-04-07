@@ -1,0 +1,12 @@
+{
+  "type": "orespawn:add_items",
+  "conditions": [
+    {
+      "condition": "minecraft:random_chance",
+      "chance": 0.3
+    }
+  ],
+  "item": "orespawn:ruby",
+  "count": 1,
+  "chance": 0.3
+}

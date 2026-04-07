@@ -1,0 +1,6 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": ["  X", " XS", "X S"],
+  "key": { "X": { "item": "orespawn:ingot_uranium" }, "S": { "item": "minecraft:string" } },
+  "result": { "id": "orespawn:ultimate_fishing_rod", "count": 1 }
+}

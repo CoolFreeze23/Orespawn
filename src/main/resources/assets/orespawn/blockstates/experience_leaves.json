@@ -1,7 +1,88 @@
-{
-  "variants": {
-    "": {
-      "model": "orespawn:block/experience_leaves"
-    }
-  }
+﻿{
+    "variants":  {
+                     "distance=6,persistent=false,waterlogged=true":  {
+                                                                          "model":  "orespawn:block/experience_leaves"
+                                                                      },
+                     "distance=3,persistent=false,waterlogged=true":  {
+                                                                          "model":  "orespawn:block/experience_leaves"
+                                                                      },
+                     "distance=5,persistent=true,waterlogged=false":  {
+                                                                          "model":  "orespawn:block/experience_leaves"
+                                                                      },
+                     "distance=4,persistent=true,waterlogged=false":  {
+                                                                          "model":  "orespawn:block/experience_leaves"
+                                                                      },
+                     "distance=1,persistent=true,waterlogged=true":  {
+                                                                         "model":  "orespawn:block/experience_leaves"
+                                                                     },
+                     "distance=5,persistent=false,waterlogged=false":  {
+                                                                           "model":  "orespawn:block/experience_leaves"
+                                                                       },
+                     "distance=2,persistent=false,waterlogged=true":  {
+                                                                          "model":  "orespawn:block/experience_leaves"
+                                                                      },
+                     "distance=2,persistent=false,waterlogged=false":  {
+                                                                           "model":  "orespawn:block/experience_leaves"
+                                                                       },
+                     "distance=7,persistent=true,waterlogged=false":  {
+                                                                          "model":  "orespawn:block/experience_leaves"
+                                                                      },
+                     "distance=5,persistent=false,waterlogged=true":  {
+                                                                          "model":  "orespawn:block/experience_leaves"
+                                                                      },
+                     "distance=6,persistent=true,waterlogged=false":  {
+                                                                          "model":  "orespawn:block/experience_leaves"
+                                                                      },
+                     "distance=6,persistent=false,waterlogged=false":  {
+                                                                           "model":  "orespawn:block/experience_leaves"
+                                                                       },
+                     "distance=5,persistent=true,waterlogged=true":  {
+                                                                         "model":  "orespawn:block/experience_leaves"
+                                                                     },
+                     "distance=2,persistent=true,waterlogged=false":  {
+                                                                          "model":  "orespawn:block/experience_leaves"
+                                                                      },
+                     "distance=7,persistent=true,waterlogged=true":  {
+                                                                         "model":  "orespawn:block/experience_leaves"
+                                                                     },
+                     "distance=2,persistent=true,waterlogged=true":  {
+                                                                         "model":  "orespawn:block/experience_leaves"
+                                                                     },
+                     "distance=7,persistent=false,waterlogged=true":  {
+                                                                          "model":  "orespawn:block/experience_leaves"
+                                                                      },
+                     "distance=3,persistent=true,waterlogged=false":  {
+                                                                          "model":  "orespawn:block/experience_leaves"
+                                                                      },
+                     "distance=4,persistent=false,waterlogged=true":  {
+                                                                          "model":  "orespawn:block/experience_leaves"
+                                                                      },
+                     "distance=6,persistent=true,waterlogged=true":  {
+                                                                         "model":  "orespawn:block/experience_leaves"
+                                                                     },
+                     "distance=4,persistent=true,waterlogged=true":  {
+                                                                         "model":  "orespawn:block/experience_leaves"
+                                                                     },
+                     "distance=1,persistent=false,waterlogged=false":  {
+                                                                           "model":  "orespawn:block/experience_leaves"
+                                                                       },
+                     "distance=7,persistent=false,waterlogged=false":  {
+                                                                           "model":  "orespawn:block/experience_leaves"
+                                                                       },
+                     "distance=3,persistent=false,waterlogged=false":  {
+                                                                           "model":  "orespawn:block/experience_leaves"
+                                                                       },
+                     "distance=1,persistent=false,waterlogged=true":  {
+                                                                          "model":  "orespawn:block/experience_leaves"
+                                                                      },
+                     "distance=4,persistent=false,waterlogged=false":  {
+                                                                           "model":  "orespawn:block/experience_leaves"
+                                                                       },
+                     "distance=1,persistent=true,waterlogged=false":  {
+                                                                          "model":  "orespawn:block/experience_leaves"
+                                                                      },
+                     "distance=3,persistent=true,waterlogged=true":  {
+                                                                         "model":  "orespawn:block/experience_leaves"
+                                                                     }
+                 }
 }

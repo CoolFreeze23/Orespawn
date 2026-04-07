@@ -1,6 +1,9 @@
 package danger.orespawn;
 
-import danger.orespawn.block.BlockExperiencePlant;
+import danger.orespawn.block.*;
+import danger.orespawn.entity.EntityAnt;
+import danger.orespawn.entity.Kraken;
+import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
@@ -55,7 +58,7 @@ public class ModBlocks {
 
     // Teleport block
     public static final DeferredBlock<Block> BLOCK_TELEPORT = BLOCKS.register("block_teleport",
-            () -> new Block(BlockBehaviour.Properties.of().strength(1.5f, 6.0f).sound(SoundType.STONE)));
+            () -> new RTPBlock(BlockBehaviour.Properties.of().strength(1.5f, 6.0f).sound(SoundType.STONE)));
 
     // Mole dirt
     public static final DeferredBlock<Block> MOLE_DIRT = BLOCKS.register("mole_dirt",
@@ -87,7 +90,8 @@ public class ModBlocks {
     public static final DeferredBlock<Block> CRYSTAL_WORKBENCH = BLOCKS.register("crystal_workbench",
             () -> new Block(BlockBehaviour.Properties.of().strength(1.0f, 5.0f)));
     public static final DeferredBlock<Block> CRYSTAL_FURNACE = BLOCKS.register("crystal_furnace",
-            () -> new Block(BlockBehaviour.Properties.of().strength(2.0f, 10.0f).lightLevel(s -> 0)));
+            () -> new CrystalFurnace(BlockBehaviour.Properties.of().strength(2.0f, 10.0f)
+                    .lightLevel(s -> s.getValue(CrystalFurnace.LIT) ? 13 : 0)));
     public static final DeferredBlock<Block> CRYSTAL_FURNACE_ON = BLOCKS.register("crystal_furnace_on",
             () -> new Block(BlockBehaviour.Properties.of().strength(2.0f, 10.0f).lightLevel(s -> 13)));
 
@@ -99,9 +103,11 @@ public class ModBlocks {
 
     // Repellents
     public static final DeferredBlock<Block> KRAKEN_REPELLENT = BLOCKS.register("kraken_repellent",
-            () -> new Block(BlockBehaviour.Properties.of().strength(1.0f).lightLevel(s -> 12)));
+            () -> new RepellentBlock(BlockBehaviour.Properties.of().strength(1.0f).lightLevel(s -> 12),
+                    e -> e instanceof Kraken || e instanceof EntityAnt));
     public static final DeferredBlock<Block> CREEPER_REPELLENT = BLOCKS.register("creeper_repellent",
-            () -> new Block(BlockBehaviour.Properties.of().strength(1.0f).lightLevel(s -> 12)));
+            () -> new RepellentBlock(BlockBehaviour.Properties.of().strength(1.0f).lightLevel(s -> 12),
+                    e -> e instanceof Creeper || e instanceof EntityAnt));
 
     // Island block
     public static final DeferredBlock<Block> ISLAND = BLOCKS.register("island",
@@ -109,29 +115,40 @@ public class ModBlocks {
 
     // Spawner blocks
     public static final DeferredBlock<Block> KING_SPAWNER = BLOCKS.register("king_spawner",
-            () -> new Block(BlockBehaviour.Properties.of().strength(50.0f, 1200.0f).lightLevel(s -> 14)));
+            () -> new BossSpawnerBlock(BlockBehaviour.Properties.of().strength(50.0f, 1200.0f).lightLevel(s -> 14),
+                    ModEntities.THE_KING));
     public static final DeferredBlock<Block> QUEEN_SPAWNER = BLOCKS.register("queen_spawner",
-            () -> new Block(BlockBehaviour.Properties.of().strength(50.0f, 1200.0f).lightLevel(s -> 14)));
+            () -> new BossSpawnerBlock(BlockBehaviour.Properties.of().strength(50.0f, 1200.0f).lightLevel(s -> 14),
+                    ModEntities.THE_QUEEN));
     public static final DeferredBlock<Block> DUNGEON_SPAWNER = BLOCKS.register("dungeon_spawner",
-            () -> new Block(BlockBehaviour.Properties.of().strength(50.0f, 1200.0f).lightLevel(s -> 14)));
+            () -> new BossSpawnerBlock(BlockBehaviour.Properties.of().strength(50.0f, 1200.0f).lightLevel(s -> 14),
+                    ModEntities.DUNGEON_BEAST));
+
+    // Portal
+    public static final DeferredBlock<Block> UTOPIA_PORTAL = BLOCKS.register("utopia_portal",
+            () -> new UtopiaPortalBlock(BlockBehaviour.Properties.of().strength(-1.0f, 3600000.0f)
+                    .noLootTable().lightLevel(s -> 11).noCollission()));
 
     // Leaves
     public static final DeferredBlock<Block> APPLE_LEAVES = BLOCKS.register("apple_leaves",
-            () -> new Block(BlockBehaviour.Properties.of().strength(0.2f).noOcclusion().sound(SoundType.GRASS)));
+            () -> new BlockAppleLeaves(BlockBehaviour.Properties.of().strength(0.2f).noOcclusion().sound(SoundType.GRASS).randomTicks()));
     public static final DeferredBlock<Block> EXPERIENCE_LEAVES = BLOCKS.register("experience_leaves",
-            () -> new Block(BlockBehaviour.Properties.of().strength(0.2f).noOcclusion().sound(SoundType.GRASS)));
+            () -> new BlockExperienceLeaves(BlockBehaviour.Properties.of().strength(0.2f).noOcclusion().sound(SoundType.GRASS).randomTicks()));
     public static final DeferredBlock<Block> SCARY_LEAVES = BLOCKS.register("scary_leaves",
-            () -> new Block(BlockBehaviour.Properties.of().strength(0.2f).noOcclusion().sound(SoundType.GRASS)));
+            () -> new BlockScaryLeaves(BlockBehaviour.Properties.of().strength(0.2f).noOcclusion().sound(SoundType.GRASS).randomTicks(),
+                    BlockScaryLeaves.Variant.SCARY));
     public static final DeferredBlock<Block> CHERRY_LEAVES = BLOCKS.register("cherry_leaves",
-            () -> new Block(BlockBehaviour.Properties.of().strength(0.15f).noOcclusion().sound(SoundType.GRASS)));
+            () -> new BlockScaryLeaves(BlockBehaviour.Properties.of().strength(0.15f).noOcclusion().sound(SoundType.GRASS).randomTicks(),
+                    BlockScaryLeaves.Variant.CHERRY));
     public static final DeferredBlock<Block> PEACH_LEAVES = BLOCKS.register("peach_leaves",
-            () -> new Block(BlockBehaviour.Properties.of().strength(0.15f).noOcclusion().sound(SoundType.GRASS)));
+            () -> new BlockScaryLeaves(BlockBehaviour.Properties.of().strength(0.15f).noOcclusion().sound(SoundType.GRASS).randomTicks(),
+                    BlockScaryLeaves.Variant.PEACH));
     public static final DeferredBlock<Block> CRYSTAL_LEAVES = BLOCKS.register("crystal_leaves",
-            () -> new Block(BlockBehaviour.Properties.of().strength(0.2f).noOcclusion().sound(SoundType.GRASS)));
+            () -> new BlockCrystalLeaves(BlockBehaviour.Properties.of().strength(0.2f).noOcclusion().sound(SoundType.GRASS).randomTicks()));
     public static final DeferredBlock<Block> CRYSTAL_LEAVES_2 = BLOCKS.register("crystal_leaves_2",
-            () -> new Block(BlockBehaviour.Properties.of().strength(0.25f).noOcclusion().sound(SoundType.GRASS)));
+            () -> new BlockCrystalLeaves(BlockBehaviour.Properties.of().strength(0.25f).noOcclusion().sound(SoundType.GRASS).randomTicks()));
     public static final DeferredBlock<Block> CRYSTAL_LEAVES_3 = BLOCKS.register("crystal_leaves_3",
-            () -> new Block(BlockBehaviour.Properties.of().strength(0.25f).noOcclusion().sound(SoundType.GRASS)));
+            () -> new BlockCrystalLeaves(BlockBehaviour.Properties.of().strength(0.25f).noOcclusion().sound(SoundType.GRASS).randomTicks()));
 
     // Logs
     public static final DeferredBlock<Block> SKY_TREE_LOG = BLOCKS.register("sky_tree_log",
@@ -173,51 +190,51 @@ public class ModBlocks {
 
     // Crop blocks
     public static final DeferredBlock<Block> STRAWBERRY_PLANT = BLOCKS.register("strawberry_plant",
-            () -> new Block(BlockBehaviour.Properties.of().strength(0.0f).noCollission().sound(SoundType.CROP)));
+            () -> new BlockStrawberry(BlockBehaviour.Properties.of().strength(0.0f).noCollission().sound(SoundType.CROP).randomTicks()));
     public static final DeferredBlock<Block> RADISH_PLANT = BLOCKS.register("radish_plant",
-            () -> new Block(BlockBehaviour.Properties.of().strength(0.0f).noCollission().sound(SoundType.CROP)));
+            () -> new BlockRadish(BlockBehaviour.Properties.of().strength(0.0f).noCollission().sound(SoundType.CROP).randomTicks()));
     public static final DeferredBlock<Block> RICE_PLANT = BLOCKS.register("rice_plant",
-            () -> new Block(BlockBehaviour.Properties.of().strength(0.0f).noCollission().sound(SoundType.CROP)));
+            () -> new BlockRice(BlockBehaviour.Properties.of().strength(0.0f).noCollission().sound(SoundType.CROP).randomTicks()));
     public static final DeferredBlock<Block> BUTTERFLY_PLANT = BLOCKS.register("butterfly_plant",
-            () -> new Block(BlockBehaviour.Properties.of().strength(0.0f).noCollission().sound(SoundType.CROP)));
+            () -> new BlockButterflyPlant(BlockBehaviour.Properties.of().strength(0.0f).noCollission().sound(SoundType.CROP).randomTicks()));
     public static final DeferredBlock<Block> MOTH_PLANT = BLOCKS.register("moth_plant",
-            () -> new Block(BlockBehaviour.Properties.of().strength(0.0f).noCollission().sound(SoundType.CROP)));
+            () -> new BlockMothPlant(BlockBehaviour.Properties.of().strength(0.0f).noCollission().sound(SoundType.CROP).randomTicks()));
     public static final DeferredBlock<Block> MOSQUITO_PLANT = BLOCKS.register("mosquito_plant",
-            () -> new Block(BlockBehaviour.Properties.of().strength(0.0f).noCollission().sound(SoundType.CROP)));
+            () -> new BlockMosquitoPlant(BlockBehaviour.Properties.of().strength(0.0f).noCollission().sound(SoundType.CROP).randomTicks()));
     public static final DeferredBlock<Block> FIREFLY_PLANT = BLOCKS.register("firefly_plant",
-            () -> new Block(BlockBehaviour.Properties.of().strength(0.0f).noCollission().sound(SoundType.CROP)));
+            () -> new BlockFireflyPlant(BlockBehaviour.Properties.of().strength(0.0f).noCollission().sound(SoundType.CROP).randomTicks()));
     public static final DeferredBlock<Block> CORN_0 = BLOCKS.register("corn_0",
-            () -> new Block(BlockBehaviour.Properties.of().strength(0.0f).noCollission().sound(SoundType.CROP)));
+            () -> new BlockCorn(BlockBehaviour.Properties.of().strength(0.0f).noCollission().sound(SoundType.CROP).randomTicks()));
     public static final DeferredBlock<Block> CORN_1 = BLOCKS.register("corn_1",
-            () -> new Block(BlockBehaviour.Properties.of().strength(0.0f).noCollission().sound(SoundType.CROP)));
+            () -> new BlockCorn(BlockBehaviour.Properties.of().strength(0.0f).noCollission().sound(SoundType.CROP).randomTicks()));
     public static final DeferredBlock<Block> CORN_2 = BLOCKS.register("corn_2",
-            () -> new Block(BlockBehaviour.Properties.of().strength(0.0f).noCollission().sound(SoundType.CROP)));
+            () -> new BlockCorn(BlockBehaviour.Properties.of().strength(0.0f).noCollission().sound(SoundType.CROP).randomTicks()));
     public static final DeferredBlock<Block> CORN_3 = BLOCKS.register("corn_3",
-            () -> new Block(BlockBehaviour.Properties.of().strength(0.0f).noCollission().sound(SoundType.CROP)));
+            () -> new BlockCorn(BlockBehaviour.Properties.of().strength(0.0f).noCollission().sound(SoundType.CROP).randomTicks()));
     public static final DeferredBlock<Block> QUINOA_0 = BLOCKS.register("quinoa_0",
-            () -> new Block(BlockBehaviour.Properties.of().strength(0.0f).noCollission().sound(SoundType.CROP)));
+            () -> new BlockQuinoa(BlockBehaviour.Properties.of().strength(0.0f).noCollission().sound(SoundType.CROP).randomTicks()));
     public static final DeferredBlock<Block> QUINOA_1 = BLOCKS.register("quinoa_1",
-            () -> new Block(BlockBehaviour.Properties.of().strength(0.0f).noCollission().sound(SoundType.CROP)));
+            () -> new BlockQuinoa(BlockBehaviour.Properties.of().strength(0.0f).noCollission().sound(SoundType.CROP).randomTicks()));
     public static final DeferredBlock<Block> QUINOA_2 = BLOCKS.register("quinoa_2",
-            () -> new Block(BlockBehaviour.Properties.of().strength(0.0f).noCollission().sound(SoundType.CROP)));
+            () -> new BlockQuinoa(BlockBehaviour.Properties.of().strength(0.0f).noCollission().sound(SoundType.CROP).randomTicks()));
     public static final DeferredBlock<Block> QUINOA_3 = BLOCKS.register("quinoa_3",
-            () -> new Block(BlockBehaviour.Properties.of().strength(0.0f).noCollission().sound(SoundType.CROP)));
+            () -> new BlockQuinoa(BlockBehaviour.Properties.of().strength(0.0f).noCollission().sound(SoundType.CROP).randomTicks()));
     public static final DeferredBlock<Block> TOMATO_0 = BLOCKS.register("tomato_0",
-            () -> new Block(BlockBehaviour.Properties.of().strength(0.0f).noCollission().sound(SoundType.CROP)));
+            () -> new BlockTomato(BlockBehaviour.Properties.of().strength(0.0f).noCollission().sound(SoundType.CROP).randomTicks()));
     public static final DeferredBlock<Block> TOMATO_1 = BLOCKS.register("tomato_1",
-            () -> new Block(BlockBehaviour.Properties.of().strength(0.0f).noCollission().sound(SoundType.CROP)));
+            () -> new BlockTomato(BlockBehaviour.Properties.of().strength(0.0f).noCollission().sound(SoundType.CROP).randomTicks()));
     public static final DeferredBlock<Block> TOMATO_2 = BLOCKS.register("tomato_2",
-            () -> new Block(BlockBehaviour.Properties.of().strength(0.0f).noCollission().sound(SoundType.CROP)));
+            () -> new BlockTomato(BlockBehaviour.Properties.of().strength(0.0f).noCollission().sound(SoundType.CROP).randomTicks()));
     public static final DeferredBlock<Block> TOMATO_3 = BLOCKS.register("tomato_3",
-            () -> new Block(BlockBehaviour.Properties.of().strength(0.0f).noCollission().sound(SoundType.CROP)));
+            () -> new BlockTomato(BlockBehaviour.Properties.of().strength(0.0f).noCollission().sound(SoundType.CROP).randomTicks()));
     public static final DeferredBlock<Block> LETTUCE_0 = BLOCKS.register("lettuce_0",
-            () -> new Block(BlockBehaviour.Properties.of().strength(0.0f).noCollission().sound(SoundType.CROP)));
+            () -> new BlockLettuce(BlockBehaviour.Properties.of().strength(0.0f).noCollission().sound(SoundType.CROP).randomTicks()));
     public static final DeferredBlock<Block> LETTUCE_1 = BLOCKS.register("lettuce_1",
-            () -> new Block(BlockBehaviour.Properties.of().strength(0.0f).noCollission().sound(SoundType.CROP)));
+            () -> new BlockLettuce(BlockBehaviour.Properties.of().strength(0.0f).noCollission().sound(SoundType.CROP).randomTicks()));
     public static final DeferredBlock<Block> LETTUCE_2 = BLOCKS.register("lettuce_2",
-            () -> new Block(BlockBehaviour.Properties.of().strength(0.0f).noCollission().sound(SoundType.CROP)));
+            () -> new BlockLettuce(BlockBehaviour.Properties.of().strength(0.0f).noCollission().sound(SoundType.CROP).randomTicks()));
     public static final DeferredBlock<Block> LETTUCE_3 = BLOCKS.register("lettuce_3",
-            () -> new Block(BlockBehaviour.Properties.of().strength(0.0f).noCollission().sound(SoundType.CROP)));
+            () -> new BlockLettuce(BlockBehaviour.Properties.of().strength(0.0f).noCollission().sound(SoundType.CROP).randomTicks()));
 
     // Ant blocks
     public static final DeferredBlock<Block> ANT_BLOCK = BLOCKS.register("ant_block",

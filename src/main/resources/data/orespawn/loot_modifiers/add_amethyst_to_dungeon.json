@@ -1,0 +1,12 @@
+{
+  "type": "orespawn:add_items",
+  "conditions": [
+    {
+      "condition": "minecraft:random_chance",
+      "chance": 0.25
+    }
+  ],
+  "item": "orespawn:amethyst_gem",
+  "count": 1,
+  "chance": 0.25
+}

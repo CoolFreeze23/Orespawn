@@ -1,0 +1,6 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": ["GGG", "GDG", "GGG"],
+  "key": { "G": { "item": "minecraft:glowstone" }, "D": { "item": "minecraft:diamond_block" } },
+  "result": { "id": "orespawn:island", "count": 1 }
+}

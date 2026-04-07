@@ -1,0 +1,6 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": ["XXX", "X X"],
+  "key": { "X": { "item": "minecraft:experience_bottle" } },
+  "result": { "id": "orespawn:experience_helmet", "count": 1 }
+}

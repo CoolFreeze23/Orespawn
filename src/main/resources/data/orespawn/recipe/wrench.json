@@ -1,0 +1,6 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": ["D D", " D ", " D "],
+  "key": { "D": { "item": "minecraft:stick" } },
+  "result": { "id": "orespawn:wrench", "count": 1 }
+}

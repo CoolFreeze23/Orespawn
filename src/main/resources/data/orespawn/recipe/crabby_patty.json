@@ -1,0 +1,10 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    { "item": "orespawn:cooked_crab_meat" },
+    { "item": "orespawn:lettuce" },
+    { "item": "orespawn:tomato" },
+    { "item": "minecraft:bread" }
+  ],
+  "result": { "id": "orespawn:crabby_patty", "count": 1 }
+}

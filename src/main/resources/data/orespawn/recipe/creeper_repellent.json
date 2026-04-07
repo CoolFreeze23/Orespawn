@@ -1,0 +1,6 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": ["SCS", "CRC", "SCS"],
+  "key": { "S": { "item": "orespawn:salt" }, "C": { "item": "minecraft:coal" }, "R": { "item": "minecraft:redstone" } },
+  "result": { "id": "orespawn:creeper_repellent", "count": 1 }
+}

@@ -3,8 +3,7 @@
   "ingredients": [
     { "item": "orespawn:block_amethyst" }
   ],
-  "result": {
-    "item": "orespawn:amethyst_gem",
+  "result": { "id": "orespawn:amethyst_gem",
     "count": 9
   }
 }

@@ -1,7 +1,28 @@
-{
-  "variants": {
-    "": {
-      "model": "orespawn:block/lettuce_1"
-    }
-  }
+﻿{
+    "variants":  {
+                     "age=1":  {
+                                   "model":  "orespawn:block/lettuce_1"
+                               },
+                     "age=2":  {
+                                   "model":  "orespawn:block/lettuce_1"
+                               },
+                     "age=5":  {
+                                   "model":  "orespawn:block/lettuce_1"
+                               },
+                     "age=6":  {
+                                   "model":  "orespawn:block/lettuce_1"
+                               },
+                     "age=4":  {
+                                   "model":  "orespawn:block/lettuce_1"
+                               },
+                     "age=0":  {
+                                   "model":  "orespawn:block/lettuce_1"
+                               },
+                     "age=7":  {
+                                   "model":  "orespawn:block/lettuce_1"
+                               },
+                     "age=3":  {
+                                   "model":  "orespawn:block/lettuce_1"
+                               }
+                 }
 }

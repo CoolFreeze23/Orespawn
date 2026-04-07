@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    { "item": "orespawn:ray_gun" },
+    { "item": "orespawn:big_hammer" },
+    { "item": "orespawn:mantis_claw" },
+    { "item": "orespawn:water_dragon_scale" },
+    { "item": "orespawn:green_goo" }
+  ],
+  "result": { "id": "orespawn:bertha_handle", "count": 1 }
+}

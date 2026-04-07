@@ -1,0 +1,6 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": ["XX", "XX"],
+  "key": { "X": { "item": "orespawn:crystal_planks" } },
+  "result": { "id": "orespawn:crystal_workbench", "count": 1 }
+}

@@ -1,0 +1,6 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": ["SSS", "PPP", "SSS"],
+  "key": { "S": { "item": "minecraft:slime_ball" }, "P": { "item": "minecraft:paper" } },
+  "result": { "id": "orespawn:duct_tape", "count": 8 }
+}

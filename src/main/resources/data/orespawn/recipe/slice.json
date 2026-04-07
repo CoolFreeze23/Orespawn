@@ -1,0 +1,8 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    { "item": "orespawn:big_bertha" },
+    { "item": "minecraft:stick" }
+  ],
+  "result": { "id": "orespawn:slice", "count": 1 }
+}

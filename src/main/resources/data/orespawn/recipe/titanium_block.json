@@ -8,8 +8,7 @@
   "key": {
     "X": { "item": "orespawn:ingot_titanium" }
   },
-  "result": {
-    "item": "orespawn:block_titanium",
+  "result": { "id": "orespawn:block_titanium",
     "count": 1
   }
 }

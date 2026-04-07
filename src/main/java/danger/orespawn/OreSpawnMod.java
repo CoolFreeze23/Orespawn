@@ -2,9 +2,11 @@ package danger.orespawn;
 
 import danger.orespawn.world.ModWorldGen;
 import net.neoforged.bus.api.IEventBus;
+import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
+import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,7 +25,13 @@ public class OreSpawnMod {
         ModArmorMaterials.register(modEventBus);
         ModCreativeTabs.register(modEventBus);
         ModWorldGen.register(modEventBus);
+        danger.orespawn.loot.ModLootModifiers.register(modEventBus);
 
+        modEventBus.addListener(this::commonSetup);
         modContainer.registerConfig(ModConfig.Type.COMMON, OreSpawnConfig.SPEC);
+    }
+
+    private void commonSetup(FMLCommonSetupEvent event) {
+        event.enqueueWork(ModDispenserBehaviors::register);
     }
 }

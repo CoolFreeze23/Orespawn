@@ -1,0 +1,6 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": ["X", "X", "#"],
+  "key": { "#": { "item": "minecraft:stick" }, "X": { "item": "orespawn:ingot_uranium" } },
+  "result": { "id": "orespawn:nightmare_sword", "count": 1 }
+}

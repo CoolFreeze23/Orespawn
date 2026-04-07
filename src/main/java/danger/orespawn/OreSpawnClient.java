@@ -1,13 +1,20 @@
 package danger.orespawn;
 
+import danger.orespawn.client.OreSpawnItemRenderer;
 import danger.orespawn.entity.client.*;
 import danger.orespawn.gui.CrystalFurnaceScreen;
+import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
+import net.minecraft.client.resources.model.ModelResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
+import net.neoforged.neoforge.client.event.ModelEvent;
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
+import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
+import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent;
 
 @Mod(value = OreSpawnMod.MOD_ID, dist = Dist.CLIENT)
 public class OreSpawnClient {
@@ -146,6 +153,10 @@ public class OreSpawnClient {
             event.registerEntityRenderer(ModEntities.CEPHADROME.get(), CephadromeRenderer::new);
             event.registerEntityRenderer(ModEntities.RED_COW.get(), RedCowRenderer::new);
             event.registerEntityRenderer(ModEntities.SPIDER_DRIVER.get(), SpiderDriverRenderer::new);
+            event.registerEntityRenderer(ModEntities.CRYSTAL_COW.get(), CrystalCowRenderer::new);
+            event.registerEntityRenderer(ModEntities.GOLD_COW.get(), GoldCowRenderer::new);
+            event.registerEntityRenderer(ModEntities.ENCHANTED_COW.get(), EnchantedCowRenderer::new);
+            event.registerEntityRenderer(ModEntities.RUBY_BIRD.get(), CockateilRenderer::new);
 
             // Projectiles
             event.registerEntityRenderer(ModEntities.BETTER_FIREBALL.get(), NoopProjectileRenderer::new);
@@ -161,6 +172,9 @@ public class OreSpawnClient {
             event.registerEntityRenderer(ModEntities.ICE_BALL.get(), NoopProjectileRenderer::new);
             event.registerEntityRenderer(ModEntities.ACID.get(), NoopProjectileRenderer::new);
             event.registerEntityRenderer(ModEntities.DEAD_IRUKANDJI.get(), NoopProjectileRenderer::new);
+            event.registerEntityRenderer(ModEntities.ULTIMATE_ARROW.get(), NoopProjectileRenderer::new);
+            event.registerEntityRenderer(ModEntities.IRUKANDJI_ARROW.get(), NoopProjectileRenderer::new);
+            event.registerEntityRenderer(ModEntities.ULTIMATE_FISH_HOOK.get(), NoopProjectileRenderer::new);
         }
 
         @SubscribeEvent
@@ -294,6 +308,36 @@ public class OreSpawnClient {
         @SubscribeEvent
         public static void registerScreens(RegisterMenuScreensEvent event) {
             event.register(ModMenuTypes.CRYSTAL_FURNACE_MENU.get(), CrystalFurnaceScreen::new);
+        }
+
+        @SubscribeEvent
+        public static void registerAdditionalModels(ModelEvent.RegisterAdditional event) {
+            String[] weapons = {"big_bertha", "slice", "royal_guardian_sword", "battle_axe",
+                    "queen_battle_axe", "chainsaw", "attitude_adjuster", "squid_zooka"};
+            for (String name : weapons) {
+                event.register(ModelResourceLocation.standalone(
+                        ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "item/" + name + "_flat")));
+            }
+        }
+
+        @SubscribeEvent
+        public static void registerClientExtensions(RegisterClientExtensionsEvent event) {
+            IClientItemExtensions bewlrExtension = new IClientItemExtensions() {
+                @Override
+                public BlockEntityWithoutLevelRenderer getCustomRenderer() {
+                    return OreSpawnItemRenderer.getInstance();
+                }
+            };
+
+            event.registerItem(bewlrExtension,
+                    ModItems.BIG_BERTHA.get(),
+                    ModItems.SLICE.get(),
+                    ModItems.ROYAL_GUARDIAN_SWORD.get(),
+                    ModItems.BATTLE_AXE.get(),
+                    ModItems.QUEEN_BATTLE_AXE.get(),
+                    ModItems.CHAINSAW.get(),
+                    ModItems.ATTITUDE_ADJUSTER.get(),
+                    ModItems.SQUID_ZOOKA.get());
         }
     }
 }

@@ -2,6 +2,7 @@
 .gradle/
 build/
 out/
+bin/
 
 # IDE
 .idea/
@@ -22,6 +23,7 @@ desktop.ini
 
 # NeoForge / Minecraft
 run/
+runs/
 logs/
 *.log
 

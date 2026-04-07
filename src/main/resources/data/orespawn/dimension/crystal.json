@@ -1,0 +1,12 @@
+{
+  "type": "orespawn:crystal",
+  "generator": {
+    "type": "orespawn:orespawn",
+    "biome_source": {
+      "type": "minecraft:fixed",
+      "biome": "orespawn:crystal_plains"
+    },
+    "settings": "minecraft:overworld",
+    "crystal_surface": true
+  }
+}

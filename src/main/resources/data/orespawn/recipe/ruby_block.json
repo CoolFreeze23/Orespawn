@@ -8,8 +8,7 @@
   "key": {
     "X": { "item": "orespawn:ruby" }
   },
-  "result": {
-    "item": "orespawn:block_ruby",
+  "result": { "id": "orespawn:block_ruby",
     "count": 1
   }
 }

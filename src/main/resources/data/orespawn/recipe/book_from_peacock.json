@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    { "item": "orespawn:peacock_feather" },
+    { "item": "orespawn:crystal_planks" },
+    { "item": "orespawn:peacock_feather" },
+    { "item": "orespawn:crystal_planks" },
+    { "item": "orespawn:peacock_feather" },
+    { "item": "orespawn:crystal_planks" }
+  ],
+  "result": { "id": "minecraft:book", "count": 1 }
+}

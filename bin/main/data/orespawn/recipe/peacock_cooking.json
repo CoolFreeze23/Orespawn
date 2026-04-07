@@ -1,7 +1,0 @@
-{
-  "type": "minecraft:smelting",
-  "ingredient": { "item": "orespawn:raw_peacock" },
-  "result": { "id": "orespawn:cooked_peacock" },
-  "experience": 0.35,
-  "cookingtime": 200
-}

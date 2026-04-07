@@ -1,0 +1,6 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": ["X X", "X X"],
+  "key": { "X": { "item": "minecraft:emerald" } },
+  "result": { "id": "orespawn:emerald_boots", "count": 1 }
+}

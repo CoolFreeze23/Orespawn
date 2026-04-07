@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    { "item": "orespawn:kraken_tooth" },
+    { "item": "orespawn:worm_tooth" },
+    { "item": "orespawn:trex_tooth" },
+    { "item": "orespawn:ultimate_sword" },
+    { "item": "orespawn:caterkiller_jaw" },
+    { "item": "orespawn:sea_viper_tongue" },
+    { "item": "orespawn:vortex_eye" }
+  ],
+  "result": { "id": "orespawn:bertha_blade", "count": 1 }
+}

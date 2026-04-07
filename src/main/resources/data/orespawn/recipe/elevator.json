@@ -1,0 +1,6 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": ["   ", "WWW", "DRD"],
+  "key": { "W": { "item": "minecraft:oak_planks" }, "R": { "item": "minecraft:redstone" }, "D": { "item": "minecraft:diamond" } },
+  "result": { "id": "orespawn:elevator", "count": 1 }
+}

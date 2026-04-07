@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    { "item": "orespawn:bertha_handle" },
+    { "item": "orespawn:bertha_guard" },
+    { "item": "orespawn:bertha_blade" }
+  ],
+  "result": { "id": "orespawn:big_bertha", "count": 1 }
+}

@@ -1,0 +1,6 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": ["XXX", "X X"],
+  "key": { "X": { "item": "orespawn:lava_eel" } },
+  "result": { "id": "orespawn:lavaeel_helmet", "count": 1 }
+}
