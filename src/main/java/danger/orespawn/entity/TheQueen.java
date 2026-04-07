@@ -34,6 +34,10 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import net.minecraft.server.level.ServerBossEvent;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.BossEvent;
+import net.minecraft.network.chat.Component;
 import danger.orespawn.ModEntities;
 import danger.orespawn.ModItems;
 import danger.orespawn.ModSounds;
@@ -54,6 +58,9 @@ public class TheQueen extends Monster {
     private static final double MOVE_SPEED_VALUE = 0.62;
     private static final double ATTACK_DAMAGE_VALUE = 200.0;
     private static final int DEFENSE_VALUE = 10;
+
+    private final ServerBossEvent bossEvent = new ServerBossEvent(
+            Component.literal("The Queen"), BossEvent.BossBarColor.PINK, BossEvent.BossBarOverlay.PROGRESS);
 
     private final Comparator<Entity> targetSorter;
     private BlockPos currentFlightTarget = null;
@@ -386,7 +393,20 @@ public class TheQueen extends Monster {
     }
 
     @Override
+    public void startSeenByPlayer(ServerPlayer player) {
+        super.startSeenByPlayer(player);
+        this.bossEvent.addPlayer(player);
+    }
+
+    @Override
+    public void stopSeenByPlayer(ServerPlayer player) {
+        super.stopSeenByPlayer(player);
+        this.bossEvent.removePlayer(player);
+    }
+
+    @Override
     protected void customServerAiStep() {
+        this.bossEvent.setProgress(this.getHealth() / this.getMaxHealth());
         if (this.isRemoved()) return;
         super.customServerAiStep();
 
