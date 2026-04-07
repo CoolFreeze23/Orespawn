@@ -40,6 +40,9 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import net.minecraft.server.level.ServerBossEvent;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.BossEvent;
 import danger.orespawn.ModEntities;
 import danger.orespawn.ModEntities;
 import danger.orespawn.ModItems;
@@ -58,6 +61,9 @@ public class TheKing extends Monster {
     private static final double ATTACK_DAMAGE_VALUE = 250.0;
     private static final int DEFENSE_VALUE = 12;
     private static final double MOVE_SPEED_VALUE = 0.62;
+
+    private final ServerBossEvent bossEvent = new ServerBossEvent(
+            Component.literal("The King"), BossEvent.BossBarColor.RED, BossEvent.BossBarOverlay.PROGRESS);
 
     private BlockPos currentFlightTarget = null;
     private final Comparator<Entity> targetSorter;
@@ -245,7 +251,21 @@ public class TheKing extends Monster {
     }
 
     @Override
+    public void startSeenByPlayer(ServerPlayer player) {
+        super.startSeenByPlayer(player);
+        this.bossEvent.addPlayer(player);
+    }
+
+    @Override
+    public void stopSeenByPlayer(ServerPlayer player) {
+        super.stopSeenByPlayer(player);
+        this.bossEvent.removePlayer(player);
+    }
+
+    @Override
     protected void customServerAiStep() {
+        this.bossEvent.setProgress(this.getHealth() / this.getMaxHealth());
+
         int randomXOffset;
         int randomZOffset;
         int attackChance = 5;

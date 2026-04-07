@@ -37,10 +37,17 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
+import net.minecraft.server.level.ServerBossEvent;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.BossEvent;
+import net.minecraft.network.chat.Component;
 
 public class Kraken extends Monster {
     private static final EntityDataAccessor<Integer> DATA_ATTACKING =
             SynchedEntityData.defineId(Kraken.class, EntityDataSerializers.INT);
+
+    private final ServerBossEvent bossEvent = new ServerBossEvent(
+            Component.literal("Kraken"), BossEvent.BossBarColor.BLUE, BossEvent.BossBarOverlay.PROGRESS);
 
     private final Comparator<Entity> targetSorter;
     private BlockPos currentFlightTarget = null;
@@ -132,7 +139,20 @@ public class Kraken extends Monster {
     }
 
     @Override
+    public void startSeenByPlayer(ServerPlayer player) {
+        super.startSeenByPlayer(player);
+        this.bossEvent.addPlayer(player);
+    }
+
+    @Override
+    public void stopSeenByPlayer(ServerPlayer player) {
+        super.stopSeenByPlayer(player);
+        this.bossEvent.removePlayer(player);
+    }
+
+    @Override
     protected void customServerAiStep() {
+        this.bossEvent.setProgress(this.getHealth() / this.getMaxHealth());
         if (this.isRemoved()) return;
         super.customServerAiStep();
 
