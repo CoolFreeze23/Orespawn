@@ -42,8 +42,7 @@ public class EntityThrownRock extends ThrowableProjectile {
     }
 
     public EntityThrownRock(Level level, LivingEntity shooter, int rockType) {
-        super(ModEntities.ENTITY_THROWN_ROCK.get(), level);
-        this.setOwner(shooter);
+        super(ModEntities.ENTITY_THROWN_ROCK.get(), shooter, level);
         this.rockType = rockType;
     }
 

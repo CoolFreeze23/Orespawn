@@ -1,12 +1,13 @@
 package danger.orespawn.item;
 
+import danger.orespawn.entity.UltimateArrow;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.projectile.Arrow;
+import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.item.BowItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -32,15 +33,22 @@ public class UltimateBow extends BowItem {
     @Override
     public void releaseUsing(ItemStack stack, Level level, LivingEntity entityLiving, int timeLeft) {
         if (!(entityLiving instanceof Player player)) return;
+        int charge = this.getUseDuration(stack, entityLiving) - timeLeft;
+        float pull = (float) charge / 20.0F;
+        pull = (pull * pull + pull * 2.0F) / 3.0F;
+        if (pull < 0.1F) return;
+        if (pull > 1.0F) pull = 1.0F;
+
         if (!level.isClientSide) {
-            Arrow arrow = new Arrow(level, player, stack, null);
-            arrow.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0F, 3.0F, 1.0F);
-            arrow.setCritArrow(true);
-            arrow.pickup = Arrow.Pickup.CREATIVE_ONLY;
+            UltimateArrow arrow = new UltimateArrow(level, player, stack);
+            arrow.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0F, pull * 3.0F, 1.0F);
+            if (pull >= 1.0F) arrow.setCritArrow(true);
+            arrow.pickup = AbstractArrow.Pickup.CREATIVE_ONLY;
             level.addFreshEntity(arrow);
         }
         level.playSound(null, player.getX(), player.getY(), player.getZ(),
-                SoundEvents.ARROW_SHOOT, SoundSource.PLAYERS, 1.0F, 1.0F);
+                SoundEvents.ARROW_SHOOT, SoundSource.PLAYERS, 1.0F,
+                1.0F / (level.random.nextFloat() * 0.4F + 1.2F) + pull * 0.5F);
         stack.hurtAndBreak(1, player, EquipmentSlot.MAINHAND);
     }
 }

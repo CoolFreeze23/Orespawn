@@ -120,6 +120,9 @@ public class AttackSquid extends Monster {
                 this.discard();
                 return;
             }
+            if (this.wasshot < 240) {
+                this.setNoGravity(false);
+            }
         }
 
         if (!this.isInWater() && this.random.nextInt(10) == 0) {

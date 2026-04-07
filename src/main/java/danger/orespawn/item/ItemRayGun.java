@@ -19,18 +19,25 @@ public class ItemRayGun extends Item {
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
+        if (stack.getDamageValue() >= stack.getMaxDamage() - 1) {
+            return InteractionResultHolder.fail(stack);
+        }
+        level.playSound(null, player.blockPosition(), SoundEvents.FIREWORK_ROCKET_LAUNCH, SoundSource.PLAYERS, 3.5F, 0.5F);
         if (!level.isClientSide) {
             LaserBall projectile = new LaserBall(level, player);
             projectile.setSpecial();
             projectile.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0F, 1.5F, 1.0F);
+            projectile.setDeltaMovement(projectile.getDeltaMovement().scale(3.0));
+            projectile.hasImpulse = true;
             level.addFreshEntity(projectile);
             player.push(
-                    -Math.sin(Math.toRadians(player.getYRot())) * 0.2,
-                    0.0,
-                    Math.cos(Math.toRadians(player.getYRot())) * 0.2
+                    Math.cos(Math.toRadians(player.getYRot() - 90.0)) * 1.5,
+                    0.3,
+                    Math.sin(Math.toRadians(player.getYRot() - 90.0)) * 1.5
             );
-            level.playSound(null, player.blockPosition(), SoundEvents.BLAZE_SHOOT, SoundSource.PLAYERS, 1.0F, 1.0F);
+            player.hurtMarked = true;
         }
+        player.swing(hand);
         stack.hurtAndBreak(1, player, EquipmentSlot.MAINHAND);
         return InteractionResultHolder.sidedSuccess(stack, level.isClientSide());
     }

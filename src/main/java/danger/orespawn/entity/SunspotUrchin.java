@@ -28,8 +28,7 @@ public class SunspotUrchin extends ThrowableProjectile {
     }
 
     public SunspotUrchin(Level level, LivingEntity shooter) {
-        super(ModEntities.SUNSPOT_URCHIN.get(), level);
-        this.setOwner(shooter);
+        super(ModEntities.SUNSPOT_URCHIN.get(), shooter, level);
     }
 
     @Override

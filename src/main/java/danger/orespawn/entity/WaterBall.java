@@ -28,8 +28,7 @@ public class WaterBall extends ThrowableProjectile {
     }
 
     public WaterBall(Level level, LivingEntity shooter) {
-        super(ModEntities.WATER_BALL.get(), level);
-        this.setOwner(shooter);
+        super(ModEntities.WATER_BALL.get(), shooter, level);
     }
 
     public WaterBall(Level level, double x, double y, double z) {

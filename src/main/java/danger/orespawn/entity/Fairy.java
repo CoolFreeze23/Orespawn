@@ -48,6 +48,12 @@ public class Fairy extends AmbientCreature {
     private String myowner = null;
     private final Comparator<Entity> targetSorter;
 
+    public void setOwner(LivingEntity entity) {
+        if (entity instanceof net.minecraft.world.entity.player.Player player) {
+            this.myowner = player.getUUID().toString();
+        }
+    }
+
     public Fairy(EntityType<? extends Fairy> type, Level level) {
         super(type, level);
         this.setFairyType(this.random.nextInt(9));
