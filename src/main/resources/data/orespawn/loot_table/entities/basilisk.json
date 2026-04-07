@@ -3,12 +3,36 @@
   "pools": [
     {
       "rolls": 1,
-      "entries": [{"type": "minecraft:item", "name": "minecraft:bone", "functions": [{"function": "minecraft:set_count", "count": {"type": "minecraft:uniform", "min": 2, "max": 4}}]}]
+      "entries": [{"type": "minecraft:item", "name": "orespawn:basilisk_scale"}]
     },
     {
       "rolls": 1,
-      "conditions": [{"condition": "minecraft:random_chance", "chance": 0.3}],
-      "entries": [{"type": "minecraft:item", "name": "minecraft:emerald", "functions": [{"function": "minecraft:set_count", "count": {"type": "minecraft:uniform", "min": 0, "max": 2}}]}]
+      "entries": [{"type": "minecraft:item", "name": "minecraft:name_tag"}]
+    },
+    {
+      "rolls": 1,
+      "entries": [{"type": "minecraft:item", "name": "minecraft:emerald", "functions": [{"function": "minecraft:set_count", "count": {"type": "minecraft:uniform", "min": 12, "max": 17}}, {"function": "minecraft:enchanted_count_increase", "enchantment": "minecraft:looting", "count": {"type": "minecraft:uniform", "min": 0, "max": 3}}]}]
+    },
+    {
+      "rolls": 1,
+      "entries": [{"type": "minecraft:item", "name": "minecraft:cod", "functions": [{"function": "minecraft:set_count", "count": {"type": "minecraft:uniform", "min": 8, "max": 12}}]}]
+    },
+    {
+      "rolls": {"type": "minecraft:uniform", "min": 3, "max": 7},
+      "entries": [
+        {"type": "minecraft:item", "name": "minecraft:emerald", "weight": 1},
+        {"type": "minecraft:item", "name": "minecraft:emerald_block", "weight": 1},
+        {"type": "minecraft:item", "name": "orespawn:emerald_sword", "weight": 1},
+        {"type": "minecraft:item", "name": "orespawn:emerald_shovel", "weight": 1},
+        {"type": "minecraft:item", "name": "orespawn:emerald_pickaxe", "weight": 1},
+        {"type": "minecraft:item", "name": "orespawn:emerald_axe", "weight": 1},
+        {"type": "minecraft:item", "name": "orespawn:emerald_hoe", "weight": 1},
+        {"type": "minecraft:item", "name": "orespawn:emerald_helmet", "weight": 1},
+        {"type": "minecraft:item", "name": "orespawn:emerald_chestplate", "weight": 1},
+        {"type": "minecraft:item", "name": "orespawn:emerald_leggings", "weight": 1},
+        {"type": "minecraft:item", "name": "orespawn:emerald_boots", "weight": 1},
+        {"type": "minecraft:empty", "weight": 4}
+      ]
     }
   ]
 }
