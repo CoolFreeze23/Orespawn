@@ -1,0 +1,6 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": ["X X", "X X"],
+  "key": { "X": { "item": "orespawn:queen_scale" } },
+  "result": { "id": "orespawn:royal_boots", "count": 1 }
+}

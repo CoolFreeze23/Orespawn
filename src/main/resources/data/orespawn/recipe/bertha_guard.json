@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    { "item": "orespawn:molenoid_nose" },
+    { "item": "orespawn:sea_monster_scale" },
+    { "item": "orespawn:moth_scale" },
+    { "item": "orespawn:basilisk_scale" },
+    { "item": "orespawn:nightmare_scale" },
+    { "item": "orespawn:emperor_scorpion_scale" },
+    { "item": "orespawn:jumpy_bug_scale" }
+  ],
+  "result": { "id": "orespawn:bertha_guard", "count": 1 }
+}

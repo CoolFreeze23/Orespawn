@@ -50,7 +50,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
-public class Dragon extends TamableAnimal {
+public class Dragon extends TamableAnimal implements danger.orespawn.network.RiderInputPayload.RideableFlyer {
 
     private static final EntityDataAccessor<Integer> DATA_ATTACKING =
             SynchedEntityData.defineId(Dragon.class, EntityDataSerializers.INT);
@@ -1193,5 +1193,25 @@ public class Dragon extends TamableAnimal {
     @Override
     public AgeableMob getBreedOffspring(ServerLevel level, AgeableMob otherParent) {
         return null;
+    }
+
+    // ==================== RideableFlyer Interface ====================
+
+    @Override
+    public void riderFlyUp() {
+        Vec3 delta = this.getDeltaMovement();
+        this.setDeltaMovement(delta.x, Math.min(delta.y + 0.2, 2.0), delta.z);
+    }
+
+    @Override
+    public void riderFlyDown() {
+        Vec3 delta = this.getDeltaMovement();
+        this.setDeltaMovement(delta.x, Math.max(delta.y - 0.2, -2.0), delta.z);
+    }
+
+    @Override
+    public void riderSpecial(net.minecraft.server.level.ServerPlayer rider) {
+        if (this.getDragonFire() > 0) return;
+        this.setDragonFire(20);
     }
 }

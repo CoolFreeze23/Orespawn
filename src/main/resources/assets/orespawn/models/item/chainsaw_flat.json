@@ -1,0 +1,6 @@
+﻿{
+    "parent": "orespawn:item/large_handheld",
+    "textures": {
+        "layer0": "orespawn:items/chainsawsmall"
+    }
+}

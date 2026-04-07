@@ -486,6 +486,22 @@ public class ModEntities {
             ENTITY_TYPES.register("red_cow", () -> EntityType.Builder.of(RedCow::new, MobCategory.MISC)
                     .sized(0.9f, 1.4f).clientTrackingRange(10).build("red_cow"));
 
+    public static final DeferredHolder<EntityType<?>, EntityType<CrystalCow>> CRYSTAL_COW =
+            ENTITY_TYPES.register("crystal_cow", () -> EntityType.Builder.of(CrystalCow::new, MobCategory.CREATURE)
+                    .sized(0.9f, 1.4f).clientTrackingRange(10).build("crystal_cow"));
+
+    public static final DeferredHolder<EntityType<?>, EntityType<GoldCow>> GOLD_COW =
+            ENTITY_TYPES.register("gold_cow", () -> EntityType.Builder.of(GoldCow::new, MobCategory.CREATURE)
+                    .sized(0.9f, 1.4f).clientTrackingRange(10).build("gold_cow"));
+
+    public static final DeferredHolder<EntityType<?>, EntityType<EnchantedCow>> ENCHANTED_COW =
+            ENTITY_TYPES.register("enchanted_cow", () -> EntityType.Builder.of(EnchantedCow::new, MobCategory.CREATURE)
+                    .sized(0.9f, 1.4f).clientTrackingRange(10).build("enchanted_cow"));
+
+    public static final DeferredHolder<EntityType<?>, EntityType<RubyBird>> RUBY_BIRD =
+            ENTITY_TYPES.register("ruby_bird", () -> EntityType.Builder.of(RubyBird::new, MobCategory.CREATURE)
+                    .sized(0.4f, 0.4f).clientTrackingRange(8).build("ruby_bird"));
+
     public static final DeferredHolder<EntityType<?>, EntityType<SpiderDriver>> SPIDER_DRIVER =
             ENTITY_TYPES.register("spider_driver", () -> EntityType.Builder.of(SpiderDriver::new, MobCategory.MISC)
                     .sized(1.4f, 0.9f).clientTrackingRange(10).build("spider_driver"));
@@ -543,6 +559,18 @@ public class ModEntities {
     public static final DeferredHolder<EntityType<?>, EntityType<DeadIrukandji>> DEAD_IRUKANDJI =
             ENTITY_TYPES.register("dead_irukandji", () -> EntityType.Builder.<DeadIrukandji>of(DeadIrukandji::new, MobCategory.MISC)
                     .sized(0.25f, 0.25f).clientTrackingRange(4).updateInterval(10).noSummon().build("dead_irukandji"));
+
+    public static final DeferredHolder<EntityType<?>, EntityType<UltimateArrow>> ULTIMATE_ARROW =
+            ENTITY_TYPES.register("ultimate_arrow", () -> EntityType.Builder.<UltimateArrow>of(UltimateArrow::new, MobCategory.MISC)
+                    .sized(0.5f, 0.5f).clientTrackingRange(4).updateInterval(20).noSummon().build("ultimate_arrow"));
+
+    public static final DeferredHolder<EntityType<?>, EntityType<IrukandjiArrow>> IRUKANDJI_ARROW =
+            ENTITY_TYPES.register("irukandji_arrow", () -> EntityType.Builder.<IrukandjiArrow>of(IrukandjiArrow::new, MobCategory.MISC)
+                    .sized(0.5f, 0.5f).clientTrackingRange(4).updateInterval(20).noSummon().build("irukandji_arrow"));
+
+    public static final DeferredHolder<EntityType<?>, EntityType<UltimateFishHook>> ULTIMATE_FISH_HOOK =
+            ENTITY_TYPES.register("ultimate_fish_hook", () -> EntityType.Builder.<UltimateFishHook>of(UltimateFishHook::new, MobCategory.MISC)
+                    .sized(0.25f, 0.25f).clientTrackingRange(4).updateInterval(5).noSummon().build("ultimate_fish_hook"));
 
     public static void register(IEventBus eventBus) {
         ENTITY_TYPES.register(eventBus);

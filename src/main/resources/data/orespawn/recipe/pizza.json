@@ -1,0 +1,6 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": ["TTT", "CCC", "BBB"],
+  "key": { "T": { "item": "orespawn:tomato" }, "C": { "item": "minecraft:milk_bucket" }, "B": { "item": "minecraft:bread" } },
+  "result": { "id": "orespawn:pizza", "count": 3 }
+}

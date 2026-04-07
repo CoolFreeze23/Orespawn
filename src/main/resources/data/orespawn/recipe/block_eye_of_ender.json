@@ -1,0 +1,6 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": ["XXX", "XXX", "XXX"],
+  "key": { "X": { "item": "minecraft:ender_eye" } },
+  "result": { "id": "orespawn:block_eye_of_ender", "count": 1 }
+}

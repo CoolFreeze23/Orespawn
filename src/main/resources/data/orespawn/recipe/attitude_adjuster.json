@@ -1,0 +1,10 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    { "item": "orespawn:ultimate_sword" },
+    { "item": "orespawn:ultimate_sword" },
+    { "item": "orespawn:big_hammer" },
+    { "item": "orespawn:green_goo" }
+  ],
+  "result": { "id": "orespawn:attitude_adjuster", "count": 1 }
+}

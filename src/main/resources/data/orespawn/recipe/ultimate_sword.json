@@ -9,8 +9,7 @@
     "#": { "item": "minecraft:stick" },
     "X": { "item": "orespawn:ingot_uranium" }
   },
-  "result": {
-    "item": "orespawn:ultimate_sword",
+  "result": { "id": "orespawn:ultimate_sword",
     "count": 1
   }
 }

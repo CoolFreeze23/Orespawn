@@ -136,5 +136,9 @@ public class ModEntityAttributes {
         event.put(ModEntities.CEPHADROME.get(), Cephadrome.createAttributes().build());
         event.put(ModEntities.RED_COW.get(), RedCow.createAttributes().build());
         event.put(ModEntities.SPIDER_DRIVER.get(), SpiderDriver.createAttributes().build());
+        event.put(ModEntities.CRYSTAL_COW.get(), CrystalCow.createAttributes().build());
+        event.put(ModEntities.GOLD_COW.get(), GoldCow.createAttributes().build());
+        event.put(ModEntities.ENCHANTED_COW.get(), EnchantedCow.createAttributes().build());
+        event.put(ModEntities.RUBY_BIRD.get(), RubyBird.createAttributes().build());
     }
 }

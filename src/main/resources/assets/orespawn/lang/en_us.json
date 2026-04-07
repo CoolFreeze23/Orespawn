@@ -53,6 +53,7 @@
   "block.orespawn.king_spawner": "King Spawner",
   "block.orespawn.queen_spawner": "Queen Spawner",
   "block.orespawn.dungeon_spawner": "Dungeon Spawner",
+  "block.orespawn.utopia_portal": "Utopia Portal",
 
   "block.orespawn.apple_leaves": "Apple Leaves",
   "block.orespawn.experience_leaves": "Experience Leaves",
@@ -617,5 +618,22 @@
   "item.orespawn.whale_spawn_egg": "Whale Spawn Egg",
   "item.orespawn.worm_small_spawn_egg": "Small Worm Spawn Egg",
   "item.orespawn.worm_medium_spawn_egg": "Medium Worm Spawn Egg",
-  "item.orespawn.worm_large_spawn_egg": "Large Worm Spawn Egg"
+  "item.orespawn.worm_large_spawn_egg": "Large Worm Spawn Egg",
+
+  "entity.orespawn.crystal_cow": "Crystal Cow",
+  "entity.orespawn.gold_cow": "Gold Cow",
+  "entity.orespawn.enchanted_cow": "Enchanted Cow",
+  "entity.orespawn.ruby_bird": "Ruby Bird",
+  "entity.orespawn.ultimate_arrow": "Ultimate Arrow",
+  "entity.orespawn.irukandji_arrow": "Irukandji Arrow",
+  "entity.orespawn.ultimate_fish_hook": "Ultimate Fish Hook",
+  "item.orespawn.crystal_cow_spawn_egg": "Crystal Cow Spawn Egg",
+  "item.orespawn.gold_cow_spawn_egg": "Gold Cow Spawn Egg",
+  "item.orespawn.enchanted_cow_spawn_egg": "Enchanted Cow Spawn Egg",
+  "item.orespawn.ruby_bird_spawn_egg": "Ruby Bird Spawn Egg",
+
+  "key.orespawn.fly_up": "Fly Up (Mount)",
+  "key.orespawn.fly_down": "Fly Down (Mount)",
+  "key.orespawn.special": "Special Attack (Mount)",
+  "key.categories.orespawn": "OreSpawn"
 }

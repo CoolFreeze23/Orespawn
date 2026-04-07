@@ -3,8 +3,7 @@
   "ingredients": [
     { "item": "orespawn:corn_seed" }
   ],
-  "result": {
-    "item": "orespawn:popcorn",
+  "result": { "id": "orespawn:popcorn",
     "count": 1
   }
 }

@@ -3,8 +3,7 @@
   "ingredients": [
     { "item": "orespawn:block_uranium" }
   ],
-  "result": {
-    "item": "orespawn:ingot_uranium",
+  "result": { "id": "orespawn:ingot_uranium",
     "count": 9
   }
 }

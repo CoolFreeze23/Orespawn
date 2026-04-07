@@ -1,0 +1,6 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": ["X X", "XXX", "XXX"],
+  "key": { "X": { "item": "orespawn:ingot_uranium" } },
+  "result": { "id": "orespawn:ultimate_chestplate", "count": 1 }
+}

@@ -1,0 +1,8 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    { "item": "minecraft:nether_star" },
+    { "item": "minecraft:end_portal_frame" }
+  ],
+  "result": { "id": "orespawn:nether_lost", "count": 1 }
+}

@@ -1,0 +1,6 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": ["X X", "XXX", "XXX"],
+  "key": { "X": { "item": "orespawn:moth_scale" } },
+  "result": { "id": "orespawn:mothscale_chestplate", "count": 1 }
+}

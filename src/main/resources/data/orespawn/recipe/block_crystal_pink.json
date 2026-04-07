@@ -1,0 +1,6 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": ["XXX", "XXX", "XXX"],
+  "key": { "X": { "item": "orespawn:crystal_pink_ingot" } },
+  "result": { "id": "orespawn:block_crystal_pink", "count": 1 }
+}

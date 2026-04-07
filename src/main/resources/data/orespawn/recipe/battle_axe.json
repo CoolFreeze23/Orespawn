@@ -1,0 +1,6 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": ["XYX", "X#X", " # "],
+  "key": { "#": { "item": "minecraft:stick" }, "X": { "item": "orespawn:ingot_titanium" }, "Y": { "item": "minecraft:diamond" } },
+  "result": { "id": "orespawn:battle_axe", "count": 1 }
+}

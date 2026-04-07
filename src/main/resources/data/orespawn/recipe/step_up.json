@@ -1,0 +1,6 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": ["GC ", " C ", " C "],
+  "key": { "C": { "item": "minecraft:cobblestone" }, "G": { "item": "minecraft:wheat" } },
+  "result": { "id": "orespawn:step_up", "count": 8 }
+}

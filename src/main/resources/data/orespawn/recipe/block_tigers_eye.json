@@ -1,0 +1,6 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": ["XXX", "XXX", "XXX"],
+  "key": { "X": { "item": "orespawn:tigers_eye_ingot" } },
+  "result": { "id": "orespawn:block_tigers_eye", "count": 1 }
+}

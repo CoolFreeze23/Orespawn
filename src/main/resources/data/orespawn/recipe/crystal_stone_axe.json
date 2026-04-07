@@ -1,0 +1,6 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": ["XX", "X#", " #"],
+  "key": { "#": { "item": "orespawn:crystal_sticks" }, "X": { "item": "orespawn:crystal_stone" } },
+  "result": { "id": "orespawn:crystal_stone_axe", "count": 1 }
+}

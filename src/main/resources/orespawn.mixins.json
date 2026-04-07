@@ -1,0 +1,12 @@
+{
+    "required": true,
+    "package": "danger.orespawn.mixin",
+    "compatibilityLevel": "JAVA_21",
+    "mixins": [],
+    "client": [
+        "EntityCullingMixin"
+    ],
+    "injectors": {
+        "defaultRequire": 1
+    }
+}
