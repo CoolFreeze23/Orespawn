@@ -1,0 +1,6 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": ["X", "X", "#"],
+  "key": { "#": { "item": "minecraft:stick" }, "X": { "item": "orespawn:amethyst_gem" } },
+  "result": { "id": "orespawn:poison_sword", "count": 1 }
+}

@@ -8,8 +8,7 @@
   "key": {
     "X": { "item": "orespawn:amethyst_gem" }
   },
-  "result": {
-    "item": "orespawn:block_amethyst",
+  "result": { "id": "orespawn:block_amethyst",
     "count": 1
   }
 }

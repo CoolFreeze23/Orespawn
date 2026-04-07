@@ -1,7 +1,0 @@
-{
-  "parent": "minecraft:block/cube_column",
-  "textures": {
-    "end": "orespawn:blocks/crystaltreelog_top",
-    "side": "orespawn:blocks/crystaltreelog"
-  }
-}

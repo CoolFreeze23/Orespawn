@@ -4,8 +4,7 @@
     { "item": "orespawn:buttered_popcorn" },
     { "item": "orespawn:salt" }
   ],
-  "result": {
-    "item": "orespawn:buttered_salted_popcorn",
+  "result": { "id": "orespawn:buttered_salted_popcorn",
     "count": 1
   }
 }

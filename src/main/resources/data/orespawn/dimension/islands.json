@@ -1,0 +1,12 @@
+{
+  "type": "orespawn:islands",
+  "generator": {
+    "type": "orespawn:orespawn",
+    "biome_source": {
+      "type": "minecraft:fixed",
+      "biome": "orespawn:island_biome"
+    },
+    "settings": "minecraft:overworld",
+    "crystal_surface": false
+  }
+}

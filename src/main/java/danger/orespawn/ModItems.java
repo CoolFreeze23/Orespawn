@@ -1,13 +1,7 @@
 package danger.orespawn;
 
 import net.minecraft.world.food.FoodProperties;
-import danger.orespawn.item.FairySword;
-import danger.orespawn.item.ItemElevator;
-import danger.orespawn.item.ItemOreSpawnArmor;
-import danger.orespawn.item.ItemRandomDungeon;
-import danger.orespawn.item.ItemSpiderRobotKit;
-import danger.orespawn.item.ItemWrench;
-import danger.orespawn.item.RatSword;
+import danger.orespawn.item.*;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.AxeItem;
 import net.minecraft.world.item.BlockItem;
@@ -64,6 +58,7 @@ public class ModItems {
     public static final DeferredItem<BlockItem> KING_SPAWNER_ITEM = ITEMS.registerSimpleBlockItem("king_spawner", ModBlocks.KING_SPAWNER);
     public static final DeferredItem<BlockItem> QUEEN_SPAWNER_ITEM = ITEMS.registerSimpleBlockItem("queen_spawner", ModBlocks.QUEEN_SPAWNER);
     public static final DeferredItem<BlockItem> DUNGEON_SPAWNER_ITEM = ITEMS.registerSimpleBlockItem("dungeon_spawner", ModBlocks.DUNGEON_SPAWNER);
+    public static final DeferredItem<BlockItem> UTOPIA_PORTAL_ITEM = ITEMS.registerSimpleBlockItem("utopia_portal", ModBlocks.UTOPIA_PORTAL);
     public static final DeferredItem<BlockItem> APPLE_LEAVES_ITEM = ITEMS.registerSimpleBlockItem("apple_leaves", ModBlocks.APPLE_LEAVES);
     public static final DeferredItem<BlockItem> EXPERIENCE_LEAVES_ITEM = ITEMS.registerSimpleBlockItem("experience_leaves", ModBlocks.EXPERIENCE_LEAVES);
     public static final DeferredItem<BlockItem> SCARY_LEAVES_ITEM = ITEMS.registerSimpleBlockItem("scary_leaves", ModBlocks.SCARY_LEAVES);
@@ -259,35 +254,58 @@ public class ModItems {
             () -> new SwordItem(ModToolTiers.EMERALD, new Item.Properties().attributes(SwordItem.createAttributes(ModToolTiers.EMERALD, 3, -2.4f))));
 
     // Ranged weapons
-    public static final DeferredItem<Item> ULTIMATE_BOW = ITEMS.registerSimpleItem("ultimate_bow");
-    public static final DeferredItem<Item> SKATE_BOW = ITEMS.registerSimpleItem("skate_bow");
-    public static final DeferredItem<Item> ULTIMATE_FISHING_ROD = ITEMS.registerSimpleItem("ultimate_fishing_rod");
-    public static final DeferredItem<Item> RAY_GUN = ITEMS.registerSimpleItem("ray_gun");
-    public static final DeferredItem<Item> THUNDER_STAFF = ITEMS.registerSimpleItem("thunder_staff");
-    public static final DeferredItem<Item> SQUID_ZOOKA = ITEMS.registerSimpleItem("squid_zooka");
-    public static final DeferredItem<Item> CREEPER_LAUNCHER = ITEMS.registerSimpleItem("creeper_launcher");
+    public static final DeferredItem<Item> ULTIMATE_BOW = ITEMS.register("ultimate_bow",
+            () -> new UltimateBow(new Item.Properties().durability(1000)));
+    public static final DeferredItem<Item> SKATE_BOW = ITEMS.register("skate_bow",
+            () -> new SkateBow(new Item.Properties().durability(300)));
+    public static final DeferredItem<Item> ULTIMATE_FISHING_ROD = ITEMS.register("ultimate_fishing_rod",
+            () -> new UltimateFishingRod(new Item.Properties().durability(3000)));
+    public static final DeferredItem<Item> RAY_GUN = ITEMS.register("ray_gun",
+            () -> new ItemRayGun(new Item.Properties().durability(50).stacksTo(1)));
+    public static final DeferredItem<Item> THUNDER_STAFF = ITEMS.register("thunder_staff",
+            () -> new ItemThunderStaff(new Item.Properties().durability(50).stacksTo(1)));
+    public static final DeferredItem<Item> SQUID_ZOOKA = ITEMS.register("squid_zooka",
+            () -> new ItemSquidZooka(new Item.Properties().durability(100).stacksTo(1)));
+    public static final DeferredItem<Item> CREEPER_LAUNCHER = ITEMS.register("creeper_launcher",
+            () -> new ItemCreeperLauncher(new Item.Properties().stacksTo(16)));
     public static final DeferredItem<Item> WRENCH = ITEMS.register("wrench",
             () -> new ItemWrench(new Item.Properties().durability(256)));
 
     // Throwables
-    public static final DeferredItem<Item> WATER_BALL = ITEMS.registerSimpleItem("water_ball");
-    public static final DeferredItem<Item> LASER_BALL = ITEMS.registerSimpleItem("laser_ball");
-    public static final DeferredItem<Item> ICE_BALL = ITEMS.registerSimpleItem("ice_ball");
-    public static final DeferredItem<Item> ACID = ITEMS.registerSimpleItem("acid");
+    public static final DeferredItem<Item> WATER_BALL = ITEMS.register("water_ball",
+            () -> new ItemWaterBall(new Item.Properties().stacksTo(16)));
+    public static final DeferredItem<Item> LASER_BALL = ITEMS.register("laser_ball",
+            () -> new ItemLaserBall(new Item.Properties().stacksTo(16)));
+    public static final DeferredItem<Item> ICE_BALL = ITEMS.register("ice_ball",
+            () -> new ItemIceBall(new Item.Properties().stacksTo(16)));
+    public static final DeferredItem<Item> ACID = ITEMS.register("acid",
+            () -> new ItemAcid(new Item.Properties().stacksTo(16)));
     public static final DeferredItem<Item> DEAD_IRUKANDJI = ITEMS.registerSimpleItem("dead_irukandji");
     public static final DeferredItem<Item> IRUKANDJI_ARROW = ITEMS.registerSimpleItem("irukandji_arrow");
-    public static final DeferredItem<Item> ROCK_SMALL = ITEMS.registerSimpleItem("rock_small");
-    public static final DeferredItem<Item> ROCK = ITEMS.registerSimpleItem("rock");
-    public static final DeferredItem<Item> ROCK_RED = ITEMS.registerSimpleItem("rock_red");
-    public static final DeferredItem<Item> ROCK_GREEN = ITEMS.registerSimpleItem("rock_green");
-    public static final DeferredItem<Item> ROCK_BLUE = ITEMS.registerSimpleItem("rock_blue");
-    public static final DeferredItem<Item> ROCK_PURPLE = ITEMS.registerSimpleItem("rock_purple");
-    public static final DeferredItem<Item> ROCK_SPIKEY = ITEMS.registerSimpleItem("rock_spikey");
-    public static final DeferredItem<Item> ROCK_TNT = ITEMS.registerSimpleItem("rock_tnt");
-    public static final DeferredItem<Item> ROCK_CRYSTAL_RED = ITEMS.registerSimpleItem("rock_crystal_red");
-    public static final DeferredItem<Item> ROCK_CRYSTAL_GREEN = ITEMS.registerSimpleItem("rock_crystal_green");
-    public static final DeferredItem<Item> ROCK_CRYSTAL_BLUE = ITEMS.registerSimpleItem("rock_crystal_blue");
-    public static final DeferredItem<Item> ROCK_CRYSTAL_TNT = ITEMS.registerSimpleItem("rock_crystal_tnt");
+    public static final DeferredItem<Item> ROCK_SMALL = ITEMS.register("rock_small",
+            () -> new ItemRock(new Item.Properties().stacksTo(16), 0));
+    public static final DeferredItem<Item> ROCK = ITEMS.register("rock",
+            () -> new ItemRock(new Item.Properties().stacksTo(16), 1));
+    public static final DeferredItem<Item> ROCK_RED = ITEMS.register("rock_red",
+            () -> new ItemRock(new Item.Properties().stacksTo(16), 2));
+    public static final DeferredItem<Item> ROCK_GREEN = ITEMS.register("rock_green",
+            () -> new ItemRock(new Item.Properties().stacksTo(16), 3));
+    public static final DeferredItem<Item> ROCK_BLUE = ITEMS.register("rock_blue",
+            () -> new ItemRock(new Item.Properties().stacksTo(16), 4));
+    public static final DeferredItem<Item> ROCK_PURPLE = ITEMS.register("rock_purple",
+            () -> new ItemRock(new Item.Properties().stacksTo(16), 5));
+    public static final DeferredItem<Item> ROCK_SPIKEY = ITEMS.register("rock_spikey",
+            () -> new ItemRock(new Item.Properties().stacksTo(16), 6));
+    public static final DeferredItem<Item> ROCK_TNT = ITEMS.register("rock_tnt",
+            () -> new ItemRock(new Item.Properties().stacksTo(16), 7));
+    public static final DeferredItem<Item> ROCK_CRYSTAL_RED = ITEMS.register("rock_crystal_red",
+            () -> new ItemRock(new Item.Properties().stacksTo(16), 8));
+    public static final DeferredItem<Item> ROCK_CRYSTAL_GREEN = ITEMS.register("rock_crystal_green",
+            () -> new ItemRock(new Item.Properties().stacksTo(16), 9));
+    public static final DeferredItem<Item> ROCK_CRYSTAL_BLUE = ITEMS.register("rock_crystal_blue",
+            () -> new ItemRock(new Item.Properties().stacksTo(16), 10));
+    public static final DeferredItem<Item> ROCK_CRYSTAL_TNT = ITEMS.register("rock_crystal_tnt",
+            () -> new ItemRock(new Item.Properties().stacksTo(16), 11));
 
     // Food items
     public static final DeferredItem<Item> FIRE_FISH = ITEMS.register("fire_fish",
@@ -383,27 +401,39 @@ public class ModItems {
     public static final DeferredItem<Item> EXPERIENCE_TREE_SEED = ITEMS.registerSimpleItem("experience_tree_seed");
 
     // Utility items
-    public static final DeferredItem<Item> MAGIC_APPLE = ITEMS.registerSimpleItem("magic_apple");
-    public static final DeferredItem<Item> MINERS_DREAM = ITEMS.registerSimpleItem("miners_dream");
+    public static final DeferredItem<Item> MAGIC_APPLE = ITEMS.register("magic_apple",
+            () -> new ItemMagicApple(new Item.Properties().stacksTo(16)));
+    public static final DeferredItem<Item> MINERS_DREAM = ITEMS.register("miners_dream",
+            () -> new ItemMinersDream(new Item.Properties().stacksTo(16)));
     public static final DeferredItem<Item> RANDOM_DUNGEON = ITEMS.register("random_dungeon",
             () -> new ItemRandomDungeon(new Item.Properties()));
-    public static final DeferredItem<Item> EXPERIENCE_CATCHER = ITEMS.registerSimpleItem("experience_catcher");
-    public static final DeferredItem<Item> SUNSPOT_URCHIN = ITEMS.registerSimpleItem("sunspot_urchin");
-    public static final DeferredItem<Item> SIFTER = ITEMS.registerSimpleItem("sifter");
+    public static final DeferredItem<Item> EXPERIENCE_CATCHER = ITEMS.register("experience_catcher",
+            () -> new ExperienceCatcher(new Item.Properties().stacksTo(16)));
+    public static final DeferredItem<Item> SUNSPOT_URCHIN = ITEMS.register("sunspot_urchin",
+            () -> new ItemSunspotUrchin(new Item.Properties().stacksTo(16)));
+    public static final DeferredItem<Item> SIFTER = ITEMS.register("sifter",
+            () -> new ItemSifter(new Item.Properties().durability(256)));
     public static final DeferredItem<Item> SPIDER_ROBOT_KIT = ITEMS.register("spider_robot_kit",
             () -> new ItemSpiderRobotKit(new Item.Properties(), () -> ModEntities.SPIDER_ROBOT.get()));
     public static final DeferredItem<Item> ANT_ROBOT_KIT = ITEMS.register("ant_robot_kit",
             () -> new ItemSpiderRobotKit(new Item.Properties(), () -> ModEntities.ANT_ROBOT.get()));
-    public static final DeferredItem<Item> ZOO_KEEPER = ITEMS.registerSimpleItem("zoo_keeper");
-    public static final DeferredItem<Item> NETHER_LOST = ITEMS.registerSimpleItem("nether_lost");
+    public static final DeferredItem<Item> ZOO_KEEPER = ITEMS.register("zoo_keeper",
+            () -> new ItemZooKeeper(new Item.Properties().durability(256)));
+    public static final DeferredItem<Item> NETHER_LOST = ITEMS.register("nether_lost",
+            () -> new ItemNetherLost(new Item.Properties()));
     public static final DeferredItem<Item> ELEVATOR = ITEMS.register("elevator",
             () -> new ItemElevator(new Item.Properties()));
-    public static final DeferredItem<Item> INSTANT_SHELTER = ITEMS.registerSimpleItem("instant_shelter");
-    public static final DeferredItem<Item> INSTANT_GARDEN = ITEMS.registerSimpleItem("instant_garden");
+    public static final DeferredItem<Item> INSTANT_SHELTER = ITEMS.register("instant_shelter",
+            () -> new InstantShelter(new Item.Properties().stacksTo(16)));
+    public static final DeferredItem<Item> INSTANT_GARDEN = ITEMS.register("instant_garden",
+            () -> new InstantGarden(new Item.Properties().stacksTo(16)));
     public static final DeferredItem<Item> DUCT_TAPE_ITEM = ITEMS.registerSimpleItem("duct_tape_item");
-    public static final DeferredItem<Item> STEP_UP = ITEMS.registerSimpleItem("step_up");
-    public static final DeferredItem<Item> STEP_DOWN = ITEMS.registerSimpleItem("step_down");
-    public static final DeferredItem<Item> STEP_ACROSS = ITEMS.registerSimpleItem("step_across");
+    public static final DeferredItem<Item> STEP_UP = ITEMS.register("step_up",
+            () -> new StepUp(new Item.Properties().stacksTo(16)));
+    public static final DeferredItem<Item> STEP_DOWN = ITEMS.register("step_down",
+            () -> new StepDown(new Item.Properties().stacksTo(16)));
+    public static final DeferredItem<Item> STEP_ACROSS = ITEMS.register("step_across",
+            () -> new StepAccross(new Item.Properties().stacksTo(16)));
 
     // Shoes / accessories
     public static final DeferredItem<Item> RED_HEELS = ITEMS.registerSimpleItem("red_heels");
@@ -834,6 +864,14 @@ public class ModItems {
             () -> new SpawnEggItem(ModEntities.RED_COW.get(), 0x8B0000, 0xFFFFFF, new Item.Properties()));
     public static final DeferredItem<SpawnEggItem> SPIDER_DRIVER_SPAWN_EGG = ITEMS.register("spider_driver_spawn_egg",
             () -> new SpawnEggItem(ModEntities.SPIDER_DRIVER.get(), 0x2F4F4F, 0x696969, new Item.Properties()));
+    public static final DeferredItem<SpawnEggItem> CRYSTAL_COW_SPAWN_EGG = ITEMS.register("crystal_cow_spawn_egg",
+            () -> new SpawnEggItem(ModEntities.CRYSTAL_COW.get(), 0xFF69B4, 0xFFB6C1, new Item.Properties()));
+    public static final DeferredItem<SpawnEggItem> GOLD_COW_SPAWN_EGG = ITEMS.register("gold_cow_spawn_egg",
+            () -> new SpawnEggItem(ModEntities.GOLD_COW.get(), 0xFFD700, 0xFFA500, new Item.Properties()));
+    public static final DeferredItem<SpawnEggItem> ENCHANTED_COW_SPAWN_EGG = ITEMS.register("enchanted_cow_spawn_egg",
+            () -> new SpawnEggItem(ModEntities.ENCHANTED_COW.get(), 0x800080, 0xDA70D6, new Item.Properties()));
+    public static final DeferredItem<SpawnEggItem> RUBY_BIRD_SPAWN_EGG = ITEMS.register("ruby_bird_spawn_egg",
+            () -> new SpawnEggItem(ModEntities.RUBY_BIRD.get(), 0xDC143C, 0xFF6347, new Item.Properties()));
 
     public static void register(IEventBus eventBus) {
         ITEMS.register(eventBus);

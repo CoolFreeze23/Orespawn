@@ -1,8 +1,0 @@
-{
-  "parent": "minecraft:block/cube_bottom_top",
-  "textures": {
-    "top": "orespawn:blocks/antnest_top",
-    "bottom": "orespawn:blocks/antnest_bottom",
-    "side": "orespawn:blocks/antnest_side"
-  }
-}

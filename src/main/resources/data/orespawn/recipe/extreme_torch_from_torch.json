@@ -1,0 +1,8 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    { "item": "minecraft:redstone" },
+    { "item": "minecraft:torch" }
+  ],
+  "result": { "id": "orespawn:extreme_torch", "count": 1 }
+}

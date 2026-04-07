@@ -5,8 +5,7 @@
     { "item": "orespawn:tomato" },
     { "item": "minecraft:bowl" }
   ],
-  "result": {
-    "item": "orespawn:salad",
+  "result": { "id": "orespawn:salad",
     "count": 1
   }
 }

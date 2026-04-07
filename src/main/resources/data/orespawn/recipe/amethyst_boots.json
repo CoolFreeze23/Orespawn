@@ -1,0 +1,6 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": ["X X", "X X"],
+  "key": { "X": { "item": "orespawn:amethyst_gem" } },
+  "result": { "id": "orespawn:amethyst_boots", "count": 1 }
+}

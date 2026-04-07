@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    { "item": "minecraft:lead" },
+    { "item": "minecraft:stick" },
+    { "item": "minecraft:string" }
+  ],
+  "result": { "id": "orespawn:experience_catcher", "count": 1 }
+}

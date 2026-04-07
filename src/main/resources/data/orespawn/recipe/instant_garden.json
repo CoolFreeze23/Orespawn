@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    { "item": "minecraft:emerald_block" },
+    { "item": "minecraft:wheat_seeds" },
+    { "item": "minecraft:wheat" }
+  ],
+  "result": { "id": "orespawn:instant_garden", "count": 1 }
+}

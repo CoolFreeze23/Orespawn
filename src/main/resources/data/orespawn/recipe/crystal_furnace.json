@@ -1,0 +1,6 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": ["XXX", "X X", "XXX"],
+  "key": { "X": { "item": "orespawn:crystal_stone" } },
+  "result": { "id": "orespawn:crystal_furnace", "count": 1 }
+}

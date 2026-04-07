@@ -1,0 +1,6 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": ["XXX", "XXX", "XXX"],
+  "key": { "X": { "item": "minecraft:ender_pearl" } },
+  "result": { "id": "orespawn:block_ender_pearl", "count": 1 }
+}

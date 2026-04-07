@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    { "item": "minecraft:paper" },
+    { "item": "minecraft:redstone" },
+    { "item": "minecraft:stick" }
+  ],
+  "result": { "id": "orespawn:creeper_launcher", "count": 4 }
+}

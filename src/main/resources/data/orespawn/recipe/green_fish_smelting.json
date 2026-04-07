@@ -1,0 +1,7 @@
+{
+  "type": "minecraft:smelting",
+  "ingredient": { "item": "orespawn:green_fish" },
+  "result": { "id": "minecraft:cooked_cod", "count": 1 },
+  "experience": 0.2,
+  "cookingtime": 200
+}

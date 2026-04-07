@@ -1,0 +1,5 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [{ "item": "orespawn:block_eye_of_ender" }],
+  "result": { "id": "minecraft:ender_eye", "count": 9 }
+}

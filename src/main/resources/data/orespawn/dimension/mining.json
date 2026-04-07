@@ -1,0 +1,12 @@
+{
+  "type": "orespawn:mining",
+  "generator": {
+    "type": "orespawn:orespawn",
+    "biome_source": {
+      "type": "minecraft:fixed",
+      "biome": "orespawn:mining_biome"
+    },
+    "settings": "minecraft:overworld",
+    "crystal_surface": false
+  }
+}

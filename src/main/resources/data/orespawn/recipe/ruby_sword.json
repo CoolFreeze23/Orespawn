@@ -9,8 +9,7 @@
     "#": { "item": "minecraft:stick" },
     "X": { "item": "orespawn:ruby" }
   },
-  "result": {
-    "item": "orespawn:ruby_sword",
+  "result": { "id": "orespawn:ruby_sword",
     "count": 1
   }
 }

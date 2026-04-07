@@ -1,0 +1,5 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [{ "item": "orespawn:ore_salt" }],
+  "result": { "id": "orespawn:salt", "count": 4 }
+}

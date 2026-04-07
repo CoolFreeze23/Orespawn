@@ -1,0 +1,7 @@
+{
+  "replace": false,
+  "entries": [
+    "orespawn:add_ruby_to_dungeon",
+    "orespawn:add_amethyst_to_dungeon"
+  ]
+}

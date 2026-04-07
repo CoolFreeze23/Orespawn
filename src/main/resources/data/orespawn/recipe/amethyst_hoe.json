@@ -9,8 +9,7 @@
     "#": { "item": "minecraft:stick" },
     "X": { "item": "orespawn:amethyst_gem" }
   },
-  "result": {
-    "item": "orespawn:amethyst_hoe",
+  "result": { "id": "orespawn:amethyst_hoe",
     "count": 1
   }
 }

@@ -1,0 +1,6 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": ["TTT", "TTT", "TTT"],
+  "key": { "T": { "item": "orespawn:godzilla_scale" } },
+  "result": { "id": "orespawn:block_mobzilla_scale", "count": 1 }
+}

@@ -3,8 +3,7 @@
   "ingredients": [
     { "item": "orespawn:block_ruby" }
   ],
-  "result": {
-    "item": "orespawn:ruby",
+  "result": { "id": "orespawn:ruby",
     "count": 9
   }
 }
