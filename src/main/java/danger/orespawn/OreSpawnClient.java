@@ -172,8 +172,10 @@ public class OreSpawnClient {
             event.registerEntityRenderer(ModEntities.ICE_BALL.get(), NoopProjectileRenderer::new);
             event.registerEntityRenderer(ModEntities.ACID.get(), NoopProjectileRenderer::new);
             event.registerEntityRenderer(ModEntities.DEAD_IRUKANDJI.get(), NoopProjectileRenderer::new);
-            event.registerEntityRenderer(ModEntities.ULTIMATE_ARROW.get(), NoopProjectileRenderer::new);
-            event.registerEntityRenderer(ModEntities.IRUKANDJI_ARROW.get(), NoopProjectileRenderer::new);
+            event.registerEntityRenderer(ModEntities.ULTIMATE_ARROW.get(),
+                    ctx -> new OreSpawnArrowRenderer<>(ctx, net.minecraft.resources.ResourceLocation.withDefaultNamespace("textures/entity/projectiles/arrow.png")));
+            event.registerEntityRenderer(ModEntities.IRUKANDJI_ARROW.get(),
+                    ctx -> new OreSpawnArrowRenderer<>(ctx, net.minecraft.resources.ResourceLocation.withDefaultNamespace("textures/entity/projectiles/arrow.png")));
             event.registerEntityRenderer(ModEntities.ULTIMATE_FISH_HOOK.get(), NoopProjectileRenderer::new);
         }
 

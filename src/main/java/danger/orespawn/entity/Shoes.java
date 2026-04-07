@@ -35,8 +35,7 @@ public class Shoes extends ThrowableProjectile {
     }
 
     public Shoes(Level level, LivingEntity shooter, int shoeId) {
-        super(ModEntities.SHOES.get(), level);
-        this.setOwner(shooter);
+        super(ModEntities.SHOES.get(), shooter, level);
         this.entityData.set(DATA_SHOE_ID, shoeId);
     }
 

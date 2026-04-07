@@ -127,15 +127,15 @@ public class ModItems {
 
     // Ultimate tier tools
     public static final DeferredItem<Item> ULTIMATE_SWORD = ITEMS.register("ultimate_sword",
-            () -> new SwordItem(ModToolTiers.ULTIMATE, new Item.Properties().attributes(SwordItem.createAttributes(ModToolTiers.ULTIMATE, 3, -2.4f))));
+            () -> new UltimateSword(new Item.Properties().attributes(SwordItem.createAttributes(ModToolTiers.ULTIMATE, 3, -2.4f))));
     public static final DeferredItem<Item> ULTIMATE_PICKAXE = ITEMS.register("ultimate_pickaxe",
-            () -> new PickaxeItem(ModToolTiers.ULTIMATE, new Item.Properties().attributes(PickaxeItem.createAttributes(ModToolTiers.ULTIMATE, 1.0f, -2.8f))));
+            () -> new UltimatePickaxe(new Item.Properties().attributes(PickaxeItem.createAttributes(ModToolTiers.ULTIMATE, 1.0f, -2.8f))));
     public static final DeferredItem<Item> ULTIMATE_SHOVEL = ITEMS.register("ultimate_shovel",
-            () -> new ShovelItem(ModToolTiers.ULTIMATE, new Item.Properties().attributes(ShovelItem.createAttributes(ModToolTiers.ULTIMATE, 1.5f, -3.0f))));
+            () -> new UltimateShovel(new Item.Properties().attributes(ShovelItem.createAttributes(ModToolTiers.ULTIMATE, 1.5f, -3.0f))));
     public static final DeferredItem<Item> ULTIMATE_HOE = ITEMS.register("ultimate_hoe",
-            () -> new HoeItem(ModToolTiers.ULTIMATE, new Item.Properties().attributes(HoeItem.createAttributes(ModToolTiers.ULTIMATE, -3.0f, 0.0f))));
+            () -> new UltimateHoe(new Item.Properties().attributes(HoeItem.createAttributes(ModToolTiers.ULTIMATE, -3.0f, 0.0f))));
     public static final DeferredItem<Item> ULTIMATE_AXE = ITEMS.register("ultimate_axe",
-            () -> new AxeItem(ModToolTiers.ULTIMATE, new Item.Properties().attributes(AxeItem.createAttributes(ModToolTiers.ULTIMATE, 5.0f, -3.0f))));
+            () -> new UltimateAxe(new Item.Properties().attributes(AxeItem.createAttributes(ModToolTiers.ULTIMATE, 5.0f, -3.0f))));
 
     // Ruby tier tools
     public static final DeferredItem<Item> RUBY_SWORD = ITEMS.register("ruby_sword",
@@ -165,7 +165,7 @@ public class ModItems {
     public static final DeferredItem<Item> EMERALD_SWORD = ITEMS.register("emerald_sword",
             () -> new SwordItem(ModToolTiers.EMERALD, new Item.Properties().attributes(SwordItem.createAttributes(ModToolTiers.EMERALD, 3, -2.4f))));
     public static final DeferredItem<Item> EMERALD_PICKAXE = ITEMS.register("emerald_pickaxe",
-            () -> new PickaxeItem(ModToolTiers.EMERALD, new Item.Properties().attributes(PickaxeItem.createAttributes(ModToolTiers.EMERALD, 1.0f, -2.8f))));
+            () -> new EmeraldPickaxe(new Item.Properties().attributes(PickaxeItem.createAttributes(ModToolTiers.EMERALD, 1.0f, -2.8f))));
     public static final DeferredItem<Item> EMERALD_SHOVEL = ITEMS.register("emerald_shovel",
             () -> new ShovelItem(ModToolTiers.EMERALD, new Item.Properties().attributes(ShovelItem.createAttributes(ModToolTiers.EMERALD, 1.5f, -3.0f))));
     public static final DeferredItem<Item> EMERALD_HOE = ITEMS.register("emerald_hoe",
@@ -223,33 +223,39 @@ public class ModItems {
 
     // Special weapons
     public static final DeferredItem<Item> NIGHTMARE_SWORD = ITEMS.register("nightmare_sword",
-            () -> new SwordItem(ModToolTiers.NIGHTMARE, new Item.Properties().attributes(SwordItem.createAttributes(ModToolTiers.NIGHTMARE, 3, -2.4f))));
+            () -> new NightmareSword(new Item.Properties().attributes(SwordItem.createAttributes(ModToolTiers.NIGHTMARE, 3, -2.4f))));
     public static final DeferredItem<Item> BIG_BERTHA = ITEMS.register("big_bertha",
-            () -> new SwordItem(ModToolTiers.BERTHA, new Item.Properties().attributes(SwordItem.createAttributes(ModToolTiers.BERTHA, 3, -2.4f))));
+            () -> new Bertha(ModToolTiers.BERTHA, new Item.Properties().attributes(SwordItem.createAttributes(ModToolTiers.BERTHA, 3, -2.4f)),
+                    0, new int[]{5, 1, 1}, net.minecraft.world.item.enchantment.Enchantments.KNOCKBACK, net.minecraft.world.item.enchantment.Enchantments.BANE_OF_ARTHROPODS, net.minecraft.world.item.enchantment.Enchantments.SWEEPING_EDGE));
     public static final DeferredItem<Item> SLICE = ITEMS.register("slice",
-            () -> new SwordItem(ModToolTiers.BERTHA, new Item.Properties().attributes(SwordItem.createAttributes(ModToolTiers.BERTHA, 3, -2.4f))));
+            () -> new Slice(ModToolTiers.BERTHA, new Item.Properties().attributes(SwordItem.createAttributes(ModToolTiers.BERTHA, 3, -2.4f))));
     public static final DeferredItem<Item> ROYAL_GUARDIAN_SWORD = ITEMS.register("royal_guardian_sword",
-            () -> new SwordItem(ModToolTiers.ROYAL, new Item.Properties().attributes(SwordItem.createAttributes(ModToolTiers.ROYAL, 3, -2.4f))));
+            () -> new Bertha(ModToolTiers.ROYAL, new Item.Properties().attributes(SwordItem.createAttributes(ModToolTiers.ROYAL, 3, -2.4f)),
+                    2, new int[]{5}, net.minecraft.world.item.enchantment.Enchantments.SHARPNESS));
     public static final DeferredItem<Item> BATTLE_AXE = ITEMS.register("battle_axe",
-            () -> new SwordItem(ModToolTiers.BATTLE, new Item.Properties().attributes(SwordItem.createAttributes(ModToolTiers.BATTLE, 3, -2.4f))));
+            () -> new Bertha(ModToolTiers.BATTLE, new Item.Properties().attributes(SwordItem.createAttributes(ModToolTiers.BATTLE, 3, -2.4f)),
+                    0, new int[]{5, 1, 1}, net.minecraft.world.item.enchantment.Enchantments.KNOCKBACK, net.minecraft.world.item.enchantment.Enchantments.BANE_OF_ARTHROPODS, net.minecraft.world.item.enchantment.Enchantments.SWEEPING_EDGE));
     public static final DeferredItem<Item> QUEEN_BATTLE_AXE = ITEMS.register("queen_battle_axe",
-            () -> new SwordItem(ModToolTiers.QUEEN_BATTLE, new Item.Properties().attributes(SwordItem.createAttributes(ModToolTiers.QUEEN_BATTLE, 3, -2.4f))));
+            () -> new Bertha(ModToolTiers.QUEEN_BATTLE, new Item.Properties().attributes(SwordItem.createAttributes(ModToolTiers.QUEEN_BATTLE, 3, -2.4f)),
+                    2, new int[]{5}, net.minecraft.world.item.enchantment.Enchantments.SHARPNESS));
     public static final DeferredItem<Item> CHAINSAW = ITEMS.register("chainsaw",
-            () -> new SwordItem(ModToolTiers.CHAINSAW, new Item.Properties().attributes(SwordItem.createAttributes(ModToolTiers.CHAINSAW, 3, -2.4f))));
+            () -> new Bertha(ModToolTiers.CHAINSAW, new Item.Properties().attributes(SwordItem.createAttributes(ModToolTiers.CHAINSAW, 3, -2.4f)),
+                    0, new int[]{5, 1, 1}, net.minecraft.world.item.enchantment.Enchantments.KNOCKBACK, net.minecraft.world.item.enchantment.Enchantments.BANE_OF_ARTHROPODS, net.minecraft.world.item.enchantment.Enchantments.SWEEPING_EDGE));
     public static final DeferredItem<Item> ATTITUDE_ADJUSTER = ITEMS.register("attitude_adjuster",
-            () -> new SwordItem(ModToolTiers.HAMMY, new Item.Properties().attributes(SwordItem.createAttributes(ModToolTiers.HAMMY, 3, -2.4f))));
+            () -> new Bertha(ModToolTiers.HAMMY, new Item.Properties().attributes(SwordItem.createAttributes(ModToolTiers.HAMMY, 3, -2.4f)),
+                    3, new int[]{}, new net.minecraft.resources.ResourceKey[0]));
     public static final DeferredItem<Item> EXPERIENCE_SWORD = ITEMS.register("experience_sword",
-            () -> new SwordItem(ModToolTiers.EMERALD, new Item.Properties().attributes(SwordItem.createAttributes(ModToolTiers.EMERALD, 3, -2.4f))));
+            () -> new ExperienceSword(new Item.Properties().attributes(SwordItem.createAttributes(ModToolTiers.EMERALD, 3, -2.4f))));
     public static final DeferredItem<Item> POISON_SWORD = ITEMS.register("poison_sword",
-            () -> new SwordItem(ModToolTiers.EMERALD, new Item.Properties().attributes(SwordItem.createAttributes(ModToolTiers.EMERALD, 3, -2.4f))));
+            () -> new PoisonSword(new Item.Properties().attributes(SwordItem.createAttributes(ModToolTiers.EMERALD, 3, -2.4f))));
     public static final DeferredItem<Item> RAT_SWORD = ITEMS.register("rat_sword",
             () -> new RatSword(new Item.Properties().attributes(SwordItem.createAttributes(ModToolTiers.EMERALD, 3, -2.4f))));
     public static final DeferredItem<Item> FAIRY_SWORD = ITEMS.register("fairy_sword",
             () -> new FairySword(new Item.Properties().attributes(SwordItem.createAttributes(ModToolTiers.EMERALD, 3, -2.4f))));
     public static final DeferredItem<Item> MANTIS_CLAW = ITEMS.register("mantis_claw",
-            () -> new SwordItem(ModToolTiers.EMERALD, new Item.Properties().attributes(SwordItem.createAttributes(ModToolTiers.EMERALD, 3, -2.4f))));
+            () -> new MantisClaw(new Item.Properties().attributes(SwordItem.createAttributes(ModToolTiers.EMERALD, 3, -2.4f))));
     public static final DeferredItem<Item> BIG_HAMMER = ITEMS.register("big_hammer",
-            () -> new SwordItem(ModToolTiers.AMETHYST, new Item.Properties().attributes(SwordItem.createAttributes(ModToolTiers.AMETHYST, 3, -2.4f))));
+            () -> new BigHammer(new Item.Properties().attributes(SwordItem.createAttributes(ModToolTiers.AMETHYST, 3, -2.4f))));
     public static final DeferredItem<Item> ROSE_SWORD = ITEMS.register("rose_sword",
             () -> new SwordItem(ModToolTiers.EMERALD, new Item.Properties().attributes(SwordItem.createAttributes(ModToolTiers.EMERALD, 3, -2.4f))));
 

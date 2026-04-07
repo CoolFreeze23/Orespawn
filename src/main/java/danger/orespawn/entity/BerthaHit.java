@@ -27,8 +27,7 @@ public class BerthaHit extends ThrowableProjectile {
     }
 
     public BerthaHit(Level level, LivingEntity shooter) {
-        super(ModEntities.BERTHA_HIT.get(), level);
-        this.setOwner(shooter);
+        super(ModEntities.BERTHA_HIT.get(), shooter, level);
     }
 
     public void setHitType(int hitType) { this.hitType = hitType; }

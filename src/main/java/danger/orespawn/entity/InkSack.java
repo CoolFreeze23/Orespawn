@@ -33,8 +33,7 @@ public class InkSack extends ThrowableProjectile {
     }
 
     public InkSack(Level level, LivingEntity shooter) {
-        super(ModEntities.INK_SACK.get(), level);
-        this.setOwner(shooter);
+        super(ModEntities.INK_SACK.get(), shooter, level);
     }
 
     @Override

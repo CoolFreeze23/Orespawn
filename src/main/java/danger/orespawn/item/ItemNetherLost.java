@@ -24,10 +24,10 @@ public class ItemNetherLost extends Item {
             OreSpawnEnchantHelper.applyEnchantment(stack, level, Enchantments.SHARPNESS, 2);
         }
 
-        if (entity instanceof Player player && level.dimension() == Level.NETHER) {
+        if (entity instanceof Player player) {
             BlockPos below = player.blockPosition().below();
-            if (level.getBlockState(below).is(Blocks.SOUL_SAND)) {
-                level.setBlock(below, Blocks.COBBLESTONE.defaultBlockState(), 3);
+            if (level.getBlockState(below).is(Blocks.NETHERRACK)) {
+                level.setBlock(below, Blocks.STONE_BRICKS.defaultBlockState(), 3);
             }
         }
     }

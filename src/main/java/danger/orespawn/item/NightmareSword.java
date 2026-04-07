@@ -13,7 +13,7 @@ import danger.orespawn.util.OreSpawnEnchantHelper;
 
 public class NightmareSword extends SwordItem {
     public NightmareSword(Item.Properties properties) {
-        super(ModToolTiers.ULTIMATE, properties);
+        super(ModToolTiers.NIGHTMARE, properties);
     }
 
     @Override
