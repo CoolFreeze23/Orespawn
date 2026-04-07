@@ -37,8 +37,7 @@ public class LaserBall extends ThrowableProjectile {
     }
 
     public LaserBall(Level level, LivingEntity shooter) {
-        super(ModEntities.LASER_BALL.get(), level);
-        this.setOwner(shooter);
+        super(ModEntities.LASER_BALL.get(), shooter, level);
     }
 
     public LaserBall(Level level, double x, double y, double z) {

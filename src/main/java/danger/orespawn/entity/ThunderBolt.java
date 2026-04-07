@@ -29,8 +29,7 @@ public class ThunderBolt extends ThrowableProjectile {
     }
 
     public ThunderBolt(Level level, LivingEntity shooter) {
-        super(ModEntities.THUNDER_BOLT.get(), level);
-        this.setOwner(shooter);
+        super(ModEntities.THUNDER_BOLT.get(), shooter, level);
     }
 
     public ThunderBolt(Level level, double x, double y, double z) {

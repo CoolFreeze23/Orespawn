@@ -530,7 +530,7 @@ public class ModEntities {
 
     public static final DeferredHolder<EntityType<?>, EntityType<LaserBall>> LASER_BALL =
             ENTITY_TYPES.register("laser_ball", () -> EntityType.Builder.<LaserBall>of(LaserBall::new, MobCategory.MISC)
-                    .sized(0.25f, 0.25f).clientTrackingRange(4).updateInterval(10).noSummon().build("laser_ball"));
+                    .sized(0.25f, 0.25f).clientTrackingRange(8).updateInterval(2).noSummon().build("laser_ball"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<Shoes>> SHOES =
             ENTITY_TYPES.register("shoes", () -> EntityType.Builder.<Shoes>of(Shoes::new, MobCategory.MISC)
@@ -562,11 +562,11 @@ public class ModEntities {
 
     public static final DeferredHolder<EntityType<?>, EntityType<UltimateArrow>> ULTIMATE_ARROW =
             ENTITY_TYPES.register("ultimate_arrow", () -> EntityType.Builder.<UltimateArrow>of(UltimateArrow::new, MobCategory.MISC)
-                    .sized(0.5f, 0.5f).clientTrackingRange(4).updateInterval(20).noSummon().build("ultimate_arrow"));
+                    .sized(0.5f, 0.5f).clientTrackingRange(8).updateInterval(2).noSummon().build("ultimate_arrow"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<IrukandjiArrow>> IRUKANDJI_ARROW =
             ENTITY_TYPES.register("irukandji_arrow", () -> EntityType.Builder.<IrukandjiArrow>of(IrukandjiArrow::new, MobCategory.MISC)
-                    .sized(0.5f, 0.5f).clientTrackingRange(4).updateInterval(20).noSummon().build("irukandji_arrow"));
+                    .sized(0.5f, 0.5f).clientTrackingRange(8).updateInterval(2).noSummon().build("irukandji_arrow"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<UltimateFishHook>> ULTIMATE_FISH_HOOK =
             ENTITY_TYPES.register("ultimate_fish_hook", () -> EntityType.Builder.<UltimateFishHook>of(UltimateFishHook::new, MobCategory.MISC)

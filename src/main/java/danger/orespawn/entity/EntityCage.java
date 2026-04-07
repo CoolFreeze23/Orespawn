@@ -44,8 +44,7 @@ public class EntityCage extends ThrowableProjectile {
     }
 
     public EntityCage(Level level, Player thrower, int index) {
-        super(ModEntities.ENTITY_CAGE.get(), level);
-        this.setOwner(thrower);
+        super(ModEntities.ENTITY_CAGE.get(), thrower, level);
         this.cageIndex = index;
     }
 
