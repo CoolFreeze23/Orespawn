@@ -26,6 +26,10 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerBossEvent;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.BossEvent;
+import net.minecraft.network.chat.Component;
 import danger.orespawn.OreSpawnMod;
 import danger.orespawn.entity.client.RenderSpiderRobotInfo;
 
@@ -41,6 +45,9 @@ public class SpiderRobot extends Mob {
     private static final float[] LEG_OFFSETS = {1.0f, 1.0f, 1.0f, 1.0f, 0.9f, 0.9f, 0.9f, 0.9f};
     private static final float[] LEG_Y_OFFS = {0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
     private final RenderSpiderRobotInfo renderInfo = new RenderSpiderRobotInfo(LEG_COUNT);
+
+    private final ServerBossEvent bossEvent = new ServerBossEvent(
+            Component.literal("Spider Robot"), BossEvent.BossBarColor.WHITE, BossEvent.BossBarOverlay.PROGRESS);
 
     private final Comparator<Entity> targetSorter;
     private final float moveSpeed = 0.35f;
@@ -76,7 +83,20 @@ public class SpiderRobot extends Mob {
     public void setAttacking(int value) { this.entityData.set(DATA_ATTACKING, value); }
 
     @Override
+    public void startSeenByPlayer(ServerPlayer player) {
+        super.startSeenByPlayer(player);
+        this.bossEvent.addPlayer(player);
+    }
+
+    @Override
+    public void stopSeenByPlayer(ServerPlayer player) {
+        super.stopSeenByPlayer(player);
+        this.bossEvent.removePlayer(player);
+    }
+
+    @Override
     protected void customServerAiStep() {
+        this.bossEvent.setProgress(this.getHealth() / this.getMaxHealth());
         if (this.isRemoved()) return;
         if (this.getFirstPassenger() != null) return;
         super.customServerAiStep();

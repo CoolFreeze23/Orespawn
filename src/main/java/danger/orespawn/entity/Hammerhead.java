@@ -26,6 +26,10 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.server.level.ServerBossEvent;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.BossEvent;
+import net.minecraft.network.chat.Component;
 
 public class Hammerhead extends Monster {
     private static final EntityDataAccessor<Integer> DATA_ATTACKING =
@@ -34,6 +38,9 @@ public class Hammerhead extends Monster {
     private static final int MAX_HEALTH = 200;
     private static final double MOVE_SPEED = 0.35;
     private static final double ATTACK_DAMAGE = 20.0;
+
+    private final ServerBossEvent bossEvent = new ServerBossEvent(
+            Component.literal("Hammerhead"), BossEvent.BossBarColor.YELLOW, BossEvent.BossBarOverlay.PROGRESS);
 
     private LivingEntity revengeTarget = null;
 
@@ -99,7 +106,20 @@ public class Hammerhead extends Monster {
     }
 
     @Override
+    public void startSeenByPlayer(ServerPlayer player) {
+        super.startSeenByPlayer(player);
+        this.bossEvent.addPlayer(player);
+    }
+
+    @Override
+    public void stopSeenByPlayer(ServerPlayer player) {
+        super.stopSeenByPlayer(player);
+        this.bossEvent.removePlayer(player);
+    }
+
+    @Override
     protected void customServerAiStep() {
+        this.bossEvent.setProgress(this.getHealth() / this.getMaxHealth());
         if (this.isRemoved()) return;
         super.customServerAiStep();
 

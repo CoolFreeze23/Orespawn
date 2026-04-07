@@ -47,6 +47,10 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import net.minecraft.server.level.ServerBossEvent;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.BossEvent;
+import net.minecraft.network.chat.Component;
 
 public class Godzilla extends Monster {
     private static final int CONFIGURED_MAX_HEALTH = 6000;
@@ -57,6 +61,9 @@ public class Godzilla extends Monster {
 
     private static final EntityDataAccessor<Integer> DATA_ATTACKING =
             SynchedEntityData.defineId(Godzilla.class, EntityDataSerializers.INT);
+
+    private final ServerBossEvent bossEvent = new ServerBossEvent(
+            Component.literal("Mobzilla"), BossEvent.BossBarColor.PURPLE, BossEvent.BossBarOverlay.PROGRESS);
 
     private final Comparator<Entity> targetSorter;
     private final float moveSpeed = 0.75f;
@@ -422,7 +429,20 @@ public class Godzilla extends Monster {
     // ---- Main AI loop ----
 
     @Override
+    public void startSeenByPlayer(ServerPlayer player) {
+        super.startSeenByPlayer(player);
+        this.bossEvent.addPlayer(player);
+    }
+
+    @Override
+    public void stopSeenByPlayer(ServerPlayer player) {
+        super.stopSeenByPlayer(player);
+        this.bossEvent.removePlayer(player);
+    }
+
+    @Override
     protected void customServerAiStep() {
+        this.bossEvent.setProgress(this.getHealth() / this.getMaxHealth());
         if (this.isRemoved()) return;
         if (this.level().isClientSide) return;
         super.customServerAiStep();

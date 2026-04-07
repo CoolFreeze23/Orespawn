@@ -25,6 +25,10 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerBossEvent;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.BossEvent;
+import net.minecraft.network.chat.Component;
 import danger.orespawn.OreSpawnMod;
 
 public class PitchBlack extends Monster {
@@ -34,6 +38,9 @@ public class PitchBlack extends Monster {
             SynchedEntityData.defineId(PitchBlack.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Integer> DATA_SCALE =
             SynchedEntityData.defineId(PitchBlack.class, EntityDataSerializers.INT);
+
+    private final ServerBossEvent bossEvent = new ServerBossEvent(
+            Component.literal("Nightmare"), BossEvent.BossBarColor.PURPLE, BossEvent.BossBarOverlay.PROGRESS);
 
     private BlockPos currentFlightTarget = null;
     private final Comparator<Entity> targetSorter;
@@ -128,7 +135,20 @@ public class PitchBlack extends Monster {
     }
 
     @Override
+    public void startSeenByPlayer(ServerPlayer player) {
+        super.startSeenByPlayer(player);
+        this.bossEvent.addPlayer(player);
+    }
+
+    @Override
+    public void stopSeenByPlayer(ServerPlayer player) {
+        super.stopSeenByPlayer(player);
+        this.bossEvent.removePlayer(player);
+    }
+
+    @Override
     protected void customServerAiStep() {
+        this.bossEvent.setProgress(this.getHealth() / this.getMaxHealth());
         if (this.damageTicker > 0) --this.damageTicker;
         if (this.getActivity() == 0) {
             super.customServerAiStep();
