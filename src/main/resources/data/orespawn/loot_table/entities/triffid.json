@@ -3,11 +3,15 @@
   "pools": [
     {
       "rolls": 1,
-      "entries": [{"type": "minecraft:item", "name": "minecraft:vine", "functions": [{"function": "minecraft:set_count", "count": {"type": "minecraft:uniform", "min": 2, "max": 5}}]}]
+      "entries": [{"type": "minecraft:item", "name": "orespawn:green_goo", "functions": [{"function": "minecraft:set_count", "count": {"type": "minecraft:uniform", "min": 4, "max": 9}}, {"function": "minecraft:enchanted_count_increase", "enchantment": "minecraft:looting", "count": {"type": "minecraft:uniform", "min": 0, "max": 2}}]}]
     },
     {
       "rolls": 1,
-      "entries": [{"type": "minecraft:item", "name": "minecraft:oak_log", "functions": [{"function": "minecraft:set_count", "count": {"type": "minecraft:uniform", "min": 0, "max": 2}}]}]
+      "entries": [{"type": "minecraft:item", "name": "minecraft:name_tag"}]
+    },
+    {
+      "rolls": 1,
+      "entries": [{"type": "minecraft:item", "name": "minecraft:vine", "functions": [{"function": "minecraft:set_count", "count": {"type": "minecraft:uniform", "min": 2, "max": 5}}]}]
     }
   ]
 }
