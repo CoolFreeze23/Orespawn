@@ -38,6 +38,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.Level;
+import danger.orespawn.OreSpawnConfig;
 import danger.orespawn.OreSpawnMod;
 
 public class Boyfriend extends TamableAnimal {
@@ -303,6 +304,19 @@ public class Boyfriend extends TamableAnimal {
     @Override
     public float getVoicePitch() {
         return (float) (this.voice - 5) * 0.02f + 1.0f;
+    }
+
+    // BOYFRIEND_BRO_MODE: when enabled, the boyfriend refuses to attack other tamed
+    // mobs that share the same owner — preventing friendly-fire between the player's
+    // pets. This overrides the vanilla TamableAnimal targeting check.
+    @Override
+    public boolean wantsToAttack(LivingEntity target, LivingEntity owner) {
+        if (OreSpawnConfig.BOYFRIEND_BRO_MODE.get() && target instanceof TamableAnimal tamable) {
+            if (tamable.isTame() && tamable.getOwner() == owner) {
+                return false;
+            }
+        }
+        return true;
     }
 
     @Override

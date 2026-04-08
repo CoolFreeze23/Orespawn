@@ -1,5 +1,6 @@
 package danger.orespawn.entity;
 
+import danger.orespawn.ModEntities;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -8,8 +9,11 @@ import net.minecraft.world.level.Level;
 
 /**
  * An ItemEntity that is immune to fire and lava damage.
- * Used for drops from lava-dwelling mobs (Lava Eel, etc.) so items
- * don't burn up in lava when killed.
+ * Registered as a custom entity type with fireImmune() so both the
+ * entity and its item stack survive indefinitely in lava.
+ *
+ * Used for drops from fire-immune mobs (Dragon, etc.) to prevent
+ * valuable loot from burning up when the mob dies in or near lava.
  */
 public class EntityLavaLovingItem extends ItemEntity {
 
@@ -18,7 +22,10 @@ public class EntityLavaLovingItem extends ItemEntity {
     }
 
     public EntityLavaLovingItem(Level level, double x, double y, double z, ItemStack stack) {
-        super(level, x, y, z, stack);
+        super(ModEntities.LAVA_LOVING_ITEM.get(), level);
+        this.setPos(x, y, z);
+        this.setItem(stack);
+        this.setDeltaMovement(level.random.nextDouble() * 0.2 - 0.1, 0.2, level.random.nextDouble() * 0.2 - 0.1);
     }
 
     @Override

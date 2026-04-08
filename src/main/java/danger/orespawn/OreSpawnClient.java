@@ -3,6 +3,7 @@ package danger.orespawn;
 import danger.orespawn.client.OreSpawnItemRenderer;
 import danger.orespawn.entity.client.*;
 import danger.orespawn.gui.CrystalFurnaceScreen;
+import danger.orespawn.gui.CrystalWorkbenchScreen;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.resources.ResourceLocation;
@@ -177,6 +178,10 @@ public class OreSpawnClient {
             event.registerEntityRenderer(ModEntities.IRUKANDJI_ARROW.get(),
                     ctx -> new OreSpawnArrowRenderer<>(ctx, net.minecraft.resources.ResourceLocation.withDefaultNamespace("textures/entity/projectiles/arrow.png")));
             event.registerEntityRenderer(ModEntities.ULTIMATE_FISH_HOOK.get(), NoopProjectileRenderer::new);
+
+            // Fire-immune item entity uses vanilla ItemEntity renderer
+            event.registerEntityRenderer(ModEntities.LAVA_LOVING_ITEM.get(),
+                    net.minecraft.client.renderer.entity.ItemEntityRenderer::new);
         }
 
         @SubscribeEvent
@@ -310,6 +315,7 @@ public class OreSpawnClient {
         @SubscribeEvent
         public static void registerScreens(RegisterMenuScreensEvent event) {
             event.register(ModMenuTypes.CRYSTAL_FURNACE_MENU.get(), CrystalFurnaceScreen::new);
+            event.register(ModMenuTypes.CRYSTAL_WORKBENCH_MENU.get(), CrystalWorkbenchScreen::new);
         }
 
         @SubscribeEvent
