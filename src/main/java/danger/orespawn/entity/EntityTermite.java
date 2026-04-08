@@ -1,6 +1,7 @@
 package danger.orespawn.entity;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -17,6 +18,7 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 
+/** Hostile termite that eats wood — teleports players to the Crystal dimension (DimensionID5). */
 public class EntityTermite extends EntityAnt {
     private static final int NO_CLOSEST_MATCH = 99999;
     private static final int ATTACK_DELAY_TICKS = 20;
@@ -38,6 +40,11 @@ public class EntityTermite extends EntityAnt {
         super(type, level);
         this.moveSpeed = 0.2;
         this.xpReward = 1;
+    }
+
+    @Override
+    protected ResourceKey<Level> getTargetDimension() {
+        return CRYSTAL;
     }
 
     @Override

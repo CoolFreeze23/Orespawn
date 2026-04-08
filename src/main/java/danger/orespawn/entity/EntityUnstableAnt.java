@@ -1,5 +1,6 @@
 package danger.orespawn.entity;
 
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
@@ -7,10 +8,16 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.PanicGoal;
 import net.minecraft.world.level.Level;
 
+/** Passive unstable ant — teleports players to the Islands dimension (DimensionID4). */
 public class EntityUnstableAnt extends EntityAnt {
     public EntityUnstableAnt(EntityType<? extends EntityUnstableAnt> type, Level level) {
         super(type, level);
         this.xpReward = 0;
+    }
+
+    @Override
+    protected ResourceKey<Level> getTargetDimension() {
+        return ISLANDS;
     }
 
     @Override

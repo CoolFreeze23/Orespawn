@@ -1,5 +1,6 @@
 package danger.orespawn.entity;
 
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
@@ -7,10 +8,16 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.PanicGoal;
 import net.minecraft.world.level.Level;
 
+/** Passive rainbow ant — teleports players to the Village dimension (DimensionID3). */
 public class EntityRainbowAnt extends EntityAnt {
     public EntityRainbowAnt(EntityType<? extends EntityRainbowAnt> type, Level level) {
         super(type, level);
         this.xpReward = 0;
+    }
+
+    @Override
+    protected ResourceKey<Level> getTargetDimension() {
+        return VILLAGE;
     }
 
     @Override

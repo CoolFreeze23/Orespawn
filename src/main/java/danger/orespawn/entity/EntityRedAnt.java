@@ -1,5 +1,6 @@
 package danger.orespawn.entity;
 
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -12,6 +13,7 @@ import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 
+/** Hostile red ant — teleports players to the Mining dimension (DimensionID2). */
 public class EntityRedAnt extends EntityAnt {
     private int attackDelay = 20;
 
@@ -19,6 +21,11 @@ public class EntityRedAnt extends EntityAnt {
         super(type, level);
         this.moveSpeed = 0.2;
         this.xpReward = 1;
+    }
+
+    @Override
+    protected ResourceKey<Level> getTargetDimension() {
+        return MINING;
     }
 
     @Override
