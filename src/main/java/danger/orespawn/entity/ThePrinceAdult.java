@@ -36,6 +36,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
+import danger.orespawn.ModEntities;
 import danger.orespawn.OreSpawnMod;
 
 public class ThePrinceAdult extends TamableAnimal {
@@ -56,6 +57,7 @@ public class ThePrinceAdult extends TamableAnimal {
     private final float moveSpeed = 0.36f;
     private int hurtTimer = 0;
     private int head1dir = 1, head2dir = 1, head3dir = 1;
+    private int growCounter = 0;
 
     public ThePrinceAdult(EntityType<? extends ThePrinceAdult> type, Level level) {
         super(type, level);
@@ -167,6 +169,14 @@ public class ThePrinceAdult extends TamableAnimal {
         if (this.isRemoved()) return;
         super.customServerAiStep();
 
+        if (this.isTame() && !this.level().getLevelData().isHardcore()) {
+            ++this.growCounter;
+            if (this.growCounter > 288000) {
+                this.transformToKing();
+                return;
+            }
+        }
+
         if (this.random.nextInt(7) == 1) {
             LivingEntity target = this.getTarget();
             if (target != null && !target.isAlive()) {
@@ -203,9 +213,46 @@ public class ThePrinceAdult extends TamableAnimal {
         return null;
     }
 
+    private void transformToKing() {
+        if (this.level().isClientSide || !(this.level() instanceof ServerLevel serverLevel)) return;
+        TheKing king = ModEntities.THE_KING.get().create(serverLevel);
+        if (king == null) return;
+        king.moveTo(this.getX(), this.getY(), this.getZ(), this.getYRot(), this.getXRot());
+        serverLevel.addFreshEntity(king);
+        this.discard();
+    }
+
     @Override
     public InteractionResult mobInteract(Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
+
+        if (this.isTame() && this.isOwnedBy(player) && this.distanceToSqr(player) < 25.0) {
+            if (stack.is(Items.CAKE)) {
+                if (!this.level().isClientSide) {
+                    this.growCounter = 288000;
+                    this.level().broadcastEntityEvent(this, (byte) 7);
+                }
+                if (!player.getAbilities().instabuild) stack.shrink(1);
+                return InteractionResult.sidedSuccess(this.level().isClientSide);
+            }
+
+            if (stack.is(Items.GOLD_INGOT)) {
+                if (!this.level().isClientSide && this.level() instanceof ServerLevel serverLevel) {
+                    ThePrinceTeen teen = ModEntities.THE_PRINCE_TEEN.get().create(serverLevel);
+                    if (teen != null) {
+                        teen.moveTo(this.getX(), this.getY(), this.getZ(), this.getYRot(), this.getXRot());
+                        if (this.getOwnerUUID() != null) {
+                            teen.tame(this.level().getPlayerByUUID(this.getOwnerUUID()));
+                        }
+                        serverLevel.addFreshEntity(teen);
+                        this.discard();
+                    }
+                }
+                if (!player.getAbilities().instabuild) stack.shrink(1);
+                return InteractionResult.sidedSuccess(this.level().isClientSide);
+            }
+        }
+
         if (stack.has(net.minecraft.core.component.DataComponents.FOOD)
                 && this.distanceToSqr(player) < 25.0) {
             if (!this.level().isClientSide) {
@@ -248,6 +295,7 @@ public class ThePrinceAdult extends TamableAnimal {
         tag.putInt("PrinceActivity", this.getActivity());
         tag.putInt("PrinceAttacking", this.getAttacking());
         tag.putInt("PrinceFire", this.entityData.get(DATA_FIRE));
+        tag.putInt("PrinceGrow", this.growCounter);
     }
 
     @Override
@@ -256,5 +304,6 @@ public class ThePrinceAdult extends TamableAnimal {
         this.setActivity(tag.getInt("PrinceActivity"));
         this.setAttacking(tag.getInt("PrinceAttacking"));
         this.entityData.set(DATA_FIRE, tag.getInt("PrinceFire"));
+        this.growCounter = tag.getInt("PrinceGrow");
     }
 }

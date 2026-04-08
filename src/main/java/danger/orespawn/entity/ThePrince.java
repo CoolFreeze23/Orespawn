@@ -36,6 +36,7 @@ import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.AABB;
+import danger.orespawn.ModEntities;
 import danger.orespawn.OreSpawnMod;
 
 public class ThePrince extends TamableAnimal {
@@ -216,6 +217,22 @@ public class ThePrince extends TamableAnimal {
             if (this.isDay == -1 && this.level().isDay()) ++this.dayCount;
             this.isDay = this.level().isDay() ? 1 : -1;
         }
+
+        if (this.okToGrow != 0 && this.killCount > 25 && this.fedCount > 10 && this.dayCount > 10) {
+            this.transformToTeen();
+        }
+    }
+
+    private void transformToTeen() {
+        if (this.level().isClientSide || !(this.level() instanceof ServerLevel serverLevel)) return;
+        ThePrinceTeen teen = ModEntities.THE_PRINCE_TEEN.get().create(serverLevel);
+        if (teen == null) return;
+        teen.moveTo(this.getX(), this.getY(), this.getZ(), this.getYRot(), this.getXRot());
+        if (this.isTame() && this.getOwnerUUID() != null) {
+            teen.tame(this.level().getPlayerByUUID(this.getOwnerUUID()));
+        }
+        serverLevel.addFreshEntity(teen);
+        this.discard();
     }
 
     private boolean isSuitableTarget(LivingEntity target) {
@@ -253,6 +270,28 @@ public class ThePrince extends TamableAnimal {
             }
             if (!player.getAbilities().instabuild) stack.shrink(1);
             return InteractionResult.sidedSuccess(this.level().isClientSide);
+        }
+
+        if (this.isTame() && this.isOwnedBy(player) && this.distanceToSqr(player) < 16.0) {
+            if (stack.is(Items.CAKE)) {
+                if (!this.level().isClientSide) {
+                    this.okToGrow = 1;
+                    this.killCount = 1000;
+                    this.fedCount = 1000;
+                    this.dayCount = 1000;
+                    this.level().broadcastEntityEvent(this, (byte) 7);
+                }
+                if (!player.getAbilities().instabuild) stack.shrink(1);
+                return InteractionResult.sidedSuccess(this.level().isClientSide);
+            }
+
+            if (stack.is(Items.GOLD_INGOT) && this.okToGrow != 0) {
+                if (!this.level().isClientSide) {
+                    this.transformToTeen();
+                }
+                if (!player.getAbilities().instabuild) stack.shrink(1);
+                return InteractionResult.sidedSuccess(this.level().isClientSide);
+            }
         }
 
         if (this.isTame() && this.isOwnedBy(player)
