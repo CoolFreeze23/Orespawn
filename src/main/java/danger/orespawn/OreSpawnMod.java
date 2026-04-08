@@ -16,6 +16,7 @@ public class OreSpawnMod {
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
     public OreSpawnMod(IEventBus modEventBus, ModContainer modContainer) {
+        ModDataComponents.register(modEventBus);
         ModBlocks.register(modEventBus);
         ModItems.register(modEventBus);
         ModEntities.register(modEventBus);

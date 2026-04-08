@@ -401,6 +401,11 @@ public class ModItems {
             () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(4).saturationModifier(0.55f).build())));
     public static final DeferredItem<Item> LETTUCE = ITEMS.register("lettuce",
             () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(3).saturationModifier(0.45f).build())));
+    public static final DeferredItem<Item> RADISH_SEED = ITEMS.registerSimpleItem("radish_seed");
+    public static final DeferredItem<Item> RICE_SEED = ITEMS.registerSimpleItem("rice_seed");
+    public static final DeferredItem<Item> QUINOA_SEED = ITEMS.registerSimpleItem("quinoa_seed");
+    public static final DeferredItem<Item> TOMATO_SEED = ITEMS.registerSimpleItem("tomato_seed");
+    public static final DeferredItem<Item> LETTUCE_SEED = ITEMS.registerSimpleItem("lettuce_seed");
     public static final DeferredItem<Item> APPLE_TREE_SEED = ITEMS.registerSimpleItem("apple_tree_seed");
     public static final DeferredItem<Item> CHERRY_TREE_SEED = ITEMS.registerSimpleItem("cherry_tree_seed");
     public static final DeferredItem<Item> PEACH_TREE_SEED = ITEMS.registerSimpleItem("peach_tree_seed");
@@ -646,13 +651,17 @@ public class ModItems {
             () -> new ItemOreSpawnArmor(ModArmorMaterials.QUEEN, ArmorItem.Type.BOOTS,
                     new Item.Properties().durability(ArmorItem.Type.BOOTS.getDurability(94)), "queen"));
 
-    // Zoo cages
+    // Zoo cages (legacy, kept for backwards compat)
     public static final DeferredItem<Item> ZOO_CAGE_2 = ITEMS.registerSimpleItem("zoo_cage_2");
     public static final DeferredItem<Item> ZOO_CAGE_4 = ITEMS.registerSimpleItem("zoo_cage_4");
     public static final DeferredItem<Item> ZOO_CAGE_6 = ITEMS.registerSimpleItem("zoo_cage_6");
     public static final DeferredItem<Item> ZOO_CAGE_8 = ITEMS.registerSimpleItem("zoo_cage_8");
     public static final DeferredItem<Item> ZOO_CAGE_10 = ITEMS.registerSimpleItem("zoo_cage_10");
     public static final DeferredItem<Item> CAGE_EMPTY = ITEMS.registerSimpleItem("cage_empty");
+
+    // Modern caged mob item (stores entity type via DataComponent)
+    public static final DeferredItem<Item> CAGED_MOB = ITEMS.register("caged_mob",
+            () -> new CagedMobItem(new Item.Properties().stacksTo(1)));
 
     // Misc items
     public static final DeferredItem<Item> PRINCE_EGG = ITEMS.registerSimpleItem("prince_egg");
