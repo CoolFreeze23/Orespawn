@@ -396,48 +396,45 @@ public class TheQueen extends Monster implements OreSpawnPartEntity.MultipartBos
             Rhud = Mth.sin(t * 0.12F) * PI * 0.1F;
         }
 
-        // Neck reach: straight-line neck base to head ≈ 123 model units
-        float neckReach = 123 * S;
-        float neckMidReach = 60 * S;
+        // Neck/head reach for animation swing arcs (empirically tuned)
+        float neckReach = 22.0F;
+        float neckMidReach = 11.0F;
 
-        // Center head: absolute model (0, -117, -199), neck mid ~(0, -113, -113)
-        float chHeadZ = 199 * S;
-        float chNeckZ = 113 * S;
+        // Center chain: empirical base anchors account for cumulative neck pitch
         float chSwingX = Mth.sin(Chlr) * neckReach;
         float chArcZ   = (1.0F - Mth.cos(Chlr)) * neckReach;
         positionPart(neckCenter,
                 Mth.sin(Chlr * 0.3F) * neckMidReach,
-                113 * S + Mth.sin(Chud * 0.3F) * 5.0F,
-                chNeckZ - (1.0F - Mth.cos(Chlr * 0.3F)) * neckMidReach);
+                26.0F + Mth.sin(Chud * 0.3F) * 5.0F,
+                32.0F - (1.0F - Mth.cos(Chlr * 0.3F)) * neckMidReach);
         positionPart(headCenter,
                 chSwingX,
-                117 * S + Mth.sin(Chud) * 10.0F,
-                chHeadZ - chArcZ);
+                34.0F + Mth.sin(Chud) * 10.0F,
+                54.0F - chArcZ);
 
-        // Left head: absolute model (59, -114, -195), neck mid ~(35, -114, -113)
-        float lhHeadZ = 195 * S;
+        // Left chain
         float lhSwingX = Mth.sin(Lhlr) * neckReach;
         float lhArcZ   = (1.0F - Mth.cos(Lhlr)) * neckReach;
         positionPart(neckLeft,
-                35 * S + Mth.sin(Lhlr * 0.3F) * neckMidReach,
-                114 * S + Mth.sin(Lhud * 0.3F) * 5.0F,
-                chNeckZ - (1.0F - Mth.cos(Lhlr * 0.3F)) * neckMidReach);
+                12.0F + Mth.sin(Lhlr * 0.3F) * neckMidReach,
+                25.0F + Mth.sin(Lhud * 0.3F) * 5.0F,
+                30.0F - (1.0F - Mth.cos(Lhlr * 0.3F)) * neckMidReach);
         positionPart(headLeft,
-                59 * S + lhSwingX,
-                114 * S + Mth.sin(Lhud) * 10.0F,
-                lhHeadZ - lhArcZ);
+                18.0F + lhSwingX,
+                33.0F + Mth.sin(Lhud) * 10.0F,
+                52.0F - lhArcZ);
 
-        // Right head: absolute model (-60, -128, -195), neck mid ~(-35, -115, -113)
+        // Right chain
         float rhSwingX = Mth.sin(Rhlr) * neckReach;
         float rhArcZ   = (1.0F - Mth.cos(Rhlr)) * neckReach;
         positionPart(neckRight,
-                -35 * S + Mth.sin(Rhlr * 0.3F) * neckMidReach,
-                115 * S + Mth.sin(Rhud * 0.3F) * 5.0F,
-                chNeckZ - (1.0F - Mth.cos(Rhlr * 0.3F)) * neckMidReach);
+                -12.0F + Mth.sin(Rhlr * 0.3F) * neckMidReach,
+                25.0F + Mth.sin(Rhud * 0.3F) * 5.0F,
+                30.0F - (1.0F - Mth.cos(Rhlr * 0.3F)) * neckMidReach);
         positionPart(headRight,
-                -60 * S + rhSwingX,
-                128 * S + Mth.sin(Rhud) * 10.0F,
-                195 * S - rhArcZ);
+                -18.0F + rhSwingX,
+                33.0F + Mth.sin(Rhud) * 10.0F,
+                52.0F - rhArcZ);
 
         // ── Tail chain walk: 7 links, tail grows in -Z (behind entity) ──
         float tailSpeed = atk ? 0.6F : 0.26F;
@@ -471,15 +468,13 @@ public class TheQueen extends Monster implements OreSpawnPartEntity.MultipartBos
         positionPart(tailMid,  tmX, 88 * S,  tmZ);
         positionPart(tailTip,  ttX, 86 * S,  ttZ);
 
-        // ── Legs: model thigh at (±46, -59, 78) from root ──
+        // ── Legs: anchored under her core, not in front ──
         float legSwing = atk
                 ? Mth.sin(t * 0.4F) * 0.3F
                 : Mth.sin(t * 0.15F) * 0.15F;
         float legSwingZ = Mth.sin(legSwing) * 2.0F;
-        float legY = 30 * S;
-        float legZ = -78 * S;
-        positionPart(legLeft,   46 * S, legY, legZ + legSwingZ);
-        positionPart(legRight, -46 * S, legY, legZ - legSwingZ);
+        positionPart(legLeft,   8.6F, 6.0F, 2.0F + legSwingZ);
+        positionPart(legRight, -8.6F, 6.0F, 2.0F - legSwingZ);
 
         for (int i = 0; i < allParts.length; i++) {
             allParts[i].xo   = oldPos[i].x;
