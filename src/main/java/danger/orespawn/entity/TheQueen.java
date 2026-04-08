@@ -352,25 +352,31 @@ public class TheQueen extends Monster implements OreSpawnPartEntity.MultipartBos
         super.tick();
 
         // ─── Animation parameters mirroring client-side ModelTheQueen.setupAnim ───
+        // Conversion: worldOffset = modelCoord / 16 * 3 (= modelCoord * S)
+        // The renderer's rotateY(180-yaw) negates model Z in world space,
+        // so all Z offsets use: worldZ = -modelZ * S
         float t = this.tickCount;
         boolean atk = this.getAttacking() != 0;
         float PI = (float) Math.PI;
         float pi4 = PI / 4.0F;
+        float S = 3.0F / 16.0F;
 
-        // ── Body (static core) ──
-        positionPart(bodyPart, 0.0, 16.7, 0.0);
+        // ── Body: model pivot (0, -89, 1) ──
+        positionPart(bodyPart, 0.0F, 89 * S, -1 * S);
 
-        // ── Wing flap: zRot on client drives vertical displacement of wing center ──
-        // wingDY is negated because model-space Y (down=positive) is inverted vs world Y (up=positive)
+        // ── Wings: shoulder at model (±40, -121, -50) from root ──
+        // wingCenterDist = X from body center to wing elbow: 124 model units
         float wingAngle = atk
                 ? Mth.cos(t * 0.85F) * PI * 0.26F
                 : Mth.cos(t * 0.35F) * PI * 0.15F;
-        float wingCenterDist = 23.3F;
+        float wingCenterDist = 124 * S;
         float wingDY = Mth.sin(wingAngle) * wingCenterDist;
+        float wingBaseY = 121 * S;
+        float wingBaseZ = 50 * S;
         positionPart(wingLeft,   wingCenterDist * Mth.cos(wingAngle),
-                22.7 - wingDY, -9.4);
+                wingBaseY - wingDY, wingBaseZ);
         positionPart(wingRight, -wingCenterDist * Mth.cos(wingAngle),
-                22.7 - wingDY, -9.4);
+                wingBaseY - wingDY, wingBaseZ);
 
         // ── Head/neck animation: yaw (lr) and pitch (ud) matching client frequencies ──
         float Lhlr, Lhud, Chlr, Chud, Rhlr, Rhud;
@@ -390,46 +396,50 @@ public class TheQueen extends Monster implements OreSpawnPartEntity.MultipartBos
             Rhud = Mth.sin(t * 0.12F) * PI * 0.1F;
         }
 
-        // Neck reach from base to head tip: ~22 blocks at 3x scale
-        float neckReach = 22.0F;
+        // Neck reach: straight-line neck base to head ≈ 123 model units
+        float neckReach = 123 * S;
+        float neckMidReach = 60 * S;
 
-        // Center neck/head: base (0, 21.2, -14.4), rest head (0, 26.4, -36.6)
+        // Center head: absolute model (0, -117, -199), neck mid ~(0, -113, -113)
+        float chHeadZ = 199 * S;
+        float chNeckZ = 113 * S;
         float chSwingX = Mth.sin(Chlr) * neckReach;
         float chArcZ   = (1.0F - Mth.cos(Chlr)) * neckReach;
         positionPart(neckCenter,
-                Mth.sin(Chlr * 0.3F) * 11.0F,
-                22.5 + Mth.sin(Chud * 0.3F) * 5.0,
-                -24.6 + (1.0F - Mth.cos(Chlr * 0.3F)) * 11.0F);
+                Mth.sin(Chlr * 0.3F) * neckMidReach,
+                113 * S + Mth.sin(Chud * 0.3F) * 5.0F,
+                chNeckZ - (1.0F - Mth.cos(Chlr * 0.3F)) * neckMidReach);
         positionPart(headCenter,
                 chSwingX,
-                26.4 + Mth.sin(Chud) * 10.0,
-                -36.6 + chArcZ);
+                117 * S + Mth.sin(Chud) * 10.0F,
+                chHeadZ - chArcZ);
 
-        // Left neck/head: base (5.6, 21.2, -14.4), rest head (11.1, 21.4, -36.6)
+        // Left head: absolute model (59, -114, -195), neck mid ~(35, -114, -113)
+        float lhHeadZ = 195 * S;
         float lhSwingX = Mth.sin(Lhlr) * neckReach;
         float lhArcZ   = (1.0F - Mth.cos(Lhlr)) * neckReach;
         positionPart(neckLeft,
-                8.3 + Mth.sin(Lhlr * 0.3F) * 11.0F,
-                21.3 + Mth.sin(Lhud * 0.3F) * 5.0,
-                -25.5 + (1.0F - Mth.cos(Lhlr * 0.3F)) * 11.0F);
+                35 * S + Mth.sin(Lhlr * 0.3F) * neckMidReach,
+                114 * S + Mth.sin(Lhud * 0.3F) * 5.0F,
+                chNeckZ - (1.0F - Mth.cos(Lhlr * 0.3F)) * neckMidReach);
         positionPart(headLeft,
-                11.1 + lhSwingX,
-                21.4 + Mth.sin(Lhud) * 10.0,
-                -36.6 + lhArcZ);
+                59 * S + lhSwingX,
+                114 * S + Mth.sin(Lhud) * 10.0F,
+                lhHeadZ - lhArcZ);
 
-        // Right neck/head: base (-5.6, 21.2, -14.4), rest head (-11.3, 24.0, -36.6)
+        // Right head: absolute model (-60, -128, -195), neck mid ~(-35, -115, -113)
         float rhSwingX = Mth.sin(Rhlr) * neckReach;
         float rhArcZ   = (1.0F - Mth.cos(Rhlr)) * neckReach;
         positionPart(neckRight,
-                -8.4 + Mth.sin(Rhlr * 0.3F) * 11.0F,
-                22.6 + Mth.sin(Rhud * 0.3F) * 5.0,
-                -25.5 + (1.0F - Mth.cos(Rhlr * 0.3F)) * 11.0F);
+                -35 * S + Mth.sin(Rhlr * 0.3F) * neckMidReach,
+                115 * S + Mth.sin(Rhud * 0.3F) * 5.0F,
+                chNeckZ - (1.0F - Mth.cos(Rhlr * 0.3F)) * neckMidReach);
         positionPart(headRight,
-                -11.3 + rhSwingX,
-                24.0 + Mth.sin(Rhud) * 10.0,
-                -36.6 + rhArcZ);
+                -60 * S + rhSwingX,
+                128 * S + Mth.sin(Rhud) * 10.0F,
+                195 * S - rhArcZ);
 
-        // ── Tail chain walk: 7 links with phase-offset yaw, recording 3 checkpoints ──
+        // ── Tail chain walk: 7 links, tail grows in -Z (behind entity) ──
         float tailSpeed = atk ? 0.6F : 0.26F;
         float tailAmp   = atk ? 0.2F : 0.08F;
 
@@ -442,9 +452,9 @@ public class TheQueen extends Monster implements OreSpawnPartEntity.MultipartBos
             Mth.cos(t * tailSpeed - 5 * pi4)   * PI * tailAmp * 0.4F,
             Mth.cos(t * tailSpeed - 6 * pi4)   * PI * tailAmp * 0.4F,
         };
-        float[] tailSegLen = {9.4F, 7.1F, 7.3F, 6.2F, 6.2F, 8.6F, 7.5F};
+        float[] tailSegLen = {50*S, 38*S, 39*S, 33*S, 33*S, 46*S, 40*S};
 
-        float tailX = 0, tailZ = 5.25F;
+        float tailX = 0, tailZ = -29 * S;
         float cumYaw = 0;
         float tbX = 0, tbZ = 0;
         float tmX = 0, tmZ = 0;
@@ -452,22 +462,24 @@ public class TheQueen extends Monster implements OreSpawnPartEntity.MultipartBos
         for (int i = 0; i < 7; i++) {
             cumYaw += tailSegYaw[i];
             tailX += Mth.sin(cumYaw) * tailSegLen[i];
-            tailZ += Mth.cos(cumYaw) * tailSegLen[i];
+            tailZ -= Mth.cos(cumYaw) * tailSegLen[i];
             if (i == 1) { tbX = tailX; tbZ = tailZ; }
             if (i == 3) { tmX = tailX; tmZ = tailZ; }
             if (i == 6) { ttX = tailX; ttZ = tailZ; }
         }
-        positionPart(tailBase, tbX, 20.5, tbZ);
-        positionPart(tailMid,  tmX, 17.5, tmZ);
-        positionPart(tailTip,  ttX, 16.1, ttZ);
+        positionPart(tailBase, tbX, 100 * S, tbZ);
+        positionPart(tailMid,  tmX, 88 * S,  tmZ);
+        positionPart(tailTip,  ttX, 86 * S,  ttZ);
 
-        // ── Legs: slight forward/back sway blended with limbSwing on the client ──
+        // ── Legs: model thigh at (±46, -59, 78) from root ──
         float legSwing = atk
                 ? Mth.sin(t * 0.4F) * 0.3F
                 : Mth.sin(t * 0.15F) * 0.15F;
-        float legSwingZ = Mth.sin(legSwing) * 4.0F;
-        positionPart(legLeft,   8.6,  5.5, 14.6 + legSwingZ);
-        positionPart(legRight, -8.6,  5.5, 14.6 - legSwingZ);
+        float legSwingZ = Mth.sin(legSwing) * 2.0F;
+        float legY = 30 * S;
+        float legZ = -78 * S;
+        positionPart(legLeft,   46 * S, legY, legZ + legSwingZ);
+        positionPart(legRight, -46 * S, legY, legZ - legSwingZ);
 
         for (int i = 0; i < allParts.length; i++) {
             allParts[i].xo   = oldPos[i].x;
