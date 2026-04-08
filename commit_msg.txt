@@ -1,20 +1,14 @@
-feat(queen): expand to 12-part dynamic hitbox system synced with client animations
+fix(queen): enlarge root AABB, add leg hitboxes, scale up parts, and invert wing Y-axis
 
-- Expand sub-part array from 7 to 12 OreSpawnPartEntity hitboxes to fully
-  map The Queen's massive geometry: body, 3 necks, 3 heads, 2 wings, and
-  a 3-segment tail (base/mid/tip) that curves with the whip animation
-- Replace all static hardcoded offsets in tick() with trigonometric math
-  that mirrors the client-side ModelTheQueen.setupAnim frequencies, so
-  every hitbox tracks the visual model frame-by-frame
-- Compute head/neck positions using arc kinematics: sin(headlr) * reach
-  for lateral swing and (1 - cos(headlr)) * reach for Z arc retraction,
-  matching the organic sway of the hierarchical neck chain
-- Implement a 7-link tail chain walk with phase-offset cosine waves
-  (PI/4 per segment) to produce a rippling whip effect on the hitboxes
-- Drive wing hitbox Y and X from the flap angle so they rise and compress
-  laterally in sync with the client zRot animation
-- Update hurtFromPart damage multipliers for all 12 parts: heads at 1.0x
-  (precision reward), body at 0.5x (armored core), necks/wings/tail
-  segments at 0.25x + 1 flat damage
-- Scale up hitbox dimensions to match 3x model scale: body 8x8, heads
-  4x4, necks 3.5x3.5, wings 14x2.5, tail base 5x5 tapering to tip 3x2
+- Override getDefaultDimensions(Pose) to return EntityDimensions.fixed(16, 12)
+  so the root bounding box fully encapsulates The Queen's massive core
+- Add legLeft and legRight sub-hitboxes (5x12) positioned at her thigh
+  columns with a subtle sine-wave walk sway in tick()
+- Scale up all existing sub-part dimensions to eliminate dead zones:
+  body 8x8 → 12x12, necks/heads 3.5-4 → 6x6, wings 14x2.5 → 18x4,
+  tail segments proportionally increased
+- Invert wing flap Y-axis math (22.7 + wingDY → 22.7 - wingDY) to
+  correct model-space vs world-space Y inversion so hitboxes track the
+  visual wing downstroke accurately
+- Route legL/legR hits through hurtFromPart at the 0.5x armored
+  multiplier, matching the body's damage reduction tier
