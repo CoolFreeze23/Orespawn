@@ -70,6 +70,10 @@ public class ModEntities {
             ENTITY_TYPES.register("giant_robot", () -> EntityType.Builder.of(GiantRobot::new, MobCategory.MONSTER)
                     .sized(3.0f, 6.0f).clientTrackingRange(16).build("giant_robot"));
 
+    public static final DeferredHolder<EntityType<?>, EntityType<Jeffery>> JEFFERY =
+            ENTITY_TYPES.register("jeffery", () -> EntityType.Builder.of(Jeffery::new, MobCategory.MONSTER)
+                    .sized(3.0f, 6.0f).clientTrackingRange(16).build("jeffery"));
+
     public static final DeferredHolder<EntityType<?>, EntityType<Hammerhead>> HAMMERHEAD =
             ENTITY_TYPES.register("hammerhead", () -> EntityType.Builder.of(Hammerhead::new, MobCategory.MONSTER)
                     .sized(1.5f, 1.0f).clientTrackingRange(10).build("hammerhead"));

@@ -446,6 +446,7 @@ public class ModCreativeTabs {
                         output.accept(ModItems.GHOST_SPAWN_EGG.get());
                         output.accept(ModItems.GHOST_SKELLY_SPAWN_EGG.get());
                         output.accept(ModItems.GIANT_ROBOT_SPAWN_EGG.get());
+                        output.accept(ModItems.JEFFERY_SPAWN_EGG.get());
                         output.accept(ModItems.GIRLFRIEND_SPAWN_EGG.get());
                         output.accept(ModItems.GODZILLA_SPAWN_EGG.get());
                         output.accept(ModItems.GOLD_FISH_SPAWN_EGG.get());

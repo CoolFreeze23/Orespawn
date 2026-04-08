@@ -410,6 +410,8 @@ public class ModItems {
             () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(5).saturationModifier(0.65f).build())));
     public static final DeferredItem<Item> CORN_SEED = ITEMS.register("corn_seed",
             () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(6).saturationModifier(0.75f).build())));
+    public static final DeferredItem<Item> CORN_COB = ITEMS.register("corn_cob",
+            () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(5).saturationModifier(0.6f).build())));
     public static final DeferredItem<Item> QUINOA = ITEMS.register("quinoa",
             () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(7).saturationModifier(0.85f).build())));
     public static final DeferredItem<Item> TOMATO = ITEMS.register("tomato",
@@ -712,6 +714,8 @@ public class ModItems {
             () -> new SpawnEggItem(ModEntities.ENDER_REAPER.get(), 0x1C1C1C, 0x9400D3, new Item.Properties()));
     public static final DeferredItem<SpawnEggItem> GIANT_ROBOT_SPAWN_EGG = ITEMS.register("giant_robot_spawn_egg",
             () -> new SpawnEggItem(ModEntities.GIANT_ROBOT.get(), 0x808080, 0xC0C0C0, new Item.Properties()));
+    public static final DeferredItem<SpawnEggItem> JEFFERY_SPAWN_EGG = ITEMS.register("jeffery_spawn_egg",
+            () -> new SpawnEggItem(ModEntities.JEFFERY.get(), 0x808080, 0xA0A0A0, new Item.Properties()));
     public static final DeferredItem<SpawnEggItem> HAMMERHEAD_SPAWN_EGG = ITEMS.register("hammerhead_spawn_egg",
             () -> new SpawnEggItem(ModEntities.HAMMERHEAD.get(), 0x4682B4, 0x708090, new Item.Properties()));
     public static final DeferredItem<SpawnEggItem> IRUKANDJI_SPAWN_EGG = ITEMS.register("irukandji_spawn_egg",

@@ -1,6 +1,7 @@
 package danger.orespawn.block;
 
 import danger.orespawn.ModBlocks;
+import danger.orespawn.OreSpawnConfig;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
@@ -21,6 +22,8 @@ public class BlockDuplicatorLog extends Block {
 
     @Override
     public void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
+        // Config: disable duplicator tree growth entirely
+        if (!OreSpawnConfig.DUPLICATOR_TREE_ENABLE.get()) return;
         if (level.isClientSide()) return;
         if (random.nextInt(5) != 0) return;
 

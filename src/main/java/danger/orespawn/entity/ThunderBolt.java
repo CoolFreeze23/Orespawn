@@ -5,6 +5,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.Entity;
 import danger.orespawn.ModEntities;
+import danger.orespawn.OreSpawnConfig;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LightningBolt;
 import net.minecraft.world.entity.LivingEntity;
@@ -46,8 +47,14 @@ public class ThunderBolt extends ThrowableProjectile {
         if (this.level().isClientSide) return;
         Entity target = result.getEntity();
         float halfDamage = TOTAL_DAMAGE * THROWN_DAMAGE_FRACTION;
-        target.hurt(this.damageSources().thrown(this, this.getOwner()), halfDamage);
-        target.hurt(this.damageSources().mobAttack((LivingEntity) this.getOwner()), halfDamage);
+        // Owner could be null or a non-living entity; guard the cast to avoid ClassCastException
+        Entity thunderOwner = this.getOwner();
+        target.hurt(this.damageSources().thrown(this, thunderOwner), halfDamage);
+        if (thunderOwner instanceof LivingEntity livingOwner) {
+            target.hurt(this.damageSources().mobAttack(livingOwner), halfDamage);
+        } else {
+            target.hurt(this.damageSources().thrown(this, thunderOwner), halfDamage);
+        }
         target.igniteForSeconds(IGNITE_DURATION_SECONDS);
     }
 
@@ -74,7 +81,8 @@ public class ThunderBolt extends ThrowableProjectile {
     @Override
     public void tick() {
         super.tick();
-        if (this.level().isClientSide) {
+        // LESS_LAG level 2 skips trail particles entirely to reduce client overhead
+        if (this.level().isClientSide && OreSpawnConfig.LESS_LAG.get() < 2) {
             for (int particleIndex = 0; particleIndex < CLIENT_FIREWORK_PARTICLE_COUNT; ++particleIndex) {
                 this.level().addParticle(ParticleTypes.FIREWORK,
                         this.getX(), this.getY(), this.getZ(),
