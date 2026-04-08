@@ -44,8 +44,8 @@ import net.minecraft.server.level.ServerBossEvent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.BossEvent;
 import danger.orespawn.ModEntities;
-import danger.orespawn.ModEntities;
 import danger.orespawn.ModItems;
+import danger.orespawn.OreSpawnConfig;
 import danger.orespawn.ModSounds;
 import danger.orespawn.util.MyUtils;
 
@@ -528,6 +528,13 @@ public class TheKing extends Monster {
     public boolean doHurtTarget(Entity target) {
         if (target == null) return false;
 
+        // FULL_POWER_KING_ENABLE: when true, The King deals 2x damage on every
+        // attack — melee and ranged alike — making the fight drastically harder.
+        double effectiveDamage = this.attackDamage;
+        if (OreSpawnConfig.FULL_POWER_KING_ENABLE.get()) {
+            effectiveDamage *= 2.0;
+        }
+
         if (target instanceof LivingEntity living) {
             float entitySize = living.getBbHeight() * living.getBbWidth();
             if (entitySize > 30.0f
@@ -535,17 +542,17 @@ public class TheKing extends Monster {
                     && !MyUtils.isBigBoss(living)
                     && !(living instanceof EnderDragon)) {
                 living.setHealth(living.getHealth() / 2.0f);
-                living.hurt(this.damageSources().mobAttack(this), (float) this.attackDamage * 10.0f);
+                living.hurt(this.damageSources().mobAttack(this), (float) effectiveDamage * 10.0f);
                 this.largeEntityDetected = 1;
             }
         }
 
         if (target instanceof EnderDragon dragon) {
             DamageSource genDmg = this.damageSources().generic();
-            dragon.head.hurt(genDmg, (float) this.attackDamage);
+            dragon.head.hurt(genDmg, (float) effectiveDamage);
         }
 
-        boolean hit = target.hurt(this.damageSources().mobAttack(this), (float) this.attackDamage);
+        boolean hit = target.hurt(this.damageSources().mobAttack(this), (float) effectiveDamage);
         if (hit) {
             double knockbackStrength = 3.3;
             double upwardKnockback = 0.25;
@@ -716,7 +723,9 @@ public class TheKing extends Monster {
         }
     }
 
-    private LivingEntity doJumpDamage(double x, double y, double z, double dist, double damage, int knock) {
+    private LivingEntity doJumpDamage(double x, double y, double z, double dist, double baseDamage, int knock) {
+        // Full Power King mode also amplifies area-of-effect jump damage
+        double damage = OreSpawnConfig.FULL_POWER_KING_ENABLE.get() ? baseDamage * 2.0 : baseDamage;
         AABB bb = new AABB(x - dist, y - 10.0, z - dist, x + dist, y + 10.0, z + dist);
         List<LivingEntity> entities = this.level().getEntitiesOfClass(LivingEntity.class, bb);
         entities.sort(this.targetSorter);

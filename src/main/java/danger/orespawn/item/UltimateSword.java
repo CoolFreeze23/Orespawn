@@ -11,6 +11,7 @@ import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 import danger.orespawn.ModToolTiers;
+import danger.orespawn.OreSpawnConfig;
 import danger.orespawn.util.OreSpawnEnchantHelper;
 
 public class UltimateSword extends SwordItem {
@@ -21,7 +22,9 @@ public class UltimateSword extends SwordItem {
     @Override
     public void inventoryTick(ItemStack stack, Level level, Entity entity, int slotId, boolean isSelected) {
         if (!level.isClientSide && !OreSpawnEnchantHelper.hasAnyEnchantments(stack)) {
-            OreSpawnEnchantHelper.applyEnchantment(stack, level, Enchantments.SHARPNESS, 5);
+            // Config: ultimateSwordEnchantmentLevel controls sharpness level
+            int sharpnessLevel = OreSpawnConfig.ULTIMATE_SWORD_MAGIC.get();
+            OreSpawnEnchantHelper.applyEnchantment(stack, level, Enchantments.SHARPNESS, sharpnessLevel);
             OreSpawnEnchantHelper.applyEnchantment(stack, level, Enchantments.SMITE, 5);
             OreSpawnEnchantHelper.applyEnchantment(stack, level, Enchantments.BANE_OF_ARTHROPODS, 5);
             OreSpawnEnchantHelper.applyEnchantment(stack, level, Enchantments.KNOCKBACK, 3);
@@ -34,7 +37,8 @@ public class UltimateSword extends SwordItem {
     @Override
     public boolean onLeftClickEntity(ItemStack stack, Player player, Entity entity) {
         if (entity != null) {
-            if (entity instanceof Player) {
+            // Config: ultimateSwordPvp allows hitting players when true
+            if (entity instanceof Player && !OreSpawnConfig.ULTIMATE_SWORD_PVP.get()) {
                 return true;
             }
             if (entity instanceof TamableAnimal t && t.isTame()) {

@@ -1,5 +1,6 @@
 package danger.orespawn.item;
 
+import danger.orespawn.OreSpawnConfig;
 import danger.orespawn.util.OreSpawnEnchantHelper;
 import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceKey;
@@ -157,6 +158,9 @@ public class ItemOreSpawnArmor extends ArmorItem {
     }
 
     private void applyGlideEffect(Player player) {
+        // Config: royalGlideEnable controls whether the glide effect is active
+        if (!OreSpawnConfig.ROYAL_GLIDE_ENABLE.get()) return;
+
         ItemStack boots = player.getItemBySlot(EquipmentSlot.FEET);
         if (boots.isEmpty() || !(boots.getItem() instanceof ItemOreSpawnArmor bootArmor)) return;
         String bootMat = bootArmor.armorMaterialName;

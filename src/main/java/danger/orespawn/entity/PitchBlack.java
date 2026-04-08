@@ -29,6 +29,7 @@ import net.minecraft.server.level.ServerBossEvent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.BossEvent;
 import net.minecraft.network.chat.Component;
+import danger.orespawn.OreSpawnConfig;
 import danger.orespawn.OreSpawnMod;
 
 public class PitchBlack extends Monster {
@@ -51,6 +52,15 @@ public class PitchBlack extends Monster {
         super(type, level);
         this.xpReward = 200;
         this.targetSorter = Comparator.comparingDouble(this::distanceToSqr);
+
+        // NIGHTMARE_SIZE config (0-5) controls the Nightmare's scale on first spawn.
+        // A value of 0 keeps the default 0.5 scale; each step adds 0.1, so size 5
+        // yields a 1.0 scale — doubling the entity's effective reach, damage, and
+        // flight speed.  Entities loaded from NBT will use their saved scale instead.
+        int nightmareSize = OreSpawnConfig.NIGHTMARE_SIZE.get();
+        if (nightmareSize > 0) {
+            this.setPitchBlackScale(0.5f + nightmareSize * 0.1f);
+        }
     }
 
     @Override
