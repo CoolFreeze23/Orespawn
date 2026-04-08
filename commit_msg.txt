@@ -1,14 +1,14 @@
-fix(queen): enlarge root AABB, add leg hitboxes, scale up parts, and invert wing Y-axis
+fix(queen): correct hitbox coordinate desync by inverting Z axis and applying proper model-to-world scaling
 
-- Override getDefaultDimensions(Pose) to return EntityDimensions.fixed(16, 12)
-  so the root bounding box fully encapsulates The Queen's massive core
-- Add legLeft and legRight sub-hitboxes (5x12) positioned at her thigh
-  columns with a subtle sine-wave walk sway in tick()
-- Scale up all existing sub-part dimensions to eliminate dead zones:
-  body 8x8 → 12x12, necks/heads 3.5-4 → 6x6, wings 14x2.5 → 18x4,
-  tail segments proportionally increased
-- Invert wing flap Y-axis math (22.7 + wingDY → 22.7 - wingDY) to
-  correct model-space vs world-space Y inversion so hitboxes track the
-  visual wing downstroke accurately
-- Route legL/legR hits through hurtFromPart at the 0.5x armored
-  multiplier, matching the body's damage reduction tier
+- Fix 180-degree Z-axis inversion: the renderer's rotateY(180-bodyYaw)
+  negates model Z in world space, so all Z offsets were placing hitboxes
+  on the opposite side of the entity from the visual model (~74 block gap)
+- Apply the exact conversion formula (modelCoord / 16.0) * 3.0 to every
+  base offset, replacing hardcoded approximations with traceable values
+  expressed as modelUnits * S where S = 3.0 / 16.0
+- Recalculate neckReach (123 model units), wingCenterDist (124 units),
+  and all 7 tail segment lengths from their true PartPose offsets
+- Reverse tail chain walk direction (tailZ -= cos * len) so the tail
+  hitboxes trail behind the entity instead of projecting forward
+- Correct leg Z offsets to place them behind the body center, matching
+  the model's thigh pivot at model Z = +78 from root
