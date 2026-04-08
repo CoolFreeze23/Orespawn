@@ -48,8 +48,9 @@ import danger.orespawn.ModItems;
 import danger.orespawn.OreSpawnConfig;
 import danger.orespawn.ModSounds;
 import danger.orespawn.util.MyUtils;
+import net.neoforged.neoforge.entity.PartEntity;
 
-public class TheKing extends Monster {
+public class TheKing extends Monster implements OreSpawnPartEntity.MultipartBoss {
     private static final EntityDataAccessor<Integer> DATA_ATTACKING =
             SynchedEntityData.defineId(TheKing.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Integer> DATA_PLAY_NICELY =
@@ -85,14 +86,27 @@ public class TheKing extends Monster {
     private int isEnd = 0;
     private int endCounter = 0;
 
+    private final OreSpawnPartEntity<TheKing> bodyPart;
+    private final OreSpawnPartEntity<TheKing> headPart;
+    private final OreSpawnPartEntity<TheKing> wingLeft;
+    private final OreSpawnPartEntity<TheKing> wingRight;
+    private final OreSpawnPartEntity<TheKing> tail;
+    private final PartEntity<?>[] allParts;
+
     public TheKing(EntityType<? extends TheKing> type, Level level) {
         super(type, level);
-        // Entity dimensions (22x24) should be set in EntityType.Builder.sized(22.0f, 24.0f)
         this.xpReward = 25000;
         this.noCulling = true;
         this.noPhysics = true;
         this.setNoGravity(true);
         this.targetSorter = Comparator.comparingDouble(this::distanceToSqr);
+
+        this.bodyPart  = new OreSpawnPartEntity<>(this, "body",  5.0f, 5.0f);
+        this.headPart  = new OreSpawnPartEntity<>(this, "head",  3.0f, 3.0f);
+        this.wingLeft  = new OreSpawnPartEntity<>(this, "wingL", 5.0f, 2.0f);
+        this.wingRight = new OreSpawnPartEntity<>(this, "wingR", 5.0f, 2.0f);
+        this.tail      = new OreSpawnPartEntity<>(this, "tail",  3.0f, 3.0f);
+        this.allParts = new PartEntity<?>[]{ bodyPart, headPart, wingLeft, wingRight, tail };
     }
 
     @Override
@@ -205,8 +219,71 @@ public class TheKing extends Monster {
     // ---- Tick / AI ----
 
     @Override
+    public boolean isMultipartEntity() {
+        return true;
+    }
+
+    @Override
+    public PartEntity<?>[] getParts() {
+        return this.allParts;
+    }
+
+    @Override
+    public void setId(int id) {
+        super.setId(id);
+        for (int i = 0; i < allParts.length; i++) {
+            allParts[i].setId(id + i + 1);
+        }
+    }
+
+    @Override
+    public boolean isPickable() {
+        return false;
+    }
+
+    @Override
+    public boolean hurtFromPart(OreSpawnPartEntity<?> part, DamageSource source, float amount) {
+        String partName = part.getPartName();
+        float multiplied = switch (partName) {
+            case "head" -> amount;
+            case "body" -> amount * 0.5f;
+            default -> amount * 0.25f + 1.0f;
+        };
+        return this.hurt(source, multiplied);
+    }
+
+    private void positionPart(OreSpawnPartEntity<TheKing> part, double offsetX, double offsetY, double offsetZ) {
+        float yawRad = this.yBodyRot * Mth.DEG_TO_RAD;
+        double sin = Mth.sin(yawRad);
+        double cos = Mth.cos(yawRad);
+        double rx = offsetX * cos - offsetZ * sin;
+        double rz = offsetX * sin + offsetZ * cos;
+        part.setPos(this.getX() + rx, this.getY() + offsetY, this.getZ() + rz);
+    }
+
+    @Override
     public void tick() {
+        Vec3[] oldPos = new Vec3[allParts.length];
+        for (int i = 0; i < allParts.length; i++) {
+            oldPos[i] = new Vec3(allParts[i].getX(), allParts[i].getY(), allParts[i].getZ());
+        }
+
         super.tick();
+        positionPart(bodyPart,    0.0,  6.0,   0.0);
+        positionPart(headPart,    0.0, 11.0,  -5.0);
+        positionPart(wingLeft,  -8.0,   7.0,   0.0);
+        positionPart(wingRight,  8.0,   7.0,   0.0);
+        positionPart(tail,       0.0,   4.0,   6.0);
+
+        for (int i = 0; i < allParts.length; i++) {
+            allParts[i].xo = oldPos[i].x;
+            allParts[i].yo = oldPos[i].y;
+            allParts[i].zo = oldPos[i].z;
+            allParts[i].xOld = oldPos[i].x;
+            allParts[i].yOld = oldPos[i].y;
+            allParts[i].zOld = oldPos[i].z;
+        }
+
         this.wingSoundTimer++;
         if (this.wingSoundTimer > 30) {
             if (!this.level().isClientSide) {

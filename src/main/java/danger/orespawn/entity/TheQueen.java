@@ -43,8 +43,9 @@ import danger.orespawn.ModItems;
 import danger.orespawn.ModSounds;
 import danger.orespawn.OreSpawnConfig;
 import danger.orespawn.util.MyUtils;
+import net.neoforged.neoforge.entity.PartEntity;
 
-public class TheQueen extends Monster {
+public class TheQueen extends Monster implements OreSpawnPartEntity.MultipartBoss {
 
     private static final EntityDataAccessor<Integer> DATA_ATTACKING =
             SynchedEntityData.defineId(TheQueen.class, EntityDataSerializers.INT);
@@ -79,6 +80,15 @@ public class TheQueen extends Monster {
     private volatile int headFound = 0;
     private int wingSound = 0;
     private int attackLevel = 1;
+
+    private final OreSpawnPartEntity<TheQueen> bodyPart;
+    private final OreSpawnPartEntity<TheQueen> headLeft;
+    private final OreSpawnPartEntity<TheQueen> headCenter;
+    private final OreSpawnPartEntity<TheQueen> headRight;
+    private final OreSpawnPartEntity<TheQueen> wingLeft;
+    private final OreSpawnPartEntity<TheQueen> wingRight;
+    private final OreSpawnPartEntity<TheQueen> tail;
+    private final PartEntity<?>[] allParts;
     private LivingEntity healthTrackedEntity = null;
     private float healthTrackedEntityHP = 0.0f;
     private int mood = 0;
@@ -90,6 +100,15 @@ public class TheQueen extends Monster {
         this.noCulling = true;
         this.noPhysics = true;
         this.targetSorter = Comparator.comparingDouble(this::distanceToSqr);
+
+        this.bodyPart   = new OreSpawnPartEntity<>(this, "body",   6.0f, 6.0f);
+        this.headLeft   = new OreSpawnPartEntity<>(this, "headL",  3.0f, 3.0f);
+        this.headCenter = new OreSpawnPartEntity<>(this, "headC",  3.0f, 3.0f);
+        this.headRight  = new OreSpawnPartEntity<>(this, "headR",  3.0f, 3.0f);
+        this.wingLeft   = new OreSpawnPartEntity<>(this, "wingL",  6.0f, 2.0f);
+        this.wingRight  = new OreSpawnPartEntity<>(this, "wingR",  6.0f, 2.0f);
+        this.tail       = new OreSpawnPartEntity<>(this, "tail",   3.0f, 3.0f);
+        this.allParts = new PartEntity<?>[]{ bodyPart, headLeft, headCenter, headRight, wingLeft, wingRight, tail };
     }
 
     @Override
@@ -238,8 +257,97 @@ public class TheQueen extends Monster {
     }
 
     @Override
+    public boolean isMultipartEntity() {
+        return true;
+    }
+
+    @Override
+    public PartEntity<?>[] getParts() {
+        return this.allParts;
+    }
+
+    /**
+     * Reserve contiguous entity IDs for all sub-parts so the client can
+     * correlate hit-detection packets with the correct part entity.
+     */
+    @Override
+    public void setId(int id) {
+        super.setId(id);
+        for (int i = 0; i < allParts.length; i++) {
+            allParts[i].setId(id + i + 1);
+        }
+    }
+
+    /**
+     * The root AABB is not hittable -- players must hit the sub-parts.
+     */
+    @Override
+    public boolean isPickable() {
+        return false;
+    }
+
+    /**
+     * Per-part damage routing: heads take full damage (precision reward),
+     * body takes 50% (armored core), wings and tail take 25% + 1 flat.
+     */
+    @Override
+    public boolean hurtFromPart(OreSpawnPartEntity<?> part, DamageSource source, float amount) {
+        String partName = part.getPartName();
+        float multiplied = switch (partName) {
+            case "headL", "headC", "headR" -> amount;
+            case "body" -> amount * 0.5f;
+            default -> amount * 0.25f + 1.0f;
+        };
+        return this.hurt(source, multiplied);
+    }
+
+    /**
+     * Moves a sub-part to an offset relative to this entity's position, rotated by yaw.
+     */
+    private void positionPart(OreSpawnPartEntity<TheQueen> part, double offsetX, double offsetY, double offsetZ) {
+        float yawRad = this.yBodyRot * Mth.DEG_TO_RAD;
+        double sin = Mth.sin(yawRad);
+        double cos = Mth.cos(yawRad);
+        double rx = offsetX * cos - offsetZ * sin;
+        double rz = offsetX * sin + offsetZ * cos;
+        part.setPos(this.getX() + rx, this.getY() + offsetY, this.getZ() + rz);
+    }
+
+    @Override
     public void tick() {
+        // Snapshot old positions before moving parts (Ender Dragon interpolation pattern)
+        Vec3[] oldPos = new Vec3[allParts.length];
+        for (int i = 0; i < allParts.length; i++) {
+            oldPos[i] = new Vec3(allParts[i].getX(), allParts[i].getY(), allParts[i].getZ());
+        }
+
         super.tick();
+
+        // Offsets derived from model geometry: worldOffset = modelOffset * 3 / 16
+        // Body1 at model(0, -89, 1)
+        positionPart(bodyPart,    0.0,  16.7,   0.0);
+        // CHead1 at model(0, -141, -195)
+        positionPart(headCenter,  0.0,  26.4, -36.6);
+        // LHead1 at model(59, -114, -195)
+        positionPart(headLeft,   11.1,  21.4, -36.6);
+        // RHead1 at model(-60, -128, -195)
+        positionPart(headRight, -11.3,  24.0, -36.6);
+        // Lwing1 at model(40, -121, -50), extending outward
+        positionPart(wingLeft,    7.5,  22.7,  -9.4);
+        // Rwing1 at model(-40, -121, -50), extending outward
+        positionPart(wingRight,  -7.5,  22.7,  -9.4);
+        // Tail midpoint around model(0, -87, 175)
+        positionPart(tail,        0.0,  16.3,  32.8);
+
+        // Restore old positions for smooth client-side interpolation
+        for (int i = 0; i < allParts.length; i++) {
+            allParts[i].xo = oldPos[i].x;
+            allParts[i].yo = oldPos[i].y;
+            allParts[i].zo = oldPos[i].z;
+            allParts[i].xOld = oldPos[i].x;
+            allParts[i].yOld = oldPos[i].y;
+            allParts[i].zOld = oldPos[i].z;
+        }
 
         this.wingSound++;
         if (this.wingSound > 30) {
