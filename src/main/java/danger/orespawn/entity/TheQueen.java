@@ -14,8 +14,10 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
@@ -93,6 +95,8 @@ public class TheQueen extends Monster implements OreSpawnPartEntity.MultipartBos
     private final OreSpawnPartEntity<TheQueen> tailBase;
     private final OreSpawnPartEntity<TheQueen> tailMid;
     private final OreSpawnPartEntity<TheQueen> tailTip;
+    private final OreSpawnPartEntity<TheQueen> legLeft;
+    private final OreSpawnPartEntity<TheQueen> legRight;
     private final PartEntity<?>[] allParts;
     private LivingEntity healthTrackedEntity = null;
     private float healthTrackedEntityHP = 0.0f;
@@ -106,22 +110,24 @@ public class TheQueen extends Monster implements OreSpawnPartEntity.MultipartBos
         this.noPhysics = true;
         this.targetSorter = Comparator.comparingDouble(this::distanceToSqr);
 
-        this.bodyPart    = new OreSpawnPartEntity<>(this, "body",    8.0f, 8.0f);
-        this.neckLeft    = new OreSpawnPartEntity<>(this, "neckL",   3.5f, 3.5f);
-        this.headLeft    = new OreSpawnPartEntity<>(this, "headL",   4.0f, 4.0f);
-        this.neckCenter  = new OreSpawnPartEntity<>(this, "neckC",   3.5f, 3.5f);
-        this.headCenter  = new OreSpawnPartEntity<>(this, "headC",   4.0f, 4.0f);
-        this.neckRight   = new OreSpawnPartEntity<>(this, "neckR",   3.5f, 3.5f);
-        this.headRight   = new OreSpawnPartEntity<>(this, "headR",   4.0f, 4.0f);
-        this.wingLeft    = new OreSpawnPartEntity<>(this, "wingL",  14.0f, 2.5f);
-        this.wingRight   = new OreSpawnPartEntity<>(this, "wingR",  14.0f, 2.5f);
-        this.tailBase    = new OreSpawnPartEntity<>(this, "tailB",   5.0f, 5.0f);
-        this.tailMid     = new OreSpawnPartEntity<>(this, "tailM",   3.5f, 3.5f);
-        this.tailTip     = new OreSpawnPartEntity<>(this, "tailT",   3.0f, 2.0f);
+        this.bodyPart    = new OreSpawnPartEntity<>(this, "body",   12.0f, 12.0f);
+        this.neckLeft    = new OreSpawnPartEntity<>(this, "neckL",   6.0f,  6.0f);
+        this.headLeft    = new OreSpawnPartEntity<>(this, "headL",   6.0f,  6.0f);
+        this.neckCenter  = new OreSpawnPartEntity<>(this, "neckC",   6.0f,  6.0f);
+        this.headCenter  = new OreSpawnPartEntity<>(this, "headC",   6.0f,  6.0f);
+        this.neckRight   = new OreSpawnPartEntity<>(this, "neckR",   6.0f,  6.0f);
+        this.headRight   = new OreSpawnPartEntity<>(this, "headR",   6.0f,  6.0f);
+        this.wingLeft    = new OreSpawnPartEntity<>(this, "wingL",  18.0f,  4.0f);
+        this.wingRight   = new OreSpawnPartEntity<>(this, "wingR",  18.0f,  4.0f);
+        this.tailBase    = new OreSpawnPartEntity<>(this, "tailB",   7.0f,  7.0f);
+        this.tailMid     = new OreSpawnPartEntity<>(this, "tailM",   6.0f,  6.0f);
+        this.tailTip     = new OreSpawnPartEntity<>(this, "tailT",   5.0f,  4.0f);
+        this.legLeft     = new OreSpawnPartEntity<>(this, "legL",    5.0f, 12.0f);
+        this.legRight    = new OreSpawnPartEntity<>(this, "legR",    5.0f, 12.0f);
         this.allParts = new PartEntity<?>[]{
             bodyPart, neckLeft, headLeft, neckCenter, headCenter,
             neckRight, headRight, wingLeft, wingRight,
-            tailBase, tailMid, tailTip
+            tailBase, tailMid, tailTip, legLeft, legRight
         };
     }
 
@@ -292,6 +298,11 @@ public class TheQueen extends Monster implements OreSpawnPartEntity.MultipartBos
         }
     }
 
+    @Override
+    public EntityDimensions getDefaultDimensions(Pose pose) {
+        return EntityDimensions.fixed(16.0f, 12.0f);
+    }
+
     /**
      * The root AABB is not hittable -- players must hit the sub-parts.
      */
@@ -302,13 +313,13 @@ public class TheQueen extends Monster implements OreSpawnPartEntity.MultipartBos
 
     /**
      * Per-part damage routing with multipliers that reward precision aiming.
-     * Heads: 1.0x (weak point), Body: 0.5x (armored), Necks/Wings/Tail: 0.25x + 1 flat.
+     * Heads: 1.0x (weak point), Body/Legs: 0.5x (armored), Necks/Wings/Tail: 0.25x + 1 flat.
      */
     @Override
     public boolean hurtFromPart(OreSpawnPartEntity<?> part, DamageSource source, float amount) {
         float multiplied = switch (part.getPartName()) {
             case "headL", "headC", "headR" -> amount;
-            case "body" -> amount * 0.5f;
+            case "body", "legL", "legR" -> amount * 0.5f;
             case "neckL", "neckC", "neckR",
                  "wingL", "wingR",
                  "tailB", "tailM", "tailT" -> amount * 0.25f + 1.0f;
@@ -350,15 +361,16 @@ public class TheQueen extends Monster implements OreSpawnPartEntity.MultipartBos
         positionPart(bodyPart, 0.0, 16.7, 0.0);
 
         // ── Wing flap: zRot on client drives vertical displacement of wing center ──
+        // wingDY is negated because model-space Y (down=positive) is inverted vs world Y (up=positive)
         float wingAngle = atk
                 ? Mth.cos(t * 0.85F) * PI * 0.26F
                 : Mth.cos(t * 0.35F) * PI * 0.15F;
         float wingCenterDist = 23.3F;
         float wingDY = Mth.sin(wingAngle) * wingCenterDist;
         positionPart(wingLeft,   wingCenterDist * Mth.cos(wingAngle),
-                22.7 + wingDY, -9.4);
+                22.7 - wingDY, -9.4);
         positionPart(wingRight, -wingCenterDist * Mth.cos(wingAngle),
-                22.7 + wingDY, -9.4);
+                22.7 - wingDY, -9.4);
 
         // ── Head/neck animation: yaw (lr) and pitch (ud) matching client frequencies ──
         float Lhlr, Lhud, Chlr, Chud, Rhlr, Rhud;
@@ -448,6 +460,14 @@ public class TheQueen extends Monster implements OreSpawnPartEntity.MultipartBos
         positionPart(tailBase, tbX, 20.5, tbZ);
         positionPart(tailMid,  tmX, 17.5, tmZ);
         positionPart(tailTip,  ttX, 16.1, ttZ);
+
+        // ── Legs: slight forward/back sway blended with limbSwing on the client ──
+        float legSwing = atk
+                ? Mth.sin(t * 0.4F) * 0.3F
+                : Mth.sin(t * 0.15F) * 0.15F;
+        float legSwingZ = Mth.sin(legSwing) * 4.0F;
+        positionPart(legLeft,   8.6,  5.5, 14.6 + legSwingZ);
+        positionPart(legRight, -8.6,  5.5, 14.6 - legSwingZ);
 
         for (int i = 0; i < allParts.length; i++) {
             allParts[i].xo   = oldPos[i].x;
