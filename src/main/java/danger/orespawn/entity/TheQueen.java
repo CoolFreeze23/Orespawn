@@ -82,12 +82,17 @@ public class TheQueen extends Monster implements OreSpawnPartEntity.MultipartBos
     private int attackLevel = 1;
 
     private final OreSpawnPartEntity<TheQueen> bodyPart;
+    private final OreSpawnPartEntity<TheQueen> neckLeft;
     private final OreSpawnPartEntity<TheQueen> headLeft;
+    private final OreSpawnPartEntity<TheQueen> neckCenter;
     private final OreSpawnPartEntity<TheQueen> headCenter;
+    private final OreSpawnPartEntity<TheQueen> neckRight;
     private final OreSpawnPartEntity<TheQueen> headRight;
     private final OreSpawnPartEntity<TheQueen> wingLeft;
     private final OreSpawnPartEntity<TheQueen> wingRight;
-    private final OreSpawnPartEntity<TheQueen> tail;
+    private final OreSpawnPartEntity<TheQueen> tailBase;
+    private final OreSpawnPartEntity<TheQueen> tailMid;
+    private final OreSpawnPartEntity<TheQueen> tailTip;
     private final PartEntity<?>[] allParts;
     private LivingEntity healthTrackedEntity = null;
     private float healthTrackedEntityHP = 0.0f;
@@ -101,14 +106,23 @@ public class TheQueen extends Monster implements OreSpawnPartEntity.MultipartBos
         this.noPhysics = true;
         this.targetSorter = Comparator.comparingDouble(this::distanceToSqr);
 
-        this.bodyPart   = new OreSpawnPartEntity<>(this, "body",   6.0f, 6.0f);
-        this.headLeft   = new OreSpawnPartEntity<>(this, "headL",  3.0f, 3.0f);
-        this.headCenter = new OreSpawnPartEntity<>(this, "headC",  3.0f, 3.0f);
-        this.headRight  = new OreSpawnPartEntity<>(this, "headR",  3.0f, 3.0f);
-        this.wingLeft   = new OreSpawnPartEntity<>(this, "wingL",  6.0f, 2.0f);
-        this.wingRight  = new OreSpawnPartEntity<>(this, "wingR",  6.0f, 2.0f);
-        this.tail       = new OreSpawnPartEntity<>(this, "tail",   3.0f, 3.0f);
-        this.allParts = new PartEntity<?>[]{ bodyPart, headLeft, headCenter, headRight, wingLeft, wingRight, tail };
+        this.bodyPart    = new OreSpawnPartEntity<>(this, "body",    8.0f, 8.0f);
+        this.neckLeft    = new OreSpawnPartEntity<>(this, "neckL",   3.5f, 3.5f);
+        this.headLeft    = new OreSpawnPartEntity<>(this, "headL",   4.0f, 4.0f);
+        this.neckCenter  = new OreSpawnPartEntity<>(this, "neckC",   3.5f, 3.5f);
+        this.headCenter  = new OreSpawnPartEntity<>(this, "headC",   4.0f, 4.0f);
+        this.neckRight   = new OreSpawnPartEntity<>(this, "neckR",   3.5f, 3.5f);
+        this.headRight   = new OreSpawnPartEntity<>(this, "headR",   4.0f, 4.0f);
+        this.wingLeft    = new OreSpawnPartEntity<>(this, "wingL",  14.0f, 2.5f);
+        this.wingRight   = new OreSpawnPartEntity<>(this, "wingR",  14.0f, 2.5f);
+        this.tailBase    = new OreSpawnPartEntity<>(this, "tailB",   5.0f, 5.0f);
+        this.tailMid     = new OreSpawnPartEntity<>(this, "tailM",   3.5f, 3.5f);
+        this.tailTip     = new OreSpawnPartEntity<>(this, "tailT",   3.0f, 2.0f);
+        this.allParts = new PartEntity<?>[]{
+            bodyPart, neckLeft, headLeft, neckCenter, headCenter,
+            neckRight, headRight, wingLeft, wingRight,
+            tailBase, tailMid, tailTip
+        };
     }
 
     @Override
@@ -287,24 +301,28 @@ public class TheQueen extends Monster implements OreSpawnPartEntity.MultipartBos
     }
 
     /**
-     * Per-part damage routing: heads take full damage (precision reward),
-     * body takes 50% (armored core), wings and tail take 25% + 1 flat.
+     * Per-part damage routing with multipliers that reward precision aiming.
+     * Heads: 1.0x (weak point), Body: 0.5x (armored), Necks/Wings/Tail: 0.25x + 1 flat.
      */
     @Override
     public boolean hurtFromPart(OreSpawnPartEntity<?> part, DamageSource source, float amount) {
-        String partName = part.getPartName();
-        float multiplied = switch (partName) {
+        float multiplied = switch (part.getPartName()) {
             case "headL", "headC", "headR" -> amount;
             case "body" -> amount * 0.5f;
+            case "neckL", "neckC", "neckR",
+                 "wingL", "wingR",
+                 "tailB", "tailM", "tailT" -> amount * 0.25f + 1.0f;
             default -> amount * 0.25f + 1.0f;
         };
         return this.hurt(source, multiplied);
     }
 
     /**
-     * Moves a sub-part to an offset relative to this entity's position, rotated by yaw.
+     * Places a sub-part at an offset relative to this entity, rotated by body yaw
+     * so hitboxes stay aligned with the direction The Queen faces.
      */
-    private void positionPart(OreSpawnPartEntity<TheQueen> part, double offsetX, double offsetY, double offsetZ) {
+    private void positionPart(OreSpawnPartEntity<TheQueen> part,
+                              double offsetX, double offsetY, double offsetZ) {
         float yawRad = this.yBodyRot * Mth.DEG_TO_RAD;
         double sin = Mth.sin(yawRad);
         double cos = Mth.cos(yawRad);
@@ -315,7 +333,6 @@ public class TheQueen extends Monster implements OreSpawnPartEntity.MultipartBos
 
     @Override
     public void tick() {
-        // Snapshot old positions before moving parts (Ender Dragon interpolation pattern)
         Vec3[] oldPos = new Vec3[allParts.length];
         for (int i = 0; i < allParts.length; i++) {
             oldPos[i] = new Vec3(allParts[i].getX(), allParts[i].getY(), allParts[i].getZ());
@@ -323,27 +340,119 @@ public class TheQueen extends Monster implements OreSpawnPartEntity.MultipartBos
 
         super.tick();
 
-        // Offsets derived from model geometry: worldOffset = modelOffset * 3 / 16
-        // Body1 at model(0, -89, 1)
-        positionPart(bodyPart,    0.0,  16.7,   0.0);
-        // CHead1 at model(0, -141, -195)
-        positionPart(headCenter,  0.0,  26.4, -36.6);
-        // LHead1 at model(59, -114, -195)
-        positionPart(headLeft,   11.1,  21.4, -36.6);
-        // RHead1 at model(-60, -128, -195)
-        positionPart(headRight, -11.3,  24.0, -36.6);
-        // Lwing1 at model(40, -121, -50), extending outward
-        positionPart(wingLeft,    7.5,  22.7,  -9.4);
-        // Rwing1 at model(-40, -121, -50), extending outward
-        positionPart(wingRight,  -7.5,  22.7,  -9.4);
-        // Tail midpoint around model(0, -87, 175)
-        positionPart(tail,        0.0,  16.3,  32.8);
+        // ─── Animation parameters mirroring client-side ModelTheQueen.setupAnim ───
+        float t = this.tickCount;
+        boolean atk = this.getAttacking() != 0;
+        float PI = (float) Math.PI;
+        float pi4 = PI / 4.0F;
 
-        // Restore old positions for smooth client-side interpolation
+        // ── Body (static core) ──
+        positionPart(bodyPart, 0.0, 16.7, 0.0);
+
+        // ── Wing flap: zRot on client drives vertical displacement of wing center ──
+        float wingAngle = atk
+                ? Mth.cos(t * 0.85F) * PI * 0.26F
+                : Mth.cos(t * 0.35F) * PI * 0.15F;
+        float wingCenterDist = 23.3F;
+        float wingDY = Mth.sin(wingAngle) * wingCenterDist;
+        positionPart(wingLeft,   wingCenterDist * Mth.cos(wingAngle),
+                22.7 + wingDY, -9.4);
+        positionPart(wingRight, -wingCenterDist * Mth.cos(wingAngle),
+                22.7 + wingDY, -9.4);
+
+        // ── Head/neck animation: yaw (lr) and pitch (ud) matching client frequencies ──
+        float Lhlr, Lhud, Chlr, Chud, Rhlr, Rhud;
+        if (atk) {
+            Lhlr = Mth.sin(t * 0.3F)  * PI * 0.25F;
+            Lhud = Mth.sin(t * 0.2F)  * PI * 0.25F;
+            Chlr = Mth.sin(t * 0.27F) * PI * 0.25F;
+            Chud = Mth.sin(t * 0.18F) * PI * 0.25F;
+            Rhlr = Mth.sin(t * 0.33F) * PI * 0.25F;
+            Rhud = Mth.sin(t * 0.22F) * PI * 0.25F;
+        } else {
+            Lhlr = Mth.sin(t * 0.17F) * PI * 0.08F;
+            Lhud = Mth.sin(t * 0.13F) * PI * 0.1F;
+            Chlr = Mth.sin(t * 0.13F) * PI * 0.08F;
+            Chud = Mth.sin(t * 0.08F) * PI * 0.1F;
+            Rhlr = Mth.sin(t * 0.19F) * PI * 0.08F;
+            Rhud = Mth.sin(t * 0.12F) * PI * 0.1F;
+        }
+
+        // Neck reach from base to head tip: ~22 blocks at 3x scale
+        float neckReach = 22.0F;
+
+        // Center neck/head: base (0, 21.2, -14.4), rest head (0, 26.4, -36.6)
+        float chSwingX = Mth.sin(Chlr) * neckReach;
+        float chArcZ   = (1.0F - Mth.cos(Chlr)) * neckReach;
+        positionPart(neckCenter,
+                Mth.sin(Chlr * 0.3F) * 11.0F,
+                22.5 + Mth.sin(Chud * 0.3F) * 5.0,
+                -24.6 + (1.0F - Mth.cos(Chlr * 0.3F)) * 11.0F);
+        positionPart(headCenter,
+                chSwingX,
+                26.4 + Mth.sin(Chud) * 10.0,
+                -36.6 + chArcZ);
+
+        // Left neck/head: base (5.6, 21.2, -14.4), rest head (11.1, 21.4, -36.6)
+        float lhSwingX = Mth.sin(Lhlr) * neckReach;
+        float lhArcZ   = (1.0F - Mth.cos(Lhlr)) * neckReach;
+        positionPart(neckLeft,
+                8.3 + Mth.sin(Lhlr * 0.3F) * 11.0F,
+                21.3 + Mth.sin(Lhud * 0.3F) * 5.0,
+                -25.5 + (1.0F - Mth.cos(Lhlr * 0.3F)) * 11.0F);
+        positionPart(headLeft,
+                11.1 + lhSwingX,
+                21.4 + Mth.sin(Lhud) * 10.0,
+                -36.6 + lhArcZ);
+
+        // Right neck/head: base (-5.6, 21.2, -14.4), rest head (-11.3, 24.0, -36.6)
+        float rhSwingX = Mth.sin(Rhlr) * neckReach;
+        float rhArcZ   = (1.0F - Mth.cos(Rhlr)) * neckReach;
+        positionPart(neckRight,
+                -8.4 + Mth.sin(Rhlr * 0.3F) * 11.0F,
+                22.6 + Mth.sin(Rhud * 0.3F) * 5.0,
+                -25.5 + (1.0F - Mth.cos(Rhlr * 0.3F)) * 11.0F);
+        positionPart(headRight,
+                -11.3 + rhSwingX,
+                24.0 + Mth.sin(Rhud) * 10.0,
+                -36.6 + rhArcZ);
+
+        // ── Tail chain walk: 7 links with phase-offset yaw, recording 3 checkpoints ──
+        float tailSpeed = atk ? 0.6F : 0.26F;
+        float tailAmp   = atk ? 0.2F : 0.08F;
+
+        float[] tailSegYaw = {
+            Mth.cos(t * tailSpeed)             * PI * tailAmp * 0.5F,
+            Mth.cos(t * tailSpeed - pi4)       * PI * tailAmp * 0.5F,
+            Mth.cos(t * tailSpeed - 2 * pi4)   * PI * tailAmp * 0.5F,
+            Mth.cos(t * tailSpeed - 3 * pi4)   * PI * tailAmp * 0.5F,
+            Mth.cos(t * tailSpeed - 4 * pi4)   * PI * tailAmp * 0.4F,
+            Mth.cos(t * tailSpeed - 5 * pi4)   * PI * tailAmp * 0.4F,
+            Mth.cos(t * tailSpeed - 6 * pi4)   * PI * tailAmp * 0.4F,
+        };
+        float[] tailSegLen = {9.4F, 7.1F, 7.3F, 6.2F, 6.2F, 8.6F, 7.5F};
+
+        float tailX = 0, tailZ = 5.25F;
+        float cumYaw = 0;
+        float tbX = 0, tbZ = 0;
+        float tmX = 0, tmZ = 0;
+        float ttX = 0, ttZ = 0;
+        for (int i = 0; i < 7; i++) {
+            cumYaw += tailSegYaw[i];
+            tailX += Mth.sin(cumYaw) * tailSegLen[i];
+            tailZ += Mth.cos(cumYaw) * tailSegLen[i];
+            if (i == 1) { tbX = tailX; tbZ = tailZ; }
+            if (i == 3) { tmX = tailX; tmZ = tailZ; }
+            if (i == 6) { ttX = tailX; ttZ = tailZ; }
+        }
+        positionPart(tailBase, tbX, 20.5, tbZ);
+        positionPart(tailMid,  tmX, 17.5, tmZ);
+        positionPart(tailTip,  ttX, 16.1, ttZ);
+
         for (int i = 0; i < allParts.length; i++) {
-            allParts[i].xo = oldPos[i].x;
-            allParts[i].yo = oldPos[i].y;
-            allParts[i].zo = oldPos[i].z;
+            allParts[i].xo   = oldPos[i].x;
+            allParts[i].yo   = oldPos[i].y;
+            allParts[i].zo   = oldPos[i].z;
             allParts[i].xOld = oldPos[i].x;
             allParts[i].yOld = oldPos[i].y;
             allParts[i].zOld = oldPos[i].z;
