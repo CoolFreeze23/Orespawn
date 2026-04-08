@@ -42,6 +42,7 @@ public class OreSpawnClient {
             event.registerEntityRenderer(ModEntities.ENDER_KNIGHT.get(), EnderKnightRenderer::new);
             event.registerEntityRenderer(ModEntities.ENDER_REAPER.get(), EnderReaperRenderer::new);
             event.registerEntityRenderer(ModEntities.GIANT_ROBOT.get(), GiantRobotRenderer::new);
+            event.registerEntityRenderer(ModEntities.JEFFERY.get(), GiantRobotRenderer::new);
             event.registerEntityRenderer(ModEntities.HAMMERHEAD.get(), HammerheadRenderer::new);
             event.registerEntityRenderer(ModEntities.IRUKANDJI.get(), IrukandjiRenderer::new);
             event.registerEntityRenderer(ModEntities.NASTYSAURUS.get(), NastysaurusRenderer::new);

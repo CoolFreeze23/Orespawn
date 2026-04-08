@@ -277,7 +277,8 @@ public class TheKing extends Monster {
         super.customServerAiStep();
 
         this.entityData.set(DATA_IS_END, this.isEnd);
-        this.entityData.set(DATA_PLAY_NICELY, 0);
+        // Wire PLAY_NICELY config: when true, The King starts in peaceful disposition
+        this.entityData.set(DATA_PLAY_NICELY, OreSpawnConfig.PLAY_NICELY.get() ? 1 : 0);
 
         // ---- End-game phase 1: dialogue ----
         if (this.isEnd == 1) {

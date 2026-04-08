@@ -93,7 +93,8 @@ public class ModSpawnControl {
                     Map.entry(ModEntities.DRAGON.get(),              OreSpawnConfig.DRAGON_ENABLE::get),
                     Map.entry(ModEntities.ENTITY_GAMMA_METROID.get(),OreSpawnConfig.GAMMA_METROID_ENABLE::get),
                     Map.entry(ModEntities.BASILISK.get(),            OreSpawnConfig.BASILISK_ENABLE::get),
-                    Map.entry(ModEntities.ENTITY_DRAGONFLY.get(),    OreSpawnConfig.DRAGONFLY_ENABLE::get)
+                    Map.entry(ModEntities.ENTITY_DRAGONFLY.get(),    OreSpawnConfig.DRAGONFLY_ENABLE::get),
+                    Map.entry(ModEntities.JEFFERY.get(),              OreSpawnConfig.JEFFERY_ENABLE::get)
             );
         }
         return spawnControls;

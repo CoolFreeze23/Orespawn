@@ -1,0 +1,8 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    { "item": "orespawn:queen_battle_axe" },
+    { "item": "orespawn:big_bertha" }
+  ],
+  "result": { "id": "orespawn:royal_guardian_sword", "count": 1 }
+}

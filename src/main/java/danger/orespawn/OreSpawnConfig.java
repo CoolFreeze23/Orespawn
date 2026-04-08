@@ -126,6 +126,8 @@ public class OreSpawnConfig {
         BUILDER.pop();
 
         BUILDER.push("tweaks");
+        // TODO: LESS_ORE requires datapack-level changes to biome modifier JSONs;
+        // wiring this at runtime would need modification of placed feature configs.
         LESS_ORE = BUILDER.define("lessOre", false);
         LESS_LAG = BUILDER.defineInRange("lessLag", 0, 0, 2);
         RAT_PLAYER_FRIENDLY = BUILDER.define("ratPlayerFriendly", true);

@@ -41,6 +41,7 @@ import net.minecraft.network.chat.Component;
 import danger.orespawn.ModEntities;
 import danger.orespawn.ModItems;
 import danger.orespawn.ModSounds;
+import danger.orespawn.OreSpawnConfig;
 import danger.orespawn.util.MyUtils;
 
 public class TheQueen extends Monster {
@@ -559,7 +560,8 @@ public class TheQueen extends Monster {
             this.streamCountL = 6;
         }
         if (this.ticker % 10 == 0) {
-            this.entityData.set(DATA_PLAY_NICELY, 0);
+            // Wire PLAY_NICELY config: when true, The Queen starts in peaceful disposition
+            this.entityData.set(DATA_PLAY_NICELY, OreSpawnConfig.PLAY_NICELY.get() ? 1 : 0);
             this.entityData.set(DATA_MOOD, this.mood);
             this.setPower(this.attackLevel);
         }

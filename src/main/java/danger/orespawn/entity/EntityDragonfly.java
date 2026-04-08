@@ -23,7 +23,9 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
+import danger.orespawn.OreSpawnConfig;
 import danger.orespawn.OreSpawnMod;
+import net.minecraft.world.entity.animal.horse.AbstractHorse;
 
 public class EntityDragonfly extends Animal {
     @Nullable
@@ -122,6 +124,8 @@ public class EntityDragonfly extends Animal {
 
     private boolean isSuitablePrey(LivingEntity target) {
         if (target == null || target == this || !target.isAlive()) return false;
+        // Config: dragonflies leave horses alone when horse-friendly mode is on
+        if (OreSpawnConfig.DRAGONFLY_HORSE_FRIENDLY.get() && target instanceof AbstractHorse) return false;
         if (!this.getSensing().hasLineOfSight(target)) return false;
         if (target instanceof EntityDragonfly) return false;
         if (target.getBbWidth() > 0.6f) return false;

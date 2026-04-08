@@ -8,8 +8,12 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 
 public class CrystalFurnaceScreen extends AbstractContainerScreen<CrystalFurnaceMenu> {
+    /**
+     * Uses the vanilla furnace texture since the slot layout is identical.
+     * Replace with a custom crystal-themed texture when one is available.
+     */
     private static final ResourceLocation TEXTURE =
-            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "textures/gui/crystal_furnace.png");
+            ResourceLocation.withDefaultNamespace("textures/gui/container/furnace.png");
 
     private static final int FLAME_BLIT_X = 56;
     private static final int FLAME_BLIT_BASE_Y = 36;
