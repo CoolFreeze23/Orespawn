@@ -93,6 +93,7 @@ public class ModCreativeTabs {
                         output.accept(ModItems.KING_SPAWNER_ITEM.get());
                         output.accept(ModItems.QUEEN_SPAWNER_ITEM.get());
                         output.accept(ModItems.DUNGEON_SPAWNER_ITEM.get());
+                        output.accept(ModItems.UTOPIA_PORTAL_ITEM.get());
                     })
                     .build());
 
@@ -357,6 +358,11 @@ public class ModCreativeTabs {
                         output.accept(ModItems.CHERRY_TREE_SEED.get());
                         output.accept(ModItems.PEACH_TREE_SEED.get());
                         output.accept(ModItems.EXPERIENCE_TREE_SEED.get());
+                        output.accept(ModItems.RADISH_SEED.get());
+                        output.accept(ModItems.RICE_SEED.get());
+                        output.accept(ModItems.QUINOA_SEED.get());
+                        output.accept(ModItems.TOMATO_SEED.get());
+                        output.accept(ModItems.LETTUCE_SEED.get());
                         // Utility
                         output.accept(ModItems.MAGIC_APPLE.get());
                         output.accept(ModItems.MINERS_DREAM.get());
@@ -384,6 +390,7 @@ public class ModCreativeTabs {
                         output.accept(ModItems.GAME_CONTROLLER.get());
                         // Zoo Cages
                         output.accept(ModItems.CAGE_EMPTY.get());
+                        output.accept(ModItems.CAGED_MOB.get());
                         output.accept(ModItems.ZOO_CAGE_2.get());
                         output.accept(ModItems.ZOO_CAGE_4.get());
                         output.accept(ModItems.ZOO_CAGE_6.get());
@@ -503,6 +510,10 @@ public class ModCreativeTabs {
                         output.accept(ModItems.WORM_SMALL_SPAWN_EGG.get());
                         output.accept(ModItems.WORM_MEDIUM_SPAWN_EGG.get());
                         output.accept(ModItems.WORM_LARGE_SPAWN_EGG.get());
+                        output.accept(ModItems.CRYSTAL_COW_SPAWN_EGG.get());
+                        output.accept(ModItems.GOLD_COW_SPAWN_EGG.get());
+                        output.accept(ModItems.ENCHANTED_COW_SPAWN_EGG.get());
+                        output.accept(ModItems.RUBY_BIRD_SPAWN_EGG.get());
                     })
                     .build());
 

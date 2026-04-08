@@ -572,6 +572,11 @@ public class ModEntities {
             ENTITY_TYPES.register("ultimate_fish_hook", () -> EntityType.Builder.<UltimateFishHook>of(UltimateFishHook::new, MobCategory.MISC)
                     .sized(0.25f, 0.25f).clientTrackingRange(4).updateInterval(5).noSummon().build("ultimate_fish_hook"));
 
+    // Fire-immune item entity for drops from lava-dwelling mobs
+    public static final DeferredHolder<EntityType<?>, EntityType<EntityLavaLovingItem>> LAVA_LOVING_ITEM =
+            ENTITY_TYPES.register("lava_loving_item", () -> EntityType.Builder.<EntityLavaLovingItem>of(EntityLavaLovingItem::new, MobCategory.MISC)
+                    .sized(0.25f, 0.25f).clientTrackingRange(6).updateInterval(20).fireImmune().build("lava_loving_item"));
+
     public static void register(IEventBus eventBus) {
         ENTITY_TYPES.register(eventBus);
     }

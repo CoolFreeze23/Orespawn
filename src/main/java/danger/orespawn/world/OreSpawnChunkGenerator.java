@@ -4,6 +4,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import danger.orespawn.ModBlocks;
+import danger.orespawn.OreSpawnConfig;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.server.level.WorldGenRegion;
@@ -87,6 +88,13 @@ public class OreSpawnChunkGenerator extends NoiseBasedChunkGenerator {
     }
 
     private void placeDungeons(WorldGenRegion region, ChunkAccess chunk) {
+        // When DISABLE_OVERWORLD_DUNGEONS is true, skip all dungeon placement.
+        // Although this generator only runs for OreSpawn dimensions, the config
+        // acts as a global kill-switch for OreSpawn dungeon generation.
+        if (OreSpawnConfig.DISABLE_OVERWORLD_DUNGEONS.get()) {
+            return;
+        }
+
         if (recentlyPlaced > 0) {
             --recentlyPlaced;
             return;

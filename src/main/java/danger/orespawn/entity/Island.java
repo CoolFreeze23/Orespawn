@@ -17,6 +17,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
+import danger.orespawn.OreSpawnConfig;
 
 public class Island extends Animal {
     /** Radians stepped per iteration when sweeping a full circle for island placement (~6°). */
@@ -64,14 +65,17 @@ public class Island extends Animal {
         }
 
         if (this.justSpawned != 0) {
+            // ISLAND_SIZE_FACTOR (1-5, default 2) scales the island's radius at spawn,
+            // producing larger or smaller floating sand platforms.
+            int sizeFactor = OreSpawnConfig.ISLAND_SIZE_FACTOR.get();
             this.dir = this.random.nextFloat() * (float) Math.PI;
             if (this.random.nextInt(2) == 1) this.dir *= -1.0f;
             if (this.random.nextInt(40) != 1) {
-                this.radius = 3 + this.random.nextInt(4);
+                this.radius = (3 + this.random.nextInt(4)) * sizeFactor;
                 this.depth = 2 + this.random.nextInt(3);
                 this.speed = this.random.nextFloat() / 50.0f;
             } else {
-                this.radius = 6 + this.random.nextInt(5);
+                this.radius = (6 + this.random.nextInt(5)) * sizeFactor;
                 this.depth = 3 + this.random.nextInt(4);
                 this.speed = this.random.nextFloat() / 200.0f;
             }
@@ -143,8 +147,11 @@ public class Island extends Animal {
     }
 
     private void updateIsland() {
-        this.myX += this.speed * Math.cos(this.dir);
-        this.myZ += this.speed * Math.sin(this.dir);
+        // ISLAND_SPEED_FACTOR (1-5, default 2) multiplies the island's drift speed,
+        // letting players tune how fast floating islands traverse the world.
+        int speedFactor = OreSpawnConfig.ISLAND_SPEED_FACTOR.get();
+        this.myX += this.speed * speedFactor * Math.cos(this.dir);
+        this.myZ += this.speed * speedFactor * Math.sin(this.dir);
         int mx = (int) this.myX;
         int mz = (int) this.myZ;
         int px = (int) this.getX();

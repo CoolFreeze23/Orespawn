@@ -28,6 +28,7 @@ import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
+import danger.orespawn.OreSpawnConfig;
 import danger.orespawn.OreSpawnMod;
 
 public class EntityRat extends Monster {
@@ -160,6 +161,17 @@ public class EntityRat extends Monster {
         if (target == null || target == this || !target.isAlive()) return false;
         if (!this.getSensing().hasLineOfSight(target)) return false;
         if (target instanceof EntityRat) return false;
+
+        // RAT_PLAYER_FRIENDLY (default true): when enabled, rats never target any
+        // player — not just their owner.  This makes wild rats passive toward players.
+        if (OreSpawnConfig.RAT_PLAYER_FRIENDLY.get() && target instanceof Player) return false;
+
+        // RAT_PET_FRIENDLY (default true): when enabled, rats will not attack any
+        // tamed animal regardless of ownership, preventing them from harassing pets.
+        if (OreSpawnConfig.RAT_PET_FRIENDLY.get() && target instanceof TamableAnimal tamable && tamable.isTame()) {
+            return false;
+        }
+
         if (target instanceof Player player) {
             if (player.getAbilities().invulnerable) return false;
             if (this.myOwner != null && this.myOwner.equals(player.getUUID().toString())) return false;

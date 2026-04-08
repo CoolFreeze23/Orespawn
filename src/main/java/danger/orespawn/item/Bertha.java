@@ -1,5 +1,6 @@
 package danger.orespawn.item;
 
+import danger.orespawn.OreSpawnConfig;
 import danger.orespawn.entity.BerthaHit;
 import danger.orespawn.util.OreSpawnEnchantHelper;
 import net.minecraft.resources.ResourceKey;
@@ -64,7 +65,8 @@ public class Bertha extends SwordItem {
     @Override
     public boolean onLeftClickEntity(ItemStack stack, Player player, Entity entity) {
         if (entity != null) {
-            if (entity instanceof Player) return true;
+            // Config: bigBerthaPvp allows hitting players when true
+            if (entity instanceof Player && !OreSpawnConfig.BIG_BERTHA_PVP.get()) return true;
             if (entity instanceof TamableAnimal t && t.isTame()) return true;
         }
         return false;

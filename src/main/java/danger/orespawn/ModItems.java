@@ -92,14 +92,22 @@ public class ModItems {
     // Raw materials / Ingots / Gems
     public static final DeferredItem<Item> RUBY = ITEMS.registerSimpleItem("ruby");
     public static final DeferredItem<Item> AMETHYST_GEM = ITEMS.registerSimpleItem("amethyst_gem");
-    public static final DeferredItem<Item> INGOT_URANIUM = ITEMS.registerSimpleItem("ingot_uranium");
-    public static final DeferredItem<Item> INGOT_TITANIUM = ITEMS.registerSimpleItem("ingot_titanium");
+    // Deals radiation damage when held in inventory
+    public static final DeferredItem<Item> INGOT_URANIUM = ITEMS.register("ingot_uranium",
+            () -> new IngotUranium(new Item.Properties()));
+    // Titanium ingot for high-tier crafting recipes
+    public static final DeferredItem<Item> INGOT_TITANIUM = ITEMS.register("ingot_titanium",
+            () -> new IngotTitanium(new Item.Properties()));
     public static final DeferredItem<Item> URANIUM_NUGGET = ITEMS.registerSimpleItem("uranium_nugget");
     public static final DeferredItem<Item> TITANIUM_NUGGET = ITEMS.registerSimpleItem("titanium_nugget");
     public static final DeferredItem<Item> CRYSTAL_PINK_INGOT = ITEMS.registerSimpleItem("crystal_pink_ingot");
     public static final DeferredItem<Item> TIGERS_EYE_INGOT = ITEMS.registerSimpleItem("tigers_eye_ingot");
-    public static final DeferredItem<Item> SALT = ITEMS.registerSimpleItem("salt");
-    public static final DeferredItem<Item> CRYSTAL_STICKS = ITEMS.registerSimpleItem("crystal_sticks");
+    // Salt for cooking recipes (popcorn, salad, etc.)
+    public static final DeferredItem<Item> SALT = ITEMS.register("salt",
+            () -> new ItemSalt(new Item.Properties()));
+    // Crystal dimension crafting sticks
+    public static final DeferredItem<Item> CRYSTAL_STICKS = ITEMS.register("crystal_sticks",
+            () -> new ItemCrystalSticks(new Item.Properties()));
     public static final DeferredItem<Item> GREEN_GOO = ITEMS.registerSimpleItem("green_goo");
 
     // Mob drop materials
@@ -313,29 +321,34 @@ public class ModItems {
     public static final DeferredItem<Item> ROCK_CRYSTAL_TNT = ITEMS.register("rock_crystal_tnt",
             () -> new ItemRock(new Item.Properties().stacksTo(16), 11));
 
-    // Food items
+    // Food items — special fish grant potion effects on consumption
+    // Grants 30s fire resistance when eaten
     public static final DeferredItem<Item> FIRE_FISH = ITEMS.register("fire_fish",
-            () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(4).saturationModifier(0.6f).build())));
+            () -> new ItemFireFish(new Item.Properties().food(new FoodProperties.Builder().nutrition(4).saturationModifier(0.6f).build())));
+    // Grants 30s fire resistance when eaten
     public static final DeferredItem<Item> SUN_FISH = ITEMS.register("sun_fish",
-            () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(6).saturationModifier(0.6f).build())));
+            () -> new ItemSunFish(new Item.Properties().food(new FoodProperties.Builder().nutrition(6).saturationModifier(0.6f).build())));
+    // Grants 60s fire resistance when eaten (double duration)
     public static final DeferredItem<Item> LAVA_EEL = ITEMS.register("lava_eel",
-            () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(2).saturationModifier(0.6f).build())));
+            () -> new ItemLavaEel(new Item.Properties().food(new FoodProperties.Builder().nutrition(2).saturationModifier(0.6f).build())));
+    // Grants 30s fire resistance when eaten
     public static final DeferredItem<Item> SPARK_FISH = ITEMS.register("spark_fish",
-            () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(1).saturationModifier(0.2f).build())));
+            () -> new ItemSparkFish(new Item.Properties().food(new FoodProperties.Builder().nutrition(1).saturationModifier(0.2f).build())));
+    // Generic fish — 25% chance to inflict hunger debuff
     public static final DeferredItem<Item> GREEN_FISH = ITEMS.register("green_fish",
-            () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(3).saturationModifier(0.5f).build())));
+            () -> new ItemGenericFish(new Item.Properties().food(new FoodProperties.Builder().nutrition(3).saturationModifier(0.5f).build())));
     public static final DeferredItem<Item> BLUE_FISH = ITEMS.register("blue_fish",
-            () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(4).saturationModifier(0.4f).build())));
+            () -> new ItemGenericFish(new Item.Properties().food(new FoodProperties.Builder().nutrition(4).saturationModifier(0.4f).build())));
     public static final DeferredItem<Item> PINK_FISH = ITEMS.register("pink_fish",
-            () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(4).saturationModifier(0.6f).build())));
+            () -> new ItemGenericFish(new Item.Properties().food(new FoodProperties.Builder().nutrition(4).saturationModifier(0.6f).build())));
     public static final DeferredItem<Item> ROCK_FISH = ITEMS.register("rock_fish",
-            () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(3).saturationModifier(0.7f).build())));
+            () -> new ItemGenericFish(new Item.Properties().food(new FoodProperties.Builder().nutrition(3).saturationModifier(0.7f).build())));
     public static final DeferredItem<Item> WOOD_FISH = ITEMS.register("wood_fish",
-            () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(5).saturationModifier(0.7f).build())));
+            () -> new ItemGenericFish(new Item.Properties().food(new FoodProperties.Builder().nutrition(5).saturationModifier(0.7f).build())));
     public static final DeferredItem<Item> GREY_FISH = ITEMS.register("grey_fish",
-            () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(5).saturationModifier(0.5f).build())));
+            () -> new ItemGenericFish(new Item.Properties().food(new FoodProperties.Builder().nutrition(5).saturationModifier(0.5f).build())));
     public static final DeferredItem<Item> POPCORN = ITEMS.register("popcorn",
-            () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(1).saturationModifier(0.5f).build())));
+            () -> new ItemPopcorn(new Item.Properties().food(new FoodProperties.Builder().nutrition(1).saturationModifier(0.5f).build())));
     public static final DeferredItem<Item> BUTTERED_POPCORN = ITEMS.register("buttered_popcorn",
             () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(2).saturationModifier(0.6f).build())));
     public static final DeferredItem<Item> BUTTERED_SALTED_POPCORN = ITEMS.register("buttered_salted_popcorn",
@@ -371,7 +384,7 @@ public class ModItems {
     public static final DeferredItem<Item> RAW_PEACOCK = ITEMS.register("raw_peacock",
             () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(6).saturationModifier(0.7f).build())));
     public static final DeferredItem<Item> STRAWBERRY = ITEMS.register("strawberry",
-            () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(2).saturationModifier(0.65f).build())));
+            () -> new ItemStrawberry(new Item.Properties().food(new FoodProperties.Builder().nutrition(2).saturationModifier(0.65f).build())));
     public static final DeferredItem<Item> CHERRIES = ITEMS.register("cherries",
             () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(3).saturationModifier(0.45f).build())));
     public static final DeferredItem<Item> PEACH = ITEMS.register("peach",
@@ -380,8 +393,10 @@ public class ModItems {
             () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(5).saturationModifier(0.85f).build())));
     public static final DeferredItem<Item> HEART = ITEMS.register("heart",
             () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(8).saturationModifier(0.95f).build())));
+    // Right-click to place as a pizza block in the world
     public static final DeferredItem<Item> PIZZA_ITEM = ITEMS.register("pizza_item",
-            () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(8).saturationModifier(1.0f).build()).stacksTo(1)));
+            () -> new ItemPizza(new Item.Properties().food(new FoodProperties.Builder().nutrition(8).saturationModifier(1.0f).build()).stacksTo(1),
+                    ModBlocks.PIZZA.get()));
 
     // Seeds & saplings
     public static final DeferredItem<Item> STRAWBERRY_SEED = ITEMS.registerSimpleItem("strawberry_seed");
@@ -409,7 +424,9 @@ public class ModItems {
     public static final DeferredItem<Item> APPLE_TREE_SEED = ITEMS.registerSimpleItem("apple_tree_seed");
     public static final DeferredItem<Item> CHERRY_TREE_SEED = ITEMS.registerSimpleItem("cherry_tree_seed");
     public static final DeferredItem<Item> PEACH_TREE_SEED = ITEMS.registerSimpleItem("peach_tree_seed");
-    public static final DeferredItem<Item> EXPERIENCE_TREE_SEED = ITEMS.registerSimpleItem("experience_tree_seed");
+    // Plants an experience tree sapling when used on grass/dirt
+    public static final DeferredItem<Item> EXPERIENCE_TREE_SEED = ITEMS.register("experience_tree_seed",
+            () -> new ItemExperienceTreeSeed(new Item.Properties()));
 
     // Utility items
     public static final DeferredItem<Item> MAGIC_APPLE = ITEMS.register("magic_apple",

@@ -1,5 +1,6 @@
 package danger.orespawn.item;
 
+import danger.orespawn.OreSpawnConfig;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.sounds.SoundEvents;
@@ -7,6 +8,8 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
@@ -30,6 +33,20 @@ public class ItemMinersDream extends Item {
 
         Player player = context.getPlayer();
         if (player == null) return InteractionResult.PASS;
+
+        // Config: minersDreamExpensive requires consuming a diamond from inventory to activate
+        if (OreSpawnConfig.MINERS_DREAM_EXPENSIVE.get()) {
+            int diamondSlot = -1;
+            for (int i = 0; i < player.getInventory().getContainerSize(); i++) {
+                ItemStack invStack = player.getInventory().getItem(i);
+                if (invStack.is(Items.DIAMOND) && !invStack.isEmpty()) {
+                    diamondSlot = i;
+                    break;
+                }
+            }
+            if (diamondSlot == -1) return InteractionResult.PASS;
+            player.getInventory().getItem(diamondSlot).shrink(1);
+        }
 
         BlockPos pos = context.getClickedPos();
         Direction facing = player.getDirection();

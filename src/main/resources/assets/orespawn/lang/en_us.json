@@ -77,6 +77,7 @@
   "block.orespawn.crystal_flower_blue": "Blue Crystal Flower",
   "block.orespawn.crystal_flower_yellow": "Yellow Crystal Flower",
 
+  "block.orespawn.experience_plant": "Experience Plant",
   "block.orespawn.experience_sapling": "Experience Sapling",
   "block.orespawn.crystal_sapling": "Crystal Sapling",
   "block.orespawn.crystal_sapling_2": "Crystal Sapling",
@@ -285,6 +286,11 @@
   "item.orespawn.quinoa": "Quinoa",
   "item.orespawn.tomato": "Tomato",
   "item.orespawn.lettuce": "Lettuce",
+  "item.orespawn.radish_seed": "Radish Seeds",
+  "item.orespawn.rice_seed": "Rice Seeds",
+  "item.orespawn.quinoa_seed": "Quinoa Seeds",
+  "item.orespawn.tomato_seed": "Tomato Seeds",
+  "item.orespawn.lettuce_seed": "Lettuce Seeds",
   "item.orespawn.apple_tree_seed": "Apple Tree Sapling",
   "item.orespawn.cherry_tree_seed": "Cherry Tree Sapling",
   "item.orespawn.peach_tree_seed": "Peach Tree Sapling",
@@ -377,6 +383,8 @@
   "item.orespawn.zoo_cage_8": "Zoo Cage (8)",
   "item.orespawn.zoo_cage_10": "Zoo Cage (10)",
   "item.orespawn.cage_empty": "Empty Cage",
+  "item.orespawn.caged_mob": "Caged Mob",
+  "item.orespawn.prince_egg": "Prince Egg",
 
   "entity.orespawn.alien": "Alien",
   "entity.orespawn.alosaurus": "Alosaurus",
@@ -510,8 +518,12 @@
   "entity.orespawn.sunspot_urchin": "Sunspot Urchin",
   "entity.orespawn.thunder_bolt": "Thunder Bolt",
   "entity.orespawn.water_ball": "Water Ball",
+  "entity.orespawn.ice_ball": "Ice Ball",
+  "entity.orespawn.acid": "Acid",
+  "entity.orespawn.dead_irukandji": "Dead Irukandji",
 
   "container.orespawn.crystal_furnace": "Crystal Furnace",
+  "container.orespawn.crystal_workbench": "Crystal Workbench",
 
   "item.orespawn.alien_spawn_egg": "Alien Spawn Egg",
   "item.orespawn.alosaurus_spawn_egg": "Alosaurus Spawn Egg",
