@@ -2,12 +2,20 @@ package danger.orespawn.entity;
 
 import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
@@ -15,12 +23,24 @@ import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ambient.AmbientCreature;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 
+/**
+ * Ambient butterfly mob with random flight AI and 4 visual variants.
+ * Right-clicking teleports the player to the Chaos dimension (DimensionID6
+ * in the original 1.7.10 mod), or back to the Overworld if already there.
+ * Unlike ants, Butterfly extends AmbientCreature so it has its own
+ * mobInteract implementation rather than inheriting from EntityAnt.
+ */
 public class EntityButterfly extends AmbientCreature {
+    private static final ResourceKey<Level> CHAOS = ResourceKey.create(
+            Registries.DIMENSION, ResourceLocation.fromNamespaceAndPath("orespawn", "chaos"));
+    private static final int TELEPORT_COOLDOWN = 80;
+
     private static final EntityDataAccessor<Integer> BUTTERFLY_TYPE =
             SynchedEntityData.defineId(EntityButterfly.class, EntityDataSerializers.INT);
     private BlockPos currentFlightTarget = null;
@@ -100,6 +120,34 @@ public class EntityButterfly extends AmbientCreature {
         float yawDiff = Mth.wrapDegrees(targetYaw - this.getYRot());
         this.zza = 0.5f;
         this.setYRot(this.getYRot() + yawDiff);
+    }
+
+    /** Teleport to Chaos on empty-hand right-click; reuses EntityAnt.findSafeY for landing. */
+    @Override
+    public InteractionResult mobInteract(Player player, InteractionHand hand) {
+        if (this.level().isClientSide()) return InteractionResult.SUCCESS;
+        if (!(player instanceof ServerPlayer serverPlayer)) return InteractionResult.PASS;
+        if (!player.getItemInHand(hand).isEmpty()) return InteractionResult.PASS;
+        if (player.isOnPortalCooldown()) return InteractionResult.PASS;
+
+        ResourceKey<Level> destination = this.level().dimension().equals(CHAOS)
+                ? Level.OVERWORLD
+                : CHAOS;
+
+        ServerLevel destLevel = serverPlayer.server.getLevel(destination);
+        if (destLevel == null) return InteractionResult.FAIL;
+
+        serverPlayer.setPortalCooldown(TELEPORT_COOLDOWN);
+
+        double x = serverPlayer.getX();
+        double z = serverPlayer.getZ();
+        int safeY = EntityAnt.findSafeY(destLevel, BlockPos.containing(x, 0, z));
+
+        serverPlayer.teleportTo(destLevel, x, safeY, z,
+                serverPlayer.getYRot(), serverPlayer.getXRot());
+
+        serverPlayer.playSound(SoundEvents.ENDERMAN_TELEPORT, 1.0f, 1.0f);
+        return InteractionResult.SUCCESS;
     }
 
     @Override
