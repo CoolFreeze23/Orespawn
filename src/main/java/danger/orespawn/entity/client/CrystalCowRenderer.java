@@ -10,7 +10,7 @@ import net.minecraft.resources.ResourceLocation;
 
 public class CrystalCowRenderer extends MobRenderer<CrystalCow, CowModel<CrystalCow>> {
     private static final ResourceLocation TEXTURE =
-            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "textures/entity/redcow.png");
+            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "textures/entity/crystal_cow.png");
 
     public CrystalCowRenderer(EntityRendererProvider.Context context) {
         super(context, new CowModel<>(context.bakeLayer(ModelLayers.COW)), 0.7f);

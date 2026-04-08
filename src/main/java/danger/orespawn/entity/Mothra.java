@@ -29,8 +29,9 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import danger.orespawn.OreSpawnConfig;
 import danger.orespawn.OreSpawnMod;
+import net.neoforged.neoforge.entity.PartEntity;
 
-public class Mothra extends EntityButterfly {
+public class Mothra extends EntityButterfly implements OreSpawnPartEntity.MultipartBoss {
     private BlockPos currentFlightTarget = null;
     private int lastX = 0, lastZ = 0, lastY = 0;
     private int stuckCount = 0;
@@ -38,10 +39,22 @@ public class Mothra extends EntityButterfly {
     private int healthTicker = 100;
     private final Comparator<Entity> targetSorter;
 
+    private final OreSpawnPartEntity<Mothra> bodyPart;
+    private final OreSpawnPartEntity<Mothra> wingLeft;
+    private final OreSpawnPartEntity<Mothra> wingRight;
+    private final OreSpawnPartEntity<Mothra> headPart;
+    private final PartEntity<?>[] allParts;
+
     public Mothra(EntityType<? extends Mothra> type, Level level) {
         super(type, level);
         this.xpReward = 100;
         this.targetSorter = Comparator.comparingDouble(this::distanceToSqr);
+
+        this.bodyPart  = new OreSpawnPartEntity<>(this, "body",  4.0f, 3.0f);
+        this.wingLeft  = new OreSpawnPartEntity<>(this, "wingL", 5.0f, 1.5f);
+        this.wingRight = new OreSpawnPartEntity<>(this, "wingR", 5.0f, 1.5f);
+        this.headPart  = new OreSpawnPartEntity<>(this, "head",  2.0f, 2.0f);
+        this.allParts = new PartEntity<?>[]{ bodyPart, wingLeft, wingRight, headPart };
     }
 
     public static AttributeSupplier.Builder createAttributes() {
@@ -74,8 +87,70 @@ public class Mothra extends EntityButterfly {
     public boolean isPushable() { return true; }
 
     @Override
+    public boolean isMultipartEntity() {
+        return true;
+    }
+
+    @Override
+    public PartEntity<?>[] getParts() {
+        return this.allParts;
+    }
+
+    @Override
+    public void setId(int id) {
+        super.setId(id);
+        for (int i = 0; i < allParts.length; i++) {
+            allParts[i].setId(id + i + 1);
+        }
+    }
+
+    @Override
+    public boolean isPickable() {
+        return false;
+    }
+
+    @Override
+    public boolean hurtFromPart(OreSpawnPartEntity<?> part, DamageSource source, float amount) {
+        String partName = part.getPartName();
+        float multiplied = switch (partName) {
+            case "head" -> amount;
+            case "body" -> amount * 0.5f;
+            default -> amount * 0.25f + 1.0f;
+        };
+        return this.hurt(source, multiplied);
+    }
+
+    private void positionPart(OreSpawnPartEntity<Mothra> part, double offsetX, double offsetY, double offsetZ) {
+        float yawRad = this.yBodyRot * Mth.DEG_TO_RAD;
+        double sin = Mth.sin(yawRad);
+        double cos = Mth.cos(yawRad);
+        double rx = offsetX * cos - offsetZ * sin;
+        double rz = offsetX * sin + offsetZ * cos;
+        part.setPos(this.getX() + rx, this.getY() + offsetY, this.getZ() + rz);
+    }
+
+    @Override
     public void tick() {
+        Vec3[] oldPos = new Vec3[allParts.length];
+        for (int i = 0; i < allParts.length; i++) {
+            oldPos[i] = new Vec3(allParts[i].getX(), allParts[i].getY(), allParts[i].getZ());
+        }
+
         super.tick();
+        positionPart(bodyPart,    0.0,  1.0,  0.0);
+        positionPart(headPart,    0.0,  2.0, -3.0);
+        positionPart(wingLeft,   -6.0,  1.5,  0.0);
+        positionPart(wingRight,   6.0,  1.5,  0.0);
+
+        for (int i = 0; i < allParts.length; i++) {
+            allParts[i].xo = oldPos[i].x;
+            allParts[i].yo = oldPos[i].y;
+            allParts[i].zo = oldPos[i].z;
+            allParts[i].xOld = oldPos[i].x;
+            allParts[i].yOld = oldPos[i].y;
+            allParts[i].zOld = oldPos[i].z;
+        }
+
         Vec3 motion = this.getDeltaMovement();
         this.setDeltaMovement(motion.x, motion.y * 0.6, motion.z);
 

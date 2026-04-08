@@ -30,7 +30,7 @@ public class ModBlocks {
     public static final DeferredBlock<Block> BLOCK_RUBY = BLOCKS.register("block_ruby",
             () -> new BlockRuby(BlockBehaviour.Properties.of().strength(5.0f, 6.0f).requiresCorrectToolForDrops()));
     public static final DeferredBlock<Block> BLOCK_AMETHYST = BLOCKS.register("block_amethyst",
-            () -> new BlockRuby(BlockBehaviour.Properties.of().strength(5.0f, 6.0f).requiresCorrectToolForDrops()));
+            () -> new TransparentCrystalBlock(BlockBehaviour.Properties.of().strength(5.0f, 6.0f).requiresCorrectToolForDrops().noOcclusion()));
     public static final DeferredBlock<Block> BLOCK_URANIUM = BLOCKS.register("block_uranium",
             () -> new BlockUranium(BlockBehaviour.Properties.of().strength(5.0f, 6.0f).requiresCorrectToolForDrops()));
     public static final DeferredBlock<Block> BLOCK_TITANIUM = BLOCKS.register("block_titanium",
@@ -39,9 +39,9 @@ public class ModBlocks {
     public static final DeferredBlock<Block> BLOCK_MOBZILLA_SCALE = BLOCKS.register("block_mobzilla_scale",
             () -> new BlockRuby(BlockBehaviour.Properties.of().strength(5.0f, 6.0f).requiresCorrectToolForDrops(), true));
     public static final DeferredBlock<Block> BLOCK_CRYSTAL_PINK = BLOCKS.register("block_crystal_pink",
-            () -> new BlockRuby(BlockBehaviour.Properties.of().strength(5.0f, 6.0f).requiresCorrectToolForDrops()));
+            () -> new TransparentCrystalBlock(BlockBehaviour.Properties.of().strength(5.0f, 6.0f).requiresCorrectToolForDrops().noOcclusion()));
     public static final DeferredBlock<Block> BLOCK_TIGERS_EYE = BLOCKS.register("block_tigers_eye",
-            () -> new BlockRuby(BlockBehaviour.Properties.of().strength(5.0f, 6.0f).requiresCorrectToolForDrops()));
+            () -> new TransparentCrystalBlock(BlockBehaviour.Properties.of().strength(5.0f, 6.0f).requiresCorrectToolForDrops().noOcclusion()));
     public static final DeferredBlock<Block> BLOCK_ENDER_PEARL = BLOCKS.register("block_ender_pearl",
             () -> new Block(BlockBehaviour.Properties.of().strength(3.0f, 3.0f)));
     public static final DeferredBlock<Block> BLOCK_EYE_OF_ENDER = BLOCKS.register("block_eye_of_ender",
@@ -67,22 +67,22 @@ public class ModBlocks {
 
     // Crystal dimension blocks
     public static final DeferredBlock<Block> CRYSTAL_STONE = BLOCKS.register("crystal_stone",
-            () -> new Block(BlockBehaviour.Properties.of().strength(2.0f, 10.0f)));
+            () -> new TransparentCrystalBlock(BlockBehaviour.Properties.of().strength(2.0f, 10.0f).noOcclusion()));
     public static final DeferredBlock<Block> CRYSTAL_COAL = BLOCKS.register("crystal_coal",
-            () -> new Block(BlockBehaviour.Properties.of().strength(0.6f, 6.0f).lightLevel(s -> 8)));
+            () -> new TransparentCrystalBlock(BlockBehaviour.Properties.of().strength(0.6f, 6.0f).lightLevel(s -> 8).noOcclusion()));
     public static final DeferredBlock<Block> CRYSTAL_GRASS = BLOCKS.register("crystal_grass",
-            () -> new CrystalGrass(BlockBehaviour.Properties.of().strength(0.6f, 2.0f)));
+            () -> new CrystalGrass(BlockBehaviour.Properties.of().strength(0.6f, 2.0f).noOcclusion()));
     public static final DeferredBlock<Block> CRYSTAL_CRYSTAL = BLOCKS.register("crystal_crystal",
-            () -> new OreCrystalCrystal(BlockBehaviour.Properties.of().strength(0.4f, 12.0f).lightLevel(s -> 12)));
+            () -> new OreCrystalCrystal(BlockBehaviour.Properties.of().strength(0.4f, 12.0f).lightLevel(s -> 12).noOcclusion()));
     public static final DeferredBlock<Block> TIGERS_EYE_ORE = BLOCKS.register("tigers_eye_ore",
-            () -> new Block(BlockBehaviour.Properties.of().strength(0.5f, 15.0f).lightLevel(s -> 12)));
+            () -> new TransparentCrystalBlock(BlockBehaviour.Properties.of().strength(0.5f, 15.0f).lightLevel(s -> 12).noOcclusion()));
     public static final DeferredBlock<Block> CRYSTAL_PLANKS = BLOCKS.register("crystal_planks",
-            () -> new Block(BlockBehaviour.Properties.of().strength(1.5f, 4.0f).sound(SoundType.WOOD)));
+            () -> new TransparentCrystalBlock(BlockBehaviour.Properties.of().strength(1.5f, 4.0f).sound(SoundType.WOOD).noOcclusion()));
     // Creature-spawning stones — spawn mobs when broken via OreBasicStone
     public static final DeferredBlock<Block> CRYSTAL_RAT = BLOCKS.register("crystal_rat",
-            () -> new OreBasicStone(BlockBehaviour.Properties.of().strength(2.5f, 14.0f), OreBasicStone.StoneType.RAT));
+            () -> new OreBasicStone(BlockBehaviour.Properties.of().strength(2.5f, 14.0f).noOcclusion(), OreBasicStone.StoneType.RAT));
     public static final DeferredBlock<Block> CRYSTAL_FAIRY = BLOCKS.register("crystal_fairy",
-            () -> new OreBasicStone(BlockBehaviour.Properties.of().strength(2.5f, 14.0f), OreBasicStone.StoneType.FAIRY));
+            () -> new OreBasicStone(BlockBehaviour.Properties.of().strength(2.5f, 14.0f).noOcclusion(), OreBasicStone.StoneType.FAIRY));
     public static final DeferredBlock<Block> RED_ANT_TROLL = BLOCKS.register("red_ant_troll",
             () -> new OreBasicStone(BlockBehaviour.Properties.of().strength(2.5f, 14.0f), OreBasicStone.StoneType.RED_ANT_TROLL));
     public static final DeferredBlock<Block> TERMITE_TROLL = BLOCKS.register("termite_troll",
@@ -90,9 +90,9 @@ public class ModBlocks {
 
     // Workbench & Furnace
     public static final DeferredBlock<Block> CRYSTAL_WORKBENCH = BLOCKS.register("crystal_workbench",
-            () -> new CrystalWorkbenchBlock(BlockBehaviour.Properties.of().strength(1.0f, 5.0f)));
+            () -> new CrystalWorkbenchBlock(BlockBehaviour.Properties.of().strength(1.0f, 5.0f).noOcclusion()));
     public static final DeferredBlock<Block> CRYSTAL_FURNACE = BLOCKS.register("crystal_furnace",
-            () -> new CrystalFurnace(BlockBehaviour.Properties.of().strength(2.0f, 10.0f)
+            () -> new CrystalFurnace(BlockBehaviour.Properties.of().strength(2.0f, 10.0f).noOcclusion()
                     .lightLevel(s -> s.getValue(CrystalFurnace.LIT) ? 13 : 0)));
     public static final DeferredBlock<Block> CRYSTAL_FURNACE_ON = BLOCKS.register("crystal_furnace_on",
             () -> new Block(BlockBehaviour.Properties.of().strength(2.0f, 10.0f).lightLevel(s -> 13)));
@@ -158,7 +158,7 @@ public class ModBlocks {
     public static final DeferredBlock<Block> DUPLICATOR_LOG = BLOCKS.register("duplicator_log",
             () -> new BlockDuplicatorLog(BlockBehaviour.Properties.of().strength(0.2f).sound(SoundType.WOOD)));
     public static final DeferredBlock<Block> CRYSTAL_TREE_LOG = BLOCKS.register("crystal_tree_log",
-            () -> new Block(BlockBehaviour.Properties.of().strength(0.2f).sound(SoundType.WOOD)));
+            () -> new TransparentCrystalBlock(BlockBehaviour.Properties.of().strength(0.2f).sound(SoundType.WOOD).noOcclusion()));
 
     // Flowers — MyBlockFlower extends BushBlock; pink↔black and blue↔scary swap at nightfall/dawn
     public static final DeferredBlock<Block> FLOWER_PINK = BLOCKS.register("flower_pink",
@@ -244,22 +244,22 @@ public class ModBlocks {
 
     // Ant spawner blocks — spawn their respective ant type on random tick when sky is clear
     public static final DeferredBlock<Block> ANT_BLOCK = BLOCKS.register("ant_block",
-            () -> new CrystalAntBlock(BlockBehaviour.Properties.of().strength(2.0f, 10.0f),
+            () -> new CrystalAntBlock(BlockBehaviour.Properties.of().strength(2.0f, 10.0f).noOcclusion(),
                     CrystalAntBlock.AntType.BLACK_ANT));
     public static final DeferredBlock<Block> RED_ANT_BLOCK = BLOCKS.register("red_ant_block",
-            () -> new CrystalAntBlock(BlockBehaviour.Properties.of().strength(2.0f, 10.0f),
+            () -> new CrystalAntBlock(BlockBehaviour.Properties.of().strength(2.0f, 10.0f).noOcclusion(),
                     CrystalAntBlock.AntType.RED_ANT));
     public static final DeferredBlock<Block> TERMITE_BLOCK = BLOCKS.register("termite_block",
-            () -> new CrystalAntBlock(BlockBehaviour.Properties.of().strength(2.0f, 10.0f),
+            () -> new CrystalAntBlock(BlockBehaviour.Properties.of().strength(2.0f, 10.0f).noOcclusion(),
                     CrystalAntBlock.AntType.TERMITE));
     public static final DeferredBlock<Block> CRYSTAL_TERMITE_BLOCK = BLOCKS.register("crystal_termite_block",
-            () -> new CrystalAntBlock(BlockBehaviour.Properties.of().strength(2.0f, 10.0f),
+            () -> new CrystalAntBlock(BlockBehaviour.Properties.of().strength(2.0f, 10.0f).noOcclusion(),
                     CrystalAntBlock.AntType.CRYSTAL_TERMITE));
     public static final DeferredBlock<Block> RAINBOW_ANT_BLOCK = BLOCKS.register("rainbow_ant_block",
-            () -> new CrystalAntBlock(BlockBehaviour.Properties.of().strength(2.0f, 10.0f),
+            () -> new CrystalAntBlock(BlockBehaviour.Properties.of().strength(2.0f, 10.0f).noOcclusion(),
                     CrystalAntBlock.AntType.RAINBOW_ANT));
     public static final DeferredBlock<Block> UNSTABLE_ANT_BLOCK = BLOCKS.register("unstable_ant_block",
-            () -> new CrystalAntBlock(BlockBehaviour.Properties.of().strength(2.0f, 10.0f),
+            () -> new CrystalAntBlock(BlockBehaviour.Properties.of().strength(2.0f, 10.0f).noOcclusion(),
                     CrystalAntBlock.AntType.UNSTABLE_ANT));
 
     public static void register(IEventBus eventBus) {

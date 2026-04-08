@@ -905,7 +905,12 @@ public class ModItems {
     public static final DeferredItem<SpawnEggItem> GOLD_COW_SPAWN_EGG = ITEMS.register("gold_cow_spawn_egg",
             () -> new SpawnEggItem(ModEntities.GOLD_COW.get(), 0xFFD700, 0xFFA500, new Item.Properties()));
     public static final DeferredItem<SpawnEggItem> ENCHANTED_COW_SPAWN_EGG = ITEMS.register("enchanted_cow_spawn_egg",
-            () -> new SpawnEggItem(ModEntities.ENCHANTED_COW.get(), 0x800080, 0xDA70D6, new Item.Properties()));
+            () -> new SpawnEggItem(ModEntities.ENCHANTED_COW.get(), 0x800080, 0xDA70D6, new Item.Properties()) {
+                @Override
+                public boolean isFoil(net.minecraft.world.item.ItemStack stack) {
+                    return true;
+                }
+            });
     public static final DeferredItem<SpawnEggItem> RUBY_BIRD_SPAWN_EGG = ITEMS.register("ruby_bird_spawn_egg",
             () -> new SpawnEggItem(ModEntities.RUBY_BIRD.get(), 0xDC143C, 0xFF6347, new Item.Properties()));
 

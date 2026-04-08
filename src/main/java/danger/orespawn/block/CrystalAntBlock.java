@@ -5,16 +5,19 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
-import net.minecraft.world.level.block.Block;
+import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.TransparentBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import danger.orespawn.ModEntities;
 
 /**
  * Ant/termite spawner block. Different instances spawn different ant types.
+ * Extends {@link TransparentBlock} so light passes through and adjacent
+ * faces between identical blocks are culled (no seam artifacts).
  */
-public class CrystalAntBlock extends Block {
+public class CrystalAntBlock extends TransparentBlock {
     private static final int MIN_ANTS_PER_TICK = 2;
     private static final int MAX_EXTRA_ANTS = 6;
 
@@ -25,6 +28,11 @@ public class CrystalAntBlock extends Block {
     public CrystalAntBlock(BlockBehaviour.Properties properties, AntType antType) {
         super(properties);
         this.antType = antType;
+    }
+
+    @Override
+    protected boolean skipRendering(BlockState state, BlockState adjacentState, Direction direction) {
+        return adjacentState.is(this) || super.skipRendering(state, adjacentState, direction);
     }
 
     @Override

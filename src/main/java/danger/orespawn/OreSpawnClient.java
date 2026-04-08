@@ -266,7 +266,7 @@ public class OreSpawnClient {
             event.registerLayerDefinition(RedAntRenderer.MODEL_LAYER, AntModel::createBodyLayer);
             event.registerLayerDefinition(RainbowAntRenderer.MODEL_LAYER, AntModel::createBodyLayer);
             event.registerLayerDefinition(StinkBugRenderer.MODEL_LAYER, StinkBugModel::createBodyLayer);
-            event.registerLayerDefinition(TermiteRenderer.MODEL_LAYER, TermiteModel::createBodyLayer);
+            event.registerLayerDefinition(TermiteRenderer.MODEL_LAYER, AntModel::createBodyLayer);
             event.registerLayerDefinition(TshirtRenderer.MODEL_LAYER, TshirtModel::createBodyLayer);
             event.registerLayerDefinition(UnstableAntRenderer.MODEL_LAYER, AntModel::createBodyLayer);
 

@@ -10,7 +10,7 @@ import net.minecraft.resources.ResourceLocation;
 
 public class GoldCowRenderer extends MobRenderer<GoldCow, CowModel<GoldCow>> {
     private static final ResourceLocation TEXTURE =
-            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "textures/entity/redcow.png");
+            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "textures/entity/gold_cow.png");
 
     public GoldCowRenderer(EntityRendererProvider.Context context) {
         super(context, new CowModel<>(context.bakeLayer(ModelLayers.COW)), 0.7f);

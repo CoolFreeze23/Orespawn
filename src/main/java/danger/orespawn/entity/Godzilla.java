@@ -51,8 +51,10 @@ import net.minecraft.server.level.ServerBossEvent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.BossEvent;
 import net.minecraft.network.chat.Component;
+import net.minecraft.util.Mth;
+import net.neoforged.neoforge.entity.PartEntity;
 
-public class Godzilla extends Monster {
+public class Godzilla extends Monster implements OreSpawnPartEntity.MultipartBoss {
     private static final int CONFIGURED_MAX_HEALTH = 6000;
     private static final double MELEE_PUSH_HORIZONTAL = 3.2;
     private static final double MELEE_PUSH_VERTICAL = 0.3;
@@ -75,10 +77,22 @@ public class Godzilla extends Monster {
     private int largeUnknownDetected = 0;
     private int headFound = 0;
 
+    private final OreSpawnPartEntity<Godzilla> bodyLower;
+    private final OreSpawnPartEntity<Godzilla> bodyUpper;
+    private final OreSpawnPartEntity<Godzilla> headPart;
+    private final OreSpawnPartEntity<Godzilla> tail;
+    private final PartEntity<?>[] allParts;
+
     public Godzilla(EntityType<? extends Godzilla> type, Level level) {
         super(type, level);
         this.xpReward = 10000;
         this.targetSorter = Comparator.comparingDouble(this::distanceToSqr);
+
+        this.bodyLower = new OreSpawnPartEntity<>(this, "bodyLow",  8.0f, 8.0f);
+        this.bodyUpper = new OreSpawnPartEntity<>(this, "bodyUp",   6.0f, 6.0f);
+        this.headPart  = new OreSpawnPartEntity<>(this, "head",     5.0f, 5.0f);
+        this.tail      = new OreSpawnPartEntity<>(this, "tail",     4.0f, 4.0f);
+        this.allParts = new PartEntity<?>[]{ bodyLower, bodyUpper, headPart, tail };
     }
 
     @Override
@@ -112,9 +126,71 @@ public class Godzilla extends Monster {
     }
 
     @Override
+    public boolean isMultipartEntity() {
+        return true;
+    }
+
+    @Override
+    public PartEntity<?>[] getParts() {
+        return this.allParts;
+    }
+
+    @Override
+    public void setId(int id) {
+        super.setId(id);
+        for (int i = 0; i < allParts.length; i++) {
+            allParts[i].setId(id + i + 1);
+        }
+    }
+
+    @Override
+    public boolean isPickable() {
+        return false;
+    }
+
+    @Override
+    public boolean hurtFromPart(OreSpawnPartEntity<?> part, DamageSource source, float amount) {
+        String partName = part.getPartName();
+        float multiplied = switch (partName) {
+            case "head" -> amount;
+            case "bodyLow", "bodyUp" -> amount * 0.5f;
+            default -> amount * 0.25f + 1.0f;
+        };
+        return this.hurt(source, multiplied);
+    }
+
+    private void positionPart(OreSpawnPartEntity<Godzilla> part, double offsetX, double offsetY, double offsetZ) {
+        float yawRad = this.yBodyRot * Mth.DEG_TO_RAD;
+        double sin = Mth.sin(yawRad);
+        double cos = Mth.cos(yawRad);
+        double rx = offsetX * cos - offsetZ * sin;
+        double rz = offsetX * sin + offsetZ * cos;
+        part.setPos(this.getX() + rx, this.getY() + offsetY, this.getZ() + rz);
+    }
+
+    @Override
     public void tick() {
+        Vec3[] oldPos = new Vec3[allParts.length];
+        for (int i = 0; i < allParts.length; i++) {
+            oldPos[i] = new Vec3(allParts[i].getX(), allParts[i].getY(), allParts[i].getZ());
+        }
+
         this.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(this.moveSpeed);
         super.tick();
+        positionPart(bodyLower,  0.0,  2.0,   0.0);
+        positionPart(bodyUpper,  0.0, 12.0,   0.0);
+        positionPart(headPart,   0.0, 20.0,  -6.0);
+        positionPart(tail,       0.0,  4.0,  10.0);
+
+        for (int i = 0; i < allParts.length; i++) {
+            allParts[i].xo = oldPos[i].x;
+            allParts[i].yo = oldPos[i].y;
+            allParts[i].zo = oldPos[i].z;
+            allParts[i].xOld = oldPos[i].x;
+            allParts[i].yOld = oldPos[i].y;
+            allParts[i].zOld = oldPos[i].z;
+        }
+
         if (this.onGround()) {
             this.getNavigation().stop();
         }

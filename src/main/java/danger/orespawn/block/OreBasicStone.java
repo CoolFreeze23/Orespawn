@@ -6,15 +6,18 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
+import net.minecraft.core.Direction;
+import net.minecraft.world.level.block.TransparentBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import danger.orespawn.ModEntities;
 import net.minecraft.world.level.block.state.BlockState;
 
 /**
  * Stone blocks that spawn creatures when broken (e.g. rat stone, fairy stone, ant troll stone).
+ * Extends {@link TransparentBlock} so light passes through and adjacent
+ * faces between identical blocks are culled (no seam artifacts).
  */
-public class OreBasicStone extends Block {
+public class OreBasicStone extends TransparentBlock {
 
     public enum StoneType { NORMAL, RAT, FAIRY, RED_ANT_TROLL, TERMITE_TROLL }
 
@@ -32,6 +35,11 @@ public class OreBasicStone extends Block {
 
     public OreBasicStone(BlockBehaviour.Properties properties) {
         this(properties, StoneType.NORMAL);
+    }
+
+    @Override
+    protected boolean skipRendering(BlockState state, BlockState adjacentState, Direction direction) {
+        return adjacentState.is(this) || super.skipRendering(state, adjacentState, direction);
     }
 
     @Override

@@ -1,5 +1,6 @@
 {
   "parent": "minecraft:block/orientable",
+  "render_type": "minecraft:translucent",
   "textures": {
     "front": "orespawn:blocks/crystalfurnace_front_on",
     "side": "orespawn:blocks/crystalfurnace_side",
