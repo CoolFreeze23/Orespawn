@@ -1,40 +1,20 @@
-Comprehensive port refinement: config wiring, safety fixes, crop loot, dead code cleanup, Jeffery entity, spawn placements, recipe audit
+feat(queen): expand to 12-part dynamic hitbox system synced with client animations
 
-Phase 1a - Config Wiring:
-- Wire MOTHRA_PEACEFUL to disable Mothra attacks when enabled
-- Wire DRAGONFLY_HORSE_FRIENDLY to prevent dragonflies preying on horses
-- Wire PLAY_NICELY config to TheKing and TheQueen synched data
-- Wire DUPLICATOR_TREE_ENABLE to block tree growth when disabled
-- Wire LESS_LAG to skip ThunderBolt trail particles at level 2
-- Document LESS_ORE as requiring datapack-level changes
-
-Phase 1b - Projectile Owner Safety:
-- Fix unsafe (Player) cast in EntityThrownRock with instanceof chain
-- Fix unsafe (Player) cast in BerthaHit with instanceof chain
-- Fix unsafe (LivingEntity) cast in ThunderBolt with null/type check
-
-Phase 1c - Crystal Furnace GUI:
-- Fall back to vanilla furnace texture (identical slot layout)
-
-Phase 1d - Crop Loot Tables:
-- Mature crops (corn, quinoa, tomato, lettuce) now drop seeds + produce
-- Immature stages (0-2) drop 1 seed each (vanilla wheat behavior)
-- Single-stage crops (strawberry, radish, rice) drop 1-3 produce
-- Add corn_cob food item (nutrition 5, saturation 0.6)
-
-Phase 2a - Dead Code Cleanup:
-- Delete 29 unused legacy classes (Ruby/Amethyst/Crystal/Emerald tool
-  stubs, cage items, orphaned BlockCrystalPlant, misc item stubs)
-
-Phase 2b - Jeffery Entity:
-- Create Jeffery as GiantRobot subclass with halved stats (1000 HP, 50 ATK)
-- Register entity type, attributes, renderer, spawn egg, loot table
-- Wire JEFFERY_ENABLE config in ModSpawnControl
-
-Phase 3a - Spawn Placements:
-- Add 49 new spawn placements (up from 10) covering hostile, passive,
-  ambient, flying, and cave mob categories
-- Each uses correct base class spawn rules (Monster/Animal/Mob)
-
-Phase 3b - Recipe Audit:
-- Add 3 missing recipes: royal_guardian_sword, spider_robot_kit, ant_robot_kit
+- Expand sub-part array from 7 to 12 OreSpawnPartEntity hitboxes to fully
+  map The Queen's massive geometry: body, 3 necks, 3 heads, 2 wings, and
+  a 3-segment tail (base/mid/tip) that curves with the whip animation
+- Replace all static hardcoded offsets in tick() with trigonometric math
+  that mirrors the client-side ModelTheQueen.setupAnim frequencies, so
+  every hitbox tracks the visual model frame-by-frame
+- Compute head/neck positions using arc kinematics: sin(headlr) * reach
+  for lateral swing and (1 - cos(headlr)) * reach for Z arc retraction,
+  matching the organic sway of the hierarchical neck chain
+- Implement a 7-link tail chain walk with phase-offset cosine waves
+  (PI/4 per segment) to produce a rippling whip effect on the hitboxes
+- Drive wing hitbox Y and X from the flap angle so they rise and compress
+  laterally in sync with the client zRot animation
+- Update hurtFromPart damage multipliers for all 12 parts: heads at 1.0x
+  (precision reward), body at 0.5x (armored core), necks/wings/tail
+  segments at 0.25x + 1 flat damage
+- Scale up hitbox dimensions to match 3x model scale: body 8x8, heads
+  4x4, necks 3.5x3.5, wings 14x2.5, tail base 5x5 tapering to tip 3x2
