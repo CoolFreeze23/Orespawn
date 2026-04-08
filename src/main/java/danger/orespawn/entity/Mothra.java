@@ -27,6 +27,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
+import danger.orespawn.OreSpawnConfig;
 import danger.orespawn.OreSpawnMod;
 
 public class Mothra extends EntityButterfly {
@@ -105,6 +106,8 @@ public class Mothra extends EntityButterfly {
     }
 
     private boolean isSuitableTarget(LivingEntity target) {
+        // Config-driven peaceful mode: Mothra won't attack anything
+        if (OreSpawnConfig.MOTHRA_PEACEFUL.get()) return false;
         if (this.level().getDifficulty() == Difficulty.PEACEFUL) return false;
         if (target == null || target == this || !target.isAlive()) return false;
         if (target instanceof Mothra) return false;
@@ -166,7 +169,8 @@ public class Mothra extends EntityButterfly {
                 }
             }
             this.stuckCount = 0;
-        } else if (this.random.nextInt(10) == 0 && this.level().getDifficulty() != Difficulty.PEACEFUL) {
+        } else if (this.random.nextInt(10) == 0 && this.level().getDifficulty() != Difficulty.PEACEFUL
+                && !OreSpawnConfig.MOTHRA_PEACEFUL.get()) {
             Player target = this.level().getNearestPlayer(this, 25.0);
             if (target != null && !target.getAbilities().instabuild) {
                 this.currentFlightTarget = new BlockPos((int) target.getX(), (int) target.getY() + 4, (int) target.getZ());

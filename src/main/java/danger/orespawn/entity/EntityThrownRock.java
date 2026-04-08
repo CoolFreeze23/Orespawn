@@ -79,7 +79,14 @@ public class EntityThrownRock extends ThrowableProjectile {
             default -> damage = 2.0f;
         }
 
-        target.hurt(this.damageSources().playerAttack((Player) owner), damage);
+        // Owner may not be a Player (e.g. dispensers, command-spawned), so pick the right damage source
+        if (owner instanceof Player player) {
+            target.hurt(this.damageSources().playerAttack(player), damage);
+        } else if (owner instanceof LivingEntity livingOwner) {
+            target.hurt(this.damageSources().mobAttack(livingOwner), damage);
+        } else {
+            target.hurt(this.damageSources().thrown(this, owner), damage);
+        }
         float angle = (float) Math.atan2(target.getZ() - owner.getZ(), target.getX() - owner.getX());
         if (target.isRemoved()) verticalKnock *= 2.0;
         target.push(Math.cos(angle) * knockback, verticalKnock, Math.sin(angle) * knockback);

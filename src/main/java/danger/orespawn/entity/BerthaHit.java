@@ -59,7 +59,14 @@ public class BerthaHit extends ThrowableProjectile {
         }
 
         if (this.distanceToSqr(owner) < CLOSE_RANGE_DAMAGE_SQ) {
-            entity.hurt(this.damageSources().playerAttack((Player) owner), damage);
+            // Owner may not be a Player, so pick the right damage source to avoid ClassCastException
+            if (owner instanceof Player player) {
+                entity.hurt(this.damageSources().playerAttack(player), damage);
+            } else if (owner instanceof LivingEntity livingOwner) {
+                entity.hurt(this.damageSources().mobAttack(livingOwner), damage);
+            } else {
+                entity.hurt(this.damageSources().thrown(this, owner), damage);
+            }
             if (this.hitType == HIT_TYPE_DEFAULT) entity.igniteForSeconds(IGNITE_SECONDS_DEFAULT);
             float angle = (float) Math.atan2(entity.getZ() - owner.getZ(), entity.getX() - owner.getX());
             if (entity.isRemoved()) verticalKnock *= 2.0;
