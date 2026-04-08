@@ -35,6 +35,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
+import danger.orespawn.ModEntities;
 import danger.orespawn.OreSpawnMod;
 
 public class ThePrinceTeen extends TamableAnimal {
@@ -56,6 +57,9 @@ public class ThePrinceTeen extends TamableAnimal {
     private int hurtTimer = 0;
     private int head1dir = 1, head2dir = 1, head3dir = 1;
     private int growCounter = 0;
+    private int killCount = 0;
+    private int dayCount = 0;
+    private int isDay = 0;
 
     public ThePrinceTeen(EntityType<? extends ThePrinceTeen> type, Level level) {
         super(type, level);
@@ -133,7 +137,11 @@ public class ThePrinceTeen extends TamableAnimal {
 
     @Override
     public boolean doHurtTarget(Entity target) {
-        return target.hurt(this.damageSources().mobAttack(this), 50.0f);
+        boolean result = target.hurt(this.damageSources().mobAttack(this), 50.0f);
+        if (target instanceof LivingEntity living && living.getHealth() <= 0.0f) {
+            ++this.killCount;
+        }
+        return result;
     }
 
     @Override
@@ -155,6 +163,19 @@ public class ThePrinceTeen extends TamableAnimal {
         if (this.isRemoved()) return;
         super.customServerAiStep();
 
+        if (this.isDay == 0) {
+            this.isDay = 1;
+            if (!this.level().isDay()) this.isDay = -1;
+        } else {
+            if (this.isDay == -1 && this.level().isDay()) ++this.dayCount;
+            this.isDay = this.level().isDay() ? 1 : -1;
+        }
+
+        if (this.killCount > 25 && this.dayCount > 10) {
+            this.transformToAdult();
+            return;
+        }
+
         if (this.random.nextInt(7) == 1) {
             LivingEntity target = this.getTarget();
             if (target != null && !target.isAlive()) { this.setTarget(null); target = null; }
@@ -173,6 +194,18 @@ public class ThePrinceTeen extends TamableAnimal {
         }
     }
 
+    private void transformToAdult() {
+        if (this.level().isClientSide || !(this.level() instanceof ServerLevel serverLevel)) return;
+        ThePrinceAdult adult = ModEntities.THE_PRINCE_ADULT.get().create(serverLevel);
+        if (adult == null) return;
+        adult.moveTo(this.getX(), this.getY(), this.getZ(), this.getYRot(), this.getXRot());
+        if (this.isTame() && this.getOwnerUUID() != null) {
+            adult.tame(this.level().getPlayerByUUID(this.getOwnerUUID()));
+        }
+        serverLevel.addFreshEntity(adult);
+        this.discard();
+    }
+
     private LivingEntity findSomethingToAttack() {
         AABB box = this.getBoundingBox().inflate(20.0, 10.0, 20.0);
         List<LivingEntity> targets = this.level().getEntitiesOfClass(LivingEntity.class, box);
@@ -188,6 +221,35 @@ public class ThePrinceTeen extends TamableAnimal {
     @Override
     public InteractionResult mobInteract(Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
+
+        if (this.isTame() && this.isOwnedBy(player) && this.distanceToSqr(player) < 25.0) {
+            if (stack.is(Items.CAKE)) {
+                if (!this.level().isClientSide) {
+                    this.killCount = 1000;
+                    this.dayCount = 1000;
+                    this.level().broadcastEntityEvent(this, (byte) 7);
+                }
+                if (!player.getAbilities().instabuild) stack.shrink(1);
+                return InteractionResult.sidedSuccess(this.level().isClientSide);
+            }
+
+            if (stack.is(Items.GOLD_INGOT)) {
+                if (!this.level().isClientSide && this.level() instanceof ServerLevel serverLevel) {
+                    ThePrince baby = ModEntities.THE_PRINCE.get().create(serverLevel);
+                    if (baby != null) {
+                        baby.moveTo(this.getX(), this.getY(), this.getZ(), this.getYRot(), this.getXRot());
+                        if (this.getOwnerUUID() != null) {
+                            baby.tame(this.level().getPlayerByUUID(this.getOwnerUUID()));
+                        }
+                        serverLevel.addFreshEntity(baby);
+                        this.discard();
+                    }
+                }
+                if (!player.getAbilities().instabuild) stack.shrink(1);
+                return InteractionResult.sidedSuccess(this.level().isClientSide);
+            }
+        }
+
         if (stack.has(net.minecraft.core.component.DataComponents.FOOD) && this.distanceToSqr(player) < 25.0) {
             if (!this.level().isClientSide) this.heal(this.getMaxHealth() - this.getHealth());
             if (!player.getAbilities().instabuild) stack.shrink(1);
@@ -204,6 +266,25 @@ public class ThePrinceTeen extends TamableAnimal {
     @Override public boolean isFood(ItemStack s) { return s.is(Items.BEEF); }
     @Nullable @Override public AgeableMob getBreedOffspring(ServerLevel l, AgeableMob o) { return null; }
 
-    @Override public void addAdditionalSaveData(CompoundTag tag) { super.addAdditionalSaveData(tag); tag.putInt("TeenActivity", getActivity()); tag.putInt("TeenAttacking", getAttacking()); tag.putInt("TeenFire", entityData.get(DATA_FIRE)); tag.putInt("TeenGrow", growCounter); }
-    @Override public void readAdditionalSaveData(CompoundTag tag) { super.readAdditionalSaveData(tag); setActivity(tag.getInt("TeenActivity")); setAttacking(tag.getInt("TeenAttacking")); entityData.set(DATA_FIRE, tag.getInt("TeenFire")); growCounter = tag.getInt("TeenGrow"); }
+    @Override
+    public void addAdditionalSaveData(CompoundTag tag) {
+        super.addAdditionalSaveData(tag);
+        tag.putInt("TeenActivity", getActivity());
+        tag.putInt("TeenAttacking", getAttacking());
+        tag.putInt("TeenFire", entityData.get(DATA_FIRE));
+        tag.putInt("TeenGrow", growCounter);
+        tag.putInt("TeenKill", killCount);
+        tag.putInt("TeenDay", dayCount);
+    }
+
+    @Override
+    public void readAdditionalSaveData(CompoundTag tag) {
+        super.readAdditionalSaveData(tag);
+        setActivity(tag.getInt("TeenActivity"));
+        setAttacking(tag.getInt("TeenAttacking"));
+        entityData.set(DATA_FIRE, tag.getInt("TeenFire"));
+        growCounter = tag.getInt("TeenGrow");
+        killCount = tag.getInt("TeenKill");
+        dayCount = tag.getInt("TeenDay");
+    }
 }

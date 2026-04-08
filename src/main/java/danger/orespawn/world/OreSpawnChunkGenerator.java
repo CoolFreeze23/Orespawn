@@ -7,6 +7,7 @@ import danger.orespawn.ModBlocks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.server.level.WorldGenRegion;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.biome.BiomeSource;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
@@ -29,6 +30,7 @@ public class OreSpawnChunkGenerator extends NoiseBasedChunkGenerator {
 
     private final Holder<NoiseGeneratorSettings> settings;
     private final boolean crystalSurface;
+    private static int recentlyPlaced = 0;
 
     public OreSpawnChunkGenerator(BiomeSource biomeSource, Holder<NoiseGeneratorSettings> settings, boolean crystalSurface) {
         super(biomeSource, settings);
@@ -44,6 +46,9 @@ public class OreSpawnChunkGenerator extends NoiseBasedChunkGenerator {
     @Override
     public void buildSurface(WorldGenRegion region, StructureManager structures, RandomState randomState, ChunkAccess chunk) {
         super.buildSurface(region, structures, randomState, chunk);
+
+        placeDungeons(region, chunk);
+
         if (!crystalSurface) return;
 
         BlockState crystalGrass = ModBlocks.CRYSTAL_GRASS.get().defaultBlockState();
@@ -77,6 +82,36 @@ public class OreSpawnChunkGenerator extends NoiseBasedChunkGenerator {
                     }
                     break;
                 }
+            }
+        }
+    }
+
+    private void placeDungeons(WorldGenRegion region, ChunkAccess chunk) {
+        if (recentlyPlaced > 0) {
+            --recentlyPlaced;
+            return;
+        }
+
+        RandomSource random = region.getRandom();
+        int cx = chunk.getPos().getMinBlockX();
+        int cz = chunk.getPos().getMinBlockZ();
+
+        if (crystalSurface) {
+            if (random.nextInt(15) == 0) {
+                int y = 10 + random.nextInt(10);
+                BlockPos pos = new BlockPos(cx + 8, y, cz + 8);
+                if (GenericDungeon.tryPlaceRubyDungeon(region, random, pos)) {
+                    recentlyPlaced = 50;
+                    return;
+                }
+            }
+        }
+
+        if (random.nextInt(16) == 0) {
+            int y = 5 + random.nextInt(40);
+            BlockPos pos = new BlockPos(cx + 8, y, cz + 8);
+            if (GenericDungeon.tryPlaceGenericDungeon(region, random, pos)) {
+                recentlyPlaced = 50;
             }
         }
     }
