@@ -151,6 +151,13 @@ public class ModelGiantRobot extends EntityModel<GiantRobot> {
     public void setupAnim(GiantRobot entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
         this.head.yRot = (float) Math.toRadians(netHeadYaw);
         this.head.xRot = (float) Math.toRadians(headPitch) / 3.0F;
+
+        // Subtle idle arm sway so the model doesn't look completely frozen
+        float idleSway = Mth.cos(ageInTicks * 0.05F) * 0.04F;
+        this.arm1.xRot = idleSway;
+        this.arm2.xRot = idleSway;
+        this.arm3.xRot = idleSway;
+        this.knuckles.xRot = idleSway;
     }
 
     @Override

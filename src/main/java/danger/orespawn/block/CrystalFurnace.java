@@ -52,6 +52,11 @@ public class CrystalFurnace extends BaseEntityBlock {
     }
 
     @Override
+    protected boolean skipRendering(BlockState state, BlockState adjacentState, Direction direction) {
+        return adjacentState.is(this) || super.skipRendering(state, adjacentState, direction);
+    }
+
+    @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         builder.add(FACING, LIT);
     }

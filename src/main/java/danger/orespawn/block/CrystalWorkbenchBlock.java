@@ -10,21 +10,27 @@ import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ContainerLevelAccess;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
+import net.minecraft.core.Direction;
+import net.minecraft.world.level.block.TransparentBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 
 /**
  * Crystal Workbench block -- a crafting table variant for the Crystal dimension.
- * Opens a 3x3 crafting GUI that uses the standard recipe system, allowing
- * all vanilla and modded recipes to be crafted.
+ * Opens a 3x3 crafting GUI that uses the standard recipe system.
+ * Extends {@link TransparentBlock} for see-through crystal rendering.
  */
-public class CrystalWorkbenchBlock extends Block {
+public class CrystalWorkbenchBlock extends TransparentBlock {
 
     private static final Component CONTAINER_TITLE = Component.translatable("container.orespawn.crystal_workbench");
 
     public CrystalWorkbenchBlock(Properties properties) {
         super(properties);
+    }
+
+    @Override
+    protected boolean skipRendering(BlockState state, BlockState adjacentState, Direction direction) {
+        return adjacentState.is(this) || super.skipRendering(state, adjacentState, direction);
     }
 
     @Override

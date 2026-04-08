@@ -68,15 +68,15 @@ public class ModEntities {
 
     public static final DeferredHolder<EntityType<?>, EntityType<GiantRobot>> GIANT_ROBOT =
             ENTITY_TYPES.register("giant_robot", () -> EntityType.Builder.of(GiantRobot::new, MobCategory.MONSTER)
-                    .sized(3.0f, 6.0f).clientTrackingRange(16).build("giant_robot"));
+                    .sized(4.0f, 10.0f).clientTrackingRange(16).build("giant_robot"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<Jeffery>> JEFFERY =
             ENTITY_TYPES.register("jeffery", () -> EntityType.Builder.of(Jeffery::new, MobCategory.MONSTER)
-                    .sized(3.0f, 6.0f).clientTrackingRange(16).build("jeffery"));
+                    .sized(4.0f, 10.0f).clientTrackingRange(16).build("jeffery"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<Hammerhead>> HAMMERHEAD =
             ENTITY_TYPES.register("hammerhead", () -> EntityType.Builder.of(Hammerhead::new, MobCategory.MONSTER)
-                    .sized(1.5f, 1.0f).clientTrackingRange(10).build("hammerhead"));
+                    .sized(2.8f, 1.8f).clientTrackingRange(10).build("hammerhead"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<Irukandji>> IRUKANDJI =
             ENTITY_TYPES.register("irukandji", () -> EntityType.Builder.of(Irukandji::new, MobCategory.MONSTER)
@@ -84,7 +84,7 @@ public class ModEntities {
 
     public static final DeferredHolder<EntityType<?>, EntityType<Nastysaurus>> NASTYSAURUS =
             ENTITY_TYPES.register("nastysaurus", () -> EntityType.Builder.of(Nastysaurus::new, MobCategory.MONSTER)
-                    .sized(1.5f, 2.0f).clientTrackingRange(10).build("nastysaurus"));
+                    .sized(2.0f, 2.8f).clientTrackingRange(10).build("nastysaurus"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<PitchBlack>> PITCH_BLACK =
             ENTITY_TYPES.register("pitch_black", () -> EntityType.Builder.of(PitchBlack::new, MobCategory.MONSTER)
@@ -116,7 +116,7 @@ public class ModEntities {
 
     public static final DeferredHolder<EntityType<?>, EntityType<SeaMonster>> SEA_MONSTER =
             ENTITY_TYPES.register("sea_monster", () -> EntityType.Builder.of(SeaMonster::new, MobCategory.MONSTER)
-                    .sized(2.0f, 2.0f).clientTrackingRange(10).build("sea_monster"));
+                    .sized(5.0f, 5.0f).clientTrackingRange(10).build("sea_monster"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<SeaViper>> SEA_VIPER =
             ENTITY_TYPES.register("sea_viper", () -> EntityType.Builder.of(SeaViper::new, MobCategory.MONSTER)
@@ -136,11 +136,11 @@ public class ModEntities {
 
     public static final DeferredHolder<EntityType<?>, EntityType<Godzilla>> GODZILLA =
             ENTITY_TYPES.register("godzilla", () -> EntityType.Builder.of(Godzilla::new, MobCategory.MONSTER)
-                    .sized(8.0f, 16.0f).clientTrackingRange(16).build("godzilla"));
+                    .sized(14.0f, 24.0f).clientTrackingRange(16).build("godzilla"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<Kraken>> KRAKEN =
             ENTITY_TYPES.register("kraken", () -> EntityType.Builder.of(Kraken::new, MobCategory.MONSTER)
-                    .sized(6.0f, 6.0f).clientTrackingRange(16).build("kraken"));
+                    .sized(12.0f, 10.0f).clientTrackingRange(16).build("kraken"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<TheKing>> THE_KING =
             ENTITY_TYPES.register("the_king", () -> EntityType.Builder.of(TheKing::new, MobCategory.MONSTER)
@@ -148,7 +148,7 @@ public class ModEntities {
 
     public static final DeferredHolder<EntityType<?>, EntityType<TheQueen>> THE_QUEEN =
             ENTITY_TYPES.register("the_queen", () -> EntityType.Builder.of(TheQueen::new, MobCategory.MONSTER)
-                    .sized(5.0f, 8.0f).clientTrackingRange(16).build("the_queen"));
+                    .sized(12.0f, 16.0f).clientTrackingRange(16).build("the_queen"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<EntityBee>> ENTITY_BEE =
             ENTITY_TYPES.register("bee", () -> EntityType.Builder.of(EntityBee::new, MobCategory.MONSTER)
@@ -282,11 +282,11 @@ public class ModEntities {
 
     public static final DeferredHolder<EntityType<?>, EntityType<Island>> ISLAND =
             ENTITY_TYPES.register("island", () -> EntityType.Builder.of(Island::new, MobCategory.CREATURE)
-                    .sized(3.0f, 3.0f).clientTrackingRange(10).build("island"));
+                    .sized(10.0f, 6.0f).clientTrackingRange(16).build("island"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<IslandToo>> ISLAND_TOO =
             ENTITY_TYPES.register("island_too", () -> EntityType.Builder.of(IslandToo::new, MobCategory.CREATURE)
-                    .sized(3.0f, 3.0f).clientTrackingRange(10).build("island_too"));
+                    .sized(10.0f, 6.0f).clientTrackingRange(16).build("island_too"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<Peacock>> PEACOCK =
             ENTITY_TYPES.register("peacock", () -> EntityType.Builder.of(Peacock::new, MobCategory.CREATURE)
@@ -412,7 +412,7 @@ public class ModEntities {
 
     public static final DeferredHolder<EntityType<?>, EntityType<WaterDragon>> WATER_DRAGON =
             ENTITY_TYPES.register("water_dragon", () -> EntityType.Builder.of(WaterDragon::new, MobCategory.CREATURE)
-                    .sized(1.5f, 2.0f).clientTrackingRange(10).build("water_dragon"));
+                    .sized(3.5f, 4.5f).clientTrackingRange(10).build("water_dragon"));
 
     // ==================== AMBIENT ====================
 
@@ -446,7 +446,7 @@ public class ModEntities {
 
     public static final DeferredHolder<EntityType<?>, EntityType<Mothra>> MOTHRA =
             ENTITY_TYPES.register("mothra", () -> EntityType.Builder.of(Mothra::new, MobCategory.AMBIENT)
-                    .sized(2.0f, 1.5f).clientTrackingRange(10).build("mothra"));
+                    .sized(8.0f, 4.0f).clientTrackingRange(16).build("mothra"));
 
     // ==================== MISC (Mob) ====================
 

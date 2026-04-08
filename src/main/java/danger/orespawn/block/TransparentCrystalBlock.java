@@ -6,12 +6,15 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 
 /**
- * Crystal dimension grass block. Supports planting on top.
- * Extends {@link TransparentBlock} so light passes through and adjacent
- * faces between identical blocks are culled (no seam artifacts).
+ * A fully see-through crystal block (like stained glass).
+ * Extends {@link TransparentBlock} which:
+ *  - Propagates skylight downward (no shadow underneath)
+ *  - Culls adjacent faces between identical blocks (no edge seams)
+ *  - Returns 0 from getLightBlock (light passes through)
  */
-public class CrystalGrass extends TransparentBlock {
-    public CrystalGrass(BlockBehaviour.Properties properties) {
+public class TransparentCrystalBlock extends TransparentBlock {
+
+    public TransparentCrystalBlock(BlockBehaviour.Properties properties) {
         super(properties);
     }
 

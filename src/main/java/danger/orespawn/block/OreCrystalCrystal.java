@@ -5,15 +5,17 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
+import net.minecraft.core.Direction;
+import net.minecraft.world.level.block.TransparentBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 
 /**
  * Crystal dimension crystal ore. Sparkles with firework/flame particles.
- * CrystalCrystal variant has a chance to explode when broken.
+ * Extends {@link TransparentBlock} so light passes through and adjacent
+ * faces between identical blocks are culled (no seam artifacts).
  */
-public class OreCrystalCrystal extends Block {
+public class OreCrystalCrystal extends TransparentBlock {
     private static final int ANIMATE_TICK_ROLL_BOUND = 20;
     private static final float PARTICLE_CENTER_OFFSET = 0.5f;
     private static final double PARTICLE_VELOCITY_SCALE = 4.0;
@@ -32,6 +34,11 @@ public class OreCrystalCrystal extends Block {
 
     public OreCrystalCrystal(BlockBehaviour.Properties properties) {
         this(properties, false, false);
+    }
+
+    @Override
+    protected boolean skipRendering(BlockState state, BlockState adjacentState, Direction direction) {
+        return adjacentState.is(this) || super.skipRendering(state, adjacentState, direction);
     }
 
     @Override
