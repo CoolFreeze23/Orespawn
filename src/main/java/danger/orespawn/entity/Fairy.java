@@ -2,6 +2,7 @@ package danger.orespawn.entity;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.UUID;
 import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
@@ -32,6 +33,28 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import danger.orespawn.OreSpawnMod;
 
+/**
+ * Fairy — ambient flying helper mob ported from 1.7.10 OreSpawn.
+ *
+ * Behavior:
+ * - During daytime (first 12000 ticks of the day) Fairy idles and emits no particles.
+ * - At night the Fairy blinks and may hunt nearby {@link Monster}s within 8 blocks.
+ * - If tamed (has {@code myowner} UUID), the Fairy follows its owner and teleports
+ *   when the owner is more than 16 blocks away.
+ *
+ * 1.21.1 paradigm shift:
+ * - Replaces the 1.7.10 {@code DataWatcher} with {@link SynchedEntityData}
+ *   (see {@link #FAIRY_TYPE}).
+ * - NBT now uses {@link CompoundTag} and the addAdditionalSaveData / readAdditionalSaveData
+ *   contract instead of writeEntityToNBT/readEntityFromNBT.
+ *
+ * Defensive coding:
+ * - {@code myowner} is persisted as a UUID string; the legacy NBT path writes
+ *   the literal "null" when no owner exists, and spawner-spawned Fairies have an
+ *   empty-string value on first read. Both cases are normalized to {@code null}
+ *   and {@link UUID#fromString(String)} is wrapped in a try/catch to guarantee
+ *   a malformed UUID never crashes the server AI tick loop.
+ */
 public class Fairy extends AmbientCreature {
     private static final long DAY_LENGTH_TICKS = 24000L;
     private static final long DAYTIME_BLINK_END_TICK = 12000L;
@@ -160,8 +183,16 @@ public class Fairy extends AmbientCreature {
                     this.doHurtTarget(monsterTarget);
                 }
             }
-        } else if (this.myowner != null) {
-            Player owner = this.level().getPlayerByUUID(java.util.UUID.fromString(this.myowner));
+        } else if (this.myowner != null && !this.myowner.isEmpty()) {
+            // Defensive: malformed UUID strings from legacy saves or NBT tampering
+            // must not crash the server tick. We clear myowner on parse failure so
+            // the Fairy reverts to unowned behavior.
+            Player owner = null;
+            try {
+                owner = this.level().getPlayerByUUID(UUID.fromString(this.myowner));
+            } catch (IllegalArgumentException ignored) {
+                this.myowner = null;
+            }
             if (owner != null) {
                 if (this.distanceToSqr(owner) > FOLLOW_OWNER_DISTANCE_SQR) {
                     this.currentFlightTarget = new BlockPos(
@@ -248,8 +279,11 @@ public class Fairy extends AmbientCreature {
     @Override
     public void readAdditionalSaveData(CompoundTag tag) {
         super.readAdditionalSaveData(tag);
+        // Legacy saves wrote the literal "null" string; spawner-spawned entities
+        // have an empty-string value on first read. Both become a true null so
+        // the owner-follow branch in customServerAiStep is skipped safely.
         this.myowner = tag.getString("MyOwner");
-        if ("null".equals(this.myowner)) this.myowner = null;
+        if ("null".equals(this.myowner) || this.myowner.isEmpty()) this.myowner = null;
         this.setFairyType(tag.getInt("FairyType"));
     }
 }

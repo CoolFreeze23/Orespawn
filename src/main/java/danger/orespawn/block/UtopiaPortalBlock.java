@@ -14,6 +14,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.world.level.portal.DimensionTransition;
 import net.minecraft.world.phys.Vec3;
 
 /**
@@ -51,8 +52,16 @@ public class UtopiaPortalBlock extends Block {
         ServerLevel destLevel = currentLevel.getServer().getLevel(destination);
         if (destLevel == null) return;
 
-        player.teleportTo(destLevel, player.getX(), Math.max(destLevel.getMinBuildHeight() + 1, 64),
-                player.getZ(), player.getYRot(), player.getXRot());
+        double y = Math.max(destLevel.getMinBuildHeight() + 1, 64);
+        DimensionTransition transition = new DimensionTransition(
+                destLevel,
+                new Vec3(player.getX(), y, player.getZ()),
+                Vec3.ZERO,
+                player.getYRot(),
+                player.getXRot(),
+                DimensionTransition.DO_NOTHING
+        );
+        player.changeDimension(transition);
     }
 
     @Override

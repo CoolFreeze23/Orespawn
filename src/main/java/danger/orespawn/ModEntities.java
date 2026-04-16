@@ -265,7 +265,7 @@ public class ModEntities {
                     .sized(0.4f, 0.6f).clientTrackingRange(8).build("easter_bunny"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<Flounder>> FLOUNDER =
-            ENTITY_TYPES.register("flounder", () -> EntityType.Builder.of(Flounder::new, MobCategory.CREATURE)
+            ENTITY_TYPES.register("flounder", () -> EntityType.Builder.of(Flounder::new, MobCategory.WATER_CREATURE)
                     .sized(0.5f, 0.3f).clientTrackingRange(8).build("flounder"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<Frog>> FROG =

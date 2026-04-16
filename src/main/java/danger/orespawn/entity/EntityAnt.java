@@ -28,6 +28,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.portal.DimensionTransition;
+import net.minecraft.world.phys.Vec3;
 
 import java.util.List;
 
@@ -93,8 +95,9 @@ public class EntityAnt extends Animal {
 
     /**
      * Right-clicking an ant with an empty hand teleports the player to this ant's
-     * target dimension, or back to the Overworld if already there. Mirrors the
-     * original 1.7.10 interact() -> transferPlayerToDimension() behavior.
+     * target dimension, or back to the Overworld if already there. Uses the
+     * vanilla {@link DimensionTransition} pipeline so the client sees a
+     * "Loading terrain..." screen instead of a hard freeze.
      */
     @Override
     public InteractionResult mobInteract(Player player, InteractionHand hand) {
@@ -118,18 +121,31 @@ public class EntityAnt extends Animal {
         double z = serverPlayer.getZ();
         int safeY = findSafeY(destLevel, BlockPos.containing(x, 0, z));
 
-        serverPlayer.teleportTo(destLevel, x, safeY, z,
-                serverPlayer.getYRot(), serverPlayer.getXRot());
-
-        serverPlayer.playSound(SoundEvents.ENDERMAN_TELEPORT, 1.0f, 1.0f);
+        DimensionTransition transition = new DimensionTransition(
+                destLevel,
+                new Vec3(x, safeY, z),
+                Vec3.ZERO,
+                serverPlayer.getYRot(),
+                serverPlayer.getXRot(),
+                e -> e.playSound(SoundEvents.ENDERMAN_TELEPORT, 1.0f, 1.0f)
+        );
+        serverPlayer.changeDimension(transition);
         return InteractionResult.SUCCESS;
     }
 
     /**
      * Scans from Y=256 downward to find a safe landing spot (solid block with
      * 2 air blocks above). Falls back to Y=64 if nothing suitable is found.
+     * Skips the scan entirely for unloaded chunks to avoid triggering
+     * synchronous chunk generation that freezes the server thread.
      */
     public static int findSafeY(ServerLevel level, BlockPos column) {
+        int chunkX = column.getX() >> 4;
+        int chunkZ = column.getZ() >> 4;
+        if (!level.hasChunk(chunkX, chunkZ)) {
+            return Math.max(level.getSeaLevel() + 1, 64);
+        }
+
         int minY = level.getMinBuildHeight();
         for (int y = Math.min(256, level.getMaxBuildHeight() - 1); y > minY; y--) {
             BlockPos feet = new BlockPos(column.getX(), y, column.getZ());
