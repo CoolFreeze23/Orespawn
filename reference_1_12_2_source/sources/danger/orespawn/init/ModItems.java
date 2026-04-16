@@ -1,0 +1,193 @@
+/*
+ * Decompiled with CFR 0.152.
+ * 
+ * Could not load the following classes:
+ *  net.minecraft.entity.monster.EntityCreeper
+ *  net.minecraft.entity.monster.EntityGhast
+ *  net.minecraft.entity.monster.EntityZombie
+ *  net.minecraft.entity.passive.EntityCow
+ *  net.minecraft.entity.passive.EntityHorse
+ *  net.minecraft.entity.passive.EntityPig
+ *  net.minecraft.inventory.EntityEquipmentSlot
+ *  net.minecraft.item.Item
+ */
+package danger.orespawn.init;
+
+import danger.orespawn.entity.Alien;
+import danger.orespawn.entity.Alosaurus;
+import danger.orespawn.entity.Baryonyx;
+import danger.orespawn.entity.Beaver;
+import danger.orespawn.entity.Bird;
+import danger.orespawn.entity.Brutalfly;
+import danger.orespawn.entity.Butterfly;
+import danger.orespawn.entity.Camarasaurus;
+import danger.orespawn.entity.Cassowary;
+import danger.orespawn.entity.CaveFisher;
+import danger.orespawn.entity.Cryolophosaurus;
+import danger.orespawn.entity.Dragonfly;
+import danger.orespawn.entity.Firefly;
+import danger.orespawn.entity.GammaMetroid;
+import danger.orespawn.entity.Kyuubi;
+import danger.orespawn.entity.Mantis;
+import danger.orespawn.entity.Mosquito;
+import danger.orespawn.entity.Moth;
+import danger.orespawn.entity.Mothra;
+import danger.orespawn.entity.Nastysaurus;
+import danger.orespawn.entity.Pointysaurus;
+import danger.orespawn.entity.RedAnt;
+import danger.orespawn.entity.RedCow;
+import danger.orespawn.entity.Spyro;
+import danger.orespawn.entity.StinkBug;
+import danger.orespawn.entity.TRex;
+import danger.orespawn.entity.Termite;
+import danger.orespawn.entity.VelocityRaptor;
+import danger.orespawn.entity.WormDoom;
+import danger.orespawn.entity.WormLarge;
+import danger.orespawn.entity.WormMedium;
+import danger.orespawn.entity.WormSmall;
+import danger.orespawn.items.CritterCage;
+import danger.orespawn.items.ItemBasic;
+import danger.orespawn.items.ItemButterflySeed;
+import danger.orespawn.items.ItemFireflySeed;
+import danger.orespawn.items.ItemGenericEgg;
+import danger.orespawn.items.ItemMosquitoSeed;
+import danger.orespawn.items.ItemMothSeed;
+import danger.orespawn.items.armor.ArmorBase;
+import danger.orespawn.items.armor.OrespawnArmorMaterial;
+import danger.orespawn.items.food.ItemCorn;
+import danger.orespawn.items.tools.EmeraldAxe;
+import danger.orespawn.items.tools.EmeraldHoe;
+import danger.orespawn.items.tools.EmeraldPickaxe;
+import danger.orespawn.items.tools.EmeraldShovel;
+import danger.orespawn.items.tools.EmeraldSword;
+import danger.orespawn.items.tools.GenericAxe;
+import danger.orespawn.items.tools.GenericHoe;
+import danger.orespawn.items.tools.GenericPickaxe;
+import danger.orespawn.items.tools.GenericShovel;
+import danger.orespawn.items.tools.GenericSword;
+import danger.orespawn.items.tools.OrespawnToolMaterial;
+import danger.orespawn.items.tools.UltimateAxe;
+import danger.orespawn.items.tools.UltimateHoe;
+import danger.orespawn.items.tools.UltimatePickaxe;
+import danger.orespawn.items.tools.UltimateShovel;
+import danger.orespawn.items.tools.UltimateSword;
+import java.util.ArrayList;
+import java.util.List;
+import net.minecraft.entity.monster.EntityCreeper;
+import net.minecraft.entity.monster.EntityGhast;
+import net.minecraft.entity.monster.EntityZombie;
+import net.minecraft.entity.passive.EntityCow;
+import net.minecraft.entity.passive.EntityHorse;
+import net.minecraft.entity.passive.EntityPig;
+import net.minecraft.inventory.EntityEquipmentSlot;
+import net.minecraft.item.Item;
+
+public class ModItems {
+    public static final List<Item> ITEMS = new ArrayList<Item>();
+    public static final Item URANIUM_NUGGET = new ItemBasic("uranium_nugget");
+    public static final Item TITANIUM_NUGGET = new ItemBasic("titanium_nugget");
+    public static final Item URANIUM_INGOT = new ItemBasic("uranium_ingot");
+    public static final Item TITANIUM_INGOT = new ItemBasic("titanium_ingot");
+    public static final Item TREX_TOOTH = new ItemBasic("trextooth");
+    public static final Item EMPTY_CAGE = new CritterCage(null, "empty_cage");
+    public static final Item ALOSAURUS_CAGE = new CritterCage(Alosaurus.class, "alosaurus_cage", 0.4f);
+    public static final Item TREX_CAGE = new CritterCage(TRex.class, "trex_cage", 0.4f);
+    public static final Item COW_CAGE = new CritterCage(EntityCow.class, "cow_cage", 0.4f);
+    public static final Item CREEPER_CAGE = new CritterCage(EntityCreeper.class, "creeper_cage", 0.4f);
+    public static final Item GHAST_CAGE = new CritterCage(EntityGhast.class, "ghast_cage", 0.4f);
+    public static final Item HORSE_CAGE = new CritterCage(EntityHorse.class, "horse_cage", 0.4f);
+    public static final Item PIG_CAGE = new CritterCage(EntityPig.class, "pig_cage", 0.4f);
+    public static final Item ZOMBIE_CAGE = new CritterCage(EntityZombie.class, "zombie_cage", 0.4f);
+    public static final Item GAMMAMETROID_CAGE = new CritterCage(GammaMetroid.class, "gammametroid_cage", 0.4f);
+    public static final Item SPYRO_CAGE = new CritterCage(Spyro.class, "spyro_cage", 0.4f);
+    public static final Item DRAGONFLY_CAGE = new CritterCage(Dragonfly.class, "dragonfly_cage", 0.4f);
+    public static final Item FIREFLY_CAGE = new CritterCage(Firefly.class, "firefly_cage", 0.4f);
+    public static final Item NASTYSAURUS_CAGE = new CritterCage(Nastysaurus.class, "nastysaurus_cage", 0.4f);
+    public static final Item ALIEN_CAGE = new CritterCage(Alien.class, "alien_cage", 0.4f);
+    public static final Item VELOCITYRAPTOR_CAGE = new CritterCage(VelocityRaptor.class, "velocityraptor_cage", 0.4f);
+    public static final Item ULTIMATE_HELMET = new ArmorBase("ultimate_helmet", OrespawnArmorMaterial.UltimateArmor, EntityEquipmentSlot.HEAD);
+    public static final Item ULTIMATE_CHESTPLATE = new ArmorBase("ultimate_chestplate", OrespawnArmorMaterial.UltimateArmor, EntityEquipmentSlot.CHEST);
+    public static final Item ULTIMATE_LEGGINGS = new ArmorBase("ultimate_leggings", OrespawnArmorMaterial.UltimateArmor, EntityEquipmentSlot.LEGS);
+    public static final Item ULTIMATE_BOOTS = new ArmorBase("ultimate_boots", OrespawnArmorMaterial.UltimateArmor, EntityEquipmentSlot.FEET);
+    public static final Item EMERALD_HELMET = new ArmorBase("emerald_helmet", OrespawnArmorMaterial.EmeraldArmor, EntityEquipmentSlot.HEAD);
+    public static final Item EMERALD_CHESTPLATE = new ArmorBase("emerald_chestplate", OrespawnArmorMaterial.EmeraldArmor, EntityEquipmentSlot.CHEST);
+    public static final Item EMERALD_LEGGINGS = new ArmorBase("emerald_leggings", OrespawnArmorMaterial.EmeraldArmor, EntityEquipmentSlot.LEGS);
+    public static final Item EMERALD_BOOTS = new ArmorBase("emerald_boots", OrespawnArmorMaterial.EmeraldArmor, EntityEquipmentSlot.FEET);
+    public static final Item ULTIMATE_PICKAXE = new UltimatePickaxe();
+    public static final Item ULTIMATE_SWORD = new UltimateSword();
+    public static final Item ULTIMATE_AXE = new UltimateAxe();
+    public static final Item ULTIMATE_SHOVEL = new UltimateShovel();
+    public static final Item ULTIMATE_HOE = new UltimateHoe();
+    public static final Item EMERALD_PICKAXE = new EmeraldPickaxe();
+    public static final Item EMERALD_SWORD = new EmeraldSword();
+    public static final Item EMERALD_AXE = new EmeraldAxe();
+    public static final Item EMERALD_SHOVEL = new EmeraldShovel();
+    public static final Item EMERALD_HOE = new EmeraldHoe();
+    public static final Item AMETHYST_PICKAXE = new GenericPickaxe("amethyst_pickaxe", OrespawnToolMaterial.AmethystTools);
+    public static final Item AMETHYST_SWORD = new GenericSword("amethyst_sword", OrespawnToolMaterial.AmethystTools);
+    public static final Item AMETHYST_AXE = new GenericAxe("amethyst_axe", OrespawnToolMaterial.AmethystTools);
+    public static final Item AMETHYST_SHOVEL = new GenericShovel("amethyst_shovel", OrespawnToolMaterial.AmethystTools);
+    public static final Item AMETHYST_HOE = new GenericHoe("amethyst_hoe", OrespawnToolMaterial.AmethystTools);
+    public static final Item CORN = new ItemCorn();
+    public static final Item BUTTERFLY_SEED = new ItemButterflySeed();
+    public static final Item MOSQUITO_SEED = new ItemMosquitoSeed();
+    public static final Item FIREFLY_SEED = new ItemFireflySeed();
+    public static final Item MOTH_SEED = new ItemMothSeed();
+    public static final Item ALOSAURUS_EGG = new ItemGenericEgg("alosaurus_egg", Alosaurus.class);
+    public static final Item BARYONYX_EGG = new ItemGenericEgg("baryonyx_egg", Baryonyx.class);
+    public static final Item CAMARASAURUS_EGG = new ItemGenericEgg("camarasaurus_egg", Camarasaurus.class);
+    public static final Item CRYOLOPHOSAURUS_EGG = new ItemGenericEgg("cryolophosaurus_egg", Cryolophosaurus.class);
+    public static final Item POINTYSAURUS_EGG = new ItemGenericEgg("pointysaurus_egg", Pointysaurus.class);
+    public static final Item TREX_EGG = new ItemGenericEgg("trex_egg", TRex.class);
+    public static final Item CAVEFISHER_EGG = new ItemGenericEgg("cavefisher_egg", CaveFisher.class);
+    public static final Item BUTTERFLY_EGG = new ItemGenericEgg("butterfly_egg", Butterfly.class);
+    public static final Item BIRD_EGG = new ItemGenericEgg("bird_egg", Bird.class);
+    public static final Item RED_ANT_EGG = new ItemGenericEgg("red_ant_egg", RedAnt.class);
+    public static final Item GAMMAMETROID_EGG = new ItemGenericEgg("gammametroid_egg", GammaMetroid.class);
+    public static final Item SPYRO_EGG = new ItemGenericEgg("spyro_egg", Spyro.class);
+    public static final Item DRAGONFLY_EGG = new ItemGenericEgg("dragonfly_egg", Dragonfly.class);
+    public static final Item FIREFLY_EGG = new ItemGenericEgg("firefly_egg", Firefly.class);
+    public static final Item MOSQUITO_EGG = new ItemGenericEgg("mosquito_egg", Mosquito.class);
+    public static final Item NASTYSAURUS_EGG = new ItemGenericEgg("nastysaurus_egg", Nastysaurus.class);
+    public static final Item ALIEN_EGG = new ItemGenericEgg("alien_egg", Alien.class);
+    public static final Item VELOCITYRAPTOR_EGG = new ItemGenericEgg("velocityraptor_egg", VelocityRaptor.class);
+    public static final Item WORM_TOOTH = new ItemBasic("worm_tooth");
+    public static final Item WORM_FOOD = new ItemBasic("worm_food");
+    public static final Item SMALLWORM_EGG = new ItemGenericEgg("smallworm_egg", WormSmall.class);
+    public static final Item MEDIUMWORM_EGG = new ItemGenericEgg("mediumworm_egg", WormMedium.class);
+    public static final Item LARGEWORM_EGG = new ItemGenericEgg("largeworm_egg", WormLarge.class);
+    public static final Item DOOMWORM_EGG = new ItemGenericEgg("doomworm_egg", WormDoom.class);
+    public static final Item SMALLWORM_CAGE = new CritterCage(WormSmall.class, "smallworm_cage", 0.4f);
+    public static final Item MEDIUMWORM_CAGE = new CritterCage(WormMedium.class, "mediumworm_cage", 0.4f);
+    public static final Item LARGEWORM_CAGE = new CritterCage(WormLarge.class, "largeworm_cage", 0.4f);
+    public static final Item MOTH_EGG = new ItemGenericEgg("moth_egg", Moth.class);
+    public static final Item KYUUBI_EGG = new ItemGenericEgg("kyuubi_egg", Kyuubi.class);
+    public static final Item MANTIS_EGG = new ItemGenericEgg("mantis_egg", Mantis.class);
+    public static final Item MONTHRA_EGG = new ItemGenericEgg("mothra_egg", Mothra.class);
+    public static final Item BRUTALFLY_EGG = new ItemGenericEgg("brutalfly_egg", Brutalfly.class);
+    public static final Item BEAVER_EGG = new ItemGenericEgg("beaver_egg", Beaver.class);
+    public static final Item KYUUBI_CAGE = new CritterCage(Kyuubi.class, "kyuubi_cage", 0.4f);
+    public static final Item MANTIS_CAGE = new CritterCage(Mantis.class, "mantis_cage", 0.4f);
+    public static final Item MONTHRA_CAGE = new CritterCage(Mothra.class, "mothra_cage", 0.4f);
+    public static final Item BRUTALFLY_CAGE = new CritterCage(Brutalfly.class, "brutalfly_cage", 0.4f);
+    public static final Item BEAVER_CAGE = new CritterCage(Beaver.class, "beaver_cage", 0.4f);
+    public static final Item MOTH_SCALE = new ItemBasic("moth_scale");
+    public static final Item MANTIS_CLAW = new ItemBasic("mantis_claw");
+    public static final Item MOTH_HELMET = new ArmorBase("moth_helmet", OrespawnArmorMaterial.MothArmor, EntityEquipmentSlot.HEAD);
+    public static final Item MOTH_CHESTPLATE = new ArmorBase("moth_chestplate", OrespawnArmorMaterial.MothArmor, EntityEquipmentSlot.CHEST);
+    public static final Item MOTH_LEGGINGS = new ArmorBase("moth_leggings", OrespawnArmorMaterial.MothArmor, EntityEquipmentSlot.LEGS);
+    public static final Item MOTH_BOOTS = new ArmorBase("moth_boots", OrespawnArmorMaterial.MothArmor, EntityEquipmentSlot.FEET);
+    public static final Item AMETHYST_HELMET = new ArmorBase("amethyst_helmet", OrespawnArmorMaterial.AmethystArmor, EntityEquipmentSlot.HEAD);
+    public static final Item AMETHYST_CHESTPLATE = new ArmorBase("amethyst_chestplate", OrespawnArmorMaterial.AmethystArmor, EntityEquipmentSlot.CHEST);
+    public static final Item AMETHYST_LEGGINGS = new ArmorBase("amethyst_leggings", OrespawnArmorMaterial.AmethystArmor, EntityEquipmentSlot.LEGS);
+    public static final Item AMETHYST_BOOTS = new ArmorBase("amethyst_boots", OrespawnArmorMaterial.AmethystArmor, EntityEquipmentSlot.FEET);
+    public static final Item AMETHYST = new ItemBasic("amethyst");
+    public static final Item TERMITE_EGG = new ItemGenericEgg("termite_egg", Termite.class);
+    public static final Item CASSOWARY_EGG = new ItemGenericEgg("cassowary_egg", Cassowary.class);
+    public static final Item REDCOW_EGG = new ItemGenericEgg("redcow_egg", RedCow.class);
+    public static final Item STINKBUG_EGG = new ItemGenericEgg("stinkbug_egg", StinkBug.class);
+    public static final Item REDCOW_CAGE = new CritterCage(RedCow.class, "redcow_cage", 0.4f);
+    public static final Item STINKBUG_CAGE = new CritterCage(StinkBug.class, "stinkbug_cage", 0.4f);
+    public static final Item CASSOWARY_CAGE = new CritterCage(Cassowary.class, "cassowary_cage", 0.4f);
+}
+

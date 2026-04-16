@@ -57,15 +57,20 @@ public class CrystalStructures {
 
     /**
      * Simple cooldown to stop multiple large structures from piling up in adjacent
-     * chunks. Decremented each invocation. Static is acceptable because worldgen
-     * for a single dimension is effectively serialized at this phase.
+     * chunks.
+     *
+     * <p>NeoForge 1.21.1 paradigm shift: the {@code applyBiomeDecoration} phase
+     * runs on a worker pool that may invoke this method for several chunks in
+     * parallel. {@link AtomicInteger} guarantees that decrement and reset are
+     * atomic, so two threads can't both observe {@code 0} and place overlapping
+     * mega-structures (Battle Tower, Haunted House) one chunk apart.</p>
      */
-    private static int recentlyPlaced = 0;
+    private static final java.util.concurrent.atomic.AtomicInteger recentlyPlaced =
+            new java.util.concurrent.atomic.AtomicInteger(0);
 
     public static void generate(WorldGenLevel level, RandomSource random, int chunkX, int chunkZ) {
-        if (recentlyPlaced > 0) {
-            recentlyPlaced--;
-        }
+        // Decrement (clamped at 0) once per chunk before any structure attempt.
+        recentlyPlaced.updateAndGet(v -> v > 0 ? v - 1 : 0);
 
         BlockState crystalGrass = ModBlocks.CRYSTAL_GRASS.get().defaultBlockState();
 
@@ -73,7 +78,7 @@ public class CrystalStructures {
 
         placeCrystalTermiteBlocks(level, random, chunkX, chunkZ, crystalGrass);
 
-        if (recentlyPlaced == 0) {
+        if (recentlyPlaced.get() == 0) {
             if (tryPlaceRotatorStation(level, random, chunkX, chunkZ, crystalGrass)) return;
             if (tryPlaceUrchinSpawner(level, random, chunkX, chunkZ, crystalGrass)) return;
             if (tryPlaceCrystalHauntedHouse(level, random, chunkX, chunkZ, crystalGrass)) return;
@@ -125,7 +130,7 @@ public class CrystalStructures {
             } else {
                 buildFairyCastleTree(level, random, posX, posY, posZ);
             }
-            recentlyPlaced = 50;
+            recentlyPlaced.set(50);
             return true;
         }
         return false;
@@ -382,7 +387,7 @@ public class CrystalStructures {
                     fillCrystalChest(container, random);
                 }
 
-                recentlyPlaced = 50;
+                recentlyPlaced.set(50);
                 return true;
             }
         }
@@ -441,7 +446,7 @@ public class CrystalStructures {
                 fillCrystalChest(container, random);
             }
 
-            recentlyPlaced = 50;
+            recentlyPlaced.set(50);
             return true;
         }
         return false;
@@ -464,7 +469,7 @@ public class CrystalStructures {
                 continue;
 
             buildCrystalHauntedHouse(level, random, posX, posY, posZ);
-            recentlyPlaced = 50;
+            recentlyPlaced.set(50);
             return true;
         }
         return false;
@@ -573,7 +578,7 @@ public class CrystalStructures {
                 fillRoundRotatorChest(container, random);
             }
 
-            recentlyPlaced = 50;
+            recentlyPlaced.set(50);
             return true;
         }
         return false;
@@ -596,7 +601,7 @@ public class CrystalStructures {
                 continue;
 
             buildCrystalBattleTower(level, random, posX, posY, posZ);
-            recentlyPlaced = 50;
+            recentlyPlaced.set(50);
             return true;
         }
         return false;
