@@ -22,37 +22,75 @@ import net.minecraft.world.level.levelgen.RandomState;
 import net.minecraft.world.level.StructureManager;
 
 /**
- * Custom chunk generator for OreSpawn dimensions. Extends vanilla's noise-based
- * generator so terrain shape (caves, height variation, biome blending) still
- * benefits from 1.21.1's noise router pipeline, but adds:
+ * Custom chunk generator for every OreSpawn dimension. Extends vanilla's
+ * noise-based generator so terrain shape (caves, height variation, biome
+ * blending) still benefits from 1.21.1's noise router pipeline, but adds:
  *
  * <ul>
  *   <li>Post-terrain block replacement: vanilla stone/grass/dirt become
- *       CrystalStone and CrystalGrass to match the original 1.7.10 palette.</li>
- *   <li>Shallow-water fill: since this generator reuses the overworld noise
- *       settings (which carve huge oceans) we convert shallow seas to land so
- *       the Crystal dimension is mostly walkable, like the original.</li>
+ *       CrystalStone and CrystalGrass to match the original 1.7.10 palette
+ *       (CRYSTAL style only).</li>
+ *   <li>Shallow-water fill: converts shallow seas to land so the Crystal
+ *       dimension is mostly walkable, like the original (CRYSTAL style only).</li>
  *   <li>Custom per-chunk features: mazes, crystal trees, flora, ore veins.</li>
  *   <li>Cross-chunk structures (battle towers, haunted houses) placed in
  *       {@link #applyBiomeDecoration} so neighboring chunks are stable.</li>
+ *   <li>Scraggly tree scatter on floating islands (ISLANDS style) ported from
+ *       1.7.10 {@code ChunkProviderOreSpawn4.addScragglyTrees}.</li>
  * </ul>
  *
- * <p>Codec: exposed via {@link #CODEC} using {@link RecordCodecBuilder}. The
- * {@code crystal_surface} flag is the only OreSpawn-specific field; when false
- * this generator just runs dungeon placement (used by the other five dimensions
- * which use the stock overworld look).</p>
+ * <p><b>Dual-reference context.</b> 1.7.10 shipped six dedicated
+ * {@code ChunkProviderOreSpawn[1-6]} classes. 1.12.2 consolidated common work
+ * behind {@code BiomeProviderSingle} + per-dimension chunk generators. In
+ * 1.21.1 chunk generators are identified by their MapCodec, so registering six
+ * separate codecs is wasteful. Instead we register <em>one</em>
+ * ({@code orespawn:orespawn}) that dispatches on {@link #style}, read from the
+ * dimension JSON's {@code dimension_style} field — see {@link DimensionStyle}
+ * for the rationale.</p>
+ *
+ * <p><b>Thread safety.</b> NeoForge 1.21.1 runs {@link #buildSurface} and
+ * {@link #applyBiomeDecoration} on a worker pool — the generator instance is
+ * shared across all workers for a given dimension. Every field on this class
+ * that is read during generation is either immutable (codec-provided) or
+ * wrapped in {@link java.util.concurrent.atomic.AtomicInteger}. Callees that
+ * need ordering guarantees (dungeon cooldowns, large-structure cooldowns) use
+ * atomic compare/update so two workers can never both pass a "cooldown is 0"
+ * check at the same instant.</p>
+ *
+ * <p><b>Codec fields:</b></p>
+ * <ul>
+ *   <li>{@code biome_source} — forwarded to {@link NoiseBasedChunkGenerator}.</li>
+ *   <li>{@code settings} — {@link NoiseGeneratorSettings} holder (overworld,
+ *       floating_islands, etc). Dimensions pick their noise preset here.</li>
+ *   <li>{@code dimension_style} — optional {@link DimensionStyle} discriminator,
+ *       defaults to {@link DimensionStyle#DEFAULT}.</li>
+ *   <li>{@code crystal_surface} — legacy boolean, still accepted for
+ *       backwards compatibility with pre-Phase-3 dimension JSONs. When
+ *       present and {@code true} it overrides {@code dimension_style} with
+ *       {@link DimensionStyle#CRYSTAL}. New JSONs should use
+ *       {@code dimension_style} instead.</li>
+ * </ul>
  */
 public class OreSpawnChunkGenerator extends NoiseBasedChunkGenerator {
 
+    /**
+     * MapCodec exposing all four fields. We keep {@code crystal_surface} as an
+     * optional boolean for backwards compatibility with dimension JSONs that
+     * predate the {@link DimensionStyle} enum — the constructor folds it into
+     * the effective style when decoding, and always emits {@code false} on
+     * re-encode so new JSONs can rely solely on {@code dimension_style}.
+     */
     public static final MapCodec<OreSpawnChunkGenerator> CODEC = RecordCodecBuilder.mapCodec(instance ->
             instance.group(
                     BiomeSource.CODEC.fieldOf("biome_source").forGetter(ChunkGenerator::getBiomeSource),
                     NoiseGeneratorSettings.CODEC.fieldOf("settings").forGetter(gen -> gen.settings),
-                    Codec.BOOL.optionalFieldOf("crystal_surface", false).forGetter(gen -> gen.crystalSurface)
+                    DimensionStyle.CODEC.optionalFieldOf("dimension_style", DimensionStyle.DEFAULT).forGetter(gen -> gen.style),
+                    Codec.BOOL.optionalFieldOf("crystal_surface", false).forGetter(gen -> false)
             ).apply(instance, OreSpawnChunkGenerator::new)
     );
 
     private final Holder<NoiseGeneratorSettings> settings;
+    private final DimensionStyle style;
     private final boolean crystalSurface;
     /**
      * Per-JVM cooldown that skips dungeon placement for 50 chunks after one is
@@ -69,10 +107,31 @@ public class OreSpawnChunkGenerator extends NoiseBasedChunkGenerator {
     private static final java.util.concurrent.atomic.AtomicInteger recentlyPlaced =
             new java.util.concurrent.atomic.AtomicInteger(0);
 
-    public OreSpawnChunkGenerator(BiomeSource biomeSource, Holder<NoiseGeneratorSettings> settings, boolean crystalSurface) {
+    public OreSpawnChunkGenerator(BiomeSource biomeSource, Holder<NoiseGeneratorSettings> settings,
+                                  DimensionStyle style, boolean legacyCrystalSurface) {
         super(biomeSource, settings);
         this.settings = settings;
-        this.crystalSurface = crystalSurface;
+        // Backwards compatibility: older dimension JSONs used the boolean
+        // `crystal_surface: true` to mean "apply crystal surface rewrite". If
+        // that field is present and truthy and the new `dimension_style` was
+        // left at default, promote the style to CRYSTAL so existing worlds
+        // don't regress.
+        this.style = (style == DimensionStyle.DEFAULT && legacyCrystalSurface)
+                ? DimensionStyle.CRYSTAL : style;
+        this.crystalSurface = this.style == DimensionStyle.CRYSTAL;
+    }
+
+    /**
+     * Convenience overload used by tests and any programmatic instantiation
+     * that doesn't care about the legacy boolean.
+     */
+    public OreSpawnChunkGenerator(BiomeSource biomeSource, Holder<NoiseGeneratorSettings> settings,
+                                  DimensionStyle style) {
+        this(biomeSource, settings, style, false);
+    }
+
+    public DimensionStyle getStyle() {
+        return style;
     }
 
     @Override
@@ -93,10 +152,26 @@ public class OreSpawnChunkGenerator extends NoiseBasedChunkGenerator {
             // decorative and a missed chunk just means no dungeon in that chunk.
         }
 
-        if (!crystalSurface) return;
+        // Dispatch per-dimension surface post-processing. A switch over the
+        // enum keeps every style's hook in one place and compiles to a clean
+        // tableswitch at runtime.
+        switch (style) {
+            case CRYSTAL -> applyCrystalSurface(chunk, region.getRandom());
+            case ISLANDS -> applyIslandsSurface(chunk, region.getRandom());
+            case CHAOS, VILLAGE, UTOPIA, DEFAULT -> {
+                // Pass-through — vanilla noise + the dungeon pass above is
+                // sufficient. These styles exist as named hooks for future
+                // per-dimension tweaks without needing another codec field.
+            }
+        }
+    }
 
-        RandomSource random = region.getRandom();
-
+    /**
+     * Full 1.7.10 Crystal surface rewrite + maze + flora + ore veins. Extracted
+     * from the old inline body so the style dispatch in {@link #buildSurface}
+     * reads top-down without nested branches.
+     */
+    private void applyCrystalSurface(ChunkAccess chunk, RandomSource random) {
         replaceTerrain(chunk);
         CrystalMaze.generate(chunk, random, chunk.getPos().getMinBlockX(), 25, chunk.getPos().getMinBlockZ());
         CrystalTreeGenerator.generate(chunk, random);
@@ -109,21 +184,83 @@ public class OreSpawnChunkGenerator extends NoiseBasedChunkGenerator {
         placeCrystalTermites(chunk, random);
     }
 
+    /**
+     * Islands surface post-process. Expects the dimension JSON to select
+     * {@code "settings": "minecraft:floating_islands"} so vanilla noise already
+     * carves the sky-island shape; we only scatter scraggly oak trees on top,
+     * mirroring 1.7.10 {@code ChunkProviderOreSpawn4.addScragglyTrees} (1–10
+     * attempts per chunk, each looking for an air-over-grass column).
+     */
+    private void applyIslandsSurface(ChunkAccess chunk, RandomSource random) {
+        int attempts = 1 + random.nextInt(10);
+        int minX = chunk.getPos().getMinBlockX();
+        int minZ = chunk.getPos().getMinBlockZ();
+
+        for (int i = 0; i < attempts; i++) {
+            int x = minX + random.nextInt(16);
+            int z = minZ + random.nextInt(16);
+            for (int y = chunk.getMaxBuildHeight() - 1; y > chunk.getMinBuildHeight() + 1; y--) {
+                BlockPos pos = new BlockPos(x, y, z);
+                BlockPos below = new BlockPos(x, y - 1, z);
+                if (!chunk.getBlockState(pos).isAir()) break;
+                if (chunk.getBlockState(below).is(Blocks.GRASS_BLOCK)) {
+                    placeScragglyTree(chunk, random, x, y, z);
+                    break;
+                }
+            }
+        }
+    }
+
+    /**
+     * 4–7 block oak trunk topped with a 3x3 leaf cap. Intentionally minimal
+     * to match the "scraggly" feel from 1.7.10 — cheap to run N times per
+     * chunk and never writes outside the chunk boundary (out-of-chunk writes
+     * during concurrent generation cause chunk pop-in).
+     */
+    private void placeScragglyTree(ChunkAccess chunk, RandomSource random, int x, int y, int z) {
+        int trunkHeight = 4 + random.nextInt(4);
+        BlockState log = Blocks.OAK_LOG.defaultBlockState();
+        BlockState leaves = Blocks.OAK_LEAVES.defaultBlockState();
+
+        for (int j = 0; j < trunkHeight; j++) {
+            setBlockInChunk(chunk, x, y + j, z, log);
+        }
+        int topY = y + trunkHeight;
+        for (int dx = -1; dx <= 1; dx++) {
+            for (int dz = -1; dz <= 1; dz++) {
+                setIfAirInChunk(chunk, x + dx, topY, z + dz, leaves);
+                setIfAirInChunk(chunk, x + dx, topY - 1, z + dz, leaves);
+            }
+        }
+        setIfAirInChunk(chunk, x, topY + 1, z, leaves);
+    }
+
+    private static void setIfAirInChunk(ChunkAccess chunk, int x, int y, int z, BlockState state) {
+        if (!isInChunk(chunk, x, z)) return;
+        BlockPos pos = new BlockPos(x, y, z);
+        if (chunk.getBlockState(pos).isAir()) {
+            chunk.setBlockState(pos, state, false);
+        }
+    }
+
     @Override
     public void applyBiomeDecoration(WorldGenLevel level, ChunkAccess chunk, StructureManager structureManager) {
         super.applyBiomeDecoration(level, chunk, structureManager);
 
-        if (!crystalSurface) return;
-
-        try {
-            // Called in decoration (not surface-build) so adjacent chunks are
-            // generated; this lets large structures (Battle Tower radius=10,
-            // Haunted House 7x7) safely straddle chunk borders.
-            RandomSource random = level.getRandom();
-            CrystalStructures.generate(level, random,
-                    chunk.getPos().getMinBlockX(), chunk.getPos().getMinBlockZ());
-        } catch (Exception e) {
-            // Non-fatal — a failed structure in one chunk doesn't compromise the world.
+        // Decoration (as opposed to buildSurface) runs after neighboring
+        // chunks have also finished their terrain pass, so large
+        // multi-chunk structures are safe to place here. Only Crystal
+        // currently injects work in this phase; keep the switch so new
+        // styles can add their own decoration with zero risk of regressing
+        // the other dimensions.
+        if (style == DimensionStyle.CRYSTAL) {
+            try {
+                RandomSource random = level.getRandom();
+                CrystalStructures.generate(level, random,
+                        chunk.getPos().getMinBlockX(), chunk.getPos().getMinBlockZ());
+            } catch (Exception e) {
+                // Non-fatal: a failed structure in one chunk doesn't compromise the world.
+            }
         }
     }
 
@@ -544,9 +681,11 @@ public class OreSpawnChunkGenerator extends NoiseBasedChunkGenerator {
         }
 
         // Atomic decrement so concurrent chunk-gen threads can't both pass the
-        // gate when the counter is 1.
+        // gate when the counter is 1. decrementAndGet is safe because we never
+        // let the value drop below 0 (we always compareAndSet it to 50 on a
+        // successful placement).
         if (recentlyPlaced.get() > 0) {
-            recentlyPlaced.decrementAndGet();
+            recentlyPlaced.updateAndGet(v -> v > 0 ? v - 1 : 0);
             return;
         }
 
@@ -554,7 +693,10 @@ public class OreSpawnChunkGenerator extends NoiseBasedChunkGenerator {
         int cx = chunk.getPos().getMinBlockX();
         int cz = chunk.getPos().getMinBlockZ();
 
-        if (crystalSurface) {
+        // Crystal dimension gets a dedicated ruby-themed dungeon tier on top
+        // of the generic dungeon roll — mirrors 1.7.10
+        // OreSpawnWorld.addRubyDungeon for dimension 5.
+        if (style == DimensionStyle.CRYSTAL) {
             if (random.nextInt(15) == 0) {
                 int y = 10 + random.nextInt(10);
                 BlockPos pos = new BlockPos(cx + 8, y, cz + 8);
