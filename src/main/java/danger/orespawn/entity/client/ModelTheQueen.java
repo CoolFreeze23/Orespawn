@@ -10,16 +10,40 @@ import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.util.Mth;
 
 /**
- * Hierarchical model for The Queen boss. All 131 model parts are arranged in a
- * true parent-child skeleton so that rotating a parent automatically cascades
- * position and rotation to every descendant. Animations only manipulate
- * xRot / yRot / zRot (and body.y for breathing).
+ * The Queen's entity model, ported from 1.7.10 Techne-generated {@code ModelTheQueen}
+ * (see {@code reference_1_7_10_source/sources/danger/orespawn/ModelTheQueen.java}).
  *
- * Render passes:
- *   1. Opaque  – renderToBuffer (hides membranes, cubes, eyes)
- *   2. Translucent wing membranes – renderWingMembranes (manual chain walk)
- *   3. Fullbright power cubes – renderPowerCubes (manual chain walk)
- *   4. Fullbright eyes – renderEyes (manual chain walk)
+ * <h2>Techne &rarr; Blaze3D paradigm shift</h2>
+ * The legacy 1.7.10 model used flat {@code ModelRenderer} siblings with per-frame
+ * absolute-position fixups inside {@code func_78088_a}. This modern port instead
+ * arranges all 131 parts as a TRUE PARENT/CHILD TREE via
+ * {@link PartDefinition#addOrReplaceChild(String, CubeListBuilder, PartPose)} so
+ * that rotating a parent automatically cascades position and rotation to every
+ * descendant. Animations only manipulate {@code xRot / yRot / zRot} (and
+ * {@code body.y} for breathing), matching modern Blaze3D conventions.
+ *
+ * <h2>Rotations</h2>
+ * All rotation literals are in RADIANS ({@link Mth#PI}, {@link Mth#DEG_TO_RAD},
+ * {@code Mth.cos/sin}) &mdash; matching Blaze3D's {@code xRot/yRot/zRot} fields.
+ * The legacy degree/radian mix from 1.7.10 has been fully normalized.
+ *
+ * <h2>Texture / UV</h2>
+ * Texture is 2048x2048 ({@code thequeentexture.png}, {@code thequeentexture2.png}
+ * for the "happy mood" variant). UV offsets in {@code .texOffs(u, v)} are 1:1
+ * pixel coordinates into that sheet, mirroring the {@code texOffs} values from
+ * the 1.7.10 source.
+ *
+ * <h2>Render passes</h2>
+ * Each pass uses a distinct {@link net.minecraft.client.renderer.RenderType}
+ * buffer, wired up in {@link TheQueenRenderer#render}:
+ * <ol>
+ *   <li>Opaque &mdash; {@link #renderToBuffer} (skips membranes, cubes, eyes).</li>
+ *   <li>Translucent wing membranes &mdash; {@link #renderWingMembranes} (manual
+ *       chain walk, ARGB-tinted).</li>
+ *   <li>Fullbright power cubes &mdash; {@link #renderPowerCubes} (manual chain
+ *       walk, entityCutoutNoCull buffer).</li>
+ *   <li>Fullbright eyes &mdash; {@link #renderEyes} (manual chain walk for glow).</li>
+ * </ol>
  */
 public class ModelTheQueen extends HierarchicalModel<TheQueen> {
 
