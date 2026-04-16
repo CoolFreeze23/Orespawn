@@ -2,11 +2,51 @@
 
 This folder is a **read-only** 1:1 reference for the legacy OreSpawn 1.12.2 jar
 (`Orespawn-1.12.2-V0.8-ConquerantFix.jar`, the ConquerantWolf maintenance fork).
-It is the canonical "source of truth" for porting decisions made in our 1.21.1
-NeoForge codebase under `src/main/java/danger/orespawn/`.
+It is the **primary architectural reference** for porting decisions made in our
+1.21.1 NeoForge codebase under `src/main/java/danger/orespawn/`.
 
 > **Do not modify anything in this folder.** Always treat it as read-only. Add
 > notes in `ORESPAWN_PORTING_AUDIT.md` (project root) instead.
+
+## Dual-Reference Policy (IMPORTANT)
+
+We maintain **two** legacy reference trees in this repository and **both are
+authoritative**. Use them for different things:
+
+| Reach for…         | When you need…                                                 |
+|--------------------|----------------------------------------------------------------|
+| `reference_1_12_2_source/` (this folder) | Modern-ish patterns: vanilla JSON loot tables, vanilla JSON recipes, AI goal classes (`MyEntityAI*`), event-driven world decoration (`TERRAIN_GEN_BUS`), cross-dimension teleport helpers (`util/Teleport.java`), `RegistryEvent`-based registration (`util/handlers/RegistryHandler.java`), `ItemEnchantments` builder, and the master ID inventory (`OreSpawnConstants.java`, `@Deprecated` but an ideal porting checklist). Also the cleanest source for things that survived into the maintenance fork (Alien poison/torch logic, Worm burrow cycle, GenericDungeon spawner variety). |
+| `reference_1_7_10_source/` | Content that was **stripped from 1.12.2 but still lives in the full OreSpawn design**: the multi-part boss framework (The King, The Queen, Godzilla), every custom dimension (Crystal, Utopia, Chaos, Village, Islands), the Fairy Tree / Battle Tower / Haunted House / Rotator Station / Urchin Spawner / Round Rotator / Fairy Castle Tree structure set, the full 146-entity roster, structure spawners (KingSpawner, QueenSpawner, DungeonSpawner), and anything involving `EntityDragonPart` / `IEntityMultiPart`. |
+
+**Rule of thumb:** if the feature still exists in 1.12.2, port from 1.12.2
+(cleaner decompilation, modern patterns). If 1.12.2 is missing it entirely
+(check by searching this folder first), fall back to 1.7.10.
+
+**Never** cite `OreSpawnConstants.java` as proof a feature is implemented —
+that file lists every ID the full mod *was designed* to have, including things
+stripped from both 1.12.2 and 1.7.10. It's a checklist, not a manifest.
+
+### Things the 1.12.2 fork deliberately **strips** (so always use 1.7.10)
+
+- Multi-part boss entities: **The King**, **The Queen**, **Godzilla**, **The Prince**, **The Princess**
+- Dimensions: **Crystal**, **Utopia**, **Chaos**, **Village**, **Islands**
+- Structures: Fairy Tree, Fairy Castle Tree, Battle Tower, Haunted House, Rotator Station, Round Rotator, Urchin Spawner, Irukandji Spawner
+- Entities: Boyfriend, Girlfriend (playable NPC, not the overlay), Hammerhead, Leon, Kraken, Water Dragon, Cephadrome, Whale, Rubber Ducky, Cloud Shark, Ghost, Ghost Skelly, Rat, Fairy, Crystal Fairy, Dungeon Beast, Vortex, Peacock, Flounder, Skate, Rotator, Urchin, Irukandji, Crystal Cow, Sea Monster, Sea Viper, Molenoid, Cater Killer, Easter Bunny, Criminal, Villager (NPC mob), Jeffery, Spider Driver, Ant Robot, Spider Robot, Robot 1-5, Leaf Monster, Terrible Terror, Cliff Racer, Lurking Terror, Triffid, Pitch Black, Hercules, Stinky, Gazelle, Ostrich, Trooper Bug, Spit Bug, Bee, Chipmunk, Hydrolisk, Emperor Scorpion, Scorpion, Basilisk, Cryo, Hydro, Alo, Cama, Velo, Mothra (as a spawn), Dragon, Lizard
+- Items: Bertha, Slice, Big Hammer, Squid Zooka, Rose Sword, Love, Chainsaw, Nightmare Sword, Rat Sword, Fairy Sword, Rose Sword, Instant Shelter, Instant Garden, Rock TNT, Duct Tape, Sifter, Wrench, Spider/Ant Robot Kits, Game Controller, Mobzilla armor, Royal armor, Queen armor, Lapis armor, Tiger's Eye armor, Peacock Feather armor, Crystal Pink/Wood/Stone tool sets, Queen Battle Axe, Poison Sword, Thunder Staff, Laser Ball, Ray Gun, Water Ball, Ultimate Arrow / Bow / Fishing Rod, Ice Ball, Magic Apple, Miners Dream, Experience Catcher, Zoo Keeper, Elevator, Step-Up/Down/Across, Kraken Repellent, Creeper Repellent, Creeper Launcher, random dungeon block, etc.
+- Systems: GeckoLib animations (newer than both refs but planned for 1.21.1), Fairy taming/ownership, CreeperRepellent/KrakenRepellent block AoE, Pizza block, Crystal Workbench / Crystal Furnace tile entities, Critter Cage per-mob filled-cage item (we replaced this with a single `CAGED_MOB` + DataComponent in 1.21.1)
+
+### Things 1.12.2 does **better** than 1.7.10 (always use 1.12.2)
+
+- Vanilla JSON `loot_tables/generic_dungeon.json` (1.7.10 used `WeightedRandomChestContent` Java arrays)
+- Vanilla JSON recipes for titanium/uranium ingot + block (1.7.10 used `GameRegistry.addRecipe(...)` lambdas)
+- Deobfuscated AI classes (`MyEntityAI*`) vs. 1.7.10's `func_*`/`field_*` mess
+- `util/Teleport.java` centralised cross-dimension player transfer (1.7.10 duplicated the logic per entity)
+- `@EventBusSubscriber`-style `RegistryHandler` for items/blocks (1.7.10 used static init + `GameRegistry.registerItem`)
+- `ItemEnchantments` fluent builder for pre-enchanted gear (1.7.10 hard-coded per-item)
+
+### Things 1.7.10 and 1.12.2 both have (prefer 1.12.2)
+
+Everything else. When both have a feature, 1.12.2 wins because CFR produces cleaner output and the class layout is closer to 1.21.1's Mojang names.
 
 ## Layout
 

@@ -10,10 +10,45 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 
+/**
+ * <b>Legacy 1.7.10 sidecar entity.</b>
+ *
+ * <p>In 1.7.10 OreSpawn ({@code reference_1_7_10_source/sources/danger/orespawn/KingHead.java}),
+ * The King's "head" was a separate {@code EntityLiving} spawned at
+ * {@code parent.y + 20} and teleported itself to
+ * {@code (parent.x − 30·sin(yaw), parent.y + 12, parent.z + 30·cos(yaw))}
+ * every tick. Damage was forwarded via an AABB search for the nearest
+ * {@code TheKing}.</p>
+ *
+ * <p><b>Obsoleted in the 1.21.1 port.</b> {@link TheKing} now carries a
+ * proper {@link net.neoforged.neoforge.entity.PartEntity} array — see
+ * {@link OreSpawnPartEntity} — so hit detection is handled by the engine,
+ * client-side rendering interpolates correctly, and damage forwarding is
+ * O(1) instead of an AABB query.</p>
+ *
+ * <p>This class is kept only for:
+ * <ol>
+ *   <li><b>NBT backward compatibility</b>: old saves with a {@code "orespawn:king_head"}
+ *       entity in the world will still load without error.</li>
+ *   <li><b>AI-hook parity</b>: {@link TheKing#customServerAiStep()} still
+ *       spawns one, mirroring the 1.7.10 flight pattern where enemies
+ *       targeting "the head" pull Queen's flight path upward. Once the
+ *       PartEntity framework is proven in playtesting, the spawn call and
+ *       this class can be removed together.</li>
+ * </ol>
+ *
+ * <p>Do not add new functionality here — put it on {@link TheKing} and its
+ * {@link OreSpawnPartEntity} children instead.</p>
+ *
+ * @deprecated superseded by {@link OreSpawnPartEntity} on {@link TheKing};
+ *             kept for save compatibility only.
+ */
+@Deprecated
 public class KingHead extends Mob {
 
     public KingHead(EntityType<? extends KingHead> type, Level level) {
         super(type, level);
+        // Sidecar flies freely — no gravity, no block collisions.
         this.noPhysics = true;
         this.xpReward = 0;
     }
