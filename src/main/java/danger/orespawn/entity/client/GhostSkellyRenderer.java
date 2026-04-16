@@ -2,6 +2,7 @@ package danger.orespawn.entity.client;
 
 import danger.orespawn.OreSpawnMod;
 import danger.orespawn.entity.GhostSkelly;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.client.model.geom.ModelLayerLocation;
@@ -20,5 +21,12 @@ public class GhostSkellyRenderer extends MobRenderer<GhostSkelly, GhostSkellyMod
     @Override
     public ResourceLocation getTextureLocation(GhostSkelly entity) {
         return TEXTURE;
+    }
+
+    // Same reasoning as GhostRenderer — send the skeletal ghost through the
+    // translucent pipeline so its soft alpha edges don't get cutout-clipped.
+    @Override
+    public RenderType getRenderType(GhostSkelly entity, boolean visible, boolean visibleToPlayer, boolean glowing) {
+        return RenderType.entityTranslucent(this.getTextureLocation(entity));
     }
 }
