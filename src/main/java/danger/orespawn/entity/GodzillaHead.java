@@ -10,6 +10,39 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 
+/**
+ * <b>Legacy 1.7.10 sidecar entity.</b>
+ *
+ * <p>In 1.7.10 OreSpawn ({@code reference_1_7_10_source/sources/danger/orespawn/GodzillaHead.java}),
+ * the "Mobzilla" boss (class name {@link Godzilla}) spawned a separate
+ * {@code GodzillaHead} entity that teleported to {@code (parent.x − 17·sin(yaw),
+ * parent.y + 16, parent.z + 17·cos(yaw))} every tick and served as a proxy
+ * hitbox for players attacking the boss's head. Damage received was
+ * re-routed to the parent via an AABB search for the nearest {@link Godzilla}.</p>
+ *
+ * <p><b>Obsoleted in the 1.21.1 port.</b> {@link Godzilla} now carries a proper
+ * {@link net.neoforged.neoforge.entity.PartEntity} array (see
+ * {@link OreSpawnPartEntity}), so hit detection is handled by the engine,
+ * rendering interpolates correctly, and damage forwarding is O(1) instead
+ * of an AABB query per tick.</p>
+ *
+ * <p>Retained solely for:
+ * <ol>
+ *   <li><b>NBT backward compatibility</b> — old saves that still contain an
+ *       {@code "orespawn:godzilla_head"} entity must still decode without
+ *       error.</li>
+ *   <li><b>Flight-pattern hook parity</b> — AI goals spawned from
+ *       {@link Godzilla} may still target this head for legacy scripted
+ *       dialogue/pattern hooks. Once the PartEntity framework is proven,
+ *       the spawn call and this class can be removed together.</li>
+ * </ol>
+ *
+ * <p>Do not add new functionality here — put it on {@link Godzilla} and its
+ * {@link OreSpawnPartEntity} children instead.</p>
+ *
+ * @deprecated Use {@link OreSpawnPartEntity} on {@link Godzilla} instead.
+ */
+@Deprecated
 public class GodzillaHead extends Mob {
 
     public GodzillaHead(EntityType<? extends GodzillaHead> type, Level level) {

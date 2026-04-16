@@ -134,6 +134,15 @@ public class ModEntities {
             ENTITY_TYPES.register("urchin", () -> EntityType.Builder.of(Urchin::new, MobCategory.MONSTER)
                     .sized(0.5f, 0.5f).clientTrackingRange(10).build("urchin"));
 
+    // "Mobzilla" is the public-facing boss name (see Godzilla#bossEvent which
+    // sets Component.literal("Mobzilla")). The class retains the 1.7.10
+    // source name (Godzilla.java) for port fidelity, but all user-visible
+    // strings, armor sets, blocks, loot tables, and recipes in this mod use
+    // the "mobzilla_*" namespace. The registry ID "orespawn:godzilla" stays
+    // stable so existing save files continue to resolve the entity type.
+    // clientTrackingRange=16 chunks is required — Mobzilla is 14x24 blocks
+    // and can fly well outside the normal 10-chunk visibility range; without
+    // this the client pops the entity out of view during long-range fights.
     public static final DeferredHolder<EntityType<?>, EntityType<Godzilla>> GODZILLA =
             ENTITY_TYPES.register("godzilla", () -> EntityType.Builder.of(Godzilla::new, MobCategory.MONSTER)
                     .sized(14.0f, 24.0f).clientTrackingRange(16).build("godzilla"));
@@ -267,8 +276,12 @@ public class ModEntities {
             ENTITY_TYPES.register("cockateil", () -> EntityType.Builder.of(Cockateil::new, MobCategory.CREATURE)
                     .sized(0.4f, 0.4f).clientTrackingRange(8).build("cockateil"));
 
+    // Coin is a dropped-currency pickup entity, not a natural-spawn creature.
+    // Registered under MISC so the vanilla CREATURE spawn logic never tries
+    // to place it in the world. The class still extends Animal for movement
+    // physics, but the registry category controls natural-spawning gates.
     public static final DeferredHolder<EntityType<?>, EntityType<Coin>> COIN =
-            ENTITY_TYPES.register("coin", () -> EntityType.Builder.of(Coin::new, MobCategory.CREATURE)
+            ENTITY_TYPES.register("coin", () -> EntityType.Builder.of(Coin::new, MobCategory.MISC)
                     .sized(0.4f, 0.4f).clientTrackingRange(8).build("coin"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<EasterBunny>> EASTER_BUNNY =
@@ -339,8 +352,11 @@ public class ModEntities {
             ENTITY_TYPES.register("termite", () -> EntityType.Builder.of(EntityTermite::new, MobCategory.CREATURE)
                     .sized(0.3f, 0.3f).clientTrackingRange(8).build("termite"));
 
+    // T-Shirt is a novelty gag entity (cosmetic prop) — not a naturally
+    // spawning mob. Registered under MISC to exclude it from CREATURE spawn
+    // passes; it is still summonable via /summon and spawn-eggs.
     public static final DeferredHolder<EntityType<?>, EntityType<EntityTshirt>> ENTITY_TSHIRT =
-            ENTITY_TYPES.register("tshirt", () -> EntityType.Builder.of(EntityTshirt::new, MobCategory.CREATURE)
+            ENTITY_TYPES.register("tshirt", () -> EntityType.Builder.of(EntityTshirt::new, MobCategory.MISC)
                     .sized(0.6f, 1.8f).clientTrackingRange(10).build("tshirt"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<EntityUnstableAnt>> ENTITY_UNSTABLE_ANT =
@@ -447,12 +463,24 @@ public class ModEntities {
             ENTITY_TYPES.register("firefly", () -> EntityType.Builder.of(Firefly::new, MobCategory.AMBIENT)
                     .sized(0.2f, 0.2f).clientTrackingRange(8).build("firefly"));
 
+    // Ghost / GhostSkelly were AMBIENT originally, but in 1.7.10 source they
+    // are combat mobs that attack players (see reference_1_7_10_source
+    // Ghost.java/GhostSkelly.java). AMBIENT caps out their spawn attempts at
+    // a very low mob-cap and routes them through the AMBIENT (bat-style)
+    // spawn rules — inappropriate for an aggressive mob. Moved to MONSTER
+    // so future combat-AI goals (Phase 4B/C) hook into the proper target
+    // selector + despawn rules, and spawning respects light-level gating.
+    //
+    // NOTE: the Java classes still extend AmbientCreature today. That's OK
+    // at the registry level (MobCategory is independent of class hierarchy),
+    // but Phase 4C will refactor them to extend Monster/PathfinderMob so
+    // they can carry real target goals. Tracking issue: see inventory notes.
     public static final DeferredHolder<EntityType<?>, EntityType<Ghost>> GHOST =
-            ENTITY_TYPES.register("ghost", () -> EntityType.Builder.of(Ghost::new, MobCategory.AMBIENT)
+            ENTITY_TYPES.register("ghost", () -> EntityType.Builder.of(Ghost::new, MobCategory.MONSTER)
                     .sized(0.6f, 1.8f).clientTrackingRange(10).build("ghost"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<GhostSkelly>> GHOST_SKELLY =
-            ENTITY_TYPES.register("ghost_skelly", () -> EntityType.Builder.of(GhostSkelly::new, MobCategory.AMBIENT)
+            ENTITY_TYPES.register("ghost_skelly", () -> EntityType.Builder.of(GhostSkelly::new, MobCategory.MONSTER)
                     .sized(0.6f, 1.8f).clientTrackingRange(10).build("ghost_skelly"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<Mothra>> MOTHRA =
@@ -470,14 +498,19 @@ public class ModEntities {
                     .sized(1.0f, 1.0f).clientTrackingRange(10).build("elevator"));
 
     // Legacy 1.7.10 sidecar heads ─ deprecated but kept for save compat.
-    // In 1.7.10 the boss's "head" was a separate tracked entity that
-    // teleported next to the parent every tick; see KingHead.java /
-    // QueenHead.java for the per-tick positioning loop. In 1.21.1 this
-    // role is filled by OreSpawnPartEntity instances owned by TheKing /
-    // TheQueen, but the registry entries must survive because:
+    // In 1.7.10 each giant boss's "head" was a separate tracked entity that
+    // teleported next to the parent every tick; see KingHead.java,
+    // QueenHead.java, and GodzillaHead.java for the per-tick positioning
+    // loops. In 1.21.1 this role is filled by OreSpawnPartEntity instances
+    // owned by TheKing / TheQueen / Godzilla (Mobzilla), but the registry
+    // entries must survive because:
     //   1. Existing saves contain instances of these entity types.
-    //   2. TheKing#customServerAiStep / TheQueen#customServerAiStep still
-    //      spawn one each to keep the 1.7.10 flight hook behaviour.
+    //   2. TheKing / TheQueen / Godzilla still spawn one each to keep the
+    //      1.7.10 flight-hook and AI-targeting parity.
+    // Their client-side renderers (KingHeadRenderer, QueenHeadRenderer,
+    // GodzillaHeadRenderer) all short-circuit shouldRender()=false so they
+    // are invisible and have zero rendering cost — matching the 1.7.10
+    // behaviour where those Render* classes were empty stubs.
     // Future removal: delete the spawn calls, bump the save-data version,
     // then drop these registrations.
 
