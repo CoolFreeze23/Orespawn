@@ -1,8 +1,7 @@
 package danger.orespawn.entity;
 
 import danger.orespawn.OreSpawnMod;
-import java.util.Comparator;
-import java.util.List;
+import danger.orespawn.entity.ai.BugMeleeAttackGoal;
 import javax.annotation.Nullable;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -21,7 +20,7 @@ import net.minecraft.world.entity.ai.goal.FloatGoal;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
-import net.minecraft.world.entity.monster.Creeper;
+import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Items;
@@ -42,17 +41,21 @@ public class EntityHerculesBeetle extends Monster {
     @Override
     protected void registerGoals() {
         this.goalSelector.addGoal(0, new FloatGoal(this));
+        this.goalSelector.addGoal(1, new BugMeleeAttackGoal(
+                this, this::setAttacking, BugMeleeAttackGoal.Params.herculesBeetle()));
         this.goalSelector.addGoal(2, new MyEntityAIWanderALot(this, 14, 1.0));
         this.goalSelector.addGoal(3, new LookAtPlayerGoal(this, Player.class, 8.0f));
         this.goalSelector.addGoal(4, new RandomLookAroundGoal(this));
         this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
+        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
     }
 
     public static AttributeSupplier.Builder createAttributes() {
         return Monster.createMonsterAttributes()
                 .add(Attributes.MAX_HEALTH, 200.0)
                 .add(Attributes.MOVEMENT_SPEED, 0.25)
-                .add(Attributes.ATTACK_DAMAGE, 15.0);
+                .add(Attributes.ATTACK_DAMAGE, 15.0)
+                .add(Attributes.FOLLOW_RANGE, 24.0);
     }
 
     @Override
@@ -102,6 +105,8 @@ public class EntityHerculesBeetle extends Monster {
 
     @Override
     public boolean doHurtTarget(Entity target) {
+        // Signature vertical "gore" knockback — the beetle tosses victims up.
+        // Preserved verbatim from the 1.7.10 doHurtTarget math (ks=0.45, vs=1.25).
         if (super.doHurtTarget(target)) {
             if (target instanceof LivingEntity) {
                 double knockbackStrength = 0.45;
@@ -134,42 +139,7 @@ public class EntityHerculesBeetle extends Monster {
     protected void customServerAiStep() {
         if (this.isRemoved()) return;
         super.customServerAiStep();
-
         if (this.hurtTimer > 0) --this.hurtTimer;
-
-        if (this.random.nextInt(4) == 0) {
-            LivingEntity target = this.getTarget();
-            if (target != null && !target.isAlive()) {
-                this.setTarget(null);
-                target = null;
-            }
-            if (target == null) target = findSomethingToAttack();
-
-            if (target != null) {
-                this.getLookControl().setLookAt(target, 10.0f, 10.0f);
-                double dist = this.distanceToSqr(target);
-                double attackRange = (5.0 + target.getBbWidth() / 2.0) * (5.0 + target.getBbWidth() / 2.0);
-                if (dist < attackRange) {
-                    this.setAttacking(1);
-                    if (this.random.nextInt(3) == 0 || this.random.nextInt(4) == 1) {
-                        this.doHurtTarget(target);
-                        if (!this.level().isClientSide) {
-                            if (this.random.nextInt(3) == 1) {
-                                this.level().playSound(null, target.blockPosition(),
-                                        SoundEvent.createVariableRangeEvent(
-                                                ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "scorpion_attack")),
-                                        this.getSoundSource(), 1.4f, 1.0f);
-                            }
-                        }
-                    }
-                } else {
-                    this.getNavigation().moveTo(target, 1.2);
-                }
-            } else {
-                this.setAttacking(0);
-            }
-        }
-
         if (this.random.nextInt(150) == 1 && this.getHealth() < this.getMaxHealth()) {
             this.heal(2.0f);
         }
@@ -184,25 +154,4 @@ public class EntityHerculesBeetle extends Monster {
             this.spawnAtLocation(Items.BONE);
         }
     }
-
-    @Nullable
-    private LivingEntity findSomethingToAttack() {
-        List<LivingEntity> entities = this.level().getEntitiesOfClass(LivingEntity.class,
-                this.getBoundingBox().inflate(16.0, 6.0, 16.0));
-        entities.sort(Comparator.comparingDouble(this::distanceToSqr));
-        for (LivingEntity candidate : entities) {
-            if (isSuitableTarget(candidate)) return candidate;
-        }
-        return null;
-    }
-
-    private boolean isSuitableTarget(LivingEntity target) {
-        if (target == null || target == this || !target.isAlive()) return false;
-        if (!this.getSensing().hasLineOfSight(target)) return false;
-        if (target instanceof Creeper) return false;
-        if (target instanceof EntityHerculesBeetle) return false;
-        if (target instanceof Player p && p.getAbilities().invulnerable) return false;
-        return true;
-    }
-
 }
