@@ -17,10 +17,17 @@ public class IslandRenderer extends MobRenderer<Island, ModelIsland> {
     public static final ModelLayerLocation MODEL_LAYER =
             new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "island"), "main");
 
-    private static final float SCALE = 4.0f;
+    // 1.7.10 ClientProxyOreSpawn: new RenderIsland(new ModelIsland(1.0f), 0.25f, 1.0f)
+    // The third float is the world-space scale; the earlier 4.0f here
+    // bloated the centerpiece model to absurd size and desynced it from
+    // the actual placed sand/gravel blocks produced by Island#createIsland.
+    // The Island's AABB was also shrunk to 0.5x0.5 in ModEntities so this
+    // scale renders the ornamental model at the hitbox's center.
+    private static final float SCALE = 1.0f;
 
     public IslandRenderer(EntityRendererProvider.Context context) {
-        super(context, new ModelIsland(context.bakeLayer(MODEL_LAYER)), 2.0f);
+        // Shadow radius mirrors 1.7.10's 0.25f.
+        super(context, new ModelIsland(context.bakeLayer(MODEL_LAYER)), 0.25f);
     }
 
     @Override

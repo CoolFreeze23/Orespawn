@@ -19,7 +19,6 @@
   "spawners": {
     "monster": [],
     "creature": [
-      { "type": "orespawn:gazelle", "weight": 10, "minCount": 2, "maxCount": 4 },
       { "type": "orespawn:girlfriend", "weight": 5, "minCount": 2, "maxCount": 3 },
       { "type": "orespawn:boyfriend", "weight": 5, "minCount": 2, "maxCount": 3 },
       { "type": "orespawn:chipmunk", "weight": 3, "minCount": 1, "maxCount": 2 },

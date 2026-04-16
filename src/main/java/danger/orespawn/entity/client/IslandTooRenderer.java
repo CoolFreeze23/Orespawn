@@ -17,10 +17,12 @@ public class IslandTooRenderer extends MobRenderer<IslandToo, ModelIslandToo> {
     public static final ModelLayerLocation MODEL_LAYER =
             new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "islandtoo"), "main");
 
-    private static final float SCALE = 4.0f;
+    // 1.7.10 ClientProxyOreSpawn: new RenderIslandToo(new ModelIsland(1.0f), 0.25f, 1.0f)
+    // See IslandRenderer for the full reasoning behind the 4.0f -> 1.0f fix.
+    private static final float SCALE = 1.0f;
 
     public IslandTooRenderer(EntityRendererProvider.Context context) {
-        super(context, new ModelIslandToo(context.bakeLayer(MODEL_LAYER)), 2.0f);
+        super(context, new ModelIslandToo(context.bakeLayer(MODEL_LAYER)), 0.25f);
     }
 
     @Override

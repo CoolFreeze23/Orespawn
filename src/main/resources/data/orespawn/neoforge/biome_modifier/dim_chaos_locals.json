@@ -1,0 +1,8 @@
+{
+  "type": "neoforge:add_spawns",
+  "biomes": "orespawn:chaos_biome",
+  "spawners": [
+    { "type": "orespawn:ghost",        "weight": 15, "minCount": 3, "maxCount": 6 },
+    { "type": "orespawn:ghost_skelly", "weight": 10, "minCount": 2, "maxCount": 4 }
+  ]
+}
