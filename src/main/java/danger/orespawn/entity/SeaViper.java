@@ -1,7 +1,7 @@
 package danger.orespawn.entity;
 
-import danger.orespawn.ModItems;
 import danger.orespawn.OreSpawnMod;
+import danger.orespawn.entity.ai.SeaViperBiteGoal;
 import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -11,9 +11,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.tags.FluidTags;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -21,10 +20,16 @@ import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.control.SmoothSwimmingLookControl;
+import net.minecraft.world.entity.ai.control.SmoothSwimmingMoveControl;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
-import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
+import net.minecraft.world.entity.ai.goal.RandomSwimmingGoal;
+import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
+import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
+import net.minecraft.world.entity.ai.navigation.PathNavigation;
+import net.minecraft.world.entity.ai.navigation.WaterBoundPathNavigation;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Items;
@@ -32,40 +37,94 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.pathfinder.PathType;
 
 public class SeaViper extends Monster {
     private static final EntityDataAccessor<Integer> DATA_ATTACKING =
             SynchedEntityData.defineId(SeaViper.class, EntityDataSerializers.INT);
 
     private static final int MAX_HEALTH = 120;
-    private static final double MOVE_SPEED = 0.35;
+    private static final double MOVE_SPEED_IN_WATER = 0.75;
+    private static final double MOVE_SPEED_OUT_OF_WATER = 0.25;
     private static final double ATTACK_DAMAGE = 12.0;
 
     private int hurtCooldown = 0;
-    private float dynamicMoveSpeed = 0.35f;
     private int closestWaterDistance = 99999;
     private int targetX = 0, targetY = 0, targetZ = 0;
 
     public SeaViper(EntityType<? extends SeaViper> type, Level level) {
         super(type, level);
         this.xpReward = 120;
+        // Smooth amphibious move/look — modern 1.21.1 equivalent of the
+        // 1.7.10 EntityAISwimming + func_70648_aU (breathes underwater) combo.
+        this.moveControl = new SmoothSwimmingMoveControl(this, 85, 10, 0.02f, 0.1f, true);
+        this.lookControl = new SmoothSwimmingLookControl(this, 10);
+        this.setPathfindingMalus(PathType.WATER, 0.0f);
     }
 
+    // AI: FloatGoal pushes the viper up if it ends up in deep air; the
+    // SeaViperBiteGoal carries the 1.7.10 swing dice + hunger-on-hit
+    // effect; RandomSwimmingGoal gives idle amphibious wander inside water
+    // bodies. Target acquisition relies on HurtByTargetGoal +
+    // NearestAttackableTargetGoal to replace the legacy 18×4×18 scan.
     @Override
     protected void registerGoals() {
         this.goalSelector.addGoal(0, new FloatGoal(this));
-        this.goalSelector.addGoal(1, new MyEntityAIWanderALot(this, 16, 1.0));
-        this.goalSelector.addGoal(2, new LookAtPlayerGoal(this, Player.class, 10.0f));
-        this.goalSelector.addGoal(3, new LookAtPlayerGoal(this, Mob.class, 8.0f));
-        this.goalSelector.addGoal(4, new RandomLookAroundGoal(this));
+        this.goalSelector.addGoal(1, new SeaViperBiteGoal(this, this::setAttacking));
+        this.goalSelector.addGoal(2, new RandomSwimmingGoal(this, 1.0, 40));
+        this.goalSelector.addGoal(3, new MyEntityAIWanderALot(this, 16, 1.0));
+        this.goalSelector.addGoal(4, new LookAtPlayerGoal(this, Player.class, 10.0f));
+        this.goalSelector.addGoal(5, new LookAtPlayerGoal(this, Mob.class, 8.0f));
+        this.goalSelector.addGoal(6, new RandomLookAroundGoal(this));
         this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
+        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
     }
 
     public static AttributeSupplier.Builder createAttributes() {
         return Monster.createMonsterAttributes()
                 .add(Attributes.MAX_HEALTH, MAX_HEALTH)
-                .add(Attributes.MOVEMENT_SPEED, MOVE_SPEED)
-                .add(Attributes.ATTACK_DAMAGE, ATTACK_DAMAGE);
+                .add(Attributes.MOVEMENT_SPEED, MOVE_SPEED_IN_WATER)
+                .add(Attributes.ATTACK_DAMAGE, ATTACK_DAMAGE)
+                .add(Attributes.FOLLOW_RANGE, 32.0);
+    }
+
+    // Pure water navigation when submerged — without this the viper would
+    // path like a land mob and drown itself on reach-for-shore attempts.
+    @Override
+    protected PathNavigation createNavigation(Level level) {
+        return new WaterBoundPathNavigation(this, level);
+    }
+
+    // 1.21.1's LivingEntity#canBreatheUnderwater is final. NeoForge's
+    // IEntityExtension#canDrownInFluidType lets us opt out of drowning in
+    // any fluid type (water included), which is the modern equivalent.
+    @Override
+    public boolean canDrownInFluidType(net.neoforged.neoforge.fluids.FluidType type) {
+        return false;
+    }
+
+    @Override
+    public boolean isPushedByFluid() {
+        return false;
+    }
+
+    @Override
+    public boolean checkSpawnObstruction(net.minecraft.world.level.LevelReader level) {
+        return level.isUnobstructed(this);
+    }
+
+    @Override
+    public void travel(net.minecraft.world.phys.Vec3 vec) {
+        if (this.isEffectiveAi() && this.isInWater()) {
+            this.moveRelative(this.getSpeed(), vec);
+            this.move(net.minecraft.world.entity.MoverType.SELF, this.getDeltaMovement());
+            this.setDeltaMovement(this.getDeltaMovement().scale(0.9));
+            if (this.getTarget() == null) {
+                this.setDeltaMovement(this.getDeltaMovement().add(0.0, -0.005, 0.0));
+            }
+        } else {
+            super.travel(vec);
+        }
     }
 
     @Override
@@ -82,24 +141,28 @@ public class SeaViper extends Monster {
         this.entityData.set(DATA_ATTACKING, value);
     }
 
+    // Dynamic speed mirror: 0.75 in water, 0.25 on land. We nudge the
+    // attribute every aiStep because some modern goals cache the base value.
     @Override
     public void aiStep() {
         super.aiStep();
-        this.dynamicMoveSpeed = this.isInWater() ? 0.75f : 0.25f;
+        this.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(
+                this.isInWater() ? MOVE_SPEED_IN_WATER : MOVE_SPEED_OUT_OF_WATER);
     }
 
     @Override
     public boolean doHurtTarget(Entity target) {
+        // Vanilla Monster#doHurtTarget applies attack damage + standard
+        // knockback. We stack the legacy 0.8 h / 0.14 v knockback on top so
+        // bites feel like the original push. Hunger-on-hit is applied by
+        // SeaViperBiteGoal#onSuccessfulAttack.
         if (super.doHurtTarget(target)) {
-            if (target instanceof LivingEntity living) {
+            if (target instanceof LivingEntity) {
                 double knockbackStrength = 0.8;
                 double upwardKnockback = 0.14;
                 float angleToTarget = (float) Math.atan2(target.getZ() - this.getZ(), target.getX() - this.getX());
                 if (target instanceof Player) upwardKnockback *= 2.0;
                 target.push(Math.cos(angleToTarget) * knockbackStrength, upwardKnockback, Math.sin(angleToTarget) * knockbackStrength);
-                if (this.random.nextInt(2) == 1) {
-                    living.addEffect(new MobEffectInstance(MobEffects.HUNGER, 8 * 20, 0));
-                }
             }
             return true;
         }
@@ -110,19 +173,23 @@ public class SeaViper extends Monster {
     public boolean hurt(DamageSource source, float amount) {
         if (source.type().msgId().equals("cactus")) return false;
         Entity attacker = source.getEntity();
+        // Sea Vipers do not friendly-fire each other (1.7.10 behaviour).
+        if (attacker instanceof SeaViper) return false;
         boolean ret = false;
         if (this.hurtCooldown <= 0) {
             ret = super.hurt(source, amount);
             this.hurtCooldown = 5;
         }
         if (attacker instanceof Mob mob) {
-            if (attacker instanceof SeaViper) return false;
             this.setTarget(mob);
             this.getNavigation().moveTo(mob, 1.2);
         }
         return ret;
     }
 
+    // Keep the legacy dry-out + water-seek behaviour outside the new goal:
+    // when out of water, scan outward in a 12-block cube, path to the
+    // nearest water column, and gradually take damage if none is found.
     @Override
     protected void customServerAiStep() {
         if (this.isRemoved()) return;
@@ -148,31 +215,6 @@ public class SeaViper extends Monster {
                     this.discard();
                     return;
                 }
-            }
-        }
-
-        if (this.random.nextInt(5) == 1) {
-            LivingEntity target = this.getTarget();
-            if (target == null) {
-                Player nearest = this.level().getNearestPlayer(this, 18.0);
-                if (nearest != null && !nearest.getAbilities().instabuild) {
-                    target = nearest;
-                    this.setTarget(target);
-                }
-            }
-            if (target != null && target.isAlive()) {
-                this.lookAt(target, 10.0f, 10.0f);
-                double range = (4.5 + target.getBbWidth() / 2.0) * (4.5 + target.getBbWidth() / 2.0);
-                if (this.distanceToSqr(target) < range) {
-                    this.setAttacking(1);
-                    if (this.random.nextInt(2) == 0) {
-                        this.doHurtTarget(target);
-                    }
-                } else {
-                    this.getNavigation().moveTo(target, 1.5);
-                }
-            } else {
-                this.setAttacking(0);
             }
         }
 
@@ -240,9 +282,13 @@ public class SeaViper extends Monster {
                 ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "seaviper_death"));
     }
 
+    // Keep legacy "near-surface water" spawn rule: Y >= 50 (vanilla sea level
+    // in 1.21.1 is ~63), mob must be in water or have a water body nearby,
+    // and no other Sea Viper within 16 blocks to avoid cluster overspawn.
     @Override
     public boolean checkSpawnRules(LevelAccessor level, MobSpawnType spawnType) {
         if (this.getY() < 50.0) return false;
+        if (!level.getFluidState(this.blockPosition()).is(FluidTags.WATER)) return false;
         return level.getEntitiesOfClass(SeaViper.class,
                 this.getBoundingBox().inflate(16.0, 5.0, 16.0)).size() <= 1;
     }

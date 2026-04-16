@@ -17,7 +17,9 @@ public class TRexRenderer extends MobRenderer<TRex, ModelTRex> {
     public static final ModelLayerLocation MODEL_LAYER =
             new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "trex"), "main");
 
-    private static final float SCALE = 1.0f;
+    // 1.7.10 ClientProxyOreSpawn: new RenderTRex(new ModelTRex(0.2f), 1.0f, 1.2f)
+    // where the last float is the renderer's world-space scale multiplier.
+    private static final float SCALE = 1.2f;
 
     public TRexRenderer(EntityRendererProvider.Context context) {
         super(context, new ModelTRex(context.bakeLayer(MODEL_LAYER)), 1.0f);

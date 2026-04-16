@@ -1,7 +1,5 @@
 package danger.orespawn.entity;
 
-import java.util.Comparator;
-import java.util.List;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -13,26 +11,25 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
-import danger.orespawn.util.MyUtils;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
+import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.AABB;
 import danger.orespawn.OreSpawnMod;
+import danger.orespawn.entity.ai.DinosaurMeleeAttackGoal;
 
 public class Pointysaurus extends Monster {
     private static final EntityDataAccessor<Integer> DATA_ATTACKING =
             SynchedEntityData.defineId(Pointysaurus.class, EntityDataSerializers.INT);
 
     private final float moveSpeed = 0.35f;
-    private LivingEntity revengeTarget = null;
 
     public Pointysaurus(EntityType<? extends Pointysaurus> type, Level level) {
         super(type, level);
@@ -42,10 +39,17 @@ public class Pointysaurus extends Monster {
     @Override
     protected void registerGoals() {
         this.goalSelector.addGoal(0, new FloatGoal(this));
+        this.goalSelector.addGoal(1, new DinosaurMeleeAttackGoal(this, this::setAttacking,
+                DinosaurMeleeAttackGoal.Presets.pointysaurus()));
         this.goalSelector.addGoal(2, new MyEntityAIWanderALot(this, 16, 1.0));
         this.goalSelector.addGoal(3, new LookAtPlayerGoal(this, Player.class, 8.0f));
         this.goalSelector.addGoal(4, new RandomLookAroundGoal(this));
         this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
+        // Pointysaurus only targets players — it will not attack other mobs.
+        // This preserves the 1.7.10 isSuitableTarget filter (rejects all
+        // Monster instances) which would otherwise make it pacifist without
+        // an explicit Player-only target goal.
+        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
     }
 
     public static AttributeSupplier.Builder createAttributes() {
@@ -124,70 +128,7 @@ public class Pointysaurus extends Monster {
     @Override
     public boolean hurt(DamageSource source, float amount) {
         if (source.getMsgId().equals("cactus")) return false;
-        boolean ret = super.hurt(source, amount);
-        Entity e = source.getEntity();
-        if (e instanceof LivingEntity living) {
-            this.revengeTarget = living;
-        }
-        return ret;
-    }
-
-    @Override
-    protected void customServerAiStep() {
-        if (this.isRemoved()) return;
-        super.customServerAiStep();
-
-        if (this.random.nextInt(6) == 0) {
-            LivingEntity target = this.revengeTarget;
-            if (target != null) {
-                if (target.isRemoved() || this.random.nextInt(250) == 1) {
-                    target = null;
-                    this.revengeTarget = null;
-                }
-                if (target != null && !this.getSensing().hasLineOfSight(target)) {
-                    target = null;
-                }
-            }
-            if (target == null) {
-                target = this.findSomethingToAttack();
-            }
-            if (target != null) {
-                this.lookAt(target, 10.0f, 10.0f);
-                double attackRange = (4.0 + target.getBbWidth() / 2.0) * (4.0 + target.getBbWidth() / 2.0);
-                if (this.distanceToSqr(target) < attackRange) {
-                    this.setAttacking(1);
-                    if (this.random.nextInt(5) == 0 || this.random.nextInt(6) == 1) {
-                        this.doHurtTarget(target);
-                    }
-                } else {
-                    this.getNavigation().moveTo(target, 1.25);
-                }
-            } else {
-                this.setAttacking(0);
-            }
-        }
-    }
-
-    private boolean isSuitableTarget(LivingEntity target) {
-        if (target == null || target == this || !target.isAlive()) return false;
-        if (target instanceof Pointysaurus) return false;
-        if (target instanceof Monster) return false;
-        if (target instanceof VelocityRaptor || MyUtils.isIgnoreable(target)) return false;
-        if (!this.getSensing().hasLineOfSight(target)) return false;
-        if (target instanceof Player player) {
-            return !player.getAbilities().invulnerable;
-        }
-        return false;
-    }
-
-    private LivingEntity findSomethingToAttack() {
-        AABB searchBox = this.getBoundingBox().inflate(12.0, 5.0, 12.0);
-        List<LivingEntity> targets = this.level().getEntitiesOfClass(LivingEntity.class, searchBox);
-        targets.sort(Comparator.comparingDouble(this::distanceToSqr));
-        for (LivingEntity target : targets) {
-            if (this.isSuitableTarget(target)) return target;
-        }
-        return null;
+        return super.hurt(source, amount);
     }
 
     public int getAttacking() {
