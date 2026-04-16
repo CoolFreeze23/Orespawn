@@ -17,7 +17,9 @@ public class BasiliskRenderer extends MobRenderer<Basilisk, ModelBasilisk> {
     public static final ModelLayerLocation MODEL_LAYER =
             new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "basilisk"), "main");
 
-    private static final float SCALE = 1.0f;
+    // 1.7.10 ClientProxyOreSpawn: new RenderBasilisk(new ModelBasilisk(0.3f), 0.5f, 1.25f)
+    // where the last float is the renderer's world-space scale multiplier.
+    private static final float SCALE = 1.25f;
 
     public BasiliskRenderer(EntityRendererProvider.Context context) {
         super(context, new ModelBasilisk(context.bakeLayer(MODEL_LAYER)), 1.5f);

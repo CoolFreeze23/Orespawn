@@ -3,6 +3,7 @@ package danger.orespawn.entity;
 import danger.orespawn.ModEntities;
 import danger.orespawn.ModItems;
 import danger.orespawn.OreSpawnMod;
+import danger.orespawn.entity.ai.DinosaurMeleeAttackGoal;
 import java.util.UUID;
 import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
@@ -22,17 +23,22 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.control.SmoothSwimmingLookControl;
+import net.minecraft.world.entity.ai.control.SmoothSwimmingMoveControl;
 import net.minecraft.world.entity.ai.goal.BreedGoal;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
 import net.minecraft.world.entity.ai.goal.FollowOwnerGoal;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
+import net.minecraft.world.entity.ai.goal.RandomSwimmingGoal;
 import net.minecraft.world.entity.ai.goal.TemptGoal;
-import net.minecraft.world.entity.monster.Monster;
+import net.minecraft.world.entity.ai.navigation.PathNavigation;
+import net.minecraft.world.entity.ai.navigation.WaterBoundPathNavigation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -41,42 +47,88 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.pathfinder.PathType;
 
 public class WaterDragon extends TamableAnimal {
     private static final EntityDataAccessor<Integer> DATA_ATTACKING =
             SynchedEntityData.defineId(WaterDragon.class, EntityDataSerializers.INT);
 
     private static final int MAX_HEALTH = 200;
-    private static final double MOVE_SPEED = 0.25;
+    private static final double MOVE_SPEED_IN_WATER = 0.55;
+    private static final double MOVE_SPEED_OUT_OF_WATER = 0.25;
     private static final double ATTACK_DAMAGE = 20.0;
 
     private int hurtTimer = 0;
-    private float dynamicMoveSpeed = 0.25f;
     private int closestWaterDistance = 99999;
     private int targetX = 0, targetY = 0, targetZ = 0;
 
     public WaterDragon(EntityType<? extends WaterDragon> type, Level level) {
         super(type, level);
         this.xpReward = 100;
+        // Smooth swimming control mirrors vanilla Dolphin/Turtle idioms and
+        // is a 1:1 behavioural upgrade from the 1.7.10 EntityAISwimming.
+        this.moveControl = new SmoothSwimmingMoveControl(this, 85, 10, 0.02f, 0.1f, true);
+        this.lookControl = new SmoothSwimmingLookControl(this, 10);
+        this.setPathfindingMalus(PathType.WATER, 0.0f);
     }
 
+    // AI: tamed WaterDragons follow and breed like a pet; wild ones still
+    // bite on retaliation via DinosaurMeleeAttackGoal (note Presets.waterDragon
+    // sets innerRoll=0 to mimic the single-dice 1.7.10 swing cadence).
+    // RandomSwimmingGoal keeps them gliding through water when idle rather
+    // than beaching themselves against currents.
     @Override
     protected void registerGoals() {
         this.goalSelector.addGoal(0, new FloatGoal(this));
         this.goalSelector.addGoal(1, new BreedGoal(this, 1.0));
         this.goalSelector.addGoal(2, new FollowOwnerGoal(this, 2.0, 10.0f, 2.0f));
         this.goalSelector.addGoal(3, new TemptGoal(this, 1.2, Ingredient.of(Items.COD), false));
-        this.goalSelector.addGoal(4, new MyEntityAIWanderALot(this, 16, 1.0));
-        this.goalSelector.addGoal(5, new LookAtPlayerGoal(this, Player.class, 8.0f));
-        this.goalSelector.addGoal(6, new RandomLookAroundGoal(this));
+        this.goalSelector.addGoal(4, new DinosaurMeleeAttackGoal(this, this::setAttacking,
+                DinosaurMeleeAttackGoal.Presets.waterDragon()));
+        this.goalSelector.addGoal(5, new RandomSwimmingGoal(this, 1.0, 30));
+        this.goalSelector.addGoal(6, new MyEntityAIWanderALot(this, 16, 1.0));
+        this.goalSelector.addGoal(7, new LookAtPlayerGoal(this, Player.class, 8.0f));
+        this.goalSelector.addGoal(8, new RandomLookAroundGoal(this));
         this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
     }
 
     public static AttributeSupplier.Builder createAttributes() {
         return Mob.createMobAttributes()
                 .add(Attributes.MAX_HEALTH, MAX_HEALTH)
-                .add(Attributes.MOVEMENT_SPEED, MOVE_SPEED)
-                .add(Attributes.ATTACK_DAMAGE, ATTACK_DAMAGE);
+                .add(Attributes.MOVEMENT_SPEED, MOVE_SPEED_IN_WATER)
+                .add(Attributes.ATTACK_DAMAGE, ATTACK_DAMAGE)
+                .add(Attributes.FOLLOW_RANGE, 32.0);
+    }
+
+    @Override
+    protected PathNavigation createNavigation(Level level) {
+        return new WaterBoundPathNavigation(this, level);
+    }
+
+    // 1.21.1 makes LivingEntity#canBreatheUnderwater final — NeoForge
+    // routes the override through IEntityExtension#canDrownInFluidType.
+    @Override
+    public boolean canDrownInFluidType(net.neoforged.neoforge.fluids.FluidType type) {
+        return false;
+    }
+
+    @Override
+    public boolean isPushedByFluid() {
+        return false;
+    }
+
+    @Override
+    public void travel(net.minecraft.world.phys.Vec3 vec) {
+        if (this.isEffectiveAi() && this.isInWater()) {
+            this.moveRelative(this.getSpeed(), vec);
+            this.move(MoverType.SELF, this.getDeltaMovement());
+            this.setDeltaMovement(this.getDeltaMovement().scale(0.9));
+            if (this.getTarget() == null) {
+                this.setDeltaMovement(this.getDeltaMovement().add(0.0, -0.005, 0.0));
+            }
+        } else {
+            super.travel(vec);
+        }
     }
 
     @Override
@@ -96,7 +148,8 @@ public class WaterDragon extends TamableAnimal {
     @Override
     public void aiStep() {
         super.aiStep();
-        this.dynamicMoveSpeed = this.isInWater() ? 0.55f : 0.25f;
+        this.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(
+                this.isInWater() ? MOVE_SPEED_IN_WATER : MOVE_SPEED_OUT_OF_WATER);
     }
 
     @Override
@@ -189,6 +242,10 @@ public class WaterDragon extends TamableAnimal {
         return ret;
     }
 
+    // Dry-out + water-seek behaviour is kept outside the new Goal because
+    // it is essentially a "meta" survival loop (scan for the nearest water
+    // block, limp-walk toward it, chip damage if nothing found). Moving
+    // this to an independent goal would duplicate target-mutation state.
     @Override
     protected void customServerAiStep() {
         if (this.isRemoved()) return;
@@ -214,35 +271,6 @@ public class WaterDragon extends TamableAnimal {
                     this.discard();
                     return;
                 }
-            }
-        }
-
-        if (this.random.nextInt(200) == 0) {
-            this.setTarget(null);
-        }
-
-        if (this.random.nextInt(5) == 1) {
-            LivingEntity target = this.getTarget();
-            if (target == null && !this.isTame()) {
-                Player nearest = this.level().getNearestPlayer(this, 14.0);
-                if (nearest != null && !nearest.getAbilities().instabuild) {
-                    target = nearest;
-                    this.setTarget(target);
-                }
-            }
-            if (target != null && target.isAlive()) {
-                this.lookAt(target, 10.0f, 10.0f);
-                double range = (4.0 + target.getBbWidth() / 2.0) * (4.0 + target.getBbWidth() / 2.0);
-                if (this.distanceToSqr(target) < range) {
-                    this.setAttacking(1);
-                    if (this.random.nextInt(4) == 0) {
-                        this.doHurtTarget(target);
-                    }
-                } else {
-                    this.getNavigation().moveTo(target, 1.0);
-                }
-            } else {
-                this.setAttacking(0);
             }
         }
 

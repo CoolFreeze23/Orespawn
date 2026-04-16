@@ -17,10 +17,15 @@ public class WaterDragonRenderer extends MobRenderer<WaterDragon, ModelWaterDrag
     public static final ModelLayerLocation MODEL_LAYER =
             new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "waterdragon"), "main");
 
-    private static final float SCALE = 2.5f;
+    // 1.7.10 ClientProxyOreSpawn: new RenderWaterDragon(new ModelWaterDragon(0.5f), 0.85f, 1.1f)
+    // Third float is the renderer's world-space scale. The earlier 2.5f here
+    // inflated the dragon far beyond the 1.7.10 silhouette and caused the
+    // visual model to swallow half the hitbox — the value belongs at 1.1f.
+    private static final float SCALE = 1.1f;
 
     public WaterDragonRenderer(EntityRendererProvider.Context context) {
-        super(context, new ModelWaterDragon(context.bakeLayer(MODEL_LAYER)), 1.5f);
+        // Second arg mirrors 1.7.10's shadow radius (0.85f).
+        super(context, new ModelWaterDragon(context.bakeLayer(MODEL_LAYER)), 0.85f);
     }
 
     @Override

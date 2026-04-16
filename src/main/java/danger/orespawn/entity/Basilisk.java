@@ -1,8 +1,7 @@
 package danger.orespawn.entity;
 
-import java.util.Comparator;
-import java.util.List;
 import danger.orespawn.ModItems;
+import danger.orespawn.entity.ai.BasiliskGazeAttackGoal;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -24,6 +23,7 @@ import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
+import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
@@ -32,7 +32,6 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.AABB;
 
 public class Basilisk extends Monster {
     private static final EntityDataAccessor<Integer> DATA_ATTACKING =
@@ -42,23 +41,29 @@ public class Basilisk extends Monster {
     private static final double KNOCKBACK_VERTICAL = 0.15;
     private static final double PLAYER_OR_REMOVED_VERTICAL_MULTIPLIER = 2.0;
 
-    private final Comparator<Entity> targetSorter;
     private int hurtTimer = 0;
     private final float moveSpeed = 0.4f;
 
     public Basilisk(EntityType<? extends Basilisk> type, Level level) {
         super(type, level);
         this.xpReward = 150;
-        this.targetSorter = Comparator.comparingDouble(this::distanceToSqr);
     }
 
+    // AI: the Basilisk is a melee-only boss in 1.7.10 (no projectile). Its
+    // "ranged" flavour is a debilitating aura — Slowness V on any target
+    // within its 6-block reach — plus Poison on a successful bite. Both are
+    // encapsulated in BasiliskGazeAttackGoal. HurtByTargetGoal handles
+    // retaliation; NearestAttackableTargetGoal replaces the legacy 24×7×24
+    // private AABB scan with modern target sensing.
     @Override
     protected void registerGoals() {
         this.goalSelector.addGoal(0, new FloatGoal(this));
+        this.goalSelector.addGoal(1, new BasiliskGazeAttackGoal(this, this::setAttacking));
         this.goalSelector.addGoal(2, new WaterAvoidingRandomStrollGoal(this, 1.0));
         this.goalSelector.addGoal(3, new LookAtPlayerGoal(this, Player.class, 8.0f));
         this.goalSelector.addGoal(4, new RandomLookAroundGoal(this));
         this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
+        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
     }
 
     public static AttributeSupplier.Builder createAttributes() {
@@ -66,7 +71,7 @@ public class Basilisk extends Monster {
                 .add(Attributes.MAX_HEALTH, 500.0)
                 .add(Attributes.MOVEMENT_SPEED, 0.4)
                 .add(Attributes.ATTACK_DAMAGE, 25.0)
-                .add(Attributes.FOLLOW_RANGE, 40.0)
+                .add(Attributes.FOLLOW_RANGE, 48.0)
                 .add(Attributes.KNOCKBACK_RESISTANCE, 0.8)
                 .add(Attributes.ARMOR, 8.0);
     }
@@ -257,6 +262,10 @@ public class Basilisk extends Monster {
         return super.hurt(source, amount);
     }
 
+    // Slow regen: 1 HP every ~75 cadence ticks while damaged, plus 1 HP on
+    // a 1-in-200 aiStep roll. Kept on the customServerAiStep path so we tick
+    // alongside the legacy hurtTimer i-frame counter without fighting the
+    // goal selector's navigation control.
     @Override
     protected void customServerAiStep() {
         if (this.isRemoved()) return;
@@ -264,26 +273,6 @@ public class Basilisk extends Monster {
 
         if (this.hurtTimer > 0) {
             --this.hurtTimer;
-        }
-
-        if (this.getRandom().nextInt(5) == 0) {
-            LivingEntity target = findSomethingToAttack();
-            if (target != null) {
-                this.lookAt(target, 10.0f, 10.0f);
-                double distSq = this.distanceToSqr(target);
-                float attackRange = 6.0f + target.getBbWidth() / 2.0f;
-                if (distSq < attackRange * attackRange) {
-                    this.setAttacking(1);
-                    if (this.getRandom().nextInt(3) == 0 || this.getRandom().nextInt(4) == 1) {
-                        this.doHurtTarget(target);
-                    }
-                } else {
-                    this.getNavigation().moveTo(target, 1.25);
-                }
-                target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 100, 5));
-            } else {
-                this.setAttacking(0);
-            }
         }
 
         if (this.getRandom().nextInt(75) == 1 && this.getHealth() < this.mygetMaxHealth()) {
@@ -298,26 +287,6 @@ public class Basilisk extends Monster {
         if (this.getRandom().nextInt(200) == 0) {
             this.heal(1.0f);
         }
-    }
-
-    private boolean isSuitableTarget(LivingEntity target) {
-        if (target == null || target == this || !target.isAlive()) return false;
-        if (!this.getSensing().hasLineOfSight(target)) return false;
-        if (target instanceof Basilisk) return false;
-        if (target instanceof Player player) {
-            if (player.getAbilities().instabuild) return false;
-        }
-        return true;
-    }
-
-    private LivingEntity findSomethingToAttack() {
-        AABB searchBox = this.getBoundingBox().inflate(24.0, 7.0, 24.0);
-        List<LivingEntity> entities = this.level().getEntitiesOfClass(LivingEntity.class, searchBox);
-        entities.sort(this.targetSorter);
-        for (LivingEntity entity : entities) {
-            if (isSuitableTarget(entity)) return entity;
-        }
-        return null;
     }
 
     public final int getAttacking() {
