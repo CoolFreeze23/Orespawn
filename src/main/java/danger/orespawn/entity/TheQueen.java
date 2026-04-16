@@ -180,9 +180,50 @@ public class TheQueen extends Monster implements OreSpawnPartEntity.MultipartBos
 
     @Override
     protected void registerGoals() {
-        this.goalSelector.addGoal(0, new FloatGoal(this));
-        this.goalSelector.addGoal(1, new RandomLookAroundGoal(this));
+        // See danger.orespawn.entity.ai.QueenPrimaryGoal and QueenMoodGoal
+        // for the full port rationale. Summary:
+        //
+        //   QueenMoodGoal (priority 0, NO mutex flags): fires once when
+        //     attackLevel crosses 1000. In "happy" mood it terraforms
+        //     grass → flowers / dirt → grass around The Queen and spawns
+        //     butterflies; in "mad" mood it emits a cloud of 15-45
+        //     PurplePower bombs. Resets attackLevel to 1 before yielding.
+        //     Empty flag set = runs ALONGSIDE QueenPrimaryGoal without
+        //     blocking it.
+        //
+        //   QueenPrimaryGoal (priority 1, MOVE|LOOK): flight pathing
+        //     (with the "follow The King when happy" rule), target
+        //     acquisition (throttled by attackChance), melee + ranged
+        //     streams, flight-motion lerp. Identical flow to the 1.7.10
+        //     original's func_70030_z_ body minus the mood-effects block.
+        //
+        //   FloatGoal + RandomLookAroundGoal: vanilla utilities,
+        //     identical role to the ones on TheKing.
+        //
+        //   HurtByTargetGoal (target selector): writes revengeTarget
+        //     which QueenPrimaryGoal reads during target acquisition.
+        this.goalSelector.addGoal(0, new danger.orespawn.entity.ai.QueenMoodGoal(this));
+        this.goalSelector.addGoal(1, new danger.orespawn.entity.ai.QueenPrimaryGoal(this));
+        this.goalSelector.addGoal(2, new FloatGoal(this));
+        this.goalSelector.addGoal(3, new RandomLookAroundGoal(this));
         this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
+    }
+
+    /**
+     * Accessor for {@link danger.orespawn.entity.ai.QueenMoodGoal#canUse()}.
+     * Returns the current attack-charge level (range 1..1000+). When this
+     * exceeds 1000 the mood goal fires its effect and resets it to 1.
+     */
+    public int getAttackLevel() {
+        return this.attackLevel;
+    }
+
+    /**
+     * Accessor for {@link danger.orespawn.entity.ai.QueenMoodGoal} — returns
+     * 0 for happy (flower/butterfly effect), 1 for mad (PurplePower bombs).
+     */
+    public int getMoodState() {
+        return this.mood;
     }
 
     public static AttributeSupplier.Builder createAttributes() {
@@ -710,16 +751,28 @@ public class TheQueen extends Monster implements OreSpawnPartEntity.MultipartBos
 
     @Override
     protected void customServerAiStep() {
+        // Post-goal bookkeeping core — mirrors TheKing#customServerAiStep().
+        //
+        // The two behavioural blocks (mood effects and primary flight+combat)
+        // have been extracted into aiStepMoodEffects() and aiStepPrimary(),
+        // invoked by QueenMoodGoal and QueenPrimaryGoal respectively. The
+        // goals tick via GoalSelector BEFORE this method in the server tick,
+        // so by the time we get here the behaviour for this tick is already
+        // applied. This method only handles state hygiene:
+        //   - Boss-bar progress
+        //   - Health-follower sync (anti-heal on tracked entity)
+        //   - attackLevel decrement (when <= 1000; >1000 is owned by MoodGoal)
+        //   - hurtTimer decrement
+        //   - Home-point init
+        //   - Mood transitions (random happy-flip at full HP, alwaysMad override,
+        //     happy-grants-attackLevel boost)
+        //   - Ticker + ranged-stream ammunition refills
+        //   - Client data sync every 10 ticks (MOOD, POWER, PLAY_NICELY)
+        //   - backoffTimer decrement
+        //   - Passive healing
         this.bossEvent.setProgress(this.getHealth() / this.getMaxHealth());
         if (this.isRemoved()) return;
         super.customServerAiStep();
-
-        int randomXOffset = 1;
-        int randomZOffset = 1;
-        int attackChance = 5;
-        LivingEntity currentTarget = null;
-        LivingEntity nearbyTarget = null;
-        double angleToTarget, headingAngle, angleDiff;
 
         if (this.healthTrackedEntity != null) {
             if (this.distanceToSqr(this.healthTrackedEntity) < 2000.0 && !this.healthTrackedEntity.isRemoved()) {
@@ -737,99 +790,8 @@ public class TheQueen extends Monster implements OreSpawnPartEntity.MultipartBos
             }
         }
 
-        if (this.attackLevel > 1000) {
-            if (this.mood == 1) {
-                int j = 15;
-                if (this.playerHitCount < 10) {
-                    j = 45;
-                }
-                for (int i = 0; i < j; i++) {
-                    PurplePower pwr = ModEntities.PURPLE_POWER.get().create(this.level());
-                    if (pwr != null) {
-                        double xzoff = 10.0;
-                        double yoff = 14.0;
-                        pwr.moveTo(
-                            this.getX() - xzoff * Math.sin(Math.toRadians(this.getYRot())) + this.getRandom().nextInt(10) - 5,
-                            this.getY() + yoff + this.getRandom().nextInt(6) - 3,
-                            this.getZ() + xzoff * Math.cos(Math.toRadians(this.getYRot())) + this.getRandom().nextInt(10) - 5,
-                            0, 0);
-                        Vec3 mot = this.getDeltaMovement();
-                        pwr.setDeltaMovement(mot.x * 3.0, 0, mot.z * 3.0);
-                        pwr.setPurpleType(10);
-                        this.level().addFreshEntity(pwr);
-                    }
-                }
-            } else {
-                if (this.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)) {
-                    for (int m = 0; m < 25; m++) {
-                        int ix = this.getRandom().nextInt(25) - this.getRandom().nextInt(25);
-                        int kx = this.getRandom().nextInt(25) - this.getRandom().nextInt(25);
-                        for (int j = -20; j < 20; j++) {
-                            BlockPos checkPos = new BlockPos((int) this.getX() + ix, (int) this.getY() + j, (int) this.getZ() + kx);
-                            BlockState blockState = this.level().getBlockState(checkPos);
-                            BlockPos abovePos = checkPos.above();
-                            BlockState aboveState = this.level().getBlockState(abovePos);
-
-                            if (blockState.is(Blocks.GRASS_BLOCK) && aboveState.isAir()) {
-                                int which = this.getRandom().nextInt(8);
-                                if (which == 0) {
-                                    this.level().setBlockAndUpdate(abovePos, Blocks.RED_TULIP.defaultBlockState());
-                                } else if (which == 1) {
-                                    this.level().setBlockAndUpdate(abovePos, Blocks.DANDELION.defaultBlockState());
-                                } else if (which == 2) {
-                                    this.level().setBlockAndUpdate(abovePos, Blocks.BLUE_ORCHID.defaultBlockState());
-                                } else if (which == 3) {
-                                    this.level().setBlockAndUpdate(abovePos, Blocks.PINK_TULIP.defaultBlockState());
-                                } else if (which == 4) {
-                                    this.level().setBlockAndUpdate(abovePos, Blocks.POPPY.defaultBlockState());
-                                } else if (which == 5) {
-                                    this.level().setBlockAndUpdate(abovePos, Blocks.ALLIUM.defaultBlockState());
-                                } else if (which == 6) {
-                                    this.level().setBlockAndUpdate(abovePos, Blocks.CORNFLOWER.defaultBlockState());
-                                } else if (which == 7) {
-                                    this.level().setBlockAndUpdate(abovePos, Blocks.SUNFLOWER.defaultBlockState());
-                                }
-                                break;
-                            } else if (blockState.is(Blocks.DIRT) && aboveState.isAir()) {
-                                this.level().setBlockAndUpdate(checkPos, Blocks.GRASS_BLOCK.defaultBlockState());
-                                break;
-                            } else if (blockState.is(Blocks.STONE) && aboveState.isAir()) {
-                                this.level().setBlockAndUpdate(abovePos, Blocks.DIRT.defaultBlockState());
-                                break;
-                            } else if (blockState.is(Blocks.GRAVEL) && aboveState.isAir()) {
-                                if (this.getRandom().nextInt(2) == 0) {
-                                    this.level().setBlockAndUpdate(abovePos, Blocks.DEAD_BUSH.defaultBlockState());
-                                } else {
-                                    this.level().setBlockAndUpdate(checkPos, Blocks.DIRT.defaultBlockState());
-                                }
-                                break;
-                            } else if (blockState.is(Blocks.SAND) && aboveState.isAir()) {
-                                this.level().setBlockAndUpdate(checkPos, Blocks.WATER.defaultBlockState());
-                                break;
-                            } else if (blockState.is(Blocks.COBBLESTONE) && aboveState.isAir()) {
-                                this.level().setBlockAndUpdate(checkPos, Blocks.STONE.defaultBlockState());
-                                break;
-                            } else if (blockState.isAir() && j > 0) {
-                                break;
-                            }
-                        }
-                    }
-                }
-                for (int m = 0; m < 10; m++) {
-                    EntityButterfly butterfly = ModEntities.ENTITY_BUTTERFLY.get().create(this.level());
-                    if (butterfly != null) {
-                        butterfly.moveTo(
-                                this.getX() + this.getRandom().nextInt(20) - 10,
-                                this.getY() + 5 + this.getRandom().nextInt(10),
-                                this.getZ() + this.getRandom().nextInt(20) - 10,
-                                this.getRandom().nextFloat() * 360.0F, 0.0F);
-                        this.level().addFreshEntity(butterfly);
-                    }
-                }
-            }
-            this.attackLevel = 1;
-        }
-
+        // attackLevel>1000 is consumed by QueenMoodGoal which resets to 1.
+        // This decrement applies only to the 1..1000 charge-up phase.
         if (this.attackLevel > 1) {
             this.attackLevel--;
         }
@@ -842,6 +804,12 @@ public class TheQueen extends Monster implements OreSpawnPartEntity.MultipartBos
             this.homeZ = (int) this.getZ();
         }
 
+        // Mood state machine:
+        //  - At full HP, 0.2% chance per tick to flip back to happy (natural
+        //    mood reset if the player walks away from a damaged Queen).
+        //  - alwaysMad NBT flag permanently forces mad (world-boss behaviour).
+        //  - Being happy also charges attackLevel at +10/tick toward the 1000
+        //    threshold that triggers the mood effect.
         if (this.getHealth() > (float) (this.mygetMaxHealth() - 2) && this.getRandom().nextInt(500) == 1) {
             this.mood = 0;
         }
@@ -872,11 +840,181 @@ public class TheQueen extends Monster implements OreSpawnPartEntity.MultipartBos
         if (this.backoffTimer > 0) {
             this.backoffTimer--;
         }
+
+        this.noPhysics = true;
+
+        // Passive healing — slow regen tick + a large top-up when a
+        // player has hit very few times (prevents cheese strategies).
+        if (this.getRandom().nextInt(32) == 1 && this.getHealth() < (float) this.mygetMaxHealth()) {
+            this.heal(5.0f);
+            if (this.playerHitCount < 10) {
+                this.heal(50.0f);
+            }
+        }
+        if (this.playerHitCount < 10 && this.getHealth() < 2000.0f) {
+            this.heal(2000.0f - this.getHealth());
+        }
+    }
+
+    // ─── AI STEP HELPERS ───────────────────────────────────────────────────
+    // Behavioural methods invoked by Goal classes in danger.orespawn.entity.ai.
+    // Public visibility is required because the goals live in a sibling
+    // package; the methods are not intended for external use.
+
+    /**
+     * Mood-charge discharge effect — fires when {@link #attackLevel}
+     * exceeds 1000 and resets it to 1. Owned by
+     * {@link danger.orespawn.entity.ai.QueenMoodGoal}.
+     *
+     * <p><b>Mad mood</b> ({@code mood == 1}): spawns 15-45
+     * {@link PurplePower} bombs in a cloud behind The Queen (45 when
+     * the player has low hit-count, signalling a fresh engagement; 15
+     * otherwise). Each bomb inherits Queen's horizontal motion × 3 for
+     * a trailing-debris effect.</p>
+     *
+     * <p><b>Happy mood</b> ({@code mood == 0}): gated by the
+     * {@code doMobGriefing} game rule. Performs 25 soil-transform
+     * attempts in a 25×40×25 region around The Queen — grass→flower,
+     * dirt→grass, stone→dirt cap, gravel→dirt (or dead bush 50/50),
+     * sand→water, cobble→stone. Then spawns 10 butterflies.</p>
+     *
+     * <p>This is the heaviest single behaviour block in the boss
+     * framework: up to 25×40 = 1000 block-state lookups and up to 25
+     * block-state writes per invocation. However it only fires every
+     * ~100 ticks at minimum (attackLevel needs 1000 charge), so the
+     * amortised cost is sub-millisecond per second. Still main-thread
+     * safe (all {@code setBlockAndUpdate} calls land on the tick thread).</p>
+     */
+    public void aiStepMoodEffects() {
+        if (this.mood == 1) {
+            int j = 15;
+            if (this.playerHitCount < 10) {
+                j = 45;
+            }
+            for (int i = 0; i < j; i++) {
+                PurplePower pwr = ModEntities.PURPLE_POWER.get().create(this.level());
+                if (pwr != null) {
+                    double xzoff = 10.0;
+                    double yoff = 14.0;
+                    pwr.moveTo(
+                        this.getX() - xzoff * Math.sin(Math.toRadians(this.getYRot())) + this.getRandom().nextInt(10) - 5,
+                        this.getY() + yoff + this.getRandom().nextInt(6) - 3,
+                        this.getZ() + xzoff * Math.cos(Math.toRadians(this.getYRot())) + this.getRandom().nextInt(10) - 5,
+                        0, 0);
+                    Vec3 mot = this.getDeltaMovement();
+                    pwr.setDeltaMovement(mot.x * 3.0, 0, mot.z * 3.0);
+                    pwr.setPurpleType(10);
+                    this.level().addFreshEntity(pwr);
+                }
+            }
+        } else {
+            if (this.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)) {
+                for (int m = 0; m < 25; m++) {
+                    int ix = this.getRandom().nextInt(25) - this.getRandom().nextInt(25);
+                    int kx = this.getRandom().nextInt(25) - this.getRandom().nextInt(25);
+                    for (int j = -20; j < 20; j++) {
+                        BlockPos checkPos = new BlockPos((int) this.getX() + ix, (int) this.getY() + j, (int) this.getZ() + kx);
+                        BlockState blockState = this.level().getBlockState(checkPos);
+                        BlockPos abovePos = checkPos.above();
+                        BlockState aboveState = this.level().getBlockState(abovePos);
+
+                        if (blockState.is(Blocks.GRASS_BLOCK) && aboveState.isAir()) {
+                            int which = this.getRandom().nextInt(8);
+                            if (which == 0) {
+                                this.level().setBlockAndUpdate(abovePos, Blocks.RED_TULIP.defaultBlockState());
+                            } else if (which == 1) {
+                                this.level().setBlockAndUpdate(abovePos, Blocks.DANDELION.defaultBlockState());
+                            } else if (which == 2) {
+                                this.level().setBlockAndUpdate(abovePos, Blocks.BLUE_ORCHID.defaultBlockState());
+                            } else if (which == 3) {
+                                this.level().setBlockAndUpdate(abovePos, Blocks.PINK_TULIP.defaultBlockState());
+                            } else if (which == 4) {
+                                this.level().setBlockAndUpdate(abovePos, Blocks.POPPY.defaultBlockState());
+                            } else if (which == 5) {
+                                this.level().setBlockAndUpdate(abovePos, Blocks.ALLIUM.defaultBlockState());
+                            } else if (which == 6) {
+                                this.level().setBlockAndUpdate(abovePos, Blocks.CORNFLOWER.defaultBlockState());
+                            } else if (which == 7) {
+                                this.level().setBlockAndUpdate(abovePos, Blocks.SUNFLOWER.defaultBlockState());
+                            }
+                            break;
+                        } else if (blockState.is(Blocks.DIRT) && aboveState.isAir()) {
+                            this.level().setBlockAndUpdate(checkPos, Blocks.GRASS_BLOCK.defaultBlockState());
+                            break;
+                        } else if (blockState.is(Blocks.STONE) && aboveState.isAir()) {
+                            this.level().setBlockAndUpdate(abovePos, Blocks.DIRT.defaultBlockState());
+                            break;
+                        } else if (blockState.is(Blocks.GRAVEL) && aboveState.isAir()) {
+                            if (this.getRandom().nextInt(2) == 0) {
+                                this.level().setBlockAndUpdate(abovePos, Blocks.DEAD_BUSH.defaultBlockState());
+                            } else {
+                                this.level().setBlockAndUpdate(checkPos, Blocks.DIRT.defaultBlockState());
+                            }
+                            break;
+                        } else if (blockState.is(Blocks.SAND) && aboveState.isAir()) {
+                            this.level().setBlockAndUpdate(checkPos, Blocks.WATER.defaultBlockState());
+                            break;
+                        } else if (blockState.is(Blocks.COBBLESTONE) && aboveState.isAir()) {
+                            this.level().setBlockAndUpdate(checkPos, Blocks.STONE.defaultBlockState());
+                            break;
+                        } else if (blockState.isAir() && j > 0) {
+                            break;
+                        }
+                    }
+                }
+            }
+            for (int m = 0; m < 10; m++) {
+                EntityButterfly butterfly = ModEntities.ENTITY_BUTTERFLY.get().create(this.level());
+                if (butterfly != null) {
+                    butterfly.moveTo(
+                            this.getX() + this.getRandom().nextInt(20) - 10,
+                            this.getY() + 5 + this.getRandom().nextInt(10),
+                            this.getZ() + this.getRandom().nextInt(20) - 10,
+                            this.getRandom().nextFloat() * 360.0F, 0.0F);
+                    this.level().addFreshEntity(butterfly);
+                }
+            }
+        }
+        this.attackLevel = 1;
+    }
+
+    /**
+     * Primary flight + target + attack behaviour. Mirrors
+     * {@link TheKing#aiStepPrimary()} but with Queen-specific details:
+     *
+     * <ul>
+     *   <li><b>Follow-The-King-when-happy</b>: if mood==0 and there's a
+     *       {@link TheKing} within 64×32×64 blocks, override the wander
+     *       target to trail the King. This is the "royal couple" flight
+     *       pattern from the 1.7.10 original.</li>
+     *   <li><b>Two elemental streams</b>: fireball + lightning (no ice
+     *       stream — that's King-only).</li>
+     *   <li><b>Revenge suppression when happy</b>: if
+     *       {@link #isHappy()} is true, revenge target is cleared at the
+     *       top of target acquisition so the Queen never aggros mid-
+     *       flight-with-King.</li>
+     *   <li><b>Attack-level charge</b>: successful combat ticks add
+     *       15-85 to attackLevel depending on target size, feeding the
+     *       mood-effect trigger threshold at 1000.</li>
+     * </ul>
+     *
+     * <p>Invoked by
+     * {@link danger.orespawn.entity.ai.QueenPrimaryGoal#tick()} every
+     * server tick. Main-thread cost is dominated by the
+     * {@link #findSomethingToAttack()} AABB scan, throttled to ~1 per
+     * 3-5 ticks per boss by the attackChance RNG gate.</p>
+     */
+    public void aiStepPrimary() {
+        int randomXOffset = 1;
+        int randomZOffset = 1;
+        int attackChance = 5;
+        LivingEntity currentTarget = null;
+        LivingEntity nearbyTarget = null;
+        double angleToTarget, headingAngle, angleDiff;
+
         if (this.playerHitCount < 10 && this.getHealth() < (float) (this.mygetMaxHealth() / 2)) {
             attackChance = 3;
         }
-
-        this.noPhysics = true;
 
         if (this.currentFlightTarget == null) {
             this.currentFlightTarget = new BlockPos((int) this.getX(), (int) this.getY(), (int) this.getZ());
@@ -1042,16 +1180,6 @@ public class TheQueen extends Monster implements OreSpawnPartEntity.MultipartBos
         float yawDelta = Mth.wrapDegrees(targetYaw - this.getYRot());
         this.zza = 0.75f;
         this.setYRot(this.getYRot() + yawDelta / 8.0f);
-
-        if (this.getRandom().nextInt(32) == 1 && this.getHealth() < (float) this.mygetMaxHealth()) {
-            this.heal(5.0f);
-            if (this.playerHitCount < 10) {
-                this.heal(50.0f);
-            }
-        }
-        if (this.playerHitCount < 10 && this.getHealth() < 2000.0f) {
-            this.heal(2000.0f - this.getHealth());
-        }
     }
 
     private int computeAltitudeOffset(int centerX, int currentY, int centerZ) {
