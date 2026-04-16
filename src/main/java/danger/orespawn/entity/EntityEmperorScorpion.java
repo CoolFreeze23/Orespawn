@@ -1,8 +1,7 @@
 package danger.orespawn.entity;
 
 import danger.orespawn.OreSpawnMod;
-import java.util.Comparator;
-import java.util.List;
+import danger.orespawn.entity.ai.EmperorScorpionPoisonGoal;
 import javax.annotation.Nullable;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -11,8 +10,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -23,7 +20,7 @@ import net.minecraft.world.entity.ai.goal.FloatGoal;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
-import net.minecraft.world.entity.monster.Creeper;
+import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Items;
@@ -35,6 +32,7 @@ public class EntityEmperorScorpion extends Monster {
             SynchedEntityData.defineId(EntityEmperorScorpion.class, EntityDataSerializers.INT);
 
     private int hurtTimer = 0;
+    private int healTimer = 0;
 
     public EntityEmperorScorpion(EntityType<? extends EntityEmperorScorpion> type, Level level) {
         super(type, level);
@@ -44,17 +42,25 @@ public class EntityEmperorScorpion extends Monster {
     @Override
     protected void registerGoals() {
         this.goalSelector.addGoal(0, new FloatGoal(this));
+        // EmperorScorpionPoisonGoal extends BugMeleeAttackGoal and layers in
+        // the 1/3-chance 90-tick poison effect that the 1.7.10 source applied
+        // inside doHurtTarget. Moving it into the goal keeps doHurtTarget
+        // focused on knockback, and ensures the poison only lands when the
+        // attack actually connects (respects invulnerability frames).
+        this.goalSelector.addGoal(1, new EmperorScorpionPoisonGoal(this, this::setAttacking));
         this.goalSelector.addGoal(2, new MyEntityAIWanderALot(this, 14, 1.0));
         this.goalSelector.addGoal(3, new LookAtPlayerGoal(this, Player.class, 8.0f));
         this.goalSelector.addGoal(4, new RandomLookAroundGoal(this));
         this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
+        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
     }
 
     public static AttributeSupplier.Builder createAttributes() {
         return Monster.createMonsterAttributes()
                 .add(Attributes.MAX_HEALTH, 300.0)
                 .add(Attributes.MOVEMENT_SPEED, 0.35)
-                .add(Attributes.ATTACK_DAMAGE, 20.0);
+                .add(Attributes.ATTACK_DAMAGE, 20.0)
+                .add(Attributes.FOLLOW_RANGE, 40.0);
     }
 
     @Override
@@ -105,12 +111,9 @@ public class EntityEmperorScorpion extends Monster {
     @Override
     public boolean doHurtTarget(Entity target) {
         if (super.doHurtTarget(target)) {
-            if (target instanceof LivingEntity living) {
+            if (target instanceof LivingEntity) {
                 double knockbackStrength = 3.0;
                 double verticalKnockback = 0.2;
-                if (this.random.nextInt(3) == 1) {
-                    living.addEffect(new MobEffectInstance(MobEffects.POISON, 90, 0));
-                }
                 float angle = (float) Math.atan2(target.getZ() - this.getZ(), target.getX() - this.getX());
                 if (target.isRemoved() || target instanceof Player) verticalKnockback *= 2.0;
                 target.push(Math.cos(angle) * knockbackStrength, verticalKnockback, Math.sin(angle) * knockbackStrength);
@@ -137,50 +140,11 @@ public class EntityEmperorScorpion extends Monster {
     protected void customServerAiStep() {
         if (this.isRemoved()) return;
         super.customServerAiStep();
-
         if (this.hurtTimer > 0) --this.hurtTimer;
-
-        if (this.random.nextInt(4) == 0) {
-            LivingEntity target = this.getTarget();
-            if (target != null && !target.isAlive()) {
-                this.setTarget(null);
-                target = null;
-            }
-            if (this.random.nextInt(100) == 0) this.setTarget(null);
-            if (target == null) target = findSomethingToAttack();
-
-            if (target != null) {
-                this.getLookControl().setLookAt(target, 10.0f, 10.0f);
-                double dist = this.distanceToSqr(target);
-                double range = (6.0 + target.getBbWidth() / 2.0) * (6.0 + target.getBbWidth() / 2.0);
-                if (dist < range) {
-                    this.setAttacking(1);
-                    if (this.random.nextInt(4) == 0 || this.random.nextInt(6) == 1) {
-                        this.doHurtTarget(target);
-                        if (!this.level().isClientSide) {
-                            if (this.random.nextInt(3) == 1) {
-                                this.level().playSound(null, target.blockPosition(),
-                                        SoundEvent.createVariableRangeEvent(
-                                                ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "scorpion_attack")),
-                                        this.getSoundSource(), 1.4f, 1.0f);
-                            } else {
-                                this.level().playSound(null, target.blockPosition(),
-                                        SoundEvent.createVariableRangeEvent(
-                                                ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "scorpion_living")),
-                                        this.getSoundSource(), 1.0f, 1.0f);
-                            }
-                        }
-                    }
-                } else {
-                    this.getNavigation().moveTo(target, 1.2);
-                }
-            } else {
-                this.setAttacking(0);
-            }
-        }
-
-        if (this.random.nextInt(100) == 1 && this.getHealth() < this.getMaxHealth()) {
-            this.heal(2.0f);
+        // Slow regen — preserved from 1.7.10 (~1-in-100 tick roll).
+        if (++this.healTimer >= 100 && this.getHealth() < this.getMaxHealth()) {
+            this.healTimer = 0;
+            if (this.random.nextInt(100) == 1) this.heal(2.0f);
         }
     }
 
@@ -192,26 +156,5 @@ public class EntityEmperorScorpion extends Monster {
         for (int i = 0; i < count; i++) {
             this.spawnAtLocation(Items.BONE);
         }
-    }
-
-    @Nullable
-    private LivingEntity findSomethingToAttack() {
-        List<LivingEntity> entities = this.level().getEntitiesOfClass(LivingEntity.class,
-                this.getBoundingBox().inflate(24.0, 6.0, 24.0));
-        entities.sort(Comparator.comparingDouble(this::distanceToSqr));
-        for (LivingEntity candidate : entities) {
-            if (isSuitableTarget(candidate)) return candidate;
-        }
-        return null;
-    }
-
-    private boolean isSuitableTarget(LivingEntity target) {
-        if (target == null || target == this || !target.isAlive()) return false;
-        if (!this.getSensing().hasLineOfSight(target)) return false;
-        if (target instanceof Creeper) return false;
-        if (target instanceof EntityScorpion) return false;
-        if (target instanceof EntityEmperorScorpion) return false;
-        if (target instanceof Player p && p.getAbilities().invulnerable) return false;
-        return true;
     }
 }

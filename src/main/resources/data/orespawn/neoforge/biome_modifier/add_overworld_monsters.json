@@ -10,21 +10,12 @@
     { "type": "orespawn:trex", "weight": 1, "minCount": 1, "maxCount": 1 },
     { "type": "orespawn:bee", "weight": 8, "minCount": 1, "maxCount": 3 },
     { "type": "orespawn:brutalfly", "weight": 3, "minCount": 1, "maxCount": 1 },
-    { "type": "orespawn:cater_killer", "weight": 3, "minCount": 1, "maxCount": 1 },
-    { "type": "orespawn:emperor_scorpion", "weight": 2, "minCount": 1, "maxCount": 1 },
-    { "type": "orespawn:hercules_beetle", "weight": 3, "minCount": 1, "maxCount": 1 },
     { "type": "orespawn:leaf_monster", "weight": 4, "minCount": 1, "maxCount": 2 },
     { "type": "orespawn:lurking_terror", "weight": 2, "minCount": 1, "maxCount": 1 },
-    { "type": "orespawn:mantis", "weight": 3, "minCount": 1, "maxCount": 1 },
-    { "type": "orespawn:scorpion", "weight": 5, "minCount": 1, "maxCount": 2 },
-    { "type": "orespawn:spit_bug", "weight": 5, "minCount": 1, "maxCount": 2 },
     { "type": "orespawn:terrible_terror", "weight": 4, "minCount": 1, "maxCount": 2 },
     { "type": "orespawn:triffid", "weight": 4, "minCount": 1, "maxCount": 2 },
-    { "type": "orespawn:trooper_bug", "weight": 3, "minCount": 1, "maxCount": 1 },
     { "type": "orespawn:creeping_horror", "weight": 3, "minCount": 1, "maxCount": 1 },
     { "type": "orespawn:band_p", "weight": 3, "minCount": 1, "maxCount": 1 },
-    { "type": "orespawn:basilisk", "weight": 1, "minCount": 1, "maxCount": 1 },
-    { "type": "orespawn:worm_medium", "weight": 4, "minCount": 1, "maxCount": 1 },
-    { "type": "orespawn:worm_large", "weight": 2, "minCount": 1, "maxCount": 1 }
+    { "type": "orespawn:basilisk", "weight": 1, "minCount": 1, "maxCount": 1 }
   ]
 }

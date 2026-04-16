@@ -17,6 +17,8 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
+import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Items;
@@ -38,6 +40,19 @@ public class EntityMantis extends Monster {
     public EntityMantis(EntityType<? extends EntityMantis> type, Level level) {
         super(type, level);
         this.xpReward = 100;
+    }
+
+    @Override
+    protected void registerGoals() {
+        // Mantis retains its bespoke flight AI inside customServerAiStep (it's
+        // the only flying hostile in Phase 4B and its aerial pathing doesn't
+        // map cleanly onto the BugMeleeAttackGoal framework). We still wire
+        // up modern target acquisition here so vanilla "hurt-by" retaliation
+        // and proximity aggression use getTarget() — the legacy
+        // retaliationTarget field can now be backed by the proper target
+        // slot, letting it appear correctly in the boss pathfinding HUD.
+        this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
+        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
     }
 
     public static AttributeSupplier.Builder createAttributes() {

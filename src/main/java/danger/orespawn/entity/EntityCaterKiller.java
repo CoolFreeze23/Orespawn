@@ -1,8 +1,7 @@
 package danger.orespawn.entity;
 
 import danger.orespawn.OreSpawnMod;
-import java.util.Comparator;
-import java.util.List;
+import danger.orespawn.entity.ai.BugMeleeAttackGoal;
 import javax.annotation.Nullable;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -21,6 +20,7 @@ import net.minecraft.world.entity.ai.goal.FloatGoal;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
+import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Items;
@@ -30,7 +30,13 @@ public class EntityCaterKiller extends Monster {
     private static final EntityDataAccessor<Integer> DATA_ATTACKING =
             SynchedEntityData.defineId(EntityCaterKiller.class, EntityDataSerializers.INT);
 
-    private int ticker = 0;
+    /**
+     * Despawn timer — matches the 1.7.10 behavior where a Cater Killer that
+     * sits below max health for 2400 ticks (2 minutes) despawns itself. This
+     * prevents world-save bloat from half-damaged cater killers that escaped
+     * combat.
+     */
+    private int damagedDespawnTicker = 0;
 
     public EntityCaterKiller(EntityType<? extends EntityCaterKiller> type, Level level) {
         super(type, level);
@@ -40,17 +46,21 @@ public class EntityCaterKiller extends Monster {
     @Override
     protected void registerGoals() {
         this.goalSelector.addGoal(0, new FloatGoal(this));
+        this.goalSelector.addGoal(1, new BugMeleeAttackGoal(
+                this, this::setAttacking, BugMeleeAttackGoal.Params.caterKiller()));
         this.goalSelector.addGoal(2, new MyEntityAIWanderALot(this, 16, 1.0));
         this.goalSelector.addGoal(3, new LookAtPlayerGoal(this, Player.class, 8.0f));
         this.goalSelector.addGoal(4, new RandomLookAroundGoal(this));
         this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
+        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
     }
 
     public static AttributeSupplier.Builder createAttributes() {
         return Monster.createMonsterAttributes()
                 .add(Attributes.MAX_HEALTH, 350.0)
                 .add(Attributes.MOVEMENT_SPEED, 0.35)
-                .add(Attributes.ATTACK_DAMAGE, 20.0);
+                .add(Attributes.ATTACK_DAMAGE, 20.0)
+                .add(Attributes.FOLLOW_RANGE, 40.0);
     }
 
     @Override
@@ -97,7 +107,7 @@ public class EntityCaterKiller extends Monster {
     @Override
     public boolean doHurtTarget(Entity target) {
         if (super.doHurtTarget(target)) {
-            if (target instanceof LivingEntity living) {
+            if (target instanceof LivingEntity) {
                 double knockbackStrength = 1.2;
                 double verticalKnockback = 0.1;
                 float angle = (float) Math.atan2(target.getZ() - this.getZ(), target.getX() - this.getX());
@@ -125,38 +135,13 @@ public class EntityCaterKiller extends Monster {
         super.customServerAiStep();
 
         if (this.getHealth() + 1.0f < this.getMaxHealth()) {
-            ++this.ticker;
-            if (this.ticker > 2400) {
+            ++this.damagedDespawnTicker;
+            if (this.damagedDespawnTicker > 2400) {
                 this.discard();
                 return;
             }
-        }
-
-        if (this.random.nextInt(4) == 0) {
-            LivingEntity target = this.getTarget();
-            if (target != null && !target.isAlive()) {
-                this.setTarget(null);
-                target = null;
-            }
-            if (this.random.nextInt(200) == 0) this.setTarget(null);
-            if (target == null) target = findSomethingToAttack();
-
-            if (target != null) {
-                this.getLookControl().setLookAt(target, 10.0f, 10.0f);
-                double dist = this.distanceToSqr(target);
-                double attackRange = (5.0 + target.getBbWidth() / 2.0) * (5.0 + target.getBbWidth() / 2.0);
-                if (dist < attackRange) {
-                    this.setAttacking(1);
-                    if (this.random.nextInt(3) == 0 || this.random.nextInt(4) == 1) {
-                        this.doHurtTarget(target);
-                    }
-                } else {
-                    this.setAttacking(0);
-                    this.getNavigation().moveTo(target, 1.25);
-                }
-            } else {
-                this.setAttacking(0);
-            }
+        } else {
+            this.damagedDespawnTicker = 0;
         }
 
         if (this.random.nextInt(150) == 1 && this.getHealth() < this.getMaxHealth()) {
@@ -174,25 +159,5 @@ public class EntityCaterKiller extends Monster {
         for (int i = 0; i < 6; i++) {
             this.spawnAtLocation(Items.BONE);
         }
-    }
-
-    @Nullable
-    private LivingEntity findSomethingToAttack() {
-        List<LivingEntity> entities = this.level().getEntitiesOfClass(LivingEntity.class,
-                this.getBoundingBox().inflate(20.0, 8.0, 20.0));
-        entities.sort(Comparator.comparingDouble(this::distanceToSqr));
-        for (LivingEntity candidate : entities) {
-            if (isSuitableTarget(candidate)) return candidate;
-        }
-        return null;
-    }
-
-    private boolean isSuitableTarget(LivingEntity target) {
-        if (target == null || target == this || !target.isAlive()) return false;
-        if (!this.getSensing().hasLineOfSight(target)) return false;
-        if (target instanceof Player p) return !p.getAbilities().invulnerable;
-        if (target instanceof EntityCaterKiller) return false;
-        if (target instanceof Monster) return true;
-        return false;
     }
 }
