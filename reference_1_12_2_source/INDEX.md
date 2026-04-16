@@ -1,0 +1,129 @@
+# OreSpawn 1.12.2 Reference (Decompiled)
+
+This folder is a **read-only** 1:1 reference for the legacy OreSpawn 1.12.2 jar
+(`Orespawn-1.12.2-V0.8-ConquerantFix.jar`, the ConquerantWolf maintenance fork).
+It is the canonical "source of truth" for porting decisions made in our 1.21.1
+NeoForge codebase under `src/main/java/danger/orespawn/`.
+
+> **Do not modify anything in this folder.** Always treat it as read-only. Add
+> notes in `ORESPAWN_PORTING_AUDIT.md` (project root) instead.
+
+## Layout
+
+```
+reference_1_12_2_source/
+├── INDEX.md                         <- this file
+├── _tools/
+│   └── cfr-0.152.jar                <- decompiler used (Java 21 compatible)
+├── sources/                         <- decompiled .java
+│   ├── summary.txt                  <- CFR summary
+│   └── danger/orespawn/
+│       ├── OreSpawnMain.java        <- @Mod entry point
+│       ├── OreSpawnConstants.java
+│       ├── GirlfriendOverlayGui.java
+│       ├── blocks/                  (20 files) blocks + plant/ore/troll/spawn-egg blocks
+│       ├── commands/                (1 file)   /dimensionTeleport
+│       ├── entity/                  (98 files) 32 mobs + projectile + render/model subdirs
+│       │   ├── render/              renderers (legacy GL11)
+│       │   └── model/               ModelBase classes (boxes + hardcoded animation)
+│       ├── events/                  (1 file)
+│       ├── init/                    (6 files)  ModEntities, ModBlocks, ModItems, ModBiomes,
+│       │                                       ModDimensions, EntitySpawns
+│       ├── items/                   (27 files) tools, armor, eggs, critter cages, food, seeds
+│       ├── proxy/                   (2 files)  CommonProxy + ClientProxy (sided proxy pattern)
+│       ├── recipes/                 (2 files)  CraftingRecipes, SmeltingRecipes
+│       ├── tabs/                    (1 file)   OrespawnTab (creative tab)
+│       ├── util/                    (15 files) ai/, handlers/, premium/, ItemEnchantments
+│       └── world/                   (12 files) ChunkGeneratorMiningDimension, dungeon,
+│                                               world generators, biome
+├── _index_1_21_1_entities.txt       <- list of all entity classes in our 1.21.1 repo
+└── assets/                          <- raw jar contents (textures, models, lang, sounds, etc.)
+    ├── pack.mcmeta
+    ├── mcmod.info
+    ├── META-INF/
+    ├── data/orespawn/loot_tables/   <- 1.13+ loot path (only generic_dungeon.json)
+    └── assets/orespawn/
+        ├── lang/en_us.lang
+        ├── recipes/                 <- crafting JSONs
+        ├── blockstates/             <- 1.12.2 blockstate JSONs
+        ├── models/block/            <- block models
+        ├── models/item/             <- item models
+        ├── textures/                <- PNG textures
+        ├── sounds/                  <- ogg sound files
+        └── sounds.json
+```
+
+## Counts at a glance
+
+| Subsystem            | Files |
+|----------------------|------:|
+| Entities (top-level) |    32 |
+| Entity renderers     |    32 |
+| Entity models        |    32 |
+| Block classes        |    20 |
+| Item classes         |    27 |
+| World generators     |    12 |
+| AI helpers           |     6 |
+| Init / handlers      |    11 |
+| **Total .java**      | **188** |
+
+## What this fork *does* contain
+
+- **Mining Dimension** (one custom dimension; `_mining` ID, no rain, perpetual day-cycle skip)
+- **32 mob entities**: Alien, Alosaurus, TRex, Baryonyx, Camarasaurus, Pointysaurus,
+  Cryolophosaurus, Nastysaurus, VelocityRaptor, CaveFisher, Worms (4 sizes),
+  Ant + RedAnt, Termite, Bird, Butterfly, Firefly, Mosquito, Dragonfly, Mantis,
+  Mothra, Brutalfly, Moth, Kyuubi, Beaver, Cassowary, RedCow, StinkBug, Spyro,
+  GammaMetroid, EntityCage (projectile)
+- **Generic dungeon**: 12×12×6 cobble box with mob spawner + chest, picks Alien/GammaMetroid/Cryolophosaurus
+- **Critter Cage system**: `EntityCage` projectile + `CritterCage` items (empty + per-mob filled cages)
+- **OreGenericEgg** spawn-egg blocks: 30+ ore blocks that spawn an entity when broken
+- **Plant blocks**: corn, butterfly, mosquito, firefly, moth — placed via `Decorate(GRASS)` event
+- **AntHill block**: 4% chance per chunk on grass (DecorateBiomeEvent.GRASS)
+- **CornPlantGenerator**: tile-entity-backed multi-block tall corn (1% chance / chunk)
+- **LiquidGenerator**: random water/lava patches in Mining Dimension (10% / chunk)
+- **WorldGenOres**: 28 OreGenericEgg ores at Y 40-80 (size 5-9, 3 chances/chunk),
+  Uranium/Titanium at Y 3-20, Amethyst at Y 3-15
+- **Tools**: Ultimate / Emerald / Amethyst tier sets (sword/pickaxe/axe/shovel/hoe)
+- **Armor**: Ultimate / Emerald / Amethyst / Moth full sets
+- **Food**: ItemCorn, MothScale, MantisClaw
+- **Premium / IP-protection**: `PremiumChecker` + `GirlfriendOverlayGui` (NOT to be ported)
+
+## What this fork does **NOT** contain
+
+(important — these are absent from the 1.12.2 baseline but exist in 1.21.1):
+
+- Multi-part boss entities (no Queen, no King)
+- Crystal / Utopia / Chaos / Village / Islands dimensions
+- The vast 1.7.10 entity roster (no Boyfriend, Girlfriend, ThePrince, Robots,
+  Hammerhead, Kraken, Godzilla, EnderKnight, Whale, etc.)
+- GeckoLib / animated models
+- Modern Data Maps / Tags
+- Loot table JSON for any mob (only `generic_dungeon` exists)
+- Capabilities / DataComponents
+- Custom workbench/furnace UIs
+- Rideable mounts beyond the bare entity hierarchy
+
+## How to use this reference when porting
+
+1. **Find the legacy source**: `reference_1_12_2_source/sources/danger/orespawn/<package>/<Class>.java`
+2. **Check obfuscated names**: CFR cannot resolve some Forge-obfuscated identifiers.
+   Common substitutions:
+   - `func_70105_a(w, h)` → `setSize(w, h)` (1.21.1 = `EntityType.Builder.sized()`)
+   - `func_110147_ax()`   → `applyEntityAttributes()` (1.21.1 = `createAttributes()`)
+   - `func_180501_a(pos, state, flag)` → `setBlockState(pos, state, flag)` (1.21.1 = `level.setBlock(...)`)
+   - `field_70170_p` → `world` (1.21.1 = `this.level()`)
+   - `field_70163_u` → `posY` (1.21.1 = `this.getY()`)
+   - `field_70146_Z` → `rand` (1.21.1 = `this.getRandom()`)
+3. **Cross-reference with the audit**: see `ORESPAWN_PORTING_AUDIT.md` in repo root.
+
+## Re-running the decompile
+
+```pwsh
+java -jar reference_1_12_2_source\_tools\cfr-0.152.jar `
+     "C:\Users\Alvin\Downloads\Orespawn-1.12.2-V0.8-ConquerantFix.jar" `
+     --outputdir reference_1_12_2_source\sources `
+     --caseinsensitivefs true --silent true
+```
+
+Decompile completes in <15 seconds; output is byte-for-byte deterministic.
