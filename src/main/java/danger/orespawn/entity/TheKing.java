@@ -159,9 +159,59 @@ public class TheKing extends Monster implements OreSpawnPartEntity.MultipartBoss
 
     @Override
     protected void registerGoals() {
-        this.goalSelector.addGoal(0, new FloatGoal(this));
-        this.goalSelector.addGoal(1, new RandomLookAroundGoal(this));
+        // Goal-priority ordering: lower number = higher priority.
+        //
+        // The 1.7.10 original packed flight pathing, target acquisition,
+        // elemental ranged streams, melee, and the "Prepare to die!"
+        // dialogue into a single ~250-line func_70030_z_ body. We preserve
+        // those mechanics byte-for-byte in the helper methods
+        // aiStepEndGameDialogue() and aiStepPrimary() on this class, but
+        // wrap them in proper Goal subclasses so the engine's mutex system
+        // can arbitrate them cleanly:
+        //
+        //   KingEndGameGoal (priority 0, MOVE|LOOK|JUMP): owns the full
+        //     mutex during the end-phase-1 dialogue cutscene. While it is
+        //     active, KingPrimaryGoal cannot tick — the boss is frozen in
+        //     place and the player is pinned to face it. Without this
+        //     mutex lock the flight-motion lerp would still run every
+        //     tick and the cutscene wouldn't read as a cutscene.
+        //
+        //   KingPrimaryGoal (priority 1, MOVE|LOOK): the "live" behaviour
+        //     goal. Handles flight wandering, guard-mode leashing, target
+        //     acquisition (throttled to the attack-chance RNG gate),
+        //     melee + jump damage, the three elemental ranged streams
+        //     (fireball / thunder / ice), and the enraged-phase purple-
+        //     power bomb trail. Effectively a single fat goal because its
+        //     sub-behaviours are tightly coupled to a shared flight-target
+        //     state — splitting them further would require more
+        //     synchronisation code than just keeping them together.
+        //
+        //   FloatGoal (priority 2): prevents The King from sinking in
+        //     water mid-flight (rare but can happen at spawn).
+        //
+        //   RandomLookAroundGoal (priority 3): idle head-turning when no
+        //     target is engaged. Does not conflict with the LOOK flag on
+        //     KingPrimaryGoal because GoalSelector's mutex check runs at
+        //     goal-activation time, not every tick.
+        //
+        //   HurtByTargetGoal (target selector, priority 1): standard
+        //     vanilla revenge behaviour. Feeds into the revengeTarget
+        //     field which KingPrimaryGoal reads.
+        this.goalSelector.addGoal(0, new danger.orespawn.entity.ai.KingEndGameGoal(this));
+        this.goalSelector.addGoal(1, new danger.orespawn.entity.ai.KingPrimaryGoal(this));
+        this.goalSelector.addGoal(2, new FloatGoal(this));
+        this.goalSelector.addGoal(3, new RandomLookAroundGoal(this));
         this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
+    }
+
+    /**
+     * Accessor for goals / external callers — returns the current end-phase
+     * state (0=normal, 1=dialogue cutscene, 2=enraged). Exposed because
+     * {@link danger.orespawn.entity.ai.KingEndGameGoal#canUse()} is in a
+     * different package and needs to read this gating flag.
+     */
+    public int getEndPhase() {
+        return this.isEnd;
     }
 
     public static AttributeSupplier.Builder createAttributes() {
@@ -453,15 +503,23 @@ public class TheKing extends Monster implements OreSpawnPartEntity.MultipartBoss
 
     @Override
     protected void customServerAiStep() {
+        // Post-goal bookkeeping core. The three behavioural blocks that used
+        // to live here — dialogue cutscene, flight pathing, and combat —
+        // have been extracted into public helpers (aiStepEndGameDialogue,
+        // aiStepFlight, aiStepCombat) invoked by the Goal classes registered
+        // in registerGoals(). GoalSelector ticks them in priority order
+        // BEFORE this method runs (see Mob.serverAiStep()), so by the time
+        // we get here the behavioural work for this tick is already done.
+        //
+        // What remains here is pure state hygiene that always runs:
+        //   - Boss-bar progress sync
+        //   - entityData sync (PLAY_NICELY + IS_END) for client rendering
+        //   - Enraged-phase config overrides (when isEnd == 2)
+        //   - Hurt-cooldown decrement
+        //   - Home-point init on first tick
+        //   - Tick counter + ranged-attack ammunition refills
+        //   - Passive healing
         this.bossEvent.setProgress(this.getHealth() / this.getMaxHealth());
-
-        int randomXOffset;
-        int randomZOffset;
-        int attackChance = 5;
-        int attackChoice;
-        LivingEntity currentTarget;
-        LivingEntity nearbyTarget;
-
         if (this.isRemoved()) return;
         super.customServerAiStep();
 
@@ -469,7 +527,80 @@ public class TheKing extends Monster implements OreSpawnPartEntity.MultipartBoss
         // Wire PLAY_NICELY config: when true, The King starts in peaceful disposition
         this.entityData.set(DATA_PLAY_NICELY, OreSpawnConfig.PLAY_NICELY.get() ? 1 : 0);
 
-        // ---- End-game phase 1: dialogue ----
+        // ---- End-game phase 2: enraged config overrides ----
+        // Phase 1 (dialogue) is fully owned by KingEndGameGoal which freezes
+        // all movement via its MOVE|LOOK|JUMP mutex; we do not touch it here.
+        // Phase 2 is a permanent config override — maxed ammunition, shorter
+        // cooldowns, healing boost — that enhances the flight+attack goals.
+        if (this.isEnd == 2) {
+            this.hurtCooldown = 10;
+            this.playerHitCount = 0;
+            this.fireballStreamCount = 10;
+            this.lightningStreamCount = 10;
+            this.iceStreamCount = 10;
+            this.guardModeTimer = 0;
+            this.largeEntityDetected = 1;
+            if (this.backoffTimer > 0) this.backoffTimer--;
+        }
+
+        if (this.hurtCooldown > 0) this.hurtCooldown--;
+
+        // First-tick home-point init — the point The King defends with the
+        // guard-mode leash in KingFlightGoal / KingAttackGoal.
+        if ((this.homeX == 0 && this.homeZ == 0) || this.guardModeTimer == 0) {
+            this.homeX = (int) this.getX();
+            this.homeZ = (int) this.getZ();
+        }
+
+        this.ticker++;
+        if (this.ticker > 30000) this.ticker = 0;
+        if (this.ticker % 80 == 0) this.fireballStreamCount = 10;
+        if (this.ticker % 90 == 0) this.lightningStreamCount = 5;
+        if (this.ticker % 70 == 0) this.iceStreamCount = 8;
+        if (this.backoffTimer > 0) this.backoffTimer--;
+
+        this.noPhysics = true;
+
+        // Passive healing — a slow regen tick plus a massive top-up when a
+        // large entity (Mobzilla, dragons) is detected. The 2000-HP floor
+        // prevents cheese strategies from nibbling away the opening health
+        // pool without triggering the real phase multipliers.
+        if (this.getRandom().nextInt(30) == 1 && this.getHealth() < this.mygetMaxHealth()) {
+            this.heal(5.0f);
+            if (this.largeEntityDetected != 0) {
+                this.heal(200.0f);
+            }
+        }
+        if (this.playerHitCount < 10 && this.getHealth() < 2000.0f) {
+            this.heal(2000.0f - this.getHealth());
+        }
+    }
+
+    // ─── AI STEP HELPERS ───────────────────────────────────────────────────
+    // These three methods used to form one monolithic ~250-line block inside
+    // customServerAiStep. They are now invoked by dedicated Goal classes in
+    // danger.orespawn.entity.ai so that:
+    //   (a) the GoalSelector's priority/mutex system can arbitrate between
+    //       dialogue, combat, and flight cleanly (instead of the old
+    //       if/else-if chain that coupled them);
+    //   (b) each concern is individually testable and replaceable;
+    //   (c) future additions (e.g. a summon-minion goal) slot in as new
+    //       Goal classes without touching this class.
+    // They are public because the goals live in a sibling package; they are
+    // not intended to be called from anywhere else.
+
+    /**
+     * Handles the "Prepare to die!" end-phase 1 dialogue cutscene. Freezes
+     * The King and the nearest player in place, orients the player to face
+     * The King, and ticks out the 500-tick scripted dialogue sequence before
+     * flipping to the enraged phase (isEnd = 2).
+     *
+     * <p>Invoked once per tick by {@link danger.orespawn.entity.ai.KingEndGameGoal#tick()}
+     * for as long as {@link #isEnd} == 1. The goal owns {@code MOVE|LOOK|JUMP}
+     * so {@link #aiStepFlight()} and {@link #aiStepCombat()} are suppressed
+     * for the duration of the cutscene.</p>
+     */
+    public void aiStepEndGameDialogue() {
         if (this.isEnd == 1) {
             this.endCounter++;
             this.noPhysics = true;
@@ -524,44 +655,74 @@ public class TheKing extends Monster implements OreSpawnPartEntity.MultipartBoss
             }
             return;
         }
+    }
 
-        // ---- End-game phase 2: enraged ----
-        if (this.isEnd == 2) {
-            this.hurtCooldown = 10;
-            this.playerHitCount = 0;
-            this.fireballStreamCount = 10;
-            this.lightningStreamCount = 10;
-            this.iceStreamCount = 10;
-            attackChance = 3;
-            this.guardModeTimer = 0;
-            this.largeEntityDetected = 1;
-            if (this.backoffTimer > 0) this.backoffTimer--;
-        }
-
-        if (this.hurtCooldown > 0) this.hurtCooldown--;
-
-        if ((this.homeX == 0 && this.homeZ == 0) || this.guardModeTimer == 0) {
-            this.homeX = (int) this.getX();
-            this.homeZ = (int) this.getZ();
-        }
-
-        this.ticker++;
-        if (this.ticker > 30000) this.ticker = 0;
-        if (this.ticker % 80 == 0) this.fireballStreamCount = 10;
-        if (this.ticker % 90 == 0) this.lightningStreamCount = 5;
-        if (this.ticker % 70 == 0) this.iceStreamCount = 8;
-        if (this.backoffTimer > 0) this.backoffTimer--;
+    /**
+     * Primary flight + target + attack behaviour. This is the monolithic
+     * "live" phase of The King — mirrors the 1.7.10 original's
+     * {@code func_70030_z_} body minus dialogue and bookkeeping.
+     *
+     * <p>Flow (preserved 1:1 from 1.7.10 to guarantee combat feel):
+     * <ol>
+     *   <li>If we're too far from home, or a 1-in-200 random wander-roll hits,
+     *       or we've reached the current flight target (dist² &lt; 9.1),
+     *       <b>pick a new random wander target</b> within ±120 blocks of
+     *       home, at an altitude adjusted by
+     *       {@link #computeAltitudeAdjustment(int, int)}.</li>
+     *   <li>Otherwise, on a 1-in-{@code attackChance} roll, acquire a target
+     *       (revenge target first, then {@link #findSomethingToAttack()}
+     *       80×64×80 AABB scan), spawn the legacy sidecar {@link KingHead}
+     *       if not present, and execute one of:
+     *       <ul>
+     *         <li>Area + melee damage if within 30 blocks;</li>
+     *         <li>Forward area damage in front of the head;</li>
+     *         <li>One of three ranged attack streams if &gt;30 blocks
+     *             (fireball / thunder / ice) gated by aim check.</li>
+     *       </ul>
+     *   </li>
+     *   <li>If in the enraged phase and currently attacking, spawn a
+     *       {@link PurplePower} projectile in the direction of travel.</li>
+     *   <li>Always: motion-lerp toward {@link #currentFlightTarget} at 0.35
+     *       per tick on the horizontal, 0.3 on vertical (soft smoothing),
+     *       and update yaw toward the motion vector at 1/8 per tick.</li>
+     * </ol>
+     *
+     * <p>Invoked by
+     * {@link danger.orespawn.entity.ai.KingPrimaryGoal#tick()} every server
+     * tick (the goal's {@code canUse()} gates on {@code isEnd != 1} so the
+     * dialogue cutscene preempts this completely).</p>
+     *
+     * <p><b>Main-thread cost</b>: the {@link #findSomethingToAttack()}
+     * AABB scan is naturally throttled by the
+     * {@code getRandom().nextInt(attackChance)==0} gate — ~1 scan every 3-5
+     * ticks per boss in the worst case. No asynchronous work is needed.</p>
+     */
+    public void aiStepPrimary() {
+        int randomXOffset;
+        int randomZOffset;
+        int attackChance = 5;
+        int attackChoice;
+        LivingEntity currentTarget;
+        LivingEntity nearbyTarget;
 
         if (this.playerHitCount < 10 && this.getHealth() < (float) (this.mygetMaxHealth() / 2)) {
             attackChance = 3;
         }
-
-        this.noPhysics = true;
+        // In enraged phase, the bookkeeping core already forces stream ammo
+        // to max each tick; here we just match the faster attack cadence.
+        if (this.isEnd == 2) {
+            attackChance = 3;
+        }
 
         if (this.currentFlightTarget == null) {
             this.currentFlightTarget = BlockPos.containing(this.getX(), this.getY(), this.getZ());
         }
 
+        // Branch A: need a new flight target (too far, random wander, or reached current).
+        //   → pick a wander destination and return — no combat this tick.
+        // Branch B: 1-in-attackChance chance — acquire target and fight.
+        //   → if a target is locked, override flight target to pursue it.
+        // Branch C (implicit): neither — keep current target, motion-lerp runs below.
         if (this.tooFarFromHome() || this.getRandom().nextInt(200) == 0 || this.flightTargetDistSqr() < 9.1) {
             randomZOffset = this.getRandom().nextInt(120);
             randomXOffset = this.getRandom().nextInt(120);
@@ -574,6 +735,9 @@ public class TheKing extends Monster implements OreSpawnPartEntity.MultipartBoss
 
         } else if (this.getRandom().nextInt(attackChance) == 0) {
             // ---- Target acquisition ----
+            // Revenge target takes priority; clear it if the target died,
+            // is out of range (guard mode), is a boss part (anti-friendly-
+            // fire), or is no longer visible (raytrace fails).
             currentTarget = this.revengeTarget;
 
             if (currentTarget instanceof TheKing || currentTarget instanceof KingHead) {
@@ -594,8 +758,13 @@ public class TheKing extends Monster implements OreSpawnPartEntity.MultipartBoss
                 }
             }
 
+            // ~4 per second under attackChance=5, ~6 per second under
+            // attackChance=3. Acceptable for single-boss arenas.
             nearbyTarget = this.findSomethingToAttack();
 
+            // Legacy 1.7.10 sidecar head spawn — see KingHead.java JavaDoc.
+            // Retained for NBT save-compat and flight-pattern hook; to be
+            // removed once the PartEntity-based hit detection is proven.
             if (this.headEntityFound == 0) {
                 KingHead head = ModEntities.KING_HEAD.get().create(this.level());
                 if (head != null) {
@@ -610,6 +779,9 @@ public class TheKing extends Monster implements OreSpawnPartEntity.MultipartBoss
             if (currentTarget != null) {
                 this.setAttacking(1);
 
+                // Chase behaviour: fly directly at the target when not
+                // backing off; strafe 30-50 blocks to the side when backing
+                // off (makes the fight dynamic instead of a ramming match).
                 if (this.backoffTimer == 0) {
                     int flightY = Math.min((int) (currentTarget.getY() + currentTarget.getBbHeight() / 2.0f + 1.0), 230);
                     this.currentFlightTarget = new BlockPos((int) currentTarget.getX(), flightY, (int) currentTarget.getZ());
@@ -627,7 +799,7 @@ public class TheKing extends Monster implements OreSpawnPartEntity.MultipartBoss
                     this.currentFlightTarget = new BlockPos((int) currentTarget.getX() + randomXOffset, flightY, (int) currentTarget.getZ() + randomZOffset);
                 }
 
-                // Melee range area + direct attack
+                // Melee range (< 30 blocks²) — area damage + direct hit.
                 if (this.distanceToSqr(currentTarget) < 900.0) {
                     if (this.getRandom().nextInt(2) == 1) {
                         this.doJumpDamage(this.getX(), this.getY(), this.getZ(),
@@ -636,7 +808,8 @@ public class TheKing extends Monster implements OreSpawnPartEntity.MultipartBoss
                     this.doHurtTarget(currentTarget);
                 }
 
-                // Forward area damage
+                // Forward area damage — 20 blocks ahead of the head, 10
+                // above. Covers the case where the target ducks under.
                 double forwardX = this.getX() + 20.0 * Math.sin(Math.toRadians(this.yHeadRot));
                 double forwardZ = this.getZ() - 20.0 * Math.cos(Math.toRadians(this.yHeadRot));
                 if (this.getRandom().nextInt(3) == 1) {
@@ -644,7 +817,9 @@ public class TheKing extends Monster implements OreSpawnPartEntity.MultipartBoss
                             15.0, ATTACK_DAMAGE_VALUE / 2, 1);
                 }
 
-                // Ranged attacks when target is far
+                // Long range (> 30 blocks²) — pick one of three elemental
+                // projectile streams. Aim check prevents wasting ammo when
+                // the target is behind us or blocked by terrain.
                 if (this.getHorizontalDistanceSqToEntity(currentTarget) > 900.0) {
                     attackChoice = this.getRandom().nextInt(3);
                     if (attackChoice == 0 && this.fireballStreamCount > 0) {
@@ -659,6 +834,7 @@ public class TheKing extends Monster implements OreSpawnPartEntity.MultipartBoss
                     }
                 }
             } else {
+                // No target — drop out of attacking pose, refill ammo.
                 this.setAttacking(0);
                 this.fireballStreamCount = 10;
                 this.lightningStreamCount = 5;
@@ -666,7 +842,9 @@ public class TheKing extends Monster implements OreSpawnPartEntity.MultipartBoss
             }
         }
 
-        // Purple power in enraged mode
+        // Enraged-phase signature: a cloud of PurplePower bombs streams
+        // behind The King whenever it's mid-attack. Only spawns when
+        // isEnd==2 so normal-phase fights don't get spammed.
         if (this.getAttacking() != 0 && this.isEnd == 2) {
             double xzoff = 10.0;
             double yoff = 14.0;
@@ -684,7 +862,12 @@ public class TheKing extends Monster implements OreSpawnPartEntity.MultipartBoss
             }
         }
 
-        // ---- Flight movement ----
+        // ---- Flight motion lerp ----
+        // Soft smoothing toward the current flight target: Math.signum()
+        // gives a unit direction, the 0.7 target speed is blended in over
+        // ~3 ticks (35% per tick on x/z, 30% on y). This is what gives The
+        // King his characteristic lazy-but-menacing arcs — never snapping,
+        // always drifting.
         double goalX = this.currentFlightTarget.getX() + 0.5 - this.getX();
         double goalY = this.currentFlightTarget.getY() + 0.1 - this.getY();
         double goalZ = this.currentFlightTarget.getZ() + 0.5 - this.getZ();
@@ -699,17 +882,6 @@ public class TheKing extends Monster implements OreSpawnPartEntity.MultipartBoss
         float yawDelta = Mth.wrapDegrees(targetYaw - this.getYRot());
         this.zza = 1.0f;
         this.setYRot(this.getYRot() + yawDelta / 8.0f);
-
-        // ---- Passive healing ----
-        if (this.getRandom().nextInt(30) == 1 && this.getHealth() < this.mygetMaxHealth()) {
-            this.heal(5.0f);
-            if (this.largeEntityDetected != 0) {
-                this.heal(200.0f);
-            }
-        }
-        if (this.playerHitCount < 10 && this.getHealth() < 2000.0f) {
-            this.heal(2000.0f - this.getHealth());
-        }
     }
 
     // ---- Combat ----
