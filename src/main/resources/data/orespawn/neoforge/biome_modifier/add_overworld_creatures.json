@@ -15,8 +15,6 @@
     { "type": "orespawn:red_cow", "weight": 6, "minCount": 1, "maxCount": 2 },
     { "type": "orespawn:ant", "weight": 12, "minCount": 1, "maxCount": 4 },
     { "type": "orespawn:red_ant", "weight": 8, "minCount": 1, "maxCount": 3 },
-    { "type": "orespawn:cricket", "weight": 12, "minCount": 1, "maxCount": 3 },
-    { "type": "orespawn:stink_bug", "weight": 6, "minCount": 1, "maxCount": 2 },
     { "type": "orespawn:worm_small", "weight": 10, "minCount": 1, "maxCount": 2 },
     { "type": "orespawn:cliff_racer", "weight": 5, "minCount": 1, "maxCount": 2 },
     { "type": "orespawn:camarasaurus", "weight": 2, "minCount": 1, "maxCount": 1 },
