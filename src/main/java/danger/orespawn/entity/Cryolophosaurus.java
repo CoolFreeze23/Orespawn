@@ -1,15 +1,9 @@
 package danger.orespawn.entity;
 
-import java.util.Comparator;
-import java.util.List;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.Mob;
-import danger.orespawn.util.MyUtils;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
@@ -19,30 +13,40 @@ import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.AABB;
 import danger.orespawn.OreSpawnMod;
+import danger.orespawn.entity.ai.DinosaurMeleeAttackGoal;
 
 public class Cryolophosaurus extends Monster {
-    private final Comparator<Entity> targetSorter;
     private final float moveSpeed = 0.25f;
 
     public Cryolophosaurus(EntityType<? extends Cryolophosaurus> type, Level level) {
         super(type, level);
         this.xpReward = 10;
-        this.targetSorter = Comparator.comparingDouble(this::distanceToSqr);
     }
 
+    // Cryolophosaurus is a timid dinosaur in the 1.7.10 source: it mostly
+    // panics when hit, only half-heartedly lashes out (nextInt(12) swing
+    // dice!), and drops its target after ~200 cadence ticks. PanicGoal fires
+    // on injury, DinosaurMeleeAttackGoal re-uses the bug/dino melee loop
+    // with those exact timid dice, and there is no proactive
+    // NearestAttackableTargetGoal — it only retaliates via HurtByTargetGoal.
     @Override
     protected void registerGoals() {
         this.goalSelector.addGoal(0, new FloatGoal(this));
         this.goalSelector.addGoal(1, new PanicGoal(this, 1.35));
+        this.goalSelector.addGoal(2, new DinosaurMeleeAttackGoal(this, this::legacySetAttacking,
+                DinosaurMeleeAttackGoal.Presets.cryolophosaurus()));
         this.goalSelector.addGoal(3, new MyEntityAIWanderALot(this, 10, 1.0));
         this.goalSelector.addGoal(4, new LookAtPlayerGoal(this, Player.class, 8.0f));
         this.goalSelector.addGoal(5, new RandomLookAroundGoal(this));
         this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
     }
+
+    // Placeholder for the DinosaurMeleeAttackGoal "setAttacking" callback.
+    // Cryolophosaurus has no DATA_ATTACKING watcher (it never needed one in
+    // 1.7.10), so this is a no-op. Kept as a method ref for interface parity.
+    private void legacySetAttacking(int value) {}
 
     public static AttributeSupplier.Builder createAttributes() {
         return Monster.createMonsterAttributes()
@@ -87,49 +91,5 @@ public class Cryolophosaurus extends Monster {
     @Override
     protected float getSoundVolume() {
         return 0.75f;
-    }
-
-    @Override
-    protected void customServerAiStep() {
-        if (this.isRemoved()) return;
-        super.customServerAiStep();
-
-        if (this.random.nextInt(200) == 1) {
-            this.setTarget(null);
-        }
-
-        if (this.random.nextInt(5) == 1) {
-            LivingEntity target = this.findSomethingToAttack();
-            if (target != null) {
-                this.getNavigation().moveTo(target, 1.25);
-                if (this.distanceToSqr(target) < 5.0
-                        && (this.random.nextInt(12) == 0 || this.random.nextInt(14) == 1)) {
-                    this.doHurtTarget(target);
-                }
-            }
-        }
-    }
-
-    private boolean isSuitableTarget(LivingEntity target) {
-        if (target == null || target == this || !target.isAlive()) return false;
-        if (!this.getSensing().hasLineOfSight(target)) return false;
-        if (target instanceof Alosaurus) return false;
-        if (target instanceof TRex) return false;
-        if (target instanceof Cryolophosaurus) return false;
-        if (MyUtils.isIgnoreable(target) || target instanceof EntityGammaMetroid) return false;
-        if (target instanceof Player player) {
-            return !player.getAbilities().invulnerable;
-        }
-        return true;
-    }
-
-    private LivingEntity findSomethingToAttack() {
-        AABB searchBox = this.getBoundingBox().inflate(9.0, 2.0, 9.0);
-        List<LivingEntity> targets = this.level().getEntitiesOfClass(LivingEntity.class, searchBox);
-        targets.sort(Comparator.comparingDouble(this::distanceToSqr));
-        for (LivingEntity target : targets) {
-            if (this.isSuitableTarget(target)) return target;
-        }
-        return null;
     }
 }

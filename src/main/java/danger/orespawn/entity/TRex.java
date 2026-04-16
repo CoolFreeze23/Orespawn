@@ -1,7 +1,5 @@
 package danger.orespawn.entity;
 
-import java.util.Comparator;
-import java.util.List;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -12,7 +10,6 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
@@ -20,35 +17,41 @@ import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
+import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.AABB;
+import danger.orespawn.entity.ai.DinosaurMeleeAttackGoal;
 
 public class TRex extends Monster {
     private static final EntityDataAccessor<Integer> DATA_ATTACKING =
             SynchedEntityData.defineId(TRex.class, EntityDataSerializers.INT);
 
-    private final Comparator<Entity> targetSorter;
     private final float moveSpeed = 0.38f;
-    private LivingEntity revengeTarget = null;
 
     public TRex(EntityType<? extends TRex> type, Level level) {
         super(type, level);
         this.xpReward = 150;
-        this.targetSorter = Comparator.comparingDouble(this::distanceToSqr);
     }
 
+    // AI mirrors 1.7.10 TRex#func_70619_bc: random-cadence swings with the
+    // same outer/inner nextInt dice. Revenge target is now handled by the
+    // standard HurtByTargetGoal; proactive target acquisition is pushed onto
+    // NearestAttackableTargetGoal with a wide follow range (40) to match the
+    // legacy 20×6×20 AABB scan.
     @Override
     protected void registerGoals() {
         this.goalSelector.addGoal(0, new FloatGoal(this));
+        this.goalSelector.addGoal(1, new DinosaurMeleeAttackGoal(this, this::setAttacking,
+                DinosaurMeleeAttackGoal.Presets.trex()));
         this.goalSelector.addGoal(2, new WaterAvoidingRandomStrollGoal(this, 1.0));
         this.goalSelector.addGoal(3, new LookAtPlayerGoal(this, Player.class, 8.0f));
         this.goalSelector.addGoal(4, new RandomLookAroundGoal(this));
         this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
+        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
     }
 
     public static AttributeSupplier.Builder createAttributes() {
@@ -132,10 +135,12 @@ public class TRex extends Monster {
         }
     }
 
+    // 1.7.10 knockback: horizontal push of 1.2 + vertical bump of 0.1
+    // (doubled if hitting a player or removed entity).
     @Override
     public boolean doHurtTarget(Entity target) {
         if (super.doHurtTarget(target)) {
-            if (target instanceof LivingEntity living) {
+            if (target instanceof LivingEntity) {
                 double knockbackStrength = 1.2;
                 double upwardKnockback = 0.1;
                 float angleToTarget = (float) Math.atan2(target.getZ() - this.getZ(), target.getX() - this.getX());
@@ -151,72 +156,11 @@ public class TRex extends Monster {
 
     @Override
     public boolean hurt(DamageSource source, float amount) {
+        // Cactus immunity preserved from 1.7.10 (T-Rex leather is too thick).
         if (source.getMsgId().equals("cactus")) {
             return false;
         }
-        boolean ret = super.hurt(source, amount);
-        Entity attacker = source.getEntity();
-        if (attacker instanceof LivingEntity living) {
-            this.revengeTarget = living;
-        }
-        return ret;
-    }
-
-    @Override
-    protected void customServerAiStep() {
-        if (this.isRemoved()) return;
-        super.customServerAiStep();
-
-        if (this.getRandom().nextInt(5) == 1) {
-            LivingEntity target = this.revengeTarget;
-            if (target != null) {
-                if (!target.isAlive() || this.getRandom().nextInt(200) == 1) {
-                    target = null;
-                    this.revengeTarget = null;
-                }
-                if (target != null && !this.getSensing().hasLineOfSight(target)) {
-                    target = null;
-                }
-            }
-            if (target == null) {
-                target = findSomethingToAttack();
-            }
-            if (target != null) {
-                this.lookAt(target, 10.0f, 10.0f);
-                double distSq = this.distanceToSqr(target);
-                float attackRange = 4.0f + target.getBbWidth() / 2.0f;
-                if (distSq < attackRange * attackRange) {
-                    this.setAttacking(1);
-                    if (this.getRandom().nextInt(4) == 0 || this.getRandom().nextInt(5) == 1) {
-                        this.doHurtTarget(target);
-                    }
-                } else {
-                    this.getNavigation().moveTo(target, 1.25);
-                }
-            } else {
-                this.setAttacking(0);
-            }
-        }
-    }
-
-    private boolean isSuitableTarget(LivingEntity target) {
-        if (target == null || target == this || !target.isAlive()) return false;
-        if (!this.getSensing().hasLineOfSight(target)) return false;
-        if (target instanceof TRex) return false;
-        if (target instanceof Player player) {
-            if (player.getAbilities().instabuild) return false;
-        }
-        return true;
-    }
-
-    private LivingEntity findSomethingToAttack() {
-        AABB searchBox = this.getBoundingBox().inflate(20.0, 6.0, 20.0);
-        List<LivingEntity> entities = this.level().getEntitiesOfClass(LivingEntity.class, searchBox);
-        entities.sort(this.targetSorter);
-        for (LivingEntity entity : entities) {
-            if (isSuitableTarget(entity)) return entity;
-        }
-        return null;
+        return super.hurt(source, amount);
     }
 
     public final int getAttacking() {

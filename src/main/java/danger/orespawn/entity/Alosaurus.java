@@ -1,39 +1,34 @@
 package danger.orespawn.entity;
 
-import java.util.Comparator;
-import java.util.List;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
+import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.AABB;
-import net.minecraft.world.phys.Vec3;
 import danger.orespawn.OreSpawnMod;
+import danger.orespawn.entity.ai.DinosaurMeleeAttackGoal;
 
 public class Alosaurus extends Monster {
     private static final EntityDataAccessor<Integer> DATA_ATTACKING =
             SynchedEntityData.defineId(Alosaurus.class, EntityDataSerializers.INT);
 
-    private final Comparator<Entity> targetSorter;
     private final float moveSpeed = 0.35f;
     private static final double KNOCKBACK_HORIZONTAL = 1.2;
     private static final double KNOCKBACK_VERTICAL = 0.1;
@@ -42,16 +37,24 @@ public class Alosaurus extends Monster {
     public Alosaurus(EntityType<? extends Alosaurus> type, Level level) {
         super(type, level);
         this.xpReward = 40;
-        this.targetSorter = Comparator.comparingDouble(this::distanceToSqr);
     }
 
+    // AI: FloatGoal for water self-rescue, DinosaurMeleeAttackGoal for the
+    // 1.7.10 "nextInt(4)==0 || nextInt(5)==1" swing cadence (tuning matches
+    // reference_1_7_10_source/Alosaurus#func_70619_bc verbatim), standard
+    // look goals for idle posture. Target acquisition uses HurtByTargetGoal
+    // for retaliation + NearestAttackableTargetGoal for proactive spotting,
+    // replacing the old private AABB scan in customServerAiStep.
     @Override
     protected void registerGoals() {
         this.goalSelector.addGoal(0, new FloatGoal(this));
+        this.goalSelector.addGoal(1, new DinosaurMeleeAttackGoal(this, this::setAttacking,
+                DinosaurMeleeAttackGoal.Presets.alosaurus()));
         this.goalSelector.addGoal(2, new MyEntityAIWanderALot(this, 16, 1.0));
         this.goalSelector.addGoal(3, new LookAtPlayerGoal(this, Player.class, 8.0f));
         this.goalSelector.addGoal(4, new RandomLookAroundGoal(this));
         this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
+        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
     }
 
     public static AttributeSupplier.Builder createAttributes() {
@@ -59,7 +62,7 @@ public class Alosaurus extends Monster {
                 .add(Attributes.MAX_HEALTH, 60.0)
                 .add(Attributes.MOVEMENT_SPEED, 0.35)
                 .add(Attributes.ATTACK_DAMAGE, 15.0)
-                .add(Attributes.FOLLOW_RANGE, 24.0);
+                .add(Attributes.FOLLOW_RANGE, 32.0);
     }
 
     @Override
@@ -105,10 +108,13 @@ public class Alosaurus extends Monster {
         return 1.5f;
     }
 
+    // Preserves 1.7.10 knockback: angle-based horizontal push + small vertical
+    // bump (doubled when hitting a player or a target already flagged removed
+    // — the latter matches the original "if (target.isRemoved() ...)" guard).
     @Override
     public boolean doHurtTarget(Entity target) {
         if (super.doHurtTarget(target)) {
-            if (target instanceof LivingEntity living) {
+            if (target instanceof LivingEntity) {
                 double verticalKnockback = KNOCKBACK_VERTICAL;
                 float yawToTarget = (float) Math.atan2(target.getZ() - this.getZ(), target.getX() - this.getX());
                 if (target.isRemoved() || target instanceof Player) {
@@ -122,51 +128,6 @@ public class Alosaurus extends Monster {
             return true;
         }
         return false;
-    }
-
-    @Override
-    protected void customServerAiStep() {
-        if (this.isRemoved()) return;
-        super.customServerAiStep();
-
-        if (this.random.nextInt(5) == 0) {
-            LivingEntity target = this.findSomethingToAttack();
-            if (target != null) {
-                this.lookAt(target, 10.0f, 10.0f);
-                double attackRange = (4.0 + target.getBbWidth() / 2.0) * (4.0 + target.getBbWidth() / 2.0);
-                if (this.distanceToSqr(target) < attackRange) {
-                    this.setAttacking(1);
-                    if (this.random.nextInt(4) == 0 || this.random.nextInt(5) == 1) {
-                        this.doHurtTarget(target);
-                    }
-                } else {
-                    this.getNavigation().moveTo(target, 1.25);
-                }
-            } else {
-                this.setAttacking(0);
-            }
-        }
-    }
-
-    private boolean isSuitableTarget(LivingEntity target) {
-        if (target == null || target == this || !target.isAlive()) return false;
-        if (target instanceof Alosaurus) return false;
-        if (target instanceof Cryolophosaurus || target instanceof VelocityRaptor) return false;
-        if (!this.getSensing().hasLineOfSight(target)) return false;
-        if (target instanceof Player player) {
-            return !player.getAbilities().invulnerable;
-        }
-        return true;
-    }
-
-    private LivingEntity findSomethingToAttack() {
-        AABB searchBox = this.getBoundingBox().inflate(12.0, 5.0, 12.0);
-        List<LivingEntity> targets = this.level().getEntitiesOfClass(LivingEntity.class, searchBox);
-        targets.sort(Comparator.comparingDouble(this::distanceToSqr));
-        for (LivingEntity target : targets) {
-            if (this.isSuitableTarget(target)) return target;
-        }
-        return null;
     }
 
     public int getAttacking() {
