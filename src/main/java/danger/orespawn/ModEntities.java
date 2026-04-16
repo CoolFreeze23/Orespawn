@@ -266,7 +266,7 @@ public class ModEntities {
 
     public static final DeferredHolder<EntityType<?>, EntityType<Cassowary>> CASSOWARY =
             ENTITY_TYPES.register("cassowary", () -> EntityType.Builder.of(Cassowary::new, MobCategory.CREATURE)
-                    .sized(0.6f, 1.5f).clientTrackingRange(10).build("cassowary"));
+                    .sized(0.5f, 1.2f).clientTrackingRange(10).build("cassowary"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<Chipmunk>> CHIPMUNK =
             ENTITY_TYPES.register("chipmunk", () -> EntityType.Builder.of(Chipmunk::new, MobCategory.CREATURE)
@@ -304,17 +304,25 @@ public class ModEntities {
             ENTITY_TYPES.register("gold_fish", () -> EntityType.Builder.of(GoldFish::new, MobCategory.CREATURE)
                     .sized(0.3f, 0.3f).clientTrackingRange(8).build("gold_fish"));
 
+    // Island entities are 1.7.10-style: the entity itself is a tiny 0.5x0.5
+    // marker that places sand/gravel/sandstone (Island) or grass/stone
+    // (IslandToo) as real world blocks via its tick() method. The visible
+    // "10x6 floating island" is those placed blocks, not the entity's AABB.
+    // Keeping the hitbox tiny avoids a 10x6 collision/pathfinder probe on
+    // every tick and faithfully matches 1.7.10's func_70105_a(0.5f, 0.5f).
+    // clientTrackingRange stays at 16 chunks so the placed structure stays
+    // visible at long distances.
     public static final DeferredHolder<EntityType<?>, EntityType<Island>> ISLAND =
             ENTITY_TYPES.register("island", () -> EntityType.Builder.of(Island::new, MobCategory.CREATURE)
-                    .sized(10.0f, 6.0f).clientTrackingRange(16).build("island"));
+                    .sized(0.5f, 0.5f).clientTrackingRange(16).build("island"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<IslandToo>> ISLAND_TOO =
             ENTITY_TYPES.register("island_too", () -> EntityType.Builder.of(IslandToo::new, MobCategory.CREATURE)
-                    .sized(10.0f, 6.0f).clientTrackingRange(16).build("island_too"));
+                    .sized(0.5f, 0.5f).clientTrackingRange(16).build("island_too"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<Peacock>> PEACOCK =
             ENTITY_TYPES.register("peacock", () -> EntityType.Builder.of(Peacock::new, MobCategory.CREATURE)
-                    .sized(0.6f, 1.0f).clientTrackingRange(10).build("peacock"));
+                    .sized(0.65f, 1.2f).clientTrackingRange(10).build("peacock"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<Whale>> WHALE =
             ENTITY_TYPES.register("whale", () -> EntityType.Builder.of(Whale::new, MobCategory.CREATURE)
@@ -403,7 +411,7 @@ public class ModEntities {
 
     public static final DeferredHolder<EntityType<?>, EntityType<Ostrich>> OSTRICH =
             ENTITY_TYPES.register("ostrich", () -> EntityType.Builder.of(Ostrich::new, MobCategory.CREATURE)
-                    .sized(0.7f, 1.5f).clientTrackingRange(10).build("ostrich"));
+                    .sized(0.85f, 2.1f).clientTrackingRange(10).build("ostrich"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<EntityRubberDucky>> ENTITY_RUBBER_DUCKY =
             ENTITY_TYPES.register("rubber_ducky", () -> EntityType.Builder.of(EntityRubberDucky::new, MobCategory.CREATURE)
@@ -457,7 +465,7 @@ public class ModEntities {
 
     public static final DeferredHolder<EntityType<?>, EntityType<Fairy>> FAIRY =
             ENTITY_TYPES.register("fairy", () -> EntityType.Builder.of(Fairy::new, MobCategory.AMBIENT)
-                    .sized(0.3f, 0.5f).clientTrackingRange(8).build("fairy"));
+                    .sized(0.4f, 0.8f).clientTrackingRange(8).build("fairy"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<Firefly>> FIREFLY =
             ENTITY_TYPES.register("firefly", () -> EntityType.Builder.of(Firefly::new, MobCategory.AMBIENT)
@@ -475,13 +483,16 @@ public class ModEntities {
     // at the registry level (MobCategory is independent of class hierarchy),
     // but Phase 4C will refactor them to extend Monster/PathfinderMob so
     // they can carry real target goals. Tracking issue: see inventory notes.
+    // Ghost: 1.7.10 func_70105_a(0.5f, 1.5f).
     public static final DeferredHolder<EntityType<?>, EntityType<Ghost>> GHOST =
             ENTITY_TYPES.register("ghost", () -> EntityType.Builder.of(Ghost::new, MobCategory.MONSTER)
-                    .sized(0.6f, 1.8f).clientTrackingRange(10).build("ghost"));
+                    .sized(0.5f, 1.5f).clientTrackingRange(10).build("ghost"));
 
+    // GhostSkelly: 1.7.10 func_70105_a(1.5f, 2.0f) — intentionally larger
+    // than Ghost so its skeletal silhouette reads correctly at distance.
     public static final DeferredHolder<EntityType<?>, EntityType<GhostSkelly>> GHOST_SKELLY =
             ENTITY_TYPES.register("ghost_skelly", () -> EntityType.Builder.of(GhostSkelly::new, MobCategory.MONSTER)
-                    .sized(0.6f, 1.8f).clientTrackingRange(10).build("ghost_skelly"));
+                    .sized(1.5f, 2.0f).clientTrackingRange(10).build("ghost_skelly"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<Mothra>> MOTHRA =
             ENTITY_TYPES.register("mothra", () -> EntityType.Builder.of(Mothra::new, MobCategory.AMBIENT)

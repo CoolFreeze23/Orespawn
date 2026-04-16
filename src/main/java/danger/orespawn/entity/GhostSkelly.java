@@ -6,11 +6,15 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
+import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.ambient.AmbientCreature;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
@@ -19,8 +23,17 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import danger.orespawn.OreSpawnMod;
 
+/**
+ * GhostSkelly — sister mob to {@link Ghost} with a heavier silhouette and
+ * stronger contact damage. See Ghost.java for the rationale behind the
+ * 1.7.10 -> 1.21.1 monster-category upgrade.
+ */
 public class GhostSkelly extends AmbientCreature {
+    private static final double CONTACT_DAMAGE_RANGE_SQ = 1.8 * 1.8;
+    private static final int ATTACK_COOLDOWN_TICKS = 20;
+
     private BlockPos currentFlightTarget = null;
+    private int attackCooldown = 0;
 
     public GhostSkelly(EntityType<? extends GhostSkelly> type, Level level) {
         super(type, level);
@@ -28,11 +41,24 @@ public class GhostSkelly extends AmbientCreature {
         this.noPhysics = true;
     }
 
+    @Override
+    protected void registerGoals() {
+        this.goalSelector.addGoal(8, new LookAtPlayerGoal(this, Player.class, 12.0f));
+        this.targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, Player.class, true));
+    }
+
     public static AttributeSupplier.Builder createAttributes() {
         return Mob.createMobAttributes()
                 .add(Attributes.MAX_HEALTH, 5.0)
                 .add(Attributes.MOVEMENT_SPEED, 0.1)
-                .add(Attributes.ATTACK_DAMAGE, 0.0);
+                .add(Attributes.ATTACK_DAMAGE, 4.0)
+                .add(Attributes.FOLLOW_RANGE, 32.0);
+    }
+
+    @Override
+    public boolean doHurtTarget(Entity target) {
+        return target.hurt(this.damageSources().mobAttack(this),
+                (float) this.getAttributeValue(Attributes.ATTACK_DAMAGE));
     }
 
     @Override
@@ -53,6 +79,22 @@ public class GhostSkelly extends AmbientCreature {
     protected void customServerAiStep() {
         if (this.isRemoved()) return;
         super.customServerAiStep();
+
+        if (this.attackCooldown > 0) this.attackCooldown--;
+
+        // See Ghost.java for why we fall back to nearest-player detection
+        // when the goalSelector target isn't populated.
+        if (this.attackCooldown == 0) {
+            LivingEntity aggroTarget = this.getTarget();
+            if (aggroTarget == null) {
+                aggroTarget = this.level().getNearestPlayer(this, Math.sqrt(CONTACT_DAMAGE_RANGE_SQ));
+            }
+            if (aggroTarget != null && aggroTarget.isAlive()
+                    && this.distanceToSqr(aggroTarget) <= CONTACT_DAMAGE_RANGE_SQ) {
+                this.doHurtTarget(aggroTarget);
+                this.attackCooldown = ATTACK_COOLDOWN_TICKS;
+            }
+        }
 
         if (this.currentFlightTarget == null) {
             this.currentFlightTarget = this.blockPosition();
