@@ -10,6 +10,26 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 
+/**
+ * <b>Legacy 1.7.10 sidecar entity.</b> See {@link KingHead} for the full
+ * explanation of this pattern and why it's superseded in 1.21.1 by
+ * {@link OreSpawnPartEntity}.
+ *
+ * <p>In the 1.7.10 original ({@code reference_1_7_10_source/sources/danger/orespawn/QueenHead.java}),
+ * Queen's head was a standalone {@code EntityLiving} that teleported to
+ * {@code (parent.x − 30·sin(yaw), parent.y + 12, parent.z + 30·cos(yaw))}
+ * every tick and forwarded damage via AABB search. The modern port expresses
+ * Queen's three heads as named {@link OreSpawnPartEntity} children of
+ * {@link TheQueen} ({@code headL} / {@code headC} / {@code headR}) — see
+ * {@link TheQueen#getParts()}.</p>
+ *
+ * <p>Retained for NBT backward compatibility and for
+ * {@link TheQueen#customServerAiStep()}'s flight-pattern hook only.</p>
+ *
+ * @deprecated superseded by {@link OreSpawnPartEntity} on {@link TheQueen};
+ *             kept for save compatibility only.
+ */
+@Deprecated
 public class QueenHead extends Mob {
 
     public QueenHead(EntityType<? extends QueenHead> type, Level level) {

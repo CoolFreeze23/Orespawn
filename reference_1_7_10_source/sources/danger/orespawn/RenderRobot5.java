@@ -1,0 +1,51 @@
+/*
+ * Decompiled with CFR 0.152.
+ */
+package danger.orespawn;
+
+import danger.orespawn.ModelRobot5;
+import danger.orespawn.Robot5;
+import net.minecraft.client.model.ModelBase;
+import net.minecraft.client.renderer.entity.RenderLiving;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.util.ResourceLocation;
+import org.lwjgl.opengl.GL11;
+
+public class RenderRobot5
+extends RenderLiving {
+    protected ModelRobot5 model = (ModelRobot5)this.field_77045_g;
+    private float scale = 1.0f;
+    private static final ResourceLocation texture = new ResourceLocation("orespawn", "Robot5texture.png");
+
+    public RenderRobot5(ModelRobot5 par1ModelBase, float par2, float par3) {
+        super((ModelBase)par1ModelBase, par2 * par3);
+        this.scale = par3;
+    }
+
+    public void renderRobot5(Robot5 par1EntityRobot5, double par2, double par4, double par6, float par8, float par9) {
+        super.func_76986_a((EntityLiving)par1EntityRobot5, par2, par4, par6, par8, par9);
+    }
+
+    public void func_76986_a(EntityLiving par1EntityLiving, double par2, double par4, double par6, float par8, float par9) {
+        this.renderRobot5((Robot5)par1EntityLiving, par2, par4, par6, par8, par9);
+    }
+
+    public void func_76986_a(Entity par1Entity, double par2, double par4, double par6, float par8, float par9) {
+        this.renderRobot5((Robot5)par1Entity, par2, par4, par6, par8, par9);
+    }
+
+    protected void preRenderScale(Robot5 par1Entity, float par2) {
+        GL11.glScalef((float)this.scale, (float)this.scale, (float)this.scale);
+    }
+
+    protected void func_77041_b(EntityLivingBase par1EntityLiving, float par2) {
+        this.preRenderScale((Robot5)par1EntityLiving, par2);
+    }
+
+    protected ResourceLocation func_110775_a(Entity entity) {
+        return texture;
+    }
+}
+

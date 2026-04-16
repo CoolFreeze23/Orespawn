@@ -47,6 +47,53 @@ import danger.orespawn.OreSpawnConfig;
 import danger.orespawn.util.MyUtils;
 import net.neoforged.neoforge.entity.PartEntity;
 
+/**
+ * The Queen — a flying, three-headed multi-region boss.
+ *
+ * <h2>Multi-part framework (1.7.10 → 1.21.1 port)</h2>
+ *
+ * <p>The 1.7.10 original ({@code reference_1_7_10_source/sources/danger/orespawn/TheQueen.java})
+ * used the same sidecar-{@code QueenHead} trick as The King: a single 22×24
+ * {@code EntityMob} with one detached {@code QueenHead} entity teleporting
+ * itself 20 blocks above and 30 blocks in front every tick
+ * ({@code QueenHead.java:139-158}). All of Queen's characteristic silhouette
+ * — three necks, three heads, two outstretched wings, a multi-segment tail,
+ * two hind legs — was invisible to the hit-detection system; everything
+ * funnelled through one massive AABB.</p>
+ *
+ * <p>NeoForge 1.21.1 lets us express Queen's full anatomy as
+ * {@link PartEntity} children: <b>fourteen</b> named regions (body; neckL /
+ * headL / neckC / headC / neckR / headR; wingL, wingR; tailB, tailM, tailT;
+ * legL, legR). Damage routes through
+ * {@link #hurtFromPart(OreSpawnPartEntity, DamageSource, float)} so that:
+ * <ul>
+ *   <li><b>Any head</b> takes full damage — rewards precision aiming at a
+ *       weak point while Queen strafes.</li>
+ *   <li><b>Body and legs</b> take half damage — the "armoured" hitbox.</li>
+ *   <li><b>Necks, wings, tail segments</b> take ¼ + 1 flat — glancing hits
+ *       still register but don't trivialise the fight.</li>
+ * </ul>
+ *
+ * <h2>Animation-aware part positioning</h2>
+ *
+ * <p>Queen's parts aren't placed by static offsets — they follow the same
+ * sinusoidal timing as the client-side {@code ModelTheQueen} so the
+ * hitboxes stay in sync with what the player visually sees. See
+ * {@link #tick()} for the full positioning block: the world-space offsets
+ * are converted from Blockbench model coordinates using
+ * {@code worldOffset = modelCoord × 3 / 16}, and the renderer's
+ * {@code rotateY(180 - yaw)} mirror means world Z uses the negated model
+ * Z coordinate.</p>
+ *
+ * <p>The legacy {@code QueenHead} sidecar entity type is still registered
+ * and still spawned by the AI step (see
+ * {@link #customServerAiStep()}) — this is deliberate for save-file
+ * backward compatibility during the port. It can be removed once the
+ * {@link PartEntity} framework has been validated end-to-end.</p>
+ *
+ * @see OreSpawnPartEntity for the part implementation and the full 1.7.10
+ *   paradigm-shift commentary.
+ */
 public class TheQueen extends Monster implements OreSpawnPartEntity.MultipartBoss {
 
     private static final EntityDataAccessor<Integer> DATA_ATTACKING =
@@ -276,19 +323,31 @@ public class TheQueen extends Monster implements OreSpawnPartEntity.MultipartBos
         }
     }
 
+    /**
+     * Advertises to NeoForge that this entity owns a non-empty
+     * {@link PartEntity} array. Without this the parts returned by
+     * {@link #getParts()} are ignored by hit-detection.
+     */
     @Override
     public boolean isMultipartEntity() {
         return true;
     }
 
+    /**
+     * Returns the stable 14-element array of child parts. Must return the
+     * SAME array reference every call — the world caches it for hit-testing.
+     */
     @Override
     public PartEntity<?>[] getParts() {
         return this.allParts;
     }
 
     /**
-     * Reserve contiguous entity IDs for all sub-parts so the client can
-     * correlate hit-detection packets with the correct part entity.
+     * Reserves a contiguous block of 14 entity IDs for the sub-parts so
+     * the client can correlate hit-detection packets with the owning boss.
+     * Mirrors vanilla {@code EnderDragon.setId}. If parts had non-contiguous
+     * IDs, client-side part lookup would fall back to the parent's root
+     * AABB, defeating per-part damage multipliers.
      */
     @Override
     public void setId(int id) {
