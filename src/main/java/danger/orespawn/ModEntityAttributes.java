@@ -1,10 +1,17 @@
 package danger.orespawn;
 
 import danger.orespawn.entity.*;
+import net.minecraft.core.BlockPos;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.SpawnPlacementTypes;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.monster.Monster;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -162,6 +169,10 @@ public class ModEntityAttributes {
                 Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Monster::checkMonsterSpawnRules, RegisterSpawnPlacementsEvent.Operation.AND);
         event.register(ModEntities.WHALE.get(), SpawnPlacementTypes.IN_WATER,
                 Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Mob::checkMobSpawnRules, RegisterSpawnPlacementsEvent.Operation.AND);
+        event.register(ModEntities.FLOUNDER.get(), SpawnPlacementTypes.IN_WATER,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Mob::checkMobSpawnRules, RegisterSpawnPlacementsEvent.Operation.AND);
+        event.register(ModEntities.SKATE.get(), SpawnPlacementTypes.IN_WATER,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Mob::checkMobSpawnRules, RegisterSpawnPlacementsEvent.Operation.AND);
 
         // Cave mobs
         event.register(ModEntities.CAVE_FISHER.get(), SpawnPlacementTypes.ON_GROUND,
@@ -224,18 +235,22 @@ public class ModEntityAttributes {
                 Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Animal::checkAnimalSpawnRules, RegisterSpawnPlacementsEvent.Operation.AND);
         event.register(ModEntities.CASSOWARY.get(), SpawnPlacementTypes.ON_GROUND,
                 Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Animal::checkAnimalSpawnRules, RegisterSpawnPlacementsEvent.Operation.AND);
-        event.register(ModEntities.COCKATEIL.get(), SpawnPlacementTypes.ON_GROUND,
-                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Animal::checkAnimalSpawnRules, RegisterSpawnPlacementsEvent.Operation.AND);
-        event.register(ModEntities.PEACOCK.get(), SpawnPlacementTypes.ON_GROUND,
-                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Animal::checkAnimalSpawnRules, RegisterSpawnPlacementsEvent.Operation.AND);
-        event.register(ModEntities.FROG.get(), SpawnPlacementTypes.ON_GROUND,
-                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Animal::checkAnimalSpawnRules, RegisterSpawnPlacementsEvent.Operation.AND);
         event.register(ModEntities.BEAVER.get(), SpawnPlacementTypes.ON_GROUND,
                 Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Animal::checkAnimalSpawnRules, RegisterSpawnPlacementsEvent.Operation.AND);
         event.register(ModEntities.EASTER_BUNNY.get(), SpawnPlacementTypes.ON_GROUND,
                 Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Animal::checkAnimalSpawnRules, RegisterSpawnPlacementsEvent.Operation.AND);
         event.register(ModEntities.LIZARD.get(), SpawnPlacementTypes.ON_GROUND,
                 Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Animal::checkAnimalSpawnRules, RegisterSpawnPlacementsEvent.Operation.AND);
+
+        // Crystal dimension passive mobs - use expanded check that also allows CrystalGrass
+        event.register(ModEntities.PEACOCK.get(), SpawnPlacementTypes.ON_GROUND,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, ModEntityAttributes::checkAnimalOrCrystalSpawnRules, RegisterSpawnPlacementsEvent.Operation.AND);
+        event.register(ModEntities.COCKATEIL.get(), SpawnPlacementTypes.ON_GROUND,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, ModEntityAttributes::checkAnimalOrCrystalSpawnRules, RegisterSpawnPlacementsEvent.Operation.AND);
+        event.register(ModEntities.FROG.get(), SpawnPlacementTypes.ON_GROUND,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, ModEntityAttributes::checkAnimalOrCrystalSpawnRules, RegisterSpawnPlacementsEvent.Operation.AND);
+        event.register(ModEntities.CRYSTAL_COW.get(), SpawnPlacementTypes.ON_GROUND,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, ModEntityAttributes::checkAnimalOrCrystalSpawnRules, RegisterSpawnPlacementsEvent.Operation.AND);
 
         // Ambient/flying mobs
         event.register(ModEntities.ENTITY_BUTTERFLY.get(), SpawnPlacementTypes.NO_RESTRICTIONS,
@@ -270,5 +285,18 @@ public class ModEntityAttributes {
                 Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Monster::checkMonsterSpawnRules, RegisterSpawnPlacementsEvent.Operation.AND);
         event.register(ModEntities.ENTITY_LURKING_TERROR.get(), SpawnPlacementTypes.ON_GROUND,
                 Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Monster::checkMonsterSpawnRules, RegisterSpawnPlacementsEvent.Operation.AND);
+    }
+
+    /**
+     * Like Animal::checkAnimalSpawnRules but also allows spawning on CrystalGrass.
+     * Used for passive mobs that appear in both the Overworld and Crystal dimension.
+     */
+    private static boolean checkAnimalOrCrystalSpawnRules(
+            EntityType<? extends Animal> type, LevelAccessor level,
+            MobSpawnType spawnType, BlockPos pos, RandomSource random) {
+        BlockState below = level.getBlockState(pos.below());
+        boolean validGround = below.is(Blocks.GRASS_BLOCK)
+                || below.is(ModBlocks.CRYSTAL_GRASS.get());
+        return validGround && level.getRawBrightness(pos, 0) > 8;
     }
 }

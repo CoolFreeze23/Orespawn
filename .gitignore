@@ -37,3 +37,14 @@ src/generated/resources/.cache/
 
 # Misc
 repo/
+
+# Development/workflow artifacts — not part of the mod itself
+blockbench_exports/
+temp_queen/
+build_queen_hierarchical.py
+clean_models_for_blockbench.py
+compile_all_queen_anims.py
+compile_queen_animation.py
+simplify_animation.py
+verify_hierarchy.py
+commit_msg.txt
