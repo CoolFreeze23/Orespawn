@@ -1,17 +1,14 @@
 package danger.orespawn.entity;
 
-import java.util.Comparator;
-import java.util.List;
-
+import danger.orespawn.OreSpawnMod;
+import danger.orespawn.entity.ai.BugMeleeAttackGoal;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
@@ -19,16 +16,15 @@ import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
+import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import danger.orespawn.OreSpawnMod;
 
 public class DungeonBeast extends Monster {
     private static final EntityDataAccessor<Integer> DATA_ATTACKING =
             SynchedEntityData.defineId(DungeonBeast.class, EntityDataSerializers.INT);
 
-    private final Comparator<Entity> targetSorter;
     private static final float MOVE_SPEED = 0.29f;
     private static final int MAX_HEALTH = 60;
     private static final int ATTACK_DAMAGE = 10;
@@ -36,16 +32,18 @@ public class DungeonBeast extends Monster {
     public DungeonBeast(EntityType<? extends DungeonBeast> type, Level level) {
         super(type, level);
         this.xpReward = 60;
-        this.targetSorter = Comparator.comparingDouble(this::distanceToSqr);
     }
 
     @Override
     protected void registerGoals() {
         this.goalSelector.addGoal(0, new FloatGoal(this));
-        this.goalSelector.addGoal(1, new WaterAvoidingRandomStrollGoal(this, 1.0));
-        this.goalSelector.addGoal(2, new LookAtPlayerGoal(this, Player.class, 8.0f));
-        this.goalSelector.addGoal(3, new RandomLookAroundGoal(this));
+        this.goalSelector.addGoal(1, new BugMeleeAttackGoal(
+                this, this::setAttacking, BugMeleeAttackGoal.Params.dungeonBeast()));
+        this.goalSelector.addGoal(2, new WaterAvoidingRandomStrollGoal(this, 1.0));
+        this.goalSelector.addGoal(3, new LookAtPlayerGoal(this, Player.class, 8.0f));
+        this.goalSelector.addGoal(4, new RandomLookAroundGoal(this));
         this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
+        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
     }
 
     public static AttributeSupplier.Builder createAttributes() {
@@ -53,7 +51,7 @@ public class DungeonBeast extends Monster {
                 .add(Attributes.MAX_HEALTH, MAX_HEALTH)
                 .add(Attributes.MOVEMENT_SPEED, MOVE_SPEED)
                 .add(Attributes.ATTACK_DAMAGE, ATTACK_DAMAGE)
-                .add(Attributes.FOLLOW_RANGE, 16.0)
+                .add(Attributes.FOLLOW_RANGE, 24.0)
                 .add(Attributes.ARMOR, 4.0);
     }
 
@@ -110,44 +108,5 @@ public class DungeonBeast extends Monster {
             return false;
         }
         return super.hurt(source, amount);
-    }
-
-    @Override
-    protected void customServerAiStep() {
-        if (this.isRemoved()) return;
-        super.customServerAiStep();
-
-        if (this.getRandom().nextInt(8) == 0) {
-            LivingEntity attackTarget = findSomethingToAttack();
-            if (attackTarget != null) {
-                if (this.distanceToSqr(attackTarget) < 8.0) {
-                    this.setAttacking(1);
-                    if (this.getRandom().nextInt(7) == 0) {
-                        this.doHurtTarget(attackTarget);
-                    }
-                } else {
-                    this.getNavigation().moveTo(attackTarget, 1.2);
-                }
-            } else {
-                this.setAttacking(0);
-            }
-        }
-    }
-
-    private LivingEntity findSomethingToAttack() {
-        List<LivingEntity> list = this.level().getEntitiesOfClass(LivingEntity.class,
-                this.getBoundingBox().inflate(16.0, 3.0, 16.0));
-        list.sort(this.targetSorter);
-        for (LivingEntity candidate : list) {
-            if (isSuitableTarget(candidate)) return candidate;
-        }
-        return null;
-    }
-
-    private boolean isSuitableTarget(LivingEntity target) {
-        if (target == null || target == this || !target.isAlive()) return false;
-        if (target instanceof DungeonBeast) return false;
-        if (target instanceof Player p) return !p.getAbilities().instabuild;
-        return true;
     }
 }

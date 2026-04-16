@@ -1,8 +1,7 @@
 package danger.orespawn.entity;
 
 import danger.orespawn.OreSpawnMod;
-import java.util.Comparator;
-import java.util.List;
+import danger.orespawn.entity.ai.TrooperBugLeapAttackGoal;
 import javax.annotation.Nullable;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -21,7 +20,7 @@ import net.minecraft.world.entity.ai.goal.FloatGoal;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
-import net.minecraft.world.entity.monster.Creeper;
+import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Items;
@@ -50,17 +49,24 @@ public class EntityTrooperBug extends Monster {
     @Override
     protected void registerGoals() {
         this.goalSelector.addGoal(0, new FloatGoal(this));
+        // TrooperBugLeapAttackGoal is a melee goal with an added "pounce"
+        // behavior: when 4-8 blocks away and on the ground, 1-in-10 rolls
+        // trigger jumpFromGround() which launches the bug forward and up.
+        // This is the mob's signature move (its name evokes paratroopers).
+        this.goalSelector.addGoal(1, new TrooperBugLeapAttackGoal(this, this::setAttacking));
         this.goalSelector.addGoal(2, new MyEntityAIWanderALot(this, 14, 1.0));
         this.goalSelector.addGoal(3, new LookAtPlayerGoal(this, Player.class, 10.0f));
         this.goalSelector.addGoal(4, new RandomLookAroundGoal(this));
         this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
+        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
     }
 
     public static AttributeSupplier.Builder createAttributes() {
         return Monster.createMonsterAttributes()
                 .add(Attributes.MAX_HEALTH, 200.0)
                 .add(Attributes.MOVEMENT_SPEED, 0.4)
-                .add(Attributes.ATTACK_DAMAGE, 16.0);
+                .add(Attributes.ATTACK_DAMAGE, 16.0)
+                .add(Attributes.FOLLOW_RANGE, 32.0);
     }
 
     @Override
@@ -106,6 +112,10 @@ public class EntityTrooperBug extends Monster {
 
     @Override
     public void jumpFromGround() {
+        // Overrides vanilla jump with a larger forward+upward impulse plus a
+        // manual Y-raise so the bug clears the block it was standing on. The
+        // navigation is stopped by tick() via the hasImpulse flag so the goal
+        // doesn't immediately re-pathfind mid-leap.
         Vec3 motion = this.getDeltaMovement();
         double yawRad = Math.toRadians(this.getYRot());
         float horizontalJumpStrength = (float) (JUMP_HORIZONTAL_MIN + Math.abs(this.random.nextFloat() * JUMP_HORIZONTAL_RANDOM));
@@ -161,46 +171,7 @@ public class EntityTrooperBug extends Monster {
     protected void customServerAiStep() {
         if (this.isRemoved()) return;
         super.customServerAiStep();
-
         if (this.hurtTimer > 0) --this.hurtTimer;
-
-        if (this.random.nextInt(5) == 0) {
-            LivingEntity target = this.getTarget();
-            if (target != null && !target.isAlive()) {
-                this.setTarget(null);
-                target = null;
-            }
-            if (target == null) target = findSomethingToAttack();
-
-            if (target != null) {
-                this.getLookControl().setLookAt(target, 10.0f, 10.0f);
-                if (this.random.nextInt(10) == 1 && !this.hasImpulse) {
-                    this.jumpFromGround();
-                } else {
-                    double dist = this.distanceToSqr(target);
-                    double range = (5.0 + target.getBbWidth() / 2.0) * (5.0 + target.getBbWidth() / 2.0);
-                    if (dist < range) {
-                        this.setAttacking(1);
-                        if (this.random.nextInt(6) == 0 || this.random.nextInt(7) == 1) {
-                            this.doHurtTarget(target);
-                            if (!this.level().isClientSide) {
-                                if (this.random.nextInt(3) == 1) {
-                                    this.level().playSound(null, target.blockPosition(),
-                                            SoundEvent.createVariableRangeEvent(
-                                                    ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "scorpion_attack")),
-                                            this.getSoundSource(), 1.4f, 1.0f);
-                                }
-                            }
-                        }
-                    } else if (!this.hasImpulse) {
-                        this.getNavigation().moveTo(target, 1.2);
-                    }
-                }
-            } else {
-                this.setAttacking(0);
-            }
-        }
-
         if (this.random.nextInt(150) == 1 && this.getHealth() < this.getMaxHealth()) {
             this.heal(1.0f);
         }
@@ -210,26 +181,5 @@ public class EntityTrooperBug extends Monster {
     protected void dropCustomDeathLoot(ServerLevel level, DamageSource source, boolean recentlyHit) {
         super.dropCustomDeathLoot(level, source, recentlyHit);
         this.spawnAtLocation(Items.NAME_TAG);
-    }
-
-    @Nullable
-    private LivingEntity findSomethingToAttack() {
-        List<LivingEntity> entities = this.level().getEntitiesOfClass(LivingEntity.class,
-                this.getBoundingBox().inflate(12.0, 7.0, 12.0));
-        entities.sort(Comparator.comparingDouble(this::distanceToSqr));
-        for (LivingEntity candidate : entities) {
-            if (isSuitableTarget(candidate)) return candidate;
-        }
-        return null;
-    }
-
-    private boolean isSuitableTarget(LivingEntity target) {
-        if (target == null || target == this || !target.isAlive()) return false;
-        if (!this.getSensing().hasLineOfSight(target)) return false;
-        if (target instanceof Creeper) return false;
-        if (target instanceof EntityTrooperBug) return false;
-        if (target instanceof EntitySpitBug) return false;
-        if (target instanceof Player p && p.getAbilities().invulnerable) return false;
-        return true;
     }
 }
