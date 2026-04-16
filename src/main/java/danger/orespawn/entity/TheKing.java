@@ -50,6 +50,54 @@ import danger.orespawn.ModSounds;
 import danger.orespawn.util.MyUtils;
 import net.neoforged.neoforge.entity.PartEntity;
 
+/**
+ * The King — a flying, multi-region boss.
+ *
+ * <h2>Multi-part framework (1.7.10 → 1.21.1 port)</h2>
+ *
+ * <p>In the 1.7.10 original ({@code reference_1_7_10_source/sources/danger/orespawn/TheKing.java}),
+ * The King was a single {@code EntityMob} with a giant 22×24 AABB and a
+ * <em>sidecar</em> {@code KingHead} entity spawned 20 blocks above. The
+ * head ran its own per-tick {@code func_70071_h_} loop, did an AABB search
+ * to locate the parent, and forwarded damage by invoking the parent's
+ * {@code attackEntityFrom}. This made the whole boss behave like a
+ * 2-region hitbox pasted together at runtime.</p>
+ *
+ * <p>NeoForge 1.21.1 replaces that dual-entity hack with a proper
+ * {@link PartEntity} array ({@link OreSpawnPartEntity}): five named
+ * regions — body, head, left wing, right wing, tail — are owned by this
+ * single {@code TheKing} and positioned every tick with offsets rotated by
+ * {@link #yBodyRot}. Damage flows back through
+ * {@link #hurtFromPart(OreSpawnPartEntity, DamageSource, float)} with
+ * per-region multipliers (head = full, body = ½, everything else = ¼ +1).</p>
+ *
+ * <p>The legacy {@code KingHead} entity type is <i>still registered</i> for
+ * save-file backward compatibility and is still spawned by the AI path
+ * below — see the comment near {@link ModEntities#KING_HEAD}. Future work
+ * should delete the sidecar spawn once multi-part hitboxes are proven in
+ * playtesting.</p>
+ *
+ * <h2>Key lifecycle hooks</h2>
+ * <ul>
+ *   <li>{@link #TheKing(EntityType, Level)} constructs all five parts. Each
+ *       part construction increments {@code Entity.ENTITY_COUNTER}.</li>
+ *   <li>{@link #setId(int)} reassigns the parts to a contiguous ID block
+ *       starting at {@code id + 1}. This mirrors vanilla
+ *       {@code EnderDragon.setId} so the client can correlate part-hit
+ *       packets with the owning boss.</li>
+ *   <li>{@link #getParts()} returns the stable {@link PartEntity} array
+ *       ({@code allParts}) — it must be the same reference every call
+ *       because the world stores it for hit-testing.</li>
+ *   <li>{@link #tick()} snapshots each part's previous position, advances
+ *       the parent via {@code super.tick()}, repositions the parts, then
+ *       writes the snapshots back to the parts' {@code xo/yo/zo} /
+ *       {@code xOld/yOld/zOld} fields so the client renderer interpolates
+ *       instead of teleporting.</li>
+ * </ul>
+ *
+ * @see OreSpawnPartEntity for the part implementation and the full 1.7.10
+ *   paradigm-shift commentary.
+ */
 public class TheKing extends Monster implements OreSpawnPartEntity.MultipartBoss {
     private static final EntityDataAccessor<Integer> DATA_ATTACKING =
             SynchedEntityData.defineId(TheKing.class, EntityDataSerializers.INT);
@@ -218,16 +266,34 @@ public class TheKing extends Monster implements OreSpawnPartEntity.MultipartBoss
 
     // ---- Tick / AI ----
 
+    /**
+     * Advertises to NeoForge that this entity owns one or more
+     * {@link PartEntity} children. Without this the parts returned by
+     * {@link #getParts()} are ignored by hit-detection.
+     */
     @Override
     public boolean isMultipartEntity() {
         return true;
     }
 
+    /**
+     * Returns the stable array of child parts. The world caches this
+     * reference for hit-testing, so we must return the SAME array object
+     * every call — never rebuild it on the fly.
+     */
     @Override
     public PartEntity<?>[] getParts() {
         return this.allParts;
     }
 
+    /**
+     * Reserves a contiguous block of entity IDs for the parts so the client
+     * can correlate part-hit packets with the owning boss. Mirrors vanilla
+     * {@code EnderDragon.setId} — if parts had non-contiguous IDs, the
+     * client-side part lookup in {@code MultiPlayerLevel} would fail and
+     * hits would register as "the parent's root AABB was struck", losing
+     * the per-part damage multipliers.
+     */
     @Override
     public void setId(int id) {
         super.setId(id);
@@ -236,11 +302,26 @@ public class TheKing extends Monster implements OreSpawnPartEntity.MultipartBoss
         }
     }
 
+    /**
+     * The parent's own bounding box is invisible to ray-tracing — players
+     * must hit a {@link OreSpawnPartEntity} to damage The King. This is
+     * the 1.21.1 analogue of 1.7.10's {@code setSize(22, 24)} trick where
+     * the giant root AABB doubled as both visual bounds and hit area.
+     */
     @Override
     public boolean isPickable() {
         return false;
     }
 
+    /**
+     * Per-part damage routing. Head = full damage (weak point), body = ½,
+     * everything else = ¼ + 1 flat.
+     *
+     * <p>1.7.10 parallel: {@code TheKing.func_70097_a} couldn't distinguish
+     * which region was hit — every hit applied the same damage because the
+     * sidecar {@code KingHead} just called {@code attackEntityFrom} with
+     * the raw amount. This multiplier table is pure gain from the port.</p>
+     */
     @Override
     public boolean hurtFromPart(OreSpawnPartEntity<?> part, DamageSource source, float amount) {
         String partName = part.getPartName();
@@ -252,6 +333,16 @@ public class TheKing extends Monster implements OreSpawnPartEntity.MultipartBoss
         return this.hurt(source, multiplied);
     }
 
+    /**
+     * Places a sub-part at {@code (offsetX, offsetY, offsetZ)} relative to
+     * this entity, with the horizontal components rotated by this entity's
+     * body yaw. Matches the projection used by the client-side renderer so
+     * the hitbox stays aligned with what the player sees.
+     *
+     * <p>Intentionally uses {@code yBodyRot} (not {@code getYRot()}) so a
+     * yaw-locked head-tracking animation doesn't slosh the hitboxes around
+     * independently of the body.</p>
+     */
     private void positionPart(OreSpawnPartEntity<TheKing> part, double offsetX, double offsetY, double offsetZ) {
         float yawRad = this.yBodyRot * Mth.DEG_TO_RAD;
         double sin = Mth.sin(yawRad);
@@ -263,18 +354,39 @@ public class TheKing extends Monster implements OreSpawnPartEntity.MultipartBoss
 
     @Override
     public void tick() {
+        // ── Step 1: snapshot previous-tick positions ──
+        // We capture before super.tick() so the values are still the
+        // positions that were computed last tick (which themselves became
+        // the "old" positions at the end of last tick's repositioning).
         Vec3[] oldPos = new Vec3[allParts.length];
         for (int i = 0; i < allParts.length; i++) {
             oldPos[i] = new Vec3(allParts[i].getX(), allParts[i].getY(), allParts[i].getZ());
         }
 
+        // ── Step 2: advance the parent ──
+        // super.tick() updates yBodyRot, getX/Y/Z, hurt timers, etc. The
+        // repositioning below depends on yBodyRot being current, so do this
+        // FIRST and then derive part positions.
         super.tick();
+
+        // ── Step 3: position each part relative to the parent's new pose ──
+        // Offsets are in world units (blocks) and are rotated by yBodyRot
+        // inside positionPart(). Numbers chosen to roughly match the visual
+        // silhouette of the 1.7.10 render model — body at +6 Y, head +11 Y
+        // and 5 blocks forward (negative Z), wings 8 blocks left/right at
+        // +7 Y, tail 6 blocks behind at +4 Y.
         positionPart(bodyPart,    0.0,  6.0,   0.0);
         positionPart(headPart,    0.0, 11.0,  -5.0);
         positionPart(wingLeft,  -8.0,   7.0,   0.0);
         positionPart(wingRight,  8.0,   7.0,   0.0);
         positionPart(tail,       0.0,   4.0,   6.0);
 
+        // ── Step 4: write the snapshots back as the parts' "old" pose ──
+        // The client renderer interpolates between oldPos and pos using the
+        // partial-tick timer. If we skipped this, parts would teleport on
+        // every tick because their "old" and "new" would be identical.
+        // xOld/yOld/zOld are the NeoForge-exposed fields; xo/yo/zo are the
+        // legacy mappings — set both to avoid any discrepancy.
         for (int i = 0; i < allParts.length; i++) {
             allParts[i].xo = oldPos[i].x;
             allParts[i].yo = oldPos[i].y;

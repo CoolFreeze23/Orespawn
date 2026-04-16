@@ -142,6 +142,17 @@ public class ModEntities {
             ENTITY_TYPES.register("kraken", () -> EntityType.Builder.of(Kraken::new, MobCategory.MONSTER)
                     .sized(12.0f, 10.0f).clientTrackingRange(16).build("kraken"));
 
+    // Multi-part bosses ─────────────────────────────────────────────────
+    // The parent's own .sized() AABB is intentionally smaller than the
+    // visual silhouette — player hits are handled by the PartEntity array
+    // registered in TheKing / TheQueen's constructors, not by this root
+    // hitbox. The root AABB is still used for spawn-fit tests and for the
+    // client-side tracking range, so it must not be 0×0.
+    //
+    // clientTrackingRange=16 chunks is required: the bosses can fly
+    // 120 blocks from their home point, and players need to see them
+    // coming from that far away even before the fight starts.
+
     public static final DeferredHolder<EntityType<?>, EntityType<TheKing>> THE_KING =
             ENTITY_TYPES.register("the_king", () -> EntityType.Builder.of(TheKing::new, MobCategory.MONSTER)
                     .sized(6.0f, 12.0f).clientTrackingRange(16).build("the_king"));
@@ -457,6 +468,18 @@ public class ModEntities {
     public static final DeferredHolder<EntityType<?>, EntityType<Elevator>> ELEVATOR =
             ENTITY_TYPES.register("elevator", () -> EntityType.Builder.of(Elevator::new, MobCategory.MISC)
                     .sized(1.0f, 1.0f).clientTrackingRange(10).build("elevator"));
+
+    // Legacy 1.7.10 sidecar heads ─ deprecated but kept for save compat.
+    // In 1.7.10 the boss's "head" was a separate tracked entity that
+    // teleported next to the parent every tick; see KingHead.java /
+    // QueenHead.java for the per-tick positioning loop. In 1.21.1 this
+    // role is filled by OreSpawnPartEntity instances owned by TheKing /
+    // TheQueen, but the registry entries must survive because:
+    //   1. Existing saves contain instances of these entity types.
+    //   2. TheKing#customServerAiStep / TheQueen#customServerAiStep still
+    //      spawn one each to keep the 1.7.10 flight hook behaviour.
+    // Future removal: delete the spawn calls, bump the save-data version,
+    // then drop these registrations.
 
     public static final DeferredHolder<EntityType<?>, EntityType<KingHead>> KING_HEAD =
             ENTITY_TYPES.register("king_head", () -> EntityType.Builder.of(KingHead::new, MobCategory.MISC)
