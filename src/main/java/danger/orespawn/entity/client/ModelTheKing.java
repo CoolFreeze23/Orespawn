@@ -9,6 +9,52 @@ import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.util.Mth;
 
+/**
+ * The King's entity model, ported from 1.7.10 Techne-generated {@code ModelTheKing}
+ * (see {@code reference_1_7_10_source/sources/danger/orespawn/ModelTheKing.java}).
+ *
+ * <h2>Techne &rarr; Blaze3D paradigm shift</h2>
+ * The legacy model used flat {@code ModelRenderer} declarations registered directly on
+ * {@code ModelBase}, with per-frame position fixups in {@code func_78088_a}. Modern
+ * Blaze3D requires {@link LayerDefinition}s built from a {@link MeshDefinition} tree.
+ *
+ * <h2>Why this tree is intentionally flat</h2>
+ * The King has 130+ parts and several CASCADING animation chains where each segment's
+ * absolute local position is derived from the previous segment's current pose:
+ * <ul>
+ *   <li>Tail chain (Tail1&rarr;Tail2&rarr;&hellip;&rarr;TailSpike): sine-wave cascade
+ *       where {@code Tail2.z = Tail1.z + cos(Tail1.yRot) * 42}, etc.</li>
+ *   <li>Three independent neck chains (NeckL/C/R) and six head-follower chains
+ *       ({@code moveLeftHead}/{@code moveCenterHead}/{@code moveRightHead}).</li>
+ *   <li>Wing propagation: Lwing3-10 positions are recomputed from Lwing1's live yaw.</li>
+ * </ul>
+ * These chains assume parts live in the SAME coordinate space (i.e. all siblings under
+ * root). Nesting them as true children would change the meaning of {@code .x/.y/.z}
+ * (which become parent-relative), breaking the cascade math. For that reason the
+ * port keeps the hierarchy flat and faithfully reproduces the 1.7.10 behavior.
+ *
+ * <h2>Rotations</h2>
+ * All rotation literals are in RADIANS (matching 1.7.10 and Blaze3D's
+ * {@code ModelPart.xRot/yRot/zRot}). The dynamic wing/tail math uses
+ * {@link Mth#cos}/{@link Mth#sin}/{@link Math#PI} directly.
+ *
+ * <h2>Texture / UV</h2>
+ * Texture is 2048x2048 ({@code thekingtexture.png}). UV offsets in
+ * {@code .texOffs(u, v)} are 1:1 pixel coordinates into that sheet, mirroring the
+ * {@code texOffs} values from the 1.7.10 source (the {@code func_78787_b(64, 32)}
+ * calls in the legacy code were a Techne export quirk; modern Blaze3D sampling
+ * against a 2048x2048 {@link LayerDefinition} resolves to the same artwork
+ * regions that were authored in the original sheet).
+ *
+ * <h2>Translucent wings</h2>
+ * In 1.7.10 the wing MEMBRANE parts (Lwing2/4/6/8/10 and Rwing2/4/6/8/10) were
+ * rendered with {@code glEnable(GL_BLEND); glColor4f(0.75,0.75,0.75,0.55)}. Modern
+ * Blaze3D cannot mix render types inside a single {@code renderToBuffer} call, so
+ * {@link #renderToBuffer} renders only OPAQUE geometry and the translucent membranes
+ * are exposed via {@link #renderWingMembranes} for a second pass through
+ * {@link net.minecraft.client.renderer.RenderType#entityTranslucent} (wired up in
+ * {@link TheKingRenderer}).
+ */
 public class ModelTheKing extends EntityModel<TheKing> {
     private static final float WING_SPEED = 1.0F;
 
@@ -1591,7 +1637,22 @@ public class ModelTheKing extends EntityModel<TheKing> {
         this.Ridge5.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
         this.Ridge6.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
 
-        // Wing membranes (originally rendered with GL blending at 55% alpha)
+        // Wing membrane parts (Lwing2/4/6/8/10, Rwing2/4/6/8/10) are intentionally
+        // NOT rendered here. In 1.7.10 they were drawn with glEnable(GL_BLEND) and
+        // glColor4f(0.75, 0.75, 0.75, 0.55) for a translucent look. Modern Blaze3D
+        // requires a separate RenderType pass for translucency, so the membranes
+        // are rendered in TheKingRenderer#render via #renderWingMembranes below.
+    }
+
+    /**
+     * Renders only the wing-membrane parts (Lwing2/4/6/8/10, Rwing2/4/6/8/10).
+     * Intended to be invoked from {@link TheKingRenderer} with a
+     * {@link net.minecraft.client.renderer.RenderType#entityTranslucent} buffer
+     * and a packed tint color reproducing the 1.7.10 {@code glColor4f(0.75, 0.75,
+     * 0.75, 0.55)} look.
+     */
+    public void renderWingMembranes(PoseStack poseStack, VertexConsumer vertexConsumer,
+                                    int packedLight, int packedOverlay, int color) {
         this.Lwing2.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
         this.Lwing4.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
         this.Lwing6.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);

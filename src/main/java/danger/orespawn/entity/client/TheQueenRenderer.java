@@ -12,6 +12,29 @@ import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.resources.ResourceLocation;
+
+/**
+ * The Queen entity renderer. Migrated from 1.7.10 {@code RenderTheQueen} and
+ * lays out the four-pass sequence required to faithfully reproduce the original
+ * boss silhouette:
+ * <ol>
+ *   <li><b>Pass 1 (opaque):</b> {@code super.render(...)} &rarr;
+ *       {@link ModelTheQueen#renderToBuffer} on the entity-cutout buffer
+ *       (head, body, neck bones, legs, tail, wing bones).</li>
+ *   <li><b>Pass 2 (translucent membranes):</b>
+ *       {@link ModelTheQueen#renderWingMembranes} on
+ *       {@link RenderType#entityTranslucent} with an ARGB tint reproducing the
+ *       legacy {@code glColor4f(0.75, 0.75, 0.75, 0.55)} wash.</li>
+ *   <li><b>Pass 3 (fullbright power cubes):</b>
+ *       {@link ModelTheQueen#renderPowerCubes} on
+ *       {@link RenderType#entityCutoutNoCull} with
+ *       {@code packedLight = 0xF000F0} (maximum block+sky light) so the cubes
+ *       glow regardless of ambient brightness.</li>
+ *   <li><b>Pass 4 (fullbright eyes):</b> {@link ModelTheQueen#renderEyes}
+ *       mirrors the 1.7.10 per-eye GL override that boosted eye brightness.</li>
+ * </ol>
+ * Texture swaps between happy/angry moods via {@link TheQueen#isHappy()}.
+ */
 public class TheQueenRenderer extends MobRenderer<TheQueen, ModelTheQueen> {
     private static final ResourceLocation TEXTURE =
             ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "textures/entity/thequeentexture.png");
