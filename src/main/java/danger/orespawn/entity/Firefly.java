@@ -1,9 +1,9 @@
 package danger.orespawn.entity;
 
+import danger.orespawn.entity.ai.AmbientFlightGoal;
 import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
@@ -16,13 +16,31 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 
+/**
+ * Firefly — tiny luminous ambient mob.
+ *
+ * <p>Flight is delegated to {@link AmbientFlightGoal} with the firefly
+ * preset (small 4-block range, slow 0.2 forward speed, quarter-turn yaw
+ * damping for a gentle bobbing feel). The legacy 1.7.10 inline flight
+ * loop has been removed in favour of the Goal system so vanilla goals
+ * can coexist cleanly.
+ *
+ * <p>Non-AI responsibilities kept here:
+ * <ul>
+ *   <li>{@link #blinker}: server-side light-blink timer (client-only visual
+ *       driven by {@link #getBlink()}).</li>
+ *   <li>Daytime despawn: 1-in-500 discard roll each tick while the day is
+ *       past tick 11000, matching 1.7.10 behaviour.</li>
+ *   <li>{@code canSeeSky} despawn suppression in {@link #removeWhenFarAway}
+ *       so sheltered fireflies stick around for cave lighting.</li>
+ * </ul>
+ */
 public class Firefly extends AmbientCreature {
     private static final long DAY_LENGTH_TICKS = 24000L;
     private static final long NIGHTFALL_START_TICK = 11000L;
 
     int myBlink = 20 + this.random.nextInt(20);
     int blinker = 0;
-    private BlockPos currentFlightTarget = null;
 
     public Firefly(EntityType<? extends Firefly> type, Level level) {
         super(type, level);
@@ -33,6 +51,11 @@ public class Firefly extends AmbientCreature {
                 .add(Attributes.MAX_HEALTH, 1.0)
                 .add(Attributes.MOVEMENT_SPEED, 0.1)
                 .add(Attributes.ATTACK_DAMAGE, 0.0);
+    }
+
+    @Override
+    protected void registerGoals() {
+        this.goalSelector.addGoal(8, new AmbientFlightGoal(this, AmbientFlightGoal.Params.firefly()));
     }
 
     public float getBlink() {
@@ -50,44 +73,6 @@ public class Firefly extends AmbientCreature {
         long dayTime = this.level().getDayTime() % DAY_LENGTH_TICKS;
         if (dayTime > NIGHTFALL_START_TICK) return;
         if (this.random.nextInt(500) == 1) this.discard();
-    }
-
-    @Override
-    protected void customServerAiStep() {
-        if (this.isRemoved()) return;
-        super.customServerAiStep();
-
-        if (this.currentFlightTarget == null) {
-            this.currentFlightTarget = this.blockPosition();
-        }
-
-        double distSq = this.currentFlightTarget.distSqr(this.blockPosition());
-        if (this.random.nextInt(40) == 0 || distSq < 2.0) {
-            for (int tries = 25; tries > 0; tries--) {
-                BlockPos newTarget = new BlockPos(
-                        (int) this.getX() + this.random.nextInt(4) - this.random.nextInt(4),
-                        (int) this.getY() + this.random.nextInt(4) - 2,
-                        (int) this.getZ() + this.random.nextInt(4) - this.random.nextInt(4));
-                if (this.level().getBlockState(newTarget).isAir()) {
-                    this.currentFlightTarget = newTarget;
-                    break;
-                }
-            }
-        }
-
-        double dx = this.currentFlightTarget.getX() + 0.5 - this.getX();
-        double dy = this.currentFlightTarget.getY() + 0.1 - this.getY();
-        double dz = this.currentFlightTarget.getZ() + 0.5 - this.getZ();
-        Vec3 motion = this.getDeltaMovement();
-        double mx = motion.x + (Math.signum(dx) * 0.2 - motion.x) * 0.1;
-        double my = motion.y + (Math.signum(dy) * 0.7 - motion.y) * 0.1;
-        double mz = motion.z + (Math.signum(dz) * 0.2 - motion.z) * 0.1;
-        this.setDeltaMovement(mx, my, mz);
-
-        float targetYaw = (float) (Math.atan2(mz, mx) * 180.0 / Math.PI) - 90.0f;
-        float yawDiff = Mth.wrapDegrees(targetYaw - this.getYRot());
-        this.zza = 0.2f;
-        this.setYRot(this.getYRot() + yawDiff / 4.0f);
     }
 
     @Nullable

@@ -1,5 +1,6 @@
 package danger.orespawn.entity;
 
+import danger.orespawn.entity.ai.AmbientFlightGoal;
 import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
@@ -13,7 +14,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
@@ -44,11 +44,26 @@ public class EntityButterfly extends AmbientCreature {
 
     private static final EntityDataAccessor<Integer> BUTTERFLY_TYPE =
             SynchedEntityData.defineId(EntityButterfly.class, EntityDataSerializers.INT);
-    private BlockPos currentFlightTarget = null;
 
     public EntityButterfly(EntityType<? extends EntityButterfly> type, Level level) {
         super(type, level);
         this.setRandomButterflyType();
+    }
+
+    /**
+     * Registers the post-1.7.10 Goal-based AI. In 1.7.10 the flight was
+     * inlined into {@code customServerAiStep}; we now use
+     * {@link AmbientFlightGoal} (butterfly preset) so flight can be
+     * interrupted by higher-priority goals in the future (e.g. panic,
+     * breed, or the dimension-teleport interaction handler) without
+     * the main-thread overhead of a hand-rolled lerp per tick.
+     *
+     * <p>Subclasses ({@code EntityLunaMoth}) override this method and
+     * replace the base flight goal with their own specialisation.
+     */
+    @Override
+    protected void registerGoals() {
+        this.goalSelector.addGoal(8, new AmbientFlightGoal(this, AmbientFlightGoal.Params.butterfly()));
     }
 
     private void setRandomButterflyType() {
@@ -83,45 +98,9 @@ public class EntityButterfly extends AmbientCreature {
         this.setDeltaMovement(mot.x, mot.y * 0.6, mot.z);
     }
 
-    @Override
-    protected void customServerAiStep() {
-        if (this.isRemoved()) return;
-        super.customServerAiStep();
-
-        if (this.currentFlightTarget == null) {
-            this.currentFlightTarget = this.blockPosition();
-        }
-
-        double distSq = this.currentFlightTarget.distSqr(this.blockPosition());
-        if (this.random.nextInt(100) == 0 || distSq < 4.0) {
-            for (int tries = 25; tries > 0; tries--) {
-                BlockPos newTarget = new BlockPos(
-                        (int) this.getX() + this.random.nextInt(7) - this.random.nextInt(7),
-                        (int) this.getY() + this.random.nextInt(6) - 2,
-                        (int) this.getZ() + this.random.nextInt(7) - this.random.nextInt(7)
-                );
-                if (this.level().getBlockState(newTarget).isAir()) {
-                    this.currentFlightTarget = newTarget;
-                    break;
-                }
-            }
-        }
-
-        double dx = this.currentFlightTarget.getX() + 0.5 - this.getX();
-        double dy = this.currentFlightTarget.getY() + 0.1 - this.getY();
-        double dz = this.currentFlightTarget.getZ() + 0.5 - this.getZ();
-
-        Vec3 mot = this.getDeltaMovement();
-        double mx = mot.x + (Math.signum(dx) * 0.5 - mot.x) * 0.1;
-        double my = mot.y + (Math.signum(dy) * 0.7 - mot.y) * 0.1;
-        double mz = mot.z + (Math.signum(dz) * 0.5 - mot.z) * 0.1;
-        this.setDeltaMovement(mx, my, mz);
-
-        float targetYaw = (float) (Math.atan2(mz, mx) * 180.0 / Math.PI) - 90.0f;
-        float yawDiff = Mth.wrapDegrees(targetYaw - this.getYRot());
-        this.zza = 0.5f;
-        this.setYRot(this.getYRot() + yawDiff);
-    }
+    // Flight logic has moved out of customServerAiStep() and into
+    // AmbientFlightGoal (registered above). The legacy inlined version
+    // lived here in 1.7.10 but could not coexist with vanilla Goals.
 
     /**
      * Teleport to Chaos on empty-hand right-click. Uses the vanilla
