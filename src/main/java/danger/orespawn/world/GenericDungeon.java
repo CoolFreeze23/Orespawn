@@ -113,7 +113,8 @@ public class GenericDungeon {
     private static void placeSpawner(WorldGenLevel level, BlockPos pos, EntityType<?> mobType) {
         level.setBlock(pos, Blocks.SPAWNER.defaultBlockState(), 2);
         if (level.getBlockEntity(pos) instanceof SpawnerBlockEntity spawner) {
-            spawner.getSpawner().setEntityId(mobType, level.getLevel(), level.getRandom(), pos);
+            // Pass null for Level to avoid ServerLevel chunk-loading during worldgen
+            spawner.getSpawner().setEntityId(mobType, null, level.getRandom(), pos);
         }
     }
 

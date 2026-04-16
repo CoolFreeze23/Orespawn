@@ -27,6 +27,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.portal.DimensionTransition;
 import net.minecraft.world.phys.Vec3;
 
 /**
@@ -122,7 +123,10 @@ public class EntityButterfly extends AmbientCreature {
         this.setYRot(this.getYRot() + yawDiff);
     }
 
-    /** Teleport to Chaos on empty-hand right-click; reuses EntityAnt.findSafeY for landing. */
+    /**
+     * Teleport to Chaos on empty-hand right-click. Uses the vanilla
+     * {@link DimensionTransition} pipeline for async chunk loading.
+     */
     @Override
     public InteractionResult mobInteract(Player player, InteractionHand hand) {
         if (this.level().isClientSide()) return InteractionResult.SUCCESS;
@@ -143,10 +147,15 @@ public class EntityButterfly extends AmbientCreature {
         double z = serverPlayer.getZ();
         int safeY = EntityAnt.findSafeY(destLevel, BlockPos.containing(x, 0, z));
 
-        serverPlayer.teleportTo(destLevel, x, safeY, z,
-                serverPlayer.getYRot(), serverPlayer.getXRot());
-
-        serverPlayer.playSound(SoundEvents.ENDERMAN_TELEPORT, 1.0f, 1.0f);
+        DimensionTransition transition = new DimensionTransition(
+                destLevel,
+                new Vec3(x, safeY, z),
+                Vec3.ZERO,
+                serverPlayer.getYRot(),
+                serverPlayer.getXRot(),
+                e -> e.playSound(SoundEvents.ENDERMAN_TELEPORT, 1.0f, 1.0f)
+        );
+        serverPlayer.changeDimension(transition);
         return InteractionResult.SUCCESS;
     }
 
