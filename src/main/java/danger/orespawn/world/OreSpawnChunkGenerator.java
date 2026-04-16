@@ -56,11 +56,18 @@ public class OreSpawnChunkGenerator extends NoiseBasedChunkGenerator {
     private final boolean crystalSurface;
     /**
      * Per-JVM cooldown that skips dungeon placement for 50 chunks after one is
-     * placed. Prevents back-to-back dungeons clustering. Static is acceptable
-     * because chunk generation for a single dimension is effectively serialized
-     * and this is a soft rate-limiter, not a correctness guard.
+     * placed. Prevents back-to-back dungeons clustering.
+     *
+     * <p>NeoForge 1.21.1 paradigm shift: unlike 1.12.2's serial chunk pipeline,
+     * worldgen in 1.21 runs on the chunk-generator worker thread pool — multiple
+     * threads call {@link #buildSurface} concurrently. A plain {@code static int}
+     * would race (two threads reading 0 simultaneously, both placing dungeons,
+     * then double-decrementing on the next 50 chunks). {@link AtomicInteger}
+     * keeps decrement and reset atomic so the cooldown is honoured under
+     * parallel chunk loading.</p>
      */
-    private static int recentlyPlaced = 0;
+    private static final java.util.concurrent.atomic.AtomicInteger recentlyPlaced =
+            new java.util.concurrent.atomic.AtomicInteger(0);
 
     public OreSpawnChunkGenerator(BiomeSource biomeSource, Holder<NoiseGeneratorSettings> settings, boolean crystalSurface) {
         super(biomeSource, settings);
@@ -536,8 +543,10 @@ public class OreSpawnChunkGenerator extends NoiseBasedChunkGenerator {
             return;
         }
 
-        if (recentlyPlaced > 0) {
-            --recentlyPlaced;
+        // Atomic decrement so concurrent chunk-gen threads can't both pass the
+        // gate when the counter is 1.
+        if (recentlyPlaced.get() > 0) {
+            recentlyPlaced.decrementAndGet();
             return;
         }
 
@@ -550,7 +559,7 @@ public class OreSpawnChunkGenerator extends NoiseBasedChunkGenerator {
                 int y = 10 + random.nextInt(10);
                 BlockPos pos = new BlockPos(cx + 8, y, cz + 8);
                 if (GenericDungeon.tryPlaceRubyDungeon(region, random, pos)) {
-                    recentlyPlaced = 50;
+                    recentlyPlaced.set(50);
                     return;
                 }
             }
@@ -560,7 +569,7 @@ public class OreSpawnChunkGenerator extends NoiseBasedChunkGenerator {
             int y = 5 + random.nextInt(40);
             BlockPos pos = new BlockPos(cx + 8, y, cz + 8);
             if (GenericDungeon.tryPlaceGenericDungeon(region, random, pos)) {
-                recentlyPlaced = 50;
+                recentlyPlaced.set(50);
             }
         }
     }
