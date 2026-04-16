@@ -7,6 +7,6 @@
       "biome": "orespawn:crystal_plains"
     },
     "settings": "minecraft:overworld",
-    "crystal_surface": true
+    "dimension_style": "crystal"
   }
 }
