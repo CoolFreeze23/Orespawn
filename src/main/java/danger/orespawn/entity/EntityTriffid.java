@@ -138,16 +138,47 @@ public class EntityTriffid extends Monster {
 
     @Override
     public boolean hurt(DamageSource source, float amount) {
-        if (this.hurtTimer > 0 || this.getOpenClosed() == 0) {
+        // Faithful 1.7.10 behaviour: while the shell is closed (or the
+        // post-hit lockout is still ticking down), the Triffid is fully
+        // invincible. The only escape hatches are damage types flagged as
+        // bypassing invulnerability — i.e. /kill, the void, and the
+        // generic creative-mode "kill anything" damage. Without this
+        // bypass the Triffid would be unkillable by admins and would
+        // happily ride out a fall into the void.
+        boolean bypassesInvuln = source.is(net.minecraft.tags.DamageTypeTags.BYPASSES_INVULNERABILITY);
+        if (!bypassesInvuln && (this.hurtTimer > 0 || this.getOpenClosed() == 0)) {
+            // Slammed while closed — refresh the lockout window so the
+            // shell stays sealed and the random "open" roll in
+            // customServerAiStep cannot fire until the timer runs out.
             this.hurtTimer = HURT_LOCKOUT_TICKS;
             this.setAttacking(0);
             return false;
         }
         boolean ret = super.hurt(source, amount);
+        // Successful hit: snap the shell closed and arm the lockout so the
+        // next damage tick has to wait for the Triffid to volunteer an
+        // opening. This is the "reaction window" the legacy mod relied on
+        // to keep the encounter from devolving into a damage-race.
         this.hurtTimer = HURT_LOCKOUT_TICKS;
         this.setOpenClosed(0);
         this.setAttacking(0);
         return ret;
+    }
+
+    /**
+     * Mirrors the closed-shell invulnerability up the LivingEntity ladder
+     * so callers that bypass {@link #hurt(DamageSource, float)} (e.g.
+     * status-effect attribute pokes, projectile aim assist) see the
+     * Triffid as untargetable while sealed. Anything flagged to bypass
+     * invulnerability still gets through.
+     */
+    @Override
+    public boolean isInvulnerableTo(DamageSource source) {
+        if (source.is(net.minecraft.tags.DamageTypeTags.BYPASSES_INVULNERABILITY)) {
+            return super.isInvulnerableTo(source);
+        }
+        if (this.getOpenClosed() == 0 || this.hurtTimer > 0) return true;
+        return super.isInvulnerableTo(source);
     }
 
     @Override

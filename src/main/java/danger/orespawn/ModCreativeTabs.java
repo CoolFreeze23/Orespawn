@@ -467,6 +467,7 @@ public class ModCreativeTabs {
                         output.accept(ModItems.MOLENOID_SPAWN_EGG.get());
                         output.accept(ModItems.MOSQUITO_SPAWN_EGG.get());
                         output.accept(ModItems.MOTHRA_SPAWN_EGG.get());
+                        output.accept(ModItems.LEONOPTERYX_SPAWN_EGG.get());
                         output.accept(ModItems.NASTYSAURUS_SPAWN_EGG.get());
                         output.accept(ModItems.OSTRICH_SPAWN_EGG.get());
                         output.accept(ModItems.PEACOCK_SPAWN_EGG.get());

@@ -25,7 +25,9 @@
       { "type": "orespawn:creeping_horror", "weight": 5, "minCount": 1, "maxCount": 3 },
       { "type": "orespawn:scorpion", "weight": 3, "minCount": 1, "maxCount": 2 }
     ],
-    "creature": [],
+    "creature": [
+      { "type": "orespawn:leonopteryx", "weight": 1, "minCount": 1, "maxCount": 1 }
+    ],
     "ambient": [
       { "type": "orespawn:firefly", "weight": 5, "minCount": 1, "maxCount": 3 }
     ],
