@@ -7,6 +7,6 @@
       "biome": "orespawn:mining_biome"
     },
     "settings": "minecraft:overworld",
-    "dimension_style": "default"
+    "dimension_style": "mining"
   }
 }

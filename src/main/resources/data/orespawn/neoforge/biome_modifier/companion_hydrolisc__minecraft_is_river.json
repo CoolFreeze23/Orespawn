@@ -1,0 +1,10 @@
+﻿{
+    "type":  "neoforge:add_spawns",
+    "biomes":  "#minecraft:is_river",
+    "spawners":  {
+                     "type":  "orespawn:hydrolisc",
+                     "weight":  3,
+                     "minCount":  1,
+                     "maxCount":  2
+                 }
+}
