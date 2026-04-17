@@ -3,6 +3,7 @@ package danger.orespawn;
 import com.mojang.serialization.Codec;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.bus.api.IEventBus;
@@ -24,6 +25,17 @@ public class ModDataComponents {
                     DataComponentType.<ResourceLocation>builder()
                             .persistent(ResourceLocation.CODEC)
                             .networkSynchronized(ResourceLocation.STREAM_CODEC)
+                            .build());
+
+    /** Full serialized {@link CompoundTag} for a captured mob — health, custom name,
+     *  taming state, equipment, age, etc. Replaces the 1.7.10 pattern of throwing
+     *  away all live state on capture and re-spawning a vanilla-default entity.
+     *  Network-synced so the tooltip can render mob-specific info on the client. */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<CompoundTag>> CAGED_ENTITY_DATA =
+            DATA_COMPONENTS.register("caged_entity_data", () ->
+                    DataComponentType.<CompoundTag>builder()
+                            .persistent(CompoundTag.CODEC)
+                            .networkSynchronized(ByteBufCodecs.COMPOUND_TAG)
                             .build());
 
     /** Cumulative kill counter for the Ultimate Sword. Replaces the 1.7.10 stack-NBT

@@ -74,8 +74,10 @@ public class EntityCage extends ThrowableProjectile {
 
             if (this.random.nextInt(10) >= 2) {
                 ResourceLocation entityId = BuiltInRegistries.ENTITY_TYPE.getKey(mob.getType());
+                net.minecraft.nbt.CompoundTag mobData = new net.minecraft.nbt.CompoundTag();
+                mob.saveWithoutId(mobData);
                 mob.discard();
-                ItemStack cageItem = CagedMobItem.createForEntity(entityId);
+                ItemStack cageItem = CagedMobItem.createForEntity(entityId, mobData);
                 if (mob.hasCustomName()) {
                     cageItem.set(net.minecraft.core.component.DataComponents.CUSTOM_NAME, mob.getCustomName());
                 }
