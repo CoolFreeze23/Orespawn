@@ -1,6 +1,9 @@
 {
   "type": "minecraft:crafting_shaped",
   "pattern": ["EEE", "EIE", "EEE"],
-  "key": { "I": { "item": "orespawn:ultimate_axe" }, "E": { "item": "minecraft:emerald_block" } },
+  "key": {
+    "I": { "item": "orespawn:ultimate_axe" },
+    "E": { "item": "minecraft:redstone_block" }
+  },
   "result": { "id": "orespawn:chainsaw", "count": 1 }
 }

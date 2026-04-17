@@ -1,6 +1,9 @@
 {
   "type": "minecraft:crafting_shaped",
   "pattern": ["EIE", "EIE", " I "],
-  "key": { "I": { "item": "minecraft:stick" }, "E": { "item": "orespawn:queen_scale" } },
+  "key": {
+    "I": { "tag": "c:ingots/iron" },
+    "E": { "item": "orespawn:queen_scale" }
+  },
   "result": { "id": "orespawn:queen_battle_axe", "count": 1 }
 }
