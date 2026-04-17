@@ -79,7 +79,7 @@ public class EntityStinky extends TamableAnimal {
         this.goalSelector.addGoal(1, new FloatGoal(this));
         this.goalSelector.addGoal(2, new AvoidEntityGoal<>(this, Monster.class, 8.0f, 0.3, 0.4));
         this.goalSelector.addGoal(3, new MyEntityAIFollowOwner(this, 1.15, 12.0f, 2.0f));
-        this.goalSelector.addGoal(4, new TemptGoal(this, 1.25, Ingredient.of(Items.COOKED_BEEF), false));
+        this.goalSelector.addGoal(4, new TemptGoal(this, 1.25, Ingredient.of(Items.BEEF), false));
         this.goalSelector.addGoal(5, new PanicGoal(this, 1.5));
         this.goalSelector.addGoal(6, new LookAtPlayerGoal(this, Player.class, 6.0f));
         this.goalSelector.addGoal(7, new WaterAvoidingRandomStrollGoal(this, 0.75));
@@ -194,7 +194,7 @@ public class EntityStinky extends TamableAnimal {
     public InteractionResult mobInteract(Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
 
-        if (stack.is(Items.COOKED_BEEF) && player.distanceToSqr(this) < 16.0) {
+        if (stack.is(Items.BEEF) && player.distanceToSqr(this) < 16.0) {
             if (!this.isTame()) {
                 if (!this.level().isClientSide) {
                     if (this.random.nextInt(2) == 1) {
@@ -456,7 +456,7 @@ public class EntityStinky extends TamableAnimal {
 
     @Override
     public boolean isFood(ItemStack stack) {
-        return stack.is(Items.COOKED_BEEF);
+        return stack.is(Items.BEEF);
     }
 
     @Nullable

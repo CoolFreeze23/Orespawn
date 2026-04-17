@@ -42,7 +42,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import danger.orespawn.ModEntities;
-import danger.orespawn.ModItems;
 import danger.orespawn.OreSpawnMod;
 
 public class EntityGammaMetroid extends TamableAnimal {
@@ -63,7 +62,7 @@ public class EntityGammaMetroid extends TamableAnimal {
         this.goalSelector.addGoal(0, new FloatGoal(this));
         this.goalSelector.addGoal(1, new BreedGoal(this, 1.0));
         this.goalSelector.addGoal(2, new FollowOwnerGoal(this, 2.0, 10.0f, 2.0f));
-        this.goalSelector.addGoal(3, new TemptGoal(this, 1.2, Ingredient.of(Items.COD), false));
+        this.goalSelector.addGoal(3, new TemptGoal(this, 1.2, Ingredient.of(Items.IRON_INGOT), false));
         this.goalSelector.addGoal(4, new WaterAvoidingRandomStrollGoal(this, 1.0));
         this.goalSelector.addGoal(5, new LookAtPlayerGoal(this, Player.class, 8.0f));
         this.goalSelector.addGoal(6, new RandomLookAroundGoal(this));
@@ -214,7 +213,7 @@ public class EntityGammaMetroid extends TamableAnimal {
             return InteractionResult.SUCCESS;
         }
 
-        if (stack.is(Items.COD) && this.distanceToSqr(player) < 25.0) {
+        if (stack.is(Items.IRON_INGOT) && this.distanceToSqr(player) < 25.0) {
             if (!this.isTame()) {
                 if (!this.level().isClientSide) {
                     if (this.random.nextInt(3) == 0) {
@@ -304,7 +303,7 @@ public class EntityGammaMetroid extends TamableAnimal {
 
     @Override
     public boolean isFood(ItemStack stack) {
-        return stack.is(ModItems.CRYSTAL_APPLE.get());
+        return stack.is(Items.IRON_INGOT);
     }
 
     @Nullable

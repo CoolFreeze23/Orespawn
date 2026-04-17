@@ -59,7 +59,7 @@ public class VelocityRaptor extends TamableAnimal {
         this.goalSelector.addGoal(1, new BreedGoal(this, 1.0));
         this.goalSelector.addGoal(2, new FollowOwnerGoal(this, 1.5, 10.0f, 2.0f));
         this.goalSelector.addGoal(3, new AvoidEntityGoal<>(this, Monster.class, 8.0f, 1.0, 1.4));
-        this.goalSelector.addGoal(4, new TemptGoal(this, 1.25, Ingredient.of(Items.WHEAT), false));
+        this.goalSelector.addGoal(4, new TemptGoal(this, 1.25, Ingredient.of(Items.APPLE), false));
         this.goalSelector.addGoal(5, new PanicGoal(this, 1.6));
         this.goalSelector.addGoal(6, new LookAtPlayerGoal(this, Player.class, 6.0f));
         this.goalSelector.addGoal(7, new WaterAvoidingRandomStrollGoal(this, 0.9));
@@ -148,7 +148,7 @@ public class VelocityRaptor extends TamableAnimal {
     public InteractionResult mobInteract(Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
 
-        if (stack.is(Items.WHEAT) && this.distanceToSqr(player) < 16.0) {
+        if (stack.is(Items.APPLE) && this.distanceToSqr(player) < 16.0) {
             if (!this.isTame()) {
                 if (!this.level().isClientSide) {
                     if (this.random.nextInt(2) == 0) {
@@ -248,7 +248,7 @@ public class VelocityRaptor extends TamableAnimal {
     @Override
     protected float getSoundVolume() { return 0.4f; }
     @Override
-    public boolean isFood(ItemStack stack) { return stack.is(Items.WHEAT); }
+    public boolean isFood(ItemStack stack) { return stack.is(Items.APPLE); }
 
     @Override
     public boolean removeWhenFarAway(double dist) {

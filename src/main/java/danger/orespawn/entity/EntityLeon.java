@@ -581,6 +581,20 @@ public class EntityLeon extends TamableAnimal {
     public InteractionResult mobInteract(Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
 
+        if (stack.is(Blocks.DIAMOND_BLOCK.asItem()) && this.distanceToSqr(player) < 49.0) {
+            if (!this.level().isClientSide) {
+                if (!this.isTame()) {
+                    this.tame(player);
+                }
+                this.setOrderedToSit(false);
+                this.setInSittingPose(false);
+                this.level().broadcastEntityEvent(this, (byte) 7);
+                this.heal(this.getMaxHealth() - this.getHealth());
+            }
+            if (!player.getAbilities().instabuild) stack.shrink(1);
+            return InteractionResult.sidedSuccess(this.level().isClientSide);
+        }
+
         if (stack.is(Items.BEEF) && this.distanceToSqr(player) < 49.0) {
             if (!this.isTame()) {
                 if (!this.level().isClientSide) {
