@@ -379,7 +379,7 @@ public class ModEntities {
 
     public static final DeferredHolder<EntityType<?>, EntityType<Camarasaurus>> CAMARASAURUS =
             ENTITY_TYPES.register("camarasaurus", () -> EntityType.Builder.of(Camarasaurus::new, MobCategory.CREATURE)
-                    .sized(2.0f, 3.5f).clientTrackingRange(10).build("camarasaurus"));
+                    .sized(1.4f, 2.6f).clientTrackingRange(10).build("camarasaurus"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<Dragon>> DRAGON =
             ENTITY_TYPES.register("dragon", () -> EntityType.Builder.of(Dragon::new, MobCategory.CREATURE)
@@ -391,7 +391,7 @@ public class ModEntities {
 
     public static final DeferredHolder<EntityType<?>, EntityType<EntityGammaMetroid>> ENTITY_GAMMA_METROID =
             ENTITY_TYPES.register("gamma_metroid", () -> EntityType.Builder.of(EntityGammaMetroid::new, MobCategory.CREATURE)
-                    .sized(0.8f, 0.8f).clientTrackingRange(10).build("gamma_metroid"));
+                    .sized(1.5f, 1.5f).clientTrackingRange(10).build("gamma_metroid"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<Girlfriend>> GIRLFRIEND =
             ENTITY_TYPES.register("girlfriend", () -> EntityType.Builder.of(Girlfriend::new, MobCategory.CREATURE)
@@ -403,7 +403,7 @@ public class ModEntities {
 
     public static final DeferredHolder<EntityType<?>, EntityType<EntityLeon>> ENTITY_LEON =
             ENTITY_TYPES.register("leon", () -> EntityType.Builder.of(EntityLeon::new, MobCategory.CREATURE)
-                    .sized(2.0f, 3.0f).clientTrackingRange(10).build("leon"));
+                    .sized(3.0f, 4.5f).clientTrackingRange(12).build("leon"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<Lizard>> LIZARD =
             ENTITY_TYPES.register("lizard", () -> EntityType.Builder.of(Lizard::new, MobCategory.CREATURE)
@@ -419,31 +419,31 @@ public class ModEntities {
 
     public static final DeferredHolder<EntityType<?>, EntityType<EntitySpyro>> ENTITY_SPYRO =
             ENTITY_TYPES.register("spyro", () -> EntityType.Builder.of(EntitySpyro::new, MobCategory.CREATURE)
-                    .sized(0.6f, 0.8f).clientTrackingRange(10).build("spyro"));
+                    .sized(0.5f, 0.5f).clientTrackingRange(10).build("spyro"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<EntityStinky>> ENTITY_STINKY =
             ENTITY_TYPES.register("stinky", () -> EntityType.Builder.of(EntityStinky::new, MobCategory.CREATURE)
-                    .sized(0.6f, 0.8f).clientTrackingRange(10).build("stinky"));
+                    .sized(0.75f, 0.75f).clientTrackingRange(10).build("stinky"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<ThePrince>> THE_PRINCE =
             ENTITY_TYPES.register("the_prince", () -> EntityType.Builder.of(ThePrince::new, MobCategory.CREATURE)
-                    .sized(0.6f, 1.5f).clientTrackingRange(10).build("the_prince"));
+                    .sized(0.75f, 1.25f).clientTrackingRange(10).build("the_prince"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<ThePrinceAdult>> THE_PRINCE_ADULT =
             ENTITY_TYPES.register("the_prince_adult", () -> EntityType.Builder.of(ThePrinceAdult::new, MobCategory.CREATURE)
-                    .sized(1.0f, 2.5f).clientTrackingRange(10).build("the_prince_adult"));
+                    .sized(4.0f, 6.0f).clientTrackingRange(16).build("the_prince_adult"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<ThePrincess>> THE_PRINCESS =
             ENTITY_TYPES.register("the_princess", () -> EntityType.Builder.of(ThePrincess::new, MobCategory.CREATURE)
-                    .sized(0.5f, 1.2f).clientTrackingRange(10).build("the_princess"));
+                    .sized(0.75f, 1.25f).clientTrackingRange(10).build("the_princess"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<ThePrinceTeen>> THE_PRINCE_TEEN =
             ENTITY_TYPES.register("the_prince_teen", () -> EntityType.Builder.of(ThePrinceTeen::new, MobCategory.CREATURE)
-                    .sized(0.8f, 1.8f).clientTrackingRange(10).build("the_prince_teen"));
+                    .sized(2.0f, 3.0f).clientTrackingRange(12).build("the_prince_teen"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<VelocityRaptor>> VELOCITY_RAPTOR =
             ENTITY_TYPES.register("velocity_raptor", () -> EntityType.Builder.of(VelocityRaptor::new, MobCategory.CREATURE)
-                    .sized(0.6f, 1.2f).clientTrackingRange(10).build("velocity_raptor"));
+                    .sized(0.5f, 0.6f).clientTrackingRange(10).build("velocity_raptor"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<WaterDragon>> WATER_DRAGON =
             ENTITY_TYPES.register("water_dragon", () -> EntityType.Builder.of(WaterDragon::new, MobCategory.WATER_CREATURE)
