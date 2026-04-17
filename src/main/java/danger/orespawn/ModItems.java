@@ -232,25 +232,35 @@ public class ModItems {
     // Special weapons
     public static final DeferredItem<Item> NIGHTMARE_SWORD = ITEMS.register("nightmare_sword",
             () -> new NightmareSword(new Item.Properties().attributes(SwordItem.createAttributes(ModToolTiers.NIGHTMARE, 3, -2.4f))));
+    // Big Bertha: tier-3 Uranium/Titanium club, +2.0 reach so the player can actually
+    // crack a Mobzilla in the face from outside its bite radius (1.7.10 fidelity is
+    // "absurdly long arms" — vanilla reach=3.0 felt wrong against giant bosses).
     public static final DeferredItem<Item> BIG_BERTHA = ITEMS.register("big_bertha",
-            () -> new Bertha(ModToolTiers.BERTHA, new Item.Properties().attributes(SwordItem.createAttributes(ModToolTiers.BERTHA, 3, -2.4f)),
+            () -> new Bertha(ModToolTiers.BERTHA, new Item.Properties()
+                    .attributes(danger.orespawn.util.BerthaAttributes.createReachAttributes(ModToolTiers.BERTHA, 3, -2.4f, 2.0)),
                     0, new int[]{5, 1, 1}, net.minecraft.world.item.enchantment.Enchantments.KNOCKBACK, net.minecraft.world.item.enchantment.Enchantments.BANE_OF_ARTHROPODS, net.minecraft.world.item.enchantment.Enchantments.SWEEPING_EDGE));
     public static final DeferredItem<Item> SLICE = ITEMS.register("slice",
-            () -> new Slice(ModToolTiers.BERTHA, new Item.Properties().attributes(SwordItem.createAttributes(ModToolTiers.BERTHA, 3, -2.4f))));
+            () -> new Slice(ModToolTiers.BERTHA, new Item.Properties()
+                    .attributes(danger.orespawn.util.BerthaAttributes.createReachAttributes(ModToolTiers.BERTHA, 3, -2.4f, 2.0))));
     public static final DeferredItem<Item> ROYAL_GUARDIAN_SWORD = ITEMS.register("royal_guardian_sword",
-            () -> new Bertha(ModToolTiers.ROYAL, new Item.Properties().attributes(SwordItem.createAttributes(ModToolTiers.ROYAL, 3, -2.4f)),
+            () -> new Bertha(ModToolTiers.ROYAL, new Item.Properties()
+                    .attributes(danger.orespawn.util.BerthaAttributes.createReachAttributes(ModToolTiers.ROYAL, 3, -2.4f, 2.5)),
                     2, new int[]{5}, net.minecraft.world.item.enchantment.Enchantments.SHARPNESS));
     public static final DeferredItem<Item> BATTLE_AXE = ITEMS.register("battle_axe",
-            () -> new Bertha(ModToolTiers.BATTLE, new Item.Properties().attributes(SwordItem.createAttributes(ModToolTiers.BATTLE, 3, -2.4f)),
+            () -> new Bertha(ModToolTiers.BATTLE, new Item.Properties()
+                    .attributes(danger.orespawn.util.BerthaAttributes.createReachAttributes(ModToolTiers.BATTLE, 3, -2.4f, 1.5)),
                     0, new int[]{5, 1, 1}, net.minecraft.world.item.enchantment.Enchantments.KNOCKBACK, net.minecraft.world.item.enchantment.Enchantments.BANE_OF_ARTHROPODS, net.minecraft.world.item.enchantment.Enchantments.SWEEPING_EDGE));
     public static final DeferredItem<Item> QUEEN_BATTLE_AXE = ITEMS.register("queen_battle_axe",
-            () -> new Bertha(ModToolTiers.QUEEN_BATTLE, new Item.Properties().attributes(SwordItem.createAttributes(ModToolTiers.QUEEN_BATTLE, 3, -2.4f)),
+            () -> new Bertha(ModToolTiers.QUEEN_BATTLE, new Item.Properties()
+                    .attributes(danger.orespawn.util.BerthaAttributes.createReachAttributes(ModToolTiers.QUEEN_BATTLE, 3, -2.4f, 2.5)),
                     2, new int[]{5}, net.minecraft.world.item.enchantment.Enchantments.SHARPNESS));
     public static final DeferredItem<Item> CHAINSAW = ITEMS.register("chainsaw",
-            () -> new Bertha(ModToolTiers.CHAINSAW, new Item.Properties().attributes(SwordItem.createAttributes(ModToolTiers.CHAINSAW, 3, -2.4f)),
+            () -> new Bertha(ModToolTiers.CHAINSAW, new Item.Properties()
+                    .attributes(danger.orespawn.util.BerthaAttributes.createReachAttributes(ModToolTiers.CHAINSAW, 3, -2.4f, 1.5)),
                     0, new int[]{5, 1, 1}, net.minecraft.world.item.enchantment.Enchantments.KNOCKBACK, net.minecraft.world.item.enchantment.Enchantments.BANE_OF_ARTHROPODS, net.minecraft.world.item.enchantment.Enchantments.SWEEPING_EDGE));
     public static final DeferredItem<Item> ATTITUDE_ADJUSTER = ITEMS.register("attitude_adjuster",
-            () -> new Bertha(ModToolTiers.HAMMY, new Item.Properties().attributes(SwordItem.createAttributes(ModToolTiers.HAMMY, 3, -2.4f)),
+            () -> new Bertha(ModToolTiers.HAMMY, new Item.Properties()
+                    .attributes(danger.orespawn.util.BerthaAttributes.createReachAttributes(ModToolTiers.HAMMY, 3, -2.4f, 2.0)),
                     3, new int[]{}, new net.minecraft.resources.ResourceKey[0]));
     public static final DeferredItem<Item> EXPERIENCE_SWORD = ITEMS.register("experience_sword",
             () -> new ExperienceSword(new Item.Properties().attributes(SwordItem.createAttributes(ModToolTiers.EMERALD, 3, -2.4f))));
