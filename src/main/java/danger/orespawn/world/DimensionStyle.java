@@ -52,6 +52,11 @@ import java.util.Locale;
  *       without touching the codec surface.</li>
  *   <li>{@link #UTOPIA} — identical to {@code DEFAULT} for now; placeholder
  *       so future time-sync or bonus-generation hooks have a home.</li>
+ *   <li>{@link #MINING} — pass-through terrain plus the continental ocean-fill
+ *       pass that converts vanilla overworld noise's ocean basins into solid
+ *       stone, restoring the 1.7.10 endless-mining-cavern feel where the
+ *       dimension is one giant buildable surface with caves underneath rather
+ *       than an archipelago.</li>
  * </ul>
  *
  * <p><b>Codec:</b> serialised as a lowercase string. Unknown values map to
@@ -64,7 +69,8 @@ public enum DimensionStyle {
     ISLANDS,
     CHAOS,
     VILLAGE,
-    UTOPIA;
+    UTOPIA,
+    MINING;
 
     public static final Codec<DimensionStyle> CODEC = Codec.STRING.xmap(
             DimensionStyle::fromId,

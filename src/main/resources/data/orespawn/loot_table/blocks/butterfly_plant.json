@@ -6,7 +6,7 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "orespawn:butterfly"
+          "name": "orespawn:butterfly_seed"
         }
       ],
       "conditions": [
