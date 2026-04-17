@@ -55,6 +55,8 @@ public class ModItems {
     public static final DeferredItem<BlockItem> CRYSTAL_FAIRY_ITEM = ITEMS.registerSimpleBlockItem("crystal_fairy", ModBlocks.CRYSTAL_FAIRY);
     public static final DeferredItem<BlockItem> RED_ANT_TROLL_ITEM = ITEMS.registerSimpleBlockItem("red_ant_troll", ModBlocks.RED_ANT_TROLL);
     public static final DeferredItem<BlockItem> TERMITE_TROLL_ITEM = ITEMS.registerSimpleBlockItem("termite_troll", ModBlocks.TERMITE_TROLL);
+    public static final DeferredItem<BlockItem> KRAKEN_SPAWN_BLOCK_ITEM = ITEMS.registerSimpleBlockItem("kraken_spawn_block", ModBlocks.KRAKEN_SPAWN_BLOCK);
+    public static final DeferredItem<BlockItem> DRAGON_SPAWN_BLOCK_ITEM = ITEMS.registerSimpleBlockItem("dragon_spawn_block", ModBlocks.DRAGON_SPAWN_BLOCK);
     public static final DeferredItem<BlockItem> KING_SPAWNER_ITEM = ITEMS.registerSimpleBlockItem("king_spawner", ModBlocks.KING_SPAWNER);
     public static final DeferredItem<BlockItem> QUEEN_SPAWNER_ITEM = ITEMS.registerSimpleBlockItem("queen_spawner", ModBlocks.QUEEN_SPAWNER);
     public static final DeferredItem<BlockItem> DUNGEON_SPAWNER_ITEM = ITEMS.registerSimpleBlockItem("dungeon_spawner", ModBlocks.DUNGEON_SPAWNER);

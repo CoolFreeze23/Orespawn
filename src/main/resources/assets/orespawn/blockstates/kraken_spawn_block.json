@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "orespawn:block/kraken_spawn_block"
+    }
+  }
+}

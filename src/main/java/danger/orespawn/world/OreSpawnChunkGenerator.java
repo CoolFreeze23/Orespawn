@@ -249,10 +249,9 @@ public class OreSpawnChunkGenerator extends NoiseBasedChunkGenerator {
 
         // Decoration (as opposed to buildSurface) runs after neighboring
         // chunks have also finished their terrain pass, so large
-        // multi-chunk structures are safe to place here. Only Crystal
-        // currently injects work in this phase; keep the switch so new
-        // styles can add their own decoration with zero risk of regressing
-        // the other dimensions.
+        // multi-chunk structures are safe to place here. Each style opts in
+        // to its own decoration pass; failures are logged-and-ignored so a
+        // single bad chunk never bricks worldgen.
         if (style == DimensionStyle.CRYSTAL) {
             try {
                 RandomSource random = level.getRandom();
@@ -260,6 +259,18 @@ public class OreSpawnChunkGenerator extends NoiseBasedChunkGenerator {
                         chunk.getPos().getMinBlockX(), chunk.getPos().getMinBlockZ());
             } catch (Exception e) {
                 // Non-fatal: a failed structure in one chunk doesn't compromise the world.
+            }
+        }
+
+        // Utopia: roll for a King/Queen altar (1/2000 chunk). Restored from
+        // 1.7.10 OreSpawnWorld.addKingAltar — this is the only structural way
+        // to obtain The King / The Queen spawn eggs short of using the Magic
+        // Apple ginormous tree (Phase 5C).
+        if (style == DimensionStyle.UTOPIA) {
+            try {
+                RoyalAltars.tryPlaceRoyalAltar(level, chunk.getPos(), level.getRandom());
+            } catch (Exception e) {
+                // Non-fatal: altar placement failures are silently swallowed.
             }
         }
     }
