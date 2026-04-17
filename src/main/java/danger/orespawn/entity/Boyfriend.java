@@ -148,7 +148,7 @@ public class Boyfriend extends TamableAnimal {
     public InteractionResult mobInteract(Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
 
-        if (stack.is(Items.DIAMOND) && this.distanceToSqr(player) < 16.0) {
+        if (stack.is(Items.COOKED_BEEF) && this.distanceToSqr(player) < 16.0) {
             if (!this.isTame()) {
                 if (!this.level().isClientSide) {
                     if (this.random.nextInt(3) == 0) {
@@ -321,7 +321,7 @@ public class Boyfriend extends TamableAnimal {
 
     @Override
     public boolean isFood(ItemStack stack) {
-        return stack.is(Items.DIAMOND);
+        return stack.is(Items.COOKED_BEEF);
     }
 
     @Nullable

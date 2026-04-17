@@ -267,7 +267,7 @@ public class ThePrince extends TamableAnimal {
     public InteractionResult mobInteract(Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
 
-        if (stack.is(Blocks.BEACON.asItem()) && this.distanceToSqr(player) < 16.0) {
+        if (stack.is(Blocks.DIAMOND_BLOCK.asItem()) && this.distanceToSqr(player) < 16.0) {
             if (!this.level().isClientSide) {
                 this.tame(player);
                 this.level().broadcastEntityEvent(this, (byte) 7);
