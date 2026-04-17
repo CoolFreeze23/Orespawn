@@ -158,121 +158,14 @@ public class OreSpawnChunkGenerator extends NoiseBasedChunkGenerator {
         switch (style) {
             case CRYSTAL -> applyCrystalSurface(chunk, region.getRandom());
             case ISLANDS -> applyIslandsSurface(chunk, region.getRandom());
-            case UTOPIA, VILLAGE, CHAOS -> fillContinentalLand(chunk,
-                    Blocks.STONE.defaultBlockState(),
-                    Blocks.GRASS_BLOCK.defaultBlockState(),
-                    Blocks.DIRT.defaultBlockState());
-            case MINING -> fillContinentalLand(chunk,
-                    Blocks.STONE.defaultBlockState(),
-                    Blocks.STONE.defaultBlockState(),
-                    Blocks.STONE.defaultBlockState());
-            case DEFAULT -> {
+            case CHAOS, VILLAGE, UTOPIA, MINING, DEFAULT -> {
                 // Pass-through — vanilla noise + the dungeon pass above is
-                // sufficient. DEFAULT is the safety fallback for unknown
-                // dimension_style values; it intentionally does no ocean-fill
-                // so the worst-case behaviour for a typo'd dim JSON is "looks
-                // like vanilla overworld", not "broken landmass override".
-            }
-        }
-    }
-
-    /**
-     * Continental ocean-fill: scans every column in the chunk and converts
-     * vanilla noise's "ocean" basins (water columns above a sub-sea-level
-     * seabed) into solid land, restoring 1.7.10's endless-continent feel for
-     * the Ant dimensions (Utopia, Village, Chaos, Mining).
-     *
-     * <p><b>Why this exists.</b> 1.7.10's {@code ChunkProviderOreSpawn[1-6]}
-     * each used a {@code BiomeProviderSingle} so the entire dimension was one
-     * biome whose {@code rootHeight} / {@code heightVariation} guaranteed
-     * above-sea-level terrain everywhere. 1.21.1's noise router pipeline
-     * adds an independent <em>continentalness</em> axis that produces ocean
-     * basins regardless of biome, so a fixed-biome dimension still gets
-     * scattered "inland seas". This pass post-processes those basins into
-     * land so the dimensions look like the original endless rolling plains
-     * the player remembers from 1.7.10 / 1.8 OreSpawn.</p>
-     *
-     * <p><b>Algorithm.</b> For each X/Z column:</p>
-     * <ol>
-     *   <li>Scan downward from sea level (Y≈63) until we hit the first
-     *       water block — this gives us the water surface.</li>
-     *   <li>Continue scanning downward until we hit a non-water solid —
-     *       that's the seabed. Cap the scan depth so we don't fill deep
-     *       caves that happen to have water at the bottom.</li>
-     *   <li>If the seabed is below sea level (i.e. this column is part of
-     *       an ocean basin), fill from seabed+1 up to (and including)
-     *       sea level with {@code fill}, replacing the water surface block
-     *       with {@code surface}.</li>
-     *   <li>Clear any leftover water above sea level (rivers/coves) and
-     *       cap the new surface so flora decoration in
-     *       {@link #applyBiomeDecoration} can place trees and grass on it.</li>
-     * </ol>
-     *
-     * <p><b>Idempotence and concurrency.</b> The method only ever reads from
-     * and writes to the single {@link ChunkAccess} passed in — no neighbour
-     * reads — so it's safe under NeoForge 1.21.1's parallel chunk-gen
-     * worker pool. Re-running it on an already-filled chunk is a no-op
-     * (no water → nothing to do).</p>
-     *
-     * @param chunk   the chunk being built
-     * @param surface block to place on the new "shore" (typically grass/stone)
-     * @param fill    block to fill the water column with (typically dirt/stone)
-     * @param subFill block to use 3 blocks below the surface as a soft floor
-     */
-    private void fillContinentalLand(ChunkAccess chunk, BlockState surface,
-                                     BlockState fill, BlockState subFill) {
-        final int seaLevel = getSeaLevel();
-        final int scanTop = Math.min(chunk.getMaxBuildHeight() - 1, seaLevel + 16);
-        final int minY = chunk.getMinBuildHeight() + 1;
-        final BlockState air = Blocks.AIR.defaultBlockState();
-        int minX = chunk.getPos().getMinBlockX();
-        int minZ = chunk.getPos().getMinBlockZ();
-
-        for (int x = 0; x < 16; x++) {
-            for (int z = 0; z < 16; z++) {
-                int worldX = minX + x;
-                int worldZ = minZ + z;
-
-                int waterTop = -1;
-                for (int y = scanTop; y >= minY; y--) {
-                    BlockState s = chunk.getBlockState(new BlockPos(worldX, y, worldZ));
-                    if (s.is(Blocks.WATER)) { waterTop = y; break; }
-                    if (!s.isAir()) break;
-                }
-                if (waterTop == -1) continue;
-
-                int seabedY = -1;
-                for (int y = waterTop - 1; y >= minY; y--) {
-                    BlockState s = chunk.getBlockState(new BlockPos(worldX, y, worldZ));
-                    if (s.is(Blocks.WATER)) continue;
-                    seabedY = y;
-                    break;
-                }
-                if (seabedY == -1) continue;
-                if (seabedY >= seaLevel - 1) continue;
-
-                int newSurfaceY = Math.max(seaLevel, waterTop);
-                for (int y = seabedY + 1; y < newSurfaceY; y++) {
-                    BlockPos p = new BlockPos(worldX, y, worldZ);
-                    chunk.setBlockState(p, fill, false);
-                }
-                BlockPos surfPos = new BlockPos(worldX, newSurfaceY, worldZ);
-                chunk.setBlockState(surfPos, surface, false);
-                for (int y = newSurfaceY - 1; y >= newSurfaceY - 3 && y > seabedY; y--) {
-                    BlockPos p = new BlockPos(worldX, y, worldZ);
-                    if (chunk.getBlockState(p).equals(fill)) {
-                        chunk.setBlockState(p, subFill, false);
-                    }
-                }
-                for (int y = newSurfaceY + 1; y <= scanTop; y++) {
-                    BlockPos p = new BlockPos(worldX, y, worldZ);
-                    BlockState s = chunk.getBlockState(p);
-                    if (s.is(Blocks.WATER)) {
-                        chunk.setBlockState(p, air, false);
-                    } else if (!s.isAir()) {
-                        break;
-                    }
-                }
+                // sufficient. The "no oceans" continental shape for
+                // UTOPIA/VILLAGE/CHAOS/MINING is now data-driven via the
+                // orespawn:inland noise_settings (constant continentalness),
+                // so the chunk generator stays clean: surface rules apply
+                // properly to the new landmass without any post-fill hack
+                // patching raw stone over generated terrain.
             }
         }
     }
@@ -283,14 +176,6 @@ public class OreSpawnChunkGenerator extends NoiseBasedChunkGenerator {
      * reads top-down without nested branches.
      */
     private void applyCrystalSurface(ChunkAccess chunk, RandomSource random) {
-        // Pre-fill oceans with crystal stone first so the subsequent crystal
-        // terrain rewrite sees a continuous land column instead of an
-        // inland-sea hole. Crystal blocks are produced by replaceTerrain so
-        // we use vanilla stone here and let the rewrite swap it.
-        fillContinentalLand(chunk,
-                Blocks.STONE.defaultBlockState(),
-                Blocks.STONE.defaultBlockState(),
-                Blocks.STONE.defaultBlockState());
         replaceTerrain(chunk);
         CrystalMaze.generate(chunk, random, chunk.getPos().getMinBlockX(), 25, chunk.getPos().getMinBlockZ());
         CrystalTreeGenerator.generate(chunk, random);
