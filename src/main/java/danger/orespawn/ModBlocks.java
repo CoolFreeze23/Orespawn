@@ -115,6 +115,15 @@ public class ModBlocks {
     public static final DeferredBlock<Block> ISLAND = BLOCKS.register("island",
             () -> new Block(BlockBehaviour.Properties.of().strength(1.0f).lightLevel(s -> 14)));
 
+    // Boss summon eggs (1.7.10 OreGenericEgg port — drop 5..11 of themselves on
+    // a 50% roll when broken). Generated as ultra-rare deep-cave single-block
+    // veins so players slowly accumulate them. Mobzilla's part block is
+    // crafted-only (Phase 5B), so it is intentionally NOT registered here.
+    public static final DeferredBlock<Block> KRAKEN_SPAWN_BLOCK = BLOCKS.register("kraken_spawn_block",
+            () -> new OreGenericEgg(BlockBehaviour.Properties.of().strength(0.5f, 1.0f).sound(SoundType.GRAVEL)));
+    public static final DeferredBlock<Block> DRAGON_SPAWN_BLOCK = BLOCKS.register("dragon_spawn_block",
+            () -> new OreGenericEgg(BlockBehaviour.Properties.of().strength(0.5f, 1.0f).sound(SoundType.GRAVEL)));
+
     // Spawner blocks
     public static final DeferredBlock<Block> KING_SPAWNER = BLOCKS.register("king_spawner",
             () -> new BossSpawnerBlock(BlockBehaviour.Properties.of().strength(50.0f, 1200.0f).lightLevel(s -> 14),

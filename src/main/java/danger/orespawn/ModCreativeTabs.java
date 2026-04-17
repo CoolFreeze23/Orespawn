@@ -90,6 +90,8 @@ public class ModCreativeTabs {
                         output.accept(ModItems.CRYSTAL_TORCH_ITEM.get());
                         output.accept(ModItems.KRAKEN_REPELLENT_ITEM.get());
                         output.accept(ModItems.CREEPER_REPELLENT_ITEM.get());
+                        output.accept(ModItems.KRAKEN_SPAWN_BLOCK_ITEM.get());
+                        output.accept(ModItems.DRAGON_SPAWN_BLOCK_ITEM.get());
                         output.accept(ModItems.KING_SPAWNER_ITEM.get());
                         output.accept(ModItems.QUEEN_SPAWNER_ITEM.get());
                         output.accept(ModItems.DUNGEON_SPAWNER_ITEM.get());
