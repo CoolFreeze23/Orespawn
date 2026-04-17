@@ -161,6 +161,14 @@ public class ItemOreSpawnArmor extends ArmorItem {
         // Config: royalGlideEnable controls whether the glide effect is active
         if (!OreSpawnConfig.ROYAL_GLIDE_ENABLE.get()) return;
 
+        // Hot-path early-out: skip the boots/material lookup unless the player is
+        // actually descending. Saves the per-tick allocation/cast for the 90%+ of
+        // ticks where the wearer is grounded or moving up. We don't gate on
+        // player.onGround() because the glide must engage the moment they leave a
+        // ledge (motion.y goes negative one tick before onGround clears).
+        net.minecraft.world.phys.Vec3 motion = player.getDeltaMovement();
+        if (motion.y >= 0.0) return;
+
         ItemStack boots = player.getItemBySlot(EquipmentSlot.FEET);
         if (boots.isEmpty() || !(boots.getItem() instanceof ItemOreSpawnArmor bootArmor)) return;
         String bootMat = bootArmor.armorMaterialName;
@@ -174,7 +182,6 @@ public class ItemOreSpawnArmor extends ArmorItem {
             return;
         }
 
-        net.minecraft.world.phys.Vec3 motion = player.getDeltaMovement();
         if (motion.y < fallCap) {
             player.setDeltaMovement(motion.x, fallCap, motion.z);
         }

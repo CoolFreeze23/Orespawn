@@ -1,8 +1,11 @@
 package danger.orespawn.item;
 
+import danger.orespawn.ModDataComponents;
 import danger.orespawn.OreSpawnConfig;
 import danger.orespawn.entity.BerthaHit;
 import danger.orespawn.util.OreSpawnEnchantHelper;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -13,8 +16,11 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.SwordItem;
 import net.minecraft.world.item.Tier;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.Level;
+
+import java.util.List;
 
 public class Bertha extends SwordItem {
     private final int hitType;
@@ -75,6 +81,23 @@ public class Bertha extends SwordItem {
     @Override
     public boolean hurtEnemy(ItemStack stack, LivingEntity target, LivingEntity attacker) {
         stack.hurtAndBreak(1, attacker, EquipmentSlot.MAINHAND);
+        // Bertha-family weapons one-shot most things; bump the kill counter when the
+        // strike actually drops the target. We use BERTHA_KILLS as a single shared
+        // component because all six Bertha variants share the same hit pipeline.
+        if (target.getHealth() <= 0.0f && attacker instanceof Player) {
+            int prior = stack.getOrDefault(ModDataComponents.BERTHA_KILLS.get(), 0);
+            stack.set(ModDataComponents.BERTHA_KILLS.get(), prior + 1);
+        }
         return true;
+    }
+
+    @Override
+    public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
+        super.appendHoverText(stack, context, tooltip, flag);
+        int kills = stack.getOrDefault(ModDataComponents.BERTHA_KILLS.get(), 0);
+        if (kills > 0) {
+            tooltip.add(Component.translatable("tooltip.orespawn.bertha_kills", kills)
+                    .withStyle(ChatFormatting.DARK_RED));
+        }
     }
 }

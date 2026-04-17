@@ -5,6 +5,9 @@
   "itemGroup.orespawn.items": "OreSpawn Items",
   "itemGroup.orespawn.spawn_eggs": "OreSpawn Spawn Eggs",
 
+  "tooltip.orespawn.bertha_kills": "Kills: %s",
+  "tooltip.orespawn.ultimate_sword_kills": "Souls Reaped: %s",
+
   "block.orespawn.ore_ruby": "Ruby Ore",
   "block.orespawn.ore_amethyst": "Amethyst Ore",
   "block.orespawn.ore_uranium": "Uranium Ore",
