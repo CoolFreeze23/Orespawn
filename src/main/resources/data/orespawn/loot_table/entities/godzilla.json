@@ -3,32 +3,43 @@
   "pools": [
     {
       "rolls": 1,
-      "entries": [{"type": "minecraft:item", "name": "minecraft:experience_bottle", "functions": [{"function": "minecraft:set_count", "count": {"type": "minecraft:uniform", "min": 1, "max": 1}}]}]
+      "entries": [{"type": "minecraft:item", "name": "minecraft:saddle"}]
     },
     {
       "rolls": 1,
-      "entries": [{"type": "minecraft:item", "name": "orespawn:godzilla_scale", "functions": [{"function": "minecraft:set_count", "count": {"type": "minecraft:uniform", "min": 50, "max": 79}}]}]
+      "entries": [{"type": "minecraft:item", "name": "orespawn:godzilla_scale", "functions": [{"function": "minecraft:set_count", "count": {"type": "minecraft:uniform", "min": 50, "max": 79}}, {"function": "minecraft:enchanted_count_increase", "enchantment": "minecraft:looting", "count": {"type": "minecraft:uniform", "min": 0, "max": 12}}]}]
     },
     {
       "rolls": 1,
-      "entries": [{"type": "minecraft:item", "name": "minecraft:diamond", "functions": [{"function": "minecraft:set_count", "count": {"type": "minecraft:uniform", "min": 100, "max": 259}}]}]
+      "entries": [{"type": "minecraft:item", "name": "minecraft:beef", "functions": [{"function": "minecraft:set_count", "count": {"type": "minecraft:uniform", "min": 100, "max": 259}}]}]
     },
     {
       "rolls": 1,
-      "entries": [{"type": "minecraft:item", "name": "minecraft:string", "functions": [{"function": "minecraft:set_count", "count": {"type": "minecraft:uniform", "min": 50, "max": 109}}]}]
+      "entries": [{"type": "minecraft:item", "name": "minecraft:bone", "functions": [{"function": "minecraft:set_count", "count": {"type": "minecraft:uniform", "min": 50, "max": 109}}]}]
     },
     {
-      "rolls": 1,
-      "entries": [{"type": "minecraft:item", "name": "minecraft:gold_ingot", "functions": [{"function": "minecraft:set_count", "count": {"type": "minecraft:uniform", "min": 10, "max": 25}}]}]
-    },
-    {
-      "rolls": 1,
-      "entries": [{"type": "minecraft:item", "name": "minecraft:iron_ingot", "functions": [{"function": "minecraft:set_count", "count": {"type": "minecraft:uniform", "min": 10, "max": 25}}]}]
-    },
-    {
-      "rolls": 1,
-      "conditions": [{"condition": "minecraft:killed_by_player"}],
-      "entries": [{"type": "minecraft:item", "name": "orespawn:ultimate_sword", "functions": [{"function": "minecraft:set_count", "count": {"type": "minecraft:uniform", "min": 1, "max": 1}}]}]
+      "rolls": {"type": "minecraft:uniform", "min": 25, "max": 39},
+      "entries": [
+        {"type": "minecraft:item", "name": "orespawn:ultimate_sword", "weight": 1},
+        {"type": "minecraft:item", "name": "minecraft:diamond", "weight": 1},
+        {"type": "minecraft:item", "name": "minecraft:diamond_block", "weight": 1},
+        {"type": "minecraft:item", "name": "minecraft:diamond_sword", "weight": 1},
+        {"type": "minecraft:item", "name": "minecraft:diamond_shovel", "weight": 1},
+        {"type": "minecraft:item", "name": "minecraft:diamond_pickaxe", "weight": 1},
+        {"type": "minecraft:item", "name": "minecraft:diamond_axe", "weight": 1},
+        {"type": "minecraft:item", "name": "minecraft:diamond_hoe", "weight": 1},
+        {"type": "minecraft:item", "name": "minecraft:diamond_helmet", "weight": 1},
+        {"type": "minecraft:item", "name": "minecraft:diamond_chestplate", "weight": 1},
+        {"type": "minecraft:item", "name": "minecraft:diamond_leggings", "weight": 1},
+        {"type": "minecraft:item", "name": "minecraft:diamond_boots", "weight": 1},
+        {"type": "minecraft:item", "name": "orespawn:ultimate_bow", "weight": 1},
+        {"type": "minecraft:item", "name": "orespawn:ultimate_axe", "weight": 1},
+        {"type": "minecraft:item", "name": "minecraft:iron_ingot", "weight": 1},
+        {"type": "minecraft:item", "name": "orespawn:ultimate_pickaxe", "weight": 1},
+        {"type": "minecraft:item", "name": "minecraft:iron_sword", "weight": 1},
+        {"type": "minecraft:item", "name": "minecraft:gold_ingot", "weight": 1},
+        {"type": "minecraft:empty", "weight": 62}
+      ]
     }
   ]
 }

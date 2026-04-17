@@ -1,6 +1,9 @@
 {
-  "type": "minecraft:crafting_shaped",
-  "pattern": ["XYX", "X#X", " # "],
-  "key": { "#": { "item": "minecraft:stick" }, "X": { "item": "orespawn:ingot_titanium" }, "Y": { "item": "minecraft:diamond" } },
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    { "item": "orespawn:ultimate_sword" },
+    { "item": "orespawn:ultimate_axe" },
+    { "item": "orespawn:green_goo" }
+  ],
   "result": { "id": "orespawn:battle_axe", "count": 1 }
 }

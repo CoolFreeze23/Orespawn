@@ -1,15 +1,14 @@
 {
   "type": "minecraft:crafting_shaped",
   "pattern": [
-    "X",
-    "X",
-    "#"
+    " T ",
+    " U ",
+    " I "
   ],
   "key": {
-    "#": { "item": "minecraft:stick" },
-    "X": { "item": "orespawn:ingot_uranium" }
+    "T": { "item": "orespawn:ingot_titanium" },
+    "U": { "item": "orespawn:ingot_uranium" },
+    "I": { "tag": "c:ingots/iron" }
   },
-  "result": { "id": "orespawn:ultimate_sword",
-    "count": 1
-  }
+  "result": { "id": "orespawn:ultimate_sword", "count": 1 }
 }
