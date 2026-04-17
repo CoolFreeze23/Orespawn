@@ -420,10 +420,9 @@ public class ModItems {
             () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(2).saturationModifier(0.45f).build())));
     public static final DeferredItem<Item> RICE = ITEMS.register("rice",
             () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(5).saturationModifier(0.65f).build())));
-    public static final DeferredItem<Item> CORN_SEED = ITEMS.register("corn_seed",
-            () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(6).saturationModifier(0.75f).build())));
+    public static final DeferredItem<Item> CORN_SEED = ITEMS.registerSimpleItem("corn_seed");
     public static final DeferredItem<Item> CORN_COB = ITEMS.register("corn_cob",
-            () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(5).saturationModifier(0.6f).build())));
+            () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(6).saturationModifier(0.75f).build())));
     public static final DeferredItem<Item> QUINOA = ITEMS.register("quinoa",
             () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(7).saturationModifier(0.85f).build())));
     public static final DeferredItem<Item> TOMATO = ITEMS.register("tomato",
