@@ -741,6 +741,8 @@ public class ModItems {
             () -> new SpawnEggItem(ModEntities.NASTYSAURUS.get(), 0x8B4513, 0xA0522D, new Item.Properties()));
     public static final DeferredItem<SpawnEggItem> PITCH_BLACK_SPAWN_EGG = ITEMS.register("pitch_black_spawn_egg",
             () -> new SpawnEggItem(ModEntities.PITCH_BLACK.get(), 0x0A0A0A, 0x1A1A1A, new Item.Properties()));
+    public static final DeferredItem<SpawnEggItem> LEONOPTERYX_SPAWN_EGG = ITEMS.register("leonopteryx_spawn_egg",
+            () -> new SpawnEggItem(ModEntities.LEONOPTERYX.get(), 0xCC2222, 0xFFEE55, new Item.Properties()));
     public static final DeferredItem<SpawnEggItem> POINTYSAURUS_SPAWN_EGG = ITEMS.register("pointysaurus_spawn_egg",
             () -> new SpawnEggItem(ModEntities.POINTYSAURUS.get(), 0x8B4513, 0xDEB887, new Item.Properties()));
     public static final DeferredItem<SpawnEggItem> ROBOT_1_SPAWN_EGG = ITEMS.register("robot_1_spawn_egg",

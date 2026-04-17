@@ -116,6 +116,7 @@ public class ModEntityAttributes {
         event.put(ModEntities.GIRLFRIEND.get(), Girlfriend.createAttributes().build());
         event.put(ModEntities.ENTITY_HYDROLISC.get(), EntityHydrolisc.createAttributes().build());
         event.put(ModEntities.ENTITY_LEON.get(), EntityLeon.createAttributes().build());
+        event.put(ModEntities.LEONOPTERYX.get(), Leonopteryx.createAttributes().build());
         event.put(ModEntities.LIZARD.get(), Lizard.createAttributes().build());
         event.put(ModEntities.OSTRICH.get(), Ostrich.createAttributes().build());
         event.put(ModEntities.ENTITY_RUBBER_DUCKY.get(), EntityRubberDucky.createAttributes().build());
@@ -273,6 +274,8 @@ public class ModEntityAttributes {
                 Heightmap.Types.MOTION_BLOCKING, Monster::checkMonsterSpawnRules, RegisterSpawnPlacementsEvent.Operation.AND);
         event.register(ModEntities.MOTHRA.get(), SpawnPlacementTypes.NO_RESTRICTIONS,
                 Heightmap.Types.MOTION_BLOCKING, Mob::checkMobSpawnRules, RegisterSpawnPlacementsEvent.Operation.AND);
+        event.register(ModEntities.LEONOPTERYX.get(), SpawnPlacementTypes.NO_RESTRICTIONS,
+                Heightmap.Types.MOTION_BLOCKING, Animal::checkAnimalSpawnRules, RegisterSpawnPlacementsEvent.Operation.AND);
 
         // Cave mobs
         event.register(ModEntities.ENTITY_MOLENOID.get(), SpawnPlacementTypes.ON_GROUND,
