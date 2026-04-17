@@ -31,26 +31,49 @@ Drop the produced JAR into your NeoForge 1.21.1 mods folder. No additional depen
 
 ## Completion Metrics (1.0.0-beta.1)
 
-| Subsystem | Implemented | Reference Total | % Complete |
-| --- | --- | --- | --- |
-| **Dimensions** | 6 | 6 | **100%** |
-| **Armor Sets** | 10 | 10 | **100%** |
-| **Top-tier Weapons** | 24 | 25 | **96%** |
-| **Bosses & Titans** | 13 | 15 | **87%** |
-| **Hostile / Neutral Mobs** | 71 | ~85 | **84%** |
-| **Companion / Tame Mobs** | 14 | 14 | **100%** |
-| **Item Roster** | 314 | ~340 | **92%** |
-| **Block Roster** | 96 | ~100 | **96%** |
-| **Recipes** | 217 | ~230 | **94%** |
-| **Loot Tables (Entity)** | 117 | ~130 | **90%** |
-| **Biome Modifiers** | 89 | n/a | data-driven |
-| **Dungeons / Hand-Built Structures** | 4 | 26 | **15%** |
+> Every "Wiki Total" below is a **strict integer count of entries explicitly enumerated**
+> on the Namu Wiki [Orespawn](https://en.namu.wiki/w/Orespawn) and
+> [Added Mobs](https://en.namu.wiki/w/Orespawn/%EC%B6%94%EA%B0%80%EB%90%98%EB%8A%94%20%EB%AA%B9)
+> pages — no approximations, no tildes. The "Implemented" column counts how many of
+> those exact wiki entries are present in our 1.21.1 codebase. Counts in the
+> *Workspace Totals* footer below show our absolute registry sizes (which exceed the
+> Wiki because we ship spawn eggs, food variants, projectiles, and bonus content).
 
-**Overall mechanical feature completeness: ~88%**
+| Subsystem | Implemented | Wiki Total | % Complete |
+| --- | --- | ---: | ---: |
+| **Dimensions** (Utopia / Mining / Village / Crystal / Chaos / Danger) | 6 | 6 | **100.0%** |
+| **Armor Sets** (Wiki §6.2) | 10 | 10 | **100.0%** |
+| **Top-tier Weapons** (Wiki §6.1) | 24 | 25 | **96.0%** |
+| **Bosses & Titans** (Wiki §13 + §14 + §15, excluding Scorpion sub-mob) | 11 | 13 | **84.6%** |
+| **Hostile / Neutral Mobs** (Wiki mobs page §2–§13.8 minus bosses & tames) | 52 | 56 | **92.9%** |
+| **Companion / Tame Mobs** (Wiki-listed pets only) | 6 | 7 | **85.7%** |
+| **General Utility Items** (Wiki §6, items above §6.1) | 16 | 18 | **88.9%** |
+| **Dungeons / Hand-Built Structures** (Wiki §5, exhaustive) | 3 | 15 | **20.0%** |
 
-> Note: "Reference Total" counts come directly from the Namu Wiki tables. Some of our
-> "implemented" extras (Kyuubi, Easter Bunny, Cliff Racer, etc.) are bonus content not
-> present in 1.7.10 and are excluded from the percentages on purpose.
+**Strict Wiki coverage: 128 / 148 enumerated entries = 86.5% mechanical completeness.**
+
+### Workspace Totals (Absolute Registry Counts)
+
+These are the actual sizes of our registries — they exceed the Wiki because we ship
+many entries the Wiki doesn't enumerate (spawn eggs, projectiles, food variants,
+bonus content, multi-slot armor pieces, etc.).
+
+| Registry | Count |
+| --- | ---: |
+| Entity types (`ModEntities.ENTITY_TYPES`) | **139** |
+| Item types (`ModItems.ITEMS`) | **314** |
+| Block types (`ModBlocks.BLOCKS`) | **96** |
+| Crafting / smelting recipes | **217** |
+| Entity loot tables | **117** |
+| Biome modifier JSONs | **89** |
+| Worldgen configured features | **12** |
+| Dimensions (`data/orespawn/dimension/*.json`) | **6** |
+
+> **Why the wiki count is the canonical baseline.** The Wiki *does not* enumerate
+> every block, food item, spawn egg, or projectile — only headline gameplay
+> entries. Comparing our 314 items to "all items the Wiki ever mentions" would
+> be apples-to-oranges. Comparing our implementation to *exact wiki entries*
+> gives the only honest "% of original mod content shipped" number.
 
 ## Major Systems Successfully Ported
 
@@ -79,7 +102,12 @@ Drop the produced JAR into your NeoForge 1.21.1 mods folder. No additional depen
 - **The Companion Roster.** Boyfriend, Girlfriend, The Prince (3 growth stages),
   The Princess, Stinky, Spyro, Leon, Velocity Raptor, Camarasaurus, Hydrolisc,
   Gamma Metroid — all with proper `TamableAnimal` taming items, follow/sit/defend
-  goals, and 1.7.10-faithful interaction recipes.
+  goals, and 1.7.10-faithful interaction recipes. (Note: only the 7 Wiki-listed
+  tames — Dragon, Water Dragon, Cephadrome, Prince ×3, Princess — count toward
+  the 85.7% companion-completion metric above. Boyfriend / Girlfriend / Stinky
+  / Spyro / Leon / Velocity Raptor / Camarasaurus / Hydrolisc / Gamma Metroid
+  are real 1.7.10 mobs that the Namu Wiki page never enumerated, so they ship
+  as bonus content rather than as percentage credit.)
 - **Faithful Power Curve.** Emerald → Experience → Amethyst → Pink Tourmaline →
   Tigers Eye → Ruby → Ultimate → Mobzilla → Royal Guardian → Queen Scale armor
   ladder with exact 1.7.10 defense values, durabilities, and recipe layouts.
@@ -148,7 +176,11 @@ Drop the produced JAR into your NeoForge 1.21.1 mods folder. No additional depen
       generic meat. **[v1.1]**
 - [ ] **Crab** size variants: only one `crab` registration. 1.7.10 has small
       (62 HP), medium (125 HP), and large (250 HP) Rainbow Crabs, each with
-      escalating defense. **[v1.1]**
+      escalating defense. Wiki documents all 3 as separate stat blocks. **[v1.1]**
+- [ ] **Baby Dragon** — separate from the adult `Dragon` registration. Wiki
+      documents Baby Dragon and Dragon as two distinct entities (the baby has
+      reduced HP and pre-fledged fire-breath). Currently we only ship the adult
+      and rely on age scaling, which is not 1:1 with the source. **[v1.1]**
 - [ ] **Iron Golems on Goodness/Queen Trees** — should aggro players who
       attack the gem leaves (vanilla iron golems instead behave like village
       defenders). **[v1.1]**
@@ -232,13 +264,37 @@ Drop the produced JAR into your NeoForge 1.21.1 mods folder. No additional depen
 - [ ] **Duplicator Tree (functional)** — the `duplicator_log` block exists
       but does not yet duplicate adjacent saplings/items as in 1.7.10.
       **[v1.1]**
-- [ ] **Kyanite Sword + Kyanite Armor** — the Crystal Dimension's blue gem
-      branch is missing entirely (no `kyanite_*` items, recipes, or ore).
-      **[v1.1]**
+- [ ] **Kyanite Sword + Kyanite Armor + Kyanite Ore** — the Crystal Dimension's
+      blue gem branch is missing entirely (no `kyanite_*` items, no recipes, no
+      `ore_kyanite` block). Wiki §6.1 lists the Kyanite Sword as a top-tier
+      blade. **[v1.1]**
+- [ ] **Pink Tourmaline gem item + ore block** — we ship the `crystal_pink_*`
+      armor and the `crystal_pink_sword`, but there is no `pink_tourmaline`
+      raw gem item and no `ore_pink_tourmaline` block. The current swords are
+      crafted from `crystal_flower_*` substitutes; restore the canonical
+      gem-from-ore path. **[v1.1]**
+- [ ] **Crystal Lumber / Crystal Stick** — the Wood Crystal Sword recipe in
+      Wiki §6.1 explicitly requires Crystal Lumber + Crystal Sticks. We craft
+      the sword from substitute materials today; add the proper intermediate
+      items + their crafting recipes. **[v1.1]**
 - [ ] **Critter Cage filled-variant projectile pickup** — `EntityCage` flies
       but does not yet transform into a `critter_cage_<mob>` filled item on
       impact. (See `ORESPAWN_PORTING_AUDIT.md` for the call-site detail.)
       **[v1.1]**
+- [ ] **Big Bertha component drops** — the wiki recipe for the Big Bertha
+      requires 16 specific boss-drop components (Mantis Claw, Water Dragon
+      Scale, Green Slime, Molenoid's Nose, Sea Monster Scale, Mothra Scale,
+      Basilisk Scale, Nightmare Scale, Emperor Scorpion Shell, Jumpy Bug
+      Shell, Kraken's Bite, Worm's Bite, T-Rex's Bite, Caterkiller's Mandible,
+      Sea Viper's Tongue, Eye of Vortex). Audit each boss's loot table and
+      fill any gaps so the recipe is satisfiable end-to-end. **[v1.1]**
+- [ ] **Crystal Apple specifics** — the Wiki specifies "5 HP recovery, 0.85
+      hunger recovery, Strength + Regeneration for 150 seconds." Our current
+      `crystal_apple` food values may not match exactly; verify and align.
+      **[v1.1]**
+- [ ] **Notch Apple compatibility** — Wiki notes the Crystal Apple must be
+      "highly compatible with gold block apples" (i.e. enchanted golden apple
+      cooldown sharing). Verify our cooldown grouping. **[v1.1]**
 
 ### 5. Misc Polish & Engineering Debt
 
