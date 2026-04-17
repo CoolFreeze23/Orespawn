@@ -1,0 +1,7 @@
+{
+  "type": "neoforge:add_spawns",
+  "biomes": "#minecraft:is_badlands",
+  "spawners": [
+    { "type": "orespawn:mothra", "weight": 2, "minCount": 1, "maxCount": 1 }
+  ]
+}
