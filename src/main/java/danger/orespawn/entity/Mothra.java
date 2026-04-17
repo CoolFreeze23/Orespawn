@@ -4,9 +4,13 @@ import java.util.Comparator;
 import java.util.List;
 import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerBossEvent;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.world.BossEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
 import net.minecraft.world.Difficulty;
@@ -45,6 +49,9 @@ public class Mothra extends EntityButterfly implements OreSpawnPartEntity.Multip
     private final OreSpawnPartEntity<Mothra> wingRight;
     private final OreSpawnPartEntity<Mothra> headPart;
     private final PartEntity<?>[] allParts;
+
+    private final ServerBossEvent bossEvent = new ServerBossEvent(
+            Component.literal("Mothra"), BossEvent.BossBarColor.YELLOW, BossEvent.BossBarOverlay.PROGRESS);
 
     public Mothra(EntityType<? extends Mothra> type, Level level) {
         super(type, level);
@@ -214,7 +221,20 @@ public class Mothra extends EntityButterfly implements OreSpawnPartEntity.Multip
     }
 
     @Override
+    public void startSeenByPlayer(ServerPlayer player) {
+        super.startSeenByPlayer(player);
+        this.bossEvent.addPlayer(player);
+    }
+
+    @Override
+    public void stopSeenByPlayer(ServerPlayer player) {
+        super.stopSeenByPlayer(player);
+        this.bossEvent.removePlayer(player);
+    }
+
+    @Override
     protected void customServerAiStep() {
+        this.bossEvent.setProgress(this.getHealth() / this.getMaxHealth());
         if (this.isRemoved()) return;
 
         if ((int) this.getX() == this.lastX && (int) this.getY() == this.lastY && (int) this.getZ() == this.lastZ) {
