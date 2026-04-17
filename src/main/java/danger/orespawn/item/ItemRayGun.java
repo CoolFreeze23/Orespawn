@@ -12,6 +12,15 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
 public class ItemRayGun extends Item {
+
+    /**
+     * Cooldown ticks between shots. 1.7.10 had no rate limit at all, which trivially
+     * crashes a modern dedicated server when a player holds right-click — every
+     * tick spawns a {@link LaserBall} entity with explosion physics. 10t (~0.5s)
+     * still feels rapid-fire but caps spawn pressure to ~2 projectiles/sec.
+     */
+    private static final int COOLDOWN_TICKS = 10;
+
     public ItemRayGun(Item.Properties properties) {
         super(properties);
     }
@@ -20,6 +29,9 @@ public class ItemRayGun extends Item {
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
         if (stack.getDamageValue() >= stack.getMaxDamage() - 1) {
+            return InteractionResultHolder.fail(stack);
+        }
+        if (player.getCooldowns().isOnCooldown(this)) {
             return InteractionResultHolder.fail(stack);
         }
         level.playSound(null, player.blockPosition(), SoundEvents.FIREWORK_ROCKET_LAUNCH, SoundSource.PLAYERS, 3.5F, 0.5F);
@@ -38,6 +50,8 @@ public class ItemRayGun extends Item {
             player.hurtMarked = true;
         }
         player.swing(hand);
+        // Server-authoritative cooldown so the throttle survives latency/desync.
+        player.getCooldowns().addCooldown(this, COOLDOWN_TICKS);
         stack.hurtAndBreak(1, player, EquipmentSlot.MAINHAND);
         return InteractionResultHolder.sidedSuccess(stack, level.isClientSide());
     }

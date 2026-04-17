@@ -45,7 +45,10 @@ public class UltimateBow extends BowItem {
         if (!level.isClientSide) {
             UltimateArrow arrow = new UltimateArrow(level, player, stack);
             arrow.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0F, pull * 3.0F, 1.0F);
-            if (pull >= 1.0F) arrow.setCritArrow(true);
+            // 1.7.10 fidelity: full pull is always crit, plus an additional 1/4 random
+            // chance to crit on under-pulled shots (matches the original
+            // `field_70146_Z.nextInt(4) == 1` roll in UltimateBow.func_77615_a).
+            if (pull >= 1.0F || level.random.nextInt(4) == 0) arrow.setCritArrow(true);
             arrow.pickup = AbstractArrow.Pickup.CREATIVE_ONLY;
             level.addFreshEntity(arrow);
         }
