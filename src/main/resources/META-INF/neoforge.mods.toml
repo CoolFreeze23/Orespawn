@@ -1,14 +1,27 @@
 modLoader="javafml"
 loaderVersion="${loader_version_range}"
 license="${mod_license}"
+issueTrackerURL="https://github.com/CoolFreeze23/Orespawn/issues"
 
 [[mods]]
 modId="${mod_id}"
 version="${mod_version}"
 displayName="${mod_name}"
+authors="${mod_authors}"
+credits="${mod_credits}"
+displayURL="https://github.com/CoolFreeze23/Orespawn"
+logoFile="assets/orespawn/textures/entity/logo.png"
 description='''
-The OreSpawn Mod - Just plain fun! Adds tons of new mobs, ores, tools, armor, dimensions, and more!
-Originally by TheyCallMeDanger, ported to NeoForge 1.21.1.
+OreSpawn — Just plain fun!
+
+Adds tons of new mobs, ores, tools, armor, weapons, dimensions, and boss fights to Minecraft.
+Includes Mobzilla, The King & Queen, Kraken, Mothra, and five custom dimensions
+(Utopia, Mining, Village, Chaos, Crystal, Islands) reached via right-clicking the iconic
+dimension ants. Features the full Bertha family of oversized melee weapons, Royal Guardian
+armor with its signature glide, gemstone armory with 1.7.10-faithful power creep, and
+data-driven ore generation across the Overworld.
+
+Originally by TheyCallMeDanger (1.7.10 / 1.8). Ported and modernized for NeoForge 1.21.1.
 '''
 
 [[dependencies.${mod_id}]]

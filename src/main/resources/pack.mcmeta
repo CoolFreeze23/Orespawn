@@ -1,0 +1,9 @@
+{
+  "pack": {
+    "description": {
+      "text": "OreSpawn resources & data — NeoForge 1.21.1"
+    },
+    "pack_format": 34,
+    "supported_formats": [34, 48]
+  }
+}
