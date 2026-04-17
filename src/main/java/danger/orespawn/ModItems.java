@@ -681,12 +681,18 @@ public class ModItems {
                     new Item.Properties().durability(ArmorItem.Type.BOOTS.getDurability(94)), "queen"));
 
     // Zoo cages (legacy, kept for backwards compat)
-    public static final DeferredItem<Item> ZOO_CAGE_2 = ITEMS.registerSimpleItem("zoo_cage_2");
-    public static final DeferredItem<Item> ZOO_CAGE_4 = ITEMS.registerSimpleItem("zoo_cage_4");
-    public static final DeferredItem<Item> ZOO_CAGE_6 = ITEMS.registerSimpleItem("zoo_cage_6");
-    public static final DeferredItem<Item> ZOO_CAGE_8 = ITEMS.registerSimpleItem("zoo_cage_8");
-    public static final DeferredItem<Item> ZOO_CAGE_10 = ITEMS.registerSimpleItem("zoo_cage_10");
-    public static final DeferredItem<Item> CAGE_EMPTY = ITEMS.registerSimpleItem("cage_empty");
+    public static final DeferredItem<Item> ZOO_CAGE_2 = ITEMS.register("zoo_cage_2",
+            () -> new ZooCageItem(new Item.Properties(), 2));
+    public static final DeferredItem<Item> ZOO_CAGE_4 = ITEMS.register("zoo_cage_4",
+            () -> new ZooCageItem(new Item.Properties(), 4));
+    public static final DeferredItem<Item> ZOO_CAGE_6 = ITEMS.register("zoo_cage_6",
+            () -> new ZooCageItem(new Item.Properties(), 6));
+    public static final DeferredItem<Item> ZOO_CAGE_8 = ITEMS.register("zoo_cage_8",
+            () -> new ZooCageItem(new Item.Properties(), 8));
+    public static final DeferredItem<Item> ZOO_CAGE_10 = ITEMS.register("zoo_cage_10",
+            () -> new ZooCageItem(new Item.Properties(), 10));
+    public static final DeferredItem<Item> CAGE_EMPTY = ITEMS.register("cage_empty",
+            () -> new EmptyCageItem(new Item.Properties()));
 
     // Modern caged mob item (stores entity type via DataComponent)
     public static final DeferredItem<Item> CAGED_MOB = ITEMS.register("caged_mob",

@@ -387,8 +387,10 @@
   "item.orespawn.zoo_cage_8": "Zoo Cage (8)",
   "item.orespawn.zoo_cage_10": "Zoo Cage (10)",
   "item.orespawn.cage_empty": "Empty Cage",
-  "item.orespawn.caged_mob": "Caged Mob",
+  "item.orespawn.caged_mob": "Caged %s",
   "item.orespawn.prince_egg": "Prince Egg",
+  "tooltip.orespawn.caged_health": "Health: %s",
+  "tooltip.orespawn.caged_persistent": "Live state preserved",
 
   "entity.orespawn.alien": "Alien",
   "entity.orespawn.alosaurus": "Alosaurus",
