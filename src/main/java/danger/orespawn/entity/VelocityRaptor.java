@@ -9,6 +9,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.AgeableMob;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
@@ -25,6 +26,9 @@ import net.minecraft.world.entity.ai.goal.PanicGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.TemptGoal;
 import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
+import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
+import net.minecraft.world.entity.ai.goal.target.OwnerHurtByTargetGoal;
+import net.minecraft.world.entity.ai.goal.target.OwnerHurtTargetGoal;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -35,6 +39,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
 import danger.orespawn.ModEntities;
 import danger.orespawn.OreSpawnMod;
 
@@ -59,6 +64,10 @@ public class VelocityRaptor extends TamableAnimal {
         this.goalSelector.addGoal(6, new LookAtPlayerGoal(this, Player.class, 6.0f));
         this.goalSelector.addGoal(7, new WaterAvoidingRandomStrollGoal(this, 0.9));
         this.goalSelector.addGoal(8, new RandomLookAroundGoal(this));
+
+        this.targetSelector.addGoal(1, new OwnerHurtByTargetGoal(this));
+        this.targetSelector.addGoal(2, new OwnerHurtTargetGoal(this));
+        this.targetSelector.addGoal(3, new HurtByTargetGoal(this));
     }
 
     public static AttributeSupplier.Builder createAttributes() {
@@ -155,12 +164,71 @@ public class VelocityRaptor extends TamableAnimal {
             return InteractionResult.SUCCESS;
         }
 
-        if (this.isTame() && this.isOwnedBy(player) && this.distanceToSqr(player) < 16.0 && stack.isEmpty()) {
+        if (this.isTame() && this.isOwnedBy(player) && stack.isEmpty()
+                && this.distanceToSqr(player) < 16.0 && !player.isShiftKeyDown()
+                && this.getPassengers().isEmpty()) {
+            if (!this.level().isClientSide) {
+                player.startRiding(this);
+                this.setOrderedToSit(false);
+                this.setInSittingPose(false);
+            }
+            return InteractionResult.sidedSuccess(this.level().isClientSide);
+        }
+
+        if (this.isTame() && this.isOwnedBy(player) && this.distanceToSqr(player) < 16.0 && player.isShiftKeyDown()) {
             this.setOrderedToSit(!this.isOrderedToSit());
+            this.setInSittingPose(this.isOrderedToSit());
             return InteractionResult.SUCCESS;
         }
 
         return super.mobInteract(player, hand);
+    }
+
+    @Nullable
+    @Override
+    public LivingEntity getControllingPassenger() {
+        if (!this.getPassengers().isEmpty()) {
+            Entity first = this.getPassengers().get(0);
+            if (first instanceof Player player && this.isOwnedBy(player)) {
+                return player;
+            }
+        }
+        return super.getControllingPassenger();
+    }
+
+    @Override
+    protected void positionRider(Entity passenger, Entity.MoveFunction callback) {
+        if (!this.hasPassenger(passenger)) return;
+        callback.accept(passenger, this.getX(), this.getY() + this.getBbHeight() * 0.95, this.getZ());
+    }
+
+    @Override
+    protected void tickRidden(Player player, Vec3 travelVector) {
+        super.tickRidden(player, travelVector);
+        this.setYRot(player.getYRot());
+        this.yRotO = this.getYRot();
+        this.setXRot(player.getXRot() * 0.5F);
+        this.setRot(this.getYRot(), this.getXRot());
+        this.yBodyRot = this.getYRot();
+        this.yHeadRot = this.yBodyRot;
+    }
+
+    @Override
+    protected Vec3 getRiddenInput(Player player, Vec3 travelVector) {
+        float strafe = player.xxa * 0.5F;
+        float forward = player.zza;
+        if (forward <= 0.0F) forward *= 0.25F;
+        return new Vec3(strafe, 0.0, forward);
+    }
+
+    @Override
+    protected float getRiddenSpeed(Player player) {
+        return (float) this.getAttributeValue(Attributes.MOVEMENT_SPEED) * 1.6F;
+    }
+
+    @Override
+    public boolean isPushable() {
+        return this.getPassengers().isEmpty();
     }
 
     @Nullable

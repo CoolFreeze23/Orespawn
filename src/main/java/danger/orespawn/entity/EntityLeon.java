@@ -33,6 +33,8 @@ import net.minecraft.world.entity.ai.goal.TemptGoal;
 import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
+import net.minecraft.world.entity.ai.goal.target.OwnerHurtByTargetGoal;
+import net.minecraft.world.entity.ai.goal.target.OwnerHurtTargetGoal;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -80,8 +82,10 @@ public class EntityLeon extends TamableAnimal {
         this.goalSelector.addGoal(3, new WaterAvoidingRandomStrollGoal(this, 0.75));
         this.goalSelector.addGoal(4, new LookAtPlayerGoal(this, Player.class, 9.0f));
         this.goalSelector.addGoal(5, new RandomLookAroundGoal(this));
-        this.targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, Monster.class, true));
-        this.targetSelector.addGoal(2, new HurtByTargetGoal(this));
+        this.targetSelector.addGoal(1, new OwnerHurtByTargetGoal(this));
+        this.targetSelector.addGoal(2, new OwnerHurtTargetGoal(this));
+        this.targetSelector.addGoal(3, new HurtByTargetGoal(this));
+        this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, Monster.class, 10, true, false, e -> !this.isTame() || this.getTarget() == null));
     }
 
     public static AttributeSupplier.Builder createAttributes() {
@@ -151,6 +155,53 @@ public class EntityLeon extends TamableAnimal {
     @Override
     public boolean isPushable() {
         return false;
+    }
+
+    // ==================== Riding ====================
+
+    @Nullable
+    @Override
+    public LivingEntity getControllingPassenger() {
+        if (!this.getPassengers().isEmpty()) {
+            Entity first = this.getPassengers().get(0);
+            if (first instanceof Player player && this.isOwnedBy(player)) {
+                return player;
+            }
+        }
+        return super.getControllingPassenger();
+    }
+
+    @Override
+    protected void positionRider(Entity passenger, Entity.MoveFunction callback) {
+        if (!this.hasPassenger(passenger)) return;
+        double rx = this.getX() - 0.1 * Math.sin(Math.toRadians(this.getYRot()));
+        double ry = this.getY() + this.getBbHeight() * 0.85;
+        double rz = this.getZ() + 0.1 * Math.cos(Math.toRadians(this.getYRot()));
+        callback.accept(passenger, rx, ry, rz);
+    }
+
+    @Override
+    protected void tickRidden(Player player, Vec3 travelVector) {
+        super.tickRidden(player, travelVector);
+        this.setYRot(player.getYRot());
+        this.yRotO = this.getYRot();
+        this.setXRot(player.getXRot() * 0.5F);
+        this.setRot(this.getYRot(), this.getXRot());
+        this.yBodyRot = this.getYRot();
+        this.yHeadRot = this.yBodyRot;
+    }
+
+    @Override
+    protected Vec3 getRiddenInput(Player player, Vec3 travelVector) {
+        float strafe = player.xxa * 0.5F;
+        float forward = player.zza;
+        if (forward <= 0.0F) forward *= 0.25F;
+        return new Vec3(strafe, 0.0, forward);
+    }
+
+    @Override
+    protected float getRiddenSpeed(Player player) {
+        return (float) this.getAttributeValue(Attributes.MOVEMENT_SPEED) * 1.8F;
     }
 
     @Override
