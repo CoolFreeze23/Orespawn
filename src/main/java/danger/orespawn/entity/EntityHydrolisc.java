@@ -39,7 +39,6 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import danger.orespawn.ModEntities;
-import danger.orespawn.ModItems;
 import danger.orespawn.OreSpawnMod;
 
 public class EntityHydrolisc extends TamableAnimal {
@@ -62,7 +61,7 @@ public class EntityHydrolisc extends TamableAnimal {
         this.goalSelector.addGoal(1, new BreedGoal(this, 1.0));
         this.goalSelector.addGoal(2, new AvoidEntityGoal<>(this, Monster.class, 8.0f, 1.0, 1.4));
         this.goalSelector.addGoal(3, new FollowOwnerGoal(this, 1.2, 10.0f, 2.0f));
-        this.goalSelector.addGoal(4, new TemptGoal(this, 1.25, Ingredient.of(Items.WHEAT), false));
+        this.goalSelector.addGoal(4, new TemptGoal(this, 1.25, Ingredient.of(Items.COD), false));
         this.goalSelector.addGoal(5, new PanicGoal(this, 1.5));
         this.goalSelector.addGoal(6, new LookAtPlayerGoal(this, Player.class, 6.0f));
         this.goalSelector.addGoal(7, new WaterAvoidingRandomStrollGoal(this, 1.0));
@@ -203,7 +202,7 @@ public class EntityHydrolisc extends TamableAnimal {
             return InteractionResult.SUCCESS;
         }
 
-        if (stack.is(Items.WHEAT) && this.distanceToSqr(player) < 16.0) {
+        if (stack.is(Items.COD) && this.distanceToSqr(player) < 16.0) {
             if (!this.isTame()) {
                 if (!this.level().isClientSide) {
                     if (this.random.nextInt(2) == 0) {
@@ -296,7 +295,7 @@ public class EntityHydrolisc extends TamableAnimal {
 
     @Override
     public boolean isFood(ItemStack stack) {
-        return stack.is(ModItems.CRYSTAL_APPLE.get());
+        return stack.is(Items.COD);
     }
 
     @Nullable

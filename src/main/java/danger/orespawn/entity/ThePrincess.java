@@ -36,6 +36,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.AABB;
 import danger.orespawn.OreSpawnMod;
 
@@ -176,6 +177,23 @@ public class ThePrincess extends TamableAnimal {
     @Override
     public InteractionResult mobInteract(Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
+
+        if (stack.is(Blocks.DIAMOND_BLOCK.asItem()) && this.distanceToSqr(player) < 16.0) {
+            if (!this.level().isClientSide) {
+                if (!this.isTame()) {
+                    this.tame(player);
+                }
+                this.level().broadcastEntityEvent(this, (byte) 7);
+                this.heal(this.getMaxHealth() - this.getHealth());
+                this.okToGrow = 1;
+                this.killCount = 1000;
+                this.fedCount = 1000;
+                this.dayCount = 1000;
+            }
+            if (!player.getAbilities().instabuild) stack.shrink(1);
+            return InteractionResult.sidedSuccess(this.level().isClientSide);
+        }
+
         if (stack.has(net.minecraft.core.component.DataComponents.FOOD) && this.distanceToSqr(player) < 16.0 && this.isTame() && this.isOwnedBy(player)) {
             if (!this.level().isClientSide) { this.heal(20.0f); ++this.fedCount; this.level().broadcastEntityEvent(this, (byte)7); }
             if (!player.getAbilities().instabuild) stack.shrink(1);

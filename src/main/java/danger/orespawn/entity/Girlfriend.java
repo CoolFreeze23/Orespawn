@@ -38,7 +38,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Blocks;
 import danger.orespawn.OreSpawnMod;
 
 public class Girlfriend extends TamableAnimal {
@@ -69,7 +68,7 @@ public class Girlfriend extends TamableAnimal {
     @Override
     protected void registerGoals() {
         this.goalSelector.addGoal(1, new FollowOwnerGoal(this, 1.4, 12.0f, 1.5f));
-        this.goalSelector.addGoal(2, new TemptGoal(this, 1.25, Ingredient.of(Blocks.RED_TULIP.asItem()), false));
+        this.goalSelector.addGoal(2, new TemptGoal(this, 1.25, Ingredient.of(Items.POPPY), false));
         this.goalSelector.addGoal(4, new MeleeAttackGoal(this, 1.25, true));
         this.goalSelector.addGoal(5, new FloatGoal(this));
         this.goalSelector.addGoal(7, new LookAtPlayerGoal(this, Player.class, 6.0f));
@@ -148,8 +147,7 @@ public class Girlfriend extends TamableAnimal {
     public InteractionResult mobInteract(Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
 
-        if ((stack.is(Blocks.RED_TULIP.asItem()) || stack.is(Items.POPPY.asItem()))
-                && this.distanceToSqr(player) < 16.0) {
+        if (stack.is(Items.POPPY) && this.distanceToSqr(player) < 16.0) {
             if (!this.isTame()) {
                 if (!this.level().isClientSide) {
                     if (this.random.nextInt(3) == 0) {
@@ -309,7 +307,7 @@ public class Girlfriend extends TamableAnimal {
 
     @Override
     public boolean isFood(ItemStack stack) {
-        return stack.is(Blocks.RED_TULIP.asItem());
+        return stack.is(Items.POPPY);
     }
 
     @Nullable
