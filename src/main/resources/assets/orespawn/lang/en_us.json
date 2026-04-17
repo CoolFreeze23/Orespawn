@@ -53,6 +53,8 @@
 
   "block.orespawn.island": "Island Block",
 
+  "block.orespawn.kraken_spawn_block": "Ancient Dried Kraken Spawn Egg",
+  "block.orespawn.dragon_spawn_block": "Ancient Dried Dragon Spawn Egg",
   "block.orespawn.king_spawner": "King Spawner",
   "block.orespawn.queen_spawner": "Queen Spawner",
   "block.orespawn.dungeon_spawner": "Dungeon Spawner",

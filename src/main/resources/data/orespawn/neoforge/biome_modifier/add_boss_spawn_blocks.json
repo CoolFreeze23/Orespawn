@@ -1,0 +1,9 @@
+{
+  "type": "neoforge:add_features",
+  "biomes": "#minecraft:is_overworld",
+  "features": [
+    "orespawn:kraken_spawn_block",
+    "orespawn:dragon_spawn_block"
+  ],
+  "step": "underground_ores"
+}
