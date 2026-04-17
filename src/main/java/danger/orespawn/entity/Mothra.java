@@ -25,6 +25,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import danger.orespawn.OreSpawnConfig;
@@ -283,12 +284,41 @@ public class Mothra extends EntityButterfly implements OreSpawnPartEntity.Multip
         for (int i = 0; i < 3; i++) this.spawnAtLocation(Items.EMERALD);
     }
 
+    /**
+     * 1.7.10 fidelity: Mothra spawned only when a vanilla mob spawner block
+     * tagged {@code EntityId="Mothra"} sat within ±2 X/Z and +1..+3 Y of the
+     * spawn point — even though her {@code addSpawn} entries listed Nether and
+     * Mesa biomes. We mirror that gating here, but relax the NBT requirement
+     * to "any spawner block" because in 1.21.1 spawner contents are stored as
+     * weighted spawn potentials, and we don't ship a Mothra-specific spawner
+     * block. The {@code MOTHRA_REQUIRES_SPAWNER} config lets servers disable
+     * the gate if they want unconditional biome spawning.
+     */
     @Override
     public boolean checkSpawnRules(LevelAccessor level, MobSpawnType spawnType) {
-        if (this.getY() < 70.0) return false;
-        if (!level.canSeeSky(this.blockPosition())) return false;
+        if (spawnType == MobSpawnType.SPAWN_EGG || spawnType == MobSpawnType.MOB_SUMMONED
+                || spawnType == MobSpawnType.COMMAND || spawnType == MobSpawnType.EVENT) {
+            return super.checkSpawnRules(level, spawnType);
+        }
         List<Mothra> nearby = level.getEntitiesOfClass(Mothra.class,
                 this.getBoundingBox().inflate(64.0, 32.0, 64.0));
-        return nearby.isEmpty();
+        if (!nearby.isEmpty()) return false;
+
+        if (OreSpawnConfig.MOTHRA_REQUIRES_SPAWNER.get()) {
+            BlockPos here = this.blockPosition();
+            for (int dx = -2; dx <= 2; dx++) {
+                for (int dz = -2; dz <= 2; dz++) {
+                    for (int dy = 1; dy <= 3; dy++) {
+                        if (level.getBlockState(here.offset(dx, dy, dz)).is(Blocks.SPAWNER)) {
+                            return true;
+                        }
+                    }
+                }
+            }
+            return false;
+        }
+
+        if (this.getY() < 70.0) return false;
+        return level.canSeeSky(this.blockPosition());
     }
 }

@@ -5,6 +5,8 @@ import java.util.List;
 import danger.orespawn.ModEntities;
 import danger.orespawn.ModBlocks;
 import danger.orespawn.ModItems;
+import danger.orespawn.MobzillaSpawnTracker;
+import danger.orespawn.OreSpawnConfig;
 import danger.orespawn.util.MyUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
@@ -21,6 +23,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LightningBolt;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
@@ -42,6 +45,7 @@ import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
@@ -123,6 +127,46 @@ public class Godzilla extends Monster implements OreSpawnPartEntity.MultipartBos
     @Override
     public boolean removeWhenFarAway(double dist) {
         return false;
+    }
+
+    /**
+     * 1.7.10 fidelity: ambient Mobzilla spawning required clear sky, night,
+     * y >= 50, a roughly 16×10×16 air pocket, a 1/40 dice roll, and the
+     * global {@code OreSpawnMain.godzilla_has_spawned} flag being unset.
+     * Player-summoned Mobzillas (via the 9 Ancient Dried Egg Parts) bypass
+     * this entire chain because the spawn item calls {@code spawn()} with
+     * {@link MobSpawnType#SPAWN_EGG}, not {@link MobSpawnType#NATURAL}.
+     */
+    @Override
+    public boolean checkSpawnRules(LevelAccessor level, MobSpawnType spawnType) {
+        if (spawnType != MobSpawnType.NATURAL && spawnType != MobSpawnType.CHUNK_GENERATION
+                && spawnType != MobSpawnType.SPAWNER) {
+            return super.checkSpawnRules(level, spawnType);
+        }
+        if (this.getY() < 50.0) return false;
+        if (!level.canSeeSky(this.blockPosition())) return false;
+
+        ServerLevel serverLevel = (level instanceof ServerLevel sl) ? sl : null;
+        if (serverLevel != null && !serverLevel.dimensionType().hasFixedTime() && serverLevel.isDay()) {
+            return false;
+        }
+        if (this.getRandom().nextInt(40) != 1) return false;
+
+        BlockPos minPos = BlockPos.containing(this.getX() - 8.0, this.getY(), this.getZ() - 8.0);
+        BlockPos maxPos = BlockPos.containing(this.getX() + 8.0, this.getY() + 10.0, this.getZ() + 8.0);
+        for (BlockPos pos : BlockPos.betweenClosed(minPos, maxPos)) {
+            if (!level.getBlockState(pos).isAir()) return false;
+        }
+
+        AABB siblingBox = this.getBoundingBox().inflate(64.0, 16.0, 64.0);
+        if (!level.getEntitiesOfClass(Godzilla.class, siblingBox, g -> g != this).isEmpty()) {
+            return false;
+        }
+
+        if (OreSpawnConfig.MOBZILLA_SINGLE_SPAWN.get() && serverLevel != null) {
+            if (MobzillaSpawnTracker.get(serverLevel).hasSpawned()) return false;
+        }
+        return true;
     }
 
     @Override
@@ -475,6 +519,11 @@ public class Godzilla extends Monster implements OreSpawnPartEntity.MultipartBos
         if (target instanceof Skeleton) return false;
         if (target instanceof Ghost) return false;
         if (target instanceof GhostSkelly) return false;
+        // Don't pick fights with peers — Mothra, the royal couple, and other
+        // OreSpawn bosses are tracked separately so Mobzilla doesn't grief
+        // boss arenas and so co-existing bosses don't cancel each other out.
+        if (target instanceof Mothra) return false;
+        if (MyUtils.isBigBoss(target) || MyUtils.isRoyalty(target)) return false;
         if (target instanceof Player player) {
             if (player.getAbilities().instabuild) return false;
         }
@@ -523,6 +572,14 @@ public class Godzilla extends Monster implements OreSpawnPartEntity.MultipartBos
         if (this.level().isClientSide) return;
         super.customServerAiStep();
 
+        // 1.7.10 fidelity: continuously assert the per-world "Mobzilla has
+        // spawned" flag while alive so chunk-load races can't sneak a second
+        // ambient spawn in. The config gate lets servers opt into the legacy
+        // multi-spawn behavior if they want.
+        if (OreSpawnConfig.MOBZILLA_SINGLE_SPAWN.get() && this.level() instanceof ServerLevel sl) {
+            MobzillaSpawnTracker.get(sl).markSpawned();
+        }
+
         ++this.ticker;
         if (this.ticker > 30000) this.ticker = 0;
         if (this.ticker % 100 == 0) this.streamCount = 8;
@@ -546,19 +603,26 @@ public class Godzilla extends Monster implements OreSpawnPartEntity.MultipartBos
         }
 
         // --- Block crushing around self ---
-        int xzrange = 12;
-        if (this.getAttacking() != 0) xzrange = 16;
-        int k = -3 + this.ticker % 30;
-        crushBlocks(this.getX(), this.getZ(), xzrange, k);
+        // 1.7.10 invoked crushBlocks() every tick over a (2*xzrange+1)² area
+        // (≈625 blocks at xzrange=12) twice per tick. On a modern 20-TPS
+        // server with chunk-section mailbox dispatch that pegs the main
+        // thread; we throttle to every 4th tick (5 Hz) and reduce the
+        // stomping silhouette while idle.
+        int xzrange = (this.getAttacking() != 0) ? 14 : 10;
+        if (this.ticker % 4 == 0) {
+            int k = -3 + (this.ticker / 4) % 30;
+            crushBlocks(this.getX(), this.getZ(), xzrange, k);
+        }
 
         // --- Block crushing in front (head direction) ---
         double frontX = this.getX() + 16.0 * Math.sin(Math.toRadians(this.yHeadRot));
         double frontZ = this.getZ() - 16.0 * Math.cos(Math.toRadians(this.yHeadRot));
-        int k2 = -3 + this.ticker % 12;
-        crushBlocks(frontX, frontZ, xzrange, k2);
-
-        if (k2 == 0) {
-            this.doJumpDamage(frontX, this.getY(), frontZ, 15.0, 75.0, 1);
+        int k2 = -3 + (this.ticker / 4) % 12;
+        if (this.ticker % 4 == 0) {
+            crushBlocks(frontX, frontZ, xzrange, k2);
+            if (k2 == 0) {
+                this.doJumpDamage(frontX, this.getY(), frontZ, 15.0, 75.0, 1);
+            }
         }
 
         // --- Target acquisition and combat ---

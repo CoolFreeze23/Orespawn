@@ -5,6 +5,7 @@
     { "type": "orespawn:kyuubi", "weight": 5, "minCount": 1, "maxCount": 1 },
     { "type": "orespawn:vortex", "weight": 4, "minCount": 1, "maxCount": 1 },
     { "type": "orespawn:gamma_metroid", "weight": 3, "minCount": 1, "maxCount": 1 },
-    { "type": "orespawn:leon", "weight": 2, "minCount": 1, "maxCount": 1 }
+    { "type": "orespawn:leon", "weight": 2, "minCount": 1, "maxCount": 1 },
+    { "type": "orespawn:mothra", "weight": 2, "minCount": 1, "maxCount": 1 }
   ]
 }

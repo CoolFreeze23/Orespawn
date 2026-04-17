@@ -73,6 +73,8 @@ public class OreSpawnConfig {
     public static final ModConfigSpec.BooleanValue DISABLE_OVERWORLD_DUNGEONS;
     public static final ModConfigSpec.BooleanValue FULL_POWER_KING_ENABLE;
     public static final ModConfigSpec.BooleanValue MOTHRA_PEACEFUL;
+    public static final ModConfigSpec.BooleanValue MOBZILLA_SINGLE_SPAWN;
+    public static final ModConfigSpec.BooleanValue MOTHRA_REQUIRES_SPAWNER;
     public static final ModConfigSpec.IntValue ULTIMATE_SWORD_MAGIC;
     public static final ModConfigSpec.IntValue ULTIMATE_BOW_DAMAGE;
 
@@ -123,6 +125,14 @@ public class OreSpawnConfig {
         BASILISK_ENABLE = BUILDER.define("basiliskEnable", true);
         DRAGONFLY_ENABLE = BUILDER.define("dragonflyEnable", true);
         MOTHRA_PEACEFUL = BUILDER.define("mothraPeaceful", false);
+        MOBZILLA_SINGLE_SPAWN = BUILDER.comment(
+                "If true, only one Mobzilla can ever spawn naturally per world (1.7.10 godzilla_has_spawned behavior). " +
+                        "Players can still summon additional Mobzillas via the 9 Ancient Dried Mobzilla Egg Parts."
+        ).define("mobzillaSingleSpawn", true);
+        MOTHRA_REQUIRES_SPAWNER = BUILDER.comment(
+                "If true, Mothra can only spawn naturally when a vanilla mob spawner block exists nearby (1.7.10 gating). " +
+                        "Disable to allow Mothra to spawn freely from biome modifiers."
+        ).define("mothraRequiresSpawner", true);
         BUILDER.pop();
 
         BUILDER.push("tweaks");
