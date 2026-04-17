@@ -142,6 +142,7 @@ public class OreSpawnClient {
             event.registerEntityRenderer(ModEntities.GHOST.get(), GhostRenderer::new);
             event.registerEntityRenderer(ModEntities.GHOST_SKELLY.get(), GhostSkellyRenderer::new);
             event.registerEntityRenderer(ModEntities.MOTHRA.get(), MothraRenderer::new);
+            event.registerEntityRenderer(ModEntities.LEONOPTERYX.get(), LeonopteryxRenderer::new);
 
             // Misc (mob)
             event.registerEntityRenderer(ModEntities.ANT_ROBOT.get(), AntRobotRenderer::new);
@@ -300,6 +301,7 @@ public class OreSpawnClient {
             event.registerLayerDefinition(GhostRenderer.MODEL_LAYER, GhostModel::createBodyLayer);
             event.registerLayerDefinition(GhostSkellyRenderer.MODEL_LAYER, GhostSkellyModel::createBodyLayer);
             event.registerLayerDefinition(MothraRenderer.MODEL_LAYER, ButterflyModel::createBodyLayer);
+            event.registerLayerDefinition(LeonopteryxRenderer.MODEL_LAYER, ButterflyModel::createBodyLayer);
 
             // Misc (mob) - custom models only (RedCow and SpiderDriver use vanilla models)
             event.registerLayerDefinition(AntRobotRenderer.MODEL_LAYER, ModelAntRobot::createBodyLayer);

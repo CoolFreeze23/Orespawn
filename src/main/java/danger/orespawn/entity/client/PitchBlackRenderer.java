@@ -23,8 +23,13 @@ public class PitchBlackRenderer extends MobRenderer<PitchBlack, ModelPitchBlack>
     @Override
     public void render(PitchBlack entity, float entityYaw, float partialTicks,
                        PoseStack poseStack, MultiBufferSource buffer, int packedLight) {
+        // Scale the rendered Nightmare to match its discrete size tier so the
+        // 1.7.10-faithful 5-stage size lottery is visible at a glance. The
+        // hitbox is scaled in PitchBlack#getDefaultDimensions, so the visual
+        // and physical sizes stay locked together.
         poseStack.pushPose();
-        poseStack.scale(1.0f, 1.0f, 1.0f);
+        float scale = entity.getPitchBlackScale();
+        poseStack.scale(scale, scale, scale);
         super.render(entity, entityYaw, partialTicks, poseStack, buffer, packedLight);
         poseStack.popPose();
     }

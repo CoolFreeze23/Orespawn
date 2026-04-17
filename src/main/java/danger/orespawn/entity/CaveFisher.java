@@ -2,6 +2,7 @@ package danger.orespawn.entity;
 
 import danger.orespawn.OreSpawnMod;
 import danger.orespawn.entity.ai.BugMeleeAttackGoal;
+import danger.orespawn.entity.ai.CaveFisherAmbushGoal;
 import javax.annotation.Nullable;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -49,9 +50,13 @@ public class CaveFisher extends Monster {
         this.goalSelector.addGoal(0, new FloatGoal(this));
         this.goalSelector.addGoal(1, new BugMeleeAttackGoal(
                 this, this::setAttacking, BugMeleeAttackGoal.Params.caveFisher()));
-        this.goalSelector.addGoal(2, new MyEntityAIWanderALot(this, 14, 1.0));
-        this.goalSelector.addGoal(3, new LookAtPlayerGoal(this, Player.class, 8.0f));
-        this.goalSelector.addGoal(4, new RandomLookAroundGoal(this));
+        // Priority 2 (above wander) so the spider prefers to hang from the
+        // ceiling and ambush rather than aimlessly stroll past targets.
+        // The ambush goal exits cleanly the moment a target is acquired.
+        this.goalSelector.addGoal(2, new CaveFisherAmbushGoal(this));
+        this.goalSelector.addGoal(3, new MyEntityAIWanderALot(this, 14, 1.0));
+        this.goalSelector.addGoal(4, new LookAtPlayerGoal(this, Player.class, 8.0f));
+        this.goalSelector.addGoal(5, new RandomLookAroundGoal(this));
         this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
         this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
     }
@@ -81,6 +86,11 @@ public class CaveFisher extends Monster {
     @Override
     public boolean hurt(DamageSource source, float amount) {
         if (source.type().msgId().equals("cactus")) return false;
+        // If we're currently anchored to a ceiling and a projectile or
+        // ranged attack hits us, drop immediately so we can fight back.
+        // Without this the spider would float in the air taking arrow
+        // hits forever until either it died or a player walked beneath.
+        CaveFisherAmbushGoal.abortAnchor(this);
         return super.hurt(source, amount);
     }
 

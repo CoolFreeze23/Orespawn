@@ -409,6 +409,15 @@ public class ModEntities {
             ENTITY_TYPES.register("leon", () -> EntityType.Builder.of(EntityLeon::new, MobCategory.CREATURE)
                     .sized(3.0f, 4.5f).clientTrackingRange(12).build("leon"));
 
+    // Leonopteryx — 1.7.10 Mining-Dimension flying boss/mount. Hitbox is
+    // 4 × 2 (the visible silhouette is much larger but a tight AABB lets
+    // the player land a sword swing on the head/wing without invisible
+    // collision walls). clientTrackingRange=16 chunks because the bird
+    // hovers far above the player and must stay rendered during pursuit.
+    public static final DeferredHolder<EntityType<?>, EntityType<Leonopteryx>> LEONOPTERYX =
+            ENTITY_TYPES.register("leonopteryx", () -> EntityType.Builder.of(Leonopteryx::new, MobCategory.CREATURE)
+                    .sized(4.0f, 2.0f).clientTrackingRange(16).build("leonopteryx"));
+
     public static final DeferredHolder<EntityType<?>, EntityType<Lizard>> LIZARD =
             ENTITY_TYPES.register("lizard", () -> EntityType.Builder.of(Lizard::new, MobCategory.CREATURE)
                     .sized(0.6f, 0.6f).clientTrackingRange(10).build("lizard"));
