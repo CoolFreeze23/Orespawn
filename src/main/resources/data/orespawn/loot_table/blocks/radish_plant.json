@@ -5,24 +5,34 @@
       "rolls": 1,
       "entries": [
         {
-          "type": "minecraft:item",
-          "name": "orespawn:radish",
-          "functions": [
+          "type": "minecraft:alternatives",
+          "children": [
             {
-              "function": "minecraft:set_count",
-              "count": {
-                "type": "minecraft:uniform",
-                "min": 1.0,
-                "max": 3.0
-              }
+              "type": "minecraft:item",
+              "name": "orespawn:radish",
+              "conditions": [
+                {
+                  "condition": "minecraft:block_state_property",
+                  "block": "orespawn:radish_plant",
+                  "properties": { "age": "7" }
+                }
+              ],
+              "functions": [
+                {
+                  "function": "minecraft:set_count",
+                  "count": { "type": "minecraft:uniform", "min": 2.0, "max": 5.0 }
+                }
+              ]
+            },
+            {
+              "type": "minecraft:item",
+              "name": "orespawn:radish_seed"
             }
           ]
         }
       ],
       "conditions": [
-        {
-          "condition": "minecraft:survives_explosion"
-        }
+        { "condition": "minecraft:survives_explosion" }
       ]
     }
   ]
