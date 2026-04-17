@@ -143,13 +143,17 @@ public class ModEntities {
     // clientTrackingRange=16 chunks is required — Mobzilla is 14x24 blocks
     // and can fly well outside the normal 10-chunk visibility range; without
     // this the client pops the entity out of view during long-range fights.
+    // 1.7.10 func_70105_a: Godzilla = 9.9 × 25.0 (real) / 2.475 × 6.25 (egg form).
     public static final DeferredHolder<EntityType<?>, EntityType<Godzilla>> GODZILLA =
             ENTITY_TYPES.register("godzilla", () -> EntityType.Builder.of(Godzilla::new, MobCategory.MONSTER)
-                    .sized(14.0f, 24.0f).clientTrackingRange(16).build("godzilla"));
+                    .sized(10.0f, 25.0f).clientTrackingRange(16).build("godzilla"));
 
+    // 1.7.10 func_70105_a: Kraken = 4.0 × 15.0 (real) / 1.33 × 5.0 (egg form).
+    // The previous 12 × 10 made the squid wider than tall, which clipped its
+    // tendrils through the floor when it surfaced.
     public static final DeferredHolder<EntityType<?>, EntityType<Kraken>> KRAKEN =
             ENTITY_TYPES.register("kraken", () -> EntityType.Builder.of(Kraken::new, MobCategory.MONSTER)
-                    .sized(12.0f, 10.0f).clientTrackingRange(16).build("kraken"));
+                    .sized(4.0f, 15.0f).clientTrackingRange(16).build("kraken"));
 
     // Multi-part bosses ─────────────────────────────────────────────────
     // The parent's own .sized() AABB is intentionally smaller than the
@@ -494,9 +498,12 @@ public class ModEntities {
             ENTITY_TYPES.register("ghost_skelly", () -> EntityType.Builder.of(GhostSkelly::new, MobCategory.MONSTER)
                     .sized(1.5f, 2.0f).clientTrackingRange(10).build("ghost_skelly"));
 
+    // 1.7.10 func_70105_a: Mothra = 5.0 × 2.0. We bump to 6 × 3 so the
+    // wing PartEntities (which extend ±6 sideways) read correctly against
+    // the root hitbox during cross-biome target sweeps.
     public static final DeferredHolder<EntityType<?>, EntityType<Mothra>> MOTHRA =
-            ENTITY_TYPES.register("mothra", () -> EntityType.Builder.of(Mothra::new, MobCategory.AMBIENT)
-                    .sized(8.0f, 4.0f).clientTrackingRange(16).build("mothra"));
+            ENTITY_TYPES.register("mothra", () -> EntityType.Builder.of(Mothra::new, MobCategory.MONSTER)
+                    .sized(6.0f, 3.0f).clientTrackingRange(16).build("mothra"));
 
     // ==================== MISC (Mob) ====================
 
