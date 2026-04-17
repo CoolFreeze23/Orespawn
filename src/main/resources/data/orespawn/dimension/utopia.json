@@ -6,7 +6,7 @@
       "type": "minecraft:fixed",
       "biome": "orespawn:utopia_plains"
     },
-    "settings": "minecraft:overworld",
+    "settings": "orespawn:inland",
     "dimension_style": "utopia"
   }
 }
