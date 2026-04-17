@@ -2,9 +2,9 @@
   "type": "neoforge:add_spawns",
   "biomes": "orespawn:utopia_plains",
   "spawners": [
-    { "type": "orespawn:peacock",   "weight": 5, "minCount": 2, "maxCount": 4 },
-    { "type": "orespawn:gazelle",   "weight": 10, "minCount": 2, "maxCount": 4 },
-    { "type": "orespawn:ostrich",   "weight": 3, "minCount": 1, "maxCount": 2 },
-    { "type": "orespawn:cassowary", "weight": 4, "minCount": 2, "maxCount": 3 }
+    { "type": "orespawn:gazelle",        "weight": 10, "minCount": 2, "maxCount": 4 },
+    { "type": "orespawn:red_cow",        "weight": 10, "minCount": 4, "maxCount": 8 },
+    { "type": "orespawn:gold_cow",       "weight": 8,  "minCount": 2, "maxCount": 6 },
+    { "type": "orespawn:enchanted_cow",  "weight": 5,  "minCount": 2, "maxCount": 4 }
   ]
 }

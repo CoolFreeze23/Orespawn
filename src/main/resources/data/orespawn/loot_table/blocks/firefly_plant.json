@@ -6,7 +6,7 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "orespawn:firefly"
+          "name": "orespawn:firefly_seed"
         }
       ],
       "conditions": [

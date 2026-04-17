@@ -1,12 +1,10 @@
-{
-  "type": "neoforge:add_spawns",
-  "biomes": [
-    "#minecraft:is_badlands"
-  ],
-  "spawners": {
-    "type": "orespawn:dungeon_beast",
-    "weight": 20,
-    "minCount": 2,
-    "maxCount": 4
-  }
+﻿{
+    "type":  "neoforge:add_spawns",
+    "biomes":  "#minecraft:is_badlands",
+    "spawners":  {
+                     "type":  "orespawn:dungeon_beast",
+                     "weight":  20,
+                     "minCount":  2,
+                     "maxCount":  4
+                 }
 }
