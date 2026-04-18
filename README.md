@@ -252,10 +252,41 @@ swaps the floor ladder to Mantis → Lurking Terror → Rotator → Bee → Moth
 `PRINCESS_EGG` instead of `PRINCE_EGG`. Both placed via
 `add_challenge_towers` biome modifier (`#minecraft:is_overworld`,
 rarity 1500, `surface_structures` step).
-- **Crystal Battle Tower** — Crystal Dimension dungeon with Crystal Monster
-spawners + Vortex spawner on the top floor. **[v2.0]**
-- **Crystal Dimension Mazes** — the labyrinthine tunnel networks generated
-under the crystal landmass. **[v2.0]**
+- ~~**Crystal Battle Tower** — Crystal Dimension dungeon with Crystal Monster
+spawners + Vortex spawner on the top floor.~~ **DONE (Phase 13A)** —
+`CrystalBattleTowerFeature` (`orespawn:crystal_battle_tower`) is a direct
+port of the legacy `GenericDungeon.makeCrystalBattleTower` (1.7.10 line
+4831): a hollow `crystal_stone` cylinder of radius 10 / height 21 capped
+by two `crystal_crystal` rings, with a 5° polar disc/ring stamper that
+preserves the exact arrow-slit window column. Five storeys stack a
+2-tall spawner column over a centred chest at Y = 1, 6, 11, 16, 21 with
+the canonical mob ladder Rat → Dungeon Beast → Crystal Urchin → Rotator
+→ Vortex (cap). Chest contents mirror the legacy
+`CrystalBattleTowerRat / DungeonBeast / Urchin / Rotator / Vortex
+ContentsList` arrays (cooked food → dyes/gold/SquidZooka → Crystal Pink
+armor + Fairy Sword → Tigers Eye armor + Rat Sword → Crystal Coal +
+Tigers Eye Sword + Tigers Eye Block + Poison Sword + diamonds /
+netherite). Placed via `add_crystal_battle_tower` biome modifier scoped
+strictly to `orespawn:crystal_plains` (rarity 220, `surface_structures`
+step). Footprint stays inside a 21×21 column and the entire Y window
+is bound-checked up-front so a partial write is impossible — directly
+addresses the runaway cascading-chunk failure mode the user flagged.
+- ~~**Crystal Dimension Mazes** — the labyrinthine tunnel networks generated
+under the crystal landmass.~~ **DONE (Phase 13A)** — `CrystalMazeFeature`
+(`orespawn:crystal_maze`) ports the legacy `CrystalMaze.buildCrystalMaze`
+algorithm (4×4 cells of side 4 = 16-block footprint, Y = 25, bedrock
+walls / floor / ceiling, 4 random ceiling holes + 1 random floor hole
+exposing `crystal_stone`). Each maze is anchored to its owning chunk's
+NW corner via `(originX >> 4) << 4` rounding, so writes never escape
+the chunk's bounding box even if a placement modifier nudged the seed
+coords — fully satisfying the user's "zero cross-chunk runaway
+generation" guard. The legacy frontier-walk wall-removal (Prim-style,
+WTOP/WRGT/WBOT/WLFT bitmask + outer-edge sentinels) is preserved
+verbatim. One Rotator spawner is dropped in the centre cell of every
+generated maze (mirrors the dim-5 underground spawner pool). Placed
+via `add_crystal_maze` biome modifier on `orespawn:crystal_plains`
+(rarity 4 = ~25% of chunks, `underground_structures` step).
+*(Phase 13A Complete)*
 - ~~**Mantis Nest** — group-of-3-or-4 mantis spawn cluster on plains
 surface.~~ **DONE (Phase 11)** — `MantisNestFeature` (`orespawn:mantis_nest`)
 generates a 3×3 mossy/cracked-stone hump with a Mantis spawner buried
