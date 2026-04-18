@@ -406,6 +406,7 @@ public class ModCreativeTabs {
                         output.accept(ModItems.STEP_DOWN.get());
                         output.accept(ModItems.STEP_ACROSS.get());
                         output.accept(ModItems.PRINCE_EGG.get());
+                        output.accept(ModItems.PRINCESS_EGG.get());
                         // Shoes & Accessories
                         output.accept(ModItems.RED_HEELS.get());
                         output.accept(ModItems.BLACK_HEELS.get());
@@ -429,6 +430,7 @@ public class ModCreativeTabs {
                     .icon(() -> new ItemStack(ModItems.GODZILLA_SPAWN_EGG.get()))
                     .displayItems((parameters, output) -> {
                         output.accept(ModItems.ALIEN_SPAWN_EGG.get());
+                        output.accept(ModItems.ALIEN_BOSS_SPAWN_EGG.get());
                         output.accept(ModItems.ALOSAURUS_SPAWN_EGG.get());
                         output.accept(ModItems.ANT_SPAWN_EGG.get());
                         output.accept(ModItems.ANT_ROBOT_SPAWN_EGG.get());

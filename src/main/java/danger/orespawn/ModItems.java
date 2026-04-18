@@ -755,10 +755,16 @@ public class ModItems {
 
     // Misc items
     public static final DeferredItem<Item> PRINCE_EGG = ITEMS.registerSimpleItem("prince_egg");
+    // Phase 12 — Princess Egg drops from the Queen Challenge Tower. Mirrors
+    // PRINCE_EGG so the legacy makeEnormousCastleQ chest layout has its
+    // canonical reward item.
+    public static final DeferredItem<Item> PRINCESS_EGG = ITEMS.registerSimpleItem("princess_egg");
 
     // ---- Spawn Eggs ----
     public static final DeferredItem<SpawnEggItem> ALIEN_SPAWN_EGG = ITEMS.register("alien_spawn_egg",
             () -> new SpawnEggItem(ModEntities.ALIEN.get(), 0x333333, 0x00FF00, new Item.Properties()));
+    public static final DeferredItem<SpawnEggItem> ALIEN_BOSS_SPAWN_EGG = ITEMS.register("alien_boss_spawn_egg",
+            () -> new SpawnEggItem(ModEntities.ALIEN_BOSS.get(), 0x101010, 0xFF00FF, new Item.Properties()));
     public static final DeferredItem<SpawnEggItem> ALOSAURUS_SPAWN_EGG = ITEMS.register("alosaurus_spawn_egg",
             () -> new SpawnEggItem(ModEntities.ALOSAURUS.get(), 0x8B4513, 0xCD853F, new Item.Properties()));
     public static final DeferredItem<SpawnEggItem> ATTACK_SQUID_SPAWN_EGG = ITEMS.register("attack_squid_spawn_egg",
