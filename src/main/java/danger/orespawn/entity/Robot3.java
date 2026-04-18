@@ -25,6 +25,17 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraft.resources.ResourceLocation;
 import danger.orespawn.OreSpawnMod;
 
+/**
+ * Robot3 — RoboGunner role.
+ *
+ * Mid-range projectile platform (300 HP, 20 ATK, 6 ARM). Tracks targets
+ * out to ~16 blocks and fires {@link LaserBall} projectiles on a 35-tick
+ * reload cycle whenever line-of-sight resolves. The shot inherits the
+ * gunner as its owner so player-friendly fire / kill credit work
+ * correctly. Movement closes the gap to maintain firing solution but
+ * never goes below ~0.5x speed so the gunner doesn't crowd melee
+ * RoboWarriors. Registry ID kept as "robot_3" for save compat.
+ */
 public class Robot3 extends Monster {
     private static final EntityDataAccessor<Integer> DATA_ATTACKING =
             SynchedEntityData.defineId(Robot3.class, EntityDataSerializers.INT);
@@ -91,11 +102,31 @@ public class Robot3 extends Monster {
                 if (this.distanceToSqr(target) < 256.0) {
                     this.setAttacking(1);
                     this.getNavigation().moveTo(target, 0.5);
+                    if (this.getSensing().hasLineOfSight(target)) {
+                        fireLaserAt(target);
+                    }
                 }
             } else {
                 this.setAttacking(0);
             }
         }
+    }
+
+    /**
+     * Spawn a server-side LaserBall aimed at the target. Bullet speed 1.6,
+     * launched from +1.4 above the gunner's feet so it doesn't intersect
+     * its own bounding box. Throwable physics handles arc and impact
+     * damage; we just provide direction and momentum.
+     */
+    private void fireLaserAt(LivingEntity target) {
+        if (this.level().isClientSide) return;
+        LaserBall projectile = new LaserBall(this.level(), this);
+        projectile.setPos(this.getX(), this.getY() + 1.4, this.getZ());
+        double dx = target.getX() - this.getX();
+        double dy = target.getY() + target.getBbHeight() * 0.5 - (this.getY() + 1.4);
+        double dz = target.getZ() - this.getZ();
+        projectile.shoot(dx, dy, dz, 1.6f, 1.0f);
+        this.level().addFreshEntity(projectile);
     }
 
     @Override

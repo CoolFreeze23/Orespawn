@@ -433,6 +433,7 @@ public class ModCreativeTabs {
                         output.accept(ModItems.CRICKET_SPAWN_EGG.get());
                         output.accept(ModItems.CRYOLOPHOSAURUS_SPAWN_EGG.get());
                         output.accept(ModItems.DRAGON_SPAWN_EGG.get());
+                        output.accept(ModItems.BABY_DRAGON_SPAWN_EGG.get());
                         output.accept(ModItems.DRAGONFLY_SPAWN_EGG.get());
                         output.accept(ModItems.DUNGEON_BEAST_SPAWN_EGG.get());
                         output.accept(ModItems.EASTER_BUNNY_SPAWN_EGG.get());

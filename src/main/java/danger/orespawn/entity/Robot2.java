@@ -26,6 +26,18 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraft.resources.ResourceLocation;
 import danger.orespawn.OreSpawnMod;
 
+/**
+ * Robot2 — RoboWarrior role.
+ *
+ * Heavy front-line melee chassis (500 HP, 30 ATK, 8 ARM). Uses pack-alert
+ * HurtByTargetGoal so all RoboWarriors in earshot of a hit aggro the
+ * attacker simultaneously, mirroring the 1.7.10 robot-army "swarm a
+ * threat" reaction. Closes to ~5-block reach and swings on a stochastic
+ * cadence (nextInt(5)==0 || nextInt(6)==1) — the same tuning as the
+ * 1.7.10 reference's func_70619_bc swing logic — and otherwise idles
+ * with brief windup animations to telegraph attack readiness. Registry
+ * ID kept as "robot_2" for save compat.
+ */
 public class Robot2 extends Monster {
     private static final EntityDataAccessor<Integer> DATA_ATTACKING =
             SynchedEntityData.defineId(Robot2.class, EntityDataSerializers.INT);
@@ -46,7 +58,7 @@ public class Robot2 extends Monster {
         this.goalSelector.addGoal(1, new WaterAvoidingRandomStrollGoal(this, 1.0));
         this.goalSelector.addGoal(3, new LookAtPlayerGoal(this, Player.class, 10.0f));
         this.goalSelector.addGoal(4, new RandomLookAroundGoal(this));
-        this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
+        this.targetSelector.addGoal(1, new HurtByTargetGoal(this, Robot2.class).setAlertOthers());
     }
 
     public static AttributeSupplier.Builder createAttributes() {

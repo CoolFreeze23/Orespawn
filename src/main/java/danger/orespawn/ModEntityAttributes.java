@@ -111,6 +111,7 @@ public class ModEntityAttributes {
         event.put(ModEntities.BOYFRIEND.get(), Boyfriend.createAttributes().build());
         event.put(ModEntities.CAMARASAURUS.get(), Camarasaurus.createAttributes().build());
         event.put(ModEntities.DRAGON.get(), Dragon.createAttributes().build());
+        event.put(ModEntities.BABY_DRAGON.get(), BabyDragon.createAttributes().build());
         event.put(ModEntities.ENTITY_CANNON_FODDER.get(), EntityCannonFodder.createAttributes().build());
         event.put(ModEntities.ENTITY_GAMMA_METROID.get(), EntityGammaMetroid.createAttributes().build());
         event.put(ModEntities.GIRLFRIEND.get(), Girlfriend.createAttributes().build());

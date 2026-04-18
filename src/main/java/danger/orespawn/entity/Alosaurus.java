@@ -43,8 +43,11 @@ public class Alosaurus extends Monster {
     // 1.7.10 "nextInt(4)==0 || nextInt(5)==1" swing cadence (tuning matches
     // reference_1_7_10_source/Alosaurus#func_70619_bc verbatim), standard
     // look goals for idle posture. Target acquisition uses HurtByTargetGoal
-    // for retaliation + NearestAttackableTargetGoal for proactive spotting,
-    // replacing the old private AABB scan in customServerAiStep.
+    // (with setAlertOthers so the entire pack aggros when one is hit -- the
+    // standard wolf/zombified-piglin pack alert pattern) plus a passive
+    // NearestAttackableTargetGoal for proactive spotting. Pack-spawning
+    // itself is handled by the biome modifier (minCount 2 / maxCount 3) and
+    // the chaos biome spawner list.
     @Override
     protected void registerGoals() {
         this.goalSelector.addGoal(0, new FloatGoal(this));
@@ -53,7 +56,7 @@ public class Alosaurus extends Monster {
         this.goalSelector.addGoal(2, new MyEntityAIWanderALot(this, 16, 1.0));
         this.goalSelector.addGoal(3, new LookAtPlayerGoal(this, Player.class, 8.0f));
         this.goalSelector.addGoal(4, new RandomLookAroundGoal(this));
-        this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
+        this.targetSelector.addGoal(1, new HurtByTargetGoal(this, Alosaurus.class).setAlertOthers());
         this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
     }
 

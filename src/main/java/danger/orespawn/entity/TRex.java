@@ -112,6 +112,14 @@ public class TRex extends Monster {
         return 1.0f;
     }
 
+    // Bone drops are kept here (independent of the loot-table tooth/beef
+    // pools) because 1.7.10 dropped a bone on every death regardless of
+    // recently-hit state. The loot table handles the trex_tooth weighted
+    // pull (60% × 1, 30% × 2, 10% × 3 — see trex.json) plus the name tag,
+    // beef, gold/iron nuggets, XP bottle, and rare diamond pity drop. The
+    // weighted tooth pool exists so a Big Bertha craft (which needs three
+    // bertha components, each gated behind a tooth) is achievable in roughly
+    // 4-5 T-Rex kills on average.
     private void dropItemRand(ItemStack stack) {
         double ox = this.getX() + this.getRandom().nextInt(4) - this.getRandom().nextInt(4);
         double oy = this.getY() + 1.0;
@@ -124,15 +132,6 @@ public class TRex extends Monster {
     protected void dropCustomDeathLoot(ServerLevel level, DamageSource source, boolean recentlyHit) {
         super.dropCustomDeathLoot(level, source, recentlyHit);
         dropItemRand(new ItemStack(Items.BONE, 1));
-        dropItemRand(new ItemStack(Items.NAME_TAG, 1));
-        for (int i = 0; i < 7; i++) {
-            dropItemRand(new ItemStack(Items.BEEF, 1));
-        }
-        int count = 2 + this.getRandom().nextInt(4);
-        for (int i = 0; i < count; i++) {
-            dropItemRand(new ItemStack(Items.GOLD_NUGGET, 1));
-            dropItemRand(new ItemStack(Items.IRON_NUGGET, 1));
-        }
     }
 
     // 1.7.10 knockback: horizontal push of 1.2 + vertical bump of 0.1

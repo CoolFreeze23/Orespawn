@@ -389,6 +389,14 @@ public class ModEntities {
             ENTITY_TYPES.register("dragon", () -> EntityType.Builder.of(Dragon::new, MobCategory.CREATURE)
                     .sized(1.5f, 2.0f).clientTrackingRange(10).build("dragon"));
 
+    // Baby Dragon — Wiki/1.7.10 lists Baby Dragon as a separate entity type
+    // from the adult Dragon (with reduced HP and pre-fledged fire breath).
+    // Hitbox is roughly 1.0 × 1.4 (about half the adult footprint). Subclass
+    // of Dragon so it inherits flight/fire AI but overrides attribute pool.
+    public static final DeferredHolder<EntityType<?>, EntityType<BabyDragon>> BABY_DRAGON =
+            ENTITY_TYPES.register("baby_dragon", () -> EntityType.Builder.of(BabyDragon::new, MobCategory.CREATURE)
+                    .sized(1.0f, 1.4f).clientTrackingRange(10).build("baby_dragon"));
+
     public static final DeferredHolder<EntityType<?>, EntityType<EntityCannonFodder>> ENTITY_CANNON_FODDER =
             ENTITY_TYPES.register("cannon_fodder", () -> EntityType.Builder.of(EntityCannonFodder::new, MobCategory.CREATURE)
                     .sized(0.6f, 0.6f).clientTrackingRange(10).build("cannon_fodder"));
