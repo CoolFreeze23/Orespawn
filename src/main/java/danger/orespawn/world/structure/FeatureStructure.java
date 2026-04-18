@@ -43,6 +43,14 @@ import java.util.Optional;
  *       a few blocks above grade) use this to hand the feature a friendly
  *       starting Y so {@code /locate}'s reported coordinate matches the
  *       structure's actual centre.</li>
+ *   <li>{@code horizontal_extent} / {@code down_extent} / {@code up_extent} —
+ *       half-widths of the bounding-box "permit" handed to
+ *       {@link FeatureStructurePiece}. Defaults are {@code 16 / 16 / 80},
+ *       which comfortably covers the Phase 13C Royal Trees (±9 horizontal,
+ *       up to 60 tall). Smaller surface dungeons can keep the defaults; the
+ *       only downside of an over-wide envelope is that vanilla treats it as
+ *       a placement reservation, so don't push these much past 32 without
+ *       also widening the matching {@code random_spread.spacing}.</li>
  * </ul>
  *
  * <p>Placement (spread, salt, exclusion zones) lives in the matching
@@ -56,16 +64,26 @@ public class FeatureStructure extends Structure {
     public static final MapCodec<FeatureStructure> CODEC = RecordCodecBuilder.mapCodec(inst -> inst.group(
             settingsCodec(inst),
             ConfiguredFeature.CODEC.fieldOf("feature").forGetter(s -> s.feature),
-            com.mojang.serialization.Codec.INT.optionalFieldOf("y_offset", 0).forGetter(s -> s.yOffset)
+            com.mojang.serialization.Codec.INT.optionalFieldOf("y_offset", 0).forGetter(s -> s.yOffset),
+            com.mojang.serialization.Codec.INT.optionalFieldOf("horizontal_extent", 16).forGetter(s -> s.horizontalExtent),
+            com.mojang.serialization.Codec.INT.optionalFieldOf("down_extent", 16).forGetter(s -> s.downExtent),
+            com.mojang.serialization.Codec.INT.optionalFieldOf("up_extent", 80).forGetter(s -> s.upExtent)
     ).apply(inst, FeatureStructure::new));
 
     private final Holder<ConfiguredFeature<?, ?>> feature;
     private final int yOffset;
+    private final int horizontalExtent;
+    private final int downExtent;
+    private final int upExtent;
 
-    public FeatureStructure(StructureSettings settings, Holder<ConfiguredFeature<?, ?>> feature, int yOffset) {
+    public FeatureStructure(StructureSettings settings, Holder<ConfiguredFeature<?, ?>> feature,
+                            int yOffset, int horizontalExtent, int downExtent, int upExtent) {
         super(settings);
         this.feature = feature;
         this.yOffset = yOffset;
+        this.horizontalExtent = horizontalExtent;
+        this.downExtent = downExtent;
+        this.upExtent = upExtent;
     }
 
     @Override
@@ -81,7 +99,8 @@ public class FeatureStructure extends Structure {
         ) + yOffset;
         BlockPos origin = new BlockPos(x, y, z);
         return Optional.of(new Structure.GenerationStub(origin, builder ->
-                builder.addPiece(new FeatureStructurePiece(origin, feature))));
+                builder.addPiece(new FeatureStructurePiece(
+                        origin, feature, horizontalExtent, downExtent, upExtent))));
     }
 
     @Override
