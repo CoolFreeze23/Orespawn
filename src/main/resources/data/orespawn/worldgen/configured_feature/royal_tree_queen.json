@@ -1,0 +1,6 @@
+{
+  "type": "orespawn:royal_tree",
+  "config": {
+    "queen_variant": true
+  }
+}
