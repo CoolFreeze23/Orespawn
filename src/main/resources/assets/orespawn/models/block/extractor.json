@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/cube_bottom_top",
+  "textures": {
+    "top": "orespawn:blocks/extractor_top",
+    "bottom": "minecraft:block/iron_block",
+    "side": "orespawn:blocks/extractor_side"
+  }
+}

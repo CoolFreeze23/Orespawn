@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:chest",
+  "pools": [
+    {
+      "rolls": 1,
+      "entries": [
+        { "type": "minecraft:item", "name": "minecraft:diamond",                "weight": 10 },
+        { "type": "minecraft:item", "name": "minecraft:emerald",                "weight": 10 },
+        { "type": "minecraft:item", "name": "orespawn:uranium_nugget",          "weight": 10 },
+        { "type": "minecraft:item", "name": "orespawn:titanium_nugget",         "weight": 10 },
+        { "type": "minecraft:item", "name": "orespawn:emerald_sword",           "weight": 10 },
+        { "type": "minecraft:item", "name": "orespawn:emerald_axe",             "weight": 10 },
+        { "type": "minecraft:item", "name": "orespawn:emerald_shovel",          "weight": 10 },
+        { "type": "minecraft:item", "name": "orespawn:emerald_pickaxe",         "weight": 10 },
+        { "type": "minecraft:item", "name": "orespawn:emerald_hoe",             "weight": 10 },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:emerald",
+          "weight": 10,
+          "functions": [
+            { "function": "minecraft:set_count", "count": { "min": 2, "max": 4 } }
+          ]
+        }
+      ]
+    }
+  ]
+}

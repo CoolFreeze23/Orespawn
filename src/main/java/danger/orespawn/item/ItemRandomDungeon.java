@@ -26,7 +26,7 @@ public class ItemRandomDungeon extends Item {
         BlockPos pos = context.getClickedPos().above();
         if (pos.getY() <= 40) return InteractionResult.FAIL;
 
-        level.setBlock(pos, ModBlocks.DUNGEON_SPAWNER.get().defaultBlockState(), 3);
+        level.setBlock(pos, ModBlocks.RANDOM_DUNGEON_BLOCK.get().defaultBlockState(), 3);
 
         level.playSound(null, player.blockPosition(), SoundEvents.STONE_PLACE, SoundSource.BLOCKS, 1.0F, 1.0F);
         context.getItemInHand().shrink(1);
