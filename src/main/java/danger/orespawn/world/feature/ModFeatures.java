@@ -55,6 +55,18 @@ public class ModFeatures {
     public static final DeferredHolder<Feature<?>, CrystalMazeFeature> CRYSTAL_MAZE =
             FEATURES.register("crystal_maze", () -> new CrystalMazeFeature(NoneFeatureConfiguration.CODEC));
 
+    // Phase 13B — Robot Lab (Village Dimension surface bunker with the
+    // Robo-Pounder + Robo-Sniper + Robo-Warrior + Robo-Spinner spawner
+    // pile and the canonical RobotContentsList loot palette).
+    public static final DeferredHolder<Feature<?>, RobotLabFeature> ROBOT_LAB =
+            FEATURES.register("robot_lab", () -> new RobotLabFeature(NoneFeatureConfiguration.CODEC));
+
+    // Phase 13B — Shadow Dungeon (Mine Dimension buried obsidian + bedrock
+    // bunker with corner Nightmare + Ender Reaper spawners and the
+    // canonical shadowContentsList loot palette).
+    public static final DeferredHolder<Feature<?>, ShadowDungeonFeature> SHADOW_DUNGEON =
+            FEATURES.register("shadow_dungeon", () -> new ShadowDungeonFeature(NoneFeatureConfiguration.CODEC));
+
     public static void register(IEventBus eventBus) {
         FEATURES.register(eventBus);
     }
