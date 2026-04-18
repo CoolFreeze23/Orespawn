@@ -3,15 +3,63 @@
   "pools": [
     {
       "rolls": 1,
-      "entries": [{"type": "minecraft:item", "name": "orespawn:trex_tooth", "functions": [{"function": "minecraft:set_count", "count": {"type": "minecraft:uniform", "min": 1, "max": 1}}]}]
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "orespawn:trex_tooth",
+          "weight": 60,
+          "functions": [
+            { "function": "minecraft:set_count", "count": 1 }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "orespawn:trex_tooth",
+          "weight": 30,
+          "functions": [
+            { "function": "minecraft:set_count", "count": 2 }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "orespawn:trex_tooth",
+          "weight": 10,
+          "functions": [
+            { "function": "minecraft:set_count", "count": 3 }
+          ]
+        }
+      ]
     },
     {
       "rolls": 1,
-      "entries": [{"type": "minecraft:item", "name": "minecraft:experience_bottle", "functions": [{"function": "minecraft:set_count", "count": {"type": "minecraft:uniform", "min": 1, "max": 1}}]}]
+      "entries": [
+        { "type": "minecraft:item", "name": "minecraft:name_tag" }
+      ]
+    },
+    {
+      "rolls": 7,
+      "entries": [
+        { "type": "minecraft:item", "name": "minecraft:beef" }
+      ]
+    },
+    {
+      "rolls": { "type": "minecraft:uniform", "min": 2, "max": 5 },
+      "entries": [
+        { "type": "minecraft:item", "name": "minecraft:gold_nugget" },
+        { "type": "minecraft:item", "name": "minecraft:iron_nugget" }
+      ]
     },
     {
       "rolls": 1,
-      "entries": [{"type": "minecraft:item", "name": "minecraft:diamond", "functions": [{"function": "minecraft:set_count", "count": {"type": "minecraft:uniform", "min": 4, "max": 7}}]}]
+      "entries": [
+        { "type": "minecraft:item", "name": "minecraft:experience_bottle" }
+      ]
+    },
+    {
+      "rolls": 1,
+      "entries": [
+        { "type": "minecraft:item", "name": "minecraft:diamond", "functions": [{ "function": "minecraft:set_count", "count": { "type": "minecraft:uniform", "min": 4, "max": 7 } }] }
+      ]
     }
   ]
 }

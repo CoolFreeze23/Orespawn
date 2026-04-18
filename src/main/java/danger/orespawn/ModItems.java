@@ -863,6 +863,8 @@ public class ModItems {
             () -> new SpawnEggItem(ModEntities.CAMARASAURUS.get(), 0x808080, 0x696969, new Item.Properties()));
     public static final DeferredItem<SpawnEggItem> DRAGON_SPAWN_EGG = ITEMS.register("dragon_spawn_egg",
             () -> new SpawnEggItem(ModEntities.DRAGON.get(), 0x8B0000, 0xFF4500, new Item.Properties()));
+    public static final DeferredItem<SpawnEggItem> BABY_DRAGON_SPAWN_EGG = ITEMS.register("baby_dragon_spawn_egg",
+            () -> new SpawnEggItem(ModEntities.BABY_DRAGON.get(), 0xFF6347, 0xFFD700, new Item.Properties()));
     public static final DeferredItem<SpawnEggItem> GAMMA_METROID_SPAWN_EGG = ITEMS.register("gamma_metroid_spawn_egg",
             () -> new SpawnEggItem(ModEntities.ENTITY_GAMMA_METROID.get(), 0x00FF00, 0xADFF2F, new Item.Properties()));
     public static final DeferredItem<SpawnEggItem> GIRLFRIEND_SPAWN_EGG = ITEMS.register("girlfriend_spawn_egg",

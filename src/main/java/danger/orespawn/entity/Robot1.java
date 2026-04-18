@@ -26,12 +26,24 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.resources.ResourceLocation;
 import danger.orespawn.OreSpawnMod;
 
+/**
+ * Robot1 — RoboSpinner role.
+ *
+ * Lightweight, low-HP kamikaze drone. Scans for targets every few ticks,
+ * sprints toward the closest valid target, and self-detonates on contact
+ * (level.explode @ 2.5 power). The "spinner" identity comes from the
+ * accelerating yaw spin once it locks a target — the body model rotates
+ * faster the closer it gets, telegraphing the imminent explosion. Smoke
+ * and lava particles trail it during the charge so players see the
+ * detonation coming. Registry ID kept as "robot_1" for save compat.
+ */
 public class Robot1 extends Monster {
     private static final EntityDataAccessor<Integer> DATA_ATTACKING =
             SynchedEntityData.defineId(Robot1.class, EntityDataSerializers.INT);
 
     private final Comparator<Entity> targetSorter;
     private final float moveSpeed = 0.2f;
+    private float spinYawAccumulator = 0.0f;
 
     public Robot1(EntityType<? extends Robot1> type, Level level) {
         super(type, level);
@@ -81,7 +93,9 @@ public class Robot1 extends Monster {
         if (this.getRandom().nextInt(8) == 0) {
             LivingEntity target = findSomethingToAttack();
             if (target != null) {
-                if (this.distanceToSqr(target) < 5.0 && !this.level().isClientSide()
+                this.setAttacking(1);
+                double distSq = this.distanceToSqr(target);
+                if (distSq < 5.0 && !this.level().isClientSide()
                         && this.getRandom().nextInt(18) == 1) {
                     this.level().explode(this, this.getX(), this.getY(), this.getZ(), 2.5f,
                             Level.ExplosionInteraction.MOB);
@@ -93,7 +107,17 @@ public class Robot1 extends Monster {
                         this.level().addParticle(ParticleTypes.LAVA, getX(), getY() + 1.0, getZ(), 0, 0, 0);
                     }
                 }
+                // Spinner identity: yaw-spin accelerates as the kamikaze
+                // closes on its target. Spin rate ramps from 12°/tick at
+                // 30+ blocks to 36°/tick under 5 blocks (hard-capped so we
+                // never NaN the yaw value when the target is co-located).
+                float spinRate = 12.0f + (float) Math.max(0.0, 30.0 - Math.sqrt(Math.max(distSq, 0.0001))) * 0.8f;
+                spinYawAccumulator = (spinYawAccumulator + spinRate) % 360.0f;
+                this.setYRot(spinYawAccumulator);
+                this.yBodyRot = spinYawAccumulator;
                 this.getNavigation().moveTo(target, 1.2);
+            } else {
+                this.setAttacking(0);
             }
         }
     }
