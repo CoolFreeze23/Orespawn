@@ -46,6 +46,31 @@ public class ModStructureTypes {
             STRUCTURE_PIECES.register("feature_piece",
                     () -> (StructurePieceType) FeatureStructurePiece::new);
 
+    /**
+     * Phase 13C-fix2 — Dedicated {@link StructureType} for the Royal Trees
+     * (Tree of Goodness + Queen Tree). Replaces the previous
+     * {@code orespawn:feature} wiring for these specifically because the
+     * generic feature-wrapper couldn't span chunks: the
+     * {@code WorldGenRegion} 24-block write cap clipped the 60-tall, ±32-wide
+     * trees at chunk borders. {@link RoyalTreeStructure} +
+     * {@link RoyalTreePiece} use the canonical Mansion / Stronghold pattern
+     * (massive blueprint bounding box + per-chunk write gating in
+     * {@code postProcess}) to stitch the tree together across chunks.
+     */
+    public static final DeferredHolder<StructureType<?>, StructureType<RoyalTreeStructure>> ROYAL_TREE =
+            STRUCTURE_TYPES.register("royal_tree", () -> () -> RoyalTreeStructure.CODEC);
+
+    /**
+     * Companion piece type for {@link RoyalTreeStructure}. Same direct-
+     * constructor-reference pattern as {@link #FEATURE_PIECE}, since
+     * {@link RoyalTreePiece} owns the {@code (StructurePieceSerializationContext,
+     * CompoundTag)} load constructor and the chunk save/load round-trip
+     * goes through that path.
+     */
+    public static final DeferredHolder<StructurePieceType, StructurePieceType> ROYAL_TREE_PIECE =
+            STRUCTURE_PIECES.register("royal_tree_piece",
+                    () -> (StructurePieceType) RoyalTreePiece::new);
+
     public static void register(IEventBus eventBus) {
         STRUCTURE_TYPES.register(eventBus);
         STRUCTURE_PIECES.register(eventBus);
