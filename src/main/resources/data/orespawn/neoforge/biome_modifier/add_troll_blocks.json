@@ -1,0 +1,9 @@
+{
+  "type": "neoforge:add_features",
+  "biomes": "#minecraft:is_overworld",
+  "features": [
+    "orespawn:red_ant_troll",
+    "orespawn:termite_troll"
+  ],
+  "step": "underground_ores"
+}

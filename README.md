@@ -299,8 +299,19 @@ jungle / savannah / mine).~~ **DONE (Phase 11)** — `BeehiveFeature`
 2 blocks above surface with a Bee spawner on top, mimicking 1.7.10's
 `makeBeeHive` micro-dungeon. Placed via biome modifier `add_beehives`
 on `#minecraft:is_forest` and `#minecraft:is_jungle` (rarity 60).
-- **Shadow Dungeon** — Mine Dimension dungeon containing Nightmare
-spawners + Ender Reaper spawners. **[v1.1]**
+- ~~**Shadow Dungeon** — Mine Dimension dungeon containing Nightmare
+spawners + Ender Reaper spawners.~~ **DONE (Phase 13B)** —
+`ShadowDungeonFeature` (`orespawn:shadow_dungeon`) buries a chunk-safe
+13×13×9 obsidian + bedrock bunker (alternating obsidian/bedrock courses
+with soul-sand cross pillars on the cardinal walls) 8 blocks below
+the surface. Inside: 4 floor-corner `Nightmare` (`PITCH_BLACK`)
+spawners + 4 ceiling-corner `Ender Reaper` spawners + 4 mid-height
+loot chests filled from the canonical `shadowContentsList` palette
+(glowstone dust, blaze rod, magma cream, blaze powder, fire charge,
+rotten flesh, dye, ruby, experience tree seed, elevator, nightmare /
+poison / rat sword). Placed via `add_shadow_dungeon` biome modifier on
+`orespawn:mining_biome` (rarity 200, `underground_structures` step).
+*(Phase 13B Complete)*
 - **Greenhouse** — Danger Dimension structure with Triffid spawners on the
 roof and many decorative crops inside. **[v1.1]**
 - ~~**White House** — Criminal spawner dungeon.~~ **DONE (Phase 12)** —
@@ -310,8 +321,21 @@ terracotta + quartz-pillar mansion on the surface, with 4 corner
 uranium/titanium nuggets, emerald, diamond, gold, cooked porkchop, and
 `BAND_P` spawn-eggs. Placed via `add_white_house` biome modifier
 (`#minecraft:is_overworld`, rarity 800, `surface_structures` step).
-- **Robot Lab** — Village Dimension structure that hosts Robo Warrior,
-Robo Spinner, and Robo Pounder spawners. **[v1.1]**
+- ~~**Robot Lab** — Village Dimension structure that hosts Robo Warrior,
+Robo Spinner, and Robo Pounder spawners.~~ **DONE (Phase 13B)** —
+`RobotLabFeature` (`orespawn:robot_lab`) builds a chunk-safe 14×14×6
+iron-block bunker on the village biome surface, with a glass-pane
+window strip, an iron-door entry split, a redstone-block floor strip
+(legacy power channel), and the canonical spawner pile:
+`Robo-Pounder` (`ROBOT_4`) on a central altar pillar with a
+`Robo-Spinner` (`ROBOT_1`) capstone; `Robo-Sniper` (`ROBOT_5`)
+front-corner sentries; `Robo-Warrior` (`ROBOT_2`) guarding the loot
+chest. Chest is filled from the canonical `RobotContentsList` palette
+(redstone, comparator, fire charge, redstone block, rails, powered /
+detector rails, pistons, sticky pistons, hopper, iron / gold ingots,
+minecart, compass). Placed via `add_robot_lab` biome modifier on
+`orespawn:village_biome` (rarity 180, `surface_structures` step).
+*(Phase 13B Complete)*
 - **Leonopteryx Dungeon** — Mine Dimension nest with the Leonopteryx
 spawner in the centre. **[v1.1]**
 - **The Goodness Tree** — the gem-leaf giant tree (gold core, emerald
@@ -358,9 +382,24 @@ on a 1-in-4 roll). Both variants build a mossy-cobble dungeon room
 (12×6×12 generic or 10×5×10 ruby-ore) with a randomized OreSpawn-mob
 spawner and a chest using `BuiltInLootTables.SIMPLE_DUNGEON`. Survives
 chunk-unload mid-countdown via NBT-persisted `Delay` field.
-- **Diamond / Emerald Troll Block** worldgen — currently
+- ~~**Diamond / Emerald Troll Block** worldgen — currently
 `red_ant_troll` / `termite_troll` exist as item entries but are never
-placed by the chunk generator. **[v1.1]**
+placed by the chunk generator.~~ **DONE (Phase 13B)** —
+`red_ant_troll` (diamond-ore-look) and `termite_troll`
+(emerald-ore-look) are now generated as Overworld ore veins via
+`add_troll_blocks` biome modifier (`#minecraft:is_overworld`,
+`underground_ores` step, count 6, vein size 4, Y 5–50 — matches the
+1.7.10 `OreSpawnWorld` parameters at lines 866 / 877). When mined the
+trap fires from `OreBasicStone#playerDestroy` (modern equivalent of
+the legacy `func_149664_b` = `onBlockDestroyedByPlayer`) so explosions,
+pistons, and Mobzilla destroying the block do **not** trigger the
+swarm — preventing the infinite-spawn / cascading-explosion edge cases.
+A swarm of 3–5 hostile `Red Ant` / `Termite` mobs spawns in place.
+**Silk Touch bypasses the trap entirely** (matches modern
+silverfish-block convention). Block textures
+(`assets/orespawn/textures/blocks/redanttroll.png` and
+`termitetroll.png`) ported from the legacy 1.7.10 resource pack.
+*(Phase 13B Complete)*
 
 ### 4. Missing Utility & Gadgets
 
