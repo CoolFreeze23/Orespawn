@@ -67,6 +67,14 @@ public class ModFeatures {
     public static final DeferredHolder<Feature<?>, ShadowDungeonFeature> SHADOW_DUNGEON =
             FEATURES.register("shadow_dungeon", () -> new ShadowDungeonFeature(NoneFeatureConfiguration.CODEC));
 
+    // Phase 13C (corrected) — Royal Trees (Tree of Goodness + Queen Tree).
+    // 100% byte-for-byte port of the 1.7.10 MakeBigSquareTree + make_branch
+    // algorithms found in ItemMagicApple.java#L248-L469 / #L133-L246, with
+    // the King vs. Queen palette dispatch at ItemMagicApple.java#L760-L772.
+    // Single Feature handles both variants via Config(queenVariant=true|false).
+    public static final DeferredHolder<Feature<?>, RoyalTreeFeature> ROYAL_TREE =
+            FEATURES.register("royal_tree", () -> new RoyalTreeFeature(RoyalTreeFeature.Config.CODEC));
+
     public static void register(IEventBus eventBus) {
         FEATURES.register(eventBus);
     }
