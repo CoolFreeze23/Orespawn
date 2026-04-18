@@ -1,9 +1,8 @@
 {
-  "type": "orespawn:feature",
+  "type": "orespawn:royal_tree",
   "biomes": "#orespawn:has_structure/royal_tree_king",
   "step": "vegetal_decoration",
   "spawn_overrides": {},
   "terrain_adaptation": "none",
-  "feature": "orespawn:royal_tree_king",
-  "y_offset": 0
+  "queen_variant": false
 }
