@@ -1,0 +1,9 @@
+{
+  "type": "orespawn:feature",
+  "biomes": "#orespawn:has_structure/shadow_dungeon",
+  "step": "underground_structures",
+  "spawn_overrides": {},
+  "terrain_adaptation": "none",
+  "feature": "orespawn:shadow_dungeon",
+  "y_offset": 0
+}

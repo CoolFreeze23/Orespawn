@@ -1,0 +1,9 @@
+{
+  "type": "orespawn:feature",
+  "biomes": "#orespawn:has_structure/crystal_maze",
+  "step": "underground_structures",
+  "spawn_overrides": {},
+  "terrain_adaptation": "none",
+  "feature": "orespawn:crystal_maze",
+  "y_offset": 0
+}

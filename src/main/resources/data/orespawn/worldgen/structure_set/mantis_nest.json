@@ -1,0 +1,11 @@
+{
+  "structures": [
+    { "structure": "orespawn:mantis_nest", "weight": 1 }
+  ],
+  "placement": {
+    "type": "minecraft:random_spread",
+    "spacing": 9,
+    "separation": 4,
+    "salt": 84312
+  }
+}
