@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "orespawn:block/random_dungeon_block"
+    }
+  }
+}

@@ -29,7 +29,7 @@ Drop the produced JAR into your NeoForge 1.21.1 mods folder. No additional depen
 > [Added Mobs](https://en.namu.wiki/w/Orespawn/%EC%B6%94%EA%B0%80%EB%90%98%EB%8A%94%20%EB%AA%B9)
 > reference pages — the most complete public catalogue of the original 1.7.10 mod.
 
-## Completion Metrics (1.1.0-dev — Phase 10)
+## Completion Metrics (1.1.0-dev — Phase 11)
 
 > Every "Wiki Total" below is a **strict integer count of entries explicitly enumerated**
 > on the Namu Wiki [Orespawn](https://en.namu.wiki/w/Orespawn) and
@@ -48,11 +48,11 @@ Drop the produced JAR into your NeoForge 1.21.1 mods folder. No additional depen
 | **Bosses & Titans** (Wiki §13 + §14 + §15, excluding Scorpion sub-mob)    | 13          | 13         | **100.0%** |
 | **Hostile / Neutral Mobs** (Wiki mobs page §2–§13.8 minus bosses & tames) | 53          | 56         | **94.6%**  |
 | **Companion / Tame Mobs** (Wiki-listed pets only)                         | 6           | 7          | **85.7%**  |
-| **General Utility Items** (Wiki §6, items above §6.1 — Hoverboard + Fossil added Phase 10) | 18          | 18         | **100.0%** |
-| **Dungeons / Hand-Built Structures** (Wiki §5, exhaustive)                | 3           | 15         | **20.0%**  |
+| **General Utility Items** (Wiki §6, items above §6.1 — Coin + Extractor added Phase 11) | 20          | 20         | **100.0%** |
+| **Dungeons / Hand-Built Structures** (Wiki §5, exhaustive — Mantis Nest + Beehive added Phase 11) | 5           | 15         | **33.3%**  |
 
 
-**Strict Wiki coverage: 135 / 151 enumerated entries = 89.4% mechanical completeness.**
+**Strict Wiki coverage: 139 / 153 enumerated entries = 90.8% mechanical completeness.**
 
 ### Workspace Totals (Absolute Registry Counts)
 
@@ -64,12 +64,13 @@ bonus content, multi-slot armor pieces, etc.).
 | Registry                                      | Count   |
 | --------------------------------------------- | ------- |
 | Entity types (`ModEntities.ENTITY_TYPES`)     | **143** |
-| Item types (`ModItems.ITEMS`)                 | **332** |
-| Block types (`ModBlocks.BLOCKS`)              | **100** |
-| Crafting / smelting recipes                   | **232** |
+| Item types (`ModItems.ITEMS`)                 | **335** |
+| Block types (`ModBlocks.BLOCKS`)              | **102** |
+| Crafting / smelting recipes                   | **237** |
 | Entity loot tables                            | **117** |
-| Biome modifier JSONs                          | **92**  |
-| Worldgen configured features                  | **15**  |
+| Biome modifier JSONs                          | **94**  |
+| Worldgen configured features                  | **17**  |
+| Custom recipe types (`orespawn:extracting`)   | **1**   |
 | Dimensions (`data/orespawn/dimension/*.json`) | **6**   |
 
 
@@ -241,11 +242,18 @@ Guardian Greatsword + Queen Scale armor + Princess egg. **[v2.0]**
 spawners + Vortex spawner on the top floor. **[v2.0]**
 - **Crystal Dimension Mazes** — the labyrinthine tunnel networks generated
 under the crystal landmass. **[v2.0]**
-- **Mantis Nest** — group-of-3-or-4 mantis spawn cluster on plains
-surface. Currently mantis spawns are evenly distributed via biome
-modifier, no nest geometry. **[v1.1]**
-- **Beehive** — mossy-stone + sponge box with bee spawners (forest /
-jungle / savannah / mine). **[v1.1]**
+- ~~**Mantis Nest** — group-of-3-or-4 mantis spawn cluster on plains
+surface.~~ **DONE (Phase 11)** — `MantisNestFeature` (`orespawn:mantis_nest`)
+generates a 3×3 mossy/cracked-stone hump with a Mantis spawner buried
+in the centre tile and cobweb decorations on the four corner blocks.
+Placed via biome modifier `add_mantis_nests` on `#minecraft:is_overworld`
+at the `surface_structures` step (rarity 80, surface heightmap).
+- ~~**Beehive** — mossy-stone + sponge box with bee spawners (forest /
+jungle / savannah / mine).~~ **DONE (Phase 11)** — `BeehiveFeature`
+(`orespawn:beehive`) generates a 3×2×3 mossy-cobble + honeycomb shell
+2 blocks above surface with a Bee spawner on top, mimicking 1.7.10's
+`makeBeeHive` micro-dungeon. Placed via biome modifier `add_beehives`
+on `#minecraft:is_forest` and `#minecraft:is_jungle` (rarity 60).
 - **Shadow Dungeon** — Mine Dimension dungeon containing Nightmare
 spawners + Ender Reaper spawners. **[v1.1]**
 - **Greenhouse** — Danger Dimension structure with Triffid spawners on the
@@ -276,9 +284,16 @@ Reaper spawners. **[v1.1]**
 Molenoids in a group. **[v1.1]**
 - **Rotator Dungeon** — Crystal-themed flying spawner cluster. **[v1.1]**
 - **Scorpion / Rat Dungeon** — desert / mesa structure. **[v1.1]**
-- **Random Dungeon item** — `random_dungeon` block places, but the random
-dungeon templates that should pop up after a few seconds are absent.
-Currently it's a no-op marker. **[v1.1]**
+- ~~**Random Dungeon item** — `random_dungeon` block places, but the random
+dungeon templates that should pop up after a few seconds are absent.~~
+**DONE (Phase 11)** — `ItemRandomDungeon` now places `RANDOM_DUNGEON_BLOCK`,
+backed by `RandomDungeonSpawnerBlockEntity` which counts down for 200
+ticks (10 s) emitting firework spark particles, then deletes itself and
+calls `GenericDungeon.tryPlaceGenericDungeon` (or `tryPlaceRubyDungeon`
+on a 1-in-4 roll). Both variants build a mossy-cobble dungeon room
+(12×6×12 generic or 10×5×10 ruby-ore) with a randomized OreSpawn-mob
+spawner and a chest using `BuiltInLootTables.SIMPLE_DUNGEON`. Survives
+chunk-unload mid-countdown via NBT-persisted `Delay` field.
 - **Diamond / Emerald Troll Block** worldgen — currently
 `red_ant_troll` / `termite_troll` exist as item entries but are never
 placed by the chunk generator. **[v1.1]**
@@ -302,13 +317,37 @@ and `useItemOn` consumes the water bucket (replaces with empty bucket
 unless creative), removes the block, and yields a random spawn egg
 from the canonical 7-egg dino pool (Alosaurus / Cryolophosaurus /
 Nastysaurus / Pointysaurus / T-Rex / VelocityRaptor / BabyDragon).
-- **Coin economy** — Coins spawn but the canonical "right-click coin to get
+- ~~**Coin economy** — Coins spawn but the canonical "right-click coin to get
 a useful item from the loot table" reward pool is minimal compared to
-1.7.10's broader randomized gear selection. **[v1.1]**
-- **Extractor** — the multi-block ore-purification gadget. **[v2.0]**
-- **Duplicator Tree (functional)** — the `duplicator_log` block exists
-but does not yet duplicate adjacent saplings/items as in 1.7.10.
-**[v1.1]**
+1.7.10's broader randomized gear selection.~~ **DONE (Phase 11)** —
+new `coin` item (`ItemCoin`) right-clicked anywhere consumes the stack
+and rolls the data-driven `orespawn:gameplay/coin_reward` loot table
+(diamond / emerald / uranium nugget / titanium nugget / emerald
+sword/axe/shovel/pickaxe/hoe + bonus emerald roll, all weight-10 ×
+10-slot pool that mirrors the 1.7.10 `Coin.func_70628_a` drop table).
+Drops auto-insert into player inventory or fall to the world if full;
+10-tick interaction cooldown prevents auto-clickers; XP-orb pickup
+sound on success.
+- ~~**Extractor** — the multi-block ore-purification gadget.~~ **DONE
+(Phase 11)** — `Extractor` block + `ExtractorBlockEntity` provide a
+hopper-driven 1-input/1-output processor. New custom recipe type
+`orespawn:extracting` (codec-defined `ExtractingRecipe` with
+`ingredient`, `result`, `processtime`) and serializer registered via
+`ModRecipes`. Three sample recipes ship: ore_kyanite → 2 kyanite
+(200 t), ore_pink_tourmaline → 2 pink_tourmaline (200 t), and
+ancient_dried_egg → trex_tooth (400 t — "DNA extraction"). Tick logic
+caches the matched RecipeHolder per cycle, drops it on input change,
+and is throttled to 1 progress increment per server tick to protect
+TPS. Hopper-friendly: top face = input, bottom face = output, sides
+locked closed.
+- ~~**Duplicator Tree (functional)** — the `duplicator_log` block exists
+but does not yet duplicate adjacent saplings/items as in 1.7.10.~~
+**DONE (Phase 11)** — `BlockDuplicatorLog.tryDuplicateAdjacent`
+now runs on every random tick (20 % chance) alongside the legacy
+tree-growth path. Scans the 4 horizontal neighbours for sapling blocks
+and copies the sapling onto a free dirt-bordered tile, OR grows a
+random adjacent dropped `ItemEntity`'s stack by 1 if one exists in the
+1-block AABB. Tree-growth still gated by `OreSpawnConfig.DUPLICATOR_TREE_ENABLE`.
 - ~~**Kyanite Sword + Kyanite Armor + Kyanite Ore** — the Crystal
 Dimension's blue gem branch is missing entirely.~~ **DONE (Phase 10)** —
 `ore_kyanite` block (size-6 veins, Y=-32..80) generates only in the

@@ -34,6 +34,7 @@
     "orespawn:king_spawner",
     "orespawn:queen_spawner",
     "orespawn:dungeon_spawner",
+    "orespawn:extractor",
     "orespawn:ant_block",
     "orespawn:red_ant_block",
     "orespawn:termite_block",

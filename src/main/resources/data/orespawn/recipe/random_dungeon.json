@@ -1,6 +1,17 @@
 {
   "type": "minecraft:crafting_shaped",
-  "pattern": ["RRR", "RAR", "RRR"],
-  "key": { "R": { "item": "minecraft:emerald_block" }, "A": { "item": "minecraft:iron_ingot" } },
-  "result": { "id": "orespawn:random_dungeon", "count": 1 }
+  "pattern": [
+    "EOE",
+    "ODO",
+    "EOE"
+  ],
+  "key": {
+    "E": { "item": "minecraft:ender_eye" },
+    "O": { "item": "minecraft:obsidian" },
+    "D": { "item": "minecraft:diamond_block" }
+  },
+  "result": {
+    "id": "orespawn:random_dungeon",
+    "count": 1
+  }
 }

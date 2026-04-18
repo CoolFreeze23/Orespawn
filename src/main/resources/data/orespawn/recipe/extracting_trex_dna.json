@@ -1,0 +1,11 @@
+{
+  "type": "orespawn:extracting",
+  "ingredient": {
+    "item": "orespawn:ancient_dried_egg"
+  },
+  "result": {
+    "id": "orespawn:trex_tooth",
+    "count": 1
+  },
+  "processtime": 400
+}
