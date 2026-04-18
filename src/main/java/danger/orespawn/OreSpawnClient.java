@@ -116,6 +116,7 @@ public class OreSpawnClient {
             event.registerEntityRenderer(ModEntities.BOYFRIEND.get(), BoyfriendRenderer::new);
             event.registerEntityRenderer(ModEntities.CAMARASAURUS.get(), CamarasaurusRenderer::new);
             event.registerEntityRenderer(ModEntities.DRAGON.get(), DragonRenderer::new);
+            event.registerEntityRenderer(ModEntities.BABY_DRAGON.get(), BabyDragonRenderer::new);
             event.registerEntityRenderer(ModEntities.ENTITY_CANNON_FODDER.get(), CannonFodderRenderer::new);
             event.registerEntityRenderer(ModEntities.ENTITY_GAMMA_METROID.get(), GammaMetroidRenderer::new);
             event.registerEntityRenderer(ModEntities.GIRLFRIEND.get(), GirlfriendRenderer::new);
@@ -275,6 +276,7 @@ public class OreSpawnClient {
             event.registerLayerDefinition(BoyfriendRenderer.MODEL_LAYER, ModelBoyfriend::createBodyLayer);
             event.registerLayerDefinition(CamarasaurusRenderer.MODEL_LAYER, ModelCamarasaurus::createBodyLayer);
             event.registerLayerDefinition(DragonRenderer.MODEL_LAYER, ModelDragon::createBodyLayer);
+            event.registerLayerDefinition(BabyDragonRenderer.MODEL_LAYER, ModelDragon::createBodyLayer);
             event.registerLayerDefinition(CannonFodderRenderer.MODEL_LAYER, CannonFodderModel::createBodyLayer);
             event.registerLayerDefinition(GammaMetroidRenderer.MODEL_LAYER, GammaMetroidModel::createBodyLayer);
             event.registerLayerDefinition(GirlfriendRenderer.MODEL_LAYER, ModelGirlfriend::createBodyLayer);

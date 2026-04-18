@@ -25,6 +25,18 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraft.resources.ResourceLocation;
 import danger.orespawn.OreSpawnMod;
 
+/**
+ * Robot5 — RoboSniper role.
+ *
+ * Long-range marksman (150 HP, 15 ATK, 4 ARM). Detection radius is a
+ * 30×6×30 AABB — far larger than the other robots — and the fire
+ * solution holds out to ~30 blocks (distSq < 900). On a successful
+ * lock the sniper plants and fires a {@link LaserBall} every 20-tick
+ * reload cycle; movement is suppressed inside 6 blocks so it doesn't
+ * shuffle out of its firing line. Light armour (4) makes it a glass
+ * cannon — the role pairs naturally with a RoboWarrior tank screen.
+ * Registry ID kept as "robot_5" for save compat.
+ */
 public class Robot5 extends Monster {
     private static final EntityDataAccessor<Integer> DATA_ATTACKING =
             SynchedEntityData.defineId(Robot5.class, EntityDataSerializers.INT);
@@ -88,16 +100,36 @@ public class Robot5 extends Monster {
             this.reloadTicker = 20;
             if (target != null) {
                 this.lookAt(target, 10.0f, 10.0f);
-                if (this.distanceToSqr(target) < 900.0) {
+                double dsq = this.distanceToSqr(target);
+                if (dsq < 900.0) {
                     this.setAttacking(1);
-                    if (this.distanceToSqr(target) > 36.0) {
+                    if (dsq > 36.0) {
                         this.getNavigation().moveTo(target, 0.5);
+                    }
+                    if (this.getSensing().hasLineOfSight(target)) {
+                        fireLaserAt(target);
                     }
                 }
             } else {
                 this.setAttacking(0);
             }
         }
+    }
+
+    /**
+     * Long-range LaserBall shot. Speed 1.8 (faster than the gunner) and
+     * spawned slightly higher (+1.5y) so the sniper "aims down range".
+     * The shooter is recorded for kill-credit and friendly-fire checks.
+     */
+    private void fireLaserAt(LivingEntity target) {
+        if (this.level().isClientSide) return;
+        LaserBall projectile = new LaserBall(this.level(), this);
+        projectile.setPos(this.getX(), this.getY() + 1.5, this.getZ());
+        double dx = target.getX() - this.getX();
+        double dy = target.getY() + target.getBbHeight() * 0.5 - (this.getY() + 1.5);
+        double dz = target.getZ() - this.getZ();
+        projectile.shoot(dx, dy, dz, 1.8f, 0.5f);
+        this.level().addFreshEntity(projectile);
     }
 
     @Override

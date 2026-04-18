@@ -30,6 +30,21 @@ public class EntityVortex extends Monster {
     private static final double PLAYER_VERTICAL_PULL_MULT = 2.0;
     private static final int WINDED_COOLDOWN_TICKS = 20;
 
+    /**
+     * Maximum upward velocity the Vortex can apply with its grab launch.
+     * Tuned so a launched player tops out around y=+90 above the cast site,
+     * matching the 1.7.10 "into the stratosphere" feel without exceeding the
+     * 10.0 vanilla velocity sanity cap (anything above ~10 starts triggering
+     * MovedTooQuickly disconnects on stricter servers). The horizontal
+     * components are clamped separately to keep the trajectory mostly
+     * vertical so the launch reads as a tornado uplift rather than a punt.
+     */
+    private static final double LAUNCH_UPWARD_VELOCITY = 4.0;
+    private static final double LAUNCH_HORIZONTAL_VELOCITY = 0.6;
+    /** Cooldown ticks between successive launches per Vortex (1.5s). */
+    private static final int LAUNCH_COOLDOWN_TICKS = 30;
+    private int launchCooldownTicks = 0;
+
     private BlockPos currentFlightTarget = null;
     private int lastX = 0;
     private int lastY = 0;
@@ -132,6 +147,9 @@ public class EntityVortex extends Monster {
         if (this.windedCooldownTicks > 0) {
             --this.windedCooldownTicks;
         }
+        if (this.launchCooldownTicks > 0) {
+            --this.launchCooldownTicks;
+        }
 
         double distSq = this.currentFlightTarget.distSqr(this.blockPosition());
 
@@ -171,6 +189,10 @@ public class EntityVortex extends Monster {
             double attackRange = (4.0 + currentTarget.getBbWidth() / 2.0);
             if (distSqToTarget < attackRange * attackRange && this.random.nextInt(8) == 2) {
                 this.doHurtTarget(currentTarget);
+                if (this.launchCooldownTicks == 0) {
+                    skywardLaunch(currentTarget);
+                    this.launchCooldownTicks = LAUNCH_COOLDOWN_TICKS;
+                }
             }
         }
 
@@ -207,6 +229,48 @@ public class EntityVortex extends Monster {
         }
         this.windedCooldownTicks = WINDED_COOLDOWN_TICKS;
         return ret;
+    }
+
+    /**
+     * The signature 1.7.10 attack: physically grab the victim and hurl
+     * them straight up (with a small horizontal nudge inherited from the
+     * existing pull vector). Velocity components are clamped, NaN-guarded,
+     * and validated against the vanilla 10.0 movement cap so neither a
+     * teleport-glitched target nor a co-located target can produce
+     * Infinity/NaN deltaMovement values that would crash the physics
+     * tick. Players also get hasImpulse set so the server doesn't reject
+     * the upward velocity as illegal client motion.
+     */
+    private void skywardLaunch(LivingEntity victim) {
+        if (victim == null || !victim.isAlive()) return;
+
+        Vec3 existing = victim.getDeltaMovement();
+        double ex = existing.x;
+        double ey = existing.y;
+        double ez = existing.z;
+        if (Double.isNaN(ex) || Double.isInfinite(ex)) ex = 0.0;
+        if (Double.isNaN(ey) || Double.isInfinite(ey)) ey = 0.0;
+        if (Double.isNaN(ez) || Double.isInfinite(ez)) ez = 0.0;
+
+        double dx = victim.getX() - this.getX();
+        double dz = victim.getZ() - this.getZ();
+        double horizontalMagnitude = Math.sqrt(dx * dx + dz * dz);
+        double pushX;
+        double pushZ;
+        if (horizontalMagnitude < 1.0e-4) {
+            pushX = 0.0;
+            pushZ = 0.0;
+        } else {
+            pushX = (dx / horizontalMagnitude) * LAUNCH_HORIZONTAL_VELOCITY;
+            pushZ = (dz / horizontalMagnitude) * LAUNCH_HORIZONTAL_VELOCITY;
+        }
+
+        double newX = Mth.clamp(ex + pushX, -9.5, 9.5);
+        double newY = Mth.clamp(ey + LAUNCH_UPWARD_VELOCITY, -9.5, 9.5);
+        double newZ = Mth.clamp(ez + pushZ, -9.5, 9.5);
+        victim.setDeltaMovement(newX, newY, newZ);
+        victim.hasImpulse = true;
+        victim.fallDistance = 0.0f;
     }
 
     @Nullable

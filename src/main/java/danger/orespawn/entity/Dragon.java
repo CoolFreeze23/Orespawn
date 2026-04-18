@@ -1079,13 +1079,18 @@ public class Dragon extends TamableAnimal implements danger.orespawn.network.Rid
             return InteractionResult.sidedSuccess(this.level().isClientSide);
         }
 
-        // Apple: spawn baby dragon
+        // Apple: spawn a Baby Dragon (the dedicated baby-dragon entity per
+        // 1.7.10 / Wiki separation, not the legacy EntitySpyro). The adult
+        // is consumed so the apple acts as a generational rebirth, matching
+        // the original 1.7.10 behaviour of the Magic Apple.
         if (stack.is(Items.APPLE) && this.distanceToSqr(player) < 25.0) {
             if (!this.level().isClientSide) {
-                EntitySpyro baby = ModEntities.ENTITY_SPYRO.get().create(this.level());
+                BabyDragon baby = ModEntities.BABY_DRAGON.get().create(this.level());
                 if (baby != null) {
                     baby.moveTo(this.getX(), this.getY(), this.getZ(),
                             this.getRandom().nextFloat() * 360.0f, 0.0f);
+                    baby.setDragonType(this.getDragonType());
+                    baby.setDragonFire(Math.max(this.getDragonFire(), 1));
                     if (this.isTame()) {
                         baby.setTame(true, false);
                         baby.setOwnerUUID(player.getUUID());

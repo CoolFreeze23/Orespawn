@@ -1,14 +1,17 @@
 package danger.orespawn.entity;
 
+import danger.orespawn.ModEntities;
 import danger.orespawn.OreSpawnMod;
 import danger.orespawn.entity.ai.BugMeleeAttackGoal;
 import javax.annotation.Nullable;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -24,7 +27,10 @@ import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
 
 public class EntityCaterKiller extends Monster {
     private static final EntityDataAccessor<Integer> DATA_ATTACKING =
@@ -37,6 +43,24 @@ public class EntityCaterKiller extends Monster {
      * combat.
      */
     private int damagedDespawnTicker = 0;
+
+    /**
+     * Cobweb-trail throttle. The 1.7.10 Cater Killer spat cobwebs into the
+     * tile underneath whichever player it was actively chasing, slowing the
+     * pursued player and forcing them into ranged combat. We rate-limit
+     * those setBlock calls so a long chase doesn't hammer chunk updates.
+     */
+    private int cobwebCooldown = 0;
+    private static final int COBWEB_INTERVAL_TICKS = 40;
+
+    /**
+     * Tree-eating regen throttle. The reference mob would munch leaves /
+     * logs adjacent to itself for steady out-of-combat healing. The check
+     * runs at most once per second to keep it cheap; the actual heal value
+     * (5 HP per leaf, 10 HP per log) matches the 1.7.10 numbers.
+     */
+    private int treeEatCooldown = 0;
+    private static final int TREE_EAT_INTERVAL_TICKS = 20;
 
     public EntityCaterKiller(EntityType<? extends EntityCaterKiller> type, Level level) {
         super(type, level);
@@ -147,6 +171,106 @@ public class EntityCaterKiller extends Monster {
         if (this.random.nextInt(150) == 1 && this.getHealth() < this.getMaxHealth()) {
             this.heal(2.0f);
         }
+
+        if (this.cobwebCooldown > 0) --this.cobwebCooldown;
+        if (this.treeEatCooldown > 0) --this.treeEatCooldown;
+
+        LivingEntity target = this.getTarget();
+        if (target instanceof Player chased && this.cobwebCooldown == 0
+                && this.distanceToSqr(chased) < 144.0
+                && this.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)) {
+            tryDropCobwebUnder(chased);
+            this.cobwebCooldown = COBWEB_INTERVAL_TICKS;
+        }
+
+        if (target == null && this.treeEatCooldown == 0
+                && this.getHealth() < this.getMaxHealth()
+                && this.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)) {
+            tryEatNearbyTreeBlock();
+            this.treeEatCooldown = TREE_EAT_INTERVAL_TICKS;
+        }
+    }
+
+    /**
+     * Spit a cobweb into the floor tile directly under the chased player.
+     * Only fires on solid-floor tiles with an air block immediately above
+     * (so we don't overwrite the player's standing tile or melt structural
+     * blocks). The cobweb naturally despawns to nothing on player break.
+     */
+    private void tryDropCobwebUnder(Player chased) {
+        if (!(this.level() instanceof ServerLevel server)) return;
+        BlockPos under = chased.blockPosition();
+        BlockState atFeet = server.getBlockState(under);
+        if (!atFeet.isAir() && atFeet.getBlock() != Blocks.COBWEB) return;
+        BlockPos floor = under.below();
+        BlockState floorState = server.getBlockState(floor);
+        if (floorState.isAir() || !floorState.getFluidState().isEmpty()) return;
+        server.setBlock(under, Blocks.COBWEB.defaultBlockState(), 3);
+    }
+
+    /**
+     * Health-regen by chewing through leaves and logs in a small radius
+     * around the body. Picks one block at random per check so the eat
+     * effect feels organic rather than zipper-stripping a forest in a
+     * single tick. Uses the standard log/leaf tags so modded trees with
+     * the right tag entries (most do) also feed the cater killer.
+     */
+    private void tryEatNearbyTreeBlock() {
+        if (!(this.level() instanceof ServerLevel server)) return;
+        int bx = (int) Math.floor(this.getX());
+        int by = (int) Math.floor(this.getY());
+        int bz = (int) Math.floor(this.getZ());
+        for (int attempts = 0; attempts < 6; attempts++) {
+            int dx = this.random.nextInt(5) - 2;
+            int dy = this.random.nextInt(4) - 1;
+            int dz = this.random.nextInt(5) - 2;
+            BlockPos pos = new BlockPos(bx + dx, by + dy, bz + dz);
+            BlockState state = server.getBlockState(pos);
+            if (state.isAir()) continue;
+            float healAmount;
+            if (state.is(BlockTags.LEAVES)) {
+                healAmount = 5.0f;
+            } else if (state.is(BlockTags.LOGS)) {
+                healAmount = 10.0f;
+            } else {
+                continue;
+            }
+            server.destroyBlock(pos, false, this);
+            this.heal(healAmount);
+            return;
+        }
+    }
+
+    /**
+     * 1.7.10 Cater Killer death sequence: rather than vanishing, the
+     * caterpillar pupates into a Brutalfly at the same location and seeds
+     * a small swarm of standard butterflies (3-5) as the chrysalis bursts.
+     * The Brutalfly inherits the original rotation so the visual handoff
+     * reads as a single creature undergoing metamorphosis. Death loot
+     * still drops via {@link #dropCustomDeathLoot} so the player gets
+     * their bones / leather / name tag despite the entity transformation.
+     */
+    @Override
+    public void die(DamageSource cause) {
+        if (!this.level().isClientSide && this.level() instanceof ServerLevel serverLevel) {
+            EntityBrutalfly brutalfly = ModEntities.ENTITY_BRUTALFLY.get().create(serverLevel);
+            if (brutalfly != null) {
+                brutalfly.moveTo(this.getX(), this.getY() + 0.5, this.getZ(),
+                        this.getYRot(), 0.0f);
+                serverLevel.addFreshEntity(brutalfly);
+            }
+            int butterflies = 3 + this.random.nextInt(3);
+            for (int i = 0; i < butterflies; i++) {
+                EntityButterfly bf = ModEntities.ENTITY_BUTTERFLY.get().create(serverLevel);
+                if (bf == null) continue;
+                double ox = this.getX() + (this.random.nextDouble() - 0.5) * 1.5;
+                double oz = this.getZ() + (this.random.nextDouble() - 0.5) * 1.5;
+                bf.moveTo(ox, this.getY() + 0.5, oz,
+                        this.random.nextFloat() * 360.0f, 0.0f);
+                serverLevel.addFreshEntity(bf);
+            }
+        }
+        super.die(cause);
     }
 
     @Override
