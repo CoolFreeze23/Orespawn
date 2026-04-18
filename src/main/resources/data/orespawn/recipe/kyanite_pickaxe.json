@@ -1,0 +1,6 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": ["XXX", " # ", " # "],
+  "key": { "#": { "item": "orespawn:crystal_wood_stick" }, "X": { "item": "orespawn:kyanite" } },
+  "result": { "id": "orespawn:kyanite_pickaxe", "count": 1 }
+}

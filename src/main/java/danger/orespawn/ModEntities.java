@@ -532,6 +532,14 @@ public class ModEntities {
             ENTITY_TYPES.register("elevator", () -> EntityType.Builder.of(Elevator::new, MobCategory.MISC)
                     .sized(1.0f, 1.0f).clientTrackingRange(10).build("elevator"));
 
+    // Phase 10 — Hoverboard (1.7.10 Elevator.java port). Wide flat hitbox so
+    // the rider's view sits where they expect; tracking range bumped to 128
+    // (matches legacy Elevator.getTrackingRange()) so distant boards don't
+    // snap to a stop on chunk-load.
+    public static final DeferredHolder<EntityType<?>, EntityType<HoverboardEntity>> HOVERBOARD =
+            ENTITY_TYPES.register("hoverboard", () -> EntityType.Builder.of(HoverboardEntity::new, MobCategory.MISC)
+                    .sized(1.25f, 0.4f).clientTrackingRange(8).updateInterval(2).build("hoverboard"));
+
     // Legacy 1.7.10 sidecar heads ─ deprecated but kept for save compat.
     // In 1.7.10 each giant boss's "head" was a separate tracked entity that
     // teleported next to the parent every tick; see KingHead.java,

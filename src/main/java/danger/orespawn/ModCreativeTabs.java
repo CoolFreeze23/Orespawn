@@ -23,6 +23,9 @@ public class ModCreativeTabs {
                         output.accept(ModItems.ORE_TITANIUM_ITEM.get());
                         output.accept(ModItems.ORE_SALT_ITEM.get());
                         output.accept(ModItems.TIGERS_EYE_ORE_ITEM.get());
+                        output.accept(ModItems.ORE_KYANITE_ITEM.get());
+                        output.accept(ModItems.ORE_PINK_TOURMALINE_ITEM.get());
+                        output.accept(ModItems.ANCIENT_DRIED_EGG_ITEM.get());
 
                         output.accept(ModItems.BLOCK_RUBY_ITEM.get());
                         output.accept(ModItems.BLOCK_AMETHYST_ITEM.get());
@@ -146,6 +149,12 @@ public class ModCreativeTabs {
                         output.accept(ModItems.CRYSTAL_PINK_SHOVEL.get());
                         output.accept(ModItems.CRYSTAL_PINK_HOE.get());
                         output.accept(ModItems.CRYSTAL_PINK_AXE.get());
+                        // Kyanite (Phase 10)
+                        output.accept(ModItems.KYANITE_SWORD.get());
+                        output.accept(ModItems.KYANITE_PICKAXE.get());
+                        output.accept(ModItems.KYANITE_SHOVEL.get());
+                        output.accept(ModItems.KYANITE_HOE.get());
+                        output.accept(ModItems.KYANITE_AXE.get());
                         // Tigers Eye
                         output.accept(ModItems.TIGERS_EYE_SWORD.get());
                         output.accept(ModItems.TIGERS_EYE_PICKAXE.get());
@@ -256,6 +265,11 @@ public class ModCreativeTabs {
                         output.accept(ModItems.PINK_CHESTPLATE.get());
                         output.accept(ModItems.PINK_LEGGINGS.get());
                         output.accept(ModItems.PINK_BOOTS.get());
+                        // Armor - Kyanite (Phase 10)
+                        output.accept(ModItems.KYANITE_HELMET.get());
+                        output.accept(ModItems.KYANITE_CHESTPLATE.get());
+                        output.accept(ModItems.KYANITE_LEGGINGS.get());
+                        output.accept(ModItems.KYANITE_BOOTS.get());
                         // Armor - Tigers Eye
                         output.accept(ModItems.TIGERSEYE_HELMET.get());
                         output.accept(ModItems.TIGERSEYE_CHESTPLATE.get());
@@ -283,6 +297,10 @@ public class ModCreativeTabs {
                         output.accept(ModItems.TITANIUM_NUGGET.get());
                         output.accept(ModItems.CRYSTAL_PINK_INGOT.get());
                         output.accept(ModItems.TIGERS_EYE_INGOT.get());
+                        output.accept(ModItems.KYANITE.get());
+                        output.accept(ModItems.PINK_TOURMALINE.get());
+                        output.accept(ModItems.CRYSTAL_WOOD_LUMBER.get());
+                        output.accept(ModItems.CRYSTAL_WOOD_STICK.get());
                         output.accept(ModItems.SALT.get());
                         output.accept(ModItems.CRYSTAL_STICKS.get());
                         output.accept(ModItems.GREEN_GOO.get());
@@ -377,6 +395,7 @@ public class ModCreativeTabs {
                         output.accept(ModItems.ZOO_KEEPER.get());
                         output.accept(ModItems.NETHER_LOST.get());
                         output.accept(ModItems.ELEVATOR.get());
+                        output.accept(ModItems.HOVERBOARD.get());
                         output.accept(ModItems.INSTANT_SHELTER.get());
                         output.accept(ModItems.INSTANT_GARDEN.get());
                         output.accept(ModItems.DUCT_TAPE_ITEM.get());

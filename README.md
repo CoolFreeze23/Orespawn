@@ -29,7 +29,7 @@ Drop the produced JAR into your NeoForge 1.21.1 mods folder. No additional depen
 > [Added Mobs](https://en.namu.wiki/w/Orespawn/%EC%B6%94%EA%B0%80%EB%90%98%EB%8A%94%20%EB%AA%B9)
 > reference pages — the most complete public catalogue of the original 1.7.10 mod.
 
-## Completion Metrics (1.0.0-beta.1)
+## Completion Metrics (1.1.0-dev — Phase 10)
 
 > Every "Wiki Total" below is a **strict integer count of entries explicitly enumerated**
 > on the Namu Wiki [Orespawn](https://en.namu.wiki/w/Orespawn) and
@@ -43,16 +43,16 @@ Drop the produced JAR into your NeoForge 1.21.1 mods folder. No additional depen
 | Subsystem                                                                 | Implemented | Wiki Total | % Complete |
 | ------------------------------------------------------------------------- | ----------- | ---------- | ---------- |
 | **Dimensions** (Utopia / Mining / Village / Crystal / Chaos / Danger)     | 6           | 6          | **100.0%** |
-| **Armor Sets** (Wiki §6.2)                                                | 10          | 10         | **100.0%** |
-| **Top-tier Weapons** (Wiki §6.1)                                          | 24          | 25         | **96.0%**  |
+| **Armor Sets** (Wiki §6.2 — Kyanite added Phase 10)                       | 11          | 11         | **100.0%** |
+| **Top-tier Weapons** (Wiki §6.1 — Kyanite Sword added Phase 10)           | 25          | 25         | **100.0%** |
 | **Bosses & Titans** (Wiki §13 + §14 + §15, excluding Scorpion sub-mob)    | 13          | 13         | **100.0%** |
 | **Hostile / Neutral Mobs** (Wiki mobs page §2–§13.8 minus bosses & tames) | 53          | 56         | **94.6%**  |
 | **Companion / Tame Mobs** (Wiki-listed pets only)                         | 6           | 7          | **85.7%**  |
-| **General Utility Items** (Wiki §6, items above §6.1)                     | 16          | 18         | **88.9%**  |
+| **General Utility Items** (Wiki §6, items above §6.1 — Hoverboard + Fossil added Phase 10) | 18          | 18         | **100.0%** |
 | **Dungeons / Hand-Built Structures** (Wiki §5, exhaustive)                | 3           | 15         | **20.0%**  |
 
 
-**Strict Wiki coverage: 131 / 148 enumerated entries = 88.5% mechanical completeness.**
+**Strict Wiki coverage: 135 / 151 enumerated entries = 89.4% mechanical completeness.**
 
 ### Workspace Totals (Absolute Registry Counts)
 
@@ -63,13 +63,13 @@ bonus content, multi-slot armor pieces, etc.).
 
 | Registry                                      | Count   |
 | --------------------------------------------- | ------- |
-| Entity types (`ModEntities.ENTITY_TYPES`)     | **141** |
-| Item types (`ModItems.ITEMS`)                 | **314** |
-| Block types (`ModBlocks.BLOCKS`)              | **96**  |
-| Crafting / smelting recipes                   | **217** |
+| Entity types (`ModEntities.ENTITY_TYPES`)     | **143** |
+| Item types (`ModItems.ITEMS`)                 | **332** |
+| Block types (`ModBlocks.BLOCKS`)              | **100** |
+| Crafting / smelting recipes                   | **232** |
 | Entity loot tables                            | **117** |
-| Biome modifier JSONs                          | **89**  |
-| Worldgen configured features                  | **12**  |
+| Biome modifier JSONs                          | **92**  |
+| Worldgen configured features                  | **15**  |
 | Dimensions (`data/orespawn/dimension/*.json`) | **6**   |
 
 
@@ -177,13 +177,14 @@ Should be a separate registration with attack AI + blood-drain effect.
 apples / golden apples. We have `red_cow`, `gold_cow`, `enchanted_cow`,
 `crystal_cow` (the dimension-local cows) but not the standard overworld
 apple-dropping variants. **[v1.1]**
-- **Dinosaur AI Polish** — Pointysaurus eye-contact aggression trigger
-(matches Enderman behaviour); ~~Allosaurus group-spawn coordination~~
-**DONE (Phase 9)** — `HurtByTargetGoal#setAlertOthers()` pack alert,
-biome modifier spawn count bumped to 2-3; ~~T-Rex's Big-Bertha-tooth
-drop weight tuning~~ **DONE (Phase 9)** — weighted loot table pool
-(60% × 1, 30% × 2, 10% × 3 teeth, ~4–5 kills per Big Bertha craft).
-Pointysaurus eye-contact remains. **[v1.1]**
+- ~~**Dinosaur AI Polish** — Pointysaurus eye-contact aggression trigger
+(matches Enderman behaviour); Allosaurus group-spawn coordination;
+T-Rex's Big-Bertha-tooth drop weight tuning.~~ **DONE (Phase 8/9/10)** —
+Allosaurus pack alert via `HurtByTargetGoal#setAlertOthers()` (Phase 9);
+T-Rex weighted loot table 60%/30%/10% × 1/2/3 teeth (Phase 9);
+Pointysaurus `PointysaurusStareGoal` enforces Enderman-style eye-contact
+aggro (32-block radius, 0.97 dot-product cone, line-of-sight gated)
+**DONE (Phase 10)**.
 - ~~**Robo-Army Polish** — separate `Robo Pounder` / `Robo Gunner` /
 `Robo Spinner` / `Robo Warrior` AI files instead of `robot_1..5`
 generic shells.~~ **DONE (Phase 9)** — `Robot1..5` refactored into
@@ -284,12 +285,23 @@ placed by the chunk generator. **[v1.1]**
 
 ### 4. Missing Utility & Gadgets
 
-- **Hoverboard** — the canonical jetpack-equivalent flying board. No item,
-no entity. **[v1.1]**
-- **Ancient Dried Egg / Fossil** — the underground fossil block that
-converts into a mob spawn egg when combined with a water bucket. We have
-spawn eggs for every entity, but the fossil-mining flow itself is
-absent. **[v1.1]**
+- ~~**Hoverboard** — the canonical jetpack-equivalent flying board. No item,
+no entity.~~ **DONE (Phase 10)** — `HoverboardItem` places a rideable
+`HoverboardEntity` mob with the legacy 1.7.10 `Elevator.java` physics
+(0.85 max forward / 0.35 reverse, 0.025–0.175 acceleration, 0.98/0.94
+horizontal/vertical friction, 1.25-block hover lift). Sprint key triggers
+the boost path (modern stand-in for the legacy `flyup_keystate`); rider
+takes no fall damage; Ultimate Sword cycles 1-of-10 paint colours;
+high-speed crashes drop sticks + diamonds (1.7.10 self-destruct port);
+NaN/clamp guards on velocity prevent `MovedTooQuicklyPacket` desync.
+- ~~**Ancient Dried Egg / Fossil** — the underground fossil block that
+converts into a mob spawn egg when combined with a water bucket.~~
+**DONE (Phase 10)** — `AncientDriedEggBlock` registers `ancient_dried_egg`,
+generates rarely (1-in-12) under all overworld biomes between Y=-32..32,
+and `useItemOn` consumes the water bucket (replaces with empty bucket
+unless creative), removes the block, and yields a random spawn egg
+from the canonical 7-egg dino pool (Alosaurus / Cryolophosaurus /
+Nastysaurus / Pointysaurus / T-Rex / VelocityRaptor / BabyDragon).
 - **Coin economy** — Coins spawn but the canonical "right-click coin to get
 a useful item from the loot table" reward pool is minimal compared to
 1.7.10's broader randomized gear selection. **[v1.1]**
@@ -297,30 +309,45 @@ a useful item from the loot table" reward pool is minimal compared to
 - **Duplicator Tree (functional)** — the `duplicator_log` block exists
 but does not yet duplicate adjacent saplings/items as in 1.7.10.
 **[v1.1]**
-- **Kyanite Sword + Kyanite Armor + Kyanite Ore** — the Crystal Dimension's
-blue gem branch is missing entirely (no `kyanite_*` items, no recipes, no
-`ore_kyanite` block). Wiki §6.1 lists the Kyanite Sword as a top-tier
-blade. **[v1.1]**
-- **Pink Tourmaline gem item + ore block** — we ship the `crystal_pink_*`
-armor and the `crystal_pink_sword`, but there is no `pink_tourmaline`
-raw gem item and no `ore_pink_tourmaline` block. The current swords are
-crafted from `crystal_flower_*` substitutes; restore the canonical
-gem-from-ore path. **[v1.1]**
-- **Crystal Lumber / Crystal Stick** — the Wood Crystal Sword recipe in
-Wiki §6.1 explicitly requires Crystal Lumber + Crystal Sticks. We craft
-the sword from substitute materials today; add the proper intermediate
-items + their crafting recipes. **[v1.1]**
+- ~~**Kyanite Sword + Kyanite Armor + Kyanite Ore** — the Crystal
+Dimension's blue gem branch is missing entirely.~~ **DONE (Phase 10)** —
+`ore_kyanite` block (size-6 veins, Y=-32..80) generates only in the
+Crystal Dimension via `add_crystal_dim_ores` biome modifier; drops the
+new `kyanite` gem (silk-touch preserves the ore). Full tier ladder
+shipped: `KYANITE` `SimpleTier` (1300 dur, 11.0 efficiency, 7.5 attack,
+60 enchantability, diamond mining-class), `KYANITE` `ArmorMaterial`
+(3/6/8/4 defense, 70 durability, 1.0 toughness), and the canonical
+sword + pickaxe + axe + shovel + hoe + 4-slot armor recipes (kyanite +
+crystal_wood_stick).
+- ~~**Pink Tourmaline gem item + ore block** — no `pink_tourmaline`
+raw gem and no `ore_pink_tourmaline` block.~~ **DONE (Phase 10)** —
+`ore_pink_tourmaline` block + `pink_tourmaline` gem registered;
+1:1 shapeless conversion recipes both directions with the legacy
+`crystal_pink_ingot` to keep existing `pink_*` armor / sword recipes
+working unchanged. Crystal-Dim worldgen places it via the same
+`add_crystal_dim_ores` biome modifier as kyanite.
+- ~~**Crystal Lumber / Crystal Stick** — the Wood Crystal Sword recipe
+in Wiki §6.1 explicitly requires Crystal Lumber + Crystal Sticks.~~
+**DONE (Phase 10)** — `crystal_wood_lumber` (4× per `crystal_tree_log`)
+and `crystal_wood_stick` (4× per 2 lumber) registered, with 1:1 shapeless
+conversion recipes from the legacy `crystal_planks` / `crystal_sticks`
+items so old worlds keep working. The `crystal_wood_sword` recipe now
+explicitly requires the canonical lumber + stick pair.
 - **Critter Cage filled-variant projectile pickup** — `EntityCage` flies
 but does not yet transform into a `critter_cage_<mob>` filled item on
 impact. (See `ORESPAWN_PORTING_AUDIT.md` for the call-site detail.)
 **[v1.1]**
-- **Big Bertha component drops** — the wiki recipe for the Big Bertha
-requires 16 specific boss-drop components (Mantis Claw, Water Dragon
-Scale, Green Slime, Molenoid's Nose, Sea Monster Scale, Mothra Scale,
-Basilisk Scale, Nightmare Scale, Emperor Scorpion Shell, Jumpy Bug
-Shell, Kraken's Bite, Worm's Bite, T-Rex's Bite, Caterkiller's Mandible,
-Sea Viper's Tongue, Eye of Vortex). Audit each boss's loot table and
-fill any gaps so the recipe is satisfiable end-to-end. **[v1.1]**
+- ~~**Big Bertha component drops** — the wiki recipe for the Big Bertha
+requires 16 specific boss-drop components.~~ **DONE (Phase 10)** —
+audited the full 16-component chain across `bertha_handle` (Mantis Claw,
+Water Dragon Scale, Green Goo, Big Hammer, Ray Gun) + `bertha_guard`
+(Molenoid Nose, Sea Monster Scale, Moth Scale, Basilisk Scale, Nightmare
+Scale, Emperor Scorpion Scale, Jumpy Bug Scale) + `bertha_blade` (Kraken
+Tooth, Worm Tooth, T-Rex Tooth, Ultimate Sword, CaterKiller Jaw, Sea
+Viper Tongue, Vortex Eye). Cross-checked every drop against
+`data/orespawn/loot_table/entities/*.json`; all 16 boss components are
+present and weighted, so the Big Bertha is craftable end-to-end in
+Survival without any ungated drops.
 - **Crystal Apple specifics** — the Wiki specifies "5 HP recovery, 0.85
 hunger recovery, Strength + Regeneration for 150 seconds." Our current
 `crystal_apple` food values may not match exactly; verify and align.

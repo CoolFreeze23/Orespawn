@@ -1,0 +1,6 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": ["X X", "XXX", "XXX"],
+  "key": { "X": { "item": "orespawn:kyanite" } },
+  "result": { "id": "orespawn:kyanite_chestplate", "count": 1 }
+}

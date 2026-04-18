@@ -1,0 +1,5 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [{ "item": "orespawn:crystal_sticks" }],
+  "result": { "id": "orespawn:crystal_wood_stick", "count": 1 }
+}

@@ -37,4 +37,11 @@ public class ModToolTiers {
             1500, 10.0f, 56.0f, 75, () -> Ingredient.of(ModItems.INGOT_TITANIUM.get()));
     public static final Tier QUEEN_BATTLE = new SimpleTier(BlockTags.INCORRECT_FOR_NETHERITE_TOOL,
             2200, 15.0f, 662.0f, 100, () -> Ingredient.of(ModItems.QUEEN_SCALE.get()));
+
+    // Phase 10 — Kyanite tier sits between Crystal Pink and Tigers Eye on the
+    // Crystal-Dimension power curve (durability 1300, mining-level diamond,
+    // attack 7.5, enchantability 60). Mining tier is "diamond-class" because
+    // Kyanite ore generates among the high-tier crystal cluster veins.
+    public static final Tier KYANITE = new SimpleTier(BlockTags.INCORRECT_FOR_DIAMOND_TOOL,
+            1300, 11.0f, 7.5f, 60, () -> Ingredient.of(ModItems.KYANITE.get()));
 }
