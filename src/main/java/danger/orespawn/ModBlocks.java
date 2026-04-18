@@ -159,6 +159,18 @@ public class ModBlocks {
             () -> new BossSpawnerBlock(BlockBehaviour.Properties.of().strength(50.0f, 1200.0f).lightLevel(s -> 14),
                     ModEntities.DUNGEON_BEAST));
 
+    // Phase 11 — Random Dungeon delayed spawner. Placed by ItemRandomDungeon,
+    // counts down for 200 ticks, then deletes itself and rolls a micro-dungeon.
+    public static final DeferredBlock<Block> RANDOM_DUNGEON_BLOCK = BLOCKS.register("random_dungeon_block",
+            () -> new RandomDungeonSpawnerBlock(BlockBehaviour.Properties.of()
+                    .strength(-1.0f, 3600000.0f).lightLevel(s -> 14).noLootTable()));
+
+    // Phase 11 — Extractor: hopper-driven 1-input/1-output processor for
+    // orespawn:extracting recipes. Powered automation only, no GUI.
+    public static final DeferredBlock<Block> EXTRACTOR = BLOCKS.register("extractor",
+            () -> new Extractor(BlockBehaviour.Properties.of()
+                    .strength(3.5f).requiresCorrectToolForDrops().sound(SoundType.METAL)));
+
     // Portal
     public static final DeferredBlock<Block> UTOPIA_PORTAL = BLOCKS.register("utopia_portal",
             () -> new UtopiaPortalBlock(BlockBehaviour.Properties.of().strength(-1.0f, 3600000.0f)

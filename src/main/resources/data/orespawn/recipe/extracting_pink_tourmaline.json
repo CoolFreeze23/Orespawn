@@ -1,0 +1,11 @@
+{
+  "type": "orespawn:extracting",
+  "ingredient": {
+    "item": "orespawn:ore_pink_tourmaline"
+  },
+  "result": {
+    "id": "orespawn:pink_tourmaline",
+    "count": 2
+  },
+  "processtime": 200
+}

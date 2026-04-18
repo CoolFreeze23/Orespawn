@@ -61,6 +61,8 @@
   "block.orespawn.king_spawner": "King Spawner",
   "block.orespawn.queen_spawner": "Queen Spawner",
   "block.orespawn.dungeon_spawner": "Dungeon Spawner",
+  "block.orespawn.random_dungeon_block": "Random Dungeon Spawner",
+  "block.orespawn.extractor": "Extractor",
   "block.orespawn.utopia_portal": "Utopia Portal",
 
   "block.orespawn.apple_leaves": "Apple Leaves",
@@ -323,6 +325,7 @@
   "item.orespawn.magic_apple": "Magic Apple",
   "item.orespawn.miners_dream": "Miner's Dream",
   "item.orespawn.random_dungeon": "Random Dungeon",
+  "item.orespawn.coin": "Coin",
   "item.orespawn.experience_catcher": "Experience Catcher",
   "item.orespawn.sunspot_urchin": "Sunspot Urchin",
   "item.orespawn.sifter": "Sifter",

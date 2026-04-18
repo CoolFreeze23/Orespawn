@@ -1,0 +1,11 @@
+{
+  "type": "orespawn:extracting",
+  "ingredient": {
+    "item": "orespawn:ore_kyanite"
+  },
+  "result": {
+    "id": "orespawn:kyanite",
+    "count": 2
+  },
+  "processtime": 200
+}
