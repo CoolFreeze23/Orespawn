@@ -68,8 +68,9 @@ bonus content, multi-slot armor pieces, etc.).
 | Block types (`ModBlocks.BLOCKS`)              | **102** |
 | Crafting / smelting recipes                   | **237** |
 | Entity loot tables                            | **117** |
-| Biome modifier JSONs                          | **104** |
+| Biome modifier JSONs                          | **93**  |
 | Worldgen configured features                  | **30**  |
+| Worldgen structures (`/locate`-able)          | **13**  |
 | Custom recipe types (`orespawn:extracting`)   | **1**   |
 | Dimensions (`data/orespawn/dimension/*.json`) | **6**   |
 
@@ -104,6 +105,24 @@ Sifter, and the Step Up / Step Down / Step Across walking aids.
 - **The Royal Altars.** King and Queen altar structures (`king_spawner` /
 `queen_spawner` blocks driven by `RoyalAltars` chunk hook + the canonical
 Magic Apple item as an explicit summoner).
+- **`/locate`-able Hand-Built Structures.** Every Phase 11–13 dungeon /
+tree / tower is exposed as a real datapack `Structure` (`type:
+orespawn:feature`) so vanilla `/locate structure orespawn:<name>`
+finds the nearest occurrence and prints its coordinates. The wrapper
+(`FeatureStructure` + `FeatureStructurePiece`) defers actual block
+placement to the existing `ConfiguredFeature`, so the per-feature
+bound-check / chunk-safety guards stay authoritative. Locatable IDs:
+`orespawn:robot_lab`, `orespawn:shadow_dungeon`,
+`orespawn:crystal_battle_tower`, `orespawn:crystal_maze`,
+`orespawn:royal_tree_king`, `orespawn:royal_tree_queen`,
+`orespawn:white_house`, `orespawn:wtf_alien_dungeon`,
+`orespawn:ufo_crash_site`, `orespawn:challenge_tower_king`,
+`orespawn:challenge_tower_queen`, `orespawn:mantis_nest`,
+`orespawn:beehive`. Placement (spread + salt) lives in matching
+`worldgen/structure_set/*.json` entries; biome filtering uses the
+`#orespawn:has_structure/<name>` tags. The previous
+`add_features` biome modifiers were removed so structures spawn
+exactly once per `random_spread` cell — no double-placement.
 - **The Companion Roster.** Boyfriend, Girlfriend, The Prince (3 growth stages),
 The Princess, Stinky, Spyro, Leon, Velocity Raptor, Camarasaurus, Hydrolisc,
 Gamma Metroid — all with proper `TamableAnimal` taming items, follow/sit/defend

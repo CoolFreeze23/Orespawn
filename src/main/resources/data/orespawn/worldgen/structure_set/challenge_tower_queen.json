@@ -1,0 +1,11 @@
+{
+  "structures": [
+    { "structure": "orespawn:challenge_tower_queen", "weight": 1 }
+  ],
+  "placement": {
+    "type": "minecraft:random_spread",
+    "spacing": 38,
+    "separation": 19,
+    "salt": 84311
+  }
+}

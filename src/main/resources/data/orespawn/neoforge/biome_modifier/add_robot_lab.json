@@ -1,6 +1,0 @@
-{
-  "type": "neoforge:add_features",
-  "biomes": "orespawn:village_biome",
-  "features": "orespawn:robot_lab",
-  "step": "surface_structures"
-}
