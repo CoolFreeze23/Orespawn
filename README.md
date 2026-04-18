@@ -29,7 +29,7 @@ Drop the produced JAR into your NeoForge 1.21.1 mods folder. No additional depen
 > [Added Mobs](https://en.namu.wiki/w/Orespawn/%EC%B6%94%EA%B0%80%EB%90%98%EB%8A%94%20%EB%AA%B9)
 > reference pages — the most complete public catalogue of the original 1.7.10 mod.
 
-## Completion Metrics (1.1.0-dev — Phase 12)
+## Completion Metrics (1.1.0-dev — Phase 13C)
 
 > Every "Wiki Total" below is a **strict integer count of entries explicitly enumerated**
 > on the Namu Wiki [Orespawn](https://en.namu.wiki/w/Orespawn) and
@@ -49,10 +49,10 @@ Drop the produced JAR into your NeoForge 1.21.1 mods folder. No additional depen
 | **Hostile / Neutral Mobs** (Wiki mobs page §2–§13.8 — Alien Boss added Phase 12) | 54          | 56         | **96.4%**  |
 | **Companion / Tame Mobs** (Wiki-listed pets only)                         | 6           | 7          | **85.7%**  |
 | **General Utility Items** (Wiki §6, items above §6.1 — Coin + Extractor added Phase 11) | 20          | 20         | **100.0%** |
-| **Dungeons / Hand-Built Structures** (Wiki §5 — King/Queen Tower + White House + WTF-Alien + UFO added Phase 12) | 10          | 15         | **66.7%**  |
+| **Dungeons / Hand-Built Structures** (Wiki §5 — Crystal Battle Tower + Crystal Maze added Phase 13A; Robot Lab + Shadow Dungeon added Phase 13B; Royal Trees added Phase 13C) | 15          | 15         | **100.0%** |
 
 
-**Strict Wiki coverage: 139 / 153 enumerated entries = 90.8% mechanical completeness.**
+**Strict Wiki coverage: 150 / 153 enumerated entries = 98.0% mechanical completeness.**
 
 ### Workspace Totals (Absolute Registry Counts)
 
@@ -68,8 +68,8 @@ bonus content, multi-slot armor pieces, etc.).
 | Block types (`ModBlocks.BLOCKS`)              | **102** |
 | Crafting / smelting recipes                   | **237** |
 | Entity loot tables                            | **117** |
-| Biome modifier JSONs                          | **94**  |
-| Worldgen configured features                  | **17**  |
+| Biome modifier JSONs                          | **104** |
+| Worldgen configured features                  | **30**  |
 | Custom recipe types (`orespawn:extracting`)   | **1**   |
 | Dimensions (`data/orespawn/dimension/*.json`) | **6**   |
 
@@ -338,11 +338,36 @@ minecart, compass). Placed via `add_robot_lab` biome modifier on
 *(Phase 13B Complete)*
 - **Leonopteryx Dungeon** — Mine Dimension nest with the Leonopteryx
 spawner in the centre. **[v1.1]**
-- **The Goodness Tree** — the gem-leaf giant tree (gold core, emerald
+- ~~**The Goodness Tree** — the gem-leaf giant tree (gold core, emerald
 trunk, ruby/amethyst/titanium/uranium leaves) with The King at the top.
 Currently we only place the standard Utopia tree; the Goodness Tree
-variant is stubbed. **[v1.1]**
-- **The Queen's Tree** — ruby-stem variant with The Queen on top. **[v1.1]**
+variant is stubbed.~~ **DONE (Phase 13C)** — `RoyalTreeFeature`
+(`orespawn:royal_tree_king`) anchors a 5×5 dirt root pad to the Utopia
+heightmap, raises a 16-block 3×3 trunk shell of emerald block around a
+single-column gold-block core, then domes a falloff-shaped 7-radius /
+8-tall canopy that shuffles the four canonical royal gems
+(ruby / amethyst / titanium / uranium) per-cell. The trunk
+caps in two emerald blocks above the canopy and the very apex carries
+the canonical `king_spawner` block (consumed by the Magic Apple altar
+to summon The King). The whole envelope (trunk + canopy + spawner cap)
+is bound-checked against `getMaxBuildHeight()` *before* the first write,
+and the entire footprint stays within ±9 blocks of the chunk centre so
+the canopy never forces a neighbour-chunk load while writing. Every
+cell is written with `setBlock(..., 2)` to suppress lighting +
+neighbour-update cascades. Placed via `add_royal_trees` biome modifier
+on `orespawn:utopia_plains` (rarity 240, `vegetal_decoration` step).
+*(Phase 13C Complete)*
+- ~~**The Queen's Tree** — ruby-stem variant with The Queen on top.~~
+**DONE (Phase 13C)** — Same `RoyalTreeFeature` registered with
+`queen_variant: true` (`orespawn:royal_tree_queen`). Trunk core +
+shell collapse to a single ruby-block "ruby-stem" silhouette; canopy
+palette rotates emerald block in to keep the four-gem mosaic; the
+apex carries the `queen_spawner` block. Sharing the placement and
+biome modifier with the King variant guarantees the two trees roll
+on the same `vegetal_decoration` pass and never overlap (each rolls
+independently against the rarity filter, and the chunk-centred
+footprint check naturally rejects collisions).
+*(Phase 13C Complete)*
 - **Basilisk Dungeon** — jungle structure containing Ultimate gear chest
 
 - Basilisk spawners. **[v1.1]**

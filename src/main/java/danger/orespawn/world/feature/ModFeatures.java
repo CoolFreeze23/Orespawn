@@ -67,6 +67,15 @@ public class ModFeatures {
     public static final DeferredHolder<Feature<?>, ShadowDungeonFeature> SHADOW_DUNGEON =
             FEATURES.register("shadow_dungeon", () -> new ShadowDungeonFeature(NoneFeatureConfiguration.CODEC));
 
+    // Phase 13C — Royal Trees (Utopia Dimension gem-leaf giants). The King
+    // variant ("Goodness Tree") uses a gold-block core inside an emerald-block
+    // trunk shell with a ruby/amethyst/titanium/uranium canopy; the Queen
+    // variant swaps the trunk to ruby blocks. Both cap with their respective
+    // boss spawner block, bound-checked against world height so the canopy
+    // never clips the build ceiling.
+    public static final DeferredHolder<Feature<?>, RoyalTreeFeature> ROYAL_TREE =
+            FEATURES.register("royal_tree", () -> new RoyalTreeFeature(RoyalTreeFeature.Config.CODEC));
+
     public static void register(IEventBus eventBus) {
         FEATURES.register(eventBus);
     }

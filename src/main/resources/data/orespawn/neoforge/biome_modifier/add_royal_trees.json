@@ -1,0 +1,9 @@
+{
+  "type": "neoforge:add_features",
+  "biomes": "orespawn:utopia_plains",
+  "features": [
+    "orespawn:royal_tree_king",
+    "orespawn:royal_tree_queen"
+  ],
+  "step": "vegetal_decoration"
+}
