@@ -1,0 +1,8 @@
+{
+  "feature": "orespawn:crystal_maze",
+  "placement": [
+    { "type": "minecraft:rarity_filter", "chance": 4 },
+    { "type": "minecraft:in_square" },
+    { "type": "minecraft:biome" }
+  ]
+}
