@@ -1,0 +1,8 @@
+{
+  "type": "neoforge:add_features",
+  "biomes": "#minecraft:is_overworld",
+  "features": [
+    "orespawn:ancient_dried_egg"
+  ],
+  "step": "underground_decoration"
+}

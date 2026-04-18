@@ -1,0 +1,5 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [{ "item": "orespawn:crystal_planks" }],
+  "result": { "id": "orespawn:crystal_wood_lumber", "count": 1 }
+}

@@ -143,6 +143,7 @@ public class ModEntityAttributes {
         // Misc (mob)
         event.put(ModEntities.ANT_ROBOT.get(), AntRobot.createAttributes().build());
         event.put(ModEntities.ELEVATOR.get(), Elevator.createAttributes().build());
+        event.put(ModEntities.HOVERBOARD.get(), HoverboardEntity.createAttributes().build());
         event.put(ModEntities.KING_HEAD.get(), KingHead.createAttributes().build());
         event.put(ModEntities.QUEEN_HEAD.get(), QueenHead.createAttributes().build());
         event.put(ModEntities.GODZILLA_HEAD.get(), GodzillaHead.createAttributes().build());
