@@ -43,6 +43,18 @@ public class ModFeatures {
     public static final DeferredHolder<Feature<?>, UfoCrashSiteFeature> UFO_CRASH_SITE =
             FEATURES.register("ufo_crash_site", () -> new UfoCrashSiteFeature(NoneFeatureConfiguration.CODEC));
 
+    // Phase 13A — Crystal Battle Tower (cylindrical 5-floor tower with the
+    // Vortex spawner on the cap floor; see CrystalBattleTowerFeature for
+    // the floor-by-floor mob ladder ported from the 1.7.10 source).
+    public static final DeferredHolder<Feature<?>, CrystalBattleTowerFeature> CRYSTAL_BATTLE_TOWER =
+            FEATURES.register("crystal_battle_tower", () -> new CrystalBattleTowerFeature(NoneFeatureConfiguration.CODEC));
+
+    // Phase 13A — Crystal Dimension Maze. Per-chunk procedural maze, anchored
+    // strictly inside the owning chunk's bounding box so it never triggers
+    // cross-chunk runaway worldgen.
+    public static final DeferredHolder<Feature<?>, CrystalMazeFeature> CRYSTAL_MAZE =
+            FEATURES.register("crystal_maze", () -> new CrystalMazeFeature(NoneFeatureConfiguration.CODEC));
+
     public static void register(IEventBus eventBus) {
         FEATURES.register(eventBus);
     }
