@@ -1,0 +1,6 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": ["XX", " #", " #"],
+  "key": { "#": { "item": "orespawn:crystal_wood_stick" }, "X": { "item": "orespawn:kyanite" } },
+  "result": { "id": "orespawn:kyanite_hoe", "count": 1 }
+}

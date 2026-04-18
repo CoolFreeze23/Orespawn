@@ -97,6 +97,12 @@ public class ModArmorMaterials {
             () -> new ArmorMaterial(defenseMap(9, 14, 16, 9), 1500,
                     SoundEvents.ARMOR_EQUIP_GENERIC, () -> Ingredient.of(ModItems.QUEEN_SCALE.get()), layer("queen"), 3.0F, 0.1F));
 
+    // Phase 10 — Kyanite armor sits between Pink and Tigers Eye on the crystal
+    // power curve (defense 3/6/8/4 ~= diamond; durability 70; toughness 1.0).
+    public static final Holder<ArmorMaterial> KYANITE = ARMOR_MATERIALS.register("kyanite",
+            () -> new ArmorMaterial(defenseMap(3, 6, 8, 4), 70,
+                    SoundEvents.ARMOR_EQUIP_GENERIC, () -> Ingredient.of(ModItems.KYANITE.get()), layer("kyanite"), 1.0F, 0F));
+
     public static void register(IEventBus eventBus) {
         ARMOR_MATERIALS.register(eventBus);
     }

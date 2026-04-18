@@ -1,6 +1,6 @@
 {
   "type": "minecraft:crafting_shaped",
   "pattern": ["X", "X", "#"],
-  "key": { "#": { "item": "orespawn:crystal_sticks" }, "X": { "item": "orespawn:crystal_planks" } },
+  "key": { "#": { "item": "orespawn:crystal_wood_stick" }, "X": { "item": "orespawn:crystal_wood_lumber" } },
   "result": { "id": "orespawn:crystal_wood_sword", "count": 1 }
 }

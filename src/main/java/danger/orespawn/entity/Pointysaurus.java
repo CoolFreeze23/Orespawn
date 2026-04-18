@@ -24,6 +24,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import danger.orespawn.OreSpawnMod;
 import danger.orespawn.entity.ai.DinosaurMeleeAttackGoal;
+import danger.orespawn.entity.ai.PointysaurusStareGoal;
 
 public class Pointysaurus extends Monster {
     private static final EntityDataAccessor<Integer> DATA_ATTACKING =
@@ -45,11 +46,17 @@ public class Pointysaurus extends Monster {
         this.goalSelector.addGoal(3, new LookAtPlayerGoal(this, Player.class, 8.0f));
         this.goalSelector.addGoal(4, new RandomLookAroundGoal(this));
         this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
+        // Phase 10 — Enderman-style eye-contact aggression. Runs at priority 2
+        // so it overrides the regular proximity targeting; if you stare at the
+        // Pointysaurus it locks onto you. Wider-radius proximity aggro still
+        // exists at priority 3 as a fallback so it isn't completely passive
+        // when you mind your business but get too close.
+        this.targetSelector.addGoal(2, new PointysaurusStareGoal(this));
         // Pointysaurus only targets players — it will not attack other mobs.
         // This preserves the 1.7.10 isSuitableTarget filter (rejects all
         // Monster instances) which would otherwise make it pacifist without
         // an explicit Player-only target goal.
-        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
+        this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, Player.class, true));
     }
 
     public static AttributeSupplier.Builder createAttributes() {

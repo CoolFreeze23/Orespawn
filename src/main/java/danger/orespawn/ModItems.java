@@ -104,6 +104,23 @@ public class ModItems {
     public static final DeferredItem<Item> TITANIUM_NUGGET = ITEMS.registerSimpleItem("titanium_nugget");
     public static final DeferredItem<Item> CRYSTAL_PINK_INGOT = ITEMS.registerSimpleItem("crystal_pink_ingot");
     public static final DeferredItem<Item> TIGERS_EYE_INGOT = ITEMS.registerSimpleItem("tigers_eye_ingot");
+
+    // Phase 10 — Canonical wiki-named gems & wood. These are the "primary" items
+    // exposed in armor/tool recipes; the legacy CRYSTAL_PINK_INGOT and
+    // CRYSTAL_STONE/CRYSTAL_PLANKS items remain registered for backwards
+    // compatibility, with shapeless 1:1 conversion recipes between them.
+    public static final DeferredItem<Item> KYANITE = ITEMS.registerSimpleItem("kyanite");
+    public static final DeferredItem<Item> PINK_TOURMALINE = ITEMS.registerSimpleItem("pink_tourmaline");
+    public static final DeferredItem<Item> CRYSTAL_WOOD_LUMBER = ITEMS.registerSimpleItem("crystal_wood_lumber");
+    public static final DeferredItem<Item> CRYSTAL_WOOD_STICK = ITEMS.registerSimpleItem("crystal_wood_stick");
+
+    // Phase 10 — Block item for ancient_dried_egg fossil block.
+    public static final DeferredItem<BlockItem> ANCIENT_DRIED_EGG_ITEM =
+            ITEMS.registerSimpleBlockItem("ancient_dried_egg", ModBlocks.ANCIENT_DRIED_EGG);
+    public static final DeferredItem<BlockItem> ORE_KYANITE_ITEM =
+            ITEMS.registerSimpleBlockItem("ore_kyanite", ModBlocks.ORE_KYANITE);
+    public static final DeferredItem<BlockItem> ORE_PINK_TOURMALINE_ITEM =
+            ITEMS.registerSimpleBlockItem("ore_pink_tourmaline", ModBlocks.ORE_PINK_TOURMALINE);
     // Salt for cooking recipes (popcorn, salad, etc.)
     public static final DeferredItem<Item> SALT = ITEMS.register("salt",
             () -> new ItemSalt(new Item.Properties()));
@@ -218,6 +235,19 @@ public class ModItems {
             () -> new HoeItem(ModToolTiers.CRYSTAL_PINK, new Item.Properties().attributes(HoeItem.createAttributes(ModToolTiers.CRYSTAL_PINK, -3.0f, 0.0f))));
     public static final DeferredItem<Item> CRYSTAL_PINK_AXE = ITEMS.register("crystal_pink_axe",
             () -> new AxeItem(ModToolTiers.CRYSTAL_PINK, new Item.Properties().attributes(AxeItem.createAttributes(ModToolTiers.CRYSTAL_PINK, 5.0f, -3.0f))));
+
+    // Phase 10 — Kyanite tier tools (the missing wiki §6.1 entry). Sits between
+    // Crystal Pink and Tigers Eye on the Crystal Dimension power curve.
+    public static final DeferredItem<Item> KYANITE_SWORD = ITEMS.register("kyanite_sword",
+            () -> new SwordItem(ModToolTiers.KYANITE, new Item.Properties().attributes(SwordItem.createAttributes(ModToolTiers.KYANITE, 3, -2.4f))));
+    public static final DeferredItem<Item> KYANITE_PICKAXE = ITEMS.register("kyanite_pickaxe",
+            () -> new PickaxeItem(ModToolTiers.KYANITE, new Item.Properties().attributes(PickaxeItem.createAttributes(ModToolTiers.KYANITE, 1.0f, -2.8f))));
+    public static final DeferredItem<Item> KYANITE_SHOVEL = ITEMS.register("kyanite_shovel",
+            () -> new ShovelItem(ModToolTiers.KYANITE, new Item.Properties().attributes(ShovelItem.createAttributes(ModToolTiers.KYANITE, 1.5f, -3.0f))));
+    public static final DeferredItem<Item> KYANITE_HOE = ITEMS.register("kyanite_hoe",
+            () -> new HoeItem(ModToolTiers.KYANITE, new Item.Properties().attributes(HoeItem.createAttributes(ModToolTiers.KYANITE, -3.0f, 0.0f))));
+    public static final DeferredItem<Item> KYANITE_AXE = ITEMS.register("kyanite_axe",
+            () -> new AxeItem(ModToolTiers.KYANITE, new Item.Properties().attributes(AxeItem.createAttributes(ModToolTiers.KYANITE, 5.0f, -3.0f))));
 
     // Tigers Eye tier tools
     public static final DeferredItem<Item> TIGERS_EYE_SWORD = ITEMS.register("tigers_eye_sword",
@@ -464,6 +494,10 @@ public class ModItems {
             () -> new ItemNetherLost(new Item.Properties()));
     public static final DeferredItem<Item> ELEVATOR = ITEMS.register("elevator",
             () -> new ItemElevator(new Item.Properties()));
+
+    // Phase 10 — Hoverboard placement item (legacy 1.7.10 ItemElevator port).
+    public static final DeferredItem<Item> HOVERBOARD = ITEMS.register("hoverboard",
+            () -> new HoverboardItem(new Item.Properties()));
     public static final DeferredItem<Item> INSTANT_SHELTER = ITEMS.register("instant_shelter",
             () -> new InstantShelter(new Item.Properties().stacksTo(16)));
     public static final DeferredItem<Item> INSTANT_GARDEN = ITEMS.register("instant_garden",
@@ -610,6 +644,20 @@ public class ModItems {
     public static final DeferredItem<Item> PINK_BOOTS = ITEMS.register("pink_boots",
             () -> new ItemOreSpawnArmor(ModArmorMaterials.PINK, ArmorItem.Type.BOOTS,
                     new Item.Properties().durability(ArmorItem.Type.BOOTS.getDurability(3)), "pink"));
+
+    // Phase 10 — Kyanite armor (the missing wiki §6.2 set).
+    public static final DeferredItem<Item> KYANITE_HELMET = ITEMS.register("kyanite_helmet",
+            () -> new ItemOreSpawnArmor(ModArmorMaterials.KYANITE, ArmorItem.Type.HELMET,
+                    new Item.Properties().durability(ArmorItem.Type.HELMET.getDurability(4)), "kyanite"));
+    public static final DeferredItem<Item> KYANITE_CHESTPLATE = ITEMS.register("kyanite_chestplate",
+            () -> new ItemOreSpawnArmor(ModArmorMaterials.KYANITE, ArmorItem.Type.CHESTPLATE,
+                    new Item.Properties().durability(ArmorItem.Type.CHESTPLATE.getDurability(4)), "kyanite"));
+    public static final DeferredItem<Item> KYANITE_LEGGINGS = ITEMS.register("kyanite_leggings",
+            () -> new ItemOreSpawnArmor(ModArmorMaterials.KYANITE, ArmorItem.Type.LEGGINGS,
+                    new Item.Properties().durability(ArmorItem.Type.LEGGINGS.getDurability(4)), "kyanite"));
+    public static final DeferredItem<Item> KYANITE_BOOTS = ITEMS.register("kyanite_boots",
+            () -> new ItemOreSpawnArmor(ModArmorMaterials.KYANITE, ArmorItem.Type.BOOTS,
+                    new Item.Properties().durability(ArmorItem.Type.BOOTS.getDurability(4)), "kyanite"));
 
     // Tigers Eye armor
     public static final DeferredItem<Item> TIGERSEYE_HELMET = ITEMS.register("tigerseye_helmet",

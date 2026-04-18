@@ -1,0 +1,5 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [{ "item": "orespawn:crystal_pink_ingot" }],
+  "result": { "id": "orespawn:pink_tourmaline", "count": 1 }
+}

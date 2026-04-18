@@ -148,6 +148,7 @@ public class OreSpawnClient {
             // Misc (mob)
             event.registerEntityRenderer(ModEntities.ANT_ROBOT.get(), AntRobotRenderer::new);
             event.registerEntityRenderer(ModEntities.ELEVATOR.get(), ElevatorRenderer::new);
+            event.registerEntityRenderer(ModEntities.HOVERBOARD.get(), HoverboardRenderer::new);
             event.registerEntityRenderer(ModEntities.KING_HEAD.get(), KingHeadRenderer::new);
             event.registerEntityRenderer(ModEntities.QUEEN_HEAD.get(), QueenHeadRenderer::new);
             event.registerEntityRenderer(ModEntities.GODZILLA_HEAD.get(), GodzillaHeadRenderer::new);
@@ -308,6 +309,7 @@ public class OreSpawnClient {
             // Misc (mob) - custom models only (RedCow and SpiderDriver use vanilla models)
             event.registerLayerDefinition(AntRobotRenderer.MODEL_LAYER, ModelAntRobot::createBodyLayer);
             event.registerLayerDefinition(ElevatorRenderer.MODEL_LAYER, ModelElevator::createBodyLayer);
+            event.registerLayerDefinition(HoverboardRenderer.MODEL_LAYER, HoverboardModel::createBodyLayer);
             event.registerLayerDefinition(KingHeadRenderer.MODEL_LAYER, ModelKingHead::createBodyLayer);
             event.registerLayerDefinition(QueenHeadRenderer.MODEL_LAYER, ModelQueenHead::createBodyLayer);
             event.registerLayerDefinition(GodzillaHeadRenderer.MODEL_LAYER, ModelGodzillaHead::createBodyLayer);
