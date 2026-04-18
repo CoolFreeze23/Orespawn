@@ -25,6 +25,7 @@ public class ModEntityAttributes {
     public static void registerAttributes(EntityAttributeCreationEvent event) {
         // Monster (hostile)
         event.put(ModEntities.ALIEN.get(), Alien.createAttributes().build());
+        event.put(ModEntities.ALIEN_BOSS.get(), AlienBoss.createAttributes().build());
         event.put(ModEntities.ALOSAURUS.get(), Alosaurus.createAttributes().build());
         event.put(ModEntities.ATTACK_SQUID.get(), AttackSquid.createAttributes().build());
         event.put(ModEntities.BAND_P.get(), BandP.createAttributes().build());

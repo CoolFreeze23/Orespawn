@@ -29,7 +29,7 @@ Drop the produced JAR into your NeoForge 1.21.1 mods folder. No additional depen
 > [Added Mobs](https://en.namu.wiki/w/Orespawn/%EC%B6%94%EA%B0%80%EB%90%98%EB%8A%94%20%EB%AA%B9)
 > reference pages — the most complete public catalogue of the original 1.7.10 mod.
 
-## Completion Metrics (1.1.0-dev — Phase 11)
+## Completion Metrics (1.1.0-dev — Phase 12)
 
 > Every "Wiki Total" below is a **strict integer count of entries explicitly enumerated**
 > on the Namu Wiki [Orespawn](https://en.namu.wiki/w/Orespawn) and
@@ -46,10 +46,10 @@ Drop the produced JAR into your NeoForge 1.21.1 mods folder. No additional depen
 | **Armor Sets** (Wiki §6.2 — Kyanite added Phase 10)                       | 11          | 11         | **100.0%** |
 | **Top-tier Weapons** (Wiki §6.1 — Kyanite Sword added Phase 10)           | 25          | 25         | **100.0%** |
 | **Bosses & Titans** (Wiki §13 + §14 + §15, excluding Scorpion sub-mob)    | 13          | 13         | **100.0%** |
-| **Hostile / Neutral Mobs** (Wiki mobs page §2–§13.8 minus bosses & tames) | 53          | 56         | **94.6%**  |
+| **Hostile / Neutral Mobs** (Wiki mobs page §2–§13.8 — Alien Boss added Phase 12) | 54          | 56         | **96.4%**  |
 | **Companion / Tame Mobs** (Wiki-listed pets only)                         | 6           | 7          | **85.7%**  |
 | **General Utility Items** (Wiki §6, items above §6.1 — Coin + Extractor added Phase 11) | 20          | 20         | **100.0%** |
-| **Dungeons / Hand-Built Structures** (Wiki §5, exhaustive — Mantis Nest + Beehive added Phase 11) | 5           | 15         | **33.3%**  |
+| **Dungeons / Hand-Built Structures** (Wiki §5 — King/Queen Tower + White House + WTF-Alien + UFO added Phase 12) | 10          | 15         | **66.7%**  |
 
 
 **Strict Wiki coverage: 139 / 153 enumerated entries = 90.8% mechanical completeness.**
@@ -167,9 +167,13 @@ docs. **[v2.0]**
 
 ### 2. The Unported / Underported Roster
 
-- **Criminal** — the Banker / Police / Pharmacist humanoid bandits that
+- ~~**Criminal** — the Banker / Police / Pharmacist humanoid bandits that
 steal armor pieces on contact. White House dungeon spawn. Not in the
-entity registry. **[v1.1]**
+entity registry.~~ **DONE (Phase 12)** — `BandP` now implements the
+canonical armor-steal AI: 1-in-4 chance per melee hit to pluck an armor
+piece (or fallback inventory item) into a 16-slot stash. Stash is NBT-
+persistent across saves, drops on death via `dropCustomDeathLoot`, and
+holding stolen items pins the mob (`removeWhenFarAway` returns false).
 - **Vampire Butterfly** — hostile butterfly variant in the Danger
 Dimension. Currently we only have the passive `butterfly` ambient mob.
 Should be a separate registration with attack AI + blood-drain effect.
@@ -230,14 +234,24 @@ finalizeSpawn time.
 
 ### 3. Missing Dungeons & Worldgen
 
-- **Challenge Tower (King Variant)** — the 7-floors-up / 8-floors-down
+- ~~**Challenge Tower (King Variant)** — the 7-floors-up / 8-floors-down
 tower with the canonical floor-by-floor mob layout (Cloud Shark →
 Rotator → Bee → Mantis → Mothra → Mothra → Nightmare ascending; Worm →
 T-Rex → Basilisk → Hercules → Jumpy/Spit → Hammerhead → Emperor Scorpion
-descending). Drops Royal Guardian Greatsword + full armor + Prince egg.
-**[v2.0]**
-- **Queen Challenge Tower** — alternate harder variant that drops Royal
-Guardian Greatsword + Queen Scale armor + Princess egg. **[v2.0]**
+descending). Drops Royal Guardian Greatsword + full armor + Prince egg.~~
+**DONE (Phase 12)** — `ChallengeTowerFeature` (`orespawn:challenge_tower_king`)
+generates the 28×16×28 stone-brick base + 6 stacked floors with per-floor
+spawners (Cloud Shark → Lurking Terror → Rotator → Bee → Mantis → Mothra),
+Emperor Scorpion column inside the base, and 4 corner top-deck chests
+holding the Royal Guardian set + Prince egg.
+- ~~**Queen Challenge Tower** — alternate harder variant that drops Royal
+Guardian Greatsword + Queen Scale armor + Princess egg.~~ **DONE (Phase 12)**
+— `ChallengeTowerFeature(queen_variant=true)` shares the King layout but
+swaps the floor ladder to Mantis → Lurking Terror → Rotator → Bee → Mothra
+→ Pitch Black (Nightmare cap), and the top chest contains the new
+`PRINCESS_EGG` instead of `PRINCE_EGG`. Both placed via
+`add_challenge_towers` biome modifier (`#minecraft:is_overworld`,
+rarity 1500, `surface_structures` step).
 - **Crystal Battle Tower** — Crystal Dimension dungeon with Crystal Monster
 spawners + Vortex spawner on the top floor. **[v2.0]**
 - **Crystal Dimension Mazes** — the labyrinthine tunnel networks generated
@@ -258,7 +272,13 @@ on `#minecraft:is_forest` and `#minecraft:is_jungle` (rarity 60).
 spawners + Ender Reaper spawners. **[v1.1]**
 - **Greenhouse** — Danger Dimension structure with Triffid spawners on the
 roof and many decorative crops inside. **[v1.1]**
-- **White House** — Criminal spawner dungeon. **[v1.1]**
+- ~~**White House** — Criminal spawner dungeon.~~ **DONE (Phase 12)** —
+`WhiteHouseFeature` (`orespawn:white_house`) builds a 13×7×11 white
+terracotta + quartz-pillar mansion on the surface, with 4 corner
+`BandP` (Criminal) spawners and a centre treasure chest containing
+uranium/titanium nuggets, emerald, diamond, gold, cooked porkchop, and
+`BAND_P` spawn-eggs. Placed via `add_white_house` biome modifier
+(`#minecraft:is_overworld`, rarity 800, `surface_structures` step).
 - **Robot Lab** — Village Dimension structure that hosts Robo Warrior,
 Robo Spinner, and Robo Pounder spawners. **[v1.1]**
 - **Leonopteryx Dungeon** — Mine Dimension nest with the Leonopteryx
@@ -272,8 +292,21 @@ variant is stubbed. **[v1.1]**
 
 - Basilisk spawners. **[v1.1]**
 
-- **WTF–Alien Dungeon** — Mine Dimension structure with Alien-swarm
-spawners and the ultimate gear chest. **[v1.1]**
+- ~~**WTF–Alien Dungeon** — Mine Dimension structure with Alien-swarm
+spawners and the ultimate gear chest.~~ **DONE (Phase 12)** —
+`WtfAlienDungeonFeature` (`orespawn:wtf_alien_dungeon`) buries a 9×7×9
+lapis-block chamber 12 blocks under the surface with a vertical lapis-
+ringed access shaft and glowstone cap. Inside: 2 stacked `Alien`
+spawners under a single `Alien Boss` spawner, plus a corner chest with
+the full Ultimate gear set (helmet, chestplate, leggings, boots,
+sword, bow). Placed via `add_wtf_alien_dungeon` biome modifier on
+`#minecraft:is_overworld` (rarity 600, `underground_structures` step).
+- **UFO Crash Site** — surface companion to the WTF-Alien Dungeon.
+`UfoCrashSiteFeature` (`orespawn:ufo_crash_site`) generates a tilted
+6-radius iron-block flying-saucer disc with a light-blue glass dome,
+lapis console, single Alien spawner, and an Alien-scrap loot chest.
+Placed via `add_ufo_crash_site` biome modifier (rarity 1000).
+**NEW (Phase 12)**.
 - **Ender Dungeon** — overworld structure with Ender Knight + Ender
 Reaper spawners. **[v1.1]**
 - **Sea Viper's Dungeon** — underwater structure. **[v1.1]**
@@ -408,8 +441,14 @@ side-effect. **[v1.1]**
 - **Worm burrow / surface-attack cycle** — `WormSmall`/`WormMedium`/
 `WormLarge` are flat Mob entities without the canonical down-count /
 up-count burrow timer. **[v1.1]**
-- **Alien torch-destruction** — 15-block torch search + mob-griefing
-gating not yet wired up. **[v1.1]**
+- ~~**Alien torch-destruction** — 15-block torch search + mob-griefing
+gating not yet wired up.~~ **DONE (Phase 12)** — `AlienTorchSeekGoal`
+attached to `Alien#registerGoals` at priority 1. Throttled scan
+(every 30 ticks, 8-block radius cube), explicitly gated behind
+`GameRules.RULE_MOBGRIEFING`, breaks vanilla `TORCH`/`WALL_TORCH`/
+`SOUL_TORCH`/`SOUL_WALL_TORCH` and `ModBlocks.EXTREME_TORCH`. Goal
+short-circuits when a player target exists so torch-swatting never
+preempts combat.
 - **Chaos Awakens cross-pollination guards** — explicitly tag overlapping
 entity IDs (mantis, basilisk, hercules_beetle) so Chaos Awakens can
 coexist without registry collisions. **[v1.1]**

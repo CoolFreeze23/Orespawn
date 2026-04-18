@@ -412,10 +412,12 @@
   "item.orespawn.cage_empty": "Empty Cage",
   "item.orespawn.caged_mob": "Caged %s",
   "item.orespawn.prince_egg": "Prince Egg",
+  "item.orespawn.princess_egg": "Princess Egg",
   "tooltip.orespawn.caged_health": "Health: %s",
   "tooltip.orespawn.caged_persistent": "Live state preserved",
 
   "entity.orespawn.alien": "Alien",
+  "entity.orespawn.alien_boss": "Alien Boss",
   "entity.orespawn.alosaurus": "Alosaurus",
   "entity.orespawn.attack_squid": "Attack Squid",
   "entity.orespawn.band_p": "B and P",
@@ -557,6 +559,7 @@
   "container.orespawn.crystal_workbench": "Crystal Workbench",
 
   "item.orespawn.alien_spawn_egg": "Alien Spawn Egg",
+  "item.orespawn.alien_boss_spawn_egg": "Alien Boss Spawn Egg",
   "item.orespawn.alosaurus_spawn_egg": "Alosaurus Spawn Egg",
   "item.orespawn.ant_spawn_egg": "Ant Spawn Egg",
   "item.orespawn.ant_robot_spawn_egg": "Ant Robot Spawn Egg",

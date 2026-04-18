@@ -18,6 +18,17 @@ public class ModEntities {
             ENTITY_TYPES.register("alien", () -> EntityType.Builder.of(Alien::new, MobCategory.MONSTER)
                     .sized(0.6f, 1.8f).clientTrackingRange(10).build("alien"));
 
+    // Phase 12 — Alien Boss is a buffed Alien sub-type registered as a
+    // separate entity ID so its summon-aura AI and persistent flag don't
+    // bleed into the regular Alien spawn pool. Hitbox is 1.4 × 3.5
+    // (roughly twice the standard Alien) so the boss reads as the dungeon
+    // mini-boss it is. Tracking range is bumped to 16 chunks so distant
+    // players can see it inside the WTF-Alien lapis chamber from the
+    // surface entry shaft.
+    public static final DeferredHolder<EntityType<?>, EntityType<AlienBoss>> ALIEN_BOSS =
+            ENTITY_TYPES.register("alien_boss", () -> EntityType.Builder.of(AlienBoss::new, MobCategory.MONSTER)
+                    .sized(1.4f, 3.5f).clientTrackingRange(16).build("alien_boss"));
+
     public static final DeferredHolder<EntityType<?>, EntityType<Alosaurus>> ALOSAURUS =
             ENTITY_TYPES.register("alosaurus", () -> EntityType.Builder.of(Alosaurus::new, MobCategory.MONSTER)
                     .sized(1.9f, 3.6f).clientTrackingRange(12).build("alosaurus"));
