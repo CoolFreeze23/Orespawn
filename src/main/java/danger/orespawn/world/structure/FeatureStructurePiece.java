@@ -24,34 +24,71 @@ import net.minecraft.world.level.levelgen.structure.pieces.StructurePieceSeriali
  * round-trip), and replays the feature's {@code place} call once during
  * {@link #postProcess}.
  *
- * <p>The bounding box of the piece is intentionally a single 1×1×1 cell
- * at the feature's origin: each wrapped feature owns its own bound-checks
- * and footprint, so the structure pipeline only needs to mark "there is a
- * structure starting here." Vanilla's chunk-overlap gating still calls
- * {@code postProcess} exactly once per generated chunk that intersects
- * this box, which means the feature runs exactly once per spawn — there
- * is no risk of duplicate placement from large overlaps.</p>
+ * <p>The bounding box of the piece is inflated around the feature's logical
+ * origin by per-construction extents (defaults: ±16 horizontal, -16 below /
+ * +80 above for the Royal Trees). This box acts as a "permit" for the
+ * wrapped feature: any {@code level.setBlock} call inside the envelope is
+ * accepted, while writes outside it are silently bulldozed by the chunk
+ * generator on the next pass. A previous 1×1×1 box caused the Phase 13C
+ * Royal Trees to be sheared at chunk borders — the inflated box fixes
+ * that by giving the tree's full ±9-block horizontal footprint and
+ * up-to-60-block vertical reach a contiguous write surface across multiple
+ * chunks. Vanilla calls {@code postProcess} once per generated chunk that
+ * intersects the inflated box (up to four times for a ±16 envelope), so
+ * to keep the wrapped feature's RNG / surface checks deterministic we
+ * gate placement to the single chunk that contains the feature's stored
+ * {@link #featureOrigin}. Cross-chunk writes from that one invocation
+ * still flow through the {@link WorldGenLevel}, which buffers them into
+ * neighbouring chunks that the inflated box has already "permitted".</p>
  */
 public class FeatureStructurePiece extends StructurePiece {
 
     private final ResourceLocation featureId;
+    private final BlockPos featureOrigin;
 
-    public FeatureStructurePiece(BlockPos origin, Holder<ConfiguredFeature<?, ?>> feature) {
-        super(ModStructureTypes.FEATURE_PIECE.get(), 0, new BoundingBox(origin));
+    /**
+     * Construct a piece whose bounding box is inflated around {@code origin} by
+     * {@code horizontalExtent} blocks on the X/Z axes, by {@code downExtent}
+     * blocks below {@code origin.y}, and by {@code upExtent} blocks above.
+     * The inflated box acts as a "permit" for the wrapped feature: any
+     * {@code level.setBlock} call inside this envelope is allowed, while
+     * writes outside it are silently bulldozed by the chunk generator on the
+     * very next pass — which is exactly what produced the sheer chunk-edge
+     * cut-off observed on the Phase 13C Royal Trees with the previous 1×1×1
+     * box.
+     */
+    public FeatureStructurePiece(BlockPos origin, Holder<ConfiguredFeature<?, ?>> feature,
+                                 int horizontalExtent, int downExtent, int upExtent) {
+        super(ModStructureTypes.FEATURE_PIECE.get(), 0,
+                new BoundingBox(
+                        origin.getX() - horizontalExtent,
+                        origin.getY() - downExtent,
+                        origin.getZ() - horizontalExtent,
+                        origin.getX() + horizontalExtent,
+                        origin.getY() + upExtent,
+                        origin.getZ() + horizontalExtent));
         this.featureId = feature.unwrapKey()
                 .map(ResourceKey::location)
                 .orElseThrow(() -> new IllegalStateException(
                         "FeatureStructurePiece requires a registry-backed ConfiguredFeature; got an inline holder."));
+        this.featureOrigin = origin.immutable();
     }
 
     public FeatureStructurePiece(StructurePieceSerializationContext ctx, CompoundTag tag) {
         super(ModStructureTypes.FEATURE_PIECE.get(), tag);
         this.featureId = ResourceLocation.parse(tag.getString("feature"));
+        this.featureOrigin = new BlockPos(
+                tag.getInt("origin_x"),
+                tag.getInt("origin_y"),
+                tag.getInt("origin_z"));
     }
 
     @Override
     protected void addAdditionalSaveData(StructurePieceSerializationContext ctx, CompoundTag tag) {
         tag.putString("feature", featureId.toString());
+        tag.putInt("origin_x", featureOrigin.getX());
+        tag.putInt("origin_y", featureOrigin.getY());
+        tag.putInt("origin_z", featureOrigin.getZ());
     }
 
     @Override
@@ -62,12 +99,19 @@ public class FeatureStructurePiece extends StructurePiece {
                             BoundingBox boundingBox,
                             ChunkPos chunkPos,
                             BlockPos pivot) {
+        // Anchor-chunk gate: only place the feature during the postProcess
+        // call for the chunk that owns the feature's origin. Other intersected
+        // chunks (the ones the inflated bounding box "permits" cross-chunk
+        // writes into) skip placement so we don't re-run the feature with
+        // stale RNG and double-stamp the geometry.
+        if (chunkPos.x != (featureOrigin.getX() >> 4) || chunkPos.z != (featureOrigin.getZ() >> 4)) {
+            return;
+        }
         // The wrapped feature does its own heightmap resolution + footprint
-        // bound-checks, so we hand it the piece's logical origin and let it
-        // re-anchor. This keeps the per-feature stability guards
-        // (Y-bound check, surface-stability check, no-liquid check) authoritative.
-        BlockPos origin = new BlockPos(this.boundingBox.minX(), this.boundingBox.minY(), this.boundingBox.minZ());
-
+        // bound-checks, so we hand it the piece's stored logical origin
+        // (NOT the inflated bounding box's min corner) and let it re-anchor.
+        // This keeps the per-feature stability guards (Y-bound check,
+        // surface-stability check, no-liquid check) authoritative.
         Registry<ConfiguredFeature<?, ?>> registry =
                 level.registryAccess().registryOrThrow(Registries.CONFIGURED_FEATURE);
         ConfiguredFeature<?, ?> configured = registry.get(featureId);
@@ -75,6 +119,6 @@ public class FeatureStructurePiece extends StructurePiece {
             throw new IllegalStateException(
                     "FeatureStructurePiece could not resolve configured feature " + featureId);
         }
-        configured.place(level, chunkGenerator, random, origin);
+        configured.place(level, chunkGenerator, random, featureOrigin);
     }
 }
