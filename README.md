@@ -29,7 +29,7 @@ Drop the produced JAR into your NeoForge 1.21.1 mods folder. No additional depen
 > [Added Mobs](https://en.namu.wiki/w/Orespawn/%EC%B6%94%EA%B0%80%EB%90%98%EB%8A%94%20%EB%AA%B9)
 > reference pages — the most complete public catalogue of the original 1.7.10 mod.
 
-## Completion Metrics (1.1.0-dev — Phase 13C)
+## Completion Metrics (1.1.0-dev — Phase 13B + /locate fix)
 
 > Every "Wiki Total" below is a **strict integer count of entries explicitly enumerated**
 > on the Namu Wiki [Orespawn](https://en.namu.wiki/w/Orespawn) and
@@ -49,10 +49,26 @@ Drop the produced JAR into your NeoForge 1.21.1 mods folder. No additional depen
 | **Hostile / Neutral Mobs** (Wiki mobs page §2–§13.8 — Alien Boss added Phase 12) | 54          | 56         | **96.4%**  |
 | **Companion / Tame Mobs** (Wiki-listed pets only)                         | 6           | 7          | **85.7%**  |
 | **General Utility Items** (Wiki §6, items above §6.1 — Coin + Extractor added Phase 11) | 20          | 20         | **100.0%** |
-| **Dungeons / Hand-Built Structures** (Wiki §5 — Crystal Battle Tower + Crystal Maze added Phase 13A; Robot Lab + Shadow Dungeon added Phase 13B; Royal Trees added Phase 13C) | 15          | 15         | **100.0%** |
+| **Dungeons / Hand-Built Structures** (Wiki §5 — Crystal Battle Tower + Crystal Maze added Phase 13A; Robot Lab + Shadow Dungeon added Phase 13B) | 13          | 15         | **86.7%**  |
 
 
-**Strict Wiki coverage: 150 / 153 enumerated entries = 98.0% mechanical completeness.**
+**Strict Wiki coverage: 148 / 153 enumerated entries = 96.7% mechanical completeness.**
+
+> **Why not 15/15?** Two of the Wiki §5 entries — the "Tree of Goodness" and
+> "Queen Tree" — appear in the Namu Wiki article but **do not exist anywhere
+> in the decompiled 1.7.10 or 1.12.2 OreSpawn source code**. A full
+> codebase audit (covering `Trees.java`, every `ChunkProviderOreSpawn*`,
+> `WorldProviderOreSpawn*`, `BiomeGenUtopianPlains`, and every
+> `KingSpawnerBlock` / `QueenSpawnerBlock` reference) confirmed that
+> `MyKingSpawnerBlock` and `MyQueenSpawnerBlock` are never placed by
+> worldgen — they extend `BlockReed` and only spawn the boss when ticked
+> by a player-placed shrine. The only legitimate worldgen path to The
+> King / The Queen in 1.7.10 is the `makekingcenteraltar` / `makequeencenteraltar`
+> mausoleum chest containing `TheKingEgg` / `TheQueenEgg`
+> (`GenericDungeon.java` lines 4673 + 6014), which we already ship as
+> the **Royal Altars** subsystem. Implementing the wiki-listed gem trees
+> would mean inventing fresh content rather than porting, so we count
+> them as **honest 0/2** instead of inflating the metric.
 
 ### Workspace Totals (Absolute Registry Counts)
 
@@ -357,36 +373,29 @@ minecart, compass). Placed via `add_robot_lab` biome modifier on
 *(Phase 13B Complete)*
 - **Leonopteryx Dungeon** — Mine Dimension nest with the Leonopteryx
 spawner in the centre. **[v1.1]**
-- ~~**The Goodness Tree** — the gem-leaf giant tree (gold core, emerald
-trunk, ruby/amethyst/titanium/uranium leaves) with The King at the top.
-Currently we only place the standard Utopia tree; the Goodness Tree
-variant is stubbed.~~ **DONE (Phase 13C)** — `RoyalTreeFeature`
-(`orespawn:royal_tree_king`) anchors a 5×5 dirt root pad to the Utopia
-heightmap, raises a 16-block 3×3 trunk shell of emerald block around a
-single-column gold-block core, then domes a falloff-shaped 7-radius /
-8-tall canopy that shuffles the four canonical royal gems
-(ruby / amethyst / titanium / uranium) per-cell. The trunk
-caps in two emerald blocks above the canopy and the very apex carries
-the canonical `king_spawner` block (consumed by the Magic Apple altar
-to summon The King). The whole envelope (trunk + canopy + spawner cap)
-is bound-checked against `getMaxBuildHeight()` *before* the first write,
-and the entire footprint stays within ±9 blocks of the chunk centre so
-the canopy never forces a neighbour-chunk load while writing. Every
-cell is written with `setBlock(..., 2)` to suppress lighting +
-neighbour-update cascades. Placed via `add_royal_trees` biome modifier
-on `orespawn:utopia_plains` (rarity 240, `vegetal_decoration` step).
-*(Phase 13C Complete)*
-- ~~**The Queen's Tree** — ruby-stem variant with The Queen on top.~~
-**DONE (Phase 13C)** — Same `RoyalTreeFeature` registered with
-`queen_variant: true` (`orespawn:royal_tree_queen`). Trunk core +
-shell collapse to a single ruby-block "ruby-stem" silhouette; canopy
-palette rotates emerald block in to keep the four-gem mosaic; the
-apex carries the `queen_spawner` block. Sharing the placement and
-biome modifier with the King variant guarantees the two trees roll
-on the same `vegetal_decoration` pass and never overlap (each rolls
-independently against the rarity filter, and the chunk-centred
-footprint check naturally rejects collisions).
-*(Phase 13C Complete)*
+- **The Goodness Tree** — the wiki describes a gem-leaf giant tree (gold
+core, emerald trunk, ruby/amethyst/titanium/uranium leaves) with The
+King at the top. **NOT IN LEGACY SOURCE.** A full audit of
+`reference_1_7_10_source/` and `reference_1_12_2_source/` (`Trees.java`,
+every `ChunkProviderOreSpawn*`, `WorldProviderOreSpawn*`,
+`BiomeGenUtopianPlains`, `KingSpawnerBlock`) found zero generation
+code matching the wiki description — `MyKingSpawnerBlock` extends
+`BlockReed` and is never placed by worldgen, only by players. The only
+legitimate "summon The King" worldgen path is the King Altar mausoleum
+chest containing `TheKingEgg` (`GenericDungeon.java#L4673`), which we
+already ship as the `RoyalAltars` subsystem. A procedural Royal Tree
+was briefly added in Phase 13C and **reverted** the same release
+because it was hallucinated rather than ported. Re-introducing it
+would require either (a) accepting it as fan content rather than a
+faithful port, or (b) sourcing a community structure NBT and shipping
+it as a Jigsaw template. **[v1.1 — needs author guidance]**
+- **The Queen's Tree** — wiki describes a ruby-stem variant with The
+Queen on top. **NOT IN LEGACY SOURCE.** Same audit, same conclusion
+as the Goodness Tree above (`MyQueenSpawnerBlock` extends `BlockReed`,
+never placed by worldgen; the only legitimate worldgen summon path is
+the Queen Altar mausoleum chest containing `TheQueenEgg` at
+`GenericDungeon.java#L6014`, already shipped as `RoyalAltars`).
+**[v1.1 — needs author guidance]**
 - **Basilisk Dungeon** — jungle structure containing Ultimate gear chest
 
 - Basilisk spawners. **[v1.1]**
