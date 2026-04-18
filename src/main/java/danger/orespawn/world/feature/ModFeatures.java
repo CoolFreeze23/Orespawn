@@ -67,13 +67,15 @@ public class ModFeatures {
     public static final DeferredHolder<Feature<?>, ShadowDungeonFeature> SHADOW_DUNGEON =
             FEATURES.register("shadow_dungeon", () -> new ShadowDungeonFeature(NoneFeatureConfiguration.CODEC));
 
-    // Phase 13C (corrected) — Royal Trees (Tree of Goodness + Queen Tree).
-    // 100% byte-for-byte port of the 1.7.10 MakeBigSquareTree + make_branch
-    // algorithms found in ItemMagicApple.java#L248-L469 / #L133-L246, with
-    // the King vs. Queen palette dispatch at ItemMagicApple.java#L760-L772.
-    // Single Feature handles both variants via Config(queenVariant=true|false).
-    public static final DeferredHolder<Feature<?>, RoyalTreeFeature> ROYAL_TREE =
-            FEATURES.register("royal_tree", () -> new RoyalTreeFeature(RoyalTreeFeature.Config.CODEC));
+    // Phase 13C-fix2 — Royal Trees were promoted from a Feature to a
+    // dedicated Structure + StructurePiece (see
+    // danger.orespawn.world.structure.RoyalTreeStructure /
+    // danger.orespawn.world.structure.RoyalTreePiece). The previous
+    // Feature wrapper couldn't span chunks because of the WorldGenRegion
+    // 24-block write cap, which sheared the trees at chunk borders. The
+    // authentic 1.7.10 MakeBigSquareTree + make_branch algorithm lives in
+    // RoyalTreePiece#postProcess now, with chunkBox.isInside gating on
+    // every setBlock so the multi-chunk tree stitches together cleanly.
 
     public static void register(IEventBus eventBus) {
         FEATURES.register(eventBus);
