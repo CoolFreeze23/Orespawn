@@ -1,0 +1,9 @@
+{
+  "type": "orespawn:feature",
+  "biomes": "#orespawn:has_structure/beehive",
+  "step": "surface_structures",
+  "spawn_overrides": {},
+  "terrain_adaptation": "none",
+  "feature": "orespawn:beehive",
+  "y_offset": 0
+}

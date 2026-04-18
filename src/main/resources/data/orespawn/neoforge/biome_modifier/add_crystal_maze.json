@@ -1,6 +1,0 @@
-{
-  "type": "neoforge:add_features",
-  "biomes": "orespawn:crystal_plains",
-  "features": "orespawn:crystal_maze",
-  "step": "underground_structures"
-}

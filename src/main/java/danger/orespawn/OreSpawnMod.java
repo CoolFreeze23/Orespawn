@@ -58,6 +58,7 @@ public class OreSpawnMod {
         ModCreativeTabs.register(modEventBus);
         ModWorldGen.register(modEventBus);
         danger.orespawn.world.feature.ModFeatures.register(modEventBus);
+        danger.orespawn.world.structure.ModStructureTypes.register(modEventBus);
         danger.orespawn.recipe.ModRecipes.register(modEventBus);
         danger.orespawn.loot.ModLootModifiers.register(modEventBus);
 

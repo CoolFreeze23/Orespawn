@@ -1,0 +1,9 @@
+{
+  "type": "orespawn:feature",
+  "biomes": "#orespawn:has_structure/crystal_battle_tower",
+  "step": "surface_structures",
+  "spawn_overrides": {},
+  "terrain_adaptation": "none",
+  "feature": "orespawn:crystal_battle_tower",
+  "y_offset": 0
+}
