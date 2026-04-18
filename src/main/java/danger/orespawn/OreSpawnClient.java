@@ -30,6 +30,10 @@ public class OreSpawnClient {
         public static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
             // Monster (hostile)
             event.registerEntityRenderer(ModEntities.ALIEN.get(), AlienRenderer::new);
+            // Phase 12 — Alien Boss reuses the AlienRenderer; the client-side
+            // size scaling is handled by the registered hitbox dimensions
+            // (1.4 × 3.5 in ModEntities) so the same model renders bigger.
+            event.registerEntityRenderer(ModEntities.ALIEN_BOSS.get(), AlienRenderer::new);
             event.registerEntityRenderer(ModEntities.ALOSAURUS.get(), AlosaurusRenderer::new);
             event.registerEntityRenderer(ModEntities.ATTACK_SQUID.get(), AttackSquidRenderer::new);
             event.registerEntityRenderer(ModEntities.BAND_P.get(), BandPRenderer::new);
