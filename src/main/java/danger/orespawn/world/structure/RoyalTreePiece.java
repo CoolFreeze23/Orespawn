@@ -26,22 +26,24 @@ import net.minecraft.world.level.levelgen.structure.pieces.StructurePieceSeriali
  * with a {@code WorldGenRegion} task radius of 1 chunk, so any write
  * farther than ~1 chunk from the chunk currently being generated is
  * silently dropped (or throws via {@code ensureCanWrite}). (2) Even after
- * switching to multi-pass + per-chunk gating, the declared piece bounding
- * box was only ±48 horizontal — the recursive {@code make_branch}
- * algorithm's worst-case {@code xaccum}/{@code zaccum} reach can extend
- * ~50 blocks from the trunk, so chunks outside that ±48 permit never had
- * {@code postProcess} scheduled and the outermost branches still clipped.
- * The fix is multi-pass geometry + a ±64 horizontal permit so every chunk
- * the algorithm can actually touch gets a pass.</p>
+ * switching to multi-pass + per-chunk gating, successively too-small
+ * piece bounding boxes (±48, ±64, ±96) clipped the outermost branches
+ * because chunks outside the permit never had {@code postProcess}
+ * scheduled. A 14-tree telemetry run measured the true procedural reach
+ * of the legacy {@code make_branch} algorithm at −126..+127 horizontal
+ * and +160 vertical, so the permit is locked in at ±144 H, +172 / −12 V
+ * with comfortable safety margin so every chunk the algorithm can ever
+ * touch gets a pass.</p>
  *
  * <p><b>How the fix works (canonical Mansion / Stronghold pattern):</b>
  * {@link #postProcess} runs the full 1.7.10 {@code MakeBigSquareTree} +
  * recursive {@code make_branch} algorithm on every pass, and every
  * {@link #place} call is gated against the per-chunk {@code chunkBox} (cached
  * in {@code pCb*} fields) so only the cells that fall inside the chunk
- * currently being generated actually land. Each of the ~25 chunks that
- * intersect the tree's ±64 horizontal permit independently paints its own
- * slice, and the slices stitch together without clipping. Determinism
+ * currently being generated actually land. Each of the ~324 chunks that
+ * intersect the tree's ±144 horizontal permit (18 × 18 chunk footprint)
+ * independently paints its own slice, and the slices stitch together
+ * without clipping. Determinism
  * across passes is guaranteed by seeding the RNG purely from the piece's
  * static bounding-box corners and by removing all terrain reads from the
  * algorithm — every loop counter, RNG draw, and coordinate computation
@@ -52,10 +54,10 @@ import net.minecraft.world.level.levelgen.structure.pieces.StructurePieceSeriali
  * {@link BlockPos} and made two virtual {@code WorldGenLevel} calls per
  * cell. The current helper uses cached primitive bounds and a single
  * reusable {@link BlockPos.MutableBlockPos}, so an out-of-chunk call is
- * ~10ns and an in-chunk call ~5µs. With realistic recursion (≈8
- * sub-branches per call, depth ≤5, ≈80k cells touched per pass), total
- * per-tree cost is ≈600-700ms across all ~25 chunk passes — a brief
- * load-time hitch, not a freeze.</p>
+ * ~10ns and an in-chunk call ~5µs. Out-of-chunk calls dominate (only
+ * ~1/324 chunks contain any given cell), so total per-tree cost across
+ * all chunk passes is ≈400ms of background worldgen work — a brief
+ * load-time hitch on first visit, not a freeze.</p>
  *
  * <p><b>Audit checklist:</b></p>
  * <ul>
@@ -111,17 +113,20 @@ public class RoyalTreePiece extends StructurePiece {
     /** {@code Block.UPDATE_CLIENTS}: no neighbour cascade, no lighting recompute. */
     private static final int FLAG_CLIENTS_ONLY = 2;
 
-    /** Phase 13C-fix5 — Empirically-sized permit. 9-sample telemetry run
-     *  showed worst-case procedural reach of −124..+123 X, −119..+123 Z,
-     *  −5..+143 Y. Sized to those extremes plus margin: ±144 horizontal
-     *  (~1.25 chunks above worst observed = 320 block diameter footprint,
-     *  ~81 postProcess passes per tree), +160 above origin (17 block
-     *  ceiling above worst), −12 below (worst was only −5). Telemetry
-     *  print stays in for one more cycle to verify the new permit fully
-     *  contains the math; will be removed once confirmed. */
+    /** Phase 13C-fix6 — Final empirically-sized permit. 14-sample telemetry
+     *  run (commit history: fa26b39 → 82ae8af → 66bb63c) showed worst-case
+     *  procedural reach of −126..+125 X, −126..+127 Z, −5..+160 Y across
+     *  King and Queen variants. Sized to those extremes plus a safety
+     *  margin: ±144 horizontal (~17 block ceiling above worst observed →
+     *  288×288 footprint, ~324 postProcess passes per tree at 16×16
+     *  chunks), +172 above origin (12 block ceiling above worst, since
+     *  one tree hit exactly +160 and {@link BoundingBox#isInside} is
+     *  inclusive — anything tighter risks shearing the apex on a future
+     *  RNG roll), −12 below (worst observed only −5). Telemetry plumbing
+     *  has been removed now that the permit is locked in. */
     private static final int H_EXTENT = 144;
     private static final int DOWN_EXTENT = 12;
-    private static final int UP_EXTENT = 160;
+    private static final int UP_EXTENT = 172;
 
     private final BlockPos origin;
     private final boolean queenVariant;
@@ -146,20 +151,6 @@ public class RoyalTreePiece extends StructurePiece {
     private transient int pCbMaxY;
     private transient int pCbMinZ;
     private transient int pCbMaxZ;
-
-    // ---- DEBUG / Phase 13C-fix4 — RNG reach telemetry --------------------
-    // Tracks the absolute min/max XZ offsets the procedural algorithm
-    // attempts to write, *before* the chunkBox gate filters them. Survives
-    // across all postProcess passes for the piece instance because the
-    // algorithm runs deterministically on every pass and the tracker
-    // accumulates by max() / min() — first pass already exhausts the full
-    // RNG decision tree, the print fires once per piece via the guard so
-    // we don't spam ~25 lines per tree. Will be removed after empirical
-    // bounds drive the next BB shrink.
-    private transient int trackMinX = 0, trackMaxX = 0;
-    private transient int trackMinZ = 0, trackMaxZ = 0;
-    private transient int trackMinY = 0, trackMaxY = 0;
-    private transient boolean hasPrintedTelemetry = false;
 
     public RoyalTreePiece(BlockPos origin, boolean queenVariant) {
         super(ModStructureTypes.ROYAL_TREE_PIECE.get(), 0,
@@ -219,11 +210,13 @@ public class RoyalTreePiece extends StructurePiece {
         //      (loops, RNG draws, coordinate computations) runs
         //      identically on every pass.
         //
-        // Performance: ~80k place() calls per pass × ~16 intersected
-        // chunks ≈ 1.3M total per tree. With cached chunkBox bounds and
-        // a reusable MutableBlockPos in the inner loop, an out-of-chunk
-        // call is ~10ns and an in-chunk call (the ~1/16 that actually
-        // write) is ~5µs — total ~400ms per tree across all passes.
+        // Performance: the algorithm's place() count per pass is fixed
+        // (deterministic decision tree, ~80k attempts), and postProcess
+        // runs once per chunk that intersects the ±144 permit (~324
+        // chunks). With cached chunkBox bounds + reusable MutableBlockPos
+        // out-of-chunk calls drop in ~10ns; in-chunk calls (~1/324 of
+        // attempts) take ~5µs. Total ≈400ms of background worldgen work
+        // amortised across all passes per tree.
         RandomSource rng = RandomSource.create(
                 (long) this.boundingBox.minX() * 341873128712L
                         + (long) this.boundingBox.minZ() * 132897987541L);
@@ -265,21 +258,6 @@ public class RoyalTreePiece extends StructurePiece {
             this.pLevel = null;
             this.pMut = null;
         }
-
-        // ---- DEBUG telemetry print (one-shot per piece) ----
-        // The deterministic algorithm exhausts its full RNG decision tree
-        // on every pass, so by the end of *any* pass the trackMin/Max
-        // fields hold the true procedural extremes for this seed. Print
-        // once per piece to drive the next BB shrink.
-        if (!hasPrintedTelemetry) {
-            System.out.println("[OreSpawn WorldGen] Royal Tree (" +
-                    (queenVariant ? "QUEEN" : "KING") +
-                    ") origin=" + origin.getX() + "," + origin.getY() + "," + origin.getZ() +
-                    " RNG bounds rel. to origin -> X:[" + trackMinX + " to " + trackMaxX +
-                    "], Z:[" + trackMinZ + " to " + trackMaxZ +
-                    "], Y:[" + trackMinY + " to " + trackMaxY + "]");
-            hasPrintedTelemetry = true;
-        }
     }
 
     /**
@@ -293,20 +271,6 @@ public class RoyalTreePiece extends StructurePiece {
      * on every chunk pass and the slices stitch together.
      */
     private void place(int x, int y, int z, BlockState state) {
-        // ---- DEBUG telemetry — track RNG reach BEFORE the gate ----
-        // Runs unconditionally on every place() attempt so we see the true
-        // procedural reach of the legacy math, not just the writes that
-        // landed in the current chunk slice.
-        int offsetX = x - origin.getX();
-        int offsetZ = z - origin.getZ();
-        int offsetY = y - origin.getY();
-        if (offsetX < trackMinX) trackMinX = offsetX;
-        if (offsetX > trackMaxX) trackMaxX = offsetX;
-        if (offsetZ < trackMinZ) trackMinZ = offsetZ;
-        if (offsetZ > trackMaxZ) trackMaxZ = offsetZ;
-        if (offsetY < trackMinY) trackMinY = offsetY;
-        if (offsetY > trackMaxY) trackMaxY = offsetY;
-
         if (y < pMinY || y >= pMaxY) return;
         if (x < pCbMinX || x > pCbMaxX) return;
         if (z < pCbMinZ || z > pCbMaxZ) return;
