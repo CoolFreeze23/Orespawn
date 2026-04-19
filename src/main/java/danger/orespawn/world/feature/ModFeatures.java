@@ -26,6 +26,16 @@ public class ModFeatures {
     public static final DeferredHolder<Feature<?>, BeehiveFeature> BEEHIVE =
             FEATURES.register("beehive", () -> new BeehiveFeature(NoneFeatureConfiguration.CODEC));
 
+    // QA Fix Part 5 — Small Beehive (the "skep" surface variant).
+    // Authentic port of GenericDungeon.makeSmallBeeHive (1.7.10 line
+    // 1363). The legacy addANest 50/50 branch (OreSpawnWorld.java:1010)
+    // calls this in Forest/Jungle biomes alongside the Mantis Hive; the
+    // 1.21.1 port previously shipped only the deep makeBeeHive variant,
+    // so QA flagged "only one beehive variant generates" — restoring
+    // the missing surface skep here.
+    public static final DeferredHolder<Feature<?>, SmallBeehiveFeature> SMALL_BEEHIVE =
+            FEATURES.register("small_beehive", () -> new SmallBeehiveFeature(NoneFeatureConfiguration.CODEC));
+
     // Audit Part 4 — King + Queen Challenge Tower promoted from a Feature
     // wrapper to LegacyDungeonStructure (dungeon_type=KING_TOWER /
     // QUEEN_TOWER). The 1.7.10 sources (GenericDungeon.makeEnormousCastle
