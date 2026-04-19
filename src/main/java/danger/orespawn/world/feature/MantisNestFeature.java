@@ -36,9 +36,10 @@ import java.util.Random;
  *       {@code width = 13} and shrinking by 2 each step
  *       (13&rarr;11&rarr;9&rarr;7&rarr;5&rarr;3&rarr;1), each ring
  *       offset by {@code (xoff, -yoff, zoff)} so the pyramid points
- *       up. Ring perimeter alternates {@code GOLD_BLOCK} on even
- *       {@code yoff} rows and {@code EMERALD_BLOCK} on odd
- *       {@code yoff} rows; interior is air (lines 1031&ndash;1052).</li>
+ *       up. Ring perimeter alternates {@code GOLD_ORE} on even
+ *       {@code yoff} rows (legacy {@code field_150352_o}) and
+ *       {@code EMERALD_ORE} on odd {@code yoff} rows (legacy
+ *       {@code field_150412_bA}); interior is air (lines 1031&ndash;1052).</li>
  *   <li>At the {@code width == 11, 9, 7} steps, place 4 chests at the
  *       midpoints of each cardinal wall (line 1046 &rarr;
  *       {@code fill_mantishive_chests}).</li>
@@ -93,8 +94,12 @@ public class MantisNestFeature extends Feature<NoneFeatureConfiguration> {
         if (cpos.getY() - 7 <= level.getMinBuildHeight() + 2) return false;
 
         BlockState air = Blocks.AIR.defaultBlockState();
-        BlockState gold = Blocks.GOLD_BLOCK.defaultBlockState();
-        BlockState emerald = Blocks.EMERALD_BLOCK.defaultBlockState();
+        // QA Fix: legacy 1.7.10 used gold_ore (field_150352_o) and
+        // emerald_ore (field_150412_bA), NOT compressed gold_block /
+        // emerald_block. The previous port substituted blocks for ores;
+        // restoring the canonical ore palette here.
+        BlockState gold = Blocks.GOLD_ORE.defaultBlockState();
+        BlockState emerald = Blocks.EMERALD_ORE.defaultBlockState();
 
         // Step 1: hollow the 13x20x13 chamber (lines 1021-1027).
         int width = 13;
@@ -114,8 +119,9 @@ public class MantisNestFeature extends Feature<NoneFeatureConfiguration> {
             for (int i = 0; i < width; i++) {
                 for (int k = 0; k < width; k++) {
                     if (k == 0 || k == width - 1 || i == 0 || i == width - 1) {
-                        // Perimeter: alternate gold (yoff even) / emerald
-                        // (yoff odd). Matches legacy line 1036-1038.
+                        // Perimeter: alternate gold ore (yoff even) /
+                        // emerald ore (yoff odd). Matches legacy
+                        // GenericDungeon.java:1035-1038.
                         BlockState ringBlock = (yoff & 1) != 0 ? emerald : gold;
                         level.setBlock(cpos.offset(i + xoff, -yoff, k + zoff), ringBlock, 2);
                     } else {
