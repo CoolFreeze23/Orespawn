@@ -1,8 +1,8 @@
 {
   "type": "orespawn:legacy_dungeon",
-  "biomes": "#orespawn:has_structure/robot_lab",
+  "biomes": "#orespawn:has_structure/greenhouse",
   "step": "surface_structures",
   "spawn_overrides": {},
   "terrain_adaptation": "beard_thin",
-  "dungeon_type": "ROBOT_LAB"
+  "dungeon_type": "GREENHOUSE"
 }

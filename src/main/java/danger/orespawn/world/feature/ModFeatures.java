@@ -31,9 +31,11 @@ public class ModFeatures {
     public static final DeferredHolder<Feature<?>, ChallengeTowerFeature> CHALLENGE_TOWER =
             FEATURES.register("challenge_tower", () -> new ChallengeTowerFeature(ChallengeTowerFeature.Config.CODEC));
 
-    // Phase 12 — White House (Criminal spawner manor).
-    public static final DeferredHolder<Feature<?>, WhiteHouseFeature> WHITE_HOUSE =
-            FEATURES.register("white_house", () -> new WhiteHouseFeature(NoneFeatureConfiguration.CODEC));
+    // Audit Part 2 — White House promoted from a Feature to a dedicated
+    // Structure + StructurePiece (LegacyDungeonStructure with
+    // dungeon_type=WHITE_HOUSE). The Feature wrapper sheared the 25x25
+    // base + 13-tier roof + flagpole at chunk borders; LegacyDungeonPiece
+    // uses the canonical chunkBox.isInside multi-pass stitching pattern.
 
     // Phase 12 — WTF-Alien Dungeon (buried lapis chamber + Alien Boss).
     public static final DeferredHolder<Feature<?>, WtfAlienDungeonFeature> WTF_ALIEN_DUNGEON =
@@ -55,17 +57,13 @@ public class ModFeatures {
     public static final DeferredHolder<Feature<?>, CrystalMazeFeature> CRYSTAL_MAZE =
             FEATURES.register("crystal_maze", () -> new CrystalMazeFeature(NoneFeatureConfiguration.CODEC));
 
-    // Phase 13B — Robot Lab (Village Dimension surface bunker with the
-    // Robo-Pounder + Robo-Sniper + Robo-Warrior + Robo-Spinner spawner
-    // pile and the canonical RobotContentsList loot palette).
-    public static final DeferredHolder<Feature<?>, RobotLabFeature> ROBOT_LAB =
-            FEATURES.register("robot_lab", () -> new RobotLabFeature(NoneFeatureConfiguration.CODEC));
-
-    // Phase 13B — Shadow Dungeon (Mine Dimension buried obsidian + bedrock
-    // bunker with corner Nightmare + Ender Reaper spawners and the
-    // canonical shadowContentsList loot palette).
-    public static final DeferredHolder<Feature<?>, ShadowDungeonFeature> SHADOW_DUNGEON =
-            FEATURES.register("shadow_dungeon", () -> new ShadowDungeonFeature(NoneFeatureConfiguration.CODEC));
+    // Audit Part 2 — Robot Lab + Shadow Dungeon promoted from Features to
+    // a dedicated Structure + StructurePiece (LegacyDungeonStructure with
+    // dungeon_type=ROBOT_LAB / SHADOW). Same reason as White House: the
+    // multi-room hangar (10x20 entry + 30x30 main + 35-tall sniper tower)
+    // and 19-wide double-pyramid Shadow envelope both exceed the
+    // WorldGenRegion 24-block write window. The full byte-for-byte
+    // 1.7.10 generators now live in LegacyDungeonPiece#postProcess.
 
     // Audit Part 1 — Wind Tree (authentic Trees.WindTree port,
     // diagonal oak-log spires with leaf-canopy halos).

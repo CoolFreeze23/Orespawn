@@ -71,6 +71,34 @@ public class ModStructureTypes {
             STRUCTURE_PIECES.register("royal_tree_piece",
                     () -> (StructurePieceType) RoyalTreePiece::new);
 
+    /**
+     * Audit Part 2 &mdash; dedicated {@link StructureType} for the four
+     * legacy Tech &amp; Danger dungeons (Shadow, Greenhouse, Robot Lab,
+     * White House). Replaces the previous {@code orespawn:feature} wiring
+     * for each because the generic feature wrapper was capped at the
+     * {@code WorldGenRegion} 24-block write radius, forcing the prior
+     * {@code *Feature} classes to either shrink the legacy footprint
+     * (procedural hallucination) or get sheared at chunk borders.
+     * {@link LegacyDungeonStructure} + {@link LegacyDungeonPiece} use the
+     * canonical Mansion / Stronghold pattern (massive blueprint bounding
+     * box + per-chunk write gating in {@code postProcess}) to stitch the
+     * structures together across chunks. The dungeon variant is selected
+     * via the {@code dungeon_type} field of the structure JSON.
+     */
+    public static final DeferredHolder<StructureType<?>, StructureType<LegacyDungeonStructure>> LEGACY_DUNGEON =
+            STRUCTURE_TYPES.register("legacy_dungeon", () -> () -> LegacyDungeonStructure.CODEC);
+
+    /**
+     * Companion piece type for {@link LegacyDungeonStructure}. The piece
+     * stores both the origin {@link net.minecraft.core.BlockPos} and a
+     * {@link LegacyDungeonPiece.DungeonType} tag, so the same piece type
+     * can dispatch all four dungeon generators while still serialising
+     * cleanly through chunk save / reload.
+     */
+    public static final DeferredHolder<StructurePieceType, StructurePieceType> LEGACY_DUNGEON_PIECE =
+            STRUCTURE_PIECES.register("legacy_dungeon_piece",
+                    () -> (StructurePieceType) LegacyDungeonPiece::new);
+
     public static void register(IEventBus eventBus) {
         STRUCTURE_TYPES.register(eventBus);
         STRUCTURE_PIECES.register(eventBus);
