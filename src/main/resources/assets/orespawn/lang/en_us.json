@@ -678,14 +678,12 @@
 
   "entity.orespawn.crystal_cow": "Crystal Cow",
   "entity.orespawn.gold_cow": "Gold Cow",
-  "entity.orespawn.enchanted_cow": "Enchanted Cow",
   "entity.orespawn.ruby_bird": "Ruby Bird",
   "entity.orespawn.ultimate_arrow": "Ultimate Arrow",
   "entity.orespawn.irukandji_arrow": "Irukandji Arrow",
   "entity.orespawn.ultimate_fish_hook": "Ultimate Fish Hook",
   "item.orespawn.crystal_cow_spawn_egg": "Crystal Cow Spawn Egg",
   "item.orespawn.gold_cow_spawn_egg": "Gold Cow Spawn Egg",
-  "item.orespawn.enchanted_cow_spawn_egg": "Enchanted Cow Spawn Egg",
   "item.orespawn.ruby_bird_spawn_egg": "Ruby Bird Spawn Egg",
 
   "key.orespawn.fly_up": "Fly Up (Mount)",

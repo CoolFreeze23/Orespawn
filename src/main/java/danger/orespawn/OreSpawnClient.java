@@ -167,7 +167,6 @@ public class OreSpawnClient {
             event.registerEntityRenderer(ModEntities.SPIDER_DRIVER.get(), SpiderDriverRenderer::new);
             event.registerEntityRenderer(ModEntities.CRYSTAL_COW.get(), CrystalCowRenderer::new);
             event.registerEntityRenderer(ModEntities.GOLD_COW.get(), GoldCowRenderer::new);
-            event.registerEntityRenderer(ModEntities.ENCHANTED_COW.get(), EnchantedCowRenderer::new);
             event.registerEntityRenderer(ModEntities.APPLE_COW.get(), AppleCowRenderer::new);
             event.registerEntityRenderer(ModEntities.GOLDEN_APPLE_COW.get(), GoldenAppleCowRenderer::new);
             event.registerEntityRenderer(ModEntities.ENCHANTED_APPLE_COW.get(), EnchantedAppleCowRenderer::new);

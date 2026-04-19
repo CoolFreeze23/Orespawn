@@ -985,13 +985,6 @@ public class ModItems {
             () -> new SpawnEggItem(ModEntities.CRYSTAL_COW.get(), 0xFF69B4, 0xFFB6C1, new Item.Properties()));
     public static final DeferredItem<SpawnEggItem> GOLD_COW_SPAWN_EGG = ITEMS.register("gold_cow_spawn_egg",
             () -> new SpawnEggItem(ModEntities.GOLD_COW.get(), 0xFFD700, 0xFFA500, new Item.Properties()));
-    public static final DeferredItem<SpawnEggItem> ENCHANTED_COW_SPAWN_EGG = ITEMS.register("enchanted_cow_spawn_egg",
-            () -> new SpawnEggItem(ModEntities.ENCHANTED_COW.get(), 0x800080, 0xDA70D6, new Item.Properties()) {
-                @Override
-                public boolean isFoil(net.minecraft.world.item.ItemStack stack) {
-                    return true;
-                }
-            });
     public static final DeferredItem<SpawnEggItem> RUBY_BIRD_SPAWN_EGG = ITEMS.register("ruby_bird_spawn_egg",
             () -> new SpawnEggItem(ModEntities.RUBY_BIRD.get(), 0xDC143C, 0xFF6347, new Item.Properties()));
 
@@ -1001,7 +994,7 @@ public class ModItems {
     public static final DeferredItem<SpawnEggItem> APPLE_COW_SPAWN_EGG = ITEMS.register("apple_cow_spawn_egg",
             () -> new SpawnEggItem(ModEntities.APPLE_COW.get(), 0xC83232, 0xFFFFFF, new Item.Properties()));
     // Golden Apple Cow gets the gold-on-cream palette to mirror the
-    // golden apple sprite. Foil flag matches enchanted_cow / golden_apple
+    // golden apple sprite. Foil flag matches the in-world golden_apple
     // shimmer so players intuit the rarity from the inventory hover.
     public static final DeferredItem<SpawnEggItem> GOLDEN_APPLE_COW_SPAWN_EGG = ITEMS.register("golden_apple_cow_spawn_egg",
             () -> new SpawnEggItem(ModEntities.GOLDEN_APPLE_COW.get(), 0xFFD700, 0xFFF8DC, new Item.Properties()) {

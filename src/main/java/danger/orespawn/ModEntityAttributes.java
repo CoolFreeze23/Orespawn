@@ -156,7 +156,6 @@ public class ModEntityAttributes {
         event.put(ModEntities.SPIDER_DRIVER.get(), SpiderDriver.createAttributes().build());
         event.put(ModEntities.CRYSTAL_COW.get(), CrystalCow.createAttributes().build());
         event.put(ModEntities.GOLD_COW.get(), GoldCow.createAttributes().build());
-        event.put(ModEntities.ENCHANTED_COW.get(), EnchantedCow.createAttributes().build());
         event.put(ModEntities.APPLE_COW.get(), AppleCow.createAttributes().build());
         event.put(ModEntities.GOLDEN_APPLE_COW.get(), GoldenAppleCow.createAttributes().build());
         event.put(ModEntities.ENCHANTED_APPLE_COW.get(), EnchantedAppleCow.createAttributes().build());

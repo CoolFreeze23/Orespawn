@@ -618,9 +618,14 @@ public class ModEntities {
             ENTITY_TYPES.register("gold_cow", () -> EntityType.Builder.of(GoldCow::new, MobCategory.CREATURE)
                     .sized(0.9f, 1.4f).clientTrackingRange(10).build("gold_cow"));
 
-    public static final DeferredHolder<EntityType<?>, EntityType<EnchantedCow>> ENCHANTED_COW =
-            ENTITY_TYPES.register("enchanted_cow", () -> EntityType.Builder.of(EnchantedCow::new, MobCategory.CREATURE)
-                    .sized(0.9f, 1.4f).clientTrackingRange(10).build("enchanted_cow"));
+    // Phase 14 follow-up — the previously separate `enchanted_cow`
+    // entity was deleted and folded into ENCHANTED_APPLE_COW (below)
+    // because they were mechanically and visually duplicates. The full
+    // legacy loot table, dropCustomDeathLoot bonuses, and biome-modifier
+    // spawn entries (dim_village_locals + dim_utopia_locals) all migrated
+    // to the consolidated entity. Existing save instances of the old
+    // registry ID will be silently dropped on world load via NeoForge's
+    // missing-mapping handler — acceptable per the consolidation request.
 
     // Phase 14 — wiki-canon overworld cow variants. Not in 1.7.10
     // source (verified zero references in reference_1_7_10_source/)

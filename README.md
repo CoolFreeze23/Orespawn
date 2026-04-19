@@ -218,13 +218,14 @@ attack loop apply Hunger (10s) + Weakness (6s) on every hit — the
 "blood drain" debuff. Spawns in `orespawn:chaos_biome` (the Wiki's
 "Danger Dimension") at weight 18, packs of 3–6.
 - ~~**Apple Cow / Golden Apple Cow** — the regular surface cows that drop
-apples / golden apples. We have `red_cow`, `gold_cow`, `enchanted_cow`,
-`crystal_cow` (the dimension-local cows) but not the standard overworld
+apples / golden apples. We have `red_cow`, `gold_cow`, `enchanted_apple_cow`
+(post-consolidation; was `enchanted_cow`), `crystal_cow` (the
+dimension-local cows) but not the standard overworld
 apple-dropping variants.~~ **DONE (Phase 14)** — `AppleCow` and
 `GoldenAppleCow` extend vanilla `Cow` and override
 `dropCustomDeathLoot` to spawn 1–3 apples / 1–2 golden apples (matches
 `RedCow`'s wheat-drop cadence). Both have spawn eggs (the golden one
-ships with the foil flag, mirroring `enchanted_cow`), are added to the
+ships with the foil flag, mirroring `enchanted_apple_cow`), are added to the
 overworld creature spawn pool with weight 6 / 2 respectively in
 `add_overworld_creatures.json`, and breed true via `getBreedOffspring`.
 - ~~**Dinosaur AI Polish** — Pointysaurus eye-contact aggression trigger
