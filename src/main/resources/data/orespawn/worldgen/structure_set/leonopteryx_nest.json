@@ -1,11 +1,11 @@
 {
   "structures": [
-    { "structure": "orespawn:ufo_crash_site", "weight": 1 }
+    { "structure": "orespawn:leonopteryx_nest", "weight": 1 }
   ],
   "placement": {
     "type": "minecraft:random_spread",
-    "spacing": 32,
-    "separation": 16,
+    "spacing": 26,
+    "separation": 13,
     "salt": 84309
   }
 }

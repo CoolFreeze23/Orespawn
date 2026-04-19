@@ -1,9 +1,0 @@
-{
-  "type": "orespawn:feature",
-  "biomes": "#orespawn:has_structure/ufo_crash_site",
-  "step": "surface_structures",
-  "spawn_overrides": {},
-  "terrain_adaptation": "none",
-  "feature": "orespawn:ufo_crash_site",
-  "y_offset": 0
-}

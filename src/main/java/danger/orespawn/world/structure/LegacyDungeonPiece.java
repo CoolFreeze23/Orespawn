@@ -72,7 +72,19 @@ public class LegacyDungeonPiece extends StructurePiece {
         SHADOW(20, 12, 20),
         GREENHOUSE(24, 2, 14),
         ROBOT_LAB(48, 2, 50),
-        WHITE_HOUSE(48, 2, 25);
+        WHITE_HOUSE(48, 2, 25),
+        // Audit Part 3 — buried 5x5 lapis surface antenna + 17-block descending
+        // shaft + 4 cardinal "Part" rooms (W=15 wide max). Down -25, up +6.
+        ALIEN_WTF(20, 25, 6),
+        // Audit Part 3 — hollow rad=10 sphere with surface decoration shell
+        // (legacy line 4677). Down -10, up +5 (hollowed sky cap).
+        LEONOPTERYX_NEST(12, 10, 5),
+        // Audit Part 3 — 51x51x48 grand altar (legacy line 4353/5697). Origin
+        // is the SW corner of the pad, so positive X/Z reach is +56 with the
+        // 5-block clear margin; we centre by passing the centre as origin
+        // and use ±32 extents to span the full footprint.
+        KING_ALTAR(32, 4, 56),
+        QUEEN_ALTAR(32, 4, 56);
 
         public final int hExtent;
         public final int downExtent;
@@ -150,6 +162,10 @@ public class LegacyDungeonPiece extends StructurePiece {
                 case GREENHOUSE -> generateGreenhouse(rng);
                 case ROBOT_LAB -> generateRobotLab(rng);
                 case WHITE_HOUSE -> generateWhiteHouse(rng);
+                case ALIEN_WTF -> generateAlienWtfDungeon(rng);
+                case LEONOPTERYX_NEST -> generateLeonopteryxNest(rng);
+                case KING_ALTAR -> generateRoyalAltar(rng, true);
+                case QUEEN_ALTAR -> generateRoyalAltar(rng, false);
             }
         } finally {
             this.pLevel = null;
@@ -1014,4 +1030,573 @@ public class LegacyDungeonPiece extends StructurePiece {
             chest.setItem(random.nextInt(slots), palette[random.nextInt(palette.length)].copy());
         }
     }
+
+    // ---- WTF-Alien Dungeon (Audit Part 3) -----------------------------
+
+    /**
+     * Direct port of {@code GenericDungeon.makeAlienWTFDungeon} (1.7.10
+     * source line 1570&ndash;1691). Three composite phases:
+     *
+     * <ol>
+     *   <li><b>Surface antenna</b> &mdash; 5&times;5&times;5 hollow lapis
+     *       block on the surface (legacy line 1581-1591), shell built of
+     *       {@code Blocks.LAPIS_BLOCK} ({@code field_150369_x}). The
+     *       {@code cposy -= depth - 3} on line 1580 anchors the antenna's
+     *       top three blocks below the legacy surface anchor.</li>
+     *   <li><b>Descending shaft</b> &mdash; 4&times;4 lapis-walled access
+     *       shaft from the antenna down 17 blocks (legacy line 1595-1624)
+     *       with a single stone "step" inscribed in a rotating corner per
+     *       Y (the legacy {@code switch (s)} on line 1605). The rotating
+     *       step block is {@code Blocks.STONE} ({@code field_150348_b}).</li>
+     *   <li><b>Four cardinal "Part" rooms</b> &mdash; 9/11/13/15 wide cube
+     *       rooms (difficulty 1/2/3/4) opening N/E/W/S of the shaft floor
+     *       via 1-tall connecting tubes (legacy {@code makePart}, line
+     *       1693-1791). Each room has a quartz floor with central obsidian
+     *       cross + obsidian walls/ceiling, {@code difficulty} central
+     *       Alien/WTF spawners (50/50 random, line 1740-1762), and 1-4
+     *       chests filled from {@link #fillAlienWtfChest}.</li>
+     * </ol>
+     */
+    private void generateAlienWtfDungeon(RandomSource random) {
+        BlockState lapis = Blocks.LAPIS_BLOCK.defaultBlockState();
+        BlockState air = Blocks.AIR.defaultBlockState();
+        BlockState stone = Blocks.STONE.defaultBlockState();
+
+        int cposx = origin.getX();
+        int cposy = origin.getY();
+        int cposz = origin.getZ();
+
+        int width = 5;
+        int height = 5;
+        int depth = 20;
+        // Legacy line 1580: cposy -= depth - 3 (antenna sinks below grass).
+        int antennaY = cposy - (depth - 3);
+
+        // Phase 1: 5x5x5 hollow lapis antenna (legacy line 1581-1591).
+        for (int i = 0; i < width; i++) {
+            for (int j = 0; j < height; j++) {
+                for (int k = 0; k < width; k++) {
+                    boolean shell = i == 0 || j == 0 || k == 0
+                            || i == width - 1 || j == height - 1 || k == width - 1;
+                    place(cposx + i - 2, antennaY + j, cposz + k - 2, shell ? lapis : air);
+                }
+            }
+        }
+
+        // Phase 2: descending 4x4 shaft (legacy line 1592-1624).
+        int s = 0;
+        int sx = cposx - 1;
+        int sz = cposz - 1;
+        for (int j = 3; j < depth; j++) {
+            for (int i = 0; i < 4; i++) {
+                for (int k = 0; k < 4; k++) {
+                    boolean shell = i == 0 || k == 0 || i == 3 || k == 3;
+                    place(sx + i, antennaY + j, sz + k, shell ? lapis : air);
+                }
+            }
+            switch (s) {
+                case 0 -> place(sx + 1, antennaY + j, sz + 1, stone);
+                case 1 -> place(sx + 2, antennaY + j, sz + 1, stone);
+                case 2 -> place(sx + 2, antennaY + j, sz + 2, stone);
+                default -> place(sx + 1, antennaY + j, sz + 2, stone);
+            }
+            if (++s > 3) s = 0;
+        }
+
+        // Phase 3: four cardinal "Part" rooms (legacy line 1625-1690).
+        // Each call centres on the shaft floor and steps further outward.
+        sx++;
+        sz++;
+        // North part — width 9, difficulty 1, dx=+1, dz=+1.
+        makeAlienPart(sx, antennaY, sz + 7, 9, 5, 1, 1, 1, random);
+        carveAlienConnector(sx, antennaY, sz, 3, 6, 0, 1);
+        // East part — width 11, difficulty 2, dx=+1, dz=-1.
+        makeAlienPart(sx + 7, antennaY, sz, 11, 6, 1, -1, 2, random);
+        carveAlienConnector(sx, antennaY, sz, 6, 3, 1, 0);
+        // West part — width 13, difficulty 3, dx=-1, dz=+1.
+        makeAlienPart(sx - 7, antennaY, sz, 13, 7, -1, 1, 3, random);
+        carveAlienConnector(sx, antennaY, sz, 6, 3, -1, 0);
+        // South part — width 15, difficulty 4, dx=-1, dz=-1.
+        makeAlienPart(sx, antennaY, sz - 7, 15, 8, -1, -1, 4, random);
+        carveAlienConnector(sx, antennaY, sz, 3, 6, 0, -1);
+    }
+
+    /** Direct port of {@code makePart} (1.7.10 line 1693-1791). */
+    private void makeAlienPart(int cposx, int cposy, int cposz,
+                               int width, int height, int dx, int dz,
+                               int difficulty, RandomSource random) {
+        BlockState air = Blocks.AIR.defaultBlockState();
+        BlockState quartz = Blocks.QUARTZ_BLOCK.defaultBlockState();
+        BlockState obsidian = Blocks.OBSIDIAN.defaultBlockState();
+
+        // Hollow box (legacy line 1699-1705).
+        for (int i = 0; i < width; i++) {
+            for (int j = 0; j < height; j++) {
+                for (int k = 0; k < width; k++) {
+                    place(cposx + i * dx, cposy + j, cposz + k * dz, air);
+                }
+            }
+        }
+        // Floor — quartz with central obsidian cross (legacy line 1706-1715).
+        for (int i = 0; i < width; i++) {
+            for (int k = 0; k < width; k++) {
+                BlockState floor = quartz;
+                if (i == width / 2 || k == width / 2) floor = obsidian;
+                place(cposx + i * dx, cposy, cposz + k * dz, floor);
+            }
+        }
+        // Ceiling — pure obsidian (legacy line 1716-1722).
+        for (int i = 0; i < width; i++) {
+            for (int k = 0; k < width; k++) {
+                place(cposx + i * dx, cposy + height, cposz + k * dz, obsidian);
+            }
+        }
+        // X-walls (legacy line 1723-1731).
+        for (int i = 0; i < width; i++) {
+            for (int j = 0; j < height; j++) {
+                place(cposx + i * dx, cposy + j, cposz + 0 * dz, obsidian);
+                place(cposx + i * dx, cposy + j, cposz + (width - 1) * dz, obsidian);
+            }
+        }
+        // Z-walls (legacy line 1732-1739).
+        for (int k = 0; k < width; k++) {
+            for (int j = 0; j < height; j++) {
+                place(cposx + 0 * dx, cposy + j, cposz + k * dz, obsidian);
+                place(cposx + (width - 1) * dx, cposy + j, cposz + k * dz, obsidian);
+            }
+        }
+        // Spawners (legacy line 1740-1762). Difficulty controls vertical
+        // count; each placement randomly picks Alien (mob index 0) or
+        // "WTF?" (mob index 1) — both resolve to ALIEN in 1.21.1 since
+        // the legacy mod registered them under the same EntityType.
+        EntityType<?> alien = ModEntities.ALIEN.get();
+        for (int j = 0; j < difficulty; j++) {
+            placeSpawner(cposx + dx * width / 2, cposy + j + 2,
+                    cposz + dz * width / 2, alien);
+            placeSpawner(cposx + dx * width / 2 + dx, cposy + j + 2,
+                    cposz + dz * width / 2 + dz, alien);
+        }
+        // Tiered chests (legacy line 1763-1791).
+        placeChest(cposx + width * dx / 2, cposy + 1, cposz + dz,
+                this::fillAlienWtfChest, random);
+        if (difficulty > 1) {
+            placeChest(cposx + width * dx / 2, cposy + 1, cposz + (width - 2) * dz,
+                    this::fillAlienWtfChest, random);
+        }
+        if (difficulty > 2) {
+            placeChest(cposx + dx, cposy + 1, cposz + width / 2 * dz,
+                    this::fillAlienWtfChest, random);
+        }
+        if (difficulty > 3) {
+            placeChest(cposx + (width - 2) * dx, cposy + 1, cposz + width / 2 * dz,
+                    this::fillAlienWtfChest, random);
+        }
+    }
+
+    /** Carve the 1-tall connecting tube from shaft floor to a Part room. */
+    private void carveAlienConnector(int sx, int sy, int sz, int dx, int dz, int rx, int rz) {
+        BlockState air = Blocks.AIR.defaultBlockState();
+        // 1-tall tube shaft-side -> Part-side, hugging the centerline.
+        for (int n = 0; n < 8; n++) {
+            int x = sx + (rx == 0 ? dx / 2 : rx * (1 + n));
+            int z = sz + (rz == 0 ? dz / 2 : rz * (1 + n));
+            place(x, sy + 1, z, air);
+            place(x, sy + 2, z, air);
+        }
+    }
+
+    /**
+     * Authentic {@code AlienWTFContentsList} (1.7.10 line 51). 18 entries:
+     * Diamond-Block(15), Ruby(20), Amethyst(20), Uranium-Ingot(5),
+     * Titanium-Ingot(5), Ultimate-{Helmet,Body,Legs,Boots}(10 each),
+     * Ultimate-Bow(15), Nightmare-Sword(15), Experience-Catcher(15),
+     * Ray-Gun(10), Cage-Empty(20), Corn-Dog(20), Bacon(20),
+     * Popcorn-Bag(20), Fire-Fish(15). Fill loop is
+     * {@code 3 + nextInt(5)} per legacy {@code func_76293_a} call.
+     */
+    private void fillAlienWtfChest(ChestBlockEntity chest, RandomSource random) {
+        ItemStack[] palette = new ItemStack[]{
+                new ItemStack(Items.DIAMOND_BLOCK, 1 + random.nextInt(2)),                  // 15
+                new ItemStack(ModItems.RUBY.get(), 1),                                      // 20
+                new ItemStack(ModItems.RUBY.get(), 1),                                      //   (dup for 20 weight)
+                new ItemStack(ModItems.AMETHYST_GEM.get(), 1),                              // 20
+                new ItemStack(ModItems.AMETHYST_GEM.get(), 1),                              //   (dup)
+                new ItemStack(ModItems.INGOT_URANIUM.get(), 1 + random.nextInt(2)),         // 5
+                new ItemStack(ModItems.INGOT_TITANIUM.get(), 1 + random.nextInt(2)),        // 5
+                new ItemStack(ModItems.ULTIMATE_HELMET.get(), 1),                           // 10
+                new ItemStack(ModItems.ULTIMATE_CHESTPLATE.get(), 1),                       // 10
+                new ItemStack(ModItems.ULTIMATE_LEGGINGS.get(), 1),                         // 10
+                new ItemStack(ModItems.ULTIMATE_BOOTS_ARMOR.get(), 1),                      // 10
+                new ItemStack(ModItems.ULTIMATE_BOW.get(), 1),                              // 15
+                new ItemStack(ModItems.NIGHTMARE_SWORD.get(), 1),                           // 15
+                new ItemStack(ModItems.EXPERIENCE_CATCHER.get(), 4 + random.nextInt(7)),    // 15
+                new ItemStack(ModItems.RAY_GUN.get(), 1),                                   // 10
+                new ItemStack(ModItems.CAGE_EMPTY.get(), 1 + random.nextInt(10)),           // 20
+                new ItemStack(ModItems.CORN_DOG.get(), 1 + random.nextInt(10)),             // 20
+                new ItemStack(ModItems.COOKED_BACON.get(), 1 + random.nextInt(5)),          // 20
+                new ItemStack(ModItems.POPCORN_BAG.get(), 2 + random.nextInt(7)),           // 20
+                new ItemStack(ModItems.FIRE_FISH.get(), 2 + random.nextInt(7))              // 15
+        };
+        int slots = chest.getContainerSize();
+        int count = 3 + random.nextInt(5);
+        for (int i = 0; i < count; i++) {
+            chest.setItem(random.nextInt(slots), palette[random.nextInt(palette.length)].copy());
+        }
+    }
+
+    // ---- Leonopteryx Nest (Audit Part 3) ------------------------------
+
+    /**
+     * Direct port of {@code GenericDungeon.makeLeonNest} (1.7.10 source
+     * line 4677&ndash;4729). Hollow rad=10 dome with a randomized
+     * decoration shell on the outer 2 layers (oak-leaves / oak-log /
+     * oak-planks / dirt / cobblestone / mossy-cobblestone — legacy
+     * {@code which = nextInt(6)} on line 4692). Hollow interior carved
+     * to rad-2. Five-block air pocket above the dome (legacy line
+     * 4716-4723). Single Leonopteryx spawner placed at
+     * {@code cposy - (rad - 4)} (line 4724-4728) so the boss surfaces
+     * out of the centre of the dome when triggered.
+     */
+    private void generateLeonopteryxNest(RandomSource random) {
+        BlockState air = Blocks.AIR.defaultBlockState();
+        int rad = 10;
+        int cposx = origin.getX();
+        int cposy = origin.getY();
+        int cposz = origin.getZ();
+
+        // Phase 1: hollow dome (legacy line 4685-4715).
+        for (int j = 0; j <= rad; j++) {
+            for (int i = -rad; i <= rad; i++) {
+                for (int k = -rad; k <= rad; k++) {
+                    int dist = (int) Math.sqrt(j * j + i * i + k * k);
+                    if (dist > rad) continue;
+                    BlockState bid = air;
+                    if (dist >= rad - 2) {
+                        // Per-cell RNG palette pick: 6-way uniform random.
+                        int which = random.nextInt(6);
+                        bid = switch (which) {
+                            case 0 -> Blocks.OAK_LEAVES.defaultBlockState();
+                            case 1 -> Blocks.OAK_LOG.defaultBlockState();
+                            case 2 -> Blocks.OAK_PLANKS.defaultBlockState();
+                            case 3 -> Blocks.DIRT.defaultBlockState();
+                            case 4 -> Blocks.COBBLESTONE.defaultBlockState();
+                            default -> Blocks.MOSSY_COBBLESTONE.defaultBlockState();
+                        };
+                    }
+                    place(cposx + i, cposy - j, cposz + k, bid);
+                }
+            }
+        }
+
+        // Phase 2: 5-block air pocket above the dome (legacy line 4716-4723).
+        for (int j = 1; j <= 5; j++) {
+            for (int i = -rad; i <= rad; i++) {
+                for (int k = -rad; k <= rad; k++) {
+                    place(cposx + i, cposy + j, cposz + k, air);
+                }
+            }
+        }
+
+        // Phase 3: central Leonopteryx spawner (legacy line 4724-4728).
+        placeSpawner(cposx, cposy - (rad - 4), cposz, ModEntities.LEONOPTERYX.get());
+    }
+
+    // ---- Royal Altars (King + Queen, Audit Part 3) --------------------
+
+    /**
+     * Unified port of {@code GenericDungeon.makeKingAltar} (line 4353)
+     * and {@code makeQueenAltar} (line 5697). Both share the same
+     * 51&times;51&times;48 envelope, four corner columns, ceiling
+     * plate, portrait wall, and tapered centre altar; only the palette
+     * differs. King uses Quartz/Gold/Emerald (legacy {@code field_150371_ca}
+     * / {@code field_150340_R} / {@code field_150475_bE}). Queen uses
+     * Obsidian/Redstone/Amethyst.
+     *
+     * <p><b>King portrait wall &mdash;</b> the 33&times;33 pixel sprite
+     * encoded in {@code GenericDungeon.king[]} (line 63). Each
+     * non-negative entry runs {@code v} consecutive blocks of the
+     * current color and toggles the palette; each {@code -1} fills the
+     * remaining columns to width 33 with stone and advances the row.
+     * The Queen wall uses the identical sprite data but swaps the
+     * {@code field_150371_ca} (quartz) palette half for Block-Ruby.</p>
+     */
+    private void generateRoyalAltar(RandomSource random, boolean king) {
+        int cposx = origin.getX();
+        int cposy = origin.getY();
+        int cposz = origin.getZ();
+        // The legacy generator anchored its SW corner at (cposx, cposz);
+        // for a centred /locate hit we shift so the centre of the 51x51
+        // pad lands on origin.
+        int ox = cposx - 25;
+        int oz = cposz - 25;
+
+        BlockState air = Blocks.AIR.defaultBlockState();
+        BlockState grass = Blocks.GRASS_BLOCK.defaultBlockState();
+        BlockState dirt = Blocks.DIRT.defaultBlockState();
+        BlockState slab = king ? Blocks.QUARTZ_BLOCK.defaultBlockState()
+                : Blocks.OBSIDIAN.defaultBlockState();
+
+        int width = 51;
+        int length = 51;
+        int height = 48;
+
+        // Phase 1: clear the build envelope (legacy line 4364-4371).
+        for (int j = 0; j <= height + 10; j++) {
+            for (int i = -5; i < width + 5; i++) {
+                for (int k = -5; k < length + 5; k++) {
+                    place(ox + i, cposy + j, oz + k, air);
+                }
+            }
+        }
+        // Phase 2: 51x51 grass pad with up-to-10-block dirt skirt
+        // (legacy line 4372-4384).
+        for (int i = 0; i < width; i++) {
+            for (int k = 0; k < length; k++) {
+                place(ox + i, cposy, oz + k, grass);
+                for (int v = 1; v < 10; v++) {
+                    if (!inChunk(ox + i, cposy - v, oz + k)) continue;
+                    BlockState here = pLevel.getBlockState(
+                            new BlockPos(ox + i, cposy - v, oz + k));
+                    if (here.isAir() || here.is(Blocks.SHORT_GRASS) || here.is(Blocks.WATER)) {
+                        place(ox + i, cposy - v, oz + k, dirt);
+                    }
+                }
+            }
+        }
+        // Phase 3: four 5x5x44 corner columns (legacy line 4385-4388 / 5729-5732).
+        buildRoyalColumn(ox + 1, cposy + 1, oz + 1, king);
+        buildRoyalColumn(ox + width - 8, cposy + 1, oz + length - 8, king);
+        buildRoyalColumn(ox + 1, cposy + 1, oz + length - 8, king);
+        buildRoyalColumn(ox + width - 8, cposy + 1, oz + 1, king);
+        // Phase 4: ceiling plate (legacy line 4389-4402 / 5733-5746).
+        for (int i = 0; i < width; i++) {
+            for (int k = 0; k < length; k++) {
+                place(ox + i, cposy + height - 1, oz + k, slab);
+            }
+        }
+        for (int i = -1; i <= width; i++) {
+            for (int k = -1; k <= length; k++) {
+                place(ox + i, cposy + height, oz + k, slab);
+            }
+        }
+        // Phase 5: 33x33 portrait wall (legacy line 4403 -> makekingbackground
+        // at 4476 / 5747 -> makequeenbackground at 5817).
+        buildRoyalPortraitWall(ox + 4, cposy + 10, oz + 9, king);
+        // Phase 6: centre altar pyramid (legacy line 4404 / 5748).
+        buildRoyalCenterAltar(ox + width / 2, cposy, oz + length / 2, king);
+    }
+
+    /** Direct port of {@code makekingcolumn} / {@code makequeencolumn}. */
+    private void buildRoyalColumn(int cposx, int cposy, int cposz, boolean king) {
+        BlockState slab = king ? Blocks.QUARTZ_BLOCK.defaultBlockState()
+                : Blocks.OBSIDIAN.defaultBlockState();
+        BlockState band1 = king ? Blocks.GOLD_BLOCK.defaultBlockState()
+                : Blocks.REDSTONE_BLOCK.defaultBlockState();
+        BlockState band2 = king ? Blocks.EMERALD_BLOCK.defaultBlockState()
+                : ModBlocks.BLOCK_AMETHYST.get().defaultBlockState();
+        BlockState air = Blocks.AIR.defaultBlockState();
+
+        int width = 5;
+        int length = 5;
+        int height = 44;
+
+        // 7x7 cap top + bottom (legacy line 4419-4425 / 5763-5769).
+        for (int i = 0; i < width + 2; i++) {
+            for (int k = 0; k < length + 2; k++) {
+                place(cposx + i, cposy, cposz + k, slab);
+                place(cposx + i, cposy + height + 1, cposz + k, slab);
+            }
+        }
+        cposx++; cposz++; cposy++;
+
+        // 5x5x44 hollow column with banded inlays
+        // (legacy line 4429-4473 / 5773-5814).
+        for (int j = 0; j < height; j++) {
+            for (int i = 0; i < width; i++) {
+                for (int k = 0; k < length; k++) {
+                    BlockState bid = air;
+                    boolean wall = i == 0 || k == 0 || i == width - 1 || k == length - 1;
+                    if (wall) bid = slab;
+                    if (wall && j % 4 == 0 && (i == 2 || k == 2)) bid = band1;
+                    if (wall && j % 4 == 1) {
+                        if (i == 1 || k == 1) bid = band1;
+                        if (i == 3 || k == 3) bid = band1;
+                    }
+                    if (wall && j % 4 == 2) {
+                        if (i == 1 || k == 1) bid = band1;
+                        if (i == 3 || k == 3) bid = band1;
+                        if (i == 2 || k == 2) bid = band2;
+                    }
+                    if (wall && j % 4 == 3) {
+                        if (i == 1 || k == 1) bid = band1;
+                        if (i == 3 || k == 3) bid = band1;
+                    }
+                    place(cposx + i, cposy + j, cposz + k, bid);
+                }
+            }
+        }
+    }
+
+    /**
+     * Direct port of {@code makekingbackground} / {@code makequeenbackground}.
+     * 33&times;33 single-X-slab portrait sprite encoded in
+     * {@link #ROYAL_PORTRAIT_DATA}.
+     */
+    private void buildRoyalPortraitWall(int cposx, int cposy, int cposz, boolean king) {
+        BlockState band = king ? Blocks.GOLD_BLOCK.defaultBlockState()
+                : Blocks.REDSTONE_BLOCK.defaultBlockState();
+        BlockState diamond = Blocks.DIAMOND_BLOCK.defaultBlockState();
+        BlockState torch = ModBlocks.CRYSTAL_TORCH.get().defaultBlockState();
+        BlockState stone = Blocks.STONE.defaultBlockState();
+        BlockState foreground = king ? Blocks.QUARTZ_BLOCK.defaultBlockState()
+                : ModBlocks.BLOCK_RUBY.get().defaultBlockState();
+
+        int height = 33;
+        int width = 33;
+        int curz = 0;
+        int cury = 0;
+        BlockState bid = stone;
+
+        for (int v : ROYAL_PORTRAIT_DATA) {
+            if (v < 0) {
+                // Newline marker — fill remaining row with stone, advance Y.
+                bid = stone;
+                while (curz < width) {
+                    place(cposx, cposy + cury, cposz + curz, bid);
+                    curz++;
+                }
+                cury++;
+                curz = 0;
+                continue;
+            }
+            for (int n = 0; n < v; n++) {
+                place(cposx, cposy + cury, cposz + curz, bid);
+                curz++;
+            }
+            bid = (bid == stone) ? foreground : stone;
+        }
+
+        // Portrait frame: gold/redstone trim (legacy line 4503-4513).
+        for (int i = 0; i < width; i++) {
+            place(cposx, cposy - 1, cposz + i, band);
+            place(cposx, cposy + height, cposz + i, band);
+        }
+        for (int i = -1; i <= height; i++) {
+            place(cposx, cposy + i, cposz - 1, band);
+            place(cposx, cposy + i, cposz + width, band);
+        }
+        // Portrait corner gems + crystal-torch sconces (legacy line 4515-4522).
+        place(cposx, cposy - 2, cposz - 2, diamond);
+        place(cposx, cposy + height + 1, cposz + width + 1, diamond);
+        place(cposx, cposy - 2, cposz + width + 1, diamond);
+        place(cposx, cposy + height + 1, cposz - 2, diamond);
+        place(cposx, cposy - 1, cposz - 2, torch);
+        place(cposx, cposy + height + 2, cposz + width + 1, torch);
+        place(cposx, cposy - 1, cposz + width + 1, torch);
+        place(cposx, cposy + height + 2, cposz - 2, torch);
+    }
+
+    /** Direct port of {@code makekingcenteraltar} / {@code makequeencenteraltar}. */
+    private void buildRoyalCenterAltar(int cposx, int cposy, int cposz, boolean king) {
+        BlockState slab = king ? Blocks.QUARTZ_BLOCK.defaultBlockState()
+                : Blocks.OBSIDIAN.defaultBlockState();
+        BlockState lapis = Blocks.LAPIS_BLOCK.defaultBlockState();
+        BlockState amethyst = ModBlocks.BLOCK_AMETHYST.get().defaultBlockState();
+        BlockState corner = king ? lapis : amethyst;
+        BlockState torch = ModBlocks.CRYSTAL_TORCH.get().defaultBlockState();
+
+        // Layer 0: 21x21 centre + 13x41 cross arms (legacy line 4534-4556).
+        layRoyalRect(cposx, cposy, cposz, 10, 10, slab);
+        layRoyalRect(cposx, cposy, cposz, 6, 20, slab);
+        layRoyalRect(cposx, cposy, cposz, 20, 6, slab);
+
+        // Layer 1: 17x17 centre + 9x37 cross with corner gems (legacy line 4557-4595).
+        layRoyalRect(cposx, cposy + 1, cposz, 8, 8, slab);
+        layRoyalCrossWithCorners(cposx, cposy + 1, cposz, 4, 18, slab, corner);
+        layRoyalCrossWithCorners(cposx, cposy + 1, cposz, 18, 4, slab, corner);
+
+        // Layer 2: 15x15 + 7x35 cross with corner torches (legacy line 4596-4627).
+        for (int i = -7; i <= 7; i++) {
+            for (int k = -7; k <= 7; k++) {
+                place(cposx + i, cposy + 2, cposz + k, slab);
+                if (i == 7 && (k == -7 || k == 7)) {
+                    place(cposx + i, cposy + 3, cposz + k, torch);
+                }
+                if (i == -7 && (k == -7 || k == 7)) {
+                    place(cposx + i, cposy + 3, cposz + k, torch);
+                }
+            }
+        }
+        layRoyalRect(cposx, cposy + 2, cposz, 3, 17, slab);
+        layRoyalRect(cposx, cposy + 2, cposz, 17, 3, slab);
+
+        // Layer 3: 13x13 + 5x33 cross (legacy line 4628-4654).
+        layRoyalRect(cposx, cposy + 3, cposz, 6, 6, slab);
+        layRoyalRect(cposx, cposy + 3, cposz, 2, 16, slab);
+        layRoyalRect(cposx, cposy + 3, cposz, 16, 2, slab);
+
+        // Layer 4: 5x5 cap + corner torches (legacy line 4655-4668).
+        for (int i = -2; i <= 2; i++) {
+            for (int k = -2; k <= 2; k++) {
+                place(cposx + i, cposy + 4, cposz + k, slab);
+                if (i == 2 && (k == -2 || k == 2)) {
+                    place(cposx + i, cposy + 5, cposz + k, torch);
+                }
+                if (i == -2 && (k == -2 || k == 2)) {
+                    place(cposx + i, cposy + 5, cposz + k, torch);
+                }
+            }
+        }
+
+        // Apex chest with the boss spawn egg in slot 13 (legacy line 4669-4674).
+        if (inChunk(cposx, cposy + 4, cposz)) {
+            BlockPos chestPos = new BlockPos(cposx, cposy + 4, cposz);
+            // Use full update flag so the chest tile entity initialises.
+            pLevel.setBlock(chestPos, Blocks.CHEST.defaultBlockState(), 3);
+            if (pLevel.getBlockEntity(chestPos) instanceof ChestBlockEntity chest) {
+                ItemStack egg = king
+                        ? new ItemStack(ModItems.THE_KING_SPAWN_EGG.get())
+                        : new ItemStack(ModItems.THE_QUEEN_SPAWN_EGG.get());
+                chest.setItem(13, egg);
+            }
+        }
+    }
+
+    private void layRoyalRect(int cx, int cy, int cz,
+                              int halfX, int halfZ, BlockState slab) {
+        for (int i = -halfX; i <= halfX; i++) {
+            for (int k = -halfZ; k <= halfZ; k++) {
+                place(cx + i, cy, cz + k, slab);
+            }
+        }
+    }
+
+    private void layRoyalCrossWithCorners(int cx, int cy, int cz,
+                                          int halfX, int halfZ,
+                                          BlockState slab, BlockState corner) {
+        for (int i = -halfX; i <= halfX; i++) {
+            for (int k = -halfZ; k <= halfZ; k++) {
+                boolean isCorner = (i == halfX || i == -halfX) && (k == -halfZ || k == halfZ);
+                place(cx + i, cy, cz + k, isCorner ? corner : slab);
+            }
+        }
+    }
+
+    /**
+     * 33&times;33 portrait sprite data shared by the King and Queen
+     * altars, copied verbatim from {@code GenericDungeon.king[]}
+     * (1.7.10 line 63). The Queen variant in the legacy source uses
+     * the identical array (line 64), so a single literal serves both.
+     * Each {@code -1} is a row terminator; non-negative entries
+     * specify a run length and toggle the palette colour.
+     */
+    private static final int[] ROYAL_PORTRAIT_DATA = new int[]{
+            -1, -1, 24, 3, -1, 24, 5, -1, 17, 12, -1, 16, 15, -1, 15, 14, -1,
+            15, 6, 3, 5, -1, 14, 6, 4, 3, -1, 14, 5, -1, 14, 5, -1, 12, 9, -1,
+            11, 11, -1, 8, 17, -1, 5, 23, -1, 3, 27, -1, 2, 29, -1, 1, 31, -1,
+            0, 33, -1, 13, 6, -1, 12, 9, -1, 11, 3, 1, 2, 1, 4, -1, 10, 3, 2,
+            2, 3, 2, -1, 10, 2, 4, 2, 3, 2, -1, 9, 2, 5, 2, 4, 6, -1, 9, 2, 5,
+            2, 6, 4, -1, 8, 2, 6, 1, -1, 8, 2, 5, 2, -1, 8, 2, 5, 2, -1, 8, 2,
+            5, 2, -1, 15, 2, -1, -1, -1
+    };
 }
