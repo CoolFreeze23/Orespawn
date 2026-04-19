@@ -1655,11 +1655,23 @@ public class LegacyDungeonPiece extends StructurePiece {
         int height = 16;
         int platformwidth = 11;
 
-        // Legacy line 202-205 / 6404-6406. The reroll favours level 4..6.
-        int level = 1 + random.nextInt(6);
-        if (level <= 3 && random.nextInt(3) != 1) {
-            level += 3;
-        }
+        // QA Fix (Endgame Loot Gate): legacy line 202-205 / 6404-6406 had
+        //   level = 1 + nextInt(6); if (level<=3 && nextInt(3)!=1) level += 3;
+        // which only landed on level=6 about 4/18 (~22%) of the time — so
+        // most Challenge Towers rolled difficulty<6, and pickDecorReward(1,
+        // difficulty) returned <6, which fell through to the generic
+        // chestContents fill instead of the reward==6 Royal-Guardian-Sword
+        // / Royal-Armor / Prince-Egg branch in fillChallengeChests. The
+        // user reported "top floor doesn't contain Royal loot" — the cause
+        // was that they were looting non-level-6 towers.
+        //
+        // Because the King and Queen Challenge Towers are the canonical
+        // endgame mega-structures (already extreme-rarity-gated by their
+        // structure_set spacing), every spawn must guarantee the prize.
+        // Lock difficulty at 6 so pickDecorReward(decor=1, difficulty=6)
+        // always returns 6 and the bottom-floor chests always carry the
+        // Royal Guardian Sword + Royal/Queen armor + Prince/Princess egg.
+        int level = 6;
 
         BlockState air = Blocks.AIR.defaultBlockState();
         BlockState bedrock = Blocks.BEDROCK.defaultBlockState();
@@ -2002,6 +2014,17 @@ public class LegacyDungeonPiece extends StructurePiece {
             for (int yj = 0; yj < 10; yj++) {
                 place(cposx + 1, cposy + yj, cposz + 1, Blocks.AIR.defaultBlockState());
             }
+            // QA Traversal Fix: legacy line 537-539 carved a 1x1 air column
+            // through the dirt fill at (cposx+1, j=0..9, cposz+1) but never
+            // placed a climbable block — the player just fell into a 9-deep
+            // pit. Stack scaffolding from j=1..9 so they can also climb
+            // back out (and so the column connects to decor=5's ceiling hole
+            // at (cposx_5+1, cposz_5+1) = world (cposx_6+1, cposz_6+1) since
+            // both floors share cposx+3, cposz+3 — the columns line up).
+            BlockState scaffolding6 = Blocks.SCAFFOLDING.defaultBlockState();
+            for (int yj = 1; yj < 10; yj++) {
+                place(cposx + 1, cposy + yj, cposz + 1, scaffolding6);
+            }
             fillChallengeChests(king, cposx, cposy + 4, cposz, width, decor, reward, random);
             return;
         }
@@ -2025,16 +2048,49 @@ public class LegacyDungeonPiece extends StructurePiece {
             place(cposx + width / 2, cposy + yj, cposz + width / 2 - 1, bedrock);
             place(cposx + width / 2, cposy + yj, cposz + width / 2 + 1, bedrock);
         }
-        // Up/down ladder access cut (line 567-568 etc / 6769-6770 etc). The
-        // exact corners alternate per decor tier — match legacy parity.
+        // Up/down ladder access cut. Exact corners alternate per decor tier
+        // — match legacy parity precisely.
+        //   decor=5: floor (w-2, w-2), ceiling (1, 1)   [legacy line 567-568]
+        //   decor=4: floor (1, 1),     ceiling (w-2, w-2) [line 600-601]
+        //   decor=3: floor (w-2, w-2), ceiling (1, 1)   [line 637-638]
+        //   decor=2: floor (1, 1),     ceiling (w-2, w-2) [line 678-679]
+        //   decor=1: NO floor hole; ceiling (1, 1) only [line 722]
+        // The previous port collapsed decor=1 into the generic else branch,
+        // which carved a bogus extra ceiling hole at (w-2, w-2) and an
+        // extraneous floor hole at (1, 1) exposing the bedrock base. Match
+        // the legacy exactly per-decor below.
         BlockState air = Blocks.AIR.defaultBlockState();
+        int floorHoleX, floorHoleZ, ceilHoleX, ceilHoleZ;
         if (decor == 5 || decor == 3) {
-            place(cposx + width - 2, cposy, cposz + width - 2, air);
-            place(cposx + 1, cposy + height, cposz + 1, air);
-        } else {
-            place(cposx + 1, cposy, cposz + 1, air);
-            place(cposx + width - 2, cposy + height, cposz + width - 2, air);
+            floorHoleX = width - 2; floorHoleZ = width - 2;
+            ceilHoleX = 1;          ceilHoleZ = 1;
+        } else if (decor == 4 || decor == 2) {
+            floorHoleX = 1;         floorHoleZ = 1;
+            ceilHoleX = width - 2;  ceilHoleZ = width - 2;
+        } else { // decor == 1: bottom floor, no floor hole; ceiling at (1, 1)
+            floorHoleX = -1; floorHoleZ = -1; // sentinel: skip floor carve
+            ceilHoleX = 1;   ceilHoleZ = 1;
         }
+        if (floorHoleX >= 0) {
+            place(cposx + floorHoleX, cposy, cposz + floorHoleZ, air);
+        }
+        place(cposx + ceilHoleX, cposy + height, cposz + ceilHoleZ, air);
+
+        // QA Traversal Fix: legacy buildLevel placed NO ladders inside the
+        // bedrock-walled rooms (verified: zero references to Blocks.ladder /
+        // field_150468_ap in GenericDungeon's challenge-tower code). Pure
+        // 1x1 holes in the bedrock ceiling were unclimbable in survival —
+        // QA flagged "completely sealed with bedrock". Drop a SCAFFOLDING
+        // column at the ceiling-hole position from j=1 to j=height-1 so
+        // the player can climb out. Scaffolding (vs ladders) because two
+        // of the six floor pairs (decor=2↔3 and decor=4↔5) have ceiling
+        // holes 2 blocks away from any wall — ladders need wall support,
+        // scaffolding supports itself off the bedrock floor below.
+        BlockState scaffolding = Blocks.SCAFFOLDING.defaultBlockState();
+        for (int yj = 1; yj < height; yj++) {
+            place(cposx + ceilHoleX, cposy + yj, cposz + ceilHoleZ, scaffolding);
+        }
+
         // Decor 1 also lays 4 RTP teleport blocks at the central spawner base
         // (line 718-721 / 6920-6923) so the player can warp out after looting.
         if (decor == 1) {
@@ -2043,7 +2099,6 @@ public class LegacyDungeonPiece extends StructurePiece {
             place(cposx + width / 2 + 1, cposy + 1, cposz + width / 2 + 1, rtp);
             place(cposx + width / 2 + 1, cposy + 1, cposz + width / 2 - 1, rtp);
             place(cposx + width / 2 - 1, cposy + 1, cposz + width / 2 + 1, rtp);
-            place(cposx + 1, cposy + height, cposz + 1, air);
         }
         fillChallengeChests(king, cposx, cposy, cposz, width, decor, reward, random);
     }
