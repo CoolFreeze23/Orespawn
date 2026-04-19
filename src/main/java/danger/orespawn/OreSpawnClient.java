@@ -170,6 +170,7 @@ public class OreSpawnClient {
             event.registerEntityRenderer(ModEntities.ENCHANTED_COW.get(), EnchantedCowRenderer::new);
             event.registerEntityRenderer(ModEntities.APPLE_COW.get(), AppleCowRenderer::new);
             event.registerEntityRenderer(ModEntities.GOLDEN_APPLE_COW.get(), GoldenAppleCowRenderer::new);
+            event.registerEntityRenderer(ModEntities.ENCHANTED_APPLE_COW.get(), EnchantedAppleCowRenderer::new);
             event.registerEntityRenderer(ModEntities.RUBY_BIRD.get(), CockateilRenderer::new);
             event.registerEntityRenderer(ModEntities.VAMPIRE_BUTTERFLY.get(), VampireButterflyRenderer::new);
 
