@@ -636,6 +636,15 @@ public class ModEntities {
             ENTITY_TYPES.register("golden_apple_cow", () -> EntityType.Builder.of(GoldenAppleCow::new, MobCategory.CREATURE)
                     .sized(0.9f, 1.4f).clientTrackingRange(10).build("golden_apple_cow"));
 
+    // Endgame-tier wiki-canon variant capping the apple → golden apple →
+    // enchanted golden apple ladder. Same hitbox/tracking range as the
+    // rest of the cow line so it pack-hunts identically; rarity is
+    // controlled at the spawn-modifier weight rather than at the
+    // entity level so the registry stays uniform with siblings.
+    public static final DeferredHolder<EntityType<?>, EntityType<EnchantedAppleCow>> ENCHANTED_APPLE_COW =
+            ENTITY_TYPES.register("enchanted_apple_cow", () -> EntityType.Builder.of(EnchantedAppleCow::new, MobCategory.CREATURE)
+                    .sized(0.9f, 1.4f).clientTrackingRange(10).build("enchanted_apple_cow"));
+
     public static final DeferredHolder<EntityType<?>, EntityType<RubyBird>> RUBY_BIRD =
             ENTITY_TYPES.register("ruby_bird", () -> EntityType.Builder.of(RubyBird::new, MobCategory.CREATURE)
                     .sized(0.4f, 0.4f).clientTrackingRange(8).build("ruby_bird"));

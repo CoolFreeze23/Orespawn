@@ -1014,6 +1014,16 @@ public class ModItems {
     // reads as the hostile cousin of the rainbow ambient butterfly egg.
     public static final DeferredItem<SpawnEggItem> VAMPIRE_BUTTERFLY_SPAWN_EGG = ITEMS.register("vampire_butterfly_spawn_egg",
             () -> new SpawnEggItem(ModEntities.VAMPIRE_BUTTERFLY.get(), 0x8B0000, 0x4B0082, new Item.Properties()));
+    // Enchanted Apple Cow caps the apple-cow ladder; foil flag matches
+    // the entity's in-world glint layer so the spawn egg in inventory
+    // signals "rare/enchanted tier" the same way the mob does in-world.
+    public static final DeferredItem<SpawnEggItem> ENCHANTED_APPLE_COW_SPAWN_EGG = ITEMS.register("enchanted_apple_cow_spawn_egg",
+            () -> new SpawnEggItem(ModEntities.ENCHANTED_APPLE_COW.get(), 0xFFD700, 0xC83232, new Item.Properties()) {
+                @Override
+                public boolean isFoil(net.minecraft.world.item.ItemStack stack) {
+                    return true;
+                }
+            });
 
     public static void register(IEventBus eventBus) {
         ITEMS.register(eventBus);
