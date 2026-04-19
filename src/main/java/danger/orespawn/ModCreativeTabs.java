@@ -544,7 +544,6 @@ public class ModCreativeTabs {
                         output.accept(ModItems.WORM_LARGE_SPAWN_EGG.get());
                         output.accept(ModItems.CRYSTAL_COW_SPAWN_EGG.get());
                         output.accept(ModItems.GOLD_COW_SPAWN_EGG.get());
-                        output.accept(ModItems.ENCHANTED_COW_SPAWN_EGG.get());
                         output.accept(ModItems.ENCHANTED_APPLE_COW_SPAWN_EGG.get());
                         output.accept(ModItems.RUBY_BIRD_SPAWN_EGG.get());
                     })

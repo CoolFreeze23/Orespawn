@@ -17,8 +17,9 @@ import net.minecraft.resources.ResourceLocation;
 
 /**
  * Renders the Enchanted Apple Cow with the {@code enchanted_apple_cow.png}
- * body texture plus the vanilla enchantment glint shimmer (mirrors the
- * {@link EnchantedCowRenderer} treatment) so the entity reads as the
+ * body texture plus the vanilla enchantment glint shimmer (an inner
+ * {@link EnchantGlintLayer} re-renders the model through
+ * {@link RenderType#entityGlintDirect()}) so the entity reads as the
  * "enchanted" tier in the apple-cow ladder at a glance — same visual
  * language as the spawn egg's {@code isFoil = true} hover effect.
  */

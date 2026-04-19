@@ -12,22 +12,27 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 
 /**
- * Endgame-tier surface variant of the OreSpawn cow lineage that drops
- * {@link Items#ENCHANTED_GOLDEN_APPLE} on death. Wiki-canon completion
- * entity (not in 1.7.10 source — verified zero references in
- * {@code reference_1_7_10_source/}); rounds out the
- * Apple → Golden Apple → Enchanted Golden Apple cow ladder so the
- * variant family mirrors the vanilla apple progression players already
- * recognise.
+ * Endgame-tier surface variant of the OreSpawn cow lineage that caps
+ * the Apple → Golden Apple → Enchanted Golden Apple ladder. This entity
+ * is the post-consolidation single source of truth for the wiki's
+ * "Enchanted (Golden Apple) Cow" — the previously separate
+ * {@code EnchantedCow} class was deleted and its loot table, AI, spawn
+ * placements, and bonus drops were folded into this class so the world
+ * doesn't ship two visually-identical glinting cows.
  *
- * <p>Drop window is intentionally a flat 1 (versus
- * {@link AppleCow}'s 1–3 and {@link GoldenAppleCow}'s 1–2) so a single
- * kill yields a single notch-apple — the most valuable consumable in
- * vanilla — without trivialising the long-form god-apple economy.
+ * <p><b>Loot</b> — base table is data-driven via
+ * {@code loot_table/entities/enchanted_apple_cow.json} (leather 1–4,
+ * golden_apple 1–2, enchanted_golden_apple 1). On top of the JSON pool,
+ * {@link #dropCustomDeathLoot} adds the legacy {@code EnchantedCow}
+ * bonus: 1–2 XP bottles always, plus a 20% chance of an enchanted book
+ * — so the consolidated entity is strictly a superset of every drop the
+ * old enchanted cow used to give.
  *
- * <p>Spawn weight in {@code add_overworld_creatures.json} is
- * intentionally one-sixth of {@link AppleCow} (one-half of
- * {@link GoldenAppleCow}) so they read as a true "shiny" sighting.
+ * <p><b>Spawning</b> — {@code add_overworld_creatures.json} (weight 1,
+ * the rare overworld sighting) plus {@code dim_village_locals.json}
+ * (weight 4, packs of 2–4) and {@code dim_utopia_locals.json}
+ * (weight 5, packs of 2–4) — the latter two preserve the legacy
+ * EnchantedCow spawn niche unchanged.
  */
 public class EnchantedAppleCow extends Cow {
     public EnchantedAppleCow(EntityType<? extends EnchantedAppleCow> type, Level level) {
@@ -41,7 +46,18 @@ public class EnchantedAppleCow extends Cow {
     @Override
     protected void dropCustomDeathLoot(ServerLevel level, DamageSource source, boolean recentlyHit) {
         super.dropCustomDeathLoot(level, source, recentlyHit);
-        this.spawnAtLocation(Items.ENCHANTED_GOLDEN_APPLE);
+        // Legacy EnchantedCow bonus drops, ported verbatim so existing
+        // farms/players retain the same yield expectations after the
+        // class consolidation. The base leather + apple drops are
+        // resolved by the loot-table JSON, not here, to keep the
+        // data-driven path as the source of truth.
+        int bottles = this.random.nextInt(2) + 1;
+        for (int i = 0; i < bottles; i++) {
+            this.spawnAtLocation(Items.EXPERIENCE_BOTTLE);
+        }
+        if (this.random.nextInt(5) == 0) {
+            this.spawnAtLocation(Items.ENCHANTED_BOOK);
+        }
     }
 
     @Override
