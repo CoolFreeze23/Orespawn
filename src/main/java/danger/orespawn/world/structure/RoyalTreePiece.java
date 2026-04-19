@@ -111,21 +111,12 @@ public class RoyalTreePiece extends StructurePiece {
     /** {@code Block.UPDATE_CLIENTS}: no neighbour cascade, no lighting recompute. */
     private static final int FLAG_CLIENTS_ONLY = 2;
 
-    /** Bounding-box "permit" extents. Horizontal ±64 = ±4 chunks. The
-     *  legacy {@code make_branch} algorithm accumulates {@code xaccum}
-     *  /{@code zaccum} drift up to ~48 blocks from the trunk on the
-     *  unluckiest RNG paths, plus the per-cell wall ring adds another
-     *  {@code current_width} blocks of reach; ±48 was leaving the outer
-     *  tendrils outside the declared permit, so vanilla wasn't even firing
-     *  postProcess for those chunks and the canopy clipped at the
-     *  declared-BB edge. ±64 buys an 8-chunk diameter footprint —
-     *  comfortably below the {@code FEATURES} structure-region task
-     *  radius — while guaranteeing every cell the legacy math can reach
-     *  has its chunk pass scheduled. Vertical −12 below origin keeps the
-     *  {@link #BASE_DEPTH} foundation walks inside the permit; +120
-     *  above covers the absolute legacy max tower + recursive branch
-     *  apex with comfortable headroom. */
-    private static final int H_EXTENT = 64;
+    /** DEBUG / Phase 13C-fix4 — Brute-forced ±96 horizontal permit (192×192
+     *  footprint) to guarantee zero clipping while the telemetry tracker
+     *  measures the actual procedural reach of the RNG tree. Once telemetry
+     *  prints reliable bounds across a few seeds we'll shrink this back
+     *  down to the empirical max + a small safety margin. */
+    private static final int H_EXTENT = 96;
     private static final int DOWN_EXTENT = 12;
     private static final int UP_EXTENT = 120;
 
@@ -152,6 +143,20 @@ public class RoyalTreePiece extends StructurePiece {
     private transient int pCbMaxY;
     private transient int pCbMinZ;
     private transient int pCbMaxZ;
+
+    // ---- DEBUG / Phase 13C-fix4 — RNG reach telemetry --------------------
+    // Tracks the absolute min/max XZ offsets the procedural algorithm
+    // attempts to write, *before* the chunkBox gate filters them. Survives
+    // across all postProcess passes for the piece instance because the
+    // algorithm runs deterministically on every pass and the tracker
+    // accumulates by max() / min() — first pass already exhausts the full
+    // RNG decision tree, the print fires once per piece via the guard so
+    // we don't spam ~25 lines per tree. Will be removed after empirical
+    // bounds drive the next BB shrink.
+    private transient int trackMinX = 0, trackMaxX = 0;
+    private transient int trackMinZ = 0, trackMaxZ = 0;
+    private transient int trackMinY = 0, trackMaxY = 0;
+    private transient boolean hasPrintedTelemetry = false;
 
     public RoyalTreePiece(BlockPos origin, boolean queenVariant) {
         super(ModStructureTypes.ROYAL_TREE_PIECE.get(), 0,
@@ -257,6 +262,21 @@ public class RoyalTreePiece extends StructurePiece {
             this.pLevel = null;
             this.pMut = null;
         }
+
+        // ---- DEBUG telemetry print (one-shot per piece) ----
+        // The deterministic algorithm exhausts its full RNG decision tree
+        // on every pass, so by the end of *any* pass the trackMin/Max
+        // fields hold the true procedural extremes for this seed. Print
+        // once per piece to drive the next BB shrink.
+        if (!hasPrintedTelemetry) {
+            System.out.println("[OreSpawn WorldGen] Royal Tree (" +
+                    (queenVariant ? "QUEEN" : "KING") +
+                    ") origin=" + origin.getX() + "," + origin.getY() + "," + origin.getZ() +
+                    " RNG bounds rel. to origin -> X:[" + trackMinX + " to " + trackMaxX +
+                    "], Z:[" + trackMinZ + " to " + trackMaxZ +
+                    "], Y:[" + trackMinY + " to " + trackMaxY + "]");
+            hasPrintedTelemetry = true;
+        }
     }
 
     /**
@@ -270,6 +290,20 @@ public class RoyalTreePiece extends StructurePiece {
      * on every chunk pass and the slices stitch together.
      */
     private void place(int x, int y, int z, BlockState state) {
+        // ---- DEBUG telemetry — track RNG reach BEFORE the gate ----
+        // Runs unconditionally on every place() attempt so we see the true
+        // procedural reach of the legacy math, not just the writes that
+        // landed in the current chunk slice.
+        int offsetX = x - origin.getX();
+        int offsetZ = z - origin.getZ();
+        int offsetY = y - origin.getY();
+        if (offsetX < trackMinX) trackMinX = offsetX;
+        if (offsetX > trackMaxX) trackMaxX = offsetX;
+        if (offsetZ < trackMinZ) trackMinZ = offsetZ;
+        if (offsetZ > trackMaxZ) trackMaxZ = offsetZ;
+        if (offsetY < trackMinY) trackMinY = offsetY;
+        if (offsetY > trackMaxY) trackMaxY = offsetY;
+
         if (y < pMinY || y >= pMaxY) return;
         if (x < pCbMinX || x > pCbMaxX) return;
         if (z < pCbMinZ || z > pCbMaxZ) return;
