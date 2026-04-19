@@ -168,7 +168,10 @@ public class OreSpawnClient {
             event.registerEntityRenderer(ModEntities.CRYSTAL_COW.get(), CrystalCowRenderer::new);
             event.registerEntityRenderer(ModEntities.GOLD_COW.get(), GoldCowRenderer::new);
             event.registerEntityRenderer(ModEntities.ENCHANTED_COW.get(), EnchantedCowRenderer::new);
+            event.registerEntityRenderer(ModEntities.APPLE_COW.get(), AppleCowRenderer::new);
+            event.registerEntityRenderer(ModEntities.GOLDEN_APPLE_COW.get(), GoldenAppleCowRenderer::new);
             event.registerEntityRenderer(ModEntities.RUBY_BIRD.get(), CockateilRenderer::new);
+            event.registerEntityRenderer(ModEntities.VAMPIRE_BUTTERFLY.get(), VampireButterflyRenderer::new);
 
             // Projectiles
             event.registerEntityRenderer(ModEntities.BETTER_FIREBALL.get(), NoopProjectileRenderer::new);
@@ -304,6 +307,7 @@ public class OreSpawnClient {
 
             // Ambient
             event.registerLayerDefinition(ButterflyRenderer.MODEL_LAYER, ButterflyModel::createBodyLayer);
+            event.registerLayerDefinition(VampireButterflyRenderer.MODEL_LAYER, ButterflyModel::createBodyLayer);
             event.registerLayerDefinition(LunaMothRenderer.MODEL_LAYER, ButterflyModel::createBodyLayer);
             event.registerLayerDefinition(MosquitoRenderer.MODEL_LAYER, MosquitoModel::createBodyLayer);
             event.registerLayerDefinition(FairyRenderer.MODEL_LAYER, FairyModel::createBodyLayer);
