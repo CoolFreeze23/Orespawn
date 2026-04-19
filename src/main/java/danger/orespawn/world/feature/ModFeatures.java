@@ -37,13 +37,21 @@ public class ModFeatures {
     // base + 13-tier roof + flagpole at chunk borders; LegacyDungeonPiece
     // uses the canonical chunkBox.isInside multi-pass stitching pattern.
 
-    // Phase 12 — WTF-Alien Dungeon (buried lapis chamber + Alien Boss).
-    public static final DeferredHolder<Feature<?>, WtfAlienDungeonFeature> WTF_ALIEN_DUNGEON =
-            FEATURES.register("wtf_alien_dungeon", () -> new WtfAlienDungeonFeature(NoneFeatureConfiguration.CODEC));
+    // Audit Part 3 — WTF-Alien Dungeon promoted from a Feature wrapper to
+    // LegacyDungeonStructure (dungeon_type=ALIEN_WTF). The 1.7.10 source
+    // (GenericDungeon.makeAlienWTFDungeon, line 1570) builds a 5x5 lapis
+    // surface antenna + a 17-block descending shaft + four cardinal "Part"
+    // rooms with widths 9/11/13/15 and difficulty 1/2/3/4 — which exceeds
+    // the WorldGenRegion 24-block write window. The full byte-for-byte port
+    // now lives in LegacyDungeonPiece#generateAlienWtfDungeon.
 
-    // Phase 12 — UFO Crash Site (Overworld surface alien encounter).
-    public static final DeferredHolder<Feature<?>, UfoCrashSiteFeature> UFO_CRASH_SITE =
-            FEATURES.register("ufo_crash_site", () -> new UfoCrashSiteFeature(NoneFeatureConfiguration.CODEC));
+    // Audit Part 3 — UFO Crash Site removed: the 1.7.10 source has no
+    // makeUfo / makeUFO / addUfo generator (verified via grep over
+    // reference_1_7_10_source). The previous UfoCrashSiteFeature was a
+    // fully invented procedural structure and has been deleted along with
+    // its configured_feature, placed_feature, structure, structure_set,
+    // and biome tag JSONs to enforce the audit's "no procedural
+    // hallucinations" rule.
 
     // Phase 13A — Crystal Battle Tower (cylindrical 5-floor tower with the
     // Vortex spawner on the cap floor; see CrystalBattleTowerFeature for

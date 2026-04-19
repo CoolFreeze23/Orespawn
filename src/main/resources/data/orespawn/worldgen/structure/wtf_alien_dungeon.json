@@ -1,9 +1,8 @@
 {
-  "type": "orespawn:feature",
+  "type": "orespawn:legacy_dungeon",
   "biomes": "#orespawn:has_structure/wtf_alien_dungeon",
   "step": "underground_structures",
   "spawn_overrides": {},
   "terrain_adaptation": "none",
-  "feature": "orespawn:wtf_alien_dungeon",
-  "y_offset": 0
+  "dungeon_type": "ALIEN_WTF"
 }
