@@ -33,12 +33,12 @@ import java.util.Random;
  *   <li>Hollow a {@code 10&times;5&times;10} air pocket centred on
  *       {@code (cposx, cposy, cposz)}, descending from the surface
  *       (lines 821&ndash;827).</li>
- *   <li>Stamp a solid {@code COAL_BLOCK} floor at {@code cposy - 30}
- *       (lines 828&ndash;833).</li>
+ *   <li>Stamp a solid {@code COAL_ORE} floor at {@code cposy - 30}
+ *       (lines 828&ndash;833, legacy {@code field_150365_q} = coal_ore).</li>
  *   <li>For Y rows 1..29 below {@code cposy}: stamp a 10&times;10
- *       perimeter ring of alternating {@code COAL_BLOCK} (even rows)
- *       and {@code GOLD_BLOCK} (odd rows). Interior of each Y row is
- *       hollow air (lines 835&ndash;849).</li>
+ *       perimeter ring of alternating {@code COAL_ORE} (even rows)
+ *       and {@code GOLD_ORE} (odd rows, legacy {@code field_150352_o}).
+ *       Interior of each Y row is hollow air (lines 835&ndash;849).</li>
  *   <li>Place 4 Bee spawners at {@code cposy - 2 - j*7}
  *       (j=0..3) on the centre column (lines 851&ndash;856).</li>
  *   <li>Stamp 4 chests per Y row (every 2 rows from j=2 to j=29) at
@@ -100,8 +100,12 @@ public class BeehiveFeature extends Feature<NoneFeatureConfiguration> {
         if (cpos.getY() - HEIGHT - 1 <= level.getMinBuildHeight() + 2) return false;
 
         BlockState air = Blocks.AIR.defaultBlockState();
-        BlockState coal = Blocks.COAL_BLOCK.defaultBlockState();
-        BlockState gold = Blocks.GOLD_BLOCK.defaultBlockState();
+        // QA Fix: legacy 1.7.10 used coal_ore (field_150365_q) and
+        // gold_ore (field_150352_o), NOT the compressed coal_block /
+        // gold_block. The previous port substituted blocks for ores —
+        // restoring the canonical ore palette here.
+        BlockState coal = Blocks.COAL_ORE.defaultBlockState();
+        BlockState gold = Blocks.GOLD_ORE.defaultBlockState();
 
         // Step 1: hollow the 10x5x10 surface chamber (lines 821-827).
         for (int i = 0; i < WIDTH; i++) {
@@ -112,7 +116,7 @@ public class BeehiveFeature extends Feature<NoneFeatureConfiguration> {
             }
         }
 
-        // Step 2: solid coal-block floor at cposy - 30 (lines 828-833).
+        // Step 2: solid coal-ore floor at cposy - 30 (lines 828-833).
         for (int i = 0; i < WIDTH; i++) {
             for (int k = 0; k < WIDTH; k++) {
                 level.setBlock(cpos.offset(i, -HEIGHT, k), coal, 2);
