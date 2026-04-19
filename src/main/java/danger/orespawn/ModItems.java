@@ -995,6 +995,26 @@ public class ModItems {
     public static final DeferredItem<SpawnEggItem> RUBY_BIRD_SPAWN_EGG = ITEMS.register("ruby_bird_spawn_egg",
             () -> new SpawnEggItem(ModEntities.RUBY_BIRD.get(), 0xDC143C, 0xFF6347, new Item.Properties()));
 
+    // Phase 14 — wiki-canon mob completion eggs.
+    // Apple Cow uses red+white (apple red on snow white) so it reads as
+    // an "apple variant" of the standard cow at a glance in the egg row.
+    public static final DeferredItem<SpawnEggItem> APPLE_COW_SPAWN_EGG = ITEMS.register("apple_cow_spawn_egg",
+            () -> new SpawnEggItem(ModEntities.APPLE_COW.get(), 0xC83232, 0xFFFFFF, new Item.Properties()));
+    // Golden Apple Cow gets the gold-on-cream palette to mirror the
+    // golden apple sprite. Foil flag matches enchanted_cow / golden_apple
+    // shimmer so players intuit the rarity from the inventory hover.
+    public static final DeferredItem<SpawnEggItem> GOLDEN_APPLE_COW_SPAWN_EGG = ITEMS.register("golden_apple_cow_spawn_egg",
+            () -> new SpawnEggItem(ModEntities.GOLDEN_APPLE_COW.get(), 0xFFD700, 0xFFF8DC, new Item.Properties()) {
+                @Override
+                public boolean isFoil(net.minecraft.world.item.ItemStack stack) {
+                    return true;
+                }
+            });
+    // Vampire Butterfly uses the deep-red / bat-purple palette so it
+    // reads as the hostile cousin of the rainbow ambient butterfly egg.
+    public static final DeferredItem<SpawnEggItem> VAMPIRE_BUTTERFLY_SPAWN_EGG = ITEMS.register("vampire_butterfly_spawn_egg",
+            () -> new SpawnEggItem(ModEntities.VAMPIRE_BUTTERFLY.get(), 0x8B0000, 0x4B0082, new Item.Properties()));
+
     public static void register(IEventBus eventBus) {
         ITEMS.register(eventBus);
     }

@@ -23,7 +23,9 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
+import net.minecraft.world.entity.ai.goal.TemptGoal;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
+import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
@@ -38,6 +40,22 @@ public class Cephadrome extends PathfinderMob {
             SynchedEntityData.defineId(Cephadrome.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Integer> DATA_ACTIVITY =
             SynchedEntityData.defineId(Cephadrome.class, EntityDataSerializers.INT);
+    // Phase 14 — taming flag. The Wiki canonises Cephadrome as the
+    // "porkchop-tamed sand swimmer" companion. The 1.7.10 source
+    // (Cephadrome.java line 878) accepted RAW_BEEF / RAW_CHICKEN /
+    // RAW_PORKCHOP as a generic *heal* trigger but never ran a tame
+    // flow — so the Companion roster was stuck at 6/7. We narrow the
+    // food-taming gate to RAW_PORKCHOP exclusively (wiki-canon) and
+    // sync the tamed state via SynchedEntityData so the client-side
+    // renderer can show a tame indicator in a future PR without a
+    // server round-trip.
+    private static final EntityDataAccessor<Boolean> DATA_TAMED =
+            SynchedEntityData.defineId(Cephadrome.class, EntityDataSerializers.BOOLEAN);
+    // Strict porkchop-only ingredient. RAW_PORKCHOP only — cooked
+    // porkchop, beef, chicken, and feathers all fall back to the legacy
+    // heal-only branch so the player can keep healing the boss-tier
+    // mob without accidentally taming it.
+    private static final Ingredient TAME_FOOD = Ingredient.of(Items.PORKCHOP);
 
     private final Comparator<Entity> targetSorter;
     private final float moveSpeed = 0.25f;
@@ -62,9 +80,15 @@ public class Cephadrome extends PathfinderMob {
     @Override
     protected void registerGoals() {
         this.goalSelector.addGoal(0, new FloatGoal(this));
-        this.goalSelector.addGoal(1, new MyEntityAIWanderALot(this, 16, 1.0));
-        this.goalSelector.addGoal(2, new LookAtPlayerGoal(this, Player.class, 9.0f));
-        this.goalSelector.addGoal(3, new RandomLookAroundGoal(this));
+        // TemptGoal at priority 1 (above wander) so a player holding raw
+        // porkchop can lead an untamed Cephadrome — the visual tell that
+        // it's tameable. canScare=false because once tamed the goal
+        // becomes a no-op and we don't want the player to lose control
+        // by accidentally hitting attack mid-lead.
+        this.goalSelector.addGoal(1, new TemptGoal(this, 1.0, TAME_FOOD, false));
+        this.goalSelector.addGoal(2, new MyEntityAIWanderALot(this, 16, 1.0));
+        this.goalSelector.addGoal(3, new LookAtPlayerGoal(this, Player.class, 9.0f));
+        this.goalSelector.addGoal(4, new RandomLookAroundGoal(this));
         this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
     }
 
@@ -82,6 +106,15 @@ public class Cephadrome extends PathfinderMob {
         super.defineSynchedData(builder);
         builder.define(DATA_ATTACKING, 0);
         builder.define(DATA_ACTIVITY, 0);
+        builder.define(DATA_TAMED, false);
+    }
+
+    public boolean isTamed() {
+        return this.entityData.get(DATA_TAMED);
+    }
+
+    public void setTamed(boolean tamed) {
+        this.entityData.set(DATA_TAMED, tamed);
     }
 
     @Override
@@ -199,6 +232,10 @@ public class Cephadrome extends PathfinderMob {
         if (target instanceof Mothra || target instanceof EntityLeon || target instanceof EntityGammaMetroid || target instanceof WaterDragon) return false;
         if (target instanceof Player player) {
             if (player.getAbilities().invulnerable) return false;
+            // Phase 14 — tamed Cephadromes never attack players.
+            // The wiki-canon companion contract: once a player feeds a
+            // raw porkchop, the Cephadrome treats players as friendly.
+            if (this.isTamed()) return false;
             return this.hitByPlayer != 0 || this.badmood != 0 || this.shouldattack > 0;
         }
         return false;
@@ -230,7 +267,31 @@ public class Cephadrome extends PathfinderMob {
     @Override
     public InteractionResult mobInteract(Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
-        if ((stack.is(Items.BEEF) || stack.is(Items.FEATHER) || stack.is(Items.COOKED_BEEF))
+        // Phase 14 — wiki-canon strict porkchop tame branch. Raw
+        // PORKCHOP is the *only* tame trigger; if the entity is already
+        // tamed the porkchop falls through to the generic heal branch
+        // so re-using the tame food on a tamed Cephadrome still heals.
+        if (TAME_FOOD.test(stack) && !this.isTamed() && this.distanceToSqr(player) < 25.0) {
+            if (!this.level().isClientSide) {
+                this.setTamed(true);
+                this.heal(this.getMaxHealth() - this.getHealth());
+                this.shouldattack = 0;
+                this.hitByPlayer = 0;
+                this.badmood = 0;
+                this.setTarget(null);
+            }
+            this.wasfed = 1;
+            if (!player.getAbilities().instabuild) {
+                stack.shrink(1);
+            }
+            return InteractionResult.sidedSuccess(this.level().isClientSide);
+        }
+        // Legacy heal branch (1.7.10 Cephadrome.java line 878). Beef /
+        // cooked beef / feather / porkchop on an *already tamed*
+        // Cephadrome still tops it back up. Untamed Cephadromes only
+        // accept porkchop above so the wiki-canon tame contract reads
+        // unambiguously to the player.
+        if ((stack.is(Items.BEEF) || stack.is(Items.FEATHER) || stack.is(Items.COOKED_BEEF) || stack.is(Items.PORKCHOP))
                 && this.distanceToSqr(player) < 25.0) {
             if (!this.level().isClientSide) {
                 this.heal(this.getMaxHealth() - this.getHealth());
@@ -271,6 +332,7 @@ public class Cephadrome extends PathfinderMob {
         tag.putInt("CephaActivity", this.getActivity());
         tag.putInt("CephaHitByPlayer", this.hitByPlayer);
         tag.putInt("CephaBadMood", this.badmood);
+        tag.putBoolean("CephaTamed", this.isTamed());
     }
 
     @Override
@@ -281,5 +343,6 @@ public class Cephadrome extends PathfinderMob {
         this.badmood = tag.getInt("CephaBadMood");
         this.setAttacking(tag.getInt("CephaAttacking"));
         this.setActivity(tag.getInt("CephaActivity"));
+        this.setTamed(tag.getBoolean("CephaTamed"));
     }
 }

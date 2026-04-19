@@ -157,7 +157,10 @@ public class ModEntityAttributes {
         event.put(ModEntities.CRYSTAL_COW.get(), CrystalCow.createAttributes().build());
         event.put(ModEntities.GOLD_COW.get(), GoldCow.createAttributes().build());
         event.put(ModEntities.ENCHANTED_COW.get(), EnchantedCow.createAttributes().build());
+        event.put(ModEntities.APPLE_COW.get(), AppleCow.createAttributes().build());
+        event.put(ModEntities.GOLDEN_APPLE_COW.get(), GoldenAppleCow.createAttributes().build());
         event.put(ModEntities.RUBY_BIRD.get(), RubyBird.createAttributes().build());
+        event.put(ModEntities.VAMPIRE_BUTTERFLY.get(), VampireButterfly.createAttributes().build());
     }
 
     @SubscribeEvent
@@ -291,6 +294,21 @@ public class ModEntityAttributes {
                 Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Monster::checkMonsterSpawnRules, RegisterSpawnPlacementsEvent.Operation.AND);
         event.register(ModEntities.ENTITY_LURKING_TERROR.get(), SpawnPlacementTypes.ON_GROUND,
                 Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Monster::checkMonsterSpawnRules, RegisterSpawnPlacementsEvent.Operation.AND);
+
+        // Phase 14 — overworld surface cow variants. Animal spawn rules
+        // (grass + sky + brightness > 8) match the existing RedCow gate
+        // so they only appear in the same green biomes as the others.
+        event.register(ModEntities.APPLE_COW.get(), SpawnPlacementTypes.ON_GROUND,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Animal::checkAnimalSpawnRules, RegisterSpawnPlacementsEvent.Operation.AND);
+        event.register(ModEntities.GOLDEN_APPLE_COW.get(), SpawnPlacementTypes.ON_GROUND,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Animal::checkAnimalSpawnRules, RegisterSpawnPlacementsEvent.Operation.AND);
+
+        // Phase 14 — Vampire Butterfly is a flying hostile, gets the
+        // NO_RESTRICTIONS placement (matches CloudShark / Mothra) and
+        // checkAnyLightMonsterSpawnRules so it can spawn in the
+        // permanently dim Chaos dimension regardless of light level.
+        event.register(ModEntities.VAMPIRE_BUTTERFLY.get(), SpawnPlacementTypes.NO_RESTRICTIONS,
+                Heightmap.Types.MOTION_BLOCKING, VampireButterfly::checkSpawnRules, RegisterSpawnPlacementsEvent.Operation.AND);
     }
 
     /**

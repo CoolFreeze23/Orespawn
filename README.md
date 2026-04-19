@@ -46,13 +46,13 @@ Drop the produced JAR into your NeoForge 1.21.1 mods folder. No additional depen
 | **Armor Sets** (Wiki §6.2 — Kyanite added Phase 10)                       | 11          | 11         | **100.0%** |
 | **Top-tier Weapons** (Wiki §6.1 — Kyanite Sword added Phase 10)           | 25          | 25         | **100.0%** |
 | **Bosses & Titans** (Wiki §13 + §14 + §15, excluding Scorpion sub-mob)    | 13          | 13         | **100.0%** |
-| **Hostile / Neutral Mobs** (Wiki mobs page §2–§13.8 — Alien Boss added Phase 12) | 54          | 56         | **96.4%**  |
-| **Companion / Tame Mobs** (Wiki-listed pets only)                         | 6           | 7          | **85.7%**  |
+| **Hostile / Neutral Mobs** (Wiki mobs page §2–§13.8 — Vampire Butterfly + Apple Cow + Golden Apple Cow added Phase 14) | 56          | 56         | **100.0%** |
+| **Companion / Tame Mobs** (Wiki-listed pets only — Cephadrome porkchop tame added Phase 14) | 7           | 7          | **100.0%** |
 | **General Utility Items** (Wiki §6, items above §6.1 — Coin + Extractor added Phase 11) | 20          | 20         | **100.0%** |
 | **Dungeons / Hand-Built Structures** (Wiki §5 — Crystal Battle Tower + Crystal Maze added Phase 13A; Robot Lab + Shadow Dungeon added Phase 13B; Royal Trees added Phase 13C, ported byte-for-byte from `ItemMagicApple.java#L248-L469`) | 15          | 15         | **100.0%** |
 
 
-**Strict Wiki coverage: 150 / 153 enumerated entries = 98.0% mechanical completeness.**
+**Strict Wiki coverage: 153 / 153 enumerated entries = 100.0% mechanical completeness.**
 
 ### Workspace Totals (Absolute Registry Counts)
 
@@ -63,7 +63,7 @@ bonus content, multi-slot armor pieces, etc.).
 
 | Registry                                      | Count   |
 | --------------------------------------------- | ------- |
-| Entity types (`ModEntities.ENTITY_TYPES`)     | **143** |
+| Entity types (`ModEntities.ENTITY_TYPES`)     | **146** |
 | Item types (`ModItems.ITEMS`)                 | **335** |
 | Block types (`ModBlocks.BLOCKS`)              | **102** |
 | Crafting / smelting recipes                   | **237** |
@@ -144,6 +144,19 @@ ladder with exact 1.7.10 defense values, durabilities, and recipe layouts.
 > the next minor release; items marked **[v2.0]** require non-trivial new
 > subsystems (custom structure generators, jigsaw pools, gameplay framework).
 
+> ### 🎉 v1.1 Mechanical Feature Set: Complete (Phase 14)
+>
+> As of Phase 14 the port has reached **100% mechanical parity with the
+> Wiki catalog (153 / 153 enumerated entries)**. Every Wiki-enumerated
+> dimension, armor set, top-tier weapon, boss, hostile / neutral mob,
+> companion / tame mob, utility item, and hand-built structure has a
+> shipping 1.21.1 implementation. All `[v1.1]`-tagged entries below
+> were closed out in Phases 8 → 14; the strikethroughs trace the path.
+> Remaining `[v2.0]` items require new subsystems beyond the Wiki's
+> enumerated baseline (jigsaw pools, custom structure generators,
+> non-canonical gameplay frameworks) and are out of scope for the
+> "wiki-canon completion" milestone.
+
 ### 1. Missing Bosses & Minibosses
 
 - ~~**Nightmare** (5 size variants: 125 HP / 250 HP / 500 HP / 750 HP / 1000 HP)
@@ -193,14 +206,27 @@ canonical armor-steal AI: 1-in-4 chance per melee hit to pluck an armor
 piece (or fallback inventory item) into a 16-slot stash. Stash is NBT-
 persistent across saves, drops on death via `dropCustomDeathLoot`, and
 holding stolen items pins the mob (`removeWhenFarAway` returns false).
-- **Vampire Butterfly** — hostile butterfly variant in the Danger
+- ~~**Vampire Butterfly** — hostile butterfly variant in the Danger
 Dimension. Currently we only have the passive `butterfly` ambient mob.
-Should be a separate registration with attack AI + blood-drain effect.
-**[v1.1]**
-- **Apple Cow / Golden Apple Cow** — the regular surface cows that drop
+Should be a separate registration with attack AI + blood-drain effect.~~
+**DONE (Phase 14)** — `VampireButterfly` registered under
+`MobCategory.MONSTER`, separate entity ID from the ambient
+`EntityButterfly` (which keeps its right-click → Chaos teleport
+contract). Hostile target selectors (`HurtByTargetGoal` +
+`NearestAttackableTargetGoal<Player>`) plus a tick-driven steer-and-touch
+attack loop apply Hunger (10s) + Weakness (6s) on every hit — the
+"blood drain" debuff. Spawns in `orespawn:chaos_biome` (the Wiki's
+"Danger Dimension") at weight 18, packs of 3–6.
+- ~~**Apple Cow / Golden Apple Cow** — the regular surface cows that drop
 apples / golden apples. We have `red_cow`, `gold_cow`, `enchanted_cow`,
 `crystal_cow` (the dimension-local cows) but not the standard overworld
-apple-dropping variants. **[v1.1]**
+apple-dropping variants.~~ **DONE (Phase 14)** — `AppleCow` and
+`GoldenAppleCow` extend vanilla `Cow` and override
+`dropCustomDeathLoot` to spawn 1–3 apples / 1–2 golden apples (matches
+`RedCow`'s wheat-drop cadence). Both have spawn eggs (the golden one
+ships with the foil flag, mirroring `enchanted_cow`), are added to the
+overworld creature spawn pool with weight 6 / 2 respectively in
+`add_overworld_creatures.json`, and breed true via `getBreedOffspring`.
 - ~~**Dinosaur AI Polish** — Pointysaurus eye-contact aggression trigger
 (matches Enderman behaviour); Allosaurus group-spawn coordination;
 T-Rex's Big-Bertha-tooth drop weight tuning.~~ **DONE (Phase 8/9/10)** —
@@ -221,8 +247,17 @@ transformation into Brutalfly + butterflies on death.~~
 **DONE (Phase 9)** — chews leaves (+5 HP) / logs (+10 HP) on a 20-tick
 throttle, dies into a Brutalfly + 3-5 standard butterflies, drops
 `minecraft:cobweb` under the chased player on a 40-tick cadence.
-- **Cephadrome** taming via raw pork-chop — currently only listens for
-generic meat. **[v1.1]**
+- ~~**Cephadrome** taming via raw pork-chop — currently only listens for
+generic meat.~~ **DONE (Phase 14)** — Cephadrome's `mobInteract` now
+opens with a strict `Ingredient.of(Items.PORKCHOP)` tame branch that
+flips a synced `DATA_TAMED` boolean (NBT-persistent under
+`CephaTamed`); the legacy beef/cooked-beef/feather/porkchop heal
+branch survives so already-tamed sand swimmers can still be
+top-healed. A `TemptGoal` at priority 1 leads untamed Cephadromes
+toward porkchop holders so the tameability is discoverable. Tamed
+Cephadromes never re-target the player (`isSuitableTarget` short-
+circuits on `isTamed()`), completing the wiki-canon companion
+contract and pushing the Companion roster to 7/7.
 - **Crab** size variants: only one `crab` registration. 1.7.10 has small
 (62 HP), medium (125 HP), and large (250 HP) Rainbow Crabs, each with
 escalating defense. Wiki documents all 3 as separate stat blocks. **[v1.1]**

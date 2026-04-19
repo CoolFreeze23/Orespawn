@@ -8,6 +8,7 @@
     { "type": "orespawn:cliff_racer",  "weight": 30, "minCount": 3, "maxCount": 6 },
     { "type": "orespawn:cloud_shark",  "weight": 2,  "minCount": 1, "maxCount": 1 },
     { "type": "orespawn:gold_fish",    "weight": 10, "minCount": 2, "maxCount": 4 },
-    { "type": "orespawn:fairy",        "weight": 5,  "minCount": 2, "maxCount": 4 }
+    { "type": "orespawn:fairy",        "weight": 5,  "minCount": 2, "maxCount": 4 },
+    { "type": "orespawn:vampire_butterfly", "weight": 18, "minCount": 3, "maxCount": 6 }
   ]
 }
