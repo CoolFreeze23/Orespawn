@@ -159,6 +159,7 @@ public class ModEntityAttributes {
         event.put(ModEntities.ENCHANTED_COW.get(), EnchantedCow.createAttributes().build());
         event.put(ModEntities.APPLE_COW.get(), AppleCow.createAttributes().build());
         event.put(ModEntities.GOLDEN_APPLE_COW.get(), GoldenAppleCow.createAttributes().build());
+        event.put(ModEntities.ENCHANTED_APPLE_COW.get(), EnchantedAppleCow.createAttributes().build());
         event.put(ModEntities.RUBY_BIRD.get(), RubyBird.createAttributes().build());
         event.put(ModEntities.VAMPIRE_BUTTERFLY.get(), VampireButterfly.createAttributes().build());
     }
@@ -301,6 +302,8 @@ public class ModEntityAttributes {
         event.register(ModEntities.APPLE_COW.get(), SpawnPlacementTypes.ON_GROUND,
                 Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Animal::checkAnimalSpawnRules, RegisterSpawnPlacementsEvent.Operation.AND);
         event.register(ModEntities.GOLDEN_APPLE_COW.get(), SpawnPlacementTypes.ON_GROUND,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Animal::checkAnimalSpawnRules, RegisterSpawnPlacementsEvent.Operation.AND);
+        event.register(ModEntities.ENCHANTED_APPLE_COW.get(), SpawnPlacementTypes.ON_GROUND,
                 Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Animal::checkAnimalSpawnRules, RegisterSpawnPlacementsEvent.Operation.AND);
 
         // Phase 14 — Vampire Butterfly is a flying hostile, gets the
