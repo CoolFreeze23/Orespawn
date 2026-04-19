@@ -1,0 +1,8 @@
+{
+  "type": "neoforge:add_features",
+  "biomes": "orespawn:utopia_plains",
+  "features": [
+    "orespawn:wind_tree"
+  ],
+  "step": "vegetal_decoration"
+}

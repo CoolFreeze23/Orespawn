@@ -67,6 +67,28 @@ public class ModFeatures {
     public static final DeferredHolder<Feature<?>, ShadowDungeonFeature> SHADOW_DUNGEON =
             FEATURES.register("shadow_dungeon", () -> new ShadowDungeonFeature(NoneFeatureConfiguration.CODEC));
 
+    // Audit Part 1 — Wind Tree (authentic Trees.WindTree port,
+    // diagonal oak-log spires with leaf-canopy halos).
+    public static final DeferredHolder<Feature<?>, WindTreeFeature> WIND_TREE =
+            FEATURES.register("wind_tree", () -> new WindTreeFeature(NoneFeatureConfiguration.CODEC));
+
+    // Audit Part 1 — Sky Tree (authentic Trees.SkyTree port, towering
+    // SkyTreeLog trunk with cross-shaped horizontal leaf canopies).
+    public static final DeferredHolder<Feature<?>, SkyTreeFeature> SKY_TREE =
+            FEATURES.register("sky_tree", () -> new SkyTreeFeature(NoneFeatureConfiguration.CODEC));
+
+    // Audit Part 1 — Round Tree (authentic
+    // ItemMagicApple.MakeBigRoundTree port, tiered circular log
+    // platforms capped with a diamond block).
+    public static final DeferredHolder<Feature<?>, RoundTreeFeature> ROUND_TREE =
+            FEATURES.register("round_tree", () -> new RoundTreeFeature(NoneFeatureConfiguration.CODEC));
+
+    // Audit Part 1 — Magic Apple Tree (authentic
+    // ItemAppleSeed.makeTree port: tall oak trunk with two cardinal
+    // arm tiers and stacked square Apple-Leaf canopy).
+    public static final DeferredHolder<Feature<?>, MagicAppleTreeFeature> MAGIC_APPLE_TREE =
+            FEATURES.register("magic_apple_tree", () -> new MagicAppleTreeFeature(NoneFeatureConfiguration.CODEC));
+
     // Phase 13C-fix2 — Royal Trees were promoted from a Feature to a
     // dedicated Structure + StructurePiece (see
     // danger.orespawn.world.structure.RoyalTreeStructure /
