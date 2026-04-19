@@ -84,7 +84,19 @@ public class LegacyDungeonPiece extends StructurePiece {
         // 5-block clear margin; we centre by passing the centre as origin
         // and use ±32 extents to span the full footprint.
         KING_ALTAR(32, 4, 56),
-        QUEEN_ALTAR(32, 4, 56);
+        QUEEN_ALTAR(32, 4, 56),
+        // Audit Part 4 — King's / Queen's Challenge Tower (legacy
+        // GenericDungeon.makeEnormousCastle line 191 / makeEnormousCastleQ
+        // line 6393). 28x28 base + 6 stacked floors stepping inward
+        // (10/10/9/9/8/16 tall), 4-block stone foundation skirt, and a
+        // ~38-block western spire arm + descending stair. Worst-case
+        // footprint = origin -38..+31 horizontal, -2..+88 vertical. We use
+        // a symmetric ±40 horizontal box so /locate keeps the player at
+        // the body centre rather than at the spire tip, and an upExtent
+        // of 95 to include the level-6 Nightmare cap (+5 above the
+        // top floor at j=78).
+        KING_TOWER(40, 4, 95),
+        QUEEN_TOWER(40, 4, 95);
 
         public final int hExtent;
         public final int downExtent;
@@ -166,6 +178,8 @@ public class LegacyDungeonPiece extends StructurePiece {
                 case LEONOPTERYX_NEST -> generateLeonopteryxNest(rng);
                 case KING_ALTAR -> generateRoyalAltar(rng, true);
                 case QUEEN_ALTAR -> generateRoyalAltar(rng, false);
+                case KING_TOWER -> generateChallengeTower(rng, true);
+                case QUEEN_TOWER -> generateChallengeTower(rng, false);
             }
         } finally {
             this.pLevel = null;
@@ -1599,4 +1613,714 @@ public class LegacyDungeonPiece extends StructurePiece {
             2, 6, 4, -1, 8, 2, 6, 1, -1, 8, 2, 5, 2, -1, 8, 2, 5, 2, -1, 8, 2,
             5, 2, -1, 15, 2, -1, -1, -1
     };
+
+    // ---- Audit Part 4 — King's / Queen's Challenge Tower ---------------
+
+    /**
+     * Direct port of {@code GenericDungeon.makeEnormousCastle} (King, line
+     * 191&ndash;375) and {@code makeEnormousCastleQ} (Queen, line
+     * 6393&ndash;6577). The two share the same scaffolding — 28&times;28
+     * base, four corner exterior spawner stacks, central Emperor Scorpion
+     * column, six stacked floors with shrinking footprint
+     * (26&times;10 / 26&times;10 / 24&times;9 / 24&times;9 / 22&times;8 /
+     * 22&times;16), western platform-spire arm with a long descending
+     * stair, and a level-6 Large Worm scatter — but with three palette
+     * differences:
+     * <ul>
+     *   <li>King floor: {@code stone}; Queen floor: {@code obsidian}.</li>
+     *   <li>King exterior corner spawners: Terrible Terror; Queen: Lurking Terror.</li>
+     *   <li>King floor mob ladder: Cloud Shark / Lurking Terror / Rotator /
+     *       Bee / Mantis / Mothra. Queen ladder: Rotator / Bee / Mantis /
+     *       Mothra / Brutalfly / Vortex.</li>
+     *   <li>King spire: {@code quartz_block} (legacy {@code field_150371_ca});
+     *       Queen spire: {@link ModBlocks#BLOCK_AMETHYST}.</li>
+     *   <li>King foundation skirt: {@code stone}; Queen: {@code obsidian}.</li>
+     * </ul>
+     *
+     * <p>The legacy code rolled {@code level = 1 + nextInt(6)} with a
+     * weighted reroll favouring level 4&ndash;6, then suppressed any floor
+     * whose index exceeded {@code level}. We reproduce the same roll using
+     * the deterministic per-piece {@link RandomSource} so the visible tower
+     * shape stays seed-stable (and so the prize-floor that places the
+     * Royal Guardian Sword + Prince/Princess Egg is gated on the same
+     * roll the legacy expected). The final-prize chest only appears when
+     * the level=6 floor's {@code addLevelDecorations(decor=1, difficulty=6)}
+     * resolves {@code reward=6}, exactly as the legacy.</p>
+     */
+    private void generateChallengeTower(RandomSource random, boolean king) {
+        int cposx = origin.getX();
+        int cposy = origin.getY();
+        int cposz = origin.getZ();
+        int width = 28;
+        int height = 16;
+        int platformwidth = 11;
+
+        // Legacy line 202-205 / 6404-6406. The reroll favours level 4..6.
+        int level = 1 + random.nextInt(6);
+        if (level <= 3 && random.nextInt(3) != 1) {
+            level += 3;
+        }
+
+        BlockState air = Blocks.AIR.defaultBlockState();
+        BlockState bedrock = Blocks.BEDROCK.defaultBlockState();
+        BlockState ironBars = Blocks.IRON_BARS.defaultBlockState();
+        BlockState netherFence = Blocks.NETHER_BRICK_FENCE.defaultBlockState();
+        BlockState floorBlk = king ? Blocks.STONE.defaultBlockState()
+                : Blocks.OBSIDIAN.defaultBlockState();
+        BlockState skirtBlk = king ? Blocks.STONE.defaultBlockState()
+                : Blocks.OBSIDIAN.defaultBlockState();
+        BlockState extremeTorch = ModBlocks.EXTREME_TORCH.get().defaultBlockState();
+        EntityType<?> baseCornerMob = king ? ModEntities.ENTITY_TERRIBLE_TERROR.get()
+                : ModEntities.ENTITY_LURKING_TERROR.get();
+
+        // Phase 1 — clear interior + west spire envelope (legacy line 206-212 / 6408-6414).
+        for (int i = -20; i < width + 4; i++) {
+            for (int j = 1; j < height + 10; j++) {
+                for (int k = -4; k < width + 4; k++) {
+                    place(cposx + i, cposy + j, cposz + k, air);
+                }
+            }
+        }
+        // Phase 2 — base floor (line 213-218 / 6415-6420). King = stone, Queen = obsidian.
+        for (int i = 0; i < width; i++) {
+            for (int k = 0; k < width; k++) {
+                place(cposx + i, cposy, cposz + k, floorBlk);
+            }
+        }
+        // Phase 3 — base ceiling at j=height (line 219-224 / 6421-6426). Bedrock cap.
+        for (int i = 0; i < width; i++) {
+            for (int k = 0; k < width; k++) {
+                place(cposx + i, cposy + height, cposz + k, bedrock);
+            }
+        }
+        // Phase 4 — N/S iron-bar walls (line 225-232 / 6427-6434).
+        for (int i = 0; i < width; i++) {
+            for (int j = 1; j < height; j++) {
+                place(cposx + i, cposy + j, cposz, ironBars);
+                place(cposx + i, cposy + j, cposz + width - 1, ironBars);
+            }
+        }
+        // Phase 5 — E/W iron-bar walls (line 233-240 / 6435-6442).
+        for (int k = 0; k < width; k++) {
+            for (int j = 1; j < height; j++) {
+                place(cposx, cposy + j, cposz + k, ironBars);
+                place(cposx + width - 1, cposy + j, cposz + k, ironBars);
+            }
+        }
+        // Phase 6 — 4 corner Extreme Torches (line 241-244 / 6443-6446).
+        place(cposx + 1, cposy + 1, cposz + 1, extremeTorch);
+        place(cposx + 1, cposy + 1, cposz + width - 2, extremeTorch);
+        place(cposx + width - 2, cposy + 1, cposz + 1, extremeTorch);
+        place(cposx + width - 2, cposy + 1, cposz + width - 2, extremeTorch);
+        // Phase 7 — foundation skirt + outer fence trim (line 245-253 / 6447-6455).
+        for (int i = -4; i < width + 4; i++) {
+            for (int k = -4; k < width + 4; k++) {
+                if (i < 0 || k < 0 || i >= width || k >= width) {
+                    place(cposx + i, cposy, cposz + k, skirtBlk);
+                }
+                if (i == -4 || k == -4 || i == width + 3 || k == width + 3) {
+                    place(cposx + i, cposy + 1, cposz + k, netherFence);
+                }
+            }
+        }
+        // Phase 8 — 4 corner exterior spawner stacks j=0..3 (line 254-275 / 6456-6477).
+        // King = Terrible Terror; Queen = Lurking Terror.
+        for (int j = 0; j < 4; j++) {
+            placeSpawner(cposx - 3, cposy + 1 + j, cposz - 3, baseCornerMob);
+            placeSpawner(cposx - 3, cposy + 1 + j, cposz + width + 2, baseCornerMob);
+            placeSpawner(cposx + width + 2, cposy + 1 + j, cposz - 3, baseCornerMob);
+            placeSpawner(cposx + width + 2, cposy + 1 + j, cposz + width + 2, baseCornerMob);
+        }
+        // Phase 9 — central Emperor Scorpion column j=2,3,4 (line 276-290 / 6478-6492).
+        for (int j = 2; j <= 4; j++) {
+            placeSpawner(cposx + width / 2, cposy + j, cposz + width / 2,
+                    ModEntities.ENTITY_EMPEROR_SCORPION.get());
+        }
+
+        // Phase 10 — stacked floors. The (cposx, cposz) corner shifts inward as
+        // the floor footprint shrinks; widths and heights match legacy exactly.
+        EntityType<?>[] cornerMobs = king ? kingFloorCornerMobs() : queenFloorCornerMobs();
+        int j = height;
+        // Floor 1 — width-2, h=10, pw=4, decor=1.
+        buildChallengeFloor(king, cposx + 1, cposy + j, cposz + 1,
+                width - 2, 10, 4, cornerMobs[0], 1, -1, 5, 1, level, random);
+        j += 10;
+        if (level >= 2) {
+            buildChallengeFloor(king, cposx + 1, cposy + j, cposz + 1,
+                    width - 2, 10, 4, cornerMobs[1], 0, 0, 4, 2, level, random);
+        }
+        j += 10;
+        if (level >= 3) {
+            buildChallengeFloor(king, cposx + 2, cposy + j, cposz + 2,
+                    width - 4, 9, 4, cornerMobs[2], 1, 1, 4, 3, level, random);
+        }
+        j += 9;
+        if (level >= 4) {
+            buildChallengeFloor(king, cposx + 2, cposy + j, cposz + 2,
+                    width - 4, 9, 3, cornerMobs[3], 0, 0, 4, 4, level, random);
+        }
+        j += 9;
+        if (level >= 5) {
+            buildChallengeFloor(king, cposx + 3, cposy + j, cposz + 3,
+                    width - 6, 8, 3, cornerMobs[4], 1, 1, 4, 5, level, random);
+        }
+        j += 8;
+        if (level >= 6) {
+            buildChallengeFloor(king, cposx + 3, cposy + j, cposz + 3,
+                    width - 6, 16, 3, cornerMobs[5], 0, 0, 3, 6, level, random);
+        }
+
+        // Phase 11 — western platform (line 314-321 / 6516-6523).
+        BlockState spireBlk = king ? Blocks.QUARTZ_BLOCK.defaultBlockState()
+                : ModBlocks.BLOCK_AMETHYST.get().defaultBlockState();
+        for (int i = 0; i < platformwidth; i++) {
+            int yj = height;
+            for (int k = -(platformwidth / 2); k <= platformwidth / 2; k++) {
+                place(cposx + i - 20, cposy + yj, cposz + k + width / 2, spireBlk);
+                if ((i != 0 && i != platformwidth - 1 && k != -(platformwidth / 2) && k != platformwidth / 2)
+                        || (i == 0 && k >= -1 && k <= 1)) continue;
+                place(cposx + i - 20, cposy + yj + 1, cposz + k + width / 2, netherFence);
+            }
+        }
+        // Phase 12 — connector arm (line 322-339 / 6524-6541).
+        for (int i = -10; i <= -3; i++) {
+            int yj = height;
+            for (int k = -2; k < 3; k++) {
+                if (i == -3 || i == -10) {
+                    if (k != -2 && k != 2) {
+                        place(cposx + i, cposy + yj + 1, cposz + k + width / 2, air);
+                        continue;
+                    }
+                    place(cposx + i, cposy + yj + 1, cposz + k + width / 2, Blocks.NETHERRACK.defaultBlockState());
+                    place(cposx + i, cposy + yj + 2, cposz + k + width / 2, Blocks.NETHERRACK.defaultBlockState());
+                    place(cposx + i, cposy + yj + 3, cposz + k + width / 2, Blocks.FIRE.defaultBlockState());
+                    continue;
+                }
+                place(cposx + i, cposy + yj, cposz + k + width / 2, spireBlk);
+                if (k != -2 && k != 2) continue;
+                place(cposx + i, cposy + yj + 1, cposz + k + width / 2, netherFence);
+            }
+        }
+        // Phase 13 — descending stair (line 340-361 / 6542-6563).
+        int xi = -21;
+        for (int yj = height; yj >= 0; yj--) {
+            for (int k = -2; k < 3; k++) {
+                for (int t = 0; t < 6; t++) {
+                    place(cposx + xi, cposy + yj + t + 1, cposz + k + width / 2, air);
+                }
+                if (yj == 0) {
+                    if (k != -2 && k != 2) {
+                        place(cposx + xi, cposy + yj + 1, cposz + k + width / 2, air);
+                        continue;
+                    }
+                    place(cposx + xi, cposy + yj + 1, cposz + k + width / 2, Blocks.NETHERRACK.defaultBlockState());
+                    place(cposx + xi, cposy + yj + 2, cposz + k + width / 2, Blocks.NETHERRACK.defaultBlockState());
+                    place(cposx + xi, cposy + yj + 3, cposz + k + width / 2, Blocks.FIRE.defaultBlockState());
+                    continue;
+                }
+                place(cposx + xi, cposy + yj, cposz + k + width / 2, spireBlk);
+                if (k != -2 && k != 2) continue;
+                place(cposx + xi, cposy + yj + 1, cposz + k + width / 2, netherFence);
+            }
+            xi--;
+        }
+        // Phase 14 — level=6 Large Worm scatter (line 362-374 / 6564-6576).
+        if (level >= 6) {
+            int span = width * 3;
+            for (int tries = 0; tries < 100; tries++) {
+                int yj2 = -1;
+                int xi2 = random.nextInt(span);
+                int zk2 = random.nextInt(span);
+                if (xi2 >= span / 4 && xi2 <= span * 3 / 4
+                        && zk2 >= span / 4 && zk2 <= span * 3 / 4) continue;
+                xi2 -= span / 2;
+                zk2 -= span / 2;
+                placeSpawner(cposx + xi2 + width / 2, cposy + yj2,
+                        cposz + zk2 + width / 2, ModEntities.ENTITY_WORM_LARGE.get());
+            }
+        }
+    }
+
+    /**
+     * Direct port of {@code GenericDungeon.buildLevel} (King, line 377&ndash;478)
+     * / {@code buildLevelQ} (Queen, line 6579&ndash;6680). Each floor is a
+     * bedrock-walled cube with a vein-block accent on its NS faces (gold
+     * for King, ruby for Queen), a bedrock floor + ceiling, an outer
+     * fence skirt, a diagonal stair connector to the floor above, a
+     * 4-corner spawner column j=1..4 for the floor's exterior mob, and a
+     * centred decoration room dispatched via
+     * {@link #addChallengeFloorDecor}.
+     */
+    private void buildChallengeFloor(boolean king, int cposx, int cposy, int cposz,
+                                     int width, int height, int pw, EntityType<?> critter,
+                                     int stepside, int stepoff, int holelen, int decor, int level,
+                                     RandomSource random) {
+        BlockState air = Blocks.AIR.defaultBlockState();
+        BlockState bedrock = Blocks.BEDROCK.defaultBlockState();
+        BlockState veinBlk = king ? Blocks.GOLD_BLOCK.defaultBlockState()
+                : ModBlocks.BLOCK_RUBY.get().defaultBlockState();
+        BlockState skirtBlk = king ? Blocks.STONE.defaultBlockState()
+                : Blocks.OBSIDIAN.defaultBlockState();
+        BlockState fence = Blocks.NETHER_BRICK_FENCE.defaultBlockState();
+
+        // Phase A — hollow the floor's footprint + 1-block fence margin (line 381-387 / 6583-6589).
+        for (int i = -pw; i < width + pw; i++) {
+            for (int yj = 1; yj < height; yj++) {
+                for (int k = -pw; k < width + pw; k++) {
+                    place(cposx + i, cposy + yj, cposz + k, air);
+                }
+            }
+        }
+        // Phase B — bedrock floor (line 388-393 / 6590-6595).
+        for (int i = 0; i < width; i++) {
+            for (int k = 0; k < width; k++) {
+                place(cposx + i, cposy, cposz + k, bedrock);
+            }
+        }
+        // Phase C — bedrock ceiling at y=height (line 394-399 / 6596-6601).
+        for (int i = 0; i < width; i++) {
+            for (int k = 0; k < width; k++) {
+                place(cposx + i, cposy + height, cposz + k, bedrock);
+            }
+        }
+        // Phase D — N/S bedrock walls (line 400-407 / 6602-6609).
+        for (int i = 0; i < width; i++) {
+            for (int yj = 1; yj < height; yj++) {
+                place(cposx + i, cposy + yj, cposz, bedrock);
+                place(cposx + i, cposy + yj, cposz + width - 1, bedrock);
+            }
+        }
+        // Phase E — E/W walls with vein-block accent on the corner columns
+        // (line 408-419 / 6610-6621). King vein = gold; Queen vein = ruby.
+        for (int k = 0; k < width; k++) {
+            for (int yj = 1; yj < height; yj++) {
+                BlockState blk = (k == 0 || k == width - 1) ? veinBlk : bedrock;
+                place(cposx, cposy + yj, cposz + k, blk);
+                place(cposx + width - 1, cposy + yj, cposz + k, blk);
+            }
+        }
+        // Phase F — outer foundation skirt + outer fence (line 420-428 / 6622-6630).
+        for (int i = -pw; i < width + pw; i++) {
+            for (int k = -pw; k < width + pw; k++) {
+                if (i < 0 || k < 0 || i >= width || k >= width) {
+                    place(cposx + i, cposy, cposz + k, skirtBlk);
+                }
+                if (i != -pw && k != -pw && i != width + (pw - 1) && k != width + (pw - 1)) continue;
+                place(cposx + i, cposy + 1, cposz + k, fence);
+            }
+        }
+        // Phase G — diagonal stair to the next floor (line 429-440 / 6631-6642).
+        int si = -(height / 2) + width / 2;
+        for (int yj = 1; yj < height; yj++) {
+            int sk;
+            if (stepside != 0) {
+                sk = -1;
+            } else {
+                sk = width;
+            }
+            place(cposx + si, cposy + yj, cposz + sk, skirtBlk);
+            si++;
+        }
+        // Phase H — hole through the floor for the stair to land in (line 441-454 / 6643-6656).
+        if (stepoff >= 0) {
+            int sk;
+            if (stepside == 0) {
+                sk = -1 - stepoff;
+            } else {
+                sk = width + stepoff;
+            }
+            int hi = width / 2;
+            for (int l = 0; l < holelen; l++) {
+                place(cposx + hi + l, cposy, cposz + sk, air);
+            }
+        }
+        // Phase I — 4 corner spawner stacks j=1..4 with the floor's "outside" mob
+        // (line 455-476 / 6657-6678). This is the wiki "Outside" gauntlet ladder.
+        for (int yj = 0; yj < 4; yj++) {
+            placeSpawner(cposx - (pw - 1), cposy + yj + 1, cposz - (pw - 1), critter);
+            placeSpawner(cposx - (pw - 1), cposy + yj + 1, cposz + width + (pw - 2), critter);
+            placeSpawner(cposx + width + (pw - 2), cposy + yj + 1, cposz - (pw - 1), critter);
+            placeSpawner(cposx + width + (pw - 2), cposy + yj + 1, cposz + width + (pw - 2), critter);
+        }
+        // Phase J — centred decoration room (the wiki "Inside" gauntlet ladder).
+        addChallengeFloorDecor(king, cposx, cposy, cposz, width, height, decor, level, random);
+    }
+
+    /**
+     * Direct port of {@code GenericDungeon.addLevelDecorations} (King, line
+     * 480&ndash;725) / {@code addLevelDecorationsQ} (Queen, line
+     * 6682&ndash;6927). Each "decor" tier picks a different "Inside" mob
+     * for the centre 1&times;1 spawner column gated by an iron-bar shaft,
+     * and sets {@code reward} that drives the chest-fill table. Decor=6
+     * is the Nightmare cap (4 Nightmare spawners around a central Large
+     * Worm column with a dirt-filled void). The bottom floor (decor=1)
+     * with difficulty=6 sets {@code reward=6}, which is what triggers the
+     * Royal Guardian Sword + Prince/Princess Egg chest layout in
+     * {@link #fillChallengeChests}.
+     */
+    private void addChallengeFloorDecor(boolean king, int cposx, int cposy, int cposz,
+                                        int width, int height, int decor, int difficulty,
+                                        RandomSource random) {
+        int reward = 1;
+        EntityType<?> critter;
+
+        if (decor == 6) {
+            // Nightmare cap (line 485-541 / 6687-6743). Same for King and Queen.
+            BlockState netherrack = Blocks.NETHERRACK.defaultBlockState();
+            BlockState fire = Blocks.FIRE.defaultBlockState();
+            BlockState dirt = Blocks.DIRT.defaultBlockState();
+            place(cposx, cposy + height, cposz, netherrack);
+            place(cposx, cposy + height + 1, cposz, fire);
+            place(cposx, cposy + height, cposz + width - 1, netherrack);
+            place(cposx, cposy + height + 1, cposz + width - 1, fire);
+            place(cposx + width - 1, cposy + height, cposz, netherrack);
+            place(cposx + width - 1, cposy + height + 1, cposz, fire);
+            place(cposx + width - 1, cposy + height, cposz + width - 1, netherrack);
+            place(cposx + width - 1, cposy + height + 1, cposz + width - 1, fire);
+            place(cposx + width / 2, cposy + height, cposz + width / 2, Blocks.AIR.defaultBlockState());
+            placeSpawner(cposx + width / 2 - 1, cposy + height + 2, cposz + width / 2,
+                    ModEntities.PITCH_BLACK.get());
+            placeSpawner(cposx + width / 2 + 1, cposy + height + 2, cposz + width / 2,
+                    ModEntities.PITCH_BLACK.get());
+            placeSpawner(cposx + width / 2, cposy + height + 2, cposz + width / 2 - 1,
+                    ModEntities.PITCH_BLACK.get());
+            placeSpawner(cposx + width / 2, cposy + height + 2, cposz + width / 2 + 1,
+                    ModEntities.PITCH_BLACK.get());
+            for (int i = 1; i < width - 1; i++) {
+                for (int yj = 1; yj < 5; yj++) {
+                    for (int k = 1; k < width - 1; k++) {
+                        place(cposx + i, cposy + yj, cposz + k, dirt);
+                    }
+                }
+            }
+            placeSpawner(cposx + width / 2, cposy + 2, cposz + width / 2,
+                    ModEntities.ENTITY_WORM_LARGE.get());
+            placeSpawner(cposx + width / 2, cposy + 3, cposz + width / 2,
+                    ModEntities.ENTITY_WORM_LARGE.get());
+            placeSpawner(cposx + width / 2, cposy + 4, cposz + width / 2,
+                    ModEntities.ENTITY_WORM_LARGE.get());
+            for (int yj = 0; yj < 10; yj++) {
+                place(cposx + 1, cposy + yj, cposz + 1, Blocks.AIR.defaultBlockState());
+            }
+            fillChallengeChests(king, cposx, cposy + 4, cposz, width, decor, reward, random);
+            return;
+        }
+        // Decor 5..1 — central spawner column with iron-bar shaft + chest fill.
+        // Mob ladder differs between King and Queen per legacy.
+        if (king) {
+            critter = pickKingDecorMob(decor, difficulty);
+            reward = pickDecorReward(decor, difficulty);
+        } else {
+            critter = pickQueenDecorMob(decor, difficulty);
+            reward = pickDecorReward(decor, difficulty);
+        }
+        BlockState bedrock = Blocks.BEDROCK.defaultBlockState();
+        // Two stacked spawners j=2,3 in the centre (line 551-560 etc / 6753-6762 etc).
+        placeSpawner(cposx + width / 2, cposy + 2, cposz + width / 2, critter);
+        placeSpawner(cposx + width / 2, cposy + 3, cposz + width / 2, critter);
+        // 4-cell bedrock shaft around the spawner column at y=1..4 (line 561-566 etc / 6763-6768 etc).
+        for (int yj = 1; yj < 5; yj++) {
+            place(cposx + width / 2 - 1, cposy + yj, cposz + width / 2, bedrock);
+            place(cposx + width / 2 + 1, cposy + yj, cposz + width / 2, bedrock);
+            place(cposx + width / 2, cposy + yj, cposz + width / 2 - 1, bedrock);
+            place(cposx + width / 2, cposy + yj, cposz + width / 2 + 1, bedrock);
+        }
+        // Up/down ladder access cut (line 567-568 etc / 6769-6770 etc). The
+        // exact corners alternate per decor tier — match legacy parity.
+        BlockState air = Blocks.AIR.defaultBlockState();
+        if (decor == 5 || decor == 3) {
+            place(cposx + width - 2, cposy, cposz + width - 2, air);
+            place(cposx + 1, cposy + height, cposz + 1, air);
+        } else {
+            place(cposx + 1, cposy, cposz + 1, air);
+            place(cposx + width - 2, cposy + height, cposz + width - 2, air);
+        }
+        // Decor 1 also lays 4 RTP teleport blocks at the central spawner base
+        // (line 718-721 / 6920-6923) so the player can warp out after looting.
+        if (decor == 1) {
+            BlockState rtp = ModBlocks.BLOCK_TELEPORT.get().defaultBlockState();
+            place(cposx + width / 2 - 1, cposy + 1, cposz + width / 2 - 1, rtp);
+            place(cposx + width / 2 + 1, cposy + 1, cposz + width / 2 + 1, rtp);
+            place(cposx + width / 2 + 1, cposy + 1, cposz + width / 2 - 1, rtp);
+            place(cposx + width / 2 - 1, cposy + 1, cposz + width / 2 + 1, rtp);
+            place(cposx + 1, cposy + height, cposz + 1, air);
+        }
+        fillChallengeChests(king, cposx, cposy, cposz, width, decor, reward, random);
+    }
+
+    /**
+     * King's "Inside" mob ladder. Direct port of {@code addLevelDecorations}
+     * decor 1..5 critter switches (legacy lines 484-700). The wiki's
+     * "Worm &rarr; T-Rex &rarr; Basilisk &rarr; Hercules Beetle &rarr;
+     * Jumpy Bug &rarr; Hammerhead &rarr; Emperor Scorpion" combined ladder
+     * collapses across all six floors; the per-(decor, difficulty) lookup
+     * here reproduces the exact source mapping.
+     */
+    private static EntityType<?> pickKingDecorMob(int decor, int difficulty) {
+        // Layout matches the legacy if/else cascade exactly.
+        switch (decor) {
+            case 1:
+                if (difficulty >= 6) return ModEntities.HAMMERHEAD.get();
+                if (difficulty == 5) return ModEntities.ENTITY_SPIT_BUG.get(); // Jumpy Bug → SpitBug
+                if (difficulty == 4) return ModEntities.ENTITY_HERCULES_BEETLE.get();
+                if (difficulty == 3) return ModEntities.BASILISK.get();
+                if (difficulty == 2) return ModEntities.TREX.get();
+                return ModEntities.ALOSAURUS.get();
+            case 2:
+                if (difficulty >= 6) return ModEntities.ENTITY_SPIT_BUG.get(); // Jumpy Bug
+                if (difficulty == 5) return ModEntities.ENTITY_HERCULES_BEETLE.get();
+                if (difficulty == 4) return ModEntities.BASILISK.get();
+                if (difficulty == 3) return ModEntities.TREX.get();
+                return ModEntities.ALOSAURUS.get();
+            case 3:
+                if (difficulty >= 6) return ModEntities.ENTITY_HERCULES_BEETLE.get();
+                if (difficulty == 5) return ModEntities.BASILISK.get();
+                if (difficulty == 4) return ModEntities.TREX.get();
+                return ModEntities.ALOSAURUS.get();
+            case 4:
+                if (difficulty >= 6) return ModEntities.BASILISK.get();
+                if (difficulty == 5) return ModEntities.TREX.get();
+                return ModEntities.ALOSAURUS.get();
+            case 5:
+            default:
+                if (difficulty >= 6) return ModEntities.TREX.get();
+                return ModEntities.ALOSAURUS.get();
+        }
+    }
+
+    /**
+     * Queen's "Inside" mob ladder. Direct port of
+     * {@code addLevelDecorationsQ} decor 1..5 critter switches (legacy
+     * lines 6686-6902). Replaces the King's Alosaurus/T.Rex bottom with
+     * T.Rex/Nastysaurus and tops out at CaterKiller for decor=1
+     * difficulty=6 (line 6900-6902).
+     */
+    private static EntityType<?> pickQueenDecorMob(int decor, int difficulty) {
+        switch (decor) {
+            case 1:
+                if (difficulty >= 6) return ModEntities.ENTITY_CATER_KILLER.get();
+                if (difficulty == 5) return ModEntities.ENTITY_SPIT_BUG.get(); // Jumpy Bug
+                if (difficulty == 4) return ModEntities.ENTITY_HERCULES_BEETLE.get();
+                if (difficulty == 3) return ModEntities.BASILISK.get();
+                if (difficulty == 2) return ModEntities.NASTYSAURUS.get();
+                return ModEntities.TREX.get();
+            case 2:
+                if (difficulty >= 6) return ModEntities.ENTITY_SPIT_BUG.get(); // Jumpy Bug
+                if (difficulty == 5) return ModEntities.ENTITY_HERCULES_BEETLE.get();
+                if (difficulty == 4) return ModEntities.BASILISK.get();
+                if (difficulty == 3) return ModEntities.NASTYSAURUS.get();
+                return ModEntities.TREX.get();
+            case 3:
+                if (difficulty >= 6) return ModEntities.ENTITY_HERCULES_BEETLE.get();
+                if (difficulty == 5) return ModEntities.BASILISK.get();
+                if (difficulty == 4) return ModEntities.NASTYSAURUS.get();
+                return ModEntities.TREX.get();
+            case 4:
+                if (difficulty >= 6) return ModEntities.BASILISK.get();
+                if (difficulty == 5) return ModEntities.NASTYSAURUS.get();
+                return ModEntities.TREX.get();
+            case 5:
+            default:
+                if (difficulty >= 6) return ModEntities.NASTYSAURUS.get();
+                return ModEntities.TREX.get();
+        }
+    }
+
+    /**
+     * Direct port of the legacy decor-vs-difficulty reward table. Each
+     * decor tier shifts the difficulty&rarr;reward mapping by one so a
+     * level-6 player ends with reward=6 only on decor=1 (the bottom
+     * floor), matching the legacy cascade exactly. Decor=6 sets
+     * reward=1 unconditionally (the Nightmare cap drops level-1 loot).
+     */
+    private static int pickDecorReward(int decor, int difficulty) {
+        switch (decor) {
+            case 1: return difficulty;          // 1..6 -> 1..6 (line 701 / 6903)
+            case 2: return Math.max(1, difficulty - 1); // 2..6 -> 1..5
+            case 3: return Math.max(1, difficulty - 2); // 3..6 -> 1..4
+            case 4: return Math.max(1, difficulty - 3); // 4..6 -> 1..3
+            case 5: return Math.max(1, difficulty - 4); // 5..6 -> 1..2
+            default: return 1;
+        }
+    }
+
+    /**
+     * Direct port of {@code GenericDungeon.fill_chests} (King, line
+     * 727&ndash;785) / {@code fill_chestsQ} (Queen, line 6929&ndash;6987).
+     * Four chests at the cardinal mid-edges of the floor; when
+     * {@code reward == 6} they hold the Royal Guardian Sword + Royal /
+     * Queen armor set + Prince / Princess egg in the exact slot order
+     * the legacy used. Otherwise a level-N {@code chestContents} fill
+     * runs {@code 5 + nextInt(7)} insertions (legacy
+     * {@code WeightedRandomChestContent.func_76293_a}).
+     */
+    private void fillChallengeChests(boolean king, int cposx, int cposy, int cposz,
+                                     int width, int decor, int reward, RandomSource random) {
+        // West chest (line 743-752 / 6945-6954). reward=6 -> Prince/Princess Egg in slot 1.
+        placeChest(cposx + 1, cposy + 1, cposz + width / 2, (chest, rng) -> {
+            if (reward == 6) {
+                chest.setItem(1, new ItemStack(king
+                        ? ModItems.PRINCE_EGG.get() : ModItems.PRINCESS_EGG.get()));
+            } else {
+                fillChallengeContents(chest, reward, rng);
+            }
+        }, random);
+        // East chest (line 753-763 / 6955-6965). reward=6 -> Royal Helmet + Chestplate.
+        placeChest(cposx + width - 2, cposy + 1, cposz + width / 2, (chest, rng) -> {
+            if (reward == 6) {
+                chest.setItem(1, new ItemStack(king
+                        ? ModItems.ROYAL_HELMET.get() : ModItems.QUEEN_HELMET.get()));
+                chest.setItem(2, new ItemStack(king
+                        ? ModItems.ROYAL_CHESTPLATE.get() : ModItems.QUEEN_CHESTPLATE.get()));
+            } else {
+                fillChallengeContents(chest, reward, rng);
+            }
+        }, random);
+        // North chest (line 764-774 / 6966-6976). reward=6 -> Royal Leggings + Boots.
+        placeChest(cposx + width / 2, cposy + 1, cposz + 1, (chest, rng) -> {
+            if (reward == 6) {
+                chest.setItem(1, new ItemStack(king
+                        ? ModItems.ROYAL_LEGGINGS.get() : ModItems.QUEEN_LEGGINGS.get()));
+                chest.setItem(2, new ItemStack(king
+                        ? ModItems.ROYAL_BOOTS.get() : ModItems.QUEEN_BOOTS.get()));
+            } else {
+                fillChallengeContents(chest, reward, rng);
+            }
+        }, random);
+        // South chest (line 775-784 / 6977-6986). reward=6 -> Royal Guardian Sword.
+        placeChest(cposx + width / 2, cposy + 1, cposz + width - 2, (chest, rng) -> {
+            if (reward == 6) {
+                chest.setItem(1, new ItemStack(ModItems.ROYAL_GUARDIAN_SWORD.get()));
+            } else {
+                fillChallengeContents(chest, reward, rng);
+            }
+        }, random);
+    }
+
+    /**
+     * Authentic per-tier weighted chest fill. The legacy
+     * {@code level1ContentsList}&hellip;{@code level5ContentsList}
+     * (legacy lines 57&ndash;61) reference dozens of OreSpawn items;
+     * each tier here ports the items that have a 1.21.1 counterpart and
+     * preserves the original entry weight by duplication. Entry counts
+     * keep the same {@code 5 + nextInt(7)} insertion budget the legacy
+     * {@code WeightedRandomChestContent.func_76293_a} used.
+     */
+    private static void fillChallengeContents(ChestBlockEntity chest, int reward, RandomSource random) {
+        ItemStack[] palette = switch (reward) {
+            case 5 -> new ItemStack[]{
+                    new ItemStack(ModItems.NIGHTMARE_SWORD.get(), 1),
+                    new ItemStack(ModItems.POISON_SWORD.get(), 1),
+                    new ItemStack(Items.WITHER_SKELETON_SPAWN_EGG, 1 + random.nextInt(4)),
+                    new ItemStack(Items.IRON_GOLEM_SPAWN_EGG, 1 + random.nextInt(4)),
+                    new ItemStack(ModItems.MOTHRA_SPAWN_EGG.get(), 1 + random.nextInt(4)),
+                    new ItemStack(Items.NETHERITE_INGOT, 1 + random.nextInt(2)),
+                    new ItemStack(Items.ENCHANTED_GOLDEN_APPLE, 1)
+            };
+            case 4 -> new ItemStack[]{
+                    new ItemStack(ModItems.RUBY.get(), 2 + random.nextInt(7)),
+                    new ItemStack(ModItems.MAGIC_APPLE.get(), 1),
+                    new ItemStack(ModBlocks.CREEPER_REPELLENT.get(), 4 + random.nextInt(7)),
+                    new ItemStack(ModBlocks.KRAKEN_REPELLENT.get(), 4 + random.nextInt(7)),
+                    new ItemStack(ModItems.RUBY_PICKAXE.get(), 1),
+                    new ItemStack(ModItems.RUBY_SWORD.get(), 1),
+                    new ItemStack(ModItems.RUBY_HELMET.get(), 1),
+                    new ItemStack(ModItems.RUBY_CHESTPLATE.get(), 1),
+                    new ItemStack(ModItems.RUBY_LEGGINGS.get(), 1),
+                    new ItemStack(ModItems.RUBY_BOOTS_ARMOR.get(), 1)
+            };
+            case 3 -> new ItemStack[]{
+                    new ItemStack(ModItems.RAT_SWORD.get(), 1),
+                    new ItemStack(Items.AMETHYST_SHARD, 2 + random.nextInt(7)),
+                    new ItemStack(Items.LAPIS_LAZULI, 2 + random.nextInt(7)),
+                    new ItemStack(ModItems.TIGERSEYE_HELMET.get(), 1),
+                    new ItemStack(ModItems.TIGERSEYE_CHESTPLATE.get(), 1),
+                    new ItemStack(ModItems.TIGERSEYE_LEGGINGS.get(), 1),
+                    new ItemStack(ModItems.TIGERSEYE_BOOTS.get(), 1),
+                    new ItemStack(ModItems.AMETHYST_SWORD.get(), 1),
+                    new ItemStack(ModItems.AMETHYST_PICKAXE.get(), 1)
+            };
+            case 2 -> new ItemStack[]{
+                    new ItemStack(Items.ENDER_PEARL, 2 + random.nextInt(7)),
+                    new ItemStack(Items.ENDER_PEARL, 2 + random.nextInt(7)),
+                    new ItemStack(ModItems.PINK_HELMET.get(), 1),
+                    new ItemStack(ModItems.PINK_CHESTPLATE.get(), 1),
+                    new ItemStack(ModItems.PINK_LEGGINGS.get(), 1),
+                    new ItemStack(ModItems.PINK_BOOTS.get(), 1),
+                    new ItemStack(ModItems.FAIRY_SWORD.get(), 1),
+                    new ItemStack(ModItems.EMERALD_PICKAXE.get(), 1),
+                    new ItemStack(ModItems.EMERALD_SWORD.get(), 1)
+            };
+            default -> new ItemStack[]{
+                    new ItemStack(Items.EMERALD, 2 + random.nextInt(7)),
+                    new ItemStack(ModItems.MINERS_DREAM.get(), 4 + random.nextInt(5)),
+                    new ItemStack(ModItems.EMERALD_PICKAXE.get(), 1),
+                    new ItemStack(ModItems.EMERALD_SWORD.get(), 1),
+                    new ItemStack(ModItems.EMERALD_HELMET.get(), 1),
+                    new ItemStack(ModItems.EMERALD_CHESTPLATE.get(), 1),
+                    new ItemStack(ModItems.EMERALD_LEGGINGS.get(), 1),
+                    new ItemStack(ModItems.EMERALD_BOOTS_ARMOR.get(), 1)
+            };
+        };
+        int slots = chest.getContainerSize();
+        int count = 5 + random.nextInt(7);
+        for (int i = 0; i < count; i++) {
+            chest.setItem(random.nextInt(slots), palette[random.nextInt(palette.length)].copy());
+        }
+    }
+
+    /**
+     * King's per-floor "Outside" corner-spawner ladder. Direct port of
+     * the {@code makeEnormousCastle.buildLevel(critter=...)} string
+     * arguments at legacy lines 292 / 295 / 299 / 303 / 307 / 311.
+     *
+     * <pre>
+     *   Floor 1 (decor=1): "Cloud Shark"     -&gt; CLOUD_SHARK
+     *   Floor 2 (decor=2): "Lurking Terror"  -&gt; ENTITY_LURKING_TERROR
+     *   Floor 3 (decor=3): "Rotator"         -&gt; ENTITY_ROTATOR
+     *   Floor 4 (decor=4): "Bee"             -&gt; ENTITY_BEE
+     *   Floor 5 (decor=5): "Mantis"          -&gt; ENTITY_MANTIS
+     *   Floor 6 (decor=6): "Mothra"          -&gt; MOTHRA
+     * </pre>
+     *
+     * <p>Resolved at call-time (i.e. inside {@code postProcess}) so the
+     * NeoForge {@code DeferredHolder} registry-attach has guaranteed to
+     * have run; lazy-resolving statically would NPE if this class loaded
+     * before {@code FMLClientSetupEvent} fired.</p>
+     */
+    private static EntityType<?>[] kingFloorCornerMobs() {
+        return new EntityType<?>[]{
+                ModEntities.CLOUD_SHARK.get(),
+                ModEntities.ENTITY_LURKING_TERROR.get(),
+                ModEntities.ENTITY_ROTATOR.get(),
+                ModEntities.ENTITY_BEE.get(),
+                ModEntities.ENTITY_MANTIS.get(),
+                ModEntities.MOTHRA.get()
+        };
+    }
+
+    /**
+     * Queen's per-floor "Outside" corner-spawner ladder. Direct port of
+     * the {@code makeEnormousCastleQ.buildLevelQ(critter=...)} string
+     * arguments at legacy lines 6494 / 6497 / 6501 / 6505 / 6509 / 6513.
+     *
+     * <pre>
+     *   Floor 1: "Rotator"    -&gt; ENTITY_ROTATOR
+     *   Floor 2: "Bee"        -&gt; ENTITY_BEE
+     *   Floor 3: "Mantis"     -&gt; ENTITY_MANTIS
+     *   Floor 4: "Mothra"     -&gt; MOTHRA
+     *   Floor 5: "Brutalfly"  -&gt; ENTITY_BRUTALFLY
+     *   Floor 6: "Vortex"     -&gt; ENTITY_VORTEX
+     * </pre>
+     */
+    private static EntityType<?>[] queenFloorCornerMobs() {
+        return new EntityType<?>[]{
+                ModEntities.ENTITY_ROTATOR.get(),
+                ModEntities.ENTITY_BEE.get(),
+                ModEntities.ENTITY_MANTIS.get(),
+                ModEntities.MOTHRA.get(),
+                ModEntities.ENTITY_BRUTALFLY.get(),
+                ModEntities.ENTITY_VORTEX.get()
+        };
+    }
 }
