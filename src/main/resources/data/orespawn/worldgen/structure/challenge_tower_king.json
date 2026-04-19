@@ -1,9 +1,8 @@
 {
-  "type": "orespawn:feature",
+  "type": "orespawn:legacy_dungeon",
   "biomes": "#orespawn:has_structure/challenge_tower_king",
   "step": "surface_structures",
   "spawn_overrides": {},
   "terrain_adaptation": "none",
-  "feature": "orespawn:challenge_tower_king",
-  "y_offset": 0
+  "dungeon_type": "KING_TOWER"
 }
