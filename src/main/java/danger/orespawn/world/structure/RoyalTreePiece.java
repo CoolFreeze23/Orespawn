@@ -18,37 +18,44 @@ import net.minecraft.world.level.levelgen.structure.pieces.StructurePieceSeriali
  * Dedicated {@link StructurePiece} for the Phase 13C Royal Trees (Tree of
  * Goodness / Queen Tree).
  *
- * <p><b>What this class fixes (the chunk-clipping bug):</b> the previous
- * "anchor-chunk gate" attempt ran the geometry algorithm only in the chunk
- * containing the trunk origin and relied on {@link WorldGenLevel} to carry
- * cross-chunk writes to the outer 35 chunks of the ±48-block footprint.
+ * <p><b>What this class fixes (the chunk-clipping bug):</b> two issues
+ * stacked. (1) The earlier "anchor-chunk gate" ran the geometry algorithm
+ * only in the chunk containing the trunk origin and relied on
+ * {@link WorldGenLevel} to carry cross-chunk writes to the outer chunks.
  * That assumption was wrong: the {@code FEATURES} chunk-status step runs
- * with a {@code WorldGenRegion} task radius of 1 chunk, so any write farther
- * than ~1 chunk from the chunk currently being generated is silently dropped
- * (or throws via {@code ensureCanWrite}). Outer chunks of the tree never
- * received their slice and the canopy clipped at chunk borders.</p>
+ * with a {@code WorldGenRegion} task radius of 1 chunk, so any write
+ * farther than ~1 chunk from the chunk currently being generated is
+ * silently dropped (or throws via {@code ensureCanWrite}). (2) Even after
+ * switching to multi-pass + per-chunk gating, the declared piece bounding
+ * box was only ±48 horizontal — the recursive {@code make_branch}
+ * algorithm's worst-case {@code xaccum}/{@code zaccum} reach can extend
+ * ~50 blocks from the trunk, so chunks outside that ±48 permit never had
+ * {@code postProcess} scheduled and the outermost branches still clipped.
+ * The fix is multi-pass geometry + a ±64 horizontal permit so every chunk
+ * the algorithm can actually touch gets a pass.</p>
  *
  * <p><b>How the fix works (canonical Mansion / Stronghold pattern):</b>
  * {@link #postProcess} runs the full 1.7.10 {@code MakeBigSquareTree} +
  * recursive {@code make_branch} algorithm on every pass, and every
  * {@link #place} call is gated against the per-chunk {@code chunkBox} (cached
  * in {@code pCb*} fields) so only the cells that fall inside the chunk
- * currently being generated actually land. Each of the ~16 chunks that
- * intersect the tree's permit independently paints its own slice, and the
- * slices stitch together without clipping. Determinism across passes is
- * guaranteed by seeding the RNG purely from the piece's static bounding-box
- * corners and by removing all terrain reads from the algorithm — every loop
- * counter, RNG draw, and coordinate computation runs unconditionally so the
- * decision tree is identical on every pass.</p>
+ * currently being generated actually land. Each of the ~25 chunks that
+ * intersect the tree's ±64 horizontal permit independently paints its own
+ * slice, and the slices stitch together without clipping. Determinism
+ * across passes is guaranteed by seeding the RNG purely from the piece's
+ * static bounding-box corners and by removing all terrain reads from the
+ * algorithm — every loop counter, RNG draw, and coordinate computation
+ * runs unconditionally so the decision tree is identical on every pass.</p>
  *
  * <p><b>Why this doesn't re-trigger the previous freeze:</b> the freeze was
  * caused by an unoptimised {@link #place} that allocated a fresh
  * {@link BlockPos} and made two virtual {@code WorldGenLevel} calls per
- * cell, multiplied by ~16 chunk passes. The current helper uses cached
- * primitive bounds and a single reusable {@link BlockPos.MutableBlockPos},
- * so an out-of-chunk call is ~10ns and an in-chunk call ~5µs. With
- * realistic recursion (≈8 sub-branches per call, depth ≤5, ≈80k cells
- * touched per pass), total per-tree cost is ≈400ms across all 16 passes.</p>
+ * cell. The current helper uses cached primitive bounds and a single
+ * reusable {@link BlockPos.MutableBlockPos}, so an out-of-chunk call is
+ * ~10ns and an in-chunk call ~5µs. With realistic recursion (≈8
+ * sub-branches per call, depth ≤5, ≈80k cells touched per pass), total
+ * per-tree cost is ≈600-700ms across all ~25 chunk passes — a brief
+ * load-time hitch, not a freeze.</p>
  *
  * <p><b>Audit checklist:</b></p>
  * <ul>
@@ -104,15 +111,23 @@ public class RoyalTreePiece extends StructurePiece {
     /** {@code Block.UPDATE_CLIENTS}: no neighbour cascade, no lighting recompute. */
     private static final int FLAG_CLIENTS_ONLY = 2;
 
-    /** Bounding-box "permit" extents. Horizontal ±48 = ±3 chunks, comfortably
-     *  inside the 8-chunk WorldGenRegion radius for the structure step, and
-     *  generous enough to cover the recursive {@code make_branch} reach
-     *  (sub-branch xaccum can extend ~40 blocks from the trunk centre).
-     *  Vertical −12 below origin covers the foundation walks; +80 above
-     *  covers a generous tower height (legacy max ~50). */
-    private static final int H_EXTENT = 48;
+    /** Bounding-box "permit" extents. Horizontal ±64 = ±4 chunks. The
+     *  legacy {@code make_branch} algorithm accumulates {@code xaccum}
+     *  /{@code zaccum} drift up to ~48 blocks from the trunk on the
+     *  unluckiest RNG paths, plus the per-cell wall ring adds another
+     *  {@code current_width} blocks of reach; ±48 was leaving the outer
+     *  tendrils outside the declared permit, so vanilla wasn't even firing
+     *  postProcess for those chunks and the canopy clipped at the
+     *  declared-BB edge. ±64 buys an 8-chunk diameter footprint —
+     *  comfortably below the {@code FEATURES} structure-region task
+     *  radius — while guaranteeing every cell the legacy math can reach
+     *  has its chunk pass scheduled. Vertical −12 below origin keeps the
+     *  {@link #BASE_DEPTH} foundation walks inside the permit; +120
+     *  above covers the absolute legacy max tower + recursive branch
+     *  apex with comfortable headroom. */
+    private static final int H_EXTENT = 64;
     private static final int DOWN_EXTENT = 12;
-    private static final int UP_EXTENT = 80;
+    private static final int UP_EXTENT = 120;
 
     private final BlockPos origin;
     private final boolean queenVariant;
