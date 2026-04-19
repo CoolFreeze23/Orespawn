@@ -1,0 +1,8 @@
+{
+  "type": "orespawn:legacy_dungeon",
+  "biomes": "#orespawn:has_structure/king_altar",
+  "step": "surface_structures",
+  "spawn_overrides": {},
+  "terrain_adaptation": "none",
+  "dungeon_type": "KING_ALTAR"
+}
