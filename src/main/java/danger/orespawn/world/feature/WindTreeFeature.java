@@ -4,6 +4,7 @@ import com.mojang.serialization.Codec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.LeavesBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.feature.Feature;
@@ -67,19 +68,44 @@ public class WindTreeFeature extends Feature<NoneFeatureConfiguration> {
         if (surface.getY() + height + 1 >= level.getMaxBuildHeight() - 2) return false;
 
         BlockState log = Blocks.OAK_LOG.defaultBlockState();
-        BlockState leaves = Blocks.OAK_LEAVES.defaultBlockState();
+        // QA fix: leaves placed by feature have to be PERSISTENT, otherwise
+        // the engine flags them with distance=7 and they decay on the next
+        // random tick. Also pin DISTANCE=1 so even if the surrounding logs
+        // load out of order the leaves never enter the decay queue.
+        BlockState leaves = Blocks.OAK_LEAVES.defaultBlockState()
+                .setValue(LeavesBlock.PERSISTENT, true)
+                .setValue(LeavesBlock.DISTANCE, 1);
+
+        // QA fix: bail if the trunk column is already occupied (e.g. inside
+        // a Royal Tree structure). Prevents Wind Trees from punching through
+        // the King/Queen mega-trees that share the Utopia biome.
+        if (!isReplaceable(level, surface)) return false;
 
         // Main trunk + lean canopy (legacy Trees.java:69-75).
         for (int j = 0; j < height; j++) {
-            level.setBlock(surface.offset(0, j, 0), log, 2);
+            BlockPos trunkPos = surface.offset(0, j, 0);
+            if (isReplaceable(level, trunkPos)) {
+                level.setBlock(trunkPos, log, 2);
+            }
             if (j <= height / 5) continue;
-            level.setBlock(surface.offset(dirx, j, dirz), leaves, 2);
+            BlockPos leafPos = surface.offset(dirx, j, dirz);
+            if (isReplaceable(level, leafPos)) {
+                level.setBlock(leafPos, leaves, 2);
+            }
             if (j <= height / 4 || j % 4 != 0) continue;
             windTreeBranch(level, surface.offset(0, j, 0), height - j, dirx, dirz, random);
         }
         // Apex leaf cap (legacy Trees.java:76).
-        level.setBlock(surface.offset(0, height, 0), leaves, 2);
+        BlockPos apex = surface.offset(0, height, 0);
+        if (isReplaceable(level, apex)) {
+            level.setBlock(apex, leaves, 2);
+        }
         return true;
+    }
+
+    private static boolean isReplaceable(WorldGenLevel level, BlockPos pos) {
+        BlockState s = level.getBlockState(pos);
+        return s.isAir() || s.canBeReplaced() || s.is(Blocks.SHORT_GRASS) || s.is(Blocks.TALL_GRASS) || s.is(Blocks.FERN);
     }
 
     /**
@@ -90,10 +116,14 @@ public class WindTreeFeature extends Feature<NoneFeatureConfiguration> {
     private static void windTreeBranch(WorldGenLevel level, BlockPos origin, int length,
                                        int dirx, int dirz, Random random) {
         BlockState log = Blocks.OAK_LOG.defaultBlockState();
-        BlockState leaves = Blocks.OAK_LEAVES.defaultBlockState();
+        BlockState leaves = Blocks.OAK_LEAVES.defaultBlockState()
+                .setValue(LeavesBlock.PERSISTENT, true)
+                .setValue(LeavesBlock.DISTANCE, 1);
         for (int i = 1; i <= length; i++) {
             BlockPos branchPos = origin.offset(i * dirx, 0, i * dirz);
-            level.setBlock(branchPos, log, 2);
+            if (isReplaceable(level, branchPos)) {
+                level.setBlock(branchPos, log, 2);
+            }
 
             BlockPos abovePos = branchPos.above();
             if (level.getBlockState(abovePos).isAir()) {
@@ -106,7 +136,6 @@ public class WindTreeFeature extends Feature<NoneFeatureConfiguration> {
                 }
             }
             if (i <= length / 3) continue;
-            // Sideways leaf fringe at +/- perpendicular axis.
             BlockPos leftSide = branchPos.offset(dirz, 0, dirx);
             BlockPos rightSide = branchPos.offset(-dirz, 0, -dirx);
             if (level.getBlockState(leftSide).isAir()) {
@@ -116,7 +145,6 @@ public class WindTreeFeature extends Feature<NoneFeatureConfiguration> {
                 level.setBlock(rightSide, leaves, 2);
             }
         }
-        // Two leaf "trail" blocks at length+1 and length+2 (lines 37-42).
         BlockPos tip1 = origin.offset((length + 1) * dirx, 0, (length + 1) * dirz);
         BlockPos tip2 = origin.offset((length + 2) * dirx, 0, (length + 2) * dirz);
         if (level.getBlockState(tip1).isAir()) {
