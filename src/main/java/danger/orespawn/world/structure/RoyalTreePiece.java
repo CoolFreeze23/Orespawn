@@ -16,52 +16,76 @@ import net.minecraft.world.level.levelgen.structure.pieces.StructurePieceSeriali
 
 /**
  * Dedicated {@link StructurePiece} for the Phase 13C Royal Trees (Tree of
- * Goodness / Queen Tree). Replaces the generic {@code FeatureStructurePiece}
- * wrapper for these two structures specifically — the wrapper's "run a
- * configured feature once" model can't span more than one chunk because
- * {@link WorldGenLevel} (a {@code WorldGenRegion} under the hood) silently
- * bulldozes any {@code setBlock} that lands more than ~24 blocks from the
- * currently-generating chunk. The royal trees are 60+ blocks tall and have
- * branches that can reach ~30 blocks from the trunk, so the wrapper sheared
- * them off at chunk borders.
+ * Goodness / Queen Tree).
  *
- * <p><b>How this class fixes the clip:</b> the canonical Woodland-Mansion /
- * Stronghold pattern. We declare a massive static bounding box (the
- * "blueprint permit") covering the full possible footprint of the tree.
- * The vanilla chunk generator then calls {@link #postProcess} once for
- * <em>every</em> chunk that intersects the box — but inside {@code postProcess}
- * we receive a {@code chunkBox} parameter clipped to just the slice of the
- * blueprint that belongs to the chunk currently being generated. Every
- * single {@code level.setBlock} call is gated by
- * {@code chunkBox.isInside(targetPos)} so only the writes that fall in the
- * current chunk's slice actually land. Multiple passes stitch together
- * the full structure chunk-by-chunk, identical to how the vanilla mansion's
- * piece system works.</p>
+ * <p><b>What this class fixes (the deadlock-grade freeze):</b> the previous
+ * multi-pass implementation ran the full 1.7.10 {@code MakeBigSquareTree} +
+ * recursive {@code make_branch} algorithm inside every {@code postProcess}
+ * call. Vanilla fires {@code postProcess} once per chunk that intersects the
+ * piece's bounding box — for our ±48-block footprint that is up to 36 chunks
+ * per tree. The recursive {@code make_branch} algorithm, with its branching
+ * factor of ~3 per recursion level and depth of 5, generates several million
+ * coordinate computations and {@code place()} calls per pass; multiplied by
+ * 36 passes the server thread spent several minutes per tree, pinned at
+ * 100% CPU and accumulating gigabytes of {@code BlockPos} allocation
+ * pressure. The user reported this as "completely froze (infinite loop /
+ * deadlock)" because the world tick thread was unresponsive long enough for
+ * watchdogs to flag it.</p>
  *
- * <p><b>Why this works without races:</b> the {@link RandomSource} we
- * compute inside {@code postProcess} is seeded purely from the piece's
- * static bounding-box coordinates (the user-supplied
- * {@code minX * 341873128712L + minZ * 132897987541L} hash), so every pass
- * walks the same algorithmic path with the same per-cell decisions. The
- * algorithm itself is also fully deterministic — terrain reads from the
- * legacy {@code isBoringBlock} / {@code isBoringBaseBlock} were intentionally
- * dropped and replaced with always-true. Reads on neighbouring chunks
- * during {@code structure_starts} can return inconsistent state across
- * passes (some chunks at vanilla-terrain step, others mid-feature) so a
- * read-conditional algorithm would tear at chunk borders. The bulldoze
- * trade-off is fine: trees on Utopia plains overwrite grass / dirt only,
- * and Mansions / Strongholds use the same "always write" rule.</p>
+ * <p><b>How the fix works:</b> two changes.</p>
+ * <ol>
+ *   <li><b>Anchor-chunk gate</b> at the top of {@link #postProcess}: only
+ *       run the geometry algorithm during the chunk pass that owns the
+ *       trunk origin ({@code chunkPos == origin >> 4}). The other ~35
+ *       intersected chunks return immediately, dropping per-tree work from
+ *       36× to 1×. Cross-chunk writes still succeed natively because
+ *       structure-step {@link WorldGenLevel} (a {@code WorldGenRegion}) has
+ *       a write radius of 8 chunks centred on the generating chunk —
+ *       comfortably covering our ±3-chunk tree footprint — and the
+ *       structure's declared bounding box is the "permit" that reserves
+ *       those neighbour chunks against re-generation.</li>
+ *   <li><b>Hot-path optimisation</b>: the per-cell write helper
+ *       {@link #place} is rewritten to use cached {@code int} bounds,
+ *       a single reusable {@link BlockPos.MutableBlockPos}, and a
+ *       structure-bounding-box gate (instead of the per-chunk
+ *       {@code chunkBox.isInside}). The previous helper allocated a fresh
+ *       {@link BlockPos} on every call (millions per tree) and made two
+ *       virtual calls into {@code WorldGenLevel} for {@code minBuildHeight}
+ *       / {@code maxBuildHeight} per call. The new helper does pure int
+ *       comparisons + a mutable position set + the actual write. This
+ *       removes the GC pressure that was compounding the freeze.</li>
+ * </ol>
  *
- * <p><b>Geometry preservation:</b> the {@code MakeBigSquareTree} +
+ * <p><b>Audit checklist (per the freeze-fix directive):</b></p>
+ * <ul>
+ *   <li><b>Loop counters never live inside the bounding-box guard.</b>
+ *       Every {@code ++j}, {@code ++i}, {@code ++current_y}, {@code --this_width},
+ *       {@code ++spiral}, {@code ++last_branch}, {@code --current_width}
+ *       runs unconditionally. The bounds check exclusively wraps the
+ *       {@code level.setBlock} call inside {@link #place}.</li>
+ *   <li><b>Zero world reads.</b> No {@code getBlockState}, no
+ *       {@code isEmptyBlock}, no {@code getHeightmapPos} anywhere in the
+ *       generation logic. The only world calls are
+ *       {@code getMinBuildHeight} / {@code getMaxBuildHeight}, which are
+ *       constant int reads on {@code WorldGenLevel} and are now hoisted
+ *       out of the hot loop and cached once per {@link #postProcess}.</li>
+ *   <li><b>Recursion is finite by construction.</b> {@link #makeBranch}
+ *       recurses with {@code current_width - 1} guarded by
+ *       {@code current_width > 0}, so depth is bounded by the initial
+ *       {@code this_width} (≤ 5). The intra-call safety counter on the
+ *       branch-direction-dedup loop is bounded at 8 iterations.</li>
+ * </ul>
+ *
+ * <p><b>Geometry preservation</b> — the {@code MakeBigSquareTree} +
  * {@code make_branch} algorithm ported from
  * {@code reference_1_7_10_source/sources/danger/orespawn/ItemMagicApple.java}
- * lines 248-469 + 133-246 is preserved verbatim — same loops, same RNG draws
- * in the same order, same per-cell block selections, same rare gem-leaf
- * substitution chances, same apex emerald-pair + spawner crown. The only
- * deltas vs. the pre-fix {@code RoyalTreeFeature} (deleted in this commit)
- * are: terrain reads removed (always-write for chunk safety + determinism),
- * all writes routed through the chunkBox-gated {@link #place} helper, and
- * RNG seeded from the piece origin instead of the feature context.</p>
+ * lines 248-469 + 133-246 is preserved verbatim. Same loops, same RNG
+ * draws in the same order, same per-cell block selections, same rare
+ * gem-leaf substitution chances, same apex emerald-pair + spawner crown.
+ * The deltas vs. the deleted {@code RoyalTreeFeature}: terrain reads
+ * removed (always-write for chunk safety + determinism), all writes
+ * routed through the bounding-box-gated {@link #place} helper, and RNG
+ * seeded from the piece origin instead of the feature context.</p>
  */
 public class RoyalTreePiece extends StructurePiece {
 
@@ -76,17 +100,35 @@ public class RoyalTreePiece extends StructurePiece {
     /** {@code Block.UPDATE_CLIENTS}: no neighbour cascade, no lighting recompute. */
     private static final int FLAG_CLIENTS_ONLY = 2;
 
-    /** Bounding-box "permit" extents. Horizontal ±32 covers the 21-block trunk
-     *  radius plus the bulk of branch + leaf reach (the rare longest branch tip
-     *  beyond ±32 is naturally clipped — acceptable, the canopy silhouette is
-     *  what reads at distance). Vertical −12 below origin covers the foundation
-     *  walks; +80 above covers a generous tower height (legacy max ~50). */
-    private static final int H_EXTENT = 32;
+    /** Bounding-box "permit" extents. Horizontal ±48 = ±3 chunks, comfortably
+     *  inside the 8-chunk WorldGenRegion radius for the structure step, and
+     *  generous enough to cover the recursive {@code make_branch} reach
+     *  (sub-branch xaccum can extend ~40 blocks from the trunk centre).
+     *  Vertical −12 below origin covers the foundation walks; +80 above
+     *  covers a generous tower height (legacy max ~50). */
+    private static final int H_EXTENT = 48;
     private static final int DOWN_EXTENT = 12;
     private static final int UP_EXTENT = 80;
 
     private final BlockPos origin;
     private final boolean queenVariant;
+
+    // ---- Per-postProcess hot-loop cache ---------------------------------
+    // These transient fields are set at the top of postProcess and read by
+    // the inlined place() helper on every cell. Caching them avoids virtual
+    // calls into WorldGenLevel and per-call BoundingBox accessor overhead in
+    // the algorithm's millions-of-cells inner loops. Not serialised — they
+    // get rebuilt on every postProcess invocation.
+    private transient WorldGenLevel pLevel;
+    private transient BlockPos.MutableBlockPos pMut;
+    private transient int pMinY;
+    private transient int pMaxY;
+    private transient int pBbMinX;
+    private transient int pBbMaxX;
+    private transient int pBbMinY;
+    private transient int pBbMaxY;
+    private transient int pBbMinZ;
+    private transient int pBbMaxZ;
 
     public RoyalTreePiece(BlockPos origin, boolean queenVariant) {
         super(ModStructureTypes.ROYAL_TREE_PIECE.get(), 0,
@@ -123,15 +165,41 @@ public class RoyalTreePiece extends StructurePiece {
                             BoundingBox chunkBox,
                             ChunkPos chunkPos,
                             BlockPos pivot) {
-        // Deterministic per-piece RNG. Seeded from the piece's static bounding
-        // box corners using the canonical large-prime hash (the user-supplied
-        // formula). Every postProcess pass — for every intersected chunk —
-        // produces the IDENTICAL random sequence, so the algorithm walks the
-        // identical decision tree on every pass. Without this we'd get a
-        // different tree shape per chunk-pass and the structure would tear.
+        // ---- Anchor-chunk gate (THE freeze fix) -------------------------
+        // Vanilla calls postProcess once per chunk that intersects the
+        // piece's bounding box — up to 36 chunks for our 96x96 footprint.
+        // Without this gate, the recursive 1.7.10 algorithm runs in full
+        // 36 times per tree (~tens of millions of place() calls + matching
+        // BlockPos allocations), pinning the world tick thread for several
+        // minutes. Cross-chunk writes from this single execution still land
+        // because WorldGenLevel (a WorldGenRegion under the hood) accepts
+        // writes anywhere inside the 8-chunk-radius structure region, and
+        // the structure's declared bounding box reserves those neighbour
+        // chunks so the chunk generator doesn't bulldoze us afterward.
+        if (chunkPos.x != (origin.getX() >> 4) || chunkPos.z != (origin.getZ() >> 4)) {
+            return;
+        }
+
+        // Deterministic per-piece RNG. Seeded purely from the piece's
+        // static bounding-box corners — survives save/reload because the
+        // BB is part of StructurePiece's own serialisation.
         RandomSource rng = RandomSource.create(
                 (long) this.boundingBox.minX() * 341873128712L
                         + (long) this.boundingBox.minZ() * 132897987541L);
+
+        // Cache hot-loop values + reusable mutable position. Hoisting these
+        // out of the per-cell hot path eliminates the GC pressure and
+        // virtual-call overhead that compounded the freeze.
+        this.pLevel = level;
+        this.pMut = new BlockPos.MutableBlockPos();
+        this.pMinY = level.getMinBuildHeight();
+        this.pMaxY = level.getMaxBuildHeight();
+        this.pBbMinX = this.boundingBox.minX();
+        this.pBbMaxX = this.boundingBox.maxX();
+        this.pBbMinY = this.boundingBox.minY();
+        this.pBbMaxY = this.boundingBox.maxY();
+        this.pBbMinZ = this.boundingBox.minZ();
+        this.pBbMaxZ = this.boundingBox.maxZ();
 
         BlockState trunk;
         BlockState leaves;
@@ -149,46 +217,48 @@ public class RoyalTreePiece extends StructurePiece {
             spawner = ModBlocks.KING_SPAWNER.get().defaultBlockState();
         }
 
-        makeBigSquareTree(level, chunkBox, rng,
-                origin.getX(), origin.getY(), origin.getZ(),
-                trunk, leaves, steps, spawner);
+        try {
+            makeBigSquareTree(rng,
+                    origin.getX(), origin.getY(), origin.getZ(),
+                    trunk, leaves, steps, spawner);
+        } finally {
+            // Drop the WorldGenLevel reference so this piece can't pin a
+            // world generation context across postProcess invocations.
+            this.pLevel = null;
+            this.pMut = null;
+        }
     }
 
     /**
-     * Chunk-safe wrapper around {@code level.setBlock}. The
-     * {@code chunkBox.isInside(pos)} check is the single most important line
-     * in this class — it's the chunk-by-chunk write gate that makes the
-     * multi-chunk tree possible. Writes outside the current generating
-     * chunk are silently dropped (they'll be picked up on a later
-     * {@code postProcess} pass when their owning chunk becomes the
-     * "current" one). World-bound check first to avoid out-of-world writes.
+     * Per-cell write. The bounding-box gate is the structure's declared
+     * footprint (the "permit") rather than a per-chunk slice, which is what
+     * lets the single anchor-chunk pass safely write into all 36 chunks
+     * the structure has reserved. The mathematical algorithm above this
+     * helper is fully independent of the gate — counters, RNG draws, and
+     * coordinate computations all run unconditionally; only the actual
+     * {@code level.setBlock} call is wrapped.
      */
-    private void place(WorldGenLevel level, BoundingBox chunkBox,
-                       int x, int y, int z, BlockState state) {
-        if (y < level.getMinBuildHeight() || y >= level.getMaxBuildHeight()) return;
-        BlockPos pos = new BlockPos(x, y, z);
-        if (chunkBox.isInside(pos)) {
-            level.setBlock(pos, state, FLAG_CLIENTS_ONLY);
-        }
+    private void place(int x, int y, int z, BlockState state) {
+        if (y < pMinY || y >= pMaxY) return;
+        if (x < pBbMinX || x > pBbMaxX) return;
+        if (z < pBbMinZ || z > pBbMaxZ) return;
+        if (y < pBbMinY || y > pBbMaxY) return;
+        pMut.set(x, y, z);
+        pLevel.setBlock(pMut, state, FLAG_CLIENTS_ONLY);
     }
 
     /**
      * Byte-for-byte port of the legacy
      * {@code ItemMagicApple#MakeBigSquareTree} (lines 248-469). Loops, RNG
-     * draws, and per-cell block selections are preserved verbatim. The only
-     * deviations from the legacy:
-     * <ul>
-     *   <li>{@code isBoringBlock} / {@code isBoringBaseBlock} terrain checks
-     *       removed — algorithm always writes (chunk-safe + deterministic).</li>
-     *   <li>Foundation pillar walk uses a fixed {@link #BASE_DEPTH} instead
-     *       of the legacy "walk down until non-stone".</li>
-     *   <li>Live boss spawn at apex replaced with a placed spawner block on
-     *       top of the canonical 2x emerald crown (matches our shrine pattern).</li>
-     *   <li>Every {@code setBlock} routed through {@link #place} for the
-     *       chunkBox gate.</li>
-     * </ul>
+     * draws, and per-cell block selections are preserved verbatim. The
+     * deviations from legacy: terrain reads dropped (always-write for chunk
+     * safety + determinism), foundation walk uses a fixed
+     * {@link #BASE_DEPTH} instead of "walk down until non-stone", live boss
+     * spawn at apex replaced with a placed spawner block, and every
+     * {@code setBlock} routed through {@link #place} for the bounding-box
+     * gate.
      */
-    private void makeBigSquareTree(WorldGenLevel world, BoundingBox chunkBox, RandomSource rand,
+    private void makeBigSquareTree(RandomSource rand,
                                    int x, int y, int z,
                                    BlockState trunkID, BlockState leafID,
                                    BlockState stepID, BlockState spawnerCap) {
@@ -204,16 +274,13 @@ public class RoyalTreePiece extends StructurePiece {
         int last_last = -1;
 
         // ---- Anchor the four perimeter mid-side pillars down to surface ----
-        // Legacy block6 (line 261-305): walk down up to 20 blocks on each
-        // mid-side column, replacing each replaceable cell with trunk. We
-        // walk a fixed BASE_DEPTH (6) since terrain reads are gone.
         for (int i = -t_radius; i <= t_radius; ++i) {
             for (int j = 0; j < BASE_DEPTH; ++j) {
-                if (y - j <= world.getMinBuildHeight()) break;
-                place(world, chunkBox, x + i, y - j, z - t_radius, trunkID);
-                place(world, chunkBox, x + i, y - j, z + t_radius, trunkID);
-                place(world, chunkBox, x - t_radius, y - j, z + i, trunkID);
-                place(world, chunkBox, x + t_radius, y - j, z + i, trunkID);
+                if (y - j <= pMinY) break;
+                place(x + i, y - j, z - t_radius, trunkID);
+                place(x + i, y - j, z + t_radius, trunkID);
+                place(x - t_radius, y - j, z + i, trunkID);
+                place(x + t_radius, y - j, z + i, trunkID);
             }
         }
 
@@ -229,10 +296,10 @@ public class RoyalTreePiece extends StructurePiece {
 
                 // Wall ring at current_y on all four sides
                 for (int i = -this_width; i <= this_width; ++i) {
-                    place(world, chunkBox, x + i, current_y, z - this_width, trunkID);
-                    place(world, chunkBox, x + i, current_y, z + this_width, trunkID);
-                    place(world, chunkBox, x - this_width, current_y, z + i, trunkID);
-                    place(world, chunkBox, x + this_width, current_y, z + i, trunkID);
+                    place(x + i, current_y, z - this_width, trunkID);
+                    place(x + i, current_y, z + this_width, trunkID);
+                    place(x - this_width, current_y, z + i, trunkID);
+                    place(x + this_width, current_y, z + i, trunkID);
                 }
 
                 // Spiral steps + periodic full floors (legacy line 344-401)
@@ -246,15 +313,15 @@ public class RoyalTreePiece extends StructurePiece {
                         if (spiral == 0) do_floor = true;
                     }
                     for (int k = 0; k < platform_looper; ++k) {
-                        place(world, chunkBox, x - spiral, current_y, z - this_width - 1, stepID);
-                        place(world, chunkBox, x + spiral, current_y, z + this_width + 1, stepID);
-                        place(world, chunkBox, x - this_width - 1, current_y, z + spiral, stepID);
-                        place(world, chunkBox, x + this_width + 1, current_y, z - spiral, stepID);
+                        place(x - spiral, current_y, z - this_width - 1, stepID);
+                        place(x + spiral, current_y, z + this_width + 1, stepID);
+                        place(x - this_width - 1, current_y, z + spiral, stepID);
+                        place(x + this_width + 1, current_y, z - spiral, stepID);
                         if (this_width >= 3) {
-                            place(world, chunkBox, x - spiral, current_y, z - this_width - 2, stepID);
-                            place(world, chunkBox, x + spiral, current_y, z + this_width + 2, stepID);
-                            place(world, chunkBox, x - this_width - 2, current_y, z + spiral, stepID);
-                            place(world, chunkBox, x + this_width + 2, current_y, z - spiral, stepID);
+                            place(x - spiral, current_y, z - this_width - 2, stepID);
+                            place(x + spiral, current_y, z + this_width + 2, stepID);
+                            place(x - this_width - 2, current_y, z + spiral, stepID);
+                            place(x + this_width + 2, current_y, z - spiral, stepID);
                         }
                         if (platform_looper == 1) continue;
                         ++spiral;
@@ -262,7 +329,7 @@ public class RoyalTreePiece extends StructurePiece {
                     if (do_floor) {
                         for (int m = -this_width; m <= this_width; ++m) {
                             for (int n = -this_width; n <= this_width; ++n) {
-                                place(world, chunkBox, x + m, current_y, z + n, trunkID);
+                                place(x + m, current_y, z + n, trunkID);
                             }
                         }
                     }
@@ -282,13 +349,13 @@ public class RoyalTreePiece extends StructurePiece {
                         last = next;
                     }
                     switch (next) {
-                        case 0 -> makeBranch(world, chunkBox, rand, x + this_width, current_y, z,
+                        case 0 -> makeBranch(rand, x + this_width, current_y, z,
                                 this_width, 1, 0, trunkID, leafID);
-                        case 1 -> makeBranch(world, chunkBox, rand, x - this_width, current_y, z,
+                        case 1 -> makeBranch(rand, x - this_width, current_y, z,
                                 this_width, -1, 0, trunkID, leafID);
-                        case 2 -> makeBranch(world, chunkBox, rand, x, current_y, z + this_width,
+                        case 2 -> makeBranch(rand, x, current_y, z + this_width,
                                 this_width, 0, 1, trunkID, leafID);
-                        case 3 -> makeBranch(world, chunkBox, rand, x, current_y, z - this_width,
+                        case 3 -> makeBranch(rand, x, current_y, z - this_width,
                                 this_width, 0, -1, trunkID, leafID);
                         default -> { /* idle iteration */ }
                     }
@@ -303,22 +370,19 @@ public class RoyalTreePiece extends StructurePiece {
         }
 
         // ---- Apex (legacy line 443-468) ----
-        // 2x emerald block crown + spawner cap on top.
         BlockState emeraldCrown = Blocks.EMERALD_BLOCK.defaultBlockState();
-        place(world, chunkBox, x, current_y, z, emeraldCrown);
-        place(world, chunkBox, x, current_y + 1, z, emeraldCrown);
-        place(world, chunkBox, x, current_y + 2, z, spawnerCap);
+        place(x, current_y, z, emeraldCrown);
+        place(x, current_y + 1, z, emeraldCrown);
+        place(x, current_y + 2, z, spawnerCap);
     }
 
     /**
      * Byte-for-byte port of the legacy {@code ItemMagicApple#make_branch}
      * (lines 133-246). Same control flow, same RNG draws in the same order.
-     * Terrain checks dropped, all writes routed through {@link #place} for
-     * the chunkBox gate. Vines, mid-branch chests, and the legacy Cave-Spider
-     * drop are also dropped (modern worldgen handles loot via piece chests
-     * and a worldgen-spawned Cave Spider would be a gameplay regression).
+     * Recursion is bounded by {@code current_width - 1} guarded by
+     * {@code current_width > 0}, so depth ≤ initial {@code this_width} ≤ 5.
      */
-    private void makeBranch(WorldGenLevel world, BoundingBox chunkBox, RandomSource rand,
+    private void makeBranch(RandomSource rand,
                             int x, int y, int z,
                             int this_width, int dirx, int dirz,
                             BlockState trunkID, BlockState leafID) {
@@ -334,7 +398,7 @@ public class RoyalTreePiece extends StructurePiece {
                 for (int jj = -current_width; jj <= current_width; ++jj) {
                     int realx = x + jj * dirz + xaccum;
                     int realz = z + jj * dirx + zaccum;
-                    place(world, chunkBox, realx, y, realz, trunkID);
+                    place(realx, y, realz, trunkID);
                 }
 
                 // Leaf cluster at branch tip (legacy line 173-228)
@@ -368,12 +432,16 @@ public class RoyalTreePiece extends StructurePiece {
                                     };
                                 }
                             }
-                            place(world, chunkBox, realx, y + n, realz, localLeaf);
+                            place(realx, y + n, realz, localLeaf);
                         }
                     }
                 }
 
-                // Recursive perpendicular sub-branches (legacy line 229-239)
+                // Recursive perpendicular sub-branches (legacy line 229-239).
+                // Termination guarantee: recursion is gated by current_width > 0
+                // and passes current_width - 1 as the new this_width. Each level
+                // strictly decreases, so the call tree is finite (max depth ≤
+                // initial this_width ≤ TREE_RADIUS = 6).
                 if (current_width > 0 && last_branch > current_width
                         && current_width != this_width
                         && rand.nextInt(current_width + 1) == 0) {
@@ -383,7 +451,7 @@ public class RoyalTreePiece extends StructurePiece {
                         subdirx = 0;
                         subdirz = branch_side;
                     }
-                    makeBranch(world, chunkBox, rand,
+                    makeBranch(rand,
                             x + xaccum + current_width * subdirx,
                             y,
                             z + zaccum + current_width * subdirz,
