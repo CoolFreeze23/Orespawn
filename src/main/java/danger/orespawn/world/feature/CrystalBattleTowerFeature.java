@@ -220,13 +220,15 @@ public class CrystalBattleTowerFeature extends Feature<NoneFeatureConfiguration>
                 chest.setItem(3, new ItemStack(ModItems.TIGERSEYE_BOOTS.get()));
                 chest.setItem(4, new ItemStack(ModItems.RAT_SWORD.get()));
             }
-            case 4 -> { // Vortex cap-floor: legacy reward tier.
+            case 4 -> { // Vortex cap-floor: legacy CrystalBattleTowerVortexContentsList
+                // (GenericDungeon.java:36) — note the legacy array deliberately
+                // duplicated CrystalCoal twice to weight it heavier in the
+                // 6-slot fill loop. Mirrored here.
                 chest.setItem(0, new ItemStack(ModItems.CRYSTAL_COAL_ITEM.get(), 6 + random.nextInt(5)));
-                chest.setItem(1, new ItemStack(ModItems.TIGERS_EYE_SWORD.get()));
-                chest.setItem(2, new ItemStack(ModItems.BLOCK_TIGERS_EYE_ITEM.get(), 4 + random.nextInt(5)));
-                chest.setItem(3, new ItemStack(ModItems.POISON_SWORD.get()));
-                chest.setItem(4, new ItemStack(Items.DIAMOND, 4 + random.nextInt(5)));
-                chest.setItem(5, new ItemStack(Items.NETHERITE_INGOT, 1 + random.nextInt(2)));
+                chest.setItem(1, new ItemStack(ModItems.CRYSTAL_COAL_ITEM.get(), 6 + random.nextInt(5)));
+                chest.setItem(2, new ItemStack(ModItems.TIGERS_EYE_SWORD.get()));
+                chest.setItem(3, new ItemStack(ModItems.BLOCK_TIGERS_EYE_ITEM.get(), 4 + random.nextInt(5)));
+                chest.setItem(4, new ItemStack(ModItems.POISON_SWORD.get()));
             }
             default -> {
                 // Defensive: should never hit, but keep the chest from being

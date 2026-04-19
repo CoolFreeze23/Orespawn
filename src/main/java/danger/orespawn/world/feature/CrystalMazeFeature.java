@@ -2,12 +2,9 @@ package danger.orespawn.world.feature;
 
 import com.mojang.serialization.Codec;
 import danger.orespawn.ModBlocks;
-import danger.orespawn.ModEntities;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.entity.SpawnerBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
@@ -53,10 +50,12 @@ import java.util.Random;
  * window would clip world build limits. This satisfies the user's
  * "zero cross-chunk runaway generation" requirement.</p>
  *
- * <p>One {@link danger.orespawn.entity.EntityRotator Rotator} spawner is
- * placed in the centre cell of every successfully generated maze
- * (mirrors the legacy crystal-dim spawner pool that pumped Rotators into
- * dim-5 underground voids).</p>
+ * <p><b>Audit note (Audit Part 1):</b> a Rotator spawner used to be
+ * placed in the centre cell as a quality-of-life addition. The legacy
+ * {@code buildCrystalMaze} (CrystalMaze.java:20) places NO spawners
+ * inside the maze itself &mdash; mob spawning was handled by the
+ * Crystal Dimension chunk provider's separate spawner pool. To enforce
+ * 100% legacy fidelity that addition was removed.</p>
  */
 public class CrystalMazeFeature extends Feature<NoneFeatureConfiguration> {
 
@@ -198,18 +197,9 @@ public class CrystalMazeFeature extends Feature<NoneFeatureConfiguration> {
         int floorHoleZ = random.nextInt(FOOTPRINT);
         level.setBlock(mazeOrigin.offset(floorHoleX, -1, floorHoleZ), crystalStone, 2);
 
-        // ---- 6. One Rotator spawner in the centre cell ----
-        // Anchored to the cell that owns (GRID/2, GRID/2). Drop one block to
-        // sit on the maze floor, never at the wall position.
-        int centreX = (GRID / 2) * CELL + 1;
-        int centreZ = (GRID / 2) * CELL + 1;
-        BlockPos spawnerPos = mazeOrigin.offset(centreX, 0, centreZ);
-        // Make sure we didn't roll a wall into that exact cell — if so, jog
-        // by 1 block to keep the spawner reachable.
-        if (!level.getBlockState(spawnerPos).isAir()) {
-            spawnerPos = spawnerPos.offset(1, 0, 0);
-        }
-        placeSpawner(level, spawnerPos, ModEntities.ENTITY_ROTATOR.get());
+        // No spawner — legacy CrystalMaze.buildCrystalMaze places only
+        // geometry. Crystal Dimension mob spawning is the chunk
+        // provider's responsibility, not the maze's.
         return true;
     }
 
@@ -232,13 +222,6 @@ public class CrystalMazeFeature extends Feature<NoneFeatureConfiguration> {
                     level.setBlock(mazeOrigin.offset(x, dy, fromZ), wall, 2);
                 }
             }
-        }
-    }
-
-    private static void placeSpawner(WorldGenLevel level, BlockPos pos, EntityType<?> mob) {
-        level.setBlock(pos, Blocks.SPAWNER.defaultBlockState(), 2);
-        if (level.getBlockEntity(pos) instanceof SpawnerBlockEntity spawner) {
-            spawner.getSpawner().setEntityId(mob, null, level.getRandom(), pos);
         }
     }
 
