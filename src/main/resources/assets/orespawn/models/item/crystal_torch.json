@@ -1,3 +1,6 @@
 ﻿{
-  "parent": "orespawn:block/crystal_torch"
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "orespawn:blocks/crystaltorch"
+  }
 }

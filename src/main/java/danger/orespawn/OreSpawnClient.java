@@ -5,14 +5,17 @@ import danger.orespawn.entity.client.*;
 import danger.orespawn.gui.CrystalFurnaceScreen;
 import danger.orespawn.gui.CrystalWorkbenchScreen;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
+import net.minecraft.client.renderer.BiomeColors;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.FoliageColor;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.neoforge.client.event.ModelEvent;
+import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent;
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent;
@@ -337,6 +340,41 @@ public class OreSpawnClient {
                 event.register(ModelResourceLocation.standalone(
                         ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "item/" + name + "_flat")));
             }
+        }
+
+        /**
+         * QA fix (gray Apple Tree leaves): {@link net.minecraft.world.level.block.LeavesBlock}
+         * subclasses render with a per-biome foliage tint, but Minecraft only
+         * applies the tint when a {@link net.minecraft.client.color.block.BlockColor}
+         * is registered for the block. Without it the leaves render with the
+         * raw greyscale texture (looks washed-out / "missing texture"). All
+         * custom OreSpawn leaves get the standard biome-driven foliage tint
+         * so they blend with the surrounding biome the same way vanilla
+         * oak leaves do; the matching item icon registration ensures
+         * inventory/dropped item rendering uses the default foliage colour
+         * (no biome context available).
+         */
+        @SubscribeEvent
+        public static void registerBlockColors(RegisterColorHandlersEvent.Block event) {
+            event.register((state, level, pos, tintIndex) -> {
+                if (level != null && pos != null) return BiomeColors.getAverageFoliageColor(level, pos);
+                return FoliageColor.getDefaultColor();
+            },
+                    ModBlocks.APPLE_LEAVES.get(),
+                    ModBlocks.SCARY_LEAVES.get(),
+                    ModBlocks.CHERRY_LEAVES.get(),
+                    ModBlocks.PEACH_LEAVES.get(),
+                    ModBlocks.EXPERIENCE_LEAVES.get());
+        }
+
+        @SubscribeEvent
+        public static void registerItemColors(RegisterColorHandlersEvent.Item event) {
+            event.register((stack, tintIndex) -> FoliageColor.getDefaultColor(),
+                    ModBlocks.APPLE_LEAVES.get(),
+                    ModBlocks.SCARY_LEAVES.get(),
+                    ModBlocks.CHERRY_LEAVES.get(),
+                    ModBlocks.PEACH_LEAVES.get(),
+                    ModBlocks.EXPERIENCE_LEAVES.get());
         }
 
         @SubscribeEvent

@@ -1,9 +1,6 @@
 {
   "type": "neoforge:add_features",
-  "biomes": [
-    "orespawn:utopia_plains",
-    "#minecraft:is_forest"
-  ],
+  "biomes": "orespawn:utopia_plains",
   "features": [
     "orespawn:magic_apple_tree"
   ],
