@@ -111,14 +111,17 @@ public class RoyalTreePiece extends StructurePiece {
     /** {@code Block.UPDATE_CLIENTS}: no neighbour cascade, no lighting recompute. */
     private static final int FLAG_CLIENTS_ONLY = 2;
 
-    /** DEBUG / Phase 13C-fix4 — Brute-forced ±96 horizontal permit (192×192
-     *  footprint) to guarantee zero clipping while the telemetry tracker
-     *  measures the actual procedural reach of the RNG tree. Once telemetry
-     *  prints reliable bounds across a few seeds we'll shrink this back
-     *  down to the empirical max + a small safety margin. */
-    private static final int H_EXTENT = 96;
+    /** Phase 13C-fix5 — Empirically-sized permit. 9-sample telemetry run
+     *  showed worst-case procedural reach of −124..+123 X, −119..+123 Z,
+     *  −5..+143 Y. Sized to those extremes plus margin: ±144 horizontal
+     *  (~1.25 chunks above worst observed = 320 block diameter footprint,
+     *  ~81 postProcess passes per tree), +160 above origin (17 block
+     *  ceiling above worst), −12 below (worst was only −5). Telemetry
+     *  print stays in for one more cycle to verify the new permit fully
+     *  contains the math; will be removed once confirmed. */
+    private static final int H_EXTENT = 144;
     private static final int DOWN_EXTENT = 12;
-    private static final int UP_EXTENT = 120;
+    private static final int UP_EXTENT = 160;
 
     private final BlockPos origin;
     private final boolean queenVariant;
