@@ -26,10 +26,20 @@ public class ModFeatures {
     public static final DeferredHolder<Feature<?>, BeehiveFeature> BEEHIVE =
             FEATURES.register("beehive", () -> new BeehiveFeature(NoneFeatureConfiguration.CODEC));
 
-    // Phase 12 — King + Queen Challenge Tower (procedural multi-floor
-    // dungeon, see ChallengeTowerFeature for the per-floor mob ladder).
-    public static final DeferredHolder<Feature<?>, ChallengeTowerFeature> CHALLENGE_TOWER =
-            FEATURES.register("challenge_tower", () -> new ChallengeTowerFeature(ChallengeTowerFeature.Config.CODEC));
+    // Audit Part 4 — King + Queen Challenge Tower promoted from a Feature
+    // wrapper to LegacyDungeonStructure (dungeon_type=KING_TOWER /
+    // QUEEN_TOWER). The 1.7.10 sources (GenericDungeon.makeEnormousCastle
+    // line 191 / makeEnormousCastleQ line 6393) build a 28x28 base + six
+    // stacked floors stepping inward (10/10/9/9/8/16 tall), a 4-block
+    // foundation skirt, a ~38-block western spire arm + descending stair,
+    // and ~90-block total height — far exceeding the WorldGenRegion 24-block
+    // write window. The full byte-for-byte port (gauntlet spawners, central
+    // decoration rooms, Royal Guardian loot) now lives in
+    // LegacyDungeonPiece#generateChallengeTower. The previous
+    // ChallengeTowerFeature was a procedural hallucination (stone-brick
+    // base, 2 stacked spawners instead of 4 corner stacks) and has been
+    // deleted along with its configured_feature / placed_feature JSONs to
+    // enforce the audit's "no procedural hallucinations" rule.
 
     // Audit Part 2 — White House promoted from a Feature to a dedicated
     // Structure + StructurePiece (LegacyDungeonStructure with
