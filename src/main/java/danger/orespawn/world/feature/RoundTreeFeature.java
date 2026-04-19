@@ -4,6 +4,7 @@ import com.mojang.serialization.Codec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.LeavesBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.feature.Feature;
@@ -71,7 +72,10 @@ public class RoundTreeFeature extends Feature<NoneFeatureConfiguration> {
         if (surface.getY() + 60 >= level.getMaxBuildHeight() - 2) return false;
 
         BlockState log = Blocks.OAK_LOG.defaultBlockState();
-        BlockState leaves = Blocks.OAK_LEAVES.defaultBlockState();
+        // QA fix: persistent + DISTANCE=1 so the canopy never decays.
+        BlockState leaves = Blocks.OAK_LEAVES.defaultBlockState()
+                .setValue(LeavesBlock.PERSISTENT, true)
+                .setValue(LeavesBlock.DISTANCE, 1);
         BlockState diamondCap = Blocks.DIAMOND_BLOCK.defaultBlockState();
 
         float fx = surface.getX() + 0.5f;

@@ -5,6 +5,7 @@ import danger.orespawn.ModBlocks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.LeavesBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.feature.Feature;
@@ -84,14 +85,23 @@ public class SkyTreeFeature extends Feature<NoneFeatureConfiguration> {
         int width = random.nextInt(10) + 25;
 
         BlockState skyLog = ModBlocks.SKY_TREE_LOG.get().defaultBlockState();
-        BlockState leaves = Blocks.OAK_LEAVES.defaultBlockState();
+        // QA fix: persistent + DISTANCE=1 so the canopy never decays.
+        BlockState leaves = Blocks.OAK_LEAVES.defaultBlockState()
+                .setValue(LeavesBlock.PERSISTENT, true)
+                .setValue(LeavesBlock.DISTANCE, 1);
+
+        // QA fix: don't overwrite Royal Tree gold/emerald blocks if the
+        // player got unlucky with co-located placement in Utopia.
+        if (!isReplaceable(level, surface)) return false;
 
         // Legacy line 106-108: trunk pillar.
         for (int j = surface.getY(); j <= targetTop; j++) {
-            level.setBlock(new BlockPos(surface.getX(), j, surface.getZ()), skyLog, 2);
+            BlockPos pos = new BlockPos(surface.getX(), j, surface.getZ());
+            if (isReplaceable(level, pos)) level.setBlock(pos, skyLog, 2);
         }
         // Legacy line 109: apex leaf cap.
-        level.setBlock(new BlockPos(surface.getX(), targetTop + 1, surface.getZ()), leaves, 2);
+        BlockPos apex = new BlockPos(surface.getX(), targetTop + 1, surface.getZ());
+        if (isReplaceable(level, apex)) level.setBlock(apex, leaves, 2);
 
         // Legacy line 110-113: 4 cardinal canopy branches at targetTop.
         BlockPos branchOrigin = new BlockPos(surface.getX(), targetTop, surface.getZ());
@@ -115,16 +125,17 @@ public class SkyTreeFeature extends Feature<NoneFeatureConfiguration> {
     /** Direct port of {@code SkyTreeBranch} (Trees.java:79-94). */
     private static void skyTreeBranch(WorldGenLevel level, BlockPos origin, int length, int dirx, int dirz) {
         BlockState skyLog = ModBlocks.SKY_TREE_LOG.get().defaultBlockState();
-        BlockState leaves = Blocks.OAK_LEAVES.defaultBlockState();
+        BlockState leaves = Blocks.OAK_LEAVES.defaultBlockState()
+                .setValue(LeavesBlock.PERSISTENT, true)
+                .setValue(LeavesBlock.DISTANCE, 1);
         for (int i = 1; i < length; i++) {
             BlockPos pos = origin.offset(i * dirx, 0, i * dirz);
-            level.setBlock(pos, skyLog, 2);
+            if (isReplaceable(level, pos)) level.setBlock(pos, skyLog, 2);
 
             BlockPos above = pos.above();
             if (level.getBlockState(above).isAir()) {
                 level.setBlock(above, leaves, 2);
             }
-            // Sideways leaves at perpendicular axis (lines 85-89).
             BlockPos sideA = pos.offset(dirz, 0, dirx);
             BlockPos sideB = pos.offset(-dirz, 0, -dirx);
             if (level.getBlockState(sideA).isAir()) {
@@ -134,10 +145,14 @@ public class SkyTreeFeature extends Feature<NoneFeatureConfiguration> {
                 level.setBlock(sideB, leaves, 2);
             }
         }
-        // Trailing leaf at the branch tip (lines 91-93).
         BlockPos tip = origin.offset(length * dirx, 0, length * dirz);
         if (level.getBlockState(tip).isAir()) {
             level.setBlock(tip, leaves, 2);
         }
+    }
+
+    private static boolean isReplaceable(WorldGenLevel level, BlockPos pos) {
+        BlockState s = level.getBlockState(pos);
+        return s.isAir() || s.canBeReplaced() || s.is(Blocks.SHORT_GRASS) || s.is(Blocks.TALL_GRASS) || s.is(Blocks.FERN);
     }
 }

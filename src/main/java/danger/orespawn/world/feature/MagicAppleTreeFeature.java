@@ -5,6 +5,7 @@ import danger.orespawn.ModBlocks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.LeavesBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.feature.Feature;
@@ -73,25 +74,38 @@ public class MagicAppleTreeFeature extends Feature<NoneFeatureConfiguration> {
         if (y + h5 + 2 >= level.getMaxBuildHeight()) return false;
 
         BlockState log = Blocks.OAK_LOG.defaultBlockState();
-        BlockState leaves = ModBlocks.APPLE_LEAVES.get().defaultBlockState();
+        // QA fix: Apple Leaves block extends LeavesBlock so the engine
+        // assigns DISTANCE=7/PERSISTENT=false on a bare defaultBlockState(),
+        // which decays the entire canopy on the first random tick. Pin
+        // PERSISTENT=true and DISTANCE=1 so worldgen-placed leaves never
+        // decay regardless of trunk recompute distance.
+        BlockState leaves = ModBlocks.APPLE_LEAVES.get().defaultBlockState()
+                .setValue(LeavesBlock.PERSISTENT, true)
+                .setValue(LeavesBlock.DISTANCE, 1);
+
+        // QA fix: don't punch through Royal Tree structures or other
+        // already-placed worldgen content sharing the Utopia biome.
+        BlockPos trunkBase = new BlockPos(x, y + 1, z);
+        if (!isReplaceable(level, trunkBase)) return false;
 
         // Trunk pillar (legacy line 77-79).
         for (int j = 1; j < h1; j++) {
-            level.setBlock(new BlockPos(x, y + j, z), log, 2);
+            BlockPos pos = new BlockPos(x, y + j, z);
+            if (isReplaceable(level, pos)) level.setBlock(pos, log, 2);
         }
         // 4 cardinal arms at y+h2 (legacy lines 80-91).
         for (int j = 1; j < w1; j++) {
-            level.setBlock(new BlockPos(x + j, y + h2, z), log, 2);
-            level.setBlock(new BlockPos(x - j, y + h2, z), log, 2);
-            level.setBlock(new BlockPos(x, y + h2, z + j), log, 2);
-            level.setBlock(new BlockPos(x, y + h2, z - j), log, 2);
+            placeIfReplaceable(level, new BlockPos(x + j, y + h2, z), log);
+            placeIfReplaceable(level, new BlockPos(x - j, y + h2, z), log);
+            placeIfReplaceable(level, new BlockPos(x, y + h2, z + j), log);
+            placeIfReplaceable(level, new BlockPos(x, y + h2, z - j), log);
         }
         // 4 cardinal arms at y+h3 (legacy lines 92-103).
         for (int j = 1; j < w2; j++) {
-            level.setBlock(new BlockPos(x + j, y + h3, z), log, 2);
-            level.setBlock(new BlockPos(x - j, y + h3, z), log, 2);
-            level.setBlock(new BlockPos(x, y + h3, z + j), log, 2);
-            level.setBlock(new BlockPos(x, y + h3, z - j), log, 2);
+            placeIfReplaceable(level, new BlockPos(x + j, y + h3, z), log);
+            placeIfReplaceable(level, new BlockPos(x - j, y + h3, z), log);
+            placeIfReplaceable(level, new BlockPos(x, y + h3, z + j), log);
+            placeIfReplaceable(level, new BlockPos(x, y + h3, z - j), log);
         }
         // Stacked leaf disks (legacy lines 104-121).
         for (int i = h4; i < h5; i++) {
@@ -108,5 +122,14 @@ public class MagicAppleTreeFeature extends Feature<NoneFeatureConfiguration> {
             }
         }
         return true;
+    }
+
+    private static boolean isReplaceable(WorldGenLevel level, BlockPos pos) {
+        BlockState s = level.getBlockState(pos);
+        return s.isAir() || s.canBeReplaced() || s.is(Blocks.SHORT_GRASS) || s.is(Blocks.TALL_GRASS) || s.is(Blocks.FERN);
+    }
+
+    private static void placeIfReplaceable(WorldGenLevel level, BlockPos pos, BlockState state) {
+        if (isReplaceable(level, pos)) level.setBlock(pos, state, 2);
     }
 }
