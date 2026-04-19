@@ -533,6 +533,16 @@ public class ModEntities {
             ENTITY_TYPES.register("mothra", () -> EntityType.Builder.of(Mothra::new, MobCategory.MONSTER)
                     .sized(6.0f, 3.0f).clientTrackingRange(16).build("mothra"));
 
+    // Phase 14 — wiki-canon hostile butterfly variant for the Chaos
+    // (a.k.a. "Danger") Dimension. Registered as MONSTER (not AMBIENT
+    // like the standard butterfly) so it routes through the hostile
+    // mob-cap and respects monster-spawn rules. Separate registration
+    // keeps the ambient EntityButterfly's right-click → Chaos teleport
+    // contract intact and avoids polluting its overworld spawn pool.
+    public static final DeferredHolder<EntityType<?>, EntityType<VampireButterfly>> VAMPIRE_BUTTERFLY =
+            ENTITY_TYPES.register("vampire_butterfly", () -> EntityType.Builder.of(VampireButterfly::new, MobCategory.MONSTER)
+                    .sized(0.5f, 0.5f).clientTrackingRange(10).build("vampire_butterfly"));
+
     // ==================== MISC (Mob) ====================
 
     public static final DeferredHolder<EntityType<?>, EntityType<AntRobot>> ANT_ROBOT =
@@ -611,6 +621,20 @@ public class ModEntities {
     public static final DeferredHolder<EntityType<?>, EntityType<EnchantedCow>> ENCHANTED_COW =
             ENTITY_TYPES.register("enchanted_cow", () -> EntityType.Builder.of(EnchantedCow::new, MobCategory.CREATURE)
                     .sized(0.9f, 1.4f).clientTrackingRange(10).build("enchanted_cow"));
+
+    // Phase 14 — wiki-canon overworld cow variants. Not in 1.7.10
+    // source (verified zero references in reference_1_7_10_source/)
+    // but enumerated on the Wiki "Added Mobs" page; ship them so the
+    // 56-entry hostile/neutral roster reaches 100% wiki coverage.
+    // Hitbox + tracking range mirror the existing OreSpawn cow line so
+    // they slot into pack-hunt AI ranges identically to RedCow.
+    public static final DeferredHolder<EntityType<?>, EntityType<AppleCow>> APPLE_COW =
+            ENTITY_TYPES.register("apple_cow", () -> EntityType.Builder.of(AppleCow::new, MobCategory.CREATURE)
+                    .sized(0.9f, 1.4f).clientTrackingRange(10).build("apple_cow"));
+
+    public static final DeferredHolder<EntityType<?>, EntityType<GoldenAppleCow>> GOLDEN_APPLE_COW =
+            ENTITY_TYPES.register("golden_apple_cow", () -> EntityType.Builder.of(GoldenAppleCow::new, MobCategory.CREATURE)
+                    .sized(0.9f, 1.4f).clientTrackingRange(10).build("golden_apple_cow"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<RubyBird>> RUBY_BIRD =
             ENTITY_TYPES.register("ruby_bird", () -> EntityType.Builder.of(RubyBird::new, MobCategory.CREATURE)
