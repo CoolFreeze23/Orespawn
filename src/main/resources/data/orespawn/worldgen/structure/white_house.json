@@ -1,9 +1,8 @@
 {
-  "type": "orespawn:feature",
+  "type": "orespawn:legacy_dungeon",
   "biomes": "#orespawn:has_structure/white_house",
   "step": "surface_structures",
   "spawn_overrides": {},
-  "terrain_adaptation": "none",
-  "feature": "orespawn:white_house",
-  "y_offset": 0
+  "terrain_adaptation": "beard_thin",
+  "dungeon_type": "WHITE_HOUSE"
 }

@@ -1,9 +1,8 @@
 {
-  "type": "orespawn:feature",
+  "type": "orespawn:legacy_dungeon",
   "biomes": "#orespawn:has_structure/shadow_dungeon",
   "step": "underground_structures",
   "spawn_overrides": {},
   "terrain_adaptation": "none",
-  "feature": "orespawn:shadow_dungeon",
-  "y_offset": 0
+  "dungeon_type": "SHADOW"
 }

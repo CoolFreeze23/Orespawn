@@ -1,11 +1,11 @@
 {
   "structures": [
-    { "structure": "orespawn:white_house", "weight": 1 }
+    { "structure": "orespawn:greenhouse", "weight": 1 }
   ],
   "placement": {
     "type": "minecraft:random_spread",
     "spacing": 48,
     "separation": 24,
-    "salt": 84307
+    "salt": 84319
   }
 }
