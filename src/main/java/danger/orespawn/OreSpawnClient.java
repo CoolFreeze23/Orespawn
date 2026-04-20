@@ -69,7 +69,7 @@ public class OreSpawnClient {
             event.registerEntityRenderer(ModEntities.GODZILLA.get(), GodzillaRenderer::new);
             event.registerEntityRenderer(ModEntities.KRAKEN.get(), KrakenRenderer::new);
             event.registerEntityRenderer(ModEntities.THE_KING.get(), TheKingRenderer::new);
-            event.registerEntityRenderer(ModEntities.THE_QUEEN.get(), TheQueenRenderer::new);
+            event.registerEntityRenderer(ModEntities.THE_QUEEN.get(), QueenRenderer::new);
             event.registerEntityRenderer(ModEntities.ENTITY_BEE.get(), BeeRenderer::new);
             event.registerEntityRenderer(ModEntities.ENTITY_BRUTALFLY.get(), BrutalflyRenderer::new);
             event.registerEntityRenderer(ModEntities.ENTITY_CATER_KILLER.get(), CaterKillerRenderer::new);
@@ -233,7 +233,9 @@ public class OreSpawnClient {
             event.registerLayerDefinition(GodzillaRenderer.MODEL_LAYER, ModelGodzilla::createBodyLayer);
             event.registerLayerDefinition(KrakenRenderer.MODEL_LAYER, ModelKraken::createBodyLayer);
             event.registerLayerDefinition(TheKingRenderer.MODEL_LAYER, ModelTheKing::createBodyLayer);
-            event.registerLayerDefinition(TheQueenRenderer.MODEL_LAYER, ModelTheQueen::createBodyLayer);
+            // The Queen now uses the Geckolib pipeline (QueenRenderer +
+            // QueenModel + ModelTheQueen.geo.json) — no vanilla model
+            // layer to register.
             event.registerLayerDefinition(BeeRenderer.MODEL_LAYER, BeeModel::createBodyLayer);
             event.registerLayerDefinition(BrutalflyRenderer.MODEL_LAYER, BrutalflyModel::createBodyLayer);
             event.registerLayerDefinition(CaterKillerRenderer.MODEL_LAYER, CaterKillerModel::createBodyLayer);
