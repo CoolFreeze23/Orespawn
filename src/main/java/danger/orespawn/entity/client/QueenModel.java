@@ -12,13 +12,20 @@ import software.bernie.geckolib.model.GeoModel;
  * <h2>Asset paths</h2>
  *
  * <ul>
- *   <li><b>Geometry:</b> {@code assets/orespawn/geo/entity/ModelTheQueen.geo.json}
- *       — exported from Blockbench in bedrock format 1.12.0
- *       (geometry identifier {@code geometry.ModelTheQueen}).</li>
+ *   <li><b>Geometry:</b> {@code assets/orespawn/geo/entity/the_queen.geo.json}
+ *       — exported from Blockbench in bedrock format 1.12.0. The Blockbench
+ *       file was named {@code ModelTheQueen.geo.json} originally, but Mojang's
+ *       1.21.1 {@code ResourceLocation} validator only accepts {@code [a-z0-9/._-]}
+ *       in path segments and rejects any uppercase letters — so we rename
+ *       the asset on disk to {@code the_queen.geo.json}. The internal Bedrock
+ *       geometry identifier ({@code geometry.ModelTheQueen}) is unaffected
+ *       and remains valid because Geckolib resolves it from the JSON content,
+ *       not the filename.</li>
  *   <li><b>Animations:</b>
- *       {@code assets/orespawn/animations/entity/ModelTheQueen.animation.json}
+ *       {@code assets/orespawn/animations/entity/the_queen.animation.json}
  *       — bedrock format 1.8.0, eight clips total: idle / idle_to_attack /
- *       attack / bite / tail_whip_left / tail_whip_right / roar / death.</li>
+ *       attack / bite / tail_whip_left / tail_whip_right / roar / death.
+ *       Same lowercase-rename rationale as the geometry file.</li>
  * </ul>
  *
  * <h2>Dynamic phase-shift texture swap</h2>
@@ -34,9 +41,9 @@ import software.bernie.geckolib.model.GeoModel;
 public class QueenModel extends GeoModel<TheQueen> {
 
     private static final ResourceLocation GEO =
-            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "geo/entity/ModelTheQueen.geo.json");
+            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "geo/entity/the_queen.geo.json");
     private static final ResourceLocation ANIMATIONS =
-            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "animations/entity/ModelTheQueen.animation.json");
+            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "animations/entity/the_queen.animation.json");
     private static final ResourceLocation TEXTURE_DORMANT =
             ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "textures/entity/blue_queen.png");
     private static final ResourceLocation TEXTURE_AGGRO =
