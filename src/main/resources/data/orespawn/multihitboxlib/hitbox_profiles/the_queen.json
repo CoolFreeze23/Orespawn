@@ -1,0 +1,175 @@
+{
+	"_comment": [
+		"MultiHitBoxLib hitbox profile for orespawn:the_queen.",
+		"",
+		"All ten parts are listed in synched-bones, which means MHLib's",
+		"GeckolibBoneInformationCollectorLayer (auto-attached to QueenRenderer",
+		"via MixinGeoEntityRenderer) reads the bone's world position via",
+		"GeoBone#getWorldPosition each render frame, packs it into a",
+		"CPacketBoneInformation, and ships it server-ward. The server's",
+		"alignSynchedSubParts() then snaps each MHLibPartEntity to that",
+		"world position the next aiStep tick.",
+		"",
+		"Bone names match danger.orespawn.entity.client.ModelTheQueen.geo.json",
+		"verbatim (legacy 1.7.10 'L'-prefixed naming retained from the original",
+		"model). The three heads are LHead / LHead4 / LHead12 -- distinct deep",
+		"chains, not duplicates of one bone.",
+		"",
+		"Damage modifiers per directive:",
+		"  heads = 1.0  (precision aiming reward),",
+		"  body / legs = 0.5  (armoured),",
+		"  wings / tail = 0.25  (glancing).",
+		"",
+		"main-hitbox.canReceiveDamage = false forces ALL incoming damage to",
+		"route through a part (so the parent's giant 16x12 AABB cannot be",
+		"trivially face-tanked from below)."
+	],
+	"synched-assets": {
+		"models": [],
+		"animations": [],
+		"textures": []
+	},
+	"sync-with-model": true,
+	"trust-client": true,
+	"part-update-steps": 3,
+	"synched-part-update-steps": 1,
+	"synched-bones": [
+		"Body1",
+		"LHead",
+		"LHead4",
+		"LHead12",
+		"Lwing1",
+		"Tail1",
+		"Tail4",
+		"Tail7",
+		"leftLeg",
+		"rightLeg"
+	],
+	"main-hitbox": {
+		"collidable": false,
+		"canReceiveDamage": false,
+		"size": [16, 12]
+	},
+	"parts": [
+		{
+			"name": "Body1",
+			"collidable": true,
+			"can-receive-damage": true,
+			"damage-modifier": 0.5,
+			"box": {
+				"type": "multihitboxlib:aabb",
+				"size": [8, 8],
+				"position": [0, 5, 0],
+				"pivot": [0, 0, 0]
+			}
+		},
+		{
+			"name": "LHead",
+			"collidable": true,
+			"can-receive-damage": true,
+			"damage-modifier": 1.0,
+			"box": {
+				"type": "multihitboxlib:aabb",
+				"size": [4, 3],
+				"position": [3.5, 7, 10],
+				"pivot": [0, 0, 0]
+			}
+		},
+		{
+			"name": "LHead4",
+			"collidable": true,
+			"can-receive-damage": true,
+			"damage-modifier": 1.0,
+			"box": {
+				"type": "multihitboxlib:aabb",
+				"size": [4, 3],
+				"position": [0, 7, 10.5],
+				"pivot": [0, 0, 0]
+			}
+		},
+		{
+			"name": "LHead12",
+			"collidable": true,
+			"can-receive-damage": true,
+			"damage-modifier": 1.0,
+			"box": {
+				"type": "multihitboxlib:aabb",
+				"size": [4, 3],
+				"position": [-3.5, 7, 10],
+				"pivot": [0, 0, 0]
+			}
+		},
+		{
+			"name": "Lwing1",
+			"collidable": true,
+			"can-receive-damage": true,
+			"damage-modifier": 0.25,
+			"box": {
+				"type": "multihitboxlib:aabb",
+				"size": [16, 3],
+				"position": [0, 6, -2],
+				"pivot": [0, 0, 0]
+			}
+		},
+		{
+			"name": "Tail1",
+			"collidable": true,
+			"can-receive-damage": true,
+			"damage-modifier": 0.25,
+			"box": {
+				"type": "multihitboxlib:aabb",
+				"size": [4, 4],
+				"position": [0, 5, -6],
+				"pivot": [0, 0, 0]
+			}
+		},
+		{
+			"name": "Tail4",
+			"collidable": true,
+			"can-receive-damage": true,
+			"damage-modifier": 0.25,
+			"box": {
+				"type": "multihitboxlib:aabb",
+				"size": [3, 3],
+				"position": [0, 5, -10],
+				"pivot": [0, 0, 0]
+			}
+		},
+		{
+			"name": "Tail7",
+			"collidable": true,
+			"can-receive-damage": true,
+			"damage-modifier": 0.25,
+			"box": {
+				"type": "multihitboxlib:aabb",
+				"size": [2, 2],
+				"position": [0, 5, -14],
+				"pivot": [0, 0, 0]
+			}
+		},
+		{
+			"name": "leftLeg",
+			"collidable": true,
+			"can-receive-damage": true,
+			"damage-modifier": 0.5,
+			"box": {
+				"type": "multihitboxlib:aabb",
+				"size": [3, 8],
+				"position": [4, 0, 0],
+				"pivot": [0, 0, 0]
+			}
+		},
+		{
+			"name": "rightLeg",
+			"collidable": true,
+			"can-receive-damage": true,
+			"damage-modifier": 0.5,
+			"box": {
+				"type": "multihitboxlib:aabb",
+				"size": [3, 8],
+				"position": [-4, 0, 0],
+				"pivot": [0, 0, 0]
+			}
+		}
+	]
+}

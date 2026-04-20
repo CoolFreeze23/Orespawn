@@ -27,6 +27,32 @@ repositories {
         name = 'GeckoLib'
         url = 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/'
     }
+    // Commoble — supplies Databuddy, a codec/registry helper used by the
+    // vendored MultiHitBoxLib's MHLibHitboxTypes.HITBOX_TYPE_DISPATCHER
+    // (RegistryDispatcher.makeDispatchForgeRegistry). Real runtime dep
+    // since MHLibHitboxTypes builds the dispatcher eagerly at class-init.
+    maven {
+        name = 'Commoble'
+        url = 'https://commoble.net/maven/'
+    }
+}
+
+// ──────────────────────────────────────────────────────────────────────
+// Access transformers
+//
+// Vendored MultiHitBoxLib needs Entity#ENTITY_COUNTER widened from
+// `protected` to `public` so its IMultipartEntity helper can reserve a
+// contiguous block of entity IDs for parent + part-entities. The widening
+// lives in src/main/resources/META-INF/accesstransformer.cfg (vendored
+// from upstream verbatim — same Mojang-mapped name in 1.21.1).
+//
+// NeoGradle 7.1.21 supports auto-discovery of this exact path but proved
+// unreliable in CI here, so we register it explicitly to be safe.
+// ──────────────────────────────────────────────────────────────────────
+minecraft {
+    accessTransformers {
+        file project.file('src/main/resources/META-INF/accesstransformer.cfg')
+    }
 }
 
 base {
@@ -67,8 +93,22 @@ configurations {
 dependencies {
     implementation "net.neoforged:neoforge:${neo_version}"
     // GeckoLib 4.x for NeoForge 1.21.1 — powers the Queen Geckolib backend
-    // (8-stage state machine, dynamic blue/red texture phase swap).
+    // (8-stage state machine, dynamic blue/red texture phase swap) AND
+    // MultiHitBoxLib's geckolib bone-tracking integration (mixin/geckolib/*,
+    // BoneTrackingGeoEntityRenderer).
     implementation "software.bernie.geckolib:geckolib-neoforge-${minecraft_version}:${geckolib_version}"
+    // Databuddy — used at *runtime* by MHLibHitboxTypes (it constructs a
+    // RegistryDispatcher at class-init time), so this is a real
+    // implementation dep, not compileOnly. The 1.21 artifact resolves
+    // fine on 1.21.1 because Databuddy targets Mojang-mapped APIs that
+    // didn't change between 1.21 and 1.21.1.
+    //
+    // NOTE: AzureLib is NOT a dependency. The vendored MHLib in this
+    // project has had every AzureLib-touching class deleted (mixin/azurelib,
+    // client/azurelib, assetsynch/impl/Alib*, api/alibplus, example
+    // AnjanathALib) so its class graph never references mod.azure.* —
+    // which would otherwise crash with NoClassDefFoundError at runtime.
+    implementation "net.commoble.databuddy:databuddy-1.21:6.0.0.0"
 }
 
 tasks.withType(ProcessResources).configureEach {

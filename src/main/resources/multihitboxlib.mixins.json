@@ -1,0 +1,22 @@
+{
+	"required": true,
+	"package": "de.dertoaster.multihitboxlib.mixin",
+	"compatibilityLevel": "JAVA_21",
+	"plugin": "de.dertoaster.multihitboxlib.mixin.MHLibPlugin",
+	"refmap": "multihitboxlib.refmap.json",
+	"mixins": [
+		"entity.MixinLivingEntity",
+		"entity.MixinServerEntity",
+		"geckolib.MixinGeoEntityRenderer",
+		"geckolib.MixinGeoReplacedEntityRenderer",
+		"geckolib.MixinGeoRenderer",
+		"minecraft.MixinCompressionDecoder",
+		"minecraft.MixinPacketBuffer"
+	],
+	"client": [
+		"accessor.AccessorEntityRenderer",
+		"minecraft.MixinMinecraft",
+		"minecraft.client.MixinClientboundCustomPayloadPacket"
+	],
+	"minVersion": "0.8"
+}
