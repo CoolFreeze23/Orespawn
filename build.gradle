@@ -18,6 +18,15 @@ sourceSets.main.resources {
 }
 
 repositories {
+    // GeckoLib — required for the Queen's Blockbench-driven animation pipeline
+    // (see QueenModel / QueenRenderer / TheQueen.registerControllers).
+    // GeckoLib publishes its NeoForge 1.21.x artifacts to Cloudsmith;
+    // BlameJared no longer hosts them. Both releases and snapshots
+    // resolve from the same dl.cloudsmith.io URL.
+    maven {
+        name = 'GeckoLib'
+        url = 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/'
+    }
 }
 
 base {
@@ -57,6 +66,9 @@ configurations {
 
 dependencies {
     implementation "net.neoforged:neoforge:${neo_version}"
+    // GeckoLib 4.x for NeoForge 1.21.1 — powers the Queen Geckolib backend
+    // (8-stage state machine, dynamic blue/red texture phase swap).
+    implementation "software.bernie.geckolib:geckolib-neoforge-${minecraft_version}:${geckolib_version}"
 }
 
 tasks.withType(ProcessResources).configureEach {
@@ -94,6 +106,58 @@ publishing {
 
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
+}
+
+// ──────────────────────────────────────────────────────────────────────
+// deployToPrism — builds the mod JAR and copies it into a Prism Launcher
+// instance's mods/ folder so the user can play through Prism rather than
+// gradlew runClient. The destination path is read from the
+// `prism_mods_dir` property in gradle.properties so the task stays
+// portable across machines / instances. Any pre-existing orespawn-*.jar
+// in the destination is deleted first to avoid NeoForge's duplicate-mod
+// error on launch.
+// ──────────────────────────────────────────────────────────────────────
+// Capture project-scoped properties at configuration time so the Copy
+// task's nested closures (which run with the Task as their delegate)
+// can still see them.
+def deployModId = project.mod_id
+def deployModVersion = project.mod_version
+def deployPrismDir = project.findProperty('prism_mods_dir')
+
+tasks.register('deployToPrism', Copy) {
+    group = 'orespawn'
+    description = 'Build the mod JAR and copy it into the Prism Launcher mods folder.'
+    dependsOn tasks.named('build')
+
+    if (deployPrismDir == null) {
+        throw new GradleException(
+            "deployToPrism requires the 'prism_mods_dir' property. " +
+            "Add it to gradle.properties, e.g.:\n" +
+            "  prism_mods_dir=C:/Users/<you>/AppData/Roaming/PrismLauncher/instances/<instance>/minecraft/mods"
+        )
+    }
+
+    def prismModsDir = file(deployPrismDir)
+
+    doFirst {
+        if (!prismModsDir.exists()) {
+            throw new GradleException("Prism mods folder does not exist: ${prismModsDir}")
+        }
+        def stalePattern = ~/^${java.util.regex.Pattern.quote(deployModId)}-.*\.jar$/
+        prismModsDir.listFiles()?.findAll {
+            it.isFile() && stalePattern.matcher(it.name).matches()
+        }?.each {
+            logger.lifecycle("deployToPrism: removing stale ${it.name}")
+            it.delete()
+        }
+    }
+
+    from tasks.named('jar').flatMap { it.archiveFile }
+    into prismModsDir
+
+    doLast {
+        logger.lifecycle("deployToPrism: copied ${deployModId}-${deployModVersion}.jar -> ${prismModsDir}")
+    }
 }
 
 idea {

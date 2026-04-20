@@ -46,6 +46,13 @@ import danger.orespawn.ModSounds;
 import danger.orespawn.OreSpawnConfig;
 import danger.orespawn.util.MyUtils;
 import net.neoforged.neoforge.entity.PartEntity;
+import software.bernie.geckolib.animatable.GeoEntity;
+import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.animation.AnimatableManager;
+import software.bernie.geckolib.animation.AnimationController;
+import software.bernie.geckolib.animation.PlayState;
+import software.bernie.geckolib.animation.RawAnimation;
+import software.bernie.geckolib.util.GeckoLibUtil;
 
 /**
  * The Queen — a flying, three-headed multi-region boss.
@@ -76,14 +83,18 @@ import net.neoforged.neoforge.entity.PartEntity;
  *
  * <h2>Animation-aware part positioning</h2>
  *
- * <p>Queen's parts aren't placed by static offsets — they follow the same
- * sinusoidal timing as the client-side {@code ModelTheQueen} so the
- * hitboxes stay in sync with what the player visually sees. See
- * {@link #tick()} for the full positioning block: the world-space offsets
- * are converted from Blockbench model coordinates using
- * {@code worldOffset = modelCoord × 3 / 16}, and the renderer's
- * {@code rotateY(180 - yaw)} mirror means world Z uses the negated model
- * Z coordinate.</p>
+ * <p>Queen's parts use sinusoidal positioning math derived from the
+ * legacy procedural model. Since the v1.1 Geckolib overhaul this no
+ * longer pixel-perfectly mirrors the visible geometry (the
+ * {@code ModelTheQueen.geo.json} bedrock model is keyframe-driven, not
+ * trig-driven), but it still places the hitboxes in approximately the
+ * right silhouette regions — wings out to the sides, three heads
+ * forward, tail trailing behind. See {@link #tick()} for the full
+ * positioning block: the world-space offsets are converted from
+ * Blockbench model coordinates using {@code worldOffset = modelCoord × 3 / 16},
+ * and the renderer's {@code rotateY(180 - yaw)} mirror means world Z
+ * uses the negated model Z coordinate. A future iteration could pull
+ * Geckolib bone world-positions for exact sync.</p>
  *
  * <p>The legacy {@code QueenHead} sidecar entity type is still registered
  * and still spawned by the AI step (see
@@ -94,7 +105,7 @@ import net.neoforged.neoforge.entity.PartEntity;
  * @see OreSpawnPartEntity for the part implementation and the full 1.7.10
  *   paradigm-shift commentary.
  */
-public class TheQueen extends Monster implements OreSpawnPartEntity.MultipartBoss {
+public class TheQueen extends Monster implements OreSpawnPartEntity.MultipartBoss, GeoEntity {
 
     private static final EntityDataAccessor<Integer> DATA_ATTACKING =
             SynchedEntityData.defineId(TheQueen.class, EntityDataSerializers.INT);
@@ -104,6 +115,38 @@ public class TheQueen extends Monster implements OreSpawnPartEntity.MultipartBos
             SynchedEntityData.defineId(TheQueen.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Integer> DATA_POWER =
             SynchedEntityData.defineId(TheQueen.class, EntityDataSerializers.INT);
+
+    // ─── Geckolib phase-shift state ─────────────────────────────────────
+    // IS_AWAKE drives the dynamic texture swap (blue idle → red aggro)
+    // and the controller's animation choice. TRANSITION_TICKS counts
+    // down from 60 while the idle_to_attack animation plays; when it
+    // hits 1, we flip IS_AWAKE on so the controller falls through to
+    // the looping "attack" stance.
+    private static final EntityDataAccessor<Boolean> IS_AWAKE =
+            SynchedEntityData.defineId(TheQueen.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Integer> TRANSITION_TICKS =
+            SynchedEntityData.defineId(TheQueen.class, EntityDataSerializers.INT);
+
+    /** Length (ticks) of the idle_to_attack wake-up animation. */
+    public static final int WAKE_UP_DURATION_TICKS = 60;
+
+    // ─── Geckolib animation cache + attack windup ──────────────────────
+    private final AnimatableInstanceCache animCache = GeckoLibUtil.createInstanceCache(this);
+
+    /**
+     * Pending melee-attack state. The Queen randomises an attack
+     * animation on contact, triggers it, then waits {@link #pendingMeleeTicks}
+     * ticks before applying the actual damage hitbox so the swing lines
+     * up with the visible animation impact frame.
+     */
+    private LivingEntity pendingMeleeTarget = null;
+    private int pendingMeleeTicks = 0;
+    private static final RawAnimation ANIM_IDLE =
+            RawAnimation.begin().thenLoop("idle");
+    private static final RawAnimation ANIM_IDLE_TO_ATTACK =
+            RawAnimation.begin().thenPlay("idle_to_attack");
+    private static final RawAnimation ANIM_ATTACK =
+            RawAnimation.begin().thenLoop("attack");
 
     private static final int MAX_HEALTH_VALUE = 6000;
     private static final double MOVE_SPEED_VALUE = 0.62;
@@ -243,6 +286,38 @@ public class TheQueen extends Monster implements OreSpawnPartEntity.MultipartBos
         builder.define(DATA_PLAY_NICELY, 0);
         builder.define(DATA_MOOD, 0);
         builder.define(DATA_POWER, 1);
+        // Phase-shift defaults: she spawns dormant (blue, idle) and only
+        // wakes (red, aggro) after taking the first hit.
+        builder.define(IS_AWAKE, false);
+        builder.define(TRANSITION_TICKS, 0);
+    }
+
+    // ─── Phase-shift accessors (consumed by QueenModel + controllers) ───
+
+    public boolean isAwake() {
+        return this.entityData.get(IS_AWAKE);
+    }
+
+    public void setAwake(boolean awake) {
+        this.entityData.set(IS_AWAKE, awake);
+    }
+
+    public int getTransitionTicks() {
+        return this.entityData.get(TRANSITION_TICKS);
+    }
+
+    public void setTransitionTicks(int ticks) {
+        this.entityData.set(TRANSITION_TICKS, Math.max(0, ticks));
+    }
+
+    /**
+     * Trigger a one-off animation on the "Actions" controller. Wraps
+     * {@link #triggerAnim(String, String)} so AI goals don't need to
+     * remember the controller name. Safe to call from server-side AI;
+     * Geckolib handles the client-side broadcast.
+     */
+    public void triggerQueenAction(String actionName) {
+        this.triggerAnim("Actions", actionName);
     }
 
     public int getAttacking() {
@@ -451,7 +526,7 @@ public class TheQueen extends Monster implements OreSpawnPartEntity.MultipartBos
 
         super.tick();
 
-        // ─── Animation parameters mirroring client-side ModelTheQueen.setupAnim ───
+        // ─── Hitbox sinusoidal positioning (legacy procedural math) ───
         // Conversion: worldOffset = modelCoord / 16 * 3 (= modelCoord * S)
         // The renderer's rotateY(180-yaw) negates model Z in world space,
         // so all Z offsets use: worldZ = -modelZ * S
@@ -676,6 +751,24 @@ public class TheQueen extends Monster implements OreSpawnPartEntity.MultipartBos
 
     @Override
     public boolean hurt(DamageSource source, float amount) {
+        // ─── Geckolib phase-shift gate ───────────────────────────────
+        // The Queen starts dormant (blue, idle). The first hit while
+        // !isAwake() does NOT damage her — instead it kicks off the
+        // 60-tick idle_to_attack animation; she stands still (target
+        // cleared) for that window, then enters aggro (red texture +
+        // looping attack stance, owned by the Movement controller).
+        // Subsequent hurts during the wake-up window are also absorbed
+        // so the transition can't be interrupted.
+        if (!this.level().isClientSide && (!this.isAwake() || this.getTransitionTicks() > 0)) {
+            if (!this.isAwake() && this.getTransitionTicks() == 0) {
+                this.setTransitionTicks(WAKE_UP_DURATION_TICKS);
+                this.setTarget(null);
+                this.revengeTarget = null;
+            }
+            this.hurtTimer = 10;
+            return false;
+        }
+
         if (this.hurtTimer > 0) {
             return false;
         }
@@ -797,6 +890,36 @@ public class TheQueen extends Monster implements OreSpawnPartEntity.MultipartBos
         }
         if (this.hurtTimer > 0) {
             this.hurtTimer--;
+        }
+
+        // ─── Phase-shift transition counter ──────────────────────────
+        // While idle_to_attack plays we count down from 60. When the
+        // counter hits 1, flip IS_AWAKE so the Movement controller
+        // promotes her to the looping "attack" stance and the model
+        // swaps to the red texture from now on.
+        int transition = this.getTransitionTicks();
+        if (transition > 0) {
+            transition--;
+            this.setTransitionTicks(transition);
+            if (transition == 0) {
+                this.setAwake(true);
+            }
+        }
+
+        // ─── Melee windup resolution ─────────────────────────────────
+        // Goals trigger the visual swing animation immediately on
+        // contact, but the actual damage application is deferred by
+        // pendingMeleeTicks so the hitbox lands on the impact frame
+        // (bite ≈ 8t, tail whips ≈ 12t, roar ≈ 16t).
+        if (this.pendingMeleeTicks > 0) {
+            this.pendingMeleeTicks--;
+            if (this.pendingMeleeTicks == 0) {
+                LivingEntity victim = this.pendingMeleeTarget;
+                this.pendingMeleeTarget = null;
+                if (victim != null && victim.isAlive() && this.distanceToSqr(victim) < 1600.0) {
+                    this.doHurtTarget(victim);
+                }
+            }
         }
 
         if ((this.homeX == 0 && this.homeZ == 0) || this.guardMode == 0) {
@@ -1122,7 +1245,28 @@ public class TheQueen extends Monster implements OreSpawnPartEntity.MultipartBos
                     if (this.getRandom().nextInt(2) == 1) {
                         doAreaDamage(this.getX(), this.getY(), this.getZ(), 15.0, ATTACK_DAMAGE_VALUE / 4.0, 0);
                     }
-                    this.doHurtTarget(currentTarget);
+                    // ─── Geckolib melee handshake ─────────────────────
+                    // Pick one of four contact attacks and trigger its
+                    // animation; queue the actual hurt for the impact
+                    // frame via pendingMeleeTicks (resolved in
+                    // customServerAiStep). If a previous attack is still
+                    // winding up we stay in that animation and skip
+                    // re-triggering — prevents jitter from back-to-back
+                    // contact ticks.
+                    if (this.pendingMeleeTicks == 0) {
+                        int pick = this.getRandom().nextInt(4);
+                        String key;
+                        int delay;
+                        switch (pick) {
+                            case 0  -> { key = "bite";       delay = 8; }
+                            case 1  -> { key = "tail_left";  delay = 12; }
+                            case 2  -> { key = "tail_right"; delay = 12; }
+                            default -> { key = "roar";       delay = 16; }
+                        }
+                        this.triggerQueenAction(key);
+                        this.pendingMeleeTarget = currentTarget;
+                        this.pendingMeleeTicks = delay;
+                    }
                 }
 
                 double forwardX = this.getX() + 20.0 * Math.sin(Math.toRadians(this.getYRot()));
@@ -1393,6 +1537,10 @@ public class TheQueen extends Monster implements OreSpawnPartEntity.MultipartBos
         tag.putInt("GuardMode", this.guardMode);
         tag.putInt("PlayerHits", this.playerHitCount);
         tag.putInt("MeanMode", this.alwaysMad);
+        // Persist the phase-shift state so a logged-out aggro Queen
+        // doesn't reset to dormant on world reload.
+        tag.putBoolean("QueenAwake", this.isAwake());
+        tag.putInt("QueenTransitionTicks", this.getTransitionTicks());
     }
 
     @Override
@@ -1403,5 +1551,66 @@ public class TheQueen extends Monster implements OreSpawnPartEntity.MultipartBos
         this.guardMode = tag.getInt("GuardMode");
         this.playerHitCount = tag.getInt("PlayerHits");
         this.alwaysMad = tag.getInt("MeanMode");
+        if (tag.contains("QueenAwake")) {
+            this.setAwake(tag.getBoolean("QueenAwake"));
+        }
+        if (tag.contains("QueenTransitionTicks")) {
+            this.setTransitionTicks(tag.getInt("QueenTransitionTicks"));
+        }
+    }
+
+    @Override
+    public void die(DamageSource source) {
+        // Fire the death animation BEFORE super.die() — once super
+        // marks us dead the Movement controller short-circuits to
+        // PlayState.STOP and would suppress the trigger.
+        this.triggerQueenAction("death");
+        super.die(source);
+    }
+
+    // ─── Geckolib animation backend ─────────────────────────────────
+    //
+    // Two controllers run side-by-side:
+    //
+    //   1. "Movement" — the base stance state machine. Owns the
+    //      idle / idle_to_attack / attack loop transitions and is
+    //      driven entirely by the synced phase-shift flags
+    //      (IS_AWAKE + TRANSITION_TICKS). Halts on death so the
+    //      death pose from the Actions controller can play out.
+    //
+    //   2. "Actions" — one-off attacks (bite / tail_left /
+    //      tail_right / roar) and the death animation. Defaults to
+    //      PlayState.STOP and only plays when a goal calls
+    //      triggerQueenAction(...). Keeps Movement free to keep
+    //      ticking the underlying stance.
+    //
+    // Both controllers are 5-tick transition smoothed for visual
+    // continuity when phase-shifting or chaining attacks.
+    @Override
+    public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
+        controllers.add(new AnimationController<>(this, "Movement", 5, state -> {
+            if (this.isDeadOrDying()) {
+                return PlayState.STOP;
+            }
+            if (this.getTransitionTicks() > 0) {
+                return state.setAndContinue(ANIM_IDLE_TO_ATTACK);
+            }
+            if (this.isAwake()) {
+                return state.setAndContinue(ANIM_ATTACK);
+            }
+            return state.setAndContinue(ANIM_IDLE);
+        }));
+
+        controllers.add(new AnimationController<>(this, "Actions", 5, state -> PlayState.STOP)
+                .triggerableAnim("bite",       RawAnimation.begin().thenPlay("bite"))
+                .triggerableAnim("tail_left",  RawAnimation.begin().thenPlay("tail_whip_left"))
+                .triggerableAnim("tail_right", RawAnimation.begin().thenPlay("tail_whip_right"))
+                .triggerableAnim("roar",       RawAnimation.begin().thenPlay("roar"))
+                .triggerableAnim("death",      RawAnimation.begin().thenPlay("death")));
+    }
+
+    @Override
+    public AnimatableInstanceCache getAnimatableInstanceCache() {
+        return this.animCache;
     }
 }
