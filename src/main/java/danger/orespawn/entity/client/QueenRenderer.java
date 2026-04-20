@@ -21,6 +21,23 @@ import software.bernie.geckolib.renderer.GeoEntityRenderer;
  * root AABB on a fully-extended wing or tail swing, and a missed
  * cull would let her invisibly clip through the player's screen
  * edge during the boss fight.</p>
+ *
+ * <h2>MultiHitBoxLib bone tracking</h2>
+ *
+ * <p>This class deliberately stays as plain {@link GeoEntityRenderer}
+ * rather than extending an MHLib-specific subclass. MHLib's
+ * {@code MixinGeoEntityRenderer} (priority MAX_VALUE) injects at the
+ * TAIL of every {@code GeoEntityRenderer} constructor and calls
+ * {@code addRenderLayer(new GeckolibBoneInformationCollectorLayer(self))},
+ * so the bone-tracking layer is attached automatically once super(...)
+ * returns. The same mixin also wraps {@code renderRecursively} HEAD/TAIL
+ * to invoke the layer's {@code onRenderRecursivelyStart/End} hooks,
+ * which read each synced bone's world position via
+ * {@code GeoBone#getWorldPosition} and ship a {@code CPacketBoneInformation}
+ * server-ward where {@code MHLibPartEntity} positions are reconciled.</p>
+ *
+ * <p>Net result: zero MHLib code in this file, full pixel-perfect
+ * bone-tracked hitbox sync.</p>
  */
 public class QueenRenderer extends GeoEntityRenderer<TheQueen> {
 

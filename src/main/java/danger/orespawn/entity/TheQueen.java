@@ -45,7 +45,6 @@ import danger.orespawn.ModItems;
 import danger.orespawn.ModSounds;
 import danger.orespawn.OreSpawnConfig;
 import danger.orespawn.util.MyUtils;
-import net.neoforged.neoforge.entity.PartEntity;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.AnimatableManager;
@@ -57,55 +56,60 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 /**
  * The Queen — a flying, three-headed multi-region boss.
  *
- * <h2>Multi-part framework (1.7.10 → 1.21.1 port)</h2>
+ * <h2>Multi-part hitbox framework (MultiHitBoxLib, vendored)</h2>
  *
- * <p>The 1.7.10 original ({@code reference_1_7_10_source/sources/danger/orespawn/TheQueen.java})
- * used the same sidecar-{@code QueenHead} trick as The King: a single 22×24
- * {@code EntityMob} with one detached {@code QueenHead} entity teleporting
- * itself 20 blocks above and 30 blocks in front every tick
- * ({@code QueenHead.java:139-158}). All of Queen's characteristic silhouette
- * — three necks, three heads, two outstretched wings, a multi-segment tail,
- * two hind legs — was invisible to the hit-detection system; everything
- * funnelled through one massive AABB.</p>
+ * <p>Historical lineage: the 1.7.10 original used a single 22×24
+ * {@code EntityMob} with one sidecar {@code QueenHead} that teleported
+ * 20 blocks above and 30 blocks ahead every tick. The 1.21.1 port's
+ * first iteration replaced that with fourteen hand-managed
+ * {@code OreSpawnPartEntity} children whose positions were driven by
+ * sinusoidal math derived from the legacy procedural model. That math
+ * never tracked the keyframe-driven Geckolib mesh, so weak points
+ * (heads/legs) drifted out from under the visible geometry — players
+ * landed phantom hits on empty air a foot to the left of the Queen's
+ * actual face.</p>
  *
- * <p>NeoForge 1.21.1 lets us express Queen's full anatomy as
- * {@link PartEntity} children: <b>fourteen</b> named regions (body; neckL /
- * headL / neckC / headC / neckR / headR; wingL, wingR; tailB, tailM, tailT;
- * legL, legR). Damage routes through
- * {@link #hurtFromPart(OreSpawnPartEntity, DamageSource, float)} so that:
+ * <p>This iteration delegates the entire multi-hitbox framework to
+ * MultiHitBoxLib (vendored under {@code de.dertoaster.multihitboxlib}).
+ * The contract is purely declarative:
  * <ul>
- *   <li><b>Any head</b> takes full damage — rewards precision aiming at a
- *       weak point while Queen strafes.</li>
- *   <li><b>Body and legs</b> take half damage — the "armoured" hitbox.</li>
- *   <li><b>Necks, wings, tail segments</b> take ¼ + 1 flat — glancing hits
- *       still register but don't trivialise the fight.</li>
+ *   <li>The hitbox profile lives at
+ *       {@code data/orespawn/multihitboxlib/hitbox_profiles/the_queen.json}
+ *       and lists ten parts mapped to Geckolib bone names from
+ *       {@code assets/orespawn/geo/entity/the_queen.geo.json} (Body1,
+ *       LHead/LHead4/LHead12 for the three heads, Lwing1, Tail1/Tail4/Tail7,
+ *       leftLeg, rightLeg).</li>
+ *   <li>{@code MixinLivingEntity} (MHLib) intercepts our constructor,
+ *       reads the profile via {@code MHLibDatapackLoaders.getHitboxProfile},
+ *       and instantiates a {@code MHLibPartEntity} per declared part. It
+ *       also supplies {@code getParts()}, {@code isMultipartEntity()},
+ *       {@code setId(int)} (contiguous IDs for client correlation),
+ *       and overrides {@code isPickable()} so the parent AABB no longer
+ *       absorbs hits when parts are present.</li>
+ *   <li>{@code MixinGeoEntityRenderer} (MHLib) auto-attaches a
+ *       {@code GeckolibBoneInformationCollectorLayer} to {@code QueenRenderer}.
+ *       Each render frame the layer reads each synced bone's world
+ *       position via {@code GeoBone#getWorldPosition}, packs it into
+ *       a {@code CPacketBoneInformation}, and ships it server-ward.</li>
+ *   <li>The server's {@code alignSynchedSubParts()} (also from
+ *       {@code MixinLivingEntity}) snaps each {@code MHLibPartEntity}
+ *       to the received bone position the next aiStep tick. Damage
+ *       absorbed by a part is forwarded to {@code TheQueen.hurt}
+ *       multiplied by the part's {@code damage-modifier}: 1.0× heads,
+ *       0.5× body/legs, 0.25× wings/tail.</li>
  * </ul>
  *
- * <h2>Animation-aware part positioning</h2>
+ * <p>Net result: every damage hitbox is pixel-perfect for the current
+ * Geckolib animation pose, with zero per-part positioning code in
+ * this class.</p>
  *
- * <p>Queen's parts use sinusoidal positioning math derived from the
- * legacy procedural model. Since the v1.1 Geckolib overhaul this no
- * longer pixel-perfectly mirrors the visible geometry (the
- * {@code ModelTheQueen.geo.json} bedrock model is keyframe-driven, not
- * trig-driven), but it still places the hitboxes in approximately the
- * right silhouette regions — wings out to the sides, three heads
- * forward, tail trailing behind. See {@link #tick()} for the full
- * positioning block: the world-space offsets are converted from
- * Blockbench model coordinates using {@code worldOffset = modelCoord × 3 / 16},
- * and the renderer's {@code rotateY(180 - yaw)} mirror means world Z
- * uses the negated model Z coordinate. A future iteration could pull
- * Geckolib bone world-positions for exact sync.</p>
- *
- * <p>The legacy {@code QueenHead} sidecar entity type is still registered
- * and still spawned by the AI step (see
- * {@link #customServerAiStep()}) — this is deliberate for save-file
- * backward compatibility during the port. It can be removed once the
- * {@link PartEntity} framework has been validated end-to-end.</p>
- *
- * @see OreSpawnPartEntity for the part implementation and the full 1.7.10
- *   paradigm-shift commentary.
+ * <p>The legacy {@code QueenHead} sidecar entity type is still
+ * registered and still spawned by {@link #aiStepPrimary()} — kept
+ * deliberately for save-file backward compatibility and as a
+ * separately-targetable nuisance during mad-mood swarms. It is
+ * functionally independent of the MHLib part system.</p>
  */
-public class TheQueen extends Monster implements OreSpawnPartEntity.MultipartBoss, GeoEntity {
+public class TheQueen extends Monster implements GeoEntity {
 
     private static final EntityDataAccessor<Integer> DATA_ATTACKING =
             SynchedEntityData.defineId(TheQueen.class, EntityDataSerializers.INT);
@@ -173,21 +177,14 @@ public class TheQueen extends Monster implements OreSpawnPartEntity.MultipartBos
     private int wingSound = 0;
     private int attackLevel = 1;
 
-    private final OreSpawnPartEntity<TheQueen> bodyPart;
-    private final OreSpawnPartEntity<TheQueen> neckLeft;
-    private final OreSpawnPartEntity<TheQueen> headLeft;
-    private final OreSpawnPartEntity<TheQueen> neckCenter;
-    private final OreSpawnPartEntity<TheQueen> headCenter;
-    private final OreSpawnPartEntity<TheQueen> neckRight;
-    private final OreSpawnPartEntity<TheQueen> headRight;
-    private final OreSpawnPartEntity<TheQueen> wingLeft;
-    private final OreSpawnPartEntity<TheQueen> wingRight;
-    private final OreSpawnPartEntity<TheQueen> tailBase;
-    private final OreSpawnPartEntity<TheQueen> tailMid;
-    private final OreSpawnPartEntity<TheQueen> tailTip;
-    private final OreSpawnPartEntity<TheQueen> legLeft;
-    private final OreSpawnPartEntity<TheQueen> legRight;
-    private final PartEntity<?>[] allParts;
+    // Multi-hitbox parts are NOT declared as fields here. MHLib's
+    // MixinLivingEntity injects a `partMap` into every LivingEntity at
+    // class-load time, populates it from the hitbox profile JSON
+    // (data/orespawn/multihitboxlib/hitbox_profiles/the_queen.json) on
+    // entity construction, and exposes them via getParts(). Bone
+    // tracking (bone name -> part position) happens automatically every
+    // render frame via MixinGeoEntityRenderer + GeckolibBoneInformationCollectorLayer.
+
     private LivingEntity healthTrackedEntity = null;
     private float healthTrackedEntityHP = 0.0f;
     private int mood = 0;
@@ -199,26 +196,10 @@ public class TheQueen extends Monster implements OreSpawnPartEntity.MultipartBos
         this.noCulling = true;
         this.noPhysics = true;
         this.targetSorter = Comparator.comparingDouble(this::distanceToSqr);
-
-        this.bodyPart    = new OreSpawnPartEntity<>(this, "body",   12.0f, 12.0f);
-        this.neckLeft    = new OreSpawnPartEntity<>(this, "neckL",   6.0f,  6.0f);
-        this.headLeft    = new OreSpawnPartEntity<>(this, "headL",   6.0f,  6.0f);
-        this.neckCenter  = new OreSpawnPartEntity<>(this, "neckC",   6.0f,  6.0f);
-        this.headCenter  = new OreSpawnPartEntity<>(this, "headC",   6.0f,  6.0f);
-        this.neckRight   = new OreSpawnPartEntity<>(this, "neckR",   6.0f,  6.0f);
-        this.headRight   = new OreSpawnPartEntity<>(this, "headR",   6.0f,  6.0f);
-        this.wingLeft    = new OreSpawnPartEntity<>(this, "wingL",  18.0f,  4.0f);
-        this.wingRight   = new OreSpawnPartEntity<>(this, "wingR",  18.0f,  4.0f);
-        this.tailBase    = new OreSpawnPartEntity<>(this, "tailB",   7.0f,  7.0f);
-        this.tailMid     = new OreSpawnPartEntity<>(this, "tailM",   6.0f,  6.0f);
-        this.tailTip     = new OreSpawnPartEntity<>(this, "tailT",   5.0f,  4.0f);
-        this.legLeft     = new OreSpawnPartEntity<>(this, "legL",    5.0f, 12.0f);
-        this.legRight    = new OreSpawnPartEntity<>(this, "legR",    5.0f, 12.0f);
-        this.allParts = new PartEntity<?>[]{
-            bodyPart, neckLeft, headLeft, neckCenter, headCenter,
-            neckRight, headRight, wingLeft, wingRight,
-            tailBase, tailMid, tailTip, legLeft, legRight
-        };
+        // No part construction here -- MHLib's mixin into LivingEntity#<init>
+        // (mhlibOnConstructor) reads the hitbox profile keyed by this
+        // entity's type ("orespawn:the_queen") and creates one
+        // MHLibPartEntity per "parts" entry in the JSON.
     }
 
     @Override
@@ -439,226 +420,21 @@ public class TheQueen extends Monster implements OreSpawnPartEntity.MultipartBos
         }
     }
 
-    /**
-     * Advertises to NeoForge that this entity owns a non-empty
-     * {@link PartEntity} array. Without this the parts returned by
-     * {@link #getParts()} are ignored by hit-detection.
-     */
-    @Override
-    public boolean isMultipartEntity() {
-        return true;
-    }
-
-    /**
-     * Returns the stable 14-element array of child parts. Must return the
-     * SAME array reference every call — the world caches it for hit-testing.
-     */
-    @Override
-    public PartEntity<?>[] getParts() {
-        return this.allParts;
-    }
-
-    /**
-     * Reserves a contiguous block of 14 entity IDs for the sub-parts so
-     * the client can correlate hit-detection packets with the owning boss.
-     * Mirrors vanilla {@code EnderDragon.setId}. If parts had non-contiguous
-     * IDs, client-side part lookup would fall back to the parent's root
-     * AABB, defeating per-part damage multipliers.
-     */
-    @Override
-    public void setId(int id) {
-        super.setId(id);
-        for (int i = 0; i < allParts.length; i++) {
-            allParts[i].setId(id + i + 1);
-        }
-    }
-
     @Override
     public EntityDimensions getDefaultDimensions(Pose pose) {
         return EntityDimensions.fixed(16.0f, 12.0f);
     }
 
-    /**
-     * The root AABB is not hittable -- players must hit the sub-parts.
-     */
-    @Override
-    public boolean isPickable() {
-        return false;
-    }
-
-    /**
-     * Per-part damage routing with multipliers that reward precision aiming.
-     * Heads: 1.0x (weak point), Body/Legs: 0.5x (armored), Necks/Wings/Tail: 0.25x + 1 flat.
-     */
-    @Override
-    public boolean hurtFromPart(OreSpawnPartEntity<?> part, DamageSource source, float amount) {
-        float multiplied = switch (part.getPartName()) {
-            case "headL", "headC", "headR" -> amount;
-            case "body", "legL", "legR" -> amount * 0.5f;
-            case "neckL", "neckC", "neckR",
-                 "wingL", "wingR",
-                 "tailB", "tailM", "tailT" -> amount * 0.25f + 1.0f;
-            default -> amount * 0.25f + 1.0f;
-        };
-        return this.hurt(source, multiplied);
-    }
-
-    /**
-     * Places a sub-part at an offset relative to this entity, rotated by body yaw
-     * so hitboxes stay aligned with the direction The Queen faces.
-     */
-    private void positionPart(OreSpawnPartEntity<TheQueen> part,
-                              double offsetX, double offsetY, double offsetZ) {
-        float yawRad = this.yBodyRot * Mth.DEG_TO_RAD;
-        double sin = Mth.sin(yawRad);
-        double cos = Mth.cos(yawRad);
-        double rx = offsetX * cos - offsetZ * sin;
-        double rz = offsetX * sin + offsetZ * cos;
-        part.setPos(this.getX() + rx, this.getY() + offsetY, this.getZ() + rz);
-    }
-
     @Override
     public void tick() {
-        Vec3[] oldPos = new Vec3[allParts.length];
-        for (int i = 0; i < allParts.length; i++) {
-            oldPos[i] = new Vec3(allParts[i].getX(), allParts[i].getY(), allParts[i].getZ());
-        }
+        // Part positioning is no longer done here -- MHLib's
+        // MixinLivingEntity injects part-tick at the TAIL of LivingEntity#tick
+        // and aligns each MHLibPartEntity to its bound bone's collected
+        // world position. Our only responsibility is the ambient
+        // wing-flap SFX, the noPhysics flag, the per-phase damage
+        // ramp, and the client-side particle effect.
 
         super.tick();
-
-        // ─── Hitbox sinusoidal positioning (legacy procedural math) ───
-        // Conversion: worldOffset = modelCoord / 16 * 3 (= modelCoord * S)
-        // The renderer's rotateY(180-yaw) negates model Z in world space,
-        // so all Z offsets use: worldZ = -modelZ * S
-        float t = this.tickCount;
-        boolean atk = this.getAttacking() != 0;
-        float PI = (float) Math.PI;
-        float pi4 = PI / 4.0F;
-        float S = 3.0F / 16.0F;
-
-        // ── Body: model pivot (0, -89, 1) ──
-        positionPart(bodyPart, 0.0F, 89 * S, -1 * S);
-
-        // ── Wings: shoulder at model (±40, -121, -50) from root ──
-        // wingCenterDist = X from body center to wing elbow: 124 model units
-        float wingAngle = atk
-                ? Mth.cos(t * 0.85F) * PI * 0.26F
-                : Mth.cos(t * 0.35F) * PI * 0.15F;
-        float wingCenterDist = 124 * S;
-        float wingDY = Mth.sin(wingAngle) * wingCenterDist;
-        float wingBaseY = 121 * S;
-        float wingBaseZ = 50 * S;
-        positionPart(wingLeft,   wingCenterDist * Mth.cos(wingAngle),
-                wingBaseY - wingDY, wingBaseZ);
-        positionPart(wingRight, -wingCenterDist * Mth.cos(wingAngle),
-                wingBaseY - wingDY, wingBaseZ);
-
-        // ── Head/neck animation: yaw (lr) and pitch (ud) matching client frequencies ──
-        float Lhlr, Lhud, Chlr, Chud, Rhlr, Rhud;
-        if (atk) {
-            Lhlr = Mth.sin(t * 0.3F)  * PI * 0.25F;
-            Lhud = Mth.sin(t * 0.2F)  * PI * 0.25F;
-            Chlr = Mth.sin(t * 0.27F) * PI * 0.25F;
-            Chud = Mth.sin(t * 0.18F) * PI * 0.25F;
-            Rhlr = Mth.sin(t * 0.33F) * PI * 0.25F;
-            Rhud = Mth.sin(t * 0.22F) * PI * 0.25F;
-        } else {
-            Lhlr = Mth.sin(t * 0.17F) * PI * 0.08F;
-            Lhud = Mth.sin(t * 0.13F) * PI * 0.1F;
-            Chlr = Mth.sin(t * 0.13F) * PI * 0.08F;
-            Chud = Mth.sin(t * 0.08F) * PI * 0.1F;
-            Rhlr = Mth.sin(t * 0.19F) * PI * 0.08F;
-            Rhud = Mth.sin(t * 0.12F) * PI * 0.1F;
-        }
-
-        // Neck/head reach for animation swing arcs (empirically tuned)
-        float neckReach = 22.0F;
-        float neckMidReach = 11.0F;
-
-        // Center chain: empirical base anchors account for cumulative neck pitch
-        float chSwingX = Mth.sin(Chlr) * neckReach;
-        float chArcZ   = (1.0F - Mth.cos(Chlr)) * neckReach;
-        positionPart(neckCenter,
-                Mth.sin(Chlr * 0.3F) * neckMidReach,
-                26.0F + Mth.sin(Chud * 0.3F) * 5.0F,
-                32.0F - (1.0F - Mth.cos(Chlr * 0.3F)) * neckMidReach);
-        positionPart(headCenter,
-                chSwingX,
-                34.0F + Mth.sin(Chud) * 10.0F,
-                54.0F - chArcZ);
-
-        // Left chain
-        float lhSwingX = Mth.sin(Lhlr) * neckReach;
-        float lhArcZ   = (1.0F - Mth.cos(Lhlr)) * neckReach;
-        positionPart(neckLeft,
-                12.0F + Mth.sin(Lhlr * 0.3F) * neckMidReach,
-                25.0F + Mth.sin(Lhud * 0.3F) * 5.0F,
-                30.0F - (1.0F - Mth.cos(Lhlr * 0.3F)) * neckMidReach);
-        positionPart(headLeft,
-                18.0F + lhSwingX,
-                33.0F + Mth.sin(Lhud) * 10.0F,
-                52.0F - lhArcZ);
-
-        // Right chain
-        float rhSwingX = Mth.sin(Rhlr) * neckReach;
-        float rhArcZ   = (1.0F - Mth.cos(Rhlr)) * neckReach;
-        positionPart(neckRight,
-                -12.0F + Mth.sin(Rhlr * 0.3F) * neckMidReach,
-                25.0F + Mth.sin(Rhud * 0.3F) * 5.0F,
-                30.0F - (1.0F - Mth.cos(Rhlr * 0.3F)) * neckMidReach);
-        positionPart(headRight,
-                -18.0F + rhSwingX,
-                33.0F + Mth.sin(Rhud) * 10.0F,
-                52.0F - rhArcZ);
-
-        // ── Tail chain walk: 7 links, tail grows in -Z (behind entity) ──
-        float tailSpeed = atk ? 0.6F : 0.26F;
-        float tailAmp   = atk ? 0.2F : 0.08F;
-
-        float[] tailSegYaw = {
-            Mth.cos(t * tailSpeed)             * PI * tailAmp * 0.5F,
-            Mth.cos(t * tailSpeed - pi4)       * PI * tailAmp * 0.5F,
-            Mth.cos(t * tailSpeed - 2 * pi4)   * PI * tailAmp * 0.5F,
-            Mth.cos(t * tailSpeed - 3 * pi4)   * PI * tailAmp * 0.5F,
-            Mth.cos(t * tailSpeed - 4 * pi4)   * PI * tailAmp * 0.4F,
-            Mth.cos(t * tailSpeed - 5 * pi4)   * PI * tailAmp * 0.4F,
-            Mth.cos(t * tailSpeed - 6 * pi4)   * PI * tailAmp * 0.4F,
-        };
-        float[] tailSegLen = {50*S, 38*S, 39*S, 33*S, 33*S, 46*S, 40*S};
-
-        float tailX = 0, tailZ = -29 * S;
-        float cumYaw = 0;
-        float tbX = 0, tbZ = 0;
-        float tmX = 0, tmZ = 0;
-        float ttX = 0, ttZ = 0;
-        for (int i = 0; i < 7; i++) {
-            cumYaw += tailSegYaw[i];
-            tailX += Mth.sin(cumYaw) * tailSegLen[i];
-            tailZ -= Mth.cos(cumYaw) * tailSegLen[i];
-            if (i == 1) { tbX = tailX; tbZ = tailZ; }
-            if (i == 3) { tmX = tailX; tmZ = tailZ; }
-            if (i == 6) { ttX = tailX; ttZ = tailZ; }
-        }
-        positionPart(tailBase, tbX, 100 * S, tbZ);
-        positionPart(tailMid,  tmX, 88 * S,  tmZ);
-        positionPart(tailTip,  ttX, 86 * S,  ttZ);
-
-        // ── Legs: anchored under her core, not in front ──
-        float legSwing = atk
-                ? Mth.sin(t * 0.4F) * 0.3F
-                : Mth.sin(t * 0.15F) * 0.15F;
-        float legSwingZ = Mth.sin(legSwing) * 2.0F;
-        positionPart(legLeft,   8.6F, 6.0F, 2.0F + legSwingZ);
-        positionPart(legRight, -8.6F, 6.0F, 2.0F - legSwingZ);
-
-        for (int i = 0; i < allParts.length; i++) {
-            allParts[i].xo   = oldPos[i].x;
-            allParts[i].yo   = oldPos[i].y;
-            allParts[i].zo   = oldPos[i].z;
-            allParts[i].xOld = oldPos[i].x;
-            allParts[i].yOld = oldPos[i].y;
-            allParts[i].zOld = oldPos[i].z;
-        }
 
         this.wingSound++;
         if (this.wingSound > 30) {
