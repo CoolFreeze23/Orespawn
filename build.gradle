@@ -27,6 +27,28 @@ repositories {
         name = 'GeckoLib'
         url = 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/'
     }
+    // AzureDoom — supplies AzureLib, an alternative animation library to
+    // Geckolib. The vendored MultiHitBoxLib (de.dertoaster.multihitboxlib)
+    // contains AzureLib integration code (mixins, asset-sync managers,
+    // render layers) that must compile but is gated at runtime by
+    // de.dertoaster.multihitboxlib.mixin.MHLibPlugin so it never loads
+    // when AzureLib isn't on the classpath. We therefore depend on
+    // AzureLib as compileOnly (see dependencies block).
+    maven {
+        name = 'AzureDoom'
+        url = 'https://maven.azuredoom.com/mods'
+    }
+    // Commoble — supplies Databuddy, a codec/registry helper used by the
+    // vendored MultiHitBoxLib's MHLibHitboxTypes.HITBOX_TYPE_DISPATCHER
+    // (RegistryDispatcher.makeDispatchForgeRegistry). Databuddy is the
+    // ONE third-party dep upstream actually pulls into Java source beyond
+    // Geckolib/AzureLib; everything else (JEI, JEED, Jade, AppleSkin,
+    // Catalogue) is purely a runtime mod-compatibility hook with no
+    // .java imports, so we can safely skip those.
+    maven {
+        name = 'Commoble'
+        url = 'https://commoble.net/maven/'
+    }
 }
 
 base {
@@ -60,6 +82,27 @@ runs {
     }
 }
 
+// ──────────────────────────────────────────────────────────────────────
+// Access transformers
+//
+// The vendored MultiHitBoxLib needs Entity#ENTITY_COUNTER (the static
+// AtomicInteger that vends entity IDs) widened from `protected` to
+// `public` so its IMultipartEntity helper can reserve a contiguous block
+// of IDs for a parent + its part-entity sub-hitboxes. The widening lives
+// in src/main/resources/META-INF/accesstransformer.cfg (vendored from
+// upstream verbatim — same Mojang-mapped name in 1.21.1).
+//
+// NeoGradle 7.1.21 supports auto-discovery of this exact path, but
+// auto-discovery proved unreliable here (compile errored with
+// "ENTITY_COUNTER has protected access" until we registered explicitly),
+// so we register it explicitly to be safe.
+// ──────────────────────────────────────────────────────────────────────
+minecraft {
+    accessTransformers {
+        file project.file('src/main/resources/META-INF/accesstransformer.cfg')
+    }
+}
+
 configurations {
     runtimeClasspath.extendsFrom localRuntime
 }
@@ -69,6 +112,23 @@ dependencies {
     // GeckoLib 4.x for NeoForge 1.21.1 — powers the Queen Geckolib backend
     // (8-stage state machine, dynamic blue/red texture phase swap).
     implementation "software.bernie.geckolib:geckolib-neoforge-${minecraft_version}:${geckolib_version}"
+    // AzureLib — compileOnly because the vendored MultiHitBoxLib has
+    // AzureLib integration code (mixin/azurelib/*, client/azurelib/*,
+    // assetsynch/impl/Alib*, api/alibplus/*) that must compile but never
+    // executes in our deployment. MHLibPlugin gates the AzureLib mixins on
+    // Constants.Dependencies.AZURELIB_LOADED, which returns false when
+    // AzureLib isn't loaded as a mod. Pinned to 2.3.28 (last 2.3.x stable
+    // for 1.21.1) — only the API surface used by MHLib (AzureLibCache,
+    // BakedAnimations, JsonUtil, GeoBone, GeoRenderer, GeoEntityRenderer,
+    // GeoReplacedEntityRenderer, AnimatableManager, AnimationController)
+    // matters, and that surface is stable across the 2.3.x line.
+    compileOnly "mod.azure.azurelib:azurelib-neo-1.21.1:2.3.28"
+    // Databuddy — used at *runtime* by MHLibHitboxTypes (it constructs
+    // a RegistryDispatcher at class-init time), so this is a real
+    // implementation dep, not compileOnly. The 1.21 artifact resolves
+    // fine on 1.21.1 because Databuddy targets Mojang-mapped APIs that
+    // didn't change between 1.21 and 1.21.1.
+    implementation "net.commoble.databuddy:databuddy-1.21:6.0.0.0"
 }
 
 tasks.withType(ProcessResources).configureEach {

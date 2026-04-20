@@ -41,3 +41,61 @@ side="BOTH"
 [[mixins]]
 config="orespawn.mixins.json"
 
+# ──────────────────────────────────────────────────────────────────────
+# Vendored MultiHitBoxLib (de.dertoaster.multihitboxlib).
+#
+# We ship MultiHitBoxLib's source inside this jar (multi-mod jar) rather
+# than as a separate jar dependency. This second [[mods]] entry registers
+# it as its own NeoForge mod under the upstream namespace so that:
+#   - its MHLibMod constructor (annotated @Mod(Constants.MODID)) fires
+#     during FML mod-loading
+#   - data files under data/multihitboxlib/* resolve to the right
+#     ResourceLocation namespace
+#   - downstream code can ModList.isLoaded("multihitboxlib") sanity-check
+# Keeping the upstream modId (instead of relocating to "orespawn") avoids
+# rewriting every namespace-prefixed resource the library ships.
+#
+# The mixin config below registers de.dertoaster.multihitboxlib.mixin
+# .MHLibPlugin as the plugin gating optional Geckolib/AzureLib mixins on
+# mod presence. AzureLib mixins compile (compileOnly dep) but the plugin
+# returns false from shouldApplyMixin when AzureLib isn't loaded, so they
+# never inject — which is what we want since AzureLib isn't shipped.
+# ──────────────────────────────────────────────────────────────────────
+[[mods]]
+modId="multihitboxlib"
+version="1.4.0-vendored"
+displayName="MultiHitBoxLib (vendored)"
+authors="DerToaster, Meme Man"
+credits="Vendored into OreSpawn for advanced Geckolib hitbox support"
+displayURL="https://github.com/DerToaster98/MultiHitBoxLib"
+description='''
+MultiHitBoxLib provides part-entity multi-hitbox support that can be
+synchronized to Geckolib (or AzureLib) animation bones in real time.
+Vendored from the upstream 1.21-NeoForge branch and shipped inside the
+OreSpawn jar to power The Queen (and other future bosses) bone-tracked
+hitbox profiles.
+'''
+
+[[dependencies.multihitboxlib]]
+modId="neoforge"
+type="required"
+versionRange="[${neo_version},)"
+ordering="NONE"
+side="BOTH"
+
+[[dependencies.multihitboxlib]]
+modId="minecraft"
+type="required"
+versionRange="${minecraft_version_range}"
+ordering="NONE"
+side="BOTH"
+
+[[dependencies.multihitboxlib]]
+modId="geckolib"
+type="optional"
+versionRange="[4.5.6,)"
+ordering="BEFORE"
+side="BOTH"
+
+[[mixins]]
+config="multihitboxlib.mixins.json"
