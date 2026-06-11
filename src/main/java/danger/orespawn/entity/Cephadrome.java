@@ -33,9 +33,11 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 import danger.orespawn.OreSpawnMod;
 
-public class Cephadrome extends PathfinderMob {
+public class Cephadrome extends PathfinderMob
+        implements danger.orespawn.network.RiderInputPayload.RideableFlyer {
     private static final EntityDataAccessor<Integer> DATA_ATTACKING =
             SynchedEntityData.defineId(Cephadrome.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Integer> DATA_ACTIVITY =
@@ -56,6 +58,33 @@ public class Cephadrome extends PathfinderMob {
     // heal-only branch so the player can keep healing the boss-tier
     // mob without accidentally taming it.
     private static final Ingredient TAME_FOOD = Ingredient.of(Items.PORKCHOP);
+
+    /**
+     * Ridden-flight tuning, number-for-number from orig Cephadrome.java:703-835
+     * (ridden branch of onLivingUpdate): hover probe 1.55 with the strong
+     * +0.07/+0.1 lift and 0.018 glide-fall (orig :720-727), terrain scan
+     * 2 + v*6 @ 0.04/block ×0.09 (orig :728-741), rise cap 2.0 (orig :742-744),
+     * yaw lag 1.5 above 0.1 (orig :760-771), pitch inverts while rising
+     * (orig :776 — 360 - 2v), fly-up +0.04 + v*0.05 (orig :786-789), throttle
+     * 0.03+0.05 applied instantly — no deltasmooth ramp (max_speed 1.15 > 0.85
+     * bonus gate, orig :800-809 with max_speed at :673), reverse 0.35 @ -0.03
+     * (orig :807-808), friction 0.985/0.94/0.985 (orig :833-835).
+     */
+    private static final danger.orespawn.entity.ai.RiderFlightController.Config RIDER_FLIGHT_CONFIG =
+            new danger.orespawn.entity.ai.RiderFlightController.Config(
+                    true, 1.55, 0.07, 0.1, 0.018,
+                    2, 6.0, 0.04, 0.09, false,
+                    2.0,
+                    1.5, 0.1, true,
+                    false, 0.04, 0.05,
+                    0.08, 1.15, -0.03, 0.35, false,
+                    0.0, 0.985, 0.94);
+
+    private final danger.orespawn.entity.ai.RiderFlightController riderFlight =
+            new danger.orespawn.entity.ai.RiderFlightController(RIDER_FLIGHT_CONFIG);
+    /** Held state of the rider's vertical keys (client-set for prediction, server-set via payload). */
+    private boolean riderFlyUp = false;
+    private boolean riderFlyDown = false;
 
     private final Comparator<Entity> targetSorter;
     private final float moveSpeed = 0.25f;
@@ -126,6 +155,117 @@ public class Cephadrome extends PathfinderMob {
     public void tick() {
         this.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(this.moveSpeed);
         super.tick();
+
+        if (this.level().isClientSide) return;
+
+        // orig Cephadrome.java:661-663 — with PlayNicely off, every Cephadrome
+        // counts as fed, so any player can hop on without offering meat first.
+        if (!danger.orespawn.OreSpawnConfig.PLAY_NICELY.get()) {
+            this.wasfed = 1;
+        }
+
+        // Flying while ridden (no gravity fights with the rider-flight physics).
+        this.setNoGravity(this.isVehicle() && this.getControllingPassenger() != null);
+
+        if (this.isVehicle() && this.getControllingPassenger() != null) {
+            serverRiddenTick();
+        }
+    }
+
+    // ==================== Riding ====================
+
+    /**
+     * Any mounted player steers — the original had no tame/ownership gate on
+     * control, only the {@code wasfed} gate on mounting (orig
+     * Cephadrome.java:893-904).
+     */
+    @javax.annotation.Nullable
+    @Override
+    public LivingEntity getControllingPassenger() {
+        if (!this.getPassengers().isEmpty() && this.getPassengers().get(0) instanceof Player player) {
+            return player;
+        }
+        return super.getControllingPassenger();
+    }
+
+    /**
+     * Seats the rider 0.75 blocks ahead of center, 2.5 up (orig
+     * Cephadrome.java:852-857 with mounted y-offset 2.5 at :211-213).
+     */
+    @Override
+    protected void positionRider(Entity passenger, Entity.MoveFunction callback) {
+        if (!this.hasPassenger(passenger)) return;
+        double rx = this.getX() - 0.75 * Math.sin(Math.toRadians(this.getYRot()));
+        double ry = this.getY() + 2.5;
+        double rz = this.getZ() + 0.75 * Math.cos(Math.toRadians(this.getYRot()));
+        callback.accept(passenger, rx, ry, rz);
+    }
+
+    /**
+     * Client-predicted ridden flight: the riding client runs the original
+     * hovering sand-shark physics (orig Cephadrome.java:703-835, constants in
+     * {@link #RIDER_FLIGHT_CONFIG}) and syncs position like a vanilla horse.
+     */
+    @Override
+    protected void tickRidden(Player rider, Vec3 travelVector) {
+        super.tickRidden(rider, travelVector);
+        if (this.isControlledByLocalInstance()) {
+            this.riderFlight.tick(this, rider, this.riderFlyUp, this.riderFlyDown);
+        }
+    }
+
+    /**
+     * Skips vanilla travel while player-ridden: {@link #tickRidden} already
+     * applied the full move via {@code RiderFlightController}, so running
+     * vanilla travel too would integrate the motion twice.
+     */
+    @Override
+    public void travel(Vec3 travelVector) {
+        if (this.isControlledByLocalInstance() && this.getControllingPassenger() instanceof Player) {
+            return;
+        }
+        super.travel(travelVector);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>Consumed by {@link #tickRidden}; modern per-player equivalent of
+     * the original's global {@code OreSpawnMain.flyup_keystate} poll (orig
+     * Cephadrome.java:786-789).</p>
+     */
+    @Override
+    public void setRiderVerticalInput(boolean up, boolean down) {
+        this.riderFlyUp = up;
+        this.riderFlyDown = down;
+    }
+
+    /**
+     * Server-side portion of the original ridden branch — pushing nearby
+     * entities (orig Cephadrome.java:836-842, box 2.25/2.0/2.25) and ejecting
+     * a removed rider (orig :843-845). The Cephadrome has no mounted
+     * auto-attack in the original.
+     */
+    private void serverRiddenTick() {
+        if (this.isRemoved()) return;
+
+        List<Entity> nearby = this.level().getEntities(this, this.getBoundingBox().inflate(2.25, 2.0, 2.25));
+        for (Entity entity : nearby) {
+            if (entity != this.getFirstPassenger() && !entity.isRemoved() && entity.isPushable()) {
+                entity.push(this);
+            }
+        }
+
+        if (this.getFirstPassenger() != null && this.getFirstPassenger().isRemoved()) {
+            this.ejectPassengers();
+        }
+    }
+
+    @Override
+    public boolean removeWhenFarAway(double dist) {
+        // orig Cephadrome.java:932-937 — never despawn while ridden.
+        if (this.isPersistenceRequired()) return false;
+        return !this.isVehicle();
     }
 
     @Override
@@ -252,19 +392,6 @@ public class Cephadrome extends PathfinderMob {
     }
 
     @Override
-    protected void dropCustomDeathLoot(ServerLevel level, DamageSource source, boolean recentlyHit) {
-        super.dropCustomDeathLoot(level, source, recentlyHit);
-        int uraniumCount = 4 + this.random.nextInt(6);
-        for (int i = 0; i < uraniumCount; i++) {
-            this.spawnAtLocation(new ItemStack(ModItems.URANIUM_NUGGET.get(), 1));
-        }
-        int titaniumCount = 4 + this.random.nextInt(6);
-        for (int i = 0; i < titaniumCount; i++) {
-            this.spawnAtLocation(new ItemStack(ModItems.TITANIUM_NUGGET.get(), 1));
-        }
-    }
-
-    @Override
     public InteractionResult mobInteract(Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
         // Phase 14 — wiki-canon strict porkchop tame branch. Raw
@@ -300,6 +427,27 @@ public class Cephadrome extends PathfinderMob {
             this.shouldattack = 0;
             if (!player.getAbilities().instabuild) {
                 stack.shrink(1);
+            }
+            return InteractionResult.sidedSuccess(this.level().isClientSide);
+        }
+        // Empty hand: mount (orig Cephadrome.java:893-904). A shark that has
+        // not been fed ({@code wasfed == 0}) refuses, stalks the would-be
+        // rider (navigate 1.2 + shouldattack), and stays grounded; a fed one
+        // accepts and consumes the "fed" state so each ride needs a fresh meal
+        // (orig :903; PlayNicely off re-feeds every tick, see tick()).
+        if (stack.isEmpty() && this.distanceToSqr(player) < 25.0) {
+            if (this.isVehicle() && this.getFirstPassenger() != player) {
+                return InteractionResult.sidedSuccess(this.level().isClientSide);
+            }
+            if (!this.level().isClientSide) {
+                if (this.wasfed == 0) {
+                    this.getNavigation().moveTo(player, 1.2);
+                    this.shouldattack = 1;
+                    return InteractionResult.PASS;
+                }
+                player.startRiding(this);
+                this.wasfed = 0;
+                this.setActivity(1);
             }
             return InteractionResult.sidedSuccess(this.level().isClientSide);
         }

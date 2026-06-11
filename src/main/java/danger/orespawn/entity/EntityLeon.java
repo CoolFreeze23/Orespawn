@@ -46,7 +46,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import danger.orespawn.OreSpawnMod;
 
-public class EntityLeon extends TamableAnimal {
+public class EntityLeon extends TamableAnimal
+        implements danger.orespawn.network.RiderInputPayload.RideableFlyer {
 
     private static final EntityDataAccessor<Integer> DATA_ATTACKING =
             SynchedEntityData.defineId(EntityLeon.class, EntityDataSerializers.INT);
@@ -54,6 +55,32 @@ public class EntityLeon extends TamableAnimal {
             SynchedEntityData.defineId(EntityLeon.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Integer> DATA_BEING_RIDDEN =
             SynchedEntityData.defineId(EntityLeon.class, EntityDataSerializers.INT);
+
+    /**
+     * Ridden-flight tuning, number-for-number from orig Leon.java:741-889
+     * (ridden branch of onLivingUpdate): hover probe 1.55 (orig :758-765 —
+     * lift +0.03/+0.1, glide-fall 0.018), terrain scan 3 + v*7 @ 0.05/block
+     * ×0.07 (orig :767-779), rise cap 2.0 (orig :780-782), yaw lag 1.85 above
+     * 0.01 (orig :799-810), fly-up +0.035 + v*0.038 (orig :827-830), throttle
+     * 0.028+0.06 ramped (max_speed 1.15 > 1.0 bonus gate, orig :843-846 with
+     * max_speed at :703), reverse 0.35 @ -0.02 (orig :855-856), friction
+     * 0.985/0.94/0.985 (orig :887-889).
+     */
+    private static final danger.orespawn.entity.ai.RiderFlightController.Config RIDER_FLIGHT_CONFIG =
+            new danger.orespawn.entity.ai.RiderFlightController.Config(
+                    true, 1.55, 0.03, 0.1, 0.018,
+                    3, 7.0, 0.05, 0.07, false,
+                    2.0,
+                    1.85, 0.01, false,
+                    false, 0.035, 0.038,
+                    0.088, 1.15, -0.02, 0.35, true,
+                    0.0, 0.985, 0.94);
+
+    private final danger.orespawn.entity.ai.RiderFlightController riderFlight =
+            new danger.orespawn.entity.ai.RiderFlightController(RIDER_FLIGHT_CONFIG);
+    /** Held state of the rider's vertical keys (client-set for prediction, server-set via payload). */
+    private boolean riderFlyUp = false;
+    private boolean riderFlyDown = false;
 
     private final float moveSpeed = 0.25f;
     private int hurtTimer = 0;
@@ -89,10 +116,14 @@ public class EntityLeon extends TamableAnimal {
     }
 
     public static AttributeSupplier.Builder createAttributes() {
+        // Orig Leon ignores its "Leonopteryx" stats-table entry (150/20/8) and
+        // hardcodes: HP 250 (orig Leon.java:169), ATK 55 (orig Leon.java:117),
+        // armor 16 (orig Leon.java:192), speed 0.25 (orig Leon.java:81).
         return Mob.createMobAttributes()
                 .add(Attributes.MAX_HEALTH, 250.0)
                 .add(Attributes.MOVEMENT_SPEED, 0.25)
                 .add(Attributes.ATTACK_DAMAGE, 55.0)
+                .add(Attributes.ARMOR, 16.0)
                 .add(Attributes.FOLLOW_RANGE, 40.0)
                 .add(Attributes.KNOCKBACK_RESISTANCE, 0.8);
     }
@@ -171,37 +202,57 @@ public class EntityLeon extends TamableAnimal {
         return super.getControllingPassenger();
     }
 
+    /**
+     * Seats the rider 0.65 blocks ahead of center (orig Leon.java:943-948,
+     * {@code updateRiderPosition} forward offset 0.65f).
+     */
     @Override
     protected void positionRider(Entity passenger, Entity.MoveFunction callback) {
         if (!this.hasPassenger(passenger)) return;
-        double rx = this.getX() - 0.1 * Math.sin(Math.toRadians(this.getYRot()));
+        double rx = this.getX() - 0.65 * Math.sin(Math.toRadians(this.getYRot()));
         double ry = this.getY() + this.getBbHeight() * 0.85;
-        double rz = this.getZ() + 0.1 * Math.cos(Math.toRadians(this.getYRot()));
+        double rz = this.getZ() + 0.65 * Math.cos(Math.toRadians(this.getYRot()));
         callback.accept(passenger, rx, ry, rz);
     }
 
+    /**
+     * Client-predicted rider FLIGHT (ENT-K-017): the riding client runs the
+     * original Leon flight physics (orig Leon.java:741-889, constants in
+     * {@link #RIDER_FLIGHT_CONFIG}) and syncs position to the server like a
+     * vanilla horse. Replaces the interim ground-only 1.8× walk control.
+     */
     @Override
-    protected void tickRidden(Player player, Vec3 travelVector) {
-        super.tickRidden(player, travelVector);
-        this.setYRot(player.getYRot());
-        this.yRotO = this.getYRot();
-        this.setXRot(player.getXRot() * 0.5F);
-        this.setRot(this.getYRot(), this.getXRot());
-        this.yBodyRot = this.getYRot();
-        this.yHeadRot = this.yBodyRot;
+    protected void tickRidden(Player rider, Vec3 travelVector) {
+        super.tickRidden(rider, travelVector);
+        if (this.isControlledByLocalInstance()) {
+            this.riderFlight.tick(this, rider, this.riderFlyUp, this.riderFlyDown);
+        }
     }
 
+    /**
+     * Skips vanilla travel while player-ridden: {@link #tickRidden} already
+     * applied the full move via {@code RiderFlightController}, so running
+     * vanilla travel too would integrate the motion twice.
+     */
     @Override
-    protected Vec3 getRiddenInput(Player player, Vec3 travelVector) {
-        float strafe = player.xxa * 0.5F;
-        float forward = player.zza;
-        if (forward <= 0.0F) forward *= 0.25F;
-        return new Vec3(strafe, 0.0, forward);
+    public void travel(Vec3 travelVector) {
+        if (this.isControlledByLocalInstance() && this.getControllingPassenger() instanceof Player) {
+            return;
+        }
+        super.travel(travelVector);
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * <p>Consumed by {@link #tickRidden}; modern per-player equivalent of
+     * the original's global {@code OreSpawnMain.flyup_keystate} poll (orig
+     * Leon.java:827-830).</p>
+     */
     @Override
-    protected float getRiddenSpeed(Player player) {
-        return (float) this.getAttributeValue(Attributes.MOVEMENT_SPEED) * 1.8F;
+    public void setRiderVerticalInput(boolean up, boolean down) {
+        this.riderFlyUp = up;
+        this.riderFlyDown = down;
     }
 
     @Override
@@ -326,9 +377,64 @@ public class EntityLeon extends TamableAnimal {
 
         if (!this.getPassengers().isEmpty()) {
             this.setBeingRidden(1);
+            serverRiddenTick();
         } else {
             this.setBeingRidden(0);
             flyWithoutRider();
+        }
+    }
+
+    /**
+     * Server-side portion of the original ridden branch — everything except
+     * movement (which is client-predicted in {@code travelRidden}): pushing
+     * nearby entities (orig Leon.java:890-896, box 2.25/2.0/2.25), the mounted
+     * auto-melee {@code fly_with_rider} (orig :345-375), and ejecting a
+     * removed rider (orig :898-900).
+     */
+    private void serverRiddenTick() {
+        if (this.isRemoved()) return;
+
+        List<Entity> nearby = this.level().getEntities(this, this.getBoundingBox().inflate(2.25, 2.0, 2.25));
+        for (Entity entity : nearby) {
+            if (entity != this.getFirstPassenger() && !entity.isRemoved() && entity.isPushable()) {
+                entity.push(this);
+            }
+        }
+
+        flyWithRider();
+
+        if (this.getFirstPassenger() != null && this.getFirstPassenger().isRemoved()) {
+            this.ejectPassengers();
+        }
+    }
+
+    /**
+     * Mounted auto-melee (orig Leon.java:345-375 {@code fly_with_rider}):
+     * 1-in-7 chance per tick outside Peaceful, re-acquires a target when the
+     * current one is dead, and bites anything within {@code 9.0 + width/2}
+     * blocks of the saddle.
+     */
+    private void flyWithRider() {
+        if (this.isRemoved() || this.isOrderedToSit() || this.level().isClientSide) return;
+        if (this.level().getDifficulty() == Difficulty.PEACEFUL) return;
+        if (this.random.nextInt(7) != 1) return;
+
+        LivingEntity target = this.getTarget();
+        if (target != null && !target.isAlive()) {
+            this.setTarget(null);
+            target = null;
+        }
+        if (target == null) {
+            target = findSomethingToAttack();
+        }
+        if (target != null) {
+            this.setAttacking(1);
+            float attackRange = 9.0f + target.getBbWidth() / 2.0f;
+            if (this.distanceToSqr(target) < attackRange * attackRange) {
+                this.doHurtTarget(target);
+            }
+        } else {
+            this.setAttacking(0);
         }
     }
 
@@ -682,16 +788,4 @@ public class EntityLeon extends TamableAnimal {
         return null;
     }
 
-    @Override
-    protected void dropCustomDeathLoot(ServerLevel level, DamageSource source, boolean recentlyHit) {
-        super.dropCustomDeathLoot(level, source, recentlyHit);
-        int count = 4 + this.random.nextInt(6);
-        for (int i = 0; i < count; i++) {
-            this.spawnAtLocation(Items.DIAMOND);
-        }
-        count = 16 + this.random.nextInt(6);
-        for (int i = 0; i < count; i++) {
-            this.spawnAtLocation(Items.GOLD_INGOT);
-        }
-    }
 }

@@ -40,7 +40,8 @@ import net.minecraft.world.phys.AABB;
 import danger.orespawn.ModEntities;
 import danger.orespawn.OreSpawnMod;
 
-public class ThePrinceTeen extends TamableAnimal {
+public class ThePrinceTeen extends TamableAnimal
+        implements danger.orespawn.network.RiderInputPayload.RideableFlyer {
     private static final EntityDataAccessor<Integer> DATA_ATTACKING =
             SynchedEntityData.defineId(ThePrinceTeen.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Integer> DATA_ACTIVITY =
@@ -54,6 +55,35 @@ public class ThePrinceTeen extends TamableAnimal {
     private static final EntityDataAccessor<Integer> DATA_HEAD3 =
             SynchedEntityData.defineId(ThePrinceTeen.class, EntityDataSerializers.INT);
 
+    /**
+     * Ridden-flight tuning, number-for-number from orig ThePrinceTeen.java:879-1087
+     * (ridden branch of onLivingUpdate): hover probe 1.25 (orig :895-902 — lift
+     * +0.03/+0.1, glide-fall 0.018), terrain scan 3 + v*7 @ 0.05/block ×0.07
+     * (orig :903-916), rise cap 2.0 (orig :917-919), yaw lag 1.85 above 0.01
+     * (orig :935-946), fly-up +0.035 + v*0.046 (orig :961-964), throttle 0.025
+     * ramped (max_speed 0.95 :843 — under the >1.0 bonus gate :978), reverse
+     * 0.35 @ -0.02 (orig :989-990), friction 0.985/0.94/0.985 (orig :1085-1087).
+     */
+    private static final danger.orespawn.entity.ai.RiderFlightController.Config RIDER_FLIGHT_CONFIG =
+            new danger.orespawn.entity.ai.RiderFlightController.Config(
+                    true, 1.25, 0.03, 0.1, 0.018,
+                    3, 7.0, 0.05, 0.07, false,
+                    2.0,
+                    1.85, 0.01, false,
+                    false, 0.035, 0.046,
+                    0.025, 0.95, -0.02, 0.35, true,
+                    0.0, 0.985, 0.94);
+
+    private final danger.orespawn.entity.ai.RiderFlightController riderFlight =
+            new danger.orespawn.entity.ai.RiderFlightController(RIDER_FLIGHT_CONFIG);
+    /** Held state of the rider's vertical keys (client-set for prediction, server-set via payload). */
+    private boolean riderFlyUp = false;
+    private boolean riderFlyDown = false;
+    /** Cooldown between rider-triggered canon volleys (orig {@code fireballticker}). */
+    private int fireballTicker = 0;
+    /** Cycles the three-headed canon: fireball → iceball → thunderbolt (orig {@code which_attack}). */
+    private int whichAttack = 0;
+
     private final Comparator<Entity> targetSorter;
     private final float moveSpeed = 0.35f;
     private int hurtTimer = 0;
@@ -65,7 +95,8 @@ public class ThePrinceTeen extends TamableAnimal {
 
     public ThePrinceTeen(EntityType<? extends ThePrinceTeen> type, Level level) {
         super(type, level);
-        this.xpReward = 500;
+        // orig ThePrinceTeen.java:105 — experienceValue = 300.
+        this.xpReward = 300;
         this.noPhysics = false;
         this.setOrderedToSit(false);
         this.targetSorter = Comparator.comparingDouble(this::distanceToSqr);
@@ -86,10 +117,12 @@ public class ThePrinceTeen extends TamableAnimal {
     }
 
     public static AttributeSupplier.Builder createAttributes() {
+        // orig ThePrinceTeen.java:230 HP 1500, :141 ATK 50, :253 armor 18, :87 speed 0.32.
         return Mob.createMobAttributes()
-                .add(Attributes.MAX_HEALTH, 1000.0)
-                .add(Attributes.MOVEMENT_SPEED, 0.35)
+                .add(Attributes.MAX_HEALTH, 1500.0)
+                .add(Attributes.MOVEMENT_SPEED, 0.32)
                 .add(Attributes.ATTACK_DAMAGE, 50.0)
+                .add(Attributes.ARMOR, 18.0)
                 .add(Attributes.FOLLOW_RANGE, 32.0)
                 .add(Attributes.KNOCKBACK_RESISTANCE, 0.5);
     }
@@ -162,6 +195,264 @@ public class ThePrinceTeen extends TamableAnimal {
         return ret;
     }
 
+    // ==================== Riding (BOSS-027) ====================
+
+    /**
+     * Only the taming owner steers (orig ThePrinceTeen.java:1151-1162 — riding
+     * is gated on tame + ownership).
+     */
+    @Nullable
+    @Override
+    public LivingEntity getControllingPassenger() {
+        if (this.isTame() && !this.getPassengers().isEmpty()
+                && this.getPassengers().get(0) instanceof Player player
+                && this.isOwnedBy(player)) {
+            return player;
+        }
+        return null;
+    }
+
+    /**
+     * Seats the rider 0.65 blocks ahead of center, 2.75 up (orig
+     * ThePrinceTeen.java:1107-1112 with mounted y-offset 2.75 at :299-301).
+     */
+    @Override
+    protected void positionRider(Entity passenger, Entity.MoveFunction callback) {
+        if (!this.hasPassenger(passenger)) return;
+        double rx = this.getX() - 0.65 * Math.sin(Math.toRadians(this.getYRot()));
+        double ry = this.getY() + 2.75;
+        double rz = this.getZ() + 0.65 * Math.cos(Math.toRadians(this.getYRot()));
+        callback.accept(passenger, rx, ry, rz);
+    }
+
+    /**
+     * Client-predicted ridden flight (BOSS-027): the riding client runs the
+     * original three-headed-dragon flight physics (orig
+     * ThePrinceTeen.java:879-1087, constants in {@link #RIDER_FLIGHT_CONFIG})
+     * and syncs position like a vanilla horse. The wild autonomous flight
+     * (activity 2 / fly_without_rider) remains out of scope (Phase D); only
+     * RIDDEN movement runs here, so the BUG-010 interim noPhysics fix for the
+     * baby ThePrince/ThePrincess is untouched.
+     */
+    @Override
+    protected void tickRidden(Player rider, net.minecraft.world.phys.Vec3 travelVector) {
+        super.tickRidden(rider, travelVector);
+        if (this.isControlledByLocalInstance()) {
+            this.riderFlight.tick(this, rider, this.riderFlyUp, this.riderFlyDown);
+        }
+    }
+
+    /**
+     * Skips vanilla travel while player-ridden: {@link #tickRidden} already
+     * applied the full move via {@code RiderFlightController}, so running
+     * vanilla travel too would integrate the motion twice.
+     */
+    @Override
+    public void travel(net.minecraft.world.phys.Vec3 travelVector) {
+        if (this.isControlledByLocalInstance() && this.getControllingPassenger() instanceof Player) {
+            return;
+        }
+        super.travel(travelVector);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>Consumed by {@link #tickRidden}; modern per-player equivalent of
+     * the original's global {@code OreSpawnMain.flyup_keystate} poll (orig
+     * ThePrinceTeen.java:961-964).</p>
+     */
+    @Override
+    public void setRiderVerticalInput(boolean up, boolean down) {
+        this.riderFlyUp = up;
+        this.riderFlyDown = down;
+    }
+
+    /**
+     * Server-side portion of the original ridden branch — everything except
+     * movement: the strafe-key canon trio (orig ThePrinceTeen.java:1020-1083),
+     * pushing nearby entities (orig :1088-1094, box 3.25/4.0/3.25), the
+     * mounted auto-attack {@code fly_with_rider} (orig :463-487), and ejecting
+     * a removed rider (orig :1096-1098).
+     */
+    private void serverRiddenTick(Player rider) {
+        if (this.isRemoved() || this.isOrderedToSit()) return;
+
+        if (this.fireballTicker > 0) {
+            --this.fireballTicker;
+        }
+        if (this.fireballTicker == 0 && Math.abs(rider.xxa) > 0.001f) {
+            fireCanonTrio(rider);
+            // orig ThePrinceTeen.java:1082 — 10-tick volley cooldown.
+            this.fireballTicker = 10;
+        }
+
+        List<Entity> nearby = this.level().getEntities(this, this.getBoundingBox().inflate(3.25, 4.0, 3.25));
+        for (Entity entity : nearby) {
+            if (entity != this.getFirstPassenger() && !entity.isRemoved() && entity.isPushable()) {
+                entity.push(this);
+            }
+        }
+
+        flyWithRider();
+
+        if (this.getFirstPassenger() != null && this.getFirstPassenger().isRemoved()) {
+            this.ejectPassengers();
+        }
+    }
+
+    /**
+     * Strafe-key canon volley while ridden (orig ThePrinceTeen.java:1020-1083):
+     * each press cycles head 1 → 3 → 2, firing a plain BetterFireball
+     * ("random.fuse", head offset -10°), an ice-making IceBall
+     * ("fireworks.launch" 0.75f, head offset +10°), and a ×3-velocity
+     * ThunderBolt ("random.bow" 0.75f, center head). Muzzle xz 7.5 / y 1.5
+     * plus the animated head extension × 0.04 (orig :1023-1024).
+     */
+    private void fireCanonTrio(Player rider) {
+        double xzoff = 7.5;
+        double yoff = 1.5;
+        ++this.whichAttack;
+        if (this.whichAttack > 2) {
+            this.whichAttack = 0;
+        }
+        net.minecraft.world.phys.Vec3 look = rider.getLookAngle();
+        if (this.whichAttack == 0) {
+            double cx = this.getX() - xzoff * Math.sin(Math.toRadians(this.getYRot() - 10.0f));
+            double cz = this.getZ() + xzoff * Math.cos(Math.toRadians(this.getYRot() - 10.0f));
+            double cy = this.getY() + yoff + this.getHead1Ext() * 0.04;
+            BetterFireball bf = new BetterFireball(this.level(), this, look);
+            bf.setNotMe();
+            bf.setPos(cx, cy, cz);
+            this.level().addFreshEntity(bf);
+            // orig :1048 "random.fuse"
+            this.level().playSound(null, this.getX(), this.getY(), this.getZ(),
+                    net.minecraft.sounds.SoundEvents.TNT_PRIMED, this.getSoundSource(), 1.0f,
+                    1.0f / (this.random.nextFloat() * 0.4f + 0.8f));
+        } else if (this.whichAttack == 1) {
+            double cx = this.getX() - xzoff * Math.sin(Math.toRadians(this.getYRot() + 10.0f));
+            double cz = this.getZ() + xzoff * Math.cos(Math.toRadians(this.getYRot() + 10.0f));
+            double cy = this.getY() + yoff + this.getHead3Ext() * 0.04;
+            IceBall ib = new IceBall(ModEntities.ICE_BALL.get(), this.level());
+            ib.setOwner(this);
+            ib.enableIceCreation();
+            ib.setPos(cx, cy, cz);
+            ib.shoot(look.x, look.y, look.z, 1.4f, 5.0f);
+            // orig :1065-1067 — ice ball flies at double speed.
+            ib.setDeltaMovement(ib.getDeltaMovement().scale(2.0));
+            this.level().addFreshEntity(ib);
+            // orig :1068 "fireworks.launch" 0.75f
+            this.level().playSound(null, this.getX(), this.getY(), this.getZ(),
+                    net.minecraft.sounds.SoundEvents.FIREWORK_ROCKET_LAUNCH, this.getSoundSource(), 0.75f,
+                    1.0f / (this.random.nextFloat() * 0.4f + 0.8f));
+        } else {
+            double cx = this.getX() - xzoff * Math.sin(Math.toRadians(this.getYRot()));
+            double cz = this.getZ() + xzoff * Math.cos(Math.toRadians(this.getYRot()));
+            double cy = this.getY() + yoff + this.getHead2Ext() * 0.04;
+            ThunderBolt tb = new ThunderBolt(this.level(), rider);
+            tb.setPos(cx, cy, cz);
+            tb.shoot(look.x, look.y, look.z, 1.5f, 1.0f);
+            // orig :1076-1078 — thunderbolt flies at triple speed.
+            tb.setDeltaMovement(tb.getDeltaMovement().scale(3.0));
+            this.level().addFreshEntity(tb);
+            // orig :1079 "random.bow" 0.75f
+            this.level().playSound(null, this.getX(), this.getY(), this.getZ(),
+                    net.minecraft.sounds.SoundEvents.ARROW_SHOOT, this.getSoundSource(), 0.75f,
+                    1.0f / (this.random.nextFloat() * 0.4f + 0.8f));
+        }
+    }
+
+    /**
+     * Mounted auto-attack (orig ThePrinceTeen.java:463-487 {@code fly_with_rider}):
+     * 1-in-5 chance per tick outside Peaceful; bites anything within
+     * {@code 8.0 + width/2} blocks, or canons targets between 10 and 25 blocks
+     * away when out of water and fireballs are lit.
+     */
+    private void flyWithRider() {
+        if (this.isRemoved() || this.isOrderedToSit() || this.level().isClientSide) return;
+        if (this.level().getDifficulty() == net.minecraft.world.Difficulty.PEACEFUL) return;
+        if (this.random.nextInt(5) != 1) return;
+
+        LivingEntity target = findSomethingToAttack();
+        if (target != null) {
+            this.setAttacking(1);
+            float attackRange = 8.0f + target.getBbWidth() / 2.0f;
+            double distSq = this.distanceToSqr(target);
+            if (distSq < attackRange * attackRange) {
+                this.doHurtTarget(target);
+            } else if (distSq > 100.0 && distSq < 625.0 && !this.isInWater()
+                    && this.entityData.get(DATA_FIRE) != 0) {
+                shootSomethingAt(target.getX(), target.getY(), target.getZ());
+            }
+        } else {
+            this.setAttacking(0);
+        }
+    }
+
+    /**
+     * Random-head canon shot at a coordinate (orig ThePrinceTeen.java:1355-1389
+     * {@code shoot_something} + the firecanon/firecanonl/firecanoni trio at
+     * :1391-1459): picks one of the three heads at random and fires only when
+     * the target sits within ~0.5 rad of the facing. Muzzle xz 6.0 / y 3.5,
+     * fireball aim is jittered ±5/±3/±5 blocks, thunder/ice bolts launch at
+     * 1.4f/4.0f and are tripled.
+     */
+    private void shootSomethingAt(double x, double y, double z) {
+        double heading = Math.atan2(z - this.getZ(), x - this.getX());
+        double facing = Math.toRadians((this.getYRot() + 90.0f) % 360.0f);
+        double diff = Math.abs(heading - facing) % (Math.PI * 2.0);
+        if (diff > Math.PI) {
+            diff -= Math.PI * 2.0;
+        }
+        if (Math.abs(diff) >= 0.5) {
+            return;
+        }
+
+        double xzoff = 6.0;
+        double yoff = 3.5;
+        double cx = this.getX() - xzoff * Math.sin(Math.toRadians(this.getYRot()));
+        double cy = this.getY() + yoff;
+        double cz = this.getZ() + xzoff * Math.cos(Math.toRadians(this.getYRot()));
+        int which = this.random.nextInt(3);
+        if (which == 0) {
+            // orig :1391-1406 — big fireball with ±5/±3/±5 aim jitter.
+            double r1 = 5.0 * (this.random.nextFloat() - this.random.nextFloat());
+            double r2 = 3.0 * (this.random.nextFloat() - this.random.nextFloat());
+            double r3 = 5.0 * (this.random.nextFloat() - this.random.nextFloat());
+            net.minecraft.world.phys.Vec3 dir =
+                    new net.minecraft.world.phys.Vec3(x - cx + r1, y + 0.25 - cy + r2, z - cz + r3);
+            BetterFireball bf = new BetterFireball(this.level(), this, dir);
+            bf.setBig();
+            bf.setPos(cx, cy, cz);
+            this.level().addFreshEntity(bf);
+        } else {
+            double dx = x - cx;
+            double dy = y + 0.25 - cy;
+            double dz = z - cz;
+            double arc = Math.sqrt(dx * dx + dz * dz) * 0.2;
+            if (which == 1) {
+                // orig :1408-1432 — thunderbolt at 1.4f/4.0f, tripled.
+                ThunderBolt tb = new ThunderBolt(this.level(), cx, cy, cz);
+                tb.shoot(dx, dy + arc, dz, 1.4f, 4.0f);
+                tb.setDeltaMovement(tb.getDeltaMovement().scale(3.0));
+                this.level().addFreshEntity(tb);
+            } else {
+                // orig :1434-1459 — ice-making ice ball at 1.4f/4.0f, tripled.
+                IceBall ib = new IceBall(ModEntities.ICE_BALL.get(), this.level());
+                ib.setOwner(this);
+                ib.enableIceCreation();
+                ib.setPos(cx, cy, cz);
+                ib.shoot(dx, dy + arc, dz, 1.4f, 4.0f);
+                ib.setDeltaMovement(ib.getDeltaMovement().scale(3.0));
+                this.level().addFreshEntity(ib);
+            }
+        }
+        // orig :1404/:1417/:1443 "random.bow"
+        this.level().playSound(null, this.getX(), this.getY(), this.getZ(),
+                net.minecraft.sounds.SoundEvents.ARROW_SHOOT, this.getSoundSource(), 1.0f,
+                1.0f / (this.random.nextFloat() * 0.4f + 0.8f));
+    }
+
     @Override
     protected void customServerAiStep() {
         if (this.isRemoved()) return;
@@ -177,6 +468,13 @@ public class ThePrinceTeen extends TamableAnimal {
 
         if (this.killCount > 25 && this.dayCount > 10) {
             this.transformToAdult();
+            return;
+        }
+
+        // While ridden, ground combat is replaced by the original's ridden
+        // duties (orig ThePrinceTeen.java:879-1098 ran instead of the AI path).
+        if (this.isVehicle() && this.getControllingPassenger() instanceof Player rider) {
+            serverRiddenTick(rider);
             return;
         }
 
@@ -204,7 +502,14 @@ public class ThePrinceTeen extends TamableAnimal {
         if (adult == null) return;
         adult.moveTo(this.getX(), this.getY(), this.getZ(), this.getYRot(), this.getXRot());
         if (this.isTame() && this.getOwnerUUID() != null) {
-            adult.tame(this.level().getPlayerByUUID(this.getOwnerUUID()));
+            Player owner = this.level().getPlayerByUUID(this.getOwnerUUID());
+            if (owner != null) {
+                adult.tame(owner);
+            } else {
+                // Owner offline: tame(null) would NPE (BUG-004); transfer UUID directly.
+                adult.setOwnerUUID(this.getOwnerUUID());
+                adult.setTame(true, true);
+            }
         }
         serverLevel.addFreshEntity(adult);
         this.discard();
@@ -226,6 +531,36 @@ public class ThePrinceTeen extends TamableAnimal {
     public InteractionResult mobInteract(Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
 
+        // Diamond block: tame + full heal + instant adult-growth credit (orig
+        // ThePrinceTeen.java:1133-1150 — kill_count/day_count forced to 1000).
+        if (stack.is(net.minecraft.world.level.block.Blocks.DIAMOND_BLOCK.asItem())
+                && this.distanceToSqr(player) < 25.0) {
+            if (!this.level().isClientSide) {
+                if (!this.isTame()) {
+                    this.tame(player);
+                }
+                this.level().broadcastEntityEvent(this, (byte) 7);
+                this.heal(this.getMaxHealth() - this.getHealth());
+                this.killCount = 1000;
+                this.dayCount = 1000;
+            }
+            if (!player.getAbilities().instabuild) stack.shrink(1);
+            return InteractionResult.sidedSuccess(this.level().isClientSide);
+        }
+
+        // Empty hand: saddle-free mount (orig ThePrinceTeen.java:1151-1162 —
+        // tamed owner within 25 sq blocks; mounting wakes the dragon and
+        // switches it to flight, activity 1).
+        if (this.isTame() && this.isOwnedBy(player)
+                && stack.isEmpty() && this.distanceToSqr(player) < 25.0) {
+            if (!this.level().isClientSide) {
+                player.startRiding(this);
+                this.setActivity(1);
+                this.setOrderedToSit(false);
+            }
+            return InteractionResult.sidedSuccess(this.level().isClientSide);
+        }
+
         if (this.isTame() && this.isOwnedBy(player) && this.distanceToSqr(player) < 25.0) {
             if (stack.is(Items.CAKE)) {
                 if (!this.level().isClientSide) {
@@ -243,7 +578,14 @@ public class ThePrinceTeen extends TamableAnimal {
                     if (baby != null) {
                         baby.moveTo(this.getX(), this.getY(), this.getZ(), this.getYRot(), this.getXRot());
                         if (this.getOwnerUUID() != null) {
-                            baby.tame(this.level().getPlayerByUUID(this.getOwnerUUID()));
+                            Player downgradeOwner = this.level().getPlayerByUUID(this.getOwnerUUID());
+                            if (downgradeOwner != null) {
+                                baby.tame(downgradeOwner);
+                            } else {
+                                // Owner offline: tame(null) would NPE (BUG-004).
+                                baby.setOwnerUUID(this.getOwnerUUID());
+                                baby.setTame(true, true);
+                            }
                         }
                         serverLevel.addFreshEntity(baby);
                         this.discard();

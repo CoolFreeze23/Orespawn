@@ -2,12 +2,18 @@ package danger.orespawn.entity;
 
 import java.util.Comparator;
 import java.util.List;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.Difficulty;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
 import net.minecraft.world.entity.ai.goal.PanicGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
@@ -18,13 +24,48 @@ import net.minecraft.world.entity.monster.Spider;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
+import danger.orespawn.OreSpawnMod;
 
 public class SpiderDriver extends Spider {
+
+    /**
+     * Stable id for the riding-state armor modifier (ENT-S-017/018). The
+     * original hard-overrode getTotalArmorValue (orig SpiderDriver.java:96-101):
+     * 8 armor while MOUNTED on its robot, 20 while on foot. Vanilla spiders
+     * have 0 base armor, so the full value is carried by this modifier.
+     */
+    private static final ResourceLocation ARMOR_MODIFIER_ID =
+            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "spider_driver_armor");
+    /** orig SpiderDriver.java:97-99 — armor while riding the SpiderRobot. */
+    private static final double MOUNTED_ARMOR = 8.0;
+    /** orig SpiderDriver.java:100 — armor while on foot. */
+    private static final double DISMOUNTED_ARMOR = 20.0;
+
     private final Comparator<Entity> targetSorter;
+    /** Melee swing cooldown while mounted (orig attackTime = 16, orig SpiderDriver.java:88). */
+    private int mountedAttackCooldown = 0;
 
     public SpiderDriver(EntityType<? extends SpiderDriver> type, Level level) {
         super(type, level);
         this.targetSorter = Comparator.comparingDouble(this::distanceToSqr);
+    }
+
+    /**
+     * Keeps the riding-state armor modifier in sync (orig
+     * SpiderDriver.java:96-101 returned 8 mounted / 20 on foot). Re-checked
+     * every server tick so it also covers spawn, world-load, and forced
+     * dismounts without needing every ride-state entry point overridden.
+     */
+    private void updateArmorModifier() {
+        AttributeInstance armor = this.getAttribute(Attributes.ARMOR);
+        if (armor == null) return;
+        double expected = this.getVehicle() != null ? MOUNTED_ARMOR : DISMOUNTED_ARMOR;
+        AttributeModifier existing = armor.getModifier(ARMOR_MODIFIER_ID);
+        if (existing == null || existing.amount() != expected) {
+            armor.removeModifier(ARMOR_MODIFIER_ID);
+            armor.addPermanentModifier(new AttributeModifier(
+                    ARMOR_MODIFIER_ID, expected, AttributeModifier.Operation.ADD_VALUE));
+        }
     }
 
     @Override
@@ -51,6 +92,11 @@ public class SpiderDriver extends Spider {
         if (this.isRemoved()) return;
         super.customServerAiStep();
 
+        updateArmorModifier();
+        if (this.mountedAttackCooldown > 0) {
+            --this.mountedAttackCooldown;
+        }
+
         if (this.level().getDifficulty() != Difficulty.PEACEFUL && this.random.nextInt(5) == 0 && this.getVehicle() == null) {
             LivingEntity robot = this.findSpiderRobot();
             if (robot != null) {
@@ -64,10 +110,35 @@ public class SpiderDriver extends Spider {
             }
         }
 
+        // Mounted combat (ENT-S-018/019, orig SpiderDriver.java:74-83 + :86-94):
+        // 1-in-4 chance per tick the driver picks a target and looks at it;
+        // if the target is outside 11 + width/2 blocks it steers its robot
+        // toward it (orig goThisWay 0.35*cos/0.35*sin), and any target that
+        // comes within melee reach gets the spider bite plus a 1-in-2 Poison
+        // (60 ticks) on a 16-tick swing timer (orig attackEntity :86-94).
         if (this.level().getDifficulty() != Difficulty.PEACEFUL && this.random.nextInt(4) == 0 && this.getVehicle() != null) {
             LivingEntity target = this.findSomethingToAttack();
             if (target != null) {
                 this.getLookControl().setLookAt(target, 10.0f, 10.0f);
+
+                double driveRange = 11.0 + target.getBbWidth() / 2.0;
+                if (this.distanceToSqr(target) >= driveRange * driveRange
+                        && this.getVehicle() instanceof SpiderRobot robot) {
+                    // orig :76-82 — point the robot's motion straight at the prey.
+                    double heading = Math.atan2(target.getZ() - this.getZ(), target.getX() - this.getX());
+                    robot.setDeltaMovement(
+                            0.35 * Math.cos(heading),
+                            robot.getDeltaMovement().y,
+                            0.35 * Math.sin(heading));
+                }
+
+                if (this.mountedAttackCooldown <= 0 && this.distanceTo(target) < 2.0f) {
+                    this.mountedAttackCooldown = 16;
+                    this.doHurtTarget(target);
+                    if (this.random.nextInt(2) == 0) {
+                        target.addEffect(new MobEffectInstance(MobEffects.POISON, 60, 0), this);
+                    }
+                }
             }
         }
     }

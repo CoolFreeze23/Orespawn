@@ -36,7 +36,35 @@ import net.minecraft.world.level.block.state.BlockState;
 import danger.orespawn.ModEntities;
 import danger.orespawn.OreSpawnMod;
 
-public class Ostrich extends TamableAnimal {
+public class Ostrich extends TamableAnimal
+        implements danger.orespawn.network.RiderInputPayload.RideableFlyer {
+
+    /**
+     * Ridden-run tuning, number-for-number from orig Ostrich.java:401-535
+     * (ridden branch of onLivingUpdate). The Ostrich is a runner, not a flier:
+     * no hover, but an upward-scanning terrain probe 1 + v*10 @ 0.075/block
+     * applied 1:1 to motionY/posY (orig :417-429), rise cap 4.0 (orig
+     * :430-432), yaw lag 1.85 above 0.01 (orig :448-459), and the "FAST" jump
+     * — fly-up key triggers a single +1.0 + v*6.0 hop with a 20-tick latch
+     * that only counts down after release (orig :470-478). Throttle 0.045
+     * ramped to max 0.75 (orig :368/:491-498), reverse 0.25 @ -0.03 (orig
+     * :500-501), then gravity 0.25 and friction 0.95/0.85/0.95 (orig :532-535).
+     */
+    private static final danger.orespawn.entity.ai.RiderFlightController.Config RIDER_RUN_CONFIG =
+            new danger.orespawn.entity.ai.RiderFlightController.Config(
+                    false, 0.0, 0.0, 0.0, 0.0,
+                    1, 10.0, 0.075, 1.0, true,
+                    4.0,
+                    1.85, 0.01, false,
+                    true, 1.0, 6.0,
+                    0.045, 0.75, -0.03, 0.25, true,
+                    0.25, 0.95, 0.85);
+
+    private final danger.orespawn.entity.ai.RiderFlightController riderRun =
+            new danger.orespawn.entity.ai.RiderFlightController(RIDER_RUN_CONFIG);
+    /** Held state of the rider's jump key (client-set for prediction, server-set via payload). */
+    private boolean riderFlyUp = false;
+
     public Ostrich(EntityType<? extends Ostrich> type, Level level) {
         super(type, level);
         this.xpReward = 10;
@@ -106,8 +134,82 @@ public class Ostrich extends TamableAnimal {
         if (this.isRemoved()) return;
         if (this.random.nextInt(200) == 1) this.setTarget(null);
         if (this.random.nextInt(250) == 0) this.heal(1.0f);
-        if (this.getFirstPassenger() != null) return;
+        if (this.getFirstPassenger() != null) {
+            // orig Ostrich.java:536-538 — drop a rider that has been removed.
+            if (this.getFirstPassenger().isRemoved()) {
+                this.ejectPassengers();
+            }
+            return;
+        }
         super.customServerAiStep();
+    }
+
+    // ==================== Riding (ENT-K-044) ====================
+
+    /**
+     * Any mounted player steers — the original had no tame gate on riding
+     * (orig Ostrich.java — bare-hand mount within 16 sq blocks, wild or tame).
+     */
+    @Nullable
+    @Override
+    public net.minecraft.world.entity.LivingEntity getControllingPassenger() {
+        if (!this.getPassengers().isEmpty() && this.getPassengers().get(0) instanceof Player player) {
+            return player;
+        }
+        return super.getControllingPassenger();
+    }
+
+    /**
+     * Seats the rider 0.15 blocks behind center, 1.4 up (orig
+     * Ostrich.java:542-547 — forward offset -0.15f, mounted y-offset 1.4
+     * at :321-323).
+     */
+    @Override
+    protected void positionRider(net.minecraft.world.entity.Entity passenger,
+            net.minecraft.world.entity.Entity.MoveFunction callback) {
+        if (!this.hasPassenger(passenger)) return;
+        double rx = this.getX() + 0.15 * Math.sin(Math.toRadians(this.getYRot()));
+        double ry = this.getY() + 1.4;
+        double rz = this.getZ() - 0.15 * Math.cos(Math.toRadians(this.getYRot()));
+        callback.accept(passenger, rx, ry, rz);
+    }
+
+    /**
+     * Client-predicted ridden running (ENT-K-044): the riding client runs the
+     * original sprint/jump physics (orig Ostrich.java:401-535, constants in
+     * {@link #RIDER_RUN_CONFIG}) and syncs position like a vanilla horse.
+     */
+    @Override
+    protected void tickRidden(Player rider, net.minecraft.world.phys.Vec3 travelVector) {
+        super.tickRidden(rider, travelVector);
+        if (this.isControlledByLocalInstance()) {
+            this.riderRun.tick(this, rider, this.riderFlyUp, false);
+        }
+    }
+
+    /**
+     * Skips vanilla travel while player-ridden: {@link #tickRidden} already
+     * applied the full move via {@code RiderFlightController}, so running
+     * vanilla travel too would integrate the motion twice.
+     */
+    @Override
+    public void travel(net.minecraft.world.phys.Vec3 travelVector) {
+        if (this.isControlledByLocalInstance() && this.getControllingPassenger() instanceof Player) {
+            return;
+        }
+        super.travel(travelVector);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>For the Ostrich the fly-up key is the FAST running jump (orig
+     * Ostrich.java:470-478); the descend key is ignored — a runner has no
+     * downward control.</p>
+     */
+    @Override
+    public void setRiderVerticalInput(boolean up, boolean down) {
+        this.riderFlyUp = up;
     }
 
     @Nullable
