@@ -39,26 +39,6 @@ public class EntityEmperorScorpion extends Monster {
 
     private int hurtTimer = 0;
     private int healTimer = 0;
-    /**
-     * Throttles the summoner-aura check so it only fires every
-     * {@link #SUMMONER_PERIOD_TICKS} ticks instead of every server tick. The
-     * 1.7.10 source ran the check inside {@code customServerAiStep} on a
-     * {@code rand.nextInt(80) == 1} dice — averaging once per ~4 seconds.
-     * We use a hard cooldown counter for predictability and so we never
-     * thrash the entity-cramming logic in heavily-populated badlands.
-     */
-    private int summonerCooldown = 0;
-
-    /** Aura cadence (server ticks). 30 ticks = 1.5s avg, with jitter below. */
-    private static final int SUMMONER_PERIOD_TICKS = 30;
-    /** Random jitter added on top of {@link #SUMMONER_PERIOD_TICKS}. */
-    private static final int SUMMONER_JITTER_TICKS = 10;
-    /** Horizontal aura radius — Scorpions outside this don't count. */
-    private static final double SUMMONER_RADIUS = 16.0;
-    /** Below this many minions the aura tries to spawn a replacement. */
-    private static final int SUMMONER_MIN_MINIONS = 3;
-    /** Hard cap on the aura's local population — avoids cramming runaway. */
-    private static final int SUMMONER_MAX_MINIONS = 6;
 
     public EntityEmperorScorpion(EntityType<? extends EntityEmperorScorpion> type, Level level) {
         super(type, level);
@@ -175,62 +155,33 @@ public class EntityEmperorScorpion extends Monster {
             if (this.random.nextInt(100) == 1) this.heal(2.0f);
         }
 
-        // Summoner aura — see field-level docs on summonerCooldown.
-        if (this.summonerCooldown > 0) {
-            --this.summonerCooldown;
-        } else {
-            this.summonerCooldown = SUMMONER_PERIOD_TICKS
-                    + this.random.nextInt(SUMMONER_JITTER_TICKS);
-            tryReplenishMinions();
-        }
-    }
-
-    /**
-     * Counts nearby standard Scorpions and, if the population has dropped
-     * below {@link #SUMMONER_MIN_MINIONS}, spawns one replacement at a
-     * random reachable air block adjacent to this Emperor. Hard-capped at
-     * {@link #SUMMONER_MAX_MINIONS} so a player who refuses to engage the
-     * aura cannot create an infinite Scorpion swarm.
-     */
-    private void tryReplenishMinions() {
-        if (!(this.level() instanceof ServerLevel server)) return;
-
-        AABB box = this.getBoundingBox().inflate(SUMMONER_RADIUS, 8.0, SUMMONER_RADIUS);
-        List<EntityScorpion> nearby = server.getEntitiesOfClass(EntityScorpion.class, box);
-        if (nearby.size() >= SUMMONER_MIN_MINIONS) return;
-        if (nearby.size() >= SUMMONER_MAX_MINIONS) return;
-
-        BlockPos spawnAt = pickSpawnPos();
-        if (spawnAt == null) return;
-
-        EntityScorpion minion = ModEntities.ENTITY_SCORPION.get().create(server);
-        if (minion == null) return;
-        minion.moveTo(spawnAt.getX() + 0.5, spawnAt.getY(), spawnAt.getZ() + 0.5,
-                this.random.nextFloat() * 360.0f, 0.0f);
-        minion.finalizeSpawn(server, server.getCurrentDifficultyAt(spawnAt),
-                MobSpawnType.MOB_SUMMONED, null);
-        server.addFreshEntity(minion);
-    }
-
-    /**
-     * Finds an air block within ±3 of the Emperor whose underside is solid.
-     * Returns null if no such position exists in 6 attempts (we don't want
-     * a tight loop that spirals out indefinitely each aura tick).
-     */
-    @Nullable
-    private BlockPos pickSpawnPos() {
-        for (int attempt = 0; attempt < 6; attempt++) {
-            int dx = this.random.nextInt(7) - 3;
-            int dz = this.random.nextInt(7) - 3;
-            int dy = this.random.nextInt(3) - 1;
-            BlockPos candidate = this.blockPosition().offset(dx, dy, dz);
-            if (this.level().getBlockState(candidate).isAir()
-                    && this.level().getBlockState(candidate.above()).isAir()
-                    && !this.level().getBlockState(candidate.below()).isAir()) {
-                return candidate;
+        // Baby-scorpion summon — orig EmperorScorpion.java:408,437-438: inside a
+        // nextInt(4)==0 AI gate, while a combat target exists, a nextInt(20)==1
+        // roll spawns one Scorpion at the midpoint between Emperor and target
+        // (±nextInt(5) horizontal jitter, y midpoint +1.01). No population cap,
+        // no cooldown, no ground check in the original.
+        if (this.random.nextInt(4) == 0) {
+            LivingEntity target = this.getTarget();
+            if (target != null && target.isAlive() && this.random.nextInt(20) == 1) {
+                spawnBabyScorpionToward(target);
             }
         }
-        return null;
+    }
+
+    /** orig EmperorScorpion.java:437-438 — midpoint spawn between self and target. */
+    private void spawnBabyScorpionToward(LivingEntity target) {
+        if (!(this.level() instanceof ServerLevel server)) return;
+        EntityScorpion minion = ModEntities.ENTITY_SCORPION.get().create(server);
+        if (minion == null) return;
+        double x = (this.getX() + target.getX()) / 2.0
+                + this.random.nextInt(5) - this.random.nextInt(5);
+        double y = (this.getY() + target.getY()) / 2.0 + 1.01;
+        double z = (this.getZ() + target.getZ()) / 2.0
+                + this.random.nextInt(5) - this.random.nextInt(5);
+        minion.moveTo(x, y, z, this.random.nextFloat() * 360.0f, 0.0f);
+        minion.finalizeSpawn(server, server.getCurrentDifficultyAt(minion.blockPosition()),
+                MobSpawnType.MOB_SUMMONED, null);
+        server.addFreshEntity(minion);
     }
 
     // Death drops are fully data-driven via loot_table/entities/emperor_scorpion.json

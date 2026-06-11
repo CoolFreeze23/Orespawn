@@ -404,6 +404,9 @@
   "ghost_sound": {
     "sounds": ["orespawn:ghost_sound"]
   },
+  "glassdead": {
+    "sounds": ["orespawn:glassdead1", "orespawn:glassdead2"]
+  },
   "glassdead1": {
     "sounds": ["orespawn:glassdead1"]
   },
@@ -442,6 +445,9 @@
   },
   "hercules_death": {
     "sounds": ["orespawn:hercules_death"]
+  },
+  "hover": {
+    "sounds": ["orespawn:hover1", "orespawn:hover2", "orespawn:hover3", "orespawn:hover4", "orespawn:hover5", "orespawn:hover6"]
   },
   "hover1": {
     "sounds": ["orespawn:hover1"]

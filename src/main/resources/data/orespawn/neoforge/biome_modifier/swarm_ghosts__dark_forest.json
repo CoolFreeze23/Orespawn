@@ -1,0 +1,8 @@
+{
+  "type": "neoforge:add_spawns",
+  "biomes": "minecraft:dark_forest",
+  "spawners": [
+    { "type": "orespawn:ghost",        "weight": 15, "minCount": 2, "maxCount": 5 },
+    { "type": "orespawn:ghost_skelly", "weight": 15, "minCount": 2, "maxCount": 5 }
+  ]
+}

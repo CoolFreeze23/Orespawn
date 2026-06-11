@@ -1,0 +1,5 @@
+{
+  "type": "neoforge:add_spawns",
+  "biomes": "minecraft:stony_shore",
+  "spawners": { "type": "orespawn:hydrolisc", "weight": 5, "minCount": 3, "maxCount": 6 }
+}

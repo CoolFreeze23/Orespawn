@@ -1,0 +1,8 @@
+{
+  "type": "neoforge:add_spawns",
+  "biomes": "minecraft:swamp",
+  "spawners": [
+    { "type": "orespawn:frog", "weight": 20, "minCount": 2, "maxCount": 6 },
+    { "type": "orespawn:frog", "weight": 2,  "minCount": 2, "maxCount": 6 }
+  ]
+}

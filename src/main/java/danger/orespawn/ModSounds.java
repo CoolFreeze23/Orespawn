@@ -281,6 +281,9 @@ public class ModSounds {
             () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "frog2")));
     public static final DeferredHolder<SoundEvent, SoundEvent> GHOST_SOUND = SOUND_EVENTS.register("ghost_sound",
             () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "ghost_sound")));
+    // orig "orespawn:glassdead" — combined event randomly picking the glassdead1/2 variants
+    public static final DeferredHolder<SoundEvent, SoundEvent> GLASSDEAD = SOUND_EVENTS.register("glassdead",
+            () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "glassdead")));
     public static final DeferredHolder<SoundEvent, SoundEvent> GLASSDEAD1 = SOUND_EVENTS.register("glassdead1",
             () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "glassdead1")));
     public static final DeferredHolder<SoundEvent, SoundEvent> GLASSDEAD2 = SOUND_EVENTS.register("glassdead2",
@@ -307,6 +310,9 @@ public class ModSounds {
             () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "hammerhead_living2")));
     public static final DeferredHolder<SoundEvent, SoundEvent> HERCULES_DEATH = SOUND_EVENTS.register("hercules_death",
             () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "hercules_death")));
+    // orig "orespawn:hover" — combined event randomly picking the hover1-6 variants
+    public static final DeferredHolder<SoundEvent, SoundEvent> HOVER = SOUND_EVENTS.register("hover",
+            () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "hover")));
     public static final DeferredHolder<SoundEvent, SoundEvent> HOVER1 = SOUND_EVENTS.register("hover1",
             () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "hover1")));
     public static final DeferredHolder<SoundEvent, SoundEvent> HOVER2 = SOUND_EVENTS.register("hover2",

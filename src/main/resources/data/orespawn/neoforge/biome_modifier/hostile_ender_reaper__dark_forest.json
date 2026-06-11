@@ -1,0 +1,5 @@
+{
+  "type": "neoforge:add_spawns",
+  "biomes": "minecraft:dark_forest",
+  "spawners": { "type": "orespawn:ender_reaper", "weight": 38, "minCount": 2, "maxCount": 4 }
+}

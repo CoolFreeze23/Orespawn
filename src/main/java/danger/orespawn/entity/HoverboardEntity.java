@@ -207,11 +207,9 @@ public class HoverboardEntity extends Mob {
         Player rider = this.getControllingPassenger() instanceof Player p ? p : null;
         if (rider != null && this.playingSoundCooldown == 0
                 && this.random.nextInt(80) == 1) {
-            // Use vanilla beacon hum as a gentle hover tone; legacy used a custom
-            // orespawn:hover sound (the .ogg files exist in the 1.7.10 assets but
-            // we don't ship a SoundEvent registration for them yet).
+            // orig Elevator.java:300-302 — plays "orespawn:hover" at 0.45 vol / 1.0 pitch
             this.level().playSound(null, this.getX(), this.getY(), this.getZ(),
-                    net.minecraft.sounds.SoundEvents.BEACON_AMBIENT,
+                    danger.orespawn.ModSounds.HOVER.get(),
                     net.minecraft.sounds.SoundSource.NEUTRAL, 0.45f, 1.0f);
             this.playingSoundCooldown = 55;
         }

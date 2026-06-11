@@ -5,6 +5,10 @@
     { "type": "orespawn:fairy",       "weight": 10, "minCount": 4, "maxCount": 8 },
     { "type": "orespawn:peacock",     "weight": 5,  "minCount": 4, "maxCount": 8 },
     { "type": "orespawn:crystal_cow", "weight": 1,  "minCount": 1, "maxCount": 4 },
-    { "type": "orespawn:ruby_bird",   "weight": 6,  "minCount": 2, "maxCount": 4 }
+    { "type": "orespawn:ruby_bird",   "weight": 6,  "minCount": 2, "maxCount": 4 },
+    { "type": "orespawn:dungeon_beast", "weight": 30, "minCount": 4, "maxCount": 6 },
+    { "type": "orespawn:flounder",    "weight": 5,  "minCount": 6, "maxCount": 8 },
+    { "type": "orespawn:irukandji",   "weight": 4,  "minCount": 2, "maxCount": 3 },
+    { "type": "orespawn:frog",        "weight": 1,  "minCount": 3, "maxCount": 5 }
   ]
 }

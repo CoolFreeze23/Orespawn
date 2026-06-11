@@ -926,18 +926,21 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 - **Original:** `Dragon.java` — raw beef tame
 - **Port:** `entity/Dragon.java` `mobInteract` — `Items.BONE`, 1/5 chance, heal to full
 - **Fix:** change tame item to `Items.BEEF` (verify original chance and replicate).
+- **Resolution:** FIXED (2026-06-11, Phase C — see FIX_LOG.md and phase_c_reports/C2_entities_D_I.md)
 
 ### ENT-D-003 — Dragon: drops beef→bones/diamonds (plus double source)
 - **Status:** DIVERGENT
 - **Original:** `Dragon.java` `func_70628_a` — raw beef
 - **Port:** hardcoded bones 1–6 + `entities/dragon.json` diamonds 1–6 (+looting)
 - **Fix:** single loot source: beef (match original count); delete the bone hardcode and diamond pool.
+- **Resolution:** VERIFIED-CORRECT (2026-06-11, Phase C — port `dragon.json` already drops beef 1–6 matching orig Dragon.java:342-347 and no hardcoded bone/diamond source remains, see phase_c_reports/C2_entities_D_I.md)
 
 ### ENT-D-004 — Dragon: Utopia-only spawn → overworld-wide
 - **Status:** DIVERGENT
 - **Original:** Utopia dimension boss list w1 1–2 (`BiomeGenUtopianPlains.java:164`); no overworld addSpawn
 - **Port:** `add_overworld_creatures.json` w1 1–1 overworld-wide
 - **Fix:** remove dragon from the overworld modifier; add to the Utopia dimension spawn list w1 1–2.
+- **Resolution:** PARTIAL (2026-06-11, Phase C — overworld entry removed, Island-biome w1 1–2 added (orig list is `setIslandCreatures`, not the Utopia boss list); spawn-rule gates → ENT-SYS-002 (Phase D), see phase_c_reports/C2_entities_D_I.md)
 
 ### ENT-D-005 — Dragon: custom wing-flap sound replaced
 - **Status:** PARTIAL
@@ -950,6 +953,7 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 - **Original:** Magic Apple spawns Spyro (named baby dragon)
 - **Port:** apple spawns generic `BabyDragon`
 - **Fix:** spawn the BabyDragon with the original Spyro identity/name (or implement a Spyro variant) when the Magic Apple is used.
+- **Resolution:** FIXED (2026-06-11, Phase C — audit corrected: the orig trigger is a DIAMOND (Dragon.java:1351-1369), not a Magic Apple, and it spawns the Spyro class; see FIX_LOG.md and phase_c_reports/C2_entities_D_I.md)
 
 ## DungeonBeast
 
@@ -965,12 +969,14 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 - **Original:** `func_70628_a` — Crystal-dimension items
 - **Port:** `dungeon_beast.json` — bones 3–8 (+looting) + 50% gold ingots 1–4
 - **Fix:** open original `DungeonBeast.java` `func_70628_a`, list the crystal items, and rewrite the JSON to match.
+- **Resolution:** FIXED (2026-06-11, Phase C — see FIX_LOG.md and phase_c_reports/C2_entities_D_I.md)
 
 ### ENT-D-009 — DungeonBeast: roofed forest → badlands relocation
 - **Status:** DIVERGENT
 - **Original:** `OreSpawnMain.java:4981` — addSpawn w20 2–4 ambient Roofed Forest; also spawners/Crystal dim
 - **Port:** `hostile_dungeon_beast.json` — `#minecraft:is_badlands` w20 2–4
 - **Fix:** change modifier biome to `minecraft:dark_forest` (roofed forest), keep w20 2–4; add Crystal-dimension spawn list entry.
+- **Resolution:** PARTIAL (2026-06-11, Phase C — dark_forest w20 2–4 + Crystal w30 4–6 + Chaos w2 1–5 done; spawn-rule gates → ENT-SYS-002 (Phase D), see phase_c_reports/C2_entities_D_I.md)
 
 ## EasterBunny
 
@@ -985,6 +991,7 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 - **Original:** `OreSpawnMain.java:4682-4688` — addSpawn w10/w5/w8 1–2 across 7 biomes
 - **Port:** `add_overworld_creatures.json` w3 1–2 overworld-wide
 - **Fix:** dedicated modifier reproducing the 7 original biomes at weights 10/8/5.
+- **Resolution:** PARTIAL (2026-06-11, Phase C — 7-biome w10/8/5 modifiers done; the orig registration is gated on Easter day (April 20, OreSpawnMain.java:4570-4571,4681) → ENT-SYS-002 (Phase D), see phase_c_reports/C2_entities_D_I.md)
 
 ## Elevator (Hoverboard)
 
@@ -993,6 +1000,7 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 - **Original:** `orespawn:hover` hum
 - **Port:** `entity/HoverboardEntity.java` — `SoundEvents.BEACON_AMBIENT`
 - **Fix:** register `orespawn:hover` and play it instead of the beacon ambient.
+- **Resolution:** FIXED (2026-06-11, Phase C — see FIX_LOG.md and phase_c_reports/C2_entities_D_I.md)
 
 ## EmperorScorpion
 
@@ -1008,6 +1016,7 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 - **Original:** rolled `nextInt(80)==1` per tick to spawn baby scorpions when population low
 - **Port:** `EntityEmperorScorpion.java:52-60` — every 30+rand(10) ticks spawns `EntityScorpion` if <3 within 16 blocks, cap 6
 - **Fix:** replace timer with per-tick `nextInt(80)==1` roll; replicate original population condition.
+- **Resolution:** FIXED (2026-06-11, Phase C — audit corrected: orig has NO population condition; it is a `nextInt(4)==0 && nextInt(20)==1` roll while a target exists, spawning at the self/target midpoint (EmperorScorpion.java:408,437-438); see phase_c_reports/C2_entities_D_I.md)
 
 ### ENT-D-015 — EmperorScorpion: loot de-enchanted, beef→slimeballs
 - **Status:** DIVERGENT
@@ -1039,6 +1048,7 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 - **Original:** `OreSpawnMain.java:4920-4928` — ambient w4 2–4 across 5 overworld biomes, w2 ×3, w20 Roofed Forest
 - **Port:** `add_end_spawns.json` — `#minecraft:is_end` w8 1–2; no overworld spawns
 - **Fix:** add overworld modifier with the original biome list (dark_forest w20 2–4 hotspot); remove or reduce the End entry.
+- **Resolution:** PARTIAL (2026-06-11, Phase C — 9-biome overworld modifiers + Chaos-dim w2 1–2 added, invented End entry removed; spawn-rule gates → ENT-SYS-002 (Phase D), see phase_c_reports/C2_entities_D_I.md)
 
 ## EnderReaper
 
@@ -1060,6 +1070,7 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 - **Original:** `OreSpawnMain.java:4931-4939` — ambient w2/1 1–2 across 8 biomes + w38 2–4 Roofed Forest
 - **Port:** `add_end_spawns.json` w4 1–1 End-only
 - **Fix:** add overworld modifier with the 8 original biomes incl. dark_forest w38 2–4; remove/reduce the End entry.
+- **Resolution:** PARTIAL (2026-06-11, Phase C — 9-biome overworld modifiers + Island w25 2–4 + Chaos w1 1–1 added, invented End entry removed; spawn-rule gates → ENT-SYS-002 (Phase D), see phase_c_reports/C2_entities_D_I.md)
 
 ## EntityCage
 
@@ -1068,6 +1079,7 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 - **Original:** `EntityCage.java:160-201,174` — `nextInt(10)>=2` (80%): per-type checks dropping matched `CagedSpiderDriver/CagedCaveSpider/CagedSpider/CagedCrab/CagedBat(×2)/CagedPig/...`; fail/player → `CageEmpty`
 - **Port:** `entity/EntityCage.java` — discards **any** Mob, drops `CagedMobItem` with full NBT; can now cage mobs the original could not
 - **Fix:** decide policy: either restore the species whitelist (reject non-listed mobs → CageEmpty), or keep universal capture but gate it behind a config default-off; the drop-item divergence resolves with the same choice.
+- **Resolution:** FIXED (2026-06-11, Phase C — full species whitelist restored with per-species escape dice and multi-count drops (Bat ×2, Silverfish ×2, Dragonfly ×2, Cockateil ×4, AttackSquid ×6); unlisted mobs eat the cage with no drop, players return CageEmpty, tamed GF/BF uncapturable; see phase_c_reports/C2_entities_D_I.md)
 
 ## EntityCannonFodder
 
@@ -1093,18 +1105,21 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 - **Original:** `EntityThrownRock.java:79-216` — t5 = 10 (t1=2, t2–4=5, t6=20, t7/8=40, t9–11=150, t12=250)
 - **Port:** `entity/EntityThrownRock.java:72-79` — t5 folded into the 5-damage band
 - **Fix:** restore `case 5 -> 10` in the damage switch.
+- **Resolution:** FIXED (2026-06-11, Phase C — see FIX_LOG.md and phase_c_reports/C2_entities_D_I.md)
 
 ### ENT-D-026 — EntityThrownRock: five rock types have wrong effects
 - **Status:** DIVERGENT
 - **Original:** `:107-227` — t6 weakness 100; t9 fire 50t + weakness 100; t10 poison 200 + weakness 100; t11 slow 200 + weakness 100; t12 weakness 100 + explosion 5.1
 - **Port:** `:94-122` — t6/9/11 wither 100; t9 lost ignite; t10 poison 200 only; t12 wither 100
 - **Fix:** replace WITHER with WEAKNESS (100t) on t6/9/10/11/12; re-add t9 50t ignite, t10/t11 weakness secondary, t11 slow 200.
+- **Resolution:** FIXED (2026-06-11, Phase C — see FIX_LOG.md and phase_c_reports/C2_entities_D_I.md)
 
 ### ENT-D-027 — EntityThrownRock: typed rock recovery and glass-breaking lost
 - **Status:** DIVERGENT
 - **Original:** `:229-285` — breaks glass on impact; returns the specific rock item of its type (MySmallRock…MyCrystalTNTRock, 12 types)
 - **Port:** `:129` — always pops generic `ModItems.ROCK`; no glass-breaking
 - **Fix:** map rock type → corresponding ModItems rock item on drop; add glass-block break on impact (mobGriefing-gated).
+- **Resolution:** FIXED (2026-06-11, Phase C — 12-type rock recovery + 3×3×3 glass/glass-pane break with `orespawn:glassdead` sound; orig has no mobGriefing gate so none added; see phase_c_reports/C2_entities_D_I.md)
 
 ### ENT-D-028 — EntityThrownRock: water-skipping physics missing
 - **Status:** PARTIAL
@@ -1119,12 +1134,14 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 - **Original:** `Fairy.java` drops — Crystal Torch
 - **Port:** `fairy.json` — glowstone_dust 1–3 (+looting)
 - **Fix:** change JSON to the port's Crystal Torch item ×1.
+- **Resolution:** FIXED (2026-06-11, Phase C — crystal_torch 0–2 (+looting), the orig uses the vanilla `func_70628_a` count, not ×1; see phase_c_reports/C2_entities_D_I.md)
 
 ### ENT-D-030 — Fairy: roofed-forest hotspot diluted overworld-wide
 - **Status:** DIVERGENT
 - **Original:** `OreSpawnMain.java:4974` — w25 2–4 ambient Roofed Forest only; + Crystal dim w10 4–8, w5 2–4
 - **Port:** `add_overworld_ambient.json` w5 1–3 ALL overworld (Crystal/Chaos dims kept)
 - **Fix:** restrict the overworld modifier to `minecraft:dark_forest` w25 2–4.
+- **Resolution:** PARTIAL (2026-06-11, Phase C — overworld-wide entry replaced with dark_forest w25 2–4 (Crystal/Chaos dims already correct); spawn-rule gates → ENT-SYS-002 (Phase D), see phase_c_reports/C2_entities_D_I.md)
 
 ## Firefly
 
@@ -1133,6 +1150,7 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 - **Original:** `Firefly.java` — drops ExtremeTorch
 - **Port:** `firefly.json` — glowstone_dust 0–1
 - **Fix:** change JSON to ExtremeTorch ×1.
+- **Resolution:** FIXED (2026-06-11, Phase C — extreme_torch 0–2 (+looting), the orig uses the vanilla `func_70628_a` count, not ×1; see phase_c_reports/C2_entities_D_I.md)
 
 ## Flounder
 
@@ -1141,6 +1159,7 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 - **Original:** Utopia water lists w2 2–4 / w5 6–8 (`BiomeGenUtopianPlains.java:126,253`)
 - **Port:** `add_ocean_spawns.json` w8 1–3 `#minecraft:is_ocean`
 - **Fix:** add Flounder to the Utopia-dimension water spawn lists at original weights (keep or drop ocean entry per design decision).
+- **Resolution:** PARTIAL (2026-06-11, Phase C — Utopia w2 2–4 + Crystal w5 6–8 added, invented ocean entry removed; spawn-rule gates → ENT-SYS-002 (Phase D), see phase_c_reports/C2_entities_D_I.md)
 
 ## Frog
 
@@ -1149,6 +1168,7 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 - **Original:** `OreSpawnMain.java:4963-4967` — waterCreature w20 3–6 river, w20 2–6 swamp, ambient w2–3
 - **Port:** `add_overworld_creatures.json` w10 1–2 (rules Y≥50/day/≤5 frogs kept)
 - **Fix:** retarget modifier to river+swamp biomes w20 3–6 / 2–6.
+- **Resolution:** PARTIAL (2026-06-11, Phase C — river w20+w3, swamp w20+w2, jungle w3 modifiers + Utopia w5 4–6 + Crystal w1 3–5 added, overworld-wide entry removed; spawn-rule gates → ENT-SYS-002 (Phase D), see phase_c_reports/C2_entities_D_I.md)
 
 ## GammaMetroid
 
@@ -1164,12 +1184,14 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 - **Original:** `GammaMetroid.java:227-231` — gold nuggets + iron ingots
 - **Port:** `gamma_metroid.json` — gunpowder 5–14 + iron 6–15
 - **Fix:** change gunpowder pool to gold_nugget (match original counts from `GammaMetroid.java:227-231`).
+- **Resolution:** FIXED (2026-06-11, Phase C — gold_nugget 5–14 + iron_ingot 6–15 per orig GammaMetroid.java:223-233; see phase_c_reports/C2_entities_D_I.md)
 
 ### ENT-D-036 — GammaMetroid: Crystal-dim swarms → Nether/mountain singles
 - **Status:** DIVERGENT
 - **Original:** Crystal dimension list w35 4–7 (`ChunkProviderOreSpawn2.java:386`) + Utopia boss w1 (`BiomeGenUtopianPlains.java:514`)
 - **Port:** `add_nether_spawns.json` w3 1–1 + `companion_gamma_metroid.json` mountains w1 1–1
 - **Fix:** add to Crystal-dimension spawn list w35 4–7 and Utopia w1; remove the Nether entry.
+- **Resolution:** PARTIAL (2026-06-11, Phase C — audit corrected: ChunkProviderOreSpawn2:386 is the MINING dim (w35 4–7) and the w1 1–1 list is `setChaosCreatures` (:513-514); Mining + Chaos entries added, Nether entry and invented mountain companion removed; spawn-rule gates → ENT-SYS-002 (Phase D), see phase_c_reports/C2_entities_D_I.md)
 
 ## Gazelle
 
@@ -1178,6 +1200,7 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 - **Original:** `Gazelle.java:347` — poppy + super drops
 - **Port:** `gazelle.json` — mutton 1–3 (+looting)
 - **Fix:** change JSON to poppy ×1 and port the "super drops" bonus from `Gazelle.java`; remove mutton.
+- **Resolution:** FIXED (2026-06-11, Phase C — audit corrected: poppies 2–6 only when TAMED (Gazelle.java:341-352); untamed = vanilla super = beef 0–2 (+looting) via `func_146068_u` (:337-339). Port writes an `OreSpawnTamed` NBT flag and the JSON branches on it; see phase_c_reports/C2_entities_D_I.md)
 
 ## Ghost
 
@@ -1186,12 +1209,14 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 - **Original:** `Ghost.java` — no notable drops
 - **Port:** `ghost.json` — bone 0–2 (+looting)
 - **Fix:** empty the loot pools.
+- **Resolution:** FIXED (2026-06-11, Phase C — pools emptied; orig Ghost extends EntityAmbientCreature with no drop override; see phase_c_reports/C2_entities_D_I.md)
 
 ### ENT-D-039 — Ghost: spawn density slashed (w15 ambient → w4 caves)
 - **Status:** DIVERGENT
 - **Original:** ~28 addSpawn ambient w2–15 grp up to 5–10 (`OreSpawnMain.java:4544+,4784-4788`)
 - **Port:** `add_cave_spawns.json` w4 1–1 + `dim_chaos_locals.json` w15 3–6; dark-only rule
 - **Fix:** raise overworld weight/groups toward the original w2–15 / 5–10 ambient distribution across its biome list.
+- **Resolution:** PARTIAL (2026-06-11, Phase C — the UNGATED block (OreSpawnMain.java:4783-4788: snowy_taiga w15 5–10, taiga w10 5–10, frozen_river w6 4–6, jungle w2 1–4, dark_forest w15 2–5) is now in JSON; invented cave/Chaos entries removed. The 22-biome w15 3–6 block (:4544-4565) is Halloween-only (Oct 31 gate :4518-4521) → ENT-SYS-002 (Phase D) along with the dark-spawn rules; see phase_c_reports/C2_entities_D_I.md)
 
 ## GhostSkelly
 
@@ -1200,12 +1225,14 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 - **Original:** no notable drops
 - **Port:** `ghost_skelly.json` — bone 1–3 (+looting) + arrows 0–2
 - **Fix:** empty the loot pools.
+- **Resolution:** FIXED (2026-06-11, Phase C — pools emptied; orig GhostSkelly extends EntityAmbientCreature with no drop override; see phase_c_reports/C2_entities_D_I.md)
 
 ### ENT-D-041 — GhostSkelly: spawn density slashed
 - **Status:** DIVERGENT
 - **Original:** ~28 addSpawn ambient w2–15 (`OreSpawnMain.java:4522-4543,4791-4795`)
 - **Port:** `add_cave_spawns.json` w4 1–1 + `dim_chaos_locals.json` w10 2–4
 - **Fix:** restore original ambient weights/groups across the original biome list.
+- **Resolution:** PARTIAL (2026-06-11, Phase C — ungated block (OreSpawnMain.java:4790-4795, same five biomes/weights as Ghost) in JSON; invented cave/Chaos entries removed; Halloween 22-biome block (:4522-4543) → ENT-SYS-002 (Phase D), see phase_c_reports/C2_entities_D_I.md)
 
 ## GiantRobot
 
@@ -1233,6 +1260,7 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 - **Original:** `GiantRobot.java:158-211` — 15–29× LaserBall(×4) + 10–19 random of {SpiderRobotKit, AntRobotKit, RayGun, redstone block, dispenser, sticky piston, piston, lever, iron block, piston-head}
 - **Port:** `giant_robot.json` — iron 5–10 + 30% iron blocks 1–3
 - **Fix:** rewrite JSON: laser-ball item 15–29 (×4 stacks) + 10–19 rolls over the 10-entry kit/component pool.
+- **Resolution:** FIXED (2026-06-11, Phase C — audit corrected: case 9 (`field_150319_E`) is the DETECTOR RAIL, not a piston head, and the `nextInt(12)` pool has 2/12 empty outcomes (preserved with an empty weight-2 entry); see phase_c_reports/C2_entities_D_I.md)
 
 ### ENT-D-046 — GiantRobot: no natural spawn
 - **Status:** MISSING
@@ -1265,6 +1293,7 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 - **Original:** `OreSpawnMain.java:4574-4585` — 12 addSpawn w2–30, groups up to 8–15
 - **Port:** `companion_girlfriend.json` — overworld-wide w4 1–2
 - **Fix:** replicate the 12 per-biome entries with original weights/groups (w30 8–15 hotspots).
+- **Resolution:** PARTIAL (2026-06-11, Phase C — all 12 orig entries replicated across 7 per-biome modifier files (beach w30 8–15 hotspot); spawn-rule gates → ENT-SYS-002 (Phase D), see phase_c_reports/C2_entities_D_I.md)
 
 ## GoldCow
 
@@ -1288,6 +1317,7 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 - **Original:** Utopia lists w1/w5/w10 (`BiomeGenUtopianPlains.java:120,176,368`)
 - **Port:** `add_ocean_spawns.json` w10 1–3 + `dim_chaos_locals.json` w10 2–4
 - **Fix:** add GoldFish to the Utopia dimension lists at original weights; review whether ocean entry should remain.
+- **Resolution:** PARTIAL (2026-06-11, Phase C — Utopia w1 1–1 + Island w5 2–4 added (Chaos w10 2–4 already correct), invented ocean entry removed; spawn-rule gates → ENT-SYS-002 (Phase D), see phase_c_reports/C2_entities_D_I.md)
 
 ## Hammerhead
 
@@ -1303,6 +1333,7 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 - **Original:** no boss bar
 - **Port:** `entity/Hammerhead.java:42` — `ServerBossEvent` added
 - **Fix:** remove the boss bar (or keep behind config; Hammerhead is not a boss in the original).
+- **Resolution:** FIXED (2026-06-11, Phase C — `ServerBossEvent` and its player/progress hooks removed; see phase_c_reports/C2_entities_D_I.md)
 
 ### ENT-D-056 — Hammerhead: four unique reward items lost
 - **Status:** DIVERGENT
@@ -1316,6 +1347,7 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 - **Original:** Utopia monster list w1 1–1 (`BiomeGenUtopianPlains.java:463`)
 - **Port:** `add_ocean_spawns.json` w3 1–1 (Y≥50 + no-buddy rules kept)
 - **Fix:** add to Utopia dimension monster list w1 1–1; review the ocean entry.
+- **Resolution:** PARTIAL (2026-06-11, Phase C — the orig w1 1–1 list is `setChaosCreatures` (BiomeGenUtopianPlains.java:462-464); Chaos-dim entry added, invented ocean entry removed; spawn-rule gates → ENT-SYS-002 (Phase D), see phase_c_reports/C2_entities_D_I.md)
 
 ## HerculesBeetle
 
@@ -1347,6 +1379,7 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 - **Original:** `OreSpawnMain.java:4829-4832` — creature w25 3–6 swamp, w15 2–5 jungle, w10 1–3 jungleHills, w5 3–6
 - **Port:** ocean w3 1–1 + beach w3 1–2 + river w3 1–2
 - **Fix:** retarget modifiers to swamp w25 3–6 and jungle w15 2–5 (+jungle hills w10 1–3); drop ocean/beach.
+- **Resolution:** FIXED (2026-06-11, Phase C — swamp w25 3–6, jungle w15 2–5, sparse_jungle w10 1–3, stony_shore w5 3–6 per-biome files; ocean/beach/river entries removed; orig Hydrolisc has NO getCanSpawnHere override so no gate remainder; see phase_c_reports/C2_entities_D_I.md)
 
 ## Irukandji
 
@@ -1362,6 +1395,7 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 - **Original:** Utopia water list w4 2–3 (`BiomeGenUtopianPlains.java:256`)
 - **Port:** `add_ocean_spawns.json` w4 1–2 (Y≥50, 1/60 roll, ≤2 nearby rules kept)
 - **Fix:** add to Utopia dimension water list w4 2–3; review ocean entry.
+- **Resolution:** PARTIAL (2026-06-11, Phase C — the orig w4 2–3 list is the Crystal sub-biome water list (BiomeGenUtopianPlains.java:255-257); Crystal-dim entry added, invented ocean entry removed; spawn-rule gates → ENT-SYS-002 (Phase D), see phase_c_reports/C2_entities_D_I.md)
 
 ## IrukandjiArrow
 

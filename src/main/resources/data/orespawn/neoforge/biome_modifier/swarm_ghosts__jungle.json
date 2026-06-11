@@ -1,0 +1,8 @@
+{
+  "type": "neoforge:add_spawns",
+  "biomes": "minecraft:jungle",
+  "spawners": [
+    { "type": "orespawn:ghost",        "weight": 2, "minCount": 1, "maxCount": 4 },
+    { "type": "orespawn:ghost_skelly", "weight": 2, "minCount": 1, "maxCount": 4 }
+  ]
+}
