@@ -10,6 +10,8 @@ import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.util.Mth;
 
 public class StinkBugModel extends EntityModel<EntityStinkBug> {
+    /** Animation frequency constant; orig ModelStinkBug.java:13,66 (wingspeed), value from orig ClientProxyOreSpawn.java:453. */
+    private final float wingspeed = 0.75f;
     private final ModelPart f6;
     private final ModelPart b10;
     private final ModelPart l6;
@@ -374,18 +376,18 @@ public class StinkBugModel extends EntityModel<EntityStinkBug> {
     @Override
     public void setupAnim(EntityStinkBug entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
         float newangle = 0.0f;
-        this.f1.xRot = this.f3.xRot = (this.f3.xRot = (newangle = Mth.sin((float)(ageInTicks * 3.1f * limbSwingAmount)) * (float)Math.PI * 0.3f * limbSwingAmount));
+        this.f1.xRot = this.f3.xRot = (this.f3.xRot = (newangle = Mth.sin((float)(ageInTicks * 3.1f * this.wingspeed)) * (float)Math.PI * 0.3f * limbSwingAmount));
         this.f4.xRot = this.f6.xRot = -newangle;
         this.f2.xRot = this.f6.xRot;
-        this.b9.zRot = newangle = Mth.sin((float)(ageInTicks * 0.4f * limbSwingAmount)) * (float)Math.PI * 0.2f;
+        this.b9.zRot = newangle = Mth.sin((float)(ageInTicks * 0.4f * this.wingspeed)) * (float)Math.PI * 0.2f;
         this.b10.zRot = -newangle;
-        newangle = Mth.sin((float)(ageInTicks * 0.2f * limbSwingAmount)) * (float)Math.PI * 0.04f;
+        newangle = Mth.sin((float)(ageInTicks * 0.2f * this.wingspeed)) * (float)Math.PI * 0.04f;
         this.jaw.xRot = 0.18f + newangle;
-        this.h1.xRot = 0.52f + Mth.sin((float)(ageInTicks * 0.4f * limbSwingAmount)) * (float)Math.PI * 0.15f;
-        this.h1.yRot = -0.3f + Mth.sin((float)(ageInTicks * 0.43f * limbSwingAmount)) * (float)Math.PI * 0.15f;
-        this.h2.xRot = 0.52f + Mth.sin((float)(ageInTicks * 0.46f * limbSwingAmount)) * (float)Math.PI * 0.15f;
-        this.h2.yRot = 0.3f + Mth.sin((float)(ageInTicks * 0.49f * limbSwingAmount)) * (float)Math.PI * 0.15f;
-        this.t4.xRot = this.t5.xRot = (this.tail.xRot = -0.2f + Mth.sin((float)(ageInTicks * 0.1f * limbSwingAmount)) * (float)Math.PI * 0.1f);
+        this.h1.xRot = 0.52f + Mth.sin((float)(ageInTicks * 0.4f * this.wingspeed)) * (float)Math.PI * 0.15f;
+        this.h1.yRot = -0.3f + Mth.sin((float)(ageInTicks * 0.43f * this.wingspeed)) * (float)Math.PI * 0.15f;
+        this.h2.xRot = 0.52f + Mth.sin((float)(ageInTicks * 0.46f * this.wingspeed)) * (float)Math.PI * 0.15f;
+        this.h2.yRot = 0.3f + Mth.sin((float)(ageInTicks * 0.49f * this.wingspeed)) * (float)Math.PI * 0.15f;
+        this.t4.xRot = this.t5.xRot = (this.tail.xRot = -0.2f + Mth.sin((float)(ageInTicks * 0.1f * this.wingspeed)) * (float)Math.PI * 0.1f);
         this.t3.xRot = this.t5.xRot;
         this.t2.xRot = this.t5.xRot;
         this.t1.xRot = this.t5.xRot;

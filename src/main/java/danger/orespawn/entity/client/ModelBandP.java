@@ -10,6 +10,8 @@ import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.util.Mth;
 
 public class ModelBandP extends EntityModel<BandP> {
+    /** Animation frequency constant; orig ModelBandP.java:14,24 (wingspeed), value from orig ClientProxyOreSpawn.java:504. */
+    private final float wingspeed = 0.4f;
     private final ModelPart belly;
     private final ModelPart chest;
     private final ModelPart head;
@@ -76,13 +78,13 @@ public class ModelBandP extends EntityModel<BandP> {
         float newangle2 = 0.0f;
         float newangle3 = 0.0f;
         if ((double)limbSwingAmount > 0.1) {
-        newangle = Mth.cos((float)(ageInTicks * 1.3f * limbSwingAmount)) * (float)Math.PI * 0.25f * limbSwingAmount;
-        newangle2 = Mth.cos((float)(ageInTicks * 2.6f * limbSwingAmount)) * (float)Math.PI * 0.025f * limbSwingAmount;
+        newangle = Mth.cos((float)(ageInTicks * 1.3f * this.wingspeed)) * (float)Math.PI * 0.25f * limbSwingAmount;
+        newangle2 = Mth.cos((float)(ageInTicks * 2.6f * this.wingspeed)) * (float)Math.PI * 0.025f * limbSwingAmount;
         newangle3 = newangle;
         } else {
         newangle = 0.0f;
-        newangle2 = Mth.cos((float)(ageInTicks * 0.6f * limbSwingAmount)) * (float)Math.PI * 0.005f;
-        newangle3 = Mth.cos((float)(ageInTicks * 0.3f * limbSwingAmount)) * (float)Math.PI * 0.02f;
+        newangle2 = Mth.cos((float)(ageInTicks * 0.6f * this.wingspeed)) * (float)Math.PI * 0.005f;
+        newangle3 = Mth.cos((float)(ageInTicks * 0.3f * this.wingspeed)) * (float)Math.PI * 0.02f;
         }
         this.lleg.xRot = newangle;
         this.rleg.xRot = -newangle;

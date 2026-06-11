@@ -16,12 +16,14 @@ public class MothraRenderer extends MobRenderer<Mothra, ButterflyModel<Mothra>> 
             new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "mothra"), "main");
 
     public MothraRenderer(EntityRendererProvider.Context context) {
-        super(context, new ButterflyModel<>(context.bakeLayer(MODEL_LAYER)), 1.5f);
+        // wingspeed 0.2f — orig ClientProxyOreSpawn.java:411 (new ModelButterfly(0.2f))
+        super(context, new ButterflyModel<>(context.bakeLayer(MODEL_LAYER), 0.2f), 1.5f);
     }
 
     @Override
     protected void scale(Mothra entity, PoseStack poseStack, float partialTick) {
-        poseStack.scale(5.0f, 5.0f, 5.0f);
+        // 10.0f — orig ClientProxyOreSpawn.java:411 third arg, applied via orig RenderButterfly.java:26,42 (glScalef)
+        poseStack.scale(10.0f, 10.0f, 10.0f);
     }
 
     @Override

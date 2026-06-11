@@ -10,6 +10,8 @@ import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.util.Mth;
 
 public class TshirtModel<T extends EntityTshirt> extends EntityModel<T> {
+    /** Animation frequency constant; orig ModelTshirt.java:13,18 (wingspeed), value from orig ClientProxyOreSpawn.java:418. */
+    private final float wingspeed = 0.22f;
     private final ModelPart body;
     private final ModelPart larm;
     private final ModelPart rarm;
@@ -32,7 +34,7 @@ public class TshirtModel<T extends EntityTshirt> extends EntityModel<T> {
     @Override
     public void setupAnim(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
         float newangle = 0.0f;
-        this.larm.yRot = newangle = Mth.cos((float)(ageInTicks * 0.05f * limbSwingAmount)) * (float)Math.PI;
+        this.larm.yRot = newangle = Mth.cos((float)(ageInTicks * 0.05f * this.wingspeed)) * (float)Math.PI;
         this.rarm.yRot = newangle;
     }
 

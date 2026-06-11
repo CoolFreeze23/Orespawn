@@ -10,7 +10,8 @@ import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.util.Mth;
 
 public class ModelSeaViper extends EntityModel<SeaViper> {
-    private final float wingspeed = 1.0f;
+    /** Animation frequency constant; orig ModelSeaViper.java:14,51 (wingspeed), value from orig ClientProxyOreSpawn.java:497. */
+    private final float wingspeed = 0.5f;
     private final ModelPart TailTip;
     private final ModelPart Neck;
     private final ModelPart tBase;
@@ -232,7 +233,7 @@ public class ModelSeaViper extends EntityModel<SeaViper> {
         if (limbSwingAmount < 0.0f) {
         limbSwingAmount = 0.0f;
         }
-        this.tBase.yRot = newangle = Mth.cos((float)(ageInTicks * 1.3f * limbSwingAmount)) * (float)Math.PI * 0.1f * limbSwingAmount;
+        this.tBase.yRot = newangle = Mth.cos((float)(ageInTicks * 1.3f * this.wingspeed)) * (float)Math.PI * 0.1f * limbSwingAmount;
         this.doseg(this.tBase, this.t2, 2.0f, limbSwingAmount, ageInTicks);
         this.doseg(this.t2, this.t3, 2.0f, limbSwingAmount, ageInTicks);
         this.doseg(this.t3, this.t4, 3.0f, limbSwingAmount, ageInTicks);
@@ -255,25 +256,25 @@ public class ModelSeaViper extends EntityModel<SeaViper> {
         this.doseg(this.t20, this.t21, 20.0f, limbSwingAmount, ageInTicks);
         this.doseg(this.t21, this.TailTip, 21.0f, limbSwingAmount, ageInTicks);
         if (entity.getAttacking() != 0) {
-        newangle = Mth.cos((float)(ageInTicks * 1.7f * limbSwingAmount)) * (float)Math.PI * 0.17f;
+        newangle = Mth.cos((float)(ageInTicks * 1.7f * this.wingspeed)) * (float)Math.PI * 0.17f;
         this.MouthBottom.xRot = 0.65f + newangle;
-        newangle = Mth.cos((float)(ageInTicks * 4.7f * limbSwingAmount)) * (float)Math.PI * 0.07f;
+        newangle = Mth.cos((float)(ageInTicks * 4.7f * this.wingspeed)) * (float)Math.PI * 0.07f;
         this.ToungBase.xRot = 0.261f + newangle;
         this.MiddleTounge.xRot = 0.174f + newangle;
         this.ForkLeft.xRot = 0.087f + newangle;
         this.ForkRight.xRot = 0.087f + newangle;
-        this.ForkLeft.zRot = this.ForkRight.zRot = (newangle = Mth.cos((float)(ageInTicks * 1.5f * limbSwingAmount)) * (float)Math.PI * 0.05f);
+        this.ForkLeft.zRot = this.ForkRight.zRot = (newangle = Mth.cos((float)(ageInTicks * 1.5f * this.wingspeed)) * (float)Math.PI * 0.05f);
         this.MiddleTounge.zRot = this.ForkRight.zRot;
         this.ToungBase.zRot = this.ForkRight.zRot;
         } else {
-        newangle = Mth.cos((float)(ageInTicks * 0.2f * limbSwingAmount)) * (float)Math.PI * 0.02f;
+        newangle = Mth.cos((float)(ageInTicks * 0.2f * this.wingspeed)) * (float)Math.PI * 0.02f;
         this.MouthBottom.xRot = 0.45f + newangle;
-        newangle = Mth.cos((float)(ageInTicks * 1.7f * limbSwingAmount)) * (float)Math.PI * 0.03f;
+        newangle = Mth.cos((float)(ageInTicks * 1.7f * this.wingspeed)) * (float)Math.PI * 0.03f;
         this.ToungBase.xRot = 0.261f + newangle;
         this.MiddleTounge.xRot = 0.174f + newangle;
         this.ForkLeft.xRot = 0.087f + newangle;
         this.ForkRight.xRot = 0.087f + newangle;
-        this.ForkLeft.zRot = this.ForkRight.zRot = (newangle = Mth.cos((float)(ageInTicks * 0.5f * limbSwingAmount)) * (float)Math.PI * 0.05f);
+        this.ForkLeft.zRot = this.ForkRight.zRot = (newangle = Mth.cos((float)(ageInTicks * 0.5f * this.wingspeed)) * (float)Math.PI * 0.05f);
         this.MiddleTounge.zRot = this.ForkRight.zRot;
         this.ToungBase.zRot = this.ForkRight.zRot;
         }

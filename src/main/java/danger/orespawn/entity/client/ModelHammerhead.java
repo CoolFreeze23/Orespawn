@@ -10,6 +10,8 @@ import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.util.Mth;
 
 public class ModelHammerhead extends EntityModel<Hammerhead> {
+    /** Animation frequency constant; orig ModelHammerhead.java:14,54 (wingspeed), value from orig ClientProxyOreSpawn.java:501. */
+    private final float wingspeed = 0.33f;
     private final ModelPart chest;
     private final ModelPart abdomen;
     private final ModelPart neck;
@@ -248,8 +250,8 @@ public class ModelHammerhead extends EntityModel<Hammerhead> {
         float newangle = 0.0f;
         float newangle2 = 0.0f;
         if ((double)limbSwingAmount > 0.1) {
-        newangle = Mth.cos((float)(ageInTicks * 1.3f * limbSwingAmount)) * (float)Math.PI * 0.1f * limbSwingAmount;
-        newangle2 = Mth.cos((float)((float)((double)(ageInTicks * 1.3f * limbSwingAmount) + 0.7853981633974483))) * (float)Math.PI * 0.1f * limbSwingAmount;
+        newangle = Mth.cos((float)(ageInTicks * 1.3f * this.wingspeed)) * (float)Math.PI * 0.1f * limbSwingAmount;
+        newangle2 = Mth.cos((float)((float)((double)(ageInTicks * 1.3f * this.wingspeed) + 0.7853981633974483))) * (float)Math.PI * 0.1f * limbSwingAmount;
         } else {
         newangle = 0.0f;
         }
@@ -280,10 +282,10 @@ public class ModelHammerhead extends EntityModel<Hammerhead> {
         this.Rfan3.yRot = this.neck.yRot + 0.226f;
         this.Lear.yRot = this.neck.yRot + 0.227f;
         this.Rear.yRot = this.neck.yRot - 0.227f;
-        newangle = Mth.cos((float)(ageInTicks * 0.3f * limbSwingAmount)) * (float)Math.PI * 0.03f;
+        newangle = Mth.cos((float)(ageInTicks * 0.3f * this.wingspeed)) * (float)Math.PI * 0.03f;
         this.back_armour_4.yRot = 0.349f + newangle;
         this.back_armour_4R.yRot = -0.349f - newangle;
-        newangle = entity.getAttacking() != 0 ? Mth.cos((float)(ageInTicks * 1.3f * limbSwingAmount)) * (float)Math.PI * 0.13f : 0.0f;
+        newangle = entity.getAttacking() != 0 ? Mth.cos((float)(ageInTicks * 1.3f * this.wingspeed)) * (float)Math.PI * 0.13f : 0.0f;
         this.neck.xRot = newangle + 0.157f;
         this.neck_armour.xRot = newangle + 0.157f;
         this.horn_base.xRot = newangle + 0.087f;

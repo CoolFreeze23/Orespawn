@@ -10,6 +10,8 @@ import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.util.Mth;
 
 public class SpitBugModel extends EntityModel<EntitySpitBug> {
+    /** Animation frequency constant; orig ModelSpitBug.java:14,110 (wingspeed), value from orig ClientProxyOreSpawn.java:452. */
+    private final float wingspeed = 0.55f;
     private final ModelPart legintersection;
     private final ModelPart legintersectionpart2;
     private final ModelPart legintersectionpart3;
@@ -679,23 +681,23 @@ public class SpitBugModel extends EntityModel<EntitySpitBug> {
         float upangle = 0.0f;
         float nextangle = 0.0f;
         float pi4 = 1.570795f;
-        newangle = Mth.sin((float)(ageInTicks * 2.0f * limbSwingAmount)) * (float)Math.PI * 0.12f * limbSwingAmount;
-        nextangle = Mth.sin((float)((ageInTicks + 0.1f) * 2.0f * limbSwingAmount)) * (float)Math.PI * 0.12f * limbSwingAmount;
+        newangle = Mth.sin((float)(ageInTicks * 2.0f * this.wingspeed)) * (float)Math.PI * 0.12f * limbSwingAmount;
+        nextangle = Mth.sin((float)((ageInTicks + 0.1f) * 2.0f * this.wingspeed)) * (float)Math.PI * 0.12f * limbSwingAmount;
         upangle = 0.0f;
         if (nextangle > newangle) {
-        upangle = Math.abs(Mth.cos((float)(ageInTicks * 2.0f * limbSwingAmount)) * (float)Math.PI * 0.12f * limbSwingAmount);
+        upangle = Math.abs(Mth.cos((float)(ageInTicks * 2.0f * this.wingspeed)) * (float)Math.PI * 0.12f * limbSwingAmount);
         }
         this.doLeftFrontLeg(newangle, upangle);
         this.doLeftRearLeg(-newangle, upangle);
-        newangle = Mth.sin((float)((float)((double)(ageInTicks * 2.0f * limbSwingAmount) + Math.PI))) * (float)Math.PI * 0.12f * limbSwingAmount;
-        nextangle = Mth.sin((float)((float)((double)((ageInTicks + 0.1f) * 2.0f * limbSwingAmount) + Math.PI))) * (float)Math.PI * 0.12f * limbSwingAmount;
+        newangle = Mth.sin((float)((float)((double)(ageInTicks * 2.0f * this.wingspeed) + Math.PI))) * (float)Math.PI * 0.12f * limbSwingAmount;
+        nextangle = Mth.sin((float)((float)((double)((ageInTicks + 0.1f) * 2.0f * this.wingspeed) + Math.PI))) * (float)Math.PI * 0.12f * limbSwingAmount;
         upangle = 0.0f;
         if (nextangle > newangle) {
-        upangle = Math.abs(Mth.cos((float)((float)((double)(ageInTicks * 2.0f * limbSwingAmount) + Math.PI))) * (float)Math.PI * 0.12f * limbSwingAmount);
+        upangle = Math.abs(Mth.cos((float)((float)((double)(ageInTicks * 2.0f * this.wingspeed) + Math.PI))) * (float)Math.PI * 0.12f * limbSwingAmount);
         }
         this.doRightFrontLeg(-newangle, upangle);
         this.doRightRearLeg(newangle, upangle);
-        newangle = entity.getAttacking() == 0 ? Mth.cos((float)(ageInTicks * 0.3f * limbSwingAmount)) * (float)Math.PI * 0.015f : Mth.cos((float)(ageInTicks * 2.6f * limbSwingAmount)) * (float)Math.PI * 0.1f;
+        newangle = entity.getAttacking() == 0 ? Mth.cos((float)(ageInTicks * 0.3f * this.wingspeed)) * (float)Math.PI * 0.015f : Mth.cos((float)(ageInTicks * 2.6f * this.wingspeed)) * (float)Math.PI * 0.1f;
         this.upperjawbasepart1.xRot = newangle = Math.abs(newangle);
         this.upperjawbasepart2.xRot = newangle;
         this.upperjawbasepart3.xRot = newangle;

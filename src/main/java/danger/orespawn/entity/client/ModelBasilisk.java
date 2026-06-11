@@ -13,7 +13,8 @@ import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.minecraft.util.Mth;
 
 public class ModelBasilisk extends EntityModel<Basilisk> {
-    private final float wingspeed = 1.0F;
+    /** Animation frequency constant; orig ModelBasilisk.java:14,38 (wingspeed), value from orig ClientProxyOreSpawn.java:420. */
+    private final float wingspeed = 0.3F;
     private final ModelPart body3;
     private final ModelPart body2;
     private final ModelPart body1;

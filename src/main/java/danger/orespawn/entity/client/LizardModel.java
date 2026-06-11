@@ -10,6 +10,8 @@ import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.util.Mth;
 
 public class LizardModel extends EntityModel<Lizard> {
+    /** Animation frequency constant; orig ModelLizard.java:15,89 (wingspeed), value from orig ClientProxyOreSpawn.java:445. */
+    private final float wingspeed = 0.65f;
     private final ModelPart BodyBack;
     private final ModelPart TopBackLeftLeg;
     private final ModelPart TailTip;
@@ -521,7 +523,7 @@ public class LizardModel extends EntityModel<Lizard> {
     @Override
     public void setupAnim(Lizard entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
         float newangle = 0.0f;
-        newangle = (double)limbSwingAmount > 0.1 ? Mth.cos((float)(ageInTicks * 1.0f * limbSwingAmount)) * (float)Math.PI * 0.25f * limbSwingAmount : 0.0f;
+        newangle = (double)limbSwingAmount > 0.1 ? Mth.cos((float)(ageInTicks * 1.0f * this.wingspeed)) * (float)Math.PI * 0.25f * limbSwingAmount : 0.0f;
         this.TopFrontLeftLeg.yRot = newangle;
         this.BottomFrontLeftLeg.xRot = newangle;
         this.FrontLeftFoot.yRot = newangle;
@@ -549,9 +551,9 @@ public class LizardModel extends EntityModel<Lizard> {
         this.Tooth13.xRot = this.BottomJaw.xRot;
         this.Tooth16.xRot = this.BottomJaw.xRot;
         this.Tooth12.xRot = this.BottomJaw.xRot;
-        newangle = Mth.cos((float)(ageInTicks * 0.25f * limbSwingAmount)) * (float)Math.PI * 0.05f;
+        newangle = Mth.cos((float)(ageInTicks * 0.25f * this.wingspeed)) * (float)Math.PI * 0.05f;
         if (entity.getAttacking() != 0) {
-        newangle = Mth.cos((float)(ageInTicks * 1.25f * limbSwingAmount)) * (float)Math.PI * 0.35f;
+        newangle = Mth.cos((float)(ageInTicks * 1.25f * this.wingspeed)) * (float)Math.PI * 0.35f;
         }
         this.TailBase1.yRot = newangle * 0.25f;
         this.Tail2.z = this.TailBase1.z + (float)Math.cos(this.TailBase1.yRot) * 12.0f;

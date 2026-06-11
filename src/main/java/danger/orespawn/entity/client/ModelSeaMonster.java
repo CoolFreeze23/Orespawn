@@ -10,6 +10,8 @@ import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.util.Mth;
 
 public class ModelSeaMonster extends EntityModel<SeaMonster> {
+    /** Animation frequency constant; orig ModelSeaMonster.java:14,40 (wingspeed), value from orig ClientProxyOreSpawn.java:496. */
+    private final float wingspeed = 0.5f;
     private final ModelPart TailTip;
     private final ModelPart TailBase;
     private final ModelPart Tail2;
@@ -163,7 +165,7 @@ public class ModelSeaMonster extends EntityModel<SeaMonster> {
     public void setupAnim(SeaMonster entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
         float newangle = 0.0f;
         float pi4 = 0.7853982f;
-        newangle = (double)limbSwingAmount > 0.1 || entity.getAttacking() != 0 ? Mth.cos((float)(ageInTicks * 1.3f * limbSwingAmount)) * (float)Math.PI * 0.2f * limbSwingAmount : 0.0f;
+        newangle = (double)limbSwingAmount > 0.1 || entity.getAttacking() != 0 ? Mth.cos((float)(ageInTicks * 1.3f * this.wingspeed)) * (float)Math.PI * 0.2f * limbSwingAmount : 0.0f;
         this.TailBase.yRot = newangle / 7.0f;
         this.Tail2.z = this.TailBase.z + (float)Math.cos(this.TailBase.yRot) * 10.0f;
         this.Tail2.x = this.TailBase.x + (float)Math.sin(this.TailBase.yRot) * 10.0f;
@@ -183,7 +185,7 @@ public class ModelSeaMonster extends EntityModel<SeaMonster> {
         this.TailTip.z = this.Tail6.z + (float)Math.cos(this.Tail6.yRot) * 5.0f;
         this.TailTip.x = this.Tail6.x + (float)Math.sin(this.Tail6.yRot) * 5.0f;
         this.TailTip.yRot = newangle;
-        newangle = (double)limbSwingAmount > 0.1 || entity.getAttacking() != 0 ? Mth.cos((float)(ageInTicks * 1.2f * limbSwingAmount)) * (float)Math.PI * 0.2f * limbSwingAmount : Mth.cos((float)(ageInTicks * 1.2f * limbSwingAmount)) * (float)Math.PI * 0.02f;
+        newangle = (double)limbSwingAmount > 0.1 || entity.getAttacking() != 0 ? Mth.cos((float)(ageInTicks * 1.2f * this.wingspeed)) * (float)Math.PI * 0.2f * limbSwingAmount : Mth.cos((float)(ageInTicks * 1.2f * this.wingspeed)) * (float)Math.PI * 0.02f;
         this.FinFrontLeft.xRot = newangle - 0.523f;
         this.FinFrontLeft.yRot = newangle + 0.698f;
         this.FinBackLeft.xRot = -newangle - 0.523f;
@@ -192,7 +194,7 @@ public class ModelSeaMonster extends EntityModel<SeaMonster> {
         this.FinFrontRight.yRot = newangle - 0.698f;
         this.FinBackRight.xRot = -newangle - 0.523f;
         this.FinBackRight.yRot = -newangle - 0.698f;
-        newangle = (double)limbSwingAmount > 0.1 || entity.getAttacking() != 0 ? 0.455f * limbSwingAmount + Mth.cos((float)(ageInTicks * 0.9f * limbSwingAmount)) * (float)Math.PI * 0.25f * limbSwingAmount : Mth.cos((float)(ageInTicks * 0.3f * limbSwingAmount)) * (float)Math.PI * 0.02f;
+        newangle = (double)limbSwingAmount > 0.1 || entity.getAttacking() != 0 ? 0.455f * limbSwingAmount + Mth.cos((float)(ageInTicks * 0.9f * this.wingspeed)) * (float)Math.PI * 0.25f * limbSwingAmount : Mth.cos((float)(ageInTicks * 0.3f * this.wingspeed)) * (float)Math.PI * 0.02f;
         this.NeckBase.xRot = 0.455f + newangle / 5.0f;
         this.Neck2.z = this.NeckBase.z - (float)Math.sin(this.NeckBase.xRot) * 9.0f;
         this.Neck2.y = this.NeckBase.y - (float)Math.cos(this.NeckBase.xRot) * 9.0f;
@@ -219,10 +221,10 @@ public class ModelSeaMonster extends EntityModel<SeaMonster> {
         this.LeftEye.yRot = this.TopJaw.yRot;
         this.BottomJaw.yRot = this.TopJaw.yRot;
         if (entity.getAttacking() != 0) {
-        newangle = Mth.cos((float)(ageInTicks * 1.7f * limbSwingAmount)) * (float)Math.PI * 0.17f;
+        newangle = Mth.cos((float)(ageInTicks * 1.7f * this.wingspeed)) * (float)Math.PI * 0.17f;
         this.BottomJaw.xRot = 0.45f + newangle;
         } else {
-        newangle = Mth.cos((float)(ageInTicks * 0.2f * limbSwingAmount)) * (float)Math.PI * 0.05f;
+        newangle = Mth.cos((float)(ageInTicks * 0.2f * this.wingspeed)) * (float)Math.PI * 0.05f;
         this.BottomJaw.xRot = 0.17f + newangle;
         }
     }

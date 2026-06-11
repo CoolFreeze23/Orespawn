@@ -10,6 +10,8 @@ import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.util.Mth;
 
 public class FairyModel extends EntityModel<Fairy> {
+    /** Animation frequency constant; orig ModelFairy.java:16,34 (wingspeed), value from orig ClientProxyOreSpawn.java:477. */
+    private final float wingspeed = 1.5f;
     private final ModelPart head;
     private final ModelPart chest;
     private final ModelPart waist;
@@ -128,10 +130,10 @@ public class FairyModel extends EntityModel<Fairy> {
 
     @Override
     public void setupAnim(Fairy entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
-        this.lwing1.yRot = -0.6f + Mth.cos((float)(ageInTicks * limbSwingAmount)) * (float)Math.PI * 0.35f;
-        this.rwing1.yRot = -2.55f - Mth.cos((float)(ageInTicks * limbSwingAmount)) * (float)Math.PI * 0.35f;
-        this.lwing2.yRot = -0.6f + Mth.cos((float)(ageInTicks * limbSwingAmount * 0.85f)) * (float)Math.PI * 0.25f;
-        this.rwing2.yRot = -2.55f - Mth.cos((float)(ageInTicks * limbSwingAmount * 0.85f)) * (float)Math.PI * 0.25f;
+        this.lwing1.yRot = -0.6f + Mth.cos((float)(ageInTicks * this.wingspeed)) * (float)Math.PI * 0.35f;
+        this.rwing1.yRot = -2.55f - Mth.cos((float)(ageInTicks * this.wingspeed)) * (float)Math.PI * 0.35f;
+        this.lwing2.yRot = -0.6f + Mth.cos((float)(ageInTicks * this.wingspeed * 0.85f)) * (float)Math.PI * 0.25f;
+        this.rwing2.yRot = -2.55f - Mth.cos((float)(ageInTicks * this.wingspeed * 0.85f)) * (float)Math.PI * 0.25f;
         this.head.yRot = (float)Math.toRadians(netHeadYaw) * 0.45f;
         if (this.head.yRot > 0.45f) {
         this.head.yRot = 0.45f;
@@ -140,10 +142,10 @@ public class FairyModel extends EntityModel<Fairy> {
         this.head.yRot = -0.45f;
         }
         this.head.xRot = (float)Math.toRadians(headPitch);
-        this.larm.xRot = -0.2f + Mth.cos((float)(ageInTicks * limbSwingAmount * 0.15f)) * (float)Math.PI * 0.05f;
-        this.rarm.xRot = -0.2f + Mth.cos((float)(ageInTicks * limbSwingAmount * 0.12f)) * (float)Math.PI * 0.05f;
-        this.larm.zRot = -0.15f + Mth.cos((float)(ageInTicks * limbSwingAmount * 0.1f)) * (float)Math.PI * 0.03f;
-        this.rarm.zRot = 0.15f + Mth.cos((float)(ageInTicks * limbSwingAmount * 0.11f)) * (float)Math.PI * 0.03f;
+        this.larm.xRot = -0.2f + Mth.cos((float)(ageInTicks * this.wingspeed * 0.15f)) * (float)Math.PI * 0.05f;
+        this.rarm.xRot = -0.2f + Mth.cos((float)(ageInTicks * this.wingspeed * 0.12f)) * (float)Math.PI * 0.05f;
+        this.larm.zRot = -0.15f + Mth.cos((float)(ageInTicks * this.wingspeed * 0.1f)) * (float)Math.PI * 0.03f;
+        this.rarm.zRot = 0.15f + Mth.cos((float)(ageInTicks * this.wingspeed * 0.11f)) * (float)Math.PI * 0.03f;
     }
 
     @Override

@@ -10,6 +10,11 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Mob;
 
 public class ButterflyModel<T extends Mob> extends EntityModel<T> {
+    /**
+     * Animation frequency constant; orig ModelButterfly.java:23,28 (wingspeed).
+     * Per-entity values from orig ClientProxyOreSpawn.java:405-411 — Butterfly 1.0f, LunaMoth 0.75f, Mothra 0.2f.
+     */
+    private final float wingspeed;
     private final ModelPart body;
     private final ModelPart leftwing;
     private final ModelPart rightwing;
@@ -21,7 +26,8 @@ public class ButterflyModel<T extends Mob> extends EntityModel<T> {
     private final ModelPart leftwing4;
     private final ModelPart rightwing4;
 
-    public ButterflyModel(ModelPart root) {
+    public ButterflyModel(ModelPart root, float wingspeed) {
+        this.wingspeed = wingspeed;
         this.body = root.getChild("body");
         this.leftwing = root.getChild("leftwing");
         this.rightwing = root.getChild("rightwing");
@@ -93,7 +99,7 @@ public class ButterflyModel<T extends Mob> extends EntityModel<T> {
 
     @Override
     public void setupAnim(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
-        this.rightwing2.zRot = this.rightwing.zRot = Mth.cos((float)(ageInTicks * 1.3f * limbSwingAmount)) * (float)Math.PI * 0.25f;
+        this.rightwing2.zRot = this.rightwing.zRot = Mth.cos((float)(ageInTicks * 1.3f * this.wingspeed)) * (float)Math.PI * 0.25f;
         this.rightwing3.zRot = this.rightwing.zRot;
         this.rightwing4.zRot = this.rightwing.zRot;
         this.leftwing.zRot = -this.rightwing.zRot;

@@ -10,6 +10,8 @@ import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.util.Mth;
 
 public class HerculesBeetleModel extends EntityModel<EntityHerculesBeetle> {
+    /** Animation frequency constant; orig ModelHerculesBeetle.java:14,54 (wingspeed), value from orig ClientProxyOreSpawn.java:489. */
+    private final float wingspeed = 1.0f;
     private final ModelPart body1;
     private final ModelPart body2;
     private final ModelPart head1;
@@ -283,14 +285,14 @@ public class HerculesBeetleModel extends EntityModel<EntityHerculesBeetle> {
     @Override
     public void setupAnim(EntityHerculesBeetle entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
         float newangle = 0.0f;
-        newangle = Mth.cos((float)(ageInTicks * limbSwingAmount * 0.45f)) * (float)Math.PI * 0.12f * limbSwingAmount;
+        newangle = Mth.cos((float)(ageInTicks * this.wingspeed * 0.45f)) * (float)Math.PI * 0.12f * limbSwingAmount;
         this.lfleg3.yRot = this.lfleg2.yRot = (this.lfleg1.yRot = 0.349f + newangle);
         this.lmleg3.yRot = this.lmleg2.yRot = (this.lmleg1.yRot = -newangle);
         this.lrleg3.yRot = this.lrleg2.yRot = (this.lrleg1.yRot = -0.349f + newangle);
         this.rfleg3.yRot = this.rfleg2.yRot = (this.rfleg1.yRot = -0.349f + newangle);
         this.rmleg3.yRot = this.rmleg2.yRot = (this.rmleg1.yRot = -newangle);
         this.rrleg3.yRot = this.rrleg2.yRot = (this.rrleg1.yRot = 0.349f + newangle);
-        newangle = entity.getAttacking() == 0 ? Mth.cos((float)(ageInTicks * 0.051f * limbSwingAmount)) * (float)Math.PI * 0.01f : Mth.cos((float)(ageInTicks * 0.51f * limbSwingAmount)) * (float)Math.PI * 0.07f;
+        newangle = entity.getAttacking() == 0 ? Mth.cos((float)(ageInTicks * 0.051f * this.wingspeed)) * (float)Math.PI * 0.01f : Mth.cos((float)(ageInTicks * 0.51f * this.wingspeed)) * (float)Math.PI * 0.07f;
         this.jaw1.xRot = 0.122f + newangle;
         this.jaw2.xRot = 0.122f + newangle;
         this.jaw3.xRot = 0.0f + newangle;

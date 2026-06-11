@@ -10,7 +10,8 @@ import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.util.Mth;
 
 public class ModelThePrinceAdult extends EntityModel<ThePrinceAdult> {
-    private final float wingspeed = 1.0F;
+    /** Animation frequency constant; orig ModelThePrinceAdult.java:15,137 (wingspeed), value from orig ClientProxyOreSpawn.java:513. */
+    private final float wingspeed = 0.65F;
 
     private final ModelPart LCClaw1;
     private final ModelPart LThigh;

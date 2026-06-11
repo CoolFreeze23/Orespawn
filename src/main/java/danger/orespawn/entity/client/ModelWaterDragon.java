@@ -10,6 +10,8 @@ import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.util.Mth;
 
 public class ModelWaterDragon extends EntityModel<WaterDragon> {
+    /** Animation frequency constant; orig ModelWaterDragon.java:14,41 (wingspeed), value from orig ClientProxyOreSpawn.java:436. */
+    private final float wingspeed = 0.5f;
     private final ModelPart Head;
     private final ModelPart neck1;
     private final ModelPart body1;
@@ -171,17 +173,17 @@ public class ModelWaterDragon extends EntityModel<WaterDragon> {
         float pi4 = 0.7853982f;
         float root13 = (float)Math.sqrt(13.0);
         float root20 = (float)Math.sqrt(20.0);
-        newangle = (double)limbSwingAmount > 0.1 ? Mth.cos((float)(ageInTicks * 1.3f * limbSwingAmount)) * (float)Math.PI * 0.2f * limbSwingAmount : 0.0f;
-        this.body3.yRot = Mth.cos((float)(ageInTicks * 1.3f * limbSwingAmount)) * (float)Math.PI * 0.4f * limbSwingAmount;
+        newangle = (double)limbSwingAmount > 0.1 ? Mth.cos((float)(ageInTicks * 1.3f * this.wingspeed)) * (float)Math.PI * 0.2f * limbSwingAmount : 0.0f;
+        this.body3.yRot = Mth.cos((float)(ageInTicks * 1.3f * this.wingspeed)) * (float)Math.PI * 0.4f * limbSwingAmount;
         this.body4.z = this.body3.z + (float)Math.cos(this.body3.yRot) * 7.0f;
         this.body4.x = this.body3.x - 1.0f + (float)Math.sin(this.body3.yRot) * 7.0f;
-        this.body4.yRot = Mth.cos((float)(ageInTicks * 1.3f * limbSwingAmount - pi4)) * (float)Math.PI * 0.4f * limbSwingAmount;
+        this.body4.yRot = Mth.cos((float)(ageInTicks * 1.3f * this.wingspeed - pi4)) * (float)Math.PI * 0.4f * limbSwingAmount;
         this.tail1.z = this.body4.z + (float)Math.cos(this.body4.yRot) * 5.0f;
         this.tail1.x = this.body4.x + (float)Math.sin(this.body4.yRot) * 5.0f;
-        this.tail1.yRot = Mth.cos((float)(ageInTicks * 1.3f * limbSwingAmount - 2.0f * pi4)) * (float)Math.PI * 0.4f * limbSwingAmount;
+        this.tail1.yRot = Mth.cos((float)(ageInTicks * 1.3f * this.wingspeed - 2.0f * pi4)) * (float)Math.PI * 0.4f * limbSwingAmount;
         this.tailmiddle.z = this.tail1.z + (float)Math.cos(this.tail1.yRot) * 3.0f;
         this.tailmiddle.x = this.tail1.x + (float)Math.sin(this.tail1.yRot) * 3.0f;
-        this.tailtop.yRot = this.tailmiddle.yRot = Mth.cos((float)(ageInTicks * 1.3f * limbSwingAmount - 3.0f * pi4)) * (float)Math.PI * 0.4f * limbSwingAmount;
+        this.tailtop.yRot = this.tailmiddle.yRot = Mth.cos((float)(ageInTicks * 1.3f * this.wingspeed - 3.0f * pi4)) * (float)Math.PI * 0.4f * limbSwingAmount;
         this.tailtop.z = this.tailmiddle.z;
         this.tailtop.x = this.tailmiddle.x;
         this.tailbottom.yRot = this.tailmiddle.yRot;
@@ -191,25 +193,25 @@ public class ModelWaterDragon extends EntityModel<WaterDragon> {
         this.Leg2.yRot = -0.58f + newangle;
         this.Leg7.yRot = -0.58f - newangle;
         this.Leg1.yRot = 0.58f - newangle;
-        newangle = Mth.cos((float)(ageInTicks * 0.8f * limbSwingAmount)) * (float)Math.PI * 0.1f;
+        newangle = Mth.cos((float)(ageInTicks * 0.8f * this.wingspeed)) * (float)Math.PI * 0.1f;
         this.leftear.yRot = 0.62f + newangle;
         this.rightear.yRot = -0.62f - newangle;
-        newangle = Mth.cos((float)(ageInTicks * 0.7f * limbSwingAmount)) * (float)Math.PI * 0.02f;
+        newangle = Mth.cos((float)(ageInTicks * 0.7f * this.wingspeed)) * (float)Math.PI * 0.02f;
         if (entity.isInSittingPose()) {
         newangle = 0.0f;
         }
         this.Bodyfin.zRot = newangle;
-        newangle = Mth.cos((float)(ageInTicks * 0.6f * limbSwingAmount)) * (float)Math.PI * 0.1f;
+        newangle = Mth.cos((float)(ageInTicks * 0.6f * this.wingspeed)) * (float)Math.PI * 0.1f;
         if (entity.isInSittingPose()) {
         newangle = 0.0f;
         }
         this.neackfin.yRot = newangle;
-        newangle = Mth.cos((float)(ageInTicks * 0.5f * limbSwingAmount)) * (float)Math.PI * 0.05f;
+        newangle = Mth.cos((float)(ageInTicks * 0.5f * this.wingspeed)) * (float)Math.PI * 0.05f;
         if (entity.isInSittingPose()) {
         newangle = 0.0f;
         }
         this.headfin.yRot = newangle;
-        this.jaw.xRot = entity.getAttacking() == 1 ? (newangle = Mth.cos((float)(ageInTicks * 1.2f * limbSwingAmount)) * (float)Math.PI * 0.25f) : (entity.getAttacking() == 2 ? 0.45f : -0.25f);
+        this.jaw.xRot = entity.getAttacking() == 1 ? (newangle = Mth.cos((float)(ageInTicks * 1.2f * this.wingspeed)) * (float)Math.PI * 0.25f) : (entity.getAttacking() == 2 ? 0.45f : -0.25f);
         this.Head.yRot = newangle = (float)Math.toRadians(netHeadYaw) * 0.75f;
         this.nose.yRot = newangle;
         this.nose.z = this.Head.z - (float)Math.cos(this.Head.yRot) * 8.0f;

@@ -13,7 +13,8 @@ import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.minecraft.util.Mth;
 
 public class ModelCryolophosaurus extends EntityModel<Cryolophosaurus> {
-    private float wingspeed = 1.0f;
+    /** Animation frequency constant; orig ModelCryolophosaurus.java:13,38 (wingspeed), value from orig ClientProxyOreSpawn.java:419. */
+    private final float wingspeed = 0.75f;
     private final ModelPart body;
     private final ModelPart neck;
     private final ModelPart head;

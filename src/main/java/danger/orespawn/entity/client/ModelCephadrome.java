@@ -13,7 +13,8 @@ import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.minecraft.util.Mth;
 
 public class ModelCephadrome extends EntityModel<Cephadrome> {
-    private final float wingspeed = 1.0f;
+    /** Animation frequency constant; orig ModelCephadrome.java:15,68 (wingspeed), value from orig ClientProxyOreSpawn.java:446. */
+    private final float wingspeed = 0.55f;
     private final ModelPart leftfoot;
     private final ModelPart butt;
     private final ModelPart rightfoot;

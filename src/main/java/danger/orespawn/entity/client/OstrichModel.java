@@ -10,6 +10,8 @@ import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.util.Mth;
 
 public class OstrichModel extends EntityModel<Ostrich> {
+    /** Animation frequency constant; orig ModelOstrich.java:16,57 (wingspeed), value from orig ClientProxyOreSpawn.java:450. */
+    private final float wingspeed = 0.65f;
     private int ri1, ri2;
     private float rf1;
     private final ModelPart Body1;
@@ -297,7 +299,7 @@ public class OstrichModel extends EntityModel<Ostrich> {
         float lspeed = 0.0f;
         lspeed = (float)((entity.xOld - entity.getX()) * (entity.xOld - entity.getX()) + (entity.zOld - entity.getZ()) * (entity.zOld - entity.getZ()));
         lspeed = (float)Math.sqrt(lspeed);
-        newangle = Mth.cos((float)(ageInTicks * 1.25f * limbSwingAmount)) * (float)Math.PI * lspeed * 0.4f;
+        newangle = Mth.cos((float)(ageInTicks * 1.25f * this.wingspeed)) * (float)Math.PI * lspeed * 0.4f;
         if ((double)newangle > 0.5) {
         newangle = 0.75f;
         }
@@ -362,8 +364,8 @@ public class OstrichModel extends EntityModel<Ostrich> {
         this.mouth1.yRot = this.Head1.yRot;
         this.Hat1.yRot = this.Head1.yRot;
         this.Hat2.yRot = this.Head1.yRot;
-        newangle = Mth.cos((float)(ageInTicks * 1.0f * limbSwingAmount)) * (float)Math.PI * 0.15f;
-        nextangle = Mth.cos((float)((ageInTicks + 0.3f) * 1.0f * limbSwingAmount)) * (float)Math.PI * 0.15f;
+        newangle = Mth.cos((float)(ageInTicks * 1.0f * this.wingspeed)) * (float)Math.PI * 0.15f;
+        nextangle = Mth.cos((float)((ageInTicks + 0.3f) * 1.0f * this.wingspeed)) * (float)Math.PI * 0.15f;
         if (nextangle > 0.0f && newangle < 0.0f) {
         ri1 = 0;
         if (entity.getRandom().nextInt(3) == 1) {

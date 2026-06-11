@@ -10,6 +10,8 @@ import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.util.Mth;
 
 public class TriffidModel extends EntityModel<EntityTriffid> {
+    /** Animation frequency constant; orig ModelTriffid.java:15,196 (wingspeed), value from orig ClientProxyOreSpawn.java:459. */
+    private final float wingspeed = 1.0f;
     private final ModelPart r9;
     private final ModelPart b14;
     private final ModelPart base;
@@ -1271,7 +1273,7 @@ public class TriffidModel extends EntityModel<EntityTriffid> {
     public void setupAnim(EntityTriffid entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
         float newangle = 0.0f;
         float delta = 0.0f;
-        newangle = entity.getOpenClosed() == 0 ? 0.122522116f : Mth.cos((float)(ageInTicks * 0.25f * limbSwingAmount)) * (float)Math.PI * 0.039f;
+        newangle = entity.getOpenClosed() == 0 ? 0.122522116f : Mth.cos((float)(ageInTicks * 0.25f * this.wingspeed)) * (float)Math.PI * 0.039f;
         this.l1.zRot = -0.95f + newangle;
         this.l1.y = (float)(10.0 - Math.cos(this.l1.zRot) * 5.0) + 3.0f;
         this.l1.x = (float)(-7.0 + Math.sin(this.l1.zRot) * 5.0) + 3.0f;
@@ -1339,7 +1341,7 @@ public class TriffidModel extends EntityModel<EntityTriffid> {
         this.leafpartD(newangle, this.l55, this.l56, 2);
         this.leafpartD(newangle, this.l56, this.l57, 2);
         if (entity.getAttacking() != 0) {
-        newangle = Mth.cos((float)(ageInTicks * 0.25f * limbSwingAmount)) * (float)Math.PI * 0.5f;
+        newangle = Mth.cos((float)(ageInTicks * 0.25f * this.wingspeed)) * (float)Math.PI * 0.5f;
         newangle = Math.abs(newangle);
         } else {
         newangle = 1.5707964f;

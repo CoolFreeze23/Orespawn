@@ -10,6 +10,8 @@ import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.util.Mth;
 
 public class BrutalflyModel extends EntityModel<EntityBrutalfly> {
+    /** Animation frequency constant; orig ModelBrutalfly.java:27,32 (wingspeed), value from orig ClientProxyOreSpawn.java:507. */
+    private final float wingspeed = 0.2f;
     private final ModelPart body;
     private final ModelPart leftwing;
     private final ModelPart rightwing;
@@ -121,7 +123,7 @@ public class BrutalflyModel extends EntityModel<EntityBrutalfly> {
 
     @Override
     public void setupAnim(EntityBrutalfly entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
-        this.rightwing2.zRot = this.rightwing.zRot = Mth.cos((float)(ageInTicks * 1.3f * limbSwingAmount)) * (float)Math.PI * 0.25f;
+        this.rightwing2.zRot = this.rightwing.zRot = Mth.cos((float)(ageInTicks * 1.3f * this.wingspeed)) * (float)Math.PI * 0.25f;
         this.rightwing3.zRot = this.rightwing.zRot;
         this.rightwing4.zRot = this.rightwing.zRot;
         this.rightwing5.zRot = this.rightwing.zRot;

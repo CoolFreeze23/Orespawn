@@ -10,6 +10,8 @@ import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.util.Mth;
 
 public class MantisModel extends EntityModel<EntityMantis> {
+    /** Animation frequency constant; orig ModelMantis.java:14,53 (wingspeed), value from orig ClientProxyOreSpawn.java:488. */
+    private final float wingspeed = 2.0f;
     private final ModelPart lfleg1;
     private final ModelPart lfleg2;
     private final ModelPart lfleg3;
@@ -277,17 +279,17 @@ public class MantisModel extends EntityModel<EntityMantis> {
     public void setupAnim(EntityMantis entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
         float a1;
         float newangle = 0.0f;
-        newangle = Mth.cos((float)(ageInTicks * 0.9f * limbSwingAmount)) * (float)Math.PI * 0.25f;
+        newangle = Mth.cos((float)(ageInTicks * 0.9f * this.wingspeed)) * (float)Math.PI * 0.25f;
         this.lfwing.zRot = -0.698f - newangle;
         this.rfwing.zRot = 0.698f + newangle;
-        newangle = Mth.cos((float)(ageInTicks * 0.9f * limbSwingAmount)) * (float)Math.PI * 0.35f;
+        newangle = Mth.cos((float)(ageInTicks * 0.9f * this.wingspeed)) * (float)Math.PI * 0.35f;
         this.lrwing.zRot = -0.349f + newangle;
         this.rrwing.zRot = 0.349f - newangle;
         if (entity.getAttacking() == 0) {
-        newangle = Mth.cos((float)(ageInTicks * 0.051f * limbSwingAmount)) * (float)Math.PI * 0.013f;
+        newangle = Mth.cos((float)(ageInTicks * 0.051f * this.wingspeed)) * (float)Math.PI * 0.013f;
         a1 = -0.2f;
         } else {
-        newangle = Mth.cos((float)(ageInTicks * 0.51f * limbSwingAmount)) * (float)Math.PI * 0.25f;
+        newangle = Mth.cos((float)(ageInTicks * 0.51f * this.wingspeed)) * (float)Math.PI * 0.25f;
         a1 = -0.698f;
         }
         this.larm1.xRot = a1 + newangle;

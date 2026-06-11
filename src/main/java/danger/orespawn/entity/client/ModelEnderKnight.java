@@ -10,6 +10,8 @@ import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.util.Mth;
 
 public class ModelEnderKnight extends EntityModel<EnderKnight> {
+    /** Animation frequency constant; orig ModelEnderKnight.java:54,57 (wingspeed), value from orig ClientProxyOreSpawn.java:473. */
+    private final float wingspeed = 0.21f;
     private final ModelPart rleg1;
     private final ModelPart rleg3;
     private final ModelPart pelvis;
@@ -264,7 +266,7 @@ public class ModelEnderKnight extends EntityModel<EnderKnight> {
     @Override
     public void setupAnim(EnderKnight entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
         float newangle = 0.0f;
-        newangle = (double)limbSwingAmount > 0.1 ? Mth.cos((float)(ageInTicks * 1.3f * limbSwingAmount)) * (float)Math.PI * 0.25f * limbSwingAmount : 0.0f;
+        newangle = (double)limbSwingAmount > 0.1 ? Mth.cos((float)(ageInTicks * 1.3f * this.wingspeed)) * (float)Math.PI * 0.25f * limbSwingAmount : 0.0f;
         this.lfoot1.xRot = newangle;
         this.lfoot2.xRot = 0.6f + newangle;
         this.lfoot3.xRot = newangle;
@@ -280,7 +282,7 @@ public class ModelEnderKnight extends EntityModel<EnderKnight> {
         this.rleg2.xRot = -0.1f - newangle;
         this.rleg3.xRot = -0.1f - newangle;
         this.cape2.zRot = newangle / 4.0f;
-        this.cape2.xRot = newangle = Mth.cos((float)(ageInTicks * 0.7f * limbSwingAmount)) * (float)Math.PI * 0.02f;
+        this.cape2.xRot = newangle = Mth.cos((float)(ageInTicks * 0.7f * this.wingspeed)) * (float)Math.PI * 0.02f;
         this.head.yRot = (float)Math.toRadians(netHeadYaw) * 0.45f;
         if (this.head.yRot > 0.45f) {
         this.head.yRot = 0.45f;
@@ -288,7 +290,7 @@ public class ModelEnderKnight extends EntityModel<EnderKnight> {
         if (this.head.yRot < -0.45f) {
         this.head.yRot = -0.45f;
         }
-        newangle = Mth.cos((float)(ageInTicks * 2.7f * limbSwingAmount)) * (float)Math.PI * 0.3f;
+        newangle = Mth.cos((float)(ageInTicks * 2.7f * this.wingspeed)) * (float)Math.PI * 0.3f;
         if (entity.isScreaming()) {
         this.larm2.xRot = -1.2f + newangle;
         this.larm3.xRot = -1.2f + newangle;

@@ -10,6 +10,8 @@ import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.util.Mth;
 
 public class BeeModel extends EntityModel<EntityBee> {
+    /** Animation frequency constant; orig ModelBee.java:14,40 (wingspeed), value from orig ClientProxyOreSpawn.java:425. */
+    private final float wingspeed = 2.0f;
     private final ModelPart Sting;
     private final ModelPart Abdomnem1;
     private final ModelPart Abdomnem2;
@@ -185,33 +187,33 @@ public class BeeModel extends EntityModel<EntityBee> {
     @Override
     public void setupAnim(EntityBee entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
         float newangle = 0.0f;
-        newangle = Mth.cos((float)(ageInTicks * 1.1f * limbSwingAmount)) * (float)Math.PI * 0.3f;
+        newangle = Mth.cos((float)(ageInTicks * 1.1f * this.wingspeed)) * (float)Math.PI * 0.3f;
         this.WingLeft.zRot = -1.745f - newangle;
         this.WingRight.zRot = 1.754f + newangle;
-        newangle = Mth.cos((float)(ageInTicks * 0.3f * limbSwingAmount)) * (float)Math.PI * 0.1f;
+        newangle = Mth.cos((float)(ageInTicks * 0.3f * this.wingspeed)) * (float)Math.PI * 0.1f;
         this.LeftPincerMain.yRot = -0.274f + newangle;
         this.LeftPincerExtra.yRot = -0.274f + newangle;
         this.RightPincerMain.yRot = 0.274f - newangle;
         this.RightPincerExtra.yRot = 0.274f - newangle;
-        newangle = Mth.cos((float)(ageInTicks * 0.21f * limbSwingAmount)) * (float)Math.PI * 0.06f;
+        newangle = Mth.cos((float)(ageInTicks * 0.21f * this.wingspeed)) * (float)Math.PI * 0.06f;
         this.LA1.xRot = 0.261f + newangle;
         this.LA2.xRot = 0.436f + newangle;
         this.LA3.xRot = 0.611f + newangle;
         this.LeftPom.xRot = newangle;
-        newangle = Mth.cos((float)(ageInTicks * 0.27f * limbSwingAmount)) * (float)Math.PI * 0.06f;
+        newangle = Mth.cos((float)(ageInTicks * 0.27f * this.wingspeed)) * (float)Math.PI * 0.06f;
         this.RA1.xRot = 0.261f + newangle;
         this.RA2.xRot = 0.436f + newangle;
         this.RA3.xRot = 0.611f + newangle;
         this.RightPom.xRot = newangle;
-        this.LA1.zRot = newangle = Mth.cos((float)(ageInTicks * 0.31f * limbSwingAmount)) * (float)Math.PI * 0.06f;
+        this.LA1.zRot = newangle = Mth.cos((float)(ageInTicks * 0.31f * this.wingspeed)) * (float)Math.PI * 0.06f;
         this.LA2.zRot = newangle;
         this.LA3.zRot = newangle;
         this.LeftPom.zRot = newangle;
-        this.RA1.zRot = newangle = Mth.cos((float)(ageInTicks * 0.37f * limbSwingAmount)) * (float)Math.PI * 0.06f;
+        this.RA1.zRot = newangle = Mth.cos((float)(ageInTicks * 0.37f * this.wingspeed)) * (float)Math.PI * 0.06f;
         this.RA2.zRot = newangle;
         this.RA3.zRot = newangle;
         this.RightPom.zRot = newangle;
-        newangle = entity.getAttacking() == 0 ? Mth.cos((float)(ageInTicks * 0.021f * limbSwingAmount)) * (float)Math.PI * 0.023f : Mth.cos((float)(ageInTicks * 0.11f * limbSwingAmount)) * (float)Math.PI * 0.055f;
+        newangle = entity.getAttacking() == 0 ? Mth.cos((float)(ageInTicks * 0.021f * this.wingspeed)) * (float)Math.PI * 0.023f : Mth.cos((float)(ageInTicks * 0.11f * this.wingspeed)) * (float)Math.PI * 0.055f;
         this.Abdomnem5.xRot = 1.099f + newangle;
         this.Abdomnem4.xRot = this.Abdomnem5.xRot + newangle - 0.35f;
         this.Abdomnem4.y = (float)((double)this.Abdomnem5.y + Math.cos(this.Abdomnem5.xRot) * 10.0);

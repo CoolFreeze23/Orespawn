@@ -10,6 +10,8 @@ import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.util.Mth;
 
 public class ModelEasterBunny extends EntityModel<EasterBunny> {
+    /** Animation frequency constant; orig ModelEasterBunny.java:14,30 (wingspeed), value from orig ClientProxyOreSpawn.java:498. */
+    private final float wingspeed = 0.55f;
     private final ModelPart body;
     private final ModelPart tail;
     private final ModelPart lfoot;
@@ -104,11 +106,11 @@ public class ModelEasterBunny extends EntityModel<EasterBunny> {
         float newangle = 0.0f;
         float newangle2 = 0.0f;
         if ((double)limbSwingAmount > 0.1) {
-        newangle = Mth.cos((float)(ageInTicks * 2.6f * limbSwingAmount)) * (float)Math.PI * 0.15f * limbSwingAmount;
-        newangle2 = Mth.cos((float)(ageInTicks * 1.3f * limbSwingAmount)) * (float)Math.PI * 0.1f * limbSwingAmount;
+        newangle = Mth.cos((float)(ageInTicks * 2.6f * this.wingspeed)) * (float)Math.PI * 0.15f * limbSwingAmount;
+        newangle2 = Mth.cos((float)(ageInTicks * 1.3f * this.wingspeed)) * (float)Math.PI * 0.1f * limbSwingAmount;
         } else {
         newangle = 0.0f;
-        newangle2 = Mth.cos((float)(ageInTicks * 1.3f * limbSwingAmount)) * (float)Math.PI * 0.01f;
+        newangle2 = Mth.cos((float)(ageInTicks * 1.3f * this.wingspeed)) * (float)Math.PI * 0.01f;
         }
         this.lleg.xRot = this.lfoot.xRot = newangle;
         this.rleg.xRot = this.rfoot.xRot = -newangle;
