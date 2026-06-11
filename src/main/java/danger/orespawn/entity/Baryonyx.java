@@ -22,7 +22,6 @@ import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -165,14 +164,8 @@ public class Baryonyx extends Animal {
         }
     }
 
-    @Override
-    protected void dropCustomDeathLoot(ServerLevel level, DamageSource source, boolean recentlyHit) {
-        super.dropCustomDeathLoot(level, source, recentlyHit);
-        int count = this.random.nextInt(5) + 2;
-        for (int i = 0; i < count; i++) {
-            this.spawnAtLocation(new ItemStack(Items.BEEF, 1));
-        }
-    }
+    // Death drops are fully data-driven via loot_table/entities/baryonyx.json
+    // (orig Baryonyx.java:113-120: 2-6 raw beef).
 
     @Override
     public boolean isFood(ItemStack stack) {

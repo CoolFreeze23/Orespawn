@@ -1,10 +1,14 @@
 package danger.orespawn.entity;
 
+import danger.orespawn.MobStats;
+
+import danger.orespawn.ModEntities;
 import danger.orespawn.OreSpawnMod;
 import java.util.Comparator;
 import java.util.List;
 import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
@@ -17,7 +21,6 @@ import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
@@ -38,10 +41,13 @@ public class EntityBrutalfly extends Monster {
     }
 
     public static AttributeSupplier.Builder createAttributes() {
+        // orig OreSpawnMain.java:6470 — Brutalfly 110 HP / 10 ATK / 6 armor;
+        // speed 0.35 matches orig Brutalfly.java:51.
         return Monster.createMonsterAttributes()
-                .add(Attributes.MAX_HEALTH, 500.0)
+                .add(Attributes.MAX_HEALTH, MobStats.BRUTALFLY.maxHealth())
                 .add(Attributes.MOVEMENT_SPEED, 0.35)
-                .add(Attributes.ATTACK_DAMAGE, 18.0);
+                .add(Attributes.ATTACK_DAMAGE, MobStats.BRUTALFLY.attackDamage())
+                .add(Attributes.ARMOR, MobStats.BRUTALFLY.armor());
     }
 
     @Override
@@ -193,11 +199,31 @@ public class EntityBrutalfly extends Monster {
         return ret;
     }
 
+    // Item drops are data-driven via loot_table/entities/brutalfly.json
+    // (orig Brutalfly.java:339-353: 53 gold nuggets). Non-item death
+    // behavior (explosion puffs + 20 Butterflies) stays in code below.
     @Override
-    protected void dropCustomDeathLoot(ServerLevel level, DamageSource source, boolean recentlyHit) {
-        super.dropCustomDeathLoot(level, source, recentlyHit);
-        for (int i = 0; i < 53; i++) {
-            this.spawnAtLocation(Items.SPIDER_EYE);
+    public void die(DamageSource source) {
+        super.die(source);
+        // orig Brutalfly.java:341-352 — 20 "largeexplode" particles and
+        // 20 Butterflies released on death.
+        if (this.level() instanceof ServerLevel serverLevel) {
+            for (int i = 0; i < 20; ++i) {
+                double ox = (this.random.nextFloat() - 0.5f) * 8.0f;
+                double oy = (this.random.nextFloat() - 0.5f) * 4.0f;
+                double oz = (this.random.nextFloat() - 0.5f) * 8.0f;
+                serverLevel.sendParticles(ParticleTypes.EXPLOSION,
+                        this.getX() + ox, this.getY() + 2.0 + oy, this.getZ() + oz,
+                        1, 0.0, 0.0, 0.0, 0.0);
+            }
+            for (int i = 0; i < 20; ++i) {
+                EntityButterfly butterfly = ModEntities.ENTITY_BUTTERFLY.get().create(serverLevel);
+                if (butterfly != null) {
+                    butterfly.moveTo(this.getX() + 0.5, this.getY() + 1.0, this.getZ() + 0.5,
+                            this.random.nextFloat() * 360.0f, 0.0f);
+                    serverLevel.addFreshEntity(butterfly);
+                }
+            }
         }
     }
 

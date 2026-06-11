@@ -1,5 +1,7 @@
 package danger.orespawn.entity;
 
+import danger.orespawn.MobStats;
+
 import danger.orespawn.ModEntities;
 import danger.orespawn.ModItems;
 import danger.orespawn.OreSpawnMod;
@@ -53,10 +55,8 @@ public class WaterDragon extends TamableAnimal {
     private static final EntityDataAccessor<Integer> DATA_ATTACKING =
             SynchedEntityData.defineId(WaterDragon.class, EntityDataSerializers.INT);
 
-    private static final int MAX_HEALTH = 200;
     private static final double MOVE_SPEED_IN_WATER = 0.55;
     private static final double MOVE_SPEED_OUT_OF_WATER = 0.25;
-    private static final double ATTACK_DAMAGE = 20.0;
 
     private int hurtTimer = 0;
     private int closestWaterDistance = 99999;
@@ -93,10 +93,12 @@ public class WaterDragon extends TamableAnimal {
     }
 
     public static AttributeSupplier.Builder createAttributes() {
+        // orig OreSpawnMain.java:6492 — WaterDragon 150 HP / 20 ATK / 8 armor
         return Mob.createMobAttributes()
-                .add(Attributes.MAX_HEALTH, MAX_HEALTH)
+                .add(Attributes.MAX_HEALTH, MobStats.WATER_DRAGON.maxHealth())
                 .add(Attributes.MOVEMENT_SPEED, MOVE_SPEED_IN_WATER)
-                .add(Attributes.ATTACK_DAMAGE, ATTACK_DAMAGE)
+                .add(Attributes.ATTACK_DAMAGE, MobStats.WATER_DRAGON.attackDamage())
+                .add(Attributes.ARMOR, MobStats.WATER_DRAGON.armor())
                 .add(Attributes.FOLLOW_RANGE, 32.0);
     }
 
@@ -166,7 +168,7 @@ public class WaterDragon extends TamableAnimal {
                     if (this.random.nextInt(3) == 0) {
                         this.tame(player);
                         this.level().broadcastEntityEvent(this, (byte) 7);
-                        this.heal(MAX_HEALTH - this.getHealth());
+                        this.heal(this.getMaxHealth() - this.getHealth());
                     } else {
                         this.level().broadcastEntityEvent(this, (byte) 6);
                     }
@@ -175,7 +177,7 @@ public class WaterDragon extends TamableAnimal {
                 if (!this.level().isClientSide) {
                     this.level().broadcastEntityEvent(this, (byte) 7);
                 }
-                this.heal(MAX_HEALTH - this.getHealth());
+                this.heal(this.getMaxHealth() - this.getHealth());
             }
             if (!player.getAbilities().instabuild) stack.shrink(1);
             return InteractionResult.sidedSuccess(this.level().isClientSide);
@@ -212,7 +214,8 @@ public class WaterDragon extends TamableAnimal {
 
     @Override
     public boolean doHurtTarget(Entity target) {
-        boolean hit = target.hurt(this.damageSources().mobAttack(this), (float) ATTACK_DAMAGE);
+        boolean hit = target.hurt(this.damageSources().mobAttack(this),
+                (float) this.getAttributeValue(Attributes.ATTACK_DAMAGE));
         if (hit && target instanceof LivingEntity) {
             double knockbackStrength = 1.1;
             double upwardKnockback = 0.14;
@@ -274,7 +277,7 @@ public class WaterDragon extends TamableAnimal {
             }
         }
 
-        if (this.random.nextInt(100) == 1 && this.isInWater() && this.getHealth() < MAX_HEALTH) {
+        if (this.random.nextInt(100) == 1 && this.isInWater() && this.getHealth() < this.getMaxHealth()) {
             this.playSound(SoundEvents.GENERIC_SPLASH, 1.5f, this.random.nextFloat() * 0.2f + 0.9f);
             this.heal(1.0f);
         }
@@ -306,13 +309,9 @@ public class WaterDragon extends TamableAnimal {
         return 0;
     }
 
-    @Override
-    protected void dropCustomDeathLoot(ServerLevel level, DamageSource source, boolean recentlyHit) {
-        this.spawnAtLocation(Items.HEART_OF_THE_SEA);
-        int fishCount = 9 + this.random.nextInt(6);
-        for (int i = 0; i < fishCount; ++i) this.spawnAtLocation(Items.COD);
-        if (this.random.nextInt(3) == 0) this.spawnAtLocation(Items.DIAMOND);
-    }
+    // Death drops are fully data-driven via loot_table/entities/water_dragon.json
+    // (orig WaterDragon.java:278-445: scale, painting, 9-14 raw fish,
+    // one d20 roll of the Ultimate/Iron gear table).
 
     @Nullable
     @Override

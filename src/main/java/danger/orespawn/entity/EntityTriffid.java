@@ -1,5 +1,7 @@
 package danger.orespawn.entity;
 
+import danger.orespawn.MobStats;
+
 import danger.orespawn.OreSpawnMod;
 import java.util.Comparator;
 import java.util.List;
@@ -8,7 +10,6 @@ import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
@@ -22,7 +23,6 @@ import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 
@@ -50,10 +50,12 @@ public class EntityTriffid extends Monster {
     }
 
     public static AttributeSupplier.Builder createAttributes() {
+        // orig OreSpawnMain.java:6502 — Triffid 100 HP / 20 ATK / 12 armor
         return Mob.createMobAttributes()
-                .add(Attributes.MAX_HEALTH, 100.0)
+                .add(Attributes.MAX_HEALTH, MobStats.TRIFFID.maxHealth())
                 .add(Attributes.MOVEMENT_SPEED, 0.13)
-                .add(Attributes.ATTACK_DAMAGE, 8.0);
+                .add(Attributes.ATTACK_DAMAGE, MobStats.TRIFFID.attackDamage())
+                .add(Attributes.ARMOR, MobStats.TRIFFID.armor());
     }
 
     @Override
@@ -224,13 +226,8 @@ public class EntityTriffid extends Monster {
         }
     }
 
-    @Override
-    protected void dropCustomDeathLoot(ServerLevel level, DamageSource source, boolean recentlyHit) {
-        super.dropCustomDeathLoot(level, source, recentlyHit);
-        if (this.random.nextInt(3) == 0) {
-            this.spawnAtLocation(Items.POISONOUS_POTATO);
-        }
-    }
+    // Death drops are fully data-driven via loot_table/entities/triffid.json
+    // (orig Triffid.java:204-210: 4-9 green goo, painting).
 
     @Nullable
     private LivingEntity findSomethingToAttack() {

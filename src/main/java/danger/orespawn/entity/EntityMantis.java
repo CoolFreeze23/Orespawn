@@ -1,5 +1,7 @@
 package danger.orespawn.entity;
 
+import danger.orespawn.MobStats;
+
 import danger.orespawn.OreSpawnMod;
 import java.util.Comparator;
 import java.util.List;
@@ -21,7 +23,6 @@ import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
@@ -56,10 +57,13 @@ public class EntityMantis extends Monster {
     }
 
     public static AttributeSupplier.Builder createAttributes() {
+        // orig OreSpawnMain.java:6467 — Mantis 120 HP / 16 ATK / 10 armor;
+        // speed 0.32 hardcoded in orig Mantis.java:68.
         return Monster.createMonsterAttributes()
-                .add(Attributes.MAX_HEALTH, 100.0)
+                .add(Attributes.MAX_HEALTH, MobStats.MANTIS.maxHealth())
                 .add(Attributes.MOVEMENT_SPEED, 0.32)
-                .add(Attributes.ATTACK_DAMAGE, 12.0);
+                .add(Attributes.ATTACK_DAMAGE, MobStats.MANTIS.attackDamage())
+                .add(Attributes.ARMOR, MobStats.MANTIS.armor());
     }
 
     @Override
@@ -211,19 +215,9 @@ public class EntityMantis extends Monster {
         return ret;
     }
 
-    @Override
-    protected void dropCustomDeathLoot(ServerLevel level, DamageSource source, boolean recentlyHit) {
-        super.dropCustomDeathLoot(level, source, recentlyHit);
-        this.spawnAtLocation(Items.NAME_TAG);
-        int count = 2 + this.random.nextInt(10);
-        for (int i = 0; i < count; i++) {
-            this.spawnAtLocation(Items.SPIDER_EYE);
-        }
-        count = 2 + this.random.nextInt(3);
-        for (int i = 0; i < count; i++) {
-            this.spawnAtLocation(Items.GOLD_INGOT);
-        }
-    }
+    // Death drops are fully data-driven via loot_table/entities/mantis.json
+    // (orig Mantis.java:129-150: 2 mantis claws, painting, 2-11 gold nugget,
+    // 1-3 uranium nugget, 1-3 titanium nugget, 2-4 diamond).
 
     @Nullable
     private LivingEntity findSomethingToAttack() {

@@ -1,5 +1,7 @@
 package danger.orespawn.entity;
 
+import danger.orespawn.MobStats;
+
 import danger.orespawn.OreSpawnMod;
 import java.util.Comparator;
 import java.util.List;
@@ -23,8 +25,6 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.npc.Villager;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
@@ -48,10 +48,12 @@ public class EntityBee extends Monster {
     }
 
     public static AttributeSupplier.Builder createAttributes() {
+        // orig OreSpawnMain.java:6466 — Bee 80 HP / 12 ATK / 5 armor
         return Monster.createMonsterAttributes()
-                .add(Attributes.MAX_HEALTH, 30.0)
+                .add(Attributes.MAX_HEALTH, MobStats.BEE.maxHealth())
                 .add(Attributes.MOVEMENT_SPEED, 0.32)
-                .add(Attributes.ATTACK_DAMAGE, 6.0);
+                .add(Attributes.ATTACK_DAMAGE, MobStats.BEE.attackDamage())
+                .add(Attributes.ARMOR, MobStats.BEE.armor());
     }
 
     @Override
@@ -206,18 +208,8 @@ public class EntityBee extends Monster {
         return ret;
     }
 
-    @Override
-    protected void dropCustomDeathLoot(ServerLevel level, DamageSource source, boolean recentlyHit) {
-        super.dropCustomDeathLoot(level, source, recentlyHit);
-        int count = 2 + this.random.nextInt(10);
-        for (int i = 0; i < count; i++) {
-            this.spawnAtLocation(Items.SPIDER_EYE);
-        }
-        count = 2 + this.random.nextInt(10);
-        for (int i = 0; i < count; i++) {
-            this.spawnAtLocation(new ItemStack(Blocks.RED_MUSHROOM));
-        }
-    }
+    // Death drops are fully data-driven via loot_table/entities/bee.json
+    // (orig Bee.java:117-135: 2-11 each of gold nugget, butter candy, dandelion, sugar).
 
     @Nullable
     private LivingEntity findSomethingToAttack() {

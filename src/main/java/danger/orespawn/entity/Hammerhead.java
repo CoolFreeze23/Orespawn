@@ -1,13 +1,13 @@
 package danger.orespawn.entity;
 
-import danger.orespawn.ModItems;
+import danger.orespawn.MobStats;
+
 import danger.orespawn.OreSpawnMod;
 import javax.annotation.Nullable;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
@@ -23,7 +23,6 @@ import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.server.level.ServerBossEvent;
@@ -35,9 +34,7 @@ public class Hammerhead extends Monster {
     private static final EntityDataAccessor<Integer> DATA_ATTACKING =
             SynchedEntityData.defineId(Hammerhead.class, EntityDataSerializers.INT);
 
-    private static final int MAX_HEALTH = 200;
     private static final double MOVE_SPEED = 0.35;
-    private static final double ATTACK_DAMAGE = 20.0;
 
     private final ServerBossEvent bossEvent = new ServerBossEvent(
             Component.literal("Hammerhead"), BossEvent.BossBarColor.YELLOW, BossEvent.BossBarOverlay.PROGRESS);
@@ -59,10 +56,13 @@ public class Hammerhead extends Monster {
     }
 
     public static AttributeSupplier.Builder createAttributes() {
+        // orig OreSpawnMain.java:6477 — Hammerhead 240 HP / 75 ATK / 20 armor;
+        // speed 0.35 matches orig Hammerhead.java:39.
         return Monster.createMonsterAttributes()
-                .add(Attributes.MAX_HEALTH, MAX_HEALTH)
+                .add(Attributes.MAX_HEALTH, MobStats.HAMMERHEAD.maxHealth())
                 .add(Attributes.MOVEMENT_SPEED, MOVE_SPEED)
-                .add(Attributes.ATTACK_DAMAGE, ATTACK_DAMAGE);
+                .add(Attributes.ATTACK_DAMAGE, MobStats.HAMMERHEAD.attackDamage())
+                .add(Attributes.ARMOR, MobStats.HAMMERHEAD.armor());
     }
 
     @Override
@@ -158,11 +158,10 @@ public class Hammerhead extends Monster {
         }
     }
 
-    @Override
-    protected void dropCustomDeathLoot(ServerLevel level, DamageSource source, boolean recentlyHit) {
-        for (int i = 0; i < 8; ++i) this.spawnAtLocation(Items.EXPERIENCE_BOTTLE);
-        for (int i = 0; i < 6; ++i) this.spawnAtLocation(Items.BONE);
-    }
+    // Death drops are fully data-driven via loot_table/entities/hammerhead.json
+    // (orig Hammerhead.java:126-149: 8 xp bottle, 10 experience catcher,
+    // 16 creeper launcher, 4 creeper repellent, 6 raw beef, 2 experience
+    // tree seed; the 1/3 "MyHammy" drop is a MISSING-ITEM in the port).
 
     @Nullable
     @Override

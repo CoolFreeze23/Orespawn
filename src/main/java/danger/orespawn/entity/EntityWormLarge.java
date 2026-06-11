@@ -1,5 +1,7 @@
 package danger.orespawn.entity;
 
+import danger.orespawn.MobStats;
+
 import danger.orespawn.ModEntities;
 import danger.orespawn.OreSpawnMod;
 import javax.annotation.Nullable;
@@ -21,7 +23,6 @@ import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
@@ -44,10 +45,12 @@ public class EntityWormLarge extends Monster {
     }
 
     public static AttributeSupplier.Builder createAttributes() {
+        // orig OreSpawnMain.java:6506 — WormLarge 90 HP / 18 ATK / 14 armor
         return Mob.createMobAttributes()
-                .add(Attributes.MAX_HEALTH, 100.0)
+                .add(Attributes.MAX_HEALTH, MobStats.WORM_LARGE.maxHealth())
                 .add(Attributes.MOVEMENT_SPEED, 0.2)
-                .add(Attributes.ATTACK_DAMAGE, 15.0);
+                .add(Attributes.ATTACK_DAMAGE, MobStats.WORM_LARGE.attackDamage())
+                .add(Attributes.ARMOR, MobStats.WORM_LARGE.armor());
     }
 
     @Override
@@ -207,21 +210,7 @@ public class EntityWormLarge extends Monster {
         this.wormsSpawned = tag.getInt("wormsSpawned");
     }
 
-    @Override
-    protected void dropCustomDeathLoot(ServerLevel level, DamageSource source, boolean recentlyHit) {
-        super.dropCustomDeathLoot(level, source, recentlyHit);
-        this.spawnAtLocation(Items.NETHER_STAR);
-        for (int i = 0; i < 6; i++) {
-            this.spawnAtLocation(Items.ROTTEN_FLESH);
-        }
-        for (int i = 0; i < 6; i++) {
-            this.spawnAtLocation(Items.STRING);
-        }
-        for (int i = 0; i < 16; i++) {
-            this.spawnAtLocation(Items.SPIDER_EYE);
-        }
-        for (int i = 0; i < 5; i++) {
-            this.spawnAtLocation(Items.DIAMOND);
-        }
-    }
+    // Death drops are fully data-driven via loot_table/entities/worm_large.json
+    // (orig WormLarge.java:352-377: worm tooth, painting, 6 rotten flesh, 6 leather,
+    // 8 dirt, 16 gold nugget, 5 diamond, 4 uranium nugget, 4 titanium nugget).
 }

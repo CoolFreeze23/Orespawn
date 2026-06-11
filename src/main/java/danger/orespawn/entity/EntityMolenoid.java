@@ -1,5 +1,7 @@
 package danger.orespawn.entity;
 
+import danger.orespawn.MobStats;
+
 import java.util.Comparator;
 import java.util.List;
 
@@ -22,8 +24,6 @@ import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.GameRules;
@@ -32,7 +32,6 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
-import danger.orespawn.ModItems;
 import danger.orespawn.OreSpawnMod;
 
 public class EntityMolenoid extends Monster {
@@ -60,10 +59,13 @@ public class EntityMolenoid extends Monster {
     }
 
     public static AttributeSupplier.Builder createAttributes() {
+        // orig OreSpawnMain.java:6478 — Molenoid 200 HP / 18 ATK / 12 armor;
+        // speed 0.35 matches orig Molenoid.java:39.
         return Mob.createMobAttributes()
-                .add(Attributes.MAX_HEALTH, 100.0)
+                .add(Attributes.MAX_HEALTH, MobStats.MOLENOID.maxHealth())
                 .add(Attributes.MOVEMENT_SPEED, 0.35)
-                .add(Attributes.ATTACK_DAMAGE, 10.0)
+                .add(Attributes.ATTACK_DAMAGE, MobStats.MOLENOID.attackDamage())
+                .add(Attributes.ARMOR, MobStats.MOLENOID.armor())
                 .add(Attributes.FOLLOW_RANGE, 16.0);
     }
 
@@ -205,18 +207,8 @@ public class EntityMolenoid extends Monster {
         return null;
     }
 
-    @Override
-    protected void dropCustomDeathLoot(ServerLevel level, DamageSource source, boolean recentlyHit) {
-        super.dropCustomDeathLoot(level, source, recentlyHit);
-        this.spawnAtLocation(new ItemStack(ModItems.MOLENOID_NOSE.get(), 1));
-        this.spawnAtLocation(new ItemStack(Items.NAME_TAG, 1));
-        for (int i = 0; i < 10; i++) {
-            this.spawnAtLocation(new ItemStack(Items.LEATHER, 1));
-        }
-        for (int i = 0; i < 6; i++) {
-            this.spawnAtLocation(new ItemStack(Items.BONE, 1));
-        }
-    }
+    // Death drops are fully data-driven via loot_table/entities/molenoid.json
+    // (orig Molenoid.java:125-135: molenoid nose, painting, 10 gold nugget, 6 raw beef).
 
     @Nullable
     @Override

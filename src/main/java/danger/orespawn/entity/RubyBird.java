@@ -1,9 +1,7 @@
 package danger.orespawn.entity;
 
 import danger.orespawn.ModEntities;
-import danger.orespawn.ModItems;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
@@ -19,18 +17,13 @@ public class RubyBird extends Cockateil {
     }
 
     public static AttributeSupplier.Builder createAttributes() {
-        return Cockateil.createAttributes()
-                .add(Attributes.MAX_HEALTH, 12.0)
-                .add(Attributes.MOVEMENT_SPEED, 0.25);
+        // orig RubyBird.java defines no attribute overrides — it inherits
+        // Cockateil's stats (HP 2 / speed 0.33 / ATK 1, orig Cockateil.java:51-54,128).
+        return Cockateil.createAttributes();
     }
 
-    @Override
-    protected void dropCustomDeathLoot(ServerLevel level, DamageSource source, boolean recentlyHit) {
-        super.dropCustomDeathLoot(level, source, recentlyHit);
-        if (this.random.nextInt(3) == 0) {
-            this.spawnAtLocation(ModItems.RUBY.get());
-        }
-    }
+    // Death drops are fully data-driven via loot_table/entities/ruby_bird.json
+    // (orig Cockateil.java:242-248: 0-2 of ruby [1/3, killed by player] or feather).
 
     @Nullable
     @Override

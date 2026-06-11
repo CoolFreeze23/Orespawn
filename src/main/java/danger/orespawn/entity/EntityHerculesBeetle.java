@@ -1,5 +1,7 @@
 package danger.orespawn.entity;
 
+import danger.orespawn.MobStats;
+
 import danger.orespawn.OreSpawnMod;
 import danger.orespawn.entity.ai.BugMeleeAttackGoal;
 import javax.annotation.Nullable;
@@ -23,7 +25,6 @@ import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 
@@ -51,10 +52,12 @@ public class EntityHerculesBeetle extends Monster {
     }
 
     public static AttributeSupplier.Builder createAttributes() {
+        // orig OreSpawnMain.java:6468 — HerculesBeetle 250 HP / 30 ATK / 19 armor
         return Monster.createMonsterAttributes()
-                .add(Attributes.MAX_HEALTH, 200.0)
+                .add(Attributes.MAX_HEALTH, MobStats.HERCULES_BEETLE.maxHealth())
                 .add(Attributes.MOVEMENT_SPEED, 0.25)
-                .add(Attributes.ATTACK_DAMAGE, 15.0)
+                .add(Attributes.ATTACK_DAMAGE, MobStats.HERCULES_BEETLE.attackDamage())
+                .add(Attributes.ARMOR, MobStats.HERCULES_BEETLE.armor())
                 .add(Attributes.FOLLOW_RANGE, 24.0);
     }
 
@@ -145,13 +148,7 @@ public class EntityHerculesBeetle extends Monster {
         }
     }
 
-    @Override
-    protected void dropCustomDeathLoot(ServerLevel level, DamageSource source, boolean recentlyHit) {
-        super.dropCustomDeathLoot(level, source, recentlyHit);
-        this.spawnAtLocation(Items.NAME_TAG);
-        int count = 4 + this.random.nextInt(8);
-        for (int i = 0; i < count; i++) {
-            this.spawnAtLocation(Items.BONE);
-        }
-    }
+    // Death drops are fully data-driven via loot_table/entities/hercules_beetle.json
+    // (orig HerculesBeetle.java:141-301: big hammer, painting, 4-11 raw beef,
+    // 1-5 rolls of the d20 Diamond gear table).
 }

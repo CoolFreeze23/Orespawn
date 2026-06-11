@@ -1,15 +1,14 @@
 package danger.orespawn.entity;
 
+import danger.orespawn.MobStats;
+
 import java.util.Comparator;
 import java.util.List;
-import danger.orespawn.ModItems;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
@@ -24,13 +23,8 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.animal.Squid;
-import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.item.enchantment.Enchantment;
-import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
@@ -74,13 +68,15 @@ public class Kraken extends Monster {
     }
 
     public static AttributeSupplier.Builder createAttributes() {
+        // orig OreSpawnMain.java:6515 — Kraken 1000 HP / 40 ATK / 10 armor;
+        // speed 0.37 hardcoded in orig Kraken.java:90.
         return Monster.createMonsterAttributes()
-                .add(Attributes.MAX_HEALTH, 3000.0)
-                .add(Attributes.MOVEMENT_SPEED, 0.5)
-                .add(Attributes.ATTACK_DAMAGE, 80.0)
+                .add(Attributes.MAX_HEALTH, MobStats.KRAKEN.maxHealth())
+                .add(Attributes.MOVEMENT_SPEED, 0.37)
+                .add(Attributes.ATTACK_DAMAGE, MobStats.KRAKEN.attackDamage())
                 .add(Attributes.FOLLOW_RANGE, 64.0)
                 .add(Attributes.KNOCKBACK_RESISTANCE, 1.0)
-                .add(Attributes.ARMOR, 8.0);
+                .add(Attributes.ARMOR, MobStats.KRAKEN.armor());
     }
 
     @Override
@@ -296,8 +292,21 @@ public class Kraken extends Monster {
                 this.caught.setDeltaMovement(
                         this.caught.getDeltaMovement().add(0, 0.25, 0));
             }
-            this.caught.setPos(this.getX(), this.getY() - 15.0, this.getZ());
-            this.caught.setYRot(this.getYRot());
+            // The grab holds the victim 15 blocks below the Kraken (original behavior).
+            // Players are client-authoritative: raw setPos/setDeltaMovement on a
+            // ServerPlayer desyncs the client and triggers "moved wrongly" kicks
+            // (BUG-011), so players are moved via the connection teleport and their
+            // forced motion is flagged for sync with hurtMarked.
+            double grabX = this.getX();
+            double grabY = this.getY() - 15.0;
+            double grabZ = this.getZ();
+            if (this.caught instanceof ServerPlayer caughtPlayer) {
+                caughtPlayer.connection.teleport(grabX, grabY, grabZ, this.getYRot(), caughtPlayer.getXRot());
+                caughtPlayer.hurtMarked = true;
+            } else {
+                this.caught.setPos(grabX, grabY, grabZ);
+                this.caught.setYRot(this.getYRot());
+            }
 
             if (this.getRandom().nextInt(50) == 1) {
                 this.doHurtTarget(this.caught);
@@ -467,139 +476,10 @@ public class Kraken extends Monster {
         this.longEnough = tag.getInt("LongEnough");
     }
 
-    private void enchantItem(ItemStack stack, ResourceKey<Enchantment> key, int enchLevel) {
-        this.level().registryAccess()
-                .lookup(Registries.ENCHANTMENT)
-                .flatMap(reg -> reg.get(key))
-                .ifPresent(holder -> stack.enchant(holder, enchLevel));
-    }
-
-    private ItemStack dropItemRand(ItemStack stack) {
-        double ox = this.getX() + this.getRandom().nextInt(8) - this.getRandom().nextInt(8);
-        double oy = this.getY() + 1.0;
-        double oz = this.getZ() + this.getRandom().nextInt(8) - this.getRandom().nextInt(8);
-        ItemEntity itemEntity = new ItemEntity(this.level(), ox, oy, oz, stack);
-        this.level().addFreshEntity(itemEntity);
-        return stack;
-    }
-
-    private void enchantSword(ItemStack is) {
-        if (this.getRandom().nextInt(6) == 1) enchantItem(is, Enchantments.SHARPNESS, 1 + this.getRandom().nextInt(5));
-        if (this.getRandom().nextInt(6) == 1) enchantItem(is, Enchantments.SMITE, 1 + this.getRandom().nextInt(5));
-        if (this.getRandom().nextInt(6) == 1) enchantItem(is, Enchantments.BANE_OF_ARTHROPODS, 1 + this.getRandom().nextInt(5));
-        if (this.getRandom().nextInt(6) == 1) enchantItem(is, Enchantments.KNOCKBACK, 1 + this.getRandom().nextInt(5));
-        if (this.getRandom().nextInt(2) == 1) enchantItem(is, Enchantments.UNBREAKING, 2 + this.getRandom().nextInt(4));
-        if (this.getRandom().nextInt(6) == 1) enchantItem(is, Enchantments.FIRE_ASPECT, 1 + this.getRandom().nextInt(5));
-        if (this.getRandom().nextInt(6) == 1) enchantItem(is, Enchantments.SHARPNESS, 1 + this.getRandom().nextInt(5));
-    }
-
-    private void enchantTool(ItemStack is) {
-        if (this.getRandom().nextInt(2) == 1) enchantItem(is, Enchantments.UNBREAKING, 2 + this.getRandom().nextInt(4));
-        if (this.getRandom().nextInt(6) == 1) enchantItem(is, Enchantments.EFFICIENCY, 1 + this.getRandom().nextInt(5));
-    }
-
-    private void enchantToolSilk(ItemStack is) {
-        enchantTool(is);
-        if (this.getRandom().nextInt(6) == 1) enchantItem(is, Enchantments.SILK_TOUCH, 1 + this.getRandom().nextInt(5));
-    }
-
-    private void enchantHelmet(ItemStack is) {
-        if (this.getRandom().nextInt(6) == 1) enchantItem(is, Enchantments.PROTECTION, 1 + this.getRandom().nextInt(5));
-        if (this.getRandom().nextInt(6) == 1) enchantItem(is, Enchantments.PROJECTILE_PROTECTION, 1 + this.getRandom().nextInt(5));
-        if (this.getRandom().nextInt(6) == 1) enchantItem(is, Enchantments.FIRE_PROTECTION, 1 + this.getRandom().nextInt(5));
-        if (this.getRandom().nextInt(6) == 1) enchantItem(is, Enchantments.BLAST_PROTECTION, 1 + this.getRandom().nextInt(5));
-        if (this.getRandom().nextInt(2) == 1) enchantItem(is, Enchantments.UNBREAKING, 2 + this.getRandom().nextInt(4));
-        if (this.getRandom().nextInt(6) == 1) enchantItem(is, Enchantments.RESPIRATION, 1 + this.getRandom().nextInt(2));
-        if (this.getRandom().nextInt(6) == 1) enchantItem(is, Enchantments.AQUA_AFFINITY, 1 + this.getRandom().nextInt(5));
-    }
-
-    private void enchantArmor(ItemStack is) {
-        if (this.getRandom().nextInt(6) == 1) enchantItem(is, Enchantments.PROTECTION, 1 + this.getRandom().nextInt(5));
-        if (this.getRandom().nextInt(6) == 1) enchantItem(is, Enchantments.PROJECTILE_PROTECTION, 1 + this.getRandom().nextInt(5));
-        if (this.getRandom().nextInt(6) == 1) enchantItem(is, Enchantments.FIRE_PROTECTION, 1 + this.getRandom().nextInt(5));
-        if (this.getRandom().nextInt(6) == 1) enchantItem(is, Enchantments.BLAST_PROTECTION, 1 + this.getRandom().nextInt(5));
-        if (this.getRandom().nextInt(2) == 1) enchantItem(is, Enchantments.UNBREAKING, 2 + this.getRandom().nextInt(4));
-    }
-
-    private void enchantBoots(ItemStack is) {
-        if (this.getRandom().nextInt(6) == 1) enchantItem(is, Enchantments.FEATHER_FALLING, 5 + this.getRandom().nextInt(5));
-        if (this.getRandom().nextInt(2) == 1) enchantItem(is, Enchantments.UNBREAKING, 2 + this.getRandom().nextInt(4));
-    }
-
-    @Override
-    protected void dropCustomDeathLoot(ServerLevel level, DamageSource source, boolean recentlyHit) {
-        super.dropCustomDeathLoot(level, source, recentlyHit);
-
-        dropItemRand(new ItemStack(ModItems.KRAKEN_TOOTH.get(), 1));
-        dropItemRand(new ItemStack(Items.GOLDEN_APPLE, 1));
-
-        int fishCount = 120 + this.getRandom().nextInt(160);
-        for (int i = 0; i < fishCount; i++) {
-            dropItemRand(new ItemStack(Items.COOKED_COD, 1));
-        }
-
-        int bonusCount = 5 + this.getRandom().nextInt(10);
-        for (int i = 0; i < bonusCount; i++) {
-            int roll = this.getRandom().nextInt(53);
-            ItemStack is;
-            switch (roll) {
-                case 0 -> dropItemRand(new ItemStack(ModItems.ULTIMATE_SWORD.get()));
-                case 1 -> dropItemRand(new ItemStack(Items.DIAMOND));
-                case 2 -> dropItemRand(new ItemStack(Items.EMERALD_BLOCK));
-                case 3 -> enchantSword(dropItemRand(new ItemStack(Items.DIAMOND_SWORD)));
-                case 4 -> enchantTool(dropItemRand(new ItemStack(Items.DIAMOND_SHOVEL)));
-                case 5 -> enchantToolSilk(dropItemRand(new ItemStack(Items.DIAMOND_PICKAXE)));
-                case 6 -> enchantTool(dropItemRand(new ItemStack(Items.DIAMOND_AXE)));
-                case 7 -> enchantTool(dropItemRand(new ItemStack(Items.DIAMOND_HOE)));
-                case 8 -> enchantHelmet(dropItemRand(new ItemStack(Items.DIAMOND_HELMET)));
-                case 9 -> enchantArmor(dropItemRand(new ItemStack(Items.DIAMOND_CHESTPLATE)));
-                case 10 -> enchantArmor(dropItemRand(new ItemStack(Items.DIAMOND_LEGGINGS)));
-                case 11 -> enchantBoots(dropItemRand(new ItemStack(Items.DIAMOND_BOOTS)));
-                case 12 -> dropItemRand(new ItemStack(ModItems.ULTIMATE_BOW.get()));
-                case 13 -> dropItemRand(new ItemStack(ModItems.ULTIMATE_AXE.get()));
-                case 14 -> dropItemRand(new ItemStack(Items.GOLD_INGOT));
-                case 15 -> dropItemRand(new ItemStack(ModItems.ULTIMATE_PICKAXE.get()));
-                case 16 -> enchantSword(dropItemRand(new ItemStack(Items.IRON_SWORD)));
-                case 17 -> enchantTool(dropItemRand(new ItemStack(Items.IRON_SHOVEL)));
-                case 18 -> enchantToolSilk(dropItemRand(new ItemStack(Items.IRON_PICKAXE)));
-                case 19 -> enchantTool(dropItemRand(new ItemStack(Items.IRON_AXE)));
-                case 20 -> enchantTool(dropItemRand(new ItemStack(Items.IRON_HOE)));
-                case 21 -> enchantHelmet(dropItemRand(new ItemStack(Items.IRON_HELMET)));
-                case 22 -> enchantArmor(dropItemRand(new ItemStack(Items.IRON_CHESTPLATE)));
-                case 23 -> enchantArmor(dropItemRand(new ItemStack(Items.IRON_LEGGINGS)));
-                case 24 -> enchantBoots(dropItemRand(new ItemStack(Items.IRON_BOOTS)));
-                case 25 -> dropItemRand(new ItemStack(ModItems.ULTIMATE_SHOVEL.get()));
-                case 26 -> dropItemRand(new ItemStack(Items.GOLD_BLOCK));
-                case 27 -> dropItemRand(new ItemStack(Items.NAME_TAG));
-                case 28 -> dropItemRand(new ItemStack(Items.IRON_INGOT));
-                case 29 -> dropItemRand(new ItemStack(Items.SADDLE));
-                case 30 -> enchantSword(dropItemRand(new ItemStack(Items.GOLDEN_SWORD)));
-                case 31 -> enchantTool(dropItemRand(new ItemStack(Items.GOLDEN_SHOVEL)));
-                case 32 -> enchantToolSilk(dropItemRand(new ItemStack(Items.GOLDEN_PICKAXE)));
-                case 33 -> enchantTool(dropItemRand(new ItemStack(Items.GOLDEN_AXE)));
-                case 34 -> enchantTool(dropItemRand(new ItemStack(Items.GOLDEN_HOE)));
-                case 35 -> enchantHelmet(dropItemRand(new ItemStack(Items.CHAINMAIL_HELMET)));
-                case 36 -> enchantArmor(dropItemRand(new ItemStack(Items.CHAINMAIL_CHESTPLATE)));
-                case 37 -> enchantArmor(dropItemRand(new ItemStack(Items.CHAINMAIL_LEGGINGS)));
-                case 38 -> enchantBoots(dropItemRand(new ItemStack(Items.CHAINMAIL_BOOTS)));
-                case 39 -> dropItemRand(new ItemStack(Items.GOLDEN_APPLE));
-                case 40 -> dropItemRand(new ItemStack(Items.DIAMOND_BLOCK));
-                case 41 -> dropItemRand(new ItemStack(Items.ENCHANTED_GOLDEN_APPLE));
-                case 42 -> enchantSword(dropItemRand(new ItemStack(ModItems.EXPERIENCE_SWORD.get())));
-                case 43 -> enchantHelmet(dropItemRand(new ItemStack(ModItems.EXPERIENCE_HELMET.get())));
-                case 44 -> enchantArmor(dropItemRand(new ItemStack(ModItems.EXPERIENCE_CHESTPLATE.get())));
-                case 45 -> enchantArmor(dropItemRand(new ItemStack(ModItems.EXPERIENCE_LEGGINGS.get())));
-                case 46 -> enchantBoots(dropItemRand(new ItemStack(ModItems.EXPERIENCE_BOOTS.get())));
-                case 47 -> enchantSword(dropItemRand(new ItemStack(ModItems.AMETHYST_SWORD.get())));
-                case 48 -> enchantTool(dropItemRand(new ItemStack(ModItems.AMETHYST_SHOVEL.get())));
-                case 49 -> enchantToolSilk(dropItemRand(new ItemStack(ModItems.AMETHYST_PICKAXE.get())));
-                case 50 -> enchantTool(dropItemRand(new ItemStack(ModItems.AMETHYST_AXE.get())));
-                case 51 -> enchantTool(dropItemRand(new ItemStack(ModItems.AMETHYST_HOE.get())));
-                case 52 -> dropItemRand(new ItemStack(ModItems.BLOCK_AMETHYST_ITEM.get()));
-                default -> dropItemRand(new ItemStack(Items.DIAMOND));
-            }
-        }
-    }
+    // Death drops are fully data-driven via loot_table/entities/kraken.json
+    // (orig Kraken.java:236-871: kraken tooth, painting, 120-279 ink sac,
+    // 5-14 rolls of the d53 Ultimate/Diamond/Iron/Gold/Experience/Amethyst
+    // gear table).
 
     private boolean isSuitableTarget(LivingEntity target) {
         if (target == null || target == this || !target.isAlive()) return false;

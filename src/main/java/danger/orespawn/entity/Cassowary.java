@@ -20,7 +20,6 @@ import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import danger.orespawn.OreSpawnMod;
 import danger.orespawn.ModItems;
@@ -88,14 +87,8 @@ public class Cassowary extends Animal {
         return 0.4f;
     }
 
-    @Override
-    protected void dropCustomDeathLoot(ServerLevel level, DamageSource source, boolean recentlyHit) {
-        super.dropCustomDeathLoot(level, source, recentlyHit);
-        int count = this.random.nextInt(3) + 2;
-        for (int i = 0; i < count; i++) {
-            this.spawnAtLocation(new ItemStack(Items.FEATHER, 1));
-        }
-    }
+    // Death drops are fully data-driven via loot_table/entities/cassowary.json
+    // (orig Cassowary.java:97-104: 2-4 raw chicken).
 
     @Override
     public boolean isFood(ItemStack stack) {

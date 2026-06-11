@@ -1,10 +1,11 @@
 package danger.orespawn.entity;
 
+import danger.orespawn.MobStats;
+
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
@@ -19,8 +20,6 @@ import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import danger.orespawn.OreSpawnMod;
 import danger.orespawn.entity.ai.DinosaurMeleeAttackGoal;
@@ -49,10 +48,13 @@ public class Nastysaurus extends Monster {
     }
 
     public static AttributeSupplier.Builder createAttributes() {
+        // orig OreSpawnMain.java:6471 — Nastysaurus 200 HP / 32 ATK / 17 armor;
+        // speed 0.35 matches orig Nastysaurus.java:42.
         return Monster.createMonsterAttributes()
-                .add(Attributes.MAX_HEALTH, 100.0)
+                .add(Attributes.MAX_HEALTH, MobStats.NASTYSAURUS.maxHealth())
                 .add(Attributes.MOVEMENT_SPEED, 0.35)
-                .add(Attributes.ATTACK_DAMAGE, 25.0)
+                .add(Attributes.ATTACK_DAMAGE, MobStats.NASTYSAURUS.attackDamage())
+                .add(Attributes.ARMOR, MobStats.NASTYSAURUS.armor())
                 .add(Attributes.FOLLOW_RANGE, 40.0);
     }
 
@@ -130,20 +132,6 @@ public class Nastysaurus extends Monster {
         this.entityData.set(DATA_ATTACKING, (int) (byte) value);
     }
 
-    @Override
-    protected void dropCustomDeathLoot(ServerLevel level, DamageSource source, boolean recentlyHit) {
-        super.dropCustomDeathLoot(level, source, recentlyHit);
-        for (int i = 0; i < 10; i++) {
-            this.spawnAtLocation(new ItemStack(Items.GOLD_INGOT, 1));
-        }
-        for (int i = 0; i < 10; i++) {
-            this.spawnAtLocation(new ItemStack(Items.EMERALD, 1));
-        }
-        for (int i = 0; i < 10; i++) {
-            this.spawnAtLocation(new ItemStack(Items.DIAMOND, 1));
-        }
-        for (int i = 0; i < 10; i++) {
-            this.spawnAtLocation(new ItemStack(Items.IRON_INGOT, 1));
-        }
-    }
+    // Death drops are fully data-driven via loot_table/entities/nastysaurus.json
+    // (orig Nastysaurus.java:156-170: 10 iron ingot, 10 rotten flesh, 10 leather, 10 string).
 }
