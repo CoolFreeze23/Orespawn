@@ -15,10 +15,14 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.Pose;
+import danger.orespawn.OreSpawnConfig;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
@@ -38,10 +42,9 @@ public class EntityCaterKiller extends Monster {
             SynchedEntityData.defineId(EntityCaterKiller.class, EntityDataSerializers.INT);
 
     /**
-     * Despawn timer — matches the 1.7.10 behavior where a Cater Killer that
-     * sits below max health for 2400 ticks (2 minutes) despawns itself. This
-     * prevents world-save bloat from half-damaged cater killers that escaped
-     * combat.
+     * Metamorphosis timer — orig CaterKiller.java:438-448: after 2400 ticks
+     * below max health the Cater Killer transforms, spawning a Brutalfly and
+     * 10 Butterflies with an explosion sound, then removes itself.
      */
     private int damagedDespawnTicker = 0;
 
@@ -54,18 +57,18 @@ public class EntityCaterKiller extends Monster {
     private int cobwebCooldown = 0;
     private static final int COBWEB_INTERVAL_TICKS = 40;
 
-    /**
-     * Tree-eating regen throttle. The reference mob would munch leaves /
-     * logs adjacent to itself for steady out-of-combat healing. The check
-     * runs at most once per second to keep it cheap; the actual heal value
-     * (5 HP per leaf, 10 HP per log) matches the 1.7.10 numbers.
-     */
-    private int treeEatCooldown = 0;
-    private static final int TREE_EAT_INTERVAL_TICKS = 20;
 
     public EntityCaterKiller(EntityType<? extends EntityCaterKiller> type, Level level) {
         super(type, level);
         this.xpReward = 200;
+    }
+
+    @Override
+    public EntityDimensions getDefaultDimensions(Pose pose) {
+        // orig CaterKiller.java:54-58 — half size when PlayNicely is on.
+        return OreSpawnConfig.PLAY_NICELY.get()
+                ? EntityDimensions.scalable(1.45f, 2.3f)
+                : EntityDimensions.scalable(2.9f, 4.6f);
     }
 
     @Override
@@ -161,22 +164,36 @@ public class EntityCaterKiller extends Monster {
         if (this.isRemoved()) return;
         super.customServerAiStep();
 
+        // orig CaterKiller.java:438-448 — timed metamorphosis: while damaged,
+        // count up; past 2400 ticks spawn 1 Brutalfly + 10 Butterflies with an
+        // explosion sound and remove self (NO loot — this is not a death).
+        // Note: the orig ticker never resets when healed (quirk kept).
         if (this.getHealth() + 1.0f < this.getMaxHealth()) {
             ++this.damagedDespawnTicker;
             if (this.damagedDespawnTicker > 2400) {
+                if (this.level() instanceof ServerLevel serverLevel) {
+                    EntityBrutalfly fly = ModEntities.ENTITY_BRUTALFLY.get().create(serverLevel);
+                    if (fly != null) {
+                        fly.moveTo(this.getX(), this.getY() + 4.0, this.getZ(),
+                                this.random.nextFloat() * 360.0f, 0.0f);
+                        serverLevel.addFreshEntity(fly);
+                    }
+                    this.playSound(SoundEvents.GENERIC_EXPLODE.value(), 1.0f,
+                            this.random.nextFloat() * 0.2f + 0.9f);
+                    for (int i = 0; i < 10; i++) {
+                        EntityButterfly bf = ModEntities.ENTITY_BUTTERFLY.get().create(serverLevel);
+                        if (bf == null) continue;
+                        bf.moveTo(this.getX(), this.getY() + 1.0 + this.random.nextInt(4), this.getZ(),
+                                this.random.nextFloat() * 360.0f, 0.0f);
+                        serverLevel.addFreshEntity(bf);
+                    }
+                }
                 this.discard();
                 return;
             }
-        } else {
-            this.damagedDespawnTicker = 0;
-        }
-
-        if (this.random.nextInt(150) == 1 && this.getHealth() < this.getMaxHealth()) {
-            this.heal(2.0f);
         }
 
         if (this.cobwebCooldown > 0) --this.cobwebCooldown;
-        if (this.treeEatCooldown > 0) --this.treeEatCooldown;
 
         LivingEntity target = this.getTarget();
         if (target instanceof Player chased && this.cobwebCooldown == 0
@@ -186,12 +203,58 @@ public class EntityCaterKiller extends Monster {
             this.cobwebCooldown = COBWEB_INTERVAL_TICKS;
         }
 
-        if (target == null && this.treeEatCooldown == 0
-                && this.getHealth() < this.getMaxHealth()
-                && this.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)) {
-            tryEatNearbyTreeBlock();
-            this.treeEatCooldown = TREE_EAT_INTERVAL_TICKS;
+        // orig CaterKiller.java:502-530 — tree-eat heal: triggers 1-in-8 while
+        // damaged or 1-in-30 otherwise, gated on PlayNicely==0; nearest tree
+        // block within 12 blocks; eaten at distSq<81 for a flat 2.0 heal.
+        boolean eatRoll = (this.random.nextInt(8) == 0 && this.getHealth() < this.getMaxHealth())
+                || this.random.nextInt(30) == 0;
+        if (eatRoll && !OreSpawnConfig.PLAY_NICELY.get()) {
+            BlockPos food = findNearestTreeBlock();
+            if (food != null) {
+                if (target == null) {
+                    this.getNavigation().moveTo(food.getX(), food.getY(), food.getZ(), 1.0);
+                }
+                if (food.distSqr(this.blockPosition().above()) < 81.0) {
+                    if (this.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)) {
+                        this.level().setBlock(food, Blocks.AIR.defaultBlockState(), 2);
+                    }
+                    this.heal(2.0f);
+                    if (this.random.nextInt(20) == 1) {
+                        this.playSound(SoundEvents.PLAYER_BURP, 1.0f,
+                                this.random.nextFloat() * 0.2f + 0.9f);
+                    }
+                }
+            }
         }
+    }
+
+    /**
+     * orig CaterKiller.java:380-427 {@code scan_it} — nearest leaf/vine/log
+     * block in an expanding box capped at 12 horizontally / 9 vertically
+     * around the head (y+1). Flat nearest-block scan over the same volume.
+     */
+    @Nullable
+    private BlockPos findNearestTreeBlock() {
+        BlockPos origin = this.blockPosition().above();
+        BlockPos best = null;
+        int bestDistSq = Integer.MAX_VALUE;
+        BlockPos.MutableBlockPos cursor = new BlockPos.MutableBlockPos();
+        for (int dx = -12; dx <= 12; ++dx) {
+            for (int dy = -9; dy <= 9; ++dy) {
+                for (int dz = -12; dz <= 12; ++dz) {
+                    int distSq = dx * dx + dy * dy + dz * dz;
+                    if (distSq >= bestDistSq) continue;
+                    cursor.setWithOffset(origin, dx, dy, dz);
+                    BlockState state = this.level().getBlockState(cursor);
+                    if (state.is(BlockTags.LEAVES) || state.is(BlockTags.LOGS)
+                            || state.is(Blocks.VINE)) {
+                        bestDistSq = distSq;
+                        best = cursor.immutable();
+                    }
+                }
+            }
+        }
+        return best;
     }
 
     /**
@@ -209,39 +272,6 @@ public class EntityCaterKiller extends Monster {
         BlockState floorState = server.getBlockState(floor);
         if (floorState.isAir() || !floorState.getFluidState().isEmpty()) return;
         server.setBlock(under, Blocks.COBWEB.defaultBlockState(), 3);
-    }
-
-    /**
-     * Health-regen by chewing through leaves and logs in a small radius
-     * around the body. Picks one block at random per check so the eat
-     * effect feels organic rather than zipper-stripping a forest in a
-     * single tick. Uses the standard log/leaf tags so modded trees with
-     * the right tag entries (most do) also feed the cater killer.
-     */
-    private void tryEatNearbyTreeBlock() {
-        if (!(this.level() instanceof ServerLevel server)) return;
-        int bx = (int) Math.floor(this.getX());
-        int by = (int) Math.floor(this.getY());
-        int bz = (int) Math.floor(this.getZ());
-        for (int attempts = 0; attempts < 6; attempts++) {
-            int dx = this.random.nextInt(5) - 2;
-            int dy = this.random.nextInt(4) - 1;
-            int dz = this.random.nextInt(5) - 2;
-            BlockPos pos = new BlockPos(bx + dx, by + dy, bz + dz);
-            BlockState state = server.getBlockState(pos);
-            if (state.isAir()) continue;
-            float healAmount;
-            if (state.is(BlockTags.LEAVES)) {
-                healAmount = 5.0f;
-            } else if (state.is(BlockTags.LOGS)) {
-                healAmount = 10.0f;
-            } else {
-                continue;
-            }
-            server.destroyBlock(pos, false, this);
-            this.heal(healAmount);
-            return;
-        }
     }
 
     // Item drops are data-driven via loot_table/entities/cater_killer.json

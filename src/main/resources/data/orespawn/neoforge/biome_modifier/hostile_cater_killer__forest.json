@@ -1,0 +1,5 @@
+{
+  "type": "neoforge:add_spawns",
+  "biomes": "minecraft:forest",
+  "spawners": { "type": "orespawn:cater_killer", "weight": 2, "minCount": 1, "maxCount": 1 }
+}

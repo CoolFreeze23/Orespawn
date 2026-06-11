@@ -1,0 +1,5 @@
+{
+  "type": "neoforge:add_spawns",
+  "biomes": ["minecraft:forest", "minecraft:river", "minecraft:stony_shore"],
+  "spawners": { "type": "orespawn:boyfriend", "weight": 10, "minCount": 3, "maxCount": 6 }
+}

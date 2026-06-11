@@ -3,6 +3,8 @@ package danger.orespawn.item;
 import danger.orespawn.ModDataComponents;
 import danger.orespawn.OreSpawnConfig;
 import danger.orespawn.entity.BerthaHit;
+import danger.orespawn.entity.Boyfriend;
+import danger.orespawn.entity.Girlfriend;
 import danger.orespawn.util.OreSpawnEnchantHelper;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
@@ -70,9 +72,12 @@ public class Bertha extends SwordItem {
 
     @Override
     public boolean onLeftClickEntity(ItemStack stack, Player player, Entity entity) {
-        if (entity != null) {
-            // Config: bigBerthaPvp allows hitting players when true
-            if (entity instanceof Player && !OreSpawnConfig.BIG_BERTHA_PVP.get()) return true;
+        // orig Bertha.java:65-76 — the entire skip list (players, Girlfriend,
+        // Boyfriend, tamed pets) only applies while big_bertha_pvp == 0.
+        if (entity != null && !OreSpawnConfig.BIG_BERTHA_PVP.get()) {
+            if (entity instanceof Player || entity instanceof Girlfriend || entity instanceof Boyfriend) {
+                return true;
+            }
             if (entity instanceof TamableAnimal t && t.isTame()) return true;
         }
         return false;

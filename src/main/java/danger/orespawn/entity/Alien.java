@@ -11,6 +11,7 @@ import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.world.Difficulty;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -135,7 +136,12 @@ public class Alien extends Monster {
         if (super.doHurtTarget(target)) {
             if (target instanceof LivingEntity living) {
                 if (this.getRandom().nextInt(5) == 1) {
-                    living.addEffect(new MobEffectInstance(MobEffects.HUNGER, 30, 0));
+                    // orig Alien.java:200-210 — POISON (field_76436_u, not Hunger as
+                    // the audit claimed) for var2*5 ticks. var2 is 6 except on Easy
+                    // where it is 8; the orig Normal/Hard branches are nested inside
+                    // the Easy check and therefore unreachable (quirk kept).
+                    int durationBase = this.level().getDifficulty() == Difficulty.EASY ? 8 : 6;
+                    living.addEffect(new MobEffectInstance(MobEffects.POISON, durationBase * 5, 0));
                 }
                 double verticalKnockback = KNOCKBACK_VERTICAL;
                 float yawToTarget = (float) Math.atan2(target.getZ() - this.getZ(), target.getX() - this.getX());

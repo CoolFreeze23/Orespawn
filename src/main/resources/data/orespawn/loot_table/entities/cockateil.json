@@ -1,49 +1,35 @@
 {
   "type": "minecraft:entity",
+  "_comment": "orig Cockateil.java:242-248 — getDropItem: ruby only when BirdType==5 && killedByPlayer && nextInt(3)==1, otherwise feather; either way vanilla count nextInt(3) = 0-2 (+looting). Single pick — never both items.",
   "pools": [
     {
       "rolls": 1,
       "entries": [
         {
-          "type": "minecraft:item",
-          "name": "minecraft:feather",
-          "functions": [
+          "type": "minecraft:alternatives",
+          "children": [
             {
-              "function": "minecraft:set_count",
-              "count": {
-                "type": "minecraft:uniform",
-                "min": 1,
-                "max": 2
-              }
+              "type": "minecraft:item",
+              "name": "orespawn:ruby",
+              "conditions": [
+                {"condition": "minecraft:entity_properties", "entity": "this", "predicate": {"nbt": "{BirdType:5}"}},
+                {"condition": "minecraft:killed_by_player"},
+                {"condition": "minecraft:random_chance", "chance": 0.3333}
+              ],
+              "functions": [
+                {"function": "minecraft:set_count", "count": {"type": "minecraft:uniform", "min": 0, "max": 2}},
+                {"function": "minecraft:enchanted_count_increase", "enchantment": "minecraft:looting", "count": {"type": "minecraft:uniform", "min": 0, "max": 1}}
+              ]
             },
             {
-              "function": "minecraft:enchanted_count_increase",
-              "enchantment": "minecraft:looting",
-              "count": {
-                "type": "minecraft:uniform",
-                "min": 0,
-                "max": 1
-              }
+              "type": "minecraft:item",
+              "name": "minecraft:feather",
+              "functions": [
+                {"function": "minecraft:set_count", "count": {"type": "minecraft:uniform", "min": 0, "max": 2}},
+                {"function": "minecraft:enchanted_count_increase", "enchantment": "minecraft:looting", "count": {"type": "minecraft:uniform", "min": 0, "max": 1}}
+              ]
             }
           ]
-        }
-      ]
-    },
-    {
-      "rolls": 1,
-      "entries": [
-        {
-          "type": "minecraft:item",
-          "name": "orespawn:ruby"
-        }
-      ],
-      "conditions": [
-        {
-          "condition": "minecraft:killed_by_player"
-        },
-        {
-          "condition": "minecraft:random_chance",
-          "chance": 0.33
         }
       ]
     }

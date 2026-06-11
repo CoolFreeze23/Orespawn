@@ -1,23 +1,20 @@
 {
   "type": "minecraft:entity",
+  "_comment": "orig Coin.java:98-129 — single nextInt(10) roll: 0 diamond, 1 uranium nugget, 2 titanium nugget, 3 emerald, 4-7 emerald axe/shovel/pickaxe/hoe, 8 CoinEgg, 9 (default) emerald sword. The CoinEgg ('Spawn Coin' egg item) is not ported yet — its slot drops nothing until Phase D adds the item.",
   "pools": [
     {
       "rolls": 1,
       "entries": [
-        {
-          "type": "minecraft:item",
-          "name": "minecraft:gold_ingot",
-          "functions": [
-            {
-              "function": "minecraft:set_count",
-              "count": {
-                "type": "minecraft:uniform",
-                "min": 1,
-                "max": 3
-              }
-            }
-          ]
-        }
+        {"type": "minecraft:item", "weight": 1, "name": "minecraft:diamond"},
+        {"type": "minecraft:item", "weight": 1, "name": "orespawn:uranium_nugget"},
+        {"type": "minecraft:item", "weight": 1, "name": "orespawn:titanium_nugget"},
+        {"type": "minecraft:item", "weight": 1, "name": "minecraft:emerald"},
+        {"type": "minecraft:item", "weight": 1, "name": "orespawn:emerald_axe"},
+        {"type": "minecraft:item", "weight": 1, "name": "orespawn:emerald_shovel"},
+        {"type": "minecraft:item", "weight": 1, "name": "orespawn:emerald_pickaxe"},
+        {"type": "minecraft:item", "weight": 1, "name": "orespawn:emerald_hoe"},
+        {"type": "minecraft:empty", "weight": 1},
+        {"type": "minecraft:item", "weight": 1, "name": "orespawn:emerald_sword"}
       ]
     }
   ]

@@ -2,6 +2,7 @@ package danger.orespawn.entity;
 
 import net.minecraft.world.entity.Entity;
 import danger.orespawn.ModEntities;
+import danger.orespawn.OreSpawnConfig;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.TamableAnimal;
@@ -13,7 +14,6 @@ import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 
 public class BerthaHit extends ThrowableProjectile {
-    private static final double CLOSE_RANGE_DAMAGE_SQ = 100.0;
     private static final int HIT_TYPE_DEFAULT = 0;
     private static final int HIT_TYPE_MEDIUM = 2;
     private static final int HIT_TYPE_EXPLOSIVE = 3;
@@ -43,7 +43,15 @@ public class BerthaHit extends ThrowableProjectile {
         Entity owner = this.getOwner();
         if (owner == null) return;
 
-        if (entity instanceof Player || entity instanceof TamableAnimal tame && tame.isTame()) {
+        // orig BerthaHit.java:68-75 — Girlfriend/Boyfriend always spared (the
+        // orig &&/|| precedence makes their check unconditional); players and
+        // tamed pets only spared while big_bertha_pvp == 0.
+        if (entity instanceof Girlfriend || entity instanceof Boyfriend) {
+            this.discard();
+            return;
+        }
+        if (!OreSpawnConfig.BIG_BERTHA_PVP.get()
+                && (entity instanceof Player || entity instanceof TamableAnimal tame && tame.isTame())) {
             this.discard();
             return;
         }
@@ -52,13 +60,17 @@ public class BerthaHit extends ThrowableProjectile {
         float damage;
         double knockback;
         double verticalKnock;
+        double maxRangeSq;
         switch (this.hitType) {
-            case HIT_TYPE_MEDIUM -> { damage = 150.0f; knockback = 1.5; verticalKnock = 0.25; }
-            case HIT_TYPE_EXPLOSIVE -> { damage = 100.0f; knockback = 1.25; verticalKnock = 0.65; }
-            default -> { damage = 250.0f; knockback = 2.25; verticalKnock = 0.35; }
+            // orig BerthaHit.java:87-95 — Royal: 746 dmg (royal_stats), distSq < 101.
+            case HIT_TYPE_MEDIUM -> { damage = 746.0f; knockback = 1.5; verticalKnock = 0.25; maxRangeSq = 101.0; }
+            // orig BerthaHit.java:97-105 — Hammy: 82 dmg (hammy_stats), distSq < 64.
+            case HIT_TYPE_EXPLOSIVE -> { damage = 82.0f; knockback = 1.25; verticalKnock = 0.65; maxRangeSq = 64.0; }
+            // orig BerthaHit.java:76-85 — Bertha: 496 dmg (bertha_stats), distSq < 81.
+            default -> { damage = 496.0f; knockback = 2.25; verticalKnock = 0.35; maxRangeSq = 81.0; }
         }
 
-        if (this.distanceToSqr(owner) < CLOSE_RANGE_DAMAGE_SQ) {
+        if (this.distanceToSqr(owner) < maxRangeSq) {
             // Owner may not be a Player, so pick the right damage source to avoid ClassCastException
             if (owner instanceof Player player) {
                 entity.hurt(this.damageSources().playerAttack(player), damage);

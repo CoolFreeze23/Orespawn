@@ -2,6 +2,8 @@ package danger.orespawn.entity;
 
 import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
@@ -97,9 +99,19 @@ public class Camarasaurus extends TamableAnimal {
     }
 
     private boolean isEdibleBlock(Block block) {
-        return block == Blocks.WHEAT || block == Blocks.CARROTS
-                || block == Blocks.POTATOES || block == Blocks.SHORT_GRASS
-                || block == Blocks.TALL_GRASS;
+        // orig Camarasaurus.java:114 — tree browser, not crop raider: leaves
+        // (field_150362_t = oak/spruce/birch/jungle only; acacia/dark-oak lived
+        // in leaves2 and were NOT edible — quirk kept), vine (field_150395_bd),
+        // tallgrass incl. fern (field_150329_H), cactus (field_150434_aF) and
+        // double_plant variants (field_150398_cm).
+        return block == Blocks.OAK_LEAVES || block == Blocks.SPRUCE_LEAVES
+                || block == Blocks.BIRCH_LEAVES || block == Blocks.JUNGLE_LEAVES
+                || block == Blocks.VINE
+                || block == Blocks.SHORT_GRASS || block == Blocks.FERN
+                || block == Blocks.CACTUS
+                || block == Blocks.SUNFLOWER || block == Blocks.LILAC
+                || block == Blocks.ROSE_BUSH || block == Blocks.PEONY
+                || block == Blocks.TALL_GRASS || block == Blocks.LARGE_FERN;
     }
 
     private boolean scanForFood(int x, int y, int z, int dx, int dy, int dz) {
@@ -324,6 +336,15 @@ public class Camarasaurus extends TamableAnimal {
     @Override
     public boolean isFood(ItemStack stack) {
         return stack.is(Items.APPLE);
+    }
+
+    @Override
+    public void addAdditionalSaveData(CompoundTag tag) {
+        super.addAdditionalSaveData(tag);
+        // Exposes the tame flag to the loot-table NBT predicate so the
+        // tamed-only poppy drop (orig Camarasaurus.java:303-312) can stay
+        // data-driven in camarasaurus.json.
+        tag.putBoolean("OreSpawnTamed", this.isTame());
     }
 
     @Nullable

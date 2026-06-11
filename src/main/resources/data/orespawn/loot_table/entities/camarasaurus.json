@@ -1,9 +1,21 @@
 {
   "type": "minecraft:entity",
+  "_comment": "orig Camarasaurus.java:303-312 — tamed only: 2-6 poppies (nextInt(5)+2); untamed drops nothing. Tamed state surfaced as OreSpawnTamed NBT by the entity.",
   "pools": [
     {
       "rolls": 1,
-      "entries": [{"type": "minecraft:item", "name": "minecraft:bone", "functions": [{"function": "minecraft:set_count", "count": {"type": "minecraft:uniform", "min": 3, "max": 6}}, {"function": "minecraft:enchanted_count_increase", "enchantment": "minecraft:looting", "count": {"type": "minecraft:uniform", "min": 0, "max": 1}}]}]
+      "conditions": [
+        {"condition": "minecraft:entity_properties", "entity": "this", "predicate": {"nbt": "{OreSpawnTamed:1b}"}}
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:poppy",
+          "functions": [
+            {"function": "minecraft:set_count", "count": {"type": "minecraft:uniform", "min": 2, "max": 6}}
+          ]
+        }
+      ]
     }
   ]
 }

@@ -3,26 +3,35 @@ package danger.orespawn.entity;
 import java.util.Comparator;
 import java.util.List;
 
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.Pose;
+import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
-import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
+import net.minecraft.world.entity.ai.goal.RandomStrollGoal;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.ServerLevelAccessor;
+import net.minecraft.world.level.block.Blocks;
 import javax.annotation.Nullable;
 import danger.orespawn.MobStats;
 import danger.orespawn.OreSpawnMod;
@@ -50,8 +59,10 @@ public class Crab extends Monster {
 
     @Override
     protected void registerGoals() {
+        // orig Crab.java:59-64 — plain wander (MyEntityAIWanderALot), no water
+        // avoidance; the crab actively SEEKS water via the tick scan below.
         this.goalSelector.addGoal(0, new FloatGoal(this));
-        this.goalSelector.addGoal(1, new WaterAvoidingRandomStrollGoal(this, 1.0));
+        this.goalSelector.addGoal(1, new RandomStrollGoal(this, 1.0));
         this.goalSelector.addGoal(2, new LookAtPlayerGoal(this, Player.class, 10.0f));
         this.goalSelector.addGoal(3, new RandomLookAroundGoal(this));
         this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
@@ -86,6 +97,38 @@ public class Crab extends Monster {
         if (!this.level().isClientSide) {
             applyScaleStats();
         }
+        this.refreshDimensions();
+    }
+
+    @Override
+    public EntityDimensions getDefaultDimensions(Pose pose) {
+        // orig Crab.java:133 — live hitbox is 2.5×scale wide, 3.5×scale tall
+        // (the per-tick setSize overrides the spawn-time 3.75 width of :97).
+        float scale = this.entityData.get(DATA_SCALE) / 100.0f;
+        if (scale <= 0.0f) scale = 0.25f;
+        return EntityDimensions.scalable(2.5f * scale, 3.5f * scale);
+    }
+
+    @Override
+    public void onSyncedDataUpdated(EntityDataAccessor<?> key) {
+        super.onSyncedDataUpdated(key);
+        if (DATA_SCALE.equals(key)) {
+            this.refreshDimensions();
+        }
+    }
+
+    @Nullable
+    @Override
+    public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty,
+                                        MobSpawnType reason, @Nullable SpawnGroupData spawnData) {
+        // orig Crab.java:74-98 — scale 0.25 base, 1-in-4 → 0.5, 1-in-8 → 1.0;
+        // spawner-spawned crabs are pinned to 0.35 (orig func_70601_bi:466).
+        float scale = 0.25f;
+        if (this.random.nextInt(4) == 1) scale = 0.5f;
+        if (this.random.nextInt(8) == 2) scale = 1.0f;
+        if (reason == MobSpawnType.SPAWNER) scale = 0.35f;
+        this.setCrabScale(scale);
+        return super.finalizeSpawn(level, difficulty, reason, spawnData);
     }
 
     /**
@@ -180,6 +223,24 @@ public class Crab extends Monster {
         super.customServerAiStep();
         if (this.hurtTimer > 0) --this.hurtTimer;
 
+        // orig Crab.java:314-338 — 1-in-25 while dry: path to the nearest
+        // water within ~12 blocks at speed 1.33; if none, 1-in-100 lose
+        // 1×scale HP (silent dry-out) and vanish (no drops) at 0 HP.
+        if (!this.isInWater() && this.getRandom().nextInt(25) == 0) {
+            BlockPos water = findNearestWater();
+            if (water != null) {
+                this.getNavigation().moveTo(water.getX(), water.getY() - 1, water.getZ(), 1.33);
+            } else {
+                if (this.getRandom().nextInt(100) == 1) {
+                    this.heal(-1.0f * this.getCrabScale());
+                }
+                if (this.getHealth() <= 0.0f) {
+                    this.discard();
+                    return;
+                }
+            }
+        }
+
         if (this.getRandom().nextInt(5) == 1) {
             LivingEntity currentTarget = this.getTarget();
             if (currentTarget != null && !currentTarget.isAlive()) {
@@ -189,11 +250,21 @@ public class Crab extends Monster {
             if (currentTarget == null) currentTarget = findSomethingToAttack();
             if (currentTarget != null) {
                 this.lookAt(currentTarget, 10.0f, 10.0f);
-                float attackRange = (6.0f + currentTarget.getBbWidth() / 2.0f) * this.getCrabScale();
-                if (this.distanceToSqr(currentTarget) < attackRange * attackRange) {
+                // orig Crab.java:354 — distSq < (6 + w/2)² × scale (scale is NOT
+                // squared with the range term).
+                float reach = 6.0f + currentTarget.getBbWidth() / 2.0f;
+                if (this.distanceToSqr(currentTarget) < reach * reach * this.getCrabScale()) {
                     this.setAttacking(1);
-                    if (this.getRandom().nextInt(4) == 0) {
+                    // orig Crab.java:356 — swing when nextInt(4)==0 OR nextInt(5)==1 (~40%).
+                    if (this.getRandom().nextInt(4) == 0 || this.getRandom().nextInt(5) == 1) {
                         this.doHurtTarget(currentTarget);
+                        // orig Crab.java:358-364 — scorpion_attack 1-in-3, else
+                        // scorpion_living; vol 0.75, pitch 1.5, at the target.
+                        SoundEvent swingSound = SoundEvent.createVariableRangeEvent(
+                                ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID,
+                                        this.getRandom().nextInt(3) == 1 ? "scorpion_attack" : "scorpion_living"));
+                        this.level().playSound(null, currentTarget.getX(), currentTarget.getY(),
+                                currentTarget.getZ(), swingSound, this.getSoundSource(), 0.75f, 1.5f);
                     }
                 } else {
                     this.getNavigation().moveTo(currentTarget, 1.0);
@@ -204,8 +275,38 @@ public class Crab extends Monster {
         }
 
         if (this.getRandom().nextInt(120) == 1 && this.isInWater() && this.getHealth() < this.getMaxHealth()) {
+            // orig Crab.java:373-376 — splash sound accompanies the water heal.
+            this.playSound(SoundEvents.GENERIC_SPLASH, 1.5f,
+                    this.getRandom().nextFloat() * 0.2f + 0.9f);
             this.heal(4.0f * this.getCrabScale());
         }
+    }
+
+    /**
+     * orig Crab.java:243-327 ({@code scan_it} shells) — nearest water or
+     * flowing-water block within an expanding box capped at 12/10/12. A flat
+     * nearest-block scan over the same volume yields the same target.
+     */
+    @Nullable
+    private BlockPos findNearestWater() {
+        BlockPos origin = this.blockPosition().below();
+        BlockPos best = null;
+        int bestDistSq = Integer.MAX_VALUE;
+        BlockPos.MutableBlockPos cursor = new BlockPos.MutableBlockPos();
+        for (int dx = -12; dx <= 12; ++dx) {
+            for (int dy = -10; dy <= 10; ++dy) {
+                for (int dz = -12; dz <= 12; ++dz) {
+                    int distSq = dx * dx + dy * dy + dz * dz;
+                    if (distSq >= bestDistSq) continue;
+                    cursor.setWithOffset(origin, dx, dy, dz);
+                    if (this.level().getBlockState(cursor).is(Blocks.WATER)) {
+                        bestDistSq = distSq;
+                        best = cursor.immutable();
+                    }
+                }
+            }
+        }
+        return best;
     }
 
     private LivingEntity findSomethingToAttack() {

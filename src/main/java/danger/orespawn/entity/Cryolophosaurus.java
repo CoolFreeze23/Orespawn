@@ -2,10 +2,16 @@ package danger.orespawn.entity;
 
 import danger.orespawn.MobStats;
 
+import java.util.Comparator;
+import java.util.List;
+
+import javax.annotation.Nullable;
+
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
@@ -16,6 +22,7 @@ import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import danger.orespawn.OreSpawnConfig;
 import danger.orespawn.OreSpawnMod;
 import danger.orespawn.entity.ai.DinosaurMeleeAttackGoal;
 
@@ -27,12 +34,10 @@ public class Cryolophosaurus extends Monster {
         this.xpReward = 10;
     }
 
-    // Cryolophosaurus is a timid dinosaur in the 1.7.10 source: it mostly
-    // panics when hit, only half-heartedly lashes out (nextInt(12) swing
-    // dice!), and drops its target after ~200 cadence ticks. PanicGoal fires
-    // on injury, DinosaurMeleeAttackGoal re-uses the bug/dino melee loop
-    // with those exact timid dice, and there is no proactive
-    // NearestAttackableTargetGoal — it only retaliates via HurtByTargetGoal.
+    // orig Cryolophosaurus.java:141-211 — proactively hunts (1-in-5 scan over
+    // a 9×2×9 box, see customServerAiStep) in addition to retaliating via
+    // HurtByTargetGoal; lashes out with timid dice (nextInt(12)/nextInt(14))
+    // and forgives its revenge target on a 1-in-200 roll.
     @Override
     protected void registerGoals() {
         this.goalSelector.addGoal(0, new FloatGoal(this));
@@ -63,6 +68,58 @@ public class Cryolophosaurus extends Monster {
     @Override
     public boolean removeWhenFarAway(double dist) {
         return !this.isPersistenceRequired();
+    }
+
+    @Override
+    protected void customServerAiStep() {
+        if (this.isRemoved()) return;
+        super.customServerAiStep();
+        // orig Cryolophosaurus.java:147-149 — 1-in-200: forgive the attacker.
+        if (this.random.nextInt(200) == 1) {
+            this.setLastHurtByMob(null);
+        }
+        // orig Cryolophosaurus.java:150-155 — 1-in-5 proactive hunt: nearest
+        // suitable prey in a 9×2×9 box; chase at 1.25 and bite at distSq<5
+        // with the timid 1-in-12 / 1-in-14 dice.
+        if (this.random.nextInt(5) == 1) {
+            LivingEntity prey = this.findSomethingToAttack();
+            if (prey != null) {
+                this.getNavigation().moveTo(prey, 1.25);
+                if (this.distanceToSqr(prey) < 5.0
+                        && (this.random.nextInt(12) == 0 || this.random.nextInt(14) == 1)) {
+                    this.doHurtTarget(prey);
+                }
+            }
+        }
+    }
+
+    /** orig Cryolophosaurus.java:158-211 — prey exclusion list. */
+    private boolean isSuitableTarget(LivingEntity candidate) {
+        if (candidate == null || candidate == this || !candidate.isAlive()) return false;
+        if (!this.getSensing().hasLineOfSight(candidate)) return false;
+        if (candidate instanceof Alosaurus || candidate instanceof TRex
+                || candidate instanceof Cryolophosaurus
+                || candidate instanceof Ghost || candidate instanceof GhostSkelly
+                || candidate instanceof CaveFisher || candidate instanceof EntityGammaMetroid
+                || candidate instanceof EntityButterfly || candidate instanceof Firefly
+                || candidate instanceof EntityMosquito || candidate instanceof RockBase) {
+            return false;
+        }
+        if (candidate instanceof Player player && player.getAbilities().invulnerable) return false;
+        return true;
+    }
+
+    /** orig Cryolophosaurus.java:213-234 — 9×2×9 scan, nearest first, PlayNicely-gated. */
+    @Nullable
+    private LivingEntity findSomethingToAttack() {
+        if (OreSpawnConfig.PLAY_NICELY.get()) return null;
+        List<LivingEntity> candidates = this.level().getEntitiesOfClass(
+                LivingEntity.class, this.getBoundingBox().inflate(9.0, 2.0, 9.0));
+        candidates.sort(Comparator.comparingDouble(this::distanceToSqr));
+        for (LivingEntity candidate : candidates) {
+            if (this.isSuitableTarget(candidate)) return candidate;
+        }
+        return null;
     }
 
     @Override
