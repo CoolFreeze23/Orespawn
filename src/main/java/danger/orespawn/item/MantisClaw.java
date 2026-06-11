@@ -15,7 +15,11 @@ public class MantisClaw extends SwordItem {
     @Override
     public boolean hurtEnemy(ItemStack stack, LivingEntity target, LivingEntity attacker) {
         if (target != null && attacker != null && !target.level().isClientSide) {
-            target.hurt(target.damageSources().magic(), 1.0f);
+            // orig MantisClaw.java:36-37 — silent health drain via heal(-1), no damage event/invuln frames
+            // (setHealth used because NeoForge's heal() rejects negative amounts)
+            if (target.getHealth() > 0.0f) {
+                target.setHealth(target.getHealth() - 1.0f);
+            }
             attacker.heal(1.0f);
         }
         stack.hurtAndBreak(1, attacker, EquipmentSlot.MAINHAND);

@@ -1,6 +1,7 @@
 package danger.orespawn.entity;
 
 import danger.orespawn.MobStats;
+import danger.orespawn.ModSounds;
 
 import java.util.Comparator;
 import java.util.List;
@@ -11,7 +12,6 @@ import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
@@ -439,7 +439,7 @@ public class Kraken extends Monster {
     @Override
     protected SoundEvent getAmbientSound() {
         if (this.getRandom().nextInt(5) == 0) {
-            return SoundEvents.ELDER_GUARDIAN_AMBIENT;
+            return ModSounds.KRAKEN_LIVING.get(); // orig Kraken.java:199-204 "orespawn:kraken_living" 1-in-5
         }
         return null;
     }
@@ -451,7 +451,7 @@ public class Kraken extends Monster {
 
     @Override
     protected SoundEvent getDeathSound() {
-        return SoundEvents.ELDER_GUARDIAN_DEATH;
+        return ModSounds.ALO_DEATH.get(); // orig Kraken.java:210-212 "orespawn:alo_death"
     }
 
     @Override

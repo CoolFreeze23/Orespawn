@@ -94,8 +94,12 @@ public class Ostrich extends TamableAnimal
 
     @Override
     public boolean hurt(DamageSource source, float amount) {
-        if (source.getMsgId().equals("cactus")) return false;
-        return super.hurt(source, amount);
+        // orig Ostrich.java:133-138 — cactus damage skipped; everything else applied
+        // via super, but the method always reports false to the attacker (orig quirk).
+        if (!source.getMsgId().equals("cactus")) {
+            super.hurt(source, amount);
+        }
+        return false;
     }
 
     @Override
@@ -252,6 +256,15 @@ public class Ostrich extends TamableAnimal
         List<Ostrich> nearby = level.getEntitiesOfClass(Ostrich.class,
                 this.getBoundingBox().inflate(16.0, 6.0, 16.0));
         return nearby.isEmpty();
+    }
+
+    @Override
+    public void addAdditionalSaveData(net.minecraft.nbt.CompoundTag tag) {
+        super.addAdditionalSaveData(tag);
+        // Exposes the tame flag to the loot-table NBT predicate so the tamed-only
+        // poppy drop (orig Ostrich.java:283-294) stays data-driven in ostrich.json —
+        // same convention as Gazelle/Camarasaurus.
+        tag.putBoolean("OreSpawnTamed", this.isTame());
     }
 
     @Nullable

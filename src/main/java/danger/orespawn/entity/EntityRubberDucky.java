@@ -69,7 +69,7 @@ public class EntityRubberDucky extends TamableAnimal {
         this.goalSelector.addGoal(0, new FloatGoal(this));
         this.goalSelector.addGoal(1, new BreedGoal(this, 1.0));
         this.goalSelector.addGoal(2, new FollowOwnerGoal(this, 2.0, 10.0f, 2.0f));
-        this.goalSelector.addGoal(3, new TemptGoal(this, 1.25, Ingredient.of(Items.WHEAT), false));
+        this.goalSelector.addGoal(3, new TemptGoal(this, 1.25, Ingredient.of(Items.COD), false)); // orig RubberDucky.java:242 raw fish (field_151115_aP)
         this.goalSelector.addGoal(4, new MyEntityAIWanderALot(this, 16, 1.0));
         this.goalSelector.addGoal(5, new LookAtPlayerGoal(this, LivingEntity.class, 6.0f));
         this.goalSelector.addGoal(6, new RandomLookAroundGoal(this));
@@ -174,7 +174,8 @@ public class EntityRubberDucky extends TamableAnimal {
     @Override
     public InteractionResult mobInteract(Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
-        if (stack.is(Items.WHEAT) && player.distanceToSqr(this) < 16.0) {
+        // orig RubberDucky.java:242-272 — raw fish (field_151115_aP) tames 1-in-2 / heals when tamed
+        if (stack.is(Items.COD) && player.distanceToSqr(this) < 16.0) {
             if (!this.isTame()) {
                 if (!this.level().isClientSide) {
                     if (this.random.nextInt(2) == 0) {
@@ -187,6 +188,21 @@ public class EntityRubberDucky extends TamableAnimal {
                 }
             } else if (this.isOwnedBy(player)) {
                 this.heal(5.0f - this.getHealth());
+            }
+            if (!player.getAbilities().instabuild) {
+                stack.shrink(1);
+            }
+            return InteractionResult.sidedSuccess(this.level().isClientSide);
+        }
+        // orig RubberDucky.java:273-287 — dead bush untames an owned duck
+        if (this.isTame() && this.isOwnedBy(player)
+                && stack.is(net.minecraft.world.level.block.Blocks.DEAD_BUSH.asItem())
+                && player.distanceToSqr(this) < 16.0) {
+            if (!this.level().isClientSide) {
+                this.setTame(false, false);
+                this.setOwnerUUID(null);
+                this.setOrderedToSit(false);
+                this.level().broadcastEntityEvent(this, (byte) 6);
             }
             if (!player.getAbilities().instabuild) {
                 stack.shrink(1);

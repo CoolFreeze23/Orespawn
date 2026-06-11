@@ -6,7 +6,6 @@
     { "type": "orespawn:whale", "weight": 2, "minCount": 1, "maxCount": 1 },
     { "type": "orespawn:skate", "weight": 6, "minCount": 1, "maxCount": 2 },
     { "type": "orespawn:urchin", "weight": 6, "minCount": 1, "maxCount": 2 },
-    { "type": "orespawn:sea_monster", "weight": 1, "minCount": 1, "maxCount": 1 },
-    { "type": "orespawn:kraken", "weight": 1, "minCount": 1, "maxCount": 1 }
+    { "type": "orespawn:sea_monster", "weight": 1, "minCount": 1, "maxCount": 1 }
   ]
 }

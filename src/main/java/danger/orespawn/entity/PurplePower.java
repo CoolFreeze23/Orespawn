@@ -156,8 +156,8 @@ public class PurplePower extends Mob {
                 le.setHealth(le.getHealth() * 15.0f / 16.0f);
                 boolean ret = le.hurt(this.damageSources().mobAttack(this), 5.0f);
                 if (type == 1) le.setRemainingFireTicks(200);
-                if (type == 2) le.addEffect(new MobEffectInstance(MobEffects.HUNGER, 50, 0));
-                if (type == 3) le.addEffect(new MobEffectInstance(MobEffects.POISON, 50, 0));
+                if (type == 2) le.addEffect(new MobEffectInstance(MobEffects.POISON, 50, 0)); // orig PurplePower.java:302 Poison (field_76436_u) 50t
+                if (type == 3) le.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 50, 0)); // orig PurplePower.java:305 Weakness (field_76437_t) 50t
                 return ret;
             }
         }

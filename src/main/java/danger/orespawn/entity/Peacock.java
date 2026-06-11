@@ -21,9 +21,9 @@ import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import danger.orespawn.ModEntities;
+import danger.orespawn.ModItems;
 import danger.orespawn.OreSpawnMod;
 
 public class Peacock extends Animal {
@@ -115,7 +115,7 @@ public class Peacock extends Animal {
 
     @Override
     public boolean isFood(ItemStack stack) {
-        return stack.is(Items.WHEAT_SEEDS);
+        return stack.is(ModItems.CRYSTAL_APPLE.get()); // orig Peacock.java:259-261 breeding item is MyCrystalApple
     }
 
     @Nullable

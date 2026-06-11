@@ -1,7 +1,10 @@
 package danger.orespawn.entity;
 
 import danger.orespawn.ModEntities;
+import danger.orespawn.OreSpawnMod;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
@@ -24,6 +27,17 @@ public class RubyBird extends Cockateil {
 
     // Death drops are fully data-driven via loot_table/entities/ruby_bird.json
     // (orig Cockateil.java:242-248: 0-2 of ruby [1/3, killed by player] or feather).
+
+    @Nullable
+    @Override
+    protected SoundEvent getAmbientSound() {
+        // orig RubyBird.java:22-27 — bespoke "orespawn:rubybird" when day and not raining, else silent
+        if (this.level().isDay() && !this.level().isRaining()) {
+            return SoundEvent.createVariableRangeEvent(
+                    ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "rubybird"));
+        }
+        return null;
+    }
 
     @Nullable
     @Override

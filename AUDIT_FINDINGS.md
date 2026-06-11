@@ -1484,12 +1484,14 @@ Paths: ORIG = `reference_1_7_10_source\sources\danger\orespawn\`, PORT = `src\ma
 - **Original:** ORIG `Kraken.java` `func_70601_bi` — no `addSpawn`; required open-sky column + Y>50, spawner/summon only
 - **Port:** `BM add_ocean_spawns.json` — weight 1/1-1 natural ocean spawn, no `checkSpawnRules` override; a 3000-HP boss spawns naturally
 - **Fix:** remove Kraken from `add_ocean_spawns.json`, or add a `checkSpawnRules` override requiring open sky + Y>50 + config gate.
+- **Resolution:** FIXED (2026-06-11, Phase C — see FIX_LOG.md and phase_c_reports/C3_entities_K_R.md)
 
 ### ENT-K-005 — Kraken: custom sounds replaced with vanilla elder guardian
 - **Status:** DIVERGENT
 - **Original:** ORIG `Kraken.java` — `orespawn:kraken_living` (1/5), `orespawn:alo_death`
 - **Port:** `entity\Kraken.java:431-446` — vanilla `ELDER_GUARDIAN_AMBIENT` (1/5) / `ELDER_GUARDIAN_DEATH`
 - **Fix:** register/use `ModSounds.KRAKEN_LIVING` and `ALO_DEATH` in `getAmbientSound`/`getDeathSound`.
+- **Resolution:** FIXED (2026-06-11, Phase C — see FIX_LOG.md and phase_c_reports/C3_entities_K_R.md)
 
 ---
 
@@ -1520,6 +1522,7 @@ Paths: ORIG = `reference_1_7_10_source\sources\danger\orespawn\`, PORT = `src\ma
 - **Original:** `OreSpawnMain.java:4802` — Nether weight 10/1-1
 - **Port:** `BM add_nether_spawns.json` — Nether weight 5/1-1
 - **Fix:** set weight back to 10 in `add_nether_spawns.json`.
+- **Resolution:** FIXED (2026-06-11, Phase C — see FIX_LOG.md and phase_c_reports/C3_entities_K_R.md)
 
 ---
 
@@ -1557,12 +1560,14 @@ Paths: ORIG = `reference_1_7_10_source\sources\danger\orespawn\`, PORT = `src\ma
 - **Original:** ORIG `LeafMonster.java` — targets ants, butterflies, luna moths, non-creative players
 - **Port:** `entity\EntityLeafMonster.java:139-146` — targets players + anything with BbWidth<1.0
 - **Fix:** replace width heuristic with an explicit class allow-list (EntityAnt, Butterfly, LunaMoth equivalents, Player).
+- **Resolution:** FIXED (2026-06-11, Phase C — see FIX_LOG.md and phase_c_reports/C3_entities_K_R.md)
 
 ### ENT-K-014 — LeafMonster: drops changed
 - **Status:** DIVERGENT
 - **Original:** ORIG `LeafMonster.java` — random leaves/log/stick
 - **Port:** `LT leaf_monster.json` — 1–3 oak log + 0–2 bone
 - **Fix:** rewrite `leaf_monster.json` to random leaves OR log OR stick (one of, weighted), no bone.
+- **Resolution:** FIXED (2026-06-11, Phase C — audit's claimed list wrong: verified orig LeafMonster.java:144-153 one-of is log/leaves/ROTTEN FLESH (no stick); see phase_c_reports/C3_entities_K_R.md)
 
 ### ENT-K-015 — LeafMonster: spawn gating lost, weight changed
 - **Status:** PARTIAL
@@ -1599,6 +1604,7 @@ Paths: ORIG = `reference_1_7_10_source\sources\danger\orespawn\`, PORT = `src\ma
 - **Original:** ORIG `Leon.java` — 1/3 tame with carrot; specific untame item
 - **Port:** `entity\EntityLeon.java:598-612` — 1/3 tame with beef; untame with glass (`:628`); Leonopteryx tames with any `ItemTags.MEAT`
 - **Fix:** change tame item to carrot at `EntityLeon.java:598-612`; restore the original untame item (verify ORIG `Leon.java` untame item).
+- **Resolution:** FIXED (2026-06-11, Phase C — audit wrong on tame item: orig Leon.java:986 tames with raw BEEF 1-in-3 (port already correct); untame fixed glass → dead bush per orig Leon.java:1035; see phase_c_reports/C3_entities_K_R.md)
 
 ### ENT-K-020 — Leon: drops replaced with diamonds/gold
 - **Status:** DIVERGENT
@@ -1612,6 +1618,7 @@ Paths: ORIG = `reference_1_7_10_source\sources\danger\orespawn\`, PORT = `src\ma
 - **Original:** ORIG — spawner-gated only ("Leonopteryx" spawner, Y>50, no nearby Leons)
 - **Port:** `BM companion_leon.json` jungle w1 + `add_nether_spawns.json` Nether w2; leonopteryx mountains w1
 - **Fix:** remove leon from `add_nether_spawns.json` (a Pandora-themed mount in the Nether is wrong); gate jungle/mountain spawns behind `checkSpawnRules` (Y>50, no nearby Leons).
+- **Resolution:** FIXED (2026-06-11, Phase C — orig has NO addSpawn for Leon (spawner/summon only); all three invented natural-spawn entries removed; Leonopteryx dungeon spawners already exist in LegacyDungeonPiece; see phase_c_reports/C3_entities_K_R.md)
 
 ### ENT-K-022 — Leonopteryx: hurt/death/living sounds missing
 - **Status:** PARTIAL
@@ -1628,12 +1635,14 @@ Paths: ORIG = `reference_1_7_10_source\sources\danger\orespawn\`, PORT = `src\ma
 - **Original:** ORIG `Lizard.java` `scan_it` — sought water/lava blocks
 - **Port:** `entity\Lizard.java:149-178` — `scanForFire` seeks LAVA/FIRE blocks only
 - **Fix:** extend `scanForFire` to also target water blocks (restore original water/lava set), or rename + restore the original scan target list.
+- **Resolution:** FIXED (2026-06-11, Phase C — audit half-wrong: orig Lizard.java:184-227 scan_it seeks WATER ONLY (still + flowing), no lava; port rewritten to scanForWater; see phase_c_reports/C3_entities_K_R.md)
 
 ### ENT-K-024 — Lizard: spawn domain widened
 - **Status:** DIVERGENT
 - **Original:** `OreSpawnMain.java:4868-4870` — water biomes, weight 2–5/2-4
 - **Port:** `BM add_overworld_creatures.json` — all-overworld w10/1-2, `checkSpawnRules` Y≥50 (`Lizard.java:258-260`)
 - **Fix:** restrict the BM to river/swamp/beach-tagged biomes at w2–5/2-4.
+- **Resolution:** FIXED (2026-06-11, Phase C — per-biome BMs river w5/swamp w4/ocean w2, all 2-4, per orig OreSpawnMain.java:4868-4870; orig getCanSpawnHere is Y≥50 only, which the port already enforces; see phase_c_reports/C3_entities_K_R.md)
 
 ---
 
@@ -1657,6 +1666,7 @@ Paths: ORIG = `reference_1_7_10_source\sources\danger\orespawn\`, PORT = `src\ma
 - **Original:** ORIG `LurkingTerror.java` — random carrot / rotten flesh / feather
 - **Port:** `LT lurking_terror.json` — 3–8 bone + 30% 1–3 diamond
 - **Fix:** rewrite `lurking_terror.json` to one-of carrot/rotten_flesh/feather; remove diamonds.
+- **Resolution:** FIXED (2026-06-11, Phase C — audit's claimed list wrong: verified orig LurkingTerror.java:368-377 one-of is raw BEEF/FLINT/FEATHER; see phase_c_reports/C3_entities_K_R.md)
 
 ### ENT-K-028 — LurkingTerror: spawn domain/gating changed
 - **Status:** PARTIAL
@@ -1703,6 +1713,7 @@ Paths: ORIG = `reference_1_7_10_source\sources\danger\orespawn\`, PORT = `src\ma
 - **Original:** ORIG `MantisClaw.java` — applies negative-regen effect to target + positive-regen to attacker (effect-based drain)
 - **Port:** `item\MantisClaw.java:16-23` — flat 1.0 magic dmg to target + 1.0 heal per hit
 - **Fix:** in `hurtEnemy`, apply a short Regeneration effect to the attacker and a Wither/negative-regen analog to the target, matching original durations.
+- **Resolution:** FIXED (2026-06-11, Phase C — audit wrong: orig MantisClaw.java:36-37 uses NO potion effects, it is a one-shot heal(-1) silent drain on the target + heal(+1) on the attacker; port now drains via setHealth (no damage event/invuln frames); see phase_c_reports/C3_entities_K_R.md)
 
 ---
 
@@ -1798,12 +1809,14 @@ Paths: ORIG = `reference_1_7_10_source\sources\danger\orespawn\`, PORT = `src\ma
 - **Original:** ORIG `Ostrich.java` `func_70097_a` — immune to everything EXCEPT cactus (cactus was its only weakness)
 - **Port:** `entity\Ostrich.java:67-71` — immune TO cactus only, vulnerable to everything else
 - **Fix:** invert `isInvulnerableTo`: return true for all sources except `DamageTypes.CACTUS`.
+- **Resolution:** VERIFIED-CORRECT (2026-06-11, Phase C — audit misread orig Ostrich.java:133-138: super.hurt runs for every NON-cactus source, i.e. the Ostrich is immune to cactus ONLY, exactly what the port does; the orig always-return-false quirk was additionally aligned; see phase_c_reports/C3_entities_K_R.md)
 
 ### ENT-K-046 — Ostrich: tamed drop table changed
 - **Status:** DIVERGENT
 - **Original:** ORIG `Ostrich.java` — tamed → 2–6 flower/sand items; else default
 - **Port:** `LT ostrich.json` — 1–3 chicken
 - **Fix:** restore tamed-conditional drop (2–6 flower/sand) via loot condition on tamed flag or code path; untamed → vanilla-equivalent default.
+- **Resolution:** FIXED (2026-06-11, Phase C — verified orig Ostrich.java:283-294: tamed → 2-6 POPPY (red_flower, no sand); untamed → vanilla default = feather 0-2 (+looting, orig :279-281); NBT-branched ostrich.json on OreSpawnTamed like Gazelle; see phase_c_reports/C3_entities_K_R.md)
 
 ---
 
@@ -1832,6 +1845,7 @@ Paths: ORIG = `reference_1_7_10_source\sources\danger\orespawn\`, PORT = `src\ma
 - **Original:** ORIG `Peacock.java` — wheat
 - **Port:** `entity\Peacock.java:117-119` — wheat seeds
 - **Fix:** change `isFood` to `Items.WHEAT`.
+- **Resolution:** FIXED (2026-06-11, Phase C — audit wrong: orig Peacock.java:259-261 breeding item is MyCrystalApple, not wheat; isFood now ModItems.CRYSTAL_APPLE; see phase_c_reports/C3_entities_K_R.md)
 
 ---
 
@@ -1842,7 +1856,7 @@ Paths: ORIG = `reference_1_7_10_source\sources\danger\orespawn\`, PORT = `src\ma
 - **Original:** `OreSpawnMain.java:6517` — continuous scale 0.5–4.0 (config `NightmareSize`); HP 250×scale, ATK 30×scale, def 10+2×scale, speed 0.2+0.1×scale
 - **Port:** `entity\PitchBlack.java:87-91`, `OreSpawnConfig.java:145` — 5 discrete tiers HP 125–1000, ATK 15–120, armor 10–18; flight speed 0.5+scale/10. Stat envelope matches at extremes; discretization + speed formula diverge
 - **Fix:** accept tiers (well-matched envelope) but align speed formula to 0.2+0.1×scale, or restore continuous scale from config.
-- **Resolution:** PARTIAL (2026-06-11, Phase B — per-tier speed (0.2+0.1t), tier-1 armor and 100×t XP fixed; the discrete-tier scale model itself remains open, see phase_b_reports/B2_mobstats.md)
+- **Resolution:** FIXED (2026-06-11, Phase C — remainder closed: audit wrong about "continuous" scale — orig PitchBlack.java:99-141 rolls the SAME five discrete values t ∈ {0.5,1,2,3,4} via cascading dice (1/4→1, 1/8→2, 1/32→3, 1/64→4); port SIZE_SCALE corrected from {0.5..1.25} to the orig values, hitbox to 2.5t×3.5t (orig :145), spawn dice now the orig cascade, and the AI flight speed 0.5+t/10 matches orig :389 verbatim; see phase_c_reports/C3_entities_K_R.md)
 
 ### ENT-K-052 — PitchBlack: bonus damage vs dragons missing
 - **Status:** PARTIAL
@@ -1883,6 +1897,7 @@ Paths: ORIG = `reference_1_7_10_source\sources\danger\orespawn\`, PORT = `src\ma
 - **Original:** ORIG `PurplePower.java` — attack type 2 applies Weakness
 - **Port:** `entity\PurplePower.java:159` — type 2 applies HUNGER
 - **Fix:** change the type-2 effect at `PurplePower.java:159` to `MobEffects.WEAKNESS`.
+- **Resolution:** FIXED (2026-06-11, Phase C — audit wrong: orig PurplePower.java:301-306 type 2 = POISON 50t, type 3 = WEAKNESS 50t; both port effects corrected (were Hunger/Poison); see phase_c_reports/C3_entities_K_R.md)
 
 ---
 
@@ -1900,18 +1915,21 @@ Paths: ORIG = `reference_1_7_10_source\sources\danger\orespawn\`, PORT = `src\ma
 - **Original:** ORIG `Rat.java` — wild rats attacked players
 - **Port:** `OreSpawnConfig.java:143-144` — `RAT_PLAYER_FRIENDLY`/`RAT_PET_FRIENDLY` default TRUE → never attacks players/pets (`EntityRat.java:160-183`)
 - **Fix:** flip both config defaults to false (keep configs for opt-in friendliness).
+- **Resolution:** FIXED (2026-06-11, Phase C — audit's fix wrong: orig OreSpawnMain.java:1472-1473 defaults BOTH configs to 1 (true); the real divergence was the port applying them to ALL rats — orig Rat.java:230-246 gates both configs on myowner != null, so WILD rats attack players/pets regardless; predicate rescoped to owned rats, defaults kept true; see phase_c_reports/C3_entities_K_R.md)
 
 ### ENT-K-059 — Rat: drop changed
 - **Status:** DIVERGENT
 - **Original:** ORIG `Rat.java` — stick
 - **Port:** `LT rat.json` — 0–1 bone + 0–1 rotten flesh
 - **Fix:** rewrite `rat.json` to drop 1 stick.
+- **Resolution:** FIXED (2026-06-11, Phase C — audit wrong: orig Rat.java:140-142 getDropItem is ROTTEN FLESH (field_151078_bh), vanilla count 0-2 (+looting); rat.json rewritten accordingly; see phase_c_reports/C3_entities_K_R.md)
 
 ### ENT-K-060 — Rat: swarm spawning lost
 - **Status:** DIVERGENT
 - **Original:** `OreSpawnMain.java:4977-4978` — weight 25–35 / group 2–20 in select biomes + Crystal-dim air-pocket checks + ≤8 nearby
 - **Port:** BM overworld-wide w20/1-3, no checks
 - **Fix:** set group size 2–20 (cap via ≤8-nearby `checkSpawnRules`) and restrict biome set.
+- **Resolution:** PARTIAL (2026-06-11, Phase C — weights/biomes done: overworld-wide entry removed, swarm_rat__dark_forest.json w35/10-20 + swarm_rat__taiga.json w25/2-8 per orig OreSpawnMain.java:4977-4978; darkness/spawner/Crystal-air-pocket/≤8-buddy gates → ENT-SYS-002 (Phase D); see phase_c_reports/C3_entities_K_R.md)
 
 ---
 
@@ -1946,6 +1964,7 @@ Paths: ORIG = `reference_1_7_10_source\sources\danger\orespawn\`, PORT = `src\ma
 - **Original:** ORIG `Robot2.java` — 2–9 iron BLOCK + 5–10 coal + large random table
 - **Port:** `LT robot_2.json` — 2–5 iron ingot + 25% 0–2 gold ingot
 - **Fix:** rewrite `robot_2.json`: iron_block 2–9 + coal 5–10 + port the random table.
+- **Resolution:** FIXED (2026-06-11, Phase C — audit half-wrong: orig Robot2.java:165-221 drops 2-9 iron BLOCK + 5-10 iron INGOT (not coal) + 5-14 rolls of a d15 redstone-component table; robot_2.json rewritten to all three pools; see phase_c_reports/C3_entities_K_R.md)
 
 ---
 
@@ -1963,6 +1982,7 @@ Paths: ORIG = `reference_1_7_10_source\sources\danger\orespawn\`, PORT = `src\ma
 - **Original:** ORIG `Robot3.java` — 5–10 × MyLaserBall(4) + random table
 - **Port:** `LT robot_3.json` — 3–6 iron ingot + 20% diamond; LaserBall item exists (`ModItems.java:335`) but is never dropped
 - **Fix:** add `orespawn:laser_ball` 5–10 to `robot_3.json`.
+- **Resolution:** FIXED (2026-06-11, Phase C — robot_3.json rewritten: 5-10 rolls of laser_ball ×4 + 5-14 rolls of the orig d15 redstone table (orig Robot3.java:166-219); see phase_c_reports/C3_entities_K_R.md)
 
 ### ENT-K-067 — Robot3: shot sound missing
 - **Status:** PARTIAL
@@ -1979,7 +1999,7 @@ Paths: ORIG = `reference_1_7_10_source\sources\danger\orespawn\`, PORT = `src\ma
 - **Original:** `OreSpawnMain.java:6497` — HP 170, ATK 12 (melee 15/20/25 by difficulty), def 18, speed 0.34, xp 120
 - **Port:** `entity\Robot4.java:91-97` — HP 750, ATK 40, armor 10
 - **Fix:** set MAX_HEALTH 170, ARMOR 18; implement difficulty-scaled melee 15/20/25.
-- **Resolution:** PARTIAL (2026-06-11, Phase B — attribute stats fixed (170/12/18); difficulty-scaled melee 15/20/25 remains open, see phase_b_reports/B2_mobstats.md)
+- **Resolution:** VERIFIED-CORRECT (2026-06-11, Phase C — remainder closed: audit wrong about the 15/20/25 melee — orig Robot4.java:145-156 getAttackStrength is NEVER CALLED (unlike Spyro/Stinky/ThePrince which invoke theirs) and is internally bugged (the NORMAL/HARD branches are nested inside the EASY branch, unreachable); orig melee = ATTACK_DAMAGE attribute 12, which the port already uses after Phase B; no code change; see phase_c_reports/C3_entities_K_R.md)
 
 ### ENT-K-069 — Robot4: ranged LaserBall attack missing
 - **Status:** PARTIAL
@@ -1998,6 +2018,7 @@ Paths: ORIG = `reference_1_7_10_source\sources\danger\orespawn\`, PORT = `src\ma
 - **Original:** ORIG `Robot4.java` — 5–14 LaserBall(4) + MyRayGun + painting + randoms
 - **Port:** `LT robot_4.json` — 2–5 iron + 2–5 redstone
 - **Fix:** add `orespawn:laser_ball` 5–14 + `orespawn:ray_gun` ×1 to `robot_4.json`.
+- **Resolution:** FIXED (2026-06-11, Phase C — robot_4.json rewritten per orig Robot4.java:195-250: 5-14 rolls of laser_ball ×4 + ray_gun ×1 + painting ×1 + 10-24 rolls of the d15 redstone table; see phase_c_reports/C3_entities_K_R.md)
 
 ---
 
@@ -2015,6 +2036,7 @@ Paths: ORIG = `reference_1_7_10_source\sources\danger\orespawn\`, PORT = `src\ma
 - **Original:** ORIG `Robot5.java` — 5–10 LaserBall(4) + randoms
 - **Port:** `LT robot_5.json` — 4–8 iron + 1–3 gold
 - **Fix:** add `orespawn:laser_ball` 5–10 to `robot_5.json`.
+- **Resolution:** FIXED (2026-06-11, Phase C — robot_5.json rewritten per orig Robot5.java:138-190: 5-10 rolls of laser_ball ×4 + 2-6 rolls of the d15 redstone table; see phase_c_reports/C3_entities_K_R.md)
 
 ### ENT-K-074 — Robot5: shot sound missing
 - **Status:** PARTIAL
@@ -2072,6 +2094,7 @@ Paths: ORIG = `reference_1_7_10_source\sources\danger\orespawn\`, PORT = `src\ma
 - **Original:** ORIG `Rotator.java:385-400` — 1 of {CrystalPinkIngot, TigersEyeIngot, CrystalCoal block, iron ingot}
 - **Port:** `LT rotator.json` — 2–5 iron nugget + 1–3 gunpowder
 - **Fix:** rewrite `rotator.json` as a one-of pool: crystal_pink_ingot / tigers_eye_ingot / crystal_coal block / iron_ingot.
+- **Resolution:** FIXED (2026-06-11, Phase C — verified orig Rotator.java:385-400; rotator.json rewritten to the equal-weight one-of pool, each 0-2 (+looting, vanilla drop core); see phase_c_reports/C3_entities_K_R.md)
 
 ---
 
@@ -2088,6 +2111,7 @@ Paths: ORIG = `reference_1_7_10_source\sources\danger\orespawn\`, PORT = `src\ma
 - **Original:** ORIG `RubberDucky.java:242-287` — raw fish 1/2 tame; untame with dead bush
 - **Port:** `entity\EntityRubberDucky.java:177-195` — wheat 1/2 tame; no untame; Tempt item also fish→wheat (`:72`)
 - **Fix:** switch tame/tempt item to `Items.COD` (raw fish analog); add dead-bush untame interaction.
+- **Resolution:** FIXED (2026-06-11, Phase C — verified orig RubberDucky.java:242 (raw fish, 1-in-2) and :273 (dead bush untame); tame/tempt switched to COD, untame added; see phase_c_reports/C3_entities_K_R.md)
 
 ### ENT-K-084 — RubberDucky: drops nothing
 - **Status:** MISSING
@@ -2124,12 +2148,14 @@ Paths: ORIG = `reference_1_7_10_source\sources\danger\orespawn\`, PORT = `src\ma
 - **Original:** ORIG — RubyBirdDungeon placement only (`func_70601_bi` true)
 - **Port:** `BM dim_crystal_locals.json` — crystal_plains natural spawn w6/2-4
 - **Fix:** if RubyBird dungeons are ported, remove the natural BM entry; otherwise keep as the substitute and document.
+- **Resolution:** FIXED (2026-06-11, Phase C — RubyBird dungeons ARE ported (GenericDungeon.tryPlaceRubyDungeon places a RUBY_BIRD spawner); the invented crystal_plains natural-spawn entry removed from dim_crystal_locals.json; see phase_c_reports/C3_entities_K_R.md)
 
 ### ENT-K-089 — RubyBird: bespoke sound unused
 - **Status:** DIVERGENT
 - **Original:** ORIG `RubyBird.java` — `orespawn:rubybird` when not raining
 - **Port:** inherits Cockateil `orespawn:birds` (`Cockateil.java:142-146`); rubybird sound asset unused
 - **Fix:** override `getAmbientSound` in `RubyBird.java` to return the rubybird sound when `!level.isRaining()`.
+- **Resolution:** FIXED (2026-06-11, Phase C — orig RubyBird.java:22-27 plays "orespawn:rubybird" when DAY && !raining (else silent, no fallback to birds); override added; see phase_c_reports/C3_entities_K_R.md)
 
 ---
 
