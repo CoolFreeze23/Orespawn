@@ -10,6 +10,8 @@ import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.util.Mth;
 
 public class ModelEnderReaper extends EntityModel<EnderReaper> {
+    /** Animation frequency constant; orig ModelEnderReaper.java:80,83 (wingspeed), value from orig ClientProxyOreSpawn.java:474. */
+    private final float wingspeed = 0.23f;
     private final ModelPart rwing1;
     private final ModelPart lwing1;
     private final ModelPart Shape3;
@@ -420,20 +422,20 @@ public class ModelEnderReaper extends EntityModel<EnderReaper> {
     @Override
     public void setupAnim(EnderReaper entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
         float newangle = 0.0f;
-        newangle = (double)limbSwingAmount > 0.1 ? Mth.cos((float)(ageInTicks * 1.3f * limbSwingAmount)) * (float)Math.PI * 0.25f * limbSwingAmount : 0.0f;
+        newangle = (double)limbSwingAmount > 0.1 ? Mth.cos((float)(ageInTicks * 1.3f * this.wingspeed)) * (float)Math.PI * 0.25f * limbSwingAmount : 0.0f;
         this.scythe2.zRot = this.scythe1.zRot = 1.0f - Math.abs(newangle);
         this.scythe3.zRot = this.scythe1.zRot;
         if (entity.isScreaming()) {
-        newangle = Mth.cos((float)(ageInTicks * 1.9f * limbSwingAmount)) * (float)Math.PI * 0.25f;
+        newangle = Mth.cos((float)(ageInTicks * 1.9f * this.wingspeed)) * (float)Math.PI * 0.25f;
         this.scythe2.zRot = this.scythe1.zRot = 1.0f + newangle;
         this.scythe3.zRot = this.scythe1.zRot;
         this.larm1.xRot = -0.436f;
         this.larm1.yRot = -0.488f;
-        newangle = Mth.cos((float)(ageInTicks * 2.7f * limbSwingAmount)) * (float)Math.PI * 0.3f;
+        newangle = Mth.cos((float)(ageInTicks * 2.7f * this.wingspeed)) * (float)Math.PI * 0.3f;
         } else {
         this.larm1.xRot = -2.436f;
         this.larm1.yRot = 1.0f;
-        newangle = Mth.cos((float)(ageInTicks * 0.7f * limbSwingAmount)) * (float)Math.PI * 0.06f;
+        newangle = Mth.cos((float)(ageInTicks * 0.7f * this.wingspeed)) * (float)Math.PI * 0.06f;
         }
         this.lwing2.yRot = this.lwing3.yRot = 0.785f + newangle;
         this.lwing1.yRot = this.lwing3.yRot;

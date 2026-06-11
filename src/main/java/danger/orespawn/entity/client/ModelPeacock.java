@@ -10,6 +10,8 @@ import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.util.Mth;
 
 public class ModelPeacock extends EntityModel<Peacock> {
+    /** Animation frequency constant; orig ModelPeacock.java:14,33 (wingspeed), value from orig ClientProxyOreSpawn.java:478. */
+    private final float wingspeed = 0.75f;
     private final ModelPart lleg;
     private final ModelPart rleg;
     private final ModelPart body;
@@ -120,7 +122,7 @@ public class ModelPeacock extends EntityModel<Peacock> {
     @Override
     public void setupAnim(Peacock entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
         float newangle = 0.0f;
-        newangle = (double)limbSwingAmount > 0.1 ? Mth.cos((float)(ageInTicks * 1.3f * limbSwingAmount)) * (float)Math.PI * 0.15f * limbSwingAmount : 0.0f;
+        newangle = (double)limbSwingAmount > 0.1 ? Mth.cos((float)(ageInTicks * 1.3f * this.wingspeed)) * (float)Math.PI * 0.15f * limbSwingAmount : 0.0f;
         this.lleg.xRot = newangle;
         this.rleg.xRot = -newangle;
         if (entity.getBlink() > 0) {

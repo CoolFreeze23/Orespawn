@@ -25,7 +25,8 @@ public class VampireButterflyRenderer extends MobRenderer<VampireButterfly, Butt
             new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "vampire_butterfly"), "main");
 
     public VampireButterflyRenderer(EntityRendererProvider.Context context) {
-        super(context, new ButterflyModel<>(context.bakeLayer(MODEL_LAYER)), 0.2f);
+        // No orig RenderButterfly registration for this entity; default wingspeed 1.0f (orig ModelButterfly.java:23)
+        super(context, new ButterflyModel<>(context.bakeLayer(MODEL_LAYER), 1.0f), 0.2f);
     }
 
     @Override

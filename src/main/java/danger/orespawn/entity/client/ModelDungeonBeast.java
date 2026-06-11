@@ -10,6 +10,8 @@ import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.util.Mth;
 
 public class ModelDungeonBeast extends EntityModel<DungeonBeast> {
+    /** Animation frequency constant; orig ModelDungeonBeast.java:16,83 (wingspeed), value from orig ClientProxyOreSpawn.java:481. */
+    private final float wingspeed = 0.62f;
     private int ri1, ri2;
     private final ModelPart tail7;
     private final ModelPart head3;
@@ -413,7 +415,7 @@ public class ModelDungeonBeast extends EntityModel<DungeonBeast> {
         float nextangle = 0.0f;
         float tailamp = 0.0f;
         float pi4 = 0.39269876f;
-        this.rfoot2.zRot = this.rheel.zRot = (newangle = Mth.cos((float)(ageInTicks * 1.4f * limbSwingAmount)) * (float)Math.PI * 0.22f * limbSwingAmount);
+        this.rfoot2.zRot = this.rheel.zRot = (newangle = Mth.cos((float)(ageInTicks * 1.4f * this.wingspeed)) * (float)Math.PI * 0.22f * limbSwingAmount);
         this.rfoot.zRot = this.rheel.zRot;
         this.rleg2.zRot = this.rheel.zRot;
         this.rleg1.zRot = this.rheel.zRot;
@@ -423,22 +425,22 @@ public class ModelDungeonBeast extends EntityModel<DungeonBeast> {
         this.lleg2.zRot = this.lheel.zRot;
         this.lleg1.zRot = this.lheel.zRot;
         this.ltoe2.zRot = -0.785f - newangle;
-        this.bodys1.xRot = Mth.cos((float)(ageInTicks * 0.5f * limbSwingAmount)) * (float)Math.PI * 0.07f;
-        this.bodys2.xRot = Mth.cos((float)(ageInTicks * 0.5f * limbSwingAmount + pi4)) * (float)Math.PI * 0.07f;
-        this.bodys3.xRot = Mth.cos((float)(ageInTicks * 0.5f * limbSwingAmount + 2.0f * pi4)) * (float)Math.PI * 0.07f;
-        this.t1s1.xRot = Mth.cos((float)(ageInTicks * 0.5f * limbSwingAmount + 3.0f * pi4)) * (float)Math.PI * 0.07f;
-        this.t1s2.xRot = Mth.cos((float)(ageInTicks * 0.5f * limbSwingAmount + 4.0f * pi4)) * (float)Math.PI * 0.07f;
-        this.t1s3.xRot = Mth.cos((float)(ageInTicks * 0.5f * limbSwingAmount + 5.0f * pi4)) * (float)Math.PI * 0.07f;
-        this.t2s1.xRot = -Mth.cos((float)(ageInTicks * 0.5f * limbSwingAmount + 6.0f * pi4)) * (float)Math.PI * 0.07f;
-        this.t2s2.xRot = -Mth.cos((float)(ageInTicks * 0.5f * limbSwingAmount + 7.0f * pi4)) * (float)Math.PI * 0.07f;
-        this.t2s3.xRot = -Mth.cos((float)(ageInTicks * 0.5f * limbSwingAmount + 8.0f * pi4)) * (float)Math.PI * 0.07f;
-        this.t3s1.xRot = -Mth.cos((float)(ageInTicks * 0.5f * limbSwingAmount + 9.0f * pi4)) * (float)Math.PI * 0.07f;
-        this.t3s2.xRot = -Mth.cos((float)(ageInTicks * 0.5f * limbSwingAmount + 10.0f * pi4)) * (float)Math.PI * 0.07f;
-        this.t4s1.xRot = -Mth.cos((float)(ageInTicks * 0.5f * limbSwingAmount + 11.0f * pi4)) * (float)Math.PI * 0.07f;
-        this.t5s1.xRot = -Mth.cos((float)(ageInTicks * 0.5f * limbSwingAmount + 12.0f * pi4)) * (float)Math.PI * 0.07f;
-        this.t6s1.xRot = -Mth.cos((float)(ageInTicks * 0.5f * limbSwingAmount + 13.0f * pi4)) * (float)Math.PI * 0.07f;
+        this.bodys1.xRot = Mth.cos((float)(ageInTicks * 0.5f * this.wingspeed)) * (float)Math.PI * 0.07f;
+        this.bodys2.xRot = Mth.cos((float)(ageInTicks * 0.5f * this.wingspeed + pi4)) * (float)Math.PI * 0.07f;
+        this.bodys3.xRot = Mth.cos((float)(ageInTicks * 0.5f * this.wingspeed + 2.0f * pi4)) * (float)Math.PI * 0.07f;
+        this.t1s1.xRot = Mth.cos((float)(ageInTicks * 0.5f * this.wingspeed + 3.0f * pi4)) * (float)Math.PI * 0.07f;
+        this.t1s2.xRot = Mth.cos((float)(ageInTicks * 0.5f * this.wingspeed + 4.0f * pi4)) * (float)Math.PI * 0.07f;
+        this.t1s3.xRot = Mth.cos((float)(ageInTicks * 0.5f * this.wingspeed + 5.0f * pi4)) * (float)Math.PI * 0.07f;
+        this.t2s1.xRot = -Mth.cos((float)(ageInTicks * 0.5f * this.wingspeed + 6.0f * pi4)) * (float)Math.PI * 0.07f;
+        this.t2s2.xRot = -Mth.cos((float)(ageInTicks * 0.5f * this.wingspeed + 7.0f * pi4)) * (float)Math.PI * 0.07f;
+        this.t2s3.xRot = -Mth.cos((float)(ageInTicks * 0.5f * this.wingspeed + 8.0f * pi4)) * (float)Math.PI * 0.07f;
+        this.t3s1.xRot = -Mth.cos((float)(ageInTicks * 0.5f * this.wingspeed + 9.0f * pi4)) * (float)Math.PI * 0.07f;
+        this.t3s2.xRot = -Mth.cos((float)(ageInTicks * 0.5f * this.wingspeed + 10.0f * pi4)) * (float)Math.PI * 0.07f;
+        this.t4s1.xRot = -Mth.cos((float)(ageInTicks * 0.5f * this.wingspeed + 11.0f * pi4)) * (float)Math.PI * 0.07f;
+        this.t5s1.xRot = -Mth.cos((float)(ageInTicks * 0.5f * this.wingspeed + 12.0f * pi4)) * (float)Math.PI * 0.07f;
+        this.t6s1.xRot = -Mth.cos((float)(ageInTicks * 0.5f * this.wingspeed + 13.0f * pi4)) * (float)Math.PI * 0.07f;
         tailamp = entity.getAttacking() == 0 ? limbSwingAmount : 1.25f;
-        newangle = Mth.cos((float)(ageInTicks * 0.75f * limbSwingAmount)) * (float)Math.PI * 0.25f * tailamp;
+        newangle = Mth.cos((float)(ageInTicks * 0.75f * this.wingspeed)) * (float)Math.PI * 0.25f * tailamp;
         this.t1s2.yRot = this.t1s3.yRot = (this.tail1.yRot = newangle * 0.25f);
         this.t1s1.yRot = this.t1s3.yRot;
         this.tail2.yRot = newangle * 0.5f;
@@ -477,8 +479,8 @@ public class ModelDungeonBeast extends EntityModel<DungeonBeast> {
         this.tail7.yRot = newangle * 1.75f;
         this.tail7.x = this.tail6.x - (float)Math.cos(this.tail6.yRot) * 3.0f;
         this.tail7.z = this.tail6.z - (float)Math.sin(this.tail6.yRot) * 3.0f;
-        newangle = Mth.cos((float)(ageInTicks * 2.0f * limbSwingAmount)) * (float)Math.PI * 0.15f;
-        nextangle = Mth.cos((float)((ageInTicks + 0.1f) * 2.0f * limbSwingAmount)) * (float)Math.PI * 0.15f;
+        newangle = Mth.cos((float)(ageInTicks * 2.0f * this.wingspeed)) * (float)Math.PI * 0.15f;
+        nextangle = Mth.cos((float)((ageInTicks + 0.1f) * 2.0f * this.wingspeed)) * (float)Math.PI * 0.15f;
         if (nextangle > 0.0f && newangle < 0.0f) {
         if (entity.getAttacking() == 0) {
         ri1 = entity.getRandom().nextInt(15);

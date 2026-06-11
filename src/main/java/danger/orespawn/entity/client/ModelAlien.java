@@ -10,6 +10,8 @@ import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.util.Mth;
 
 public class ModelAlien extends EntityModel<Alien> {
+    /** Animation frequency constant; orig ModelAlien.java:15,73 (wingspeed), value from orig ClientProxyOreSpawn.java:435. */
+    private final float wingspeed = 0.22f;
     private int ri1, ri2, ri3;
     private final ModelPart torso;
     private final ModelPart stomach;
@@ -356,7 +358,7 @@ public class ModelAlien extends EntityModel<Alien> {
     public void setupAnim(Alien entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
         float newangle = 0.0f;
         float nextangle = 0.0f;
-        newangle = Mth.cos((float)(ageInTicks * 4.0f * limbSwingAmount)) * (float)Math.PI * 0.5f * limbSwingAmount;
+        newangle = Mth.cos((float)(ageInTicks * 4.0f * this.wingspeed)) * (float)Math.PI * 0.5f * limbSwingAmount;
         this.doLeftLeg(newangle);
         this.doRightLeg(-newangle);
         if (entity.getAttacking() == 0) {
@@ -394,21 +396,21 @@ public class ModelAlien extends EntityModel<Alien> {
         float pi6 = 0.5235988f;
         float fanspeed = 1.22f;
         float fanamp = 0.1f;
-        this.fan.xRot = Mth.cos((float)(ageInTicks * fanspeed * limbSwingAmount)) * (float)Math.PI * fanamp;
-        this.fanl1.xRot = Mth.cos((float)(ageInTicks * fanspeed * limbSwingAmount - 1.0f * pi6)) * (float)Math.PI * fanamp;
-        this.fanl2.xRot = Mth.cos((float)(ageInTicks * fanspeed * limbSwingAmount - 2.0f * pi6)) * (float)Math.PI * fanamp;
-        this.fanl3.xRot = Mth.cos((float)(ageInTicks * fanspeed * limbSwingAmount - 3.0f * pi6)) * (float)Math.PI * fanamp;
-        this.fanl4.xRot = Mth.cos((float)(ageInTicks * fanspeed * limbSwingAmount - 4.0f * pi6)) * (float)Math.PI * fanamp;
-        this.fanl5.xRot = Mth.cos((float)(ageInTicks * fanspeed * limbSwingAmount - 5.0f * pi6)) * (float)Math.PI * fanamp;
-        this.fanl6.xRot = Mth.cos((float)(ageInTicks * fanspeed * limbSwingAmount - 6.0f * pi6)) * (float)Math.PI * fanamp;
-        this.fanl7.xRot = Mth.cos((float)(ageInTicks * fanspeed * limbSwingAmount - 7.0f * pi6)) * (float)Math.PI * fanamp;
-        this.fanr1.xRot = Mth.cos((float)(ageInTicks * fanspeed * limbSwingAmount - 1.0f * pi6)) * (float)Math.PI * fanamp;
-        this.fanr2.xRot = Mth.cos((float)(ageInTicks * fanspeed * limbSwingAmount - 2.0f * pi6)) * (float)Math.PI * fanamp;
-        this.fanr3.xRot = Mth.cos((float)(ageInTicks * fanspeed * limbSwingAmount - 3.0f * pi6)) * (float)Math.PI * fanamp;
-        this.fanr4.xRot = Mth.cos((float)(ageInTicks * fanspeed * limbSwingAmount - 4.0f * pi6)) * (float)Math.PI * fanamp;
-        this.fanr5.xRot = Mth.cos((float)(ageInTicks * fanspeed * limbSwingAmount - 5.0f * pi6)) * (float)Math.PI * fanamp;
-        this.fanr6.xRot = Mth.cos((float)(ageInTicks * fanspeed * limbSwingAmount - 6.0f * pi6)) * (float)Math.PI * fanamp;
-        this.fanr7.xRot = Mth.cos((float)(ageInTicks * fanspeed * limbSwingAmount - 7.0f * pi6)) * (float)Math.PI * fanamp;
+        this.fan.xRot = Mth.cos((float)(ageInTicks * fanspeed * this.wingspeed)) * (float)Math.PI * fanamp;
+        this.fanl1.xRot = Mth.cos((float)(ageInTicks * fanspeed * this.wingspeed - 1.0f * pi6)) * (float)Math.PI * fanamp;
+        this.fanl2.xRot = Mth.cos((float)(ageInTicks * fanspeed * this.wingspeed - 2.0f * pi6)) * (float)Math.PI * fanamp;
+        this.fanl3.xRot = Mth.cos((float)(ageInTicks * fanspeed * this.wingspeed - 3.0f * pi6)) * (float)Math.PI * fanamp;
+        this.fanl4.xRot = Mth.cos((float)(ageInTicks * fanspeed * this.wingspeed - 4.0f * pi6)) * (float)Math.PI * fanamp;
+        this.fanl5.xRot = Mth.cos((float)(ageInTicks * fanspeed * this.wingspeed - 5.0f * pi6)) * (float)Math.PI * fanamp;
+        this.fanl6.xRot = Mth.cos((float)(ageInTicks * fanspeed * this.wingspeed - 6.0f * pi6)) * (float)Math.PI * fanamp;
+        this.fanl7.xRot = Mth.cos((float)(ageInTicks * fanspeed * this.wingspeed - 7.0f * pi6)) * (float)Math.PI * fanamp;
+        this.fanr1.xRot = Mth.cos((float)(ageInTicks * fanspeed * this.wingspeed - 1.0f * pi6)) * (float)Math.PI * fanamp;
+        this.fanr2.xRot = Mth.cos((float)(ageInTicks * fanspeed * this.wingspeed - 2.0f * pi6)) * (float)Math.PI * fanamp;
+        this.fanr3.xRot = Mth.cos((float)(ageInTicks * fanspeed * this.wingspeed - 3.0f * pi6)) * (float)Math.PI * fanamp;
+        this.fanr4.xRot = Mth.cos((float)(ageInTicks * fanspeed * this.wingspeed - 4.0f * pi6)) * (float)Math.PI * fanamp;
+        this.fanr5.xRot = Mth.cos((float)(ageInTicks * fanspeed * this.wingspeed - 5.0f * pi6)) * (float)Math.PI * fanamp;
+        this.fanr6.xRot = Mth.cos((float)(ageInTicks * fanspeed * this.wingspeed - 6.0f * pi6)) * (float)Math.PI * fanamp;
+        this.fanr7.xRot = Mth.cos((float)(ageInTicks * fanspeed * this.wingspeed - 7.0f * pi6)) * (float)Math.PI * fanamp;
         this.fan.zRot = 0.0f;
         this.fanl1.zRot = 0.261f;
         this.fanl2.zRot = 0.523f;
@@ -453,8 +455,8 @@ public class ModelAlien extends EntityModel<Alien> {
         this.jaw2.yRot = this.jaw1.yRot;
         this.jaw2.z = this.jaw1.z;
         this.jaw2.x = this.jaw1.x;
-        newangle = Mth.cos((float)(ageInTicks * 3.5f * limbSwingAmount)) * (float)Math.PI * 0.5f;
-        nextangle = Mth.cos((float)((ageInTicks + 0.2f) * 3.5f * limbSwingAmount)) * (float)Math.PI * 0.5f;
+        newangle = Mth.cos((float)(ageInTicks * 3.5f * this.wingspeed)) * (float)Math.PI * 0.5f;
+        nextangle = Mth.cos((float)((ageInTicks + 0.2f) * 3.5f * this.wingspeed)) * (float)Math.PI * 0.5f;
         if (nextangle > 0.0f && newangle < 0.0f) {
         if (entity.getAttacking() == 0) {
         ri1 = entity.getRandom().nextInt(15);
@@ -469,27 +471,27 @@ public class ModelAlien extends EntityModel<Alien> {
         if (ri2 == 1) {
         this.doTail(newangle);
         } else {
-        newangle = Mth.cos((float)(ageInTicks * limbSwingAmount)) * (float)Math.PI * 0.05f;
+        newangle = Mth.cos((float)(ageInTicks * this.wingspeed)) * (float)Math.PI * 0.05f;
         this.doTail(newangle);
         }
         if (ri3 == 1) {
-        newangle = Mth.cos((float)(ageInTicks * 3.5f * limbSwingAmount)) * (float)Math.PI * 0.35f;
+        newangle = Mth.cos((float)(ageInTicks * 3.5f * this.wingspeed)) * (float)Math.PI * 0.35f;
         this.doJaw(newangle);
         } else {
-        newangle = Mth.cos((float)(ageInTicks * limbSwingAmount)) * (float)Math.PI * 0.02f;
+        newangle = Mth.cos((float)(ageInTicks * this.wingspeed)) * (float)Math.PI * 0.02f;
         this.doJaw(newangle);
         }
-        newangle = Mth.cos((float)(ageInTicks * limbSwingAmount * 3.5f)) * (float)Math.PI * 0.2f;
+        newangle = Mth.cos((float)(ageInTicks * this.wingspeed * 3.5f)) * (float)Math.PI * 0.2f;
         if (ri1 == 1 || ri1 == 3) {
         this.doLeftClaw(newangle);
         } else {
-        newangle = Mth.cos((float)(ageInTicks * limbSwingAmount)) * (float)Math.PI * 0.03f;
+        newangle = Mth.cos((float)(ageInTicks * this.wingspeed)) * (float)Math.PI * 0.03f;
         this.doLeftClaw(newangle);
         }
         if (ri1 == 2 || ri1 == 3) {
         this.doRightClaw(-newangle);
         } else {
-        newangle = Mth.cos((float)(ageInTicks * limbSwingAmount)) * (float)Math.PI * 0.03f;
+        newangle = Mth.cos((float)(ageInTicks * this.wingspeed)) * (float)Math.PI * 0.03f;
         this.doRightClaw(-newangle);
         }
     }

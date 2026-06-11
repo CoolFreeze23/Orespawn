@@ -10,6 +10,8 @@ import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.util.Mth;
 
 public class FireflyModel extends EntityModel<Firefly> {
+    /** Animation frequency constant; orig ModelFirefly.java:16,33 (wingspeed), value from orig ClientProxyOreSpawn.java:406. */
+    private final float wingspeed = 2.5f;
     private final ModelPart body;
     private final ModelPart wing_left;
     private final ModelPart wing_right;
@@ -107,8 +109,8 @@ public class FireflyModel extends EntityModel<Firefly> {
 
     @Override
     public void setupAnim(Firefly entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
-        this.wing_left.zRot = 1.11f + Mth.cos((float)(ageInTicks * limbSwingAmount)) * (float)Math.PI * 0.35f;
-        this.wing_right.zRot = -1.11f - Mth.cos((float)(ageInTicks * limbSwingAmount)) * (float)Math.PI * 0.35f;
+        this.wing_left.zRot = 1.11f + Mth.cos((float)(ageInTicks * this.wingspeed)) * (float)Math.PI * 0.35f;
+        this.wing_right.zRot = -1.11f - Mth.cos((float)(ageInTicks * this.wingspeed)) * (float)Math.PI * 0.35f;
     }
 
     @Override

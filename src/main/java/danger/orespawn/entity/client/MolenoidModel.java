@@ -10,6 +10,8 @@ import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.util.Mth;
 
 public class MolenoidModel extends EntityModel<EntityMolenoid> {
+    /** Animation frequency constant; orig ModelMolenoid.java:14,54 (wingspeed), value from orig ClientProxyOreSpawn.java:495. */
+    private final float wingspeed = 0.5f;
     private final ModelPart body;
     private final ModelPart shoulders;
     private final ModelPart head1;
@@ -283,7 +285,7 @@ public class MolenoidModel extends EntityModel<EntityMolenoid> {
     @Override
     public void setupAnim(EntityMolenoid entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
         float newangle = 0.0f;
-        newangle = entity.getAttacking() != 0 ? Mth.cos((float)(ageInTicks * 1.7f * limbSwingAmount)) * (float)Math.PI * 0.25f : (limbSwingAmount > 0.1f ? Mth.cos((float)(ageInTicks * 1.3f * limbSwingAmount)) * (float)Math.PI * 0.25f * limbSwingAmount : 0.0f);
+        newangle = entity.getAttacking() != 0 ? Mth.cos((float)(ageInTicks * 1.7f * this.wingspeed)) * (float)Math.PI * 0.25f : (limbSwingAmount > 0.1f ? Mth.cos((float)(ageInTicks * 1.3f * this.wingspeed)) * (float)Math.PI * 0.25f * limbSwingAmount : 0.0f);
         this.larm.yRot = newangle + 0.628f;
         this.lhand.z = this.larm.z - (float)Math.sin(this.larm.yRot) * 15.0f;
         this.lhand.x = this.larm.x + (float)Math.cos(this.larm.yRot) * 15.0f;
@@ -316,7 +318,7 @@ public class MolenoidModel extends EntityModel<EntityMolenoid> {
         this.rclaw4.z = this.rclaw1.z;
         this.rclaw4.x = this.rclaw1.x;
         this.rclaw4.yRot = this.rclaw1.yRot;
-        newangle = limbSwingAmount > 0.1f ? Mth.cos((float)(ageInTicks * 1.3f * limbSwingAmount)) * (float)Math.PI * 0.25f * limbSwingAmount : 0.0f;
+        newangle = limbSwingAmount > 0.1f ? Mth.cos((float)(ageInTicks * 1.3f * this.wingspeed)) * (float)Math.PI * 0.25f * limbSwingAmount : 0.0f;
         this.lleg.yRot = -newangle + 0.628f;
         this.lfoot.z = this.lleg.z - (float)Math.sin(this.lleg.yRot) * 15.0f;
         this.lfoot.x = this.lleg.x + (float)Math.cos(this.lleg.yRot) * 15.0f;
@@ -349,7 +351,7 @@ public class MolenoidModel extends EntityModel<EntityMolenoid> {
         this.rtoe4.z = this.rtoe1.z;
         this.rtoe4.x = this.rtoe1.x;
         this.rtoe4.yRot = this.rtoe1.yRot;
-        this.nosestar1.zRot = newangle = Mth.cos((float)(ageInTicks * 0.1f * limbSwingAmount)) * (float)Math.PI;
+        this.nosestar1.zRot = newangle = Mth.cos((float)(ageInTicks * 0.1f * this.wingspeed)) * (float)Math.PI;
         this.nosestar2.zRot = newangle + 0.523f;
         this.nosestar3.zRot = newangle + 1.047f;
         this.nosestar4.zRot = newangle + 1.57f;

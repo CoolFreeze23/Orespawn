@@ -10,6 +10,8 @@ import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.util.Mth;
 
 public class VelocityRaptorModel extends EntityModel<VelocityRaptor> {
+    /** Animation frequency constant; orig ModelVelocityRaptor.java:15,52 (wingspeed), value from orig ClientProxyOreSpawn.java:423. */
+    private final float wingspeed = 1.25f;
     private final ModelPart hf3;
     private final ModelPart hf4;
     private final ModelPart hf2;
@@ -263,7 +265,7 @@ public class VelocityRaptorModel extends EntityModel<VelocityRaptor> {
     public void setupAnim(VelocityRaptor entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
         float hf = 0.0f;
         float newangle = 0.0f;
-        newangle = (double)limbSwingAmount > 0.1 ? Mth.cos((float)(ageInTicks * 1.3f * limbSwingAmount)) * (float)Math.PI * 0.25f * limbSwingAmount : 0.0f;
+        newangle = (double)limbSwingAmount > 0.1 ? Mth.cos((float)(ageInTicks * 1.3f * this.wingspeed)) * (float)Math.PI * 0.25f * limbSwingAmount : 0.0f;
         this.bl1.xRot = newangle;
         this.bl2.xRot = newangle + 0.488f;
         this.bl3.xRot = newangle;
@@ -273,7 +275,7 @@ public class VelocityRaptorModel extends EntityModel<VelocityRaptor> {
         this.br3.xRot = -newangle;
         this.br4.xRot = -newangle + 0.628f;
         hf = entity.getHealth() / entity.getMaxHealth();
-        this.hf1.yRot = newangle = Mth.cos((float)(ageInTicks * 1.25f * limbSwingAmount * hf)) * (float)Math.PI * 0.1f * hf;
+        this.hf1.yRot = newangle = Mth.cos((float)(ageInTicks * 1.25f * this.wingspeed * hf)) * (float)Math.PI * 0.1f * hf;
         this.hf2.yRot = -newangle;
         this.hf3.yRot = newangle;
         this.hf4.yRot = -newangle;
@@ -288,13 +290,13 @@ public class VelocityRaptorModel extends EntityModel<VelocityRaptor> {
         this.rff1.xRot = -newangle - 0.279f;
         this.rff2.xRot = -newangle - 0.453f;
         this.rff3.xRot = -newangle - 1.047f;
-        this.lff1.yRot = newangle = Mth.cos((float)(ageInTicks * 1.3f * limbSwingAmount)) * (float)Math.PI * 0.1f;
+        this.lff1.yRot = newangle = Mth.cos((float)(ageInTicks * 1.3f * this.wingspeed)) * (float)Math.PI * 0.1f;
         this.lff2.yRot = -newangle;
         this.lff3.yRot = newangle;
         this.rff1.yRot = -newangle;
         this.rff2.yRot = newangle;
         this.rff3.yRot = -newangle;
-        newangle = entity.isInSittingPose() ? 0.0f : Mth.cos((float)(ageInTicks * 1.4f * limbSwingAmount * hf)) * (float)Math.PI * 0.25f * hf;
+        newangle = entity.isInSittingPose() ? 0.0f : Mth.cos((float)(ageInTicks * 1.4f * this.wingspeed * hf)) * (float)Math.PI * 0.25f * hf;
         this.tf1.zRot = newangle;
         this.tf2.zRot = -newangle;
         this.tf3.zRot = newangle;

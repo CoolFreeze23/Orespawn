@@ -13,7 +13,8 @@ import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.minecraft.util.Mth;
 
 public class ModelGazelle extends EntityModel<Gazelle> {
-    private final float wingspeed = 1.0F;
+    /** Animation frequency constant; orig ModelGazelle.java:14,51 (wingspeed), value from orig ClientProxyOreSpawn.java:449. */
+    private final float wingspeed = 0.65F;
     private final ModelPart Chest;
     private final ModelPart lfleg1;
     private final ModelPart lrleg2;

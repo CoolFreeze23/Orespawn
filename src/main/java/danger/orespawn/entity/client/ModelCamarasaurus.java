@@ -13,7 +13,8 @@ import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.minecraft.util.Mth;
 
 public class ModelCamarasaurus extends EntityModel<Camarasaurus> {
-    private float wingspeed = 1.0f;
+    /** Animation frequency constant; orig ModelCamarasaurus.java:14,38 (wingspeed), value from orig ClientProxyOreSpawn.java:421. */
+    private final float wingspeed = 0.65f;
     private final ModelPart Body1;
     private final ModelPart Body2;
     private final ModelPart Body3;

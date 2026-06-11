@@ -14,7 +14,8 @@ public class ButterflyRenderer extends MobRenderer<EntityButterfly, ButterflyMod
             new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "butterfly"), "main");
 
     public ButterflyRenderer(EntityRendererProvider.Context context) {
-        super(context, new ButterflyModel<>(context.bakeLayer(MODEL_LAYER)), 0.15f);
+        // wingspeed 1.0f — orig ClientProxyOreSpawn.java:405 (new ModelButterfly(1.0f))
+        super(context, new ButterflyModel<>(context.bakeLayer(MODEL_LAYER), 1.0f), 0.15f);
     }
 
     @Override

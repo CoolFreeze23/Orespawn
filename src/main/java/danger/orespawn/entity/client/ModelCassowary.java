@@ -13,7 +13,8 @@ import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.minecraft.util.Mth;
 
 public class ModelCassowary extends EntityModel<Cassowary> {
-    private float wingspeed = 1.0f;
+    /** Animation frequency constant; orig ModelCassowary.java:14,29 (wingspeed), value from orig ClientProxyOreSpawn.java:469. */
+    private final float wingspeed = 0.55f;
     private final ModelPart tail;
     private final ModelPart body;
     private final ModelPart neck1;

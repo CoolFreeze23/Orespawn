@@ -10,6 +10,8 @@ import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.util.Mth;
 
 public class TrooperBugModel extends EntityModel<EntityTrooperBug> {
+    /** Animation frequency constant; orig ModelTrooperBug.java:14,151 (wingspeed), value from orig ClientProxyOreSpawn.java:451. */
+    private final float wingspeed = 0.22f;
     private final ModelPart legintersection;
     private final ModelPart legintersectionb;
     private final ModelPart leg1start;
@@ -966,27 +968,27 @@ public class TrooperBugModel extends EntityModel<EntityTrooperBug> {
         float upangle = 0.0f;
         float nextangle = 0.0f;
         float pi4 = 1.570795f;
-        newangle = entity.getAttacking() == 0 ? Mth.cos((float)(ageInTicks * 0.4f * limbSwingAmount)) * (float)Math.PI * 0.05f : Mth.cos((float)(ageInTicks * 1.4f * limbSwingAmount)) * (float)Math.PI * 0.1f;
+        newangle = entity.getAttacking() == 0 ? Mth.cos((float)(ageInTicks * 0.4f * this.wingspeed)) * (float)Math.PI * 0.05f : Mth.cos((float)(ageInTicks * 1.4f * this.wingspeed)) * (float)Math.PI * 0.1f;
         this.antenna2part2.yRot = 0.78f + newangle;
         this.antenna1part2.yRot = -0.78f - newangle;
-        newangle = entity.getAttacking() == 0 ? Mth.cos((float)(ageInTicks * 0.5f * limbSwingAmount)) * (float)Math.PI * 0.05f : Mth.cos((float)(ageInTicks * 2.5f * limbSwingAmount)) * (float)Math.PI * 0.15f;
+        newangle = entity.getAttacking() == 0 ? Mth.cos((float)(ageInTicks * 0.5f * this.wingspeed)) * (float)Math.PI * 0.05f : Mth.cos((float)(ageInTicks * 2.5f * this.wingspeed)) * (float)Math.PI * 0.15f;
         this.arm4part1.yRot = newangle;
         this.arm4part1b.yRot = newangle;
         this.arm4part1c.yRot = newangle;
         this.arm3part1.yRot = -newangle;
         this.arm3part1b.yRot = -newangle;
         this.arm3part1c.yRot = -newangle;
-        newangle = entity.getAttacking() == 0 ? Mth.cos((float)(ageInTicks * 0.3f * limbSwingAmount)) * (float)Math.PI * 0.05f : Mth.cos((float)(ageInTicks * 2.6f * limbSwingAmount)) * (float)Math.PI * 0.2f;
+        newangle = entity.getAttacking() == 0 ? Mth.cos((float)(ageInTicks * 0.3f * this.wingspeed)) * (float)Math.PI * 0.05f : Mth.cos((float)(ageInTicks * 2.6f * this.wingspeed)) * (float)Math.PI * 0.2f;
         this.arm1part3.xRot = 1.56f + newangle;
         this.arm1part3b.xRot = 1.56f + newangle;
         this.arm2part3.xRot = 1.56f - newangle;
         this.arm2part3b.xRot = 1.56f - newangle;
-        newangle = entity.getAttacking() == 0 ? Mth.cos((float)(ageInTicks * 0.1f * limbSwingAmount)) * (float)Math.PI * 0.02f : Mth.cos((float)(ageInTicks * 1.0f * limbSwingAmount)) * (float)Math.PI * 0.1f;
+        newangle = entity.getAttacking() == 0 ? Mth.cos((float)(ageInTicks * 0.1f * this.wingspeed)) * (float)Math.PI * 0.02f : Mth.cos((float)(ageInTicks * 1.0f * this.wingspeed)) * (float)Math.PI * 0.1f;
         this.headleftridge.yRot = -0.25f + newangle;
         this.headrightridge.yRot = 0.25f - newangle;
         this.upperjawridgeleft.yRot = -0.372f + newangle;
         this.upperjawridgeright.yRot = 0.372f - newangle;
-        newangle = entity.getAttacking() == 0 ? Mth.cos((float)(ageInTicks * 0.3f * limbSwingAmount)) * (float)Math.PI * 0.015f : Mth.cos((float)(ageInTicks * 2.6f * limbSwingAmount)) * (float)Math.PI * 0.1f;
+        newangle = entity.getAttacking() == 0 ? Mth.cos((float)(ageInTicks * 0.3f * this.wingspeed)) * (float)Math.PI * 0.015f : Mth.cos((float)(ageInTicks * 2.6f * this.wingspeed)) * (float)Math.PI * 0.1f;
         this.jawbase.xRot = 0.22f + newangle;
         this.jawbase2.xRot = 0.22f + newangle;
         this.jawbase3.xRot = 0.22f + newangle;
@@ -1001,19 +1003,19 @@ public class TrooperBugModel extends EntityModel<EntityTrooperBug> {
         this.jawend.xRot = 0.22f + newangle;
         this.jawleft.xRot = 0.22f + newangle;
         this.jawright.xRot = 0.22f + newangle;
-        newangle = Mth.sin((float)(ageInTicks * 2.0f * limbSwingAmount)) * (float)Math.PI * 0.12f * limbSwingAmount;
-        nextangle = Mth.sin((float)((ageInTicks + 0.1f) * 2.0f * limbSwingAmount)) * (float)Math.PI * 0.12f * limbSwingAmount;
+        newangle = Mth.sin((float)(ageInTicks * 2.0f * this.wingspeed)) * (float)Math.PI * 0.12f * limbSwingAmount;
+        nextangle = Mth.sin((float)((ageInTicks + 0.1f) * 2.0f * this.wingspeed)) * (float)Math.PI * 0.12f * limbSwingAmount;
         upangle = 0.0f;
         if (nextangle > newangle) {
-        upangle = Math.abs(Mth.cos((float)(ageInTicks * 2.0f * limbSwingAmount)) * (float)Math.PI * 0.12f * limbSwingAmount);
+        upangle = Math.abs(Mth.cos((float)(ageInTicks * 2.0f * this.wingspeed)) * (float)Math.PI * 0.12f * limbSwingAmount);
         }
         this.doLeftFrontLeg(newangle, upangle);
         this.doLeftRearLeg(-newangle, upangle);
-        newangle = Mth.sin((float)((float)((double)(ageInTicks * 2.0f * limbSwingAmount) + Math.PI))) * (float)Math.PI * 0.12f * limbSwingAmount;
-        nextangle = Mth.sin((float)((float)((double)((ageInTicks + 0.1f) * 2.0f * limbSwingAmount) + Math.PI))) * (float)Math.PI * 0.12f * limbSwingAmount;
+        newangle = Mth.sin((float)((float)((double)(ageInTicks * 2.0f * this.wingspeed) + Math.PI))) * (float)Math.PI * 0.12f * limbSwingAmount;
+        nextangle = Mth.sin((float)((float)((double)((ageInTicks + 0.1f) * 2.0f * this.wingspeed) + Math.PI))) * (float)Math.PI * 0.12f * limbSwingAmount;
         upangle = 0.0f;
         if (nextangle > newangle) {
-        upangle = Math.abs(Mth.cos((float)((float)((double)(ageInTicks * 2.0f * limbSwingAmount) + Math.PI))) * (float)Math.PI * 0.12f * limbSwingAmount);
+        upangle = Math.abs(Mth.cos((float)((float)((double)(ageInTicks * 2.0f * this.wingspeed) + Math.PI))) * (float)Math.PI * 0.12f * limbSwingAmount);
         }
         this.doRightFrontLeg(-newangle, upangle);
         this.doRightRearLeg(newangle, upangle);

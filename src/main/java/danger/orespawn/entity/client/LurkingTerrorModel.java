@@ -10,6 +10,8 @@ import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.util.Mth;
 
 public class LurkingTerrorModel extends EntityModel<EntityLurkingTerror> {
+    /** Animation frequency constant; orig ModelLurkingTerror.java:15 (default; orig ctor takes no wingspeed arg) (wingspeed), value from orig ClientProxyOreSpawn.java:461. */
+    private final float wingspeed = 1.0f;
     private int ri1, ri2;
     private float rf1, rf2;
     private final ModelPart body;
@@ -441,7 +443,7 @@ public class LurkingTerrorModel extends EntityModel<EntityLurkingTerror> {
         float newangle = 0.0f;
         float legspeed = 0.7f;
         float mouthspeed = 0.9f;
-        newangle = ageInTicks * legspeed * limbSwingAmount % ((float)Math.PI * 2);
+        newangle = ageInTicks * legspeed * this.wingspeed % ((float)Math.PI * 2);
         newangle = Math.abs(newangle);
         if (newangle < rf1) {
         ri1 = 0;
@@ -465,7 +467,7 @@ public class LurkingTerrorModel extends EntityModel<EntityLurkingTerror> {
         }
         }
         rf1 = newangle;
-        newangle = ageInTicks * mouthspeed * limbSwingAmount % ((float)Math.PI * 2);
+        newangle = ageInTicks * mouthspeed * this.wingspeed % ((float)Math.PI * 2);
         if ((newangle = Math.abs(newangle)) < rf2) {
         ri2 = 0;
         if (entity.getRandom().nextInt(20) == 1) {
@@ -478,41 +480,41 @@ public class LurkingTerrorModel extends EntityModel<EntityLurkingTerror> {
         rf2 = newangle;
         newangle = 0.0f;
         if ((ri1 & 1) != 0) {
-        newangle = Mth.sin((float)(ageInTicks * legspeed * limbSwingAmount)) * (float)Math.PI * 0.25f;
+        newangle = Mth.sin((float)(ageInTicks * legspeed * this.wingspeed)) * (float)Math.PI * 0.25f;
         }
         this.leg2.zRot = this.leg2part2.zRot = 0.191f + newangle;
         this.leg2part3.zRot = 0.675f + newangle;
         newangle = 0.0f;
         if ((ri1 & 2) != 0) {
-        newangle = Mth.sin((float)(ageInTicks * legspeed * limbSwingAmount)) * (float)Math.PI * 0.25f;
+        newangle = Mth.sin((float)(ageInTicks * legspeed * this.wingspeed)) * (float)Math.PI * 0.25f;
         }
         this.leg1.zRot = this.leg1part2.zRot = -0.191f + newangle;
         this.leg1part3.zRot = -0.675f + newangle;
         newangle = 0.0f;
         if ((ri1 & 4) != 0) {
-        newangle = Mth.sin((float)(ageInTicks * legspeed * limbSwingAmount)) * (float)Math.PI * 0.15f;
+        newangle = Mth.sin((float)(ageInTicks * legspeed * this.wingspeed)) * (float)Math.PI * 0.15f;
         }
         this.leg4.zRot = this.leg4part2.zRot = 0.191f + newangle;
         this.leg4part3.zRot = 0.675f + newangle;
         newangle = 0.0f;
         if ((ri1 & 8) != 0) {
-        newangle = Mth.sin((float)(ageInTicks * legspeed * limbSwingAmount)) * (float)Math.PI * 0.15f;
+        newangle = Mth.sin((float)(ageInTicks * legspeed * this.wingspeed)) * (float)Math.PI * 0.15f;
         }
         this.leg3.zRot = this.leg3part2.zRot = -0.191f + newangle;
         this.leg3part3.zRot = -0.675f + newangle;
         newangle = 0.0f;
         if ((ri1 & 0x10) != 0) {
-        newangle = Mth.sin((float)(ageInTicks * legspeed * limbSwingAmount)) * (float)Math.PI * 0.1f;
+        newangle = Mth.sin((float)(ageInTicks * legspeed * this.wingspeed)) * (float)Math.PI * 0.1f;
         }
         this.leg6.zRot = this.leg6part2.zRot = -0.34f + newangle;
         newangle = 0.0f;
         if ((ri1 & 0x20) != 0) {
-        newangle = Mth.sin((float)(ageInTicks * legspeed * limbSwingAmount)) * (float)Math.PI * 0.1f;
+        newangle = Mth.sin((float)(ageInTicks * legspeed * this.wingspeed)) * (float)Math.PI * 0.1f;
         }
         this.leg5.zRot = this.leg5part2.zRot = 0.34f + newangle;
         newangle = 0.0f;
         if ((ri2 & 1) != 0) {
-        newangle = Mth.sin((float)(ageInTicks * mouthspeed * limbSwingAmount)) * (float)Math.PI * 0.35f;
+        newangle = Mth.sin((float)(ageInTicks * mouthspeed * this.wingspeed)) * (float)Math.PI * 0.35f;
         newangle = Math.abs(newangle);
         }
         this.jaw1.yRot = newangle;
@@ -552,9 +554,9 @@ public class LurkingTerrorModel extends EntityModel<EntityLurkingTerror> {
         this.tonguepart1.y = this.tonguepart3.y = this.tonguepart2.y;
         this.tonguepart1.z = this.tonguepart2.z - newangle * 5.0f;
         this.tonguepart3.z = this.tonguepart2.z - newangle * 10.0f;
-        this.thorax.xRot = newangle = Mth.sin((float)(ageInTicks * 0.1f * limbSwingAmount)) * (float)Math.PI * 0.06f;
+        this.thorax.xRot = newangle = Mth.sin((float)(ageInTicks * 0.1f * this.wingspeed)) * (float)Math.PI * 0.06f;
         this.abdomen.y = (float)((double)this.thorax.y - Math.sin(newangle) * 14.0);
-        newangle = Mth.cos((float)(ageInTicks * 1.4f * limbSwingAmount)) * (float)Math.PI * 0.2f;
+        newangle = Mth.cos((float)(ageInTicks * 1.4f * this.wingspeed)) * (float)Math.PI * 0.2f;
         this.wing_1.xRot = 0.455f + newangle;
         this.wing_2.xRot = 0.455f + newangle;
         this.wing_3.xRot = 0.455f - newangle;

@@ -10,6 +10,8 @@ import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.util.Mth;
 
 public class ModelCaveFisher extends EntityModel<CaveFisher> {
+    /** Animation frequency constant; orig ModelCaveFisher.java:15,93 (wingspeed), value from orig ClientProxyOreSpawn.java:434. */
+    private final float wingspeed = 0.62f;
     private int ri1, ri2;
     private final ModelPart Nose;
     private final ModelPart EyeLeft;
@@ -478,7 +480,7 @@ public class ModelCaveFisher extends EntityModel<CaveFisher> {
         float upangle = 0.0f;
         float nextangle = 0.0f;
         float pi4 = 1.570795f;
-        this.LFLeg1.yRot = newangle = Mth.cos((float)(ageInTicks * 2.0f * limbSwingAmount)) * (float)Math.PI * 0.12f * limbSwingAmount;
+        this.LFLeg1.yRot = newangle = Mth.cos((float)(ageInTicks * 2.0f * this.wingspeed)) * (float)Math.PI * 0.12f * limbSwingAmount;
         this.LFLeg2.yRot = newangle;
         this.LFLeg3.yRot = newangle;
         this.LFLeg4.yRot = newangle;
@@ -490,7 +492,7 @@ public class ModelCaveFisher extends EntityModel<CaveFisher> {
         this.RFLeg4.yRot = -newangle;
         this.RFLeg5.yRot = -newangle;
         this.RFLeg6.yRot = -newangle;
-        this.LMLeg1.yRot = newangle = Mth.cos((float)(ageInTicks * 2.0f * limbSwingAmount - 1.0f * pi4)) * (float)Math.PI * 0.12f * limbSwingAmount;
+        this.LMLeg1.yRot = newangle = Mth.cos((float)(ageInTicks * 2.0f * this.wingspeed - 1.0f * pi4)) * (float)Math.PI * 0.12f * limbSwingAmount;
         this.LMLeg2.yRot = newangle;
         this.LMLeg3.yRot = newangle;
         this.LMLeg4.yRot = newangle;
@@ -502,7 +504,7 @@ public class ModelCaveFisher extends EntityModel<CaveFisher> {
         this.RMLeg4.yRot = -newangle;
         this.RMLeg5.yRot = -newangle;
         this.RMLeg6.yRot = -newangle;
-        this.LBLeg1.yRot = newangle = Mth.cos((float)(ageInTicks * 2.0f * limbSwingAmount - 2.0f * pi4)) * (float)Math.PI * 0.12f * limbSwingAmount;
+        this.LBLeg1.yRot = newangle = Mth.cos((float)(ageInTicks * 2.0f * this.wingspeed - 2.0f * pi4)) * (float)Math.PI * 0.12f * limbSwingAmount;
         this.LBLeg2.yRot = newangle;
         this.LBLeg3.yRot = newangle;
         this.LBLeg4.yRot = newangle;
@@ -514,8 +516,8 @@ public class ModelCaveFisher extends EntityModel<CaveFisher> {
         this.RBLeg4.yRot = -newangle;
         this.RBLeg5.yRot = -newangle;
         this.RBLeg6.yRot = -newangle;
-        newangle = Mth.cos((float)(ageInTicks * 3.0f * limbSwingAmount)) * (float)Math.PI * 0.15f;
-        nextangle = Mth.cos((float)((ageInTicks + 0.1f) * 3.0f * limbSwingAmount)) * (float)Math.PI * 0.15f;
+        newangle = Mth.cos((float)(ageInTicks * 3.0f * this.wingspeed)) * (float)Math.PI * 0.15f;
+        nextangle = Mth.cos((float)((ageInTicks + 0.1f) * 3.0f * this.wingspeed)) * (float)Math.PI * 0.15f;
         if (nextangle > 0.0f && newangle < 0.0f) {
         ri1 = 0;
         if (entity.getAttacking() == 0) {

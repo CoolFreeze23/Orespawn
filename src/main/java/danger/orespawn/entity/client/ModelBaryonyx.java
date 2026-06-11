@@ -13,7 +13,8 @@ import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.minecraft.util.Mth;
 
 public class ModelBaryonyx extends EntityModel<Baryonyx> {
-    private float wingspeed = 1.0f;
+    /** Animation frequency constant; orig ModelBaryonyx.java:14,69 (wingspeed), value from orig ClientProxyOreSpawn.java:428. */
+    private final float wingspeed = 0.25f;
     private final ModelPart backSail1;
     private final ModelPart backSail2;
     private final ModelPart backSail3;

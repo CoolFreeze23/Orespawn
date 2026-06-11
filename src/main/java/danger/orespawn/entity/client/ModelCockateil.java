@@ -10,6 +10,8 @@ import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.util.Mth;
 
 public class ModelCockateil extends EntityModel<Cockateil> {
+    /** Animation frequency constant; orig ModelCockateil.java:13,32 (wingspeed), value from orig ClientProxyOreSpawn.java:430-431 (Cockateil and RubyBird both 1.0f). */
+    private final float wingspeed = 1.0f;
     private final ModelPart Body;
     private final ModelPart Head;
     private final ModelPart Beak;
@@ -120,17 +122,17 @@ public class ModelCockateil extends EntityModel<Cockateil> {
     @Override
     public void setupAnim(Cockateil entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
         float newangle = 0.0f;
-        newangle = Mth.cos((float)(ageInTicks * 1.5f * limbSwingAmount)) * (float)Math.PI * 0.35f;
+        newangle = Mth.cos((float)(ageInTicks * 1.5f * this.wingspeed)) * (float)Math.PI * 0.35f;
         this.lwing1.zRot = -1.5f + newangle;
         this.lwing2.zRot = newangle;
         this.rwing1.zRot = 1.5f - newangle;
         this.rwing2.zRot = -newangle;
-        this.tailfeather1.xRot = newangle = Mth.cos((float)(ageInTicks * 0.3f * limbSwingAmount)) * (float)Math.PI * 0.1f;
+        this.tailfeather1.xRot = newangle = Mth.cos((float)(ageInTicks * 0.3f * this.wingspeed)) * (float)Math.PI * 0.1f;
         this.tailfeather2.xRot = newangle;
         this.tailfeather3.xRot = newangle;
-        this.feather1.zRot = newangle = Mth.cos((float)(ageInTicks * 1.1f * limbSwingAmount)) * (float)Math.PI * 0.08f;
-        this.feather2.zRot = newangle = Mth.cos((float)(ageInTicks * 1.2f * limbSwingAmount)) * (float)Math.PI * 0.08f;
-        this.feather3.zRot = newangle = Mth.cos((float)(ageInTicks * 1.3f * limbSwingAmount)) * (float)Math.PI * 0.08f;
+        this.feather1.zRot = newangle = Mth.cos((float)(ageInTicks * 1.1f * this.wingspeed)) * (float)Math.PI * 0.08f;
+        this.feather2.zRot = newangle = Mth.cos((float)(ageInTicks * 1.2f * this.wingspeed)) * (float)Math.PI * 0.08f;
+        this.feather3.zRot = newangle = Mth.cos((float)(ageInTicks * 1.3f * this.wingspeed)) * (float)Math.PI * 0.08f;
     }
 
     @Override

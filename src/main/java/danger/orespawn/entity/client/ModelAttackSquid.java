@@ -10,6 +10,8 @@ import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.util.Mth;
 
 public class ModelAttackSquid extends EntityModel<AttackSquid> {
+    /** Animation frequency constant; orig ModelAttackSquid.java:14,26 (wingspeed), value from orig ClientProxyOreSpawn.java:437. */
+    private final float wingspeed = 1.0f;
     private final ModelPart tent1;
     private final ModelPart tent2;
     private final ModelPart tent3;
@@ -89,27 +91,27 @@ public class ModelAttackSquid extends EntityModel<AttackSquid> {
         float newangle7 = 0.0f;
         float pi4 = 0.7853982f;
         if ((double)limbSwingAmount > 0.1) {
-        newangleA = Mth.cos((float)(ageInTicks * 0.25f * limbSwingAmount)) * (float)Math.PI * 0.04f * limbSwingAmount;
-        newangleB = Mth.cos((float)(ageInTicks * 0.39f * limbSwingAmount)) * (float)Math.PI * 0.04f * limbSwingAmount;
-        newangle1 = Mth.cos((float)(ageInTicks * 1.2f * limbSwingAmount)) * (float)Math.PI * 0.4f * limbSwingAmount;
-        newangle2 = Mth.cos((float)(ageInTicks * 1.1f * limbSwingAmount)) * (float)Math.PI * 0.4f * limbSwingAmount;
-        newangle3 = Mth.cos((float)(ageInTicks * 1.0f * limbSwingAmount)) * (float)Math.PI * 0.4f * limbSwingAmount;
-        newangle4 = Mth.cos((float)(ageInTicks * 1.9f * limbSwingAmount)) * (float)Math.PI * 0.4f * limbSwingAmount;
-        newangle5 = Mth.cos((float)(ageInTicks * 1.8f * limbSwingAmount)) * (float)Math.PI * 0.4f * limbSwingAmount;
-        newangle6 = Mth.cos((float)(ageInTicks * 1.7f * limbSwingAmount)) * (float)Math.PI * 0.4f * limbSwingAmount;
-        newangle7 = Mth.cos((float)(ageInTicks * 1.6f * limbSwingAmount)) * (float)Math.PI * 0.4f * limbSwingAmount;
-        newangle8 = Mth.cos((float)(ageInTicks * 1.5f * limbSwingAmount)) * (float)Math.PI * 0.4f * limbSwingAmount;
+        newangleA = Mth.cos((float)(ageInTicks * 0.25f * this.wingspeed)) * (float)Math.PI * 0.04f * limbSwingAmount;
+        newangleB = Mth.cos((float)(ageInTicks * 0.39f * this.wingspeed)) * (float)Math.PI * 0.04f * limbSwingAmount;
+        newangle1 = Mth.cos((float)(ageInTicks * 1.2f * this.wingspeed)) * (float)Math.PI * 0.4f * limbSwingAmount;
+        newangle2 = Mth.cos((float)(ageInTicks * 1.1f * this.wingspeed)) * (float)Math.PI * 0.4f * limbSwingAmount;
+        newangle3 = Mth.cos((float)(ageInTicks * 1.0f * this.wingspeed)) * (float)Math.PI * 0.4f * limbSwingAmount;
+        newangle4 = Mth.cos((float)(ageInTicks * 1.9f * this.wingspeed)) * (float)Math.PI * 0.4f * limbSwingAmount;
+        newangle5 = Mth.cos((float)(ageInTicks * 1.8f * this.wingspeed)) * (float)Math.PI * 0.4f * limbSwingAmount;
+        newangle6 = Mth.cos((float)(ageInTicks * 1.7f * this.wingspeed)) * (float)Math.PI * 0.4f * limbSwingAmount;
+        newangle7 = Mth.cos((float)(ageInTicks * 1.6f * this.wingspeed)) * (float)Math.PI * 0.4f * limbSwingAmount;
+        newangle8 = Mth.cos((float)(ageInTicks * 1.5f * this.wingspeed)) * (float)Math.PI * 0.4f * limbSwingAmount;
         } else {
-        newangleA = Mth.cos((float)(ageInTicks * 0.25f * limbSwingAmount)) * (float)Math.PI * 0.01f;
-        newangleB = Mth.cos((float)(ageInTicks * 0.39f * limbSwingAmount)) * (float)Math.PI * 0.01f;
-        newangle1 = Mth.cos((float)(ageInTicks * 1.2f * limbSwingAmount)) * (float)Math.PI * 0.1f;
-        newangle2 = Mth.cos((float)(ageInTicks * 1.1f * limbSwingAmount)) * (float)Math.PI * 0.1f;
-        newangle3 = Mth.cos((float)(ageInTicks * 1.0f * limbSwingAmount)) * (float)Math.PI * 0.1f;
-        newangle4 = Mth.cos((float)(ageInTicks * 1.9f * limbSwingAmount)) * (float)Math.PI * 0.1f;
-        newangle5 = Mth.cos((float)(ageInTicks * 1.8f * limbSwingAmount)) * (float)Math.PI * 0.1f;
-        newangle6 = Mth.cos((float)(ageInTicks * 1.7f * limbSwingAmount)) * (float)Math.PI * 0.1f;
-        newangle7 = Mth.cos((float)(ageInTicks * 1.6f * limbSwingAmount)) * (float)Math.PI * 0.1f;
-        newangle8 = Mth.cos((float)(ageInTicks * 1.5f * limbSwingAmount)) * (float)Math.PI * 0.1f;
+        newangleA = Mth.cos((float)(ageInTicks * 0.25f * this.wingspeed)) * (float)Math.PI * 0.01f;
+        newangleB = Mth.cos((float)(ageInTicks * 0.39f * this.wingspeed)) * (float)Math.PI * 0.01f;
+        newangle1 = Mth.cos((float)(ageInTicks * 1.2f * this.wingspeed)) * (float)Math.PI * 0.1f;
+        newangle2 = Mth.cos((float)(ageInTicks * 1.1f * this.wingspeed)) * (float)Math.PI * 0.1f;
+        newangle3 = Mth.cos((float)(ageInTicks * 1.0f * this.wingspeed)) * (float)Math.PI * 0.1f;
+        newangle4 = Mth.cos((float)(ageInTicks * 1.9f * this.wingspeed)) * (float)Math.PI * 0.1f;
+        newangle5 = Mth.cos((float)(ageInTicks * 1.8f * this.wingspeed)) * (float)Math.PI * 0.1f;
+        newangle6 = Mth.cos((float)(ageInTicks * 1.7f * this.wingspeed)) * (float)Math.PI * 0.1f;
+        newangle7 = Mth.cos((float)(ageInTicks * 1.6f * this.wingspeed)) * (float)Math.PI * 0.1f;
+        newangle8 = Mth.cos((float)(ageInTicks * 1.5f * this.wingspeed)) * (float)Math.PI * 0.1f;
         }
         this.tent1.xRot = newangle1 - 1.03f;
         this.tent7.zRot = newangle2 + 0.37f;

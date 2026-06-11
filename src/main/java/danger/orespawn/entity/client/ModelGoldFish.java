@@ -10,6 +10,8 @@ import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.util.Mth;
 
 public class ModelGoldFish extends EntityModel<GoldFish> {
+    /** Animation frequency constant; orig ModelGoldFish.java:13,32 (wingspeed), value from orig ClientProxyOreSpawn.java:470. */
+    private final float wingspeed = 0.7f;
     private final ModelPart Body;
     private final ModelPart Head;
     private final ModelPart Dorsalfin;
@@ -120,17 +122,17 @@ public class ModelGoldFish extends EntityModel<GoldFish> {
     @Override
     public void setupAnim(GoldFish entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
         float newangle = 0.0f;
-        newangle = Mth.cos((float)(ageInTicks * 1.3f * limbSwingAmount)) * (float)Math.PI * 0.15f;
+        newangle = Mth.cos((float)(ageInTicks * 1.3f * this.wingspeed)) * (float)Math.PI * 0.15f;
         this.Pectoralfin1.yRot = 0.4f + newangle;
-        newangle = Mth.cos((float)(ageInTicks * 1.2f * limbSwingAmount)) * (float)Math.PI * 0.15f;
+        newangle = Mth.cos((float)(ageInTicks * 1.2f * this.wingspeed)) * (float)Math.PI * 0.15f;
         this.Pectoralfin2.yRot = -0.4f + newangle;
-        newangle = Mth.cos((float)(ageInTicks * 1.1f * limbSwingAmount)) * (float)Math.PI * 0.15f;
+        newangle = Mth.cos((float)(ageInTicks * 1.1f * this.wingspeed)) * (float)Math.PI * 0.15f;
         this.Pectoralfin3.yRot = 0.4f + newangle;
-        newangle = Mth.cos((float)(ageInTicks * 1.0f * limbSwingAmount)) * (float)Math.PI * 0.15f;
+        newangle = Mth.cos((float)(ageInTicks * 1.0f * this.wingspeed)) * (float)Math.PI * 0.15f;
         this.Pectoralfin4.yRot = -0.4f + newangle;
-        this.Bottomfin1.yRot = newangle = Mth.cos((float)(ageInTicks * 1.7f * limbSwingAmount)) * (float)Math.PI * 0.25f;
+        this.Bottomfin1.yRot = newangle = Mth.cos((float)(ageInTicks * 1.7f * this.wingspeed)) * (float)Math.PI * 0.25f;
         this.Bottomfin2.yRot = -newangle;
-        newangle = Mth.cos((float)(ageInTicks * 0.7f * limbSwingAmount)) * (float)Math.PI * 0.1f;
+        newangle = Mth.cos((float)(ageInTicks * 0.7f * this.wingspeed)) * (float)Math.PI * 0.1f;
         this.Jaw.xRot = -0.25f + newangle;
     }
 

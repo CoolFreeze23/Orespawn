@@ -14,7 +14,8 @@ import net.minecraft.util.Mth;
 
 public class ModelNastysaurus extends EntityModel<Nastysaurus> {
 
-    private final float wingspeed = 1.0f;
+    /** Animation frequency constant; orig ModelNastysaurus.java:15,77 (wingspeed), value from orig ClientProxyOreSpawn.java:508. */
+    private final float wingspeed = 0.65f;
     private final ModelPart lclaw1;
     private final ModelPart lclaw2;
     private final ModelPart lclaw3;

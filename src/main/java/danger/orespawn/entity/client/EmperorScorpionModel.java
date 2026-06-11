@@ -10,6 +10,8 @@ import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.util.Mth;
 
 public class EmperorScorpionModel extends EntityModel<EntityEmperorScorpion> {
+    /** Animation frequency constant; orig ModelEmperorScorpion.java:15,96 (wingspeed), value from orig ClientProxyOreSpawn.java:426. */
+    private final float wingspeed = 0.22f;
     private int ri1, ri2;
     private final ModelPart Head;
     private final ModelPart Seg1;
@@ -574,43 +576,43 @@ public class EmperorScorpionModel extends EntityModel<EntityEmperorScorpion> {
         float upangle = 0.0f;
         float nextangle = 0.0f;
         float pi4 = 1.570795f;
-        newangle = Mth.cos((float)(ageInTicks * 2.0f * limbSwingAmount)) * (float)Math.PI * 0.12f * limbSwingAmount;
-        nextangle = Mth.cos((float)((ageInTicks + 0.1f) * 2.0f * limbSwingAmount)) * (float)Math.PI * 0.12f * limbSwingAmount;
+        newangle = Mth.cos((float)(ageInTicks * 2.0f * this.wingspeed)) * (float)Math.PI * 0.12f * limbSwingAmount;
+        nextangle = Mth.cos((float)((ageInTicks + 0.1f) * 2.0f * this.wingspeed)) * (float)Math.PI * 0.12f * limbSwingAmount;
         upangle = 0.0f;
         if (nextangle > newangle) {
         upangle = 0.47f * limbSwingAmount - Math.abs(newangle);
         }
         this.doLeftLeg(this.Leg1Seg1, this.Leg1Seg2, this.Leg1Seg3, this.Leg1Seg4, this.Leg1Seg5, newangle, upangle);
         this.doRightLeg(this.Leg5Seg1, this.Leg5Seg2, this.Leg5Seg3, this.Leg5Seg4, this.Leg5Seg5, -newangle, upangle);
-        newangle = Mth.cos((float)(ageInTicks * 2.0f * limbSwingAmount - 1.0f * pi4)) * (float)Math.PI * 0.12f * limbSwingAmount;
-        nextangle = Mth.cos((float)((ageInTicks + 0.1f) * 2.0f * limbSwingAmount - 1.0f * pi4)) * (float)Math.PI * 0.12f * limbSwingAmount;
+        newangle = Mth.cos((float)(ageInTicks * 2.0f * this.wingspeed - 1.0f * pi4)) * (float)Math.PI * 0.12f * limbSwingAmount;
+        nextangle = Mth.cos((float)((ageInTicks + 0.1f) * 2.0f * this.wingspeed - 1.0f * pi4)) * (float)Math.PI * 0.12f * limbSwingAmount;
         upangle = 0.0f;
         if (nextangle > newangle) {
         upangle = 0.47f * limbSwingAmount - Math.abs(newangle);
         }
         this.doLeftLeg(this.Leg2Seg1, this.Leg2Seg2, this.Leg2Seg3, this.Leg2Seg4, this.Leg2Seg5, newangle, upangle);
         this.doRightLeg(this.Leg6Seg1, this.Leg6Seg2, this.Leg6Seg3, this.Leg6Seg4, this.Leg6Seg5, -newangle, upangle);
-        newangle = Mth.cos((float)(ageInTicks * 2.0f * limbSwingAmount - 2.0f * pi4)) * (float)Math.PI * 0.12f * limbSwingAmount;
-        nextangle = Mth.cos((float)((ageInTicks + 0.1f) * 2.0f * limbSwingAmount - 2.0f * pi4)) * (float)Math.PI * 0.12f * limbSwingAmount;
+        newangle = Mth.cos((float)(ageInTicks * 2.0f * this.wingspeed - 2.0f * pi4)) * (float)Math.PI * 0.12f * limbSwingAmount;
+        nextangle = Mth.cos((float)((ageInTicks + 0.1f) * 2.0f * this.wingspeed - 2.0f * pi4)) * (float)Math.PI * 0.12f * limbSwingAmount;
         upangle = 0.0f;
         if (nextangle > newangle) {
         upangle = 0.47f * limbSwingAmount - Math.abs(newangle);
         }
         this.doLeftLeg(this.Leg3Seg1, this.Leg3Seg2, this.Leg3Seg3, this.Leg3Seg4, this.Leg3Seg5, newangle, upangle);
         this.doRightLeg(this.Leg7Seg1, this.Leg7Seg2, this.Leg7Seg3, this.Leg7Seg4, this.Leg7Seg5, -newangle, upangle);
-        newangle = Mth.cos((float)(ageInTicks * 2.0f * limbSwingAmount - 3.0f * pi4)) * (float)Math.PI * 0.12f * limbSwingAmount;
-        nextangle = Mth.cos((float)((ageInTicks + 0.1f) * 2.0f * limbSwingAmount - 3.0f * pi4)) * (float)Math.PI * 0.12f * limbSwingAmount;
+        newangle = Mth.cos((float)(ageInTicks * 2.0f * this.wingspeed - 3.0f * pi4)) * (float)Math.PI * 0.12f * limbSwingAmount;
+        nextangle = Mth.cos((float)((ageInTicks + 0.1f) * 2.0f * this.wingspeed - 3.0f * pi4)) * (float)Math.PI * 0.12f * limbSwingAmount;
         upangle = 0.0f;
         if (nextangle > newangle) {
         upangle = 0.47f * limbSwingAmount - Math.abs(newangle);
         }
         this.doLeftLeg(this.Leg4Seg1, this.Leg4Seg2, this.Leg4Seg3, this.Leg4Seg4, this.Leg4Seg5, newangle, upangle);
         this.doRightLeg(this.Leg8Seg1, this.Leg8Seg2, this.Leg8Seg3, this.Leg8Seg4, this.Leg8Seg5, -newangle, upangle);
-        newangle = entity.getAttacking() == 0 ? Mth.cos((float)(ageInTicks * 0.5f * limbSwingAmount)) * (float)Math.PI * 0.05f : Mth.cos((float)(ageInTicks * 2.5f * limbSwingAmount)) * (float)Math.PI * 0.15f;
+        newangle = entity.getAttacking() == 0 ? Mth.cos((float)(ageInTicks * 0.5f * this.wingspeed)) * (float)Math.PI * 0.05f : Mth.cos((float)(ageInTicks * 2.5f * this.wingspeed)) * (float)Math.PI * 0.15f;
         this.LeftManPart2.zRot = newangle;
         this.RightManPart2.zRot = -newangle;
-        newangle = Mth.cos((float)(ageInTicks * 3.0f * limbSwingAmount)) * (float)Math.PI * 0.15f;
-        nextangle = Mth.cos((float)((ageInTicks + 0.1f) * 3.0f * limbSwingAmount)) * (float)Math.PI * 0.15f;
+        newangle = Mth.cos((float)(ageInTicks * 3.0f * this.wingspeed)) * (float)Math.PI * 0.15f;
+        nextangle = Mth.cos((float)((ageInTicks + 0.1f) * 3.0f * this.wingspeed)) * (float)Math.PI * 0.15f;
         if (nextangle > 0.0f && newangle < 0.0f) {
         ri1 = 0;
         if (entity.getAttacking() == 0) {

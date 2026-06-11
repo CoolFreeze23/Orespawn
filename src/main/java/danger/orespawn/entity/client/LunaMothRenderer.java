@@ -1,5 +1,6 @@
 package danger.orespawn.entity.client;
 
+import com.mojang.blaze3d.vertex.PoseStack;
 import danger.orespawn.OreSpawnMod;
 import danger.orespawn.entity.EntityLunaMoth;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
@@ -14,7 +15,14 @@ public class LunaMothRenderer extends MobRenderer<EntityLunaMoth, ButterflyModel
             new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "luna_moth"), "main");
 
     public LunaMothRenderer(EntityRendererProvider.Context context) {
-        super(context, new ButterflyModel<>(context.bakeLayer(MODEL_LAYER)), 0.15f);
+        // wingspeed 0.75f — orig ClientProxyOreSpawn.java:407 (new ModelButterfly(0.75f))
+        super(context, new ButterflyModel<>(context.bakeLayer(MODEL_LAYER), 0.75f), 0.15f);
+    }
+
+    @Override
+    protected void scale(EntityLunaMoth entity, PoseStack poseStack, float partialTick) {
+        // 1.5f — orig ClientProxyOreSpawn.java:407 third arg, applied via orig RenderButterfly.java:26,42 (glScalef)
+        poseStack.scale(1.5f, 1.5f, 1.5f);
     }
 
     @Override

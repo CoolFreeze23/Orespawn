@@ -10,6 +10,8 @@ import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.util.Mth;
 
 public class DragonflyModel extends EntityModel<EntityDragonfly> {
+    /** Animation frequency constant; orig ModelDragonfly.java:13,42 (wingspeed), value from orig ClientProxyOreSpawn.java:424. */
+    private final float wingspeed = 2.0f;
     private final ModelPart Shape1;
     private final ModelPart lfwing;
     private final ModelPart Shape3;
@@ -206,11 +208,11 @@ public class DragonflyModel extends EntityModel<EntityDragonfly> {
     @Override
     public void setupAnim(EntityDragonfly entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
         float newangle = 0.0f;
-        this.lfwing.zRot = newangle = Mth.cos((float)(ageInTicks * 1.3f * limbSwingAmount)) * (float)Math.PI * 0.25f;
+        this.lfwing.zRot = newangle = Mth.cos((float)(ageInTicks * 1.3f * this.wingspeed)) * (float)Math.PI * 0.25f;
         this.rfwing.zRot = -newangle;
         this.lrwing.zRot = newangle + 3.14f;
         this.rrwing.zRot = -newangle + 3.14f;
-        this.ljaw.xRot = newangle = Mth.cos((float)(ageInTicks * 0.3f * limbSwingAmount)) * (float)Math.PI * 0.1f;
+        this.ljaw.xRot = newangle = Mth.cos((float)(ageInTicks * 0.3f * this.wingspeed)) * (float)Math.PI * 0.1f;
         this.rjaw.xRot = -newangle;
     }
 

@@ -10,6 +10,8 @@ import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.util.Mth;
 
 public class LeonModel extends EntityModel<EntityLeon> {
+    /** Animation frequency constant; orig ModelLeon.java:15,116 (wingspeed), value from orig ClientProxyOreSpawn.java:500. */
+    private final float wingspeed = 0.22f;
     private float rf1;
     private final ModelPart chest;
     private final ModelPart neck_1;
@@ -716,11 +718,11 @@ public class LeonModel extends EntityModel<EntityLeon> {
         float spd = 1.0f;
         float amp = 1.0f;
         if ((double)limbSwingAmount > 0.1) {
-        newangle = Mth.cos((float)(ageInTicks * 1.8f * limbSwingAmount)) * (float)Math.PI * 0.25f * limbSwingAmount;
-        newangle2 = Mth.cos((float)(ageInTicks * 0.9f * limbSwingAmount)) * (float)Math.PI * 0.25f * limbSwingAmount;
+        newangle = Mth.cos((float)(ageInTicks * 1.8f * this.wingspeed)) * (float)Math.PI * 0.25f * limbSwingAmount;
+        newangle2 = Mth.cos((float)(ageInTicks * 0.9f * this.wingspeed)) * (float)Math.PI * 0.25f * limbSwingAmount;
         } else {
         newangle = 0.0f;
-        newangle2 = Mth.cos((float)(ageInTicks * 0.9f * limbSwingAmount)) * (float)Math.PI * 0.02f;
+        newangle2 = Mth.cos((float)(ageInTicks * 0.9f * this.wingspeed)) * (float)Math.PI * 0.02f;
         if (entity.isInSittingPose()) {
         newangle2 = 0.0f;
         }
@@ -778,7 +780,7 @@ public class LeonModel extends EntityModel<EntityLeon> {
         this.claw_L2.z = this.wing_5_R.z - 9.0f;
         this.claw_R.y = this.wing_5_R.y + 2.0f;
         this.claw_L2.y = this.wing_5_R.y + 2.0f;
-        newangle2 = Mth.cos((float)(ageInTicks * 0.6f * limbSwingAmount)) * (float)Math.PI * 0.02f;
+        newangle2 = Mth.cos((float)(ageInTicks * 0.6f * this.wingspeed)) * (float)Math.PI * 0.02f;
         this.chest_ridge.xRot = this.chest.xRot = -0.436f + newangle2 / 8.0f;
         this.bottom_jaw.xRot = -1.308f + newangle2 / 2.0f;
         this.lower_sail1.xRot = 0.297f + newangle2 / 2.0f;
@@ -804,7 +806,7 @@ public class LeonModel extends EntityModel<EntityLeon> {
         spd = 1.7f;
         amp = 1.4f;
         }
-        newangle2 = Mth.cos((float)(ageInTicks * 1.6f * limbSwingAmount * spd)) * (float)Math.PI * 0.06f;
+        newangle2 = Mth.cos((float)(ageInTicks * 1.6f * this.wingspeed * spd)) * (float)Math.PI * 0.06f;
         this.fchest.xRot = newangle2 / 8.0f;
         this.fchest_ridge.xRot = -0.18f + this.fchest.xRot;
         this.fchest.y = entity.getBeingRidden() == 0 ? (float)(-2.0 + Math.sin(newangle2) * 10.0 * (double)amp) : -2.0f;
@@ -851,7 +853,7 @@ public class LeonModel extends EntityModel<EntityLeon> {
         this.ffootR.x = this.fleg_1_R.x;
         } else {
         newangle = -0.7853982f;
-        newangle3 = Mth.cos((float)(ageInTicks * 3.6f * limbSwingAmount)) * (float)Math.PI * 0.1f;
+        newangle3 = Mth.cos((float)(ageInTicks * 3.6f * this.wingspeed)) * (float)Math.PI * 0.1f;
         this.fleg_1_L.y = this.fabdomen.y + 5.0f;
         this.fleg_1_R.y = this.fabdomen.y + 5.0f;
         this.fleg_1_L.xRot = -0.1f + newangle + newangle3;
@@ -873,7 +875,7 @@ public class LeonModel extends EntityModel<EntityLeon> {
         this.fleg_2_R.x = -9.0f;
         this.ffootR.x = -13.0f;
         }
-        newangle = Mth.cos((float)(ageInTicks * 1.6f * limbSwingAmount * spd)) * (float)Math.PI * 0.26f * amp;
+        newangle = Mth.cos((float)(ageInTicks * 1.6f * this.wingspeed * spd)) * (float)Math.PI * 0.26f * amp;
         this.farm_1_L.zRot = (float)(-1.5707963267948966 - (double)newangle);
         this.farm_1_R.zRot = (float)(1.5707963267948966 + (double)newangle);
         this.fwing_1_L.zRot = (float)(-1.5707963267948966 - (double)newangle);
@@ -993,7 +995,7 @@ public class LeonModel extends EntityModel<EntityLeon> {
         if (entity.getAttacking() == 0) {
         this.fbottom_jaw.xRot = -1.308f + newangle2 / 2.0f;
         } else {
-        newangle2 = Mth.cos((float)(ageInTicks * 2.6f * limbSwingAmount)) * (float)Math.PI * 0.16f;
+        newangle2 = Mth.cos((float)(ageInTicks * 2.6f * this.wingspeed)) * (float)Math.PI * 0.16f;
         this.fbottom_jaw.xRot = -0.9f + newangle2;
         }
         this.flower_sail1.xRot = this.fbottom_jaw.xRot + tf1;

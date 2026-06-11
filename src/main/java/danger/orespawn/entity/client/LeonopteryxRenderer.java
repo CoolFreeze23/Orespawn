@@ -30,7 +30,8 @@ public class LeonopteryxRenderer extends MobRenderer<Leonopteryx, ButterflyModel
                     ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "leonopteryx"), "main");
 
     public LeonopteryxRenderer(EntityRendererProvider.Context context) {
-        super(context, new ButterflyModel<>(context.bakeLayer(MODEL_LAYER)), 2.0f);
+        // No orig RenderButterfly registration for this entity; default wingspeed 1.0f (orig ModelButterfly.java:23)
+        super(context, new ButterflyModel<>(context.bakeLayer(MODEL_LAYER), 1.0f), 2.0f);
     }
 
     @Override

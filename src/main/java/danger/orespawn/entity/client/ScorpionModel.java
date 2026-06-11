@@ -10,6 +10,8 @@ import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.util.Mth;
 
 public class ScorpionModel extends EntityModel<EntityScorpion> {
+    /** Animation frequency constant; orig ModelScorpion.java:15,40 (wingspeed), value from orig ClientProxyOreSpawn.java:433. */
+    private final float wingspeed = 0.62f;
     private int ri1, ri2;
     private final ModelPart body;
     private final ModelPart tail1;
@@ -182,20 +184,20 @@ public class ScorpionModel extends EntityModel<EntityScorpion> {
         float upangle = 0.0f;
         float nextangle = 0.0f;
         float pi4 = 1.570795f;
-        newangle = Mth.cos((float)(ageInTicks * 2.0f * limbSwingAmount)) * (float)Math.PI * 0.12f * limbSwingAmount;
+        newangle = Mth.cos((float)(ageInTicks * 2.0f * this.wingspeed)) * (float)Math.PI * 0.12f * limbSwingAmount;
         this.lleg1.yRot = newangle + 0.49f;
         this.rleg1.yRot = -newangle + 2.65f;
-        newangle = Mth.cos((float)(ageInTicks * 2.0f * limbSwingAmount - 1.0f * pi4)) * (float)Math.PI * 0.12f * limbSwingAmount;
+        newangle = Mth.cos((float)(ageInTicks * 2.0f * this.wingspeed - 1.0f * pi4)) * (float)Math.PI * 0.12f * limbSwingAmount;
         this.lleg2.yRot = newangle + 0.24f;
         this.rleg2.yRot = -newangle + 2.9f;
-        newangle = Mth.cos((float)(ageInTicks * 2.0f * limbSwingAmount - 2.0f * pi4)) * (float)Math.PI * 0.12f * limbSwingAmount;
+        newangle = Mth.cos((float)(ageInTicks * 2.0f * this.wingspeed - 2.0f * pi4)) * (float)Math.PI * 0.12f * limbSwingAmount;
         this.lleg3.yRot = newangle - 0.24f;
         this.rleg3.yRot = -newangle - 2.9f;
-        newangle = Mth.cos((float)(ageInTicks * 2.0f * limbSwingAmount - 3.0f * pi4)) * (float)Math.PI * 0.12f * limbSwingAmount;
+        newangle = Mth.cos((float)(ageInTicks * 2.0f * this.wingspeed - 3.0f * pi4)) * (float)Math.PI * 0.12f * limbSwingAmount;
         this.lleg4.yRot = newangle - 0.49f;
         this.rleg4.yRot = -newangle - 2.65f;
-        newangle = Mth.cos((float)(ageInTicks * 3.0f * limbSwingAmount)) * (float)Math.PI * 0.15f;
-        nextangle = Mth.cos((float)((ageInTicks + 0.1f) * 3.0f * limbSwingAmount)) * (float)Math.PI * 0.15f;
+        newangle = Mth.cos((float)(ageInTicks * 3.0f * this.wingspeed)) * (float)Math.PI * 0.15f;
+        nextangle = Mth.cos((float)((ageInTicks + 0.1f) * 3.0f * this.wingspeed)) * (float)Math.PI * 0.15f;
         if (nextangle > 0.0f && newangle < 0.0f) {
         ri1 = 0;
         if (entity.getAttacking() == 0) {

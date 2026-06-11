@@ -10,6 +10,8 @@ import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.util.Mth;
 
 public class ModelCloudShark extends EntityModel<CloudShark> {
+    /** Animation frequency constant; orig ModelCloudShark.java:13,24 (wingspeed), value from orig ClientProxyOreSpawn.java:471. */
+    private final float wingspeed = 1.0f;
     private final ModelPart body;
     private final ModelPart head;
     private final ModelPart jaw;
@@ -72,12 +74,12 @@ public class ModelCloudShark extends EntityModel<CloudShark> {
     @Override
     public void setupAnim(CloudShark entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
         float newangle = 0.0f;
-        newangle = Mth.cos((float)(ageInTicks * 0.7f * limbSwingAmount)) * (float)Math.PI * 0.15f;
+        newangle = Mth.cos((float)(ageInTicks * 0.7f * this.wingspeed)) * (float)Math.PI * 0.15f;
         this.leftfin.yRot = 1.15f + newangle;
-        newangle = Mth.cos((float)(ageInTicks * 1.5f * limbSwingAmount)) * (float)Math.PI * 0.15f;
+        newangle = Mth.cos((float)(ageInTicks * 1.5f * this.wingspeed)) * (float)Math.PI * 0.15f;
         this.rightfin.yRot = -0.9f + newangle;
-        this.fins.yRot = newangle = Mth.cos((float)(ageInTicks * 1.5f * limbSwingAmount)) * (float)Math.PI * 0.25f;
-        newangle = Mth.cos((float)(ageInTicks * 0.5f * limbSwingAmount)) * (float)Math.PI * 0.1f;
+        this.fins.yRot = newangle = Mth.cos((float)(ageInTicks * 1.5f * this.wingspeed)) * (float)Math.PI * 0.25f;
+        newangle = Mth.cos((float)(ageInTicks * 0.5f * this.wingspeed)) * (float)Math.PI * 0.1f;
         this.jaw.xRot = 0.5f + newangle;
     }
 

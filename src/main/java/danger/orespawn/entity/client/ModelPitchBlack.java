@@ -10,6 +10,8 @@ import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.util.Mth;
 
 public class ModelPitchBlack extends EntityModel<PitchBlack> {
+    /** Animation frequency constant; orig ModelPitchBlack.java:15,119 (wingspeed), value from orig ClientProxyOreSpawn.java:460. */
+    private final float wingspeed = 0.65f;
     private int ri1, ri2;
     private float rf1;
     private final ModelPart lclaw1;
@@ -637,7 +639,7 @@ public class ModelPitchBlack extends EntityModel<PitchBlack> {
         float tailamp = 0.25f;
         float pi4 = 0.7853982f;
         float pscale = entity.getPitchBlackScale();
-        newangle = entity.getActivity() != 0 ? Mth.cos((float)(ageInTicks * 0.45f * limbSwingAmount / pscale)) * (float)Math.PI * 0.24f : -pi4 + Mth.cos((float)(ageInTicks * 0.05f * limbSwingAmount / pscale)) * (float)Math.PI * 0.02f;
+        newangle = entity.getActivity() != 0 ? Mth.cos((float)(ageInTicks * 0.45f * this.wingspeed / pscale)) * (float)Math.PI * 0.24f : -pi4 + Mth.cos((float)(ageInTicks * 0.05f * this.wingspeed / pscale)) * (float)Math.PI * 0.02f;
         this.wing1.zRot = newangle;
         this.mem1.zRot = newangle;
         this.wing2.zRot = newangle * 5.0f / 3.0f;
@@ -709,10 +711,10 @@ public class ModelPitchBlack extends EntityModel<PitchBlack> {
         this.tooth21.yRot = this.tooth23.yRot;
         this.reye.yRot = this.leye.yRot = this.head1.yRot;
         if (entity.getAttacking() != 0) {
-        newangle = Mth.cos((float)(ageInTicks * 0.85f * limbSwingAmount)) * (float)Math.PI * 0.16f;
+        newangle = Mth.cos((float)(ageInTicks * 0.85f * this.wingspeed)) * (float)Math.PI * 0.16f;
         newangle += 0.5f;
         } else {
-        newangle = ageInTicks * 0.7f * limbSwingAmount % ((float)Math.PI * 2);
+        newangle = ageInTicks * 0.7f * this.wingspeed % ((float)Math.PI * 2);
         if ((newangle = Math.abs(newangle)) < rf1) {
         ri1 = 0;
         if (entity.getRandom().nextInt(20) == 1) {
@@ -721,7 +723,7 @@ public class ModelPitchBlack extends EntityModel<PitchBlack> {
         }
         rf1 = newangle;
         if (ri1 != 0) {
-        newangle = Mth.sin((float)(ageInTicks * 0.85f * limbSwingAmount)) * (float)Math.PI * 0.16f;
+        newangle = Mth.sin((float)(ageInTicks * 0.85f * this.wingspeed)) * (float)Math.PI * 0.16f;
         newangle += 0.5f;
         } else {
         newangle = pi4 / 4.0f;
@@ -746,8 +748,8 @@ public class ModelPitchBlack extends EntityModel<PitchBlack> {
         float t1 = 0.0f;
         float t2 = 0.0f;
         if ((double)limbSwingAmount > 0.001) {
-        newangle = Mth.cos((float)(ageInTicks * 0.75f * limbSwingAmount / pscale));
-        t1 = Mth.sin((float)(ageInTicks * 0.75f * limbSwingAmount / pscale));
+        newangle = Mth.cos((float)(ageInTicks * 0.75f * this.wingspeed / pscale));
+        t1 = Mth.sin((float)(ageInTicks * 0.75f * this.wingspeed / pscale));
         } else {
         newangle = 0.0f;
         t1 = 0.0f;
@@ -780,8 +782,8 @@ public class ModelPitchBlack extends EntityModel<PitchBlack> {
         t1 = 0.0f;
         t2 = 0.0f;
         if ((double)limbSwingAmount > 0.001) {
-        newangle = Mth.cos((float)(ageInTicks * 0.75f * limbSwingAmount / pscale + pi4 * 4.0f));
-        t1 = Mth.sin((float)(ageInTicks * 0.75f * limbSwingAmount / pscale + pi4 * 4.0f));
+        newangle = Mth.cos((float)(ageInTicks * 0.75f * this.wingspeed / pscale + pi4 * 4.0f));
+        t1 = Mth.sin((float)(ageInTicks * 0.75f * this.wingspeed / pscale + pi4 * 4.0f));
         } else {
         newangle = 0.0f;
         t1 = 0.0f;
@@ -828,7 +830,7 @@ public class ModelPitchBlack extends EntityModel<PitchBlack> {
         } else {
         clawZ = 7.0f;
         clawY = 9.0f;
-        newangle = entity.getAttacking() != 0 ? Mth.cos((float)(ageInTicks * 0.85f * limbSwingAmount / pscale)) * 0.2f : 0.0f;
+        newangle = entity.getAttacking() != 0 ? Mth.cos((float)(ageInTicks * 0.85f * this.wingspeed / pscale)) * 0.2f : 0.0f;
         this.lclaw1.z = clawZ;
         this.lclaw1.y = clawY + newangle * 30.0f;
         this.lclaw1.xRot = -0.7f + newangle;
@@ -889,19 +891,19 @@ public class ModelPitchBlack extends EntityModel<PitchBlack> {
         tailspeed = 0.26f / pscale;
         tailamp = 0.08f;
         }
-        this.tail1.yRot = Mth.cos((float)(ageInTicks * tailspeed * limbSwingAmount)) * (float)Math.PI * tailamp / 2.0f;
+        this.tail1.yRot = Mth.cos((float)(ageInTicks * tailspeed * this.wingspeed)) * (float)Math.PI * tailamp / 2.0f;
         this.tail2.z = this.tail1.z + (float)Math.cos(this.tail1.yRot) * 11.0f;
         this.tail2.x = this.tail1.x - 1.0f + (float)Math.sin(this.tail1.yRot) * 11.0f;
-        this.tail2.yRot = Mth.cos((float)(ageInTicks * tailspeed * limbSwingAmount - pi4)) * (float)Math.PI * tailamp;
+        this.tail2.yRot = Mth.cos((float)(ageInTicks * tailspeed * this.wingspeed - pi4)) * (float)Math.PI * tailamp;
         this.tail3.z = this.tail2.z + (float)Math.cos(this.tail2.yRot) * 9.0f;
         this.tail3.x = this.tail2.x + (float)Math.sin(this.tail2.yRot) * 9.0f;
-        this.tail3.yRot = Mth.cos((float)(ageInTicks * tailspeed * limbSwingAmount - 2.0f * pi4)) * (float)Math.PI * tailamp;
+        this.tail3.yRot = Mth.cos((float)(ageInTicks * tailspeed * this.wingspeed - 2.0f * pi4)) * (float)Math.PI * tailamp;
         this.tail4.z = this.tail3.z + (float)Math.cos(this.tail3.yRot) * 9.0f;
         this.tail4.x = this.tail3.x + (float)Math.sin(this.tail3.yRot) * 9.0f;
-        this.tail4.yRot = Mth.cos((float)(ageInTicks * tailspeed * limbSwingAmount - 3.0f * pi4)) * (float)Math.PI * tailamp;
+        this.tail4.yRot = Mth.cos((float)(ageInTicks * tailspeed * this.wingspeed - 3.0f * pi4)) * (float)Math.PI * tailamp;
         this.tail5.z = this.tail4.z + (float)Math.cos(this.tail4.yRot) * 9.0f;
         this.tail5.x = this.tail4.x + (float)Math.sin(this.tail4.yRot) * 9.0f;
-        newangle = Mth.cos((float)(ageInTicks * tailspeed * limbSwingAmount - 3.0f * pi4)) * (float)Math.PI * tailamp;
+        newangle = Mth.cos((float)(ageInTicks * tailspeed * this.wingspeed - 3.0f * pi4)) * (float)Math.PI * tailamp;
         this.tail5.yRot = this.tail4.yRot + (newangle /= 2.0f);
         this.tail6.z = this.tail5.z + (float)Math.cos(this.tail5.yRot) * 9.0f;
         this.tail6.x = this.tail5.x + (float)Math.sin(this.tail5.yRot) * 9.0f;

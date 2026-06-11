@@ -10,6 +10,8 @@ import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.util.Mth;
 
 public class HydroliscModel extends EntityModel<EntityHydrolisc> {
+    /** Animation frequency constant; orig ModelHydrolisc.java:14,57 (wingspeed), value from orig ClientProxyOreSpawn.java:422. */
+    private final float wingspeed = 0.65f;
     private final ModelPart tail2;
     private final ModelPart tail3;
     private final ModelPart body2;
@@ -305,7 +307,7 @@ public class HydroliscModel extends EntityModel<EntityHydrolisc> {
     public void setupAnim(EntityHydrolisc entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
         float hf = 0.0f;
         float newangle = 0.0f;
-        newangle = (double)limbSwingAmount > 0.1 ? Mth.cos((float)(ageInTicks * 1.3f * limbSwingAmount)) * (float)Math.PI * 0.25f * limbSwingAmount : 0.0f;
+        newangle = (double)limbSwingAmount > 0.1 ? Mth.cos((float)(ageInTicks * 1.3f * this.wingspeed)) * (float)Math.PI * 0.25f * limbSwingAmount : 0.0f;
         this.lf1.xRot = newangle;
         this.lf2.xRot = newangle - 0.488f;
         this.lf3.xRot = newangle - 2.347f;
@@ -330,7 +332,7 @@ public class HydroliscModel extends EntityModel<EntityHydrolisc> {
         this.rb4.xRot = newangle - 0.628f;
         this.rb5.xRot = newangle - 0.628f;
         this.rb6.xRot = newangle + 0.174f;
-        newangle = Mth.cos((float)(ageInTicks * 1.0f * limbSwingAmount)) * (float)Math.PI * 0.15f;
+        newangle = Mth.cos((float)(ageInTicks * 1.0f * this.wingspeed)) * (float)Math.PI * 0.15f;
         if (entity.isInSittingPose()) {
         newangle = 0.0f;
         }
@@ -342,8 +344,8 @@ public class HydroliscModel extends EntityModel<EntityHydrolisc> {
         this.tail3.x = this.tail2.x + (float)Math.sin(this.tail2.yRot) * 8.0f;
         this.tail3.yRot = newangle * 0.75f;
         hf = entity.getHealth() / entity.getMaxHealth();
-        this.feather2.yRot = newangle = Mth.cos((float)(ageInTicks * 1.25f * limbSwingAmount * hf)) * (float)Math.PI * 0.2f * hf;
-        newangle = Mth.cos((float)(ageInTicks * 0.75f * limbSwingAmount * hf)) * (float)Math.PI * 0.2f * hf;
+        this.feather2.yRot = newangle = Mth.cos((float)(ageInTicks * 1.25f * this.wingspeed * hf)) * (float)Math.PI * 0.2f * hf;
+        newangle = Mth.cos((float)(ageInTicks * 0.75f * this.wingspeed * hf)) * (float)Math.PI * 0.2f * hf;
         this.feather1.yRot = newangle - 0.9f;
         this.feather3.yRot = -newangle + 0.9f;
     }
