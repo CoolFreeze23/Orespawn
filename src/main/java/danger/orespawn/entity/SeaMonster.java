@@ -84,7 +84,10 @@ public class SeaMonster extends Monster {
     @Override
     public void aiStep() {
         super.aiStep();
+        // orig SeaMonster.java:126 — onLivingUpdate sets moveSpeed to 0.55 in water / 0.25 on land,
+        // and orig SeaMonster.java:93 — onUpdate writes it into the MOVEMENT_SPEED attribute every tick.
         this.dynamicMoveSpeed = this.isInWater() ? 0.55f : 0.25f;
+        this.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(this.dynamicMoveSpeed);
     }
 
     @Override

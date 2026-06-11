@@ -154,7 +154,8 @@ public class ModEntities {
 
     public static final DeferredHolder<EntityType<?>, EntityType<Urchin>> URCHIN =
             ENTITY_TYPES.register("urchin", () -> EntityType.Builder.of(Urchin::new, MobCategory.MONSTER)
-                    .sized(0.5f, 0.5f).clientTrackingRange(10).build("urchin"));
+                    // orig Urchin.java:54 — field_70178_ae = true (fire-immune)
+                    .sized(0.5f, 0.5f).fireImmune().clientTrackingRange(10).build("urchin"));
 
     // "Mobzilla" is the public-facing boss name (see Godzilla#bossEvent which
     // sets Component.literal("Mobzilla")). The class retains the 1.7.10
@@ -271,7 +272,8 @@ public class ModEntities {
 
     public static final DeferredHolder<EntityType<?>, EntityType<EntityVortex>> ENTITY_VORTEX =
             ENTITY_TYPES.register("vortex", () -> EntityType.Builder.of(EntityVortex::new, MobCategory.MONSTER)
-                    .sized(1.0f, 1.5f).clientTrackingRange(10).build("vortex"));
+                    // orig Vortex.java:52 — field_70178_ae = true (fire-immune)
+                    .sized(1.0f, 1.5f).fireImmune().clientTrackingRange(10).build("vortex"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<EntityWormSmall>> ENTITY_WORM_SMALL =
             ENTITY_TYPES.register("worm_small", () -> EntityType.Builder.of(EntityWormSmall::new, MobCategory.MONSTER)

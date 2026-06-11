@@ -1,12 +1,12 @@
 package danger.orespawn.entity;
 
 import danger.orespawn.MobStats;
+import danger.orespawn.ModSounds;
 
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -87,20 +87,23 @@ public class TRex extends Monster {
 
     @Override
     protected SoundEvent getAmbientSound() {
+        // orig TRex.java:96-101 — "orespawn:trex_living" 1-in-4, else silent.
         if (this.getRandom().nextInt(4) == 0) {
-            return SoundEvents.RAVAGER_ROAR;
+            return ModSounds.TREX_LIVING.get();
         }
         return null;
     }
 
     @Override
     protected SoundEvent getHurtSound(DamageSource source) {
-        return SoundEvents.RAVAGER_HURT;
+        // orig TRex.java:103-105 — "orespawn:alo_hurt".
+        return ModSounds.ALO_HURT.get();
     }
 
     @Override
     protected SoundEvent getDeathSound() {
-        return SoundEvents.RAVAGER_DEATH;
+        // orig TRex.java:107-109 — "orespawn:trex_death".
+        return ModSounds.TREX_DEATH.get();
     }
 
     @Override

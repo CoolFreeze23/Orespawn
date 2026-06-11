@@ -8,6 +8,9 @@
     { "type": "orespawn:dungeon_beast", "weight": 30, "minCount": 4, "maxCount": 6 },
     { "type": "orespawn:flounder",    "weight": 5,  "minCount": 6, "maxCount": 8 },
     { "type": "orespawn:irukandji",   "weight": 4,  "minCount": 2, "maxCount": 3 },
-    { "type": "orespawn:frog",        "weight": 1,  "minCount": 3, "maxCount": 5 }
+    { "type": "orespawn:frog",        "weight": 1,  "minCount": 3, "maxCount": 5 },
+    { "type": "orespawn:skate",       "weight": 2,  "minCount": 3, "maxCount": 6 },
+    { "type": "orespawn:urchin",      "weight": 15, "minCount": 2, "maxCount": 4 },
+    { "type": "orespawn:vortex",      "weight": 3,  "minCount": 1, "maxCount": 2 }
   ]
 }

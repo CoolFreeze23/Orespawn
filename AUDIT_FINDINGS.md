@@ -81,6 +81,7 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 - **Original:** CaterKiller tree-eat heals 2.0 with pathing; CaterKiller timed metamorphosis spawns Brutalfly+Butterflies; Cryolophosaurus hunts proactively (1-in-5 scan over 9×2×9)
 - **Port:** `entity/EntityCaterKiller.java` comments claim parity for invented heal values (5/10) and despawn-instead-of-transform; `entity/Cryolophosaurus.java` comment claims it "never had" proactive hunting (wrong)
 - **Fix:** correct or delete the misleading comments when fixing the behaviors (see ENT-A-074, ENT-A-075, ENT-A-112); audit other port comments asserting parity before trusting them.
+- **Resolution:** FIXED (2026-06-11, Phase C — see FIX_LOG.md and phase_c_reports/C4_entities_S_Z.md)
 
 ---
 
@@ -2185,6 +2186,7 @@ Paths: ORIG = `reference_1_7_10_source\sources\danger\orespawn\`, PORT = `src\ma
 - **Original:** ORIG `Scorpion.java:148-160` — 1/10 each: gold nugget / uranium nugget / titanium nugget
 - **Port:** `LT scorpion.json` — bone 1–3 (+looting)
 - **Fix:** rewrite `scorpion.json`: three 10%-chance entries for gold/uranium/titanium nuggets.
+- **Resolution:** FIXED (2026-06-11, Phase C — see FIX_LOG.md and phase_c_reports/C4_entities_S_Z.md)
 
 ### ENT-S-005 — Scorpion: biome coverage shrunk
 - **Status:** PARTIAL
@@ -2201,7 +2203,7 @@ Paths: ORIG = `reference_1_7_10_source\sources\danger\orespawn\`, PORT = `src\ma
 - **Original:** `OreSpawnMain.java:6493` — HP 110, atk 14, def 8; speed 0.25 land / 0.55 in water
 - **Port:** `SeaMonster.java:38-40,86` — HP 150, atk 15; `dynamicMoveSpeed` computed but never applied to the attribute → water speed-up inert
 - **Fix:** set MAX_HEALTH 110, ATTACK_DAMAGE 14, ARMOR 8; in `aiStep`, write `dynamicMoveSpeed` into `Attributes.MOVEMENT_SPEED` (0.55 in water).
-- **Resolution:** PARTIAL (2026-06-11, Phase B — stats portion fixed (110/14/8); water speed-boost dead code remains open, see phase_b_reports/B2_mobstats.md)
+- **Resolution:** FIXED (2026-06-11, Phase C — remainder closed in Phase C; see FIX_LOG.md and phase_c_reports/C4_entities_S_Z.md)
 
 ### ENT-S-007 — SeaMonster: double drops + additions, gear unenchanted
 - **Status:** DIVERGENT
@@ -2215,6 +2217,7 @@ Paths: ORIG = `reference_1_7_10_source\sources\danger\orespawn\`, PORT = `src\ma
 - **Original:** `OreSpawnMain.java:4850-4851` — waterCreature ocean w4, swamp w2
 - **Port:** `BM add_ocean_spawns` — w1 (1-1)
 - **Fix:** raise ocean weight to 4; add swamp entry w2.
+- **Resolution:** PARTIAL (2026-06-11, Phase C — weights/biomes JSON half fixed; spawn-rule gates → ENT-SYS-002 (Phase D); see FIX_LOG.md and phase_c_reports/C4_entities_S_Z.md)
 
 ---
 
@@ -2232,6 +2235,7 @@ Paths: ORIG = `reference_1_7_10_source\sources\danger\orespawn\`, PORT = `src\ma
 - **Original:** ORIG `SeaViper.java` — melee applies Poison
 - **Port:** `entity\ai\SeaViperBiteGoal.java:22-26` — Hunger 8 s, 1/2 roll
 - **Fix:** change the effect in `SeaViperBiteGoal` to `MobEffects.POISON` (keep duration/roll).
+- **Resolution:** FIXED (2026-06-11, Phase C — see FIX_LOG.md and phase_c_reports/C4_entities_S_Z.md)
 
 ### ENT-S-011 — SeaViper: double drops + fish inflation
 - **Status:** DIVERGENT
@@ -2266,12 +2270,14 @@ Paths: ORIG = `reference_1_7_10_source\sources\danger\orespawn\`, PORT = `src\ma
 - **Original:** ORIG `Skate.java` `func_146068_u` — raw fish
 - **Port:** `LT skate.json` — prismarine_shard 1–3
 - **Fix:** rewrite `skate.json` to cod ×1.
+- **Resolution:** FIXED (2026-06-11, Phase C — see FIX_LOG.md and phase_c_reports/C4_entities_S_Z.md)
 
 ### ENT-S-015 — Skate: spawn domain moved to vanilla oceans
 - **Status:** DIVERGENT
 - **Original:** `BiomeGenUtopianPlains.java:259` — Island/Crystal dims waterCreature w2 (3-6)
 - **Port:** `BM add_ocean_spawns` w6 (1-2); gates (y≥50, 1/30, ≤6 nearby) ported (`Skate.java:182-187`)
 - **Fix:** if Island/Crystal dims exist in port, move skate spawns there at w2 (3-6); else reduce ocean weight to 2, group 3-6, and document the domain substitution.
+- **Resolution:** PARTIAL (2026-06-11, Phase C — weights/biomes JSON half fixed; spawn-rule gates → ENT-SYS-002 (Phase D); see FIX_LOG.md and phase_c_reports/C4_entities_S_Z.md)
 
 ---
 
@@ -2336,6 +2342,7 @@ Paths: ORIG = `reference_1_7_10_source\sources\danger\orespawn\`, PORT = `src\ma
 - **Original:** ORIG `func_70628_a` — various blocks/items
 - **Port:** `LT spider_robot.json` — iron 3–8 + string 2–5
 - **Fix:** read ORIG `SpiderRobot.java` drop method and port the block/item list into `spider_robot.json`.
+- **Resolution:** FIXED (2026-06-11, Phase C — see FIX_LOG.md and phase_c_reports/C4_entities_S_Z.md)
 
 ---
 
@@ -2359,6 +2366,7 @@ Paths: ORIG = `reference_1_7_10_source\sources\danger\orespawn\`, PORT = `src\ma
 - **Original:** ORIG — amethyst nuggets
 - **Port:** `LT spit_bug.json` — slime_ball 1–3
 - **Fix:** rewrite `spit_bug.json` to amethyst nugget drops (count per ORIG `SpitBug.java` drop method).
+- **Resolution:** FIXED (2026-06-11, Phase C — see FIX_LOG.md and phase_c_reports/C4_entities_S_Z.md)
 
 ---
 
@@ -2375,12 +2383,14 @@ Paths: ORIG = `reference_1_7_10_source\sources\danger\orespawn\`, PORT = `src\ma
 - **Original:** ORIG `func_146068_u` — apple on death
 - **Port:** `LT spyro.json` — blaze_powder 1–3
 - **Fix:** rewrite `spyro.json` to apple ×1.
+- **Resolution:** FIXED (2026-06-11, Phase C — see FIX_LOG.md and phase_c_reports/C4_entities_S_Z.md)
 
 ### ENT-S-029 — Spyro: spawn domain moved
 - **Status:** DIVERGENT
 - **Original:** Island/Crystal/Mining dims (`BiomeGenUtopianPlains`; mining w1)
 - **Port:** `BM companion_spyro__is_badlands/is_mountain` w1 (1-1)
 - **Fix:** if the custom dims exist in port, add Spyro to their spawn lists at w1; otherwise keep substitute biomes and document.
+- **Resolution:** PARTIAL (2026-06-11, Phase C — weights/biomes JSON half fixed; spawn-rule gates → ENT-SYS-002 (Phase D); see FIX_LOG.md and phase_c_reports/C4_entities_S_Z.md)
 
 ---
 
@@ -2391,12 +2401,14 @@ Paths: ORIG = `reference_1_7_10_source\sources\danger\orespawn\`, PORT = `src\ma
 - **Original:** ORIG `StinkBug.java` — Poison to entities within ~8 blocks on death
 - **Port:** port `EntityStinkBug.java:82-95` — Hunger 300t in 8×5×8
 - **Fix:** change the effect to `MobEffects.POISON` (keep radius/duration).
+- **Resolution:** FIXED (2026-06-11, Phase C — see FIX_LOG.md and phase_c_reports/C4_entities_S_Z.md)
 
 ### ENT-S-031 — StinkBug: food changed
 - **Status:** DIVERGENT
 - **Original:** ORIG — fish + CrystalApple
 - **Port:** port `EntityStinkBug.java:107-109` — apple
 - **Fix:** change `isFood` to cod + crystal_apple (ModItems).
+- **Resolution:** FIXED (2026-06-11, Phase C — see FIX_LOG.md and phase_c_reports/C4_entities_S_Z.md)
 
 ### ENT-S-032 — StinkBug: spawn weights flattened
 - **Status:** PARTIAL
@@ -2413,6 +2425,7 @@ Paths: ORIG = `reference_1_7_10_source\sources\danger\orespawn\`, PORT = `src\ma
 - **Original:** ORIG `Stinky.java:337-396` — front burp: coal; rear drop by 19 skin variants: blaze powder, rotten flesh, melon seeds, uranium nugget, wheat, reeds, torch, emerald, gold ingot, leaves, titanium nugget, apple seed, diamond, sand, cobble, bone, string, cherry seed, peach seed
 - **Port:** port `EntityStinky.java:153-155,396-420` — front: bone 1/1750; rear 1/2000: diamond, chicken, iron, gold nugget, cookie, cake, flower pot, poisonous potato, gold ingot, sand, copper, apple, emerald, gravel, cobble, name tag, iron pickaxe, berries, melon
 - **Fix:** restore front burp = coal; map the rear 19-skin list back to the original items (substituting ported analogs for uranium/titanium nuggets and seeds).
+- **Resolution:** FIXED (2026-06-11, Phase C — see FIX_LOG.md and phase_c_reports/C4_entities_S_Z.md)
 
 ### ENT-S-034 — Stinky: death drop missing
 - **Status:** MISSING
@@ -2425,6 +2438,7 @@ Paths: ORIG = `reference_1_7_10_source\sources\danger\orespawn\`, PORT = `src\ma
 - **Original:** `OreSpawnMain.java:4805-4808` — hell monster w2; mesa-variant ambient w1 ×3; island dim w2
 - **Port:** `BM companion_stinky` forest/taiga w1 + dim_islands w2
 - **Fix:** add a Nether BM entry w2 and mesa/badlands entries w1.
+- **Resolution:** PARTIAL (2026-06-11, Phase C — weights/biomes JSON half fixed; spawn-rule gates → ENT-SYS-002 (Phase D); see FIX_LOG.md and phase_c_reports/C4_entities_S_Z.md)
 
 ---
 
@@ -2462,12 +2476,14 @@ Paths: ORIG = `reference_1_7_10_source\sources\danger\orespawn\`, PORT = `src\ma
 - **Original:** ORIG `TerribleTerror.java:313-322` — 1/3 each: rotten flesh / emerald / feather
 - **Port:** LT — bone 1–2 + leather 0–1 + feather 0–1
 - **Fix:** rewrite loot table: three independent 1/3 entries for rotten_flesh, emerald, feather.
+- **Resolution:** FIXED (2026-06-11, Phase C — see FIX_LOG.md and phase_c_reports/C4_entities_S_Z.md)
 
 ### ENT-S-040 — TerribleTerror: spawn domain moved to vanilla overworld
 - **Status:** DIVERGENT
 - **Original:** `BiomeGenUtopianPlains.java:182,412` — Island dim monster w25 (3-6); chaos w4 (2-6)
 - **Port:** `BM add_overworld_monsters` w4 (1-2)
 - **Fix:** if Island/Chaos dims exist in port, move spawns there (w25/3-6, w4/2-6); else document overworld substitution and consider group 2-6.
+- **Resolution:** PARTIAL (2026-06-11, Phase C — weights/biomes JSON half fixed; spawn-rule gates → ENT-SYS-002 (Phase D); see FIX_LOG.md and phase_c_reports/C4_entities_S_Z.md)
 
 ---
 
@@ -2502,12 +2518,14 @@ Paths: ORIG = `reference_1_7_10_source\sources\danger\orespawn\`, PORT = `src\ma
 - **Original:** no overworld `addSpawn`; Island/Crystal w1, Mining dim (`BiomeGenUtopianPlains.java:496`)
 - **Port:** `BM` trex badlands+savanna w1 (1-1) AND `add_overworld_monsters` w1
 - **Fix:** remove TRex from `add_overworld_monsters`; keep (or dim-gate) the badlands/savanna entries.
+- **Resolution:** PARTIAL (2026-06-11, Phase C — weights/biomes JSON half fixed; spawn-rule gates → ENT-SYS-002 (Phase D); see FIX_LOG.md and phase_c_reports/C4_entities_S_Z.md)
 
 ### ENT-S-045 — TRex: custom sounds replaced with ravager
 - **Status:** DIVERGENT
 - **Original:** ORIG `:98-108` — `trex_living` / `alo_hurt` / `trex_death`
 - **Port:** port `:88-103` — RAVAGER_ROAR / RAVAGER_HURT / RAVAGER_DEATH
 - **Fix:** use `ModSounds.TREX_LIVING/ALO_HURT/TREX_DEATH` (trex_death already registered — used by TheKing).
+- **Resolution:** FIXED (2026-06-11, Phase C — see FIX_LOG.md and phase_c_reports/C4_entities_S_Z.md)
 
 ---
 
@@ -2601,6 +2619,7 @@ Paths: ORIG = `reference_1_7_10_source\sources\danger\orespawn\`, PORT = `src\ma
 - **Original:** `OreSpawnMain.java:1519-1529` — `UltimateBowDamage` config (default 10, clamp 2–20) × arrow velocity
 - **Port:** port `UltimateArrow.java:12-21` — flat `setBaseDamage(12.0)`
 - **Fix:** add an `ULTIMATE_BOW_DAMAGE` config (default 10, clamp 2–20) and use it as base damage.
+- **Resolution:** FIXED (2026-06-11, Phase C — see FIX_LOG.md and phase_c_reports/C4_entities_S_Z.md)
 
 ### ENT-S-058 — UltimateArrow: ignite, knockback, tame-exempt, trail particles missing
 - **Status:** MISSING
@@ -2633,13 +2652,14 @@ Paths: ORIG = `reference_1_7_10_source\sources\danger\orespawn\`, PORT = `src\ma
 - **Original:** `OreSpawnMain.java:6484` — HP 25, atk 10, def 4; fire-immune (`field_70178_ae=true`)
 - **Port:** port `Urchin.java:33-35` — HP 30, atk 8, not fire-immune
 - **Fix:** set MAX_HEALTH 25, ATTACK_DAMAGE 10, ARMOR 4; add `fireImmune()` override.
-- **Resolution:** PARTIAL (2026-06-11, Phase B — stats portion fixed (25/10/4); fire immunity remains open, see phase_b_reports/B2_mobstats.md)
+- **Resolution:** FIXED (2026-06-11, Phase C — remainder closed in Phase C; see FIX_LOG.md and phase_c_reports/C4_entities_S_Z.md)
 
 ### ENT-S-062 — Urchin: spawn domain moved to vanilla oceans
 - **Status:** DIVERGENT
 - **Original:** Island w15 (2-4) / Crystal w2 (1-5) dims; night spawner
 - **Port:** `BM add_ocean_spawns` w6 (1-2); rules time≥13000 (`:168-171`)
 - **Fix:** if Island/Crystal dims exist in port, move spawns there at original weights; else document the ocean substitution.
+- **Resolution:** PARTIAL (2026-06-11, Phase C — weights/biomes JSON half fixed; spawn-rule gates → ENT-SYS-002 (Phase D); see FIX_LOG.md and phase_c_reports/C4_entities_S_Z.md)
 
 ---
 
@@ -2663,18 +2683,21 @@ Paths: ORIG = `reference_1_7_10_source\sources\danger\orespawn\`, PORT = `src\ma
 - **Original:** ORIG — NOT rideable in 1.7.10 (EntityCannonFodder tameable)
 - **Port:** port `:188-227` — fully rideable (`getControllingPassenger`/`tickRidden`/speed ×1.6)
 - **Fix:** decide: remove riding for fidelity, or keep as documented enhancement (config-gate if keeping).
+- **Resolution:** FIXED (2026-06-11, Phase C — see FIX_LOG.md and phase_c_reports/C4_entities_S_Z.md)
 
 ### ENT-S-066 — VelocityRaptor: drop changed
 - **Status:** DIVERGENT
 - **Original:** ORIG `:335` — poppy
 - **Port:** `LT velocity_raptor.json` — bone 1–3
 - **Fix:** rewrite to poppy ×1.
+- **Resolution:** FIXED (2026-06-11, Phase C — see FIX_LOG.md and phase_c_reports/C4_entities_S_Z.md)
 
 ### ENT-S-067 — VelocityRaptor: spawn domain moved
 - **Status:** DIVERGENT
 - **Original:** Island/Crystal/Mining dims (jungle addSpawn not found)
 - **Port:** `BM companion_velocity_raptor` jungle/savanna w2 (1-2) + `add_overworld_creatures` w4 (1-2); rules y≥50 + sky (`:261-264`)
 - **Fix:** remove from `add_overworld_creatures` (keep themed jungle/savanna entries); add custom-dim entries if those dims exist.
+- **Resolution:** PARTIAL (2026-06-11, Phase C — weights/biomes JSON half fixed; spawn-rule gates → ENT-SYS-002 (Phase D); see FIX_LOG.md and phase_c_reports/C4_entities_S_Z.md)
 
 ---
 
@@ -2685,25 +2708,28 @@ Paths: ORIG = `reference_1_7_10_source\sources\danger\orespawn\`, PORT = `src\ma
 - **Original:** `OreSpawnMain.java:6500` — HP 150, atk 26, def 10; fire-immune
 - **Port:** port `EntityVortex.java:60-65` — HP 200, atk 20, no armor, not fire-immune
 - **Fix:** set MAX_HEALTH 150, ATTACK_DAMAGE 26, ARMOR 10; add `fireImmune()`.
-- **Resolution:** PARTIAL (2026-06-11, Phase B — stats portion fixed (150/26/10); fire immunity remains open, see phase_b_reports/B2_mobstats.md)
+- **Resolution:** FIXED (2026-06-11, Phase C — remainder closed in Phase C; see FIX_LOG.md and phase_c_reports/C4_entities_S_Z.md)
 
 ### ENT-S-069 — Vortex: invented skyward-launch attack
 - **Status:** DIVERGENT
 - **Original:** ORIG — melee 26 + drag only
 - **Port:** port `:190-196,244-274` — melee plus new `skywardLaunch` (+4.0 up, 30t cooldown)
 - **Fix:** remove `skywardLaunch` (or config-gate it); rely on the ported pull + melee.
+- **Resolution:** FIXED (2026-06-11, Phase C — see FIX_LOG.md and phase_c_reports/C4_entities_S_Z.md)
 
 ### ENT-S-070 — Vortex: drops changed
 - **Status:** DIVERGENT
 - **Original:** ORIG — VortexEye, bone, ingots/gems
 - **Port:** `LT vortex.json` — vortex_eye + xp bottle + gunpowder 3–8 + gold 1–3
 - **Fix:** rewrite: vortex_eye + bone + the original ingot/gem pool; drop xp bottle/gunpowder.
+- **Resolution:** FIXED (2026-06-11, Phase C — see FIX_LOG.md and phase_c_reports/C4_entities_S_Z.md)
 
 ### ENT-S-071 — Vortex: spawns in the wrong dimension
 - **Status:** DIVERGENT
 - **Original:** night overworld + Island w3 (1-2)/Crystal w1/Chaos dims (`BiomeGenUtopianPlains.java:226,406`)
 - **Port:** `BM add_nether_spawns` w4 — Nether only
 - **Fix:** remove vortex from `add_nether_spawns`; add overworld monster entry (night via `checkSpawnRules`, day-despawn already ported `:121-126`) + custom-dim entries if available.
+- **Resolution:** PARTIAL (2026-06-11, Phase C — weights/biomes JSON half fixed; spawn-rule gates → ENT-SYS-002 (Phase D); see FIX_LOG.md and phase_c_reports/C4_entities_S_Z.md)
 
 ---
 
@@ -2766,12 +2792,14 @@ Paths: ORIG = `reference_1_7_10_source\sources\danger\orespawn\`, PORT = `src\ma
 - **Original:** ORIG — no drops
 - **Port:** `LT worm_small.json` — dirt 0–2
 - **Fix:** empty `worm_small.json` pools (minor).
+- **Resolution:** FIXED (2026-06-11, Phase C — see FIX_LOG.md and phase_c_reports/C4_entities_S_Z.md)
 
 ### ENT-S-080 — WormSmall: natural daytime spawning added
 - **Status:** DIVERGENT
 - **Original:** ORIG — no `addSpawn`; only spawned by WormLarge; spawn rule = night only (`:214-216`)
 - **Port:** `BM add_overworld_creatures` CREATURE w10 (1-2), ON_GROUND placement
 - **Fix:** remove WormSmall from `add_overworld_creatures` (WormLarge already summons 20); if kept, add night-only `checkSpawnRules`.
+- **Resolution:** FIXED (2026-06-11, Phase C — see FIX_LOG.md and phase_c_reports/C4_entities_S_Z.md)
 
 ---
 

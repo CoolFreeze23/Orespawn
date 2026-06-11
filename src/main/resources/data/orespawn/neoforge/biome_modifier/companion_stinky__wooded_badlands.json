@@ -1,0 +1,7 @@
+{
+  "type": "neoforge:add_spawns",
+  "biomes": "minecraft:wooded_badlands",
+  "spawners": [
+    { "type": "orespawn:stinky", "weight": 1, "minCount": 1, "maxCount": 1 }
+  ]
+}

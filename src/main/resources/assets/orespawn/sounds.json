@@ -368,6 +368,9 @@
   "emperorscorpion_death": {
     "sounds": ["orespawn:emperorscorpion_death"]
   },
+  "fart": {
+    "sounds": ["orespawn:fart1", "orespawn:fart2", "orespawn:fart3", "orespawn:fart4", "orespawn:fart5", "orespawn:fart6", "orespawn:fart7", "orespawn:fart8", "orespawn:fart9"]
+  },
   "fart1": {
     "sounds": ["orespawn:fart1"]
   },

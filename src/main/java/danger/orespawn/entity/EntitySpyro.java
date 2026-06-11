@@ -390,6 +390,10 @@ public class EntitySpyro extends TamableAnimal {
         super.addAdditionalSaveData(tag);
         tag.putInt("SpyroActivity", this.getActivity());
         tag.putInt("SpyroFire", this.getSpyroFire());
+        // Exposes the tame flag to the loot-table NBT predicate so the tamed-only
+        // beef drop (orig Spyro.java:378-387) stays data-driven in spyro.json —
+        // same convention as Gazelle/Ostrich.
+        tag.putBoolean("OreSpawnTamed", this.isTame());
     }
 
     @Override
