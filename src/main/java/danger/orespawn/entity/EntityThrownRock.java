@@ -1,7 +1,10 @@
 package danger.orespawn.entity;
 
 import danger.orespawn.ModItems;
+import danger.orespawn.ModSounds;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -12,10 +15,13 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.ThrowableProjectile;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 
@@ -70,12 +76,14 @@ public class EntityThrownRock extends ThrowableProjectile {
         double verticalKnock = 0.025;
 
         switch (this.rockType) {
-            case 1 -> { damage = 2.0f; knockback = 0.1; }
-            case 2, 3, 4, 5 -> damage = 5.0f;
-            case 6 -> damage = 20.0f;
-            case 7, 8 -> { damage = 40.0f; knockback = 0.5; verticalKnock = 0.055; }
-            case 9, 10, 11 -> damage = 150.0f;
-            case 12 -> damage = 250.0f;
+            case 1 -> { damage = 2.0f; knockback = 0.1; }     // orig EntityThrownRock.java:79-80
+            case 2, 3, 4 -> damage = 5.0f;                    // orig :89,99,110
+            case 5 -> { damage = 10.0f; knockback = 0.1; }    // orig :123-124 — 10 dmg, ks 0.1
+            case 6 -> damage = 20.0f;                         // orig :136
+            case 7 -> damage = 40.0f;                         // orig :149-151 — ks 0.2 (only t8 gets 0.5)
+            case 8 -> { damage = 40.0f; knockback = 0.5; verticalKnock = 0.055; } // orig :159-161
+            case 9, 10, 11 -> damage = 150.0f;                // orig :170,184,200
+            case 12 -> damage = 250.0f;                       // orig :216
             default -> damage = 2.0f;
         }
 
@@ -91,22 +99,29 @@ public class EntityThrownRock extends ThrowableProjectile {
         if (target.isRemoved()) verticalKnock *= 2.0;
         target.push(Math.cos(angle) * knockback, verticalKnock, Math.sin(angle) * knockback);
 
-        if (this.rockType == 3) target.igniteForSeconds(IGNITE_DURATION_SECONDS);
+        if (this.rockType == 3) target.igniteForSeconds(IGNITE_DURATION_SECONDS); // orig :107 — 20t fire
+        if (this.rockType == 9) target.igniteForSeconds(50);                      // orig :178 — setFire(50) takes seconds in 1.7.10
         if (target instanceof LivingEntity living) {
             if (this.rockType == 4) {
+                // orig :119 — Poison 100t
                 living.addEffect(new MobEffectInstance(MobEffects.POISON, EFFECT_DURATION_SHORT, EFFECT_AMPLIFIER));
             }
             if (this.rockType == 5) {
+                // orig :132 — Slowness 100t
                 living.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, EFFECT_DURATION_SHORT, EFFECT_AMPLIFIER));
             }
-            if (this.rockType == 6 || this.rockType == 9 || this.rockType == 11) {
-                living.addEffect(new MobEffectInstance(MobEffects.WITHER, EFFECT_DURATION_SHORT, EFFECT_AMPLIFIER));
+            if (this.rockType == 6 || this.rockType == 9 || this.rockType == 10
+                    || this.rockType == 11 || this.rockType == 12) {
+                // orig :145,:180,:196,:212,:225 — Weakness (field_76437_t) 100t, NOT Wither
+                living.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, EFFECT_DURATION_SHORT, EFFECT_AMPLIFIER));
             }
             if (this.rockType == 10) {
+                // orig :193 — Poison 200t
                 living.addEffect(new MobEffectInstance(MobEffects.POISON, EFFECT_DURATION_LONG, EFFECT_AMPLIFIER));
             }
-            if (this.rockType == 12) {
-                living.addEffect(new MobEffectInstance(MobEffects.WITHER, EFFECT_DURATION_SHORT, EFFECT_AMPLIFIER));
+            if (this.rockType == 11) {
+                // orig :209 — Slowness 200t
+                living.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, EFFECT_DURATION_LONG, EFFECT_AMPLIFIER));
             }
         }
 
@@ -125,8 +140,51 @@ public class EntityThrownRock extends ThrowableProjectile {
     @Override
     protected void onHit(HitResult result) {
         super.onHit(result);
-        if (!this.level().isClientSide) {
-            Block.popResource(this.level(), this.blockPosition(), new ItemStack(ModItems.ROCK.get()));
+        if (this.level().isClientSide) {
+            this.discard();
+            return;
+        }
+        // orig EntityThrownRock.java:229-285 — the block-impact branch (no entity hit,
+        // rock_type != 0): break glass/glass panes in a 3x3x3 cube around the impact
+        // (playing "orespawn:glassdead" once) and return the type-specific rock item.
+        // Entity hits drop nothing (the orig only drops in the else-branch).
+        if (!(result instanceof EntityHitResult) && this.rockType != 0) {
+            BlockPos impact = this.blockPosition();
+            boolean played = false;
+            for (int i = -1; i <= 1; ++i) {
+                for (int j = -1; j <= 1; ++j) {
+                    for (int k = -1; k <= 1; ++k) {
+                        BlockPos pos = impact.offset(i, j, k);
+                        BlockState state = this.level().getBlockState(pos);
+                        // orig :238 — plain glass and glass panes only (no break gate in the orig)
+                        if (!state.is(Blocks.GLASS) && !state.is(Blocks.GLASS_PANE)) continue;
+                        this.level().setBlockAndUpdate(pos, Blocks.AIR.defaultBlockState());
+                        if (!played) {
+                            this.level().playSound(null, impact, ModSounds.GLASSDEAD.get(),
+                                    SoundSource.NEUTRAL, 1.0f, 1.0f);
+                            played = true;
+                        }
+                    }
+                }
+            }
+            Item recovered = switch (this.rockType) {  // orig :249-284 — typed rock recovery
+                case 1 -> ModItems.ROCK_SMALL.get();
+                case 2 -> ModItems.ROCK.get();
+                case 3 -> ModItems.ROCK_RED.get();
+                case 4 -> ModItems.ROCK_GREEN.get();
+                case 5 -> ModItems.ROCK_BLUE.get();
+                case 6 -> ModItems.ROCK_PURPLE.get();
+                case 7 -> ModItems.ROCK_SPIKEY.get();
+                case 8 -> ModItems.ROCK_TNT.get();
+                case 9 -> ModItems.ROCK_CRYSTAL_RED.get();
+                case 10 -> ModItems.ROCK_CRYSTAL_GREEN.get();
+                case 11 -> ModItems.ROCK_CRYSTAL_BLUE.get();
+                case 12 -> ModItems.ROCK_CRYSTAL_TNT.get();
+                default -> null;
+            };
+            if (recovered != null) {
+                Block.popResource(this.level(), impact, new ItemStack(recovered));
+            }
         }
         this.discard();
     }

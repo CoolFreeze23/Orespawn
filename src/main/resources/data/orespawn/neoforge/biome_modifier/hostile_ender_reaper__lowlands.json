@@ -1,0 +1,5 @@
+{
+  "type": "neoforge:add_spawns",
+  "biomes": ["minecraft:forest", "minecraft:plains", "minecraft:river", "minecraft:desert"],
+  "spawners": { "type": "orespawn:ender_reaper", "weight": 1, "minCount": 1, "maxCount": 2 }
+}

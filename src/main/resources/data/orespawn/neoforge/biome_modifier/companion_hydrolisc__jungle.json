@@ -1,0 +1,5 @@
+{
+  "type": "neoforge:add_spawns",
+  "biomes": "minecraft:jungle",
+  "spawners": { "type": "orespawn:hydrolisc", "weight": 15, "minCount": 2, "maxCount": 5 }
+}

@@ -323,6 +323,15 @@ public class Gazelle extends TamableAnimal {
         return stack.is(ModItems.CRYSTAL_APPLE.get());
     }
 
+    @Override
+    public void addAdditionalSaveData(net.minecraft.nbt.CompoundTag tag) {
+        super.addAdditionalSaveData(tag);
+        // Exposes the tame flag to the loot-table NBT predicate so the
+        // tamed-only poppy drop (orig Gazelle.java:341-352) stays data-driven
+        // in gazelle.json — same convention as Camarasaurus (ENT-A-070).
+        tag.putBoolean("OreSpawnTamed", this.isTame());
+    }
+
     @Nullable
     @Override
     public AgeableMob getBreedOffspring(ServerLevel level, AgeableMob otherParent) {

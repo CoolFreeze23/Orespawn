@@ -25,10 +25,6 @@ import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
-import net.minecraft.server.level.ServerBossEvent;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.BossEvent;
-import net.minecraft.network.chat.Component;
 
 public class Hammerhead extends Monster {
     private static final EntityDataAccessor<Integer> DATA_ATTACKING =
@@ -36,8 +32,8 @@ public class Hammerhead extends Monster {
 
     private static final double MOVE_SPEED = 0.35;
 
-    private final ServerBossEvent bossEvent = new ServerBossEvent(
-            Component.literal("Hammerhead"), BossEvent.BossBarColor.YELLOW, BossEvent.BossBarOverlay.PROGRESS);
+    // No boss bar: the orig Hammerhead.java is a plain EntityMob with no
+    // BossStatus hooks — the port's ServerBossEvent was an invention (ENT-D-055).
 
     private LivingEntity revengeTarget = null;
 
@@ -106,20 +102,7 @@ public class Hammerhead extends Monster {
     }
 
     @Override
-    public void startSeenByPlayer(ServerPlayer player) {
-        super.startSeenByPlayer(player);
-        this.bossEvent.addPlayer(player);
-    }
-
-    @Override
-    public void stopSeenByPlayer(ServerPlayer player) {
-        super.stopSeenByPlayer(player);
-        this.bossEvent.removePlayer(player);
-    }
-
-    @Override
     protected void customServerAiStep() {
-        this.bossEvent.setProgress(this.getHealth() / this.getMaxHealth());
         if (this.isRemoved()) return;
         super.customServerAiStep();
 

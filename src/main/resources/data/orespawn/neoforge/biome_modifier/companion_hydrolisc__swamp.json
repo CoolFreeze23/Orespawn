@@ -1,0 +1,5 @@
+{
+  "type": "neoforge:add_spawns",
+  "biomes": "minecraft:swamp",
+  "spawners": { "type": "orespawn:hydrolisc", "weight": 25, "minCount": 3, "maxCount": 6 }
+}

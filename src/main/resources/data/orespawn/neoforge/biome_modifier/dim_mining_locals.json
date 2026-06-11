@@ -3,6 +3,7 @@
   "biomes": "orespawn:mining_biome",
   "spawners": [
     { "type": "orespawn:alien", "weight": 35, "minCount": 2, "maxCount": 3 },
+    { "type": "orespawn:gamma_metroid", "weight": 35, "minCount": 4, "maxCount": 7 },
     { "type": "orespawn:alosaurus", "weight": 8, "minCount": 1, "maxCount": 2 },
     { "type": "orespawn:camarasaurus", "weight": 1, "minCount": 2, "maxCount": 4 },
     { "type": "orespawn:baryonyx", "weight": 2, "minCount": 4, "maxCount": 8 }

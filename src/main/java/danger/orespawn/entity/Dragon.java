@@ -113,7 +113,8 @@ public class Dragon extends TamableAnimal implements danger.orespawn.network.Rid
         this.goalSelector.addGoal(0, new FloatGoal(this));
         this.goalSelector.addGoal(1, new SitWhenOrderedToGoal(this));
         this.goalSelector.addGoal(2, new FollowOwnerGoal(this, 1.1, 12.0f, 2.0f));
-        this.goalSelector.addGoal(3, new TemptGoal(this, 1.25, Ingredient.of(Items.BONE), false));
+        // orig Dragon.java:1212 — dragons are tempted/tamed/healed with raw beef, not bones
+        this.goalSelector.addGoal(3, new TemptGoal(this, 1.25, Ingredient.of(Items.BEEF), false));
         this.goalSelector.addGoal(4, new WaterAvoidingRandomStrollGoal(this, 0.75));
         this.goalSelector.addGoal(5, new LookAtPlayerGoal(this, Player.class, 9.0f));
         this.goalSelector.addGoal(6, new RandomLookAroundGoal(this));
@@ -165,7 +166,7 @@ public class Dragon extends TamableAnimal implements danger.orespawn.network.Rid
 
     @Override
     public boolean isFood(ItemStack stack) {
-        return stack.is(Items.BONE);
+        return stack.is(Items.BEEF); // orig Dragon.java:1212 — raw beef (field_151082_bd)
     }
 
     @Nullable
@@ -907,7 +908,8 @@ public class Dragon extends TamableAnimal implements danger.orespawn.network.Rid
         ItemStack stack = player.getItemInHand(hand);
 
         if (!this.isTame()) {
-            if (stack.is(Items.BONE) && this.distanceToSqr(player) < 25.0) {
+            // orig Dragon.java:1212-1219 — raw beef, 1-in-5 tame chance, heal to full on success
+            if (stack.is(Items.BEEF) && this.distanceToSqr(player) < 25.0) {
                 if (!this.level().isClientSide) {
                     if (this.getRandom().nextInt(5) == 1) {
                         this.setTame(true, false);
@@ -941,8 +943,8 @@ public class Dragon extends TamableAnimal implements danger.orespawn.network.Rid
             return InteractionResult.sidedSuccess(this.level().isClientSide);
         }
 
-        // Bone: heal to full
-        if (stack.is(Items.BONE) && this.distanceToSqr(player) < 25.0) {
+        // Raw beef: heal to full (orig Dragon.java:1245-1252)
+        if (stack.is(Items.BEEF) && this.distanceToSqr(player) < 25.0) {
             if (!this.level().isClientSide) {
                 this.level().broadcastEntityEvent(this, (byte) 7);
             }
@@ -1034,18 +1036,16 @@ public class Dragon extends TamableAnimal implements danger.orespawn.network.Rid
             return InteractionResult.sidedSuccess(this.level().isClientSide);
         }
 
-        // Apple: spawn a Baby Dragon (the dedicated baby-dragon entity per
-        // 1.7.10 / Wiki separation, not the legacy EntitySpyro). The adult
-        // is consumed so the apple acts as a generational rebirth, matching
-        // the original 1.7.10 behaviour of the Magic Apple.
-        if (stack.is(Items.APPLE) && this.distanceToSqr(player) < 25.0) {
+        // Diamond: spawn a Spyro (orig Dragon.java:1351-1369 — the "Baby Dragon"
+        // registry name is the Spyro class). The adult is discarded; the baby is
+        // tamed to the player when the adult was tame. No type/fire transfer in
+        // the original — Spyro carries its own state.
+        if (stack.is(Items.DIAMOND) && this.distanceToSqr(player) < 25.0) {
             if (!this.level().isClientSide) {
-                BabyDragon baby = ModEntities.BABY_DRAGON.get().create(this.level());
+                EntitySpyro baby = ModEntities.ENTITY_SPYRO.get().create(this.level());
                 if (baby != null) {
                     baby.moveTo(this.getX(), this.getY(), this.getZ(),
                             this.getRandom().nextFloat() * 360.0f, 0.0f);
-                    baby.setDragonType(this.getDragonType());
-                    baby.setDragonFire(Math.max(this.getDragonFire(), 1));
                     if (this.isTame()) {
                         baby.setTame(true, false);
                         baby.setOwnerUUID(player.getUUID());
