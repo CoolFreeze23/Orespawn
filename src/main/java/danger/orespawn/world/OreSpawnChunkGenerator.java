@@ -45,11 +45,11 @@ import net.minecraft.world.level.StructureManager;
  * 1.21.1 chunk generators are identified by their MapCodec, so registering six
  * separate codecs is wasteful. Instead we register <em>one</em>
  * ({@code orespawn:orespawn}) that dispatches on {@link #style}, read from the
- * dimension JSON's {@code dimension_style} field — see {@link DimensionStyle}
+ * dimension JSON's {@code dimension_style} field â€” see {@link DimensionStyle}
  * for the rationale.</p>
  *
  * <p><b>Thread safety.</b> NeoForge 1.21.1 runs {@link #buildSurface} and
- * {@link #applyBiomeDecoration} on a worker pool — the generator instance is
+ * {@link #applyBiomeDecoration} on a worker pool â€” the generator instance is
  * shared across all workers for a given dimension. Every field on this class
  * that is read during generation is either immutable (codec-provided) or
  * wrapped in {@link java.util.concurrent.atomic.AtomicInteger}. Callees that
@@ -59,12 +59,12 @@ import net.minecraft.world.level.StructureManager;
  *
  * <p><b>Codec fields:</b></p>
  * <ul>
- *   <li>{@code biome_source} — forwarded to {@link NoiseBasedChunkGenerator}.</li>
- *   <li>{@code settings} — {@link NoiseGeneratorSettings} holder (overworld,
+ *   <li>{@code biome_source} â€” forwarded to {@link NoiseBasedChunkGenerator}.</li>
+ *   <li>{@code settings} â€” {@link NoiseGeneratorSettings} holder (overworld,
  *       floating_islands, etc). Dimensions pick their noise preset here.</li>
- *   <li>{@code dimension_style} — optional {@link DimensionStyle} discriminator,
+ *   <li>{@code dimension_style} â€” optional {@link DimensionStyle} discriminator,
  *       defaults to {@link DimensionStyle#DEFAULT}.</li>
- *   <li>{@code crystal_surface} — legacy boolean, still accepted for
+ *   <li>{@code crystal_surface} â€” legacy boolean, still accepted for
  *       backwards compatibility with pre-Phase-3 dimension JSONs. When
  *       present and {@code true} it overrides {@code dimension_style} with
  *       {@link DimensionStyle#CRYSTAL}. New JSONs should use
@@ -76,7 +76,7 @@ public class OreSpawnChunkGenerator extends NoiseBasedChunkGenerator {
     /**
      * MapCodec exposing all four fields. We keep {@code crystal_surface} as an
      * optional boolean for backwards compatibility with dimension JSONs that
-     * predate the {@link DimensionStyle} enum — the constructor folds it into
+     * predate the {@link DimensionStyle} enum â€” the constructor folds it into
      * the effective style when decoding, and always emits {@code false} on
      * re-encode so new JSONs can rely solely on {@code dimension_style}.
      */
@@ -93,18 +93,25 @@ public class OreSpawnChunkGenerator extends NoiseBasedChunkGenerator {
     private final DimensionStyle style;
     private final boolean crystalSurface;
     /**
-     * Per-JVM cooldown that skips dungeon placement for 50 chunks after one is
-     * placed. Prevents back-to-back dungeons clustering.
+     * Cooldown that skips dungeon placement for 50 chunks after one is placed.
+     * Prevents back-to-back dungeons clustering.
      *
-     * <p>NeoForge 1.21.1 paradigm shift: unlike 1.12.2's serial chunk pipeline,
-     * worldgen in 1.21 runs on the chunk-generator worker thread pool — multiple
-     * threads call {@link #buildSurface} concurrently. A plain {@code static int}
-     * would race (two threads reading 0 simultaneously, both placing dungeons,
-     * then double-decrementing on the next 50 chunks). {@link AtomicInteger}
-     * keeps decrement and reset atomic so the cooldown is honoured under
-     * parallel chunk loading.</p>
+     * <p>Instance field, NOT static: each dimension owns one generator instance, so a
+     * dungeon placed in the Mining dimension must not suppress dungeons in Utopia or
+     * Crystal (BUG-013). {@link java.util.concurrent.atomic.AtomicInteger} because
+     * worldgen in 1.21 runs on a worker thread pool â€” multiple threads decorate chunks
+     * of the same dimension concurrently, and a plain {@code int} would race.</p>
      */
-    private static final java.util.concurrent.atomic.AtomicInteger recentlyPlaced =
+    private final java.util.concurrent.atomic.AtomicInteger dungeonPlacementCooldown =
+            new java.util.concurrent.atomic.AtomicInteger(0);
+
+    /**
+     * Same per-dimension/thread-safe cooldown pattern as {@link #dungeonPlacementCooldown},
+     * but owned here and handed to {@link CrystalStructures#generate} so the large crystal
+     * structures (Battle Tower, Haunted House, ...) don't share state across dimensions
+     * or generator instances either (BUG-013).
+     */
+    private final java.util.concurrent.atomic.AtomicInteger crystalStructureCooldown =
             new java.util.concurrent.atomic.AtomicInteger(0);
 
     public OreSpawnChunkGenerator(BiomeSource biomeSource, Holder<NoiseGeneratorSettings> settings,
@@ -159,7 +166,7 @@ public class OreSpawnChunkGenerator extends NoiseBasedChunkGenerator {
             case CRYSTAL -> applyCrystalSurface(chunk, region.getRandom());
             case ISLANDS -> applyIslandsSurface(chunk, region.getRandom());
             case CHAOS, VILLAGE, UTOPIA, MINING, DEFAULT -> {
-                // Pass-through — vanilla noise + the dungeon pass above is
+                // Pass-through â€” vanilla noise + the dungeon pass above is
                 // sufficient. The "no oceans" continental shape for
                 // UTOPIA/VILLAGE/CHAOS/MINING is now data-driven via the
                 // orespawn:inland noise_settings (constant continentalness),
@@ -192,7 +199,7 @@ public class OreSpawnChunkGenerator extends NoiseBasedChunkGenerator {
      * Islands surface post-process. Expects the dimension JSON to select
      * {@code "settings": "minecraft:floating_islands"} so vanilla noise already
      * carves the sky-island shape; we only scatter scraggly oak trees on top,
-     * mirroring 1.7.10 {@code ChunkProviderOreSpawn4.addScragglyTrees} (1–10
+     * mirroring 1.7.10 {@code ChunkProviderOreSpawn4.addScragglyTrees} (1â€“10
      * attempts per chunk, each looking for an air-over-grass column).
      */
     private void applyIslandsSurface(ChunkAccess chunk, RandomSource random) {
@@ -216,8 +223,8 @@ public class OreSpawnChunkGenerator extends NoiseBasedChunkGenerator {
     }
 
     /**
-     * 4–7 block oak trunk topped with a 3x3 leaf cap. Intentionally minimal
-     * to match the "scraggly" feel from 1.7.10 — cheap to run N times per
+     * 4â€“7 block oak trunk topped with a 3x3 leaf cap. Intentionally minimal
+     * to match the "scraggly" feel from 1.7.10 â€” cheap to run N times per
      * chunk and never writes outside the chunk boundary (out-of-chunk writes
      * during concurrent generation cause chunk pop-in).
      */
@@ -260,13 +267,14 @@ public class OreSpawnChunkGenerator extends NoiseBasedChunkGenerator {
             try {
                 RandomSource random = level.getRandom();
                 CrystalStructures.generate(level, random,
-                        chunk.getPos().getMinBlockX(), chunk.getPos().getMinBlockZ());
+                        chunk.getPos().getMinBlockX(), chunk.getPos().getMinBlockZ(),
+                        this.crystalStructureCooldown);
             } catch (Exception e) {
                 // Non-fatal: a failed structure in one chunk doesn't compromise the world.
             }
         }
 
-        // Audit Part 3 — Royal Altars no longer placed via this hook.
+        // Audit Part 3 â€” Royal Altars no longer placed via this hook.
         // The previous RoyalAltars.tryPlaceRoyalAltar wrote ~12k blocks
         // through WorldGenLevel.setBlock during applyBiomeDecoration, which
         // (a) sheared at the 24-block WorldGenLevel write window for any
@@ -699,11 +707,9 @@ public class OreSpawnChunkGenerator extends NoiseBasedChunkGenerator {
         }
 
         // Atomic decrement so concurrent chunk-gen threads can't both pass the
-        // gate when the counter is 1. decrementAndGet is safe because we never
-        // let the value drop below 0 (we always compareAndSet it to 50 on a
-        // successful placement).
-        if (recentlyPlaced.get() > 0) {
-            recentlyPlaced.updateAndGet(v -> v > 0 ? v - 1 : 0);
+        // gate when the counter is 1; the value is clamped at 0.
+        if (dungeonPlacementCooldown.get() > 0) {
+            dungeonPlacementCooldown.updateAndGet(v -> v > 0 ? v - 1 : 0);
             return;
         }
 
@@ -712,14 +718,14 @@ public class OreSpawnChunkGenerator extends NoiseBasedChunkGenerator {
         int cz = chunk.getPos().getMinBlockZ();
 
         // Crystal dimension gets a dedicated ruby-themed dungeon tier on top
-        // of the generic dungeon roll — mirrors 1.7.10
+        // of the generic dungeon roll â€” mirrors 1.7.10
         // OreSpawnWorld.addRubyDungeon for dimension 5.
         if (style == DimensionStyle.CRYSTAL) {
             if (random.nextInt(15) == 0) {
                 int y = 10 + random.nextInt(10);
                 BlockPos pos = new BlockPos(cx + 8, y, cz + 8);
                 if (GenericDungeon.tryPlaceRubyDungeon(region, random, pos)) {
-                    recentlyPlaced.set(50);
+                    dungeonPlacementCooldown.set(50);
                     return;
                 }
             }
@@ -729,7 +735,7 @@ public class OreSpawnChunkGenerator extends NoiseBasedChunkGenerator {
             int y = 5 + random.nextInt(40);
             BlockPos pos = new BlockPos(cx + 8, y, cz + 8);
             if (GenericDungeon.tryPlaceGenericDungeon(region, random, pos)) {
-                recentlyPlaced.set(50);
+                dungeonPlacementCooldown.set(50);
             }
         }
     }

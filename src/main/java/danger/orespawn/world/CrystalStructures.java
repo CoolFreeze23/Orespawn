@@ -56,34 +56,52 @@ import net.minecraft.world.level.block.state.BlockState;
 public class CrystalStructures {
 
     /**
-     * Simple cooldown to stop multiple large structures from piling up in adjacent
-     * chunks.
+     * Decorates one crystal-dimension chunk with structures.
      *
-     * <p>NeoForge 1.21.1 paradigm shift: the {@code applyBiomeDecoration} phase
-     * runs on a worker pool that may invoke this method for several chunks in
-     * parallel. {@link AtomicInteger} guarantees that decrement and reset are
-     * atomic, so two threads can't both observe {@code 0} and place overlapping
-     * mega-structures (Battle Tower, Haunted House) one chunk apart.</p>
+     * <p>{@code placementCooldown} is the anti-clustering counter for large structures.
+     * It is owned by the calling {@link OreSpawnChunkGenerator} instance (one per
+     * dimension) rather than being a static field here, so structure placement in one
+     * dimension can never suppress placement in another (BUG-013). It is an
+     * {@link java.util.concurrent.atomic.AtomicInteger} because the decoration phase
+     * runs on a worker pool that processes several chunks in parallel.</p>
      */
-    private static final java.util.concurrent.atomic.AtomicInteger recentlyPlaced =
-            new java.util.concurrent.atomic.AtomicInteger(0);
-
-    public static void generate(WorldGenLevel level, RandomSource random, int chunkX, int chunkZ) {
+    public static void generate(WorldGenLevel level, RandomSource random, int chunkX, int chunkZ,
+                                java.util.concurrent.atomic.AtomicInteger placementCooldown) {
         // Decrement (clamped at 0) once per chunk before any structure attempt.
-        recentlyPlaced.updateAndGet(v -> v > 0 ? v - 1 : 0);
+        placementCooldown.updateAndGet(v -> v > 0 ? v - 1 : 0);
 
         BlockState crystalGrass = ModBlocks.CRYSTAL_GRASS.get().defaultBlockState();
 
-        if (tryPlaceFairyTree(level, random, chunkX, chunkZ, crystalGrass)) return;
+        // Each successful large-structure placement arms the 50-chunk cooldown. The
+        // helpers used to set it themselves on their single success path; it is hoisted
+        // here so the counter can be per-generator instead of static (BUG-013).
+        if (tryPlaceFairyTree(level, random, chunkX, chunkZ, crystalGrass)) {
+            placementCooldown.set(50);
+            return;
+        }
 
         placeCrystalTermiteBlocks(level, random, chunkX, chunkZ, crystalGrass);
 
-        if (recentlyPlaced.get() == 0) {
-            if (tryPlaceRotatorStation(level, random, chunkX, chunkZ, crystalGrass)) return;
-            if (tryPlaceUrchinSpawner(level, random, chunkX, chunkZ, crystalGrass)) return;
-            if (tryPlaceCrystalHauntedHouse(level, random, chunkX, chunkZ, crystalGrass)) return;
-            if (tryPlaceRoundRotator(level, random, chunkX, chunkZ, crystalGrass)) return;
-            tryPlaceCrystalBattleTower(level, random, chunkX, chunkZ, crystalGrass);
+        if (placementCooldown.get() == 0) {
+            if (tryPlaceRotatorStation(level, random, chunkX, chunkZ, crystalGrass)) {
+                placementCooldown.set(50);
+                return;
+            }
+            if (tryPlaceUrchinSpawner(level, random, chunkX, chunkZ, crystalGrass)) {
+                placementCooldown.set(50);
+                return;
+            }
+            if (tryPlaceCrystalHauntedHouse(level, random, chunkX, chunkZ, crystalGrass)) {
+                placementCooldown.set(50);
+                return;
+            }
+            if (tryPlaceRoundRotator(level, random, chunkX, chunkZ, crystalGrass)) {
+                placementCooldown.set(50);
+                return;
+            }
+            if (tryPlaceCrystalBattleTower(level, random, chunkX, chunkZ, crystalGrass)) {
+                placementCooldown.set(50);
+            }
 
             placeIrukandjiSpawner(level, random, chunkX, chunkZ);
         }
@@ -130,7 +148,6 @@ public class CrystalStructures {
             } else {
                 buildFairyCastleTree(level, random, posX, posY, posZ);
             }
-            recentlyPlaced.set(50);
             return true;
         }
         return false;
@@ -387,7 +404,6 @@ public class CrystalStructures {
                     fillCrystalChest(container, random);
                 }
 
-                recentlyPlaced.set(50);
                 return true;
             }
         }
@@ -446,7 +462,6 @@ public class CrystalStructures {
                 fillCrystalChest(container, random);
             }
 
-            recentlyPlaced.set(50);
             return true;
         }
         return false;
@@ -469,7 +484,6 @@ public class CrystalStructures {
                 continue;
 
             buildCrystalHauntedHouse(level, random, posX, posY, posZ);
-            recentlyPlaced.set(50);
             return true;
         }
         return false;
@@ -578,7 +592,6 @@ public class CrystalStructures {
                 fillRoundRotatorChest(container, random);
             }
 
-            recentlyPlaced.set(50);
             return true;
         }
         return false;
@@ -601,7 +614,6 @@ public class CrystalStructures {
                 continue;
 
             buildCrystalBattleTower(level, random, posX, posY, posZ);
-            recentlyPlaced.set(50);
             return true;
         }
         return false;

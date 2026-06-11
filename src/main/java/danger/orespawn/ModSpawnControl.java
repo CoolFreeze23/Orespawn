@@ -38,9 +38,14 @@ public class ModSpawnControl {
      * Entities flagged as natural spawns by {@link #onFinalizeSpawn}. Consumed
      * (removed) in {@link #onEntityJoinLevel}. Weak keys prevent memory leaks
      * if an entity is discarded before it ever joins a level.
+     *
+     * <p>Synchronized: {@link FinalizeSpawnEvent} fires on parallel chunk-generation
+     * worker threads while {@link EntityJoinLevelEvent} runs on the server thread; an
+     * unsynchronized WeakHashMap rehash under concurrent mutation can corrupt the map
+     * or spin forever (BUG-009).</p>
      */
     private static final Set<Entity> NATURAL_SPAWNS =
-            Collections.newSetFromMap(new WeakHashMap<>());
+            Collections.synchronizedSet(Collections.newSetFromMap(new WeakHashMap<>()));
 
     /**
      * Lazily-initialized mapping from each configurable entity type to a supplier
