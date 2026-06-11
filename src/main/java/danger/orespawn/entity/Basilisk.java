@@ -1,13 +1,11 @@
 package danger.orespawn.entity;
 
-import danger.orespawn.ModItems;
+import danger.orespawn.MobStats;
+
 import danger.orespawn.entity.ai.BasiliskGazeAttackGoal;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.damagesource.DamageSource;
@@ -24,13 +22,8 @@ import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
-import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.item.enchantment.Enchantment;
-import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 
 public class Basilisk extends Monster {
@@ -67,13 +60,14 @@ public class Basilisk extends Monster {
     }
 
     public static AttributeSupplier.Builder createAttributes() {
+        // orig OreSpawnMain.java:6487 — Basilisk 200 HP / 24 ATK / 15 armor
         return Monster.createMonsterAttributes()
-                .add(Attributes.MAX_HEALTH, 500.0)
+                .add(Attributes.MAX_HEALTH, MobStats.BASILISK.maxHealth())
                 .add(Attributes.MOVEMENT_SPEED, 0.4)
-                .add(Attributes.ATTACK_DAMAGE, 25.0)
+                .add(Attributes.ATTACK_DAMAGE, MobStats.BASILISK.attackDamage())
                 .add(Attributes.FOLLOW_RANGE, 48.0)
                 .add(Attributes.KNOCKBACK_RESISTANCE, 0.8)
-                .add(Attributes.ARMOR, 8.0);
+                .add(Attributes.ARMOR, MobStats.BASILISK.armor());
     }
 
     @Override
@@ -125,111 +119,9 @@ public class Basilisk extends Monster {
         return 1.0f;
     }
 
-    private void enchantItem(ItemStack stack, ResourceKey<Enchantment> key, int enchLevel) {
-        this.level().registryAccess()
-                .lookup(Registries.ENCHANTMENT)
-                .flatMap(reg -> reg.get(key))
-                .ifPresent(holder -> stack.enchant(holder, enchLevel));
-    }
-
-    private ItemStack dropItemRand(ItemStack stack) {
-        double dropX = this.getX() + this.getRandom().nextInt(4) - this.getRandom().nextInt(4);
-        double dropY = this.getY() + 1.0;
-        double dropZ = this.getZ() + this.getRandom().nextInt(4) - this.getRandom().nextInt(4);
-        ItemEntity itemEntity = new ItemEntity(this.level(), dropX, dropY, dropZ, stack);
-        this.level().addFreshEntity(itemEntity);
-        return stack;
-    }
-
-    @Override
-    protected void dropCustomDeathLoot(ServerLevel level, DamageSource source, boolean recentlyHit) {
-        super.dropCustomDeathLoot(level, source, recentlyHit);
-        dropItemRand(new ItemStack(ModItems.BASILISK_SCALE.get(), 1));
-        dropItemRand(new ItemStack(Items.GOLDEN_APPLE, 1));
-        int emeraldCount = 12 + this.getRandom().nextInt(6);
-        for (int i = 0; i < emeraldCount; i++) {
-            dropItemRand(new ItemStack(Items.EMERALD, 1));
-        }
-        int goldCount = 8 + this.getRandom().nextInt(5);
-        for (int i = 0; i < goldCount; i++) {
-            dropItemRand(new ItemStack(Items.GOLD_INGOT, 1));
-        }
-        int bonusCount = 3 + this.getRandom().nextInt(5);
-        for (int i = 0; i < bonusCount; i++) {
-            int lootRoll = this.getRandom().nextInt(15);
-            ItemStack droppedStack;
-            switch (lootRoll) {
-                case 1 -> dropItemRand(new ItemStack(Items.EMERALD, 1));
-                case 2 -> dropItemRand(new ItemStack(Items.EMERALD_BLOCK, 1));
-                case 3 -> {
-                    droppedStack = dropItemRand(new ItemStack(ModItems.EMERALD_SWORD.get()));
-                    if (this.getRandom().nextInt(6) == 1) enchantItem(droppedStack, Enchantments.SHARPNESS, 1 + this.getRandom().nextInt(5));
-                    if (this.getRandom().nextInt(6) == 1) enchantItem(droppedStack, Enchantments.SMITE, 1 + this.getRandom().nextInt(5));
-                    if (this.getRandom().nextInt(6) == 1) enchantItem(droppedStack, Enchantments.BANE_OF_ARTHROPODS, 1 + this.getRandom().nextInt(5));
-                    if (this.getRandom().nextInt(6) == 1) enchantItem(droppedStack, Enchantments.KNOCKBACK, 1 + this.getRandom().nextInt(5));
-                    if (this.getRandom().nextInt(2) == 1) enchantItem(droppedStack, Enchantments.UNBREAKING, 2 + this.getRandom().nextInt(4));
-                    if (this.getRandom().nextInt(6) == 1) enchantItem(droppedStack, Enchantments.FIRE_ASPECT, 1 + this.getRandom().nextInt(5));
-                }
-                case 4 -> {
-                    droppedStack = dropItemRand(new ItemStack(ModItems.EMERALD_SHOVEL.get()));
-                    if (this.getRandom().nextInt(2) == 1) enchantItem(droppedStack, Enchantments.UNBREAKING, 2 + this.getRandom().nextInt(4));
-                    if (this.getRandom().nextInt(6) == 1) enchantItem(droppedStack, Enchantments.EFFICIENCY, 1 + this.getRandom().nextInt(5));
-                }
-                case 5 -> {
-                    droppedStack = dropItemRand(new ItemStack(ModItems.EMERALD_PICKAXE.get()));
-                    if (this.getRandom().nextInt(2) == 1) enchantItem(droppedStack, Enchantments.UNBREAKING, 2 + this.getRandom().nextInt(4));
-                    if (this.getRandom().nextInt(6) == 1) enchantItem(droppedStack, Enchantments.EFFICIENCY, 1 + this.getRandom().nextInt(5));
-                    if (this.getRandom().nextInt(6) == 1) enchantItem(droppedStack, Enchantments.SILK_TOUCH, 1);
-                }
-                case 6 -> {
-                    droppedStack = dropItemRand(new ItemStack(ModItems.EMERALD_AXE.get()));
-                    if (this.getRandom().nextInt(2) == 1) enchantItem(droppedStack, Enchantments.UNBREAKING, 2 + this.getRandom().nextInt(4));
-                    if (this.getRandom().nextInt(6) == 1) enchantItem(droppedStack, Enchantments.EFFICIENCY, 1 + this.getRandom().nextInt(5));
-                }
-                case 7 -> {
-                    droppedStack = dropItemRand(new ItemStack(ModItems.EMERALD_HOE.get()));
-                    if (this.getRandom().nextInt(2) == 1) enchantItem(droppedStack, Enchantments.UNBREAKING, 2 + this.getRandom().nextInt(4));
-                    if (this.getRandom().nextInt(6) == 1) enchantItem(droppedStack, Enchantments.EFFICIENCY, 1 + this.getRandom().nextInt(5));
-                }
-                case 8 -> {
-                    droppedStack = dropItemRand(new ItemStack(ModItems.EMERALD_HELMET.get()));
-                    if (this.getRandom().nextInt(6) == 1) enchantItem(droppedStack, Enchantments.PROTECTION, 1 + this.getRandom().nextInt(5));
-                    if (this.getRandom().nextInt(6) == 1) enchantItem(droppedStack, Enchantments.PROJECTILE_PROTECTION, 1 + this.getRandom().nextInt(5));
-                    if (this.getRandom().nextInt(6) == 1) enchantItem(droppedStack, Enchantments.FIRE_PROTECTION, 1 + this.getRandom().nextInt(5));
-                    if (this.getRandom().nextInt(6) == 1) enchantItem(droppedStack, Enchantments.BLAST_PROTECTION, 1 + this.getRandom().nextInt(5));
-                    if (this.getRandom().nextInt(2) == 1) enchantItem(droppedStack, Enchantments.UNBREAKING, 2 + this.getRandom().nextInt(4));
-                    if (this.getRandom().nextInt(6) == 1) enchantItem(droppedStack, Enchantments.RESPIRATION, 1 + this.getRandom().nextInt(2));
-                    if (this.getRandom().nextInt(6) == 1) enchantItem(droppedStack, Enchantments.AQUA_AFFINITY, 1);
-                }
-                case 9 -> {
-                    droppedStack = dropItemRand(new ItemStack(ModItems.EMERALD_CHESTPLATE.get()));
-                    if (this.getRandom().nextInt(6) == 1) enchantItem(droppedStack, Enchantments.PROTECTION, 1 + this.getRandom().nextInt(5));
-                    if (this.getRandom().nextInt(6) == 1) enchantItem(droppedStack, Enchantments.PROJECTILE_PROTECTION, 1 + this.getRandom().nextInt(5));
-                    if (this.getRandom().nextInt(6) == 1) enchantItem(droppedStack, Enchantments.FIRE_PROTECTION, 1 + this.getRandom().nextInt(5));
-                    if (this.getRandom().nextInt(6) == 1) enchantItem(droppedStack, Enchantments.BLAST_PROTECTION, 1 + this.getRandom().nextInt(5));
-                    if (this.getRandom().nextInt(2) == 1) enchantItem(droppedStack, Enchantments.UNBREAKING, 2 + this.getRandom().nextInt(4));
-                }
-                case 10 -> {
-                    droppedStack = dropItemRand(new ItemStack(ModItems.EMERALD_LEGGINGS.get()));
-                    if (this.getRandom().nextInt(6) == 1) enchantItem(droppedStack, Enchantments.PROTECTION, 1 + this.getRandom().nextInt(5));
-                    if (this.getRandom().nextInt(6) == 1) enchantItem(droppedStack, Enchantments.PROJECTILE_PROTECTION, 1 + this.getRandom().nextInt(5));
-                    if (this.getRandom().nextInt(6) == 1) enchantItem(droppedStack, Enchantments.FIRE_PROTECTION, 1 + this.getRandom().nextInt(5));
-                    if (this.getRandom().nextInt(6) == 1) enchantItem(droppedStack, Enchantments.BLAST_PROTECTION, 1 + this.getRandom().nextInt(5));
-                    if (this.getRandom().nextInt(2) == 1) enchantItem(droppedStack, Enchantments.UNBREAKING, 2 + this.getRandom().nextInt(4));
-                }
-                case 11 -> {
-                    droppedStack = dropItemRand(new ItemStack(ModItems.EMERALD_BOOTS_ARMOR.get()));
-                    if (this.getRandom().nextInt(6) == 1) enchantItem(droppedStack, Enchantments.PROTECTION, 1 + this.getRandom().nextInt(5));
-                    if (this.getRandom().nextInt(6) == 1) enchantItem(droppedStack, Enchantments.PROJECTILE_PROTECTION, 1 + this.getRandom().nextInt(5));
-                    if (this.getRandom().nextInt(6) == 1) enchantItem(droppedStack, Enchantments.FIRE_PROTECTION, 1 + this.getRandom().nextInt(5));
-                    if (this.getRandom().nextInt(6) == 1) enchantItem(droppedStack, Enchantments.BLAST_PROTECTION, 1 + this.getRandom().nextInt(5));
-                    if (this.getRandom().nextInt(2) == 1) enchantItem(droppedStack, Enchantments.UNBREAKING, 2 + this.getRandom().nextInt(4));
-                    if (this.getRandom().nextInt(6) == 1) enchantItem(droppedStack, Enchantments.FEATHER_FALLING, 5 + this.getRandom().nextInt(5));
-                }
-                default -> dropItemRand(new ItemStack(Items.EMERALD, 1));
-            }
-        }
-    }
+    // Death drops are fully data-driven via loot_table/entities/basilisk.json
+    // (orig Basilisk.java:151-310: basilisk scale, painting, 12-17 emerald,
+    // 8-12 raw chicken, 3-7 rolls of the d15 Emerald gear table).
 
     @Override
     public boolean doHurtTarget(Entity target) {

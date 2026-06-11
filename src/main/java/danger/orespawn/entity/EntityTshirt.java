@@ -11,7 +11,6 @@ import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 
 public class EntityTshirt extends Animal {
@@ -55,9 +54,7 @@ public class EntityTshirt extends Animal {
         return null;
     }
 
-    @Override
-    protected void dropCustomDeathLoot(ServerLevel level, DamageSource source, boolean recentlyHit) {
-        super.dropCustomDeathLoot(level, source, recentlyHit);
-        this.spawnAtLocation(Items.LEATHER);
-    }
+    // Death drops are fully data-driven via loot_table/entities/tshirt.json
+    // (orig Tshirt.java getDropItem returns emerald; vanilla 1.7.10
+    // dropFewItems drops 0-2 of it, plus looting bonus).
 }

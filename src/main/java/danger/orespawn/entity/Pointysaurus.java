@@ -1,10 +1,11 @@
 package danger.orespawn.entity;
 
+import danger.orespawn.MobStats;
+
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
@@ -19,8 +20,6 @@ import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import danger.orespawn.OreSpawnMod;
 import danger.orespawn.entity.ai.DinosaurMeleeAttackGoal;
@@ -60,10 +59,13 @@ public class Pointysaurus extends Monster {
     }
 
     public static AttributeSupplier.Builder createAttributes() {
+        // orig OreSpawnMain.java:6472 — Pointysaurus 80 HP / 10 ATK / 16 armor;
+        // speed 0.35 matches orig Pointysaurus.java:40.
         return Monster.createMonsterAttributes()
-                .add(Attributes.MAX_HEALTH, 80.0)
+                .add(Attributes.MAX_HEALTH, MobStats.POINTYSAURUS.maxHealth())
                 .add(Attributes.MOVEMENT_SPEED, 0.35)
-                .add(Attributes.ATTACK_DAMAGE, 20.0)
+                .add(Attributes.ATTACK_DAMAGE, MobStats.POINTYSAURUS.attackDamage())
+                .add(Attributes.ARMOR, MobStats.POINTYSAURUS.armor())
                 .add(Attributes.FOLLOW_RANGE, 24.0);
     }
 
@@ -146,20 +148,6 @@ public class Pointysaurus extends Monster {
         this.entityData.set(DATA_ATTACKING, (int) (byte) value);
     }
 
-    @Override
-    protected void dropCustomDeathLoot(ServerLevel level, DamageSource source, boolean recentlyHit) {
-        super.dropCustomDeathLoot(level, source, recentlyHit);
-        for (int i = 0; i < 10; i++) {
-            this.spawnAtLocation(new ItemStack(Items.DIAMOND, 1));
-        }
-        for (int i = 0; i < 6; i++) {
-            this.spawnAtLocation(new ItemStack(Items.BEEF, 1));
-        }
-        for (int i = 0; i < 6; i++) {
-            this.spawnAtLocation(new ItemStack(Items.EMERALD, 1));
-        }
-        for (int i = 0; i < 6; i++) {
-            this.spawnAtLocation(new ItemStack(Items.IRON_INGOT, 1));
-        }
-    }
+    // Death drops are fully data-driven via loot_table/entities/pointysaurus.json
+    // (orig Pointysaurus.java:127-141: 10 leather, 6 raw beef, 6 rotten flesh, 6 string).
 }

@@ -1,9 +1,12 @@
 package danger.orespawn.entity;
 
+import danger.orespawn.MobStats;
+
 import java.util.Comparator;
 import java.util.List;
 import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerBossEvent;
@@ -25,13 +28,12 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.SmallFireball;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
+import danger.orespawn.ModEntities;
 import danger.orespawn.OreSpawnConfig;
 import danger.orespawn.OreSpawnMod;
 import net.neoforged.neoforge.entity.PartEntity;
@@ -67,9 +69,11 @@ public class Mothra extends EntityButterfly implements OreSpawnPartEntity.Multip
 
     public static AttributeSupplier.Builder createAttributes() {
         return Mob.createMobAttributes()
-                .add(Attributes.MAX_HEALTH, 500.0)
+                // orig OreSpawnMain.java:6469 — Mothra 150 HP / 12 ATK / 8 armor
+                .add(Attributes.MAX_HEALTH, MobStats.MOTHRA.maxHealth())
                 .add(Attributes.MOVEMENT_SPEED, 0.35)
-                .add(Attributes.ATTACK_DAMAGE, 30.0)
+                .add(Attributes.ATTACK_DAMAGE, MobStats.MOTHRA.attackDamage())
+                .add(Attributes.ARMOR, MobStats.MOTHRA.armor())
                 .add(Attributes.FOLLOW_RANGE, 48.0);
     }
 
@@ -296,12 +300,32 @@ public class Mothra extends EntityButterfly implements OreSpawnPartEntity.Multip
         this.setYRot(this.getYRot() + yawDiff / 4.0f);
     }
 
+    // Item drops are data-driven via loot_table/entities/mothra.json
+    // (orig Mothra.java:341-363: painting, 53 gold nuggets, 25 moth scales,
+    // 3 blaze rods, 1 nether star). Non-item death behavior stays here.
     @Override
-    protected void dropCustomDeathLoot(ServerLevel level, DamageSource source, boolean recentlyHit) {
-        super.dropCustomDeathLoot(level, source, recentlyHit);
-        this.spawnAtLocation(Items.NETHER_STAR);
-        for (int i = 0; i < 53; i++) this.spawnAtLocation(Items.EXPERIENCE_BOTTLE);
-        for (int i = 0; i < 3; i++) this.spawnAtLocation(Items.EMERALD);
+    public void die(DamageSource source) {
+        super.die(source);
+        // orig Mothra.java:344-362 — 20 "largeexplode" particles and
+        // 20 Moths released on death (port Moth = luna_moth).
+        if (this.level() instanceof ServerLevel serverLevel) {
+            for (int i = 0; i < 20; ++i) {
+                double ox = (this.random.nextFloat() - 0.5f) * 8.0f;
+                double oy = (this.random.nextFloat() - 0.5f) * 4.0f;
+                double oz = (this.random.nextFloat() - 0.5f) * 8.0f;
+                serverLevel.sendParticles(ParticleTypes.EXPLOSION,
+                        this.getX() + ox, this.getY() + 2.0 + oy, this.getZ() + oz,
+                        1, 0.0, 0.0, 0.0, 0.0);
+            }
+            for (int i = 0; i < 20; ++i) {
+                EntityLunaMoth moth = ModEntities.ENTITY_LUNA_MOTH.get().create(serverLevel);
+                if (moth != null) {
+                    moth.moveTo(this.getX() + 0.5, this.getY() + 1.0, this.getZ() + 0.5,
+                            this.random.nextFloat() * 360.0f, 0.0f);
+                    serverLevel.addFreshEntity(moth);
+                }
+            }
+        }
     }
 
     /**

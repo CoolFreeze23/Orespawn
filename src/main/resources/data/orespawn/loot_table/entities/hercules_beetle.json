@@ -3,11 +3,32 @@
   "pools": [
     {
       "rolls": 1,
-      "entries": [{"type": "minecraft:item", "name": "minecraft:bone", "functions": [{"function": "minecraft:set_count", "count": {"type": "minecraft:uniform", "min": 3, "max": 6}}]}]
+      "entries": [{"type": "minecraft:item", "name": "orespawn:big_hammer"}]
     },
     {
       "rolls": 1,
-      "entries": [{"type": "minecraft:item", "name": "minecraft:gunpowder", "functions": [{"function": "minecraft:set_count", "count": {"type": "minecraft:uniform", "min": 2, "max": 5}}]}]
+      "entries": [{"type": "minecraft:item", "name": "minecraft:painting"}]
+    },
+    {
+      "rolls": 1,
+      "entries": [{"type": "minecraft:item", "name": "minecraft:beef", "functions": [{"function": "minecraft:set_count", "count": {"type": "minecraft:uniform", "min": 4, "max": 11}}]}]
+    },
+    {
+      "rolls": {"type": "minecraft:uniform", "min": 1, "max": 5},
+      "entries": [
+        {"type": "minecraft:item", "name": "minecraft:diamond", "weight": 1},
+        {"type": "minecraft:item", "name": "minecraft:diamond_block", "weight": 1},
+        {"type": "minecraft:item", "name": "minecraft:diamond_sword", "weight": 1, "functions": [{"function": "minecraft:enchant_randomly"}]},
+        {"type": "minecraft:item", "name": "minecraft:diamond_shovel", "weight": 1, "functions": [{"function": "minecraft:enchant_randomly"}]},
+        {"type": "minecraft:item", "name": "minecraft:diamond_pickaxe", "weight": 1, "functions": [{"function": "minecraft:enchant_randomly"}]},
+        {"type": "minecraft:item", "name": "minecraft:diamond_axe", "weight": 1, "functions": [{"function": "minecraft:enchant_randomly"}]},
+        {"type": "minecraft:item", "name": "minecraft:diamond_hoe", "weight": 1, "functions": [{"function": "minecraft:enchant_randomly"}]},
+        {"type": "minecraft:item", "name": "minecraft:diamond_helmet", "weight": 1, "functions": [{"function": "minecraft:enchant_randomly"}]},
+        {"type": "minecraft:item", "name": "minecraft:diamond_chestplate", "weight": 1, "functions": [{"function": "minecraft:enchant_randomly"}]},
+        {"type": "minecraft:item", "name": "minecraft:diamond_leggings", "weight": 1, "functions": [{"function": "minecraft:enchant_randomly"}]},
+        {"type": "minecraft:item", "name": "minecraft:diamond_boots", "weight": 1, "functions": [{"function": "minecraft:enchant_randomly"}]},
+        {"type": "minecraft:empty", "weight": 9}
+      ]
     }
   ]
 }

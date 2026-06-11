@@ -1,5 +1,7 @@
 package danger.orespawn.entity;
 
+import danger.orespawn.MobStats;
+
 import java.util.Comparator;
 import java.util.List;
 import net.minecraft.core.BlockPos;
@@ -44,19 +46,18 @@ import net.minecraft.server.level.ServerBossEvent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.BossEvent;
 import danger.orespawn.ModEntities;
-import danger.orespawn.ModItems;
 import danger.orespawn.OreSpawnConfig;
 import danger.orespawn.ModSounds;
 import danger.orespawn.util.MyUtils;
 import net.neoforged.neoforge.entity.PartEntity;
 
 /**
- * The King — a flying, multi-region boss.
+ * The King â€” a flying, multi-region boss.
  *
- * <h2>Multi-part framework (1.7.10 → 1.21.1 port)</h2>
+ * <h2>Multi-part framework (1.7.10 â†’ 1.21.1 port)</h2>
  *
  * <p>In the 1.7.10 original ({@code reference_1_7_10_source/sources/danger/orespawn/TheKing.java}),
- * The King was a single {@code EntityMob} with a giant 22×24 AABB and a
+ * The King was a single {@code EntityMob} with a giant 22Ã—24 AABB and a
  * <em>sidecar</em> {@code KingHead} entity spawned 20 blocks above. The
  * head ran its own per-tick {@code func_70071_h_} loop, did an AABB search
  * to locate the parent, and forwarded damage by invoking the parent's
@@ -65,15 +66,15 @@ import net.neoforged.neoforge.entity.PartEntity;
  *
  * <p>NeoForge 1.21.1 replaces that dual-entity hack with a proper
  * {@link PartEntity} array ({@link OreSpawnPartEntity}): five named
- * regions — body, head, left wing, right wing, tail — are owned by this
+ * regions â€” body, head, left wing, right wing, tail â€” are owned by this
  * single {@code TheKing} and positioned every tick with offsets rotated by
  * {@link #yBodyRot}. Damage flows back through
  * {@link #hurtFromPart(OreSpawnPartEntity, DamageSource, float)} with
- * per-region multipliers (head = full, body = ½, everything else = ¼ +1).</p>
+ * per-region multipliers (head = full, body = Â½, everything else = Â¼ +1).</p>
  *
  * <p>The legacy {@code KingHead} entity type is <i>still registered</i> for
  * save-file backward compatibility and is still spawned by the AI path
- * below — see the comment near {@link ModEntities#KING_HEAD}. Future work
+ * below â€” see the comment near {@link ModEntities#KING_HEAD}. Future work
  * should delete the sidecar spawn once multi-part hitboxes are proven in
  * playtesting.</p>
  *
@@ -86,7 +87,7 @@ import net.neoforged.neoforge.entity.PartEntity;
  *       {@code EnderDragon.setId} so the client can correlate part-hit
  *       packets with the owning boss.</li>
  *   <li>{@link #getParts()} returns the stable {@link PartEntity} array
- *       ({@code allParts}) — it must be the same reference every call
+ *       ({@code allParts}) â€” it must be the same reference every call
  *       because the world stores it for hit-testing.</li>
  *   <li>{@link #tick()} snapshots each part's previous position, advances
  *       the parent via {@code super.tick()}, repositions the parts, then
@@ -106,9 +107,11 @@ public class TheKing extends Monster implements OreSpawnPartEntity.MultipartBoss
     private static final EntityDataAccessor<Integer> DATA_IS_END =
             SynchedEntityData.defineId(TheKing.class, EntityDataSerializers.INT);
 
-    private static final int MAX_HEALTH_VALUE = 6000;
-    private static final double ATTACK_DAMAGE_VALUE = 250.0;
-    private static final int DEFENSE_VALUE = 12;
+    // orig OreSpawnMain.java:6521 â€” TheKing 7000 HP / 350 ATK / 21 armor.
+    private static final int MAX_HEALTH_VALUE = (int) MobStats.THE_KING.maxHealth();
+    private static final double ATTACK_DAMAGE_VALUE = MobStats.THE_KING.attackDamage();
+    private static final int DEFENSE_VALUE = (int) MobStats.THE_KING.armor();
+    // orig TheKing.java:105 â€” speed hardcoded 0.62.
     private static final double MOVE_SPEED_VALUE = 0.62;
 
     private final ServerBossEvent bossEvent = new ServerBossEvent(
@@ -171,7 +174,7 @@ public class TheKing extends Monster implements OreSpawnPartEntity.MultipartBoss
         //
         //   KingEndGameGoal (priority 0, MOVE|LOOK|JUMP): owns the full
         //     mutex during the end-phase-1 dialogue cutscene. While it is
-        //     active, KingPrimaryGoal cannot tick — the boss is frozen in
+        //     active, KingPrimaryGoal cannot tick â€” the boss is frozen in
         //     place and the player is pinned to face it. Without this
         //     mutex lock the flight-motion lerp would still run every
         //     tick and the cutscene wouldn't read as a cutscene.
@@ -183,7 +186,7 @@ public class TheKing extends Monster implements OreSpawnPartEntity.MultipartBoss
         //     (fireball / thunder / ice), and the enraged-phase purple-
         //     power bomb trail. Effectively a single fat goal because its
         //     sub-behaviours are tightly coupled to a shared flight-target
-        //     state — splitting them further would require more
+        //     state â€” splitting them further would require more
         //     synchronisation code than just keeping them together.
         //
         //   FloatGoal (priority 2): prevents The King from sinking in
@@ -205,7 +208,7 @@ public class TheKing extends Monster implements OreSpawnPartEntity.MultipartBoss
     }
 
     /**
-     * Accessor for goals / external callers — returns the current end-phase
+     * Accessor for goals / external callers â€” returns the current end-phase
      * state (0=normal, 1=dialogue cutscene, 2=enraged). Exposed because
      * {@link danger.orespawn.entity.ai.KingEndGameGoal#canUse()} is in a
      * different package and needs to read this gating flag.
@@ -215,6 +218,8 @@ public class TheKing extends Monster implements OreSpawnPartEntity.MultipartBoss
     }
 
     public static AttributeSupplier.Builder createAttributes() {
+        // orig OreSpawnMain.java:6521 â€” TheKing 7000 HP / 350 ATK / 21 armor.
+        // Orig armor is situationally boosted (orig TheKing.java:856-864) â€” 21 is the base.
         return Monster.createMonsterAttributes()
                 .add(Attributes.MAX_HEALTH, MAX_HEALTH_VALUE)
                 .add(Attributes.MOVEMENT_SPEED, MOVE_SPEED_VALUE)
@@ -329,7 +334,7 @@ public class TheKing extends Monster implements OreSpawnPartEntity.MultipartBoss
     /**
      * Returns the stable array of child parts. The world caches this
      * reference for hit-testing, so we must return the SAME array object
-     * every call — never rebuild it on the fly.
+     * every call â€” never rebuild it on the fly.
      */
     @Override
     public PartEntity<?>[] getParts() {
@@ -339,7 +344,7 @@ public class TheKing extends Monster implements OreSpawnPartEntity.MultipartBoss
     /**
      * Reserves a contiguous block of entity IDs for the parts so the client
      * can correlate part-hit packets with the owning boss. Mirrors vanilla
-     * {@code EnderDragon.setId} — if parts had non-contiguous IDs, the
+     * {@code EnderDragon.setId} â€” if parts had non-contiguous IDs, the
      * client-side part lookup in {@code MultiPlayerLevel} would fail and
      * hits would register as "the parent's root AABB was struck", losing
      * the per-part damage multipliers.
@@ -353,7 +358,7 @@ public class TheKing extends Monster implements OreSpawnPartEntity.MultipartBoss
     }
 
     /**
-     * The parent's own bounding box is invisible to ray-tracing — players
+     * The parent's own bounding box is invisible to ray-tracing â€” players
      * must hit a {@link OreSpawnPartEntity} to damage The King. This is
      * the 1.21.1 analogue of 1.7.10's {@code setSize(22, 24)} trick where
      * the giant root AABB doubled as both visual bounds and hit area.
@@ -364,11 +369,11 @@ public class TheKing extends Monster implements OreSpawnPartEntity.MultipartBoss
     }
 
     /**
-     * Per-part damage routing. Head = full damage (weak point), body = ½,
-     * everything else = ¼ + 1 flat.
+     * Per-part damage routing. Head = full damage (weak point), body = Â½,
+     * everything else = Â¼ + 1 flat.
      *
      * <p>1.7.10 parallel: {@code TheKing.func_70097_a} couldn't distinguish
-     * which region was hit — every hit applied the same damage because the
+     * which region was hit â€” every hit applied the same damage because the
      * sidecar {@code KingHead} just called {@code attackEntityFrom} with
      * the raw amount. This multiplier table is pure gain from the port.</p>
      */
@@ -404,7 +409,7 @@ public class TheKing extends Monster implements OreSpawnPartEntity.MultipartBoss
 
     @Override
     public void tick() {
-        // ── Step 1: snapshot previous-tick positions ──
+        // â”€â”€ Step 1: snapshot previous-tick positions â”€â”€
         // We capture before super.tick() so the values are still the
         // positions that were computed last tick (which themselves became
         // the "old" positions at the end of last tick's repositioning).
@@ -413,16 +418,16 @@ public class TheKing extends Monster implements OreSpawnPartEntity.MultipartBoss
             oldPos[i] = new Vec3(allParts[i].getX(), allParts[i].getY(), allParts[i].getZ());
         }
 
-        // ── Step 2: advance the parent ──
+        // â”€â”€ Step 2: advance the parent â”€â”€
         // super.tick() updates yBodyRot, getX/Y/Z, hurt timers, etc. The
         // repositioning below depends on yBodyRot being current, so do this
         // FIRST and then derive part positions.
         super.tick();
 
-        // ── Step 3: position each part relative to the parent's new pose ──
+        // â”€â”€ Step 3: position each part relative to the parent's new pose â”€â”€
         // Offsets are in world units (blocks) and are rotated by yBodyRot
         // inside positionPart(). Numbers chosen to roughly match the visual
-        // silhouette of the 1.7.10 render model — body at +6 Y, head +11 Y
+        // silhouette of the 1.7.10 render model â€” body at +6 Y, head +11 Y
         // and 5 blocks forward (negative Z), wings 8 blocks left/right at
         // +7 Y, tail 6 blocks behind at +4 Y.
         positionPart(bodyPart,    0.0,  6.0,   0.0);
@@ -431,12 +436,12 @@ public class TheKing extends Monster implements OreSpawnPartEntity.MultipartBoss
         positionPart(wingRight,  8.0,   7.0,   0.0);
         positionPart(tail,       0.0,   4.0,   6.0);
 
-        // ── Step 4: write the snapshots back as the parts' "old" pose ──
+        // â”€â”€ Step 4: write the snapshots back as the parts' "old" pose â”€â”€
         // The client renderer interpolates between oldPos and pos using the
         // partial-tick timer. If we skipped this, parts would teleport on
         // every tick because their "old" and "new" would be identical.
         // xOld/yOld/zOld are the NeoForge-exposed fields; xo/yo/zo are the
-        // legacy mappings — set both to avoid any discrepancy.
+        // legacy mappings â€” set both to avoid any discrepancy.
         for (int i = 0; i < allParts.length; i++) {
             allParts[i].xo = oldPos[i].x;
             allParts[i].yo = oldPos[i].y;
@@ -504,7 +509,7 @@ public class TheKing extends Monster implements OreSpawnPartEntity.MultipartBoss
     @Override
     protected void customServerAiStep() {
         // Post-goal bookkeeping core. The three behavioural blocks that used
-        // to live here — dialogue cutscene, flight pathing, and combat —
+        // to live here â€” dialogue cutscene, flight pathing, and combat â€”
         // have been extracted into public helpers (aiStepEndGameDialogue,
         // aiStepFlight, aiStepCombat) invoked by the Goal classes registered
         // in registerGoals(). GoalSelector ticks them in priority order
@@ -530,8 +535,8 @@ public class TheKing extends Monster implements OreSpawnPartEntity.MultipartBoss
         // ---- End-game phase 2: enraged config overrides ----
         // Phase 1 (dialogue) is fully owned by KingEndGameGoal which freezes
         // all movement via its MOVE|LOOK|JUMP mutex; we do not touch it here.
-        // Phase 2 is a permanent config override — maxed ammunition, shorter
-        // cooldowns, healing boost — that enhances the flight+attack goals.
+        // Phase 2 is a permanent config override â€” maxed ammunition, shorter
+        // cooldowns, healing boost â€” that enhances the flight+attack goals.
         if (this.isEnd == 2) {
             this.hurtCooldown = 10;
             this.playerHitCount = 0;
@@ -545,7 +550,7 @@ public class TheKing extends Monster implements OreSpawnPartEntity.MultipartBoss
 
         if (this.hurtCooldown > 0) this.hurtCooldown--;
 
-        // First-tick home-point init — the point The King defends with the
+        // First-tick home-point init â€” the point The King defends with the
         // guard-mode leash in KingFlightGoal / KingAttackGoal.
         if ((this.homeX == 0 && this.homeZ == 0) || this.guardModeTimer == 0) {
             this.homeX = (int) this.getX();
@@ -561,7 +566,7 @@ public class TheKing extends Monster implements OreSpawnPartEntity.MultipartBoss
 
         this.noPhysics = true;
 
-        // Passive healing — a slow regen tick plus a massive top-up when a
+        // Passive healing â€” a slow regen tick plus a massive top-up when a
         // large entity (Mobzilla, dragons) is detected. The 2000-HP floor
         // prevents cheese strategies from nibbling away the opening health
         // pool without triggering the real phase multipliers.
@@ -576,7 +581,7 @@ public class TheKing extends Monster implements OreSpawnPartEntity.MultipartBoss
         }
     }
 
-    // ─── AI STEP HELPERS ───────────────────────────────────────────────────
+    // â”€â”€â”€ AI STEP HELPERS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     // These three methods used to form one monolithic ~250-line block inside
     // customServerAiStep. They are now invoked by dedicated Goal classes in
     // danger.orespawn.entity.ai so that:
@@ -659,19 +664,19 @@ public class TheKing extends Monster implements OreSpawnPartEntity.MultipartBoss
 
     /**
      * Primary flight + target + attack behaviour. This is the monolithic
-     * "live" phase of The King — mirrors the 1.7.10 original's
+     * "live" phase of The King â€” mirrors the 1.7.10 original's
      * {@code func_70030_z_} body minus dialogue and bookkeeping.
      *
      * <p>Flow (preserved 1:1 from 1.7.10 to guarantee combat feel):
      * <ol>
      *   <li>If we're too far from home, or a 1-in-200 random wander-roll hits,
-     *       or we've reached the current flight target (dist² &lt; 9.1),
-     *       <b>pick a new random wander target</b> within ±120 blocks of
+     *       or we've reached the current flight target (distÂ² &lt; 9.1),
+     *       <b>pick a new random wander target</b> within Â±120 blocks of
      *       home, at an altitude adjusted by
      *       {@link #computeAltitudeAdjustment(int, int)}.</li>
      *   <li>Otherwise, on a 1-in-{@code attackChance} roll, acquire a target
      *       (revenge target first, then {@link #findSomethingToAttack()}
-     *       80×64×80 AABB scan), spawn the legacy sidecar {@link KingHead}
+     *       80Ã—64Ã—80 AABB scan), spawn the legacy sidecar {@link KingHead}
      *       if not present, and execute one of:
      *       <ul>
      *         <li>Area + melee damage if within 30 blocks;</li>
@@ -694,7 +699,7 @@ public class TheKing extends Monster implements OreSpawnPartEntity.MultipartBoss
      *
      * <p><b>Main-thread cost</b>: the {@link #findSomethingToAttack()}
      * AABB scan is naturally throttled by the
-     * {@code getRandom().nextInt(attackChance)==0} gate — ~1 scan every 3-5
+     * {@code getRandom().nextInt(attackChance)==0} gate â€” ~1 scan every 3-5
      * ticks per boss in the worst case. No asynchronous work is needed.</p>
      */
     public void aiStepPrimary() {
@@ -719,10 +724,10 @@ public class TheKing extends Monster implements OreSpawnPartEntity.MultipartBoss
         }
 
         // Branch A: need a new flight target (too far, random wander, or reached current).
-        //   → pick a wander destination and return — no combat this tick.
-        // Branch B: 1-in-attackChance chance — acquire target and fight.
-        //   → if a target is locked, override flight target to pursue it.
-        // Branch C (implicit): neither — keep current target, motion-lerp runs below.
+        //   â†’ pick a wander destination and return â€” no combat this tick.
+        // Branch B: 1-in-attackChance chance â€” acquire target and fight.
+        //   â†’ if a target is locked, override flight target to pursue it.
+        // Branch C (implicit): neither â€” keep current target, motion-lerp runs below.
         if (this.tooFarFromHome() || this.getRandom().nextInt(200) == 0 || this.flightTargetDistSqr() < 9.1) {
             randomZOffset = this.getRandom().nextInt(120);
             randomXOffset = this.getRandom().nextInt(120);
@@ -762,7 +767,7 @@ public class TheKing extends Monster implements OreSpawnPartEntity.MultipartBoss
             // attackChance=3. Acceptable for single-boss arenas.
             nearbyTarget = this.findSomethingToAttack();
 
-            // Legacy 1.7.10 sidecar head spawn — see KingHead.java JavaDoc.
+            // Legacy 1.7.10 sidecar head spawn â€” see KingHead.java JavaDoc.
             // Retained for NBT save-compat and flight-pattern hook; to be
             // removed once the PartEntity-based hit detection is proven.
             if (this.headEntityFound == 0) {
@@ -799,7 +804,7 @@ public class TheKing extends Monster implements OreSpawnPartEntity.MultipartBoss
                     this.currentFlightTarget = new BlockPos((int) currentTarget.getX() + randomXOffset, flightY, (int) currentTarget.getZ() + randomZOffset);
                 }
 
-                // Melee range (< 30 blocks²) — area damage + direct hit.
+                // Melee range (< 30 blocksÂ²) â€” area damage + direct hit.
                 if (this.distanceToSqr(currentTarget) < 900.0) {
                     if (this.getRandom().nextInt(2) == 1) {
                         this.doJumpDamage(this.getX(), this.getY(), this.getZ(),
@@ -808,7 +813,7 @@ public class TheKing extends Monster implements OreSpawnPartEntity.MultipartBoss
                     this.doHurtTarget(currentTarget);
                 }
 
-                // Forward area damage — 20 blocks ahead of the head, 10
+                // Forward area damage â€” 20 blocks ahead of the head, 10
                 // above. Covers the case where the target ducks under.
                 double forwardX = this.getX() + 20.0 * Math.sin(Math.toRadians(this.yHeadRot));
                 double forwardZ = this.getZ() - 20.0 * Math.cos(Math.toRadians(this.yHeadRot));
@@ -817,7 +822,7 @@ public class TheKing extends Monster implements OreSpawnPartEntity.MultipartBoss
                             15.0, ATTACK_DAMAGE_VALUE / 2, 1);
                 }
 
-                // Long range (> 30 blocks²) — pick one of three elemental
+                // Long range (> 30 blocksÂ²) â€” pick one of three elemental
                 // projectile streams. Aim check prevents wasting ammo when
                 // the target is behind us or blocked by terrain.
                 if (this.getHorizontalDistanceSqToEntity(currentTarget) > 900.0) {
@@ -834,7 +839,7 @@ public class TheKing extends Monster implements OreSpawnPartEntity.MultipartBoss
                     }
                 }
             } else {
-                // No target — drop out of attacking pose, refill ammo.
+                // No target â€” drop out of attacking pose, refill ammo.
                 this.setAttacking(0);
                 this.fireballStreamCount = 10;
                 this.lightningStreamCount = 5;
@@ -866,7 +871,7 @@ public class TheKing extends Monster implements OreSpawnPartEntity.MultipartBoss
         // Soft smoothing toward the current flight target: Math.signum()
         // gives a unit direction, the 0.7 target speed is blended in over
         // ~3 ticks (35% per tick on x/z, 30% on y). This is what gives The
-        // King his characteristic lazy-but-menacing arcs — never snapping,
+        // King his characteristic lazy-but-menacing arcs â€” never snapping,
         // always drifting.
         double goalX = this.currentFlightTarget.getX() + 0.5 - this.getX();
         double goalY = this.currentFlightTarget.getY() + 0.1 - this.getY();
@@ -891,7 +896,7 @@ public class TheKing extends Monster implements OreSpawnPartEntity.MultipartBoss
         if (target == null) return false;
 
         // FULL_POWER_KING_ENABLE: when true, The King deals 2x damage on every
-        // attack — melee and ranged alike — making the fight drastically harder.
+        // attack â€” melee and ranged alike â€” making the fight drastically harder.
         double effectiveDamage = this.attackDamage;
         if (OreSpawnConfig.FULL_POWER_KING_ENABLE.get()) {
             effectiveDamage *= 2.0;
@@ -1302,21 +1307,15 @@ public class TheKing extends Monster implements OreSpawnPartEntity.MultipartBoss
         this.level().addFreshEntity(itemEntity);
     }
 
+    // EXCEPTION to the loot-table architecture (see phase_b_reports/B1_drops.md):
+    // orig TheKing.java:193-226 samples the ENTIRE item and block registries at
+    // random (150 draws each) â€” inexpressible in a loot JSON, so that code path
+    // is retained here. The fixed royal-gear drops (orig TheKing.java:188-192)
+    // live in loot_table/entities/the_king.json; The Prince spawn (orig
+    // TheKing.java:187) lives in die().
     @Override
     protected void dropCustomDeathLoot(ServerLevel level, DamageSource source, boolean recentlyHit) {
         super.dropCustomDeathLoot(level, source, recentlyHit);
-
-        ThePrince prince = ModEntities.THE_PRINCE.get().create(this.level());
-        if (prince != null) {
-            prince.moveTo(this.getX(), this.getY() + 10, this.getZ(), 0.0F, 0.0F);
-            this.level().addFreshEntity(prince);
-        }
-
-        dropItemRand(new ItemStack(ModItems.ROYAL_GUARDIAN_SWORD.get(), 1));
-        dropItemRand(new ItemStack(ModItems.ROYAL_HELMET.get(), 1));
-        dropItemRand(new ItemStack(ModItems.ROYAL_CHESTPLATE.get(), 1));
-        dropItemRand(new ItemStack(ModItems.ROYAL_LEGGINGS.get(), 1));
-        dropItemRand(new ItemStack(ModItems.ROYAL_BOOTS.get(), 1));
 
         int icount = BuiltInRegistries.ITEM.size();
         int j = 0;
@@ -1337,6 +1336,19 @@ public class TheKing extends Monster implements OreSpawnPartEntity.MultipartBoss
             j++;
             dropItemRand(new ItemStack(blockItem, 1));
         }
+    }
+
+    @Override
+    public void die(DamageSource source) {
+        // orig TheKing.java:187 â€” The Prince spawns when the King dies.
+        if (!this.level().isClientSide) {
+            ThePrince prince = ModEntities.THE_PRINCE.get().create(this.level());
+            if (prince != null) {
+                prince.moveTo(this.getX(), this.getY() + 10, this.getZ(), 0.0F, 0.0F);
+                this.level().addFreshEntity(prince);
+            }
+        }
+        super.die(source);
     }
 
     // ---- NBT ----

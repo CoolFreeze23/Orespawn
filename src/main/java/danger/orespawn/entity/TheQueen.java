@@ -1,5 +1,7 @@
 package danger.orespawn.entity;
 
+import danger.orespawn.MobStats;
+
 import java.util.Comparator;
 import java.util.List;
 import net.minecraft.core.BlockPos;
@@ -7,7 +9,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
@@ -25,11 +26,8 @@ import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.animal.horse.Horse;
 import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
-import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
@@ -41,7 +39,6 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.BossEvent;
 import net.minecraft.network.chat.Component;
 import danger.orespawn.ModEntities;
-import danger.orespawn.ModItems;
 import danger.orespawn.ModSounds;
 import danger.orespawn.OreSpawnConfig;
 import danger.orespawn.util.MyUtils;
@@ -54,18 +51,18 @@ import software.bernie.geckolib.animation.RawAnimation;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 /**
- * The Queen — a flying, three-headed multi-region boss.
+ * The Queen â€” a flying, three-headed multi-region boss.
  *
  * <h2>Multi-part hitbox framework (MultiHitBoxLib, vendored)</h2>
  *
- * <p>Historical lineage: the 1.7.10 original used a single 22×24
+ * <p>Historical lineage: the 1.7.10 original used a single 22Ã—24
  * {@code EntityMob} with one sidecar {@code QueenHead} that teleported
  * 20 blocks above and 30 blocks ahead every tick. The 1.21.1 port's
  * first iteration replaced that with fourteen hand-managed
  * {@code OreSpawnPartEntity} children whose positions were driven by
  * sinusoidal math derived from the legacy procedural model. That math
  * never tracked the keyframe-driven Geckolib mesh, so weak points
- * (heads/legs) drifted out from under the visible geometry — players
+ * (heads/legs) drifted out from under the visible geometry â€” players
  * landed phantom hits on empty air a foot to the left of the Queen's
  * actual face.</p>
  *
@@ -95,8 +92,8 @@ import software.bernie.geckolib.util.GeckoLibUtil;
  *       {@code MixinLivingEntity}) snaps each {@code MHLibPartEntity}
  *       to the received bone position the next aiStep tick. Damage
  *       absorbed by a part is forwarded to {@code TheQueen.hurt}
- *       multiplied by the part's {@code damage-modifier}: 1.0× heads,
- *       0.5× body/legs, 0.25× wings/tail.</li>
+ *       multiplied by the part's {@code damage-modifier}: 1.0Ã— heads,
+ *       0.5Ã— body/legs, 0.25Ã— wings/tail.</li>
  * </ul>
  *
  * <p>Net result: every damage hitbox is pixel-perfect for the current
@@ -104,7 +101,7 @@ import software.bernie.geckolib.util.GeckoLibUtil;
  * this class.</p>
  *
  * <p>The legacy {@code QueenHead} sidecar entity type is still
- * registered and still spawned by {@link #aiStepPrimary()} — kept
+ * registered and still spawned by {@link #aiStepPrimary()} â€” kept
  * deliberately for save-file backward compatibility and as a
  * separately-targetable nuisance during mad-mood swarms. It is
  * functionally independent of the MHLib part system.</p>
@@ -120,8 +117,8 @@ public class TheQueen extends Monster implements GeoEntity {
     private static final EntityDataAccessor<Integer> DATA_POWER =
             SynchedEntityData.defineId(TheQueen.class, EntityDataSerializers.INT);
 
-    // ─── Geckolib phase-shift state ─────────────────────────────────────
-    // IS_AWAKE drives the dynamic texture swap (blue idle → red aggro)
+    // â”€â”€â”€ Geckolib phase-shift state â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // IS_AWAKE drives the dynamic texture swap (blue idle â†’ red aggro)
     // and the controller's animation choice. TRANSITION_TICKS counts
     // down from 60 while the idle_to_attack animation plays; when it
     // hits 1, we flip IS_AWAKE on so the controller falls through to
@@ -134,7 +131,7 @@ public class TheQueen extends Monster implements GeoEntity {
     /** Length (ticks) of the idle_to_attack wake-up animation. */
     public static final int WAKE_UP_DURATION_TICKS = 60;
 
-    // ─── Geckolib animation cache + attack windup ──────────────────────
+    // â”€â”€â”€ Geckolib animation cache + attack windup â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     private final AnimatableInstanceCache animCache = GeckoLibUtil.createInstanceCache(this);
 
     /**
@@ -152,10 +149,12 @@ public class TheQueen extends Monster implements GeoEntity {
     private static final RawAnimation ANIM_ATTACK =
             RawAnimation.begin().thenLoop("attack");
 
-    private static final int MAX_HEALTH_VALUE = 6000;
+    // orig OreSpawnMain.java:6522 â€” TheQueen 6000 HP / 225 ATK / 21 armor.
+    private static final int MAX_HEALTH_VALUE = (int) MobStats.THE_QUEEN.maxHealth();
+    private static final double ATTACK_DAMAGE_VALUE = MobStats.THE_QUEEN.attackDamage();
+    private static final int DEFENSE_VALUE = (int) MobStats.THE_QUEEN.armor();
+    // orig TheQueen.java:98 â€” speed hardcoded 0.62.
     private static final double MOVE_SPEED_VALUE = 0.62;
-    private static final double ATTACK_DAMAGE_VALUE = 200.0;
-    private static final int DEFENSE_VALUE = 10;
 
     private final ServerBossEvent bossEvent = new ServerBossEvent(
             Component.literal("The Queen"), BossEvent.BossBarColor.PINK, BossEvent.BossBarOverlay.PROGRESS);
@@ -209,7 +208,7 @@ public class TheQueen extends Monster implements GeoEntity {
         //
         //   QueenMoodGoal (priority 0, NO mutex flags): fires once when
         //     attackLevel crosses 1000. In "happy" mood it terraforms
-        //     grass → flowers / dirt → grass around The Queen and spawns
+        //     grass â†’ flowers / dirt â†’ grass around The Queen and spawns
         //     butterflies; in "mad" mood it emits a cloud of 15-45
         //     PurplePower bombs. Resets attackLevel to 1 before yielding.
         //     Empty flag set = runs ALONGSIDE QueenPrimaryGoal without
@@ -243,7 +242,7 @@ public class TheQueen extends Monster implements GeoEntity {
     }
 
     /**
-     * Accessor for {@link danger.orespawn.entity.ai.QueenMoodGoal} — returns
+     * Accessor for {@link danger.orespawn.entity.ai.QueenMoodGoal} â€” returns
      * 0 for happy (flower/butterfly effect), 1 for mad (PurplePower bombs).
      */
     public int getMoodState() {
@@ -251,6 +250,8 @@ public class TheQueen extends Monster implements GeoEntity {
     }
 
     public static AttributeSupplier.Builder createAttributes() {
+        // orig OreSpawnMain.java:6522 â€” TheQueen 6000 HP / 225 ATK / 21 armor.
+        // Orig armor is situationally boosted (orig TheQueen.java:819-827) â€” 21 is the base.
         return Monster.createMonsterAttributes()
                 .add(Attributes.MAX_HEALTH, MAX_HEALTH_VALUE)
                 .add(Attributes.MOVEMENT_SPEED, MOVE_SPEED_VALUE)
@@ -273,7 +274,7 @@ public class TheQueen extends Monster implements GeoEntity {
         builder.define(TRANSITION_TICKS, 0);
     }
 
-    // ─── Phase-shift accessors (consumed by QueenModel + controllers) ───
+    // â”€â”€â”€ Phase-shift accessors (consumed by QueenModel + controllers) â”€â”€â”€
 
     public boolean isAwake() {
         return this.entityData.get(IS_AWAKE);
@@ -394,31 +395,10 @@ public class TheQueen extends Monster implements GeoEntity {
     public void thunderHit(net.minecraft.server.level.ServerLevel level, net.minecraft.world.entity.LightningBolt bolt) {
     }
 
-    private void dropItemRand(ItemStack stack) {
-        double ox = this.getX() + this.getRandom().nextInt(20) - this.getRandom().nextInt(20);
-        double oy = this.getY() + 12.0;
-        double oz = this.getZ() + this.getRandom().nextInt(20) - this.getRandom().nextInt(20);
-        ItemEntity itemEntity = new ItemEntity(this.level(), ox, oy, oz, stack);
-        this.level().addFreshEntity(itemEntity);
-    }
-
-    @Override
-    protected void dropCustomDeathLoot(ServerLevel level, DamageSource source, boolean recentlyHit) {
-        super.dropCustomDeathLoot(level, source, recentlyHit);
-        dropItemRand(new ItemStack(ModItems.QUEEN_SCALE.get(), 1));
-        dropItemRand(new ItemStack(ModItems.PRINCE_EGG.get(), 1));
-        ThePrincess princess = ModEntities.THE_PRINCESS.get().create(this.level());
-        if (princess != null) {
-            princess.moveTo(this.getX(), this.getY() + 10, this.getZ(), 0.0F, 0.0F);
-            this.level().addFreshEntity(princess);
-        }
-        for (int i = 0; i < 56; i++) {
-            dropItemRand(new ItemStack(ModItems.QUEEN_SCALE.get(), 1));
-            dropItemRand(new ItemStack(Items.EXPERIENCE_BOTTLE, 1));
-            dropItemRand(new ItemStack(Items.GOLDEN_APPLE, 1));
-            dropItemRand(new ItemStack(Items.NETHER_STAR, 1));
-        }
-    }
+    // Death drops are fully data-driven via loot_table/entities/the_queen.json
+    // (orig TheQueen.java:190-200: royal guardian sword, prince egg, 56 each of
+    // queen scale / raw beef / bone / rotten flesh). The Princess spawn from the
+    // same original method lives in die() â€” it is not an item drop.
 
     @Override
     public EntityDimensions getDefaultDimensions(Pose pose) {
@@ -481,6 +461,24 @@ public class TheQueen extends Monster implements GeoEntity {
         }
     }
 
+    /**
+     * Removes the health-tracked victim once its tracked HP reaches zero.
+     *
+     * <p>Original behavior ({@code orig TheQueen.java:260-261, 340-341}) called
+     * {@code setDead()} on any victim, including players â€” which on a server deletes the
+     * player entity without the death pipeline (no death screen/respawn; BUG-005).
+     * Players therefore get a proper lethal hit attributed to the Queen; non-player mobs
+     * keep the original quirk of being removed without drops or a death event
+     * (see PARITY_NOTES.md).</p>
+     */
+    private void finishTrackedVictim() {
+        if (this.healthTrackedEntity instanceof Player) {
+            this.healthTrackedEntity.hurt(this.damageSources().mobAttack(this), Float.MAX_VALUE);
+        } else {
+            this.healthTrackedEntity.discard();
+        }
+    }
+
     @Override
     public boolean doHurtTarget(Entity target) {
         if (target != null && target instanceof LivingEntity living && !this.level().isClientSide) {
@@ -498,7 +496,7 @@ public class TheQueen extends Monster implements GeoEntity {
                 }
                 this.healthTrackedEntityHP = living.getHealth();
                 if (this.healthTrackedEntityHP <= 0.0f) {
-                    this.healthTrackedEntity.discard();
+                    this.finishTrackedVictim();
                 }
             } else {
                 this.healthTrackedEntity = null;
@@ -527,9 +525,9 @@ public class TheQueen extends Monster implements GeoEntity {
 
     @Override
     public boolean hurt(DamageSource source, float amount) {
-        // ─── Geckolib phase-shift gate ───────────────────────────────
+        // â”€â”€â”€ Geckolib phase-shift gate â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         // The Queen starts dormant (blue, idle). The first hit while
-        // !isAwake() does NOT damage her — instead it kicks off the
+        // !isAwake() does NOT damage her â€” instead it kicks off the
         // 60-tick idle_to_attack animation; she stands still (target
         // cleared) for that window, then enters aggro (red texture +
         // looping attack stance, owned by the Movement controller).
@@ -620,7 +618,7 @@ public class TheQueen extends Monster implements GeoEntity {
 
     @Override
     protected void customServerAiStep() {
-        // Post-goal bookkeeping core — mirrors TheKing#customServerAiStep().
+        // Post-goal bookkeeping core â€” mirrors TheKing#customServerAiStep().
         //
         // The two behavioural blocks (mood effects and primary flight+combat)
         // have been extracted into aiStepMoodEffects() and aiStepPrimary(),
@@ -651,7 +649,7 @@ public class TheQueen extends Monster implements GeoEntity {
                     this.healthTrackedEntityHP = this.healthTrackedEntity.getHealth();
                 }
                 if (this.healthTrackedEntityHP <= 0.0f) {
-                    this.healthTrackedEntity.discard();
+                    this.finishTrackedVictim();
                 }
             } else {
                 this.healthTrackedEntity = null;
@@ -668,7 +666,7 @@ public class TheQueen extends Monster implements GeoEntity {
             this.hurtTimer--;
         }
 
-        // ─── Phase-shift transition counter ──────────────────────────
+        // â”€â”€â”€ Phase-shift transition counter â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         // While idle_to_attack plays we count down from 60. When the
         // counter hits 1, flip IS_AWAKE so the Movement controller
         // promotes her to the looping "attack" stance and the model
@@ -682,11 +680,11 @@ public class TheQueen extends Monster implements GeoEntity {
             }
         }
 
-        // ─── Melee windup resolution ─────────────────────────────────
+        // â”€â”€â”€ Melee windup resolution â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         // Goals trigger the visual swing animation immediately on
         // contact, but the actual damage application is deferred by
         // pendingMeleeTicks so the hitbox lands on the impact frame
-        // (bite ≈ 8t, tail whips ≈ 12t, roar ≈ 16t).
+        // (bite â‰ˆ 8t, tail whips â‰ˆ 12t, roar â‰ˆ 16t).
         if (this.pendingMeleeTicks > 0) {
             this.pendingMeleeTicks--;
             if (this.pendingMeleeTicks == 0) {
@@ -742,7 +740,7 @@ public class TheQueen extends Monster implements GeoEntity {
 
         this.noPhysics = true;
 
-        // Passive healing — slow regen tick + a large top-up when a
+        // Passive healing â€” slow regen tick + a large top-up when a
         // player has hit very few times (prevents cheese strategies).
         if (this.getRandom().nextInt(32) == 1 && this.getHealth() < (float) this.mygetMaxHealth()) {
             this.heal(5.0f);
@@ -755,30 +753,30 @@ public class TheQueen extends Monster implements GeoEntity {
         }
     }
 
-    // ─── AI STEP HELPERS ───────────────────────────────────────────────────
+    // â”€â”€â”€ AI STEP HELPERS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     // Behavioural methods invoked by Goal classes in danger.orespawn.entity.ai.
     // Public visibility is required because the goals live in a sibling
     // package; the methods are not intended for external use.
 
     /**
-     * Mood-charge discharge effect — fires when {@link #attackLevel}
+     * Mood-charge discharge effect â€” fires when {@link #attackLevel}
      * exceeds 1000 and resets it to 1. Owned by
      * {@link danger.orespawn.entity.ai.QueenMoodGoal}.
      *
      * <p><b>Mad mood</b> ({@code mood == 1}): spawns 15-45
      * {@link PurplePower} bombs in a cloud behind The Queen (45 when
      * the player has low hit-count, signalling a fresh engagement; 15
-     * otherwise). Each bomb inherits Queen's horizontal motion × 3 for
+     * otherwise). Each bomb inherits Queen's horizontal motion Ã— 3 for
      * a trailing-debris effect.</p>
      *
      * <p><b>Happy mood</b> ({@code mood == 0}): gated by the
      * {@code doMobGriefing} game rule. Performs 25 soil-transform
-     * attempts in a 25×40×25 region around The Queen — grass→flower,
-     * dirt→grass, stone→dirt cap, gravel→dirt (or dead bush 50/50),
-     * sand→water, cobble→stone. Then spawns 10 butterflies.</p>
+     * attempts in a 25Ã—40Ã—25 region around The Queen â€” grassâ†’flower,
+     * dirtâ†’grass, stoneâ†’dirt cap, gravelâ†’dirt (or dead bush 50/50),
+     * sandâ†’water, cobbleâ†’stone. Then spawns 10 butterflies.</p>
      *
      * <p>This is the heaviest single behaviour block in the boss
-     * framework: up to 25×40 = 1000 block-state lookups and up to 25
+     * framework: up to 25Ã—40 = 1000 block-state lookups and up to 25
      * block-state writes per invocation. However it only fires every
      * ~100 ticks at minimum (attackLevel needs 1000 charge), so the
      * amortised cost is sub-millisecond per second. Still main-thread
@@ -883,11 +881,11 @@ public class TheQueen extends Monster implements GeoEntity {
      *
      * <ul>
      *   <li><b>Follow-The-King-when-happy</b>: if mood==0 and there's a
-     *       {@link TheKing} within 64×32×64 blocks, override the wander
+     *       {@link TheKing} within 64Ã—32Ã—64 blocks, override the wander
      *       target to trail the King. This is the "royal couple" flight
      *       pattern from the 1.7.10 original.</li>
      *   <li><b>Two elemental streams</b>: fireball + lightning (no ice
-     *       stream — that's King-only).</li>
+     *       stream â€” that's King-only).</li>
      *   <li><b>Revenge suppression when happy</b>: if
      *       {@link #isHappy()} is true, revenge target is cleared at the
      *       top of target acquisition so the Queen never aggros mid-
@@ -1021,13 +1019,13 @@ public class TheQueen extends Monster implements GeoEntity {
                     if (this.getRandom().nextInt(2) == 1) {
                         doAreaDamage(this.getX(), this.getY(), this.getZ(), 15.0, ATTACK_DAMAGE_VALUE / 4.0, 0);
                     }
-                    // ─── Geckolib melee handshake ─────────────────────
+                    // â”€â”€â”€ Geckolib melee handshake â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
                     // Pick one of four contact attacks and trigger its
                     // animation; queue the actual hurt for the impact
                     // frame via pendingMeleeTicks (resolved in
                     // customServerAiStep). If a previous attack is still
                     // winding up we stay in that animation and skip
-                    // re-triggering — prevents jitter from back-to-back
+                    // re-triggering â€” prevents jitter from back-to-back
                     // contact ticks.
                     if (this.pendingMeleeTicks == 0) {
                         int pick = this.getRandom().nextInt(4);
@@ -1337,24 +1335,32 @@ public class TheQueen extends Monster implements GeoEntity {
 
     @Override
     public void die(DamageSource source) {
-        // Fire the death animation BEFORE super.die() — once super
+        // Fire the death animation BEFORE super.die() â€” once super
         // marks us dead the Movement controller short-circuits to
         // PlayState.STOP and would suppress the trigger.
         this.triggerQueenAction("death");
+        // orig TheQueen.java:193 â€” The Princess spawns when the Queen dies.
+        if (!this.level().isClientSide) {
+            ThePrincess princess = ModEntities.THE_PRINCESS.get().create(this.level());
+            if (princess != null) {
+                princess.moveTo(this.getX(), this.getY() + 10, this.getZ(), 0.0F, 0.0F);
+                this.level().addFreshEntity(princess);
+            }
+        }
         super.die(source);
     }
 
-    // ─── Geckolib animation backend ─────────────────────────────────
+    // â”€â”€â”€ Geckolib animation backend â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     //
     // Two controllers run side-by-side:
     //
-    //   1. "Movement" — the base stance state machine. Owns the
+    //   1. "Movement" â€” the base stance state machine. Owns the
     //      idle / idle_to_attack / attack loop transitions and is
     //      driven entirely by the synced phase-shift flags
     //      (IS_AWAKE + TRANSITION_TICKS). Halts on death so the
     //      death pose from the Actions controller can play out.
     //
-    //   2. "Actions" — one-off attacks (bite / tail_left /
+    //   2. "Actions" â€” one-off attacks (bite / tail_left /
     //      tail_right / roar) and the death animation. Defaults to
     //      PlayState.STOP and only plays when a goal calls
     //      triggerQueenAction(...). Keeps Movement free to keep

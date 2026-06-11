@@ -1,5 +1,7 @@
 package danger.orespawn.entity;
 
+import danger.orespawn.MobStats;
+
 import danger.orespawn.ModEntities;
 import danger.orespawn.OreSpawnMod;
 import danger.orespawn.entity.ai.BugMeleeAttackGoal;
@@ -26,7 +28,6 @@ import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
@@ -80,10 +81,12 @@ public class EntityCaterKiller extends Monster {
     }
 
     public static AttributeSupplier.Builder createAttributes() {
+        // orig OreSpawnMain.java:6481 — CaterKiller 450 HP / 32 ATK / 19 armor
         return Monster.createMonsterAttributes()
-                .add(Attributes.MAX_HEALTH, 350.0)
+                .add(Attributes.MAX_HEALTH, MobStats.CATERKILLER.maxHealth())
                 .add(Attributes.MOVEMENT_SPEED, 0.35)
-                .add(Attributes.ATTACK_DAMAGE, 20.0)
+                .add(Attributes.ATTACK_DAMAGE, MobStats.CATERKILLER.attackDamage())
+                .add(Attributes.ARMOR, MobStats.CATERKILLER.armor())
                 .add(Attributes.FOLLOW_RANGE, 40.0);
     }
 
@@ -241,47 +244,22 @@ public class EntityCaterKiller extends Monster {
         }
     }
 
-    /**
-     * 1.7.10 Cater Killer death sequence: rather than vanishing, the
-     * caterpillar pupates into a Brutalfly at the same location and seeds
-     * a small swarm of standard butterflies (3-5) as the chrysalis bursts.
-     * The Brutalfly inherits the original rotation so the visual handoff
-     * reads as a single creature undergoing metamorphosis. Death loot
-     * still drops via {@link #dropCustomDeathLoot} so the player gets
-     * their bones / leather / name tag despite the entity transformation.
-     */
+    // Item drops are data-driven via loot_table/entities/cater_killer.json
+    // (orig CaterKiller.java:160-324: jaw, painting, 10 leather, 6 raw beef,
+    // 1-5 rolls of the d20 Ruby/Ultimate gear table). Non-item death
+    // behavior (butterfly swarm) stays in die() below.
     @Override
     public void die(DamageSource cause) {
+        // orig CaterKiller.java:325-327 — 25 Butterflies released on death.
         if (!this.level().isClientSide && this.level() instanceof ServerLevel serverLevel) {
-            EntityBrutalfly brutalfly = ModEntities.ENTITY_BRUTALFLY.get().create(serverLevel);
-            if (brutalfly != null) {
-                brutalfly.moveTo(this.getX(), this.getY() + 0.5, this.getZ(),
-                        this.getYRot(), 0.0f);
-                serverLevel.addFreshEntity(brutalfly);
-            }
-            int butterflies = 3 + this.random.nextInt(3);
-            for (int i = 0; i < butterflies; i++) {
+            for (int i = 0; i < 25; i++) {
                 EntityButterfly bf = ModEntities.ENTITY_BUTTERFLY.get().create(serverLevel);
                 if (bf == null) continue;
-                double ox = this.getX() + (this.random.nextDouble() - 0.5) * 1.5;
-                double oz = this.getZ() + (this.random.nextDouble() - 0.5) * 1.5;
-                bf.moveTo(ox, this.getY() + 0.5, oz,
+                bf.moveTo(this.getX(), this.getY() + 1.0, this.getZ(),
                         this.random.nextFloat() * 360.0f, 0.0f);
                 serverLevel.addFreshEntity(bf);
             }
         }
         super.die(cause);
-    }
-
-    @Override
-    protected void dropCustomDeathLoot(ServerLevel level, DamageSource source, boolean recentlyHit) {
-        super.dropCustomDeathLoot(level, source, recentlyHit);
-        this.spawnAtLocation(Items.NAME_TAG);
-        for (int i = 0; i < 10; i++) {
-            this.spawnAtLocation(Items.LEATHER);
-        }
-        for (int i = 0; i < 6; i++) {
-            this.spawnAtLocation(Items.BONE);
-        }
     }
 }

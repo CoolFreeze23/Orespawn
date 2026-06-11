@@ -1,19 +1,18 @@
 package danger.orespawn.entity;
 
+import danger.orespawn.MobStats;
+
 import java.util.Comparator;
 import java.util.List;
 import danger.orespawn.ModEntities;
 import danger.orespawn.ModBlocks;
-import danger.orespawn.ModItems;
 import danger.orespawn.MobzillaSpawnTracker;
 import danger.orespawn.OreSpawnConfig;
 import danger.orespawn.util.MyUtils;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
@@ -31,7 +30,6 @@ import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
-import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.monster.Skeleton;
@@ -39,10 +37,6 @@ import net.minecraft.world.entity.monster.Spider;
 import net.minecraft.world.entity.monster.Zombie;
 import net.minecraft.world.entity.npc.Villager;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.item.enchantment.Enchantment;
-import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
@@ -109,10 +103,14 @@ public class Godzilla extends Monster implements OreSpawnPartEntity.MultipartBos
     }
 
     public static AttributeSupplier.Builder createAttributes() {
+        // orig OreSpawnMain.java:6514 â€” "Mobzilla" 4000 HP / 175 ATK / 21 armor;
+        // speed 0.75 matches orig Godzilla.java:107. Orig armor boosts to 25 while
+        // a "large unknown" is detected (orig Godzilla.java:145-150) â€” base is 21.
         return Monster.createMonsterAttributes()
-                .add(Attributes.MAX_HEALTH, 6000.0)
+                .add(Attributes.MAX_HEALTH, MobStats.GODZILLA.maxHealth())
                 .add(Attributes.MOVEMENT_SPEED, 0.75)
-                .add(Attributes.ATTACK_DAMAGE, 150.0)
+                .add(Attributes.ATTACK_DAMAGE, MobStats.GODZILLA.attackDamage())
+                .add(Attributes.ARMOR, MobStats.GODZILLA.armor())
                 .add(Attributes.FOLLOW_RANGE, 64.0)
                 .add(Attributes.KNOCKBACK_RESISTANCE, 1.0)
                 .add(Attributes.STEP_HEIGHT, 12.0);
@@ -131,7 +129,7 @@ public class Godzilla extends Monster implements OreSpawnPartEntity.MultipartBos
 
     /**
      * 1.7.10 fidelity: ambient Mobzilla spawning required clear sky, night,
-     * y >= 50, a roughly 16×10×16 air pocket, a 1/40 dice roll, and the
+     * y >= 50, a roughly 16Ã—10Ã—16 air pocket, a 1/40 dice roll, and the
      * global {@code OreSpawnMain.godzilla_has_spawned} flag being unset.
      * Player-summoned Mobzillas (via the 9 Ancient Dried Egg Parts) bypass
      * this entire chain because the spawn item calls {@code spawn()} with
@@ -295,35 +293,6 @@ public class Godzilla extends Monster implements OreSpawnPartEntity.MultipartBos
         this.entityData.set(DATA_ATTACKING, value);
     }
 
-    // ---- Enchantment helper ----
-
-    private void enchantItem(ItemStack stack, ResourceKey<Enchantment> key, int enchLevel) {
-        this.level().registryAccess()
-                .lookup(Registries.ENCHANTMENT)
-                .flatMap(reg -> reg.get(key))
-                .ifPresent(holder -> stack.enchant(holder, enchLevel));
-    }
-
-    // ---- Item drop helpers ----
-
-    private ItemStack dropItemRand(ItemStack stack) {
-        double ox = this.getX() + this.getRandom().nextInt(10) - this.getRandom().nextInt(10);
-        double oy = this.getY() + 4.0 + this.getRandom().nextInt(10);
-        double oz = this.getZ() + this.getRandom().nextInt(10) - this.getRandom().nextInt(10);
-        ItemEntity itemEntity = new ItemEntity(this.level(), ox, oy, oz, stack);
-        this.level().addFreshEntity(itemEntity);
-        return stack;
-    }
-
-    private ItemStack dropItemRandAt(ItemStack stack, double dx, double dz) {
-        double ox = dx + this.getRandom().nextInt(10) - this.getRandom().nextInt(10);
-        double oy = this.getY() + 4.0 + this.getRandom().nextInt(6);
-        double oz = dz + this.getRandom().nextInt(10) - this.getRandom().nextInt(10);
-        ItemEntity itemEntity = new ItemEntity(this.level(), ox, oy, oz, stack);
-        this.level().addFreshEntity(itemEntity);
-        return stack;
-    }
-
     // ---- Jump mechanics ----
 
     @Override
@@ -427,8 +396,11 @@ public class Godzilla extends Monster implements OreSpawnPartEntity.MultipartBos
             if (target instanceof Godzilla) continue;
             if (target instanceof GodzillaHead || target instanceof Ghost || target instanceof GhostSkelly) continue;
 
-            target.hurt(this.damageSources().mobAttack(this), (float) damage / 2.0f);
-            target.hurt(this.damageSources().genericKill(), (float) damage / 2.0f);
+            // Original (orig Godzilla.java:509-512) deals half as unattributed explosion
+            // damage and half as fall damage. The previous port used genericKill (the
+            // /kill source), which bypassed Creative/Spectator invulnerability (BUG-006).
+            target.hurt(this.damageSources().explosion(null, null), (float) damage / 2.0f);
+            target.hurt(this.damageSources().fall(), (float) damage / 2.0f);
             this.level().playSound(null, target.getX(), target.getY(), target.getZ(),
                     SoundEvents.GENERIC_EXPLODE.value(), SoundSource.HOSTILE,
                     0.85f, 1.0f + (this.getRandom().nextFloat() - this.getRandom().nextFloat()) * 0.5f);
@@ -519,7 +491,7 @@ public class Godzilla extends Monster implements OreSpawnPartEntity.MultipartBos
         if (target instanceof Skeleton) return false;
         if (target instanceof Ghost) return false;
         if (target instanceof GhostSkelly) return false;
-        // Don't pick fights with peers — Mothra, the royal couple, and other
+        // Don't pick fights with peers â€” Mothra, the royal couple, and other
         // OreSpawn bosses are tracked separately so Mobzilla doesn't grief
         // boss arenas and so co-existing bosses don't cancel each other out.
         if (target instanceof Mothra) return false;
@@ -603,8 +575,8 @@ public class Godzilla extends Monster implements OreSpawnPartEntity.MultipartBos
         }
 
         // --- Block crushing around self ---
-        // 1.7.10 invoked crushBlocks() every tick over a (2*xzrange+1)² area
-        // (≈625 blocks at xzrange=12) twice per tick. On a modern 20-TPS
+        // 1.7.10 invoked crushBlocks() every tick over a (2*xzrange+1)Â² area
+        // (â‰ˆ625 blocks at xzrange=12) twice per tick. On a modern 20-TPS
         // server with chunk-section mailbox dispatch that pegs the main
         // thread; we throttle to every 4th tick (5 Hz) and reduce the
         // stomping silhouette while idle.
@@ -764,161 +736,7 @@ public class Godzilla extends Monster implements OreSpawnPartEntity.MultipartBos
         return ret;
     }
 
-    // ---- Death loot ----
-
-    @Override
-    protected void dropCustomDeathLoot(ServerLevel level, DamageSource source, boolean recentlyHit) {
-        super.dropCustomDeathLoot(level, source, recentlyHit);
-
-        dropItemRand(new ItemStack(Items.NETHER_STAR, 1));
-
-        int scaleCount = 50 + this.getRandom().nextInt(30);
-        for (int i = 0; i < scaleCount; i++) {
-            dropItemRand(new ItemStack(ModItems.GODZILLA_SCALE.get(), 1));
-        }
-
-        int emeraldCount = 100 + this.getRandom().nextInt(160);
-        for (int i = 0; i < emeraldCount; i++) {
-            dropItemRand(new ItemStack(Items.EMERALD, 1));
-        }
-
-        int xpBottleCount = 50 + this.getRandom().nextInt(60);
-        for (int i = 0; i < xpBottleCount; i++) {
-            dropItemRand(new ItemStack(Items.EXPERIENCE_BOTTLE, 1));
-        }
-
-        int bonusCount = 25 + this.getRandom().nextInt(15);
-        for (int i = 0; i < bonusCount; i++) {
-            dropLootByRoll(this.getRandom().nextInt(80));
-        }
-    }
-
-    @SuppressWarnings("java:S1479")
-    private void dropLootByRoll(int roll) {
-        ItemStack is;
-        switch (roll) {
-            case 0 -> dropItemRand(new ItemStack(ModItems.ULTIMATE_SWORD.get()));
-            case 1 -> dropItemRand(new ItemStack(Items.DIAMOND));
-            case 2 -> dropItemRand(new ItemStack(Items.DIAMOND_BLOCK));
-            case 3 -> { is = dropItemRand(new ItemStack(Items.IRON_SWORD)); enchantSword(is); }
-            case 4 -> { is = dropItemRand(new ItemStack(Items.IRON_SHOVEL)); enchantTool(is); }
-            case 5 -> { is = dropItemRand(new ItemStack(Items.IRON_PICKAXE)); enchantToolSilkTouch(is); }
-            case 6 -> { is = dropItemRand(new ItemStack(Items.IRON_AXE)); enchantTool(is); }
-            case 7 -> { is = dropItemRand(new ItemStack(Items.IRON_HOE)); enchantTool(is); }
-            case 8 -> { is = dropItemRand(new ItemStack(Items.IRON_HELMET)); enchantHelmet(is); }
-            case 9 -> { is = dropItemRand(new ItemStack(Items.IRON_CHESTPLATE)); enchantArmor(is); }
-            case 10 -> { is = dropItemRand(new ItemStack(Items.IRON_LEGGINGS)); enchantArmor(is); }
-            case 11 -> { is = dropItemRand(new ItemStack(Items.IRON_BOOTS)); enchantBoots(is); }
-            case 12 -> dropItemRand(new ItemStack(ModItems.ULTIMATE_BOW.get()));
-            case 13 -> dropItemRand(new ItemStack(ModItems.ULTIMATE_AXE.get()));
-            case 14 -> dropItemRand(new ItemStack(Items.GOLD_INGOT));
-            case 15 -> dropItemRand(new ItemStack(ModItems.ULTIMATE_PICKAXE.get()));
-            case 16 -> { is = dropItemRand(new ItemStack(Items.GOLDEN_SWORD)); enchantSword(is); }
-            case 17 -> { is = dropItemRand(new ItemStack(Items.GOLDEN_SHOVEL)); enchantTool(is); }
-            case 18 -> { is = dropItemRand(new ItemStack(Items.GOLDEN_PICKAXE)); enchantToolSilkTouch(is); }
-            case 19 -> { is = dropItemRand(new ItemStack(Items.GOLDEN_AXE)); enchantTool(is); }
-            case 20 -> { is = dropItemRand(new ItemStack(Items.GOLDEN_HOE)); enchantTool(is); }
-            case 21 -> { is = dropItemRand(new ItemStack(Items.GOLDEN_HELMET)); enchantHelmet(is); }
-            case 22 -> { is = dropItemRand(new ItemStack(Items.GOLDEN_CHESTPLATE)); enchantArmor(is); }
-            case 23 -> { is = dropItemRand(new ItemStack(Items.GOLDEN_LEGGINGS)); enchantArmor(is); }
-            case 24 -> { is = dropItemRand(new ItemStack(Items.GOLDEN_BOOTS)); enchantBoots(is); }
-            case 25 -> dropItemRand(new ItemStack(ModItems.ULTIMATE_SHOVEL.get()));
-            case 26 -> dropItemRand(new ItemStack(Items.IRON_BLOCK));
-            case 27 -> dropItemRand(new ItemStack(Items.ENDER_PEARL));
-            case 28 -> dropItemRand(new ItemStack(Items.IRON_INGOT));
-            case 29 -> dropItemRand(new ItemStack(Items.NAME_TAG));
-            case 30 -> { is = dropItemRand(new ItemStack(Items.DIAMOND_SWORD)); enchantSword(is); }
-            case 31 -> { is = dropItemRand(new ItemStack(Items.DIAMOND_SHOVEL)); enchantTool(is); }
-            case 32 -> { is = dropItemRand(new ItemStack(Items.DIAMOND_PICKAXE)); enchantToolSilkTouch(is); }
-            case 33 -> { is = dropItemRand(new ItemStack(Items.DIAMOND_AXE)); enchantTool(is); }
-            case 34 -> { is = dropItemRand(new ItemStack(Items.DIAMOND_HOE)); enchantTool(is); }
-            case 35 -> { is = dropItemRand(new ItemStack(Items.DIAMOND_HELMET)); enchantHelmet(is); }
-            case 36 -> { is = dropItemRand(new ItemStack(Items.DIAMOND_CHESTPLATE)); enchantArmor(is); }
-            case 37 -> { is = dropItemRand(new ItemStack(Items.DIAMOND_LEGGINGS)); enchantArmor(is); }
-            case 38 -> { is = dropItemRand(new ItemStack(Items.DIAMOND_BOOTS)); enchantBoots(is); }
-            case 39 -> dropItemRand(new ItemStack(Items.GOLDEN_APPLE));
-            case 40 -> dropItemRand(new ItemStack(Items.GOLD_BLOCK));
-            case 41 -> dropItemRand(new ItemStack(Items.ENCHANTED_GOLDEN_APPLE));
-            case 42 -> { is = dropItemRand(new ItemStack(ModItems.EXPERIENCE_SWORD.get())); enchantSword(is); }
-            case 43 -> { is = dropItemRand(new ItemStack(ModItems.EXPERIENCE_HELMET.get())); enchantHelmet(is); }
-            case 44 -> { is = dropItemRand(new ItemStack(ModItems.EXPERIENCE_CHESTPLATE.get())); enchantArmor(is); }
-            case 45 -> { is = dropItemRand(new ItemStack(ModItems.EXPERIENCE_LEGGINGS.get())); enchantArmor(is); }
-            case 46 -> { is = dropItemRand(new ItemStack(ModItems.EXPERIENCE_BOOTS.get())); enchantBoots(is); }
-            case 47 -> { is = dropItemRand(new ItemStack(ModItems.AMETHYST_SWORD.get())); enchantSword(is); }
-            case 48 -> { is = dropItemRand(new ItemStack(ModItems.AMETHYST_SHOVEL.get())); enchantTool(is); }
-            case 49 -> { is = dropItemRand(new ItemStack(ModItems.AMETHYST_PICKAXE.get())); enchantToolSilkTouch(is); }
-            case 50 -> { is = dropItemRand(new ItemStack(ModItems.AMETHYST_AXE.get())); enchantTool(is); }
-            case 51 -> { is = dropItemRand(new ItemStack(ModItems.AMETHYST_HOE.get())); enchantTool(is); }
-            case 52 -> dropItemRand(new ItemStack(ModItems.BLOCK_AMETHYST_ITEM.get()));
-            case 53 -> { is = dropItemRand(new ItemStack(ModItems.AMETHYST_HELMET.get())); enchantHelmet(is); }
-            case 54 -> { is = dropItemRand(new ItemStack(ModItems.AMETHYST_CHESTPLATE.get())); enchantArmor(is); }
-            case 55 -> { is = dropItemRand(new ItemStack(ModItems.AMETHYST_LEGGINGS.get())); enchantArmor(is); }
-            case 56 -> { is = dropItemRand(new ItemStack(ModItems.AMETHYST_BOOTS_ARMOR.get())); enchantBoots(is); }
-            case 57 -> { is = dropItemRand(new ItemStack(ModItems.RUBY_HELMET.get())); enchantHelmet(is); }
-            case 58 -> { is = dropItemRand(new ItemStack(ModItems.RUBY_CHESTPLATE.get())); enchantArmor(is); }
-            case 59 -> { is = dropItemRand(new ItemStack(ModItems.RUBY_LEGGINGS.get())); enchantArmor(is); }
-            case 60 -> { is = dropItemRand(new ItemStack(ModItems.RUBY_BOOTS_ARMOR.get())); enchantBoots(is); }
-            case 61 -> { is = dropItemRand(new ItemStack(ModItems.RUBY_SWORD.get())); enchantSword(is); }
-            case 62 -> { is = dropItemRand(new ItemStack(ModItems.RUBY_SHOVEL.get())); enchantTool(is); }
-            case 63 -> { is = dropItemRand(new ItemStack(ModItems.RUBY_PICKAXE.get())); enchantToolSilkTouch(is); }
-            case 64 -> { is = dropItemRand(new ItemStack(ModItems.RUBY_AXE.get())); enchantTool(is); }
-            case 65 -> { is = dropItemRand(new ItemStack(ModItems.RUBY_HOE.get())); enchantTool(is); }
-            case 66 -> dropItemRand(new ItemStack(ModItems.BLOCK_RUBY_ITEM.get()));
-            case 67 -> { is = dropItemRand(new ItemStack(ModItems.ULTIMATE_HELMET.get())); enchantHelmet(is); }
-            case 68 -> { is = dropItemRand(new ItemStack(ModItems.ULTIMATE_CHESTPLATE.get())); enchantArmor(is); }
-            case 69 -> { is = dropItemRand(new ItemStack(ModItems.ULTIMATE_LEGGINGS.get())); enchantArmor(is); }
-            case 70 -> { is = dropItemRand(new ItemStack(ModItems.ULTIMATE_BOOTS_ARMOR.get())); enchantBoots(is); }
-            case 71 -> { is = dropItemRand(new ItemStack(ModItems.ULTIMATE_SHOVEL.get())); enchantTool(is); }
-            case 73 -> { is = dropItemRand(new ItemStack(ModItems.ULTIMATE_PICKAXE.get())); enchantToolSilkTouch(is); }
-            case 74 -> { is = dropItemRand(new ItemStack(ModItems.ULTIMATE_AXE.get())); enchantTool(is); }
-            case 75 -> { is = dropItemRand(new ItemStack(ModItems.ULTIMATE_HOE.get())); enchantTool(is); }
-            default -> dropItemRand(new ItemStack(Items.EMERALD));
-        }
-    }
-
-    // ---- Loot enchantment patterns ----
-
-    private void enchantSword(ItemStack is) {
-        if (this.getRandom().nextInt(6) == 1) enchantItem(is, Enchantments.SHARPNESS, 1 + this.getRandom().nextInt(5));
-        if (this.getRandom().nextInt(6) == 1) enchantItem(is, Enchantments.SMITE, 1 + this.getRandom().nextInt(5));
-        if (this.getRandom().nextInt(6) == 1) enchantItem(is, Enchantments.BANE_OF_ARTHROPODS, 1 + this.getRandom().nextInt(5));
-        if (this.getRandom().nextInt(6) == 1) enchantItem(is, Enchantments.KNOCKBACK, 1 + this.getRandom().nextInt(5));
-        if (this.getRandom().nextInt(2) == 1) enchantItem(is, Enchantments.UNBREAKING, 2 + this.getRandom().nextInt(4));
-        if (this.getRandom().nextInt(6) == 1) enchantItem(is, Enchantments.FIRE_ASPECT, 1 + this.getRandom().nextInt(5));
-        if (this.getRandom().nextInt(6) == 1) enchantItem(is, Enchantments.SHARPNESS, 1 + this.getRandom().nextInt(5));
-    }
-
-    private void enchantTool(ItemStack is) {
-        if (this.getRandom().nextInt(2) == 1) enchantItem(is, Enchantments.UNBREAKING, 2 + this.getRandom().nextInt(4));
-        if (this.getRandom().nextInt(6) == 1) enchantItem(is, Enchantments.EFFICIENCY, 1 + this.getRandom().nextInt(5));
-    }
-
-    private void enchantToolSilkTouch(ItemStack is) {
-        if (this.getRandom().nextInt(2) == 1) enchantItem(is, Enchantments.UNBREAKING, 2 + this.getRandom().nextInt(4));
-        if (this.getRandom().nextInt(6) == 1) enchantItem(is, Enchantments.EFFICIENCY, 1 + this.getRandom().nextInt(5));
-        if (this.getRandom().nextInt(6) == 1) enchantItem(is, Enchantments.SILK_TOUCH, 1);
-    }
-
-    private void enchantHelmet(ItemStack is) {
-        if (this.getRandom().nextInt(6) == 1) enchantItem(is, Enchantments.PROTECTION, 1 + this.getRandom().nextInt(5));
-        if (this.getRandom().nextInt(6) == 1) enchantItem(is, Enchantments.PROJECTILE_PROTECTION, 1 + this.getRandom().nextInt(5));
-        if (this.getRandom().nextInt(6) == 1) enchantItem(is, Enchantments.FIRE_PROTECTION, 1 + this.getRandom().nextInt(5));
-        if (this.getRandom().nextInt(6) == 1) enchantItem(is, Enchantments.BLAST_PROTECTION, 1 + this.getRandom().nextInt(5));
-        if (this.getRandom().nextInt(2) == 1) enchantItem(is, Enchantments.UNBREAKING, 2 + this.getRandom().nextInt(4));
-        if (this.getRandom().nextInt(6) == 1) enchantItem(is, Enchantments.RESPIRATION, 1 + this.getRandom().nextInt(2));
-        if (this.getRandom().nextInt(6) == 1) enchantItem(is, Enchantments.AQUA_AFFINITY, 1 + this.getRandom().nextInt(5));
-    }
-
-    private void enchantArmor(ItemStack is) {
-        if (this.getRandom().nextInt(6) == 1) enchantItem(is, Enchantments.PROTECTION, 1 + this.getRandom().nextInt(5));
-        if (this.getRandom().nextInt(6) == 1) enchantItem(is, Enchantments.PROJECTILE_PROTECTION, 1 + this.getRandom().nextInt(5));
-        if (this.getRandom().nextInt(6) == 1) enchantItem(is, Enchantments.FIRE_PROTECTION, 1 + this.getRandom().nextInt(5));
-        if (this.getRandom().nextInt(6) == 1) enchantItem(is, Enchantments.BLAST_PROTECTION, 1 + this.getRandom().nextInt(5));
-        if (this.getRandom().nextInt(2) == 1) enchantItem(is, Enchantments.UNBREAKING, 2 + this.getRandom().nextInt(4));
-    }
-
-    private void enchantBoots(ItemStack is) {
-        if (this.getRandom().nextInt(6) == 1) enchantItem(is, Enchantments.FEATHER_FALLING, 5 + this.getRandom().nextInt(5));
-        if (this.getRandom().nextInt(2) == 1) enchantItem(is, Enchantments.UNBREAKING, 2 + this.getRandom().nextInt(4));
-    }
+    // Death drops are fully data-driven via loot_table/entities/godzilla.json
+    // (orig Godzilla.java:820-1775: painting, 50-79 godzilla scale, 100-259
+    // raw beef, 50-109 bone, 25-39 rolls of the d80 enchanted-gear table).
 }

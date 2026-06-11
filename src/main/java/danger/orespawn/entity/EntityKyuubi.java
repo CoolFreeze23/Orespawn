@@ -1,5 +1,7 @@
 package danger.orespawn.entity;
 
+import danger.orespawn.MobStats;
+
 import java.util.Comparator;
 import java.util.List;
 import javax.annotation.Nullable;
@@ -24,7 +26,6 @@ import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.SmallFireball;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import danger.orespawn.OreSpawnMod;
@@ -48,10 +49,12 @@ public class EntityKyuubi extends Monster {
     }
 
     public static AttributeSupplier.Builder createAttributes() {
+        // orig OreSpawnMain.java:6485 — Kyuubi 125 HP / 10 ATK / 10 armor
         return Monster.createMonsterAttributes()
-                .add(Attributes.MAX_HEALTH, 30.0)
+                .add(Attributes.MAX_HEALTH, MobStats.KYUUBI.maxHealth())
                 .add(Attributes.MOVEMENT_SPEED, 0.25)
-                .add(Attributes.ATTACK_DAMAGE, 3.0);
+                .add(Attributes.ATTACK_DAMAGE, MobStats.KYUUBI.attackDamage())
+                .add(Attributes.ARMOR, MobStats.KYUUBI.armor());
     }
 
     @Override
@@ -138,19 +141,8 @@ public class EntityKyuubi extends Monster {
         return true;
     }
 
-    @Override
-    protected void dropCustomDeathLoot(ServerLevel level, DamageSource source, boolean recentlyHit) {
-        super.dropCustomDeathLoot(level, source, recentlyHit);
-        for (int i = 0; i < 10; i++) {
-            this.spawnAtLocation(Items.GOLD_INGOT);
-        }
-        for (int i = 0; i < 3; i++) {
-            this.spawnAtLocation(Items.TNT);
-        }
-        for (int i = 0; i < 4; i++) {
-            this.spawnAtLocation(Items.REDSTONE_BLOCK);
-        }
-    }
+    // Death drops are fully data-driven via loot_table/entities/kyuubi.json
+    // (orig Kyuubi.java:231-242: 10 coal, 3 redstone block, 4 quartz block).
 
     @Override
     protected SoundEvent getAmbientSound() {

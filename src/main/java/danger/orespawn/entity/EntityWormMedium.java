@@ -1,10 +1,11 @@
 package danger.orespawn.entity;
 
+import danger.orespawn.MobStats;
+
 import danger.orespawn.OreSpawnMod;
 import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
@@ -14,7 +15,6 @@ import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
@@ -30,10 +30,12 @@ public class EntityWormMedium extends Monster {
     }
 
     public static AttributeSupplier.Builder createAttributes() {
+        // orig OreSpawnMain.java:6505 — WormMedium 30 HP / 10 ATK / 8 armor
         return Mob.createMobAttributes()
-                .add(Attributes.MAX_HEALTH, 30.0)
+                .add(Attributes.MAX_HEALTH, MobStats.WORM_MEDIUM.maxHealth())
                 .add(Attributes.MOVEMENT_SPEED, 0.1)
-                .add(Attributes.ATTACK_DAMAGE, 6.0);
+                .add(Attributes.ATTACK_DAMAGE, MobStats.WORM_MEDIUM.attackDamage())
+                .add(Attributes.ARMOR, MobStats.WORM_MEDIUM.armor());
     }
 
     @Override
@@ -179,14 +181,6 @@ public class EntityWormMedium extends Monster {
         return super.hurt(source, amount);
     }
 
-    @Override
-    protected void dropCustomDeathLoot(ServerLevel level, DamageSource source, boolean recentlyHit) {
-        super.dropCustomDeathLoot(level, source, recentlyHit);
-        for (int i = 0; i < 2; i++) {
-            this.spawnAtLocation(Items.ROTTEN_FLESH);
-        }
-        for (int i = 0; i < 2; i++) {
-            this.spawnAtLocation(Items.STRING);
-        }
-    }
+    // Death drops are fully data-driven via loot_table/entities/worm_medium.json
+    // (orig WormMedium.java:265-273: 2 rotten flesh, 2 leather).
 }

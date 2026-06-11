@@ -1,5 +1,7 @@
 package danger.orespawn.entity;
 
+import danger.orespawn.MobStats;
+
 import danger.orespawn.OreSpawnMod;
 import danger.orespawn.entity.ai.TrooperBugLeapAttackGoal;
 import javax.annotation.Nullable;
@@ -23,7 +25,6 @@ import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 
@@ -62,10 +63,12 @@ public class EntityTrooperBug extends Monster {
     }
 
     public static AttributeSupplier.Builder createAttributes() {
+        // orig OreSpawnMain.java:6489 — TrooperBug 200 HP / 20 ATK / 15 armor
         return Monster.createMonsterAttributes()
-                .add(Attributes.MAX_HEALTH, 200.0)
+                .add(Attributes.MAX_HEALTH, MobStats.TROOPER_BUG.maxHealth())
                 .add(Attributes.MOVEMENT_SPEED, 0.4)
-                .add(Attributes.ATTACK_DAMAGE, 16.0)
+                .add(Attributes.ATTACK_DAMAGE, MobStats.TROOPER_BUG.attackDamage())
+                .add(Attributes.ARMOR, MobStats.TROOPER_BUG.armor())
                 .add(Attributes.FOLLOW_RANGE, 32.0);
     }
 
@@ -177,9 +180,7 @@ public class EntityTrooperBug extends Monster {
         }
     }
 
-    @Override
-    protected void dropCustomDeathLoot(ServerLevel level, DamageSource source, boolean recentlyHit) {
-        super.dropCustomDeathLoot(level, source, recentlyHit);
-        this.spawnAtLocation(Items.NAME_TAG);
-    }
+    // Death drops are fully data-driven via loot_table/entities/trooper_bug.json
+    // (orig TrooperBug.java:200-359: jumpy bug scale, painting, 2-6 amethyst,
+    // 1-5 rolls of the d14 Amethyst gear table).
 }

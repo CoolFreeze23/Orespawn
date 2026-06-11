@@ -7,25 +7,25 @@
     },
     {
       "rolls": 1,
-      "entries": [{"type": "minecraft:item", "name": "minecraft:name_tag"}]
+      "entries": [{"type": "minecraft:item", "name": "minecraft:painting"}]
     },
     {
       "rolls": 1,
-      "entries": [{"type": "minecraft:item", "name": "orespawn:amethyst_gem", "functions": [{"function": "minecraft:set_count", "count": {"type": "minecraft:uniform", "min": 2, "max": 6}}, {"function": "minecraft:enchanted_count_increase", "enchantment": "minecraft:looting", "count": {"type": "minecraft:uniform", "min": 0, "max": 2}}]}]
+      "entries": [{"type": "minecraft:item", "name": "orespawn:amethyst_gem", "functions": [{"function": "minecraft:set_count", "count": {"type": "minecraft:uniform", "min": 2, "max": 6}}]}]
     },
     {
       "rolls": {"type": "minecraft:uniform", "min": 1, "max": 5},
       "entries": [
-        {"type": "minecraft:item", "name": "minecraft:amethyst_block", "weight": 1},
-        {"type": "minecraft:item", "name": "orespawn:amethyst_sword", "weight": 1},
-        {"type": "minecraft:item", "name": "orespawn:amethyst_shovel", "weight": 1},
-        {"type": "minecraft:item", "name": "orespawn:amethyst_pickaxe", "weight": 1},
-        {"type": "minecraft:item", "name": "orespawn:amethyst_axe", "weight": 1},
-        {"type": "minecraft:item", "name": "orespawn:amethyst_hoe", "weight": 1},
-        {"type": "minecraft:item", "name": "orespawn:amethyst_helmet", "weight": 1},
-        {"type": "minecraft:item", "name": "orespawn:amethyst_chestplate", "weight": 1},
-        {"type": "minecraft:item", "name": "orespawn:amethyst_leggings", "weight": 1},
-        {"type": "minecraft:item", "name": "orespawn:amethyst_boots", "weight": 1},
+        {"type": "minecraft:item", "name": "orespawn:block_amethyst", "weight": 1},
+        {"type": "minecraft:item", "name": "orespawn:amethyst_sword", "weight": 1, "functions": [{"function": "minecraft:enchant_randomly"}]},
+        {"type": "minecraft:item", "name": "orespawn:amethyst_shovel", "weight": 1, "functions": [{"function": "minecraft:enchant_randomly"}]},
+        {"type": "minecraft:item", "name": "orespawn:amethyst_pickaxe", "weight": 1, "functions": [{"function": "minecraft:enchant_randomly"}]},
+        {"type": "minecraft:item", "name": "orespawn:amethyst_axe", "weight": 1, "functions": [{"function": "minecraft:enchant_randomly"}]},
+        {"type": "minecraft:item", "name": "orespawn:amethyst_hoe", "weight": 1, "functions": [{"function": "minecraft:enchant_randomly"}]},
+        {"type": "minecraft:item", "name": "orespawn:amethyst_helmet", "weight": 1, "functions": [{"function": "minecraft:enchant_randomly"}]},
+        {"type": "minecraft:item", "name": "orespawn:amethyst_chestplate", "weight": 1, "functions": [{"function": "minecraft:enchant_randomly"}]},
+        {"type": "minecraft:item", "name": "orespawn:amethyst_leggings", "weight": 1, "functions": [{"function": "minecraft:enchant_randomly"}]},
+        {"type": "minecraft:item", "name": "orespawn:amethyst_boots", "weight": 1, "functions": [{"function": "minecraft:enchant_randomly"}]},
         {"type": "minecraft:empty", "weight": 4}
       ]
     }

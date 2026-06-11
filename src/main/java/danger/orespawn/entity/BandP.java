@@ -1,5 +1,8 @@
 package danger.orespawn.entity;
 
+import danger.orespawn.MobStats;
+import danger.orespawn.ModItems;
+
 import java.util.Comparator;
 import java.util.List;
 
@@ -35,8 +38,6 @@ public class BandP extends Monster {
 
     private final Comparator<Entity> targetSorter;
     private static final float MOVE_SPEED = 0.32f;
-    private static final int MAX_HEALTH = 30;
-    private static final int ATTACK_DAMAGE = 5;
     /** Maximum slots in the BandP's stash (legacy MymainInventory length=100). */
     private static final int STASH_SIZE = 16;
     /** 1-in-N chance per melee hit to grab an armor piece (~25% per swing). */
@@ -48,7 +49,8 @@ public class BandP extends Monster {
 
     public BandP(EntityType<? extends BandP> type, Level level) {
         super(type, level);
-        this.xpReward = 10;
+        // orig BandP.java:53 — experienceValue = 1000.
+        this.xpReward = 1000;
         this.targetSorter = Comparator.comparingDouble(this::distanceToSqr);
     }
 
@@ -60,10 +62,13 @@ public class BandP extends Monster {
     }
 
     public static AttributeSupplier.Builder createAttributes() {
+        // orig OreSpawnMain.java:6480 — BandP 100 HP / 1 ATK / 18 armor
+        // (orig BandP.java:68,94,98 consumes BandP_stats directly).
         return Monster.createMonsterAttributes()
-                .add(Attributes.MAX_HEALTH, MAX_HEALTH)
+                .add(Attributes.MAX_HEALTH, MobStats.BANDP.maxHealth())
                 .add(Attributes.MOVEMENT_SPEED, MOVE_SPEED)
-                .add(Attributes.ATTACK_DAMAGE, ATTACK_DAMAGE)
+                .add(Attributes.ATTACK_DAMAGE, MobStats.BANDP.attackDamage())
+                .add(Attributes.ARMOR, MobStats.BANDP.armor())
                 .add(Attributes.FOLLOW_RANGE, 20.0);
     }
 
@@ -198,10 +203,25 @@ public class BandP extends Monster {
         }
     }
 
+    // EXCEPTION to the loot-table architecture (see phase_b_reports/B1_drops.md):
+    // the stolen-item stash is runtime state and the bear/panda variant gate
+    // reads synched entity data — neither is expressible in a loot JSON.
+    // The unconditional emerald drop (orig BandP.java:148-151) lives in
+    // loot_table/entities/band_p.json.
     @Override
     protected void dropCustomDeathLoot(net.minecraft.server.level.ServerLevel level,
                                        DamageSource source, boolean recentlyHit) {
         super.dropCustomDeathLoot(level, source, recentlyHit);
+        // orig BandP.java:152-158 — bear variant (getWhat()==0) drops 2-4
+        // paired uranium + titanium nuggets.
+        if (this.getWhat() == 0) {
+            int pairs = 2 + this.getRandom().nextInt(3);
+            for (int i = 0; i < pairs; i++) {
+                this.spawnAtLocation(ModItems.URANIUM_NUGGET.get());
+                this.spawnAtLocation(ModItems.TITANIUM_NUGGET.get());
+            }
+        }
+        // orig BandP.java:159-164 — drops everything it has stolen.
         for (ItemStack stolen : this.stash) {
             if (stolen.isEmpty()) continue;
             ItemEntity drop = new ItemEntity(level,

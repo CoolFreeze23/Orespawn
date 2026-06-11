@@ -1,5 +1,7 @@
 package danger.orespawn.entity;
 
+import danger.orespawn.MobStats;
+
 import danger.orespawn.ModEntities;
 import danger.orespawn.OreSpawnMod;
 import danger.orespawn.entity.ai.EmperorScorpionPoisonGoal;
@@ -27,7 +29,6 @@ import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
@@ -81,10 +82,12 @@ public class EntityEmperorScorpion extends Monster {
     }
 
     public static AttributeSupplier.Builder createAttributes() {
+        // orig OreSpawnMain.java:6488 — EmperorScorpion 350 HP / 35 ATK / 20 armor
         return Monster.createMonsterAttributes()
-                .add(Attributes.MAX_HEALTH, 300.0)
+                .add(Attributes.MAX_HEALTH, MobStats.EMPEROR_SCORPION.maxHealth())
                 .add(Attributes.MOVEMENT_SPEED, 0.35)
-                .add(Attributes.ATTACK_DAMAGE, 20.0)
+                .add(Attributes.ATTACK_DAMAGE, MobStats.EMPEROR_SCORPION.attackDamage())
+                .add(Attributes.ARMOR, MobStats.EMPEROR_SCORPION.armor())
                 .add(Attributes.FOLLOW_RANGE, 40.0);
     }
 
@@ -230,13 +233,7 @@ public class EntityEmperorScorpion extends Monster {
         return null;
     }
 
-    @Override
-    protected void dropCustomDeathLoot(ServerLevel level, DamageSource source, boolean recentlyHit) {
-        super.dropCustomDeathLoot(level, source, recentlyHit);
-        this.spawnAtLocation(Items.NAME_TAG);
-        int count = 4 + this.random.nextInt(8);
-        for (int i = 0; i < count; i++) {
-            this.spawnAtLocation(Items.BONE);
-        }
-    }
+    // Death drops are fully data-driven via loot_table/entities/emperor_scorpion.json
+    // (orig EmperorScorpion.java:181-347: scale, painting, 4-8 obsidian,
+    // 4-11 raw beef, 1-5 rolls of the d20 Ultimate/Diamond gear table).
 }

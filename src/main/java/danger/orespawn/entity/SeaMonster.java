@@ -1,5 +1,7 @@
 package danger.orespawn.entity;
 
+import danger.orespawn.MobStats;
+
 import danger.orespawn.ModItems;
 import danger.orespawn.OreSpawnMod;
 import javax.annotation.Nullable;
@@ -25,7 +27,6 @@ import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Blocks;
@@ -35,9 +36,7 @@ public class SeaMonster extends Monster {
     private static final EntityDataAccessor<Integer> DATA_ATTACKING =
             SynchedEntityData.defineId(SeaMonster.class, EntityDataSerializers.INT);
 
-    private static final int MAX_HEALTH = 150;
     private static final double MOVE_SPEED = 0.25;
-    private static final double ATTACK_DAMAGE = 15.0;
 
     private int hurtCooldown = 0;
     private float dynamicMoveSpeed = 0.25f;
@@ -60,10 +59,12 @@ public class SeaMonster extends Monster {
     }
 
     public static AttributeSupplier.Builder createAttributes() {
+        // orig OreSpawnMain.java:6493 — SeaMonster 110 HP / 14 ATK / 8 armor
         return Monster.createMonsterAttributes()
-                .add(Attributes.MAX_HEALTH, MAX_HEALTH)
+                .add(Attributes.MAX_HEALTH, MobStats.SEA_MONSTER.maxHealth())
                 .add(Attributes.MOVEMENT_SPEED, MOVE_SPEED)
-                .add(Attributes.ATTACK_DAMAGE, ATTACK_DAMAGE);
+                .add(Attributes.ATTACK_DAMAGE, MobStats.SEA_MONSTER.attackDamage())
+                .add(Attributes.ARMOR, MobStats.SEA_MONSTER.armor());
     }
 
     @Override
@@ -171,7 +172,7 @@ public class SeaMonster extends Monster {
             }
         }
 
-        if (this.random.nextInt(120) == 1 && this.isInWater() && this.getHealth() < MAX_HEALTH) {
+        if (this.random.nextInt(120) == 1 && this.isInWater() && this.getHealth() < this.getMaxHealth()) {
             this.playSound(SoundEvents.GENERIC_SPLASH, 1.5f, this.random.nextFloat() * 0.2f + 0.9f);
             this.heal(1.0f);
         }
@@ -203,13 +204,9 @@ public class SeaMonster extends Monster {
         return 0;
     }
 
-    @Override
-    protected void dropCustomDeathLoot(ServerLevel level, DamageSource source, boolean recentlyHit) {
-        this.spawnAtLocation(Items.HEART_OF_THE_SEA);
-        int fishCount = 9 + this.random.nextInt(6);
-        for (int i = 0; i < fishCount; ++i) this.spawnAtLocation(Items.COD);
-        if (this.random.nextInt(3) == 0) this.spawnAtLocation(Items.DIAMOND);
-    }
+    // Death drops are fully data-driven via loot_table/entities/sea_monster.json
+    // (orig SeaMonster.java:170-322: scale, painting, 9-14 raw fish,
+    // one d20 roll of the Iron gear table).
 
     @Nullable
     @Override

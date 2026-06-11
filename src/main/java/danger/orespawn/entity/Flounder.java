@@ -25,7 +25,6 @@ import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Blocks;
@@ -142,13 +141,8 @@ public class Flounder extends Animal {
         return 0;
     }
 
-    @Override
-    protected void dropCustomDeathLoot(ServerLevel level, DamageSource source, boolean recentlyHit) {
-        int count = 1 + this.random.nextInt(2);
-        for (int i = 0; i < count; ++i) {
-            this.spawnAtLocation(Items.COD);
-        }
-    }
+    // Death drops are fully data-driven via loot_table/entities/flounder.json
+    // (orig Flounder.java:102-109: 1-2 raw fish).
 
     @Override
     public boolean checkSpawnRules(LevelAccessor level, MobSpawnType spawnType) {

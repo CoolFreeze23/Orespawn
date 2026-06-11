@@ -1,9 +1,10 @@
 package danger.orespawn.entity;
 
+import danger.orespawn.MobStats;
+
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.damagesource.DamageSource;
@@ -18,11 +19,8 @@ import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
-import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import danger.orespawn.entity.ai.DinosaurMeleeAttackGoal;
 
@@ -55,10 +53,13 @@ public class TRex extends Monster {
     }
 
     public static AttributeSupplier.Builder createAttributes() {
+        // orig OreSpawnMain.java:6479 — TRex 160 HP / 22 ATK / 14 armor;
+        // speed 0.38 matches orig TRex.java:41.
         return Monster.createMonsterAttributes()
-                .add(Attributes.MAX_HEALTH, 200.0)
+                .add(Attributes.MAX_HEALTH, MobStats.TREX.maxHealth())
                 .add(Attributes.MOVEMENT_SPEED, 0.38)
-                .add(Attributes.ATTACK_DAMAGE, 30.0)
+                .add(Attributes.ATTACK_DAMAGE, MobStats.TREX.attackDamage())
+                .add(Attributes.ARMOR, MobStats.TREX.armor())
                 .add(Attributes.FOLLOW_RANGE, 40.0)
                 .add(Attributes.KNOCKBACK_RESISTANCE, 0.8);
     }
@@ -112,27 +113,9 @@ public class TRex extends Monster {
         return 1.0f;
     }
 
-    // Bone drops are kept here (independent of the loot-table tooth/beef
-    // pools) because 1.7.10 dropped a bone on every death regardless of
-    // recently-hit state. The loot table handles the trex_tooth weighted
-    // pull (60% × 1, 30% × 2, 10% × 3 — see trex.json) plus the name tag,
-    // beef, gold/iron nuggets, XP bottle, and rare diamond pity drop. The
-    // weighted tooth pool exists so a Big Bertha craft (which needs three
-    // bertha components, each gated behind a tooth) is achievable in roughly
-    // 4-5 T-Rex kills on average.
-    private void dropItemRand(ItemStack stack) {
-        double ox = this.getX() + this.getRandom().nextInt(4) - this.getRandom().nextInt(4);
-        double oy = this.getY() + 1.0;
-        double oz = this.getZ() + this.getRandom().nextInt(4) - this.getRandom().nextInt(4);
-        ItemEntity itemEntity = new ItemEntity(this.level(), ox, oy, oz, stack);
-        this.level().addFreshEntity(itemEntity);
-    }
-
-    @Override
-    protected void dropCustomDeathLoot(ServerLevel level, DamageSource source, boolean recentlyHit) {
-        super.dropCustomDeathLoot(level, source, recentlyHit);
-        dropItemRand(new ItemStack(Items.BONE, 1));
-    }
+    // Death drops are fully data-driven via loot_table/entities/trex.json
+    // (orig TRex.java:128-140: trex tooth, painting, 7 raw beef,
+    // 2-5x paired uranium+titanium nuggets).
 
     // 1.7.10 knockback: horizontal push of 1.2 + vertical bump of 0.1
     // (doubled if hitting a player or removed entity).

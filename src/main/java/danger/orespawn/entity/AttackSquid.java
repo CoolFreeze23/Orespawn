@@ -1,5 +1,7 @@
 package danger.orespawn.entity;
 
+import danger.orespawn.MobStats;
+
 import danger.orespawn.OreSpawnMod;
 import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
@@ -25,8 +27,6 @@ import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Blocks;
@@ -36,9 +36,7 @@ public class AttackSquid extends Monster {
     private static final EntityDataAccessor<Integer> DATA_ATTACKING =
             SynchedEntityData.defineId(AttackSquid.class, EntityDataSerializers.INT);
 
-    private static final int MAX_HEALTH = 30;
     private static final double MOVE_SPEED = 0.25;
-    private static final double ATTACK_DAMAGE = 8.0;
     private static final int NO_WATER_FOUND_SENTINEL = 99999;
 
     private int wasshot = 0;
@@ -62,10 +60,12 @@ public class AttackSquid extends Monster {
     }
 
     public static AttributeSupplier.Builder createAttributes() {
+        // orig OreSpawnMain.java:6510 — AttackSquid 10 HP / 8 ATK / 0 armor
         return Monster.createMonsterAttributes()
-                .add(Attributes.MAX_HEALTH, MAX_HEALTH)
+                .add(Attributes.MAX_HEALTH, MobStats.ATTACK_SQUID.maxHealth())
                 .add(Attributes.MOVEMENT_SPEED, MOVE_SPEED)
-                .add(Attributes.ATTACK_DAMAGE, ATTACK_DAMAGE);
+                .add(Attributes.ATTACK_DAMAGE, MobStats.ATTACK_SQUID.attackDamage())
+                .add(Attributes.ARMOR, MobStats.ATTACK_SQUID.armor());
     }
 
     @Override
@@ -235,17 +235,9 @@ public class AttackSquid extends Monster {
         return 1.0f;
     }
 
-    @Override
-    protected void dropCustomDeathLoot(ServerLevel level, DamageSource source, boolean recentlyHit) {
-        super.dropCustomDeathLoot(level, source, recentlyHit);
-        int fishCount = 1 + this.random.nextInt(3);
-        for (int i = 0; i < fishCount; ++i) {
-            this.spawnAtLocation(Items.COD);
-        }
-        if (this.random.nextInt(5) == 0) {
-            this.spawnAtLocation(Items.DIAMOND);
-        }
-    }
+    // Death drops are fully data-driven via loot_table/entities/attack_squid.json
+    // (orig AttackSquid.java:169-344: one d50 roll of the Gold gear table,
+    // plus 1-3 raw fish).
 
     @Override
     public boolean checkSpawnRules(LevelAccessor level, MobSpawnType spawnType) {

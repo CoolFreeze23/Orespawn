@@ -1,5 +1,7 @@
 package danger.orespawn.entity;
 
+import danger.orespawn.MobStats;
+
 import danger.orespawn.OreSpawnMod;
 import danger.orespawn.entity.ai.SeaViperBiteGoal;
 import javax.annotation.Nullable;
@@ -32,7 +34,6 @@ import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.ai.navigation.WaterBoundPathNavigation;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Blocks;
@@ -43,10 +44,8 @@ public class SeaViper extends Monster {
     private static final EntityDataAccessor<Integer> DATA_ATTACKING =
             SynchedEntityData.defineId(SeaViper.class, EntityDataSerializers.INT);
 
-    private static final int MAX_HEALTH = 120;
     private static final double MOVE_SPEED_IN_WATER = 0.75;
     private static final double MOVE_SPEED_OUT_OF_WATER = 0.25;
-    private static final double ATTACK_DAMAGE = 12.0;
 
     private int hurtCooldown = 0;
     private int closestWaterDistance = 99999;
@@ -81,10 +80,12 @@ public class SeaViper extends Monster {
     }
 
     public static AttributeSupplier.Builder createAttributes() {
+        // orig OreSpawnMain.java:6494 — SeaViper 160 HP / 22 ATK / 12 armor
         return Monster.createMonsterAttributes()
-                .add(Attributes.MAX_HEALTH, MAX_HEALTH)
+                .add(Attributes.MAX_HEALTH, MobStats.SEA_VIPER.maxHealth())
                 .add(Attributes.MOVEMENT_SPEED, MOVE_SPEED_IN_WATER)
-                .add(Attributes.ATTACK_DAMAGE, ATTACK_DAMAGE)
+                .add(Attributes.ATTACK_DAMAGE, MobStats.SEA_VIPER.attackDamage())
+                .add(Attributes.ARMOR, MobStats.SEA_VIPER.armor())
                 .add(Attributes.FOLLOW_RANGE, 32.0);
     }
 
@@ -218,7 +219,7 @@ public class SeaViper extends Monster {
             }
         }
 
-        if (this.random.nextInt(100) == 1 && this.isInWater() && this.getHealth() < MAX_HEALTH) {
+        if (this.random.nextInt(100) == 1 && this.isInWater() && this.getHealth() < this.getMaxHealth()) {
             this.playSound(SoundEvents.GENERIC_SPLASH, 1.5f, this.random.nextFloat() * 0.2f + 0.9f);
             this.heal(1.0f);
         }
@@ -250,15 +251,9 @@ public class SeaViper extends Monster {
         return 0;
     }
 
-    @Override
-    protected void dropCustomDeathLoot(ServerLevel level, DamageSource source, boolean recentlyHit) {
-        this.spawnAtLocation(Items.HEART_OF_THE_SEA);
-        int fishCount = 9 + this.random.nextInt(6);
-        for (int i = 0; i < fishCount; ++i) {
-            this.spawnAtLocation(Items.COD);
-            this.spawnAtLocation(Items.SALMON);
-        }
-    }
+    // Death drops are fully data-driven via loot_table/entities/sea_viper.json
+    // (orig SeaViper.java:174-327: tongue, painting, 9-14x paired raw fish +
+    // raw chicken, one d20 roll of the Iron gear table).
 
     @Nullable
     @Override
