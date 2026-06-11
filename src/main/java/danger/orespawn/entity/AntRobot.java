@@ -1,5 +1,7 @@
 package danger.orespawn.entity;
 
+import danger.orespawn.MobStats;
+
 import java.util.Comparator;
 import java.util.List;
 import net.minecraft.core.particles.ParticleTypes;
@@ -69,11 +71,13 @@ public class AntRobot extends Mob {
     }
 
     public static AttributeSupplier.Builder createAttributes() {
+        // orig OreSpawnMain.java:6475 — AntRobot 300 HP / 30 ATK / 16 armor;
+        // speed 0.3 matches orig AntRobot.java:44.
         return Mob.createMobAttributes()
-                .add(Attributes.MAX_HEALTH, 350.0)
+                .add(Attributes.MAX_HEALTH, MobStats.ANT_ROBOT.maxHealth())
                 .add(Attributes.MOVEMENT_SPEED, 0.3)
-                .add(Attributes.ATTACK_DAMAGE, 35.0)
-                .add(Attributes.ARMOR, 6.0);
+                .add(Attributes.ATTACK_DAMAGE, MobStats.ANT_ROBOT.attackDamage())
+                .add(Attributes.ARMOR, MobStats.ANT_ROBOT.armor());
     }
 
     @Override
@@ -193,7 +197,9 @@ public class AntRobot extends Mob {
     public boolean doHurtTarget(Entity target) {
         if (target instanceof LivingEntity livingTarget) {
             float yawToTarget = (float) Math.atan2(livingTarget.getZ() - this.getZ(), livingTarget.getX() - this.getX());
-            boolean hurtApplied = livingTarget.hurt(this.damageSources().mobAttack(this), 35.0f);
+            // orig AntRobot.java:1079 — melee damage = the attack attribute, not a literal.
+            boolean hurtApplied = livingTarget.hurt(this.damageSources().mobAttack(this),
+                    (float) this.getAttributeValue(Attributes.ATTACK_DAMAGE));
             double verticalKnockback = KNOCKBACK_VERTICAL;
             if (livingTarget.isRemoved() || livingTarget instanceof Player) {
                 verticalKnockback *= PLAYER_OR_REMOVED_VERTICAL_MULTIPLIER;

@@ -1,5 +1,7 @@
 package danger.orespawn.entity;
 
+import danger.orespawn.MobStats;
+
 import danger.orespawn.OreSpawnMod;
 import java.util.Comparator;
 import java.util.List;
@@ -58,10 +60,12 @@ public class EntityVortex extends Monster {
     }
 
     public static AttributeSupplier.Builder createAttributes() {
+        // orig OreSpawnMain.java:6500 — Vortex 150 HP / 26 ATK / 10 armor
         return Mob.createMobAttributes()
-                .add(Attributes.MAX_HEALTH, 200.0)
+                .add(Attributes.MAX_HEALTH, MobStats.VORTEX.maxHealth())
                 .add(Attributes.MOVEMENT_SPEED, 0.35)
-                .add(Attributes.ATTACK_DAMAGE, 20.0);
+                .add(Attributes.ATTACK_DAMAGE, MobStats.VORTEX.attackDamage())
+                .add(Attributes.ARMOR, MobStats.VORTEX.armor());
     }
 
     @Override

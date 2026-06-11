@@ -1,5 +1,7 @@
 package danger.orespawn.entity;
 
+import danger.orespawn.MobStats;
+
 import danger.orespawn.OreSpawnMod;
 import danger.orespawn.entity.ai.BugMeleeAttackGoal;
 import danger.orespawn.entity.ai.CaveFisherAmbushGoal;
@@ -28,9 +30,7 @@ public class CaveFisher extends Monster {
     private static final EntityDataAccessor<Integer> DATA_ATTACKING =
             SynchedEntityData.defineId(CaveFisher.class, EntityDataSerializers.INT);
 
-    private static final int MAX_HEALTH = 25;
     private static final double MOVE_SPEED = 0.2;
-    private static final double ATTACK_DAMAGE = 6.0;
     /**
      * Cave fishers are cave-dwellers — the 1.7.10 mod restricted their
      * natural spawning to Y <= 50. We keep that gate in
@@ -62,10 +62,12 @@ public class CaveFisher extends Monster {
     }
 
     public static AttributeSupplier.Builder createAttributes() {
+        // orig OreSpawnMain.java:6511 — CaveFisher 10 HP / 4 ATK / 4 armor
         return Monster.createMonsterAttributes()
-                .add(Attributes.MAX_HEALTH, MAX_HEALTH)
+                .add(Attributes.MAX_HEALTH, MobStats.CAVE_FISHER.maxHealth())
                 .add(Attributes.MOVEMENT_SPEED, MOVE_SPEED)
-                .add(Attributes.ATTACK_DAMAGE, ATTACK_DAMAGE)
+                .add(Attributes.ATTACK_DAMAGE, MobStats.CAVE_FISHER.attackDamage())
+                .add(Attributes.ARMOR, MobStats.CAVE_FISHER.armor())
                 .add(Attributes.FOLLOW_RANGE, 16.0);
     }
 

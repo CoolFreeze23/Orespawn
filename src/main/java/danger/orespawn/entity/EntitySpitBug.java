@@ -1,5 +1,7 @@
 package danger.orespawn.entity;
 
+import danger.orespawn.MobStats;
+
 import danger.orespawn.OreSpawnMod;
 import danger.orespawn.entity.ai.SpitBugAcidAttackGoal;
 import javax.annotation.Nullable;
@@ -59,10 +61,12 @@ public class EntitySpitBug extends Monster {
     }
 
     public static AttributeSupplier.Builder createAttributes() {
+        // orig OreSpawnMain.java:6490 — SpitBug 100 HP / 10 ATK / 12 armor
         return Monster.createMonsterAttributes()
-                .add(Attributes.MAX_HEALTH, 60.0)
+                .add(Attributes.MAX_HEALTH, MobStats.SPIT_BUG.maxHealth())
                 .add(Attributes.MOVEMENT_SPEED, 0.33)
-                .add(Attributes.ATTACK_DAMAGE, 8.0)
+                .add(Attributes.ATTACK_DAMAGE, MobStats.SPIT_BUG.attackDamage())
+                .add(Attributes.ARMOR, MobStats.SPIT_BUG.armor())
                 .add(Attributes.FOLLOW_RANGE, 32.0);
     }
 

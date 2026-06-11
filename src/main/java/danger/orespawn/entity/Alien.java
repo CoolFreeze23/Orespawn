@@ -1,5 +1,7 @@
 package danger.orespawn.entity;
 
+import danger.orespawn.MobStats;
+
 import java.util.Comparator;
 import java.util.List;
 
@@ -36,8 +38,6 @@ public class Alien extends Monster {
     private final Comparator<Entity> targetSorter;
     private int hurtTimer = 0;
     private static final double MOVE_SPEED = 0.65;
-    private static final int MAX_HEALTH = 80;
-    private static final int ATTACK_DAMAGE = 12;
     private static final double KNOCKBACK_HORIZONTAL = 1.1;
     private static final double KNOCKBACK_VERTICAL = 0.1;
     private static final double PLAYER_KNOCKBACK_VERTICAL_MULTIPLIER = 2.0;
@@ -63,12 +63,13 @@ public class Alien extends Monster {
     }
 
     public static AttributeSupplier.Builder createAttributes() {
+        // orig OreSpawnMain.java:6491 — Alien 100 HP / 12 ATK / 8 armor
         return Monster.createMonsterAttributes()
-                .add(Attributes.MAX_HEALTH, MAX_HEALTH)
+                .add(Attributes.MAX_HEALTH, MobStats.ALIEN.maxHealth())
                 .add(Attributes.MOVEMENT_SPEED, MOVE_SPEED)
-                .add(Attributes.ATTACK_DAMAGE, ATTACK_DAMAGE)
+                .add(Attributes.ATTACK_DAMAGE, MobStats.ALIEN.attackDamage())
                 .add(Attributes.FOLLOW_RANGE, 24.0)
-                .add(Attributes.ARMOR, 6.0);
+                .add(Attributes.ARMOR, MobStats.ALIEN.armor());
     }
 
     @Override

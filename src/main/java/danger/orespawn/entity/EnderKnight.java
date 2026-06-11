@@ -1,5 +1,7 @@
 package danger.orespawn.entity;
 
+import danger.orespawn.MobStats;
+
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -28,8 +30,6 @@ public class EnderKnight extends Monster {
     private static final EntityDataAccessor<Boolean> DATA_SCREAMING =
             SynchedEntityData.defineId(EnderKnight.class, EntityDataSerializers.BOOLEAN);
 
-    private static final int MAX_HEALTH = 80;
-    private static final int ATTACK_DAMAGE = 15;
 
     public EnderKnight(EntityType<? extends EnderKnight> type, Level level) {
         super(type, level);
@@ -48,10 +48,12 @@ public class EnderKnight extends Monster {
     }
 
     public static AttributeSupplier.Builder createAttributes() {
+        // orig OreSpawnMain.java:6507 — EnderKnight 60 HP / 12 ATK / 6 armor
         return Monster.createMonsterAttributes()
-                .add(Attributes.MAX_HEALTH, MAX_HEALTH)
+                .add(Attributes.MAX_HEALTH, MobStats.ENDER_KNIGHT.maxHealth())
                 .add(Attributes.MOVEMENT_SPEED, 0.32)
-                .add(Attributes.ATTACK_DAMAGE, ATTACK_DAMAGE)
+                .add(Attributes.ATTACK_DAMAGE, MobStats.ENDER_KNIGHT.attackDamage())
+                .add(Attributes.ARMOR, MobStats.ENDER_KNIGHT.armor())
                 .add(Attributes.FOLLOW_RANGE, 64.0);
     }
 

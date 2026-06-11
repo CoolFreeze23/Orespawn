@@ -1,5 +1,7 @@
 package danger.orespawn.entity;
 
+import danger.orespawn.MobStats;
+
 import java.util.Comparator;
 import java.util.List;
 
@@ -29,8 +31,6 @@ public class CreepingHorror extends Monster {
 
     private final Comparator<Entity> targetSorter;
     private static final float MOVE_SPEED = 0.25f;
-    private static final int MAX_HEALTH = 20;
-    private static final int ATTACK_DAMAGE = 6;
 
     public CreepingHorror(EntityType<? extends CreepingHorror> type, Level level) {
         super(type, level);
@@ -49,10 +49,12 @@ public class CreepingHorror extends Monster {
     }
 
     public static AttributeSupplier.Builder createAttributes() {
+        // orig OreSpawnMain.java:6513 — CreepingHorror 10 HP / 3 ATK / 2 armor
         return Monster.createMonsterAttributes()
-                .add(Attributes.MAX_HEALTH, MAX_HEALTH)
+                .add(Attributes.MAX_HEALTH, MobStats.CREEPING_HORROR.maxHealth())
                 .add(Attributes.MOVEMENT_SPEED, MOVE_SPEED)
-                .add(Attributes.ATTACK_DAMAGE, ATTACK_DAMAGE)
+                .add(Attributes.ATTACK_DAMAGE, MobStats.CREEPING_HORROR.attackDamage())
+                .add(Attributes.ARMOR, MobStats.CREEPING_HORROR.armor())
                 .add(Attributes.FOLLOW_RANGE, 16.0);
     }
 

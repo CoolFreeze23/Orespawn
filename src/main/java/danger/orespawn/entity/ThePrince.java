@@ -89,6 +89,7 @@ public class ThePrince extends TamableAnimal {
     }
 
     public static AttributeSupplier.Builder createAttributes() {
+        // orig ThePrince.java:186 HP 500, :102 ATK 10, :347 armor 16, :81 speed 0.32 — all confirmed.
         return Mob.createMobAttributes()
                 .add(Attributes.MAX_HEALTH, 500.0)
                 .add(Attributes.MOVEMENT_SPEED, 0.32)
@@ -141,7 +142,11 @@ public class ThePrince extends TamableAnimal {
     @Override
     public void tick() {
         super.tick();
-        this.noPhysics = this.getActivity() == 2;
+        // Original (orig ThePrince.java:423) maps activity 2 (flying) to noPhysics, but
+        // its flight movement (do_movement) is not yet ported. Until it is, enabling
+        // noPhysics just lets a hurt prince sink through terrain permanently (BUG-010),
+        // so the mapping is intentionally disabled here (see PARITY_NOTES.md).
+        this.noPhysics = false;
 
         int i;
         if (this.random.nextInt(10) == 1) {
@@ -205,6 +210,19 @@ public class ThePrince extends TamableAnimal {
             }
         }
 
+        // Original activity cycling (orig ThePrince.java:529-539): every tick while not
+        // sitting, a 1/100 roll re-picks the state — 1/20 of those start flying (2),
+        // otherwise land (1). This is the original's only path back from activity 2,
+        // and dropping it left the prince stuck flying after a hit (BUG-010).
+        if (!this.isOrderedToSit()) {
+            if (this.getActivity() == 0) {
+                this.setActivity(1);
+            }
+            if (this.random.nextInt(100) == 1) {
+                this.setActivity(this.random.nextInt(20) == 1 ? 2 : 1);
+            }
+        }
+
         if (!this.isOrderedToSit() && this.random.nextInt(7) == 1) {
             LivingEntity target = this.findSomethingToAttack();
             if (target != null) {
@@ -238,7 +256,15 @@ public class ThePrince extends TamableAnimal {
         if (teen == null) return;
         teen.moveTo(this.getX(), this.getY(), this.getZ(), this.getYRot(), this.getXRot());
         if (this.isTame() && this.getOwnerUUID() != null) {
-            teen.tame(this.level().getPlayerByUUID(this.getOwnerUUID()));
+            Player owner = this.level().getPlayerByUUID(this.getOwnerUUID());
+            if (owner != null) {
+                teen.tame(owner);
+            } else {
+                // Owner offline: tame(null) would NPE (BUG-004). Growth is timer-driven
+                // and must not require the owner online — carry the UUID over directly.
+                teen.setOwnerUUID(this.getOwnerUUID());
+                teen.setTame(true, true);
+            }
         }
         serverLevel.addFreshEntity(teen);
         this.discard();

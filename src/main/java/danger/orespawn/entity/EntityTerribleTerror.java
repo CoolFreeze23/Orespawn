@@ -1,5 +1,7 @@
 package danger.orespawn.entity;
 
+import danger.orespawn.MobStats;
+
 import java.util.Comparator;
 import java.util.List;
 
@@ -37,10 +39,12 @@ public class EntityTerribleTerror extends Monster {
     }
 
     public static AttributeSupplier.Builder createAttributes() {
+        // orig OreSpawnMain.java:6520 — TerribleTerror 10 HP / 5 ATK / 3 armor
         return Mob.createMobAttributes()
-                .add(Attributes.MAX_HEALTH, 20.0)
+                .add(Attributes.MAX_HEALTH, MobStats.TERRIBLE_TERROR.maxHealth())
                 .add(Attributes.MOVEMENT_SPEED, 0.1)
-                .add(Attributes.ATTACK_DAMAGE, 5.0);
+                .add(Attributes.ATTACK_DAMAGE, MobStats.TERRIBLE_TERROR.attackDamage())
+                .add(Attributes.ARMOR, MobStats.TERRIBLE_TERROR.armor());
     }
 
     @Override

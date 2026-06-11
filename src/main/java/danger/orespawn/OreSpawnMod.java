@@ -1,6 +1,8 @@
 package danger.orespawn;
 
 import danger.orespawn.world.ModWorldGen;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.attributes.RangedAttribute;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModContainer;
@@ -45,7 +47,23 @@ public class OreSpawnMod {
     public static final String MOD_ID = "orespawn";
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
+    /**
+     * Cap applied to {@code MAX_HEALTH} and {@code ATTACK_DAMAGE}: comfortably
+     * above every original value (largest: TheKing 7000 HP / 350 base attack,
+     * orig OreSpawnMain.java:6521, with in-fight ×16 attack multipliers).
+     */
+    private static final double RAISED_ATTRIBUTE_CAP = 100000.0;
+
     public OreSpawnMod(IEventBus modEventBus, ModContainer modContainer) {
+        // Vanilla 1.21.1 clamps MAX_HEALTH to 1024 and ATTACK_DAMAGE to 2048
+        // (RangedAttribute.sanitizeValue reads maxValue on every evaluation),
+        // silently capping original boss stats — TheKing 7000 HP, TheQueen 6000,
+        // Godzilla 4000 (orig OreSpawnMain.java:6514-6522). The field is opened
+        // via accesstransformer.cfg; a plain write is sufficient because
+        // sanitizeValue re-reads it each call.
+        ((RangedAttribute) Attributes.MAX_HEALTH.value()).maxValue = RAISED_ATTRIBUTE_CAP;
+        ((RangedAttribute) Attributes.ATTACK_DAMAGE.value()).maxValue = RAISED_ATTRIBUTE_CAP;
+
         // Order is intentional — see class JavaDoc.
         ModDataComponents.register(modEventBus);
         ModBlocks.register(modEventBus);

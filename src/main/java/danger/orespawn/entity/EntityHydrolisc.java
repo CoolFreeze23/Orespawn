@@ -73,10 +73,13 @@ public class EntityHydrolisc extends TamableAnimal {
     }
 
     public static AttributeSupplier.Builder createAttributes() {
+        // orig Hydrolisc.java:210 HP 100, :74 ATK 1.0, :161 armor 10, :39 speed 0.25
+        // (audit ENT-D-060 claimed HP 60 / speed 0.2 — the original source says otherwise).
         return Mob.createMobAttributes()
                 .add(Attributes.MAX_HEALTH, 100.0)
                 .add(Attributes.MOVEMENT_SPEED, 0.25)
-                .add(Attributes.ATTACK_DAMAGE, 1.0);
+                .add(Attributes.ATTACK_DAMAGE, 1.0)
+                .add(Attributes.ARMOR, 10.0);
     }
 
     @Override

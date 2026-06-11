@@ -1,5 +1,7 @@
 package danger.orespawn.entity;
 
+import danger.orespawn.MobStats;
+
 import danger.orespawn.OreSpawnMod;
 import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
@@ -21,8 +23,6 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.Vec3;
 
 public class CloudShark extends Monster {
-    private static final int MAX_HEALTH = 20;
-    private static final double ATTACK_DAMAGE = 6.0;
     private static final int MIN_CRUISE_ALTITUDE = 120;
     private static final int MAX_CRUISE_ALTITUDE = 140;
     private static final int ALTITUDE_BIAS_UP = 2;
@@ -40,10 +40,12 @@ public class CloudShark extends Monster {
     }
 
     public static AttributeSupplier.Builder createAttributes() {
+        // orig OreSpawnMain.java:6512 — CloudShark 15 HP / 6 ATK / 5 armor
         return Monster.createMonsterAttributes()
-                .add(Attributes.MAX_HEALTH, MAX_HEALTH)
+                .add(Attributes.MAX_HEALTH, MobStats.CLOUD_SHARK.maxHealth())
                 .add(Attributes.MOVEMENT_SPEED, 0.3)
-                .add(Attributes.ATTACK_DAMAGE, ATTACK_DAMAGE);
+                .add(Attributes.ATTACK_DAMAGE, MobStats.CLOUD_SHARK.attackDamage())
+                .add(Attributes.ARMOR, MobStats.CLOUD_SHARK.armor());
     }
 
     @Override

@@ -1,9 +1,10 @@
 package danger.orespawn.entity;
 
+import danger.orespawn.MobStats;
+
 import java.util.Comparator;
 import java.util.List;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -55,7 +56,8 @@ public class SpiderRobot extends Mob {
 
     public SpiderRobot(EntityType<? extends SpiderRobot> type, Level level) {
         super(type, level);
-        this.xpReward = 200;
+        // orig SpiderRobot.java:64 — XP = SpiderRobot_stats.health / 2 = 1500/2.
+        this.xpReward = 750;
         this.targetSorter = Comparator.comparingDouble(this::distanceToSqr);
     }
 
@@ -66,11 +68,13 @@ public class SpiderRobot extends Mob {
     }
 
     public static AttributeSupplier.Builder createAttributes() {
+        // orig OreSpawnMain.java:6474 — SpiderRobot 1500 HP / 100 ATK / 16 armor;
+        // speed 0.35 matches orig SpiderRobot.java:51.
         return Mob.createMobAttributes()
-                .add(Attributes.MAX_HEALTH, 500.0)
+                .add(Attributes.MAX_HEALTH, MobStats.SPIDER_ROBOT.maxHealth())
                 .add(Attributes.MOVEMENT_SPEED, 0.35)
-                .add(Attributes.ATTACK_DAMAGE, 50.0)
-                .add(Attributes.ARMOR, 8.0);
+                .add(Attributes.ATTACK_DAMAGE, MobStats.SPIDER_ROBOT.attackDamage())
+                .add(Attributes.ARMOR, MobStats.SPIDER_ROBOT.armor());
     }
 
     @Override
@@ -158,7 +162,9 @@ public class SpiderRobot extends Mob {
             double knockbackStrength = 1.2;
             double upwardKnockback = 0.15;
             float angleToTarget = (float) Math.atan2(livingTarget.getZ() - this.getZ(), livingTarget.getX() - this.getX());
-            boolean ret = livingTarget.hurt(this.damageSources().mobAttack(this), 50.0f);
+            // Attribute is authoritative (orig melee used the attack attribute).
+            boolean ret = livingTarget.hurt(this.damageSources().mobAttack(this),
+                    (float) this.getAttributeValue(Attributes.ATTACK_DAMAGE));
             if (livingTarget.isRemoved() || livingTarget instanceof Player) upwardKnockback *= 2.0;
             if (ret) livingTarget.push(Math.cos(angleToTarget) * knockbackStrength, upwardKnockback, Math.sin(angleToTarget) * knockbackStrength);
             return ret;
@@ -195,11 +201,10 @@ public class SpiderRobot extends Mob {
         return false;
     }
 
-    @Override
-    public void addAdditionalSaveData(CompoundTag tag) {}
-
-    @Override
-    public void readAdditionalSaveData(CompoundTag tag) {}
+    // The previous empty overrides dropped the super call, so Health, effects,
+    // PersistenceRequired and equipment were never saved — robots reloaded at full HP
+    // and name-tagged ones could despawn (BUG-007). The overrides are removed entirely:
+    // SpiderRobot has no extra fields to persist, so the inherited behavior is correct.
 
     private LivingEntity findSomethingToAttack() {
         AABB searchBox = this.getBoundingBox().inflate(20.0, 12.0, 20.0);

@@ -1,5 +1,7 @@
 package danger.orespawn.entity;
 
+import danger.orespawn.MobStats;
+
 import java.util.Comparator;
 import java.util.List;
 import javax.annotation.Nullable;
@@ -42,10 +44,12 @@ public class EntityLeafMonster extends Monster {
     }
 
     public static AttributeSupplier.Builder createAttributes() {
+        // orig OreSpawnMain.java:6516 — LeafMonster 6 HP / 2 ATK / 1 armor
         return Monster.createMonsterAttributes()
-                .add(Attributes.MAX_HEALTH, 20.0)
+                .add(Attributes.MAX_HEALTH, MobStats.LEAF_MONSTER.maxHealth())
                 .add(Attributes.MOVEMENT_SPEED, 0.25)
-                .add(Attributes.ATTACK_DAMAGE, 5.0);
+                .add(Attributes.ATTACK_DAMAGE, MobStats.LEAF_MONSTER.attackDamage())
+                .add(Attributes.ARMOR, MobStats.LEAF_MONSTER.armor());
     }
 
     @Override

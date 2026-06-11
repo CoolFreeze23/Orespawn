@@ -81,11 +81,12 @@ public class ThePrincess extends TamableAnimal {
     }
 
     public static AttributeSupplier.Builder createAttributes() {
+        // orig ThePrincess.java:195 HP 400, :102 ATK 10, :335 armor 14, :81 speed 0.32.
         return Mob.createMobAttributes()
-                .add(Attributes.MAX_HEALTH, 500.0)
-                .add(Attributes.MOVEMENT_SPEED, 0.3)
+                .add(Attributes.MAX_HEALTH, 400.0)
+                .add(Attributes.MOVEMENT_SPEED, 0.32)
                 .add(Attributes.ATTACK_DAMAGE, 10.0)
-                .add(Attributes.ARMOR, 16.0)
+                .add(Attributes.ARMOR, 14.0)
                 .add(Attributes.FOLLOW_RANGE, 24.0);
     }
 
@@ -111,7 +112,11 @@ public class ThePrincess extends TamableAnimal {
     @Override
     public void tick() {
         super.tick();
-        this.noPhysics = this.getActivity() == 2;
+        // Original (orig ThePrincess.java tick) maps activity 2 (flying) to noPhysics,
+        // but flight movement is not yet ported — enabling noPhysics let a hurt princess
+        // sink through terrain permanently (BUG-010). Disabled until flight is restored
+        // (see PARITY_NOTES.md).
+        this.noPhysics = false;
 
         int i;
         if (this.random.nextInt(10) == 1) { i = this.random.nextInt(3); this.head1dir = i == 0 ? 2 : i == 1 ? -2 : 0; }
@@ -144,6 +149,18 @@ public class ThePrincess extends TamableAnimal {
                 this.tame(nearestPlayer);
                 this.level().broadcastEntityEvent(this, (byte) 7);
                 this.heal(this.getMaxHealth() - this.getHealth());
+            }
+        }
+
+        // Original activity cycling (orig ThePrincess.java:629-639): 1/100 roll per tick
+        // while not sitting; 1/20 of rolls fly (2), otherwise land (1). The only original
+        // path back from activity 2 — restored to fix the stuck flying state (BUG-010).
+        if (!this.isOrderedToSit()) {
+            if (this.getActivity() == 0) {
+                this.setActivity(1);
+            }
+            if (this.random.nextInt(100) == 1) {
+                this.setActivity(this.random.nextInt(20) == 1 ? 2 : 1);
             }
         }
 

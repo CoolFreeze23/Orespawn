@@ -1,5 +1,6 @@
 package danger.orespawn.entity;
 
+import danger.orespawn.MobStats;
 import danger.orespawn.ModItems;
 import danger.orespawn.OreSpawnMod;
 import javax.annotation.Nullable;
@@ -32,9 +33,7 @@ public class Irukandji extends Monster {
     private static final EntityDataAccessor<Integer> DATA_ATTACKING =
             SynchedEntityData.defineId(Irukandji.class, EntityDataSerializers.INT);
 
-    private static final int MAX_HEALTH = 5;
     private static final double MOVE_SPEED = 0.15;
-    private static final double ATTACK_DAMAGE = 200.0;
     private static final int NO_WATER_FOUND_SENTINEL = 99999;
     private static final float EMPTY_HAND_RETALIATION_DAMAGE = 200.0f;
 
@@ -58,10 +57,13 @@ public class Irukandji extends Monster {
     }
 
     public static AttributeSupplier.Builder createAttributes() {
+        // orig OreSpawnMain.java:6509 — Irukandji 1 HP / 20 ATK / 0 armor.
+        // (The 200.0f is only the empty-hand retaliation, orig Irukandji.java:96.)
         return Monster.createMonsterAttributes()
-                .add(Attributes.MAX_HEALTH, MAX_HEALTH)
+                .add(Attributes.MAX_HEALTH, MobStats.IRUKANDJI.maxHealth())
                 .add(Attributes.MOVEMENT_SPEED, MOVE_SPEED)
-                .add(Attributes.ATTACK_DAMAGE, ATTACK_DAMAGE);
+                .add(Attributes.ATTACK_DAMAGE, MobStats.IRUKANDJI.attackDamage())
+                .add(Attributes.ARMOR, MobStats.IRUKANDJI.armor());
     }
 
     @Override

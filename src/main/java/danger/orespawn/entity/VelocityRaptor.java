@@ -70,7 +70,11 @@ public class VelocityRaptor extends TamableAnimal {
         this.targetSelector.addGoal(3, new HurtByTargetGoal(this));
     }
 
+    /** orig VelocityRaptor.java:212 — {@code mygetMaxHealth() = tamed ? 20 : 10}. */
+    private static final double TAMED_MAX_HEALTH = 20.0;
+
     public static AttributeSupplier.Builder createAttributes() {
+        // orig VelocityRaptor.java:67-70,212 — wild HP 10, ATK 2.
         return Mob.createMobAttributes()
                 .add(Attributes.MAX_HEALTH, 10.0)
                 .add(Attributes.MOVEMENT_SPEED, 0.55)
@@ -154,6 +158,8 @@ public class VelocityRaptor extends TamableAnimal {
                     if (this.random.nextInt(2) == 0) {
                         this.setTame(true, true);
                         this.setOwnerUUID(player.getUUID());
+                        // orig VelocityRaptor.java:212 — max HP is 20 when tamed (10 wild).
+                        this.getAttribute(Attributes.MAX_HEALTH).setBaseValue(TAMED_MAX_HEALTH);
                         this.heal(this.getMaxHealth() - this.getHealth());
                     }
                 }

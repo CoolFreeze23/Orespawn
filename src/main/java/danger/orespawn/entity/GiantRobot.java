@@ -1,5 +1,7 @@
 package danger.orespawn.entity;
 
+import danger.orespawn.MobStats;
+
 import java.util.Comparator;
 import java.util.List;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -40,7 +42,8 @@ public class GiantRobot extends Monster {
 
     public GiantRobot(EntityType<? extends GiantRobot> type, Level level) {
         super(type, level);
-        this.xpReward = 500;
+        // orig GiantRobot.java:48 — XP = Jeffery_stats.health / 2 = 550/2.
+        this.xpReward = 275;
         this.targetSorter = Comparator.comparingDouble(this::distanceToSqr);
     }
 
@@ -55,10 +58,13 @@ public class GiantRobot extends Monster {
 
     public static AttributeSupplier.Builder createAttributes() {
         return Monster.createMonsterAttributes()
-                .add(Attributes.MAX_HEALTH, 2000.0)
+                // orig OreSpawnMain.java:6476 — "Jeffery" 550 HP / 40 ATK / 18 armor
+                // (the original GiantRobot consumes Jeffery_stats);
+                // speed 0.55 matches orig GiantRobot.java:42.
+                .add(Attributes.MAX_HEALTH, MobStats.JEFFERY.maxHealth())
                 .add(Attributes.MOVEMENT_SPEED, 0.55)
-                .add(Attributes.ATTACK_DAMAGE, 100.0)
-                .add(Attributes.ARMOR, 12.0);
+                .add(Attributes.ATTACK_DAMAGE, MobStats.JEFFERY.attackDamage())
+                .add(Attributes.ARMOR, MobStats.JEFFERY.armor());
     }
 
     @Override
