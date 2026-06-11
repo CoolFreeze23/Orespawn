@@ -1,5 +1,7 @@
 package danger.orespawn.entity;
 
+import danger.orespawn.MobStats;
+
 import danger.orespawn.OreSpawnMod;
 import danger.orespawn.entity.ai.BugMeleeAttackGoal;
 import javax.annotation.Nullable;
@@ -48,10 +50,12 @@ public class EntityScorpion extends Monster {
     }
 
     public static AttributeSupplier.Builder createAttributes() {
+        // orig OreSpawnMain.java:6518 — Scorpion 15 HP / 4 ATK / 10 armor
         return Monster.createMonsterAttributes()
-                .add(Attributes.MAX_HEALTH, 20.0)
+                .add(Attributes.MAX_HEALTH, MobStats.SCORPION.maxHealth())
                 .add(Attributes.MOVEMENT_SPEED, 0.2)
-                .add(Attributes.ATTACK_DAMAGE, 4.0)
+                .add(Attributes.ATTACK_DAMAGE, MobStats.SCORPION.attackDamage())
+                .add(Attributes.ARMOR, MobStats.SCORPION.armor())
                 .add(Attributes.FOLLOW_RANGE, 24.0);
     }
 

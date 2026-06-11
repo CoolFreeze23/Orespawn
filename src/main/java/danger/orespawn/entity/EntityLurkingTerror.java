@@ -1,5 +1,7 @@
 package danger.orespawn.entity;
 
+import danger.orespawn.MobStats;
+
 import danger.orespawn.OreSpawnMod;
 import java.util.Comparator;
 import java.util.List;
@@ -40,10 +42,12 @@ public class EntityLurkingTerror extends Monster {
     }
 
     public static AttributeSupplier.Builder createAttributes() {
+        // orig OreSpawnMain.java:6503 — LurkingTerror 30 HP / 6 ATK / 5 armor
         return Mob.createMobAttributes()
-                .add(Attributes.MAX_HEALTH, 40.0)
+                .add(Attributes.MAX_HEALTH, MobStats.LURKING_TERROR.maxHealth())
                 .add(Attributes.MOVEMENT_SPEED, 0.25)
-                .add(Attributes.ATTACK_DAMAGE, 5.0);
+                .add(Attributes.ATTACK_DAMAGE, MobStats.LURKING_TERROR.attackDamage())
+                .add(Attributes.ARMOR, MobStats.LURKING_TERROR.armor());
     }
 
     @Override

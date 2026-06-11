@@ -1,5 +1,7 @@
 package danger.orespawn.entity;
 
+import danger.orespawn.MobStats;
+
 import danger.orespawn.OreSpawnMod;
 import danger.orespawn.entity.ai.BugMeleeAttackGoal;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -26,8 +28,6 @@ public class DungeonBeast extends Monster {
             SynchedEntityData.defineId(DungeonBeast.class, EntityDataSerializers.INT);
 
     private static final float MOVE_SPEED = 0.29f;
-    private static final int MAX_HEALTH = 60;
-    private static final int ATTACK_DAMAGE = 10;
 
     public DungeonBeast(EntityType<? extends DungeonBeast> type, Level level) {
         super(type, level);
@@ -47,12 +47,13 @@ public class DungeonBeast extends Monster {
     }
 
     public static AttributeSupplier.Builder createAttributes() {
+        // orig OreSpawnMain.java:6501 — DungeonBeast 65 HP / 12 ATK / 6 armor
         return Monster.createMonsterAttributes()
-                .add(Attributes.MAX_HEALTH, MAX_HEALTH)
+                .add(Attributes.MAX_HEALTH, MobStats.DUNGEON_BEAST.maxHealth())
                 .add(Attributes.MOVEMENT_SPEED, MOVE_SPEED)
-                .add(Attributes.ATTACK_DAMAGE, ATTACK_DAMAGE)
+                .add(Attributes.ATTACK_DAMAGE, MobStats.DUNGEON_BEAST.attackDamage())
                 .add(Attributes.FOLLOW_RANGE, 24.0)
-                .add(Attributes.ARMOR, 4.0);
+                .add(Attributes.ARMOR, MobStats.DUNGEON_BEAST.armor());
     }
 
     @Override

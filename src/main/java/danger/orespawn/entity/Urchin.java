@@ -1,5 +1,7 @@
 package danger.orespawn.entity;
 
+import danger.orespawn.MobStats;
+
 import danger.orespawn.ModItems;
 import danger.orespawn.OreSpawnMod;
 import javax.annotation.Nullable;
@@ -30,9 +32,7 @@ public class Urchin extends Monster {
     private static final EntityDataAccessor<Integer> DATA_ATTACKING =
             SynchedEntityData.defineId(Urchin.class, EntityDataSerializers.INT);
 
-    private static final int MAX_HEALTH = 30;
     private static final double MOVE_SPEED = 0.3;
-    private static final double ATTACK_DAMAGE = 8.0;
 
     public Urchin(EntityType<? extends Urchin> type, Level level) {
         super(type, level);
@@ -49,10 +49,12 @@ public class Urchin extends Monster {
     }
 
     public static AttributeSupplier.Builder createAttributes() {
+        // orig OreSpawnMain.java:6484 — Urchin 25 HP / 10 ATK / 4 armor
         return Monster.createMonsterAttributes()
-                .add(Attributes.MAX_HEALTH, MAX_HEALTH)
+                .add(Attributes.MAX_HEALTH, MobStats.URCHIN.maxHealth())
                 .add(Attributes.MOVEMENT_SPEED, MOVE_SPEED)
-                .add(Attributes.ATTACK_DAMAGE, ATTACK_DAMAGE);
+                .add(Attributes.ATTACK_DAMAGE, MobStats.URCHIN.attackDamage())
+                .add(Attributes.ARMOR, MobStats.URCHIN.armor());
     }
 
     @Override

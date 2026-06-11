@@ -1,5 +1,7 @@
 package danger.orespawn.entity;
 
+import danger.orespawn.MobStats;
+
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -16,14 +18,17 @@ public class Jeffery extends GiantRobot {
 
     public Jeffery(EntityType<? extends Jeffery> type, Level level) {
         super(type, level);
-        this.xpReward = 250;
+        // orig GiantRobot.java:48 — XP = Jeffery_stats.health / 2 = 550/2
+        // (Jeffery is a named-skin alias of GiantRobot; identical stats).
+        this.xpReward = 275;
     }
 
     public static AttributeSupplier.Builder createAttributes() {
         return Monster.createMonsterAttributes()
-                .add(Attributes.MAX_HEALTH, 1000.0)
+                // orig OreSpawnMain.java:6476 — "Jeffery" 550 HP / 40 ATK / 18 armor
+                .add(Attributes.MAX_HEALTH, MobStats.JEFFERY.maxHealth())
                 .add(Attributes.MOVEMENT_SPEED, 0.55)
-                .add(Attributes.ATTACK_DAMAGE, 50.0)
-                .add(Attributes.ARMOR, 6.0);
+                .add(Attributes.ATTACK_DAMAGE, MobStats.JEFFERY.attackDamage())
+                .add(Attributes.ARMOR, MobStats.JEFFERY.armor());
     }
 }

@@ -1,5 +1,7 @@
 package danger.orespawn.entity;
 
+import danger.orespawn.MobStats;
+
 import java.util.Comparator;
 import java.util.List;
 
@@ -40,10 +42,12 @@ public class EntityRotator extends Monster {
     }
 
     public static AttributeSupplier.Builder createAttributes() {
+        // orig OreSpawnMain.java:6499 — Rotator 35 HP / 10 ATK / 8 armor
         return Mob.createMobAttributes()
-                .add(Attributes.MAX_HEALTH, 30.0)
+                .add(Attributes.MAX_HEALTH, MobStats.ROTATOR.maxHealth())
                 .add(Attributes.MOVEMENT_SPEED, 0.25)
-                .add(Attributes.ATTACK_DAMAGE, 5.0);
+                .add(Attributes.ATTACK_DAMAGE, MobStats.ROTATOR.attackDamage())
+                .add(Attributes.ARMOR, MobStats.ROTATOR.armor());
     }
 
     @Override

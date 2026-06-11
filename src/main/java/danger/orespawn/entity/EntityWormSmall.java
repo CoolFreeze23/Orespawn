@@ -1,5 +1,7 @@
 package danger.orespawn.entity;
 
+import danger.orespawn.MobStats;
+
 import danger.orespawn.OreSpawnMod;
 import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
@@ -28,10 +30,12 @@ public class EntityWormSmall extends Monster {
     }
 
     public static AttributeSupplier.Builder createAttributes() {
+        // orig OreSpawnMain.java:6504 — WormSmall 10 HP / 3 ATK / 0 armor
         return Mob.createMobAttributes()
-                .add(Attributes.MAX_HEALTH, 10.0)
+                .add(Attributes.MAX_HEALTH, MobStats.WORM_SMALL.maxHealth())
                 .add(Attributes.MOVEMENT_SPEED, 0.1)
-                .add(Attributes.ATTACK_DAMAGE, 3.0);
+                .add(Attributes.ATTACK_DAMAGE, MobStats.WORM_SMALL.attackDamage())
+                .add(Attributes.ARMOR, MobStats.WORM_SMALL.armor());
     }
 
     @Override

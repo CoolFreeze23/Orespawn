@@ -1,5 +1,7 @@
 package danger.orespawn.entity;
 
+import danger.orespawn.MobStats;
+
 import java.util.Comparator;
 import java.util.List;
 import javax.annotation.Nullable;
@@ -83,12 +85,21 @@ public class PitchBlack extends Monster {
     public static final int MIN_SIZE_TIER = 1;
     public static final int MAX_SIZE_TIER = 5;
 
-    /** HP per size tier (1.7.10 fidelity). Index 0 unused; tier N → SIZE_HP[N]. */
+    /**
+     * Per-tier stats derived from the original Nightmare scale formulas, with
+     * the original stat scale t ∈ {0.5, 1, 2, 3, 4} (orig PitchBlack.java:99-141)
+     * and the "Nightmare" table entry 250 HP / 30 ATK / 10 armor
+     * (orig OreSpawnMain.java:6517):
+     * HP = 250×t (orig PitchBlack.java:239), ATK = 30×t (orig :80),
+     * armor = 10 + 2×t (orig :190), XP = 100×t (orig :143),
+     * speed = 0.2 + 0.1×t (orig :79). Index 0 unused; tier N → SIZE_*[N].
+     */
     private static final double[] SIZE_HP   = { 0.0, 125.0, 250.0,  500.0, 750.0, 1000.0 };
     private static final double[] SIZE_ATK  = { 0.0,  15.0,  30.0,   60.0,  90.0,  120.0 };
-    private static final double[] SIZE_ARM  = { 0.0,  10.0,  12.0,   14.0,  16.0,   18.0 };
+    private static final double[] SIZE_ARM  = { 0.0,  11.0,  12.0,   14.0,  16.0,   18.0 };
+    private static final double[] SIZE_SPEED= { 0.0,  0.25,  0.30,   0.40,  0.50,   0.60 };
     private static final float[]  SIZE_SCALE= { 0.0f, 0.50f, 0.65f, 0.80f, 1.00f,  1.25f };
-    private static final int[]    SIZE_XP   = { 0,    200,   250,   350,  450,    600   };
+    private static final int[]    SIZE_XP   = { 0,    50,    100,    200,   300,    400  };
     /** Base hitbox at scale 1.0 — the visual scale is applied on top of this. */
     private static final float BASE_WIDTH  = 2.0f;
     private static final float BASE_HEIGHT = 3.0f;
@@ -207,6 +218,7 @@ public class PitchBlack extends Monster {
         AttributeInstance hp  = this.getAttribute(Attributes.MAX_HEALTH);
         AttributeInstance atk = this.getAttribute(Attributes.ATTACK_DAMAGE);
         AttributeInstance arm = this.getAttribute(Attributes.ARMOR);
+        AttributeInstance spd = this.getAttribute(Attributes.MOVEMENT_SPEED);
 
         boolean firstApply = !attributesSeeded;
         float prevRatio = (hp != null && hp.getValue() > 0)
@@ -215,6 +227,7 @@ public class PitchBlack extends Monster {
         if (hp != null)  hp.setBaseValue(SIZE_HP[tier]);
         if (atk != null) atk.setBaseValue(SIZE_ATK[tier]);
         if (arm != null) arm.setBaseValue(SIZE_ARM[tier]);
+        if (spd != null) spd.setBaseValue(SIZE_SPEED[tier]);
 
         // First apply (fresh spawn) → fill HP. Otherwise preserve the % HP the
         // entity had before the resize, so a tier-up effect doesn't free-heal.

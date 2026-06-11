@@ -1,5 +1,7 @@
 package danger.orespawn.entity;
 
+import danger.orespawn.MobStats;
+
 import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
@@ -74,10 +76,12 @@ public class EntityGammaMetroid extends TamableAnimal {
     }
 
     public static AttributeSupplier.Builder createAttributes() {
+        // orig OreSpawnMain.java:6486 — GammaMetroid 100 HP / 10 ATK / 12 armor
         return Mob.createMobAttributes()
-                .add(Attributes.MAX_HEALTH, 60.0)
+                .add(Attributes.MAX_HEALTH, MobStats.GAMMA_METROID.maxHealth())
                 .add(Attributes.MOVEMENT_SPEED, 0.15)
-                .add(Attributes.ATTACK_DAMAGE, 8.0);
+                .add(Attributes.ATTACK_DAMAGE, MobStats.GAMMA_METROID.attackDamage())
+                .add(Attributes.ARMOR, MobStats.GAMMA_METROID.armor());
     }
 
     @Override

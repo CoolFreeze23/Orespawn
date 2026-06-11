@@ -1,5 +1,7 @@
 package danger.orespawn.entity;
 
+import danger.orespawn.MobStats;
+
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.damagesource.DamageSource;
@@ -49,10 +51,12 @@ public class Cryolophosaurus extends Monster {
     private void legacySetAttacking(int value) {}
 
     public static AttributeSupplier.Builder createAttributes() {
+        // orig OreSpawnMain.java:6482 — Cryolophosaurus 10 HP / 3 ATK / 1 armor
         return Monster.createMonsterAttributes()
-                .add(Attributes.MAX_HEALTH, 20.0)
+                .add(Attributes.MAX_HEALTH, MobStats.CRYOLOPHOSAURUS.maxHealth())
                 .add(Attributes.MOVEMENT_SPEED, 0.25)
-                .add(Attributes.ATTACK_DAMAGE, 5.0)
+                .add(Attributes.ATTACK_DAMAGE, MobStats.CRYOLOPHOSAURUS.attackDamage())
+                .add(Attributes.ARMOR, MobStats.CRYOLOPHOSAURUS.armor())
                 .add(Attributes.FOLLOW_RANGE, 16.0);
     }
 

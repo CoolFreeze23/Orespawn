@@ -1,5 +1,7 @@
 package danger.orespawn.entity;
 
+import danger.orespawn.MobStats;
+
 import java.util.Comparator;
 import java.util.List;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -60,11 +62,12 @@ public class Robot3 extends Monster {
     }
 
     public static AttributeSupplier.Builder createAttributes() {
+        // orig OreSpawnMain.java:6496 — Robot3 80 HP / 16 ATK / 14 armor
         return Monster.createMonsterAttributes()
-                .add(Attributes.MAX_HEALTH, 300.0)
+                .add(Attributes.MAX_HEALTH, MobStats.ROBOT3.maxHealth())
                 .add(Attributes.MOVEMENT_SPEED, 0.35)
-                .add(Attributes.ATTACK_DAMAGE, 20.0)
-                .add(Attributes.ARMOR, 6.0);
+                .add(Attributes.ATTACK_DAMAGE, MobStats.ROBOT3.attackDamage())
+                .add(Attributes.ARMOR, MobStats.ROBOT3.armor());
     }
 
     @Override

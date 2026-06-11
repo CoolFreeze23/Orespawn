@@ -1,5 +1,7 @@
 package danger.orespawn.entity;
 
+import danger.orespawn.MobStats;
+
 import danger.orespawn.OreSpawnMod;
 import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
@@ -32,9 +34,7 @@ public class Skate extends Monster {
     private static final EntityDataAccessor<Integer> DATA_ATTACKING =
             SynchedEntityData.defineId(Skate.class, EntityDataSerializers.INT);
 
-    private static final int MAX_HEALTH = 15;
     private static final double MOVE_SPEED = 0.25;
-    private static final double ATTACK_DAMAGE = 4.0;
 
     private int closestWaterDistance = 99999;
     private int targetX = 0, targetY = 0, targetZ = 0;
@@ -54,10 +54,12 @@ public class Skate extends Monster {
     }
 
     public static AttributeSupplier.Builder createAttributes() {
+        // orig OreSpawnMain.java:6519 — Skate 8 HP / 8 ATK / 4 armor
         return Monster.createMonsterAttributes()
-                .add(Attributes.MAX_HEALTH, MAX_HEALTH)
+                .add(Attributes.MAX_HEALTH, MobStats.SKATE.maxHealth())
                 .add(Attributes.MOVEMENT_SPEED, MOVE_SPEED)
-                .add(Attributes.ATTACK_DAMAGE, ATTACK_DAMAGE);
+                .add(Attributes.ATTACK_DAMAGE, MobStats.SKATE.attackDamage())
+                .add(Attributes.ARMOR, MobStats.SKATE.armor());
     }
 
     @Override

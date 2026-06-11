@@ -24,6 +24,7 @@ import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import javax.annotation.Nullable;
+import danger.orespawn.MobStats;
 import danger.orespawn.OreSpawnMod;
 
 public class Crab extends Monster {
@@ -35,11 +36,11 @@ public class Crab extends Monster {
     private final Comparator<Entity> targetSorter;
     private int hurtTimer = 0;
     private float moveSpeed = 0.55f;
-    private static final int BASE_HEALTH = 100;
-    private static final int BASE_ATTACK = 10;
     private static final double KNOCKBACK_HORIZONTAL_SCALE = 1.15;
     private static final double KNOCKBACK_VERTICAL_SCALE = 0.48;
     private static final double PLAYER_VERTICAL_KNOCKBACK_MULTIPLIER = 2.0;
+    /** Scale whose stats were last pushed into the live attributes; -1 = never. */
+    private float lastAppliedStatScale = -1.0f;
 
     public Crab(EntityType<? extends Crab> type, Level level) {
         super(type, level);
@@ -57,12 +58,16 @@ public class Crab extends Monster {
     }
 
     public static AttributeSupplier.Builder createAttributes() {
+        // orig OreSpawnMain.java:6524 — Crab table entry 180 HP / 24 ATK / 16 armor.
+        // These are the scale=1.0 baselines; applyScaleStats() pushes the real
+        // per-scale values (orig Crab.java:69-71,137,141), including the original
+        // bug where crab health reads PitchBlack's 250 instead of 180.
         return Monster.createMonsterAttributes()
-                .add(Attributes.MAX_HEALTH, BASE_HEALTH)
+                .add(Attributes.MAX_HEALTH, MobStats.PITCH_BLACK.maxHealth())
                 .add(Attributes.MOVEMENT_SPEED, 0.55)
-                .add(Attributes.ATTACK_DAMAGE, BASE_ATTACK)
+                .add(Attributes.ATTACK_DAMAGE, MobStats.CRAB.attackDamage())
                 .add(Attributes.FOLLOW_RANGE, 16.0)
-                .add(Attributes.ARMOR, 6.0);
+                .add(Attributes.ARMOR, MobStats.CRAB.armor());
     }
 
     @Override
@@ -78,6 +83,36 @@ public class Crab extends Monster {
 
     public void setCrabScale(float val) {
         this.entityData.set(DATA_SCALE, (int) (val * 100.0f));
+        if (!this.level().isClientSide) {
+            applyScaleStats();
+        }
+    }
+
+    /**
+     * Pushes the size-scaled stats into the live attributes, mirroring the
+     * original formulas:
+     * <ul>
+     *   <li>HP = {@code PitchBlack_stats.health (250) × scale} — orig
+     *       Crab.java:137 reads PitchBlack's health instead of Crab's 180;
+     *       original bug kept for parity.</li>
+     *   <li>ATK = {@code Crab_stats.attack (24) × scale} — orig Crab.java:71.</li>
+     *   <li>Armor = {@code Crab_stats.defense (16) + 2 × scale} — orig Crab.java:141.</li>
+     *   <li>XP = {@code 400 × scale} — orig Crab.java:95,116.</li>
+     * </ul>
+     */
+    private void applyScaleStats() {
+        float scale = this.getCrabScale();
+        var hp = this.getAttribute(Attributes.MAX_HEALTH);
+        var atk = this.getAttribute(Attributes.ATTACK_DAMAGE);
+        var arm = this.getAttribute(Attributes.ARMOR);
+        if (hp != null) hp.setBaseValue((int) (MobStats.PITCH_BLACK.maxHealth() * scale));
+        if (atk != null) atk.setBaseValue(MobStats.CRAB.attackDamage() * scale);
+        if (arm != null) arm.setBaseValue((int) (MobStats.CRAB.armor() + 2.0f * scale));
+        // Clamp (covers the fresh-spawn case where health still reflects the
+        // pre-scale builder baseline); never heals a damaged crab.
+        this.setHealth(Math.min(this.getHealth(), this.getMaxHealth()));
+        this.xpReward = (int) (400.0f * scale);
+        this.lastAppliedStatScale = scale;
     }
 
     public final int getAttacking() {
@@ -97,12 +132,16 @@ public class Crab extends Monster {
     public void tick() {
         this.moveSpeed = this.isInWater() ? 0.95f : 0.55f;
         this.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(this.moveSpeed * this.getCrabScale());
+        if (!this.level().isClientSide && this.getCrabScale() != this.lastAppliedStatScale) {
+            applyScaleStats();
+        }
         super.tick();
     }
 
     @Override
     public boolean doHurtTarget(Entity target) {
-        float damage = (float) BASE_ATTACK * this.getCrabScale();
+        // The attribute already carries Crab_stats.attack × scale (orig Crab.java:71).
+        float damage = (float) this.getAttributeValue(Attributes.ATTACK_DAMAGE);
         boolean hit = target.hurt(this.damageSources().mobAttack(this), damage);
         if (hit && target instanceof LivingEntity) {
             float scale = this.getCrabScale();
