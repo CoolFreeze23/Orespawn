@@ -2,12 +2,39 @@
   "type": "minecraft:entity",
   "pools": [
     {
-      "rolls": 1,
-      "entries": [{"type": "minecraft:item", "name": "minecraft:iron_ingot", "functions": [{"function": "minecraft:set_count", "count": {"type": "minecraft:uniform", "min": 4, "max": 8}}]}]
+      "rolls": {
+        "type": "minecraft:uniform",
+        "min": 5,
+        "max": 10
+      },
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "orespawn:laser_ball",
+          "functions": [
+            {"function": "minecraft:set_count", "count": 4}
+          ]
+        }
+      ]
     },
     {
-      "rolls": 1,
-      "entries": [{"type": "minecraft:item", "name": "minecraft:gold_ingot", "functions": [{"function": "minecraft:set_count", "count": {"type": "minecraft:uniform", "min": 1, "max": 3}}]}]
+      "rolls": {
+        "type": "minecraft:uniform",
+        "min": 2,
+        "max": 6
+      },
+      "entries": [
+        {"type": "minecraft:item", "weight": 1, "name": "minecraft:redstone"},
+        {"type": "minecraft:item", "weight": 1, "name": "minecraft:repeater"},
+        {"type": "minecraft:item", "weight": 1, "name": "minecraft:comparator"},
+        {"type": "minecraft:item", "weight": 2, "name": "minecraft:redstone_block"},
+        {"type": "minecraft:item", "weight": 1, "name": "minecraft:dispenser"},
+        {"type": "minecraft:item", "weight": 1, "name": "minecraft:sticky_piston"},
+        {"type": "minecraft:item", "weight": 1, "name": "minecraft:piston"},
+        {"type": "minecraft:item", "weight": 1, "name": "minecraft:lever"},
+        {"type": "minecraft:item", "weight": 1, "name": "minecraft:light_weighted_pressure_plate"},
+        {"type": "minecraft:empty", "weight": 5}
+      ]
     }
   ]
 }

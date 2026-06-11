@@ -1,0 +1,7 @@
+{
+  "type": "neoforge:add_spawns",
+  "biomes": "minecraft:taiga",
+  "spawners": [
+    { "type": "orespawn:rat", "weight": 25, "minCount": 2, "maxCount": 8 }
+  ]
+}

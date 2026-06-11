@@ -52,9 +52,9 @@ public class Lizard extends TamableAnimal {
     public boolean shouldDespawn = true;
     private LivingEntity buddy = null;
     private int followTime = 0;
-    private static final int NO_FIRE_FOUND_SENTINEL = 99999;
+    private static final int NO_WATER_FOUND_SENTINEL = 99999;
 
-    private int closestFireDistanceSq = NO_FIRE_FOUND_SENTINEL;
+    private int closestWaterDistanceSq = NO_WATER_FOUND_SENTINEL;
     private int targetX = 0;
     private int targetY = 0;
     private int targetZ = 0;
@@ -146,15 +146,16 @@ public class Lizard extends TamableAnimal {
         return null;
     }
 
-    private boolean scanForFire(int x, int y, int z, int dx, int dy, int dz) {
+    // orig Lizard.java:175-236 scan_it seeks water/flowing_water blocks (field_150355_j/field_150358_i), not fire
+    private boolean scanForWater(int x, int y, int z, int dx, int dy, int dz) {
         int found = 0;
         for (int i = -dy; i <= dy; i++) {
             for (int j = -dz; j <= dz; j++) {
                 BlockState state = this.level().getBlockState(new BlockPos(x + dx, y + i, z + j));
-                if (state.is(Blocks.LAVA) || state.is(Blocks.FIRE)) {
+                if (state.is(Blocks.WATER)) {
                     int distSq = dx * dx + j * j + i * i;
-                    if (distSq < this.closestFireDistanceSq) {
-                        this.closestFireDistanceSq = distSq;
+                    if (distSq < this.closestWaterDistanceSq) {
+                        this.closestWaterDistanceSq = distSq;
                         this.targetX = x + dx;
                         this.targetY = y + i;
                         this.targetZ = z + j;
@@ -162,10 +163,10 @@ public class Lizard extends TamableAnimal {
                     }
                 }
                 state = this.level().getBlockState(new BlockPos(x - dx, y + i, z + j));
-                if (state.is(Blocks.LAVA) || state.is(Blocks.FIRE)) {
+                if (state.is(Blocks.WATER)) {
                     int distSq = dx * dx + j * j + i * i;
-                    if (distSq < this.closestFireDistanceSq) {
-                        this.closestFireDistanceSq = distSq;
+                    if (distSq < this.closestWaterDistanceSq) {
+                        this.closestWaterDistanceSq = distSq;
                         this.targetX = x - dx;
                         this.targetY = y + i;
                         this.targetZ = z + j;
@@ -186,16 +187,16 @@ public class Lizard extends TamableAnimal {
         else { this.shouldDespawn = true; }
 
         if (!this.isInWater() && this.random.nextInt(100) == 0) {
-            this.closestFireDistanceSq = NO_FIRE_FOUND_SENTINEL;
+            this.closestWaterDistanceSq = NO_WATER_FOUND_SENTINEL;
             this.targetX = 0;
             this.targetY = 0;
             this.targetZ = 0;
             for (int i = 1; i < 14; i++) {
                 int j = Math.min(i, 5);
-                if (this.scanForFire((int) this.getX(), (int) this.getY() - 1, (int) this.getZ(), i, j, i)) break;
+                if (this.scanForWater((int) this.getX(), (int) this.getY() - 1, (int) this.getZ(), i, j, i)) break;
                 if (i >= 5) i++;
             }
-            if (this.closestFireDistanceSq < NO_FIRE_FOUND_SENTINEL) {
+            if (this.closestWaterDistanceSq < NO_WATER_FOUND_SENTINEL) {
                 this.getNavigation().moveTo(this.targetX, this.targetY - 1, this.targetZ, 1.33);
             }
         }

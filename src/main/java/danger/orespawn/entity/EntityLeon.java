@@ -731,7 +731,7 @@ public class EntityLeon extends TamableAnimal
         }
 
         if (this.isTame() && this.isOwnedBy(player)) {
-            if (stack.is(Blocks.GLASS.asItem()) && this.distanceToSqr(player) < 49.0) {
+            if (stack.is(Blocks.DEAD_BUSH.asItem()) && this.distanceToSqr(player) < 49.0) { // orig Leon.java:1035 untame item is dead bush (field_150330_I)
                 if (!this.level().isClientSide) {
                     this.setTame(false, false);
                     this.setOwnerUUID(null);

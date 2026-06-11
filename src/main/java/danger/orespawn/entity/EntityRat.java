@@ -180,27 +180,23 @@ public class EntityRat extends Monster {
         }
     }
 
+    // orig Rat.java:185-249 — RatPlayerFriendly/RatPetFriendly only gate OWNED rats
+    // (myowner != null); wild rats attack players and pets regardless of the configs.
     private boolean isSuitableTarget(LivingEntity target) {
         if (target == null || target == this || !target.isAlive()) return false;
         if (!this.getSensing().hasLineOfSight(target)) return false;
         if (target instanceof EntityRat) return false;
 
-        // RAT_PLAYER_FRIENDLY (default true): when enabled, rats never target any
-        // player — not just their owner.  This makes wild rats passive toward players.
-        if (OreSpawnConfig.RAT_PLAYER_FRIENDLY.get() && target instanceof Player) return false;
-
-        // RAT_PET_FRIENDLY (default true): when enabled, rats will not attack any
-        // tamed animal regardless of ownership, preventing them from harassing pets.
-        if (OreSpawnConfig.RAT_PET_FRIENDLY.get() && target instanceof TamableAnimal tamable && tamable.isTame()) {
-            return false;
-        }
-
         if (target instanceof Player player) {
             if (player.getAbilities().invulnerable) return false;
-            if (this.ownerUuid != null && this.ownerUuid.equals(player.getUUID())) return false;
+            if (this.ownerUuid != null) {
+                if (this.ownerUuid.equals(player.getUUID())) return false; // orig Rat.java:230-233
+                if (OreSpawnConfig.RAT_PLAYER_FRIENDLY.get()) return false; // orig Rat.java:234-236
+            }
         }
-        if (this.ownerUuid != null && target instanceof TamableAnimal tamable && tamable.isTame()) {
-            return false;
+        if (this.ownerUuid != null && target instanceof TamableAnimal tamable) {
+            if (OreSpawnConfig.RAT_PET_FRIENDLY.get() && tamable.isTame()) return false; // orig Rat.java:241-243
+            if (tamable.getOwnerUUID() != null && this.ownerUuid.equals(tamable.getOwnerUUID())) return false; // orig Rat.java:244-246
         }
         return true;
     }

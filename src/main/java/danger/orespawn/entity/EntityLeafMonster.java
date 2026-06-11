@@ -23,6 +23,7 @@ import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import danger.orespawn.OreSpawnConfig;
 import danger.orespawn.OreSpawnMod;
 
 public class EntityLeafMonster extends Monster {
@@ -131,6 +132,7 @@ public class EntityLeafMonster extends Monster {
 
     @Nullable
     private LivingEntity findSomethingToAttack() {
+        if (OreSpawnConfig.PLAY_NICELY.get()) return null; // orig LeafMonster.java:210-212
         List<LivingEntity> entities = this.level().getEntitiesOfClass(LivingEntity.class,
                 this.getBoundingBox().inflate(4.0, 6.0, 4.0));
         entities.sort(Comparator.comparingDouble(this::distanceToSqr));
@@ -140,13 +142,17 @@ public class EntityLeafMonster extends Monster {
         return null;
     }
 
+    // orig LeafMonster.java:178-207 — explicit prey list: Ant, Butterfly, LunaMoth, non-creative players
     private boolean isSuitableTarget(LivingEntity target) {
         if (target == null || target == this || !target.isAlive()) return false;
         if (!this.getSensing().hasLineOfSight(target)) return false;
+        if (target instanceof EntityAnt) return true;
+        if (target instanceof EntityButterfly) return true;
+        if (target instanceof EntityLunaMoth) return true;
         if (target instanceof Player player) {
             return !player.getAbilities().invulnerable;
         }
-        return target.getBbWidth() < 1.0f;
+        return false;
     }
 
     @Nullable

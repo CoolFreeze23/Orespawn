@@ -45,25 +45,26 @@ import danger.orespawn.OreSpawnMod;
 /**
  * The Nightmare — Danger Dimension apex predator.
  *
- * <p>Wiki §14 (1.7.10) documents five discrete size tiers, each with its own
- * stat block. We reproduce them exactly:</p>
+ * <p>The original (orig PitchBlack.java:99-145) rolls a discrete scale
+ * t ∈ {0.5, 1, 2, 3, 4} via a cascading dice chain, then derives every stat
+ * from t. The five tiers here are exactly those five scale values:</p>
  *
  * <pre>
- *   tier | HP   | atk | armor | scale | xp
- *   -----+------+-----+-------+-------+-----
- *    1   |  125 |  15 |  10.0 |  0.50 | 200
- *    2   |  250 |  30 |  12.0 |  0.65 | 250
- *    3   |  500 |  60 |  14.0 |  0.80 | 350
- *    4   |  750 |  90 |  16.0 |  1.00 | 450
- *    5   | 1000 | 120 |  18.0 |  1.25 | 600
+ *   tier | t   | HP   | atk | armor | speed | xp
+ *   -----+-----+------+-----+-------+-------+-----
+ *    1   | 0.5 |  125 |  15 |  11   | 0.25  | 50
+ *    2   | 1.0 |  250 |  30 |  12   | 0.30  | 100
+ *    3   | 2.0 |  500 |  60 |  14   | 0.40  | 200
+ *    4   | 3.0 |  750 |  90 |  16   | 0.50  | 300
+ *    5   | 4.0 | 1000 | 120 |  18   | 0.60  | 400
  * </pre>
  *
  * <p>The legacy {@code pitch_black} registry id and class name are preserved
  * for save compatibility — every existing world that contains a Nightmare
  * still resolves to this class. The {@code DATA_SIZE_TIER} byte is the new
- * canonical size source; the legacy {@code DATA_SCALE} (10×scale int) and
- * the older {@code Fscale} NBT field are still read so that betas saved with
- * the continuous-scale system migrate cleanly to the discrete tier system.</p>
+ * canonical size source; the legacy {@code DATA_SCALE} (10×scale int, the
+ * orig DataWatcher format at PitchBlack.java:183-187) and the older
+ * {@code Fscale} NBT field are still read so older saves migrate cleanly.</p>
  */
 public class PitchBlack extends Monster {
     private static final EntityDataAccessor<Integer> DATA_ATTACKING =
@@ -98,11 +99,12 @@ public class PitchBlack extends Monster {
     private static final double[] SIZE_ATK  = { 0.0,  15.0,  30.0,   60.0,  90.0,  120.0 };
     private static final double[] SIZE_ARM  = { 0.0,  11.0,  12.0,   14.0,  16.0,   18.0 };
     private static final double[] SIZE_SPEED= { 0.0,  0.25,  0.30,   0.40,  0.50,   0.60 };
-    private static final float[]  SIZE_SCALE= { 0.0f, 0.50f, 0.65f, 0.80f, 1.00f,  1.25f };
+    /** The orig scale values themselves: t ∈ {0.5, 1, 2, 3, 4} (orig PitchBlack.java:99-141). */
+    private static final float[]  SIZE_SCALE= { 0.0f, 0.50f, 1.00f, 2.00f, 3.00f,  4.00f };
     private static final int[]    SIZE_XP   = { 0,    50,    100,    200,   300,    400  };
-    /** Base hitbox at scale 1.0 — the visual scale is applied on top of this. */
-    private static final float BASE_WIDTH  = 2.0f;
-    private static final float BASE_HEIGHT = 3.0f;
+    /** Hitbox = 2.5×t wide, 3.5×t tall (orig PitchBlack.java:145,250 setSize(2.5f*t, 3.5f*t)). */
+    private static final float BASE_WIDTH  = 2.5f;
+    private static final float BASE_HEIGHT = 3.5f;
 
     private final ServerBossEvent bossEvent = new ServerBossEvent(
             Component.literal("Nightmare"), BossEvent.BossBarColor.PURPLE, BossEvent.BossBarOverlay.PROGRESS);
@@ -270,13 +272,19 @@ public class PitchBlack extends Monster {
     @Override
     public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty,
                                         MobSpawnType reason, @Nullable SpawnGroupData spawnData) {
-        // NIGHTMARE_SIZE config (0..5) controls the spawn tier:
-        //   0 = random 1..5 (the 1.7.10 default — every Nightmare lottery)
-        //   1..5 = force that exact tier (debug / arena / boss-rush servers)
+        // orig PitchBlack.java:99-141 — cascading size dice: start at t=0.5,
+        // then 1-in-4 -> 1.0, 1-in-8 -> 2.0, 1-in-32 -> 3.0, 1-in-64 -> 4.0
+        // (later rolls override earlier ones). NightmareSize config 1..5
+        // (orig :127-141) forces tiers 1..5; 0 leaves the dice result.
+        int tier = MIN_SIZE_TIER;
+        if (this.random.nextInt(4) == 1) tier = 2;
+        if (this.random.nextInt(8) == 2) tier = 3;
+        if (this.random.nextInt(32) == 3) tier = 4;
+        if (this.random.nextInt(64) == 4) tier = 5;
         int forced = OreSpawnConfig.NIGHTMARE_SIZE.get();
-        int tier = (forced >= MIN_SIZE_TIER && forced <= MAX_SIZE_TIER)
-                ? forced
-                : MIN_SIZE_TIER + this.random.nextInt(MAX_SIZE_TIER);
+        if (forced >= MIN_SIZE_TIER && forced <= MAX_SIZE_TIER) {
+            tier = forced;
+        }
         setSizeTier(tier);
         return super.finalizeSpawn(level, difficulty, reason, spawnData);
     }
@@ -374,8 +382,9 @@ public class PitchBlack extends Monster {
         float scale = this.getPitchBlackScale();
         if (this.getRandom().nextInt(150) == 0
                 || this.currentFlightTarget.distSqr(this.blockPosition()) < 4) {
-            int xdir = this.getRandom().nextInt(20) + (int) (5 * scale);
-            int zdir = this.getRandom().nextInt(20) + (int) (5 * scale);
+            // orig PitchBlack.java:346-347 — 5 * (int)scale (scale truncated first, so t=0.5 adds 0)
+            int xdir = this.getRandom().nextInt(20) + 5 * (int) scale;
+            int zdir = this.getRandom().nextInt(20) + 5 * (int) scale;
             if (this.getRandom().nextInt(2) == 0) xdir = -xdir;
             if (this.getRandom().nextInt(2) == 0) zdir = -zdir;
             this.currentFlightTarget = new BlockPos(
