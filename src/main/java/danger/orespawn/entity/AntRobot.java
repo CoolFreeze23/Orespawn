@@ -39,7 +39,6 @@ public class AntRobot extends Mob {
     private static final double KNOCKBACK_HORIZONTAL = 0.7;
     private static final double KNOCKBACK_VERTICAL = 0.1;
     private static final double PLAYER_OR_REMOVED_VERTICAL_MULTIPLIER = 2.0;
-    private static final float STOMP_DAMAGE = 3.5f;
     private static final double STOMP_KNOCKBACK = 0.6;
     private static final float PARTICLE_OFFSET_BLOCKS = 4.0f;
 
@@ -120,12 +119,16 @@ public class AntRobot extends Mob {
                             this.getDeltaMovement().y,
                             CHASE_SPEED * Math.sin(yawToTarget));
                 }
-                double meleeRange = (6.0f + currentTarget.getBbWidth() / 2.0f);
-                if (this.distanceToSqr(currentTarget) < meleeRange * meleeRange) {
-                    this.setAttacking(1);
-                    this.doHurtTarget(currentTarget);
-                } else {
-                    this.setAttacking(0);
+                // orig AntRobot.java:130-145 — melee only attempted on a
+                // 1-in-15 roll per tick, not every tick.
+                if (this.getRandom().nextInt(15) == 0) {
+                    double meleeRange = (6.0f + currentTarget.getBbWidth() / 2.0f);
+                    if (this.distanceToSqr(currentTarget) < meleeRange * meleeRange) {
+                        this.setAttacking(1);
+                        this.doHurtTarget(currentTarget);
+                    } else {
+                        this.setAttacking(0);
+                    }
                 }
             } else {
                 this.setAttacking(0);
@@ -158,6 +161,10 @@ public class AntRobot extends Mob {
         super.tick();
         this.clearFire();
 
+        // orig AntRobot.java:617-619 — while ridden, 1-in-50 stomp around the feet.
+        if (!this.level().isClientSide() && this.getFirstPassenger() != null && this.getRandom().nextInt(50) == 0) {
+            feetFindSomethingToHit();
+        }
         if (!this.level().isClientSide() && this.getFirstPassenger() != null && this.getRandom().nextInt(9) == 0) {
             LivingEntity riderTarget = findSomethingToAttack();
             if (riderTarget != null) {
@@ -263,7 +270,9 @@ public class AntRobot extends Mob {
         for (LivingEntity stompTarget : entities) {
             if (feetIsSuitableTarget(stompTarget)) {
                 float yawToTarget = (float) Math.atan2(stompTarget.getZ() - this.getZ(), stompTarget.getX() - this.getX());
-                boolean hurtApplied = stompTarget.hurt(this.damageSources().mobAttack(this), STOMP_DAMAGE);
+                // orig AntRobot.java:1000 — stomp damage = attack attribute / 10 (30/10 = 3.0).
+                boolean hurtApplied = stompTarget.hurt(this.damageSources().mobAttack(this),
+                        (float) this.getAttributeValue(Attributes.ATTACK_DAMAGE) / 10.0f);
                 if (hurtApplied) {
                     stompTarget.push(
                             Math.cos(yawToTarget) * STOMP_KNOCKBACK,

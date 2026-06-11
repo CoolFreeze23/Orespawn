@@ -25,6 +25,7 @@ import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.TemptGoal;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
+import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.monster.Monster;
@@ -299,7 +300,14 @@ public class Cephadrome extends PathfinderMob
         if (!(target instanceof LivingEntity)) {
             return false;
         }
-        boolean hurtApplied = target.hurt(this.damageSources().mobAttack(this), MELEE_DAMAGE);
+        // orig Cephadrome.java:409-419 — Ender Dragon takes 70 directly to a
+        // body part via an explosion-typed source; no knockback applied.
+        if (target instanceof EnderDragon dragon) {
+            return dragon.hurt(this.damageSources().explosion(this, this), MELEE_DAMAGE);
+        }
+        // orig Cephadrome.java:421-424 — Kraken takes ×1.5 damage.
+        float damage = target instanceof Kraken ? MELEE_DAMAGE * 1.5f : MELEE_DAMAGE;
+        boolean hurtApplied = target.hurt(this.damageSources().mobAttack(this), damage);
         double verticalKnockback = KNOCKBACK_VERTICAL;
         float yawToTarget = (float) Math.atan2(target.getZ() - this.getZ(), target.getX() - this.getX());
         if (target.isRemoved() || target instanceof Player) {
@@ -369,7 +377,13 @@ public class Cephadrome extends PathfinderMob
         if (!this.getSensing().hasLineOfSight(target)) return false;
         if (target instanceof Cephadrome) return false;
         if (target instanceof Monster) return true;
-        if (target instanceof Mothra || target instanceof EntityLeon || target instanceof EntityGammaMetroid || target instanceof WaterDragon) return false;
+        // orig Cephadrome.java:537-554 — Mothra always a target; Leon /
+        // GammaMetroid / WaterDragon only while untamed; EnderDragon always.
+        if (target instanceof Mothra) return true;
+        if (target instanceof EntityLeon leon) return !leon.isTame();
+        if (target instanceof EntityGammaMetroid metroid) return !metroid.isTame();
+        if (target instanceof WaterDragon waterDragon) return !waterDragon.isTame();
+        if (target instanceof EnderDragon) return true;
         if (target instanceof Player player) {
             if (player.getAbilities().invulnerable) return false;
             // Phase 14 — tamed Cephadromes never attack players.

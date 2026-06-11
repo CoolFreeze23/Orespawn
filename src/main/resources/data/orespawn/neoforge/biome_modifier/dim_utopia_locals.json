@@ -5,6 +5,8 @@
     { "type": "orespawn:gazelle",        "weight": 10, "minCount": 2, "maxCount": 4 },
     { "type": "orespawn:red_cow",        "weight": 10, "minCount": 4, "maxCount": 8 },
     { "type": "orespawn:gold_cow",       "weight": 8,  "minCount": 2, "maxCount": 6 },
-    { "type": "orespawn:enchanted_apple_cow",  "weight": 5,  "minCount": 2, "maxCount": 4 }
+    { "type": "orespawn:enchanted_apple_cow",  "weight": 5,  "minCount": 2, "maxCount": 4 },
+    { "type": "orespawn:alosaurus",      "weight": 1,  "minCount": 1, "maxCount": 1 },
+    { "type": "orespawn:baryonyx",       "weight": 2,  "minCount": 2, "maxCount": 4 }
   ]
 }

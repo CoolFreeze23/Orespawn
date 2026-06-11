@@ -1,0 +1,5 @@
+{
+  "type": "neoforge:add_spawns",
+  "biomes": "minecraft:windswept_forest",
+  "spawners": { "type": "orespawn:boyfriend", "weight": 8, "minCount": 2, "maxCount": 5 }
+}

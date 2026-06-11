@@ -116,7 +116,8 @@ public class Chipmunk extends TamableAnimal {
             return InteractionResult.SUCCESS;
         }
 
-        if (stack.is(Items.WHEAT) && this.distanceToSqr(player) < 16.0) {
+        // orig Chipmunk.java:141 — taming food is an apple (1-in-2 chance).
+        if (stack.is(Items.APPLE) && this.distanceToSqr(player) < 16.0) {
             if (!this.isTame()) {
                 if (!this.level().isClientSide) {
                     if (this.random.nextInt(2) == 0) {
@@ -141,7 +142,8 @@ public class Chipmunk extends TamableAnimal {
             return InteractionResult.sidedSuccess(this.level().isClientSide);
         }
 
-        if (this.isTame() && stack.is(Blocks.GLASS.asItem())
+        // orig Chipmunk.java:172 — a dead bush releases (untames) the chipmunk.
+        if (this.isTame() && stack.is(Blocks.DEAD_BUSH.asItem())
                 && this.distanceToSqr(player) < 16.0
                 && this.isOwnedBy(player)) {
             if (!this.level().isClientSide) {

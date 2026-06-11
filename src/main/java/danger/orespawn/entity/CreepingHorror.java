@@ -5,12 +5,15 @@ import danger.orespawn.MobStats;
 import java.util.Comparator;
 import java.util.List;
 
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
@@ -22,9 +25,13 @@ import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.ServerLevelAccessor;
 import danger.orespawn.OreSpawnMod;
 
 public class CreepingHorror extends Monster {
+    private static final ResourceKey<Level> CHAOS_DIM = ResourceKey.create(
+            Registries.DIMENSION, ResourceLocation.fromNamespaceAndPath("orespawn", "chaos"));
     private static final long DAYTIME_TICKS = 24000L;
     /** Past this tick-of-day, the random daytime despawn logic does not run. */
     private static final long DAYTIME_DESPAWN_CUTOFF = 11000L;
@@ -61,6 +68,20 @@ public class CreepingHorror extends Monster {
     @Override
     public boolean removeWhenFarAway(double dist) {
         return !this.isPersistenceRequired();
+    }
+
+    @Override
+    public boolean checkSpawnRules(LevelAccessor level, MobSpawnType spawnType) {
+        // orig CreepingHorror.java:220-228 — only spawns in darkness, at
+        // night, and either in the Chaos dimension (DimensionID6) or at y<=15.
+        if (level instanceof ServerLevelAccessor server) {
+            if (!Monster.isDarkEnoughToSpawn(server, this.blockPosition(), this.getRandom())) {
+                return false;
+            }
+            if (server.getLevel().isDay()) return false;
+            return server.getLevel().dimension() == CHAOS_DIM || this.getY() <= 15.0;
+        }
+        return super.checkSpawnRules(level, spawnType);
     }
 
     @Override

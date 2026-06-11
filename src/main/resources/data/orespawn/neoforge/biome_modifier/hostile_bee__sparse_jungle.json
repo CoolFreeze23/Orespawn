@@ -1,0 +1,5 @@
+{
+  "type": "neoforge:add_spawns",
+  "biomes": "minecraft:sparse_jungle",
+  "spawners": { "type": "orespawn:bee", "weight": 5, "minCount": 2, "maxCount": 5 }
+}

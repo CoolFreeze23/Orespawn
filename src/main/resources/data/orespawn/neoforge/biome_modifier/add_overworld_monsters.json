@@ -3,19 +3,14 @@
   "biomes": "#minecraft:is_overworld",
   "spawners": [
     { "type": "orespawn:rat", "weight": 20, "minCount": 1, "maxCount": 3 },
-    { "type": "orespawn:alosaurus", "weight": 3, "minCount": 1, "maxCount": 1 },
     { "type": "orespawn:cryolophosaurus", "weight": 3, "minCount": 1, "maxCount": 1 },
     { "type": "orespawn:pointysaurus", "weight": 3, "minCount": 1, "maxCount": 1 },
     { "type": "orespawn:nastysaurus", "weight": 3, "minCount": 1, "maxCount": 1 },
     { "type": "orespawn:trex", "weight": 1, "minCount": 1, "maxCount": 1 },
-    { "type": "orespawn:bee", "weight": 8, "minCount": 1, "maxCount": 3 },
-    { "type": "orespawn:brutalfly", "weight": 3, "minCount": 1, "maxCount": 1 },
     { "type": "orespawn:leaf_monster", "weight": 4, "minCount": 1, "maxCount": 2 },
     { "type": "orespawn:lurking_terror", "weight": 2, "minCount": 1, "maxCount": 1 },
     { "type": "orespawn:terrible_terror", "weight": 4, "minCount": 1, "maxCount": 2 },
     { "type": "orespawn:triffid", "weight": 4, "minCount": 1, "maxCount": 2 },
-    { "type": "orespawn:creeping_horror", "weight": 3, "minCount": 1, "maxCount": 1 },
-    { "type": "orespawn:band_p", "weight": 3, "minCount": 1, "maxCount": 1 },
-    { "type": "orespawn:basilisk", "weight": 1, "minCount": 1, "maxCount": 1 }
+    { "type": "orespawn:creeping_horror", "weight": 3, "minCount": 1, "maxCount": 1 }
   ]
 }

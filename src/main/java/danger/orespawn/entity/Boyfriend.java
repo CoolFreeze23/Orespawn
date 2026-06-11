@@ -23,6 +23,7 @@ import net.minecraft.world.entity.ai.goal.FloatGoal;
 import net.minecraft.world.entity.ai.goal.FollowOwnerGoal;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
+import net.minecraft.world.entity.ai.goal.OpenDoorGoal;
 import net.minecraft.world.entity.ai.goal.PanicGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.TemptGoal;
@@ -30,6 +31,7 @@ import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.OwnerHurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.OwnerHurtTargetGoal;
+import net.minecraft.world.entity.ai.navigation.GroundPathNavigation;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.food.FoodProperties;
@@ -64,17 +66,28 @@ public class Boyfriend extends TamableAnimal {
         this.voice = this.random.nextInt(10);
         this.setTameSkin(this.whichGuy);
         this.setOrderedToSit(false);
+        // Needed for the OpenDoorGoal (orig Boyfriend.java:135) to path through doors.
+        if (this.getNavigation() instanceof GroundPathNavigation groundNav) {
+            groundNav.setCanOpenDoors(true);
+        }
     }
 
     @Override
     protected void registerGoals() {
+        // orig Boyfriend.java:127-148. MeleeAttackGoal stands in for the orig
+        // EntityAIArrowAttack until the UltimateBow/Shoes ranged system is
+        // ported (ENT-A-055, Phase D); MoveIndoors(11) and the Jealousy goals
+        // (4/5) have no ported equivalent yet (Phase D).
         this.goalSelector.addGoal(1, new FollowOwnerGoal(this, 1.4, 12.0f, 1.5f));
-        this.goalSelector.addGoal(2, new TemptGoal(this, 1.25, Ingredient.of(Items.DIAMOND), false));
+        this.goalSelector.addGoal(2, new TemptGoal(this, 1.25,
+                Ingredient.of(Items.COOKED_BEEF), false)); // orig :128 — cooked beef
         this.goalSelector.addGoal(4, new MeleeAttackGoal(this, 1.25, true));
         this.goalSelector.addGoal(5, new FloatGoal(this));
+        this.goalSelector.addGoal(6, new PanicGoal(this, 1.5)); // orig :131
         this.goalSelector.addGoal(7, new LookAtPlayerGoal(this, Player.class, 6.0f));
         this.goalSelector.addGoal(8, new WaterAvoidingRandomStrollGoal(this, 0.75));
         this.goalSelector.addGoal(9, new RandomLookAroundGoal(this));
+        this.goalSelector.addGoal(10, new OpenDoorGoal(this, true)); // orig :135
 
         this.targetSelector.addGoal(1, new OwnerHurtByTargetGoal(this));
         this.targetSelector.addGoal(2, new OwnerHurtTargetGoal(this));

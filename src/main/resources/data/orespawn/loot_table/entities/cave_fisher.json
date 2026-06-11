@@ -1,13 +1,24 @@
 {
   "type": "minecraft:entity",
+  "_comment": "orig CaveFisher.java:141-153 — getDropItem nextInt(6): 0 gold nugget, 1 uranium nugget, 2 titanium nugget, else nothing; vanilla drop count nextInt(3) = 0-2 (+looting).",
   "pools": [
     {
       "rolls": 1,
-      "entries": [{"type": "minecraft:item", "name": "minecraft:string", "functions": [{"function": "minecraft:set_count", "count": {"type": "minecraft:uniform", "min": 2, "max": 5}}]}]
-    },
-    {
-      "rolls": 1,
-      "entries": [{"type": "minecraft:item", "name": "minecraft:spider_eye", "functions": [{"function": "minecraft:set_count", "count": {"type": "minecraft:uniform", "min": 0, "max": 1}}]}]
+      "entries": [
+        {"type": "minecraft:item", "weight": 1, "name": "minecraft:gold_nugget", "functions": [
+          {"function": "minecraft:set_count", "count": {"type": "minecraft:uniform", "min": 0, "max": 2}},
+          {"function": "minecraft:enchanted_count_increase", "enchantment": "minecraft:looting", "count": {"type": "minecraft:uniform", "min": 0, "max": 1}}
+        ]},
+        {"type": "minecraft:item", "weight": 1, "name": "orespawn:uranium_nugget", "functions": [
+          {"function": "minecraft:set_count", "count": {"type": "minecraft:uniform", "min": 0, "max": 2}},
+          {"function": "minecraft:enchanted_count_increase", "enchantment": "minecraft:looting", "count": {"type": "minecraft:uniform", "min": 0, "max": 1}}
+        ]},
+        {"type": "minecraft:item", "weight": 1, "name": "orespawn:titanium_nugget", "functions": [
+          {"function": "minecraft:set_count", "count": {"type": "minecraft:uniform", "min": 0, "max": 2}},
+          {"function": "minecraft:enchanted_count_increase", "enchantment": "minecraft:looting", "count": {"type": "minecraft:uniform", "min": 0, "max": 1}}
+        ]},
+        {"type": "minecraft:empty", "weight": 3}
+      ]
     }
   ]
 }

@@ -6,6 +6,7 @@ import net.minecraft.world.entity.Entity;
 import danger.orespawn.ModEntities;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.ThrowableProjectile;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
@@ -63,6 +64,39 @@ public class LaserBall extends ThrowableProjectile {
 
         if (this.isIrukandji) {
             target.hurt(this.damageSources().thrown(this, this.getOwner()), IRUKANDJI_DAMAGE);
+            this.discard();
+            return;
+        }
+
+        // orig LaserBall.java:83-92 — acid-type balls pass through TrooperBug and
+        // SpitBug. Those two entities are not ported yet (Phase D); restore their
+        // immunity checks here once they exist.
+
+        // orig LaserBall.java:93-114 — non-ice, non-acid balls never damage the
+        // robot family.
+        if (!this.isIceball && !this.isAcid
+                && (target instanceof Robot2 || target instanceof Robot3
+                        || target instanceof Robot4 || target instanceof Robot5
+                        || target instanceof GiantRobot)) {
+            this.discard();
+            return;
+        }
+
+        // orig LaserBall.java:115-125 — non-acid balls spare ridden dragons, and
+        // iceballs spare every non-type-0 dragon.
+        if (target instanceof Dragon dragon && !this.isAcid) {
+            if (dragon.isVehicle()) {
+                this.discard();
+                return;
+            }
+            if (dragon.getDragonType() != 0 && this.isIceball) {
+                this.discard();
+                return;
+            }
+        }
+
+        // orig LaserBall.java:126-132 — non-acid balls spare mounted players.
+        if (target instanceof Player player && !this.isAcid && player.isPassenger()) {
             this.discard();
             return;
         }

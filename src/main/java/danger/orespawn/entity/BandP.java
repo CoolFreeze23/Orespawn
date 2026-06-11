@@ -38,10 +38,8 @@ public class BandP extends Monster {
 
     private final Comparator<Entity> targetSorter;
     private static final float MOVE_SPEED = 0.32f;
-    /** Maximum slots in the BandP's stash (legacy MymainInventory length=100). */
-    private static final int STASH_SIZE = 16;
-    /** 1-in-N chance per melee hit to grab an armor piece (~25% per swing). */
-    private static final int ARMOR_STEAL_CHANCE_DEN = 4;
+    /** orig BandP.java:46 — MymainInventory is 100 slots. */
+    private static final int STASH_SIZE = 100;
     private int whatset = 0;
     private int whatami = 0;
     private int gotStuff = 0;
@@ -145,30 +143,14 @@ public class BandP extends Monster {
 
     /**
      * Direct port of the legacy 1.7.10 {@code BandP#func_70619_bc} armor-steal
-     * branch (lines 185-218 of {@code BandP.java}). On a successful melee hit
-     * the criminal rolls a 1-in-{@link #ARMOR_STEAL_CHANCE_DEN} chance to pluck
-     * an armor piece (or, if all 4 slots are empty, a regular inventory item)
-     * from the player and stash it in their internal {@link #stash}. The stolen
-     * stack is dropped on death via {@link #dropAllDeathLoot} so it is
-     * recoverable.
-     *
-     * <p>Modernization differences vs the legacy code:</p>
-     * <ul>
-     *   <li>Stash size capped at {@link #STASH_SIZE} (legacy used 100). Once
-     *       full, the steal short-circuits — preventing infinite mob-cap
-     *       inventory bloat.</li>
-     *   <li>Steal is rolled per swing rather than every tick; the legacy
-     *       version always tried to grab on contact, which on a saturated
-     *       server made the mob effectively impossible to fight without
-     *       creative armor.</li>
-     *   <li>Each successful steal increments {@link #gotStuff}, which
-     *       (per the legacy {@code func_70692_ba} logic) makes the mob
-     *       persistent so it doesn't despawn with looted inventory.</li>
-     * </ul>
+     * branch (orig BandP.java:185-218): every successful melee hit steals one
+     * item — armor first (helmet→boots), else the last non-empty inventory
+     * slot — into the 100-slot {@link #stash}. Stolen stacks drop on death.
+     * Each steal increments {@link #gotStuff}, which (per the legacy
+     * {@code func_70692_ba} logic) blocks despawning while loot is held.
      */
     private void tryStealFromPlayer(Player player) {
         if (player.getAbilities().instabuild) return;
-        if (this.getRandom().nextInt(ARMOR_STEAL_CHANCE_DEN) != 0) return;
 
         int freeSlot = -1;
         for (int i = 0; i < this.stash.size(); i++) {

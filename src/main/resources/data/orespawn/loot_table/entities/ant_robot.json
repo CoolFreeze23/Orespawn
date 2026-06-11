@@ -1,13 +1,22 @@
 {
   "type": "minecraft:entity",
+  "_comment": "orig AntRobot.java:1112-1164 — 7-13 rolls of nextInt(12): redstone, repeater, comparator, redstone_block (cases 3+8 = weight 2), dispenser, sticky_piston, piston, lever, light_weighted_pressure_plate (field_150445_bS), iron_ingot; case 11 drops nothing (weight 1 empty kept as orig quirk).",
   "pools": [
     {
-      "rolls": 1,
-      "entries": [{"type": "minecraft:item", "name": "minecraft:iron_ingot", "functions": [{"function": "minecraft:set_count", "count": {"type": "minecraft:uniform", "min": 3, "max": 8}}]}]
-    },
-    {
-      "rolls": 1,
-      "entries": [{"type": "minecraft:item", "name": "minecraft:gold_ingot", "functions": [{"function": "minecraft:set_count", "count": {"type": "minecraft:uniform", "min": 1, "max": 3}}]}]
+      "rolls": {"type": "minecraft:uniform", "min": 7, "max": 13},
+      "entries": [
+        {"type": "minecraft:item", "weight": 1, "name": "minecraft:redstone"},
+        {"type": "minecraft:item", "weight": 1, "name": "minecraft:repeater"},
+        {"type": "minecraft:item", "weight": 1, "name": "minecraft:comparator"},
+        {"type": "minecraft:item", "weight": 2, "name": "minecraft:redstone_block"},
+        {"type": "minecraft:item", "weight": 1, "name": "minecraft:dispenser"},
+        {"type": "minecraft:item", "weight": 1, "name": "minecraft:sticky_piston"},
+        {"type": "minecraft:item", "weight": 1, "name": "minecraft:piston"},
+        {"type": "minecraft:item", "weight": 1, "name": "minecraft:lever"},
+        {"type": "minecraft:item", "weight": 1, "name": "minecraft:light_weighted_pressure_plate"},
+        {"type": "minecraft:item", "weight": 1, "name": "minecraft:iron_ingot"},
+        {"type": "minecraft:empty", "weight": 1}
+      ]
     }
   ]
 }

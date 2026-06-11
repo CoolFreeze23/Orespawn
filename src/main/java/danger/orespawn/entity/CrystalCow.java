@@ -12,18 +12,15 @@ import javax.annotation.Nullable;
 
 // Death drops are fully data-driven via loot_table/entities/crystal_cow.json
 // (orig CrystalCow.java:19-26: crystal apples + 1 apple + RedCow/vanilla cow drops).
-public class CrystalCow extends Cow {
+// orig CrystalCow.java:13-14 — extends RedCow, inheriting its 1-in-200
+// revenge-forgiveness tick and never-despawn behavior.
+public class CrystalCow extends RedCow {
     public CrystalCow(EntityType<? extends CrystalCow> type, Level level) {
         super(type, level);
     }
 
     public static AttributeSupplier.Builder createAttributes() {
-        return Cow.createAttributes();
-    }
-
-    @Override
-    public boolean removeWhenFarAway(double dist) {
-        return false;
+        return RedCow.createAttributes();
     }
 
     @Nullable

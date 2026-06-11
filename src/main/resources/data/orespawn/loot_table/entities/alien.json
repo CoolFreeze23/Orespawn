@@ -1,17 +1,26 @@
 {
   "type": "minecraft:entity",
+  "_comment": "orig Alien.java:179-192 — 5-10 spider eyes (field_151070_bp), 5-10 flint (field_151145_ak), 1 map (field_151148_bJ), 1 clock (field_151113_aN), 1 compass (field_151111_aL). The audit's gold-nugget/iron/ender-pearl claim was wrong.",
   "pools": [
     {
       "rolls": 1,
-      "entries": [{"type": "minecraft:item", "name": "minecraft:gunpowder", "functions": [{"function": "minecraft:set_count", "count": {"type": "minecraft:uniform", "min": 5, "max": 10}}]}]
+      "entries": [{"type": "minecraft:item", "name": "minecraft:spider_eye", "functions": [{"function": "minecraft:set_count", "count": {"type": "minecraft:uniform", "min": 5, "max": 10}}]}]
     },
     {
       "rolls": 1,
-      "entries": [{"type": "minecraft:item", "name": "minecraft:iron_ingot", "functions": [{"function": "minecraft:set_count", "count": {"type": "minecraft:uniform", "min": 5, "max": 10}}]}]
+      "entries": [{"type": "minecraft:item", "name": "minecraft:flint", "functions": [{"function": "minecraft:set_count", "count": {"type": "minecraft:uniform", "min": 5, "max": 10}}]}]
     },
     {
       "rolls": 1,
-      "entries": [{"type": "minecraft:item", "name": "minecraft:ender_pearl", "functions": [{"function": "minecraft:set_count", "count": {"type": "minecraft:uniform", "min": 1, "max": 3}}]}]
+      "entries": [{"type": "minecraft:item", "name": "minecraft:map"}]
+    },
+    {
+      "rolls": 1,
+      "entries": [{"type": "minecraft:item", "name": "minecraft:clock"}]
+    },
+    {
+      "rolls": 1,
+      "entries": [{"type": "minecraft:item", "name": "minecraft:compass"}]
     }
   ]
 }

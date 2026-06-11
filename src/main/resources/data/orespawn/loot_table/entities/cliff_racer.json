@@ -1,32 +1,23 @@
 {
   "type": "minecraft:entity",
+  "_comment": "orig CliffRacer.java:149-161 — getDropItem nextInt(8): 0 raw chicken, 1 uranium nugget, 2 titanium nugget, else nothing; vanilla drop count nextInt(3) = 0-2 (+looting).",
   "pools": [
     {
       "rolls": 1,
       "entries": [
-        {
-          "type": "minecraft:item",
-          "name": "minecraft:feather",
-          "functions": [
-            {
-              "function": "minecraft:set_count",
-              "count": {
-                "type": "minecraft:uniform",
-                "min": 1,
-                "max": 3
-              }
-            },
-            {
-              "function": "minecraft:enchanted_count_increase",
-              "enchantment": "minecraft:looting",
-              "count": {
-                "type": "minecraft:uniform",
-                "min": 0,
-                "max": 1
-              }
-            }
-          ]
-        }
+        {"type": "minecraft:item", "weight": 1, "name": "minecraft:chicken", "functions": [
+          {"function": "minecraft:set_count", "count": {"type": "minecraft:uniform", "min": 0, "max": 2}},
+          {"function": "minecraft:enchanted_count_increase", "enchantment": "minecraft:looting", "count": {"type": "minecraft:uniform", "min": 0, "max": 1}}
+        ]},
+        {"type": "minecraft:item", "weight": 1, "name": "orespawn:uranium_nugget", "functions": [
+          {"function": "minecraft:set_count", "count": {"type": "minecraft:uniform", "min": 0, "max": 2}},
+          {"function": "minecraft:enchanted_count_increase", "enchantment": "minecraft:looting", "count": {"type": "minecraft:uniform", "min": 0, "max": 1}}
+        ]},
+        {"type": "minecraft:item", "weight": 1, "name": "orespawn:titanium_nugget", "functions": [
+          {"function": "minecraft:set_count", "count": {"type": "minecraft:uniform", "min": 0, "max": 2}},
+          {"function": "minecraft:enchanted_count_increase", "enchantment": "minecraft:looting", "count": {"type": "minecraft:uniform", "min": 0, "max": 1}}
+        ]},
+        {"type": "minecraft:empty", "weight": 5}
       ]
     }
   ]

@@ -1,0 +1,5 @@
+{
+  "type": "neoforge:add_spawns",
+  "biomes": "minecraft:jungle",
+  "spawners": { "type": "orespawn:basilisk", "weight": 3, "minCount": 1, "maxCount": 1 }
+}

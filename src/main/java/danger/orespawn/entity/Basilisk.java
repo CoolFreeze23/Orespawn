@@ -2,15 +2,14 @@ package danger.orespawn.entity;
 
 import danger.orespawn.MobStats;
 
+import danger.orespawn.OreSpawnMod;
 import danger.orespawn.entity.ai.BasiliskGazeAttackGoal;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.sounds.SoundEvents;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -93,20 +92,26 @@ public class Basilisk extends Monster {
 
     @Override
     protected SoundEvent getAmbientSound() {
+        // orig Basilisk.java:114-119 — basilisk_living 1-in-2, else silent.
         if (this.getRandom().nextInt(2) == 0) {
-            return SoundEvents.RAVAGER_ROAR;
+            return SoundEvent.createVariableRangeEvent(
+                    ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "basilisk_living"));
         }
         return null;
     }
 
     @Override
     protected SoundEvent getHurtSound(DamageSource source) {
-        return SoundEvents.RAVAGER_HURT;
+        // orig Basilisk.java:121-123
+        return SoundEvent.createVariableRangeEvent(
+                ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "alo_hurt"));
     }
 
     @Override
     protected SoundEvent getDeathSound() {
-        return SoundEvents.RAVAGER_DEATH;
+        // orig Basilisk.java:125-127
+        return SoundEvent.createVariableRangeEvent(
+                ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "emperorscorpion_death"));
     }
 
     @Override
@@ -127,9 +132,10 @@ public class Basilisk extends Monster {
     public boolean doHurtTarget(Entity target) {
         if (super.doHurtTarget(target)) {
             if (target instanceof LivingEntity living) {
-                if (this.getRandom().nextInt(3) == 0) {
-                    living.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 200, 0));
-                }
+                // orig Basilisk.java:316-330 — the bite itself carries no
+                // slowness; the 1-in-3 difficulty-scaled POISON lives in
+                // BasiliskGazeAttackGoal#onSuccessfulAttack and the Slowness V
+                // 100t target debuff (orig :373) in onAttackPhaseStart.
                 double verticalKnockback = KNOCKBACK_VERTICAL;
                 float yawToTarget = (float) Math.atan2(target.getZ() - this.getZ(), target.getX() - this.getX());
                 if (target.isRemoved() || target instanceof Player) {

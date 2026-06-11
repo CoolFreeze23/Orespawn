@@ -91,6 +91,7 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 - **Original:** `LaserBall.java` — special immunities for TrooperBug/SpitBug/Robot2–5/GiantRobot when projectile is acid-type
 - **Port:** `entity/LaserBall.java` — all entity immunities removed; Acid (and every LaserBall subclass) now damages those mobs
 - **Fix:** restore the acid-immunity checks in the port `LaserBall` hit logic (skip damage when target is TrooperBug/SpitBug/Robot2–5/GiantRobot and acid flag set).
+- **Resolution:** PARTIAL (2026-06-11, Phase C — Robot2-5/GiantRobot/ridden-Dragon/ridden-Player immunities restored in LaserBall.onHitEntity; TrooperBug/SpitBug remain unported (Phase D); see FIX_LOG.md and phase_c_reports/C1_entities_A_C.md)
 
 ## Alien
 
@@ -99,7 +100,7 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 - **Original:** `OreSpawnMain.java:6491` — HP 100, atk 12, armor 8; `Alien.java` ctor — size 1.1×3.25
 - **Port:** `entity/Alien.java` `createAttributes` — HP 80, armor 6; `ModEntities.java` — size 0.6×1.8
 - **Fix:** set MAX_HEALTH 100, ARMOR 8 in `createAttributes`; set entity dimensions to 1.1×3.25 in `ModEntities`.
-- **Resolution:** PARTIAL (2026-06-11, Phase B — stats portion fixed (HP 100, armor 8); hitbox 1.1×3.25 remains open, see phase_b_reports/B2_mobstats.md)
+- **Resolution:** FIXED (2026-06-11, Phase C — hitbox remainder closed in Phase C: 1.1x3.25 set in ModEntities; see FIX_LOG.md and phase_c_reports/C1_entities_A_C.md)
 
 ### ENT-A-003 — Alien: MoveThroughVillage goal missing; torch logic approximated
 - **Status:** PARTIAL
@@ -112,18 +113,21 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 - **Original:** `Alien.java` — Hunger for `var2*5` ticks, difficulty multipliers 6/8/10/12, 1-in-5 chance
 - **Port:** `entity/Alien.java` — `MobEffects.HUNGER` fixed 30 ticks amp 0, 1-in-5
 - **Fix:** compute duration as `difficultyMult * 5` ticks (mult 6/8/10/12 by difficulty) instead of fixed 30.
+- **Resolution:** FIXED (2026-06-11, Phase C — audit corrected: orig applies POISON (not Hunger), duration 40t Easy / 30t otherwise; see FIX_LOG.md and phase_c_reports/C1_entities_A_C.md)
 
 ### ENT-A-005 — Alien: drop table replaced
 - **Status:** DIVERGENT
 - **Original:** `Alien.java` `func_70628_a` — gold nuggets 5–10, iron ingots 5–10, ender pearl 1, compass 1, clock 1
 - **Port:** `loot_table/entities/alien.json` — gunpowder 5–10, iron 5–10, ender pearl 1–3; no compass/clock
 - **Fix:** edit `alien.json`: gunpowder→gold nuggets 5–10, ender pearl count 1, add compass ×1 and clock ×1 pools.
+- **Resolution:** FIXED (2026-06-11, Phase C — audit corrected: orig drops spider eye 5-10, flint 5-10, map/clock/compass x1; alien.json rewritten; see FIX_LOG.md and phase_c_reports/C1_entities_A_C.md)
 
 ### ENT-A-006 — Alien: spawn habitat moved from underground/Utopia to the End
 - **Status:** DIVERGENT
 - **Original:** `Alien.java` `func_70601_bi` — spawner tag "Alien", or dim 4 (Utopia), or underground y<50 & dark; no `addSpawn`
 - **Port:** `add_end_spawns.json` — `#minecraft:is_end` weight 3, 1–1
 - **Fix:** remove alien from `add_end_spawns.json`; add an overworld monster modifier plus `checkSpawnRules` for y<50 & dark, and add to the Utopia dimension spawn list.
+- **Resolution:** PARTIAL (2026-06-11, Phase C — End spawn removed; audit corrected: orig has a Mining-dim spawn entry w35 2-3 (ChunkProviderOreSpawn2.java:389), restored in dim_mining_locals.json; spawn-rule gates (dark/y<50/Utopia) tracked by ENT-SYS-002 (Phase D); see FIX_LOG.md and phase_c_reports/C1_entities_A_C.md)
 
 ### ENT-A-007 — Alien: jump boost invented in port
 - **Status:** PARTIAL
@@ -158,6 +162,7 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 - **Original:** `addSpawn` multiple biomes; `func_70601_bi` y>50, night, not raining, no other Alosaurus
 - **Port:** `hostile_alosaurus.json` `#minecraft:is_savanna` w1 2–3; conditions deleted (ENT-SYS-002)
 - **Fix:** restore original biome list in the modifier; add spawn rules (y>50, night, !raining, no nearby Alosaurus).
+- **Resolution:** PARTIAL (2026-06-11, Phase C — audit corrected: orig has NO overworld addSpawn; spawns were Mining dim w8 1-2 + Utopia plains w1 1-1, both restored, overworld modifiers removed; spawn rules tracked by ENT-SYS-002 (Phase D); see FIX_LOG.md and phase_c_reports/C1_entities_A_C.md)
 
 ## AntRobot
 
@@ -166,25 +171,28 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 - **Original:** `OreSpawnMain.java:6475` — HP 300, atk 30, def 16; XP = health/2 = 150 (`AntRobot.java:58`); size 2.75×1.25
 - **Port:** `entity/AntRobot.java:71-77` — HP 350, atk 35, armor 6; `ModEntities.java:548` size 2.0×3.0 (W/H swapped)
 - **Fix:** set HP 300, ATTACK 30, ARMOR 16; dimensions 2.75 wide × 1.25 tall in `ModEntities`.
-- **Resolution:** PARTIAL (2026-06-11, Phase B — stats portion fixed (300/30/16, melee reads attribute); hitbox 2.75×1.25 remains open, see phase_b_reports/B2_mobstats.md)
+- **Resolution:** FIXED (2026-06-11, Phase C — hitbox remainder closed in Phase C: 2.75x1.25 set in ModEntities; see FIX_LOG.md and phase_c_reports/C1_entities_A_C.md)
 
 ### ENT-A-013 — AntRobot: melee throttle removed (attack rate massively higher)
 - **Status:** DIVERGENT
 - **Original:** `AntRobot.java` `func_70619_bc:96-147` — 1-in-15 melee attempt at range <(6+w/2); melee damage = atk attribute
 - **Port:** `entity/AntRobot.java:108-125` — melee fires every `customServerAiStep` tick in range; damage hardcoded 35.0
 - **Fix:** gate melee behind `random.nextInt(15)==0`; read damage from ATTACK_DAMAGE attribute instead of hardcoding.
+- **Resolution:** FIXED (2026-06-11, Phase C — unridden melee gated on 1-in-15 per tick (orig AntRobot.java:130-145); see FIX_LOG.md and phase_c_reports/C1_entities_A_C.md)
 
 ### ENT-A-014 — AntRobot: ridden 1-in-50 stomp missing
 - **Status:** DIVERGENT
 - **Original:** `AntRobot.java` `func_70071_h_:617-631` — when ridden: 1-in-50 stomp + 1-in-9 melee; stomp = atk/10 = 3.0
 - **Port:** `entity/AntRobot.java` — ridden 1-in-9 melee only; stomp value 3.5
 - **Fix:** add the 1-in-50 ridden stomp call; set stomp damage to atk/10.
+- **Resolution:** FIXED (2026-06-11, Phase C — ridden 1-in-50 stomp restored, damage = ATTACK_DAMAGE/10 (orig AntRobot.java:617-619,1000); see FIX_LOG.md and phase_c_reports/C1_entities_A_C.md)
 
 ### ENT-A-015 — AntRobot: drop table replaced (redstone-component loot lost)
 - **Status:** DIVERGENT
 - **Original:** `AntRobot.java` `func_70628_a:1112-1164` — 7–13 rolls of redstone/repeater/comparator/redstone block/dispenser/sticky piston/piston/lever/pressure plate/iron ingot
 - **Port:** `ant_robot.json` — iron 3–8 + gold 1–3
 - **Fix:** rewrite `ant_robot.json` as 7–13 rolls over a uniform pool of the 10 original redstone-component items.
+- **Resolution:** FIXED (2026-06-11, Phase C — ant_robot.json rewritten to the orig 7-13 rolls of d10 redstone-component table; see FIX_LOG.md and phase_c_reports/C1_entities_A_C.md)
 
 ### ENT-A-016 — AntRobot: custom ride/hover movement physics absent
 - **Status:** PARTIAL
@@ -199,7 +207,7 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 - **Original:** `OreSpawnMain.java:6510` — HP 10, atk 8, def 0; size 1.0×1.25
 - **Port:** `entity/AttackSquid.java` — HP 30; size 0.8×0.8
 - **Fix:** set HP 10 in `createAttributes`; dimensions 1.0×1.25.
-- **Resolution:** PARTIAL (2026-06-11, Phase B — stats portion fixed (HP 10, armor 0); dimensions 1.0×1.25 remain open, see phase_b_reports/B2_mobstats.md)
+- **Resolution:** FIXED (2026-06-11, Phase C — dims remainder closed in Phase C: 1.0x1.25 set in ModEntities; see FIX_LOG.md and phase_c_reports/C1_entities_A_C.md)
 
 ### ENT-A-018 — AttackSquid: melee swing odds drifted
 - **Status:** PARTIAL
@@ -239,7 +247,7 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 - **Original:** `OreSpawnMain.java:6480` — HP 100, atk 1, def 18 (runtime armor clamp 8–23); XP 1000; size 0.75×1.75
 - **Port:** `entity/BandP.java` — HP 30, atk 5, armor 0, XP 10, size 0.6×1.0
 - **Fix:** set HP 100, ATTACK 1, ARMOR 18 with the 8–23 worn-gear clamp; XP 1000; dimensions 0.75×1.75.
-- **Resolution:** PARTIAL (2026-06-11, Phase B — stats portion fixed (100/1/18, XP 1000); size 0.75×1.75 and the worn-gear armor clamp 8-23 remain open, see phase_b_reports/B2_mobstats.md)
+- **Resolution:** FIXED (2026-06-11, Phase C — size remainder closed in Phase C: 0.75x1.75 set in ModEntities; audit corrected: orig BandP has no worn-gear armor clamp (flat defense), so none was added; see FIX_LOG.md and phase_c_reports/C1_entities_A_C.md)
 
 ### ENT-A-024 — BandP: AI goals and target types pruned
 - **Status:** PARTIAL
@@ -252,18 +260,21 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 - **Original:** `BandP.java` — melee steals item (armor first) into 100-slot `MymainInventory`, every hit; despawns if `got_stuff==0`
 - **Port:** `entity/BandP.java` — `tryStealFromPlayer` 1-in-4 chance, 16-slot stash
 - **Fix:** steal on every successful melee hit (remove 1-in-4 roll), prioritize armor slots, and expand stash to 100 slots.
+- **Resolution:** FIXED (2026-06-11, Phase C — steals on every successful melee hit, 100-slot stash (orig BandP.java:46,185-218); see FIX_LOG.md and phase_c_reports/C1_entities_A_C.md)
 
 ### ENT-A-026 — BandP: drops nuggets→ingots
 - **Status:** DIVERGENT
 - **Original:** `BandP.java` — 10–14 leather; if `getWhat()==0` 2–4 Uranium+Titanium **nuggets**; all stolen items
 - **Port:** `band_p.json` — leather 10–14, uranium **ingot** 0–3@50%, titanium **ingot** 0–3@50%
 - **Fix:** change JSON entries to uranium_nugget / titanium_nugget 2–4 gated on the `getWhat()==0` condition (or move to code if loot conditions can't express it).
+- **Resolution:** VERIFIED-CORRECT (2026-06-11, Phase C — audit wrong: orig drops emeralds (field_151166_bC), port band_p.json already matches; see phase_c_reports/C1_entities_A_C.md)
 
 ### ENT-A-027 — BandP: spawn conditions deleted
 - **Status:** DIVERGENT
 - **Original:** plains/desert/savanna w20 1–2; night, y≥50, villager-count condition
 - **Port:** `add_overworld_monsters.json` w3 1–1; no conditions
 - **Fix:** dedicated modifier for plains/desert/savanna w20 1–2; restore night + y≥50 + nearby-villager spawn rule (ENT-SYS-002).
+- **Resolution:** PARTIAL (2026-06-11, Phase C — plains/desert/savanna w20 1-2 modifier restored (hostile_band_p.json), removed from generic overworld list; night/y>=50/villager rules tracked by ENT-SYS-002 (Phase D); see FIX_LOG.md and phase_c_reports/C1_entities_A_C.md)
 
 ## Baryonyx
 
@@ -279,6 +290,7 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 - **Original:** mining-dim biomes (`BiomeGenUtopianPlains`, `ChunkProviderOreSpawn2` w2 4–8); rules y>50, day, ≤8 buddies
 - **Port:** `add_overworld_creatures.json` w3 1–1; conditions removed
 - **Fix:** add Baryonyx to the port's mining-dimension spawn lists w2 4–8; restore day/y>50/buddy-cap rules.
+- **Resolution:** PARTIAL (2026-06-11, Phase C — Mining-dim w2 4-8 + Utopia w2 2-4 restored, overworld entry removed; day/y>50/buddy-cap rules tracked by ENT-SYS-002 (Phase D); see FIX_LOG.md and phase_c_reports/C1_entities_A_C.md)
 
 ### ENT-A-030 — Baryonyx: wheat breeding lost
 - **Status:** PARTIAL
@@ -293,7 +305,7 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 - **Original:** `OreSpawnMain.java:6487` — HP 200, atk 24, def 15; fire-immune (`field_70178_ae=true`)
 - **Port:** `entity/Basilisk.java` — HP 500, atk 25, armor 8, KB-resist 0.8; fire immunity not set
 - **Fix:** set HP 200, ATTACK 24, ARMOR 15; add `fireImmune()` to the entity type builder.
-- **Resolution:** PARTIAL (2026-06-11, Phase B — stats portion fixed (200/24/15); fire immunity remains open, see phase_b_reports/B2_mobstats.md)
+- **Resolution:** FIXED (2026-06-11, Phase C — fire-immunity remainder closed in Phase C: fireImmune() set in ModEntities (orig Basilisk.java:52); see FIX_LOG.md and phase_c_reports/C1_entities_A_C.md)
 
 ### ENT-A-032 — Basilisk: gaze/slowness aura invented
 - **Status:** PARTIAL
@@ -306,6 +318,7 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 - **Original:** `Basilisk.java` — melee 24 + slowness (`Potion.field_76421_d`) 100 ticks amp 5, 1-in-3
 - **Port:** `entity/Basilisk.java` — melee 25 + `MOVEMENT_SLOWDOWN` 200 ticks amp 0, 1-in-3
 - **Fix:** apply MOVEMENT_SLOWDOWN for 100 ticks, amplifier 5.
+- **Resolution:** FIXED (2026-06-11, Phase C — extraneous Slowness removed from the bite; gaze goal carries the orig effects; see FIX_LOG.md and phase_c_reports/C1_entities_A_C.md)
 
 ### ENT-A-034 — Basilisk: loot content diverged
 - **Status:** DIVERGENT
@@ -319,12 +332,14 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 - **Original:** mushroom/jungle/mega-taiga w3–15; night + spawner check + no buddy
 - **Port:** `hostile_basilisk__*` badlands+jungle, w3 1–1
 - **Fix:** retarget modifiers to mushroom fields, jungle, old-growth taiga at original weights; restore night/buddy rules (ENT-SYS-002).
+- **Resolution:** PARTIAL (2026-06-11, Phase C — audit corrected: orig biomes are jungle w3, jungleHills w2, birchForestHills w4 1-2, roofedForest w15 1-2 (OreSpawnMain.java:4877-4880), not mushroom/mega-taiga; modifiers retargeted; night/spawner/buddy rules tracked by ENT-SYS-002 (Phase D); see FIX_LOG.md and phase_c_reports/C1_entities_A_C.md)
 
 ### ENT-A-036 — Basilisk: custom sounds replaced with vanilla ravager
 - **Status:** DIVERGENT
 - **Original:** `basilisk_living` (1-in-2), `alo_hurt`, `emperorscorpion_death`, vol 1.0
 - **Port:** `RAVAGER_ROAR/HURT/DEATH`
 - **Fix:** register/use `orespawn:basilisk_living`, `orespawn:alo_hurt`, `orespawn:emperorscorpion_death` at vol 1.0.
+- **Resolution:** FIXED (2026-06-11, Phase C — basilisk_living / alo_hurt / emperorscorpion_death wired (orig Basilisk.java sound methods); see FIX_LOG.md and phase_c_reports/C1_entities_A_C.md)
 
 ## Beaver
 
@@ -333,6 +348,7 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 - **Original:** `Beaver.java` — 2–6 raw porkchops
 - **Port:** `beaver.json` — 1–3 leather
 - **Fix:** change `beaver.json` to porkchop 2–6.
+- **Resolution:** FIXED (2026-06-11, Phase C — audit corrected: orig porkchop drop is vanilla EntityAnimal 0-2 (+looting), not 2-6; beaver.json rewritten; see FIX_LOG.md and phase_c_reports/C1_entities_A_C.md)
 
 ### ENT-A-038 — Beaver: spawn weights/biomes flattened
 - **Status:** PARTIAL
@@ -353,7 +369,7 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 - **Original:** `OreSpawnMain.java:6466` — HP 80, atk 12, def 5; size 1.5×2.5
 - **Port:** `entity/EntityBee.java` — HP 30, atk 6, armor 0; size 0.5×0.5
 - **Fix:** set HP 80, ATTACK 12, ARMOR 5; dimensions 1.5×2.5.
-- **Resolution:** PARTIAL (2026-06-11, Phase B — stats portion fixed (80/12/5); size 1.5×2.5 remains open, see phase_b_reports/B2_mobstats.md)
+- **Resolution:** FIXED (2026-06-11, Phase C — size remainder closed in Phase C: 1.5x2.5 set in ModEntities; see FIX_LOG.md and phase_c_reports/C1_entities_A_C.md)
 
 ### ENT-A-041 — Bee: Girlfriend/Boyfriend targets dropped
 - **Status:** PARTIAL
@@ -366,6 +382,7 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 - **Original:** `Bee.java` — melee + Hunger (`field_76436_u`… per audit: Hunger) 50 ticks, 1-in-3
 - **Port:** melee + POISON 50 ticks, 1-in-3
 - **Fix:** apply `MobEffects.HUNGER` 50t instead of POISON.
+- **Resolution:** VERIFIED-CORRECT (2026-06-11, Phase C — audit wrong: orig Bee applies POISON (field_76436_u), port already applies Poison; see phase_c_reports/C1_entities_A_C.md)
 
 ### ENT-A-043 — Bee: drop table unrecognizable
 - **Status:** DIVERGENT
@@ -379,6 +396,7 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 - **Original:** forest/taiga biomes w2–5 1–5; day/clear-air/y>50 or Utopia rules
 - **Port:** `add_overworld_monsters.json` w8 1–3
 - **Fix:** dedicated forest/taiga modifier w2–5 1–5; restore rules (ENT-SYS-002).
+- **Resolution:** PARTIAL (2026-06-11, Phase C — per-biome forest/jungle/birch/taiga/savanna modifiers w2-5 restored (OreSpawnMain.java:4709-4718), removed from generic overworld list; day/clear-air/y>50 rules tracked by ENT-SYS-002 (Phase D); see FIX_LOG.md and phase_c_reports/C1_entities_A_C.md)
 
 ## Bertha (item)
 
@@ -387,6 +405,7 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 - **Original:** `Bertha.java` / `OreSpawnMain.java` `bertha_stats` — damage 496 (Royal 746, Hammy 82), durability 9000
 - **Port:** `item/Bertha.java` — sword-tier values differ; kills tracked via new `ModDataComponents.BERTHA_KILLS`
 - **Fix:** set tier/attribute so attack damage is 496 and durability 9000 (Royal/Hammy variants 746/82 — see ENT-A-048).
+- **Resolution:** VERIFIED-CORRECT (2026-06-11, Phase C — ModToolTiers already matches orig get_weaponstats: Bertha 9000 dur/496 dmg, Royal 10000/746, Hammy 2000/82; see phase_c_reports/C1_entities_A_C.md)
 
 ### ENT-A-046 — Bertha: enchant application path changed
 - **Status:** PARTIAL
@@ -399,6 +418,7 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 - **Original:** blocks hitting players/tamed only when config `big_bertha_pvp == 0`
 - **Port:** blocks unconditionally
 - **Fix:** add a `big_bertha_pvp` config option and gate the player/tamed-skip on it.
+- **Resolution:** FIXED (2026-06-11, Phase C — whole skip list (players, Girlfriend, Boyfriend, tamed pets) now gated on bigBerthaPvp (orig Bertha.java:65-76); see FIX_LOG.md and phase_c_reports/C1_entities_A_C.md)
 
 ## BerthaHit (projectile)
 
@@ -407,12 +427,14 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 - **Original:** `BerthaHit.java` — type 0 (Bertha) 496; type 2 (Royal) 746; type 3 (Hammy) 82
 - **Port:** `entity/BerthaHit.java` — type 0: 250; type 2: 150; type 3: 100
 - **Fix:** restore per-type damage constants 496 / 746 / 82.
+- **Resolution:** FIXED (2026-06-11, Phase C — BerthaHit damages restored to 496/746/82 per hit type (orig BerthaHit.java:76-105); see FIX_LOG.md and phase_c_reports/C1_entities_A_C.md)
 
 ### ENT-A-049 — BerthaHit: per-type range collapsed
 - **Status:** DIVERGENT
 - **Original:** distSq < 81 / 101 / 64 per type
 - **Port:** single `CLOSE_RANGE_DAMAGE_SQ = 100` for all
 - **Fix:** replace the constant with per-type thresholds 81 (t0), 101 (t2), 64 (t3).
+- **Resolution:** FIXED (2026-06-11, Phase C — per-type distSq ranges 81/101/64 restored (orig BerthaHit.java:76-105); see FIX_LOG.md and phase_c_reports/C1_entities_A_C.md)
 
 ### ENT-A-050 — BerthaHit: Hammy explosion radius branch lost
 - **Status:** PARTIAL
@@ -425,6 +447,7 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 - **Original:** skips players/tamed if `big_bertha_pvp==0`
 - **Port:** skips unconditionally
 - **Fix:** gate on the same `big_bertha_pvp` config as ENT-A-047.
+- **Resolution:** FIXED (2026-06-11, Phase C — BerthaHit pvp gate restored incl. orig precedence quirk (Girlfriend/Boyfriend spared unconditionally); see FIX_LOG.md and phase_c_reports/C1_entities_A_C.md)
 
 ## BetterFireball
 
@@ -447,6 +470,7 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 - **Original:** `Boyfriend.java:127-148` — Tempt(cooked beef), `EntityAIArrowAttack(4, 1.25, 20t, 10.0f)`, Panic(6), OpenDoor(10), MoveIndoors(11); Jealousy target goals @4/5
 - **Port:** `entity/Boyfriend.java:70-82` — Tempt(DIAMOND), `MeleeAttackGoal(4)`; no Panic/OpenDoor/MoveIndoors/Jealousy
 - **Fix:** tempt with cooked beef; replace MeleeAttackGoal with a ranged-attack goal (see ENT-A-055); add Panic, OpenDoor, MoveIndoors and Jealousy goals.
+- **Resolution:** PARTIAL (2026-06-11, Phase C — tempt food cooked beef, PanicGoal(1.5)@6, OpenDoorGoal@10 + door navigation added; ranged attack (ENT-A-055), Jealousy goals, MoveIndoors remain (Phase D); see FIX_LOG.md and phase_c_reports/C1_entities_A_C.md)
 
 ### ENT-A-055 — Boyfriend: entire weapon/ranged system missing
 - **Status:** MISSING
@@ -465,6 +489,7 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 - **Original:** `OreSpawnMain.java:4588-4599` — beach w30 8–15, forest w10 3–6, hills w8 2–5, plains w5 2–3, river w10, stone beach w10, birch w5, roofed w5, mega taiga w5, taiga w5, savanna w2, savanna plateau w2
 - **Port:** `companion_boyfriend.json` — `#minecraft:is_overworld` w4 1–2
 - **Fix:** split modifier into per-biome entries with the original weights/group sizes (beach hotspot w30 8–15 especially).
+- **Resolution:** FIXED (2026-06-11, Phase C — full per-biome list restored (beach w30 8-15 etc., orig OreSpawnMain.java:4588-4599); 1.18-removed hills biomes mapped to nearest modern equivalents; see FIX_LOG.md and phase_c_reports/C1_entities_A_C.md)
 
 ### ENT-A-058 — Boyfriend: situational ambient voice lines missing
 - **Status:** PARTIAL
@@ -485,7 +510,7 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 - **Original:** `OreSpawnMain.java:6470` — HP 110, atk 10, def 6; size 5.0×2.0 (`Brutalfly.java:55`); fire-immune (`:58`)
 - **Port:** `EntityBrutalfly.java:40-45` — HP 500, atk 18, armor 0; size 1.2×1.2 (`ModEntities.java:192`); not fire-immune
 - **Fix:** set HP 110, ATTACK 10, ARMOR 6; dimensions 5.0×2.0; `fireImmune()`.
-- **Resolution:** PARTIAL (2026-06-11, Phase B — stats portion fixed (110/10/6); size 5.0×2.0 and fire immunity remain open, see phase_b_reports/B2_mobstats.md)
+- **Resolution:** FIXED (2026-06-11, Phase C — remainder closed in Phase C: 5.0x2.0 + fireImmune() set in ModEntities; see FIX_LOG.md and phase_c_reports/C1_entities_A_C.md)
 
 ### ENT-A-061 — Brutalfly: terrain-descent scan and exclusion list missing
 - **Status:** PARTIAL
@@ -511,6 +536,7 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 - **Original:** `OreSpawnMain.java:4839-4841` — ambient w2 1–1 ExtremeHillsPlus/SavannaPlateau/MesaPlateau; rules y≥70, dark, night, 4×3×10 clear air, none within 64
 - **Port:** `add_overworld_monsters.json` w3 1–1; no checkSpawnRules
 - **Fix:** dedicated modifier for windswept hills/savanna plateau/badlands plateau w2 1–1; restore rules (ENT-SYS-002).
+- **Resolution:** PARTIAL (2026-06-11, Phase C — audit corrected: orig biomes are megaTaigaHills/extremeHillsPlus/mesaPlateau (OreSpawnMain.java:4839-4841), not savanna plateau; modifier set to old_growth_spruce_taiga/windswept_forest/badlands w2 1-1; altitude/dark/night/clear-air/64-radius rules tracked by ENT-SYS-002 (Phase D); see FIX_LOG.md and phase_c_reports/C1_entities_A_C.md)
 
 ### ENT-A-065 — Brutalfly: hurt sound invented
 - **Status:** PARTIAL
@@ -537,6 +563,7 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 - **Original:** `Camarasaurus.java:105-166` — eats leaves/vines/tallgrass/cactus/double_plant
 - **Port:** `entity/Camarasaurus.java:99-103` `isEdibleBlock` — eats wheat/carrots/potatoes/short_grass/tall_grass
 - **Fix:** change `isEdibleBlock` to leaves (`BlockTags.LEAVES`), vines, grass, cactus, and tall flowers; drop the crop blocks.
+- **Resolution:** FIXED (2026-06-11, Phase C — diet restored to leaves/vine/tall-grass/cactus/double-plants (orig Camarasaurus.java:114); see FIX_LOG.md and phase_c_reports/C1_entities_A_C.md)
 
 ### ENT-A-069 — Camarasaurus: rideability invented
 - **Status:** PARTIAL
@@ -549,12 +576,14 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 - **Original:** `Camarasaurus.java:303-312` — tamed only: 2–6 poppies; untamed drops nothing
 - **Port:** `camarasaurus.json` — bone 3–6 always
 - **Fix:** empty the default pool; drop poppy 2–6 only when tamed (code-side or loot condition).
+- **Resolution:** FIXED (2026-06-11, Phase C — OreSpawnTamed NBT flag + entity_properties condition; poppies 2-6 tamed-only (orig Camarasaurus.java:303-312); see FIX_LOG.md and phase_c_reports/C1_entities_A_C.md)
 
 ### ENT-A-071 — Camarasaurus: spawning relocated to overworld
 - **Status:** DIVERGENT
 - **Original:** mining-dim chunk providers only; rules y≥50 + day (`func_70601_bi:78-83`)
 - **Port:** `add_overworld_creatures.json` w2 1–1 + `companion_camarasaurus__*` jungle/savanna w1 1–1; no rules
 - **Fix:** move spawns to the mining-dimension spawn lists; restore y≥50 + day rules; remove overworld modifiers.
+- **Resolution:** PARTIAL (2026-06-11, Phase C — Mining-dim w1 2-4 restored, overworld modifiers removed; y>=50+day rules tracked by ENT-SYS-002 (Phase D); see FIX_LOG.md and phase_c_reports/C1_entities_A_C.md)
 
 ## CaterKiller
 
@@ -563,7 +592,7 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 - **Original:** `OreSpawnMain.java:6481` — HP 450, atk 32, def 19; size 2.9×4.6 (`CaterKiller.java:54-58`)
 - **Port:** `EntityCaterKiller.java:82-88` — HP 350, atk 20, armor 0; size 1.5×1.0 (`ModEntities.java:196`)
 - **Fix:** set HP 450, ATTACK 32, ARMOR 19; dimensions 2.9×4.6 (halve when PlayNicely config active, per original).
-- **Resolution:** PARTIAL (2026-06-11, Phase B — stats portion fixed (450/32/19); size 2.9×4.6 remains open, see phase_b_reports/B2_mobstats.md)
+- **Resolution:** FIXED (2026-06-11, Phase C — size remainder closed in Phase C: 2.9x4.6 in ModEntities plus PlayNicely half-size via getDefaultDimensions (orig CaterKiller.java:54-58); see FIX_LOG.md and phase_c_reports/C1_entities_A_C.md)
 
 ### ENT-A-073 — CaterKiller: web-self-clear missing
 - **Status:** PARTIAL
@@ -576,12 +605,14 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 - **Original:** `CaterKiller.java:438-448` — damaged >2400t: spawns 1 Brutalfly + 10 Butterflies, explode sound, removes self; on death spawns 25 Butterflies (no Brutalfly)
 - **Port:** `EntityCaterKiller.java:161-169,253-274` — timed transform silently discards (no spawns); every death spawns 1 Brutalfly + 3–5 Butterflies
 - **Fix:** swap: timed transform spawns Brutalfly + 10 Butterflies + explode sound then discard; `die()` spawns 25 Butterflies and never a Brutalfly.
+- **Resolution:** FIXED (2026-06-11, Phase C — 2400t damaged timer now spawns 1 Brutalfly + 10 Butterflies with explosion sound before discard (orig CaterKiller.java:438-448); see FIX_LOG.md and phase_c_reports/C1_entities_A_C.md)
 
 ### ENT-A-075 — CaterKiller: tree-eat heal values invented
 - **Status:** DIVERGENT
 - **Original:** `CaterKiller.java:502-530` — scan ≤13 for leaves/vines/logs, path to it, eat at distSq<81, heal 2.0, odds 1-in-8 hurt / 1-in-30 idle
 - **Port:** `EntityCaterKiller.java:218-242` — random 5×4×5 sample 1/s, heal 5 (leaf) / 10 (log), no pathing; extra 1-in-150 heal 2.0 added
 - **Fix:** restore pathing scan (radius 13, eat range distSq<81), heal 2.0 flat, original trigger odds; remove invented heals and false parity comments (ENT-SYS-003).
+- **Resolution:** FIXED (2026-06-11, Phase C — tree-eat heal restored: 1-in-8 hurt / 1-in-30 idle, PlayNicely-gated, nearest tree block within 12, eat at distSq<81 for 2.0 heal + 1-in-20 burp (orig CaterKiller.java:502-530); invented 5/10-HP random-munch and 1-in-150 heal removed; see FIX_LOG.md and phase_c_reports/C1_entities_A_C.md)
 
 ### ENT-A-076 — CaterKiller: reward loot degraded
 - **Status:** DIVERGENT
@@ -595,6 +626,7 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 - **Original:** `OreSpawnMain.java:4746-4754` — ambient forest/jungle/hills/jungleEdge/birch/roofed/megaTaiga/taiga w2–10 1–2; rules day, y≥50, 1-in-10 dice, leaf/air clearance, none within 48
 - **Port:** `hostile_cater_killer__*` forest/jungle/taiga/badlands w4 1–2; no rules
 - **Fix:** drop badlands, restore original biome weights; add rules (ENT-SYS-002).
+- **Resolution:** PARTIAL (2026-06-11, Phase C — orig biome/weight spread restored (dark_forest w10, birch w6, forest-hills w4 etc., orig OreSpawnMain.java:4746-4754), badlands dropped; day/y>=50/dice/clearance rules tracked by ENT-SYS-002 (Phase D); see FIX_LOG.md and phase_c_reports/C1_entities_A_C.md)
 
 ## CaveFisher
 
@@ -603,7 +635,7 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 - **Original:** `OreSpawnMain.java:6511` — HP 10, atk 4, def 4; size 1.35×0.75
 - **Port:** `CaveFisher.java:64-70` — HP 25, atk 6, armor 0; size 0.8×0.8 (`ModEntities.java:48`)
 - **Fix:** set HP 10, ATTACK 4, ARMOR 4; dimensions 1.35×0.75.
-- **Resolution:** PARTIAL (2026-06-11, Phase B — stats portion fixed (10/4/4); size 1.35×0.75 remains open, see phase_b_reports/B2_mobstats.md)
+- **Resolution:** FIXED (2026-06-11, Phase C — size remainder closed in Phase C: 1.35x0.75 set in ModEntities; see FIX_LOG.md and phase_c_reports/C1_entities_A_C.md)
 
 ### ENT-A-079 — CaveFisher: ceiling-ambush goal invented
 - **Status:** PARTIAL
@@ -616,12 +648,14 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 - **Original:** `CaveFisher.java:193-228` — hunts players & animals; excludes CaveFisher/EnderReaper/EnderKnight/all EntityMob
 - **Port:** targets Player only via goal
 - **Fix:** add `NearestAttackableTargetGoal<Animal>` with the original exclusion filter (no monsters, no CaveFisher/EnderReaper/EnderKnight).
+- **Resolution:** FIXED (2026-06-11, Phase C — passive-mob predation restored via NearestAttackableTargetGoal<Animal> (orig CaveFisher.java:193-228 excludes all EntityMob); see FIX_LOG.md and phase_c_reports/C1_entities_A_C.md)
 
 ### ENT-A-081 — CaveFisher: nugget gamble drops replaced
 - **Status:** DIVERGENT
 - **Original:** `CaveFisher.java:141-153` — 1-in-6 each: gold nugget / uranium nugget / titanium nugget, else nothing
 - **Port:** `cave_fisher.json` — string 2–5 + spider eye 0–1
 - **Fix:** rewrite JSON: three independent pools, each item @ ~16.7% chance, count 1; remove string/spider-eye.
+- **Resolution:** FIXED (2026-06-11, Phase C — gold/uranium/titanium nugget gamble restored in cave_fisher.json (1-in-6 each, 0-2 +looting); see FIX_LOG.md and phase_c_reports/C1_entities_A_C.md)
 
 ## Cephadrome
 
@@ -630,6 +664,7 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 - **Original:** `Cephadrome.java:515-573,404-432` — attacks Monsters, Mothra, untamed Leon/GammaMetroid/WaterDragon, EnderDragon (70 direct part hits), Kraken ×1.5 dmg; players only if hit_by_player/badmood
 - **Port:** `entity/Cephadrome.java:227-242` — Monsters ✓ but Mothra/Leon/GammaMetroid/WaterDragon explicitly EXCLUDED; no EnderDragon/Kraken special damage
 - **Fix:** flip the exclusions into inclusions (untamed only); add EnderDragon part-hit handling and ×1.5 Kraken damage.
+- **Resolution:** FIXED (2026-06-11, Phase C — targets now include Mothra, untamed Leon/GammaMetroid/WaterDragon, EnderDragon; EnderDragon takes 70 via explosion-typed hit, Kraken x1.5 (orig Cephadrome.java:404-432,515-573); see FIX_LOG.md and phase_c_reports/C1_entities_A_C.md)
 
 ### ENT-A-083 — Cephadrome: flying-mount system missing (signature feature)
 - **Status:** MISSING
@@ -663,6 +698,7 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 - **Original:** `Chipmunk.java:132-206` — tame apple 1-in-2; untame dead bush
 - **Port:** `entity/Chipmunk.java:119-158` — tame wheat 1-in-2; untame glass
 - **Fix:** switch tame item to apple, untame item to dead bush.
+- **Resolution:** FIXED (2026-06-11, Phase C — tame item apple (1-in-2), untame item dead bush (orig Chipmunk.java:141,172); see FIX_LOG.md and phase_c_reports/C1_entities_A_C.md)
 
 ### ENT-A-088 — Chipmunk: all drops missing
 - **Status:** MISSING
@@ -683,6 +719,7 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 - **Original:** `CliffRacer.java:149-161` — 1-in-8 each: raw chicken / uranium nugget / titanium nugget
 - **Port:** `cliff_racer.json` — feather 1–3
 - **Fix:** rewrite JSON: three pools, each item @12.5% chance ×1; remove feathers.
+- **Resolution:** FIXED (2026-06-11, Phase C — raw chicken/uranium/titanium nugget gamble restored in cliff_racer.json (1-in-8 each, 0-2 +looting); see FIX_LOG.md and phase_c_reports/C1_entities_A_C.md)
 
 ## CloudShark
 
@@ -691,7 +728,7 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 - **Original:** `OreSpawnMain.java:6512` — HP 15, atk 6, def 5; size 1.0×0.75
 - **Port:** `CloudShark.java:42-47` — HP 20, armor 0; size 1.5×1.0 (`ModEntities.java:52`)
 - **Fix:** set HP 15, ARMOR 5; dimensions 1.0×0.75.
-- **Resolution:** PARTIAL (2026-06-11, Phase B — stats portion fixed (HP 15, armor 5); size 1.0×0.75 remains open, see phase_b_reports/B2_mobstats.md)
+- **Resolution:** FIXED (2026-06-11, Phase C — size remainder closed in Phase C: 1.0x0.75 set in ModEntities; see FIX_LOG.md and phase_c_reports/C1_entities_A_C.md)
 
 ### ENT-A-092 — CloudShark: prey ecosystem gone (player-only hunter)
 - **Status:** PARTIAL
@@ -704,6 +741,7 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 - **Original:** `CloudShark.java:263-275` — 1-in-3 each: paper / string / bone
 - **Port:** `cloud_shark.json` — cod 3–8
 - **Fix:** rewrite JSON: paper/string/bone pools each @33% ×1; remove cod.
+- **Resolution:** FIXED (2026-06-11, Phase C — paper/string/bone gamble restored in cloud_shark.json (1-in-3 each, 0-2 +looting); see FIX_LOG.md and phase_c_reports/C1_entities_A_C.md)
 
 ### ENT-A-094 — CloudShark: persistence/despawn semantics changed
 - **Status:** PARTIAL
@@ -718,6 +756,7 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 - **Original:** `Cockateil.java:82-86` — random type 0–5 at spawn → 6 textures
 - **Port:** `entity/Cockateil.java:55-58` — DATA_BIRD_TYPE defaults 0, never randomized
 - **Fix:** in `finalizeSpawn`, set bird type to `random.nextInt(6)`.
+- **Resolution:** FIXED (2026-06-11, Phase C — finalizeSpawn randomizes BirdType nextInt(6) for fresh spawns (orig Cockateil.java:82-86); see FIX_LOG.md and phase_c_reports/C1_entities_A_C.md)
 
 ### ENT-A-096 — Cockateil: flight AI degraded (no yaw update, LOS/air checks and hooks gone)
 - **Status:** PARTIAL
@@ -730,6 +769,7 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 - **Original:** `Cockateil.java:242-248` — ruby only if birdtype==5 & killedByPlayer & 1-in-3
 - **Port:** `cockateil.json` — ruby @ killed_by_player && 33% from ANY bird
 - **Fix:** move ruby drop to code gated on `getBirdType()==5` (or a loot condition reading the synched data), keep 1-in-3 + killed-by-player.
+- **Resolution:** FIXED (2026-06-11, Phase C — ruby drop gated on BirdType 5 + player kill + 1-in-3 via NBT entity_properties in cockateil.json; see FIX_LOG.md and phase_c_reports/C1_entities_A_C.md)
 
 ## Coin
 
@@ -738,6 +778,7 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 - **Original:** `Coin.java:98-129` — 1 roll-of-10: diamond / uranium nugget / titanium nugget / emerald / emerald axe-shovel-pickaxe-hoe / CoinEgg / emerald sword default
 - **Port:** `coin.json` — gold ingot 1–3
 - **Fix:** rewrite JSON as a single roll over the original 10-entry pool (incl. CoinEgg and emerald tools/sword).
+- **Resolution:** PARTIAL (2026-06-11, Phase C — orig 10-slot weighted jackpot restored in coin.json; the CoinEgg slot stays empty until the item is ported (Phase D); see FIX_LOG.md and phase_c_reports/C1_entities_A_C.md)
 
 ### ENT-A-099 — Coin: natural overworld spawning impossible
 - **Status:** MISSING
@@ -752,26 +793,28 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 - **Original:** `Crab.java:136-138`, `OreSpawnMain.java:6517,6524` — HP 250×scale, atk 24×scale, armor 16+2·scale, XP 400×scale, size 3.75×3.5·scale
 - **Port:** `Crab.java:38-42,59-66,96-101` — HP fixed 100, atk 10×scale, armor 6, XP fixed 150; size fixed 0.8×0.6 (`ModEntities.java:56`)
 - **Fix:** derive HP/XP/armor/dimensions from scale per original formulas (HP 250·scale, atk 24·scale, armor 16+2·scale, XP 400·scale, size 3.75×3.5·scale via `EntityDimensions.scalable`).
-- **Resolution:** PARTIAL (2026-06-11, Phase B — stat formulas fixed (HP 250×scale, ATK 24×scale, armor 16+2×scale, XP 400×scale); scale-driven size 3.75×3.5×scale remains open, see phase_b_reports/B2_mobstats.md)
+- **Resolution:** FIXED (2026-06-11, Phase C — remainder closed in Phase C: scale-driven dims via getDefaultDimensions (2.5x3.5 x scale — orig Crab.java:133 tick() setSize overrides the 3.75 spawn-time width every tick, so 2.5 is the live value); see FIX_LOG.md and phase_c_reports/C1_entities_A_C.md)
 
 ### ENT-A-101 — Crab: spawn-time scale randomization deleted (giant crabs never occur)
 - **Status:** DIVERGENT
 - **Original:** `Crab.java:74-98` — scale 0.25 base, 1-in-4→0.5, 1-in-8→1.0; spawner crabs 0.35
 - **Port:** `Crab.java:69-73` — DATA_SCALE constant 25 (0.25), never randomized
 - **Fix:** randomize scale in `finalizeSpawn` with the original 0.25/0.5/1.0 distribution (0.35 for spawner spawns).
+- **Resolution:** FIXED (2026-06-11, Phase C — finalizeSpawn restores the 0.25/0.5/1.0 scale dice and the fixed 0.35 spawner scale (orig Crab.java:74-98); see FIX_LOG.md and phase_c_reports/C1_entities_A_C.md)
 
 ### ENT-A-102 — Crab: water ecology inverted (water-seeker → water-avoider)
 - **Status:** DIVERGENT
 - **Original:** `Crab.java:306-339` — water-seek scan ≤12 → path 1.33; dry-out −1 HP @1-in-100, discard at 0
 - **Port:** `WaterAvoidingRandomStrollGoal`; water-seek & dry-out missing
 - **Fix:** replace WaterAvoidingStroll with plain stroll + ported water-seek scan and dry-out damage/discard.
+- **Resolution:** FIXED (2026-06-11, Phase C — RandomStrollGoal (no water avoidance), water-seek scan, dry-out damage and self-discard restored (orig Crab.java:314-338); see FIX_LOG.md and phase_c_reports/C1_entities_A_C.md)
 
 ### ENT-A-103 — Crab: melee damage cut and attack sounds missing
 - **Status:** DIVERGENT
 - **Original:** `Crab.java` — melee 24×scale; attack sounds `scorpion_attack`/`scorpion_living`; water-heal splash sound
 - **Port:** `Crab.java:104-119` — melee 10×scale; no attack sounds, no splash
 - **Fix:** set base melee 24×scale; play `orespawn:scorpion_attack`/`scorpion_living` on swings and splash on water heal.
-- **Resolution:** PARTIAL (2026-06-11, Phase B — melee now reads the scaled ATTACK_DAMAGE attribute; attack/splash sounds remain open, see phase_b_reports/B2_mobstats.md)
+- **Resolution:** FIXED (2026-06-11, Phase C — remainder closed in Phase C: scorpion_attack/scorpion_living on melee swings, splash sound on water heal (orig Crab.java:358-364); see FIX_LOG.md and phase_c_reports/C1_entities_A_C.md)
 
 ### ENT-A-104 — Crab: target list pruned
 - **Status:** PARTIAL
@@ -792,7 +835,7 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 - **Original:** `OreSpawnMain.java:6513` — HP 10, atk 3, def 2; size 0.75×0.5
 - **Port:** `CreepingHorror.java:32-37,51-57` — HP 20, atk 6, armor 0; size 1.5×1.5 (`ModEntities.java:60`)
 - **Fix:** set HP 10, ATTACK 3, ARMOR 2; dimensions 0.75×0.5.
-- **Resolution:** PARTIAL (2026-06-11, Phase B — stats portion fixed (10/3/2); size 0.75×0.5 remains open, see phase_b_reports/B2_mobstats.md)
+- **Resolution:** FIXED (2026-06-11, Phase C — size remainder closed in Phase C: 0.75x0.5 set in ModEntities; see FIX_LOG.md and phase_c_reports/C1_entities_A_C.md)
 
 ### ENT-A-107 — CreepingHorror: MoveThroughVillage missing
 - **Status:** PARTIAL
@@ -811,12 +854,14 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 - **Original:** `CreepingHorror.java:119-128` — 1 of: rotten flesh / bone / string
 - **Port:** `creeping_horror.json` — rotten flesh 2–5 + bone 1–3
 - **Fix:** rewrite JSON as one roll picking a single rotten flesh OR bone OR string.
+- **Resolution:** FIXED (2026-06-11, Phase C — rotten flesh/bone/string gamble restored in creeping_horror.json (1-in-3 each, 0-2 +looting); see FIX_LOG.md and phase_c_reports/C1_entities_A_C.md)
 
 ### ENT-A-110 — CreepingHorror: deep-cave/night spawn identity removed
 - **Status:** DIVERGENT
 - **Original:** `CreepingHorror.java:220-228` — rules: dark, night, and (dim6 or y≤15)
 - **Port:** `add_overworld_monsters.json` w3 1–1; no rules — spawns anywhere monsters can
 - **Fix:** add `checkSpawnRules` enforcing darkness + night + y≤15 (or the dungeon dimension); keep modifier weight.
+- **Resolution:** FIXED (2026-06-11, Phase C — checkSpawnRules enforces darkness + night + (Chaos dim or y<=15) (orig CreepingHorror.java:220-228); see FIX_LOG.md and phase_c_reports/C1_entities_A_C.md)
 
 ## Cryolophosaurus
 
@@ -832,12 +877,14 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 - **Original:** `Cryolophosaurus.java:141-211` — proactive hunt 1-in-5 over 9×2×9; excludes Alosaurus/TRex/own kind/ghosts/CaveFisher/insects
 - **Port:** `entity/Cryolophosaurus.java:34-44` — HurtBy only; comment falsely claims it never hunted (ENT-SYS-003)
 - **Fix:** add proactive target scan (1-in-5 per tick, 9×2×9 box) with original exclusion list; fix the comment.
+- **Resolution:** FIXED (2026-06-11, Phase C — proactive 1-in-5 hunt over 9x2x9 with the orig exclusion list and timid bite dice restored; misleading comment fixed (orig Cryolophosaurus.java:141-211); see FIX_LOG.md and phase_c_reports/C1_entities_A_C.md)
 
 ### ENT-A-113 — Cryolophosaurus: gamble drops replaced
 - **Status:** DIVERGENT
 - **Original:** `Cryolophosaurus.java:120-132` — 1-in-10: raw chicken / uranium nugget / titanium nugget, else nothing
 - **Port:** `cryolophosaurus.json` — bone 2–5 + diamond 0–1@20%
 - **Fix:** rewrite JSON: three pools each @10% ×1; remove bone/diamond.
+- **Resolution:** FIXED (2026-06-11, Phase C — raw chicken/uranium/titanium nugget gamble restored in cryolophosaurus.json (1-in-10 each, 0-2 +looting); see FIX_LOG.md and phase_c_reports/C1_entities_A_C.md)
 
 ## CrystalCow
 
@@ -846,6 +893,7 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 - **Original:** `CrystalCow.java` — extends RedCow (inherits its stats/behavior)
 - **Port:** `entity/CrystalCow.java:15-22` — extends vanilla `Cow` with `Cow.createAttributes()`
 - **Fix:** re-parent to the port's RedCow (or replicate RedCow stats/behavior) so inherited drops/attributes match.
+- **Resolution:** FIXED (2026-06-11, Phase C — CrystalCow re-parented to RedCow, inheriting the 1-in-200 forgiveness tick and never-despawn (orig CrystalCow.java:13-14); see FIX_LOG.md and phase_c_reports/C1_entities_A_C.md)
 
 ### ENT-A-115 — CrystalCow: pink-ingot drop invented, vanilla apple lost
 - **Status:** DIVERGENT

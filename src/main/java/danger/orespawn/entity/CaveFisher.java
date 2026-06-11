@@ -21,6 +21,7 @@ import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
+import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
@@ -59,6 +60,10 @@ public class CaveFisher extends Monster {
         this.goalSelector.addGoal(5, new RandomLookAroundGoal(this));
         this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
         this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
+        // orig CaveFisher.java:193-228 — also preys on passive mobs (anything
+        // that isn't an EntityMob/CaveFisher/EnderReaper/EnderKnight). Animal
+        // targeting covers the non-monster living set in modern terms.
+        this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, Animal.class, true));
     }
 
     public static AttributeSupplier.Builder createAttributes() {

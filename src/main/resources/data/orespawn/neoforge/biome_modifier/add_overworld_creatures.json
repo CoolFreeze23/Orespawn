@@ -20,8 +20,6 @@
     { "type": "orespawn:red_ant", "weight": 8, "minCount": 1, "maxCount": 3 },
     { "type": "orespawn:worm_small", "weight": 10, "minCount": 1, "maxCount": 2 },
     { "type": "orespawn:cliff_racer", "weight": 5, "minCount": 1, "maxCount": 2 },
-    { "type": "orespawn:camarasaurus", "weight": 2, "minCount": 1, "maxCount": 1 },
-    { "type": "orespawn:baryonyx", "weight": 3, "minCount": 1, "maxCount": 1 },
     { "type": "orespawn:velocity_raptor", "weight": 4, "minCount": 1, "maxCount": 2 },
     { "type": "orespawn:dragon", "weight": 1, "minCount": 1, "maxCount": 1 }
   ]

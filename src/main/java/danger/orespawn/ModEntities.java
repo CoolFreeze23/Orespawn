@@ -16,7 +16,8 @@ public class ModEntities {
 
     public static final DeferredHolder<EntityType<?>, EntityType<Alien>> ALIEN =
             ENTITY_TYPES.register("alien", () -> EntityType.Builder.of(Alien::new, MobCategory.MONSTER)
-                    .sized(0.6f, 1.8f).clientTrackingRange(10).build("alien"));
+                    .sized(1.1f, 3.25f) // orig Alien.java:52
+                    .clientTrackingRange(10).build("alien"));
 
     // Phase 12 — Alien Boss is a buffed Alien sub-type registered as a
     // separate entity ID so its summon-aura AI and persistent flag don't
@@ -35,31 +36,41 @@ public class ModEntities {
 
     public static final DeferredHolder<EntityType<?>, EntityType<AttackSquid>> ATTACK_SQUID =
             ENTITY_TYPES.register("attack_squid", () -> EntityType.Builder.of(AttackSquid::new, MobCategory.MONSTER)
-                    .sized(0.8f, 0.8f).clientTrackingRange(10).build("attack_squid"));
+                    .sized(1.0f, 1.25f) // orig AttackSquid.java:65
+                    .clientTrackingRange(10).build("attack_squid"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<BandP>> BAND_P =
             ENTITY_TYPES.register("band_p", () -> EntityType.Builder.of(BandP::new, MobCategory.MONSTER)
-                    .sized(0.6f, 1.0f).clientTrackingRange(10).build("band_p"));
+                    .sized(0.75f, 1.75f) // orig BandP.java:51
+                    .clientTrackingRange(10).build("band_p"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<Basilisk>> BASILISK =
             ENTITY_TYPES.register("basilisk", () -> EntityType.Builder.of(Basilisk::new, MobCategory.MONSTER)
-                    .sized(1.6f, 3.5f).clientTrackingRange(12).build("basilisk"));
+                    .sized(1.6f, 3.5f)
+                    .fireImmune() // orig Basilisk.java:52 field_70178_ae = true
+                    .clientTrackingRange(12).build("basilisk"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<CaveFisher>> CAVE_FISHER =
             ENTITY_TYPES.register("cave_fisher", () -> EntityType.Builder.of(CaveFisher::new, MobCategory.MONSTER)
-                    .sized(0.8f, 0.8f).clientTrackingRange(10).build("cave_fisher"));
+                    .sized(1.35f, 0.75f) // orig CaveFisher.java:44
+                    .clientTrackingRange(10).build("cave_fisher"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<CloudShark>> CLOUD_SHARK =
             ENTITY_TYPES.register("cloud_shark", () -> EntityType.Builder.of(CloudShark::new, MobCategory.MONSTER)
-                    .sized(1.5f, 1.0f).clientTrackingRange(10).build("cloud_shark"));
+                    .sized(1.0f, 0.75f) // orig CloudShark.java:41
+                    .clientTrackingRange(10).build("cloud_shark"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<Crab>> CRAB =
             ENTITY_TYPES.register("crab", () -> EntityType.Builder.of(Crab::new, MobCategory.MONSTER)
-                    .sized(0.8f, 0.6f).clientTrackingRange(10).build("crab"));
+                    // orig Crab.java:133 — the per-tick setSize(2.5×scale, 3.5×scale)
+                    // wins over the spawn-time 3.75 width (orig :97, audit's claim);
+                    // Crab#getDefaultDimensions applies the live scale on this base.
+                    .sized(2.5f, 3.5f).clientTrackingRange(10).build("crab"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<CreepingHorror>> CREEPING_HORROR =
             ENTITY_TYPES.register("creeping_horror", () -> EntityType.Builder.of(CreepingHorror::new, MobCategory.MONSTER)
-                    .sized(1.5f, 1.5f).clientTrackingRange(10).build("creeping_horror"));
+                    .sized(0.75f, 0.5f) // orig CreepingHorror.java:47
+                    .clientTrackingRange(10).build("creeping_horror"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<Cryolophosaurus>> CRYOLOPHOSAURUS =
             ENTITY_TYPES.register("cryolophosaurus", () -> EntityType.Builder.of(Cryolophosaurus::new, MobCategory.MONSTER)
@@ -187,15 +198,20 @@ public class ModEntities {
 
     public static final DeferredHolder<EntityType<?>, EntityType<EntityBee>> ENTITY_BEE =
             ENTITY_TYPES.register("bee", () -> EntityType.Builder.of(EntityBee::new, MobCategory.MONSTER)
-                    .sized(0.5f, 0.5f).clientTrackingRange(10).build("bee"));
+                    .sized(1.5f, 2.5f) // orig Bee.java:45
+                    .clientTrackingRange(10).build("bee"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<EntityBrutalfly>> ENTITY_BRUTALFLY =
             ENTITY_TYPES.register("brutalfly", () -> EntityType.Builder.of(EntityBrutalfly::new, MobCategory.MONSTER)
-                    .sized(1.2f, 1.2f).clientTrackingRange(10).build("brutalfly"));
+                    .sized(5.0f, 2.0f) // orig Brutalfly.java:55
+                    .fireImmune() // orig Brutalfly.java:58 field_70178_ae = true
+                    .clientTrackingRange(10).build("brutalfly"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<EntityCaterKiller>> ENTITY_CATER_KILLER =
             ENTITY_TYPES.register("cater_killer", () -> EntityType.Builder.of(EntityCaterKiller::new, MobCategory.MONSTER)
-                    .sized(1.5f, 1.0f).clientTrackingRange(10).build("cater_killer"));
+                    // orig CaterKiller.java:54-58 — 2.9×4.6, halved to 1.45×2.3 when
+                    // PlayNicely; the halving lives in EntityCaterKiller#getDefaultDimensions.
+                    .sized(2.9f, 4.6f).clientTrackingRange(10).build("cater_killer"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<EntityEmperorScorpion>> ENTITY_EMPEROR_SCORPION =
             ENTITY_TYPES.register("emperor_scorpion", () -> EntityType.Builder.of(EntityEmperorScorpion::new, MobCategory.MONSTER)
@@ -547,7 +563,8 @@ public class ModEntities {
 
     public static final DeferredHolder<EntityType<?>, EntityType<AntRobot>> ANT_ROBOT =
             ENTITY_TYPES.register("ant_robot", () -> EntityType.Builder.of(AntRobot::new, MobCategory.MISC)
-                    .sized(2.0f, 3.0f).clientTrackingRange(10).build("ant_robot"));
+                    .sized(2.75f, 1.25f) // orig AntRobot.java:52
+                    .clientTrackingRange(10).build("ant_robot"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<Elevator>> ELEVATOR =
             ENTITY_TYPES.register("elevator", () -> EntityType.Builder.of(Elevator::new, MobCategory.MISC)
