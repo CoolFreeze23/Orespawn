@@ -63,13 +63,40 @@ import net.minecraft.world.phys.Vec3;
  *       without touching code.</li>
  * </ul>
  */
-public class Leonopteryx extends TamableAnimal {
+public class Leonopteryx extends TamableAnimal
+        implements danger.orespawn.network.RiderInputPayload.RideableFlyer {
 
     private static final EntityDataAccessor<Integer> DATA_ATTACKING =
             SynchedEntityData.defineId(Leonopteryx.class, EntityDataSerializers.INT);
 
-    private static final double WILD_HP        = 300.0;
-    private static final double WILD_ATTACK    = 40.0;
+    /**
+     * Ridden-flight tuning copied verbatim from {@link EntityLeon}: the port
+     * registers Leonopteryx separately, but the 1.7.10 original is a single
+     * entity (orig Leon.java — the stats table calls it "Leonopteryx"), so the
+     * wild variant is given the exact same rider flight (decision documented
+     * in phase_b_reports/B3_riders.md). Constants from orig Leon.java:741-889;
+     * see EntityLeon.RIDER_FLIGHT_CONFIG for the per-value citations.
+     */
+    private static final danger.orespawn.entity.ai.RiderFlightController.Config RIDER_FLIGHT_CONFIG =
+            new danger.orespawn.entity.ai.RiderFlightController.Config(
+                    true, 1.55, 0.03, 0.1, 0.018,
+                    3, 7.0, 0.05, 0.07, false,
+                    2.0,
+                    1.85, 0.01, false,
+                    false, 0.035, 0.038,
+                    0.088, 1.15, -0.02, 0.35, true,
+                    0.0, 0.985, 0.94);
+
+    private final danger.orespawn.entity.ai.RiderFlightController riderFlight =
+            new danger.orespawn.entity.ai.RiderFlightController(RIDER_FLIGHT_CONFIG);
+    /** Held state of the rider's vertical keys (client-set for prediction, server-set via payload). */
+    private boolean riderFlyUp = false;
+    private boolean riderFlyDown = false;
+
+    // Orig Leon hardcodes HP 250 (orig Leon.java:169) and ATK 55 (orig
+    // Leon.java:117), ignoring its "Leonopteryx" stats-table entry (150/20/8).
+    private static final double WILD_HP        = 250.0;
+    private static final double WILD_ATTACK    = 55.0;
     private static final double FLIGHT_SPEED   = 0.6;
     /** 1-in-3 dice on raw-beef offering — matches the 1.7.10 tame chance. */
     private static final int TAME_DICE = 3;
@@ -86,7 +113,8 @@ public class Leonopteryx extends TamableAnimal {
 
     public Leonopteryx(EntityType<? extends Leonopteryx> type, Level level) {
         super(type, level);
-        this.xpReward = 120;
+        // orig Leon.java:82 — experienceValue = 300.
+        this.xpReward = 300;
         this.targetSorter = Comparator.comparingDouble(this::distanceToSqr);
         this.setNoGravity(true);
         // Air-resistant move/look — flying creatures get treated like ambient
@@ -96,9 +124,12 @@ public class Leonopteryx extends TamableAnimal {
     }
 
     public static AttributeSupplier.Builder createAttributes() {
+        // orig Leon.java:169/117/192 — HP 250 / ATK 55 / armor 16 (entity-side
+        // hardcodes that override the stats table; see MobStats.LEON javadoc).
         return TamableAnimal.createMobAttributes()
                 .add(Attributes.MAX_HEALTH, WILD_HP)
                 .add(Attributes.ATTACK_DAMAGE, WILD_ATTACK)
+                .add(Attributes.ARMOR, 16.0)
                 .add(Attributes.MOVEMENT_SPEED, 0.4)
                 .add(Attributes.FOLLOW_RANGE, 64.0)
                 .add(Attributes.FLYING_SPEED, 0.5);
@@ -157,6 +188,74 @@ public class Leonopteryx extends TamableAnimal {
         return null;
     }
 
+    // ==================== Riding ====================
+
+    /**
+     * The owner steers from the front seat — same gate as orig Leon.java
+     * (only the taming owner could mount; riding required tame + ownership).
+     */
+    @Nullable
+    @Override
+    public LivingEntity getControllingPassenger() {
+        if (!this.getPassengers().isEmpty()
+                && this.getPassengers().get(0) instanceof Player player
+                && this.isOwnedBy(player)) {
+            return player;
+        }
+        return super.getControllingPassenger();
+    }
+
+    /**
+     * Seats the rider 0.65 blocks ahead of center (orig Leon.java:943-948).
+     */
+    @Override
+    protected void positionRider(Entity passenger, Entity.MoveFunction callback) {
+        if (!this.hasPassenger(passenger)) return;
+        double rx = this.getX() - 0.65 * Math.sin(Math.toRadians(this.getYRot()));
+        double ry = this.getY() + this.getBbHeight() * 0.85;
+        double rz = this.getZ() + 0.65 * Math.cos(Math.toRadians(this.getYRot()));
+        callback.accept(passenger, rx, ry, rz);
+    }
+
+    /**
+     * Client-predicted rider flight — identical physics to {@link EntityLeon}
+     * (orig Leon.java:741-889) since both port registrations descend from the
+     * one original entity.
+     */
+    @Override
+    protected void tickRidden(Player rider, Vec3 travelVector) {
+        super.tickRidden(rider, travelVector);
+        if (this.isControlledByLocalInstance()) {
+            this.riderFlight.tick(this, rider, this.riderFlyUp, this.riderFlyDown);
+        }
+    }
+
+    /**
+     * Skips vanilla travel while player-ridden: {@link #tickRidden} already
+     * applied the full move via {@code RiderFlightController}, so running
+     * vanilla travel too would integrate the motion twice.
+     */
+    @Override
+    public void travel(Vec3 travelVector) {
+        if (this.isControlledByLocalInstance() && this.getControllingPassenger() instanceof Player) {
+            return;
+        }
+        super.travel(travelVector);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>Consumed by {@link #tickRidden}; modern per-player equivalent of
+     * the original's global {@code OreSpawnMain.flyup_keystate} poll (orig
+     * Leon.java:827-830).</p>
+     */
+    @Override
+    public void setRiderVerticalInput(boolean up, boolean down) {
+        this.riderFlyUp = up;
+        this.riderFlyDown = down;
+    }
+
     @Override
     public InteractionResult mobInteract(Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
@@ -170,6 +269,15 @@ public class Leonopteryx extends TamableAnimal {
 
         if (this.isTame()) {
             if (this.isOwnedBy(player)) {
+                // Empty hand: mount and fly (orig Leon.java:1011-1018 —
+                // bare-hand right-click within 49 sq blocks starts riding,
+                // wakes the bird, and switches it to flight).
+                if (stack.isEmpty() && this.distanceToSqr(player) < 49.0) {
+                    this.setOrderedToSit(false);
+                    this.setInSittingPose(false);
+                    player.startRiding(this);
+                    return InteractionResult.SUCCESS;
+                }
                 if (this.isFood(stack) && this.getHealth() < this.getMaxHealth()) {
                     if (!player.getAbilities().instabuild) stack.shrink(1);
                     this.heal((float) Math.ceil(this.getMaxHealth() / 10.0f));
@@ -253,9 +361,13 @@ public class Leonopteryx extends TamableAnimal {
         }
 
         // Damp the y-velocity so the bird coasts smoothly rather than
-        // free-falling between flap intervals.
-        Vec3 motion = this.getDeltaMovement();
-        this.setDeltaMovement(motion.x, motion.y * 0.6, motion.z);
+        // free-falling between flap intervals. Skipped while ridden — the
+        // rider-flight physics apply the original's own 0.94 y-friction
+        // (orig Leon.java:888) and this extra damping would cancel fly-up.
+        if (!this.isVehicle()) {
+            Vec3 motion = this.getDeltaMovement();
+            this.setDeltaMovement(motion.x, motion.y * 0.6, motion.z);
+        }
     }
 
     @Override
@@ -285,6 +397,13 @@ public class Leonopteryx extends TamableAnimal {
 
         if (this.isOrderedToSit()) {
             this.getNavigation().stop();
+            return;
+        }
+
+        // Ridden: movement is client-predicted (travelRidden); the server only
+        // runs the original's non-movement ridden duties (orig Leon.java:890-900).
+        if (this.isVehicle() && this.getControllingPassenger() != null) {
+            serverRiddenTick();
             return;
         }
 
@@ -330,6 +449,48 @@ public class Leonopteryx extends TamableAnimal {
         float motionYaw = (float) (Math.atan2(this.getDeltaMovement().z, this.getDeltaMovement().x) * 180.0 / Math.PI) - 90.0f;
         float yawDelta = Mth.wrapDegrees(motionYaw - this.getYRot());
         this.setYRot(this.getYRot() + yawDelta / 5.0f);
+    }
+
+    /**
+     * Server-side portion of the original ridden branch — pushing nearby
+     * entities (orig Leon.java:890-896, box 2.25/2.0/2.25), the mounted
+     * auto-melee {@code fly_with_rider} (orig :345-375 — 1/7 chance per tick,
+     * range {@code 9.0 + width/2}), and ejecting a removed rider (orig :898-900).
+     */
+    private void serverRiddenTick() {
+        if (this.isRemoved()) return;
+
+        List<Entity> nearby = this.level().getEntities(this, this.getBoundingBox().inflate(2.25, 2.0, 2.25));
+        for (Entity entity : nearby) {
+            if (entity != this.getFirstPassenger() && !entity.isRemoved() && entity.isPushable()) {
+                entity.push(this);
+            }
+        }
+
+        if (this.level().getDifficulty() != net.minecraft.world.Difficulty.PEACEFUL
+                && this.random.nextInt(7) == 1) {
+            LivingEntity target = this.getTarget();
+            if (target != null && !target.isAlive()) {
+                this.setTarget(null);
+                target = null;
+            }
+            if (target == null) {
+                target = findSomethingToAttack();
+            }
+            if (target != null) {
+                this.setAttacking(1);
+                float attackRange = 9.0f + target.getBbWidth() / 2.0f;
+                if (this.distanceToSqr(target) < attackRange * attackRange) {
+                    this.doHurtTarget(target);
+                }
+            } else {
+                this.setAttacking(0);
+            }
+        }
+
+        if (this.getFirstPassenger() != null && this.getFirstPassenger().isRemoved()) {
+            this.ejectPassengers();
+        }
     }
 
     @Nullable

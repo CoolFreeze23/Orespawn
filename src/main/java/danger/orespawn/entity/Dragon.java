@@ -39,7 +39,6 @@ import net.minecraft.world.entity.ai.goal.SitWhenOrderedToGoal;
 import net.minecraft.world.entity.ai.goal.TemptGoal;
 import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
-import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -61,6 +60,31 @@ public class Dragon extends TamableAnimal implements danger.orespawn.network.Rid
     private static final EntityDataAccessor<Integer> DATA_DRAGON_FIRE =
             SynchedEntityData.defineId(Dragon.class, EntityDataSerializers.INT);
 
+    /**
+     * Ridden-flight tuning, number-for-number from orig Dragon.java:919-1165
+     * (ridden branch of onLivingUpdate): hover probe 1.25 (:935-942 — lift
+     * +0.03/+0.1, glide-fall 0.018), terrain scan 3 + v*7 @ 0.05/block ×0.07
+     * (:944-956), rise cap 2.0 (:957-959), yaw lag 1.85 above 0.01 (:975-986),
+     * fly-up +0.03 + v*0.036 (:1001-1004), throttle 0.025 ramped (max_speed
+     * 0.95 :882 — under the >1.0 bonus gate :1018), reverse 0.35 @ -0.02
+     * (:1029-1030), friction 0.985/0.94/0.985 (:1163-1165).
+     */
+    private static final danger.orespawn.entity.ai.RiderFlightController.Config RIDER_FLIGHT_CONFIG =
+            new danger.orespawn.entity.ai.RiderFlightController.Config(
+                    true, 1.25, 0.03, 0.1, 0.018,
+                    3, 7.0, 0.05, 0.07, false,
+                    2.0,
+                    1.85, 0.01, false,
+                    false, 0.03, 0.036,
+                    0.025, 0.95, -0.02, 0.35, true,
+                    0.0, 0.985, 0.94);
+
+    private final danger.orespawn.entity.ai.RiderFlightController riderFlight =
+            new danger.orespawn.entity.ai.RiderFlightController(RIDER_FLIGHT_CONFIG);
+    /** Held state of the rider's vertical keys (client-set for prediction, server-set via payload). */
+    private boolean riderFlyUp = false;
+    private boolean riderFlyDown = false;
+
     private final Comparator<Entity> targetSorter;
     private final float moveSpeed = 0.32f;
     private int hurtTimer = 0;
@@ -73,7 +97,6 @@ public class Dragon extends TamableAnimal implements danger.orespawn.network.Rid
     private int lastZ = 0;
     private int unstickTimer = 0;
     private int fireballTicker = 0;
-    private float deltaSmooth = 0.0f;
     /** Local copy of dragon type (fire vs ice/water); synced with entity data and NBT. */
     private int cachedDragonType = 0;
     @Nullable
@@ -98,10 +121,12 @@ public class Dragon extends TamableAnimal implements danger.orespawn.network.Rid
     }
 
     public static AttributeSupplier.Builder createAttributes() {
+        // orig Dragon.java:192 HP 200, :140 ATK 35, :215 armor 14.
         return Mob.createMobAttributes()
                 .add(Attributes.MAX_HEALTH, 200.0)
                 .add(Attributes.MOVEMENT_SPEED, 0.32)
                 .add(Attributes.ATTACK_DAMAGE, 35.0)
+                .add(Attributes.ARMOR, 14.0)
                 .add(Attributes.FOLLOW_RANGE, 40.0)
                 .add(Attributes.KNOCKBACK_RESISTANCE, 0.5);
     }
@@ -195,23 +220,9 @@ public class Dragon extends TamableAnimal implements danger.orespawn.network.Rid
     }
 
     // ==================== Loot ====================
-
-    private void dropItemRand(ItemStack stack) {
-        double ox = this.getX() + this.getRandom().nextInt(5) - this.getRandom().nextInt(5);
-        double oy = this.getY() + 1.0;
-        double oz = this.getZ() + this.getRandom().nextInt(5) - this.getRandom().nextInt(5);
-        ItemEntity itemEntity = new ItemEntity(this.level(), ox, oy, oz, stack);
-        this.level().addFreshEntity(itemEntity);
-    }
-
-    @Override
-    protected void dropCustomDeathLoot(ServerLevel level, DamageSource source, boolean recentlyHit) {
-        super.dropCustomDeathLoot(level, source, recentlyHit);
-        int count = 1 + this.getRandom().nextInt(6);
-        for (int i = 0; i < count; i++) {
-            dropItemRand(new ItemStack(Items.BONE, 1));
-        }
-    }
+    // Death drops live solely in data/orespawn/loot_table/entities/dragon.json
+    // (orig Dragon.java:342-347 — raw beef 1-6); the former dropCustomDeathLoot
+    // bone override was an invention and double-dropped on top of the table.
 
     // ==================== Combat ====================
 
@@ -342,7 +353,7 @@ public class Dragon extends TamableAnimal implements danger.orespawn.network.Rid
 
         if (this.getActivity() == 1) {
             if (this.isVehicle() && this.getControllingPassenger() instanceof Player rider) {
-                handleRiderFlight(rider);
+                serverRiddenTick(rider);
             } else if (!this.isOrderedToSit()) {
                 handleAIFlight();
             }
@@ -351,8 +362,17 @@ public class Dragon extends TamableAnimal implements danger.orespawn.network.Rid
         handlePassiveBehaviors();
     }
 
+    /**
+     * Skips vanilla travel while flying: the wild AI flight (activity 1)
+     * moves the dragon itself, and player-ridden movement is fully applied
+     * in {@link #tickRidden} via {@code RiderFlightController}, so vanilla
+     * travel would integrate the motion twice.
+     */
     @Override
     public void travel(Vec3 travelVector) {
+        if (this.isControlledByLocalInstance() && this.getControllingPassenger() instanceof Player) {
+            return;
+        }
         if (this.getActivity() == 1) {
             return;
         }
@@ -361,114 +381,34 @@ public class Dragon extends TamableAnimal implements danger.orespawn.network.Rid
 
     // ==================== Flight with Rider ====================
 
-    private void handleRiderFlight(Player rider) {
+    /**
+     * Client-predicted ridden movement (BUG-020 fix): the riding client runs
+     * the original flight physics (orig Dragon.java:919-1165, constants in
+     * {@link #RIDER_FLIGHT_CONFIG}) and syncs the vehicle position to the
+     * server like a vanilla horse; the server no longer moves the dragon.
+     */
+    @Override
+    protected void tickRidden(Player rider, Vec3 travelVector) {
+        super.tickRidden(rider, travelVector);
+        if (this.isControlledByLocalInstance()) {
+            this.riderFlight.tick(this, rider, this.riderFlyUp, this.riderFlyDown);
+        }
+    }
+
+    /**
+     * Server-side portion of the original ridden branch — everything except
+     * movement: strafe-key projectile firing (orig Dragon.java:1060-1161),
+     * pushing nearby entities (orig :1166-1172, box 2.25/2.0/2.25), the
+     * mounted auto-melee {@code fly_with_rider} (orig :486-518), and ejecting
+     * a removed rider (orig :1174-1176).
+     */
+    private void serverRiddenTick(Player rider) {
         if (this.isRemoved() || this.isOrderedToSit()) return;
 
-        Vec3 delta = this.getDeltaMovement();
-        double motionX = Mth.clamp(delta.x, -2.0, 2.0);
-        double motionY = delta.y;
-        double motionZ = Mth.clamp(delta.z, -2.0, 2.0);
-        double velocity = Math.sqrt(motionX * motionX + motionZ * motionZ);
-
-        // Ground proximity: push up near blocks, apply gravity when clear
-        BlockPos belowPos = BlockPos.containing(this.getX(), this.getY() - 1.25, this.getZ());
-        if (!this.level().getBlockState(belowPos).isAir()) {
-            motionY += 0.03;
-            this.setPos(this.getX(), this.getY() + 0.1, this.getZ());
-        } else {
-            motionY -= 0.018;
-        }
-
-        // Obstacle avoidance
-        double obstruction = scanForObstructions(velocity);
-        motionY += obstruction * 0.07;
-        if (obstruction > 0) {
-            this.setPos(this.getX(), this.getY() + obstruction * 0.07, this.getZ());
-        }
-        motionY = Math.min(motionY, 2.0);
-
-        // Smooth yaw interpolation from rider, with turning radius based on velocity
-        double yawDiff = Mth.wrapDegrees(rider.getYRot() - this.getYRot());
-        if (yawDiff > 90) yawDiff -= 180;
-        if (yawDiff < -90) yawDiff += 180;
-
-        if (velocity > 0.01) {
-            double turnRate = Mth.clamp(Math.abs(1.85 - velocity), 0.01, 0.9);
-            this.setYRot(rider.getYRot() + (float) (yawDiff * turnRate));
-        } else {
-            this.setYRot(rider.getYRot());
-        }
-        this.setXRot(2.0f * (float) velocity);
-        this.setRot(this.getYRot(), this.getXRot());
-        this.yHeadRot = this.getYRot();
-
-        // Resolve current velocity direction vs. rider direction
-        double riderDirAngle = Math.toRadians((rider.getYRot() + 90.0f) % 360.0f);
-        double currentAngle = Math.atan2(motionZ, motionX);
-        double angleDiff = Math.abs(currentAngle - riderDirAngle) % (Math.PI * 2);
-        if (angleDiff > Math.PI) angleDiff -= Math.PI * 2;
-        angleDiff = Math.abs(angleDiff);
-        double newVelocity = velocity;
-        if (Math.abs(newVelocity) < 0.01) angleDiff = 0;
-        if (angleDiff > 1.5) newVelocity = -newVelocity;
-
-        // Forward/backward from rider input
-        float forwardInput = rider.zza;
-        double maxSpeed = 0.95;
-        if (Math.abs(forwardInput) > 0.001f) {
-            double deltav;
-            if (forwardInput > 0) {
-                deltav = maxSpeed > 1.0 ? 0.075 : 0.025;
-                if (this.deltaSmooth < 0) this.deltaSmooth = 0;
-                this.deltaSmooth = (float) Math.min(this.deltaSmooth + deltav / 10.0, deltav);
-            } else {
-                maxSpeed = 0.35;
-                deltav = -0.02;
-                if (this.deltaSmooth > 0) this.deltaSmooth = 0;
-                this.deltaSmooth = (float) Math.max(this.deltaSmooth + deltav / 10.0, deltav);
-            }
-
-            newVelocity += this.deltaSmooth;
-            double moveAngle;
-            if (newVelocity >= 0) {
-                newVelocity = Math.min(newVelocity, maxSpeed);
-                moveAngle = Math.toRadians(this.getYRot() + 90.0f);
-            } else {
-                newVelocity = Math.max(newVelocity, -maxSpeed);
-                newVelocity = -newVelocity;
-                moveAngle = Math.toRadians(this.getYRot() + 270.0f);
-            }
-            motionX = Math.cos(moveAngle) * newVelocity;
-            motionZ = Math.sin(moveAngle) * newVelocity;
-        } else {
-            double moveAngle;
-            if (newVelocity >= 0) {
-                moveAngle = Math.toRadians(this.getYRot() + 90.0f);
-            } else {
-                newVelocity = -newVelocity;
-                moveAngle = Math.toRadians(this.getYRot() + 270.0f);
-            }
-            motionX = Math.cos(moveAngle) * newVelocity;
-            motionZ = Math.sin(moveAngle) * newVelocity;
-        }
-
-        // Flyup keybinding requires client-server networking (deferred)
-        // When flyup key is pressed: motionY += 0.03 + velocity * 0.036;
-
-        // Rider projectile firing
         if (this.fireballTicker == 0) {
             handleRiderProjectiles(rider);
         }
 
-        // Apply movement
-        this.setDeltaMovement(motionX, motionY, motionZ);
-        this.move(MoverType.SELF, this.getDeltaMovement());
-
-        // Velocity damping
-        Vec3 dm = this.getDeltaMovement();
-        this.setDeltaMovement(dm.x * 0.985, dm.y * 0.94, dm.z * 0.985);
-
-        // Push nearby entities
         AABB pushBox = this.getBoundingBox().inflate(2.25, 2.0, 2.25);
         List<Entity> nearby = this.level().getEntities(this, pushBox);
         for (Entity entity : nearby) {
@@ -484,6 +424,17 @@ public class Dragon extends TamableAnimal implements danger.orespawn.network.Rid
         }
     }
 
+    /**
+     * Strafe-key projectile firing while ridden (orig Dragon.java:1060-1161):
+     * fire dragon — strafe-right small fireball @ 0.15 accel, "random.bow",
+     * 10-tick cooldown (orig :1068-1091); strafe-left regular (NOT big)
+     * fireball @ 0.1 accel, "random.fuse", 20-tick cooldown (orig :1092-1114).
+     * Water dragon — strafe-right WaterBall 1.4f/5.0f, "random.bow", 5 ticks
+     * (orig :1121-1137); strafe-left special IceBall 1.4f/5.0f,
+     * "fireworks.launch" 0.75f, 15 ticks (orig :1138-1159). Spawn offset
+     * xz 4.0 / y -0.25 ahead of the dragon (orig :1063-1064), aimed along the
+     * rider's view.
+     */
     private void handleRiderProjectiles(Player rider) {
         float strafe = rider.xxa;
         if (Math.abs(strafe) < 0.001f) return;
@@ -504,16 +455,18 @@ public class Dragon extends TamableAnimal implements danger.orespawn.network.Rid
                 bf.setSmall();
                 bf.setPos(spawnX, spawnY, spawnZ);
                 this.level().addFreshEntity(bf);
+                // orig :1088 "random.bow"
                 this.level().playSound(null, this.getX(), this.getY(), this.getZ(),
-                        SoundEvents.BLAZE_SHOOT, SoundSource.NEUTRAL, 0.75f,
+                        SoundEvents.ARROW_SHOOT, SoundSource.NEUTRAL, 0.75f,
                         1.0f / (this.getRandom().nextFloat() * 0.4f + 0.8f));
                 this.fireballTicker = 10;
             } else {
+                // orig :1093-1094 — plain fireball, no setBig()/setSmall()
                 BetterFireball bf = new BetterFireball(this.level(), this, look);
                 bf.setNotMe();
-                bf.setBig();
                 bf.setPos(spawnX, spawnY, spawnZ);
                 this.level().addFreshEntity(bf);
+                // orig :1111 "random.fuse"
                 this.level().playSound(null, this.getX(), this.getY(), this.getZ(),
                         SoundEvents.TNT_PRIMED, SoundSource.NEUTRAL, 1.0f,
                         1.0f / (this.getRandom().nextFloat() * 0.4f + 0.8f));
@@ -526,6 +479,7 @@ public class Dragon extends TamableAnimal implements danger.orespawn.network.Rid
                 wb.setOwner(this);
                 wb.shoot(look.x, look.y, look.z, 1.4f, 5.0f);
                 this.level().addFreshEntity(wb);
+                // orig :1134 "random.bow"
                 this.level().playSound(null, this.getX(), this.getY(), this.getZ(),
                         SoundEvents.ARROW_SHOOT, SoundSource.NEUTRAL, 0.75f,
                         1.0f / (this.getRandom().nextFloat() * 0.4f + 0.8f));
@@ -537,6 +491,7 @@ public class Dragon extends TamableAnimal implements danger.orespawn.network.Rid
                 ib.setPos(spawnX, spawnY, spawnZ);
                 ib.shoot(look.x, look.y, look.z, 1.4f, 5.0f);
                 this.level().addFreshEntity(ib);
+                // orig :1156 "fireworks.launch" 0.75f
                 this.level().playSound(null, this.getX(), this.getY(), this.getZ(),
                         SoundEvents.FIREWORK_ROCKET_LAUNCH, SoundSource.NEUTRAL, 0.75f,
                         1.0f / (this.getRandom().nextFloat() * 0.4f + 0.8f));
@@ -1202,21 +1157,18 @@ public class Dragon extends TamableAnimal implements danger.orespawn.network.Rid
 
     // ==================== RideableFlyer Interface ====================
 
+    /**
+     * {@inheritDoc}
+     *
+     * <p>Consumed by the flight physics in {@link #travelRidden}; matches the
+     * original's polling of {@code OreSpawnMain.flyup_keystate} (orig
+     * Dragon.java:1001-1004). No {@code riderSpecial} — the original Dragon
+     * had no special-key action (its ranged attacks are strafe-fired); the
+     * previous "ignite fireballs" implementation was invented and removed.</p>
+     */
     @Override
-    public void riderFlyUp() {
-        Vec3 delta = this.getDeltaMovement();
-        this.setDeltaMovement(delta.x, Math.min(delta.y + 0.2, 2.0), delta.z);
-    }
-
-    @Override
-    public void riderFlyDown() {
-        Vec3 delta = this.getDeltaMovement();
-        this.setDeltaMovement(delta.x, Math.max(delta.y - 0.2, -2.0), delta.z);
-    }
-
-    @Override
-    public void riderSpecial(net.minecraft.server.level.ServerPlayer rider) {
-        if (this.getDragonFire() > 0) return;
-        this.setDragonFire(20);
+    public void setRiderVerticalInput(boolean up, boolean down) {
+        this.riderFlyUp = up;
+        this.riderFlyDown = down;
     }
 }
