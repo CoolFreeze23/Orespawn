@@ -1,5 +1,7 @@
 package danger.orespawn.entity;
 
+import danger.orespawn.MobStats;
+
 import java.util.Comparator;
 import java.util.List;
 
@@ -36,7 +38,13 @@ public class EntityRat extends Monster {
             SynchedEntityData.defineId(EntityRat.class, EntityDataSerializers.INT);
 
     private final float moveSpeed = 0.25f;
-    private String myOwner = null;
+    /**
+     * Owner assigned via {@link #setOwner}. Stored as a UUID (not a string) so that
+     * spawner-spawned or summoned rats, whose NBT has no owner tag, can never reach
+     * {@code UUID.fromString("")} — which crashed the server (BUG-003).
+     */
+    @Nullable
+    private java.util.UUID ownerUuid = null;
 
     public EntityRat(EntityType<? extends EntityRat> type, Level level) {
         super(type, level);
@@ -54,10 +62,12 @@ public class EntityRat extends Monster {
     }
 
     public static AttributeSupplier.Builder createAttributes() {
+        // orig OreSpawnMain.java:6483 — Rat 5 HP / 3 ATK / 1 armor
         return Mob.createMobAttributes()
-                .add(Attributes.MAX_HEALTH, 10.0)
+                .add(Attributes.MAX_HEALTH, MobStats.RAT.maxHealth())
                 .add(Attributes.MOVEMENT_SPEED, 0.25)
-                .add(Attributes.ATTACK_DAMAGE, 2.0);
+                .add(Attributes.ATTACK_DAMAGE, MobStats.RAT.attackDamage())
+                .add(Attributes.ARMOR, MobStats.RAT.armor());
     }
 
     @Override
@@ -77,7 +87,7 @@ public class EntityRat extends Monster {
     @Override
     public boolean removeWhenFarAway(double dist) {
         if (this.isPersistenceRequired()) return false;
-        return this.myOwner == null;
+        return this.ownerUuid == null;
     }
 
     @Override
@@ -96,22 +106,35 @@ public class EntityRat extends Monster {
 
     public void setOwner(LivingEntity entity) {
         if (entity instanceof Player player) {
-            this.myOwner = player.getUUID().toString();
+            this.ownerUuid = player.getUUID();
         }
     }
 
     @Override
     public void addAdditionalSaveData(CompoundTag tag) {
         super.addAdditionalSaveData(tag);
-        tag.putString("MyOwner", this.myOwner != null ? this.myOwner : "null");
+        if (this.ownerUuid != null) {
+            tag.putUUID("MyOwner", this.ownerUuid);
+        }
     }
 
     @Override
     public void readAdditionalSaveData(CompoundTag tag) {
         super.readAdditionalSaveData(tag);
-        this.myOwner = tag.getString("MyOwner");
-        if (this.myOwner.equals("null")) {
-            this.myOwner = null;
+        this.ownerUuid = null;
+        if (tag.hasUUID("MyOwner")) {
+            this.ownerUuid = tag.getUUID("MyOwner");
+        } else if (tag.contains("MyOwner", CompoundTag.TAG_STRING)) {
+            // Legacy format: owner persisted as a string ("null" meant no owner; absent
+            // tags read back as ""). Parse defensively so old saves can't crash (BUG-003).
+            String legacyOwner = tag.getString("MyOwner");
+            if (!legacyOwner.isEmpty() && !legacyOwner.equals("null")) {
+                try {
+                    this.ownerUuid = java.util.UUID.fromString(legacyOwner);
+                } catch (IllegalArgumentException ignored) {
+                    // Malformed legacy data: treat as wild rat rather than crash.
+                }
+            }
         }
     }
 
@@ -135,8 +158,8 @@ public class EntityRat extends Monster {
                 }
             } else {
                 this.setAttacking(0);
-                if (this.myOwner != null) {
-                    Player owner = this.level().getPlayerByUUID(java.util.UUID.fromString(this.myOwner));
+                if (this.ownerUuid != null) {
+                    Player owner = this.level().getPlayerByUUID(this.ownerUuid);
                     if (owner != null) {
                         if (this.distanceToSqr(owner) > 64.0) {
                             this.getNavigation().moveTo(owner, 1.75);
@@ -174,9 +197,9 @@ public class EntityRat extends Monster {
 
         if (target instanceof Player player) {
             if (player.getAbilities().invulnerable) return false;
-            if (this.myOwner != null && this.myOwner.equals(player.getUUID().toString())) return false;
+            if (this.ownerUuid != null && this.ownerUuid.equals(player.getUUID())) return false;
         }
-        if (this.myOwner != null && target instanceof TamableAnimal tamable && tamable.isTame()) {
+        if (this.ownerUuid != null && target instanceof TamableAnimal tamable && tamable.isTame()) {
             return false;
         }
         return true;

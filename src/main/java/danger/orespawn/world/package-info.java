@@ -43,14 +43,15 @@
  * <ul>
  *   <li>Immutable (codec-provided fields like biome source, noise settings,
  *       and the {@link danger.orespawn.world.DimensionStyle} enum).</li>
- *   <li>{@link java.util.concurrent.atomic.AtomicInteger} where a global
- *       cooldown must be enforced — see
- *       {@link danger.orespawn.world.OreSpawnChunkGenerator}'s
- *       {@code recentlyPlaced} and
- *       {@link danger.orespawn.world.CrystalStructures}' {@code
- *       recentlyPlaced}. Both use {@code updateAndGet} / {@code compareAndSet}
- *       so two worker threads can never both observe "cooldown is 0" and
- *       place overlapping mega-structures one chunk apart.</li>
+ *   <li>{@link java.util.concurrent.atomic.AtomicInteger} instance fields on
+ *       {@link danger.orespawn.world.OreSpawnChunkGenerator} where a placement
+ *       cooldown must be enforced ({@code dungeonPlacementCooldown} and
+ *       {@code crystalStructureCooldown}, the latter handed into
+ *       {@link danger.orespawn.world.CrystalStructures#generate}). Instance —
+ *       not static — so each dimension's generator keeps an independent
+ *       cooldown (BUG-013); atomic so two worker threads can never both
+ *       observe "cooldown is 0" and place overlapping mega-structures one
+ *       chunk apart.</li>
  *   <li>Per-call locals inside {@code static} helper methods — stateless
  *       by construction.</li>
  * </ul>

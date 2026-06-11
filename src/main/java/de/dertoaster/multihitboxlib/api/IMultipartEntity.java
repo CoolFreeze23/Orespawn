@@ -50,13 +50,29 @@ public interface IMultipartEntity<T extends Entity> {
 				return;
 			}
 			access._mhlibAccess_setMasterUUID(id);
-			// System.out.println("ID SET!");
-			/*if(id == null) {
-				System.out.println("ID IS NULL!!");
+			// ──────────────────────────────────────────────────────────
+			// CRITICAL: Do NOT broadcast SPacketSetMaster when id is null.
+			//
+			// Upstream MHL (1.21-NeoForge branch) had a latent NPE here:
+			// the rotate-tracker logic in mhlibAiStep() calls
+			// setMasterUUID(null) every time the current bone-info
+			// master goes 10+ ticks without sending sync data, then
+			// IMMEDIATELY re-calls setMasterUUID(<next queued UUID>).
+			// The first call (with null) reached this branch and tried
+			// to encode SPacketSetMaster.masterUUID via
+			// UtilityCodecs.UUID_STRING_CODEC, which is non-nullable.
+			// Result on 1.21.1 NeoForge: every player tracking *any*
+			// MHL-bound entity got disconnected on world join with
+			// "Failed to encode packet 'clientbound/minecraft:custom_payload'".
+			//
+			// Skipping the broadcast when id==null is safe: the
+			// follow-up setMasterUUID(realUUID) call will fire its own
+			// packet on the same tick, and the local field has already
+			// been updated above so the server's view is consistent.
+			// ──────────────────────────────────────────────────────────
+			if (id == null) {
+				return;
 			}
-			else {
-				System.out.println("Master set to: " + id != null ? id.toString() : "NONE");
-			}*/
 			SPacketSetMaster masterPacket = new SPacketSetMaster(this);
 			//MHLibPackets.send(masterPacket, PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> entity));
 			PacketDistributor.sendToPlayersTrackingEntityAndSelf(entity, masterPacket);

@@ -9,7 +9,15 @@ import de.dertoaster.multihitboxlib.assetsynch.impl.TextureEnforcementManager;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 
-@EventBusSubscriber(modid = Constants.MODID, bus = EventBusSubscriber.Bus.MOD)
+/**
+ * Registers MHLib's built-in asset enforcement managers and asset finders.
+ *
+ * <p>GAME bus: both registration events are posted via {@code NeoForge.EVENT_BUS.post(...)}
+ * in {@code AssetEnforcement} (called from common setup), so a MOD-bus listener would
+ * never receive them (BUG-001 family). The bus attribute is deprecated on this NeoForge
+ * version, so registration is left to per-listener auto-detection.</p>
+ */
+@EventBusSubscriber(modid = Constants.MODID)
 public class ModEventHandler {
 
 	@SubscribeEvent

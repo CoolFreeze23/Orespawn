@@ -21,6 +21,8 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 
+// RegisterPayloadHandlersEvent is a MOD-bus event (IModBusEvent); auto-detection
+// routes it to the mod bus (found while fixing BUG-001/002).
 @EventBusSubscriber(modid = Constants.MODID)
 public class MHLibNetwork implements IMHLibNetworkHelper {
 
