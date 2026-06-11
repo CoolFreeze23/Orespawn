@@ -9,6 +9,7 @@
     { "type": "orespawn:cloud_shark", "weight": 1,  "minCount": 1, "maxCount": 1 },
     { "type": "orespawn:dragon",      "weight": 1,  "minCount": 1, "maxCount": 2 },
     { "type": "orespawn:gold_fish",   "weight": 5,  "minCount": 2, "maxCount": 4 },
-    { "type": "orespawn:ender_reaper", "weight": 25, "minCount": 2, "maxCount": 4 }
+    { "type": "orespawn:ender_reaper", "weight": 25, "minCount": 2, "maxCount": 4 },
+    { "type": "orespawn:terrible_terror", "weight": 25, "minCount": 3, "maxCount": 6 }
   ]
 }

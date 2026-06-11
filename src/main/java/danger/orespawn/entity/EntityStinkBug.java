@@ -1,6 +1,7 @@
 package danger.orespawn.entity;
 
 import danger.orespawn.ModEntities;
+import danger.orespawn.ModItems;
 import danger.orespawn.OreSpawnMod;
 import javax.annotation.Nullable;
 import net.minecraft.resources.ResourceLocation;
@@ -25,9 +26,9 @@ import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.phys.AABB;
 
 import java.util.List;
 
@@ -83,11 +84,14 @@ public class EntityStinkBug extends Animal {
         if (this.isRemoved()) return false;
         boolean ret = super.hurt(source, amount);
         if (this.getHealth() <= 0.0f || this.isRemoved()) {
+            // orig StinkBug.java:95-103 — death gas is CONFUSION/nausea (field_76431_k)
+            // 300t in the box x±8 / y -5..+10 / z±8.
             List<LivingEntity> nearby = this.level().getEntitiesOfClass(LivingEntity.class,
-                    this.getBoundingBox().inflate(8.0, 5.0, 8.0));
+                    new AABB(this.getX() - 8.0, this.getY() - 5.0, this.getZ() - 8.0,
+                            this.getX() + 8.0, this.getY() + 10.0, this.getZ() + 8.0));
             for (LivingEntity nearbyEntity : nearby) {
                 if (nearbyEntity != null) {
-                    nearbyEntity.addEffect(new MobEffectInstance(MobEffects.HUNGER, 300, 0));
+                    nearbyEntity.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 300, 0));
                 }
             }
         }
@@ -105,7 +109,9 @@ public class EntityStinkBug extends Animal {
 
     @Override
     public boolean isFood(ItemStack stack) {
-        return stack.is(Items.APPLE);
+        // orig StinkBug.java:173-175 — breeding item is MyCrystalApple only (the raw-fish
+        // isWheat() at :169-171 is never called: no tempt goal is registered).
+        return stack.is(ModItems.CRYSTAL_APPLE.get());
     }
 
     @Override

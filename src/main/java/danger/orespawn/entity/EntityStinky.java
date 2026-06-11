@@ -13,6 +13,7 @@ import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.InteractionHand;
@@ -47,6 +48,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import danger.orespawn.ModItems;
 import danger.orespawn.OreSpawnMod;
 
 public class EntityStinky extends TamableAnimal {
@@ -150,11 +152,16 @@ public class EntityStinky extends TamableAnimal {
             this.setDeltaMovement(motion.x, motion.y + 0.07, motion.z);
         }
 
+        // orig Stinky.java:335-338 — 1-in-1750: "random.burp" + COAL dropped in front.
         if (!this.level().isClientSide && this.random.nextInt(1750) == 1) {
-            dropItemFront(Items.BONE.getDefaultInstance());
+            this.playSound(SoundEvents.PLAYER_BURP, 1.0f, 1.0f);
+            dropItemFront(Items.COAL.getDefaultInstance());
         }
 
+        // orig Stinky.java:339-398 — 1-in-2000: "orespawn:fart" (pitch 1.5) + skin-indexed rear drop.
         if (!this.level().isClientSide && this.random.nextInt(2000) == 2) {
+            this.playSound(SoundEvent.createVariableRangeEvent(
+                    ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "fart")), 1.0f, 1.5f);
             dropRandomItemRear();
         }
 
@@ -394,29 +401,32 @@ public class EntityStinky extends TamableAnimal {
     }
 
     private void dropRandomItemRear() {
+        // orig Stinky.java:341-397 — rear drop indexed by the 19 skin variants.
         ItemStack drop = switch (this.skinColor) {
-            case 0 -> new ItemStack(Items.DIAMOND);
-            case 1 -> new ItemStack(Items.CHICKEN);
-            case 2 -> new ItemStack(Items.IRON_INGOT);
-            case 3 -> new ItemStack(Items.GOLD_NUGGET);
-            case 4 -> new ItemStack(Items.COOKIE);
-            case 5 -> new ItemStack(Items.CAKE);
-            case 6 -> new ItemStack(Items.FLOWER_POT);
-            case 7 -> new ItemStack(Items.POISONOUS_POTATO);
+            case 0 -> new ItemStack(Items.BLAZE_POWDER);
+            case 1 -> new ItemStack(Items.ROTTEN_FLESH);
+            case 2 -> new ItemStack(Items.MELON_SEEDS);
+            case 3 -> new ItemStack(ModItems.URANIUM_NUGGET.get());
+            case 4 -> new ItemStack(Items.WHEAT);
+            case 5 -> new ItemStack(Items.SUGAR_CANE);
+            case 6 -> new ItemStack(Items.TORCH);
+            case 7 -> new ItemStack(Items.EMERALD);
             case 8 -> new ItemStack(Items.GOLD_INGOT);
-            case 9 -> new ItemStack(Items.SAND.asItem());
-            case 10 -> new ItemStack(Items.COPPER_INGOT);
-            case 11 -> new ItemStack(Items.APPLE);
-            case 12 -> new ItemStack(Items.EMERALD);
-            case 13 -> new ItemStack(Items.GRAVEL.asItem());
-            case 14 -> new ItemStack(Items.COBBLESTONE.asItem());
-            case 15 -> new ItemStack(Items.NAME_TAG);
-            case 16 -> new ItemStack(Items.IRON_PICKAXE);
-            case 17 -> new ItemStack(Items.SWEET_BERRIES);
-            case 18 -> new ItemStack(Items.MELON_SLICE);
-            default -> new ItemStack(Items.BONE);
+            case 9 -> new ItemStack(Items.OAK_LEAVES);
+            case 10 -> new ItemStack(ModItems.TITANIUM_NUGGET.get());
+            case 11 -> new ItemStack(ModItems.APPLE_TREE_SEED.get());
+            case 12 -> new ItemStack(Items.DIAMOND);
+            case 13 -> new ItemStack(Items.SAND);
+            case 14 -> new ItemStack(Items.COBBLESTONE);
+            case 15 -> new ItemStack(Items.BONE);
+            case 16 -> new ItemStack(Items.STRING);
+            case 17 -> new ItemStack(ModItems.CHERRY_TREE_SEED.get());
+            case 18 -> new ItemStack(ModItems.PEACH_TREE_SEED.get());
+            default -> ItemStack.EMPTY;
         };
-        dropItemRear(drop);
+        if (!drop.isEmpty()) {
+            dropItemRear(drop);
+        }
     }
 
     private boolean isSuitableTarget(LivingEntity target) {
