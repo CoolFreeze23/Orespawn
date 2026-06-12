@@ -5,8 +5,6 @@
     "orespawn:ore_amethyst",
     "orespawn:ore_uranium",
     "orespawn:ore_titanium",
-    "orespawn:tigers_eye_ore",
-    "orespawn:ore_kyanite",
-    "orespawn:ore_pink_tourmaline"
+    "orespawn:tigers_eye_ore"
   ]
 }

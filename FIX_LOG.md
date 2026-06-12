@@ -198,6 +198,12 @@ Build verification: `./gradlew build` → BUILD SUCCESSFUL (NeoForge 21.1.223, J
 
 ---
 
+## Carried forward — medium/low bugs (assigned 2026-06-13)
+
+**Phase E owns BUG-014..BUG-031 (17 findings; BUG-020 was closed in Phase B3).**
+The plan's Phase A covered only the 7 CRITICAL + 6 HIGH bugs; the 9 MEDIUM + 9 LOW
+entries had no named owner until this assignment.
+
 ## Phase B — Carried forward (owners for every PARTIAL)
 
 All 21 Phase B PARTIALs have a designated closing phase; none is unowned.
@@ -331,3 +337,46 @@ each is the authoritative record for its stream; this log summarizes and indexes
   - ExperienceCatcher: click the ground under a dropped XP orb (worth ≥3) — expect a Bottle o' Enchanting + string + stick about 4 times in 5, and the catcher (dropped back at your feet) on a miss.
   - Spawn flags: set e.g. `krakenEnable=false`, `godzillaEnable=false`, `cowEnable=false` in `orespawn-common.toml` — no natural spawns of those mobs (and no AttackSquid revenge Krakens); spawn eggs/summons still work.
   - Crystal Furnace: burn a lava bucket — the empty bucket must remain in the fuel slot.
+
+### Phase C checkpoint — corrected ledger (2026-06-13)
+
+The end-of-C checkpoint reported 394 terminal findings; that figure was wrong on two
+counts and is corrected here for the record (script: `tools/ledger_reconcile.py`):
+
+- The per-phase closure totals (A 13 + B 117 + C 284 = 414) count closure EVENTS, not
+  unique IDs: 20 of Phase B's 21 carried-forward PARTIALs were re-counted when Phase C
+  closed their remainders (13 in C1, 2 in C3, 3 in C4, 2 in C5; ANIM-012's Elevator
+  remainder went to Phase D, not C). 414 − 20 = 394 unique IDs *touched*.
+- Of those 394, 49 carry `Resolution: PARTIAL`, which is NOT a terminal state.
+
+**True ledger after Phase C: 345 terminal (326 FIXED + 19 VERIFIED-CORRECT +
+0 DEFERRED) / 256 open** = 49 resolved-PARTIAL (all Phase D-owned) + 61 MISSING
+(Phase D) + 95 untouched PARTIAL (Phase E) + 7 untouched UNVERIFIED (Phase E) +
+17 medium/low BUGs (Phase E, see carried-forward section above) + 27 OPT (Phase F).
+345 + 256 = 601 ✓.
+
+---
+
+## Phase D preliminaries — PN-009 closure (2026-06-13)
+
+### WGEN-024 / PN-009 — kyanite branch removal (owner decision: Option A)
+- **Decision:** faithful replication. The Phase-10 invented kyanite/pink-tourmaline
+  branch is removed from the parity build; its complete design (blocks, items, tier
+  stats, armor values, recipes, worldgen) is archived in MODERNIZATION_NOTES MOD-009
+  as a deliberate 2.0 content candidate, including the world-compat impact (branch
+  items vanish from existing port worlds on load).
+- **Files deleted (35):** `ModBlocks` ORE_KYANITE/ORE_PINK_TOURMALINE, `ModItems`
+  KYANITE/PINK_TOURMALINE gems + 2 BlockItems + 5 kyanite tools + 4 kyanite armor,
+  `ModToolTiers.KYANITE`, `ModArmorMaterials.KYANITE`, 13 `ModCreativeTabs` rows;
+  data: 13 recipe JSONs, 2 block loot tables, `add_crystal_dim_ores` biome modifier,
+  `ore_kyanite` configured+placed features, 2 tag entries (mineable/pickaxe,
+  needs_iron_tool); assets: 2 blockstates, 2 block models, 13 item models, 12 lang
+  entries.
+- **Display names restored:** `crystal_stone` family renamed to the original 1.7.10
+  strings — block "Kyanite" (orig `OreSpawnMain.java:3029`), tools "Kyanite
+  Sword/Pickaxe/Shovel/Hoe/Axe" (orig `:3239-3243`); they were shipping as "Crystal
+  Stone ...".
+- **Verification:** `git grep kyanite|tourmaline -- src/` → only two explanatory
+  comments remain; the original chain (crystal_stone + crystal_sticks → 5 tools,
+  `:3244-3252`; ×8 → Crystal Furnace, `:3082`; tier 3/800/+6/ench 45, `:1507` =
+  `ModToolTiers.CRYSTAL_STONE` 800/6.0/5.0/45) is untouched. Build: see commit.

@@ -92,3 +92,43 @@ impact estimate, related finding IDs.
   entry back to `hammerhead.json`.
 - **Impact:** Missing signature weapon; effort tied to the weapons pass.
 - **Related findings:** ENT-D-056.
+
+## MOD-009 — Kyanite gem branch + Pink Tourmaline (DELIBERATE 2.0 CONTENT CANDIDATE)
+- **Origin:** Phase-10 port invention, REMOVED from the parity build per the PN-009
+  Option-A decision (2026-06-13). 1.7.10 has no kyanite gem/ore/armor and no pink
+  tourmaline: its "Kyanite" is just the display name of the CrystalStone terrain block
+  (`orig OreSpawnMain.java:3029`), whose tool chain the port keeps as `crystal_stone`.
+  Archived here verbatim so it can be reintroduced post-parity as intentional content.
+- **Complete design (as removed):**
+  - **Blocks** — both `TransparentCrystalBlock`, strength 3.0/6.0, light 6,
+    `requiresCorrectToolForDrops`, `noOcclusion`; tags `minecraft:mineable/pickaxe` +
+    `minecraft:needs_iron_tool`; loot = own gem ×1, Silk Touch → the ore block;
+    `cube_all` models (`blocks/orekyanite`, `blocks/orepinktourmaline` — texture files
+    were never shipped):
+    - `ore_kyanite` "Kyanite Ore"
+    - `ore_pink_tourmaline` "Pink Tourmaline Ore"
+  - **Items** — `kyanite` "Kyanite" gem, `pink_tourmaline` "Pink Tourmaline" gem, plus
+    the two BlockItems.
+  - **Tool tier** — `SimpleTier(INCORRECT_FOR_DIAMOND_TOOL, durability 1300,
+    speed 11.0, bonus 7.5, enchantability 60, repair = kyanite)`; positioned between
+    Crystal Pink (1100) and Tigers Eye (1600) on the Crystal-dimension power curve.
+  - **Tools** (crafted vanilla-shape from kyanite gem + `crystal_wood_stick` handles):
+    Sword (atk 3, speed −2.4), Pickaxe (1.0, −2.8), Shovel (1.5, −3.0),
+    Hoe (−3.0, 0.0), Axe (5.0, −3.0).
+  - **Armor** — material: defense 3/6/8/4 (boots/legs/chest/helmet map), enchantability
+    70, toughness 1.0, knockback 0, repair = kyanite, layer `"kyanite"` (layer texture
+    never shipped); 4 pieces at durability multiplier 4, vanilla shapes from the gem.
+  - **Worldgen** — `ore_kyanite`: size-6 veins targeting `crystal_stone` +
+    `#stone_ore_replaceables`, 6/chunk, uniform Y −32..80, `underground_ores` step,
+    `orespawn:crystal_plains` only, wired via the `add_crystal_dim_ores` biome modifier.
+    The matching `ore_pink_tourmaline` vein was already deleted in Phase C7 (WGEN-024).
+  - **Recipes** — extracting: `ore_kyanite` → 2 kyanite @ 200 t, `ore_pink_tourmaline`
+    → 2 pink_tourmaline @ 200 t; shapeless 1:1 conversions both ways between
+    `pink_tourmaline` and `crystal_pink_ingot`; 5 tool + 4 armor crafting recipes.
+- **World-compat impact:** removal makes all branch blocks/items vanish from existing
+  port worlds (unknown-registry entries are stripped on load); reintroducing the same
+  IDs later will NOT restore already-stripped items, so this is a one-way break for
+  affected saves. Reintroduction in 2.0 should note that.
+- **Proposal:** reintroduce post-parity as an explicit addition, ideally with real
+  textures (block, gem, tools, armor layer) and a JEI-visible extracting use.
+- **Related findings:** WGEN-024 (resolved), PN-009 (closed by this removal).

@@ -3912,7 +3912,7 @@ Only MISSING / PARTIAL / DIVERGENT / UNVERIFIED items are listed; fully PORTED i
 - **Original:** n/a — Kyanite *is* CrystalStone; Pink Tourmaline/TigersEye exist only as column formations
 - **Port:** `add_crystal_dim_ores.json` — injects `ore_kyanite` (6×size6, Y−32..80) and `ore_pink_tourmaline` (6×size6) as standard veins on top of the column generators
 - **Fix:** Remove `add_crystal_dim_ores.json` (or the tourmaline entry at minimum) to eliminate the no-counterpart veins and tourmaline double-generation; keep kyanite only if it stays as a deliberate "Phase 10" addition — document it.
-- **Resolution:** FIXED (2026-06-12, Phase C — ore_pink_tourmaline configured/placed features deleted (no 1.7.10 counterpart; the ingot stays craftable from kyanite); ore_kyanite retained as the documented Phase-10 parity exception (PARITY_NOTES.md); see FIX_LOG.md and phase_c_reports/C7_worldgen.md)
+- **Resolution:** FIXED (2026-06-12, Phase C — ore_pink_tourmaline configured/placed features deleted; ore_kyanite initially retained as a documented exception. SUPERSEDED 2026-06-13 by owner decision PN-009 Option A: the entire invented kyanite/pink-tourmaline branch removed from the parity build, crystal_stone display names restored to the original "Kyanite" family; design archived in MODERNIZATION_NOTES MOD-009; see FIX_LOG.md)
 
 ### WGEN-025 — Crystal structures: chest loot only approximated
 - **Status:** DIVERGENT

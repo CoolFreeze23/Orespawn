@@ -86,14 +86,23 @@ justification. Cross-referenced to finding IDs and MODERNIZATION_NOTES entries.
   also exceed 1024 if they set higher bases — benign, but worth remembering when
   debugging cross-mod health oddities.
 
-## PN-009 — Kyanite vein retained; pink-tourmaline vein removed (WGEN-024, Phase C7)
-- **What:** The port's Crystal-dimension `ore_kyanite` vein (a Phase-10 port addition —
-  the 1.7.10 Crystal dimension generated no kyanite ore) is RETAINED as the supply for
-  the crystal-tool crafting chain. The companion `ore_pink_tourmaline` vein, which had
-  no original counterpart either, was DELETED; pink tourmaline remains obtainable by
-  processing kyanite/ingots (existing recipes unchanged).
-- **Why:** WGEN-024 flagged the pair as double-generating inventions. Keeping exactly
-  one documented source preserves the crafting chain without compounding the deviation.
+## PN-009 — CLOSED (2026-06-13): invented kyanite/pink-tourmaline branch fully removed
+- **What:** The Phase-C7 version of this note retained the port-invented `ore_kyanite`
+  vein as a documented exception. Owner decision (Option A) superseded that: the entire
+  Phase-10 branch — `ore_kyanite`/`ore_pink_tourmaline` blocks, `kyanite`/
+  `pink_tourmaline` gems, the kyanite tool tier + 5 tools + 4-piece armor set, and all
+  13 associated recipes/loot/worldgen JSONs — is deleted from the parity build. The
+  complete design is archived in MODERNIZATION_NOTES MOD-009 as a 2.0 content candidate.
+- **Why the original needed no exception:** 1.7.10's "Kyanite" is the display name of
+  the `CrystalStone` terrain block (`orig OreSpawnMain.java:3029`) — the entire Crystal
+  dimension floor is made of it (`ChunkProviderOreSpawn5.java:121,154-177`), so the
+  crystal-tool chain (CrystalStone + CrystalSticks → tools, `:3244-3252`; ×8 → Crystal
+  Furnace, `:3082`) was never supply-constrained and never depended on a gem item. The
+  port's `crystal_stone` already replicates all of that; its display strings were
+  restored to the original "Kyanite" / "Kyanite Sword/Pickaxe/Shovel/Hoe/Axe" names
+  (`:3239-3243`) as part of this closure.
+- **Residual deviation:** none in-game. World-compat: invented branch items vanish from
+  pre-existing port worlds on load (recorded in MOD-009).
 
 ## PN-010 — SpawnOres pool reduced to boss spawn blocks + ancient dried eggs (WGEN-005, Phase C7)
 - **What:** 1.7.10 generated 28+/chunk "spawn ore" veins at Y50-128 drawn from a pool of
