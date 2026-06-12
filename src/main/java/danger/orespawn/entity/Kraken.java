@@ -55,6 +55,15 @@ public class Kraken extends Monster {
     private int straightDown = 1;
     private int hurtTimer = 0;
 
+    /**
+     * Per-entity render scratch (orig Kraken.java:58 {@code renderdata = new RenderInfo()},
+     * accessor orig Kraken.java:123-125). Mutated client-side by
+     * {@code ModelKraken} for the random mouth-twitch driver
+     * (orig ModelKraken.java:1045-1057); never datawatcher-synced.
+     */
+    private final danger.orespawn.entity.client.RenderInfo renderInfo =
+            new danger.orespawn.entity.client.RenderInfo();
+
     public Kraken(EntityType<? extends Kraken> type, Level level) {
         super(type, level);
         this.xpReward = 500;
@@ -506,6 +515,11 @@ public class Kraken extends Monster {
 
     public final int getAttacking() {
         return this.entityData.get(DATA_ATTACKING);
+    }
+
+    /** Mirrors orig Kraken.java:123-125 {@code getRenderInfo()}. */
+    public danger.orespawn.entity.client.RenderInfo getRenderInfo() {
+        return this.renderInfo;
     }
 
     public final void setAttacking(int value) {

@@ -156,8 +156,11 @@ public class ModelRobot3 extends EntityModel<Robot3> {
 
     @Override
     public void setupAnim(Robot3 entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
+        // orig ModelRobot3.java:163-167 — legs swing on time at 0.55*wingspeed
+        // (wingspeed 1.0, orig ClientProxyOreSpawn.java:441), amplitude scaled
+        // by limbSwingAmount, frozen below the 0.1 movement threshold.
         float walkAngle = limbSwingAmount > 0.1F
-                ? Mth.cos(limbSwing * 0.55F) * (float) Math.PI * 0.12F * limbSwingAmount
+                ? Mth.cos(ageInTicks * 0.55F) * (float) Math.PI * 0.12F * limbSwingAmount
                 : 0.0F;
         this.lleg1.xRot = walkAngle;
         this.lleg2.xRot = walkAngle;
@@ -166,7 +169,20 @@ public class ModelRobot3 extends EntityModel<Robot3> {
 
         this.lazer.yRot = (float) Math.toRadians(netHeadYaw / 2.0);
 
+        // orig ModelRobot3.java:169-180 — at each cosine zero crossing, latch
+        // ri1 = 1 while getAttacking() != 0 else 0; arms swing only when ri1 == 1.
+        // Per-entity scratch as in the original (orig Robot3.java renderdata field).
+        RenderInfo r = entity.getRenderInfo();
         float armSwing = Mth.cos(ageInTicks * 1.0F) * (float) Math.PI * 0.15F;
+        float nextangle = Mth.cos((ageInTicks + 0.3F) * 1.0F) * (float) Math.PI * 0.15F;
+        if (nextangle > 0.0F && armSwing < 0.0F) {
+            r.ri1 = entity.getAttacking() != 0 ? 1 : 0;
+        }
+        if (r.ri1 == 0) {
+            armSwing = 0.0F;
+        }
+
+        // orig ModelRobot3.java:181-186 — upper arms offset -1 rad, fore arms +1 rad.
         this.rarm1.xRot = armSwing - 1.0F;
         this.rarm2.xRot = armSwing + 1.0F;
         this.rarm3.xRot = armSwing + 1.0F;

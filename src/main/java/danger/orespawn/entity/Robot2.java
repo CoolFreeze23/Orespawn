@@ -48,6 +48,19 @@ public class Robot2 extends Monster {
     private int idleAnimationTimer = 0;
     private final float moveSpeed = 0.3f;
 
+    /**
+     * Per-entity render scratch (orig Robot2.java:39 {@code renderdata = new RenderInfo()}).
+     * {@code ri1} selects which arm(s) windmill while attacking
+     * (orig ModelRobot2.java:142-170); mutated client-side by the model.
+     */
+    private final danger.orespawn.entity.client.RenderInfo renderInfo =
+            new danger.orespawn.entity.client.RenderInfo();
+
+    /** Mirrors orig Robot2.java {@code getRenderInfo()}. */
+    public danger.orespawn.entity.client.RenderInfo getRenderInfo() {
+        return this.renderInfo;
+    }
+
     public Robot2(EntityType<? extends Robot2> type, Level level) {
         super(type, level);
         this.xpReward = 100;

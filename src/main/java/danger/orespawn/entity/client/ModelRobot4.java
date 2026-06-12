@@ -415,15 +415,20 @@ public class ModelRobot4 extends EntityModel<Robot4> {
 
     @Override
     public void setupAnim(Robot4 entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
+        // orig ModelRobot4.java:421-437 — legs swing on time at 0.5*wingspeed
+        // (wingspeed 1.0, orig ClientProxyOreSpawn.java:442), amplitude scaled
+        // by limbSwingAmount, frozen below the 0.1 movement threshold. The
+        // shins carry no rest offset (orig :426, :434); calves +0.175,
+        // knee guards +0.63, thighs -0.175.
         float walkAngle = limbSwingAmount > 0.1F
-                ? Mth.cos(limbSwing * 0.5F) * (float) Math.PI * 0.15F * limbSwingAmount
+                ? Mth.cos(ageInTicks * 0.5F) * (float) Math.PI * 0.15F * limbSwingAmount
                 : 0.0F;
 
         this.leftfootfront.xRot = walkAngle;
         this.leftfootbase.xRot = walkAngle;
         this.leftfootback.xRot = walkAngle;
         this.leftfoottip.xRot = walkAngle;
-        this.leftshin.xRot = walkAngle + 0.175F;
+        this.leftshin.xRot = walkAngle;
         this.leftcalf.xRot = walkAngle + 0.175F;
         this.leftkneegaurd.xRot = walkAngle + 0.63F;
         this.leftthigh.xRot = walkAngle - 0.175F;
@@ -432,15 +437,32 @@ public class ModelRobot4 extends EntityModel<Robot4> {
         this.rightfoottip.xRot = -walkAngle;
         this.rightfootbase.xRot = -walkAngle;
         this.rightfootback.xRot = -walkAngle;
-        this.rightshin.xRot = -walkAngle + 0.175F;
+        this.rightshin.xRot = -walkAngle;
         this.rightcalf.xRot = -walkAngle + 0.175F;
         this.rightkneegaurd.xRot = -walkAngle + 0.63F;
         this.rightthigh.xRot = -walkAngle - 0.175F;
 
         this.head.yRot = (float) Math.toRadians(netHeadYaw / 1.5);
 
-        float armAngle = Mth.cos((float) Math.toRadians(ageInTicks % 360.0F) * 6.0F) * 0.7853982F;
-        armAngle = Math.abs(armAngle) + 0.75F;
+        // orig ModelRobot4.java:439-451 — shield arm pumps only while
+        // getAttacking() != 0 (|cos| * 45° + 0.75 rad), rests at 0 when idle;
+        // shielding flag raised while the arm is above amp/3 (as in the
+        // original, this is a client-local datawatcher write — the server
+        // copy is driven by gameplay code, not the renderer).
+        float amp = 0.7853982F;
+        float armAngle;
+        if (entity.getAttacking() != 0) {
+            armAngle = Mth.cos((float) Math.toRadians(ageInTicks % 360.0F) * 6.0F) * amp;
+            armAngle = Math.abs(armAngle);
+            armAngle += 0.75F;
+        } else {
+            armAngle = 0.0F;
+        }
+        if (armAngle > amp / 3.0F) {
+            entity.setShielding(1);
+        } else {
+            entity.setShielding(0);
+        }
 
         this.rightsholder.xRot = -armAngle;
         this.rightsholdergaurd.xRot = -armAngle - 0.21F;
@@ -451,7 +473,9 @@ public class ModelRobot4 extends EntityModel<Robot4> {
         this.sheildend.xRot = -armAngle + 1.04F;
         this.sholdergaurdtip.xRot = -armAngle - 0.21F;
 
-        float cannonAngle = 0.85F;
+        // orig ModelRobot4.java:460-474 — cannon arm aims (0.85 rad) only
+        // while attacking, hangs at 0 when idle.
+        float cannonAngle = entity.getAttacking() != 0 ? 0.85F : 0.0F;
         this.leftsholder.xRot = -cannonAngle;
         this.leftupperarm.xRot = -cannonAngle - 0.21F;
         this.cannonbase.xRot = -cannonAngle - 0.7F;
@@ -466,6 +490,35 @@ public class ModelRobot4 extends EntityModel<Robot4> {
         this.glowycannonbit4.xRot = -cannonAngle + 0.08F;
         this.glowycannonbit5.xRot = -cannonAngle;
         this.cannonammo.xRot = -cannonAngle - 0.7F;
+
+        // orig ModelRobot4.java:475-500 — cannon assembly follows the upper
+        // arm: pivot = shoulder + (cos,sin)(upper-arm angle) * 14.
+        float cannonY = (float) ((double) this.leftsholder.y + Math.cos(this.leftupperarm.xRot) * 14.0);
+        float cannonZ = (float) ((double) this.leftsholder.z + Math.sin(this.leftupperarm.xRot) * 14.0);
+        this.cannonbase.y = cannonY;
+        this.cannonbase.z = cannonZ;
+        this.cannonend.y = cannonY;
+        this.cannonend.z = cannonZ;
+        this.leftcannonpiece.y = cannonY;
+        this.leftcannonpiece.z = cannonZ;
+        this.topcannonpiece.y = cannonY;
+        this.topcannonpiece.z = cannonZ;
+        this.rightcannonpiece.y = cannonY;
+        this.rightcannonpiece.z = cannonZ;
+        this.bottomcannonpiece.y = cannonY;
+        this.bottomcannonpiece.z = cannonZ;
+        this.glowycannonbit1.y = cannonY;
+        this.glowycannonbit1.z = cannonZ;
+        this.glowycannonbit2.y = cannonY;
+        this.glowycannonbit2.z = cannonZ;
+        this.glowycannonbit3.y = cannonY;
+        this.glowycannonbit3.z = cannonZ;
+        this.glowycannonbit4.y = cannonY;
+        this.glowycannonbit4.z = cannonZ;
+        this.glowycannonbit5.y = cannonY;
+        this.glowycannonbit5.z = cannonZ;
+        this.cannonammo.y = cannonY;
+        this.cannonammo.z = cannonZ;
     }
 
     @Override

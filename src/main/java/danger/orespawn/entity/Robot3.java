@@ -46,6 +46,19 @@ public class Robot3 extends Monster {
     private int reloadTicker = 0;
     private final float moveSpeed = 0.35f;
 
+    /**
+     * Per-entity render scratch (orig Robot3.java {@code renderdata = new RenderInfo()}).
+     * {@code ri1} latches the attack arm-swing state at animation zero crossings
+     * (orig ModelRobot3.java:169-180); mutated client-side by the model.
+     */
+    private final danger.orespawn.entity.client.RenderInfo renderInfo =
+            new danger.orespawn.entity.client.RenderInfo();
+
+    /** Mirrors orig Robot3.java {@code getRenderInfo()}. */
+    public danger.orespawn.entity.client.RenderInfo getRenderInfo() {
+        return this.renderInfo;
+    }
+
     public Robot3(EntityType<? extends Robot3> type, Level level) {
         super(type, level);
         this.xpReward = 60;

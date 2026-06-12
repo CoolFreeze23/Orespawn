@@ -183,11 +183,44 @@ public class ModelAntRobot extends EntityModel<AntRobot> {
         return LayerDefinition.create(meshdefinition, 128, 256);
     }
 
+    /**
+     * Leg solver data captured in {@link #setupAnim} and consumed by the
+     * per-leg pose-and-render loop in {@link #renderToBuffer}. The original
+     * posed AND rendered the shared leg parts inside the 6-iteration loop
+     * (orig ModelAntRobot.java, renders at :266-275); rendering after the
+     * loop would draw only the last leg's pose (same defect class as the
+     * SpiderRobot, ANIM-006).
+     */
+    private RenderSpiderRobotInfo renderInfo;
+
     @Override
     public void setupAnim(AntRobot entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
-        RenderSpiderRobotInfo r = null;
-        r = entity.getRenderSpiderRobotInfo();
-        for (int i = 0; i < 6; ++i) {
+        RenderSpiderRobotInfo r = entity.getRenderSpiderRobotInfo();
+        this.renderInfo = r;
+        if (entity.getAttacking() == 0) {
+        this.LJaw1.yRot = 0.89f;
+        this.LJaw2.yRot = 1.378f;
+        this.RJaw1.yRot = 2.216f;
+        this.RJaw2.yRot = 1.745f;
+        this.LAntenna.xRot = Mth.cos((float)((float)r.gpcounter * 0.35f)) * (float)Math.PI * 0.05f;
+        this.LAntenna.zRot = 0.54f + Mth.cos((float)((float)r.gpcounter * 0.25f)) * (float)Math.PI * 0.05f;
+        this.RAntenna.xRot = Mth.cos((float)((float)r.gpcounter * 0.3f)) * (float)Math.PI * 0.05f;
+        this.RAntenna.zRot = -0.54f + Mth.cos((float)((float)r.gpcounter * 0.45f)) * (float)Math.PI * 0.05f;
+        } else {
+        float newangle = Mth.cos((float)((float)r.gpcounter * 0.25f)) * (float)Math.PI * 0.22f;
+        this.LJaw1.yRot = newangle + 0.89f;
+        this.LJaw2.yRot = newangle + 1.378f;
+        this.RJaw1.yRot = -newangle + 2.216f;
+        this.RJaw2.yRot = 1.745f - newangle;
+        this.LAntenna.xRot = Mth.cos((float)((float)r.gpcounter * 0.45f)) * (float)Math.PI * 0.1f;
+        this.LAntenna.zRot = 0.54f + Mth.cos((float)((float)r.gpcounter * 0.35f)) * (float)Math.PI * 0.1f;
+        this.RAntenna.xRot = Mth.cos((float)((float)r.gpcounter * 0.4f)) * (float)Math.PI * 0.1f;
+        this.RAntenna.zRot = -0.54f + Mth.cos((float)((float)r.gpcounter * 0.55f)) * (float)Math.PI * 0.1f;
+        }
+    }
+
+    /** Poses the shared leg parts for leg {@code i} (orig ModelAntRobot leg solver consumption). */
+    private void poseLeg(RenderSpiderRobotInfo r, int i) {
         this.Leg2.yRot = this.Leg3.yRot = r.ydisplayangle[i];
         this.Leg1.yRot = this.Leg3.yRot;
         this.Foot1.yRot = r.ydisplayangle[i];
@@ -235,41 +268,28 @@ public class ModelAntRobot extends EntityModel<AntRobot> {
         this.Foot7.x = this.Leg3.x;
         this.Foot7.y = this.Leg3.y;
         this.Foot7.z = this.Leg3.z;
-        }
-        if (entity.getAttacking() == 0) {
-        this.LJaw1.yRot = 0.89f;
-        this.LJaw2.yRot = 1.378f;
-        this.RJaw1.yRot = 2.216f;
-        this.RJaw2.yRot = 1.745f;
-        this.LAntenna.xRot = Mth.cos((float)((float)r.gpcounter * 0.35f)) * (float)Math.PI * 0.05f;
-        this.LAntenna.zRot = 0.54f + Mth.cos((float)((float)r.gpcounter * 0.25f)) * (float)Math.PI * 0.05f;
-        this.RAntenna.xRot = Mth.cos((float)((float)r.gpcounter * 0.3f)) * (float)Math.PI * 0.05f;
-        this.RAntenna.zRot = -0.54f + Mth.cos((float)((float)r.gpcounter * 0.45f)) * (float)Math.PI * 0.05f;
-        } else {
-        float newangle = Mth.cos((float)((float)r.gpcounter * 0.25f)) * (float)Math.PI * 0.22f;
-        this.LJaw1.yRot = newangle + 0.89f;
-        this.LJaw2.yRot = newangle + 1.378f;
-        this.RJaw1.yRot = -newangle + 2.216f;
-        this.RJaw2.yRot = 1.745f - newangle;
-        this.LAntenna.xRot = Mth.cos((float)((float)r.gpcounter * 0.45f)) * (float)Math.PI * 0.1f;
-        this.LAntenna.zRot = 0.54f + Mth.cos((float)((float)r.gpcounter * 0.35f)) * (float)Math.PI * 0.1f;
-        this.RAntenna.xRot = Mth.cos((float)((float)r.gpcounter * 0.4f)) * (float)Math.PI * 0.1f;
-        this.RAntenna.zRot = -0.54f + Mth.cos((float)((float)r.gpcounter * 0.55f)) * (float)Math.PI * 0.1f;
-        }
     }
 
     @Override
     public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, int color) {
-        this.Leg1.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
-        this.Leg2.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
-        this.Leg3.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
-        this.Foot1.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
-        this.Foot2.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
-        this.Foot3.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
-        this.Foot4.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
-        this.Foot5.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
-        this.Foot6.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
-        this.Foot7.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        // orig ModelAntRobot.java:266-275 — pose leg i, then render the shared
+        // leg parts, for each of the 6 legs.
+        RenderSpiderRobotInfo r = this.renderInfo;
+        if (r != null) {
+            for (int i = 0; i < 6; ++i) {
+                poseLeg(r, i);
+                this.Leg1.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+                this.Leg2.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+                this.Leg3.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+                this.Foot1.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+                this.Foot2.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+                this.Foot3.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+                this.Foot4.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+                this.Foot5.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+                this.Foot6.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+                this.Foot7.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+            }
+        }
         this.Body.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
         this.Abdomen.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
         this.Head.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);

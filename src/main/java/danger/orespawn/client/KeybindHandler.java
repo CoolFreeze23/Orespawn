@@ -16,9 +16,13 @@ import org.lwjgl.glfw.GLFW;
 
 /**
  * Client rider keys. The original had a single "OreSpawn UP/FAST" key
- * (Left Alt, orig KeyHandler.java:15-18) whose state was mirrored to a global
- * server flag; the port splits it into fly-up / fly-down / special keys and
- * sends a per-player {@link RiderInputPayload} (sanctioned modernization).
+ * (Left Alt, LWJGL keycode 56, orig KeyHandler.java:15-18) whose state was
+ * mirrored to a global server flag; the port splits it into fly-up /
+ * fly-down / special keys and sends a per-player {@link RiderInputPayload}
+ * (sanctioned modernization). The fly-up default matches the original's
+ * Left Alt (ANIM-011) — SPACE was rejected because it collides with the
+ * vanilla mount-jump/dismount key; fly-down and special are new keys with
+ * no original counterpart.
  *
  * <p>Because mount movement is client-predicted (vanilla horse-style), the key
  * state is also applied directly to the local vehicle every tick — the server
@@ -32,7 +36,8 @@ public class KeybindHandler {
     public static final KeyMapping FLY_UP_KEY = new KeyMapping(
             "key.orespawn.fly_up",
             InputConstants.Type.KEYSYM,
-            GLFW.GLFW_KEY_SPACE,
+            // orig KeyHandler.java:15 — "OreSpawn UP/FAST" default LWJGL 56 = Left Alt.
+            GLFW.GLFW_KEY_LEFT_ALT,
             "key.categories.orespawn"
     );
 
