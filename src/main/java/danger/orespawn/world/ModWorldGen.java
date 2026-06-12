@@ -60,6 +60,15 @@ public class ModWorldGen {
             PLACEMENT_MODIFIERS.register("less_ore_count", () -> () -> LessOreCountPlacement.CODEC);
 
     /**
+     * {@code orespawn:vein_count} — exact 1.7.10 ore-loop arithmetic
+     * (attempt count + LessOre truncation + per-attempt nextInt(128) Y
+     * rejection). See {@link OreSpawnVeinPlacement} for the citations
+     * (WGEN-001 / WGEN-011).
+     */
+    public static final DeferredHolder<PlacementModifierType<?>, PlacementModifierType<OreSpawnVeinPlacement>> VEIN_COUNT =
+            PLACEMENT_MODIFIERS.register("vein_count", () -> () -> OreSpawnVeinPlacement.CODEC);
+
+    /**
      * Wire the chunk-generator and placement-modifier registers onto the mod
      * event bus. Called from {@link danger.orespawn.OreSpawnMod#OreSpawnMod}.
      */

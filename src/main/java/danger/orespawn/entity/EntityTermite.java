@@ -1,8 +1,12 @@
 package danger.orespawn.entity;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.Difficulty;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
@@ -45,6 +49,43 @@ public class EntityTermite extends EntityAnt {
     @Override
     protected ResourceKey<Level> getTargetDimension() {
         return CRYSTAL;
+    }
+
+    /**
+     * Crystal-dimension entry rule (WGEN-026): the original Termite
+     * (orig Termite.java:96-107) only allowed travel TO DimensionID5 with a
+     * completely empty main inventory and no armor (plus the empty hand the
+     * base ant already requires), messaging the player otherwise. The return
+     * trip (orig Termite.java:109-110) has no such check.
+     */
+    @Override
+    public InteractionResult mobInteract(Player player, InteractionHand hand) {
+        boolean travellingToCrystal = !this.level().dimension().equals(CRYSTAL);
+        if (travellingToCrystal && !this.level().isClientSide()) {
+            // orig Termite.java:98-102 — every main-inventory slot must be empty
+            for (ItemStack stack : player.getInventory().items) {
+                if (!stack.isEmpty()) {
+                    player.displayClientMessage(Component.literal("Empty your inventory!"), false);
+                    return InteractionResult.PASS;
+                }
+            }
+            // 1.21 offhand slot did not exist in 1.7.10; it counts as inventory
+            // under the dimension's "bring nothing in" rule.
+            for (ItemStack stack : player.getInventory().offhand) {
+                if (!stack.isEmpty()) {
+                    player.displayClientMessage(Component.literal("Empty your inventory!"), false);
+                    return InteractionResult.PASS;
+                }
+            }
+            // orig Termite.java:103-107 — no armor may be worn
+            for (ItemStack stack : player.getInventory().armor) {
+                if (!stack.isEmpty()) {
+                    player.displayClientMessage(Component.literal("Take off your armor!"), false);
+                    return InteractionResult.PASS;
+                }
+            }
+        }
+        return super.mobInteract(player, hand);
     }
 
     @Override

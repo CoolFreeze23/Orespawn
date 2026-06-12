@@ -6,7 +6,7 @@
       "type": "minecraft:fixed",
       "biome": "orespawn:island_biome"
     },
-    "settings": "minecraft:floating_islands",
+    "settings": "orespawn:islands",
     "dimension_style": "islands"
   }
 }

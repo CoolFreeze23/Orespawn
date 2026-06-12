@@ -115,6 +115,26 @@ public class ModFeatures {
     public static final DeferredHolder<Feature<?>, MagicAppleTreeFeature> MAGIC_APPLE_TREE =
             FEATURES.register("magic_apple_tree", () -> new MagicAppleTreeFeature(NoneFeatureConfiguration.CODEC));
 
+    // Phase C7 (WGEN-002) — Ruby ore via the original lava-seek loop
+    // (orig OreSpawnWorld.java:879-892); replaces the invented ore_ruby vein.
+    public static final DeferredHolder<Feature<?>, RubyLavaSeekFeature> RUBY_LAVA_SEEK =
+            FEATURES.register("ruby_lava_seek", () -> new RubyLavaSeekFeature(RubyLavaSeekFeature.Config.CODEC));
+
+    // Phase C7 (WGEN-006/048) — anthill surface blocks
+    // (orig OreSpawnWorld.addAnts, OreSpawnWorld.java:1472-1507).
+    public static final DeferredHolder<Feature<?>, AnthillFeature> ANTHILL =
+            FEATURES.register("anthill", () -> new AnthillFeature(AnthillFeature.Config.CODEC));
+
+    // Phase C7 (WGEN-048) — Islands unstable-ant anthills
+    // (orig OreSpawnWorld.addUnstableAnts, OreSpawnWorld.java:1572-1588).
+    public static final DeferredHolder<Feature<?>, UnstableAnthillFeature> UNSTABLE_ANTHILL =
+            FEATURES.register("unstable_anthill", () -> new UnstableAnthillFeature(NoneFeatureConfiguration.CODEC));
+
+    // Phase C7 (WGEN-030 et al) — wild veggie patches
+    // (orig OreSpawnWorld.addVeggies, OreSpawnWorld.java:1882-1921).
+    public static final DeferredHolder<Feature<?>, VeggiePatchFeature> VEGGIE_PATCH =
+            FEATURES.register("veggie_patch", () -> new VeggiePatchFeature(NoneFeatureConfiguration.CODEC));
+
     // Phase 13C-fix2 — Royal Trees were promoted from a Feature to a
     // dedicated Structure + StructurePiece (see
     // danger.orespawn.world.structure.RoyalTreeStructure /

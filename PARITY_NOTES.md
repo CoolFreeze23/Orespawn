@@ -85,3 +85,30 @@ justification. Cross-referenced to finding IDs and MODERNIZATION_NOTES entries.
 - **Interop note:** the raise is global to the attribute, so other mods' entities may
   also exceed 1024 if they set higher bases — benign, but worth remembering when
   debugging cross-mod health oddities.
+
+## PN-009 — Kyanite vein retained; pink-tourmaline vein removed (WGEN-024, Phase C7)
+- **What:** The port's Crystal-dimension `ore_kyanite` vein (a Phase-10 port addition —
+  the 1.7.10 Crystal dimension generated no kyanite ore) is RETAINED as the supply for
+  the crystal-tool crafting chain. The companion `ore_pink_tourmaline` vein, which had
+  no original counterpart either, was DELETED; pink tourmaline remains obtainable by
+  processing kyanite/ingots (existing recipes unchanged).
+- **Why:** WGEN-024 flagged the pair as double-generating inventions. Keeping exactly
+  one documented source preserves the crafting chain without compounding the deviation.
+
+## PN-010 — SpawnOres pool reduced to boss spawn blocks + ancient dried eggs (WGEN-005, Phase C7)
+- **What:** 1.7.10 generated 28+/chunk "spawn ore" veins at Y50-128 drawn from a pool of
+  ~105 spawn-block types (ChunkOreGenerator + OreSpawnMain SpawnOres stats). The port
+  currently generates only dragon/kraken boss spawn blocks (1/24 chunks each) and
+  ancient dried eggs (1/12) — a deliberate redesign kept for Phase C.
+- **Why deferred:** the pool depends on dozens of per-mob spawn blocks that are
+  Phase D scope (with WGEN-042's structure/block backlog). Owner: Phase D
+  spawn-block pool restoration.
+
+## PN-011 — Utopia Portal Block kept as a creative-only utility (WGEN-050, Phase C7)
+- **What:** 1.7.10 `PortalBlock.java` is an empty stub; dimension travel was entirely
+  entity-based (ants/termite/butterfly). The port's `UtopiaPortalBlock` (entityInside
+  teleport, unbreakable) is a port addition retained as a creative-only admin utility:
+  it is not generated in any world, has no recipe, and is obtainable only from the
+  creative menu.
+- **Why:** harmless operator convenience; removing it would break existing port worlds
+  that placed it. Documented here so it is not mistaken for original content.

@@ -1,0 +1,9 @@
+{
+  "feature": "orespawn:anthill_dense",
+  "placement": [
+    {
+      "type": "minecraft:count",
+      "count": 2
+    }
+  ]
+}

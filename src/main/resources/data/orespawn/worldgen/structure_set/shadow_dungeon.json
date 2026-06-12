@@ -1,6 +1,9 @@
 {
   "structures": [
-    { "structure": "orespawn:shadow_dungeon", "weight": 1 }
+    {
+      "structure": "orespawn:shadow_dungeon",
+      "weight": 1
+    }
   ],
   "placement": {
     "type": "minecraft:random_spread",

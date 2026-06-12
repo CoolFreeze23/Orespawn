@@ -2,24 +2,15 @@
   "feature": "orespawn:ore_amethyst",
   "placement": [
     {
-      "type": "orespawn:less_ore_count",
-      "count": 4,
+      "type": "orespawn:vein_count",
+      "count": 2,
+      "min_y": 0,
+      "max_y": 25,
+      "extra_dice": 12,
       "less_ore_divisor": 3
     },
     {
       "type": "minecraft:in_square"
-    },
-    {
-      "type": "minecraft:height_range",
-      "height": {
-        "type": "minecraft:uniform",
-        "min_inclusive": {
-          "absolute": -64
-        },
-        "max_inclusive": {
-          "absolute": 25
-        }
-      }
     },
     {
       "type": "minecraft:biome"

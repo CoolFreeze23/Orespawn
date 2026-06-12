@@ -1,12 +1,18 @@
 {
   "structures": [
-    { "structure": "orespawn:king_altar", "weight": 1 },
-    { "structure": "orespawn:queen_altar", "weight": 1 }
+    {
+      "structure": "orespawn:king_altar",
+      "weight": 1
+    },
+    {
+      "structure": "orespawn:queen_altar",
+      "weight": 1
+    }
   ],
   "placement": {
     "type": "minecraft:random_spread",
-    "spacing": 64,
-    "separation": 32,
+    "spacing": 45,
+    "separation": 22,
     "salt": 84310
   }
 }

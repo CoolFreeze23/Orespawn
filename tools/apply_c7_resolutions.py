@@ -1,0 +1,63 @@
+"""Append Phase C slice 7 Resolution lines to WGEN findings."""
+import re
+
+SUFFIX = 'see FIX_LOG.md and phase_c_reports/C7_worldgen.md'
+R = {
+ '001': 'FIXED (2026-06-12, Phase C \u2014 new orespawn:vein_count placement reproduces the exact rate+nextInt(dice) / LessOre-divide / nextInt(128) Y-reject loop per ore; all ore_*.json rebuilt with original rates and Y windows; ' + SUFFIX + ')',
+ '002': 'FIXED (2026-06-12, Phase C \u2014 ore_ruby configured feature replaced with orespawn:ruby_lava_seek (rate 10+nextInt(5), Y\u22640..50, lava-over-stone descent per OreSpawnWorld.java:879-892); ' + SUFFIX + ')',
+ '005': 'PARTIAL (2026-06-12, Phase C \u2014 the 2-boss-block + ancient-dried-egg reduction is documented as a deliberate redesign (PARITY_NOTES.md); restoring the full ~105-type SpawnOres pool at 28+/chunk Y50-128 is Phase D (structures/spawn-block pool owner, with WGEN-042); ' + SUFFIX + ')',
+ '006': 'FIXED (2026-06-12, Phase C \u2014 new orespawn:anthill feature (1/30 gate, 4 attempts, redfreq picker per OreSpawnWorld.addAnts:1472-1507) wired to overworld (#is_overworld redfreq 4), Utopia/Village (4), Mining (2, x2), Chaos (2); ' + SUFFIX + ')',
+ '008': 'FIXED (2026-06-12, Phase C \u2014 veggie_patch_utopia (count 2) added to utopia_plains; royal_altars spacing corrected 48/24 \u2192 45/22 (1/2000 roll, OreSpawnWorld.java:2550 \u2192 45\u00b2=2025); ' + SUFFIX + ')',
+ '009': 'VERIFIED-CORRECT (2026-06-12, Phase C \u2014 orig BiomeGenUtopianPlains.java:132/:135: Cricket 5(4,6) ambient, Frog 5(4,6) water; port matches exactly; ' + SUFFIX + ')',
+ '010': 'FIXED (2026-06-12, Phase C \u2014 mining/village biomes added to minecraft:has_structure/mineshaft+stronghold tags; lake_water_dim (1/4), lake_lava_dim (1/8), monster_room_dim (count 8) placed features added per ChunkProviderOreSpawn2 populate; ' + SUFFIX + ')',
+ '011': 'FIXED (2026-06-12, Phase C \u2014 *_mining ore variants run the whole vein loop with passes:3 / less_ore_passes:1 (ChunkProviderOreSpawn2.java:191-195); ruby x3 via less_ore_count{3,1}; lapis boost 45x size7 + 25x size4 Y<50 LessOre==0-only restored (OreSpawnWorld.java:64-77); ' + SUFFIX + ')',
+ '012': 'FIXED (2026-06-12, Phase C \u2014 mining_biome monster roster rebuilt to the 9-entry dino/alien overlay (ChunkProviderOreSpawn2.java:374-399) + vanilla Extreme Hills defaults; invented rat/worms/molenoid/creeping_horror/scorpion/leonopteryx/firefly entries removed; ' + SUFFIX + ')',
+ '014': 'PARTIAL (2026-06-12, Phase C \u2014 BeeHive restored to Mining (WGEN-040) and shadow/WTF/Leon frequencies corrected (WGEN-039); BasiliskMaze is WGEN-037 and KyuubiDungeon/EnderKnightDungeon are WGEN-042 \u2014 both Phase D structure owners; ' + SUFFIX + ')',
+ '016': 'FIXED (2026-06-12, Phase C \u2014 Village dimension style now populates per ChunkProviderOreSpawn3: vanilla mineshaft/stronghold/lakes/monster rooms (WGEN-010 mechanism), generic dungeon 1/16, anthills (redfreq 4), apple trees; villages themselves remain WGEN-015 (MISSING, Phase D); ' + SUFFIX + ')',
+ '017': 'FIXED (2026-06-12, Phase C \u2014 village roster rebuilt from setVillageCreatures + the un-reset Utopia ctor + vanilla defaults (lists are never cleared, BiomeGenUtopianPlains.java:272-332); spider_driver 20(3,5) and godzilla 2(1,1) added; audit corrected: Jeffery IS the port giant_robot (JefferyEnable\u2192GiantRobot :289) and Criminal IS band_p (CriminalEnable\u2192BandP :330) \u2014 neither was missing; invented beaver entry removed; ' + SUFFIX + ')',
+ '018': 'PARTIAL (2026-06-12, Phase C \u2014 the divergent half fixed: greenhouse/robot_lab/white_house re-tagged to Islands (WGEN-022) so Village no longer hosts them; DamselInDistress/SpiderHangout/RedAntHangout remain Phase D (WGEN-042 structure owner); ' + SUFFIX + ')',
+ '019': 'FIXED (2026-06-12, Phase C \u2014 noise_settings/islands.json generates the original flat plane (bedrock Y0, dirt Y1-6, grass Y7 per ChunkProviderOreSpawn4.java:30-32); island_biome carvers/vanilla features emptied; ' + SUFFIX + ')',
+ '020': 'FIXED (2026-06-12, Phase C \u2014 weights verified against setIslandCreatures (BiomeGenUtopianPlains.java:142-199): all 16 entries match; duplicate terrible_terror/ender_reaper entries (biome JSON + dim_islands_locals doubling the weights) consolidated; ' + SUFFIX + ')',
+ '022': 'FIXED (2026-06-12, Phase C \u2014 greenhouse/robot_lab/white_house biome tags re-set to orespawn:island_biome and spacing normalized to 44/22 (orig D4 roll 1/100 x 1/19 = 1/1900 \u2248 44\u00b2, OreSpawnWorld.java:134-177); ' + SUFFIX + ')',
+ '023': 'FIXED (2026-06-12, Phase C \u2014 11 OreGenericEgg blocks registered (ore_urchin..ore_irukandji) with original textures/assets/loot and wired into OreSpawnChunkGenerator.getSpawnBlockStates; audit corrected: OreGenericEgg drops XP on harvest (OreGenericEgg.java func_149690_a), it never had break-to-spawn behaviour; ' + SUFFIX + ')',
+ '024': 'FIXED (2026-06-12, Phase C \u2014 ore_pink_tourmaline configured/placed features deleted (no 1.7.10 counterpart; the ingot stays craftable from kyanite); ore_kyanite retained as the documented Phase-10 parity exception (PARITY_NOTES.md); ' + SUFFIX + ')',
+ '025': 'FIXED (2026-06-12, Phase C \u2014 the weighted chest lists transcribed into data-driven loot tables (chests/crystal_chest, crystal_chest_maze, battle_tower_rat/dungeon_beast/urchin/rotator/vortex) referenced from CrystalStructures; fixed-content chests (rotator station, urchin spawner) keep their explicit original item lists; ' + SUFFIX + ')',
+ '026': 'FIXED (2026-06-12, Phase C \u2014 EntityTermite.mobInteract now requires an empty main inventory, offhand and armor before Crystal travel, with the original "Empty your inventory!"/"Take off your armor!" messages (orig Termite.java:96-107); return trip unchecked, as in the original; ' + SUFFIX + ')',
+ '027': 'FIXED (2026-06-12, Phase C \u2014 redundant crystal_maze (spacing-1!) and crystal_battle_tower structure sets/structures/features and the dangling crystal_tree*/crystal_flowers JSONs deleted; the chunk-generator code path (OreSpawnChunkGenerator + CrystalStructures) is the single placement mechanism; ' + SUFFIX + ')',
+ '028': 'FIXED (2026-06-12, Phase C \u2014 noise_settings/chaos.json replicates the nether-style 128-high terrain with the Y60-65 grass/dirt band per ChunkProviderOreSpawn6; ' + SUFFIX + ')',
+ '029': 'FIXED (2026-06-12, Phase C \u2014 chaos roster rebuilt to the full setChaosCreatures list (BiomeGenUtopianPlains.java:334-516): bee/cassowary/dragonfly/peacock/stink_bug/ostrich/chipmunk/cows added, alosaurus groups corrected to (1,1), invented vampire_butterfly and the weight-doubling dim_chaos_locals duplicates removed; ' + SUFFIX + ')',
+ '030': 'FIXED (2026-06-12, Phase C \u2014 veggie_patch + anthill (redfreq 2) wired into chaos_biome per OreSpawnWorld.java:203-208; challenge towers moved out of Chaos to their original Islands home (WGEN-043); the invented chaos generic dungeon was already removed in the chunk-generator dispatch; ' + SUFFIX + ')',
+ '031': 'FIXED (2026-06-12, Phase C \u2014 verified: WorldProviderOreSpawn6 overrides no sky/fog members, so vanilla overworld visuals are correct; dimension_type/chaos.json aligned (min_y 0 / height 256 / ambient_light 0.0); ' + SUFFIX + ')',
+ '032': 'FIXED (2026-06-12, Phase C \u2014 lavafoam_nether (15+nextInt(10) size-6 veins, /3 LessOre) and ore_ruby_nether (5+nextInt(5) size-2) at Y10-117 in netherrack added via add_nether_ores modifier per OreSpawnWorld.generateNether:243-271; ' + SUFFIX + ')',
+ '033': 'PARTIAL (2026-06-12, Phase C \u2014 End spawns verified present (add_end_spawns); Hospital and EnderCastle structures remain Phase D (WGEN-042 structure owner); ' + SUFFIX + ')',
+ '034': 'FIXED (2026-06-12, Phase C \u2014 spawner pool restored to the exact nextInt(12) ladder (GenericDungeon.java:141-177: Scorpion/Alien/Cryolophosaurus/WTF?/Kyuubi/Bee/Cloud Shark/Lurking Terror/Terrible Terror/Rotator/Rat/Dungeon Beast); chest now uses chests/generic_dungeon (91-entry transcription of chestContentsList, 5+nextInt(7) rolls); ' + SUFFIX + ')',
+ '035': 'FIXED (2026-06-12, Phase C \u2014 placement restored to the original Utopia caller: 1/15 gate, 8 lava-seek attempts Y50\u21926 (OreSpawnWorld.addRubyDungeon:1998-2012), removed from Crystal; chest uses chests/ruby_dungeon (cage/ruby/bacon/butter candy/full ruby kit/thunder staff, 4+nextInt(7) rolls per RubyBirdDungeon.java:18); audit note: addRubyDungeon was only ever called from Utopia (OreSpawnWorld.java:49), not the overworld; ' + SUFFIX + ')',
+ '036': 'PARTIAL (2026-06-12, Phase C \u2014 the 400-tick timer is already faithful (RandomDungeonSpawnerBlockEntity TOTAL_DELAY=400 vs orig DungeonSpawnerBlock.java:39); expanding the 2-outcome table back to 50 is blocked on the Phase D structure ports (WGEN-021/037/038/042); ' + SUFFIX + ')',
+ '039': 'FIXED (2026-06-12, Phase C \u2014 verified the Mining rotation odds: recently_placed==0 && nextInt(95)==1 then nextInt(7) (OreSpawnWorld.java:79-101) \u2192 1/665 per structure \u2192 spacing 26 (26\u00b2=676); sets corrected from 32/16 to 26/13; ' + SUFFIX + ')',
+ '040': 'FIXED (2026-06-12, Phase C \u2014 beehive structure re-tagged to orespawn:mining_biome at 26/13 (Mining rotation slot i==2, same 1/665 math as WGEN-039); the overworld forest skep remains as the separate small_beehive structure (addANest 50/50 branch, OreSpawnWorld.java:999-1021); ' + SUFFIX + ')',
+ '041': 'VERIFIED-CORRECT (2026-06-12, Phase C \u2014 orig placement found: addANest (OreSpawnWorld.java:999-1021), 1/230 gate in Forest/ForestHills/Jungle/JungleHills/Birch biomes, 50/50 mantis hive vs small beehive \u2192 1/460 each \u2248 spacing 21 (21\u00b2=441); the port set is already 21/10 on #is_forest+#is_jungle (tag also covers dark/flower forest \u2014 noted in report); ' + SUFFIX + ')',
+ '043': 'FIXED (2026-06-12, Phase C \u2014 audit corrected: the towers ARE 1.7.10 content (GenericDungeon.makeEnormousCastle:191 / makeEnormousCastleQ:6393, placed by addD4Castle OreSpawnWorld.java:2203-2228 in the Islands dimension); biome tags moved chaos_biome \u2192 island_biome; the existing 36/18 spacing matches the 1/100 x 3/19 x 1/2 = 1/1267 per-tower odds; ' + SUFFIX + ')',
+ '046': 'VERIFIED-CORRECT (2026-06-12, Phase C \u2014 audit corrected: 1.7.10 has NO overworld decoration call sites for these trees \u2014 Trees.ScragglyTreeWithBranches has no callers at all (dead code) and Trees.SmallTree is only invoked by the IslandToo entity (IslandToo.java:196/:419); the port matching the Islands/Crystal/Chaos chunk-provider variants only is correct; IslandToo planting behaviour \u2192 Phase D entity-behaviour owner; ' + SUFFIX + ')',
+ '047': 'VERIFIED-CORRECT (2026-06-12, Phase C \u2014 rolls extracted and matched: addOtherTrees 1/30 x 1/2 \u2192 wind 60/count 4, sky 60/count 3 (OreSpawnWorld.java:2508-2547); addHugeTree 1/50 x 15% \u2192 round 1/333 (:1830-1874); addAppleTrees harmonic mean of 1/(15+freq) over freq 0..14 \u2248 1/21 \u2192 apple rarity 21/count 4 (:1792-1828); ' + SUFFIX + ')',
+ '048': 'FIXED (2026-06-12, Phase C \u2014 rainbow-ant blocks now generate via the anthill feature special picker (1/redfreq then nextInt(4), OreSpawnWorld.java:1488-1499) in all anthill dimensions, and unstable-ant blocks via both the anthill picker and the Islands unstable_anthill feature (addUnstableAnts :1572-1588), so Village and Islands are survival-reachable; ' + SUFFIX + ')',
+ '049': 'FIXED (2026-06-12, Phase C \u2014 EntityAnt.mobInteract co-teleports tamed, non-sitting pets owned by the player within the original 48x24x48 departure box through the same DimensionTransition (orig OreSpawnTeleporter.justPutMe:151-163); ' + SUFFIX + ')',
+ '050': 'VERIFIED-CORRECT (2026-06-12, Phase C \u2014 confirmed a deliberate port addition (1.7.10 PortalBlock.java is empty; travel was entity-based); kept as a documented creative-only utility block, PARITY_NOTES.md entry added; ' + SUFFIX + ')',
+}
+
+text = open('AUDIT_FINDINGS.md', encoding='utf-8').read()
+blocks = re.split(r'(?=^### )', text, flags=re.M)
+out = []
+applied = []
+for b in blocks:
+    m = re.match(r'### WGEN-(\d+)', b)
+    if m and m.group(1) in R and '- **Resolution:**' not in b:
+        # insert before trailing blank lines / next header separator
+        stripped = b.rstrip('\n')
+        trailing = b[len(stripped):]
+        b = stripped + '\n- **Resolution:** ' + R[m.group(1)] + trailing
+        applied.append(m.group(1))
+    out.append(b)
+open('AUDIT_FINDINGS.md', 'w', encoding='utf-8').write(''.join(out))
+print('applied', len(applied), ':', ','.join(applied))
+missing = [k for k in R if k not in applied]
+print('not applied:', missing or 'none')

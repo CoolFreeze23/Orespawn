@@ -1,0 +1,6 @@
+{
+  "type": "orespawn:anthill",
+  "config": {
+    "redfreq": 4
+  }
+}

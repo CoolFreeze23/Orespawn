@@ -1,0 +1,8 @@
+{
+  "type": "orespawn:ruby_lava_seek",
+  "config": {
+    "attempts_base": 10,
+    "attempts_spread": 7,
+    "max_y": 50
+  }
+}

@@ -2,8 +2,21 @@
   "feature": "orespawn:dragon_spawn_block",
   "placement": [
     {
-      "type": "minecraft:rarity_filter",
-      "chance": 24
+      "type": "orespawn:less_ore_count",
+      "count": {
+        "type": "minecraft:weighted_list",
+        "distribution": [
+          { "data": 0, "weight": 7738 },
+          { "data": 1, "weight": 2262 }
+        ]
+      },
+      "less_ore_count": {
+        "type": "minecraft:weighted_list",
+        "distribution": [
+          { "data": 0, "weight": 9266 },
+          { "data": 1, "weight": 734 }
+        ]
+      }
     },
     {
       "type": "minecraft:in_square"
@@ -12,8 +25,8 @@
       "type": "minecraft:height_range",
       "height": {
         "type": "minecraft:uniform",
-        "min_inclusive": { "absolute": -56 },
-        "max_inclusive": { "absolute": -10 }
+        "min_inclusive": { "absolute": 50 },
+        "max_inclusive": { "absolute": 127 }
       }
     },
     {

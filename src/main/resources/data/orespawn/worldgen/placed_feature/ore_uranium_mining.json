@@ -1,0 +1,21 @@
+{
+  "feature": "orespawn:ore_uranium",
+  "placement": [
+    {
+      "type": "orespawn:vein_count",
+      "count": 3,
+      "min_y": 0,
+      "max_y": 30,
+      "extra_dice": 9,
+      "less_ore_divisor": 3,
+      "passes": 3,
+      "less_ore_passes": 1
+    },
+    {
+      "type": "minecraft:in_square"
+    },
+    {
+      "type": "minecraft:biome"
+    }
+  ]
+}

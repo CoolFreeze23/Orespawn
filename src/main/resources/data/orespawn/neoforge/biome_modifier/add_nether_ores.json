@@ -1,0 +1,9 @@
+{
+  "type": "neoforge:add_features",
+  "biomes": "#minecraft:is_nether",
+  "features": [
+    "orespawn:lavafoam_nether",
+    "orespawn:ore_ruby_nether"
+  ],
+  "step": "underground_ores"
+}

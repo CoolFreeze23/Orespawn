@@ -1,0 +1,7 @@
+{
+  "replace": false,
+  "values": [
+    "orespawn:mining_biome",
+    "orespawn:village_biome"
+  ]
+}

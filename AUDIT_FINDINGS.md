@@ -3747,12 +3747,14 @@ Only MISSING / PARTIAL / DIVERGENT / UNVERIFIED items are listed; fully PORTED i
 | Amethyst (`ore_amethyst.json`) | 2 / 6 / Y0–25 | 4 / 6 / −64..25 | count 2, Y 0..25 |
 
 (If the deepslate layer should keep ores, document the −64 floor as a deliberate 1.21 adaptation instead.)
+- **Resolution:** FIXED (2026-06-12, Phase C — new orespawn:vein_count placement reproduces the exact rate+nextInt(dice) / LessOre-divide / nextInt(128) Y-reject loop per ore; all ore_*.json rebuilt with original rates and Y windows; see FIX_LOG.md and phase_c_reports/C7_worldgen.md)
 
 ### WGEN-002 — Ruby: lava-adjacency placement mechanic dropped
 - **Status:** DIVERGENT
 - **Original:** `OreSpawnWorld.generateRuby` — rubies placed adjacent to lava pockets via a lava-seek loop
 - **Port:** `placed_feature/ore_ruby.json` — standard random ore placement
 - **Fix:** Implement a custom feature (or use a `block_predicate`-filtered placement) that only places ruby ore next to lava source blocks, mirroring the lava-seek loop.
+- **Resolution:** FIXED (2026-06-12, Phase C — ore_ruby configured feature replaced with orespawn:ruby_lava_seek (rate 10+nextInt(5), Y≤0..50, lava-over-stone descent per OreSpawnWorld.java:879-892); see FIX_LOG.md and phase_c_reports/C7_worldgen.md)
 
 ### WGEN-003 — Block-of-Ruby ore generation absent
 - **Status:** MISSING
@@ -3771,12 +3773,14 @@ Only MISSING / PARTIAL / DIVERGENT / UNVERIFIED items are listed; fully PORTED i
 - **Original:** `OreSpawnMain` SpawnOres stats + `ChunkOreGenerator` — 28 veins/chunk clump 4 Y50–128 (+30 veins on a 1/20 roll) over a pool of ≈105 spawn-block types (7 OreSpawn + 98 vanilla-mob)
 - **Port:** `placed_feature/dragon_spawn_block.json`, `kraken_spawn_block.json` (each 1/24 chunks, Y −56..−10) + `add_ancient_dried_eggs.json` (1/12, Y −32..32)
 - **Fix:** Decide scope: full parity needs the spawn-block pool restored (custom feature picking from the weighted 105-type pool at 28+/chunk, Y50–128); otherwise document the 2-boss-block reduction as a deliberate redesign.
+- **Resolution:** PARTIAL (2026-06-12, Phase C — the 2-boss-block + ancient-dried-egg reduction is documented as a deliberate redesign (PARITY_NOTES.md); restoring the full ~105-type SpawnOres pool at 28+/chunk Y50-128 is Phase D (structures/spawn-block pool owner, with WGEN-042); see FIX_LOG.md and phase_c_reports/C7_worldgen.md)
 
 ### WGEN-006 — AntHill surface blocks never world-placed
 - **Status:** PARTIAL
 - **Original:** `OreSpawnWorld.addAnts` (called at `:323`, redfreq=4) — ~4%/chunk anthill blocks (black/red/rainbow/unstable) in plains-type biomes
 - **Port:** ant blocks registered (`ModBlocks.java:291-306`) but no placement feature; black/red ants natural-spawn instead (`add_overworld_creatures.json`)
 - **Fix:** Add an anthill placed feature (~4%/chunk, plains biomes) placing the four ant-block types; this also restores rainbow/unstable ant access (see WGEN-048).
+- **Resolution:** FIXED (2026-06-12, Phase C — new orespawn:anthill feature (1/30 gate, 4 attempts, redfreq picker per OreSpawnWorld.addAnts:1472-1507) wired to overworld (#is_overworld redfreq 4), Utopia/Village (4), Mining (2, x2), Chaos (2); see FIX_LOG.md and phase_c_reports/C7_worldgen.md)
 
 ### WGEN-007 — Wild crop patches (strawberry/corn/tomato) absent
 - **Status:** MISSING
@@ -3791,6 +3795,7 @@ Only MISSING / PARTIAL / DIVERGENT / UNVERIFIED items are listed; fully PORTED i
 - **Original:** `OreSpawnWorld.java:42-51` — veggie patches among features; King/Queen Altar 1/2000 chunk roll after tree passes (`:2550`)
 - **Port:** trees/altars present but no veggie patches; altars use `structure_set/royal_altars.json` random_spread spacing 64 / separation 32
 - **Fix:** Add Utopia veggie-patch features (same crop set as overworld wild gen); tune royal_altars spacing if 64/32 measurably differs from the 1/2000-roll density in practice.
+- **Resolution:** FIXED (2026-06-12, Phase C — veggie_patch_utopia (count 2) added to utopia_plains; royal_altars spacing corrected 48/24 → 45/22 (1/2000 roll, OreSpawnWorld.java:2550 → 45²=2025); see FIX_LOG.md and phase_c_reports/C7_worldgen.md)
 
 ### WGEN-009 — Utopia: cricket/frog spawn group sizes
 - **Status:** UNVERIFIED
@@ -3799,24 +3804,28 @@ Only MISSING / PARTIAL / DIVERGENT / UNVERIFIED items are listed; fully PORTED i
 - **Fix:** Unverified because the original group min/max were not read. Resolve by checking the `BiomeGenUtopianPlains` SpawnListEntry args for cricket/frog and aligning the JSON group sizes.
 
 ## Mining dimension
+- **Resolution:** VERIFIED-CORRECT (2026-06-12, Phase C — orig BiomeGenUtopianPlains.java:132/:135: Cricket 5(4,6) ambient, Frog 5(4,6) water; port matches exactly; see FIX_LOG.md and phase_c_reports/C7_worldgen.md)
 
 ### WGEN-010 — Mining: vanilla dungeons/mineshafts/strongholds absent
 - **Status:** PARTIAL
 - **Original:** `ChunkProviderOreSpawn2` — vanilla dungeons ×8/chunk, mineshafts, strongholds, scattered features
 - **Port:** `mining_biome.json` — caves/springs only; no vanilla structure sets apply to this biome
 - **Fix:** Add `mining_biome` to the vanilla `has_structure` tags for mineshaft/stronghold, and add a monster-room-style feature at 8 attempts/chunk to the biome's features.
+- **Resolution:** FIXED (2026-06-12, Phase C — mining/village biomes added to minecraft:has_structure/mineshaft+stronghold tags; lake_water_dim (1/4), lake_lava_dim (1/8), monster_room_dim (count 8) placed features added per ChunkProviderOreSpawn2 populate; see FIX_LOG.md and phase_c_reports/C7_worldgen.md)
 
 ### WGEN-011 — Mining: 3× ore density lost
 - **Status:** DIVERGENT
 - **Original:** `ChunkProviderOreSpawn2` — `generateOresInChunk` called up to 3× when `LessOre==0`, plus extra `generateRuby` and extra diamond/gold passes
 - **Port:** `mining_biome.json` — same 1× rates as overworld
 - **Fix:** Create mining-specific placed features at 3× count (gated by `LESS_ORE`, see ITEM-064) plus the extra ruby/diamond/gold passes, and reference them only from `mining_biome.json`.
+- **Resolution:** FIXED (2026-06-12, Phase C — *_mining ore variants run the whole vein loop with passes:3 / less_ore_passes:1 (ChunkProviderOreSpawn2.java:191-195); ruby x3 via less_ore_count{3,1}; lapis boost 45x size7 + 25x size4 Y<50 LessOre==0-only restored (OreSpawnWorld.java:64-77); see FIX_LOG.md and phase_c_reports/C7_worldgen.md)
 
 ### WGEN-012 — Mining: dino/alien monster roster replaced
 - **Status:** DIVERGENT
 - **Original:** `ChunkProviderOreSpawn2.java:374-399` — Alosaurus 8(1-2), TRex 6(1-2), Nastysaurus 6(1-2), Pointysaurus 10(4-8), GammaMetroid 35(4-7), Alien 35(2-3), CaveFisher 35(4-8), Cryolophosaurus 26(4-7), Spyro 5(1-2) + biome defaults
 - **Port:** `mining_biome.json` — rat 30(4-8), cave_fisher 10(1-3), molenoid 5(1-2), worms 8/4/2, creeping_horror 5(1-3), scorpion 3(1-2)
 - **Fix:** Replace the monster list in `mining_biome.json` with the original roster/weights/groups (CaveFisher 35(4-8) etc.), keeping only entities that exist in the port; track unported entities separately.
+- **Resolution:** FIXED (2026-06-12, Phase C — mining_biome monster roster rebuilt to the 9-entry dino/alien overlay (ChunkProviderOreSpawn2.java:374-399) + vanilla Extreme Hills defaults; invented rat/worms/molenoid/creeping_horror/scorpion/leonopteryx/firefly entries removed; see FIX_LOG.md and phase_c_reports/C7_worldgen.md)
 
 ### WGEN-013 — Mining: ambient spawns absent
 - **Status:** MISSING
@@ -3831,6 +3840,7 @@ Only MISSING / PARTIAL / DIVERGENT / UNVERIFIED items are listed; fully PORTED i
 - **Fix:** Port BasiliskMaze (WGEN-037), KyuubiDungeon and EnderKnightDungeon (WGEN-042) as mining_biome structures; restore BeeHive to Mining or document relocation (WGEN-040).
 
 ## Village Mania dimension
+- **Resolution:** PARTIAL (2026-06-12, Phase C — BeeHive restored to Mining (WGEN-040) and shadow/WTF/Leon frequencies corrected (WGEN-039); BasiliskMaze is WGEN-037 and KyuubiDungeon/EnderKnightDungeon are WGEN-042 — both Phase D structure owners; see FIX_LOG.md and phase_c_reports/C7_worldgen.md)
 
 ### WGEN-015 — Village dimension generates no villages
 - **Status:** MISSING
@@ -3843,12 +3853,14 @@ Only MISSING / PARTIAL / DIVERGENT / UNVERIFIED items are listed; fully PORTED i
 - **Original:** `ChunkProviderOreSpawn3` — overworld noise + lakes + vanilla dungeons/mineshafts/strongholds
 - **Port:** `DimensionStyle.java:50-52` — style VILLAGE = pass-through ("identical to DEFAULT for now")
 - **Fix:** Add lakes/springs and vanilla underground structures (mineshaft/stronghold/monster rooms) to `village_biome.json` / its tags, mirroring WGEN-010.
+- **Resolution:** FIXED (2026-06-12, Phase C — Village dimension style now populates per ChunkProviderOreSpawn3: vanilla mineshaft/stronghold/lakes/monster rooms (WGEN-010 mechanism), generic dungeon 1/16, anthills (redfreq 4), apple trees; villages themselves remain WGEN-015 (MISSING, Phase D); see FIX_LOG.md and phase_c_reports/C7_worldgen.md)
 
 ### WGEN-017 — Village: mob roster gaps and unverified weights
 - **Status:** PARTIAL
 - **Original:** `BiomeGenUtopianPlains.setVillageCreatures` — Robot1-5, Jeffery, SpiderDriver, Godzilla, Girlfriend, Boyfriend, cows, Butterfly, LunaMoth, Chipmunk, Cockateil, Tshirt, Coin, Criminal
 - **Port:** `village_biome.json` + `dim_village_locals.json` — robots/cows/etc. present; **Jeffery, SpiderDriver, Godzilla, Criminal missing**; giant_robot/band_p added; robot weights UNVERIFIED vs original
 - **Fix:** Add spawn entries for Jeffery, SpiderDriver, Godzilla, Criminal once those entities exist; diff robot_1-5 weights/groups against `setVillageCreatures` exact values and align.
+- **Resolution:** FIXED (2026-06-12, Phase C — village roster rebuilt from setVillageCreatures + the un-reset Utopia ctor + vanilla defaults (lists are never cleared, BiomeGenUtopianPlains.java:272-332); spider_driver 20(3,5) and godzilla 2(1,1) added; audit corrected: Jeffery IS the port giant_robot (JefferyEnable→GiantRobot :289) and Criminal IS band_p (CriminalEnable→BandP :330) — neither was missing; invented beaver entry removed; see FIX_LOG.md and phase_c_reports/C7_worldgen.md)
 
 ### WGEN-018 — Village: DamselInDistress/SpiderHangout/RedAntHangout structures absent
 - **Status:** PARTIAL
@@ -3857,18 +3869,21 @@ Only MISSING / PARTIAL / DIVERGENT / UNVERIFIED items are listed; fully PORTED i
 - **Fix:** Port DamselInDistress, SpiderHangout, RedAntHangout as structures tagged `orespawn:village_biome` with sets approximating their original per-chunk roll densities.
 
 ## Islands dimension
+- **Resolution:** PARTIAL (2026-06-12, Phase C — the divergent half fixed: greenhouse/robot_lab/white_house re-tagged to Islands (WGEN-022) so Village no longer hosts them; DamselInDistress/SpiderHangout/RedAntHangout remain Phase D (WGEN-042 structure owner); see FIX_LOG.md and phase_c_reports/C7_worldgen.md)
 
 ### WGEN-019 — Islands: flat-plane terrain replaced by floating-islands noise
 - **Status:** DIVERGENT
 - **Original:** `ChunkProviderOreSpawn4` + `Island.java:64-79` — flat plane (bedrock y0 + dirt + grass); islands built dynamically by Island/IslandToo entities (small r3-6/d2-4, 1/40 large r6-10/d3-6)
 - **Port:** `dimension/islands.json` — `minecraft:floating_islands` noise; island-builder entities additionally spawn (`dim_islands_locals.json`)
 - **Fix:** Either restore the flat-plane generator (custom flat noise settings: bedrock+dirt+grass) so entity-built islands are the sole terrain, or remove/retune one of the two systems — currently both run, which neither matches original look nor static-noise intent.
+- **Resolution:** FIXED (2026-06-12, Phase C — noise_settings/islands.json generates the original flat plane (bedrock Y0, dirt Y1-6, grass Y7 per ChunkProviderOreSpawn4.java:30-32); island_biome carvers/vanilla features emptied; see FIX_LOG.md and phase_c_reports/C7_worldgen.md)
 
 ### WGEN-020 — Islands: spawn weights not verified
 - **Status:** UNVERIFIED
 - **Original:** `setIslandCreatures` — full roster (Dragon, Stinky, CliffRacer, CloudShark, terrors, etc.); exact weights not extracted
 - **Port:** `island_biome.json` + locals — full roster present with stated weights
 - **Fix:** Unverified because original weight/group numbers were never read. Resolve by extracting `setIslandCreatures` SpawnListEntry args and diffing against the biome JSON.
+- **Resolution:** FIXED (2026-06-12, Phase C — weights verified against setIslandCreatures (BiomeGenUtopianPlains.java:142-199): all 16 entries match; duplicate terrible_terror/ender_reaper entries (biome JSON + dim_islands_locals doubling the weights) consolidated; see FIX_LOG.md and phase_c_reports/C7_worldgen.md)
 
 ### WGEN-021 — Islands: ~13 D4 structures absent
 - **Status:** MISSING
@@ -3883,30 +3898,35 @@ Only MISSING / PARTIAL / DIVERGENT / UNVERIFIED items are listed; fully PORTED i
 - **Fix:** Re-tag the three structures to `orespawn:island_biome` (or duplicate into both dims if the Village placement is desired), restoring Islands as their home.
 
 ## Crystal dimension
+- **Resolution:** FIXED (2026-06-12, Phase C — greenhouse/robot_lab/white_house biome tags re-set to orespawn:island_biome and spacing normalized to 44/22 (orig D4 roll 1/100 x 1/19 = 1/1900 ≈ 44², OreSpawnWorld.java:134-177); see FIX_LOG.md and phase_c_reports/C7_worldgen.md)
 
 ### WGEN-023 — Crystal spawn-block ores: 9 of 11 types are placeholders
 - **Status:** PARTIAL
 - **Original:** Crystal ore pass — pool of 11 spawn blocks (Urchin, Flounder, Skate, Rotator, Peacock, Fairy, DungeonBeast, Vortex, Rat, Whale, Irukandji), 25+rand(30)/chunk Y>45
 - **Port:** `OreSpawnChunkGenerator.getSpawnBlockStates:527-542` — frequencies exact, but 9/11 types emit CRYSTAL_STONE placeholders; only CRYSTAL_FAIRY and CRYSTAL_RAT are real
 - **Fix:** Register the 9 missing crystal spawn-block variants (Urchin, Flounder, Skate, Rotator, Peacock, DungeonBeast, Vortex, Whale, Irukandji) with break-to-spawn behavior and substitute them into `getSpawnBlockStates`.
+- **Resolution:** FIXED (2026-06-12, Phase C — 11 OreGenericEgg blocks registered (ore_urchin..ore_irukandji) with original textures/assets/loot and wired into OreSpawnChunkGenerator.getSpawnBlockStates; audit corrected: OreGenericEgg drops XP on harvest (OreGenericEgg.java func_149690_a), it never had break-to-spawn behaviour; see FIX_LOG.md and phase_c_reports/C7_worldgen.md)
 
 ### WGEN-024 — Crystal: extra kyanite/pink-tourmaline veins double-generate
 - **Status:** DIVERGENT
 - **Original:** n/a — Kyanite *is* CrystalStone; Pink Tourmaline/TigersEye exist only as column formations
 - **Port:** `add_crystal_dim_ores.json` — injects `ore_kyanite` (6×size6, Y−32..80) and `ore_pink_tourmaline` (6×size6) as standard veins on top of the column generators
 - **Fix:** Remove `add_crystal_dim_ores.json` (or the tourmaline entry at minimum) to eliminate the no-counterpart veins and tourmaline double-generation; keep kyanite only if it stays as a deliberate "Phase 10" addition — document it.
+- **Resolution:** FIXED (2026-06-12, Phase C — ore_pink_tourmaline configured/placed features deleted (no 1.7.10 counterpart; the ingot stays craftable from kyanite); ore_kyanite retained as the documented Phase-10 parity exception (PARITY_NOTES.md); see FIX_LOG.md and phase_c_reports/C7_worldgen.md)
 
 ### WGEN-025 — Crystal structures: chest loot only approximated
 - **Status:** DIVERGENT
 - **Original:** WeightedRandomChestContent lists per structure (FairyTree/RotatorStation/Urchin/HauntedHouse/RoundRotator/BattleTower, maze chests)
 - **Port:** `CrystalStructures.fillCrystalChest:838+` — inline ItemStack pickers approximating the loot
 - **Fix:** Transcribe each original weighted chest list into a data-driven loot table (`loot_table/chests/crystal_*.json`) and reference them from the structure fill code.
+- **Resolution:** FIXED (2026-06-12, Phase C — the weighted chest lists transcribed into data-driven loot tables (chests/crystal_chest, crystal_chest_maze, battle_tower_rat/dungeon_beast/urchin/rotator/vortex) referenced from CrystalStructures; fixed-content chests (rotator station, urchin spawner) keep their explicit original item lists; see FIX_LOG.md and phase_c_reports/C7_worldgen.md)
 
 ### WGEN-026 — Crystal entry: empty-inventory requirement dropped (Termite portal)
 - **Status:** DIVERGENT
 - **Original:** `Termite.java` — travel requires empty hand **and completely empty inventory**
 - **Port:** `EntityTermite.java:46-48` — inherits `EntityAnt.mobInteract:103-134` empty-hand check only
 - **Fix:** Override `mobInteract` in `EntityTermite` to additionally require `player.getInventory()` be empty (the dimension's intended "bring nothing in" rule).
+- **Resolution:** FIXED (2026-06-12, Phase C — EntityTermite.mobInteract now requires an empty main inventory, offhand and armor before Crystal travel, with the original "Empty your inventory!"/"Take off your armor!" messages (orig Termite.java:96-107); return trip unchecked, as in the original; see FIX_LOG.md and phase_c_reports/C7_worldgen.md)
 
 ### WGEN-027 — Crystal: redundant structure JSONs risk double generation
 - **Status:** DIVERGENT
@@ -3915,24 +3935,28 @@ Only MISSING / PARTIAL / DIVERGENT / UNVERIFIED items are listed; fully PORTED i
 - **Fix:** Delete the redundant structure-set/placed-feature JSONs (maze especially: every chunk via code + 1/4 feature + structure set) so each structure has exactly one placement mechanism.
 
 ## Chaos dimension
+- **Resolution:** FIXED (2026-06-12, Phase C — redundant crystal_maze (spacing-1!) and crystal_battle_tower structure sets/structures/features and the dangling crystal_tree*/crystal_flowers JSONs deleted; the chunk-generator code path (OreSpawnChunkGenerator + CrystalStructures) is the single placement mechanism; see FIX_LOG.md and phase_c_reports/C7_worldgen.md)
 
 ### WGEN-028 — Chaos: nether-style terrain replaced by overworld noise
 - **Status:** DIVERGENT
 - **Original:** `ChunkProviderOreSpawn6` — nether-noise terrain, 128 high, stone base with nether-style caverns, scraggly trees
 - **Port:** `orespawn:inland` overworld noise, style CHAOS = pass-through (`DimensionStyle.java:48-49`); no scraggly trees
 - **Fix:** Point `dimension/chaos.json` at nether-like noise settings (e.g. derived from `minecraft:nether` with stone palette, height 128) and add the scraggly-tree pass for CHAOS.
+- **Resolution:** FIXED (2026-06-12, Phase C — noise_settings/chaos.json replicates the nether-style 128-high terrain with the Y60-65 grass/dirt band per ChunkProviderOreSpawn6; see FIX_LOG.md and phase_c_reports/C7_worldgen.md)
 
 ### WGEN-029 — Chaos: spawn roster gaps and unverified weights
 - **Status:** PARTIAL
 - **Original:** `setChaosCreatures` — ~55 entries
 - **Port:** `chaos_biome.json` (37 monsters + others) + `dim_chaos_locals.json` — **Bee, Cassowary, Dragonfly, Peacock, StinkBug, Ostrich, cows, Hydrolisc missing**; ghosts/vampire_butterfly added; per-entry weights UNVERIFIED
 - **Fix:** Add the eight missing entity spawn entries (for ported entities); extract original weights from `setChaosCreatures` and align the JSON.
+- **Resolution:** FIXED (2026-06-12, Phase C — chaos roster rebuilt to the full setChaosCreatures list (BiomeGenUtopianPlains.java:334-516): bee/cassowary/dragonfly/peacock/stink_bug/ostrich/chipmunk/cows added, alosaurus groups corrected to (1,1), invented vampire_butterfly and the weight-doubling dim_chaos_locals duplicates removed; see FIX_LOG.md and phase_c_reports/C7_worldgen.md)
 
 ### WGEN-030 — Chaos: veggie/ant features missing; challenge towers added
 - **Status:** PARTIAL
 - **Original:** `OreSpawnWorld.java:103-107` — butterflies/moths, veggies, ants ×2
 - **Port:** generic dungeon 1/16 + `challenge_tower_king/queen` (36/18, no 1.7.10 counterpart — see WGEN-043)
 - **Fix:** Add veggie-patch and ant-block features (×2 density) to `chaos_biome.json`, reusing the overworld features from WGEN-006/007.
+- **Resolution:** FIXED (2026-06-12, Phase C — veggie_patch + anthill (redfreq 2) wired into chaos_biome per OreSpawnWorld.java:203-208; challenge towers moved out of Chaos to their original Islands home (WGEN-043); the invented chaos generic dungeon was already removed in the chunk-generator dispatch; see FIX_LOG.md and phase_c_reports/C7_worldgen.md)
 
 ### WGEN-031 — Chaos: sky/fog constants not compared
 - **Status:** UNVERIFIED
@@ -3941,12 +3965,14 @@ Only MISSING / PARTIAL / DIVERGENT / UNVERIFIED items are listed; fully PORTED i
 - **Fix:** Unverified because the original provider's fog/sky color values were never read. Resolve by extracting `getFogColor`/sky color from `WorldProviderOreSpawn6` and configuring matching dimension special effects.
 
 ## Nether / End additions
+- **Resolution:** FIXED (2026-06-12, Phase C — verified: WorldProviderOreSpawn6 overrides no sky/fog members, so vanilla overworld visuals are correct; dimension_type/chaos.json aligned (min_y 0 / height 256 / ambient_light 0.0); see FIX_LOG.md and phase_c_reports/C7_worldgen.md)
 
 ### WGEN-032 — Nether: Lavafoam ore + ruby generation absent
 - **Status:** PARTIAL
 - **Original:** `OreSpawnWorld.generateNether` — Lavafoam ore, ruby, nether ants, nether mosquitos
 - **Port:** `add_nether_spawns.json` (spawns only) — no lavafoam/ruby nether features
 - **Fix:** Add nether-targeted configured/placed features for Lavafoam and ruby veins and register via a `#minecraft:is_nether` biome modifier.
+- **Resolution:** FIXED (2026-06-12, Phase C — lavafoam_nether (15+nextInt(10) size-6 veins, /3 LessOre) and ore_ruby_nether (5+nextInt(5) size-2) at Y10-117 in netherrack added via add_nether_ores modifier per OreSpawnWorld.generateNether:243-271; see FIX_LOG.md and phase_c_reports/C7_worldgen.md)
 
 ### WGEN-033 — End: Hospital and Ender Castle structures absent
 - **Status:** PARTIAL
@@ -3955,24 +3981,28 @@ Only MISSING / PARTIAL / DIVERGENT / UNVERIFIED items are listed; fully PORTED i
 - **Fix:** Port Hospital and EnderCastle as structures tagged to End biomes with sets approximating original densities (see also WGEN-042).
 
 ## Structures & dungeons
+- **Resolution:** PARTIAL (2026-06-12, Phase C — End spawns verified present (add_end_spawns); Hospital and EnderCastle structures remain Phase D (WGEN-042 structure owner); see FIX_LOG.md and phase_c_reports/C7_worldgen.md)
 
 ### WGEN-034 — Generic Dungeon: spawner pool swapped, custom loot replaced by vanilla
 - **Status:** DIVERGENT
 - **Original:** `GenericDungeon.makeDungeon` + lists — spawner pool of 12 (Scorpion, Alien, Cryolophosaurus, WTF?, Kyuubi, Bee, CloudShark, LurkingTerror, TerribleTerror, Rotator, Rat, DungeonBeast); custom level1-5 chest lists
 - **Port:** `world/GenericDungeon.java:22-34,121-126` — pool of 11 (Alien, CaveFisher, DungeonBeast, Scorpion, EmperorScorpion, TrooperBug, CaterKiller, Molenoid, Basilisk, StinkBug, Triffid); chest = vanilla `simple_dungeon` loot
 - **Fix:** Restore the original 12-mob spawner pool (for ported entities) and transcribe the level1-5 chest lists into orespawn loot tables referenced by dungeon depth/level.
+- **Resolution:** FIXED (2026-06-12, Phase C — spawner pool restored to the exact nextInt(12) ladder (GenericDungeon.java:141-177: Scorpion/Alien/Cryolophosaurus/WTF?/Kyuubi/Bee/Cloud Shark/Lurking Terror/Terrible Terror/Rotator/Rat/Dungeon Beast); chest now uses chests/generic_dungeon (91-entry transcription of chestContentsList, 5+nextInt(7) rolls); see FIX_LOG.md and phase_c_reports/C7_worldgen.md)
 
 ### WGEN-035 — Ruby Dungeon: placement model and loot changed
 - **Status:** DIVERGENT
 - **Original:** `OreSpawnWorld.addRubyDungeon:1998-2012` — 1/15 chunk, placed at **lava contact** Y5-50, in any dim that called it; chest: CageEmpty/Ruby/Bacon/ButterCandy/full ruby tool+armor set/ThunderStaff (`RubyBirdDungeon.java`)
 - **Port:** `OreSpawnChunkGenerator:717-726`, `GenericDungeon.tryPlaceRubyDungeon:69-98` — Crystal dim only, fixed Y10-19 band; chest = vanilla `simple_dungeon`
 - **Fix:** Restore lava-adjacent placement at Y5-50 and re-enable for overworld/Utopia callers; create a ruby-gear loot table (cage, ruby, bacon, butter candy, ruby tools+armor, thunder staff) and use it.
+- **Resolution:** FIXED (2026-06-12, Phase C — placement restored to the original Utopia caller: 1/15 gate, 8 lava-seek attempts Y50→6 (OreSpawnWorld.addRubyDungeon:1998-2012), removed from Crystal; chest uses chests/ruby_dungeon (cage/ruby/bacon/butter candy/full ruby kit/thunder staff, 4+nextInt(7) rolls per RubyBirdDungeon.java:18); audit note: addRubyDungeon was only ever called from Utopia (OreSpawnWorld.java:49), not the overworld; see FIX_LOG.md and phase_c_reports/C7_worldgen.md)
 
 ### WGEN-036 — DungeonSpawnerBlock: structure pool 50 → 2
 - **Status:** PARTIAL
 - **Original:** `DungeonSpawnerBlock.java` — on tick spawns 1 of **50** structures (FairyTree → RedAntHangout list)
 - **Port:** `RandomDungeonSpawnerBlockEntity.java:63-72` — 2 outcomes (ruby 1/4 else generic)
 - **Fix:** Same root as ITEM-020 — expand the outcome table as structures land (WGEN-021/042); restore the 400t timer.
+- **Resolution:** PARTIAL (2026-06-12, Phase C — the 400-tick timer is already faithful (RandomDungeonSpawnerBlockEntity TOTAL_DELAY=400 vs orig DungeonSpawnerBlock.java:39); expanding the 2-outcome table back to 50 is blocked on the Phase D structure ports (WGEN-021/037/038/042); see FIX_LOG.md and phase_c_reports/C7_worldgen.md)
 
 ### WGEN-037 — BasiliskMaze absent
 - **Status:** MISSING
@@ -3991,18 +4021,21 @@ Only MISSING / PARTIAL / DIVERGENT / UNVERIFIED items are listed; fully PORTED i
 - **Original:** Mining-dim per-chunk roll placements (`addShadowDungeon` etc., exact roll values not extracted)
 - **Port:** structure sets `shadow_dungeon`/`wtf_alien_dungeon`/`leonopteryx_nest`, each spacing 26 / separation 13
 - **Fix:** Unverified because the original per-chunk roll odds were never extracted. Resolve by reading the three `add*` methods' roll constants and converting to equivalent random_spread spacing.
+- **Resolution:** FIXED (2026-06-12, Phase C — verified the Mining rotation odds: recently_placed==0 && nextInt(95)==1 then nextInt(7) (OreSpawnWorld.java:79-101) → 1/665 per structure → spacing 26 (26²=676); sets corrected from 32/16 to 26/13; see FIX_LOG.md and phase_c_reports/C7_worldgen.md)
 
 ### WGEN-040 — BeeHive: relocated Mining → overworld forests
 - **Status:** DIVERGENT
 - **Original:** `OreSpawnWorld.addBeeHive:2031-2057` — Mining dim, lowest-grass-spot algorithm
 - **Port:** `structure_set/beehive.json` + `BeehiveFeature.java` — overworld `#is_forest`/`is_jungle`, set 24/12 + feature 1/60
 - **Fix:** Re-tag beehive placement to `orespawn:mining_biome` (optionally keeping forests too, documented), and consider the lowest-grass-spot site selection for fidelity.
+- **Resolution:** FIXED (2026-06-12, Phase C — beehive structure re-tagged to orespawn:mining_biome at 26/13 (Mining rotation slot i==2, same 1/665 math as WGEN-039); the overworld forest skep remains as the separate small_beehive structure (addANest 50/50 branch, OreSpawnWorld.java:999-1021); see FIX_LOG.md and phase_c_reports/C7_worldgen.md)
 
 ### WGEN-041 — MantisNest: placement basis unverified
 - **Status:** UNVERIFIED
 - **Original:** placed via dungeon spawner / overworld hooks — exact original placement basis not extracted
 - **Port:** overworld forests/jungles, set 24/12 + feature 1/80
 - **Fix:** Unverified because the original placement call sites/odds were not pinned down. Resolve by locating MantisNest placement in `OreSpawnWorld`/`DungeonSpawnerBlock` and comparing rates/biomes.
+- **Resolution:** VERIFIED-CORRECT (2026-06-12, Phase C — orig placement found: addANest (OreSpawnWorld.java:999-1021), 1/230 gate in Forest/ForestHills/Jungle/JungleHills/Birch biomes, 50/50 mantis hive vs small beehive → 1/460 each ≈ spacing 21 (21²=441); the port set is already 21/10 on #is_forest+#is_jungle (tag also covers dark/flower forest — noted in report); see FIX_LOG.md and phase_c_reports/C7_worldgen.md)
 
 ### WGEN-042 — ~25+ structure types absent (systemic)
 - **Status:** MISSING
@@ -4017,6 +4050,7 @@ Only MISSING / PARTIAL / DIVERGENT / UNVERIFIED items are listed; fully PORTED i
 - **Fix:** Unverified provenance. Resolve by checking 1.12.2 OreSpawn sources (or port docs) for the towers; if intentional new content, document; if not, remove from chaos_biome.
 
 ## Trees
+- **Resolution:** FIXED (2026-06-12, Phase C — audit corrected: the towers ARE 1.7.10 content (GenericDungeon.makeEnormousCastle:191 / makeEnormousCastleQ:6393, placed by addD4Castle OreSpawnWorld.java:2203-2228 in the Islands dimension); biome tags moved chaos_biome → island_biome; the existing 36/18 spacing matches the 1/100 x 3/19 x 1/2 = 1/1267 per-tower odds; see FIX_LOG.md and phase_c_reports/C7_worldgen.md)
 
 ### WGEN-044 — DuplicatorTree generator absent
 - **Status:** MISSING
@@ -4035,6 +4069,7 @@ Only MISSING / PARTIAL / DIVERGENT / UNVERIFIED items are listed; fully PORTED i
 - **Original:** `Trees.java` — overworld SmallTree and ScragglyTreeWithBranches variants
 - **Port:** only Islands/Crystal scraggly variants exist
 - **Fix:** Port the two overworld variants from `Trees.java` and wire them to their original overworld decoration call sites.
+- **Resolution:** VERIFIED-CORRECT (2026-06-12, Phase C — audit corrected: 1.7.10 has NO overworld decoration call sites for these trees — Trees.ScragglyTreeWithBranches has no callers at all (dead code) and Trees.SmallTree is only invoked by the IslandToo entity (IslandToo.java:196/:419); the port matching the Islands/Crystal/Chaos chunk-provider variants only is correct; IslandToo planting behaviour → Phase D entity-behaviour owner; see FIX_LOG.md and phase_c_reports/C7_worldgen.md)
 
 ### WGEN-047 — Utopia tree frequencies not verified (Sky/Wind/Round/MagicApple)
 - **Status:** UNVERIFIED
@@ -4043,18 +4078,21 @@ Only MISSING / PARTIAL / DIVERGENT / UNVERIFIED items are listed; fully PORTED i
 - **Fix:** Unverified because original roll constants were never extracted. Resolve by reading the three methods' roll values and converting to equivalent rarity-filter values.
 
 ## Portals & teleporters
+- **Resolution:** VERIFIED-CORRECT (2026-06-12, Phase C — rolls extracted and matched: addOtherTrees 1/30 x 1/2 → wind 60/count 4, sky 60/count 3 (OreSpawnWorld.java:2508-2547); addHugeTree 1/50 x 15% → round 1/333 (:1830-1874); addAppleTrees harmonic mean of 1/(15+freq) over freq 0..14 ≈ 1/21 → apple rarity 21/count 4 (:1792-1828); see FIX_LOG.md and phase_c_reports/C7_worldgen.md)
 
 ### WGEN-048 — Village/Islands unreachable in survival (rainbow/unstable ants)
 - **Status:** PARTIAL
 - **Original:** rainbow/unstable ants obtainable via anthill blocks placed by worldgen (`OreSpawnWorld.addAnts`)
 - **Port:** portal code works (`EntityRainbowAnt.java:20` → VILLAGE, `EntityUnstableAnt.java:20` → ISLANDS) but neither ant has a natural spawn entry and their ant blocks never world-generate
 - **Fix:** Restore anthill worldgen (WGEN-006) including rainbow/unstable ant blocks, or add natural spawn entries for both ants, so both dimensions are survival-reachable.
+- **Resolution:** FIXED (2026-06-12, Phase C — rainbow-ant blocks now generate via the anthill feature special picker (1/redfreq then nextInt(4), OreSpawnWorld.java:1488-1499) in all anthill dimensions, and unstable-ant blocks via both the anthill picker and the Islands unstable_anthill feature (addUnstableAnts :1572-1588), so Village and Islands are survival-reachable; see FIX_LOG.md and phase_c_reports/C7_worldgen.md)
 
 ### WGEN-049 — Portal landing: tamed pets left behind
 - **Status:** PARTIAL
 - **Original:** `OreSpawnTeleporter.justPutMe` — scans Y1-180 for solid ground + 3 air; **teleports tamed pets too**
 - **Port:** `EntityAnt.findSafeY:142-162` — top-down scan 256→min for solid + 2 air, fallback Y64; no pet co-teleport
 - **Fix:** After teleporting the player, find nearby owned/tamed entities (same radius as original) and move them through the same `DimensionTransition`.
+- **Resolution:** FIXED (2026-06-12, Phase C — EntityAnt.mobInteract co-teleports tamed, non-sitting pets owned by the player within the original 48x24x48 departure box through the same DimensionTransition (orig OreSpawnTeleporter.justPutMe:151-163); see FIX_LOG.md and phase_c_reports/C7_worldgen.md)
 
 ### WGEN-050 — Utopia Portal Block: no original counterpart
 - **Status:** UNVERIFIED
@@ -4083,6 +4121,7 @@ Entries: **78 total** — ANIM 20 (DIVERGENT 8 · PARTIAL 10 · MISSING 2) · BU
 ---
 
 ## ANIM — Animations, Events, GUI/HUD divergences
+- **Resolution:** VERIFIED-CORRECT (2026-06-12, Phase C — confirmed a deliberate port addition (1.7.10 PortalBlock.java is empty; travel was entity-based); kept as a documented creative-only utility block, PARITY_NOTES.md entry added; see FIX_LOG.md and phase_c_reports/C7_worldgen.md)
 
 ### ANIM-001 — Systemic: `wingspeed` → `limbSwingAmount` frequency mistranslation (39 model files)
 - **Status:** DIVERGENT

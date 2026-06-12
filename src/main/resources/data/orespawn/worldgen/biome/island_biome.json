@@ -18,36 +18,127 @@
   },
   "spawners": {
     "monster": [
-      { "type": "orespawn:creeping_horror", "weight": 60, "minCount": 4, "maxCount": 8 },
-      { "type": "orespawn:terrible_terror", "weight": 25, "minCount": 3, "maxCount": 6 },
-      { "type": "orespawn:lurking_terror", "weight": 1, "minCount": 1, "maxCount": 1 },
-      { "type": "orespawn:pitch_black", "weight": 15, "minCount": 3, "maxCount": 6 },
-      { "type": "orespawn:leaf_monster", "weight": 35, "minCount": 2, "maxCount": 4 },
-      { "type": "orespawn:ender_reaper", "weight": 25, "minCount": 2, "maxCount": 4 },
-      { "type": "orespawn:hercules_beetle", "weight": 5, "minCount": 1, "maxCount": 2 }
+      {
+        "type": "orespawn:creeping_horror",
+        "weight": 60,
+        "minCount": 4,
+        "maxCount": 8
+      },
+      {
+        "type": "orespawn:terrible_terror",
+        "weight": 25,
+        "minCount": 3,
+        "maxCount": 6
+      },
+      {
+        "type": "orespawn:lurking_terror",
+        "weight": 1,
+        "minCount": 1,
+        "maxCount": 1
+      },
+      {
+        "type": "orespawn:pitch_black",
+        "weight": 15,
+        "minCount": 3,
+        "maxCount": 6
+      },
+      {
+        "type": "orespawn:leaf_monster",
+        "weight": 35,
+        "minCount": 2,
+        "maxCount": 4
+      },
+      {
+        "type": "orespawn:ender_reaper",
+        "weight": 25,
+        "minCount": 2,
+        "maxCount": 4
+      },
+      {
+        "type": "orespawn:hercules_beetle",
+        "weight": 5,
+        "minCount": 1,
+        "maxCount": 2
+      }
     ],
     "creature": [
-      { "type": "orespawn:dragon", "weight": 1, "minCount": 1, "maxCount": 2 },
-      { "type": "orespawn:gold_fish", "weight": 5, "minCount": 2, "maxCount": 4 }
+      {
+        "type": "orespawn:island",
+        "weight": 1,
+        "minCount": 1,
+        "maxCount": 1
+      },
+      {
+        "type": "orespawn:island_too",
+        "weight": 1,
+        "minCount": 1,
+        "maxCount": 1
+      },
+      {
+        "type": "orespawn:dragon",
+        "weight": 1,
+        "minCount": 1,
+        "maxCount": 2
+      },
+      {
+        "type": "orespawn:stinky",
+        "weight": 2,
+        "minCount": 1,
+        "maxCount": 2
+      },
+      {
+        "type": "orespawn:cliff_racer",
+        "weight": 20,
+        "minCount": 3,
+        "maxCount": 6
+      },
+      {
+        "type": "orespawn:cloud_shark",
+        "weight": 1,
+        "minCount": 1,
+        "maxCount": 1
+      },
+      {
+        "type": "orespawn:gold_fish",
+        "weight": 5,
+        "minCount": 2,
+        "maxCount": 4
+      }
     ],
     "ambient": [
-      { "type": "orespawn:butterfly", "weight": 5, "minCount": 2, "maxCount": 6 },
-      { "type": "orespawn:cockateil", "weight": 4, "minCount": 1, "maxCount": 2 },
-      { "type": "orespawn:luna_moth", "weight": 5, "minCount": 2, "maxCount": 4 },
-      { "type": "orespawn:firefly", "weight": 10, "minCount": 4, "maxCount": 8 }
+      {
+        "type": "orespawn:butterfly",
+        "weight": 5,
+        "minCount": 2,
+        "maxCount": 6
+      },
+      {
+        "type": "orespawn:cockateil",
+        "weight": 4,
+        "minCount": 1,
+        "maxCount": 2
+      },
+      {
+        "type": "orespawn:luna_moth",
+        "weight": 5,
+        "minCount": 2,
+        "maxCount": 4
+      },
+      {
+        "type": "orespawn:firefly",
+        "weight": 10,
+        "minCount": 4,
+        "maxCount": 8
+      }
     ],
-    "underground_water_creature": [],
     "water_creature": [],
     "water_ambient": [],
+    "underground_water_creature": [],
+    "axolotls": [],
     "misc": []
   },
   "spawn_costs": {},
-  "carvers": {
-    "air": [
-      "minecraft:cave",
-      "minecraft:canyon"
-    ]
-  },
+  "carvers": {},
   "features": [
     [],
     [],
@@ -55,20 +146,11 @@
     [],
     [],
     [],
-    [
-      "minecraft:ore_coal_upper",
-      "minecraft:ore_iron_upper",
-      "minecraft:ore_gold"
-    ],
+    [],
     [],
     [],
     [
-      "minecraft:trees_plains",
-      "minecraft:flower_default",
-      "minecraft:patch_grass_plain"
-    ],
-    [
-      "minecraft:freeze_top_layer"
+      "orespawn:unstable_anthill"
     ]
   ]
 }

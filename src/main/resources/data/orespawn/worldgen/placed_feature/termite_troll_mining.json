@@ -1,0 +1,21 @@
+{
+  "feature": "orespawn:termite_troll",
+  "placement": [
+    {
+      "type": "orespawn:vein_count",
+      "count": 4,
+      "min_y": 5,
+      "max_y": 50,
+      "extra_dice": 4,
+      "less_ore_divisor": 2,
+      "passes": 3,
+      "less_ore_passes": 1
+    },
+    {
+      "type": "minecraft:in_square"
+    },
+    {
+      "type": "minecraft:biome"
+    }
+  ]
+}
