@@ -4,6 +4,7 @@ import com.mojang.serialization.MapCodec;
 import danger.orespawn.OreSpawnMod;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.level.chunk.ChunkGenerator;
+import net.minecraft.world.level.levelgen.placement.PlacementModifierType;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
@@ -46,11 +47,24 @@ public class ModWorldGen {
     public static final DeferredHolder<MapCodec<? extends ChunkGenerator>, MapCodec<OreSpawnChunkGenerator>> ORESPAWN_CHUNK_GENERATOR =
             CHUNK_GENERATORS.register("orespawn", () -> OreSpawnChunkGenerator.CODEC);
 
+    /** DeferredRegister for custom placement modifiers (LessOre count gating, ITEM-064). */
+    public static final DeferredRegister<PlacementModifierType<?>> PLACEMENT_MODIFIERS =
+            DeferredRegister.create(Registries.PLACEMENT_MODIFIER_TYPE, OreSpawnMod.MOD_ID);
+
     /**
-     * Wire the chunk-generator register onto the mod event bus. Called from
-     * {@link danger.orespawn.OreSpawnMod#OreSpawnMod}.
+     * {@code orespawn:less_ore_count} — count placement divided by the JSON's
+     * {@code less_ore_divisor} when the {@code lessOre} config is on. See
+     * {@link LessOreCountPlacement} for the original 1.7.10 citations.
+     */
+    public static final DeferredHolder<PlacementModifierType<?>, PlacementModifierType<LessOreCountPlacement>> LESS_ORE_COUNT =
+            PLACEMENT_MODIFIERS.register("less_ore_count", () -> () -> LessOreCountPlacement.CODEC);
+
+    /**
+     * Wire the chunk-generator and placement-modifier registers onto the mod
+     * event bus. Called from {@link danger.orespawn.OreSpawnMod#OreSpawnMod}.
      */
     public static void register(IEventBus eventBus) {
         CHUNK_GENERATORS.register(eventBus);
+        PLACEMENT_MODIFIERS.register(eventBus);
     }
 }

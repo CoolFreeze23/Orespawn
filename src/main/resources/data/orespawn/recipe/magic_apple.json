@@ -1,6 +1,19 @@
 {
   "type": "minecraft:crafting_shaped",
-  "pattern": ["RRR", "RAR", "RRR"],
-  "key": { "R": { "item": "minecraft:emerald_block" }, "A": { "item": "minecraft:apple" } },
-  "result": { "id": "orespawn:magic_apple", "count": 1 }
+  "pattern": [
+    "AAA",
+    "ABA",
+    "AAA"
+  ],
+  "key": {
+    "A": {
+      "item": "minecraft:redstone_block"
+    },
+    "B": {
+      "item": "minecraft:apple"
+    }
+  },
+  "result": {
+    "id": "orespawn:magic_apple"
+  }
 }

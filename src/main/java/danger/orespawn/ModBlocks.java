@@ -1,9 +1,6 @@
 package danger.orespawn;
 
 import danger.orespawn.block.*;
-import danger.orespawn.entity.EntityAnt;
-import danger.orespawn.entity.Kraken;
-import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
@@ -14,42 +11,58 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 public class ModBlocks {
     public static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(OreSpawnMod.MOD_ID);
 
-    // Ores — OreCrystal adds sparkle particles and a chance to explode when mined
+    // Overworld ores — plain non-volatile blocks in 1.7.10 (ITEM-001); only the
+    // Crystal Dimension's CrystalCoal/CrystalCrystal explode on break.
     public static final DeferredBlock<Block> ORE_RUBY = BLOCKS.register("ore_ruby",
-            () -> new OreCrystal(BlockBehaviour.Properties.of().strength(3.0f, 3.0f).requiresCorrectToolForDrops()));
+            // orig OreRuby.java:21-22 — hardness 10.0, resistance 4.0 (ITEM-002)
+            () -> new OreRuby(BlockBehaviour.Properties.of().strength(10.0f, 4.0f).requiresCorrectToolForDrops()));
     public static final DeferredBlock<Block> ORE_AMETHYST = BLOCKS.register("ore_amethyst",
-            () -> new OreCrystal(BlockBehaviour.Properties.of().strength(3.0f, 3.0f).requiresCorrectToolForDrops()));
+            // orig OreAmethyst.java:21-22 — hardness 10.0, resistance 4.0 (ITEM-002)
+            () -> new OreRuby(BlockBehaviour.Properties.of().strength(10.0f, 4.0f).requiresCorrectToolForDrops()));
     public static final DeferredBlock<Block> ORE_URANIUM = BLOCKS.register("ore_uranium",
-            () -> new OreUranium(BlockBehaviour.Properties.of().strength(3.0f, 3.0f).requiresCorrectToolForDrops()));
+            // orig OreUranium.java:24-25 — hardness 10.0, resistance 1.0 (ITEM-002)
+            () -> new OreUranium(BlockBehaviour.Properties.of().strength(10.0f, 1.0f).requiresCorrectToolForDrops()));
     public static final DeferredBlock<Block> ORE_TITANIUM = BLOCKS.register("ore_titanium",
-            () -> new OreTitanium(BlockBehaviour.Properties.of().strength(3.0f, 3.0f).requiresCorrectToolForDrops()));
+            // orig OreTitanium.java:24-25 — hardness 15.0, resistance 5.0 (ITEM-002)
+            () -> new OreTitanium(BlockBehaviour.Properties.of().strength(15.0f, 5.0f).requiresCorrectToolForDrops()));
     public static final DeferredBlock<Block> ORE_SALT = BLOCKS.register("ore_salt",
-            () -> new OreSalt(BlockBehaviour.Properties.of().strength(2.0f, 2.0f).requiresCorrectToolForDrops()));
+            // orig OreSalt.java:21-22 — hardness 5.0, resistance 2.0 (ITEM-002)
+            () -> new OreSalt(BlockBehaviour.Properties.of().strength(5.0f, 2.0f).requiresCorrectToolForDrops()));
 
-    // Storage blocks — BlockTitanium/BlockUranium add sparkle particles; BlockRuby supports mobzilla-scale fire-resistance
+    // Storage blocks — BlockTitanium/BlockUranium add sparkle particles; BlockRuby supports mobzilla-scale strength buff
     public static final DeferredBlock<Block> BLOCK_RUBY = BLOCKS.register("block_ruby",
-            () -> new BlockRuby(BlockBehaviour.Properties.of().strength(5.0f, 6.0f).requiresCorrectToolForDrops()));
+            // orig BlockRuby.java:23-26 — 4.0/4.0, light 0.4 = level 6 (ITEM-007)
+            () -> new BlockRuby(BlockBehaviour.Properties.of().strength(4.0f, 4.0f).lightLevel(s -> 6).requiresCorrectToolForDrops()));
     public static final DeferredBlock<Block> BLOCK_AMETHYST = BLOCKS.register("block_amethyst",
-            () -> new TransparentCrystalBlock(BlockBehaviour.Properties.of().strength(5.0f, 6.0f).requiresCorrectToolForDrops().noOcclusion()));
+            // orig OreSpawnMain.java:1612 — blockamethyst is a BlockRuby: 4.0/4.0, light 6 (ITEM-007)
+            () -> new TransparentCrystalBlock(BlockBehaviour.Properties.of().strength(4.0f, 4.0f).lightLevel(s -> 6).requiresCorrectToolForDrops().noOcclusion()));
     public static final DeferredBlock<Block> BLOCK_URANIUM = BLOCKS.register("block_uranium",
-            () -> new BlockUranium(BlockBehaviour.Properties.of().strength(5.0f, 6.0f).requiresCorrectToolForDrops()));
+            // orig BlockUranium.java:19-22 — 5.0/5.0, light 0.2 = level 3 (audit's "4.0/4.0 light 6" was wrong; ITEM-007)
+            () -> new BlockUranium(BlockBehaviour.Properties.of().strength(5.0f, 5.0f).lightLevel(s -> 3).requiresCorrectToolForDrops()));
     public static final DeferredBlock<Block> BLOCK_TITANIUM = BLOCKS.register("block_titanium",
-            () -> new BlockTitanium(BlockBehaviour.Properties.of().strength(5.0f, 6.0f).requiresCorrectToolForDrops()));
-    // Mobzilla scale block grants fire resistance on contact via BlockRuby(props, true)
+            // orig BlockTitanium.java:19-22 — 5.0/5.0, light 0.5 = level 7 (audit's "4.0/4.0 light 6" was wrong; ITEM-007)
+            () -> new BlockTitanium(BlockBehaviour.Properties.of().strength(5.0f, 5.0f).lightLevel(s -> 7).requiresCorrectToolForDrops()));
+    // Mobzilla scale block grants Strength on contact via BlockRuby(props, true) — ITEM-008
     public static final DeferredBlock<Block> BLOCK_MOBZILLA_SCALE = BLOCKS.register("block_mobzilla_scale",
-            () -> new BlockRuby(BlockBehaviour.Properties.of().strength(5.0f, 6.0f).requiresCorrectToolForDrops(), true));
+            // orig OreSpawnMain.java:1609 — a BlockRuby: 4.0/4.0, light 6 (ITEM-007)
+            () -> new BlockRuby(BlockBehaviour.Properties.of().strength(4.0f, 4.0f).lightLevel(s -> 6).requiresCorrectToolForDrops(), true));
     public static final DeferredBlock<Block> BLOCK_CRYSTAL_PINK = BLOCKS.register("block_crystal_pink",
-            () -> new TransparentCrystalBlock(BlockBehaviour.Properties.of().strength(5.0f, 6.0f).requiresCorrectToolForDrops().noOcclusion()));
+            // orig BlockCrystal.java:17-20 — 4.0/4.0, light 0.4 = level 6 (ITEM-007)
+            () -> new TransparentCrystalBlock(BlockBehaviour.Properties.of().strength(4.0f, 4.0f).lightLevel(s -> 6).requiresCorrectToolForDrops().noOcclusion()));
     public static final DeferredBlock<Block> BLOCK_TIGERS_EYE = BLOCKS.register("block_tigers_eye",
-            () -> new TransparentCrystalBlock(BlockBehaviour.Properties.of().strength(5.0f, 6.0f).requiresCorrectToolForDrops().noOcclusion()));
+            // orig BlockCrystal.java:17-20 — 4.0/4.0, light 6 (ITEM-007)
+            () -> new TransparentCrystalBlock(BlockBehaviour.Properties.of().strength(4.0f, 4.0f).lightLevel(s -> 6).requiresCorrectToolForDrops().noOcclusion()));
+    // orig OreSpawnMain.java:1972-1973 — both are OreGenericEgg blocks (0.5/1.0,
+    // gravel sound, 50% 5..9 XP on break), not plain 3.0/3.0 blocks (ITEM-010)
     public static final DeferredBlock<Block> BLOCK_ENDER_PEARL = BLOCKS.register("block_ender_pearl",
-            () -> new Block(BlockBehaviour.Properties.of().strength(3.0f, 3.0f)));
+            () -> new OreGenericEgg(BlockBehaviour.Properties.of().strength(0.5f, 1.0f).sound(SoundType.GRAVEL)));
     public static final DeferredBlock<Block> BLOCK_EYE_OF_ENDER = BLOCKS.register("block_eye_of_ender",
-            () -> new Block(BlockBehaviour.Properties.of().strength(3.0f, 3.0f)));
+            () -> new OreGenericEgg(BlockBehaviour.Properties.of().strength(0.5f, 1.0f).sound(SoundType.GRAVEL)));
 
     // Lavafoam — pushes entities away and damages at high speed
     public static final DeferredBlock<Block> LAVAFOAM = BLOCKS.register("lavafoam",
-            () -> new Lavafoam(BlockBehaviour.Properties.of().strength(0.5f, 0.5f)));
+            // orig Lavafoam.java:23-27 — 5.0/5.0, slipperiness 1.1 (ITEM-009)
+            () -> new Lavafoam(BlockBehaviour.Properties.of().strength(5.0f, 5.0f).friction(1.1f)));
 
     // Pizza (edible, shrinks per bite) & Duct tape (repairs held item, shrinks per use)
     public static final DeferredBlock<Block> PIZZA = BLOCKS.register("pizza",
@@ -68,14 +81,21 @@ public class ModBlocks {
     // Crystal dimension blocks
     public static final DeferredBlock<Block> CRYSTAL_STONE = BLOCKS.register("crystal_stone",
             () -> new TransparentCrystalBlock(BlockBehaviour.Properties.of().strength(2.0f, 10.0f).noOcclusion()));
+    // orig ctor signature is (id, lightValue, hardness, resistance) — the old port
+    // misread light as hardness and invented light levels (ITEM-004).
     public static final DeferredBlock<Block> CRYSTAL_COAL = BLOCKS.register("crystal_coal",
-            () -> new TransparentCrystalBlock(BlockBehaviour.Properties.of().strength(0.6f, 6.0f).lightLevel(s -> 8).noOcclusion()));
+            // orig OreSpawnMain.java:1865 — OreCrystal(id, 0.6f, 6.0f, 20.0f): light 0.6*15=9, strength 6.0/20.0
+            () -> new OreCrystal(BlockBehaviour.Properties.of().strength(6.0f, 20.0f).lightLevel(s -> 9).noOcclusion()));
     public static final DeferredBlock<Block> CRYSTAL_GRASS = BLOCKS.register("crystal_grass",
             () -> new CrystalGrass(BlockBehaviour.Properties.of().strength(0.6f, 2.0f).noOcclusion()));
     public static final DeferredBlock<Block> CRYSTAL_CRYSTAL = BLOCKS.register("crystal_crystal",
-            () -> new OreCrystalCrystal(BlockBehaviour.Properties.of().strength(0.4f, 12.0f).lightLevel(s -> 12).noOcclusion()));
+            // orig OreSpawnMain.java:1867 — OreCrystalCrystal(id, 0.4f, 12.0f, 40.0f): light 0.4*15=6, strength 12.0/40.0;
+            // volatile (1-in-10 explode, orig OreCrystalCrystal.java:59-64), firework sparkle
+            () -> new OreCrystalCrystal(BlockBehaviour.Properties.of().strength(12.0f, 40.0f).lightLevel(s -> 6).noOcclusion(), true, false));
     public static final DeferredBlock<Block> TIGERS_EYE_ORE = BLOCKS.register("tigers_eye_ore",
-            () -> new TransparentCrystalBlock(BlockBehaviour.Properties.of().strength(0.5f, 15.0f).lightLevel(s -> 12).noOcclusion()));
+            // orig OreSpawnMain.java:1868 — OreCrystalCrystal(id, 0.5f, 15.0f, 60.0f): light 0.5*15=7, strength 15.0/60.0;
+            // non-volatile, flame sparkle (orig OreCrystalCrystal.java:40-44)
+            () -> new OreCrystalCrystal(BlockBehaviour.Properties.of().strength(15.0f, 60.0f).lightLevel(s -> 7).noOcclusion(), false, true));
     public static final DeferredBlock<Block> CRYSTAL_PLANKS = BLOCKS.register("crystal_planks",
             () -> new TransparentCrystalBlock(BlockBehaviour.Properties.of().strength(1.5f, 4.0f).sound(SoundType.WOOD).noOcclusion()));
 
@@ -83,15 +103,17 @@ public class ModBlocks {
     // mapped "Kyanite" to CrystalStone, but the canonical post-1.7.10 setup is a
     // dedicated ore that drops the kyanite gem (used for Kyanite armor + sword).
     // Generated by orespawn:add_features#kyanite_ore_in_crystal in the Crystal Dim.
+    // Non-volatile (ITEM-001): the explode-on-break behavior belongs only to the
+    // original CrystalCoal/CrystalCrystal; these Phase 10 additions never had it.
     public static final DeferredBlock<Block> ORE_KYANITE = BLOCKS.register("ore_kyanite",
-            () -> new OreCrystal(BlockBehaviour.Properties.of().strength(3.0f, 6.0f)
+            () -> new TransparentCrystalBlock(BlockBehaviour.Properties.of().strength(3.0f, 6.0f)
                     .lightLevel(s -> 6).requiresCorrectToolForDrops().noOcclusion()));
 
     // Phase 10 — Pink Tourmaline Ore. Replaces the legacy "smelt the storage block
     // for circular ingots" path with an actual ore source. Generated alongside
     // kyanite in the Crystal Dimension.
     public static final DeferredBlock<Block> ORE_PINK_TOURMALINE = BLOCKS.register("ore_pink_tourmaline",
-            () -> new OreCrystal(BlockBehaviour.Properties.of().strength(3.0f, 6.0f)
+            () -> new TransparentCrystalBlock(BlockBehaviour.Properties.of().strength(3.0f, 6.0f)
                     .lightLevel(s -> 6).requiresCorrectToolForDrops().noOcclusion()));
 
     // Phase 10 — Ancient Dried Egg block. Right-clicking with a water bucket
@@ -116,10 +138,12 @@ public class ModBlocks {
     public static final DeferredBlock<Block> CRYSTAL_WORKBENCH = BLOCKS.register("crystal_workbench",
             () -> new CrystalWorkbenchBlock(BlockBehaviour.Properties.of().strength(1.0f, 5.0f).noOcclusion()));
     public static final DeferredBlock<Block> CRYSTAL_FURNACE = BLOCKS.register("crystal_furnace",
+            // orig CrystalFurnace.java:46 — active light 0.6 = level 9 (ITEM-015)
             () -> new CrystalFurnace(BlockBehaviour.Properties.of().strength(2.0f, 10.0f).noOcclusion()
-                    .lightLevel(s -> s.getValue(CrystalFurnace.LIT) ? 13 : 0)));
+                    .lightLevel(s -> s.getValue(CrystalFurnace.LIT) ? 9 : 0)));
     public static final DeferredBlock<Block> CRYSTAL_FURNACE_ON = BLOCKS.register("crystal_furnace_on",
-            () -> new Block(BlockBehaviour.Properties.of().strength(2.0f, 10.0f).lightLevel(s -> 13)));
+            // orig CrystalFurnace.java:46 — light 0.6 = level 9 (ITEM-015)
+            () -> new Block(BlockBehaviour.Properties.of().strength(2.0f, 10.0f).lightLevel(s -> 9)));
 
     // Torch blocks — extend TorchBlock for proper placement/particles; extreme torch also summons Cephadrome
     public static final DeferredBlock<Block> EXTREME_TORCH = BLOCKS.register("extreme_torch",
@@ -127,22 +151,23 @@ public class ModBlocks {
     public static final DeferredBlock<Block> CRYSTAL_TORCH = BLOCKS.register("crystal_torch",
             () -> new BlockCrystalTorch(BlockBehaviour.Properties.of().strength(0.0f).lightLevel(s -> 15).sound(SoundType.WOOD).noCollission()));
 
-    // Repellents
+    // Repellents — repel every 10 ticks via scheduled ticks (ITEM-019);
+    // target sets per orig KrakenRepellent.java:93-124 / CreeperRepellent.java:94-145
     public static final DeferredBlock<Block> KRAKEN_REPELLENT = BLOCKS.register("kraken_repellent",
             () -> new RepellentBlock(BlockBehaviour.Properties.of().strength(1.0f).lightLevel(s -> 12),
-                    e -> e instanceof Kraken || e instanceof EntityAnt));
+                    RepellentBlock.Variant.KRAKEN));
     public static final DeferredBlock<Block> CREEPER_REPELLENT = BLOCKS.register("creeper_repellent",
             () -> new RepellentBlock(BlockBehaviour.Properties.of().strength(1.0f).lightLevel(s -> 12),
-                    e -> e instanceof Creeper || e instanceof EntityAnt));
+                    RepellentBlock.Variant.CREEPER));
 
     // Island block
     public static final DeferredBlock<Block> ISLAND = BLOCKS.register("island",
             () -> new Block(BlockBehaviour.Properties.of().strength(1.0f).lightLevel(s -> 14)));
 
-    // Boss summon eggs (1.7.10 OreGenericEgg port — drop 5..11 of themselves on
-    // a 50% roll when broken). Generated as ultra-rare deep-cave single-block
-    // veins so players slowly accumulate them. Mobzilla's part block is
-    // crafted-only (Phase 5B), so it is intentionally NOT registered here.
+    // Boss summon eggs (1.7.10 OreGenericEgg port — 50% chance of 5..9 bonus XP
+    // on break, orig OreGenericEgg.java:24-30). Generated as ultra-rare deep-cave
+    // single-block veins so players slowly accumulate them. Mobzilla's part block
+    // is crafted-only (Phase 5B), so it is intentionally NOT registered here.
     public static final DeferredBlock<Block> KRAKEN_SPAWN_BLOCK = BLOCKS.register("kraken_spawn_block",
             () -> new OreGenericEgg(BlockBehaviour.Properties.of().strength(0.5f, 1.0f).sound(SoundType.GRAVEL)));
     public static final DeferredBlock<Block> DRAGON_SPAWN_BLOCK = BLOCKS.register("dragon_spawn_block",

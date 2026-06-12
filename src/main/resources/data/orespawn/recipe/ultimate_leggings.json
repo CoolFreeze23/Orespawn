@@ -1,6 +1,22 @@
 {
   "type": "minecraft:crafting_shaped",
-  "pattern": ["XXX", "X X", "X X"],
-  "key": { "X": { "item": "orespawn:ingot_uranium" } },
-  "result": { "id": "orespawn:ultimate_leggings", "count": 1 }
+  "pattern": [
+    "AAA",
+    "B B",
+    "C C"
+  ],
+  "key": {
+    "A": {
+      "item": "minecraft:iron_ingot"
+    },
+    "B": {
+      "item": "orespawn:ingot_titanium"
+    },
+    "C": {
+      "item": "orespawn:ingot_uranium"
+    }
+  },
+  "result": {
+    "id": "orespawn:ultimate_leggings"
+  }
 }

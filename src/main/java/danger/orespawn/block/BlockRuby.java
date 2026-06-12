@@ -12,11 +12,14 @@ import net.minecraft.world.level.block.state.BlockState;
 
 /**
  * Used for gem/scale storage blocks (e.g. Mobzilla Scale Block).
- * The isMobzillaScale flag controls whether stepping on the block applies fire resistance.
+ * The isMobzillaScale flag controls whether contact applies Strength —
+ * orig BlockRuby.java:37-47 gives the Mobzilla Scale Block variant
+ * {@code Potion.damageBoost} (Strength) 200t on touch/walk (ITEM-008).
  */
 public class BlockRuby extends Block {
-    private static final int FIRE_RESISTANCE_DURATION_TICKS = 200;
-    private static final int FIRE_RESISTANCE_AMPLIFIER = 0;
+    // orig BlockRuby.java:39,45 — PotionEffect(damageBoost, 200, 0)
+    private static final int STRENGTH_DURATION_TICKS = 200;
+    private static final int STRENGTH_AMPLIFIER = 0;
 
     private final boolean isMobzillaScale;
 
@@ -32,7 +35,7 @@ public class BlockRuby extends Block {
     @Override
     public void stepOn(Level level, BlockPos pos, BlockState state, Entity entity) {
         if (isMobzillaScale && entity instanceof LivingEntity living) {
-            living.addEffect(new MobEffectInstance(MobEffects.FIRE_RESISTANCE, FIRE_RESISTANCE_DURATION_TICKS, FIRE_RESISTANCE_AMPLIFIER));
+            living.addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST, STRENGTH_DURATION_TICKS, STRENGTH_AMPLIFIER));
         }
         super.stepOn(level, pos, state, entity);
     }
@@ -40,7 +43,7 @@ public class BlockRuby extends Block {
     @Override
     public void entityInside(BlockState state, Level level, BlockPos pos, Entity entity) {
         if (isMobzillaScale && entity instanceof LivingEntity living) {
-            living.addEffect(new MobEffectInstance(MobEffects.FIRE_RESISTANCE, FIRE_RESISTANCE_DURATION_TICKS, FIRE_RESISTANCE_AMPLIFIER));
+            living.addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST, STRENGTH_DURATION_TICKS, STRENGTH_AMPLIFIER));
         }
         super.entityInside(state, level, pos, entity);
     }

@@ -15,8 +15,9 @@ public class ItemGenericFish extends Item {
     @Override
     public ItemStack finishUsingItem(ItemStack stack, Level level, LivingEntity livingEntity) {
         ItemStack result = super.finishUsingItem(stack, level, livingEntity);
-        if (!level.isClientSide && level.random.nextInt(4) == 0) {
-            livingEntity.addEffect(new MobEffectInstance(MobEffects.HUNGER, 200, 0));
+        // orig ItemGenericFish.java:24-25 — 1-in-4 chance of Hunger for 20 ticks
+        if (!level.isClientSide && level.random.nextInt(4) == 1) {
+            livingEntity.addEffect(new MobEffectInstance(MobEffects.HUNGER, 20, 0));
         }
         return result;
     }

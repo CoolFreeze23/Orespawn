@@ -1,6 +1,7 @@
 package danger.orespawn.gui;
 
 import danger.orespawn.ModBlockEntities;
+import danger.orespawn.ModBlocks;
 import danger.orespawn.block.CrystalFurnace;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
@@ -31,7 +32,12 @@ public class CrystalFurnaceBlockEntity extends BlockEntity implements MenuProvid
     private static final int SLOT_INPUT = 0;
     private static final int SLOT_FUEL = 1;
     private static final int SLOT_OUTPUT = 2;
-    private static final int CRYSTAL_SMELT_DURATION_TICKS = 100;
+    // orig TileEntityCrystalFurnace.java:175 — cook duration 150 ticks (ITEM-016)
+    private static final int CRYSTAL_SMELT_DURATION_TICKS = 150;
+    // orig TileEntityCrystalFurnace.java:267-275 — custom fuel values (ITEM-016)
+    private static final int CRYSTAL_COAL_BURN_TICKS = 20000;
+    private static final int CRYSTAL_TREE_LOG_BURN_TICKS = 800;
+    private static final int CRYSTAL_PLANKS_BURN_TICKS = 400;
     private static final int CONTAINER_DATA_SIZE = 4;
     private static final int DATA_INDEX_BURN_TIME = 0;
     private static final int DATA_INDEX_MAX_BURN_TIME = 1;
@@ -180,7 +186,7 @@ public class CrystalFurnaceBlockEntity extends BlockEntity implements MenuProvid
         ItemStack input = be.items.get(SLOT_INPUT);
 
         if (be.burnTime == 0 && !fuel.isEmpty() && canSmelt(level, input, be)) {
-            be.burnTime = fuel.getBurnTime(RecipeType.SMELTING);
+            be.burnTime = getFuelBurnTime(fuel);
             be.maxBurnTime = be.burnTime;
             if (be.burnTime > 0) {
                 fuel.shrink(1);
@@ -207,6 +213,18 @@ public class CrystalFurnaceBlockEntity extends BlockEntity implements MenuProvid
         if (changed) {
             be.setChanged();
         }
+    }
+
+    /**
+     * Fuel lookup: the vanilla furnace fuel table plus the crystal fuels the
+     * original hardcoded — orig TileEntityCrystalFurnace.java:267-275:
+     * CrystalCoal 20000t, CrystalTreeLog 800t, CrystalPlanks 400t (ITEM-016).
+     */
+    private static int getFuelBurnTime(ItemStack fuel) {
+        if (fuel.is(ModBlocks.CRYSTAL_COAL.get().asItem())) return CRYSTAL_COAL_BURN_TICKS;
+        if (fuel.is(ModBlocks.CRYSTAL_TREE_LOG.get().asItem())) return CRYSTAL_TREE_LOG_BURN_TICKS;
+        if (fuel.is(ModBlocks.CRYSTAL_PLANKS.get().asItem())) return CRYSTAL_PLANKS_BURN_TICKS;
+        return fuel.getBurnTime(RecipeType.SMELTING);
     }
 
     private static boolean canSmelt(Level level, ItemStack input, CrystalFurnaceBlockEntity be) {

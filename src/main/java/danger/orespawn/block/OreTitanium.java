@@ -2,10 +2,12 @@ package danger.orespawn.block;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockBehaviour;
@@ -14,11 +16,14 @@ import net.minecraft.world.phys.BlockHitResult;
 
 /**
  * Titanium ore that sparkles with redstone particles when interacted with.
+ * Drops bonus XP only when broken below Y40 (orig OreTitanium.java:101-107).
  */
 public class OreTitanium extends Block {
     private static final int FACE_COUNT = 6;
     private static final double FACE_PARTICLE_EPSILON = 0.0625;
     private static final int GLOW_ANIMATION_TICKS = 5;
+    // orig OreTitanium.java:104 — XP only below Y40 (ITEM-003)
+    private static final int XP_MAX_Y_EXCLUSIVE = 40;
 
     private boolean glowing = false;
     private int glowTicksRemaining = 0;
@@ -43,6 +48,20 @@ public class OreTitanium extends Block {
         this.glowing = true;
         this.glowTicksRemaining = GLOW_ANIMATION_TICKS;
         sparkle(level, pos, level.random);
+    }
+
+    /**
+     * Y-gated bonus XP (orig OreTitanium.java:101-107 —
+     * {@code 5 + nextInt(5) + nextInt(10)} only when {@code y < 40}).
+     * {@code dropExperience} is false for Silk Touch harvests, matching the
+     * 1.7.10 silk-harvest path which skipped dropBlockAsItemWithChance.
+     */
+    @Override
+    protected void spawnAfterBreak(BlockState state, ServerLevel level, BlockPos pos, ItemStack stack, boolean dropExperience) {
+        super.spawnAfterBreak(state, level, pos, stack, dropExperience);
+        if (dropExperience && pos.getY() < XP_MAX_Y_EXCLUSIVE) {
+            popExperience(level, pos, 5 + level.random.nextInt(5) + level.random.nextInt(10));
+        }
     }
 
     @Override

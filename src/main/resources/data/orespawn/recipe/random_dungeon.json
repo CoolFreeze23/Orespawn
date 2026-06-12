@@ -1,17 +1,19 @@
 {
   "type": "minecraft:crafting_shaped",
   "pattern": [
-    "EOE",
-    "ODO",
-    "EOE"
+    "AAA",
+    "ABA",
+    "AAA"
   ],
   "key": {
-    "E": { "item": "minecraft:ender_eye" },
-    "O": { "item": "minecraft:obsidian" },
-    "D": { "item": "minecraft:diamond_block" }
+    "A": {
+      "item": "minecraft:redstone_block"
+    },
+    "B": {
+      "item": "minecraft:coal"
+    }
   },
   "result": {
-    "id": "orespawn:random_dungeon",
-    "count": 1
+    "id": "orespawn:random_dungeon"
   }
 }

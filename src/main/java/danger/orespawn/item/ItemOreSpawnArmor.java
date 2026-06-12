@@ -16,7 +16,6 @@ import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 
 import java.util.Map;
-import java.util.Set;
 
 public class ItemOreSpawnArmor extends ArmorItem {
     private final String armorMaterialName;
@@ -26,6 +25,8 @@ public class ItemOreSpawnArmor extends ArmorItem {
     private record ArmorEnchants(EnchantEntry[] allPieces, EnchantEntry[] helmet, EnchantEntry[] boots) {}
 
     private static final Map<String, ArmorEnchants> ENCHANT_TABLE = Map.ofEntries(
+        // orig OreSpawnMain.java:1498 — Mobzilla: prot10 fire10 blast10 proj10 unb5 fall10,
+        // NO respiration/aqua affinity
         Map.entry("mobzilla", new ArmorEnchants(
             new EnchantEntry[]{
                 new EnchantEntry(Enchantments.PROTECTION, 10),
@@ -34,10 +35,7 @@ public class ItemOreSpawnArmor extends ArmorItem {
                 new EnchantEntry(Enchantments.PROJECTILE_PROTECTION, 10),
                 new EnchantEntry(Enchantments.UNBREAKING, 5)
             },
-            new EnchantEntry[]{
-                new EnchantEntry(Enchantments.RESPIRATION, 1),
-                new EnchantEntry(Enchantments.AQUA_AFFINITY, 2)
-            },
+            new EnchantEntry[0],
             new EnchantEntry[]{ new EnchantEntry(Enchantments.FEATHER_FALLING, 10) }
         )),
         Map.entry("royal", new ArmorEnchants(
@@ -54,13 +52,13 @@ public class ItemOreSpawnArmor extends ArmorItem {
             },
             new EnchantEntry[]{ new EnchantEntry(Enchantments.FEATHER_FALLING, 10) }
         )),
+        // orig OreSpawnMain.java:1494 — Ultimate: resp2 aqua3 prot5 fire5 blast5 proj5 unb0 fall3
         Map.entry("ultimate", new ArmorEnchants(
             new EnchantEntry[]{
                 new EnchantEntry(Enchantments.PROTECTION, 5),
                 new EnchantEntry(Enchantments.FIRE_PROTECTION, 5),
                 new EnchantEntry(Enchantments.BLAST_PROTECTION, 5),
-                new EnchantEntry(Enchantments.PROJECTILE_PROTECTION, 5),
-                new EnchantEntry(Enchantments.UNBREAKING, 3)
+                new EnchantEntry(Enchantments.PROJECTILE_PROTECTION, 5)
             },
             new EnchantEntry[]{
                 new EnchantEntry(Enchantments.RESPIRATION, 2),
@@ -68,11 +66,12 @@ public class ItemOreSpawnArmor extends ArmorItem {
             },
             new EnchantEntry[]{ new EnchantEntry(Enchantments.FEATHER_FALLING, 3) }
         )),
+        // orig OreSpawnMain.java:1493 — LavaEel: resp1 aqua2 prot3 fire2 blast10 proj0 unb0 fall2
         Map.entry("lavaeel", new ArmorEnchants(
             new EnchantEntry[]{
-                new EnchantEntry(Enchantments.PROTECTION, 2),
-                new EnchantEntry(Enchantments.BLAST_PROTECTION, 10),
-                new EnchantEntry(Enchantments.UNBREAKING, 3)
+                new EnchantEntry(Enchantments.PROTECTION, 3),
+                new EnchantEntry(Enchantments.FIRE_PROTECTION, 2),
+                new EnchantEntry(Enchantments.BLAST_PROTECTION, 10)
             },
             new EnchantEntry[]{
                 new EnchantEntry(Enchantments.RESPIRATION, 1),
@@ -80,12 +79,12 @@ public class ItemOreSpawnArmor extends ArmorItem {
             },
             new EnchantEntry[]{ new EnchantEntry(Enchantments.FEATHER_FALLING, 2) }
         )),
+        // orig OreSpawnMain.java:1492 — MothScale: prot3 fire3 blast3 fall5, all else 0
         Map.entry("mothscale", new ArmorEnchants(
             new EnchantEntry[]{
                 new EnchantEntry(Enchantments.PROTECTION, 3),
                 new EnchantEntry(Enchantments.FIRE_PROTECTION, 3),
-                new EnchantEntry(Enchantments.BLAST_PROTECTION, 3),
-                new EnchantEntry(Enchantments.UNBREAKING, 3)
+                new EnchantEntry(Enchantments.BLAST_PROTECTION, 3)
             },
             new EnchantEntry[0],
             new EnchantEntry[]{ new EnchantEntry(Enchantments.FEATHER_FALLING, 5) }
@@ -116,8 +115,7 @@ public class ItemOreSpawnArmor extends ArmorItem {
         ))
     );
 
-    private static final Set<String> GLIDE_MATERIALS = Set.of("royal", "peacock");
-    private static final Set<String> GLIDE_BOOT_MATERIALS = Set.of("royal", "peacock");
+    // orig ItemOreSpawnArmor.java:348-349 — royal/peacock cap; :354-355 — queen cap
     private static final double GLIDE_FALL_CAP = -0.1;
     private static final double QUEEN_FALL_CAP = -0.25;
 
@@ -149,43 +147,52 @@ public class ItemOreSpawnArmor extends ArmorItem {
             }
         }
 
-        if (entity instanceof Player player && getType() == Type.CHESTPLATE) {
-            ItemStack worn = player.getItemBySlot(EquipmentSlot.CHEST);
-            if (worn == stack) {
-                applyGlideEffect(player);
-            }
+        // orig ItemOreSpawnArmor.java:343-358 — onArmorTick ran for EVERY worn
+        // royal/peacock/queen piece (so peacock boots alone glide); replicate by
+        // ticking the glide from any worn slot.
+        if (entity instanceof Player player
+                && player.getItemBySlot(getEquipmentSlot()) == stack) {
+            applyGlideEffect(player);
         }
     }
 
+    /**
+     * Glide, ported from 1.7.10 ItemOreSpawnArmor.java:343-358. A worn royal or
+     * peacock piece plus Royal boots (config-gated) or Peacock boots (NOT
+     * config-gated, orig :347) caps falling speed at -0.1; a worn queen piece
+     * plus Queen boots (config-gated, orig :353) caps it at -0.25. Both reset
+     * fall distance.
+     */
     private void applyGlideEffect(Player player) {
-        // Config: royalGlideEnable controls whether the glide effect is active
-        if (!OreSpawnConfig.ROYAL_GLIDE_ENABLE.get()) return;
-
-        // Hot-path early-out: skip the boots/material lookup unless the player is
-        // actually descending. Saves the per-tick allocation/cast for the 90%+ of
-        // ticks where the wearer is grounded or moving up. We don't gate on
-        // player.onGround() because the glide must engage the moment they leave a
-        // ledge (motion.y goes negative one tick before onGround clears).
-        net.minecraft.world.phys.Vec3 motion = player.getDeltaMovement();
-        if (motion.y >= 0.0) return;
+        boolean royalOrPeacockPiece = "royal".equals(armorMaterialName) || "peacock".equals(armorMaterialName);
+        boolean queenPiece = "queen".equals(armorMaterialName);
+        if (!royalOrPeacockPiece && !queenPiece) return;
 
         ItemStack boots = player.getItemBySlot(EquipmentSlot.FEET);
-        if (boots.isEmpty() || !(boots.getItem() instanceof ItemOreSpawnArmor bootArmor)) return;
-        String bootMat = bootArmor.armorMaterialName;
-
-        double fallCap;
-        if (GLIDE_MATERIALS.contains(armorMaterialName) && GLIDE_BOOT_MATERIALS.contains(bootMat)) {
-            fallCap = GLIDE_FALL_CAP;
-        } else if ("queen".equals(armorMaterialName) && "queen".equals(bootMat)) {
-            fallCap = QUEEN_FALL_CAP;
-        } else {
+        if (boots.isEmpty() || !(boots.getItem() instanceof ItemOreSpawnArmor bootArmor)
+                || bootArmor.getType() != Type.BOOTS) {
             return;
         }
+        String bootMat = bootArmor.armorMaterialName;
 
-        if (motion.y < fallCap) {
-            player.setDeltaMovement(motion.x, fallCap, motion.z);
+        net.minecraft.world.phys.Vec3 motion = player.getDeltaMovement();
+        if (royalOrPeacockPiece) {
+            // orig :347 — RoyalBoots require RoyalGlideEnable; PeacockFeatherBoots never gated
+            boolean glide = ("royal".equals(bootMat) && OreSpawnConfig.ROYAL_GLIDE_ENABLE.get())
+                    || "peacock".equals(bootMat);
+            if (!glide) return;
+            if (motion.y < GLIDE_FALL_CAP) {
+                player.setDeltaMovement(motion.x, GLIDE_FALL_CAP, motion.z);
+            }
+            player.fallDistance = 0.0f;
+        } else {
+            // orig :353 — queen glide requires QueenBoots and RoyalGlideEnable
+            if (!"queen".equals(bootMat) || !OreSpawnConfig.ROYAL_GLIDE_ENABLE.get()) return;
+            if (motion.y < QUEEN_FALL_CAP) {
+                player.setDeltaMovement(motion.x, QUEEN_FALL_CAP, motion.z);
+            }
+            player.fallDistance = 0.0f;
         }
-        player.fallDistance = 0.0f;
     }
 
     public String getArmorMaterialName() {

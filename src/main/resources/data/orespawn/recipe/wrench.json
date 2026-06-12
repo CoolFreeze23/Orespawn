@@ -1,6 +1,16 @@
 {
   "type": "minecraft:crafting_shaped",
-  "pattern": ["D D", " D ", " D "],
-  "key": { "D": { "item": "minecraft:stick" } },
-  "result": { "id": "orespawn:wrench", "count": 1 }
+  "pattern": [
+    "A A",
+    " A ",
+    " A "
+  ],
+  "key": {
+    "A": {
+      "item": "minecraft:iron_ingot"
+    }
+  },
+  "result": {
+    "id": "orespawn:wrench"
+  }
 }

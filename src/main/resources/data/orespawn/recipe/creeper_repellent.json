@@ -1,6 +1,22 @@
 {
   "type": "minecraft:crafting_shaped",
-  "pattern": ["SCS", "CRC", "SCS"],
-  "key": { "S": { "item": "orespawn:salt" }, "C": { "item": "minecraft:coal" }, "R": { "item": "minecraft:redstone" } },
-  "result": { "id": "orespawn:creeper_repellent", "count": 1 }
+  "pattern": [
+    "A A",
+    "BCB",
+    "A A"
+  ],
+  "key": {
+    "A": {
+      "item": "orespawn:green_goo"
+    },
+    "B": {
+      "item": "minecraft:string"
+    },
+    "C": {
+      "item": "orespawn:extreme_torch"
+    }
+  },
+  "result": {
+    "id": "orespawn:creeper_repellent"
+  }
 }

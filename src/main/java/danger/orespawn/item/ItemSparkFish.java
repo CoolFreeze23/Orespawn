@@ -16,7 +16,8 @@ public class ItemSparkFish extends Item {
     public ItemStack finishUsingItem(ItemStack stack, Level level, LivingEntity livingEntity) {
         ItemStack result = super.finishUsingItem(stack, level, livingEntity);
         if (!level.isClientSide) {
-            livingEntity.addEffect(new MobEffectInstance(MobEffects.FIRE_RESISTANCE, 600, 0));
+            // orig ItemSparkFish.java:26 — Fire Resistance 100 ticks
+            livingEntity.addEffect(new MobEffectInstance(MobEffects.FIRE_RESISTANCE, 100, 0));
         }
         return result;
     }

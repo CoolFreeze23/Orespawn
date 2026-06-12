@@ -38,18 +38,29 @@ public class ItemRock extends Item {
         return InteractionResultHolder.sidedSuccess(stack, level.isClientSide());
     }
 
+    /**
+     * orig ItemRock.java:75-128 — right-clicking a block places a pet Rock
+     * critter of this item's type one block above, with a random yaw.
+     */
     @Override
     public InteractionResult useOn(UseOnContext context) {
         Level level = context.getLevel();
         if (level.isClientSide) return InteractionResult.SUCCESS;
 
-        BlockPos pos = context.getClickedPos().above();
+        BlockPos pos = context.getClickedPos();
         RockBase rock = ModEntities.ROCK_BASE.get().create(level);
         if (rock != null) {
-            rock.moveTo(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, 0.0F, 0.0F);
+            // orig ItemRock.java:130-148 — +0.5 centering, y + 1.01, random yaw
+            rock.moveTo(pos.getX() + 0.5, pos.getY() + 1.01, pos.getZ() + 0.5,
+                    level.random.nextFloat() * 360.0F, 0.0F);
+            rock.placeRock(this.rockType); // orig ItemRock.java:86-121
             level.addFreshEntity(rock);
         }
-        context.getItemInHand().shrink(1);
+        // orig ItemRock.java:124-126 — consume one unless creative
+        Player player = context.getPlayer();
+        if (player == null || !player.getAbilities().instabuild) {
+            context.getItemInHand().shrink(1);
+        }
         return InteractionResult.SUCCESS;
     }
 

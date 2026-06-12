@@ -6,47 +6,17 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "orespawn:lettuce_seed",
-          "functions": [
-            {
-              "function": "minecraft:set_count",
-              "count": {
-                "type": "minecraft:uniform",
-                "min": 1.0,
-                "max": 3.0
-              }
-            }
-          ]
-        }
-      ],
-      "conditions": [
-        {
-          "condition": "minecraft:survives_explosion"
-        }
-      ]
-    },
-    {
-      "rolls": 1,
-      "entries": [
-        {
-          "type": "minecraft:item",
           "name": "orespawn:lettuce",
           "functions": [
             {
               "function": "minecraft:set_count",
-              "count": {
-                "type": "minecraft:uniform",
-                "min": 2.0,
-                "max": 4.0
-              }
+              "count": { "type": "minecraft:uniform", "min": 2.0, "max": 4.0 }
             }
           ]
         }
       ],
       "conditions": [
-        {
-          "condition": "minecraft:survives_explosion"
-        }
+        { "condition": "minecraft:survives_explosion" }
       ]
     }
   ]

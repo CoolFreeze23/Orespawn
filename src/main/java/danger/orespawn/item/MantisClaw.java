@@ -12,6 +12,15 @@ public class MantisClaw extends SwordItem {
         super(ModToolTiers.AMETHYST, properties);
     }
 
+    /**
+     * orig MantisClaw.java:25 — {@code setMaxDamage(1000)} overrides the
+     * Amethyst tool material's 2000.
+     */
+    @Override
+    public int getMaxDamage(ItemStack stack) {
+        return 1000;
+    }
+
     @Override
     public boolean hurtEnemy(ItemStack stack, LivingEntity target, LivingEntity attacker) {
         if (target != null && attacker != null && !target.level().isClientSide) {

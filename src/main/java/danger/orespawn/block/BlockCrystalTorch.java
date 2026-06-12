@@ -1,9 +1,11 @@
 package danger.orespawn.block;
 
+import danger.orespawn.ModBlocks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.TorchBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
@@ -19,6 +21,25 @@ public class BlockCrystalTorch extends TorchBlock {
 
     public BlockCrystalTorch(BlockBehaviour.Properties properties) {
         super(ParticleTypes.FIREWORK, properties);
+    }
+
+    /**
+     * orig BlockCrystalTorch.java:53-83 — custom {@code canPlaceTorchOn}
+     * accepts the (non-solid-rendering) crystal blocks as supports:
+     * CrystalStone, CrystalGrass, CrystalTreeLog, CrystalPlanks (ITEM-018).
+     * Without this the modern solid-face check rejects them (they are
+     * transparent/noOcclusion blocks).
+     */
+    @Override
+    protected boolean canSurvive(BlockState state, LevelReader level, BlockPos pos) {
+        BlockState below = level.getBlockState(pos.below());
+        if (below.is(ModBlocks.CRYSTAL_STONE.get())
+                || below.is(ModBlocks.CRYSTAL_GRASS.get())
+                || below.is(ModBlocks.CRYSTAL_TREE_LOG.get())
+                || below.is(ModBlocks.CRYSTAL_PLANKS.get())) {
+            return true;
+        }
+        return super.canSurvive(state, level, pos);
     }
 
     @Override

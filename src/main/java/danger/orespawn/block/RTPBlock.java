@@ -33,8 +33,14 @@ public class RTPBlock extends Block {
         super(properties);
     }
 
+    /**
+     * orig RTPBlock.java:25 — teleport fires from {@code func_149724_b}
+     * (onEntityWalking, i.e. standing on top of the block). The old port used
+     * {@code entityInside}, which never fires for a full cube (ITEM-013).
+     */
     @Override
-    public void entityInside(BlockState state, Level level, BlockPos pos, Entity entity) {
+    public void stepOn(Level level, BlockPos pos, BlockState state, Entity entity) {
+        super.stepOn(level, pos, state, entity);
         if (!(entity instanceof Player player)) return;
         if (level.isClientSide()) return;
 

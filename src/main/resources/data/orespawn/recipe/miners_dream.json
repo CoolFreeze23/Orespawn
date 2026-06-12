@@ -1,6 +1,22 @@
 {
   "type": "minecraft:crafting_shaped",
-  "pattern": ["CCC", "RRR", "GGG"],
-  "key": { "R": { "item": "minecraft:emerald_block" }, "C": { "item": "minecraft:coal_block" }, "G": { "item": "minecraft:wheat" } },
-  "result": { "id": "orespawn:miners_dream", "count": 1 }
+  "pattern": [
+    "AAA",
+    "BBB",
+    "CCC"
+  ],
+  "key": {
+    "A": {
+      "item": "minecraft:cactus"
+    },
+    "B": {
+      "item": "minecraft:redstone_block"
+    },
+    "C": {
+      "item": "minecraft:gunpowder"
+    }
+  },
+  "result": {
+    "id": "orespawn:miners_dream"
+  }
 }

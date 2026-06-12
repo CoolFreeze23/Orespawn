@@ -33,28 +33,29 @@ public class UltimateBow extends BowItem {
         }
     }
 
+    /**
+     * orig UltimateBow.java:46-64 — the arrow always launches at velocity 3.0
+     * the moment the use is released; there is no charge-up scaling and no
+     * minimum draw. Crit is a flat 1-in-4 roll (orig :49-51).
+     */
     @Override
     public void releaseUsing(ItemStack stack, Level level, LivingEntity entityLiving, int timeLeft) {
         if (!(entityLiving instanceof Player player)) return;
-        int charge = this.getUseDuration(stack, entityLiving) - timeLeft;
-        float pull = (float) charge / 20.0F;
-        pull = (pull * pull + pull * 2.0F) / 3.0F;
-        if (pull < 0.1F) return;
-        if (pull > 1.0F) pull = 1.0F;
 
         if (!level.isClientSide) {
             UltimateArrow arrow = new UltimateArrow(level, player, stack);
-            arrow.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0F, pull * 3.0F, 1.0F);
-            // 1.7.10 fidelity: full pull is always crit, plus an additional 1/4 random
-            // chance to crit on under-pulled shots (matches the original
-            // `field_70146_Z.nextInt(4) == 1` roll in UltimateBow.func_77615_a).
-            if (pull >= 1.0F || level.random.nextInt(4) == 0) arrow.setCritArrow(true);
+            // orig UltimateBow.java:48 — fixed velocity 3.0
+            arrow.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0F, 3.0F, 1.0F);
+            // orig UltimateBow.java:49-51 — 1/4 chance to crit
+            if (level.random.nextInt(4) == 1) arrow.setCritArrow(true);
             arrow.pickup = AbstractArrow.Pickup.CREATIVE_ONLY;
             level.addFreshEntity(arrow);
         }
+        // orig UltimateBow.java:59 — bow sound with the vanilla random pitch + 0.5
         level.playSound(null, player.getX(), player.getY(), player.getZ(),
                 SoundEvents.ARROW_SHOOT, SoundSource.PLAYERS, 1.0F,
-                1.0F / (level.random.nextFloat() * 0.4F + 1.2F) + pull * 0.5F);
+                1.0F / (level.random.nextFloat() * 0.4F + 1.2F) + 0.5F);
+        // orig UltimateBow.java:58 — 1 durability per shot
         stack.hurtAndBreak(1, player, EquipmentSlot.MAINHAND);
     }
 }

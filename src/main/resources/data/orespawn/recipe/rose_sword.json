@@ -1,6 +1,19 @@
 {
   "type": "minecraft:crafting_shaped",
-  "pattern": ["X", "X", "#"],
-  "key": { "#": { "item": "minecraft:stick" }, "X": { "item": "orespawn:ruby" } },
-  "result": { "id": "orespawn:rose_sword", "count": 1 }
+  "pattern": [
+    "A",
+    "A",
+    "B"
+  ],
+  "key": {
+    "A": {
+      "item": "minecraft:poppy"
+    },
+    "B": {
+      "item": "minecraft:stick"
+    }
+  },
+  "result": {
+    "id": "orespawn:rose_sword"
+  }
 }

@@ -28,12 +28,13 @@ public class PoisonSword extends SwordItem {
     @Override
     public boolean hurtEnemy(ItemStack stack, LivingEntity target, LivingEntity attacker) {
         if (target != null) {
+            // orig PoisonSword.java:50-59 — Poison + Wither + Weakness, 10-19s each
             int dur = 10 + target.level().random.nextInt(10);
             target.addEffect(new MobEffectInstance(MobEffects.POISON, dur * 20, 0));
             dur = 10 + target.level().random.nextInt(10);
             target.addEffect(new MobEffectInstance(MobEffects.WITHER, dur * 20, 0));
             dur = 10 + target.level().random.nextInt(10);
-            target.addEffect(new MobEffectInstance(MobEffects.HUNGER, dur * 20, 0));
+            target.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, dur * 20, 0));
         }
         stack.hurtAndBreak(1, attacker, EquipmentSlot.MAINHAND);
         return true;

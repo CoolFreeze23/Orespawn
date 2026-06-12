@@ -1,6 +1,21 @@
 {
   "type": "minecraft:crafting_shaped",
-  "pattern": ["XXX", "X X"],
-  "key": { "X": { "item": "orespawn:ingot_uranium" } },
-  "result": { "id": "orespawn:ultimate_helmet", "count": 1 }
+  "pattern": [
+    "ABA",
+    "C C"
+  ],
+  "key": {
+    "A": {
+      "item": "orespawn:ingot_titanium"
+    },
+    "B": {
+      "item": "minecraft:iron_ingot"
+    },
+    "C": {
+      "item": "orespawn:ingot_uranium"
+    }
+  },
+  "result": {
+    "id": "orespawn:ultimate_helmet"
+  }
 }

@@ -1,6 +1,9 @@
 package danger.orespawn.entity;
 
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.entity.Entity;
 import danger.orespawn.ModEntities;
 import net.minecraft.world.entity.EntityType;
@@ -48,6 +51,14 @@ public class SunspotUrchin extends ThrowableProjectile {
     @Override
     protected void onHit(HitResult result) {
         super.onHit(result);
+        // orig SunspotUrchin.java:58-89 — block hits ignite the face that was
+        // struck (fire block on the adjacent air block)
+        if (!this.level().isClientSide && result instanceof BlockHitResult blockHit) {
+            BlockPos firePos = blockHit.getBlockPos().relative(blockHit.getDirection());
+            if (this.level().isEmptyBlock(firePos)) {
+                this.level().setBlockAndUpdate(firePos, Blocks.FIRE.defaultBlockState());
+            }
+        }
         if (this.level().isClientSide) {
             for (int particleIndex = 0; particleIndex < CLIENT_SMOKE_BURST_COUNT; ++particleIndex) {
                 this.level().addParticle(ParticleTypes.SMOKE, this.getX(), this.getY(), this.getZ(),

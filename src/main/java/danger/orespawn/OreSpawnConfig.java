@@ -138,9 +138,12 @@ public class OreSpawnConfig {
         BUILDER.pop();
 
         BUILDER.push("tweaks");
-        // TODO: LESS_ORE requires datapack-level changes to biome modifier JSONs;
-        // wiring this at runtime would need modification of placed feature configs.
-        LESS_ORE = BUILDER.define("lessOre", false);
+        // orig OreSpawnMain.java:1470 — "LessOre", default 0. Wired through the
+        // orespawn:less_ore_count placement modifier (LessOreCountPlacement);
+        // Mining-dim density gating remains WGEN-011 scope.
+        LESS_ORE = BUILDER.comment(
+                "If true, OreSpawn overworld ore/troll-block vein counts are reduced (1.7.10 LessOre)."
+        ).define("lessOre", false);
         LESS_LAG = BUILDER.defineInRange("lessLag", 0, 0, 2);
         RAT_PLAYER_FRIENDLY = BUILDER.define("ratPlayerFriendly", true);
         RAT_PET_FRIENDLY = BUILDER.define("ratPetFriendly", true);

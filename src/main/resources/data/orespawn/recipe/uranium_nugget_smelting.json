@@ -1,7 +1,7 @@
 {
   "type": "minecraft:smelting",
   "ingredient": { "item": "orespawn:ore_uranium" },
-  "result": { "id": "orespawn:ingot_uranium" },
-  "experience": 0.7,
+  "result": { "id": "orespawn:uranium_nugget" },
+  "experience": 0.3,
   "cookingtime": 200
 }

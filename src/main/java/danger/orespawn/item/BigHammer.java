@@ -12,6 +12,15 @@ public class BigHammer extends SwordItem {
         super(ModToolTiers.AMETHYST, properties);
     }
 
+    /**
+     * orig BigHammer.java:25 — {@code setMaxDamage(9000)} overrides the
+     * Amethyst tool material's 2000.
+     */
+    @Override
+    public int getMaxDamage(ItemStack stack) {
+        return 9000;
+    }
+
     @Override
     public boolean hurtEnemy(ItemStack stack, LivingEntity target, LivingEntity attacker) {
         if (target != null && !target.level().isClientSide) {
