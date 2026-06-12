@@ -1,6 +1,15 @@
 {
   "type": "minecraft:crafting_shaped",
-  "pattern": ["XXX", "X X"],
-  "key": { "X": { "item": "orespawn:block_mobzilla_scale" } },
-  "result": { "id": "orespawn:mobzilla_helmet", "count": 1 }
+  "pattern": [
+    "AAA",
+    "A A"
+  ],
+  "key": {
+    "A": {
+      "item": "orespawn:godzilla_scale"
+    }
+  },
+  "result": {
+    "id": "orespawn:mobzilla_helmet"
+  }
 }

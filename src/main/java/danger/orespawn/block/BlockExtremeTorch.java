@@ -34,22 +34,63 @@ public class BlockExtremeTorch extends TorchBlock {
         level.addParticle(ParticleTypes.DUST_PLUME, x, y, z, 0, 0, 0);
     }
 
+    // orig BlockExtremeTorch.java:72-79 — Cephadrome spawn-spot search (ITEM-017):
+    // 100 tries, ±4 blocks ± nextInt(3) jitter horizontally, y−2..y+2 vertically,
+    // needs solid ground + 2 air blocks. No spawn (and no torch removal) if none found.
+    private static final int SPAWN_SEARCH_TRIES = 100;
+    private static final int SPAWN_BASE_OFFSET = 4;
+    private static final int SPAWN_JITTER_BOUND = 3;
+    private static final int SPAWN_VERTICAL_RADIUS = 2;
+
+    /**
+     * Summons a Cephadrome at a random nearby valid spot when the torch is
+     * placed on an Eye-of-Ender block — orig BlockExtremeTorch.java:66-101.
+     * The torch only consumes itself when a spawn spot was actually found.
+     */
     @Override
     public void setPlacedBy(Level level, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack) {
         super.setPlacedBy(level, pos, state, placer, stack);
 
         BlockState belowState = level.getBlockState(pos.below());
-        if (belowState.is(ModBlocks.BLOCK_EYE_OF_ENDER.get())) {
-            level.removeBlock(pos, false);
-            level.playSound(null, pos, SoundEvents.GENERIC_EXPLODE.value(), SoundSource.BLOCKS, 1.0f,
-                    level.random.nextFloat() * 0.2f + 0.9f);
-            if (!level.isClientSide) {
-                Cephadrome ceph = ModEntities.CEPHADROME.get().create(level);
-                if (ceph != null) {
-                    ceph.moveTo(pos.getX() + 0.5, pos.getY() + 1, pos.getZ() + 0.5, 0.0F, 0.0F);
-                    level.addFreshEntity(ceph);
+        if (!belowState.is(ModBlocks.BLOCK_EYE_OF_ENDER.get())) return;
+
+        int spawnX = pos.getX();
+        int spawnY = pos.getY();
+        int spawnZ = pos.getZ();
+        boolean found = false;
+
+        for (int tries = 0; tries < SPAWN_SEARCH_TRIES && !found; tries++) {
+            spawnX = level.random.nextInt(2) == 0
+                    ? pos.getX() + SPAWN_BASE_OFFSET + level.random.nextInt(SPAWN_JITTER_BOUND) - level.random.nextInt(SPAWN_JITTER_BOUND)
+                    : pos.getX() - SPAWN_BASE_OFFSET + level.random.nextInt(SPAWN_JITTER_BOUND) - level.random.nextInt(SPAWN_JITTER_BOUND);
+            spawnZ = level.random.nextInt(2) == 0
+                    ? pos.getZ() + SPAWN_BASE_OFFSET + level.random.nextInt(SPAWN_JITTER_BOUND) - level.random.nextInt(SPAWN_JITTER_BOUND)
+                    : pos.getZ() - SPAWN_BASE_OFFSET + level.random.nextInt(SPAWN_JITTER_BOUND) - level.random.nextInt(SPAWN_JITTER_BOUND);
+            for (spawnY = pos.getY() - SPAWN_VERTICAL_RADIUS; spawnY <= pos.getY() + SPAWN_VERTICAL_RADIUS; spawnY++) {
+                BlockPos feet = new BlockPos(spawnX, spawnY, spawnZ);
+                if (level.getBlockState(feet.below()).isSolid()
+                        && level.getBlockState(feet).isAir()
+                        && level.getBlockState(feet.above()).isAir()) {
+                    found = true;
+                    break;
                 }
             }
         }
+
+        if (!found) return;
+
+        if (!level.isClientSide) {
+            Cephadrome ceph = ModEntities.CEPHADROME.get().create(level);
+            if (ceph != null) {
+                // orig :84 — spawn at the found spot (y+0.01), random yaw
+                ceph.moveTo(spawnX + 0.5, spawnY + 0.01, spawnZ + 0.5, level.random.nextFloat() * 360.0f, 0.0F);
+                level.addFreshEntity(ceph);
+                ceph.playAmbientSound();
+            }
+        }
+        level.playSound(null, pos, SoundEvents.GENERIC_EXPLODE.value(), SoundSource.BLOCKS, 1.0f,
+                level.random.nextFloat() * 0.2f + 0.9f);
+        // orig :97 — the torch turns to air only on a successful summon
+        level.removeBlock(pos, false);
     }
 }

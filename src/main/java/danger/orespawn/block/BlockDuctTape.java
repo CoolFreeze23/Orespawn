@@ -54,6 +54,18 @@ public class BlockDuctTape extends Block {
         return InteractionResult.sidedSuccess(level.isClientSide());
     }
 
+    /**
+     * Left-click repairs too — orig BlockDuctTape.java:92-94
+     * ({@code func_149699_a} / onBlockClicked) routes to the same
+     * repair path as right-click (ITEM-012).
+     */
+    @Override
+    protected void attack(BlockState state, Level level, BlockPos pos, Player player) {
+        if (!level.isClientSide()) {
+            repairItem(level, pos, state, player);
+        }
+    }
+
     private void repairItem(Level level, BlockPos pos, BlockState state, Player player) {
         ItemStack held = player.getMainHandItem();
         if (held.isEmpty() || held.getCount() != 1) return;

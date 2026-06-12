@@ -107,7 +107,7 @@ public class ModItems {
     public static final DeferredItem<Item> CRYSTAL_PINK_INGOT = ITEMS.registerSimpleItem("crystal_pink_ingot");
     public static final DeferredItem<Item> TIGERS_EYE_INGOT = ITEMS.registerSimpleItem("tigers_eye_ingot");
 
-    // Phase 10 — Canonical wiki-named gems & wood. These are the "primary" items
+    // Phase 10 â€” Canonical wiki-named gems & wood. These are the "primary" items
     // exposed in armor/tool recipes; the legacy CRYSTAL_PINK_INGOT and
     // CRYSTAL_STONE/CRYSTAL_PLANKS items remain registered for backwards
     // compatibility, with shapeless 1:1 conversion recipes between them.
@@ -116,7 +116,7 @@ public class ModItems {
     public static final DeferredItem<Item> CRYSTAL_WOOD_LUMBER = ITEMS.registerSimpleItem("crystal_wood_lumber");
     public static final DeferredItem<Item> CRYSTAL_WOOD_STICK = ITEMS.registerSimpleItem("crystal_wood_stick");
 
-    // Phase 10 — Block item for ancient_dried_egg fossil block.
+    // Phase 10 â€” Block item for ancient_dried_egg fossil block.
     public static final DeferredItem<BlockItem> ANCIENT_DRIED_EGG_ITEM =
             ITEMS.registerSimpleBlockItem("ancient_dried_egg", ModBlocks.ANCIENT_DRIED_EGG);
     public static final DeferredItem<BlockItem> ORE_KYANITE_ITEM =
@@ -155,8 +155,10 @@ public class ModItems {
     public static final DeferredItem<Item> DEAD_STINK_BUG = ITEMS.registerSimpleItem("dead_stink_bug");
 
     // Ultimate tier tools
+    // orig OreSpawnMain.java:1636, UltimateSword.java:49-55 â€” full config-driven enchant set (ITEM-030)
     public static final DeferredItem<Item> ULTIMATE_SWORD = ITEMS.register("ultimate_sword",
-            () -> new UltimateSword(new Item.Properties().attributes(SwordItem.createAttributes(ModToolTiers.ULTIMATE, 3, -2.4f))));
+            () -> new UltimateSword(ModToolTiers.ULTIMATE, UltimateSword.Variant.FULL,
+                    new Item.Properties().attributes(SwordItem.createAttributes(ModToolTiers.ULTIMATE, 3, -2.4f))));
     public static final DeferredItem<Item> ULTIMATE_PICKAXE = ITEMS.register("ultimate_pickaxe",
             () -> new UltimatePickaxe(new Item.Properties().attributes(PickaxeItem.createAttributes(ModToolTiers.ULTIMATE, 1.0f, -2.8f))));
     public static final DeferredItem<Item> ULTIMATE_SHOVEL = ITEMS.register("ultimate_shovel",
@@ -238,7 +240,7 @@ public class ModItems {
     public static final DeferredItem<Item> CRYSTAL_PINK_AXE = ITEMS.register("crystal_pink_axe",
             () -> new AxeItem(ModToolTiers.CRYSTAL_PINK, new Item.Properties().attributes(AxeItem.createAttributes(ModToolTiers.CRYSTAL_PINK, 5.0f, -3.0f))));
 
-    // Phase 10 — Kyanite tier tools (the missing wiki §6.1 entry). Sits between
+    // Phase 10 â€” Kyanite tier tools (the missing wiki Â§6.1 entry). Sits between
     // Crystal Pink and Tigers Eye on the Crystal Dimension power curve.
     public static final DeferredItem<Item> KYANITE_SWORD = ITEMS.register("kyanite_sword",
             () -> new SwordItem(ModToolTiers.KYANITE, new Item.Properties().attributes(SwordItem.createAttributes(ModToolTiers.KYANITE, 3, -2.4f))));
@@ -266,35 +268,41 @@ public class ModItems {
     // Special weapons
     public static final DeferredItem<Item> NIGHTMARE_SWORD = ITEMS.register("nightmare_sword",
             () -> new NightmareSword(new Item.Properties().attributes(SwordItem.createAttributes(ModToolTiers.NIGHTMARE, 3, -2.4f))));
-    // Big Bertha: tier-3 Uranium/Titanium club, +2.0 reach so the player can actually
-    // crack a Mobzilla in the face from outside its bite radius (1.7.10 fidelity is
-    // "absurdly long arms" — vanilla reach=3.0 felt wrong against giant bosses).
+    // orig Bertha.java:39-41 â€” Big Bertha bakes Knockback 5 / Bane 1 / Fire Aspect 1 (ITEM-031)
     public static final DeferredItem<Item> BIG_BERTHA = ITEMS.register("big_bertha",
             () -> new Bertha(ModToolTiers.BERTHA, new Item.Properties()
-                    .attributes(danger.orespawn.util.BerthaAttributes.createReachAttributes(ModToolTiers.BERTHA, 3, -2.4f, 2.0)),
-                    0, new int[]{5, 1, 1}, net.minecraft.world.item.enchantment.Enchantments.KNOCKBACK, net.minecraft.world.item.enchantment.Enchantments.BANE_OF_ARTHROPODS, net.minecraft.world.item.enchantment.Enchantments.SWEEPING_EDGE));
+                    .attributes(SwordItem.createAttributes(ModToolTiers.BERTHA, 3, -2.4f)),
+                    0, new int[]{5, 1, 1}, net.minecraft.world.item.enchantment.Enchantments.KNOCKBACK, net.minecraft.world.item.enchantment.Enchantments.BANE_OF_ARTHROPODS, net.minecraft.world.item.enchantment.Enchantments.FIRE_ASPECT));
+    // orig OreSpawnMain.java:1646 â€” Slice is a plain Bertha-class clone: same baked
+    // KB5/Bane1/FireAspect1 set and shockwave (ITEM-032)
     public static final DeferredItem<Item> SLICE = ITEMS.register("slice",
-            () -> new Slice(ModToolTiers.BERTHA, new Item.Properties()
-                    .attributes(danger.orespawn.util.BerthaAttributes.createReachAttributes(ModToolTiers.BERTHA, 3, -2.4f, 2.0))));
+            () -> new Bertha(ModToolTiers.BERTHA, new Item.Properties()
+                    .attributes(SwordItem.createAttributes(ModToolTiers.BERTHA, 3, -2.4f)),
+                    0, new int[]{5, 1, 1}, net.minecraft.world.item.enchantment.Enchantments.KNOCKBACK, net.minecraft.world.item.enchantment.Enchantments.BANE_OF_ARTHROPODS, net.minecraft.world.item.enchantment.Enchantments.FIRE_ASPECT));
+    // orig Bertha.java:36-37 â€” Royal Guardian Sword bakes Unbreaking 5 (not Sharpness); hitType 2 (ITEM-033)
     public static final DeferredItem<Item> ROYAL_GUARDIAN_SWORD = ITEMS.register("royal_guardian_sword",
             () -> new Bertha(ModToolTiers.ROYAL, new Item.Properties()
-                    .attributes(danger.orespawn.util.BerthaAttributes.createReachAttributes(ModToolTiers.ROYAL, 3, -2.4f, 2.5)),
-                    2, new int[]{5}, net.minecraft.world.item.enchantment.Enchantments.SHARPNESS));
+                    .attributes(SwordItem.createAttributes(ModToolTiers.ROYAL, 3, -2.4f)),
+                    2, new int[]{5}, net.minecraft.world.item.enchantment.Enchantments.UNBREAKING));
+    // orig OreSpawnMain.java:1649 â€” Battle Axe is UltimateSword-class (no shockwave),
+    // Looting 3 + Unbreaking 3 branch, dur 3000 class override (ITEM-036)
     public static final DeferredItem<Item> BATTLE_AXE = ITEMS.register("battle_axe",
-            () -> new Bertha(ModToolTiers.BATTLE, new Item.Properties()
-                    .attributes(danger.orespawn.util.BerthaAttributes.createReachAttributes(ModToolTiers.BATTLE, 3, -2.4f, 1.5)),
-                    0, new int[]{5, 1, 1}, net.minecraft.world.item.enchantment.Enchantments.KNOCKBACK, net.minecraft.world.item.enchantment.Enchantments.BANE_OF_ARTHROPODS, net.minecraft.world.item.enchantment.Enchantments.SWEEPING_EDGE));
+            () -> new UltimateSword(ModToolTiers.BATTLE, UltimateSword.Variant.BATTLE_AXE,
+                    new Item.Properties().attributes(SwordItem.createAttributes(ModToolTiers.BATTLE, 3, -2.4f))));
+    // orig OreSpawnMain.java:1651 â€” Queen Battle Axe is UltimateSword-class (no shockwave)
+    // and takes the FULL enchant branch (orig UltimateSword.java:48-55), dur 3000 (ITEM-035)
     public static final DeferredItem<Item> QUEEN_BATTLE_AXE = ITEMS.register("queen_battle_axe",
-            () -> new Bertha(ModToolTiers.QUEEN_BATTLE, new Item.Properties()
-                    .attributes(danger.orespawn.util.BerthaAttributes.createReachAttributes(ModToolTiers.QUEEN_BATTLE, 3, -2.4f, 2.5)),
-                    2, new int[]{5}, net.minecraft.world.item.enchantment.Enchantments.SHARPNESS));
+            () -> new UltimateSword(ModToolTiers.QUEEN_BATTLE, UltimateSword.Variant.FULL,
+                    new Item.Properties().attributes(SwordItem.createAttributes(ModToolTiers.QUEEN_BATTLE, 3, -2.4f))));
+    // orig OreSpawnMain.java:1650 â€” Chainsaw is UltimateSword-class: no baked enchants,
+    // AoE left-click, tree crush, saw sound (ITEM-037)
     public static final DeferredItem<Item> CHAINSAW = ITEMS.register("chainsaw",
-            () -> new Bertha(ModToolTiers.CHAINSAW, new Item.Properties()
-                    .attributes(danger.orespawn.util.BerthaAttributes.createReachAttributes(ModToolTiers.CHAINSAW, 3, -2.4f, 1.5)),
-                    0, new int[]{5, 1, 1}, net.minecraft.world.item.enchantment.Enchantments.KNOCKBACK, net.minecraft.world.item.enchantment.Enchantments.BANE_OF_ARTHROPODS, net.minecraft.world.item.enchantment.Enchantments.SWEEPING_EDGE));
+            () -> new Chainsaw(ModToolTiers.CHAINSAW,
+                    new Item.Properties().attributes(SwordItem.createAttributes(ModToolTiers.CHAINSAW, 3, -2.4f))));
+    // orig Bertha.java:38,91-93 â€” Attitude Adjuster: no baked enchants, hitType 3 (ITEM-034)
     public static final DeferredItem<Item> ATTITUDE_ADJUSTER = ITEMS.register("attitude_adjuster",
             () -> new Bertha(ModToolTiers.HAMMY, new Item.Properties()
-                    .attributes(danger.orespawn.util.BerthaAttributes.createReachAttributes(ModToolTiers.HAMMY, 3, -2.4f, 2.0)),
+                    .attributes(SwordItem.createAttributes(ModToolTiers.HAMMY, 3, -2.4f)),
                     3, new int[]{}, new net.minecraft.resources.ResourceKey[0]));
     public static final DeferredItem<Item> EXPERIENCE_SWORD = ITEMS.register("experience_sword",
             () -> new ExperienceSword(new Item.Properties().attributes(SwordItem.createAttributes(ModToolTiers.EMERALD, 3, -2.4f))));
@@ -327,7 +335,8 @@ public class ModItems {
     public static final DeferredItem<Item> CREEPER_LAUNCHER = ITEMS.register("creeper_launcher",
             () -> new ItemCreeperLauncher(new Item.Properties().stacksTo(16)));
     public static final DeferredItem<Item> WRENCH = ITEMS.register("wrench",
-            () -> new ItemWrench(new Item.Properties().durability(256)));
+            // orig ItemWrench.java:26 â€” setMaxDamage(100)
+            () -> new ItemWrench(new Item.Properties().durability(100)));
 
     // Throwables
     public static final DeferredItem<Item> WATER_BALL = ITEMS.register("water_ball",
@@ -338,7 +347,9 @@ public class ModItems {
             () -> new ItemIceBall(new Item.Properties().stacksTo(16)));
     public static final DeferredItem<Item> ACID = ITEMS.register("acid",
             () -> new ItemAcid(new Item.Properties().stacksTo(16)));
-    public static final DeferredItem<Item> DEAD_IRUKANDJI = ITEMS.registerSimpleItem("dead_irukandji");
+    public static final DeferredItem<Item> DEAD_IRUKANDJI = ITEMS.register("dead_irukandji",
+            // orig ItemIrukandji.java:20-23 â€” stack 64, throws a DeadIrukandji on use
+            () -> new ItemDeadIrukandji(new Item.Properties()));
     public static final DeferredItem<Item> IRUKANDJI_ARROW = ITEMS.registerSimpleItem("irukandji_arrow");
     public static final DeferredItem<Item> ROCK_SMALL = ITEMS.register("rock_small",
             () -> new ItemRock(new Item.Properties().stacksTo(16), 0));
@@ -365,7 +376,7 @@ public class ModItems {
     public static final DeferredItem<Item> ROCK_CRYSTAL_TNT = ITEMS.register("rock_crystal_tnt",
             () -> new ItemRock(new Item.Properties().stacksTo(16), 11));
 
-    // Food items — special fish grant potion effects on consumption
+    // Food items â€” special fish grant potion effects on consumption
     // Grants 30s fire resistance when eaten
     public static final DeferredItem<Item> FIRE_FISH = ITEMS.register("fire_fish",
             () -> new ItemFireFish(new Item.Properties().food(new FoodProperties.Builder().nutrition(4).saturationModifier(0.6f).build())));
@@ -378,7 +389,7 @@ public class ModItems {
     // Grants 30s fire resistance when eaten
     public static final DeferredItem<Item> SPARK_FISH = ITEMS.register("spark_fish",
             () -> new ItemSparkFish(new Item.Properties().food(new FoodProperties.Builder().nutrition(1).saturationModifier(0.2f).build())));
-    // Generic fish — 25% chance to inflict hunger debuff
+    // Generic fish â€” 25% chance to inflict hunger debuff
     public static final DeferredItem<Item> GREEN_FISH = ITEMS.register("green_fish",
             () -> new ItemGenericFish(new Item.Properties().food(new FoodProperties.Builder().nutrition(3).saturationModifier(0.5f).build())));
     public static final DeferredItem<Item> BLUE_FISH = ITEMS.register("blue_fish",
@@ -481,27 +492,32 @@ public class ModItems {
     public static final DeferredItem<Item> RANDOM_DUNGEON = ITEMS.register("random_dungeon",
             () -> new ItemRandomDungeon(new Item.Properties()));
 
-    // Phase 11 — Coin: right-click consumes & rolls orespawn:gameplay/coin_reward
-    public static final DeferredItem<Item> COIN = ITEMS.register("coin",
-            () -> new ItemCoin(new Item.Properties().stacksTo(64)));
+    // Phase 11 â€” Coin: right-click consumes & rolls orespawn:gameplay/coin_reward
     public static final DeferredItem<Item> EXPERIENCE_CATCHER = ITEMS.register("experience_catcher",
             () -> new ExperienceCatcher(new Item.Properties().stacksTo(16)));
     public static final DeferredItem<Item> SUNSPOT_URCHIN = ITEMS.register("sunspot_urchin",
             () -> new ItemSunspotUrchin(new Item.Properties().stacksTo(16)));
     public static final DeferredItem<Item> SIFTER = ITEMS.register("sifter",
-            () -> new ItemSifter(new Item.Properties().durability(256)));
+            // orig ItemSifter.java:25-27 â€” stack size 1, setMaxDamage(600)
+            () -> new ItemSifter(new Item.Properties().stacksTo(1).durability(600)));
     public static final DeferredItem<Item> SPIDER_ROBOT_KIT = ITEMS.register("spider_robot_kit",
-            () -> new ItemSpiderRobotKit(new Item.Properties(), () -> ModEntities.SPIDER_ROBOT.get()));
+            // orig ItemSpiderRobotKit.java:26-29 â€” stack 1, durability = SpiderRobot health (1500)
+            () -> new ItemSpiderRobotKit(new Item.Properties().stacksTo(1).durability((int) MobStats.SPIDER_ROBOT.maxHealth()),
+                    () -> ModEntities.SPIDER_ROBOT.get()));
     public static final DeferredItem<Item> ANT_ROBOT_KIT = ITEMS.register("ant_robot_kit",
-            () -> new ItemSpiderRobotKit(new Item.Properties(), () -> ModEntities.ANT_ROBOT.get()));
+            // orig ItemSpiderRobotKit.java:26,31 â€” stack 1, durability = AntRobot health (300)
+            () -> new ItemSpiderRobotKit(new Item.Properties().stacksTo(1).durability((int) MobStats.ANT_ROBOT.maxHealth()),
+                    () -> ModEntities.ANT_ROBOT.get()));
     public static final DeferredItem<Item> ZOO_KEEPER = ITEMS.register("zoo_keeper",
-            () -> new ItemZooKeeper(new Item.Properties().durability(256)));
+            // orig ItemZooKeeper.java:21 â€” setMaxDamage(1)
+            () -> new ItemZooKeeper(new Item.Properties().durability(1)));
     public static final DeferredItem<Item> NETHER_LOST = ITEMS.register("nether_lost",
-            () -> new ItemNetherLost(new Item.Properties()));
+            // orig ItemNetherLost.java:24-25 â€” stack 1, setMaxDamage(3000)
+            () -> new ItemNetherLost(new Item.Properties().stacksTo(1).durability(3000)));
     public static final DeferredItem<Item> ELEVATOR = ITEMS.register("elevator",
             () -> new ItemElevator(new Item.Properties()));
 
-    // Phase 10 — Hoverboard placement item (legacy 1.7.10 ItemElevator port).
+    // Phase 10 â€” Hoverboard placement item (legacy 1.7.10 ItemElevator port).
     public static final DeferredItem<Item> HOVERBOARD = ITEMS.register("hoverboard",
             () -> new HoverboardItem(new Item.Properties()));
     public static final DeferredItem<Item> INSTANT_SHELTER = ITEMS.register("instant_shelter",
@@ -525,133 +541,139 @@ public class ModItems {
 
 
     // ==================== ARMOR ====================
-    // Ultimate armor
+    // Durability multipliers below are the original per-set durability values from
+    // orig OreSpawnMain.java:1489-1502 (get_armorstats arg 3). 1.21.1
+    // ArmorItem.Type.getDurability uses the same per-slot bases as the 1.7.10
+    // ItemArmor (helmet x11, chest x16, legs x15, boots x13), so passing the
+    // original value reproduces the original per-piece durability exactly
+    // (e.g. Ultimate helmet = 200 x 11 = 2200).
+    // Ultimate armor — orig OreSpawnMain.java:1494 (durability 200)
     public static final DeferredItem<Item> ULTIMATE_HELMET = ITEMS.register("ultimate_helmet",
             () -> new ItemOreSpawnArmor(ModArmorMaterials.ULTIMATE, ArmorItem.Type.HELMET,
-                    new Item.Properties().durability(ArmorItem.Type.HELMET.getDurability(13)), "ultimate"));
+                    new Item.Properties().durability(ArmorItem.Type.HELMET.getDurability(200)), "ultimate"));
     public static final DeferredItem<Item> ULTIMATE_CHESTPLATE = ITEMS.register("ultimate_chestplate",
             () -> new ItemOreSpawnArmor(ModArmorMaterials.ULTIMATE, ArmorItem.Type.CHESTPLATE,
-                    new Item.Properties().durability(ArmorItem.Type.CHESTPLATE.getDurability(13)), "ultimate"));
+                    new Item.Properties().durability(ArmorItem.Type.CHESTPLATE.getDurability(200)), "ultimate"));
     public static final DeferredItem<Item> ULTIMATE_LEGGINGS = ITEMS.register("ultimate_leggings",
             () -> new ItemOreSpawnArmor(ModArmorMaterials.ULTIMATE, ArmorItem.Type.LEGGINGS,
-                    new Item.Properties().durability(ArmorItem.Type.LEGGINGS.getDurability(13)), "ultimate"));
+                    new Item.Properties().durability(ArmorItem.Type.LEGGINGS.getDurability(200)), "ultimate"));
     public static final DeferredItem<Item> ULTIMATE_BOOTS_ARMOR = ITEMS.register("ultimate_boots",
             () -> new ItemOreSpawnArmor(ModArmorMaterials.ULTIMATE, ArmorItem.Type.BOOTS,
-                    new Item.Properties().durability(ArmorItem.Type.BOOTS.getDurability(13)), "ultimate"));
+                    new Item.Properties().durability(ArmorItem.Type.BOOTS.getDurability(200)), "ultimate"));
 
-    // Mobzilla armor
+    // Mobzilla armor — orig OreSpawnMain.java:1498 (durability 1000)
     public static final DeferredItem<Item> MOBZILLA_HELMET = ITEMS.register("mobzilla_helmet",
             () -> new ItemOreSpawnArmor(ModArmorMaterials.MOBZILLA, ArmorItem.Type.HELMET,
-                    new Item.Properties().durability(ArmorItem.Type.HELMET.getDurability(63)), "mobzilla"));
+                    new Item.Properties().durability(ArmorItem.Type.HELMET.getDurability(1000)), "mobzilla"));
     public static final DeferredItem<Item> MOBZILLA_CHESTPLATE = ITEMS.register("mobzilla_chestplate",
             () -> new ItemOreSpawnArmor(ModArmorMaterials.MOBZILLA, ArmorItem.Type.CHESTPLATE,
-                    new Item.Properties().durability(ArmorItem.Type.CHESTPLATE.getDurability(63)), "mobzilla"));
+                    new Item.Properties().durability(ArmorItem.Type.CHESTPLATE.getDurability(1000)), "mobzilla"));
     public static final DeferredItem<Item> MOBZILLA_LEGGINGS = ITEMS.register("mobzilla_leggings",
             () -> new ItemOreSpawnArmor(ModArmorMaterials.MOBZILLA, ArmorItem.Type.LEGGINGS,
-                    new Item.Properties().durability(ArmorItem.Type.LEGGINGS.getDurability(63)), "mobzilla"));
+                    new Item.Properties().durability(ArmorItem.Type.LEGGINGS.getDurability(1000)), "mobzilla"));
     public static final DeferredItem<Item> MOBZILLA_BOOTS = ITEMS.register("mobzilla_boots",
             () -> new ItemOreSpawnArmor(ModArmorMaterials.MOBZILLA, ArmorItem.Type.BOOTS,
-                    new Item.Properties().durability(ArmorItem.Type.BOOTS.getDurability(63)), "mobzilla"));
+                    new Item.Properties().durability(ArmorItem.Type.BOOTS.getDurability(1000)), "mobzilla"));
 
-    // Lava Eel armor
+    // Lava Eel armor — orig OreSpawnMain.java:1493 (durability 40)
     public static final DeferredItem<Item> LAVAEEL_HELMET = ITEMS.register("lavaeel_helmet",
             () -> new ItemOreSpawnArmor(ModArmorMaterials.LAVA_EEL, ArmorItem.Type.HELMET,
-                    new Item.Properties().durability(ArmorItem.Type.HELMET.getDurability(3)), "lavaeel"));
+                    new Item.Properties().durability(ArmorItem.Type.HELMET.getDurability(40)), "lavaeel"));
     public static final DeferredItem<Item> LAVAEEL_CHESTPLATE = ITEMS.register("lavaeel_chestplate",
             () -> new ItemOreSpawnArmor(ModArmorMaterials.LAVA_EEL, ArmorItem.Type.CHESTPLATE,
-                    new Item.Properties().durability(ArmorItem.Type.CHESTPLATE.getDurability(3)), "lavaeel"));
+                    new Item.Properties().durability(ArmorItem.Type.CHESTPLATE.getDurability(40)), "lavaeel"));
     public static final DeferredItem<Item> LAVAEEL_LEGGINGS = ITEMS.register("lavaeel_leggings",
             () -> new ItemOreSpawnArmor(ModArmorMaterials.LAVA_EEL, ArmorItem.Type.LEGGINGS,
-                    new Item.Properties().durability(ArmorItem.Type.LEGGINGS.getDurability(3)), "lavaeel"));
+                    new Item.Properties().durability(ArmorItem.Type.LEGGINGS.getDurability(40)), "lavaeel"));
     public static final DeferredItem<Item> LAVAEEL_BOOTS = ITEMS.register("lavaeel_boots",
             () -> new ItemOreSpawnArmor(ModArmorMaterials.LAVA_EEL, ArmorItem.Type.BOOTS,
-                    new Item.Properties().durability(ArmorItem.Type.BOOTS.getDurability(3)), "lavaeel"));
+                    new Item.Properties().durability(ArmorItem.Type.BOOTS.getDurability(40)), "lavaeel"));
 
-    // Moth Scale armor
+    // Moth Scale armor — orig OreSpawnMain.java:1492 (durability 50)
     public static final DeferredItem<Item> MOTHSCALE_HELMET = ITEMS.register("mothscale_helmet",
             () -> new ItemOreSpawnArmor(ModArmorMaterials.MOTH_SCALE, ArmorItem.Type.HELMET,
-                    new Item.Properties().durability(ArmorItem.Type.HELMET.getDurability(3)), "mothscale"));
+                    new Item.Properties().durability(ArmorItem.Type.HELMET.getDurability(50)), "mothscale"));
     public static final DeferredItem<Item> MOTHSCALE_CHESTPLATE = ITEMS.register("mothscale_chestplate",
             () -> new ItemOreSpawnArmor(ModArmorMaterials.MOTH_SCALE, ArmorItem.Type.CHESTPLATE,
-                    new Item.Properties().durability(ArmorItem.Type.CHESTPLATE.getDurability(3)), "mothscale"));
+                    new Item.Properties().durability(ArmorItem.Type.CHESTPLATE.getDurability(50)), "mothscale"));
     public static final DeferredItem<Item> MOTHSCALE_LEGGINGS = ITEMS.register("mothscale_leggings",
             () -> new ItemOreSpawnArmor(ModArmorMaterials.MOTH_SCALE, ArmorItem.Type.LEGGINGS,
-                    new Item.Properties().durability(ArmorItem.Type.LEGGINGS.getDurability(3)), "mothscale"));
+                    new Item.Properties().durability(ArmorItem.Type.LEGGINGS.getDurability(50)), "mothscale"));
     public static final DeferredItem<Item> MOTHSCALE_BOOTS = ITEMS.register("mothscale_boots",
             () -> new ItemOreSpawnArmor(ModArmorMaterials.MOTH_SCALE, ArmorItem.Type.BOOTS,
-                    new Item.Properties().durability(ArmorItem.Type.BOOTS.getDurability(3)), "mothscale"));
+                    new Item.Properties().durability(ArmorItem.Type.BOOTS.getDurability(50)), "mothscale"));
 
-    // Emerald armor
+    // Emerald armor — orig OreSpawnMain.java:1490 (durability 60)
     public static final DeferredItem<Item> EMERALD_HELMET = ITEMS.register("emerald_helmet",
             () -> new ItemOreSpawnArmor(ModArmorMaterials.EMERALD, ArmorItem.Type.HELMET,
-                    new Item.Properties().durability(ArmorItem.Type.HELMET.getDurability(4)), "emerald"));
+                    new Item.Properties().durability(ArmorItem.Type.HELMET.getDurability(60)), "emerald"));
     public static final DeferredItem<Item> EMERALD_CHESTPLATE = ITEMS.register("emerald_chestplate",
             () -> new ItemOreSpawnArmor(ModArmorMaterials.EMERALD, ArmorItem.Type.CHESTPLATE,
-                    new Item.Properties().durability(ArmorItem.Type.CHESTPLATE.getDurability(4)), "emerald"));
+                    new Item.Properties().durability(ArmorItem.Type.CHESTPLATE.getDurability(60)), "emerald"));
     public static final DeferredItem<Item> EMERALD_LEGGINGS = ITEMS.register("emerald_leggings",
             () -> new ItemOreSpawnArmor(ModArmorMaterials.EMERALD, ArmorItem.Type.LEGGINGS,
-                    new Item.Properties().durability(ArmorItem.Type.LEGGINGS.getDurability(4)), "emerald"));
+                    new Item.Properties().durability(ArmorItem.Type.LEGGINGS.getDurability(60)), "emerald"));
     public static final DeferredItem<Item> EMERALD_BOOTS_ARMOR = ITEMS.register("emerald_boots",
             () -> new ItemOreSpawnArmor(ModArmorMaterials.EMERALD, ArmorItem.Type.BOOTS,
-                    new Item.Properties().durability(ArmorItem.Type.BOOTS.getDurability(4)), "emerald"));
+                    new Item.Properties().durability(ArmorItem.Type.BOOTS.getDurability(60)), "emerald"));
 
-    // Experience armor
+    // Experience armor — orig OreSpawnMain.java:1491 (durability 70)
     public static final DeferredItem<Item> EXPERIENCE_HELMET = ITEMS.register("experience_helmet",
             () -> new ItemOreSpawnArmor(ModArmorMaterials.EXPERIENCE, ArmorItem.Type.HELMET,
-                    new Item.Properties().durability(ArmorItem.Type.HELMET.getDurability(5)), "experience"));
+                    new Item.Properties().durability(ArmorItem.Type.HELMET.getDurability(70)), "experience"));
     public static final DeferredItem<Item> EXPERIENCE_CHESTPLATE = ITEMS.register("experience_chestplate",
             () -> new ItemOreSpawnArmor(ModArmorMaterials.EXPERIENCE, ArmorItem.Type.CHESTPLATE,
-                    new Item.Properties().durability(ArmorItem.Type.CHESTPLATE.getDurability(5)), "experience"));
+                    new Item.Properties().durability(ArmorItem.Type.CHESTPLATE.getDurability(70)), "experience"));
     public static final DeferredItem<Item> EXPERIENCE_LEGGINGS = ITEMS.register("experience_leggings",
             () -> new ItemOreSpawnArmor(ModArmorMaterials.EXPERIENCE, ArmorItem.Type.LEGGINGS,
-                    new Item.Properties().durability(ArmorItem.Type.LEGGINGS.getDurability(5)), "experience"));
+                    new Item.Properties().durability(ArmorItem.Type.LEGGINGS.getDurability(70)), "experience"));
     public static final DeferredItem<Item> EXPERIENCE_BOOTS = ITEMS.register("experience_boots",
             () -> new ItemOreSpawnArmor(ModArmorMaterials.EXPERIENCE, ArmorItem.Type.BOOTS,
-                    new Item.Properties().durability(ArmorItem.Type.BOOTS.getDurability(5)), "experience"));
+                    new Item.Properties().durability(ArmorItem.Type.BOOTS.getDurability(70)), "experience"));
 
-    // Ruby armor
+    // Ruby armor — orig OreSpawnMain.java:1499 (durability 90)
     public static final DeferredItem<Item> RUBY_HELMET = ITEMS.register("ruby_helmet",
             () -> new ItemOreSpawnArmor(ModArmorMaterials.RUBY, ArmorItem.Type.HELMET,
-                    new Item.Properties().durability(ArmorItem.Type.HELMET.getDurability(6)), "ruby"));
+                    new Item.Properties().durability(ArmorItem.Type.HELMET.getDurability(90)), "ruby"));
     public static final DeferredItem<Item> RUBY_CHESTPLATE = ITEMS.register("ruby_chestplate",
             () -> new ItemOreSpawnArmor(ModArmorMaterials.RUBY, ArmorItem.Type.CHESTPLATE,
-                    new Item.Properties().durability(ArmorItem.Type.CHESTPLATE.getDurability(6)), "ruby"));
+                    new Item.Properties().durability(ArmorItem.Type.CHESTPLATE.getDurability(90)), "ruby"));
     public static final DeferredItem<Item> RUBY_LEGGINGS = ITEMS.register("ruby_leggings",
             () -> new ItemOreSpawnArmor(ModArmorMaterials.RUBY, ArmorItem.Type.LEGGINGS,
-                    new Item.Properties().durability(ArmorItem.Type.LEGGINGS.getDurability(6)), "ruby"));
+                    new Item.Properties().durability(ArmorItem.Type.LEGGINGS.getDurability(90)), "ruby"));
     public static final DeferredItem<Item> RUBY_BOOTS_ARMOR = ITEMS.register("ruby_boots",
             () -> new ItemOreSpawnArmor(ModArmorMaterials.RUBY, ArmorItem.Type.BOOTS,
-                    new Item.Properties().durability(ArmorItem.Type.BOOTS.getDurability(6)), "ruby"));
+                    new Item.Properties().durability(ArmorItem.Type.BOOTS.getDurability(90)), "ruby"));
 
-    // Amethyst armor
+    // Amethyst armor — orig OreSpawnMain.java:1489 (durability 100)
     public static final DeferredItem<Item> AMETHYST_HELMET = ITEMS.register("amethyst_helmet",
             () -> new ItemOreSpawnArmor(ModArmorMaterials.AMETHYST, ArmorItem.Type.HELMET,
-                    new Item.Properties().durability(ArmorItem.Type.HELMET.getDurability(6)), "amethyst"));
+                    new Item.Properties().durability(ArmorItem.Type.HELMET.getDurability(100)), "amethyst"));
     public static final DeferredItem<Item> AMETHYST_CHESTPLATE = ITEMS.register("amethyst_chestplate",
             () -> new ItemOreSpawnArmor(ModArmorMaterials.AMETHYST, ArmorItem.Type.CHESTPLATE,
-                    new Item.Properties().durability(ArmorItem.Type.CHESTPLATE.getDurability(6)), "amethyst"));
+                    new Item.Properties().durability(ArmorItem.Type.CHESTPLATE.getDurability(100)), "amethyst"));
     public static final DeferredItem<Item> AMETHYST_LEGGINGS = ITEMS.register("amethyst_leggings",
             () -> new ItemOreSpawnArmor(ModArmorMaterials.AMETHYST, ArmorItem.Type.LEGGINGS,
-                    new Item.Properties().durability(ArmorItem.Type.LEGGINGS.getDurability(6)), "amethyst"));
+                    new Item.Properties().durability(ArmorItem.Type.LEGGINGS.getDurability(100)), "amethyst"));
     public static final DeferredItem<Item> AMETHYST_BOOTS_ARMOR = ITEMS.register("amethyst_boots",
             () -> new ItemOreSpawnArmor(ModArmorMaterials.AMETHYST, ArmorItem.Type.BOOTS,
-                    new Item.Properties().durability(ArmorItem.Type.BOOTS.getDurability(6)), "amethyst"));
+                    new Item.Properties().durability(ArmorItem.Type.BOOTS.getDurability(100)), "amethyst"));
 
-    // Crystal Pink armor
+    // Crystal Pink armor — orig OreSpawnMain.java:1495 (durability 50)
     public static final DeferredItem<Item> PINK_HELMET = ITEMS.register("pink_helmet",
             () -> new ItemOreSpawnArmor(ModArmorMaterials.PINK, ArmorItem.Type.HELMET,
-                    new Item.Properties().durability(ArmorItem.Type.HELMET.getDurability(3)), "pink"));
+                    new Item.Properties().durability(ArmorItem.Type.HELMET.getDurability(50)), "pink"));
     public static final DeferredItem<Item> PINK_CHESTPLATE = ITEMS.register("pink_chestplate",
             () -> new ItemOreSpawnArmor(ModArmorMaterials.PINK, ArmorItem.Type.CHESTPLATE,
-                    new Item.Properties().durability(ArmorItem.Type.CHESTPLATE.getDurability(3)), "pink"));
+                    new Item.Properties().durability(ArmorItem.Type.CHESTPLATE.getDurability(50)), "pink"));
     public static final DeferredItem<Item> PINK_LEGGINGS = ITEMS.register("pink_leggings",
             () -> new ItemOreSpawnArmor(ModArmorMaterials.PINK, ArmorItem.Type.LEGGINGS,
-                    new Item.Properties().durability(ArmorItem.Type.LEGGINGS.getDurability(3)), "pink"));
+                    new Item.Properties().durability(ArmorItem.Type.LEGGINGS.getDurability(50)), "pink"));
     public static final DeferredItem<Item> PINK_BOOTS = ITEMS.register("pink_boots",
             () -> new ItemOreSpawnArmor(ModArmorMaterials.PINK, ArmorItem.Type.BOOTS,
-                    new Item.Properties().durability(ArmorItem.Type.BOOTS.getDurability(3)), "pink"));
+                    new Item.Properties().durability(ArmorItem.Type.BOOTS.getDurability(50)), "pink"));
 
-    // Phase 10 — Kyanite armor (the missing wiki §6.2 set).
+    // Phase 10 â€” Kyanite armor (the missing wiki Â§6.2 set).
     public static final DeferredItem<Item> KYANITE_HELMET = ITEMS.register("kyanite_helmet",
             () -> new ItemOreSpawnArmor(ModArmorMaterials.KYANITE, ArmorItem.Type.HELMET,
                     new Item.Properties().durability(ArmorItem.Type.HELMET.getDurability(4)), "kyanite"));
@@ -665,75 +687,75 @@ public class ModItems {
             () -> new ItemOreSpawnArmor(ModArmorMaterials.KYANITE, ArmorItem.Type.BOOTS,
                     new Item.Properties().durability(ArmorItem.Type.BOOTS.getDurability(4)), "kyanite"));
 
-    // Tigers Eye armor
+    // Tigers Eye armor — orig OreSpawnMain.java:1496 (durability 80)
     public static final DeferredItem<Item> TIGERSEYE_HELMET = ITEMS.register("tigerseye_helmet",
             () -> new ItemOreSpawnArmor(ModArmorMaterials.TIGERS_EYE, ArmorItem.Type.HELMET,
-                    new Item.Properties().durability(ArmorItem.Type.HELMET.getDurability(5)), "tigerseye"));
+                    new Item.Properties().durability(ArmorItem.Type.HELMET.getDurability(80)), "tigerseye"));
     public static final DeferredItem<Item> TIGERSEYE_CHESTPLATE = ITEMS.register("tigerseye_chestplate",
             () -> new ItemOreSpawnArmor(ModArmorMaterials.TIGERS_EYE, ArmorItem.Type.CHESTPLATE,
-                    new Item.Properties().durability(ArmorItem.Type.CHESTPLATE.getDurability(5)), "tigerseye"));
+                    new Item.Properties().durability(ArmorItem.Type.CHESTPLATE.getDurability(80)), "tigerseye"));
     public static final DeferredItem<Item> TIGERSEYE_LEGGINGS = ITEMS.register("tigerseye_leggings",
             () -> new ItemOreSpawnArmor(ModArmorMaterials.TIGERS_EYE, ArmorItem.Type.LEGGINGS,
-                    new Item.Properties().durability(ArmorItem.Type.LEGGINGS.getDurability(5)), "tigerseye"));
+                    new Item.Properties().durability(ArmorItem.Type.LEGGINGS.getDurability(80)), "tigerseye"));
     public static final DeferredItem<Item> TIGERSEYE_BOOTS = ITEMS.register("tigerseye_boots",
             () -> new ItemOreSpawnArmor(ModArmorMaterials.TIGERS_EYE, ArmorItem.Type.BOOTS,
-                    new Item.Properties().durability(ArmorItem.Type.BOOTS.getDurability(5)), "tigerseye"));
+                    new Item.Properties().durability(ArmorItem.Type.BOOTS.getDurability(80)), "tigerseye"));
 
-    // Peacock armor
+    // Peacock armor — orig OreSpawnMain.java:1497 (durability 40)
     public static final DeferredItem<Item> PEACOCK_HELMET = ITEMS.register("peacock_helmet",
             () -> new ItemOreSpawnArmor(ModArmorMaterials.PEACOCK, ArmorItem.Type.HELMET,
-                    new Item.Properties().durability(ArmorItem.Type.HELMET.getDurability(3)), "peacock"));
+                    new Item.Properties().durability(ArmorItem.Type.HELMET.getDurability(40)), "peacock"));
     public static final DeferredItem<Item> PEACOCK_CHESTPLATE = ITEMS.register("peacock_chestplate",
             () -> new ItemOreSpawnArmor(ModArmorMaterials.PEACOCK, ArmorItem.Type.CHESTPLATE,
-                    new Item.Properties().durability(ArmorItem.Type.CHESTPLATE.getDurability(3)), "peacock"));
+                    new Item.Properties().durability(ArmorItem.Type.CHESTPLATE.getDurability(40)), "peacock"));
     public static final DeferredItem<Item> PEACOCK_LEGGINGS = ITEMS.register("peacock_leggings",
             () -> new ItemOreSpawnArmor(ModArmorMaterials.PEACOCK, ArmorItem.Type.LEGGINGS,
-                    new Item.Properties().durability(ArmorItem.Type.LEGGINGS.getDurability(3)), "peacock"));
+                    new Item.Properties().durability(ArmorItem.Type.LEGGINGS.getDurability(40)), "peacock"));
     public static final DeferredItem<Item> PEACOCK_BOOTS = ITEMS.register("peacock_boots",
             () -> new ItemOreSpawnArmor(ModArmorMaterials.PEACOCK, ArmorItem.Type.BOOTS,
-                    new Item.Properties().durability(ArmorItem.Type.BOOTS.getDurability(3)), "peacock"));
+                    new Item.Properties().durability(ArmorItem.Type.BOOTS.getDurability(40)), "peacock"));
 
-    // Royal Guardian armor
+    // Royal Guardian armor — orig OreSpawnMain.java:1500 (durability 2000)
     public static final DeferredItem<Item> ROYAL_HELMET = ITEMS.register("royal_helmet",
             () -> new ItemOreSpawnArmor(ModArmorMaterials.ROYAL, ArmorItem.Type.HELMET,
-                    new Item.Properties().durability(ArmorItem.Type.HELMET.getDurability(125)), "royal"));
+                    new Item.Properties().durability(ArmorItem.Type.HELMET.getDurability(2000)), "royal"));
     public static final DeferredItem<Item> ROYAL_CHESTPLATE = ITEMS.register("royal_chestplate",
             () -> new ItemOreSpawnArmor(ModArmorMaterials.ROYAL, ArmorItem.Type.CHESTPLATE,
-                    new Item.Properties().durability(ArmorItem.Type.CHESTPLATE.getDurability(125)), "royal"));
+                    new Item.Properties().durability(ArmorItem.Type.CHESTPLATE.getDurability(2000)), "royal"));
     public static final DeferredItem<Item> ROYAL_LEGGINGS = ITEMS.register("royal_leggings",
             () -> new ItemOreSpawnArmor(ModArmorMaterials.ROYAL, ArmorItem.Type.LEGGINGS,
-                    new Item.Properties().durability(ArmorItem.Type.LEGGINGS.getDurability(125)), "royal"));
+                    new Item.Properties().durability(ArmorItem.Type.LEGGINGS.getDurability(2000)), "royal"));
     public static final DeferredItem<Item> ROYAL_BOOTS = ITEMS.register("royal_boots",
             () -> new ItemOreSpawnArmor(ModArmorMaterials.ROYAL, ArmorItem.Type.BOOTS,
-                    new Item.Properties().durability(ArmorItem.Type.BOOTS.getDurability(125)), "royal"));
+                    new Item.Properties().durability(ArmorItem.Type.BOOTS.getDurability(2000)), "royal"));
 
-    // Lapis armor
+    // Lapis armor — orig OreSpawnMain.java:1501 (durability 60)
     public static final DeferredItem<Item> LAPIS_HELMET = ITEMS.register("lapis_helmet",
             () -> new ItemOreSpawnArmor(ModArmorMaterials.LAPIS, ArmorItem.Type.HELMET,
-                    new Item.Properties().durability(ArmorItem.Type.HELMET.getDurability(4)), "lapis"));
+                    new Item.Properties().durability(ArmorItem.Type.HELMET.getDurability(60)), "lapis"));
     public static final DeferredItem<Item> LAPIS_CHESTPLATE = ITEMS.register("lapis_chestplate",
             () -> new ItemOreSpawnArmor(ModArmorMaterials.LAPIS, ArmorItem.Type.CHESTPLATE,
-                    new Item.Properties().durability(ArmorItem.Type.CHESTPLATE.getDurability(4)), "lapis"));
+                    new Item.Properties().durability(ArmorItem.Type.CHESTPLATE.getDurability(60)), "lapis"));
     public static final DeferredItem<Item> LAPIS_LEGGINGS = ITEMS.register("lapis_leggings",
             () -> new ItemOreSpawnArmor(ModArmorMaterials.LAPIS, ArmorItem.Type.LEGGINGS,
-                    new Item.Properties().durability(ArmorItem.Type.LEGGINGS.getDurability(4)), "lapis"));
+                    new Item.Properties().durability(ArmorItem.Type.LEGGINGS.getDurability(60)), "lapis"));
     public static final DeferredItem<Item> LAPIS_BOOTS = ITEMS.register("lapis_boots",
             () -> new ItemOreSpawnArmor(ModArmorMaterials.LAPIS, ArmorItem.Type.BOOTS,
-                    new Item.Properties().durability(ArmorItem.Type.BOOTS.getDurability(4)), "lapis"));
+                    new Item.Properties().durability(ArmorItem.Type.BOOTS.getDurability(60)), "lapis"));
 
-    // Queen armor
+    // Queen armor — orig OreSpawnMain.java:1502 (durability 1500)
     public static final DeferredItem<Item> QUEEN_HELMET = ITEMS.register("queen_helmet",
             () -> new ItemOreSpawnArmor(ModArmorMaterials.QUEEN, ArmorItem.Type.HELMET,
-                    new Item.Properties().durability(ArmorItem.Type.HELMET.getDurability(94)), "queen"));
+                    new Item.Properties().durability(ArmorItem.Type.HELMET.getDurability(1500)), "queen"));
     public static final DeferredItem<Item> QUEEN_CHESTPLATE = ITEMS.register("queen_chestplate",
             () -> new ItemOreSpawnArmor(ModArmorMaterials.QUEEN, ArmorItem.Type.CHESTPLATE,
-                    new Item.Properties().durability(ArmorItem.Type.CHESTPLATE.getDurability(94)), "queen"));
+                    new Item.Properties().durability(ArmorItem.Type.CHESTPLATE.getDurability(1500)), "queen"));
     public static final DeferredItem<Item> QUEEN_LEGGINGS = ITEMS.register("queen_leggings",
             () -> new ItemOreSpawnArmor(ModArmorMaterials.QUEEN, ArmorItem.Type.LEGGINGS,
-                    new Item.Properties().durability(ArmorItem.Type.LEGGINGS.getDurability(94)), "queen"));
+                    new Item.Properties().durability(ArmorItem.Type.LEGGINGS.getDurability(1500)), "queen"));
     public static final DeferredItem<Item> QUEEN_BOOTS = ITEMS.register("queen_boots",
             () -> new ItemOreSpawnArmor(ModArmorMaterials.QUEEN, ArmorItem.Type.BOOTS,
-                    new Item.Properties().durability(ArmorItem.Type.BOOTS.getDurability(94)), "queen"));
+                    new Item.Properties().durability(ArmorItem.Type.BOOTS.getDurability(1500)), "queen"));
 
     // Zoo cages (legacy, kept for backwards compat)
     public static final DeferredItem<Item> ZOO_CAGE_2 = ITEMS.register("zoo_cage_2",
@@ -755,7 +777,7 @@ public class ModItems {
 
     // Misc items
     public static final DeferredItem<Item> PRINCE_EGG = ITEMS.registerSimpleItem("prince_egg");
-    // Phase 12 — Princess Egg drops from the Queen Challenge Tower. Mirrors
+    // Phase 12 â€” Princess Egg drops from the Queen Challenge Tower. Mirrors
     // PRINCE_EGG so the legacy makeEnormousCastleQ chest layout has its
     // canonical reward item.
     public static final DeferredItem<Item> PRINCESS_EGG = ITEMS.registerSimpleItem("princess_egg");
@@ -988,7 +1010,7 @@ public class ModItems {
     public static final DeferredItem<SpawnEggItem> RUBY_BIRD_SPAWN_EGG = ITEMS.register("ruby_bird_spawn_egg",
             () -> new SpawnEggItem(ModEntities.RUBY_BIRD.get(), 0xDC143C, 0xFF6347, new Item.Properties()));
 
-    // Phase 14 — wiki-canon mob completion eggs.
+    // Phase 14 â€” wiki-canon mob completion eggs.
     // Apple Cow uses red+white (apple red on snow white) so it reads as
     // an "apple variant" of the standard cow at a glance in the egg row.
     public static final DeferredItem<SpawnEggItem> APPLE_COW_SPAWN_EGG = ITEMS.register("apple_cow_spawn_egg",

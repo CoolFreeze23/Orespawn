@@ -53,6 +53,18 @@ public class BlockPizza extends Block {
         return InteractionResult.sidedSuccess(level.isClientSide());
     }
 
+    /**
+     * Left-click eats a slice too — orig BlockPizza.java:91-93
+     * ({@code func_149699_a} / onBlockClicked) routes to the same
+     * eat-slice path as right-click (ITEM-011).
+     */
+    @Override
+    protected void attack(BlockState state, Level level, BlockPos pos, Player player) {
+        if (!level.isClientSide()) {
+            eatPizzaSlice(level, pos, state, player);
+        }
+    }
+
     private void eatPizzaSlice(Level level, BlockPos pos, BlockState state, Player player) {
         if (!player.canEat(false)) return;
 

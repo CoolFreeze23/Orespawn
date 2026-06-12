@@ -1,10 +1,20 @@
 {
   "type": "minecraft:crafting_shapeless",
   "ingredients": [
-    { "item": "orespawn:zoo_cage_8" },
-    { "item": "minecraft:glass" },
-    { "item": "minecraft:iron_bars" },
-    { "item": "minecraft:quartz_block" }
+    {
+      "item": "minecraft:glass"
+    },
+    {
+      "item": "minecraft:iron_block"
+    },
+    {
+      "item": "minecraft:quartz_block"
+    },
+    {
+      "item": "orespawn:zoo_cage_8"
+    }
   ],
-  "result": { "id": "orespawn:zoo_cage_10", "count": 1 }
+  "result": {
+    "id": "orespawn:zoo_cage_10"
+  }
 }

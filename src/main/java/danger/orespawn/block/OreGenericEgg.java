@@ -2,31 +2,26 @@ package danger.orespawn.block;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 
 /**
- * 1.7.10 OreGenericEgg port. The Kraken/Dragon "ancient dried spawn egg" blocks
- * use this class so a single broken block has a 50% chance to drop an extra
- * 5–11 copies of itself, which is how 1.7.10 made the rare deep-cave veins
- * yield enough eggs to actually craft the boss-summon altars.
+ * 1.7.10 OreGenericEgg port — used by the Kraken/Dragon spawn-egg blocks and
+ * the Ender-Pearl / Eye-of-Ender storage blocks (orig OreSpawnMain.java:1972-1973).
  *
- * <p>1.7.10 logic from {@code OreGenericEgg.func_149690_a}:</p>
+ * <p>orig OreGenericEgg.java:24-30 ({@code func_149690_a}) — on break there is a
+ * 50% chance to drop bonus <b>experience</b> (not extra items):</p>
  * <pre>
- *   int j1 = 5 + rand.nextInt(3) + rand.nextInt(3);  // 5..11 inclusive
- *   if (rand.nextInt(2) == 1) dropMore(j1);
+ *   int j1 = 5 + rand.nextInt(3) + rand.nextInt(3);  // 5..9 XP
+ *   if (rand.nextInt(2) == 1) dropXpOnBlockBreak(j1);
  * </pre>
  *
- * <p>1.21.1 paradigm note: vanilla loot tables can express weighted bonus rolls
- * but not "self-multiplying drop based on a 50% gate", so we override
- * {@link #playerWillDestroy} and inject the bonus drops via
- * {@link Block#popResource}. The block's own loot table still controls the
- * guaranteed single self-drop, so silk-touch and fortune behave as expected on
- * the base item.</p>
+ * <p>The previous port dropped 5..9 extra copies of the egg block instead —
+ * an infinite-duplication exploit removed by ITEM-021. {@code dropExperience}
+ * is false for Silk Touch harvests, matching the 1.7.10 silk-harvest path
+ * which skipped dropBlockAsItemWithChance.</p>
  */
 public class OreGenericEgg extends Block {
 
@@ -34,14 +29,12 @@ public class OreGenericEgg extends Block {
         super(properties);
     }
 
+    /** 50% chance to pop 5..9 XP (orig OreGenericEgg.java:26-29). */
     @Override
-    public BlockState playerWillDestroy(Level level, BlockPos pos, BlockState state, Player player) {
-        if (!level.isClientSide && !player.isCreative() && level instanceof ServerLevel sl) {
-            if (sl.random.nextInt(2) == 1) {
-                int extra = 5 + sl.random.nextInt(3) + sl.random.nextInt(3);
-                Block.popResource(sl, pos, new ItemStack(this.asItem(), extra));
-            }
+    protected void spawnAfterBreak(BlockState state, ServerLevel level, BlockPos pos, ItemStack stack, boolean dropExperience) {
+        super.spawnAfterBreak(state, level, pos, stack, dropExperience);
+        if (dropExperience && level.random.nextInt(2) == 1) {
+            popExperience(level, pos, 5 + level.random.nextInt(3) + level.random.nextInt(3));
         }
-        return super.playerWillDestroy(level, pos, state, player);
     }
 }

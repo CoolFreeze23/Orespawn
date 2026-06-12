@@ -1,6 +1,19 @@
 {
   "type": "minecraft:crafting_shaped",
-  "pattern": ["X", "X", "#"],
-  "key": { "#": { "item": "minecraft:stick" }, "X": { "item": "minecraft:iron_ingot" } },
-  "result": { "id": "orespawn:rat_sword", "count": 1 }
+  "pattern": [
+    "A",
+    "A",
+    "B"
+  ],
+  "key": {
+    "A": {
+      "item": "orespawn:crystal_rat"
+    },
+    "B": {
+      "item": "orespawn:crystal_sticks"
+    }
+  },
+  "result": {
+    "id": "orespawn:rat_sword"
+  }
 }

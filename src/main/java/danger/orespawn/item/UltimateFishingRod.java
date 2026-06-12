@@ -23,8 +23,9 @@ public class UltimateFishingRod extends FishingRodItem {
     @Override
     public void inventoryTick(ItemStack stack, Level level, Entity entity, int slotId, boolean isSelected) {
         if (!level.isClientSide && !OreSpawnEnchantHelper.hasAnyEnchantments(stack)) {
-            OreSpawnEnchantHelper.applyEnchantment(stack, level, Enchantments.LUCK_OF_THE_SEA, 3);
-            OreSpawnEnchantHelper.applyEnchantment(stack, level, Enchantments.LURE, 2);
+            // orig UltimateFishingRod.java:33 — baked Unbreaking 2 only (the port's
+            // previous Luck of the Sea 3 / Lure 2 had no original counterpart)
+            OreSpawnEnchantHelper.applyEnchantment(stack, level, Enchantments.UNBREAKING, 2);
         }
     }
 

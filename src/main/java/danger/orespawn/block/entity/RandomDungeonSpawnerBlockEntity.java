@@ -18,18 +18,29 @@ import net.minecraft.world.level.block.state.BlockState;
  *
  * <p>Strategy:
  * <ol>
- *   <li>Tick 0 → 200: emit firework-spark particles for visual feedback.</li>
- *   <li>Tick 200: remove self, then call into {@link GenericDungeon#tryPlaceGenericDungeon}
- *       (or {@code tryPlaceRubyDungeon} on a 1-in-4 roll) using the block's position
- *       as the structure origin. Both methods are worldgen-style and work fine on
- *       the live {@link ServerLevel}.</li>
+ *   <li>Tick 0 → 400: emit firework-spark particles for visual feedback
+ *       (orig DungeonSpawnerBlock.java:35-40 schedules the build 400 ticks
+ *       after placement — ITEM-020).</li>
+ *   <li>Tick 400: remove self + the block above (orig :50-51), roll
+ *       {@code nextInt(50)} against the table-driven structure pool
+ *       (orig :52-202 — 50 outcomes, FairyTree → RedAntHangout).</li>
  * </ol>
+ *
+ * <p>Pool status: only the orig type 21 (MyDungeon.makeDungeon → generic
+ * dungeon) and type 22 (RubyDungeon.makeDungeon) builders are ported so far;
+ * unported indices currently fall back to the generic dungeon. As WGEN-042
+ * ports more of the 50 structures, register them in {@link #buildForType}.</p>
  *
  * <p>Persisted across save/load via {@code Delay} NBT, so chunk unload + reload
  * during the countdown doesn't reset the timer.</p>
  */
 public class RandomDungeonSpawnerBlockEntity extends BlockEntity {
-    private static final int TOTAL_DELAY = 200; // 10 seconds at 20 TPS
+    // orig DungeonSpawnerBlock.java:39 — world.scheduleBlockUpdate(..., 400)
+    private static final int TOTAL_DELAY = 400; // 20 seconds at 20 TPS
+    // orig DungeonSpawnerBlock.java:52 — nextInt(50) outcome roll
+    private static final int STRUCTURE_POOL_SIZE = 50;
+    private static final int TYPE_GENERIC_DUNGEON = 21;
+    private static final int TYPE_RUBY_DUNGEON = 22;
 
     private int delay = TOTAL_DELAY;
 
@@ -57,20 +68,13 @@ public class RandomDungeonSpawnerBlockEntity extends BlockEntity {
     }
 
     private void detonate(ServerLevel server, BlockPos pos) {
+        // orig DungeonSpawnerBlock.java:50-51 — spawner AND the block above → air
         server.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
+        server.setBlock(pos.above(), Blocks.AIR.defaultBlockState(), 3);
 
-        // 1-in-4 chance for the ruby variant; otherwise generic mossy dungeon
-        boolean rubyVariant = server.random.nextInt(4) == 0;
-        boolean placed = rubyVariant
-                ? GenericDungeon.tryPlaceRubyDungeon(server, server.random, pos)
-                : GenericDungeon.tryPlaceGenericDungeon(server, server.random, pos);
-
-        if (!placed) {
-            // Fallback: try the other variant in case the first failed terrain checks
-            placed = rubyVariant
-                    ? GenericDungeon.tryPlaceGenericDungeon(server, server.random, pos)
-                    : GenericDungeon.tryPlaceRubyDungeon(server, server.random, pos);
-        }
+        // orig DungeonSpawnerBlock.java:52 — one roll over the 50-entry pool
+        int type = server.random.nextInt(STRUCTURE_POOL_SIZE);
+        boolean placed = buildForType(server, pos, type);
 
         if (placed) {
             server.playSound(null, pos, SoundEvents.GENERIC_EXPLODE.value(),
@@ -79,6 +83,22 @@ public class RandomDungeonSpawnerBlockEntity extends BlockEntity {
                     pos.getX() + 0.5, pos.getY() + 1.5, pos.getZ() + 0.5,
                     1, 0, 0, 0, 0);
         }
+    }
+
+    /**
+     * Table-driven outcome pool keyed by the ORIGINAL type index
+     * (orig DungeonSpawnerBlock.java:52-202). Ported entries: 21 (generic
+     * dungeon), 22 (ruby dungeon). Every still-unported index falls back to
+     * the generic dungeon until WGEN-042 lands those structures — register
+     * new builders here as they are ported.
+     */
+    private static boolean buildForType(ServerLevel server, BlockPos pos, int type) {
+        return switch (type) {
+            case TYPE_RUBY_DUNGEON -> GenericDungeon.tryPlaceRubyDungeon(server, server.random, pos);
+            case TYPE_GENERIC_DUNGEON -> GenericDungeon.tryPlaceGenericDungeon(server, server.random, pos);
+            // Interim fallback for the 48 not-yet-ported structures (Phase D / WGEN-042)
+            default -> GenericDungeon.tryPlaceGenericDungeon(server, server.random, pos);
+        };
     }
 
     @Override

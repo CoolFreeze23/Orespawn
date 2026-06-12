@@ -1,6 +1,16 @@
 {
   "type": "minecraft:crafting_shaped",
-  "pattern": ["FF", "FF", "FF"],
-  "key": { "F": { "item": "orespawn:crystal_planks" } },
-  "result": { "id": "minecraft:oak_door", "count": 3 }
+  "pattern": [
+    "AA",
+    "AA",
+    "AA"
+  ],
+  "key": {
+    "A": {
+      "item": "orespawn:crystal_planks"
+    }
+  },
+  "result": {
+    "id": "minecraft:oak_door"
+  }
 }

@@ -1,6 +1,19 @@
 {
   "type": "minecraft:crafting_shaped",
-  "pattern": ["X X", "XXX", "XXX"],
-  "key": { "X": { "item": "minecraft:experience_bottle" } },
-  "result": { "id": "orespawn:experience_chestplate", "count": 1 }
+  "pattern": [
+    "AAA",
+    "ABA",
+    "AAA"
+  ],
+  "key": {
+    "A": {
+      "item": "minecraft:experience_bottle"
+    },
+    "B": {
+      "item": "orespawn:emerald_chestplate"
+    }
+  },
+  "result": {
+    "id": "orespawn:experience_chestplate"
+  }
 }

@@ -16,7 +16,8 @@ public class ItemSunFish extends Item {
     public ItemStack finishUsingItem(ItemStack stack, Level level, LivingEntity livingEntity) {
         ItemStack result = super.finishUsingItem(stack, level, livingEntity);
         if (!level.isClientSide) {
-            livingEntity.addEffect(new MobEffectInstance(MobEffects.FIRE_RESISTANCE, 600, 0));
+            // orig ItemSunFish.java:27 — Fire Resistance 6000 ticks
+            livingEntity.addEffect(new MobEffectInstance(MobEffects.FIRE_RESISTANCE, 6000, 0));
         }
         return result;
     }

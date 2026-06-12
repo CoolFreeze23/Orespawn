@@ -1,15 +1,22 @@
 {
   "type": "minecraft:crafting_shaped",
   "pattern": [
-    "X",
-    "#",
-    "#"
+    "A",
+    "B",
+    "C"
   ],
   "key": {
-    "#": { "item": "minecraft:stick" },
-    "X": { "item": "orespawn:ingot_uranium" }
+    "A": {
+      "item": "orespawn:ingot_uranium"
+    },
+    "B": {
+      "item": "orespawn:ingot_titanium"
+    },
+    "C": {
+      "item": "minecraft:iron_ingot"
+    }
   },
-  "result": { "id": "orespawn:ultimate_shovel",
-    "count": 1
+  "result": {
+    "id": "orespawn:ultimate_shovel"
   }
 }

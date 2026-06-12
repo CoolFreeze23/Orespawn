@@ -1,10 +1,14 @@
 package danger.orespawn.block;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LeavesBlock;
@@ -14,7 +18,17 @@ import danger.orespawn.ModBlocks;
 import danger.orespawn.ModItems;
 
 public class BlockAppleLeaves extends LeavesBlock {
+    /**
+     * orig BlockAppleLeaves.java:59 — DimensionID4, named "Dimension-Islands"
+     * (orig WorldProviderOreSpawn4.java:23). Night transform and the reduced
+     * fruit chance only apply there.
+     */
+    private static final ResourceKey<Level> ISLANDS =
+            ResourceKey.create(Registries.DIMENSION, ResourceLocation.fromNamespaceAndPath("orespawn", "islands"));
+    // orig BlockAppleLeaves.java:58 — chance = 20 (overworld etc.)
     private static final int FRUIT_ATTEMPT_ROLL_BOUND = 20;
+    // orig BlockAppleLeaves.java:59-62 — chance = 100 in Dimension-Islands
+    private static final int FRUIT_ATTEMPT_ROLL_BOUND_ISLANDS = 100;
     private static final int FRUIT_ATTEMPT_SUCCESS_INDEX = 3;
     private static final long TICKS_PER_DAY = 24000L;
     private static final long NIGHT_START_TICK = 12000L;
@@ -41,16 +55,21 @@ public class BlockAppleLeaves extends LeavesBlock {
         super.randomTick(state, level, pos, random);
         if (level.isClientSide()) return;
 
+        boolean inIslands = level.dimension().equals(ISLANDS);
+
         BlockPos below = pos.below();
         BlockState belowState = level.getBlockState(below);
 
-        if (belowState.is(Blocks.AIR) && random.nextInt(FRUIT_ATTEMPT_ROLL_BOUND) == FRUIT_ATTEMPT_SUCCESS_INDEX) {
+        // orig BlockAppleLeaves.java:58-62,70-73 — fruit roll 1/20, 1/100 in Islands
+        int fruitRollBound = inIslands ? FRUIT_ATTEMPT_ROLL_BOUND_ISLANDS : FRUIT_ATTEMPT_ROLL_BOUND;
+        if (belowState.is(Blocks.AIR) && random.nextInt(fruitRollBound) == FRUIT_ATTEMPT_SUCCESS_INDEX) {
             dropAppleProducts(level, below, random);
         }
 
-        // Night-time transformation in Danger Dimension
+        // orig BlockAppleLeaves.java:74-77 — night transform to ScaryLeaves
+        // ONLY in Dimension-Islands (DimensionID4)
         long timeOfDayTicks = level.getDayTime() % TICKS_PER_DAY;
-        if (timeOfDayTicks > NIGHT_START_TICK) {
+        if (timeOfDayTicks > NIGHT_START_TICK && inIslands) {
             level.setBlock(pos, ModBlocks.SCARY_LEAVES.get().defaultBlockState(), 3);
         }
     }

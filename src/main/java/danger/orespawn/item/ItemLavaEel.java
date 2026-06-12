@@ -16,7 +16,8 @@ public class ItemLavaEel extends Item {
     public ItemStack finishUsingItem(ItemStack stack, Level level, LivingEntity livingEntity) {
         ItemStack result = super.finishUsingItem(stack, level, livingEntity);
         if (!level.isClientSide) {
-            livingEntity.addEffect(new MobEffectInstance(MobEffects.FIRE_RESISTANCE, 1200, 0));
+            // orig ItemLavaEel.java:26 — Fire Resistance 600 ticks
+            livingEntity.addEffect(new MobEffectInstance(MobEffects.FIRE_RESISTANCE, 600, 0));
         }
         return result;
     }

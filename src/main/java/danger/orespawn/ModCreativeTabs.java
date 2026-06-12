@@ -389,7 +389,6 @@ public class ModCreativeTabs {
                         output.accept(ModItems.MAGIC_APPLE.get());
                         output.accept(ModItems.MINERS_DREAM.get());
                         output.accept(ModItems.RANDOM_DUNGEON.get());
-                        output.accept(ModItems.COIN.get());
                         output.accept(ModItems.EXPERIENCE_CATCHER.get());
                         output.accept(ModItems.SUNSPOT_URCHIN.get());
                         output.accept(ModItems.SIFTER.get());

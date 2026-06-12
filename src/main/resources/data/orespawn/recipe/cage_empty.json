@@ -1,6 +1,20 @@
 {
   "type": "minecraft:crafting_shaped",
-  "pattern": ["SSS", "S S", "SSS"],
-  "key": { "S": { "item": "minecraft:stick" } },
-  "result": { "id": "orespawn:cage_empty", "count": 2 }
+  "pattern": [
+    "ABA",
+    "B B",
+    "ABA"
+  ],
+  "key": {
+    "A": {
+      "item": "minecraft:iron_ingot"
+    },
+    "B": {
+      "item": "minecraft:stick"
+    }
+  },
+  "result": {
+    "id": "orespawn:cage_empty",
+    "count": 2
+  }
 }

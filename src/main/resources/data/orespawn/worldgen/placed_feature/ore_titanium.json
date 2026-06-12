@@ -2,8 +2,9 @@
   "feature": "orespawn:ore_titanium",
   "placement": [
     {
-      "type": "minecraft:count",
-      "count": 6
+      "type": "orespawn:less_ore_count",
+      "count": 6,
+      "less_ore_divisor": 3
     },
     {
       "type": "minecraft:in_square"

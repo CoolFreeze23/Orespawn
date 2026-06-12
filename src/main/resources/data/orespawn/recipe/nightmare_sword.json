@@ -1,6 +1,28 @@
 {
   "type": "minecraft:crafting_shaped",
-  "pattern": ["X", "X", "#"],
-  "key": { "#": { "item": "minecraft:stick" }, "X": { "item": "orespawn:ingot_uranium" } },
-  "result": { "id": "orespawn:nightmare_sword", "count": 1 }
+  "pattern": [
+    "ABA",
+    "CDC",
+    "AEA"
+  ],
+  "key": {
+    "A": {
+      "item": "orespawn:nightmare_scale"
+    },
+    "B": {
+      "item": "minecraft:diamond"
+    },
+    "C": {
+      "item": "minecraft:redstone"
+    },
+    "D": {
+      "item": "orespawn:ingot_titanium"
+    },
+    "E": {
+      "item": "minecraft:iron_ingot"
+    }
+  },
+  "result": {
+    "id": "orespawn:nightmare_sword"
+  }
 }

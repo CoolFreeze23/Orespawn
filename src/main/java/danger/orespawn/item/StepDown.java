@@ -1,9 +1,7 @@
 package danger.orespawn.item;
 
+import danger.orespawn.ModBlocks;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -11,9 +9,12 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 
+/**
+ * StepDown, ported from 1.7.10 StepDown.java:26-99. Identical to StepUp but
+ * the cobble path descends one block per step; Extreme Torch every 8 steps,
+ * stops at the first non-air block.
+ */
 public class StepDown extends Item {
-    private static final int STAIRCASE_LENGTH = 33;
-    private static final int TORCH_INTERVAL = 3;
 
     public StepDown(Item.Properties properties) {
         super(properties);
@@ -22,36 +23,37 @@ public class StepDown extends Item {
     @Override
     public InteractionResult useOn(UseOnContext context) {
         Level level = context.getLevel();
-        if (level.isClientSide) return InteractionResult.SUCCESS;
-
         Player player = context.getPlayer();
         if (player == null) return InteractionResult.PASS;
 
-        BlockPos pos = context.getClickedPos();
-        Direction facing = player.getDirection();
+        // orig StepDown.java:31-33 — start one above the clicked block
+        int x = context.getClickedPos().getX();
+        int y = context.getClickedPos().getY() + 1;
+        int z = context.getClickedPos().getZ();
 
-        int forwardX = facing.getStepX();
-        int forwardZ = facing.getStepZ();
+        // orig StepDown.java:34-81 — same 8-way head-yaw octant as StepUp
+        int[] delta = StepUp.headingDeltas(player);
+        if (delta == null) return InteractionResult.FAIL;
 
-        for (int stepIndex = 0; stepIndex < STAIRCASE_LENGTH; stepIndex++) {
-            BlockPos step = pos.offset(forwardX * stepIndex, -stepIndex, forwardZ * stepIndex);
-            if (!level.getBlockState(step).isAir()) {
-                level.setBlock(step, Blocks.COBBLESTONE.defaultBlockState(), 3);
-            }
-            BlockPos above = step.above();
-            level.setBlock(above, Blocks.AIR.defaultBlockState(), 3);
-            level.setBlock(above.above(), Blocks.AIR.defaultBlockState(), 3);
-            level.setBlock(above.above(2), Blocks.AIR.defaultBlockState(), 3);
-            if (stepIndex % TORCH_INTERVAL == 0) {
-                BlockPos wallPos = step.above().relative(facing.getClockWise());
-                if (!level.getBlockState(wallPos).isAir()) {
-                    level.setBlock(step.above(), Blocks.TORCH.defaultBlockState(), 3);
-                }
+        if (level.isClientSide) return InteractionResult.SUCCESS;
+        // orig StepDown.java:82-88 — explosion fx, particles at path level
+        StepUp.playUseEffects(level, player, x, y, z, 0.0f);
+
+        // orig StepDown.java:91-95 — descend one block per step until obstructed;
+        // Extreme Torch on steps 1, 9, 17, 25 ((k-1) % 8 == 0) when air above
+        for (int k = 1; k < StepUp.LENGTH; ++k) {
+            BlockPos step = new BlockPos(x + k * delta[0], y - k - 1, z + k * delta[1]);
+            if (!level.getBlockState(step).isAir()) break;
+            level.setBlock(step, Blocks.COBBLESTONE.defaultBlockState(), 2);
+            if ((k - 1) % 8 == 0 && level.getBlockState(step.above()).isAir()) {
+                level.setBlock(step.above(), ModBlocks.EXTREME_TORCH.get().defaultBlockState(), 2);
             }
         }
 
-        level.playSound(null, player.blockPosition(), SoundEvents.STONE_PLACE, SoundSource.BLOCKS, 1.0F, 1.0F);
-        context.getItemInHand().shrink(1);
-        return InteractionResult.SUCCESS;
+        // orig StepDown.java:96-98 — consume one unless creative
+        if (!player.getAbilities().instabuild) {
+            context.getItemInHand().shrink(1);
+        }
+        return InteractionResult.CONSUME;
     }
 }

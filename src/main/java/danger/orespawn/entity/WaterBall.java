@@ -1,6 +1,8 @@
 package danger.orespawn.entity;
 
+import danger.orespawn.ModItems;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.Entity;
 import danger.orespawn.ModEntities;
@@ -48,6 +50,10 @@ public class WaterBall extends ThrowableProjectile {
         if (target instanceof Player player && player.getVehicle() != null) return;
 
         target.hurt(this.damageSources().thrown(this, this.getOwner()), damage);
+        // orig WaterBall.java:63-65 — 1/10 chance the target coughs up a water ball
+        if (!this.level().isClientSide && this.random.nextInt(10) == 1) {
+            target.spawnAtLocation(new ItemStack(ModItems.WATER_BALL.get()));
+        }
         target.clearFire();
     }
 

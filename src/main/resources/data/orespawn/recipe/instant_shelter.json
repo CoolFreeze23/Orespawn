@@ -1,9 +1,17 @@
 {
   "type": "minecraft:crafting_shapeless",
   "ingredients": [
-    { "item": "minecraft:emerald_block" },
-    { "item": "minecraft:stick" },
-    { "item": "minecraft:cobblestone" }
+    {
+      "item": "minecraft:cobblestone"
+    },
+    {
+      "item": "minecraft:redstone_block"
+    },
+    {
+      "item": "minecraft:stick"
+    }
   ],
-  "result": { "id": "orespawn:instant_shelter", "count": 1 }
+  "result": {
+    "id": "orespawn:instant_shelter"
+  }
 }

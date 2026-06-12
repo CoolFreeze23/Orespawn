@@ -4,12 +4,15 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.VoxelShape;
 
 /**
  * Temporary dirt block left by moles. Disappears on random tick and slows entities.
@@ -17,9 +20,19 @@ import net.minecraft.world.phys.Vec3;
 public class MoleDirtBlock extends Block {
     /** Horizontal movement multiplier while inside this block (sticky mud). */
     private static final double HORIZONTAL_DRAG_FACTOR = 0.3;
+    /**
+     * orig MoleDirtBlock.java:33-36 — collision box lowered by 0.125
+     * (2/16 of a block), so entities sink in like soul sand (ITEM-014).
+     */
+    private static final VoxelShape COLLISION_SHAPE = Block.box(0, 0, 0, 16, 14, 16);
 
     public MoleDirtBlock(BlockBehaviour.Properties properties) {
         super(properties);
+    }
+
+    @Override
+    protected VoxelShape getCollisionShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+        return COLLISION_SHAPE;
     }
 
     @Override

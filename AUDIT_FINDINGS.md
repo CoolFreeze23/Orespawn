@@ -3209,6 +3209,7 @@ Only MISSING / PARTIAL / DIVERGENT / UNVERIFIED items are listed; fully PORTED i
 - **Original:** `OreRuby.java:21-22`, `OreAmethyst.java` ctor — overworld ruby/amethyst ores never exploded; only crystal-dimension CrystalCoal had volatile break behavior
 - **Port:** `block/OreCrystal.java:49` — `ModBlocks` registers RUBY_ORE (`ModBlocks.java:19`), AMETHYST_ORE (`:21`), and ORE_KYANITE/ORE_PINK_TOURMALINE (`:87,94`) as `OreCrystal` → 1/3 chance to explode on break
 - **Fix:** Register overworld ruby/amethyst (and kyanite/pink tourmaline) as plain `DropExperienceBlock`/dedicated non-volatile classes; reserve the `OreCrystal` explode-on-break behavior for crystal-dimension CrystalCoal only.
+- **Resolution:** FIXED (2026-06-12, Phase C — see FIX_LOG.md and phase_c_reports/C6_items_blocks.md)
 
 ### ITEM-002 — Overworld ores: hardness/resistance values (systemic)
 - **Status:** DIVERGENT
@@ -3223,6 +3224,7 @@ Only MISSING / PARTIAL / DIVERGENT / UNVERIFIED items are listed; fully PORTED i
 | OreUranium | 10.0/1.0 (`OreUranium.java:24-26`) | 3.0/3.0 (`:23`) | 10.0/1.0 |
 | OreTitanium | 15.0/5.0 (`OreTitanium.java` ctor) | 3.0/3.0 (`:25`) | 15.0/5.0 |
 | OreSalt | 5.0/2.0 (`OreSalt.java:21-22`) | 2.0/2.0 (`:27`) | 5.0/2.0 |
+- **Resolution:** FIXED (2026-06-12, Phase C — see FIX_LOG.md and phase_c_reports/C6_items_blocks.md)
 
 ### ITEM-003 — OreUranium/OreTitanium: Y-level-gated XP drop lost
 - **Status:** DIVERGENT
@@ -3231,6 +3233,7 @@ Only MISSING / PARTIAL / DIVERGENT / UNVERIFIED items are listed; fully PORTED i
 - **Fix:** Override `getExpDrop` in `block/OreUranium.java`/`block/OreTitanium.java` to return XP only when `pos.getY() < 40` (return 0 otherwise).
 
 ## Crystal-dimension blocks
+- **Resolution:** FIXED (2026-06-12, Phase C — see FIX_LOG.md and phase_c_reports/C6_items_blocks.md)
 
 ### ITEM-004 — Crystal ores: constructor parameter shift (systemic)
 - **Status:** DIVERGENT
@@ -3243,12 +3246,14 @@ Only MISSING / PARTIAL / DIVERGENT / UNVERIFIED items are listed; fully PORTED i
 | CrystalCoal | light 9 (0.6), hard 6.0, res 20.0 (`:1865`) | strength(0.6, 6.0), light 8 (`:72`) | strength(6.0, 20.0), light 9 |
 | CrystalCrystal | light 6 (0.4), hard 12.0, res 40.0 (`:1867`) | strength(0.4, 12.0), light 12 (`:76`) | strength(12.0, 40.0), light 6 |
 | TigersEye ore | light 7 (0.5×15=7.5), hard 15.0, res 60.0 (`:1868`) | strength(0.5, 15.0), light 12 (`:78`) | strength(15.0, 60.0), light 7 or 8 |
+- **Resolution:** FIXED (2026-06-12, Phase C — see FIX_LOG.md and phase_c_reports/C6_items_blocks.md)
 
 ### ITEM-005 — RedAntTroll/TermiteTroll: spawn count nerf + Silk Touch escape
 - **Status:** DIVERGENT
 - **Original:** `OreBasicStone.java:24+` (regs `OreSpawnMain.java:1877-1878`) — breaking spawns **15-20** mobs; no Silk Touch bypass
 - **Port:** `block/OreBasicStone.java` (regs `ModBlocks.java:111,113`) — spawns **3-5**; Silk Touch bypass added
 - **Fix:** Change spawn count to `15 + random.nextInt(6)` (15-20) and remove the Silk Touch bypass (or keep it only behind a documented config flag).
+- **Resolution:** FIXED (2026-06-12, Phase C — see FIX_LOG.md and phase_c_reports/C6_items_blocks.md)
 
 ### ITEM-006 — CrystalGrass: plant-sustain behavior
 - **Status:** UNVERIFIED
@@ -3257,24 +3262,28 @@ Only MISSING / PARTIAL / DIVERGENT / UNVERIFIED items are listed; fully PORTED i
 - **Fix:** Unverified because the audit only compared strength values. Resolve by testing `canSurvive`/`mayPlaceOn` for crystal flowers, rice, and quinoa on CrystalGrass and comparing to original `canPlaceBlockOn` logic.
 
 ## Storage / decorative blocks
+- **Resolution:** FIXED (2026-06-12, Phase C — see FIX_LOG.md and phase_c_reports/C6_items_blocks.md)
 
 ### ITEM-007 — Gem storage blocks: strength + light emission (systemic)
 - **Status:** DIVERGENT
 - **Original:** `BlockRuby.java:23-25`, `BlockUranium.java`, `BlockTitanium.java`, `BlockCrystal.java` — all 4.0/4.0 with light 6 (0.4)
 - **Port:** `ModBlocks.java:31,33,35,37,42,44` — 5.0/6.0, no light
 - **Fix:** For BLOCK_RUBY, BLOCK_AMETHYST, BLOCK_URANIUM, BLOCK_TITANIUM, BLOCK_CRYSTAL_PINK, BLOCK_TIGERS_EYE: set `strength(4.0F, 4.0F).lightLevel(s -> 6)`.
+- **Resolution:** FIXED (2026-06-12, Phase C — see FIX_LOG.md and phase_c_reports/C6_items_blocks.md)
 
 ### ITEM-008 — BlockMobzillaScale: wrong contact effect
 - **Status:** DIVERGENT
 - **Original:** `BlockRuby.java` (mobzilla variant) — applies **Strength** effect on contact
 - **Port:** `block/BlockRuby.java:23+` (isMobzillaScale branch) — applies **FIRE_RESISTANCE**; also 5.0/6.0 strength
 - **Fix:** Change the isMobzillaScale effect to `MobEffects.DAMAGE_BOOST` (Strength); also align strength per ITEM-007.
+- **Resolution:** FIXED (2026-06-12, Phase C — see FIX_LOG.md and phase_c_reports/C6_items_blocks.md)
 
 ### ITEM-009 — Lavafoam: hardness 10× off, slipperiness lost
 - **Status:** DIVERGENT
 - **Original:** `Lavafoam.java:23-26` — 5.0/5.0, slipperiness **1.1**, pushes entities + speed-scaled damage
 - **Port:** `ModBlocks.java:52`, `block/Lavafoam.java:29` — 0.5/0.5, no friction set; push/damage ported
 - **Fix:** Set `strength(5.0F, 5.0F).friction(1.1F)` on the Lavafoam registration.
+- **Resolution:** FIXED (2026-06-12, Phase C — see FIX_LOG.md and phase_c_reports/C6_items_blocks.md)
 
 ### ITEM-010 — BlockEnderPearl/BlockEyeOfEnder: strength values
 - **Status:** UNVERIFIED
@@ -3283,72 +3292,84 @@ Only MISSING / PARTIAL / DIVERGENT / UNVERIFIED items are listed; fully PORTED i
 - **Fix:** Unverified because original ctor hardness/resistance were never read. Resolve by opening the original BlockEnderPearl/BlockEyeOfEnder classes and comparing to the port's 3.0/3.0.
 
 ## Functional blocks
+- **Resolution:** FIXED (2026-06-12, Phase C — see FIX_LOG.md and phase_c_reports/C6_items_blocks.md)
 
 ### ITEM-011 — BlockPizza: left-click eating missing
 - **Status:** PARTIAL
 - **Original:** `BlockPizza.java:30+` — eat slice via right- **and** left-click, 4 food/0.2 sat per slice
 - **Port:** `block/BlockPizza.java:34` — right-click only (nutrition values match)
 - **Fix:** Add a left-click handler (`attack()` override or `PlayerInteractEvent.LeftClickBlock` listener) that consumes a slice identically to the right-click path.
+- **Resolution:** FIXED (2026-06-12, Phase C — see FIX_LOG.md and phase_c_reports/C6_items_blocks.md)
 
 ### ITEM-012 — BlockDuctTape: left-click repair missing
 - **Status:** PARTIAL
 - **Original:** `BlockDuctTape.java` — repairs held item on right- and left-click
 - **Port:** `block/BlockDuctTape.java` — right-click repair only (USES property)
 - **Fix:** Add left-click repair path mirroring the right-click logic (same event approach as ITEM-011).
+- **Resolution:** FIXED (2026-06-12, Phase C — see FIX_LOG.md and phase_c_reports/C6_items_blocks.md)
 
 ### ITEM-013 — RTPBlock: teleport trigger likely dead
 - **Status:** DIVERGENT
 - **Original:** `RTPBlock.java:25` — teleports on **stepOn** (`func_149724_b`) with explosion fx
 - **Port:** `block/RTPBlock.java:33`, `ModBlocks.java:62` — uses `entityInside`, but the block is a full cube so `entityInside` may never fire
 - **Fix:** Replace `entityInside` with a `stepOn` override (`Block#stepOn`), which fires for entities standing on full cubes.
+- **Resolution:** FIXED (2026-06-12, Phase C — see FIX_LOG.md and phase_c_reports/C6_items_blocks.md)
 
 ### ITEM-014 — MoleDirtBlock: collision shape
 - **Status:** PARTIAL
 - **Original:** `MoleDirtBlock.java:39` — lowered collision box (entities sink in); despawn + slow behavior
 - **Port:** `block/MoleDirtBlock.java:22`, `ModBlocks.java:66` — despawn/slow ported, but full-cube collision
 - **Fix:** Override `getCollisionShape` to return a lowered box (e.g. `Block.box(0,0,0,16,14,16)` matching the original offset) so entities sink like soul sand.
+- **Resolution:** FIXED (2026-06-12, Phase C — see FIX_LOG.md and phase_c_reports/C6_items_blocks.md)
 
 ### ITEM-015 — CrystalFurnace (block): lit light level
 - **Status:** PARTIAL
 - **Original:** `CrystalFurnace.java:48` — active light 0.6 = level 9
 - **Port:** `ModBlocks.java:122` — LIT light 13
 - **Fix:** Change lit light level from 13 to 9 in the `lightLevel` lambda.
+- **Resolution:** FIXED (2026-06-12, Phase C — see FIX_LOG.md and phase_c_reports/C6_items_blocks.md)
 
 ### ITEM-016 — CrystalFurnace (BE): cook speed + custom fuels unusable
 - **Status:** DIVERGENT
 - **Original:** `TileEntityCrystalFurnace.java:175` — cook time 150t; custom fuel values: CrystalCoal 20000, CrystalTreeLog 800, CrystalPlanks 400
 - **Port:** `gui/CrystalFurnaceBlockEntity.java:45` — `CRYSTAL_SMELT_DURATION_TICKS=100`; fuel = vanilla `getBurnTime(SMELTING)` only, so crystal fuels have burn time 0
 - **Fix:** Set cook duration to 150; register burn times (FurnaceFuel events / item `burnTime`) for CrystalCoal=20000, CrystalTreeLog=800, CrystalPlanks=400, or check them explicitly in the BE's fuel lookup.
+- **Resolution:** FIXED (2026-06-12, Phase C — see FIX_LOG.md and phase_c_reports/C6_items_blocks.md)
 
 ### ITEM-017 — ExtremeTorch: Cephadrome spawn position
 - **Status:** PARTIAL
 - **Original:** `BlockExtremeTorch.java` — summons Cephadrome **randomly nearby** when torch is on an EyeOfEnder block
 - **Port:** `block/BlockExtremeTorch.java:41` — summons at the torch position itself
 - **Fix:** Offset the spawn position by a random nearby delta (match original random offsets) instead of spawning at the torch block.
+- **Resolution:** FIXED (2026-06-12, Phase C — see FIX_LOG.md and phase_c_reports/C6_items_blocks.md)
 
 ### ITEM-018 — CrystalTorch: placement logic absent
 - **Status:** PARTIAL
 - **Original:** `BlockCrystalTorch.java` — custom `canPlaceTorchOn` allowing placement on crystal blocks
 - **Port:** `block/BlockCrystalTorch.java:24` — standard `TorchBlock` (particles ported), no custom placement support
 - **Fix:** Override `canSurvive`/support check to also accept crystal blocks (CrystalStone, CrystalCrystal, etc.) as valid supports.
+- **Resolution:** FIXED (2026-06-12, Phase C — see FIX_LOG.md and phase_c_reports/C6_items_blocks.md)
 
 ### ITEM-019 — Kraken/Creeper Repellent: repel cadence too slow (systemic)
 - **Status:** PARTIAL
 - **Original:** `KrakenRepellent.java:82-124`, `CreeperRepellent.java` — repels Kraken+EntityAnt (resp. creepers) within 20 blocks every frequent tick, force ∝ distance
 - **Port:** `block/RepellentBlock.java:31,44-61`, `ModBlocks.java:132,135` — repel runs on **randomTick** (~every 68s average)
 - **Fix:** Convert to a BlockEntity ticker (or scheduled tick re-queue every 10-20t) applying the same predicate repel; verify radius=20 and target sets (Kraken+Ant / Creeper) match the originals.
+- **Resolution:** FIXED (2026-06-12, Phase C — see FIX_LOG.md and phase_c_reports/C6_items_blocks.md)
 
 ### ITEM-020 — DungeonSpawnerBlock: 50 structures → 2, 400t → 200t
 - **Status:** DIVERGENT
 - **Original:** `DungeonSpawnerBlock.java:46+` — after 400 ticks spawns 1 of **50** structure types (FairyTree → RedAntHangout list)
 - **Port:** `block/entity/RandomDungeonSpawnerBlockEntity.java:63-72`, `ModBlocks.java:166` — 200-tick countdown, then 1-in-4 ruby dungeon else generic dungeon (2 outcomes)
 - **Fix:** Restore the 400-tick delay and expand the outcome pool toward the original 50-entry structure list as structures are ported (see WGEN-042); at minimum make the pool table-driven so new structures register into it.
+- **Resolution:** PARTIAL (2026-06-12, Phase C — 400-tick fuse + table-driven nextInt(50) pool restored; structure builders beyond generic/ruby dungeon → WGEN-042 (Phase D); see FIX_LOG.md and phase_c_reports/C6_items_blocks.md)
 
 ### ITEM-021 — OreGenericEgg: XP bonus became item-dupe exploit
 - **Status:** DIVERGENT
 - **Original:** `OreGenericEgg.java:18-19` — 50% chance to drop **5-11 XP** on break
 - **Port:** `block/OreGenericEgg.java:38`, `ModBlocks.java:147,149` — 50% chance drops **5-11 extra copies of the egg block** (infinite egg duplication)
 - **Fix:** Replace the extra-item drop with `popExperience(level, pos, 5 + random.nextInt(7))`.
+- **Resolution:** FIXED (2026-06-12, Phase C — see FIX_LOG.md and phase_c_reports/C6_items_blocks.md)
 
 ### ITEM-022 — RockBlock: block form absent
 - **Status:** MISSING
@@ -3363,24 +3384,28 @@ Only MISSING / PARTIAL / DIVERGENT / UNVERIFIED items are listed; fully PORTED i
 - **Fix:** Accept the item-based modernization as design; if block parity is required, add a placed-cage block that renders/holds the captured mob NBT. Document the decision either way.
 
 ## Plants, crops, leaves
+- **Resolution:** PARTIAL (2026-06-12, Phase C — item-based capture flow accepted as the documented modernization; placed-cage block form → Phase D; see FIX_LOG.md and phase_c_reports/C6_items_blocks.md)
 
 ### ITEM-024 — Crop blocks: per-stage drop counts unconfirmed
 - **Status:** PARTIAL
 - **Original:** `BlockStrawberry`/`BlockRice`/`BlockRadish`/`BlockQuinoa`/`BlockTomato`/`BlockLettuce` — 4-stage `BlockCrops` with in-class drop logic
 - **Port:** `CropBlock` subclasses + `loot_table/blocks/*.json` — growth ported; per-stage drop counts UNVERIFIED against JSON
 - **Fix:** Diff each original class's `quantityDropped`/stage logic against the six loot JSONs; set count ranges and age conditions in the JSONs to match.
+- **Resolution:** FIXED (2026-06-12, Phase C — see FIX_LOG.md and phase_c_reports/C6_items_blocks.md)
 
 ### ITEM-025 — BlockCorn: stalk height cap lost
 - **Status:** DIVERGENT
 - **Original:** `BlockCorn.java:49+` — multi-block stalk, height capped at 4-7, lower-stalk progression
 - **Port:** `block/BlockCorn.java:64` — grows upward without any height cap (infinite stacking)
 - **Fix:** Add a height check in the growth path: count stalk blocks below and stop growth at a per-plant cap of `4 + random(4)` (4-7).
+- **Resolution:** FIXED (2026-06-12, Phase C — see FIX_LOG.md and phase_c_reports/C6_items_blocks.md)
 
 ### ITEM-026 — BlockAppleLeaves: night transform dimension lock lost
 - **Status:** DIVERGENT
 - **Original:** `BlockAppleLeaves.java:59` — night transform to ScaryLeaves **only in DimensionID4** (Islands)
 - **Port:** `block/BlockAppleLeaves.java:53` — transforms at night in **any** dimension
 - **Fix:** Gate the transform on `level.dimension() == ModDimensions.ISLANDS` before swapping to ScaryLeaves.
+- **Resolution:** FIXED (2026-06-12, Phase C — see FIX_LOG.md and phase_c_reports/C6_items_blocks.md)
 
 ### ITEM-027 — BlockDuplicatorLog: behavior re-interpreted
 - **Status:** PARTIAL
@@ -3389,6 +3414,7 @@ Only MISSING / PARTIAL / DIVERGENT / UNVERIFIED items are listed; fully PORTED i
 - **Fix:** Port the original `Trees.DuplicatorTree` generator (see WGEN-044) and have the log's random tick invoke it, keeping the config gate.
 
 ## Food effects
+- **Resolution:** FIXED (2026-06-12, Phase C — see FIX_LOG.md and phase_c_reports/C6_items_blocks.md)
 
 ### ITEM-028 — Fish foods: effect durations all wrong (systemic)
 - **Status:** DIVERGENT
@@ -3403,6 +3429,7 @@ Only MISSING / PARTIAL / DIVERGENT / UNVERIFIED items are listed; fully PORTED i
 | Lava Eel | Fire Res 600t (`ItemLavaEel.java:26`) | 1200t (`item/ItemLavaEel.java:19`) | Fire Res 600t |
 | Spark Fish | Fire Res 100t (`ItemSparkFish.java:26`) | 600t (`item/ItemSparkFish.java`) | Fire Res 100t |
 | Generic fish | 25% Hunger 20t (`ItemGenericFish.java:24-25`) | 25% Hunger 200t (`item/ItemGenericFish.java:18-19`) | Hunger 20t (keep 25%) |
+- **Resolution:** FIXED (2026-06-12, Phase C — see FIX_LOG.md and phase_c_reports/C6_items_blocks.md)
 
 ### ITEM-029 — Special foods: potion effects entirely missing (systemic)
 - **Status:** MISSING
@@ -3424,72 +3451,84 @@ Only MISSING / PARTIAL / DIVERGENT / UNVERIFIED items are listed; fully PORTED i
 - **Original:** `UltimateSword.java:44-59` — baked Unbreaking **3**, Fire Aspect **2** (Sharp/Smite/Bane=magic 5, KB 3, Looting 3 all correct)
 - **Port:** `item/UltimateSword.java:32-39` — Unbreaking **2**, Fire Aspect **3**
 - **Fix:** Swap the two values: Unbreaking 3, Fire Aspect 2.
+- **Resolution:** FIXED (2026-06-12, Phase C — see FIX_LOG.md and phase_c_reports/C6_items_blocks.md)
 
 ### ITEM-031 — Big Bertha: Fire Aspect replaced by Sweeping Edge; reach added
 - **Status:** PARTIAL
 - **Original:** `Bertha.java:35-43` — baked KB5 / Bane1 / **Fire Aspect 1**; dur 9000 (`:31`); no reach bonus
 - **Port:** `ModItems.java:272-275`, `item/Bertha.java:49` — KB5 / Bane1 / **Sweeping Edge 1**; +2.0 reach and kill-counter tooltip added
 - **Fix:** Replace Sweeping Edge 1 with Fire Aspect 1 in the baked enchant list; decide (and document) whether the added reach/tooltip stay as deliberate enhancements.
+- **Resolution:** FIXED (2026-06-12, Phase C — see FIX_LOG.md and phase_c_reports/C6_items_blocks.md)
 
 ### ITEM-032 — Slice: baked enchants missing
 - **Status:** DIVERGENT
 - **Original:** `Bertha.java` clone — dur 9000, same baked enchants as Bertha (KB5/Bane1/FireAspect1)
 - **Port:** `ModItems.java:276-278`, `item/Slice.java` — no baked enchants passed
 - **Fix:** Pass the Bertha enchant set (KB5, Bane1, FireAspect1) to the Slice registration.
+- **Resolution:** FIXED (2026-06-12, Phase C — see FIX_LOG.md and phase_c_reports/C6_items_blocks.md)
 
 ### ITEM-033 — Royal Guardian Sword: wrong enchant identity + durability
 - **Status:** DIVERGENT
 - **Original:** `Bertha.java:36-37` (field_77347_r = unbreaking) — baked **Unbreaking 5**; dur **9000** override; dmg 750, hitType 2
 - **Port:** `ModItems.java:279-282` — baked **Sharpness 5**; dur 10000 (tier)
 - **Fix:** Change baked enchant from Sharpness 5 to Unbreaking 5; override durability to 9000 (or adjust the ROYAL tier use only for this item).
+- **Resolution:** FIXED (2026-06-12, Phase C — see FIX_LOG.md and phase_c_reports/C6_items_blocks.md)
 
 ### ITEM-034 — Attitude Adjuster: durability 9000 → 2000
 - **Status:** PARTIAL
 - **Original:** `Bertha.java:31` durability override path — dur **9000** (dmg 86, no enchants, hitType 3 all correct)
 - **Port:** `ModItems.java` HAMMY tier — dur 2000
 - **Fix:** Override item durability to 9000 (original used the Bertha 9000 override despite tier 2000).
+- **Resolution:** FIXED (2026-06-12, Phase C — see FIX_LOG.md and phase_c_reports/C6_items_blocks.md)
 
 ### ITEM-035 — Queen Battle Axe: wrong class lineage (enchants, shockwave, durability)
 - **Status:** DIVERGENT
 - **Original:** `UltimateSword` class — baked Looting 3 + Unbreaking 3; dur 3000; no shockwave; dmg 666
 - **Port:** `ModItems.java:287-290` — built on Bertha class: Sharpness 5 + swing shockwave; dur 2200 (tier)
 - **Fix:** Rebase on the UltimateSword-style item: baked Looting3 + Unbreaking3, durability 3000, remove shockwave.
+- **Resolution:** FIXED (2026-06-12, Phase C — see FIX_LOG.md and phase_c_reports/C6_items_blocks.md)
 
 ### ITEM-036 — Battle Axe: wrong enchants, added shockwave, durability
 - **Status:** DIVERGENT
 - **Original:** `UltimateSword.java:56-58` — baked Looting 3 + Unbreaking 3; dur 3000; dmg 50
 - **Port:** `ModItems.java:283-286` — KB5/Bane1/Sweeping1 via Bertha class + shockwave; dur 1500
 - **Fix:** Same as ITEM-035: Looting3 + Unbreaking3, durability 3000, no shockwave.
+- **Resolution:** FIXED (2026-06-12, Phase C — see FIX_LOG.md and phase_c_reports/C6_items_blocks.md)
 
 ### ITEM-037 — Chainsaw: signature mechanics missing, wrong enchants
 - **Status:** DIVERGENT
 - **Original:** `UltimateSword.java:63-394` — **no** baked enchants; left-click AoE (5-block radius, dmg 56), crushes wood/leaves in 11×16×11 on block break, saw sound + particles
 - **Port:** `ModItems.java:291-294` — KB5/Bane1/Sweeping1 + Bertha shockwave; no AoE, no tree-crushing, no sound
 - **Fix:** Remove baked enchants and shockwave; implement left-click AoE damage (r=5, dmg 56), 11×16×11 wood/leaf crush on block break, and the saw sound/particle loop.
+- **Resolution:** FIXED (2026-06-12, Phase C — see FIX_LOG.md and phase_c_reports/C6_items_blocks.md)
 
 ### ITEM-038 — Nightmare Sword: durability + enchant identity
 - **Status:** DIVERGENT
 - **Original:** `NightmareSword.java:26,30-34` — dur **1200** override; baked Sharp1 / KB3 / **Fire Aspect 1**
 - **Port:** `item/NightmareSword.java:22-24` — dur 1800 (tier); Sharp1 / KB3 / **Sweeping 1**
 - **Fix:** Override durability to 1200; replace Sweeping 1 with Fire Aspect 1.
+- **Resolution:** FIXED (2026-06-12, Phase C — see FIX_LOG.md and phase_c_reports/C6_items_blocks.md)
 
 ### ITEM-039 — Poison Sword: Weakness replaced by Hunger
 - **Status:** DIVERGENT
 - **Original:** `PoisonSword.java:50-59` — on-hit Poison + Wither + **Weakness**, 10-19s each
 - **Port:** `item/PoisonSword.java:30-37` — Poison + Wither + **Hunger**
 - **Fix:** Replace `MobEffects.HUNGER` with `MobEffects.WEAKNESS` in the on-hit effect list.
+- **Resolution:** FIXED (2026-06-12, Phase C — see FIX_LOG.md and phase_c_reports/C6_items_blocks.md)
 
 ### ITEM-040 — Experience Sword: enchant identity, durability, armor-XP tick
 - **Status:** DIVERGENT
 - **Original:** `ExperienceSword.java:30-139` — dur **1400**; baked Sharp2 + **Unbreaking 3**; +10 XP/hit; bonus dmg = playerLevel/2; inventory tick grants XP while wearing Experience armor (`:63-103`)
 - **Port:** `item/ExperienceSword.java:27-28,33-61` — dur 1300 (tier); Sharp2 + **Looting 3**; XP/bonus dmg ported; armor-XP tick MISSING
 - **Fix:** Durability 1400; swap Looting3 → Unbreaking3; implement `inventoryTick` granting XP when the holder wears Experience armor pieces (per original rates, see also ITEM-057).
+- **Resolution:** FIXED (2026-06-12, Phase C — see FIX_LOG.md and phase_c_reports/C6_items_blocks.md)
 
 ### ITEM-041 — Big Hammer: durability 9000 → 2000
 - **Status:** PARTIAL
 - **Original:** `BigHammer.java:25` — dur **9000** (launch-up behavior ported correctly)
 - **Port:** `item/BigHammer.java:16-22` — dur 2000 (tier)
 - **Fix:** Override durability to 9000.
+- **Resolution:** FIXED (2026-06-12, Phase C — see FIX_LOG.md and phase_c_reports/C6_items_blocks.md)
 
 ### ITEM-042 — Mantis Claw: durability 1000 → 2000
 - **Status:** PARTIAL
@@ -3498,66 +3537,77 @@ Only MISSING / PARTIAL / DIVERGENT / UNVERIFIED items are listed; fully PORTED i
 - **Fix:** Override durability to 1000.
 
 ## Ranged / gadgets
+- **Resolution:** FIXED (2026-06-12, Phase C — see FIX_LOG.md and phase_c_reports/C6_items_blocks.md)
 
 ### ITEM-043 — Ultimate Bow: Power level + fire model
 - **Status:** DIVERGENT
 - **Original:** `UltimateBow.java:29-34,46-64` — baked **Power 5** (fixed), Flame 3, Punch 2, Infinity 1; fires **instantly** at velocity 3.0, 1/4 crit chance
 - **Port:** `item/UltimateBow.java:28-32,37-58` — Power = `UltimateBowDamage` config (**10**); requires charge-up, crit at full pull or 1/4
 - **Fix:** Bake Power 5 (config-independent) or default `UltimateBowDamage` to 5; restore instant-fire at velocity 3.0 with 1/4 crit (no charge), or document the charge model as a deliberate change.
+- **Resolution:** FIXED (2026-06-12, Phase C — see FIX_LOG.md and phase_c_reports/C6_items_blocks.md)
 
 ### ITEM-044 — Skate Bow: behavior not compared
 - **Status:** UNVERIFIED
 - **Original:** `SkateBow.java` — recipe + custom arrows
 - **Port:** `item/SkateBow.java` — dur 300
 - **Fix:** Unverified because the audit never diffed firing behavior/arrow type/durability. Resolve by comparing `SkateBow.java` (orig) projectile, velocity, and durability against the port class. Recipe is separately MISSING (ITEM-060).
+- **Resolution:** FIXED (2026-06-12, Phase C — see FIX_LOG.md and phase_c_reports/C6_items_blocks.md)
 
 ### ITEM-045 — Ultimate Fishing Rod: hook behavior not compared
 - **Status:** UNVERIFIED
 - **Original:** dur 3000 fishing rod with possible custom hook logic
 - **Port:** `ModItems.java:319` — dur 3000
 - **Fix:** Unverified because only durability was checked. Resolve by diffing the original rod class's hook/loot behavior against the port item.
+- **Resolution:** FIXED (2026-06-12, Phase C — see FIX_LOG.md and phase_c_reports/C6_items_blocks.md)
 
 ### ITEM-046 — Magic Apple: structure geometry condensed
 - **Status:** PARTIAL
 - **Original:** `ItemMagicApple` usage — tree gen 80/19/1 rolls, King (diamond cap) / Queen (amethyst cap) spawns
 - **Port:** `item/ItemMagicApple.java:69-141` — same rolls + boss triggers, condensed tree geometry
 - **Fix:** If 1:1 parity is required, port the original tree-build geometry; otherwise document the condensed geometry as accepted (rolls/triggers already match).
+- **Resolution:** FIXED (2026-06-12, Phase C — 80/19/1 rolls + King/Queen triggers verified to original; condensed tree geometry documented per audit option B; see FIX_LOG.md and phase_c_reports/C6_items_blocks.md)
 
 ### ITEM-047 — Instant Garden: layout and crop set replaced
 - **Status:** DIVERGENT
 - **Original:** `InstantGarden.java:26-147` — 18×15 plot with radish/lettuce/carrot/water/potato/wheat/tomato/corn/strawberry/reeds/melon rows, 10-high clearing
 - **Port:** `item/InstantGarden.java:20-62` — 11×11 farmland with wheat/carrot/potato + fence
 - **Fix:** Rebuild to the original 18×15 row layout (including mod crops radish/lettuce/tomato/corn/strawberry, water channels, reeds, melon) with 10-high clear.
+- **Resolution:** FIXED (2026-06-12, Phase C — see FIX_LOG.md and phase_c_reports/C6_items_blocks.md)
 
 ### ITEM-048 — Instant Shelter: size, materials, loot replaced
 - **Status:** DIVERGENT
 - **Original:** `InstantShelter.java:28-150` — 7×7×~5 cobble-floor/plank shelter, direction-aware, door, chest with original contents
 - **Port:** `item/InstantShelter.java:24-75` — 5×5×5 all-oak box; crafting table/furnace/chest (bread, torch, coal, wood pick, wood sword)
 - **Fix:** Rebuild to the original 7×7 directional cobble/plank design with door and the original chest loot list.
+- **Resolution:** FIXED (2026-06-12, Phase C — see FIX_LOG.md and phase_c_reports/C6_items_blocks.md)
 
 ### ITEM-049 — StepUp/StepDown/StepAcross: pathing semantics changed
 - **Status:** DIVERGENT
 - **Original:** `StepUp.java:26-99` (and Down/Across) — 8-way including diagonals; cobble path stops at obstruction (max 33); **ExtremeTorch** every 8 blocks; explosion fx
 - **Port:** `item/StepUp.java:22-60` — 4-way cardinal only; always 33 long; vanilla torch every 3; stone sound; consumes item even in creative
 - **Fix:** Add diagonal directions (8-way), stop at first obstruction, place ExtremeTorch every 8 blocks, restore explosion fx, and skip consumption in creative.
+- **Resolution:** FIXED (2026-06-12, Phase C — see FIX_LOG.md and phase_c_reports/C6_items_blocks.md)
 
 ### ITEM-050 — ZooKeeper: persistence became AI-freeze
 - **Status:** DIVERGENT
 - **Original:** `ItemZooKeeper.java:44` — makes mob **persistent** (`func_110163_bv`, no despawn); dur 1, damage 2/use
 - **Port:** `item/ItemZooKeeper.java:22` — sets **NoAi(true)**, freezing the mob; dur 256
 - **Fix:** Replace `setNoAi(true)` with `setPersistenceRequired()`; restore original durability semantics (tiny durability, 2 damage per use).
+- **Resolution:** FIXED (2026-06-12, Phase C — see FIX_LOG.md and phase_c_reports/C6_items_blocks.md)
 
 ### ITEM-051 — Sifter: loot tables gutted
 - **Status:** DIVERGENT
 - **Original:** `ItemSifter.java:35-471` — dur 600; sifts **water** (160-entry table: 6 mod fish, 4 shoes, ruby/amethyst/diamond...) plus sand/gravel/dirt/grass 60-entry tables incl. salt/scales/mod flowers
 - **Port:** `item/ItemSifter.java:24-69` — dur 256; dirt/sand/gravel/soul-sand only; vanilla-only 100-roll table; no water sifting
 - **Fix:** Restore dur 600; re-implement the original per-substrate weighted tables (water 160-table + four 60-tables) as data-driven loot tables including mod items.
+- **Resolution:** FIXED (2026-06-12, Phase C — see FIX_LOG.md and phase_c_reports/C6_items_blocks.md)
 
 ### ITEM-052 — Wrench: ownership rules + kit damage lost
 - **Status:** PARTIAL
 - **Original:** `ItemWrench.java:29-80` — dur 100; SpiderRobot disassembles freely; AntRobot requires owner or HP<50%; resulting kit keeps damage
 - **Port:** `item/ItemWrench.java:23-46` — dur 256; disassembles either robot unconditionally; kit damage not carried
 - **Fix:** Restore dur 100; add the AntRobot owner-or-HP<50% guard; copy remaining HP into the dropped kit's damage value.
+- **Resolution:** FIXED (2026-06-12, Phase C — see FIX_LOG.md and phase_c_reports/C6_items_blocks.md)
 
 ### ITEM-053 — Projectile/misc items: damage values not compared
 - **Status:** UNVERIFIED
@@ -3566,6 +3616,7 @@ Only MISSING / PARTIAL / DIVERGENT / UNVERIFIED items are listed; fully PORTED i
 - **Fix:** Unverified because per-projectile damage/velocity values were never diffed. Resolve by comparing each projectile entity/item class's damage constants between codebases.
 
 ## Armor materials
+- **Resolution:** PARTIAL (2026-06-12, Phase C — projectile damage/velocity verified number-by-number and fixed (cooldown + Coin inventions removed, DeadIrukandji throw + urchin fire + WaterBall drop restored); Shoes & GameController throwables → Phase D; see FIX_LOG.md and phase_c_reports/C6_items_blocks.md)
 
 ### ITEM-054 — All 14 armor sets: durability ~1/15th and enchantability wrong (systemic)
 - **Status:** DIVERGENT
@@ -3589,12 +3640,14 @@ Only MISSING / PARTIAL / DIVERGENT / UNVERIFIED items are listed; fully PORTED i
 | Peacock | 40 | 30 |
 | Ruby | 90 | 40 |
 | Lapis | 60 | 60 |
+- **Resolution:** FIXED (2026-06-12, Phase C — see FIX_LOG.md and phase_c_reports/C6_items_blocks.md)
 
 ### ITEM-055 — ArmorStats record: positionally mislabeled fields
 - **Status:** DIVERGENT
 - **Original:** `ArmorStats.java:13-20` (orig) — enchant parameter order: resp, aqua, prot, fire, blast, proj, unb, fall
 - **Port:** `ArmorStats.java:10-17` — field names (fireProtection/blastProtection/.../thorns) hold values from the wrong positions; values were copied in original order, and only the hardcoded `ENCHANT_TABLE` is used at runtime, so this is currently latent
 - **Fix:** Rename the record components to the original order (respiration, aquaAffinity, protection, fireProtection, blastProtection, projectileProtection, unbreaking, featherFalling) so any future consumer reads correct values.
+- **Resolution:** FIXED (2026-06-12, Phase C — see FIX_LOG.md and phase_c_reports/C6_items_blocks.md)
 
 ### ITEM-056 — Baked armor enchants: 4 sets diverge (systemic)
 - **Status:** DIVERGENT
@@ -3608,6 +3661,7 @@ Only MISSING / PARTIAL / DIVERGENT / UNVERIFIED items are listed; fully PORTED i
 | Mobzilla (`:1498`) | Resp0, Aqua0, Prot10, Fire10, Blast10, Proj10, Unb5, Fall10 | adds Resp1/Aqua2 → remove |
 | Moth Scale (`:1492`) | Prot3, Fire3, Blast3, Fall5, all else 0 | adds Unbreaking 3 → remove |
 | Lava Eel (`:1493`) | Resp1, Aqua2, Prot3, Fire2, Blast10, Proj0, Unb0, Fall2 | Prot 2→3, add Fire Prot 2, remove Unbreaking 3 |
+- **Resolution:** FIXED (2026-06-12, Phase C — see FIX_LOG.md and phase_c_reports/C6_items_blocks.md)
 
 ### ITEM-057 — Experience armor: XP-generation set effect missing
 - **Status:** MISSING
@@ -3622,12 +3676,14 @@ Only MISSING / PARTIAL / DIVERGENT / UNVERIFIED items are listed; fully PORTED i
 - **Fix:** Exempt the Peacock-boots glide path from the `ROYAL_GLIDE_ENABLE` check (or document the unified gate as intentional).
 
 ## Recipes
+- **Resolution:** FIXED (2026-06-12, Phase C — see FIX_LOG.md and phase_c_reports/C6_items_blocks.md)
 
 ### ITEM-059 — Uranium/Titanium smelting: 9× output inflation
 - **Status:** DIVERGENT
 - **Original:** `OreSpawnMain.java:3092,3094` — ore smelts to a **nugget**, XP 0.3
 - **Port:** `recipe/uranium_ingot_smelting.json:3-5` (+ titanium analog) — ore smelts to a full **ingot**, XP 0.7
 - **Fix:** Change both smelting JSONs' result to the nugget item and `"experience": 0.3` (ingot = 9 nuggets via crafting, as original).
+- **Resolution:** FIXED (2026-06-12, Phase C — see FIX_LOG.md and phase_c_reports/C6_items_blocks.md)
 
 ### ITEM-060 — Skate Bow recipe absent
 - **Status:** MISSING
@@ -3648,6 +3704,7 @@ Only MISSING / PARTIAL / DIVERGENT / UNVERIFIED items are listed; fully PORTED i
 - **Fix:** Unverified because a full 381↔236 correspondence diff was never run. Resolve by scripting an extraction of all original `addRecipe`/`addShapelessRecipe`/`addSmelting` calls and matching each against a port JSON (mirrored left/center/right variants count as one).
 
 ## Dispenser behaviors
+- **Resolution:** PARTIAL (2026-06-12, Phase C — all 381 original registrations diffed by script (phase_c_reports/C6_recipe_diff.md): 201 logical recipes verified/fixed, 16 invented recipe JSONs removed; absent recipe families (spawn-block→egg conversions etc.) → Phase D; see FIX_LOG.md and phase_c_reports/C6_items_blocks.md)
 
 ### ITEM-063 — All 8 dispenser behaviors unimplemented (systemic)
 - **Status:** MISSING
@@ -3662,6 +3719,7 @@ Only MISSING / PARTIAL / DIVERGENT / UNVERIFIED items are listed; fully PORTED i
 - **Original:** `LessOre` config gates ore-generation multiplier (notably Mining dim 3× passes)
 - **Port:** `OreSpawnConfig.java:139-141` — `LESS_ORE` exists with explicit TODO, affects nothing
 - **Fix:** Wire `LESS_ORE` into the datapack/feature pipeline (e.g. select between normal and reduced placed-feature sets, and gate the Mining-dim density per WGEN-011).
+- **Resolution:** PARTIAL (2026-06-12, Phase C — lessOre wired via the orespawn:less_ore_count placement modifier for overworld ore/troll-block veins; Mining-dim density gating → WGEN-011 (Phase D); see FIX_LOG.md and phase_c_reports/C6_items_blocks.md)
 
 ### ITEM-065 — Per-tier weapon/armor/ore stat overrides missing
 - **Status:** MISSING

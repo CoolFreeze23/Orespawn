@@ -1,6 +1,19 @@
 {
   "type": "minecraft:crafting_shaped",
-  "pattern": ["X", "X", "#"],
-  "key": { "#": { "item": "minecraft:stick" }, "X": { "item": "minecraft:experience_bottle" } },
-  "result": { "id": "orespawn:experience_sword", "count": 1 }
+  "pattern": [
+    "AAA",
+    "ABA",
+    "AAA"
+  ],
+  "key": {
+    "A": {
+      "item": "minecraft:experience_bottle"
+    },
+    "B": {
+      "item": "orespawn:emerald_sword"
+    }
+  },
+  "result": {
+    "id": "orespawn:experience_sword"
+  }
 }
