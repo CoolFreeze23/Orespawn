@@ -16,24 +16,172 @@
   },
   "spawners": {
     "monster": [
-      { "type": "orespawn:rat", "weight": 30, "minCount": 4, "maxCount": 8 },
-      { "type": "orespawn:cave_fisher", "weight": 10, "minCount": 1, "maxCount": 3 },
-      { "type": "orespawn:molenoid", "weight": 5, "minCount": 1, "maxCount": 2 },
-      { "type": "orespawn:worm_small", "weight": 8, "minCount": 2, "maxCount": 4 },
-      { "type": "orespawn:worm_medium", "weight": 4, "minCount": 1, "maxCount": 2 },
-      { "type": "orespawn:worm_large", "weight": 2, "minCount": 1, "maxCount": 1 },
-      { "type": "orespawn:creeping_horror", "weight": 5, "minCount": 1, "maxCount": 3 },
-      { "type": "orespawn:scorpion", "weight": 3, "minCount": 1, "maxCount": 2 }
+      {
+        "type": "minecraft:spider",
+        "weight": 100,
+        "minCount": 4,
+        "maxCount": 4
+      },
+      {
+        "type": "minecraft:zombie",
+        "weight": 100,
+        "minCount": 4,
+        "maxCount": 4
+      },
+      {
+        "type": "minecraft:skeleton",
+        "weight": 100,
+        "minCount": 4,
+        "maxCount": 4
+      },
+      {
+        "type": "minecraft:creeper",
+        "weight": 100,
+        "minCount": 4,
+        "maxCount": 4
+      },
+      {
+        "type": "minecraft:slime",
+        "weight": 100,
+        "minCount": 4,
+        "maxCount": 4
+      },
+      {
+        "type": "minecraft:enderman",
+        "weight": 10,
+        "minCount": 1,
+        "maxCount": 4
+      },
+      {
+        "type": "minecraft:witch",
+        "weight": 5,
+        "minCount": 1,
+        "maxCount": 1
+      },
+      {
+        "type": "orespawn:alosaurus",
+        "weight": 8,
+        "minCount": 1,
+        "maxCount": 2
+      },
+      {
+        "type": "orespawn:trex",
+        "weight": 6,
+        "minCount": 1,
+        "maxCount": 2
+      },
+      {
+        "type": "orespawn:nastysaurus",
+        "weight": 6,
+        "minCount": 1,
+        "maxCount": 2
+      },
+      {
+        "type": "orespawn:pointysaurus",
+        "weight": 10,
+        "minCount": 4,
+        "maxCount": 8
+      },
+      {
+        "type": "orespawn:gamma_metroid",
+        "weight": 35,
+        "minCount": 4,
+        "maxCount": 7
+      },
+      {
+        "type": "orespawn:alien",
+        "weight": 35,
+        "minCount": 2,
+        "maxCount": 3
+      },
+      {
+        "type": "orespawn:cave_fisher",
+        "weight": 35,
+        "minCount": 4,
+        "maxCount": 8
+      },
+      {
+        "type": "orespawn:cryolophosaurus",
+        "weight": 26,
+        "minCount": 4,
+        "maxCount": 7
+      },
+      {
+        "type": "orespawn:spyro",
+        "weight": 5,
+        "minCount": 1,
+        "maxCount": 2
+      }
     ],
     "creature": [
-      { "type": "orespawn:leonopteryx", "weight": 1, "minCount": 1, "maxCount": 1 }
+      {
+        "type": "minecraft:sheep",
+        "weight": 12,
+        "minCount": 4,
+        "maxCount": 4
+      },
+      {
+        "type": "minecraft:pig",
+        "weight": 10,
+        "minCount": 4,
+        "maxCount": 4
+      },
+      {
+        "type": "minecraft:chicken",
+        "weight": 10,
+        "minCount": 4,
+        "maxCount": 4
+      },
+      {
+        "type": "minecraft:cow",
+        "weight": 8,
+        "minCount": 4,
+        "maxCount": 4
+      }
     ],
     "ambient": [
-      { "type": "orespawn:firefly", "weight": 5, "minCount": 1, "maxCount": 3 }
+      {
+        "type": "minecraft:bat",
+        "weight": 10,
+        "minCount": 8,
+        "maxCount": 8
+      },
+      {
+        "type": "orespawn:velocity_raptor",
+        "weight": 1,
+        "minCount": 2,
+        "maxCount": 4
+      },
+      {
+        "type": "orespawn:dragonfly",
+        "weight": 2,
+        "minCount": 1,
+        "maxCount": 3
+      },
+      {
+        "type": "orespawn:camarasaurus",
+        "weight": 1,
+        "minCount": 2,
+        "maxCount": 4
+      },
+      {
+        "type": "orespawn:baryonyx",
+        "weight": 2,
+        "minCount": 4,
+        "maxCount": 8
+      }
     ],
-    "underground_water_creature": [],
-    "water_creature": [],
+    "water_creature": [
+      {
+        "type": "minecraft:squid",
+        "weight": 10,
+        "minCount": 4,
+        "maxCount": 4
+      }
+    ],
     "water_ambient": [],
+    "underground_water_creature": [],
+    "axolotls": [],
     "misc": []
   },
   "spawn_costs": {},
@@ -46,9 +194,14 @@
   },
   "features": [
     [],
+    [
+      "orespawn:lake_water_dim",
+      "orespawn:lake_lava_dim"
+    ],
     [],
-    [],
-    [],
+    [
+      "orespawn:monster_room_dim"
+    ],
     [],
     [],
     [
@@ -76,18 +229,27 @@
       "minecraft:ore_lapis_buried",
       "minecraft:ore_copper",
       "minecraft:ore_copper_large",
-      "orespawn:ore_ruby",
-      "orespawn:ore_amethyst",
-      "orespawn:ore_uranium",
-      "orespawn:ore_titanium",
-      "orespawn:ore_salt"
+      "orespawn:ore_ruby_mining",
+      "orespawn:ore_amethyst_mining",
+      "orespawn:ore_uranium_mining",
+      "orespawn:ore_titanium_mining",
+      "orespawn:ore_salt_mining",
+      "orespawn:red_ant_troll_mining",
+      "orespawn:termite_troll_mining",
+      "orespawn:kraken_spawn_block_mining",
+      "orespawn:dragon_spawn_block_mining",
+      "orespawn:ore_lapis_mining_large",
+      "orespawn:ore_lapis_mining_small"
     ],
     [],
     [
       "minecraft:spring_water",
       "minecraft:spring_lava"
     ],
-    [],
+    [
+      "orespawn:anthill_mining",
+      "orespawn:veggie_patch"
+    ],
     []
   ]
 }

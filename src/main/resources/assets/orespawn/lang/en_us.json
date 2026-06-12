@@ -4,10 +4,8 @@
   "itemGroup.orespawn.equipment": "OreSpawn Equipment",
   "itemGroup.orespawn.items": "OreSpawn Items",
   "itemGroup.orespawn.spawn_eggs": "OreSpawn Spawn Eggs",
-
   "tooltip.orespawn.bertha_kills": "Kills: %s",
   "tooltip.orespawn.ultimate_sword_kills": "Souls Reaped: %s",
-
   "block.orespawn.ore_ruby": "Ruby Ore",
   "block.orespawn.ore_amethyst": "Amethyst Ore",
   "block.orespawn.ore_uranium": "Uranium Ore",
@@ -16,7 +14,6 @@
   "block.orespawn.ore_kyanite": "Kyanite Ore",
   "block.orespawn.ore_pink_tourmaline": "Pink Tourmaline Ore",
   "block.orespawn.ancient_dried_egg": "Ancient Dried Egg",
-
   "block.orespawn.block_ruby": "Block of Ruby",
   "block.orespawn.block_amethyst": "Block of Amethyst",
   "block.orespawn.block_uranium": "Block of Uranium",
@@ -26,13 +23,11 @@
   "block.orespawn.block_tigers_eye": "Block of Tiger's Eye",
   "block.orespawn.block_ender_pearl": "Block of Ender Pearl",
   "block.orespawn.block_eye_of_ender": "Block of Eye of Ender",
-
   "block.orespawn.lavafoam": "Lavafoam",
   "block.orespawn.pizza": "Pizza",
   "block.orespawn.duct_tape": "Duct Tape",
   "block.orespawn.block_teleport": "Teleport Block",
   "block.orespawn.mole_dirt": "Mole Dirt",
-
   "block.orespawn.crystal_stone": "Crystal Stone",
   "block.orespawn.crystal_coal": "Crystal Coal",
   "block.orespawn.crystal_grass": "Crystal Grass",
@@ -43,19 +38,14 @@
   "block.orespawn.crystal_fairy": "Crystal Fairy",
   "block.orespawn.red_ant_troll": "Red Ant Troll",
   "block.orespawn.termite_troll": "Termite Troll",
-
   "block.orespawn.crystal_workbench": "Crystal Workbench",
   "block.orespawn.crystal_furnace": "Crystal Furnace",
   "block.orespawn.crystal_furnace_on": "Crystal Furnace",
-
   "block.orespawn.extreme_torch": "Extreme Torch",
   "block.orespawn.crystal_torch": "Crystal Torch",
-
   "block.orespawn.kraken_repellent": "Kraken Repellent",
   "block.orespawn.creeper_repellent": "Creeper Repellent",
-
   "block.orespawn.island": "Island Block",
-
   "block.orespawn.kraken_spawn_block": "Ancient Dried Kraken Spawn Egg",
   "block.orespawn.dragon_spawn_block": "Ancient Dried Dragon Spawn Egg",
   "block.orespawn.king_spawner": "King Spawner",
@@ -64,7 +54,6 @@
   "block.orespawn.random_dungeon_block": "Random Dungeon Spawner",
   "block.orespawn.extractor": "Extractor",
   "block.orespawn.utopia_portal": "Utopia Portal",
-
   "block.orespawn.apple_leaves": "Apple Leaves",
   "block.orespawn.experience_leaves": "Experience Leaves",
   "block.orespawn.scary_leaves": "Scary Leaves",
@@ -73,11 +62,9 @@
   "block.orespawn.crystal_leaves": "Crystal Leaves",
   "block.orespawn.crystal_leaves_2": "Crystal Leaves",
   "block.orespawn.crystal_leaves_3": "Crystal Leaves",
-
   "block.orespawn.sky_tree_log": "Sky Tree Log",
   "block.orespawn.duplicator_log": "Duplicator Log",
   "block.orespawn.crystal_tree_log": "Crystal Tree Log",
-
   "block.orespawn.flower_pink": "Pink Flower",
   "block.orespawn.flower_blue": "Blue Flower",
   "block.orespawn.flower_black": "Black Flower",
@@ -86,13 +73,11 @@
   "block.orespawn.crystal_flower_green": "Green Crystal Flower",
   "block.orespawn.crystal_flower_blue": "Blue Crystal Flower",
   "block.orespawn.crystal_flower_yellow": "Yellow Crystal Flower",
-
   "block.orespawn.experience_plant": "Experience Plant",
   "block.orespawn.experience_sapling": "Experience Sapling",
   "block.orespawn.crystal_sapling": "Crystal Sapling",
   "block.orespawn.crystal_sapling_2": "Crystal Sapling",
   "block.orespawn.crystal_sapling_3": "Crystal Sapling",
-
   "block.orespawn.strawberry_plant": "Strawberry Plant",
   "block.orespawn.radish_plant": "Radish Plant",
   "block.orespawn.rice_plant": "Rice Plant",
@@ -116,14 +101,12 @@
   "block.orespawn.lettuce_1": "Lettuce",
   "block.orespawn.lettuce_2": "Lettuce",
   "block.orespawn.lettuce_3": "Lettuce",
-
   "block.orespawn.ant_block": "Ant Block",
   "block.orespawn.red_ant_block": "Red Ant Block",
   "block.orespawn.termite_block": "Termite Block",
   "block.orespawn.crystal_termite_block": "Crystal Termite Block",
   "block.orespawn.rainbow_ant_block": "Rainbow Ant Block",
   "block.orespawn.unstable_ant_block": "Unstable Ant Block",
-
   "item.orespawn.ruby": "Ruby",
   "item.orespawn.amethyst_gem": "Amethyst",
   "item.orespawn.ingot_uranium": "Uranium Ingot",
@@ -150,7 +133,6 @@
   "item.orespawn.salt": "Salt",
   "item.orespawn.crystal_sticks": "Crystal Sticks",
   "item.orespawn.green_goo": "Green Goo",
-
   "item.orespawn.moth_scale": "Moth Scale",
   "item.orespawn.queen_scale": "Queen Scale",
   "item.orespawn.nightmare_scale": "Nightmare Scale",
@@ -172,55 +154,46 @@
   "item.orespawn.sea_viper_tongue": "Sea Viper Tongue",
   "item.orespawn.vortex_eye": "Vortex Eye",
   "item.orespawn.dead_stink_bug": "Dead Stink Bug",
-
   "item.orespawn.ultimate_sword": "Ultimate Sword",
   "item.orespawn.ultimate_pickaxe": "Ultimate Pickaxe",
   "item.orespawn.ultimate_shovel": "Ultimate Shovel",
   "item.orespawn.ultimate_hoe": "Ultimate Hoe",
   "item.orespawn.ultimate_axe": "Ultimate Axe",
-
   "item.orespawn.ruby_sword": "Ruby Sword",
   "item.orespawn.ruby_pickaxe": "Ruby Pickaxe",
   "item.orespawn.ruby_shovel": "Ruby Shovel",
   "item.orespawn.ruby_hoe": "Ruby Hoe",
   "item.orespawn.ruby_axe": "Ruby Axe",
-
   "item.orespawn.amethyst_sword": "Amethyst Sword",
   "item.orespawn.amethyst_pickaxe": "Amethyst Pickaxe",
   "item.orespawn.amethyst_shovel": "Amethyst Shovel",
   "item.orespawn.amethyst_hoe": "Amethyst Hoe",
   "item.orespawn.amethyst_axe": "Amethyst Axe",
-
   "item.orespawn.emerald_sword": "Emerald Sword",
   "item.orespawn.emerald_pickaxe": "Emerald Pickaxe",
   "item.orespawn.emerald_shovel": "Emerald Shovel",
   "item.orespawn.emerald_hoe": "Emerald Hoe",
   "item.orespawn.emerald_axe": "Emerald Axe",
-
   "item.orespawn.crystal_wood_sword": "Crystal Wood Sword",
   "item.orespawn.crystal_wood_pickaxe": "Crystal Wood Pickaxe",
   "item.orespawn.crystal_wood_shovel": "Crystal Wood Shovel",
   "item.orespawn.crystal_wood_hoe": "Crystal Wood Hoe",
   "item.orespawn.crystal_wood_axe": "Crystal Wood Axe",
-
   "item.orespawn.crystal_stone_sword": "Crystal Stone Sword",
   "item.orespawn.crystal_stone_pickaxe": "Crystal Stone Pickaxe",
   "item.orespawn.crystal_stone_shovel": "Crystal Stone Shovel",
   "item.orespawn.crystal_stone_hoe": "Crystal Stone Hoe",
   "item.orespawn.crystal_stone_axe": "Crystal Stone Axe",
-
   "item.orespawn.crystal_pink_sword": "Pink Crystal Sword",
   "item.orespawn.crystal_pink_pickaxe": "Pink Crystal Pickaxe",
   "item.orespawn.crystal_pink_shovel": "Pink Crystal Shovel",
   "item.orespawn.crystal_pink_hoe": "Pink Crystal Hoe",
   "item.orespawn.crystal_pink_axe": "Pink Crystal Axe",
-
   "item.orespawn.tigers_eye_sword": "Tiger's Eye Sword",
   "item.orespawn.tigers_eye_pickaxe": "Tiger's Eye Pickaxe",
   "item.orespawn.tigers_eye_shovel": "Tiger's Eye Shovel",
   "item.orespawn.tigers_eye_hoe": "Tiger's Eye Hoe",
   "item.orespawn.tigers_eye_axe": "Tiger's Eye Axe",
-
   "item.orespawn.nightmare_sword": "Nightmare Sword",
   "item.orespawn.big_bertha": "Big Bertha",
   "item.orespawn.slice": "Slice",
@@ -236,7 +209,6 @@
   "item.orespawn.mantis_claw": "Mantis Claw",
   "item.orespawn.big_hammer": "Big Hammer",
   "item.orespawn.rose_sword": "Rose Sword",
-
   "item.orespawn.ultimate_bow": "Ultimate Bow",
   "item.orespawn.skate_bow": "Skate Bow",
   "item.orespawn.ultimate_fishing_rod": "Ultimate Fishing Rod",
@@ -245,7 +217,6 @@
   "item.orespawn.squid_zooka": "Squid Zooka",
   "item.orespawn.creeper_launcher": "Creeper Launcher",
   "item.orespawn.wrench": "Wrench",
-
   "item.orespawn.water_ball": "Water Ball",
   "item.orespawn.laser_ball": "Laser Ball",
   "item.orespawn.ice_ball": "Ice Ball",
@@ -264,7 +235,6 @@
   "item.orespawn.rock_crystal_green": "Green Crystal Rock",
   "item.orespawn.rock_crystal_blue": "Blue Crystal Rock",
   "item.orespawn.rock_crystal_tnt": "Crystal TNT Rock",
-
   "item.orespawn.fire_fish": "Fire Fish",
   "item.orespawn.sun_fish": "Sun Fish",
   "item.orespawn.lava_eel": "Lava Eel",
@@ -299,7 +269,6 @@
   "item.orespawn.crystal_apple": "Crystal Apple",
   "item.orespawn.heart": "Heart",
   "item.orespawn.pizza_item": "Pizza Slice",
-
   "item.orespawn.strawberry_seed": "Strawberry Seeds",
   "item.orespawn.butterfly_seed": "Butterfly Seeds",
   "item.orespawn.moth_seed": "Moth Seeds",
@@ -321,7 +290,6 @@
   "item.orespawn.cherry_tree_seed": "Cherry Tree Sapling",
   "item.orespawn.peach_tree_seed": "Peach Tree Sapling",
   "item.orespawn.experience_tree_seed": "Experience Tree Sapling",
-
   "item.orespawn.magic_apple": "Magic Apple",
   "item.orespawn.miners_dream": "Miner's Dream",
   "item.orespawn.random_dungeon": "Random Dungeon",
@@ -339,13 +307,11 @@
   "item.orespawn.step_up": "Step Up",
   "item.orespawn.step_down": "Step Down",
   "item.orespawn.step_across": "Step Across",
-
   "item.orespawn.red_heels": "Red Heels",
   "item.orespawn.black_heels": "Black Heels",
   "item.orespawn.slippers": "Slippers",
   "item.orespawn.boots_shoes": "Boots",
   "item.orespawn.game_controller": "Game Controller",
-
   "item.orespawn.ultimate_helmet": "Ultimate Helmet",
   "item.orespawn.ultimate_chestplate": "Ultimate Chestplate",
   "item.orespawn.ultimate_leggings": "Ultimate Leggings",
@@ -402,7 +368,6 @@
   "item.orespawn.queen_chestplate": "Queen's Scale Chestplate",
   "item.orespawn.queen_leggings": "Queen's Scale Leggings",
   "item.orespawn.queen_boots": "Queen's Scale Boots",
-
   "item.orespawn.zoo_cage_2": "Zoo Cage (2)",
   "item.orespawn.zoo_cage_4": "Zoo Cage (4)",
   "item.orespawn.zoo_cage_6": "Zoo Cage (6)",
@@ -414,7 +379,6 @@
   "item.orespawn.princess_egg": "Princess Egg",
   "tooltip.orespawn.caged_health": "Health: %s",
   "tooltip.orespawn.caged_persistent": "Live state preserved",
-
   "entity.orespawn.alien": "Alien",
   "entity.orespawn.alien_boss": "Alien Boss",
   "entity.orespawn.alosaurus": "Alosaurus",
@@ -471,7 +435,6 @@
   "entity.orespawn.worm_small": "Small Worm",
   "entity.orespawn.worm_medium": "Medium Worm",
   "entity.orespawn.worm_large": "Large Worm",
-
   "entity.orespawn.baryonyx": "Baryonyx",
   "entity.orespawn.beaver": "Beaver",
   "entity.orespawn.cassowary": "Cassowary",
@@ -497,7 +460,6 @@
   "entity.orespawn.termite": "Termite",
   "entity.orespawn.tshirt": "T-Shirt",
   "entity.orespawn.unstable_ant": "Unstable Ant",
-
   "entity.orespawn.boyfriend": "Boyfriend",
   "entity.orespawn.camarasaurus": "Camarasaurus",
   "entity.orespawn.dragon": "Dragon",
@@ -518,7 +480,6 @@
   "entity.orespawn.the_prince_teen": "The Prince",
   "entity.orespawn.velocity_raptor": "Velocity Raptor",
   "entity.orespawn.water_dragon": "Water Dragon",
-
   "entity.orespawn.butterfly": "Butterfly",
   "entity.orespawn.vampire_butterfly": "Vampire Butterfly",
   "entity.orespawn.apple_cow": "Apple Cow",
@@ -531,7 +492,6 @@
   "entity.orespawn.ghost": "Ghost",
   "entity.orespawn.ghost_skelly": "Ghost Skeleton",
   "entity.orespawn.mothra": "Mothra",
-
   "entity.orespawn.ant_robot": "Ant Robot",
   "entity.orespawn.elevator": "Elevator",
   "entity.orespawn.king_head": "King Head",
@@ -543,7 +503,6 @@
   "entity.orespawn.cephadrome": "Cephadrome",
   "entity.orespawn.red_cow": "Red Cow",
   "entity.orespawn.spider_driver": "Spider Driver",
-
   "entity.orespawn.better_fireball": "Fireball",
   "entity.orespawn.bertha_hit": "Bertha Hit",
   "entity.orespawn.cage": "Cage",
@@ -557,10 +516,8 @@
   "entity.orespawn.ice_ball": "Ice Ball",
   "entity.orespawn.acid": "Acid",
   "entity.orespawn.dead_irukandji": "Dead Irukandji",
-
   "container.orespawn.crystal_furnace": "Crystal Furnace",
   "container.orespawn.crystal_workbench": "Crystal Workbench",
-
   "item.orespawn.alien_spawn_egg": "Alien Spawn Egg",
   "item.orespawn.alien_boss_spawn_egg": "Alien Boss Spawn Egg",
   "item.orespawn.alosaurus_spawn_egg": "Alosaurus Spawn Egg",
@@ -674,7 +631,6 @@
   "item.orespawn.worm_small_spawn_egg": "Small Worm Spawn Egg",
   "item.orespawn.worm_medium_spawn_egg": "Medium Worm Spawn Egg",
   "item.orespawn.worm_large_spawn_egg": "Large Worm Spawn Egg",
-
   "entity.orespawn.crystal_cow": "Crystal Cow",
   "entity.orespawn.gold_cow": "Gold Cow",
   "entity.orespawn.ruby_bird": "Ruby Bird",
@@ -684,9 +640,19 @@
   "item.orespawn.crystal_cow_spawn_egg": "Crystal Cow Spawn Egg",
   "item.orespawn.gold_cow_spawn_egg": "Gold Cow Spawn Egg",
   "item.orespawn.ruby_bird_spawn_egg": "Ruby Bird Spawn Egg",
-
   "key.orespawn.fly_up": "Fly Up (Mount)",
   "key.orespawn.fly_down": "Fly Down (Mount)",
   "key.orespawn.special": "Special Attack (Mount)",
-  "key.categories.orespawn": "OreSpawn"
+  "key.categories.orespawn": "OreSpawn",
+  "block.orespawn.ore_urchin": "Urchin Egg",
+  "block.orespawn.ore_flounder": "Flounder Egg",
+  "block.orespawn.ore_skate": "Skate Egg",
+  "block.orespawn.ore_rotator": "Rotator Egg",
+  "block.orespawn.ore_peacock": "Peacock Egg",
+  "block.orespawn.ore_fairy": "Fairy Egg",
+  "block.orespawn.ore_dungeon_beast": "Dungeon Beast Egg",
+  "block.orespawn.ore_vortex": "Vortex Egg",
+  "block.orespawn.ore_rat": "Rat Egg",
+  "block.orespawn.ore_whale": "Whale Egg",
+  "block.orespawn.ore_irukandji": "Irukandji Egg"
 }

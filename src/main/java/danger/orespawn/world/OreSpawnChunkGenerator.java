@@ -4,7 +4,6 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import danger.orespawn.ModBlocks;
-import danger.orespawn.OreSpawnConfig;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.server.level.WorldGenRegion;
@@ -92,18 +91,6 @@ public class OreSpawnChunkGenerator extends NoiseBasedChunkGenerator {
     private final Holder<NoiseGeneratorSettings> settings;
     private final DimensionStyle style;
     private final boolean crystalSurface;
-    /**
-     * Cooldown that skips dungeon placement for 50 chunks after one is placed.
-     * Prevents back-to-back dungeons clustering.
-     *
-     * <p>Instance field, NOT static: each dimension owns one generator instance, so a
-     * dungeon placed in the Mining dimension must not suppress dungeons in Utopia or
-     * Crystal (BUG-013). {@link java.util.concurrent.atomic.AtomicInteger} because
-     * worldgen in 1.21 runs on a worker thread pool â€” multiple threads decorate chunks
-     * of the same dimension concurrently, and a plain {@code int} would race.</p>
-     */
-    private final java.util.concurrent.atomic.AtomicInteger dungeonPlacementCooldown =
-            new java.util.concurrent.atomic.AtomicInteger(0);
 
     /**
      * Same per-dimension/thread-safe cooldown pattern as {@link #dungeonPlacementCooldown},
@@ -165,14 +152,17 @@ public class OreSpawnChunkGenerator extends NoiseBasedChunkGenerator {
         switch (style) {
             case CRYSTAL -> applyCrystalSurface(chunk, region.getRandom());
             case ISLANDS -> applyIslandsSurface(chunk, region.getRandom());
-            case CHAOS, VILLAGE, UTOPIA, MINING, DEFAULT -> {
+            case CHAOS -> applyChaosSurface(chunk, region.getRandom());
+            case VILLAGE, UTOPIA, MINING, DEFAULT -> {
                 // Pass-through â€” vanilla noise + the dungeon pass above is
                 // sufficient. The "no oceans" continental shape for
-                // UTOPIA/VILLAGE/CHAOS/MINING is now data-driven via the
+                // UTOPIA/VILLAGE/MINING is now data-driven via the
                 // orespawn:inland noise_settings (constant continentalness),
-                // so the chunk generator stays clean: surface rules apply
-                // properly to the new landmass without any post-fill hack
-                // patching raw stone over generated terrain.
+                // and Chaos terrain via orespawn:chaos (nether-style noise,
+                // orig ChunkProviderOreSpawn6), so the chunk generator stays
+                // clean: surface rules apply properly to the new landmass
+                // without any post-fill hack patching raw stone over
+                // generated terrain.
             }
         }
     }
@@ -196,26 +186,29 @@ public class OreSpawnChunkGenerator extends NoiseBasedChunkGenerator {
     }
 
     /**
-     * Islands surface post-process. Expects the dimension JSON to select
-     * {@code "settings": "minecraft:floating_islands"} so vanilla noise already
-     * carves the sky-island shape; we only scatter scraggly oak trees on top,
-     * mirroring 1.7.10 {@code ChunkProviderOreSpawn4.addScragglyTrees} (1â€“10
-     * attempts per chunk, each looking for an air-over-grass column).
+     * Islands surface post-process — scraggly apple-leaf trees on the flat
+     * dirt plane, faithful to 1.7.10 {@code ChunkProviderOreSpawn4.addScragglyTrees}
+     * (orig ChunkProviderOreSpawn4.java:109-129): {@code 1 + nextInt(10)}
+     * attempts per chunk (LessLag=0 default), each picking
+     * {@code x/z = 2 + nextInt(12)} and scanning Y20 down to Y3 for a grass
+     * block to root a {@link ScragglyTrees#scragglyTreeWithBranches} on.
+     * The flat plane itself (bedrock Y0, dirt Y1-6, grass Y7,
+     * orig ChunkProviderOreSpawn4.java:30-32) is data-driven via the
+     * {@code orespawn:islands} noise settings.
      */
     private void applyIslandsSurface(ChunkAccess chunk, RandomSource random) {
-        int attempts = 1 + random.nextInt(10);
         int minX = chunk.getPos().getMinBlockX();
         int minZ = chunk.getPos().getMinBlockZ();
 
+        // orig ChunkProviderOreSpawn4.java:110 — howmany = 1 + nextInt(10)
+        int attempts = 1 + random.nextInt(10);
         for (int i = 0; i < attempts; i++) {
-            int x = minX + random.nextInt(16);
-            int z = minZ + random.nextInt(16);
-            for (int y = chunk.getMaxBuildHeight() - 1; y > chunk.getMinBuildHeight() + 1; y--) {
-                BlockPos pos = new BlockPos(x, y, z);
-                BlockPos below = new BlockPos(x, y - 1, z);
-                if (!chunk.getBlockState(pos).isAir()) break;
-                if (chunk.getBlockState(below).is(Blocks.GRASS_BLOCK)) {
-                    placeScragglyTree(chunk, random, x, y, z);
+            int x = 2 + minX + random.nextInt(12);
+            int z = 2 + minZ + random.nextInt(12);
+            // orig ChunkProviderOreSpawn4.java:123 — scan Y20 down to Y3 for grass below
+            for (int y = 20; y > 2; y--) {
+                if (chunk.getBlockState(new BlockPos(x, y - 1, z)).is(Blocks.GRASS_BLOCK)) {
+                    ScragglyTrees.scragglyTreeWithBranches(chunk, random, x, y, z);
                     break;
                 }
             }
@@ -223,34 +216,29 @@ public class OreSpawnChunkGenerator extends NoiseBasedChunkGenerator {
     }
 
     /**
-     * 4â€“7 block oak trunk topped with a 3x3 leaf cap. Intentionally minimal
-     * to match the "scraggly" feel from 1.7.10 â€” cheap to run N times per
-     * chunk and never writes outside the chunk boundary (out-of-chunk writes
-     * during concurrent generation cause chunk pop-in).
+     * Chaos surface post-process — scraggly tree scatter, faithful to 1.7.10
+     * {@code ChunkProviderOreSpawn6.addScragglyTrees}
+     * (orig ChunkProviderOreSpawn6.java:335-358): roll {@code 1 + nextInt(5)}
+     * trees but only proceed on a 1-in-4 chunk gate; positions
+     * {@code 2 + nextInt(12)}, scanning Y120 down to Y51 for grass.
      */
-    private void placeScragglyTree(ChunkAccess chunk, RandomSource random, int x, int y, int z) {
-        int trunkHeight = 4 + random.nextInt(4);
-        BlockState log = Blocks.OAK_LOG.defaultBlockState();
-        BlockState leaves = Blocks.OAK_LEAVES.defaultBlockState();
+    private void applyChaosSurface(ChunkAccess chunk, RandomSource random) {
+        int minX = chunk.getPos().getMinBlockX();
+        int minZ = chunk.getPos().getMinBlockZ();
 
-        for (int j = 0; j < trunkHeight; j++) {
-            setBlockInChunk(chunk, x, y + j, z, log);
-        }
-        int topY = y + trunkHeight;
-        for (int dx = -1; dx <= 1; dx++) {
-            for (int dz = -1; dz <= 1; dz++) {
-                setIfAirInChunk(chunk, x + dx, topY, z + dz, leaves);
-                setIfAirInChunk(chunk, x + dx, topY - 1, z + dz, leaves);
+        // orig ChunkProviderOreSpawn6.java:336-339 — count rolled BEFORE the 1/4 gate
+        int attempts = 1 + random.nextInt(5);
+        if (random.nextInt(4) != 0) return;
+        for (int i = 0; i < attempts; i++) {
+            int x = 2 + minX + random.nextInt(12);
+            int z = 2 + minZ + random.nextInt(12);
+            // orig ChunkProviderOreSpawn6.java:352 — scan Y120 down to Y51
+            for (int y = 120; y > 50; y--) {
+                if (chunk.getBlockState(new BlockPos(x, y - 1, z)).is(Blocks.GRASS_BLOCK)) {
+                    ScragglyTrees.scragglyTreeWithBranches(chunk, random, x, y, z);
+                    break;
+                }
             }
-        }
-        setIfAirInChunk(chunk, x, topY + 1, z, leaves);
-    }
-
-    private static void setIfAirInChunk(ChunkAccess chunk, int x, int y, int z, BlockState state) {
-        if (!isInChunk(chunk, x, z)) return;
-        BlockPos pos = new BlockPos(x, y, z);
-        if (chunk.getBlockState(pos).isAir()) {
-            chunk.setBlockState(pos, state, false);
         }
     }
 
@@ -527,25 +515,26 @@ public class OreSpawnChunkGenerator extends NoiseBasedChunkGenerator {
     }
 
     /**
-     * The 11 spawn block types that appear as ore veins above Y=45 in the original.
-     * These are OreBasicStone blocks that spawn creatures when broken.
-     * We reuse CRYSTAL_RAT and CRYSTAL_FAIRY for the ones we have registered;
-     * for others we fall back to CRYSTAL_STONE (placeholder until all blocks exist).
+     * The 11 spawn-block egg ores that appear as veins above Y=45, in the exact
+     * {@code nextInt(11)} switch order of orig ChunkProviderOreSpawn5.java:586-633:
+     * Urchin, Flounder, Skate, Rotator, Peacock, Fairy, DungeonBeast, Vortex,
+     * Rat, Whale, Irukandji. All are {@code OreGenericEgg} XP-drop blocks
+     * (orig OreSpawnMain.java:6326-6336) — distinct from the CrystalRat /
+     * CrystalFairy mob-spawning deep veins below Y25 (WGEN-023).
      */
     private BlockState[] getSpawnBlockStates() {
-        BlockState fallback = ModBlocks.CRYSTAL_STONE.get().defaultBlockState();
         return new BlockState[]{
-                fallback, // Urchin spawn block
-                fallback, // Flounder spawn block
-                fallback, // Skate spawn block
-                fallback, // Rotator spawn block
-                fallback, // Peacock spawn block
-                ModBlocks.CRYSTAL_FAIRY.get().defaultBlockState(),
-                fallback, // DungeonBeast spawn block
-                fallback, // Vortex spawn block
-                ModBlocks.CRYSTAL_RAT.get().defaultBlockState(),
-                fallback, // Whale spawn block
-                fallback  // Irukandji spawn block
+                ModBlocks.ORE_URCHIN.get().defaultBlockState(),        // case 0
+                ModBlocks.ORE_FLOUNDER.get().defaultBlockState(),      // case 1
+                ModBlocks.ORE_SKATE.get().defaultBlockState(),         // case 2
+                ModBlocks.ORE_ROTATOR.get().defaultBlockState(),       // case 3
+                ModBlocks.ORE_PEACOCK.get().defaultBlockState(),       // case 4
+                ModBlocks.ORE_FAIRY.get().defaultBlockState(),         // case 5
+                ModBlocks.ORE_DUNGEON_BEAST.get().defaultBlockState(), // case 6
+                ModBlocks.ORE_VORTEX.get().defaultBlockState(),        // case 7
+                ModBlocks.ORE_RAT.get().defaultBlockState(),           // case 8
+                ModBlocks.ORE_WHALE.get().defaultBlockState(),         // case 9
+                ModBlocks.ORE_IRUKANDJI.get().defaultBlockState()      // case 10
         };
     }
 
@@ -701,41 +690,49 @@ public class OreSpawnChunkGenerator extends NoiseBasedChunkGenerator {
         }
     }
 
+    /**
+     * Per-dimension dungeon dispatch, faithful to the 1.7.10
+     * {@code OreSpawnWorld.generate} branches:
+     *
+     * <ul>
+     *   <li><b>Utopia</b> (orig OreSpawnWorld.java:48-52): try the Ruby Bird
+     *       dungeon first ({@code addRubyDungeon}, :1998-2012 — 1/15 gate, 8
+     *       lava-seek attempts); only when it fails, roll the generic dungeon
+     *       ({@code addGenericDungeon}, :2014-2029 — 1/16 gate).</li>
+     *   <li><b>Mining</b> (orig OreSpawnWorld.java:79-104): the generic dungeon
+     *       runs in the else-branch of the 1/95 large-structure roll, i.e. in
+     *       ~664/665 of chunks — approximated here as an unconditional 1/16
+     *       roll (the large structures are data-driven structure sets now).</li>
+     *   <li><b>Village</b> (orig OreSpawnWorld.java:120): generic dungeon every
+     *       chunk (1/16 gate).</li>
+     *   <li><b>Islands</b> (orig OreSpawnWorld.java:134-139): the D4 generic
+     *       dungeon takes 4/19 of the 1/100 structure roll → 1/475 chunks,
+     *       surfaced at grass level ({@code addD4GenericDungeon}, :2438-2452).</li>
+     *   <li><b>Crystal / Chaos / overworld:</b> no generic or ruby dungeons in
+     *       the original — none here. (The pre-C7 port wrongly rolled a Ruby
+     *       dungeon in Crystal and generic dungeons everywhere; WGEN-034/035.)</li>
+     * </ul>
+     *
+     * <p>The original applies no {@code recently_placed} cooldown and no
+     * {@code DisableOverworldDungeons} gate to these dungeons (the config flag
+     * only guards the overworld surface set, orig OreSpawnWorld.java:284), so
+     * neither is checked here.</p>
+     */
     private void placeDungeons(WorldGenRegion region, ChunkAccess chunk) {
-        if (OreSpawnConfig.DISABLE_OVERWORLD_DUNGEONS.get()) {
-            return;
-        }
-
-        // Atomic decrement so concurrent chunk-gen threads can't both pass the
-        // gate when the counter is 1; the value is clamped at 0.
-        if (dungeonPlacementCooldown.get() > 0) {
-            dungeonPlacementCooldown.updateAndGet(v -> v > 0 ? v - 1 : 0);
-            return;
-        }
-
         RandomSource random = region.getRandom();
         int cx = chunk.getPos().getMinBlockX();
         int cz = chunk.getPos().getMinBlockZ();
 
-        // Crystal dimension gets a dedicated ruby-themed dungeon tier on top
-        // of the generic dungeon roll â€” mirrors 1.7.10
-        // OreSpawnWorld.addRubyDungeon for dimension 5.
-        if (style == DimensionStyle.CRYSTAL) {
-            if (random.nextInt(15) == 0) {
-                int y = 10 + random.nextInt(10);
-                BlockPos pos = new BlockPos(cx + 8, y, cz + 8);
-                if (GenericDungeon.tryPlaceRubyDungeon(region, random, pos)) {
-                    dungeonPlacementCooldown.set(50);
-                    return;
+        switch (style) {
+            case UTOPIA -> {
+                if (!GenericDungeon.tryPlaceRubyDungeon(region, random, cx, cz)) {
+                    GenericDungeon.tryPlaceGenericDungeon(region, random, cx, cz);
                 }
             }
-        }
-
-        if (random.nextInt(16) == 0) {
-            int y = 5 + random.nextInt(40);
-            BlockPos pos = new BlockPos(cx + 8, y, cz + 8);
-            if (GenericDungeon.tryPlaceGenericDungeon(region, random, pos)) {
-                dungeonPlacementCooldown.set(50);
+            case MINING, VILLAGE -> GenericDungeon.tryPlaceGenericDungeon(region, random, cx, cz);
+            case ISLANDS -> GenericDungeon.tryPlaceIslandsGenericDungeon(region, random, cx, cz);
+            default -> {
+                // Crystal, Chaos, DEFAULT: no dungeons (orig parity).
             }
         }
     }

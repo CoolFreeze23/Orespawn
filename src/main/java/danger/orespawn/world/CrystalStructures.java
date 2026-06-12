@@ -5,10 +5,11 @@ import danger.orespawn.ModEntities;
 import danger.orespawn.ModItems;
 import danger.orespawn.entity.RockBase;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.Container;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.WorldGenLevel;
@@ -16,6 +17,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.SpawnerBlockEntity;
 import net.minecraft.world.level.block.entity.RandomizableContainerBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.loot.LootTable;
 
 /**
  * Crystal dimension structures faithfully ported from the original 1.7.10
@@ -36,9 +38,13 @@ import net.minecraft.world.level.block.state.BlockState;
  *       random, pos)} — passing {@code null} for {@code Level} is intentional; a
  *       non-null Level triggers synchronous chunk loads during worldgen and
  *       deadlocks the server thread.</li>
- *   <li>{@link WeightedRandomChestContent} (1.7.10) has no direct analog, so loot
- *       tables are inlined as {@link ItemStack} picker methods that emulate the
- *       original weights.</li>
+ *   <li>The original's {@code WeightedRandomChestContent} arrays are transcribed
+ *       to data-driven loot tables ({@code data/orespawn/loot_table/chests/
+ *       crystal_chest*.json}, {@code battle_tower_*.json}) referenced via
+ *       {@link RandomizableContainerBlockEntity#setLootTable}; chests the
+ *       original filled with FIXED slot contents (Rotator Station, Urchin
+ *       Spawner, Haunted House) keep in-code {@link ItemStack} fills matching
+ *       the original slot-by-slot.</li>
  * </ul>
  *
  * <p>Frequencies preserved from 1.7.10:</p>
@@ -55,57 +61,73 @@ import net.minecraft.world.level.block.state.BlockState;
  */
 public class CrystalStructures {
 
+    /** Fairy tree / castle / maze loot (orig Trees.CrystalChestContentsList, Trees.java:19). */
+    private static final ResourceKey<LootTable> CRYSTAL_CHEST_LOOT = chestLoot("crystal_chest");
+    /** Same pool with the maze chest's smaller 1-3 roll count (orig OreSpawnWorld.java:1762). */
+    private static final ResourceKey<LootTable> CRYSTAL_CHEST_MAZE_LOOT = chestLoot("crystal_chest_maze");
+    private static final ResourceKey<LootTable> BATTLE_TOWER_RAT_LOOT = chestLoot("battle_tower_rat");
+    private static final ResourceKey<LootTable> BATTLE_TOWER_DUNGEON_BEAST_LOOT = chestLoot("battle_tower_dungeon_beast");
+    private static final ResourceKey<LootTable> BATTLE_TOWER_URCHIN_LOOT = chestLoot("battle_tower_urchin");
+    private static final ResourceKey<LootTable> BATTLE_TOWER_ROTATOR_LOOT = chestLoot("battle_tower_rotator");
+    private static final ResourceKey<LootTable> BATTLE_TOWER_VORTEX_LOOT = chestLoot("battle_tower_vortex");
+
+    private static ResourceKey<LootTable> chestLoot(String name) {
+        return ResourceKey.create(Registries.LOOT_TABLE,
+                ResourceLocation.fromNamespaceAndPath("orespawn", "chests/" + name));
+    }
+
     /**
-     * Decorates one crystal-dimension chunk with structures.
+     * Decorates one crystal-dimension chunk with structures, mirroring the D5
+     * dispatch in {@code OreSpawnWorld.generateSurface}
+     * (orig OreSpawnWorld.java:187-202): a successful fairy-tree roll skips the
+     * termites and the big-structure block, but maze chests and rocks ALWAYS run;
+     * the Irukandji spawner rolls whenever the cooldown gate was open, regardless
+     * of whether a big structure landed.
      *
-     * <p>{@code placementCooldown} is the anti-clustering counter for large structures.
-     * It is owned by the calling {@link OreSpawnChunkGenerator} instance (one per
-     * dimension) rather than being a static field here, so structure placement in one
-     * dimension can never suppress placement in another (BUG-013). It is an
-     * {@link java.util.concurrent.atomic.AtomicInteger} because the decoration phase
-     * runs on a worker pool that processes several chunks in parallel.</p>
+     * <p>{@code placementCooldown} is the anti-clustering counter ({@code
+     * recently_placed}, orig OreSpawnWorld.java:30/37-38). It is owned by the
+     * calling {@link OreSpawnChunkGenerator} instance (one per dimension) rather
+     * than being a static field here, so structure placement in one dimension can
+     * never suppress placement in another (BUG-013). It is an
+     * {@link java.util.concurrent.atomic.AtomicInteger} because the decoration
+     * phase runs on a worker pool that processes several chunks in parallel.</p>
      */
     public static void generate(WorldGenLevel level, RandomSource random, int chunkX, int chunkZ,
                                 java.util.concurrent.atomic.AtomicInteger placementCooldown) {
-        // Decrement (clamped at 0) once per chunk before any structure attempt.
+        // orig OreSpawnWorld.java:37-38 — decrement once per chunk before any attempt.
         placementCooldown.updateAndGet(v -> v > 0 ? v - 1 : 0);
 
         BlockState crystalGrass = ModBlocks.CRYSTAL_GRASS.get().defaultBlockState();
 
-        // Each successful large-structure placement arms the 50-chunk cooldown. The
-        // helpers used to set it themselves on their single success path; it is hoisted
-        // here so the counter can be per-generator instead of static (BUG-013).
+        // Each successful large-structure placement arms the 50-chunk cooldown
+        // (recently_placed = 50 on the helpers' success paths, e.g. orig
+        // OreSpawnWorld.java:1621/1641/1661/1678/1695/1992); hoisted here so the
+        // counter can be per-generator instead of static (BUG-013).
         if (tryPlaceFairyTree(level, random, chunkX, chunkZ, crystalGrass)) {
             placementCooldown.set(50);
-            return;
+        } else {
+            // orig OreSpawnWorld.java:189 — termites only when the fairy roll failed
+            placeCrystalTermiteBlocks(level, random, chunkX, chunkZ, crystalGrass);
+
+            if (placementCooldown.get() == 0) {
+                // orig OreSpawnWorld.java:191-193 — battle tower only if none of the
+                // first four landed; Irukandji rolls afterwards either way (:194).
+                boolean placed = tryPlaceRotatorStation(level, random, chunkX, chunkZ, crystalGrass)
+                        || tryPlaceUrchinSpawner(level, random, chunkX, chunkZ, crystalGrass)
+                        || tryPlaceCrystalHauntedHouse(level, random, chunkX, chunkZ, crystalGrass)
+                        || tryPlaceRoundRotator(level, random, chunkX, chunkZ, crystalGrass);
+                if (!placed) {
+                    placed = tryPlaceCrystalBattleTower(level, random, chunkX, chunkZ, crystalGrass);
+                }
+                if (placed) {
+                    placementCooldown.set(50);
+                }
+
+                placeIrukandjiSpawner(level, random, chunkX, chunkZ);
+            }
         }
 
-        placeCrystalTermiteBlocks(level, random, chunkX, chunkZ, crystalGrass);
-
-        if (placementCooldown.get() == 0) {
-            if (tryPlaceRotatorStation(level, random, chunkX, chunkZ, crystalGrass)) {
-                placementCooldown.set(50);
-                return;
-            }
-            if (tryPlaceUrchinSpawner(level, random, chunkX, chunkZ, crystalGrass)) {
-                placementCooldown.set(50);
-                return;
-            }
-            if (tryPlaceCrystalHauntedHouse(level, random, chunkX, chunkZ, crystalGrass)) {
-                placementCooldown.set(50);
-                return;
-            }
-            if (tryPlaceRoundRotator(level, random, chunkX, chunkZ, crystalGrass)) {
-                placementCooldown.set(50);
-                return;
-            }
-            if (tryPlaceCrystalBattleTower(level, random, chunkX, chunkZ, crystalGrass)) {
-                placementCooldown.set(50);
-            }
-
-            placeIrukandjiSpawner(level, random, chunkX, chunkZ);
-        }
-
+        // orig OreSpawnWorld.java:197-200 — these run even when a fairy tree placed
         placeMazeChestsAndSpawners(level, random, chunkX, chunkZ);
 
         if (random.nextInt(4) == 1) {
@@ -189,11 +211,8 @@ public class CrystalStructures {
 
         placeSpawner(level, new BlockPos(x - 1, y + 1, z), ModEntities.FAIRY.get());
 
-        BlockPos chestPos = new BlockPos(x + 2, y + 1, z);
-        level.setBlock(chestPos, Blocks.CHEST.defaultBlockState(), 2);
-        if (level.getBlockEntity(chestPos) instanceof RandomizableContainerBlockEntity container) {
-            fillCrystalChest(container, random);
-        }
+        // orig Trees.java:483-489 — crystal chest, 1+nextInt(5) weighted picks
+        placeLootChest(level, new BlockPos(x + 2, y + 1, z), CRYSTAL_CHEST_LOOT);
     }
 
     private static void makeCrystalLeaves(WorldGenLevel level, int x, int y, int z) {
@@ -367,11 +386,8 @@ public class CrystalStructures {
         if (choice == 1) {
             placeSpawner(level, new BlockPos(x, y + 1, z), ModEntities.FAIRY.get());
         } else if (choice == 2) {
-            BlockPos chestPos = new BlockPos(x, y + 1, z);
-            level.setBlock(chestPos, Blocks.CHEST.defaultBlockState(), 2);
-            if (level.getBlockEntity(chestPos) instanceof RandomizableContainerBlockEntity container) {
-                fillCrystalChest(container, random);
-            }
+            // orig Trees.java:605-613 — crystal chest, 1+nextInt(5) weighted picks
+            placeLootChest(level, new BlockPos(x, y + 1, z), CRYSTAL_CHEST_LOOT);
         }
     }
 
@@ -398,10 +414,15 @@ public class CrystalStructures {
                 placeSpawner(level, new BlockPos(posX, posY + 6, posZ), ModEntities.ENTITY_ROTATOR.get());
                 level.setBlock(new BlockPos(posX, posY + 7, posZ), crystalStone, 2);
 
+                // orig GenericDungeon.java:802-809 — FIXED slot fill, not the
+                // weighted crystal list: slot 1 Rotator egg 1+nextInt(5), slots
+                // 2-3 Crystal Coal 4+nextInt(16) each.
                 BlockPos chestPos = new BlockPos(posX, posY + 8, posZ);
                 level.setBlock(chestPos, Blocks.CHEST.defaultBlockState(), 2);
                 if (level.getBlockEntity(chestPos) instanceof RandomizableContainerBlockEntity container) {
-                    fillCrystalChest(container, random);
+                    container.setItem(1, new ItemStack(ModItems.ROTATOR_SPAWN_EGG.get(), 1 + random.nextInt(5)));
+                    container.setItem(2, new ItemStack(ModBlocks.CRYSTAL_COAL.get(), 4 + random.nextInt(16)));
+                    container.setItem(3, new ItemStack(ModBlocks.CRYSTAL_COAL.get(), 4 + random.nextInt(16)));
                 }
 
                 return true;
@@ -416,55 +437,70 @@ public class CrystalStructures {
 
     private static boolean tryPlaceUrchinSpawner(WorldGenLevel level, RandomSource random,
                                                   int chunkX, int chunkZ, BlockState grassState) {
+        // orig OreSpawnWorld.java:1652 — 1/180 gate, then 3 attempts (:1655)
         if (random.nextInt(180) != 0) return false;
 
+        for (int i = 0; i < 3; i++) {
+            int posX = chunkX + random.nextInt(16);
+            int posZ = chunkZ + random.nextInt(16);
+            for (int posY = 100; posY > 50; posY--) {
+                if (!level.getBlockState(new BlockPos(posX, posY, posZ)).isAir()
+                        || !level.getBlockState(new BlockPos(posX, posY - 1, posZ)).equals(grassState))
+                    continue;
+
+                buildUrchinSpawner(level, random, posX, posY, posZ);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /** Port of {@code GenericDungeon.makeUrchinSpawner} (orig GenericDungeon.java:2578-2636). */
+    private static void buildUrchinSpawner(WorldGenLevel level, RandomSource random,
+                                            int posX, int posY, int posZ) {
         BlockState[] columnBlocks = {
                 ModBlocks.CRYSTAL_STONE.get().defaultBlockState(),
                 ModBlocks.CRYSTAL_CRYSTAL.get().defaultBlockState(),
                 ModBlocks.TIGERS_EYE_ORE.get().defaultBlockState()
         };
 
-        int posX = chunkX + 8;
-        int posZ = chunkZ + 8;
-        for (int posY = 100; posY > 50; posY--) {
-            if (!level.getBlockState(new BlockPos(posX, posY, posZ)).isAir()
-                    || !level.getBlockState(new BlockPos(posX, posY - 1, posZ)).equals(grassState))
-                continue;
+        for (int col = 0; col < 3; col++) {
+            float dx = random.nextFloat() - random.nextFloat();
+            float dz = random.nextFloat() - random.nextFloat();
+            float dy = 0.5f + random.nextFloat() / 2.0f;
+            int w = random.nextInt(2);
+            // orig GenericDungeon.java:2594-2597 — same length formula for all
+            // three spikes, halved (integer division) for crystal and tigers-eye
+            int length = 10 + w * 3 + random.nextInt(5);
+            if (col != 0) length /= 2;
+            float rx = posX, ry = posY, rz = posZ;
 
-            for (int col = 0; col < 3; col++) {
-                float dx = random.nextFloat() - random.nextFloat();
-                float dz = random.nextFloat() - random.nextFloat();
-                float dy = 0.5f + random.nextFloat() / 2.0f;
-                int w = random.nextInt(2);
-                int length = col == 0 ? (10 + w * 3 + random.nextInt(5)) : (5 + w + random.nextInt(3));
-                float rx = posX, ry = posY, rz = posZ;
-
-                for (int iy = 0; iy <= length; iy++) {
-                    for (int ix = 0; ix <= w; ix++) {
-                        for (int iz = 0; iz <= w; iz++) {
-                            safeSetBlock(level, (int)(rx + ix), (int)ry, (int)(rz + iz), columnBlocks[col]);
-                        }
+            for (int iy = 0; iy <= length; iy++) {
+                for (int ix = 0; ix <= w; ix++) {
+                    for (int iz = 0; iz <= w; iz++) {
+                        safeSetBlock(level, (int)(rx + ix), (int)ry, (int)(rz + iz), columnBlocks[col]);
                     }
-                    ry += dy;
-                    rx += dx;
-                    rz += dz;
                 }
+                ry += dy;
+                rx += dx;
+                rz += dz;
             }
-
-            placeSpawner(level, new BlockPos(posX, posY + 1, posZ), ModEntities.URCHIN.get());
-            placeSpawner(level, new BlockPos(posX, posY + 2, posZ), ModEntities.URCHIN.get());
-            placeSpawner(level, new BlockPos(posX, posY + 3, posZ), ModEntities.URCHIN.get());
-            level.setBlock(new BlockPos(posX, posY, posZ), Blocks.AIR.defaultBlockState(), 2);
-
-            BlockPos chestPos = new BlockPos(posX, posY - 1, posZ);
-            level.setBlock(chestPos, Blocks.CHEST.defaultBlockState(), 2);
-            if (level.getBlockEntity(chestPos) instanceof RandomizableContainerBlockEntity container) {
-                fillCrystalChest(container, random);
-            }
-
-            return true;
         }
-        return false;
+
+        placeSpawner(level, new BlockPos(posX, posY + 1, posZ), ModEntities.URCHIN.get());
+        placeSpawner(level, new BlockPos(posX, posY + 2, posZ), ModEntities.URCHIN.get());
+        placeSpawner(level, new BlockPos(posX, posY + 3, posZ), ModEntities.URCHIN.get());
+        level.setBlock(new BlockPos(posX, posY, posZ), Blocks.AIR.defaultBlockState(), 2);
+
+        // orig GenericDungeon.java:2628-2635 — FIXED slot fill: slot 1 Urchin egg
+        // 1+nextInt(5), slots 2-3 Crystal Coal 4+nextInt(16) each.
+        BlockPos chestPos = new BlockPos(posX, posY - 1, posZ);
+        level.setBlock(chestPos, Blocks.CHEST.defaultBlockState(), 2);
+        if (level.getBlockEntity(chestPos) instanceof RandomizableContainerBlockEntity container) {
+            container.setItem(1, new ItemStack(ModItems.URCHIN_SPAWN_EGG.get(), 1 + random.nextInt(5)));
+            container.setItem(2, new ItemStack(ModBlocks.CRYSTAL_COAL.get(), 4 + random.nextInt(16)));
+            container.setItem(3, new ItemStack(ModBlocks.CRYSTAL_COAL.get(), 4 + random.nextInt(16)));
+        }
     }
 
     // =====================================================================
@@ -474,17 +510,20 @@ public class CrystalStructures {
 
     private static boolean tryPlaceCrystalHauntedHouse(WorldGenLevel level, RandomSource random,
                                                         int chunkX, int chunkZ, BlockState grassState) {
+        // orig OreSpawnWorld.java:1669 — 1/230 gate, then 3 attempts (:1672)
         if (random.nextInt(230) != 0) return false;
 
-        int posX = chunkX + 8;
-        int posZ = chunkZ + 8;
-        for (int posY = 100; posY > 50; posY--) {
-            if (!level.getBlockState(new BlockPos(posX, posY, posZ)).isAir()
-                    || !level.getBlockState(new BlockPos(posX, posY - 1, posZ)).equals(grassState))
-                continue;
+        for (int i = 0; i < 3; i++) {
+            int posX = chunkX + random.nextInt(16);
+            int posZ = chunkZ + random.nextInt(16);
+            for (int posY = 100; posY > 50; posY--) {
+                if (!level.getBlockState(new BlockPos(posX, posY, posZ)).isAir()
+                        || !level.getBlockState(new BlockPos(posX, posY - 1, posZ)).equals(grassState))
+                    continue;
 
-            buildCrystalHauntedHouse(level, random, posX, posY, posZ);
-            return true;
+                buildCrystalHauntedHouse(level, random, posX, posY, posZ);
+                return true;
+            }
         }
         return false;
     }
@@ -493,7 +532,8 @@ public class CrystalStructures {
                                                    int x, int y, int z) {
         BlockState crystalStone = ModBlocks.CRYSTAL_STONE.get().defaultBlockState();
         BlockState crystalPlanks = ModBlocks.CRYSTAL_PLANKS.get().defaultBlockState();
-        BlockState slabs = Blocks.SMOOTH_STONE_SLAB.defaultBlockState();
+        // orig GenericDungeon.java:3028 — the k==height wall band is GLASS windows
+        BlockState glass = Blocks.GLASS.defaultBlockState();
         BlockState air = Blocks.AIR.defaultBlockState();
         int width = 3;
         int length = 3;
@@ -509,7 +549,7 @@ public class CrystalStructures {
                         safeSetBlock(level, x + i, y + k, z + j, crystalStone);
                     } else if (i == width || j == length || i == -width || j == -length) {
                         if (k == height) {
-                            safeSetBlock(level, x + i, y + k, z + j, slabs);
+                            safeSetBlock(level, x + i, y + k, z + j, glass);
                         } else if ((k == 1 || k == 2) && i == deltax * width && j == 0) {
                             safeSetBlock(level, x + i, y + k, z + j, air);
                         } else {
@@ -540,61 +580,67 @@ public class CrystalStructures {
 
     // =====================================================================
     // ROUND ROTATOR - 1/150 chance
-    // Original uses obsidian outer ring, crystal pink inner ring
+    // Original: BEDROCK outer ring, crystal pink inner ring (vertical, X/Y plane)
     // =====================================================================
 
     private static boolean tryPlaceRoundRotator(WorldGenLevel level, RandomSource random,
                                                  int chunkX, int chunkZ, BlockState grassState) {
+        // orig OreSpawnWorld.java:1632 — 1/150 gate, then 3 attempts (:1635)
         if (random.nextInt(150) != 0) return false;
 
-        int posX = chunkX + 8;
-        int posZ = chunkZ + 8;
-        for (int posY = 100; posY > 50; posY--) {
-            if (!level.getBlockState(new BlockPos(posX, posY, posZ)).isAir()
-                    || !level.getBlockState(new BlockPos(posX, posY - 1, posZ)).equals(grassState))
-                continue;
+        for (int i = 0; i < 3; i++) {
+            int posX = chunkX + random.nextInt(16);
+            int posZ = chunkZ + random.nextInt(16);
+            for (int posY = 100; posY > 50; posY--) {
+                if (!level.getBlockState(new BlockPos(posX, posY, posZ)).isAir()
+                        || !level.getBlockState(new BlockPos(posX, posY - 1, posZ)).equals(grassState))
+                    continue;
 
-            int centerY = posY + 6;
-            BlockState obsidian = Blocks.OBSIDIAN.defaultBlockState();
-            BlockState pink = ModBlocks.BLOCK_CRYSTAL_PINK.get().defaultBlockState();
-            BlockState coal = ModBlocks.CRYSTAL_COAL.get().defaultBlockState();
-
-            for (float deg = 0; deg < 360; deg += 5) {
-                double rad = Math.toRadians(deg);
-                int bx = (int)(posX + 6 * Math.cos(rad) + 0.5);
-                int by = (int)(centerY + 6 * Math.sin(rad) + 0.5);
-                safeSetBlock(level, bx, by, posZ, obsidian);
+                buildRoundRotator(level, random, posX, posY, posZ);
+                return true;
             }
-            for (float deg = 0; deg < 360; deg += 5) {
-                double rad = Math.toRadians(deg);
-                int bx = (int)(posX + 2 * Math.cos(rad) + 0.5);
-                int by = (int)(centerY + 2 * Math.sin(rad) + 0.5);
-                safeSetBlock(level, bx, by, posZ, pink);
-            }
-
-            placeSpawner(level, new BlockPos(posX + 1, centerY + 1, posZ), ModEntities.ENTITY_ROTATOR.get());
-            placeSpawner(level, new BlockPos(posX - 1, centerY - 1, posZ), ModEntities.ENTITY_ROTATOR.get());
-            placeSpawner(level, new BlockPos(posX + 1, centerY - 1, posZ), ModEntities.ENTITY_ROTATOR.get());
-            placeSpawner(level, new BlockPos(posX - 1, centerY + 1, posZ), ModEntities.ENTITY_ROTATOR.get());
-            placeSpawner(level, new BlockPos(posX + 5, centerY, posZ), ModEntities.DUNGEON_BEAST.get());
-            placeSpawner(level, new BlockPos(posX - 5, centerY, posZ), ModEntities.DUNGEON_BEAST.get());
-            placeSpawner(level, new BlockPos(posX, centerY - 5, posZ), ModEntities.DUNGEON_BEAST.get());
-            placeSpawner(level, new BlockPos(posX, centerY + 5, posZ), ModEntities.DUNGEON_BEAST.get());
-
-            safeSetBlock(level, posX + 1, centerY, posZ, coal);
-            safeSetBlock(level, posX - 1, centerY, posZ, coal);
-            safeSetBlock(level, posX, centerY + 1, posZ, coal);
-            safeSetBlock(level, posX, centerY - 1, posZ, coal);
-
-            BlockPos chestPos = new BlockPos(posX, centerY, posZ);
-            level.setBlock(chestPos, Blocks.CHEST.defaultBlockState(), 2);
-            if (level.getBlockEntity(chestPos) instanceof RandomizableContainerBlockEntity container) {
-                fillRoundRotatorChest(container, random);
-            }
-
-            return true;
         }
         return false;
+    }
+
+    /** Port of {@code GenericDungeon.makeRoundRotator} (orig GenericDungeon.java:6184-6258). */
+    private static void buildRoundRotator(WorldGenLevel level, RandomSource random,
+                                           int posX, int posY, int posZ) {
+        int centerY = posY + 6;
+        // orig GenericDungeon.java:6196 — outer radius-6 ring is BEDROCK
+        BlockState bedrock = Blocks.BEDROCK.defaultBlockState();
+        BlockState pink = ModBlocks.BLOCK_CRYSTAL_PINK.get().defaultBlockState();
+        BlockState coal = ModBlocks.CRYSTAL_COAL.get().defaultBlockState();
+
+        for (float deg = 0; deg < 360; deg += 5) {
+            double rad = Math.toRadians(deg);
+            int bx = (int)(posX + 6 * Math.cos(rad) + 0.5);
+            int by = (int)(centerY + 6 * Math.sin(rad) + 0.5);
+            safeSetBlock(level, bx, by, posZ, bedrock);
+        }
+        for (float deg = 0; deg < 360; deg += 5) {
+            double rad = Math.toRadians(deg);
+            int bx = (int)(posX + 2 * Math.cos(rad) + 0.5);
+            int by = (int)(centerY + 2 * Math.sin(rad) + 0.5);
+            safeSetBlock(level, bx, by, posZ, pink);
+        }
+
+        placeSpawner(level, new BlockPos(posX + 1, centerY + 1, posZ), ModEntities.ENTITY_ROTATOR.get());
+        placeSpawner(level, new BlockPos(posX - 1, centerY - 1, posZ), ModEntities.ENTITY_ROTATOR.get());
+        placeSpawner(level, new BlockPos(posX + 1, centerY - 1, posZ), ModEntities.ENTITY_ROTATOR.get());
+        placeSpawner(level, new BlockPos(posX - 1, centerY + 1, posZ), ModEntities.ENTITY_ROTATOR.get());
+        placeSpawner(level, new BlockPos(posX + 5, centerY, posZ), ModEntities.DUNGEON_BEAST.get());
+        placeSpawner(level, new BlockPos(posX - 5, centerY, posZ), ModEntities.DUNGEON_BEAST.get());
+        placeSpawner(level, new BlockPos(posX, centerY - 5, posZ), ModEntities.DUNGEON_BEAST.get());
+        placeSpawner(level, new BlockPos(posX, centerY + 5, posZ), ModEntities.DUNGEON_BEAST.get());
+
+        safeSetBlock(level, posX + 1, centerY, posZ, coal);
+        safeSetBlock(level, posX - 1, centerY, posZ, coal);
+        safeSetBlock(level, posX, centerY + 1, posZ, coal);
+        safeSetBlock(level, posX, centerY - 1, posZ, coal);
+
+        // orig GenericDungeon.java:6253-6257 — Vortex list, 6+nextInt(6) picks
+        placeLootChest(level, new BlockPos(posX, centerY, posZ), BATTLE_TOWER_VORTEX_LOOT);
     }
 
     // =====================================================================
@@ -604,17 +650,20 @@ public class CrystalStructures {
 
     private static boolean tryPlaceCrystalBattleTower(WorldGenLevel level, RandomSource random,
                                                        int chunkX, int chunkZ, BlockState grassState) {
+        // orig OreSpawnWorld.java:1686 — 1/280 gate, then 3 attempts (:1689)
         if (random.nextInt(280) != 0) return false;
 
-        int posX = chunkX + 8;
-        int posZ = chunkZ + 8;
-        for (int posY = 100; posY > 50; posY--) {
-            if (!level.getBlockState(new BlockPos(posX, posY, posZ)).isAir()
-                    || !level.getBlockState(new BlockPos(posX, posY - 1, posZ)).equals(grassState))
-                continue;
+        for (int i = 0; i < 3; i++) {
+            int posX = chunkX + random.nextInt(16);
+            int posZ = chunkZ + random.nextInt(16);
+            for (int posY = 100; posY > 50; posY--) {
+                if (!level.getBlockState(new BlockPos(posX, posY, posZ)).isAir()
+                        || !level.getBlockState(new BlockPos(posX, posY - 1, posZ)).equals(grassState))
+                    continue;
 
-            buildCrystalBattleTower(level, random, posX, posY, posZ);
-            return true;
+                buildCrystalBattleTower(level, random, posX, posY, posZ);
+                return true;
+            }
         }
         return false;
     }
@@ -663,29 +712,27 @@ public class CrystalStructures {
             }
         }
 
-        placeBattleTowerFloor(level, random, cx, cy, cz, 1,
-                ModEntities.ENTITY_RAT.get(), CrystalLoot.BATTLE_TOWER_RAT);
-        placeBattleTowerFloor(level, random, cx, cy, cz, 6,
-                ModEntities.DUNGEON_BEAST.get(), CrystalLoot.BATTLE_TOWER_DUNGEON_BEAST);
-        placeBattleTowerFloor(level, random, cx, cy, cz, 11,
-                ModEntities.URCHIN.get(), CrystalLoot.BATTLE_TOWER_URCHIN);
-        placeBattleTowerFloor(level, random, cx, cy, cz, 16,
-                ModEntities.ENTITY_ROTATOR.get(), CrystalLoot.BATTLE_TOWER_ROTATOR);
-        placeBattleTowerFloor(level, random, cx, cy, cz, 21,
-                ModEntities.ENTITY_VORTEX.get(), CrystalLoot.BATTLE_TOWER_VORTEX);
+        // Floors per orig GenericDungeon.java:4875-4959 — chest at cy+j, two
+        // spawners above; pick counts (5+nextInt(5), Vortex 6+nextInt(6)) are
+        // encoded in the loot tables' rolls.
+        placeBattleTowerFloor(level, cx, cy, cz, 1,
+                ModEntities.ENTITY_RAT.get(), BATTLE_TOWER_RAT_LOOT);
+        placeBattleTowerFloor(level, cx, cy, cz, 6,
+                ModEntities.DUNGEON_BEAST.get(), BATTLE_TOWER_DUNGEON_BEAST_LOOT);
+        placeBattleTowerFloor(level, cx, cy, cz, 11,
+                ModEntities.URCHIN.get(), BATTLE_TOWER_URCHIN_LOOT);
+        placeBattleTowerFloor(level, cx, cy, cz, 16,
+                ModEntities.ENTITY_ROTATOR.get(), BATTLE_TOWER_ROTATOR_LOOT);
+        placeBattleTowerFloor(level, cx, cy, cz, 21,
+                ModEntities.ENTITY_VORTEX.get(), BATTLE_TOWER_VORTEX_LOOT);
     }
 
-    private static void placeBattleTowerFloor(WorldGenLevel level, RandomSource random,
+    private static void placeBattleTowerFloor(WorldGenLevel level,
                                                int cx, int cy, int cz, int floorY,
-                                               EntityType<?> mob, CrystalLoot lootType) {
+                                               EntityType<?> mob, ResourceKey<LootTable> loot) {
         placeSpawner(level, new BlockPos(cx, cy + floorY + 1, cz), mob);
         placeSpawner(level, new BlockPos(cx, cy + floorY + 2, cz), mob);
-
-        BlockPos chestPos = new BlockPos(cx, cy + floorY, cz);
-        level.setBlock(chestPos, Blocks.CHEST.defaultBlockState(), 2);
-        if (level.getBlockEntity(chestPos) instanceof RandomizableContainerBlockEntity container) {
-            fillBattleTowerChest(container, random, lootType);
-        }
+        placeLootChest(level, new BlockPos(cx, cy + floorY, cz), loot);
     }
 
     // =====================================================================
@@ -736,6 +783,16 @@ public class CrystalStructures {
     // MAZE CHESTS AND SPAWNERS at Y=25
     // =====================================================================
 
+    /**
+     * Maze-level chests/spawners at Y=25, port of
+     * {@code OreSpawnWorld.addCrystalChestsAndSpawners} (orig OreSpawnWorld.java:1724-1753)
+     * and {@code addCrystalChest} (:1755-1777). The original requires the picked
+     * position to be air and looks for an adjacent AIR block in the fixed order
+     * +X, -X, +Z, -Z (the chest's facing followed that direction); if even -Z is
+     * solid, it gives up for the whole chunk rather than retrying. Whatever spot
+     * passes gets a 1-in-3 chest (maze crystal loot, 1+nextInt(3) picks,
+     * :1762) or a spawner, 50/50 Dungeon Beast / Rat (:1768-1774).
+     */
     private static void placeMazeChestsAndSpawners(WorldGenLevel level, RandomSource random,
                                                      int chunkX, int chunkZ) {
         for (int i = 0; i < 3; i++) {
@@ -743,25 +800,24 @@ public class CrystalStructures {
             int posY = 25;
             int posZ = 1 + chunkZ + random.nextInt(14);
 
+            // orig :1730 — position itself must be air
             if (!level.getBlockState(new BlockPos(posX, posY, posZ)).isAir()) continue;
 
-            boolean hasAdjWall = false;
+            // orig :1733-1750 — first AIR neighbour in +X, -X, +Z, -Z order wins;
+            // all-solid means stop entirely (the original's final `break`)
+            boolean foundOpenSide = false;
             int[][] dirs = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
             for (int[] dir : dirs) {
-                if (!level.getBlockState(new BlockPos(posX + dir[0], posY, posZ + dir[1])).isAir()) {
-                    hasAdjWall = true;
+                if (level.getBlockState(new BlockPos(posX + dir[0], posY, posZ + dir[1])).isAir()) {
+                    foundOpenSide = true;
                     break;
                 }
             }
-            if (!hasAdjWall) continue;
+            if (!foundOpenSide) break;
 
-            int choice = random.nextInt(3);
-            if (choice == 0) {
-                BlockPos chestPos = new BlockPos(posX, posY, posZ);
-                level.setBlock(chestPos, Blocks.CHEST.defaultBlockState(), 2);
-                if (level.getBlockEntity(chestPos) instanceof RandomizableContainerBlockEntity container) {
-                    fillCrystalChest(container, random);
-                }
+            // orig :1756 — 1/3 chest, else spawner
+            if (random.nextInt(3) == 0) {
+                placeLootChest(level, new BlockPos(posX, posY, posZ), CRYSTAL_CHEST_MAZE_LOOT);
             } else {
                 EntityType<?> mob = random.nextInt(2) == 0
                         ? ModEntities.DUNGEON_BEAST.get()
@@ -835,84 +891,41 @@ public class CrystalStructures {
     // CRYSTAL-SPECIFIC CHEST LOOT
     // =====================================================================
 
-    enum CrystalLoot {
-        BATTLE_TOWER_RAT,
-        BATTLE_TOWER_DUNGEON_BEAST,
-        BATTLE_TOWER_URCHIN,
-        BATTLE_TOWER_ROTATOR,
-        BATTLE_TOWER_VORTEX
-    }
-
     /**
-     * General crystal dimension chest loot - based on Trees.CrystalChestContentsList.
-     * Contains crystal blocks, tools, armor, eggs, food, and special items.
+     * Places a chest whose contents are generated lazily from the given loot
+     * table when first opened. The tables under {@code orespawn:chests/}
+     * transcribe the original {@code WeightedRandomChestContent} arrays
+     * entry-for-entry (weights, counts and pick counts); generation is in
+     * tools/gen_loot_tables.py with per-entry citations.
      */
-    private static void fillCrystalChest(Container container, RandomSource random) {
-        int count = 1 + random.nextInt(5);
-        for (int i = 0; i < count && i < container.getContainerSize(); i++) {
-            ItemStack stack = pickCrystalItem(random);
-            if (!stack.isEmpty()) {
-                container.setItem(i, stack);
-            }
+    private static void placeLootChest(WorldGenLevel level, BlockPos pos, ResourceKey<LootTable> loot) {
+        level.setBlock(pos, Blocks.CHEST.defaultBlockState(), 2);
+        if (level.getBlockEntity(pos) instanceof RandomizableContainerBlockEntity container) {
+            container.setLootTable(loot);
         }
     }
 
-    private static ItemStack pickCrystalItem(RandomSource random) {
-        int roll = random.nextInt(30);
-        return switch (roll) {
-            case 0 -> new ItemStack(ModBlocks.CRYSTAL_TERMITE_BLOCK.get(), 1 + random.nextInt(5));
-            case 1 -> new ItemStack(ModBlocks.CRYSTAL_FLOWER_RED.get(), 1 + random.nextInt(10));
-            case 2 -> new ItemStack(ModBlocks.CRYSTAL_FLOWER_BLUE.get(), 1 + random.nextInt(10));
-            case 3 -> new ItemStack(ModBlocks.CRYSTAL_FLOWER_GREEN.get(), 1 + random.nextInt(10));
-            case 4 -> new ItemStack(ModBlocks.CRYSTAL_FLOWER_YELLOW.get(), 1 + random.nextInt(10));
-            case 5 -> new ItemStack(ModBlocks.CRYSTAL_PLANKS.get(), 1 + random.nextInt(10));
-            case 6 -> new ItemStack(ModBlocks.CRYSTAL_WORKBENCH.get(), 1);
-            case 7 -> new ItemStack(ModBlocks.CRYSTAL_FURNACE.get(), 1);
-            case 8 -> new ItemStack(ModBlocks.CRYSTAL_STONE.get(), 1 + random.nextInt(10));
-            case 9 -> new ItemStack(ModBlocks.CRYSTAL_COAL.get(), 1 + random.nextInt(10));
-            case 10 -> new ItemStack(ModBlocks.CRYSTAL_TORCH.get(), 1 + random.nextInt(10));
-            case 11 -> new ItemStack(ModItems.CRYSTAL_WOOD_SWORD.get());
-            case 12 -> new ItemStack(ModItems.CRYSTAL_WOOD_PICKAXE.get());
-            case 13 -> new ItemStack(ModItems.CRYSTAL_WOOD_AXE.get());
-            case 14 -> new ItemStack(ModItems.CRYSTAL_STONE_SWORD.get());
-            case 15 -> new ItemStack(ModItems.CRYSTAL_STONE_PICKAXE.get());
-            case 16 -> new ItemStack(ModItems.CRYSTAL_STONE_AXE.get());
-            case 17 -> new ItemStack(ModItems.CRYSTAL_PINK_SWORD.get());
-            case 18 -> new ItemStack(ModItems.CRYSTAL_PINK_PICKAXE.get());
-            case 19 -> new ItemStack(ModItems.CRYSTAL_PINK_AXE.get());
-            case 20 -> new ItemStack(ModItems.CRYSTAL_PINK_INGOT.get(), 1 + random.nextInt(5));
-            case 21 -> new ItemStack(ModItems.CRYSTAL_APPLE.get(), 1 + random.nextInt(5));
-            case 22 -> new ItemStack(ModItems.RAW_PEACOCK.get(), 1 + random.nextInt(10));
-            case 23 -> new ItemStack(ModItems.RICE.get(), 1 + random.nextInt(10));
-            case 24 -> new ItemStack(ModItems.QUINOA.get(), 1 + random.nextInt(10));
-            case 25 -> new ItemStack(ModItems.PEACOCK_FEATHER.get(), 1 + random.nextInt(5));
-            case 26 -> new ItemStack(ModItems.TIGERS_EYE_INGOT.get(), 1 + random.nextInt(5));
-            case 27 -> new ItemStack(ModItems.TIGERS_EYE_SWORD.get());
-            case 28 -> new ItemStack(ModItems.TIGERS_EYE_PICKAXE.get());
-            case 29 -> new ItemStack(ModItems.IRUKANDJI_ARROW.get(), 5 + random.nextInt(6));
-            default -> ItemStack.EMPTY;
-        };
-    }
-
     /**
-     * Haunted House chest: iron ingot, raw peacock, crystal torches,
-     * crystal coal, golden apples, saddle, crystal pink tools, kraken repellent.
+     * Haunted House chest, slot-by-slot per orig GenericDungeon.java:3052-3088:
+     * compass (1/2), cooked peacock x8 (2/3), crystal torch x32 (2/3), crystal
+     * coal x16 (1/2), two beds (1/2 each), wooden door (1/2), crystal pink
+     * pickaxe/sword/axe (1/2 each), guaranteed Kraken Repellent, chest (1/2).
      */
-    private static void fillHauntedHouseChest(Container container, RandomSource random) {
+    private static void fillHauntedHouseChest(RandomizableContainerBlockEntity container, RandomSource random) {
         if (random.nextInt(2) == 0)
-            container.setItem(0, new ItemStack(Items.IRON_INGOT));
+            container.setItem(0, new ItemStack(Items.COMPASS));
         if (random.nextInt(3) != 0)
-            container.setItem(2, new ItemStack(ModItems.RAW_PEACOCK.get(), 8));
+            container.setItem(2, new ItemStack(ModItems.COOKED_PEACOCK.get(), 8));
         if (random.nextInt(3) != 0)
             container.setItem(3, new ItemStack(ModBlocks.CRYSTAL_TORCH.get(), 32));
         if (random.nextInt(2) == 0)
             container.setItem(4, new ItemStack(ModBlocks.CRYSTAL_COAL.get(), 16));
         if (random.nextInt(2) == 0)
-            container.setItem(5, new ItemStack(Items.GOLDEN_APPLE));
+            container.setItem(5, new ItemStack(Items.RED_BED));
         if (random.nextInt(2) == 0)
-            container.setItem(6, new ItemStack(Items.GOLDEN_APPLE));
+            container.setItem(6, new ItemStack(Items.RED_BED));
         if (random.nextInt(2) == 0)
-            container.setItem(7, new ItemStack(Items.SADDLE));
+            container.setItem(7, new ItemStack(Items.OAK_DOOR));
         if (random.nextInt(2) == 0)
             container.setItem(8, new ItemStack(ModItems.CRYSTAL_PINK_PICKAXE.get()));
         if (random.nextInt(2) == 0)
@@ -924,105 +937,4 @@ public class CrystalStructures {
             container.setItem(13, new ItemStack(Items.CHEST));
     }
 
-    /**
-     * Round Rotator chest: crystal coal, tiger's eye sword, tiger's eye block,
-     * poison sword (same loot as BattleTowerVortex in original).
-     */
-    private static void fillRoundRotatorChest(Container container, RandomSource random) {
-        fillBattleTowerChest(container, random, CrystalLoot.BATTLE_TOWER_VORTEX);
-    }
-
-    /**
-     * Battle Tower chests - per-floor loot based on original GenericDungeon.
-     */
-    private static void fillBattleTowerChest(Container container, RandomSource random,
-                                              CrystalLoot tier) {
-        switch (tier) {
-            case BATTLE_TOWER_RAT -> {
-                int count = 5 + random.nextInt(5);
-                for (int i = 0; i < count && i < container.getContainerSize(); i++) {
-                    container.setItem(i, pickRatLoot(random));
-                }
-            }
-            case BATTLE_TOWER_DUNGEON_BEAST -> {
-                int count = 5 + random.nextInt(5);
-                for (int i = 0; i < count && i < container.getContainerSize(); i++) {
-                    container.setItem(i, pickDungeonBeastLoot(random));
-                }
-            }
-            case BATTLE_TOWER_URCHIN -> {
-                int count = 3 + random.nextInt(3);
-                for (int i = 0; i < count && i < container.getContainerSize(); i++) {
-                    container.setItem(i, pickUrchinLoot(random));
-                }
-            }
-            case BATTLE_TOWER_ROTATOR -> {
-                int count = 3 + random.nextInt(3);
-                for (int i = 0; i < count && i < container.getContainerSize(); i++) {
-                    container.setItem(i, pickRotatorLoot(random));
-                }
-            }
-            case BATTLE_TOWER_VORTEX -> {
-                int count = 6 + random.nextInt(6);
-                for (int i = 0; i < count && i < container.getContainerSize(); i++) {
-                    container.setItem(i, pickVortexLoot(random));
-                }
-            }
-        }
-    }
-
-    private static ItemStack pickRatLoot(RandomSource random) {
-        return switch (random.nextInt(7)) {
-            case 0 -> new ItemStack(Items.IRON_SWORD, 1);
-            case 1 -> new ItemStack(Items.IRON_PICKAXE, 1);
-            case 2 -> new ItemStack(Items.IRON_AXE, 1);
-            case 3 -> new ItemStack(Items.IRON_HELMET, 1);
-            case 4 -> new ItemStack(ModItems.BLT_SANDWICH.get(), 4 + random.nextInt(7));
-            case 5 -> new ItemStack(ModItems.SALAD.get(), 4 + random.nextInt(7));
-            case 6 -> new ItemStack(ModItems.CORN_DOG.get(), 4 + random.nextInt(7));
-            default -> ItemStack.EMPTY;
-        };
-    }
-
-    private static ItemStack pickDungeonBeastLoot(RandomSource random) {
-        return switch (random.nextInt(4)) {
-            case 0 -> new ItemStack(Items.DIAMOND, 6 + random.nextInt(11));
-            case 1 -> new ItemStack(ModItems.SQUID_ZOOKA.get());
-            case 2 -> new ItemStack(Items.EMERALD, 5 + random.nextInt(11));
-            case 3 -> new ItemStack(Items.DIAMOND_PICKAXE);
-            default -> ItemStack.EMPTY;
-        };
-    }
-
-    private static ItemStack pickUrchinLoot(RandomSource random) {
-        return switch (random.nextInt(5)) {
-            case 0 -> new ItemStack(ModItems.PINK_HELMET.get());
-            case 1 -> new ItemStack(ModItems.PINK_CHESTPLATE.get());
-            case 2 -> new ItemStack(ModItems.PINK_LEGGINGS.get());
-            case 3 -> new ItemStack(ModItems.PINK_BOOTS.get());
-            case 4 -> new ItemStack(ModItems.FAIRY_SWORD.get());
-            default -> ItemStack.EMPTY;
-        };
-    }
-
-    private static ItemStack pickRotatorLoot(RandomSource random) {
-        return switch (random.nextInt(5)) {
-            case 0 -> new ItemStack(ModItems.TIGERSEYE_HELMET.get());
-            case 1 -> new ItemStack(ModItems.TIGERSEYE_CHESTPLATE.get());
-            case 2 -> new ItemStack(ModItems.TIGERSEYE_LEGGINGS.get());
-            case 3 -> new ItemStack(ModItems.TIGERSEYE_BOOTS.get());
-            case 4 -> new ItemStack(ModItems.RAT_SWORD.get());
-            default -> ItemStack.EMPTY;
-        };
-    }
-
-    private static ItemStack pickVortexLoot(RandomSource random) {
-        return switch (random.nextInt(5)) {
-            case 0, 1 -> new ItemStack(ModBlocks.CRYSTAL_COAL.get(), 6 + random.nextInt(5));
-            case 2 -> new ItemStack(ModItems.TIGERS_EYE_SWORD.get());
-            case 3 -> new ItemStack(ModBlocks.BLOCK_TIGERS_EYE.get(), 4 + random.nextInt(5));
-            case 4 -> new ItemStack(ModItems.POISON_SWORD.get());
-            default -> ItemStack.EMPTY;
-        };
-    }
 }

@@ -1,0 +1,13 @@
+{
+  "feature": "orespawn:ore_ruby_mining",
+  "placement": [
+    {
+      "type": "orespawn:less_ore_count",
+      "count": 3,
+      "less_ore_count": 1
+    },
+    {
+      "type": "minecraft:biome"
+    }
+  ]
+}

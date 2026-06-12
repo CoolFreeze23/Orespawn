@@ -1,0 +1,21 @@
+{
+  "feature": "orespawn:ore_salt",
+  "placement": [
+    {
+      "type": "orespawn:vein_count",
+      "count": 5,
+      "min_y": 50,
+      "max_y": 127,
+      "extra_dice": 9,
+      "less_ore_divisor": 3,
+      "passes": 3,
+      "less_ore_passes": 1
+    },
+    {
+      "type": "minecraft:in_square"
+    },
+    {
+      "type": "minecraft:biome"
+    }
+  ]
+}

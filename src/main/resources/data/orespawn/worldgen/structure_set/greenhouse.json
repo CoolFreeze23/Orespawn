@@ -1,11 +1,14 @@
 {
   "structures": [
-    { "structure": "orespawn:greenhouse", "weight": 1 }
+    {
+      "structure": "orespawn:greenhouse",
+      "weight": 1
+    }
   ],
   "placement": {
     "type": "minecraft:random_spread",
-    "spacing": 48,
-    "separation": 24,
+    "spacing": 44,
+    "separation": 22,
     "salt": 84319
   }
 }

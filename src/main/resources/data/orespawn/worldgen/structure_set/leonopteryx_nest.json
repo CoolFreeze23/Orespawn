@@ -1,6 +1,9 @@
 {
   "structures": [
-    { "structure": "orespawn:leonopteryx_nest", "weight": 1 }
+    {
+      "structure": "orespawn:leonopteryx_nest",
+      "weight": 1
+    }
   ],
   "placement": {
     "type": "minecraft:random_spread",

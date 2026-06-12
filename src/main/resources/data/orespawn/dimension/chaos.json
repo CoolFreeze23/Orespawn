@@ -6,7 +6,7 @@
       "type": "minecraft:fixed",
       "biome": "orespawn:chaos_biome"
     },
-    "settings": "orespawn:inland",
+    "settings": "orespawn:chaos",
     "dimension_style": "chaos"
   }
 }

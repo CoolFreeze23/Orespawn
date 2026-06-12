@@ -2,8 +2,7 @@
   "type": "neoforge:add_features",
   "biomes": "orespawn:crystal_plains",
   "features": [
-    "orespawn:ore_kyanite",
-    "orespawn:ore_pink_tourmaline"
+    "orespawn:ore_kyanite"
   ],
   "step": "underground_ores"
 }

@@ -94,10 +94,10 @@ public class RandomDungeonSpawnerBlockEntity extends BlockEntity {
      */
     private static boolean buildForType(ServerLevel server, BlockPos pos, int type) {
         return switch (type) {
-            case TYPE_RUBY_DUNGEON -> GenericDungeon.tryPlaceRubyDungeon(server, server.random, pos);
-            case TYPE_GENERIC_DUNGEON -> GenericDungeon.tryPlaceGenericDungeon(server, server.random, pos);
+            case TYPE_RUBY_DUNGEON -> GenericDungeon.placeRubyDungeonAt(server, server.random, pos);
+            case TYPE_GENERIC_DUNGEON -> GenericDungeon.placeGenericDungeonAt(server, server.random, pos);
             // Interim fallback for the 48 not-yet-ported structures (Phase D / WGEN-042)
-            default -> GenericDungeon.tryPlaceGenericDungeon(server, server.random, pos);
+            default -> GenericDungeon.placeGenericDungeonAt(server, server.random, pos);
         };
     }
 

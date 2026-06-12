@@ -1,0 +1,124 @@
+{
+  "type": "minecraft:chest",
+  "pools": [
+    {
+      "rolls": {
+        "type": "minecraft:uniform",
+        "min": 4.0,
+        "max": 10.0
+      },
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "orespawn:cage_empty",
+          "weight": 20,
+          "functions": [
+            {
+              "function": "minecraft:set_count",
+              "count": {
+                "type": "minecraft:uniform",
+                "min": 3.0,
+                "max": 10.0
+              }
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "orespawn:ruby",
+          "weight": 15,
+          "functions": [
+            {
+              "function": "minecraft:set_count",
+              "count": {
+                "type": "minecraft:uniform",
+                "min": 2.0,
+                "max": 8.0
+              }
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "orespawn:cooked_bacon",
+          "weight": 20,
+          "functions": [
+            {
+              "function": "minecraft:set_count",
+              "count": {
+                "type": "minecraft:uniform",
+                "min": 6.0,
+                "max": 12.0
+              }
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "orespawn:butter_candy",
+          "weight": 20,
+          "functions": [
+            {
+              "function": "minecraft:set_count",
+              "count": {
+                "type": "minecraft:uniform",
+                "min": 6.0,
+                "max": 12.0
+              }
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "orespawn:ruby_pickaxe",
+          "weight": 15
+        },
+        {
+          "type": "minecraft:item",
+          "name": "orespawn:ruby_shovel",
+          "weight": 15
+        },
+        {
+          "type": "minecraft:item",
+          "name": "orespawn:ruby_hoe",
+          "weight": 15
+        },
+        {
+          "type": "minecraft:item",
+          "name": "orespawn:ruby_axe",
+          "weight": 15
+        },
+        {
+          "type": "minecraft:item",
+          "name": "orespawn:ruby_sword",
+          "weight": 15
+        },
+        {
+          "type": "minecraft:item",
+          "name": "orespawn:ruby_chestplate",
+          "weight": 15
+        },
+        {
+          "type": "minecraft:item",
+          "name": "orespawn:ruby_leggings",
+          "weight": 15
+        },
+        {
+          "type": "minecraft:item",
+          "name": "orespawn:ruby_helmet",
+          "weight": 15
+        },
+        {
+          "type": "minecraft:item",
+          "name": "orespawn:ruby_boots",
+          "weight": 15
+        },
+        {
+          "type": "minecraft:item",
+          "name": "orespawn:thunder_staff",
+          "weight": 5
+        }
+      ]
+    }
+  ]
+}

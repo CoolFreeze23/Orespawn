@@ -21,6 +21,7 @@ import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
 import net.minecraft.world.entity.ai.goal.PanicGoal;
+import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -29,6 +30,7 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.portal.DimensionTransition;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.List;
@@ -118,8 +120,17 @@ public class EntityAnt extends Animal {
         serverPlayer.setPortalCooldown(TELEPORT_COOLDOWN);
 
         double x = serverPlayer.getX();
+        double oldY = serverPlayer.getY();
         double z = serverPlayer.getZ();
         int safeY = findSafeY(destLevel, BlockPos.containing(x, 0, z));
+
+        // WGEN-049: orig OreSpawnTeleporter.java:153-162 — tamed, non-sitting pets
+        // owned by the player inside a 48x24x48 box around the departure point
+        // travel along with them.
+        List<TamableAnimal> pets = serverPlayer.serverLevel().getEntitiesOfClass(
+                TamableAnimal.class,
+                new AABB(x - 24.0, oldY - 12.0, z - 24.0, x + 24.0, oldY + 12.0, z + 24.0),
+                pet -> pet.isTame() && pet.isOwnedBy(serverPlayer) && !pet.isOrderedToSit());
 
         DimensionTransition transition = new DimensionTransition(
                 destLevel,
@@ -130,6 +141,17 @@ public class EntityAnt extends Animal {
                 e -> e.playSound(SoundEvents.ENDERMAN_TELEPORT, 1.0f, 1.0f)
         );
         serverPlayer.changeDimension(transition);
+        for (TamableAnimal pet : pets) {
+            // orig OreSpawnTeleporter.java:161 — sendToThisDimension(pet, newX, newY, newZ)
+            pet.changeDimension(new DimensionTransition(
+                    destLevel,
+                    new Vec3(x, safeY, z),
+                    Vec3.ZERO,
+                    pet.getYRot(),
+                    pet.getXRot(),
+                    DimensionTransition.DO_NOTHING
+            ));
+        }
         return InteractionResult.SUCCESS;
     }
 

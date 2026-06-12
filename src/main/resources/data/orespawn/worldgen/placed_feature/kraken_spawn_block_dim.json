@@ -1,0 +1,36 @@
+{
+  "feature": "orespawn:kraken_spawn_block",
+  "placement": [
+    {
+      "type": "orespawn:less_ore_count",
+      "count": {
+        "type": "minecraft:weighted_list",
+        "distribution": [
+          { "data": 0, "weight": 7448 },
+          { "data": 1, "weight": 2552 }
+        ]
+      },
+      "less_ore_count": {
+        "type": "minecraft:weighted_list",
+        "distribution": [
+          { "data": 0, "weight": 9169 },
+          { "data": 1, "weight": 831 }
+        ]
+      }
+    },
+    {
+      "type": "minecraft:in_square"
+    },
+    {
+      "type": "minecraft:height_range",
+      "height": {
+        "type": "minecraft:uniform",
+        "min_inclusive": { "absolute": 50 },
+        "max_inclusive": { "absolute": 127 }
+      }
+    },
+    {
+      "type": "minecraft:biome"
+    }
+  ]
+}

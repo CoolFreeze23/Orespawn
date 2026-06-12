@@ -1,0 +1,39 @@
+{
+  "type": "minecraft:chest",
+  "pools": [
+    {
+      "rolls": {
+        "type": "minecraft:uniform",
+        "min": 5.0,
+        "max": 9.0
+      },
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "orespawn:pink_helmet",
+          "weight": 10
+        },
+        {
+          "type": "minecraft:item",
+          "name": "orespawn:pink_chestplate",
+          "weight": 10
+        },
+        {
+          "type": "minecraft:item",
+          "name": "orespawn:pink_leggings",
+          "weight": 10
+        },
+        {
+          "type": "minecraft:item",
+          "name": "orespawn:pink_boots",
+          "weight": 10
+        },
+        {
+          "type": "minecraft:item",
+          "name": "orespawn:fairy_sword",
+          "weight": 15
+        }
+      ]
+    }
+  ]
+}

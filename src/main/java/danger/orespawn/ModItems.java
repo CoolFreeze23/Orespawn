@@ -57,6 +57,18 @@ public class ModItems {
     public static final DeferredItem<BlockItem> TERMITE_TROLL_ITEM = ITEMS.registerSimpleBlockItem("termite_troll", ModBlocks.TERMITE_TROLL);
     public static final DeferredItem<BlockItem> KRAKEN_SPAWN_BLOCK_ITEM = ITEMS.registerSimpleBlockItem("kraken_spawn_block", ModBlocks.KRAKEN_SPAWN_BLOCK);
     public static final DeferredItem<BlockItem> DRAGON_SPAWN_BLOCK_ITEM = ITEMS.registerSimpleBlockItem("dragon_spawn_block", ModBlocks.DRAGON_SPAWN_BLOCK);
+    // WGEN-023 — crystal spawn-block egg ores (orig OreSpawnMain.java:6326-6336)
+    public static final DeferredItem<BlockItem> ORE_URCHIN_ITEM = ITEMS.registerSimpleBlockItem("ore_urchin", ModBlocks.ORE_URCHIN);
+    public static final DeferredItem<BlockItem> ORE_FLOUNDER_ITEM = ITEMS.registerSimpleBlockItem("ore_flounder", ModBlocks.ORE_FLOUNDER);
+    public static final DeferredItem<BlockItem> ORE_SKATE_ITEM = ITEMS.registerSimpleBlockItem("ore_skate", ModBlocks.ORE_SKATE);
+    public static final DeferredItem<BlockItem> ORE_ROTATOR_ITEM = ITEMS.registerSimpleBlockItem("ore_rotator", ModBlocks.ORE_ROTATOR);
+    public static final DeferredItem<BlockItem> ORE_PEACOCK_ITEM = ITEMS.registerSimpleBlockItem("ore_peacock", ModBlocks.ORE_PEACOCK);
+    public static final DeferredItem<BlockItem> ORE_FAIRY_ITEM = ITEMS.registerSimpleBlockItem("ore_fairy", ModBlocks.ORE_FAIRY);
+    public static final DeferredItem<BlockItem> ORE_DUNGEON_BEAST_ITEM = ITEMS.registerSimpleBlockItem("ore_dungeon_beast", ModBlocks.ORE_DUNGEON_BEAST);
+    public static final DeferredItem<BlockItem> ORE_VORTEX_ITEM = ITEMS.registerSimpleBlockItem("ore_vortex", ModBlocks.ORE_VORTEX);
+    public static final DeferredItem<BlockItem> ORE_RAT_ITEM = ITEMS.registerSimpleBlockItem("ore_rat", ModBlocks.ORE_RAT);
+    public static final DeferredItem<BlockItem> ORE_WHALE_ITEM = ITEMS.registerSimpleBlockItem("ore_whale", ModBlocks.ORE_WHALE);
+    public static final DeferredItem<BlockItem> ORE_IRUKANDJI_ITEM = ITEMS.registerSimpleBlockItem("ore_irukandji", ModBlocks.ORE_IRUKANDJI);
     public static final DeferredItem<BlockItem> KING_SPAWNER_ITEM = ITEMS.registerSimpleBlockItem("king_spawner", ModBlocks.KING_SPAWNER);
     public static final DeferredItem<BlockItem> QUEEN_SPAWNER_ITEM = ITEMS.registerSimpleBlockItem("queen_spawner", ModBlocks.QUEEN_SPAWNER);
     public static final DeferredItem<BlockItem> DUNGEON_SPAWNER_ITEM = ITEMS.registerSimpleBlockItem("dungeon_spawner", ModBlocks.DUNGEON_SPAWNER);

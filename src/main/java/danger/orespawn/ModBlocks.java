@@ -173,6 +173,35 @@ public class ModBlocks {
     public static final DeferredBlock<Block> DRAGON_SPAWN_BLOCK = BLOCKS.register("dragon_spawn_block",
             () -> new OreGenericEgg(BlockBehaviour.Properties.of().strength(0.5f, 1.0f).sound(SoundType.GRAVEL)));
 
+    // Crystal-dimension spawn-block ("egg") ores — the 11-entry nextInt(11) pool
+    // of ChunkProviderOreSpawn5.generateCrystalOres:586-633 (WGEN-023). All are
+    // OreGenericEgg blocks (orig OreSpawnMain.java:6326-6336): hardness 0.5,
+    // resistance 1.0, gravel sound, 50% chance of 5..9 XP on break
+    // (orig OreGenericEgg.java:16-30). They do NOT spawn mobs — only the
+    // separate CrystalRat/CrystalFairy deep-vein OreBasicStone blocks do.
+    public static final DeferredBlock<Block> ORE_URCHIN = BLOCKS.register("ore_urchin",
+            () -> new OreGenericEgg(BlockBehaviour.Properties.of().strength(0.5f, 1.0f).sound(SoundType.GRAVEL)));
+    public static final DeferredBlock<Block> ORE_FLOUNDER = BLOCKS.register("ore_flounder",
+            () -> new OreGenericEgg(BlockBehaviour.Properties.of().strength(0.5f, 1.0f).sound(SoundType.GRAVEL)));
+    public static final DeferredBlock<Block> ORE_SKATE = BLOCKS.register("ore_skate",
+            () -> new OreGenericEgg(BlockBehaviour.Properties.of().strength(0.5f, 1.0f).sound(SoundType.GRAVEL)));
+    public static final DeferredBlock<Block> ORE_ROTATOR = BLOCKS.register("ore_rotator",
+            () -> new OreGenericEgg(BlockBehaviour.Properties.of().strength(0.5f, 1.0f).sound(SoundType.GRAVEL)));
+    public static final DeferredBlock<Block> ORE_PEACOCK = BLOCKS.register("ore_peacock",
+            () -> new OreGenericEgg(BlockBehaviour.Properties.of().strength(0.5f, 1.0f).sound(SoundType.GRAVEL)));
+    public static final DeferredBlock<Block> ORE_FAIRY = BLOCKS.register("ore_fairy",
+            () -> new OreGenericEgg(BlockBehaviour.Properties.of().strength(0.5f, 1.0f).sound(SoundType.GRAVEL)));
+    public static final DeferredBlock<Block> ORE_DUNGEON_BEAST = BLOCKS.register("ore_dungeon_beast",
+            () -> new OreGenericEgg(BlockBehaviour.Properties.of().strength(0.5f, 1.0f).sound(SoundType.GRAVEL)));
+    public static final DeferredBlock<Block> ORE_VORTEX = BLOCKS.register("ore_vortex",
+            () -> new OreGenericEgg(BlockBehaviour.Properties.of().strength(0.5f, 1.0f).sound(SoundType.GRAVEL)));
+    public static final DeferredBlock<Block> ORE_RAT = BLOCKS.register("ore_rat",
+            () -> new OreGenericEgg(BlockBehaviour.Properties.of().strength(0.5f, 1.0f).sound(SoundType.GRAVEL)));
+    public static final DeferredBlock<Block> ORE_WHALE = BLOCKS.register("ore_whale",
+            () -> new OreGenericEgg(BlockBehaviour.Properties.of().strength(0.5f, 1.0f).sound(SoundType.GRAVEL)));
+    public static final DeferredBlock<Block> ORE_IRUKANDJI = BLOCKS.register("ore_irukandji",
+            () -> new OreGenericEgg(BlockBehaviour.Properties.of().strength(0.5f, 1.0f).sound(SoundType.GRAVEL)));
+
     // Spawner blocks
     // orig KingSpawnerBlock.java:66-67 / QueenSpawnerBlock.java:66-67 — spawn at
     // y+8, gated by TheKingEnable/TheQueenEnable (BOSS-005/BOSS-012).
