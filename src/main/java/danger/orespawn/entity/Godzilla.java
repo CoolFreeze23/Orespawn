@@ -9,8 +9,10 @@ import danger.orespawn.ModBlocks;
 import danger.orespawn.MobzillaSpawnTracker;
 import danger.orespawn.OreSpawnConfig;
 import danger.orespawn.util.MyUtils;
+import danger.orespawn.OreSpawnMod;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
@@ -257,20 +259,26 @@ public class Godzilla extends Monster implements OreSpawnPartEntity.MultipartBos
 
     @Override
     protected SoundEvent getAmbientSound() {
+        // orig Godzilla.java:176-181 — "orespawn:godzilla_living" 1 time in 5.
         if (this.getRandom().nextInt(5) == 0) {
-            return SoundEvents.ENDER_DRAGON_GROWL;
+            return SoundEvent.createVariableRangeEvent(
+                    ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "godzilla_living"));
         }
         return null;
     }
 
     @Override
     protected SoundEvent getHurtSound(DamageSource source) {
-        return SoundEvents.ENDER_DRAGON_HURT;
+        // orig Godzilla.java:183-185 — "orespawn:alo_hurt".
+        return SoundEvent.createVariableRangeEvent(
+                ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "alo_hurt"));
     }
 
     @Override
     protected SoundEvent getDeathSound() {
-        return SoundEvents.ENDER_DRAGON_DEATH;
+        // orig Godzilla.java:187-189 — "orespawn:godzilla_death".
+        return SoundEvent.createVariableRangeEvent(
+                ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "godzilla_death"));
     }
 
     @Override

@@ -460,9 +460,15 @@ public class ThePrinceAdult extends TamableAnimal
         if (this.isRemoved()) return;
         super.customServerAiStep();
 
-        if (this.isTame() && !this.level().getLevelData().isHardcore()) {
+        // orig ThePrinceAdult.java:400-412 — the grow counter only ticks (and
+        // the King transform only fires) while: idle (activity 0), riderless,
+        // not Peaceful, tamed, AND the FullPowerKingEnable config is on.
+        if (this.getActivity() == 0 && !this.isVehicle()
+                && this.level().getDifficulty() != net.minecraft.world.Difficulty.PEACEFUL
+                && this.isTame()
+                && danger.orespawn.OreSpawnConfig.FULL_POWER_KING_ENABLE.get()) {
             ++this.growCounter;
-            if (this.growCounter > 288000) {
+            if (this.growCounter > 288000) { // orig ThePrinceAdult.java:402
                 this.transformToKing();
                 return;
             }
@@ -516,6 +522,9 @@ public class ThePrinceAdult extends TamableAnimal
         TheKing king = ModEntities.THE_KING.get().create(serverLevel);
         if (king == null) return;
         king.moveTo(this.getX(), this.getY(), this.getZ(), this.getYRot(), this.getXRot());
+        // orig ThePrinceAdult.java:408 — the transformed King starts the
+        // "free" end-game sequence (isEnd=1 → enraged full-power phase).
+        king.setFree();
         serverLevel.addFreshEntity(king);
         this.discard();
     }
@@ -597,20 +606,28 @@ public class ThePrinceAdult extends TamableAnimal
 
     @Override
     protected SoundEvent getAmbientSound() {
-        return SoundEvent.createVariableRangeEvent(
-                ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "roar"));
+        // orig ThePrinceAdult.java:265-273 — "orespawn:king_living", but only
+        // while aggro (activity 1), riderless and not sitting; silent otherwise.
+        if (this.isOrderedToSit()) return null;
+        if (this.getActivity() == 1 && !this.isVehicle()) {
+            return SoundEvent.createVariableRangeEvent(
+                    ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "king_living"));
+        }
+        return null;
     }
 
     @Override
     protected SoundEvent getHurtSound(DamageSource source) {
+        // orig ThePrinceAdult.java:275-277 — "orespawn:king_hit".
         return SoundEvent.createVariableRangeEvent(
-                ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "alo_hurt"));
+                ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "king_hit"));
     }
 
     @Override
     protected SoundEvent getDeathSound() {
+        // orig ThePrinceAdult.java:279-281 — "orespawn:trex_death".
         return SoundEvent.createVariableRangeEvent(
-                ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "alo_death"));
+                ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "trex_death"));
     }
 
     @Override protected float getSoundVolume() { return 1.5f; }

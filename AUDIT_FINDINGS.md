@@ -2871,6 +2871,7 @@ Paths: ORIG = `reference_1_7_10_source\sources\danger\orespawn\`, PORT = `src\ma
 - **Original:** ORIG `TheKing.java:86-88` — 22×24 (5.5×6 if PlayNicely)
 - **Port:** `ModEntities.java:180-182` — 6×12 parent + 5 parts (partial compensation)
 - **Fix:** enlarge the parent dimensions and/or part AABBs to approximate the 22×24 envelope; implement PlayNicely shrink (see BOSS-017).
+- **Resolution:** FIXED (2026-06-11, Phase C — parent resized 22×24 per orig TheKing.java:86; PlayNicely shrink stays with BOSS-017; see FIX_LOG.md and phase_c_reports/C5_bosses.md)
 
 ### BOSS-003 — TheKing: KingHead sidecar degraded
 - **Status:** PARTIAL
@@ -2890,6 +2891,7 @@ Paths: ORIG = `reference_1_7_10_source\sources\danger\orespawn\`, PORT = `src\ma
 - **Original:** ORIG `KingSpawnerBlock.java:43-89` — 100-tick scheduled fuse; spawns at y+8 with `setGuardMode(1)` (home-leash anchor); gated by `TheKingEnable`
 - **Port:** `PORT\block\BossSpawnerBlock.java:44-57` (generic, `ModBlocks.java:152-154`) — randomTick (unbounded delay), y+1, `MobSpawnType.EVENT`, no guard mode, no enable gate
 - **Fix:** in `BossSpawnerBlock`: schedule a 100-tick block tick on placement; spawn at y+8; call the King's guard-mode setter; add a `THE_KING_ENABLE` config check.
+- **Resolution:** FIXED (2026-06-11, Phase C — all four deviations closed; see FIX_LOG.md and phase_c_reports/C5_bosses.md)
 
 ---
 
@@ -2900,13 +2902,14 @@ Paths: ORIG = `reference_1_7_10_source\sources\danger\orespawn\`, PORT = `src\ma
 - **Original:** `OreSpawnMain.java:6522`, ORIG `TheQueen.java:99,817-828` — attack 225; armor 21 base with +2/+3/+5 phase scaling
 - **Port:** `PORT\entity\TheQueen.java:157,257,158-259` — attack 200; flat armor 10, no scaling override
 - **Fix:** set ATTACK_DAMAGE 225, ARMOR 21; port the +2/+3/+5 phase armor bonuses (mirror TheKing's ported structure at `TheKing.java:975-984`).
-- **Resolution:** PARTIAL (2026-06-11, Phase B — ATK 225 and base armor 21 fixed; the +2/+3/+5 phase armor scaling override remains open, see phase_b_reports/B2_mobstats.md)
+- **Resolution:** FIXED (2026-06-11, Phase C — +2/+3/+5 phase armor override ported incl. the orig's unreachable +3/+5 branches (the +2 condition is a superset, effective bonus is always +2); see FIX_LOG.md and phase_c_reports/C5_bosses.md)
 
 ### BOSS-007 — TheQueen: hitbox smaller, no PlayNicely shrink
 - **Status:** DIVERGENT
 - **Original:** ORIG `TheQueen.java:79-81` — 22×24 (5.5×6 PlayNicely)
 - **Port:** `ModEntities.java:184-186` — 16×12 + MHLib parts (`TheQueen.java:425`)
 - **Fix:** verify the MHLib profile covers the 22×24 envelope; implement PlayNicely shrink (BOSS-017).
+- **Resolution:** FIXED (2026-06-11, Phase C — main hitbox 16×12 → 22×24 (profile + EntityType) per orig TheQueen.java:79; PlayNicely shrink stays with BOSS-017; see FIX_LOG.md and phase_c_reports/C5_bosses.md)
 
 ### BOSS-008 — TheQueen: QueenHead sidecar degraded
 - **Status:** PARTIAL
@@ -2925,6 +2928,7 @@ Paths: ORIG = `reference_1_7_10_source\sources\danger\orespawn\`, PORT = `src\ma
 - **Original:** does not exist in 1.7.10 — first hit dealt normal damage
 - **Port:** `TheQueen.java:129-135,538-546` — first hit deals 0 dmg and starts a 60-tick invulnerable `idle_to_attack` transition (dormant blue → aggro red)
 - **Fix:** decide: remove the free invulnerability window (apply the first hit's damage after wake-up) for fidelity, or keep and document; at minimum don't zero the triggering hit.
+- **Resolution:** FIXED (2026-06-11, Phase C — invulnerability window removed entirely; wake-up animation kept as a purely cosmetic trigger, all hits damage normally as in 1.7.10; see FIX_LOG.md and phase_c_reports/C5_bosses.md)
 
 ### BOSS-011 — TheQueen: drops massively buffed + doubled
 - **Status:** DIVERGENT
@@ -2938,6 +2942,7 @@ Paths: ORIG = `reference_1_7_10_source\sources\danger\orespawn\`, PORT = `src\ma
 - **Original:** ORIG `QueenSpawnerBlock.java:55,66-67,81-89` — 100-tick fuse, y+8, `TheQueenEnable` gate, `setGuardMode(1)`
 - **Port:** generic `BossSpawnerBlock` (`ModBlocks.java:155-157`) — randomTick, y+1, no gate, no guard mode
 - **Fix:** same as BOSS-005, with a `THE_QUEEN_ENABLE` config.
+- **Resolution:** FIXED (2026-06-11, Phase C — shared BossSpawnerBlock fix, THE_QUEEN_ENABLE added; see FIX_LOG.md and phase_c_reports/C5_bosses.md)
 
 ---
 
@@ -2968,6 +2973,7 @@ Paths: ORIG = `reference_1_7_10_source\sources\danger\orespawn\`, PORT = `src\ma
 - **Original:** ORIG `Godzilla.java:178-188` — `orespawn:godzilla_living` (1/5) / `alo_hurt` / `godzilla_death`
 - **Port:** `Godzilla.java:261-276` — ENDER_DRAGON_GROWL / ENDER_DRAGON_HURT / ENDER_DRAGON_DEATH
 - **Fix:** register/use `ModSounds.GODZILLA_LIVING/ALO_HURT/GODZILLA_DEATH`.
+- **Resolution:** FIXED (2026-06-11, Phase C — orespawn:godzilla_living (1-in-5)/alo_hurt/godzilla_death wired (all three already in sounds.json); see FIX_LOG.md and phase_c_reports/C5_bosses.md)
 
 ---
 
@@ -2988,6 +2994,7 @@ Paths: ORIG = `reference_1_7_10_source\sources\danger\orespawn\`, PORT = `src\ma
 - **Original:** ORIG `ThePrince.java:215-224` — any food heals `healAmount×10`, ++fedCount
 - **Port:** `PORT\entity\ThePrince.java:306-318` — flat 20 HP, ++fedCount
 - **Fix:** heal `foodProperties.getNutrition() × 10` instead of flat 20.
+- **Resolution:** FIXED (2026-06-11, Phase C — see FIX_LOG.md and phase_c_reports/C5_bosses.md)
 
 ### BOSS-019 — ThePrince: fire toggle interactions missing
 - **Status:** MISSING
@@ -3000,6 +3007,7 @@ Paths: ORIG = `reference_1_7_10_source\sources\danger\orespawn\`, PORT = `src\ma
 - **Original:** ORIG `ThePrince.java:267-278` — DIAMOND triggers growth when ok_to_grow
 - **Port:** `ThePrince.java:297-303` — GOLD INGOT; cake added to max counters (`:285-295`, not in orig)
 - **Fix:** change the grow item to `Items.DIAMOND`; remove or document the cake shortcut.
+- **Resolution:** FIXED (2026-06-11, Phase C — grow item now DIAMOND; invented cake shortcut removed from the baby; see FIX_LOG.md and phase_c_reports/C5_bosses.md)
 
 ### BOSS-021 — ThePrince: natural growth blocked by extra okToGrow gate
 - **Status:** PARTIAL
@@ -3024,12 +3032,14 @@ Paths: ORIG = `reference_1_7_10_source\sources\danger\orespawn\`, PORT = `src\ma
 - **Original:** ORIG `ThePrince.java:746-761` — Monsters AND Mothra/Butterfly/Cockateil/Dragonfly/Mosquito; PlayNicely gate (`:765`)
 - **Port:** `ThePrince.java:247-254` — Monsters only; insects/Mothra explicitly excluded; no PlayNicely
 - **Fix:** add the insect/Mothra prey classes back to targeting; PlayNicely per BOSS-017.
+- **Resolution:** FIXED (2026-06-11, Phase C — Mothra/Butterfly/Cockateil/Dragonfly/Mosquito restored as prey; PlayNicely gate stays with BOSS-017; see FIX_LOG.md and phase_c_reports/C5_bosses.md)
 
 ### BOSS-025 — ThePrince: drops beef → diamond
 - **Status:** DIVERGENT
 - **Original:** ORIG `ThePrince.java:354-361` — 1–4 beef
 - **Port:** `LT the_prince.json` — 1–4 diamond
 - **Fix:** rewrite `the_prince.json` to beef 1–4.
+- **Resolution:** FIXED (2026-06-11, Phase C — see FIX_LOG.md and phase_c_reports/C5_bosses.md)
 
 ---
 
@@ -3040,7 +3050,7 @@ Paths: ORIG = `reference_1_7_10_source\sources\danger\orespawn\`, PORT = `src\ma
 - **Original:** ORIG `ThePrinceTeen.java:229-231,252-254,87,105,103` — HP 1500, armor 18, speed 0.32, XP 300, size 3.25×4.25
 - **Port:** `PORT\entity\ThePrinceTeen.java:90,88-95,58,68`, `ModEntities.java:472-474` — HP 1000, NO armor, speed 0.35, XP 500, size 2×3
 - **Fix:** set MAX_HEALTH 1500, add ARMOR 18, speed 0.32, XP 300; resize EntityType to 3.25×4.25.
-- **Resolution:** PARTIAL (2026-06-11, Phase B — HP 1500, armor 18, speed 0.32, XP 300 fixed; size 3.25×4.25 remains open, see phase_b_reports/B2_mobstats.md)
+- **Resolution:** FIXED (2026-06-11, Phase C — size 3.25×4.25 applied in ModEntities per orig ThePrinceTeen.java:103, completing the Phase B stat fixes; see FIX_LOG.md and phase_c_reports/C5_bosses.md)
 
 ### BOSS-027 — ThePrinceTeen: riding missing
 - **Status:** MISSING
@@ -3060,6 +3070,7 @@ Paths: ORIG = `reference_1_7_10_source\sources\danger\orespawn\`, PORT = `src\ma
 - **Original:** no shrink-back exists in 1.7.10
 - **Port:** `ThePrinceTeen.java:240-254` — gold ingot reverts teen → baby
 - **Fix:** remove the gold-ingot regression (or document as intentional; note gold ingot also conflicts with BOSS-020's grow item).
+- **Resolution:** FIXED (2026-06-11, Phase C — invented gold-ingot teen→baby regression removed (orig ThePrinceTeen.java:1127-1230 has no shrink-back); see FIX_LOG.md and phase_c_reports/C5_bosses.md)
 
 ---
 
@@ -3077,12 +3088,14 @@ Paths: ORIG = `reference_1_7_10_source\sources\danger\orespawn\`, PORT = `src\ma
 - **Original:** ORIG `ThePrinceAdult.java:100` — 6.25×10.25
 - **Port:** `ModEntities.java:464-466` — 4×6
 - **Fix:** resize EntityType to 6.25×10.25 (and check model scale).
+- **Resolution:** FIXED (2026-06-11, Phase C — resized per orig ThePrinceAdult.java:100; model scale needs an in-game look (pending manual test); see FIX_LOG.md and phase_c_reports/C5_bosses.md)
 
 ### BOSS-032 — ThePrinceAdult: King-transform config gate dropped
 - **Status:** DIVERGENT
 - **Original:** ORIG `ThePrinceAdult.java:400-404` — transform→TheKing gated `activity==0 && no rider && !peaceful && tamed && FullPowerKingEnable!=0`, growcounter>288000
 - **Port:** `ThePrinceAdult.java:176-182,220-227` — gated `isTame && !hardcore` only; `FULL_POWER_KING_ENABLE` repurposed as King damage ×2 (`TheKing.java:893-896`)
 - **Fix:** re-add a `FULL_POWER_KING_ENABLE`-style gate on the transform (and the no-rider/!peaceful checks); if the ×2 King damage stays, give it its own config key.
+- **Resolution:** FIXED (2026-06-11, Phase C — full orig gate restored (activity 0 + riderless + !Peaceful + tamed + FULL_POWER_KING_ENABLE) and transform now calls king.setFree() per orig :408; the invented ×2 King-damage repurposing was removed rather than re-keyed; see FIX_LOG.md and phase_c_reports/C5_bosses.md)
 
 ### BOSS-033 — ThePrinceAdult: riding missing
 - **Status:** MISSING
@@ -3102,12 +3115,14 @@ Paths: ORIG = `reference_1_7_10_source\sources\danger\orespawn\`, PORT = `src\ma
 - **Original:** ORIG `ThePrinceAdult.java:313-315` — PrinceEgg ×1
 - **Port:** `LT the_prince_adult.json` — 5–15 diamond + 3–8 gold
 - **Fix:** rewrite `the_prince_adult.json` to prince_egg ×1.
+- **Resolution:** FIXED (2026-06-11, Phase C — see FIX_LOG.md and phase_c_reports/C5_bosses.md)
 
 ### BOSS-036 — ThePrinceAdult: King-tier sounds replaced
 - **Status:** DIVERGENT
 - **Original:** ORIG `ThePrinceAdult.java:270-281` — king_living / king_hit / trex_death
 - **Port:** `ThePrinceAdult.java:272-287` — roar / alo_hurt / alo_death
 - **Fix:** switch to `ModSounds.KING_LIVING/KING_HIT/TREX_DEATH` (already registered for TheKing).
+- **Resolution:** FIXED (2026-06-11, Phase C — king_living (only while aggro + riderless + not sitting, per orig :265-273)/king_hit/trex_death; see FIX_LOG.md and phase_c_reports/C5_bosses.md)
 
 ### BOSS-037 — ThePrinceAdult: grow-counter NBT key renamed — old saves lose progress
 - **Status:** PARTIAL
@@ -3149,6 +3164,7 @@ Paths: ORIG = `reference_1_7_10_source\sources\danger\orespawn\`, PORT = `src\ma
 - **Original:** ORIG `ThePrincess.java:342-349` — 1–4 beef
 - **Port:** `LT the_princess.json` — 1–4 diamond
 - **Fix:** rewrite `the_princess.json` to beef 1–4.
+- **Resolution:** FIXED (2026-06-11, Phase C — see FIX_LOG.md and phase_c_reports/C5_bosses.md)
 
 ---
 
