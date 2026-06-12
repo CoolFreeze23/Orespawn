@@ -50,6 +50,9 @@ public class KrakenRevengeHandler {
         if (level.dimension().equals(CRYSTAL_DIMENSION)) return;
 
         if (OreSpawnConfig.ALL_MOBS_DISABLE.get()) return;
+        // orig OreSpawnMain.java:6426 — KrakenEnable gates all Kraken spawns,
+        // including the AttackSquid revenge spawn (ANIM-018).
+        if (!OreSpawnConfig.KRAKEN_ENABLE.get()) return;
         if (level.random.nextInt(REVENGE_DICE) != 0) return;
 
         int spawnCount = 1 + level.random.nextInt(3);

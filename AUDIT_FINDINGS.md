@@ -4135,12 +4135,14 @@ Entries: **78 total** — ANIM 20 (DIVERGENT 8 · PARTIAL 10 · MISSING 2) · BU
 - **Original:** `ModelKraken.java:1029-1058`; `Kraken.java:58, 105, 123-132` — fin twitch keyed on **server-synced** `RenderInfo.ri1`.
 - **Port:** `entity/client/ModelKraken.java:594-628` (`:128, 619-622`) — `ri1` is now client-local random; tentacle/fin anims otherwise ported, `getAttacking()` synced (`Kraken.java:317, 387, 627-631`). Cosmetic-only divergence.
 - **Fix:** Either accept (visual-only), or add a synched int to `Kraken` mirroring original `ri1` and read it in the model.
+- **Resolution:** FIXED (2026-06-12, Phase C — audit corrected: orig `RenderInfo` was never datawatcher-synced; it is a per-entity client scratch object (orig Kraken.java:58, RenderInfo.java:6-15) mutated by the model (orig ModelKraken.java:1045-1057). Port now attaches a per-entity `RenderInfo` to `Kraken` and drives ri1/ri2 from it, restoring independent per-Kraken twitch state; see FIX_LOG.md and phase_c_reports/C8_animations_gui.md)
 
 ### ANIM-003 — Rotator: 24-blade tri-axis gyroscope reduced to 3 flat Z-spinning blades
 - **Status:** DIVERGENT
 - **Original:** `ModelRotator.java:44-80` — each of 3 blade shapes rendered **8×** in a fan; fans spun on X, Y and Z axes via accumulating `ri.rf1 += 2°`.
 - **Port:** `entity/client/RotatorModel.java:33-45` — each shape rendered once, all three spun around **Z only** at 1×/1.5×/2×; the signature 24-blade ball is gone.
 - **Fix:** In `renderToBuffer`, render each blade part 8 times with 45° pose offsets, and assign the three fans X/Y/Z rotation axes with an accumulating angle field (2°/frame) as in the original.
+- **Resolution:** FIXED (2026-06-12, Phase C — RotatorModel rewritten: each blade rendered 8× at 45° steps, fans spun on X/Y/Z by a per-entity accumulating rf1 (+2°/frame, wrap 359°, orig ModelRotator.java:44-80); see FIX_LOG.md and phase_c_reports/C8_animations_gui.md)
 
 ### ANIM-004 — Mothra: renders at half size (flap-speed identity covered by ANIM-001)
 - **Status:** DIVERGENT
@@ -4154,42 +4156,49 @@ Entries: **78 total** — ANIM 20 (DIVERGENT 8 · PARTIAL 10 · MISSING 2) · BU
 - **Original:** `ModelGiantRobot.java:150-279` (attack at `:230-240`) — full walk cycle (hip bob + 2-phase legs by re-rendering shared parts at both positions), punch-windmill arms when `getAttacking()!=0`, state in `RenderGiantRobotInfo`.
 - **Port:** `entity/client/ModelGiantRobot.java:150-161` — only head look + tiny idle arm sway; `renderToBuffer` (`:164-183`) draws each part once, so the second leg/arm of each pair never renders.
 - **Fix:** Re-render each shared limb part at both leg/arm positions inside `renderToBuffer` (or duplicate the parts), reinstate the walk-cycle pose math from the original, and gate windmill arms on the entity's `getAttacking()` accessor (see also ANIM-014 for the missing state holder).
+- **Resolution:** FIXED (2026-06-12, Phase C — full walk cycle (hip sway/bob, two-phase thigh/shin), two-pass shared-part leg/arm rendering, and getAttacking()-gated punch windmill restored per orig ModelGiantRobot.java:150-279; pose values recomputed per frame so no cross-frame state holder is needed (see ANIM-014); see FIX_LOG.md and phase_c_reports/C8_animations_gui.md)
 
 ### ANIM-006 — SpiderRobot: only 1 of 8 legs renders
 - **Status:** DIVERGENT
 - **Original:** `ModelSpiderRobot.java:302-411` — 8 legs posed **and rendered inside** the loop (renders at `:392-410`); jaw snap at `:412-427`.
 - **Port:** `entity/client/ModelSpiderRobot.java:259-352` — keeps the 8-iteration pose loop but never renders inside it; `renderToBuffer` (`:372+`) draws once after the loop, so only leg i=7 is visible. Jaw snap ported (`:353-368`); gait simplified to a canned sine (`SpiderRobot.java:221-237`).
 - **Fix:** Move the leg `render` call inside the 8-iteration pose loop (pose leg i, render leg i) as the original does, or maintain 8 distinct leg `ModelPart`s posed per index.
+- **Resolution:** PARTIAL (2026-06-12, Phase C — pose-and-render now happens per leg inside the 8-iteration loop in `renderToBuffer` (orig ModelSpiderRobot.java:302-411), all 8 legs visible; same bug fixed in ModelAntRobot (6 legs). The simplified canned-sine gait vs the orig RenderSpiderRobotInfo leg solver remains — Phase D (entity-AI owner); see FIX_LOG.md and phase_c_reports/C8_animations_gui.md)
 
 ### ANIM-007 — Robot2: attack-gated arm poses replaced by constant windmill
 - **Status:** PARTIAL
 - **Original:** `ModelRobot2.java:133-153` — walk legs + attack-gated random arm poses via `getAttacking()`/`RenderInfo.ri1`.
 - **Port:** `entity/client/ModelRobot2.java:129-148` — walk ported; arms windmill constantly at 20°/tick regardless of attack state.
 - **Fix:** Gate the arm windmill behind the entity's `getAttacking()` synched accessor; pose arms at a resting angle when idle.
+- **Resolution:** FIXED (2026-06-12, Phase C — per-entity RenderInfo.ri1 re-rolled at sine zero crossings, arms windmill only while getAttacking()!=0 with random arm selection 1..3 (orig ModelRobot2.java:139-170); legs corrected to time-driven frequency; see FIX_LOG.md and phase_c_reports/C8_animations_gui.md)
 
 ### ANIM-008 — Robot3: attack driver dropped (shares Robot2 pattern)
 - **Status:** PARTIAL
 - **Original:** `ModelRobot3.java` — `getAttacking()`-gated arm animation (same pattern as Robot2).
 - **Port:** `entity/client/ModelRobot3.java` — no `getAttacking()` use (verified by absence in grep of attack-driver coverage, 08 §"Attack-driver coverage").
 - **Fix:** Same as ANIM-007: read `getAttacking()` and gate the attack arm pose on it.
+- **Resolution:** FIXED (2026-06-12, Phase C — ri1 latched at cosine zero crossings from getAttacking(), arm swing zeroed when idle (orig ModelRobot3.java:169-186); see FIX_LOG.md and phase_c_reports/C8_animations_gui.md)
 
 ### ANIM-009 — Robot4: attack-gated shield/cannon arm anims dropped
 - **Status:** PARTIAL
 - **Original:** `ModelRobot4.java` — walk + attack-gated shield/cannon arm animations keyed on `getAttacking()`.
 - **Port:** `entity/client/ModelRobot4.java:417-459` — walk ported; right arm swings on a fixed always-on cycle, cannon arm frozen at a constant angle; no `getAttacking()` use.
 - **Fix:** Restore the `getAttacking()` branch: idle pose when 0, shield raise + cannon aim cycle when attacking.
+- **Resolution:** FIXED (2026-06-12, Phase C — shield arm pumps (|cos|·45°+0.75) and cannon aims (0.85 rad) only while getAttacking()!=0, resting at 0 when idle; cannon assembly follows the upper-arm pivot (orig ModelRobot4.java:439-500); shin rest offsets corrected; see FIX_LOG.md and phase_c_reports/C8_animations_gui.md)
 
 ### ANIM-010 — EntityRat: attack head pose dropped
 - **Status:** PARTIAL
 - **Original:** `ModelRat.java:116` — attack-vs-idle head bob.
 - **Port:** `entity/client/RatModel.java:60-67` — walk + head yaw only.
 - **Fix:** Read the rat's `getAttacking()` accessor in `setupAnim` and apply the original attack head-bob branch.
+- **Resolution:** FIXED (2026-06-12, Phase C — audit corrected: orig ModelRat.java:116-120 animates the TAIL (yRot thrash, freq 1.5/amp 0.25π attacking vs 0.4/0.05π idle, tail2 follows tail1's tip), not the head; tail branch restored, leg phase signs fixed, unoriginal head yaw removed; see FIX_LOG.md and phase_c_reports/C8_animations_gui.md)
 
 ### ANIM-011 — Keybinds: fly-up default key changed (Left Alt → Space)
 - **Status:** DIVERGENT
 - **Original:** `KeyHandler.java:15-18` — one key "OreSpawn UP/FAST", LWJGL 56 = **Left Alt**.
 - **Port:** `client/KeybindHandler.java:18-37, 54-62` — fly_up=**SPACE**, fly_down=LCTRL, special=G (two keys are new additions).
 - **Fix:** Decide intentionally: either set fly_up default to `GLFW_KEY_LEFT_ALT` for parity, or document SPACE as a deliberate UX change (SPACE conflicts with vanilla mount-jump/dismount expectations).
+- **Resolution:** FIXED (2026-06-12, Phase C — fly_up default set to Left Alt for parity with orig KeyHandler.java:15 (LWJGL 56); SPACE rejected because it collides with vanilla mount-jump/dismount; fly_down/special documented as port-only additions; see FIX_LOG.md and phase_c_reports/C8_animations_gui.md)
 
 ### ANIM-012 — Rider flight/jump controls missing for 6 of 7 original mounts
 - **Status:** PARTIAL
@@ -4203,6 +4212,7 @@ Entries: **78 total** — ANIM 20 (DIVERGENT 8 · PARTIAL 10 · MISSING 2) · BU
 - **Original:** `GirlfriendOverlayGui.java:75-447` — universal crosshair-target health bar (name + `girlfriendgui.png` 182×5 textured bar above hotbar) covering ~45 entity types incl. ownership-gated Girlfriend/Boyfriend, Princes, Dragon, bosses (King `:360-364`, Queen `:365-369`, Mobzilla `:335-339`), robots, big crabs; pointed-entity lookup `:105-114`; bar draw `:432-446`; config gate `:102`.
 - **Port:** `client/GirlfriendOverlay.java:27-62` — top-left list of owned Girlfriends within 16 blocks only; flat-color bars; no crosshair targeting, no bosses/mounts/robots. Config gate ported (`:33`).
 - **Fix:** Reimplement crosshair-entity resolution (pick entity via `Minecraft.crosshairPickEntity` or a ray trace), restore the textured 182×5 bar centered above the hotbar, and port the ~45-type eligibility list (ownership gates for Girlfriend/Boyfriend).
+- **Resolution:** FIXED (2026-06-12, Phase C — GirlfriendOverlay rewritten as the crosshair-target HUD: vanilla pick entity + 16-block entity ray trace fallback (orig :105-114), full eligibility chain with ownership gates (Girlfriend/Boyfriend/Princes/Princess) and activity gates (Princes/Dragon/Cephadrome), custom-name-or-label, textured 182×5 bar from girlfriendgui.png (copied from orig assets) at y=25 (15 in water/armored) with 0xFF3434 name 10px above (orig :432-446), GUI_OVERLAY_ENABLE gate kept. Orig shoulder-Girlfriend passenger gate has no port equivalent (noted in class Javadoc); see FIX_LOG.md and phase_c_reports/C8_animations_gui.md)
 
 ### ANIM-014 — GiantRobot: `RenderGiantRobotInfo` walk-cycle state holder absent
 - **Status:** MISSING
@@ -4215,6 +4225,7 @@ Entries: **78 total** — ANIM 20 (DIVERGENT 8 · PARTIAL 10 · MISSING 2) · BU
 - **Original:** `TileEntityCrystalFurnace.java:174-179` — cook = **150 ticks**; custom fuel table (`:226-277`): lava/CrystalCoal **20000**, CrystalTreeLog 800, CrystalPlanks 400, etc.
 - **Port:** `gui/CrystalFurnaceBlockEntity.java:34` — cook = **100 ticks**; fuel via vanilla `fuel.getBurnTime(RecipeType.SMELTING)` (`:183`); no burn-time registration anywhere for Crystal Coal/Log/Planks (grep `getBurnTime|FurnaceFuel` = only this file), so they don't burn.
 - **Fix:** Register burn times for Crystal Coal (20000), Crystal Tree Log (800), Crystal Planks (400) via `IItemExtension#getBurnTime` overrides or a `FurnaceFuelBurnTimeEvent` handler; set cook time back to 150 (or document 100 as an intended buff).
+- **Resolution:** VERIFIED-CORRECT (2026-06-12, Phase C — duplicate of ITEM-016, already fixed in Phase C slice 6: cook 150 ticks and the orig fuel table (lava/CrystalCoal 20000, log 800, planks 400) live in CrystalFurnaceBlockEntity. Slice 8 additionally restored the fuel container-item remainder (lava bucket → empty bucket, orig TileEntityCrystalFurnace.java:165-170); see FIX_LOG.md and phase_c_reports/C8_animations_gui.md)
 
 ### ANIM-016 — Seasonal content: Halloween/Valentine's/Easter gates all absent
 - **Status:** MISSING
@@ -4227,24 +4238,28 @@ Entries: **78 total** — ANIM 20 (DIVERGENT 8 · PARTIAL 10 · MISSING 2) · BU
 - **Original:** `ExperienceCatcher.java:29-62` — catches **one** orb (value ≥3, 80% chance) → drops Bottle o' Enchanting + string + stick; item consumed.
 - **Port:** `item/ExperienceCatcher.java:24-61` — vacuums **all** orbs in r=3 → pays out emeralds/gold/diamonds by XP total.
 - **Fix:** Either restore original semantics (single orb ≥3 value, 80% roll, Bottle o' Enchanting + string + stick, consume item) or sign off the redesign explicitly.
+- **Resolution:** FIXED (2026-06-12, Phase C — original semantics restored: 1×2×1 click-column scan, first orb ≥3 passing the 80% roll → Bottle o' Enchanting + string + stick, catcher consumed unless creative; on miss the catcher is dropped at the click point and one removed (orig ExperienceCatcher.java:29-62); see FIX_LOG.md and phase_c_reports/C8_animations_gui.md)
 
 ### ANIM-018 — Per-mob spawn-disable flags: ~42 of ~100 enforced
 - **Status:** PARTIAL
 - **Original:** ~100 `XxxEnable` config flags gate `EntityRegistry.addSpawn` (grep `Enable = config.get` = 100, e.g. `OreSpawnMain.java:1519`).
 - **Port:** `ModSpawnControl.java:53-101` maps **42** entity types; cancellation via `FinalizeSpawnEvent`+`EntityJoinLevelEvent` (`:109-135`). Bosses/water mobs unmapped; `KRAKEN_ENABLE` does not exist in port config at all (grep = 0).
 - **Fix:** Extend the `ModSpawnControl` map to cover all ~100 original flags (add the missing config entries, incl. `KRAKEN_ENABLE`, which `KrakenRevengeHandler` should also respect).
+- **Resolution:** FIXED (2026-06-12, Phase C — 56 missing config flags added (orig OreSpawnMain.java:6364-6465; BoyfriendEnable default false per orig :6430) and ~65 map entries wired in ModSpawnControl, covering bosses (Mobzilla/King/Queen/Kraken), water mobs, robots, ambients and all cow variants (CowEnable, orig :4609-4624); KrakenRevengeHandler now respects KRAKEN_ENABLE; see FIX_LOG.md and phase_c_reports/C8_animations_gui.md)
 
 ### ANIM-019 — Creeper Repellent: PurplePower target omitted
 - **Status:** PARTIAL
 - **Original:** `CreeperRepellent.java:94-126` — repels Creeper + EntityAnt + **PurplePower**; `KrakenRepellent.java:93-109` repels Kraken + EntityAnt.
 - **Port:** `block/RepellentBlock.java:26-47` + `ModBlocks.java:131-136` — kraken predicate = Kraken‖EntityAnt ✓; creeper predicate = Creeper‖EntityAnt — PurplePower missing.
 - **Fix:** Add `|| e instanceof PurplePower` to the creeper-repellent predicate in `ModBlocks.java:131-136`.
+- **Resolution:** VERIFIED-CORRECT (2026-06-12, Phase C — audit stale: the ITEM-019 RepellentBlock rewrite already repels PurplePower in the creeper variant, including the orig type-10 scan-abort quirk (port block/RepellentBlock.java:109-114, orig CreeperRepellent.java:126-145); see phase_c_reports/C8_animations_gui.md)
 
 ### ANIM-020 — Dimension teleporter: 1 of 5+ destinations implemented
 - **Status:** PARTIAL
 - **Original:** `OreSpawnTeleporter.java:22-96` — custom placement for 5 dims (mining/crystal/chaos/village/islands + utopia).
 - **Port:** only `block/UtopiaPortalBlock.java:23-50` (entityInside → utopia/back); no teleporter/portal code for the other dimensions exists.
 - **Fix:** Implement portal blocks + placement logic for the remaining dimensions (mirror `UtopiaPortalBlock`), coordinating with the dimension-slice audit on which dims actually exist in the port.
+- **Resolution:** VERIFIED-CORRECT (2026-06-12, Phase C — audit stale: the orig "teleporter" triggers are the rideable ants/termite/butterfly (orig EntityAnt.java:95, EntityRedAnt.java:83, EntityRainbowAnt.java:55, EntityUnstableAnt.java:55, Termite.java:108, EntityButterfly.java:276), and the port already implements all 6 destinations via EntityAnt.mobInteract + subclass getTargetDimension overrides and EntityButterfly (Chaos), with the OreSpawnTeleporter safe-landing scan (findSafeY) and tamed-pet transfer (WGEN-049). All 6 dimension JSONs exist; see phase_c_reports/C8_animations_gui.md)
 
 ---
 

@@ -125,9 +125,6 @@ public class ModelKraken extends EntityModel<Kraken> {
     private final ModelPart Tooth41;
     private final ModelPart Tent17;
 
-    private int ri1 = 0;
-    private int ri2 = 0;
-
     public ModelKraken(ModelPart root) {
         this.Lefteye = root.getChild("Lefteye");
         this.Backbody = root.getChild("Backbody");
@@ -612,19 +609,26 @@ public class ModelKraken extends EntityModel<Kraken> {
         Sucktioncupright.xRot = Tent68.xRot;
         Sucktioncupright.yRot = Tent68.yRot;
 
+        // Per-entity scratch as in the original (orig Kraken.java:58, orig
+        // ModelKraken.java:1045-1057): each Kraken keeps its own twitch state
+        // instead of sharing one field on the model singleton.
+        RenderInfo r = entity.getRenderInfo();
         float newangle = Mth.cos(ageInTicks * 0.66F) * (float) Math.PI * 0.15F;
         float nextangle = Mth.cos((ageInTicks + 0.1F) * 0.66F) * (float) Math.PI * 0.15F;
         if (nextangle > 0.0F && newangle < 0.0F) {
+            // orig ModelKraken.java:1048-1057 — re-roll at the cosine zero
+            // crossing; idle nextInt(10)/nextInt(15), attacking nextInt(4)/nextInt(3).
             if (attacking == 0) {
-                ri1 = entity.getRandom().nextInt(10);
-                ri2 = entity.getRandom().nextInt(15);
+                r.ri1 = entity.getRandom().nextInt(10);
+                r.ri2 = entity.getRandom().nextInt(15);
             } else {
-                ri1 = entity.getRandom().nextInt(4);
-                ri2 = entity.getRandom().nextInt(3);
+                r.ri1 = entity.getRandom().nextInt(4);
+                r.ri2 = entity.getRandom().nextInt(3);
             }
         }
 
-        newangle = (ri1 == 1 || ri1 == 3)
+        // orig ModelKraken.java:1058 — twitch only while ri1 is 1 or 3.
+        newangle = (r.ri1 == 1 || r.ri1 == 3)
                 ? Mth.cos(ageInTicks * 0.5F * ANIM_SPEED) * (float) Math.PI * 0.015F
                 : 0.0F;
 

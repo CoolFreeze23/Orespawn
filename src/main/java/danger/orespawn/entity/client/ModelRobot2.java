@@ -128,8 +128,11 @@ public class ModelRobot2 extends EntityModel<Robot2> {
 
     @Override
     public void setupAnim(Robot2 entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
+        // orig ModelRobot2.java:133-137 — legs swing on time at 0.3*wingspeed
+        // (wingspeed 1.0, orig ClientProxyOreSpawn.java:440), amplitude scaled
+        // by limbSwingAmount, frozen below the 0.1 movement threshold.
         float walkAngle = limbSwingAmount > 0.1F
-                ? Mth.cos(limbSwing * 0.3F) * (float) Math.PI * 0.12F * limbSwingAmount
+                ? Mth.cos(ageInTicks * 0.3F) * (float) Math.PI * 0.12F * limbSwingAmount
                 : 0.0F;
         this.lleg1.xRot = walkAngle;
         this.lleg2.xRot = walkAngle;
@@ -138,13 +141,43 @@ public class ModelRobot2 extends EntityModel<Robot2> {
 
         this.head.yRot = (float) Math.toRadians(netHeadYaw);
 
+        // orig ModelRobot2.java:139-151 — at each zero crossing of
+        // sin(toRadians(t*20)), re-roll ri1: 0 when idle (arms rest), 1..3
+        // while attacking (which arm(s) windmill). Per-entity scratch as in
+        // the original (orig Robot2.java:39).
+        RenderInfo r = entity.getRenderInfo();
+        float newangle = Mth.sin((float) Math.toRadians(ageInTicks * 20.0F));
+        float nextangle = Mth.sin((float) Math.toRadians(ageInTicks * 20.0F + 1.5F));
+        if (nextangle > 0.0F && newangle < 0.0F) {
+            r.ri1 = 0;
+            if (entity.getAttacking() != 0) {
+                while (r.ri1 == 0) {
+                    r.ri1 = entity.getRandom().nextInt(4);
+                }
+            }
+        }
+
+        // orig ModelRobot2.java:152-170 — right arm windmills when ri1 is 1 or 3,
+        // left arm when ri1 is 2 or 3; otherwise the arm rests at 0.
         float armAngle = (float) Math.toRadians(ageInTicks * 20.0F);
-        this.rarm1.xRot = armAngle;
-        this.rarm2.xRot = armAngle;
-        this.rarm3.xRot = armAngle;
-        this.larm1.xRot = armAngle;
-        this.larm2.xRot = armAngle;
-        this.larm3.xRot = armAngle;
+        if (r.ri1 == 1 || r.ri1 == 3) {
+            this.rarm1.xRot = armAngle;
+            this.rarm2.xRot = armAngle;
+            this.rarm3.xRot = armAngle;
+        } else {
+            this.rarm1.xRot = 0.0F;
+            this.rarm2.xRot = 0.0F;
+            this.rarm3.xRot = 0.0F;
+        }
+        if (r.ri1 == 2 || r.ri1 == 3) {
+            this.larm1.xRot = armAngle;
+            this.larm2.xRot = armAngle;
+            this.larm3.xRot = armAngle;
+        } else {
+            this.larm1.xRot = 0.0F;
+            this.larm2.xRot = 0.0F;
+            this.larm3.xRot = 0.0F;
+        }
     }
 
     @Override

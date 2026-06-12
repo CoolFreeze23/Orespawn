@@ -58,12 +58,25 @@ public class RatModel<T extends EntityRat> extends EntityModel<T> {
 
     @Override
     public void setupAnim(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
-        float legAngle = limbSwingAmount > 0.1f ? Mth.cos(ageInTicks * 1.3f) * (float) Math.PI * 0.25f * limbSwingAmount : 0.0f;
-        this.lfleg.xRot = legAngle;
-        this.rfleg.xRot = -legAngle;
-        this.lrleg.xRot = -legAngle;
-        this.rrleg.xRot = legAngle;
-        this.head.yRot = netHeadYaw * ((float) Math.PI / 180F);
+        // orig ModelRat.java:111-115 — legs scurry on time at 1.7*wingspeed
+        // (wingspeed 1.0, orig ClientProxyOreSpawn.java:482), amplitude scaled
+        // by limbSwingAmount, frozen below the 0.1 movement threshold.
+        float legAngle = limbSwingAmount > 0.1f ? Mth.cos(ageInTicks * 1.7f) * (float) Math.PI * 0.25f * limbSwingAmount : 0.0f;
+        this.rfleg.xRot = legAngle;
+        this.lfleg.xRot = -legAngle;
+        this.rrleg.xRot = -legAngle;
+        this.lrleg.xRot = legAngle;
+
+        // orig ModelRat.java:116-120 — tail thrashes fast and wide while
+        // getAttacking() != 0 (freq 1.5, amp 0.25π), gentle idle sway
+        // otherwise (freq 0.4, amp 0.05π); tail2 follows tail1's tip.
+        float tailAngle = entity.getAttacking() != 0
+                ? Mth.cos(ageInTicks * 1.5f) * (float) Math.PI * 0.25f
+                : Mth.cos(ageInTicks * 0.4f) * (float) Math.PI * 0.05f;
+        this.tail1.yRot = tailAngle * 0.5f;
+        this.tail2.yRot = tailAngle * 1.25f;
+        this.tail2.z = this.tail1.z + (float) Math.cos(this.tail1.yRot) * 9.0f;
+        this.tail2.x = this.tail1.x + (float) Math.sin(this.tail1.yRot) * 9.0f;
     }
 
     @Override

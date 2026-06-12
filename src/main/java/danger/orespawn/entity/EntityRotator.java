@@ -31,6 +31,19 @@ public class EntityRotator extends Monster {
     private BlockPos currentFlightTarget = null;
     private int busyFighting = 0;
 
+    /**
+     * Per-entity render scratch (orig Rotator.java:50 {@code renderdata = new RenderInfo()},
+     * accessor orig Rotator.java:86-88). {@code rf1} is the accumulating gyroscope
+     * fan angle advanced 2°/frame by the model (orig ModelRotator.java:75-78).
+     */
+    private final danger.orespawn.entity.client.RenderInfo renderInfo =
+            new danger.orespawn.entity.client.RenderInfo();
+
+    /** Mirrors orig Rotator.java:86-88 {@code getRenderInfo()}. */
+    public danger.orespawn.entity.client.RenderInfo getRenderInfo() {
+        return this.renderInfo;
+    }
+
     public EntityRotator(EntityType<? extends EntityRotator> type, Level level) {
         super(type, level);
         this.xpReward = 35;

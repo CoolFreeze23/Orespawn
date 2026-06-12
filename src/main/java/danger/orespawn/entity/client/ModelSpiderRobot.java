@@ -255,11 +255,39 @@ public class ModelSpiderRobot extends EntityModel<SpiderRobot> {
         return LayerDefinition.create(meshdefinition, 256, 512);
     }
 
+    /**
+     * Leg solver data captured in {@link #setupAnim} and consumed by the
+     * per-leg pose-and-render loop in {@link #renderToBuffer}. The original
+     * posed AND rendered the shared leg parts inside the 8-iteration loop
+     * (orig ModelSpiderRobot.java:302-411, renders at :392-410); rendering
+     * after the loop would draw only the last leg's pose.
+     */
+    private RenderSpiderRobotInfo renderInfo;
+
     @Override
     public void setupAnim(SpiderRobot entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
-        RenderSpiderRobotInfo r = null;
-        r = entity.getRenderSpiderRobotInfo();
-        for (int i = 0; i < 8; ++i) {
+        RenderSpiderRobotInfo r = entity.getRenderSpiderRobotInfo();
+        this.renderInfo = r;
+        if (entity.getAttacking() == 0) {
+        this.Ljaw1.yRot = 0.0f;
+        this.Ljaw2.yRot = 0.75f;
+        this.Ljaw3.yRot = 1.71f;
+        this.Rjaw1.yRot = 0.0f;
+        this.Rjaw2.yRot = 2.3f;
+        this.Rjaw3.yRot = 1.41f;
+        } else {
+        float newangle;
+        this.Ljaw1.yRot = newangle = Mth.cos((float)((float)r.gpcounter * 0.25f)) * (float)Math.PI * 0.22f;
+        this.Ljaw2.yRot = newangle + 0.75f;
+        this.Ljaw3.yRot = newangle + 1.71f;
+        this.Rjaw1.yRot = -newangle;
+        this.Rjaw2.yRot = 2.3f - newangle;
+        this.Rjaw3.yRot = 1.41f - newangle;
+        }
+    }
+
+    /** Poses the shared leg parts for leg {@code i} (orig ModelSpiderRobot.java:303-391). */
+    private void poseLeg(RenderSpiderRobotInfo r, int i) {
         this.Leg1p2.yRot = this.Leg1p3.yRot = r.ydisplayangle[i];
         this.Leg1p1.yRot = this.Leg1p3.yRot;
         this.Foot.yRot = r.ydisplayangle[i];
@@ -349,46 +377,37 @@ public class ModelSpiderRobot extends EntityModel<SpiderRobot> {
         this.LowerKnee.x = this.Leg1p3.x;
         this.LowerKnee.y = this.Leg1p3.y;
         this.LowerKnee.z = this.Leg1p3.z;
-        }
-        if (entity.getAttacking() == 0) {
-        this.Ljaw1.yRot = 0.0f;
-        this.Ljaw2.yRot = 0.75f;
-        this.Ljaw3.yRot = 1.71f;
-        this.Rjaw1.yRot = 0.0f;
-        this.Rjaw2.yRot = 2.3f;
-        this.Rjaw3.yRot = 1.41f;
-        } else {
-        float newangle;
-        this.Ljaw1.yRot = newangle = Mth.cos((float)((float)r.gpcounter * 0.25f)) * (float)Math.PI * 0.22f;
-        this.Ljaw2.yRot = newangle + 0.75f;
-        this.Ljaw3.yRot = newangle + 1.71f;
-        this.Rjaw1.yRot = -newangle;
-        this.Rjaw2.yRot = 2.3f - newangle;
-        this.Rjaw3.yRot = 1.41f - newangle;
-        }
     }
 
     @Override
     public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, int color) {
-        this.Leg1p1.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
-        this.Leg1p2.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
-        this.Leg1p3.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
-        this.Foot.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
-        this.FootSpike1.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
-        this.FootSpike2.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
-        this.FootSpike3.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
-        this.FootSpike4.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
-        this.AnkleSpike1.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
-        this.AnkleSpike2.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
-        this.AnkleSpike3.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
-        this.AnkleSpike4.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
-        this.LowerKnee.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
-        this.UpperKnee.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
-        this.LegBump1.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
-        this.LegBump2.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
-        this.LowerKnee2.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
-        this.UpperKnee2.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
-        this.HipJoint.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        // orig ModelSpiderRobot.java:302-411 — pose leg i, then render the
+        // shared leg parts, for each of the 8 legs.
+        RenderSpiderRobotInfo r = this.renderInfo;
+        if (r != null) {
+            for (int i = 0; i < 8; ++i) {
+                poseLeg(r, i);
+                this.Leg1p1.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+                this.Leg1p2.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+                this.Leg1p3.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+                this.Foot.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+                this.FootSpike1.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+                this.FootSpike2.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+                this.FootSpike3.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+                this.FootSpike4.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+                this.AnkleSpike1.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+                this.AnkleSpike2.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+                this.AnkleSpike3.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+                this.AnkleSpike4.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+                this.LowerKnee.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+                this.UpperKnee.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+                this.LegBump1.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+                this.LegBump2.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+                this.LowerKnee2.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+                this.UpperKnee2.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+                this.HipJoint.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+            }
+        }
         this.BodyCenter.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
         this.Abdomen.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
         this.Head.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);

@@ -189,7 +189,14 @@ public class CrystalFurnaceBlockEntity extends BlockEntity implements MenuProvid
             be.burnTime = getFuelBurnTime(fuel);
             be.maxBurnTime = be.burnTime;
             if (be.burnTime > 0) {
+                // orig TileEntityCrystalFurnace.java:165-170 — when the fuel
+                // stack empties, leave its container item behind (lava bucket
+                // → empty bucket).
+                ItemStack remainder = fuel.getCraftingRemainingItem();
                 fuel.shrink(1);
+                if (fuel.isEmpty()) {
+                    be.items.set(SLOT_FUEL, remainder);
+                }
                 changed = true;
             }
         }
