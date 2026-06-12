@@ -572,28 +572,9 @@ public class ThePrinceTeen extends TamableAnimal
                 return InteractionResult.sidedSuccess(this.level().isClientSide);
             }
 
-            if (stack.is(Items.GOLD_INGOT)) {
-                if (!this.level().isClientSide && this.level() instanceof ServerLevel serverLevel) {
-                    ThePrince baby = ModEntities.THE_PRINCE.get().create(serverLevel);
-                    if (baby != null) {
-                        baby.moveTo(this.getX(), this.getY(), this.getZ(), this.getYRot(), this.getXRot());
-                        if (this.getOwnerUUID() != null) {
-                            Player downgradeOwner = this.level().getPlayerByUUID(this.getOwnerUUID());
-                            if (downgradeOwner != null) {
-                                baby.tame(downgradeOwner);
-                            } else {
-                                // Owner offline: tame(null) would NPE (BUG-004).
-                                baby.setOwnerUUID(this.getOwnerUUID());
-                                baby.setTame(true, true);
-                            }
-                        }
-                        serverLevel.addFreshEntity(baby);
-                        this.discard();
-                    }
-                }
-                if (!player.getAbilities().instabuild) stack.shrink(1);
-                return InteractionResult.sidedSuccess(this.level().isClientSide);
-            }
+            // BOSS-029: the gold-ingot teen→baby regression that used to live
+            // here was a port invention — orig ThePrinceTeen.java:1127-1230
+            // (func_70085_c) has no shrink-back interaction. Removed.
         }
 
         if (stack.has(net.minecraft.core.component.DataComponents.FOOD) && this.distanceToSqr(player) < 25.0) {

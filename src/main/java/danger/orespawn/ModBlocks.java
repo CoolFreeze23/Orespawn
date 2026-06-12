@@ -149,12 +149,14 @@ public class ModBlocks {
             () -> new OreGenericEgg(BlockBehaviour.Properties.of().strength(0.5f, 1.0f).sound(SoundType.GRAVEL)));
 
     // Spawner blocks
+    // orig KingSpawnerBlock.java:66-67 / QueenSpawnerBlock.java:66-67 — spawn at
+    // y+8, gated by TheKingEnable/TheQueenEnable (BOSS-005/BOSS-012).
     public static final DeferredBlock<Block> KING_SPAWNER = BLOCKS.register("king_spawner",
             () -> new BossSpawnerBlock(BlockBehaviour.Properties.of().strength(50.0f, 1200.0f).lightLevel(s -> 14),
-                    ModEntities.THE_KING));
+                    ModEntities.THE_KING, 8, () -> danger.orespawn.OreSpawnConfig.THE_KING_ENABLE.get()));
     public static final DeferredBlock<Block> QUEEN_SPAWNER = BLOCKS.register("queen_spawner",
             () -> new BossSpawnerBlock(BlockBehaviour.Properties.of().strength(50.0f, 1200.0f).lightLevel(s -> 14),
-                    ModEntities.THE_QUEEN));
+                    ModEntities.THE_QUEEN, 8, () -> danger.orespawn.OreSpawnConfig.THE_QUEEN_ENABLE.get()));
     public static final DeferredBlock<Block> DUNGEON_SPAWNER = BLOCKS.register("dungeon_spawner",
             () -> new BossSpawnerBlock(BlockBehaviour.Properties.of().strength(50.0f, 1200.0f).lightLevel(s -> 14),
                     ModEntities.DUNGEON_BEAST));

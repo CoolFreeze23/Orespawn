@@ -525,22 +525,16 @@ public class TheQueen extends Monster implements GeoEntity {
 
     @Override
     public boolean hurt(DamageSource source, float amount) {
-        // â”€â”€â”€ Geckolib phase-shift gate â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-        // The Queen starts dormant (blue, idle). The first hit while
-        // !isAwake() does NOT damage her â€” instead it kicks off the
-        // 60-tick idle_to_attack animation; she stands still (target
-        // cleared) for that window, then enters aggro (red texture +
-        // looping attack stance, owned by the Movement controller).
-        // Subsequent hurts during the wake-up window are also absorbed
-        // so the transition can't be interrupted.
-        if (!this.level().isClientSide && (!this.isAwake() || this.getTransitionTicks() > 0)) {
-            if (!this.isAwake() && this.getTransitionTicks() == 0) {
-                this.setTransitionTicks(WAKE_UP_DURATION_TICKS);
-                this.setTarget(null);
-                this.revengeTarget = null;
-            }
-            this.hurtTimer = 10;
-            return false;
+        // â”€â”€â”€ Geckolib phase-shift trigger (cosmetic only, BOSS-010) â”€â”€â”€
+        // The Queen spawns in the dormant blue pose; the first hit kicks
+        // off the 60-tick idle_to_attack animation (texture swap handled
+        // by the Movement controller). The 1.7.10 Queen had NO dormant
+        // phase â€” every hit dealt normal damage from the start â€” so the
+        // transition must not absorb damage or clear her target: the
+        // triggering hit and all hits during the wake-up window fall
+        // through to the normal damage path below.
+        if (!this.level().isClientSide && !this.isAwake() && this.getTransitionTicks() == 0) {
+            this.setTransitionTicks(WAKE_UP_DURATION_TICKS);
         }
 
         if (this.hurtTimer > 0) {
@@ -589,6 +583,25 @@ public class TheQueen extends Monster implements GeoEntity {
             return ret;
         }
         return false;
+    }
+
+    /**
+     * Phase armor scaling (orig TheQueen.java:817-828, func_70658_aO):
+     * defense+2 below 2/3 max HP, +3 below 1/2, +5 below 1/3 â€” each gated
+     * on {@code playerHitCount < 10}. Quirk preserved: the original checks
+     * in this order, so the +3/+5 branches are unreachable (any health
+     * below 1/2 or 1/3 is also below 2/3 and returns +2 first). The
+     * effective bonus is therefore always +2; ported as-is per parity.
+     */
+    @Override
+    public int getArmorValue() {
+        if (this.playerHitCount < 10 && this.getHealth() < (float) (this.mygetMaxHealth() * 2 / 3))
+            return DEFENSE_VALUE + 2; // orig TheQueen.java:818-819
+        if (this.playerHitCount < 10 && this.getHealth() < (float) (this.mygetMaxHealth() / 2))
+            return DEFENSE_VALUE + 3; // orig TheQueen.java:821-822 (unreachable quirk)
+        if (this.playerHitCount < 10 && this.getHealth() < (float) (this.mygetMaxHealth() / 3))
+            return DEFENSE_VALUE + 5; // orig TheQueen.java:824-825 (unreachable quirk)
+        return DEFENSE_VALUE; // orig TheQueen.java:827
     }
 
     private boolean tooFarFromHome() {

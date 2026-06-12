@@ -21,8 +21,9 @@
 		"  wings / tail = 0.25  (glancing).",
 		"",
 		"main-hitbox.canReceiveDamage = false forces ALL incoming damage to",
-		"route through a part (so the parent's giant 16x12 AABB cannot be",
-		"trivially face-tanked from below)."
+		"route through a part (so the parent's giant 22x24 AABB -- orig",
+		"TheQueen.java:79 envelope, BOSS-007 -- cannot be trivially",
+		"face-tanked from below)."
 	],
 	"synched-assets": {
 		"models": [],
@@ -48,7 +49,7 @@
 	"main-hitbox": {
 		"collidable": false,
 		"canReceiveDamage": false,
-		"size": [16, 12]
+		"size": [22, 24]
 	},
 	"parts": [
 		{

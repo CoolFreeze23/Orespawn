@@ -895,12 +895,12 @@ public class TheKing extends Monster implements OreSpawnPartEntity.MultipartBoss
     public boolean doHurtTarget(Entity target) {
         if (target == null) return false;
 
-        // FULL_POWER_KING_ENABLE: when true, The King deals 2x damage on every
-        // attack â€” melee and ranged alike â€” making the fight drastically harder.
+        // BOSS-032: the former FULL_POWER_KING_ENABLE x2 damage modifier here
+        // was a port invention. In 1.7.10 FullPowerKingEnable only gates the
+        // ThePrinceAdult -> TheKing transform (orig ThePrinceAdult.java:400);
+        // the King's own damage scaling comes from the health-band multipliers
+        // in the bookkeeping core (orig TheKing.java:240-255).
         double effectiveDamage = this.attackDamage;
-        if (OreSpawnConfig.FULL_POWER_KING_ENABLE.get()) {
-            effectiveDamage *= 2.0;
-        }
 
         if (target instanceof LivingEntity living) {
             float entitySize = living.getBbHeight() * living.getBbWidth();
@@ -1091,8 +1091,9 @@ public class TheKing extends Monster implements OreSpawnPartEntity.MultipartBoss
     }
 
     private LivingEntity doJumpDamage(double x, double y, double z, double dist, double baseDamage, int knock) {
-        // Full Power King mode also amplifies area-of-effect jump damage
-        double damage = OreSpawnConfig.FULL_POWER_KING_ENABLE.get() ? baseDamage * 2.0 : baseDamage;
+        // BOSS-032: invented FULL_POWER_KING_ENABLE x2 AoE amplifier removed
+        // (the config gates the prince-adult transform in 1.7.10, nothing else).
+        double damage = baseDamage;
         AABB bb = new AABB(x - dist, y - 10.0, z - dist, x + dist, y + 10.0, z + dist);
         List<LivingEntity> entities = this.level().getEntitiesOfClass(LivingEntity.class, bb);
         entities.sort(this.targetSorter);

@@ -191,11 +191,13 @@ public class ModEntities {
 
     public static final DeferredHolder<EntityType<?>, EntityType<TheKing>> THE_KING =
             ENTITY_TYPES.register("the_king", () -> EntityType.Builder.of(TheKing::new, MobCategory.MONSTER)
-                    .sized(6.0f, 12.0f).clientTrackingRange(16).build("the_king"));
+                    .sized(22.0f, 24.0f) // orig TheKing.java:86 (5.5x6 PlayNicely shrink -> BOSS-017)
+                    .clientTrackingRange(16).build("the_king"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<TheQueen>> THE_QUEEN =
             ENTITY_TYPES.register("the_queen", () -> EntityType.Builder.of(TheQueen::new, MobCategory.MONSTER)
-                    .sized(12.0f, 16.0f).clientTrackingRange(16).build("the_queen"));
+                    .sized(22.0f, 24.0f) // orig TheQueen.java:79 (5.5x6 PlayNicely shrink -> BOSS-017)
+                    .clientTrackingRange(16).build("the_queen"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<EntityBee>> ENTITY_BEE =
             ENTITY_TYPES.register("bee", () -> EntityType.Builder.of(EntityBee::new, MobCategory.MONSTER)
@@ -481,7 +483,8 @@ public class ModEntities {
 
     public static final DeferredHolder<EntityType<?>, EntityType<ThePrinceAdult>> THE_PRINCE_ADULT =
             ENTITY_TYPES.register("the_prince_adult", () -> EntityType.Builder.of(ThePrinceAdult::new, MobCategory.CREATURE)
-                    .sized(4.0f, 6.0f).clientTrackingRange(16).build("the_prince_adult"));
+                    .sized(6.25f, 10.25f) // orig ThePrinceAdult.java:100
+                    .clientTrackingRange(16).build("the_prince_adult"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<ThePrincess>> THE_PRINCESS =
             ENTITY_TYPES.register("the_princess", () -> EntityType.Builder.of(ThePrincess::new, MobCategory.CREATURE)
@@ -489,7 +492,8 @@ public class ModEntities {
 
     public static final DeferredHolder<EntityType<?>, EntityType<ThePrinceTeen>> THE_PRINCE_TEEN =
             ENTITY_TYPES.register("the_prince_teen", () -> EntityType.Builder.of(ThePrinceTeen::new, MobCategory.CREATURE)
-                    .sized(2.0f, 3.0f).clientTrackingRange(12).build("the_prince_teen"));
+                    .sized(3.25f, 4.25f) // orig ThePrinceTeen.java:103
+                    .clientTrackingRange(12).build("the_prince_teen"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<VelocityRaptor>> VELOCITY_RAPTOR =
             ENTITY_TYPES.register("velocity_raptor", () -> EntityType.Builder.of(VelocityRaptor::new, MobCategory.CREATURE)

@@ -72,6 +72,8 @@ public class OreSpawnConfig {
     public static final ModConfigSpec.BooleanValue MINERS_DREAM_EXPENSIVE;
     public static final ModConfigSpec.BooleanValue DISABLE_OVERWORLD_DUNGEONS;
     public static final ModConfigSpec.BooleanValue FULL_POWER_KING_ENABLE;
+    public static final ModConfigSpec.BooleanValue THE_KING_ENABLE;
+    public static final ModConfigSpec.BooleanValue THE_QUEEN_ENABLE;
     public static final ModConfigSpec.BooleanValue MOTHRA_PEACEFUL;
     public static final ModConfigSpec.BooleanValue MOBZILLA_SINGLE_SPAWN;
     public static final ModConfigSpec.BooleanValue MOTHRA_REQUIRES_SPAWNER;
@@ -157,6 +159,13 @@ public class OreSpawnConfig {
         MINERS_DREAM_EXPENSIVE = BUILDER.define("minersDreamExpensive", false);
         DISABLE_OVERWORLD_DUNGEONS = BUILDER.define("disableOverworldDungeons", false);
         FULL_POWER_KING_ENABLE = BUILDER.define("fullPowerKingEnable", false);
+        // orig OreSpawnMain.java:6434-6435 — "TheKingEnable"/"TheQueenEnable", default 1.
+        THE_KING_ENABLE = BUILDER.comment(
+                "If false, the King Spawner block fizzles without summoning The King (1.7.10 TheKingEnable)."
+        ).define("theKingEnable", true);
+        THE_QUEEN_ENABLE = BUILDER.comment(
+                "If false, the Queen Spawner block fizzles without summoning The Queen (1.7.10 TheQueenEnable)."
+        ).define("theQueenEnable", true);
         BUILDER.pop();
 
         BUILDER.push("weapons");

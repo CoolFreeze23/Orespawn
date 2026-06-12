@@ -274,9 +274,11 @@ public class ThePrince extends TamableAnimal {
         if (target == null || target == this || !target.isAlive()) return false;
         if (!this.getSensing().hasLineOfSight(target)) return false;
         if (MyUtils.isRoyalty(target)) return false;
-        if (target instanceof Monster) return true;
-        if (target instanceof Mothra || target instanceof EntityButterfly || target instanceof Cockateil || target instanceof EntityDragonfly || target instanceof EntityMosquito) return false;
-        return false;
+        if (target instanceof Monster) return true; // orig ThePrince.java:746-747
+        // orig ThePrince.java:749-761 — Mothra and the insects are PREY, not excluded.
+        return target instanceof Mothra || target instanceof EntityButterfly
+                || target instanceof Cockateil || target instanceof EntityDragonfly
+                || target instanceof EntityMosquito;
     }
 
     private LivingEntity findSomethingToAttack() {
@@ -307,26 +309,16 @@ public class ThePrince extends TamableAnimal {
             return InteractionResult.sidedSuccess(this.level().isClientSide);
         }
 
-        if (this.isTame() && this.isOwnedBy(player) && this.distanceToSqr(player) < 16.0) {
-            if (stack.is(Items.CAKE)) {
-                if (!this.level().isClientSide) {
-                    this.okToGrow = 1;
-                    this.killCount = 1000;
-                    this.fedCount = 1000;
-                    this.dayCount = 1000;
-                    this.level().broadcastEntityEvent(this, (byte) 7);
-                }
-                if (!player.getAbilities().instabuild) stack.shrink(1);
-                return InteractionResult.sidedSuccess(this.level().isClientSide);
+        // orig ThePrince.java:267-286 — DIAMOND (not gold ingot) triggers the
+        // teen transform when ok_to_grow is set; the original has no cake
+        // shortcut on the baby (BOSS-020).
+        if (stack.is(Items.DIAMOND) && this.isOwnedBy(player)
+                && this.distanceToSqr(player) < 16.0 && this.okToGrow != 0) {
+            if (!this.level().isClientSide) {
+                this.transformToTeen();
             }
-
-            if (stack.is(Items.GOLD_INGOT) && this.okToGrow != 0) {
-                if (!this.level().isClientSide) {
-                    this.transformToTeen();
-                }
-                if (!player.getAbilities().instabuild) stack.shrink(1);
-                return InteractionResult.sidedSuccess(this.level().isClientSide);
-            }
+            if (!player.getAbilities().instabuild) stack.shrink(1);
+            return InteractionResult.sidedSuccess(this.level().isClientSide);
         }
 
         if (this.isTame() && this.isOwnedBy(player)
@@ -334,7 +326,9 @@ public class ThePrince extends TamableAnimal {
                 && stack.has(net.minecraft.core.component.DataComponents.FOOD)) {
             if (!this.level().isClientSide) {
                 if (this.getMaxHealth() > this.getHealth()) {
-                    this.heal(20.0f);
+                    // orig ThePrince.java:219 — any food heals healAmount × 10.
+                    FoodProperties food = stack.get(net.minecraft.core.component.DataComponents.FOOD);
+                    this.heal(food.nutrition() * 10.0f);
                 }
                 this.level().broadcastEntityEvent(this, (byte) 7);
                 ++this.fedCount;
