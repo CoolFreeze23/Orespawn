@@ -183,4 +183,14 @@ public class EntityTrooperBug extends Monster {
     // Death drops are fully data-driven via loot_table/entities/trooper_bug.json
     // (orig TrooperBug.java:200-359: jumpy bug scale, painting, 2-6 amethyst,
     // 1-5 rolls of the d14 Amethyst gear table).
+
+    /** orig TrooperBug.java:536-570 — "Jumpy Bug" spawner bypass; darkness; daytime only on a 2-in-20 dice; clear-air box. */
+    @Override
+    public boolean checkSpawnRules(net.minecraft.world.level.LevelAccessor level,
+                                   net.minecraft.world.entity.MobSpawnType spawnType) {
+        if (OriginalSpawnGates.nearOwnSpawner(this, level)) return true;
+        if (!OriginalSpawnGates.isDarkEnough(this, level)) return false;
+        if (OriginalSpawnGates.isDaytime(level) && this.getRandom().nextInt(20) > 1) return false;
+        return OriginalSpawnGates.airBox(this, level, -2, 1, 1, 4, -2, 1);
+    }
 }

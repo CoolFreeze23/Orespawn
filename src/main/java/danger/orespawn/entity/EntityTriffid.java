@@ -247,4 +247,11 @@ public class EntityTriffid extends Monster {
         if (target instanceof Player p) return !p.getAbilities().invulnerable;
         return !(target instanceof Monster);
     }
+
+    /** orig Triffid.java:355-357 — always allowed. */
+    @Override
+    public boolean checkSpawnRules(net.minecraft.world.level.LevelAccessor level,
+                                   net.minecraft.world.entity.MobSpawnType spawnType) {
+        return true;
+    }
 }

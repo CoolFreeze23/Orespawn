@@ -378,4 +378,13 @@ public class EntityRubberDucky extends TamableAnimal {
     protected float getSoundVolume() {
         return 0.8f;
     }
+
+    /** orig RubberDucky.java:508-526 — "Rubber Ducky" spawner bypass; y>=50; daytime. */
+    @Override
+    public boolean checkSpawnRules(net.minecraft.world.level.LevelAccessor level,
+                                   net.minecraft.world.entity.MobSpawnType spawnType) {
+        if (OriginalSpawnGates.nearOwnSpawner(this, level)) return true;
+        if (this.getY() < 50.0) return false;
+        return OriginalSpawnGates.isDaytime(level);
+    }
 }

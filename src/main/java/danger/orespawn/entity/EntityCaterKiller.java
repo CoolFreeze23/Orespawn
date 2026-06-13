@@ -292,4 +292,17 @@ public class EntityCaterKiller extends Monster {
         }
         super.die(cause);
     }
+
+    /** orig CaterKiller.java:585-624 — spawner bypass; y>=50; 1-in-10 dice; daytime; air/leaves/logs clearance above; no other CaterKiller within 48/16/48. */
+    @Override
+    public boolean checkSpawnRules(net.minecraft.world.level.LevelAccessor level,
+                                   net.minecraft.world.entity.MobSpawnType spawnType) {
+        if (OriginalSpawnGates.nearOwnSpawner(this, level)) return true;
+        if (this.getY() < 50.0) return false;
+        if (this.getRandom().nextInt(10) != 0) return false;
+        if (!OriginalSpawnGates.isDaytime(level)) return false;
+        if (!OriginalSpawnGates.boxMatches(this, level, -1, 1, 1, 4, -1, 1,
+                s -> s.isAir() || s.is(net.minecraft.tags.BlockTags.LEAVES) || s.is(net.minecraft.tags.BlockTags.LOGS))) return false;
+        return !OriginalSpawnGates.anyOtherNearby(this, level, EntityCaterKiller.class, 48.0, 16.0, 48.0);
+    }
 }

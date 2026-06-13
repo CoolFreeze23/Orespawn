@@ -1,0 +1,5 @@
+{
+  "type": "neoforge:add_spawns",
+  "biomes": "minecraft:savanna_plateau",
+  "spawners": { "type": "orespawn:worm_large", "weight": 10, "minCount": 1, "maxCount": 1 }
+}

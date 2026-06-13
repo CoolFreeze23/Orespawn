@@ -239,9 +239,10 @@ public class AttackSquid extends Monster {
     // (orig AttackSquid.java:169-344: one d50 roll of the Gold gear table,
     // plus 1-3 raw fish).
 
+    /** orig AttackSquid.java:645-651 — y&gt;=50 and daytime (the pre-D1 port had this inverted: y&lt;50 + canSeeSky; ENT-A-021). */
     @Override
     public boolean checkSpawnRules(LevelAccessor level, MobSpawnType spawnType) {
         if (this.getY() < 50.0) return false;
-        return level.canSeeSky(this.blockPosition());
+        return OriginalSpawnGates.isDaytime(level);
     }
 }

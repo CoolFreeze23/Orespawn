@@ -44,4 +44,11 @@ public class RubyBird extends Cockateil {
     public Animal getBreedOffspring(ServerLevel level, AgeableMob otherParent) {
         return new RubyBird(ModEntities.RUBY_BIRD.get(), this.level());
     }
+
+    /** orig RubyBird.java:29-31 — always allowed. */
+    @Override
+    public boolean checkSpawnRules(net.minecraft.world.level.LevelAccessor level,
+                                   net.minecraft.world.entity.MobSpawnType spawnType) {
+        return true;
+    }
 }

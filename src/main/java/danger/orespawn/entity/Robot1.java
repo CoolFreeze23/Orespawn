@@ -159,4 +159,13 @@ public class Robot1 extends Monster {
     protected SoundEvent getDeathSound() {
         return SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "robot1_death"));
     }
+
+    /** orig Robot1.java:226-234 — y>=50; darkness; night. */
+    @Override
+    public boolean checkSpawnRules(net.minecraft.world.level.LevelAccessor level,
+                                   net.minecraft.world.entity.MobSpawnType spawnType) {
+        if (this.getY() < 50.0) return false;
+        if (!OriginalSpawnGates.isDarkEnough(this, level)) return false;
+        return !OriginalSpawnGates.isDaytime(level);
+    }
 }

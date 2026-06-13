@@ -497,4 +497,12 @@ public class EntityStinky extends TamableAnimal {
     protected float getSoundVolume() {
         return 0.6f;
     }
+
+    /** orig Stinky.java:286-291 — daytime; at most 2 buddies within 20/10/20 (findBuddies, Stinky.java:705-708). */
+    @Override
+    public boolean checkSpawnRules(net.minecraft.world.level.LevelAccessor level,
+                                   net.minecraft.world.entity.MobSpawnType spawnType) {
+        if (!OriginalSpawnGates.isDaytime(level)) return false;
+        return OriginalSpawnGates.countBuddies(this, level, EntityStinky.class, 20.0, 10.0, 20.0) <= 2;
+    }
 }

@@ -238,4 +238,11 @@ public class ThePrincess extends TamableAnimal {
 
     @Override public void addAdditionalSaveData(CompoundTag tag) { super.addAdditionalSaveData(tag); tag.putInt("PrincessActivity", getActivity()); tag.putInt("PrincessFire", entityData.get(DATA_FIRE)); tag.putInt("PrincessGrow", okToGrow); tag.putInt("PrincessKill", killCount); tag.putInt("PrincessFed", fedCount); tag.putInt("PrincessDay", dayCount); }
     @Override public void readAdditionalSaveData(CompoundTag tag) { super.readAdditionalSaveData(tag); setActivity(tag.getInt("PrincessActivity")); entityData.set(DATA_FIRE, tag.getInt("PrincessFire")); okToGrow = tag.getInt("PrincessGrow"); killCount = tag.getInt("PrincessKill"); fedCount = tag.getInt("PrincessFed"); dayCount = tag.getInt("PrincessDay"); }
+
+    /** orig ThePrincess.java:369-371 — always allowed. */
+    @Override
+    public boolean checkSpawnRules(net.minecraft.world.level.LevelAccessor level,
+                                   net.minecraft.world.entity.MobSpawnType spawnType) {
+        return true;
+    }
 }

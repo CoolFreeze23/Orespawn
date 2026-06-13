@@ -440,4 +440,12 @@ public class EntitySpyro extends TamableAnimal {
     protected float getSoundVolume() {
         return 0.4f;
     }
+
+    /** orig Spyro.java:407-412 — daytime; y>=50. */
+    @Override
+    public boolean checkSpawnRules(net.minecraft.world.level.LevelAccessor level,
+                                   net.minecraft.world.entity.MobSpawnType spawnType) {
+        if (!OriginalSpawnGates.isDaytime(level)) return false;
+        return this.getY() >= 50.0;
+    }
 }

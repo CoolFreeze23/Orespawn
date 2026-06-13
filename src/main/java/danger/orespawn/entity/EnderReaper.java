@@ -126,4 +126,15 @@ public class EnderReaper extends Monster {
     protected SoundEvent getDeathSound() {
         return SoundEvents.ENDERMAN_DEATH;
     }
+
+    /** orig EnderReaper.java:253-279 — "Ender Reaper" spawner bypass; darkness; night; y>=30; no other EnderReaper within 16/8/16. */
+    @Override
+    public boolean checkSpawnRules(net.minecraft.world.level.LevelAccessor level,
+                                   net.minecraft.world.entity.MobSpawnType spawnType) {
+        if (OriginalSpawnGates.nearOwnSpawner(this, level)) return true;
+        if (!OriginalSpawnGates.isDarkEnough(this, level)) return false;
+        if (OriginalSpawnGates.isDaytime(level)) return false;
+        if (this.getY() < 30.0) return false;
+        return !OriginalSpawnGates.anyOtherNearby(this, level, EnderReaper.class, 16.0, 8.0, 16.0);
+    }
 }

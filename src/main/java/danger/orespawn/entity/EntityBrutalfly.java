@@ -246,4 +246,16 @@ public class EntityBrutalfly extends Monster {
         if (target instanceof Player p) return !p.getAbilities().invulnerable;
         return false;
     }
+
+    /** orig Brutalfly.java:290-329 — spawner bypass; y>=70; darkness; night; 6x9x8 clear-air volume; no other Brutalfly within 64/32/64. */
+    @Override
+    public boolean checkSpawnRules(net.minecraft.world.level.LevelAccessor level,
+                                   net.minecraft.world.entity.MobSpawnType spawnType) {
+        if (OriginalSpawnGates.nearOwnSpawner(this, level, -2, 2, 1, 3)) return true;
+        if (this.getY() < 70.0) return false;
+        if (!OriginalSpawnGates.isDarkEnough(this, level)) return false;
+        if (OriginalSpawnGates.isDaytime(level)) return false;
+        if (!OriginalSpawnGates.airBox(this, level, -3, 2, 1, 9, -4, 3)) return false;
+        return !OriginalSpawnGates.anyOtherNearby(this, level, EntityBrutalfly.class, 64.0, 32.0, 64.0);
+    }
 }

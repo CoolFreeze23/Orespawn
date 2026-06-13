@@ -178,11 +178,17 @@ public class EntityButterfly extends AmbientCreature {
         return !this.isPersistenceRequired();
     }
 
+    /** orig EntityButterfly.java:283-310 — "Butterfly" spawner bypass (forces type 1); feet-block air; daytime; Islands always allowed; otherwise y>=50. */
     @Override
-    public boolean checkSpawnRules(LevelAccessor level, MobSpawnType spawnType) {
-        BlockState state = level.getBlockState(this.blockPosition());
-        if (!state.isAir()) return false;
-        if (!level.canSeeSky(this.blockPosition())) return false;
+    public boolean checkSpawnRules(net.minecraft.world.level.LevelAccessor level,
+                                   net.minecraft.world.entity.MobSpawnType spawnType) {
+        if (OriginalSpawnGates.nearOwnSpawner(this, level)) {
+            this.setButterflyType(1);
+            return true;
+        }
+        if (!level.getBlockState(this.blockPosition()).isAir()) return false;
+        if (!OriginalSpawnGates.isDaytime(level)) return false;
+        if (danger.orespawn.ModDimensionKeys.isIn(level, danger.orespawn.ModDimensionKeys.ISLANDS)) return true;
         return this.getY() >= 50.0;
     }
 

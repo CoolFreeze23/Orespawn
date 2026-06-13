@@ -135,4 +135,11 @@ public class RockBase extends Mob {
         super.readAdditionalSaveData(tag);
         this.rockType = tag.getInt("ButterflyType");
     }
+
+    /** orig RockBase.java:191-193 — y>=50. */
+    @Override
+    public boolean checkSpawnRules(net.minecraft.world.level.LevelAccessor level,
+                                   net.minecraft.world.entity.MobSpawnType spawnType) {
+        return this.getY() >= 50.0;
+    }
 }

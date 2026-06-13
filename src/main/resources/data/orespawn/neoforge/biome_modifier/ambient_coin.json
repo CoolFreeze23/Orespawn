@@ -1,0 +1,12 @@
+{
+  "type": "neoforge:add_spawns",
+  "biomes": [
+    "minecraft:taiga",
+    "minecraft:forest",
+    "minecraft:jungle",
+    "minecraft:birch_forest",
+    "minecraft:snowy_taiga",
+    "minecraft:old_growth_pine_taiga"
+  ],
+  "spawners": { "type": "orespawn:coin", "weight": 2, "minCount": 1, "maxCount": 1 }
+}

@@ -236,4 +236,16 @@ public class EntityMolenoid extends Monster {
     protected float getSoundVolume() {
         return 1.1f;
     }
+
+    /** orig Molenoid.java:303-342 — spawner bypass; darkness; y>=50; night; clear air above; no other Molenoid within 16/8/16. */
+    @Override
+    public boolean checkSpawnRules(net.minecraft.world.level.LevelAccessor level,
+                                   net.minecraft.world.entity.MobSpawnType spawnType) {
+        if (OriginalSpawnGates.nearOwnSpawner(this, level)) return true;
+        if (!OriginalSpawnGates.isDarkEnough(this, level)) return false;
+        if (this.getY() < 50.0) return false;
+        if (OriginalSpawnGates.isDaytime(level)) return false;
+        if (!OriginalSpawnGates.airBox(this, level, -1, 0, 1, 3, -1, 0)) return false;
+        return !OriginalSpawnGates.anyOtherNearby(this, level, EntityMolenoid.class, 16.0, 8.0, 16.0);
+    }
 }

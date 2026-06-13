@@ -5,6 +5,7 @@ import danger.orespawn.MobStats;
 import danger.orespawn.ModItems;
 import danger.orespawn.OreSpawnMod;
 import javax.annotation.Nullable;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -33,6 +34,14 @@ public class Urchin extends Monster {
             SynchedEntityData.defineId(Urchin.class, EntityDataSerializers.INT);
 
     private static final double MOVE_SPEED = 0.3;
+
+    /**
+     * orig Urchin.java:46 {@code was_spawnered} — set when the spawn check passes
+     * via the "Crystal Urchin" spawner bypass (orig :312); spawnered Urchins skip
+     * the far-away despawn (orig :87-92) and the daytime discard (orig :94-107).
+     * Not persisted in the original either.
+     */
+    private int wasSpawnered = 0;
 
     public Urchin(EntityType<? extends Urchin> type, Level level) {
         super(type, level);
@@ -107,10 +116,18 @@ public class Urchin extends Monster {
     @Override
     public void tick() {
         super.tick();
+        // orig Urchin.java:94-107 — daytime discard skipped when spawnered
         long timeOfDay = this.level().getDayTime() % 24000L;
-        if (timeOfDay < 12000L && this.random.nextInt(400) == 1 && !this.level().isClientSide) {
+        if (timeOfDay < 12000L && this.random.nextInt(400) == 1 && !this.level().isClientSide
+                && this.wasSpawnered == 0) {
             this.discard();
         }
+    }
+
+    /** orig Urchin.java:87-92 — spawnered Urchins never despawn from distance. */
+    @Override
+    public boolean removeWhenFarAway(double distanceToClosestPlayer) {
+        return this.wasSpawnered == 0;
     }
 
     @Override
@@ -166,9 +183,26 @@ public class Urchin extends Monster {
         return 1.1f;
     }
 
+    /**
+     * orig Urchin.java:298-332 — "Crystal Urchin" spawner bypass (x/z -2..+2,
+     * y +1..+3, sets {@code was_spawnered}); >=6 air blocks in the 3x3 ring one
+     * above the feet; darkness; night half of the day only.
+     */
     @Override
     public boolean checkSpawnRules(LevelAccessor level, MobSpawnType spawnType) {
-        long timeOfDay = level.dayTime() % 24000L;
-        return timeOfDay >= 13000L;
+        if (OriginalSpawnGates.nearOwnSpawner(this, level, -2, 2, 1, 3)) {
+            this.wasSpawnered = 1;
+            return true;
+        }
+        int sc = 0;
+        BlockPos feet = this.blockPosition();
+        for (int dz = -1; dz <= 1; dz++) {
+            for (int dx = -1; dx <= 1; dx++) {
+                if (level.getBlockState(feet.offset(dx, 1, dz)).isAir()) sc++;
+            }
+        }
+        if (sc < 6) return false;
+        if (!OriginalSpawnGates.isDarkEnough(this, level)) return false;
+        return level.dayTime() % 24000L >= 13000L;
     }
 }

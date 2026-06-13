@@ -202,4 +202,13 @@ public class Cockateil extends Animal {
         this.birdtype = tag.getInt("BirdType");
         this.setBirdType(this.birdtype);
     }
+
+    /** orig Cockateil.java:232-240 — daytime; Islands always allowed; otherwise y>=50. */
+    @Override
+    public boolean checkSpawnRules(net.minecraft.world.level.LevelAccessor level,
+                                   net.minecraft.world.entity.MobSpawnType spawnType) {
+        if (!OriginalSpawnGates.isDaytime(level)) return false;
+        if (danger.orespawn.ModDimensionKeys.isIn(level, danger.orespawn.ModDimensionKeys.ISLANDS)) return true;
+        return this.getY() >= 50.0;
+    }
 }

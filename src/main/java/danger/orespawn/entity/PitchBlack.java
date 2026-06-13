@@ -473,4 +473,31 @@ public class PitchBlack extends Monster {
     protected SoundEvent getDeathSound() {
         return SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "pitchblack_dead"));
     }
+
+    /**
+     * orig PitchBlack.java:429-483 — "Nightmare" spawner bypass (clamps the size
+     * to scale 1.0, i.e. the spawnered Nightmare is never giant); darkness; night;
+     * in Chaos no other PitchBlack within 16/16/16; small ones (scale &lt; 1.1)
+     * always fit, larger ones need a clear-air volume scaled with their size
+     * (half-width 1 → 2 above scale 3.1, height 3x the half-width).
+     */
+    @Override
+    public boolean checkSpawnRules(net.minecraft.world.level.LevelAccessor level, MobSpawnType spawnType) {
+        if (OriginalSpawnGates.nearOwnSpawner(this, level)) {
+            if (this.getPitchBlackScale() > 1.0f) {
+                this.setPitchBlackScale(1.0f);
+            }
+            return true;
+        }
+        if (!OriginalSpawnGates.isDarkEnough(this, level)) return false;
+        if (OriginalSpawnGates.isDaytime(level)) return false;
+        if (danger.orespawn.ModDimensionKeys.isIn(level, danger.orespawn.ModDimensionKeys.CHAOS)
+                && OriginalSpawnGates.anyOtherNearby(this, level, PitchBlack.class, 16.0, 16.0, 16.0)) {
+            return false;
+        }
+        if (this.getPitchBlackScale() < 1.1f) return true;
+        int halfWidth = this.getPitchBlackScale() > 3.1f ? 2 : 1;
+        int height = halfWidth * 3;
+        return OriginalSpawnGates.airBox(this, level, -halfWidth, halfWidth, 1, height, -halfWidth, halfWidth);
+    }
 }

@@ -199,4 +199,18 @@ public class EntityLurkingTerror extends Monster {
         if (target instanceof Player p) return !p.getAbilities().invulnerable;
         return true;
     }
+
+    /** orig LurkingTerror.java:237-269 — spawner bypass; darkness; DAYTIME required; 1-in-2 dice; extra 1-in-6 dice in Chaos; no other within 32/16/32; y>=10. */
+    @Override
+    public boolean checkSpawnRules(net.minecraft.world.level.LevelAccessor level,
+                                   net.minecraft.world.entity.MobSpawnType spawnType) {
+        if (OriginalSpawnGates.nearOwnSpawner(this, level, -2, 1, 0, 4)) return true;
+        if (!OriginalSpawnGates.isDarkEnough(this, level)) return false;
+        if (!OriginalSpawnGates.isDaytime(level)) return false;
+        if (this.getRandom().nextInt(2) != 1) return false;
+        if (danger.orespawn.ModDimensionKeys.isIn(level, danger.orespawn.ModDimensionKeys.CHAOS)
+                && this.getRandom().nextInt(6) != 0) return false;
+        if (OriginalSpawnGates.anyOtherNearby(this, level, EntityLurkingTerror.class, 32.0, 16.0, 32.0)) return false;
+        return this.getY() >= 10.0;
+    }
 }

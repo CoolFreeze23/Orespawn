@@ -212,4 +212,11 @@ public class PurplePower extends Mob {
         super.readAdditionalSaveData(tag);
         this.purpleType = tag.getInt("PurpleType");
     }
+
+    /** orig PurplePower.java:226-228 — always allowed. */
+    @Override
+    public boolean checkSpawnRules(net.minecraft.world.level.LevelAccessor level,
+                                   net.minecraft.world.entity.MobSpawnType spawnType) {
+        return true;
+    }
 }

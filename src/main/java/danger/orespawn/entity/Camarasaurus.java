@@ -352,4 +352,12 @@ public class Camarasaurus extends TamableAnimal {
     public AgeableMob getBreedOffspring(ServerLevel level, AgeableMob otherParent) {
         return new Camarasaurus((EntityType<? extends Camarasaurus>) this.getType(), level);
     }
+
+    /** orig Camarasaurus.java:78-83 — y>=50 and daytime. */
+    @Override
+    public boolean checkSpawnRules(net.minecraft.world.level.LevelAccessor level,
+                                   net.minecraft.world.entity.MobSpawnType spawnType) {
+        if (this.getY() < 50.0) return false;
+        return OriginalSpawnGates.isDaytime(level);
+    }
 }

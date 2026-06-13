@@ -194,14 +194,14 @@ public class Whale extends Animal {
         return 0;
     }
 
+    /** orig Whale.java:260-271 — y>=50; daytime; 1-in-50 dice; no buddies within 32/8/32. */
     @Override
-    public boolean checkSpawnRules(LevelAccessor level, MobSpawnType spawnType) {
+    public boolean checkSpawnRules(net.minecraft.world.level.LevelAccessor level,
+                                   net.minecraft.world.entity.MobSpawnType spawnType) {
         if (this.getY() < 50.0) return false;
-        long dayTime = level.dayTime() % 24000L;
-        if (dayTime >= 13000L) return false;
+        if (!OriginalSpawnGates.isDaytime(level)) return false;
         if (this.random.nextInt(50) != 1) return false;
-        return level.getEntitiesOfClass(Whale.class,
-                this.getBoundingBox().inflate(32.0, 8.0, 32.0)).size() <= 0;
+        return OriginalSpawnGates.countBuddies(this, level, Whale.class, 32.0, 8.0, 32.0) <= 0;
     }
 
     @Nullable

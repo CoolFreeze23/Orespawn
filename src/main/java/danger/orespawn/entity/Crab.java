@@ -360,4 +360,24 @@ public class Crab extends Monster {
         super.readAdditionalSaveData(tag);
         this.setCrabScale(tag.getFloat("Fscale"));
     }
+
+    /**
+     * orig Crab.java:456-486 — spawner bypass (forces the mini 0.35 scale);
+     * y&gt;=50; daytime; in the Crystal dimension additionally a 1-in-40 dice and
+     * at most 3 buddies within 24/8/24 (orig findBuddies, Crab.java:451-454).
+     */
+    @Override
+    public boolean checkSpawnRules(net.minecraft.world.level.LevelAccessor level, MobSpawnType spawnType) {
+        if (OriginalSpawnGates.nearOwnSpawner(this, level)) {
+            this.setCrabScale(0.35f);
+            return true;
+        }
+        if (this.getY() < 50.0) return false;
+        if (!OriginalSpawnGates.isDaytime(level)) return false;
+        if (danger.orespawn.ModDimensionKeys.isIn(level, danger.orespawn.ModDimensionKeys.CRYSTAL)) {
+            if (this.getRandom().nextInt(40) != 1) return false;
+            if (OriginalSpawnGates.countBuddies(this, level, Crab.class, 24.0, 8.0, 24.0) > 3) return false;
+        }
+        return true;
+    }
 }

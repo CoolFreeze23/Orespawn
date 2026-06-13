@@ -38,6 +38,15 @@ public class EntityVortex extends Monster {
     private int lastZ = 0;
     private int stuckCount = 0;
     private int windedCooldownTicks = 0;
+    /**
+     * orig Vortex.java:46 {@code was_spawnered} — set when the spawn-rule check
+     * passes via the "Vortex" spawner bypass (orig :254); spawnered Vortexes are
+     * exempt from far-away despawn (orig :64-72) and the daytime discard
+     * (orig :134-143). Not persisted in the original either.
+     */
+    private int wasSpawnered = 0;
+    /** orig Vortex.java:45 {@code busy_fighting} — refreshed every tick; guards both despawn paths. */
+    private boolean busyFighting = false;
 
     public EntityVortex(EntityType<? extends EntityVortex> type, Level level) {
         super(type, level);
@@ -88,6 +97,7 @@ public class EntityVortex extends Monster {
         this.setDeltaMovement(motion.x, motion.y * 0.6, motion.z);
 
         LivingEntity pullTarget = findSomethingToAttack();
+        this.busyFighting = pullTarget != null; // orig Vortex.java:113-116
         if (pullTarget != null && this.level().isClientSide) {
             for (int i = 0; i < 20; ++i) {
                 double smokeRadius = this.random.nextDouble() * 3.5;
@@ -107,12 +117,40 @@ public class EntityVortex extends Monster {
             this.heal(1.0f);
         }
 
-        if (!this.level().isClientSide) {
+        if (!this.level().isClientSide && !this.busyFighting && this.wasSpawnered == 0) {
+            // orig Vortex.java:132-143 — daytime discard skipped while fighting or when spawnered
             long dayTimeInCycle = this.level().getDayTime() % DAY_LENGTH_TICKS;
             if (dayTimeInCycle < DAYTIME_DESPAWN_BEFORE && this.random.nextInt(500) == 1) {
                 this.discard();
             }
         }
+    }
+
+    /** orig Vortex.java:64-72 — no far-away despawn while fighting or when spawnered. */
+    @Override
+    public boolean removeWhenFarAway(double distanceToClosestPlayer) {
+        if (this.busyFighting) return false;
+        return this.wasSpawnered == 0;
+    }
+
+    /**
+     * orig Vortex.java:240-284 — "Vortex" spawner bypass (sets {@code was_spawnered});
+     * 5x3x5 clear-air volume above; darkness; y>=50; night half of the day only;
+     * 1-in-2 dice; no other Vortex within 20/16/20.
+     */
+    @Override
+    public boolean checkSpawnRules(net.minecraft.world.level.LevelAccessor level,
+                                   net.minecraft.world.entity.MobSpawnType spawnType) {
+        if (OriginalSpawnGates.nearOwnSpawner(this, level)) {
+            this.wasSpawnered = 1;
+            return true;
+        }
+        if (!OriginalSpawnGates.airBox(this, level, -2, 2, 1, 3, -2, 2)) return false;
+        if (!OriginalSpawnGates.isDarkEnough(this, level)) return false;
+        if (this.getY() < 50.0) return false;
+        if (level.dayTime() % DAY_LENGTH_TICKS < DAYTIME_DESPAWN_BEFORE) return false;
+        if (this.random.nextInt(2) != 1) return false;
+        return !OriginalSpawnGates.anyOtherNearby(this, level, EntityVortex.class, 20.0, 16.0, 20.0);
     }
 
     @Override

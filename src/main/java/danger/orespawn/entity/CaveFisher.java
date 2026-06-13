@@ -124,8 +124,11 @@ public class CaveFisher extends Monster {
         return 1.5f;
     }
 
+    /** orig CaveFisher.java:256-275 — spawner bypass (x/z -2..+1); darkness (restored, ENT-SYS-002); y&lt;=50. */
     @Override
     public boolean checkSpawnRules(LevelAccessor level, MobSpawnType spawnType) {
+        if (OriginalSpawnGates.nearOwnSpawner(this, level, -2, 1, 0, 4)) return true;
+        if (!OriginalSpawnGates.isDarkEnough(this, level)) return false;
         return this.getY() <= MAX_NATURAL_SPAWN_Y;
     }
 }

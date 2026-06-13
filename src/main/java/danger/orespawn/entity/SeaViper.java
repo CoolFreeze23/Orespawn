@@ -280,11 +280,13 @@ public class SeaViper extends Monster {
     // Keep legacy "near-surface water" spawn rule: Y >= 50 (vanilla sea level
     // in 1.21.1 is ~63), mob must be in water or have a water body nearby,
     // and no other Sea Viper within 16 blocks to avoid cluster overspawn.
+    /** orig SeaViper.java:561-584 — "Sea Viper" spawner bypass; y>=50; daytime; no other SeaViper within 16/5/16. */
     @Override
-    public boolean checkSpawnRules(LevelAccessor level, MobSpawnType spawnType) {
+    public boolean checkSpawnRules(net.minecraft.world.level.LevelAccessor level,
+                                   net.minecraft.world.entity.MobSpawnType spawnType) {
+        if (OriginalSpawnGates.nearOwnSpawner(this, level)) return true;
         if (this.getY() < 50.0) return false;
-        if (!level.getFluidState(this.blockPosition()).is(FluidTags.WATER)) return false;
-        return level.getEntitiesOfClass(SeaViper.class,
-                this.getBoundingBox().inflate(16.0, 5.0, 16.0)).size() <= 1;
+        if (!OriginalSpawnGates.isDaytime(level)) return false;
+        return !OriginalSpawnGates.anyOtherNearby(this, level, SeaViper.class, 16.0, 5.0, 16.0);
     }
 }

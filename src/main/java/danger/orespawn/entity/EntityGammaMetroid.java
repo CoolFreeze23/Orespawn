@@ -321,4 +321,15 @@ public class EntityGammaMetroid extends TamableAnimal {
         }
         return baby;
     }
+
+    /** orig GammaMetroid.java:328-365 — spawner bypass (orig tag "WTF?"); darkness; Islands always allowed; y<=50; clear air above. */
+    @Override
+    public boolean checkSpawnRules(net.minecraft.world.level.LevelAccessor level,
+                                   net.minecraft.world.entity.MobSpawnType spawnType) {
+        if (OriginalSpawnGates.nearOwnSpawner(this, level)) return true;
+        if (!OriginalSpawnGates.isDarkEnough(this, level)) return false;
+        if (danger.orespawn.ModDimensionKeys.isIn(level, danger.orespawn.ModDimensionKeys.ISLANDS)) return true;
+        if (this.getY() > 50.0) return false;
+        return OriginalSpawnGates.airBox(this, level, -1, 0, 1, 3, -1, 0);
+    }
 }

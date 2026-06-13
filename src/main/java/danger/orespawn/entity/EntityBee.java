@@ -230,4 +230,15 @@ public class EntityBee extends Monster {
         if (target instanceof Villager) return true;
         return false;
     }
+
+    /** orig Bee.java:253-287 — Islands always allowed; spawner bypass; clear air above; y>=50; daytime. */
+    @Override
+    public boolean checkSpawnRules(net.minecraft.world.level.LevelAccessor level,
+                                   net.minecraft.world.entity.MobSpawnType spawnType) {
+        if (danger.orespawn.ModDimensionKeys.isIn(level, danger.orespawn.ModDimensionKeys.ISLANDS)) return true;
+        if (OriginalSpawnGates.nearOwnSpawner(this, level, -2, 1, 0, 4)) return true;
+        if (!OriginalSpawnGates.airBox(this, level, -1, 1, 1, 4, -1, 1)) return false;
+        if (this.getY() < 50.0) return false;
+        return OriginalSpawnGates.isDaytime(level);
+    }
 }

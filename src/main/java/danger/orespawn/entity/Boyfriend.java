@@ -359,4 +359,12 @@ public class Boyfriend extends TamableAnimal {
         this.voice = tag.getInt("GuyVoice");
         this.voiceEnable = tag.getInt("GuyVoiceEnable");
     }
+
+    /** orig Boyfriend.java:978-993 — "Boyfriend" spawner bypass, else the vanilla creature rules. */
+    @Override
+    public boolean checkSpawnRules(net.minecraft.world.level.LevelAccessor level,
+                                   net.minecraft.world.entity.MobSpawnType spawnType) {
+        if (OriginalSpawnGates.nearOwnSpawner(this, level)) return true;
+        return super.checkSpawnRules(level, spawnType);
+    }
 }

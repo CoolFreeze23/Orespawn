@@ -128,4 +128,14 @@ public class EnderKnight extends Monster {
     protected SoundEvent getDeathSound() {
         return SoundEvents.ENDERMAN_DEATH;
     }
+
+    /** orig EnderKnight.java:256-277 — "Ender Knight" spawner bypass; darkness; night; y>=30. */
+    @Override
+    public boolean checkSpawnRules(net.minecraft.world.level.LevelAccessor level,
+                                   net.minecraft.world.entity.MobSpawnType spawnType) {
+        if (OriginalSpawnGates.nearOwnSpawner(this, level)) return true;
+        if (!OriginalSpawnGates.isDarkEnough(this, level)) return false;
+        if (OriginalSpawnGates.isDaytime(level)) return false;
+        return this.getY() >= 30.0;
+    }
 }

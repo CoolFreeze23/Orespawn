@@ -180,6 +180,12 @@ public class ModEntityAttributes {
                 Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Mob::checkMobSpawnRules, RegisterSpawnPlacementsEvent.Operation.AND);
         event.register(ModEntities.SKATE.get(), SpawnPlacementTypes.IN_WATER,
                 Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Mob::checkMobSpawnRules, RegisterSpawnPlacementsEvent.Operation.AND);
+        // Phase D1 — natural water spawns restored (ENT-A-021 / ENT-K-085); both
+        // were waterCreature spawns in 1.7.10 (orig OreSpawnMain.java:4863-4865, 4873-4874).
+        event.register(ModEntities.ATTACK_SQUID.get(), SpawnPlacementTypes.IN_WATER,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Mob::checkMobSpawnRules, RegisterSpawnPlacementsEvent.Operation.AND);
+        event.register(ModEntities.ENTITY_RUBBER_DUCKY.get(), SpawnPlacementTypes.IN_WATER,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Mob::checkMobSpawnRules, RegisterSpawnPlacementsEvent.Operation.AND);
 
         // Cave mobs
         event.register(ModEntities.CAVE_FISHER.get(), SpawnPlacementTypes.ON_GROUND,
@@ -294,6 +300,13 @@ public class ModEntityAttributes {
                 Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Monster::checkMonsterSpawnRules, RegisterSpawnPlacementsEvent.Operation.AND);
         event.register(ModEntities.ENTITY_LURKING_TERROR.get(), SpawnPlacementTypes.ON_GROUND,
                 Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Monster::checkMonsterSpawnRules, RegisterSpawnPlacementsEvent.Operation.AND);
+
+        // Phase D1 — ambient overworld spawns restored (ENT-A-085 Cephadrome,
+        // ENT-A-099 Coin); both were 1.7.10 ambient ground spawns.
+        event.register(ModEntities.CEPHADROME.get(), SpawnPlacementTypes.ON_GROUND,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Mob::checkMobSpawnRules, RegisterSpawnPlacementsEvent.Operation.AND);
+        event.register(ModEntities.COIN.get(), SpawnPlacementTypes.ON_GROUND,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Mob::checkMobSpawnRules, RegisterSpawnPlacementsEvent.Operation.AND);
 
         // Phase 14 — overworld surface cow variants. Animal spawn rules
         // (grass + sky + brightness > 8) match the existing RedCow gate

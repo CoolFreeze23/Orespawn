@@ -525,4 +525,13 @@ public class Kraken extends Monster {
     public final void setAttacking(int value) {
         this.entityData.set(DATA_ATTACKING, value);
     }
+
+    /** orig Kraken.java:1183-1197 — y>=50; air/short-grass clearance above the spawn column. */
+    @Override
+    public boolean checkSpawnRules(net.minecraft.world.level.LevelAccessor level,
+                                   net.minecraft.world.entity.MobSpawnType spawnType) {
+        if (this.getY() < 50.0) return false;
+        return OriginalSpawnGates.boxMatches(this, level, -1, 0, 1, 5, -1, 1,
+                s -> s.isAir() || s.is(net.minecraft.world.level.block.Blocks.SHORT_GRASS));
+    }
 }

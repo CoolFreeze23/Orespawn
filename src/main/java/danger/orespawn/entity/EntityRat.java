@@ -234,4 +234,28 @@ public class EntityRat extends Monster {
     protected float getSoundVolume() {
         return 0.45f;
     }
+
+    /**
+     * orig Rat.java:302-339 — spawner bypass (x/z -2..+1); darkness; in the
+     * Crystal dimension additionally y&lt;=50 and at least 4 air blocks in the
+     * 3x3 ring one block above the feet; at most 8 buddies within 20/10/20.
+     */
+    @Override
+    public boolean checkSpawnRules(net.minecraft.world.level.LevelAccessor level,
+                                   net.minecraft.world.entity.MobSpawnType spawnType) {
+        if (OriginalSpawnGates.nearOwnSpawner(this, level, -2, 1, 0, 4)) return true;
+        if (!OriginalSpawnGates.isDarkEnough(this, level)) return false;
+        if (danger.orespawn.ModDimensionKeys.isIn(level, danger.orespawn.ModDimensionKeys.CRYSTAL)) {
+            if (this.getY() > 50.0) return false;
+            int airCount = 0;
+            net.minecraft.core.BlockPos feet = this.blockPosition();
+            for (int k = -1; k <= 1; k++) {
+                for (int j = -1; j <= 1; j++) {
+                    if (level.getBlockState(feet.offset(j, 1, k)).isAir()) airCount++;
+                }
+            }
+            if (airCount < 4) return false;
+        }
+        return OriginalSpawnGates.countBuddies(this, level, EntityRat.class, 20.0, 10.0, 20.0) <= 8;
+    }
 }

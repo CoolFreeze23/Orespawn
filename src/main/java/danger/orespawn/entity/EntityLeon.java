@@ -788,4 +788,15 @@ public class EntityLeon extends TamableAnimal
         return null;
     }
 
+
+    /** orig Leon.java:452-478 — "Leonopteryx" spawner bypass; 1-in-16 dice; daytime; no other Leon within 48/16/48; y>=50. */
+    @Override
+    public boolean checkSpawnRules(net.minecraft.world.level.LevelAccessor level,
+                                   net.minecraft.world.entity.MobSpawnType spawnType) {
+        if (OriginalSpawnGates.nearOwnSpawner(this, level)) return true;
+        if (this.getRandom().nextInt(16) != 0) return false;
+        if (!OriginalSpawnGates.isDaytime(level)) return false;
+        if (OriginalSpawnGates.anyOtherNearby(this, level, EntityLeon.class, 48.0, 16.0, 48.0)) return false;
+        return this.getY() >= 50.0;
+    }
 }

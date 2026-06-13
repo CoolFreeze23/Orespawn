@@ -614,4 +614,11 @@ public class ThePrinceTeen extends TamableAnimal
         killCount = tag.getInt("TeenKill");
         dayCount = tag.getInt("TeenDay");
     }
+
+    /** orig ThePrinceTeen.java:561-563 — never spawns naturally (growth stage, spawned by promotion only). */
+    @Override
+    public boolean checkSpawnRules(net.minecraft.world.level.LevelAccessor level,
+                                   net.minecraft.world.entity.MobSpawnType spawnType) {
+        return false;
+    }
 }

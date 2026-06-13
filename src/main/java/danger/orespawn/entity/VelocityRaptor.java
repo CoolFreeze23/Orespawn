@@ -213,10 +213,12 @@ public class VelocityRaptor extends TamableAnimal {
         return !this.isPersistenceRequired();
     }
 
+    /** orig VelocityRaptor.java:78-83 — y>=50; daytime. */
     @Override
-    public boolean checkSpawnRules(LevelAccessor level, MobSpawnType spawnType) {
+    public boolean checkSpawnRules(net.minecraft.world.level.LevelAccessor level,
+                                   net.minecraft.world.entity.MobSpawnType spawnType) {
         if (this.getY() < 50.0) return false;
-        return level.canSeeSky(this.blockPosition());
+        return OriginalSpawnGates.isDaytime(level);
     }
 
     @Nullable

@@ -165,4 +165,11 @@ public class EntityWormSmall extends Monster {
         }
         return super.hurt(source, amount);
     }
+
+    /** orig WormSmall.java:214-216 — night only. */
+    @Override
+    public boolean checkSpawnRules(net.minecraft.world.level.LevelAccessor level,
+                                   net.minecraft.world.entity.MobSpawnType spawnType) {
+        return !OriginalSpawnGates.isDaytime(level);
+    }
 }

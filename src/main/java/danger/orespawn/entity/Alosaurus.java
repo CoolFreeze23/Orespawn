@@ -145,4 +145,16 @@ public class Alosaurus extends Monster {
 
     // Death drops are fully data-driven via loot_table/entities/alosaurus.json
     // (orig Alosaurus.java:126-134: 10 gold nugget, 6 raw beef).
+
+    /** orig Alosaurus.java:240-279 — spawner bypass; darkness; y>=50; night; clear-air column; no other Alosaurus within 16/8/16. */
+    @Override
+    public boolean checkSpawnRules(net.minecraft.world.level.LevelAccessor level,
+                                   net.minecraft.world.entity.MobSpawnType spawnType) {
+        if (OriginalSpawnGates.nearOwnSpawner(this, level)) return true;
+        if (!OriginalSpawnGates.isDarkEnough(this, level)) return false;
+        if (this.getY() < 50.0) return false;
+        if (OriginalSpawnGates.isDaytime(level)) return false;
+        if (!OriginalSpawnGates.airBox(this, level, -1, 0, 1, 5, -1, 0)) return false;
+        return !OriginalSpawnGates.anyOtherNearby(this, level, Alosaurus.class, 16.0, 8.0, 16.0);
+    }
 }

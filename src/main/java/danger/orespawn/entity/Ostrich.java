@@ -248,14 +248,14 @@ public class Ostrich extends TamableAnimal
         return !this.isTame();
     }
 
+    /** orig Ostrich.java:325-338 — y>=50; daytime; 1-in-4 dice; no other Ostrich within 16/6/16. */
     @Override
-    public boolean checkSpawnRules(LevelAccessor level, MobSpawnType spawnType) {
+    public boolean checkSpawnRules(net.minecraft.world.level.LevelAccessor level,
+                                   net.minecraft.world.entity.MobSpawnType spawnType) {
         if (this.getY() < 50.0) return false;
-        if (!level.canSeeSky(this.blockPosition())) return false;
+        if (!OriginalSpawnGates.isDaytime(level)) return false;
         if (this.random.nextInt(4) != 1) return false;
-        List<Ostrich> nearby = level.getEntitiesOfClass(Ostrich.class,
-                this.getBoundingBox().inflate(16.0, 6.0, 16.0));
-        return nearby.isEmpty();
+        return !OriginalSpawnGates.anyOtherNearby(this, level, Ostrich.class, 16.0, 6.0, 16.0);
     }
 
     @Override

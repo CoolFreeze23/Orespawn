@@ -57,4 +57,13 @@ public class EntityTshirt extends Animal {
     // Death drops are fully data-driven via loot_table/entities/tshirt.json
     // (orig Tshirt.java getDropItem returns emerald; vanilla 1.7.10
     // dropFewItems drops 0-2 of it, plus looting bonus).
+
+    /** orig Tshirt.java:93-103 — daytime; y>=50; no other Tshirt within 20/8/20. */
+    @Override
+    public boolean checkSpawnRules(net.minecraft.world.level.LevelAccessor level,
+                                   net.minecraft.world.entity.MobSpawnType spawnType) {
+        if (!OriginalSpawnGates.isDaytime(level)) return false;
+        if (this.getY() < 50.0) return false;
+        return !OriginalSpawnGates.anyOtherNearby(this, level, EntityTshirt.class, 20.0, 8.0, 20.0);
+    }
 }

@@ -403,4 +403,11 @@ public class ThePrince extends TamableAnimal {
         this.fedCount = tag.getInt("SpyroFed");
         this.dayCount = tag.getInt("SpyroDay");
     }
+
+    /** orig ThePrince.java:381-383 — always allowed. */
+    @Override
+    public boolean checkSpawnRules(net.minecraft.world.level.LevelAccessor level,
+                                   net.minecraft.world.entity.MobSpawnType spawnType) {
+        return true;
+    }
 }

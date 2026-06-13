@@ -57,11 +57,13 @@ public class EntityLunaMoth extends EntityButterfly {
         this.setDeltaMovement(motion.x, motion.y * VERTICAL_DRAG, motion.z);
     }
 
+    /** orig EntityLunaMoth.java:168-180 — feet-block air; night; Islands always allowed; otherwise y>=50. */
     @Override
-    public boolean checkSpawnRules(LevelAccessor level, MobSpawnType spawnType) {
-        BlockState state = level.getBlockState(this.blockPosition());
-        if (!state.isAir()) return false;
-        if (level.canSeeSky(this.blockPosition())) return false;
+    public boolean checkSpawnRules(net.minecraft.world.level.LevelAccessor level,
+                                   net.minecraft.world.entity.MobSpawnType spawnType) {
+        if (!level.getBlockState(this.blockPosition()).isAir()) return false;
+        if (OriginalSpawnGates.isDaytime(level)) return false;
+        if (danger.orespawn.ModDimensionKeys.isIn(level, danger.orespawn.ModDimensionKeys.ISLANDS)) return true;
         return this.getY() >= MIN_SPAWN_Y;
     }
 }
