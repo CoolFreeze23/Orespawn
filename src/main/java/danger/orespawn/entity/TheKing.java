@@ -1375,4 +1375,11 @@ public class TheKing extends Monster implements OreSpawnPartEntity.MultipartBoss
         this.isEnd = tag.getInt("IsEnd");
         this.endCounter = tag.getInt("EndCounter");
     }
+
+    /** orig TheKing.java:847-849 — always allowed. */
+    @Override
+    public boolean checkSpawnRules(net.minecraft.world.level.LevelAccessor level,
+                                   net.minecraft.world.entity.MobSpawnType spawnType) {
+        return true;
+    }
 }

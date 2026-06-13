@@ -166,4 +166,11 @@ public class EntityKyuubi extends Monster {
     protected float getSoundVolume() {
         return 0.75f;
     }
+
+    /** orig Kyuubi.java:222-224 — always allowed. */
+    @Override
+    public boolean checkSpawnRules(net.minecraft.world.level.LevelAccessor level,
+                                   net.minecraft.world.entity.MobSpawnType spawnType) {
+        return true;
+    }
 }

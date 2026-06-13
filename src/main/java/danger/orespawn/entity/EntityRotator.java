@@ -30,6 +30,13 @@ import danger.orespawn.OreSpawnMod;
 public class EntityRotator extends Monster {
     private BlockPos currentFlightTarget = null;
     private int busyFighting = 0;
+    /**
+     * orig Rotator.java:52 {@code was_spawnered} — set when the spawn-rule check
+     * finds an own-type spawner nearby (orig :269); spawnered Rotators are exempt
+     * from despawning (orig :108) and from the random daytime discard (orig :166).
+     * Like the original, not persisted to NBT.
+     */
+    private int wasSpawnered = 0;
 
     /**
      * Per-entity render scratch (orig Rotator.java:50 {@code renderdata = new RenderInfo()},
@@ -67,7 +74,8 @@ public class EntityRotator extends Monster {
     public boolean removeWhenFarAway(double dist) {
         if (this.isPersistenceRequired()) return false;
         if (this.busyFighting != 0) return false;
-        return true;
+        // orig Rotator.java:108 — spawner-spawned Rotators never despawn
+        return this.wasSpawnered == 0;
     }
 
     @Override
@@ -96,12 +104,29 @@ public class EntityRotator extends Monster {
             this.busyFighting = 1;
         }
 
-        if (!this.level().isClientSide && !this.isPersistenceRequired() && this.busyFighting == 0) {
+        if (!this.level().isClientSide && !this.isPersistenceRequired() && this.busyFighting == 0
+                && this.wasSpawnered == 0) { // orig Rotator.java:166 — spawnered Rotators skip the daytime discard
             long dayTimeInCycle = this.level().getDayTime() % 24000L;
             if (dayTimeInCycle < 12000L && this.random.nextInt(400) == 1) {
                 this.discard();
             }
         }
+    }
+
+    /**
+     * orig Rotator.java:255-288 — spawner bypass (x/z -2..+2, y +1..+3; flags
+     * {@code was_spawnered}); darkness; clear air above; night half of the day only.
+     */
+    @Override
+    public boolean checkSpawnRules(net.minecraft.world.level.LevelAccessor level,
+                                   net.minecraft.world.entity.MobSpawnType spawnType) {
+        if (OriginalSpawnGates.nearOwnSpawner(this, level, -2, 2, 1, 3)) {
+            this.wasSpawnered = 1;
+            return true;
+        }
+        if (!OriginalSpawnGates.isDarkEnough(this, level)) return false;
+        if (!OriginalSpawnGates.airBox(this, level, -1, 1, 1, 2, -1, 1)) return false;
+        return level.dayTime() % 24000L >= 12000L;
     }
 
     @Override

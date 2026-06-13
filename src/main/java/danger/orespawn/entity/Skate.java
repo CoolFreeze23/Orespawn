@@ -180,11 +180,13 @@ public class Skate extends Monster {
     @Override
     protected float getSoundVolume() { return 0.33f; }
 
+    /** orig Skate.java:318-329 — y>=50; daytime; 1-in-30 dice; at most 6 buddies within 16/8/16. */
     @Override
-    public boolean checkSpawnRules(LevelAccessor level, MobSpawnType spawnType) {
+    public boolean checkSpawnRules(net.minecraft.world.level.LevelAccessor level,
+                                   net.minecraft.world.entity.MobSpawnType spawnType) {
         if (this.getY() < 50.0) return false;
+        if (!OriginalSpawnGates.isDaytime(level)) return false;
         if (this.random.nextInt(30) != 1) return false;
-        return level.getEntitiesOfClass(Skate.class,
-                this.getBoundingBox().inflate(16.0, 8.0, 16.0)).size() <= 6;
+        return OriginalSpawnGates.countBuddies(this, level, Skate.class, 16.0, 8.0, 16.0) <= 6;
     }
 }

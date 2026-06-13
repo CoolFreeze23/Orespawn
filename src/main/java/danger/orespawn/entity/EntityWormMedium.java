@@ -183,4 +183,11 @@ public class EntityWormMedium extends Monster {
 
     // Death drops are fully data-driven via loot_table/entities/worm_medium.json
     // (orig WormMedium.java:265-273: 2 rotten flesh, 2 leather).
+
+    /** orig WormMedium.java:240-242 — night only. */
+    @Override
+    public boolean checkSpawnRules(net.minecraft.world.level.LevelAccessor level,
+                                   net.minecraft.world.entity.MobSpawnType spawnType) {
+        return !OriginalSpawnGates.isDaytime(level);
+    }
 }

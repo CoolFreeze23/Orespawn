@@ -153,4 +153,12 @@ public class Cryolophosaurus extends Monster {
     protected float getSoundVolume() {
         return 0.75f;
     }
+
+    /** orig Cryolophosaurus.java:231-236 — darkness, then night OR y<=50 (daytime cave spawns allowed). */
+    @Override
+    public boolean checkSpawnRules(net.minecraft.world.level.LevelAccessor level,
+                                   net.minecraft.world.entity.MobSpawnType spawnType) {
+        if (!OriginalSpawnGates.isDarkEnough(this, level)) return false;
+        return !OriginalSpawnGates.isDaytime(level) || this.getY() <= 50.0;
+    }
 }

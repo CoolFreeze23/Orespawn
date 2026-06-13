@@ -177,4 +177,19 @@ public class EntityLeafMonster extends Monster {
     protected float getSoundVolume() {
         return 0.65f;
     }
+
+    /** orig LeafMonster.java:227-251 — "Leaf Monster" spawner bypass; darkness; night; Islands y<=20 / elsewhere y>=50; at most 4 buddies within 20/10/20. */
+    @Override
+    public boolean checkSpawnRules(net.minecraft.world.level.LevelAccessor level,
+                                   net.minecraft.world.entity.MobSpawnType spawnType) {
+        if (OriginalSpawnGates.nearOwnSpawner(this, level)) return true;
+        if (!OriginalSpawnGates.isDarkEnough(this, level)) return false;
+        if (OriginalSpawnGates.isDaytime(level)) return false;
+        if (danger.orespawn.ModDimensionKeys.isIn(level, danger.orespawn.ModDimensionKeys.ISLANDS)) {
+            if (this.getY() > 20.0) return false;
+        } else if (this.getY() < 50.0) {
+            return false;
+        }
+        return OriginalSpawnGates.countBuddies(this, level, EntityLeafMonster.class, 20.0, 10.0, 20.0) <= 4;
+    }
 }

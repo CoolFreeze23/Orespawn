@@ -172,8 +172,11 @@ public class GhostSkelly extends AmbientCreature {
         return !this.isPersistenceRequired();
     }
 
+    /** orig GhostSkelly.java:173-188 — "Ghost Pumpkin Skelly" spawner bypass (x/z -2..+1); night. */
     @Override
-    public boolean checkSpawnRules(LevelAccessor level, MobSpawnType spawnType) {
-        return !level.canSeeSky(this.blockPosition());
+    public boolean checkSpawnRules(net.minecraft.world.level.LevelAccessor level,
+                                   net.minecraft.world.entity.MobSpawnType spawnType) {
+        if (OriginalSpawnGates.nearOwnSpawner(this, level, -2, 1, 0, 4)) return true;
+        return !OriginalSpawnGates.isDaytime(level);
     }
 }

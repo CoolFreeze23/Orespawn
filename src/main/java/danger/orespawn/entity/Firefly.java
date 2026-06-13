@@ -100,13 +100,14 @@ public class Firefly extends AmbientCreature {
         return !this.isPersistenceRequired();
     }
 
+    /** orig Firefly.java:161-176 — feet-block air; night; at most 10 buddies within 20/8/20; Islands always allowed; otherwise y>=50. */
     @Override
-    public boolean checkSpawnRules(LevelAccessor level, MobSpawnType spawnType) {
+    public boolean checkSpawnRules(net.minecraft.world.level.LevelAccessor level,
+                                   net.minecraft.world.entity.MobSpawnType spawnType) {
         if (!level.getBlockState(this.blockPosition()).isAir()) return false;
-        if (level.canSeeSky(this.blockPosition())) return false;
-        int buddies = level.getEntitiesOfClass(Firefly.class,
-                this.getBoundingBox().inflate(20.0, 8.0, 20.0)).size();
-        if (buddies > 10) return false;
+        if (OriginalSpawnGates.isDaytime(level)) return false;
+        if (OriginalSpawnGates.countBuddies(this, level, Firefly.class, 20.0, 8.0, 20.0) > 10) return false;
+        if (danger.orespawn.ModDimensionKeys.isIn(level, danger.orespawn.ModDimensionKeys.ISLANDS)) return true;
         return this.getY() >= 50.0;
     }
 }

@@ -121,3 +121,20 @@ justification. Cross-referenced to finding IDs and MODERNIZATION_NOTES entries.
   creative menu.
 - **Why:** harmless operator convenience; removing it would break existing port worlds
   that placed it. Documented here so it is not mistaken for original content.
+
+## PN-012 — PROPOSED (awaiting approval): Village dimension villages as modern jigsaw villages (WGEN-015, Phase D1)
+- **Original:** `MapGenMoreVillages.java:11-12` ran the vanilla **1.7.10** village
+  generator in the Village dimension at spacing 9 / separation 7 (~12× vanilla
+  density), producing 1.7.10-era plains villages (gravel paths, old house shapes,
+  pre-1.14 villager professions implied by era).
+- **Port:** `worldgen/structure/dim_village.json` runs the vanilla **1.21.1** plains
+  jigsaw village (`minecraft:village/plains/town_centers` start pool) via
+  `structure_set/dim_villages.json` with the same spacing 9 / separation 7.
+- **Why this mapping:** the 1.7.10 procedural village generator does not exist in
+  1.21.1; vanilla replaced it with jigsaw villages in 1.14. Reproducing the 2014
+  building shapes would mean shipping ~30 custom NBT templates of obsolete vanilla
+  buildings — out of parity scope (the original delegated to "whatever vanilla
+  villages look like", which in 1.21.1 is the jigsaw plains village). Density and
+  dimension placement — the parts OreSpawn itself controlled — are exact.
+- **Player-visible:** village *style* differs the same way vanilla villages differ
+  between 1.7.10 and 1.21.1; village *frequency and location* match the original.

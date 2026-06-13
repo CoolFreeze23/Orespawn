@@ -181,8 +181,11 @@ public class Ghost extends AmbientCreature {
         return !this.isPersistenceRequired();
     }
 
+    /** orig Ghost.java:145-160 — "Ghost" spawner bypass (x/z -2..+1); night. */
     @Override
-    public boolean checkSpawnRules(LevelAccessor level, MobSpawnType spawnType) {
-        return !level.canSeeSky(this.blockPosition());
+    public boolean checkSpawnRules(net.minecraft.world.level.LevelAccessor level,
+                                   net.minecraft.world.entity.MobSpawnType spawnType) {
+        if (OriginalSpawnGates.nearOwnSpawner(this, level, -2, 1, 0, 4)) return true;
+        return !OriginalSpawnGates.isDaytime(level);
     }
 }

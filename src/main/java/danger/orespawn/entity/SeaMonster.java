@@ -233,10 +233,14 @@ public class SeaMonster extends Monster {
                 ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "seamonster_death"));
     }
 
+    /** orig SeaMonster.java:544-570 — "Sea Monster" spawner bypass; y>=50; night; darkness; no other SeaMonster within 16/5/16. */
     @Override
-    public boolean checkSpawnRules(LevelAccessor level, MobSpawnType spawnType) {
+    public boolean checkSpawnRules(net.minecraft.world.level.LevelAccessor level,
+                                   net.minecraft.world.entity.MobSpawnType spawnType) {
+        if (OriginalSpawnGates.nearOwnSpawner(this, level)) return true;
         if (this.getY() < 50.0) return false;
-        return level.getEntitiesOfClass(SeaMonster.class,
-                this.getBoundingBox().inflate(16.0, 5.0, 16.0)).size() <= 1;
+        if (OriginalSpawnGates.isDaytime(level)) return false;
+        if (!OriginalSpawnGates.isDarkEnough(this, level)) return false;
+        return !OriginalSpawnGates.anyOtherNearby(this, level, SeaMonster.class, 16.0, 5.0, 16.0);
     }
 }

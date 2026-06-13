@@ -206,11 +206,13 @@ public class Irukandji extends Monster {
         return 0.25f;
     }
 
+    /** orig Irukandji.java:326-337 — y>=50; daytime; 1-in-60 dice; at most 2 buddies within 16/8/16. */
     @Override
-    public boolean checkSpawnRules(LevelAccessor level, MobSpawnType spawnType) {
+    public boolean checkSpawnRules(net.minecraft.world.level.LevelAccessor level,
+                                   net.minecraft.world.entity.MobSpawnType spawnType) {
         if (this.getY() < 50.0) return false;
+        if (!OriginalSpawnGates.isDaytime(level)) return false;
         if (this.random.nextInt(60) != 1) return false;
-        return level.getEntitiesOfClass(Irukandji.class,
-                this.getBoundingBox().inflate(16.0, 8.0, 16.0)).size() <= 2;
+        return OriginalSpawnGates.countBuddies(this, level, Irukandji.class, 16.0, 8.0, 16.0) <= 2;
     }
 }

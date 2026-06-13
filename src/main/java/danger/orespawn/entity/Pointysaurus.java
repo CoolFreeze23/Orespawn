@@ -150,4 +150,15 @@ public class Pointysaurus extends Monster {
 
     // Death drops are fully data-driven via loot_table/entities/pointysaurus.json
     // (orig Pointysaurus.java:127-141: 10 leather, 6 raw beef, 6 rotten flesh, 6 string).
+
+    /** orig Pointysaurus.java:275-312 — "Pointysaurus" spawner bypass; darkness; y>=50; night; clear-air column. */
+    @Override
+    public boolean checkSpawnRules(net.minecraft.world.level.LevelAccessor level,
+                                   net.minecraft.world.entity.MobSpawnType spawnType) {
+        if (OriginalSpawnGates.nearOwnSpawner(this, level)) return true;
+        if (!OriginalSpawnGates.isDarkEnough(this, level)) return false;
+        if (this.getY() < 50.0) return false;
+        if (OriginalSpawnGates.isDaytime(level)) return false;
+        return OriginalSpawnGates.airBox(this, level, -1, 0, 1, 5, -1, 0);
+    }
 }

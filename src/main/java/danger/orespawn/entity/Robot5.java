@@ -174,4 +174,16 @@ public class Robot5 extends Monster {
     protected SoundEvent getDeathSound() {
         return SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "robot_death"));
     }
+
+    /** orig Robot5.java:317-351 — "Robo-Sniper" spawner bypass; y>=50; night; shorter (y+1..+2) air/short-grass clearance; darkness. */
+    @Override
+    public boolean checkSpawnRules(net.minecraft.world.level.LevelAccessor level,
+                                   net.minecraft.world.entity.MobSpawnType spawnType) {
+        if (OriginalSpawnGates.nearOwnSpawner(this, level)) return true;
+        if (this.getY() < 50.0) return false;
+        if (OriginalSpawnGates.isDaytime(level)) return false;
+        if (!OriginalSpawnGates.boxMatches(this, level, -1, 1, 1, 2, -1, 0,
+                s -> s.isAir() || s.is(net.minecraft.world.level.block.Blocks.SHORT_GRASS))) return false;
+        return OriginalSpawnGates.isDarkEnough(this, level);
+    }
 }

@@ -144,12 +144,14 @@ public class Flounder extends Animal {
     // Death drops are fully data-driven via loot_table/entities/flounder.json
     // (orig Flounder.java:102-109: 1-2 raw fish).
 
+    /** orig Flounder.java:219-230 — y>=50; daytime; 1-in-20 dice; at most 10 buddies within 16/8/16. */
     @Override
-    public boolean checkSpawnRules(LevelAccessor level, MobSpawnType spawnType) {
+    public boolean checkSpawnRules(net.minecraft.world.level.LevelAccessor level,
+                                   net.minecraft.world.entity.MobSpawnType spawnType) {
         if (this.getY() < 50.0) return false;
+        if (!OriginalSpawnGates.isDaytime(level)) return false;
         if (this.random.nextInt(20) != 1) return false;
-        return level.getEntitiesOfClass(Flounder.class,
-                this.getBoundingBox().inflate(16.0, 8.0, 16.0)).size() <= 10;
+        return OriginalSpawnGates.countBuddies(this, level, Flounder.class, 16.0, 8.0, 16.0) <= 10;
     }
 
     @Nullable

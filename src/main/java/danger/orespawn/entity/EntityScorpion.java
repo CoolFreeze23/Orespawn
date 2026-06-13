@@ -95,4 +95,13 @@ public class EntityScorpion extends Monster {
     protected float getSoundVolume() {
         return 1.5f;
     }
+
+    /** orig Scorpion.java:281-299 — spawner bypass; darkness; then night OR y<=50 (daytime cave spawns allowed). */
+    @Override
+    public boolean checkSpawnRules(net.minecraft.world.level.LevelAccessor level,
+                                   net.minecraft.world.entity.MobSpawnType spawnType) {
+        if (OriginalSpawnGates.nearOwnSpawner(this, level)) return true;
+        if (!OriginalSpawnGates.isDarkEnough(this, level)) return false;
+        return !OriginalSpawnGates.isDaytime(level) || this.getY() <= 50.0;
+    }
 }

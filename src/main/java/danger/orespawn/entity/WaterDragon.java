@@ -334,11 +334,14 @@ public class WaterDragon extends TamableAnimal {
         return stack.is(ModItems.CRYSTAL_APPLE.get());
     }
 
+    /** orig WaterDragon.java:716-739 — "Water Dragon" spawner bypass; y>=50; daytime; no other WaterDragon within 16/5/16. */
     @Override
-    public boolean checkSpawnRules(LevelAccessor level, MobSpawnType spawnType) {
+    public boolean checkSpawnRules(net.minecraft.world.level.LevelAccessor level,
+                                   net.minecraft.world.entity.MobSpawnType spawnType) {
+        if (OriginalSpawnGates.nearOwnSpawner(this, level)) return true;
         if (this.getY() < 50.0) return false;
-        return level.getEntitiesOfClass(WaterDragon.class,
-                this.getBoundingBox().inflate(16.0, 5.0, 16.0)).size() <= 1;
+        if (!OriginalSpawnGates.isDaytime(level)) return false;
+        return !OriginalSpawnGates.anyOtherNearby(this, level, WaterDragon.class, 16.0, 5.0, 16.0);
     }
 
     @Nullable

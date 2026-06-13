@@ -177,4 +177,13 @@ public class Baryonyx extends Animal {
     public AgeableMob getBreedOffspring(ServerLevel level, AgeableMob otherParent) {
         return new Baryonyx((EntityType<? extends Baryonyx>) this.getType(), level);
     }
+
+    /** orig Baryonyx.java:66-74 — y>=50; daytime; at most 8 buddies within 20/10/20. */
+    @Override
+    public boolean checkSpawnRules(net.minecraft.world.level.LevelAccessor level,
+                                   net.minecraft.world.entity.MobSpawnType spawnType) {
+        if (this.getY() < 50.0) return false;
+        if (!OriginalSpawnGates.isDaytime(level)) return false;
+        return OriginalSpawnGates.countBuddies(this, level, Baryonyx.class, 20.0, 10.0, 20.0) <= 8;
+    }
 }

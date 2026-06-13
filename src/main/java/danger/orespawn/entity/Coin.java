@@ -71,4 +71,13 @@ public class Coin extends Animal {
     public AgeableMob getBreedOffspring(ServerLevel level, AgeableMob otherParent) {
         return null;
     }
+
+    /** orig Coin.java:138-148 — daytime; y>=50; no other Coin within 20/8/20. */
+    @Override
+    public boolean checkSpawnRules(net.minecraft.world.level.LevelAccessor level,
+                                   net.minecraft.world.entity.MobSpawnType spawnType) {
+        if (!OriginalSpawnGates.isDaytime(level)) return false;
+        if (this.getY() < 50.0) return false;
+        return !OriginalSpawnGates.anyOtherNearby(this, level, Coin.class, 20.0, 8.0, 20.0);
+    }
 }

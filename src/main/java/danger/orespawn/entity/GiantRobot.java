@@ -175,4 +175,15 @@ public class GiantRobot extends Monster {
     protected SoundEvent getDeathSound() {
         return SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "robot_death"));
     }
+
+    /** orig GiantRobot.java:364-381 — y>=50; night; air/short-grass clearance above; darkness. */
+    @Override
+    public boolean checkSpawnRules(net.minecraft.world.level.LevelAccessor level,
+                                   net.minecraft.world.entity.MobSpawnType spawnType) {
+        if (this.getY() < 50.0) return false;
+        if (OriginalSpawnGates.isDaytime(level)) return false;
+        if (!OriginalSpawnGates.boxMatches(this, level, -1, 1, 1, 5, -1, 0,
+                s -> s.isAir() || s.is(net.minecraft.world.level.block.Blocks.SHORT_GRASS))) return false;
+        return OriginalSpawnGates.isDarkEnough(this, level);
+    }
 }

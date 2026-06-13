@@ -507,4 +507,22 @@ public class Cephadrome extends PathfinderMob
         this.setActivity(tag.getInt("CephaActivity"));
         this.setTamed(tag.getBoolean("CephaTamed"));
     }
+
+    /**
+     * orig Cephadrome.java:593-630 — spawner bypass (flags {@code badmood} so the
+     * spawnered shark is born hostile); daytime; y&gt;=50; clear air above; no other
+     * Cephadrome within 16/6/16.
+     */
+    @Override
+    public boolean checkSpawnRules(net.minecraft.world.level.LevelAccessor level,
+                                   net.minecraft.world.entity.MobSpawnType spawnType) {
+        if (OriginalSpawnGates.nearOwnSpawner(this, level)) {
+            this.badmood = 1;
+            return true;
+        }
+        if (!OriginalSpawnGates.isDaytime(level)) return false;
+        if (this.getY() < 50.0) return false;
+        if (!OriginalSpawnGates.airBox(this, level, -2, 1, 1, 4, -2, 1)) return false;
+        return !OriginalSpawnGates.anyOtherNearby(this, level, Cephadrome.class, 16.0, 6.0, 16.0);
+    }
 }

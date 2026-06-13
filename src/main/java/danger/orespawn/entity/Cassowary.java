@@ -100,4 +100,11 @@ public class Cassowary extends Animal {
     public AgeableMob getBreedOffspring(ServerLevel level, AgeableMob otherParent) {
         return new Cassowary((EntityType<? extends Cassowary>) this.getType(), level);
     }
+
+    /** orig Cassowary.java:113-115 — daytime only. */
+    @Override
+    public boolean checkSpawnRules(net.minecraft.world.level.LevelAccessor level,
+                                   net.minecraft.world.entity.MobSpawnType spawnType) {
+        return OriginalSpawnGates.isDaytime(level);
+    }
 }

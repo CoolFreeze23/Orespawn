@@ -194,4 +194,15 @@ public class Basilisk extends Monster {
     public final void setAttacking(int value) {
         this.entityData.set(DATA_ATTACKING, value);
     }
+
+    /** orig Basilisk.java:441-477 — spawner bypass; darkness; night; clear air above; no other Basilisk within 20/6/20. */
+    @Override
+    public boolean checkSpawnRules(net.minecraft.world.level.LevelAccessor level,
+                                   net.minecraft.world.entity.MobSpawnType spawnType) {
+        if (OriginalSpawnGates.nearOwnSpawner(this, level)) return true;
+        if (!OriginalSpawnGates.isDarkEnough(this, level)) return false;
+        if (OriginalSpawnGates.isDaytime(level)) return false;
+        if (!OriginalSpawnGates.airBox(this, level, -1, 1, 1, 4, -1, 1)) return false;
+        return !OriginalSpawnGates.anyOtherNearby(this, level, Basilisk.class, 20.0, 6.0, 20.0);
+    }
 }

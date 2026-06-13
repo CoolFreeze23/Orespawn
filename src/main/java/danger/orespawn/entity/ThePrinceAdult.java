@@ -654,4 +654,11 @@ public class ThePrinceAdult extends TamableAnimal
         this.entityData.set(DATA_FIRE, tag.getInt("PrinceFire"));
         this.growCounter = tag.getInt("PrinceGrow");
     }
+
+    /** orig ThePrinceAdult.java:541-543 — never spawns naturally (growth stage, spawned by promotion only). */
+    @Override
+    public boolean checkSpawnRules(net.minecraft.world.level.LevelAccessor level,
+                                   net.minecraft.world.entity.MobSpawnType spawnType) {
+        return false;
+    }
 }

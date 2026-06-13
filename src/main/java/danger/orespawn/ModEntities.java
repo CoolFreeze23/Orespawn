@@ -34,8 +34,10 @@ public class ModEntities {
             ENTITY_TYPES.register("alosaurus", () -> EntityType.Builder.of(Alosaurus::new, MobCategory.MONSTER)
                     .sized(1.9f, 3.6f).clientTrackingRange(12).build("alosaurus"));
 
+    // Phase D1 (ENT-A-021) — WATER_CREATURE to match the original's
+    // waterCreature spawns (orig OreSpawnMain.java:4863-4865, river/swamp/ocean).
     public static final DeferredHolder<EntityType<?>, EntityType<AttackSquid>> ATTACK_SQUID =
-            ENTITY_TYPES.register("attack_squid", () -> EntityType.Builder.of(AttackSquid::new, MobCategory.MONSTER)
+            ENTITY_TYPES.register("attack_squid", () -> EntityType.Builder.of(AttackSquid::new, MobCategory.WATER_CREATURE)
                     .sized(1.0f, 1.25f) // orig AttackSquid.java:65
                     .clientTrackingRange(10).build("attack_squid"));
 
@@ -285,8 +287,11 @@ public class ModEntities {
             ENTITY_TYPES.register("worm_medium", () -> EntityType.Builder.of(EntityWormMedium::new, MobCategory.MONSTER)
                     .sized(1.0f, 1.0f).clientTrackingRange(10).build("worm_medium"));
 
+    // Phase D1 (ENT-S-087) — CREATURE to match the original's creature-list
+    // spawns (orig OreSpawnMain.java:4631-4633, plains/savanna/plateau); the
+    // class stays a Monster so despawn behavior matches the 1.7.10 EntityMob.
     public static final DeferredHolder<EntityType<?>, EntityType<EntityWormLarge>> ENTITY_WORM_LARGE =
-            ENTITY_TYPES.register("worm_large", () -> EntityType.Builder.of(EntityWormLarge::new, MobCategory.MONSTER)
+            ENTITY_TYPES.register("worm_large", () -> EntityType.Builder.of(EntityWormLarge::new, MobCategory.CREATURE)
                     .sized(1.5f, 1.5f).clientTrackingRange(10).build("worm_large"));
 
     // ==================== CREATURE (Passive) ====================
@@ -311,12 +316,12 @@ public class ModEntities {
             ENTITY_TYPES.register("cockateil", () -> EntityType.Builder.of(Cockateil::new, MobCategory.CREATURE)
                     .sized(0.4f, 0.4f).clientTrackingRange(8).build("cockateil"));
 
-    // Coin is a dropped-currency pickup entity, not a natural-spawn creature.
-    // Registered under MISC so the vanilla CREATURE spawn logic never tries
-    // to place it in the world. The class still extends Animal for movement
-    // physics, but the registry category controls natural-spawning gates.
+    // Phase D1 (ENT-A-099) — AMBIENT to match the original's ambient w2 1-1
+    // overworld spawns (orig OreSpawnMain.java:4942-4947); was MISC, which made
+    // natural spawning impossible. The Village roster lists it under "creature"
+    // exactly as the original setVillageCreatures did.
     public static final DeferredHolder<EntityType<?>, EntityType<Coin>> COIN =
-            ENTITY_TYPES.register("coin", () -> EntityType.Builder.of(Coin::new, MobCategory.MISC)
+            ENTITY_TYPES.register("coin", () -> EntityType.Builder.of(Coin::new, MobCategory.AMBIENT)
                     .sized(0.4f, 0.4f).clientTrackingRange(8).build("coin"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<EasterBunny>> EASTER_BUNNY =
@@ -465,8 +470,10 @@ public class ModEntities {
             ENTITY_TYPES.register("ostrich", () -> EntityType.Builder.of(Ostrich::new, MobCategory.CREATURE)
                     .sized(0.85f, 2.1f).clientTrackingRange(10).build("ostrich"));
 
+    // Phase D1 (ENT-K-085) — WATER_CREATURE to match the original's
+    // waterCreature spawns (orig OreSpawnMain.java:4873-4874, river/deep ocean).
     public static final DeferredHolder<EntityType<?>, EntityType<EntityRubberDucky>> ENTITY_RUBBER_DUCKY =
-            ENTITY_TYPES.register("rubber_ducky", () -> EntityType.Builder.of(EntityRubberDucky::new, MobCategory.CREATURE)
+            ENTITY_TYPES.register("rubber_ducky", () -> EntityType.Builder.of(EntityRubberDucky::new, MobCategory.WATER_CREATURE)
                     .sized(0.4f, 0.4f).clientTrackingRange(8).build("rubber_ducky"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<EntitySpyro>> ENTITY_SPYRO =
@@ -625,8 +632,11 @@ public class ModEntities {
             ENTITY_TYPES.register("spider_robot", () -> EntityType.Builder.of(SpiderRobot::new, MobCategory.MISC)
                     .sized(2.0f, 1.5f).clientTrackingRange(10).build("spider_robot"));
 
+    // Phase D1 (ENT-A-085) — AMBIENT to match the original's ambient w1 1-1
+    // snowy-biome spawns (orig OreSpawnMain.java:4774-4775); was MISC, which
+    // made natural spawning impossible.
     public static final DeferredHolder<EntityType<?>, EntityType<Cephadrome>> CEPHADROME =
-            ENTITY_TYPES.register("cephadrome", () -> EntityType.Builder.of(Cephadrome::new, MobCategory.MISC)
+            ENTITY_TYPES.register("cephadrome", () -> EntityType.Builder.of(Cephadrome::new, MobCategory.AMBIENT)
                     .sized(1.5f, 1.5f).clientTrackingRange(10).build("cephadrome"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<RedCow>> RED_COW =

@@ -93,10 +93,12 @@ public class EntityDragonfly extends Animal {
         return !this.isPersistenceRequired();
     }
 
+    /** orig Dragonfly.java:187-192 — y>=50; daytime. */
     @Override
     public boolean checkSpawnRules(net.minecraft.world.level.LevelAccessor level,
-                                    net.minecraft.world.entity.MobSpawnType spawnType) {
-        return this.getY() >= 50.0 && level.dayTime() % 24000L < 13000L;
+                                   net.minecraft.world.entity.MobSpawnType spawnType) {
+        if (this.getY() < 50.0) return false;
+        return OriginalSpawnGates.isDaytime(level);
     }
 
     @Override

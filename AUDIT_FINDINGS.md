@@ -75,6 +75,7 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 - **Original:** per-entity `func_70601_bi` enforced day/night, altitude (y thresholds), darkness, weather, buddy-count, clear-air, and dimension gates
 - **Port:** biome-modifier JSONs exist but the rule overrides are absent (or weakened). Affected: Alien (underground y<50 & dark / dim4), Alosaurus (y>50, night, not raining, no other Alosaurus), Basilisk (night, spawner check, no buddy), BandP (night, y≥50, villager-count), Baryonyx (y>50, day, ≤8 buddies), Bee (day/clear-air/y>50), Brutalfly (y≥70, dark, night, 4×3×10 clear air, none within 64), Camarasaurus (y≥50 + day), Cassowary (day-only), CaterKiller (day, y≥50, 1-in-10 dice, leaf/air clearance, none within 48), CaveFisher (has y≤50 but darkness check dropped), Cockateil (day & (dim4 or y≥50)), Crab (day, y≥50, dim5 throttle), CreepingHorror (dark, night, dim6 or y≤15), Cryolophosaurus (dark and (night or y≤50))
 - **Fix:** implement `checkSpawnRules`/`SpawnPlacements` predicates per entity reproducing the original gate list above; re-test natural spawning per entity afterwards.
+- **Resolution:** FIXED (2026-06-13, Phase D1 — all 103 original `func_70601_bi` gates now have `checkSpawnRules` ports built on `OriginalSpawnGates` + `ModDimensionKeys`; corpus in phase_d_reports/D1_original_spawn_rules.md, coverage verified by tools/d1_gate_diff.py (0 missing); pre-existing divergent gates rebuilt (tools/fix_preexisting_gates.py, audit in phase_d_reports/D1_preexisting_gate_audit.md); see FIX_LOG.md)
 
 ### ENT-SYS-003 — Systemic: port comments falsely claim 1.7.10 parity
 - **Status:** DIVERGENT
@@ -128,7 +129,7 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 - **Original:** `Alien.java` `func_70601_bi` — spawner tag "Alien", or dim 4 (Utopia), or underground y<50 & dark; no `addSpawn`
 - **Port:** `add_end_spawns.json` — `#minecraft:is_end` weight 3, 1–1
 - **Fix:** remove alien from `add_end_spawns.json`; add an overworld monster modifier plus `checkSpawnRules` for y<50 & dark, and add to the Utopia dimension spawn list.
-- **Resolution:** PARTIAL (2026-06-11, Phase C — End spawn removed; audit corrected: orig has a Mining-dim spawn entry w35 2-3 (ChunkProviderOreSpawn2.java:389), restored in dim_mining_locals.json; spawn-rule gates (dark/y<50/Utopia) tracked by ENT-SYS-002 (Phase D); see FIX_LOG.md and phase_c_reports/C1_entities_A_C.md)
+- **Resolution:** FIXED (2026-06-13, Phase D1 — spawn-rule gate ported in checkSpawnRules citing orig Alien.java:397-434; weights/biomes half closed in Phase C (2026-06-11, Phase C — End spawn removed); see FIX_LOG.md)
 
 ### ENT-A-007 — Alien: jump boost invented in port
 - **Status:** PARTIAL
@@ -163,7 +164,7 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 - **Original:** `addSpawn` multiple biomes; `func_70601_bi` y>50, night, not raining, no other Alosaurus
 - **Port:** `hostile_alosaurus.json` `#minecraft:is_savanna` w1 2–3; conditions deleted (ENT-SYS-002)
 - **Fix:** restore original biome list in the modifier; add spawn rules (y>50, night, !raining, no nearby Alosaurus).
-- **Resolution:** PARTIAL (2026-06-11, Phase C — audit corrected: orig has NO overworld addSpawn; spawns were Mining dim w8 1-2 + Utopia plains w1 1-1, both restored, overworld modifiers removed; spawn rules tracked by ENT-SYS-002 (Phase D); see FIX_LOG.md and phase_c_reports/C1_entities_A_C.md)
+- **Resolution:** FIXED (2026-06-13, Phase D1 — spawn-rule gate ported in checkSpawnRules citing orig Alosaurus.java:240-279; weights/biomes half closed in Phase C (2026-06-11, Phase C — audit corrected: orig has NO overworld addSpawn); see FIX_LOG.md)
 
 ## AntRobot
 
@@ -234,6 +235,7 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 - **Original:** `addSpawn` rivers/oceans w12 6–10; `func_70601_bi`: y>50 & daylight
 - **Port:** no biome modifier exists for attack_squid; `checkSpawnRules` y<50 && canSeeSky (inverted)
 - **Fix:** create biome modifier for `#minecraft:is_river` + `#minecraft:is_ocean` w12 6–10; fix `checkSpawnRules` to y>50 && daylight.
+- **Resolution:** FIXED (2026-06-13, Phase D1 — MobCategory MONSTER→WATER_CREATURE, IN_WATER spawn placement, river/swamp/ocean BM JSONs restored, checkSpawnRules y>=50+day per orig AttackSquid.java; see FIX_LOG.md)
 
 ### ENT-A-022 — AttackSquid: hurt() projectile exclusions missing
 - **Status:** PARTIAL
@@ -275,7 +277,7 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 - **Original:** plains/desert/savanna w20 1–2; night, y≥50, villager-count condition
 - **Port:** `add_overworld_monsters.json` w3 1–1; no conditions
 - **Fix:** dedicated modifier for plains/desert/savanna w20 1–2; restore night + y≥50 + nearby-villager spawn rule (ENT-SYS-002).
-- **Resolution:** PARTIAL (2026-06-11, Phase C — plains/desert/savanna w20 1-2 modifier restored (hostile_band_p.json), removed from generic overworld list; night/y>=50/villager rules tracked by ENT-SYS-002 (Phase D); see FIX_LOG.md and phase_c_reports/C1_entities_A_C.md)
+- **Resolution:** FIXED (2026-06-13, Phase D1 — spawn-rule gate ported in checkSpawnRules citing orig BandP.java:278-309; weights/biomes half closed in Phase C (2026-06-11, Phase C — plains/desert/savanna w20 1-2 modifier restored (hostile_band_p.json), removed from generic overworld list); see FIX_LOG.md)
 
 ## Baryonyx
 
@@ -291,7 +293,7 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 - **Original:** mining-dim biomes (`BiomeGenUtopianPlains`, `ChunkProviderOreSpawn2` w2 4–8); rules y>50, day, ≤8 buddies
 - **Port:** `add_overworld_creatures.json` w3 1–1; conditions removed
 - **Fix:** add Baryonyx to the port's mining-dimension spawn lists w2 4–8; restore day/y>50/buddy-cap rules.
-- **Resolution:** PARTIAL (2026-06-11, Phase C — Mining-dim w2 4-8 + Utopia w2 2-4 restored, overworld entry removed; day/y>50/buddy-cap rules tracked by ENT-SYS-002 (Phase D); see FIX_LOG.md and phase_c_reports/C1_entities_A_C.md)
+- **Resolution:** FIXED (2026-06-13, Phase D1 — spawn-rule gate ported in checkSpawnRules citing orig Baryonyx.java:66-74; weights/biomes half closed in Phase C (2026-06-11, Phase C — Mining-dim w2 4-8 + Utopia w2 2-4 restored, overworld entry removed); see FIX_LOG.md)
 
 ### ENT-A-030 — Baryonyx: wheat breeding lost
 - **Status:** PARTIAL
@@ -333,7 +335,7 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 - **Original:** mushroom/jungle/mega-taiga w3–15; night + spawner check + no buddy
 - **Port:** `hostile_basilisk__*` badlands+jungle, w3 1–1
 - **Fix:** retarget modifiers to mushroom fields, jungle, old-growth taiga at original weights; restore night/buddy rules (ENT-SYS-002).
-- **Resolution:** PARTIAL (2026-06-11, Phase C — audit corrected: orig biomes are jungle w3, jungleHills w2, birchForestHills w4 1-2, roofedForest w15 1-2 (OreSpawnMain.java:4877-4880), not mushroom/mega-taiga; modifiers retargeted; night/spawner/buddy rules tracked by ENT-SYS-002 (Phase D); see FIX_LOG.md and phase_c_reports/C1_entities_A_C.md)
+- **Resolution:** FIXED (2026-06-13, Phase D1 — spawn-rule gate ported in checkSpawnRules citing orig Basilisk.java:441-477; weights/biomes half closed in Phase C (2026-06-11, Phase C — audit corrected: orig biomes are jungle w3, jungleHills w2, birchForestHills w4 1-2, roofedForest w15 1-2 (OreSpawnMain.java:4877-4880), not mushroom/mega-taiga); see FIX_LOG.md)
 
 ### ENT-A-036 — Basilisk: custom sounds replaced with vanilla ravager
 - **Status:** DIVERGENT
@@ -397,7 +399,7 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 - **Original:** forest/taiga biomes w2–5 1–5; day/clear-air/y>50 or Utopia rules
 - **Port:** `add_overworld_monsters.json` w8 1–3
 - **Fix:** dedicated forest/taiga modifier w2–5 1–5; restore rules (ENT-SYS-002).
-- **Resolution:** PARTIAL (2026-06-11, Phase C — per-biome forest/jungle/birch/taiga/savanna modifiers w2-5 restored (OreSpawnMain.java:4709-4718), removed from generic overworld list; day/clear-air/y>50 rules tracked by ENT-SYS-002 (Phase D); see FIX_LOG.md and phase_c_reports/C1_entities_A_C.md)
+- **Resolution:** FIXED (2026-06-13, Phase D1 — spawn-rule gate ported in checkSpawnRules citing orig Bee.java:253-287; weights/biomes half closed in Phase C (2026-06-11, Phase C — per-biome forest/jungle/birch/taiga/savanna modifiers w2-5 restored (OreSpawnMain.java:4709-4718), removed from generic overworld list); see FIX_LOG.md)
 
 ## Bertha (item)
 
@@ -537,7 +539,7 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 - **Original:** `OreSpawnMain.java:4839-4841` — ambient w2 1–1 ExtremeHillsPlus/SavannaPlateau/MesaPlateau; rules y≥70, dark, night, 4×3×10 clear air, none within 64
 - **Port:** `add_overworld_monsters.json` w3 1–1; no checkSpawnRules
 - **Fix:** dedicated modifier for windswept hills/savanna plateau/badlands plateau w2 1–1; restore rules (ENT-SYS-002).
-- **Resolution:** PARTIAL (2026-06-11, Phase C — audit corrected: orig biomes are megaTaigaHills/extremeHillsPlus/mesaPlateau (OreSpawnMain.java:4839-4841), not savanna plateau; modifier set to old_growth_spruce_taiga/windswept_forest/badlands w2 1-1; altitude/dark/night/clear-air/64-radius rules tracked by ENT-SYS-002 (Phase D); see FIX_LOG.md and phase_c_reports/C1_entities_A_C.md)
+- **Resolution:** FIXED (2026-06-13, Phase D1 — spawn-rule gate ported in checkSpawnRules citing orig Brutalfly.java:290-329; weights/biomes half closed in Phase C (2026-06-11, Phase C — audit corrected: orig biomes are megaTaigaHills/extremeHillsPlus/mesaPlateau (OreSpawnMain.java:4839-4841), not savanna plateau); see FIX_LOG.md)
 
 ### ENT-A-065 — Brutalfly: hurt sound invented
 - **Status:** PARTIAL
@@ -584,7 +586,7 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 - **Original:** mining-dim chunk providers only; rules y≥50 + day (`func_70601_bi:78-83`)
 - **Port:** `add_overworld_creatures.json` w2 1–1 + `companion_camarasaurus__*` jungle/savanna w1 1–1; no rules
 - **Fix:** move spawns to the mining-dimension spawn lists; restore y≥50 + day rules; remove overworld modifiers.
-- **Resolution:** PARTIAL (2026-06-11, Phase C — Mining-dim w1 2-4 restored, overworld modifiers removed; y>=50+day rules tracked by ENT-SYS-002 (Phase D); see FIX_LOG.md and phase_c_reports/C1_entities_A_C.md)
+- **Resolution:** FIXED (2026-06-13, Phase D1 — spawn-rule gate ported in checkSpawnRules citing orig Camarasaurus.java:78-83; weights/biomes half closed in Phase C (2026-06-11, Phase C — Mining-dim w1 2-4 restored, overworld modifiers removed); see FIX_LOG.md)
 
 ## CaterKiller
 
@@ -627,7 +629,7 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 - **Original:** `OreSpawnMain.java:4746-4754` — ambient forest/jungle/hills/jungleEdge/birch/roofed/megaTaiga/taiga w2–10 1–2; rules day, y≥50, 1-in-10 dice, leaf/air clearance, none within 48
 - **Port:** `hostile_cater_killer__*` forest/jungle/taiga/badlands w4 1–2; no rules
 - **Fix:** drop badlands, restore original biome weights; add rules (ENT-SYS-002).
-- **Resolution:** PARTIAL (2026-06-11, Phase C — orig biome/weight spread restored (dark_forest w10, birch w6, forest-hills w4 etc., orig OreSpawnMain.java:4746-4754), badlands dropped; day/y>=50/dice/clearance rules tracked by ENT-SYS-002 (Phase D); see FIX_LOG.md and phase_c_reports/C1_entities_A_C.md)
+- **Resolution:** FIXED (2026-06-13, Phase D1 — spawn-rule gate ported in checkSpawnRules citing orig CaterKiller.java:585-624; weights/biomes half closed in Phase C (2026-06-11, Phase C — orig biome/weight spread restored (dark_forest w10, birch w6, forest-hills w4 etc., orig OreSpawnMain.java:4746-4754), badlands dropped); see FIX_LOG.md)
 
 ## CaveFisher
 
@@ -685,6 +687,7 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 - **Original:** `OreSpawnMain.java:4774-4775` — ambient w1 1–1 icePlains + coldTaiga; rules day, y≥50, clear air, none within 16
 - **Port:** no biome modifier; MISC category (`ModEntities.java:605`)
 - **Fix:** change MobCategory to AMBIENT/CREATURE; create biome modifier for snowy plains + snowy taiga w1 1–1; add the spawn rules.
+- **Resolution:** FIXED (2026-06-13, Phase D1 — MobCategory MISC→AMBIENT, ON_GROUND placement, snowy-biome BM JSON, gate with badmood spawner bypass per orig Cephadrome.java; see FIX_LOG.md)
 
 ## Chipmunk
 
@@ -786,6 +789,7 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 - **Original:** `OreSpawnMain.java:4942-4947` — ambient w2 1–1 taiga/forest/jungle/birch/coldTaigaHills/megaTaiga; rules day, y≥50, none within 20
 - **Port:** `dim_village_locals.json` only; MobCategory.MISC (`ModEntities.java:298`) — natural cycle never picks it
 - **Fix:** change category to AMBIENT; create overworld biome modifier w2 1–1 for the six biomes; add rules.
+- **Resolution:** FIXED (2026-06-13, Phase D1 — MobCategory MISC→AMBIENT, ON_GROUND placement, overworld BM JSON, gate day/y>=50/no-other-Coin per orig Coin.java:138-148; see FIX_LOG.md)
 
 ## Crab
 
@@ -941,7 +945,7 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 - **Original:** Utopia dimension boss list w1 1–2 (`BiomeGenUtopianPlains.java:164`); no overworld addSpawn
 - **Port:** `add_overworld_creatures.json` w1 1–1 overworld-wide
 - **Fix:** remove dragon from the overworld modifier; add to the Utopia dimension spawn list w1 1–2.
-- **Resolution:** PARTIAL (2026-06-11, Phase C — overworld entry removed, Island-biome w1 1–2 added (orig list is `setIslandCreatures`, not the Utopia boss list); spawn-rule gates → ENT-SYS-002 (Phase D), see phase_c_reports/C2_entities_D_I.md)
+- **Resolution:** FIXED (2026-06-13, Phase D1 — spawn-rule gate ported in checkSpawnRules citing orig Dragon.java:598-611; weights/biomes half closed in Phase C (2026-06-11, Phase C — overworld entry removed, Island-biome w1 1–2 added (orig list is `setIslandCreatures`, not the Utopia boss list)); see FIX_LOG.md)
 
 ### ENT-D-005 — Dragon: custom wing-flap sound replaced
 - **Status:** PARTIAL
@@ -977,7 +981,7 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 - **Original:** `OreSpawnMain.java:4981` — addSpawn w20 2–4 ambient Roofed Forest; also spawners/Crystal dim
 - **Port:** `hostile_dungeon_beast.json` — `#minecraft:is_badlands` w20 2–4
 - **Fix:** change modifier biome to `minecraft:dark_forest` (roofed forest), keep w20 2–4; add Crystal-dimension spawn list entry.
-- **Resolution:** PARTIAL (2026-06-11, Phase C — dark_forest w20 2–4 + Crystal w30 4–6 + Chaos w2 1–5 done; spawn-rule gates → ENT-SYS-002 (Phase D), see phase_c_reports/C2_entities_D_I.md)
+- **Resolution:** FIXED (2026-06-13, Phase D1 — spawn-rule gate ported in checkSpawnRules citing orig DungeonBeast.java:275-312; weights/biomes half closed in Phase C (2026-06-11, Phase C — dark_forest w20 2–4 + Crystal w30 4–6 + Chaos w2 1–5 done); see FIX_LOG.md)
 
 ## EasterBunny
 
@@ -992,7 +996,7 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 - **Original:** `OreSpawnMain.java:4682-4688` — addSpawn w10/w5/w8 1–2 across 7 biomes
 - **Port:** `add_overworld_creatures.json` w3 1–2 overworld-wide
 - **Fix:** dedicated modifier reproducing the 7 original biomes at weights 10/8/5.
-- **Resolution:** PARTIAL (2026-06-11, Phase C — 7-biome w10/8/5 modifiers done; the orig registration is gated on Easter day (April 20, OreSpawnMain.java:4570-4571,4681) → ENT-SYS-002 (Phase D), see phase_c_reports/C2_entities_D_I.md)
+- **Resolution:** PARTIAL (2026-06-11, Phase C — 7-biome w10/8/5 modifiers done; the orig registration is gated on Easter day (April 20, OreSpawnMain.java:4570-4571,4681) → the seasonal-gates slice (Phase D; spawn-rule gate itself ported in D1, orig EasterBunny.java:67-77), see phase_c_reports/C2_entities_D_I.md)
 
 ## Elevator (Hoverboard)
 
@@ -1049,7 +1053,7 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 - **Original:** `OreSpawnMain.java:4920-4928` — ambient w4 2–4 across 5 overworld biomes, w2 ×3, w20 Roofed Forest
 - **Port:** `add_end_spawns.json` — `#minecraft:is_end` w8 1–2; no overworld spawns
 - **Fix:** add overworld modifier with the original biome list (dark_forest w20 2–4 hotspot); remove or reduce the End entry.
-- **Resolution:** PARTIAL (2026-06-11, Phase C — 9-biome overworld modifiers + Chaos-dim w2 1–2 added, invented End entry removed; spawn-rule gates → ENT-SYS-002 (Phase D), see phase_c_reports/C2_entities_D_I.md)
+- **Resolution:** FIXED (2026-06-13, Phase D1 — spawn-rule gate ported in checkSpawnRules citing orig EnderKnight.java:256-277; weights/biomes half closed in Phase C (2026-06-11, Phase C — 9-biome overworld modifiers + Chaos-dim w2 1–2 added, invented End entry removed); see FIX_LOG.md)
 
 ## EnderReaper
 
@@ -1071,7 +1075,7 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 - **Original:** `OreSpawnMain.java:4931-4939` — ambient w2/1 1–2 across 8 biomes + w38 2–4 Roofed Forest
 - **Port:** `add_end_spawns.json` w4 1–1 End-only
 - **Fix:** add overworld modifier with the 8 original biomes incl. dark_forest w38 2–4; remove/reduce the End entry.
-- **Resolution:** PARTIAL (2026-06-11, Phase C — 9-biome overworld modifiers + Island w25 2–4 + Chaos w1 1–1 added, invented End entry removed; spawn-rule gates → ENT-SYS-002 (Phase D), see phase_c_reports/C2_entities_D_I.md)
+- **Resolution:** FIXED (2026-06-13, Phase D1 — spawn-rule gate ported in checkSpawnRules citing orig EnderReaper.java:253-279; weights/biomes half closed in Phase C (2026-06-11, Phase C — 9-biome overworld modifiers + Island w25 2–4 + Chaos w1 1–1 added, invented End entry removed); see FIX_LOG.md)
 
 ## EntityCage
 
@@ -1142,7 +1146,7 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 - **Original:** `OreSpawnMain.java:4974` — w25 2–4 ambient Roofed Forest only; + Crystal dim w10 4–8, w5 2–4
 - **Port:** `add_overworld_ambient.json` w5 1–3 ALL overworld (Crystal/Chaos dims kept)
 - **Fix:** restrict the overworld modifier to `minecraft:dark_forest` w25 2–4.
-- **Resolution:** PARTIAL (2026-06-11, Phase C — overworld-wide entry replaced with dark_forest w25 2–4 (Crystal/Chaos dims already correct); spawn-rule gates → ENT-SYS-002 (Phase D), see phase_c_reports/C2_entities_D_I.md)
+- **Resolution:** FIXED (2026-06-13, Phase D1 — spawn-rule gate ported in checkSpawnRules citing orig Fairy.java:334-347; weights/biomes half closed in Phase C (2026-06-11, Phase C — overworld-wide entry replaced with dark_forest w25 2–4 (Crystal/Chaos dims already correct)); see FIX_LOG.md)
 
 ## Firefly
 
@@ -1160,7 +1164,7 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 - **Original:** Utopia water lists w2 2–4 / w5 6–8 (`BiomeGenUtopianPlains.java:126,253`)
 - **Port:** `add_ocean_spawns.json` w8 1–3 `#minecraft:is_ocean`
 - **Fix:** add Flounder to the Utopia-dimension water spawn lists at original weights (keep or drop ocean entry per design decision).
-- **Resolution:** PARTIAL (2026-06-11, Phase C — Utopia w2 2–4 + Crystal w5 6–8 added, invented ocean entry removed; spawn-rule gates → ENT-SYS-002 (Phase D), see phase_c_reports/C2_entities_D_I.md)
+- **Resolution:** FIXED (2026-06-13, Phase D1 — spawn-rule gate ported in checkSpawnRules citing orig Flounder.java:219-230; weights/biomes half closed in Phase C (2026-06-11, Phase C — Utopia w2 2–4 + Crystal w5 6–8 added, invented ocean entry removed); see FIX_LOG.md)
 
 ## Frog
 
@@ -1169,7 +1173,7 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 - **Original:** `OreSpawnMain.java:4963-4967` — waterCreature w20 3–6 river, w20 2–6 swamp, ambient w2–3
 - **Port:** `add_overworld_creatures.json` w10 1–2 (rules Y≥50/day/≤5 frogs kept)
 - **Fix:** retarget modifier to river+swamp biomes w20 3–6 / 2–6.
-- **Resolution:** PARTIAL (2026-06-11, Phase C — river w20+w3, swamp w20+w2, jungle w3 modifiers + Utopia w5 4–6 + Crystal w1 3–5 added, overworld-wide entry removed; spawn-rule gates → ENT-SYS-002 (Phase D), see phase_c_reports/C2_entities_D_I.md)
+- **Resolution:** FIXED (2026-06-13, Phase D1 — spawn-rule gate ported in checkSpawnRules citing orig Frog.java:240-251; weights/biomes half closed in Phase C (2026-06-11, Phase C — river w20+w3, swamp w20+w2, jungle w3 modifiers + Utopia w5 4–6 + Crystal w1 3–5 added, overworld-wide entry removed); see FIX_LOG.md)
 
 ## GammaMetroid
 
@@ -1192,7 +1196,7 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 - **Original:** Crystal dimension list w35 4–7 (`ChunkProviderOreSpawn2.java:386`) + Utopia boss w1 (`BiomeGenUtopianPlains.java:514`)
 - **Port:** `add_nether_spawns.json` w3 1–1 + `companion_gamma_metroid.json` mountains w1 1–1
 - **Fix:** add to Crystal-dimension spawn list w35 4–7 and Utopia w1; remove the Nether entry.
-- **Resolution:** PARTIAL (2026-06-11, Phase C — audit corrected: ChunkProviderOreSpawn2:386 is the MINING dim (w35 4–7) and the w1 1–1 list is `setChaosCreatures` (:513-514); Mining + Chaos entries added, Nether entry and invented mountain companion removed; spawn-rule gates → ENT-SYS-002 (Phase D), see phase_c_reports/C2_entities_D_I.md)
+- **Resolution:** FIXED (2026-06-13, Phase D1 — spawn-rule gate ported in checkSpawnRules citing orig GammaMetroid.java:328-365; weights/biomes half closed in Phase C (2026-06-11, Phase C — audit corrected: ChunkProviderOreSpawn2:386 is the MINING dim (w35 4–7) and the w1 1–1 list is `setChaosCreatures` (:513-514)); see FIX_LOG.md)
 
 ## Gazelle
 
@@ -1217,7 +1221,7 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 - **Original:** ~28 addSpawn ambient w2–15 grp up to 5–10 (`OreSpawnMain.java:4544+,4784-4788`)
 - **Port:** `add_cave_spawns.json` w4 1–1 + `dim_chaos_locals.json` w15 3–6; dark-only rule
 - **Fix:** raise overworld weight/groups toward the original w2–15 / 5–10 ambient distribution across its biome list.
-- **Resolution:** PARTIAL (2026-06-11, Phase C — the UNGATED block (OreSpawnMain.java:4783-4788: snowy_taiga w15 5–10, taiga w10 5–10, frozen_river w6 4–6, jungle w2 1–4, dark_forest w15 2–5) is now in JSON; invented cave/Chaos entries removed. The 22-biome w15 3–6 block (:4544-4565) is Halloween-only (Oct 31 gate :4518-4521) → ENT-SYS-002 (Phase D) along with the dark-spawn rules; see phase_c_reports/C2_entities_D_I.md)
+- **Resolution:** PARTIAL (2026-06-11, Phase C — the UNGATED block (OreSpawnMain.java:4783-4788: snowy_taiga w15 5–10, taiga w10 5–10, frozen_river w6 4–6, jungle w2 1–4, dark_forest w15 2–5) is now in JSON; invented cave/Chaos entries removed. The 22-biome w15 3–6 block (:4544-4565) is Halloween-only (Oct 31 gate :4518-4521) → the seasonal-gates slice (Phase D); the spawn-rule gate itself was ported in D1 (orig Ghost.java:145-160); see phase_c_reports/C2_entities_D_I.md)
 
 ## GhostSkelly
 
@@ -1233,7 +1237,7 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 - **Original:** ~28 addSpawn ambient w2–15 (`OreSpawnMain.java:4522-4543,4791-4795`)
 - **Port:** `add_cave_spawns.json` w4 1–1 + `dim_chaos_locals.json` w10 2–4
 - **Fix:** restore original ambient weights/groups across the original biome list.
-- **Resolution:** PARTIAL (2026-06-11, Phase C — ungated block (OreSpawnMain.java:4790-4795, same five biomes/weights as Ghost) in JSON; invented cave/Chaos entries removed; Halloween 22-biome block (:4522-4543) → ENT-SYS-002 (Phase D), see phase_c_reports/C2_entities_D_I.md)
+- **Resolution:** PARTIAL (2026-06-11, Phase C — ungated block (OreSpawnMain.java:4790-4795, same five biomes/weights as Ghost) in JSON; invented cave/Chaos entries removed; Halloween 22-biome block (:4522-4543) → the seasonal-gates slice (Phase D); the spawn-rule gate itself was ported in D1 (orig GhostSkelly.java:173-188), see phase_c_reports/C2_entities_D_I.md)
 
 ## GiantRobot
 
@@ -1268,6 +1272,7 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 - **Original:** Utopia monster list w8 1–2 (`BiomeGenUtopianPlains.java:289`); rules Y≥50, night, 5 air above (`GiantRobot.java:364-381`)
 - **Port:** no biome modifier for giant_robot or jeffery (config toggle exists, `ModSpawnControl.java:97`)
 - **Fix:** add GiantRobot to the Utopia dimension spawn list w8 1–2 with checkSpawnRules (Y≥50, night, 5 clear blocks above).
+- **Resolution:** FIXED (2026-06-13, Phase D1 — village roster entry was restored in C7 (w8 1-2 per BiomeGenUtopianPlains.java:289); checkSpawnRules gate ported this slice (orig GiantRobot.java:364-381); see FIX_LOG.md)
 
 ## Girlfriend
 
@@ -1294,7 +1299,7 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 - **Original:** `OreSpawnMain.java:4574-4585` — 12 addSpawn w2–30, groups up to 8–15
 - **Port:** `companion_girlfriend.json` — overworld-wide w4 1–2
 - **Fix:** replicate the 12 per-biome entries with original weights/groups (w30 8–15 hotspots).
-- **Resolution:** PARTIAL (2026-06-11, Phase C — all 12 orig entries replicated across 7 per-biome modifier files (beach w30 8–15 hotspot); spawn-rule gates → ENT-SYS-002 (Phase D), see phase_c_reports/C2_entities_D_I.md)
+- **Resolution:** FIXED (2026-06-13, Phase D1 — spawn-rule gate ported in checkSpawnRules citing orig Girlfriend.java:1100-1115; weights/biomes half closed in Phase C (2026-06-11, Phase C — all 12 orig entries replicated across 7 per-biome modifier files (beach w30 8–15 hotspot)); see FIX_LOG.md)
 
 ## GoldCow
 
@@ -1318,7 +1323,7 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 - **Original:** Utopia lists w1/w5/w10 (`BiomeGenUtopianPlains.java:120,176,368`)
 - **Port:** `add_ocean_spawns.json` w10 1–3 + `dim_chaos_locals.json` w10 2–4
 - **Fix:** add GoldFish to the Utopia dimension lists at original weights; review whether ocean entry should remain.
-- **Resolution:** PARTIAL (2026-06-11, Phase C — Utopia w1 1–1 + Island w5 2–4 added (Chaos w10 2–4 already correct), invented ocean entry removed; spawn-rule gates → ENT-SYS-002 (Phase D), see phase_c_reports/C2_entities_D_I.md)
+- **Resolution:** FIXED (2026-06-13, Phase D1 — spawn-rule gate ported in checkSpawnRules citing orig GoldFish.java:153-155; weights/biomes half closed in Phase C (2026-06-11, Phase C — Utopia w1 1–1 + Island w5 2–4 added (Chaos w10 2–4 already correct), invented ocean entry removed); see FIX_LOG.md)
 
 ## Hammerhead
 
@@ -1348,7 +1353,7 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 - **Original:** Utopia monster list w1 1–1 (`BiomeGenUtopianPlains.java:463`)
 - **Port:** `add_ocean_spawns.json` w3 1–1 (Y≥50 + no-buddy rules kept)
 - **Fix:** add to Utopia dimension monster list w1 1–1; review the ocean entry.
-- **Resolution:** PARTIAL (2026-06-11, Phase C — the orig w1 1–1 list is `setChaosCreatures` (BiomeGenUtopianPlains.java:462-464); Chaos-dim entry added, invented ocean entry removed; spawn-rule gates → ENT-SYS-002 (Phase D), see phase_c_reports/C2_entities_D_I.md)
+- **Resolution:** FIXED (2026-06-13, Phase D1 — spawn-rule gate ported in checkSpawnRules citing orig Hammerhead.java:277-316; weights/biomes half closed in Phase C (2026-06-11, Phase C — the orig w1 1–1 list is `setChaosCreatures` (BiomeGenUtopianPlains.java:462-464)); see FIX_LOG.md)
 
 ## HerculesBeetle
 
@@ -1396,7 +1401,7 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 - **Original:** Utopia water list w4 2–3 (`BiomeGenUtopianPlains.java:256`)
 - **Port:** `add_ocean_spawns.json` w4 1–2 (Y≥50, 1/60 roll, ≤2 nearby rules kept)
 - **Fix:** add to Utopia dimension water list w4 2–3; review ocean entry.
-- **Resolution:** PARTIAL (2026-06-11, Phase C — the orig w4 2–3 list is the Crystal sub-biome water list (BiomeGenUtopianPlains.java:255-257); Crystal-dim entry added, invented ocean entry removed; spawn-rule gates → ENT-SYS-002 (Phase D), see phase_c_reports/C2_entities_D_I.md)
+- **Resolution:** FIXED (2026-06-13, Phase D1 — spawn-rule gate ported in checkSpawnRules citing orig Irukandji.java:326-337; weights/biomes half closed in Phase C (2026-06-11, Phase C — the orig w4 2–3 list is the Crystal sub-biome water list (BiomeGenUtopianPlains.java:255-257)); see FIX_LOG.md)
 
 ## IrukandjiArrow
 
@@ -1449,12 +1454,14 @@ Paths: ORIG = `reference_1_7_10_source\sources\danger\orespawn\`, PORT = `src\ma
 - **Original:** Utopia/Island/Crystal/Village dim spawn lists (`BiomeGenUtopianPlains.java`) + spawner gates: Robot1 w25/4-8 + w5/2-8 ("Bomb-Omb"), Robot2 w16/2-8 + w2/1-4 ("Robo-Pounder"), Robot3 w12/2-4 + w2/1-4, Robot4 w8/1-2 + w1/1-2, Robot5 w20/4-8 + w2/3-5 ("Robo-Sniper"), PitchBlack (Utopia DimensionID6 + "Nightmare" spawner), SpiderDriver (Village w20/3-5, `BiomeGenUtopianPlains.java:292`)
 - **Port:** absent — no biome-modifier entry for any of these seven entities; spawn egg/summon only
 - **Fix:** create BM JSONs mapping each entity to the port's analog dimensions/biomes (or themed vanilla biomes) with the original weights/group sizes. High priority — these mobs are unencounterable.
+- **Resolution:** FIXED (2026-06-13, Phase D1 — rosters were restored by the Phase C7 dimension-roster rebuild (Robot1-5 + PitchBlack in village/chaos/island biome JSONs, SpiderDriver village w20 3-5); their `func_70601_bi` gates ported this slice (Robot1-5, PitchBlack, SpiderDriver, GiantRobot); see FIX_LOG.md)
 
 ### ENT-SYS2-004 — Systemic: original spawn gates (spawner blocks, darkness, Y-bands, crowd caps) absent
 - **Status:** MISSING
 - **Original:** per-entity `func_70601_bi` checks: spawner-block proximity, darkness, Y ranges, nearby-buddy caps, dimension checks
 - **Port:** most biome-modifier spawns have no `checkSpawnRules` override. Affected (this register's scope): Kraken, LeafMonster, LurkingTerror, Mantis, Molenoid, Nastysaurus, Peacock (`findBuddies()` exists but never called, `Peacock.java:111-114`), Rat, Rotator, Tshirt, Scorpion
 - **Fix:** add `checkSpawnRules` overrides per entity replicating darkness/Y/crowd gates; for spawner-driven mobs, gate natural spawning behind config or remove BM entry. Medium priority.
+- **Resolution:** FIXED (2026-06-13, Phase D1 — same slice as ENT-SYS-002: Kraken/LeafMonster/LurkingTerror/Mantis/Molenoid/Nastysaurus/Peacock/Rat/Rotator/Tshirt/Scorpion gates all ported with original bounds; Peacock findBuddies cap now enforced; see FIX_LOG.md)
 
 ---
 
@@ -1930,7 +1937,7 @@ Paths: ORIG = `reference_1_7_10_source\sources\danger\orespawn\`, PORT = `src\ma
 - **Original:** `OreSpawnMain.java:4977-4978` — weight 25–35 / group 2–20 in select biomes + Crystal-dim air-pocket checks + ≤8 nearby
 - **Port:** BM overworld-wide w20/1-3, no checks
 - **Fix:** set group size 2–20 (cap via ≤8-nearby `checkSpawnRules`) and restrict biome set.
-- **Resolution:** PARTIAL (2026-06-11, Phase C — weights/biomes done: overworld-wide entry removed, swarm_rat__dark_forest.json w35/10-20 + swarm_rat__taiga.json w25/2-8 per orig OreSpawnMain.java:4977-4978; darkness/spawner/Crystal-air-pocket/≤8-buddy gates → ENT-SYS-002 (Phase D); see phase_c_reports/C3_entities_K_R.md)
+- **Resolution:** FIXED (2026-06-13, Phase D1 — spawn-rule gate ported in checkSpawnRules citing orig Rat.java (Crystal air-pocket + buddy gates); weights/biomes half closed in Phase C (2026-06-11, Phase C — weights/biomes done: overworld-wide entry removed, swarm_rat__dark_forest.json w35/10-20 + swarm_rat__taiga.json w25/2-8 per orig OreSpawnMain.java:4977-4978); see FIX_LOG.md)
 
 ---
 
@@ -2125,6 +2132,7 @@ Paths: ORIG = `reference_1_7_10_source\sources\danger\orespawn\`, PORT = `src\ma
 - **Original:** `OreSpawnMain.java:4873-4874` — water biomes w4–10 / groups 4–20 + "Rubber Ducky" spawner gate + daytime + Y≥50 (`RubberDucky.java:508-526`)
 - **Port:** no biome modifier entry
 - **Fix:** create a BM JSON for water biomes, weight 4–10 / group 4–20, plus `checkSpawnRules` daytime + Y≥50. (Also listed in ENT-SYS2-003.)
+- **Resolution:** FIXED (2026-06-13, Phase D1 — MobCategory CREATURE→WATER_CREATURE, IN_WATER placement, river/deep-ocean BM JSONs, gate spawner-bypass/y>=50/day per orig RubberDucky.java:508-526; see FIX_LOG.md)
 
 ---
 
@@ -2217,7 +2225,7 @@ Paths: ORIG = `reference_1_7_10_source\sources\danger\orespawn\`, PORT = `src\ma
 - **Original:** `OreSpawnMain.java:4850-4851` — waterCreature ocean w4, swamp w2
 - **Port:** `BM add_ocean_spawns` — w1 (1-1)
 - **Fix:** raise ocean weight to 4; add swamp entry w2.
-- **Resolution:** PARTIAL (2026-06-11, Phase C — weights/biomes JSON half fixed; spawn-rule gates → ENT-SYS-002 (Phase D); see FIX_LOG.md and phase_c_reports/C4_entities_S_Z.md)
+- **Resolution:** FIXED (2026-06-13, Phase D1 — spawn-rule gate ported in checkSpawnRules citing orig SeaMonster.java:544-570; weights/biomes half closed in Phase C (2026-06-11, Phase C — weights/biomes JSON half fixed); see FIX_LOG.md)
 
 ---
 
@@ -2277,7 +2285,7 @@ Paths: ORIG = `reference_1_7_10_source\sources\danger\orespawn\`, PORT = `src\ma
 - **Original:** `BiomeGenUtopianPlains.java:259` — Island/Crystal dims waterCreature w2 (3-6)
 - **Port:** `BM add_ocean_spawns` w6 (1-2); gates (y≥50, 1/30, ≤6 nearby) ported (`Skate.java:182-187`)
 - **Fix:** if Island/Crystal dims exist in port, move skate spawns there at w2 (3-6); else reduce ocean weight to 2, group 3-6, and document the domain substitution.
-- **Resolution:** PARTIAL (2026-06-11, Phase C — weights/biomes JSON half fixed; spawn-rule gates → ENT-SYS-002 (Phase D); see FIX_LOG.md and phase_c_reports/C4_entities_S_Z.md)
+- **Resolution:** FIXED (2026-06-13, Phase D1 — spawn-rule gate ported in checkSpawnRules citing orig Skate.java:318-329; weights/biomes half closed in Phase C (2026-06-11, Phase C — weights/biomes JSON half fixed); see FIX_LOG.md)
 
 ---
 
@@ -2390,7 +2398,7 @@ Paths: ORIG = `reference_1_7_10_source\sources\danger\orespawn\`, PORT = `src\ma
 - **Original:** Island/Crystal/Mining dims (`BiomeGenUtopianPlains`; mining w1)
 - **Port:** `BM companion_spyro__is_badlands/is_mountain` w1 (1-1)
 - **Fix:** if the custom dims exist in port, add Spyro to their spawn lists at w1; otherwise keep substitute biomes and document.
-- **Resolution:** PARTIAL (2026-06-11, Phase C — weights/biomes JSON half fixed; spawn-rule gates → ENT-SYS-002 (Phase D); see FIX_LOG.md and phase_c_reports/C4_entities_S_Z.md)
+- **Resolution:** FIXED (2026-06-13, Phase D1 — spawn-rule gate ported in checkSpawnRules citing orig Spyro.java:407-412; weights/biomes half closed in Phase C (2026-06-11, Phase C — weights/biomes JSON half fixed); see FIX_LOG.md)
 
 ---
 
@@ -2438,7 +2446,7 @@ Paths: ORIG = `reference_1_7_10_source\sources\danger\orespawn\`, PORT = `src\ma
 - **Original:** `OreSpawnMain.java:4805-4808` — hell monster w2; mesa-variant ambient w1 ×3; island dim w2
 - **Port:** `BM companion_stinky` forest/taiga w1 + dim_islands w2
 - **Fix:** add a Nether BM entry w2 and mesa/badlands entries w1.
-- **Resolution:** PARTIAL (2026-06-11, Phase C — weights/biomes JSON half fixed; spawn-rule gates → ENT-SYS-002 (Phase D); see FIX_LOG.md and phase_c_reports/C4_entities_S_Z.md)
+- **Resolution:** FIXED (2026-06-13, Phase D1 — spawn-rule gate ported in checkSpawnRules citing orig Stinky.java:286-291; weights/biomes half closed in Phase C (2026-06-11, Phase C — weights/biomes JSON half fixed); see FIX_LOG.md)
 
 ---
 
@@ -2483,7 +2491,7 @@ Paths: ORIG = `reference_1_7_10_source\sources\danger\orespawn\`, PORT = `src\ma
 - **Original:** `BiomeGenUtopianPlains.java:182,412` — Island dim monster w25 (3-6); chaos w4 (2-6)
 - **Port:** `BM add_overworld_monsters` w4 (1-2)
 - **Fix:** if Island/Chaos dims exist in port, move spawns there (w25/3-6, w4/2-6); else document overworld substitution and consider group 2-6.
-- **Resolution:** PARTIAL (2026-06-11, Phase C — weights/biomes JSON half fixed; spawn-rule gates → ENT-SYS-002 (Phase D); see FIX_LOG.md and phase_c_reports/C4_entities_S_Z.md)
+- **Resolution:** FIXED (2026-06-13, Phase D1 — spawn-rule gate ported in checkSpawnRules citing orig TerribleTerror.java:193-214; weights/biomes half closed in Phase C (2026-06-11, Phase C — weights/biomes JSON half fixed); see FIX_LOG.md)
 
 ---
 
@@ -2518,7 +2526,7 @@ Paths: ORIG = `reference_1_7_10_source\sources\danger\orespawn\`, PORT = `src\ma
 - **Original:** no overworld `addSpawn`; Island/Crystal w1, Mining dim (`BiomeGenUtopianPlains.java:496`)
 - **Port:** `BM` trex badlands+savanna w1 (1-1) AND `add_overworld_monsters` w1
 - **Fix:** remove TRex from `add_overworld_monsters`; keep (or dim-gate) the badlands/savanna entries.
-- **Resolution:** PARTIAL (2026-06-11, Phase C — weights/biomes JSON half fixed; spawn-rule gates → ENT-SYS-002 (Phase D); see FIX_LOG.md and phase_c_reports/C4_entities_S_Z.md)
+- **Resolution:** FIXED (2026-06-13, Phase D1 — spawn-rule gate ported in checkSpawnRules citing orig TRex.java:276-315; weights/biomes half closed in Phase C (2026-06-11, Phase C — weights/biomes JSON half fixed); see FIX_LOG.md)
 
 ### ENT-S-045 — TRex: custom sounds replaced with ravager
 - **Status:** DIVERGENT
@@ -2659,7 +2667,7 @@ Paths: ORIG = `reference_1_7_10_source\sources\danger\orespawn\`, PORT = `src\ma
 - **Original:** Island w15 (2-4) / Crystal w2 (1-5) dims; night spawner
 - **Port:** `BM add_ocean_spawns` w6 (1-2); rules time≥13000 (`:168-171`)
 - **Fix:** if Island/Crystal dims exist in port, move spawns there at original weights; else document the ocean substitution.
-- **Resolution:** PARTIAL (2026-06-11, Phase C — weights/biomes JSON half fixed; spawn-rule gates → ENT-SYS-002 (Phase D); see FIX_LOG.md and phase_c_reports/C4_entities_S_Z.md)
+- **Resolution:** FIXED (2026-06-13, Phase D1 — spawn-rule gate ported in checkSpawnRules citing orig Urchin.java:298-332 (was_spawnered side effect included); weights/biomes half closed in Phase C (2026-06-11, Phase C — weights/biomes JSON half fixed); see FIX_LOG.md)
 
 ---
 
@@ -2697,7 +2705,7 @@ Paths: ORIG = `reference_1_7_10_source\sources\danger\orespawn\`, PORT = `src\ma
 - **Original:** Island/Crystal/Mining dims (jungle addSpawn not found)
 - **Port:** `BM companion_velocity_raptor` jungle/savanna w2 (1-2) + `add_overworld_creatures` w4 (1-2); rules y≥50 + sky (`:261-264`)
 - **Fix:** remove from `add_overworld_creatures` (keep themed jungle/savanna entries); add custom-dim entries if those dims exist.
-- **Resolution:** PARTIAL (2026-06-11, Phase C — weights/biomes JSON half fixed; spawn-rule gates → ENT-SYS-002 (Phase D); see FIX_LOG.md and phase_c_reports/C4_entities_S_Z.md)
+- **Resolution:** FIXED (2026-06-13, Phase D1 — spawn-rule gate ported in checkSpawnRules citing orig VelocityRaptor.java:78-83; weights/biomes half closed in Phase C (2026-06-11, Phase C — weights/biomes JSON half fixed); see FIX_LOG.md)
 
 ---
 
@@ -2729,7 +2737,7 @@ Paths: ORIG = `reference_1_7_10_source\sources\danger\orespawn\`, PORT = `src\ma
 - **Original:** night overworld + Island w3 (1-2)/Crystal w1/Chaos dims (`BiomeGenUtopianPlains.java:226,406`)
 - **Port:** `BM add_nether_spawns` w4 — Nether only
 - **Fix:** remove vortex from `add_nether_spawns`; add overworld monster entry (night via `checkSpawnRules`, day-despawn already ported `:121-126`) + custom-dim entries if available.
-- **Resolution:** PARTIAL (2026-06-11, Phase C — weights/biomes JSON half fixed; spawn-rule gates → ENT-SYS-002 (Phase D); see FIX_LOG.md and phase_c_reports/C4_entities_S_Z.md)
+- **Resolution:** FIXED (2026-06-13, Phase D1 — spawn-rule gate ported in checkSpawnRules citing orig Vortex.java:240-284 (was_spawnered side effect included); weights/biomes half closed in Phase C (2026-06-11, Phase C — weights/biomes JSON half fixed); see FIX_LOG.md)
 
 ---
 
@@ -2854,6 +2862,7 @@ Paths: ORIG = `reference_1_7_10_source\sources\danger\orespawn\`, PORT = `src\ma
 - **Original:** `OreSpawnMain.java:4631-4633` — creature plains w25, savanna w15, savannaPlateau w10 (1-1) + ground-solidity/no-other-in-32/y≥50/spawner gates (`:263-309`)
 - **Port:** no biome modifier entry (only ON_GROUND placement registered, `ModEntityAttributes.java:219`)
 - **Fix:** create a BM JSON: plains w25, savanna w15, savanna plateau w10, group 1-1; add `checkSpawnRules` (solid ground, no WormLarge in 32, y≥50).
+- **Resolution:** FIXED (2026-06-13, Phase D1 — MobCategory MONSTER→CREATURE, plains/savanna BM JSONs, gate with wormsSpawned side effect per orig WormLarge.java; see FIX_LOG.md)
 
 ---
 
@@ -3832,6 +3841,7 @@ Only MISSING / PARTIAL / DIVERGENT / UNVERIFIED items are listed; fully PORTED i
 - **Original:** `ChunkProviderOreSpawn2.java:410-419` — VelocityRaptor 1(2-4), Dragonfly 2(1-3), Camarasaurus 1(2-4), Baryonyx 2(4-8)
 - **Port:** `mining_biome.json` — firefly 5(1-3) only
 - **Fix:** Add the four original ambient/creature entries with the listed weights/groups to `mining_biome.json` (for ported entities).
+- **Resolution:** FIXED (2026-06-13, Phase D1 — verified already present: mining_biome.json carries VelocityRaptor w1 2-4, Dragonfly w2 1-3, Camarasaurus w1 2-4, Baryonyx w2 4-8 from the Phase C7 roster rebuild per ChunkProviderOreSpawn2.java:410-419; no change needed)
 
 ### WGEN-014 — Mining: BasiliskMaze/KyuubiDungeon/EnderKnight dungeon absent; BeeHive relocated
 - **Status:** PARTIAL
@@ -3847,6 +3857,7 @@ Only MISSING / PARTIAL / DIVERGENT / UNVERIFIED items are listed; fully PORTED i
 - **Original:** `MapGenMoreVillages.java:11-12` — spacing 9 / separation 7 (vanilla 32/8 → ~12× denser), enabled in dim 82 (`ChunkProviderOreSpawn3`); plus `BiomeManager.addVillageBiome` in `WorldProviderOreSpawn3`
 - **Port:** absent — no `minecraft:villages` structure-set override, `orespawn:village_biome` not in any `has_structure/village` tag, no `data/minecraft/tags/worldgen` overrides at all
 - **Fix:** Add `orespawn:village_biome` to `data/minecraft/tags/worldgen/biome/has_structure/village_plains.json` (override) and add a `data/minecraft/worldgen/structure_set/villages.json` override (or dimension-scoped set) with spacing 9 / separation 7.
+- **Resolution:** PENDING-APPROVAL (2026-06-13, Phase D1 — implementation staged (worldgen/structure/dim_village.json: vanilla plains jigsaw start pool in orespawn:village_biome; structure_set/dim_villages.json spacing 9 / separation 7 per MapGenMoreVillages.java:11-12) but NOT committed: village style is modern 1.21.1 jigsaw, a player-visible difference vs 1.7.10-era villages — awaiting decision on PN-012)
 
 ### WGEN-016 — Village: dimension style is a no-op placeholder
 - **Status:** PARTIAL

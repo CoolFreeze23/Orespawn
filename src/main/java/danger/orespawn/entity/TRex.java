@@ -155,4 +155,16 @@ public class TRex extends Monster {
     public final void setAttacking(int value) {
         this.entityData.set(DATA_ATTACKING, value);
     }
+
+    /** orig TRex.java:276-315 — "T. Rex" spawner bypass; darkness; y>=50; night; clear-air column; no other TRex within 24/12/24. */
+    @Override
+    public boolean checkSpawnRules(net.minecraft.world.level.LevelAccessor level,
+                                   net.minecraft.world.entity.MobSpawnType spawnType) {
+        if (OriginalSpawnGates.nearOwnSpawner(this, level)) return true;
+        if (!OriginalSpawnGates.isDarkEnough(this, level)) return false;
+        if (this.getY() < 50.0) return false;
+        if (OriginalSpawnGates.isDaytime(level)) return false;
+        if (!OriginalSpawnGates.airBox(this, level, -1, 1, 1, 5, -1, 1)) return false;
+        return !OriginalSpawnGates.anyOtherNearby(this, level, TRex.class, 24.0, 12.0, 24.0);
+    }
 }

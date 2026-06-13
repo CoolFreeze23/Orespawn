@@ -123,4 +123,14 @@ public class Peacock extends Animal {
     public AgeableMob getBreedOffspring(ServerLevel level, AgeableMob otherParent) {
         return new Peacock(ModEntities.PEACOCK.get(), level);
     }
+
+    /** orig Peacock.java:101-119 — clear air above; first half of the day only; 50<=y<=100; at most 2 buddies within 16/10/16 (restores the never-called findBuddies()). */
+    @Override
+    public boolean checkSpawnRules(net.minecraft.world.level.LevelAccessor level,
+                                   net.minecraft.world.entity.MobSpawnType spawnType) {
+        if (!OriginalSpawnGates.airBox(this, level, -1, 0, 1, 2, -1, 0)) return false;
+        if (level.dayTime() % 24000L > 12000L) return false;
+        if (this.getY() < 50.0 || this.getY() > 100.0) return false;
+        return OriginalSpawnGates.countBuddies(this, level, Peacock.class, 16.0, 10.0, 16.0) <= 2;
+    }
 }

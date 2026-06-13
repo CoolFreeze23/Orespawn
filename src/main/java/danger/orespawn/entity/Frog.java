@@ -274,13 +274,15 @@ public class Frog extends Animal {
                 this.getBoundingBox().inflate(20.0, 8.0, 20.0)).size();
     }
 
+    /** orig Frog.java:240-251 — y>=50; daytime; extra 1-in-20 dice in Crystal; at most 5 buddies within 20/8/20. */
     @Override
-    public boolean checkSpawnRules(LevelAccessor level, MobSpawnType spawnType) {
+    public boolean checkSpawnRules(net.minecraft.world.level.LevelAccessor level,
+                                   net.minecraft.world.entity.MobSpawnType spawnType) {
         if (this.getY() < 50.0) return false;
-        long dayTime = level.dayTime() % 24000L;
-        if (dayTime >= 13000L) return false;
-        return level.getEntitiesOfClass(Frog.class,
-                this.getBoundingBox().inflate(20.0, 8.0, 20.0)).size() <= 5;
+        if (!OriginalSpawnGates.isDaytime(level)) return false;
+        if (danger.orespawn.ModDimensionKeys.isIn(level, danger.orespawn.ModDimensionKeys.CRYSTAL)
+                && this.random.nextInt(20) != 1) return false;
+        return OriginalSpawnGates.countBuddies(this, level, Frog.class, 20.0, 8.0, 20.0) <= 5;
     }
 
     @Override

@@ -151,4 +151,16 @@ public class EntityHerculesBeetle extends Monster {
     // Death drops are fully data-driven via loot_table/entities/hercules_beetle.json
     // (orig HerculesBeetle.java:141-301: big hammer, painting, 4-11 raw beef,
     // 1-5 rolls of the d20 Diamond gear table).
+
+    /** orig HerculesBeetle.java:442-481 — "Hercules Beetle" spawner bypass; darkness; night; y>=50; clear-air box; no other HerculesBeetle within 16/6/16. */
+    @Override
+    public boolean checkSpawnRules(net.minecraft.world.level.LevelAccessor level,
+                                   net.minecraft.world.entity.MobSpawnType spawnType) {
+        if (OriginalSpawnGates.nearOwnSpawner(this, level)) return true;
+        if (!OriginalSpawnGates.isDarkEnough(this, level)) return false;
+        if (OriginalSpawnGates.isDaytime(level)) return false;
+        if (this.getY() < 50.0) return false;
+        if (!OriginalSpawnGates.airBox(this, level, -2, 1, 2, 4, -2, 1)) return false;
+        return !OriginalSpawnGates.anyOtherNearby(this, level, EntityHerculesBeetle.class, 16.0, 6.0, 16.0);
+    }
 }

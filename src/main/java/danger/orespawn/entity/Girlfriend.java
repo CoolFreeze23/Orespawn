@@ -332,4 +332,12 @@ public class Girlfriend extends TamableAnimal {
         this.voice = tag.getInt("GirlVoice");
         this.voiceEnable = tag.getInt("GirlVoiceEnable");
     }
+
+    /** orig Girlfriend.java:1100-1115 — "Girlfriend" spawner bypass, else the vanilla creature rules. */
+    @Override
+    public boolean checkSpawnRules(net.minecraft.world.level.LevelAccessor level,
+                                   net.minecraft.world.entity.MobSpawnType spawnType) {
+        if (OriginalSpawnGates.nearOwnSpawner(this, level)) return true;
+        return super.checkSpawnRules(level, spawnType);
+    }
 }

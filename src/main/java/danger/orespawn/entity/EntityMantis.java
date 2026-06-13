@@ -240,4 +240,17 @@ public class EntityMantis extends Monster {
         if (target instanceof Monster) return true;
         return false;
     }
+
+    /** orig Mantis.java:263-302 — spawner bypass; clear-air volume; extra 1-in-6 dice in Chaos; y>=50; daytime; no other Mantis within 32/16/32. */
+    @Override
+    public boolean checkSpawnRules(net.minecraft.world.level.LevelAccessor level,
+                                   net.minecraft.world.entity.MobSpawnType spawnType) {
+        if (OriginalSpawnGates.nearOwnSpawner(this, level, -2, 2, 1, 3)) return true;
+        if (!OriginalSpawnGates.airBox(this, level, -2, 1, 1, 5, -2, 1)) return false;
+        if (danger.orespawn.ModDimensionKeys.isIn(level, danger.orespawn.ModDimensionKeys.CHAOS)
+                && this.getRandom().nextInt(6) != 0) return false;
+        if (this.getY() < 50.0) return false;
+        if (!OriginalSpawnGates.isDaytime(level)) return false;
+        return !OriginalSpawnGates.anyOtherNearby(this, level, EntityMantis.class, 32.0, 16.0, 32.0);
+    }
 }

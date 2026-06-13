@@ -1171,4 +1171,14 @@ public class Dragon extends TamableAnimal implements danger.orespawn.network.Rid
         this.riderFlyUp = up;
         this.riderFlyDown = down;
     }
+
+    /** orig Dragon.java:598-611 — daytime; no other Dragon within 16/6/16; Islands always allowed; otherwise y>=50. */
+    @Override
+    public boolean checkSpawnRules(net.minecraft.world.level.LevelAccessor level,
+                                   net.minecraft.world.entity.MobSpawnType spawnType) {
+        if (!OriginalSpawnGates.isDaytime(level)) return false;
+        if (OriginalSpawnGates.anyOtherNearby(this, level, Dragon.class, 16.0, 6.0, 16.0)) return false;
+        if (danger.orespawn.ModDimensionKeys.isIn(level, danger.orespawn.ModDimensionKeys.ISLANDS)) return true;
+        return this.getY() >= 50.0;
+    }
 }

@@ -262,4 +262,17 @@ public class BandP extends Monster {
         }
         return this.stash.size() - 1;
     }
+
+    /** orig BandP.java:278-309 — "Criminal" spawner bypass; daytime; y>=100 (the y>=50 check is shadowed); no other BandP within 32/12/32; requires a villager within 36/12/36. */
+    @Override
+    public boolean checkSpawnRules(net.minecraft.world.level.LevelAccessor level,
+                                   net.minecraft.world.entity.MobSpawnType spawnType) {
+        if (OriginalSpawnGates.nearOwnSpawner(this, level)) return true;
+        if (!OriginalSpawnGates.isDaytime(level)) return false;
+        if (this.getY() < 50.0) return false;
+        if (this.getY() < 100.0) return false;
+        if (OriginalSpawnGates.anyOtherNearby(this, level, BandP.class, 32.0, 12.0, 32.0)) return false;
+        return !level.getEntitiesOfClass(net.minecraft.world.entity.npc.Villager.class,
+                this.getBoundingBox().inflate(36.0, 12.0, 36.0)).isEmpty();
+    }
 }

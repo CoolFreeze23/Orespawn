@@ -213,4 +213,23 @@ public class EntityWormLarge extends Monster {
     // Death drops are fully data-driven via loot_table/entities/worm_large.json
     // (orig WormLarge.java:352-377: worm tooth, painting, 6 rotten flesh, 6 leather,
     // 8 dirt, 16 gold nugget, 5 diamond, 4 uranium nugget, 4 titanium nugget).
+
+    /**
+     * orig WormLarge.java:263-309 — "Large Worm" spawner bypass (sets
+     * {@code wormsSpawned} so the segment chain is not re-spawned); y&gt;=50; no
+     * other WormLarge within 32/8/32; 13x13 column of SOLID ground from y-2 down
+     * to y-8 (no air pockets); 13x13 column of pure air from y+2 up to y+8.
+     */
+    @Override
+    public boolean checkSpawnRules(net.minecraft.world.level.LevelAccessor level, MobSpawnType spawnType) {
+        if (OriginalSpawnGates.nearOwnSpawner(this, level)) {
+            this.wormsSpawned = 1;
+            return true;
+        }
+        if (this.getY() < 50.0) return false;
+        if (OriginalSpawnGates.anyOtherNearby(this, level, EntityWormLarge.class, 32.0, 8.0, 32.0)) return false;
+        if (!OriginalSpawnGates.boxMatches(this, level, -6, 6, -8, -2, -6, 6,
+                s -> !s.isAir())) return false;
+        return OriginalSpawnGates.airBox(this, level, -6, 6, 2, 8, -6, 6);
+    }
 }

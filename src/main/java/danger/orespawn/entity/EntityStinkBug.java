@@ -114,8 +114,11 @@ public class EntityStinkBug extends Animal {
         return stack.is(ModItems.CRYSTAL_APPLE.get());
     }
 
+    /** orig StinkBug.java:136-151 — "Stink Bug" spawner bypass; y>=50. */
     @Override
-    public boolean checkSpawnRules(LevelAccessor level, MobSpawnType spawnType) {
+    public boolean checkSpawnRules(net.minecraft.world.level.LevelAccessor level,
+                                   net.minecraft.world.entity.MobSpawnType spawnType) {
+        if (OriginalSpawnGates.nearOwnSpawner(this, level)) return true;
         return this.getY() >= 50.0;
     }
 

@@ -165,4 +165,14 @@ public class EntitySpitBug extends Monster {
             this.heal(1.0f);
         }
     }
+
+    /** orig SpitBug.java:396-430 — "Spit Bug" spawner bypass; daytime only on a 2-in-20 dice; darkness; clear-air box. */
+    @Override
+    public boolean checkSpawnRules(net.minecraft.world.level.LevelAccessor level,
+                                   net.minecraft.world.entity.MobSpawnType spawnType) {
+        if (OriginalSpawnGates.nearOwnSpawner(this, level)) return true;
+        if (OriginalSpawnGates.isDaytime(level) && this.getRandom().nextInt(20) > 1) return false;
+        if (!OriginalSpawnGates.isDarkEnough(this, level)) return false;
+        return OriginalSpawnGates.airBox(this, level, -2, 1, 1, 3, -2, 1);
+    }
 }

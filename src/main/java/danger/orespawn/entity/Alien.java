@@ -222,4 +222,15 @@ public class Alien extends Monster {
         if (target instanceof Player player) return !player.getAbilities().instabuild;
         return false;
     }
+
+    /** orig Alien.java:397-434 — spawner bypass; darkness; Islands always allowed; y<=50; 3x3x3 clear air above. */
+    @Override
+    public boolean checkSpawnRules(net.minecraft.world.level.LevelAccessor level,
+                                   net.minecraft.world.entity.MobSpawnType spawnType) {
+        if (OriginalSpawnGates.nearOwnSpawner(this, level)) return true;
+        if (!OriginalSpawnGates.isDarkEnough(this, level)) return false;
+        if (danger.orespawn.ModDimensionKeys.isIn(level, danger.orespawn.ModDimensionKeys.ISLANDS)) return true;
+        if (this.getY() > 50.0) return false;
+        return OriginalSpawnGates.airBox(this, level, -1, 1, 1, 3, -1, 1);
+    }
 }

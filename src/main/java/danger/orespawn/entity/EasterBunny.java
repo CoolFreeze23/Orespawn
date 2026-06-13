@@ -99,4 +99,13 @@ public class EasterBunny extends Animal {
     public AgeableMob getBreedOffspring(ServerLevel level, AgeableMob otherParent) {
         return new EasterBunny(ModEntities.EASTER_BUNNY.get(), level);
     }
+
+    /** orig EasterBunny.java:67-77 — y>=50; daytime; no other EasterBunny within 32/8/32. */
+    @Override
+    public boolean checkSpawnRules(net.minecraft.world.level.LevelAccessor level,
+                                   net.minecraft.world.entity.MobSpawnType spawnType) {
+        if (this.getY() < 50.0) return false;
+        if (!OriginalSpawnGates.isDaytime(level)) return false;
+        return !OriginalSpawnGates.anyOtherNearby(this, level, EasterBunny.class, 32.0, 8.0, 32.0);
+    }
 }

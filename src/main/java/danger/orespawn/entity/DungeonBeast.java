@@ -110,4 +110,24 @@ public class DungeonBeast extends Monster {
         }
         return super.hurt(source, amount);
     }
+
+    /** orig DungeonBeast.java:275-312 — "Dungeon Beast" spawner bypass; darkness; in Crystal only 25<=y<=28 with >=6 air blocks in the 3x3 ring one above the feet. */
+    @Override
+    public boolean checkSpawnRules(net.minecraft.world.level.LevelAccessor level,
+                                   net.minecraft.world.entity.MobSpawnType spawnType) {
+        if (OriginalSpawnGates.nearOwnSpawner(this, level)) return true;
+        if (!OriginalSpawnGates.isDarkEnough(this, level)) return false;
+        if (danger.orespawn.ModDimensionKeys.isIn(level, danger.orespawn.ModDimensionKeys.CRYSTAL)) {
+            if (this.getY() > 28.0 || this.getY() < 25.0) return false;
+            int sc = 0;
+            net.minecraft.core.BlockPos feet = this.blockPosition();
+            for (int dz = -1; dz <= 1; dz++) {
+                for (int dx = -1; dx <= 1; dx++) {
+                    if (level.getBlockState(feet.offset(dx, 1, dz)).isAir()) sc++;
+                }
+            }
+            if (sc < 6) return false;
+        }
+        return true;
+    }
 }

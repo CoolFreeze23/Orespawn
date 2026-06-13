@@ -134,4 +134,16 @@ public class Nastysaurus extends Monster {
 
     // Death drops are fully data-driven via loot_table/entities/nastysaurus.json
     // (orig Nastysaurus.java:156-170: 10 iron ingot, 10 rotten flesh, 10 leather, 10 string).
+
+    /** orig Nastysaurus.java:304-343 — spawner bypass; darkness; y>=50; night; clear air above; no other Nastysaurus within 16/8/16. */
+    @Override
+    public boolean checkSpawnRules(net.minecraft.world.level.LevelAccessor level,
+                                   net.minecraft.world.entity.MobSpawnType spawnType) {
+        if (OriginalSpawnGates.nearOwnSpawner(this, level)) return true;
+        if (!OriginalSpawnGates.isDarkEnough(this, level)) return false;
+        if (this.getY() < 50.0) return false;
+        if (OriginalSpawnGates.isDaytime(level)) return false;
+        if (!OriginalSpawnGates.airBox(this, level, -1, 0, 1, 5, -1, 0)) return false;
+        return !OriginalSpawnGates.anyOtherNearby(this, level, Nastysaurus.class, 16.0, 8.0, 16.0);
+    }
 }

@@ -187,4 +187,24 @@ public class EntityEmperorScorpion extends Monster {
     // Death drops are fully data-driven via loot_table/entities/emperor_scorpion.json
     // (orig EmperorScorpion.java:181-347: scale, painting, 4-8 obsidian,
     // 4-11 raw beef, 1-5 rolls of the d20 Ultimate/Diamond gear table).
+
+    /** orig EmperorScorpion.java:529-559 — combined scan of x/z -2..+1, y +2..+4: own spawner anywhere in the box passes, any non-air block fails; then darkness; night; y>=50; no other EmperorScorpion within 20/6/20. */
+    @Override
+    public boolean checkSpawnRules(net.minecraft.world.level.LevelAccessor level,
+                                   net.minecraft.world.entity.MobSpawnType spawnType) {
+        net.minecraft.core.BlockPos feet = this.blockPosition();
+        for (int dz = -2; dz <= 1; dz++) {
+            for (int dx = -2; dx <= 1; dx++) {
+                for (int dy = 2; dy <= 4; dy++) {
+                    net.minecraft.core.BlockPos p = feet.offset(dx, dy, dz);
+                    if (OriginalSpawnGates.isOwnSpawner(this, level, p)) return true;
+                    if (!level.getBlockState(p).isAir()) return false;
+                }
+            }
+        }
+        if (!OriginalSpawnGates.isDarkEnough(this, level)) return false;
+        if (OriginalSpawnGates.isDaytime(level)) return false;
+        if (this.getY() < 50.0) return false;
+        return !OriginalSpawnGates.anyOtherNearby(this, level, EntityEmperorScorpion.class, 20.0, 6.0, 20.0);
+    }
 }

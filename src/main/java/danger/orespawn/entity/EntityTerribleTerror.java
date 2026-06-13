@@ -189,4 +189,15 @@ public class EntityTerribleTerror extends Monster {
     protected float getSoundVolume() {
         return 0.45f;
     }
+
+    /** orig TerribleTerror.java:193-214 — "Terrible Terror" spawner bypass (x/z -2..+1); darkness; night; Chaos always allowed, otherwise y<=40. */
+    @Override
+    public boolean checkSpawnRules(net.minecraft.world.level.LevelAccessor level,
+                                   net.minecraft.world.entity.MobSpawnType spawnType) {
+        if (OriginalSpawnGates.nearOwnSpawner(this, level, -2, 1, 0, 4)) return true;
+        if (!OriginalSpawnGates.isDarkEnough(this, level)) return false;
+        if (OriginalSpawnGates.isDaytime(level)) return false;
+        if (danger.orespawn.ModDimensionKeys.isIn(level, danger.orespawn.ModDimensionKeys.CHAOS)) return true;
+        return this.getY() <= 40.0;
+    }
 }
