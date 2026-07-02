@@ -21,6 +21,8 @@ import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.SmallFireball;
+import net.minecraft.world.Difficulty;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
@@ -144,20 +146,31 @@ public class EntityBrutalfly extends Monster {
             }
         }
 
+        // orig Brutalfly.java:155,168-170 — barrage odds 1-in-3, 1-in-2 on Hard.
+        int shoot = this.level().getDifficulty() == Difficulty.HARD ? 2 : 3;
+
         if (this.random.nextInt(6) == 0) {
+            // orig Brutalfly.java:213-227 — players are only ever strafed with
+            // fireballs (no melee path against players).
             Player target = this.level().getNearestPlayer(this, 30.0);
             if (target != null && !target.getAbilities().invulnerable && this.getSensing().hasLineOfSight(target)) {
                 this.currentFlightTarget = target.blockPosition().above(4);
-                if (this.distanceToSqr(target) < 25.0) {
-                    this.doHurtTarget(target);
+                if (this.random.nextInt(shoot) == 0) {
+                    this.attackWithSomething(target);
                 }
             }
 
+            // orig Brutalfly.java:228-241 — mobs get fireballs beyond distSq 25,
+            // melee inside it.
             if (target == null && this.random.nextInt(3) == 0) {
                 LivingEntity mobTarget = findSomethingToAttack();
                 if (mobTarget != null) {
                     this.currentFlightTarget = mobTarget.blockPosition().above(5);
-                    if (this.distanceToSqr(mobTarget) <= 25.0) {
+                    if (this.distanceToSqr(mobTarget) > 25.0) {
+                        if (this.random.nextInt(shoot) == 0) {
+                            this.attackWithSomething(mobTarget);
+                        }
+                    } else {
                         this.doHurtTarget(mobTarget);
                     }
                 }
@@ -177,6 +190,44 @@ public class EntityBrutalfly extends Monster {
         float targetYaw = (float) (Math.atan2(newMz, newMx) * 180.0 / Math.PI) - 90.0f;
         float yawDiff = Mth.wrapDegrees(targetYaw - this.getYRot());
         this.setYRot(this.getYRot() + yawDiff / 8.0f);
+    }
+
+    /**
+     * orig Brutalfly.java:369-406 (attackWithSomething) — difficulty-keyed
+     * fireball from a muzzle 2.25 blocks ahead, aimed at the target's y+0.55:
+     * Easy = vanilla SmallFireball; Normal = 50/50 SmallFireball or
+     * BetterFireball; otherwise BetterFireball. Small fireballs play the bow
+     * sound at 0.75 volume, BetterFireballs the fuse sound at 1.0; every shot
+     * self-heals 1 HP when below max.
+     */
+    private void attackWithSomething(LivingEntity target) {
+        double xzoff = 2.25;
+        double yoff = 0.0;
+        double cx = this.getX() - xzoff * Math.sin(Math.toRadians(this.getYRot()));
+        double cz = this.getZ() + xzoff * Math.cos(Math.toRadians(this.getYRot()));
+        Vec3 accel = new Vec3(target.getX() - cx,
+                target.getY() + 0.55 - (this.getY() + yoff),
+                target.getZ() - cz);
+
+        boolean small = this.level().getDifficulty() == Difficulty.EASY
+                || (this.level().getDifficulty() == Difficulty.NORMAL && this.random.nextInt(2) == 0);
+        if (small) {
+            SmallFireball fireball = new SmallFireball(this.level(), this, accel);
+            fireball.setPos(cx, this.getY() + yoff, cz);
+            this.level().playSound(null, this, SoundEvents.ARROW_SHOOT, this.getSoundSource(),
+                    0.75f, 1.0f / (this.random.nextFloat() * 0.4f + 0.8f));
+            this.level().addFreshEntity(fireball);
+        } else {
+            BetterFireball fireball = new BetterFireball(this.level(), this, accel);
+            fireball.setPos(cx, this.getY() + yoff, cz);
+            fireball.setNotMe();
+            this.level().playSound(null, this, SoundEvents.TNT_PRIMED, this.getSoundSource(),
+                    1.0f, 1.0f / (this.random.nextFloat() * 0.4f + 0.8f));
+            this.level().addFreshEntity(fireball);
+        }
+        if (this.getHealth() < this.getMaxHealth()) {
+            this.heal(1.0f);
+        }
     }
 
     @Override

@@ -27,6 +27,7 @@ import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.ThrowableProjectile;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Blocks;
@@ -153,16 +154,48 @@ public class AttackSquid extends Monster {
             if (target != null && target.isAlive()) {
                 if (this.distanceToSqr(target) < 9.0) {
                     this.setAttacking(1);
-                    if (this.random.nextInt(4) == 0) {
+                    // orig AttackSquid.java:507 — double melee roll (~40%/tick)
+                    if (this.random.nextInt(4) == 0 || this.random.nextInt(5) == 1) {
                         this.doHurtTarget(target);
                     }
                 } else {
                     this.getNavigation().moveTo(target, 1.2);
+                    this.watercanon(target);
                 }
             } else {
                 this.setAttacking(0);
             }
         }
+    }
+
+    /**
+     * orig AttackSquid.java:523-549 — 1-in-5 per call, spits an InkSack
+     * (1-in-3) or WaterBall from a muzzle 1.2 blocks ahead / 1.0 up, aimed at
+     * the target's y+0.25 with a 0.2-per-horizontal-block arc, velocity 1.4,
+     * inaccuracy 5.0. The original mixed head yaw for the muzzle X offset and
+     * body yaw for Z (orig :529,539); that quirk is preserved.
+     */
+    private void watercanon(LivingEntity target) {
+        double yoff = 1.0;
+        double xzoff = 1.2;
+        if (this.random.nextInt(5) != 1) return;
+
+        double muzzleX = this.getX() - xzoff * Math.sin(Math.toRadians(this.yHeadRot));
+        double muzzleY = this.getY() + yoff;
+        double muzzleZ = this.getZ() + xzoff * Math.cos(Math.toRadians(this.getYRot()));
+        ThrowableProjectile projectile = this.random.nextInt(3) == 1
+                ? new InkSack(this.level(), this)
+                : new WaterBall(this.level(), this);
+        projectile.setPos(muzzleX, muzzleY, muzzleZ);
+
+        double dx = target.getX() - this.getX();
+        double dy = target.getY() + 0.25 - muzzleY;
+        double dz = target.getZ() - this.getZ();
+        double arc = Math.sqrt(dx * dx + dz * dz) * 0.2;
+        projectile.shoot(dx, dy + arc, dz, 1.4f, 5.0f);
+        this.level().playSound(null, this, SoundEvents.ARROW_SHOOT, this.getSoundSource(),
+                0.75f, 1.0f / (this.random.nextFloat() * 0.4f + 0.8f));
+        this.level().addFreshEntity(projectile);
     }
 
     private boolean scanForWater(int x, int y, int z, int dx, int dy, int dz) {

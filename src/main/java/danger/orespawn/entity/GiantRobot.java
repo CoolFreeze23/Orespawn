@@ -8,6 +8,7 @@ import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -114,12 +115,26 @@ public class GiantRobot extends Monster {
             if (currentTarget != null) {
                 this.lookAt(currentTarget, 10.0f, 10.0f);
                 if (this.distanceToSqr(currentTarget) < LONG_RANGE_TARGET_DISTANCE_SQR) {
-                    double meleeRange = (8.0f + currentTarget.getBbWidth() / 2.0f);
-                    if (this.distanceToSqr(currentTarget) < meleeRange * meleeRange) {
-                        this.setAttacking(1);
-                        this.doHurtTarget(currentTarget);
-                    } else {
-                        this.setAttacking(0);
+                    // orig GiantRobot.java:256-263 — only engage once the head
+                    // has swung to within 0.5 rad of the target bearing.
+                    double targetBearing = Math.atan2(currentTarget.getZ() - this.getZ(),
+                            currentTarget.getX() - this.getX());
+                    double headBearing = Math.toRadians((this.yHeadRot + 90.0f) % 360.0f);
+                    double bearingError = Math.abs(targetBearing - headBearing) % (Math.PI * 2.0);
+                    if (bearingError > Math.PI) {
+                        bearingError -= Math.PI * 2.0;
+                    }
+                    if (Math.abs(bearingError) < 0.5) {
+                        if (this.reloadTicker == 0) {
+                            this.fireLaserBall(currentTarget);
+                        }
+                        double meleeRange = (8.0f + currentTarget.getBbWidth() / 2.0f);
+                        if (this.distanceToSqr(currentTarget) < meleeRange * meleeRange) {
+                            this.setAttacking(1);
+                            this.doHurtTarget(currentTarget);
+                        } else {
+                            this.setAttacking(0);
+                        }
                     }
                     this.getNavigation().moveTo(currentTarget, 0.5);
                 } else {
@@ -129,6 +144,41 @@ public class GiantRobot extends Monster {
                 this.setAttacking(0);
             }
         }
+    }
+
+    /**
+     * orig GiantRobot.java:264-283 — chest canon: LaserBall from a muzzle
+     * 3.75 blocks ahead of the head bearing at y+10, aimed with a
+     * 0.2-per-horizontal-block arc, velocity 2.0, inaccuracy 4.0. Beyond
+     * distSq 100 the ball is {@code setSpecial()} (explosive) with a 25-tick
+     * reload and a deeper launch sound (3.5 vol / 0.5 pitch); closer shots
+     * reload in 10 ticks (2.5 vol / 1.0 pitch).
+     */
+    private void fireLaserBall(LivingEntity target) {
+        double yoff = 10.0;
+        double xzoff = 3.75;
+        double muzzleX = this.getX() - xzoff * Math.sin(Math.toRadians(this.yHeadRot));
+        double muzzleY = this.getY() + yoff;
+        double muzzleZ = this.getZ() + xzoff * Math.cos(Math.toRadians(this.yHeadRot));
+        LaserBall laserBall = new LaserBall(this.level(), this);
+        laserBall.setPos(muzzleX, muzzleY, muzzleZ);
+
+        double dx = target.getX() - muzzleX;
+        double dy = target.getY() - muzzleY;
+        double dz = target.getZ() - muzzleZ;
+        double arc = Math.sqrt(dx * dx + dz * dz) * 0.2;
+        laserBall.shoot(dx, dy + arc, dz, 2.0f, 4.0f);
+        if (this.distanceToSqr(target) > 100.0) {
+            laserBall.setSpecial();
+            this.reloadTicker = 25;
+            this.level().playSound(null, this, SoundEvents.FIREWORK_ROCKET_LAUNCH,
+                    this.getSoundSource(), 3.5f, 0.5f);
+        } else {
+            this.reloadTicker = 10;
+            this.level().playSound(null, this, SoundEvents.FIREWORK_ROCKET_LAUNCH,
+                    this.getSoundSource(), 2.5f, 1.0f);
+        }
+        this.level().addFreshEntity(laserBall);
     }
 
     @Override

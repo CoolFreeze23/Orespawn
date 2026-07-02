@@ -3,13 +3,17 @@ package danger.orespawn.entity;
 import java.util.Comparator;
 import java.util.List;
 import javax.annotation.Nullable;
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.util.Mth;
+import net.minecraft.world.Difficulty;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
@@ -37,8 +41,11 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 import danger.orespawn.ModEntities;
+import danger.orespawn.OreSpawnConfig;
 import danger.orespawn.OreSpawnMod;
+import danger.orespawn.util.MyUtils;
 
 public class ThePrinceTeen extends TamableAnimal
         implements danger.orespawn.network.RiderInputPayload.RideableFlyer {
@@ -92,6 +99,16 @@ public class ThePrinceTeen extends TamableAnimal
     private int killCount = 0;
     private int dayCount = 0;
     private int isDay = 0;
+    /** orig ThePrinceTeen.java:73 — owner creative-flight fast-follow flag. */
+    private int ownerFlying = 0;
+    /** orig ThePrinceTeen.java:76 — ticks the dragon flees after a bite before re-engaging. */
+    private int flyAway = 0;
+    /** orig ThePrinceTeen.java:77 — sticky combat flag; keeps flight locked on the victim. */
+    private boolean targetInSight = false;
+    /** orig ThePrinceTeen.java:80 — wing-flap sound ticker while flying. */
+    private int wingSound = 0;
+    /** orig ThePrinceTeen.java:64 — flight steering target (transient). */
+    private BlockPos.MutableBlockPos currentFlightTarget = null;
 
     public ThePrinceTeen(EntityType<? extends ThePrinceTeen> type, Level level) {
         super(type, level);
@@ -152,10 +169,35 @@ public class ThePrinceTeen extends TamableAnimal
     public void tick() {
         this.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(this.moveSpeed);
         super.tick();
+        // orig ThePrinceTeen.java:590 — any flight activity ghosts through terrain.
+        this.noPhysics = this.getActivity() != 0;
         if (this.hurtTimer > 0) --this.hurtTimer;
+        // (The 1-in-100 self-heal that used to sit here was a port invention;
+        // the original heals 2.0 at 1-in-250 inside always_do — see alwaysDo().)
 
-        if (this.random.nextInt(100) == 1 && this.getHealth() < this.getMaxHealth()) {
-            this.heal(2.0f);
+        // orig ThePrinceTeen.java:657-665 — wing flaps every 20 ticks while flying wild.
+        if (this.getActivity() == 1) {
+            ++this.wingSound;
+            if (this.wingSound > 20) {
+                if (!this.level().isClientSide) {
+                    this.level().playSound(null, this.getX(), this.getY(), this.getZ(),
+                            SoundEvent.createVariableRangeEvent(
+                                    ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "mothrawings")),
+                            this.getSoundSource(), 0.5f, 1.0f);
+                }
+                this.wingSound = 0;
+            }
+        }
+        // orig ThePrinceTeen.java:666-668 — buoyancy.
+        if (this.isInWater()) {
+            this.setDeltaMovement(this.getDeltaMovement().add(0.0, 0.07, 0.0));
+        }
+        // orig ThePrinceTeen.java:672-674 — grounded pet takes flight when the
+        // owner is more than 20 blocks away.
+        if (!this.level().isClientSide && this.getActivity() == 0 && this.isTame()
+                && this.getOwner() != null && !this.isOrderedToSit()
+                && this.distanceToSqr(this.getOwner()) > 400.0) {
+            this.setActivity(1);
         }
 
         int i;
@@ -181,16 +223,41 @@ public class ThePrinceTeen extends TamableAnimal
         return result;
     }
 
+    /** orig ThePrinceTeen.java:343-393 ({@code func_70097_a}). */
     @Override
     public boolean hurt(DamageSource source, float amount) {
         if (this.hurtTimer > 0) return false;
-        if (source.getMsgId().equals("cactus")) return false;
-        boolean ret = super.hurt(source, amount);
-        this.hurtTimer = 25;
+        // orig :349-363 — immune to cactus, fire, lava, and suffocation.
+        String msg = source.getMsgId();
+        if (msg.equals("cactus") || msg.equals("inFire") || msg.equals("onFire")
+                || msg.equals("lava") || msg.equals("inWall")) {
+            return false;
+        }
+        // orig :364-365 — any real hit breaks the sit and launches into flight.
+        this.setOrderedToSit(false);
+        this.setInSittingPose(false);
+        this.setActivity(1);
         Entity attacker = source.getEntity();
+        // orig :367-374 — fireballs pop harmlessly.
+        if (attacker instanceof BetterFireball
+                || attacker instanceof net.minecraft.world.entity.projectile.SmallFireball) {
+            attacker.discard();
+            return false;
+        }
+        // orig :375-380 — immune to other teen princes and Spyros.
+        if (attacker instanceof ThePrinceTeen || attacker instanceof EntitySpyro) {
+            return false;
+        }
+        boolean ret = super.hurt(source, amount);
+        this.hurtTimer = 20; // orig :382
         if (attacker instanceof LivingEntity living) {
+            // orig :383-391 — a tamed teen never retaliates against players.
+            if (this.isTame() && living instanceof Player) {
+                return false;
+            }
             this.setTarget(living);
             this.getNavigation().moveTo(living, 1.2);
+            ret = true;
         }
         return ret;
     }
@@ -245,11 +312,17 @@ public class ThePrinceTeen extends TamableAnimal
     /**
      * Skips vanilla travel while player-ridden: {@link #tickRidden} already
      * applied the full move via {@code RiderFlightController}, so running
-     * vanilla travel too would integrate the motion twice.
+     * vanilla travel too would integrate the motion twice. Also skipped while
+     * flying wild (activity != 0): the original bypassed all vanilla movement
+     * then (orig ThePrinceTeen.java:849-857 — super.onLivingUpdate only when
+     * activity == 0) and {@code flyWithoutRider} moves the entity directly.
      */
     @Override
     public void travel(net.minecraft.world.phys.Vec3 travelVector) {
         if (this.isControlledByLocalInstance() && this.getControllingPassenger() instanceof Player) {
+            return;
+        }
+        if (!this.level().isClientSide && this.getActivity() != 0) {
             return;
         }
         super.travel(travelVector);
@@ -278,9 +351,6 @@ public class ThePrinceTeen extends TamableAnimal
     private void serverRiddenTick(Player rider) {
         if (this.isRemoved() || this.isOrderedToSit()) return;
 
-        if (this.fireballTicker > 0) {
-            --this.fireballTicker;
-        }
         if (this.fireballTicker == 0 && Math.abs(rider.xxa) > 0.001f) {
             fireCanonTrio(rider);
             // orig ThePrinceTeen.java:1082 — 10-tick volley cooldown.
@@ -453,11 +523,57 @@ public class ThePrinceTeen extends TamableAnimal
                 1.0f / (this.random.nextFloat() * 0.4f + 0.8f));
     }
 
+    /**
+     * orig ThePrinceTeen.java:849-857 — while flying (activity != 0) the
+     * original never called {@code super.onLivingUpdate()}, so goals,
+     * navigation, and vanilla physics were all paused; only the flight brain
+     * ran. Clients still run super for position interpolation (the original
+     * hand-rolled the same lerp at :859-873).
+     */
+    @Override
+    public void aiStep() {
+        if (this.level().isClientSide || this.getActivity() == 0 || this.isRemoved()) {
+            super.aiStep();
+            return;
+        }
+        // orig ThePrinceTeen.java:875-1101 — the server flight branch.
+        if (this.fireballTicker > 0) {
+            --this.fireballTicker;
+        }
+        if (this.isVehicle() && this.getControllingPassenger() instanceof Player rider) {
+            serverRiddenTick(rider);
+        } else {
+            flyWithoutRider();
+        }
+        alwaysDo(); // orig ThePrinceTeen.java:1103 — every server tick.
+    }
+
+    /** Grounded server AI (activity 0) — orig func_70619_bc, ThePrinceTeen.java:395-433. */
     @Override
     protected void customServerAiStep() {
         if (this.isRemoved()) return;
         super.customServerAiStep();
 
+        // orig ThePrinceTeen.java:398-405 — ground spotting: a 1-in-10 roll
+        // outside Peaceful; seeing prey launches the teen into flight.
+        if (!this.isOrderedToSit() && !this.isVehicle()
+                && this.level().getDifficulty() != Difficulty.PEACEFUL
+                && this.random.nextInt(10) == 1) {
+            LivingEntity e = findSomethingToAttack();
+            if (e != null) {
+                this.setActivity(1);
+            } else {
+                this.setAttacking(0);
+            }
+        }
+
+        // orig ThePrinceTeen.java:406-418 — natural growth to adult.
+        if (this.killCount > 25 && this.dayCount > 10) {
+            this.transformToAdult();
+            return;
+        }
+
+        // orig ThePrinceTeen.java:419-432 — day counting.
         if (this.isDay == 0) {
             this.isDay = 1;
             if (!this.level().isDay()) this.isDay = -1;
@@ -466,34 +582,235 @@ public class ThePrinceTeen extends TamableAnimal
             this.isDay = this.level().isDay() ? 1 : -1;
         }
 
-        if (this.killCount > 25 && this.dayCount > 10) {
-            this.transformToAdult();
+        alwaysDo(); // orig ThePrinceTeen.java:1103 — every server tick.
+    }
+
+    /**
+     * orig ThePrinceTeen.java:435-461 ({@code always_do}) — slow regen, target
+     * forgiveness, owner creative-flight detection, and the random settle roll.
+     */
+    private void alwaysDo() {
+        if (this.random.nextInt(250) == 1 && this.getHealth() < this.getMaxHealth()) {
+            this.heal(2.0f);
+        }
+        if (this.random.nextInt(250) == 0) {
+            this.setTarget(null);
+        }
+        if (this.isOrderedToSit()) {
             return;
         }
+        this.ownerFlying = 0;
+        if (this.isTame() && !this.isVehicle()
+                && this.getOwner() instanceof Player ownerPlayer
+                && ownerPlayer.getAbilities().flying) {
+            this.ownerFlying = 1;
+            this.setActivity(1);
+        }
+        // orig :454-460 — 1-in-50 settle roll while uncommitted: 1-in-15 keeps
+        // flying, otherwise land (activity 0).
+        if (this.random.nextInt(50) == 1 && !this.targetInSight && !this.isVehicle()) {
+            if (this.random.nextInt(15) == 1) {
+                this.setActivity(1);
+            } else {
+                this.setActivity(0);
+            }
+        }
+    }
 
-        // While ridden, ground combat is replaced by the original's ridden
-        // duties (orig ThePrinceTeen.java:879-1098 ran instead of the AI path).
-        if (this.isVehicle() && this.getControllingPassenger() instanceof Player rider) {
-            serverRiddenTick(rider);
+    /** orig ThePrinceTeen.java:565-567 — block-only line of sight from eye height 0.75. */
+    private boolean canSeeSpot(double px, double py, double pz) {
+        return this.level().clip(new net.minecraft.world.level.ClipContext(
+                new Vec3(this.getX(), this.getY() + 0.75, this.getZ()), new Vec3(px, py, pz),
+                net.minecraft.world.level.ClipContext.Block.COLLIDER,
+                net.minecraft.world.level.ClipContext.Fluid.NONE, this)).getType()
+                == net.minecraft.world.phys.HitResult.Type.MISS;
+    }
+
+    /**
+     * orig ThePrinceTeen.java:677-834 ({@code fly_without_rider}) — wild flight:
+     * vertical damping, the 1-in-7 combat roll (bite + fly-away, or the canon
+     * volley within 20 blocks), flight-target selection (owner-anchored when
+     * tame), terrain-following lift, and signum steering with a direct move.
+     */
+    private void flyWithoutRider() {
+        boolean doNew = false;
+        boolean hasOwner = false;
+        double ox = 0.0;
+        double oy = 0.0;
+        double oz = 0.0;
+        boolean tooFar = false;
+        Vec3 motion = this.getDeltaMovement();
+        double velocity = Math.sqrt(motion.x * motion.x + motion.z * motion.z);
+        if (this.currentFlightTarget == null) {
+            doNew = true;
+            this.currentFlightTarget = new BlockPos.MutableBlockPos(
+                    (int) this.getX(), (int) this.getY(), (int) this.getZ());
+        }
+        if (this.isVehicle()) {
             return;
         }
-
-        if (this.random.nextInt(7) == 1) {
-            LivingEntity target = this.getTarget();
-            if (target != null && !target.isAlive()) { this.setTarget(null); target = null; }
-            if (target == null) target = findSomethingToAttack();
-            if (target != null) {
-                this.getNavigation().moveTo(target, 1.5);
-                this.lookAt(target, 10.0f, 10.0f);
-                this.setAttacking(1);
-                double meleeRange = 6.0 + target.getBbWidth() / 2.0;
-                if (this.distanceToSqr(target) < meleeRange * meleeRange) {
-                    this.doHurtTarget(target);
+        LivingEntity owner = this.getOwner();
+        if (this.isTame() && owner != null) {
+            hasOwner = true;
+            ox = owner.getX();
+            oy = owner.getY();
+            oz = owner.getZ();
+            // orig :709-716 — >20 blocks from the owner: drop everything and return.
+            if (this.distanceToSqr(owner) > 400.0) {
+                tooFar = true;
+                this.targetInSight = false;
+                this.setAttacking(0);
+                this.setOrderedToSit(false);
+                this.setInSittingPose(false);
+                this.flyAway = 0;
+                doNew = true;
+            }
+        }
+        if (this.isOrderedToSit()) {
+            return;
+        }
+        // orig :721 — vertical damping (the 0.61 arm is unreachable in the
+        // original's ternary too; kept verbatim).
+        double dampY = this.getY() < this.currentFlightTarget.getY() + 2.0 ? 0.7
+                : (this.getY() > this.currentFlightTarget.getY() - 2.0 ? 0.5 : 0.61);
+        this.setDeltaMovement(motion.x, motion.y * dampY, motion.z);
+        if (this.random.nextInt(300) == 1) {
+            doNew = true;
+        }
+        if (this.flyAway > 0) {
+            --this.flyAway;
+        }
+        // orig :728-763 — the 1-in-7 combat roll.
+        if (!tooFar && this.flyAway == 0 && this.level().getDifficulty() != Difficulty.PEACEFUL
+                && this.random.nextInt(7) == 1) {
+            LivingEntity e = this.getTarget();
+            if (e != null && !e.isAlive()) {
+                this.setTarget(null);
+                e = null;
+            }
+            if (e == null) {
+                e = this.findSomethingToAttack();
+            }
+            if (e != null) {
+                if (this.isTame() && this.getHealth() / this.getMaxHealth() < 0.25f) {
+                    // orig :738-743 — badly hurt pet flees away from the threat.
+                    this.setActivity(1);
+                    this.setAttacking(0);
+                    this.targetInSight = false;
+                    doNew = false;
+                    this.currentFlightTarget.set(
+                            (int) (this.getX() + (this.getX() - e.getX())),
+                            (int) (this.getY() + 1.0),
+                            (int) (this.getZ() + (this.getZ() - e.getZ())));
+                } else {
+                    this.setActivity(1);
+                    this.setAttacking(1);
+                    this.targetInSight = true;
+                    this.currentFlightTarget.set((int) e.getX(), (int) (e.getY() + 1.0), (int) e.getZ());
+                    doNew = false;
+                    float meleeRange = 8.0f + e.getBbWidth() / 2.0f;
+                    double distSq = this.distanceToSqr(e);
+                    if (distSq < (double) (meleeRange * meleeRange)) {
+                        // orig :750-753 — bite, then break off for 5-19 ticks.
+                        this.doHurtTarget(e);
+                        this.flyAway = 5 + this.random.nextInt(15);
+                        doNew = true;
+                    } else if (distSq < 400.0 && !this.isInWater()
+                            && this.entityData.get(DATA_FIRE) != 0 && this.random.nextInt(2) == 1) {
+                        this.shootSomethingAt(e.getX(), e.getY(), e.getZ());
+                    }
                 }
             } else {
+                this.targetInSight = false;
+                this.flyAway = 0;
                 this.setAttacking(0);
             }
         }
+        if (this.currentFlightTarget.distSqr(new net.minecraft.core.Vec3i(
+                (int) this.getX(), (int) this.getY(), (int) this.getZ())) < 2.1) {
+            doNew = true;
+        }
+        // orig :767-801 — pick a new air target the teen can see: near the owner
+        // (spread 5-18, tighter 0-5 when the owner is creative-flying) or a wild
+        // 16-25 wander; up to 10 tries.
+        if ((doNew && !this.targetInSight) || (doNew && this.flyAway != 0)) {
+            int keepTrying = 10;
+            boolean found = false;
+            while (!found && keepTrying != 0) {
+                int gox = (int) this.getX();
+                int goy = (int) this.getY();
+                int goz = (int) this.getZ();
+                int xdir;
+                int zdir;
+                if (hasOwner) {
+                    gox = (int) ox;
+                    goy = (int) oy;
+                    goz = (int) oz;
+                    if (this.ownerFlying == 0) {
+                        zdir = this.random.nextInt(14) + 5;
+                        xdir = this.random.nextInt(14) + 5;
+                    } else {
+                        zdir = this.random.nextInt(6);
+                        xdir = this.random.nextInt(6);
+                    }
+                } else {
+                    zdir = this.random.nextInt(10) + 16;
+                    xdir = this.random.nextInt(10) + 16;
+                }
+                if (this.random.nextInt(2) == 1) {
+                    zdir = -zdir;
+                }
+                if (this.random.nextInt(2) == 1) {
+                    xdir = -xdir;
+                }
+                this.currentFlightTarget.set(gox + xdir,
+                        goy + this.random.nextInt(9 + this.ownerFlying * 2) - 4, goz + zdir);
+                found = this.level().isEmptyBlock(this.currentFlightTarget)
+                        && this.canSeeSpot(this.currentFlightTarget.getX(),
+                                this.currentFlightTarget.getY(), this.currentFlightTarget.getZ());
+                --keepTrying;
+            }
+        }
+        // orig :802-815 — terrain-following lift: scan the blocks below and
+        // ahead (radius grows with speed) and nudge both motion and position up.
+        double obstruction = 0.0;
+        int dist = 2 + (int) (velocity * 4.0);
+        for (int k = 1; k < dist; ++k) {
+            for (int i = 1; i < dist * 2; ++i) {
+                double sx = i * Math.cos(Math.toRadians(this.getYRot() + 90.0f));
+                double sz = i * Math.sin(Math.toRadians(this.getYRot() + 90.0f));
+                BlockPos probe = new BlockPos((int) (this.getX() + sx),
+                        (int) this.getY() - k, (int) (this.getZ() + sz));
+                if (!this.level().isEmptyBlock(probe)) {
+                    obstruction += 0.05;
+                }
+            }
+        }
+        motion = this.getDeltaMovement();
+        this.setDeltaMovement(motion.add(0.0, obstruction * 0.05, 0.0));
+        this.setPos(this.getX(), this.getY() + obstruction * 0.05, this.getZ());
+        // orig :816-833 — signum steering: base 0.5, 1.75 chasing a flying
+        // owner, 3.5 when also >8 blocks behind; then a direct move.
+        double speedFactor = 0.5;
+        double dx = this.currentFlightTarget.getX() + 0.5 - this.getX();
+        double dy = this.currentFlightTarget.getY() + 0.1 - this.getY();
+        double dz = this.currentFlightTarget.getZ() + 0.5 - this.getZ();
+        if (this.ownerFlying != 0) {
+            speedFactor = 1.75;
+            if (this.isTame() && owner != null && this.distanceToSqr(owner) > 64.0) {
+                speedFactor = 3.5;
+            }
+        }
+        motion = this.getDeltaMovement();
+        double mx = motion.x + (Math.signum(dx) - motion.x) * 0.15 * speedFactor;
+        double my = motion.y + (Math.signum(dy) - motion.y) * 0.21 * speedFactor;
+        double mz = motion.z + (Math.signum(dz) - motion.z) * 0.15 * speedFactor;
+        this.setDeltaMovement(mx, my, mz);
+        float targetYaw = (float) (Math.atan2(mz, mx) * 180.0 / Math.PI) - 90.0f;
+        float yawDelta = Mth.wrapDegrees(targetYaw - this.getYRot());
+        this.zza = (float) (0.75 * speedFactor);
+        this.setYRot(this.getYRot() + yawDelta / 4.0f);
+        this.move(net.minecraft.world.entity.MoverType.SELF, this.getDeltaMovement());
     }
 
     private void transformToAdult() {
@@ -515,14 +832,30 @@ public class ThePrinceTeen extends TamableAnimal
         this.discard();
     }
 
+    /** orig ThePrinceTeen.java:496-537 ({@code isSuitableTarget}). */
+    private boolean isSuitableTarget(LivingEntity target) {
+        if (this.level().getDifficulty() == Difficulty.PEACEFUL) return false;
+        if (target == null || target == this || !target.isAlive()) return false;
+        if (!this.getSensing().hasLineOfSight(target)) return false;
+        if (MyUtils.isRoyalty(target)) return false;
+        if (target instanceof Monster) return true;
+        if (target instanceof Mothra) return true;
+        if (target instanceof Kraken) return true;
+        // orig :524-535 — Leon, WaterDragon, and GammaMetroid are prey while wild.
+        if (target instanceof EntityLeon leon) return !leon.isTame();
+        if (target instanceof WaterDragon wd) return !wd.isTame();
+        if (target instanceof EntityGammaMetroid gm) return !gm.isTame();
+        return false;
+    }
+
+    /** orig ThePrinceTeen.java:539-555 — nearest suitable prey in a 25/20/25 box. */
     private LivingEntity findSomethingToAttack() {
-        AABB box = this.getBoundingBox().inflate(20.0, 10.0, 20.0);
+        if (OreSpawnConfig.PLAY_NICELY.get()) return null;
+        AABB box = this.getBoundingBox().inflate(25.0, 20.0, 25.0);
         List<LivingEntity> targets = this.level().getEntitiesOfClass(LivingEntity.class, box);
-        targets.sort(Comparator.comparingDouble(this::distanceToSqr));
+        targets.sort(this.targetSorter);
         for (LivingEntity t : targets) {
-            if (t == this || !t.isAlive()) continue;
-            if (!this.getSensing().hasLineOfSight(t)) continue;
-            if (t instanceof Monster) return t;
+            if (this.isSuitableTarget(t)) return t;
         }
         return null;
     }
@@ -532,13 +865,12 @@ public class ThePrinceTeen extends TamableAnimal
         ItemStack stack = player.getItemInHand(hand);
 
         // Diamond block: tame + full heal + instant adult-growth credit (orig
-        // ThePrinceTeen.java:1133-1150 — kill_count/day_count forced to 1000).
+        // ThePrinceTeen.java:1133-1150 — kill_count/day_count forced to 1000;
+        // the original tames unconditionally, so it also transfers ownership).
         if (stack.is(net.minecraft.world.level.block.Blocks.DIAMOND_BLOCK.asItem())
                 && this.distanceToSqr(player) < 25.0) {
             if (!this.level().isClientSide) {
-                if (!this.isTame()) {
-                    this.tame(player);
-                }
+                this.tame(player);
                 this.level().broadcastEntityEvent(this, (byte) 7);
                 this.heal(this.getMaxHealth() - this.getHealth());
                 this.killCount = 1000;
@@ -548,11 +880,18 @@ public class ThePrinceTeen extends TamableAnimal
             return InteractionResult.sidedSuccess(this.level().isClientSide);
         }
 
-        // Empty hand: saddle-free mount (orig ThePrinceTeen.java:1151-1162 —
-        // tamed owner within 25 sq blocks; mounting wakes the dragon and
-        // switches it to flight, activity 1).
-        if (this.isTame() && this.isOwnedBy(player)
-                && stack.isEmpty() && this.distanceToSqr(player) < 25.0) {
+        // orig ThePrinceTeen.java:1151-1154 — everything below is owner-only;
+        // a tamed teen ignores strangers entirely.
+        if (!this.isTame() || !this.isOwnedBy(player)) {
+            return InteractionResult.PASS;
+        }
+        // (The CAKE growth shortcut that used to live here was a port
+        // invention — orig func_70085_c :1127-1273 has no cake branch. Removed;
+        // see AUDIT_FINDINGS teen_cake_dup.)
+
+        // Empty hand: saddle-free mount (orig ThePrinceTeen.java:1155-1162 —
+        // mounting wakes the dragon and switches it to flight, activity 1).
+        if (stack.isEmpty() && this.distanceToSqr(player) < 25.0) {
             if (!this.level().isClientSide) {
                 player.startRiding(this);
                 this.setActivity(1);
@@ -561,28 +900,90 @@ public class ThePrinceTeen extends TamableAnimal
             return InteractionResult.sidedSuccess(this.level().isClientSide);
         }
 
-        if (this.isTame() && this.isOwnedBy(player) && this.distanceToSqr(player) < 25.0) {
-            if (stack.is(Items.CAKE)) {
-                if (!this.level().isClientSide) {
-                    this.killCount = 1000;
-                    this.dayCount = 1000;
-                    this.level().broadcastEntityEvent(this, (byte) 7);
-                }
-                if (!player.getAbilities().instabuild) stack.shrink(1);
-                return InteractionResult.sidedSuccess(this.level().isClientSide);
+        // orig ThePrinceTeen.java:1163-1178 — beef heals to full.
+        if (stack.is(Items.BEEF) && this.distanceToSqr(player) < 25.0) {
+            if (this.getMaxHealth() > this.getHealth()) {
+                this.heal(this.getMaxHealth() - this.getHealth());
             }
-
-            // BOSS-029: the gold-ingot teen→baby regression that used to live
-            // here was a port invention — orig ThePrinceTeen.java:1127-1230
-            // (func_70085_c) has no shrink-back interaction. Removed.
-        }
-
-        if (stack.has(net.minecraft.core.component.DataComponents.FOOD) && this.distanceToSqr(player) < 25.0) {
-            if (!this.level().isClientSide) this.heal(this.getMaxHealth() - this.getHealth());
+            if (!this.level().isClientSide) {
+                this.level().broadcastEntityEvent(this, (byte) 7);
+            }
             if (!player.getAbilities().instabuild) stack.shrink(1);
             return InteractionResult.sidedSuccess(this.level().isClientSide);
         }
-        return super.mobInteract(player, hand);
+
+        // orig ThePrinceTeen.java:1179-1195 — any other food heals nutrition × 10.
+        if (stack.has(net.minecraft.core.component.DataComponents.FOOD)
+                && this.distanceToSqr(player) < 25.0) {
+            if (!this.level().isClientSide) {
+                if (this.getMaxHealth() > this.getHealth()) {
+                    net.minecraft.world.food.FoodProperties food =
+                            stack.get(net.minecraft.core.component.DataComponents.FOOD);
+                    this.heal(food.nutrition() * 10.0f);
+                }
+                this.level().broadcastEntityEvent(this, (byte) 7);
+            }
+            if (!player.getAbilities().instabuild) stack.shrink(1);
+            return InteractionResult.sidedSuccess(this.level().isClientSide);
+        }
+
+        // orig ThePrinceTeen.java:1196-1212 — an ice block extinguishes the fireballs.
+        if (stack.is(net.minecraft.world.level.block.Blocks.ICE.asItem())
+                && this.distanceToSqr(player) < 25.0) {
+            if (!this.level().isClientSide) {
+                this.level().broadcastEntityEvent(this, (byte) 6);
+                this.entityData.set(DATA_FIRE, 0);
+                player.displayClientMessage(Component.literal("Fireballs extinguished."), false);
+            }
+            if (!player.getAbilities().instabuild) stack.shrink(1);
+            return InteractionResult.sidedSuccess(this.level().isClientSide);
+        }
+
+        // orig ThePrinceTeen.java:1213-1229 — flint & steel relights them.
+        if (stack.is(Items.FLINT_AND_STEEL) && this.distanceToSqr(player) < 25.0) {
+            if (!this.level().isClientSide) {
+                this.level().broadcastEntityEvent(this, (byte) 6);
+                this.entityData.set(DATA_FIRE, 1);
+                player.displayClientMessage(Component.literal("Fireballs lit!"), false);
+            }
+            if (!player.getAbilities().instabuild) stack.shrink(1);
+            return InteractionResult.sidedSuccess(this.level().isClientSide);
+        }
+
+        // orig ThePrinceTeen.java:1230-1250 — a diamond reverts the teen back to
+        // a baby Prince with ok_to_grow set (instant re-grow eligibility).
+        if (stack.is(Items.DIAMOND) && this.distanceToSqr(player) < 25.0) {
+            if (!this.level().isClientSide) {
+                this.revertToBaby(player);
+            }
+            if (!player.getAbilities().instabuild) stack.shrink(1);
+            return InteractionResult.sidedSuccess(this.level().isClientSide);
+        }
+
+        // orig ThePrinceTeen.java:1261-1270 — any other held item toggles the sit
+        // and grounds the dragon (activity 0).
+        if (!stack.isEmpty() && this.distanceToSqr(player) < 16.0) {
+            this.setOrderedToSit(!this.isOrderedToSit());
+            this.setInSittingPose(this.isOrderedToSit());
+            this.setActivity(0);
+            return InteractionResult.sidedSuccess(this.level().isClientSide);
+        }
+        return InteractionResult.PASS;
+    }
+
+    /** orig ThePrinceTeen.java:1230-1250 — diamond regression to "The Prince". */
+    private void revertToBaby(Player player) {
+        if (!(this.level() instanceof ServerLevel serverLevel)) return;
+        ThePrince baby = ModEntities.THE_PRINCE.get().create(serverLevel);
+        if (baby == null) return;
+        baby.moveTo(this.getX(), this.getY(), this.getZ(),
+                this.random.nextFloat() * 360.0f, 0.0f);
+        if (this.isTame()) {
+            baby.tame(player);
+            baby.setOkToGrow();
+        }
+        serverLevel.addFreshEntity(baby);
+        this.discard();
     }
 
     @Override protected SoundEvent getAmbientSound() { return SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "roar")); }

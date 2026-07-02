@@ -9,6 +9,7 @@ import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
@@ -22,10 +23,10 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
 import net.minecraft.world.entity.ai.goal.FollowOwnerGoal;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
-import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
 import net.minecraft.world.entity.ai.goal.OpenDoorGoal;
 import net.minecraft.world.entity.ai.goal.PanicGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
+import net.minecraft.world.entity.ai.goal.RangedAttackGoal;
 import net.minecraft.world.entity.ai.goal.TemptGoal;
 import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
@@ -33,17 +34,20 @@ import net.minecraft.world.entity.ai.goal.target.OwnerHurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.OwnerHurtTargetGoal;
 import net.minecraft.world.entity.ai.navigation.GroundPathNavigation;
 import net.minecraft.world.entity.monster.Monster;
+import net.minecraft.world.entity.monster.RangedAttackMob;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.Level;
+import danger.orespawn.ModItems;
 import danger.orespawn.OreSpawnConfig;
 import danger.orespawn.OreSpawnMod;
 
-public class Boyfriend extends TamableAnimal {
+public class Boyfriend extends TamableAnimal implements RangedAttackMob {
     private static final EntityDataAccessor<Integer> DATA_SKIN =
             SynchedEntityData.defineId(Boyfriend.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Integer> DATA_VOICE =
@@ -59,6 +63,11 @@ public class Boyfriend extends TamableAnimal {
     public int whichGuy;
     private int voice;
     private int voiceEnable = 1;
+    // orig Boyfriend.java:239-289 weapon-melee state
+    private int meleeCooldown = 0;
+    private int fightSoundTicker = 0;
+    private int tauntSoundTicker = 0;
+    private int hadTarget = 0;
 
     public Boyfriend(EntityType<? extends Boyfriend> type, Level level) {
         super(type, level);
@@ -74,14 +83,14 @@ public class Boyfriend extends TamableAnimal {
 
     @Override
     protected void registerGoals() {
-        // orig Boyfriend.java:127-148. MeleeAttackGoal stands in for the orig
-        // EntityAIArrowAttack until the UltimateBow/Shoes ranged system is
-        // ported (ENT-A-055, Phase D); MoveIndoors(11) and the Jealousy goals
-        // (4/5) have no ported equivalent yet (Phase D).
+        // orig Boyfriend.java:127-148. MoveIndoors(11) and the Jealousy goals
+        // have no ported equivalent yet (Phase D/E).
         this.goalSelector.addGoal(1, new FollowOwnerGoal(this, 1.4, 12.0f, 1.5f));
         this.goalSelector.addGoal(2, new TemptGoal(this, 1.25,
                 Ingredient.of(Items.COOKED_BEEF), false)); // orig :128 — cooked beef
-        this.goalSelector.addGoal(4, new MeleeAttackGoal(this, 1.25, true));
+        // orig :129 — EntityAIArrowAttack(this, 1.25, 20t, 10.0f); melee happens
+        // separately in customServerAiStep (orig func_70629_bd).
+        this.goalSelector.addGoal(4, new RangedAttackGoal(this, 1.25, 20, 10.0f));
         this.goalSelector.addGoal(5, new FloatGoal(this));
         this.goalSelector.addGoal(6, new PanicGoal(this, 1.5)); // orig :131
         this.goalSelector.addGoal(7, new LookAtPlayerGoal(this, Player.class, 6.0f));
@@ -155,6 +164,124 @@ public class Boyfriend extends TamableAnimal {
                 this.voiceEnable = this.entityData.get(DATA_VOICE_ENABLE);
             }
         }
+    }
+
+    /**
+     * orig Boyfriend.java:239-289 (func_70629_bd) — held-weapon melee.
+     * Attacks with the held item every 25 ticks inside 4 blocks (10 with Big
+     * Bertha), plays "b_fight" every 3rd swing and "b_taunt" every 300 ticks
+     * while closing in (unless holding the Ultimate Bow), and celebrates with
+     * "b_woohoo" once the target is gone.
+     *
+     * <p>1.7.10's attackTargetEntityWithCurrentItem (orig :913-952) manually
+     * summed the attack attribute, held-item enchant damage, knockback enchant
+     * + sprint knockback, and Fire Aspect ignite. In 1.21.1 that exact
+     * player-style pipeline is what {@code Mob.doHurtTarget} runs (attribute +
+     * data-driven enchant damage/knockback/post-attack effects), so the port
+     * delegates to it.</p>
+     */
+    @Override
+    protected void customServerAiStep() {
+        super.customServerAiStep();
+        ItemStack stack = this.getMainHandItem();
+        LivingEntity victim = this.getTarget();
+        if (OreSpawnConfig.PLAY_NICELY.get()) {
+            victim = null;
+        }
+        if (this.random.nextInt(100) == 1) {
+            this.setLastHurtByMob(null);
+        }
+        if (!stack.isEmpty() && !this.isOrderedToSit()) {
+            if (victim != null) {
+                float dist = this.distanceTo(victim);
+                if (dist < 4.0f || (stack.is(ModItems.BIG_BERTHA.get()) && dist < 10.0f)) {
+                    --this.meleeCooldown;
+                    if (this.meleeCooldown <= 0) {
+                        this.meleeCooldown = 25;
+                        this.swing(InteractionHand.MAIN_HAND);
+                        this.doHurtTarget(victim);
+                        --this.fightSoundTicker;
+                        if (this.fightSoundTicker <= 0) {
+                            if (this.voiceEnable != 0) {
+                                this.level().playSound(null, this,
+                                        SoundEvent.createVariableRangeEvent(
+                                                ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "b_fight")),
+                                        this.getSoundSource(), 0.5f, this.getVoicePitch());
+                            }
+                            this.fightSoundTicker = 3;
+                        }
+                        this.hadTarget = 1;
+                    }
+                } else if (dist < 7.0f && !stack.is(ModItems.ULTIMATE_BOW.get())) {
+                    --this.tauntSoundTicker;
+                    if (this.tauntSoundTicker <= 0) {
+                        if (this.voiceEnable != 0) {
+                            this.level().playSound(null, this,
+                                    SoundEvent.createVariableRangeEvent(
+                                            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "b_taunt")),
+                                    this.getSoundSource(), 0.5f, this.getVoicePitch());
+                        }
+                        this.tauntSoundTicker = 300;
+                    }
+                    this.getNavigation().moveTo(victim, 1.25);
+                }
+            } else {
+                this.fightSoundTicker = 0;
+                this.meleeCooldown = 0;
+                if (this.hadTarget != 0) {
+                    this.hadTarget = 0;
+                    if (this.voiceEnable != 0) {
+                        this.level().playSound(null, this,
+                                SoundEvent.createVariableRangeEvent(
+                                        ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "b_woohoo")),
+                                this.getSoundSource(), 0.4f, this.getVoicePitch());
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * orig Boyfriend.java:874-907 (attackEntityWithRangedAttack) — fires an
+     * UltimateArrow (velocity 2.0, inaccuracy 10.0, 1-in-4 crit, creative-only
+     * pickup, 1 bow durability) when holding the Ultimate Bow, else throws a
+     * type-6 Shoes projectile (velocity 1.8, inaccuracy 4.0). Punch knockback
+     * and Flame ignite (orig :886-891) ride along automatically because the
+     * held bow is passed as the arrow's firing weapon.
+     */
+    @Override
+    public void performRangedAttack(LivingEntity target, float distanceFactor) {
+        if (this.swinging) {
+            return;
+        }
+        ItemStack stack = this.getMainHandItem();
+        if (stack.is(ModItems.ULTIMATE_BOW.get())) {
+            UltimateArrow arrow = new UltimateArrow(this.level(), this, stack);
+            double dx = target.getX() - this.getX();
+            double dy = target.getY(1.0 / 3.0) - arrow.getY();
+            double dz = target.getZ() - this.getZ();
+            double horiz = Math.sqrt(dx * dx + dz * dz);
+            arrow.shoot(dx, dy + horiz * 0.2, dz, 2.0f, 10.0f);
+            if (this.random.nextInt(4) == 1) {
+                arrow.setCritArrow(true);
+            }
+            stack.hurtAndBreak(1, this, EquipmentSlot.MAINHAND);
+            this.level().playSound(null, this, SoundEvents.ARROW_SHOOT, this.getSoundSource(),
+                    1.0f, 1.0f / (this.random.nextFloat() * 0.4f + 1.2f) + 0.5f);
+            arrow.pickup = AbstractArrow.Pickup.CREATIVE_ONLY;
+            this.level().addFreshEntity(arrow);
+        } else {
+            Shoes shoes = new Shoes(this.level(), this, 6);
+            double dx = target.getX() - this.getX();
+            double dy = target.getY() + target.getEyeHeight() - 1.1 - shoes.getY();
+            double dz = target.getZ() - this.getZ();
+            double horiz = Math.sqrt(dx * dx + dz * dz) * 0.2;
+            shoes.shoot(dx, dy + horiz, dz, 1.8f, 4.0f);
+            this.level().playSound(null, this, SoundEvents.ARROW_SHOOT, this.getSoundSource(),
+                    0.75f, 1.0f / (this.random.nextFloat() * 0.4f + 0.8f));
+            this.level().addFreshEntity(shoes);
+        }
+        this.swing(InteractionHand.MAIN_HAND);
     }
 
     @Override
@@ -319,18 +446,12 @@ public class Boyfriend extends TamableAnimal {
         return (float) (this.voice - 5) * 0.02f + 1.0f;
     }
 
-    // BOYFRIEND_BRO_MODE: when enabled, the boyfriend refuses to attack other tamed
-    // mobs that share the same owner — preventing friendly-fire between the player's
-    // pets. This overrides the vanilla TamableAnimal targeting check.
-    @Override
-    public boolean wantsToAttack(LivingEntity target, LivingEntity owner) {
-        if (OreSpawnConfig.BOYFRIEND_BRO_MODE.get() && target instanceof TamableAnimal tamable) {
-            if (tamable.isTame() && tamable.getOwner() == owner) {
-                return false;
-            }
-        }
-        return true;
-    }
+    // (A Phase-10 wantsToAttack override that used BOYFRIEND_BRO_MODE as a
+    // friendly-fire gate was removed here in Phase D3: the original's bro_mode
+    // config (orig OreSpawnMain.java:1481) only gates VOICE behavior — silence
+    // rolls and the bb_happy line, orig Boyfriend.java:772/804/818/825 — which
+    // is ENT-A-058's scope. The invented combat meaning is archived in
+    // MODERNIZATION_NOTES MOD-010.)
 
     @Override
     public boolean isFood(ItemStack stack) {
