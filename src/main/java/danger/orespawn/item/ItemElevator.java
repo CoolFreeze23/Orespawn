@@ -2,8 +2,6 @@ package danger.orespawn.item;
 
 import danger.orespawn.ModEntities;
 import net.minecraft.core.BlockPos;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
@@ -11,9 +9,16 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 
+/**
+ * Hoverboard placement item (orig ItemElevator.java — display name
+ * "Hoverboard", orig OreSpawnMain.java:5174). Right-clicking a block spawns
+ * the board 1.2 above it at a random yaw and consumes the item unless the
+ * player is in creative (orig ItemElevator.java:25-36).
+ */
 public class ItemElevator extends Item {
     public ItemElevator(Item.Properties properties) {
-        super(properties);
+        // orig ItemElevator.java:21 — maxStackSize = 1.
+        super(properties.stacksTo(1));
     }
 
     @Override
@@ -24,14 +29,18 @@ public class ItemElevator extends Item {
         Player player = context.getPlayer();
         if (player == null) return InteractionResult.PASS;
 
-        BlockPos pos = context.getClickedPos().above();
+        // orig ItemElevator.java:29-31 — spawn at block center, +1.2 up, random yaw.
+        BlockPos pos = context.getClickedPos();
         Entity elevator = ModEntities.ELEVATOR.get().create(level);
         if (elevator != null) {
-            elevator.moveTo(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, player.getYRot(), 0.0F);
+            elevator.moveTo(pos.getX() + 0.5, pos.getY() + 1.2, pos.getZ() + 0.5,
+                    level.getRandom().nextFloat() * 360.0f, 0.0f);
             level.addFreshEntity(elevator);
         }
-        level.playSound(null, player.blockPosition(), SoundEvents.ANVIL_PLACE, SoundSource.BLOCKS, 1.0F, 1.0F);
-        context.getItemInHand().shrink(1);
+        // orig ItemElevator.java:32-34 — creative players keep the item.
+        if (!player.getAbilities().instabuild) {
+            context.getItemInHand().shrink(1);
+        }
         return InteractionResult.SUCCESS;
     }
 }

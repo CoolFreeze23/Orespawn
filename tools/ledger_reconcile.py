@@ -13,7 +13,8 @@ import re
 import collections
 import sys
 
-TOTAL_EXPECTED = 601
+# 601 audit IDs + ENT-D-066 (duplicate hoverboard, found 2026-07-02 in Phase D2).
+TOTAL_EXPECTED = 602
 TERMINAL = {"FIXED", "VERIFIED-CORRECT", "DEFERRED"}
 
 with open("AUDIT_FINDINGS.md", encoding="utf-8") as fh:

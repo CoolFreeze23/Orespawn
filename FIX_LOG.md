@@ -13,115 +13,115 @@ Port source: `src/main/java/danger/orespawn/` (referred to as `port:`).
 Fixes that can only be truly confirmed in-game. Append here in every phase; burn the
 list down at the end before release.
 
-- [ ] **BUG-003** — Place a Rat mob spawner (or `/summon orespawn:rat`), let it tick:
-      server must not crash, rat must despawn normally when far away.
-- [ ] **BUG-004** — Tame a Prince, push it to its growth thresholds (or downgrade
-      the Adult with a gold ingot — the Teen regression was removed in BOSS-029),
-      then log the owner out with the chunk loaded:
-      transformation must complete with ownership intact, no NPE.
-- [ ] **BUG-005** — Let TheQueen reduce a Survival player to 0 HP via melee: normal
-      death screen/drops/respawn. Also confirm a low-HP mob victim still vanishes
-      without drops (original quirk preserved).
-- [ ] **BUG-006** — Stand next to Godzilla's jump landing in Creative and Spectator:
-      no damage taken; Survival players still take the shockwave.
-- [ ] **B2 attribute caps** — `/summon orespawn:the_king` then `/data get entity` its
-      Health: must read 7000 (not 1024). Same spot-check for TheQueen (6000) and
-      Godzilla (4000).
-- [ ] **B2 stats** — spot-check 3-4 reconciled mobs in-game (`/attribute ... minecraft:generic.armor base get`)
-      against the table in `phase_b_reports/B2_mobstats.md`.
-- [ ] **B1 drops** — kill (Survival) one of each: Kraken (ink sacs 120-279 + d53 gear,
-      NO cooked cod), Godzilla (painting/beef/bone, NO emeralds), TheQueen (56× scale/
-      beef/bone/flesh + Princess spawns), TheKing (royal set + 300 random registry items
-      + Prince spawns), Mothra (20 moths burst), Dragon (beef 1-6, no bones). Confirm
-      nothing drops twice.
-- [ ] **B3 riding** — mount and fly/ride each: Dragon (no rubber-banding — BUG-020),
-      Leon, Leonopteryx, Cephadrome (fed first), Ostrich (FAST jump on UP key),
-      ThePrinceTeen + Adult (tamed; strafe keys fire the canon trio). Verify a second
-      player observing sees smooth movement.
-- [ ] **B3 SpiderDriver** — armor 8 mounted / 20 on foot; attacks (with poison) while
-      mounted on the SpiderRobot.
-- [ ] **B4 animations** — stand still near Bee/Mothra/Urchin/Kyuubi etc.: idle
-      animations must keep moving (no frozen wings); Mothra renders at 10× scale and
-      flaps slowly (0.2 frequency).
-- [ ] **ENT-A-002/012/017/023/040/060/072/078/091/106** — eyeball hitboxes (F3+B) of Alien/AntRobot/AttackSquid/BandP/Bee/Brutalfly/CaterKiller/CaveFisher/CloudShark/CreepingHorror against the sizes in `phase_c_reports/C1_entities_A_C.md`; CaterKiller must halve with `playNicely=true`.
-- [ ] **ENT-A-031/060** — drop Basilisk and Brutalfly into lava: no fire damage.
-- [ ] **ENT-A-100/101** — spawn many Crabs naturally: sizes vary (¼/½/full, occasional giants); spawner Crabs all small (0.35).
-- [ ] **ENT-A-102/103** — Crab walks toward water, takes dry-out damage away from it, plays scorpion sounds on melee and a splash when healing in water.
-- [ ] **ENT-A-004** — Alien melee applies Poison (40t on Easy, 30t otherwise), not Hunger.
-- [ ] **ENT-A-013/014** — AntRobot melee noticeably throttled; while ridden it occasionally stomps nearby mobs for ~3.0.
-- [ ] **ENT-A-025** — BandP steals an item on every successful hit (armor first).
-- [ ] **ENT-A-036** — Basilisk uses custom living/hurt/death sounds (no Ravager).
-- [ ] **ENT-A-045-051** — Big Bertha/Royal/Hammy: swing projectiles one-shot in range (496/746/82), respect `bigBerthaPvp` for players/tamed; Girlfriend/Boyfriend never hit.
-- [ ] **ENT-A-054** — Boyfriend follows cooked beef, panics when hit, opens doors.
-- [ ] **ENT-A-074/075** — damaged CaterKiller transforms after ~2 min into Brutalfly + 10 Butterflies (explosion sound); eats nearby leaves/logs (heal 2.0, occasional burp).
-- [ ] **ENT-A-080** — CaveFisher hunts nearby passive animals, not just players.
-- [ ] **ENT-A-082** — Cephadrome attacks Mothra/untamed Leon/GammaMetroid/WaterDragon; Kraken takes 1.5× hits.
-- [ ] **ENT-A-087** — Chipmunk tames with apple (50%), releases with dead bush.
-- [ ] **ENT-A-095/097** — Cockateil spawns with random bird type; only type 5 birds can drop rubies (player kill, 1-in-3).
-- [ ] **ENT-A-110** — CreepingHorror only spawns naturally in darkness at night below y=15 (or in Chaos).
-- [ ] **ENT-A-112** — Cryolophosaurus proactively chases nearby prey, not only retaliating.
-- [ ] **C1 loot** — kill (Survival): Alien (spider eyes/flint/map/clock/compass), AntRobot (redstone jackpot), Beaver (0–2 porkchop), tamed Camarasaurus (2–6 poppies; untamed none), CaveFisher/CliffRacer/CloudShark/Cryolophosaurus/CreepingHorror (gamble drops), Coin (10-slot jackpot).
-- [ ] **C1 spawns** — verify Alien/Alosaurus/Camarasaurus/Baryonyx spawn in the Mining dim (and Alosaurus/Baryonyx in Utopia), no longer in the End/overworld; Boyfriend beach hotspots; Bee/CaterKiller/Basilisk/Brutalfly/BandP in their per-biome lists.
-- [ ] **ENT-D-002/006** — Dragon tames/heals with raw beef (1-in-5), ignores bones; diamond on a tamed dragon spawns a tamed Spyro and removes the adult.
-- [ ] **ENT-D-012** — ridden Hoverboard hums `orespawn:hover` (randomized 1–6 variants), not the beacon tone.
-- [ ] **ENT-D-014** — Emperor Scorpion in combat occasionally spawns a baby scorpion midway to its target (no cap — can flood).
-- [ ] **ENT-D-022** — Cage: players bounce back an empty cage; Creeper always cages; Ghast/Enderman escape ~20%, Kraken ~95%; Bat gives 2 caged bats, Cockateil 4, AttackSquid 6; villager-hit consumes the cage and returns it; Iron Golem cageable; tamed Girlfriend/Boyfriend eat the cage with no drop.
-- [ ] **ENT-D-025/026/027** — thrown rocks: t5 deals 10; t6/9–12 apply Weakness (not Wither); t9 ignites ~50s; block impacts shatter glass in 3×3×3 with the glassdead sound and return the same rock type; entity hits return nothing.
-- [ ] **ENT-D-037** — tamed Gazelle drops 2–6 poppies; untamed drops 0–2 raw beef.
-- [ ] **C2 loot** — kill (Survival): DungeonBeast (25% each crystal pink ingot/crystal apple/oak log/nothing ×0–2), Fairy (crystal torch), Firefly (extreme torch), GammaMetroid (5–14 gold nuggets + 6–15 iron), Ghost/GhostSkelly (nothing), GiantRobot (~60–116 laser balls + 10–19 kit/component rolls incl. detector rails).
-- [ ] **C2 spawns** — Dragon/GoldFish/EnderReaper on the Island biome; DungeonBeast/Flounder/Irukandji/Frog in Crystal; EnderKnight/EnderReaper/Hammerhead/GammaMetroid/DungeonBeast in Chaos; GammaMetroid swarms in Mining; EnderKnight/EnderReaper dark-forest hotspots (w20/w38) and NONE in the End; Fairy only in dark forests overworld; Girlfriend beach hotspot (8–15 groups); Hydrolisc swamp/jungle; Frog river/swamp; ghosts in snowy taiga/taiga/frozen river/jungle/dark forest; no more ocean spawns for Flounder/GoldFish/Irukandji/Hammerhead/Hydrolisc.
-- [ ] **ENT-K-005** — Kraken plays its custom living growl (1-in-5 ambient) and alo_death on death, not Elder Guardian sounds.
-- [ ] **ENT-K-013** — LeafMonster attacks Ants/Butterflies/LunaMoths and players only (ignores other small mobs); never hunts with `playNicely=true`.
-- [ ] **ENT-K-019/083** — Leon and RubberDucky untame with a dead bush (Leon glass no longer works); RubberDucky tames/tempts with raw cod, not wheat.
-- [ ] **ENT-K-023** — Lizard out of water periodically pathfinds to the nearest water (never to lava/fire).
-- [ ] **ENT-K-033** — MantisClaw hits drain 1 HP silently (no extra hurt flash) and heal the wielder 1.
-- [ ] **ENT-K-045** — Ostrich takes no cactus damage but normal damage otherwise.
-- [ ] **ENT-K-046** — tamed Ostrich drops 2–6 poppies; untamed drops 0–2 feathers.
-- [ ] **ENT-K-050** — Peacock breeds with Crystal Apple only.
-- [ ] **ENT-K-051** — Nightmares spawn mostly tiny (t=0.5); big ones rare (t=4 ≈ 1.5%); hitbox/model grow together up to 10×14 blocks; `nightmareSize=5` forces max size.
-- [ ] **ENT-K-056** — PurplePower type 2 poisons, type 3 weakens (2.5 s each).
-- [ ] **ENT-K-058** — wild rats attack players/pets even with default configs; a rat with an owner never attacks its owner (and respects ratPlayerFriendly/ratPetFriendly).
-- [ ] **C3 loot** — kill (Survival): LeafMonster (log OR leaves OR rotten flesh), LurkingTerror (beef/flint/feather), Rat (rotten flesh), Robot2 (2–9 iron blocks + 5–10 iron ingots + redstone parts), Robot3/5 (20–40 laser balls + redstone parts), Robot4 (20–56 laser balls + RayGun + painting + redstone parts), Rotator (one of crystal pink ingot/tigers eye ingot/crystal coal/iron).
-- [ ] **C3 spawns** — Kraken/Leon/Leonopteryx/RubyBird never spawn naturally (spawner-block/dungeon only); Kyuubi Nether weight doubled; Lizard only river/swamp/ocean; rat swarms in dark forests (10–20 packs) and taigas, not everywhere.
-- [ ] **ENT-S-006** — SeaMonster visibly faster in water than on land (0.55 vs 0.25).
-- [ ] **ENT-S-010** — SeaViper bites apply Poison ~6 s (8 s on Easy), never Hunger.
-- [ ] **ENT-S-030/031** — killing a StinkBug nauseates (not starves) everything nearby incl. well above it; it breeds with Crystal Apple only, not apples.
-- [ ] **ENT-S-033** — tamed Stinky occasionally burps coal out the front and farts a skin-matched item (e.g. blaze powder for skin 0) out the back, with sounds.
-- [ ] **ENT-S-045** — TRex roars/hurts/dies with the orespawn trex/alo sounds, no Ravager audio.
-- [ ] **ENT-S-057** — Ultimate Bow full-draw hit ≈ ceil(3×ultimateBowDamage); halving the config halves it; bow self-enchants Power 5 (not 10).
-- [ ] **ENT-S-061/068** — drop an Urchin and a Vortex into lava: no fire damage.
-- [ ] **ENT-S-065** — right-clicking a tamed Velocity Raptor with an empty hand no longer mounts it (sit toggle on shift still works).
-- [ ] **ENT-S-069** — Vortex melee never launches the victim skyward; the drag pull still works.
-- [ ] **C4 loot** — kill (Survival): Scorpion (~10% each gold/uranium/titanium nugget, often nothing), Skate (string), SpiderRobot (14–27 redstone-component drops), SpitBug (1–3 amethyst gems), tamed Spyro (1–4 beef; untamed nothing), TerribleTerror (one of flesh/emerald/feather), tamed VelocityRaptor (2–6 poppies; untamed nothing), Vortex (eye + painting + 5–11 mixed ingots/nuggets/sticks), WormSmall (nothing).
-- [ ] **C4 spawns** — TRex only in Chaos/Mining dims (not overworld); TerribleTerror in Island/Chaos (not overworld); Urchin/Skate/Vortex in Crystal (+Chaos), no longer oceans/Nether; Spyro/VelocityRaptor only in Mining; Stinky in Nether + badlands + Island, not forests; SeaMonster ocean w4 + swamps; WormSmall never naturally.
-- [ ] **BOSS-002/007** — F3+B on TheKing and TheQueen: 22-wide × 24-tall envelope; parts still take/route damage (King parent unhittable, Queen parts glued to bones); check the rendered models don't look lost inside the box.
-- [ ] **BOSS-005/012** — place a King/Queen spawner: ~5 s fuse then both the spawner and the block above turn to air, boss appears 8 blocks up with its living sound and leashes near the spawn point; with `theKingEnable=false`/`theQueenEnable=false` the block still fizzles to air but spawns nothing.
-- [ ] **BOSS-006** — Queen below 2/3 HP with <10 player hits: armor reads 23 (`/attribute` won't show it — overridden getter — so verify via reduced damage taken).
-- [ ] **BOSS-010** — first hit on a dormant (blue) Queen deals normal damage while the 3 s wake-up animation plays; she can keep fighting/being hurt during it.
-- [ ] **BOSS-016** — Godzilla growls godzilla_living (sporadic), hurts with alo_hurt, dies with godzilla_death — no Ender Dragon audio.
-- [ ] **BOSS-018/020** — feeding a tamed Prince cooked beef heals 80 (not 20); DIAMOND (after diamond block) transforms baby→teen; gold ingot and cake do nothing on the baby.
-- [ ] **BOSS-024** — baby Prince hunts Butterflies/Cockateils/Dragonflies/Mosquitoes/Mothra, not just monsters.
-- [ ] **BOSS-025/035/042** — kill (Survival): ThePrince (1–4 beef), ThePrincess (1–4 beef), ThePrinceAdult (1 Prince Egg) — no diamonds/gold.
-- [ ] **BOSS-026/031** — F3+B: PrinceTeen 3.25×4.25, PrinceAdult 6.25×10.25; eyeball model scale vs box, rider seats still correct.
-- [ ] **BOSS-029** — gold ingot on a tamed PrinceTeen does nothing (no baby regression).
-- [ ] **BOSS-032** — tamed idle riderless Adult with `fullPowerKingEnable=true` transforms after the grow counter (diamond block fast-path) into a King that goes through the isEnd "free" sequence ("Prepare to die!"); with the config false it never transforms; King no longer deals doubled damage from that config.
-- [ ] **BOSS-036** — PrinceAdult: king_living only while aggro and riderless, king_hit on hurt, trex_death on death.
-- [ ] **ITEM-001/005** — break overworld ruby/amethyst ore: never explodes; break a red-ant/termite troll block without Silk Touch: 15–20 mobs erupt (Silk Touch no longer bypasses).
-- [ ] **ITEM-003/021** — uranium/titanium ore drops XP only below y=40; breaking an ender-pearl/eye-of-ender egg block pops 5–9 XP half the time and never duplicates itself.
-- [ ] **ITEM-011/012** — left-click a Pizza block to eat a slice; left-click Duct Tape to repair held gear (both previously right-click only).
-- [ ] **ITEM-013/014** — step on an RTP block: random teleport fires; walk onto mole dirt: feet sink slightly (lowered collision box).
-- [ ] **ITEM-016** — Crystal Furnace: items cook in 7.5 s (150t); crystal coal burns 20000t (~133 smelts), crystal logs 800t, crystal planks 400t.
-- [ ] **ITEM-019** — Kraken/Creeper repellent pushes targets away continuously (every ~0.5 s) within radius 20, not once a minute.
-- [ ] **ITEM-027** — place a Duplicator Log on dirt/grass with blocks nearby: tree grows block-by-block, then copies ~20 nearby blocks into the 5×5 area.
-- [ ] **ITEM-037** — Chainsaw: left-click swings deal 56 AoE damage in r=5 with the saw sound; breaking a log crushes the 11×16×11 wood/leaf volume.
-- [ ] **ITEM-040** — Experience Sword in hotbar slowly repairs worn OreSpawn armor while draining the sword (armor-XP tick).
-- [ ] **ITEM-043** — Ultimate Bow fires instantly at full speed (no charge-up) and crits ~25% of shots.
-- [ ] **ITEM-047/048/049** — Instant Garden (18×15 plot, 8 crops + reeds/melons + 3 water channels), Instant Shelter (7×7 furnished, 14-item chest), StepUp/Down/Across (8-way from look yaw, extreme torches every 8, stops at obstructions, explosion fx, kept in creative).
-- [ ] **ITEM-050/051/052** — ZooKeeper makes a mob persistent (1 use, breaks); Sifter on water/sand/gravel/dirt/grass rolls the original tables (mod fish from water!); Wrench refuses healthy unowned AntRobots, kits re-spawn robots with carried-over health/name.
-- [ ] **ITEM-053** — DeadIrukandji is throwable; WaterBall hits drop a pickup ~10% of the time; SunspotUrchin lights blocks on fire; LaserBall/IceBall have no cooldown.
-- [ ] **ITEM-058** — Peacock boots glide works with `royalGlideEnable=false`; Royal/Queen boots glide only with it true.
-- [ ] **ITEM-059** — uranium/titanium ore smelts into a NUGGET (9 nuggets → ingot).
-- [ ] **ITEM-064** — with `lessOre=true`, new chunks carry ~1/3 the uranium/titanium/amethyst/salt veins and ~1/2 the troll blocks.
+- **BUG-003** — Place a Rat mob spawner (or `/summon orespawn:rat`), let it tick:
+server must not crash, rat must despawn normally when far away.
+- **BUG-004** — Tame a Prince, push it to its growth thresholds (or downgrade
+the Adult with a gold ingot — the Teen regression was removed in BOSS-029),
+then log the owner out with the chunk loaded:
+transformation must complete with ownership intact, no NPE.
+- **BUG-005** — Let TheQueen reduce a Survival player to 0 HP via melee: normal
+death screen/drops/respawn. Also confirm a low-HP mob victim still vanishes
+without drops (original quirk preserved).
+- **BUG-006** — Stand next to Godzilla's jump landing in Creative and Spectator:
+no damage taken; Survival players still take the shockwave.
+- **B2 attribute caps** — `/summon orespawn:the_king` then `/data get entity` its
+Health: must read 7000 (not 1024). Same spot-check for TheQueen (6000) and
+Godzilla (4000).
+- **B2 stats** — spot-check 3-4 reconciled mobs in-game (`/attribute ... minecraft:generic.armor base get`)
+against the table in `phase_b_reports/B2_mobstats.md`.
+- **B1 drops** — kill (Survival) one of each: Kraken (ink sacs 120-279 + d53 gear,
+NO cooked cod), Godzilla (painting/beef/bone, NO emeralds), TheQueen (56× scale/
+beef/bone/flesh + Princess spawns), TheKing (royal set + 300 random registry items
++ Prince spawns), Mothra (20 moths burst), Dragon (beef 1-6, no bones). Confirm
+nothing drops twice.
+- **B3 riding** — mount and fly/ride each: Dragon (no rubber-banding — BUG-020),
+Leon, Leonopteryx, Cephadrome (fed first), Ostrich (FAST jump on UP key),
+ThePrinceTeen + Adult (tamed; strafe keys fire the canon trio). Verify a second
+player observing sees smooth movement.
+- **B3 SpiderDriver** — armor 8 mounted / 20 on foot; attacks (with poison) while
+mounted on the SpiderRobot.
+- **B4 animations** — stand still near Bee/Mothra/Urchin/Kyuubi etc.: idle
+animations must keep moving (no frozen wings); Mothra renders at 10× scale and
+flaps slowly (0.2 frequency).
+- **ENT-A-002/012/017/023/040/060/072/078/091/106** — eyeball hitboxes (F3+B) of Alien/AntRobot/AttackSquid/BandP/Bee/Brutalfly/CaterKiller/CaveFisher/CloudShark/CreepingHorror against the sizes in `phase_c_reports/C1_entities_A_C.md`; CaterKiller must halve with `playNicely=true`.
+- **ENT-A-031/060** — drop Basilisk and Brutalfly into lava: no fire damage.
+- **ENT-A-100/101** — spawn many Crabs naturally: sizes vary (¼/½/full, occasional giants); spawner Crabs all small (0.35).
+- **ENT-A-102/103** — Crab walks toward water, takes dry-out damage away from it, plays scorpion sounds on melee and a splash when healing in water.
+- **ENT-A-004** — Alien melee applies Poison (40t on Easy, 30t otherwise), not Hunger.
+- **ENT-A-013/014** — AntRobot melee noticeably throttled; while ridden it occasionally stomps nearby mobs for ~3.0.
+- **ENT-A-025** — BandP steals an item on every successful hit (armor first).
+- **ENT-A-036** — Basilisk uses custom living/hurt/death sounds (no Ravager).
+- **ENT-A-045-051** — Big Bertha/Royal/Hammy: swing projectiles one-shot in range (496/746/82), respect `bigBerthaPvp` for players/tamed; Girlfriend/Boyfriend never hit.
+- **ENT-A-054** — Boyfriend follows cooked beef, panics when hit, opens doors.
+- **ENT-A-074/075** — damaged CaterKiller transforms after ~2 min into Brutalfly + 10 Butterflies (explosion sound); eats nearby leaves/logs (heal 2.0, occasional burp).
+- **ENT-A-080** — CaveFisher hunts nearby passive animals, not just players.
+- **ENT-A-082** — Cephadrome attacks Mothra/untamed Leon/GammaMetroid/WaterDragon; Kraken takes 1.5× hits.
+- **ENT-A-087** — Chipmunk tames with apple (50%), releases with dead bush.
+- **ENT-A-095/097** — Cockateil spawns with random bird type; only type 5 birds can drop rubies (player kill, 1-in-3).
+- **ENT-A-110** — CreepingHorror only spawns naturally in darkness at night below y=15 (or in Chaos).
+- **ENT-A-112** — Cryolophosaurus proactively chases nearby prey, not only retaliating.
+- **C1 loot** — kill (Survival): Alien (spider eyes/flint/map/clock/compass), AntRobot (redstone jackpot), Beaver (0–2 porkchop), tamed Camarasaurus (2–6 poppies; untamed none), CaveFisher/CliffRacer/CloudShark/Cryolophosaurus/CreepingHorror (gamble drops), Coin (10-slot jackpot).
+- **C1 spawns** — verify Alien/Alosaurus/Camarasaurus/Baryonyx spawn in the Mining dim (and Alosaurus/Baryonyx in Utopia), no longer in the End/overworld; Boyfriend beach hotspots; Bee/CaterKiller/Basilisk/Brutalfly/BandP in their per-biome lists.
+- **ENT-D-002/006** — Dragon tames/heals with raw beef (1-in-5), ignores bones; diamond on a tamed dragon spawns a tamed Spyro and removes the adult.
+- **ENT-D-012** — ridden Hoverboard hums `orespawn:hover` (randomized 1–6 variants), not the beacon tone.
+- **ENT-D-014** — Emperor Scorpion in combat occasionally spawns a baby scorpion midway to its target (no cap — can flood).
+- **ENT-D-022** — Cage: players bounce back an empty cage; Creeper always cages; Ghast/Enderman escape ~20%, Kraken ~95%; Bat gives 2 caged bats, Cockateil 4, AttackSquid 6; villager-hit consumes the cage and returns it; Iron Golem cageable; tamed Girlfriend/Boyfriend eat the cage with no drop.
+- **ENT-D-025/026/027** — thrown rocks: t5 deals 10; t6/9–12 apply Weakness (not Wither); t9 ignites ~50s; block impacts shatter glass in 3×3×3 with the glassdead sound and return the same rock type; entity hits return nothing.
+- **ENT-D-037** — tamed Gazelle drops 2–6 poppies; untamed drops 0–2 raw beef.
+- **C2 loot** — kill (Survival): DungeonBeast (25% each crystal pink ingot/crystal apple/oak log/nothing ×0–2), Fairy (crystal torch), Firefly (extreme torch), GammaMetroid (5–14 gold nuggets + 6–15 iron), Ghost/GhostSkelly (nothing), GiantRobot (~60–116 laser balls + 10–19 kit/component rolls incl. detector rails).
+- **C2 spawns** — Dragon/GoldFish/EnderReaper on the Island biome; DungeonBeast/Flounder/Irukandji/Frog in Crystal; EnderKnight/EnderReaper/Hammerhead/GammaMetroid/DungeonBeast in Chaos; GammaMetroid swarms in Mining; EnderKnight/EnderReaper dark-forest hotspots (w20/w38) and NONE in the End; Fairy only in dark forests overworld; Girlfriend beach hotspot (8–15 groups); Hydrolisc swamp/jungle; Frog river/swamp; ghosts in snowy taiga/taiga/frozen river/jungle/dark forest; no more ocean spawns for Flounder/GoldFish/Irukandji/Hammerhead/Hydrolisc.
+- **ENT-K-005** — Kraken plays its custom living growl (1-in-5 ambient) and alo_death on death, not Elder Guardian sounds.
+- **ENT-K-013** — LeafMonster attacks Ants/Butterflies/LunaMoths and players only (ignores other small mobs); never hunts with `playNicely=true`.
+- **ENT-K-019/083** — Leon and RubberDucky untame with a dead bush (Leon glass no longer works); RubberDucky tames/tempts with raw cod, not wheat.
+- **ENT-K-023** — Lizard out of water periodically pathfinds to the nearest water (never to lava/fire).
+- **ENT-K-033** — MantisClaw hits drain 1 HP silently (no extra hurt flash) and heal the wielder 1.
+- **ENT-K-045** — Ostrich takes no cactus damage but normal damage otherwise.
+- **ENT-K-046** — tamed Ostrich drops 2–6 poppies; untamed drops 0–2 feathers.
+- **ENT-K-050** — Peacock breeds with Crystal Apple only.
+- **ENT-K-051** — Nightmares spawn mostly tiny (t=0.5); big ones rare (t=4 ≈ 1.5%); hitbox/model grow together up to 10×14 blocks; `nightmareSize=5` forces max size.
+- **ENT-K-056** — PurplePower type 2 poisons, type 3 weakens (2.5 s each).
+- **ENT-K-058** — wild rats attack players/pets even with default configs; a rat with an owner never attacks its owner (and respects ratPlayerFriendly/ratPetFriendly).
+- **C3 loot** — kill (Survival): LeafMonster (log OR leaves OR rotten flesh), LurkingTerror (beef/flint/feather), Rat (rotten flesh), Robot2 (2–9 iron blocks + 5–10 iron ingots + redstone parts), Robot3/5 (20–40 laser balls + redstone parts), Robot4 (20–56 laser balls + RayGun + painting + redstone parts), Rotator (one of crystal pink ingot/tigers eye ingot/crystal coal/iron).
+- **C3 spawns** — Kraken/Leon/Leonopteryx/RubyBird never spawn naturally (spawner-block/dungeon only); Kyuubi Nether weight doubled; Lizard only river/swamp/ocean; rat swarms in dark forests (10–20 packs) and taigas, not everywhere.
+- **ENT-S-006** — SeaMonster visibly faster in water than on land (0.55 vs 0.25).
+- **ENT-S-010** — SeaViper bites apply Poison ~6 s (8 s on Easy), never Hunger.
+- **ENT-S-030/031** — killing a StinkBug nauseates (not starves) everything nearby incl. well above it; it breeds with Crystal Apple only, not apples.
+- **ENT-S-033** — tamed Stinky occasionally burps coal out the front and farts a skin-matched item (e.g. blaze powder for skin 0) out the back, with sounds.
+- **ENT-S-045** — TRex roars/hurts/dies with the orespawn trex/alo sounds, no Ravager audio.
+- **ENT-S-057** — Ultimate Bow full-draw hit ≈ ceil(3×ultimateBowDamage); halving the config halves it; bow self-enchants Power 5 (not 10).
+- **ENT-S-061/068** — drop an Urchin and a Vortex into lava: no fire damage.
+- **ENT-S-065** — right-clicking a tamed Velocity Raptor with an empty hand no longer mounts it (sit toggle on shift still works).
+- **ENT-S-069** — Vortex melee never launches the victim skyward; the drag pull still works.
+- **C4 loot** — kill (Survival): Scorpion (~10% each gold/uranium/titanium nugget, often nothing), Skate (string), SpiderRobot (14–27 redstone-component drops), SpitBug (1–3 amethyst gems), tamed Spyro (1–4 beef; untamed nothing), TerribleTerror (one of flesh/emerald/feather), tamed VelocityRaptor (2–6 poppies; untamed nothing), Vortex (eye + painting + 5–11 mixed ingots/nuggets/sticks), WormSmall (nothing).
+- **C4 spawns** — TRex only in Chaos/Mining dims (not overworld); TerribleTerror in Island/Chaos (not overworld); Urchin/Skate/Vortex in Crystal (+Chaos), no longer oceans/Nether; Spyro/VelocityRaptor only in Mining; Stinky in Nether + badlands + Island, not forests; SeaMonster ocean w4 + swamps; WormSmall never naturally.
+- **BOSS-002/007** — F3+B on TheKing and TheQueen: 22-wide × 24-tall envelope; parts still take/route damage (King parent unhittable, Queen parts glued to bones); check the rendered models don't look lost inside the box.
+- **BOSS-005/012** — place a King/Queen spawner: ~5 s fuse then both the spawner and the block above turn to air, boss appears 8 blocks up with its living sound and leashes near the spawn point; with `theKingEnable=false`/`theQueenEnable=false` the block still fizzles to air but spawns nothing.
+- **BOSS-006** — Queen below 2/3 HP with <10 player hits: armor reads 23 (`/attribute` won't show it — overridden getter — so verify via reduced damage taken).
+- **BOSS-010** — first hit on a dormant (blue) Queen deals normal damage while the 3 s wake-up animation plays; she can keep fighting/being hurt during it.
+- **BOSS-016** — Godzilla growls godzilla_living (sporadic), hurts with alo_hurt, dies with godzilla_death — no Ender Dragon audio.
+- **BOSS-018/020** — feeding a tamed Prince cooked beef heals 80 (not 20); DIAMOND (after diamond block) transforms baby→teen; gold ingot and cake do nothing on the baby.
+- **BOSS-024** — baby Prince hunts Butterflies/Cockateils/Dragonflies/Mosquitoes/Mothra, not just monsters.
+- **BOSS-025/035/042** — kill (Survival): ThePrince (1–4 beef), ThePrincess (1–4 beef), ThePrinceAdult (1 Prince Egg) — no diamonds/gold.
+- **BOSS-026/031** — F3+B: PrinceTeen 3.25×4.25, PrinceAdult 6.25×10.25; eyeball model scale vs box, rider seats still correct.
+- **BOSS-029** — gold ingot on a tamed PrinceTeen does nothing (no baby regression).
+- **BOSS-032** — tamed idle riderless Adult with `fullPowerKingEnable=true` transforms after the grow counter (diamond block fast-path) into a King that goes through the isEnd "free" sequence ("Prepare to die!"); with the config false it never transforms; King no longer deals doubled damage from that config.
+- **BOSS-036** — PrinceAdult: king_living only while aggro and riderless, king_hit on hurt, trex_death on death.
+- **ITEM-001/005** — break overworld ruby/amethyst ore: never explodes; break a red-ant/termite troll block without Silk Touch: 15–20 mobs erupt (Silk Touch no longer bypasses).
+- **ITEM-003/021** — uranium/titanium ore drops XP only below y=40; breaking an ender-pearl/eye-of-ender egg block pops 5–9 XP half the time and never duplicates itself.
+- **ITEM-011/012** — left-click a Pizza block to eat a slice; left-click Duct Tape to repair held gear (both previously right-click only).
+- **ITEM-013/014** — step on an RTP block: random teleport fires; walk onto mole dirt: feet sink slightly (lowered collision box).
+- **ITEM-016** — Crystal Furnace: items cook in 7.5 s (150t); crystal coal burns 20000t (~133 smelts), crystal logs 800t, crystal planks 400t.
+- **ITEM-019** — Kraken/Creeper repellent pushes targets away continuously (every ~0.5 s) within radius 20, not once a minute.
+- **ITEM-027** — place a Duplicator Log on dirt/grass with blocks nearby: tree grows block-by-block, then copies ~20 nearby blocks into the 5×5 area.
+- **ITEM-037** — Chainsaw: left-click swings deal 56 AoE damage in r=5 with the saw sound; breaking a log crushes the 11×16×11 wood/leaf volume.
+- **ITEM-040** — Experience Sword in hotbar slowly repairs worn OreSpawn armor while draining the sword (armor-XP tick).
+- **ITEM-043** — Ultimate Bow fires instantly at full speed (no charge-up) and crits ~25% of shots.
+- **ITEM-047/048/049** — Instant Garden (18×15 plot, 8 crops + reeds/melons + 3 water channels), Instant Shelter (7×7 furnished, 14-item chest), StepUp/Down/Across (8-way from look yaw, extreme torches every 8, stops at obstructions, explosion fx, kept in creative).
+- **ITEM-050/051/052** — ZooKeeper makes a mob persistent (1 use, breaks); Sifter on water/sand/gravel/dirt/grass rolls the original tables (mod fish from water!); Wrench refuses healthy unowned AntRobots, kits re-spawn robots with carried-over health/name.
+- **ITEM-053** — DeadIrukandji is throwable; WaterBall hits drop a pickup ~10% of the time; SunspotUrchin lights blocks on fire; LaserBall/IceBall have no cooldown.
+- **ITEM-058** — Peacock boots glide works with `royalGlideEnable=false`; Royal/Queen boots glide only with it true.
+- **ITEM-059** — uranium/titanium ore smelts into a NUGGET (9 nuggets → ingot).
+- **ITEM-064** — with `lessOre=true`, new chunks carry ~1/3 the uranium/titanium/amethyst/salt veins and ~1/2 the troll blocks.
 
 ---
 
@@ -130,68 +130,82 @@ list down at the end before release.
 Build verification: `./gradlew build` → BUILD SUCCESSFUL (NeoForge 21.1.223, Java 21).
 
 ### BUG-001 — FIXED (CRITICAL)
+
 - **Files:** `src/main/java/de/dertoaster/multihitboxlib/EntityEventHandler.java`
 - **Change:** Removed the explicit `bus = EventBusSubscriber.Bus.MOD` from `@EventBusSubscriber`. `EntityEvent.Size` / `PlayerEvent.StartTracking` / `StopTracking` are GAME-bus events; registration now uses NeoForge 21.1's per-listener bus auto-detection (the `bus` attribute is deprecated-for-removal on 21.1.223).
 - **Repro note:** Before — mod construction threw `IllegalArgumentException` registering game-bus event listeners on the mod bus (launch crash). After — listeners are routed to `NeoForge.EVENT_BUS`; cannot recur because no bus is forced.
 
 ### BUG-002 — FIXED (CRITICAL)
+
 - **Files:** `src/main/java/de/dertoaster/multihitboxlib/GameEventHandler.java`
 - **Change:** Same as BUG-001 for `PlayerEvent.PlayerLoggedInEvent` (GAME bus). Asset-synch enforcement now actually fires on login.
 
 ### BUG-001-family (found during fix, not in audit) — FIXED
+
 - **Files:** `src/main/java/de/dertoaster/multihitboxlib/ModEventHandler.java`, `api/event/server/AssetEnforcementManagerRegistrationEvent.java`, `api/event/server/SynchAssetFinderRegistrationEvent.java`, `init/MHLibNetwork.java`
 - **Change:** MHLib's two custom registration events implemented `IModBusEvent` but are posted on `NeoForge.EVENT_BUS` (`AssetEnforcement.java:46,67`) — the game bus rejects mod-bus event types at post time, so `AssetEnforcement.init()` would throw during common setup, and `ModEventHandler`'s MOD-bus listeners could never receive them. Removed the `IModBusEvent` marker from both events and let `ModEventHandler`/`MHLibNetwork` use bus auto-detection.
 - **Verification:** `AssetEnforcement.initializeManagers/initializeAssetFinders` post on the game bus; listeners now resolve to the same bus; compile clean.
 
 ### BUG-003 — FIXED (CRITICAL)
+
 - **Files:** `src/main/java/danger/orespawn/entity/EntityRat.java`
 - **Change:** Replaced the `String myOwner` field with `@Nullable UUID ownerUuid`. NBT now writes `putUUID("MyOwner")` only when an owner exists; reads accept the UUID form, parse the legacy string form defensively (empty/`"null"`/malformed → no owner), and `customServerAiStep` no longer calls `UUID.fromString` at all.
 - **Repro note:** Before — a rat from a Crystal-dungeon spawner deserialized with no `MyOwner` tag, `getString` returned `""`, and `UUID.fromString("")` crashed the server on its first AI tick. After — the parse site is gone; legacy strings are handled in try/catch on load only.
 - **Parity:** Owner-following/teleport thresholds (64.0 / 256.0 distSqr) untouched.
 
 ### BUG-004 — FIXED (CRITICAL)
+
 - **Files:** `src/main/java/danger/orespawn/entity/ThePrince.java` (transformToTeen), `ThePrinceTeen.java` (transformToAdult + gold-ingot downgrade), `ThePrinceAdult.java` (gold-ingot downgrade) — all 4 audited sites
 - **Change:** `getPlayerByUUID` result is null-checked; when the owner is offline the new life-stage entity gets `setOwnerUUID(this.getOwnerUUID()); setTame(true, true)` instead of `tame(null)`.
 - **Repro note:** Before — `TamableAnimal.tame(null)` NPE'd the server the moment a chunk-loaded prince hit its growth thresholds with its owner logged out. After — ownership transfers by UUID without resolving the player.
 
 ### BUG-005 — FIXED (CRITICAL)
+
 - **Files:** `src/main/java/danger/orespawn/entity/TheQueen.java` (both discard sites: `doHurtTarget` and `customServerAiStep`, now `finishTrackedVictim()`)
 - **Change:** When the health-tracked victim reaches 0 HP: players receive a lethal `hurt(mobAttack(this), Float.MAX_VALUE)` (full death pipeline, kill attributed to the Queen); non-player mobs keep the original `discard()` quirk.
 - **Original:** `orig TheQueen.java:260-261, 340-341` (`func_70106_y()` on any victim). Player-deletion side replicated a 1.7.10 defect — deviation recorded in PARITY_NOTES.md, modernization entry MOD-001.
 - **Repro note:** Before — a player "killed" via the tracked-HP path was removed without death screen/drops/respawn (ghost connection). After — players die normally; mobs behave exactly as the original.
 
 ### BUG-006 — FIXED (CRITICAL)
+
 - **Files:** `src/main/java/danger/orespawn/entity/Godzilla.java` (`doJumpDamage`)
 - **Change:** `mobAttack + genericKill` halves replaced with `explosion(null, null)` + `fall()` halves.
 - **Verification vs original:** `orig Godzilla.java:509-512` — half damage via `DamageSource.func_94539_a(null)` (unattributed explosion), half via `DamageSource.field_76379_h` (fall). The port now matches source-for-source; `genericKill` (the `/kill` source) bypassed Creative/Spectator invulnerability, which the original never did.
 
 ### BUG-007 — FIXED (CRITICAL)
+
 - **Files:** `src/main/java/danger/orespawn/entity/SpiderRobot.java`
 - **Change:** Deleted the empty `addAdditionalSaveData`/`readAdditionalSaveData` overrides (no extra fields to persist → inherited behavior is correct); removed the now-unused `CompoundTag` import.
 - **Repro note:** Before — Health/effects/PersistenceRequired/equipment never persisted; half-killed robots reloaded at full HP and name-tagged ones could despawn. After — vanilla `LivingEntity` persistence applies.
 
 ### BUG-008 — VERIFIED-CORRECT (HIGH)
+
 - **Proof the audit was wrong:** `port EntityWormLarge.java:199-208` already persists `wormsSpawned` (`tag.putInt("wormsSpawned", ...)` in `addAdditionalSaveData`, `tag.getInt` in `readAdditionalSaveData`). The 40-worm brood spawn at `:133-147` is gated on `wormsSpawned == 0`, which survives reload. No change made.
 
 ### BUG-009 — FIXED (HIGH)
+
 - **Files:** `src/main/java/danger/orespawn/ModSpawnControl.java`
 - **Change:** `NATURAL_SPAWNS` wrapped in `Collections.synchronizedSet(...)`.
 - **Repro note:** Before — `FinalizeSpawnEvent` mutated the WeakHashMap-backed set from chunk-gen worker threads while `EntityJoinLevelEvent` mutated it on the server thread; a concurrent rehash can corrupt the map (infinite `getEntry` loop) or throw CME. After — all access serialized; the two handlers only do single `add`/`remove` calls, so no compound-operation races remain.
 
 ### BUG-010 — FIXED (HIGH)
+
 - **Files:** `src/main/java/danger/orespawn/entity/ThePrince.java`, `ThePrincess.java`
 - **Change:** (1) Restored the original's activity cycling (`orig ThePrince.java:529-539`, `orig ThePrincess.java:629-639`): while not sitting, activity 0 → 1, and a 1/100-per-tick roll re-picks flying (1/20) vs landed (19/20) — this is the original's only path back from activity 2, and it was missing. (2) Disabled the activity-2 → `noPhysics` mapping until the original's flight movement (`do_movement`) is ported (Phase D), since noPhysics without flight control sank hurt princes through terrain into the void.
 - **Repro note:** Before — one hit set activity 2 permanently (persisted via `SpyroActivity`), entity fell through the world. After — activity recovers within ~5s on average and noPhysics is never enabled. Temporary deviation logged in PARITY_NOTES.md pending flight restoration.
 
 ### BUG-011 — FIXED (HIGH)
+
 - **Files:** `src/main/java/danger/orespawn/entity/Kraken.java` (`handleCaughtEntity`)
 - **Change:** Caught `ServerPlayer`s are now moved with `connection.teleport(...)` (kraken yaw kept for parity with the original's forced rotation) and `hurtMarked = true` so the forced motion syncs; non-player victims keep raw `setPos`/`setYRot` as before.
 - **Repro note:** Before — per-tick server-side `setPos` on a client-authoritative player caused rubber-banding and "moved wrongly" kicks. After — position updates go through the movement-check-exempt teleport path.
 
 ### BUG-012 — VERIFIED-CORRECT (HIGH)
+
 - **Proof the audit's premise is original behavior:** `orig TheKing.java:824-826` — `if (e instanceof EntityMob && s < 3.0f) { e.setDead(); return false; }`. The port (`port TheKing.java:951-953`, `Monster` + bbWidth×bbHeight < 3.0 + `discard()`) matches it exactly; players can never be `Monster`, so no player is at risk. Faithful port retained per ground rule 2; logged as MOD-002 (ORIGINAL-BUG) for the modernization pass.
 
 ### BUG-013 — FIXED (HIGH)
+
 - **Files:** `src/main/java/danger/orespawn/world/OreSpawnChunkGenerator.java`, `world/CrystalStructures.java`, `world/package-info.java`
 - **Change:** Both 50-chunk anti-clustering cooldowns converted from `static` to per-generator-instance `AtomicInteger` fields (`dungeonPlacementCooldown`, `crystalStructureCooldown`). `CrystalStructures.generate` now receives the cooldown as a parameter, and the six `set(50)` calls were hoisted from the structure helpers (each had exactly one success path) to the call sites — semantics within a single dimension unchanged.
 - **Repro note:** Before — one static counter shared across every dimension instance meant a Mining-dim dungeon suppressed Utopia/Crystal placements. After — each dimension's generator cools down independently; atomics keep it safe across parallel worldgen threads. Residual ordering nondeterminism inherent to any chunk-order cooldown is unchanged (matches the original's design); full determinism would alter placement behavior and is deferred to the OPT review (Phase F).
@@ -208,29 +222,31 @@ entries had no named owner until this assignment.
 
 All 21 Phase B PARTIALs have a designated closing phase; none is unowned.
 
-| ID | Remainder | Closes in |
-|---|---|---|
-| ENT-A-002 (Alien) | hitbox 1.1×3.25 | Phase C — entities |
-| ENT-A-012 (AntRobot) | hitbox 2.75×1.25 | Phase C — entities |
-| ENT-A-017 (AttackSquid) | dimensions 1.0×1.25 | Phase C — entities |
-| ENT-A-023 (BandP) | size 0.75×1.75 + worn-gear armor clamp 8–23 | Phase C — entities |
-| ENT-A-031 (Basilisk) | fire immunity | Phase C — entities |
-| ENT-A-040 (Bee) | size 1.5×2.5 | Phase C — entities |
-| ENT-A-060 (Brutalfly) | size 5.0×2.0 + fire immunity | Phase C — entities |
-| ENT-A-072 (CaterKiller) | size 2.9×4.6 | Phase C — entities |
-| ENT-A-078 (CaveFisher) | size 1.35×0.75 | Phase C — entities |
-| ENT-A-091 (CloudShark) | size 1.0×0.75 | Phase C — entities |
-| ENT-A-100 (Crab) | scale-driven size 3.75×3.5×scale | Phase C — entities |
-| ENT-A-103 (Crab) | attack/splash sounds | Phase C — entities |
-| ENT-A-106 (CreepingHorror) | size 0.75×0.5 | Phase C — entities |
-| ENT-K-051 (PitchBlack) | continuous scale model (vs discrete tiers) | Phase C — entities (renderer follow-through) |
-| ENT-K-068 (Robot4) | difficulty-scaled melee 15/20/25 | Phase C — entities |
-| ENT-S-006 (SeaMonster) | water speed-boost dead code (0.55 in water) | Phase C — entities |
-| ENT-S-061 (Urchin) | fire immunity | Phase C — entities |
-| ENT-S-068 (Vortex) | fire immunity | Phase C — entities |
-| BOSS-006 (TheQueen) | +2/+3/+5 phase armor scaling | Phase C — bosses |
-| BOSS-026 (ThePrinceTeen) | size 3.25×4.25 | Phase C — bosses |
-| ANIM-012 (rider controls) | Elevator riding (entity port) | Phase D — missing features (rider elevator) |
+
+| ID                         | Remainder                                   | Closes in                                    |
+| -------------------------- | ------------------------------------------- | -------------------------------------------- |
+| ENT-A-002 (Alien)          | hitbox 1.1×3.25                             | Phase C — entities                           |
+| ENT-A-012 (AntRobot)       | hitbox 2.75×1.25                            | Phase C — entities                           |
+| ENT-A-017 (AttackSquid)    | dimensions 1.0×1.25                         | Phase C — entities                           |
+| ENT-A-023 (BandP)          | size 0.75×1.75 + worn-gear armor clamp 8–23 | Phase C — entities                           |
+| ENT-A-031 (Basilisk)       | fire immunity                               | Phase C — entities                           |
+| ENT-A-040 (Bee)            | size 1.5×2.5                                | Phase C — entities                           |
+| ENT-A-060 (Brutalfly)      | size 5.0×2.0 + fire immunity                | Phase C — entities                           |
+| ENT-A-072 (CaterKiller)    | size 2.9×4.6                                | Phase C — entities                           |
+| ENT-A-078 (CaveFisher)     | size 1.35×0.75                              | Phase C — entities                           |
+| ENT-A-091 (CloudShark)     | size 1.0×0.75                               | Phase C — entities                           |
+| ENT-A-100 (Crab)           | scale-driven size 3.75×3.5×scale            | Phase C — entities                           |
+| ENT-A-103 (Crab)           | attack/splash sounds                        | Phase C — entities                           |
+| ENT-A-106 (CreepingHorror) | size 0.75×0.5                               | Phase C — entities                           |
+| ENT-K-051 (PitchBlack)     | continuous scale model (vs discrete tiers)  | Phase C — entities (renderer follow-through) |
+| ENT-K-068 (Robot4)         | difficulty-scaled melee 15/20/25            | Phase C — entities                           |
+| ENT-S-006 (SeaMonster)     | water speed-boost dead code (0.55 in water) | Phase C — entities                           |
+| ENT-S-061 (Urchin)         | fire immunity                               | Phase C — entities                           |
+| ENT-S-068 (Vortex)         | fire immunity                               | Phase C — entities                           |
+| BOSS-006 (TheQueen)        | +2/+3/+5 phase armor scaling                | Phase C — bosses                             |
+| BOSS-026 (ThePrinceTeen)   | size 3.25×4.25                              | Phase C — bosses                             |
+| ANIM-012 (rider controls)  | Elevator riding (entity port)               | Phase D — missing features (rider elevator)  |
+
 
 ---
 
@@ -241,6 +257,7 @@ Detailed per-value / per-entity citation tables live in `phase_b_reports/` —
 each is the authoritative record for its stream; this log summarizes and indexes them.
 
 ### B1 — Double-drop architectural consolidation — FIXED (ENT-SYS-001, ENT-SYS2-001 + 36 per-entity drop findings)
+
 - **Report:** `phase_b_reports/B1_drops.md` (per-entity original lists, citations, divergences removed) plus the Leon/Cephadrome rows in `phase_b_reports/B3_riders.md` §Task 7.
 - **Architecture (uniform):** the loot-table JSON is the single source of truth for item death-drops; every duplicating `dropCustomDeathLoot` override was deleted and each JSON rewritten to the exact original 1.7.10 drop list (40 entities + Kraken/Godzilla/TheQueen/TheKing; Dragon's leftover override removed in integration). Non-item death behavior (Mothra's 20-moth burst, Brutalfly's/CaterKiller's butterfly bursts, Queen→Princess and King→Prince spawns) moved to `die()` with citations.
 - **Exceptions (justified individually in the report):** TheKing keeps the code path for its 150+150 random item/block-registry draws (inexpressible in JSON; duplicated JSON pools emptied instead); BandP keeps code for its dynamic stolen-item stash and its variant-gated nugget drop (loot conditions cannot read either); enchanted gear everywhere uses one `minecraft:enchant_randomly` per item in place of the original's 0–7 independent per-enchantment dice (uniform documented approximation — PARITY_NOTES PN-005).
@@ -249,18 +266,21 @@ each is the authoritative record for its stream; this log summarizes and indexes
 - **MISSING-ITEM:** `MyHammy` (orig Hammerhead 1-in-3 drop) is not registered in the port; omitted, no substitute invented — backlog for Phase D.
 
 ### B2 — MobStats reconciliation — FIXED (ENT-SYS2-002 + 65 per-entity stat findings)
+
 - **Report:** `phase_b_reports/B2_mobstats.md` — one row per stat value (HP/ATK/ARMOR/SPEED/XP), each with its own orig citation; no batch assertions.
 - **Change:** `MobStats.java` rewritten as the live single source of truth: 59 constants copied exactly from `orig OreSpawnMain.java:6466-6525`, each Javadoc-cited; every table entity's `createAttributes()` now reads from it (ARMOR added wherever the original had defense). Entity-side original overrides honored and documented (Leon hardcodes 250/55/16; Crab reads PitchBlack health — original bug preserved; King/Queen/Godzilla armor boosts kept on corrected bases). Hardcoded melee floats (SpiderRobot 50f, AntRobot 35f, Crab) replaced with the ATTACK_DAMAGE attribute. xpReward reconciled where the original sets experienceValue. Original config clamping (orig `:6066-6096`) deferred to the config findings (Phase E).
 - **Critical discovery fixed (not in audit):** vanilla 1.21.1 clamps MAX_HEALTH to 1024 / ATTACK_DAMAGE to 2048, so every big boss silently ran at 1024 HP. Fixed via AT `public-f ... RangedAttribute maxValue` + cap raise to 100000 in the mod constructor (`OreSpawnMod.java`).
 - **Audit corrections:** ENT-D-024 (RedAnt) and ENT-D-060 (Hydrolisc HP/speed) VERIFIED-CORRECT with orig citations; Hydrolisc's missing ARMOR 10 (which the audit missed) added.
 
 ### B3 — Rider flight + mounted attacks — FIXED (ENT-K-017, ENT-K-044, BOSS-027, BOSS-033, BUG-020, ENT-S-017/018/019)
+
 - **Report:** `phase_b_reports/B3_riders.md` (per-mount original physics constants, all cited).
 - **Change:** new shared `entity/ai/RiderFlightController.java` — a line-by-line port of the original's hand-rolled ridden physics (hover, terrain-follow, yaw lag, fly-up/FAST-jump, smoothed throttle, friction), parameterized per mount with citation-carrying `Config` records. Mounts now use the vanilla-horse client-predicted pattern (`getControllingPassenger` + `tickRidden` + `travel` guard): Dragon (refactored off server-side movement — closes BUG-020), Leon + Leonopteryx, Cephadrome, Ostrich (runner: FAST jump `+1.0 + v*6.0`, 20-tick latch), ThePrinceTeen/Adult (saddle-free mounting + strafe-key canon trio per the originals). SpiderDriver: 8-mounted/20-on-foot armor via stable AttributeModifier, and the mounted branch now steers the robot and actually attacks (melee + Poison 60t, 1-in-2, 16t cooldown).
 - **Invention removed:** Dragon's G-key big-fireball volley had no original counterpart — riderSpecial is now a no-op; Dragon's real ridden projectiles are strafe-key driven, ported per `orig Dragon.java:1060-1161`.
 - **Noted, not done here:** Elevator exists in the port but keeps the generic ±0.15 Δy fallback (proper port = Phase D backlog).
 
 ### B4 — Animation frequency mistranslation — FIXED (systemic `wingspeed → limbSwingAmount` finding, 08_animations)
+
 - **Report:** `phase_b_reports/B4_animations.md` (per-file expression counts + wingspeed sources).
 - **Change:** 342 trig-frequency expressions across 41 model files restored from `limbSwingAmount` (runtime movement → frozen idle animations) to the original constructor-constant `wingspeed`, every coefficient preserved and every constant cited from `orig ClientProxyOreSpawn.java`; follow-up pass corrected 12 more models that had the right structure but a wrong 1.0 constant (Basilisk 0.3, Cassowary 0.55, Princes 0.65, …). `ButterflyModel` takes wingspeed per entity (Butterfly 1.0 / LunaMoth 0.75 / Mothra 0.2). Urchin's double-applied amplitude fixed to orig (frequency×wingspeed, amplitude×f1). Mothra render scale 5.0 → 10.0 and LunaMoth scale 1.5 restored (orig proxy:407,411).
 
@@ -269,42 +289,49 @@ each is the authoritative record for its stream; this log summarizes and indexes
 ## Phase C — Category fixes (2026-06-11)
 
 ### Phase C slice 1 — entities A–C
+
 - **Report:** `phase_c_reports/C1_entities_A_C.md` (per-finding orig citation / old / new value tables).
 - **Scope & outcome:** 61 ENT-A findings (48 open DIVERGENT + 13 carried-forward PARTIAL remainders): **46 FIXED, 3 VERIFIED-CORRECT, 12 PARTIAL** (remainders all named with owners — mostly ENT-SYS-002 spawn-rule gates and unported entities/items for Phase D). Hitboxes and fire immunity restored in `ModEntities` for 12 entities (incl. Crab's scale-driven dims and CaterKiller's PlayNicely halving); 11 loot JSONs rewritten to the original drop lists; Bertha/BerthaHit damage (496/746/82), per-type ranges (81/101/64) and the `bigBerthaPvp` gates restored incl. the original operator-precedence quirk; behavior parity restored for Alien (Poison), AntRobot (melee throttle + ridden stomp), BandP (steal-every-hit, 100-slot stash), Basilisk (bite effects + custom sounds), Boyfriend (cooked-beef tempt, panic, door-opening), Camarasaurus (diet + tamed poppies), CaterKiller (metamorphosis + tree-eat heal, inventions removed), CaveFisher (passive-mob predation), Cephadrome (target list + EnderDragon/Kraken handling), Chipmunk (apple/dead-bush), Cockateil (bird-type randomization), Crab (scale dice + water ecology + sounds), CreepingHorror (spawn rules), Cryolophosaurus (proactive hunting), CrystalCow (RedCow lineage), LaserBall (immunity list). Spawn biome modifiers rebuilt against the original registrations for Alien/Alosaurus/BandP/Baryonyx/Basilisk/Bee/Boyfriend/Brutalfly/Camarasaurus/CaterKiller, incl. a new Mining-dimension spawn list. Audit errors corrected with proof: ENT-A-004/005 (Poison + real drop items), 006/011 (Mining-dim spawn lists, no overworld addSpawn), 023 (no armor clamp), 026 (emeralds), 035/064 (real biome lists), 042 (Poison), 045 (tier values already correct), 100 (live crab width 2.5).
 - **Finding IDs:** 001, 002, 004, 005, 006, 011, 012, 013, 014, 015, 017, 023, 025, 026, 027, 029, 031, 033, 035, 036, 037, 040, 042, 044, 045, 047, 048, 049, 051, 054, 057, 060, 064, 068, 070, 071, 072, 074, 075, 077, 078, 080, 081, 082, 087, 090, 091, 093, 095, 097, 098, 100, 101, 102, 103, 106, 109, 110, 112, 113, 114 (all ENT-A).
 - **Build:** `.\gradlew.bat build` → BUILD SUCCESSFUL.
 
 ### Phase C slice 2 — entities D–I
+
 - **Report:** `phase_c_reports/C2_entities_D_I.md` (per-finding orig citation / old / new value tables).
 - **Scope & outcome:** 34 open DIVERGENT ENT-D findings: **18 FIXED, 1 VERIFIED-CORRECT, 15 PARTIAL** (remainders → ENT-SYS-002 spawn-rule/date gates, Phase D). Dragon re-tamed/healed with raw beef and the diamond→Spyro rebirth restored (audit's "Magic Apple" was wrong); EntityCage's ~100-species whitelist rebuilt with per-species escape dice, multi-count drops (Bat/Silverfish/Dragonfly ×2, Cockateil ×4, AttackSquid ×6) and the unlisted-mob/tamed-GF-BF/player branches; EmperorScorpion's invented summon timer replaced by the orig 1-in-80 midpoint dice; ThrownRock t5 damage, Weakness-not-Wither effects, 50s ignite, 12-type rock recovery and 3×3×3 glass-breaking (new combined `glassdead` + `hover` sound events, the latter fixing the Hoverboard's beacon hum); Hammerhead boss bar removed. Drops rewritten to the originals for DungeonBeast (crystal ingot/apple/oak-log/nothing), Fairy (crystal torch), Firefly (extreme torch), GammaMetroid (gold nuggets), Gazelle (tamed-poppies/untamed-beef via new `OreSpawnTamed` NBT flag), Ghost/GhostSkelly (nothing), GiantRobot (60–116 laser balls + 10-item kit pool incl. detector rail — audit's "piston-head" was wrong). Spawns rebuilt against the original registrations for Dragon/DungeonBeast/EasterBunny/EnderKnight/EnderReaper/Fairy/Flounder/Frog/GammaMetroid/Ghost/GhostSkelly/Girlfriend/GoldFish/Hammerhead/Hydrolisc/Irukandji — invented End/Nether/ocean/cave habitats removed, Utopia-sub-biome (Island/Crystal/Chaos) and Mining-dim lists populated, Girlfriend's 12-entry per-biome map (beach w30 8–15 hotspot) restored. Audit errors corrected with proof: ENT-D-006 (diamond, not apple), 014 (no population condition), 027 (orig has no mobGriefing gate), 036 (Mining dim, not Crystal/Nether), 037 (poppies only when tamed), 045 (detector rail), 057/063 (Chaos/Crystal sub-biome lists), 039/041 (the w15-3–6 22-biome block is Halloween-only).
 - **Finding IDs:** ENT-D-002, 003, 004, 006, 008, 009, 011, 012, 014, 018, 021, 022, 025, 026, 027, 029, 030, 031, 032, 033, 035, 036, 037, 038, 039, 040, 041, 045, 050, 053, 055, 057, 061, 063.
 - **Build:** `.\gradlew.bat build` → BUILD SUCCESSFUL.
 
 ### Phase C slice 3 — entities K–R
+
 - **Report:** `phase_c_reports/C3_entities_K_R.md` (per-finding orig citation / old / new value tables).
 - **Scope & outcome:** 26 open DIVERGENT ENT-K findings + 2 carried-forward PARTIAL remainders (051, 068): **25 FIXED, 2 VERIFIED-CORRECT, 1 PARTIAL** (Rat spawn gates → ENT-SYS-002, Phase D). Kraken's custom kraken_living/alo_death sounds wired and its invented natural ocean spawn removed (orig is spawner/summon-only); Kyuubi Nether weight 5→10; LeafMonster prey restored to the Ant/Butterfly/LunaMoth/player allow-list (PlayNicely-gated) and its drops to the orig log/leaves/rotten-flesh one-of; Leon untames with dead bush (audit's "carrot tame" was wrong — beef was already correct) and all three invented Leon/Leonopteryx natural spawns removed (dungeon spawners are the orig path); Lizard seeks WATER (not fire — and not lava either, audit half-wrong) and spawns river/swamp/ocean w5/w4/w2 2-4; LurkingTerror drops beef/flint/feather; MantisClaw's lifesteal restored to the orig silent heal(-1)/heal(+1) drain (no potion effects, no invuln frames); Ostrich verified cactus-only-immune (audit misread the inversion) and its tamed-poppy/untamed-feather drop split restored; Peacock breeds with Crystal Apple (not wheat); PitchBlack's scale model restored to the orig five discrete t ∈ {0.5,1,2,3,4} with the cascading 1/4-1/8-1/32-1/64 dice, 2.5t×3.5t hitbox and NightmareSize forcing (audit's "continuous scale" was wrong, and the flight formula 0.5+t/10 was already the orig's); PurplePower type-2/type-3 effects corrected to Poison/Weakness; Rat configs rescoped to OWNED rats only (orig defaults are true — audit's flip-to-false fix would have diverged), drop corrected to rotten flesh, and swarm spawns rebuilt (dark_forest w35 10-20 + taiga w25 2-8); Robot2-5 loot rebuilt from the originals (iron blocks/ingots, 20-56 laser balls each, the shared d15 redstone-component table, Robot4's RayGun + painting); Robot4's "15/20/25 difficulty melee" proven dead code (never called + internally bugged) — melee is the attribute 12; Rotator drops the crystal-ingot one-of pool; RubberDucky tames with raw fish and untames with dead bush; RubyBird's natural crystal-plains spawn removed (ruby dungeons are ported) and its bespoke day-only sound wired.
 - **Finding IDs:** ENT-K-004, 005, 009, 013, 014, 019, 021, 023, 024, 027, 033, 045, 046, 050, 051, 056, 058, 059, 060, 064, 066, 068, 071, 073, 081, 083, 088, 089.
 - **Build:** `.\gradlew.bat build` → BUILD SUCCESSFUL.
 
 ### Phase C slice 4 — entities S–Z
+
 - **Report:** `phase_c_reports/C4_entities_S_Z.md` (per-finding orig citation / old / new value tables).
 - **Scope & outcome:** 27 open DIVERGENT ENT-S findings + ENT-SYS-003 + 3 carried-forward PARTIAL remainders (006, 061, 068): **22 FIXED, 9 PARTIAL** (all nine are spawn findings whose weights/biomes JSON half is done; the `func_70601_bi` gate remainders → ENT-SYS-002, Phase D). SeaMonster's water speed-boost wired into MOVEMENT_SPEED (0.55 in water / 0.25, per-tick like the orig) and its ocean w4 + swamp w2 spawns restored; SeaViper bite restored to Poison with the orig 6s/8s-easy duration quirk (audit's flat 8s was wrong); StinkBug death gas corrected to Nausea (not Poison — audit wrong) in the exact −5..+10 vertical box, and its food to Crystal Apple only (the raw-fish isWheat is dead code); Stinky's item economy rebuilt — front burp now drops COAL with the burp sound, the 19-skin rear table restored item-for-item (blaze powder…peach seed) with the `orespawn:fart` sound (new aggregate `fart` event = random fart1-9, matching the 1.7.10 sounds.json); TRex wired to trex_living/alo_hurt/trex_death; UltimateArrow damage = ceil(velocity × ultimateBowDamage config) per the orig, with the bow's self-enchant restored to the orig fixed Power 5; VelocityRaptor's invented riding removed entirely (orig is a plain tameable) and its drop corrected to TAMED-only poppies 2-6 via the OreSpawnTamed flag; Spyro's drop likewise corrected to TAMED-only beef 1-4 (audit's "apple" was wrong); Vortex's invented skywardLaunch attack (and its false "signature 1.7.10 attack" comment) removed, its drops rebuilt (vortex eye + painting + the d10 stick/ingot/nugget/irukandji/crystal-coal pool — audit's "bone" was wrong), and `.fireImmune()` added to Vortex and Urchin; Skate drop corrected to STRING (audit's "raw fish" was wrong); Scorpion/SpitBug/SpiderRobot/TerribleTerror/WormSmall loot rebuilt from the originals (10% nugget one-of; 1-3 amethyst gems; 14-27 rolls of the shared d15 redstone table; flesh/emerald/feather one-of; nothing). Spawn domains rebuilt against the orig registrations: TRex/TerribleTerror/Urchin/Vortex/Skate/Spyro/VelocityRaptor/WormSmall pulled from invented overworld/ocean/Nether lists and placed into their real Island/Crystal/Chaos/Mining dimension lists; Stinky's Nether w2 + mesa-group ambient spawns restored. ENT-SYS-003 closed: the CaterKiller/Cryolophosaurus false-parity comments were corrected with the C1 behavior fixes, and the last one found (Vortex) is removed here. Audit errors corrected with proof: ENT-S-010 (duration), 014 (string), 026 (amethyst gems), 028 (tamed beef), 030 (nausea), 031 (crystal apple only), 044/062/071 (real dim lists — the audit misattributed `BiomeGenUtopianPlains` sections by one), 015/029/067 (single-dim spawn sources), 066 (tamed-gated 2-6), 070 (painting + d10 table, no bone).
 - **Finding IDs:** ENT-S-004, 006, 008, 010, 014, 015, 023, 026, 028, 029, 030, 031, 033, 035, 039, 040, 044, 045, 057, 061, 062, 065, 066, 067, 068, 069, 070, 071, 079, 080; ENT-SYS-003.
 - **Build:** `.\gradlew.bat build` → BUILD SUCCESSFUL.
 
 ### Phase C slice 5 — bosses
+
 - **Report:** `phase_c_reports/C5_bosses.md` (per-finding orig citation / old / new value tables).
 - **Scope & outcome:** 16 open DIVERGENT BOSS findings + 2 carried-forward PARTIAL remainders (006 Queen phase armor, 026 PrinceTeen size): **18 FIXED, 0 VERIFIED-CORRECT, 0 PARTIAL**. King and Queen restored to the original 22×24 envelope (EntityType + the Queen's MHLib main-hitbox, which was the live 16×12 box; part/bone damage routing untouched) — this also re-aligns the King's `MyCanSee` height·7/8 sight origin to the orig y+21; the King/Queen spawner blocks rebuilt to the original contract (100-tick fuse on placement, spawner + block above → air, spawn at y+8 with living sound, `setGuardMode(1)` home leash, new `theKingEnable`/`theQueenEnable` configs default-true per orig OreSpawnMain.java:6434-6435 — a disabled spawner still consumes itself); Queen's +2/+3/+5 phase armor override ported verbatim incl. the orig's unreachable +3/+5 branches (effective bonus always +2 — documented quirk), and her invented dormant-phase invulnerability removed (the blue→red Geckolib wake-up is now purely cosmetic; first hit damages normally per 1.7.10); Godzilla switched off Ender Dragon audio onto orespawn godzilla_living (1-in-5)/alo_hurt/godzilla_death; ThePrince feeding heals nutrition×10 (not flat 20), grows with DIAMOND (not gold ingot, invented cake shortcut removed) and hunts the original prey list (Mothra/Butterfly/Cockateil/Dragonfly/Mosquito restored); PrinceTeen resized 3.25×4.25 and its invented gold-ingot teen→baby regression deleted; PrinceAdult resized 6.25×10.25, its King transform re-gated on the full orig condition (idle + riderless + !Peaceful + tamed + `fullPowerKingEnable`) with `king.setFree()` restored (isEnd end-game sequence) — the port's invented "King deals ×2 damage" repurposing of that config was removed — and its sounds restored to king_living (aggro+riderless only)/king_hit/trex_death; Prince/Princess loot → 1–4 beef, PrinceAdult loot → Prince Egg ×1. PlayNicely shrink/targeting remains with BOSS-017 (open PARTIAL).
 - **Finding IDs:** BOSS-002, 005, 006, 007, 010, 012, 016, 018, 020, 024, 025, 026, 029, 031, 032, 035, 036, 042.
 - **Build:** `.\gradlew.bat build` → BUILD SUCCESSFUL.
 
 ### Phase C slice 6 — items & blocks
+
 - **Report:** `phase_c_reports/C6_items_blocks.md` (per-finding orig citation / old / new value tables); recipe diff table in `phase_c_reports/C6_recipe_diff.md`.
 - **Scope & outcome:** 58 open ITEM- findings (33 DIVERGENT + 19 PARTIAL + 6 UNVERIFIED): **53 FIXED, 5 PARTIAL** (020 dungeon structure pool → WGEN-042; 023 placed-cage block form; 053 Shoes/GameController throwables; 062 absent recipe families; 064 Mining-dim density → WGEN-011 — all Phase D), 7 MISSING skipped per ground rules. Block stats restored number-by-number (ore hardness/resistance incl. titanium 15.0/5.0, gem-block light 6/3/7/6, crystal-ore ctor parameter shift unwound, Lavafoam 5.0/5.0 friction 1.1); behavior parity for OreBasicStone (15–20 mobs, no Silk Touch escape), uranium/titanium y<40 XP, egg blocks (5–9 XP — the audit's "5–11" and the port's item-dupe both wrong), Pizza/DuctTape left-click, RTP stepOn, MoleDirt sunken box, CrystalFurnace (150t cook + 20000/800/400 crystal fuels), ExtremeTorch Cephadrome offsets, repellent 10t pulse, corn height cap 4–7, AppleLeaves Islands-only night transform, DuplicatorTree incremental build + 5×5 copy; 19 crop loot JSONs rebuilt. Weapons: UltimateSword/RoyalGuardian/Battle-axes/Nightmare/Poison/Experience/BigHammer/MantisClaw enchants+durabilities corrected (Bertha-class 9000 family incl. Slice rebuilt as the orig plain clone), Chainsaw's real identity restored (no enchants; 56-damage r=5 AoE + 11×16×11 tree crush + saw sound), Bertha's invented reach/kill-counter removed. UltimateBow back to instant-fire velocity 3.0 / baked Power 5 / 1-in-4 crit; SkateBow Infinity bypass + pull cap; UltimateFishingRod Unbreaking 2 (invented Luck/Lure removed). Gadgets rebuilt to the orig structures: InstantGarden 18×15, InstantShelter 7×7 (exact chest list), StepUp/Down/Across 8-way + extreme torches, ZooKeeper persistence (dur 1), Sifter's five weighted tables, Wrench/robot-kit health carry-through. All 14 armor sets' durability multipliers + enchantabilities fixed (they were swapped/scaled), four sets' baked enchants corrected, peacock glide un-gated from royalGlideEnable. Recipes: 381 orig registrations script-diffed — 59 JSONs rewritten to the originals, 16 invented recipes removed (ray gun craft, royal gear set, robot kits, pizza/island/lavafoam blocks…), uranium/titanium smelting → nuggets XP 0.3, salt/popcorn back to smelting; kyanite system documented as a port addition (→ WGEN-024). lessOre wired via the new `orespawn:less_ore_count` placement modifier (ores ÷3, troll blocks ÷2). Projectile family verified number-by-number; invented LaserBall/IceBall cooldowns and the invented Coin item removed; DeadIrukandji throw, WaterBall 1-in-10 drop, urchin fire restored. Audit errors corrected with proof: ITEM-007 (uranium/titanium blocks are 5.0/5.0 light 3/7, not 4.0/4.0 light 6), ITEM-021 (orig XP 5..9, not 5–11), ITEM-061 note (orig :3084 crafts a wooden door, not a piston).
 - **Finding IDs:** ITEM-001..021, 023..028, 030..056, 058, 059, 062, 064.
 - **Build:** `.\gradlew.bat build` → BUILD SUCCESSFUL.
 
 ### Phase C slice 7 — worldgen
+
 - **Report:** `phase_c_reports/C7_worldgen.md` (per-finding tables incl. rate-equivalence math, audit-error proofs, Phase D owners).
 - **Scope & outcome:** 39 open WGEN- findings (14 DIVERGENT + 17 PARTIAL + 8 UNVERIFIED): **29 FIXED, 5 VERIFIED-CORRECT** (009, 041, 046, 047, 050), **5 PARTIAL** (005 SpawnOres pool, 014/018/033 missing structures, 036 spawner-outcome table — remainders all Phase D structure/spawn-block scope), 0 still-UNVERIFIED; 11 MISSING skipped per ground rules. Ore veins rebuilt on a new `orespawn:vein_count` placement modifier (`OreSpawnVeinPlacement`) that reproduces the original `rate + nextInt(dice)` attempts, the y=nextInt(128) reject-outside-window rule, the LessOre ÷3 (÷2 trolls) truncation, and the Mining-dim ×3 passes — uranium/titanium/amethyst/salt/troll values restored number-by-number; ruby reverted to the orig lava-seek single-block placement (`RubyLavaSeekFeature`) in overworld/Utopia-only dungless dims, plus Mining triple pass and the previously-absent Nether lavafoam/ruby and Mining lapis boost. Islands and Chaos got real noise settings (flat bedrock/dirt/grass plane; nether-shaped 128-high stone) replacing floating_islands/overworld noise; Mining/Village gained vanilla mineshafts/strongholds, water/lava lakes (1/4, 1/8) and 8×monster rooms. Anthills (redfreq per dim), veggie patches, and Islands unstable anthills are now world-placed. Five biome spawn rosters rebuilt from `BiomeGenUtopianPlains`/`ChunkProviderOreSpawn2` (incl. the inherited vanilla + Utopia layers in Village, the full ~55-entry Chaos list, Mining's dino/alien roster); inventions (rat/worms/beaver/vampire-butterfly…) and weight-doubling `dim_*_locals` duplicates removed. Structures: shadow/WTF/leonopteryx/beehive sets re-spaced to 26/13 (1/665 Mining rotation odds), beehive re-homed to Mining, greenhouse/robot-lab/white-house + challenge towers re-homed to Islands (towers ARE original — `makeEnormousCastle(Q)`), royal altars 45/22 (1/2000), redundant crystal maze/tower datapack duplicates deleted (code path is authoritative), generic-dungeon spawner pool restored to the exact `nextInt(12)` ladder and generic/ruby chest loot transcribed to loot tables (5+d7 / 4+d7 rolls); ruby dungeon back to Utopia lava-adjacent placement. 11 crystal egg-ore blocks (`OreGenericEgg`, XP-on-break — audit's "break-to-spawn" claim disproven) registered with original assets and wired into the crystal sphere generator. Termite Crystal-travel empty-inventory/armor gate and ant pet co-teleport (48×24×48 box) ported. WGEN-024 decided: pink-tourmaline vein removed, kyanite vein kept as the documented crafting-chain exception (PN-009); PN-010 (SpawnOres reduction), PN-011 (Utopia portal block) added. Audit errors corrected with proof: WGEN-017 (Jeffery=giant_robot, Criminal=band_p), WGEN-023 (eggs drop XP, never spawned mobs), WGEN-031 (Chaos visuals are vanilla), WGEN-035 (ruby dungeon is Utopia-only), WGEN-039 (port was 32/16, not 26/13), WGEN-043 (towers exist in orig, Islands placement), WGEN-046 (ScragglyTreeWithBranches is dead code; SmallTree is IslandToo-only).
 - **Finding IDs:** WGEN-001, 002, 005, 006, 008..012, 014, 016..020, 022..036, 039..041, 043, 046..050.
@@ -321,6 +348,7 @@ each is the authoritative record for its stream; this log summarizes and indexes
   - Crystal egg ores: in the Crystal dimension sphere shells, break oreurchin/orerat/etc. blocks — expect the block item + occasional 5-9 XP, NO mob spawn.
 
 ### Phase C slice 8 — animations & GUI
+
 - **Report:** `phase_c_reports/C8_animations_gui.md` (per-finding orig citation / old / new value tables, audit-error proofs, Phase D owners).
 - **Scope & outcome:** 15 open ANIM- findings (6 DIVERGENT + 9 PARTIAL): **11 FIXED, 3 VERIFIED-CORRECT** (015 duplicate of ITEM-016; 019/020 stale — PurplePower repel and all six dimension teleports already exist), **1 PARTIAL** (006 — all legs now render; canned-sine gait vs the orig RenderSpiderRobotInfo leg solver → Phase D entity-AI owner), 2 MISSING skipped per ground rules (014, 016). The original's generic `RenderInfo` POJO recreated as a per-entity client scratch (`entity/client/RenderInfo.java`) and attached to Kraken/Rotator/Robot2/Robot3 — the audit's "server-synced ri1" claim disproven (orig never datawatcher-synced it; the real divergence was per-entity vs model-singleton state). Rotator restored to the 24-blade tri-axis gyroscope (each blade 8× at 45° steps, fans spun on X/Y/Z by per-entity rf1 +2°/frame wrap 359°); GiantRobot got its full walk cycle back (movescale clamp, hip sway/bob, two-phase thigh/shin) with two-pass shared-part leg/arm rendering and the getAttacking()-gated punch windmill — obviating ANIM-014's holder class (orig recomputes every pose per frame); SpiderRobot now poses-and-renders each of its 8 legs inside the loop (same bug found+fixed in ModelAntRobot, 6 legs); Robot2/3/4 arm animations re-gated on getAttacking() (Robot2 random per-arm windmill via ri1 re-roll at sine zero crossings; Robot3 latch-at-cosine-crossing; Robot4 shield pump |cos|·45°+0.75 and cannon aim 0.85 rad with the pivot-following cannon assembly, shin rest offsets corrected); Rat's attack-vs-idle TAIL thrash restored (audit said "head bob" — orig ModelRat.java:116-120 only animates the tail) with leg phase signs fixed and the invented head yaw removed. Fly-up keybind default reverted to Left Alt (orig LWJGL 56); fly-down/special documented as port-only. The HUD rewritten to the original universal pointed-at-mob health bar: crosshair pick entity + 16-block ray-trace fallback, ~45-type eligibility chain with ownership/activity gates and special cases (phasing Worm, BandP Banker/Politician, >0.75-scale Crab), textured 182×5 girlfriendgui.png bar (texture copied from orig assets) at y=25/15 with the 0xFF3434 name 10px above, GUI_OVERLAY_ENABLE gate kept. ExperienceCatcher restored to the original single-orb mechanic (1×2×1 click column, value ≥3, 80% roll → Bottle o' Enchanting + string + stick, catcher consumed unless creative; miss drops the catcher). Per-mob spawn flags completed: 56 config entries added (orig OreSpawnMain.java:6364-6465; boyfriendEnable default false, orig key spellings nightmareEnable/criminalEnable kept) and ~65 ModSpawnControl map entries wired incl. bosses, water mobs, Robots 1-5, ambients and all cow variants under cowEnable; KrakenRevengeHandler now respects KRAKEN_ENABLE. Crystal Furnace verification side-find fixed: fuel container item left behind when the stack empties (lava bucket → empty bucket, orig TileEntityCrystalFurnace.java:165-170).
 - **Finding IDs:** ANIM-002, 003, 005, 006, 007, 008, 009, 010, 011, 013, 015, 017, 018, 019, 020.
@@ -344,9 +372,9 @@ The end-of-C checkpoint reported 394 terminal findings; that figure was wrong on
 counts and is corrected here for the record (script: `tools/ledger_reconcile.py`):
 
 - The per-phase closure totals (A 13 + B 117 + C 284 = 414) count closure EVENTS, not
-  unique IDs: 20 of Phase B's 21 carried-forward PARTIALs were re-counted when Phase C
-  closed their remainders (13 in C1, 2 in C3, 3 in C4, 2 in C5; ANIM-012's Elevator
-  remainder went to Phase D, not C). 414 − 20 = 394 unique IDs *touched*.
+unique IDs: 20 of Phase B's 21 carried-forward PARTIALs were re-counted when Phase C
+closed their remainders (13 in C1, 2 in C3, 3 in C4, 2 in C5; ANIM-012's Elevator
+remainder went to Phase D, not C). 414 − 20 = 394 unique IDs *touched*.
 - Of those 394, 49 carry `Resolution: PARTIAL`, which is NOT a terminal state.
 
 **True ledger after Phase C: 345 terminal (326 FIXED + 19 VERIFIED-CORRECT +
@@ -360,32 +388,34 @@ counts and is corrected here for the record (script: `tools/ledger_reconcile.py`
 ## Phase D preliminaries — PN-009 closure (2026-06-13)
 
 ### WGEN-024 / PN-009 — kyanite branch removal (owner decision: Option A)
+
 - **Decision:** faithful replication. The Phase-10 invented kyanite/pink-tourmaline
-  branch is removed from the parity build; its complete design (blocks, items, tier
-  stats, armor values, recipes, worldgen) is archived in MODERNIZATION_NOTES MOD-009
-  as a deliberate 2.0 content candidate, including the world-compat impact (branch
-  items vanish from existing port worlds on load).
+branch is removed from the parity build; its complete design (blocks, items, tier
+stats, armor values, recipes, worldgen) is archived in MODERNIZATION_NOTES MOD-009
+as a deliberate 2.0 content candidate, including the world-compat impact (branch
+items vanish from existing port worlds on load).
 - **Files deleted (35):** `ModBlocks` ORE_KYANITE/ORE_PINK_TOURMALINE, `ModItems`
-  KYANITE/PINK_TOURMALINE gems + 2 BlockItems + 5 kyanite tools + 4 kyanite armor,
-  `ModToolTiers.KYANITE`, `ModArmorMaterials.KYANITE`, 13 `ModCreativeTabs` rows;
-  data: 13 recipe JSONs, 2 block loot tables, `add_crystal_dim_ores` biome modifier,
-  `ore_kyanite` configured+placed features, 2 tag entries (mineable/pickaxe,
-  needs_iron_tool); assets: 2 blockstates, 2 block models, 13 item models, 12 lang
-  entries.
+KYANITE/PINK_TOURMALINE gems + 2 BlockItems + 5 kyanite tools + 4 kyanite armor,
+`ModToolTiers.KYANITE`, `ModArmorMaterials.KYANITE`, 13 `ModCreativeTabs` rows;
+data: 13 recipe JSONs, 2 block loot tables, `add_crystal_dim_ores` biome modifier,
+`ore_kyanite` configured+placed features, 2 tag entries (mineable/pickaxe,
+needs_iron_tool); assets: 2 blockstates, 2 block models, 13 item models, 12 lang
+entries.
 - **Display names restored:** `crystal_stone` family renamed to the original 1.7.10
-  strings — block "Kyanite" (orig `OreSpawnMain.java:3029`), tools "Kyanite
-  Sword/Pickaxe/Shovel/Hoe/Axe" (orig `:3239-3243`); they were shipping as "Crystal
-  Stone ...".
+strings — block "Kyanite" (orig `OreSpawnMain.java:3029`), tools "Kyanite
+Sword/Pickaxe/Shovel/Hoe/Axe" (orig `:3239-3243`); they were shipping as "Crystal
+Stone ...".
 - **Verification:** `git grep kyanite|tourmaline -- src/` → only two explanatory
-  comments remain; the original chain (crystal_stone + crystal_sticks → 5 tools,
-  `:3244-3252`; ×8 → Crystal Furnace, `:3082`; tier 3/800/+6/ench 45, `:1507` =
-  `ModToolTiers.CRYSTAL_STONE` 800/6.0/5.0/45) is untouched. Build: see commit.
+comments remain; the original chain (crystal_stone + crystal_sticks → 5 tools,
+`:3244-3252`; ×8 → Crystal Furnace, `:3082`; tier 3/800/+6/ench 45, `:1507` =
+`ModToolTiers.CRYSTAL_STONE` 800/6.0/5.0/45) is untouched. Build: see commit.
 
 ---
 
 ## Phase D — slice D1: spawn architecture + dimension access (2026-06-13)
 
 ### Scope and method
+
 The original 1.7.10 sources contain **103** per-entity `func_70601_bi` overrides
 (extracted corpus: `phase_d_reports/D1_original_spawn_rules.md`, generated by
 `tools/extract_spawn_rules.py`). D1 ports every one of them as a `checkSpawnRules`
@@ -393,59 +423,64 @@ override, each citing its original file:line range in Javadoc. Coverage is verif
 mechanically: `tools/d1_gate_diff.py` reports **0 originals without a port gate**.
 
 ### Shared infrastructure (new)
+
 - `ModDimensionKeys` — the six dimension `ResourceKey`s mapped from the original
-  numeric IDs (OreSpawnMain.java:1595-1600): Utopia/Mining/Village/Islands/Crystal/
-  Chaos, plus the `isIn` helper used by every dimension-gated rule.
+numeric IDs (OreSpawnMain.java:1595-1600): Utopia/Mining/Village/Islands/Crystal/
+Chaos, plus the `isIn` helper used by every dimension-gated rule.
 - `entity/OriginalSpawnGates` — the five primitives every original gate combines:
-  spawner-proximity bypass (id-matched, the 1.7.10 name-string check in registry-id
-  form; single-pos variant `isOwnSpawner` for interleaved scans), clear-air/`boxMatches`
-  with the originals' inclusive bounds, `countBuddies`/`anyOtherNearby`,
-  `isDaytime` (func_72935_r), `isDarkEnough` (func_70814_o).
+spawner-proximity bypass (id-matched, the 1.7.10 name-string check in registry-id
+form; single-pos variant `isOwnSpawner` for interleaved scans), clear-air/`boxMatches`
+with the originals' inclusive bounds, `countBuddies`/`anyOtherNearby`,
+`isDaytime` (func_72935_r), `isDarkEnough` (func_70814_o).
 
 ### Gate batches
+
 - **Batch 1** (`tools/insert_spawn_gates.py`, 29 entities A-C + robots + misc) and
-  manual ports with side effects: AttackSquid, CaveFisher, Crab (spawner forces 0.35
-  scale), Rotator (`wasSpawnered`), Rat (Crystal air-pocket), Cephadrome (`badmood`),
-  WormLarge (`wormsSpawned`), PitchBlack (scale clamp + Chaos crowd check).
+manual ports with side effects: AttackSquid, CaveFisher, Crab (spawner forces 0.35
+scale), Rotator (`wasSpawnered`), Rat (Crystal air-pocket), Cephadrome (`badmood`),
+WormLarge (`wormsSpawned`), PitchBlack (scale clamp + Chaos crowd check).
 - **Batch 2** (`tools/insert_spawn_gates_d1b.py`, 31 entities): Boyfriend/Girlfriend
-  (spawner-else-super), Dragon, DungeonBeast (Crystal 25≤y≤28 + air-ring),
-  EasterBunny, EmperorScorpion (interleaved spawner-or-air scan), EnderKnight,
-  EnderReaper, GammaMetroid, HerculesBeetle, Kyuubi, Leon, Pointysaurus, PurplePower,
-  RockBase, RubyBird, SpitBug, Spyro, Stinky, TRex, TerribleTerror, TheKing,
-  ThePrince(+Adult/Teen `return false`), ThePrincess, TheQueen, Triffid, TrooperBug,
-  WormMedium, WormSmall; manual: **Vortex** (`wasSpawnered` + `busyFighting` — gate,
-  far-away-despawn exemption orig :64-72, daytime-discard guard orig :134-143).
+(spawner-else-super), Dragon, DungeonBeast (Crystal 25≤y≤28 + air-ring),
+EasterBunny, EmperorScorpion (interleaved spawner-or-air scan), EnderKnight,
+EnderReaper, GammaMetroid, HerculesBeetle, Kyuubi, Leon, Pointysaurus, PurplePower,
+RockBase, RubyBird, SpitBug, Spyro, Stinky, TRex, TerribleTerror, TheKing,
+ThePrince(+Adult/Teen `return false`), ThePrincess, TheQueen, Triffid, TrooperBug,
+WormMedium, WormSmall; manual: **Vortex** (`wasSpawnered` + `busyFighting` — gate,
+far-away-despawn exemption orig :64-72, daytime-discard guard orig :134-143).
 - **Batch 3** (`tools/fix_preexisting_gates.py`, 18 rebuilt): pre-existing gates
-  audited against the corpus (`phase_d_reports/D1_preexisting_gate_audit.md`); the
-  divergent ones rebuilt — Butterfly (spawner forces type 1, Islands), Dragonfly,
-  LunaMoth (night+Islands), StinkBug (spawner), Firefly (night+buddies+Islands),
-  Flounder (day), Frog (Crystal dice), Ghost/GhostSkelly (spawner; the canSeeSky
-  invention replaced with the original night check), Hammerhead (full chain),
-  Irukandji (day), Ostrich (day), SeaMonster (night+darkness), SeaViper (day),
-  Skate (day), VelocityRaptor (true day check, not canSeeSky), WaterDragon
-  (spawner+day), Whale (day); manual: **Urchin** (`wasSpawnered` + despawn guards
-  orig :87-107). Kept as-is (verified faithful): Beaver, Chipmunk, CloudShark,
-  CreepingHorror, Ant, Cricket, Mosquito, Termite (≡ inherited Ant rule), Fairy,
-  Gazelle, GoldFish, Lizard, CliffRacer, SpiderDriver, and the documented
-  config-gated adaptations Godzilla + Mothra.
+audited against the corpus (`phase_d_reports/D1_preexisting_gate_audit.md`); the
+divergent ones rebuilt — Butterfly (spawner forces type 1, Islands), Dragonfly,
+LunaMoth (night+Islands), StinkBug (spawner), Firefly (night+buddies+Islands),
+Flounder (day), Frog (Crystal dice), Ghost/GhostSkelly (spawner; the canSeeSky
+invention replaced with the original night check), Hammerhead (full chain),
+Irukandji (day), Ostrich (day), SeaMonster (night+darkness), SeaViper (day),
+Skate (day), VelocityRaptor (true day check, not canSeeSky), WaterDragon
+(spawner+day), Whale (day); manual: **Urchin** (`wasSpawnered` + despawn guards
+orig :87-107). Kept as-is (verified faithful): Beaver, Chipmunk, CloudShark,
+CreepingHorror, Ant, Cricket, Mosquito, Termite (≡ inherited Ant rule), Fairy,
+Gazelle, GoldFish, Lizard, CliffRacer, SpiderDriver, and the documented
+config-gated adaptations Godzilla + Mothra.
 
 ### Categories / placements / spawn entries (earlier this slice, same commit series)
+
 - MobCategory fixes: Coin + Cephadrome → AMBIENT, AttackSquid + RubberDucky →
-  WATER_CREATURE, WormLarge → CREATURE; placements registered accordingly.
+WATER_CREATURE, WormLarge → CREATURE; placements registered accordingly.
 - New BM JSONs: AttackSquid (river/swamp/ocean), RubberDucky (river/deep ocean),
-  Cephadrome (snowy), Coin (overworld), WormLarge (plains/savanna/plateau).
+Cephadrome (snowy), Coin (overworld), WormLarge (plains/savanna/plateau).
 
 ### Findings closed (45)
+
 - ENT-SYS-002, ENT-SYS2-003, ENT-SYS2-004 — the three systemic spawn findings.
 - WGEN-013 — verified already satisfied by the C7 roster rebuild (mining ambients).
 - 31 Phase-C PARTIALs whose remainder was the gate: ENT-A-006/011/027/029/035/044/
-  064/071/077, ENT-D-004/009/018/021/030/032/033/036/050/053/057/063, ENT-K-060,
-  ENT-S-008/015/029/035/040/044/062/067/071.
+064/071/077, ENT-D-004/009/018/021/030/032/033/036/050/053/057/063, ENT-K-060,
+ENT-S-008/015/029/035/040/044/062/067/071.
 - 6 category/spawn-entry findings: ENT-A-021/085/099, ENT-K-085, ENT-S-087, ENT-D-046.
 - Still PARTIAL (seasonal registration remainder only; gates done): ENT-D-011
-  (Easter), ENT-D-039/041 (Halloween) — owned by the seasonal-gates slice.
+(Easter), ENT-D-039/041 (Halloween) — owned by the seasonal-gates slice.
 
 ### WGEN-015 (PN-012) — approved 2026-07-02, committed
+
 Village-dimension villages: `worldgen/structure/dim_village.json` +
 `structure_set/dim_villages.json`, spacing 9 / separation 7 per
 MapGenMoreVillages.java:11-12. Owner approved Option A: the original delegated
@@ -455,9 +490,74 @@ OreSpawn's actual contribution — are exact. See PN-012 (APPROVED). No
 1.7.10-style template work planned (style was never OreSpawn content).
 
 ### Verification
+
 - `tools/d1_gate_diff.py`: 103 original rules, 0 missing in port.
 - `gradlew compileJava`: green after each batch.
 - Manual test notes: spawner-placed mobs (e.g. via `/setblock` spawner with mob id)
-  must spawn regardless of light/altitude gates; natural spawns of Alosaurus/TRex
-  etc. only at night above y50 with clear air; Vortex/Urchin/Rotator from spawners
-  must not despawn when the player walks away.
+must spawn regardless of light/altitude gates; natural spawns of Alosaurus/TRex
+etc. only at night above y50 with clear air; Vortex/Urchin/Rotator from spawners
+must not despawn when the player walks away.
+
+---
+
+## Phase D — slice D2: robot gait solvers, GiantRobot walk state, Elevator rider (2026-07-02)
+
+- **Report:** `phase_d_reports/D2_gait_elevator.md` (full citation tables).
+- **ANIM-006 — FIXED (remainder closed).** The canned-sine gait in SpiderRobot/AntRobot
+  replaced with line-by-line ports of the original client-side leg solver:
+  `initLegData`/`getNewVelocity`/`updateLegs`/`findNewFooting` (orig SpiderRobot.java:111-486,
+  orig AntRobot.java:156-510 — same algorithm, different constants: 8 vs 6 legs,
+  99px vs 49px segments, ×8[1,4] vs ×18[2,8] velocity scales, 294/32 vs 144/22
+  relocation windows, spider-only ridden grass trample). `RenderSpiderRobotInfo`
+  expanded to the original's full field set (orig RenderSpiderRobotInfo.java:6-40),
+  leg-count-parameterized; both models already consumed it (C8 per-leg render loops).
+  Original quirks preserved: hand-typed `pi = 3.1415926545`, int-truncated block
+  coordinates, client-side trample world-mutation.
+- **ANIM-014 — VERIFIED-CORRECT.** `RenderGiantRobotInfo` is per-frame scratch: written
+  orig ModelGiantRobot.java:162-167, read :170-224 in the same render call; the sole
+  other write (`gpcounter = 2000000`, orig GiantRobot.java:80) has no reader. The C8
+  walk cycle (ANIM-005) already computes the identical per-frame formulas
+  (0.19634954084936207 / 0.6283185400806344 digit-for-digit), so the walk state
+  matches with no holder class. Owner accepted the proof 2026-07-02.
+- **ANIM-012 — FIXED (7 of 7 mounts).** The Elevator remainder closed: full port of
+  orig Elevator.java:232-515 as client-predicted `tickRidden` (B3 architecture) +
+  server-side world effects (`serverRiddenTick`) + client particle effects. Hover
+  1.25/0.75, obstruction climb ×0.11, yaw lag |1.85−v|, exploding malfunction
+  (1-in-20000 @ v>0.65, 45t, −0.05/t speed bleed), crash → 6+d10 sticks + 2 diamonds,
+  throttle 0.025/0.15-boost/−0.02, fly-up "FAST" cap 0.85→1.85 via `RideableFlyer`
+  (orig :441-443; fly-down deliberately ignored — orig had one key). Also restored:
+  missing item drop on destruction (orig :184-186), color-cycle renderer textures
+  elevator1-10.png (orig :45-54/73-107) + boat hit-wobble (orig RenderElevator.java:31-38),
+  1.25×1.0 hitbox (orig :58), tracking 128/1/velocity (orig OreSpawnMain.java:3883),
+  item spawn placement +1.2/random-yaw/stack-1 (orig ItemElevator.java:21-36, invented
+  anvil sound removed), `ModSounds.HOVER` hum. Mapping deltas (crash detection
+  server-side, one-tick lag possible; riderless client nudge → vanilla lerp) are in
+  the class Javadoc. PN-002 checked: ThePrince/ThePrincess flight — no Elevator
+  intersection; stays with D3.
+- **ENT-D-066 — new finding, FIXED (owner decision 2026-07-02).** The port shipped a
+  second, invented hoverboard ("Phase 10" `HoverboardEntity` + `hoverboard` item)
+  alongside the faithful `elevator` port; the original had exactly one
+  (orig OreSpawnMain.java:1904/5174/3879-3883). Duplicate removed entirely (4 classes,
+  2 registrations, attributes/renderer/layer/creative-tab rows, item model, 2 lang
+  keys); not archived to MODERNIZATION_NOTES (duplicated an original feature — owner
+  ruled nothing worth reintroducing). `elevator` item/entity displays corrected
+  "Elevator" → "Hoverboard". **World-compat:** placed `orespawn:hoverboard`
+  entities/items vanish from existing port worlds (unknown id).
+- **Progress notes (owners unchanged, Phase E):** ENT-A-016 (AntRobot) and ENT-S-021
+  (SpiderRobot) leg-animation clauses closed by ANIM-006's solver port; their
+  ride-physics / flame-attack remainders stay open. ENT-A-016's stale
+  "compare HoverboardEntity" fix hint retargeted to `entity/Elevator.java`.
+- **Ledger:** 391 terminal (371 FIXED + 20 VERIFIED-CORRECT) / 211 open, total 602
+  (601 audit IDs + ENT-D-066; `tools/ledger_reconcile.py` TOTAL_EXPECTED bumped, green).
+- **Build:** `.\gradlew.bat compileJava` → green.
+- **Pending manual tests (in-game):**
+  - SpiderRobot/AntRobot: feet plant in the world and step ahead as the body moves
+    (no synchronized sine paddling); legs relocate when overstretched; a ridden
+    SpiderRobot occasionally flattens tall grass / turns grass blocks to dirt.
+  - Hoverboard (`orespawn:elevator`, displays "Hoverboard"): W/S throttle with
+    Left Alt FAST boost; terrain climb; pitch grows with speed; wall slam above
+    ~0.75 speed shatters into sticks + 2 diamonds; rare high-speed malfunction
+    (explosions/smoke, speed bleed, 45t); Ultimate Sword click cycles 10 skins;
+    mob punches can't destroy it while ridden; hover hum only while ridden.
+  - Creative tab: exactly one Hoverboard entry; `/summon orespawn:hoverboard` fails
+    (intentional removal).

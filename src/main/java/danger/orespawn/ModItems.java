@@ -505,12 +505,9 @@ public class ModItems {
     public static final DeferredItem<Item> NETHER_LOST = ITEMS.register("nether_lost",
             // orig ItemNetherLost.java:24-25 â€” stack 1, setMaxDamage(3000)
             () -> new ItemNetherLost(new Item.Properties().stacksTo(1).durability(3000)));
+    // orig OreSpawnMain.java:1904/5174: "elevator" internally, displayed "Hoverboard".
     public static final DeferredItem<Item> ELEVATOR = ITEMS.register("elevator",
             () -> new ItemElevator(new Item.Properties()));
-
-    // Phase 10 â€” Hoverboard placement item (legacy 1.7.10 ItemElevator port).
-    public static final DeferredItem<Item> HOVERBOARD = ITEMS.register("hoverboard",
-            () -> new HoverboardItem(new Item.Properties()));
     public static final DeferredItem<Item> INSTANT_SHELTER = ITEMS.register("instant_shelter",
             () -> new InstantShelter(new Item.Properties().stacksTo(16)));
     public static final DeferredItem<Item> INSTANT_GARDEN = ITEMS.register("instant_garden",
