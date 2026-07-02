@@ -4,7 +4,9 @@ import danger.orespawn.MobStats;
 
 import java.util.Comparator;
 import java.util.List;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.util.Mth;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -43,13 +45,9 @@ public class AntRobot extends Mob {
     private static final float PARTICLE_OFFSET_BLOCKS = 4.0f;
 
     private static final int LEG_COUNT = 6;
-    private static final double[] LEG_Y_ANGLES = {
-        Math.toRadians(60), Math.toRadians(120), Math.toRadians(180),
-        Math.toRadians(240), Math.toRadians(300), Math.toRadians(360)
-    };
-    private static final float[] LEG_OFFSETS = {1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f};
-    private static final float[] LEG_Y_OFFS = {0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
     private final RenderSpiderRobotInfo renderInfo = new RenderSpiderRobotInfo(LEG_COUNT);
+    /** Lazy one-shot leg-data (re)initialization flag (orig {@code didonce}, AntRobot.java:47). */
+    private boolean legDataInitialized = false;
 
     private final Comparator<Entity> targetSorter;
     private final float moveSpeed = 0.3f;
@@ -61,6 +59,8 @@ public class AntRobot extends Mob {
         super(type, level);
         this.xpReward = 150;
         this.targetSorter = Comparator.comparingDouble(this::distanceToSqr);
+        // orig AntRobot.java:532-535 — entityInit primes the leg data once at construction.
+        initLegData();
     }
 
     @Override
@@ -181,6 +181,8 @@ public class AntRobot extends Mob {
         float particleOffsetX = (float) (PARTICLE_OFFSET_BLOCKS * Math.cos(Math.toRadians(this.getYRot() - 80.0f)));
         float particleOffsetZ = (float) (PARTICLE_OFFSET_BLOCKS * Math.sin(Math.toRadians(this.getYRot() - 80.0f)));
         if (this.level().isClientSide()) {
+            // orig AntRobot.java:740 — the leg solver steps once per client tick.
+            updateLegs();
             if (this.getRandom().nextInt(18) == 0) {
                 this.level().addParticle(ParticleTypes.FLAME,
                         getX() + particleOffsetX, getY() + 0.5, getZ() + particleOffsetZ, 0, 0, 0);
@@ -310,21 +312,391 @@ public class AntRobot extends Mob {
         return true;
     }
 
+    /** Live gait-solver state consumed by the model (orig AntRobot.java:540-542). */
     public RenderSpiderRobotInfo getRenderSpiderRobotInfo() {
-        renderInfo.gpcounter = this.tickCount;
-        float walkPhase = this.tickCount * 0.15f;
-        for (int i = 0; i < LEG_COUNT; i++) {
-            renderInfo.ymid[i] = LEG_Y_ANGLES[i];
-            renderInfo.ydisplayangle[i] = (float) LEG_Y_ANGLES[i];
-            renderInfo.legoff[i] = LEG_OFFSETS[i];
-            renderInfo.yoff[i] = LEG_Y_OFFS[i];
-            float phase = walkPhase + (float)(i * Math.PI / 3.0);
-            float swing = (float) Math.sin(phase) * 0.3f;
-            renderInfo.p1xangle[i] = -0.4 + swing;
-            renderInfo.p2xangle[i] = 0.6 + swing * 0.5;
-            renderInfo.p3xangle[i] = -0.2 - swing * 0.3;
-            renderInfo.uddisplayangle[i] = 0.0f;
-        }
         return renderInfo;
+    }
+
+    // ==================== Procedural leg-gait solver ====================
+    // The AntRobot shares the SpiderRobot's inverse-kinematics walk (planted
+    // feet, per-leg relocation, speed-scaled joint convergence) with its own
+    // constants: 6 legs of 49px segments, tighter reach windows, a ×18 [2,8]
+    // velocity scale and shallower mid-step lifts. See SpiderRobot for the
+    // algorithm commentary; citations here point at the AntRobot original.
+
+    /**
+     * Per-leg constants and initial state (orig AntRobot.java:156-229).
+     * Pairs: 0-1 front/back center, 2-3 and 4-5 diagonal side pairs.
+     */
+    private void initLegData() {
+        for (int leg = 0; leg < LEG_COUNT; ++leg) {
+            renderInfo.ycurrentangle[leg] = 0.0f;
+            renderInfo.ywantedangle[leg] = 0.0f;
+            renderInfo.ydisplayangle[leg] = 0.0f;
+            renderInfo.yvelocity[leg] = 0.0f;
+            renderInfo.ymid[leg] = 0.0f;
+            renderInfo.yoff[leg] = 0.0f;
+            renderInfo.yrange[leg] = 0.0f;
+            renderInfo.udcurrentangle[leg] = 0.0f;
+            renderInfo.udwantedangle[leg] = 0.0f;
+            renderInfo.uddisplayangle[leg] = 0.0f;
+            renderInfo.udvelocity[leg] = 0.0f;
+            // Rest pose: upper segment 45° up, middle level, lower 45° down (orig :172-174).
+            renderInfo.p1xangle[leg] = 0.7853981633974483;
+            renderInfo.p2xangle[leg] = 0.0;
+            renderInfo.p3xangle[leg] = -0.7853981633974483;
+            renderInfo.pxvelocity[leg] = 0.0f;
+            renderInfo.foot_xpos[leg] = (float) this.getX();
+            renderInfo.foot_ypos[leg] = (float) this.getY();
+            renderInfo.foot_zpos[leg] = (float) this.getZ();
+            renderInfo.realposx[leg] = 0.0f;
+            renderInfo.realposy[leg] = 0.0f;
+            renderInfo.realposz[leg] = 0.0f;
+            renderInfo.legoff[leg] = 0.0f;
+            renderInfo.footup[leg] = 1;
+            renderInfo.uppoint[leg] = 0.0f;
+            renderInfo.footingticker[leg] = 0;
+            renderInfo.gpcounter = 0;
+            switch (leg) {
+                // orig :187-193
+                case 0 -> { renderInfo.legoff[leg] = 0.75f; renderInfo.ymid[leg] = 0.0f;            renderInfo.yrange[leg] = 0.2617994f;  renderInfo.pairedwith[leg] = 1; renderInfo.yoff[leg] = -0.75f; }
+                // orig :194-200
+                case 1 -> { renderInfo.legoff[leg] = 0.75f; renderInfo.ymid[leg] = (float) Math.PI; renderInfo.yrange[leg] = -0.2617994f; renderInfo.pairedwith[leg] = 0; renderInfo.yoff[leg] = -0.75f; }
+                // orig :201-207
+                case 2 -> { renderInfo.legoff[leg] = 1.0f;  renderInfo.ymid[leg] = -0.7853982f;     renderInfo.yrange[leg] = 0.2617994f;  renderInfo.pairedwith[leg] = 3; renderInfo.yoff[leg] = -0.75f; }
+                // orig :208-214
+                case 3 -> { renderInfo.legoff[leg] = 1.0f;  renderInfo.ymid[leg] = 3.9269907f;      renderInfo.yrange[leg] = -0.2617994f; renderInfo.pairedwith[leg] = 2; renderInfo.yoff[leg] = -0.75f; }
+                // orig :215-221
+                case 4 -> { renderInfo.legoff[leg] = 1.15f; renderInfo.ymid[leg] = 0.7853982f;      renderInfo.yrange[leg] = 0.2617994f;  renderInfo.pairedwith[leg] = 5; renderInfo.yoff[leg] = -0.75f; }
+                // orig :222-227
+                case 5 -> { renderInfo.legoff[leg] = 1.15f; renderInfo.ymid[leg] = 2.3561945f;      renderInfo.yrange[leg] = -0.2617994f; renderInfo.pairedwith[leg] = 4; renderInfo.yoff[leg] = -0.75f; }
+                default -> { }
+            }
+        }
+    }
+
+    /**
+     * Speed-scaled angular-velocity controller (orig AntRobot.java:231-269).
+     * Identical structure to the SpiderRobot's, but the body speed scales
+     * ×18 clamped to [2,8] — the small ant's joints snap faster.
+     *
+     * @param bodySpeed       blocks moved last tick
+     * @param angleError      remaining angle to the target, radians (sign = direction)
+     * @param currentVelocity the joint's angular velocity from last tick
+     * @return the new angular velocity, radians/tick
+     */
+    private float getNewVelocity(float bodySpeed, float angleError, float currentVelocity) {
+        float scale = bodySpeed * 18.0f;
+        if (scale < 2.0f) {
+            scale = 2.0f;
+        }
+        if (scale > 8.0f) {
+            scale = 8.0f;
+        }
+        if (angleError > 0.0f) {
+            if ((double) angleError < Math.PI / 360 * (double) scale) {
+                currentVelocity = 0.0f;
+            } else {
+                currentVelocity = (float) ((double) currentVelocity + 0.004363323129985824 * (double) scale);
+                if ((double) angleError < 0.06981317007977318 * (double) scale) {
+                    currentVelocity = (float) (Math.PI / 180 * (double) scale);
+                }
+                if ((double) angleError < Math.PI / 90 * (double) scale) {
+                    currentVelocity = (float) (Math.PI / 360 * (double) scale);
+                }
+                if ((double) currentVelocity > 0.06981317007977318 * (double) scale) {
+                    currentVelocity = (float) (0.06981317007977318 * (double) scale);
+                }
+            }
+        } else if ((double) angleError > -Math.PI / 360 * (double) scale) {
+            currentVelocity = 0.0f;
+        } else {
+            currentVelocity = (float) ((double) currentVelocity - 0.004363323129985824 * (double) scale);
+            if ((double) angleError > -0.06981317007977318 * (double) scale) {
+                currentVelocity = -((float) (Math.PI / 180 * (double) scale));
+            }
+            if ((double) angleError > -Math.PI / 90 * (double) scale) {
+                currentVelocity = -((float) (Math.PI / 360 * (double) scale));
+            }
+            if ((double) currentVelocity < -0.06981317007977318 * (double) scale) {
+                currentVelocity = -((float) (0.06981317007977318 * (double) scale));
+            }
+        }
+        return currentVelocity;
+    }
+
+    /**
+     * One solver step (orig AntRobot.java:271-404), client-only like the
+     * original's {@code isRemote} early-out. The ant's relocation windows are
+     * 144 &gt; reach×16 &gt; 22 with yaw beyond range×8/6; leg segments are
+     * 49px; foot landing has no block side effects (the SpiderRobot's grass
+     * trample does not exist here).
+     */
+    public void updateLegs() {
+        if (!this.level().isClientSide()) {
+            return;
+        }
+        // orig :275-278 — yaw normalized into [0,360) before the trig below.
+        float normalizedYaw = this.getYRot() % 360.0f;
+        while (normalizedYaw < 0.0f) {
+            normalizedYaw += 360.0f;
+        }
+        this.setYRot(normalizedYaw);
+        ++renderInfo.gpcounter;
+        if (!this.legDataInitialized) {
+            this.legDataInitialized = true;
+            this.initLegData();
+        }
+        float deltaX = (float) (this.xo - this.getX());
+        float deltaY = (float) (this.yo - this.getY());
+        float deltaZ = (float) (this.zo - this.getZ());
+        float bodySpeed = (float) Math.sqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ);
+        for (int leg = 0; leg < LEG_COUNT; ++leg) {
+            int settledAxes = 0;
+            renderInfo.footingticker[leg] = renderInfo.footingticker[leg] + 1;
+            // Hip socket world position (orig :294-296).
+            renderInfo.realposx[leg] = (float) (this.getX() - (double) renderInfo.legoff[leg]
+                    * Math.sin(Math.toRadians(Mth.wrapDegrees((double) (this.getYRot() + 90.0f))) + (double) renderInfo.ymid[leg]));
+            renderInfo.realposz[leg] = (float) (this.getZ() + (double) renderInfo.legoff[leg]
+                    * Math.cos(Math.toRadians(Mth.wrapDegrees((double) (this.getYRot() + 90.0f))) + (double) renderInfo.ymid[leg]));
+            renderInfo.realposy[leg] = (float) this.getY() + renderInfo.yoff[leg];
+            // Alternating-pair step scheduler (orig :297-300).
+            int pairTickerSum = renderInfo.footingticker[leg] + renderInfo.footingticker[renderInfo.pairedwith[leg]];
+            if (pairTickerSum > 50 && renderInfo.footingticker[leg] > renderInfo.footingticker[renderInfo.pairedwith[leg]]) {
+                renderInfo.footingticker[leg] = 0;
+            }
+            deltaX = renderInfo.realposx[leg] - renderInfo.foot_xpos[leg];
+            deltaY = renderInfo.realposy[leg] - renderInfo.foot_ypos[leg];
+            deltaZ = renderInfo.realposz[leg] - renderInfo.foot_zpos[leg];
+            float footDistance = (float) Math.sqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ);
+            footDistance *= 16.0f;
+            // Yaw deviation from the leg's neutral direction (orig :306-313).
+            float yawDeviation = (float) (Math.abs((double) renderInfo.ycurrentangle[leg]
+                    - (Math.toRadians(Mth.wrapDegrees((double) this.getYRot())) + (double) renderInfo.ymid[leg])) % (Math.PI * 2));
+            if ((double) yawDeviation > Math.PI) {
+                yawDeviation = (float) ((double) yawDeviation - Math.PI * 2);
+            }
+            if ((double) yawDeviation < -Math.PI) {
+                yawDeviation = (float) ((double) yawDeviation + Math.PI * 2);
+            }
+            yawDeviation = Math.abs(yawDeviation);
+            // Foot relocation triggers (orig :314-321).
+            if (footDistance > 144.0f || footDistance < 22.0f
+                    || yawDeviation > Math.abs(renderInfo.yrange[leg]) * 8.0f / 6.0f
+                    || (double) Math.abs(renderInfo.udcurrentangle[leg]) > 1.25
+                    || renderInfo.footingticker[leg] == 0) {
+                this.findNewFooting(leg);
+                deltaX = renderInfo.realposx[leg] - renderInfo.foot_xpos[leg];
+                deltaY = renderInfo.realposy[leg] - renderInfo.foot_ypos[leg];
+                deltaZ = renderInfo.realposz[leg] - renderInfo.foot_zpos[leg];
+                footDistance = (float) Math.sqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ);
+                footDistance *= 16.0f;
+            }
+            // Segment fold: 3 × 49px segments converge on the foot distance (orig :322-334).
+            float segment1Reach = (float) (49.0 * Math.cos(renderInfo.p2xangle[leg] - renderInfo.p1xangle[leg]));
+            float segment2Reach = 49.0f;
+            float segment3Reach = (float) (49.0 * Math.cos(renderInfo.p2xangle[leg] - renderInfo.p3xangle[leg]));
+            float totalReach = segment1Reach + segment2Reach + segment3Reach;
+            float reachError = totalReach - footDistance;
+            renderInfo.pxvelocity[leg] = this.getNewVelocity(bodySpeed, (float) ((double) reachError * Math.PI / 360.0), renderInfo.pxvelocity[leg]);
+            if (renderInfo.pxvelocity[leg] == 0.0f || Math.abs(reachError) < 8.0f) {
+                ++settledAxes;
+            }
+            renderInfo.p1xangle[leg] = renderInfo.p1xangle[leg] + (double) renderInfo.pxvelocity[leg];
+            renderInfo.p2xangle[leg] = 0.0;
+            renderInfo.p3xangle[leg] = -renderInfo.p1xangle[leg];
+            // Elevation toward the planted foot or the mid-step lift point (orig :335-365).
+            float elevationTarget = renderInfo.uppoint[leg] != 0.0f
+                    ? (float) Math.atan2(footDistance, (double) (renderInfo.realposy[leg] - renderInfo.uppoint[leg]) * 16.0)
+                    : (float) Math.atan2(footDistance, (double) (renderInfo.realposy[leg] - renderInfo.foot_ypos[leg]) * 16.0);
+            renderInfo.udwantedangle[leg] = (float) ((double) elevationTarget - 1.5707963267948966);
+            while ((double) renderInfo.udwantedangle[leg] > Math.PI) {
+                renderInfo.udwantedangle[leg] = (float) ((double) renderInfo.udwantedangle[leg] - Math.PI * 2);
+            }
+            while ((double) renderInfo.udwantedangle[leg] < -Math.PI) {
+                renderInfo.udwantedangle[leg] = (float) ((double) renderInfo.udwantedangle[leg] + Math.PI * 2);
+            }
+            double targetHeading = renderInfo.udwantedangle[leg];
+            double currentHeading = renderInfo.udcurrentangle[leg];
+            double headingError = (targetHeading - currentHeading) % (Math.PI * 2);
+            while (headingError > Math.PI) {
+                headingError -= Math.PI * 2;
+            }
+            while (headingError < -Math.PI) {
+                headingError += Math.PI * 2;
+            }
+            renderInfo.udvelocity[leg] = this.getNewVelocity(bodySpeed * 2.0f, (float) headingError, renderInfo.udvelocity[leg]);
+            if (renderInfo.udvelocity[leg] == 0.0f || Math.abs(headingError) < Math.PI / 90) {
+                renderInfo.uppoint[leg] = 0.0f;
+                ++settledAxes;
+            }
+            currentHeading += (double) renderInfo.udvelocity[leg];
+            while (currentHeading > Math.PI) {
+                currentHeading -= Math.PI * 2;
+            }
+            while (currentHeading < -Math.PI) {
+                currentHeading += Math.PI * 2;
+            }
+            renderInfo.uddisplayangle[leg] = renderInfo.udcurrentangle[leg] = (float) currentHeading;
+            // Yaw: swing toward the planted foot's world bearing (orig :366-400).
+            deltaZ = renderInfo.realposz[leg] - renderInfo.foot_zpos[leg];
+            deltaX = renderInfo.realposx[leg] - renderInfo.foot_xpos[leg];
+            renderInfo.ywantedangle[leg] = (float) Math.atan2(deltaZ, deltaX);
+            targetHeading = renderInfo.ywantedangle[leg];
+            currentHeading = renderInfo.ycurrentangle[leg];
+            headingError = (targetHeading - currentHeading) % (Math.PI * 2);
+            if (headingError > Math.PI) {
+                headingError -= Math.PI * 2;
+            }
+            if (headingError < -Math.PI) {
+                headingError += Math.PI * 2;
+            }
+            renderInfo.yvelocity[leg] = this.getNewVelocity(bodySpeed, (float) headingError, renderInfo.yvelocity[leg]);
+            if (renderInfo.yvelocity[leg] == 0.0f || Math.abs(headingError) < Math.PI / 90) {
+                ++settledAxes;
+            }
+            renderInfo.ycurrentangle[leg] = renderInfo.ycurrentangle[leg] + renderInfo.yvelocity[leg];
+            while ((double) renderInfo.ycurrentangle[leg] > Math.PI) {
+                renderInfo.ycurrentangle[leg] = (float) ((double) renderInfo.ycurrentangle[leg] - Math.PI * 2);
+            }
+            while ((double) renderInfo.ycurrentangle[leg] < -Math.PI) {
+                renderInfo.ycurrentangle[leg] = (float) ((double) renderInfo.ycurrentangle[leg] + Math.PI * 2);
+            }
+            float displayYaw = (float) ((double) renderInfo.ycurrentangle[leg]
+                    - Math.toRadians(Mth.wrapDegrees((double) this.getYRot())) - 1.5707963267948966);
+            while ((double) displayYaw > Math.PI) {
+                displayYaw = (float) ((double) displayYaw - Math.PI * 2);
+            }
+            while ((double) displayYaw < -Math.PI) {
+                displayYaw = (float) ((double) displayYaw + Math.PI * 2);
+            }
+            renderInfo.ydisplayangle[leg] = displayYaw;
+            // All three axes settled → foot lands (orig :401-403; no side effects).
+            if (settledAxes == 3) {
+                renderInfo.footup[leg] = 0;
+            }
+        }
+    }
+
+    /**
+     * Plants the foot of leg {@code leg} on fresh ground (orig
+     * AntRobot.java:406-510). Same sweep as the SpiderRobot's with ant
+     * proportions: reach 9 (4 for the side-rear pair, 6 for the front/back
+     * center pair — orig :445-447 applies that unconditionally last), scan
+     * column 8 up / 9 down, minimum reach 2.5, candidate rejected while the
+     * probe loop runs if it lies beyond 144 (reach×16); mid-step lift bumps
+     * +0.3 above 3px, +0.6 above 24px, +0.6 more above 50px.
+     */
+    private void findNewFooting(int leg) {
+        float reach = 9.0f;
+        boolean found = false;
+        double headingRad = Math.toRadians((this.getYRot() + 90.0f) % 360.0f);
+        // orig :416 — the original's slightly-off hand-typed PI, kept for exactness.
+        double pi = 3.1415926545;
+        renderInfo.footingticker[leg] = 0;
+        float deltaX = (float) (this.getX() - this.xo);
+        float deltaZ = (float) (this.getZ() - this.zo);
+        double travelHeading = Math.atan2(deltaZ, deltaX);
+        double travelSpeed = Math.sqrt(deltaX * deltaX + deltaZ * deltaZ);
+        double headingDiff = Math.abs(travelHeading - headingRad) % (pi * 2.0);
+        if (headingDiff > pi) {
+            headingDiff -= pi * 2.0;
+        }
+        headingDiff = Math.abs(headingDiff);
+        if (Math.abs(travelSpeed) < 0.01) {
+            headingDiff = 0.0;
+        }
+        float swingBias = renderInfo.yrange[leg];
+        swingBias *= 0.8f;
+        if (Math.abs((this.yRotO - this.getYRot()) % 360.0f) > 0.75f) {
+            swingBias = 0.0f;
+        }
+        if (leg >= 4) {
+            reach = 4.0f;
+        }
+        // Moving backward relative to facing: step behind instead (orig :438-444).
+        if (headingDiff > 1.5) {
+            swingBias = -swingBias;
+            reach = 4.0f;
+            if (leg >= 4) {
+                reach = 9.0f;
+            }
+        }
+        if (leg == 0 || leg == 1) {
+            reach = 6.0f;
+        }
+        float fallbackX = (float) ((double) renderInfo.realposx[leg] - (double) (reach / 2.0f)
+                * Math.sin(Math.toRadians(Mth.wrapDegrees((double) (this.getYRot() + 90.0f))) + (double) renderInfo.ymid[leg]));
+        float fallbackZ = (float) ((double) renderInfo.realposz[leg] + (double) (reach / 2.0f)
+                * Math.cos(Math.toRadians(Mth.wrapDegrees((double) (this.getYRot() + 90.0f))) + (double) renderInfo.ymid[leg]));
+        float fallbackY = renderInfo.realposy[leg] - 1.0f;
+        float footX = fallbackX;
+        float footY = fallbackY;
+        float footZ = fallbackZ;
+        float initialReach = reach;
+        int spread = 1;
+        while (!found && reach > 2.5f) {
+            footX = (float) ((double) renderInfo.realposx[leg] - (double) reach
+                    * Math.sin(Math.toRadians(Mth.wrapDegrees((double) (this.getYRot() + 90.0f))) + (double) renderInfo.ymid[leg] - (double) swingBias));
+            footZ = (float) ((double) renderInfo.realposz[leg] + (double) reach
+                    * Math.cos(Math.toRadians(Mth.wrapDegrees((double) (this.getYRot() + 90.0f))) + (double) renderInfo.ymid[leg] - (double) swingBias));
+            footY = renderInfo.realposy[leg];
+            for (int yScan = 8; !found && yScan > -9; --yScan) {
+                for (int xSpread = -spread; !found && xSpread <= spread; ++xSpread) {
+                    for (int zSpread = -spread; !found && zSpread <= spread; ++zSpread) {
+                        BlockPos probe = BlockPos.containing((int) footX + xSpread, (int) footY + yScan, (int) footZ + zSpread);
+                        // orig :460-461 — non-air with a solid material.
+                        if (this.level().getBlockState(probe).isAir() || !this.level().getBlockState(probe).isSolid()) continue;
+                        // orig :462-466 — reject candidates beyond 144 (reach×16) inside the sweep.
+                        deltaX = renderInfo.realposx[leg] - (footX + (float) xSpread);
+                        float deltaY = renderInfo.realposy[leg] - (footY + (float) yScan + 1.0f);
+                        deltaZ = renderInfo.realposz[leg] - (footZ + (float) zSpread);
+                        float footingDistance = (float) Math.sqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ);
+                        if ((footingDistance *= 16.0f) > 144.0f) continue;
+                        footY += (float) (yScan + 1);
+                        footX += (float) xSpread;
+                        footZ += (float) zSpread;
+                        found = true;
+                        break;
+                    }
+                }
+            }
+            // Second pass: bias removed, spread widened to ±3 (orig :475-479).
+            if (!((reach -= 1.0f) < 2.5f) || swingBias == 0.0f) continue;
+            swingBias = 0.0f;
+            spread = 3;
+            reach = initialReach;
+        }
+        if (!found) {
+            footX = fallbackX;
+            footY = fallbackY;
+            footZ = fallbackZ;
+        }
+        float previousFootX = renderInfo.foot_xpos[leg];
+        float previousFootY = renderInfo.foot_ypos[leg];
+        float previousFootZ = renderInfo.foot_zpos[leg];
+        renderInfo.foot_xpos[leg] = footX;
+        renderInfo.foot_ypos[leg] = footY;
+        renderInfo.foot_zpos[leg] = footZ;
+        // Mid-step lift point for a foot that was down (orig :491-509).
+        if (renderInfo.footup[leg] == 0) {
+            renderInfo.footup[leg] = 1;
+            deltaX = previousFootX - footX;
+            float deltaY = previousFootY - footY;
+            deltaZ = previousFootZ - footZ;
+            float stepLength = (float) Math.sqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ);
+            stepLength *= 16.0f;
+            float liftPoint = (previousFootY + footY) / 2.0f;
+            if (stepLength > 3.0f) {
+                liftPoint += 0.3f;
+            }
+            if (stepLength > 24.0f) {
+                liftPoint += 0.6f;
+            }
+            if (stepLength > 50.0f) {
+                liftPoint += 0.6f;
+            }
+            renderInfo.uppoint[leg] = liftPoint;
+        }
     }
 }

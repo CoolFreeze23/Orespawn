@@ -398,7 +398,6 @@ public class ModCreativeTabs {
                         output.accept(ModItems.ZOO_KEEPER.get());
                         output.accept(ModItems.NETHER_LOST.get());
                         output.accept(ModItems.ELEVATOR.get());
-                        output.accept(ModItems.HOVERBOARD.get());
                         output.accept(ModItems.INSTANT_SHELTER.get());
                         output.accept(ModItems.INSTANT_GARDEN.get());
                         output.accept(ModItems.DUCT_TAPE_ITEM.get());
