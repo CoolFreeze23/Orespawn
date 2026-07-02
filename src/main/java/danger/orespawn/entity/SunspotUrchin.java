@@ -34,6 +34,12 @@ public class SunspotUrchin extends ThrowableProjectile {
         super(ModEntities.SUNSPOT_URCHIN.get(), shooter, level);
     }
 
+    // orig MyDispenserBehaviorSunspotUrchin.java:29-31 — dispensers spawn at a bare position
+    public SunspotUrchin(Level level, double x, double y, double z) {
+        super(ModEntities.SUNSPOT_URCHIN.get(), level);
+        this.setPos(x, y, z);
+    }
+
     @Override
     protected void defineSynchedData(net.minecraft.network.syncher.SynchedEntityData.Builder builder) {
     }

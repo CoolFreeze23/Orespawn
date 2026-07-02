@@ -29,6 +29,21 @@ public class Lavafoam extends Block {
         super(properties);
     }
 
+    /**
+     * orig Lavafoam.java:110-116 — breaking lavafoam in the Nether
+     * (dimension -1) grants 5 + nextInt(5) + nextInt(5) = 5-13 XP.
+     */
+    @Override
+    public int getExpDrop(BlockState state, net.minecraft.world.level.LevelAccessor level, BlockPos pos,
+                          net.minecraft.world.level.block.entity.BlockEntity blockEntity,
+                          Entity breaker, net.minecraft.world.item.ItemStack tool) {
+        if (level instanceof Level realLevel && realLevel.dimension() == Level.NETHER) {
+            RandomSource random = level.getRandom();
+            return 5 + random.nextInt(5) + random.nextInt(5);
+        }
+        return 0;
+    }
+
     @Override
     public void animateTick(BlockState state, Level level, BlockPos pos, RandomSource random) {
         if (random.nextInt(ANIMATE_TICK_ROLL_BOUND) != 0) return;

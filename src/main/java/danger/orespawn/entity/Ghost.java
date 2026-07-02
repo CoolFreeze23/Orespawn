@@ -186,6 +186,14 @@ public class Ghost extends AmbientCreature {
     public boolean checkSpawnRules(net.minecraft.world.level.LevelAccessor level,
                                    net.minecraft.world.entity.MobSpawnType spawnType) {
         if (OriginalSpawnGates.nearOwnSpawner(this, level, -2, 1, 0, 4)) return true;
+        // orig OreSpawnMain.java:4518-4521,4544-4565 — the 22-biome w15 3-6 block
+        // was only registered on Oct 31; the year-round block (:4783-4788) covers
+        // snowy_taiga/taiga/frozen_river/jungle/dark_forest. The port's
+        // halloween_ghosts.json is static, so the date gate lives here.
+        if (!danger.orespawn.util.SeasonalDates.isHalloween()
+                && !OriginalSpawnGates.inYearRoundGhostBiome(this, level)) {
+            return false;
+        }
         return !OriginalSpawnGates.isDaytime(level);
     }
 }

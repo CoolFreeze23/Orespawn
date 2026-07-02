@@ -226,6 +226,15 @@ public class Chipmunk extends TamableAnimal {
         return stack.is(ModItems.CRYSTAL_APPLE.get());
     }
 
+    @Override
+    public void addAdditionalSaveData(net.minecraft.nbt.CompoundTag tag) {
+        super.addAdditionalSaveData(tag);
+        // Exposes the tame flag to the loot-table NBT predicate for the
+        // tamed-only poppy drop (orig Chipmunk.java:231-242) — same convention
+        // as Gazelle/Camarasaurus.
+        tag.putBoolean("OreSpawnTamed", this.isTame());
+    }
+
     @Nullable
     @Override
     public AgeableMob getBreedOffspring(ServerLevel level, AgeableMob otherParent) {

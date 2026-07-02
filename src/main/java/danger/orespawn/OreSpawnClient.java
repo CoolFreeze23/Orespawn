@@ -190,7 +190,10 @@ public class OreSpawnClient {
                     ctx -> new OreSpawnArrowRenderer<>(ctx, net.minecraft.resources.ResourceLocation.withDefaultNamespace("textures/entity/projectiles/arrow.png")));
             event.registerEntityRenderer(ModEntities.IRUKANDJI_ARROW.get(),
                     ctx -> new OreSpawnArrowRenderer<>(ctx, net.minecraft.resources.ResourceLocation.withDefaultNamespace("textures/entity/projectiles/arrow.png")));
-            event.registerEntityRenderer(ModEntities.ULTIMATE_FISH_HOOK.get(), NoopProjectileRenderer::new);
+            // orig rendered the vanilla bobber + line (vanilla RenderFish);
+            // FishingHookRenderer is generic over FishingHook and null-safe
+            event.registerEntityRenderer(ModEntities.ULTIMATE_FISH_HOOK.get(),
+                    net.minecraft.client.renderer.entity.FishingHookRenderer::new);
 
             // Fire-immune item entity uses vanilla ItemEntity renderer
             event.registerEntityRenderer(ModEntities.LAVA_LOVING_ITEM.get(),

@@ -1,23 +1,16 @@
 package danger.orespawn.block;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Holder;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.ThrownExperienceBottle;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.enchantment.Enchantment;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
-import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LeavesBlock;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 
@@ -44,58 +37,14 @@ public class BlockExperienceLeaves extends LeavesBlock {
     private static final double ABOVE_PARTICLE_Y = 1.25;
     private static final double BELOW_PARTICLE_Y = -1.25;
 
-    /**
-     * Player-harvest XP rewards. 1.7.10 only emitted XP via random ticks
-     * (see {@link #randomTick}) so a chopped-down experience tree still
-     * felt unrewarding without a "leaves drop XP" payoff. We mirror the
-     * iconic XP-bottle drop logic on harvest as well: a small chance per
-     * leaf-block destroyed to drop a Bottle o' Enchanting plus a few
-     * direct XP orbs. Silk-touch and shears suppress the bonus (their
-     * loot-table entries already return the leaf block as an item — and
-     * matching vanilla, harvesting cleanly should not also reward XP).
-     */
-    private static final int HARVEST_BOTTLE_DROP_CHANCE = 5;
-    private static final int HARVEST_XP_ORB_CHANCE = 3;
-    private static final int HARVEST_XP_ORB_MIN = 1;
-    private static final int HARVEST_XP_ORB_MAX = 3;
-
     public BlockExperienceLeaves(BlockBehaviour.Properties properties) {
         super(properties);
     }
 
-    /**
-     * 1.7.10 fidelity: experience-tree leaves emit XP randomly during
-     * their own random tick. Since 1.21.1 vanilla loot tables can't
-     * conditionally drop XP based on tool / silk-touch / fortune in a
-     * clean way, we hook {@link Block#playerDestroy} which fires AFTER
-     * loot resolution. That lets us preserve silk-touch/shears as a
-     * "clean harvest" (the loot table returns the leaf block; we skip
-     * the XP) and only reward bare-handed / hoe / axe harvests with a
-     * Bottle o' Enchanting + a small direct XP burst — matching the
-     * spirit of "the experience tree gives experience".
-     */
-    @Override
-    public void playerDestroy(Level level, Player player, BlockPos pos, BlockState state,
-                              BlockEntity blockEntity, ItemStack tool) {
-        super.playerDestroy(level, player, pos, state, blockEntity, tool);
-        if (level.isClientSide() || !(level instanceof ServerLevel sl)) return;
-        if (player.isCreative()) return;
-
-        Holder<Enchantment> silk = sl.registryAccess()
-                .lookupOrThrow(Registries.ENCHANTMENT)
-                .getOrThrow(Enchantments.SILK_TOUCH);
-        if (EnchantmentHelper.getItemEnchantmentLevel(silk, tool) > 0) return;
-        if (tool.is(Items.SHEARS)) return;
-
-        RandomSource random = sl.random;
-        if (random.nextInt(HARVEST_BOTTLE_DROP_CHANCE) == 0) {
-            Block.popResource(sl, pos, new ItemStack(Items.EXPERIENCE_BOTTLE));
-        }
-        if (random.nextInt(HARVEST_XP_ORB_CHANCE) == 0) {
-            int xp = HARVEST_XP_ORB_MIN + random.nextInt(HARVEST_XP_ORB_MAX - HARVEST_XP_ORB_MIN + 1);
-            popExperience(sl, pos, xp);
-        }
-    }
+    // ORIG BlockExperienceLeaves.java:41-46 (func_149690_a) is an empty stub and
+    // :48-50 (func_149745_a) returns 0 — leaves drop NOTHING when harvested and
+    // grant no harvest XP. A Phase-10 invention added a Bottle-o'-Enchanting +
+    // XP-orb bonus in playerDestroy here; removed for parity (see FIX_LOG D4).
 
     @Override
     public boolean isRandomlyTicking(BlockState state) {
@@ -113,16 +62,19 @@ public class BlockExperienceLeaves extends LeavesBlock {
         BlockPos above = pos.above();
         BlockPos below = pos.below();
 
+        // orig :58-60 — bottle item spawns at y+2 when y+1 is air
         if (random.nextInt(XP_BOTTLE_DROP_ROLL_BOUND) == XP_BOTTLE_DROP_SUCCESS_INDEX && level.getBlockState(above).is(Blocks.AIR)) {
-            Block.popResource(level, above, new ItemStack(Items.EXPERIENCE_BOTTLE));
+            Block.popResource(level, pos.above(2), new ItemStack(Items.EXPERIENCE_BOTTLE));
         }
 
+        // orig :61-66 — thrown bottle launched with velocity 0.4, inaccuracy 5.0
         if (random.nextInt(THROWN_BOTTLE_ROLL_BOUND) == THROWN_BOTTLE_SUCCESS_INDEX && level.getBlockState(below).is(Blocks.AIR)) {
             ThrownExperienceBottle bottle = new ThrownExperienceBottle(level, pos.getX(), pos.getY() - 1, pos.getZ());
-            bottle.setDeltaMovement(
+            bottle.shoot(
                     (random.nextFloat() - random.nextFloat()) / THROWN_BOTTLE_HORIZONTAL_SPREAD,
                     THROWN_BOTTLE_VERTICAL_IMPULSE,
-                    (random.nextFloat() - random.nextFloat()) / THROWN_BOTTLE_HORIZONTAL_SPREAD
+                    (random.nextFloat() - random.nextFloat()) / THROWN_BOTTLE_HORIZONTAL_SPREAD,
+                    0.4f, 5.0f
             );
             level.addFreshEntity(bottle);
         }

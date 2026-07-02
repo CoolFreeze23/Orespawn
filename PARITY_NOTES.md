@@ -157,3 +157,31 @@ jigsaw village (`minecraft:village/plains/town_centers` start pool) via
   was never OreSpawn content, so there is nothing to revisit post-parity.
 - **Player-visible:** village *style* differs the same way vanilla villages differ
   between 1.7.10 and 1.21.1; village *frequency and location* match the original.
+
+## PN-013 — Per-tier stat config overrides hardcoded at original defaults (ITEM-065, Phase D4)
+
+- **Original:** `orig OreSpawnMain.java:1489-1517` — `get_armorstats`/`get_weaponstats`/
+`get_orestats` read every armor/weapon/ore stat number from the Forge config file at
+init, so server owners could rebalance any tier (defaults visible in the calls, e.g.
+Ultimate armor 200 dur / 6-12-10-6 / ench 100).
+- **Port:** `ModArmorMaterials`/`ModToolTiers` carry the original **default** values
+verbatim (verified number-by-number in Phase C, e.g. ENT-A-045) but are baked in at
+registration. NeoForge 1.21.1 registers armor materials and tool tiers statically at
+mod construction, before any config (especially server configs) is loaded, so a
+faithful config-override hook is not implementable without mutating frozen registries.
+Gameplay with an untouched original config file is identical.
+- **Decision:** hardcode at original defaults, per the audit's sanctioned fallback for
+ITEM-065 ("document hardcoding as a deliberate platform decision"). Datapacks already
+cover ore-drop tuning. Config-driven rebalancing recorded as MOD-011.
+
+## PN-014 — Seasonal date gates evaluate live instead of freezing at launch (ANIM-016, Phase D4)
+
+- **Original:** `orig OreSpawnMain.java:4518-4521,4567-4571` — read a GregorianCalendar
+once at mod init; holiday behavior (Oct 31 ghosts, Feb 14 giant Girlfriend, Apr 20
+EasterBunny) froze for the whole session, and the holiday spawn *registrations*
+happened at init, so a server started Oct 30 never saw Halloween at all.
+- **Port:** `SeasonalDates` checks `LocalDate.now()` per query (spawn checks, AI
+gates, renderer), per the audit's own fix recommendation for ANIM-016. Same dates,
+including the original's hardcoded April 20 "Easter". The registration-time spawn adds
+became static biome modifiers (`halloween_ghosts.json` + existing bunny files) gated
+at spawn-rule time — the only datapack-compatible equivalent.

@@ -113,6 +113,61 @@ public class Peacock extends Animal {
                 this.getBoundingBox().inflate(16.0, 10.0, 16.0)).size();
     }
 
+    /**
+     * orig Peacock.java:181-200 — 1-in-200 revenge clear; nothing on peaceful;
+     * 1-in-10 hunt the nearest visible Termite within 10/2/10 (melee 6.0 within
+     * 2 blocks, else path at 1.2); 1-in-5000 lay 1-3 Spawn Peacock eggs.
+     */
+    @Override
+    protected void customServerAiStep() {
+        if (this.random.nextInt(200) == 1) {
+            this.setLastHurtByMob(null);
+        }
+        super.customServerAiStep();
+        if (this.level().getDifficulty() == net.minecraft.world.Difficulty.PEACEFUL) {
+            return;
+        }
+        if (this.random.nextInt(10) == 1) {
+            net.minecraft.world.entity.LivingEntity prey = findSomethingToAttack();
+            if (prey != null) {
+                if (this.distanceToSqr(prey) < 4.0) {
+                    // orig :166-169 — flat 6.0 mob-attack damage
+                    prey.hurt(this.damageSources().mobAttack(this), 6.0f);
+                } else {
+                    this.getNavigation().moveTo(prey, 1.2);
+                }
+            }
+        }
+        if (this.random.nextInt(5000) == 1) {
+            // orig :171-179,197-199 — 1-3 eggs at ±0-1 x/z, y+1
+            ItemStack eggs = new ItemStack(ModItems.PEACOCK_SPAWN_EGG.get(), 1 + this.random.nextInt(3));
+            net.minecraft.world.entity.item.ItemEntity drop = new net.minecraft.world.entity.item.ItemEntity(
+                    this.level(),
+                    this.getX() + this.random.nextInt(2) - this.random.nextInt(2),
+                    this.getY() + 1.0,
+                    this.getZ() + this.random.nextInt(2) - this.random.nextInt(2),
+                    eggs);
+            this.level().addFreshEntity(drop);
+        }
+    }
+
+    /**
+     * orig Peacock.java:202-237 — nearest living, visible Termite within
+     * 10/2/10; nothing when PlayNicely is enabled.
+     */
+    @Nullable
+    private net.minecraft.world.entity.LivingEntity findSomethingToAttack() {
+        if (danger.orespawn.OreSpawnConfig.PLAY_NICELY.get()) {
+            return null;
+        }
+        return this.level().getEntitiesOfClass(EntityTermite.class,
+                        this.getBoundingBox().inflate(10.0, 2.0, 10.0),
+                        t -> t.isAlive() && this.getSensing().hasLineOfSight(t))
+                .stream()
+                .min(java.util.Comparator.comparingDouble(this::distanceToSqr))
+                .orElse(null);
+    }
+
     @Override
     public boolean isFood(ItemStack stack) {
         return stack.is(ModItems.CRYSTAL_APPLE.get()); // orig Peacock.java:259-261 breeding item is MyCrystalApple

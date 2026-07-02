@@ -564,6 +564,143 @@ must not despawn when the player walks away.
 
 ---
 
+## Phase D — slice D4: items/blocks/small-entity batch (2026-07-02)
+
+- **Report:** `phase_d_reports/D4_items_small_entities.md` (full citation tables).
+- **Scope:** the approved D4 pool (ITEM-022/029/057/060/061/063/065, ANIM-016,
+  ENT-A-052/088, ENT-D-010/052, ENT-K-007/011/047/048/076/080/084,
+  ENT-S-025/034/036/047/059/078/085) plus the reconcile pool's D4-assigned
+  PARTIAL remainders (ENT-A-001/098, ITEM-053/062, ENT-D-011/039/041).
+  ENT-D-044 was already closed in D3 and was not redone.
+
+### Items & blocks
+
+- **ITEM-063 — FIXED.** All 8 dispenser behaviors (orig OreSpawnMain.java:5755-5773
+  + the MyDispenserBehavior* one-liners): IrukandjiArrow (pickup allowed), WaterBall,
+  SunspotUrchin, Acid, IceBall, DeadIrukandji, LaserBall, and the shared rock behavior
+  stamped onto all 12 rock items — `ModDispenserBehaviors`, velocity 1.1 /
+  inaccuracy 6.0 / +0.1 vertical bias / aux 1002, per vanilla BehaviorProjectileDispense.
+  Projectile `(Level, x, y, z)` constructors added where missing.
+- **ITEM-029 — FIXED.** Special-food effects per orig ItemSunFish.java:29-48:
+  Butter Candy Speed+Jump 2000t, Cooked Bacon Regen+Strength 2000t, Crystal Apple
+  Regen+Strength 3000t, Heart Regen IV / Strength III / Fire Res III / Resistance II
+  6000t + Speed/Jump 5000t. Heart display name corrected to the original "Love".
+- **ITEM-057 — FIXED.** The armor-set XP effect was already live via the ITEM-040
+  handler (C6); D4 closed the item half: `ItemExperienceTreeSeed` placement/consumption
+  ported faithfully, and the port's invented leaf-harvest mechanic removed from
+  `BlockExperienceLeaves`. The experience-tree worldgen body is WGEN-045 (D5).
+- **ITEM-022 — VERIFIED-CORRECT.** RockBlock is dead code in 1.7.10 — the class is
+  never instantiated or registered anywhere; no block form existed in-game.
+- **ENT-K-076 — FIXED.** RockBase death drop (one rock item matching the mob's type)
+  restored, and a port-wide 0-vs-1-based rock-type mismatch fixed: `ItemRock`
+  registrations realigned to the original 1-12 scheme so `EntityThrownRock` damage and
+  `RockBase` placement resolve the correct type.
+- **ITEM-060/061 — FIXED.** `skate_bow.json`; `chest_from_crystal_planks.json`
+  (orig :3083/:3209). Audit correction on ITEM-061: field_151135_aq at :3084-3085 is
+  the 1.7.10 wooden door (2x3 plank shape) — the port's existing
+  `oak_door_from_crystal_planks.json` was faithful all along; there is no piston recipe.
+- **ITEM-062 — PARTIAL (narrowed).** Six diffed-absent recipes added (skate bow, chest,
+  red bed, raw corn dog, bucket from pink-tourmaline ingots, cobweb from string).
+  Remainder: the 116 water-bucket spawn-block→egg conversions
+  (OreSpawnMain.java:2667+), blocked on WGEN-005's ~105-type SpawnOres pool → D5.
+- **ITEM-065 — DEFERRED.** The orig config-file per-tier weapon/armor/ore overrides
+  can't be replicated against NeoForge's frozen item registries without registry
+  mutation; original default values stay hardcoded (verified in earlier slices).
+  Documented as PN-013; config system archived as MOD-011 (2.0 candidate).
+
+### Small entities
+
+- **ENT-K-007 — FIXED.** Kyuubi `fireImmune()` (orig Kyuubi.java:47-48) — no more
+  self-damage from its own fire.
+- **ENT-S-025 / ENT-S-047 — FIXED.** SpitBug and Triffid cactus + fall immunity.
+- **Drops — ENT-A-088 / ENT-D-052 / ENT-K-084 / ENT-S-034 / ENT-K-011 / ENT-A-098
+  FIXED.** chipmunk.json (incl. tamed-only poppy per the established in-code
+  convention), gold_fish.json, rubber_ducky.json, stinky.json rebuilt from the orig
+  tables; Lavafoam Nether XP bonus 5+nextInt(5)+nextInt(5) via `getExpDrop`
+  (orig Lavafoam.java:110-116); Coin jackpot's empty CoinEgg slot filled with the
+  ported coin spawn egg (closes the C1 PARTIAL).
+- **ENT-S-085 — FIXED.** WormLarge theft: 1-in-4 helmet-else-chestplate
+  (orig WormLarge.java:210-230) + independent 1-in-4 held item (:231-238), stack
+  zeroed and scattered; PlayNicely gate (:192-198); 8-block non-creative targets
+  (:199-202); death drops (:352-377) and the "Large Worm" spawner bypass (:263-309).
+- **ENT-S-078 — FIXED.** WormSmall surface-block check at every burrow step
+  (orig WormSmall.java:107-110/124-127/139-142, tall grass counts as air :104-106);
+  1-in-6 boots theft (:188-195); night-only spawn (:214-216).
+- **ENT-K-047/048 — FIXED.** Peacock termite hunting (nearest visible Termite
+  :202-237, flat 6.0 damage :166-169, 1-in-200 revenge clear :181-200) and egg laying
+  (clear-air / first-half-of-day / 50≤y≤100 / ≤2 buddies gate :101-119 — restores the
+  never-called `findBuddies()` — 1-3 eggs :171-179,197-199); Crystal Apple breeding.
+- **ENT-D-010 — FIXED.** EasterBunny: carrot taming + mob-egg laying with the full
+  115-entry mob→spawn-egg lookup (script-extracted from the orig table and mapped to
+  the port's spawn-egg items); natural spawns Easter-gated (see ANIM-016).
+- **ENT-S-059 — FIXED.** UltimateFishHook rebuilt on vanilla `FishingHook` with ATs
+  widening `nibble`/`currentState`/`catchingFish`/`shouldStopFishing`
+  (accesstransformer.cfg): orig weighted junk/treasure/vanilla-fish/OreSpawn-fish/
+  lava-fish pools in `getCatch` with Luck-of-the-Sea/Lure scaling; lava fishing
+  (buoyancy, bite cycle, lava particles); `fireImmune()` hook (orig :76-77) spawning
+  `EntityLavaLovingItem` for lava catches; XP orb on retrieve; random durability
+  damage + level-30 enchant on caught gear. Invented +3 luck / +2 lure-speed
+  constructor bonuses removed; renderer switched to the vanilla `FishingHookRenderer`.
+- **ENT-A-052 — FIXED.** BetterFireball `canHitEntity` pass-throughs (other
+  BetterFireballs, Mothra, GodzillaHead, Royalty, and Player/Dragon when `notme` set)
+  + HP-halving exemptions (Royalty, Godzilla, GodzillaHead, PitchBlack, Kraken).
+- **ENT-A-001 — FIXED (closes the C1 PARTIAL).** TrooperBug/SpitBug acid immunity in
+  `LaserBall.onHitEntity` (acid discards on impact).
+- **ITEM-053 — FIXED (closes the C6 PARTIAL).** Shoes & GameController throwables:
+  new `ItemShoes` drives all 5 items; full per-target damage table incl.
+  Girlfriend/Boyfriend 1.0f and the Valentine's-Day 10.0f override; reddust +
+  snowballpoof impact particles.
+- **ENT-S-036 / ENT-K-080 — FIXED (verification only).** SunspotUrchin fire placement
+  was restored in C6 (ITEM-053's projectile pass); Rotator `wasSpawnered` persistence
+  was implemented in D1 (set in checkSpawnRules, NBT-persisted, consumed by the
+  despawn exemption). Both ledger entries were simply never updated.
+
+### Seasonal gates (ANIM-016; closes ENT-D-011/039/041)
+
+- **ANIM-016 — FIXED.** New `util/SeasonalDates` evaluates isHalloween/isValentines/
+  isEaster from `LocalDate` at check time — the orig froze the flags once at init via
+  GregorianCalendar; live evaluation is the deliberate deviation logged as **PN-014**.
+- **Halloween (ENT-D-039/041 closed):** the 22-biome Ghost/GhostSkelly w15 3-6 block
+  added as `halloween_ghosts.json` (20 modern biomes after mapping), runtime-gated in
+  `checkSpawnRules` with the 5 year-round biomes exempt
+  (`OriginalSpawnGates.inYearRoundGhostBiome`).
+- **Easter (ENT-D-011 closed):** EasterBunny natural spawns denied unless
+  `isEaster()`.
+- **Valentine's:** Girlfriend becomes the original giant angry variant — 2.5x8.0
+  dimensions, 800 HP, `girlfriendv.png` texture (5x render scale), MyValentineTarget
+  goal (players + Boyfriends while angry, owner/tamed-pet filtered), inWall damage
+  immunity, `o_hurt` ambient; Rose Sword 1-in-4 cure (clears target, resizes, drops
+  Love items), persisted as `feelingBetter` NBT and synced for the client renderer.
+
+### Verification & ledger
+
+- **Ledger:** 442 terminal (420 FIXED + 21 VERIFIED-CORRECT + 1 DEFERRED) / 163 open,
+  total 605 (`tools/ledger_reconcile.py` green; patch script `tools/d4_ledger_patch.py`).
+- **Build:** full `.\gradlew.bat build` → green (BUILD SUCCESSFUL, 28 tasks).
+- **Pending manual tests (in-game):**
+  - Dispensers fire all 8 projectile types; dispensed rocks keep their type and damage.
+  - Butter Candy / Cooked Bacon / Crystal Apple / "Love" grant their potion effects.
+  - RockBase mobs drop the matching rock on death; thrown rocks deal per-type damage.
+  - New recipes craft: skate bow, chest / red bed from crystal planks, raw corn dog,
+    bucket from pink-tourmaline ingots, cobweb from string.
+  - Kyuubi stands in its own fire unharmed; SpitBug/Triffid ignore cactus and falls.
+  - Chipmunk (poppy when tamed), GoldFish, RubberDucky, Stinky drops; Lavafoam gives
+    bonus XP only in the Nether; Coin jackpot can yield the coin spawn egg.
+  - WormLarge steals helmet/chestplate/held item and scatters them; WormSmall steals
+    boots at night and pops when surfacing.
+  - Peacock hunts termites, lays 1-3 eggs in the morning at y 50-100, breeds with
+    Crystal Apple.
+  - System date on Easter: EasterBunny spawns naturally, tames with a carrot, lays
+    mob eggs from the 115-entry table.
+  - Ultimate Fishing Rod: bobber floats and catches in lava (item survives), custom
+    junk/treasure/fish pools, caught gear arrives damaged + level-30 enchanted,
+    XP orb on catch.
+  - System date Oct 31: Ghost/GhostSkelly spawn across the Halloween biome list
+    (5 biomes keep them year-round). Feb 14: Girlfriend spawns giant and hostile;
+    Rose Sword hits eventually cure her; thrown shoes deal 10 damage.
+
+---
+
 ## Phase D — slice D3: ranged attacks + Prince-family flight (2026-06-13)
 
 - **Report:** `phase_d_reports/D3_ranged_flight.md` (full citation tables).

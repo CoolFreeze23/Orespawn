@@ -165,14 +165,61 @@ public class EntityWormLarge extends Monster {
             super.customServerAiStep();
         }
 
+        // orig WormLarge.java:192-198 — no hunting while PlayNicely, or while any
+        // WormMedium segment is within 8 blocks
+        if (danger.orespawn.OreSpawnConfig.PLAY_NICELY.get()) return;
+        if (!this.level().getEntitiesOfClass(EntityWormMedium.class,
+                this.getBoundingBox().inflate(8.0, 8.0, 8.0)).isEmpty()) {
+            return;
+        }
+
+        // orig :199-202 — nearest non-creative player within 8 blocks
         Player target = this.level().getNearestPlayer(this, 8.0);
-        if (target != null && !target.getAbilities().invulnerable) {
+        if (target != null && !target.getAbilities().instabuild) {
             this.pointAtEntity(target);
             this.getNavigation().moveTo(target.getX(), target.getY(), target.getZ(), 1.0);
             if (this.random.nextInt(10) == 1 && this.distanceTo(target) < 3.0f) {
                 this.doHurtTarget(target);
+                // orig :210-230 — 1-in-4: steal the helmet, or the chestplate if bare-headed
+                if (this.random.nextInt(4) == 1) {
+                    if (!stealAndScatter(target, net.minecraft.world.entity.EquipmentSlot.HEAD)) {
+                        stealAndScatter(target, net.minecraft.world.entity.EquipmentSlot.CHEST);
+                    }
+                }
+                // orig :231-238 — independent 1-in-4: steal the held item
+                if (this.random.nextInt(4) == 1) {
+                    stealAndScatter(target, net.minecraft.world.entity.EquipmentSlot.MAINHAND);
+                }
             }
         }
+    }
+
+    /**
+     * orig WormLarge.java:210-238 — the stolen stack is removed from the slot,
+     * damaged by remainingDurability/10 (min 1), and flung 3 blocks up at a
+     * ±0-4 x/z scatter. A stack that breaks from the durability hit vanishes
+     * (orig func_77972_a zeroes the stack before the EntityItem spawns).
+     */
+    private boolean stealAndScatter(Player target, net.minecraft.world.entity.EquipmentSlot slot) {
+        net.minecraft.world.item.ItemStack stack = target.getItemBySlot(slot);
+        if (stack.isEmpty()) return false;
+        target.setItemSlot(slot, net.minecraft.world.item.ItemStack.EMPTY);
+        if (stack.isDamageableItem()) {
+            int remaining = stack.getMaxDamage() - stack.getDamageValue();
+            int hit = remaining > 10 ? remaining / 10 : 1;
+            stack.setDamageValue(stack.getDamageValue() + hit);
+            if (stack.getDamageValue() >= stack.getMaxDamage()) {
+                return true;
+            }
+        }
+        net.minecraft.world.entity.item.ItemEntity drop = new net.minecraft.world.entity.item.ItemEntity(
+                this.level(),
+                this.getX() + this.random.nextInt(5) - this.random.nextInt(5),
+                this.getY() + 3.0,
+                this.getZ() + this.random.nextInt(5) - this.random.nextInt(5),
+                stack);
+        this.level().addFreshEntity(drop);
+        return true;
     }
 
     @Override

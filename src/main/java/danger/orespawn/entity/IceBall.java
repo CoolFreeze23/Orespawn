@@ -18,7 +18,13 @@ public class IceBall extends LaserBall {
     }
 
     public IceBall(Level level, LivingEntity shooter) {
-        super(level, shooter);
+        super(danger.orespawn.ModEntities.ICE_BALL.get(), shooter, level);
+        this.setIceBall();
+    }
+
+    // orig MyDispenserBehaviorIceball.java:29-31 — dispensers spawn iceballs at a bare position
+    public IceBall(Level level, double x, double y, double z) {
+        super(danger.orespawn.ModEntities.ICE_BALL.get(), level, x, y, z);
         this.setIceBall();
     }
 

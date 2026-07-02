@@ -227,8 +227,9 @@ public class ModEntities {
                     .sized(1.2f, 1.0f).clientTrackingRange(10).build("hercules_beetle"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<EntityKyuubi>> ENTITY_KYUUBI =
-            ENTITY_TYPES.register("kyuubi", () -> EntityType.Builder.of(EntityKyuubi::new, MobCategory.MONSTER)
-                    .sized(1.0f, 1.2f).clientTrackingRange(10).build("kyuubi"));
+                // orig Kyuubi.java:47-48 — fireResistance 1000 + isImmuneToFire
+                ENTITY_TYPES.register("kyuubi", () -> EntityType.Builder.of(EntityKyuubi::new, MobCategory.MONSTER)
+                        .sized(1.0f, 1.2f).fireImmune().clientTrackingRange(10).build("kyuubi"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<EntityLeafMonster>> ENTITY_LEAF_MONSTER =
             ENTITY_TYPES.register("leaf_monster", () -> EntityType.Builder.of(EntityLeafMonster::new, MobCategory.MONSTER)
@@ -749,8 +750,10 @@ public class ModEntities {
                     .sized(0.5f, 0.5f).clientTrackingRange(8).updateInterval(2).noSummon().build("irukandji_arrow"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<UltimateFishHook>> ULTIMATE_FISH_HOOK =
-            ENTITY_TYPES.register("ultimate_fish_hook", () -> EntityType.Builder.<UltimateFishHook>of(UltimateFishHook::new, MobCategory.MISC)
-                    .sized(0.25f, 0.25f).clientTrackingRange(4).updateInterval(5).noSummon().build("ultimate_fish_hook"));
+                // orig UltimateFishHook.java:76-77 — fireResistance 3000 + isImmuneToFire
+                // (the hook survives lava fishing)
+                ENTITY_TYPES.register("ultimate_fish_hook", () -> EntityType.Builder.<UltimateFishHook>of(UltimateFishHook::new, MobCategory.MISC)
+                        .sized(0.25f, 0.25f).fireImmune().clientTrackingRange(4).updateInterval(5).noSummon().build("ultimate_fish_hook"));
 
     // Fire-immune item entity for drops from lava-dwelling mobs
     public static final DeferredHolder<EntityType<?>, EntityType<EntityLavaLovingItem>> LAVA_LOVING_ITEM =

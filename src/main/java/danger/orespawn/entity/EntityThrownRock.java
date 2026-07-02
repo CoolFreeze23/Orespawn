@@ -52,6 +52,13 @@ public class EntityThrownRock extends ThrowableProjectile {
         this.rockType = rockType;
     }
 
+    // orig MyDispenserBehaviorRock.java:72-75 — dispensers spawn rocks at a bare position,
+    // then call setRockType per the dispensed item
+    public EntityThrownRock(Level level, double x, double y, double z) {
+        super(ModEntities.ENTITY_THROWN_ROCK.get(), level);
+        this.setPos(x, y, z);
+    }
+
     @Override
     protected void defineSynchedData(SynchedEntityData.Builder builder) {
         builder.define(DATA_ROCK_TYPE, 0);

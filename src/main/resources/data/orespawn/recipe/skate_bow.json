@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " TS",
+    "T S",
+    " TS"
+  ],
+  "key": {
+    "T": {
+      "item": "orespawn:crystal_sticks"
+    },
+    "S": {
+      "item": "minecraft:string"
+    }
+  },
+  "result": {
+    "id": "orespawn:skate_bow"
+  }
+}

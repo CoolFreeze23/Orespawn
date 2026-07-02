@@ -148,3 +148,17 @@ impact estimate, related finding IDs.
   config key (e.g. `petsProtectEachOther`), ideally for all tamed OreSpawn mobs rather
   than the Boyfriend alone.
 - **Related findings:** ENT-A-055 (closed, Phase D3), ENT-A-058 (voice scope, open).
+
+## MOD-011 — Config-driven per-tier weapon/armor/ore stats (TECH-DEBT / PARITY-GAP)
+- **Origin:** ITEM-065 / PN-013 (2026-07-02, Phase D4). The original exposed every
+  tier's durability, per-piece armor values, enchantability, damage and drop numbers
+  through `get_armorstats`/`get_weaponstats`/`get_orestats` config bindings
+  (`orig OreSpawnMain.java:1489-1517`); the port bakes the defaults into
+  `ModArmorMaterials`/`ModToolTiers` because NeoForge 1.21.1 freezes those
+  registries before config load.
+- **Proposal for 2.0:** move armor materials to datapack-driven definitions (1.21.2+
+  moves ArmorMaterial to a data registry, making this nearly free on upgrade), or
+  apply config deltas at runtime via attribute modifiers on the finished items rather
+  than registry values.
+- **Related findings:** ITEM-065 (documented per PN-013), ENT-A-045 (stat values
+  verified correct in Phase C).

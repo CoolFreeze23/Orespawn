@@ -1,6 +1,8 @@
 package danger.orespawn.entity;
 
+import danger.orespawn.util.MyUtils;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
@@ -24,7 +26,7 @@ public class BetterFireball extends LargeFireball {
     private int ticksAlive = 0;
     private int explosionPower = 1;
     private boolean small = false;
-    /** Reserved for callers; not read by this class (legacy / future use). */
+    /** orig BetterFireball.java:70-72,152,214 — shooter-set flag sparing players/Dragons. */
     private boolean notme = false;
 
     public BetterFireball(EntityType<? extends LargeFireball> type, Level level) {
@@ -55,6 +57,26 @@ public class BetterFireball extends LargeFireball {
         }
     }
 
+    /**
+     * orig BetterFireball.java:136-155 (tick sweep skips) and :208-217 (impact
+     * returns) — the fireball passes through other BetterFireballs, Mothra,
+     * GodzillaHeads and Royalty, and, when the shooter set notme, through
+     * players and Dragons. The original aborted the whole collision scan when
+     * such an entity appeared anywhere in the sweep list; the port maps this
+     * to per-entity pass-through, the closest vanilla-hit-detection analogue.
+     */
+    @Override
+    protected boolean canHitEntity(Entity target) {
+        if (target instanceof BetterFireball || target instanceof Mothra
+                || target instanceof GodzillaHead || MyUtils.isRoyalty(target)) {
+            return false;
+        }
+        if (this.notme && (target instanceof Player || target instanceof Dragon)) {
+            return false;
+        }
+        return super.canHitEntity(target);
+    }
+
     @Override
     protected void onHitEntity(EntityHitResult result) {
         if (this.level().isClientSide) return;
@@ -63,7 +85,14 @@ public class BetterFireball extends LargeFireball {
 
         if (target instanceof LivingEntity living) {
             float boundingBoxArea = living.getBbHeight() * living.getBbWidth();
-            if (boundingBoxArea > LARGE_MOB_BB_AREA_THRESHOLD) {
+            // orig BetterFireball.java:221-223 — big mobs lose half their HP,
+            // except Royalty/Godzilla/GodzillaHead/PitchBlack/Kraken
+            if (boundingBoxArea > LARGE_MOB_BB_AREA_THRESHOLD
+                    && !MyUtils.isRoyalty(living)
+                    && !(living instanceof Godzilla)
+                    && !(living instanceof GodzillaHead)
+                    && !(living instanceof PitchBlack)
+                    && !(living instanceof Kraken)) {
                 living.setHealth(living.getHealth() / 2.0f);
             }
         }
