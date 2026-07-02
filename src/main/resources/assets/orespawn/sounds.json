@@ -23,11 +23,17 @@
   "b_death_boyfriend": {
     "sounds": ["orespawn:b_death_boyfriend"]
   },
+  "b_death_single": {
+    "sounds": ["orespawn:b_death_single1", "orespawn:b_death_single2"]
+  },
   "b_death_single1": {
     "sounds": ["orespawn:b_death_single1"]
   },
   "b_death_single2": {
     "sounds": ["orespawn:b_death_single2"]
+  },
+  "b_fight": {
+    "sounds": ["orespawn:b_fight1", "orespawn:b_fight2", "orespawn:b_fight3", "orespawn:b_fight4", "orespawn:b_fight5", "orespawn:b_fight6", "orespawn:b_fight7"]
   },
   "b_fight1": {
     "sounds": ["orespawn:b_fight1"]
@@ -49,6 +55,9 @@
   },
   "b_fight7": {
     "sounds": ["orespawn:b_fight7"]
+  },
+  "b_happy": {
+    "sounds": ["orespawn:b_happy1", "orespawn:b_happy2", "orespawn:b_happy3", "orespawn:b_happy4", "orespawn:b_happy5", "orespawn:b_happy6", "orespawn:b_happy7", "orespawn:b_happy8"]
   },
   "b_happy1": {
     "sounds": ["orespawn:b_happy1"]
@@ -73,6 +82,9 @@
   },
   "b_happy8": {
     "sounds": ["orespawn:b_happy8"]
+  },
+  "b_hurt": {
+    "sounds": ["orespawn:b_hurt1", "orespawn:b_hurt2", "orespawn:b_hurt3", "orespawn:b_hurt4", "orespawn:b_hurt5", "orespawn:b_hurt6", "orespawn:b_hurt7", "orespawn:b_hurt8", "orespawn:b_hurt9", "orespawn:b_hurt10"]
   },
   "b_hurt1": {
     "sounds": ["orespawn:b_hurt1"]
@@ -104,6 +116,9 @@
   "b_hurt10": {
     "sounds": ["orespawn:b_hurt10"]
   },
+  "b_ow": {
+    "sounds": ["orespawn:b_ow1", "orespawn:b_ow2", "orespawn:b_ow3", "orespawn:b_ow4", "orespawn:b_ow5", "orespawn:b_ow6", "orespawn:b_ow7", "orespawn:b_ow8", "orespawn:b_ow9"]
+  },
   "b_ow1": {
     "sounds": ["orespawn:b_ow1"]
   },
@@ -131,11 +146,17 @@
   "b_ow9": {
     "sounds": ["orespawn:b_ow9"]
   },
+  "b_rain": {
+    "sounds": ["orespawn:b_rain1", "orespawn:b_rain2"]
+  },
   "b_rain1": {
     "sounds": ["orespawn:b_rain1"]
   },
   "b_rain2": {
     "sounds": ["orespawn:b_rain2"]
+  },
+  "b_taunt": {
+    "sounds": ["orespawn:b_taunt1", "orespawn:b_taunt2", "orespawn:b_taunt3", "orespawn:b_taunt4", "orespawn:b_taunt5", "orespawn:b_taunt6"]
   },
   "b_taunt1": {
     "sounds": ["orespawn:b_taunt1"]
@@ -158,11 +179,17 @@
   "b_thunder": {
     "sounds": ["orespawn:b_thunder"]
   },
+  "b_water": {
+    "sounds": ["orespawn:b_water1", "orespawn:b_water2"]
+  },
   "b_water1": {
     "sounds": ["orespawn:b_water1"]
   },
   "b_water2": {
     "sounds": ["orespawn:b_water2"]
+  },
+  "b_woohoo": {
+    "sounds": ["orespawn:b_woohoo1", "orespawn:b_woohoo2", "orespawn:b_woohoo3", "orespawn:b_woohoo4"]
   },
   "b_woohoo1": {
     "sounds": ["orespawn:b_woohoo1"]
@@ -178,6 +205,9 @@
   },
   "basilisk_living": {
     "sounds": ["orespawn:basilisk_living"]
+  },
+  "bb_happy": {
+    "sounds": ["orespawn:bb_happy1", "orespawn:bb_happy2", "orespawn:bb_happy3", "orespawn:bb_happy4", "orespawn:bb_happy5", "orespawn:bb_happy6"]
   },
   "bb_happy1": {
     "sounds": ["orespawn:bb_happy1"]
@@ -202,6 +232,9 @@
   },
   "big_splat": {
     "sounds": ["orespawn:big_splat"]
+  },
+  "birds": {
+    "sounds": ["orespawn:birds1", "orespawn:birds2", "orespawn:birds3", "orespawn:birds4", "orespawn:birds5", "orespawn:birds6", "orespawn:birds7", "orespawn:birds8", "orespawn:birds9", "orespawn:birds10", "orespawn:birds11", "orespawn:birds12", "orespawn:birds13", "orespawn:birds14", "orespawn:birds15", "orespawn:birds16", "orespawn:birds17", "orespawn:birds18", "orespawn:birds19", "orespawn:birds20", "orespawn:birds21", "orespawn:birds22", "orespawn:birds23"]
   },
   "birds1": {
     "sounds": ["orespawn:birds1"]
@@ -275,6 +308,9 @@
   "caterkiller_death": {
     "sounds": ["orespawn:caterkiller_death"]
   },
+  "caterkiller_hit": {
+    "sounds": ["orespawn:caterkiller_hit1", "orespawn:caterkiller_hit2", "orespawn:caterkiller_hit3", "orespawn:caterkiller_hit4"]
+  },
   "caterkiller_hit1": {
     "sounds": ["orespawn:caterkiller_hit1"]
   },
@@ -286,6 +322,9 @@
   },
   "caterkiller_hit4": {
     "sounds": ["orespawn:caterkiller_hit4"]
+  },
+  "caterkiller_living": {
+    "sounds": ["orespawn:caterkiller_living1", "orespawn:caterkiller_living2", "orespawn:caterkiller_living3", "orespawn:caterkiller_living4"]
   },
   "caterkiller_living1": {
     "sounds": ["orespawn:caterkiller_living1"]
@@ -307,6 +346,9 @@
   },
   "chainsawshort": {
     "sounds": ["orespawn:chainsawshort"]
+  },
+  "clatter": {
+    "sounds": ["orespawn:clatter1", "orespawn:clatter2"]
   },
   "clatter1": {
     "sounds": ["orespawn:clatter1"]
@@ -343,6 +385,9 @@
   },
   "dbdead": {
     "sounds": ["orespawn:dbdead"]
+  },
+  "dbhit": {
+    "sounds": ["orespawn:dbhit1", "orespawn:dbhit2", "orespawn:dbhit3"]
   },
   "dbhit1": {
     "sounds": ["orespawn:dbhit1"]
@@ -416,6 +461,9 @@
   "glassdead2": {
     "sounds": ["orespawn:glassdead2"]
   },
+  "glasshit": {
+    "sounds": ["orespawn:glasshit1", "orespawn:glasshit2", "orespawn:glasshit3", "orespawn:glasshit4", "orespawn:glasshit5"]
+  },
   "glasshit1": {
     "sounds": ["orespawn:glasshit1"]
   },
@@ -439,6 +487,9 @@
   },
   "hammerhead_death": {
     "sounds": ["orespawn:hammerhead_death"]
+  },
+  "hammerhead_living": {
+    "sounds": ["orespawn:hammerhead_living1", "orespawn:hammerhead_living2"]
   },
   "hammerhead_living1": {
     "sounds": ["orespawn:hammerhead_living1"]
@@ -491,6 +542,9 @@
   "leon_death": {
     "sounds": ["orespawn:leon_death"]
   },
+  "leon_hit": {
+    "sounds": ["orespawn:leon_hit1", "orespawn:leon_hit2", "orespawn:leon_hit3"]
+  },
   "leon_hit1": {
     "sounds": ["orespawn:leon_hit1"]
   },
@@ -518,6 +572,9 @@
   "molenoid_death": {
     "sounds": ["orespawn:molenoid_death"]
   },
+  "molenoid_hit": {
+    "sounds": ["orespawn:molenoid_hit1", "orespawn:molenoid_hit2", "orespawn:molenoid_hit3", "orespawn:molenoid_hit4", "orespawn:molenoid_hit5", "orespawn:molenoid_hit6"]
+  },
   "molenoid_hit1": {
     "sounds": ["orespawn:molenoid_hit1"]
   },
@@ -536,6 +593,9 @@
   "molenoid_hit6": {
     "sounds": ["orespawn:molenoid_hit6"]
   },
+  "molenoid_living": {
+    "sounds": ["orespawn:molenoid_living1", "orespawn:molenoid_living2", "orespawn:molenoid_living3"]
+  },
   "molenoid_living1": {
     "sounds": ["orespawn:molenoid_living1"]
   },
@@ -547,6 +607,9 @@
   },
   "mosquito": {
     "sounds": ["orespawn:mosquito"]
+  },
+  "mothrawings": {
+    "sounds": ["orespawn:mothrawings1", "orespawn:mothrawings2", "orespawn:mothrawings3"]
   },
   "mothrawings1": {
     "sounds": ["orespawn:mothrawings1"]
@@ -565,6 +628,9 @@
   },
   "o_death_single": {
     "sounds": ["orespawn:o_death_single"]
+  },
+  "o_fight": {
+    "sounds": ["orespawn:o_fight1", "orespawn:o_fight2", "orespawn:o_fight3", "orespawn:o_fight4", "orespawn:o_fight5", "orespawn:o_fight6", "orespawn:o_fight7"]
   },
   "o_fight1": {
     "sounds": ["orespawn:o_fight1"]
@@ -587,6 +653,9 @@
   "o_fight7": {
     "sounds": ["orespawn:o_fight7"]
   },
+  "o_happy": {
+    "sounds": ["orespawn:o_happy1", "orespawn:o_happy2", "orespawn:o_happy3", "orespawn:o_happy4", "orespawn:o_happy5", "orespawn:o_happy6", "orespawn:o_happy7"]
+  },
   "o_happy1": {
     "sounds": ["orespawn:o_happy1"]
   },
@@ -607,6 +676,9 @@
   },
   "o_happy7": {
     "sounds": ["orespawn:o_happy7"]
+  },
+  "o_hurt": {
+    "sounds": ["orespawn:o_hurt1", "orespawn:o_hurt2", "orespawn:o_hurt3", "orespawn:o_hurt4", "orespawn:o_hurt5", "orespawn:o_hurt6", "orespawn:o_hurt7", "orespawn:o_hurt8", "orespawn:o_hurt9"]
   },
   "o_hurt1": {
     "sounds": ["orespawn:o_hurt1"]
@@ -635,6 +707,9 @@
   "o_hurt9": {
     "sounds": ["orespawn:o_hurt9"]
   },
+  "o_ow": {
+    "sounds": ["orespawn:o_ow1", "orespawn:o_ow2", "orespawn:o_ow3", "orespawn:o_ow4", "orespawn:o_ow5", "orespawn:o_ow6", "orespawn:o_ow7", "orespawn:o_ow8"]
+  },
   "o_ow1": {
     "sounds": ["orespawn:o_ow1"]
   },
@@ -662,6 +737,9 @@
   "o_rain": {
     "sounds": ["orespawn:o_rain"]
   },
+  "o_taunt": {
+    "sounds": ["orespawn:o_taunt1", "orespawn:o_taunt2", "orespawn:o_taunt3", "orespawn:o_taunt4"]
+  },
   "o_taunt1": {
     "sounds": ["orespawn:o_taunt1"]
   },
@@ -677,11 +755,17 @@
   "o_thunder": {
     "sounds": ["orespawn:o_thunder"]
   },
+  "o_water": {
+    "sounds": ["orespawn:o_water1", "orespawn:o_water2"]
+  },
   "o_water1": {
     "sounds": ["orespawn:o_water1"]
   },
   "o_water2": {
     "sounds": ["orespawn:o_water2"]
+  },
+  "o_woohoo": {
+    "sounds": ["orespawn:o_woohoo1", "orespawn:o_woohoo2", "orespawn:o_woohoo3", "orespawn:o_woohoo4"]
   },
   "o_woohoo1": {
     "sounds": ["orespawn:o_woohoo1"]
@@ -713,6 +797,9 @@
   "pitchblack_living": {
     "sounds": ["orespawn:pitchblack_living"]
   },
+  "ratdead": {
+    "sounds": ["orespawn:ratdead1", "orespawn:ratdead2", "orespawn:ratdead3"]
+  },
   "ratdead1": {
     "sounds": ["orespawn:ratdead1"]
   },
@@ -727,6 +814,9 @@
   },
   "ratlive": {
     "sounds": ["orespawn:ratlive"]
+  },
+  "roar": {
+    "sounds": ["orespawn:roar1", "orespawn:roar2", "orespawn:roar3", "orespawn:roar4", "orespawn:roar5", "orespawn:roar6"]
   },
   "roar1": {
     "sounds": ["orespawn:roar1"]
@@ -749,6 +839,9 @@
   "robot1_death": {
     "sounds": ["orespawn:robot1_death"]
   },
+  "robot_death": {
+    "sounds": ["orespawn:robot_death1", "orespawn:robot_death2", "orespawn:robot_death3", "orespawn:robot_death4", "orespawn:robot_death5"]
+  },
   "robot_death1": {
     "sounds": ["orespawn:robot_death1"]
   },
@@ -763,6 +856,9 @@
   },
   "robot_death5": {
     "sounds": ["orespawn:robot_death5"]
+  },
+  "robot_hurt": {
+    "sounds": ["orespawn:robot_hurt1", "orespawn:robot_hurt2", "orespawn:robot_hurt3", "orespawn:robot_hurt4", "orespawn:robot_hurt5", "orespawn:robot_hurt6", "orespawn:robot_hurt7", "orespawn:robot_hurt8"]
   },
   "robot_hurt1": {
     "sounds": ["orespawn:robot_hurt1"]
@@ -788,6 +884,9 @@
   "robot_hurt8": {
     "sounds": ["orespawn:robot_hurt8"]
   },
+  "robot_living": {
+    "sounds": ["orespawn:robot_living1", "orespawn:robot_living2", "orespawn:robot_living3", "orespawn:robot_living4"]
+  },
   "robot_living1": {
     "sounds": ["orespawn:robot_living1"]
   },
@@ -799,6 +898,9 @@
   },
   "robot_living4": {
     "sounds": ["orespawn:robot_living4"]
+  },
+  "robotspider": {
+    "sounds": ["orespawn:robotspider1", "orespawn:robotspider2", "orespawn:robotspider3", "orespawn:robotspider4", "orespawn:robotspider5", "orespawn:robotspider6", "orespawn:robotspider7", "orespawn:robotspider8", "orespawn:robotspider9", "orespawn:robotspider10", "orespawn:robotspider11"]
   },
   "robotspider1": {
     "sounds": ["orespawn:robotspider1"]
@@ -854,6 +956,9 @@
   "seamonster_hit": {
     "sounds": ["orespawn:seamonster_hit"]
   },
+  "seamonster_living": {
+    "sounds": ["orespawn:seamonster_living1", "orespawn:seamonster_living2"]
+  },
   "seamonster_living1": {
     "sounds": ["orespawn:seamonster_living1"]
   },
@@ -862,6 +967,9 @@
   },
   "seaviper_death": {
     "sounds": ["orespawn:seaviper_death"]
+  },
+  "seaviper_hit": {
+    "sounds": ["orespawn:seaviper_hit1", "orespawn:seaviper_hit2", "orespawn:seaviper_hit3"]
   },
   "seaviper_hit1": {
     "sounds": ["orespawn:seaviper_hit1"]
@@ -875,11 +983,17 @@
   "seaviper_living": {
     "sounds": ["orespawn:seaviper_living"]
   },
+  "squid_death": {
+    "sounds": ["orespawn:squid_death1", "orespawn:squid_death2"]
+  },
   "squid_death1": {
     "sounds": ["orespawn:squid_death1"]
   },
   "squid_death2": {
     "sounds": ["orespawn:squid_death2"]
+  },
+  "squid_hurt": {
+    "sounds": ["orespawn:squid_hurt1", "orespawn:squid_hurt2", "orespawn:squid_hurt3", "orespawn:squid_hurt4"]
   },
   "squid_hurt1": {
     "sounds": ["orespawn:squid_hurt1"]
@@ -922,6 +1036,9 @@
   },
   "waterdragon_death": {
     "sounds": ["orespawn:waterdragon_death"]
+  },
+  "waterdragon_hurt": {
+    "sounds": ["orespawn:waterdragon_hurt1", "orespawn:waterdragon_hurt2", "orespawn:waterdragon_hurt3"]
   },
   "waterdragon_hurt1": {
     "sounds": ["orespawn:waterdragon_hurt1"]

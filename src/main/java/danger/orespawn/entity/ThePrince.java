@@ -3,13 +3,18 @@ package danger.orespawn.entity;
 import java.util.Comparator;
 import java.util.List;
 import javax.annotation.Nullable;
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.util.Mth;
+import net.minecraft.world.Difficulty;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
@@ -40,7 +45,9 @@ import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 import danger.orespawn.ModEntities;
+import danger.orespawn.OreSpawnConfig;
 import danger.orespawn.OreSpawnMod;
 
 public class ThePrince extends TamableAnimal {
@@ -64,6 +71,18 @@ public class ThePrince extends TamableAnimal {
     private int fedCount = 0;
     private int dayCount = 0;
     private int isDay = 0;
+    /** orig ThePrince.java:309-314 ({@code set_ok_to_grow}) — called on diamond regression from the teen. */
+    public void setOkToGrow() {
+        this.okToGrow = 1;
+        this.killCount = 0;
+        this.fedCount = 0;
+        this.dayCount = 0;
+    }
+
+    /** orig ThePrince.java:63 — set while the owner is creative-flying; speeds flight up. */
+    private int ownerFlying = 0;
+    /** orig ThePrince.java:60 — the flight steering target (transient, like the original). */
+    private BlockPos.MutableBlockPos currentFlightTarget = null;
 
     public ThePrince(EntityType<? extends ThePrince> type, Level level) {
         super(type, level);
@@ -142,11 +161,11 @@ public class ThePrince extends TamableAnimal {
     @Override
     public void tick() {
         super.tick();
-        // Original (orig ThePrince.java:423) maps activity 2 (flying) to noPhysics, but
-        // its flight movement (do_movement) is not yet ported. Until it is, enabling
-        // noPhysics just lets a hurt prince sink through terrain permanently (BUG-010),
-        // so the mapping is intentionally disabled here (see PARITY_NOTES.md).
-        this.noPhysics = false;
+        // orig ThePrince.java:423 — activity 2 (flying) ghosts through terrain.
+        // Safe now that do_movement is ported: flight steering pulls the prince
+        // to air-block targets and the 1/100 activity re-roll (orig :533-539)
+        // restores physics (resolves the BUG-010 interim disable; PN-002).
+        this.noPhysics = this.getActivity() == 2;
 
         int i;
         if (this.random.nextInt(10) == 1) {
@@ -164,6 +183,23 @@ public class ThePrince extends TamableAnimal {
         this.head1ext = Math.max(0, Math.min(60, this.head1ext + this.head1dir));
         this.head2ext = Math.max(0, Math.min(60, this.head2ext + this.head2dir));
         this.head3ext = Math.max(0, Math.min(60, this.head3ext + this.head3dir));
+    }
+
+    /**
+     * orig ThePrince.java:483-505 (func_70636_d) — buoyancy while swimming and
+     * a 0.6 vertical damping factor while flying. (The original's syncit
+     * DataWatcher refresh is obsolete: SynchedEntityData handles it.)
+     */
+    @Override
+    public void aiStep() {
+        super.aiStep();
+        if (this.isInWater()) {
+            this.setDeltaMovement(this.getDeltaMovement().add(0.0, 0.07, 0.0));
+        }
+        if (this.getActivity() == 2) {
+            Vec3 motion = this.getDeltaMovement();
+            this.setDeltaMovement(motion.x, motion.y * 0.6, motion.z);
+        }
     }
 
     @Override
@@ -189,8 +225,10 @@ public class ThePrince extends TamableAnimal {
     protected void customServerAiStep() {
         if (this.isRemoved()) return;
 
+        // orig ThePrince.java:513-515 — periodically forgive the revenge target
+        // (setRevengeTarget(null), not the attack target).
         if (this.random.nextInt(200) == 1) {
-            this.setTarget(null);
+            this.setLastHurtByMob(null);
         }
 
         if (this.getActivity() != 2) {
@@ -210,31 +248,46 @@ public class ThePrince extends TamableAnimal {
             }
         }
 
-        // Original activity cycling (orig ThePrince.java:529-539): every tick while not
-        // sitting, a 1/100 roll re-picks the state — 1/20 of those start flying (2),
-        // otherwise land (1). This is the original's only path back from activity 2,
-        // and dropping it left the prince stuck flying after a hit (BUG-010).
         if (!this.isOrderedToSit()) {
+            // orig ThePrince.java:529-539 — activity cycling: 1/100 roll re-picks
+            // the state, 1/20 of those start flying (2), otherwise land (1).
             if (this.getActivity() == 0) {
                 this.setActivity(1);
             }
             if (this.random.nextInt(100) == 1) {
                 this.setActivity(this.random.nextInt(20) == 1 ? 2 : 1);
             }
+            // orig ThePrince.java:540-547 — a creative-flying owner pulls the
+            // prince into the air and marks fast-follow mode.
+            this.ownerFlying = 0;
+            LivingEntity owner = this.getOwner();
+            if (this.isTame() && owner instanceof Player ownerPlayer && ownerPlayer.getAbilities().flying) {
+                this.ownerFlying = 1;
+                this.setActivity(2);
+            }
+            // orig ThePrince.java:548-550 — grounded prince takes flight when the
+            // owner is over 16 blocks away.
+            if (this.getActivity() == 1 && this.isTame() && owner != null
+                    && this.distanceToSqr(owner) > 256.0) {
+                this.setActivity(2);
+            }
+            this.doMovement();
+        } else {
+            // orig ThePrince.java:552-555 — a sitting prince breaks the sit and
+            // flies after an owner who leaves it behind.
+            LivingEntity owner = this.getOwner();
+            if (this.isTame() && owner != null && this.distanceToSqr(owner) > 256.0) {
+                this.setOrderedToSit(false);
+                this.setInSittingPose(false);
+                this.setActivity(2);
+            }
         }
 
-        if (!this.isOrderedToSit() && this.random.nextInt(7) == 1) {
-            LivingEntity target = this.findSomethingToAttack();
-            if (target != null) {
-                this.setActivity(2);
-                this.setAttacking(1);
-                double attackRange = (3.0 + target.getBbWidth() / 2.0) * (3.0 + target.getBbWidth() / 2.0);
-                if (this.distanceToSqr(target) < attackRange) {
-                    this.doHurtTarget(target);
-                }
-            } else {
-                this.setAttacking(0);
-            }
+        // orig ThePrince.java:556-568 — natural growth has no ok_to_grow gate;
+        // the counters alone decide (closes BOSS-021).
+        if (this.killCount > 25 && this.fedCount > 10 && this.dayCount > 10) {
+            this.transformToTeen();
+            return;
         }
 
         if (this.isDay == 0) {
@@ -244,10 +297,240 @@ public class ThePrince extends TamableAnimal {
             if (this.isDay == -1 && this.level().isDay()) ++this.dayCount;
             this.isDay = this.level().isDay() ? 1 : -1;
         }
+    }
 
-        if (this.okToGrow != 0 && this.killCount > 25 && this.fedCount > 10 && this.dayCount > 10) {
-            this.transformToTeen();
+    /**
+     * orig ThePrince.java:585-725 ({@code do_movement}) — the per-tick brain:
+     * a 1-in-7 combat roll (melee bite, or the fire/lightning/ice canon trio
+     * gated on a 0.5 rad head-bearing check), retreat-when-hurt for tame
+     * princes, and flight-target steering. Steering only runs while flying
+     * (activity 2); on the ground (activity 1) the method exits after the
+     * combat roll (orig :670-672) and vanilla goals drive movement.
+     */
+    private void doMovement() {
+        boolean doNew = false;
+        boolean hasOwner = false;
+        double ox = 0.0;
+        double oy = 0.0;
+        double oz = 0.0;
+        if (this.currentFlightTarget == null) {
+            doNew = true;
+            this.currentFlightTarget = new BlockPos.MutableBlockPos(
+                    (int) this.getX(), (int) this.getY(), (int) this.getZ());
         }
+        // orig :603-605 — 1-in-300 wanderlust re-roll while flying.
+        if (this.getActivity() == 2 && this.random.nextInt(300) == 0) {
+            doNew = true;
+        }
+        LivingEntity owner = this.getOwner();
+        if (this.isTame() && owner != null) {
+            hasOwner = true;
+            ox = owner.getX();
+            oy = owner.getY() + 1.0;
+            oz = owner.getZ();
+            // orig :612-617 — re-target when straying: >10 blocks normally,
+            // >6 blocks when chasing a flying owner.
+            if (this.distanceToSqr(owner) > 100.0) {
+                doNew = true;
+            }
+            if (this.ownerFlying != 0 && this.distanceToSqr(owner) > 36.0) {
+                doNew = true;
+            }
+        }
+        // orig :619-669 — 1-in-7 combat roll outside Peaceful.
+        if (this.random.nextInt(7) == 1 && this.level().getDifficulty() != Difficulty.PEACEFUL) {
+            LivingEntity target = this.findSomethingToAttack();
+            if (target != null) {
+                if (this.isTame() && this.getHealth() / this.getMaxHealth() < 0.25f) {
+                    // orig :622-626 — a badly hurt tame prince flees directly
+                    // away from the threat.
+                    this.setActivity(2);
+                    this.setAttacking(0);
+                    doNew = false;
+                    this.currentFlightTarget.set(
+                            (int) (this.getX() + (this.getX() - target.getX())),
+                            (int) (this.getY() + 1.0),
+                            (int) (this.getZ() + (this.getZ() - target.getZ())));
+                } else {
+                    this.setActivity(2);
+                    this.setAttacking(1);
+                    this.currentFlightTarget.set(
+                            (int) target.getX(), (int) (target.getY() + 1.0), (int) target.getZ());
+                    doNew = false;
+                    float meleeRange = 3.0f + target.getBbWidth() / 2.0f;
+                    double distSq = this.distanceToSqr(target);
+                    if (distSq < (double) (meleeRange * meleeRange)) {
+                        this.doHurtTarget(target);
+                    } else if (distSq > 25.0 && distSq < 144.0 && !this.isInWater()
+                            && this.getSpyroFire() != 0
+                            && (this.random.nextInt(3) == 0 || this.random.nextInt(4) == 1)) {
+                        // orig :634-663 — random head, and fire only once that head
+                        // has swung to within 0.5 rad of the target bearing.
+                        int which = this.random.nextInt(3);
+                        double heading = Math.atan2(target.getZ() - this.getZ(), target.getX() - this.getX());
+                        double facing = Math.toRadians((this.getYRot() + 90.0f) % 360.0f);
+                        double diff = Math.abs(heading - facing) % (Math.PI * 2.0);
+                        if (diff > Math.PI) {
+                            diff -= Math.PI * 2.0;
+                        }
+                        if (Math.abs(diff) < 0.5) {
+                            if (which == 0) {
+                                this.firecanon(target);
+                            } else if (which == 1) {
+                                this.firecanonl(target);
+                            } else {
+                                this.firecanoni(target);
+                            }
+                        }
+                    }
+                }
+            } else {
+                this.setAttacking(0);
+            }
+        }
+        // orig :670-672 — grounded: vanilla AI moves the prince.
+        if (this.getActivity() == 1) {
+            return;
+        }
+        if (this.currentFlightTarget.distSqr(new net.minecraft.core.Vec3i(
+                (int) this.getX(), (int) this.getY(), (int) this.getZ())) < 2.1) {
+            doNew = true;
+        }
+        if (doNew) {
+            // orig :676-707 — pick a random air block near self (or the owner),
+            // tighter spread when the owner is flying; up to 10 tries.
+            int keepTrying = 10;
+            boolean foundAir = false;
+            while (!foundAir && keepTrying != 0) {
+                int gox = (int) this.getX();
+                int goy = (int) this.getY();
+                int goz = (int) this.getZ();
+                int xdir;
+                int zdir;
+                if (hasOwner) {
+                    gox = (int) ox;
+                    goy = (int) oy;
+                    goz = (int) oz;
+                    if (this.ownerFlying == 0) {
+                        zdir = this.random.nextInt(4) + 6;
+                        xdir = this.random.nextInt(4) + 6;
+                    } else {
+                        zdir = this.random.nextInt(8);
+                        xdir = this.random.nextInt(8);
+                    }
+                } else {
+                    zdir = this.random.nextInt(5) + 6;
+                    xdir = this.random.nextInt(5) + 6;
+                }
+                if (this.random.nextInt(2) == 0) {
+                    zdir = -zdir;
+                }
+                if (this.random.nextInt(2) == 0) {
+                    xdir = -xdir;
+                }
+                this.currentFlightTarget.set(gox + xdir,
+                        goy + (this.random.nextInt(6 + this.ownerFlying * 2) - 2), goz + zdir);
+                foundAir = this.level().isEmptyBlock(this.currentFlightTarget);
+                --keepTrying;
+            }
+        }
+        // orig :708-724 — signum steering toward the target; 1.75× speed chasing
+        // a flying owner, 3.5× when also more than 7 blocks behind.
+        double speedFactor = 1.0;
+        double dx = this.currentFlightTarget.getX() + 0.5 - this.getX();
+        double dy = this.currentFlightTarget.getY() + 0.1 - this.getY();
+        double dz = this.currentFlightTarget.getZ() + 0.5 - this.getZ();
+        if (this.ownerFlying != 0) {
+            speedFactor = 1.75;
+            if (this.isTame() && owner != null && this.distanceToSqr(owner) > 49.0) {
+                speedFactor = 3.5;
+            }
+        }
+        Vec3 motion = this.getDeltaMovement();
+        double mx = motion.x + (Math.signum(dx) * 0.5 - motion.x) * 0.15 * speedFactor;
+        double my = motion.y + (Math.signum(dy) * 0.7 - motion.y) * 0.21 * speedFactor;
+        double mz = motion.z + (Math.signum(dz) * 0.5 - motion.z) * 0.15 * speedFactor;
+        this.setDeltaMovement(mx, my, mz);
+        float targetYaw = (float) (Math.atan2(mz, mx) * 180.0 / Math.PI) - 90.0f;
+        float yawDelta = Mth.wrapDegrees(targetYaw - this.getYRot());
+        this.zza = (float) (0.75 * speedFactor);
+        this.setYRot(this.getYRot() + yawDelta / 3.0f);
+    }
+
+    /**
+     * orig ThePrince.java:782-800 ({@code firecanon}) — head 1: a big
+     * BetterFireball (halved to small 1-in-2) from muzzle xz 3.0 / y 1.0,
+     * aim jittered ±5/±3/±5 blocks, "random.bow" sound.
+     */
+    private void firecanon(LivingEntity target) {
+        double yoff = 1.0;
+        double xzoff = 3.0;
+        double cx = this.getX() - xzoff * Math.sin(Math.toRadians(this.getYRot()));
+        double cz = this.getZ() + xzoff * Math.cos(Math.toRadians(this.getYRot()));
+        float r1 = 5.0f * (this.random.nextFloat() - this.random.nextFloat());
+        float r2 = 3.0f * (this.random.nextFloat() - this.random.nextFloat());
+        float r3 = 5.0f * (this.random.nextFloat() - this.random.nextFloat());
+        Vec3 dir = new Vec3(target.getX() - cx + r1,
+                target.getY() + target.getBbHeight() / 2.0f - (this.getY() + yoff) + r2,
+                target.getZ() - cz + r3);
+        BetterFireball bf = new BetterFireball(this.level(), this, dir);
+        bf.moveTo(cx, this.getY() + yoff, cz, this.getYRot(), 0.0f);
+        bf.setBig();
+        if (this.random.nextInt(2) == 1) {
+            bf.setSmall();
+        }
+        this.level().playSound(null, this.getX(), this.getY(), this.getZ(),
+                SoundEvents.ARROW_SHOOT, this.getSoundSource(), 1.0f,
+                1.0f / (this.random.nextFloat() * 0.4f + 0.8f));
+        this.level().addFreshEntity(bf);
+    }
+
+    /**
+     * orig ThePrince.java:802-826 ({@code firecanonl}) — head 2: a ThunderBolt
+     * launched at 1.4f/4.0f with a 0.2×distance arc, then tripled.
+     */
+    private void firecanonl(LivingEntity target) {
+        double yoff = 1.0;
+        double xzoff = 3.0;
+        double cx = this.getX() - xzoff * Math.sin(Math.toRadians(this.getYRot()));
+        double cz = this.getZ() + xzoff * Math.cos(Math.toRadians(this.getYRot()));
+        this.level().playSound(null, this.getX(), this.getY(), this.getZ(),
+                SoundEvents.ARROW_SHOOT, this.getSoundSource(), 1.0f,
+                1.0f / (this.random.nextFloat() * 0.4f + 0.8f));
+        ThunderBolt tb = new ThunderBolt(this.level(), cx, this.getY() + yoff, cz);
+        tb.moveTo(cx, this.getY() + yoff, cz, 0.0f, 0.0f);
+        double dx = target.getX() - tb.getX();
+        double dy = target.getY() + 0.25 - tb.getY();
+        double dz = target.getZ() - tb.getZ();
+        double arc = Math.sqrt(dx * dx + dz * dz) * 0.2f;
+        tb.shoot(dx, dy + arc, dz, 1.4f, 4.0f);
+        tb.setDeltaMovement(tb.getDeltaMovement().scale(3.0));
+        this.level().addFreshEntity(tb);
+    }
+
+    /**
+     * orig ThePrince.java:828-853 ({@code firecanoni}) — head 3: an ice-making
+     * IceBall launched at 1.4f/4.0f with a 0.2×distance arc, then tripled.
+     */
+    private void firecanoni(LivingEntity target) {
+        double yoff = 1.0;
+        double xzoff = 3.0;
+        double cx = this.getX() - xzoff * Math.sin(Math.toRadians(this.getYRot()));
+        double cz = this.getZ() + xzoff * Math.cos(Math.toRadians(this.getYRot()));
+        this.level().playSound(null, this.getX(), this.getY(), this.getZ(),
+                SoundEvents.ARROW_SHOOT, this.getSoundSource(), 1.0f,
+                1.0f / (this.random.nextFloat() * 0.4f + 0.8f));
+        IceBall ib = new IceBall(ModEntities.ICE_BALL.get(), this.level());
+        ib.setOwner(this);
+        ib.enableIceCreation();
+        ib.moveTo(cx, this.getY() + yoff, cz, 0.0f, 0.0f);
+        double dx = target.getX() - ib.getX();
+        double dy = target.getY() + 0.25 - ib.getY();
+        double dz = target.getZ() - ib.getZ();
+        double arc = Math.sqrt(dx * dx + dz * dz) * 0.2f;
+        ib.shoot(dx, dy + arc, dz, 1.4f, 4.0f);
+        ib.setDeltaMovement(ib.getDeltaMovement().scale(3.0));
+        this.level().addFreshEntity(ib);
     }
 
     private void transformToTeen() {
@@ -271,6 +554,7 @@ public class ThePrince extends TamableAnimal {
     }
 
     private boolean isSuitableTarget(LivingEntity target) {
+        if (this.level().getDifficulty() == Difficulty.PEACEFUL) return false; // orig :728-730
         if (target == null || target == this || !target.isAlive()) return false;
         if (!this.getSensing().hasLineOfSight(target)) return false;
         if (MyUtils.isRoyalty(target)) return false;
@@ -282,9 +566,10 @@ public class ThePrince extends TamableAnimal {
     }
 
     private LivingEntity findSomethingToAttack() {
+        if (OreSpawnConfig.PLAY_NICELY.get()) return null; // orig ThePrince.java:765-767
         AABB searchBox = this.getBoundingBox().inflate(12.0, 6.0, 12.0);
         List<LivingEntity> targets = this.level().getEntitiesOfClass(LivingEntity.class, searchBox);
-        targets.sort(Comparator.comparingDouble(this::distanceToSqr));
+        targets.sort(this.targetSorter);
         for (LivingEntity target : targets) {
             if (this.isSuitableTarget(target)) return target;
         }
@@ -332,6 +617,32 @@ public class ThePrince extends TamableAnimal {
                 }
                 this.level().broadcastEntityEvent(this, (byte) 7);
                 ++this.fedCount;
+            }
+            if (!player.getAbilities().instabuild) stack.shrink(1);
+            return InteractionResult.sidedSuccess(this.level().isClientSide);
+        }
+
+        // orig ThePrince.java:233-249 — an ice block extinguishes the fireballs.
+        if (this.isTame() && this.isOwnedBy(player)
+                && this.distanceToSqr(player) < 16.0
+                && stack.is(Blocks.ICE.asItem())) {
+            if (!this.level().isClientSide) {
+                this.level().broadcastEntityEvent(this, (byte) 6);
+                this.setSpyroFire(0);
+                player.displayClientMessage(Component.literal("Prince fireballs extinguished."), false);
+            }
+            if (!player.getAbilities().instabuild) stack.shrink(1);
+            return InteractionResult.sidedSuccess(this.level().isClientSide);
+        }
+
+        // orig ThePrince.java:250-266 — flint & steel relights them.
+        if (this.isTame() && this.isOwnedBy(player)
+                && this.distanceToSqr(player) < 16.0
+                && stack.is(Items.FLINT_AND_STEEL)) {
+            if (!this.level().isClientSide) {
+                this.level().broadcastEntityEvent(this, (byte) 6);
+                this.setSpyroFire(1);
+                player.displayClientMessage(Component.literal("Prince fireballs lit!"), false);
             }
             if (!player.getAbilities().instabuild) stack.shrink(1);
             return InteractionResult.sidedSuccess(this.level().isClientSide);

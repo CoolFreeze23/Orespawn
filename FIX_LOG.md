@@ -16,7 +16,7 @@ list down at the end before release.
 - **BUG-003** — Place a Rat mob spawner (or `/summon orespawn:rat`), let it tick:
 server must not crash, rat must despawn normally when far away.
 - **BUG-004** — Tame a Prince, push it to its growth thresholds (or downgrade
-the Adult with a gold ingot — the Teen regression was removed in BOSS-029),
+the Adult/Teen with a diamond — regressions restored in D3),
 then log the owner out with the chunk loaded:
 transformation must complete with ownership intact, no NPE.
 - **BUG-005** — Let TheQueen reduce a Survival player to 0 HP via melee: normal
@@ -561,3 +561,115 @@ must not despawn when the player walks away.
     mob punches can't destroy it while ridden; hover hum only while ridden.
   - Creative tab: exactly one Hoverboard entry; `/summon orespawn:hoverboard` fails
     (intentional removal).
+
+---
+
+## Phase D — slice D3: ranged attacks + Prince-family flight (2026-06-13)
+
+- **Report:** `phase_d_reports/D3_ranged_flight.md` (full citation tables).
+
+### Small-entity batch
+
+- **BUG-032 — new finding, FIXED.** 39 aggregate sound events the original's sounds.json
+  defines (e.g. `mothrawings` → mothrawings1/2/3, `b_fight`, `b_taunt`, `o_hurt`,
+  `robot_living`) were missing from the port's sounds.json while code referenced the
+  aggregate names — every such sound silently played nothing. All 39 added.
+- **ENT-S-058 — FIXED (audit corrected).** Orig UltimateArrow.java has no
+  ignite/knockback/trail; the real behaviors ported: UltimateSwordPvp-gated
+  heal-instead-of-damage (+1 HP, arrow-hit sound, discard) for players / Girlfriend /
+  Boyfriend / tamed pets, and `canHitEntity` passthrough for Elevators and ridden
+  Cephadrome/Dragon/AbstractHorse.
+- **ENT-A-055 — FIXED.** Boyfriend weapon system: `RangedAttackMob` +
+  `RangedAttackGoal(1.25, 20, 10.0f)`; UltimateArrow when holding the Ultimate Bow
+  (2.0f, 1-in-4 crit) else Shoes id 6 (1.8f/4.0f); armed melee in `customServerAiStep`
+  (25t cooldown, Big-Bertha 10-block reach, `b_fight`, `b_taunt` at 4-7 blocks,
+  1-in-100 revenge forgiveness). Invented BOYFRIEND_BRO_MODE combat gate removed —
+  orig `bro_mode` (OreSpawnMain.java:1481) is voice-only (ENT-A-058 scope); archived
+  as MOD-010. The config key itself stays (it is original).
+- **ENT-D-049 — FIXED.** Girlfriend: same system with `o_` sounds, Shoes id 2-5,
+  1-in-200 target clear (orig Girlfriend.java).
+- **ENT-A-019 + ENT-A-018 — FIXED.** AttackSquid `watercanon` (1-in-5 roll, InkSack
+  1-in-3 else WaterBall, 1.4f/5.0f, muzzle offsets, orig yHeadRot/yRot aiming quirk
+  preserved); melee restored to the original double roll (`nextInt(4)==0 ||
+  nextInt(5)==1` = 40%).
+- **ENT-A-062 — FIXED.** Brutalfly `attackWithSomething`: Easy SmallFireball / Normal
+  50-50 / Hard BetterFireball, +1 HP self-heal per shot, shoot odds 1-in-3 (1-in-2
+  Hard); invented melee-on-player replaced by the original ranged-only engagement.
+- **ENT-D-044 — FIXED.** GiantRobot `fireLaserBall`: 0.5 rad aim gate (melee nested
+  inside per orig :256-263), reload 10/25 keyed on distSq 100, `setSpecial()` far
+  shots, original volumes/pitches.
+
+### Prince family (BOSS-019/021/022/023 baby · BOSS-028 teen · BOSS-034 adult · BOSS-039/040/041 princess; PN-002 closed)
+
+- **ThePrince (baby) — BOSS-019/021/022/023 FIXED.** Full `do_movement`
+  (orig :585-725: activity cycling 1/100 with 1/20 fly, owner-flying 1.75×/3.5×
+  speedups, flee-when-hurt retreat, signum steering 0.5/0.7 prods, yaw/3), canon trio
+  `firecanon`/`firecanonl`/`firecanoni` (muzzle xz 3.0 / y 1.0, 0.5 rad head-bearing
+  gate, 5-12 block band, DATA_FIRE + dry gate), ice/flint fire toggles with messages,
+  okToGrow gate dropped from natural growth (kill>25 && fed>10 && day>10), noPhysics
+  restored for activity 2 (BUG-010 interim disable lifted), 0.6 y-damping + water
+  buoyancy, revenge forgiveness corrected to `setLastHurtByMob(null)`.
+- **ThePrinceTeen — BOSS-028 FIXED.** `fly_without_rider` (orig :677-834): vertical
+  damping ternary (unreachable 0.61 arm kept verbatim), 1-in-7 combat roll, 8-block
+  bite + 5-19t fly-away, `shoot_somethingAt` volley <20 blocks, owner-anchored flight
+  targets (5-18 / 0-5 flying / 16-25 wild) requiring line of sight, terrain-following
+  lift (0.05/block × 0.05), signum steering + direct `move()`. `always_do`
+  (orig :435-461): 2 HP regen 1/250, 1/250 target forgiveness, owner creative-flight
+  follow, 1/50 settle roll (1/15 keeps flying). Ground spotting 1-in-10
+  (orig :398-405). While flying, vanilla goals/physics are bypassed (orig :849-857 —
+  `aiStep` override; travel skipped). `hurt()` rewritten per orig :343-393 (cactus/
+  fire/lava/inWall immune, fireballs pop, teen/Spyro immune, sit-break + take-flight,
+  hurt_timer 20, tame-vs-player no-retaliate). Wing sound every 20t; owner >20 blocks
+  launches flight. Interactions per orig :1127-1273: diamond block now steal-tames,
+  owner-only gate, beef full heal, food ×10, ice/flint toggles, **DIAMOND teen→baby
+  regression restored** (`ThePrince.setOkToGrow()` added), sit toggle grounds
+  (activity 0). Targeting per orig :496-555: 25/20/25 box, PlayNicely/Peaceful/royalty
+  gates, prey = Monster/Mothra/Kraken/untamed Leon/WaterDragon/GammaMetroid.
+- **BOSS-029 — RE-FIXED (audit corrected).** The Phase C note "orig has no shrink-back"
+  was wrong: orig ThePrinceTeen.java:1230-1250 has a DIAMOND regression. The C fix
+  correctly removed the invented gold-ingot item; D3 restores the faithful diamond one.
+- **BOSS-045 — new finding, FIXED.** Teen's invented cake growth shortcut removed
+  (duplicated the diamond block's function; orig has no cake branch).
+- **ThePrinceAdult — BOSS-034 FIXED.** Same brain with adult numbers
+  (orig :657-814/415-441/389-413): 1-in-6 combat roll, 10-block bite, volley <~24
+  blocks (muzzle xz 6.0 / y 3.5), spreads 8-23 / 0-11 / 20-34, 5 HP regen, wing sound
+  every 30t, owner >30 blocks launches flight, inWall hurt = no damage but take-flight.
+  Interactions per orig :1109-1249 (all <36 distSq): owner-only gate, beef full heal,
+  food ×10, ice/flint toggles, **DIAMOND adult→teen regression restored**, sit toggle.
+- **BOSS-046 — new finding, FIXED.** Adult's invented cake shortcut + gold-ingot
+  regression removed (both duplicated original diamond-item features).
+- **ThePrincess — BOSS-039/040/041 FIXED.** `do_movement` identical to the baby's;
+  canon trio at baby scale; noPhysics for activity 2 + 0.6 damping + buoyancy; food
+  heal nutrition ×10 (invented fedCount++ dropped); ice/flint toggles with
+  Princess-specific messages; diamond block steal-tames per orig. Melee fixed to the
+  original 9.0 via `doHurtTarget` (+kill counting) — clarifies BOSS-038: the 10.0 the
+  audit "verified" is the attribute (orig :102), but orig melee used
+  `getAttackStrength()`=9. **Power system ported** (orig :518-628): attack_level
+  +1/tick (+4 in combat, 0 while extinguished), DATA_POWER synced every 10 steps,
+  client firework-spark aura >400, discharge >500 → 3 PurplePower orbs (type 1-3,
+  3× her motion) in combat, else the terraforming bloom (5 column probes under
+  mobGriefing: flowers incl. the 6 OreSpawn kinds on grass, dirt→grass, stone→dirt
+  cover, sand→cactus/dirt, lava→water, plus 2 Butterfly/Cockateil hatches —
+  orig "Bird" = Cockateil, OreSpawnMain.java:3831).
+- **PN-002 — CLOSED.** All four royals fly with the original noPhysics mapping; the
+  BUG-010 interim disable is fully lifted (MOD-003 remains the 2.0 candidate).
+- **Mapping deltas (non-player-visible):** 1.7.10's raw-block flower/terraform writes →
+  `setBlockAndUpdate`; still/flowing lava (two 1.7.10 blocks) → the single modern lava
+  block, both becoming water; teen/adult flight bypass implemented as an `aiStep`
+  override (clients keep vanilla lerp, matching the original's hand-rolled client lerp).
+- **Ledger:** 410 terminal (390 FIXED + 20 VERIFIED-CORRECT) / 195 open, total 605
+  (602 + BOSS-045 + BOSS-046 + BUG-032; `tools/ledger_reconcile.py` green).
+- **Build:** `.\gradlew.bat compileJava` → green; full `.\gradlew.bat build` at commit.
+- **Pending manual tests (in-game):**
+  - Boyfriend/Girlfriend: hand them an Ultimate Bow (arrows fly, heal allies when PvP
+    off) vs. no bow (shoes fly); melee sounds b_fight/o_fight; taunts at 4-7 blocks.
+  - AttackSquid: ink/water projectiles beyond 3 blocks; melee inside.
+  - Brutalfly: fireball type follows difficulty; heals itself while strafing players.
+  - GiantRobot: laser volleys only once its head faces you; slower, special lasers
+    from >10 blocks.
+  - Prince family: babies/princess take off (1-in-2000 per tick at idle) and land;
+    hurt pets at <25% HP flee airborne; canon trio fires only in the 5-12 band while
+    lit; ice block/flint toggle the fire with chat messages; teen/adult fly to a
+    distant owner, bite-and-break-off in combat, wing flaps audible; diamond
+    regressions teen→baby and adult→teen work; princess blooms terrain at peace and
+    vents PurplePower in combat (sparkle aura when charged).

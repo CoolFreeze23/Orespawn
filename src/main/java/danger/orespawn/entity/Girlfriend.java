@@ -9,6 +9,7 @@ import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
@@ -22,25 +23,29 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
 import net.minecraft.world.entity.ai.goal.FollowOwnerGoal;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
-import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
 import net.minecraft.world.entity.ai.goal.PanicGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
+import net.minecraft.world.entity.ai.goal.RangedAttackGoal;
 import net.minecraft.world.entity.ai.goal.TemptGoal;
 import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.OwnerHurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.OwnerHurtTargetGoal;
 import net.minecraft.world.entity.monster.Monster;
+import net.minecraft.world.entity.monster.RangedAttackMob;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.Level;
+import danger.orespawn.ModItems;
+import danger.orespawn.OreSpawnConfig;
 import danger.orespawn.OreSpawnMod;
 
-public class Girlfriend extends TamableAnimal {
+public class Girlfriend extends TamableAnimal implements RangedAttackMob {
     private static final EntityDataAccessor<Integer> DATA_SKIN =
             SynchedEntityData.defineId(Girlfriend.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Integer> DATA_VOICE =
@@ -56,6 +61,11 @@ public class Girlfriend extends TamableAnimal {
     public int whichGirl;
     private int voice;
     private int voiceEnable = 1;
+    // orig Girlfriend.java:272-325 weapon-melee state
+    private int meleeCooldown = 0;
+    private int fightSoundTicker = 0;
+    private int tauntSoundTicker = 0;
+    private int hadTarget = 0;
 
     public Girlfriend(EntityType<? extends Girlfriend> type, Level level) {
         super(type, level);
@@ -69,7 +79,9 @@ public class Girlfriend extends TamableAnimal {
     protected void registerGoals() {
         this.goalSelector.addGoal(1, new FollowOwnerGoal(this, 1.4, 12.0f, 1.5f));
         this.goalSelector.addGoal(2, new TemptGoal(this, 1.25, Ingredient.of(Items.POPPY), false));
-        this.goalSelector.addGoal(4, new MeleeAttackGoal(this, 1.25, true));
+        // orig Girlfriend.java:153 — EntityAIArrowAttack(this, 1.25, 20t, 10.0f);
+        // melee happens separately in customServerAiStep (orig func_70629_bd).
+        this.goalSelector.addGoal(4, new RangedAttackGoal(this, 1.25, 20, 10.0f));
         this.goalSelector.addGoal(5, new FloatGoal(this));
         this.goalSelector.addGoal(7, new LookAtPlayerGoal(this, Player.class, 6.0f));
         this.goalSelector.addGoal(8, new WaterAvoidingRandomStrollGoal(this, 0.75));
@@ -141,6 +153,120 @@ public class Girlfriend extends TamableAnimal {
                 this.voiceEnable = this.entityData.get(DATA_VOICE_ENABLE);
             }
         }
+    }
+
+    /**
+     * orig Girlfriend.java:272-325 (func_70629_bd) — held-weapon melee,
+     * identical to the Boyfriend's (orig Boyfriend.java:239-289) except for the
+     * "o_" voice lines and an extra 1-in-200 full target reset (orig :282-284).
+     * See {@link Boyfriend#customServerAiStep} for the 1.7.10
+     * attackTargetEntityWithCurrentItem → {@code Mob.doHurtTarget} mapping.
+     */
+    @Override
+    protected void customServerAiStep() {
+        super.customServerAiStep();
+        ItemStack stack = this.getMainHandItem();
+        LivingEntity victim = this.getTarget();
+        if (OreSpawnConfig.PLAY_NICELY.get()) {
+            victim = null;
+        }
+        if (this.random.nextInt(100) == 1) {
+            this.setLastHurtByMob(null);
+        }
+        if (this.random.nextInt(200) == 1) {
+            this.setTarget(null);
+        }
+        if (!stack.isEmpty() && !this.isOrderedToSit()) {
+            if (victim != null) {
+                float dist = this.distanceTo(victim);
+                if (dist < 4.0f || (stack.is(ModItems.BIG_BERTHA.get()) && dist < 10.0f)) {
+                    --this.meleeCooldown;
+                    if (this.meleeCooldown <= 0) {
+                        this.meleeCooldown = 25;
+                        this.swing(InteractionHand.MAIN_HAND);
+                        this.doHurtTarget(victim);
+                        --this.fightSoundTicker;
+                        if (this.fightSoundTicker <= 0) {
+                            if (this.voiceEnable != 0) {
+                                this.level().playSound(null, this,
+                                        SoundEvent.createVariableRangeEvent(
+                                                ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "o_fight")),
+                                        this.getSoundSource(), 0.5f, this.getVoicePitch());
+                            }
+                            this.fightSoundTicker = 3;
+                        }
+                        this.hadTarget = 1;
+                    }
+                } else if (dist < 7.0f && !stack.is(ModItems.ULTIMATE_BOW.get())) {
+                    --this.tauntSoundTicker;
+                    if (this.tauntSoundTicker <= 0) {
+                        if (this.voiceEnable != 0) {
+                            this.level().playSound(null, this,
+                                    SoundEvent.createVariableRangeEvent(
+                                            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "o_taunt")),
+                                    this.getSoundSource(), 0.5f, this.getVoicePitch());
+                        }
+                        this.tauntSoundTicker = 300;
+                    }
+                    this.getNavigation().moveTo(victim, 1.25);
+                }
+            } else {
+                this.fightSoundTicker = 0;
+                this.meleeCooldown = 0;
+                if (this.hadTarget != 0) {
+                    this.hadTarget = 0;
+                    if (this.voiceEnable != 0) {
+                        this.level().playSound(null, this,
+                                SoundEvent.createVariableRangeEvent(
+                                        ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "o_woohoo")),
+                                this.getSoundSource(), 0.4f, this.getVoicePitch());
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * orig Girlfriend.java:975-1008 (attackEntityWithRangedAttack) — identical
+     * to the Boyfriend's (orig Boyfriend.java:874-907) except the shoe thrown
+     * is a random type 2-5 instead of always 6. UltimateArrow: velocity 2.0,
+     * inaccuracy 10.0, 1-in-4 crit, creative-only pickup, 1 bow durability;
+     * Punch/Flame ride along via the firing-weapon stack. Shoes: velocity 1.8,
+     * inaccuracy 4.0.
+     */
+    @Override
+    public void performRangedAttack(LivingEntity target, float distanceFactor) {
+        if (this.swinging) {
+            return;
+        }
+        ItemStack stack = this.getMainHandItem();
+        if (stack.is(ModItems.ULTIMATE_BOW.get())) {
+            UltimateArrow arrow = new UltimateArrow(this.level(), this, stack);
+            double dx = target.getX() - this.getX();
+            double dy = target.getY(1.0 / 3.0) - arrow.getY();
+            double dz = target.getZ() - this.getZ();
+            double horiz = Math.sqrt(dx * dx + dz * dz);
+            arrow.shoot(dx, dy + horiz * 0.2, dz, 2.0f, 10.0f);
+            if (this.random.nextInt(4) == 1) {
+                arrow.setCritArrow(true);
+            }
+            stack.hurtAndBreak(1, this, EquipmentSlot.MAINHAND);
+            this.level().playSound(null, this, SoundEvents.ARROW_SHOOT, this.getSoundSource(),
+                    1.0f, 1.0f / (this.random.nextFloat() * 0.4f + 1.2f) + 0.5f);
+            arrow.pickup = AbstractArrow.Pickup.CREATIVE_ONLY;
+            this.level().addFreshEntity(arrow);
+        } else {
+            Shoes shoes = new Shoes(this.level(), this, 2 + this.random.nextInt(4));
+            double dx = target.getX() - this.getX();
+            double dy = target.getY() + target.getEyeHeight() - 1.1 - shoes.getY();
+            double dz = target.getZ() - this.getZ();
+            double horiz = Math.sqrt(dx * dx + dz * dz) * 0.2;
+            shoes.shoot(dx, dy + horiz, dz, 1.8f, 4.0f);
+            this.level().playSound(null, this, SoundEvents.ARROW_SHOOT, this.getSoundSource(),
+                    0.75f, 1.0f / (this.random.nextFloat() * 0.4f + 0.8f));
+            this.level().addFreshEntity(shoes);
+        }
+        this.swing(InteractionHand.MAIN_HAND);
     }
 
     @Override

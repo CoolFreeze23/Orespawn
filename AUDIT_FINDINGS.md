@@ -241,6 +241,7 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 - **Original:** `AttackSquid.java` — melee 1-in-10 trigger, ~40% swing at distSq<9
 - **Port:** `entity/AttackSquid.java` — 1-in-10 trigger, 1-in-4 (25%) swing
 - **Fix:** raise swing roll to ~40% (e.g. `nextInt(5)<2`) to match original cadence.
+- **Resolution:** FIXED (2026-06-13, Phase D3 — the original's exact double roll restored (`nextInt(4)==0 || nextInt(5)==1` = 40%) as part of the ENT-A-019 watercanon port; see FIX_LOG.md)
 
 ### ENT-A-019 — AttackSquid: ranged `watercanon` attack missing
 
@@ -248,6 +249,7 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 - **Original:** `AttackSquid.java` — fires `InkSack` (1-in-3) or `WaterBall` (2-in-3), speed 1.4, spread 5.0
 - **Port:** `entity/AttackSquid.java` — melee only
 - **Fix:** add ranged attack: roll 1-in-3 InkSack else WaterBall, velocity 1.4, inaccuracy 5.0 (both projectile classes exist in port).
+- **Resolution:** FIXED (2026-06-13, Phase D3 — `watercanon` ported line-for-line (1-in-5 fire roll, InkSack 1-in-3 else WaterBall, shoot 1.4f/5.0f, muzzle offsets and the original's yHeadRot/yRot mix preserved); see FIX_LOG.md)
 
 ### ENT-A-020 — AttackSquid: drop table replaced
 
@@ -542,6 +544,7 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 - **Original:** `Boyfriend.java:874-907,239-289` — fires `UltimateArrow` (2.0f, 1-in-4 crit, punch/flame aware) when holding UltimateBow, else throws `Shoes` projectile (1.8 speed, 4.0 spread); melee with held-item enchant math + 25t cooldown + `b_fight` sound
 - **Port:** plain vanilla `MeleeAttackGoal`; no Shoes, no UltimateBow logic, no fight/taunt sounds
 - **Fix:** implement `RangedAttackMob`: UltimateArrow when holding UltimateBow, Shoes projectile fallback; port held-item enchant melee math and `b_fight` sound.
+- **Resolution:** FIXED (2026-06-13, Phase D3 — `RangedAttackMob` + `RangedAttackGoal(1.25, 20, 10.0f)` per orig goal 4; `performRangedAttack` fires UltimateArrow (UltimateBow held) or Shoes id 6; armed melee in `customServerAiStep` with the 25t cooldown, Big-Bertha 10-block reach, `b_fight`/`b_taunt` sounds. The invented BOYFRIEND_BRO_MODE combat gate was removed (archived as MOD-010 — orig bro_mode is voice-only, ENT-A-058 scope); see FIX_LOG.md)
 
 ### ENT-A-056 — Boyfriend: tamed poppy drop missing
 
@@ -595,6 +598,7 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 - **Original:** `Brutalfly.java:369-406` — Easy=SmallFireball, Normal=50/50 Small/BetterFireball, Hard=BetterFireball; +1 HP self-heal per shot; shoot odds 1-in-3 (1-in-2 hard); melee only within distSq 25
 - **Port:** `EntityBrutalfly.java:141-158` — melee only
 - **Fix:** implement `attackWithSomething`-style ranged logic with difficulty-keyed projectile choice, per-shot self-heal, and the original shoot odds.
+- **Resolution:** FIXED (2026-06-13, Phase D3 — `attackWithSomething` ported (difficulty-keyed Small/BetterFireball, +1 HP per shot, distinct sounds); shoot odds 1-in-3 (1-in-2 Hard); the port's invented melee-on-player replaced by the original's ranged-only player engagement; mobs meleed close / canonned past 25 blocks; see FIX_LOG.md)
 
 ### ENT-A-063 — Brutalfly: death loot/butterfly burst replaced
 
@@ -1434,6 +1438,7 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 - **Original:** `GiantRobot.java:264-283` — fires LaserBall: aims within 0.5 rad, reload 10 close (vol 2.5 pitch 1.0) / 25 + `setSpecial()` far >100 distSq (vol 3.5 pitch 0.5), launch offset y+10
 - **Port:** melee only; `reloadTicker` field exists but no firing code
 - **Fix:** implement the ranged attack in `customServerAiStep`: aim gate 0.5 rad, reload 10/25 by range, `setSpecial()` on far shots, y+10 launch offset, original volumes/pitches.
+- **Resolution:** FIXED (2026-06-13, Phase D3 — `fireLaserBall` ported with the 0.5 rad aim gate (melee nested inside it per orig :256-263), reload 10/25 keyed on distSq 100, `setSpecial()` on far shots, muzzle/launch offsets and original volumes/pitches; see FIX_LOG.md)
 
 ### ENT-D-045 — GiantRobot: kit/RayGun drops lost
 
@@ -1473,6 +1478,7 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 - **Original:** `Girlfriend.java` — `EntityAIArrowAttack(4, 1.25, 20t, 10.0f)` + IRangedAttackMob firing UltimateArrow
 - **Port:** `MeleeAttackGoal(4)` only
 - **Fix:** implement `RangedAttackMob` with an arrow-attack goal (speed 1.25, 20t interval, 10.0 range) firing UltimateArrow.
+- **Resolution:** FIXED (2026-06-13, Phase D3 — `RangedAttackMob` + `RangedAttackGoal(1.25, 20, 10.0f)`; `performRangedAttack` fires UltimateArrow (UltimateBow held) or Shoes id 2-5; armed melee with the 25t cooldown, `o_`-prefixed sounds and the 1-in-200 target-clear roll ported alongside; see FIX_LOG.md)
 
 ### ENT-D-050 — Girlfriend: spawn hotspots flattened
 
@@ -2981,6 +2987,7 @@ Paths: ORIG = `reference_1_7_10_source\sources\danger\orespawn\`, PORT = `src\ma
 - **Original:** ORIG — ignites targets, custom knockback, skips player-owned tameables, trail particles
 - **Port:** none of the four behaviors
 - **Fix:** port `onHitEntity`: ignite + extra knockback, early-return for `TamableAnimal` with owner; add a per-tick particle trail.
+- **Resolution:** FIXED (2026-06-13, Phase D3 — audit description corrected against orig UltimateArrow.java: there is no ignite/knockback/trail; the real custom behaviors are (a) the UltimateSwordPvp-gated heal-instead-of-damage for players/Girlfriend/Boyfriend/tamed pets (+1 HP, arrow-hit sound, arrow consumed) and (b) passthrough of Elevators and ridden Cephadrome/Dragon/horses — both ported via `canHitEntity`/`onHitEntity`; see FIX_LOG.md)
 
 ---
 
@@ -3405,6 +3412,7 @@ Paths: ORIG = `reference_1_7_10_source\sources\danger\orespawn\`, PORT = `src\ma
 - **Original:** ORIG `ThePrince.java:233-258` — flint&steel → fire ON, ice block → fire OFF, with chat messages
 - **Port:** `DATA_FIRE` exists but no interaction sets it
 - **Fix:** in `mobInteract`, handle FLINT_AND_STEEL (`setFire(1)`) and ICE (`setFire(0)`) + player messages.
+- **Resolution:** FIXED (2026-06-13, Phase D3 — ice block extinguishes / flint & steel relights with the original chat messages, owner-gated at <16 distSq, inserted before the sit toggle per orig order; see FIX_LOG.md)
 
 ### BOSS-020 — ThePrince: grow-trigger item changed
 
@@ -3420,6 +3428,7 @@ Paths: ORIG = `reference_1_7_10_source\sources\danger\orespawn\`, PORT = `src\ma
 - **Original:** ORIG `ThePrince.java:556` — grows when `kill>25 && fed>10 && day>10` (no okToGrow gate)
 - **Port:** `ThePrince.java:230` — same condition AND `okToGrow != 0` — natural growth can never trigger without diamond-block/cake
 - **Fix:** drop the `okToGrow` term from the natural-growth condition at `ThePrince.java:230`.
+- **Resolution:** FIXED (2026-06-13, Phase D3 — okToGrow gate removed from the natural-growth trigger; the field stays (saved, set by diamond-block and the teen's diamond regression via `setOkToGrow()`) because the original keeps it as the DIAMOND-item grow gate (BOSS-020); see FIX_LOG.md)
 
 ### BOSS-022 — ThePrince: ranged attack trio missing
 
@@ -3427,6 +3436,7 @@ Paths: ORIG = `reference_1_7_10_source\sources\danger\orespawn\`, PORT = `src\ma
 - **Original:** ORIG `ThePrince.java:634-663,782-853` — fireball / ThunderBolt / IceBall canons at 5–12 block range when fire enabled
 - **Port:** none
 - **Fix:** port the three-canon ranged attack (reuse TheKing's `firecanon`/`firecanonl`/`firecanoni` plumbing at baby scale), gated on `DATA_FIRE`.
+- **Resolution:** FIXED (2026-06-13, Phase D3 — `firecanon` (big/small BetterFireball), `firecanonl` (×3 ThunderBolt), `firecanoni` (ice-making IceBall) ported at baby scale (muzzle xz 3.0 / y 1.0), fired from `doMovement`'s combat roll behind the 0.5 rad head-bearing gate, 5-12 block band, `DATA_FIRE` + not-in-water gated; see FIX_LOG.md)
 
 ### BOSS-023 — ThePrince: flight missing
 
@@ -3434,6 +3444,7 @@ Paths: ORIG = `reference_1_7_10_source\sources\danger\orespawn\`, PORT = `src\ma
 - **Original:** ORIG `ThePrince.java:585-725` — flying wander/owner-follow `do_movement` incl. owner-flying speedups
 - **Port:** ground `MyEntityAIWander` (`:82`)
 - **Fix:** port the flight movement (the codebase already has the pattern in EntitySpyro `:253-359` — reuse it).
+- **Resolution:** FIXED (2026-06-13, Phase D3 — `do_movement` ported line-for-line (activity cycling, owner-flying 1.75×/3.5× speedups, flee-when-hurt retreat, flight-target rerolls, signum steering with 0.5/0.7 prods and yaw/3); activity 2 restores `noPhysics` (BUG-010 interim disable lifted) with the 0.6 y-damping in `aiStep`; closes PN-002 for the baby Prince; see FIX_LOG.md)
 
 ### BOSS-024 — ThePrince: target list narrowed
 
@@ -3477,14 +3488,15 @@ Paths: ORIG = `reference_1_7_10_source\sources\danger\orespawn\`, PORT = `src\ma
 - **Original:** ORIG — fire/lightning/ice canons (same trio pattern as ThePrince)
 - **Port:** none
 - **Fix:** port the three-canon attack (shared implementation with BOSS-022).
+- **Resolution:** FIXED (2026-06-13, Phase D3 — the teen's full flight brain ported: `fly_without_rider` (orig :677-834 — vertical damping, 1-in-7 combat roll, bite + 5-19t fly-away, `shoot_somethingAt` canon volley <20 blocks behind the 0.5 rad gate, owner-anchored flight targets, terrain-following lift, signum steering with direct move), `always_do` (2 HP regen 1/250, settle rolls, owner creative-flight follow), ground spotting (1-in-10), hurt() immunities/fireball-pop/take-flight, wing sounds every 20t, and the original interaction set (mount, beef full heal, food ×10, ice/flint fire toggles, DIAMOND teen→baby regression restored — see BOSS-029 correction); see FIX_LOG.md)
 
 ### BOSS-029 — ThePrinceTeen: regression-to-baby added
 
 - **Status:** DIVERGENT
-- **Original:** no shrink-back exists in 1.7.10
+- **Original:** ~~no shrink-back exists in 1.7.10~~ **CORRECTED (Phase D3):** orig `ThePrinceTeen.java:1230-1250` DOES have a shrink-back — a held DIAMOND reverts the teen to a baby "The Prince" with `set_ok_to_grow()`; the audit (and the Phase C resolution note) missed it. The port's divergence was the ITEM (gold ingot) not the feature.
 - **Port:** `ThePrinceTeen.java:240-254` — gold ingot reverts teen → baby
 - **Fix:** remove the gold-ingot regression (or document as intentional; note gold ingot also conflicts with BOSS-020's grow item).
-- **Resolution:** FIXED (2026-06-11, Phase C — invented gold-ingot teen→baby regression removed (orig ThePrinceTeen.java:1127-1230 has no shrink-back); see FIX_LOG.md and phase_c_reports/C5_bosses.md)
+- **Resolution:** FIXED (2026-06-11, Phase C — invented gold-ingot teen→baby regression removed) + RE-FIXED (2026-06-13, Phase D3 — the original DIAMOND teen→baby regression restored per orig :1230-1250, including `setOkToGrow()` on the spawned baby; see FIX_LOG.md)
 
 ---
 
@@ -3528,6 +3540,7 @@ Paths: ORIG = `reference_1_7_10_source\sources\danger\orespawn\`, PORT = `src\ma
 - **Original:** ORIG — fire/lightning/ice canons
 - **Port:** none
 - **Fix:** shared implementation with BOSS-022/028.
+- **Resolution:** FIXED (2026-06-13, Phase D3 — the adult's full flight brain ported: `fly_without_rider` (orig :657-814 — 1-in-6 combat roll, 10-block bite + fly-away, `shoot_something` canon volley <~24 blocks behind the 0.5 rad gate at muzzle xz 6.0 / y 3.5, wider owner spreads 8-23/0-11/20-34, terrain lift, signum steering), `always_do` (5 HP regen 1/250, settle rolls, owner creative-flight follow), ground spotting (1-in-10), hurt() immunities incl. the inWall no-damage take-flight branch, wing sounds every 30t, and the original interaction set (mount, beef full heal, food ×10 all at <36 distSq, ice/flint fire toggles, DIAMOND adult→teen regression restored; invented cake + gold-ingot branches removed — see adult_interact_dup); see FIX_LOG.md)
 
 ### BOSS-035 — ThePrinceAdult: PrinceEgg drop lost
 
@@ -3562,7 +3575,7 @@ Paths: ORIG = `reference_1_7_10_source\sources\danger\orespawn\`, PORT = `src\ma
 - **Original:** ORIG `ThePrincess.java:194-196,377-379,334-336,62,81` — HP 400, attack 9, armor 14, speed 0.32
 - **Port:** `PORT\entity\ThePrincess.java:85-88,52,86` — HP 500, attack 10, armor 16, speed 0.3
 - **Fix:** set MAX_HEALTH 400, ATTACK_DAMAGE 9, ARMOR 14, MOVEMENT_SPEED 0.32.
-- **Resolution:** FIXED (2026-06-11, Phase B — HP/speed/armor fixed; attack verified correct at orig 10 (audit's 9 wrong), see FIX_LOG.md and phase_b_reports/B2_mobstats.md)
+- **Resolution:** FIXED (2026-06-11, Phase B — HP/speed/armor fixed; attack verified correct at orig 10 (audit's 9 wrong), see FIX_LOG.md and phase_b_reports/B2_mobstats.md) — **Phase D3 clarification:** both were right: the orig ATTRIBUTE is 10 (orig :102) but orig melee dealt `getAttackStrength()`=9 (orig :377-379); the port now keeps the 10 attribute and deals 9 via `doHurtTarget` (see BOSS-041 resolution)
 
 ### BOSS-039 — ThePrincess: feeding heal flat instead of ×10
 
@@ -3570,6 +3583,7 @@ Paths: ORIG = `reference_1_7_10_source\sources\danger\orespawn\`, PORT = `src\ma
 - **Original:** ORIG `ThePrincess.java:224-226` — food heals `healAmount×10`
 - **Port:** `ThePrincess.java:197-201` — flat 20
 - **Fix:** heal `nutrition × 10` (same fix as BOSS-018).
+- **Resolution:** FIXED (2026-06-13, Phase D3 — nutrition × 10 heal, only-when-hurt gate, heart particles per orig :224-240; the port's invented fedCount increment dropped (the original princess has no fed counter logic beyond the saved field); see FIX_LOG.md)
 
 ### BOSS-040 — ThePrincess: ranged canon trio missing
 
@@ -3577,6 +3591,7 @@ Paths: ORIG = `reference_1_7_10_source\sources\danger\orespawn\`, PORT = `src\ma
 - **Original:** ORIG `ThePrincess.java:730-748,863-909` — fire/lightning/ice canons
 - **Port:** none
 - **Fix:** shared canon implementation (BOSS-022 family).
+- **Resolution:** FIXED (2026-06-13, Phase D3 — the trio ported at baby scale (muzzle xz 3.0 / y 1.0) behind the 0.5 rad head-bearing gate in `doMovement`'s 1-in-7 combat roll (5-12 block band, fire + not-in-water gated). The full power system came with it: attack_level charge (+1/tick, +4 in combat, zeroed while extinguished), DATA_POWER sync every 10 steps, client firework-spark aura >400, and the >500 discharge — 3 PurplePower orbs in combat, else the terraforming bloom (flowers/grass/dirt/cactus/lava-calming under mobGriefing + 2 Butterfly/Bird hatches); plus ice/flint fire toggles with the Princess-specific messages; see FIX_LOG.md)
 
 ### BOSS-041 — ThePrincess: flight missing
 
@@ -3584,6 +3599,7 @@ Paths: ORIG = `reference_1_7_10_source\sources\danger\orespawn\`, PORT = `src\ma
 - **Original:** ORIG — flying `do_movement`
 - **Port:** ground wander
 - **Fix:** port flight movement (reuse EntitySpyro pattern), same as BOSS-023. (PlayNicely targeting gate: BOSS-017.)
+- **Resolution:** FIXED (2026-06-13, Phase D3 — `do_movement` ported line-for-line (same brain as the baby Prince: activity cycling, owner-flying speedups, flee-when-hurt, signum steering); activity 2 restores `noPhysics` with 0.6 y-damping and water buoyancy in `aiStep`; targeting restored to the original prey list (Monster/Mothra/Dragonfly/Mosquito, PlayNicely + Peaceful gates, royalty exempt) and melee fixed to the original 9.0 via `doHurtTarget` (the attribute stays 10 per orig :102 — BOSS-038's "attack 10 verified" refers to the attribute; actual melee used `getAttackStrength()`=9); closes PN-002; see FIX_LOG.md)
 
 ### BOSS-042 — ThePrincess: drops beef → diamond
 
@@ -3592,6 +3608,20 @@ Paths: ORIG = `reference_1_7_10_source\sources\danger\orespawn\`, PORT = `src\ma
 - **Port:** `LT the_princess.json` — 1–4 diamond
 - **Fix:** rewrite `the_princess.json` to beef 1–4.
 - **Resolution:** FIXED (2026-06-11, Phase C — see FIX_LOG.md and phase_c_reports/C5_bosses.md)
+
+### BOSS-045 — ThePrinceTeen: invented cake growth shortcut (found 2026-06-13, Phase D3)
+
+- **Status:** DIVERGENT
+- **Original:** ORIG `ThePrinceTeen.java:1127-1273` (`func_70085_c`) — no cake interaction of any kind; the only instant-growth item is the DIAMOND BLOCK (:1133-1150).
+- **Port:** a Phase-10 cake branch maxed `killCount`/`dayCount` to 1000 (duplicate of the diamond block's growth credit on a cheaper item).
+- **Resolution:** FIXED (2026-06-13, Phase D3 — removed while porting the original interaction set (beef heal, food ×10, ice/flint fire toggles, diamond regression, sit toggle); not archived to MODERNIZATION_NOTES because it duplicated the diamond block's original function; see FIX_LOG.md)
+
+### BOSS-046 — ThePrinceAdult: invented cake shortcut + gold-ingot regression (found 2026-06-13, Phase D3)
+
+- **Status:** DIVERGENT
+- **Original:** ORIG `ThePrinceAdult.java:1109-1249` (`func_70085_c`) — no cake and no gold-ingot interaction; the King-growth shortcut is the DIAMOND BLOCK (:1115-1127) and the regression item is a DIAMOND (adult → teen, :1207-1226).
+- **Port:** Phase-10 branches: cake maxed `growCounter` to 288000 (duplicate of the diamond block) and a gold ingot reverted adult → teen (duplicate of the diamond regression on a different item).
+- **Resolution:** FIXED (2026-06-13, Phase D3 — both removed while porting the original interaction set; the faithful DIAMOND adult→teen regression restored in their place; not archived to MODERNIZATION_NOTES because both duplicated original features; see FIX_LOG.md)
 
 ---
 
@@ -3615,8 +3645,8 @@ Paths: ORIG = `reference_1_7_10_source\sources\danger\orespawn\`, PORT = `src\ma
 
 ## Register totals
 
-- Total entries: 224 (ENT-SYS2: 4 · ENT-K: 89 · ENT-S: 87 · BOSS: 44)
-- DIVERGENT: 128 · PARTIAL: 59 · MISSING: 31 · UNVERIFIED: 6
+- Total entries: 226 (ENT-SYS2: 4 · ENT-K: 89 · ENT-S: 87 · BOSS: 46; BOSS-045/046 added 2026-06-13, Phase D3)
+- DIVERGENT: 130 · PARTIAL: 59 · MISSING: 31 · UNVERIFIED: 6
 
 ---
 
@@ -4701,7 +4731,7 @@ Only MISSING / PARTIAL / DIVERGENT / UNVERIFIED items are listed; fully PORTED i
 
 Consolidated from `audit_sections/08_animations_events_gui.md` (ANIM), `audit_sections/09_bugs.md` (BUG), `audit_sections/10_optimizations.md` (OPT). Paths: original = `reference_1_7_10_source/sources/danger/orespawn/`, port = `src/main/java/danger/orespawn/` (MHLib under `src/main/java/de/dertoaster/multihitboxlib/`).
 
-Entries: **78 total** — ANIM 20 (DIVERGENT 8 · PARTIAL 10 · MISSING 2) · BUG 31 (CRITICAL 7 · HIGH 6 · MEDIUM 9 · LOW 9) · OPT 27 (HIGH 8 · MEDIUM 11 · LOW 8).
+Entries: **79 total** — ANIM 20 (DIVERGENT 8 · PARTIAL 10 · MISSING 2) · BUG 32 (CRITICAL 7 · HIGH 7 · MEDIUM 9 · LOW 9; BUG-032 added 2026-06-13, Phase D3) · OPT 27 (HIGH 8 · MEDIUM 11 · LOW 8).
 
 ---
 
@@ -5102,6 +5132,14 @@ Entries: **78 total** — ANIM 20 (DIVERGENT 8 · PARTIAL 10 · MISSING 2) · BU
 - **Location:** `danger/orespawn/entity/EntityVortex.java:117–119`
 - **Scenario:** `heal(1.0f)` runs on both sides with independent RNG — client's local health copy briefly diverges (visual only; next health sync corrects).
 - **Fix:** Gate the heal behind `!level().isClientSide`.
+
+### BUG-032 — 39 aggregate sound events missing from sounds.json (found 2026-06-13, Phase D3)
+
+- **Severity:** HIGH
+- **Location:** `src/main/resources/assets/orespawn/sounds.json` vs orig `reference_1_7_10_source/.../sounds.json`
+- **Scenario:** the original defines aggregate events (one key listing several variant files — e.g. `mothrawings` → mothrawings1/2/3, `b_fight`, `o_hurt`, `robot_living`) that the port's sounds.json never declared, while entity code references the aggregate names. Every such `SoundEvent.createVariableRangeEvent` resolved to nothing and played silence — a silent failure with no log spam.
+- **Fix:** declare the 39 missing aggregate keys with their original variant lists.
+- **Resolution:** FIXED (2026-06-13, Phase D3 — all 39 aggregates added to sounds.json (lowercase keys, original variant membership); found while wiring the Boyfriend/Girlfriend fight/taunt sounds and Prince-family wing sounds; see FIX_LOG.md)
 
 ---
 

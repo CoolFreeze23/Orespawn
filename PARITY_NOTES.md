@@ -16,7 +16,7 @@ death pipeline runs. Deleting a `ServerPlayer` entity outright is a server-integ
 defect (ghost connection, no respawn), not a gameplay value.
 - **See:** MOD-001 for the full modernization of the mob half.
 
-## PN-002 — ThePrince/ThePrincess: activity 2 no longer enables noPhysics (BUG-010, temporary)
+## PN-002 — ThePrince/ThePrincess: activity 2 no longer enables noPhysics (BUG-010, temporary) — CLOSED 2026-06-13 (Phase D3)
 
 - **Original:** `orig ThePrince.java:423` maps activity 2 (flying) to `noPhysics`, with
 `do_movement()` providing the actual flight steering.
@@ -25,6 +25,11 @@ noPhysics mapping is disabled — with it on and no steering, a hurt prince sank
 through terrain into the void. The original's 1/100-per-tick land/fly re-roll
 (`orig ThePrince.java:529-539`) IS ported, so the activity state machine matches.
 When flight lands in Phase D this note must be revisited and the mapping restored.
+- **CLOSED (2026-06-13, Phase D3):** `do_movement()` is ported for both the baby
+Prince and the Princess (and `fly_without_rider` for Teen/Adult), so the
+`noPhysics` mapping is restored exactly as the original had it: baby/princess
+`noPhysics = activity == 2`, teen/adult `noPhysics = activity != 0`. The interim
+disable is gone; MOD-003 remains the 2.0 candidate for collision-aware flight.
 
 ## PN-003 — TheKing: small-attacker deletion preserved (BUG-012)
 

@@ -132,3 +132,19 @@ impact estimate, related finding IDs.
 - **Proposal:** reintroduce post-parity as an explicit addition, ideally with real
   textures (block, gem, tools, armor layer) and a JEI-visible extracting use.
 - **Related findings:** WGEN-024 (resolved), PN-009 (closed by this removal).
+
+## MOD-010 — Boyfriend "bro mode" as a friendly-fire gate (DELIBERATE 2.0 CONTENT CANDIDATE)
+- **Origin:** Phase-10 port invention, REMOVED from the parity build (2026-06-13,
+  Phase D3). The port overrode `TamableAnimal.wantsToAttack` so that, with
+  `boyfriendBroMode` enabled, a tamed Boyfriend refused to attack other tamed mobs
+  sharing his owner (no pet-vs-pet friendly fire).
+- **Why removed:** the original's `bro_mode` config (`orig OreSpawnMain.java:1481`,
+  "BoyfriendBroMode", default 0) has no combat meaning at all — it only gates the
+  Boyfriend's VOICE: 1-in-2 silence rolls on ambient/hurt lines, a silent death, and
+  the `bb_happy` ambient variant (`orig Boyfriend.java:772,804,818,825`). Reusing the
+  key for targeting behavior was an invented divergence. The config key itself stays
+  (it is original) for the ENT-A-058 voice work.
+- **Proposal:** if pet friendly-fire protection is wanted in 2.0, add it under its own
+  config key (e.g. `petsProtectEachOther`), ideally for all tamed OreSpawn mobs rather
+  than the Boyfriend alone.
+- **Related findings:** ENT-A-055 (closed, Phase D3), ENT-A-058 (voice scope, open).
