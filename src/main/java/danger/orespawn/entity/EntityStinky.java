@@ -452,6 +452,10 @@ public class EntityStinky extends TamableAnimal {
         tag.putInt("SpyroActivity", this.getActivity());
         tag.putInt("SpyroFire", this.getSpyroFire());
         tag.putInt("StinkySkin", this.getSkin());
+        // Exposes the tame flag to the loot-table NBT predicate for the
+        // tamed-only beef drop (orig Stinky.java:257-266) — same convention
+        // as Gazelle/Camarasaurus.
+        tag.putBoolean("OreSpawnTamed", this.isTame());
     }
 
     @Override

@@ -14,9 +14,11 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.AgeableMob;
+import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -44,6 +46,7 @@ import net.minecraft.world.level.Level;
 import danger.orespawn.ModItems;
 import danger.orespawn.OreSpawnConfig;
 import danger.orespawn.OreSpawnMod;
+import danger.orespawn.util.SeasonalDates;
 
 public class Girlfriend extends TamableAnimal implements RangedAttackMob {
     private static final EntityDataAccessor<Integer> DATA_SKIN =
@@ -52,8 +55,14 @@ public class Girlfriend extends TamableAnimal implements RangedAttackMob {
             SynchedEntityData.defineId(Girlfriend.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Integer> DATA_VOICE_ENABLE =
             SynchedEntityData.defineId(Girlfriend.class, EntityDataSerializers.INT);
+    // orig Girlfriend.java:265-266 — feelingBetter (DataWatcher slot 25);
+    // synched so the renderer can pick the valentine texture/scale client-side
+    private static final EntityDataAccessor<Integer> DATA_FEELING_BETTER =
+            SynchedEntityData.defineId(Girlfriend.class, EntityDataSerializers.INT);
 
     private static final int MAX_HEALTH = 80;
+    // orig Girlfriend.java:569-574 (mygetMaxHealth) — 800 while valentine-angry
+    private static final int VALENTINE_MAX_HEALTH = 800;
     private static final float MOVE_SPEED = 0.3f;
     private static final int MAX_SKINS = 41;
     private int autoHeal = 200;
@@ -73,11 +82,54 @@ public class Girlfriend extends TamableAnimal implements RangedAttackMob {
         this.voice = this.random.nextInt(10);
         this.setTameSkin(this.whichGirl);
         this.setOrderedToSit(false);
+        // orig Girlfriend.java:142-144 — 2.5x8.0 giant on Feb 14 (until cured);
+        // orig :198-200 (applyEntityAttributes) reads mygetMaxHealth → 800
+        if (SeasonalDates.isValentines()) {
+            this.applyValentineState();
+            this.setHealth(this.getMaxHealth());
+        }
+    }
+
+    /** True while the Feb-14 "giant angry girlfriend" mode is active. */
+    public boolean isValentineAngry() {
+        return SeasonalDates.isValentines() && this.entityData.get(DATA_FEELING_BETTER) == 0;
+    }
+
+    public int getFeelingBetter() {
+        return this.entityData.get(DATA_FEELING_BETTER);
+    }
+
+    /**
+     * orig Girlfriend.java:142-144,198-200,569-574 — size and max health track
+     * the valentine-angry state (2.5x8.0 / 800 HP, else 0.5x1.6 / 80 HP).
+     */
+    private void applyValentineState() {
+        this.refreshDimensions();
+        int max = this.isValentineAngry() ? VALENTINE_MAX_HEALTH : MAX_HEALTH;
+        this.getAttribute(Attributes.MAX_HEALTH).setBaseValue(max);
+        if (this.getHealth() > max) {
+            this.setHealth(max);
+        }
+    }
+
+    /** orig Girlfriend.java:142-144 — 2.5x8.0 while valentine-angry, else 0.5x1.6. */
+    @Override
+    public EntityDimensions getDefaultDimensions(Pose pose) {
+        return this.isValentineAngry()
+                ? EntityDimensions.scalable(2.5f, 8.0f)
+                : super.getDefaultDimensions(pose);
     }
 
     @Override
     protected void registerGoals() {
-        this.goalSelector.addGoal(1, new FollowOwnerGoal(this, 1.4, 12.0f, 1.5f));
+        // orig MyEntityAIFollowOwner.java:48 — Girlfriends never follow their
+        // owner on Feb 14 (the giant-angry mode overrides companionship)
+        this.goalSelector.addGoal(1, new FollowOwnerGoal(this, 1.4, 12.0f, 1.5f) {
+            @Override
+            public boolean canUse() {
+                return !SeasonalDates.isValentines() && super.canUse();
+            }
+        });
         this.goalSelector.addGoal(2, new TemptGoal(this, 1.25, Ingredient.of(Items.POPPY), false));
         // orig Girlfriend.java:153 — EntityAIArrowAttack(this, 1.25, 20t, 10.0f);
         // melee happens separately in customServerAiStep (orig func_70629_bd).
@@ -87,9 +139,45 @@ public class Girlfriend extends TamableAnimal implements RangedAttackMob {
         this.goalSelector.addGoal(8, new WaterAvoidingRandomStrollGoal(this, 0.75));
         this.goalSelector.addGoal(9, new RandomLookAroundGoal(this));
 
-        this.targetSelector.addGoal(1, new OwnerHurtByTargetGoal(this));
-        this.targetSelector.addGoal(2, new OwnerHurtTargetGoal(this));
-        this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, Monster.class, true));
+        // orig Girlfriend.java:161-162 — MyValentineTarget(Player) prio 1 and
+        // MyValentineTarget(Boyfriend) prio 2; active only while valentine-angry
+        // (MyValentineTarget.java:47-56), fixed 16-block radius
+        this.targetSelector.addGoal(1, new ValentineTargetGoal<>(this, Player.class));
+        this.targetSelector.addGoal(2, new ValentineTargetGoal<>(this, Boyfriend.class));
+        this.targetSelector.addGoal(3, new OwnerHurtByTargetGoal(this));
+        this.targetSelector.addGoal(4, new OwnerHurtTargetGoal(this));
+        this.targetSelector.addGoal(5, new NearestAttackableTargetGoal<>(this, Monster.class, true));
+    }
+
+    /**
+     * Port of orig MyValentineTarget.java:47-70 — a nearest-attackable-target
+     * goal that only runs on Feb 14 while the Girlfriend has not been cured
+     * (feelingBetter == 0). targetChance 0 = no dice roll; 16-block radius
+     * (orig ctor par3, MyValentineTarget.java:26,39); owner excluded per the
+     * 1.7.10 EntityAITarget tameable-owner check.
+     */
+    private static class ValentineTargetGoal<T extends LivingEntity> extends NearestAttackableTargetGoal<T> {
+        private final Girlfriend girlfriend;
+
+        ValentineTargetGoal(Girlfriend girlfriend, Class<T> targetType) {
+            // orig MyEntityAITarget.java:88-94 — a tamed task owner never
+            // targets her owner or other tamed pets
+            super(girlfriend, targetType, 0, true, true,
+                    candidate -> candidate != girlfriend.getOwner()
+                            && !(girlfriend.isTame()
+                                    && candidate instanceof TamableAnimal pet && pet.isTame()));
+            this.girlfriend = girlfriend;
+        }
+
+        @Override
+        protected double getFollowDistance() {
+            return 16.0;
+        }
+
+        @Override
+        public boolean canUse() {
+            return this.girlfriend.isValentineAngry() && super.canUse();
+        }
     }
 
     public static AttributeSupplier.Builder createAttributes() {
@@ -105,6 +193,7 @@ public class Girlfriend extends TamableAnimal implements RangedAttackMob {
         builder.define(DATA_SKIN, 0);
         builder.define(DATA_VOICE, 0);
         builder.define(DATA_VOICE_ENABLE, 1);
+        builder.define(DATA_FEELING_BETTER, 0);
     }
 
     public int getTameSkin() {
@@ -385,7 +474,42 @@ public class Girlfriend extends TamableAnimal implements RangedAttackMob {
     public boolean hurt(DamageSource source, float amount) {
         float capped = Math.min(amount, 10.0f);
         if (source.getMsgId().equals("cactus")) return false;
+        // orig Girlfriend.java:1078-1080 — a valentine giant can't suffocate
+        // in walls (she is 8 blocks tall and clips ceilings constantly)
+        if (source.getMsgId().equals("inWall") && SeasonalDates.isValentines()) {
+            return false;
+        }
+        // orig Girlfriend.java:1081-1094 — hitting the valentine giant with the
+        // Rose Sword: 1-in-4 chance to cure her (back to normal size/health,
+        // target cleared, 10-19 Love drops); otherwise she drops 1 Love
+        if (SeasonalDates.isValentines() && !this.level().isClientSide
+                && this.getFeelingBetter() == 0
+                && source.getEntity() instanceof Player attacker
+                && attacker.getMainHandItem().is(ModItems.ROSE_SWORD.get())) {
+            if (this.level().random.nextInt(4) == 1) {
+                this.entityData.set(DATA_FEELING_BETTER, 1);
+                this.setTarget(null);
+                this.applyValentineState();
+                int moreLove = this.level().random.nextInt(10);
+                for (int i = 0; i < 10 + moreLove; ++i) {
+                    this.dropItemRand(new ItemStack(ModItems.HEART.get()));
+                }
+            } else {
+                this.dropItemRand(new ItemStack(ModItems.HEART.get()));
+            }
+        }
         return super.hurt(source, capped);
+    }
+
+    /** orig Girlfriend.java:916-919 (dropItemRand) — drop at y+1 with +/-0-3 x/z scatter. */
+    private void dropItemRand(ItemStack stack) {
+        net.minecraft.world.entity.item.ItemEntity drop = new net.minecraft.world.entity.item.ItemEntity(
+                this.level(),
+                this.getX() + this.random.nextInt(4) - this.random.nextInt(4),
+                this.getY() + 1.0,
+                this.getZ() + this.random.nextInt(4) - this.random.nextInt(4),
+                stack);
+        this.level().addFreshEntity(drop);
     }
 
     @Nullable
@@ -394,7 +518,8 @@ public class Girlfriend extends TamableAnimal implements RangedAttackMob {
         if (this.isOrderedToSit() || this.voiceEnable == 0) return null;
         if (this.getRandom().nextInt(11) == 1) {
             if (this.isTame()) {
-                if (this.getHealth() < this.getMaxHealth()) {
+                // orig Girlfriend.java:886-889 — hurt voice also while valentine-angry
+                if (this.getHealth() < this.getMaxHealth() || this.isValentineAngry()) {
                     return SoundEvent.createVariableRangeEvent(
                             ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "o_hurt"));
                 }
@@ -448,6 +573,8 @@ public class Girlfriend extends TamableAnimal implements RangedAttackMob {
         tag.putInt("GirlType", this.getTameSkin());
         tag.putInt("GirlVoice", this.voice);
         tag.putInt("GirlVoiceEnable", this.voiceEnable);
+        // orig Girlfriend.java:236-241/265-266 — feelingBetter persists
+        tag.putInt("feelingBetter", this.getFeelingBetter());
     }
 
     @Override
@@ -457,6 +584,12 @@ public class Girlfriend extends TamableAnimal implements RangedAttackMob {
         this.setTameSkin(this.whichGirl);
         this.voice = tag.getInt("GirlVoice");
         this.voiceEnable = tag.getInt("GirlVoiceEnable");
+        // orig Girlfriend.java:265-269 — restore feelingBetter and shrink an
+        // already-cured girlfriend back to normal size
+        this.entityData.set(DATA_FEELING_BETTER, tag.getInt("feelingBetter"));
+        if (SeasonalDates.isValentines()) {
+            this.applyValentineState();
+        }
     }
 
     /** orig Girlfriend.java:1100-1115 — "Girlfriend" spawner bypass, else the vanilla creature rules. */

@@ -165,4 +165,18 @@ public final class OriginalSpawnGates {
         }
         return false;
     }
+
+    /**
+     * The five biomes where Ghost/GhostSkelly spawn year-round (orig
+     * OreSpawnMain.java:4783-4788/4790-4795, ungated by the Oct 31 check);
+     * everywhere else in halloween_ghosts.json requires Halloween.
+     */
+    public static boolean inYearRoundGhostBiome(Mob mob, LevelAccessor level) {
+        var biome = level.getBiome(mob.blockPosition());
+        return biome.is(net.minecraft.world.level.biome.Biomes.SNOWY_TAIGA)
+                || biome.is(net.minecraft.world.level.biome.Biomes.TAIGA)
+                || biome.is(net.minecraft.world.level.biome.Biomes.FROZEN_RIVER)
+                || biome.is(net.minecraft.world.level.biome.Biomes.JUNGLE)
+                || biome.is(net.minecraft.world.level.biome.Biomes.DARK_FOREST);
+    }
 }

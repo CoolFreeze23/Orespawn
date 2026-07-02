@@ -1,5 +1,7 @@
 package danger.orespawn.entity;
 
+import danger.orespawn.util.SeasonalDates;
+import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -46,13 +48,20 @@ public class Shoes extends ThrowableProjectile {
 
     public int getShoeId() { return this.entityData.get(DATA_SHOE_ID); }
 
+    /** orig Shoes.java:57-79 — damage table in original order (later rules win). */
     @Override
     protected void onHitEntity(EntityHitResult result) {
         Entity target = result.getEntity();
         float damage = DAMAGE_DEFAULT;
         if (this.getShoeId() == HEAVY_SHOE_ID) damage = DAMAGE_HEAVY_SHOE;
         if (target instanceof Creeper) damage += DAMAGE_CREEPER_BONUS;
+        // orig :66-71 — companions only take a token 1.0
+        if (target instanceof Girlfriend) damage = 1.0f;
+        if (target instanceof Boyfriend) damage = 1.0f;
         if (target instanceof Player) damage = 0.0f;
+        // orig :75-77 — on Feb 14 every shoe hits for 10 (giant girlfriends
+        // throw them back hard)
+        if (SeasonalDates.isValentines()) damage = 10.0f;
 
         target.hurt(this.damageSources().thrown(this, this.getOwner()), damage);
     }
@@ -61,8 +70,11 @@ public class Shoes extends ThrowableProjectile {
     protected void onHit(HitResult result) {
         super.onHit(result);
         if (this.level().isClientSide) {
+            // orig Shoes.java:80-83 — 4x snowballpoof + 4x reddust
             for (int particleIndex = 0; particleIndex < CLIENT_PARTICLE_COUNT; ++particleIndex) {
                 this.level().addParticle(ParticleTypes.ITEM_SNOWBALL,
+                        this.getX(), this.getY(), this.getZ(), 0, 0, 0);
+                this.level().addParticle(new DustParticleOptions(DustParticleOptions.REDSTONE_PARTICLE_COLOR, 1.0f),
                         this.getX(), this.getY(), this.getZ(), 0, 0, 0);
             }
         }

@@ -2,8 +2,6 @@ package danger.orespawn.item;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -11,9 +9,14 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.server.level.ServerLevel;
 import danger.orespawn.ModBlocks;
 
+/**
+ * orig ItemExperienceTreeSeed.java:25-42 — right-clicking grass/dirt/farmland
+ * places an Experience Plant one block above (unconditionally, block flag 2),
+ * spawns 10 client-side happy-villager particles, and consumes the seed
+ * unless the player is in creative.
+ */
 public class ItemExperienceTreeSeed extends Item {
     public ItemExperienceTreeSeed(Item.Properties properties) {
         super(properties);
@@ -22,27 +25,32 @@ public class ItemExperienceTreeSeed extends Item {
     @Override
     public InteractionResult useOn(UseOnContext context) {
         Level level = context.getLevel();
-        if (level.isClientSide) return InteractionResult.SUCCESS;
-
-        Player player = context.getPlayer();
-        if (player == null) return InteractionResult.PASS;
-
         BlockPos pos = context.getClickedPos();
-        BlockState state = level.getBlockState(pos);
-        boolean validBlock = state.is(Blocks.GRASS_BLOCK) || state.is(Blocks.DIRT) || state.is(Blocks.FARMLAND);
-        if (!validBlock) return InteractionResult.FAIL;
 
-        BlockPos above = pos.above();
-        if (!level.isEmptyBlock(above)) return InteractionResult.FAIL;
-        level.setBlock(above, ModBlocks.EXPERIENCE_PLANT.get().defaultBlockState(), 3);
-
-        if (level instanceof ServerLevel serverLevel) {
-            serverLevel.sendParticles(ParticleTypes.HAPPY_VILLAGER,
-                    above.getX() + 0.5, above.getY() + 0.5, above.getZ() + 0.5, 10, 0.5, 0.5, 0.5, 0.1);
+        if (!level.isClientSide) {
+            // orig :27-30 — only grass, dirt, farmland; a miss consumes nothing
+            BlockState state = level.getBlockState(pos);
+            if (!state.is(Blocks.GRASS_BLOCK) && !state.is(Blocks.DIRT) && !state.is(Blocks.FARMLAND)) {
+                return InteractionResult.FAIL;
+            }
+            // orig :31 — placed at y+1 with flag 2, no emptiness check
+            level.setBlock(pos.above(), ModBlocks.EXPERIENCE_PLANT.get().defaultBlockState(), 2);
+        } else {
+            // orig :33-35 — 10 happy-villager particles, client side
+            for (int i = 0; i < 10; ++i) {
+                level.addParticle(ParticleTypes.HAPPY_VILLAGER,
+                        pos.getX() + level.random.nextFloat(),
+                        pos.getY() + 1.0 + level.random.nextFloat(),
+                        pos.getZ() + level.random.nextFloat(),
+                        0.0, 0.0, 0.0);
+            }
         }
 
-        level.playSound(null, player.blockPosition(), SoundEvents.GRASS_PLACE, SoundSource.BLOCKS, 1.0F, 1.0F);
-        context.getItemInHand().shrink(1);
-        return InteractionResult.SUCCESS;
+        // orig :37-39 — creative players keep the seed
+        Player player = context.getPlayer();
+        if (player == null || !player.getAbilities().instabuild) {
+            context.getItemInHand().shrink(1);
+        }
+        return InteractionResult.sidedSuccess(level.isClientSide);
     }
 }

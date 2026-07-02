@@ -46,6 +46,17 @@ public class LaserBall extends ThrowableProjectile {
         this.setPos(x, y, z);
     }
 
+    // Subclass plumbing so Acid/IceBall/DeadIrukandji keep their own entity type
+    // (renderer registration is keyed by type).
+    protected LaserBall(EntityType<? extends ThrowableProjectile> type, LivingEntity shooter, Level level) {
+        super(type, shooter, level);
+    }
+
+    protected LaserBall(EntityType<? extends ThrowableProjectile> type, Level level, double x, double y, double z) {
+        super(type, level);
+        this.setPos(x, y, z);
+    }
+
     public void setSpecial() { this.isSpecial = true; }
     public void setIceBall() { this.isIceball = true; }
     public void setAcid() { this.isAcid = true; }
@@ -68,9 +79,12 @@ public class LaserBall extends ThrowableProjectile {
             return;
         }
 
-        // orig LaserBall.java:83-92 — acid-type balls pass through TrooperBug and
-        // SpitBug. Those two entities are not ported yet (Phase D); restore their
-        // immunity checks here once they exist.
+        // orig LaserBall.java:83-92 — acid-type balls never damage the acid
+        // bugs that spit them (TrooperBug/SpitBug); the ball just vanishes.
+        if (this.isAcid && (target instanceof EntityTrooperBug || target instanceof EntitySpitBug)) {
+            this.discard();
+            return;
+        }
 
         // orig LaserBall.java:93-114 — non-ice, non-acid balls never damage the
         // robot family.

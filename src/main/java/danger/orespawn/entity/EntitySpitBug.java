@@ -143,9 +143,17 @@ public class EntitySpitBug extends Monster {
         return false;
     }
 
+    /**
+     * orig SpitBug.java:239-256 — hurt-timer lockout, then cactus and fall
+     * damage are ignored entirely (no hurt, no timer reset, no retaliation).
+     */
     @Override
     public boolean hurt(DamageSource source, float amount) {
         if (this.hurtTimer > 0) return false;
+        if (source.is(net.minecraft.tags.DamageTypeTags.IS_FALL)
+                || source.is(net.minecraft.world.damagesource.DamageTypes.CACTUS)) {
+            return false; // orig :244 — "cactus" / "fall" filtered
+        }
         boolean ret = super.hurt(source, amount);
         this.hurtTimer = 15;
         Entity attacker = source.getEntity();

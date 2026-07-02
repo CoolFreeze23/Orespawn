@@ -136,6 +136,35 @@ public class RockBase extends Mob {
         this.rockType = tag.getInt("ButterflyType");
     }
 
+    /**
+     * orig RockBase.java:213-251 — func_70645_a: on death the rock vanishes and
+     * drops exactly one rock item matching its type (types 1-12).
+     */
+    @Override
+    public void die(DamageSource source) {
+        super.die(source);
+        if (this.level().isClientSide()) return;
+        net.minecraft.world.item.Item drop = switch (this.rockType) {
+            case 1 -> danger.orespawn.ModItems.ROCK_SMALL.get();
+            case 2 -> danger.orespawn.ModItems.ROCK.get();
+            case 3 -> danger.orespawn.ModItems.ROCK_RED.get();
+            case 4 -> danger.orespawn.ModItems.ROCK_GREEN.get();
+            case 5 -> danger.orespawn.ModItems.ROCK_BLUE.get();
+            case 6 -> danger.orespawn.ModItems.ROCK_PURPLE.get();
+            case 7 -> danger.orespawn.ModItems.ROCK_SPIKEY.get();
+            case 8 -> danger.orespawn.ModItems.ROCK_TNT.get();
+            case 9 -> danger.orespawn.ModItems.ROCK_CRYSTAL_RED.get();
+            case 10 -> danger.orespawn.ModItems.ROCK_CRYSTAL_GREEN.get();
+            case 11 -> danger.orespawn.ModItems.ROCK_CRYSTAL_BLUE.get();
+            case 12 -> danger.orespawn.ModItems.ROCK_CRYSTAL_TNT.get();
+            default -> null;
+        };
+        if (drop != null) {
+            this.spawnAtLocation(new net.minecraft.world.item.ItemStack(drop));
+        }
+        this.discard(); // orig :214 — func_70106_y, no death animation
+    }
+
     /** orig RockBase.java:191-193 — y>=50. */
     @Override
     public boolean checkSpawnRules(net.minecraft.world.level.LevelAccessor level,

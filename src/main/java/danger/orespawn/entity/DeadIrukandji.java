@@ -1,5 +1,6 @@
 package danger.orespawn.entity;
 
+import danger.orespawn.ModEntities;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.projectile.ThrowableProjectile;
@@ -12,7 +13,13 @@ public class DeadIrukandji extends LaserBall {
     }
 
     public DeadIrukandji(Level level, LivingEntity shooter) {
-        super(level, shooter);
+        super(ModEntities.DEAD_IRUKANDJI.get(), shooter, level);
+        this.setIrukandji();
+    }
+
+    // orig MyDispenserBehaviorDeadIrukandji.java:29-31 — dispensers spawn at a bare position
+    public DeadIrukandji(Level level, double x, double y, double z) {
+        super(ModEntities.DEAD_IRUKANDJI.get(), level, x, y, z);
         this.setIrukandji();
     }
 }

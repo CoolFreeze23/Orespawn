@@ -76,6 +76,10 @@ public class BlockExperiencePlant extends BushBlock {
         }
     }
 
+    // orig BlockExperiencePlant.java:42-52 (func_149674_a) — on growth the plant
+    // calls OreSpawnTrees.ExperienceTree(world, x, y-1, z). The geometry below is a
+    // placeholder; the faithful Trees.ExperienceTree port lands with WGEN-045 (D5),
+    // which should replace this method with a call into the ported tree generator.
     private void generateExperienceTree(ServerLevel level, BlockPos pos, RandomSource random) {
         int height = 6 + random.nextInt(4);
         BlockState logState = Blocks.OAK_LOG.defaultBlockState();

@@ -90,17 +90,22 @@ public class EntityWormSmall extends Monster {
 
         Player target = this.level().getNearestPlayer(this, 8.0);
 
-        if (target != null) {
+        // orig WormSmall.java:94 — the up/down burrow cycle also runs (without
+        // aiming) when PlayNicely is enabled, even with no player nearby
+        if (target != null || danger.orespawn.OreSpawnConfig.PLAY_NICELY.get()) {
             if (this.upcount > 0) {
                 --this.upcount;
                 if (this.upcount == 0) {
                     this.downcount = 100 + this.random.nextInt(150);
                 }
-                this.pointAtEntity(target);
+                if (target != null) { // orig :101-103
+                    this.pointAtEntity(target);
+                }
 
                 BlockPos checkPos = BlockPos.containing(this.getX(), this.getY() + 0.25, this.getZ());
                 BlockState state = this.level().getBlockState(checkPos);
-                if (!state.isAir()) {
+                if (!isAirOrTallGrass(state)) {
+                    checkSurfaceBlock(state); // orig WormSmall.java:107-110
                     Vec3 motion = this.getDeltaMovement();
                     this.setDeltaMovement(motion.x, motion.y + 0.15, motion.z);
                     this.setPos(this.getX(), this.getY() + 0.1, this.getZ());
@@ -113,7 +118,8 @@ public class EntityWormSmall extends Monster {
                 }
                 BlockPos checkPos = BlockPos.containing(this.getX(), this.getY() + 2, this.getZ());
                 BlockState state = this.level().getBlockState(checkPos);
-                if (!state.isAir()) {
+                if (!isAirOrTallGrass(state)) {
+                    checkSurfaceBlock(state); // orig WormSmall.java:124-127
                     Vec3 motion = this.getDeltaMovement();
                     this.setDeltaMovement(motion.x, motion.y + 0.2, motion.z);
                     this.setPos(this.getX(), this.getY() + 0.05, this.getZ());
@@ -124,7 +130,8 @@ public class EntityWormSmall extends Monster {
             this.downcount = 0;
             BlockPos checkPos = BlockPos.containing(this.getX(), this.getY() + 2, this.getZ());
             BlockState state = this.level().getBlockState(checkPos);
-            if (!state.isAir()) {
+            if (!isAirOrTallGrass(state)) {
+                checkSurfaceBlock(state); // orig WormSmall.java:139-142
                 Vec3 motion = this.getDeltaMovement();
                 this.setDeltaMovement(motion.x, motion.y + 0.1, motion.z);
                 this.setPos(this.getX(), this.getY() + 0.05, this.getZ());
@@ -135,16 +142,61 @@ public class EntityWormSmall extends Monster {
         this.setDeltaMovement(0, motion.y - 0.01, 0);
     }
 
+    /** orig WormSmall.java:104-106 etc. — tall grass counts as air for surfacing. */
+    private static boolean isAirOrTallGrass(BlockState state) {
+        return state.isAir() || state.is(net.minecraft.world.level.block.Blocks.SHORT_GRASS);
+    }
+
+    /**
+     * orig WormSmall.java:108-110/125-127/140-142 — a small worm that surfaces
+     * through anything but grass block, dirt, or stone dies on the spot.
+     */
+    private void checkSurfaceBlock(BlockState state) {
+        if (!state.is(net.minecraft.world.level.block.Blocks.GRASS_BLOCK)
+                && !state.is(net.minecraft.world.level.block.Blocks.DIRT)
+                && !state.is(net.minecraft.world.level.block.Blocks.STONE)) {
+            this.discard();
+        }
+    }
+
     @Override
     protected void customServerAiStep() {
         if (this.isRemoved()) return;
         super.customServerAiStep();
 
+        // orig WormSmall.java:176-178 — no thieving when PlayNicely
+        if (danger.orespawn.OreSpawnConfig.PLAY_NICELY.get()) return;
+
+        // orig :179-182 — nearest non-creative player within 1.5/4/1.5
         Player target = this.level().getNearestPlayer(this, 1.5);
-        if (target != null && !target.getAbilities().invulnerable) {
+        if (target != null && !target.getAbilities().instabuild) {
             this.pointAtEntity(target);
             if (this.upcount > 0 && this.random.nextInt(15) == 1) {
                 this.doHurtTarget(target);
+                // orig :188-195 — 1-in-6: steal the boots, damage by
+                // remainingDurability/20 (min 1), scatter 3 blocks up at ±0-4 x/z
+                if (this.random.nextInt(6) == 1) {
+                    net.minecraft.world.item.ItemStack boots =
+                            target.getItemBySlot(net.minecraft.world.entity.EquipmentSlot.FEET);
+                    if (!boots.isEmpty()) {
+                        target.setItemSlot(net.minecraft.world.entity.EquipmentSlot.FEET,
+                                net.minecraft.world.item.ItemStack.EMPTY);
+                        if (boots.isDamageableItem()) {
+                            int remaining = boots.getMaxDamage() - boots.getDamageValue();
+                            int hit = remaining > 20 ? remaining / 20 : 1;
+                            boots.setDamageValue(boots.getDamageValue() + hit);
+                        }
+                        if (!boots.isDamageableItem() || boots.getDamageValue() < boots.getMaxDamage()) {
+                            net.minecraft.world.entity.item.ItemEntity drop =
+                                    new net.minecraft.world.entity.item.ItemEntity(this.level(),
+                                            this.getX() + this.random.nextInt(5) - this.random.nextInt(5),
+                                            this.getY() + 3.0,
+                                            this.getZ() + this.random.nextInt(5) - this.random.nextInt(5),
+                                            boots);
+                            this.level().addFreshEntity(drop);
+                        }
+                    }
+                }
             }
         }
     }

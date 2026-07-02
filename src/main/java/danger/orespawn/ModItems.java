@@ -1,5 +1,7 @@
 package danger.orespawn;
 
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.food.FoodProperties;
 import danger.orespawn.item.*;
 import net.minecraft.world.item.ArmorItem;
@@ -342,30 +344,34 @@ public class ModItems {
             // orig ItemIrukandji.java:20-23 â€” stack 64, throws a DeadIrukandji on use
             () -> new ItemDeadIrukandji(new Item.Properties()));
     public static final DeferredItem<Item> IRUKANDJI_ARROW = ITEMS.registerSimpleItem("irukandji_arrow");
+    // Rock types are 1-based to match orig MyDispenserBehaviorRock.java:36-71 and
+    // ORIG EntityThrownRock.java:74-227 / RockBase.java:213-251 (type 0 means "unset"
+    // and re-randomizes in RockBase.tick). D4: was 0-11, which shifted every rock's
+    // damage/recovery/placement down one tier and broke rock_small entirely.
     public static final DeferredItem<Item> ROCK_SMALL = ITEMS.register("rock_small",
-            () -> new ItemRock(new Item.Properties().stacksTo(16), 0));
-    public static final DeferredItem<Item> ROCK = ITEMS.register("rock",
             () -> new ItemRock(new Item.Properties().stacksTo(16), 1));
-    public static final DeferredItem<Item> ROCK_RED = ITEMS.register("rock_red",
+    public static final DeferredItem<Item> ROCK = ITEMS.register("rock",
             () -> new ItemRock(new Item.Properties().stacksTo(16), 2));
-    public static final DeferredItem<Item> ROCK_GREEN = ITEMS.register("rock_green",
+    public static final DeferredItem<Item> ROCK_RED = ITEMS.register("rock_red",
             () -> new ItemRock(new Item.Properties().stacksTo(16), 3));
-    public static final DeferredItem<Item> ROCK_BLUE = ITEMS.register("rock_blue",
+    public static final DeferredItem<Item> ROCK_GREEN = ITEMS.register("rock_green",
             () -> new ItemRock(new Item.Properties().stacksTo(16), 4));
-    public static final DeferredItem<Item> ROCK_PURPLE = ITEMS.register("rock_purple",
+    public static final DeferredItem<Item> ROCK_BLUE = ITEMS.register("rock_blue",
             () -> new ItemRock(new Item.Properties().stacksTo(16), 5));
-    public static final DeferredItem<Item> ROCK_SPIKEY = ITEMS.register("rock_spikey",
+    public static final DeferredItem<Item> ROCK_PURPLE = ITEMS.register("rock_purple",
             () -> new ItemRock(new Item.Properties().stacksTo(16), 6));
-    public static final DeferredItem<Item> ROCK_TNT = ITEMS.register("rock_tnt",
+    public static final DeferredItem<Item> ROCK_SPIKEY = ITEMS.register("rock_spikey",
             () -> new ItemRock(new Item.Properties().stacksTo(16), 7));
-    public static final DeferredItem<Item> ROCK_CRYSTAL_RED = ITEMS.register("rock_crystal_red",
+    public static final DeferredItem<Item> ROCK_TNT = ITEMS.register("rock_tnt",
             () -> new ItemRock(new Item.Properties().stacksTo(16), 8));
-    public static final DeferredItem<Item> ROCK_CRYSTAL_GREEN = ITEMS.register("rock_crystal_green",
+    public static final DeferredItem<Item> ROCK_CRYSTAL_RED = ITEMS.register("rock_crystal_red",
             () -> new ItemRock(new Item.Properties().stacksTo(16), 9));
-    public static final DeferredItem<Item> ROCK_CRYSTAL_BLUE = ITEMS.register("rock_crystal_blue",
+    public static final DeferredItem<Item> ROCK_CRYSTAL_GREEN = ITEMS.register("rock_crystal_green",
             () -> new ItemRock(new Item.Properties().stacksTo(16), 10));
-    public static final DeferredItem<Item> ROCK_CRYSTAL_TNT = ITEMS.register("rock_crystal_tnt",
+    public static final DeferredItem<Item> ROCK_CRYSTAL_BLUE = ITEMS.register("rock_crystal_blue",
             () -> new ItemRock(new Item.Properties().stacksTo(16), 11));
+    public static final DeferredItem<Item> ROCK_CRYSTAL_TNT = ITEMS.register("rock_crystal_tnt",
+            () -> new ItemRock(new Item.Properties().stacksTo(16), 12));
 
     // Food items â€” special fish grant potion effects on consumption
     // Grants 30s fire resistance when eaten
@@ -407,10 +413,18 @@ public class ModItems {
             () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(16).saturationModifier(2.5f).build())));
     public static final DeferredItem<Item> RAW_CORN_DOG = ITEMS.register("raw_corn_dog",
             () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(4).saturationModifier(0.6f).build())));
+    // orig ItemSunFish.java:29-32 — Speed + Jump Boost, 2000 ticks
     public static final DeferredItem<Item> BUTTER_CANDY = ITEMS.register("butter_candy",
-            () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(4).saturationModifier(0.5f).build())));
+            () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(4).saturationModifier(0.5f)
+                    .effect(() -> new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 2000, 0), 1.0f)
+                    .effect(() -> new MobEffectInstance(MobEffects.JUMP, 2000, 0), 1.0f)
+                    .build())));
+    // orig ItemSunFish.java:33-36 — Regeneration + Strength, 2000 ticks
     public static final DeferredItem<Item> COOKED_BACON = ITEMS.register("cooked_bacon",
-            () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(14).saturationModifier(1.5f).build())));
+            () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(14).saturationModifier(1.5f)
+                    .effect(() -> new MobEffectInstance(MobEffects.REGENERATION, 2000, 0), 1.0f)
+                    .effect(() -> new MobEffectInstance(MobEffects.DAMAGE_BOOST, 2000, 0), 1.0f)
+                    .build())));
     public static final DeferredItem<Item> RAW_BACON = ITEMS.register("raw_bacon",
             () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(8).saturationModifier(1.0f).build())));
     public static final DeferredItem<Item> COOKED_CRAB_MEAT = ITEMS.register("cooked_crab_meat",
@@ -435,10 +449,23 @@ public class ModItems {
             () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(3).saturationModifier(0.45f).build())));
     public static final DeferredItem<Item> PEACH = ITEMS.register("peach",
             () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(4).saturationModifier(0.55f).build())));
+    // orig ItemSunFish.java:37-40 — Regeneration + Strength, 3000 ticks
     public static final DeferredItem<Item> CRYSTAL_APPLE = ITEMS.register("crystal_apple",
-            () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(5).saturationModifier(0.85f).build())));
+            () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(5).saturationModifier(0.85f)
+                    .effect(() -> new MobEffectInstance(MobEffects.REGENERATION, 3000, 0), 1.0f)
+                    .effect(() -> new MobEffectInstance(MobEffects.DAMAGE_BOOST, 3000, 0), 1.0f)
+                    .build())));
+    // orig ItemSunFish.java:41-48 (MyLove) — Regen IV + Strength III + Fire Res III
+    // + Resistance II for 6000t; Speed + Jump Boost for 5000t
     public static final DeferredItem<Item> HEART = ITEMS.register("heart",
-            () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(8).saturationModifier(0.95f).build())));
+            () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(8).saturationModifier(0.95f)
+                    .effect(() -> new MobEffectInstance(MobEffects.REGENERATION, 6000, 3), 1.0f)
+                    .effect(() -> new MobEffectInstance(MobEffects.DAMAGE_BOOST, 6000, 2), 1.0f)
+                    .effect(() -> new MobEffectInstance(MobEffects.FIRE_RESISTANCE, 6000, 2), 1.0f)
+                    .effect(() -> new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 6000, 1), 1.0f)
+                    .effect(() -> new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 5000, 0), 1.0f)
+                    .effect(() -> new MobEffectInstance(MobEffects.JUMP, 5000, 0), 1.0f)
+                    .build())));
     // Right-click to place as a pizza block in the world
     public static final DeferredItem<Item> PIZZA_ITEM = ITEMS.register("pizza_item",
             () -> new ItemPizza(new Item.Properties().food(new FoodProperties.Builder().nutrition(8).saturationModifier(1.0f).build()).stacksTo(1),
@@ -520,12 +547,18 @@ public class ModItems {
     public static final DeferredItem<Item> STEP_ACROSS = ITEMS.register("step_across",
             () -> new StepAccross(new Item.Properties().stacksTo(16)));
 
-    // Shoes / accessories
-    public static final DeferredItem<Item> RED_HEELS = ITEMS.registerSimpleItem("red_heels");
-    public static final DeferredItem<Item> BLACK_HEELS = ITEMS.registerSimpleItem("black_heels");
-    public static final DeferredItem<Item> SLIPPERS = ITEMS.registerSimpleItem("slippers");
-    public static final DeferredItem<Item> BOOTS_SHOES = ITEMS.registerSimpleItem("boots_shoes");
-    public static final DeferredItem<Item> GAME_CONTROLLER = ITEMS.registerSimpleItem("game_controller");
+    // Shoes / accessories — throwables, orig OreSpawnMain.java:1700-1704
+    // (ItemShoes ids: redheels 2, blackheels 3, slippers 4, boots 5, gamecontroller 6)
+    public static final DeferredItem<Item> RED_HEELS = ITEMS.register("red_heels",
+            () -> new danger.orespawn.item.ItemShoes(new Item.Properties(), 2));
+    public static final DeferredItem<Item> BLACK_HEELS = ITEMS.register("black_heels",
+            () -> new danger.orespawn.item.ItemShoes(new Item.Properties(), 3));
+    public static final DeferredItem<Item> SLIPPERS = ITEMS.register("slippers",
+            () -> new danger.orespawn.item.ItemShoes(new Item.Properties(), 4));
+    public static final DeferredItem<Item> BOOTS_SHOES = ITEMS.register("boots_shoes",
+            () -> new danger.orespawn.item.ItemShoes(new Item.Properties(), 5));
+    public static final DeferredItem<Item> GAME_CONTROLLER = ITEMS.register("game_controller",
+            () -> new danger.orespawn.item.ItemShoes(new Item.Properties(), 6));
 
 
     // ==================== ARMOR ====================
@@ -879,6 +912,14 @@ public class ModItems {
             () -> new SpawnEggItem(ModEntities.CASSOWARY.get(), 0x000000, 0x1E90FF, new Item.Properties()));
     public static final DeferredItem<SpawnEggItem> CHIPMUNK_SPAWN_EGG = ITEMS.register("chipmunk_spawn_egg",
             () -> new SpawnEggItem(ModEntities.CHIPMUNK.get(), 0xD2691E, 0xFFDEAD, new Item.Properties()));
+    // orig OreSpawnMain.java:5612,5330 — CoinEgg "Spawn Coin" (D4: needed by the
+    // Coin jackpot loot slot, ENT-A-098, and the EasterBunny egg table, ENT-D-010)
+    public static final DeferredItem<SpawnEggItem> COIN_SPAWN_EGG = ITEMS.register("coin_spawn_egg",
+            () -> new SpawnEggItem(ModEntities.COIN.get(), 0xFFD700, 0xB8860B, new Item.Properties()));
+    // orig OreSpawnMain.java:5577,5295 — TshirtEgg "Spawn T-Shirt!" (D4: needed by
+    // the EasterBunny egg table, ENT-D-010)
+    public static final DeferredItem<SpawnEggItem> TSHIRT_SPAWN_EGG = ITEMS.register("tshirt_spawn_egg",
+            () -> new SpawnEggItem(ModEntities.ENTITY_TSHIRT.get(), 0xFFFFFF, 0xFF4040, new Item.Properties()));
     public static final DeferredItem<SpawnEggItem> COCKATEIL_SPAWN_EGG = ITEMS.register("cockateil_spawn_egg",
             () -> new SpawnEggItem(ModEntities.COCKATEIL.get(), 0xFFFF00, 0xFF8C00, new Item.Properties()));
     public static final DeferredItem<SpawnEggItem> EASTER_BUNNY_SPAWN_EGG = ITEMS.register("easter_bunny_spawn_egg",

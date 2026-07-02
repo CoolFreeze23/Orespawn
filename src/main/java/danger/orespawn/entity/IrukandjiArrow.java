@@ -24,6 +24,12 @@ public class IrukandjiArrow extends AbstractArrow {
         this.setBaseDamage(BASE_DAMAGE);
     }
 
+    // orig MyDispenserBehaviorArrow.java:18-22 — dispensers spawn the arrow at a bare position
+    public IrukandjiArrow(Level level, double x, double y, double z) {
+        super(ModEntities.IRUKANDJI_ARROW.get(), x, y, z, level, new ItemStack(Items.ARROW), null);
+        this.setBaseDamage(BASE_DAMAGE);
+    }
+
     @Override
     protected void onHitEntity(EntityHitResult result) {
         super.onHitEntity(result);

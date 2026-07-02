@@ -23,8 +23,22 @@ public class GirlfriendRenderer extends HumanoidMobRenderer<Girlfriend, ModelGir
                 context.getModelManager()));
     }
 
+    /** orig RenderGirlfriend.java:29-37 — valentine-angry girlfriends render 5x. */
+    @Override
+    protected void scale(Girlfriend entity, com.mojang.blaze3d.vertex.PoseStack poseStack, float partialTick) {
+        if (entity.isValentineAngry()) {
+            poseStack.scale(5.0f, 5.0f, 5.0f);
+        }
+        super.scale(entity, poseStack, partialTick);
+    }
+
     @Override
     public ResourceLocation getTextureLocation(Girlfriend entity) {
+        // orig Girlfriend.java:331-334 — dedicated texture while valentine-angry
+        if (entity.isValentineAngry()) {
+            return ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID,
+                    "textures/entity/girlfriendv.png");
+        }
         int skin = entity.getTameSkin();
         return ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID,
                 "textures/entity/girlfriend" + skin + ".png");
