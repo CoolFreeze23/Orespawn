@@ -3857,7 +3857,7 @@ Only MISSING / PARTIAL / DIVERGENT / UNVERIFIED items are listed; fully PORTED i
 - **Original:** `MapGenMoreVillages.java:11-12` — spacing 9 / separation 7 (vanilla 32/8 → ~12× denser), enabled in dim 82 (`ChunkProviderOreSpawn3`); plus `BiomeManager.addVillageBiome` in `WorldProviderOreSpawn3`
 - **Port:** absent — no `minecraft:villages` structure-set override, `orespawn:village_biome` not in any `has_structure/village` tag, no `data/minecraft/tags/worldgen` overrides at all
 - **Fix:** Add `orespawn:village_biome` to `data/minecraft/tags/worldgen/biome/has_structure/village_plains.json` (override) and add a `data/minecraft/worldgen/structure_set/villages.json` override (or dimension-scoped set) with spacing 9 / separation 7.
-- **Resolution:** PENDING-APPROVAL (2026-06-13, Phase D1 — implementation staged (worldgen/structure/dim_village.json: vanilla plains jigsaw start pool in orespawn:village_biome; structure_set/dim_villages.json spacing 9 / separation 7 per MapGenMoreVillages.java:11-12) but NOT committed: village style is modern 1.21.1 jigsaw, a player-visible difference vs 1.7.10-era villages — awaiting decision on PN-012)
+- **Resolution:** FIXED (2026-07-02, Phase D1 — PN-012 approved (Option A): worldgen/structure/dim_village.json (vanilla plains jigsaw start pool in orespawn:village_biome) + structure_set/dim_villages.json spacing 9 / separation 7 per MapGenMoreVillages.java:11-12; village style is modern 1.21.1 jigsaw — the original delegated style to vanilla, OreSpawn only controlled density/placement, which are exact; see PARITY_NOTES PN-012 and FIX_LOG.md)
 
 ### WGEN-016 — Village: dimension style is a no-op placeholder
 - **Status:** PARTIAL

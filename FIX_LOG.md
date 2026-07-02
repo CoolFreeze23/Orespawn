@@ -445,12 +445,14 @@ mechanically: `tools/d1_gate_diff.py` reports **0 originals without a port gate*
 - Still PARTIAL (seasonal registration remainder only; gates done): ENT-D-011
   (Easter), ENT-D-039/041 (Halloween) — owned by the seasonal-gates slice.
 
-### Held for approval — WGEN-015 (PN-012)
-Village-dimension villages: implementation staged (`worldgen/structure/dim_village.json`
-+ `structure_set/dim_villages.json`, spacing 9 / separation 7 per
-MapGenMoreVillages.java:11-12) but **not committed** — the 1.7.10 village generator
-no longer exists, so the port uses modern jigsaw plains villages: a player-visible
-style difference. See PN-012 (PROPOSED) for the full mapping rationale.
+### WGEN-015 (PN-012) — approved 2026-07-02, committed
+Village-dimension villages: `worldgen/structure/dim_village.json` +
+`structure_set/dim_villages.json`, spacing 9 / separation 7 per
+MapGenMoreVillages.java:11-12. Owner approved Option A: the original delegated
+village *style* to vanilla (`MapGenMoreVillages` only overrode spacing/separation),
+so the port uses modern 1.21.1 jigsaw plains villages; density/placement —
+OreSpawn's actual contribution — are exact. See PN-012 (APPROVED). No
+1.7.10-style template work planned (style was never OreSpawn content).
 
 ### Verification
 - `tools/d1_gate_diff.py`: 103 original rules, 0 missing in port.
