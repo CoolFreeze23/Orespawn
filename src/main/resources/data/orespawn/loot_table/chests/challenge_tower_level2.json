@@ -1,0 +1,129 @@
+{
+  "type": "minecraft:chest",
+  "pools": [
+    {
+      "rolls": {
+        "type": "minecraft:uniform",
+        "min": 5.0,
+        "max": 11.0
+      },
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:experience_bottle",
+          "weight": 15,
+          "functions": [
+            {
+              "function": "minecraft:set_count",
+              "count": {
+                "type": "minecraft:uniform",
+                "min": 2.0,
+                "max": 8.0
+              }
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:experience_bottle",
+          "weight": 15,
+          "functions": [
+            {
+              "function": "minecraft:set_count",
+              "count": {
+                "type": "minecraft:uniform",
+                "min": 2.0,
+                "max": 8.0
+              }
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "orespawn:creeper_launcher",
+          "weight": 15,
+          "functions": [
+            {
+              "function": "minecraft:set_count",
+              "count": {
+                "type": "minecraft:uniform",
+                "min": 2.0,
+                "max": 10.0
+              }
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "orespawn:pink_helmet",
+          "weight": 10
+        },
+        {
+          "type": "minecraft:item",
+          "name": "orespawn:pink_chestplate",
+          "weight": 10
+        },
+        {
+          "type": "minecraft:item",
+          "name": "orespawn:pink_leggings",
+          "weight": 10
+        },
+        {
+          "type": "minecraft:item",
+          "name": "orespawn:pink_boots",
+          "weight": 10
+        },
+        {
+          "type": "minecraft:item",
+          "name": "orespawn:fairy_sword",
+          "weight": 15
+        },
+        {
+          "type": "minecraft:item",
+          "name": "orespawn:emerald_pickaxe",
+          "weight": 15
+        },
+        {
+          "type": "minecraft:item",
+          "name": "orespawn:emerald_shovel",
+          "weight": 15
+        },
+        {
+          "type": "minecraft:item",
+          "name": "orespawn:emerald_hoe",
+          "weight": 15
+        },
+        {
+          "type": "minecraft:item",
+          "name": "orespawn:emerald_axe",
+          "weight": 15
+        },
+        {
+          "type": "minecraft:item",
+          "name": "orespawn:emerald_sword",
+          "weight": 15
+        },
+        {
+          "type": "minecraft:item",
+          "name": "orespawn:experience_chestplate",
+          "weight": 15
+        },
+        {
+          "type": "minecraft:item",
+          "name": "orespawn:experience_leggings",
+          "weight": 15
+        },
+        {
+          "type": "minecraft:item",
+          "name": "orespawn:experience_helmet",
+          "weight": 15
+        },
+        {
+          "type": "minecraft:item",
+          "name": "orespawn:experience_boots",
+          "weight": 15
+        }
+      ]
+    }
+  ]
+}

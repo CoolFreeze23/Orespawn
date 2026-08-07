@@ -1,0 +1,8 @@
+{
+  "type": "neoforge:add_features",
+  "biomes": "orespawn:mining_biome",
+  "features": [
+    "orespawn:spawn_ores_mining"
+  ],
+  "step": "underground_ores"
+}

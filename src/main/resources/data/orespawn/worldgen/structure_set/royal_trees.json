@@ -1,12 +1,18 @@
 {
   "structures": [
-    { "structure": "orespawn:royal_tree_king", "weight": 1 },
-    { "structure": "orespawn:royal_tree_queen", "weight": 1 }
+    {
+      "structure": "orespawn:royal_tree_king",
+      "weight": 1
+    },
+    {
+      "structure": "orespawn:royal_tree_queen",
+      "weight": 1
+    }
   ],
   "placement": {
     "type": "minecraft:random_spread",
     "spacing": 96,
     "separation": 48,
-    "salt": 84312
+    "salt": 84332
   }
 }

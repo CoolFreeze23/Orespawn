@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "minecraft:water_bucket"
+    },
+    {
+      "item": "orespawn:ore_vortex"
+    }
+  ],
+  "result": {
+    "id": "orespawn:vortex_spawn_egg",
+    "count": 1
+  }
+}

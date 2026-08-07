@@ -1,0 +1,89 @@
+{
+  "type": "minecraft:chest",
+  "pools": [
+    {
+      "rolls": {
+        "type": "minecraft:uniform",
+        "min": 5.0,
+        "max": 11.0
+      },
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:emerald",
+          "weight": 15,
+          "functions": [
+            {
+              "function": "minecraft:set_count",
+              "count": {
+                "type": "minecraft:uniform",
+                "min": 2.0,
+                "max": 8.0
+              }
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "orespawn:miners_dream",
+          "weight": 15,
+          "functions": [
+            {
+              "function": "minecraft:set_count",
+              "count": {
+                "type": "minecraft:uniform",
+                "min": 4.0,
+                "max": 8.0
+              }
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "orespawn:emerald_pickaxe",
+          "weight": 15
+        },
+        {
+          "type": "minecraft:item",
+          "name": "orespawn:emerald_shovel",
+          "weight": 15
+        },
+        {
+          "type": "minecraft:item",
+          "name": "orespawn:emerald_hoe",
+          "weight": 15
+        },
+        {
+          "type": "minecraft:item",
+          "name": "orespawn:emerald_axe",
+          "weight": 15
+        },
+        {
+          "type": "minecraft:item",
+          "name": "orespawn:emerald_sword",
+          "weight": 15
+        },
+        {
+          "type": "minecraft:item",
+          "name": "orespawn:emerald_chestplate",
+          "weight": 15
+        },
+        {
+          "type": "minecraft:item",
+          "name": "orespawn:emerald_leggings",
+          "weight": 15
+        },
+        {
+          "type": "minecraft:item",
+          "name": "orespawn:emerald_helmet",
+          "weight": 15
+        },
+        {
+          "type": "minecraft:item",
+          "name": "orespawn:emerald_boots",
+          "weight": 15
+        }
+      ]
+    }
+  ]
+}

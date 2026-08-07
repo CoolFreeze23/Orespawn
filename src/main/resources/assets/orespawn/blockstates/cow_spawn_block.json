@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "orespawn:block/cow_spawn_block"
+    }
+  }
+}

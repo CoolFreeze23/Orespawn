@@ -1,0 +1,119 @@
+{
+  "type": "minecraft:chest",
+  "pools": [
+    {
+      "rolls": {
+        "type": "minecraft:uniform",
+        "min": 5.0,
+        "max": 11.0
+      },
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "orespawn:squid_zooka",
+          "weight": 15
+        },
+        {
+          "type": "minecraft:item",
+          "name": "orespawn:rat_sword",
+          "weight": 15
+        },
+        {
+          "type": "minecraft:item",
+          "name": "orespawn:amethyst_gem",
+          "weight": 15,
+          "functions": [
+            {
+              "function": "minecraft:set_count",
+              "count": {
+                "type": "minecraft:uniform",
+                "min": 2.0,
+                "max": 8.0
+              }
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:ink_sac",
+          "weight": 15,
+          "functions": [
+            {
+              "function": "minecraft:set_count",
+              "count": {
+                "type": "minecraft:uniform",
+                "min": 2.0,
+                "max": 8.0
+              }
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "orespawn:tigerseye_helmet",
+          "weight": 10
+        },
+        {
+          "type": "minecraft:item",
+          "name": "orespawn:tigerseye_chestplate",
+          "weight": 10
+        },
+        {
+          "type": "minecraft:item",
+          "name": "orespawn:tigerseye_leggings",
+          "weight": 10
+        },
+        {
+          "type": "minecraft:item",
+          "name": "orespawn:tigerseye_boots",
+          "weight": 10
+        },
+        {
+          "type": "minecraft:item",
+          "name": "orespawn:amethyst_pickaxe",
+          "weight": 15
+        },
+        {
+          "type": "minecraft:item",
+          "name": "orespawn:amethyst_shovel",
+          "weight": 15
+        },
+        {
+          "type": "minecraft:item",
+          "name": "orespawn:amethyst_hoe",
+          "weight": 15
+        },
+        {
+          "type": "minecraft:item",
+          "name": "orespawn:amethyst_axe",
+          "weight": 15
+        },
+        {
+          "type": "minecraft:item",
+          "name": "orespawn:amethyst_sword",
+          "weight": 15
+        },
+        {
+          "type": "minecraft:item",
+          "name": "orespawn:amethyst_chestplate",
+          "weight": 15
+        },
+        {
+          "type": "minecraft:item",
+          "name": "orespawn:amethyst_leggings",
+          "weight": 15
+        },
+        {
+          "type": "minecraft:item",
+          "name": "orespawn:amethyst_helmet",
+          "weight": 15
+        },
+        {
+          "type": "minecraft:item",
+          "name": "orespawn:amethyst_boots",
+          "weight": 15
+        }
+      ]
+    }
+  ]
+}

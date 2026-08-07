@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "minecraft:water_bucket"
+    },
+    {
+      "item": "orespawn:wither_skeleton_spawn_block"
+    }
+  ],
+  "result": {
+    "id": "minecraft:wither_skeleton_spawn_egg",
+    "count": 1
+  }
+}

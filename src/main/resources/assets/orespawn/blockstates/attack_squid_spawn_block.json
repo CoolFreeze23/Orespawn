@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "orespawn:block/attack_squid_spawn_block"
+    }
+  }
+}

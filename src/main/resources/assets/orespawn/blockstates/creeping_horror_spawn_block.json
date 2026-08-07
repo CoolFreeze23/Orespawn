@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "orespawn:block/creeping_horror_spawn_block"
+    }
+  }
+}

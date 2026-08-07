@@ -3,7 +3,6 @@
   "values": [
     "orespawn:mole_dirt",
     "orespawn:crystal_grass",
-    "orespawn:lavafoam",
-    "orespawn:ancient_dried_egg"
+    "orespawn:lavafoam"
   ]
 }

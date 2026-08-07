@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "orespawn:block/wither_skeleton_spawn_block"
+    }
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "minecraft:water_bucket"
+    },
+    {
+      "item": "orespawn:snow_golem_spawn_block"
+    }
+  ],
+  "result": {
+    "id": "minecraft:snow_golem_spawn_egg",
+    "count": 1
+  }
+}

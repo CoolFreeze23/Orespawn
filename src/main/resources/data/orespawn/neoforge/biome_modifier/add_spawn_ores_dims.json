@@ -1,0 +1,12 @@
+{
+  "type": "neoforge:add_features",
+  "biomes": [
+    "orespawn:utopia_plains",
+    "orespawn:village_biome",
+    "orespawn:chaos_biome"
+  ],
+  "features": [
+    "orespawn:spawn_ores_dim"
+  ],
+  "step": "underground_ores"
+}

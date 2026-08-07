@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "orespawn:block/gazelle_spawn_block"
+    }
+  }
+}

@@ -6,7 +6,7 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "orespawn:prince_egg",
+          "name": "orespawn:the_prince_spawn_egg",
           "functions": [
             {
               "function": "minecraft:set_count",

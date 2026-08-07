@@ -1,0 +1,6 @@
+{
+  "type": "orespawn:spawn_ores_pool",
+  "config": {
+    "count_dice": 30
+  }
+}

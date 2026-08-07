@@ -1,0 +1,8 @@
+{
+  "feature": "orespawn:spawn_ores_dim",
+  "placement": [
+    {
+      "type": "minecraft:biome"
+    }
+  ]
+}
