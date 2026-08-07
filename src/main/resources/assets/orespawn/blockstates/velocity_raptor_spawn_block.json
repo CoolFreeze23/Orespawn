@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "orespawn:block/velocity_raptor_spawn_block"
+    }
+  }
+}

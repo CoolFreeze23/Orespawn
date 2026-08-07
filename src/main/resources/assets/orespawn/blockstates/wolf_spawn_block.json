@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "orespawn:block/wolf_spawn_block"
+    }
+  }
+}

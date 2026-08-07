@@ -1,0 +1,36 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "orespawn:the_king_part_spawn_block"
+    },
+    {
+      "item": "orespawn:the_king_part_spawn_block"
+    },
+    {
+      "item": "orespawn:the_king_part_spawn_block"
+    },
+    {
+      "item": "orespawn:the_king_part_spawn_block"
+    },
+    {
+      "item": "orespawn:the_king_part_spawn_block"
+    },
+    {
+      "item": "orespawn:the_king_part_spawn_block"
+    },
+    {
+      "item": "orespawn:the_king_part_spawn_block"
+    },
+    {
+      "item": "orespawn:the_king_part_spawn_block"
+    },
+    {
+      "item": "orespawn:the_king_part_spawn_block"
+    }
+  ],
+  "result": {
+    "id": "orespawn:the_king_spawn_block",
+    "count": 1
+  }
+}

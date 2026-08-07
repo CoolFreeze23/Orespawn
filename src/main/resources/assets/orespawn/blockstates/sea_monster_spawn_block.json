@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "orespawn:block/sea_monster_spawn_block"
+    }
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "orespawn:block/lizard_spawn_block"
+    }
+  }
+}

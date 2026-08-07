@@ -16,7 +16,11 @@ import sys
 # 601 audit IDs + ENT-D-066 (duplicate hoverboard, found 2026-07-02 in Phase D2)
 # + BOSS-045/BOSS-046 (invented teen/adult interactions) + BUG-032 (39 missing
 #   aggregate sound events), all found 2026-06-13 in Phase D3.
-TOTAL_EXPECTED = 605
+# + WGEN-051..057 (Challenge Tower reconciliation: level lock, scaffolding,
+#   loot palettes, Jumpy Bug mob, placement, chest facing; structure-set salt
+#   collision) + ITEM-066 (trophy prince/princess eggs), found 2026-08-08 in
+#   Phase D5.
+TOTAL_EXPECTED = 613
 TERMINAL = {"FIXED", "VERIFIED-CORRECT", "DEFERRED"}
 
 with open("AUDIT_FINDINGS.md", encoding="utf-8") as fh:

@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "orespawn:block/cave_spider_spawn_block"
+    }
+  }
+}

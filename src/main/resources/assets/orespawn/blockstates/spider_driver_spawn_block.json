@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "orespawn:block/spider_driver_spawn_block"
+    }
+  }
+}

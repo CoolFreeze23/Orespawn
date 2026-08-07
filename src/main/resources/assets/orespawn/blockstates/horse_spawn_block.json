@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "orespawn:block/horse_spawn_block"
+    }
+  }
+}

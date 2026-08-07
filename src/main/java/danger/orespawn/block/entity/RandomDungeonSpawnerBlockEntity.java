@@ -2,6 +2,7 @@ package danger.orespawn.block.entity;
 
 import danger.orespawn.ModBlockEntities;
 import danger.orespawn.world.GenericDungeon;
+import danger.orespawn.world.structure.LegacyDungeonPiece;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
@@ -39,8 +40,16 @@ public class RandomDungeonSpawnerBlockEntity extends BlockEntity {
     private static final int TOTAL_DELAY = 400; // 20 seconds at 20 TPS
     // orig DungeonSpawnerBlock.java:52 — nextInt(50) outcome roll
     private static final int STRUCTURE_POOL_SIZE = 50;
+    // orig DungeonSpawnerBlock.java:59-61 — makeEnormousCastle (King tower)
+    private static final int TYPE_ENORMOUS_CASTLE_KING = 2;
     private static final int TYPE_GENERIC_DUNGEON = 21;
     private static final int TYPE_RUBY_DUNGEON = 22;
+    // orig DungeonSpawnerBlock.java:122-124 — BMaze.buildBasiliskMaze at the block pos
+    private static final int TYPE_BASILISK_MAZE = 23;
+    // orig DungeonSpawnerBlock.java:167-169 — MyDungeon.makeNightmareRookery
+    private static final int TYPE_NIGHTMARE_ROOKERY = 38;
+    // orig DungeonSpawnerBlock.java:194-196 — makeEnormousCastleQ (Queen tower)
+    private static final int TYPE_ENORMOUS_CASTLE_QUEEN = 47;
 
     private int delay = TOTAL_DELAY;
 
@@ -96,7 +105,32 @@ public class RandomDungeonSpawnerBlockEntity extends BlockEntity {
         return switch (type) {
             case TYPE_RUBY_DUNGEON -> GenericDungeon.placeRubyDungeonAt(server, server.random, pos);
             case TYPE_GENERIC_DUNGEON -> GenericDungeon.placeGenericDungeonAt(server, server.random, pos);
-            // Interim fallback for the 48 not-yet-ported structures (Phase D / WGEN-042)
+            case TYPE_BASILISK_MAZE -> {
+                // orig DungeonSpawnerBlock.java:122-124 — same public builder as
+                // worldgen, at the block position with no ground scan or -2 offset.
+                LegacyDungeonPiece.buildNow(server, pos,
+                        LegacyDungeonPiece.DungeonType.BASILISK_MAZE);
+                yield true;
+            }
+            case TYPE_NIGHTMARE_ROOKERY -> {
+                // orig DungeonSpawnerBlock.java:167-169.
+                LegacyDungeonPiece.buildNow(server, pos,
+                        LegacyDungeonPiece.DungeonType.NIGHTMARE_ROOKERY);
+                yield true;
+            }
+            case TYPE_ENORMOUS_CASTLE_KING -> {
+                // orig DungeonSpawnerBlock.java:59-61.
+                LegacyDungeonPiece.buildNow(server, pos,
+                        LegacyDungeonPiece.DungeonType.KING_TOWER);
+                yield true;
+            }
+            case TYPE_ENORMOUS_CASTLE_QUEEN -> {
+                // orig DungeonSpawnerBlock.java:194-196.
+                LegacyDungeonPiece.buildNow(server, pos,
+                        LegacyDungeonPiece.DungeonType.QUEEN_TOWER);
+                yield true;
+            }
+            // Interim fallback for the not-yet-ported structures (Phase D / WGEN-042)
             default -> GenericDungeon.placeGenericDungeonAt(server, server.random, pos);
         };
     }

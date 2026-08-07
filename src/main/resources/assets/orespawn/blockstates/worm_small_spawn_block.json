@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "orespawn:block/worm_small_spawn_block"
+    }
+  }
+}

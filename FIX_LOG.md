@@ -564,6 +564,113 @@ must not despawn when the player walks away.
 
 ---
 
+## Phase D — slice D5: representative structures + SpawnOres pool (2026-08-08)
+
+- **Report:** `phase_d_reports/D5_structures_spawnores.md` (full citation tables);
+  extraction specs in `phase_d_reports/d5_extraction/` (basilisk_maze / nightmare /
+  enormous_castle / spawn_ores — each independently verified against the originals).
+- **Pattern doc:** `phase_d_reports/structure_conversion_pattern.md` — the D6 playbook
+  (mechanism decision, LegacyDungeonStructure recipe, RNG stitching contract, loot
+  conversion rules, placement-odds table, DSB wiring, verification checklist).
+
+### Structures
+
+- **WGEN-037 — FIXED.** BasiliskMaze ported line-by-line (orig BasiliskMaze.java:30-458)
+  as `LegacyDungeonStructure`/`BasiliskMazeGenerator`: randomized-Prim 10x10 maze
+  (in-memory wall bitmap replaces the original's read-after-write entrance probes —
+  required by chunk stitching), 80 lava + 20 RTP floor traps, iron-ore antechamber,
+  pyramid + spiral parkour shaft, 2-4 chests (31-entry list -> `chests/basilisk_maze`,
+  weight 495, rolls 5-10; CagedGirlfriend via caged_mob + caged_entity component),
+  3 persistent Basilisks (spawnPersistent, no spawner blocks). Mining set 26/13
+  (1/665 rotation odds), LOWEST_SURFACE_36 anchor (OSW:2573-2597), DSB outcome 23.
+- **WGEN-038 — VERIFIED-CORRECT.** `NightmareDungeon` is dead code in 1.7.10 (never
+  instantiated; exhaustive proof in nightmare_spec.md §1) — porting it would invent
+  behavior. The live Nightmare structure is the Rookery (below).
+- **WGEN-042 — PARTIAL (advanced).** NightmareRookery ported
+  (orig GenericDungeon.java:5242-5312): two 26-column drunkard ridges (Z drift carries
+  across passes), 4 side-bulge rolls per pillar block, PitchBlack spawner + chest caps
+  on h>=19 pillars, 10-entry loot (weight 270, rolls 4-8), ISLANDS_GRASS anchor with
+  LessLag gate (OSW:2253-2274), island set 44/22 (1/1900), DSB outcome 38.
+  Remaining ~20 structures -> D6.
+- **Challenge Towers reconciled (WGEN-051..056 + ITEM-066, all new, all FIXED):**
+  the existing makeEnormousCastle/Q port diffed end-to-end against GD:191-786/6393-6987.
+  Removed inventions: level-6 lock (roll restored, GD:202-205) and scaffolding columns
+  (archived MOD-012). Restored: faithful level1-5 chest lists as
+  `chests/challenge_tower_level1..5` (totals 165/235/235/255/1285 assert-verified),
+  "Jumpy Bug" = TrooperBug spawners, chest facings (meta 5/4/3/2 -> room centre),
+  faithful placement (grass anchor + jitter + LessLag; sets corrected 44/22 -> the
+  C7-approved 36/18; bounding box extended so the level-6 buried worm ring
+  (x,z -28..+55, GD:362-374) is no longer chunk-clipped), functional
+  the_prince/the_princess spawn eggs in the prize chests AND the Queen/Teen/Adult
+  drops (invented trophy items removed). DSB outcomes 2 + 47.
+- **WGEN-057 — FIXED (found in passing).** mantis_nest and royal_trees structure sets
+  shared salt 84312; royal_trees re-salted 84332.
+- **Infrastructure:** asymmetric piece bounding boxes, per-type PlacementMode
+  (SURFACE_CENTER / LOWEST_SURFACE_36 / ISLANDS_GRASS), `buildNow` live-build entry
+  (level RNG, unclipped window), facing-aware + loot-table chest placement,
+  `spawnPersistent`. Per-structure generator classes keep LegacyDungeonPiece flat.
+
+### SpawnOres pool + egg recipes
+
+- **WGEN-005 — FIXED.** 106 new OreGenericEgg blocks (119-row verified master table);
+  `SpawnOresPoolFeature` reproduces the original roll exactly (28+nextInt(20/30),
+  1/20 +30, LessOre÷3, Y 50..127 discard, 7-in-104 rare tier, exact switch orders)
+  for overworld + Utopia/Village/Chaos + Mining x3 (CP2:191-195). Original
+  "Ancient Dried <Mob> Spawn Egg" names restored everywhere (incl. the 13
+  previously-deviating existing blocks). Interim PN-010 artifacts retired:
+  dragon/kraken features (incl. never-wired _dim/_mining orphans),
+  add_boss_spawn_blocks, and the invented ancient_dried_egg block/worldgen
+  (archived MOD-013). Generators: `tools/d5_gen_spawn_ores.py`.
+- **ITEM-062 — FIXED (closes the last remainder).** All 116 water-bucket
+  spawn-block->egg recipes + 3 nine-part combines (OSM:2665-3021). Vanilla eggs for
+  vanilla mobs (ender_dragon/iron_golem/snow_golem/wither all exist since 1.20.5 —
+  verified in the 1.21.1 client jar); CriminalEgg -> band_p_spawn_egg (WGEN-017);
+  EnchantedCowEgg -> enchanted_apple_cow_spawn_egg (consolidation target).
+- **ITEM-020 — PARTIAL (advanced).** DSB outcome table now covers 2/21/22/23/38/47.
+
+### Notes & ledger
+
+- **PARITY_NOTES:** PN-010 closed; PN-015 (seed-stable structure RNG) and PN-016
+  (SpawnOres replaceables-tag/step mapping) added.
+- **MODERNIZATION_NOTES:** MOD-012 (tower QoL pack), MOD-013 (rehydration block).
+- **Observation for Phase E (not acted on):** Phase-14 invented entities
+  (APPLE_COW/GOLDEN_APPLE_COW/VAMPIRE_BUTTERFLY; EnchantedCow renamed into
+  ENCHANTED_APPLE_COW; BABY_DRAGON alongside SPYRO) — invented-content ruling
+  candidates.
+- **Ledger:** 613 IDs (605 + WGEN-051..057 + ITEM-066), 454 terminal
+  (431 FIXED + 22 VERIFIED-CORRECT + 1 DEFERRED) / 159 open;
+  `tools/ledger_reconcile.py` green (TOTAL_EXPECTED 613).
+- **Verification pass:** 4 independent verifiers re-derived every D5 number
+  from the originals (details in the report §9). Caught + fixed pre-commit: a
+  LESS_ORE Boolean-vs-int compile error in SpawnOresPoolFeature; the stale
+  `ancient_dried_egg` entry in `data/minecraft/tags/block/mineable/shovel.json`
+  (would have broken the vanilla tag at load); the invented
+  `extracting_trex_dna.json` Extractor recipe (ADE-coupled, no original
+  counterpart — deleted). One documented delta: LOWEST_SURFACE_36 can't probe
+  under overhangs where modern terrain exceeds Y128 (impossible in 1.7.10's
+  128-tall world). Rookery and tower verifiers: zero findings.
+- **Build:** full `./gradlew build` — see commit.
+- **Pending manual tests (in-game):** appended to TESTING_CHECKLIST.md §D5:
+  - `/locate structure orespawn:basilisk_maze` (Mining): pyramid marker, parkour
+    shaft, maze solvable W->E, 3 aggressive persistent Basilisks, east-wall chests
+    roll the 31-entry table, lava/RTP floor traps live.
+  - `/locate structure orespawn:nightmare_rookery` (Islands): jagged spire cluster,
+    ~10% of spires capped chest-under-spawner, Nightmare spawners live.
+  - Challenge Towers (Islands): height varies by the restored roll (short towers
+    common, full 6-floor towers ~28%); no scaffolding; chests face the room centre;
+    level-5 room loot includes the 83-egg jackpot; prize floor (level-6 towers only)
+    gives ROYAL gear + a FUNCTIONAL Prince/Princess spawn egg; buried worm-spawner
+    ring extends well past the west stair without chunk seams.
+  - Random Dungeon Spawner block: outcomes 2/23/38/47 build King tower / maze /
+    rookery / Queen tower at the block.
+  - SpawnOres: new chunks Y50+ carry frequent varied spawn-ore veins in overworld,
+    Utopia, Village, Chaos, Mining x3 (none in Islands/Crystal-beyond-its-own-pool);
+    breaking drops the block + 50% 5-9 XP; every block + water bucket crafts its
+    mob's egg (bucket returned); 9 Mobzilla/King/Queen parts combine to full blocks.
+  - LessOre=1: spawn-ore veins ~1/3; LessLag=1: rookery/towers ~half frequency.
+
+---
+
 ## Phase D — slice D4: items/blocks/small-entity batch (2026-07-02)
 
 - **Report:** `phase_d_reports/D4_items_small_entities.md` (full citation tables).

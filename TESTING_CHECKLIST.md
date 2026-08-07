@@ -254,6 +254,33 @@ still applies).
 
 ---
 
+## D5 — structures + SpawnOres pool (added 2026-08-08)
+
+### D5a — Mining dimension
+
+- **WGEN-037** — `/execute in orespawn:mining run tp @s 0 100 0`, then `/locate structure orespawn:basilisk_maze` and tp there. Expect: sandstone step-pyramid marker sunk ~2 blocks into terrain; 4×4 bedrock shaft with 2×2 core and spiral obsidian parkour steps descending 20-29 blocks; iron-ore-walled antechamber with 3 Extreme Torches; 30×30 obsidian maze (2-wide corridors, solvable west→east, lava traps in the floor); 30×30 taller chamber with 3 persistent Basilisks, RTP floor traps, 2-4 chests on the east wall (torch 3 above each) rolling diamonds 15-25 / cages / uranium / fish / ultimate gear per the 31-entry table.
+- Walk >130 blocks from the maze chamber and return: the 3 Basilisks must NOT have despawned (persistence).
+
+### D5b — Islands dimension
+
+- **WGEN-042 (rookery)** — `/execute in orespawn:islands run tp @s 0 20 0`, `/locate structure orespawn:nightmare_rookery`. Expect: cluster of jagged stone spires in two wandering ridges; roughly 1-in-10 spires truncate at 19 blocks with a chest on top and a Nightmare (Pitch Black) spawner sitting directly on the chest; chests roll dead stink bugs / black+scary flowers / nightmare eggs / robot kits / bones / string / flesh / XP bottles (4-8 stacks).
+- **WGEN-051/055** — `/locate structure orespawn:challenge_tower_king` (and _queen): tower heights VARY (most towers stop below 6 floors; full towers with the Nightmare cap ≈ 28%); towers sit on the grass plane (not floating on a heightmap ledge); with `lessLag=1` roughly half as many towers/rookeries generate in fresh chunks.
+- **WGEN-052/053/056 + ITEM-066** — inside any tower floor room: NO scaffolding anywhere; all 4 chests face the room centre; non-prize floors roll the faithful tier lists (emerald kit / experience+pink / amethyst+tigers-eye / ruby+utility / the 83-spawn-egg jackpot at level 5). On a level-6 tower's BOTTOM floor: west chest = The Prince (King) / The Princess (Queen) SPAWN EGG that actually spawns the royal, east = Royal/Queen helmet+chestplate, north = leggings+boots, south = Royal Guardian Sword; 4 RTP blocks around the central spawner column.
+- **WGEN-054** — level-2+ tower centre rooms at the right difficulty spawn Jumpy Bugs (TrooperBug — jumps, no spit attack).
+- **WGEN-055 (worm ring)** — around a FULL-height tower, dig at surface−1 out to ~55 blocks east/±55 north-south of the base: buried Large Worm spawners scattered outside the castle, with no rectangular cutoff at chunk borders.
+- **ITEM-020** — place 4+ Random Dungeon Spawner blocks; observed outcomes should now include the King tower (2), Basilisk maze (23), rookery (38), Queen tower (47) at the block position.
+
+### D5c — SpawnOres + recipes (overworld / Utopia / Village / Chaos / Mining)
+
+- **WGEN-005** — fly through NEW chunks at Y50+ mining into stone: spawn-ore veins (clump ~4) of many different mobs appear frequently (~24/chunk overworld, ~27 dims); Mining dim noticeably denser (×3); Islands and Crystal (other than its own 11 egg ores) get NONE; Nether/End get none.
+- Break any spawn ore: drops itself; ~50% of breaks pop 5-9 XP; Silk Touch: block, no XP; nothing ever spawns from breaking.
+- Lang: every spawn ore reads "Ancient Dried <Mob> Spawn Egg" (incl. the renamed 11 crystal egg ores + kraken/dragon).
+- **ITEM-062** — craft water bucket + spawn block for a sample across the table (spider→vanilla spider egg, wither boss→wither egg, criminal→BandP egg, enchanted cow→Enchanted Apple Cow egg, kraken→Kraken egg, urchin ore→Urchin egg): 1 egg + EMPTY BUCKET returned. 9× Mobzilla/King/Queen part blocks → full egg block → + water → boss egg. Mobzilla FULL egg blocks also mine from worldgen; King/Queen full blocks never do (parts only).
+- **LessOre=1** — new chunks: spawn-ore veins cut to ~1/3.
+- Confirm the interim content is GONE: no `orespawn:ancient_dried_egg` block anywhere (worldgen or creative tab), and dragon/kraken spawn blocks now appear via the pool at Y50+ (not as deep single blocks).
+
+---
+
 ## Failure log
 
 *(appended during the session as FAILs come in)*

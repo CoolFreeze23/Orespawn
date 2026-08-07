@@ -162,3 +162,41 @@ impact estimate, related finding IDs.
   than registry values.
 - **Related findings:** ITEM-065 (documented per PN-013), ENT-A-045 (stat values
   verified correct in Phase C).
+
+## MOD-012 — Challenge Tower QoL pack: guaranteed prize level + climbable shafts (DELIBERATE 2.0 CONTENT CANDIDATE)
+- **Origin:** pre-plan "QA fixes" REMOVED from the parity build (2026-08-08, Phase D5,
+  WGEN-051/WGEN-052). The port (a) locked the tower difficulty roll to level 6 so
+  every Challenge Tower topped out with the Royal Guardian Sword / Royal armor /
+  Prince-or-Princess egg chests, and (b) added scaffolding columns under every
+  decoration-room ceiling hole and in the level-6 dirt shaft so the sealed bedrock
+  rooms were climbable without bringing blocks.
+- **Original behavior:** `GenericDungeon.java:202-205` rolls level 1-6 (P(6) = 5/18 ≈
+  28%), so most towers are shorter and prize-less; no climbable block exists anywhere
+  in either castle variant — players tower up on their own blocks or ender-pearl.
+- **Proposal for 2.0:** keep the original roll but surface the tower's level visibly
+  (banner colour / height is already a tell), and reconsider a climb aid that fits the
+  original aesthetic (e.g. exposed iron-bar rungs) gated behind a config default-off.
+  If a guaranteed-prize variant is wanted, make it a rarer second structure rather
+  than changing every tower.
+- **Impact:** gameplay-visible (tower height distribution, loot availability,
+  traversal difficulty). Effort: small (both changes are localized).
+- **Related findings:** WGEN-051, WGEN-052 (both closed, Phase D5); WGEN-043
+  (provenance, closed Phase C7).
+
+## MOD-013 — Ancient Dried Egg rehydration block (DELIBERATE 2.0 CONTENT CANDIDATE)
+- **Origin:** Phase-10/C7 port invention REMOVED with the SpawnOres pool restoration
+  (2026-08-08, Phase D5, WGEN-005/PN-010). A standalone "Ancient Dried Egg" block
+  generated at Y −32..32 (1/12 chunks); right-clicking it with a water bucket
+  consumed the block and yielded a random egg from a 7-entry dino pool.
+- **Original behavior:** no such block exists in 1.7.10. The "Ancient Dried … Spawn
+  Egg" names belong to the ~105 per-mob SpawnOres blocks, and rehydration is a
+  CRAFTING recipe (water bucket + block → that mob's egg, orig
+  OreSpawnMain.java:2665-3021) — now fully restored.
+- **Proposal for 2.0:** the in-world right-click rehydration is a nice diegetic touch;
+  if revived, make it an alternate interaction on the REAL spawn-ore blocks (right
+  click with water bucket = the crafting recipe's result in place) instead of a
+  separate generic block, so the per-mob identity is kept. The removed
+  `AncientDriedEggBlock` implementation is recoverable from git history.
+- **Impact:** gameplay-visible but redundant with crafting; invisible to parity.
+  Effort: small.
+- **Related findings:** WGEN-005 (closed, Phase D5); ITEM-062 (closed, Phase D5).

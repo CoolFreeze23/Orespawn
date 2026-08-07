@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "orespawn:block/gold_fish_spawn_block"
+    }
+  }
+}

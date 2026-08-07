@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "orespawn:block/leaf_monster_spawn_block"
+    }
+  }
+}

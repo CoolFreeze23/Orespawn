@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "orespawn:block/trooper_bug_spawn_block"
+    }
+  }
+}

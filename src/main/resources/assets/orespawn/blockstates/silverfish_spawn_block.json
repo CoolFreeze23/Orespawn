@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "orespawn:block/silverfish_spawn_block"
+    }
+  }
+}

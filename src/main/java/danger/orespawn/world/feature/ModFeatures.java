@@ -26,6 +26,16 @@ public class ModFeatures {
     public static final DeferredHolder<Feature<?>, BeehiveFeature> BEEHIVE =
             FEATURES.register("beehive", () -> new BeehiveFeature(NoneFeatureConfiguration.CODEC));
 
+    // Phase D5 (WGEN-005) — the original ~105-type SpawnOres vein pool
+    // (orig OreSpawnWorld.java:355-803 / ChunkOreGenerator.java:21-469),
+    // replacing the interim Phase C7 dragon/kraken + ancient-dried-egg
+    // redesign (PN-010, retired). Config: count_dice 20 (overworld) / 30
+    // (dims), passes 3 for the Mining triple pass (ChunkProviderOreSpawn2
+    // .java:191-195).
+    public static final DeferredHolder<Feature<?>, SpawnOresPoolFeature> SPAWN_ORES_POOL =
+            FEATURES.register("spawn_ores_pool",
+                    () -> new SpawnOresPoolFeature(SpawnOresPoolFeature.Configuration.CODEC));
+
     // QA Fix Part 5 — Small Beehive (the "skep" surface variant).
     // Authentic port of GenericDungeon.makeSmallBeeHive (1.7.10 line
     // 1363). The legacy addANest 50/50 branch (OreSpawnWorld.java:1010)

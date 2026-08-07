@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "minecraft:water_bucket"
+    },
+    {
+      "item": "orespawn:leon_spawn_block"
+    }
+  ],
+  "result": {
+    "id": "orespawn:leon_spawn_egg",
+    "count": 1
+  }
+}

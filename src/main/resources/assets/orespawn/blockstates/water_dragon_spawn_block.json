@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "orespawn:block/water_dragon_spawn_block"
+    }
+  }
+}

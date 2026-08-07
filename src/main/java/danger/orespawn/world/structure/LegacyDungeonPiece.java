@@ -5,9 +5,15 @@ import danger.orespawn.ModEntities;
 import danger.orespawn.ModItems;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.ChunkPos;
@@ -15,6 +21,7 @@ import net.minecraft.world.level.StructureManager;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.ChestBlockEntity;
+import net.minecraft.world.level.block.entity.RandomizableContainerBlockEntity;
 import net.minecraft.world.level.block.entity.SpawnerBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
@@ -22,6 +29,7 @@ import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.level.levelgen.structure.StructurePiece;
 import net.minecraft.world.level.levelgen.structure.pieces.StructurePieceSerializationContext;
+import net.minecraft.world.level.storage.loot.LootTable;
 
 /**
  * Audit Part 2 &mdash; unified {@link StructurePiece} for the four legacy
@@ -85,27 +93,82 @@ public class LegacyDungeonPiece extends StructurePiece {
         // and use ±32 extents to span the full footprint.
         KING_ALTAR(32, 4, 56),
         QUEEN_ALTAR(32, 4, 56),
-        // Audit Part 4 — King's / Queen's Challenge Tower (legacy
-        // GenericDungeon.makeEnormousCastle line 191 / makeEnormousCastleQ
-        // line 6393). 28x28 base + 6 stacked floors stepping inward
-        // (10/10/9/9/8/16 tall), 4-block stone foundation skirt, and a
-        // ~38-block western spire arm + descending stair. Worst-case
-        // footprint = origin -38..+31 horizontal, -2..+88 vertical. We use
-        // a symmetric ±40 horizontal box so /locate keeps the player at
-        // the body centre rather than at the spire tip, and an upExtent
-        // of 95 to include the level-6 Nightmare cap (+5 above the
-        // top floor at j=78).
-        KING_TOWER(40, 4, 95),
-        QUEEN_TOWER(40, 4, 95);
+        // Audit Part 4 + Phase D5 reconciliation — King's / Queen's Challenge
+        // Tower (legacy GenericDungeon.makeEnormousCastle line 191 /
+        // makeEnormousCastleQ line 6393). 28x28 base + up to 6 stacked floors
+        // (10/10/9/9/8/16 tall), 4-block foundation skirt, western
+        // platform-arm + descending stair to x=-37 (GD:340-361), and — on
+        // level-6 towers — the buried "Large Worm" spawner ring scattered
+        // over x,z -28..+55 at y-1 (GD:362-374). The pre-D5 symmetric ±40
+        // box CLIPPED that ring's outer band at chunk borders (WGEN-055);
+        // the asymmetric box now covers stair + skirt + ring with margin:
+        // x -39..+57, z -30..+57, down 4, up 85 (Nightmare-cap spawners top
+        // out at +80, GD:495-514). Placement is the faithful Islands D4
+        // anchor (grass level + nextInt(8) jitter + LessLag gate,
+        // OSW:2203-2228) instead of the old chunk-centre heightmap probe.
+        KING_TOWER(-39, 57, 4, 85, -30, 57, PlacementMode.ISLANDS_GRASS),
+        QUEEN_TOWER(-39, 57, 4, 85, -30, 57, PlacementMode.ISLANDS_GRASS),
+        // Phase D5 (WGEN-037) — BasiliskMaze (orig BasiliskMaze.java). The
+        // footprint is strongly asymmetric around the build origin (X0,Y0,Z0):
+        // X −8 (pyramid ground ring, BM:421) .. +64 (east bedrock shell Bx+61
+        // = X0+64, BM:328); Y −(D+4) with D ∈ [20,29] → −33 (castle floor,
+        // BM:305) .. +8 (pyramid apex, BM:419); Z −22 (castle north shell
+        // Bz−2, BM:335) .. +11 (south shell Bz+31, BM:342). One margin block
+        // each side. Placement reproduces OreSpawnWorld.addBasiliskMaze's
+        // lowest-of-36-columns surface scan (OSW:2573-2597).
+        BASILISK_MAZE(-9, 65, 34, 9, -23, 12, PlacementMode.LOWEST_SURFACE_36),
+        // Phase D5 (WGEN-042, Nightmare Rookery) — two 26-column spike-ridge
+        // passes (orig GenericDungeon.java:5242-5312). X core −5..+20 ±1 side
+        // bulge; Z is a cumulative 52-step drunkard's walk from 0, hard bound
+        // ±52 ±1 bulge (unclamped in the original, GenericDungeon.java:5253,
+        // 5283); Y pillars 0..18 + chest 19 + spawner 20. One margin block.
+        NIGHTMARE_ROOKERY(-7, 22, 1, 22, -54, 54, PlacementMode.ISLANDS_GRASS);
 
-        public final int hExtent;
+        /** How {@link LegacyDungeonStructure#findGenerationPoint} anchors this type. */
+        public enum PlacementMode {
+            /** Chunk-centre heightmap probe (the original Audit Part 2-4 behaviour). */
+            SURFACE_CENTER,
+            /**
+             * OreSpawnWorld.addBasiliskMaze (orig OreSpawnWorld.java:2573-2597):
+             * sample a 6×6 grid of columns at chunk offsets {0,3,6,9,12,15},
+             * keep the LOWEST surface within the original's Y 31..128 scan
+             * window, refuse unless that surface is above Y40, and sink the
+             * origin 2 blocks into the terrain.
+             */
+            LOWEST_SURFACE_36,
+            /**
+             * OreSpawnWorld.addD4NightmareRookery (orig OreSpawnWorld.java:
+             * 2253-2274): LessLag 50% skip, corner + nextInt(8) jitter, and a
+             * grass-level anchor found by the original's Y 20→5 downward scan
+             * (the Islands plane is flat, grass at Y7 via the orespawn:islands
+             * noise settings, so the predicted heightmap is exact).
+             */
+            ISLANDS_GRASS
+        }
+
+        public final int minXOff;
+        public final int maxXOff;
         public final int downExtent;
         public final int upExtent;
+        public final int minZOff;
+        public final int maxZOff;
+        public final PlacementMode placement;
 
+        /** Symmetric envelope (all pre-D5 dungeon types). */
         DungeonType(int h, int d, int u) {
-            this.hExtent = h;
-            this.downExtent = d;
-            this.upExtent = u;
+            this(-h, h, d, u, -h, h, PlacementMode.SURFACE_CENTER);
+        }
+
+        /** Asymmetric envelope for algorithms whose reach differs per side. */
+        DungeonType(int minXOff, int maxXOff, int down, int up, int minZOff, int maxZOff,
+                    PlacementMode placement) {
+            this.minXOff = minXOff;
+            this.maxXOff = maxXOff;
+            this.downExtent = down;
+            this.upExtent = up;
+            this.minZOff = minZOff;
+            this.maxZOff = maxZOff;
+            this.placement = placement;
         }
     }
 
@@ -125,12 +188,12 @@ public class LegacyDungeonPiece extends StructurePiece {
     public LegacyDungeonPiece(BlockPos origin, DungeonType dungeonType) {
         super(ModStructureTypes.LEGACY_DUNGEON_PIECE.get(), 0,
                 new BoundingBox(
-                        origin.getX() - dungeonType.hExtent,
+                        origin.getX() + dungeonType.minXOff,
                         origin.getY() - dungeonType.downExtent,
-                        origin.getZ() - dungeonType.hExtent,
-                        origin.getX() + dungeonType.hExtent,
+                        origin.getZ() + dungeonType.minZOff,
+                        origin.getX() + dungeonType.maxXOff,
                         origin.getY() + dungeonType.upExtent,
-                        origin.getZ() + dungeonType.hExtent));
+                        origin.getZ() + dungeonType.maxZOff));
         this.origin = origin.immutable();
         this.dungeonType = dungeonType;
     }
@@ -149,13 +212,24 @@ public class LegacyDungeonPiece extends StructurePiece {
         tag.putString("dt", dungeonType.name());
     }
 
+    /**
+     * Non-null only on the {@link #buildNow} live-game path: the original
+     * Dungeon Spawner Block built with the world RNG
+     * (orig DungeonSpawnerBlock.java:52 {@code world.rand}), so repeated
+     * builds must not repeat a layout. Worldgen passes leave this null and
+     * use the deterministic per-piece seed below (required so every chunk's
+     * replay paints the same slice).
+     */
+    private transient RandomSource runtimeRandomOverride;
+
     @Override
     public void postProcess(WorldGenLevel level, StructureManager structureManager,
                             ChunkGenerator chunkGenerator, RandomSource random,
                             BoundingBox chunkBox, ChunkPos chunkPos, BlockPos pivot) {
         // RoyalTreePiece pattern: deterministic per-piece RNG seeded from the
         // bounding box corners so every chunk pass paints the same slice.
-        RandomSource rng = RandomSource.create(
+        RandomSource rng = runtimeRandomOverride != null ? runtimeRandomOverride
+                : RandomSource.create(
                 (long) this.boundingBox.minX() * 341873128712L
                         + (long) this.boundingBox.minZ() * 132897987541L);
 
@@ -180,6 +254,8 @@ public class LegacyDungeonPiece extends StructurePiece {
                 case QUEEN_ALTAR -> generateRoyalAltar(rng, false);
                 case KING_TOWER -> generateChallengeTower(rng, true);
                 case QUEEN_TOWER -> generateChallengeTower(rng, false);
+                case BASILISK_MAZE -> BasiliskMazeGenerator.generate(this, origin, rng);
+                case NIGHTMARE_ROOKERY -> NightmareRookeryGenerator.generate(this, origin, rng);
             }
         } finally {
             this.pLevel = null;
@@ -188,33 +264,119 @@ public class LegacyDungeonPiece extends StructurePiece {
     }
 
     // ---- Per-cell helpers ----------------------------------------------
+    // Visibility note: place/placeSpawner/placeLootChest/spawnPersistent are
+    // package-private so per-structure generator classes (BasiliskMazeGenerator,
+    // NightmareRookeryGenerator, ...) can build through the same gated writers
+    // instead of growing this file by ~500 lines per D6 structure. The
+    // cross-chunk stitching contract for those generators: consume RNG
+    // unconditionally in every pass, gate only the WRITES — a draw skipped in
+    // one chunk pass but taken in another desynchronises the replay.
+
+    /**
+     * Live-game entry for the Dungeon Spawner Block outcome pool
+     * (orig DungeonSpawnerBlock.java:52-202): builds {@code type} immediately
+     * at {@code origin} on a real {@link ServerLevel}, bypassing the
+     * structure-start machinery. The piece's whole bounding box is the write
+     * window, so nothing is chunk-clipped, and the level RNG replaces the
+     * deterministic per-position seed — the original built this path with
+     * {@code world.rand}, so rebuilding at the same spot must not repeat a
+     * layout.
+     */
+    public static void buildNow(ServerLevel level, BlockPos origin, DungeonType type) {
+        LegacyDungeonPiece piece = new LegacyDungeonPiece(origin, type);
+        piece.runtimeRandomOverride = level.random;
+        piece.postProcess(level, level.structureManager(), level.getChunkSource().getGenerator(),
+                level.random, piece.getBoundingBox(), new ChunkPos(origin), origin);
+    }
 
     /** Returns true iff the target cell is inside the per-chunk write window. */
-    private boolean inChunk(int x, int y, int z) {
+    boolean inChunk(int x, int y, int z) {
         return x >= pCbMinX && x <= pCbMaxX
                 && y >= pCbMinY && y <= pCbMaxY
                 && z >= pCbMinZ && z <= pCbMaxZ;
     }
 
     /** Gated {@code level.setBlock} ({@link #FLAG_CLIENTS_ONLY}). */
-    private void place(int x, int y, int z, BlockState state) {
+    void place(int x, int y, int z, BlockState state) {
         if (!inChunk(x, y, z)) return;
         pMut.set(x, y, z);
         pLevel.setBlock(pMut, state, FLAG_CLIENTS_ONLY);
     }
 
-    /** Gated chest placement + immediate fill (within the same postProcess pass). */
-    private void placeChest(int x, int y, int z, ChestFiller filler, RandomSource random) {
+    /**
+     * Gated chest placement bound to a data-driven loot table — the Phase C
+     * treatment approved for the generic/ruby dungeon chest lists (roll counts
+     * and weights live in the JSON; the table rolls when a player first opens
+     * the chest). Used by the D5+ structure generators in place of the older
+     * code-side {@link ChestFiller} fills.
+     */
+    void placeLootChest(int x, int y, int z, ResourceKey<LootTable> lootTable) {
+        placeLootChest(x, y, z, null, lootTable);
+    }
+
+    /**
+     * {@link #placeLootChest(int, int, int, ResourceKey)} with an explicit
+     * facing. The originals stamped chest facing metadata after placement
+     * (e.g. GD:744 meta 5 = faces east, so each Challenge Tower chest faces
+     * the room centre); a default chest state loses that (WGEN-056).
+     * {@code facing == null} keeps the default state.
+     */
+    void placeLootChest(int x, int y, int z, Direction facing, ResourceKey<LootTable> lootTable) {
         if (!inChunk(x, y, z)) return;
         BlockPos pos = new BlockPos(x, y, z);
-        pLevel.setBlock(pos, Blocks.CHEST.defaultBlockState(), FLAG_CLIENTS_ONLY);
+        pLevel.setBlock(pos, chestState(facing), FLAG_CLIENTS_ONLY);
+        if (pLevel.getBlockEntity(pos) instanceof RandomizableContainerBlockEntity container) {
+            container.setLootTable(lootTable);
+        }
+    }
+
+    private static BlockState chestState(Direction facing) {
+        BlockState state = Blocks.CHEST.defaultBlockState();
+        return facing == null ? state
+                : state.setValue(BlockStateProperties.HORIZONTAL_FACING, facing);
+    }
+
+    /**
+     * Gated direct entity spawn, porting the original's {@code spawnCreature}
+     * pattern (orig BasiliskMaze.java:243-252: createEntityByName +
+     * setLocationAndAngles with a random yaw + spawnEntityInWorld +
+     * playLivingSound) plus the callers' {@code func_110163_bv()} =
+     * {@link Mob#setPersistenceRequired()}. The yaw is drawn by the CALLER so
+     * the RNG stream stays identical across chunk passes even when the spawn
+     * position falls outside the current write window. The ambient-sound call
+     * is inaudible during worldgen (no players track an ungenerated chunk) but
+     * matters on the live Dungeon Spawner Block path, which builds through
+     * this same code.
+     */
+    void spawnPersistent(EntityType<? extends Mob> type, double x, double y, double z, float yawDegrees) {
+        if (!inChunk(Mth.floor(x), Mth.floor(y), Mth.floor(z))) return;
+        Mob mob = type.create(pLevel.getLevel());
+        if (mob == null) return;
+        mob.moveTo(x, y, z, yawDegrees, 0.0f);
+        mob.setPersistenceRequired();
+        pLevel.addFreshEntityWithPassengers(mob);
+        mob.playAmbientSound();
+    }
+
+    /** Gated chest placement + immediate fill (within the same postProcess pass). */
+    private void placeChest(int x, int y, int z, ChestFiller filler, RandomSource random) {
+        placeChest(x, y, z, null, filler, random);
+    }
+
+    /** {@link #placeChest(int, int, int, ChestFiller, RandomSource)} with an
+     *  explicit facing (see {@link #placeLootChest(int, int, int, Direction,
+     *  ResourceKey)} for why facing matters). */
+    private void placeChest(int x, int y, int z, Direction facing, ChestFiller filler, RandomSource random) {
+        if (!inChunk(x, y, z)) return;
+        BlockPos pos = new BlockPos(x, y, z);
+        pLevel.setBlock(pos, chestState(facing), FLAG_CLIENTS_ONLY);
         if (pLevel.getBlockEntity(pos) instanceof ChestBlockEntity chest) {
             filler.fill(chest, random);
         }
     }
 
     /** Gated spawner placement + immediate {@link EntityType} bind. */
-    private void placeSpawner(int x, int y, int z, EntityType<?> mob) {
+    void placeSpawner(int x, int y, int z, EntityType<?> mob) {
         if (!inChunk(x, y, z)) return;
         BlockPos pos = new BlockPos(x, y, z);
         pLevel.setBlock(pos, Blocks.SPAWNER.defaultBlockState(), FLAG_CLIENTS_ONLY);
@@ -1655,23 +1817,18 @@ public class LegacyDungeonPiece extends StructurePiece {
         int height = 16;
         int platformwidth = 11;
 
-        // QA Fix (Endgame Loot Gate): legacy line 202-205 / 6404-6406 had
-        //   level = 1 + nextInt(6); if (level<=3 && nextInt(3)!=1) level += 3;
-        // which only landed on level=6 about 4/18 (~22%) of the time — so
-        // most Challenge Towers rolled difficulty<6, and pickDecorReward(1,
-        // difficulty) returned <6, which fell through to the generic
-        // chestContents fill instead of the reward==6 Royal-Guardian-Sword
-        // / Royal-Armor / Prince-Egg branch in fillChallengeChests. The
-        // user reported "top floor doesn't contain Royal loot" — the cause
-        // was that they were looting non-level-6 towers.
-        //
-        // Because the King and Queen Challenge Towers are the canonical
-        // endgame mega-structures (already extreme-rarity-gated by their
-        // structure_set spacing), every spawn must guarantee the prize.
-        // Lock difficulty at 6 so pickDecorReward(decor=1, difficulty=6)
-        // always returns 6 and the bottom-floor chests always carry the
-        // Royal Guardian Sword + Royal/Queen armor + Prince/Princess egg.
-        int level = 6;
+        // orig GD:202-205 / 6404-6407 — the tower's difficulty roll:
+        // uniform 1-6, then levels 1-3 are rerolled up by 3 two thirds of
+        // the time, giving P(1)=P(2)=P(3)=1/18 and P(4)=P(5)=P(6)=5/18.
+        // Only a level-6 tower (~27.8%) builds all six floors and awards
+        // the reward-6 Royal chests. A pre-D5 "QA fix" locked this to 6 so
+        // every tower guaranteed the prize — invented behavior, removed
+        // per WGEN-051 (the guaranteed-prize idea is archived as a 2.0
+        // candidate, MODERNIZATION_NOTES MOD-012).
+        int level = 1 + random.nextInt(6);
+        if (level <= 3 && random.nextInt(3) != 1) {
+            level += 3;
+        }
 
         BlockState air = Blocks.AIR.defaultBlockState();
         BlockState bedrock = Blocks.BEDROCK.defaultBlockState();
@@ -2011,19 +2168,13 @@ public class LegacyDungeonPiece extends StructurePiece {
                     ModEntities.ENTITY_WORM_LARGE.get());
             placeSpawner(cposx + width / 2, cposy + 4, cposz + width / 2,
                     ModEntities.ENTITY_WORM_LARGE.get());
+            // orig GD:537-539 — the bare 1x1 air shaft through the dirt fill
+            // and this floor's slab. The original places NO climbable block
+            // here (or anywhere in the tower); players brought their own. A
+            // pre-D5 "QA fix" added a scaffolding column — invented behavior,
+            // removed per WGEN-052 (archived as MOD-012).
             for (int yj = 0; yj < 10; yj++) {
                 place(cposx + 1, cposy + yj, cposz + 1, Blocks.AIR.defaultBlockState());
-            }
-            // QA Traversal Fix: legacy line 537-539 carved a 1x1 air column
-            // through the dirt fill at (cposx+1, j=0..9, cposz+1) but never
-            // placed a climbable block — the player just fell into a 9-deep
-            // pit. Stack scaffolding from j=1..9 so they can also climb
-            // back out (and so the column connects to decor=5's ceiling hole
-            // at (cposx_5+1, cposz_5+1) = world (cposx_6+1, cposz_6+1) since
-            // both floors share cposx+3, cposz+3 — the columns line up).
-            BlockState scaffolding6 = Blocks.SCAFFOLDING.defaultBlockState();
-            for (int yj = 1; yj < 10; yj++) {
-                place(cposx + 1, cposy + yj, cposz + 1, scaffolding6);
             }
             fillChallengeChests(king, cposx, cposy + 4, cposz, width, decor, reward, random);
             return;
@@ -2075,21 +2226,12 @@ public class LegacyDungeonPiece extends StructurePiece {
             place(cposx + floorHoleX, cposy, cposz + floorHoleZ, air);
         }
         place(cposx + ceilHoleX, cposy + height, cposz + ceilHoleZ, air);
-
-        // QA Traversal Fix: legacy buildLevel placed NO ladders inside the
-        // bedrock-walled rooms (verified: zero references to Blocks.ladder /
-        // field_150468_ap in GenericDungeon's challenge-tower code). Pure
-        // 1x1 holes in the bedrock ceiling were unclimbable in survival —
-        // QA flagged "completely sealed with bedrock". Drop a SCAFFOLDING
-        // column at the ceiling-hole position from j=1 to j=height-1 so
-        // the player can climb out. Scaffolding (vs ladders) because two
-        // of the six floor pairs (decor=2↔3 and decor=4↔5) have ceiling
-        // holes 2 blocks away from any wall — ladders need wall support,
-        // scaffolding supports itself off the bedrock floor below.
-        BlockState scaffolding = Blocks.SCAFFOLDING.defaultBlockState();
-        for (int yj = 1; yj < height; yj++) {
-            place(cposx + ceilHoleX, cposy + yj, cposz + ceilHoleZ, scaffolding);
-        }
+        // NOTE: the legacy places NO ladders or climbable blocks anywhere in
+        // the tower (verified: zero ladder references in GD:191-786 /
+        // 6393-6987) — the 1x1 bedrock holes are the only route and players
+        // bring their own blocks. A pre-D5 "QA fix" added scaffolding
+        // columns under every ceiling hole — invented behavior, removed per
+        // WGEN-052 (archived as MOD-012).
 
         // Decor 1 also lays 4 RTP teleport blocks at the central spawner base
         // (line 718-721 / 6920-6923) so the player can warp out after looting.
@@ -2116,13 +2258,13 @@ public class LegacyDungeonPiece extends StructurePiece {
         switch (decor) {
             case 1:
                 if (difficulty >= 6) return ModEntities.HAMMERHEAD.get();
-                if (difficulty == 5) return ModEntities.ENTITY_SPIT_BUG.get(); // Jumpy Bug → SpitBug
+                if (difficulty == 5) return ModEntities.ENTITY_TROOPER_BUG.get(); // "Jumpy Bug" = TrooperBug (orig OreSpawnMain.java:3943), WGEN-054
                 if (difficulty == 4) return ModEntities.ENTITY_HERCULES_BEETLE.get();
                 if (difficulty == 3) return ModEntities.BASILISK.get();
                 if (difficulty == 2) return ModEntities.TREX.get();
                 return ModEntities.ALOSAURUS.get();
             case 2:
-                if (difficulty >= 6) return ModEntities.ENTITY_SPIT_BUG.get(); // Jumpy Bug
+                if (difficulty >= 6) return ModEntities.ENTITY_TROOPER_BUG.get(); // "Jumpy Bug" = TrooperBug (orig OreSpawnMain.java:3943), WGEN-054
                 if (difficulty == 5) return ModEntities.ENTITY_HERCULES_BEETLE.get();
                 if (difficulty == 4) return ModEntities.BASILISK.get();
                 if (difficulty == 3) return ModEntities.TREX.get();
@@ -2154,13 +2296,13 @@ public class LegacyDungeonPiece extends StructurePiece {
         switch (decor) {
             case 1:
                 if (difficulty >= 6) return ModEntities.ENTITY_CATER_KILLER.get();
-                if (difficulty == 5) return ModEntities.ENTITY_SPIT_BUG.get(); // Jumpy Bug
+                if (difficulty == 5) return ModEntities.ENTITY_TROOPER_BUG.get(); // "Jumpy Bug" = TrooperBug (orig OreSpawnMain.java:3943), WGEN-054
                 if (difficulty == 4) return ModEntities.ENTITY_HERCULES_BEETLE.get();
                 if (difficulty == 3) return ModEntities.BASILISK.get();
                 if (difficulty == 2) return ModEntities.NASTYSAURUS.get();
                 return ModEntities.TREX.get();
             case 2:
-                if (difficulty >= 6) return ModEntities.ENTITY_SPIT_BUG.get(); // Jumpy Bug
+                if (difficulty >= 6) return ModEntities.ENTITY_TROOPER_BUG.get(); // "Jumpy Bug" = TrooperBug (orig OreSpawnMain.java:3943), WGEN-054
                 if (difficulty == 5) return ModEntities.ENTITY_HERCULES_BEETLE.get();
                 if (difficulty == 4) return ModEntities.BASILISK.get();
                 if (difficulty == 3) return ModEntities.NASTYSAURUS.get();
@@ -2200,128 +2342,67 @@ public class LegacyDungeonPiece extends StructurePiece {
     }
 
     /**
-     * Direct port of {@code GenericDungeon.fill_chests} (King, line
-     * 727&ndash;785) / {@code fill_chestsQ} (Queen, line 6929&ndash;6987).
-     * Four chests at the cardinal mid-edges of the floor; when
-     * {@code reward == 6} they hold the Royal Guardian Sword + Royal /
-     * Queen armor set + Prince / Princess egg in the exact slot order
-     * the legacy used. Otherwise a level-N {@code chestContents} fill
-     * runs {@code 5 + nextInt(7)} insertions (legacy
-     * {@code WeightedRandomChestContent.func_76293_a}).
+     * Direct port of {@code GenericDungeon.fill_chests} (King, GD:727-785) /
+     * {@code fill_chestsQ} (Queen, GD:6929-6987). Four chests at the cardinal
+     * mid-edges of the floor, each stamped with the original's facing
+     * metadata (GD:744/754/765/776 — meta 5/4/3/2, every chest faces the
+     * room centre; restored per WGEN-056). When {@code reward == 6} — only
+     * the bottom floor of a level-6 tower — they hold the fixed Royal prize
+     * layout in the exact slots the legacy used; the prize eggs are the
+     * FUNCTIONAL Prince/Princess spawn eggs, matching the original
+     * {@code ThePrinceEgg}/{@code ThePrincessEgg} {@code ItemSpawnEgg}s
+     * (OSM:5616/5630), not the invented trophy items (ITEM-066). Otherwise
+     * each chest binds the level-N loot table transcribing the original
+     * {@code levelNContentsList} (GD:57-61) with the original
+     * {@code 5 + nextInt(7)} stack rolls of {@code func_76293_a} (GD:750) —
+     * faithful lists restored per WGEN-053. The Queen variant's decor 2-6
+     * floors called the King's {@code fill_chests} with the same lists
+     * (GD:6742/6771/6804/6841/6882); sharing one table set per reward tier
+     * reproduces that call graph's outcome exactly.
      */
     private void fillChallengeChests(boolean king, int cposx, int cposy, int cposz,
                                      int width, int decor, int reward, RandomSource random) {
-        // West chest (line 743-752 / 6945-6954). reward=6 -> Prince/Princess Egg in slot 1.
-        placeChest(cposx + 1, cposy + 1, cposz + width / 2, (chest, rng) -> {
-            if (reward == 6) {
-                chest.setItem(1, new ItemStack(king
-                        ? ModItems.PRINCE_EGG.get() : ModItems.PRINCESS_EGG.get()));
-            } else {
-                fillChallengeContents(chest, reward, rng);
-            }
-        }, random);
-        // East chest (line 753-763 / 6955-6965). reward=6 -> Royal Helmet + Chestplate.
-        placeChest(cposx + width - 2, cposy + 1, cposz + width / 2, (chest, rng) -> {
-            if (reward == 6) {
+        if (reward == 6) {
+            // West chest (GD:743-752 / 6945-6954, faces east): Prince/Princess egg, slot 1.
+            placeChest(cposx + 1, cposy + 1, cposz + width / 2, Direction.EAST, (chest, rng) ->
+                    chest.setItem(1, new ItemStack(king
+                            ? ModItems.THE_PRINCE_SPAWN_EGG.get()
+                            : ModItems.THE_PRINCESS_SPAWN_EGG.get())), random);
+            // East chest (GD:753-763 / 6955-6965, faces west): helmet slot 1 + chestplate slot 2.
+            placeChest(cposx + width - 2, cposy + 1, cposz + width / 2, Direction.WEST, (chest, rng) -> {
                 chest.setItem(1, new ItemStack(king
                         ? ModItems.ROYAL_HELMET.get() : ModItems.QUEEN_HELMET.get()));
                 chest.setItem(2, new ItemStack(king
                         ? ModItems.ROYAL_CHESTPLATE.get() : ModItems.QUEEN_CHESTPLATE.get()));
-            } else {
-                fillChallengeContents(chest, reward, rng);
-            }
-        }, random);
-        // North chest (line 764-774 / 6966-6976). reward=6 -> Royal Leggings + Boots.
-        placeChest(cposx + width / 2, cposy + 1, cposz + 1, (chest, rng) -> {
-            if (reward == 6) {
+            }, random);
+            // North chest (GD:764-774 / 6966-6976, faces south): leggings slot 1 + boots slot 2.
+            placeChest(cposx + width / 2, cposy + 1, cposz + 1, Direction.SOUTH, (chest, rng) -> {
                 chest.setItem(1, new ItemStack(king
                         ? ModItems.ROYAL_LEGGINGS.get() : ModItems.QUEEN_LEGGINGS.get()));
                 chest.setItem(2, new ItemStack(king
                         ? ModItems.ROYAL_BOOTS.get() : ModItems.QUEEN_BOOTS.get()));
-            } else {
-                fillChallengeContents(chest, reward, rng);
-            }
-        }, random);
-        // South chest (line 775-784 / 6977-6986). reward=6 -> Royal Guardian Sword.
-        placeChest(cposx + width / 2, cposy + 1, cposz + width - 2, (chest, rng) -> {
-            if (reward == 6) {
-                chest.setItem(1, new ItemStack(ModItems.ROYAL_GUARDIAN_SWORD.get()));
-            } else {
-                fillChallengeContents(chest, reward, rng);
-            }
-        }, random);
+            }, random);
+            // South chest (GD:775-784 / 6977-6986, faces north): Royal Guardian Sword, slot 1.
+            placeChest(cposx + width / 2, cposy + 1, cposz + width - 2, Direction.NORTH, (chest, rng) ->
+                    chest.setItem(1, new ItemStack(ModItems.ROYAL_GUARDIAN_SWORD.get())), random);
+            return;
+        }
+        // Rewards 1-5: the original weighted lists as data (GD:729-742 list select).
+        ResourceKey<LootTable> loot = challengeLootTable(reward);
+        placeLootChest(cposx + 1, cposy + 1, cposz + width / 2, Direction.EAST, loot);
+        placeLootChest(cposx + width - 2, cposy + 1, cposz + width / 2, Direction.WEST, loot);
+        placeLootChest(cposx + width / 2, cposy + 1, cposz + 1, Direction.SOUTH, loot);
+        placeLootChest(cposx + width / 2, cposy + 1, cposz + width - 2, Direction.NORTH, loot);
     }
 
     /**
-     * Authentic per-tier weighted chest fill. The legacy
-     * {@code level1ContentsList}&hellip;{@code level5ContentsList}
-     * (legacy lines 57&ndash;61) reference dozens of OreSpawn items;
-     * each tier here ports the items that have a 1.21.1 counterpart and
-     * preserves the original entry weight by duplication. Entry counts
-     * keep the same {@code 5 + nextInt(7)} insertion budget the legacy
-     * {@code WeightedRandomChestContent.func_76293_a} used.
+     * The {@code chestContents} list select of {@code fill_chests}
+     * (GD:729-742): reward 1-5 → {@code chests/challenge_tower_level<N>},
+     * each a full transcription of {@code levelNContentsList} (GD:57-61).
      */
-    private static void fillChallengeContents(ChestBlockEntity chest, int reward, RandomSource random) {
-        ItemStack[] palette = switch (reward) {
-            case 5 -> new ItemStack[]{
-                    new ItemStack(ModItems.NIGHTMARE_SWORD.get(), 1),
-                    new ItemStack(ModItems.POISON_SWORD.get(), 1),
-                    new ItemStack(Items.WITHER_SKELETON_SPAWN_EGG, 1 + random.nextInt(4)),
-                    new ItemStack(Items.IRON_GOLEM_SPAWN_EGG, 1 + random.nextInt(4)),
-                    new ItemStack(ModItems.MOTHRA_SPAWN_EGG.get(), 1 + random.nextInt(4)),
-                    new ItemStack(Items.NETHERITE_INGOT, 1 + random.nextInt(2)),
-                    new ItemStack(Items.ENCHANTED_GOLDEN_APPLE, 1)
-            };
-            case 4 -> new ItemStack[]{
-                    new ItemStack(ModItems.RUBY.get(), 2 + random.nextInt(7)),
-                    new ItemStack(ModItems.MAGIC_APPLE.get(), 1),
-                    new ItemStack(ModBlocks.CREEPER_REPELLENT.get(), 4 + random.nextInt(7)),
-                    new ItemStack(ModBlocks.KRAKEN_REPELLENT.get(), 4 + random.nextInt(7)),
-                    new ItemStack(ModItems.RUBY_PICKAXE.get(), 1),
-                    new ItemStack(ModItems.RUBY_SWORD.get(), 1),
-                    new ItemStack(ModItems.RUBY_HELMET.get(), 1),
-                    new ItemStack(ModItems.RUBY_CHESTPLATE.get(), 1),
-                    new ItemStack(ModItems.RUBY_LEGGINGS.get(), 1),
-                    new ItemStack(ModItems.RUBY_BOOTS_ARMOR.get(), 1)
-            };
-            case 3 -> new ItemStack[]{
-                    new ItemStack(ModItems.RAT_SWORD.get(), 1),
-                    new ItemStack(Items.AMETHYST_SHARD, 2 + random.nextInt(7)),
-                    new ItemStack(Items.LAPIS_LAZULI, 2 + random.nextInt(7)),
-                    new ItemStack(ModItems.TIGERSEYE_HELMET.get(), 1),
-                    new ItemStack(ModItems.TIGERSEYE_CHESTPLATE.get(), 1),
-                    new ItemStack(ModItems.TIGERSEYE_LEGGINGS.get(), 1),
-                    new ItemStack(ModItems.TIGERSEYE_BOOTS.get(), 1),
-                    new ItemStack(ModItems.AMETHYST_SWORD.get(), 1),
-                    new ItemStack(ModItems.AMETHYST_PICKAXE.get(), 1)
-            };
-            case 2 -> new ItemStack[]{
-                    new ItemStack(Items.ENDER_PEARL, 2 + random.nextInt(7)),
-                    new ItemStack(Items.ENDER_PEARL, 2 + random.nextInt(7)),
-                    new ItemStack(ModItems.PINK_HELMET.get(), 1),
-                    new ItemStack(ModItems.PINK_CHESTPLATE.get(), 1),
-                    new ItemStack(ModItems.PINK_LEGGINGS.get(), 1),
-                    new ItemStack(ModItems.PINK_BOOTS.get(), 1),
-                    new ItemStack(ModItems.FAIRY_SWORD.get(), 1),
-                    new ItemStack(ModItems.EMERALD_PICKAXE.get(), 1),
-                    new ItemStack(ModItems.EMERALD_SWORD.get(), 1)
-            };
-            default -> new ItemStack[]{
-                    new ItemStack(Items.EMERALD, 2 + random.nextInt(7)),
-                    new ItemStack(ModItems.MINERS_DREAM.get(), 4 + random.nextInt(5)),
-                    new ItemStack(ModItems.EMERALD_PICKAXE.get(), 1),
-                    new ItemStack(ModItems.EMERALD_SWORD.get(), 1),
-                    new ItemStack(ModItems.EMERALD_HELMET.get(), 1),
-                    new ItemStack(ModItems.EMERALD_CHESTPLATE.get(), 1),
-                    new ItemStack(ModItems.EMERALD_LEGGINGS.get(), 1),
-                    new ItemStack(ModItems.EMERALD_BOOTS_ARMOR.get(), 1)
-            };
-        };
-        int slots = chest.getContainerSize();
-        int count = 5 + random.nextInt(7);
-        for (int i = 0; i < count; i++) {
-            chest.setItem(random.nextInt(slots), palette[random.nextInt(palette.length)].copy());
-        }
+    private static ResourceKey<LootTable> challengeLootTable(int reward) {
+        return ResourceKey.create(Registries.LOOT_TABLE, ResourceLocation.fromNamespaceAndPath(
+                "orespawn", "chests/challenge_tower_level" + reward));
     }
 
     /**

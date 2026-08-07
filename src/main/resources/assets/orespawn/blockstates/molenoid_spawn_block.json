@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "orespawn:block/molenoid_spawn_block"
+    }
+  }
+}

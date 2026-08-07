@@ -1,0 +1,11 @@
+{
+  "structures": [
+    { "structure": "orespawn:nightmare_rookery", "weight": 1 }
+  ],
+  "placement": {
+    "type": "minecraft:random_spread",
+    "spacing": 44,
+    "separation": 22,
+    "salt": 84331
+  }
+}

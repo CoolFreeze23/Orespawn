@@ -1,0 +1,8 @@
+{
+  "type": "orespawn:spawn_ores_pool",
+  "config": {
+    "count_dice": 30,
+    "passes": 3,
+    "less_ore_passes": 1
+  }
+}

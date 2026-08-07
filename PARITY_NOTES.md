@@ -118,15 +118,20 @@ restored to the original "Kyanite" / "Kyanite Sword/Pickaxe/Shovel/Hoe/Axe" name
 - **Residual deviation:** none in-game. World-compat: invented branch items vanish from
 pre-existing port worlds on load (recorded in MOD-009).
 
-## PN-010 — SpawnOres pool reduced to boss spawn blocks + ancient dried eggs (WGEN-005, Phase C7)
+## PN-010 — CLOSED (2026-08-08, Phase D5): SpawnOres pool fully restored
 
-- **What:** 1.7.10 generated 28+/chunk "spawn ore" veins at Y50-128 drawn from a pool of
-~105 spawn-block types (ChunkOreGenerator + OreSpawnMain SpawnOres stats). The port
-currently generates only dragon/kraken boss spawn blocks (1/24 chunks each) and
-ancient dried eggs (1/12) — a deliberate redesign kept for Phase C.
-- **Why deferred:** the pool depends on dozens of per-mob spawn blocks that are
-Phase D scope (with WGEN-042's structure/block backlog). Owner: Phase D
-spawn-block pool restoration.
+> Historical note only. The interim Phase C7 redesign this entry documented
+> (dragon/kraken-only spawn blocks + the invented ancient-dried-egg block) was
+> retired in Phase D5: the full ~105-type pool now generates via
+> `SpawnOresPoolFeature` with the original roll structure, all 116 water-bucket
+> egg recipes exist (ITEM-062), and the ancient-dried-egg invention was removed
+> (archived as MOD-013). No residual deviation beyond PN-016.
+- **What (historical):** 1.7.10 generated 28+/chunk "spawn ore" veins at Y50-128 drawn
+from a pool of ~105 spawn-block types (ChunkOreGenerator + OreSpawnMain SpawnOres
+stats). The Phase C port generated only dragon/kraken boss spawn blocks (1/24 chunks
+each) and ancient dried eggs (1/12) — a deliberate redesign kept for Phase C.
+- **Why deferred then:** the pool depended on dozens of per-mob spawn blocks that were
+Phase D scope (with WGEN-042's structure/block backlog).
 
 ## PN-011 — Utopia Portal Block kept as a creative-only utility (WGEN-050, Phase C7)
 
@@ -193,3 +198,33 @@ gates, renderer), per the audit's own fix recommendation for ANIM-016. Same date
 including the original's hardcoded April 20 "Easter". The registration-time spawn adds
 became static biome modifiers (`halloween_ghosts.json` + existing bunny files) gated
 at spawn-rule time — the only datapack-compatible equivalent.
+
+## PN-015 — Structure randomness is seed-stable in worldgen (Phase D5)
+
+- **Original:** structure layouts drew from live RNG at build time — `world.rand`
+throughout, and the BasiliskMaze corridor topology from raw unseeded `Math.random()`
+(orig BasiliskMaze.java:232-234) — so no layout was reproducible from the world seed.
+- **Port:** every LegacyDungeonStructure generator draws from the deterministic
+per-position piece RandomSource (seeded from the piece bounding box). This is
+REQUIRED by the multi-pass chunk-stitching pattern: the whole build replays once per
+intersecting chunk and every pass must see identical rolls, or structures would have
+visible seams at chunk borders. Per-instance layouts remain just as random; the only
+delta is that a given world seed + position now always yields the same layout.
+- **Exception kept faithful:** the Dungeon Spawner Block path builds with the live
+level RNG (orig DungeonSpawnerBlock.java:52 used `world.rand`), so repeated
+block-triggered builds do not repeat layouts (`LegacyDungeonPiece.buildNow`).
+- **Player-visible:** no (nobody can observe non-reproducibility in normal play).
+
+## PN-016 — SpawnOres veins use the modern stone-replaceables tag and step ordering (WGEN-005, Phase D5)
+
+- **Original:** SpawnOres veins replaced bare `Blocks.stone` only (OSW:403/COG:642)
+and ran as the FIRST block of the ore pass, before uranium/titanium/etc
+(OSW:355→805 / COG:21→471 call order).
+- **Port:** `SpawnOresPoolFeature` places vanilla ore veins against
+`#minecraft:stone_ore_replaceables` at the `underground_ores` step — the same
+treatment every other restored ore received in Phase C7 (WGEN-001). 1.7.10 had no
+granite/diorite/andesite, so the tag widens the target set exactly the way the other
+ores already do; intra-step ordering vs the other ore features follows biome-modifier
+order rather than the original call order. All veins replace stone-family blocks
+either way — the difference is not player-distinguishable.
+- **Player-visible:** no.

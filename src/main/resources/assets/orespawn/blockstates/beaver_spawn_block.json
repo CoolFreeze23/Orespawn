@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "orespawn:block/beaver_spawn_block"
+    }
+  }
+}
