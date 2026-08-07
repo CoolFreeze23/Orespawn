@@ -4305,7 +4305,7 @@ Only MISSING / PARTIAL / DIVERGENT / UNVERIFIED items are listed; fully PORTED i
 # PART B — Worldgen, Dimensions, Structures (file 07)
 
 ## Overworld ore generation
-- **Resolution:** DEFERRED (2026-07-02, Phase D4 — the orig config-file per-tier weapon/armor/ore stat overrides cannot be replicated against NeoForge's frozen static item registries without registry mutation; the orig default values stay hardcoded (verified number-by-number in earlier slices), the platform decision is documented as PARITY_NOTES PN-013 and the config system as 2.0 modernization candidate MODERNIZATION_NOTES MOD-011; see FIX_LOG.md)
+- **Resolution:** DEFERRED (2026-07-02, Phase D4 — the orig config-file per-tier weapon/armor/ore stat overrides cannot be replicated against NeoForge's frozen static item registries without registry mutation; the orig default values stay hardcoded (verified number-by-number in earlier slices), the platform decision is documented as PARITY_NOTES PN-013 and the config system as 2.0 modernization candidate MODERNIZATION_NOTES MOD-011; see FIX_LOG.md. **Owner approval recorded 2026-07-03 at the D4 checkpoint** — PN-013/MOD-011 stand as written)
 
 ### WGEN-001 — OreSpawn ore vein counts inflated, Y-floors extended to −64 (systemic)
 

@@ -699,6 +699,16 @@ must not despawn when the player walks away.
     (5 biomes keep them year-round). Feb 14: Girlfriend spawns giant and hostile;
     Rose Sword hits eventually cure her; thrown shoes deal 10 damage.
 
+### D4 checkpoint rulings (owner, 2026-07-03)
+
+- **ITEM-065 DEFERRED — approved.** The deferral recorded above now carries the
+  owner's explicit approval (the plan's requirement for any DEFERRED terminal
+  state). PN-013 and MOD-011 stand as written; PN-013 header updated to APPROVED.
+- **PN-014 — approved as an explicit behavior deviation.** Live `LocalDate`
+  seasonal gates (vs the original's frozen at-init GregorianCalendar) carry the
+  owner's sign-off in their own right, not just the audit's recommendation;
+  PN-014 header updated to APPROVED.
+
 ---
 
 ## Phase D — slice D3: ranged attacks + Prince-family flight (2026-06-13)

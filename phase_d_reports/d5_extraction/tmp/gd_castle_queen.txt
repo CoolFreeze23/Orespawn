@@ -1,0 +1,606 @@
+        }
+    }
+
+    public void makeEnormousCastleQ(World world, int cposx, int cposy, int cposz) {
+        int k;
+        int j;
+        int i;
+        int width = 28;
+        int height = 16;
+        int platformwidth = 11;
+        int level = 0;
+        if (world.field_72995_K) {
+            return;
+        }
+        level = 1 + world.field_73012_v.nextInt(6);
+        if (level <= 3 && world.field_73012_v.nextInt(3) != 1) {
+            level += 3;
+        }
+        for (i = -20; i < width + 4; ++i) {
+            for (j = 1; j < height + 10; ++j) {
+                for (k = -4; k < width + 4; ++k) {
+                    this.FastSetBlock(world, cposx + i, cposy + j, cposz + k, Blocks.field_150350_a);
+                }
+            }
+        }
+        for (i = 0; i < width; ++i) {
+            j = 0;
+            for (k = 0; k < width; ++k) {
+                this.FastSetBlock(world, cposx + i, cposy + j, cposz + k, Blocks.field_150343_Z);
+            }
+        }
+        for (i = 0; i < width; ++i) {
+            j = height;
+            for (k = 0; k < width; ++k) {
+                this.FastSetBlock(world, cposx + i, cposy + j, cposz + k, Blocks.field_150357_h);
+            }
+        }
+        for (i = 0; i < width; ++i) {
+            for (j = 1; j < height; ++j) {
+                k = 0;
+                this.FastSetBlock(world, cposx + i, cposy + j, cposz + k, Blocks.field_150411_aY);
+                k = width - 1;
+                this.FastSetBlock(world, cposx + i, cposy + j, cposz + k, Blocks.field_150411_aY);
+            }
+        }
+        for (k = 0; k < width; ++k) {
+            for (j = 1; j < height; ++j) {
+                i = 0;
+                this.FastSetBlock(world, cposx + i, cposy + j, cposz + k, Blocks.field_150411_aY);
+                i = width - 1;
+                this.FastSetBlock(world, cposx + i, cposy + j, cposz + k, Blocks.field_150411_aY);
+            }
+        }
+        world.func_147449_b(cposx + 1, cposy + 1, cposz + 1, OreSpawnMain.ExtremeTorch);
+        world.func_147449_b(cposx + 1, cposy + 1, cposz + width - 2, OreSpawnMain.ExtremeTorch);
+        world.func_147449_b(cposx + width - 2, cposy + 1, cposz + 1, OreSpawnMain.ExtremeTorch);
+        world.func_147449_b(cposx + width - 2, cposy + 1, cposz + width - 2, OreSpawnMain.ExtremeTorch);
+        for (i = -4; i < width + 4; ++i) {
+            for (k = -4; k < width + 4; ++k) {
+                if (i < 0 || k < 0 || i >= width || k >= width) {
+                    this.FastSetBlock(world, cposx + i, cposy, cposz + k, Blocks.field_150343_Z);
+                }
+                if (i != -4 && k != -4 && i != width + 3 && k != width + 3) continue;
+                this.FastSetBlock(world, cposx + i, cposy + 1, cposz + k, Blocks.field_150386_bk);
+            }
+        }
+        TileEntityMobSpawner tileentitymobspawner = null;
+        for (j = 0; j < 4; ++j) {
+            world.func_147465_d(cposx - 3, cposy + 1 + j, cposz - 3, Blocks.field_150474_ac, 0, 2);
+            tileentitymobspawner = this.getSpawnerTileEntity(world, cposx - 3, cposy + 1 + j, cposz - 3);
+            if (tileentitymobspawner != null) {
+                tileentitymobspawner.func_145881_a().func_98272_a("Lurking Terror");
+            }
+            world.func_147465_d(cposx - 3, cposy + 1 + j, cposz + width + 2, Blocks.field_150474_ac, 0, 2);
+            tileentitymobspawner = this.getSpawnerTileEntity(world, cposx - 3, cposy + 1 + j, cposz + width + 2);
+            if (tileentitymobspawner != null) {
+                tileentitymobspawner.func_145881_a().func_98272_a("Lurking Terror");
+            }
+            world.func_147465_d(cposx + width + 2, cposy + 1 + j, cposz - 3, Blocks.field_150474_ac, 0, 2);
+            tileentitymobspawner = this.getSpawnerTileEntity(world, cposx + width + 2, cposy + 1 + j, cposz - 3);
+            if (tileentitymobspawner != null) {
+                tileentitymobspawner.func_145881_a().func_98272_a("Lurking Terror");
+            }
+            world.func_147465_d(cposx + width + 2, cposy + 1 + j, cposz + width + 2, Blocks.field_150474_ac, 0, 2);
+            tileentitymobspawner = this.getSpawnerTileEntity(world, cposx + width + 2, cposy + 1 + j, cposz + width + 2);
+            if (tileentitymobspawner == null) continue;
+            tileentitymobspawner.func_145881_a().func_98272_a("Lurking Terror");
+        }
+        world.func_147465_d(cposx + width / 2, cposy + 2, cposz + width / 2, Blocks.field_150474_ac, 0, 2);
+        tileentitymobspawner = this.getSpawnerTileEntity(world, cposx + width / 2, cposy + 2, cposz + width / 2);
+        if (tileentitymobspawner != null) {
+            tileentitymobspawner.func_145881_a().func_98272_a("Emperor Scorpion");
+        }
+        world.func_147465_d(cposx + width / 2, cposy + 3, cposz + width / 2, Blocks.field_150474_ac, 0, 2);
+        tileentitymobspawner = this.getSpawnerTileEntity(world, cposx + width / 2, cposy + 3, cposz + width / 2);
+        if (tileentitymobspawner != null) {
+            tileentitymobspawner.func_145881_a().func_98272_a("Emperor Scorpion");
+        }
+        world.func_147465_d(cposx + width / 2, cposy + 4, cposz + width / 2, Blocks.field_150474_ac, 0, 2);
+        tileentitymobspawner = this.getSpawnerTileEntity(world, cposx + width / 2, cposy + 4, cposz + width / 2);
+        if (tileentitymobspawner != null) {
+            tileentitymobspawner.func_145881_a().func_98272_a("Emperor Scorpion");
+        }
+        j = height;
+        this.buildLevelQ(world, cposx + 1, cposy + j, cposz + 1, width - 2, 10, 4, "Rotator", 1, -1, 5, 1, level);
+        j += 10;
+        if (level >= 2) {
+            this.buildLevelQ(world, cposx + 1, cposy + j, cposz + 1, width - 2, 10, 4, "Bee", 0, 0, 4, 2, level);
+        }
+        j += 10;
+        if (level >= 3) {
+            this.buildLevelQ(world, cposx + 2, cposy + j, cposz + 2, width - 4, 9, 4, "Mantis", 1, 1, 4, 3, level);
+        }
+        j += 9;
+        if (level >= 4) {
+            this.buildLevelQ(world, cposx + 2, cposy + j, cposz + 2, width - 4, 9, 3, "Mothra", 0, 0, 4, 4, level);
+        }
+        j += 9;
+        if (level >= 5) {
+            this.buildLevelQ(world, cposx + 3, cposy + j, cposz + 3, width - 6, 8, 3, "Brutalfly", 1, 1, 4, 5, level);
+        }
+        j += 8;
+        if (level >= 6) {
+            this.buildLevelQ(world, cposx + 3, cposy + j, cposz + 3, width - 6, 16, 3, "Vortex", 0, 0, 3, 6, level);
+        }
+        j += 16;
+        for (i = 0; i < platformwidth; ++i) {
+            j = height;
+            for (k = -(platformwidth / 2); k <= platformwidth / 2; ++k) {
+                this.FastSetBlock(world, cposx + i - 20, cposy + j, cposz + k + width / 2, OreSpawnMain.MyBlockAmethystBlock);
+                if (i != 0 && i != platformwidth - 1 && k != -(platformwidth / 2) && k != platformwidth / 2 || i == 0 && k >= -1 && k <= 1) continue;
+                this.FastSetBlock(world, cposx + i - 20, cposy + j + 1, cposz + k + width / 2, Blocks.field_150386_bk);
+            }
+        }
+        for (i = -10; i <= -3; ++i) {
+            j = height;
+            for (k = -2; k < 3; ++k) {
+                if (i == -3 || i == -10) {
+                    if (k != -2 && k != 2) {
+                        this.FastSetBlock(world, cposx + i, cposy + j + 1, cposz + k + width / 2, Blocks.field_150350_a);
+                        continue;
+                    }
+                    this.FastSetBlock(world, cposx + i, cposy + j + 1, cposz + k + width / 2, Blocks.field_150424_aL);
+                    this.FastSetBlock(world, cposx + i, cposy + j + 2, cposz + k + width / 2, Blocks.field_150424_aL);
+                    this.FastSetBlock(world, cposx + i, cposy + j + 3, cposz + k + width / 2, (Block)Blocks.field_150480_ab);
+                    continue;
+                }
+                this.FastSetBlock(world, cposx + i, cposy + j, cposz + k + width / 2, OreSpawnMain.MyBlockAmethystBlock);
+                if (k != -2 && k != 2) continue;
+                this.FastSetBlock(world, cposx + i, cposy + j + 1, cposz + k + width / 2, Blocks.field_150386_bk);
+            }
+        }
+        i = -21;
+        for (j = height; j >= 0; --j) {
+            for (k = -2; k < 3; ++k) {
+                for (int t = 0; t < 6; ++t) {
+                    this.FastSetBlock(world, cposx + i, cposy + j + t + 1, cposz + k + width / 2, Blocks.field_150350_a);
+                }
+                if (j == 0) {
+                    if (k != -2 && k != 2) {
+                        this.FastSetBlock(world, cposx + i, cposy + j + 1, cposz + k + width / 2, Blocks.field_150350_a);
+                        continue;
+                    }
+                    this.FastSetBlock(world, cposx + i, cposy + j + 1, cposz + k + width / 2, Blocks.field_150424_aL);
+                    this.FastSetBlock(world, cposx + i, cposy + j + 2, cposz + k + width / 2, Blocks.field_150424_aL);
+                    this.FastSetBlock(world, cposx + i, cposy + j + 3, cposz + k + width / 2, (Block)Blocks.field_150480_ab);
+                    continue;
+                }
+                this.FastSetBlock(world, cposx + i, cposy + j, cposz + k + width / 2, OreSpawnMain.MyBlockAmethystBlock);
+                if (k != -2 && k != 2) continue;
+                this.FastSetBlock(world, cposx + i, cposy + j + 1, cposz + k + width / 2, Blocks.field_150386_bk);
+            }
+            --i;
+        }
+        if (level >= 6) {
+            int span = width * 3;
+            for (int tries = 0; tries < 100; ++tries) {
+                j = -1;
+                i = world.field_73012_v.nextInt(span);
+                k = world.field_73012_v.nextInt(span);
+                if (i >= span / 4 && i <= span * 3 / 4 && k >= span / 4 && k <= span * 3 / 4) continue;
+                world.func_147465_d(cposx + (i -= span / 2) + width / 2, cposy + j, cposz + (k -= span / 2) + width / 2, Blocks.field_150474_ac, 0, 2);
+                tileentitymobspawner = this.getSpawnerTileEntity(world, cposx + i + width / 2, cposy + j, cposz + k + width / 2);
+                if (tileentitymobspawner == null) continue;
+                tileentitymobspawner.func_145881_a().func_98272_a("Large Worm");
+            }
+        }
+    }
+
+    public void buildLevelQ(World world, int cposx, int cposy, int cposz, int width, int height, int pw, String critter, int stepside, int stepoff, int holelen, int decor, int level) {
+        int k;
+        int j;
+        int i;
+        for (i = -pw; i < width + pw; ++i) {
+            for (j = 1; j < height; ++j) {
+                for (k = -pw; k < width + pw; ++k) {
+                    this.FastSetBlock(world, cposx + i, cposy + j, cposz + k, Blocks.field_150350_a);
+                }
+            }
+        }
+        for (i = 0; i < width; ++i) {
+            j = 0;
+            for (k = 0; k < width; ++k) {
+                this.FastSetBlock(world, cposx + i, cposy + j, cposz + k, Blocks.field_150357_h);
+            }
+        }
+        for (i = 0; i < width; ++i) {
+            j = height;
+            for (k = 0; k < width; ++k) {
+                this.FastSetBlock(world, cposx + i, cposy + j, cposz + k, Blocks.field_150357_h);
+            }
+        }
+        for (i = 0; i < width; ++i) {
+            for (j = 1; j < height; ++j) {
+                k = 0;
+                this.FastSetBlock(world, cposx + i, cposy + j, cposz + k, Blocks.field_150357_h);
+                k = width - 1;
+                this.FastSetBlock(world, cposx + i, cposy + j, cposz + k, Blocks.field_150357_h);
+            }
+        }
+        for (k = 0; k < width; ++k) {
+            for (j = 1; j < height; ++j) {
+                Block blk = Blocks.field_150357_h;
+                if (k == 0 || k == width - 1) {
+                    blk = OreSpawnMain.MyBlockRubyBlock;
+                }
+                i = 0;
+                this.FastSetBlock(world, cposx + i, cposy + j, cposz + k, blk);
+                i = width - 1;
+                this.FastSetBlock(world, cposx + i, cposy + j, cposz + k, blk);
+            }
+        }
+        for (i = -pw; i < width + pw; ++i) {
+            for (k = -pw; k < width + pw; ++k) {
+                if (i < 0 || k < 0 || i >= width || k >= width) {
+                    this.FastSetBlock(world, cposx + i, cposy, cposz + k, Blocks.field_150343_Z);
+                }
+                if (i != -pw && k != -pw && i != width + (pw - 1) && k != width + (pw - 1)) continue;
+                this.FastSetBlock(world, cposx + i, cposy + 1, cposz + k, Blocks.field_150386_bk);
+            }
+        }
+        i = -(height / 2);
+        i += width / 2;
+        for (j = 1; j < height; ++j) {
+            if (stepside != 0) {
+                k = -1;
+                this.FastSetBlock(world, cposx + i, cposy + j, cposz + k, Blocks.field_150343_Z);
+            } else {
+                k = width;
+                this.FastSetBlock(world, cposx + i, cposy + j, cposz + k, Blocks.field_150343_Z);
+            }
+            ++i;
+        }
+        if (stepoff >= 0) {
+            if (stepside == 0) {
+                k = -1;
+                k -= stepoff;
+            } else {
+                k = width;
+                k += stepoff;
+            }
+            i = width / 2;
+            j = 0;
+            for (int l = 0; l < holelen; ++l) {
+                this.FastSetBlock(world, cposx + i + l, cposy + j, cposz + k, Blocks.field_150350_a);
+            }
+        }
+        TileEntityMobSpawner tileentitymobspawner = null;
+        for (j = 0; j < 4; ++j) {
+            world.func_147465_d(cposx - (pw - 1), cposy + j + 1, cposz - (pw - 1), Blocks.field_150474_ac, 0, 2);
+            tileentitymobspawner = this.getSpawnerTileEntity(world, cposx - (pw - 1), cposy + j + 1, cposz - (pw - 1));
+            if (tileentitymobspawner != null) {
+                tileentitymobspawner.func_145881_a().func_98272_a(critter);
+            }
+            world.func_147465_d(cposx - (pw - 1), cposy + j + 1, cposz + width + (pw - 2), Blocks.field_150474_ac, 0, 2);
+            tileentitymobspawner = this.getSpawnerTileEntity(world, cposx - (pw - 1), cposy + j + 1, cposz + width + (pw - 2));
+            if (tileentitymobspawner != null) {
+                tileentitymobspawner.func_145881_a().func_98272_a(critter);
+            }
+            world.func_147465_d(cposx + width + (pw - 2), cposy + j + 1, cposz - (pw - 1), Blocks.field_150474_ac, 0, 2);
+            tileentitymobspawner = this.getSpawnerTileEntity(world, cposx + width + (pw - 2), cposy + j + 1, cposz - (pw - 1));
+            if (tileentitymobspawner != null) {
+                tileentitymobspawner.func_145881_a().func_98272_a(critter);
+            }
+            world.func_147465_d(cposx + width + (pw - 2), cposy + j + 1, cposz + width + (pw - 2), Blocks.field_150474_ac, 0, 2);
+            tileentitymobspawner = this.getSpawnerTileEntity(world, cposx + width + (pw - 2), cposy + j + 1, cposz + width + (pw - 2));
+            if (tileentitymobspawner == null) continue;
+            tileentitymobspawner.func_145881_a().func_98272_a(critter);
+        }
+        this.addLevelDecorationsQ(world, cposx, cposy, cposz, width, height, decor, level);
+    }
+
+    public void addLevelDecorationsQ(World world, int cposx, int cposy, int cposz, int width, int height, int decor, int difficulty) {
+        int j;
+        TileEntityMobSpawner tileentitymobspawner = null;
+        int reward = 1;
+        String critter = "T. Rex";
+        if (decor == 6) {
+            this.FastSetBlock(world, cposx, cposy + height, cposz, Blocks.field_150424_aL);
+            this.FastSetBlock(world, cposx, cposy + height + 1, cposz, (Block)Blocks.field_150480_ab);
+            this.FastSetBlock(world, cposx, cposy + height, cposz + width - 1, Blocks.field_150424_aL);
+            this.FastSetBlock(world, cposx, cposy + height + 1, cposz + width - 1, (Block)Blocks.field_150480_ab);
+            this.FastSetBlock(world, cposx + width - 1, cposy + height, cposz, Blocks.field_150424_aL);
+            this.FastSetBlock(world, cposx + width - 1, cposy + height + 1, cposz, (Block)Blocks.field_150480_ab);
+            this.FastSetBlock(world, cposx + width - 1, cposy + height, cposz + width - 1, Blocks.field_150424_aL);
+            this.FastSetBlock(world, cposx + width - 1, cposy + height + 1, cposz + width - 1, (Block)Blocks.field_150480_ab);
+            this.FastSetBlock(world, cposx + width / 2, cposy + height, cposz + width / 2, Blocks.field_150350_a);
+            world.func_147465_d(cposx + width / 2 - 1, cposy + height + 2, cposz + width / 2, Blocks.field_150474_ac, 0, 2);
+            tileentitymobspawner = this.getSpawnerTileEntity(world, cposx + width / 2 - 1, cposy + height + 2, cposz + width / 2);
+            if (tileentitymobspawner != null) {
+                tileentitymobspawner.func_145881_a().func_98272_a("Nightmare");
+            }
+            world.func_147465_d(cposx + width / 2 + 1, cposy + height + 2, cposz + width / 2, Blocks.field_150474_ac, 0, 2);
+            tileentitymobspawner = this.getSpawnerTileEntity(world, cposx + width / 2 + 1, cposy + height + 2, cposz + width / 2);
+            if (tileentitymobspawner != null) {
+                tileentitymobspawner.func_145881_a().func_98272_a("Nightmare");
+            }
+            world.func_147465_d(cposx + width / 2, cposy + height + 2, cposz + width / 2 - 1, Blocks.field_150474_ac, 0, 2);
+            tileentitymobspawner = this.getSpawnerTileEntity(world, cposx + width / 2, cposy + height + 2, cposz + width / 2 - 1);
+            if (tileentitymobspawner != null) {
+                tileentitymobspawner.func_145881_a().func_98272_a("Nightmare");
+            }
+            world.func_147465_d(cposx + width / 2, cposy + height + 2, cposz + width / 2 + 1, Blocks.field_150474_ac, 0, 2);
+            tileentitymobspawner = this.getSpawnerTileEntity(world, cposx + width / 2, cposy + height + 2, cposz + width / 2 + 1);
+            if (tileentitymobspawner != null) {
+                tileentitymobspawner.func_145881_a().func_98272_a("Nightmare");
+            }
+            for (int i = 1; i < width - 1; ++i) {
+                for (j = 1; j < 5; ++j) {
+                    for (int k = 1; k < width - 1; ++k) {
+                        this.FastSetBlock(world, cposx + i, cposy + j, cposz + k, Blocks.field_150346_d);
+                    }
+                }
+            }
+            world.func_147465_d(cposx + width / 2, cposy + 2, cposz + width / 2, Blocks.field_150474_ac, 0, 2);
+            tileentitymobspawner = this.getSpawnerTileEntity(world, cposx + width / 2, cposy + 2, cposz + width / 2);
+            if (tileentitymobspawner != null) {
+                tileentitymobspawner.func_145881_a().func_98272_a("Large Worm");
+            }
+            world.func_147465_d(cposx + width / 2, cposy + 3, cposz + width / 2, Blocks.field_150474_ac, 0, 2);
+            tileentitymobspawner = this.getSpawnerTileEntity(world, cposx + width / 2, cposy + 3, cposz + width / 2);
+            if (tileentitymobspawner != null) {
+                tileentitymobspawner.func_145881_a().func_98272_a("Large Worm");
+            }
+            world.func_147465_d(cposx + width / 2, cposy + 4, cposz + width / 2, Blocks.field_150474_ac, 0, 2);
+            tileentitymobspawner = this.getSpawnerTileEntity(world, cposx + width / 2, cposy + 4, cposz + width / 2);
+            if (tileentitymobspawner != null) {
+                tileentitymobspawner.func_145881_a().func_98272_a("Large Worm");
+            }
+            for (j = 0; j < 10; ++j) {
+                this.FastSetBlock(world, cposx + 1, cposy + j, cposz + 1, Blocks.field_150350_a);
+            }
+            this.fill_chests(world, cposx, cposy + 4, cposz, width, height, decor, reward);
+        }
+        if (decor == 5) {
+            if (difficulty == 5) {
+                critter = "T. Rex";
+                reward = 1;
+            }
+            if (difficulty == 6) {
+                critter = "Nastysaurus";
+                reward = 2;
+            }
+            world.func_147465_d(cposx + width / 2, cposy + 2, cposz + width / 2, Blocks.field_150474_ac, 0, 2);
+            tileentitymobspawner = this.getSpawnerTileEntity(world, cposx + width / 2, cposy + 2, cposz + width / 2);
+            if (tileentitymobspawner != null) {
+                tileentitymobspawner.func_145881_a().func_98272_a(critter);
+            }
+            world.func_147465_d(cposx + width / 2, cposy + 3, cposz + width / 2, Blocks.field_150474_ac, 0, 2);
+            tileentitymobspawner = this.getSpawnerTileEntity(world, cposx + width / 2, cposy + 3, cposz + width / 2);
+            if (tileentitymobspawner != null) {
+                tileentitymobspawner.func_145881_a().func_98272_a(critter);
+            }
+            for (j = 1; j < 5; ++j) {
+                this.FastSetBlock(world, cposx + width / 2 - 1, cposy + j, cposz + width / 2, Blocks.field_150357_h);
+                this.FastSetBlock(world, cposx + width / 2 + 1, cposy + j, cposz + width / 2, Blocks.field_150357_h);
+                this.FastSetBlock(world, cposx + width / 2, cposy + j, cposz + width / 2 - 1, Blocks.field_150357_h);
+                this.FastSetBlock(world, cposx + width / 2, cposy + j, cposz + width / 2 + 1, Blocks.field_150357_h);
+            }
+            this.FastSetBlock(world, cposx + width - 2, cposy, cposz + width - 2, Blocks.field_150350_a);
+            this.FastSetBlock(world, cposx + 1, cposy + height, cposz + 1, Blocks.field_150350_a);
+            this.fill_chests(world, cposx, cposy, cposz, width, height, decor, reward);
+        }
+        if (decor == 4) {
+            if (difficulty == 4) {
+                critter = "T. Rex";
+                reward = 1;
+            }
+            if (difficulty == 5) {
+                critter = "Nastysaurus";
+                reward = 2;
+            }
+            if (difficulty == 6) {
+                critter = "Basilisk";
+                reward = 3;
+            }
+            world.func_147465_d(cposx + width / 2, cposy + 2, cposz + width / 2, Blocks.field_150474_ac, 0, 2);
+            tileentitymobspawner = this.getSpawnerTileEntity(world, cposx + width / 2, cposy + 2, cposz + width / 2);
+            if (tileentitymobspawner != null) {
+                tileentitymobspawner.func_145881_a().func_98272_a(critter);
+            }
+            world.func_147465_d(cposx + width / 2, cposy + 3, cposz + width / 2, Blocks.field_150474_ac, 0, 2);
+            tileentitymobspawner = this.getSpawnerTileEntity(world, cposx + width / 2, cposy + 3, cposz + width / 2);
+            if (tileentitymobspawner != null) {
+                tileentitymobspawner.func_145881_a().func_98272_a(critter);
+            }
+            for (j = 1; j < 5; ++j) {
+                this.FastSetBlock(world, cposx + width / 2 - 1, cposy + j, cposz + width / 2, Blocks.field_150357_h);
+                this.FastSetBlock(world, cposx + width / 2 + 1, cposy + j, cposz + width / 2, Blocks.field_150357_h);
+                this.FastSetBlock(world, cposx + width / 2, cposy + j, cposz + width / 2 - 1, Blocks.field_150357_h);
+                this.FastSetBlock(world, cposx + width / 2, cposy + j, cposz + width / 2 + 1, Blocks.field_150357_h);
+            }
+            this.FastSetBlock(world, cposx + 1, cposy, cposz + 1, Blocks.field_150350_a);
+            this.FastSetBlock(world, cposx + width - 2, cposy + height, cposz + width - 2, Blocks.field_150350_a);
+            this.fill_chests(world, cposx, cposy, cposz, width, height, decor, reward);
+        }
+        if (decor == 3) {
+            if (difficulty == 3) {
+                critter = "T. Rex";
+                reward = 1;
+            }
+            if (difficulty == 4) {
+                critter = "Nastysaurus";
+                reward = 2;
+            }
+            if (difficulty == 5) {
+                critter = "Basilisk";
+                reward = 3;
+            }
+            if (difficulty == 6) {
+                critter = "Hercules Beetle";
+                reward = 4;
+            }
+            world.func_147465_d(cposx + width / 2, cposy + 2, cposz + width / 2, Blocks.field_150474_ac, 0, 2);
+            tileentitymobspawner = this.getSpawnerTileEntity(world, cposx + width / 2, cposy + 2, cposz + width / 2);
+            if (tileentitymobspawner != null) {
+                tileentitymobspawner.func_145881_a().func_98272_a(critter);
+            }
+            world.func_147465_d(cposx + width / 2, cposy + 3, cposz + width / 2, Blocks.field_150474_ac, 0, 2);
+            tileentitymobspawner = this.getSpawnerTileEntity(world, cposx + width / 2, cposy + 3, cposz + width / 2);
+            if (tileentitymobspawner != null) {
+                tileentitymobspawner.func_145881_a().func_98272_a(critter);
+            }
+            for (j = 1; j < 5; ++j) {
+                this.FastSetBlock(world, cposx + width / 2 - 1, cposy + j, cposz + width / 2, Blocks.field_150357_h);
+                this.FastSetBlock(world, cposx + width / 2 + 1, cposy + j, cposz + width / 2, Blocks.field_150357_h);
+                this.FastSetBlock(world, cposx + width / 2, cposy + j, cposz + width / 2 - 1, Blocks.field_150357_h);
+                this.FastSetBlock(world, cposx + width / 2, cposy + j, cposz + width / 2 + 1, Blocks.field_150357_h);
+            }
+            this.FastSetBlock(world, cposx + width - 2, cposy, cposz + width - 2, Blocks.field_150350_a);
+            this.FastSetBlock(world, cposx + 1, cposy + height, cposz + 1, Blocks.field_150350_a);
+            this.fill_chests(world, cposx, cposy, cposz, width, height, decor, reward);
+        }
+        if (decor == 2) {
+            if (difficulty == 2) {
+                critter = "T. Rex";
+                reward = 1;
+            }
+            if (difficulty == 3) {
+                critter = "Nastysaurus";
+                reward = 2;
+            }
+            if (difficulty == 4) {
+                critter = "Basilisk";
+                reward = 3;
+            }
+            if (difficulty == 5) {
+                critter = "Hercules Beetle";
+                reward = 4;
+            }
+            if (difficulty == 6) {
+                critter = "Jumpy Bug";
+                reward = 5;
+            }
+            world.func_147465_d(cposx + width / 2, cposy + 2, cposz + width / 2, Blocks.field_150474_ac, 0, 2);
+            tileentitymobspawner = this.getSpawnerTileEntity(world, cposx + width / 2, cposy + 2, cposz + width / 2);
+            if (tileentitymobspawner != null) {
+                tileentitymobspawner.func_145881_a().func_98272_a(critter);
+            }
+            world.func_147465_d(cposx + width / 2, cposy + 3, cposz + width / 2, Blocks.field_150474_ac, 0, 2);
+            tileentitymobspawner = this.getSpawnerTileEntity(world, cposx + width / 2, cposy + 3, cposz + width / 2);
+            if (tileentitymobspawner != null) {
+                tileentitymobspawner.func_145881_a().func_98272_a(critter);
+            }
+            for (j = 1; j < 5; ++j) {
+                this.FastSetBlock(world, cposx + width / 2 - 1, cposy + j, cposz + width / 2, Blocks.field_150357_h);
+                this.FastSetBlock(world, cposx + width / 2 + 1, cposy + j, cposz + width / 2, Blocks.field_150357_h);
+                this.FastSetBlock(world, cposx + width / 2, cposy + j, cposz + width / 2 - 1, Blocks.field_150357_h);
+                this.FastSetBlock(world, cposx + width / 2, cposy + j, cposz + width / 2 + 1, Blocks.field_150357_h);
+            }
+            this.FastSetBlock(world, cposx + 1, cposy, cposz + 1, Blocks.field_150350_a);
+            this.FastSetBlock(world, cposx + width - 2, cposy + height, cposz + width - 2, Blocks.field_150350_a);
+            this.fill_chests(world, cposx, cposy, cposz, width, height, decor, reward);
+        }
+        if (decor == 1) {
+            if (difficulty == 1) {
+                critter = "T. Rex";
+            }
+            if (difficulty == 2) {
+                critter = "Nastysaurus";
+            }
+            if (difficulty == 3) {
+                critter = "Basilisk";
+            }
+            if (difficulty == 4) {
+                critter = "Hercules Beetle";
+            }
+            if (difficulty == 5) {
+                critter = "Jumpy Bug";
+            }
+            if (difficulty == 6) {
+                critter = "CaterKiller";
+            }
+            reward = difficulty;
+            world.func_147465_d(cposx + width / 2, cposy + 2, cposz + width / 2, Blocks.field_150474_ac, 0, 2);
+            tileentitymobspawner = this.getSpawnerTileEntity(world, cposx + width / 2, cposy + 2, cposz + width / 2);
+            if (tileentitymobspawner != null) {
+                tileentitymobspawner.func_145881_a().func_98272_a(critter);
+            }
+            world.func_147465_d(cposx + width / 2, cposy + 3, cposz + width / 2, Blocks.field_150474_ac, 0, 2);
+            tileentitymobspawner = this.getSpawnerTileEntity(world, cposx + width / 2, cposy + 3, cposz + width / 2);
+            if (tileentitymobspawner != null) {
+                tileentitymobspawner.func_145881_a().func_98272_a(critter);
+            }
+            for (j = 1; j < 5; ++j) {
+                this.FastSetBlock(world, cposx + width / 2 - 1, cposy + j, cposz + width / 2, Blocks.field_150357_h);
+                this.FastSetBlock(world, cposx + width / 2 + 1, cposy + j, cposz + width / 2, Blocks.field_150357_h);
+                this.FastSetBlock(world, cposx + width / 2, cposy + j, cposz + width / 2 - 1, Blocks.field_150357_h);
+                this.FastSetBlock(world, cposx + width / 2, cposy + j, cposz + width / 2 + 1, Blocks.field_150357_h);
+            }
+            this.FastSetBlock(world, cposx + width / 2 - 1, cposy + 1, cposz + width / 2 - 1, OreSpawnMain.MyRTPBlock);
+            this.FastSetBlock(world, cposx + width / 2 + 1, cposy + 1, cposz + width / 2 + 1, OreSpawnMain.MyRTPBlock);
+            this.FastSetBlock(world, cposx + width / 2 + 1, cposy + 1, cposz + width / 2 - 1, OreSpawnMain.MyRTPBlock);
+            this.FastSetBlock(world, cposx + width / 2 - 1, cposy + 1, cposz + width / 2 + 1, OreSpawnMain.MyRTPBlock);
+            this.FastSetBlock(world, cposx + 1, cposy + height, cposz + 1, Blocks.field_150350_a);
+            this.fill_chestsQ(world, cposx, cposy, cposz, width, height, decor, reward);
+        }
+    }
+
+    private void fill_chestsQ(World world, int cposx, int cposy, int cposz, int width, int height, int decor, int reward) {
+        TileEntityChest chest = null;
+        WeightedRandomChestContent[] chestContents = null;
+        chestContents = this.level1ContentsList;
+        if (reward == 2) {
+            chestContents = this.level2ContentsList;
+        }
+        if (reward == 3) {
+            chestContents = this.level3ContentsList;
+        }
+        if (reward == 4) {
+            chestContents = this.level4ContentsList;
+        }
+        if (reward == 5) {
+            chestContents = this.level5ContentsList;
+        }
+        world.func_147465_d(cposx + 1, cposy + 1, cposz + width / 2, (Block)Blocks.field_150486_ae, 0, 2);
+        world.func_72921_c(cposx + 1, cposy + 1, cposz + width / 2, 5, 3);
+        chest = this.getChestTileEntity(world, cposx + 1, cposy + 1, cposz + width / 2);
+        if (chest != null) {
+            if (reward == 6) {
+                chest.func_70299_a(1, new ItemStack(OreSpawnMain.ThePrincessEgg, 1, 0));
+            } else {
+                WeightedRandomChestContent.func_76293_a((Random)world.field_73012_v, (WeightedRandomChestContent[])chestContents, (IInventory)chest, (int)(5 + world.field_73012_v.nextInt(7)));
+            }
+        }
+        world.func_147465_d(cposx + width - 2, cposy + 1, cposz + width / 2, (Block)Blocks.field_150486_ae, 0, 2);
+        world.func_72921_c(cposx + width - 2, cposy + 1, cposz + width / 2, 4, 3);
+        chest = this.getChestTileEntity(world, cposx + width - 2, cposy + 1, cposz + width / 2);
+        if (chest != null) {
+            if (reward == 6) {
+                chest.func_70299_a(1, new ItemStack((Item)OreSpawnMain.QueenHelmet, 1, 0));
+                chest.func_70299_a(2, new ItemStack((Item)OreSpawnMain.QueenBody, 1, 0));
+            } else {
+                WeightedRandomChestContent.func_76293_a((Random)world.field_73012_v, (WeightedRandomChestContent[])chestContents, (IInventory)chest, (int)(5 + world.field_73012_v.nextInt(7)));
+            }
+        }
+        world.func_147465_d(cposx + width / 2, cposy + 1, cposz + 1, (Block)Blocks.field_150486_ae, 0, 2);
+        world.func_72921_c(cposx + width / 2, cposy + 1, cposz + 1, 3, 3);
+        chest = this.getChestTileEntity(world, cposx + width / 2, cposy + 1, cposz + 1);
+        if (chest != null) {
+            if (reward == 6) {
+                chest.func_70299_a(1, new ItemStack((Item)OreSpawnMain.QueenLegs, 1, 0));
+                chest.func_70299_a(2, new ItemStack((Item)OreSpawnMain.QueenBoots, 1, 0));
+            } else {
+                WeightedRandomChestContent.func_76293_a((Random)world.field_73012_v, (WeightedRandomChestContent[])chestContents, (IInventory)chest, (int)(5 + world.field_73012_v.nextInt(7)));
+            }
+        }
+        world.func_147465_d(cposx + width / 2, cposy + 1, cposz + width - 2, (Block)Blocks.field_150486_ae, 0, 2);
+        world.func_72921_c(cposx + width / 2, cposy + 1, cposz + width - 2, 2, 3);
+        chest = this.getChestTileEntity(world, cposx + width / 2, cposy + 1, cposz + width - 2);
+        if (chest != null) {
+            if (reward == 6) {
+                chest.func_70299_a(1, new ItemStack(OreSpawnMain.MyRoyal, 1, 0));
+            } else {
+                WeightedRandomChestContent.func_76293_a((Random)world.field_73012_v, (WeightedRandomChestContent[])chestContents, (IInventory)chest, (int)(5 + world.field_73012_v.nextInt(7)));
+            }
+        }
+    }
+
+    public void makeSpiderHangout(World world, int cposx, int cposy, int cposz) {
+        int k;
+        int j;
+        int i;
+        Entity var8 = null;
+        TileEntityMobSpawner tileentitymobspawner = null;
+        for (i = 0; i < 20; ++i) {

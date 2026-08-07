@@ -1,0 +1,623 @@
+public class GenericDungeon {
+    private final WeightedRandomChestContent[] RainbowContentsList = new WeightedRandomChestContent[]{
+    WRCC(OreSpawnMain.MagicApple, 0, 1, 1, 25), 
+    WRCC(OreSpawnMain.CloudSharkEgg, 0, 4, 10, 25), 
+    WRCC(Items.field_151103_aS, 0, 2, 16, 25), 
+    WRCC(Items.field_151007_F, 0, 2, 16, 25), 
+    WRCC(Items.field_151078_bh, 0, 3, 10, 25), 
+    WRCC(Items.field_151062_by, 0, 4, 10, 25)};
+    private final WeightedRandomChestContent[] WhiteHouseContentsList = new WeightedRandomChestContent[]{
+    WRCC(OreSpawnMain.MyCornDog, 0, 6, 12, 35), 
+    WRCC(OreSpawnMain.UraniumNugget, 0, 2, 6, 10), 
+    WRCC(OreSpawnMain.TitaniumNugget, 0, 2, 6, 10), 
+    WRCC(OreSpawnMain.MyAmethyst, 0, 2, 6, 35), 
+    WRCC(OreSpawnMain.MyRuby, 0, 2, 6, 25), 
+    WRCC(OreSpawnMain.CriminalEgg, 0, 4, 10, 35), 
+    WRCC(Items.field_151166_bC, 0, 6, 16, 35), 
+    WRCC(Items.field_151147_al, 0, 6, 16, 35), 
+    WRCC(Items.field_151157_am, 0, 6, 16, 35), 
+    WRCC(Items.field_151045_i, 0, 6, 16, 35), 
+    WRCC(Items.field_151043_k, 0, 6, 16, 35)};
+    private final WeightedRandomChestContent[] RubberDuckyContentsList = new WeightedRandomChestContent[]{
+    WRCC(OreSpawnMain.MyDeadStinkBug, 0, 4, 10, 35), 
+    WRCC(OreSpawnMain.MyFireFish, 0, 4, 10, 35), 
+    WRCC(OreSpawnMain.MySunFish, 0, 4, 10, 35), 
+    WRCC(OreSpawnMain.MySparkFish, 0, 4, 10, 35), 
+    WRCC(OreSpawnMain.MyGreenFish, 0, 4, 10, 35), 
+    WRCC(OreSpawnMain.MyBlueFish, 0, 4, 10, 35), 
+    WRCC(OreSpawnMain.MyPinkFish, 0, 4, 10, 35), 
+    WRCC(OreSpawnMain.MyRockFish, 0, 4, 10, 35), 
+    WRCC(OreSpawnMain.MyWoodFish, 0, 4, 10, 35), 
+    WRCC(OreSpawnMain.MyGreyFish, 0, 4, 10, 35), 
+    WRCC(OreSpawnMain.RubberDuckyEgg, 0, 4, 10, 35), 
+    WRCC(OreSpawnMain.MyPeacockFeather, 0, 4, 10, 35), 
+    WRCC(Items.field_151008_G, 0, 6, 16, 35)};
+    private final WeightedRandomChestContent[] StinkyHouseContentsList = new WeightedRandomChestContent[]{
+    WRCC(OreSpawnMain.MyDeadStinkBug, 0, 4, 10, 35), 
+    WRCC(OreSpawnMain.StinkyEgg, 0, 4, 10, 35), 
+    WRCC(OreSpawnMain.StinkBugEgg, 0, 4, 10, 35), 
+    WRCC(Items.field_151103_aS, 0, 6, 16, 25), 
+    WRCC(Items.field_151044_h, 0, 6, 16, 25), 
+    WRCC(Items.field_151007_F, 0, 6, 16, 25), 
+    WRCC(Items.field_151078_bh, 0, 3, 10, 35)};
+    private final WeightedRandomChestContent[] NightmareRookeryContentsList = new WeightedRandomChestContent[]{
+    WRCC(OreSpawnMain.MyDeadStinkBug, 0, 4, 10, 35), 
+    WRCC(Item.func_150898_a((Block)OreSpawnMain.MyFlowerBlackBlock), 0, 4, 10, 35), 
+    WRCC(Item.func_150898_a((Block)OreSpawnMain.MyFlowerScaryBlock), 0, 4, 10, 35), 
+    WRCC(OreSpawnMain.PitchBlackEgg, 0, 4, 10, 25), 
+    WRCC(OreSpawnMain.AntRobotKit, 0, 1, 1, 10), 
+    WRCC(OreSpawnMain.SpiderRobotKit, 0, 1, 1, 10), 
+    WRCC(Items.field_151103_aS, 0, 6, 16, 25), 
+    WRCC(Items.field_151007_F, 0, 6, 16, 25), 
+    WRCC(Items.field_151078_bh, 0, 3, 10, 35), 
+    WRCC(Items.field_151062_by, 0, 4, 10, 35)};
+    private final WeightedRandomChestContent[] MonsterIslandContentsList = new WeightedRandomChestContent[]{
+    WRCC(Item.func_150898_a((Block)OreSpawnMain.CreeperRepellent), 0, 4, 10, 35), 
+    WRCC(Item.func_150898_a((Block)OreSpawnMain.KrakenRepellent), 0, 4, 10, 35), 
+    WRCC(Items.field_151100_aR, 0, 6, 16, 25), 
+    WRCC(Items.field_151103_aS, 0, 6, 16, 25), 
+    WRCC(Items.field_151007_F, 0, 6, 16, 25), 
+    WRCC(Items.field_151147_al, 0, 3, 10, 35), 
+    WRCC(Items.field_151082_bd, 0, 3, 10, 35), 
+    WRCC(Items.field_151076_bf, 0, 3, 10, 35), 
+    WRCC(Items.field_151115_aP, 0, 3, 10, 35), 
+    WRCC(Items.field_151078_bh, 0, 3, 10, 35), 
+    WRCC(Items.field_151062_by, 0, 4, 10, 35), 
+    WRCC(OreSpawnMain.MyRawBacon, 0, 6, 16, 35), 
+    WRCC(OreSpawnMain.MyRawPeacock, 0, 6, 16, 35), 
+    WRCC(Item.func_150898_a((Block)Blocks.field_150364_r), 0, 6, 16, 25)};
+    private final WeightedRandomChestContent[] GreenhouseContentsList = new WeightedRandomChestContent[]{
+    WRCC(OreSpawnMain.GreenGoo, 0, 4, 10, 35), 
+    WRCC(Item.func_150898_a((Block)OreSpawnMain.CreeperRepellent), 0, 4, 10, 35), 
+    WRCC(Items.field_151162_bE, 0, 6, 16, 35), 
+    WRCC(Item.func_150898_a((Block)Blocks.field_150345_g), 0, 6, 16, 35), 
+    WRCC(Item.func_150898_a((Block)Blocks.field_150362_t), 0, 6, 16, 25), 
+    WRCC(Item.func_150898_a((Block)Blocks.field_150346_d), 0, 6, 16, 25), 
+    WRCC(Item.func_150898_a((Block)Blocks.field_150364_r), 0, 6, 16, 25)};
+    private final WeightedRandomChestContent[] CrystalBattleTowerRatContentsList = new WeightedRandomChestContent[]{
+    WRCC(Items.field_151157_am, 0, 3, 10, 35), 
+    WRCC(Items.field_151082_bd, 0, 3, 10, 35), 
+    WRCC(Items.field_151077_bg, 0, 3, 10, 35), 
+    WRCC(Items.field_151101_aQ, 0, 3, 10, 35), 
+    WRCC(OreSpawnMain.MyBLT, 0, 4, 10, 35), 
+    WRCC(OreSpawnMain.MySalad, 0, 4, 10, 35), 
+    WRCC(OreSpawnMain.MyCornDog, 0, 4, 10, 35)};
+    private final WeightedRandomChestContent[] CrystalBattleTowerDungeonBeastContentsList = new WeightedRandomChestContent[]{
+    WRCC(Items.field_151100_aR, 0, 6, 16, 25), 
+    WRCC(OreSpawnMain.MySquidZooka, 0, 1, 1, 25), 
+    WRCC(Items.field_151074_bl, 0, 5, 15, 15), 
+    WRCC(Items.field_151078_bh, 0, 6, 16, 25)};
+    private final WeightedRandomChestContent[] CrystalBattleTowerUrchinContentsList = new WeightedRandomChestContent[]{
+    WRCC((Item)OreSpawnMain.CrystalPinkHelmet, 0, 1, 1, 10), 
+    WRCC((Item)OreSpawnMain.CrystalPinkBody, 0, 1, 1, 10), 
+    WRCC((Item)OreSpawnMain.CrystalPinkLegs, 0, 1, 1, 10), 
+    WRCC((Item)OreSpawnMain.CrystalPinkBoots, 0, 1, 1, 10), 
+    WRCC(OreSpawnMain.MyFairySword, 0, 1, 1, 15)};
+    private final WeightedRandomChestContent[] CrystalBattleTowerRotatorContentsList = new WeightedRandomChestContent[]{
+    WRCC((Item)OreSpawnMain.TigersEyeHelmet, 0, 1, 1, 10), 
+    WRCC((Item)OreSpawnMain.TigersEyeBody, 0, 1, 1, 10), 
+    WRCC((Item)OreSpawnMain.TigersEyeLegs, 0, 1, 1, 10), 
+    WRCC((Item)OreSpawnMain.TigersEyeBoots, 0, 1, 1, 10), 
+    WRCC(OreSpawnMain.MyRatSword, 0, 1, 1, 15)};
+    private final WeightedRandomChestContent[] CrystalBattleTowerVortexContentsList = new WeightedRandomChestContent[]{
+    WRCC(Item.func_150898_a((Block)OreSpawnMain.CrystalCoal), 0, 6, 10, 10), 
+    WRCC(Item.func_150898_a((Block)OreSpawnMain.CrystalCoal), 0, 6, 10, 10), 
+    WRCC(OreSpawnMain.MyTigersEyeSword, 0, 1, 1, 10), 
+    WRCC(Item.func_150898_a((Block)OreSpawnMain.MyTigersEyeBlock), 0, 4, 8, 15), 
+    WRCC(OreSpawnMain.MyPoisonSword, 0, 1, 1, 15)};
+    private final WeightedRandomChestContent[] RobotContentsList = new WeightedRandomChestContent[]{
+    WRCC(Items.field_151137_ax, 0, 1, 10, 35), 
+    WRCC(Items.field_151107_aW, 0, 1, 10, 35), 
+    WRCC(Items.field_151143_au, 0, 1, 1, 35), 
+    WRCC(Items.field_151059_bz, 0, 1, 10, 35), 
+    WRCC(Items.field_151140_bW, 0, 1, 1, 35), 
+    WRCC(Item.func_150898_a((Block)Blocks.field_150451_bX), 0, 1, 10, 35), 
+    WRCC(Item.func_150898_a((Block)Blocks.field_150448_aq), 0, 1, 10, 35), 
+    WRCC(Item.func_150898_a((Block)Blocks.field_150319_E), 0, 1, 10, 35), 
+    WRCC(Item.func_150898_a((Block)Blocks.field_150320_F), 0, 1, 10, 35), 
+    WRCC(Item.func_150898_a((Block)Blocks.field_150331_J), 0, 1, 10, 35), 
+    WRCC(Item.func_150898_a((Block)Blocks.field_150429_aA), 0, 1, 10, 35), 
+    WRCC(Item.func_150898_a((Block)Blocks.field_150335_W), 0, 1, 10, 35), 
+    WRCC(Item.func_150898_a((Block)Blocks.field_150448_aq), 0, 1, 10, 35), 
+    WRCC(Item.func_150898_a((Block)Blocks.field_150442_at), 0, 1, 10, 35), 
+    WRCC(OreSpawnMain.AntRobotKit, 0, 1, 1, 10), 
+    WRCC(OreSpawnMain.SpiderRobotKit, 0, 1, 1, 10), 
+    WRCC(Items.field_151139_aw, 0, 1, 10, 35), 
+    WRCC(Item.func_150898_a((Block)Blocks.field_150429_aA), 0, 1, 10, 35), 
+    WRCC(Item.func_150898_a((Block)Blocks.field_150471_bO), 0, 1, 10, 35), 
+    WRCC(Item.func_150898_a((Block)Blocks.field_150411_aY), 0, 1, 10, 35), 
+    WRCC(Items.field_151132_bS, 0, 1, 10, 35), 
+    WRCC(Item.func_150898_a((Block)Blocks.field_150408_cc), 0, 1, 10, 35), 
+    WRCC(OreSpawnMain.MyRayGun, 0, 1, 1, 35)};
+    private final WeightedRandomChestContent[] IncaPyramidContentsList = new WeightedRandomChestContent[]{
+    WRCC(Items.field_151010_B, 0, 1, 1, 35), 
+    WRCC((Item)Items.field_151151_aj, 0, 1, 1, 35), 
+    WRCC((Item)Items.field_151149_ai, 0, 1, 1, 35), 
+    WRCC((Item)Items.field_151169_ag, 0, 1, 1, 35), 
+    WRCC((Item)Items.field_151171_ah, 0, 1, 1, 35), 
+    WRCC(Item.func_150898_a((Block)Blocks.field_150327_N), 0, 3, 10, 35), 
+    WRCC(Item.func_150898_a((Block)Blocks.field_150328_O), 0, 3, 10, 35), 
+    WRCC(Items.field_151074_bl, 0, 3, 10, 35), 
+    WRCC(Items.field_151043_k, 0, 3, 10, 35), 
+    WRCC(Items.field_151062_by, 0, 4, 10, 35), 
+    WRCC(OreSpawnMain.MyCornCob, 0, 4, 10, 35), 
+    WRCC(OreSpawnMain.MyExperienceCatcher, 0, 4, 10, 25), 
+    WRCC(Items.field_151103_aS, 0, 4, 10, 35), 
+    WRCC(Item.func_150898_a((Block)Blocks.field_150340_R), 0, 4, 10, 35)};
+    private final WeightedRandomChestContent[] DamselContentsList = new WeightedRandomChestContent[]{
+    WRCC(Items.field_151035_b, 0, 1, 1, 35), 
+    WRCC(Items.field_151040_l, 0, 1, 1, 35), 
+    WRCC(Items.field_151157_am, 0, 3, 10, 35), 
+    WRCC(Items.field_151082_bd, 0, 3, 10, 35), 
+    WRCC(Items.field_151077_bg, 0, 3, 10, 35), 
+    WRCC(Items.field_151101_aQ, 0, 3, 10, 35), 
+    WRCC(OreSpawnMain.MyBLT, 0, 4, 10, 35), 
+    WRCC(OreSpawnMain.MySalad, 0, 4, 10, 35), 
+    WRCC(OreSpawnMain.MyCornDog, 0, 4, 10, 35)};
+    private final WeightedRandomChestContent[] EnderCastleContentsList = new WeightedRandomChestContent[]{
+    WRCC(Item.func_150898_a((Block)Blocks.field_150477_bB), 0, 2, 4, 35), 
+    WRCC(Item.func_150898_a((Block)Blocks.field_150484_ah), 0, 2, 4, 35), 
+    WRCC(Item.func_150898_a((Block)Blocks.field_150380_bt), 0, 1, 1, 35), 
+    WRCC(Item.func_150898_a((Block)OreSpawnMain.MyEnderPearlBlock), 0, 3, 6, 35), 
+    WRCC(Item.func_150898_a((Block)OreSpawnMain.MyEyeOfEnderBlock), 0, 3, 6, 35), 
+    WRCC(OreSpawnMain.MyExperienceCatcher, 0, 4, 10, 25), 
+    WRCC(Items.field_151079_bi, 0, 2, 4, 35), 
+    WRCC(Items.field_151061_bv, 0, 2, 4, 35)};
+    private final WeightedRandomChestContent[] BouncyContentsList = new WeightedRandomChestContent[]{
+    WRCC(Items.field_151078_bh, 0, 6, 16, 35), 
+    WRCC(Items.field_151115_aP, 0, 6, 16, 25), 
+    WRCC(Items.field_151103_aS, 0, 6, 16, 25), 
+    WRCC(Items.field_151007_F, 0, 6, 16, 25), 
+    WRCC(Item.func_150898_a((Block)Blocks.field_150328_O), 0, 6, 16, 25), 
+    WRCC(Item.func_150898_a((Block)Blocks.field_150327_N), 0, 6, 16, 25), 
+    WRCC(Items.field_151079_bi, 0, 2, 4, 20)};
+    private final WeightedRandomChestContent[] SpitBugContentsList = new WeightedRandomChestContent[]{
+    WRCC(Items.field_151078_bh, 0, 6, 16, 35), 
+    WRCC(Items.field_151115_aP, 0, 6, 16, 25), 
+    WRCC(Items.field_151103_aS, 0, 6, 16, 25), 
+    WRCC(Items.field_151007_F, 0, 6, 16, 25), 
+    WRCC(OreSpawnMain.MyAmethystPickaxe, 0, 1, 1, 15), 
+    WRCC(OreSpawnMain.MyAmethystShovel, 0, 1, 1, 15), 
+    WRCC(OreSpawnMain.MyAmethystHoe, 0, 1, 1, 15), 
+    WRCC(OreSpawnMain.MyAmethystAxe, 0, 1, 1, 15), 
+    WRCC(OreSpawnMain.MyAmethystSword, 0, 1, 1, 15), 
+    WRCC((Item)OreSpawnMain.AmethystBody, 0, 1, 1, 15), 
+    WRCC((Item)OreSpawnMain.AmethystLegs, 0, 1, 1, 15), 
+    WRCC((Item)OreSpawnMain.AmethystHelmet, 0, 1, 1, 15), 
+    WRCC((Item)OreSpawnMain.AmethystBoots, 0, 1, 1, 15), 
+    WRCC(OreSpawnMain.InstantGarden, 0, 2, 4, 25), 
+    WRCC(OreSpawnMain.InstantShelter, 0, 2, 4, 25)};
+    private final WeightedRandomChestContent[] GraveContentsList = new WeightedRandomChestContent[]{
+    WRCC(Items.field_151061_bv, 0, 6, 16, 35), 
+    WRCC(Item.func_150898_a((Block)Blocks.field_150328_O), 0, 6, 16, 35), 
+    WRCC(Item.func_150898_a((Block)Blocks.field_150327_N), 0, 6, 16, 35), 
+    WRCC(Items.field_151079_bi, 0, 6, 16, 35)};
+    private final WeightedRandomChestContent[] HospitalContentsList = new WeightedRandomChestContent[]{
+    WRCC(Item.func_150898_a((Block)Blocks.field_150477_bB), 0, 2, 4, 35), 
+    WRCC(Item.func_150898_a((Block)Blocks.field_150484_ah), 0, 2, 4, 35), 
+    WRCC(Item.func_150898_a((Block)Blocks.field_150380_bt), 0, 1, 1, 35), 
+    WRCC(Item.func_150898_a((Block)OreSpawnMain.MyEnderPearlBlock), 0, 3, 6, 35), 
+    WRCC(Items.field_151079_bi, 0, 2, 4, 35), 
+    WRCC(Items.field_151061_bv, 0, 2, 4, 35)};
+    private final WeightedRandomChestContent[] MiniContentsList = new WeightedRandomChestContent[]{
+    WRCC(Items.field_151153_ao, 0, 6, 16, 35), 
+    WRCC(OreSpawnMain.MyCrystalApple, 0, 6, 16, 35), 
+    WRCC(OreSpawnMain.MyBacon, 0, 6, 16, 35), 
+    WRCC(OreSpawnMain.MyFireFish, 0, 6, 16, 35), 
+    WRCC(OreSpawnMain.InstantGarden, 0, 2, 4, 25), 
+    WRCC(OreSpawnMain.InstantShelter, 0, 2, 4, 25)};
+    private final WeightedRandomChestContent[] LeafMonsterContentsList = new WeightedRandomChestContent[]{
+    WRCC(Items.field_151162_bE, 0, 6, 16, 35), 
+    WRCC(Item.func_150898_a((Block)Blocks.field_150345_g), 0, 6, 16, 35), 
+    WRCC(Items.field_151162_bE, 0, 6, 16, 35), 
+    WRCC(Item.func_150898_a((Block)Blocks.field_150345_g), 0, 6, 16, 35), 
+    WRCC(Item.func_150898_a((Block)Blocks.field_150362_t), 0, 6, 16, 25), 
+    WRCC(Item.func_150898_a((Block)Blocks.field_150346_d), 0, 6, 16, 25), 
+    WRCC(Item.func_150898_a((Block)Blocks.field_150364_r), 0, 6, 16, 25), 
+    WRCC(OreSpawnMain.MyPoisonSword, 0, 1, 1, 15), 
+    WRCC(Items.field_151078_bh, 0, 6, 16, 25)};
+    private final WeightedRandomChestContent[] CloudSharkContentsList = new WeightedRandomChestContent[]{
+    WRCC(Items.field_151115_aP, 0, 6, 16, 25), 
+    WRCC(Items.field_151103_aS, 0, 6, 16, 25), 
+    WRCC(Items.field_151007_F, 0, 6, 16, 25), 
+    WRCC(Items.field_151121_aF, 0, 6, 16, 25), 
+    WRCC(OreSpawnMain.MyExperienceTreeSeed, 0, 1, 2, 15), 
+    WRCC(Items.field_151078_bh, 0, 6, 16, 25)};
+    private final WeightedRandomChestContent[] WaterDragonContentsList = new WeightedRandomChestContent[]{
+    WRCC(Items.field_151115_aP, 0, 6, 16, 25), 
+    WRCC(OreSpawnMain.MyUltimateAxe, 0, 1, 1, 15), 
+    WRCC(OreSpawnMain.MyUltimatePickaxe, 0, 1, 1, 15), 
+    WRCC(OreSpawnMain.MyUltimateShovel, 0, 1, 1, 15), 
+    WRCC(OreSpawnMain.MyExperienceCatcher, 0, 4, 10, 25), 
+    WRCC(Item.func_150898_a((Block)Blocks.field_150339_S), 0, 6, 16, 25), 
+    WRCC(Items.field_151078_bh, 0, 6, 16, 25)};
+    private final WeightedRandomChestContent[] SquidContentsList = new WeightedRandomChestContent[]{
+    WRCC(Items.field_151100_aR, 0, 6, 16, 25), 
+    WRCC(OreSpawnMain.MySquidZooka, 0, 1, 1, 15), 
+    WRCC(Items.field_151074_bl, 0, 5, 15, 15), 
+    WRCC(Items.field_151078_bh, 0, 6, 16, 25)};
+    private final WeightedRandomChestContent[] KnightContentsList = new WeightedRandomChestContent[]{
+    WRCC(Items.field_151121_aF, 0, 2, 8, 20), 
+    WRCC(Item.func_150898_a((Block)Blocks.field_150344_f), 0, 4, 8, 20), 
+    WRCC(Items.field_151061_bv, 0, 2, 8, 15), 
+    WRCC(Items.field_151079_bi, 0, 2, 8, 15), 
+    WRCC(Items.field_151078_bh, 0, 6, 16, 25)};
+    private final WeightedRandomChestContent[] AlienWTFContentsList = new WeightedRandomChestContent[]{
+    WRCC(Item.func_150898_a((Block)Blocks.field_150484_ah), 0, 1, 2, 15), 
+    WRCC(OreSpawnMain.MyRuby, 0, 1, 1, 20), 
+    WRCC(OreSpawnMain.MyAmethyst, 0, 1, 1, 20), 
+    WRCC(OreSpawnMain.MyIngotUranium, 0, 1, 2, 5), 
+    WRCC(OreSpawnMain.MyIngotTitanium, 0, 1, 2, 5), 
+    WRCC((Item)OreSpawnMain.UltimateHelmet, 0, 1, 1, 10), 
+    WRCC((Item)OreSpawnMain.UltimateBody, 0, 1, 1, 10), 
+    WRCC((Item)OreSpawnMain.UltimateLegs, 0, 1, 1, 10), 
+    WRCC((Item)OreSpawnMain.UltimateBoots, 0, 1, 1, 10), 
+    WRCC(OreSpawnMain.MyUltimateBow, 0, 1, 1, 15), 
+    WRCC(OreSpawnMain.MyNightmareSword, 0, 1, 1, 15), 
+    WRCC(OreSpawnMain.MyExperienceCatcher, 0, 4, 10, 15), 
+    WRCC(OreSpawnMain.MyRayGun, 0, 1, 1, 10), 
+    WRCC(OreSpawnMain.CageEmpty, 0, 1, 10, 20), 
+    WRCC(OreSpawnMain.MyCornDog, 0, 1, 10, 20), 
+    WRCC(OreSpawnMain.MyBacon, 0, 1, 5, 20), 
+    WRCC(OreSpawnMain.MyPopcornBag, 0, 2, 8, 20), 
+    WRCC(OreSpawnMain.MyFireFish, 0, 2, 8, 15)};
+    private final WeightedRandomChestContent[] shadowContentsList = new WeightedRandomChestContent[]{
+    WRCC(Items.field_151114_aO, 0, 2, 8, 20), 
+    WRCC(Items.field_151075_bm, 0, 4, 8, 20), 
+    WRCC(Items.field_151072_bj, 0, 2, 8, 15), 
+    WRCC(Items.field_151065_br, 0, 2, 8, 15), 
+    WRCC(Items.field_151059_bz, 0, 4, 8, 15), 
+    WRCC(Items.field_151078_bh, 0, 6, 16, 25), 
+    WRCC(Items.field_151100_aR, 0, 6, 16, 25), 
+    WRCC(OreSpawnMain.MyRuby, 0, 2, 8, 15), 
+    WRCC(OreSpawnMain.MyExperienceTreeSeed, 0, 2, 4, 15), 
+    WRCC(OreSpawnMain.MyElevator, 0, 1, 1, 15), 
+    WRCC(OreSpawnMain.MyNightmareSword, 0, 1, 1, 15), 
+    WRCC(OreSpawnMain.MyPoisonSword, 0, 1, 1, 15), 
+    WRCC(OreSpawnMain.MyRatSword, 0, 1, 1, 10), 
+    WRCC(OreSpawnMain.MyRubySword, 0, 1, 1, 10), 
+    WRCC(OreSpawnMain.MyBigHammer, 0, 1, 1, 15), 
+    WRCC(OreSpawnMain.MySquidZooka, 0, 1, 1, 15), 
+    WRCC(OreSpawnMain.MyIngotTitanium, 0, 1, 1, 5), 
+    WRCC(OreSpawnMain.MyIngotUranium, 0, 1, 1, 5), 
+    WRCC(OreSpawnMain.MyUltimateSword, 0, 1, 1, 10), 
+    WRCC(OreSpawnMain.MyUltimateBow, 0, 1, 1, 10), 
+    WRCC(OreSpawnMain.EnderReaperEgg, 0, 2, 8, 15), 
+    WRCC(OreSpawnMain.PitchBlackEgg, 0, 2, 8, 15)};
+    private final WeightedRandomChestContent[] kyuubiContentsList = new WeightedRandomChestContent[]{
+    WRCC(Items.field_151137_ax, 0, 2, 8, 10), 
+    WRCC(Item.func_150898_a((Block)Blocks.field_150451_bX), 0, 4, 8, 15), 
+    WRCC(Items.field_151128_bU, 0, 2, 8, 15), 
+    WRCC(Items.field_151044_h, 0, 2, 8, 15), 
+    WRCC(OreSpawnMain.MyNightmareSword, 0, 1, 1, 20), 
+    WRCC(OreSpawnMain.MyPoisonSword, 0, 1, 1, 20), 
+    WRCC(OreSpawnMain.KyuubiEgg, 0, 2, 8, 15)};
+    private final WeightedRandomChestContent[] blazeContentsList = new WeightedRandomChestContent[]{
+    WRCC(Items.field_151072_bj, 0, 2, 8, 15), 
+    WRCC(Items.field_151065_br, 0, 2, 8, 15), 
+    WRCC(Items.field_151059_bz, 0, 4, 8, 15), 
+    WRCC(Items.field_151033_d, 0, 1, 1, 10), 
+    WRCC((Item)OreSpawnMain.LavaEelHelmet, 0, 1, 1, 15), 
+    WRCC((Item)OreSpawnMain.LavaEelBody, 0, 1, 1, 15), 
+    WRCC((Item)OreSpawnMain.LavaEelLegs, 0, 1, 1, 15), 
+    WRCC((Item)OreSpawnMain.LavaEelBoots, 0, 1, 1, 15), 
+    WRCC(Items.field_151063_bx, 61, 2, 8, 15)};
+    private final WeightedRandomChestContent[] beeContentsList = new WeightedRandomChestContent[]{
+    WRCC(Items.field_151102_aT, 0, 2, 8, 15), 
+    WRCC(Item.func_150898_a((Block)Blocks.field_150327_N), 0, 4, 8, 15), 
+    WRCC(Items.field_151074_bl, 0, 5, 15, 15), 
+    WRCC(Items.field_151121_aF, 0, 2, 8, 15), 
+    WRCC(OreSpawnMain.MyFairySword, 0, 1, 1, 10), 
+    WRCC((Item)OreSpawnMain.CrystalPinkHelmet, 0, 1, 1, 10), 
+    WRCC((Item)OreSpawnMain.CrystalPinkBody, 0, 1, 1, 10), 
+    WRCC((Item)OreSpawnMain.CrystalPinkLegs, 0, 1, 1, 10), 
+    WRCC((Item)OreSpawnMain.CrystalPinkBoots, 0, 1, 1, 10), 
+    WRCC(OreSpawnMain.MyButterCandy, 0, 2, 8, 15), 
+    WRCC(OreSpawnMain.MyExperienceCatcher, 0, 4, 10, 10), 
+    WRCC(OreSpawnMain.BeeEgg, 0, 2, 8, 15)};
+    private final WeightedRandomChestContent[] mantisContentsList = new WeightedRandomChestContent[]{
+    WRCC(OreSpawnMain.MyMantisClaw, 0, 1, 1, 10), 
+    WRCC(Items.field_151074_bl, 0, 4, 8, 15), 
+    WRCC(OreSpawnMain.UraniumNugget, 0, 1, 3, 5), 
+    WRCC(OreSpawnMain.TitaniumNugget, 0, 1, 3, 5), 
+    WRCC(OreSpawnMain.MantisEgg, 0, 2, 4, 20), 
+    WRCC((Item)OreSpawnMain.TigersEyeHelmet, 0, 1, 1, 10), 
+    WRCC((Item)OreSpawnMain.TigersEyeBody, 0, 1, 1, 10), 
+    WRCC((Item)OreSpawnMain.TigersEyeLegs, 0, 1, 1, 10), 
+    WRCC((Item)OreSpawnMain.TigersEyeBoots, 0, 1, 1, 10), 
+    WRCC(Items.field_151078_bh, 0, 6, 16, 25), 
+    WRCC(Items.field_151045_i, 0, 1, 3, 15)};
+    private final WeightedRandomChestContent[] level1ContentsList = new WeightedRandomChestContent[]{
+    WRCC(Items.field_151166_bC, 0, 2, 8, 15), 
+    WRCC(OreSpawnMain.MinersDream, 0, 4, 8, 15), 
+    WRCC(OreSpawnMain.MyEmeraldPickaxe, 0, 1, 1, 15), 
+    WRCC(OreSpawnMain.MyEmeraldShovel, 0, 1, 1, 15), 
+    WRCC(OreSpawnMain.MyEmeraldHoe, 0, 1, 1, 15), 
+    WRCC(OreSpawnMain.MyEmeraldAxe, 0, 1, 1, 15), 
+    WRCC(OreSpawnMain.MyEmeraldSword, 0, 1, 1, 15), 
+    WRCC((Item)OreSpawnMain.EmeraldBody, 0, 1, 1, 15), 
+    WRCC((Item)OreSpawnMain.EmeraldLegs, 0, 1, 1, 15), 
+    WRCC((Item)OreSpawnMain.EmeraldHelmet, 0, 1, 1, 15), 
+    WRCC((Item)OreSpawnMain.EmeraldBoots, 0, 1, 1, 15)};
+    private final WeightedRandomChestContent[] level2ContentsList = new WeightedRandomChestContent[]{
+    WRCC(Items.field_151062_by, 0, 2, 8, 15), 
+    WRCC(Items.field_151062_by, 0, 2, 8, 15), 
+    WRCC(OreSpawnMain.CreeperLauncher, 0, 2, 10, 15), 
+    WRCC((Item)OreSpawnMain.CrystalPinkHelmet, 0, 1, 1, 10), 
+    WRCC((Item)OreSpawnMain.CrystalPinkBody, 0, 1, 1, 10), 
+    WRCC((Item)OreSpawnMain.CrystalPinkLegs, 0, 1, 1, 10), 
+    WRCC((Item)OreSpawnMain.CrystalPinkBoots, 0, 1, 1, 10), 
+    WRCC(OreSpawnMain.MyFairySword, 0, 1, 1, 15), 
+    WRCC(OreSpawnMain.MyEmeraldPickaxe, 0, 1, 1, 15), 
+    WRCC(OreSpawnMain.MyEmeraldShovel, 0, 1, 1, 15), 
+    WRCC(OreSpawnMain.MyEmeraldHoe, 0, 1, 1, 15), 
+    WRCC(OreSpawnMain.MyEmeraldAxe, 0, 1, 1, 15), 
+    WRCC(OreSpawnMain.MyEmeraldSword, 0, 1, 1, 15), 
+    WRCC((Item)OreSpawnMain.ExperienceBody, 0, 1, 1, 15), 
+    WRCC((Item)OreSpawnMain.ExperienceLegs, 0, 1, 1, 15), 
+    WRCC((Item)OreSpawnMain.ExperienceHelmet, 0, 1, 1, 15), 
+    WRCC((Item)OreSpawnMain.ExperienceBoots, 0, 1, 1, 15)};
+    private final WeightedRandomChestContent[] level3ContentsList = new WeightedRandomChestContent[]{
+    WRCC(OreSpawnMain.MySquidZooka, 0, 1, 1, 15), 
+    WRCC(OreSpawnMain.MyRatSword, 0, 1, 1, 15), 
+    WRCC(OreSpawnMain.MyAmethyst, 0, 2, 8, 15), 
+    WRCC(Items.field_151100_aR, 0, 2, 8, 15), 
+    WRCC((Item)OreSpawnMain.TigersEyeHelmet, 0, 1, 1, 10), 
+    WRCC((Item)OreSpawnMain.TigersEyeBody, 0, 1, 1, 10), 
+    WRCC((Item)OreSpawnMain.TigersEyeLegs, 0, 1, 1, 10), 
+    WRCC((Item)OreSpawnMain.TigersEyeBoots, 0, 1, 1, 10), 
+    WRCC(OreSpawnMain.MyAmethystPickaxe, 0, 1, 1, 15), 
+    WRCC(OreSpawnMain.MyAmethystShovel, 0, 1, 1, 15), 
+    WRCC(OreSpawnMain.MyAmethystHoe, 0, 1, 1, 15), 
+    WRCC(OreSpawnMain.MyAmethystAxe, 0, 1, 1, 15), 
+    WRCC(OreSpawnMain.MyAmethystSword, 0, 1, 1, 15), 
+    WRCC((Item)OreSpawnMain.AmethystBody, 0, 1, 1, 15), 
+    WRCC((Item)OreSpawnMain.AmethystLegs, 0, 1, 1, 15), 
+    WRCC((Item)OreSpawnMain.AmethystHelmet, 0, 1, 1, 15), 
+    WRCC((Item)OreSpawnMain.AmethystBoots, 0, 1, 1, 15)};
+    private final WeightedRandomChestContent[] level4ContentsList = new WeightedRandomChestContent[]{
+    WRCC(OreSpawnMain.MyRuby, 0, 2, 8, 15), 
+    WRCC(OreSpawnMain.MagicApple, 0, 1, 1, 15), 
+    WRCC(OreSpawnMain.MyRayGun, 0, 1, 1, 15), 
+    WRCC(Item.func_150898_a((Block)OreSpawnMain.CreeperRepellent), 0, 4, 10, 15), 
+    WRCC(Item.func_150898_a((Block)OreSpawnMain.KrakenRepellent), 0, 4, 10, 15), 
+    WRCC(OreSpawnMain.MyExperienceCatcher, 0, 4, 10, 15), 
+    WRCC(OreSpawnMain.ZooKeeper, 0, 10, 16, 15), 
+    WRCC(OreSpawnMain.MyRubyPickaxe, 0, 1, 1, 15), 
+    WRCC(OreSpawnMain.MyRubyShovel, 0, 1, 1, 15), 
+    WRCC(OreSpawnMain.MyRubyHoe, 0, 1, 1, 15), 
+    WRCC(OreSpawnMain.MyRubyAxe, 0, 1, 1, 15), 
+    WRCC(OreSpawnMain.MyRubySword, 0, 1, 1, 15), 
+    WRCC(OreSpawnMain.MyThunderStaff, 0, 1, 1, 15), 
+    WRCC((Item)OreSpawnMain.RubyBody, 0, 1, 1, 15), 
+    WRCC((Item)OreSpawnMain.RubyLegs, 0, 1, 1, 15), 
+    WRCC((Item)OreSpawnMain.RubyHelmet, 0, 1, 1, 15), 
+    WRCC((Item)OreSpawnMain.RubyBoots, 0, 1, 1, 15)};
+    private final WeightedRandomChestContent[] level5ContentsList = new WeightedRandomChestContent[]{
+    WRCC(OreSpawnMain.MyNightmareSword, 0, 1, 1, 15), 
+    WRCC(OreSpawnMain.MyPoisonSword, 0, 1, 1, 15), 
+    WRCC(OreSpawnMain.WitherSkeletonEgg, 0, 1, 4, 15), 
+    WRCC(OreSpawnMain.EnderDragonEgg, 0, 1, 4, 15), 
+    WRCC(OreSpawnMain.SnowGolemEgg, 0, 1, 4, 15), 
+    WRCC(OreSpawnMain.IronGolemEgg, 0, 1, 4, 15), 
+    WRCC(OreSpawnMain.WitherBossEgg, 0, 1, 4, 15), 
+    WRCC(OreSpawnMain.RedCowEgg, 0, 1, 4, 15), 
+    WRCC(OreSpawnMain.GoldCowEgg, 0, 1, 4, 15), 
+    WRCC(OreSpawnMain.EnchantedCowEgg, 0, 1, 4, 15), 
+    WRCC(OreSpawnMain.MOTHRAEgg, 0, 1, 4, 15), 
+    WRCC(OreSpawnMain.AloEgg, 0, 1, 4, 15), 
+    WRCC(OreSpawnMain.CryoEgg, 0, 1, 4, 15), 
+    WRCC(OreSpawnMain.CamaEgg, 0, 1, 4, 15), 
+    WRCC(OreSpawnMain.VeloEgg, 0, 1, 4, 15), 
+    WRCC(OreSpawnMain.HydroEgg, 0, 1, 4, 15), 
+    WRCC(OreSpawnMain.BasilEgg, 0, 1, 4, 15), 
+    WRCC(OreSpawnMain.DragonflyEgg, 0, 1, 4, 15), 
+    WRCC(OreSpawnMain.EmperorScorpionEgg, 0, 1, 4, 15), 
+    WRCC(OreSpawnMain.ScorpionEgg, 0, 1, 4, 15), 
+    WRCC(OreSpawnMain.CaveFisherEgg, 0, 1, 4, 15), 
+    WRCC(OreSpawnMain.SpyroEgg, 0, 1, 4, 15), 
+    WRCC(OreSpawnMain.BaryonyxEgg, 0, 1, 4, 15), 
+    WRCC(OreSpawnMain.CockateilEgg, 0, 1, 4, 15), 
+    WRCC(OreSpawnMain.GammaMetroidEgg, 0, 1, 4, 15), 
+    WRCC(OreSpawnMain.KyuubiEgg, 0, 1, 4, 15), 
+    WRCC(OreSpawnMain.AlienEgg, 0, 1, 4, 15), 
+    WRCC(OreSpawnMain.AttackSquidEgg, 0, 1, 4, 15), 
+    WRCC(OreSpawnMain.WaterDragonEgg, 0, 1, 4, 15), 
+    WRCC(OreSpawnMain.CephadromeEgg, 0, 1, 4, 15), 
+    WRCC(OreSpawnMain.KrakenEgg, 0, 1, 4, 15), 
+    WRCC(OreSpawnMain.LizardEgg, 0, 1, 4, 15), 
+    WRCC(OreSpawnMain.DragonEgg, 0, 1, 4, 15), 
+    WRCC(OreSpawnMain.BeeEgg, 0, 1, 4, 15), 
+    WRCC(OreSpawnMain.TrooperBugEgg, 0, 1, 4, 15), 
+    WRCC(OreSpawnMain.SpitBugEgg, 0, 1, 4, 15), 
+    WRCC(OreSpawnMain.StinkBugEgg, 0, 1, 4, 15), 
+    WRCC(OreSpawnMain.OstrichEgg, 0, 1, 4, 15), 
+    WRCC(OreSpawnMain.GazelleEgg, 0, 1, 4, 15), 
+    WRCC(OreSpawnMain.ChipmunkEgg, 0, 1, 4, 15), 
+    WRCC(OreSpawnMain.CreepingHorrorEgg, 0, 1, 4, 15), 
+    WRCC(OreSpawnMain.TerribleTerrorEgg, 0, 1, 4, 15), 
+    WRCC(OreSpawnMain.CliffRacerEgg, 0, 1, 4, 15), 
+    WRCC(OreSpawnMain.TriffidEgg, 0, 1, 4, 15), 
+    WRCC(OreSpawnMain.PitchBlackEgg, 0, 1, 4, 15), 
+    WRCC(OreSpawnMain.LurkingTerrorEgg, 0, 1, 4, 15), 
+    WRCC(OreSpawnMain.SmallWormEgg, 0, 1, 4, 15), 
+    WRCC(OreSpawnMain.MediumWormEgg, 0, 1, 4, 15), 
+    WRCC(OreSpawnMain.LargeWormEgg, 0, 1, 4, 15), 
+    WRCC(OreSpawnMain.TRexEgg, 0, 1, 4, 15), 
+    WRCC(OreSpawnMain.GodzillaEgg, 0, 1, 4, 15), 
+    WRCC(OreSpawnMain.MantisEgg, 0, 1, 4, 15), 
+    WRCC(OreSpawnMain.HerculesEgg, 0, 1, 4, 15), 
+    WRCC(OreSpawnMain.VortexEgg, 0, 1, 4, 15), 
+    WRCC(OreSpawnMain.RatEgg, 0, 1, 4, 15), 
+    WRCC(OreSpawnMain.DungeonBeastEgg, 0, 1, 4, 15), 
+    WRCC(OreSpawnMain.FairyEgg, 0, 1, 4, 15), 
+    WRCC(OreSpawnMain.WhaleEgg, 0, 1, 4, 15), 
+    WRCC(OreSpawnMain.SkateEgg, 0, 1, 4, 15), 
+    WRCC(OreSpawnMain.IrukandjiEgg, 0, 1, 4, 15), 
+    WRCC(OreSpawnMain.Robot1Egg, 0, 1, 4, 15), 
+    WRCC(OreSpawnMain.Robot2Egg, 0, 1, 4, 15), 
+    WRCC(OreSpawnMain.Robot3Egg, 0, 1, 4, 15), 
+    WRCC(OreSpawnMain.Robot4Egg, 0, 1, 4, 15), 
+    WRCC(OreSpawnMain.Robot5Egg, 0, 1, 4, 15), 
+    WRCC(OreSpawnMain.CriminalEgg, 0, 1, 4, 15), 
+    WRCC(OreSpawnMain.CoinEgg, 0, 1, 4, 15), 
+    WRCC(OreSpawnMain.BoyfriendEgg, 0, 1, 4, 15), 
+    WRCC(OreSpawnMain.EasterBunnyEgg, 0, 1, 4, 5), 
+    WRCC(OreSpawnMain.MolenoidEgg, 0, 1, 4, 15), 
+    WRCC(OreSpawnMain.SeaMonsterEgg, 0, 1, 4, 15), 
+    WRCC(OreSpawnMain.SeaViperEgg, 0, 1, 4, 15), 
+    WRCC(OreSpawnMain.CaterKillerEgg, 0, 1, 4, 15), 
+    WRCC(OreSpawnMain.LeonEgg, 0, 1, 4, 15), 
+    WRCC(OreSpawnMain.HammerheadEgg, 0, 1, 4, 15), 
+    WRCC(OreSpawnMain.RubberDuckyEgg, 0, 1, 4, 15), 
+    WRCC(OreSpawnMain.NastysaurusEgg, 0, 1, 4, 15), 
+    WRCC(OreSpawnMain.PointysaurusEgg, 0, 1, 4, 15), 
+    WRCC(OreSpawnMain.BrutalflyEgg, 0, 1, 4, 15), 
+    WRCC(OreSpawnMain.CricketEgg, 0, 1, 4, 15), 
+    WRCC(OreSpawnMain.FrogEgg, 0, 1, 4, 15), 
+    WRCC(OreSpawnMain.AntRobotKit, 0, 1, 1, 10), 
+    WRCC(OreSpawnMain.SpiderRobotKit, 0, 1, 1, 10), 
+    WRCC(OreSpawnMain.JefferyEgg, 0, 1, 4, 15), 
+    WRCC(OreSpawnMain.SpiderDriverEgg, 0, 1, 4, 15), 
+    WRCC(OreSpawnMain.CrabEgg, 0, 1, 4, 15), 
+    WRCC(OreSpawnMain.CassowaryEgg, 0, 1, 4, 15)};
+    private final WeightedRandomChestContent[] chestContentsList = new WeightedRandomChestContent[]{
+    WRCC(OreSpawnMain.MyBacon, 0, 6, 12, 20), 
+    WRCC(OreSpawnMain.MyButterCandy, 0, 6, 12, 20), 
+    WRCC(Items.field_151166_bC, 0, 2, 8, 15), 
+    WRCC(OreSpawnMain.MyEmeraldPickaxe, 0, 1, 1, 15), 
+    WRCC(OreSpawnMain.MyEmeraldShovel, 0, 1, 1, 15), 
+    WRCC(OreSpawnMain.MyEmeraldHoe, 0, 1, 1, 15), 
+    WRCC(OreSpawnMain.MyEmeraldAxe, 0, 1, 1, 15), 
+    WRCC(OreSpawnMain.MyEmeraldSword, 0, 1, 1, 15), 
+    WRCC((Item)OreSpawnMain.EmeraldBody, 0, 1, 1, 15), 
+    WRCC((Item)OreSpawnMain.EmeraldLegs, 0, 1, 1, 15), 
+    WRCC((Item)OreSpawnMain.EmeraldHelmet, 0, 1, 1, 15), 
+    WRCC((Item)OreSpawnMain.EmeraldBoots, 0, 1, 1, 15), 
+    WRCC(OreSpawnMain.MyMothScale, 0, 2, 8, 15), 
+    WRCC((Item)OreSpawnMain.MothScaleBody, 0, 1, 1, 15), 
+    WRCC((Item)OreSpawnMain.MothScaleLegs, 0, 1, 1, 15), 
+    WRCC((Item)OreSpawnMain.MothScaleHelmet, 0, 1, 1, 15), 
+    WRCC((Item)OreSpawnMain.MothScaleBoots, 0, 1, 1, 15), 
+    WRCC(OreSpawnMain.MyLavaEel, 0, 2, 8, 15), 
+    WRCC((Item)OreSpawnMain.LavaEelBody, 0, 1, 1, 15), 
+    WRCC((Item)OreSpawnMain.LavaEelLegs, 0, 1, 1, 15), 
+    WRCC((Item)OreSpawnMain.LavaEelHelmet, 0, 1, 1, 15), 
+    WRCC((Item)OreSpawnMain.LavaEelBoots, 0, 1, 1, 15), 
+    WRCC((Item)OreSpawnMain.ExperienceBody, 0, 1, 1, 15), 
+    WRCC((Item)OreSpawnMain.ExperienceLegs, 0, 1, 1, 15), 
+    WRCC((Item)OreSpawnMain.ExperienceHelmet, 0, 1, 1, 15), 
+    WRCC((Item)OreSpawnMain.ExperienceBoots, 0, 1, 1, 15), 
+    WRCC(OreSpawnMain.MyExperienceSword, 0, 1, 1, 15), 
+    WRCC(OreSpawnMain.WitherSkeletonEgg, 0, 1, 4, 15), 
+    WRCC(OreSpawnMain.EnderDragonEgg, 0, 1, 4, 15), 
+    WRCC(OreSpawnMain.SnowGolemEgg, 0, 1, 4, 15), 
+    WRCC(OreSpawnMain.IronGolemEgg, 0, 1, 4, 15), 
+    WRCC(OreSpawnMain.WitherBossEgg, 0, 1, 4, 15), 
+    WRCC(OreSpawnMain.RedCowEgg, 0, 1, 4, 15), 
+    WRCC(OreSpawnMain.GoldCowEgg, 0, 1, 4, 15), 
+    WRCC(OreSpawnMain.EnchantedCowEgg, 0, 1, 4, 15), 
+    WRCC(OreSpawnMain.MOTHRAEgg, 0, 1, 4, 15), 
+    WRCC(OreSpawnMain.AloEgg, 0, 1, 4, 15), 
+    WRCC(OreSpawnMain.CryoEgg, 0, 1, 4, 15), 
+    WRCC(OreSpawnMain.CamaEgg, 0, 1, 4, 15), 
+    WRCC(OreSpawnMain.VeloEgg, 0, 1, 4, 15), 
+    WRCC(OreSpawnMain.HydroEgg, 0, 1, 4, 15), 
+    WRCC(OreSpawnMain.BasilEgg, 0, 1, 4, 15), 
+    WRCC(OreSpawnMain.DragonflyEgg, 0, 1, 4, 15), 
+    WRCC(OreSpawnMain.EmperorScorpionEgg, 0, 1, 4, 15), 
+    WRCC(OreSpawnMain.ScorpionEgg, 0, 1, 4, 15), 
+    WRCC(OreSpawnMain.CaveFisherEgg, 0, 1, 4, 15), 
+    WRCC(OreSpawnMain.SpyroEgg, 0, 1, 4, 15), 
+    WRCC(OreSpawnMain.BaryonyxEgg, 0, 1, 4, 15), 
+    WRCC(OreSpawnMain.CockateilEgg, 0, 1, 4, 15), 
+    WRCC(OreSpawnMain.GammaMetroidEgg, 0, 1, 4, 15), 
+    WRCC(OreSpawnMain.KyuubiEgg, 0, 1, 4, 15), 
+    WRCC(OreSpawnMain.AlienEgg, 0, 1, 4, 15), 
+    WRCC(OreSpawnMain.AttackSquidEgg, 0, 1, 4, 15), 
+    WRCC(OreSpawnMain.WaterDragonEgg, 0, 1, 4, 15), 
+    WRCC(OreSpawnMain.CephadromeEgg, 0, 1, 4, 15), 
+    WRCC(OreSpawnMain.KrakenEgg, 0, 1, 4, 15), 
+    WRCC(OreSpawnMain.LizardEgg, 0, 1, 4, 15), 
+    WRCC(OreSpawnMain.DragonEgg, 0, 1, 4, 15), 
+    WRCC(OreSpawnMain.BeeEgg, 0, 1, 4, 15), 
+    WRCC(OreSpawnMain.TrooperBugEgg, 0, 1, 4, 15), 
+    WRCC(OreSpawnMain.SpitBugEgg, 0, 1, 4, 15), 
+    WRCC(OreSpawnMain.StinkBugEgg, 0, 1, 4, 15), 
+    WRCC(OreSpawnMain.OstrichEgg, 0, 1, 4, 15), 
+    WRCC(OreSpawnMain.GazelleEgg, 0, 1, 4, 15), 
+    WRCC(OreSpawnMain.ChipmunkEgg, 0, 1, 4, 15), 
+    WRCC(OreSpawnMain.CreepingHorrorEgg, 0, 1, 4, 15), 
+    WRCC(OreSpawnMain.TerribleTerrorEgg, 0, 1, 4, 15), 
+    WRCC(OreSpawnMain.CliffRacerEgg, 0, 1, 4, 15), 
+    WRCC(OreSpawnMain.TriffidEgg, 0, 1, 4, 15), 
+    WRCC(OreSpawnMain.PitchBlackEgg, 0, 1, 4, 15), 
+    WRCC(OreSpawnMain.LurkingTerrorEgg, 0, 1, 4, 15), 
+    WRCC(OreSpawnMain.SmallWormEgg, 0, 1, 4, 15), 
+    WRCC(OreSpawnMain.MediumWormEgg, 0, 1, 4, 15), 
+    WRCC(OreSpawnMain.LargeWormEgg, 0, 1, 4, 15), 
+    WRCC(OreSpawnMain.CassowaryEgg, 0, 1, 4, 15), 
+    WRCC(OreSpawnMain.MolenoidEgg, 0, 1, 4, 15), 
+    WRCC(OreSpawnMain.SeaMonsterEgg, 0, 1, 4, 15), 
+    WRCC(OreSpawnMain.SeaViperEgg, 0, 1, 4, 15), 
+    WRCC(OreSpawnMain.CaterKillerEgg, 0, 1, 4, 15), 
+    WRCC(OreSpawnMain.LeonEgg, 0, 1, 4, 15), 
+    WRCC(OreSpawnMain.HammerheadEgg, 0, 1, 4, 15), 
+    WRCC(OreSpawnMain.RubberDuckyEgg, 0, 1, 4, 15), 
+    WRCC(OreSpawnMain.NastysaurusEgg, 0, 1, 4, 15), 
+    WRCC(OreSpawnMain.PointysaurusEgg, 0, 1, 4, 15), 
+    WRCC(OreSpawnMain.BrutalflyEgg, 0, 1, 4, 15), 
+    WRCC(OreSpawnMain.CricketEgg, 0, 1, 4, 15), 
+    WRCC(OreSpawnMain.FrogEgg, 0, 1, 4, 15), 
+    WRCC(OreSpawnMain.JefferyEgg, 0, 1, 4, 15), 
+    WRCC(OreSpawnMain.SpiderDriverEgg, 0, 1, 4, 15), 
+    WRCC(OreSpawnMain.CrabEgg, 0, 1, 4, 15), 
+    WRCC(OreSpawnMain.CageEmpty, 0, 3, 10, 20)};
+    private int[] king = new int[]{-1, -1, 24, 3, -1, 24, 5, -1, 17, 12, -1, 16, 15, -1, 15, 14, -1, 15, 6, 3, 5, -1, 14, 6, 4, 3, -1, 14, 5, -1, 14, 5, -1, 12, 9, -1, 11, 11, -1, 8, 17, -1, 5, 23, -1, 3, 27, -1, 2, 29, -1, 1, 31, -1, 0, 33, -1, 13, 6, -1, 12, 9, -1, 11, 3, 1, 2, 1, 4, -1, 10, 3, 2, 2, 3, 2, -1, 10, 2, 4, 2, 3, 2, -1, 9, 2, 5, 2, 4, 6, -1, 9, 2, 5, 2, 6, 4, -1, 8, 2, 6, 1, -1, 8, 2, 5, 2, -1, 8, 2, 5, 2, -1, 8, 2, 5, 2, -1, 15, 2, -1, -1, -1};
+    private int[] queen = new int[]{-1, -1, 24, 3, -1, 24, 5, -1, 17, 12, -1, 16, 15, -1, 15, 14, -1, 15, 6, 3, 5, -1, 14, 6, 4, 3, -1, 14, 5, -1, 14, 5, -1, 12, 9, -1, 11, 11, -1, 8, 17, -1, 5, 23, -1, 3, 27, -1, 2, 29, -1, 1, 31, -1, 0, 33, -1, 13, 6, -1, 12, 9, -1, 11, 3, 1, 2, 1, 4, -1, 10, 3, 2, 2, 3, 2, -1, 10, 2, 4, 2, 3, 2, -1, 9, 2, 5, 2, 4, 6, -1, 9, 2, 5, 2, 6, 4, -1, 8, 2, 6, 1, -1, 8, 2, 5, 2, -1, 8, 2, 5, 2, -1, 8, 2, 5, 2, -1, 15, 2, -1, -1, -1};
+    private int[] blkcolors = new int[]{14, 1, 4, 5, 3, 11, 10, 6};
+
+    private void setThisBlock(World world, int cposx, int cposy, int cposz) {
+        if (world.field_73012_v.nextInt(2) == 1) {
+            this.FastSetBlock(world, cposx, cposy, cposz, Blocks.field_150341_Y);
+        } else {
+            this.FastSetBlock(world, cposx, cposy, cposz, Blocks.field_150347_e);
+        }
+    }
+
+    private TileEntityChest getChestTileEntity(World world, int cposx, int cposy, int cposz) {
+        TileEntityChest chest = null;
+        TileEntity t = null;
+        t = world.func_147438_o(cposx, cposy, cposz);
+        if (t != null && t instanceof TileEntityChest) {
+            chest = (TileEntityChest)t;
+            return chest;
+        }
+        return null;
+    }
+
+    private TileEntityMobSpawner getSpawnerTileEntity(World world, int cposx, int cposy, int cposz) {
+        TileEntityMobSpawner chest = null;
+        TileEntity t = null;
+        t = world.func_147438_o(cposx, cposy, cposz);
+        if (t != null && t instanceof TileEntityMobSpawner) {
+            chest = (TileEntityMobSpawner)t;
+            return chest;
+        }
+        return null;
+    }
+
+    public void makeDungeon(World world, int cposx, int cposy, int cposz) {
+        int k;
+        int j;
+        int i;
+        int width = 12;
+        int height = 6;
+        for (i = 0; i < width; ++i) {
+            for (j = 0; j < height; ++j) {
+                for (k = 0; k < width; ++k) {
+                    this.FastSetBlock(world, cposx + i, cposy + j, cposz + k, Blocks.field_150350_a);
+                }
+            }
+        }
+        for (i = 0; i < width; ++i) {

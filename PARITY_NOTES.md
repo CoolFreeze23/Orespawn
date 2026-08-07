@@ -158,7 +158,10 @@ jigsaw village (`minecraft:village/plains/town_centers` start pool) via
 - **Player-visible:** village *style* differs the same way vanilla villages differ
   between 1.7.10 and 1.21.1; village *frequency and location* match the original.
 
-## PN-013 — Per-tier stat config overrides hardcoded at original defaults (ITEM-065, Phase D4)
+## PN-013 — APPROVED (2026-07-03): Per-tier stat config overrides hardcoded at original defaults (ITEM-065, Phase D4)
+
+> Design ruling at the D4 checkpoint (2026-07-03): ITEM-065's DEFERRED status is
+> approved; this note and MOD-011 stand as written.
 
 - **Original:** `orig OreSpawnMain.java:1489-1517` — `get_armorstats`/`get_weaponstats`/
 `get_orestats` read every armor/weapon/ore stat number from the Forge config file at
@@ -174,7 +177,12 @@ Gameplay with an untouched original config file is identical.
 ITEM-065 ("document hardcoding as a deliberate platform decision"). Datapacks already
 cover ore-drop tuning. Config-driven rebalancing recorded as MOD-011.
 
-## PN-014 — Seasonal date gates evaluate live instead of freezing at launch (ANIM-016, Phase D4)
+## PN-014 — APPROVED (2026-07-03): Seasonal date gates evaluate live instead of freezing at launch (ANIM-016, Phase D4)
+
+> Design ruling at the D4 checkpoint (2026-07-03): this deviation carries the
+> owner's explicit sign-off as an intentional behavior change — live `LocalDate`
+> evaluation replaces the original's frozen at-init calendar. It is approved in
+> its own right, not merely on the audit's recommendation.
 
 - **Original:** `orig OreSpawnMain.java:4518-4521,4567-4571` — read a GregorianCalendar
 once at mod init; holiday behavior (Oct 31 ghosts, Feb 14 giant Girlfriend, Apr 20
