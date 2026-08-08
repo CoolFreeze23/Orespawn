@@ -4859,7 +4859,7 @@ Entries: **79 total** — ANIM 20 (DIVERGENT 8 · PARTIAL 10 · MISSING 2) · BU
 - **Status:** DIVERGENT
 - **Original:** `addFairyTree` returns TRUE when its Y 128→41 air-over-CrystalGrass scan finds no candidate (falls through to OreSpawnWorld.java:1995), so 1/5 of such chunks still suppress the termite/big-structure follow-ups with no tree placed; only the explicit 17×17/5×5 clearance failures (:1977/:1984) return false.
 - **Port:** `CrystalStructures.tryPlaceFairyTree` returned false on scan exhaustion, letting follow-ups proceed.
-- **Resolution:** FIXED (2026-08-08, Phase D6a — original return contract restored with citations; pattern-doc addendum updated ("port the FULL return contract"); see FIX_LOG.md)
+- **Resolution:** FIXED (2026-08-08, Phase D6a — original return contract restored with citations; pattern-doc addendum updated ("port the FULL return contract"); see FIX_LOG.md. D6b batch-1 verification then caught a side effect of that restore — the suppress path was also arming the 50-chunk cooldown, which the original arms ONLY on the build path (OSW:1992) — fixed with a tri-state result (BUILT/SUPPRESS/NONE) in CrystalStructures)
 
 
 

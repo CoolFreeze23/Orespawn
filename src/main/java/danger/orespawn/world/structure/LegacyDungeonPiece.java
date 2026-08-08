@@ -158,7 +158,21 @@ public class LegacyDungeonPiece extends StructurePiece {
         // 5170-5240. Floating lens island on the OVERWORLD OCEAN surface
         // (biome "Ocean", 1/6 × 1/300, anchor = the water-surface block,
         // OSW:1398-1412). X ±5, Y −1..+4, Z ±3.
-        MONSTER_ISLAND(-6, 6, 2, 5, -4, 4, PlacementMode.OCEAN_SURFACE);
+        MONSTER_ISLAND(-6, 6, 2, 5, -4, 4, PlacementMode.OCEAN_SURFACE),
+        // Phase D6b batch 1 — specs in phase_d_reports/d6_extraction/.
+        // Play Pool (GD:1934-1957): sky platform +16..+18 above the ocean
+        // air-anchor (OSW:1136-1154; anchor = the AIR block, not the water —
+        // hence OCEAN_SURFACE_AIR).
+        PLAY_POOL(-2, 5, 1, 19, -1, 1, PlacementMode.OCEAN_SURFACE_AIR),
+        // Cloud Shark Dungeon (GD:2059-2091): 3×3×3 floating sky cluster,
+        // Islands Y 150..159 with no scan at all (OSW:2423-2428).
+        CLOUD_SHARK_DUNGEON(-2, 2, 2, 2, -2, 2, PlacementMode.SKY_BAND_150),
+        // Gold Fish Bowl (GD:2408-2488): glass bowl on the ocean surface
+        // (OSW:1176-1194, water-block anchor like Monster Island).
+        GOLD_FISH_BOWL(-2, 6, 0, 9, -2, 6, PlacementMode.OCEAN_SURFACE),
+        // Spit Bug Lair (GD:2638-2696): overworld Swampland platform
+        // (OSW:1236-1256; exact-name "Swampland" → minecraft:swamp only).
+        SPIT_BUG_LAIR(-9, 9, 1, 13, -9, 9, PlacementMode.SWAMP_GRASS_SURFACE);
 
         /** How {@link LegacyDungeonStructure#findGenerationPoint} anchors this type. */
         public enum PlacementMode {
@@ -204,7 +218,30 @@ public class LegacyDungeonPiece extends StructurePiece {
              * water-exists check via the ocean-floor heightmap sitting below
              * sea level.
              */
-            OCEAN_SURFACE
+            OCEAN_SURFACE,
+            /**
+             * Play Pool's variant of {@link #OCEAN_SURFACE}
+             * (orig OreSpawnWorld.java:1146-1148 — byte-identical scan to
+             * Monster Island's, but the builder receives {@code posY}, the
+             * AIR block above the water, not {@code posY - 1}).
+             */
+            OCEAN_SURFACE_AIR,
+            /**
+             * addD4CloudShark (orig OreSpawnWorld.java:2423-2428): no scan
+             * at all — X/Z = chunk + 4 + nextInt(8), Y = 150 + nextInt(10),
+             * unconditional. Frequency lives entirely in the structure set.
+             */
+            SKY_BAND_150,
+            /**
+             * addSpitBugLair (orig OreSpawnWorld.java:1236-1256): overworld
+             * "Swampland" corner-biome gate (→ biome tag), 4 attempts of
+             * chunk + nextInt(16) jitter, air-over-GRASS scan Y 100→41.
+             * Grass identity is not predictable pre-terrain; approximated as
+             * "dry column" (WORLD_SURFACE == OCEAN_FLOOR) within the Y
+             * window — documented mapping delta, same style as END_SURFACE's
+             * clearance approximation.
+             */
+            SWAMP_GRASS_SURFACE
         }
 
         public final int minXOff;
@@ -322,6 +359,10 @@ public class LegacyDungeonPiece extends StructurePiece {
                 case KYUUBI_DUNGEON -> KyuubiDungeonGenerator.generate(this, origin, rng);
                 case HOSPITAL -> HospitalGenerator.generate(this, origin, rng);
                 case MONSTER_ISLAND -> MonsterIslandGenerator.generate(this, origin, rng);
+                case PLAY_POOL -> PlayPoolGenerator.generate(this, origin, rng);
+                case CLOUD_SHARK_DUNGEON -> CloudSharkDungeonGenerator.generate(this, origin, rng);
+                case GOLD_FISH_BOWL -> GoldFishBowlGenerator.generate(this, origin, rng);
+                case SPIT_BUG_LAIR -> SpitBugLairGenerator.generate(this, origin, rng);
             }
         } finally {
             this.pLevel = null;

@@ -69,6 +69,15 @@ public class LegacyDungeonStructure extends Structure {
             case ISLANDS_GRASS -> islandsGrassOrigin(context);
             case END_SURFACE -> endSurfaceOrigin(context);
             case OCEAN_SURFACE -> oceanSurfaceOrigin(context);
+            case OCEAN_SURFACE_AIR -> {
+                // Play Pool (orig OreSpawnWorld.java:1146-1148): identical scan
+                // to Monster Island's, but the anchor is the AIR block above
+                // the water surface.
+                BlockPos water = oceanSurfaceOrigin(context);
+                yield water == null ? null : water.above();
+            }
+            case SKY_BAND_150 -> skyBand150Origin(context);
+            case SWAMP_GRASS_SURFACE -> swampGrassSurfaceOrigin(context);
         };
         if (origin == null) return Optional.empty();
         if (origin.getY() + dungeonType.upExtent + 4 >= context.heightAccessor().getMaxBuildHeight()) {
@@ -203,6 +212,56 @@ public class LegacyDungeonStructure extends Structure {
             // Land column — the surface block is terrain, not water.
             if (floorY >= firstFree) continue;
             return new BlockPos(x, surfaceY, z);
+        }
+        return null;
+    }
+
+    /**
+     * Port of {@code addD4CloudShark}'s anchoring
+     * (orig OreSpawnWorld.java:2423-2428): no scan at all — X/Z at
+     * {@code chunk + 4 + nextInt(8)}, Y in the 150..159 sky band,
+     * unconditional success (the original had no cooldown or space check on
+     * this path either; frequency lives in the structure set). The original's
+     * mixed-RNG quirk (Y from the world RNG, X/Z from the passed one) is a
+     * single-stream draw here — no cross-pass hazard, since structure starts
+     * draw from one seeded random anyway.
+     */
+    private BlockPos skyBand150Origin(GenerationContext context) {
+        ChunkPos chunk = context.chunkPos();
+        int x = chunk.getMinBlockX() + 4 + context.random().nextInt(8);
+        int z = chunk.getMinBlockZ() + 4 + context.random().nextInt(8);
+        int y = 150 + context.random().nextInt(10);
+        return new BlockPos(x, y, z);
+    }
+
+    /**
+     * Port of {@code addSpitBugLair}'s anchoring
+     * (orig OreSpawnWorld.java:1236-1256): the "Swampland" corner-biome gate
+     * maps to the structure's biome tag (minecraft:swamp only — mangrove has
+     * no 1.7.10 analogue); up to 4 attempts (:1244) of chunk + nextInt(16)
+     * jitter (:1245-1246); the original scans Y 100→41 for air directly above
+     * GRASS (:1248-1249). Grass identity is not predictable before terrain
+     * exists, so the accept test is the noise surface inside the window AND a
+     * dry column (surface heightmap == ocean-floor heightmap — rejects the
+     * swamp's water sheets exactly where the original's grass test did) —
+     * documented mapping delta, END_SURFACE-style.
+     */
+    private BlockPos swampGrassSurfaceOrigin(GenerationContext context) {
+        ChunkPos chunk = context.chunkPos();
+        for (int attempt = 0; attempt < 4; attempt++) {
+            int x = chunk.getMinBlockX() + context.random().nextInt(16);
+            int z = chunk.getMinBlockZ() + context.random().nextInt(16);
+            int firstFree = context.chunkGenerator().getBaseHeight(
+                    x, z, Heightmap.Types.WORLD_SURFACE_WG,
+                    context.heightAccessor(), context.randomState());
+            // orig :1248 — the scan only visits Y 100 down to 41.
+            if (firstFree > 100 || firstFree < 41) continue;
+            int floorY = context.chunkGenerator().getBaseHeight(
+                    x, z, Heightmap.Types.OCEAN_FLOOR_WG,
+                    context.heightAccessor(), context.randomState());
+            // Wet column — the original required grass below, never water.
+            if (floorY != firstFree) continue;
+            return new BlockPos(x, firstFree, z);
         }
         return null;
     }

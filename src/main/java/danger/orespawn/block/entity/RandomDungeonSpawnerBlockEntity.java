@@ -42,6 +42,16 @@ public class RandomDungeonSpawnerBlockEntity extends BlockEntity {
     private static final int STRUCTURE_POOL_SIZE = 50;
     // orig DungeonSpawnerBlock.java:53-55 — OreSpawnTrees.FairyTree
     private static final int TYPE_FAIRY_TREE = 0;
+    // orig DungeonSpawnerBlock.java:71-73 — makeRotatorStation
+    private static final int TYPE_ROTATOR_STATION = 3;
+    // orig DungeonSpawnerBlock.java:89-91 — makePlayPool
+    private static final int TYPE_PLAY_POOL = 12;
+    // orig DungeonSpawnerBlock.java:95-97 — makeCloudSharkDungeon
+    private static final int TYPE_CLOUD_SHARK_DUNGEON = 14;
+    // orig DungeonSpawnerBlock.java:104-106 — makeGoldFishBowl
+    private static final int TYPE_GOLD_FISH_BOWL = 17;
+    // orig DungeonSpawnerBlock.java:110-112 — makeSpitBugLair
+    private static final int TYPE_SPIT_BUG_LAIR = 19;
     // orig DungeonSpawnerBlock.java:56-58 — OreSpawnTrees.FairyCastleTree
     private static final int TYPE_FAIRY_CASTLE_TREE = 1;
     // orig DungeonSpawnerBlock.java:59-61 — makeEnormousCastle (King tower)
@@ -180,6 +190,29 @@ public class RandomDungeonSpawnerBlockEntity extends BlockEntity {
             case TYPE_MONSTER_ISLAND -> {
                 LegacyDungeonPiece.buildNow(server, pos,
                         LegacyDungeonPiece.DungeonType.MONSTER_ISLAND);
+                yield true;
+            }
+            // Phase D6b batch 1.
+            case TYPE_ROTATOR_STATION ->
+                    danger.orespawn.world.CrystalStructures.buildRotatorStationAt(server, server.random, pos);
+            case TYPE_PLAY_POOL -> {
+                LegacyDungeonPiece.buildNow(server, pos,
+                        LegacyDungeonPiece.DungeonType.PLAY_POOL);
+                yield true;
+            }
+            case TYPE_CLOUD_SHARK_DUNGEON -> {
+                LegacyDungeonPiece.buildNow(server, pos,
+                        LegacyDungeonPiece.DungeonType.CLOUD_SHARK_DUNGEON);
+                yield true;
+            }
+            case TYPE_GOLD_FISH_BOWL -> {
+                LegacyDungeonPiece.buildNow(server, pos,
+                        LegacyDungeonPiece.DungeonType.GOLD_FISH_BOWL);
+                yield true;
+            }
+            case TYPE_SPIT_BUG_LAIR -> {
+                LegacyDungeonPiece.buildNow(server, pos,
+                        LegacyDungeonPiece.DungeonType.SPIT_BUG_LAIR);
                 yield true;
             }
             // Interim fallback for the not-yet-ported structures (Phase D / WGEN-042)
