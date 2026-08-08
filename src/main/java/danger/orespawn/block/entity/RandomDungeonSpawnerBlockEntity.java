@@ -40,8 +40,25 @@ public class RandomDungeonSpawnerBlockEntity extends BlockEntity {
     private static final int TOTAL_DELAY = 400; // 20 seconds at 20 TPS
     // orig DungeonSpawnerBlock.java:52 — nextInt(50) outcome roll
     private static final int STRUCTURE_POOL_SIZE = 50;
+    // orig DungeonSpawnerBlock.java:53-55 — OreSpawnTrees.FairyTree
+    private static final int TYPE_FAIRY_TREE = 0;
+    // orig DungeonSpawnerBlock.java:56-58 — OreSpawnTrees.FairyCastleTree
+    private static final int TYPE_FAIRY_CASTLE_TREE = 1;
     // orig DungeonSpawnerBlock.java:59-61 — makeEnormousCastle (King tower)
     private static final int TYPE_ENORMOUS_CASTLE_KING = 2;
+    // orig DungeonSpawnerBlock.java:74-76 — makeKyuubiDungeon
+    private static final int TYPE_KYUUBI_DUNGEON = 7;
+    // orig DungeonSpawnerBlock.java:125-127 — makeEnderDragonHospital (single call;
+    // MonsterIsland is NOT paired here — it is its own type 37, DSB:164-166)
+    private static final int TYPE_HOSPITAL = 24;
+    // orig DungeonSpawnerBlock.java:134-136 — makeEnderCastle
+    private static final int TYPE_ENDER_CASTLE = 27;
+    // orig DungeonSpawnerBlock.java:140-142 — makeIncaPyramid
+    private static final int TYPE_INCA_PYRAMID = 29;
+    // orig DungeonSpawnerBlock.java:143-145 — makeRobotLab
+    private static final int TYPE_ROBOT_LAB = 30;
+    // orig DungeonSpawnerBlock.java:164-166 — makeMonsterIsland
+    private static final int TYPE_MONSTER_ISLAND = 37;
     private static final int TYPE_GENERIC_DUNGEON = 21;
     private static final int TYPE_RUBY_DUNGEON = 22;
     // orig DungeonSpawnerBlock.java:122-124 — BMaze.buildBasiliskMaze at the block pos
@@ -128,6 +145,41 @@ public class RandomDungeonSpawnerBlockEntity extends BlockEntity {
                 // orig DungeonSpawnerBlock.java:194-196.
                 LegacyDungeonPiece.buildNow(server, pos,
                         LegacyDungeonPiece.DungeonType.QUEEN_TOWER);
+                yield true;
+            }
+            // Phase D6a — the six strong-model structures + the two tree outcomes.
+            case TYPE_FAIRY_TREE ->
+                    danger.orespawn.world.CrystalStructures.buildFairyTreeAt(server, server.random, pos);
+            case TYPE_FAIRY_CASTLE_TREE ->
+                    danger.orespawn.world.CrystalStructures.buildFairyCastleTreeAt(server, server.random, pos);
+            case TYPE_KYUUBI_DUNGEON -> {
+                LegacyDungeonPiece.buildNow(server, pos,
+                        LegacyDungeonPiece.DungeonType.KYUUBI_DUNGEON);
+                yield true;
+            }
+            case TYPE_HOSPITAL -> {
+                LegacyDungeonPiece.buildNow(server, pos,
+                        LegacyDungeonPiece.DungeonType.HOSPITAL);
+                yield true;
+            }
+            case TYPE_ENDER_CASTLE -> {
+                LegacyDungeonPiece.buildNow(server, pos,
+                        LegacyDungeonPiece.DungeonType.ENDER_CASTLE);
+                yield true;
+            }
+            case TYPE_INCA_PYRAMID -> {
+                LegacyDungeonPiece.buildNow(server, pos,
+                        LegacyDungeonPiece.DungeonType.INCA_PYRAMID);
+                yield true;
+            }
+            case TYPE_ROBOT_LAB -> {
+                LegacyDungeonPiece.buildNow(server, pos,
+                        LegacyDungeonPiece.DungeonType.ROBOT_LAB);
+                yield true;
+            }
+            case TYPE_MONSTER_ISLAND -> {
+                LegacyDungeonPiece.buildNow(server, pos,
+                        LegacyDungeonPiece.DungeonType.MONSTER_ISLAND);
                 yield true;
             }
             // Interim fallback for the not-yet-ported structures (Phase D / WGEN-042)

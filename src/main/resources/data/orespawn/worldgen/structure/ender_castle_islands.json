@@ -1,0 +1,9 @@
+{
+  "type": "orespawn:legacy_dungeon",
+  "biomes": "#orespawn:has_structure/ender_castle_islands",
+  "step": "surface_structures",
+  "spawn_overrides": {},
+  "terrain_adaptation": "none",
+  "dungeon_type": "ENDER_CASTLE",
+  "placement_mode": "ISLANDS_GRASS"
+}

@@ -35,22 +35,40 @@ public class LegacyDungeonStructure extends Structure {
 
     public static final MapCodec<LegacyDungeonStructure> CODEC = RecordCodecBuilder.mapCodec(inst -> inst.group(
             settingsCodec(inst),
-            Codec.STRING.fieldOf("dungeon_type").forGetter(s -> s.dungeonType.name())
-    ).apply(inst, (settings, name) -> new LegacyDungeonStructure(settings, LegacyDungeonPiece.DungeonType.valueOf(name))));
+            Codec.STRING.fieldOf("dungeon_type").forGetter(s -> s.dungeonType.name()),
+            // Phase D6a — optional per-JSON anchor override for dungeon types
+            // that generate in more than one dimension with different original
+            // anchors (Ender Castle: END_SURFACE in the End, ISLANDS_GRASS on
+            // the Islands D4 roll — orig OSW:1557-1570 vs :2322-2343). Omit to
+            // use the DungeonType's default mode.
+            Codec.STRING.optionalFieldOf("placement_mode").forGetter(s ->
+                    s.placementOverride.map(Enum::name))
+    ).apply(inst, (settings, name, mode) -> new LegacyDungeonStructure(settings,
+            LegacyDungeonPiece.DungeonType.valueOf(name),
+            mode.map(LegacyDungeonPiece.DungeonType.PlacementMode::valueOf))));
 
     private final LegacyDungeonPiece.DungeonType dungeonType;
+    private final Optional<LegacyDungeonPiece.DungeonType.PlacementMode> placementOverride;
 
     public LegacyDungeonStructure(StructureSettings settings, LegacyDungeonPiece.DungeonType dungeonType) {
+        this(settings, dungeonType, Optional.empty());
+    }
+
+    public LegacyDungeonStructure(StructureSettings settings, LegacyDungeonPiece.DungeonType dungeonType,
+                                  Optional<LegacyDungeonPiece.DungeonType.PlacementMode> placementOverride) {
         super(settings);
         this.dungeonType = dungeonType;
+        this.placementOverride = placementOverride;
     }
 
     @Override
     public Optional<GenerationStub> findGenerationPoint(GenerationContext context) {
-        BlockPos origin = switch (dungeonType.placement) {
+        BlockPos origin = switch (placementOverride.orElse(dungeonType.placement)) {
             case SURFACE_CENTER -> surfaceCenterOrigin(context);
             case LOWEST_SURFACE_36 -> lowestSurfaceOrigin(context);
             case ISLANDS_GRASS -> islandsGrassOrigin(context);
+            case END_SURFACE -> endSurfaceOrigin(context);
+            case OCEAN_SURFACE -> oceanSurfaceOrigin(context);
         };
         if (origin == null) return Optional.empty();
         if (origin.getY() + dungeonType.upExtent + 4 >= context.heightAccessor().getMaxBuildHeight()) {
@@ -120,6 +138,97 @@ public class LegacyDungeonStructure extends Structure {
         }
         if (!found || lowestSurfaceY <= 40) return null;
         return new BlockPos(lowestX, lowestSurfaceY - 2, lowestZ);
+    }
+
+    /**
+     * The End-dimension anchor shared by {@code addEnderCastle}
+     * (orig OreSpawnWorld.java:1557-1570) and {@code addHospital} (:1542-1555):
+     * up to 3 attempts (:1561/:1546) of {@code chunk + nextInt(16)} jitter
+     * (:1562-1563/:1547-1548); accept a column whose surface is air directly
+     * on end stone within the original's Y 90→11 downward scan (:1564-1565/
+     * :1549-1550). Structure starts resolve before blocks exist, so the probes
+     * map to the noise heightmap: first-free-Y = the air block sitting on the
+     * end-stone surface (void columns predict the world floor and are
+     * rejected). The originals' flat clearance planes (quickBigSpaceCheck
+     * 30×30 at +8, OSW:2635-2643; quickSpaceCheck 12×12 at +4, :2625-2633)
+     * are approximated by requiring the footprint's sampled corner/centre
+     * surfaces not to rise more than 3 blocks above the anchor — conservative
+     * for the castle's looser +8 plane; documented in the D6a report.
+     * Frequency (the 1/4 dimension roll × 1/50 / 1/25 gates) maps to the
+     * structure-set spacing per the C7 equivalence.
+     */
+    private BlockPos endSurfaceOrigin(GenerationContext context) {
+        ChunkPos chunk = context.chunkPos();
+        for (int attempt = 0; attempt < 3; attempt++) {
+            int x = chunk.getMinBlockX() + context.random().nextInt(16);
+            int z = chunk.getMinBlockZ() + context.random().nextInt(16);
+            int firstFree = context.chunkGenerator().getBaseHeight(
+                    x, z, Heightmap.Types.WORLD_SURFACE_WG,
+                    context.heightAccessor(), context.randomState());
+            // Void column — no end-stone surface to sit on.
+            if (firstFree <= context.heightAccessor().getMinBuildHeight() + 1) continue;
+            // orig :1564/:1549 — the scan only visits Y 90 down to 11.
+            if (firstFree > 90 || firstFree < 11) continue;
+            if (!footprintClearAbove(context, x, z, firstFree)) continue;
+            return new BlockPos(x, firstFree, z);
+        }
+        return null;
+    }
+
+    /**
+     * Port of {@code OreSpawnWorld.addMonsterIsland}'s anchoring
+     * (orig OreSpawnWorld.java:1398-1412): the corner-biome "Ocean" gate maps
+     * to the structure's biome tag; up to 4 attempts (:1404) of in-chunk
+     * jitter (:1405-1406); the original scans Y 100→41 for air directly above
+     * STILL WATER (:1408-1409) and anchors at the water-surface block itself
+     * ({@code posY - 1}, :1410). Modern mapping: water surface = the noise
+     * first-free-Y minus 1; a water column exists iff the ocean-floor
+     * heightmap sits below it.
+     */
+    private BlockPos oceanSurfaceOrigin(GenerationContext context) {
+        ChunkPos chunk = context.chunkPos();
+        for (int attempt = 0; attempt < 4; attempt++) {
+            int x = chunk.getMinBlockX() + context.random().nextInt(16);
+            int z = chunk.getMinBlockZ() + context.random().nextInt(16);
+            int firstFree = context.chunkGenerator().getBaseHeight(
+                    x, z, Heightmap.Types.WORLD_SURFACE_WG,
+                    context.heightAccessor(), context.randomState());
+            int surfaceY = firstFree - 1;
+            // orig :1408-1410 — the scan visits posY 100 down to 41 and anchors
+            // at posY−1, so the legal water-surface anchor band is Y 40..99.
+            if (surfaceY > 99 || surfaceY < 40) continue;
+            int floorY = context.chunkGenerator().getBaseHeight(
+                    x, z, Heightmap.Types.OCEAN_FLOOR_WG,
+                    context.heightAccessor(), context.randomState());
+            // Land column — the surface block is terrain, not water.
+            if (floorY >= firstFree) continue;
+            return new BlockPos(x, surfaceY, z);
+        }
+        return null;
+    }
+
+    /**
+     * Noise-level approximation of the originals' flat air-plane clearance
+     * probes (see {@link #endSurfaceOrigin}): the four footprint corners and
+     * the centre must not predict terrain rising more than 3 blocks above the
+     * anchor.
+     */
+    private boolean footprintClearAbove(GenerationContext context, int x, int z, int anchorY) {
+        int[][] samples = {
+                {x + dungeonType.minXOff, z + dungeonType.minZOff},
+                {x + dungeonType.maxXOff, z + dungeonType.minZOff},
+                {x + dungeonType.minXOff, z + dungeonType.maxZOff},
+                {x + dungeonType.maxXOff, z + dungeonType.maxZOff},
+                {x + (dungeonType.minXOff + dungeonType.maxXOff) / 2,
+                 z + (dungeonType.minZOff + dungeonType.maxZOff) / 2},
+        };
+        for (int[] sample : samples) {
+            int surface = context.chunkGenerator().getBaseHeight(
+                    sample[0], sample[1], Heightmap.Types.WORLD_SURFACE_WG,
+                    context.heightAccessor(), context.randomState());
+            if (surface > anchorY + 3) return false;
+        }
+        return true;
     }
 
     /**
