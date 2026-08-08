@@ -564,6 +564,55 @@ must not despawn when the player walks away.
 
 ---
 
+## Phase D — slice D6a: strong-model structures (2026-08-08)
+
+- **Specs:** `phase_d_reports/d6_extraction/` — six extraction/audit specs, each
+  independently verified against the originals before implementation.
+- **WGEN-042 — PARTIAL (advanced):** EnderCastle (GD:3207-3623; End
+  END_SURFACE placement + Islands i==7 via the new per-JSON placement_mode
+  override; DSB 27; 8-entry loot 270), IncaPyramid (GD:3735-4042; write-set
+  model for ramp self-reads, PN-018 deviation; DSB 29; 14-entry loot 480),
+  KyuubiDungeon (GD:1095-1361; Mining set 26/13; DSB 7; five loot tables,
+  totals 110/130, four blaze fill formulas kept distinct), EnderDragonHospital
+  (GD:2815-2991; 4 End Crystals via the new spawnEntity helper — NO dragon
+  exists in the original; End-only 10/5; DSB 24), MonsterIsland (GD:5170-5240;
+  overworld OCEAN_SURFACE, minecraft:ocean only, 42/21; DSB 37), FairyTree/
+  FairyCastleTree live path (DSB 0/1 + LessLag shrinks restored). Salts
+  84340-84345. Remaining ~16 mechanical structures -> D6b.
+- **Robot Lab reconciliation — WGEN-058..061 (new) FIXED:** invented chest
+  palette (dropper/dispenser/clock/comparator) -> faithful 23-entry
+  `chests/robot_lab.json` (total 755); Robo-Pounder/Robo-Warrior bindings
+  unswapped; hangar-before-pillars order restored (the port erased both rear
+  sniper spawners every generation); railway/assembly/altar/door hardware
+  restored (powered rails, powered crusher lever, quartz stairs/white carpet,
+  piston facing, NORTH-facing door pair). Anchor switched to the faithful
+  ISLANDS_GRASS; the /locate recentring retained per the audit's own
+  recommendation.
+- **WGEN-044 — FIXED (audit corrected):** BlockDuplicatorLog was already
+  faithful; the missing half was the worldgen seed log (VeggiePatchFeature
+  what==5, orig OSW:1915-1916) — restored.
+- **WGEN-045 — FIXED:** BlockExperiencePlant's placeholder grower replaced
+  with the faithful Trees.ExperienceTree port (live-tick reads legal, kept).
+- **WGEN-062 (new) — FIXED:** fairy-tree dispatch scan-exhaustion return
+  restored to the original TRUE (suppresses the chunk's follow-ups).
+- **Infrastructure:** END_SURFACE + OCEAN_SURFACE placement modes, per-JSON
+  placement_mode override, generic spawnEntity helper; the pattern doc gained
+  the tree-generator addendum and the "port the FULL return contract" trap.
+- **Verification:** four-verifier independent pass over all new code:
+  0 critical / 0 major / 4 minor, all resolved pre-commit (ocean anchor
+  off-by-one at Y40, robot door 180-degree mirror, Inca Javadoc overclaim,
+  WGEN-062). EnderCastle/Kyuubi verifiers: zero findings. Verifiers also
+  corrected two D5-assessment miscounts: EnderCastle has THREE loot chests
+  (not 4), and DSB types 24/37 are single-call (the "type-24 pair" premise
+  was a truncated-read artifact).
+- **Notes:** PN-017 (End placement), PN-018 (Inca ramps), PN-019 (ocean
+  biome). No new MOD entries (removed inventions were duplicative).
+- **Ledger:** 618 IDs (613 + WGEN-058..062), 461 terminal / 157 open,
+  reconcile green. **Build:** full `./gradlew build` — see commit.
+- **Pending manual tests:** TESTING_CHECKLIST.md section D6a.
+
+---
+
 ## Phase D — slice D5: representative structures + SpawnOres pool (2026-08-08)
 
 - **Report:** `phase_d_reports/D5_structures_spawnores.md` (full citation tables);

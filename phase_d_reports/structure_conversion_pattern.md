@@ -256,3 +256,102 @@ window, live RNG).
 9. Persistent entity spawns: `spawnPersistent` only — a naked
    `addFreshEntity` without `setPersistenceRequired` despawns the boss
    the original pinned (`func_110163_bv`).
+
+---
+
+## 4. Tree-generator addendum (D6a)
+
+The `orig:Trees.java` builders are NOT structures in the section-1 sense, and
+forcing them through the `LegacyDungeonStructure` pipeline (or any worldgen
+`Feature`) is wrong for most of them. The mechanism decision for a tree is
+made by ONE question: **what calls it in 1.7.10?** The full trigger-site table
+is in `phase_d_reports/d6_extraction/trees_spec.md` section 1; the decision it
+produces:
+
+| Original call site | Port shape | D6 examples |
+|---|---|---|
+| A ticking block's `func_149674_a` (the tree grows/acts at play time) | Logic on the port block's `randomTick` — no Feature, no generator class, no structure JSON | DuplicatorTree (`port:block/BlockDuplicatorLog.randomTick`, orig BlockDuplicatorLog.java:32-39), ExperienceTree (`port:block/BlockExperiencePlant.randomTick`, orig BlockExperiencePlant.java:42-51) |
+| An `OreSpawnWorld.add*` decoration call only | Decoration-phase direct builder (`port:world/CrystalStructures`-style) or a registered `Feature` with rarity filters (`port:world/feature/MagicAppleTreeFeature`-style) | WindTree/SkyTree (done pre-D6), FairyTree/FairyCastleTree worldgen path (orig OreSpawnWorld.java:1962-1996) |
+| BOTH `OreSpawnWorld` and `DungeonSpawnerBlock` | ONE shared builder serving both paths (see the FairyTree worked example below) | FairyTree (DSB type 0), FairyCastleTree (DSB type 1) |
+| Nothing (dead code) | Do not port as generating content — porting it would invent behavior (same rule as NightmareDungeon, section 1 step 1) | ScragglyTreeWithBranches (orig Trees.java:418-450, WGEN-046) |
+
+**Do not "upgrade" a live-tick tree to worldgen.** ExperienceTree has zero
+natural worldgen in 1.7.10 (the only caller in the whole original tree is
+BlockExperiencePlant.java:50); registering a ConfiguredFeature for it would
+invent content. Conversely, the DuplicatorTree's worldgen presence is ONLY the
+single seed log placed by `addVeggies` (orig OreSpawnWorld.java:1915-1916 →
+`port:world/feature/VeggiePatchFeature`); the tree itself then grows live, one
+block per tick — building the finished tree during worldgen would skip the
+original's multi-day growth and its duplication behavior entirely.
+
+### Read legality: why the RNG stitching contract does NOT apply here
+
+Section 1 step 3's "never read world state" rule exists because a
+`LegacyDungeonPiece` generator REPLAYS per intersecting chunk against a
+half-written world. Tree builders run in exactly two other regimes, and both
+may read freely:
+
+- **Live `ServerLevel` tick** (`randomTick`, DSB `buildForType`): the world is
+  fully loaded and there is no replay — one call, one build. The
+  DuplicatorTree is the extreme case: its ENTIRE algorithm is world reads
+  (soil probe orig Trees.java:125, trunk-state probes :140-155, duplication
+  source+meta :171-172); it re-derives "how grown am I" from the world every
+  tick and performs at most one write. That is unportable to any worldgen
+  mechanism by construction — the world IS its state model, and unlike the
+  BasiliskMaze case you cannot move that state into memory, because the state
+  must persist across ticks/saves and reflect player edits.
+- **Decoration phase** (`applyBiomeDecoration`): neighbor chunks exist, so
+  the original's air-check leaf drapes (`make_leaves` orig Trees.java:188,
+  `make_crystal_leaves` :496) and ground scans (orig OreSpawnWorld.java:
+  1968-1986) port verbatim. What remains forbidden is the noise/`ChunkAccess`
+  build pass (`port:world/CrystalTreeGenerator` is that regime's one
+  clamped-to-chunk exception) — never move a Trees.java builder there.
+
+Corollary: tree builders write with plain `level.setBlock(pos, state, 2)`
+(the original's `setBlockFast` flags=2), not the piece helpers — there is no
+piece, no gating, and no per-chunk replay to protect. Draw randomness from
+whatever `RandomSource` the trigger hands you (`randomTick`'s parameter, the
+decoration random); there is no cross-pass determinism requirement.
+
+One modern-paradigm trap that replaces the RNG contract in this regime:
+flag-2 writes never run neighbor updates, so a modern `LeavesBlock` keeps its
+default `DISTANCE=7` and decays on random ticks even beside its trunk. Port
+adaptation: place tree leaves with `PERSISTENT=true`
+(`port:block/BlockDuplicatorLog` apple leaves, `port:block/
+BlockExperiencePlant.makeLeaves` experience leaves). Document it as an
+adaptation — the original's metadata-driven decay had no equivalent hazard.
+
+### Worked example: FairyTree/FairyCastleTree dual trigger
+
+The original shares one `OreSpawnMain.OreSpawnTrees` instance between crystal
+worldgen (orig OreSpawnWorld.java:1987-1991) and the player-placed Random
+Dungeon Spawner (orig DungeonSpawnerBlock.java:53-58). The port mirrors that
+sharing with one private builder per tree in `port:world/CrystalStructures`,
+reached two ways:
+
+1. **Worldgen**: `tryPlaceFairyTree` (decoration phase) reproduces the site
+   scan — 1/5 chunk gate, y128→41 descending probe, 17×17 air clearance, 5×5
+   crystal-grass footing, then the 4/5-vs-1/5 variant split with the
+   original's asymmetric anchors (plain tree gets `posY-1`, castle gets
+   `posY`, orig OreSpawnWorld.java:1987-1991).
+2. **Play time**: `buildFairyTreeAt` / `buildFairyCastleTreeAt(ServerLevel,
+   RandomSource, BlockPos)` — thin public wrappers called by
+   `RandomDungeonSpawnerBlockEntity.buildForType` for DSB types 0/1, at the
+   cleared spawner-block position with NO ground gate and NO y adjustment
+   (orig DungeonSpawnerBlock.java:53-58 validates nothing — a floating or
+   terrain-embedded tree is faithful behavior).
+
+The builders themselves are typed on `WorldGenLevel`, which `ServerLevel`
+satisfies — that one signature is what lets a single transcription serve both
+regimes. Config-driven size reduction (`LessLag`) shrinks every
+crystal-branch segment and the castle tier count AFTER the random draw (orig
+Trees.java:529-589, :618-624 → `CrystalStructures.lessLagShrink`) — the draw
+itself is never gated, so toggling the config never desynchronizes anything.
+
+Return-value quirks are behavior: the original `addFairyTree` returns
+`true` after passing its 1/5 gate even when the site scan fails (orig
+OreSpawnWorld.java:1995), suppressing that chunk's termites and big
+structures with no tree placed. The port briefly returned `false` there;
+the D6a verification pass restored the original semantics (WGEN-062) —
+when converting an `add*` method, port its FULL return contract, not just
+its build path.

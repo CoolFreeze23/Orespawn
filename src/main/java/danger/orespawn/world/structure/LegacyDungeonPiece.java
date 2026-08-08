@@ -24,7 +24,10 @@ import net.minecraft.world.level.block.entity.ChestBlockEntity;
 import net.minecraft.world.level.block.entity.RandomizableContainerBlockEntity;
 import net.minecraft.world.level.block.entity.SpawnerBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.AttachFace;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.DoorHingeSide;
+import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.level.levelgen.structure.StructurePiece;
@@ -79,7 +82,11 @@ public class LegacyDungeonPiece extends StructurePiece {
     public enum DungeonType {
         SHADOW(20, 12, 20),
         GREENHOUSE(24, 2, 14),
-        ROBOT_LAB(48, 2, 50),
+        // Phase D6a reconciliation: anchor switched from the chunk-centre
+        // heightmap probe to the faithful Islands D4 grass anchor
+        // (addD4RobotLab: LessLag gate + nextInt(8) jitter + grass scan
+        // Y20→5, OSW:2368-2389; audit spec d6_extraction/robot_lab_audit_spec.md).
+        ROBOT_LAB(-48, 48, 2, 50, -48, 48, PlacementMode.ISLANDS_GRASS),
         WHITE_HOUSE(48, 2, 25),
         // Audit Part 3 — buried 5x5 lapis surface antenna + 17-block descending
         // shaft + 4 cardinal "Part" rooms (W=15 wide max). Down -25, up +6.
@@ -122,7 +129,36 @@ public class LegacyDungeonPiece extends StructurePiece {
         // bulge; Z is a cumulative 52-step drunkard's walk from 0, hard bound
         // ±52 ±1 bulge (unclamped in the original, GenericDungeon.java:5253,
         // 5283); Y pillars 0..18 + chest 19 + spawner 20. One margin block.
-        NIGHTMARE_ROOKERY(-7, 22, 1, 22, -54, 54, PlacementMode.ISLANDS_GRASS);
+        NIGHTMARE_ROOKERY(-7, 22, 1, 22, -54, 54, PlacementMode.ISLANDS_GRASS),
+        // Phase D6a (WGEN-042, Ender Castle) — orig GenericDungeon.java:
+        // 3207-3624. 29×29 obsidian plate (−3..+25) + four corner towers
+        // reaching −4..+26, 17 tall (spec d6_extraction/ender_castle_spec.md
+        // §10). Generates in TWO dimensions: the End (default END_SURFACE —
+        // air-on-end-stone anchor, OSW:1557-1570) and Islands D4 i==7
+        // (ISLANDS_GRASS via the structure JSON's placement_mode override,
+        // OSW:2322-2343).
+        ENDER_CASTLE(-5, 27, 1, 17, -5, 27, PlacementMode.END_SURFACE),
+        // Phase D6a (WGEN-042, Inca Pyramid) — orig GenericDungeon.java:
+        // 3735-4044. 41×31 stepped base with four ramps reaching X −10..+50,
+        // Z −10..+40, 20 tall (spec d6_extraction/inca_pyramid_spec.md §7).
+        // Islands D4 i==8 (OSW:2345-2366).
+        INCA_PYRAMID(-11, 51, 1, 20, -11, 41, PlacementMode.ISLANDS_GRASS),
+        // Phase D6a (WGEN-042, Kyuubi Dungeon) — orig GenericDungeon.java:
+        // 1095-1363. Surface hut + 22-deep shaft into the 20×30 boss room
+        // with altar/ziggurat; X −0..+34, Y −22..+5, Z −15..+14 (spec
+        // d6_extraction/kyuubi_dungeon_spec.md, suggested entry adopted).
+        // Mining rotation i==1 slot (1/665, set 26/13 like BasiliskMaze).
+        KYUUBI_DUNGEON(-1, 35, 23, 6, -16, 15, PlacementMode.LOWEST_SURFACE_36),
+        // Phase D6a (WGEN-042, Ender Dragon Hospital) — orig GenericDungeon
+        // .java:2815-2991. 10×10 iron-bar cage with 4 End Crystals on bedrock
+        // caps (NO dragon — spec section A2), ramp to X −6; End-exclusive
+        // worldgen (1/4 × 1/25, OSW:1542-1555).
+        HOSPITAL(-7, 10, 1, 12, -1, 10, PlacementMode.END_SURFACE),
+        // Phase D6a (WGEN-042, Monster Island) — orig GenericDungeon.java:
+        // 5170-5240. Floating lens island on the OVERWORLD OCEAN surface
+        // (biome "Ocean", 1/6 × 1/300, anchor = the water-surface block,
+        // OSW:1398-1412). X ±5, Y −1..+4, Z ±3.
+        MONSTER_ISLAND(-6, 6, 2, 5, -4, 4, PlacementMode.OCEAN_SURFACE);
 
         /** How {@link LegacyDungeonStructure#findGenerationPoint} anchors this type. */
         public enum PlacementMode {
@@ -143,7 +179,32 @@ public class LegacyDungeonPiece extends StructurePiece {
              * (the Islands plane is flat, grass at Y7 via the orespawn:islands
              * noise settings, so the predicted heightmap is exact).
              */
-            ISLANDS_GRASS
+            ISLANDS_GRASS,
+            /**
+             * The End-dimension anchor shared by addEnderCastle
+             * (orig OreSpawnWorld.java:1557-1570) and addHospital (:1542-1555):
+             * up to 3 attempts of chunk + nextInt(16) jitter, accepting the
+             * first column whose surface — air directly on end stone — lies in
+             * the original's Y 90→11 scan window. Structure starts resolve
+             * before blocks exist, so the block probes map to the noise
+             * heightmap (surface = getBaseHeight − 1; void columns report
+             * min-build and are rejected), and the originals' flat air-plane
+             * clearance probes (30×30 at +8 / 12×12 at +4) are approximated by
+             * requiring the sampled neighbourhood surfaces not to rise above
+             * the anchor (documented mapping delta, D6a report).
+             */
+            END_SURFACE,
+            /**
+             * OreSpawnWorld.addMonsterIsland (orig OreSpawnWorld.java:
+             * 1398-1412): corner-biome gate "Ocean", up to 4 attempts of
+             * in-chunk jitter, scan Y 100→41 for air directly above STILL
+             * WATER; the anchor is the water-surface block itself (posY − 1).
+             * Modern mapping: ocean biomes via the structure's biome tag, the
+             * water surface from the noise heightmap (first-free − 1), and a
+             * water-exists check via the ocean-floor heightmap sitting below
+             * sea level.
+             */
+            OCEAN_SURFACE
         }
 
         public final int minXOff;
@@ -256,6 +317,11 @@ public class LegacyDungeonPiece extends StructurePiece {
                 case QUEEN_TOWER -> generateChallengeTower(rng, false);
                 case BASILISK_MAZE -> BasiliskMazeGenerator.generate(this, origin, rng);
                 case NIGHTMARE_ROOKERY -> NightmareRookeryGenerator.generate(this, origin, rng);
+                case ENDER_CASTLE -> EnderCastleGenerator.generate(this, origin, rng);
+                case INCA_PYRAMID -> IncaPyramidGenerator.generate(this, origin, rng);
+                case KYUUBI_DUNGEON -> KyuubiDungeonGenerator.generate(this, origin, rng);
+                case HOSPITAL -> HospitalGenerator.generate(this, origin, rng);
+                case MONSTER_ISLAND -> MonsterIslandGenerator.generate(this, origin, rng);
             }
         } finally {
             this.pLevel = null;
@@ -356,6 +422,22 @@ public class LegacyDungeonPiece extends StructurePiece {
         mob.setPersistenceRequired();
         pLevel.addFreshEntityWithPassengers(mob);
         mob.playAmbientSound();
+    }
+
+    /**
+     * Gated direct spawn for NON-mob entities (Phase D6a: the Hospital's four
+     * {@code EntityEnderCrystal}s, orig GenericDungeon.java:2906-2921 — spawned
+     * with a random yaw and no persistence flag; end crystals never despawn).
+     * Same stitching contract as {@link #spawnPersistent}: the caller draws the
+     * yaw so the RNG stream is identical in every chunk pass.
+     */
+    void spawnEntity(EntityType<? extends net.minecraft.world.entity.Entity> type,
+                     double x, double y, double z, float yawDegrees) {
+        if (!inChunk(Mth.floor(x), Mth.floor(y), Mth.floor(z))) return;
+        net.minecraft.world.entity.Entity entity = type.create(pLevel.getLevel());
+        if (entity == null) return;
+        entity.moveTo(x, y, z, yawDegrees, 0.0f);
+        pLevel.addFreshEntityWithPassengers(entity);
     }
 
     /** Gated chest placement + immediate fill (within the same postProcess pass). */
@@ -670,32 +752,58 @@ public class LegacyDungeonPiece extends StructurePiece {
     // ---- Robot Lab -----------------------------------------------------
 
     /**
+     * Loot for the two treasure-room chests: full transcription of
+     * {@code RobotContentsList} (1.7.10 GenericDungeon.java line 37 — 23
+     * entries, total weight 755, incl. the intentional duplicate rail and
+     * redstone-torch entries) at the original fill count {@code 10 +
+     * nextInt(5)} (GD:4344/4349 → rolls uniform 10..14).
+     */
+    private static final ResourceKey<LootTable> ROBOT_LAB_LOOT = ResourceKey.create(
+            Registries.LOOT_TABLE,
+            ResourceLocation.fromNamespaceAndPath("orespawn", "chests/robot_lab"));
+
+    /**
      * Direct port of {@code GenericDungeon.makeRobotLab} (1.7.10 source
-     * line 4044&ndash;4091) and its sub-methods. Builds:
+     * line 4044&ndash;4091) and its sub-methods. Builds, in original order:
      * <ul>
-     *   <li>Entry hall: 10&times;20&times;5 quartz block with iron-block
-     *       floor stripe, double iron door + button (line 4076-4083).</li>
-     *   <li>Six Robo-Sniper pillars: three on each wall at z = length/3,
-     *       2*length/3, length-1 (line 4085-4090).</li>
-     *   <li>Main hangar 30&times;30&times;9 (south of entry, x-shifted -10):
-     *       quartz walls, iron-block floor stripe, open south side
-     *       (line 4127-4158).</li>
-     *   <li>Robo-Pounder altar (8&times;8 iron + 6&times;6 quartz +
-     *       redstone/torch corners + 2 spawners, line 4223-4258).</li>
-     *   <li>Redstone railway (line 4260-4293).</li>
-     *   <li>Assembly line with sticky-piston crushers (line 4295-4308).</li>
-     *   <li>Robo-Warrior treasure room with iron bars + 2 chests
-     *       (line 4310-4351).</li>
-     *   <li>Sniper tower: 12&times;12 iron-bar foundation + 4 corner
-     *       redstone-torch markers + 4 inner Robo-Sniper pillars + a
-     *       30-tall central iron-bar shaft (line 4166-4221).</li>
+     *   <li>Entry hall: 10&times;20&times;5 quartz box with iron-block
+     *       floor stripe (line 4053-4075), 2&times;2 doorway carve + two
+     *       full iron doors + two stone buttons (line 4076-4083).</li>
+     *   <li>Main hangar 30&times;30&times;9 &mdash; built FIRST, before the
+     *       entry pillars (line 4084; south of entry, x-shifted &minus;10):
+     *       quartz walls, iron-block floor stripe, 10-wide door opening
+     *       back into the entry hall (line 4127-4158), plus its five annex
+     *       calls (line 4159-4163): Robo-Pounder altar (line 4223-4258),
+     *       redstone railway (line 4260-4293), assembly line with
+     *       sticky-piston crushers (line 4295-4308), Robo-Warrior treasure
+     *       room with iron bars + 2 loot chests (line 4310-4351), and the
+     *       rooftop sniper tower: 12&times;12 pad + iron-bar railing +
+     *       4 inner Robo-Sniper pillars + 30-tall central spire
+     *       (line 4166-4221).</li>
+     *   <li>Six Robo-Sniper entry pillars, AFTER the hangar: three on each
+     *       wall at z = length/3, 2*length/3, length&minus;1
+     *       (line 4085-4090).</li>
      * </ul>
+     *
+     * <p><b>Build order matters</b>: the hangar's k=0 door carve
+     * (line 4152-4154) blows air through the shared wall row (z rel 19);
+     * the two rear pillars (line 4087/4090) then repair those columns and
+     * re-seat their spawners. A pillars-first order silently deletes both
+     * rear Robo-Sniper spawners (robot_lab_audit_spec.md §18 item 2).</p>
+     *
+     * <p>This generator draws NO randomness: the original's only
+     * {@code world.rand} use was the chest fills (GD:4344/4349), which are
+     * data-driven here ({@link #ROBOT_LAB_LOOT}), so the RNG stream is
+     * trivially identical in every chunk pass.</p>
      */
     private void generateRobotLab(RandomSource random) {
         int cposx = origin.getX();
         int cposy = origin.getY();
         int cposz = origin.getZ();
         // Centre on origin so /locate matches the visual centre of the lab.
+        // (Invented recentring, kept + documented: the original built
+        // NE-ward from its anchor; this is a constant -5/-25 shift of the
+        // whole build, geometry unchanged — audit §18 item 10.)
         int ox = cposx - 5;
         int oz = cposz - 25;
 
@@ -724,24 +832,58 @@ public class LegacyDungeonPiece extends StructurePiece {
                 }
             }
         }
-        // Carve the iron-door entry (legacy line 4076-4083).
+        // Carve the 2x2 doorway in the k=0 wall (legacy line 4076-4079).
         place(ox + width / 2, cposy + 1, oz, air);
         place(ox + width / 2, cposy + 2, oz, air);
         place(ox + width / 2 - 1, cposy + 1, oz, air);
         place(ox + width / 2 - 1, cposy + 2, oz, air);
-        place(ox + width / 2, cposy + 1, oz, Blocks.IRON_DOOR.defaultBlockState());
-        place(ox + width / 2 - 1, cposy + 1, oz, Blocks.IRON_DOOR.defaultBlockState());
+        // Two FULL iron doors (lower + upper halves, legacy line 4080-4081).
+        // The original used vanilla ItemDoor.func_150924_a(dir=3), whose
+        // hinge pick and double-door pairing READ neighbouring world blocks
+        // — forbidden inside a generator (chunk-pass divergence, audit §17)
+        // — so both halves are placed with static states. 1.7.10
+        // ItemDoor.func_150924_a dir=3 (GD:4080-4081) is the NORTH-facing
+        // placement (1.7.10 door meta 0=east/1=south/2=west/3=north, per the
+        // 1.13 DataFixer table): the panel sits flush with the interior/south
+        // face of the k=0 wall, i.e. modern FACING=NORTH. Hinges follow the
+        // vanilla adjacent-door helper's trace for that facing: east leaf
+        // HINGE=LEFT, west leaf HINGE=RIGHT, so the pair opens away from the
+        // centre (D6a verification pass corrected an earlier 180° mirror).
+        BlockState doorEast = Blocks.IRON_DOOR.defaultBlockState()
+                .setValue(BlockStateProperties.HORIZONTAL_FACING, Direction.NORTH)
+                .setValue(BlockStateProperties.DOOR_HINGE, DoorHingeSide.LEFT);
+        BlockState doorWest = Blocks.IRON_DOOR.defaultBlockState()
+                .setValue(BlockStateProperties.HORIZONTAL_FACING, Direction.NORTH)
+                .setValue(BlockStateProperties.DOOR_HINGE, DoorHingeSide.RIGHT);
+        place(ox + width / 2, cposy + 1, oz, doorEast);
+        place(ox + width / 2, cposy + 2, oz,
+                doorEast.setValue(BlockStateProperties.DOUBLE_BLOCK_HALF, DoubleBlockHalf.UPPER));
+        place(ox + width / 2 - 1, cposy + 1, oz, doorWest);
+        place(ox + width / 2 - 1, cposy + 2, oz,
+                doorWest.setValue(BlockStateProperties.DOUBLE_BLOCK_HALF, DoubleBlockHalf.UPPER));
+        // Two stone buttons at z-1 flanking the doors (legacy line 4082-4083,
+        // meta 4 = wall-mounted pointing north, i.e. attached to the outside
+        // of the entry wall) — the only legitimate way to open the iron doors.
+        BlockState button = Blocks.STONE_BUTTON.defaultBlockState()
+                .setValue(BlockStateProperties.ATTACH_FACE, AttachFace.WALL)
+                .setValue(BlockStateProperties.HORIZONTAL_FACING, Direction.NORTH);
+        place(ox + width / 2 - 2, cposy + 2, oz - 1, button);
+        place(ox + width / 2 + 1, cposy + 2, oz - 1, button);
 
-        // 6 Robo-Sniper pillars (legacy line 4085-4090).
+        // Main hangar FIRST (legacy line 4084; shifted south + x-shifted -10)
+        // — see the build-order note in the method Javadoc.
+        makeRoboMain(ox, cposy, oz + length - 1);
+
+        // 6 Robo-Sniper entry pillars AFTER the hangar (legacy line
+        // 4085-4090); the two z = length-1 pillars rebuild the shared-wall
+        // columns the hangar's door carve just opened, restoring their
+        // spawners (legacy overwrite-order dependency, audit §19.3).
         makeRoboPillar(ox, cposy, oz + length / 3, 0);
         makeRoboPillar(ox, cposy, oz + length * 2 / 3, 0);
         makeRoboPillar(ox, cposy, oz + (length - 1), 0);
         makeRoboPillar(ox + width - 1, cposy, oz + length / 3, 1);
         makeRoboPillar(ox + width - 1, cposy, oz + length * 2 / 3, 1);
         makeRoboPillar(ox + width - 1, cposy, oz + (length - 1), 1);
-
-        // Main hangar (legacy line 4127-4163, shifted south + x-shifted -10).
-        makeRoboMain(ox, cposy, oz + length - 1, random);
     }
 
     /** Direct port of {@code makerobopillar} (1.7.10 line 4093-4125). */
@@ -760,6 +902,9 @@ public class LegacyDungeonPiece extends StructurePiece {
                 }
             }
         }
+        // "Robo-Sniper" spawner = Robot5 (OreSpawnMain.java line 3719):
+        // dir 0 = east face (+1), dir 1 = west face (-1) — legacy line
+        // 4111-4124. 10 pillars total (6 entry + 4 tower) = 10 snipers.
         if (dir == 0) {
             placeSpawner(cposx + 1, cposy + 1, cposz, ModEntities.ROBOT_5.get());
         } else {
@@ -767,8 +912,13 @@ public class LegacyDungeonPiece extends StructurePiece {
         }
     }
 
-    /** Direct port of {@code makerobomain} (1.7.10 line 4127-4164). */
-    private void makeRoboMain(int cposx, int cposy, int cposz, RandomSource random) {
+    /**
+     * Direct port of {@code makerobomain} (1.7.10 line 4127-4164). Takes no
+     * {@link RandomSource}: the hangar and all five annexes are fully
+     * deterministic (the only legacy RNG, the chest fills at GD:4344/4349,
+     * lives in {@link #ROBOT_LAB_LOOT}).
+     */
+    private void makeRoboMain(int cposx, int cposy, int cposz) {
         BlockState quartz = Blocks.QUARTZ_BLOCK.defaultBlockState();
         BlockState iron = Blocks.IRON_BLOCK.defaultBlockState();
         BlockState air = Blocks.AIR.defaultBlockState();
@@ -799,10 +949,11 @@ public class LegacyDungeonPiece extends StructurePiece {
                 }
             }
         }
+        // Annex calls in original order (legacy line 4159-4163).
         makeRoboAltar(cposx + width / 2 - 4, cposy, cposz + 6);
         makeRoboRailway(cposx + 3, cposy, cposz + 10);
         makeRoboAssemblyLine(cposx + width - 4, cposy, cposz + 4);
-        makeRoboTreasureRoom(cposx + 9, cposy, cposz + 18, random);
+        makeRoboTreasureRoom(cposx + 9, cposy, cposz + 18);
         makeRoboTower(cposx + width / 2 - 6, cposy + height, cposz + length / 2 - 6);
     }
 
@@ -830,50 +981,85 @@ public class LegacyDungeonPiece extends StructurePiece {
         place(cposx + 5, cposy + 2, cposz + 2, torch);
         place(cposx + 2, cposy + 1, cposz + 5, redstone);
         place(cposx + 2, cposy + 2, cposz + 5, torch);
-        placeSpawner(cposx + 3, cposy + 2, cposz + 3, ModEntities.ROBOT_4.get());
-        placeSpawner(cposx + 4, cposy + 2, cposz + 4, ModEntities.ROBOT_4.get());
+        // Two "Robo-Pounder" spawners (legacy line 4248-4257). Robo-Pounder is
+        // registered as Robot2 (OreSpawnMain.java line 3695) — the class
+        // numbers do NOT follow difficulty order; ROBOT_4 here was a port bug
+        // (robot_lab_audit_spec.md sect. 18 item 1).
+        placeSpawner(cposx + 3, cposy + 2, cposz + 3, ModEntities.ROBOT_2.get());
+        placeSpawner(cposx + 4, cposy + 2, cposz + 4, ModEntities.ROBOT_2.get());
     }
 
-    /** Direct port of {@code makeroborailway} (1.7.10 line 4260-4293). */
+    /**
+     * Direct port of {@code makeroborailway} (1.7.10 line 4260-4293): two
+     * parallel 13-long rail lines at x+0 and x+3, all at y+1, z+0..+12. The
+     * original's 32 unrolled {@code setBlockFast} calls are compressed into
+     * one loop, write-for-write identical: plain rail on rows z+0/1/3/4/5/
+     * 7/8/9/11/12, and on rows z+2/6/10 a golden (powered) rail
+     * ({@code field_150318_D}, GD:4265/4268/4275/4278/4285/4288) on each
+     * line flanked by two floor levers between the tracks (meta 5 = lever
+     * on ground, handle on the north-south axis, unpowered; GD:4266-4267,
+     * 4276-4277, 4286-4287). The prior port's DETECTOR_RAIL + default wall
+     * lever were wrong blocks (robot_lab_audit_spec.md sect. 18 item 6).
+     */
     private void makeRoboRailway(int cposx, int cposy, int cposz) {
         BlockState rail = Blocks.RAIL.defaultBlockState();
-        BlockState detector = Blocks.DETECTOR_RAIL.defaultBlockState();
-        BlockState lever = Blocks.LEVER.defaultBlockState();
-        // 4-wide railway from z..z+12, with detector/lever pairs every 4 ties.
+        BlockState golden = Blocks.POWERED_RAIL.defaultBlockState();
+        BlockState floorLever = Blocks.LEVER.defaultBlockState()
+                .setValue(BlockStateProperties.ATTACH_FACE, AttachFace.FLOOR)
+                .setValue(BlockStateProperties.HORIZONTAL_FACING, Direction.NORTH);
         for (int dz = 0; dz <= 12; dz++) {
-            BlockState here = (dz == 2 || dz == 6 || dz == 10) ? detector : rail;
+            // z%4==2 rows (2, 6, 10) are the boost rows (GD:4265-4288).
+            boolean boost = (dz == 2 || dz == 6 || dz == 10);
+            BlockState here = boost ? golden : rail;
             place(cposx + 0, cposy + 1, cposz + dz, here);
             place(cposx + 3, cposy + 1, cposz + dz, here);
-            if (dz == 2 || dz == 6 || dz == 10) {
-                place(cposx + 1, cposy + 1, cposz + dz, lever);
-                place(cposx + 2, cposy + 1, cposz + dz, lever);
+            if (boost) {
+                place(cposx + 1, cposy + 1, cposz + dz, floorLever);
+                place(cposx + 2, cposy + 1, cposz + dz, floorLever);
             }
         }
     }
 
-    /** Direct port of {@code makeroboassemblyline} (1.7.10 line 4295-4308). */
+    /**
+     * Direct port of {@code makeroboassemblyline} (1.7.10 line 4295-4308):
+     * a 2-wide, 24-long quartz belt (GD:4305-4306) with, every third row
+     * ({@code k%3==1}), a quartz stair step at x&minus;2 (meta 1 =
+     * ascending west, GD:4298), a sticky piston at y+2 (meta 3 = facing
+     * south, GD:4299) and a white carpet above it (meta 0, GD:4300); the
+     * {@code k%3==0} rows carry floor levers placed PRE-POWERED (meta 13 =
+     * 5+8: ground lever, north-south axis, ON — GD:4302-4304), so the
+     * piston "crushers" are extended and active from the moment of
+     * generation. The prior port's RED_CARPET / RED_WOOL / default-facing
+     * piston / unpowered wall lever were all wrong states and killed the
+     * animated tableau (robot_lab_audit_spec.md sect. 18 item 7).
+     */
     private void makeRoboAssemblyLine(int cposx, int cposy, int cposz) {
         BlockState quartz = Blocks.QUARTZ_BLOCK.defaultBlockState();
-        BlockState carpet = Blocks.RED_CARPET.defaultBlockState();
-        BlockState piston = Blocks.STICKY_PISTON.defaultBlockState();
-        BlockState wool = Blocks.RED_WOOL.defaultBlockState();
-        BlockState lever = Blocks.LEVER.defaultBlockState();
-        for (int k = 0; k < 24; k++) {
+        BlockState stairsWest = Blocks.QUARTZ_STAIRS.defaultBlockState()
+                .setValue(BlockStateProperties.HORIZONTAL_FACING, Direction.WEST);
+        BlockState pistonSouth = Blocks.STICKY_PISTON.defaultBlockState()
+                .setValue(BlockStateProperties.FACING, Direction.SOUTH);
+        BlockState whiteCarpet = Blocks.WHITE_CARPET.defaultBlockState();
+        BlockState leverOn = Blocks.LEVER.defaultBlockState()
+                .setValue(BlockStateProperties.ATTACH_FACE, AttachFace.FLOOR)
+                .setValue(BlockStateProperties.HORIZONTAL_FACING, Direction.NORTH)
+                .setValue(BlockStateProperties.POWERED, true);
+        for (int k = 0; k < 24; k++) { // legacy line 4296
             place(cposx, cposy + 1, cposz + k, quartz);
             place(cposx + 1, cposy + 1, cposz + k, quartz);
-            if (k % 3 == 1) {
-                place(cposx - 2, cposy + 1, cposz + k, carpet);
-                place(cposx, cposy + 2, cposz + k, piston);
-                place(cposx, cposy + 3, cposz + k, wool);
+            if (k % 3 == 1) { // legacy line 4297-4301
+                place(cposx - 2, cposy + 1, cposz + k, stairsWest);
+                place(cposx, cposy + 2, cposz + k, pistonSouth);
+                place(cposx, cposy + 3, cposz + k, whiteCarpet);
             }
-            if (k % 3 == 0) {
-                place(cposx, cposy + 2, cposz + k, lever);
+            if (k % 3 == 0) { // legacy line 4302-4304
+                place(cposx, cposy + 2, cposz + k, leverOn);
             }
         }
     }
 
     /** Direct port of {@code makerobotreasureroom} (1.7.10 line 4310-4351). */
-    private void makeRoboTreasureRoom(int cposx, int cposy, int cposz, RandomSource random) {
+    private void makeRoboTreasureRoom(int cposx, int cposy, int cposz) {
         BlockState quartz = Blocks.QUARTZ_BLOCK.defaultBlockState();
         BlockState bars = Blocks.IRON_BARS.defaultBlockState();
         BlockState air = Blocks.AIR.defaultBlockState();
@@ -889,9 +1075,16 @@ public class LegacyDungeonPiece extends StructurePiece {
                 }
             }
         }
-        placeSpawner(cposx + 10, cposy + 1, cposz + 1, ModEntities.ROBOT_2.get());
-        placeChest(cposx + 8, cposy + 1, cposz + 1, this::fillRobotChest, random);
-        placeChest(cposx + 6, cposy + 1, cposz + 1, this::fillRobotChest, random);
+        // "Robo-Warrior" spawner (legacy line 4336-4340). Robo-Warrior is
+        // registered as Robot4 (OreSpawnMain.java line 3711) — the prior
+        // port's ROBOT_2 was the inverse of the altar's swap bug
+        // (robot_lab_audit_spec.md sect. 18 item 1).
+        placeSpawner(cposx + 10, cposy + 1, cposz + 1, ModEntities.ROBOT_4.get());
+        // Two RobotContentsList chests, meta 2 = faces north (legacy line
+        // 4341-4350); fills are data-driven (rolls 10 + nextInt(5) live in
+        // the JSON), replacing the old in-code palette fill.
+        placeLootChest(cposx + 8, cposy + 1, cposz + 1, Direction.NORTH, ROBOT_LAB_LOOT);
+        placeLootChest(cposx + 6, cposy + 1, cposz + 1, Direction.NORTH, ROBOT_LAB_LOOT);
     }
 
     /** Direct port of {@code makerobotower} (1.7.10 line 4166-4221). */
@@ -937,32 +1130,6 @@ public class LegacyDungeonPiece extends StructurePiece {
                     place(cposx + i + 5, cposy + j, cposz + k + 5, bid);
                 }
             }
-        }
-    }
-
-    /**
-     * Authentic {@code RobotContentsList} (1.7.10 line 37). 11 entries, all
-     * weight 35 (so equal-weight uniform random pick); the legacy fill
-     * loop runs {@code 10 + nextInt(5)} per chest.
-     */
-    private void fillRobotChest(ChestBlockEntity chest, RandomSource random) {
-        ItemStack[] palette = new ItemStack[]{
-                new ItemStack(Items.REDSTONE, 1 + random.nextInt(10)),
-                new ItemStack(Items.CLOCK, 1 + random.nextInt(10)),
-                new ItemStack(Items.MINECART, 1),
-                new ItemStack(Items.FIRE_CHARGE, 1 + random.nextInt(10)),
-                new ItemStack(Items.COMPARATOR, 1),
-                new ItemStack(Items.REDSTONE_BLOCK, 1 + random.nextInt(10)),
-                new ItemStack(Items.RAIL, 1 + random.nextInt(10)),
-                new ItemStack(Items.PISTON, 1 + random.nextInt(10)),
-                new ItemStack(Items.STICKY_PISTON, 1 + random.nextInt(10)),
-                new ItemStack(Items.DROPPER, 1 + random.nextInt(10)),
-                new ItemStack(Items.DISPENSER, 1 + random.nextInt(10))
-        };
-        int slots = chest.getContainerSize();
-        int count = 10 + random.nextInt(5);
-        for (int i = 0; i < count; i++) {
-            chest.setItem(random.nextInt(slots), palette[random.nextInt(palette.length)].copy());
         }
     }
 

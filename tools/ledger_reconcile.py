@@ -20,7 +20,10 @@ import sys
 #   loot palettes, Jumpy Bug mob, placement, chest facing; structure-set salt
 #   collision) + ITEM-066 (trophy prince/princess eggs), found 2026-08-08 in
 #   Phase D5.
-TOTAL_EXPECTED = 613
+# + WGEN-058..062 (Robot Lab reconciliation: loot palette, mob bindings,
+#   build order, annex hardware; fairy-tree return contract), found 2026-08-08
+#   in Phase D6a.
+TOTAL_EXPECTED = 618
 TERMINAL = {"FIXED", "VERIFIED-CORRECT", "DEFERRED"}
 
 with open("AUDIT_FINDINGS.md", encoding="utf-8") as fh:

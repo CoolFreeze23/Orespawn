@@ -228,3 +228,42 @@ ores already do; intra-step ordering vs the other ore features follows biome-mod
 order rather than the original call order. All veins replace stone-family blocks
 either way — the difference is not player-distinguishable.
 - **Player-visible:** no.
+
+## PN-017 — End-dimension placement mapping (EnderCastle + Hospital, Phase D6a)
+
+- **Original:** both structures fire dimension-wide in the End (OSW:219-241 —
+dimension-id gate, biome never inspected; 1.7.10 had one End biome and no outer
+islands), with block scans: 3 attempts, air-on-end-stone in Y 90→11
+(EnderCastle adds a 30×30 air plane at +8, Hospital a 12×12 at +4).
+- **Port:** biome tag `#minecraft:is_end` (the faithful-to-CODE choice — the
+dimension-wide gate + end-stone scan self-selects island terrain, which now
+includes the 1.9+ outer-ring biomes; outer islands top out ~Y60-75, inside the
+scan window) + the END_SURFACE placement mode (noise-heightmap anchor; void
+columns rejected; clearance planes approximated by footprint corner/centre
+surface sampling ≤ anchor+3 — conservative vs the castle's looser +8 plane).
+Frequencies map to structure-set spacing (castle 14/7 ≈ 1/200; hospital 10/5 ≈
+1/100); the End path's "recently_placed never set" quirk maps to independent
+sets. Player-visible: castles/hospitals can also appear on outer End islands —
+terrain that did not exist in 1.7.10; central-island behavior matches.
+
+## PN-018 — Inca Pyramid ramps: pre-build terrain reads (Phase D6a)
+
+- **Original:** ramp rails/treads/support pillars condition every write on
+world air-reads (GD:3791-3873): pillars stop at terrain, treads skip occupied
+cells, and docking into the pyramid's own steps is a read-after-write.
+- **Port:** own-structure reads reproduced exactly via an in-memory write-set
+model; pre-build terrain is unreadable under chunk stitching, so unrecorded
+cells read as air — support pillars always fill to relative y 0 (replacing the
+surface grass under ~200 outside-footprint ramp-lane cells even on the flat
+Islands plane, where the original stopped atop the grass) and treads place
+unconditionally. Worst case on the live Dungeon Spawner Block path over rough
+terrain: ramps punch through instead of yielding. Sanctioned by the spec
+(section 10); the flat-plane grass delta is cosmetic (under the ramp lanes).
+
+## PN-019 — Monster Island ocean-biome mapping (Phase D6a)
+
+- **Original:** corner-biome name check EXACTLY "Ocean" (OSW:1402-1403) —
+excludes Deep Ocean, Frozen Ocean, beaches; 1.7.10 had no other ocean variants.
+- **Port:** biome filter `minecraft:ocean` only. Modern lukewarm/cold/warm
+variants (no 1.7.10 counterpart) are excluded — the narrow faithful reading;
+the deep/frozen exclusions carry over exactly. Set 42/21 ≈ the 1/6 × 1/300 odds.

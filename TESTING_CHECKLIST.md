@@ -281,6 +281,20 @@ still applies).
 
 ---
 
+## D6a — strong-model structures (added 2026-08-08)
+
+- **EnderCastle (End)** — `/execute in minecraft:the_end run tp @s 100 70 0`, `/locate structure orespawn:ender_castle_end`. Expect: 29x29 obsidian-plate castle on end stone (central OR outer islands — PN-017), 4 spiral-stair corner towers, rooftop lava pool + dragon-egg pedestal, Ender Knight/Reaper rooftop spawner pairs + pit + CaveFisher alcoves, 3 alcove chests (facing inward) rolling the ender/experience-catcher table (6-10 stacks), trophy ender chest EMPTY (plain block).
+- **EnderCastle (Islands)** — `/locate structure orespawn:ender_castle_islands` in orespawn:islands: same castle at grass level.
+- **IncaPyramid (Islands)** — `/locate structure orespawn:inca_pyramid`: 41x31 stepped pyramid, 4 torch-ended ramps (support pillars reach the ground — PN-018), lit-lamp temple checkerboard, 5 water altars, 4 Creeper Repellents, Molenoid spawner, trapdoor + ladder shaft, 24-grave graveyard (~1/3 with Ghost spawners, poppy/dandelion/poppy beds), all chests roll 10-14 stacks of the 480-weight table.
+- **KyuubiDungeon (Mining)** — `/locate structure orespawn:kyuubi_dungeon`: sealed surface hut (enter via the 1x1 roof hole), 22-deep shaft with water brake, lava-walled corridor, boss room with altar + 4-tier ziggurat, 8-Blaze spawner ring, kyuubi chest (7-13 stacks) + 4 wall chests with DIFFERENT fill counts (4-8/3-7/5-9/6-10) incl. blaze-egg loot entries.
+- **Robot Lab (Islands)** — freshly generated lab: BOTH rear sniper spawners exist behind the hangar wall; altar spawns Robo-Pounder, treasure room Robo-Warrior, pillars Robo-Sniper; railway has powered (golden) rails + unpowered floor levers; assembly-line sticky pistons face south under white carpet and are CRUSHING (their lever generates powered); entry doors face NORTH and open with the wall buttons; chests roll 10-14 of the 755-weight table (minecarts, kits, Ray Gun — no droppers/dispensers/clocks).
+- **Hospital (End)** — `/locate structure orespawn:hospital`: 10x10 iron-bar cage, 4 End Crystals on bedrock caps (NO dragon), 8 spawners, chest at the corner (6-10 of the 210 table).
+- **MonsterIsland (overworld)** — `/locate structure orespawn:monster_island` over PLAIN ocean only (not deep/frozen/warm — PN-019): floating lens island in the water surface, canopy tree, 4 spawners all of ONE randomly picked mob, 2 chests (4-8 of the 450 table).
+- **DSB outcomes** — Random Dungeon Spawner can now also produce: fairy tree (0), fairy castle tree (1), kyuubi dungeon (7), hospital (24), ender castle (27), inca pyramid (29), robot lab (30), monster island (37) at the block.
+- **Trees** — a lone Duplicator Log appears rarely in veggie patches (duplicatorTreeEnable on); the experience sapling grows the REAL experience tree (2x2 oak trunk, drooping branch crown); crystal fairy trees shrink with lessLag=1; fairy-tree chunks that fail the site scan still suppress termites (WGEN-062 quirk).
+
+---
+
 ## Failure log
 
 *(appended during the session as FAILs come in)*

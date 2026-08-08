@@ -3,8 +3,10 @@ package danger.orespawn.world;
 import danger.orespawn.ModBlocks;
 import danger.orespawn.ModEntities;
 import danger.orespawn.ModItems;
+import danger.orespawn.OreSpawnConfig;
 import danger.orespawn.entity.RockBase;
 import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -137,7 +139,62 @@ public class CrystalStructures {
 
     // =====================================================================
     // FAIRY TREE - faithful port from Trees.FairyTree / Trees.FairyCastleTree
+    //
+    // Both builders serve TWO trigger paths, exactly like the original shared
+    // one OreSpawnMain.OreSpawnTrees instance between OreSpawnWorld (crystal
+    // worldgen, orig OreSpawnWorld.java:1987-1991) and DungeonSpawnerBlock
+    // (player-placed Random Dungeon Spawner, orig DungeonSpawnerBlock.java:53-58):
+    //   1. worldgen  — tryPlaceFairyTree below, decoration phase, reads legal;
+    //   2. play time — buildFairyTreeAt / buildFairyCastleTreeAt below, called
+    //      from RandomDungeonSpawnerBlockEntity.buildForType on a live
+    //      ServerLevel tick (types 0/1 of the nextInt(50) roll), reads legal.
+    // The shared private builders are typed on WorldGenLevel, which a
+    // ServerLevel satisfies.
     // =====================================================================
+
+    /**
+     * Random Dungeon Spawner outcome type 0 (orig DungeonSpawnerBlock.java:53-55):
+     * {@code OreSpawnTrees.FairyTree(world, x, y, z)} at the (already-cleared)
+     * spawner-block position — no {@code posY-1} adjustment; that asymmetry
+     * belongs to the worldgen trigger only (orig OreSpawnWorld.java:1988).
+     * The original FairyTree has NO ground gate (callers pre-validate, the DSB
+     * doesn't), so this can legally conjure a floating/embedded tree — faithful.
+     *
+     * @return always {@code true} — the original builds unconditionally
+     */
+    public static boolean buildFairyTreeAt(ServerLevel level, RandomSource random, BlockPos pos) {
+        buildFairyTree(level, random, pos.getX(), pos.getY(), pos.getZ());
+        return true;
+    }
+
+    /**
+     * Random Dungeon Spawner outcome type 1 (orig DungeonSpawnerBlock.java:56-58):
+     * {@code OreSpawnTrees.FairyCastleTree(world, x, y, z)} at the spawner-block
+     * position. See {@link #buildFairyTreeAt} for the shared-builder rationale
+     * (no ground gate, live-tick reads legal).
+     *
+     * @return always {@code true} — the original builds unconditionally
+     */
+    public static boolean buildFairyCastleTreeAt(ServerLevel level, RandomSource random, BlockPos pos) {
+        buildFairyCastleTree(level, random, pos.getX(), pos.getY(), pos.getZ());
+        return true;
+    }
+
+    /**
+     * The 1.7.10 LessLag shrink (orig {@code OreSpawnMain.LessLag} config,
+     * OreSpawnMain.java:471; ported as {@link OreSpawnConfig#LESS_LAG}, 0-2):
+     * {@code LessLag == 1} subtracts 1, {@code LessLag == 2} subtracts 2.
+     * The original applies it to every crystal-branch segment length AFTER the
+     * random draw (orig Trees.java:529-534, :543-548, :556-561, :570-575,
+     * :584-589) and to the fairy-castle tier count (orig Trees.java:618-624) —
+     * the draw itself is never gated, only the resulting length shrinks.
+     */
+    private static int lessLagShrink(int value) {
+        int lessLag = OreSpawnConfig.LESS_LAG.get();
+        if (lessLag == 1) --value;
+        if (lessLag == 2) value -= 2;
+        return value;
+    }
 
     private static boolean tryPlaceFairyTree(WorldGenLevel level, RandomSource random,
                                               int chunkX, int chunkZ, BlockState grassState) {
@@ -172,7 +229,14 @@ public class CrystalStructures {
             }
             return true;
         }
-        return false;
+        // orig OreSpawnWorld.addFairyTree:1968-1995 — when the Y 128→41 scan
+        // finds no air-over-CrystalGrass candidate, the original falls
+        // through to `return true`, which per the dispatch (OSW:188-196)
+        // still suppresses this chunk's termite/big-structure follow-ups.
+        // Only the explicit 17×17 / 5×5 clearance failures (:1977, :1984)
+        // return false. Restored in D6a (WGEN-062); the port previously
+        // returned false here.
+        return true;
     }
 
     /**
@@ -211,7 +275,7 @@ public class CrystalStructures {
 
         placeSpawner(level, new BlockPos(x - 1, y + 1, z), ModEntities.FAIRY.get());
 
-        // orig Trees.java:483-489 — crystal chest, 1+nextInt(5) weighted picks
+        // orig Trees.java:485-489 — crystal chest, 1+nextInt(5) weighted picks
         placeLootChest(level, new BlockPos(x + 2, y + 1, z), CRYSTAL_CHEST_LOOT);
     }
 
@@ -255,7 +319,8 @@ public class CrystalStructures {
         int i = x, j = y, k = z;
         int i2, k2, j2;
 
-        int grow = 4 + random.nextInt(4);
+        // orig Trees.java:528-534 — seg 1 (rising): 4+nextInt(4), LessLag shrink
+        int grow = lessLagShrink(4 + random.nextInt(4));
         for (int n = 0; n < grow; n++) {
             safeSetBlock(level, i, j, k, log);
             makeCrystalLeaves(level, i, j, k);
@@ -266,7 +331,8 @@ public class CrystalStructures {
         i2 = i;
         k2 = k;
 
-        grow = 5 + random.nextInt(5);
+        // orig Trees.java:542-548 — seg 2 (level, main arm): 5+nextInt(5), LessLag shrink
+        grow = lessLagShrink(5 + random.nextInt(5));
         for (int n = 0; n < grow; n++) {
             safeSetBlock(level, i, j, k, log);
             makeCrystalLeaves(level, i, j, k);
@@ -274,7 +340,8 @@ public class CrystalStructures {
             k += zdir;
         }
 
-        grow = 5 + random.nextInt(5);
+        // orig Trees.java:555-561 — seg 3 (level, fork): 5+nextInt(5), LessLag shrink
+        grow = lessLagShrink(5 + random.nextInt(5));
         for (int n = 0; n < grow; n++) {
             safeSetBlock(level, i2, j, k2, log);
             makeCrystalLeaves(level, i2, j, k2);
@@ -284,7 +351,8 @@ public class CrystalStructures {
 
         j--;
         j2 = j;
-        grow = 4 + random.nextInt(4);
+        // orig Trees.java:569-575 — seg 4 (drooping, main): 4+nextInt(4), LessLag shrink
+        grow = lessLagShrink(4 + random.nextInt(4));
         for (int n = 0; n < grow; n++) {
             safeSetBlock(level, i, j, k, log);
             makeCrystalLeaves(level, i, j, k);
@@ -293,7 +361,8 @@ public class CrystalStructures {
             j += ydir;
         }
 
-        grow = 4 + random.nextInt(4);
+        // orig Trees.java:583-589 — seg 5 (drooping, fork): 4+nextInt(4), LessLag shrink
+        grow = lessLagShrink(4 + random.nextInt(4));
         for (int n = 0; n < grow; n++) {
             safeSetBlock(level, i2, j2, k2, log);
             makeCrystalLeaves(level, i2, j2, k2);
@@ -310,7 +379,8 @@ public class CrystalStructures {
     private static void buildFairyCastleTree(WorldGenLevel level, RandomSource random, int x, int y, int z) {
         BlockState log = ModBlocks.CRYSTAL_TREE_LOG.get().defaultBlockState();
         BlockState torch = ModBlocks.CRYSTAL_TORCH.get().defaultBlockState();
-        int nc = 6;
+        // orig Trees.java:618-624 — 6 tiers; LessLag==1 → 5, LessLag==2 → 4
+        int nc = lessLagShrink(6);
         int j = 3 + random.nextInt(3);
         int spread = 0;
 
@@ -386,7 +456,7 @@ public class CrystalStructures {
         if (choice == 1) {
             placeSpawner(level, new BlockPos(x, y + 1, z), ModEntities.FAIRY.get());
         } else if (choice == 2) {
-            // orig Trees.java:605-613 — crystal chest, 1+nextInt(5) weighted picks
+            // orig Trees.java:608-614 — crystal chest, 1+nextInt(5) weighted picks
             placeLootChest(level, new BlockPos(x, y + 1, z), CRYSTAL_CHEST_LOOT);
         }
     }

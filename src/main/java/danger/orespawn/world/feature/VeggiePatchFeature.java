@@ -2,6 +2,7 @@ package danger.orespawn.world.feature;
 
 import com.mojang.serialization.Codec;
 import danger.orespawn.ModBlocks;
+import danger.orespawn.OreSpawnConfig;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.WorldGenLevel;
@@ -18,9 +19,12 @@ import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConf
  * column from Y100 down through air to Y41 for grass and plants ON TOP of it
  * (the grass survives): {@code nextInt(6)} — 0 carrots, 1 potatoes, 2 radish,
  * 3 lettuce, 4 melon stem (only on a further 1-in-10 roll), 5 duplicator-tree
- * sapling (1-in-50 roll; the Duplicator Tree is not ported — Phase D
- * WGEN-044 — so case 5 places nothing, exactly like the original with
- * {@code enableduplicatortree=0}).</p>
+ * seed log (success index 1 of a nextInt(50) roll, gated by the
+ * {@code enableduplicatortree} config, orig OreSpawnWorld.java:1915-1916).
+ * The original places ONLY the first log during worldgen; the tree then grows
+ * live, one block per random tick of {@link
+ * danger.orespawn.block.BlockDuplicatorLog} (WGEN-044, trees_spec.md
+ * section 12 — do not build the whole tree here).</p>
  *
  * <p>The original's biome gate (Utopia/Mining/Chaos dimensions, or overworld
  * River/Swampland biomes, orig OreSpawnWorld.java:1887) is expressed by which
@@ -66,10 +70,15 @@ public class VeggiePatchFeature extends Feature<NoneFeatureConfiguration> {
                         }
                     }
                     default -> {
-                        // orig OreSpawnWorld.java:1915-1916 — duplicator sapling (1/50,
-                        // config-gated). Tree not ported (Phase D WGEN-044): roll for
-                        // random-stream shape, place nothing.
-                        random.nextInt(50);
+                        // orig OreSpawnWorld.java:1915-1916 — duplicator seed log.
+                        // `nextInt(50) != 1 || enableduplicatortree == 0` skips, i.e.
+                        // the roll is drawn UNCONDITIONALLY (short-circuit ||) and the
+                        // config gate is only consulted on success index 1 — preserved
+                        // exactly so the random stream matches with the tree disabled.
+                        if (random.nextInt(50) == 1 && OreSpawnConfig.DUPLICATOR_TREE_ENABLE.get()) {
+                            level.setBlock(plantPos, ModBlocks.DUPLICATOR_LOG.get().defaultBlockState(), 2);
+                            placedAny = true;
+                        }
                     }
                 }
                 break;

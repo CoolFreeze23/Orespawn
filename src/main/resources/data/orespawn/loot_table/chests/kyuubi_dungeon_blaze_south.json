@@ -1,0 +1,83 @@
+{
+  "type": "minecraft:chest",
+  "pools": [
+    {
+      "rolls": {
+        "type": "minecraft:uniform",
+        "min": 5.0,
+        "max": 9.0
+      },
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:blaze_rod",
+          "weight": 15,
+          "functions": [
+            {
+              "function": "minecraft:set_count",
+              "count": { "type": "minecraft:uniform", "min": 2.0, "max": 8.0 }
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:blaze_powder",
+          "weight": 15,
+          "functions": [
+            {
+              "function": "minecraft:set_count",
+              "count": { "type": "minecraft:uniform", "min": 2.0, "max": 8.0 }
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:fire_charge",
+          "weight": 15,
+          "functions": [
+            {
+              "function": "minecraft:set_count",
+              "count": { "type": "minecraft:uniform", "min": 4.0, "max": 8.0 }
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:flint_and_steel",
+          "weight": 10
+        },
+        {
+          "type": "minecraft:item",
+          "name": "orespawn:lavaeel_helmet",
+          "weight": 15
+        },
+        {
+          "type": "minecraft:item",
+          "name": "orespawn:lavaeel_chestplate",
+          "weight": 15
+        },
+        {
+          "type": "minecraft:item",
+          "name": "orespawn:lavaeel_leggings",
+          "weight": 15
+        },
+        {
+          "type": "minecraft:item",
+          "name": "orespawn:lavaeel_boots",
+          "weight": 15
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:blaze_spawn_egg",
+          "weight": 15,
+          "functions": [
+            {
+              "function": "minecraft:set_count",
+              "count": { "type": "minecraft:uniform", "min": 2.0, "max": 8.0 }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

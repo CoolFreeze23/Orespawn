@@ -3867,7 +3867,7 @@ Only MISSING / PARTIAL / DIVERGENT / UNVERIFIED items are listed; fully PORTED i
 - **Original:** `DungeonSpawnerBlock.java:46+` — after 400 ticks spawns 1 of **50** structure types (FairyTree → RedAntHangout list)
 - **Port:** `block/entity/RandomDungeonSpawnerBlockEntity.java:63-72`, `ModBlocks.java:166` — 200-tick countdown, then 1-in-4 ruby dungeon else generic dungeon (2 outcomes)
 - **Fix:** Restore the 400-tick delay and expand the outcome pool toward the original 50-entry structure list as structures are ported (see WGEN-042); at minimum make the pool table-driven so new structures register into it.
-- **Resolution:** PARTIAL (2026-06-12, Phase C — 400-tick fuse + table-driven nextInt(50) pool restored; structure builders beyond generic/ruby dungeon → WGEN-042 (Phase D). 2026-08-08, Phase D5 — outcomes 2 (EnormousCastle King, DSB:59-61), 23 (BasiliskMaze, DSB:122-124), 38 (NightmareRookery, DSB:167-169), 47 (EnormousCastleQ, DSB:194-196) wired via LegacyDungeonPiece.buildNow; remaining outcomes land with their D6 structures; see FIX_LOG.md)
+- **Resolution:** PARTIAL (2026-06-12, Phase C — 400-tick fuse + table-driven nextInt(50) pool restored; structure builders beyond generic/ruby dungeon → WGEN-042 (Phase D). 2026-08-08, Phase D5 — outcomes 2 (EnormousCastle King, DSB:59-61), 23 (BasiliskMaze, DSB:122-124), 38 (NightmareRookery, DSB:167-169), 47 (EnormousCastleQ, DSB:194-196) wired via LegacyDungeonPiece.buildNow; 2026-08-08, Phase D6a — outcomes 0 (FairyTree), 1 (FairyCastleTree), 7 (Kyuubi), 24 (Hospital), 27 (EnderCastle), 29 (IncaPyramid), 30 (RobotLab), 37 (MonsterIsland) wired — 14 of 50 live; remaining outcomes land with their D6b structures; see FIX_LOG.md)
 
 ### ITEM-021 — OreGenericEgg: XP bonus became item-dupe exploit
 
@@ -4680,7 +4680,7 @@ Only MISSING / PARTIAL / DIVERGENT / UNVERIFIED items are listed; fully PORTED i
 - **Original:** placed by OreSpawnWorld/D4 hooks & DungeonSpawnerBlock (loot lists in `GenericDungeon.java`): D4Castle, EnderCastle, IncaPyramid, Mini, CephadromeAltar, NightmareRookery, StinkyHouse, Rainbow, CloudShark dungeon, Pumpkin, BouncyCastle, MonsterIsland, GirlfriendIsland, PlayPool, WaterDragonLair, GoldFishBowl, Graveyard, SpitBugLair, Igloo, KyuubiDungeon, EnderKnightDungeon, Hospital, DamselInDistress, SpiderHangout, RedAntHangout, FrogPond, RubberDuckyPond, QueenAltar(D4), EnormousCastle(Q)
 - **Port:** absent — only 17 structure JSONs + 2 dungeon code paths exist
 - **Fix:** Port these builders incrementally (legacy-piece transcription like the royal altars), prioritizing those wired to gameplay (KyuubiDungeon/EnderKnightDungeon for Mining, Hospital/EnderCastle for End, D4 set for Islands); register each into the DungeonSpawnerBlock pool (ITEM-020/WGEN-036) as it lands.
-- **Resolution:** PARTIAL (2026-08-08, Phase D5 — NightmareRookery ported (`NightmareRookeryGenerator` per orig GenericDungeon.java:5242-5312 + addD4NightmareRookery OSW:2253-2274, island_biome set 44/22 = the 1/100 x 1/19 D4 roll, DSB outcome 38) and the already-ported EnormousCastle/Q ('Challenge Towers') reconciled interior-and-placement to the originals (WGEN-051..056, ITEM-066). D5 also produced `phase_d_reports/structure_conversion_pattern.md` — the D6 playbook — and the full Islands i=nextInt(19) dispatch table (`enormous_castle_spec.md` section 12.3). Remaining ~20 structures → Phase D6; see FIX_LOG.md)
+- **Resolution:** PARTIAL (2026-08-08, Phase D5 — NightmareRookery ported (`NightmareRookeryGenerator` per orig GenericDungeon.java:5242-5312 + addD4NightmareRookery OSW:2253-2274, island_biome set 44/22 = the 1/100 x 1/19 D4 roll, DSB outcome 38) and the already-ported EnormousCastle/Q ('Challenge Towers') reconciled interior-and-placement to the originals (WGEN-051..056, ITEM-066). D5 also produced `phase_d_reports/structure_conversion_pattern.md` — the D6 playbook — and the full Islands i=nextInt(19) dispatch table (`enormous_castle_spec.md` section 12.3). 2026-08-08, Phase D6a — the six strong-model items landed: EnderCastle (GD:3207-3623 + End placement END_SURFACE/is_end + Islands i==7, DSB 27), IncaPyramid (GD:3735-4042, write-set model for ramp self-reads, DSB 29), KyuubiDungeon (GD:1095-1361, Mining rotation i==1, DSB 7), EnderDragonHospital (GD:2815-2991, 4 End Crystals — no dragon, End-only, DSB 24), MonsterIsland (GD:5170-5240, overworld ocean OCEAN_SURFACE, DSB 37), Robot Lab annex reconciliation (WGEN-058..061), FairyTree/FairyCastleTree DSB 0/1 + LessLag shrinks (+WGEN-062). Remaining ~16 mechanical structures → Phase D6b; see FIX_LOG.md)
 
 ### WGEN-043 — Challenge Towers: no 1.7.10 counterpart found
 
@@ -4699,6 +4699,7 @@ Only MISSING / PARTIAL / DIVERGENT / UNVERIFIED items are listed; fully PORTED i
 - **Original:** `Trees.DuplicatorTree` — sapling/worldgen tree generator
 - **Port:** absent — no feature or code (BlockDuplicatorLog re-interprets behavior, ITEM-027)
 - **Fix:** Port `Trees.DuplicatorTree` as a `Feature`/TreeGrower wired to the duplicator sapling and the log's random tick.
+- **Resolution:** FIXED (2026-08-08, Phase D6a — audit corrected in part: `BlockDuplicatorLog` was ALREADY faithful to Trees.DuplicatorTree line-by-line (one-write-per-tick trunk/cap/ring growth, 20×20 duplication with whole-BlockState copies subsuming orig block+meta T:171-178, config gate) — the finding's 'log re-interprets behavior' premise was wrong. The genuinely missing half was the WORLDGEN seed: `addVeggies` plants a lone Duplicator Log on a 1-in-N crop roll (orig OreSpawnWorld.java:1915-1916), which the port's VeggiePatchFeature stubbed out; the what==5 branch now places the seed log (roll drawn unconditionally, DUPLICATOR_TREE_ENABLE gate). Spec `phase_d_reports/d6_extraction/trees_spec.md`; see FIX_LOG.md)
 
 ### WGEN-045 — ExperienceTree generator absent
 
@@ -4706,6 +4707,7 @@ Only MISSING / PARTIAL / DIVERGENT / UNVERIFIED items are listed; fully PORTED i
 - **Original:** `Trees.ExperienceTree`
 - **Port:** absent — no feature/code (EXPERIENCE_SAPLING exists but uses a different/placeholder grower per file 06)
 - **Fix:** Port `Trees.ExperienceTree` geometry as the grower for the experience sapling and any worldgen placement it had.
+- **Resolution:** FIXED (2026-08-08, Phase D6a — `BlockExperiencePlant`'s self-declared placeholder grower replaced with the faithful Trees.ExperienceTree port (soil gate T:298-301, 2×2 oak trunk y+1..5 / y+7..18, crown 5+nextInt(6), makeLeaves 7×7×3 air-only T:184-194, growBranch 5-segment rolls T:245-292, growSmallBranch T:196-243); the trigger (nextInt(10)==1 growth tick, build at y−1) was already faithful. Live-tick context, so the original's world reads are legal and preserved. See FIX_LOG.md)
 
 ### WGEN-046 — SmallTree / ScragglyTreeWithBranches (overworld variants) absent
 
@@ -4823,6 +4825,42 @@ Entries: **79 total** — ANIM 20 (DIVERGENT 8 · PARTIAL 10 · MISSING 2) · BU
 - **Original:** n/a (port-side placement plumbing) — random_spread sets must use distinct salts or their placement grids correlate.
 - **Port:** `structure_set/mantis_nest.json` and `structure_set/royal_trees.json` both used salt 84312.
 - **Resolution:** FIXED (2026-08-08, Phase D5 — royal_trees re-salted to 84332 (next free value); pre-release, so no published worlds shift; see FIX_LOG.md)
+
+### WGEN-058 — Robot Lab: invented chest palette (found 2026-08-08, Phase D6a)
+
+- **Status:** DIVERGENT
+- **Original:** `RobotContentsList` (GenericDungeon.java:37) — 23 weighted entries totalling 755 (incl. two deliberate duplicates, kits at weight 10, Ray Gun 35), fill `10 + nextInt(5)` per chest (GD:4344/4349).
+- **Port:** an invented in-code 11-entry palette (falsely documented as "all weight 35") with `DROPPER`/`DISPENSER` additions, `CLOCK` in place of the repeater, and the comparator count locked to 1.
+- **Resolution:** FIXED (2026-08-08, Phase D6a — palette deleted; both chests bind `chests/robot_lab.json` transcribing GD:37 entry-for-entry (23 entries, total 755, rolls 10-14) via facing-aware placeLootChest (meta 2 = NORTH, GD:4341/4346); see FIX_LOG.md)
+
+### WGEN-059 — Robot Lab: Robo-mob spawner bindings swapped (found 2026-08-08, Phase D6a)
+
+- **Status:** DIVERGENT
+- **Original:** altar spawners = "Robo-Pounder" (= Robot2, OreSpawnMain.java:3695); treasure-room spawner = "Robo-Warrior" (= Robot4, :3711); pillar spawners = "Robo-Sniper" (= Robot5, :3719).
+- **Port:** altar bound ROBOT_4 and treasure bound ROBOT_2 (swapped); pillars correct.
+- **Resolution:** FIXED (2026-08-08, Phase D6a — bindings corrected with citations; see FIX_LOG.md)
+
+### WGEN-060 — Robot Lab: build order erased the rear sniper spawners (found 2026-08-08, Phase D6a)
+
+- **Status:** DIVERGENT
+- **Original:** hangar carve FIRST (GenericDungeon.java:4084), THEN the six pillar spawners (:4085-4090).
+- **Port:** pillars built before the hangar; the carve (i 10..19, j 1..3) overwrote the two rear sniper spawners with air every generation.
+- **Resolution:** FIXED (2026-08-08, Phase D6a — original order restored; see FIX_LOG.md)
+
+### WGEN-061 — Robot Lab: annex hardware divergences (found 2026-08-08, Phase D6a)
+
+- **Status:** DIVERGENT
+- **Original:** railway uses golden/powered rail (`field_150318_D`) with floor levers meta 5 unpowered (GD:4260-4293); assembly line uses quartz stairs meta 1 (WEST), white carpet, sticky piston meta 3 (SOUTH), floor lever meta 13 POWERED (GD:4295-4308); altar buttons meta 4 on the north wall (GD:4223-4258); entry = two adjacent iron doors placed north-facing with outer-jamb hinges (`ItemDoor.func_150924_a` dir 3, GD:4080-4081).
+- **Port:** detector rails, wrong lever states, red carpet/wool substitutions, mis-faced piston, and doors mirrored 180° (FACING=SOUTH).
+- **Resolution:** FIXED (2026-08-08, Phase D6a — all hardware restored to the original blocks/states, incl. the powered crusher lever and the NORTH-facing door pair (the last corrected by the D6a verification pass after the first fix mirrored it); see FIX_LOG.md)
+
+### WGEN-062 — Fairy tree dispatch: scan-exhaustion return diverged (found 2026-08-08, Phase D6a)
+
+- **Status:** DIVERGENT
+- **Original:** `addFairyTree` returns TRUE when its Y 128→41 air-over-CrystalGrass scan finds no candidate (falls through to OreSpawnWorld.java:1995), so 1/5 of such chunks still suppress the termite/big-structure follow-ups with no tree placed; only the explicit 17×17/5×5 clearance failures (:1977/:1984) return false.
+- **Port:** `CrystalStructures.tryPlaceFairyTree` returned false on scan exhaustion, letting follow-ups proceed.
+- **Resolution:** FIXED (2026-08-08, Phase D6a — original return contract restored with citations; pattern-doc addendum updated ("port the FULL return contract"); see FIX_LOG.md)
+
 
 
 ### ANIM-001 — Systemic: `wingspeed` → `limbSwingAmount` frequency mistranslation (39 model files)

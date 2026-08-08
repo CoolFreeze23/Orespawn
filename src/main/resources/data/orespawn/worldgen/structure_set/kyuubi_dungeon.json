@@ -1,0 +1,11 @@
+{
+  "structures": [
+    { "structure": "orespawn:kyuubi_dungeon", "weight": 1 }
+  ],
+  "placement": {
+    "type": "minecraft:random_spread",
+    "spacing": 26,
+    "separation": 13,
+    "salt": 84343
+  }
+}
