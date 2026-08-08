@@ -105,8 +105,13 @@ public class CrystalStructures {
         // (recently_placed = 50 on the helpers' success paths, e.g. orig
         // OreSpawnWorld.java:1621/1641/1661/1678/1695/1992); hoisted here so the
         // counter can be per-generator instead of static (BUG-013).
-        if (tryPlaceFairyTree(level, random, chunkX, chunkZ, crystalGrass)) {
+        FairyTreeResult fairyResult = tryPlaceFairyTree(level, random, chunkX, chunkZ, crystalGrass);
+        if (fairyResult == FairyTreeResult.BUILT) {
+            // orig OSW:1992 — recently_placed = 50 ONLY on the build path.
             placementCooldown.set(50);
+        } else if (fairyResult == FairyTreeResult.SUPPRESS) {
+            // orig OSW:1994-1995 — scan exhaustion suppresses this chunk's
+            // follow-ups without arming the cooldown (WGEN-062).
         } else {
             // orig OreSpawnWorld.java:189 — termites only when the fairy roll failed
             placeCrystalTermiteBlocks(level, random, chunkX, chunkZ, crystalGrass);
@@ -196,11 +201,24 @@ public class CrystalStructures {
         return value;
     }
 
-    private static boolean tryPlaceFairyTree(WorldGenLevel level, RandomSource random,
+    /**
+     * Tri-state result of the fairy-tree roll, mirroring the original's TWO
+     * distinct true-paths (orig OreSpawnWorld.addFairyTree:1962-1996):
+     * {@code BUILT} = a tree was placed (arms recently_placed, OSW:1992);
+     * {@code SUPPRESS} = the 1/5 roll passed but the Y-scan found no site —
+     * the original still returns true (OSW:1994-1995), suppressing the
+     * chunk's termite/big-structure follow-ups WITHOUT arming the cooldown
+     * (WGEN-062, cooldown side-effect corrected in D6b batch-1 verification);
+     * {@code NONE} = roll failed or an explicit clearance check failed
+     * (:1977/:1984) — follow-ups proceed.
+     */
+    private enum FairyTreeResult { BUILT, SUPPRESS, NONE }
+
+    private static FairyTreeResult tryPlaceFairyTree(WorldGenLevel level, RandomSource random,
                                               int chunkX, int chunkZ, BlockState grassState) {
         int posX = chunkX + 8;
         int posZ = chunkZ + 8;
-        if (random.nextInt(5) != 0) return false;
+        if (random.nextInt(5) != 0) return FairyTreeResult.NONE;
 
         for (int posY = 128; posY > 40; posY--) {
             BlockPos pos = new BlockPos(posX, posY, posZ);
@@ -211,14 +229,14 @@ public class CrystalStructures {
             for (int i = -8; i <= 8; i++) {
                 for (int j = -8; j <= 8; j++) {
                     if (!level.getBlockState(new BlockPos(posX + i, posY, posZ + j)).isAir())
-                        return false;
+                        return FairyTreeResult.NONE;
                 }
             }
 
             for (int i = -2; i <= 2; i++) {
                 for (int j = -2; j <= 2; j++) {
                     if (!level.getBlockState(new BlockPos(posX + i, posY - 1, posZ + j)).equals(grassState))
-                        return false;
+                        return FairyTreeResult.NONE;
                 }
             }
 
@@ -227,16 +245,16 @@ public class CrystalStructures {
             } else {
                 buildFairyCastleTree(level, random, posX, posY, posZ);
             }
-            return true;
+            return FairyTreeResult.BUILT;
         }
         // orig OreSpawnWorld.addFairyTree:1968-1995 — when the Y 128→41 scan
         // finds no air-over-CrystalGrass candidate, the original falls
-        // through to `return true`, which per the dispatch (OSW:188-196)
-        // still suppresses this chunk's termite/big-structure follow-ups.
-        // Only the explicit 17×17 / 5×5 clearance failures (:1977, :1984)
-        // return false. Restored in D6a (WGEN-062); the port previously
-        // returned false here.
-        return true;
+        // through to `return true` (OSW:1994-1995), which per the dispatch
+        // (OSW:188-196) suppresses this chunk's termite/big-structure
+        // follow-ups — but does NOT arm recently_placed (that happens only on
+        // the build path, OSW:1992). Restored as WGEN-062; the cooldown
+        // distinction is why this is SUPPRESS, not BUILT.
+        return FairyTreeResult.SUPPRESS;
     }
 
     /**
@@ -463,42 +481,89 @@ public class CrystalStructures {
 
     // =====================================================================
     // ROTATOR STATION - 1/150 chance
+    //
+    // Like the fairy trees above, the builder serves TWO trigger paths, the
+    // same shape the original had (one GenericDungeon.makeRotatorStation
+    // reached from OreSpawnWorld.addRotatorStation, orig OreSpawnWorld.java:
+    // 1608-1626, and from DungeonSpawnerBlock type 3, orig
+    // DungeonSpawnerBlock.java:62-64):
+    //   1. worldgen  — tryPlaceRotatorStation below, decoration phase;
+    //   2. play time — buildRotatorStationAt below, called from
+    //      RandomDungeonSpawnerBlockEntity.buildForType on a live ServerLevel.
     // =====================================================================
+
+    /**
+     * Random Dungeon Spawner outcome type 3 (orig DungeonSpawnerBlock.java:62-64):
+     * {@code MyDungeon.makeRotatorStation(world, x, y, z)} at the
+     * (already-cleared) spawner-block position, unmodified — no ground scan, no
+     * config gate, no Y adjustment (orig :46-52 validates nothing before the
+     * builder). The column writes start at {@code pos.above(4)} exactly as the
+     * original's cposy+4, so a floating or terrain-embedded station is faithful
+     * behavior. Same shared-builder pattern as {@link #buildFairyTreeAt}.
+     *
+     * @return always {@code true} — the original builds unconditionally
+     */
+    public static boolean buildRotatorStationAt(ServerLevel level, RandomSource random, BlockPos pos) {
+        buildRotatorStation(level, random, pos.getX(), pos.getY(), pos.getZ());
+        return true;
+    }
 
     private static boolean tryPlaceRotatorStation(WorldGenLevel level, RandomSource random,
                                                    int chunkX, int chunkZ, BlockState grassState) {
+        // orig OreSpawnWorld.java:1612 — 1/150 gate, then 3 attempts (:1615).
+        // (RotatorEnable, orig :1609-1611, intentionally not ported — see the
+        // class Javadoc; original default is enabled, orig OreSpawnMain.java:6423.)
         if (random.nextInt(150) != 0) return false;
-
-        BlockState crystalStone = ModBlocks.CRYSTAL_STONE.get().defaultBlockState();
 
         for (int i = 0; i < 3; i++) {
             int posX = chunkX + random.nextInt(16);
             int posZ = chunkZ + random.nextInt(16);
+            // orig OreSpawnWorld.java:1618-1619 — Y 100→51 descending,
+            // air above CrystalGrass
             for (int posY = 100; posY > 50; posY--) {
                 if (!level.getBlockState(new BlockPos(posX, posY, posZ)).isAir()
                         || !level.getBlockState(new BlockPos(posX, posY - 1, posZ)).equals(grassState))
                     continue;
 
-                level.setBlock(new BlockPos(posX, posY + 4, posZ), crystalStone, 2);
-                placeSpawner(level, new BlockPos(posX, posY + 5, posZ), ModEntities.ENTITY_ROTATOR.get());
-                placeSpawner(level, new BlockPos(posX, posY + 6, posZ), ModEntities.ENTITY_ROTATOR.get());
-                level.setBlock(new BlockPos(posX, posY + 7, posZ), crystalStone, 2);
-
-                // orig GenericDungeon.java:802-809 — FIXED slot fill, not the
-                // weighted crystal list: slot 1 Rotator egg 1+nextInt(5), slots
-                // 2-3 Crystal Coal 4+nextInt(16) each.
-                BlockPos chestPos = new BlockPos(posX, posY + 8, posZ);
-                level.setBlock(chestPos, Blocks.CHEST.defaultBlockState(), 2);
-                if (level.getBlockEntity(chestPos) instanceof RandomizableContainerBlockEntity container) {
-                    container.setItem(1, new ItemStack(ModItems.ROTATOR_SPAWN_EGG.get(), 1 + random.nextInt(5)));
-                    container.setItem(2, new ItemStack(ModBlocks.CRYSTAL_COAL.get(), 4 + random.nextInt(16)));
-                    container.setItem(3, new ItemStack(ModBlocks.CRYSTAL_COAL.get(), 4 + random.nextInt(16)));
-                }
-
+                // orig OreSpawnWorld.java:1620 — build at the found air block,
+                // no offset (makeRotatorStation itself floats the column +4..+8)
+                buildRotatorStation(level, random, posX, posY, posZ);
                 return true;
             }
         }
         return false;
+    }
+
+    /**
+     * Port of {@code GenericDungeon.makeRotatorStation} (orig
+     * GenericDungeon.java:787-810): a floating 1-wide column starting 4 blocks
+     * above the origin — CrystalStone (+4), two "Rotator" spawners (+5, +6),
+     * CrystalStone (+7), chest (+8) facing north (orig meta 2 via
+     * {@code func_72921_c(..., 2, 3)} ≡ default {@code FACING=NORTH}).
+     * Typed on {@link WorldGenLevel} so one transcription serves both the
+     * decoration phase and the live-tick DSB path ({@link ServerLevel}
+     * satisfies it).
+     */
+    private static void buildRotatorStation(WorldGenLevel level, RandomSource random,
+                                             int posX, int posY, int posZ) {
+        BlockState crystalStone = ModBlocks.CRYSTAL_STONE.get().defaultBlockState();
+
+        // orig GenericDungeon.java:790-801
+        level.setBlock(new BlockPos(posX, posY + 4, posZ), crystalStone, 2);
+        placeSpawner(level, new BlockPos(posX, posY + 5, posZ), ModEntities.ENTITY_ROTATOR.get());
+        placeSpawner(level, new BlockPos(posX, posY + 6, posZ), ModEntities.ENTITY_ROTATOR.get());
+        level.setBlock(new BlockPos(posX, posY + 7, posZ), crystalStone, 2);
+
+        // orig GenericDungeon.java:802-809 — FIXED slot fill, not the
+        // weighted crystal list: slot 1 Rotator egg 1+nextInt(5), slots
+        // 2-3 Crystal Coal 4+nextInt(16) each; slot 0 left empty.
+        BlockPos chestPos = new BlockPos(posX, posY + 8, posZ);
+        level.setBlock(chestPos, Blocks.CHEST.defaultBlockState(), 2);
+        if (level.getBlockEntity(chestPos) instanceof RandomizableContainerBlockEntity container) {
+            container.setItem(1, new ItemStack(ModItems.ROTATOR_SPAWN_EGG.get(), 1 + random.nextInt(5)));
+            container.setItem(2, new ItemStack(ModBlocks.CRYSTAL_COAL.get(), 4 + random.nextInt(16)));
+            container.setItem(3, new ItemStack(ModBlocks.CRYSTAL_COAL.get(), 4 + random.nextInt(16)));
+        }
     }
 
     // =====================================================================
@@ -507,6 +572,13 @@ public class CrystalStructures {
 
     private static boolean tryPlaceUrchinSpawner(WorldGenLevel level, RandomSource random,
                                                   int chunkX, int chunkZ, BlockState grassState) {
+        // orig OreSpawnWorld.java:1649-1651 — UrchinEnable kill-switch (config
+        // default 1/enabled, orig OreSpawnMain.java:6391) returns false BEFORE
+        // the 1/180 roll; with urchins disabled no spawner structure may
+        // generate. Kept FIRST to match the original contract shape (D6b,
+        // urchin_spawner_spec.md §11.1) — the skipped draw only matters for the
+        // original's shared Random stream, not the port's decoration RandomSource.
+        if (!OreSpawnConfig.URCHIN_ENABLE.get()) return false;
         // orig OreSpawnWorld.java:1652 — 1/180 gate, then 3 attempts (:1655)
         if (random.nextInt(180) != 0) return false;
 
