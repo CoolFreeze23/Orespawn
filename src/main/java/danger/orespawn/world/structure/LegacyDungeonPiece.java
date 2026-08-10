@@ -172,7 +172,26 @@ public class LegacyDungeonPiece extends StructurePiece {
         GOLD_FISH_BOWL(-2, 6, 0, 9, -2, 6, PlacementMode.OCEAN_SURFACE),
         // Spit Bug Lair (GD:2638-2696): overworld Swampland platform
         // (OSW:1236-1256; exact-name "Swampland" → minecraft:swamp only).
-        SPIT_BUG_LAIR(-9, 9, 1, 13, -9, 9, PlacementMode.SWAMP_GRASS_SURFACE);
+        SPIT_BUG_LAIR(-9, 9, 1, 13, -9, 9, PlacementMode.SWAMP_GRASS_SURFACE),
+        // Phase D6b batch 2 — specs in phase_d_reports/d6_extraction/.
+        // Igloo (GD:2698-2813): builder + DSB type 20 only. Worldgen placement
+        // is deliberately NOT wired — the snow-biome-border frequency/biome
+        // decision is unresolved (igloo_spec.md §7.3, NEEDS_DESIGN_RULING per
+        // the D6b rule); the mode below is inert until a structure JSON exists.
+        IGLOO(-7, 8, 1, 6, -7, 8, PlacementMode.SURFACE_CENTER),
+        // Ender Reaper Graveyard (GD:2490-2563 + makeAGrave :2565-2576):
+        // End-exclusive (addEndReapers OSW:1527-1540, quickSpaceCheck 12×12).
+        ENDER_REAPER_GRAVEYARD(-1, 11, 5, 5, -1, 13, PlacementMode.END_SURFACE),
+        // Water Dragon Lair (GD:1959-2057): ocean-surface structure.
+        WATER_DRAGON_LAIR(-11, 12, 2, 8, -11, 12, PlacementMode.OCEAN_SURFACE),
+        // Leaf Monster Dungeon (GD:2093-2226): overworld exact-"Plains"
+        // (biome via tag; the SWAMP_GRASS_SURFACE anchor is biome-agnostic —
+        // 4 jitter attempts, Y 41..100 dry grass surface, same scan shape).
+        LEAF_MONSTER_DUNGEON(-4, 7, 5, 17, -4, 7, PlacementMode.SWAMP_GRASS_SURFACE),
+        // Mini Dungeon (GD:2229-2406): Islands D4 i==10 (addD4Mini).
+        MINI_DUNGEON(-7, 10, 1, 12, -1, 10, PlacementMode.ISLANDS_GRASS),
+        // Cephadrome Altar (GD:4731-4829): Islands D4 i==12.
+        CEPHADROME_ALTAR(-5, 5, 1, 5, -5, 5, PlacementMode.ISLANDS_GRASS);
 
         /** How {@link LegacyDungeonStructure#findGenerationPoint} anchors this type. */
         public enum PlacementMode {
@@ -363,6 +382,12 @@ public class LegacyDungeonPiece extends StructurePiece {
                 case CLOUD_SHARK_DUNGEON -> CloudSharkDungeonGenerator.generate(this, origin, rng);
                 case GOLD_FISH_BOWL -> GoldFishBowlGenerator.generate(this, origin, rng);
                 case SPIT_BUG_LAIR -> SpitBugLairGenerator.generate(this, origin, rng);
+                case IGLOO -> IglooGenerator.generate(this, origin, rng);
+                case ENDER_REAPER_GRAVEYARD -> EnderReaperGraveyardGenerator.generate(this, origin, rng);
+                case WATER_DRAGON_LAIR -> WaterDragonLairGenerator.generate(this, origin, rng);
+                case LEAF_MONSTER_DUNGEON -> LeafMonsterDungeonGenerator.generate(this, origin, rng);
+                case MINI_DUNGEON -> MiniDungeonGenerator.generate(this, origin, rng);
+                case CEPHADROME_ALTAR -> CephadromeAltarGenerator.generate(this, origin, rng);
             }
         } finally {
             this.pLevel = null;
@@ -401,6 +426,24 @@ public class LegacyDungeonPiece extends StructurePiece {
         return x >= pCbMinX && x <= pCbMaxX
                 && y >= pCbMinY && y <= pCbMaxY
                 && z >= pCbMinZ && z <= pCbMaxZ;
+    }
+
+    /**
+     * Gated PRE-BUILD terrain probe for the one sanctioned read pattern:
+     * originals that read the world at the SAME cell they are about to write
+     * (royal-altar dirt skirt; Ender Reaper graveyard air-only skirt,
+     * orig GenericDungeon.java:2500; Leaf Monster foundation roots, :2113).
+     * Legal ONLY for read-cell == write-cell probes — each cell's outcome
+     * depends solely on pre-build terrain inside the current pass, so chunk
+     * replays stay consistent. Returns {@code null} outside the current
+     * write window: treat as "unknown, skip", keeping read and write gated
+     * on the same cell. Any other read shape (neighbouring cells, own prior
+     * writes) must use an in-memory model instead (pattern doc §1 step 3).
+     */
+    BlockState terrainStateIfInChunk(int x, int y, int z) {
+        if (!inChunk(x, y, z)) return null;
+        pMut.set(x, y, z);
+        return pLevel.getBlockState(pMut);
     }
 
     /** Gated {@code level.setBlock} ({@link #FLAG_CLIENTS_ONLY}). */

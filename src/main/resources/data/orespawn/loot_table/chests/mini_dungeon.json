@@ -1,0 +1,80 @@
+{
+  "type": "minecraft:chest",
+  "pools": [
+    {
+      "rolls": {
+        "type": "minecraft:uniform",
+        "min": 4.0,
+        "max": 8.0
+      },
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:golden_apple",
+          "weight": 35,
+          "functions": [
+            {
+              "function": "minecraft:set_count",
+              "count": { "type": "minecraft:uniform", "min": 6.0, "max": 16.0 }
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "orespawn:crystal_apple",
+          "weight": 35,
+          "functions": [
+            {
+              "function": "minecraft:set_count",
+              "count": { "type": "minecraft:uniform", "min": 6.0, "max": 16.0 }
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "orespawn:cooked_bacon",
+          "weight": 35,
+          "functions": [
+            {
+              "function": "minecraft:set_count",
+              "count": { "type": "minecraft:uniform", "min": 6.0, "max": 16.0 }
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "orespawn:fire_fish",
+          "weight": 35,
+          "functions": [
+            {
+              "function": "minecraft:set_count",
+              "count": { "type": "minecraft:uniform", "min": 6.0, "max": 16.0 }
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "orespawn:instant_garden",
+          "weight": 25,
+          "functions": [
+            {
+              "function": "minecraft:set_count",
+              "count": { "type": "minecraft:uniform", "min": 2.0, "max": 4.0 }
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "orespawn:instant_shelter",
+          "weight": 25,
+          "functions": [
+            {
+              "function": "minecraft:set_count",
+              "count": { "type": "minecraft:uniform", "min": 2.0, "max": 4.0 }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

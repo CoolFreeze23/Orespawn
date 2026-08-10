@@ -52,6 +52,18 @@ public class RandomDungeonSpawnerBlockEntity extends BlockEntity {
     private static final int TYPE_GOLD_FISH_BOWL = 17;
     // orig DungeonSpawnerBlock.java:110-112 — makeSpitBugLair
     private static final int TYPE_SPIT_BUG_LAIR = 19;
+    // orig DungeonSpawnerBlock.java:92-94 — makeWaterDragonLair
+    private static final int TYPE_WATER_DRAGON_LAIR = 13;
+    // orig DungeonSpawnerBlock.java:98-100 — makeLeafMonsterDungeon
+    private static final int TYPE_LEAF_MONSTER_DUNGEON = 15;
+    // orig DungeonSpawnerBlock.java:101-103 — makeMiniDungeon
+    private static final int TYPE_MINI_DUNGEON = 16;
+    // orig DungeonSpawnerBlock.java:107-109 — makeEnderReaperGraveyard
+    private static final int TYPE_ENDER_REAPER_GRAVEYARD = 18;
+    // orig DungeonSpawnerBlock.java:113-115 — makeIgloo
+    private static final int TYPE_IGLOO = 20;
+    // orig DungeonSpawnerBlock.java:155-157 — makeCephadromeAltar
+    private static final int TYPE_CEPHADROME_ALTAR = 34;
     // orig DungeonSpawnerBlock.java:56-58 — OreSpawnTrees.FairyCastleTree
     private static final int TYPE_FAIRY_CASTLE_TREE = 1;
     // orig DungeonSpawnerBlock.java:59-61 — makeEnormousCastle (King tower)
@@ -213,6 +225,37 @@ public class RandomDungeonSpawnerBlockEntity extends BlockEntity {
             case TYPE_SPIT_BUG_LAIR -> {
                 LegacyDungeonPiece.buildNow(server, pos,
                         LegacyDungeonPiece.DungeonType.SPIT_BUG_LAIR);
+                yield true;
+            }
+            // Phase D6b batch 2.
+            case TYPE_WATER_DRAGON_LAIR -> {
+                LegacyDungeonPiece.buildNow(server, pos,
+                        LegacyDungeonPiece.DungeonType.WATER_DRAGON_LAIR);
+                yield true;
+            }
+            case TYPE_LEAF_MONSTER_DUNGEON -> {
+                LegacyDungeonPiece.buildNow(server, pos,
+                        LegacyDungeonPiece.DungeonType.LEAF_MONSTER_DUNGEON);
+                yield true;
+            }
+            case TYPE_MINI_DUNGEON -> {
+                LegacyDungeonPiece.buildNow(server, pos,
+                        LegacyDungeonPiece.DungeonType.MINI_DUNGEON);
+                yield true;
+            }
+            case TYPE_ENDER_REAPER_GRAVEYARD -> {
+                LegacyDungeonPiece.buildNow(server, pos,
+                        LegacyDungeonPiece.DungeonType.ENDER_REAPER_GRAVEYARD);
+                yield true;
+            }
+            case TYPE_IGLOO -> {
+                LegacyDungeonPiece.buildNow(server, pos,
+                        LegacyDungeonPiece.DungeonType.IGLOO);
+                yield true;
+            }
+            case TYPE_CEPHADROME_ALTAR -> {
+                LegacyDungeonPiece.buildNow(server, pos,
+                        LegacyDungeonPiece.DungeonType.CEPHADROME_ALTAR);
                 yield true;
             }
             // Interim fallback for the not-yet-ported structures (Phase D / WGEN-042)

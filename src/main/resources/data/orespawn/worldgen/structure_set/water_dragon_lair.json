@@ -1,0 +1,11 @@
+{
+  "structures": [
+    { "structure": "orespawn:water_dragon_lair", "weight": 1 }
+  ],
+  "placement": {
+    "type": "minecraft:random_spread",
+    "spacing": 46,
+    "separation": 23,
+    "salt": 84358
+  }
+}
