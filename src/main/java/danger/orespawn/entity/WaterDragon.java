@@ -6,6 +6,7 @@ import danger.orespawn.ModEntities;
 import danger.orespawn.ModItems;
 import danger.orespawn.OreSpawnMod;
 import danger.orespawn.entity.ai.DinosaurMeleeAttackGoal;
+import danger.orespawn.entity.ai.OwnerFollowAnyNavGoal;
 import java.util.UUID;
 import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
@@ -33,7 +34,6 @@ import net.minecraft.world.entity.ai.control.SmoothSwimmingLookControl;
 import net.minecraft.world.entity.ai.control.SmoothSwimmingMoveControl;
 import net.minecraft.world.entity.ai.goal.BreedGoal;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
-import net.minecraft.world.entity.ai.goal.FollowOwnerGoal;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
@@ -81,7 +81,11 @@ public class WaterDragon extends TamableAnimal {
     protected void registerGoals() {
         this.goalSelector.addGoal(0, new FloatGoal(this));
         this.goalSelector.addGoal(1, new BreedGoal(this, 1.0));
-        this.goalSelector.addGoal(2, new FollowOwnerGoal(this, 2.0, 10.0f, 2.0f));
+        // TF-001/TEST-005 — vanilla FollowOwnerGoal's ctor rejects our
+        // WaterBoundPathNavigation (1.21 addition), making the entity
+        // unspawnable; OwnerFollowAnyNavGoal is the same goal minus that gate.
+        // orig WaterDragon.java:71 — MyEntityAIFollowOwner(this, 2.0f, 10.0f, 2.0f).
+        this.goalSelector.addGoal(2, new OwnerFollowAnyNavGoal(this, 2.0, 10.0f, 2.0f));
         this.goalSelector.addGoal(3, new TemptGoal(this, 1.2, Ingredient.of(Items.COD), false));
         this.goalSelector.addGoal(4, new DinosaurMeleeAttackGoal(this, this::setAttacking,
                 DinosaurMeleeAttackGoal.Presets.waterDragon()));

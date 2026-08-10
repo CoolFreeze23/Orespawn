@@ -9,7 +9,7 @@
   "id": "i002-bug-004",
   "section": "A. Creative flatworld",
   "sub": "A1 \u2014 Stability",
-  "text": "<strong>BUG-004</strong> \u2014 Tame a Prince (diamond block), give diamond to grow baby\u2192teen\u2192adult, then quit-to-title and rejoin mid-transformation window. Expect: transformation completes, still tamed to you, no NPE in the log."
+  "text": "<strong>BUG-004</strong> \u2014 Tame a Prince (diamond block); the tame maxes the growth counters, so the baby transforms to a teen instantly \u2014 no separate diamond feed (faithful to 1.7.10; TF-024). Quit-to-title and rejoin mid-transformation window. Expect: instant baby\u2192teen transform completes, still tamed to you, no NPE in the log."
  },
  {
   "id": "i003-item-011-012",

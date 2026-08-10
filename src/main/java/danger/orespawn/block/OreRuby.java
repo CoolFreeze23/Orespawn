@@ -1,7 +1,8 @@
 package danger.orespawn.block;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockBehaviour;
@@ -23,16 +24,25 @@ public class OreRuby extends Block {
     }
 
     /**
-     * Drops the original bonus XP. {@code dropExperience} is false for
-     * Silk Touch harvests, matching 1.7.10 where dropBlockAsItemWithChance
-     * (the XP path) was skipped when silk-harvesting.
+     * Unconditional bonus XP (orig OreRuby.java:26-30 / OreAmethyst.java:26-30 —
+     * {@code 5 + nextInt(5) + nextInt(5)} on every break; no Y gate, unlike
+     * uranium/titanium).
+     *
+     * <p>Implemented via NeoForge's {@code getExpDrop} because every 1.21.1
+     * break path calls {@code spawnAfterBreak(..., dropExperience = false)}
+     * unconditionally and sources break XP exclusively from this hook
+     * (CommonHooks.handleBlockDrops; TF-022, TESTING_FINDINGS 2026-08-10 — the
+     * previous spawnAfterBreak override never fired). Silk Touch drops no XP
+     * because {@code EnchantmentHelper.processBlockExperience} applies the
+     * enchantment's block_experience=0 effect to this value — the same net
+     * semantics as the 1.7.10 silk-harvest path, which skipped
+     * dropBlockAsItemWithChance.</p>
      */
     @Override
-    protected void spawnAfterBreak(BlockState state, ServerLevel level, BlockPos pos, ItemStack stack, boolean dropExperience) {
-        super.spawnAfterBreak(state, level, pos, stack, dropExperience);
-        if (dropExperience) {
-            // orig OreRuby.java:28 — 5 + nextInt(5) + nextInt(5)
-            popExperience(level, pos, 5 + level.random.nextInt(5) + level.random.nextInt(5));
-        }
+    public int getExpDrop(BlockState state, net.minecraft.world.level.LevelAccessor level, BlockPos pos,
+                          net.minecraft.world.level.block.entity.BlockEntity blockEntity,
+                          Entity breaker, ItemStack tool) {
+        RandomSource random = level.getRandom();
+        return 5 + random.nextInt(5) + random.nextInt(5);
     }
 }

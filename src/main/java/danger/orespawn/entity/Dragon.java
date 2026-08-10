@@ -957,8 +957,9 @@ public class Dragon extends TamableAnimal implements danger.orespawn.network.Rid
             return InteractionResult.sidedSuccess(this.level().isClientSide);
         }
 
-        // TNT: release (untame)
-        if (stack.is(Items.TNT) && this.distanceToSqr(player) < 25.0) {
+        // Dead Bush: release (untame) (TF-019; orig Dragon.java:1261-1275 — the
+        // original has no TNT branch, so TNT falls through to the any-item sit toggle)
+        if (stack.is(Blocks.DEAD_BUSH.asItem()) && this.distanceToSqr(player) < 25.0) {
             if (!this.level().isClientSide) {
                 this.setTame(false, false);
                 this.setOwnerUUID(null);
@@ -970,8 +971,9 @@ public class Dragon extends TamableAnimal implements danger.orespawn.network.Rid
             return InteractionResult.sidedSuccess(this.level().isClientSide);
         }
 
-        // Soul Sand: extinguish fireballs
-        if (stack.is(Blocks.SOUL_SAND.asItem()) && this.distanceToSqr(player) < 25.0) {
+        // Ice: extinguish fireballs (TF-020; orig Dragon.java:1276-1290 —
+        // ownership-gated by the isOwnedBy check atop this section, same message)
+        if (stack.is(Blocks.ICE.asItem()) && this.distanceToSqr(player) < 25.0) {
             if (!this.level().isClientSide) {
                 this.setDragonFire(0);
                 player.displayClientMessage(Component.literal("Dragon fireballs extinguished."), false);

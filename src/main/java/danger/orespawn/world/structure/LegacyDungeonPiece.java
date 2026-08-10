@@ -54,8 +54,21 @@ import net.minecraft.world.level.storage.loot.LootTable;
  */
 public class LegacyDungeonPiece extends StructurePiece {
 
-    /** {@code Block.UPDATE_CLIENTS}: no neighbour cascade, no lighting recompute. */
-    private static final int FLAG_CLIENTS_ONLY = 2;
+    /**
+     * {@code Block.UPDATE_CLIENTS | Block.UPDATE_KNOWN_SHAPE}: no neighbour
+     * cascade, no lighting recompute, and — TF-021 fix (2026-08-10) — no
+     * SHAPE updates on already-placed neighbours. On the live buildNow path
+     * a plain flag-2 {@code ServerLevel.setBlock} still ran
+     * {@code updateShape} on neighbours, which let {@code BushBlock}
+     * self-erase fragile plants the generator had just placed (greenhouse
+     * farmland mushrooms died in ~86% of placements — 13.65% empty plots vs
+     * the documented 1-in-20, orig GenericDungeon.java:5075-5080). The
+     * 1.7.10 {@code setBlockFast} flag 2 fired no neighbour updates at all
+     * (orig GenericDungeon.java:187-189); UPDATE_KNOWN_SHAPE restores that
+     * semantic for every piece write (also protects lily pads, nether wart,
+     * cocoa on their structures' live paths).
+     */
+    private static final int FLAG_PIECE_WRITE = 2 | 16;
 
     /**
      * Per-dungeon bounding box envelope. Each tuple is sized to the legacy
@@ -577,11 +590,11 @@ public class LegacyDungeonPiece extends StructurePiece {
         return pLevel.getBlockState(pMut);
     }
 
-    /** Gated {@code level.setBlock} ({@link #FLAG_CLIENTS_ONLY}). */
+    /** Gated {@code level.setBlock} ({@link #FLAG_PIECE_WRITE}). */
     void place(int x, int y, int z, BlockState state) {
         if (!inChunk(x, y, z)) return;
         pMut.set(x, y, z);
-        pLevel.setBlock(pMut, state, FLAG_CLIENTS_ONLY);
+        pLevel.setBlock(pMut, state, FLAG_PIECE_WRITE);
     }
 
     /**
@@ -605,7 +618,7 @@ public class LegacyDungeonPiece extends StructurePiece {
     void placeLootChest(int x, int y, int z, Direction facing, ResourceKey<LootTable> lootTable) {
         if (!inChunk(x, y, z)) return;
         BlockPos pos = new BlockPos(x, y, z);
-        pLevel.setBlock(pos, chestState(facing), FLAG_CLIENTS_ONLY);
+        pLevel.setBlock(pos, chestState(facing), FLAG_PIECE_WRITE);
         if (pLevel.getBlockEntity(pos) instanceof RandomizableContainerBlockEntity container) {
             container.setLootTable(lootTable);
         }
@@ -681,7 +694,7 @@ public class LegacyDungeonPiece extends StructurePiece {
     private void placeChest(int x, int y, int z, Direction facing, ChestFiller filler, RandomSource random) {
         if (!inChunk(x, y, z)) return;
         BlockPos pos = new BlockPos(x, y, z);
-        pLevel.setBlock(pos, chestState(facing), FLAG_CLIENTS_ONLY);
+        pLevel.setBlock(pos, chestState(facing), FLAG_PIECE_WRITE);
         if (pLevel.getBlockEntity(pos) instanceof ChestBlockEntity chest) {
             filler.fill(chest, random);
         }
@@ -691,7 +704,7 @@ public class LegacyDungeonPiece extends StructurePiece {
     void placeSpawner(int x, int y, int z, EntityType<?> mob) {
         if (!inChunk(x, y, z)) return;
         BlockPos pos = new BlockPos(x, y, z);
-        pLevel.setBlock(pos, Blocks.SPAWNER.defaultBlockState(), FLAG_CLIENTS_ONLY);
+        pLevel.setBlock(pos, Blocks.SPAWNER.defaultBlockState(), FLAG_PIECE_WRITE);
         if (pLevel.getBlockEntity(pos) instanceof SpawnerBlockEntity spawner) {
             spawner.getSpawner().setEntityId(mob, null, pLevel.getRandom(), pos);
         }

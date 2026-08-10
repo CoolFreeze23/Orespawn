@@ -1140,8 +1140,44 @@ random_chance condition and NO loot-table scoping, so ruby/amethyst are injected
 into EVERY loot roll game-wide — the original scoped these gems to three vanilla
 ChestGenHooks pools only (OreSpawnMain.java:5391-5403). Canonical mechanism
 writeups: TF-009 (entity/block side) and TF-010 (structure-chest side + missing
-companion injections). All findings are **status OPEN** — fixes await user
-approval before any src/main change.
+companion injections). All findings were logged **status OPEN**; the
+user-approved fix batch (2026-08-10, commit follows this edit) resolves them
+as follows — **TF-001..TF-022 and TF-024 are now FIXED/CLOSED; TF-023 and
+TF-025 remain OPEN**:
+
+- **Bundle A (TF-002..TF-016, TF-018 + the GLM halves of i014_egg/i145/i146):**
+  gem GLMs scoped per-table with exact per-table chances derived from the
+  1.7.10 weighted pools (add_ruby/amethyst_to_{simple_dungeon 0.1875,
+  jungle_temple 0.1667, desert_pyramid 0.1154} — split from a shared mean at
+  batch-verify); codec now decodes item/min_count/max_count/chance; single
+  chance application; thunder_staff/ant_robot_kit/spider_robot_kit injections
+  added (0.125/0.1667/0.1154). CTOR-ORDER CORRECTION: the TF-009/TF-018 fix
+  texts below prescribe "1-3/1-2 counts" — that misread 1.7.10
+  WeightedRandomChestContent(stack, min, max, WEIGHT): (stack,1,1,3) is
+  min=max=1 at WEIGHT 3, so the shipped min_count=max_count=1 JSONs are the
+  faithful form; do NOT "restore" 1-3/1-2 stack counts.
+- **Bundle B (TF-017):** all 14 tables re-gated with the modern silk schema
+  (verified byte-identical in structure to vanilla 1.21.1); ore_ruby/
+  ore_amethyst gems set_count 1-2.
+- **Bundle C (TF-022):** OreRuby (shared by both gem ores) moved to getExpDrop,
+  5+nextInt(5)+nextInt(5) every break, no Y gate.
+- **Bundle D (TF-019/TF-020):** dead-bush release + ICE extinguish restored
+  per orig Dragon.java:1261-1290; TNT falls to the generic sit toggle.
+- **Bundle E, greenhouse half (TF-021):** LegacyDungeonPiece piece writes now
+  carry UPDATE_KNOWN_SHAPE (FLAG_PIECE_WRITE = 2|16) — live-path parity with
+  the original's update-free setBlockFast; frog-pond half deferred to TF-025.
+- **TF-001 (+ TEST-005 closed):** OwnerFollowAnyNavGoal (vanilla FollowOwnerGoal
+  minus the 1.21 navigation-type ctor check) on WaterDragon with the original's
+  parameters (orig WaterDragon.java:71 — MyEntityAIFollowOwner(2.0, 10, 2),
+  which had no navigation restriction).
+- **TF-024 CLOSED (docs amended per user ruling):** the instant diamond-block
+  transform is faithful (orig ThePrince.java:195-206 + :556-568); the bug004
+  test now asserts the faithful flow and items.json i002 is corrected.
+- **TF-023 OPEN:** Red Ant Hangout robot intermittently absent
+  (chunk-border spawn-X hypothesis) — rides the TF-025 instrumentation
+  session rather than this batch.
+- **TF-025 OPEN:** tf025_diag_frog_pond_cascade diagnostic (always-red by
+  design) ships in StructureTestsC; fix proposal follows its dump analysis.
 
 - **TF-001 (HIGH)** `cephadrome_targets_and_kraken_bonus` — WaterDragon is
   unspawnable: its ctor throws IllegalArgumentException "Unsupported mob type for
