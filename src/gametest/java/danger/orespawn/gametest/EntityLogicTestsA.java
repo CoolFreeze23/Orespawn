@@ -1948,4 +1948,51 @@ public class EntityLogicTestsA {
         victim.discard();
         helper.succeed();
     }
+
+    /**
+     * TF-032 — Cephadrome feed gate, source semantics (orig
+     * Cephadrome.java:878-891): any of the three RAW meats (beef / chicken /
+     * porkchop) within 5 blocks heals to full and consumes one item in
+     * survival; anything else (the previously invented feather / cooked-beef
+     * feeds, and the wiki porkchop-only "tame") does not heal. There is no
+     * persistent tame state — this test guards against its reintroduction by
+     * asserting a feather interaction leaves health untouched.
+     */
+    @GameTest(template = "empty", timeoutTicks = 100)
+    public void cephadrome_feed_gate_tf032(GameTestHelper helper) {
+        Cephadrome ceph = helper.spawnWithNoFreeWill(ModEntities.CEPHADROME.get(), new BlockPos(2, 2, 2));
+        Player feeder = helper.makeMockPlayer(GameType.SURVIVAL);
+        feeder.setPos(ceph.getX() + 1.0, ceph.getY(), ceph.getZ());
+
+        String[] names = {"beef", "chicken", "porkchop"};
+        net.minecraft.world.item.Item[] meats =
+                {net.minecraft.world.item.Items.BEEF,
+                 net.minecraft.world.item.Items.CHICKEN,
+                 net.minecraft.world.item.Items.PORKCHOP};
+        for (int i = 0; i < meats.length; i++) {
+            ceph.setHealth(150.0f);
+            ItemStack meal = new ItemStack(meats[i], 5);
+            feeder.setItemInHand(InteractionHand.MAIN_HAND, meal);
+            ceph.mobInteract(feeder, InteractionHand.MAIN_HAND);
+            helper.assertTrue(ceph.getHealth() >= ceph.getMaxHealth() - 0.001f,
+                    "raw " + names[i] + " must heal to full (orig :880-881), got " + ceph.getHealth());
+            helper.assertTrue(feeder.getItemInHand(InteractionHand.MAIN_HAND).getCount() == 4,
+                    "raw " + names[i] + " feed must consume exactly 1 in survival (orig :886-887)");
+        }
+
+        // Non-foods: feather and cooked beef were port inventions; neither
+        // appears in orig :878's item check, so neither may heal.
+        net.minecraft.world.item.Item[] nonFoods =
+                {net.minecraft.world.item.Items.FEATHER, net.minecraft.world.item.Items.COOKED_BEEF};
+        for (net.minecraft.world.item.Item nonFood : nonFoods) {
+            ceph.setHealth(150.0f);
+            feeder.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(nonFood, 5));
+            ceph.mobInteract(feeder, InteractionHand.MAIN_HAND);
+            helper.assertTrue(ceph.getHealth() <= 150.001f,
+                    nonFood + " must NOT trigger the feed heal (not in orig :878)");
+        }
+
+        ceph.discard();
+        helper.succeed();
+    }
 }
