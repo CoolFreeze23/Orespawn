@@ -36,7 +36,11 @@ public class DinosaurMeleeAttackGoal extends BugMeleeAttackGoal {
         public static Params pointysaurus()     { return new Params(1.25, 4.0, 6, 5, 6, 250, 12.0, 5.0); }
         public static Params cryolophosaurus()  { return new Params(1.25, Math.sqrt(5.0), 5, 12, 14, 200, 9.0, 2.0); }
         public static Params basilisk()         { return new Params(1.25, 6.0, 5, 3, 4,   0, 24.0, 7.0); }
-        public static Params waterDragon()      { return new Params(1.0,  4.0, 5, 4, 0, 200, 14.0, 5.0); }
+        // TF-026 (2026-08-11): innerAttackRoll was transcribed 0, crashing
+        // nextInt(0) on the first in-reach attack once TF-001 made the
+        // entity spawnable — orig WaterDragon.java:597/603 is cadence
+        // nextInt(5)==1, then nextInt(4)==0 || nextInt(5)==1.
+        public static Params waterDragon()      { return new Params(1.0,  4.0, 5, 4, 5, 200, 14.0, 5.0); }
         public static Params seaViper()         { return new Params(1.5,  4.5, 5, 2, 4,   0, 18.0, 4.0); }
     }
 }

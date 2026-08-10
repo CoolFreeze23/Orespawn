@@ -1199,6 +1199,17 @@ TF-025 remain OPEN**:
   the same user-approved ITEM-003/TF-022 mechanism, applied as Bundle C's
   completion (no test currently covers these three ores' XP; flagged for a
   follow-up assert).
+- **TF-026 FIXED (2026-08-11, live-session blocker — ticking-entity crash):**
+  WaterDragon's melee preset shipped innerAttackRoll = 0, so the goal's
+  unconditional `nextInt(innerAttackRoll)` threw "Bound must be positive" on
+  the first in-reach attack, killing the server — reachable only since
+  TF-001 made the entity spawnable (crash-2026-08-11_05.46.43-server.txt).
+  Orig WaterDragon.java:597/603: cadence nextInt(5)==1, then
+  nextInt(4)==0 || nextInt(5)==1 → correct Params (…, 5, 4, 5, 200, …).
+  Fixed the preset (DinosaurMeleeAttackGoal.Presets.waterDragon) and added
+  a construction-time positive-rolls guard to BugMeleeAttackGoal.Params
+  (forgetTargetRoll excluded — 0 = "never forget", gated at :118). Suite
+  green 143/143 post-fix.
 - **TF-025 CLOSED (2026-08-11, user-ratified docs amendment — "the
   fluid-mechanics analysis is decisive"):** spec S9 amended to the observed
   stable end-state, i166's cascade asserts re-pointed (one-block lip flow at

@@ -46,6 +46,17 @@ public class BugMeleeAttackGoal extends Goal {
             int    forgetTargetRoll,
             double targetSearchXZ,
             double targetSearchY) {
+        public Params {
+            // TF-026 guard: every roll feeds nextInt(bound) unconditionally
+            // (forgetTargetRoll of 0 means "never forget" and IS gated) —
+            // a zero here crashed the server mid-tick when a transcription
+            // slip shipped innerAttackRoll=0. Fail loudly at construction.
+            if (cadence <= 0 || outerAttackRoll <= 0 || innerAttackRoll <= 0) {
+                throw new IllegalArgumentException(
+                        "BugMeleeAttackGoal.Params rolls must be positive: cadence=" + cadence
+                                + " outer=" + outerAttackRoll + " inner=" + innerAttackRoll);
+            }
+        }
         public static Params scorpion()        { return new Params(1.2, 3.0, 6, 5, 6,   0,  8.0, 3.0); }
         public static Params emperorScorpion() { return new Params(1.2, 6.0, 4, 4, 6, 100, 24.0, 6.0); }
         public static Params herculesBeetle()  { return new Params(1.2, 5.0, 4, 3, 4,   0, 16.0, 6.0); }

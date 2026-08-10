@@ -89,5 +89,39 @@
   "notes": "when riding, hoverboard isnt on feet. its in the middle of the player",
   "status": "fail",
   "when": "2026-08-10T20:20:47.053Z"
+ },
+ "i075-c8-rotator": {
+  "status": "pass",
+  "when": "2026-08-10T20:43:04.390Z"
+ },
+ "i077-c8-d2-giantrobot": {
+  "status": "pass",
+  "when": "2026-08-10T20:42:34.952Z"
+ },
+ "i078-c8-d2-spider-antrobot-legs": {
+  "status": "pass",
+  "when": "2026-08-10T20:43:36.924Z"
+ },
+ "i079-c8-robot2-3-4-arms": {
+  "status": "pass",
+  "when": "2026-08-10T20:43:38.791Z"
+ },
+ "i080-c8-rat": {
+  "notes": "texture glitched",
+  "status": "fail",
+  "when": "2026-08-10T20:44:15.790Z"
+ },
+ "i082-c8-hud": {
+  "status": "pass",
+  "when": "2026-08-10T20:44:15.883Z"
+ },
+ "i084-ent-a-100-101-102-103-crabs": {
+  "status": "pass",
+  "when": "2026-08-10T20:44:32.046Z"
+ },
+ "i085-hook-lava": {
+  "notes": "bobber starts in lava then starts floating out of it.",
+  "status": "fail",
+  "when": "2026-08-10T20:46:19.899Z"
  }
 }
