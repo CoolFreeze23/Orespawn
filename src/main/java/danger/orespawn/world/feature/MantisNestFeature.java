@@ -4,11 +4,13 @@ import com.mojang.serialization.Codec;
 import danger.orespawn.ModEntities;
 import danger.orespawn.ModItems;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.ChestBlock;
 import net.minecraft.world.level.block.entity.ChestBlockEntity;
 import net.minecraft.world.level.block.entity.SpawnerBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -50,8 +52,10 @@ import java.util.Random;
  *
  * <p><b>Loot fidelity (mantisContentsList, GenericDungeon.java:56):</b>
  * Mantis Claw, gold nuggets, uranium nugget, titanium nugget, mantis
- * egg (cobweb stand-in: no entity item exists in 1.21.1), full Tigers
- * Eye armour set, rotten flesh, diamonds. Each chest gets
+ * spawn egg (repo convention: 1.7.10 OreSpawn egg items map to port
+ * spawn eggs &mdash; same mapping as the shipped stinky_house /
+ * rubber_ducky_pond / water_dragon_lair loot), full Tigers Eye armour
+ * set, rotten flesh, diamonds. Each chest gets
  * {@code 3 + nextInt(7)} weighted draws.</p>
  *
  * <p><b>Spawn frequency (verified OreSpawnWorld.java:999-1018,
@@ -181,21 +185,25 @@ public class MantisNestFeature extends Feature<NoneFeatureConfiguration> {
      * {@code fill_mantishive_chests} (GenericDungeon.java:1064-1093).
      */
     private static void fillMantisChests(WorldGenLevel level, BlockPos stepCorner, int width, Random random) {
-        BlockState chestState = Blocks.CHEST.defaultBlockState();
         // Legacy placed chests at (cposx+1, cposy, cposz+width/2) etc. —
         // i.e. at the inside face of each cardinal wall, midpoint along
-        // the perpendicular axis.
-        BlockPos[] chestPositions = new BlockPos[]{
-                stepCorner.offset(1, 0, width / 2),
-                stepCorner.offset(width - 2, 0, width / 2),
-                stepCorner.offset(width / 2, 0, 1),
-                stepCorner.offset(width / 2, 0, width - 2)
-        };
-        for (BlockPos chestPos : chestPositions) {
-            level.setBlock(chestPos, chestState, 2);
-            if (level.getBlockEntity(chestPos) instanceof ChestBlockEntity chest) {
-                fillMantisLoot(chest, random);
-            }
+        // the perpendicular axis. Per-chest facings from the original's
+        // metadata writes (func_72921_c(..., meta, 3); 1.7.10 chest meta
+        // 2=NORTH, 3=SOUTH, 4=WEST, 5=EAST) — each chest faces inward.
+        // West-wall chest faces EAST (meta 5, GD:1069-1070).
+        placeLootChest(level, stepCorner.offset(1, 0, width / 2), Direction.EAST, random);
+        // East-wall chest faces WEST (meta 4, GD:1075-1076).
+        placeLootChest(level, stepCorner.offset(width - 2, 0, width / 2), Direction.WEST, random);
+        // North-wall chest faces SOUTH (meta 3, GD:1081-1082).
+        placeLootChest(level, stepCorner.offset(width / 2, 0, 1), Direction.SOUTH, random);
+        // South-wall chest faces NORTH (meta 2, GD:1087-1088).
+        placeLootChest(level, stepCorner.offset(width / 2, 0, width - 2), Direction.NORTH, random);
+    }
+
+    private static void placeLootChest(WorldGenLevel level, BlockPos chestPos, Direction facing, Random random) {
+        level.setBlock(chestPos, Blocks.CHEST.defaultBlockState().setValue(ChestBlock.FACING, facing), 2);
+        if (level.getBlockEntity(chestPos) instanceof ChestBlockEntity chest) {
+            fillMantisLoot(chest, random);
         }
     }
 
@@ -212,7 +220,10 @@ public class MantisNestFeature extends Feature<NoneFeatureConfiguration> {
                 new ItemStack(Items.GOLD_NUGGET, 4 + random.nextInt(5)),
                 new ItemStack(ModItems.URANIUM_NUGGET.get(), 1 + random.nextInt(3)),
                 new ItemStack(ModItems.TITANIUM_NUGGET.get(), 1 + random.nextInt(3)),
-                new ItemStack(Items.SPIDER_EYE, 2 + random.nextInt(3)),
+                // Legacy MantisEgg, min 2 / max 4 / weight 20 (GD:56 entry 5).
+                // Repo convention maps 1.7.10 OreSpawn egg items to port
+                // spawn eggs (stinky_house / rubber_ducky_pond precedents).
+                new ItemStack(ModItems.MANTIS_SPAWN_EGG.get(), 2 + random.nextInt(3)),
                 new ItemStack(ModItems.TIGERSEYE_HELMET.get()),
                 new ItemStack(ModItems.TIGERSEYE_CHESTPLATE.get()),
                 new ItemStack(ModItems.TIGERSEYE_LEGGINGS.get()),

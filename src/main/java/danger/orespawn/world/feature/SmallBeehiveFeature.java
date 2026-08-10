@@ -4,11 +4,13 @@ import com.mojang.serialization.Codec;
 import danger.orespawn.ModEntities;
 import danger.orespawn.ModItems;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.ChestBlock;
 import net.minecraft.world.level.block.entity.ChestBlockEntity;
 import net.minecraft.world.level.block.entity.SpawnerBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -78,9 +80,11 @@ import java.util.Random;
  * <p><b>Loot fidelity:</b> shares {@code beeContentsList} with the deep
  * {@link BeehiveFeature} (sugar, dandelion, gold nuggets, paper, Fairy
  * Sword, Pink/Crystal Pink armour set, butter candy, experience
- * catcher, golden carrot stand-in for the legacy bee egg), but the
- * small skep gets {@code 7 + nextInt(5)} draws (vs 1+nextInt(5) in the
- * deep variant) per legacy line 1449.</p>
+ * catcher, bee spawn egg &mdash; the repo convention maps 1.7.10
+ * OreSpawn egg items to port spawn eggs, per the shipped stinky_house /
+ * rubber_ducky_pond / water_dragon_lair loot), but the small skep gets
+ * {@code 7 + nextInt(5)} draws (vs 1+nextInt(5) in the deep variant)
+ * per legacy line 1449.</p>
  *
  * <p><b>Spawn frequency:</b> wired via {@code structure_set/small_beehive.json}
  * with {@code spacing=24, separation=12, salt=84314} so it shares the
@@ -224,8 +228,11 @@ public class SmallBeehiveFeature extends Feature<NoneFeatureConfiguration> {
         }
 
         // Step 7: single chest at chamber centre (lines 1444-1450).
+        // Faces EAST per the original metadata write (meta 5; 1.7.10 chest
+        // meta 2=NORTH, 3=SOUTH, 4=WEST, 5=EAST) — orig GD:1446.
         BlockPos chestPos = cpos.offset(WIDTH / 2, j, WIDTH / 2);
-        level.setBlock(chestPos, Blocks.CHEST.defaultBlockState(), 2);
+        level.setBlock(chestPos, Blocks.CHEST.defaultBlockState()
+                .setValue(ChestBlock.FACING, Direction.EAST), 2);
         if (level.getBlockEntity(chestPos) instanceof ChestBlockEntity chest) {
             // Legacy: 7 + nextInt(5) draws (line 1449).
             fillBeeLoot(chest, random, 7 + random.nextInt(5));
@@ -254,7 +261,10 @@ public class SmallBeehiveFeature extends Feature<NoneFeatureConfiguration> {
                 new ItemStack(ModItems.PINK_BOOTS.get()),
                 new ItemStack(ModItems.BUTTER_CANDY.get(), 2 + random.nextInt(7)),
                 new ItemStack(ModItems.EXPERIENCE_CATCHER.get(), 4 + random.nextInt(7)),
-                new ItemStack(Items.GOLDEN_CARROT, 1 + random.nextInt(3))
+                // Legacy BeeEgg, min 2 / max 8 / weight 15 (GD:55 last entry).
+                // Repo convention maps 1.7.10 OreSpawn egg items to port
+                // spawn eggs (stinky_house / rubber_ducky_pond precedents).
+                new ItemStack(ModItems.BEE_SPAWN_EGG.get(), 2 + random.nextInt(7))
         };
         int totalWeight = 0;
         for (int w : weights) totalWeight += w;
