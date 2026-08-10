@@ -77,7 +77,6 @@ public class OreSpawnMod {
         ModWorldGen.register(modEventBus);
         danger.orespawn.world.feature.ModFeatures.register(modEventBus);
         danger.orespawn.world.structure.ModStructureTypes.register(modEventBus);
-        danger.orespawn.recipe.ModRecipes.register(modEventBus);
         danger.orespawn.loot.ModLootModifiers.register(modEventBus);
 
         modEventBus.addListener(this::commonSetup);

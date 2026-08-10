@@ -433,12 +433,6 @@ public class ModBlocks {
             () -> new RandomDungeonSpawnerBlock(BlockBehaviour.Properties.of()
                     .strength(-1.0f, 3600000.0f).lightLevel(s -> 14).noLootTable()));
 
-    // Phase 11 — Extractor: hopper-driven 1-input/1-output processor for
-    // orespawn:extracting recipes. Powered automation only, no GUI.
-    public static final DeferredBlock<Block> EXTRACTOR = BLOCKS.register("extractor",
-            () -> new Extractor(BlockBehaviour.Properties.of()
-                    .strength(3.5f).requiresCorrectToolForDrops().sound(SoundType.METAL)));
-
     // Portal
     public static final DeferredBlock<Block> UTOPIA_PORTAL = BLOCKS.register("utopia_portal",
             () -> new UtopiaPortalBlock(BlockBehaviour.Properties.of().strength(-1.0f, 3600000.0f)

@@ -1531,6 +1531,37 @@ tripped on VANILLA minecraft:igloo — namespace-scoped now).
   LeonModel draws BOTH the standing and f-prefixed flying part sets every
   frame (98 parts), z-fighting whichever set is un-animated; (c) the interim
   Leonopteryx static-pose model gets no wing/leg animation until consolidated.
+
+- **TF-031 FIXED (2026-08-11, user ruling on MOD-020):** Extractor block removed
+  as an orphaned port invention. Grep evidence: the full 1.7.10 reference dump
+  (reference_1_7_10_source, sources + assets) contains zero Extractor/extractor
+  hits — no class, block, art, or DNA/fossil-extraction mechanic of any kind —
+  and the block's output chain was already gone (kyanite / pink tourmaline
+  extracting recipes deleted per PN-009/MOD-009; the last remaining
+  extracting_trex_dna recipe deleted with the ADE retirement in D5). Design
+  archived under MOD-009's "Extractor (DNA extraction bench)" sub-bullet for a
+  possible 2.0 revival. Files removed:
+  src/main/java/danger/orespawn/block/Extractor.java,
+  src/main/java/danger/orespawn/block/entity/ExtractorBlockEntity.java,
+  src/main/java/danger/orespawn/recipe/ExtractingRecipe.java,
+  src/main/java/danger/orespawn/recipe/ModRecipes.java (the
+  orespawn:extracting type/serializer served only this block; the now-empty
+  danger/orespawn/recipe package was deleted with it),
+  src/main/resources/assets/orespawn/blockstates/extractor.json,
+  src/main/resources/assets/orespawn/models/block/extractor.json,
+  src/main/resources/assets/orespawn/models/item/extractor.json,
+  src/main/resources/data/orespawn/recipe/extractor.json,
+  src/main/resources/data/orespawn/loot_table/blocks/extractor.json.
+  Deregistered/edited in place: ModBlocks.EXTRACTOR, ModItems.EXTRACTOR_ITEM,
+  ModBlockEntities.EXTRACTOR_BE (+ import), ModCreativeTabs tab entry,
+  OreSpawnMod's ModRecipes.register(modEventBus) call, the
+  block.orespawn.extractor lang key (en_us.json), and the orespawn:extractor
+  entry in data/minecraft/tags/block/mineable/pickaxe.json. No textures existed
+  to delete (the 2026-08-11 asset wave had aliased the model to vanilla
+  iron_block instead of inventing extractor_* art). Verified: compileJava clean,
+  python tools/asset_audit.py = 0 errors (report JSON refreshed), zero
+  extractor/Extracting references remain under src/. Status: FIXED.
+
 - **Session observation (Phase E note):** EntityCage's DATA_CAGE_INDEX synched
   value is never written server-side (client-only write in tick), so clients
   always read 160; harmless today (only empty cages are thrown) but a latent

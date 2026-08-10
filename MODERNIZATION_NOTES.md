@@ -125,7 +125,22 @@ impact estimate, related finding IDs.
   - **Recipes** — extracting: `ore_kyanite` → 2 kyanite @ 200 t, `ore_pink_tourmaline`
     → 2 pink_tourmaline @ 200 t; shapeless 1:1 conversions both ways between
     `pink_tourmaline` and `crystal_pink_ingot`; 5 tool + 4 armor crafting recipes.
-- **World-compat impact:** removal makes all branch blocks/items vanish from existing
+  - **Extractor (DNA extraction bench)** — the Phase-11 machine that consumed the
+    extracting recipes above; removed 2026-08-11 per the MOD-020 ruling and archived
+    here so the whole chain lives in one place. `extractor` block ("Extractor",
+    strength 3.5, `requiresCorrectToolForDrops`, METAL sound, mineable/pickaxe) +
+    `ExtractorBlockEntity`: a no-GUI, hopper-driven 1-input/1-output processor —
+    top face = input slot, bottom face = output slot, sides locked; matched the
+    input against the custom `orespawn:extracting` recipe type (`ExtractingRecipe`
+    codec: `ingredient`/`result`/`processtime`, default 200 t), throttled to 1
+    progress increment per server tick, held progress while the output was blocked,
+    reset it on input change, and dropped contents on break. Crafted shaped from
+    6 iron ingots + piston + redstone block ("I I"/"IPI"/"IRI"). Its third shipped
+    recipe, `extracting_trex_dna` (`ancient_dried_egg` → `trex_tooth` @ 400 t,
+    the "DNA extraction" use), was removed earlier with the ADE retirement in
+    Phase D5. Art was placeholder-grade: no extractor_* textures ever shipped —
+    the model was a `cube_all` aliased to vanilla `iron_block`. A 2.0 revival
+    should bring real art, in-world feedback (or a GUI), and JEI-visible recipes. removal makes all branch blocks/items vanish from existing
   port worlds (unknown-registry entries are stripped on load); reintroducing the same
   IDs later will NOT restore already-stripped items, so this is a one-way break for
   affected saves. Reintroduction in 2.0 should note that.
@@ -378,19 +393,30 @@ impact estimate, related finding IDs.
   "armor repairs / sword drains" checklist text was an extraction inference);
   the i009 RECONCILIATION PLAN procedure in TESTING_CHECKLIST §(e).
 
-## MOD-020 — Extractor block: port invention pending remove-or-adopt (PARITY REVIEW)
+## MOD-020 — Extractor block: port invention REMOVED (ruling applied 2026-08-11)
+- **Ruling applied 2026-08-11 — REMOVED per user decision**, under the standing
+  no-procedural-fabrication ruling (same treatment as kyanite/MOD-009 and the
+  Ancient Dried Egg block/MOD-013). The complete design is folded into MOD-009's
+  kyanite 2.0 archive (see the "Extractor (DNA extraction bench)" sub-bullet there)
+  so a 2.0 revival has the full picture in one place.
 - **Origin:** Phase-11 port invention — no Extractor class, art, or mechanic exists
-  anywhere in the 1.7.10 reference dump (verified 2026-08-11 during the asset audit;
-  the block's Javadoc previously claimed a fictitious 1.7.10 provenance, corrected the
-  same day). Its companion "extracting_trex_dna" recipe was already removed as invented
-  in Phase D5.
-- **Current state:** registered block + block item (ModBlocks.java:436 region) with
-  placeholder-grade art (the audit's missing extractor_top/side textures were resolved
-  by the 2026-08-11 asset wave per its report).
-- **Decision needed:** the standing no-procedural-fabrication ruling says REMOVE from
-  the 1.0 parity build (same treatment as kyanite/MOD-009 and the Ancient Dried Egg
-  block/MOD-013); if the DNA-extraction concept is wanted, it returns here as designed
-  2.0 content with real art and a full mechanic.
-- **Impact:** removal touches registrations/tab/lang/models; no worldgen places it, so
-  world compat risk is limited to player-placed instances. Effort: small.
-- **Related findings:** PN-009 (invention-removal precedent), MOD-009, MOD-013.
+  anywhere in the 1.7.10 reference dump (verified 2026-08-11 during the asset audit
+  and re-verified at removal; the block's Javadoc previously claimed a fictitious
+  1.7.10 provenance, corrected the same day). Its companion "extracting_trex_dna"
+  recipe was already removed as invented in Phase D5, and its remaining output chain
+  (kyanite / pink tourmaline) was deleted with the MOD-009 branch — the block had
+  no shipped recipes left to process.
+- **What was removed:** the block/BE/recipe-type classes (`Extractor`,
+  `ExtractorBlockEntity`, `ExtractingRecipe`, `ModRecipes` — the
+  `orespawn:extracting` type + serializer existed solely for this block, so the
+  whole `danger.orespawn.recipe` package is gone), the ModBlocks/ModItems/
+  ModBlockEntities registrations, creative-tab entry, OreSpawnMod register call,
+  lang key, blockstate + block/item models, crafting recipe, loot table, and the
+  `minecraft:mineable/pickaxe` tag entry. No textures existed to delete — the
+  2026-08-11 asset wave had pointed the model at vanilla `iron_block` per the
+  no-invented-art rule rather than inventing extractor_* art. Full file list in
+  FIX_LOG TF-031; asset_audit.py stays at 0 errors post-removal.
+- **Impact:** as predicted — no worldgen places it, so world compat risk is limited
+  to player-placed instances (stripped on load; same one-way break class as MOD-009).
+- **Related findings:** PN-009 (invention-removal precedent), MOD-009 (archive
+  location), MOD-013, FIX_LOG TF-031.

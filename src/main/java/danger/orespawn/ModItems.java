@@ -184,7 +184,6 @@ public class ModItems {
     public static final DeferredItem<BlockItem> QUEEN_SPAWNER_ITEM = ITEMS.registerSimpleBlockItem("queen_spawner", ModBlocks.QUEEN_SPAWNER);
     public static final DeferredItem<BlockItem> DUNGEON_SPAWNER_ITEM = ITEMS.registerSimpleBlockItem("dungeon_spawner", ModBlocks.DUNGEON_SPAWNER);
     public static final DeferredItem<BlockItem> RANDOM_DUNGEON_BLOCK_ITEM = ITEMS.registerSimpleBlockItem("random_dungeon_block", ModBlocks.RANDOM_DUNGEON_BLOCK);
-    public static final DeferredItem<BlockItem> EXTRACTOR_ITEM = ITEMS.registerSimpleBlockItem("extractor", ModBlocks.EXTRACTOR);
     public static final DeferredItem<BlockItem> UTOPIA_PORTAL_ITEM = ITEMS.registerSimpleBlockItem("utopia_portal", ModBlocks.UTOPIA_PORTAL);
     public static final DeferredItem<BlockItem> APPLE_LEAVES_ITEM = ITEMS.registerSimpleBlockItem("apple_leaves", ModBlocks.APPLE_LEAVES);
     public static final DeferredItem<BlockItem> EXPERIENCE_LEAVES_ITEM = ITEMS.registerSimpleBlockItem("experience_leaves", ModBlocks.EXPERIENCE_LEAVES);

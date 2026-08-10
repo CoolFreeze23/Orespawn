@@ -912,4 +912,39 @@ public class MiscTests {
                 "dragon_spawn_block appears via the pool (c53; λ≈46 over 200 passes)");
         helper.succeed();
     }
+
+    /**
+     * TEST-004 — ant-teleport first-visit arrival safety. The harness has no
+     * custom dimensions, so a NEVER-GENERATED far overworld chunk stands in
+     * for the fresh destination: before the 2026-08-11 fix,
+     * {@code EntityAnt.findSafeY} bailed to a blind ~Y64 when the chunk did
+     * not exist (EntityAnt.java:164-169 old form), burying arrivals in
+     * terrain; the fix force-generates via {@code level.getChunk} and scans
+     * real blocks (the original's teleporter force-generated too, orig
+     * OreSpawnTeleporter.java placeInPortal path). Region (-300000, -300000)
+     * is untouched by every suite far-build convention (positive-Z 50000
+     * bands and the i156 mirrored columns), so the chunk is genuinely fresh.
+     * Asserts the ported safe-landing contract itself (EntityAnt.java:
+     * ground non-air/non-liquid, feet and head non-motion-blocking) rather
+     * than a fixed Y value.
+     */
+    @GameTest(template = "empty", timeoutTicks = 200)
+    public void test004_ant_teleport_first_visit_safe_y(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        BlockPos column = new BlockPos(-300_000, 0, -300_000);
+        helper.assertTrue(!level.hasChunk(column.getX() >> 4, column.getZ() >> 4),
+                "TEST-004 precondition: the stand-in first-visit chunk must not be generated yet");
+
+        int y = danger.orespawn.entity.EntityAnt.findSafeY(level, column);
+
+        BlockPos feet = new BlockPos(column.getX(), y, column.getZ());
+        var ground = level.getBlockState(feet.below());
+        helper.assertTrue(!ground.isAir() && !ground.liquid(),
+                "TEST-004: ground below the arrival Y must be solid (got " + ground + " at " + feet.below() + ")");
+        helper.assertTrue(!level.getBlockState(feet).blocksMotion(),
+                "TEST-004: arrival feet cell must be passable — the blind-Y64 burial is the regression");
+        helper.assertTrue(!level.getBlockState(feet.above()).blocksMotion(),
+                "TEST-004: arrival head cell must be passable");
+        helper.succeed();
+    }
 }

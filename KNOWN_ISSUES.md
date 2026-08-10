@@ -71,8 +71,8 @@ Known, on the radar, not yet resolved:
 
 - The Leonopteryx may look or animate oddly (stiff pose, smaller than it should be) — it is being consolidated under the hood. *(TF-030 — open)*
 - Kraken and Creeper repellents can only be placed on the floor for now; wall-mounting (which 1.7.10 supported) is a planned follow-up.
-- The Extractor block is pending review — it never actually existed in 1.7.10, so it will either be removed or properly adopted as new content. *(MOD-020)*
-- Your **first** ant-teleport into a freshly generated dimension can bury you inside terrain — dig out and re-enter; later trips to that dimension are safe. A fix is proposed but not yet applied. *(TEST-004 — open)*
+- ~~The Extractor block is pending review — it never actually existed in 1.7.10, so it will either be removed or properly adopted as new content.~~ **Removed in this build** — it was a port invention with no 1.7.10 counterpart and its processing recipes were already gone; the design is archived (with the kyanite branch) for a possible 2.0 return. Player-placed Extractors will disappear from existing worlds on load. *(MOD-020 — ruling applied 2026-08-11, TF-031)*
+- ~~Your **first** ant-teleport into a freshly generated dimension can bury you inside terrain~~ **Fixed in this build** — arrivals now land on the surface even on the very first visit (the destination terrain is generated before the landing spot is chosen). Please confirm on a fresh world. *(TEST-004 — fixed 2026-08-11, GameTest-covered)*
 
 ---
 

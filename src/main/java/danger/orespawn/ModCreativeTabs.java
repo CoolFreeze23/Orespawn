@@ -216,7 +216,6 @@ public class ModCreativeTabs {
                         output.accept(ModItems.QUEEN_SPAWNER_ITEM.get());
                         output.accept(ModItems.DUNGEON_SPAWNER_ITEM.get());
                         output.accept(ModItems.RANDOM_DUNGEON_BLOCK_ITEM.get());
-                        output.accept(ModItems.EXTRACTOR_ITEM.get());
                         // WGEN-050: Utopia Portal block hidden from creative — 1.7.10's
                         // PortalBlock.java was an empty stub and dimension travel was
                         // entity-based only (see PARITY_NOTES.md PN-010).
