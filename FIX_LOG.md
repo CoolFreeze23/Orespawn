@@ -564,6 +564,47 @@ must not despawn when the player walks away.
 
 ---
 
+## Phase D — slice D6b batches 1-2: mechanical structures (2026-08-08, IN PROGRESS — batches 3-4 pending)
+
+- **Pipeline:** every structure ran spec-extract → independent spec-verify →
+  implement → per-structure code-verify (specs in `phase_d_reports/d6_extraction/`).
+- **Batch 1 (committed 1cb4cf0):** PlayPool (DSB 12, ocean-air anchor, set 46/23),
+  CloudSharkDungeon (DSB 14, Islands sky band Y150-159, 17/8), GoldFishBowl
+  (DSB 17, ocean, 46/23), SpitBugLair (DSB 19, swamp, 14/7), UrchinSpawner
+  reconciliation (missing UrchinEnable gate restored in CrystalStructures),
+  RotatorStation live path (DSB 3). New placement modes OCEAN_SURFACE_AIR /
+  SKY_BAND_150 / SWAMP_GRASS_SURFACE. Verify pass: 4x zero issues + 1 real
+  catch — the WGEN-062 restore was arming the cooldown on the suppress path
+  (original arms it only on build, OSW:1992); fixed via tri-state result.
+- **Batch 2 (this commit):** Igloo (builder + DSB 20 ONLY — worldgen placement
+  deliberately unwired, NEEDS_DESIGN_RULING: the snow-biome-border frequency/
+  biome decision, igloo_spec.md §7.3), EnderReaperGraveyard (End, DSB 18,
+  10/5), WaterDragonLair (ocean, DSB 13, 46/23), LeafMonsterDungeon (plains,
+  DSB 15, 17/8), MiniDungeon (Islands, DSB 16, 44/22), CephadromeAltar
+  (Islands, DSB 34, 44/22). Salts 84350-84361 all unique.
+- **Batch-2 verify pass: 0 critical / 0 major / 4 minor, all resolved:**
+  (1) Igloo apex-"skylight" is quadrant-dependent (float32 four-quadrant
+  simulation; code was bit-faithful, doc + spec S3 corrected); (2) Graveyard's
+  interim reflection access to the piece level replaced with the new sanctioned
+  `terrainStateIfInChunk` read-at-write-cell helper; (3) LeafMonster's
+  foundation-root probe (air/tallgrass, orig GD:2113-2114) restored via the
+  same helper, replacing an interim treat-as-air fill; (4) MiniDungeon
+  fetch-count comment corrected (23 fetches / 12 sites).
+- **Infrastructure:** `LegacyDungeonPiece.terrainStateIfInChunk` — the one
+  sanctioned pre-build terrain read (read cell == write cell only), now used
+  by the royal-altar-style skirts; documented against the pattern doc's
+  no-reads contract.
+- **DSB outcome table now covers 27 of 50** (0-3, 7, 12-20, 21-24, 27, 29,
+  30, 34, 37, 38, 47).
+- **Remaining for D6b batches 3-4 (ON HOLD, user usage budget):** BouncyCastle,
+  DamselInDistress, GirlfriendIsland, StinkyHouse, Pumpkin, Rainbow,
+  SpiderHangout, RedAntHangout, FrogPond, RubberDuckyPond + the full DSB
+  outcome sweep + Igloo's placement decision + WGEN-042/ITEM-020 closure +
+  the Phase D rollup.
+- **Build:** full `./gradlew build` SUCCESSFUL both batches.
+
+---
+
 ## Phase D — slice D6a: strong-model structures (2026-08-08)
 
 - **Specs:** `phase_d_reports/d6_extraction/` — six extraction/audit specs, each

@@ -295,6 +295,23 @@ still applies).
 
 ---
 
+## D6b batches 1-2 — mechanical structures (added 2026-08-08)
+
+- **PlayPool (overworld ocean)** — `/locate structure orespawn:play_pool`: floating platform 16 blocks above the sea with 4 Attack Squid spawners, twin chests (only the x+1 chest has loot: ink/squid-zooka/gold-nugget/flesh, 3-7 stacks), water channel with flowing caps.
+- **CloudSharkDungeon (Islands sky)** — `/locate structure orespawn:cloud_shark_dungeon` then fly to Y150-159: tiny glowstone cluster with 4 Cloud Shark spawners + 1 chest (4-8 stacks incl. experience tree seeds).
+- **GoldFishBowl (overworld ocean)** — glass bowl on the surface: sand bed, water fill, 4 glowstone corners, Gold Fish spawner, open wall-top ring and unwritten base ring (faithful oddities), NO chest.
+- **SpitBugLair (swamp)** — emerald-ore antenna, 3 Spit Bug spawners, loot chest; only in plain swamp (not mangrove).
+- **UrchinSpawner (Crystal)** — with `urchinEnable=false` no new urchin spawners generate in fresh Crystal chunks.
+- **RotatorStation / other DSB outcomes** — Random Dungeon Spawner can now produce types 3/12/13/14/15/16/17/18/19/20/34 (rotator station, play pool, water-dragon lair, cloud cluster, leaf tower, mini dungeon, gold fish bowl, graveyard, spit-bug lair, igloo, cephadrome altar) at the block.
+- **EnderReaperGraveyard (End)** — roofless iron-bar cage, 8 obsidian graves with flush chests (eye/poppy/dandelion/pearl 3-5 stacks), 4 Ender Reaper spawners; foundation skirt fills only air below (End terrain preserved).
+- **WaterDragonLair (ocean)** — floating polar-math disc with iron annulus, lapis/spawn-egg rim courses, canopy tree, 4 Water Dragon spawners, chest (4-8 of the 145 table).
+- **LeafMonsterDungeon (plains)** — log tower with leaf crown, 4 Leaf Monster spawners, chest pair (one filled, 12-16 stacks), foundation roots leave the grass threshold intact.
+- **MiniDungeon (Islands)** — per its spec: spawner ring at j=9 (12 spawners), corner caps, floor spawners, chest.
+- **CephadromeAltar (Islands)** — altar per spec with its spawners.
+- **Igloo** — DSB type 20 ONLY (no natural generation yet — placement decision pending): snow/ice dome, west oak door, Rat/Ghost/Ghost-Pumpkin-Skelly spawners, north-facing chest with 16 independent 50% fixed items; at (+,+) build coordinates the apex has a 1x1 skylight, at negative coordinates it closes (faithful float quirk).
+
+---
+
 ## Failure log
 
 *(appended during the session as FAILs come in)*

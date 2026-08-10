@@ -64,8 +64,9 @@ from the OSW:290 picker.
   `addGoldFishBowl` (gold_fish_bowl_spec.md §1.1).
 - Effective odds: 1/6 × 1/350 = **1/2100 per overworld chunk whose corner biome is
   Ocean**, before scan success. No LessLag, no `D4BigSpaceCheck` air probe.
-- `WaterDragonEnable` (OSM:4843-4847 region) gates only the natural ocean/river/swamp
-  spawn-list entries — it does NOT gate the lair worldgen, the DSB roll, or the spawners
+- `WaterDragonEnable` (OSM:4843-4847) gates only the four natural spawn-list entries
+  (river/swamp/ocean/stone-beach `addSpawn`s, OSM:4844-4847) — it does NOT gate the lair
+  worldgen, the DSB roll, or the spawners
   (same scope finding as GoldFishEnable, gold_fish_bowl_spec.md S7). Port mirror:
   `OreSpawnConfig.WATER_DRAGON_ENABLE` (OreSpawnConfig.java:65,200) →
   `ModSpawnControl` (ModSpawnControl.java:115). The structure needs no config check.
@@ -246,9 +247,9 @@ Relative to `(cposx, cposy, cposz)`:
 
 | Axis | Min | Max | Extent | Determined by |
 |---|---|---|---|---|
-| X | `−10` | `+10` (positive-coord regime; **−9..+11 at negative world coords** — §2 idiom) | 21 (union −10..+11) | rim radius 10.0 (GD:1994) / disc max radius 9.90 (GD:1972), `(int)(v+0.5f)` rounding |
+| X | `−10` | `+10` (positive-coord regime; **−9..+11 at negative world coords** — §2 idiom) | 21 per regime (union −10..+11 = 22) | rim radius 10.0 (GD:1994) / disc max radius 9.90 (GD:1972), `(int)(v+0.5f)` rounding |
 | Y | `−1` | `+7` | **9** | pad stone y−1 (GD:2016) / roof y+7 (GD:1980) |
-| Z | `−10` | `+10` (same negative-coord caveat) | 21 | same lines as X |
+| Z | `−10` | `+10` (same negative-coord caveat) | 21 per regime (union 22) | same lines as X |
 
 Suggested entry (asymmetric 6-int ctor; bounds cover the UNION of both truncation regimes
 [−10, +11] plus 1 margin — a write outside the box would be dropped in non-intersecting
@@ -259,7 +260,8 @@ WATER_DRAGON_LAIR(-11, 12, 2, 8, -11, 12, PlacementMode.OCEAN_SURFACE),
 ```
 
 **PlacementMode: `OCEAN_SURFACE` — exact fit, no new mode needed.** The scan
-(OSW:1364-1374) is line-for-line identical to `addMonsterIsland`'s (OSW:1398-1412), which
+(OSW:1364-1374) is line-for-line identical to `addMonsterIsland`'s (OSW:1404-1414; only
+MI's upstream gate differs, 1/300 at OSW:1399 vs this 1/350), which
 `oceanSurfaceOrigin` (LegacyDungeonStructure.java:197-208, dispatched at :71) already
 implements: 4 attempts, chunk + `nextInt(16)` jitter, Y 100→41 downward scan for air
 directly above still water, anchor at `posY − 1` (the water-surface block). Same mode
@@ -270,8 +272,10 @@ already reused by GOLD_FISH_BOWL (LegacyDungeonPiece.java:172).
 - Effective odds 1/6 × 1/350 = **1/2100** per qualifying chunk (§1.1) — identical to Gold
   Fish Bowl. C7 sqrt equivalence: spacing ≈ √2100 ≈ 45.8 → **spacing 46, separation 23**.
 - **Salt 84358** (assigned to this task; verified free — grep of
-  `RES:worldgen/structure_set/*.json` on extraction date shows highest in use = 84354,
-  plus the known 84312 mantis_nest/royal_trees collision).
+  `RES:worldgen/structure_set/*.json` on verification date 2026-08-08 shows highest 843xx
+  in use = 84354 [spit_bug_lair]; the pattern doc's mantis_nest/royal_trees 84312
+  collision has since been fixed — royal_trees now 84332. Sibling D6 specs claim
+  84357/84359/84360/84361; 84358 collides with none).
 - The `recently_placed = 50` cooldown (OSW:1371) maps onto structure-set separation per
   the standing C7 approximation.
 

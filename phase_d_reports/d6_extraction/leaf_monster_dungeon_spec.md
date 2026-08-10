@@ -122,7 +122,7 @@ Same triple loop; only `k == 2 && (i==1 \|\| i==2)`, `j = 0..9`:
 north**, i.e. attached to the south log wall at `k = 3` (written by loop 3 BEFORE this
 loop, so the support exists), climbable from the `k = 1` shaft. Note **flags = 3**,
 the method's only non-flag-2 write — behaviorally a no-op here (the neighbor check
-passes; final state identical), so the port's flag-2 `piece.place` matches (§10 S4).
+passes; final state identical), so the port's flag-2 `piece.place` matches (§12 S4).
 2×10 = 20 ladders.
 
 ### 2.5 Door awning (GD:2143-2144)
@@ -152,7 +152,7 @@ k == 5` → **oak log** (GD:2171-2173); then `i == −1 || i == 4 || k == −1 |
 choice). Result: 8×8 layer, outer log square, inner leaf square, 4×4 air center —
 EXCEPT the 8 outer-ring cells that also sit on an inner-ring line
 (`(−2,−1), (−2,4), (5,−1), (5,4), (−1,−2), (4,−2), (−1,5), (4,5)`), which end up
-**leaves**, visibly breaking the log square near its corners (§10 S6 — faithful).
+**leaves**, visibly breaking the log square near its corners (§12 S6 — faithful).
 
 ### 2.9 Loops 8-10 — roof cap (GD:2180-2200)
 
@@ -202,7 +202,7 @@ all 9), **total weight = 255** (4×35 + 4×25 + 15).
 
 | # | 1.7.10 item | Modern / port mapping (cite) | min | max | weight |
 |---|---|---|---|---|---|
-| 1 | `Items.field_151162_bE` | `minecraft:flower_pot` (identity proven by the port's ItemSifter case 5, src/main/java/danger/orespawn/item/ItemSifter.java:147 ← orig ItemSifter.java:387; do NOT copy the greenhouse fill's APPLE mis-mapping, §10 S8) | 6 | 16 | 35 |
+| 1 | `Items.field_151162_bE` | `minecraft:flower_pot` (identity proven by the port's ItemSifter case 5, src/main/java/danger/orespawn/item/ItemSifter.java:147 ← orig ItemSifter.java:371; do NOT copy the greenhouse fill's APPLE mis-mapping, §12 S8) | 6 | 16 | 35 |
 | 2 | `Blocks.field_150345_g` (sapling, meta 0) | `minecraft:oak_sapling` | 6 | 16 | 35 |
 | 3 | `Items.field_151162_bE` (duplicate of #1) | `minecraft:flower_pot` | 6 | 16 | 35 |
 | 4 | `Blocks.field_150345_g` (duplicate of #2) | `minecraft:oak_sapling` | 6 | 16 | 35 |
@@ -235,7 +235,7 @@ already whitelists "Leaf Monster" spawner spawns, EntityLeafMonster.java:181-193
 |---|---|---|---|
 | `Blocks.field_150350_a` | `minecraft:air` | yard clearing, door, shaft, room interiors | GD:2105, 2124, 2127, 2159, 2170 |
 | `Blocks.field_150364_r` meta 0 | `minecraft:oak_log` (default axis=y) | walls, foundation roots, plateau, roof rings | GD:2112, 2122, 2149, 2172, 2190 |
-| `Blocks.field_150362_t` meta 0 | `minecraft:oak_leaves` — **place with `PERSISTENT=true`** (adaptation, §10 S5) | awning, plateau rim, crown walls, roof | GD:2143-2144, 2151, 2161, 2175, 2183, 2197 |
+| `Blocks.field_150362_t` meta 0 | `minecraft:oak_leaves` — **place with `PERSISTENT=true`** (adaptation, §12 S5) | awning, plateau rim, crown walls, roof | GD:2143-2144, 2151, 2161, 2175, 2183, 2197 |
 | `Blocks.field_150468_ap` meta 2 | `minecraft:ladder[facing=north]` | 2×10 ladder wall | GD:2138-2139 |
 | `Blocks.field_150329_H` | `minecraft:short_grass` / `minecraft:fern` (block-level compare — see §9) | foundation probe READ target only | GD:2114 |
 | `Blocks.field_150474_ac` | `minecraft:spawner` | 4 spawners | GD:2201/2206/2211/2216 |
@@ -292,7 +292,8 @@ Javadoc that it also serves the Plains fall-through-chain structures
 (LeafMonsterDungeon; later Igloo/BouncyCastle/RubberDuckyPond candidates share the
 same scan shape).
 
-JSON trio (copy the `spit_bug_lair` trio and rename — same anchor mode):
+JSON pair (copy the `spit_bug_lair` structure/structure_set JSONs and rename — same
+anchor mode; but swap its tag `biomes` field for an inline biome, see below):
 
 - `RES:worldgen/structure/leaf_monster_dungeon.json` —
   `"type": "orespawn:legacy_dungeon"`, `"dungeon_type": "LEAF_MONSTER_DUNGEON"`,
@@ -301,8 +302,14 @@ JSON trio (copy the `spit_bug_lair` trio and rename — same anchor mode):
   Monster Island exact-"Ocean" treatment), `"step": "surface_structures"`,
   `"terrain_adaptation": "none"`, `"spawn_overrides": {}`.
 - `RES:worldgen/structure_set/leaf_monster_dungeon.json` — §8.
-- No biome tag file needed (vanilla tag inline, matching monster_island/spit_bug_lair
-  precedent — spit_bug_lair uses `minecraft:swamp` inline).
+- No biome tag file needed (inline single-biome `"biomes"`, matching the
+  monster_island precedent — monster_island.json uses `"minecraft:ocean"` inline.
+  NOTE: spit_bug_lair itself uses a tag,
+  `"#orespawn:has_structure/spit_bug_lair"` +
+  `RES:tags/worldgen/biome/has_structure/spit_bug_lair.json` — so if the trio is
+  copied from spit_bug_lair, the `biomes` field must be changed to the inline form,
+  or a `has_structure/leaf_monster_dungeon.json` tag containing only
+  `minecraft:plains` added instead; either is precedented, inline is less files).
 
 ## 8. Structure-set conversion
 
@@ -313,8 +320,10 @@ couplings are absorbed per the C7 approximation, pattern §1 step 4).
 
 C7 sqrt equivalence: spacing ≈ √275 ≈ 16.6 → **spacing 17, separation 8**.
 Salt: **84359** (assigned per task; verified free — grep of
-`RES:worldgen/structure_set/*.json` on extraction date shows highest OreSpawn salt in
-use = 84354, plus the known 84312 mantis_nest/royal_trees collision logged in D5).
+`RES:worldgen/structure_set/*.json` at verification date shows highest OreSpawn salt
+in use = 84354 (spit_bug_lair); all current OreSpawn salts are unique — the 84312
+mantis_nest/royal_trees collision logged in D5 has since been fixed, royal_trees now
+uses 84332).
 
 `RES:worldgen/structure_set/leaf_monster_dungeon.json`: random_spread, spacing 17,
 separation 8, salt 84359.
@@ -361,7 +370,7 @@ placement / the DSB roll as usual.)
   DungeonType.LEAF_MONSTER_DUNGEON)` in
   `src/main/java/danger/orespawn/block/entity/RandomDungeonSpawnerBlockEntity.buildForType`
   (currently types 0/1/2/3/7/12/14/17/19/21/22/23/24/27/29/30/37/38/47 are wired,
-  RandomDungeonSpawnerBlockEntity.java:44-79, 131-218; **type 15 falls through to the
+  RandomDungeonSpawnerBlockEntity.java:44-79, 131-221; **type 15 falls through to the
   generic-dungeon fallback** today, the `default` arm at :219).
 - The DSB path bypasses the biome/grass scan AND the foundation probe's usual context
   — the terrain-conditional roots still run (live ServerLevel reads are legal there),
