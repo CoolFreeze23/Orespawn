@@ -43,6 +43,8 @@ import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.RandomState;
 import net.minecraft.world.level.levelgen.structure.Structure;
+import net.minecraft.world.level.material.FluidState;
+import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
@@ -627,6 +629,184 @@ public class StructureTestsC {
                     "i166: sheet centre must remain a source");
             helper.succeed();
         });
+    }
+
+    // ------------------------------------------------------------------
+    // TF-025 diagnostic — TEMPORARY, delete when the finding closes
+    // ------------------------------------------------------------------
+
+    /**
+     * <b>TEMPORARY DIAGNOSTIC for FIX_LOG TF-025 — not a checklist test.
+     * It always FAILS by design (the harness prints fail messages, so the
+     * dump rides out in one) and must be DELETED when TF-025 closes.</b>
+     *
+     * <p>Instrumented repro for {@code frog_pond_plains_i166}'s red rim
+     * assert: the +1 riser/flow-cross sources (orig GenericDungeon.java:
+     * 6030-6034, FrogPondGenerator.java, spec S4) are documented to cascade
+     * over the 7x7 sheet and off the rim (spec S9), but the post-triage run
+     * saw no water at (+4,+1,0) after 300 ticks. This test rebuilds the
+     * i166 environment write-for-write (same dirt plane, same containment
+     * wall, same origin, same {@code buildNow} call), makes NO structure
+     * asserts, and snapshots at t=0/40/100/250 ticks: the riser, the four
+     * flow-cross arms, the sheet edge cells (&plusmn;3 ring, y=0 sheet and
+     * y=+1 spill frontier), the rim overflow line (+4,+1,z=-1..+1), the
+     * water levels along the +x ray to +6 (y=+1 and y=0), pending fluid
+     * ticks ({@code level.getFluidTicks().hasScheduledTick}) per sampled
+     * cell plus a region census, and a source/flowing census of the +1
+     * layer over the sheet — separating "the scheduler starved" from "the
+     * spread reached a stable no-spill fixed point". Each snapshot is also
+     * logged as it is taken, so partial data survives a timeout.</p>
+     *
+     * <p>Code-reading prediction (decompiled 1.21.1 FlowingFluid.java): the
+     * blanket forms but the rim stays dry — {@code getSpread} (:364-405)
+     * rates any direction whose below-cell holds same-type fluid as a
+     * water hole ({@code isWaterHole} :318-325, j=0 at :388) and
+     * {@code map.clear()} (:393-394) then drops every j&ge;1 direction, so
+     * a FLOWING +1 cell over the sheet can never pick the past-rim
+     * direction; and the {@code getNewLiquid} two-source promotion
+     * (:175-181) stops at the convex 3x3 square around the riser (each
+     * cell orthogonally outside it sees at most ONE source), so the rim
+     * ring never becomes the all-source state that would exclude the
+     * over-sheet directions and force the spill. The dump exists to
+     * confirm or kill that prediction before any fix lands.</p>
+     */
+    @GameTest(template = "empty_large", timeoutTicks = 400)
+    public void tf025_diag_frog_pond_cascade(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        // i166 environment, write-for-write (see frog_pond_plains_i166
+        // above — same 19x19 2-deep dirt plane, same obsidian containment
+        // wall, same origin cell) so the repro matches the red run exactly.
+        for (int x = 15; x <= 33; x++) {
+            for (int z = 15; z <= 33; z++) {
+                helper.setBlock(new BlockPos(x, 1, z), Blocks.DIRT.defaultBlockState());
+                helper.setBlock(new BlockPos(x, 2, z), Blocks.DIRT.defaultBlockState());
+            }
+        }
+        for (int x = 15; x <= 33; x++) {
+            for (int z : new int[]{15, 33}) {
+                helper.setBlock(new BlockPos(x, 3, z), Blocks.OBSIDIAN.defaultBlockState());
+                helper.setBlock(new BlockPos(x, 4, z), Blocks.OBSIDIAN.defaultBlockState());
+            }
+        }
+        for (int z = 16; z <= 32; z++) {
+            for (int x : new int[]{15, 33}) {
+                helper.setBlock(new BlockPos(x, 3, z), Blocks.OBSIDIAN.defaultBlockState());
+                helper.setBlock(new BlockPos(x, 4, z), Blocks.OBSIDIAN.defaultBlockState());
+            }
+        }
+        BlockPos origin = helper.absolutePos(new BlockPos(24, 2, 24));
+        LegacyDungeonPiece.buildNow(level, origin, DungeonType.FROG_POND);
+
+        StringBuilder dump = new StringBuilder("TF-025 frog pond cascade diagnostic");
+        tf025Snapshot(level, origin, dump, 0);
+        helper.runAfterDelay(40, () -> tf025Snapshot(level, origin, dump, 40));
+        helper.runAfterDelay(100, () -> tf025Snapshot(level, origin, dump, 100));
+        helper.runAfterDelay(250, () -> {
+            tf025Snapshot(level, origin, dump, 250);
+            helper.fail("TF-025 TEMPORARY DIAGNOSTIC — always red by design so the harness "
+                    + "prints this dump; delete the test when TF-025 closes.\n" + dump);
+        });
+    }
+
+    /**
+     * One TF-025 snapshot (support for {@link #tf025_diag_frog_pond_cascade}
+     * only): samples the documented cells, appends to {@code dump}, and logs
+     * the block immediately so a timeout still leaves partial data.
+     */
+    private static void tf025Snapshot(ServerLevel level, BlockPos origin, StringBuilder dump, int tick) {
+        StringBuilder out = new StringBuilder();
+        out.append("\n--- t=").append(tick).append(" ---");
+        // Riser + flow-cross arms — the five +1 cells the cascade starts
+        // from (orig GD:6030-6034, spec S9).
+        tf025Cell(level, origin, out, "riser    ", 0, 1, 0);
+        tf025Cell(level, origin, out, "arm-west ", -1, 1, 0);
+        tf025Cell(level, origin, out, "arm-east ", 1, 1, 0);
+        tf025Cell(level, origin, out, "arm-north", 0, 1, -1);
+        tf025Cell(level, origin, out, "arm-south", 0, 1, 1);
+        // Sheet edge cells: the +-3 ring's axis + corner cells at y=0 (the
+        // sheet itself, orig GD:6025-6029) and y=+1 (the spill frontier one
+        // above them — the cells that must hop outward for the S9 spill).
+        for (int[] d : new int[][]{{3, 0}, {-3, 0}, {0, 3}, {0, -3}, {3, 3}, {3, -3}, {-3, 3}, {-3, -3}}) {
+            tf025Cell(level, origin, out, "edge y0  ", d[0], 0, d[1]);
+            tf025Cell(level, origin, out, "edge y1  ", d[0], 1, d[1]);
+        }
+        // Rim overflow line — the i166 red assert's neighbourhood.
+        for (int z = -1; z <= 1; z++) {
+            tf025Cell(level, origin, out, "rim      ", 4, 1, z);
+        }
+        // +x ray to +6: y=+1 (the layer the spill travels in) and y=0 (the
+        // sheet out to +3, then the dirt plane the overflow would cross).
+        for (int x = 1; x <= 6; x++) {
+            tf025Cell(level, origin, out, "ray y1   ", x, 1, 0);
+        }
+        for (int x = 1; x <= 6; x++) {
+            tf025Cell(level, origin, out, "ray y0   ", x, 0, 0);
+        }
+        // Pending-fluid-tick census over the pond neighbourhood plus a
+        // source/flowing census of the 49-cell +1 layer over the sheet:
+        // zero pending ticks with a dry rim means a stable fixed point, not
+        // scheduler starvation.
+        int pending = 0;
+        int srcAbove = 0;
+        int flowAbove = 0;
+        int emptyAbove = 0;
+        StringBuilder pendingList = new StringBuilder();
+        for (int x = -7; x <= 7; x++) {
+            for (int y = 0; y <= 2; y++) {
+                for (int z = -7; z <= 7; z++) {
+                    BlockPos pos = origin.offset(x, y, z);
+                    if (level.getFluidTicks().hasScheduledTick(pos, Fluids.WATER)
+                            || level.getFluidTicks().hasScheduledTick(pos, Fluids.FLOWING_WATER)) {
+                        if (pending < 12) {
+                            pendingList.append(String.format(" (%+d,%+d,%+d)", x, y, z));
+                        }
+                        pending++;
+                    }
+                    if (y == 1 && x >= -3 && x <= 3 && z >= -3 && z <= 3) {
+                        FluidState f = level.getBlockState(pos).getFluidState();
+                        if (f.isEmpty()) {
+                            emptyAbove++;
+                        } else if (f.isSource()) {
+                            srcAbove++;
+                        } else {
+                            flowAbove++;
+                        }
+                    }
+                }
+            }
+        }
+        out.append("\n  pending fluid ticks (x,z=-7..+7, y=0..+2): ").append(pending);
+        if (pending > 0) {
+            out.append(" first:").append(pendingList).append(pending > 12 ? " ..." : "");
+        }
+        out.append("\n  +1 layer over the 7x7 sheet: ").append(srcAbove).append(" source / ")
+                .append(flowAbove).append(" flowing / ").append(emptyAbove).append(" empty");
+        OreSpawnMod.LOGGER.info("[TF-025 diag]{}", out);
+        dump.append(out);
+    }
+
+    /**
+     * One TF-025 sampled cell (support for {@link #tf025Snapshot} only):
+     * block state, fluid state (source/flowing + amount), and whether a
+     * fluid tick is pending for either registered water fluid.
+     */
+    private static void tf025Cell(ServerLevel level, BlockPos origin, StringBuilder out,
+                                  String label, int dx, int dy, int dz) {
+        BlockPos pos = origin.offset(dx, dy, dz);
+        BlockState state = level.getBlockState(pos);
+        FluidState fluid = state.getFluidState();
+        out.append("\n  ").append(label).append(String.format(" (%+d,%+d,%+d): ", dx, dy, dz))
+                .append(state);
+        if (fluid.isEmpty()) {
+            out.append(" fluid=EMPTY");
+        } else {
+            out.append(" fluid=").append(BuiltInRegistries.FLUID.getKey(fluid.getType()).getPath())
+                    .append(fluid.isSource() ? " SOURCE" : " flowing")
+                    .append(" amt=").append(fluid.getAmount());
+        }
+        out.append(" tick[W=").append(level.getFluidTicks().hasScheduledTick(pos, Fluids.WATER))
+                .append(",FW=").append(level.getFluidTicks().hasScheduledTick(pos, Fluids.FLOWING_WATER))
+                .append(']');
     }
 
     // ------------------------------------------------------------------

@@ -1,0 +1,13 @@
+{
+  "type": "orespawn:add_items",
+  "conditions": [
+    {
+      "condition": "neoforge:loot_table_id",
+      "loot_table_id": "minecraft:chests/desert_pyramid"
+    }
+  ],
+  "item": "orespawn:amethyst_gem",
+  "min_count": 1,
+  "max_count": 1,
+  "chance": 0.1154
+}

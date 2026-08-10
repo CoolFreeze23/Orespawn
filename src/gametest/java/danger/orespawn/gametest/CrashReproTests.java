@@ -220,47 +220,47 @@ public class CrashReproTests {
     }
 
     /**
-     * Checklist item i002-bug-004, DOCUMENTED-flow half. EXPECTED TO FAIL.
+     * Checklist item i002-bug-004, faithful-transform half (docs amended per
+     * TF-024): the diamond-block tame transforms the baby prince to a teen
+     * INSTANTLY, and ownership survives the transform.
      *
-     * <p>The documented flow (items.json i002 / FIX_LOG.md "Pending manual
-     * tests" BUG-004: "Tame a Prince (diamond block), give diamond to grow
-     * baby→teen→adult") implies the diamond-block tame leaves a BABY prince
-     * that waits for a separate diamond before growing. The user manually
-     * observed the port transforming INSTANTLY on the diamond-block tame.
-     * This test asserts the documented two-step behavior and is expected to
-     * fail, pinning the observation.</p>
-     *
-     * <p>Why it fails (source conflict, recorded for triage): the diamond-block
-     * tame sets kill/fed/day counters to 1000 (port ThePrince.java:583-595),
-     * and the counter-driven natural-growth check
+     * <p>Faithful mechanism: the diamond-block tame sets kill/fed/day counters
+     * to 1000 (port ThePrince.java:583-595 = orig ThePrince.java:195-206), and
+     * the counter-driven natural-growth check
      * ({@code killCount > 25 && fedCount > 10 && dayCount > 10}, port
-     * ThePrince.java:286-291) transforms on the very next AI tick. The 1.7.10
-     * original does the SAME (orig ThePrince.java:195-206 sets the counters to
-     * 1000; orig :556-568 transforms on the counters alone) — i.e. the
-     * documented two-step expectation contradicts both the port and the
-     * original source. The failure is the deliverable; resolution (fix docs vs
-     * fix behavior) belongs to the maintainer.</p>
+     * ThePrince.java:286-291 = orig :556-568) trips on the very next AI tick —
+     * no separate diamond feed is involved. The transform copies tame + owner
+     * to the teen and removes the baby (port ThePrince.java:536-554 = orig
+     * :556-568). An earlier docs revision described a two-step "give diamond
+     * to grow baby→teen" flow that exists in NEITHER version (TF-024); this
+     * test pins the behavior both versions actually share.</p>
      */
     @GameTest(template = "empty_large", timeoutTicks = 200)
-    public void bug004_documented_diamond_block_tame_keeps_baby(GameTestHelper helper) {
+    public void bug004_diamond_block_tame_instant_transform_faithful(GameTestHelper helper) {
         ServerLevel level = helper.getLevel();
         ThePrince prince = helper.spawn(ModEntities.THE_PRINCE.get(), new BlockPos(24, 2, 24));
-        tamePrinceWithDiamondBlock(helper, prince);
+        Player owner = tamePrinceWithDiamondBlock(helper, prince);
+        UUID ownerId = owner.getUUID();
         Vec3 center = helper.absoluteVec(new Vec3(24.5, 2.0, 24.5));
 
         helper.runAfterDelay(20, () -> {
-            boolean stillBaby = !prince.isRemoved();
-            // Clean up any teen the (undocumented) instant transform produced
-            // BEFORE failing, so the shared grid is not polluted.
+            boolean babyRemoved = prince.isRemoved();
             AABB sweep = new AABB(center, center).inflate(20.0, 20.0, 20.0);
             List<ThePrinceTeen> teens = level.getEntitiesOfClass(ThePrinceTeen.class, sweep);
+            boolean teenTame = !teens.isEmpty() && teens.get(0).isTame();
+            UUID teenOwner = teens.isEmpty() ? null : teens.get(0).getOwnerUUID();
+            // Clean up BEFORE asserting so the shared grid is not polluted.
             teens.forEach(Entity::discard);
             prince.discard();
-            helper.assertTrue(stillBaby,
-                    "EXPECTED FAIL (documented BUG-004 flow): the prince transformed instantly on the "
-                            + "diamond-block tame instead of staying a baby until fed a diamond "
-                            + "(counters set to 1000 by ThePrince.java:583-595 trip the growth check at :286-291; "
-                            + "orig ThePrince.java:195-206/:556 behaves identically — docs and source disagree)");
+            helper.assertTrue(babyRemoved,
+                    "baby prince still present 20 ticks after the diamond-block tame — the counters set "
+                            + "to 1000 (ThePrince.java:583-595, orig :195-206) must trip the growth check "
+                            + "(:286-291, orig :556-568) on the next AI tick");
+            helper.assertFalse(teens.isEmpty(),
+                    "no teen prince found after the instant transform (ThePrince.java:536-554, orig :556-568)");
+            helper.assertTrue(teenTame, "teen lost its tame flag in the instant transform (BUG-004)");
+            helper.assertTrue(ownerId.equals(teenOwner),
+                    "teen lost the owner UUID in the instant transform (BUG-004): " + teenOwner);
             helper.succeed();
         });
     }

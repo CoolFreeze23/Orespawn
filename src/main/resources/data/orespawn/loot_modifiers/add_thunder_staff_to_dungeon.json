@@ -1,0 +1,13 @@
+{
+  "type": "orespawn:add_items",
+  "conditions": [
+    {
+      "condition": "neoforge:loot_table_id",
+      "loot_table_id": "minecraft:chests/simple_dungeon"
+    }
+  ],
+  "item": "orespawn:thunder_staff",
+  "min_count": 1,
+  "max_count": 1,
+  "chance": 0.125
+}
