@@ -8,6 +8,7 @@ public class OreSpawnConfig {
 
     // Mob toggles
     public static final ModConfigSpec.BooleanValue ALL_MOBS_DISABLE;
+    public static final ModConfigSpec.BooleanValue PHASE14_CONTENT_ENABLE;
     public static final ModConfigSpec.BooleanValue MOSQUITO_ENABLE;
     public static final ModConfigSpec.BooleanValue ROCK_ENABLE;
     public static final ModConfigSpec.BooleanValue GHOST_ENABLE;
@@ -287,6 +288,15 @@ public class OreSpawnConfig {
         THE_QUEEN_ENABLE = BUILDER.comment(
                 "If false, the Queen Spawner block fizzles without summoning The Queen (1.7.10 TheQueenEnable)."
         ).define("theQueenEnable", true);
+        // Phase E ruling (2026-08-11): wiki-documented mobs with no 1.7.10
+        // source counterpart (Vampire Butterfly, Apple Cow, Golden Apple
+        // Cow) stay registered but ship disabled — no natural spawns and
+        // no creative spawn eggs unless this is flipped on.
+        PHASE14_CONTENT_ENABLE = BUILDER.comment(
+                "Enables the optional wiki-documented mobs that never existed in the 1.7.10 source: " +
+                        "Vampire Butterfly, Apple Cow, Golden Apple Cow. Off = no natural spawns, " +
+                        "no creative spawn eggs. Existing placed/saved mobs are unaffected."
+        ).define("phase14ContentEnable", false);
         BUILDER.pop();
 
         BUILDER.push("weapons");

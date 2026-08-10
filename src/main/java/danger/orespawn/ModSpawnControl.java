@@ -141,9 +141,21 @@ public class ModSpawnControl {
                     // custom cow variants' natural spawns.
                     Map.entry(ModEntities.RED_COW.get(),             OreSpawnConfig.COW_ENABLE::get),
                     Map.entry(ModEntities.GOLD_COW.get(),            OreSpawnConfig.COW_ENABLE::get),
-                    Map.entry(ModEntities.APPLE_COW.get(),           OreSpawnConfig.COW_ENABLE::get),
-                    Map.entry(ModEntities.GOLDEN_APPLE_COW.get(),    OreSpawnConfig.COW_ENABLE::get),
+                    // Phase E ruling (2026-08-11): AppleCow / GoldenAppleCow are
+                    // wiki-only (no 1.7.10 source class) — natural spawns
+                    // additionally require phase14ContentEnable. EnchantedAppleCow
+                    // is the original EnchantedCow (orig OreSpawnMain.java:3599,
+                    // display name "Enchanted Golden Apple Cow" :2765) and stays
+                    // on the plain CowEnable gate.
+                    Map.entry(ModEntities.APPLE_COW.get(),
+                            () -> OreSpawnConfig.PHASE14_CONTENT_ENABLE.get() && OreSpawnConfig.COW_ENABLE.get()),
+                    Map.entry(ModEntities.GOLDEN_APPLE_COW.get(),
+                            () -> OreSpawnConfig.PHASE14_CONTENT_ENABLE.get() && OreSpawnConfig.COW_ENABLE.get()),
                     Map.entry(ModEntities.ENCHANTED_APPLE_COW.get(), OreSpawnConfig.COW_ENABLE::get),
+                    // Wiki-only hostile (same ruling); currently has no natural
+                    // spawn data, the entry is a guard in case one is added.
+                    Map.entry(ModEntities.VAMPIRE_BUTTERFLY.get(),
+                            OreSpawnConfig.PHASE14_CONTENT_ENABLE::get),
                     Map.entry(ModEntities.CRYSTAL_COW.get(),         OreSpawnConfig.COW_ENABLE::get),
                     Map.entry(ModEntities.ENTITY_BUTTERFLY.get(),    OreSpawnConfig.BUTTERFLY_ENABLE::get),
                     Map.entry(ModEntities.ENTITY_LUNA_MOTH.get(),    OreSpawnConfig.MOTH_ENABLE::get),

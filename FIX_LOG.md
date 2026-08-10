@@ -1747,3 +1747,61 @@ in-flight invisibility is the separate i018 renderer item). **MOD-019**
 additionally filed for the i009 user request — the original's
 ExperienceSword.java:55-103 is an XP trickle only and never repaired
 anything.
+---
+
+## Phase E — E0: Phase 14 disposition + Cephadrome source-wins + cow spawn parity (2026-08-11)
+
+**Ruling applied:** wiki-documented mobs absent from the 1.7.10 source
+(VampireButterfly, AppleCow, GoldenAppleCow) are now optional content behind
+`phase14ContentEnable` (default false) — natural spawns gated in
+ModSpawnControl (cows also keep the orig CowEnable gate,
+OreSpawnMain.java:4609), spawn eggs hidden from creative tabs, no recipes
+exist. EnchantedAppleCow is exempt: it is the original EnchantedCow
+(orig OreSpawnMain.java:3599, display name "Enchanted Golden Apple Cow"
+:2765) consolidated under the display-name-derived id. Full record in
+MODERNIZATION_NOTES MOD-021; KNOWN_ISSUES updated.
+
+- **TF-032 FIXED (parity — Cephadrome feed gate, source wins over wiki):**
+  orig Cephadrome.java:878 accepts RAW beef (field_151082_bd) / chicken
+  (field_151076_bf) / porkchop (field_151147_al) within 5 blocks as a
+  heal-to-full + `wasfed=1` + `shouldattack=0` + heart-burst
+  (playTameEffect(true) :884, body :858-870) trigger, one item consumed
+  outside creative; empty hand mounts only when fed, consuming the flag
+  (:893-904). There is NO tame state in the source. Removed the Phase-14
+  grafts from port entity/Cephadrome.java: `DATA_TAMED` accessor +
+  define + save/read ("CephaTamed"), porkchop-only `TAME_FOOD` +
+  tame branch in mobInteract, priority-1 TemptGoal (orig has no
+  EntityAITempt), and the `isTamed()` player-aggro immunity in
+  isSuitableTarget (orig gate is hitByPlayer/badmood/shouldattack only,
+  :537-554). Restored the three-raw-meats branch verbatim with a new
+  `spawnFeedHearts()` porting the original particle body. Old saves'
+  `CephaTamed` flag is dropped silently. Wiki variant archived in MOD-021.
+- **TF-033 FIXED (parity — cow overworld spawns vs orig
+  OreSpawnMain.java:4609-4624):** the pre-audit lump
+  `add_overworld_creatures.json` gave red_cow an invented all-overworld
+  w6 1-2 entry, gave enchanted_apple_cow an invented all-overworld w1 1-1
+  entry, and omitted GoldCow's overworld spawns entirely. Replaced with
+  per-biome modifiers matching the original addSpawn table: red_cow
+  plains+forest w8 4-8, old_growth_pine_taiga+taiga w5 2-5, savanna w8 1-3,
+  savanna_plateau w2 1-3 (:4610-4615); gold_cow plains+forest w5 2-6,
+  old_growth_pine_taiga+taiga w5 2-5 (:4616-4619); enchanted_apple_cow
+  forest+plains w3 2-4, old_growth_pine_taiga w5 2-5, mushroom_fields
+  w15 3-6 (:4620-4623). Biome mapping: field_76772_c=plains,
+  field_76767_f=forest, field_150578_U=old_growth_pine_taiga,
+  field_76768_g=taiga, field_150588_X=savanna, field_150587_Y=
+  savanna_plateau, field_76789_p=mushroom_fields. New files
+  creature_{red_cow,gold_cow,enchanted_apple_cow}__*.json (9); lump rows
+  removed. apple_cow/golden_apple_cow lump rows kept as the wiki spawn
+  profile behind the TF-032 ruling's runtime gate.
+- **TF-034 OPEN (verification gap — add_overworld_creatures.json
+  residuals):** the same pre-audit lump file is the sole spawn source for
+  beaver, cassowary, chipmunk, cockateil, gazelle, ostrich, peacock, ant,
+  red_ant, and cliff_racer, with flat all-overworld weights that predate
+  the audit and have no per-entity original-registration verification
+  (orig Beaver, for contrast, is per-biome: river w10 2-4, forest w3 2-4,
+  birch w2 2-4, tall-birch w2 2-5, mega-taiga w5 2-5, taiga w5 2-5,
+  OreSpawnMain.java:4601-4608). Owned by the E4 PARTIAL batches — verify
+  each entity's original addSpawn rows when its category batch runs
+  (beaver/cassowary/chipmunk/cockateil = ENT-A, gazelle/ostrich/peacock =
+  ENT-D/K per category split, ants = WGEN-049 adjunct, cliff_racer =
+  TEST-002 overlap).

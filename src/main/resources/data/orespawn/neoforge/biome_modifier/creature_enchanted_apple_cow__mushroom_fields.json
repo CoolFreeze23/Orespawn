@@ -1,0 +1,5 @@
+{
+  "type": "neoforge:add_spawns",
+  "biomes": "minecraft:mushroom_fields",
+  "spawners": { "type": "orespawn:enchanted_apple_cow", "weight": 15, "minCount": 3, "maxCount": 6 }
+}

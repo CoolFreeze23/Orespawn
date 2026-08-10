@@ -62,6 +62,18 @@ don't report them as bugs. Configurable modern behavior for each is on the
 - Rocks **place** a pet rock when you click a block within reach (even into tight spaces); aim at open air to actually throw one. *(MOD-018)*
 - Mole dirt sinks your feet and slows you down like soul sand — intended, original values. *(i004)*
 - Experience armor never repairs itself and the Experience Sword never drains — the set quietly trickles XP instead (about 4 XP/min with the full set; invisible in creative mode). *(MOD-019)*
+- The Cephadrome can't be permanently tamed — feed it raw beef, chicken, **or** porkchop to calm and heal it, then mount empty-handed; each ride needs a fresh meal. An earlier beta build had a porkchop "tame" that stuck — that was not in 1.7.10 and has been removed (any stuck tames reset on load). *(TF-032)*
+
+---
+
+## Optional non-source content (off by default)
+
+The Vampire Butterfly, Apple Cow, and Golden Apple Cow appear on the classic
+OreSpawn wiki but never existed in the 1.7.10 mod's code, so a source-faithful
+build can't ship them enabled. They're still in the mod — set
+`phase14ContentEnable = true` in the config to get their spawns and creative
+spawn eggs back. (The Enchanted Golden Apple Cow IS original content and is
+always on.) *(MOD-021)*
 
 ---
 

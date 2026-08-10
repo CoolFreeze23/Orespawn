@@ -1,0 +1,5 @@
+{
+  "type": "neoforge:add_spawns",
+  "biomes": ["minecraft:forest", "minecraft:plains"],
+  "spawners": { "type": "orespawn:enchanted_apple_cow", "weight": 3, "minCount": 2, "maxCount": 4 }
+}

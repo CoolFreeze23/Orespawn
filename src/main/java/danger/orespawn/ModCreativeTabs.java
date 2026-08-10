@@ -536,7 +536,11 @@ public class ModCreativeTabs {
                         output.accept(ModItems.ALOSAURUS_SPAWN_EGG.get());
                         output.accept(ModItems.ANT_SPAWN_EGG.get());
                         output.accept(ModItems.ANT_ROBOT_SPAWN_EGG.get());
-                        output.accept(ModItems.APPLE_COW_SPAWN_EGG.get());
+                        // Phase E ruling (2026-08-11): wiki-only mobs' eggs are
+                        // creative-visible only with phase14ContentEnable on.
+                        if (OreSpawnConfig.PHASE14_CONTENT_ENABLE.get()) {
+                            output.accept(ModItems.APPLE_COW_SPAWN_EGG.get());
+                        }
                         output.accept(ModItems.ATTACK_SQUID_SPAWN_EGG.get());
                         output.accept(ModItems.BAND_P_SPAWN_EGG.get());
                         output.accept(ModItems.BARYONYX_SPAWN_EGG.get());
@@ -580,7 +584,9 @@ public class ModCreativeTabs {
                         output.accept(ModItems.GIRLFRIEND_SPAWN_EGG.get());
                         output.accept(ModItems.GODZILLA_SPAWN_EGG.get());
                         output.accept(ModItems.GOLD_FISH_SPAWN_EGG.get());
-                        output.accept(ModItems.GOLDEN_APPLE_COW_SPAWN_EGG.get());
+                        if (OreSpawnConfig.PHASE14_CONTENT_ENABLE.get()) {
+                            output.accept(ModItems.GOLDEN_APPLE_COW_SPAWN_EGG.get());
+                        }
                         output.accept(ModItems.HAMMERHEAD_SPAWN_EGG.get());
                         output.accept(ModItems.HERCULES_BEETLE_SPAWN_EGG.get());
                         output.accept(ModItems.HYDROLISC_SPAWN_EGG.get());
@@ -636,7 +642,9 @@ public class ModCreativeTabs {
                         output.accept(ModItems.TROOPER_BUG_SPAWN_EGG.get());
                         output.accept(ModItems.UNSTABLE_ANT_SPAWN_EGG.get());
                         output.accept(ModItems.URCHIN_SPAWN_EGG.get());
-                        output.accept(ModItems.VAMPIRE_BUTTERFLY_SPAWN_EGG.get());
+                        if (OreSpawnConfig.PHASE14_CONTENT_ENABLE.get()) {
+                            output.accept(ModItems.VAMPIRE_BUTTERFLY_SPAWN_EGG.get());
+                        }
                         output.accept(ModItems.VELOCITY_RAPTOR_SPAWN_EGG.get());
                         output.accept(ModItems.VORTEX_SPAWN_EGG.get());
                         output.accept(ModItems.WATER_DRAGON_SPAWN_EGG.get());

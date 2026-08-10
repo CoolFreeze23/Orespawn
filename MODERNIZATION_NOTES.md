@@ -420,3 +420,38 @@ impact estimate, related finding IDs.
   to player-placed instances (stripped on load; same one-way break class as MOD-009).
 - **Related findings:** PN-009 (invention-removal precedent), MOD-009 (archive
   location), MOD-013, FIX_LOG TF-031.
+
+## MOD-021 — Phase 14 wiki-only mobs: optional content behind `phase14ContentEnable` (ruling applied 2026-08-11)
+- **Category:** VANILLA-INTEGRATION / provenance
+- **Ruling (2026-08-11):** VampireButterfly, AppleCow, and GoldenAppleCow are
+  wiki-documented ("Added Mobs" page) but have **no class in the 586-file
+  1.7.10 source dump** — they cannot ship enabled in a source-verified parity
+  build, but their community provenance distinguishes them from pure port
+  inventions (Extractor/MOD-020, kyanite/MOD-009). Disposition: code stays
+  registered; default experience excludes them. `phase14ContentEnable`
+  (default **false**, `[tweaks]`) gates natural spawns (ModSpawnControl —
+  AppleCow/GoldenAppleCow additionally respect the original `CowEnable`,
+  orig OreSpawnMain.java:4609) and creative spawn-egg visibility
+  (ModCreativeTabs). They have no recipes. VampireButterfly has no natural
+  spawn data at all (egg-only); its ModSpawnControl entry is a guard.
+- **NOT gated — EnchantedAppleCow:** despite the Phase-14-era name, this is
+  the original **EnchantedCow** (orig OreSpawnMain.java:3599; display name
+  "Enchanted Golden Apple Cow", :2765/:5250 — the port id `enchanted_apple_cow`
+  maps the display name). It keeps its source wiring: EntityCage :352 entry,
+  EasterBunny EnchantedCowEgg drop, SpawnOres c30, dimension-biome spawns,
+  and (TF-033) the restored overworld per-biome spawns.
+- **Cephadrome porkchop-tame (removed, archived here):** the wiki "porkchop
+  tame" was implemented Phase 14 as a persistent `DATA_TAMED` flag +
+  porkchop-only feed gate + TemptGoal + player-aggro immunity. The source
+  (orig Cephadrome.java:878-904) has **no tame state**: any raw
+  beef/chicken/porkchop heals to full and arms a one-ride `wasfed` gate
+  consumed on mount. Source restored as TF-032. 2.0 revival sketch: re-add
+  `DATA_TAMED` behind this same flag, porkchop-exclusive, with the tame
+  suppressing `shouldattack`/`badmood` permanently and enabling a saddle
+  slot — the removed implementation in git history (pre-TF-032) is complete.
+- **Impact:** default worlds lose 3 spawn-egg items from creative and the 2
+  cows' natural spawns (wiki profile: all-overworld w6 1-2 / w2 1-1);
+  existing saved entities are untouched (registrations remain). Flag-on
+  restores the previous behavior exactly.
+- **Related:** TF-032 (Cephadrome), TF-033 (cow overworld spawns), TF-034
+  (lump-file residuals), MOD-009/MOD-020 (invention-removal precedents).
