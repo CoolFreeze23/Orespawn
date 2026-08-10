@@ -1835,9 +1835,12 @@ public class LootTests {
      * OreBasicStone blocks do" (port ModBlocks.java:166-171;
      * phase_c_reports/C7_worldgen.md:122). Self-drop and the no-mob negative
      * are exercised through real player breaks; the XP roll through the
-     * spawnAfterBreak mechanism (see
-     * {@link #i014_i131_break_pops_xp_end_to_end} for the end-to-end XP
-     * wiring sentinel).</p>
+     * {@code BlockState.getExpDrop} delegate — NeoForge 1.21.1's sole
+     * break-XP source since the 2026-08-10 ITEM-003/TF-022 fix moved the
+     * roll there (OreGenericEgg no longer overrides spawnAfterBreak, and no
+     * 1.21.1 break route calls it with dropExperience=true anyway) — with
+     * the end-to-end mined-XP wiring covered by the green
+     * {@link #i014_i131_break_pops_xp_end_to_end} sentinel.</p>
      *
      * <p>Statistics: 60 mechanism rolls per block, at-least-one-event —
      * false-fail 0.5^60 ≈ 8.7e-19 per block (×11 blocks ≈ 1e-17).</p>
@@ -1869,12 +1872,14 @@ public class LootTests {
             helper.assertTrue(helper.getLevel().getEntitiesOfClass(Mob.class, helper.getBounds()).isEmpty(),
                     id + ": breaking spawned a mob — egg ORES must never spawn (ModBlocks.java:166-171)");
 
-            // 50% 5..9 XP mechanism (orig OreGenericEgg.java:26-29).
+            // 50% 5..9 XP mechanism (orig OreGenericEgg.java:26-29), rolled
+            // through getExpDrop — the sole NeoForge 1.21.1 break-XP source
+            // (same delegate the green i014 mechanism tests use); the former
+            // direct spawnAfterBreak(..., true) call is a path no break route
+            // takes and OreGenericEgg no longer overrides.
             int events = 0;
             for (int i = 0; i < 60; i++) {
-                clearDropsAndXp(helper, area);
-                state.spawnAfterBreak(level, breakPos, ItemStack.EMPTY, true);
-                int xp = totalXp(level, area);
+                int xp = state.getExpDrop(level, breakPos, null, null, ItemStack.EMPTY);
                 if (xp > 0) {
                     events++;
                     helper.assertTrue(xp >= 5 && xp <= 9, id + ": XP event " + xp + " outside 5..9");
@@ -1908,11 +1913,12 @@ public class LootTests {
      * <p>Statistics: rate assert on spider_spawn_block — 300 mechanism rolls
      * against the Hoeffding band [90,210] (false-fail ≈ 7.6e-11); presence
      * asserts (60 rolls) on the other three (0.5^60 ≈ 8.7e-19 each). The
-     * mined-XP wiring itself is the
+     * mechanism rolls go through {@code BlockState.getExpDrop} — the sole
+     * NeoForge 1.21.1 break-XP source since the 2026-08-10 ITEM-003/TF-022
+     * fix. The mined-XP wiring itself is the green
      * {@link #i014_i131_break_pops_xp_end_to_end} sentinel; the silk "no XP"
-     * half is asserted end-to-end here (a pass under both the documented and
-     * the current behavior, and a regression guard once the XP wiring is
-     * fixed).</p>
+     * half is asserted end-to-end here
+     * (EnchantmentHelper.processBlockExperience zeroes the roll).</p>
      */
     @GameTest(template = "empty_large", timeoutTicks = 200)
     public void i131_spawn_ore_breaks(GameTestHelper helper) {
@@ -1961,13 +1967,12 @@ public class LootTests {
             helper.assertTrue(helper.getLevel().getEntitiesOfClass(Mob.class, helper.getBounds()).isEmpty(),
                     id + ": breaking spawned a mob — spawn ORES never spawn on break (D5c)");
 
-            // XP roll mechanism.
+            // XP roll mechanism — via the getExpDrop delegate (the sole
+            // NeoForge 1.21.1 break-XP source; see the i115 note).
             int rolls = b == 0 ? 300 : 60;
             int events = 0;
             for (int i = 0; i < rolls; i++) {
-                clearDropsAndXp(helper, area);
-                state.spawnAfterBreak(level, breakPos, ItemStack.EMPTY, true);
-                int xp = totalXp(level, area);
+                int xp = state.getExpDrop(level, breakPos, null, null, ItemStack.EMPTY);
                 if (xp > 0) {
                     events++;
                     helper.assertTrue(xp >= 5 && xp <= 9,

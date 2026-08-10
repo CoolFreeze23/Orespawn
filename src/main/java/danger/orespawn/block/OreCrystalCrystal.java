@@ -76,16 +76,25 @@ public class OreCrystalCrystal extends TransparentBlock {
     }
 
     /**
-     * Bonus XP, Y-gated like the original (orig OreCrystalCrystal.java:66-72 —
+     * Y-gated bonus XP (orig OreCrystalCrystal.java:66-72 —
      * {@code 5 + nextInt(5) + nextInt(10)} only when {@code y < 40}).
-     * {@code dropExperience} is false for Silk Touch harvests, matching the
-     * 1.7.10 silk-harvest path which skipped dropBlockAsItemWithChance.
+     *
+     * <p>Moved from the dead {@code spawnAfterBreak} path to NeoForge's
+     * {@code getExpDrop} — the sole 1.21.1 break-XP source — completing the
+     * approved ITEM-003/TF-022 migration across all 8 original XP classes
+     * (residual-triage finding, 2026-08-10; mirrors OreUranium). Silk Touch
+     * drops no XP via the enchantment's block_experience=0 effect, matching
+     * the 1.7.10 silk path.</p>
      */
     @Override
-    protected void spawnAfterBreak(BlockState state, ServerLevel level, BlockPos pos, ItemStack stack, boolean dropExperience) {
-        super.spawnAfterBreak(state, level, pos, stack, dropExperience);
-        if (dropExperience && pos.getY() < XP_MAX_Y_EXCLUSIVE) {
-            popExperience(level, pos, 5 + level.random.nextInt(5) + level.random.nextInt(10));
+    public int getExpDrop(BlockState state, net.minecraft.world.level.LevelAccessor level, BlockPos pos,
+                          net.minecraft.world.level.block.entity.BlockEntity blockEntity,
+                          net.minecraft.world.entity.Entity breaker, ItemStack tool) {
+        if (pos.getY() < XP_MAX_Y_EXCLUSIVE) {
+            var random = level.getRandom();
+            return 5 + random.nextInt(5) + random.nextInt(10);
         }
+        return 0;
     }
 }
+

@@ -192,7 +192,12 @@ public class CoreStatTests {
         victim.setPos(start.x, start.y, start.z);
         helper.getLevel().addFreshEntity(victim);
 
-        helper.runAfterDelay(2, () -> helper.assertTrue(driver.startRiding(robot, true), "mount failed"));
+        // The driver AUTO-MOUNTS a nearby riderless robot (SpiderDriver.java:106,
+        // faithful ENT-S-017) — within the 2-tick delay it may already be
+        // aboard, and startRiding on a mounted entity returns false. Accept
+        // either mount path (triage fix, 2026-08-10 — was a timing flake).
+        helper.runAfterDelay(2, () -> helper.assertTrue(
+                driver.getVehicle() == robot || driver.startRiding(robot, true), "mount failed"));
 
         boolean[] done = {false};
         helper.onEachTick(() -> {

@@ -22,7 +22,9 @@ import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerChunkCache;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.TicketType;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
@@ -359,6 +361,38 @@ public class StructureTestsC {
         ServerLevel level = helper.getLevel();
         BlockPos p = farPos(helper, 801);
 
+        // TF-023 harness race — identical mechanism and fix as the red-ant
+        // i165 test below (see the full analysis there): pin the pad chunks
+        // with a FORCED region ticket and sync-load them a few ticks BEFORE
+        // the build, so buildNow writes into already-promoted chunks and the
+        // Robot Spider spawn lands in TRACKED (queryable) entity sections.
+        // All asserts keep their original same-tick-after-build semantics.
+        ServerChunkCache chunkSource = level.getChunkSource();
+        ChunkPos ticketPos = new ChunkPos(p.offset(10, 0, 10));
+        chunkSource.addRegionTicket(TicketType.FORCED, ticketPos, 2, ticketPos);
+        ChunkPos minC = new ChunkPos(p);
+        ChunkPos maxC = new ChunkPos(p.offset(19, 0, 19));
+        for (int ccx = minC.x; ccx <= maxC.x; ccx++) {
+            for (int ccz = minC.z; ccz <= maxC.z; ccz++) {
+                level.getChunk(ccx, ccz); // blocking FULL load now; the queued
+                                          // visibility promotion drains between
+                                          // ticks, before the delayed build
+            }
+        }
+        helper.runAfterDelay(5, () -> {
+            try {
+                spiderHangoutBuildAndAsserts(helper, level, p);
+            } finally {
+                chunkSource.removeRegionTicket(TicketType.FORCED, ticketPos, 2, ticketPos);
+            }
+            helper.succeed();
+        });
+    }
+
+    /** Build + asserts of {@link #spider_hangout_village_i164} (body unchanged
+     *  by the TF-023 infra fix — only moved behind the chunk pre-ticketing). */
+    private static void spiderHangoutBuildAndAsserts(GameTestHelper helper, ServerLevel level,
+                                                     BlockPos p) {
         // Capture sound dispatches during the build: zero PlayLevelSoundEvent
         // near the build = nothing audible (the classification-blessed
         // absence assert for "no spawn sound"; the original spawn is bare
@@ -443,7 +477,6 @@ public class StructureTestsC {
         // empty result would be unattributable. The gate sub-check returns
         // to MANUAL_ONLY; the pad/spawner/robot/silent-spawn asserts above
         // remain automated (and passed in the triaged run).
-        helper.succeed();
     }
 
     // ------------------------------------------------------------------
@@ -469,6 +502,52 @@ public class StructureTestsC {
     public void red_ant_hangout_village_i165(GameTestHelper helper) {
         ServerLevel level = helper.getLevel();
         BlockPos p = farPos(helper, 802);
+
+        // TF-023 root cause (test infra, NOT the port): the far-K chunks are
+        // loaded by ServerLevel.setBlock's blocking path under self-expiring
+        // UNKNOWN tickets (TicketType.java:19 — timeout 1 tick), and the flip
+        // that makes a chunk's ENTITY SECTIONS queryable is a QUEUED
+        // main-thread task (ChunkHolder.promoteFullChunk → thenRunAsync →
+        // ChunkMap.onFullChunkStatusChange → PersistentEntitySectionManager
+        // .updateChunkStatus). AABB entity queries visit only sections whose
+        // visibility isAccessible() (EntitySectionStorage
+        // .forEachAccessibleNonEmptySection), so a same-tick query after
+        // buildNow races that queued flip — and loses exactly when the
+        // robot's chunk was the LAST chunk the build block-loaded (no later
+        // blocking load drains the queue), i.e. whenever the pad's chunk
+        // alignment puts the +8,+8 spawn in the final loaded chunk. That is
+        // the observed spawn-X-on-chunk-border flake; the robot was present
+        // in the section storage every time. Fix: pin the pad chunks with a
+        // FORCED region ticket and sync-load them a few ticks BEFORE the
+        // build, so buildNow writes into already-promoted chunks and the
+        // spawn lands in TRACKED (queryable) sections. All asserts keep
+        // their original same-tick-after-build semantics.
+        ServerChunkCache chunkSource = level.getChunkSource();
+        ChunkPos ticketPos = new ChunkPos(p.offset(8, 0, 8));
+        chunkSource.addRegionTicket(TicketType.FORCED, ticketPos, 2, ticketPos);
+        ChunkPos minC = new ChunkPos(p);
+        ChunkPos maxC = new ChunkPos(p.offset(15, 0, 15));
+        for (int ccx = minC.x; ccx <= maxC.x; ccx++) {
+            for (int ccz = minC.z; ccz <= maxC.z; ccz++) {
+                level.getChunk(ccx, ccz); // blocking FULL load now; the queued
+                                          // visibility promotion drains between
+                                          // ticks, before the delayed build
+            }
+        }
+        helper.runAfterDelay(5, () -> {
+            try {
+                redAntHangoutBuildAndAsserts(helper, level, p);
+            } finally {
+                chunkSource.removeRegionTicket(TicketType.FORCED, ticketPos, 2, ticketPos);
+            }
+            helper.succeed();
+        });
+    }
+
+    /** Build + asserts of {@link #red_ant_hangout_village_i165} (body unchanged
+     *  by the TF-023 infra fix — only moved behind the chunk pre-ticketing). */
+    private static void redAntHangoutBuildAndAsserts(GameTestHelper helper, ServerLevel level,
+                                                     BlockPos p) {
         LegacyDungeonPiece.buildNow(level, p, DungeonType.RED_ANT_HANGOUT);
 
         // Floor census: exactly 36 nest cells, exactly on the 3x3 corner
@@ -527,7 +606,6 @@ public class StructureTestsC {
                         && Math.abs(robot.getY() - (p.getY() + 1)) < 1.0e-6
                         && Math.abs(robot.getZ() - (p.getZ() + 8)) < 1.0e-6,
                 "i165: Robot Red Ant not on the block corner (+8,+1,+8): " + robot.position());
-        helper.succeed();
     }
 
     // ------------------------------------------------------------------
