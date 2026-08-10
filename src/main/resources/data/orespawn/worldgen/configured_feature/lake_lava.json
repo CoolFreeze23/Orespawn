@@ -10,7 +10,7 @@
     "fluid": {
       "type": "minecraft:simple_state_provider",
       "state": {
-        "Name": "minecraft:water",
+        "Name": "minecraft:lava",
         "Properties": {
           "level": "0"
         }
