@@ -564,7 +564,34 @@ must not despawn when the player walks away.
 
 ---
 
-## Phase D — slice D6b batches 1-4: mechanical structures (2026-08-08/10, batch 4 COMPLETE — close-out pending)
+## Phase D — close-out (2026-08-10): PHASE D COMPLETE
+
+- **Close-out fixes (all verified against originals):** WGEN-064
+  DisableOverworldDungeons gate restored in findGenerationPoint over the 11
+  wired overworld types (orig OSW:284; DSB path stays ungated); WGEN-067
+  greenhouse double-door entry rebuilt (two doors at width/2 & width/2−1,
+  lintels, meta-4 buttons — the D6a robot-lab door trace; the port had a
+  single door at the wrong x); WGEN-068 white-house door upper half
+  restored + button re-hung NORTH; ITEM-068 bee/mantis/small-beehive chest
+  facings restored (inward E/W/S/N ring per orig metas); ITEM-069
+  bee/mantis egg loot restored (BEE_SPAWN_EGG 2-8 w15, MANTIS_SPAWN_EGG
+  2-4 w20 — the invented golden-carrot/spider-eye stand-ins removed).
+- **CrystalMazeFeature audit (sweep F5):** NOT deleted — it maps to real
+  original code (CrystalMaze.java, per-chunk at Y=25); the live faithful
+  path is the chunk-generator port (WGEN-027), leaving the Feature a
+  datapack-orphaned divergent duplicate → WGEN-070, Phase E retirement
+  candidate.
+- **Ledger close-out (tools/d6b_ledger_patch.py):** WGEN-042 and ITEM-020
+  closed FIXED; WGEN-014/018/021/033/036 + ITEM-064 closed (their
+  remainders were exactly the D5-D6b ports); new findings WGEN-063..071 +
+  ITEM-067..069 recorded (10 FIXED, WGEN-070/071 open → Phase E);
+  ENT-A-054, ENT-A-083, WGEN-003/004/007, ITEM-023 re-owned to Phase E.
+  Ledger 618 → 630 IDs, 479 terminal / 151 open, **Phase D owns zero open
+  findings.** Full rollup: `phase_d_reports/phase_d_rollup.md`.
+
+---
+
+## Phase D — slice D6b batches 1-4: mechanical structures (2026-08-08/10, batch 4 COMPLETE — close-out above)
 
 - **Pipeline:** every structure ran spec-extract → independent spec-verify →
   implement → per-structure code-verify (specs in `phase_d_reports/d6_extraction/`).

@@ -909,15 +909,39 @@ public class LegacyDungeonPiece extends StructurePiece {
                 }
             }
         }
-        // Two double-iron-door entry (legacy line 5138-5147).
-        place(ox + width / 2, cposy + 1, oz, air);
-        place(ox + width / 2, cposy + 2, oz, air);
-        place(ox + width / 2 - 1, cposy + 1, oz, air);
-        place(ox + width / 2 - 1, cposy + 2, oz, air);
-        place(ox + length / 2, cposy + 1, oz, Blocks.IRON_DOOR.defaultBlockState()
-                .setValue(BlockStateProperties.DOOR_HINGE, net.minecraft.world.level.block.state.properties.DoorHingeSide.LEFT));
-        place(ox + length / 2, cposy + 2, oz, Blocks.IRON_DOOR.defaultBlockState()
-                .setValue(BlockStateProperties.DOUBLE_BLOCK_HALF, net.minecraft.world.level.block.state.properties.DoubleBlockHalf.UPPER));
+        // Double-iron-door entry with stone lintels + buttons (legacy line
+        // 5138-5147 — the identical entry pattern as the Robot Lab hangar's
+        // GD:4076-4083: two ItemDoor.func_150924_a(dir=3) doors at width/2
+        // and width/2-1 on the z=0 wall, lintel stones, meta-4 buttons).
+        // D6b close-out fix (dsb_sweep_spec.md F1): the port previously
+        // placed a single door column at the WRONG x (ox + length/2) and
+        // omitted the second door, both lintels, and both buttons. States
+        // per the D6a-verified robot-lab trace: dir 3 = FACING NORTH
+        // (1.7.10 door meta 0=east/1=south/2=west/3=north), east leaf
+        // HINGE=LEFT, west leaf HINGE=RIGHT.
+        place(ox + width / 2, cposy + 1, oz, air);                   // orig :5138
+        place(ox + width / 2, cposy + 2, oz, air);                   // orig :5139
+        place(ox + width / 2 - 1, cposy + 1, oz, air);               // orig :5140
+        place(ox + width / 2 - 1, cposy + 2, oz, air);               // orig :5141
+        BlockState ghDoorEast = Blocks.IRON_DOOR.defaultBlockState()
+                .setValue(BlockStateProperties.HORIZONTAL_FACING, Direction.NORTH)
+                .setValue(BlockStateProperties.DOOR_HINGE, DoorHingeSide.LEFT);
+        BlockState ghDoorWest = Blocks.IRON_DOOR.defaultBlockState()
+                .setValue(BlockStateProperties.HORIZONTAL_FACING, Direction.NORTH)
+                .setValue(BlockStateProperties.DOOR_HINGE, DoorHingeSide.RIGHT);
+        place(ox + width / 2, cposy + 1, oz, ghDoorEast);            // orig :5142
+        place(ox + width / 2, cposy + 2, oz,
+                ghDoorEast.setValue(BlockStateProperties.DOUBLE_BLOCK_HALF, DoubleBlockHalf.UPPER));
+        place(ox + width / 2 - 1, cposy + 1, oz, ghDoorWest);        // orig :5143
+        place(ox + width / 2 - 1, cposy + 2, oz,
+                ghDoorWest.setValue(BlockStateProperties.DOUBLE_BLOCK_HALF, DoubleBlockHalf.UPPER));
+        place(ox + width / 2 - 2, cposy + 2, oz, Blocks.STONE.defaultBlockState()); // orig :5144 (lintel)
+        place(ox + width / 2 + 1, cposy + 2, oz, Blocks.STONE.defaultBlockState()); // orig :5145 (lintel)
+        BlockState ghButton = Blocks.STONE_BUTTON.defaultBlockState()
+                .setValue(BlockStateProperties.ATTACH_FACE, AttachFace.WALL)
+                .setValue(BlockStateProperties.HORIZONTAL_FACING, Direction.NORTH);  // meta 4 (robot-lab trace)
+        place(ox + width / 2 - 2, cposy + 2, oz - 1, ghButton);      // orig :5146
+        place(ox + width / 2 + 1, cposy + 2, oz - 1, ghButton);      // orig :5147
 
         // Roof Triffid spawners (legacy line 5148-5161).
         int i = length / 2;
@@ -1500,14 +1524,24 @@ public class LegacyDungeonPiece extends StructurePiece {
                 }
             }
         }
-        // Iron door entry (legacy line 5548-5551).
+        // Full 2-tall iron door entry (legacy line 5548-5551:
+        // ItemDoor.func_150924_a dir=3 = FACING NORTH, default hinge — a
+        // single door with symmetric wall neighbours keeps vanilla's LEFT).
+        // D6b close-out fix (dsb_sweep_spec.md F2): the port previously
+        // placed only the LOWER half; the upper half is restored, and the
+        // button's facing is corrected SOUTH -> NORTH (1.7.10 button meta 4
+        // = north per the D6a-verified robot-lab trace — the button hangs on
+        // the z=0 wall block south of it and protrudes north).
         place(cposx + 11, cposy, cposz, air);
         place(cposx + 11, cposy + 1, cposz, air);
-        place(cposx + 11, cposy, cposz, Blocks.IRON_DOOR.defaultBlockState());
+        BlockState whDoor = Blocks.IRON_DOOR.defaultBlockState()
+                .setValue(BlockStateProperties.HORIZONTAL_FACING, Direction.NORTH);
+        place(cposx + 11, cposy, cposz, whDoor);
+        place(cposx + 11, cposy + 1, cposz,
+                whDoor.setValue(BlockStateProperties.DOUBLE_BLOCK_HALF, DoubleBlockHalf.UPPER));
         place(cposx + 12, cposy + 1, cposz - 1, Blocks.STONE_BUTTON.defaultBlockState()
-                .setValue(BlockStateProperties.ATTACH_FACE,
-                        net.minecraft.world.level.block.state.properties.AttachFace.WALL)
-                .setValue(BlockStateProperties.HORIZONTAL_FACING, Direction.SOUTH));
+                .setValue(BlockStateProperties.ATTACH_FACE, AttachFace.WALL)
+                .setValue(BlockStateProperties.HORIZONTAL_FACING, Direction.NORTH));
     }
 
     /** Direct port of {@code makewhroof} (1.7.10 line 5554-5597). */

@@ -23,7 +23,7 @@ import sys
 # + WGEN-058..062 (Robot Lab reconciliation: loot palette, mob bindings,
 #   build order, annex hardware; fairy-tree return contract), found 2026-08-08
 #   in Phase D6a.
-TOTAL_EXPECTED = 618
+TOTAL_EXPECTED = 630
 TERMINAL = {"FIXED", "VERIFIED-CORRECT", "DEFERRED"}
 
 with open("AUDIT_FINDINGS.md", encoding="utf-8") as fh:
@@ -46,7 +46,19 @@ for block in re.split(r"(?m)^### ", text)[1:]:
     )
 
 
+# D close-out (2026-08-10): Phase D owns zero open findings. These open
+# IDs were explicitly re-owned to Phase E in phase_d_reports/phase_d_rollup.md
+# §3 (entity/feature work outside the structure phase, or new close-out
+# findings assigned to E).
+PHASE_E_REOWNED = {
+    "ENT-A-054", "ENT-A-083", "WGEN-003", "WGEN-004", "WGEN-007",
+    "ITEM-023", "WGEN-070", "WGEN-071",
+}
+
+
 def expected_owner(fid: str, status: str, res: str | None) -> str:
+    if fid in PHASE_E_REOWNED:
+        return "Phase E"
     if res == "PARTIAL":
         return "Phase D"
     if fid.startswith("OPT-"):

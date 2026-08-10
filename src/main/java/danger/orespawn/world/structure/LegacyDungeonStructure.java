@@ -47,6 +47,28 @@ public class LegacyDungeonStructure extends Structure {
             LegacyDungeonPiece.DungeonType.valueOf(name),
             mode.map(LegacyDungeonPiece.DungeonType.PlacementMode::valueOf))));
 
+    /**
+     * The 11 wired overworld dungeon types the original gated behind
+     * {@code DisableOverworldDungeons == 0} (orig OreSpawnWorld.java:284):
+     * the 6-way rotation (:285-303) + the ahh fall-through chain (:304-321).
+     * addANest's ant nests live in the ant features, and the Igloo's
+     * worldgen placement is deliberately unwired (igloo_spec.md §7.3) — a
+     * future Igloo placement must honor this gate too.
+     */
+    private static final java.util.EnumSet<LegacyDungeonPiece.DungeonType> OVERWORLD_DUNGEON_TYPES =
+            java.util.EnumSet.of(
+                    LegacyDungeonPiece.DungeonType.PLAY_POOL,
+                    LegacyDungeonPiece.DungeonType.WATER_DRAGON_LAIR,
+                    LegacyDungeonPiece.DungeonType.GOLD_FISH_BOWL,
+                    LegacyDungeonPiece.DungeonType.GIRLFRIEND_ISLAND,
+                    LegacyDungeonPiece.DungeonType.MONSTER_ISLAND,
+                    LegacyDungeonPiece.DungeonType.FROG_POND,
+                    LegacyDungeonPiece.DungeonType.HAUNTED_HOUSE,
+                    LegacyDungeonPiece.DungeonType.LEAF_MONSTER_DUNGEON,
+                    LegacyDungeonPiece.DungeonType.SPIT_BUG_LAIR,
+                    LegacyDungeonPiece.DungeonType.BOUNCY_CASTLE,
+                    LegacyDungeonPiece.DungeonType.RUBBER_DUCKY_POND);
+
     private final LegacyDungeonPiece.DungeonType dungeonType;
     private final Optional<LegacyDungeonPiece.DungeonType.PlacementMode> placementOverride;
 
@@ -70,6 +92,15 @@ public class LegacyDungeonStructure extends Structure {
         // through buildNow, untouched by this check.
         if (dungeonType == LegacyDungeonPiece.DungeonType.SPIDER_HANGOUT
                 && !danger.orespawn.OreSpawnConfig.SPIDER_DRIVER_ENABLE.get()) {
+            return Optional.empty();
+        }
+        // DisableOverworldDungeons (orig OreSpawnWorld.java:284) gated the
+        // ENTIRE overworld dungeon dispatch. D6b close-out fix: the config
+        // was defined (OreSpawnConfig.DISABLE_OVERWORLD_DUNGEONS) but never
+        // read anywhere. Worldgen-only, like the original — the Dungeon
+        // Spawner Block path was never gated.
+        if (danger.orespawn.OreSpawnConfig.DISABLE_OVERWORLD_DUNGEONS.get()
+                && OVERWORLD_DUNGEON_TYPES.contains(dungeonType)) {
             return Optional.empty();
         }
         BlockPos origin = switch (placementOverride.orElse(dungeonType.placement)) {

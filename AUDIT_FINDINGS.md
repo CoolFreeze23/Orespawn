@@ -3867,7 +3867,7 @@ Only MISSING / PARTIAL / DIVERGENT / UNVERIFIED items are listed; fully PORTED i
 - **Original:** `DungeonSpawnerBlock.java:46+` — after 400 ticks spawns 1 of **50** structure types (FairyTree → RedAntHangout list)
 - **Port:** `block/entity/RandomDungeonSpawnerBlockEntity.java:63-72`, `ModBlocks.java:166` — 200-tick countdown, then 1-in-4 ruby dungeon else generic dungeon (2 outcomes)
 - **Fix:** Restore the 400-tick delay and expand the outcome pool toward the original 50-entry structure list as structures are ported (see WGEN-042); at minimum make the pool table-driven so new structures register into it.
-- **Resolution:** PARTIAL (2026-06-12, Phase C — 400-tick fuse + table-driven nextInt(50) pool restored; structure builders beyond generic/ruby dungeon → WGEN-042 (Phase D). 2026-08-08, Phase D5 — outcomes 2 (EnormousCastle King, DSB:59-61), 23 (BasiliskMaze, DSB:122-124), 38 (NightmareRookery, DSB:167-169), 47 (EnormousCastleQ, DSB:194-196) wired via LegacyDungeonPiece.buildNow; 2026-08-08, Phase D6a — outcomes 0 (FairyTree), 1 (FairyCastleTree), 7 (Kyuubi), 24 (Hospital), 27 (EnderCastle), 29 (IncaPyramid), 30 (RobotLab), 37 (MonsterIsland) wired — 14 of 50 live; D6b batches 1-2: +outcomes 3/12/13/14/15/16/17/18/19/20/34 — 25 of 50 live (the prior "27" here was a miscount, corrected during batch 3's recount); D6b batch 3 (2026-08-10): +outcomes 26/28/35/39/44/46 — 31 of 50 live; D6b batch 4 (2026-08-10): the final 19 — six via new structure ports (5 haunted house, 11 ender knight dungeon, 40/43/48/49) and 13 via the sweep (9/10/32 direct; 31/36/41/42 offset-corrected buildNow; 25/33/45 CrystalStructures adapters; 4/6/8 feature buildAt cores) — **ALL 50 of 50 live**; see FIX_LOG.md and dsb_sweep_spec.md)
+- **Resolution:** FIXED (2026-06-12, Phase C — 400-tick fuse + table-driven nextInt(50) pool restored; structure builders beyond generic/ruby dungeon → WGEN-042 (Phase D). 2026-08-08, Phase D5 — outcomes 2 (EnormousCastle King, DSB:59-61), 23 (BasiliskMaze, DSB:122-124), 38 (NightmareRookery, DSB:167-169), 47 (EnormousCastleQ, DSB:194-196) wired via LegacyDungeonPiece.buildNow; 2026-08-08, Phase D6a — outcomes 0 (FairyTree), 1 (FairyCastleTree), 7 (Kyuubi), 24 (Hospital), 27 (EnderCastle), 29 (IncaPyramid), 30 (RobotLab), 37 (MonsterIsland) wired — 14 of 50 live; D6b batches 1-2: +outcomes 3/12/13/14/15/16/17/18/19/20/34 — 25 of 50 live (the prior "27" here was a miscount, corrected during batch 3's recount); D6b batch 3 (2026-08-10): +outcomes 26/28/35/39/44/46 — 31 of 50 live; D6b batch 4 (2026-08-10): the final 19 — six via new structure ports (5 haunted house, 11 ender knight dungeon, 40/43/48/49) and 13 via the sweep (9/10/32 direct; 31/36/41/42 offset-corrected buildNow; 25/33/45 CrystalStructures adapters; 4/6/8 feature buildAt cores) — **ALL 50 of 50 live**; see FIX_LOG.md and dsb_sweep_spec.md)
 
 ### ITEM-021 — OreGenericEgg: XP bonus became item-dupe exploit
 
@@ -4291,7 +4291,7 @@ Only MISSING / PARTIAL / DIVERGENT / UNVERIFIED items are listed; fully PORTED i
 - **Original:** `LessOre` config gates ore-generation multiplier (notably Mining dim 3× passes)
 - **Port:** `OreSpawnConfig.java:139-141` — `LESS_ORE` exists with explicit TODO, affects nothing
 - **Fix:** Wire `LESS_ORE` into the datapack/feature pipeline (e.g. select between normal and reduced placed-feature sets, and gate the Mining-dim density per WGEN-011).
-- **Resolution:** PARTIAL (2026-06-12, Phase C — lessOre wired via the orespawn:less_ore_count placement modifier for overworld ore/troll-block veins; Mining-dim density gating → WGEN-011 (Phase D); see FIX_LOG.md and phase_c_reports/C6_items_blocks.md)
+- **Resolution:** FIXED (2026-06-12, Phase C — lessOre wired via the orespawn:less_ore_count placement modifier for overworld ore/troll-block veins; Mining-dim density gating → WGEN-011, itself FIXED in Phase C — nothing remained; CLOSED 2026-08-10 at the D close-out; see FIX_LOG.md and phase_c_reports/C6_items_blocks.md)
 
 ### ITEM-065 — Per-tier weapon/armor/ore stat overrides missing
 
@@ -4442,7 +4442,7 @@ Only MISSING / PARTIAL / DIVERGENT / UNVERIFIED items are listed; fully PORTED i
 
 ## Village Mania dimension
 
-- **Resolution:** PARTIAL (2026-06-12, Phase C — BeeHive restored to Mining (WGEN-040) and shadow/WTF/Leon frequencies corrected (WGEN-039); BasiliskMaze is WGEN-037 and KyuubiDungeon/EnderKnightDungeon are WGEN-042 — both Phase D structure owners; see FIX_LOG.md and phase_c_reports/C7_worldgen.md)
+- **Resolution:** FIXED (2026-06-12, Phase C — BeeHive restored to Mining (WGEN-040) and shadow/WTF/Leon frequencies corrected (WGEN-039); BasiliskMaze is WGEN-037 and KyuubiDungeon/EnderKnightDungeon are WGEN-042. CLOSED 2026-08-10, D close-out: maze D5, Kyuubi D6a, EnderKnightDungeon D6b batch 4 (LOWEST_GRASS_36 mining set 26/13); see FIX_LOG.md and phase_d_reports/phase_d_rollup.md)
 
 ### WGEN-015 — Village dimension generates no villages
 
@@ -4477,7 +4477,7 @@ Only MISSING / PARTIAL / DIVERGENT / UNVERIFIED items are listed; fully PORTED i
 
 ## Islands dimension
 
-- **Resolution:** PARTIAL (2026-06-12, Phase C — the divergent half fixed: greenhouse/robot_lab/white_house re-tagged to Islands (WGEN-022) so Village no longer hosts them; DamselInDistress/SpiderHangout/RedAntHangout remain Phase D (WGEN-042 structure owner); see FIX_LOG.md and phase_c_reports/C7_worldgen.md)
+- **Resolution:** FIXED (2026-06-12, Phase C — the divergent half fixed: greenhouse/robot_lab/white_house re-tagged to Islands (WGEN-022) so Village no longer hosts them; DamselInDistress/SpiderHangout/RedAntHangout were WGEN-042 owners. CLOSED 2026-08-10, D close-out: Damsel D6b batch 3, both Hangouts batch 4, all inline orespawn:village_biome; see FIX_LOG.md and phase_d_reports/phase_d_rollup.md)
 
 ### WGEN-019 — Islands: flat-plane terrain replaced by floating-islands noise
 
@@ -4501,6 +4501,7 @@ Only MISSING / PARTIAL / DIVERGENT / UNVERIFIED items are listed; fully PORTED i
 - **Original:** `OreSpawnWorld.java:134-198` — D4Castle, D4GenericDungeon, D4EnderCastle, D4IncaPyramid, D4RobotLab, D4Mini, D4RubyDungeon, D4CephadromeAltar, D4Greenhouse, D4NightmareRookery, D4StinkyHouse, D4WhiteHouse, Pumpkin, D4Rainbow, D4CloudShark, UnstableAnts placement
 - **Port:** absent — nothing tagged `island_biome` (RobotLab/Greenhouse/WhiteHouse were moved to Village)
 - **Fix:** Port the D4 structure builders as jigsaw/legacy-piece structures tagged `orespawn:island_biome` with sets matching the original per-chunk roll rates; restore unstable-ant block placement.
+- **Resolution:** FIXED (2026-08-10, Phase D close-out — every Islands D4 builder is ported: EnormousCastle K/Q + NightmareRookery D5, Robot Lab/Greenhouse/White House re-tagged Islands in C and reconciled D6a, CloudShark b1, MiniDungeon/CephadromeAltar b2, StinkyHouse/Pumpkin/Rainbow b3; unstable anthills wired via configured/placed_feature/unstable_anthill.json into island_biome.json; see phase_d_reports/phase_d_rollup.md)
 
 ### WGEN-022 — Greenhouse/RobotLab/WhiteHouse relocated Islands → Village
 
@@ -4608,7 +4609,7 @@ Only MISSING / PARTIAL / DIVERGENT / UNVERIFIED items are listed; fully PORTED i
 
 ## Structures & dungeons
 
-- **Resolution:** PARTIAL (2026-06-12, Phase C — End spawns verified present (add_end_spawns); Hospital and EnderCastle structures remain Phase D (WGEN-042 structure owner); see FIX_LOG.md and phase_c_reports/C7_worldgen.md)
+- **Resolution:** FIXED (2026-06-12, Phase C — End spawns verified present (add_end_spawns); Hospital and EnderCastle were WGEN-042 owners. CLOSED 2026-08-10, D close-out: both ported D6a (is_end sets 42/21 + 10/5); see FIX_LOG.md and phase_d_reports/phase_d_rollup.md)
 
 ### WGEN-034 — Generic Dungeon: spawner pool swapped, custom loot replaced by vanilla
 
@@ -4632,7 +4633,7 @@ Only MISSING / PARTIAL / DIVERGENT / UNVERIFIED items are listed; fully PORTED i
 - **Original:** `DungeonSpawnerBlock.java` — on tick spawns 1 of **50** structures (FairyTree → RedAntHangout list)
 - **Port:** `RandomDungeonSpawnerBlockEntity.java:63-72` — 2 outcomes (ruby 1/4 else generic)
 - **Fix:** Same root as ITEM-020 — expand the outcome table as structures land (WGEN-021/042); restore the 400t timer.
-- **Resolution:** PARTIAL (2026-06-12, Phase C — the 400-tick timer is already faithful (RandomDungeonSpawnerBlockEntity TOTAL_DELAY=400 vs orig DungeonSpawnerBlock.java:39); expanding the 2-outcome table back to 50 is blocked on the Phase D structure ports (WGEN-021/037/038/042); see FIX_LOG.md and phase_c_reports/C7_worldgen.md)
+- **Resolution:** FIXED (2026-06-12, Phase C — the 400-tick timer is already faithful (RandomDungeonSpawnerBlockEntity TOTAL_DELAY=400 vs orig DungeonSpawnerBlock.java:39); expanding the 2-outcome table back to 50 was blocked on the Phase D structure ports. CLOSED 2026-08-10, D close-out: all 50 outcomes wired (ITEM-020); see FIX_LOG.md and phase_c_reports/C7_worldgen.md)
 
 ### WGEN-037 — BasiliskMaze absent
 
@@ -4680,7 +4681,7 @@ Only MISSING / PARTIAL / DIVERGENT / UNVERIFIED items are listed; fully PORTED i
 - **Original:** placed by OreSpawnWorld/D4 hooks & DungeonSpawnerBlock (loot lists in `GenericDungeon.java`): D4Castle, EnderCastle, IncaPyramid, Mini, CephadromeAltar, NightmareRookery, StinkyHouse, Rainbow, CloudShark dungeon, Pumpkin, BouncyCastle, MonsterIsland, GirlfriendIsland, PlayPool, WaterDragonLair, GoldFishBowl, Graveyard, SpitBugLair, Igloo, KyuubiDungeon, EnderKnightDungeon, Hospital, DamselInDistress, SpiderHangout, RedAntHangout, FrogPond, RubberDuckyPond, QueenAltar(D4), EnormousCastle(Q)
 - **Port:** absent — only 17 structure JSONs + 2 dungeon code paths exist
 - **Fix:** Port these builders incrementally (legacy-piece transcription like the royal altars), prioritizing those wired to gameplay (KyuubiDungeon/EnderKnightDungeon for Mining, Hospital/EnderCastle for End, D4 set for Islands); register each into the DungeonSpawnerBlock pool (ITEM-020/WGEN-036) as it lands.
-- **Resolution:** PARTIAL (2026-08-08, Phase D5 — NightmareRookery ported (`NightmareRookeryGenerator` per orig GenericDungeon.java:5242-5312 + addD4NightmareRookery OSW:2253-2274, island_biome set 44/22 = the 1/100 x 1/19 D4 roll, DSB outcome 38) and the already-ported EnormousCastle/Q ('Challenge Towers') reconciled interior-and-placement to the originals (WGEN-051..056, ITEM-066). D5 also produced `phase_d_reports/structure_conversion_pattern.md` — the D6 playbook — and the full Islands i=nextInt(19) dispatch table (`enormous_castle_spec.md` section 12.3). 2026-08-08, Phase D6a — the six strong-model items landed: EnderCastle (GD:3207-3623 + End placement END_SURFACE/is_end + Islands i==7, DSB 27), IncaPyramid (GD:3735-4042, write-set model for ramp self-reads, DSB 29), KyuubiDungeon (GD:1095-1361, Mining rotation i==1, DSB 7), EnderDragonHospital (GD:2815-2991, 4 End Crystals — no dragon, End-only, DSB 24), MonsterIsland (GD:5170-5240, overworld ocean OCEAN_SURFACE, DSB 37), Robot Lab annex reconciliation (WGEN-058..061), FairyTree/FairyCastleTree DSB 0/1 + LessLag shrinks (+WGEN-062). D6b batches 1-2 (2026-08-08): PlayPool, CloudSharkDungeon, GoldFishBowl, SpitBugLair, UrchinSpawner gate, RotatorStation DSB, Igloo (builder+DSB; placement NEEDS_DESIGN_RULING, igloo_spec.md §7.3), EnderReaperGraveyard, WaterDragonLair, LeafMonsterDungeon, MiniDungeon, CephadromeAltar. D6b batch 3 (2026-08-10): BouncyCastle (GD:3106-3205, desert SAND_SURFACE_MINUS1, DSB 26), DamselInDistress (GD:3625-3733, Village dim VILLAGE_GRASS_SURFACE + direct Girlfriend spawn, DSB 28), GirlfriendIsland (GD:4962-5028, MonsterIsland twin, DSB 35), StinkyHouse (GD:5314-5381, Islands i==15, DSB 39), Pumpkin (GD:6041-6182, Islands i==17 ISLANDS_GRASS_AIR, DSB 44), Rainbow (GD:6260-6393, Islands i==18 SKY_BAND_70, DSB 46). D6b batch 4 (2026-08-10): SpiderHangout (GD:6989-7043, Village dim, DSB 48), RedAntHangout (GD:7045-7069, Village dim, DSB 49), FrogPond (GD:6018-6039, plains, DSB 43), RubberDuckyPond (GD:5383-5421, plains, DSB 40), plus the two sweep-surfaced unported builders HauntedHouse (GD:891-1010, overworld, DSB 5) and EnderKnightDungeon (GD:1794-1932, End+Mining dual via LOWEST_GRASS_36 override, DSB 11). Remaining open: Igloo worldgen placement only (igloo_spec.md §7.3 NEEDS_DESIGN_RULING); see FIX_LOG.md)
+- **Resolution:** FIXED (2026-08-08, Phase D5 — NightmareRookery ported (`NightmareRookeryGenerator` per orig GenericDungeon.java:5242-5312 + addD4NightmareRookery OSW:2253-2274, island_biome set 44/22 = the 1/100 x 1/19 D4 roll, DSB outcome 38) and the already-ported EnormousCastle/Q ('Challenge Towers') reconciled interior-and-placement to the originals (WGEN-051..056, ITEM-066). D5 also produced `phase_d_reports/structure_conversion_pattern.md` — the D6 playbook — and the full Islands i=nextInt(19) dispatch table (`enormous_castle_spec.md` section 12.3). 2026-08-08, Phase D6a — the six strong-model items landed: EnderCastle (GD:3207-3623 + End placement END_SURFACE/is_end + Islands i==7, DSB 27), IncaPyramid (GD:3735-4042, write-set model for ramp self-reads, DSB 29), KyuubiDungeon (GD:1095-1361, Mining rotation i==1, DSB 7), EnderDragonHospital (GD:2815-2991, 4 End Crystals — no dragon, End-only, DSB 24), MonsterIsland (GD:5170-5240, overworld ocean OCEAN_SURFACE, DSB 37), Robot Lab annex reconciliation (WGEN-058..061), FairyTree/FairyCastleTree DSB 0/1 + LessLag shrinks (+WGEN-062). D6b batches 1-2 (2026-08-08): PlayPool, CloudSharkDungeon, GoldFishBowl, SpitBugLair, UrchinSpawner gate, RotatorStation DSB, Igloo (builder+DSB; placement NEEDS_DESIGN_RULING, igloo_spec.md §7.3), EnderReaperGraveyard, WaterDragonLair, LeafMonsterDungeon, MiniDungeon, CephadromeAltar. D6b batch 3 (2026-08-10): BouncyCastle (GD:3106-3205, desert SAND_SURFACE_MINUS1, DSB 26), DamselInDistress (GD:3625-3733, Village dim VILLAGE_GRASS_SURFACE + direct Girlfriend spawn, DSB 28), GirlfriendIsland (GD:4962-5028, MonsterIsland twin, DSB 35), StinkyHouse (GD:5314-5381, Islands i==15, DSB 39), Pumpkin (GD:6041-6182, Islands i==17 ISLANDS_GRASS_AIR, DSB 44), Rainbow (GD:6260-6393, Islands i==18 SKY_BAND_70, DSB 46). D6b batch 4 (2026-08-10): SpiderHangout (GD:6989-7043, Village dim, DSB 48), RedAntHangout (GD:7045-7069, Village dim, DSB 49), FrogPond (GD:6018-6039, plains, DSB 43), RubberDuckyPond (GD:5383-5421, plains, DSB 40), plus the two sweep-surfaced unported builders HauntedHouse (GD:891-1010, overworld, DSB 5) and EnderKnightDungeon (GD:1794-1932, End+Mining dual via LOWEST_GRASS_36 override, DSB 11). Igloo worldgen placement carved out to WGEN-071 (Phase E) at the D close-out — every other structure is ported and verified; see FIX_LOG.md and phase_d_reports/phase_d_rollup.md)
 
 ### WGEN-043 — Challenge Towers: no 1.7.10 counterpart found
 
@@ -4860,6 +4861,89 @@ Entries: **79 total** — ANIM 20 (DIVERGENT 8 · PARTIAL 10 · MISSING 2) · BU
 - **Original:** `addFairyTree` returns TRUE when its Y 128→41 air-over-CrystalGrass scan finds no candidate (falls through to OreSpawnWorld.java:1995), so 1/5 of such chunks still suppress the termite/big-structure follow-ups with no tree placed; only the explicit 17×17/5×5 clearance failures (:1977/:1984) return false.
 - **Port:** `CrystalStructures.tryPlaceFairyTree` returned false on scan exhaustion, letting follow-ups proceed.
 - **Resolution:** FIXED (2026-08-08, Phase D6a — original return contract restored with citations; pattern-doc addendum updated ("port the FULL return contract"); see FIX_LOG.md. D6b batch-1 verification then caught a side effect of that restore — the suppress path was also arming the 50-chunk cooldown, which the original arms ONLY on the build path (OSW:1992) — fixed with a tri-state result (BUILT/SUPPRESS/NONE) in CrystalStructures)
+
+### WGEN-063 — Greenhouse: plant table silently drifted (found 2026-08-10, D6b batch 4)
+
+- **Status:** DIVERGENT
+- **Original:** `makeGreenhouseDungeon` plant roll t==7 places reeds/sugar cane (GenericDungeon.java:5090-5092, field_150436_aH) and t==19 places MyRicePlant (:5123-5125); only t==8 rolls nothing.
+- **Port:** case 7 returned PUMPKIN and case 19 fell to air under a Javadoc claiming "indices 8 and 19 are intentional gaps".
+- **Resolution:** FIXED (2026-08-10, D6b batch 4 — case 7 → SUGAR_CANE, case 19 → ModBlocks.RICE_PLANT, Javadoc corrected; affects worldgen GREENHOUSE + DSB type 36; caught by the batch-4 cross-cutting verifier; see FIX_LOG.md)
+
+### WGEN-064 — DisableOverworldDungeons config defined but never read (found 2026-08-10, D6b batch 4)
+
+- **Status:** MISSING
+- **Original:** `DisableOverworldDungeons == 0` gates the ENTIRE overworld dungeon dispatch — the 6-way rotation and the ahh fall-through chain (OreSpawnWorld.java:284-321).
+- **Port:** `OreSpawnConfig.DISABLE_OVERWORLD_DUNGEONS` existed (OreSpawnConfig.java:131/281) but no code read it.
+- **Resolution:** FIXED (2026-08-10, D close-out — worldgen-only gate in LegacyDungeonStructure.findGenerationPoint over the 11 wired overworld types (PLAY_POOL, WATER_DRAGON_LAIR, GOLD_FISH_BOWL, GIRLFRIEND_ISLAND, MONSTER_ISLAND, FROG_POND, HAUNTED_HOUSE, LEAF_MONSTER_DUNGEON, SPIT_BUG_LAIR, BOUNCY_CASTLE, RUBBER_DUCKY_POND); the DSB path stays ungated like the original; a future Igloo placement (WGEN-071) must honor it; see FIX_LOG.md)
+
+### WGEN-065 — Royal altars: bounding box clipped skirt + air clear (found 2026-08-10, D6b batch 4, sweep flag F3)
+
+- **Status:** DIVERGENT
+- **Original:** the v=1..9 dirt skirt writes to origin−9 (GenericDungeon.java:4377-4382/5721-5726) and the j<=height+10 air clear to origin+58 (:4364/5708).
+- **Port:** `KING_ALTAR/QUEEN_ALTAR(32, 4, 56)` — down 4 / up 56 dropped those writes in BOTH worldgen and buildNow.
+- **Resolution:** FIXED (2026-08-10, D6b batch 4 — box widened to (32, 10, 59); piece RNG seeds from the box, so altar layouts reseed for existing seeds (pre-release, documented delta); see FIX_LOG.md)
+
+### WGEN-066 — Alien WTF: box clipped the south Part room's far wall (found 2026-08-10, D6b batch 4, sweep flag F8)
+
+- **Status:** DIVERGENT
+- **Original:** the south Part room writes to z = origin−21 (GenericDungeon.java:1674 → makeAlienPart at sz−7 spanning 15).
+- **Port:** symmetric ±20 box — the far Z wall plane was ALWAYS dropped on the buildNow path and on ~1/16 worldgen chunk alignments.
+- **Resolution:** FIXED (2026-08-10, D6b batch 4 — box widened to the asymmetric (-20, 20, 25, 6, -22, 20); footprint re-derived X −19..+17, Z −21..+15 by the cross-cutting verifier; RNG-reseed delta documented; see FIX_LOG.md)
+
+### WGEN-067 — Greenhouse: entry doors diverged (found 2026-08-10, D6b batch 4, sweep flag F1)
+
+- **Status:** DIVERGENT
+- **Original:** two full iron doors at width/2 and width/2−1 (ItemDoor dir=3 = NORTH), two stone lintels, two meta-4 stone buttons (GenericDungeon.java:5138-5147) — the same entry pattern as the Robot Lab hangar (GD:4076-4083).
+- **Port:** a single hinge-only door column at the WRONG x (ox + length/2) with no second door, lintels, or buttons.
+- **Resolution:** FIXED (2026-08-10, D close-out — full pattern transcribed with the D6a-verified robot-lab door trace (east leaf HINGE=LEFT, west leaf HINGE=RIGHT, FACING=NORTH); see FIX_LOG.md)
+
+### WGEN-068 — White House: half a door and a mis-hung button (found 2026-08-10, D6b batch 4, sweep flag F2)
+
+- **Status:** DIVERGENT
+- **Original:** full 2-tall iron door via ItemDoor dir=3 + meta-4 button (GenericDungeon.java:5548-5551).
+- **Port:** only the LOWER door half; button FACING=SOUTH, which attaches it to the wrong block (meta 4 = north per the robot-lab trace).
+- **Resolution:** FIXED (2026-08-10, D close-out — upper half restored, button re-hung NORTH; see FIX_LOG.md)
+
+### WGEN-069 — CrystalBattleTowerFeature: invented and dead (found 2026-08-10, D6b batch 4, sweep flag F4)
+
+- **Status:** DIVERGENT
+- **Original:** none — the faithful CrystalBattleTower port lives in CrystalStructures (GD:4831-4959 → CS builder); the Feature's loot was invented and no datapack JSON referenced it.
+- **Resolution:** FIXED (2026-08-10, D6b batch 4 — class deleted + ModFeatures registration removed under the no-procedural-fabrication rule; DSB type 33 wired to the faithful CrystalStructures.buildCrystalBattleTowerAt adapter; see FIX_LOG.md)
+
+### WGEN-070 — CrystalMazeFeature: dead duplicate registration (found 2026-08-10, D close-out, sweep flag F5)
+
+- **Status:** DIVERGENT
+- **Original:** CrystalMaze.java buildCrystalMaze (called per Crystal chunk at Y=25, ChunkProviderOreSpawn5.java:213-214) — REAL original code, so the F4 deletion rule does not apply.
+- **Port:** the live faithful path is world/CrystalMaze via OreSpawnChunkGenerator.java:177 (WGEN-027 resolution made it the single placement mechanism); the parallel CrystalMazeFeature registration is datapack-orphaned AND divergent (stamps outer boundary walls, skips openCrystalMaze's perimeter carve, bedrock ordering differs).
+- **Fix:** retire the Feature class + registration, or reconcile it to the original and re-wire — either way ONE mechanism should remain. Phase E owner (audit cleanup).
+
+### WGEN-071 — Igloo: worldgen placement undecided (carved from WGEN-042 at the D close-out)
+
+- **Status:** MISSING
+- **Original:** addIgloo generates on snow-biome borders inside the overworld ahh chain (OreSpawnWorld.java:304-321 dispatch; scan per igloo_spec.md §7.3).
+- **Port:** builder + DSB type 20 shipped (D6b batch 2); worldgen placement deliberately unwired — the border-biome/frequency mapping has no clean biome-tag equivalent (NEEDS_DESIGN_RULING, igloo_spec.md §7.3).
+- **Fix:** decide the border mapping + frequency and add the JSON pair; the placement must honor the DisableOverworldDungeons gate (WGEN-064). Phase E owner.
+
+### ITEM-067 — DSB Robot Lab outcome built shifted from the clicked pos (found 2026-08-10, D6b batch 4, sweep flag F7)
+
+- **Status:** DIVERGENT
+- **Original:** makeRobotLab is corner-anchored at the passed position (GenericDungeon.java:4053-4059).
+- **Port:** generateRobotLab recentres (ox = x−5, oz = z−25), and the DSB case passed the clicked pos raw — the live build landed (−5, 0, −25) off.
+- **Resolution:** FIXED (2026-08-10, D6b batch 4 — case pre-offsets pos.offset(5, 0, 25), the same recentring-cancel treatment as the batch's King/Queen altar, Greenhouse, and White House cases; see FIX_LOG.md)
+
+### ITEM-068 — Bee/Mantis feature chests dropped their facings (found 2026-08-10, D6b batch 4)
+
+- **Status:** DIVERGENT
+- **Original:** every chest in fill_beehive_chests (GD:860-889), fill_mantishive_chests (GD:1064-1093), and the SmallBeeHive chamber (GD:1446) carries meta 2-5 (inward-facing).
+- **Port:** all placed default (north).
+- **Resolution:** FIXED (2026-08-10, D close-out — facings restored per the metas (Beehive/Mantis: E/W/S/N inward ring; SmallBeehive: EAST); see FIX_LOG.md)
+
+### ITEM-069 — Bee/Mantis loot substituted invented items for the egg entries (found 2026-08-10, D6b batch 4)
+
+- **Status:** DIVERGENT
+- **Original:** beeContentsList carries BeeEgg 2-8 weight 15 (GenericDungeon.java:55); mantisContentsList carries MantisEgg 2-4 weight 20 (:56).
+- **Port:** GOLDEN_CARROT / SPIDER_EYE stand-ins justified by a false "no equivalent item exists" premise — ModItems registers BEE_SPAWN_EGG and MANTIS_SPAWN_EGG.
+- **Resolution:** FIXED (2026-08-10, D close-out — spawn eggs restored at the original stacks/weights per the repo egg-item convention (stinky_house/rubber_ducky_pond/water_dragon_lair precedents); the in-code fills now agree with the shipped chests/beehive.json; see FIX_LOG.md)
 
 
 

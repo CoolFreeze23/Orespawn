@@ -4,11 +4,13 @@ import com.mojang.serialization.Codec;
 import danger.orespawn.ModEntities;
 import danger.orespawn.ModItems;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.ChestBlock;
 import net.minecraft.world.level.block.entity.ChestBlockEntity;
 import net.minecraft.world.level.block.entity.SpawnerBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -47,9 +49,12 @@ import java.util.Random;
  *
  * <p><b>Loot fidelity (beeContentsList, GenericDungeon.java:55):</b>
  * sugar, dandelion, gold nuggets, paper, Fairy Sword, full Crystal
- * Pink armour set, butter candy, experience catcher, bee egg
- * (golden carrot stand-in: no entity item exists in 1.21.1). Each
- * chest gets {@code 1 + nextInt(5)} weighted draws.</p>
+ * Pink armour set, butter candy, experience catcher, bee spawn egg
+ * (repo convention: 1.7.10 OreSpawn egg items map to port spawn
+ * eggs &mdash; same mapping as the shipped stinky_house /
+ * rubber_ducky_pond / water_dragon_lair loot and
+ * {@code loot_table/chests/beehive.json}). Each chest gets
+ * {@code 1 + nextInt(5)} weighted draws.</p>
  *
  * <p><b>Spawn frequency:</b></p>
  * <ul>
@@ -172,22 +177,31 @@ public class BeehiveFeature extends Feature<NoneFeatureConfiguration> {
         return true;
     }
 
-    /** Direct port of {@code fill_beehive_chests} (GenericDungeon.java:860-888). */
+    /**
+     * Direct port of {@code fill_beehive_chests} (GenericDungeon.java:860-889).
+     *
+     * <p>Per-chest facings come from the original's metadata writes
+     * ({@code func_72921_c(..., meta, 3)}; 1.7.10 chest meta 2=NORTH,
+     * 3=SOUTH, 4=WEST, 5=EAST) &mdash; each chest faces inward, away
+     * from the wall it sits against.</p>
+     */
     private static void fillBeehiveChests(WorldGenLevel level, BlockPos cpos, Random random) {
-        BlockState chestState = Blocks.CHEST.defaultBlockState();
         for (int j = 2; j < HEIGHT - 1; j += 2) {
-            BlockPos[] chestPositions = new BlockPos[]{
-                    cpos.offset(1, -j, WIDTH / 2),
-                    cpos.offset(WIDTH - 2, -j, WIDTH / 2),
-                    cpos.offset(WIDTH / 2, -j, 1),
-                    cpos.offset(WIDTH / 2, -j, WIDTH - 2)
-            };
-            for (BlockPos chestPos : chestPositions) {
-                level.setBlock(chestPos, chestState, 2);
-                if (level.getBlockEntity(chestPos) instanceof ChestBlockEntity chest) {
-                    fillBeeLoot(chest, random);
-                }
-            }
+            // West-wall chest faces EAST (meta 5, GD:865-866).
+            placeLootChest(level, cpos.offset(1, -j, WIDTH / 2), Direction.EAST, random);
+            // East-wall chest faces WEST (meta 4, GD:871-872).
+            placeLootChest(level, cpos.offset(WIDTH - 2, -j, WIDTH / 2), Direction.WEST, random);
+            // North-wall chest faces SOUTH (meta 3, GD:877-878).
+            placeLootChest(level, cpos.offset(WIDTH / 2, -j, 1), Direction.SOUTH, random);
+            // South-wall chest faces NORTH (meta 2, GD:883-884).
+            placeLootChest(level, cpos.offset(WIDTH / 2, -j, WIDTH - 2), Direction.NORTH, random);
+        }
+    }
+
+    private static void placeLootChest(WorldGenLevel level, BlockPos chestPos, Direction facing, Random random) {
+        level.setBlock(chestPos, Blocks.CHEST.defaultBlockState().setValue(ChestBlock.FACING, facing), 2);
+        if (level.getBlockEntity(chestPos) instanceof ChestBlockEntity chest) {
+            fillBeeLoot(chest, random);
         }
     }
 
@@ -210,7 +224,10 @@ public class BeehiveFeature extends Feature<NoneFeatureConfiguration> {
                 new ItemStack(ModItems.PINK_BOOTS.get()),
                 new ItemStack(ModItems.BUTTER_CANDY.get(), 2 + random.nextInt(7)),
                 new ItemStack(ModItems.EXPERIENCE_CATCHER.get(), 4 + random.nextInt(7)),
-                new ItemStack(Items.GOLDEN_CARROT, 1 + random.nextInt(3))
+                // Legacy BeeEgg, min 2 / max 8 / weight 15 (GD:55 last entry).
+                // Repo convention maps 1.7.10 OreSpawn egg items to port
+                // spawn eggs (stinky_house / rubber_ducky_pond precedents).
+                new ItemStack(ModItems.BEE_SPAWN_EGG.get(), 2 + random.nextInt(7))
         };
         int totalWeight = 0;
         for (int w : weights) totalWeight += w;
