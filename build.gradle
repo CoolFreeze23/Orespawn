@@ -61,6 +61,22 @@ base {
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(21)
 
+// GameTest suite (2026-08-10): lives in its own source set so test code and
+// test templates never ship in the mod jar. Wired into the gameTestServer
+// run (headless, CI-able — exits nonzero on failure) and the client run
+// (/test commands in dev).
+sourceSets {
+    gametest {
+        // Convention already maps src/gametest/java + src/gametest/resources.
+        compileClasspath += sourceSets.main.output
+        runtimeClasspath += sourceSets.main.output
+    }
+}
+configurations {
+    gametestImplementation.extendsFrom implementation
+    gametestRuntimeOnly.extendsFrom runtimeOnly
+}
+
 runs {
     configureEach {
         systemProperty 'forge.logging.markers', 'REGISTRIES'
@@ -70,6 +86,7 @@ runs {
 
     client {
         systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+        modSource project.sourceSets.gametest
     }
 
     server {
@@ -79,6 +96,7 @@ runs {
 
     gameTestServer {
         systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+        modSource project.sourceSets.gametest
     }
 
     data {

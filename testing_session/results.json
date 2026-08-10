@@ -1,0 +1,69 @@
+{
+ "i001-bug-003": {
+  "status": "pass",
+  "when": "2026-08-10T10:00:29.584Z"
+ },
+ "i002-bug-004": {
+  "notes": "summoned prince, then used dimaond block and it instantly transformed into teen. used again, and it transformed into adult. adult texture is glitched and not rendering properly.",
+  "status": "fail",
+  "when": "2026-08-10T10:02:51.588Z"
+ },
+ "i003-item-011-012": {
+  "notes": "pizza renders as a full 16x16 pixel block. with alot of it being a filled in color. doesnt render like regular \"cake like texture\". when eating it gives hunger but no animation or block change, then it just dissapears when its done. for the ductape, i tried holding the ducttape in offhand and damged diamond boots in mainland and it just put the boots on. and tried flipping it and it did the same thing. nothing repaired. tried with a diamond sword too and nothing happened",
+  "status": "fail",
+  "when": "2026-08-10T10:08:39.561Z"
+ },
+ "i004-item-013-014": {
+  "notes": "teleport block works. mole dirt acts pretty much like soulsand. a little bit lower and makes me slow when walking on it. dont know if thats intended",
+  "status": "fail",
+  "when": "2026-08-10T10:10:57.477Z"
+ },
+ "i005-item-016-c8-furnace": {
+  "notes": "works but no furnace progress bar. it never progresses but things are still smelting",
+  "status": "fail",
+  "when": "2026-08-10T10:12:58.541Z"
+ },
+ "i006-item-019": {
+  "notes": "works but texture isnt likea torch, its a full 16x16 block so it looks weird",
+  "status": "fail",
+  "when": "2026-08-10T10:13:44.916Z"
+ },
+ "i007-item-027": {
+  "notes": "looks like it works but its super slow. i placed the log down, then it took like 2 mincraft days to grow the tree, and another day for a block to actually spawn. so lets look deep into what the actaul code is for how this block works and try to make sure everything is good",
+  "status": "fail",
+  "when": "2026-08-10T10:17:54.725Z"
+ },
+ "i008-item-037": {
+  "notes": "AOE attack works. the tree works too, but it also cuts down nearby trees. idk if thats intended but i think itd be better if it just cutdown the attached tree. also holding it its a little strange. like its sideways. also when i go in f5 its a litle glitched as well",
+  "status": "fail",
+  "when": "2026-08-10T10:23:10.195Z"
+ },
+ "i009-item-040-item-057": {
+  "notes": "doesnt work. wearing chestpalte and holding sword and nothing happens. lets add a built in mending feature as well as fixing it so that the armors repaired when holding an experience tool.",
+  "status": "fail",
+  "when": "2026-08-10T10:25:37.556Z"
+ },
+ "i010-item-047-048-049": {
+  "notes": "works fine, but the crop textures are glitched. it also seems the garden spawns 1 block lower. lets make it spawn at the same y level of the block your clicking it at",
+  "status": "fail",
+  "when": "2026-08-10T10:27:31.724Z"
+ },
+ "i012-item-059": {
+  "status": "pass",
+  "when": "2026-08-10T10:30:30.634Z"
+ },
+ "i013-item-001-005": {
+  "notes": "ruby and amethyst both drop jsuit the straight ore. both ores dont smelt either. troll block works",
+  "status": "fail",
+  "when": "2026-08-10T10:33:30.797Z"
+ },
+ "i015-item-029-d4": {
+  "status": "pass",
+  "when": "2026-08-10T10:35:06.382Z"
+ },
+ "i016-item-060-061-062-d4": {
+  "notes": "bow crafing works,",
+  "status": "fail",
+  "when": "2026-08-10T10:37:00.973Z"
+ }
+}

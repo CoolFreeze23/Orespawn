@@ -1,0 +1,1076 @@
+[
+ {
+  "id": "i001-bug-003",
+  "section": "A. Creative flatworld",
+  "sub": "A1 \u2014 Stability",
+  "text": "<strong>BUG-003</strong> \u2014 <code>/summon orespawn:rat</code>, walk &gt;130 blocks away. Expect: no server crash on rat AI tick, rat despawns normally."
+ },
+ {
+  "id": "i002-bug-004",
+  "section": "A. Creative flatworld",
+  "sub": "A1 \u2014 Stability",
+  "text": "<strong>BUG-004</strong> \u2014 Tame a Prince (diamond block), give diamond to grow baby\u2192teen\u2192adult, then quit-to-title and rejoin mid-transformation window. Expect: transformation completes, still tamed to you, no NPE in the log."
+ },
+ {
+  "id": "i003-item-011-012",
+  "section": "A. Creative flatworld",
+  "sub": "A2 \u2014 Items & blocks",
+  "text": "<strong>ITEM-011/012</strong> \u2014 <code>/give @s orespawn:pizza_item</code> (place), <code>/give @s orespawn:duct_tape_item</code>. Expect: LEFT-click pizza eats a slice; LEFT-click with duct tape repairs held damaged gear."
+ },
+ {
+  "id": "i004-item-013-014",
+  "section": "A. Creative flatworld",
+  "sub": "A2 \u2014 Items & blocks",
+  "text": "<strong>ITEM-013/014</strong> \u2014 <code>/setblock ~ ~ ~2 orespawn:block_teleport</code> then step on it; <code>/setblock ~ ~ ~2 orespawn:mole_dirt</code> and walk on. Expect: RTP random-teleports you; mole dirt sinks your feet slightly."
+ },
+ {
+  "id": "i005-item-016-c8-furnace",
+  "section": "A. Creative flatworld",
+  "sub": "A2 \u2014 Items & blocks",
+  "text": "<strong>ITEM-016 + C8 furnace</strong> \u2014 <code>/setblock ~ ~ ~2 orespawn:crystal_furnace</code>; cook with crystal coal, then burn a lava bucket. Expect: 7.5 s cooks; crystal coal ~133 smelts; the EMPTY BUCKET stays in the fuel slot."
+ },
+ {
+  "id": "i006-item-019",
+  "section": "A. Creative flatworld",
+  "sub": "A2 \u2014 Items & blocks",
+  "text": "<strong>ITEM-019</strong> \u2014 <code>/give @s orespawn:kraken_repellent</code> + <code>orespawn:creeper_repellent</code> (place), summon a creeper 15 blocks away. Expect: continuous push every ~0.5 s within radius 20, not once a minute."
+ },
+ {
+  "id": "i007-item-027",
+  "section": "A. Creative flatworld",
+  "sub": "A2 \u2014 Items & blocks",
+  "text": "<strong>ITEM-027</strong> \u2014 Place <code>orespawn:duplicator_log</code> on grass with a small build ~5 blocks away. Expect: tree grows block-by-block, then ~20 nearby blocks are copied into the 5\u00d75 area."
+ },
+ {
+  "id": "i008-item-037",
+  "section": "A. Creative flatworld",
+  "sub": "A2 \u2014 Items & blocks",
+  "text": "<strong>ITEM-037</strong> \u2014 <code>/give @s orespawn:chainsaw</code>; swing at a mob crowd, then break a log in a big tree (<code>/setblock</code> an oak). Expect: 56 AoE dmg r=5 with saw sound; log break crushes an 11\u00d716\u00d711 wood/leaf volume."
+ },
+ {
+  "id": "i009-item-040-item-057",
+  "section": "A. Creative flatworld",
+  "sub": "A2 \u2014 Items & blocks",
+  "text": "<strong>ITEM-040 + ITEM-057</strong> \u2014 Wear damaged experience armor (<code>/give @s orespawn:experience_chestplate</code>, damage it), hold <code>orespawn:experience_sword</code> in hotbar. Expect: armor slowly repairs while the sword drains."
+ },
+ {
+  "id": "i010-item-047-048-049",
+  "section": "A. Creative flatworld",
+  "sub": "A2 \u2014 Items & blocks",
+  "text": "<strong>ITEM-047/048/049</strong> \u2014 <code>/give @s orespawn:instant_garden</code>, <code>orespawn:instant_shelter</code>, <code>orespawn:step_up</code>, <code>orespawn:step_down</code>, <code>orespawn:step_across</code>. Expect: 18\u00d715 garden w/ 8 crops+reeds+melons+3 water channels; 7\u00d77 furnished shelter with 14-item chest; steppers build 8-way from look yaw with extreme torches every 8, stop at obstructions, explosion fx, item kept in creative."
+ },
+ {
+  "id": "i011-item-050-051-052",
+  "section": "A. Creative flatworld",
+  "sub": "A2 \u2014 Items & blocks",
+  "text": "<strong>ITEM-050/051/052</strong> \u2014 <code>/give @s orespawn:zoo_keeper</code>, <code>orespawn:sifter</code>, <code>orespawn:wrench</code>, <code>orespawn:ant_robot_kit</code>. Expect: ZooKeeper 1-use persistence; Sifter rolls tables on water/sand/gravel/dirt/grass (mod fish from water!); Wrench refuses healthy unowned AntRobots; kit re-spawns robot with carried-over health/name."
+ },
+ {
+  "id": "i012-item-059",
+  "section": "A. Creative flatworld",
+  "sub": "A2 \u2014 Items & blocks",
+  "text": "<strong>ITEM-059</strong> \u2014 Smelt <code>orespawn:ore_uranium</code> / <code>ore_titanium</code>. Expect: a NUGGET each (9 nuggets \u2192 ingot), not an ingot."
+ },
+ {
+  "id": "i013-item-001-005",
+  "section": "A. Creative flatworld",
+  "sub": "A2 \u2014 Items & blocks",
+  "text": "<strong>ITEM-001/005</strong> \u2014 <code>/setblock</code> + break <code>orespawn:ore_ruby</code> / <code>ore_amethyst</code> (no Silk Touch), then <code>orespawn:red_ant_troll</code> / <code>termite_troll</code>. Expect: ore never explodes; troll blocks erupt 15-20 mobs even WITH Silk Touch."
+ },
+ {
+  "id": "i014-item-003-021",
+  "section": "A. Creative flatworld",
+  "sub": "A2 \u2014 Items & blocks",
+  "text": "<strong>ITEM-003/021</strong> \u2014 Break <code>ore_uranium</code>/<code>ore_titanium</code> placed below y=40 and above; break <code>orespawn:block_ender_pearl</code> egg block. Expect: XP only below y=40; egg block pops 5-9 XP ~half the time, never duplicates itself."
+ },
+ {
+  "id": "i015-item-029-d4",
+  "section": "A. Creative flatworld",
+  "sub": "A2 \u2014 Items & blocks",
+  "text": "<strong>ITEM-029 (D4)</strong> \u2014 Eat <code>orespawn:butter_candy</code>, <code>cooked_bacon</code>, <code>crystal_apple</code>, <code>heart</code> (&quot;Love&quot;). Expect: Speed+Jump 100s / Regen+Strength 100s / Regen+Strength 150s / Regen IV+Strength III+FireRes III+Resist II 300s + Speed/Jump 250s."
+ },
+ {
+  "id": "i016-item-060-061-062-d4",
+  "section": "A. Creative flatworld",
+  "sub": "A2 \u2014 Items & blocks",
+  "text": "<strong>ITEM-060/061/062 (D4)</strong> \u2014 Craft: skate bow (crystal sticks+string), chest + red bed from crystal planks, raw corn dog, bucket from 3 pink tourmaline ingots, cobweb from string. Expect: all five craft; oak door from crystal planks also still works."
+ },
+ {
+  "id": "i017-c8-experiencecatcher",
+  "section": "A. Creative flatworld",
+  "sub": "A2 \u2014 Items & blocks",
+  "text": "<strong>C8 ExperienceCatcher</strong> \u2014 <code>/give @s orespawn:experience_catcher</code>; drop XP (<code>/xp add @s 10 levels</code>, die, or kill mobs), click the ground under an orb worth \u22653. Expect: ~80% Bottle o&#x27; Enchanting + string + stick, catcher consumed; on a miss the catcher drops back at your feet."
+ },
+ {
+  "id": "i018-item-063-d4-dispensers",
+  "section": "A. Creative flatworld",
+  "sub": "A3 \u2014 Projectiles, throwables, dispensers",
+  "text": "<strong>ITEM-063 (D4) dispensers</strong> \u2014 <code>/setblock ~2 ~ ~ minecraft:dispenser</code> + button; load <code>orespawn:irukandji_arrow</code>, <code>water_ball</code>, <code>sunspot_urchin</code> (item), <code>acid</code>, <code>ice_ball</code>, <code>dead_irukandji</code>, <code>laser_ball</code>, then each rock type. Expect: all fire as projectiles (bow sound, arrow is pickup-able); dispensed rocks keep their per-type damage/behavior."
+ },
+ {
+  "id": "i019-ent-d-025-026-027-ent-k-076-rocks",
+  "section": "A. Creative flatworld",
+  "sub": "A3 \u2014 Projectiles, throwables, dispensers",
+  "text": "<strong>ENT-D-025/026/027 + ENT-K-076 rocks</strong> \u2014 Throw <code>orespawn:rock_small</code>(t1) \u2026 <code>rock_crystal_tnt</code>(t12); hit glass and mobs. Expect: t5 deals 10; t6, t9-12 apply WEAKNESS (not Wither); t9 ignites ~50 s; block impact shatters glass 3\u00d73\u00d73 with glassdead sound and returns the SAME rock type; entity hits return nothing."
+ },
+ {
+  "id": "i020-item-053",
+  "section": "A. Creative flatworld",
+  "sub": "A3 \u2014 Projectiles, throwables, dispensers",
+  "text": "<strong>ITEM-053</strong> \u2014 Throw <code>orespawn:dead_irukandji</code> (throwable), <code>water_ball</code> (hits drop pickup ~10%), <code>sunspot_urchin</code> (lights blocks on fire \u2014 also ENT-S-036), spam <code>laser_ball</code>/<code>ice_ball</code> (no cooldown). Throw <code>red_heels</code>/<code>black_heels</code>/<code>slippers</code>/<code>boots_shoes</code>/<code>game_controller</code> at mobs. Expect: shoes fly, hit with poof + reddust particles, per-target damage (1.0 on Girlfriend/Boyfriend)."
+ },
+ {
+  "id": "i021-item-043-ent-s-057",
+  "section": "A. Creative flatworld",
+  "sub": "A3 \u2014 Projectiles, throwables, dispensers",
+  "text": "<strong>ITEM-043 + ENT-S-057</strong> \u2014 <code>/give @s orespawn:ultimate_bow</code>. Expect: fires instantly (no charge), self-enchants Power 5 (not 10), ~25% crits; full-draw hit \u2248 ceil(3\u00d7ultimateBowDamage config); halving the config halves damage."
+ },
+ {
+  "id": "i022-ent-a-045-051-bertha",
+  "section": "A. Creative flatworld",
+  "sub": "A3 \u2014 Projectiles, throwables, dispensers",
+  "text": "<strong>ENT-A-045-051 Bertha</strong> \u2014 <code>/give @s orespawn:big_bertha</code>; swing near mixed mobs incl. a tamed pet and a second player if available (<code>bigBerthaPvp</code> config). Expect: swing projectiles one-shot in range (496/746/82 by item); Girlfriend/Boyfriend NEVER hit; players/tamed respect the config."
+ },
+ {
+  "id": "i023-ent-k-033",
+  "section": "A. Creative flatworld",
+  "sub": "A3 \u2014 Projectiles, throwables, dispensers",
+  "text": "<strong>ENT-K-033</strong> \u2014 <code>/give @s orespawn:fairy_sword</code>? (No \u2014) MantisClaw: hit a mob repeatedly. Expect: each hit silently drains 1 extra HP (no second hurt flash) and heals you 1."
+ },
+ {
+  "id": "i024-item-058",
+  "section": "A. Creative flatworld",
+  "sub": "A3 \u2014 Projectiles, throwables, dispensers",
+  "text": "<strong>ITEM-058</strong> \u2014 Wear <code>orespawn:peacock_boots</code> and glide off a pillar with <code>royalGlideEnable=false</code>; then royal/queen boots with it true. Expect: peacock boots glide regardless; royal/queen only with the flag."
+ },
+ {
+  "id": "i025-ent-a-004",
+  "section": "A. Creative flatworld",
+  "sub": "A4 \u2014 Mob behavior & taming",
+  "text": "<strong>ENT-A-004</strong> \u2014 Let an Alien melee you on easy, then normal. Expect: POISON 2 s easy / 1.5 s otherwise \u2014 never Hunger."
+ },
+ {
+  "id": "i026-ent-a-013-014",
+  "section": "A. Creative flatworld",
+  "sub": "A4 \u2014 Mob behavior & taming",
+  "text": "<strong>ENT-A-013/014</strong> \u2014 AntRobot melee cadence visibly throttled; ride it near mobs. Expect: occasional ~3.0 stomp damage to nearby mobs while ridden."
+ },
+ {
+  "id": "i027-ent-a-025",
+  "section": "A. Creative flatworld",
+  "sub": "A4 \u2014 Mob behavior & taming",
+  "text": "<strong>ENT-A-025</strong> \u2014 Let a BandP hit you wearing armor + carrying items. Expect: it steals an item on EVERY successful hit, armor first."
+ },
+ {
+  "id": "i028-ent-a-054",
+  "section": "A. Creative flatworld",
+  "sub": "A4 \u2014 Mob behavior & taming",
+  "text": "<strong>ENT-A-054</strong> \u2014 Boyfriend follows held cooked beef, panics when hit, opens wooden doors."
+ },
+ {
+  "id": "i029-ent-a-074-075",
+  "section": "A. Creative flatworld",
+  "sub": "A4 \u2014 Mob behavior & taming",
+  "text": "<strong>ENT-A-074/075</strong> \u2014 Damage a CaterKiller, wait ~2 min near trees. Expect: transforms into Brutalfly + 10 Butterflies (explosion sound); eats leaves/logs to heal 2.0 with occasional burp."
+ },
+ {
+  "id": "i030-ent-a-080",
+  "section": "A. Creative flatworld",
+  "sub": "A4 \u2014 Mob behavior & taming",
+  "text": "<strong>ENT-A-080</strong> \u2014 CaveFisher near cows/pigs. Expect: hunts passive animals, not only players."
+ },
+ {
+  "id": "i031-ent-a-082",
+  "section": "A. Creative flatworld",
+  "sub": "A4 \u2014 Mob behavior & taming",
+  "text": "<strong>ENT-A-082</strong> \u2014 Cephadrome near Mothra / untamed Leon / GammaMetroid / WaterDragon; hit a Kraken with it. Expect: attacks those targets; Kraken takes 1.5\u00d7 damage."
+ },
+ {
+  "id": "i032-ent-a-087",
+  "section": "A. Creative flatworld",
+  "sub": "A4 \u2014 Mob behavior & taming",
+  "text": "<strong>ENT-A-087</strong> \u2014 Right-click Chipmunk with apples. Expect: tames at 50% per apple; dead bush releases it."
+ },
+ {
+  "id": "i033-ent-a-095-097",
+  "section": "A. Creative flatworld",
+  "sub": "A4 \u2014 Mob behavior & taming",
+  "text": "<strong>ENT-A-095/097</strong> \u2014 Summon ~10 Cockateils. Expect: random bird types; only type-5 birds can drop rubies (player kill, 1-in-3)."
+ },
+ {
+  "id": "i034-ent-a-112",
+  "section": "A. Creative flatworld",
+  "sub": "A4 \u2014 Mob behavior & taming",
+  "text": "<strong>ENT-A-112</strong> \u2014 Cryolophosaurus + nearby prey animals. Expect: proactively chases prey, not retaliation-only."
+ },
+ {
+  "id": "i035-ent-d-002-006",
+  "section": "A. Creative flatworld",
+  "sub": "A4 \u2014 Mob behavior & taming",
+  "text": "<strong>ENT-D-002/006</strong> \u2014 Dragon: raw beef tames/heals (1-in-5), bones ignored; diamond on a TAMED dragon \u2192 tamed Spyro replaces the adult."
+ },
+ {
+  "id": "i036-ent-d-014",
+  "section": "A. Creative flatworld",
+  "sub": "A4 \u2014 Mob behavior & taming",
+  "text": "<strong>ENT-D-014</strong> \u2014 Emperor Scorpion in combat. Expect: occasionally spawns a baby scorpion midway to its target (uncapped \u2014 can flood)."
+ },
+ {
+  "id": "i037-ent-d-022",
+  "section": "A. Creative flatworld",
+  "sub": "A4 \u2014 Mob behavior & taming",
+  "text": "<strong>ENT-D-022</strong> \u2014 <code>/give @s orespawn:cage_empty</code> \u00d710. Throw at: yourself (bounces back empty), Creeper (always cages), Ghast/Enderman (<s>20% escape), Kraken (</s>95% escape), Bat (2 caged bats), Cockateil (4), AttackSquid (6), villager (cage consumed + returned), Iron Golem (cageable), tamed Girlfriend/Boyfriend (eats the cage, no drop)."
+ },
+ {
+  "id": "i038-ent-d-037-ent-k-046",
+  "section": "A. Creative flatworld",
+  "sub": "A4 \u2014 Mob behavior & taming",
+  "text": "<strong>ENT-D-037 / ENT-K-046</strong> \u2014 Kill tamed vs untamed Gazelle and Ostrich. Expect: tamed 2-6 poppies; untamed Gazelle 0-2 beef, untamed Ostrich 0-2 feathers."
+ },
+ {
+  "id": "i039-ent-k-013",
+  "section": "A. Creative flatworld",
+  "sub": "A4 \u2014 Mob behavior & taming",
+  "text": "<strong>ENT-K-013</strong> \u2014 LeafMonster among mixed small mobs. Expect: attacks only Ants/Butterflies/LunaMoths/players; never hunts with <code>playNicely=true</code>."
+ },
+ {
+  "id": "i040-ent-k-019-083",
+  "section": "A. Creative flatworld",
+  "sub": "A4 \u2014 Mob behavior & taming",
+  "text": "<strong>ENT-K-019/083</strong> \u2014 Leon: dead bush untames (glass does NOT); RubberDucky tames/tempts with raw cod (not wheat), unames with dead bush."
+ },
+ {
+  "id": "i041-ent-k-023",
+  "section": "A. Creative flatworld",
+  "sub": "A4 \u2014 Mob behavior & taming",
+  "text": "<strong>ENT-K-023</strong> \u2014 Lizard on dry land near water + near lava. Expect: periodically paths to the WATER, never toward lava/fire."
+ },
+ {
+  "id": "i042-ent-k-050-ent-s-031",
+  "section": "A. Creative flatworld",
+  "sub": "A4 \u2014 Mob behavior & taming",
+  "text": "<strong>ENT-K-050 / ENT-S-031</strong> \u2014 Peacock and StinkBug breed with <code>orespawn:crystal_apple</code> ONLY (regular apples do nothing)."
+ },
+ {
+  "id": "i043-ent-k-051",
+  "section": "A. Creative flatworld",
+  "sub": "A4 \u2014 Mob behavior & taming",
+  "text": "<strong>ENT-K-051</strong> \u2014 Summon <s>30 Nightmares. Expect: mostly tiny (t=0.5), big t=4 rare (</s>1.5%), hitbox+model grow together up to 10\u00d714; config <code>nightmareSize=5</code> forces max."
+ },
+ {
+  "id": "i044-ent-k-056",
+  "section": "A. Creative flatworld",
+  "sub": "A4 \u2014 Mob behavior & taming",
+  "text": "<strong>ENT-K-056</strong> \u2014 Princess PurplePower orbs (or arena): type 2 poisons, type 3 weakens, 2.5 s each."
+ },
+ {
+  "id": "i045-ent-k-058",
+  "section": "A. Creative flatworld",
+  "sub": "A4 \u2014 Mob behavior & taming",
+  "text": "<strong>ENT-K-058</strong> \u2014 Wild rat attacks you/pets with default configs; a rat with an owner never attacks its owner."
+ },
+ {
+  "id": "i046-ent-s-010",
+  "section": "A. Creative flatworld",
+  "sub": "A4 \u2014 Mob behavior & taming",
+  "text": "<strong>ENT-S-010</strong> \u2014 SeaViper bite. Expect: Poison ~6 s (8 s easy), never Hunger."
+ },
+ {
+  "id": "i047-ent-s-030",
+  "section": "A. Creative flatworld",
+  "sub": "A4 \u2014 Mob behavior & taming",
+  "text": "<strong>ENT-S-030</strong> \u2014 Kill a StinkBug in a crowd (incl. mobs well above it). Expect: NAUSEA (not hunger) on everything nearby."
+ },
+ {
+  "id": "i048-ent-s-033",
+  "section": "A. Creative flatworld",
+  "sub": "A4 \u2014 Mob behavior & taming",
+  "text": "<strong>ENT-S-033</strong> \u2014 Tamed Stinky idles. Expect: occasional coal burp out the front, skin-matched item fart out the back (blaze powder for skin 0), with sounds."
+ },
+ {
+  "id": "i049-ent-s-065",
+  "section": "A. Creative flatworld",
+  "sub": "A4 \u2014 Mob behavior & taming",
+  "text": "<strong>ENT-S-065</strong> \u2014 Right-click tamed Velocity Raptor empty-handed. Expect: does NOT mount; shift-click sit toggle still works."
+ },
+ {
+  "id": "i050-ent-s-069",
+  "section": "A. Creative flatworld",
+  "sub": "A4 \u2014 Mob behavior & taming",
+  "text": "<strong>ENT-S-069</strong> \u2014 Vortex melee. Expect: victim is never launched skyward; drag pull still works."
+ },
+ {
+  "id": "i051-ent-s-085-d4",
+  "section": "A. Creative flatworld",
+  "sub": "A4 \u2014 Mob behavior & taming",
+  "text": "<strong>ENT-S-085 (D4)</strong> \u2014 Wear a helmet+chestplate, hold an item, stand near WormLarge. Expect: 1-in-4 steals helmet (chestplate if bare-headed), independent 1-in-4 steals held item; stolen gear scatters as item entities; none of it while <code>playNicely=true</code>."
+ },
+ {
+  "id": "i052-ent-s-078-d4",
+  "section": "A. Creative flatworld",
+  "sub": "A4 \u2014 Mob behavior & taming",
+  "text": "<strong>ENT-S-078 (D4)</strong> \u2014 WormSmall at night wearing boots. Expect: 1-in-6 boots theft; worm pops when it surfaces (tall grass counts as air)."
+ },
+ {
+  "id": "i053-ent-k-047-048-d4",
+  "section": "A. Creative flatworld",
+  "sub": "A4 \u2014 Mob behavior & taming",
+  "text": "<strong>ENT-K-047/048 (D4)</strong> \u2014 Peacock + summoned Termites; then a lone Peacock at <code>/time set 1000</code>, y 50-100. Expect: hunts the termite (flat 6.0 hits); lays 1-3 eggs in the first half of the day when \u22642 other peacocks within 16."
+ },
+ {
+  "id": "i054-ent-d-010-d4",
+  "section": "A. Creative flatworld",
+  "sub": "A4 \u2014 Mob behavior & taming",
+  "text": "<strong>ENT-D-010 (D4)</strong> \u2014 <code>/summon orespawn:easter_bunny</code> (summon bypasses the Easter gate), wait ~30 s. Expect: 1-in-600/tick lays a stack of 1-3 random spawn eggs from the 115-type table; breeds with Crystal Apple (NO carrot taming \u2014 the audit&#x27;s carrot claim was wrong)."
+ },
+ {
+  "id": "i055-c1-loot",
+  "section": "A. Creative flatworld",
+  "sub": "A5 \u2014 Drop spot-checks (kill each once; creative kills count as player kills)",
+  "text": "<strong>C1 loot</strong> \u2014 Alien (spider eyes/flint/map/clock/compass), AntRobot (redstone jackpot), Beaver (0-2 porkchop), tamed Camarasaurus (2-6 poppies; untamed none), CaveFisher/CliffRacer/CloudShark/Cryolophosaurus/CreepingHorror (gamble drops), Coin (10-slot jackpot \u2014 <strong>D4: slot can now yield <code>coin_spawn_egg</code></strong>, ENT-A-098)."
+ },
+ {
+  "id": "i056-c2-loot",
+  "section": "A. Creative flatworld",
+  "sub": "A5 \u2014 Drop spot-checks (kill each once; creative kills count as player kills)",
+  "text": "<strong>C2 loot</strong> \u2014 DungeonBeast (25% each: pink ingot/crystal apple/oak log/nothing, \u00d70-2), Fairy (crystal torch), Firefly (extreme torch), GammaMetroid (5-14 gold nuggets + 6-15 iron), Ghost/GhostSkelly (NOTHING), GiantRobot (~60-116 laser balls + 10-19 kit/component rolls incl. detector rails)."
+ },
+ {
+  "id": "i057-c3-loot",
+  "section": "A. Creative flatworld",
+  "sub": "A5 \u2014 Drop spot-checks (kill each once; creative kills count as player kills)",
+  "text": "<strong>C3 loot</strong> \u2014 LeafMonster (log OR leaves OR flesh), LurkingTerror (beef/flint/feather), Rat (rotten flesh), Robot2 (2-9 iron blocks + 5-10 ingots + redstone parts), Robot3/5 (20-40 laser balls + parts), Robot4 (20-56 laser balls + RayGun + painting + parts), Rotator (ONE of pink ingot/tigers-eye ingot/crystal coal/iron)."
+ },
+ {
+  "id": "i058-c4-loot",
+  "section": "A. Creative flatworld",
+  "sub": "A5 \u2014 Drop spot-checks (kill each once; creative kills count as player kills)",
+  "text": "<strong>C4 loot</strong> \u2014 Scorpion (~10% each gold/uranium/titanium nugget, often nothing), Skate (string), SpiderRobot (14-27 redstone components), SpitBug (1-3 amethyst), tamed Spyro (1-4 beef; untamed nothing), TerribleTerror (flesh/emerald/feather), tamed VelocityRaptor (2-6 poppies), Vortex (eye + painting + 5-11 mixed), WormSmall (nothing)."
+ },
+ {
+  "id": "i059-d4-drops",
+  "section": "A. Creative flatworld",
+  "sub": "A5 \u2014 Drop spot-checks (kill each once; creative kills count as player kills)",
+  "text": "<strong>D4 drops</strong> \u2014 Chipmunk (orig table + poppy only when tamed), GoldFish, RubberDucky, Stinky (beef only when tamed). Lavafoam: break in overworld (0 XP) vs Nether (5-13 XP) \u2014 <code>/setblock ~ ~ ~2 orespawn:lavafoam</code> in each."
+ },
+ {
+  "id": "i060-boss-025-035-042",
+  "section": "A. Creative flatworld",
+  "sub": "A5 \u2014 Drop spot-checks (kill each once; creative kills count as player kills)",
+  "text": "<strong>BOSS-025/035/042</strong> \u2014 ThePrince (1-4 beef), ThePrincess (1-4 beef), ThePrinceAdult (1 <code>orespawn:prince_egg</code>) \u2014 no diamonds/gold."
+ },
+ {
+  "id": "i061-ent-a-031-060-ent-s-061-068",
+  "section": "A. Creative flatworld",
+  "sub": "A6 \u2014 Immunities",
+  "text": "<strong>ENT-A-031/060, ENT-S-061/068</strong> \u2014 Drop Basilisk, Brutalfly, Urchin, Vortex into a lava pit. Expect: no fire damage on any."
+ },
+ {
+  "id": "i062-ent-k-045",
+  "section": "A. Creative flatworld",
+  "sub": "A6 \u2014 Immunities",
+  "text": "<strong>ENT-K-045</strong> \u2014 Ostrich pushed into cactus. Expect: no cactus damage; normal damage otherwise."
+ },
+ {
+  "id": "i063-ent-k-007-d4",
+  "section": "A. Creative flatworld",
+  "sub": "A6 \u2014 Immunities",
+  "text": "<strong>ENT-K-007 (D4)</strong> \u2014 Kyuubi standing in its own fire attack / lava. Expect: fully fire-immune, no self-damage."
+ },
+ {
+  "id": "i064-ent-s-025-ent-s-047-d4",
+  "section": "A. Creative flatworld",
+  "sub": "A6 \u2014 Immunities",
+  "text": "<strong>ENT-S-025 / ENT-S-047 (D4)</strong> \u2014 SpitBug and Triffid vs cactus and long falls. Expect: immune to both."
+ },
+ {
+  "id": "i065-ent-a-052-ent-a-001-d4",
+  "section": "A. Creative flatworld",
+  "sub": "A6 \u2014 Immunities",
+  "text": "<strong>ENT-A-052 / ENT-A-001 (D4)</strong> \u2014 Brutalfly BetterFireballs pass through Mothra/other fireballs/royalty; acid (spit at TrooperBug/SpitBug) vanishes harmlessly on them."
+ },
+ {
+  "id": "i066-b3-riding",
+  "section": "A. Creative flatworld",
+  "sub": "A7 \u2014 Riding & movement",
+  "text": "<strong>B3 riding</strong> \u2014 Mount and fly/ride each: Dragon (no rubber-banding \u2014 BUG-020), Leon, Leonopteryx, Cephadrome (feed it first), Ostrich (FAST jump on UP key), tamed PrinceTeen + Adult (strafe keys fire the canon trio). If a second player is available: observed movement is smooth."
+ },
+ {
+  "id": "i067-b3-spiderdriver",
+  "section": "A. Creative flatworld",
+  "sub": "A7 \u2014 Riding & movement",
+  "text": "<strong>B3 SpiderDriver</strong> \u2014 armor reads 8 mounted / 20 on foot (<code>/attribute</code>); attacks with poison while mounted on SpiderRobot."
+ },
+ {
+  "id": "i068-c8-controls",
+  "section": "A. Creative flatworld",
+  "sub": "A7 \u2014 Riding & movement",
+  "text": "<strong>C8 controls</strong> \u2014 Default binds: LEFT ALT (not Space) = fly up / sprint on ridden Dragon/Cephadrome/Ostrich."
+ },
+ {
+  "id": "i069-d2-hoverboard-physics",
+  "section": "A. Creative flatworld",
+  "sub": "A7 \u2014 Riding & movement",
+  "text": "<strong>D2 Hoverboard physics</strong> \u2014 <code>/summon orespawn:elevator</code> (displays &quot;Hoverboard&quot;): W/S throttle, Left Alt FAST boost, climbs terrain, pitch grows with speed."
+ },
+ {
+  "id": "i070-d2-hoverboard-crash",
+  "section": "A. Creative flatworld",
+  "sub": "A7 \u2014 Riding & movement",
+  "text": "<strong>D2 Hoverboard crash</strong> \u2014 Ride into a wall above ~0.75 speed. Expect: shatters into sticks + 2 diamonds."
+ },
+ {
+  "id": "i071-d2-hoverboard-malfunction",
+  "section": "A. Creative flatworld",
+  "sub": "A7 \u2014 Riding & movement",
+  "text": "<strong>D2 Hoverboard malfunction</strong> \u2014 Sustained high speed. Expect: rare malfunction (explosions/smoke, speed bleed, ~2.2 s)."
+ },
+ {
+  "id": "i072-d2-hoverboard-skins-guards",
+  "section": "A. Creative flatworld",
+  "sub": "A7 \u2014 Riding & movement",
+  "text": "<strong>D2 Hoverboard skins + guards</strong> \u2014 Click with <code>orespawn:ultimate_sword</code>: cycles 10 skins. Mob punches can&#x27;t destroy it while ridden. Hum (<code>orespawn:hover</code>, ENT-D-012 \u2014 randomized variants, not beacon) only while ridden."
+ },
+ {
+  "id": "i073-d2-registry",
+  "section": "A. Creative flatworld",
+  "sub": "A7 \u2014 Riding & movement",
+  "text": "<strong>D2 registry</strong> \u2014 Creative tab has exactly ONE Hoverboard entry; <code>/summon orespawn:hoverboard</code> FAILS (id is <code>elevator</code>; intentional)."
+ },
+ {
+  "id": "i074-b4-idle-animations",
+  "section": "A. Creative flatworld",
+  "sub": "A8 \u2014 Animations, models, HUD (visual)",
+  "text": "<strong>B4 idle animations</strong> \u2014 Bee/Mothra/Urchin/Kyuubi etc. keep animating while you stand still (no frozen wings); Mothra renders 10\u00d7 scale, slow flaps."
+ },
+ {
+  "id": "i075-c8-rotator",
+  "section": "A. Creative flatworld",
+  "sub": "A8 \u2014 Animations, models, HUD (visual)",
+  "text": "<strong>C8 Rotator</strong> \u2014 spins as a 24-blade tri-axis gyroscope ball, not three flat blades."
+ },
+ {
+  "id": "i076-c8-kraken",
+  "section": "A. Creative flatworld",
+  "sub": "A8 \u2014 Animations, models, HUD (visual)",
+  "text": "<strong>C8 Kraken</strong> \u2014 two Krakens side by side: mouth-twitch cycles differ; twitch harder in combat."
+ },
+ {
+  "id": "i077-c8-d2-giantrobot",
+  "section": "A. Creative flatworld",
+  "sub": "A8 \u2014 Animations, models, HUD (visual)",
+  "text": "<strong>C8/D2 GiantRobot</strong> \u2014 walks with BOTH legs + arms visible, hip bob; aggro \u2192 windmill punch + shoulder twist; D2: walk-state solver, no moonwalk."
+ },
+ {
+  "id": "i078-c8-d2-spider-antrobot-legs",
+  "section": "A. Creative flatworld",
+  "sub": "A8 \u2014 Animations, models, HUD (visual)",
+  "text": "<strong>C8/D2 Spider/AntRobot legs</strong> \u2014 SpiderRobot renders all 8 legs, AntRobot all 6; D2: feet PLANT in the world and step ahead of body movement (no synchronized sine paddling); legs relocate when overstretched; ridden SpiderRobot occasionally flattens grass to dirt."
+ },
+ {
+  "id": "i079-c8-robot2-3-4-arms",
+  "section": "A. Creative flatworld",
+  "sub": "A8 \u2014 Animations, models, HUD (visual)",
+  "text": "<strong>C8 Robot2/3/4 arms</strong> \u2014 Robot2 idle arms at sides, random windmill only in combat; Robot3 swings only in combat; Robot4 shield pumps + cannon raises/follows only in combat."
+ },
+ {
+  "id": "i080-c8-rat",
+  "section": "A. Creative flatworld",
+  "sub": "A8 \u2014 Animations, models, HUD (visual)",
+  "text": "<strong>C8 Rat</strong> \u2014 tail sways calm / thrashes attacking; head does NOT turn."
+ },
+ {
+  "id": "i081-ent-a-036-ent-k-005-ent-s-045-boss-016-sounds",
+  "section": "A. Creative flatworld",
+  "sub": "A8 \u2014 Animations, models, HUD (visual)",
+  "text": "<strong>ENT-A-036 / ENT-K-005 / ENT-S-045 / BOSS-016 sounds</strong> \u2014 Basilisk, Kraken (growl + alo_death), TRex (trex/alo set), Godzilla (godzilla_living/alo_hurt/godzilla_death): custom sounds, no Ravager/Elder-Guardian/Ender-Dragon audio."
+ },
+ {
+  "id": "i082-c8-hud",
+  "section": "A. Creative flatworld",
+  "sub": "A8 \u2014 Animations, models, HUD (visual)",
+  "text": "<strong>C8 HUD</strong> \u2014 Crosshair on TheKing/robot/big crab: textured health bar above hotbar + red name; named pets show custom name; YOUR Girlfriend shows a bar, someone else&#x27;s doesn&#x27;t; bar shifts up 10px swimming/armored; <code>guiOverlayEnable=false</code> hides it."
+ },
+ {
+  "id": "i083-ent-a-002-012-017-023-040-060-072-078-091-106-hitboxes",
+  "section": "A. Creative flatworld",
+  "sub": "A8 \u2014 Animations, models, HUD (visual)",
+  "text": "<strong>ENT-A-002/012/017/023/040/060/072/078/091/106 hitboxes</strong> \u2014 F3+B on Alien/AntRobot/AttackSquid/BandP/Bee/Brutalfly/CaterKiller/CaveFisher/CloudShark/CreepingHorror vs the size table in <code>phase_c_reports/C1_entities_A_C.md</code>; CaterKiller halves with <code>playNicely=true</code>."
+ },
+ {
+  "id": "i084-ent-a-100-101-102-103-crabs",
+  "section": "A. Creative flatworld",
+  "sub": "A8 \u2014 Animations, models, HUD (visual)",
+  "text": "<strong>ENT-A-100/101/102/103 crabs</strong> \u2014 natural-ish sizes vary (\u00bc/\u00bd/full, rare giants; spawner crabs all 0.35); crab walks to water, dry-out damage away from it, scorpion sounds on melee, splash heal in water."
+ },
+ {
+  "id": "i085-hook-lava",
+  "section": "A. Creative flatworld",
+  "sub": "A9 \u2014 Ultimate Rod lava fishing (ENT-S-059, D4)",
+  "text": "<strong>Hook + lava</strong> \u2014 <code>/give @s orespawn:ultimate_fishing_rod</code>; dig a 3\u00d73 lava pool. Expect: bobber floats IN lava (fire-immune), bite cycle with lava particles works like water fishing."
+ },
+ {
+  "id": "i086-pools",
+  "section": "A. Creative flatworld",
+  "sub": "A9 \u2014 Ultimate Rod lava fishing (ENT-S-059, D4)",
+  "text": "<strong>Pools</strong> \u2014 Fish ~10 catches (water and lava). Expect: junk / treasure / vanilla fish / OreSpawn fish pools; lava adds lava-fish; caught items fly to you and SURVIVE the lava (LavaLovingItem); gear arrives pre-damaged with a level-30 enchant; XP orb at your feet per catch; rod keeps working (doesn&#x27;t dismiss the custom hook)."
+ },
+ {
+  "id": "i087-ent-a-055-ent-d-049",
+  "section": "A. Creative flatworld",
+  "sub": "A10 \u2014 Ranged-attack set (D3)",
+  "text": "<strong>ENT-A-055 / ENT-D-049</strong> \u2014 Hand Boyfriend/Girlfriend an <code>orespawn:ultimate_bow</code>: arrows fly (heal allies if PvP off); without bow: shoes fly. Melee b_fight/o_fight sounds; taunts at 4-7 blocks."
+ },
+ {
+  "id": "i088-ent-a-018-019",
+  "section": "A. Creative flatworld",
+  "sub": "A10 \u2014 Ranged-attack set (D3)",
+  "text": "<strong>ENT-A-018/019</strong> \u2014 AttackSquid: ink/water projectiles beyond 3 blocks, melee inside."
+ },
+ {
+  "id": "i089-ent-a-062",
+  "section": "A. Creative flatworld",
+  "sub": "A10 \u2014 Ranged-attack set (D3)",
+  "text": "<strong>ENT-A-062</strong> \u2014 Brutalfly fireball type follows difficulty (Easy small / Hard BetterFireball), heals itself +1 per shot."
+ },
+ {
+  "id": "i090-ent-d-044",
+  "section": "A. Creative flatworld",
+  "sub": "A10 \u2014 Ranged-attack set (D3)",
+  "text": "<strong>ENT-D-044</strong> \u2014 GiantRobot fires laser volleys only once its head faces you; slower &quot;special&quot; lasers from &gt;10 blocks."
+ },
+ {
+  "id": "i091-d3-prince-family",
+  "section": "A. Creative flatworld",
+  "sub": "A10 \u2014 Ranged-attack set (D3)",
+  "text": "<strong>D3 Prince family</strong> \u2014 Babies/Princess randomly take off and land; hurt pets &lt;25% HP flee airborne; canon trio fires only in the 5-12 block band while fire is lit; ice block / flint&amp;steel toggle fire with chat messages; teen/adult fly to a distant owner, bite-and-break-off combat, audible wing flaps; <strong>diamond regressions</strong>: DIAMOND item on tamed teen\u2192baby, adult\u2192teen (BOSS-018/020/029: cooked beef heals 80; gold ingot and cake do NOTHING)."
+ },
+ {
+  "id": "i092-boss-024",
+  "section": "A. Creative flatworld",
+  "sub": "A10 \u2014 Ranged-attack set (D3)",
+  "text": "<strong>BOSS-024</strong> \u2014 Baby Prince hunts Butterflies/Cockateils/Dragonflies/Mosquitoes/Mothra, not just monsters."
+ },
+ {
+  "id": "i093-d3-princess-power",
+  "section": "A. Creative flatworld",
+  "sub": "A10 \u2014 Ranged-attack set (D3)",
+  "text": "<strong>D3 Princess power</strong> \u2014 In combat, discharge &gt;500 \u2192 3 PurplePower orbs; at peace, terraforming bloom (flowers/grass/cactus/lava\u2192water, 2 Butterfly/Cockateil hatches) under mobGriefing; firework-spark aura when charged."
+ },
+ {
+  "id": "i094-b2-caps",
+  "section": "B. Boss arena (build a big flat pen away from your base, or use a fresh superflat)",
+  "sub": "",
+  "text": "<strong>B2 caps</strong> \u2014 the three big ones read 7000 / 6000 / 4000 (not 1024)."
+ },
+ {
+  "id": "i095-b2-stats",
+  "section": "B. Boss arena (build a big flat pen away from your base, or use a fresh superflat)",
+  "sub": "",
+  "text": "<strong>B2 stats</strong> \u2014 spot-check 3-4 mobs: <code>/attribute @n[type=orespawn:kraken] minecraft:generic.armor base get</code> vs <code>phase_b_reports/B2_mobstats.md</code>."
+ },
+ {
+  "id": "i096-bug-005",
+  "section": "B. Boss arena (build a big flat pen away from your base, or use a fresh superflat)",
+  "sub": "",
+  "text": "<strong>BUG-005</strong> \u2014 TheQueen melees a SURVIVAL you to 0 HP: normal death screen/drops/respawn. Bonus: a low-HP mob victim vanishes with no drops (original quirk preserved)."
+ },
+ {
+  "id": "i097-bug-006",
+  "section": "B. Boss arena (build a big flat pen away from your base, or use a fresh superflat)",
+  "sub": "",
+  "text": "<strong>BUG-006</strong> \u2014 Stand at Godzilla&#x27;s jump landing in Creative and Spectator: NO damage; in Survival the shockwave hits."
+ },
+ {
+  "id": "i098-boss-002-007",
+  "section": "B. Boss arena (build a big flat pen away from your base, or use a fresh superflat)",
+  "sub": "",
+  "text": "<strong>BOSS-002/007</strong> \u2014 F3+B on King and Queen: 22-wide \u00d7 24-tall envelope; parts take/route damage (King parent unhittable, Queen parts glued to bones); models not lost inside the box."
+ },
+ {
+  "id": "i099-boss-005-012",
+  "section": "B. Boss arena (build a big flat pen away from your base, or use a fresh superflat)",
+  "sub": "",
+  "text": "<strong>BOSS-005/012</strong> \u2014 Place <code>orespawn:king_spawner</code> / <code>queen_spawner</code>: ~5 s fuse, spawner + block above turn to air, boss appears 8 blocks up with living sound, stays leashed near spawn. With <code>theKingEnable=false</code>/<code>theQueenEnable=false</code>: block fizzles, nothing spawns."
+ },
+ {
+  "id": "i100-boss-006",
+  "section": "B. Boss arena (build a big flat pen away from your base, or use a fresh superflat)",
+  "sub": "",
+  "text": "<strong>BOSS-006</strong> \u2014 Queen below 2/3 HP with &lt;10 player hits takes visibly reduced damage (armor 23 via overridden getter \u2014 <code>/attribute</code> won&#x27;t show it)."
+ },
+ {
+  "id": "i101-boss-010",
+  "section": "B. Boss arena (build a big flat pen away from your base, or use a fresh superflat)",
+  "sub": "",
+  "text": "<strong>BOSS-010</strong> \u2014 First hit on a dormant (blue) Queen deals normal damage during the 3 s wake-up; she can fight/be hurt during it."
+ },
+ {
+  "id": "i102-boss-026-031",
+  "section": "B. Boss arena (build a big flat pen away from your base, or use a fresh superflat)",
+  "sub": "",
+  "text": "<strong>BOSS-026/031</strong> \u2014 F3+B: PrinceTeen 3.25\u00d74.25, PrinceAdult 6.25\u00d710.25; rider seats correct."
+ },
+ {
+  "id": "i103-boss-032",
+  "section": "B. Boss arena (build a big flat pen away from your base, or use a fresh superflat)",
+  "sub": "",
+  "text": "<strong>BOSS-032</strong> \u2014 Tamed idle riderless Adult with <code>fullPowerKingEnable=true</code> transforms (diamond-block fast-path) into a King with the &quot;Prepare to die!&quot; sequence; config false \u2192 never; King does NOT deal doubled damage from that config."
+ },
+ {
+  "id": "i104-boss-036",
+  "section": "B. Boss arena (build a big flat pen away from your base, or use a fresh superflat)",
+  "sub": "",
+  "text": "<strong>BOSS-036</strong> \u2014 PrinceAdult: king_living only while aggro+riderless, king_hit on hurt, trex_death on death."
+ },
+ {
+  "id": "i105-b1-boss-drops-survival-kills",
+  "section": "B. Boss arena (build a big flat pen away from your base, or use a fresh superflat)",
+  "sub": "",
+  "text": "<strong>B1 boss drops (Survival kills)</strong> \u2014 Kraken (120-279 ink sacs + d53 gear, NO cooked cod), Godzilla (painting/beef/bone, NO emeralds), TheQueen (56\u00d7 scale/beef/bone/flesh + Princess spawns), TheKing (royal set + 300 random registry items + Prince spawns), Mothra (20-moth burst), Dragon (1-6 beef, no bones). Nothing drops twice."
+ },
+ {
+  "id": "i106-c7-vein-rates",
+  "section": "C. Survival/worldgen sanity (new world or unexplored chunks; survival for spawn tests)",
+  "sub": "",
+  "text": "<strong>C7 vein rates</strong> \u2014 <code>/execute in orespawn:mining run tp @s 0 100 0</code>, mine at Y10-20: uranium/titanium \u22483\u00d7 overworld density; salt only ABOVE Y50; amethyst only BELOW Y25."
+ },
+ {
+  "id": "i107-item-064",
+  "section": "C. Survival/worldgen sanity (new world or unexplored chunks; survival for spawn tests)",
+  "sub": "",
+  "text": "<strong>ITEM-064</strong> \u2014 Set <code>lessOre=true</code>, generate NEW chunks: ~1/3 uranium/titanium/amethyst/salt veins, ~1/2 troll blocks."
+ },
+ {
+  "id": "i108-c7-ruby-lava-seek",
+  "section": "C. Survival/worldgen sanity (new world or unexplored chunks; survival for spawn tests)",
+  "sub": "",
+  "text": "<strong>C7 ruby lava-seek</strong> \u2014 Overworld cave lakes &lt;Y50: ruby ore in stone directly UNDER lava, never free-floating; Nether has lavafoam veins + occasional nether ruby."
+ },
+ {
+  "id": "i109-c7-islands-terrain",
+  "section": "C. Survival/worldgen sanity (new world or unexplored chunks; survival for spawn tests)",
+  "sub": "",
+  "text": "<strong>C7 Islands terrain</strong> \u2014 <code>/execute in orespawn:islands run tp @s 0 80 0</code>: flat grass plane at Y7, no carvers/lakes; unstable anthills near the surface."
+ },
+ {
+  "id": "i110-c7-chaos-terrain",
+  "section": "C. Survival/worldgen sanity (new world or unexplored chunks; survival for spawn tests)",
+  "sub": "",
+  "text": "<strong>C7 Chaos terrain</strong> \u2014 128-high stone world, grass band ~Y60-65, vanilla sky; chaos roster spawns; no dungeons/towers."
+ },
+ {
+  "id": "i111-c7-structures",
+  "section": "C. Survival/worldgen sanity (new world or unexplored chunks; survival for spawn tests)",
+  "sub": "",
+  "text": "<strong>C7 structures</strong> \u2014 <code>/locate structure orespawn:beehive</code> (Mining only), <code>orespawn:greenhouse</code>/<code>robot_lab</code>/<code>white_house</code>/<code>challenge_tower_king</code> (Islands only), <code>orespawn:royal_altars</code> (Utopia ~45-chunk grid), <code>minecraft:mineshaft</code> + <code>stronghold</code> resolve in Mining and Village."
+ },
+ {
+  "id": "i112-c7-dungeons",
+  "section": "C. Survival/worldgen sanity (new world or unexplored chunks; survival for spawn tests)",
+  "sub": "",
+  "text": "<strong>C7 dungeons</strong> \u2014 Utopia lava pools &lt;Y50: ruby-brick dungeon (ruby kit/ThunderStaff chest pool); generic cobble dungeons in Utopia/Mining/Village/Islands \u2014 break the spawner block, 12-mob-ladder mob appears after ~20 s (ITEM-020&#x27;s 400t fuse)."
+ },
+ {
+  "id": "i113-c7-mining-lakes-rooms",
+  "section": "C. Survival/worldgen sanity (new world or unexplored chunks; survival for spawn tests)",
+  "sub": "",
+  "text": "<strong>C7 Mining lakes/rooms</strong> \u2014 caves contain vanilla-style water/lava lakes and monster rooms."
+ },
+ {
+  "id": "i114-c7-termite-gate-ant-chain-wgen-049",
+  "section": "C. Survival/worldgen sanity (new world or unexplored chunks; survival for spawn tests)",
+  "sub": "",
+  "text": "<strong>C7 termite gate + ant chain (WGEN-049)</strong> \u2014 dimension access via the ant chain: <code>/summon orespawn:ant</code> (\u2192 Utopia), <code>orespawn:red_ant</code> (\u2192 Mining), <code>orespawn:termite</code> (\u2192 Crystal), <code>orespawn:unstable_ant</code> (\u2192 Islands). Right-click EMPTY-HANDED teleports; clicking the same ant type while already in its dimension returns you to the Overworld; portal cooldown between hops. Termite with items/armor held: &quot;Empty your inventory!&quot; / &quot;Take off your armor!&quot; chat gates, no teleport. A FOLLOWING tamed wolf within 48\u00d724\u00d748 travels along; a SITTING one stays."
+ },
+ {
+  "id": "i115-c7-crystal-egg-ores",
+  "section": "C. Survival/worldgen sanity (new world or unexplored chunks; survival for spawn tests)",
+  "sub": "",
+  "text": "<strong>C7 crystal egg ores</strong> \u2014 Crystal dimension sphere shells: breaking oreurchin/orerat/etc. gives block item + occasional 5-9 XP, NO mob spawn."
+ },
+ {
+  "id": "i116-c1-spawns",
+  "section": "C. Survival/worldgen sanity (new world or unexplored chunks; survival for spawn tests)",
+  "sub": "",
+  "text": "<strong>C1 spawns</strong> \u2014 Alien/Alosaurus/Camarasaurus/Baryonyx in Mining (Alosaurus/Baryonyx also Utopia), NOT End/overworld; Boyfriend beach hotspots; Bee/CaterKiller/Basilisk/Brutalfly/BandP per-biome."
+ },
+ {
+  "id": "i117-c2-spawns",
+  "section": "C. Survival/worldgen sanity (new world or unexplored chunks; survival for spawn tests)",
+  "sub": "",
+  "text": "<strong>C2 spawns</strong> \u2014 Dragon/GoldFish/EnderReaper on Island; DungeonBeast/Flounder/Irukandji/Frog in Crystal; EnderKnight/EnderReaper/Hammerhead/GammaMetroid/DungeonBeast in Chaos; GammaMetroid swarms in Mining; EnderKnight/EnderReaper dark-forest hotspots, NONE in the End; Fairy only dark forest; Girlfriend beach groups 8-15; Hydrolisc swamp/jungle; Frog river/swamp; NO ocean Flounder/GoldFish/Irukandji/Hammerhead/Hydrolisc."
+ },
+ {
+  "id": "i118-c3-spawns",
+  "section": "C. Survival/worldgen sanity (new world or unexplored chunks; survival for spawn tests)",
+  "sub": "",
+  "text": "<strong>C3 spawns</strong> \u2014 Kraken/Leon/Leonopteryx/RubyBird never natural; Kyuubi Nether weight doubled; Lizard river/swamp/ocean only; rat swarms in dark forests (10-20) + taigas only."
+ },
+ {
+  "id": "i119-c4-spawns",
+  "section": "C. Survival/worldgen sanity (new world or unexplored chunks; survival for spawn tests)",
+  "sub": "",
+  "text": "<strong>C4 spawns</strong> \u2014 TRex only Chaos/Mining; TerribleTerror Island/Chaos; Urchin/Skate/Vortex Crystal(+Chaos); Spyro/VelocityRaptor Mining only; Stinky Nether/badlands/Island; SeaMonster ocean w4 + swamps; WormSmall never natural (day) \u2014 <strong>D4: WormSmall spawns at NIGHT only</strong> (ENT-S-078 gate)."
+ },
+ {
+  "id": "i120-ent-a-110",
+  "section": "C. Survival/worldgen sanity (new world or unexplored chunks; survival for spawn tests)",
+  "sub": "",
+  "text": "<strong>ENT-A-110</strong> \u2014 CreepingHorror naturally only in darkness at night below y=15 (or Chaos)."
+ },
+ {
+  "id": "i121-c8-spawn-flags",
+  "section": "C. Survival/worldgen sanity (new world or unexplored chunks; survival for spawn tests)",
+  "sub": "",
+  "text": "<strong>C8 spawn flags</strong> \u2014 Set <code>krakenEnable=false</code>, <code>godzillaEnable=false</code>, <code>cowEnable=false</code>: no natural spawns of those (no AttackSquid revenge Krakens); eggs//summon still work."
+ },
+ {
+  "id": "i122-wgen-037",
+  "section": "C-D5 \u2014 structures + SpawnOres pool (D5, 2026-08-08)",
+  "sub": "D5a \u2014 Mining dimension",
+  "text": "<strong>WGEN-037</strong> \u2014 <code>/execute in orespawn:mining run tp @s 0 100 0</code>, then <code>/locate structure orespawn:basilisk_maze</code> and tp there. Expect: sandstone step-pyramid marker sunk ~2 blocks into terrain; 4\u00d74 bedrock shaft with 2\u00d72 core and spiral obsidian parkour steps descending 20-29 blocks; iron-ore-walled antechamber with 3 Extreme Torches; 30\u00d730 obsidian maze (2-wide corridors, solvable west\u2192east, lava traps in the floor); 30\u00d730 taller chamber with 3 persistent Basilisks, RTP floor traps, 2-4 chests on the east wall (torch 3 above each) rolling diamonds 15-25 / cages / uranium / fish / ultimate gear per the 31-entry table."
+ },
+ {
+  "id": "i123-walk-130-blocks-from-the-maze-chamber-and-return-the-3-bas",
+  "section": "C-D5 \u2014 structures + SpawnOres pool (D5, 2026-08-08)",
+  "sub": "D5a \u2014 Mining dimension",
+  "text": "Walk &gt;130 blocks from the maze chamber and return: the 3 Basilisks must NOT have despawned (persistence)."
+ },
+ {
+  "id": "i124-wgen-042-rookery",
+  "section": "C-D5 \u2014 structures + SpawnOres pool (D5, 2026-08-08)",
+  "sub": "D5b \u2014 Islands dimension",
+  "text": "<strong>WGEN-042 (rookery)</strong> \u2014 <code>/execute in orespawn:islands run tp @s 0 20 0</code>, <code>/locate structure orespawn:nightmare_rookery</code>. Expect: cluster of jagged stone spires in two wandering ridges; roughly 1-in-10 spires truncate at 19 blocks with a chest on top and a Nightmare (Pitch Black) spawner sitting directly on the chest; chests roll dead stink bugs / black+scary flowers / nightmare eggs / robot kits / bones / string / flesh / XP bottles (4-8 stacks)."
+ },
+ {
+  "id": "i125-wgen-051-055",
+  "section": "C-D5 \u2014 structures + SpawnOres pool (D5, 2026-08-08)",
+  "sub": "D5b \u2014 Islands dimension",
+  "text": "<strong>WGEN-051/055</strong> \u2014 <code>/locate structure orespawn:challenge_tower_king</code> (and _queen): tower heights VARY (most towers stop below 6 floors; full towers with the Nightmare cap \u2248 28%); towers sit on the grass plane (not floating on a heightmap ledge); with <code>lessLag=1</code> roughly half as many towers/rookeries generate in fresh chunks."
+ },
+ {
+  "id": "i126-wgen-052-053-056-item-066",
+  "section": "C-D5 \u2014 structures + SpawnOres pool (D5, 2026-08-08)",
+  "sub": "D5b \u2014 Islands dimension",
+  "text": "<strong>WGEN-052/053/056 + ITEM-066</strong> \u2014 inside any tower floor room: NO scaffolding anywhere; all 4 chests face the room centre; non-prize floors roll the faithful tier lists (emerald kit / experience+pink / amethyst+tigers-eye / ruby+utility / the 83-spawn-egg jackpot at level 5). On a level-6 tower&#x27;s BOTTOM floor: west chest = The Prince (King) / The Princess (Queen) SPAWN EGG that actually spawns the royal, east = Royal/Queen helmet+chestplate, north = leggings+boots, south = Royal Guardian Sword; 4 RTP blocks around the central spawner column."
+ },
+ {
+  "id": "i127-wgen-054",
+  "section": "C-D5 \u2014 structures + SpawnOres pool (D5, 2026-08-08)",
+  "sub": "D5b \u2014 Islands dimension",
+  "text": "<strong>WGEN-054</strong> \u2014 level-2+ tower centre rooms at the right difficulty spawn Jumpy Bugs (TrooperBug \u2014 jumps, no spit attack)."
+ },
+ {
+  "id": "i128-wgen-055-worm-ring",
+  "section": "C-D5 \u2014 structures + SpawnOres pool (D5, 2026-08-08)",
+  "sub": "D5b \u2014 Islands dimension",
+  "text": "<strong>WGEN-055 (worm ring)</strong> \u2014 around a FULL-height tower, dig at surface\u22121 out to ~55 blocks east/\u00b155 north-south of the base: buried Large Worm spawners scattered outside the castle, with no rectangular cutoff at chunk borders."
+ },
+ {
+  "id": "i129-item-020",
+  "section": "C-D5 \u2014 structures + SpawnOres pool (D5, 2026-08-08)",
+  "sub": "D5b \u2014 Islands dimension",
+  "text": "<strong>ITEM-020</strong> \u2014 place 4+ Random Dungeon Spawner blocks; observed outcomes should now include the King tower (2), Basilisk maze (23), rookery (38), Queen tower (47) at the block position."
+ },
+ {
+  "id": "i130-wgen-005",
+  "section": "C-D5 \u2014 structures + SpawnOres pool (D5, 2026-08-08)",
+  "sub": "D5c \u2014 SpawnOres + recipes (overworld / Utopia / Village / Chaos / Mining)",
+  "text": "<strong>WGEN-005</strong> \u2014 fly through NEW chunks at Y50+ mining into stone: spawn-ore veins (clump ~4) of many different mobs appear frequently (~24/chunk overworld, ~27 dims); Mining dim noticeably denser (\u00d73); Islands and Crystal (other than its own 11 egg ores) get NONE; Nether/End get none."
+ },
+ {
+  "id": "i131-break-any-spawn-ore-drops-itself-50-of-breaks-pop-5-9-xp",
+  "section": "C-D5 \u2014 structures + SpawnOres pool (D5, 2026-08-08)",
+  "sub": "D5c \u2014 SpawnOres + recipes (overworld / Utopia / Village / Chaos / Mining)",
+  "text": "Break any spawn ore: drops itself; ~50% of breaks pop 5-9 XP; Silk Touch: block, no XP; nothing ever spawns from breaking."
+ },
+ {
+  "id": "i132-lang-every-spawn-ore-reads-ancient-dried-mob-spawn-egg",
+  "section": "C-D5 \u2014 structures + SpawnOres pool (D5, 2026-08-08)",
+  "sub": "D5c \u2014 SpawnOres + recipes (overworld / Utopia / Village / Chaos / Mining)",
+  "text": "Lang: every spawn ore reads &quot;Ancient Dried &lt;Mob&gt; Spawn Egg&quot; (incl. the renamed 11 crystal egg ores + kraken/dragon)."
+ },
+ {
+  "id": "i133-item-062",
+  "section": "C-D5 \u2014 structures + SpawnOres pool (D5, 2026-08-08)",
+  "sub": "D5c \u2014 SpawnOres + recipes (overworld / Utopia / Village / Chaos / Mining)",
+  "text": "<strong>ITEM-062</strong> \u2014 craft water bucket + spawn block for a sample across the table (spider\u2192vanilla spider egg, wither boss\u2192wither egg, criminal\u2192BandP egg, enchanted cow\u2192Enchanted Apple Cow egg, kraken\u2192Kraken egg, urchin ore\u2192Urchin egg): 1 egg + EMPTY BUCKET returned. 9\u00d7 Mobzilla/King/Queen part blocks \u2192 full egg block \u2192 + water \u2192 boss egg. Mobzilla FULL egg blocks also mine from worldgen; King/Queen full blocks never do (parts only)."
+ },
+ {
+  "id": "i134-lessore-1",
+  "section": "C-D5 \u2014 structures + SpawnOres pool (D5, 2026-08-08)",
+  "sub": "D5c \u2014 SpawnOres + recipes (overworld / Utopia / Village / Chaos / Mining)",
+  "text": "<strong>LessOre=1</strong> \u2014 new chunks: spawn-ore veins cut to ~1/3."
+ },
+ {
+  "id": "i135-confirm-the-interim-content-is-gone-no-orespawn-ancient-dr",
+  "section": "C-D5 \u2014 structures + SpawnOres pool (D5, 2026-08-08)",
+  "sub": "D5c \u2014 SpawnOres + recipes (overworld / Utopia / Village / Chaos / Mining)",
+  "text": "Confirm the interim content is GONE: no <code>orespawn:ancient_dried_egg</code> block anywhere (worldgen or creative tab), and dragon/kraken spawn blocks now appear via the pool at Y50+ (not as deep single blocks)."
+ },
+ {
+  "id": "i136-endercastle-end",
+  "section": "C-D6a \u2014 strong-model structures (D6a, 2026-08-08)",
+  "sub": "",
+  "text": "<strong>EnderCastle (End)</strong> \u2014 <code>/execute in minecraft:the_end run tp @s 100 70 0</code>, <code>/locate structure orespawn:ender_castle_end</code>. Expect: 29x29 obsidian-plate castle on end stone (central OR outer islands \u2014 PN-017), 4 spiral-stair corner towers, rooftop lava pool + dragon-egg pedestal, Ender Knight/Reaper rooftop spawner pairs + pit + CaveFisher alcoves, 3 alcove chests (facing inward) rolling the ender/experience-catcher table (6-10 stacks), trophy ender chest EMPTY (plain block)."
+ },
+ {
+  "id": "i137-endercastle-islands",
+  "section": "C-D6a \u2014 strong-model structures (D6a, 2026-08-08)",
+  "sub": "",
+  "text": "<strong>EnderCastle (Islands)</strong> \u2014 <code>/locate structure orespawn:ender_castle_islands</code> in orespawn:islands: same castle at grass level."
+ },
+ {
+  "id": "i138-incapyramid-islands",
+  "section": "C-D6a \u2014 strong-model structures (D6a, 2026-08-08)",
+  "sub": "",
+  "text": "<strong>IncaPyramid (Islands)</strong> \u2014 <code>/locate structure orespawn:inca_pyramid</code>: 41x31 stepped pyramid, 4 torch-ended ramps (support pillars reach the ground \u2014 PN-018), lit-lamp temple checkerboard, 5 water altars, 4 Creeper Repellents, Molenoid spawner, trapdoor + ladder shaft, 24-grave graveyard (~1/3 with Ghost spawners, poppy/dandelion/poppy beds), all chests roll 10-14 stacks of the 480-weight table."
+ },
+ {
+  "id": "i139-kyuubidungeon-mining",
+  "section": "C-D6a \u2014 strong-model structures (D6a, 2026-08-08)",
+  "sub": "",
+  "text": "<strong>KyuubiDungeon (Mining)</strong> \u2014 <code>/locate structure orespawn:kyuubi_dungeon</code>: sealed surface hut (enter via the 1x1 roof hole), 22-deep shaft with water brake, lava-walled corridor, boss room with altar + 4-tier ziggurat, 8-Blaze spawner ring, kyuubi chest (7-13 stacks) + 4 wall chests with DIFFERENT fill counts (4-8/3-7/5-9/6-10) incl. blaze-egg loot entries."
+ },
+ {
+  "id": "i140-robot-lab-islands",
+  "section": "C-D6a \u2014 strong-model structures (D6a, 2026-08-08)",
+  "sub": "",
+  "text": "<strong>Robot Lab (Islands)</strong> \u2014 freshly generated lab: BOTH rear sniper spawners exist behind the hangar wall; altar spawns Robo-Pounder, treasure room Robo-Warrior, pillars Robo-Sniper; railway has powered (golden) rails + unpowered floor levers; assembly-line sticky pistons face south under white carpet and are CRUSHING (their lever generates powered); entry doors face NORTH and open with the wall buttons; chests roll 10-14 of the 755-weight table (minecarts, kits, Ray Gun \u2014 no droppers/dispensers/clocks)."
+ },
+ {
+  "id": "i141-hospital-end",
+  "section": "C-D6a \u2014 strong-model structures (D6a, 2026-08-08)",
+  "sub": "",
+  "text": "<strong>Hospital (End)</strong> \u2014 <code>/locate structure orespawn:hospital</code>: 10x10 iron-bar cage, 4 End Crystals on bedrock caps (NO dragon), 8 spawners, chest at the corner (6-10 of the 210 table)."
+ },
+ {
+  "id": "i142-monsterisland-overworld",
+  "section": "C-D6a \u2014 strong-model structures (D6a, 2026-08-08)",
+  "sub": "",
+  "text": "<strong>MonsterIsland (overworld)</strong> \u2014 <code>/locate structure orespawn:monster_island</code> over PLAIN ocean only (not deep/frozen/warm \u2014 PN-019): floating lens island in the water surface, canopy tree, 4 spawners all of ONE randomly picked mob, 2 chests (4-8 of the 450 table)."
+ },
+ {
+  "id": "i143-dsb-outcomes",
+  "section": "C-D6a \u2014 strong-model structures (D6a, 2026-08-08)",
+  "sub": "",
+  "text": "<strong>DSB outcomes</strong> \u2014 Random Dungeon Spawner can now also produce: fairy tree (0), fairy castle tree (1), kyuubi dungeon (7), hospital (24), ender castle (27), inca pyramid (29), robot lab (30), monster island (37) at the block."
+ },
+ {
+  "id": "i144-trees",
+  "section": "C-D6a \u2014 strong-model structures (D6a, 2026-08-08)",
+  "sub": "",
+  "text": "<strong>Trees</strong> \u2014 a lone Duplicator Log appears rarely in veggie patches (duplicatorTreeEnable on); the experience sapling grows the REAL experience tree (2x2 oak trunk, drooping branch crown); crystal fairy trees shrink with lessLag=1; fairy-tree chunks that fail the site scan still suppress termites (WGEN-062 quirk)."
+ },
+ {
+  "id": "i145-playpool-overworld-ocean",
+  "section": "C-D6b \u2014 mechanical structures, batches 1-4 (2026-08-08/10)",
+  "sub": "",
+  "text": "<strong>PlayPool (overworld ocean)</strong> \u2014 <code>/locate structure orespawn:play_pool</code>: floating platform 16 blocks above the sea with 4 Attack Squid spawners, twin chests (only the x+1 chest has loot: ink/squid-zooka/gold-nugget/flesh, 3-7 stacks), water channel with flowing caps."
+ },
+ {
+  "id": "i146-cloudsharkdungeon-islands-sky",
+  "section": "C-D6b \u2014 mechanical structures, batches 1-4 (2026-08-08/10)",
+  "sub": "",
+  "text": "<strong>CloudSharkDungeon (Islands sky)</strong> \u2014 <code>/locate structure orespawn:cloud_shark_dungeon</code> then fly to Y150-159: tiny glowstone cluster with 4 Cloud Shark spawners + 1 chest (4-8 stacks incl. experience tree seeds)."
+ },
+ {
+  "id": "i147-goldfishbowl-overworld-ocean-wgen-042",
+  "section": "C-D6b \u2014 mechanical structures, batches 1-4 (2026-08-08/10)",
+  "sub": "",
+  "text": "<strong>GoldFishBowl (overworld ocean, WGEN-042)</strong> \u2014 <code>/locate structure orespawn:gold_fish_bowl</code>: glass bowl on the surface: sand bed, water fill, 4 glowstone corners, Gold Fish spawner, open wall-top ring and unwritten base ring (faithful oddities), NO chest."
+ },
+ {
+  "id": "i148-spitbuglair-swamp-wgen-042",
+  "section": "C-D6b \u2014 mechanical structures, batches 1-4 (2026-08-08/10)",
+  "sub": "",
+  "text": "<strong>SpitBugLair (swamp, WGEN-042)</strong> \u2014 <code>/locate structure orespawn:spit_bug_lair</code>: emerald-ore antenna, 3 Spit Bug spawners, loot chest; only in plain swamp (not mangrove)."
+ },
+ {
+  "id": "i149-urchinspawner-crystal-wgen-042",
+  "section": "C-D6b \u2014 mechanical structures, batches 1-4 (2026-08-08/10)",
+  "sub": "",
+  "text": "<strong>UrchinSpawner (Crystal, WGEN-042)</strong> \u2014 set <code>urchinEnable=false</code>, fly fresh Crystal chunks: no new urchin spawners generate."
+ },
+ {
+  "id": "i150-rotatorstation-other-dsb-outcomes",
+  "section": "C-D6b \u2014 mechanical structures, batches 1-4 (2026-08-08/10)",
+  "sub": "",
+  "text": "<strong>RotatorStation / other DSB outcomes</strong> \u2014 Random Dungeon Spawner can now produce types 3/12/13/14/15/16/17/18/19/20/34 (rotator station, play pool, water-dragon lair, cloud cluster, leaf tower, mini dungeon, gold fish bowl, graveyard, spit-bug lair, igloo, cephadrome altar) at the block."
+ },
+ {
+  "id": "i151-enderreapergraveyard-end-wgen-042",
+  "section": "C-D6b \u2014 mechanical structures, batches 1-4 (2026-08-08/10)",
+  "sub": "",
+  "text": "<strong>EnderReaperGraveyard (End, WGEN-042)</strong> \u2014 <code>/locate structure orespawn:graveyard</code> in the End: roofless iron-bar cage, 8 obsidian graves with flush chests (eye/poppy/dandelion/pearl 3-5 stacks), 4 Ender Reaper spawners; foundation skirt fills only air below (End terrain preserved)."
+ },
+ {
+  "id": "i152-waterdragonlair-ocean-wgen-042",
+  "section": "C-D6b \u2014 mechanical structures, batches 1-4 (2026-08-08/10)",
+  "sub": "",
+  "text": "<strong>WaterDragonLair (ocean, WGEN-042)</strong> \u2014 <code>/locate structure orespawn:water_dragon_lair</code>: floating polar-math disc with iron annulus, lapis/spawn-egg rim courses, canopy tree, 4 Water Dragon spawners, chest (4-8 of the 145 table)."
+ },
+ {
+  "id": "i153-leafmonsterdungeon-plains-wgen-042",
+  "section": "C-D6b \u2014 mechanical structures, batches 1-4 (2026-08-08/10)",
+  "sub": "",
+  "text": "<strong>LeafMonsterDungeon (plains, WGEN-042)</strong> \u2014 <code>/locate structure orespawn:leaf_monster_dungeon</code>: log tower with leaf crown, 4 Leaf Monster spawners, chest pair (one filled, 12-16 stacks), foundation roots leave the grass threshold intact."
+ },
+ {
+  "id": "i154-minidungeon-islands-wgen-042",
+  "section": "C-D6b \u2014 mechanical structures, batches 1-4 (2026-08-08/10)",
+  "sub": "",
+  "text": "<strong>MiniDungeon (Islands, WGEN-042)</strong> \u2014 <code>/locate structure orespawn:mini_dungeon</code>: spawner ring at j=9 (12 spawners), corner caps, floor spawners, chest."
+ },
+ {
+  "id": "i155-cephadromealtar-islands-wgen-042",
+  "section": "C-D6b \u2014 mechanical structures, batches 1-4 (2026-08-08/10)",
+  "sub": "",
+  "text": "<strong>CephadromeAltar (Islands, WGEN-042)</strong> \u2014 <code>/locate structure orespawn:cephadrome_altar</code>: altar per spec with its spawners."
+ },
+ {
+  "id": "i156-igloo-wgen-042-wgen-071",
+  "section": "C-D6b \u2014 mechanical structures, batches 1-4 (2026-08-08/10)",
+  "sub": "",
+  "text": "<strong>Igloo (WGEN-042 / WGEN-071)</strong> \u2014 DSB type 20 ONLY (no natural generation \u2014 placement is the one open structure item, WGEN-071/Phase E). Roll <code>/setblock ~2 ~ ~ orespawn:random_dungeon_block</code> until an igloo appears (or verify via other outcomes that 20 exists): snow/ice dome, west oak door, Rat/Ghost/Ghost-Pumpkin-Skelly spawners, north-facing chest with 16 independent 50% fixed items; at (+,+) build coordinates the apex has a 1x1 skylight, at negative coordinates it closes (faithful float quirk)."
+ },
+ {
+  "id": "i157-bouncycastle-desert",
+  "section": "C-D6b \u2014 mechanical structures, batches 1-4 (2026-08-08/10)",
+  "sub": "",
+  "text": "<strong>BouncyCastle (desert)</strong> \u2014 <code>/locate structure orespawn:bouncy_castle</code>: lavafoam (bouncy, friction 1.1) castle sunk to the sand surface, 9 spawners (Silverfish/Rat/Scorpion mix), north-facing chest at (+3,+3,+3) with 6-10 stacks (cod/poppy/dandelion/pearl table, weight 180)."
+ },
+ {
+  "id": "i158-damselindistress-village-dim",
+  "section": "C-D6b \u2014 mechanical structures, batches 1-4 (2026-08-08/10)",
+  "sub": "",
+  "text": "<strong>DamselInDistress (Village dim)</strong> \u2014 <code>/locate structure orespawn:damsel_in_distress</code> in the Village dimension: 9\u00d79 mossy-decay cottage with front gable, 7\u00d74 iron-bar jail wall, 2 Scorpion spawners, north-facing chest (10-14 stacks: iron tools + foods), and a live Girlfriend standing in the jail cell (persistent by entity class \u2014 she must NOT despawn when you leave and return)."
+ },
+ {
+  "id": "i159-girlfriendisland-ocean",
+  "section": "C-D6b \u2014 mechanical structures, batches 1-4 (2026-08-08/10)",
+  "sub": "",
+  "text": "<strong>GirlfriendIsland (ocean)</strong> \u2014 <code>/locate structure orespawn:girlfriend_island</code>: MonsterIsland&#x27;s twin island/tree geometry, spawners Girlfriend/Boyfriend/Gold Fish\u00d72 (fixed, no random pick), TWO chests each with 4-8 stacks of the damsel food/tool table."
+ },
+ {
+  "id": "i160-stinkyhouse-islands",
+  "section": "C-D6b \u2014 mechanical structures, batches 1-4 (2026-08-08/10)",
+  "sub": "",
+  "text": "<strong>StinkyHouse (Islands)</strong> \u2014 <code>/locate structure orespawn:stinky_house</code>: 25\u00d717 fenced yard (1/3 fence gaps, 1/10 bushes, never overwrites yard air), 13\u00d710 house with corner-adjacent window panes and 1/10 wall decay, doorway force-cleared, Stink Bug + Stinky spawners, chest (8-12 stacks, weight-215 table incl. both stink eggs)."
+ },
+ {
+  "id": "i161-pumpkin-islands",
+  "section": "C-D6b \u2014 mechanical structures, batches 1-4 (2026-08-08/10)",
+  "sub": "",
+  "text": "<strong>Pumpkin (Islands)</strong> \u2014 <code>/locate structure orespawn:pumpkin</code>: 14-wide orange-terracotta jack-o&#x27;-lantern floating one block above grass, 48-cell carved face (eyes/nose/mouth) on the \u2212z wall, green stem, interior plank candle with netherrack cap, twin fires, 2 Ghost Pumpkin Skelly spawners, NO chest."
+ },
+ {
+  "id": "i162-rainbow-islands-sky",
+  "section": "C-D6b \u2014 mechanical structures, batches 1-4 (2026-08-08/10)",
+  "sub": "",
+  "text": "<strong>Rainbow (Islands sky)</strong> \u2014 <code>/locate structure orespawn:rainbow</code> then fly to Y70-89: 8 nested wool arches (red innermost \u2192 pink outermost) threading a raining cloud slab, 6 Cloud Shark spawners, roof double chest \u2014 BOTH halves filled (10-14 stacks each, weight-150 table incl. magic apple)."
+ },
+ {
+  "id": "i163-dsb-batch-3-outcomes",
+  "section": "C-D6b \u2014 mechanical structures, batches 1-4 (2026-08-08/10)",
+  "sub": "",
+  "text": "<strong>DSB batch-3 outcomes</strong> \u2014 Random Dungeon Spawner can additionally produce types 26/28/35/39/44/46 (bouncy castle, damsel cottage, girlfriend island, stinky house, pumpkin at +1Y, rainbow) at the block."
+ },
+ {
+  "id": "i164-spiderhangout-village-dim",
+  "section": "C-D6b \u2014 mechanical structures, batches 1-4 (2026-08-08/10)",
+  "sub": "",
+  "text": "<strong>SpiderHangout (Village dim)</strong> \u2014 <code>/locate structure orespawn:spider_hangout</code>: 20\u00d720 gravel pad on a stone slab, 12 Spider Driver spawners in 3-high corner columns, one persistent Robot Spider at the pad centre (no spawn sound), NO chest. With <code>spiderDriverEnable=false</code> no new hangouts generate (the Dungeon Spawner Block can still build one \u2014 faithful)."
+ },
+ {
+  "id": "i165-redanthangout-village-dim",
+  "section": "C-D6b \u2014 mechanical structures, batches 1-4 (2026-08-08/10)",
+  "sub": "",
+  "text": "<strong>RedAntHangout (Village dim)</strong> \u2014 <code>/locate structure orespawn:red_ant_hangout</code>: 16\u00d716 gravel pad with four 3\u00d73 red-ant-block corner pads, one persistent UNOWNED Robot Red Ant at centre (wrench-claim per its item flow), no spawners, no chest."
+ },
+ {
+  "id": "i166-frogpond-plains-wgen-042",
+  "section": "C-D6b \u2014 mechanical structures, batches 1-4 (2026-08-08/10)",
+  "sub": "",
+  "text": "<strong>FrogPond (plains, WGEN-042)</strong> \u2014 <code>/locate structure orespawn:frog_pond</code>: 7\u00d77 still-water sheet sunk at the grass line, Frog spawner, centre riser with flowing cross, lily-pad cross above."
+ },
+ {
+  "id": "i167-disableoverworlddungeons-gate-wgen-064",
+  "section": "C-D6b \u2014 mechanical structures, batches 1-4 (2026-08-08/10)",
+  "sub": "",
+  "text": "<strong>DisableOverworldDungeons gate (WGEN-064)</strong> \u2014 set <code>disableOverworldDungeons=true</code>, fly fresh overworld chunks: NONE of the 11 overworld dungeon types generate (ponds, haunted house, bouncy castle, leaf tower, spit-bug lair, fish bowl, islands, play pool); <code>/setblock</code> a Random Dungeon block: outcomes still build (DSB never gated \u2014 faithful)."
+ },
+ {
+  "id": "i168-rubberduckypond-plains",
+  "section": "C-D6b \u2014 mechanical structures, batches 1-4 (2026-08-08/10)",
+  "sub": "",
+  "text": "<strong>RubberDuckyPond (plains)</strong> \u2014 <code>/locate structure orespawn:rubber_ducky_pond</code>: 12\u00d711 sand-rimmed perched pond, glass-capped tower with 2 Rubber Ducky spawners, chest pair at +5 \u2014 ONLY the +1 chest has loot (13-entry table, 8-12 stacks); the other is empty (faithful oddity)."
+ },
+ {
+  "id": "i169-hauntedhouse-overworld",
+  "section": "C-D6b \u2014 mechanical structures, batches 1-4 (2026-08-08/10)",
+  "sub": "",
+  "text": "<strong>HauntedHouse (overworld)</strong> \u2014 <code>/locate structure orespawn:haunted_house</code>: 7\u00d77 plank house with glass clerestory band and east doorway, furnace/crafting-table/chest furniture row, spawner stack Rat/Ghost/Ghost Pumpkin Skelly; chest has 14 fixed slots each present 50% (porkchops/torches/coal/ore salt etc.)."
+ },
+ {
+  "id": "i170-enderknightdungeon-end-mining",
+  "section": "C-D6b \u2014 mechanical structures, batches 1-4 (2026-08-08/10)",
+  "sub": "",
+  "text": "<strong>EnderKnightDungeon (End + Mining)</strong> \u2014 <code>/locate structure orespawn:ender_knight_dungeon_end</code> and <code>..._mining</code>: cobble dungeon with shelf rooms (28 random shelf sites), 2 floating Ender Knight spawners, chest (3-7 of the 5-entry table). Mining version sits ON the lowest grass surface (not sunk \u2014 contrast Basilisk Maze)."
+ },
+ {
+  "id": "i171-dsb-full-sweep",
+  "section": "C-D6b \u2014 mechanical structures, batches 1-4 (2026-08-08/10)",
+  "sub": "",
+  "text": "<strong>DSB full sweep</strong> \u2014 the Random Dungeon Spawner now produces ALL 50 original outcomes, including: type 5 haunted house, 11 ender knight dungeon, 4/8 bee hives, 6 mantis nest, 25 crystal haunted house, 31/42 King/Queen altars (offset-corrected to the clicked pos), 33 crystal battle tower, 36 greenhouse, 40/43 ponds, 41 white house, 45 round rotator (+1Y), 48/49 hangouts. Royal altars/greenhouse/white house/robot lab DSB builds land exactly at the clicked position (recentring canceled)."
+ },
+ {
+  "id": "i172-regression-greenhouse-plants-wgen-063",
+  "section": "C-D6b \u2014 mechanical structures, batches 1-4 (2026-08-08/10)",
+  "sub": "",
+  "text": "<strong>Regression: greenhouse plants (WGEN-063)</strong> \u2014 in any fresh Greenhouse (worldgen or DSB 36): plots roll sugar cane and rice among the crops as in 1.7.10; only 1 roll in 20 leaves a plot empty (never pumpkins)."
+ },
+ {
+  "id": "i173-regression-greenhouse-white-house-doors-wgen-067-068",
+  "section": "C-D6b \u2014 mechanical structures, batches 1-4 (2026-08-08/10)",
+  "sub": "",
+  "text": "<strong>Regression: greenhouse + white house doors (WGEN-067/068)</strong> \u2014 Greenhouse entry: TWO full iron doors side by side (facing north) with stone lintels above the flanks and stone buttons on the outside wall; White House entry: FULL 2-tall iron door + outside button that sits ON the wall (not floating)."
+ },
+ {
+  "id": "i174-regression-royal-altars-alien-wtf-boxes-wgen-065-066",
+  "section": "C-D6b \u2014 mechanical structures, batches 1-4 (2026-08-08/10)",
+  "sub": "",
+  "text": "<strong>Regression: royal altars + Alien WTF boxes (WGEN-065/066)</strong> \u2014 royal altar dirt skirts reach 9 deep and the air-clear reaches +58; the Alien WTF south Part room&#x27;s far wall is complete (box widenings; worldgen layouts reseed for existing seeds \u2014 documented delta)."
+ },
+ {
+  "id": "i175-regression-dsb-recentring-item-067",
+  "section": "C-D6b \u2014 mechanical structures, batches 1-4 (2026-08-08/10)",
+  "sub": "",
+  "text": "<strong>Regression: DSB recentring (ITEM-067)</strong> \u2014 a Robot Lab rolled from the Random Dungeon block builds centered at the block position (previously shifted \u22125/\u221225), like the altars/greenhouse/white house cases."
+ },
+ {
+  "id": "i176-regression-bee-mantis-chests-item-068-069",
+  "section": "C-D6b \u2014 mechanical structures, batches 1-4 (2026-08-08/10)",
+  "sub": "",
+  "text": "<strong>Regression: bee/mantis chests (ITEM-068/069)</strong> \u2014 in a BeeHive (Mining), SmallBeeHive, or MantisNest: chests FACE INWARD (not all north) and loot includes Bee/Mantis SPAWN EGGS (2-8 / 2-4 stacks), never golden carrots or spider eyes standing in."
+ },
+ {
+  "id": "i177-anim-016-halloween-closes-ent-d-039-041",
+  "section": "D. Date-gated tests (LAST \u2014 they change your system clock)",
+  "sub": "",
+  "text": "<strong>ANIM-016 Halloween (closes ENT-D-039/041)</strong> \u2014 Set clock to <strong>Oct 31</strong>, night, in a plains/forest (survival, mob spawning on). Expect: Ghost + GhostSkelly natural spawns across the 22-biome list; back on a normal date they spawn ONLY in the 5 year-round biomes (snowy taiga, taiga, frozen river, jungle, dark forest). Drop: nothing (C2)."
+ },
+ {
+  "id": "i178-anim-016-valentine-s-ent-d-011-family",
+  "section": "D. Date-gated tests (LAST \u2014 they change your system clock)",
+  "sub": "",
+  "text": "<strong>ANIM-016 Valentine&#x27;s (ENT-D-011-family)</strong> \u2014 Set clock to <strong>Feb 14</strong>, <code>/summon orespawn:girlfriend</code> (fresh!). Expect: GIANT (2.5\u00d78, renders 5\u00d7) angry Girlfriend, 800 HP (<code>/data get</code>), <code>girlfriendv</code> texture, attacks players and Boyfriends (not her owner/pets), immune to inWall damage, <code>o_hurt</code> ambient. Hit her with <code>orespawn:rose_sword</code>: each hit drops a &quot;Love&quot;; ~1-in-4 cures her (shrinks, calms, extra Love shower). Thrown shoes deal <strong>10</strong> damage today (ITEM-053)."
+ },
+ {
+  "id": "i179-anim-016-easter-closes-ent-d-011",
+  "section": "D. Date-gated tests (LAST \u2014 they change your system clock)",
+  "sub": "",
+  "text": "<strong>ANIM-016 Easter (closes ENT-D-011)</strong> \u2014 Set clock to <strong>Apr 20</strong>. Expect: EasterBunny NATURAL spawns appear (any other date: none \u2014 verify with a spawn-friendly area first). Egg-laying itself is date-independent (tested in A4 via /summon)."
+ }
+]

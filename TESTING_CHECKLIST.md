@@ -1,14 +1,17 @@
-# TESTING_CHECKLIST — in-game manual test session (2026-07-03)
+# TESTING_CHECKLIST — in-game manual test session (reorganized 2026-08-10, session live)
 
 Every "Pending manual tests" item from FIX_LOG.md (master list + C7 + C8 + D2 + D3 + D4
-sections), regrouped by test environment for one efficient play session.
++ D5 + D6a + D6b sections), regrouped by test environment for one efficient play
+session: **A creative flatworld → B boss arena → C survival/worldgen (now including all
+Phase D structures) → D date-gated LAST**.
 
-**Marking:** `[ ]` open → `[PASS]` / `[FAIL]` as results come in. FAILs get logged at the
-bottom with triage; fixes are batched after the session (nothing applied mid-session
-unless it blocks testing).
+**Marking:** items get `[PASS]` / `[FAIL]` prefixes as results come in. FAILs get logged
+in the Failure log with triage; fixes are batched after the session (nothing applied
+mid-session unless it blocks testing).
 
-**Client:** `gradlew runClient` running, launched clean — no startup crash (finding #1
-does not exist). Config file for flag tests: `runs/client/config/orespawn-common.toml`.
+**Client:** `gradlew runClient`. Finding #1 DID exist this session — see TEST-001 in the
+Failure log (registry crash on world creation; fixed mid-session as a blocker). Config
+file for flag tests: `runs/client/config/orespawn-common.toml`.
 
 ---
 
@@ -206,7 +209,7 @@ Check: `/data get entity @n[type=orespawn:the_king] Health`
 - **C7 structures** — `/locate structure orespawn:beehive` (Mining only), `orespawn:greenhouse`/`robot_lab`/`white_house`/`challenge_tower_king` (Islands only), `orespawn:royal_altars` (Utopia ~45-chunk grid), `minecraft:mineshaft` + `stronghold` resolve in Mining and Village.
 - **C7 dungeons** — Utopia lava pools <Y50: ruby-brick dungeon (ruby kit/ThunderStaff chest pool); generic cobble dungeons in Utopia/Mining/Village/Islands — break the spawner block, 12-mob-ladder mob appears after ~20 s (ITEM-020's 400t fuse).
 - **C7 Mining lakes/rooms** — caves contain vanilla-style water/lava lakes and monster rooms.
-- **C7 termite gate** — Right-click a termite with items/armor: "Empty your inventory!" / "Take off your armor!"; empty+bare: Crystal teleport. Ant teleport takes a FOLLOWING tamed wolf along, not a sitting one.
+- **C7 termite gate + ant chain (WGEN-049)** — dimension access via the ant chain: `/summon orespawn:ant` (→ Utopia), `orespawn:red_ant` (→ Mining), `orespawn:termite` (→ Crystal), `orespawn:unstable_ant` (→ Islands). Right-click EMPTY-HANDED teleports; clicking the same ant type while already in its dimension returns you to the Overworld; portal cooldown between hops. Termite with items/armor held: "Empty your inventory!" / "Take off your armor!" chat gates, no teleport. A FOLLOWING tamed wolf within 48×24×48 travels along; a SITTING one stays.
 - **C7 crystal egg ores** — Crystal dimension sphere shells: breaking oreurchin/orerat/etc. gives block item + occasional 5-9 XP, NO mob spawn.
 - **C1 spawns** — Alien/Alosaurus/Camarasaurus/Baryonyx in Mining (Alosaurus/Baryonyx also Utopia), NOT End/overworld; Boyfriend beach hotspots; Bee/CaterKiller/Basilisk/Brutalfly/BandP per-biome.
 - **C2 spawns** — Dragon/GoldFish/EnderReaper on Island; DungeonBeast/Flounder/Irukandji/Frog in Crystal; EnderKnight/EnderReaper/Hammerhead/GammaMetroid/DungeonBeast in Chaos; GammaMetroid swarms in Mining; EnderKnight/EnderReaper dark-forest hotspots, NONE in the End; Fairy only dark forest; Girlfriend beach groups 8-15; Hydrolisc swamp/jungle; Frog river/swamp; NO ocean Flounder/GoldFish/Irukandji/Hammerhead/Hydrolisc.
@@ -217,44 +220,13 @@ Check: `/data get entity @n[type=orespawn:the_king] Health`
 
 ---
 
-## D. Date-gated tests (LAST — they change your system clock)
+*(The former "E. Untestable until D5/D6" section is RETIRED — everything in it landed
+in D5-D6b and now lives in the C subsections below, except three items that are Phase E
+WORK, not tests: ENT-A-083 Cephadrome flight, ENT-A-054 Boyfriend AI remainder, and
+ITEM-023 ZooCage block form — see phase_d_rollup.md §3. WGEN-003/004/007 are also
+Phase E features and not testable yet.)*
 
-**How the gates work (PN-014):** the port evaluates `LocalDate.now()` **live at every
-check** — nothing is frozen at launch. You do NOT need to close the client: change the
-Windows clock (turn OFF "Set time automatically"), and spawn attempts pick up the new
-date within seconds. Caveats:
-
-1. **Girlfriend reads the date when she's constructed/loaded** — a Girlfriend already
-  standing in the world won't turn giant when the clock flips. Summon a FRESH one (or
-   leave/rejoin the world) after changing the date.
-2. Do these after everything else, then reset the clock. If Gradle acts up about clock
-  skew afterwards, `.\gradlew --stop` restarts the daemon.
-3. The mod's "Easter" is the original's fixed **April 20** (not the real movable feast).
-
-- **ANIM-016 Halloween (closes ENT-D-039/041)** — Set clock to **Oct 31**, night, in a plains/forest (survival, mob spawning on). Expect: Ghost + GhostSkelly natural spawns across the 22-biome list; back on a normal date they spawn ONLY in the 5 year-round biomes (snowy taiga, taiga, frozen river, jungle, dark forest). Drop: nothing (C2).
-- **ANIM-016 Valentine's (ENT-D-011-family)** — Set clock to **Feb 14**, `/summon orespawn:girlfriend` (fresh!). Expect: GIANT (2.5×8, renders 5×) angry Girlfriend, 800 HP (`/data get`), `girlfriendv` texture, attacks players and Boyfriends (not her owner/pets), immune to inWall damage, `o_hurt` ambient. Hit her with `orespawn:rose_sword`: each hit drops a "Love"; ~1-in-4 cures her (shrinks, calms, extra Love shower). Thrown shoes deal **10** damage today (ITEM-053).
-- **ANIM-016 Easter (closes ENT-D-011)** — Set clock to **Apr 20**. Expect: EasterBunny NATURAL spawns appear (any other date: none — verify with a spawn-friendly area first). Egg-laying itself is date-independent (tested in A4 via /summon).
-
----
-
-## E. Untestable until D5/D6 — stays on the pending list for the final pre-release pass
-
-- **WGEN-005 / ITEM-062 remainder** — the ~105-type SpawnOres block pool and its 116
-water-bucket→spawn-egg conversion recipes (D5 spawn-block slice).
-- **WGEN-042 / ITEM-020 remainder** — the 48 dungeon structure builders beyond
-generic/ruby (D5); the 12-mob spawner ladder itself IS testable (section C).
-- **WGEN-014/018/033 + WGEN-003/004/007/021/037/038/044** — missing structures/features
-(D5).
-- **WGEN-045** — Experience-tree growth from the planted seed (D5; seed placement itself
-is testable in A2).
-- **ENT-A-083** — Cephadrome flying-mount signature system (D5/D6; basic B3 ride test
-still applies).
-- **ENT-A-054 remainder** — Boyfriend Jealousy goals + MoveIndoors (Phase D remainder).
-- **ITEM-023 remainder** — ZooCage placed-block form.
-
----
-
-## D5 — structures + SpawnOres pool (added 2026-08-08)
+## C-D5 — structures + SpawnOres pool (D5, 2026-08-08)
 
 ### D5a — Mining dimension
 
@@ -281,7 +253,7 @@ still applies).
 
 ---
 
-## D6a — strong-model structures (added 2026-08-08)
+## C-D6a — strong-model structures (D6a, 2026-08-08)
 
 - **EnderCastle (End)** — `/execute in minecraft:the_end run tp @s 100 70 0`, `/locate structure orespawn:ender_castle_end`. Expect: 29x29 obsidian-plate castle on end stone (central OR outer islands — PN-017), 4 spiral-stair corner towers, rooftop lava pool + dragon-egg pedestal, Ender Knight/Reaper rooftop spawner pairs + pit + CaveFisher alcoves, 3 alcove chests (facing inward) rolling the ender/experience-catcher table (6-10 stacks), trophy ender chest EMPTY (plain block).
 - **EnderCastle (Islands)** — `/locate structure orespawn:ender_castle_islands` in orespawn:islands: same castle at grass level.
@@ -295,20 +267,28 @@ still applies).
 
 ---
 
-## D6b batches 1-4 — mechanical structures (added 2026-08-08, batches 3-4 2026-08-10)
+## C-D6b — mechanical structures, batches 1-4 (2026-08-08/10)
+
+**Setup for this whole section:** overworld structures from a boat/elytra over fresh
+chunks; Islands = `/execute in orespawn:islands run tp @s 0 20 0`; Village =
+`/execute in orespawn:village run tp @s 0 100 0`; End via a portal or
+`/execute in minecraft:the_end run tp @s 100 70 0`; Mining =
+`/execute in orespawn:mining run tp @s 0 100 0`. Dungeon Spawner Block outcomes:
+`/setblock ~2 ~ ~ orespawn:random_dungeon_block` then wait ~20 s (400-tick fuse,
+ITEM-020) — the block + the block above vanish and one of the 50 outcomes builds.
 
 - **PlayPool (overworld ocean)** — `/locate structure orespawn:play_pool`: floating platform 16 blocks above the sea with 4 Attack Squid spawners, twin chests (only the x+1 chest has loot: ink/squid-zooka/gold-nugget/flesh, 3-7 stacks), water channel with flowing caps.
 - **CloudSharkDungeon (Islands sky)** — `/locate structure orespawn:cloud_shark_dungeon` then fly to Y150-159: tiny glowstone cluster with 4 Cloud Shark spawners + 1 chest (4-8 stacks incl. experience tree seeds).
-- **GoldFishBowl (overworld ocean)** — glass bowl on the surface: sand bed, water fill, 4 glowstone corners, Gold Fish spawner, open wall-top ring and unwritten base ring (faithful oddities), NO chest.
-- **SpitBugLair (swamp)** — emerald-ore antenna, 3 Spit Bug spawners, loot chest; only in plain swamp (not mangrove).
-- **UrchinSpawner (Crystal)** — with `urchinEnable=false` no new urchin spawners generate in fresh Crystal chunks.
+- **GoldFishBowl (overworld ocean, WGEN-042)** — `/locate structure orespawn:gold_fish_bowl`: glass bowl on the surface: sand bed, water fill, 4 glowstone corners, Gold Fish spawner, open wall-top ring and unwritten base ring (faithful oddities), NO chest.
+- **SpitBugLair (swamp, WGEN-042)** — `/locate structure orespawn:spit_bug_lair`: emerald-ore antenna, 3 Spit Bug spawners, loot chest; only in plain swamp (not mangrove).
+- **UrchinSpawner (Crystal, WGEN-042)** — set `urchinEnable=false`, fly fresh Crystal chunks: no new urchin spawners generate.
 - **RotatorStation / other DSB outcomes** — Random Dungeon Spawner can now produce types 3/12/13/14/15/16/17/18/19/20/34 (rotator station, play pool, water-dragon lair, cloud cluster, leaf tower, mini dungeon, gold fish bowl, graveyard, spit-bug lair, igloo, cephadrome altar) at the block.
-- **EnderReaperGraveyard (End)** — roofless iron-bar cage, 8 obsidian graves with flush chests (eye/poppy/dandelion/pearl 3-5 stacks), 4 Ender Reaper spawners; foundation skirt fills only air below (End terrain preserved).
-- **WaterDragonLair (ocean)** — floating polar-math disc with iron annulus, lapis/spawn-egg rim courses, canopy tree, 4 Water Dragon spawners, chest (4-8 of the 145 table).
-- **LeafMonsterDungeon (plains)** — log tower with leaf crown, 4 Leaf Monster spawners, chest pair (one filled, 12-16 stacks), foundation roots leave the grass threshold intact.
-- **MiniDungeon (Islands)** — per its spec: spawner ring at j=9 (12 spawners), corner caps, floor spawners, chest.
-- **CephadromeAltar (Islands)** — altar per spec with its spawners.
-- **Igloo** — DSB type 20 ONLY (no natural generation yet — placement decision pending): snow/ice dome, west oak door, Rat/Ghost/Ghost-Pumpkin-Skelly spawners, north-facing chest with 16 independent 50% fixed items; at (+,+) build coordinates the apex has a 1x1 skylight, at negative coordinates it closes (faithful float quirk).
+- **EnderReaperGraveyard (End, WGEN-042)** — `/locate structure orespawn:graveyard` in the End: roofless iron-bar cage, 8 obsidian graves with flush chests (eye/poppy/dandelion/pearl 3-5 stacks), 4 Ender Reaper spawners; foundation skirt fills only air below (End terrain preserved).
+- **WaterDragonLair (ocean, WGEN-042)** — `/locate structure orespawn:water_dragon_lair`: floating polar-math disc with iron annulus, lapis/spawn-egg rim courses, canopy tree, 4 Water Dragon spawners, chest (4-8 of the 145 table).
+- **LeafMonsterDungeon (plains, WGEN-042)** — `/locate structure orespawn:leaf_monster_dungeon`: log tower with leaf crown, 4 Leaf Monster spawners, chest pair (one filled, 12-16 stacks), foundation roots leave the grass threshold intact.
+- **MiniDungeon (Islands, WGEN-042)** — `/locate structure orespawn:mini_dungeon`: spawner ring at j=9 (12 spawners), corner caps, floor spawners, chest.
+- **CephadromeAltar (Islands, WGEN-042)** — `/locate structure orespawn:cephadrome_altar`: altar per spec with its spawners.
+- **Igloo (WGEN-042 / WGEN-071)** — DSB type 20 ONLY (no natural generation — placement is the one open structure item, WGEN-071/Phase E). Roll `/setblock ~2 ~ ~ orespawn:random_dungeon_block` until an igloo appears (or verify via other outcomes that 20 exists): snow/ice dome, west oak door, Rat/Ghost/Ghost-Pumpkin-Skelly spawners, north-facing chest with 16 independent 50% fixed items; at (+,+) build coordinates the apex has a 1x1 skylight, at negative coordinates it closes (faithful float quirk).
 - **BouncyCastle (desert)** — `/locate structure orespawn:bouncy_castle`: lavafoam (bouncy, friction 1.1) castle sunk to the sand surface, 9 spawners (Silverfish/Rat/Scorpion mix), north-facing chest at (+3,+3,+3) with 6-10 stacks (cod/poppy/dandelion/pearl table, weight 180).
 - **DamselInDistress (Village dim)** — `/locate structure orespawn:damsel_in_distress` in the Village dimension: 9×9 mossy-decay cottage with front gable, 7×4 iron-bar jail wall, 2 Scorpion spawners, north-facing chest (10-14 stacks: iron tools + foods), and a live Girlfriend standing in the jail cell (persistent by entity class — she must NOT despawn when you leave and return).
 - **GirlfriendIsland (ocean)** — `/locate structure orespawn:girlfriend_island`: MonsterIsland's twin island/tree geometry, spawners Girlfriend/Boyfriend/Gold Fish×2 (fixed, no random pick), TWO chests each with 4-8 stacks of the damsel food/tool table.
@@ -318,16 +298,97 @@ still applies).
 - **DSB batch-3 outcomes** — Random Dungeon Spawner can additionally produce types 26/28/35/39/44/46 (bouncy castle, damsel cottage, girlfriend island, stinky house, pumpkin at +1Y, rainbow) at the block.
 - **SpiderHangout (Village dim)** — `/locate structure orespawn:spider_hangout`: 20×20 gravel pad on a stone slab, 12 Spider Driver spawners in 3-high corner columns, one persistent Robot Spider at the pad centre (no spawn sound), NO chest. With `spiderDriverEnable=false` no new hangouts generate (the Dungeon Spawner Block can still build one — faithful).
 - **RedAntHangout (Village dim)** — `/locate structure orespawn:red_ant_hangout`: 16×16 gravel pad with four 3×3 red-ant-block corner pads, one persistent UNOWNED Robot Red Ant at centre (wrench-claim per its item flow), no spawners, no chest.
-- **FrogPond (plains)** — `/locate structure orespawn:frog_pond`: 7×7 still-water sheet sunk at the grass line, Frog spawner, centre riser with flowing cross, lily-pad cross above.
+- **FrogPond (plains, WGEN-042)** — `/locate structure orespawn:frog_pond`: 7×7 still-water sheet sunk at the grass line, Frog spawner, centre riser with flowing cross, lily-pad cross above.
+- **DisableOverworldDungeons gate (WGEN-064)** — set `disableOverworldDungeons=true`, fly fresh overworld chunks: NONE of the 11 overworld dungeon types generate (ponds, haunted house, bouncy castle, leaf tower, spit-bug lair, fish bowl, islands, play pool); `/setblock` a Random Dungeon block: outcomes still build (DSB never gated — faithful).
 - **RubberDuckyPond (plains)** — `/locate structure orespawn:rubber_ducky_pond`: 12×11 sand-rimmed perched pond, glass-capped tower with 2 Rubber Ducky spawners, chest pair at +5 — ONLY the +1 chest has loot (13-entry table, 8-12 stacks); the other is empty (faithful oddity).
 - **HauntedHouse (overworld)** — `/locate structure orespawn:haunted_house`: 7×7 plank house with glass clerestory band and east doorway, furnace/crafting-table/chest furniture row, spawner stack Rat/Ghost/Ghost Pumpkin Skelly; chest has 14 fixed slots each present 50% (porkchops/torches/coal/ore salt etc.).
 - **EnderKnightDungeon (End + Mining)** — `/locate structure orespawn:ender_knight_dungeon_end` and `..._mining`: cobble dungeon with shelf rooms (28 random shelf sites), 2 floating Ender Knight spawners, chest (3-7 of the 5-entry table). Mining version sits ON the lowest grass surface (not sunk — contrast Basilisk Maze).
 - **DSB full sweep** — the Random Dungeon Spawner now produces ALL 50 original outcomes, including: type 5 haunted house, 11 ender knight dungeon, 4/8 bee hives, 6 mantis nest, 25 crystal haunted house, 31/42 King/Queen altars (offset-corrected to the clicked pos), 33 crystal battle tower, 36 greenhouse, 40/43 ponds, 41 white house, 45 round rotator (+1Y), 48/49 hangouts. Royal altars/greenhouse/white house/robot lab DSB builds land exactly at the clicked position (recentring canceled).
-- **Regression: greenhouse plants** — greenhouse plots now roll sugar cane (t=7) and rice (t=19) as in 1.7.10; only t=8 rolls empty.
-- **Regression: royal altars + Alien WTF** — dirt skirts now reach 9 deep, altar air-clear reaches +58, and the Alien WTF south room's far wall is complete (box widenings; worldgen layouts reseed for existing seeds — documented delta).
+- **Regression: greenhouse plants (WGEN-063)** — in any fresh Greenhouse (worldgen or DSB 36): plots roll sugar cane and rice among the crops as in 1.7.10; only 1 roll in 20 leaves a plot empty (never pumpkins).
+- **Regression: greenhouse + white house doors (WGEN-067/068)** — Greenhouse entry: TWO full iron doors side by side (facing north) with stone lintels above the flanks and stone buttons on the outside wall; White House entry: FULL 2-tall iron door + outside button that sits ON the wall (not floating).
+- **Regression: royal altars + Alien WTF boxes (WGEN-065/066)** — royal altar dirt skirts reach 9 deep and the air-clear reaches +58; the Alien WTF south Part room's far wall is complete (box widenings; worldgen layouts reseed for existing seeds — documented delta).
+- **Regression: DSB recentring (ITEM-067)** — a Robot Lab rolled from the Random Dungeon block builds centered at the block position (previously shifted −5/−25), like the altars/greenhouse/white house cases.
+- **Regression: bee/mantis chests (ITEM-068/069)** — in a BeeHive (Mining), SmallBeeHive, or MantisNest: chests FACE INWARD (not all north) and loot includes Bee/Mantis SPAWN EGGS (2-8 / 2-4 stacks), never golden carrots or spider eyes standing in.
+
+---
+
+## D. Date-gated tests (LAST — they change your system clock)
+
+**How the gates work (PN-014):** the port evaluates `LocalDate.now()` **live at every
+check** — nothing is frozen at launch. You do NOT need to close the client: change the
+Windows clock (turn OFF "Set time automatically"), and spawn attempts pick up the new
+date within seconds. Caveats:
+
+1. **Girlfriend reads the date when she's constructed/loaded** — a Girlfriend already
+  standing in the world won't turn giant when the clock flips. Summon a FRESH one (or
+   leave/rejoin the world) after changing the date.
+2. Do these after everything else, then reset the clock. If Gradle acts up about clock
+  skew afterwards, `.\gradlew --stop` restarts the daemon.
+3. The mod's "Easter" is the original's fixed **April 20** (not the real movable feast).
+
+- **ANIM-016 Halloween (closes ENT-D-039/041)** — Set clock to **Oct 31**, night, in a plains/forest (survival, mob spawning on). Expect: Ghost + GhostSkelly natural spawns across the 22-biome list; back on a normal date they spawn ONLY in the 5 year-round biomes (snowy taiga, taiga, frozen river, jungle, dark forest). Drop: nothing (C2).
+- **ANIM-016 Valentine's (ENT-D-011-family)** — Set clock to **Feb 14**, `/summon orespawn:girlfriend` (fresh!). Expect: GIANT (2.5×8, renders 5×) angry Girlfriend, 800 HP (`/data get`), `girlfriendv` texture, attacks players and Boyfriends (not her owner/pets), immune to inWall damage, `o_hurt` ambient. Hit her with `orespawn:rose_sword`: each hit drops a "Love"; ~1-in-4 cures her (shrinks, calms, extra Love shower). Thrown shoes deal **10** damage today (ITEM-053).
+- **ANIM-016 Easter (closes ENT-D-011)** — Set clock to **Apr 20**. Expect: EasterBunny NATURAL spawns appear (any other date: none — verify with a spawn-friendly area first). Egg-laying itself is date-independent (tested in A4 via /summon).
 
 ---
 
 ## Failure log
 
 *(appended during the session as FAILs come in)*
+
+- **TEST-001 (FIXED mid-session — launch blocker)** — Client crashed on world creation:
+  `IllegalStateException: Failed to load registries` — unbound placed_feature refs
+  `orespawn:dragon_spawn_block_dim/_mining` + `orespawn:kraken_spawn_block_dim/_mining`.
+  Triage: D5's WGEN-005 SpawnOres slice deleted the four interim dedicated
+  dragon/kraken spawn-block placed features (the pool replaced them) but missed their
+  references in the `features` arrays of chaos_biome/mining_biome/utopia_plains/
+  village_biome. Never caught because gradle builds don't validate datapack registry
+  closure and no client ran since D5. Fix applied (blocker rule): the 8 stale refs
+  removed from the four biome JSONs; a mechanical scan of biome→placed_feature,
+  placed→configured, biome-modifier→placed, set→structure, structure→tag→biome found
+  zero other dangling refs. Client relaunched clean.
+- **TEST-002 (OPEN — log observation, not yet gameplay-verified)** — Server startup
+  logs `RegisterSpawnPlacementsEvent` errors for six OreSpawn entities that have biome
+  spawn entries but no placement rules: `spit_bug`, `gamma_metroid`, `island_too`,
+  `cliff_racer`, `red_ant`, `the_princess`. Consequence: NO spawn-location
+  restrictions (can attempt to spawn midair/in fluids/in light where the original's
+  1.7.10 `getCanSpawnHere` had ground/light checks). Triage pending: compare each
+  original's canSpawnHere against ModSpawnControl registrations; likely fix is six
+  registrations in the RegisterSpawnPlacementsEvent handler. Watch during section C
+  spawn tests for these six floating/misplaced. Not fixed mid-session (not a
+  blocker).
+- **TEST-003 (FIXED mid-session — blocker: crashed Village, would crash Mining)** —
+  "Server closed" on travel to the VILLAGE dimension (Rainbow Ant), reproduced twice;
+  second repro (without Domestication Innovation — exonerated, jar restored) flushed
+  the stack: `IllegalStateException: Requested chunk unavailable during world
+  generation` at vanilla `LakeFeature.place` ice-freeze check → `getBiome` →
+  `WorldGenRegion.getChunk`. Root cause: vanilla removed classic lakes in 1.19,
+  leaving `LakeFeature` with a latent border defect — a lake whose in_square origin
+  hugs the +x/+z chunk corner freeze-samples `getBiome(origin+15)`, and BiomeManager's
+  zoom fuzz pushes the lookup ~4 more blocks: two chunks out, past the FEATURES
+  stage's guaranteed region. The port's classic 1.7.10-style lakes (`lake_water_dim`
+  rarity 4 + `lake_lava_dim`, C7 parity) run in Village AND Mining, so Village hit it
+  within seconds of first generation (first crash additionally deadlocked the JVM in
+  shutdown hooks — jstack in scratchpad — which is why no report file ever wrote).
+  Fix applied (blocker rule): `SafeLakeFeature` — line-for-line copy of the decompiled
+  vanilla feature (same RNG stream, same writes) with the freeze-check biome SAMPLE
+  clamped into the decorated chunk (ice still places at the true position; identical
+  result in these single-biome dims). Registered `orespawn:safe_lake`;
+  `configured_feature/lake_water.json` re-typed, new `lake_lava.json` clone of the
+  vanilla config, `lake_lava_dim.json` re-pointed. Build green.
+- **TEST-004 (OPEN — triaged, fix proposed)** — Ant teleport buries the player in
+  terrain on FIRST visit to a dimension: `EntityAnt.findSafeY` (EntityAnt.java:164)
+  bails to a blind `max(seaLevel+1, 64)` when the destination chunk is not yet
+  generated (`!level.hasChunk`), which lands inside stone in terrain-heavy dims.
+  Original scanned real blocks because its teleporter force-generated the chunk.
+  Proposed fix: `destLevel.getChunk(chunkX, chunkZ)` (synchronously generates) before
+  the scan, then drop the hasChunk bail-out. Not a blocker (escapable).
+- **TEST-005 (OPEN — triaged, fix proposed)** — WaterDragon is UNSPAWNABLE: its ctor
+  throws `IllegalArgumentException: Unsupported mob type for FollowOwnerGoal`
+  (WaterDragon.java:84) because vanilla 1.21 FollowOwnerGoal accepts only
+  ground/flying navigation and WaterDragon uses water-bound navigation. Every natural
+  spawn fails (8× "Failed to create mob" in this session's log before any testing
+  began); a WaterDragonLair spawner activating may crash the server thread the same
+  way (verify carefully — approach that structure's spawners LAST). Proposed fix: a
+  navigation-agnostic follow goal (copy of FollowOwnerGoal without the ctor check, or
+  the amphibious variant) matching the original's follow AI.

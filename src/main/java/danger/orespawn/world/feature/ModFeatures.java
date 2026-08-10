@@ -23,6 +23,14 @@ public class ModFeatures {
     public static final DeferredHolder<Feature<?>, MantisNestFeature> MANTIS_NEST =
             FEATURES.register("mantis_nest", () -> new MantisNestFeature(NoneFeatureConfiguration.CODEC));
 
+    // TEST-003 (2026-08-10): chunk-border-safe replacement for the deprecated
+    // vanilla lake feature — the classic Village/Mining water+lava lakes
+    // crashed worldgen when a corner-hugging lake's ice freeze-check sampled
+    // a biome beyond the guaranteed region (see SafeLakeFeature Javadoc).
+    public static final DeferredHolder<Feature<?>, SafeLakeFeature> SAFE_LAKE =
+            FEATURES.register("safe_lake", () -> new SafeLakeFeature(
+                    net.minecraft.world.level.levelgen.feature.LakeFeature.Configuration.CODEC));
+
     public static final DeferredHolder<Feature<?>, BeehiveFeature> BEEHIVE =
             FEATURES.register("beehive", () -> new BeehiveFeature(NoneFeatureConfiguration.CODEC));
 
