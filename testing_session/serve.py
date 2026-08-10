@@ -54,8 +54,13 @@ def parse_checklist():
                 cur["subs"].append(cur_sub)
             counter += 1
             body = m.group(1).strip()
-            b = re.match(r"^\*\*(.+?)\*\*", body)
-            label = b.group(1) if b else body[:60]
+            # GameTest coverage marks ("**[AUTOMATED: ...]**" /
+            # "**[MOSTLY AUTOMATED - ...]**", added 2026-08-10) are display-only:
+            # strip them before deriving label/slug so item ids stay stable
+            # against results.json / items.json / classification.json.
+            label_src = re.sub(r"^\*\*\[(?:MOSTLY )?AUTOMATED[^\]]*\]\*\*\s*", "", body)
+            b = re.match(r"^\*\*(.+?)\*\*", label_src)
+            label = b.group(1) if b else label_src[:60]
             slug = re.sub(r"[^a-z0-9]+", "-", label.lower()).strip("-")[:60]
             cur_sub["items"].append({
                 "id": f"i{counter:03d}-{slug}",

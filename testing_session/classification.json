@@ -1,181 +1,1255 @@
 [
-{"id":"i001-bug-003","verdict":"AUTOMATABLE","category":"crash","rationale":"Crash repro on entity ticking, explicitly automatable: spawn orespawn:rat in a GameTest, place a mock player >130 blocks away (or none at all on headless gameTestServer), tick ~200 ticks, assert no throw. Despawn half: with the nearest player beyond 128 blocks, Mob.checkDespawn discards the rat — assert it is removed. Both are pure server-side observations.","seam_needed":false},
-{"id":"i002-bug-004","verdict":"MANUAL_ONLY","category":"crash","rationale":"The stated repro requires quit-to-title and rejoin mid-transformation — the rubric's named screen-flow example; a fake server player cannot faithfully perform client disconnect/reconnect through the title screen. Partial automation possible: an NBT save/load round-trip of a mid-transformation Prince (saveWithoutId -> load into fresh entity) could verify transformation completion, tame-owner retention, and no NPE, but that only partially verifies the stated quit-to-title window.","seam_needed":false},
-{"id":"i003-item-011-012","verdict":"AUTOMATABLE","category":"other","rationale":"Verified in source: both are server-side Block.attack() overrides (BlockPizza.java:62, BlockDuctTape.java:63) routing to eatPizzaSlice/repairItem. A GameTest places each block and invokes state.attack(level, pos, mockPlayer), then asserts FoodData nutrition gained + BITES increment, and held-item damage reduced + USES increment. No client left-click event involved.","seam_needed":false},
-{"id":"i004-item-013-014","verdict":"AUTOMATABLE","category":"other","rationale":"RTPBlock teleports from stepOn (RTPBlock.java:42), pure server logic directly invocable with a mock player; target is ~16 +/- 8 blocks with air/solid checks — assert player position changed by the expected offset within the prepared flat area. MoleDirt sink is a lowered collision shape (Block.box(0,0,0,16,14,16), MoleDirtBlock.java:27) — assert getCollisionShape max-Y and that a standing entity's feet Y sits 0.125 below block top.","seam_needed":false},
-{"id":"i005-item-016-c8-furnace","verdict":"AUTOMATABLE","category":"other","rationale":"Block-entity logic: place crystal_furnace, load input + crystal coal, tick and assert cook completes at 150 ticks (7.5 s); assert crystal coal burn time covers ~133 smelts (burnTime/cookTime arithmetic or long-run tick count); insert lava bucket as fuel, run one burn, assert the fuel slot contains minecraft:bucket. All server-side BE state.","seam_needed":false},
-{"id":"i006-item-019","verdict":"AUTOMATABLE","category":"other","rationale":"Verified in source: RepellentBlock repels via scheduled block ticks every 10 game ticks (RepellentBlock.java:37,74-76) with radius-20 scan and entity push — pure server logic. Test places the block, summons a creeper 15 blocks away (fits the structure), records velocity impulses across ~60 ticks, asserts a push roughly every 10 ticks rather than once a minute.","seam_needed":false},
-{"id":"i007-item-027","verdict":"AUTOMATABLE","category":"structures","rationale":"Block placement over time is server-observable: place duplicator_log on grass with a small marker build 5 blocks away, tick, sample intermediate ticks to confirm progressive (block-by-block) growth, then assert ~20 copied blocks appear in the 5x5 target area matching the source build. Specific named block asserts in a small area, well within the 48-block template limit.","seam_needed":false},
-{"id":"i008-item-037","verdict":"MANUAL_ONLY","category":"other","rationale":"The bundle's acceptance includes 'with saw sound' — a heard-audio criterion. A GameTest can capture the server-side dispatch (PlayLevelSoundEvent), but that does not verify the sound actually plays on a client: this repo's BUG-032 defect class (39 sound events referenced by code but missing from sounds.json, dispatching normally while playing silence) passes any dispatch-capture assert. Under no-gray-zone the sound half fails the bundle. Partial automation possible: the 56-damage r=5 AoE via crowd health deltas and the 11x16x11 wood/leaf crush volume after a log break are fully server-side.","seam_needed":false},
-{"id":"i009-item-040-item-057","verdict":"AUTOMATABLE","category":"other","rationale":"Inventory-tick item logic: equip damaged experience_chestplate on a mock player, put experience_sword in the hotbar, tick the player (or invoke inventoryTick directly) for N ticks, assert armor damageValue decreases while sword damageValue increases. Fully server-side state observation.","seam_needed":false},
-{"id":"i010-item-047-048-049","verdict":"MANUAL_ONLY","category":"structures","rationale":"Bundle includes 'explosion fx' — StepUp.playUseEffects sends LARGE_SMOKE/EXPLOSION particles via sendParticles (StepUp.java:61-68); particles are flatly MANUAL_ONLY under the rubric, so the full bundle fails. Partial automation possible for nearly everything else: garden 18x15 geometry/crops/water channels, shelter 7x7 + 14-item chest contents, stepper 8-way yaw paths with extreme torches every 8, obstruction stop, and creative item retention (mock player in creative) are all block/inventory asserts.","seam_needed":false},
-{"id":"i011-item-050-051-052","verdict":"AUTOMATABLE","category":"other","rationale":"All four are server-side item interactions with observable outcomes: ZooKeeper single-use capture (assert stack consumed + mob stored/removed), Sifter useOn each of water/sand/gravel/dirt/grass asserting rolled item entities incl. mod fish from water (statistical over trials), Wrench mobInteract on a healthy unowned AntRobot asserting refusal (no damage repair/no consume), kit use asserting respawned robot carries prior health and custom name.","seam_needed":false},
-{"id":"i012-item-059","verdict":"AUTOMATABLE","category":"recipes","rationale":"Pure recipe asserts via RecipeManager: smelting ore_uranium/ore_titanium yields the nugget item (not ingot), and the 9-nugget-to-ingot crafting recipe exists with correct output. No world interaction needed.","seam_needed":false},
-{"id":"i013-item-001-005","verdict":"AUTOMATABLE","category":"other","rationale":"Block-break outcomes server-side: break ore_ruby/ore_amethyst via playerDestroy with a non-silk tool repeatedly, assert surrounding blocks intact and no Explosion occurred (repeat N trials for the 'never explodes' claim at manual-test confidence); break red_ant_troll/termite_troll with a Silk Touch tool and count 15-20 spawned mobs in the area. All observable in-test.","seam_needed":false},
-{"id":"i014-item-003-021","verdict":"AUTOMATABLE","category":"loot","rationale":"XP-drop logic with controlled positions, analogous to the rubric's controlled-position spawn checks: invoke the blocks' getExpDrop (or break at absolute positions) with pos.y below and above 40, asserting XP only below y=40. Egg block: break N times, assert 5-9 XP roughly half the trials and that drops never contain the egg block itself. Server-side data asserts plus statistical trials.","seam_needed":false},
-{"id":"i015-item-029-d4","verdict":"AUTOMATABLE","category":"other","rationale":"Food-effect asserts: have a mock player eat each item server-side (Item.finishUsingItem / player.eat), then assert exact MobEffect types, amplifiers, and durations (100s/100s/150s/300s+250s sets) via getActiveEffects. Fully server-observable state.","seam_needed":false},
-{"id":"i016-item-060-061-062-d4","verdict":"AUTOMATABLE","category":"recipes","rationale":"Straight RecipeManager asserts: verify each of the five recipes (skate bow, chest and red bed from crystal planks, raw corn dog, pink tourmaline bucket, string cobweb) resolves with the expected output, plus the oak door from crystal planks recipe. The rubric's canonical recipe case.","seam_needed":false},
-{"id":"i017-c8-experiencecatcher","verdict":"AUTOMATABLE","category":"other","rationale":"Server-side item use with statistical outcome: spawn an ExperienceOrb worth >=3, mock player uses the catcher on the ground beneath it, repeat N trials; assert ~80% yield Bottle o' Enchanting + string + stick with the catcher consumed, and on misses an item entity of the catcher appears at the player's feet. All entity/inventory observations.","seam_needed":false},
-{"id":"i018-item-063-d4-dispensers","verdict":"MANUAL_ONLY","category":"dispenser","rationale":"Bundle includes 'bow sound' as part of the acceptance — heard audio. Server-side PlayLevelSoundEvent capture proves dispatch, not audible playback: this repo's BUG-032 (code-referenced sounds missing from sounds.json played silence while dispatching normally) is exactly the failure class a dispatch assert cannot catch, so under no-gray-zone the sound half fails the bundle. Partial automation possible: dispenser trigger via block update, each loaded item spawning the correct projectile entity type, arrow pickup-ability via AbstractArrow.pickup, and dispensed rocks' per-type damage/behavior via target health deltas/effects are all server-observable.","seam_needed":false},
-{"id":"i019-ent-d-025-026-027-ent-k-076-rocks","verdict":"MANUAL_ONLY","category":"entity_logic","rationale":"Bundle includes the glassdead sound on glass shatter — heard audio, not fully verifiable headlessly: dispatch capture cannot detect the BUG-032 silent-sound failure class (sound fired server-side but absent from sounds.json). Under no-gray-zone the sound clause fails the bundle. Partial automation possible for everything else: t5 health delta 10; WEAKNESS (and absence of WITHER) on t6/t9-12; t9 target remainingFireTicks ~1000 (50 s); the 3x3x3 glass clear; same-rock-type item return on block impact; nothing returned on entity impact — all server-side.","seam_needed":false},
-{"id":"i020-item-053","verdict":"MANUAL_ONLY","category":"entity_logic","rationale":"Bundle includes 'hit with poof + reddust particles' — particles are flatly MANUAL_ONLY under the rubric, so the full bundle fails. Partial automation possible for everything else: dead_irukandji throw spawn, water_ball ~10% pickup drop (statistical), sunspot_urchin igniting blocks (block-state assert), laser/ice spam with no ItemCooldowns entry, shoe projectiles flying and dealing per-target damage incl. exactly 1.0 to Girlfriend/Boyfriend — all server-observable.","seam_needed":false},
-{"id":"i021-item-043-ent-s-057","verdict":"AUTOMATABLE","category":"entity_logic","rationale":"All server-observable: use() must spawn the arrow immediately (no draw ticks) — assert arrow exists same tick; assert stack carries Power 5 (not 10) enchantment; spawn many arrows and count isCritArrow for ~25%; fire at a target and assert damage = ceil(3 x ultimateBowDamage), then set the ModConfigSpec value to half in-test and assert halved damage (config-gated behavior is automatable when set server-side).","seam_needed":false},
-{"id":"i022-ent-a-045-051-bertha","verdict":"AUTOMATABLE","category":"entity_logic","rationale":"Swing-projectile AoE with target filtering: trigger the swing server-side with a fake player amid mixed mobs, a tamed pet, and a second fake player (fake players are real ServerPlayers, sufficient for PvP checks). Assert one-shot damage values (496/746/82 per item) on valid targets, zero damage ever to Girlfriend/Boyfriend, and player/tamed damage toggling with bigBerthaPvp set server-side.","seam_needed":false},
-{"id":"i023-ent-k-033","verdict":"AUTOMATABLE","category":"entity_logic","rationale":"'Silently drains' means the extra 1 HP bypasses a second hurt() call — fully verifiable server-side: attack a target with MantisClaw via fake player, capture damage events, assert exactly one hurt event per swing while total health delta = weapon damage + 1, and attacker health increases by 1. The absent 'second hurt flash' is mechanically equivalent to the absent second damage event (the flash is driven by the broadcast damage event, which the test asserts never fires twice).","seam_needed":false},
-{"id":"i024-item-058","verdict":"AUTOMATABLE","category":"config","rationale":"Verified in source: glide is armor inventoryTick logic (ItemOreSpawnArmor.applyGlideEffect) capping deltaMovement.y at -0.1 and zeroing fallDistance; peacock boots are explicitly NOT config-gated while royal/queen require ROYAL_GLIDE_ENABLE (ItemOreSpawnArmor.java:181-190). Test: mock player with each boot set, downward velocity, tick, assert cap and fallDistance under both config states set server-side.","seam_needed":false},
-{"id":"i025-ent-a-004","verdict":"AUTOMATABLE","category":"entity_logic","rationale":"Set server difficulty to EASY then NORMAL in-test, invoke the Alien's doHurtTarget on a mock player, and assert the applied effect is POISON with duration 40 ticks (2 s) on easy and 30 ticks (1.5 s) otherwise, and that HUNGER is never present. Pure server-side effect asserts.","seam_needed":false},
-{"id":"i026-ent-a-013-014","verdict":"AUTOMATABLE","category":"entity_logic","rationale":"Verified in source: ridden stomp is a server tick() path — 1-in-50 per tick when getFirstPassenger() != null, hitting the 6-9 block ring for ATTACK_DAMAGE/10 = 3.0 (AntRobot.java:165-166, 276-277, 293). Test: fake player startRiding, mob placed at distance 7, tick until stomp, assert 3.0 health delta. Melee cadence throttle measured by damage-event intervals over ticks — 'visibly' is the manual proxy for a measurable attack interval.","seam_needed":false},
-{"id":"i027-ent-a-025","verdict":"AUTOMATABLE","category":"entity_logic","rationale":"Invoke BandP doHurtTarget repeatedly on a mock player equipped with armor plus inventory items; after each successful hit assert exactly one item removed from the player, with armor slots emptied before inventory items. Fully server-side inventory observation.","seam_needed":false},
-{"id":"i028-ent-a-054","verdict":"AUTOMATABLE","category":"entity_logic","rationale":"Three AI asserts in a small arena: mock player holding cooked beef — assert Boyfriend's navigation closes distance (tempt goal detects any Player in level.players(), mock players qualify); hurt it and assert panic (PanicGoal running / burst movement speed); place a wooden door in its path and assert the door blockstate opens as it passes. All server-observable positions and block states.","seam_needed":false},
-{"id":"i029-ent-a-074-075","verdict":"MANUAL_ONLY","category":"entity_logic","rationale":"Bundle includes the burp and explosion sounds as heard — dispatch capture (PlayLevelSoundEvent) does not verify audible playback, and this repo's BUG-032 (dispatched sounds silently absent from sounds.json) is precisely the gap; under no-gray-zone the sound clauses fail the bundle. Partial automation possible for the rest (headless-friendly at maxTicks ~2600): leaf/log eating with blocks removed and +2.0 heal per bite, and the ~2 min transformation into exactly one Brutalfly plus 10 Butterflies — all entity/block/health asserts.","seam_needed":false},
-{"id":"i030-ent-a-080","verdict":"AUTOMATABLE","category":"entity_logic","rationale":"Targeting-goal assert: spawn CaveFisher with cows/pigs nearby and no player aggression, tick, and assert getTarget() becomes a passive animal (and/or the animal takes damage) without the CaveFisher being provoked. Pure server-side AI observation.","seam_needed":false},
-{"id":"i031-ent-a-082","verdict":"AUTOMATABLE","category":"entity_logic","rationale":"Spawn Cephadrome beside each listed target (Mothra, untamed Leon, GammaMetroid, WaterDragon) and assert getTarget()/attack acquisition for each; then invoke its attack on a Kraken and assert health delta equals 1.5x its base attack damage. All within-template entity observations.","seam_needed":false},
-{"id":"i032-ent-a-087","verdict":"AUTOMATABLE","category":"entity_logic","rationale":"mobInteract with a mock player holding apples over N trials: assert taming succeeds ~50% per apple (statistical, apple consumed each attempt) and tame flag/owner set on success; then interact with a dead bush and assert the tamed state is cleared/released. Server-side interaction results and NBT flags.","seam_needed":false},
-{"id":"i033-ent-a-095-097","verdict":"AUTOMATABLE","category":"loot","rationale":"Summon ~10+ Cockateils and assert the variant field takes multiple random values; kill N of each type with mock-player damage (player kill source) and count drops: type-5 yields rubies at ~1-in-3 while all other types yield zero across trials — the same confidence the manual check provides. Drops and variants are pure server data.","seam_needed":false},
-{"id":"i034-ent-a-112","verdict":"AUTOMATABLE","category":"entity_logic","rationale":"Proactive-aggression assert: spawn Cryolophosaurus with prey animals in range, never damaging it, tick, and assert it acquires a prey target and closes distance/attacks unprovoked. Retaliation-only behavior would leave getTarget() null — cleanly distinguishable server-side.","seam_needed":false},
-{"id":"i035-ent-d-002-006","verdict":"AUTOMATABLE","category":"entity_logic","rationale":"mobInteract asserts with a mock player: raw beef tames at ~1-in-5 over N trials (beef consumed, tame flag on success) and heals a damaged tamed dragon; bone interaction asserts no consume/no state change; diamond on a TAMED adult asserts the adult is removed and a Spyro spawns at its position with tamed flag and same owner. All server-side entity state.","seam_needed":false},
-{"id":"i036-ent-d-014","verdict":"AUTOMATABLE","category":"entity_logic","rationale":"Spawn Emperor Scorpion with a combat target in the test area, tick, and count baby-scorpion entities appearing server-side; the uncapped/flood property is verifiable by asserting the count keeps growing over trials. Pure entity-tick observation.","seam_needed":false},
-{"id":"i037-ent-d-022","verdict":"AUTOMATABLE","category":"entity_logic","rationale":"EntityCage is a thrown projectile with all capture logic in server-side onHitEntity (CaptureSpec escapePercent/count records in EntityCage.java). A test can spawn owned cage projectiles at each target species and assert outcomes: empty-cage return on player hit, caged-item counts (Bat 2, Cockateil 4, AttackSquid 6), cage consumed for Girlfriend/Boyfriend, and escape rates (20%/95%) statistically over repeated trials, same standard as loot ranges.","seam_needed":false},
-{"id":"i038-ent-d-037-ent-k-046","verdict":"AUTOMATABLE","category":"loot","rationale":"Kill tamed and untamed Gazelle/Ostrich with a player damage source and count drops (2-6 poppies tamed, 0-2 beef/feathers untamed) over repeated kills. Classic kill-and-count loot verification.","seam_needed":false},
-{"id":"i039-ent-k-013","verdict":"AUTOMATABLE","category":"entity_logic","rationale":"Spawn LeafMonster among a controlled mix of mobs and assert its target is always in {Ant, Butterfly, LunaMoth, player} and never other species; set playNicely=true server-side and assert it never acquires a target. Targeting state is fully server-observable; config settable in test.","seam_needed":false},
-{"id":"i040-ent-k-019-083","verdict":"AUTOMATABLE","category":"entity_logic","rationale":"Fake-player mobInteract with dead bush / glass / raw cod / wheat and assert the tamed flag transitions (dead bush untames, glass does not; cod tames RubberDucky, wheat does not). Temptation is observable via the tempt goal's navigation toward a cod-holding fake player. All server-side interaction logic.","seam_needed":false},
-{"id":"i041-ent-k-023","verdict":"AUTOMATABLE","category":"entity_logic","rationale":"Place water and lava pools in the test area with a Lizard on dry land; over maxTicks assert its navigation target/position reaches the water and never enters lava/fire proximity. Pathing goals are server-observable; 'never' is bounded by test duration like any behavior assert.","seam_needed":false},
-{"id":"i042-ent-k-050-ent-s-031","verdict":"AUTOMATABLE","category":"entity_logic","rationale":"Fake-player feed crystal_apple to paired Peacocks/StinkBugs and assert love state then baby entity; feed regular apple and assert no love/consumption. Breeding-item gates are pure server logic.","seam_needed":false},
-{"id":"i043-ent-k-051","verdict":"MANUAL_ONLY","category":"entity_logic","rationale":"The bundle requires 'hitbox+model grow together up to 10x14' - the model half is client-rendered and cannot be verified server-side. Partial automation possible: scale distribution over ~30 summons (mostly t=0.5, t=4 at ~1.5%) via entity dimensions, and nightmareSize=5 config forcing max, are both server-assertable.","seam_needed":false},
-{"id":"i044-ent-k-056","verdict":"AUTOMATABLE","category":"entity_logic","rationale":"Spawn PurplePower orb projectiles of type 2 and type 3 aimed at a victim and assert Poison vs Weakness MobEffect with 50-tick (2.5 s) duration via hasEffect/getEffect. Projectile effect application is server-side.","seam_needed":false},
-{"id":"i045-ent-k-058","verdict":"AUTOMATABLE","category":"entity_logic","rationale":"With default configs, spawn a wild rat near a fake player and a tamed pet and assert it acquires them as targets; set an owner on a rat and assert it never targets that owner over the test duration. Targeting is server-observable.","seam_needed":false},
-{"id":"i046-ent-s-010","verdict":"AUTOMATABLE","category":"entity_logic","rationale":"Trigger SeaViper doHurtTarget on a victim under normal and easy difficulty (settable server-side) and assert Poison duration ~6 s / 8 s and that Hunger is never applied. Effect type and duration are server data.","seam_needed":false},
-{"id":"i047-ent-s-030","verdict":"AUTOMATABLE","category":"entity_logic","rationale":"Kill a StinkBug surrounded by a controlled crowd including entities positioned well above it, then assert every nearby entity has Nausea (confusion) and none has Hunger. Death-AoE effect application is server-side.","seam_needed":false},
-{"id":"i048-ent-s-033","verdict":"MANUAL_ONLY","category":"entity_logic","rationale":"The bundle explicitly includes 'with sounds' - sounds as heard are client-side and not assertable in a GameTest. Partial automation possible: the coal item entity spawning in front and skin-matched item (blaze powder for skin 0) behind, with relative positions, are server-assertable.","seam_needed":false},
-{"id":"i049-ent-s-065","verdict":"AUTOMATABLE","category":"entity_logic","rationale":"Call mobInteract with an empty-handed fake player and assert the player gains no vehicle; repeat with setShiftKeyDown(true) and assert the sitting flag toggles. Interaction outcomes are server-side state.","seam_needed":false},
-{"id":"i050-ent-s-069","verdict":"AUTOMATABLE","category":"entity_logic","rationale":"Let Vortex melee a victim repeatedly and assert deltaMovement.y never spikes upward (no skyward launch) while horizontal velocity toward the Vortex confirms the drag pull. Victim motion is server-observable.","seam_needed":false},
-{"id":"i051-ent-s-085-d4","verdict":"AUTOMATABLE","category":"entity_logic","rationale":"Equip a fake player with helmet+chestplate+held item near WormLarge; over repeated trials assert the ~1-in-4 helmet theft (chestplate when bare-headed), independent 1-in-4 held-item theft, stolen gear appearing as item entities, and zero thefts with playNicely=true set server-side.","seam_needed":false},
-{"id":"i052-ent-s-078-d4","verdict":"AUTOMATABLE","category":"entity_logic","rationale":"Set night server-side, boots on a fake player, assert ~1-in-6 theft over trials. The 'pop' is a server-side discard(): EntityWormSmall.checkSurfaceBlock discards unless surfacing under grass/dirt/stone, and isAirOrTallGrass treats SHORT_GRASS as air - both directly assertable with controlled block placement.","seam_needed":false},
-{"id":"i053-ent-k-047-048-d4","verdict":"AUTOMATABLE","category":"entity_logic","rationale":"Spawn Peacock + Termite and assert targeting plus exact 6.0 health decrements per hit; then a lone peacock at a controlled absolute y in 50-100 with day time set to 1000 and <=2 peacocks within 16, asserting 1-3 egg items appear in the first half-day. Time, positions, and neighbor counts are all controllable server-side.","seam_needed":false},
-{"id":"i054-ent-d-010-d4","verdict":"AUTOMATABLE","category":"entity_logic","rationale":"Direct entity spawn in the test bypasses the Easter gate (per the item itself), so no date seam is needed. Run maxTicks high enough for the 1-in-600/tick roll, assert dropped stacks of 1-3 spawn-egg items are members of the 115-type table, breeding works with crystal apple, and carrot interaction never sets a tamed flag.","seam_needed":false},
-{"id":"i055-c1-loot","verdict":"AUTOMATABLE","category":"loot","rationale":"Kill each species with a player damage source (fake player attribution) repeatedly and assert drop contents against each table, including gamble drops and the Coin 10-slot jackpot's coin_spawn_egg slot, statistically over many kills. Pure kill-and-count loot verification.","seam_needed":false},
-{"id":"i056-c2-loot","verdict":"AUTOMATABLE","category":"loot","rationale":"Kill-and-count over repeated player kills: percentage tables (DungeonBeast 25% slots), fixed drops (Fairy crystal torch), ranges (GammaMetroid, GiantRobot), and the negative assert that Ghost/GhostSkelly drop nothing. All server-observable item entities.","seam_needed":false},
-{"id":"i057-c3-loot","verdict":"AUTOMATABLE","category":"loot","rationale":"Kill-and-count with player attribution for each species; one-of tables (LeafMonster, Rotator) verified by asserting each kill yields exactly one member of the set, ranges (Robot2-5) by counting over repeats. Fully server-observable.","seam_needed":false},
-{"id":"i058-c4-loot","verdict":"AUTOMATABLE","category":"loot","rationale":"Kill-and-count including tamed-vs-untamed conditionals (Spyro, VelocityRaptor) settable server-side before the kill, probabilistic Scorpion nuggets over many trials, and the WormSmall nothing-drops negative. All server-observable.","seam_needed":false},
-{"id":"i059-d4-drops","verdict":"AUTOMATABLE","category":"loot","rationale":"Chipmunk/GoldFish/RubberDucky/Stinky tamed-conditional drops are standard kill-and-count. The Lavafoam XP split is assertable by invoking the block's exp-drop path (or placing and fake-player-breaking the block) against the overworld level (0 XP) and the loaded Nether ServerLevel via server.getLevel(Level.NETHER) (5-13 XP over trials) - a dimension-conditional data assert, not worldgen placement.","seam_needed":false},
-{"id":"i060-boss-025-035-042","verdict":"AUTOMATABLE","category":"loot","rationale":"Kill ThePrince/ThePrincess/ThePrinceAdult with player attribution and count drops: 1-4 beef, 1-4 beef, exactly one prince_egg, plus the negative assert of no diamonds/gold. Standard loot kills.","seam_needed":false},
-{"id":"i061-ent-a-031-060-ent-s-061-068","verdict":"AUTOMATABLE","category":"entity_logic","rationale":"Place a lava pit in the test area, drop Basilisk/Brutalfly/Urchin/Vortex in, tick, and assert health unchanged (and/or fireImmune plus no fire damage events). Fully server-observable immunity check.","seam_needed":false},
-{"id":"i062-ent-k-045","verdict":"AUTOMATABLE","category":"entity_logic","rationale":"Spawn Ostrich in contact with a placed cactus and assert no health loss; then hurt it with a generic damage source and assert normal damage applies. Both halves server-observable.","seam_needed":false},
-{"id":"i063-ent-k-007-d4","verdict":"AUTOMATABLE","category":"entity_logic","rationale":"Stand Kyuubi in lava / its own fire-attack blocks and assert zero self-damage over ticks (fireImmune and health unchanged). Server-side immunity check with controlled block placement.","seam_needed":false},
-{"id":"i064-ent-s-025-ent-s-047-d4","verdict":"AUTOMATABLE","category":"entity_logic","rationale":"Cactus contact with placed cactus asserting no damage; fall immunity via causeFallDamage with a large distance (or an in-structure drop) asserting health unchanged. Both immunities are server-observable for SpitBug and Triffid.","seam_needed":false},
-{"id":"i065-ent-a-052-ent-a-001-d4","verdict":"AUTOMATABLE","category":"entity_logic","rationale":"Spawn BetterFireball projectiles aimed at Mothra/other fireballs/royalty and assert pass-through (targets at full health, projectile continues); spawn acid projectiles at TrooperBug/SpitBug and assert the projectile is discarded with zero damage. Projectile collision outcomes are server-side.","seam_needed":false},
-{"id":"i066-b3-riding","verdict":"MANUAL_ONLY","category":"entity_logic","rationale":"Acceptance is ride feel: no rubber-banding as perceived, UP-key fast jump, strafe-key canon firing, and second-player visual smoothness - all driven by real client keybinds and client-predicted movement a fake server player cannot produce. Partial automation possible: mount success and canon projectile spawns could be asserted server-side, but the bundle's core is felt/observed motion.","seam_needed":false},
-{"id":"i067-b3-spiderdriver","verdict":"AUTOMATABLE","category":"attributes","rationale":"Spawn SpiderDriver, read the armor attribute on foot (20), startRiding a SpiderRobot server-side and re-read (8); trigger its attack on a victim and assert Poison is applied. Attribute values and effect application are server data.","seam_needed":false},
-{"id":"i068-c8-controls","verdict":"MANUAL_ONLY","category":"other","rationale":"Default keybind mapping (LEFT ALT = fly up/sprint) is client-side KeyMapping registration and physical input handling; a headless gameTestServer has no keybind system and a fake player sends no key input. Requires a real client.","seam_needed":false},
-{"id":"i069-d2-hoverboard-physics","verdict":"MANUAL_ONLY","category":"entity_logic","rationale":"Throttle, Left Alt boost, terrain climb, and speed-scaled pitch all live in Elevator.tickRidden gated on isControlledByLocalInstance() - client-predicted physics driven by real rider key input, plus pitch is a rendered/felt property. A fake server player cannot drive this path faithfully.","seam_needed":false},
-{"id":"i070-d2-hoverboard-crash","verdict":"MANUAL_ONLY","category":"entity_logic","rationale":"harness limit: the wall-crash branch is unreachable on the headless GameTestServer — the documented ANIM-012 architecture integrates ridden movement on the CONTROLLING CLIENT (tickRidden gated by isControlledByLocalInstance()); serverRiddenTick detects the crash from in-tick position deltas of the client-synced entity, every server-side travel() path zeroes horizontal motion (Elevator.java:544-569), a ServerPlayer is never a local instance, and external movers (pistons/pushes/teleports) land between entity ticks where baseTick re-captures xo/zo — so no server-side path can produce the required >0.75 in-tick horizontal delta. The removed test's Pig-rider premise also encodes no original behavior (orig ridden branch casts the rider to EntityPlayer). Test method removed from EntityLogicTestsB.java with a stub comment. Manual procedure: ride into a wall above 0.75 b/t in a real client — 6-15 sticks + exactly 2 diamonds, rider ejected, no Hoverboard item.","seam_needed":false},
-{"id":"i071-d2-hoverboard-malfunction","verdict":"MANUAL_ONLY","category":"entity_logic","rationale":"Expectation bundles explosion/smoke particles (client-rendered, spawned in the client tick path) and speed bleed (0.05/tick applied in client-predicted tickRidden), triggered by a 1-in-20000 roll during real ridden movement. Partial automation possible: the synced 45-tick exploding countdown (~2.2 s) could be asserted server-side after forcing speed > 0.65, but the visible malfunction and felt speed bleed cannot.","seam_needed":false},
-{"id":"i072-d2-hoverboard-skins-guards","verdict":"MANUAL_ONLY","category":"entity_logic","rationale":"The bundle includes the hum sound (orespawn:hover, randomized variants) heard only while ridden - sound-as-heard is not assertable headlessly. Partial automation possible: ultimate_sword interact cycling the synced skin index through 10 values and hurt() immunity to mob punches while ridden are server-assertable.","seam_needed":false},
-{"id":"i073-d2-registry","verdict":"AUTOMATABLE","category":"other","rationale":"Pure data asserts: BuiltInRegistries.ENTITY_TYPE contains orespawn:elevator and lacks orespawn:hoverboard (which is exactly why /summon fails), and creative tab contents can be rebuilt in common code (CreativeModeTabs.tryRebuildTabContents with registry access) to assert exactly one Hoverboard entry.","seam_needed":false},
-{"id":"i074-b4-idle-animations","verdict":"MANUAL_ONLY","category":"other","rationale":"Idle animation continuity, frozen-wing detection, 10x render scale, and flap speed are all client-rendered GeckoLib/model behavior with no server-observable state; a headless GameTest cannot see any of it.","seam_needed":false},
-{"id":"i075-c8-rotator","verdict":"MANUAL_ONLY","category":"other","rationale":"Whether the Rotator renders as a 24-blade tri-axis gyroscope ball versus three flat blades is purely model geometry and rendering - visual acceptance with no server-side observable.","seam_needed":false},
-{"id":"i076-c8-kraken","verdict":"MANUAL_ONLY","category":"other","rationale":"Acceptance is rendered animation: mouth-twitch cycle desync between two individuals and twitch intensity in combat are client-side model animation states judged by eye. No server-observable criterion.","seam_needed":false},
-{"id":"i077-c8-d2-giantrobot","verdict":"MANUAL_ONLY","category":"other","rationale":"Walk gait with visible leg/arm articulation, hip bob, windmill punch, shoulder twist, and no-moonwalk are rendered animation/gait-IK checks — explicitly in the manual bucket. The walk-state solver's correctness criterion is visual (feet vs ground motion).","seam_needed":false},
-{"id":"i078-c8-d2-spider-antrobot-legs","verdict":"MANUAL_ONLY","category":"other","rationale":"Leg rendering (8/6 legs), foot planting, stepping ahead of body, and relocate-on-overstretch are leg-IK rendering — manual per rubric. Partial automation possible: the ridden-SpiderRobot grass-to-dirt flattening is a server block change assertable in a GameTest.","seam_needed":false},
-{"id":"i079-c8-robot2-3-4-arms","verdict":"MANUAL_ONLY","category":"other","rationale":"Idle-vs-combat arm poses, windmills, shield pumps, and cannon raise/follow are rendered model animations judged visually; the combat gating could only be inferred client-side.","seam_needed":false},
-{"id":"i080-c8-rat","verdict":"MANUAL_ONLY","category":"other","rationale":"Tail sway/thrash and the absence of head turning are rendered animation behaviors with no server-side acceptance criterion.","seam_needed":false},
-{"id":"i081-ent-a-036-ent-k-005-ent-s-045-boss-016-sounds","verdict":"MANUAL_ONLY","category":"other","rationale":"Criterion is audio as heard: custom sound sets play and NO vanilla Ravager/Elder-Guardian/Ender-Dragon audio is audible from any source. Absence-of-vanilla-audio is a perceptual audit, and presence-of-custom-audio cannot be verified by dispatch capture (BUG-032 silent-sound class). Partial automation possible: asserting the entities' SoundEvent getters return the custom ids.","seam_needed":false},
-{"id":"i082-c8-hud","verdict":"MANUAL_ONLY","category":"other","rationale":"Crosshair-target health bar, red name, custom pet names, ownership-gated Girlfriend bar, and the 10px swim/armor shift are client HUD overlay rendering — explicitly manual per rubric, even though the guiOverlayEnable config gate itself is server-settable.","seam_needed":false},
-{"id":"i083-ent-a-002-012-017-023-040-060-072-078-091-106-hitboxes","verdict":"AUTOMATABLE","category":"entity_logic","rationale":"F3+B is only the manual inspection method; the actual expectation is bounding-box dimensions vs the C1_entities_A_C.md size table, fully readable server-side via getBbWidth/getBbHeight/getDimensions on spawned entities. playNicely is a NeoForge config value (OreSpawnConfig.java:279) settable in-test to assert the CaterKiller halving.","seam_needed":false},
-{"id":"i084-ent-a-100-101-102-103-crabs","verdict":"MANUAL_ONLY","category":"entity_logic","rationale":"Bundle includes 'scorpion sounds on melee' — audio as heard, with no headless verification of audible playback. Partial automation possible: size distribution via finalizeSpawn NATURAL vs SPAWNER paths, walk-to-water pathing, dry-out damage ticks, and splash heal are all server-observable HP/position asserts.","seam_needed":false},
-{"id":"i085-hook-lava","verdict":"MANUAL_ONLY","category":"entity_logic","rationale":"Bundle includes 'bite cycle with lava particles' — particle presentation is rendered. Partial automation possible: bobber floating/surviving in lava (fire immunity) and the bite state machine are server-observable, and UltimateFishHook already access-transforms catchingFish/nibble for deterministic driving.","seam_needed":false},
-{"id":"i086-pools","verdict":"AUTOMATABLE","category":"loot","rationale":"All server-observable: roll junk/treasure/fish/lava-fish loot pools programmatically; drive real catches with a mock player using the mod's existing access-transformed catchingFish/nibble/timeUntilLured fields (UltimateFishHook.java:43,173); assert caught ItemEntity velocity toward player, LavaLovingItem survival ticking in lava, pre-damage plus level-30 enchant on rolled gear, ExperienceOrb spawn, and hook persistence after retrieve.","seam_needed":false},
-{"id":"i087-ent-a-055-ent-d-049","verdict":"MANUAL_ONLY","category":"entity_logic","rationale":"Bundle includes b_fight/o_fight melee sounds and audible taunts at 4-7 blocks — audio as heard. Partial automation possible: projectile entity class (arrow vs shoe) by held item, heal-allies-on-hit with PvP off, and the equip-bow interaction are server-observable.","seam_needed":false},
-{"id":"i088-ent-a-018-019","verdict":"AUTOMATABLE","category":"entity_logic","rationale":"Pure distance-gated combat logic: place AttackSquid and target at controlled ranges, assert ink/water projectile entities spawn beyond 3 blocks and melee damage events occur inside — all server-side observation.","seam_needed":false},
-{"id":"i089-ent-a-062","verdict":"AUTOMATABLE","category":"entity_logic","rationale":"Server difficulty is settable in-test; assert the spawned projectile class (small fireball vs BetterFireball) per difficulty and the Brutalfly's +1 HP self-heal after each shot via health observation.","seam_needed":false},
-{"id":"i090-ent-d-044","verdict":"AUTOMATABLE","category":"entity_logic","rationale":"The fire gate is a server-side head-bearing computation on yHeadRot (GiantRobot.java:122-129) and the 'special' slow laser is a flag/velocity on the spawned LaserBall (setSpecial at :172). Test: spawn robot with target at controlled distances, assert LaserBall spawn timing vs head alignment and special-flag/speed beyond 10 blocks.","seam_needed":false},
-{"id":"i091-d3-prince-family","verdict":"MANUAL_ONLY","category":"entity_logic","rationale":"Bundle includes audible wing flaps (as heard) and teen/adult flight to a DISTANT owner, which exceeds the ~48-block GameTest template. Partial automation possible: diamond teen-to-baby and adult-to-teen regressions, cooked-beef +80 heal, gold/cake no-ops, fire-lit 5-12 block firing band, and ice/flint fire-state toggling are server-observable.","seam_needed":false},
-{"id":"i092-boss-024","verdict":"AUTOMATABLE","category":"entity_logic","rationale":"Target-selection logic: spawn Baby Prince with Butterfly/Cockateil/Dragonfly/Mosquito/Mothra in the test area and assert getTarget()/attack acquisition on each — fully server-observable.","seam_needed":false},
-{"id":"i093-d3-princess-power","verdict":"MANUAL_ONLY","category":"entity_logic","rationale":"Bundle includes the firework-spark aura when charged — rendered particles. Partial automation possible: 3 PurplePower orb entities on discharge >500, terraform block changes (flowers/grass/cactus/lava-to-water), the 2 Butterfly/Cockateil hatch spawns, and the mobGriefing gamerule gate are all server-observable.","seam_needed":false},
-{"id":"i094-b2-caps","verdict":"AUTOMATABLE","category":"attributes","rationale":"Boss max-health attribute values above 1024 (7000/6000/4000) are explicitly in the automatable rubric: spawn each boss in-test and assert the max_health attribute/getMaxHealth.","seam_needed":false},
-{"id":"i095-b2-stats","verdict":"AUTOMATABLE","category":"attributes","rationale":"Attribute base-value spot-checks vs phase_b_reports/B2_mobstats.md: spawn each mob and read AttributeInstance base values programmatically — the /attribute command is just the manual equivalent. Automation can cover all mobs, not just 3-4.","seam_needed":false},
-{"id":"i096-bug-005","verdict":"MANUAL_ONLY","category":"crash","rationale":"Bundle requires the normal death SCREEN and respawn flow, which need a real client — a GameTest mock player cannot faithfully present the death screen or the respawn UX. Partial automation possible: Queen melee killing a fake survival player without crash, player drop spawning, and the low-HP mob victim vanishing with no drops are server-observable.","seam_needed":false},
-{"id":"i097-bug-006","verdict":"AUTOMATABLE","category":"crash","rationale":"Fully server-verifiable: the landing branch triggers off deltaMovement thresholds settable in-test (Godzilla.java:575-581), and the fix routes damage through vanilla hurt() with explosion/fall sources (:410-411) which respect gamemode invulnerability. Use makeMockPlayer in SURVIVAL/CREATIVE/SPECTATOR at the landing point and assert HP deltas.","seam_needed":false},
-{"id":"i098-boss-002-007","verdict":"MANUAL_ONLY","category":"entity_logic","rationale":"Bundle includes 'models not lost inside the box' — a rendering judgment. Partial automation possible: the 22x24 bounding envelope, King-parent unhittability, part damage routing, and Queen part-to-bone position gluing are all server-observable via hurt() results and part entity positions.","seam_needed":false},
-{"id":"i099-boss-005-012","verdict":"MANUAL_ONLY","category":"dsb","rationale":"Bundle includes the boss appearing 'with living sound' — a heard-audio criterion; server-side dispatch capture cannot verify audible playback (this repo's BUG-032: dispatched sounds absent from sounds.json played silence). Partial automation possible (and substantial): place spawner block, assert ~5s fuse timing, spawner+above turning to air, boss spawn 8 blocks up, leash radius, and the theKingEnable/theQueenEnable=false fizzle are classic spawner-block GameTest asserts.","seam_needed":false},
-{"id":"i100-boss-006","verdict":"AUTOMATABLE","category":"attributes","rationale":"'Visibly reduced' is measurable server-side: set Queen below 2/3 HP with under 10 recorded player hits, apply a known damage amount, and assert the reduced HP delta; the overridden public armor getter (23) can also be asserted directly even though /attribute cannot see it.","seam_needed":false},
-{"id":"i101-boss-010","verdict":"AUTOMATABLE","category":"entity_logic","rationale":"Server-side state test: spawn a dormant (blue-state) Queen, hit her, assert full normal damage applied during the 3s (60-tick) wake-up window, and assert she can acquire targets and take further hits during that window.","seam_needed":false},
-{"id":"i102-boss-026-031","verdict":"MANUAL_ONLY","category":"entity_logic","rationale":"Bundle includes 'rider seats correct' — a looks-right judgment of rider placement with no numeric spec, i.e. rendered/felt. Partial automation possible: the 3.25x4.25 and 6.25x10.25 bounding dimensions are direct getDimensions asserts, and a mounted mock player's attachment position could be asserted if a seat-offset spec existed.","seam_needed":false},
-{"id":"i103-boss-032","verdict":"MANUAL_ONLY","category":"config","rationale":"Bundle includes the 'Prepare to die!' sequence — a 500-tick scripted cutscene of staged chat broadcasts plus player freeze/orient (TheKing.java:598-660) whose acceptance is watching the presentation on a real client; the forced-orient half depends on client packet handling a mock player cannot exercise (the BUG-011 rubber-band class). Partial automation possible: fullPowerKingEnable-gated transform occurs/never, the diamond-block fast-path, the resulting King entity, and absence of doubled King damage are all server-observable.","seam_needed":false},
-{"id":"i104-boss-036","verdict":"MANUAL_ONLY","category":"entity_logic","rationale":"The mapping conditions (king_living only when activity==1, riderless, not sitting; king_hit on hurt; trex_death on death — ThePrinceAdult.java:988-1011) are assertable via the protected getters from a same-package test, but the stated expectation is that these sounds PLAY under those states, and audible playback cannot be verified headlessly: this repo's BUG-032 precedent had getters/dispatch correct while sounds.json wiring played silence. Under no-gray-zone the audible half fails the bundle. Partial automation possible: the getter asserts under each state combination fully cover the selection logic.","seam_needed":false},
-{"id":"i105-b1-boss-drops-survival-kills","verdict":"AUTOMATABLE","category":"loot","rationale":"Explicitly rubric-automatable: kill each boss with fake-player damage in the test area and count ItemEntity drops vs ranges (120-279 ink sacs, 56x Queen set, royal set + 300 registry items, 1-6 beef), assert forbidden items absent (cooked cod, emeralds), assert Princess/Prince/20-moth entity spawns, and re-kill to assert nothing drops twice. Even the 22-block King fits the ~48-block template.","seam_needed":false},
-{"id":"i106-c7-vein-rates","verdict":"MANUAL_ONLY","category":"structures","rationale":"Expectation is worldgen frequency in the real Mining dimension: ~3x vein density vs overworld plus Y-band restrictions observed while mining fresh chunks. The cross-dimension density comparison spans two different placed-feature registrations and terrain contexts, unlike the single-mechanism config-toggle ratios of i107/i134. Partial automation possible: the salt>Y50 / amethyst<Y25 bands, the Mining triple-pass registration, and count-per-chunk values are data asserts on the placed-feature configs.","seam_needed":false},
-{"id":"i107-item-064","verdict":"AUTOMATABLE","category":"config","rationale":"Same mechanism-complete shape as i134, which stands AUTOMATABLE: the entire lessOre effect is OreSpawnVeinPlacement.getPositions (src/main/java/danger/orespawn/world/OreSpawnVeinPlacement.java:83-104) — attempts /= lessOreDivisor (3 for ores, 2 for trolls, carried per placed-feature JSON) with LESS_ORE read live from config, plus optional lessOrePasses. A GameTest sets LESS_ORE server-side and samples getPositions across N rolls with config on vs off, asserting the ~1/3 vein and ~1/2 troll ratios directly (terrain cancels out of a same-mechanism ratio), and data-asserts that every uranium/titanium/amethyst/salt/troll placed feature carries the vein_count modifier with the expected divisor. No real-chunk flight needed — the count logic is the whole behavior.","seam_needed":false},
-{"id":"i108-c7-ruby-lava-seek","verdict":"MANUAL_ONLY","category":"structures","rationale":"Bundle spans dimension-wide worldgen observation: ruby under lava at every overworld cave lake <Y50 with 'never free-floating' (a universal claim over real carver-generated lakes) plus Nether lavafoam vein and nether-ruby occurrence. Partial automation possible: the lava-seek placement logic could be exercised by invoking the feature over a hand-built lava pool in the test area.","seam_needed":false},
-{"id":"i109-c7-islands-terrain","verdict":"MANUAL_ONLY","category":"structures","rationale":"Expectation is whole-dimension terrain character (flat grass plane at Y7, no carvers/lakes anywhere, anthill frequency near surface) in orespawn:islands — real dimension generation and a distribution claim, not a bounded named check. Partial automation possible: sample one generated chunk via the dimension's ChunkGenerator and assert the Y7 surface column.","seam_needed":false},
-{"id":"i110-c7-chaos-terrain","verdict":"MANUAL_ONLY","category":"structures","rationale":"Bundle includes rendered acceptance ('vanilla sky' is a client visual), dimension-wide terrain shape (128-high stone, grass band Y60-65), natural spawn roster observation, and absence of dungeons/towers across the dimension. Only fragments (e.g. a single chunk's stone/grass columns) could be automated, so the full bundle is manual.","seam_needed":false},
-{"id":"i111-c7-structures","verdict":"MANUAL_ONLY","category":"structures","rationale":"Expectation is /locate resolution and dimension exclusivity (Mining-only, Islands-only, Utopia ~45-chunk grid) in real dimensions — exactly the rubric's worldgen placement/biome-selection carve-out. Partial automation possible: recast as pure data asserts on structure sets, placement spacing/salt, and biome tags per dimension, but that is not the item's stated /locate expectation.","seam_needed":false},
-{"id":"i112-c7-dungeons","verdict":"MANUAL_ONLY","category":"structures","rationale":"Bundle: natural placement of ruby-brick dungeons under Utopia lava pools <Y50 and generic dungeons across four dimensions (real-worldgen venue/frequency) plus the spawner-block 400-tick fuse. Partial automation possible: GenericDungeon.placeRubyDungeonAt/placeGenericDungeonAt are public and could verify geometry, chest pools, and the 12-mob-ladder fuse (place spawner block, tick 400, assert mob), but the in-dimension placement half stays manual.","seam_needed":false},
-{"id":"i113-c7-mining-lakes-rooms","verdict":"MANUAL_ONLY","category":"structures","rationale":"Expectation is that Mining-dimension caves 'contain' vanilla-style water/lava lakes and monster rooms — an occurrence/frequency observation over really generated cave chunks, which cannot be produced inside a GameTest template. Partial automation possible: assert the lake/monster-room features are registered in the dimension's biome feature lists (data assert).","seam_needed":false},
-{"id":"i114-c7-termite-gate-ant-chain-wgen-049","verdict":"MANUAL_ONLY","category":"entity_logic","rationale":"harness limit: the GameTestServer never instantiates datapack dimensions — GameTestServer.create builds its WorldDimensions from the FLAT world preset baked against a freshly created EMPTY LevelStem registry (decompiled 1.21.1 GameTestServer.java:97-103), so only minecraft:overworld/the_nether/the_end exist and server.getLevel(EntityAnt.UTOPIA/MINING/ISLANDS/CRYSTAL) returns null — confirmed by the triaged run's failure ('all four ant-chain dimensions must exist on the test server') and the shutdown save listing only the three vanilla dimensions. Every hop assertion needs a live destination ServerLevel. Test method removed from EntityLogicTestsB.java with a stub comment; the termite empty-inventory/no-armor refusal messages were the only destination-free sub-checks and go manual with the rest.","seam_needed":false},
-{"id":"i115-c7-crystal-egg-ores","verdict":"AUTOMATABLE","category":"loot","rationale":"The acceptance criterion is break behavior: block drops itself, occasional 5-9 XP, and no mob spawns. Place each of the 11 crystal egg-ore blocks in the test area, break via fake player over N trials, count drops and XP orb values, and assert zero entities spawn. The 'sphere shells' phrase is the manual venue, and the worldgen side is covered by other C7 items; the stated expectation here is fully server-verifiable.","seam_needed":false},
-{"id":"i116-c1-spawns","verdict":"MANUAL_ONLY","category":"spawn_gates","rationale":"Expectation is observed natural spawning per dimension/biome (in Mining/Utopia, NOT End/overworld, beach hotspots, per-biome rosters) — emergent worldgen-and-spawn-cycle behavior in real dimensions. Partial automation possible: data asserts on biome MobSpawnSettings rosters/weights per dimension plus checkSpawnRules calls, but that only partially verifies 'spawns there in play'.","seam_needed":false},
-{"id":"i117-c2-spawns","verdict":"MANUAL_ONLY","category":"spawn_gates","rationale":"Same class of expectation as i116: dimension/biome rosters, group sizes observed in the wild (Girlfriend beach groups 8-15), hotspots, and dimension exclusions across seven-plus dims. Emergent natural-spawn observation in real dimensions; partial automation possible via biome spawn-settings data asserts (weights, min/max pack counts) and spawn-rule invocations.","seam_needed":false},
-{"id":"i118-c3-spawns","verdict":"MANUAL_ONLY","category":"spawn_gates","rationale":"Bundle of natural-spawn distribution claims: never-natural mobs, doubled Nether weight, biome-only restrictions, swarm sizes in dark forests/taigas. These are observations of real-dimension spawn cycles. Partial automation possible: absence from all biome spawner lists and the doubled Kyuubi weight are clean registry data asserts.","seam_needed":false},
-{"id":"i119-c4-spawns","verdict":"MANUAL_ONLY","category":"spawn_gates","rationale":"Bundles real-dimension roster observations (TRex only Chaos/Mining, ocean-w4 SeaMonster, etc.) with the D4 WormSmall night-only gate. The rosters are emergent worldgen spawn observations (manual per rubric); the night gate alone is automatable via checkSpawnRules with controlled day/night time, so partial automation possible, but the full bundle is not.","seam_needed":false},
-{"id":"i120-ent-a-110","verdict":"AUTOMATABLE","category":"spawn_gates","rationale":"Pure spawn-gate condition item: invoke CreepingHorror's SpawnPlacements/checkSpawnRules with controlled combinations of light level, world time (day/night), Y above/below 15 in the test level, and with the Chaos ServerLevel handle from server.getLevel for the dimension bypass. Every clause of the stated gate is decidable server-side — the rubric's canonical AUTOMATABLE case.","seam_needed":false},
-{"id":"i121-c8-spawn-flags","verdict":"AUTOMATABLE","category":"config","rationale":"Gating is fully server-side and config-driven: ModSpawnControl's FinalizeSpawnEvent handler (src/main/java/danger/orespawn/ModSpawnControl.java:184) discards natural spawns per the config map, and KrakenRevengeHandler.java:55 early-returns on krakenEnable — so a test can set the three configs false, drive the finalize-spawn path with NATURAL spawn type and assert the entity is discarded, hurt an AttackSquid and assert no revenge Kraken, then spawn via egg/command types and assert those still succeed.","seam_needed":false},
-{"id":"i122-wgen-037","verdict":"AUTOMATABLE","category":"structures","rationale":"Every expectation is a specific named check and the maze is directly buildable: LegacyDungeonPiece.buildNow(server, pos, type) is public (src/main/java/danger/orespawn/world/structure/LegacyDungeonPiece.java:548). Build onto a flat controlled surface and assert: pyramid sink offset, 4x4 bedrock shaft with steps in the 20-29 range, antechamber torches, 30x30 maze with 2-wide corridors solvable west-to-east via programmatic BFS over the placed blocks, lava floor traps, 3 basilisks with isPersistenceRequired(), RTP trap blocks, and 2-4 east-wall chests whose contents roll from the 31-entry table. Randomized dimensions are ranged asserts; sampling may reach outside the template via direct ServerLevel access but remains server-side.","seam_needed":false},
-{"id":"i123-walk-130-blocks-from-the-maze-chamber-and-return-the-3-bas","verdict":"AUTOMATABLE","category":"entity_logic","rationale":"Persistence is server state: build the maze (buildNow) or spawn its basilisks, assert isPersistenceRequired() on all three, then drive the despawn path directly — position the fake player >128 blocks away and run checkDespawn/tick cycles, asserting the entities are not removed. Fully server-observable with no client involvement.","seam_needed":false},
-{"id":"i124-wgen-042-rookery","verdict":"MANUAL_ONLY","category":"structures","rationale":"Core expectation is aesthetic/statistical shape: 'cluster of jagged stone spires in two wandering ridges' is a looks-right criterion, and 'roughly 1-in-10 spires truncate' is a distribution claim over natural generation. Partial automation possible: buildNow the rookery and assert the chest-with-spawner-on-top pairing and the chest loot pool (4-8 stacks from the listed table), but the ridge/spire geometry judgment stays manual.","seam_needed":false},
-{"id":"i125-wgen-051-055","verdict":"MANUAL_ONLY","category":"structures","rationale":"Bundle is dominated by real-worldgen placement properties: towers seated on the grass plane rather than floating on a heightmap ledge (needs natural Islands generation) and lessLag=1 halving tower/rookery counts in fresh chunks (placement frequency). Partial automation possible: the ~28% full-height distribution could be sampled by repeated seeded generator invocations, but the placement halves cannot, so the bundle is manual.","seam_needed":false},
-{"id":"i126-wgen-052-053-056-item-066","verdict":"AUTOMATABLE","category":"structures","rationale":"All specific named checks on a directly buildable structure: buildNow KING_TOWER/QUEEN_TOWER (LegacyDungeonPiece.java:491-492, generateChallengeTower at line 2247) repeatedly until a level-6 tower rolls (~28% per build), then assert no scaffolding blocks in bounds, all 4 chests' facing blockstates point at room centre, per-floor chest contents match the tier lists, bottom-floor directional chests hold egg/armor/leggings-boots/sword, the 4 RTP blocks ring the central column, and the prize spawn egg used by a fake player actually spawns ThePrince/ThePrincess. Loot binding and entity spawn are all server-side.","seam_needed":false},
-{"id":"i127-wgen-054","verdict":"AUTOMATABLE","category":"structures","rationale":"Build a level-2+ tower via buildNow, set server difficulty in the test, and assert the centre room produces a TrooperBug; its 'jumpy' behavior is server-observable as vertical deltaMovement/position changes over ticks, and 'no spit attack' is a bounded negative assert (no spit/acid projectile entity spawned during a window while it has a target in range). No rendered criterion involved.","seam_needed":false},
-{"id":"i128-wgen-055-worm-ring","verdict":"MANUAL_ONLY","category":"structures","rationale":"The ring extends ~55 blocks from the tower base (~110-block footprint, beyond any GameTest template) and the key expectation — no rectangular cutoff at chunk borders — is specifically a cross-chunk artifact of natural piece-bounding-box clipping, which buildNow's unclipped window bypasses entirely, so the fix cannot be exercised that way. Partial automation possible: spawner presence at sampled radii after buildNow, but the chunk-border claim cannot.","seam_needed":false},
-{"id":"i129-item-020","verdict":"AUTOMATABLE","category":"dsb","rationale":"Canonical DSB-outcome item: RandomDungeonSpawnerBlockEntity.serverTick rolls type and dispatches buildForType(server, pos, type) (src/main/java/danger/orespawn/block/entity/RandomDungeonSpawnerBlockEntity.java:178-198). A test can invoke buildForType directly (reflection; it is private) with types 2/23/38/47 — or place DSB blocks in a loop until each rolls — and assert each structure's signature blocks appear at the block position. Fully server-side; no mod change strictly required.","seam_needed":false},
-{"id":"i130-wgen-005","verdict":"MANUAL_ONLY","category":"structures","rationale":"Expectation is spawn-ore vein frequency per chunk and per dimension (~24/chunk overworld, ~27 dims, Mining x3, none in Islands/Crystal/Nether/End) observed by flying fresh chunks — absolute observed density depends on the roll AND on placement success in real terrain (Y-window discards vs actual stone availability), unlike a same-mechanism ratio. Partial automation possible: the 'get NONE' halves are data asserts on which dimensions/biomes register the spawn-ore feature, and per-chunk attempt counts exist in the feature config.","seam_needed":false},
-{"id":"i131-break-any-spawn-ore-drops-itself-50-of-breaks-pop-5-9-xp","verdict":"AUTOMATABLE","category":"loot","rationale":"Pure block-break loot/XP logic: place spawn-ore blocks in the test area, break with a fake player (plain pick) over N trials asserting self-drop, XP orbs valued 5-9 on roughly half of breaks (statistical bound over a large sample, or invoke the block's XP-drop method deterministically), then break with a Silk Touch tool asserting block-only and zero XP, and assert no entity ever spawns. All server-observable.","seam_needed":false},
-{"id":"i132-lang-every-spawn-ore-reads-ancient-dried-mob-spawn-egg","verdict":"AUTOMATABLE","category":"other","rationale":"Display names resolve server-side: NeoForge dedicated servers load mod en_us lang entries, so a GameTest can iterate every spawn-ore block (including the 11 renamed crystal egg ores and kraken/dragon) and assert Component.translatable(block.getDescriptionId()).getString() equals the expected 'Ancient Dried <Mob> Spawn Egg' string rather than a raw translation key; falling back to parsing assets/orespawn/lang/en_us.json from the jar covers the same expectation if needed. No client rendering involved.","seam_needed":false},
-{"id":"i133-item-062","verdict":"AUTOMATABLE","category":"recipes","rationale":"Every clause is now covered by blessed methods. The crafting halves are RecipeManager asserts: water bucket + spawn block yields one egg with the EMPTY BUCKET container remainder, 9x part blocks combine to full egg blocks, full block + water yields the boss egg. The former manual-blocking clause — 'Mobzilla FULL egg blocks also mine from worldgen; King/Queen full blocks never do' — is a pool-membership data assert, the exact pattern i135 already uses: ModBlocks.java:157-160 documents the asymmetry and SpawnOresPoolFeature's pool carries Mobzilla part+full (c68/c69) but only THE_KING_PART/THE_QUEEN_PART (c86/c97, 'full King egg is craft-only'), and the pool is the sole worldgen source for these blocks. Assert pool contents statically plus place() sampling showing King/Queen fulls never appear.","seam_needed":false},
-{"id":"i134-lessore-1","verdict":"AUTOMATABLE","category":"config","rationale":"The ~1/3 cut is entirely the LessOre mechanism: SpawnOresPoolFeature.Configuration carries lessOrePasses and ore placed features carry orespawn:less_ore_count (LessOreCountPlacement.count() branches on OreSpawnConfig.LESS_ORE). A GameTest sets LESS_ORE server-side, invokes SpawnOresPoolFeature.place() / samples LessOreCountPlacement.count() across N rolls with config on vs off, asserts the ~1/3 ratio, and data-asserts every spawn-ore placed feature carries the modifier. No real-dimension chunk flight needed - the count logic is the whole behavior.","seam_needed":false},
-{"id":"i135-confirm-the-interim-content-is-gone-no-orespawn-ancient-dr","verdict":"AUTOMATABLE","category":"other","rationale":"Pure data asserts + feature invocation: assert orespawn:ancient_dried_egg absent from BLOCK/ITEM registries and from server-side creative-tab buildContents, and that no configured/placed feature references it (ModItems.java:236-237 documents the removal). SpawnOresPoolFeature's pool contains ENDER_DRAGON/DRAGON/WATER_DRAGON/KRAKEN spawn blocks with MIN_DEPTH=50 (Y50-128 window in code); invoke place() repeatedly in-test and assert those blocks appear via the pool only within Y50+, never as separate deep single-block features (registry scan).","seam_needed":false},
-{"id":"i136-endercastle-end","verdict":"MANUAL_ONLY","category":"structures","rationale":"Bundle includes the load-bearing End siting claim 'on end stone (central OR outer islands - PN-017)', which is real-End structure-start placement observation over sparse, varied End terrain (both island regions) - needs the real dimension per rubric, unlike the deterministic flat-Islands anchors of i137/i146. Partial automation possible: entire interior (towers, rooftop lava+pedestal, spawner pairs, pit, CaveFisher alcoves, 3 inward-facing chests rolling the table, EMPTY trophy ender chest) via LegacyDungeonPiece.buildNow(ENDER_CASTLE), plus #minecraft:is_end biome-tag data assert on ender_castle_end.json.","seam_needed":false},
-{"id":"i137-endercastle-islands","verdict":"AUTOMATABLE","category":"structures","rationale":"Consistent with i157/i170, which stand AUTOMATABLE on the same method: the 'at grass level' siting is the Islands variant's ISLANDS_GRASS anchor (LegacyDungeonStructure.java:41 documents the Ender Castle anchor split END_SURFACE vs ISLANDS_GRASS; :109 wires islandsGrassOrigin), verifiable by invoking findGenerationPoint against the Islands generator loaded on the gameTestServer — deterministic on Islands' flat Y7 grass plane. 'Same castle' is a buildNow block-diff against the End variant; ender_castle_islands.json biome registration is a data assert. The /locate phrasing is the manual venue, not a distinct check.","seam_needed":false},
-{"id":"i138-incapyramid-islands","verdict":"AUTOMATABLE","category":"structures","rationale":"Every expectation is a specific named content check: buildNow(INCA_PYRAMID) onto controlled template ground, then assert 41x31 stepped geometry by targeted sampling, 4 torch-ended ramps with pillars reaching the (controlled) ground (PN-018 is generator terrain-probe behavior, reproducible on prepared terrain), lamp checkerboard, 5 water altars, 4 Creeper Repellents, Molenoid spawner BE, trapdoor+ladder shaft, 24 graves with ~1/3 Ghost spawners over repeated builds (statistical), and all chests rolling 10-14 stacks from the 480-weight table. 41x31 fits the ~48-block template.","seam_needed":false},
-{"id":"i139-kyuubidungeon-mining","verdict":"AUTOMATABLE","category":"structures","rationale":"All content checks, no siting claim ('Mining' is where a manual tester finds it): buildNow(KYUUBI_DUNGEON), assert sealed hut with 1x1 roof hole, 22-deep shaft with water brake, lava-walled corridor, altar + 4-tier ziggurat, 8 Blaze spawner BEs in a ring, kyuubi chest fill count 7-13 and the four wall chests' distinct 4-8/3-7/5-9/6-10 fills (statistical over rebuilds) including blaze-egg entries. Vertical extent fits template/targeted sampling.","seam_needed":false},
-{"id":"i140-robot-lab-islands","verdict":"AUTOMATABLE","category":"structures","rationale":"All specific named server-side checks: buildNow(ROBOT_LAB), assert both rear sniper spawner BEs behind the hangar wall, spawner entity ids per room (Robo-Pounder altar / Robo-Warrior treasure / Robo-Sniper pillars), golden-rail powered states and unpowered floor levers as block states, sticky pistons facing south under white carpet with lever-driven extension after redstone ticks, doors facing NORTH with button-press opening (set button state, tick, assert door open - pure server logic), chests rolling 10-14 of the 755 table with dropper/dispenser/clock absence across rolls. buildNow writes directly to the level so size beyond the template only needs targeted sampling, which the rubric blesses for named checks.","seam_needed":false},
-{"id":"i141-hospital-end","verdict":"AUTOMATABLE","category":"structures","rationale":"Content-only bundle: buildNow(HOSPITAL), assert 10x10 iron-bar cage blocks, exactly 4 EndCrystal entities on bedrock caps, zero EnderDragon entities in the area, 8 spawner BEs, and the corner chest rolling 6-10 stacks of the 210-weight table. '(End)' is just where the manual tester locates it; every stated check is a block/entity/loot assert.","seam_needed":false},
-{"id":"i142-monsterisland-overworld","verdict":"AUTOMATABLE","category":"structures","rationale":"PN-019 biome half is a pure data assert: monster_island.json's biomes field is literally \"minecraft:ocean\" (excludes deep/frozen/warm) - the rubric's blessed structure-tag assert. The rest is generator-relative over a sea the test builds itself: buildNow(MONSTER_ISLAND) with origin at the template water surface, assert the lens island embedded at the waterline, canopy tree, 4 spawner BEs sharing ONE entity id per build (varying across rebuilds), 2 chests rolling 4-8 of the 450 table.","seam_needed":false},
-{"id":"i143-dsb-outcomes","verdict":"AUTOMATABLE","category":"dsb","rationale":"Rubric's canonical DSB pattern: place orespawn:random_dungeon_block, tick 400, assert block+above cleared and a pool structure built. All eight listed types are confirmed wired in RandomDungeonSpawnerBlockEntity (TYPE_FAIRY_TREE=0, FAIRY_CASTLE_TREE=1, KYUUBI_DUNGEON=7, HOSPITAL=24, ENDER_CASTLE=27, INCA_PYRAMID=29, ROBOT_LAB=30, MONSTER_ISLAND=37, lines 45-84). Deterministic per-type coverage via reflection into the private static buildForType(ServerLevel,BlockPos,int) from test sources - no mod-code change needed - asserting each type's signature blocks at the block pos.","seam_needed":false},
-{"id":"i144-trees","verdict":"MANUAL_ONLY","category":"structures","rationale":"Bundle fails as a whole: 'lone Duplicator Log appears RARELY in veggie patches' is a worldgen frequency claim over natural chunks, and 'fairy-tree chunks that fail the site scan still suppress termites' (WGEN-062) is cross-feature chunk-decoration interplay - both need real dimension generation per rubric. Partial automation possible: experience sapling growth (grow server-side, assert 2x2 oak trunk + branch blocks), and lessLag=1 crystal-fairy-tree shrink (set config, call CrystalStructures.buildFairyTreeAt with config on/off, compare extents).","seam_needed":false},
-{"id":"i145-playpool-overworld-ocean","verdict":"AUTOMATABLE","category":"structures","rationale":"PlayPoolGenerator's documented anchor contract is 'origin is the AIR block directly above the ocean' with all offsets internal (spawners at y+16, chest pair at y+17, channel down into the sea below - PlayPoolGenerator.java:25,81-83). A GameTest builds its own sea in the template, invokes buildNow(PLAY_POOL) at the surface origin, and asserts the platform 16 above the water, 4 Attack Squid spawner BEs, only the x+1 chest holding the ink/squid-zooka/gold-nugget/flesh 3-7 stack rolls, and flowing-water channel caps. Every stated check is generator-relative and server-observable.","seam_needed":false},
-{"id":"i146-cloudsharkdungeon-islands-sky","verdict":"AUTOMATABLE","category":"structures","rationale":"Exact parity with i162, which stands AUTOMATABLE: the Y150-159 band is PlacementMode.SKY_BAND_150 (CloudSharkDungeonGenerator.java:28, wired at LegacyDungeonStructure.java:119) — the same anchor-code assert blessed for Rainbow's SKY_BAND_70, checkable via findGenerationPoint against the Islands generator loaded on the gameTestServer. Content (glowstone cluster, 4 Cloud Shark spawner BEs, chest rolling 4-8 stacks incl. experience tree seeds) via buildNow(CLOUD_SHARK_DUNGEON); the biome tag on cloud_shark_dungeon.json is a data assert. The /locate-and-fly phrasing is the manual venue, not a distinct check.","seam_needed":false},
-{"id":"i147-goldfishbowl-overworld-ocean-wgen-042","verdict":"AUTOMATABLE","category":"structures","rationale":"The tracked expectations are the faithful generator oddities, all internal content: buildNow(GOLD_FISH_BOWL) over template water, assert glass bowl shape, sand bed, water fill, 4 glowstone corners, Gold Fish spawner BE, the open wall-top ring and unwritten base ring (block-level asserts of the faithful quirks), and chest absence. 'On the surface' is scene-setting for the manual locate procedure, not a distinct numbered check.","seam_needed":false},
-{"id":"i148-spitbuglair-swamp-wgen-042","verdict":"AUTOMATABLE","category":"structures","rationale":"Content via buildNow(SPIT_BUG_LAIR): emerald-ore antenna blocks, 3 Spit Bug spawner BEs, loot chest contents. The biome half 'only in plain swamp (not mangrove)' is exactly the rubric's blessed data assert: spit_bug_lair.json restricts to tag #orespawn:has_structure/spit_bug_lair - assert the tag's holder set contains minecraft:swamp and not minecraft:mangrove_swamp. Both halves fully covered by blessed methods.","seam_needed":false},
-{"id":"i149-urchinspawner-crystal-wgen-042","verdict":"AUTOMATABLE","category":"config","rationale":"Config-gated behavior, settable server-side in-test (rubric blesses). The gate is CrystalStructures.java:581: URCHIN_ENABLE=false returns before the 1/180 roll, so no urchin spawner can ever place. Test sets the config false, invokes the public CrystalStructures.generate(WorldGenLevel, random, chunkX, chunkZ, ...) decoration path (line 97) many times over prepared terrain and asserts zero urchin spawner blocks/BEs appear; with config true, repeated invocations (or reflection on tryPlaceUrchinSpawner) show they can. Fully captures 'no new urchin spawners generate'.","seam_needed":false},
-{"id":"i150-rotatorstation-other-dsb-outcomes","verdict":"AUTOMATABLE","category":"dsb","rationale":"Same blessed DSB pattern as i143. All eleven listed indices are confirmed wired in RandomDungeonSpawnerBlockEntity exactly as mapped (TYPE_ROTATOR_STATION=3, PLAY_POOL=12, WATER_DRAGON_LAIR=13, CLOUD_SHARK_DUNGEON=14, LEAF_MONSTER_DUNGEON=15, MINI_DUNGEON=16, GOLD_FISH_BOWL=17, ENDER_REAPER_GRAVEYARD=18, SPIT_BUG_LAIR=19, IGLOO=20, CEPHADROME_ALTAR=34). Place block + tick 400 for the end-to-end path; per-type determinism via reflection into private static buildForType, asserting each type's signature blocks at the block pos.","seam_needed":false},
-{"id":"i151-enderreapergraveyard-end-wgen-042","verdict":"AUTOMATABLE","category":"structures","rationale":"All content, including the skirt behavior which is the generator's sanctioned same-cell terrain probe (LegacyDungeonPiece doc cites 'Ender Reaper graveyard air-only skirt, orig GenericDungeon.java:2500'): buildNow(ENDER_REAPER_GRAVEYARD) over controlled mixed air/end-stone terrain, assert the skirt filled only cells that were air and left prior terrain untouched, roofless iron-bar cage, 8 obsidian graves with flush chests rolling eye/poppy/dandelion/pearl 3-5 stacks, 4 Ender Reaper spawner BEs. '(End)' is locate procedure only.","seam_needed":false},
-{"id":"i152-waterdragonlair-ocean-wgen-042","verdict":"AUTOMATABLE","category":"structures","rationale":"Content-only bundle: buildNow(WATER_DRAGON_LAIR) over template water, assert the polar-math disc geometry by targeted sampling, iron annulus, lapis/spawn-egg rim courses, canopy tree blocks, 4 Water Dragon spawner BEs, and the chest rolling 4-8 stacks of the 145-weight table. No siting or biome claim stated beyond the locate procedure.","seam_needed":false},
-{"id":"i153-leafmonsterdungeon-plains-wgen-042","verdict":"AUTOMATABLE","category":"structures","rationale":"All content; the foundation-roots claim is the generator's same-cell probe pattern (LegacyDungeonPiece doc cites 'Leaf Monster foundation roots, orig GenericDungeon.java:2113'), reproducible on controlled grass terrain: buildNow(LEAF_MONSTER_DUNGEON), assert log tower + leaf crown blocks, 4 Leaf Monster spawner BEs, the chest pair with exactly one filled at 12-16 stacks, and that the grass threshold cell survives while roots fill below-terrain cells.","seam_needed":false},
-{"id":"i154-minidungeon-islands-wgen-042","verdict":"AUTOMATABLE","category":"structures","rationale":"Exact-position content checks: buildNow(MINI_DUNGEON), assert the 12-spawner ring at j=9, corner caps, floor spawner BEs, and chest presence/loot. '(Islands)' is the manual locate context; every stated expectation is a deterministic block/BE assert at named offsets.","seam_needed":false},
-{"id":"i155-cephadromealtar-islands-wgen-042","verdict":"AUTOMATABLE","category":"structures","rationale":"'Altar per spec with its spawners' is a set of specific named checks against the D6b spec: buildNow(CEPHADROME_ALTAR) (CephadromeAltarGenerator exists, DSB TYPE_CEPHADROME_ALTAR=34 wired), assert the spec'd altar blocks and Cephadrome spawner BEs. No siting claim in the expectation.","seam_needed":false},
-{"id":"i156-igloo-wgen-042-wgen-071","verdict":"AUTOMATABLE","category":"dsb","rationale":"Every half is server-verifiable: 'DSB type 20 ONLY' - TYPE_IGLOO=20 is wired (place DSB / drive buildForType) and 'no natural generation' is a registry data assert (no igloo structure JSON or structure_set entry exists in the datapack - confirmed absent from worldgen/structure/). Content via buildNow(IGLOO): snow/ice dome, west-facing oak door, Rat/Ghost/Ghost-Pumpkin-Skelly spawner BEs, north-facing chest whose 16 fixed items each land ~50% independently (statistical over rebuilds). The float quirk is testable by invoking buildNow at positive vs negative coordinate origins in the same level and asserting the apex 1x1 skylight open vs closed via direct block reads. WGEN-071 placement itself is explicitly out of scope (Phase E).","seam_needed":false},
-{"id":"i157-bouncycastle-desert","verdict":"AUTOMATABLE","category":"structures","rationale":"buildNow(BOUNCY_CASTLE) into the test area (9x9x5, fits template): assert full lavafoam shell with Block#getFriction()==1.1 plus bounce via a dropped entity's server-side velocity, the 9 Silverfish/Rat/Scorpion spawner block entities, and the north-facing chest at (+3,+3,+3) with 6-10 stacks from the weight-180 loot table (repeated rolls for range/contents). 'Sunk to the sand surface' is the SAND_SURFACE_MINUS1 anchor (LegacyDungeonStructure.java:121-131), verifiable by invoking findGenerationPoint against the real overworld generator plus a placement-mode data assert.","seam_needed":false},
-{"id":"i158-damselindistress-village-dim","verdict":"MANUAL_ONLY","category":"structures","rationale":"harness limit: GameTestServer instantiates only minecraft:overworld (runs/gameTestServer/logs/latest.log: the sole 'Preparing start region for dimension minecraft:overworld'; siblings i164 and i114 hit the same wall), so getServer().getLevel(orespawn:village) is always null in the harness even though src/main/resources/data/orespawn/dimension/village.json registers the dimension on a real server (runclient loads it). Village LEVEL-existence half only returns to manual — only that assert was removed from i158_damsel_in_distress_content (HARNESS_LIMIT stub left); the structure-content, orespawn:village_biome binding, and VILLAGE_GRASS_SURFACE placement-mode asserts remain in-harness and passing.","seam_needed":false},
-{"id":"i159-girlfriendisland-ocean","verdict":"AUTOMATABLE","category":"structures","rationale":"GirlfriendIslandGenerator consumes ZERO random draws (geometry, spawner names, chest positions all constants per class doc) — build both it and MonsterIsland via buildNow and block-diff to fully verify the geometry-twin claim; assert the four FIXED spawner ids (Girlfriend/Boyfriend/GoldFish x2, no roll) and both chests' 4-8 stack rolls from the damsel table.","seam_needed":false},
-{"id":"i160-stinkyhouse-islands","verdict":"AUTOMATABLE","category":"structures","rationale":"buildNow(STINKY_HOUSE) (25x17 yard fits template): deterministic asserts for house footprint, corner-adjacent panes, force-cleared doorway, Stink Bug + Stinky spawner ids, chest 8-12 stacks of the weight-215 table incl. both stink eggs. The 1/3 fence-gap, 1/10 bush, 1/10 decay probabilities verify statistically over repeated builds; 'never overwrites yard air' verifies as an invariant against pre-marked cells.","seam_needed":false},
-{"id":"i161-pumpkin-islands","verdict":"AUTOMATABLE","category":"structures","rationale":"buildNow(PUMPKIN) (14x14x12): enumerate the 48 carved-face air cells on the -z wall, stem terracotta lean, plank candle + netherrack + two fires, 2 Ghost Pumpkin Skelly spawners, and chest ABSENCE — all block/blockentity asserts. 'One block above grass' is the ISLANDS_GRASS_AIR anchor (grass+1, LegacyDungeonStructure.java:133-138), a data+code assert via findGenerationPoint.","seam_needed":false},
-{"id":"i162-rainbow-islands-sky","verdict":"MANUAL_ONLY","category":"structures","rationale":"harness limit: the SKY_BAND_70 anchor probe needs the orespawn:islands ServerLevel and its real generator (findGenerationPoint against contextFor(islands)), but the vanilla GameTestServer bakes WorldPresets.FLAT against an EMPTY datapack LevelStem registry (GameTestServer.create), so datapack dimensions are never created — the run log prepares only minecraft:overworld and every suite test requesting an orespawn dimension failed identically (i164 in this batch; i158/i114 in other groups). Anchor sub-check only returns to manual — the section was removed from rainbow_islands_sky_i162 with a HARNESS_LIMIT stub; the build/spawner/chest/loot assertions remain automated (loot currently red only from the unscoped-GLM defect TF-018).","seam_needed":false},
-{"id":"i163-dsb-batch-3-outcomes","verdict":"AUTOMATABLE","category":"dsb","rationale":"DSB outcome test: invoke the dispatch for types 26/28/35/39/44/46 at a controlled pos and assert each structure's signature blocks appear at the block (pumpkin at +1Y). The roll is server.random.nextInt(50) feeding private buildForType (RandomDungeonSpawnerBlockEntity.java:178-198), so forcing a type needs a seam: expose buildForType (@VisibleForTesting) or a forced-type detonate hook.","seam_needed":true},
-{"id":"i164-spiderhangout-village-dim","verdict":"MANUAL_ONLY","category":"structures","rationale":"harness limit: the SpiderDriverEnable worldgen-gate check requires findGenerationPoint against the real orespawn:village generator — the positive control needs a Village grass surface inside the Y 41..100 scan window, and no orespawn dimension exists on the GameTestServer (flat-preset-only world creation); the flat overworld surface at Y -60 fails the scan, so a gate-off empty result would be unattributable to the config gate. Gate sub-check only returns to manual — the section was removed from spider_hangout_village_i164 with a HARNESS_LIMIT stub; the pad/spawner/robot/silent-spawn assertions remain automated and all passed in the triaged run, so the test should now be green.","seam_needed":false},
-{"id":"i165-redanthangout-village-dim","verdict":"AUTOMATABLE","category":"structures","rationale":"buildNow(RED_ANT_HANGOUT): assert the exact 36 corner nest cells vs 220 gravel cells (the De Morgan corner condition), no spawners, no chest; Robot Red Ant at +8,+8 with persistence flag and UNOWNED ownership data; wrench-claim exercised via a mock ServerPlayer interactOn and asserting the resulting owner data — all server-side.","seam_needed":false},
-{"id":"i166-frogpond-plains-wgen-042","verdict":"AUTOMATABLE","category":"structures","rationale":"buildNow(FROG_POND) (7x7, smallest of the pool): assert still-water sheet flush at origin, centre riser, Frog spawner id at +2, lily-pad cross; the flowing-cross spill is generated behavior that materialises after fluid ticks run inside the test — block-state asserts on flowing water.","seam_needed":false},
-{"id":"i167-disableoverworlddungeons-gate-wgen-064","verdict":"AUTOMATABLE","category":"config","rationale":"The gate is a single early return covering exactly the 11-type EnumSet (LegacyDungeonStructure.java:58-70,102-105) and is the only worldgen path for those structures: set disableOverworldDungeons=true server-side and assert findGenerationPoint returns empty for all 11 types (real GenerationContext against the overworld generator). DSB half: place the Random Dungeon block, tick 400, assert detonation still builds — the buildNow path never reads the gate.","seam_needed":false},
-{"id":"i168-rubberduckypond-plains","verdict":"AUTOMATABLE","category":"structures","rationale":"buildNow(RUBBER_DUCKY_POND) (12x11): sand rim + 10x9 water interior, tower layers (water +3, glass +4, chest pair +5, 2 Rubber Ducky spawners +6) are all named block/blockentity asserts; the faithful oddity — only the +1 chest rolls the 13-entry table (8-12 stacks) while its pair stays EMPTY — is a direct container-contents assert.","seam_needed":false},
-{"id":"i169-hauntedhouse-overworld","verdict":"AUTOMATABLE","category":"structures","rationale":"buildNow(HAUNTED_HOUSE) (7x7x5): hardcoded orientation makes every check positional — glass clerestory band incl. corners, east doorway, furnace/crafting-table/chest furniture row, Rat/Ghost/GhostPumpkinSkelly spawner stack. The 14 fixed chest slots at 50% presence each verify by slot/item identity plus presence statistics over repeated builds.","seam_needed":false},
-{"id":"i170-enderknightdungeon-end-mining","verdict":"MANUAL_ONLY","category":"structures","rationale":"harness limit: the LOWEST_GRASS_36 no-sink anchor probe needs the orespawn:mining ServerLevel/generator (getBaseHeight recomputation of the 6x6 lowest-grass scan); no orespawn dimension loads on the GameTestServer (flat-preset-only world creation), and the flat overworld surface (Y -60) is outside the scan's 31..128 window, so no generation stub can even form as a stand-in. Mining-anchor sub-check only returns to manual — the section was removed from ender_knight_dungeon_i170 with a HARNESS_LIMIT stub; the octagon/shelf-statistics/spawner/loot assertions remain automated (currently red only from the unscoped-GLM ruby defect TF-018).","seam_needed":true},
-{"id":"i171-dsb-full-sweep","verdict":"AUTOMATABLE","category":"dsb","rationale":"All 50 outcomes are a table-driven switch (buildForType, RandomDungeonSpawnerBlockEntity.java:198+): force each type 0-49 at a fresh pos, assert a per-outcome signature block/entity, and for the offset-corrected group (altars/greenhouse/white house/robot lab, +1Y cases) assert the anchor lands exactly at the clicked pos. Large outcomes assert via direct level reads (specific named checks), not template bounds. Needs the forced-type seam since the roll is server.random.nextInt(50): expose buildForType (@VisibleForTesting).","seam_needed":true},
-{"id":"i172-regression-greenhouse-plants-wgen-063","verdict":"AUTOMATABLE","category":"structures","rationale":"buildNow(GREENHOUSE) repeatedly and enumerate the plot blocks: sugar cane and rice must appear across builds, empty-plot rate must sit in statistical bounds of 1/20, and pumpkins must NEVER appear (hard invariant over N builds). The DSB-36 path runs the same generator, so one loop covers both entry points.","seam_needed":false},
-{"id":"i173-regression-greenhouse-white-house-doors-wgen-067-068","verdict":"AUTOMATABLE","category":"structures","rationale":"Pure block-state asserts after buildNow: greenhouse entry has two complete iron doors (both halves present, facing north) with stone lintels above the flanks and stone buttons attached to the outside wall; White House entry has a full 2-tall iron door plus a button whose attachment face/support block is the wall (the 'not floating' check is the button state + supporting block assert). White House is huge but these are targeted named checks.","seam_needed":false},
-{"id":"i174-regression-royal-altars-alien-wtf-boxes-wgen-065-066","verdict":"AUTOMATABLE","category":"structures","rationale":"buildNow(KING_ALTAR/QUEEN_ALTAR): assert dirt skirt cells down to -9 and air columns up to +58 via direct level reads (the piece writes +58 on both worldgen and buildNow paths per LegacyDungeonPiece.java:111). buildNow(ALIEN_WTF): enumerate the south Part-room far-wall cells and assert completeness. The reseed-for-existing-seeds note is documentation, not a runtime criterion.","seam_needed":false},
-{"id":"i175-regression-dsb-recentring-item-067","verdict":"AUTOMATABLE","category":"dsb","rationale":"Force the Robot Lab type through the DSB dispatch and assert the lab's anchor/signature blocks sit exactly at the clicked position rather than -5/-25 shifted — a deterministic position assert once the roll is controllable. Needs the same forced-type seam (expose RandomDungeonSpawnerBlockEntity.buildForType for tests).","seam_needed":true},
-{"id":"i176-regression-bee-mantis-chests-item-068-069","verdict":"AUTOMATABLE","category":"structures","rationale":"BeehiveFeature.buildAt / SmallBeehiveFeature.buildAt / MantisNestFeature.buildAt are public static builders callable in the test area: assert each chest's FACING state points inward (not uniformly north) and roll/inspect the bound loot — Bee/Mantis spawn eggs at 2-8 / 2-4 stacks present, golden carrots and spider eyes absent as a hard invariant over repeated fills.","seam_needed":false},
-{"id":"i177-anim-016-halloween-closes-ent-d-039-041","verdict":"AUTOMATABLE","category":"date","rationale":"The date gate lives in server-side checkSpawnRules (Ghost.java:184-198, GhostSkelly.java:184) atop static halloween_ghosts.json biome registration: data-assert the 22-biome list, then call checkSpawnRules at night with /fillbiome-controlled positions under both dates — Oct 31 passes everywhere registered, other dates pass only in the 5 year-round biomes (OriginalSpawnGates.inYearRoundGhostBiome). 'Drop: nothing' = kill and count. Needs a seam: SeasonalDates hardcodes LocalDate.now() (util/SeasonalDates.java:21) — add an injectable date override.","seam_needed":true},
-{"id":"i178-anim-016-valentine-s-ent-d-011-family","verdict":"MANUAL_ONLY","category":"date","rationale":"The bundle includes 'renders 5x' and the girlfriendv TEXTURE — client-rendered acceptance criteria a headless GameTest cannot observe — plus o_hurt ambient as heard; per the no-gray-zone rule the whole item is manual. Partial automation possible with a SeasonalDates date-injection seam: 800 HP attribute, 2.5x8 getDimensions, targeting players/Boyfriends but not owner/pets, inWall immunity (Girlfriend.java:479), Love drop per rose_sword hit and the ~1/4 cure/shrink/calm (Girlfriend.java:485-590), and Shoes dealing 10 (Shoes.java:64) are all server-observable.","seam_needed":false},
-{"id":"i179-anim-016-easter-closes-ent-d-011","verdict":"AUTOMATABLE","category":"date","rationale":"The whole expectation is the spawn gate: EasterBunny.checkSpawnRules returns false unless SeasonalDates.isEaster() (EasterBunny.java:253). With an injected date, call checkSpawnRules in a spawn-valid setup and assert true on Apr 20 and false on any other date, plus a data assert on the bunny's biome spawn registration; egg-laying is explicitly out of scope (covered by A4). Seam: same SeasonalDates injectable date override (currently LocalDate.now()).","seam_needed":true}
+ {
+  "id": "i001-bug-003",
+  "verdict": "AUTOMATABLE",
+  "category": "crash",
+  "rationale": "Crash repro on entity ticking, explicitly automatable: spawn orespawn:rat in a GameTest, place a mock player >130 blocks away (or none at all on headless gameTestServer), tick ~200 ticks, assert no throw. Despawn half: with the nearest player beyond 128 blocks, Mob.checkDespawn discards the rat \u2014 assert it is removed. Both are pure server-side observations.",
+  "seam_needed": false
+ },
+ {
+  "id": "i002-bug-004",
+  "verdict": "MANUAL_ONLY",
+  "category": "crash",
+  "rationale": "The stated repro requires quit-to-title and rejoin mid-transformation \u2014 the rubric's named screen-flow example; a fake server player cannot faithfully perform client disconnect/reconnect through the title screen. Partial automation possible: an NBT save/load round-trip of a mid-transformation Prince (saveWithoutId -> load into fresh entity) could verify transformation completion, tame-owner retention, and no NPE, but that only partially verifies the stated quit-to-title window.",
+  "seam_needed": false
+ },
+ {
+  "id": "i003-item-011-012",
+  "verdict": "AUTOMATABLE",
+  "category": "other",
+  "rationale": "Verified in source: both are server-side Block.attack() overrides (BlockPizza.java:62, BlockDuctTape.java:63) routing to eatPizzaSlice/repairItem. A GameTest places each block and invokes state.attack(level, pos, mockPlayer), then asserts FoodData nutrition gained + BITES increment, and held-item damage reduced + USES increment. No client left-click event involved.",
+  "seam_needed": false
+ },
+ {
+  "id": "i004-item-013-014",
+  "verdict": "AUTOMATABLE",
+  "category": "other",
+  "rationale": "RTPBlock teleports from stepOn (RTPBlock.java:42), pure server logic directly invocable with a mock player; target is ~16 +/- 8 blocks with air/solid checks \u2014 assert player position changed by the expected offset within the prepared flat area. MoleDirt sink is a lowered collision shape (Block.box(0,0,0,16,14,16), MoleDirtBlock.java:27) \u2014 assert getCollisionShape max-Y and that a standing entity's feet Y sits 0.125 below block top.",
+  "seam_needed": false
+ },
+ {
+  "id": "i005-item-016-c8-furnace",
+  "verdict": "AUTOMATABLE",
+  "category": "other",
+  "rationale": "Block-entity logic: place crystal_furnace, load input + crystal coal, tick and assert cook completes at 150 ticks (7.5 s); assert crystal coal burn time covers ~133 smelts (burnTime/cookTime arithmetic or long-run tick count); insert lava bucket as fuel, run one burn, assert the fuel slot contains minecraft:bucket. All server-side BE state.",
+  "seam_needed": false
+ },
+ {
+  "id": "i006-item-019",
+  "verdict": "AUTOMATABLE",
+  "category": "other",
+  "rationale": "Verified in source: RepellentBlock repels via scheduled block ticks every 10 game ticks (RepellentBlock.java:37,74-76) with radius-20 scan and entity push \u2014 pure server logic. Test places the block, summons a creeper 15 blocks away (fits the structure), records velocity impulses across ~60 ticks, asserts a push roughly every 10 ticks rather than once a minute.",
+  "seam_needed": false
+ },
+ {
+  "id": "i007-item-027",
+  "verdict": "AUTOMATABLE",
+  "category": "structures",
+  "rationale": "Block placement over time is server-observable: place duplicator_log on grass with a small marker build 5 blocks away, tick, sample intermediate ticks to confirm progressive (block-by-block) growth, then assert ~20 copied blocks appear in the 5x5 target area matching the source build. Specific named block asserts in a small area, well within the 48-block template limit.",
+  "seam_needed": false
+ },
+ {
+  "id": "i008-item-037",
+  "verdict": "MANUAL_ONLY",
+  "category": "other",
+  "rationale": "The bundle's acceptance includes 'with saw sound' \u2014 a heard-audio criterion. A GameTest can capture the server-side dispatch (PlayLevelSoundEvent), but that does not verify the sound actually plays on a client: this repo's BUG-032 defect class (39 sound events referenced by code but missing from sounds.json, dispatching normally while playing silence) passes any dispatch-capture assert. Under no-gray-zone the sound half fails the bundle. Partial automation possible: the 56-damage r=5 AoE via crowd health deltas and the 11x16x11 wood/leaf crush volume after a log break are fully server-side.",
+  "seam_needed": false
+ },
+ {
+  "id": "i009-item-040-item-057",
+  "verdict": "AUTOMATABLE",
+  "category": "other",
+  "rationale": "Inventory-tick item logic: equip damaged experience_chestplate on a mock player, put experience_sword in the hotbar, tick the player (or invoke inventoryTick directly) for N ticks, assert armor damageValue decreases while sword damageValue increases. Fully server-side state observation.",
+  "seam_needed": false
+ },
+ {
+  "id": "i010-item-047-048-049",
+  "verdict": "MANUAL_ONLY",
+  "category": "structures",
+  "rationale": "Bundle includes 'explosion fx' \u2014 StepUp.playUseEffects sends LARGE_SMOKE/EXPLOSION particles via sendParticles (StepUp.java:61-68); particles are flatly MANUAL_ONLY under the rubric, so the full bundle fails. Partial automation possible for nearly everything else: garden 18x15 geometry/crops/water channels, shelter 7x7 + 14-item chest contents, stepper 8-way yaw paths with extreme torches every 8, obstruction stop, and creative item retention (mock player in creative) are all block/inventory asserts.",
+  "seam_needed": false
+ },
+ {
+  "id": "i011-item-050-051-052",
+  "verdict": "AUTOMATABLE",
+  "category": "other",
+  "rationale": "All four are server-side item interactions with observable outcomes: ZooKeeper single-use capture (assert stack consumed + mob stored/removed), Sifter useOn each of water/sand/gravel/dirt/grass asserting rolled item entities incl. mod fish from water (statistical over trials), Wrench mobInteract on a healthy unowned AntRobot asserting refusal (no damage repair/no consume), kit use asserting respawned robot carries prior health and custom name.",
+  "seam_needed": false
+ },
+ {
+  "id": "i012-item-059",
+  "verdict": "AUTOMATABLE",
+  "category": "recipes",
+  "rationale": "Pure recipe asserts via RecipeManager: smelting ore_uranium/ore_titanium yields the nugget item (not ingot), and the 9-nugget-to-ingot crafting recipe exists with correct output. No world interaction needed.",
+  "seam_needed": false
+ },
+ {
+  "id": "i013-item-001-005",
+  "verdict": "AUTOMATABLE",
+  "category": "other",
+  "rationale": "Block-break outcomes server-side: break ore_ruby/ore_amethyst via playerDestroy with a non-silk tool repeatedly, assert surrounding blocks intact and no Explosion occurred (repeat N trials for the 'never explodes' claim at manual-test confidence); break red_ant_troll/termite_troll with a Silk Touch tool and count 15-20 spawned mobs in the area. All observable in-test.",
+  "seam_needed": false
+ },
+ {
+  "id": "i014-item-003-021",
+  "verdict": "AUTOMATABLE",
+  "category": "loot",
+  "rationale": "XP-drop logic with controlled positions, analogous to the rubric's controlled-position spawn checks: invoke the blocks' getExpDrop (or break at absolute positions) with pos.y below and above 40, asserting XP only below y=40. Egg block: break N times, assert 5-9 XP roughly half the trials and that drops never contain the egg block itself. Server-side data asserts plus statistical trials.",
+  "seam_needed": false
+ },
+ {
+  "id": "i015-item-029-d4",
+  "verdict": "AUTOMATABLE",
+  "category": "other",
+  "rationale": "Food-effect asserts: have a mock player eat each item server-side (Item.finishUsingItem / player.eat), then assert exact MobEffect types, amplifiers, and durations (100s/100s/150s/300s+250s sets) via getActiveEffects. Fully server-observable state.",
+  "seam_needed": false
+ },
+ {
+  "id": "i016-item-060-061-062-d4",
+  "verdict": "AUTOMATABLE",
+  "category": "recipes",
+  "rationale": "Straight RecipeManager asserts: verify each of the five recipes (skate bow, chest and red bed from crystal planks, raw corn dog, pink tourmaline bucket, string cobweb) resolves with the expected output, plus the oak door from crystal planks recipe. The rubric's canonical recipe case.",
+  "seam_needed": false
+ },
+ {
+  "id": "i017-c8-experiencecatcher",
+  "verdict": "AUTOMATABLE",
+  "category": "other",
+  "rationale": "Server-side item use with statistical outcome: spawn an ExperienceOrb worth >=3, mock player uses the catcher on the ground beneath it, repeat N trials; assert ~80% yield Bottle o' Enchanting + string + stick with the catcher consumed, and on misses an item entity of the catcher appears at the player's feet. All entity/inventory observations.",
+  "seam_needed": false
+ },
+ {
+  "id": "i018-item-063-d4-dispensers",
+  "verdict": "MANUAL_ONLY",
+  "category": "dispenser",
+  "rationale": "Bundle includes 'bow sound' as part of the acceptance \u2014 heard audio. Server-side PlayLevelSoundEvent capture proves dispatch, not audible playback: this repo's BUG-032 (code-referenced sounds missing from sounds.json played silence while dispatching normally) is exactly the failure class a dispatch assert cannot catch, so under no-gray-zone the sound half fails the bundle. Partial automation possible: dispenser trigger via block update, each loaded item spawning the correct projectile entity type, arrow pickup-ability via AbstractArrow.pickup, and dispensed rocks' per-type damage/behavior via target health deltas/effects are all server-observable.",
+  "seam_needed": false
+ },
+ {
+  "id": "i019-ent-d-025-026-027-ent-k-076-rocks",
+  "verdict": "MANUAL_ONLY",
+  "category": "entity_logic",
+  "rationale": "Bundle includes the glassdead sound on glass shatter \u2014 heard audio, not fully verifiable headlessly: dispatch capture cannot detect the BUG-032 silent-sound failure class (sound fired server-side but absent from sounds.json). Under no-gray-zone the sound clause fails the bundle. Partial automation possible for everything else: t5 health delta 10; WEAKNESS (and absence of WITHER) on t6/t9-12; t9 target remainingFireTicks ~1000 (50 s); the 3x3x3 glass clear; same-rock-type item return on block impact; nothing returned on entity impact \u2014 all server-side.",
+  "seam_needed": false
+ },
+ {
+  "id": "i020-item-053",
+  "verdict": "MANUAL_ONLY",
+  "category": "entity_logic",
+  "rationale": "Bundle includes 'hit with poof + reddust particles' \u2014 particles are flatly MANUAL_ONLY under the rubric, so the full bundle fails. Partial automation possible for everything else: dead_irukandji throw spawn, water_ball ~10% pickup drop (statistical), sunspot_urchin igniting blocks (block-state assert), laser/ice spam with no ItemCooldowns entry, shoe projectiles flying and dealing per-target damage incl. exactly 1.0 to Girlfriend/Boyfriend \u2014 all server-observable.",
+  "seam_needed": false
+ },
+ {
+  "id": "i021-item-043-ent-s-057",
+  "verdict": "AUTOMATABLE",
+  "category": "entity_logic",
+  "rationale": "All server-observable: use() must spawn the arrow immediately (no draw ticks) \u2014 assert arrow exists same tick; assert stack carries Power 5 (not 10) enchantment; spawn many arrows and count isCritArrow for ~25%; fire at a target and assert damage = ceil(3 x ultimateBowDamage), then set the ModConfigSpec value to half in-test and assert halved damage (config-gated behavior is automatable when set server-side).",
+  "seam_needed": false
+ },
+ {
+  "id": "i022-ent-a-045-051-bertha",
+  "verdict": "AUTOMATABLE",
+  "category": "entity_logic",
+  "rationale": "Swing-projectile AoE with target filtering: trigger the swing server-side with a fake player amid mixed mobs, a tamed pet, and a second fake player (fake players are real ServerPlayers, sufficient for PvP checks). Assert one-shot damage values (496/746/82 per item) on valid targets, zero damage ever to Girlfriend/Boyfriend, and player/tamed damage toggling with bigBerthaPvp set server-side.",
+  "seam_needed": false
+ },
+ {
+  "id": "i023-ent-k-033",
+  "verdict": "AUTOMATABLE",
+  "category": "entity_logic",
+  "rationale": "'Silently drains' means the extra 1 HP bypasses a second hurt() call \u2014 fully verifiable server-side: attack a target with MantisClaw via fake player, capture damage events, assert exactly one hurt event per swing while total health delta = weapon damage + 1, and attacker health increases by 1. The absent 'second hurt flash' is mechanically equivalent to the absent second damage event (the flash is driven by the broadcast damage event, which the test asserts never fires twice).",
+  "seam_needed": false
+ },
+ {
+  "id": "i024-item-058",
+  "verdict": "AUTOMATABLE",
+  "category": "config",
+  "rationale": "Verified in source: glide is armor inventoryTick logic (ItemOreSpawnArmor.applyGlideEffect) capping deltaMovement.y at -0.1 and zeroing fallDistance; peacock boots are explicitly NOT config-gated while royal/queen require ROYAL_GLIDE_ENABLE (ItemOreSpawnArmor.java:181-190). Test: mock player with each boot set, downward velocity, tick, assert cap and fallDistance under both config states set server-side.",
+  "seam_needed": false
+ },
+ {
+  "id": "i025-ent-a-004",
+  "verdict": "AUTOMATABLE",
+  "category": "entity_logic",
+  "rationale": "Set server difficulty to EASY then NORMAL in-test, invoke the Alien's doHurtTarget on a mock player, and assert the applied effect is POISON with duration 40 ticks (2 s) on easy and 30 ticks (1.5 s) otherwise, and that HUNGER is never present. Pure server-side effect asserts.",
+  "seam_needed": false
+ },
+ {
+  "id": "i026-ent-a-013-014",
+  "verdict": "AUTOMATABLE",
+  "category": "entity_logic",
+  "rationale": "Verified in source: ridden stomp is a server tick() path \u2014 1-in-50 per tick when getFirstPassenger() != null, hitting the 6-9 block ring for ATTACK_DAMAGE/10 = 3.0 (AntRobot.java:165-166, 276-277, 293). Test: fake player startRiding, mob placed at distance 7, tick until stomp, assert 3.0 health delta. Melee cadence throttle measured by damage-event intervals over ticks \u2014 'visibly' is the manual proxy for a measurable attack interval.",
+  "seam_needed": false
+ },
+ {
+  "id": "i027-ent-a-025",
+  "verdict": "AUTOMATABLE",
+  "category": "entity_logic",
+  "rationale": "Invoke BandP doHurtTarget repeatedly on a mock player equipped with armor plus inventory items; after each successful hit assert exactly one item removed from the player, with armor slots emptied before inventory items. Fully server-side inventory observation.",
+  "seam_needed": false
+ },
+ {
+  "id": "i028-ent-a-054",
+  "verdict": "AUTOMATABLE",
+  "category": "entity_logic",
+  "rationale": "Three AI asserts in a small arena: mock player holding cooked beef \u2014 assert Boyfriend's navigation closes distance (tempt goal detects any Player in level.players(), mock players qualify); hurt it and assert panic (PanicGoal running / burst movement speed); place a wooden door in its path and assert the door blockstate opens as it passes. All server-observable positions and block states.",
+  "seam_needed": false
+ },
+ {
+  "id": "i029-ent-a-074-075",
+  "verdict": "MANUAL_ONLY",
+  "category": "entity_logic",
+  "rationale": "Bundle includes the burp and explosion sounds as heard \u2014 dispatch capture (PlayLevelSoundEvent) does not verify audible playback, and this repo's BUG-032 (dispatched sounds silently absent from sounds.json) is precisely the gap; under no-gray-zone the sound clauses fail the bundle. Partial automation possible for the rest (headless-friendly at maxTicks ~2600): leaf/log eating with blocks removed and +2.0 heal per bite, and the ~2 min transformation into exactly one Brutalfly plus 10 Butterflies \u2014 all entity/block/health asserts.",
+  "seam_needed": false
+ },
+ {
+  "id": "i030-ent-a-080",
+  "verdict": "AUTOMATABLE",
+  "category": "entity_logic",
+  "rationale": "Targeting-goal assert: spawn CaveFisher with cows/pigs nearby and no player aggression, tick, and assert getTarget() becomes a passive animal (and/or the animal takes damage) without the CaveFisher being provoked. Pure server-side AI observation.",
+  "seam_needed": false
+ },
+ {
+  "id": "i031-ent-a-082",
+  "verdict": "AUTOMATABLE",
+  "category": "entity_logic",
+  "rationale": "Spawn Cephadrome beside each listed target (Mothra, untamed Leon, GammaMetroid, WaterDragon) and assert getTarget()/attack acquisition for each; then invoke its attack on a Kraken and assert health delta equals 1.5x its base attack damage. All within-template entity observations.",
+  "seam_needed": false
+ },
+ {
+  "id": "i032-ent-a-087",
+  "verdict": "AUTOMATABLE",
+  "category": "entity_logic",
+  "rationale": "mobInteract with a mock player holding apples over N trials: assert taming succeeds ~50% per apple (statistical, apple consumed each attempt) and tame flag/owner set on success; then interact with a dead bush and assert the tamed state is cleared/released. Server-side interaction results and NBT flags.",
+  "seam_needed": false
+ },
+ {
+  "id": "i033-ent-a-095-097",
+  "verdict": "AUTOMATABLE",
+  "category": "loot",
+  "rationale": "Summon ~10+ Cockateils and assert the variant field takes multiple random values; kill N of each type with mock-player damage (player kill source) and count drops: type-5 yields rubies at ~1-in-3 while all other types yield zero across trials \u2014 the same confidence the manual check provides. Drops and variants are pure server data.",
+  "seam_needed": false
+ },
+ {
+  "id": "i034-ent-a-112",
+  "verdict": "AUTOMATABLE",
+  "category": "entity_logic",
+  "rationale": "Proactive-aggression assert: spawn Cryolophosaurus with prey animals in range, never damaging it, tick, and assert it acquires a prey target and closes distance/attacks unprovoked. Retaliation-only behavior would leave getTarget() null \u2014 cleanly distinguishable server-side.",
+  "seam_needed": false
+ },
+ {
+  "id": "i035-ent-d-002-006",
+  "verdict": "AUTOMATABLE",
+  "category": "entity_logic",
+  "rationale": "mobInteract asserts with a mock player: raw beef tames at ~1-in-5 over N trials (beef consumed, tame flag on success) and heals a damaged tamed dragon; bone interaction asserts no consume/no state change; diamond on a TAMED adult asserts the adult is removed and a Spyro spawns at its position with tamed flag and same owner. All server-side entity state.",
+  "seam_needed": false
+ },
+ {
+  "id": "i036-ent-d-014",
+  "verdict": "AUTOMATABLE",
+  "category": "entity_logic",
+  "rationale": "Spawn Emperor Scorpion with a combat target in the test area, tick, and count baby-scorpion entities appearing server-side; the uncapped/flood property is verifiable by asserting the count keeps growing over trials. Pure entity-tick observation.",
+  "seam_needed": false
+ },
+ {
+  "id": "i037-ent-d-022",
+  "verdict": "AUTOMATABLE",
+  "category": "entity_logic",
+  "rationale": "EntityCage is a thrown projectile with all capture logic in server-side onHitEntity (CaptureSpec escapePercent/count records in EntityCage.java). A test can spawn owned cage projectiles at each target species and assert outcomes: empty-cage return on player hit, caged-item counts (Bat 2, Cockateil 4, AttackSquid 6), cage consumed for Girlfriend/Boyfriend, and escape rates (20%/95%) statistically over repeated trials, same standard as loot ranges.",
+  "seam_needed": false
+ },
+ {
+  "id": "i038-ent-d-037-ent-k-046",
+  "verdict": "AUTOMATABLE",
+  "category": "loot",
+  "rationale": "Kill tamed and untamed Gazelle/Ostrich with a player damage source and count drops (2-6 poppies tamed, 0-2 beef/feathers untamed) over repeated kills. Classic kill-and-count loot verification.",
+  "seam_needed": false
+ },
+ {
+  "id": "i039-ent-k-013",
+  "verdict": "AUTOMATABLE",
+  "category": "entity_logic",
+  "rationale": "Spawn LeafMonster among a controlled mix of mobs and assert its target is always in {Ant, Butterfly, LunaMoth, player} and never other species; set playNicely=true server-side and assert it never acquires a target. Targeting state is fully server-observable; config settable in test.",
+  "seam_needed": false
+ },
+ {
+  "id": "i040-ent-k-019-083",
+  "verdict": "AUTOMATABLE",
+  "category": "entity_logic",
+  "rationale": "Fake-player mobInteract with dead bush / glass / raw cod / wheat and assert the tamed flag transitions (dead bush untames, glass does not; cod tames RubberDucky, wheat does not). Temptation is observable via the tempt goal's navigation toward a cod-holding fake player. All server-side interaction logic.",
+  "seam_needed": false
+ },
+ {
+  "id": "i041-ent-k-023",
+  "verdict": "AUTOMATABLE",
+  "category": "entity_logic",
+  "rationale": "Place water and lava pools in the test area with a Lizard on dry land; over maxTicks assert its navigation target/position reaches the water and never enters lava/fire proximity. Pathing goals are server-observable; 'never' is bounded by test duration like any behavior assert.",
+  "seam_needed": false
+ },
+ {
+  "id": "i042-ent-k-050-ent-s-031",
+  "verdict": "AUTOMATABLE",
+  "category": "entity_logic",
+  "rationale": "Fake-player feed crystal_apple to paired Peacocks/StinkBugs and assert love state then baby entity; feed regular apple and assert no love/consumption. Breeding-item gates are pure server logic.",
+  "seam_needed": false
+ },
+ {
+  "id": "i043-ent-k-051",
+  "verdict": "MANUAL_ONLY",
+  "category": "entity_logic",
+  "rationale": "The bundle requires 'hitbox+model grow together up to 10x14' - the model half is client-rendered and cannot be verified server-side. Partial automation possible: scale distribution over ~30 summons (mostly t=0.5, t=4 at ~1.5%) via entity dimensions, and nightmareSize=5 config forcing max, are both server-assertable.",
+  "seam_needed": false
+ },
+ {
+  "id": "i044-ent-k-056",
+  "verdict": "AUTOMATABLE",
+  "category": "entity_logic",
+  "rationale": "Spawn PurplePower orb projectiles of type 2 and type 3 aimed at a victim and assert Poison vs Weakness MobEffect with 50-tick (2.5 s) duration via hasEffect/getEffect. Projectile effect application is server-side.",
+  "seam_needed": false
+ },
+ {
+  "id": "i045-ent-k-058",
+  "verdict": "AUTOMATABLE",
+  "category": "entity_logic",
+  "rationale": "With default configs, spawn a wild rat near a fake player and a tamed pet and assert it acquires them as targets; set an owner on a rat and assert it never targets that owner over the test duration. Targeting is server-observable.",
+  "seam_needed": false
+ },
+ {
+  "id": "i046-ent-s-010",
+  "verdict": "AUTOMATABLE",
+  "category": "entity_logic",
+  "rationale": "Trigger SeaViper doHurtTarget on a victim under normal and easy difficulty (settable server-side) and assert Poison duration ~6 s / 8 s and that Hunger is never applied. Effect type and duration are server data.",
+  "seam_needed": false
+ },
+ {
+  "id": "i047-ent-s-030",
+  "verdict": "AUTOMATABLE",
+  "category": "entity_logic",
+  "rationale": "Kill a StinkBug surrounded by a controlled crowd including entities positioned well above it, then assert every nearby entity has Nausea (confusion) and none has Hunger. Death-AoE effect application is server-side.",
+  "seam_needed": false
+ },
+ {
+  "id": "i048-ent-s-033",
+  "verdict": "MANUAL_ONLY",
+  "category": "entity_logic",
+  "rationale": "The bundle explicitly includes 'with sounds' - sounds as heard are client-side and not assertable in a GameTest. Partial automation possible: the coal item entity spawning in front and skin-matched item (blaze powder for skin 0) behind, with relative positions, are server-assertable.",
+  "seam_needed": false
+ },
+ {
+  "id": "i049-ent-s-065",
+  "verdict": "AUTOMATABLE",
+  "category": "entity_logic",
+  "rationale": "Call mobInteract with an empty-handed fake player and assert the player gains no vehicle; repeat with setShiftKeyDown(true) and assert the sitting flag toggles. Interaction outcomes are server-side state.",
+  "seam_needed": false
+ },
+ {
+  "id": "i050-ent-s-069",
+  "verdict": "AUTOMATABLE",
+  "category": "entity_logic",
+  "rationale": "Let Vortex melee a victim repeatedly and assert deltaMovement.y never spikes upward (no skyward launch) while horizontal velocity toward the Vortex confirms the drag pull. Victim motion is server-observable.",
+  "seam_needed": false
+ },
+ {
+  "id": "i051-ent-s-085-d4",
+  "verdict": "AUTOMATABLE",
+  "category": "entity_logic",
+  "rationale": "Equip a fake player with helmet+chestplate+held item near WormLarge; over repeated trials assert the ~1-in-4 helmet theft (chestplate when bare-headed), independent 1-in-4 held-item theft, stolen gear appearing as item entities, and zero thefts with playNicely=true set server-side.",
+  "seam_needed": false
+ },
+ {
+  "id": "i052-ent-s-078-d4",
+  "verdict": "AUTOMATABLE",
+  "category": "entity_logic",
+  "rationale": "Set night server-side, boots on a fake player, assert ~1-in-6 theft over trials. The 'pop' is a server-side discard(): EntityWormSmall.checkSurfaceBlock discards unless surfacing under grass/dirt/stone, and isAirOrTallGrass treats SHORT_GRASS as air - both directly assertable with controlled block placement.",
+  "seam_needed": false
+ },
+ {
+  "id": "i053-ent-k-047-048-d4",
+  "verdict": "AUTOMATABLE",
+  "category": "entity_logic",
+  "rationale": "Spawn Peacock + Termite and assert targeting plus exact 6.0 health decrements per hit; then a lone peacock at a controlled absolute y in 50-100 with day time set to 1000 and <=2 peacocks within 16, asserting 1-3 egg items appear in the first half-day. Time, positions, and neighbor counts are all controllable server-side.",
+  "seam_needed": false
+ },
+ {
+  "id": "i054-ent-d-010-d4",
+  "verdict": "AUTOMATABLE",
+  "category": "entity_logic",
+  "rationale": "Direct entity spawn in the test bypasses the Easter gate (per the item itself), so no date seam is needed. Run maxTicks high enough for the 1-in-600/tick roll, assert dropped stacks of 1-3 spawn-egg items are members of the 115-type table, breeding works with crystal apple, and carrot interaction never sets a tamed flag.",
+  "seam_needed": false
+ },
+ {
+  "id": "i055-c1-loot",
+  "verdict": "AUTOMATABLE",
+  "category": "loot",
+  "rationale": "Kill each species with a player damage source (fake player attribution) repeatedly and assert drop contents against each table, including gamble drops and the Coin 10-slot jackpot's coin_spawn_egg slot, statistically over many kills. Pure kill-and-count loot verification.",
+  "seam_needed": false
+ },
+ {
+  "id": "i056-c2-loot",
+  "verdict": "AUTOMATABLE",
+  "category": "loot",
+  "rationale": "Kill-and-count over repeated player kills: percentage tables (DungeonBeast 25% slots), fixed drops (Fairy crystal torch), ranges (GammaMetroid, GiantRobot), and the negative assert that Ghost/GhostSkelly drop nothing. All server-observable item entities.",
+  "seam_needed": false
+ },
+ {
+  "id": "i057-c3-loot",
+  "verdict": "AUTOMATABLE",
+  "category": "loot",
+  "rationale": "Kill-and-count with player attribution for each species; one-of tables (LeafMonster, Rotator) verified by asserting each kill yields exactly one member of the set, ranges (Robot2-5) by counting over repeats. Fully server-observable.",
+  "seam_needed": false
+ },
+ {
+  "id": "i058-c4-loot",
+  "verdict": "AUTOMATABLE",
+  "category": "loot",
+  "rationale": "Kill-and-count including tamed-vs-untamed conditionals (Spyro, VelocityRaptor) settable server-side before the kill, probabilistic Scorpion nuggets over many trials, and the WormSmall nothing-drops negative. All server-observable.",
+  "seam_needed": false
+ },
+ {
+  "id": "i059-d4-drops",
+  "verdict": "AUTOMATABLE",
+  "category": "loot",
+  "rationale": "Chipmunk/GoldFish/RubberDucky/Stinky tamed-conditional drops are standard kill-and-count. The Lavafoam XP split is assertable by invoking the block's exp-drop path (or placing and fake-player-breaking the block) against the overworld level (0 XP) and the loaded Nether ServerLevel via server.getLevel(Level.NETHER) (5-13 XP over trials) - a dimension-conditional data assert, not worldgen placement.",
+  "seam_needed": false
+ },
+ {
+  "id": "i060-boss-025-035-042",
+  "verdict": "AUTOMATABLE",
+  "category": "loot",
+  "rationale": "Kill ThePrince/ThePrincess/ThePrinceAdult with player attribution and count drops: 1-4 beef, 1-4 beef, exactly one prince_egg, plus the negative assert of no diamonds/gold. Standard loot kills.",
+  "seam_needed": false
+ },
+ {
+  "id": "i061-ent-a-031-060-ent-s-061-068",
+  "verdict": "AUTOMATABLE",
+  "category": "entity_logic",
+  "rationale": "Place a lava pit in the test area, drop Basilisk/Brutalfly/Urchin/Vortex in, tick, and assert health unchanged (and/or fireImmune plus no fire damage events). Fully server-observable immunity check.",
+  "seam_needed": false
+ },
+ {
+  "id": "i062-ent-k-045",
+  "verdict": "AUTOMATABLE",
+  "category": "entity_logic",
+  "rationale": "Spawn Ostrich in contact with a placed cactus and assert no health loss; then hurt it with a generic damage source and assert normal damage applies. Both halves server-observable.",
+  "seam_needed": false
+ },
+ {
+  "id": "i063-ent-k-007-d4",
+  "verdict": "AUTOMATABLE",
+  "category": "entity_logic",
+  "rationale": "Stand Kyuubi in lava / its own fire-attack blocks and assert zero self-damage over ticks (fireImmune and health unchanged). Server-side immunity check with controlled block placement.",
+  "seam_needed": false
+ },
+ {
+  "id": "i064-ent-s-025-ent-s-047-d4",
+  "verdict": "AUTOMATABLE",
+  "category": "entity_logic",
+  "rationale": "Cactus contact with placed cactus asserting no damage; fall immunity via causeFallDamage with a large distance (or an in-structure drop) asserting health unchanged. Both immunities are server-observable for SpitBug and Triffid.",
+  "seam_needed": false
+ },
+ {
+  "id": "i065-ent-a-052-ent-a-001-d4",
+  "verdict": "AUTOMATABLE",
+  "category": "entity_logic",
+  "rationale": "Spawn BetterFireball projectiles aimed at Mothra/other fireballs/royalty and assert pass-through (targets at full health, projectile continues); spawn acid projectiles at TrooperBug/SpitBug and assert the projectile is discarded with zero damage. Projectile collision outcomes are server-side.",
+  "seam_needed": false
+ },
+ {
+  "id": "i066-b3-riding",
+  "verdict": "MANUAL_ONLY",
+  "category": "entity_logic",
+  "rationale": "Acceptance is ride feel: no rubber-banding as perceived, UP-key fast jump, strafe-key canon firing, and second-player visual smoothness - all driven by real client keybinds and client-predicted movement a fake server player cannot produce. Partial automation possible: mount success and canon projectile spawns could be asserted server-side, but the bundle's core is felt/observed motion.",
+  "seam_needed": false
+ },
+ {
+  "id": "i067-b3-spiderdriver",
+  "verdict": "AUTOMATABLE",
+  "category": "attributes",
+  "rationale": "Spawn SpiderDriver, read the armor attribute on foot (20), startRiding a SpiderRobot server-side and re-read (8); trigger its attack on a victim and assert Poison is applied. Attribute values and effect application are server data.",
+  "seam_needed": false
+ },
+ {
+  "id": "i068-c8-controls",
+  "verdict": "MANUAL_ONLY",
+  "category": "other",
+  "rationale": "Default keybind mapping (LEFT ALT = fly up/sprint) is client-side KeyMapping registration and physical input handling; a headless gameTestServer has no keybind system and a fake player sends no key input. Requires a real client.",
+  "seam_needed": false
+ },
+ {
+  "id": "i069-d2-hoverboard-physics",
+  "verdict": "MANUAL_ONLY",
+  "category": "entity_logic",
+  "rationale": "Throttle, Left Alt boost, terrain climb, and speed-scaled pitch all live in Elevator.tickRidden gated on isControlledByLocalInstance() - client-predicted physics driven by real rider key input, plus pitch is a rendered/felt property. A fake server player cannot drive this path faithfully.",
+  "seam_needed": false
+ },
+ {
+  "id": "i070-d2-hoverboard-crash",
+  "verdict": "MANUAL_ONLY",
+  "category": "entity_logic",
+  "rationale": "harness limit: the wall-crash branch is unreachable on the headless GameTestServer \u2014 the documented ANIM-012 architecture integrates ridden movement on the CONTROLLING CLIENT (tickRidden gated by isControlledByLocalInstance()); serverRiddenTick detects the crash from in-tick position deltas of the client-synced entity, every server-side travel() path zeroes horizontal motion (Elevator.java:544-569), a ServerPlayer is never a local instance, and external movers (pistons/pushes/teleports) land between entity ticks where baseTick re-captures xo/zo \u2014 so no server-side path can produce the required >0.75 in-tick horizontal delta. The removed test's Pig-rider premise also encodes no original behavior (orig ridden branch casts the rider to EntityPlayer). Test method removed from EntityLogicTestsB.java with a stub comment. Manual procedure: ride into a wall above 0.75 b/t in a real client \u2014 6-15 sticks + exactly 2 diamonds, rider ejected, no Hoverboard item.",
+  "seam_needed": false
+ },
+ {
+  "id": "i071-d2-hoverboard-malfunction",
+  "verdict": "MANUAL_ONLY",
+  "category": "entity_logic",
+  "rationale": "Expectation bundles explosion/smoke particles (client-rendered, spawned in the client tick path) and speed bleed (0.05/tick applied in client-predicted tickRidden), triggered by a 1-in-20000 roll during real ridden movement. Partial automation possible: the synced 45-tick exploding countdown (~2.2 s) could be asserted server-side after forcing speed > 0.65, but the visible malfunction and felt speed bleed cannot.",
+  "seam_needed": false
+ },
+ {
+  "id": "i072-d2-hoverboard-skins-guards",
+  "verdict": "MANUAL_ONLY",
+  "category": "entity_logic",
+  "rationale": "The bundle includes the hum sound (orespawn:hover, randomized variants) heard only while ridden - sound-as-heard is not assertable headlessly. Partial automation possible: ultimate_sword interact cycling the synced skin index through 10 values and hurt() immunity to mob punches while ridden are server-assertable.",
+  "seam_needed": false
+ },
+ {
+  "id": "i073-d2-registry",
+  "verdict": "AUTOMATABLE",
+  "category": "other",
+  "rationale": "Pure data asserts: BuiltInRegistries.ENTITY_TYPE contains orespawn:elevator and lacks orespawn:hoverboard (which is exactly why /summon fails), and creative tab contents can be rebuilt in common code (CreativeModeTabs.tryRebuildTabContents with registry access) to assert exactly one Hoverboard entry.",
+  "seam_needed": false
+ },
+ {
+  "id": "i074-b4-idle-animations",
+  "verdict": "MANUAL_ONLY",
+  "category": "other",
+  "rationale": "Idle animation continuity, frozen-wing detection, 10x render scale, and flap speed are all client-rendered GeckoLib/model behavior with no server-observable state; a headless GameTest cannot see any of it.",
+  "seam_needed": false
+ },
+ {
+  "id": "i075-c8-rotator",
+  "verdict": "MANUAL_ONLY",
+  "category": "other",
+  "rationale": "Whether the Rotator renders as a 24-blade tri-axis gyroscope ball versus three flat blades is purely model geometry and rendering - visual acceptance with no server-side observable.",
+  "seam_needed": false
+ },
+ {
+  "id": "i076-c8-kraken",
+  "verdict": "MANUAL_ONLY",
+  "category": "other",
+  "rationale": "Acceptance is rendered animation: mouth-twitch cycle desync between two individuals and twitch intensity in combat are client-side model animation states judged by eye. No server-observable criterion.",
+  "seam_needed": false
+ },
+ {
+  "id": "i077-c8-d2-giantrobot",
+  "verdict": "MANUAL_ONLY",
+  "category": "other",
+  "rationale": "Walk gait with visible leg/arm articulation, hip bob, windmill punch, shoulder twist, and no-moonwalk are rendered animation/gait-IK checks \u2014 explicitly in the manual bucket. The walk-state solver's correctness criterion is visual (feet vs ground motion).",
+  "seam_needed": false
+ },
+ {
+  "id": "i078-c8-d2-spider-antrobot-legs",
+  "verdict": "MANUAL_ONLY",
+  "category": "other",
+  "rationale": "Leg rendering (8/6 legs), foot planting, stepping ahead of body, and relocate-on-overstretch are leg-IK rendering \u2014 manual per rubric. Partial automation possible: the ridden-SpiderRobot grass-to-dirt flattening is a server block change assertable in a GameTest.",
+  "seam_needed": false
+ },
+ {
+  "id": "i079-c8-robot2-3-4-arms",
+  "verdict": "MANUAL_ONLY",
+  "category": "other",
+  "rationale": "Idle-vs-combat arm poses, windmills, shield pumps, and cannon raise/follow are rendered model animations judged visually; the combat gating could only be inferred client-side.",
+  "seam_needed": false
+ },
+ {
+  "id": "i080-c8-rat",
+  "verdict": "MANUAL_ONLY",
+  "category": "other",
+  "rationale": "Tail sway/thrash and the absence of head turning are rendered animation behaviors with no server-side acceptance criterion.",
+  "seam_needed": false
+ },
+ {
+  "id": "i081-ent-a-036-ent-k-005-ent-s-045-boss-016-sounds",
+  "verdict": "MANUAL_ONLY",
+  "category": "other",
+  "rationale": "Criterion is audio as heard: custom sound sets play and NO vanilla Ravager/Elder-Guardian/Ender-Dragon audio is audible from any source. Absence-of-vanilla-audio is a perceptual audit, and presence-of-custom-audio cannot be verified by dispatch capture (BUG-032 silent-sound class). Partial automation possible: asserting the entities' SoundEvent getters return the custom ids.",
+  "seam_needed": false
+ },
+ {
+  "id": "i082-c8-hud",
+  "verdict": "MANUAL_ONLY",
+  "category": "other",
+  "rationale": "Crosshair-target health bar, red name, custom pet names, ownership-gated Girlfriend bar, and the 10px swim/armor shift are client HUD overlay rendering \u2014 explicitly manual per rubric, even though the guiOverlayEnable config gate itself is server-settable.",
+  "seam_needed": false
+ },
+ {
+  "id": "i083-ent-a-002-012-017-023-040-060-072-078-091-106-hitboxes",
+  "verdict": "AUTOMATABLE",
+  "category": "entity_logic",
+  "rationale": "F3+B is only the manual inspection method; the actual expectation is bounding-box dimensions vs the C1_entities_A_C.md size table, fully readable server-side via getBbWidth/getBbHeight/getDimensions on spawned entities. playNicely is a NeoForge config value (OreSpawnConfig.java:279) settable in-test to assert the CaterKiller halving.",
+  "seam_needed": false
+ },
+ {
+  "id": "i084-ent-a-100-101-102-103-crabs",
+  "verdict": "MANUAL_ONLY",
+  "category": "entity_logic",
+  "rationale": "Bundle includes 'scorpion sounds on melee' \u2014 audio as heard, with no headless verification of audible playback. Partial automation possible: size distribution via finalizeSpawn NATURAL vs SPAWNER paths, walk-to-water pathing, dry-out damage ticks, and splash heal are all server-observable HP/position asserts.",
+  "seam_needed": false
+ },
+ {
+  "id": "i085-hook-lava",
+  "verdict": "MANUAL_ONLY",
+  "category": "entity_logic",
+  "rationale": "Bundle includes 'bite cycle with lava particles' \u2014 particle presentation is rendered. Partial automation possible: bobber floating/surviving in lava (fire immunity) and the bite state machine are server-observable, and UltimateFishHook already access-transforms catchingFish/nibble for deterministic driving.",
+  "seam_needed": false
+ },
+ {
+  "id": "i086-pools",
+  "verdict": "AUTOMATABLE",
+  "category": "loot",
+  "rationale": "All server-observable: roll junk/treasure/fish/lava-fish loot pools programmatically; drive real catches with a mock player using the mod's existing access-transformed catchingFish/nibble/timeUntilLured fields (UltimateFishHook.java:43,173); assert caught ItemEntity velocity toward player, LavaLovingItem survival ticking in lava, pre-damage plus level-30 enchant on rolled gear, ExperienceOrb spawn, and hook persistence after retrieve.",
+  "seam_needed": false
+ },
+ {
+  "id": "i087-ent-a-055-ent-d-049",
+  "verdict": "MANUAL_ONLY",
+  "category": "entity_logic",
+  "rationale": "Bundle includes b_fight/o_fight melee sounds and audible taunts at 4-7 blocks \u2014 audio as heard. Partial automation possible: projectile entity class (arrow vs shoe) by held item, heal-allies-on-hit with PvP off, and the equip-bow interaction are server-observable.",
+  "seam_needed": false
+ },
+ {
+  "id": "i088-ent-a-018-019",
+  "verdict": "AUTOMATABLE",
+  "category": "entity_logic",
+  "rationale": "Pure distance-gated combat logic: place AttackSquid and target at controlled ranges, assert ink/water projectile entities spawn beyond 3 blocks and melee damage events occur inside \u2014 all server-side observation.",
+  "seam_needed": false
+ },
+ {
+  "id": "i089-ent-a-062",
+  "verdict": "AUTOMATABLE",
+  "category": "entity_logic",
+  "rationale": "Server difficulty is settable in-test; assert the spawned projectile class (small fireball vs BetterFireball) per difficulty and the Brutalfly's +1 HP self-heal after each shot via health observation.",
+  "seam_needed": false
+ },
+ {
+  "id": "i090-ent-d-044",
+  "verdict": "AUTOMATABLE",
+  "category": "entity_logic",
+  "rationale": "The fire gate is a server-side head-bearing computation on yHeadRot (GiantRobot.java:122-129) and the 'special' slow laser is a flag/velocity on the spawned LaserBall (setSpecial at :172). Test: spawn robot with target at controlled distances, assert LaserBall spawn timing vs head alignment and special-flag/speed beyond 10 blocks.",
+  "seam_needed": false
+ },
+ {
+  "id": "i091-d3-prince-family",
+  "verdict": "MANUAL_ONLY",
+  "category": "entity_logic",
+  "rationale": "Bundle includes audible wing flaps (as heard) and teen/adult flight to a DISTANT owner, which exceeds the ~48-block GameTest template. Partial automation possible: diamond teen-to-baby and adult-to-teen regressions, cooked-beef +80 heal, gold/cake no-ops, fire-lit 5-12 block firing band, and ice/flint fire-state toggling are server-observable.",
+  "seam_needed": false
+ },
+ {
+  "id": "i092-boss-024",
+  "verdict": "AUTOMATABLE",
+  "category": "entity_logic",
+  "rationale": "Target-selection logic: spawn Baby Prince with Butterfly/Cockateil/Dragonfly/Mosquito/Mothra in the test area and assert getTarget()/attack acquisition on each \u2014 fully server-observable.",
+  "seam_needed": false
+ },
+ {
+  "id": "i093-d3-princess-power",
+  "verdict": "MANUAL_ONLY",
+  "category": "entity_logic",
+  "rationale": "Bundle includes the firework-spark aura when charged \u2014 rendered particles. Partial automation possible: 3 PurplePower orb entities on discharge >500, terraform block changes (flowers/grass/cactus/lava-to-water), the 2 Butterfly/Cockateil hatch spawns, and the mobGriefing gamerule gate are all server-observable.",
+  "seam_needed": false
+ },
+ {
+  "id": "i094-b2-caps",
+  "verdict": "AUTOMATABLE",
+  "category": "attributes",
+  "rationale": "Boss max-health attribute values above 1024 (7000/6000/4000) are explicitly in the automatable rubric: spawn each boss in-test and assert the max_health attribute/getMaxHealth.",
+  "seam_needed": false
+ },
+ {
+  "id": "i095-b2-stats",
+  "verdict": "AUTOMATABLE",
+  "category": "attributes",
+  "rationale": "Attribute base-value spot-checks vs phase_b_reports/B2_mobstats.md: spawn each mob and read AttributeInstance base values programmatically \u2014 the /attribute command is just the manual equivalent. Automation can cover all mobs, not just 3-4.",
+  "seam_needed": false
+ },
+ {
+  "id": "i096-bug-005",
+  "verdict": "MANUAL_ONLY",
+  "category": "crash",
+  "rationale": "Bundle requires the normal death SCREEN and respawn flow, which need a real client \u2014 a GameTest mock player cannot faithfully present the death screen or the respawn UX. Partial automation possible: Queen melee killing a fake survival player without crash, player drop spawning, and the low-HP mob victim vanishing with no drops are server-observable.",
+  "seam_needed": false
+ },
+ {
+  "id": "i097-bug-006",
+  "verdict": "AUTOMATABLE",
+  "category": "crash",
+  "rationale": "Fully server-verifiable: the landing branch triggers off deltaMovement thresholds settable in-test (Godzilla.java:575-581), and the fix routes damage through vanilla hurt() with explosion/fall sources (:410-411) which respect gamemode invulnerability. Use makeMockPlayer in SURVIVAL/CREATIVE/SPECTATOR at the landing point and assert HP deltas.",
+  "seam_needed": false
+ },
+ {
+  "id": "i098-boss-002-007",
+  "verdict": "MANUAL_ONLY",
+  "category": "entity_logic",
+  "rationale": "Bundle includes 'models not lost inside the box' \u2014 a rendering judgment. Partial automation possible: the 22x24 bounding envelope, King-parent unhittability, part damage routing, and Queen part-to-bone position gluing are all server-observable via hurt() results and part entity positions.",
+  "seam_needed": false
+ },
+ {
+  "id": "i099-boss-005-012",
+  "verdict": "MANUAL_ONLY",
+  "category": "dsb",
+  "rationale": "Bundle includes the boss appearing 'with living sound' \u2014 a heard-audio criterion; server-side dispatch capture cannot verify audible playback (this repo's BUG-032: dispatched sounds absent from sounds.json played silence). Partial automation possible (and substantial): place spawner block, assert ~5s fuse timing, spawner+above turning to air, boss spawn 8 blocks up, leash radius, and the theKingEnable/theQueenEnable=false fizzle are classic spawner-block GameTest asserts.",
+  "seam_needed": false
+ },
+ {
+  "id": "i100-boss-006",
+  "verdict": "AUTOMATABLE",
+  "category": "attributes",
+  "rationale": "'Visibly reduced' is measurable server-side: set Queen below 2/3 HP with under 10 recorded player hits, apply a known damage amount, and assert the reduced HP delta; the overridden public armor getter (23) can also be asserted directly even though /attribute cannot see it.",
+  "seam_needed": false
+ },
+ {
+  "id": "i101-boss-010",
+  "verdict": "AUTOMATABLE",
+  "category": "entity_logic",
+  "rationale": "Server-side state test: spawn a dormant (blue-state) Queen, hit her, assert full normal damage applied during the 3s (60-tick) wake-up window, and assert she can acquire targets and take further hits during that window.",
+  "seam_needed": false
+ },
+ {
+  "id": "i102-boss-026-031",
+  "verdict": "MANUAL_ONLY",
+  "category": "entity_logic",
+  "rationale": "Bundle includes 'rider seats correct' \u2014 a looks-right judgment of rider placement with no numeric spec, i.e. rendered/felt. Partial automation possible: the 3.25x4.25 and 6.25x10.25 bounding dimensions are direct getDimensions asserts, and a mounted mock player's attachment position could be asserted if a seat-offset spec existed.",
+  "seam_needed": false
+ },
+ {
+  "id": "i103-boss-032",
+  "verdict": "MANUAL_ONLY",
+  "category": "config",
+  "rationale": "Bundle includes the 'Prepare to die!' sequence \u2014 a 500-tick scripted cutscene of staged chat broadcasts plus player freeze/orient (TheKing.java:598-660) whose acceptance is watching the presentation on a real client; the forced-orient half depends on client packet handling a mock player cannot exercise (the BUG-011 rubber-band class). Partial automation possible: fullPowerKingEnable-gated transform occurs/never, the diamond-block fast-path, the resulting King entity, and absence of doubled King damage are all server-observable.",
+  "seam_needed": false
+ },
+ {
+  "id": "i104-boss-036",
+  "verdict": "MANUAL_ONLY",
+  "category": "entity_logic",
+  "rationale": "The mapping conditions (king_living only when activity==1, riderless, not sitting; king_hit on hurt; trex_death on death \u2014 ThePrinceAdult.java:988-1011) are assertable via the protected getters from a same-package test, but the stated expectation is that these sounds PLAY under those states, and audible playback cannot be verified headlessly: this repo's BUG-032 precedent had getters/dispatch correct while sounds.json wiring played silence. Under no-gray-zone the audible half fails the bundle. Partial automation possible: the getter asserts under each state combination fully cover the selection logic.",
+  "seam_needed": false
+ },
+ {
+  "id": "i105-b1-boss-drops-survival-kills",
+  "verdict": "AUTOMATABLE",
+  "category": "loot",
+  "rationale": "Explicitly rubric-automatable: kill each boss with fake-player damage in the test area and count ItemEntity drops vs ranges (120-279 ink sacs, 56x Queen set, royal set + 300 registry items, 1-6 beef), assert forbidden items absent (cooked cod, emeralds), assert Princess/Prince/20-moth entity spawns, and re-kill to assert nothing drops twice. Even the 22-block King fits the ~48-block template.",
+  "seam_needed": false
+ },
+ {
+  "id": "i106-c7-vein-rates",
+  "verdict": "MANUAL_ONLY",
+  "category": "structures",
+  "rationale": "Expectation is worldgen frequency in the real Mining dimension: ~3x vein density vs overworld plus Y-band restrictions observed while mining fresh chunks. The cross-dimension density comparison spans two different placed-feature registrations and terrain contexts, unlike the single-mechanism config-toggle ratios of i107/i134. Partial automation possible: the salt>Y50 / amethyst<Y25 bands, the Mining triple-pass registration, and count-per-chunk values are data asserts on the placed-feature configs.",
+  "seam_needed": false
+ },
+ {
+  "id": "i107-item-064",
+  "verdict": "AUTOMATABLE",
+  "category": "config",
+  "rationale": "Same mechanism-complete shape as i134, which stands AUTOMATABLE: the entire lessOre effect is OreSpawnVeinPlacement.getPositions (src/main/java/danger/orespawn/world/OreSpawnVeinPlacement.java:83-104) \u2014 attempts /= lessOreDivisor (3 for ores, 2 for trolls, carried per placed-feature JSON) with LESS_ORE read live from config, plus optional lessOrePasses. A GameTest sets LESS_ORE server-side and samples getPositions across N rolls with config on vs off, asserting the ~1/3 vein and ~1/2 troll ratios directly (terrain cancels out of a same-mechanism ratio), and data-asserts that every uranium/titanium/amethyst/salt/troll placed feature carries the vein_count modifier with the expected divisor. No real-chunk flight needed \u2014 the count logic is the whole behavior.",
+  "seam_needed": false
+ },
+ {
+  "id": "i108-c7-ruby-lava-seek",
+  "verdict": "MANUAL_ONLY",
+  "category": "structures",
+  "rationale": "Bundle spans dimension-wide worldgen observation: ruby under lava at every overworld cave lake <Y50 with 'never free-floating' (a universal claim over real carver-generated lakes) plus Nether lavafoam vein and nether-ruby occurrence. Partial automation possible: the lava-seek placement logic could be exercised by invoking the feature over a hand-built lava pool in the test area.",
+  "seam_needed": false
+ },
+ {
+  "id": "i109-c7-islands-terrain",
+  "verdict": "MANUAL_ONLY",
+  "category": "structures",
+  "rationale": "Expectation is whole-dimension terrain character (flat grass plane at Y7, no carvers/lakes anywhere, anthill frequency near surface) in orespawn:islands \u2014 real dimension generation and a distribution claim, not a bounded named check. Partial automation possible: sample one generated chunk via the dimension's ChunkGenerator and assert the Y7 surface column.",
+  "seam_needed": false
+ },
+ {
+  "id": "i110-c7-chaos-terrain",
+  "verdict": "MANUAL_ONLY",
+  "category": "structures",
+  "rationale": "Bundle includes rendered acceptance ('vanilla sky' is a client visual), dimension-wide terrain shape (128-high stone, grass band Y60-65), natural spawn roster observation, and absence of dungeons/towers across the dimension. Only fragments (e.g. a single chunk's stone/grass columns) could be automated, so the full bundle is manual.",
+  "seam_needed": false
+ },
+ {
+  "id": "i111-c7-structures",
+  "verdict": "MANUAL_ONLY",
+  "category": "structures",
+  "rationale": "Expectation is /locate resolution and dimension exclusivity (Mining-only, Islands-only, Utopia ~45-chunk grid) in real dimensions \u2014 exactly the rubric's worldgen placement/biome-selection carve-out. Partial automation possible: recast as pure data asserts on structure sets, placement spacing/salt, and biome tags per dimension, but that is not the item's stated /locate expectation.",
+  "seam_needed": false
+ },
+ {
+  "id": "i112-c7-dungeons",
+  "verdict": "MANUAL_ONLY",
+  "category": "structures",
+  "rationale": "Bundle: natural placement of ruby-brick dungeons under Utopia lava pools <Y50 and generic dungeons across four dimensions (real-worldgen venue/frequency) plus the spawner-block 400-tick fuse. Partial automation possible: GenericDungeon.placeRubyDungeonAt/placeGenericDungeonAt are public and could verify geometry, chest pools, and the 12-mob-ladder fuse (place spawner block, tick 400, assert mob), but the in-dimension placement half stays manual.",
+  "seam_needed": false
+ },
+ {
+  "id": "i113-c7-mining-lakes-rooms",
+  "verdict": "MANUAL_ONLY",
+  "category": "structures",
+  "rationale": "Expectation is that Mining-dimension caves 'contain' vanilla-style water/lava lakes and monster rooms \u2014 an occurrence/frequency observation over really generated cave chunks, which cannot be produced inside a GameTest template. Partial automation possible: assert the lake/monster-room features are registered in the dimension's biome feature lists (data assert).",
+  "seam_needed": false
+ },
+ {
+  "id": "i114-c7-termite-gate-ant-chain-wgen-049",
+  "verdict": "MANUAL_ONLY",
+  "category": "entity_logic",
+  "rationale": "harness limit: the GameTestServer never instantiates datapack dimensions \u2014 GameTestServer.create builds its WorldDimensions from the FLAT world preset baked against a freshly created EMPTY LevelStem registry (decompiled 1.21.1 GameTestServer.java:97-103), so only minecraft:overworld/the_nether/the_end exist and server.getLevel(EntityAnt.UTOPIA/MINING/ISLANDS/CRYSTAL) returns null \u2014 confirmed by the triaged run's failure ('all four ant-chain dimensions must exist on the test server') and the shutdown save listing only the three vanilla dimensions. Every hop assertion needs a live destination ServerLevel. Test method removed from EntityLogicTestsB.java with a stub comment; the termite empty-inventory/no-armor refusal messages were the only destination-free sub-checks and go manual with the rest.",
+  "seam_needed": false
+ },
+ {
+  "id": "i115-c7-crystal-egg-ores",
+  "verdict": "AUTOMATABLE",
+  "category": "loot",
+  "rationale": "The acceptance criterion is break behavior: block drops itself, occasional 5-9 XP, and no mob spawns. Place each of the 11 crystal egg-ore blocks in the test area, break via fake player over N trials, count drops and XP orb values, and assert zero entities spawn. The 'sphere shells' phrase is the manual venue, and the worldgen side is covered by other C7 items; the stated expectation here is fully server-verifiable.",
+  "seam_needed": false
+ },
+ {
+  "id": "i116-c1-spawns",
+  "verdict": "MANUAL_ONLY",
+  "category": "spawn_gates",
+  "rationale": "Expectation is observed natural spawning per dimension/biome (in Mining/Utopia, NOT End/overworld, beach hotspots, per-biome rosters) \u2014 emergent worldgen-and-spawn-cycle behavior in real dimensions. Partial automation possible: data asserts on biome MobSpawnSettings rosters/weights per dimension plus checkSpawnRules calls, but that only partially verifies 'spawns there in play'.",
+  "seam_needed": false
+ },
+ {
+  "id": "i117-c2-spawns",
+  "verdict": "MANUAL_ONLY",
+  "category": "spawn_gates",
+  "rationale": "Same class of expectation as i116: dimension/biome rosters, group sizes observed in the wild (Girlfriend beach groups 8-15), hotspots, and dimension exclusions across seven-plus dims. Emergent natural-spawn observation in real dimensions; partial automation possible via biome spawn-settings data asserts (weights, min/max pack counts) and spawn-rule invocations.",
+  "seam_needed": false
+ },
+ {
+  "id": "i118-c3-spawns",
+  "verdict": "MANUAL_ONLY",
+  "category": "spawn_gates",
+  "rationale": "Bundle of natural-spawn distribution claims: never-natural mobs, doubled Nether weight, biome-only restrictions, swarm sizes in dark forests/taigas. These are observations of real-dimension spawn cycles. Partial automation possible: absence from all biome spawner lists and the doubled Kyuubi weight are clean registry data asserts.",
+  "seam_needed": false
+ },
+ {
+  "id": "i119-c4-spawns",
+  "verdict": "MANUAL_ONLY",
+  "category": "spawn_gates",
+  "rationale": "Bundles real-dimension roster observations (TRex only Chaos/Mining, ocean-w4 SeaMonster, etc.) with the D4 WormSmall night-only gate. The rosters are emergent worldgen spawn observations (manual per rubric); the night gate alone is automatable via checkSpawnRules with controlled day/night time, so partial automation possible, but the full bundle is not.",
+  "seam_needed": false
+ },
+ {
+  "id": "i120-ent-a-110",
+  "verdict": "MANUAL_ONLY",
+  "category": "spawn_gates",
+  "rationale": "harness limit: the \"(or Chaos)\" clause needs a real orespawn:chaos ServerLevel, which the GameTestServer never instantiates; no-partial-test rule (writer-workflow reclassification, bookkeeping applied at close-out). Stays manual until a SpawnGateTests method can cover the full gate.",
+  "seam_needed": false
+ },
+ {
+  "id": "i121-c8-spawn-flags",
+  "verdict": "AUTOMATABLE",
+  "category": "config",
+  "rationale": "Gating is fully server-side and config-driven: ModSpawnControl's FinalizeSpawnEvent handler (src/main/java/danger/orespawn/ModSpawnControl.java:184) discards natural spawns per the config map, and KrakenRevengeHandler.java:55 early-returns on krakenEnable \u2014 so a test can set the three configs false, drive the finalize-spawn path with NATURAL spawn type and assert the entity is discarded, hurt an AttackSquid and assert no revenge Kraken, then spawn via egg/command types and assert those still succeed.",
+  "seam_needed": false
+ },
+ {
+  "id": "i122-wgen-037",
+  "verdict": "AUTOMATABLE",
+  "category": "structures",
+  "rationale": "Every expectation is a specific named check and the maze is directly buildable: LegacyDungeonPiece.buildNow(server, pos, type) is public (src/main/java/danger/orespawn/world/structure/LegacyDungeonPiece.java:548). Build onto a flat controlled surface and assert: pyramid sink offset, 4x4 bedrock shaft with steps in the 20-29 range, antechamber torches, 30x30 maze with 2-wide corridors solvable west-to-east via programmatic BFS over the placed blocks, lava floor traps, 3 basilisks with isPersistenceRequired(), RTP trap blocks, and 2-4 east-wall chests whose contents roll from the 31-entry table. Randomized dimensions are ranged asserts; sampling may reach outside the template via direct ServerLevel access but remains server-side.",
+  "seam_needed": false
+ },
+ {
+  "id": "i123-walk-130-blocks-from-the-maze-chamber-and-return-the-3-bas",
+  "verdict": "AUTOMATABLE",
+  "category": "entity_logic",
+  "rationale": "Persistence is server state: build the maze (buildNow) or spawn its basilisks, assert isPersistenceRequired() on all three, then drive the despawn path directly \u2014 position the fake player >128 blocks away and run checkDespawn/tick cycles, asserting the entities are not removed. Fully server-observable with no client involvement.",
+  "seam_needed": false
+ },
+ {
+  "id": "i124-wgen-042-rookery",
+  "verdict": "MANUAL_ONLY",
+  "category": "structures",
+  "rationale": "Core expectation is aesthetic/statistical shape: 'cluster of jagged stone spires in two wandering ridges' is a looks-right criterion, and 'roughly 1-in-10 spires truncate' is a distribution claim over natural generation. Partial automation possible: buildNow the rookery and assert the chest-with-spawner-on-top pairing and the chest loot pool (4-8 stacks from the listed table), but the ridge/spire geometry judgment stays manual.",
+  "seam_needed": false
+ },
+ {
+  "id": "i125-wgen-051-055",
+  "verdict": "MANUAL_ONLY",
+  "category": "structures",
+  "rationale": "Bundle is dominated by real-worldgen placement properties: towers seated on the grass plane rather than floating on a heightmap ledge (needs natural Islands generation) and lessLag=1 halving tower/rookery counts in fresh chunks (placement frequency). Partial automation possible: the ~28% full-height distribution could be sampled by repeated seeded generator invocations, but the placement halves cannot, so the bundle is manual.",
+  "seam_needed": false
+ },
+ {
+  "id": "i126-wgen-052-053-056-item-066",
+  "verdict": "AUTOMATABLE",
+  "category": "structures",
+  "rationale": "All specific named checks on a directly buildable structure: buildNow KING_TOWER/QUEEN_TOWER (LegacyDungeonPiece.java:491-492, generateChallengeTower at line 2247) repeatedly until a level-6 tower rolls (~28% per build), then assert no scaffolding blocks in bounds, all 4 chests' facing blockstates point at room centre, per-floor chest contents match the tier lists, bottom-floor directional chests hold egg/armor/leggings-boots/sword, the 4 RTP blocks ring the central column, and the prize spawn egg used by a fake player actually spawns ThePrince/ThePrincess. Loot binding and entity spawn are all server-side.",
+  "seam_needed": false
+ },
+ {
+  "id": "i127-wgen-054",
+  "verdict": "AUTOMATABLE",
+  "category": "structures",
+  "rationale": "Build a level-2+ tower via buildNow, set server difficulty in the test, and assert the centre room produces a TrooperBug; its 'jumpy' behavior is server-observable as vertical deltaMovement/position changes over ticks, and 'no spit attack' is a bounded negative assert (no spit/acid projectile entity spawned during a window while it has a target in range). No rendered criterion involved.",
+  "seam_needed": false
+ },
+ {
+  "id": "i128-wgen-055-worm-ring",
+  "verdict": "MANUAL_ONLY",
+  "category": "structures",
+  "rationale": "The ring extends ~55 blocks from the tower base (~110-block footprint, beyond any GameTest template) and the key expectation \u2014 no rectangular cutoff at chunk borders \u2014 is specifically a cross-chunk artifact of natural piece-bounding-box clipping, which buildNow's unclipped window bypasses entirely, so the fix cannot be exercised that way. Partial automation possible: spawner presence at sampled radii after buildNow, but the chunk-border claim cannot.",
+  "seam_needed": false
+ },
+ {
+  "id": "i129-item-020",
+  "verdict": "AUTOMATABLE",
+  "category": "dsb",
+  "rationale": "Canonical DSB-outcome item: RandomDungeonSpawnerBlockEntity.serverTick rolls type and dispatches buildForType(server, pos, type) (src/main/java/danger/orespawn/block/entity/RandomDungeonSpawnerBlockEntity.java:178-198). A test can invoke buildForType directly (reflection; it is private) with types 2/23/38/47 \u2014 or place DSB blocks in a loop until each rolls \u2014 and assert each structure's signature blocks appear at the block position. Fully server-side; no mod change strictly required.",
+  "seam_needed": false
+ },
+ {
+  "id": "i130-wgen-005",
+  "verdict": "MANUAL_ONLY",
+  "category": "structures",
+  "rationale": "Expectation is spawn-ore vein frequency per chunk and per dimension (~24/chunk overworld, ~27 dims, Mining x3, none in Islands/Crystal/Nether/End) observed by flying fresh chunks \u2014 absolute observed density depends on the roll AND on placement success in real terrain (Y-window discards vs actual stone availability), unlike a same-mechanism ratio. Partial automation possible: the 'get NONE' halves are data asserts on which dimensions/biomes register the spawn-ore feature, and per-chunk attempt counts exist in the feature config.",
+  "seam_needed": false
+ },
+ {
+  "id": "i131-break-any-spawn-ore-drops-itself-50-of-breaks-pop-5-9-xp",
+  "verdict": "AUTOMATABLE",
+  "category": "loot",
+  "rationale": "Pure block-break loot/XP logic: place spawn-ore blocks in the test area, break with a fake player (plain pick) over N trials asserting self-drop, XP orbs valued 5-9 on roughly half of breaks (statistical bound over a large sample, or invoke the block's XP-drop method deterministically), then break with a Silk Touch tool asserting block-only and zero XP, and assert no entity ever spawns. All server-observable.",
+  "seam_needed": false
+ },
+ {
+  "id": "i132-lang-every-spawn-ore-reads-ancient-dried-mob-spawn-egg",
+  "verdict": "AUTOMATABLE",
+  "category": "other",
+  "rationale": "Display names resolve server-side: NeoForge dedicated servers load mod en_us lang entries, so a GameTest can iterate every spawn-ore block (including the 11 renamed crystal egg ores and kraken/dragon) and assert Component.translatable(block.getDescriptionId()).getString() equals the expected 'Ancient Dried <Mob> Spawn Egg' string rather than a raw translation key; falling back to parsing assets/orespawn/lang/en_us.json from the jar covers the same expectation if needed. No client rendering involved.",
+  "seam_needed": false
+ },
+ {
+  "id": "i133-item-062",
+  "verdict": "AUTOMATABLE",
+  "category": "recipes",
+  "rationale": "Every clause is now covered by blessed methods. The crafting halves are RecipeManager asserts: water bucket + spawn block yields one egg with the EMPTY BUCKET container remainder, 9x part blocks combine to full egg blocks, full block + water yields the boss egg. The former manual-blocking clause \u2014 'Mobzilla FULL egg blocks also mine from worldgen; King/Queen full blocks never do' \u2014 is a pool-membership data assert, the exact pattern i135 already uses: ModBlocks.java:157-160 documents the asymmetry and SpawnOresPoolFeature's pool carries Mobzilla part+full (c68/c69) but only THE_KING_PART/THE_QUEEN_PART (c86/c97, 'full King egg is craft-only'), and the pool is the sole worldgen source for these blocks. Assert pool contents statically plus place() sampling showing King/Queen fulls never appear.",
+  "seam_needed": false
+ },
+ {
+  "id": "i134-lessore-1",
+  "verdict": "AUTOMATABLE",
+  "category": "config",
+  "rationale": "The ~1/3 cut is entirely the LessOre mechanism: SpawnOresPoolFeature.Configuration carries lessOrePasses and ore placed features carry orespawn:less_ore_count (LessOreCountPlacement.count() branches on OreSpawnConfig.LESS_ORE). A GameTest sets LESS_ORE server-side, invokes SpawnOresPoolFeature.place() / samples LessOreCountPlacement.count() across N rolls with config on vs off, asserts the ~1/3 ratio, and data-asserts every spawn-ore placed feature carries the modifier. No real-dimension chunk flight needed - the count logic is the whole behavior.",
+  "seam_needed": false
+ },
+ {
+  "id": "i135-confirm-the-interim-content-is-gone-no-orespawn-ancient-dr",
+  "verdict": "AUTOMATABLE",
+  "category": "other",
+  "rationale": "Pure data asserts + feature invocation: assert orespawn:ancient_dried_egg absent from BLOCK/ITEM registries and from server-side creative-tab buildContents, and that no configured/placed feature references it (ModItems.java:236-237 documents the removal). SpawnOresPoolFeature's pool contains ENDER_DRAGON/DRAGON/WATER_DRAGON/KRAKEN spawn blocks with MIN_DEPTH=50 (Y50-128 window in code); invoke place() repeatedly in-test and assert those blocks appear via the pool only within Y50+, never as separate deep single-block features (registry scan).",
+  "seam_needed": false
+ },
+ {
+  "id": "i136-endercastle-end",
+  "verdict": "MANUAL_ONLY",
+  "category": "structures",
+  "rationale": "Bundle includes the load-bearing End siting claim 'on end stone (central OR outer islands - PN-017)', which is real-End structure-start placement observation over sparse, varied End terrain (both island regions) - needs the real dimension per rubric, unlike the deterministic flat-Islands anchors of i137/i146. Partial automation possible: entire interior (towers, rooftop lava+pedestal, spawner pairs, pit, CaveFisher alcoves, 3 inward-facing chests rolling the table, EMPTY trophy ender chest) via LegacyDungeonPiece.buildNow(ENDER_CASTLE), plus #minecraft:is_end biome-tag data assert on ender_castle_end.json.",
+  "seam_needed": false
+ },
+ {
+  "id": "i137-endercastle-islands",
+  "verdict": "AUTOMATABLE",
+  "category": "structures",
+  "rationale": "Consistent with i157/i170, which stand AUTOMATABLE on the same method: the 'at grass level' siting is the Islands variant's ISLANDS_GRASS anchor (LegacyDungeonStructure.java:41 documents the Ender Castle anchor split END_SURFACE vs ISLANDS_GRASS; :109 wires islandsGrassOrigin), verifiable by invoking findGenerationPoint against the Islands generator loaded on the gameTestServer \u2014 deterministic on Islands' flat Y7 grass plane. 'Same castle' is a buildNow block-diff against the End variant; ender_castle_islands.json biome registration is a data assert. The /locate phrasing is the manual venue, not a distinct check.",
+  "seam_needed": false
+ },
+ {
+  "id": "i138-incapyramid-islands",
+  "verdict": "AUTOMATABLE",
+  "category": "structures",
+  "rationale": "Every expectation is a specific named content check: buildNow(INCA_PYRAMID) onto controlled template ground, then assert 41x31 stepped geometry by targeted sampling, 4 torch-ended ramps with pillars reaching the (controlled) ground (PN-018 is generator terrain-probe behavior, reproducible on prepared terrain), lamp checkerboard, 5 water altars, 4 Creeper Repellents, Molenoid spawner BE, trapdoor+ladder shaft, 24 graves with ~1/3 Ghost spawners over repeated builds (statistical), and all chests rolling 10-14 stacks from the 480-weight table. 41x31 fits the ~48-block template.",
+  "seam_needed": false
+ },
+ {
+  "id": "i139-kyuubidungeon-mining",
+  "verdict": "AUTOMATABLE",
+  "category": "structures",
+  "rationale": "All content checks, no siting claim ('Mining' is where a manual tester finds it): buildNow(KYUUBI_DUNGEON), assert sealed hut with 1x1 roof hole, 22-deep shaft with water brake, lava-walled corridor, altar + 4-tier ziggurat, 8 Blaze spawner BEs in a ring, kyuubi chest fill count 7-13 and the four wall chests' distinct 4-8/3-7/5-9/6-10 fills (statistical over rebuilds) including blaze-egg entries. Vertical extent fits template/targeted sampling.",
+  "seam_needed": false
+ },
+ {
+  "id": "i140-robot-lab-islands",
+  "verdict": "AUTOMATABLE",
+  "category": "structures",
+  "rationale": "All specific named server-side checks: buildNow(ROBOT_LAB), assert both rear sniper spawner BEs behind the hangar wall, spawner entity ids per room (Robo-Pounder altar / Robo-Warrior treasure / Robo-Sniper pillars), golden-rail powered states and unpowered floor levers as block states, sticky pistons facing south under white carpet with lever-driven extension after redstone ticks, doors facing NORTH with button-press opening (set button state, tick, assert door open - pure server logic), chests rolling 10-14 of the 755 table with dropper/dispenser/clock absence across rolls. buildNow writes directly to the level so size beyond the template only needs targeted sampling, which the rubric blesses for named checks.",
+  "seam_needed": false
+ },
+ {
+  "id": "i141-hospital-end",
+  "verdict": "AUTOMATABLE",
+  "category": "structures",
+  "rationale": "Content-only bundle: buildNow(HOSPITAL), assert 10x10 iron-bar cage blocks, exactly 4 EndCrystal entities on bedrock caps, zero EnderDragon entities in the area, 8 spawner BEs, and the corner chest rolling 6-10 stacks of the 210-weight table. '(End)' is just where the manual tester locates it; every stated check is a block/entity/loot assert.",
+  "seam_needed": false
+ },
+ {
+  "id": "i142-monsterisland-overworld",
+  "verdict": "AUTOMATABLE",
+  "category": "structures",
+  "rationale": "PN-019 biome half is a pure data assert: monster_island.json's biomes field is literally \"minecraft:ocean\" (excludes deep/frozen/warm) - the rubric's blessed structure-tag assert. The rest is generator-relative over a sea the test builds itself: buildNow(MONSTER_ISLAND) with origin at the template water surface, assert the lens island embedded at the waterline, canopy tree, 4 spawner BEs sharing ONE entity id per build (varying across rebuilds), 2 chests rolling 4-8 of the 450 table.",
+  "seam_needed": false
+ },
+ {
+  "id": "i143-dsb-outcomes",
+  "verdict": "AUTOMATABLE",
+  "category": "dsb",
+  "rationale": "Rubric's canonical DSB pattern: place orespawn:random_dungeon_block, tick 400, assert block+above cleared and a pool structure built. All eight listed types are confirmed wired in RandomDungeonSpawnerBlockEntity (TYPE_FAIRY_TREE=0, FAIRY_CASTLE_TREE=1, KYUUBI_DUNGEON=7, HOSPITAL=24, ENDER_CASTLE=27, INCA_PYRAMID=29, ROBOT_LAB=30, MONSTER_ISLAND=37, lines 45-84). Deterministic per-type coverage via reflection into the private static buildForType(ServerLevel,BlockPos,int) from test sources - no mod-code change needed - asserting each type's signature blocks at the block pos.",
+  "seam_needed": false
+ },
+ {
+  "id": "i144-trees",
+  "verdict": "MANUAL_ONLY",
+  "category": "structures",
+  "rationale": "Bundle fails as a whole: 'lone Duplicator Log appears RARELY in veggie patches' is a worldgen frequency claim over natural chunks, and 'fairy-tree chunks that fail the site scan still suppress termites' (WGEN-062) is cross-feature chunk-decoration interplay - both need real dimension generation per rubric. Partial automation possible: experience sapling growth (grow server-side, assert 2x2 oak trunk + branch blocks), and lessLag=1 crystal-fairy-tree shrink (set config, call CrystalStructures.buildFairyTreeAt with config on/off, compare extents).",
+  "seam_needed": false
+ },
+ {
+  "id": "i145-playpool-overworld-ocean",
+  "verdict": "AUTOMATABLE",
+  "category": "structures",
+  "rationale": "PlayPoolGenerator's documented anchor contract is 'origin is the AIR block directly above the ocean' with all offsets internal (spawners at y+16, chest pair at y+17, channel down into the sea below - PlayPoolGenerator.java:25,81-83). A GameTest builds its own sea in the template, invokes buildNow(PLAY_POOL) at the surface origin, and asserts the platform 16 above the water, 4 Attack Squid spawner BEs, only the x+1 chest holding the ink/squid-zooka/gold-nugget/flesh 3-7 stack rolls, and flowing-water channel caps. Every stated check is generator-relative and server-observable.",
+  "seam_needed": false
+ },
+ {
+  "id": "i146-cloudsharkdungeon-islands-sky",
+  "verdict": "AUTOMATABLE",
+  "category": "structures",
+  "rationale": "Exact parity with i162, which stands AUTOMATABLE: the Y150-159 band is PlacementMode.SKY_BAND_150 (CloudSharkDungeonGenerator.java:28, wired at LegacyDungeonStructure.java:119) \u2014 the same anchor-code assert blessed for Rainbow's SKY_BAND_70, checkable via findGenerationPoint against the Islands generator loaded on the gameTestServer. Content (glowstone cluster, 4 Cloud Shark spawner BEs, chest rolling 4-8 stacks incl. experience tree seeds) via buildNow(CLOUD_SHARK_DUNGEON); the biome tag on cloud_shark_dungeon.json is a data assert. The /locate-and-fly phrasing is the manual venue, not a distinct check.",
+  "seam_needed": false
+ },
+ {
+  "id": "i147-goldfishbowl-overworld-ocean-wgen-042",
+  "verdict": "AUTOMATABLE",
+  "category": "structures",
+  "rationale": "The tracked expectations are the faithful generator oddities, all internal content: buildNow(GOLD_FISH_BOWL) over template water, assert glass bowl shape, sand bed, water fill, 4 glowstone corners, Gold Fish spawner BE, the open wall-top ring and unwritten base ring (block-level asserts of the faithful quirks), and chest absence. 'On the surface' is scene-setting for the manual locate procedure, not a distinct numbered check.",
+  "seam_needed": false
+ },
+ {
+  "id": "i148-spitbuglair-swamp-wgen-042",
+  "verdict": "AUTOMATABLE",
+  "category": "structures",
+  "rationale": "Content via buildNow(SPIT_BUG_LAIR): emerald-ore antenna blocks, 3 Spit Bug spawner BEs, loot chest contents. The biome half 'only in plain swamp (not mangrove)' is exactly the rubric's blessed data assert: spit_bug_lair.json restricts to tag #orespawn:has_structure/spit_bug_lair - assert the tag's holder set contains minecraft:swamp and not minecraft:mangrove_swamp. Both halves fully covered by blessed methods.",
+  "seam_needed": false
+ },
+ {
+  "id": "i149-urchinspawner-crystal-wgen-042",
+  "verdict": "AUTOMATABLE",
+  "category": "config",
+  "rationale": "Config-gated behavior, settable server-side in-test (rubric blesses). The gate is CrystalStructures.java:581: URCHIN_ENABLE=false returns before the 1/180 roll, so no urchin spawner can ever place. Test sets the config false, invokes the public CrystalStructures.generate(WorldGenLevel, random, chunkX, chunkZ, ...) decoration path (line 97) many times over prepared terrain and asserts zero urchin spawner blocks/BEs appear; with config true, repeated invocations (or reflection on tryPlaceUrchinSpawner) show they can. Fully captures 'no new urchin spawners generate'.",
+  "seam_needed": false
+ },
+ {
+  "id": "i150-rotatorstation-other-dsb-outcomes",
+  "verdict": "AUTOMATABLE",
+  "category": "dsb",
+  "rationale": "Same blessed DSB pattern as i143. All eleven listed indices are confirmed wired in RandomDungeonSpawnerBlockEntity exactly as mapped (TYPE_ROTATOR_STATION=3, PLAY_POOL=12, WATER_DRAGON_LAIR=13, CLOUD_SHARK_DUNGEON=14, LEAF_MONSTER_DUNGEON=15, MINI_DUNGEON=16, GOLD_FISH_BOWL=17, ENDER_REAPER_GRAVEYARD=18, SPIT_BUG_LAIR=19, IGLOO=20, CEPHADROME_ALTAR=34). Place block + tick 400 for the end-to-end path; per-type determinism via reflection into private static buildForType, asserting each type's signature blocks at the block pos.",
+  "seam_needed": false
+ },
+ {
+  "id": "i151-enderreapergraveyard-end-wgen-042",
+  "verdict": "AUTOMATABLE",
+  "category": "structures",
+  "rationale": "All content, including the skirt behavior which is the generator's sanctioned same-cell terrain probe (LegacyDungeonPiece doc cites 'Ender Reaper graveyard air-only skirt, orig GenericDungeon.java:2500'): buildNow(ENDER_REAPER_GRAVEYARD) over controlled mixed air/end-stone terrain, assert the skirt filled only cells that were air and left prior terrain untouched, roofless iron-bar cage, 8 obsidian graves with flush chests rolling eye/poppy/dandelion/pearl 3-5 stacks, 4 Ender Reaper spawner BEs. '(End)' is locate procedure only.",
+  "seam_needed": false
+ },
+ {
+  "id": "i152-waterdragonlair-ocean-wgen-042",
+  "verdict": "AUTOMATABLE",
+  "category": "structures",
+  "rationale": "Content-only bundle: buildNow(WATER_DRAGON_LAIR) over template water, assert the polar-math disc geometry by targeted sampling, iron annulus, lapis/spawn-egg rim courses, canopy tree blocks, 4 Water Dragon spawner BEs, and the chest rolling 4-8 stacks of the 145-weight table. No siting or biome claim stated beyond the locate procedure.",
+  "seam_needed": false
+ },
+ {
+  "id": "i153-leafmonsterdungeon-plains-wgen-042",
+  "verdict": "AUTOMATABLE",
+  "category": "structures",
+  "rationale": "All content; the foundation-roots claim is the generator's same-cell probe pattern (LegacyDungeonPiece doc cites 'Leaf Monster foundation roots, orig GenericDungeon.java:2113'), reproducible on controlled grass terrain: buildNow(LEAF_MONSTER_DUNGEON), assert log tower + leaf crown blocks, 4 Leaf Monster spawner BEs, the chest pair with exactly one filled at 12-16 stacks, and that the grass threshold cell survives while roots fill below-terrain cells.",
+  "seam_needed": false
+ },
+ {
+  "id": "i154-minidungeon-islands-wgen-042",
+  "verdict": "AUTOMATABLE",
+  "category": "structures",
+  "rationale": "Exact-position content checks: buildNow(MINI_DUNGEON), assert the 12-spawner ring at j=9, corner caps, floor spawner BEs, and chest presence/loot. '(Islands)' is the manual locate context; every stated expectation is a deterministic block/BE assert at named offsets.",
+  "seam_needed": false
+ },
+ {
+  "id": "i155-cephadromealtar-islands-wgen-042",
+  "verdict": "AUTOMATABLE",
+  "category": "structures",
+  "rationale": "'Altar per spec with its spawners' is a set of specific named checks against the D6b spec: buildNow(CEPHADROME_ALTAR) (CephadromeAltarGenerator exists, DSB TYPE_CEPHADROME_ALTAR=34 wired), assert the spec'd altar blocks and Cephadrome spawner BEs. No siting claim in the expectation.",
+  "seam_needed": false
+ },
+ {
+  "id": "i156-igloo-wgen-042-wgen-071",
+  "verdict": "AUTOMATABLE",
+  "category": "dsb",
+  "rationale": "Every half is server-verifiable: 'DSB type 20 ONLY' - TYPE_IGLOO=20 is wired (place DSB / drive buildForType) and 'no natural generation' is a registry data assert (no igloo structure JSON or structure_set entry exists in the datapack - confirmed absent from worldgen/structure/). Content via buildNow(IGLOO): snow/ice dome, west-facing oak door, Rat/Ghost/Ghost-Pumpkin-Skelly spawner BEs, north-facing chest whose 16 fixed items each land ~50% independently (statistical over rebuilds). The float quirk is testable by invoking buildNow at positive vs negative coordinate origins in the same level and asserting the apex 1x1 skylight open vs closed via direct block reads. WGEN-071 placement itself is explicitly out of scope (Phase E).",
+  "seam_needed": false
+ },
+ {
+  "id": "i157-bouncycastle-desert",
+  "verdict": "AUTOMATABLE",
+  "category": "structures",
+  "rationale": "buildNow(BOUNCY_CASTLE) into the test area (9x9x5, fits template): assert full lavafoam shell with Block#getFriction()==1.1 plus bounce via a dropped entity's server-side velocity, the 9 Silverfish/Rat/Scorpion spawner block entities, and the north-facing chest at (+3,+3,+3) with 6-10 stacks from the weight-180 loot table (repeated rolls for range/contents). 'Sunk to the sand surface' is the SAND_SURFACE_MINUS1 anchor (LegacyDungeonStructure.java:121-131), verifiable by invoking findGenerationPoint against the real overworld generator plus a placement-mode data assert.",
+  "seam_needed": false
+ },
+ {
+  "id": "i158-damselindistress-village-dim",
+  "verdict": "MANUAL_ONLY",
+  "category": "structures",
+  "rationale": "harness limit: GameTestServer instantiates only minecraft:overworld (runs/gameTestServer/logs/latest.log: the sole 'Preparing start region for dimension minecraft:overworld'; siblings i164 and i114 hit the same wall), so getServer().getLevel(orespawn:village) is always null in the harness even though src/main/resources/data/orespawn/dimension/village.json registers the dimension on a real server (runclient loads it). Village LEVEL-existence half only returns to manual \u2014 only that assert was removed from i158_damsel_in_distress_content (HARNESS_LIMIT stub left); the structure-content, orespawn:village_biome binding, and VILLAGE_GRASS_SURFACE placement-mode asserts remain in-harness and passing.",
+  "seam_needed": false
+ },
+ {
+  "id": "i159-girlfriendisland-ocean",
+  "verdict": "AUTOMATABLE",
+  "category": "structures",
+  "rationale": "GirlfriendIslandGenerator consumes ZERO random draws (geometry, spawner names, chest positions all constants per class doc) \u2014 build both it and MonsterIsland via buildNow and block-diff to fully verify the geometry-twin claim; assert the four FIXED spawner ids (Girlfriend/Boyfriend/GoldFish x2, no roll) and both chests' 4-8 stack rolls from the damsel table.",
+  "seam_needed": false
+ },
+ {
+  "id": "i160-stinkyhouse-islands",
+  "verdict": "AUTOMATABLE",
+  "category": "structures",
+  "rationale": "buildNow(STINKY_HOUSE) (25x17 yard fits template): deterministic asserts for house footprint, corner-adjacent panes, force-cleared doorway, Stink Bug + Stinky spawner ids, chest 8-12 stacks of the weight-215 table incl. both stink eggs. The 1/3 fence-gap, 1/10 bush, 1/10 decay probabilities verify statistically over repeated builds; 'never overwrites yard air' verifies as an invariant against pre-marked cells.",
+  "seam_needed": false
+ },
+ {
+  "id": "i161-pumpkin-islands",
+  "verdict": "AUTOMATABLE",
+  "category": "structures",
+  "rationale": "buildNow(PUMPKIN) (14x14x12): enumerate the 48 carved-face air cells on the -z wall, stem terracotta lean, plank candle + netherrack + two fires, 2 Ghost Pumpkin Skelly spawners, and chest ABSENCE \u2014 all block/blockentity asserts. 'One block above grass' is the ISLANDS_GRASS_AIR anchor (grass+1, LegacyDungeonStructure.java:133-138), a data+code assert via findGenerationPoint.",
+  "seam_needed": false
+ },
+ {
+  "id": "i162-rainbow-islands-sky",
+  "verdict": "MANUAL_ONLY",
+  "category": "structures",
+  "rationale": "harness limit: the SKY_BAND_70 anchor probe needs the orespawn:islands ServerLevel and its real generator (findGenerationPoint against contextFor(islands)), but the vanilla GameTestServer bakes WorldPresets.FLAT against an EMPTY datapack LevelStem registry (GameTestServer.create), so datapack dimensions are never created \u2014 the run log prepares only minecraft:overworld and every suite test requesting an orespawn dimension failed identically (i164 in this batch; i158/i114 in other groups). Anchor sub-check only returns to manual \u2014 the section was removed from rainbow_islands_sky_i162 with a HARNESS_LIMIT stub; the build/spawner/chest/loot assertions remain automated (loot currently red only from the unscoped-GLM defect TF-018).",
+  "seam_needed": false
+ },
+ {
+  "id": "i163-dsb-batch-3-outcomes",
+  "verdict": "AUTOMATABLE",
+  "category": "dsb",
+  "rationale": "DSB outcome test: invoke the dispatch for types 26/28/35/39/44/46 at a controlled pos and assert each structure's signature blocks appear at the block (pumpkin at +1Y). The roll is server.random.nextInt(50) feeding private buildForType (RandomDungeonSpawnerBlockEntity.java:178-198), so forcing a type needs a seam: expose buildForType (@VisibleForTesting) or a forced-type detonate hook.",
+  "seam_needed": true
+ },
+ {
+  "id": "i164-spiderhangout-village-dim",
+  "verdict": "MANUAL_ONLY",
+  "category": "structures",
+  "rationale": "harness limit: the SpiderDriverEnable worldgen-gate check requires findGenerationPoint against the real orespawn:village generator \u2014 the positive control needs a Village grass surface inside the Y 41..100 scan window, and no orespawn dimension exists on the GameTestServer (flat-preset-only world creation); the flat overworld surface at Y -60 fails the scan, so a gate-off empty result would be unattributable to the config gate. Gate sub-check only returns to manual \u2014 the section was removed from spider_hangout_village_i164 with a HARNESS_LIMIT stub; the pad/spawner/robot/silent-spawn assertions remain automated and all passed in the triaged run, so the test should now be green.",
+  "seam_needed": false
+ },
+ {
+  "id": "i165-redanthangout-village-dim",
+  "verdict": "AUTOMATABLE",
+  "category": "structures",
+  "rationale": "buildNow(RED_ANT_HANGOUT): assert the exact 36 corner nest cells vs 220 gravel cells (the De Morgan corner condition), no spawners, no chest; Robot Red Ant at +8,+8 with persistence flag and UNOWNED ownership data; wrench-claim exercised via a mock ServerPlayer interactOn and asserting the resulting owner data \u2014 all server-side.",
+  "seam_needed": false
+ },
+ {
+  "id": "i166-frogpond-plains-wgen-042",
+  "verdict": "AUTOMATABLE",
+  "category": "structures",
+  "rationale": "buildNow(FROG_POND) (7x7, smallest of the pool): assert still-water sheet flush at origin, centre riser, Frog spawner id at +2, lily-pad cross; the flowing-cross spill is generated behavior that materialises after fluid ticks run inside the test \u2014 block-state asserts on flowing water.",
+  "seam_needed": false
+ },
+ {
+  "id": "i167-disableoverworlddungeons-gate-wgen-064",
+  "verdict": "AUTOMATABLE",
+  "category": "config",
+  "rationale": "The gate is a single early return covering exactly the 11-type EnumSet (LegacyDungeonStructure.java:58-70,102-105) and is the only worldgen path for those structures: set disableOverworldDungeons=true server-side and assert findGenerationPoint returns empty for all 11 types (real GenerationContext against the overworld generator). DSB half: place the Random Dungeon block, tick 400, assert detonation still builds \u2014 the buildNow path never reads the gate.",
+  "seam_needed": false
+ },
+ {
+  "id": "i168-rubberduckypond-plains",
+  "verdict": "AUTOMATABLE",
+  "category": "structures",
+  "rationale": "buildNow(RUBBER_DUCKY_POND) (12x11): sand rim + 10x9 water interior, tower layers (water +3, glass +4, chest pair +5, 2 Rubber Ducky spawners +6) are all named block/blockentity asserts; the faithful oddity \u2014 only the +1 chest rolls the 13-entry table (8-12 stacks) while its pair stays EMPTY \u2014 is a direct container-contents assert.",
+  "seam_needed": false
+ },
+ {
+  "id": "i169-hauntedhouse-overworld",
+  "verdict": "AUTOMATABLE",
+  "category": "structures",
+  "rationale": "buildNow(HAUNTED_HOUSE) (7x7x5): hardcoded orientation makes every check positional \u2014 glass clerestory band incl. corners, east doorway, furnace/crafting-table/chest furniture row, Rat/Ghost/GhostPumpkinSkelly spawner stack. The 14 fixed chest slots at 50% presence each verify by slot/item identity plus presence statistics over repeated builds.",
+  "seam_needed": false
+ },
+ {
+  "id": "i170-enderknightdungeon-end-mining",
+  "verdict": "MANUAL_ONLY",
+  "category": "structures",
+  "rationale": "harness limit: the LOWEST_GRASS_36 no-sink anchor probe needs the orespawn:mining ServerLevel/generator (getBaseHeight recomputation of the 6x6 lowest-grass scan); no orespawn dimension loads on the GameTestServer (flat-preset-only world creation), and the flat overworld surface (Y -60) is outside the scan's 31..128 window, so no generation stub can even form as a stand-in. Mining-anchor sub-check only returns to manual \u2014 the section was removed from ender_knight_dungeon_i170 with a HARNESS_LIMIT stub; the octagon/shelf-statistics/spawner/loot assertions remain automated (currently red only from the unscoped-GLM ruby defect TF-018).",
+  "seam_needed": true
+ },
+ {
+  "id": "i171-dsb-full-sweep",
+  "verdict": "AUTOMATABLE",
+  "category": "dsb",
+  "rationale": "All 50 outcomes are a table-driven switch (buildForType, RandomDungeonSpawnerBlockEntity.java:198+): force each type 0-49 at a fresh pos, assert a per-outcome signature block/entity, and for the offset-corrected group (altars/greenhouse/white house/robot lab, +1Y cases) assert the anchor lands exactly at the clicked pos. Large outcomes assert via direct level reads (specific named checks), not template bounds. Needs the forced-type seam since the roll is server.random.nextInt(50): expose buildForType (@VisibleForTesting).",
+  "seam_needed": true
+ },
+ {
+  "id": "i172-regression-greenhouse-plants-wgen-063",
+  "verdict": "AUTOMATABLE",
+  "category": "structures",
+  "rationale": "buildNow(GREENHOUSE) repeatedly and enumerate the plot blocks: sugar cane and rice must appear across builds, empty-plot rate must sit in statistical bounds of 1/20, and pumpkins must NEVER appear (hard invariant over N builds). The DSB-36 path runs the same generator, so one loop covers both entry points.",
+  "seam_needed": false
+ },
+ {
+  "id": "i173-regression-greenhouse-white-house-doors-wgen-067-068",
+  "verdict": "AUTOMATABLE",
+  "category": "structures",
+  "rationale": "Pure block-state asserts after buildNow: greenhouse entry has two complete iron doors (both halves present, facing north) with stone lintels above the flanks and stone buttons attached to the outside wall; White House entry has a full 2-tall iron door plus a button whose attachment face/support block is the wall (the 'not floating' check is the button state + supporting block assert). White House is huge but these are targeted named checks.",
+  "seam_needed": false
+ },
+ {
+  "id": "i174-regression-royal-altars-alien-wtf-boxes-wgen-065-066",
+  "verdict": "AUTOMATABLE",
+  "category": "structures",
+  "rationale": "buildNow(KING_ALTAR/QUEEN_ALTAR): assert dirt skirt cells down to -9 and air columns up to +58 via direct level reads (the piece writes +58 on both worldgen and buildNow paths per LegacyDungeonPiece.java:111). buildNow(ALIEN_WTF): enumerate the south Part-room far-wall cells and assert completeness. The reseed-for-existing-seeds note is documentation, not a runtime criterion.",
+  "seam_needed": false
+ },
+ {
+  "id": "i175-regression-dsb-recentring-item-067",
+  "verdict": "AUTOMATABLE",
+  "category": "dsb",
+  "rationale": "Force the Robot Lab type through the DSB dispatch and assert the lab's anchor/signature blocks sit exactly at the clicked position rather than -5/-25 shifted \u2014 a deterministic position assert once the roll is controllable. Needs the same forced-type seam (expose RandomDungeonSpawnerBlockEntity.buildForType for tests).",
+  "seam_needed": true
+ },
+ {
+  "id": "i176-regression-bee-mantis-chests-item-068-069",
+  "verdict": "AUTOMATABLE",
+  "category": "structures",
+  "rationale": "BeehiveFeature.buildAt / SmallBeehiveFeature.buildAt / MantisNestFeature.buildAt are public static builders callable in the test area: assert each chest's FACING state points inward (not uniformly north) and roll/inspect the bound loot \u2014 Bee/Mantis spawn eggs at 2-8 / 2-4 stacks present, golden carrots and spider eyes absent as a hard invariant over repeated fills.",
+  "seam_needed": false
+ },
+ {
+  "id": "i177-anim-016-halloween-closes-ent-d-039-041",
+  "verdict": "AUTOMATABLE",
+  "category": "date",
+  "rationale": "The date gate lives in server-side checkSpawnRules (Ghost.java:184-198, GhostSkelly.java:184) atop static halloween_ghosts.json biome registration: data-assert the 22-biome list, then call checkSpawnRules at night with /fillbiome-controlled positions under both dates \u2014 Oct 31 passes everywhere registered, other dates pass only in the 5 year-round biomes (OriginalSpawnGates.inYearRoundGhostBiome). 'Drop: nothing' = kill and count. Needs a seam: SeasonalDates hardcodes LocalDate.now() (util/SeasonalDates.java:21) \u2014 add an injectable date override.",
+  "seam_needed": true
+ },
+ {
+  "id": "i178-anim-016-valentine-s-ent-d-011-family",
+  "verdict": "MANUAL_ONLY",
+  "category": "date",
+  "rationale": "The bundle includes 'renders 5x' and the girlfriendv TEXTURE \u2014 client-rendered acceptance criteria a headless GameTest cannot observe \u2014 plus o_hurt ambient as heard; per the no-gray-zone rule the whole item is manual. Partial automation possible with a SeasonalDates date-injection seam: 800 HP attribute, 2.5x8 getDimensions, targeting players/Boyfriends but not owner/pets, inWall immunity (Girlfriend.java:479), Love drop per rose_sword hit and the ~1/4 cure/shrink/calm (Girlfriend.java:485-590), and Shoes dealing 10 (Shoes.java:64) are all server-observable.",
+  "seam_needed": false
+ },
+ {
+  "id": "i179-anim-016-easter-closes-ent-d-011",
+  "verdict": "AUTOMATABLE",
+  "category": "date",
+  "rationale": "The whole expectation is the spawn gate: EasterBunny.checkSpawnRules returns false unless SeasonalDates.isEaster() (EasterBunny.java:253). With an injected date, call checkSpawnRules in a spawn-valid setup and assert true on Apr 20 and false on any other date, plus a data assert on the bunny's biome spawn registration; egg-laying is explicitly out of scope (covered by A4). Seam: same SeasonalDates injectable date override (currently LocalDate.now()).",
+  "seam_needed": true
+ }
 ]
