@@ -1,0 +1,157 @@
+{
+  "type": "minecraft:chest",
+  "pools": [
+    {
+      "rolls": {
+        "type": "minecraft:uniform",
+        "min": 8.0,
+        "max": 12.0
+      },
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "orespawn:dead_stink_bug",
+          "weight": 35,
+          "functions": [
+            {
+              "function": "minecraft:set_count",
+              "count": { "type": "minecraft:uniform", "min": 4.0, "max": 10.0 }
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "orespawn:fire_fish",
+          "weight": 35,
+          "functions": [
+            {
+              "function": "minecraft:set_count",
+              "count": { "type": "minecraft:uniform", "min": 4.0, "max": 10.0 }
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "orespawn:sun_fish",
+          "weight": 35,
+          "functions": [
+            {
+              "function": "minecraft:set_count",
+              "count": { "type": "minecraft:uniform", "min": 4.0, "max": 10.0 }
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "orespawn:spark_fish",
+          "weight": 35,
+          "functions": [
+            {
+              "function": "minecraft:set_count",
+              "count": { "type": "minecraft:uniform", "min": 4.0, "max": 10.0 }
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "orespawn:green_fish",
+          "weight": 35,
+          "functions": [
+            {
+              "function": "minecraft:set_count",
+              "count": { "type": "minecraft:uniform", "min": 4.0, "max": 10.0 }
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "orespawn:blue_fish",
+          "weight": 35,
+          "functions": [
+            {
+              "function": "minecraft:set_count",
+              "count": { "type": "minecraft:uniform", "min": 4.0, "max": 10.0 }
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "orespawn:pink_fish",
+          "weight": 35,
+          "functions": [
+            {
+              "function": "minecraft:set_count",
+              "count": { "type": "minecraft:uniform", "min": 4.0, "max": 10.0 }
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "orespawn:rock_fish",
+          "weight": 35,
+          "functions": [
+            {
+              "function": "minecraft:set_count",
+              "count": { "type": "minecraft:uniform", "min": 4.0, "max": 10.0 }
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "orespawn:wood_fish",
+          "weight": 35,
+          "functions": [
+            {
+              "function": "minecraft:set_count",
+              "count": { "type": "minecraft:uniform", "min": 4.0, "max": 10.0 }
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "orespawn:grey_fish",
+          "weight": 35,
+          "functions": [
+            {
+              "function": "minecraft:set_count",
+              "count": { "type": "minecraft:uniform", "min": 4.0, "max": 10.0 }
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "orespawn:rubber_ducky_spawn_egg",
+          "weight": 35,
+          "functions": [
+            {
+              "function": "minecraft:set_count",
+              "count": { "type": "minecraft:uniform", "min": 4.0, "max": 10.0 }
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "orespawn:peacock_feather",
+          "weight": 35,
+          "functions": [
+            {
+              "function": "minecraft:set_count",
+              "count": { "type": "minecraft:uniform", "min": 4.0, "max": 10.0 }
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:feather",
+          "weight": 35,
+          "functions": [
+            {
+              "function": "minecraft:set_count",
+              "count": { "type": "minecraft:uniform", "min": 6.0, "max": 16.0 }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

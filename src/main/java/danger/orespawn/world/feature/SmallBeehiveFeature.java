@@ -116,6 +116,30 @@ public class SmallBeehiveFeature extends Feature<NoneFeatureConfiguration> {
         if (cpos.getY() + HEIGHT + 2 >= level.getMaxBuildHeight() - 2) return false;
         if (cpos.getY() <= level.getMinBuildHeight() + 2) return false;
 
+        return buildAt(level, random, cpos);
+    }
+
+    /**
+     * The {@code makeSmallBeeHive} build core (orig GenericDungeon.java:
+     * 1363-1451), corner-anchored on the passed {@code cpos} exactly like the
+     * original's {@code (cposx, cposy, cposz)} — including the legacy
+     * {@code j = height*2/3 + 1} reassignment quirk before the doorway carve.
+     *
+     * <p>Serves TWO trigger paths, the same sharing the original had:</p>
+     * <ol>
+     *   <li><b>Worldgen</b> — {@link #place} keeps its heightmap anchor and
+     *       bounds vetoes (the {@code addANest} grass-tile semantic), then
+     *       delegates here with an unchanged draw sequence.</li>
+     *   <li><b>Play time</b> — Random Dungeon Spawner outcome type 8 (orig
+     *       DungeonSpawnerBlock.java:77-79) calls this at the cleared
+     *       spawner-block position with NO ground gate and NO Y adjustment —
+     *       the original validated nothing, so a floating or terrain-embedded
+     *       skep is faithful behavior (dsb_sweep_spec.md &sect;C.2).</li>
+     * </ol>
+     *
+     * @return always {@code true} &mdash; the original builds unconditionally
+     */
+    public static boolean buildAt(WorldGenLevel level, Random random, BlockPos cpos) {
         BlockState air = Blocks.AIR.defaultBlockState();
         BlockState honeycomb = Blocks.HONEYCOMB_BLOCK.defaultBlockState();
         BlockState mossy = Blocks.MOSSY_COBBLESTONE.defaultBlockState();

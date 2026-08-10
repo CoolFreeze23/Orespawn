@@ -40,12 +40,14 @@ import net.minecraft.world.level.storage.loot.LootTable;
  *     {@code (int)((float) origin + (float)(radius * cos/sin(deg)) + 0.5f)}
  *     &mdash; the drift-preserving origin-added form
  *     ({@code CrystalStructures.buildCrystalBattleTower} precedent,
- *     CrystalStructures.java:822-826). {@code (int)} truncates toward zero,
+ *     CrystalStructures.java:868). {@code (int)} truncates toward zero,
  *     so the whole shell + door column shifts +1 per NEGATIVE world axis
  *     while the int-math spawners/chest stay fixed &mdash; faithful 1.7.10
- *     quadrant drift, reproduced bit-identically. Deliberately NOT the
- *     zero-centered {@code CrystalBattleTowerFeature.stampDisc/stampRing}
- *     form, which the spec proves is not bit-faithful at any origin.</li>
+ *     quadrant drift, reproduced bit-identically. Deliberately NOT a
+ *     zero-centered stamp form (the since-deleted
+ *     CrystalBattleTowerFeature's approach &mdash; removed in D6b batch 4,
+ *     dsb_sweep_spec.md F4), which the spec proves is not bit-faithful at
+ *     any origin.</li>
  * <li>The original door helper {@code ItemDoor.func_150924_a} (orig :2745,
  *     direction 2 = facing west) picks the hinge by READING the two flanking
  *     wall columns &mdash; all four probed cells are this builder's own

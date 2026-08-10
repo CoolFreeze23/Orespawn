@@ -90,7 +90,14 @@ public class LegacyDungeonPiece extends StructurePiece {
         WHITE_HOUSE(48, 2, 25),
         // Audit Part 3 — buried 5x5 lapis surface antenna + 17-block descending
         // shaft + 4 cardinal "Part" rooms (W=15 wide max). Down -25, up +6.
-        ALIEN_WTF(20, 25, 6),
+        // D6b batch-4 F8 fix (dsb_sweep_spec.md): the south Part room writes
+        // to z = origin-21 (orig GD:1674 — makeAlienPart at sz-7 spanning 15),
+        // outside the old symmetric ±20 box, so its far Z wall plane was
+        // ALWAYS dropped on the buildNow path and on ~1/16 worldgen chunk
+        // alignments. Widened to the true footprint (X -19..+17, Z -21..+15)
+        // +1 margin. Documented delta: the piece RandomSource seeds from the
+        // bounding box, so worldgen layouts reseed for existing seeds.
+        ALIEN_WTF(-20, 20, 25, 6, -22, 20, PlacementMode.SURFACE_CENTER),
         // Audit Part 3 — hollow rad=10 sphere with surface decoration shell
         // (legacy line 4677). Down -10, up +5 (hollowed sky cap).
         LEONOPTERYX_NEST(12, 10, 5),
@@ -98,8 +105,14 @@ public class LegacyDungeonPiece extends StructurePiece {
         // is the SW corner of the pad, so positive X/Z reach is +56 with the
         // 5-block clear margin; we centre by passing the centre as origin
         // and use ±32 extents to span the full footprint.
-        KING_ALTAR(32, 4, 56),
-        QUEEN_ALTAR(32, 4, 56),
+        // D6b batch-4 F3 fix (dsb_sweep_spec.md): down 4 clipped the v=1..9
+        // dirt skirt (orig GD:4377-4382/5721-5726, writes to origin-9) and
+        // up 56 clipped the top 2 rows of the j<=height+10 air clear (orig
+        // GD:4364, writes to origin+58) in BOTH worldgen and buildNow.
+        // Widened to down 10 / up 59 (+1 margin). Documented delta: piece
+        // RNG seeds from the box, so layouts reseed for existing seeds.
+        KING_ALTAR(32, 10, 59),
+        QUEEN_ALTAR(32, 10, 59),
         // Audit Part 4 + Phase D5 reconciliation — King's / Queen's Challenge
         // Tower (legacy GenericDungeon.makeEnormousCastle line 191 /
         // makeEnormousCastleQ line 6393). 28x28 base + up to 6 stacked floors
@@ -211,7 +224,36 @@ public class LegacyDungeonPiece extends StructurePiece {
         PUMPKIN(-1, 14, 1, 18, -1, 12, PlacementMode.ISLANDS_GRASS_AIR),
         // Rainbow (GD:6260-6393): Islands D4 i==18 (addD4Rainbow
         // OSW:2430-2436) — unconditional sky placement, Y 70..89.
-        RAINBOW(-15, 14, 0, 41, -4, 4, PlacementMode.SKY_BAND_70);
+        RAINBOW(-15, 14, 0, 41, -4, 4, PlacementMode.SKY_BAND_70),
+        // Phase D6b batch 4 — specs in phase_d_reports/d6_extraction/.
+        // Spider Hangout (GD:6989-7043): Village-dimension gravel pad
+        // (addSpiderHangout OSW:1319-1338, grass-block anchor posY-1 +
+        // quickSpaceCheck; SpiderDriverEnable gate honored in
+        // findGenerationPoint, orig OSW:1323-1325).
+        SPIDER_HANGOUT(-1, 20, 2, 20, -1, 20, PlacementMode.VILLAGE_GRASS_SURFACE),
+        // Red Ant Hangout (GD:7045-7069, file-final method): Village-dim
+        // twin of the spider pad (addRedAntHangout OSW:1340-1356 — no
+        // config gate in the original, verified).
+        RED_ANT_HANGOUT(-1, 16, 2, 16, -1, 16, PlacementMode.VILLAGE_GRASS_SURFACE),
+        // Frog Pond (GD:6018-6039): overworld exact-"Plains" water sheet
+        // (addFrogPond OSW:1156-1174; anchor = the GRASS block, posY-1 at
+        // OSW:1168 — SAND_SURFACE_MINUS1 is the biome-agnostic -1-anchor
+        // mode; plains identity via the biome tag).
+        FROG_POND(-4, 4, 1, 3, -4, 4, PlacementMode.SAND_SURFACE_MINUS1),
+        // Rubber Ducky Pond (GD:5383-5421): overworld exact-"Plains"
+        // perched pond (addRubberDuckyPond OSW:1217-1236; anchor = the AIR
+        // block above grass, same shape as the swamp scan).
+        RUBBER_DUCKY_POND(-6, 7, 1, 7, -6, 6, PlacementMode.SWAMP_GRASS_SURFACE),
+        // Haunted House (GD:891-1010, overworld — distinct from the
+        // Crystal variant): addHauntedHouse OSW:979-997, 3-biome gate,
+        // air-block anchor; the original's 5 jitter attempts vs the
+        // mode's 4 is a documented delta (haunted_house_spec.md §7).
+        HAUNTED_HOUSE(-4, 4, 1, 5, -4, 4, PlacementMode.SWAMP_GRASS_SURFACE),
+        // Ender Knight Dungeon (GD:1794-1932): End (addEndKnights
+        // OSW:1512-1525, END_SURFACE default) + Mining dimension via the
+        // per-JSON placement_mode override LOWEST_GRASS_36 (addEnderKnight
+        // OSW:2087-2113 — lowest-grass 6x6 scan, NO -2 sink).
+        ENDER_KNIGHT_DUNGEON(-1, 13, 1, 6, -3, 7, PlacementMode.END_SURFACE);
 
         /** How {@link LegacyDungeonStructure#findGenerationPoint} anchors this type. */
         public enum PlacementMode {
@@ -289,7 +331,10 @@ public class LegacyDungeonPiece extends StructurePiece {
              * dry-column approximation standing in for the sand identity
              * test) — but the anchor is the SAND block itself
              * ({@code posY - 1}, orig :1292), one below the air block
-             * SWAMP_GRASS_SURFACE returns.
+             * SWAMP_GRASS_SURFACE returns. The mode is biome-agnostic
+             * (surface identity rides on the structure's biomes): the Frog
+             * Pond (addFrogPond OSW:1156-1174, grass/Plains, anchor
+             * posY − 1 at :1168) is its second exact user.
              */
             SAND_SURFACE_MINUS1,
             /**
@@ -318,7 +363,23 @@ public class LegacyDungeonPiece extends StructurePiece {
              * the single seeded structure random (documented delta, same
              * as the Cloud Shark's).
              */
-            SKY_BAND_70
+            SKY_BAND_70,
+            /**
+             * addEnderKnight's Mining-dimension anchor (orig
+             * OreSpawnWorld.java:2087-2113): the {@link #LOWEST_SURFACE_36}
+             * 6×6 lowest-surface scan (offsets {0,3,6,9,12,15}, Y 31..128
+             * window, strictly-lowest first-seen-wins, {@code lowestY > 40}
+             * gate) with two deltas — the accept condition is a GRASS block
+             * (:2097, not any-solid; grass identity collapses into the same
+             * noise-surface probe, the documented SWAMP_GRASS_SURFACE-style
+             * approximation) and the anchor is {@code lowestY} with NO −2
+             * sink (:2108 vs addBasiliskMaze's :2594). Future users with the
+             * identical scan: addAlienWTF (OSW:2059-2085 — ALIEN_WTF still
+             * anchors SURFACE_CENTER, a pre-D5 reconciliation candidate; not
+             * rewired this slice) and addBeeHive (OSW:2031-2057, at
+             * lowestY + 3).
+             */
+            LOWEST_GRASS_36
         }
 
         public final int minXOff;
@@ -452,6 +513,12 @@ public class LegacyDungeonPiece extends StructurePiece {
                 case STINKY_HOUSE -> StinkyHouseGenerator.generate(this, origin, rng);
                 case PUMPKIN -> PumpkinGenerator.generate(this, origin, rng);
                 case RAINBOW -> RainbowGenerator.generate(this, origin, rng);
+                case SPIDER_HANGOUT -> SpiderHangoutGenerator.generate(this, origin, rng);
+                case RED_ANT_HANGOUT -> RedAntHangoutGenerator.generate(this, origin, rng);
+                case FROG_POND -> FrogPondGenerator.generate(this, origin, rng);
+                case RUBBER_DUCKY_POND -> RubberDuckyPondGenerator.generate(this, origin, rng);
+                case HAUNTED_HOUSE -> HauntedHouseGenerator.generate(this, origin, rng);
+                case ENDER_KNIGHT_DUNGEON -> EnderKnightDungeonGenerator.generate(this, origin, rng);
             }
         } finally {
             this.pLevel = null;
@@ -563,13 +630,28 @@ public class LegacyDungeonPiece extends StructurePiece {
      * this same code.
      */
     void spawnPersistent(EntityType<? extends Mob> type, double x, double y, double z, float yawDegrees) {
+        spawnPersistent(type, x, y, z, yawDegrees, true);
+    }
+
+    /**
+     * {@link #spawnPersistent(EntityType, double, double, double, float)}
+     * with the ambient sound controllable: originals that spawned via the
+     * {@code spawnCreature} helper played the mob's living sound
+     * (orig BasiliskMaze.java:243-252), but the bare
+     * {@code createEntity + setLocationAndAngles + spawnEntityInWorld}
+     * spawns (Spider/Red Ant Hangouts, orig GD:7038-7042 / :7064-7068) did
+     * not — those callers pass {@code false} so the live Dungeon Spawner
+     * Block path stays silent like the original (D6b batch-4 verify fix).
+     */
+    void spawnPersistent(EntityType<? extends Mob> type, double x, double y, double z,
+                         float yawDegrees, boolean ambientSound) {
         if (!inChunk(Mth.floor(x), Mth.floor(y), Mth.floor(z))) return;
         Mob mob = type.create(pLevel.getLevel());
         if (mob == null) return;
         mob.moveTo(x, y, z, yawDegrees, 0.0f);
         mob.setPersistenceRequired();
         pLevel.addFreshEntityWithPassengers(mob);
-        mob.playAmbientSound();
+        if (ambientSound) mob.playAmbientSound();
     }
 
     /**
@@ -848,9 +930,12 @@ public class LegacyDungeonPiece extends StructurePiece {
     }
 
     /**
-     * Authentic per-tile RNG (legacy line 5067-5125). Indices 8 and 19
-     * are intentional gaps in the legacy table (no plant rolled), so the
-     * call must return air on those rolls to match drop frequencies.
+     * Authentic per-tile RNG (legacy line 5067-5125). Index 8 is the one
+     * intentional gap in the legacy table (no plant rolled), so the call
+     * must return air on that roll to match drop frequencies. D6b batch-4
+     * verify fix: case 7 is REEDS/sugar cane (orig GD:5090-5092,
+     * field_150436_aH — not pumpkin) and case 19 is MyRicePlant
+     * (GD:5123-5125 → ModBlocks.RICE_PLANT); both had silently drifted.
      */
     private BlockState pickGreenhousePlant(int t) {
         return switch (t) {
@@ -861,7 +946,7 @@ public class LegacyDungeonPiece extends StructurePiece {
             case 4 -> Blocks.WHEAT.defaultBlockState();
             case 5 -> Blocks.CARROTS.defaultBlockState();
             case 6 -> Blocks.POTATOES.defaultBlockState();
-            case 7 -> Blocks.PUMPKIN.defaultBlockState();
+            case 7 -> Blocks.SUGAR_CANE.defaultBlockState();     // orig GD:5090-5092 (reeds)
             case 9 -> ModBlocks.CORN_3.get().defaultBlockState();
             case 10 -> ModBlocks.TOMATO_3.get().defaultBlockState();
             case 11 -> ModBlocks.STRAWBERRY_PLANT.get().defaultBlockState();
@@ -872,7 +957,8 @@ public class LegacyDungeonPiece extends StructurePiece {
             case 16 -> ModBlocks.FLOWER_PINK.get().defaultBlockState();
             case 17 -> ModBlocks.FLOWER_BLUE.get().defaultBlockState();
             case 18 -> ModBlocks.QUINOA_3.get().defaultBlockState();
-            default -> Blocks.AIR.defaultBlockState(); // t == 8 or t == 19 (legacy gaps)
+            case 19 -> ModBlocks.RICE_PLANT.get().defaultBlockState(); // orig GD:5123-5125
+            default -> Blocks.AIR.defaultBlockState(); // t == 8 (the one legacy gap)
         };
     }
 

@@ -1,0 +1,11 @@
+{
+  "structures": [
+    { "structure": "orespawn:ender_knight_dungeon_end", "weight": 1 }
+  ],
+  "placement": {
+    "type": "minecraft:random_spread",
+    "spacing": 10,
+    "separation": 5,
+    "salt": 84373
+  }
+}

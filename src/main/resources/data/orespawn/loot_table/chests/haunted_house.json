@@ -1,0 +1,100 @@
+{
+  "type": "minecraft:chest",
+  "_kit_family": "The InstantShelter kit (orig InstantShelter.java:121-134, port item/InstantShelter.java:107-120 deterministic fill) as 14 independent 50% slot rolls (orig GenericDungeon.java:952-993): keeps the slot-12 Ore Salt block that chests/igloo.json omits, has NO appended gold-nugget slots, and uses COOKED porkchop where the shelter kit has raw (the one list difference). Same per-slot-1/2 fill formula as the igloo but a different list — own table per (list, fill formula) pair; the Crystal variant fills in code (CrystalStructures.java:1056-1080). Edit the family together.",
+  "pools": [
+    {
+      "rolls": 1,
+      "conditions": [{ "condition": "minecraft:random_chance", "chance": 0.5 }],
+      "entries": [{ "type": "minecraft:item", "name": "minecraft:compass" }]
+    },
+    {
+      "rolls": 1,
+      "conditions": [{ "condition": "minecraft:random_chance", "chance": 0.5 }],
+      "entries": [{ "type": "minecraft:item", "name": "minecraft:map" }]
+    },
+    {
+      "rolls": 1,
+      "conditions": [{ "condition": "minecraft:random_chance", "chance": 0.5 }],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:cooked_porkchop",
+          "functions": [{ "function": "minecraft:set_count", "count": 8 }]
+        }
+      ]
+    },
+    {
+      "rolls": 1,
+      "conditions": [{ "condition": "minecraft:random_chance", "chance": 0.5 }],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:torch",
+          "functions": [{ "function": "minecraft:set_count", "count": 32 }]
+        }
+      ]
+    },
+    {
+      "rolls": 1,
+      "conditions": [{ "condition": "minecraft:random_chance", "chance": 0.5 }],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:coal",
+          "functions": [{ "function": "minecraft:set_count", "count": 16 }]
+        }
+      ]
+    },
+    {
+      "rolls": 1,
+      "conditions": [{ "condition": "minecraft:random_chance", "chance": 0.5 }],
+      "entries": [{ "type": "minecraft:item", "name": "minecraft:red_bed" }]
+    },
+    {
+      "rolls": 1,
+      "conditions": [{ "condition": "minecraft:random_chance", "chance": 0.5 }],
+      "entries": [{ "type": "minecraft:item", "name": "minecraft:red_bed" }]
+    },
+    {
+      "rolls": 1,
+      "conditions": [{ "condition": "minecraft:random_chance", "chance": 0.5 }],
+      "entries": [{ "type": "minecraft:item", "name": "minecraft:oak_door" }]
+    },
+    {
+      "rolls": 1,
+      "conditions": [{ "condition": "minecraft:random_chance", "chance": 0.5 }],
+      "entries": [{ "type": "minecraft:item", "name": "minecraft:iron_pickaxe" }]
+    },
+    {
+      "rolls": 1,
+      "conditions": [{ "condition": "minecraft:random_chance", "chance": 0.5 }],
+      "entries": [{ "type": "minecraft:item", "name": "minecraft:iron_sword" }]
+    },
+    {
+      "rolls": 1,
+      "conditions": [{ "condition": "minecraft:random_chance", "chance": 0.5 }],
+      "entries": [{ "type": "minecraft:item", "name": "minecraft:iron_axe" }]
+    },
+    {
+      "rolls": 1,
+      "conditions": [{ "condition": "minecraft:random_chance", "chance": 0.5 }],
+      "entries": [{ "type": "minecraft:item", "name": "minecraft:bucket" }]
+    },
+    {
+      "rolls": 1,
+      "conditions": [{ "condition": "minecraft:random_chance", "chance": 0.5 }],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "orespawn:ore_salt",
+          "functions": [{ "function": "minecraft:set_count", "count": 4 }]
+        }
+      ]
+    },
+    {
+      "rolls": 1,
+      "conditions": [{ "condition": "minecraft:random_chance", "chance": 0.5 }],
+      "entries": [{ "type": "minecraft:item", "name": "minecraft:chest" }]
+    }
+  ]
+}
