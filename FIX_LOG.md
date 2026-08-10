@@ -1407,6 +1407,31 @@ approval before any src/main change.
   transform, or set the tame counters to 0 for the two-step flow (deliberate
   divergence from the original). **EXPECTED_RED**. Status: OPEN.
 
+- **TF-025 (MED)** `frog_pond_plains_i166` — the frog pond's cascade never
+  spills past the 7×7 rim on the live buildNow path: the documented behavior
+  (spec S9, generated in BOTH versions) has the +1 riser/flow-cross water
+  running outward over the sheet and off the rim; in the post-triage run no
+  water reached (+4,+1,0) after 300 ticks on a flat stand-in plane. Suspects:
+  the batch-4 flowing→source flattening (frog_pond spec S4, PlayPool S3
+  precedent) interacting with source-block stability on the flat sheet, or
+  fluid scheduled-tick behavior under piece.place flag-2 writes on the live
+  path. The test is faithful to the documented spill; mechanism not yet
+  isolated (same treatment as TF-023). Orig: GenericDungeon.java:6030-6034
+  (riser + flowing cross, meta-0 flowing water). Port:
+  src/main/java/danger/orespawn/world/structure/FrogPondGenerator.java (S4
+  flattening) + LegacyDungeonPiece.place flag-2. Fix: reproduce live with
+  instrumentation; if the flattening is the cause, place the cross as
+  Blocks.WATER flowing states (level>0) or schedule fluid ticks explicitly;
+  align with whatever TF-021's flag decision lands on. Status: OPEN.
+
+**Post-triage re-run (143 tests): 29 red — fully accounted for**: the TF
+findings' tests (the unscoped-GLM umbrella flickers probabilistically, so
+single-roll tests like i105 float in and out; sampling-loop tests stay red),
+the 4 expected-reds, TF-025 above, and two same-run infra slips fixed in test
+code after the run (b3 spider-driver read raced the driver's faithful
+auto-mount, port SpiderDriver.java:106; dsb_igloo's registry-absence filter
+tripped on VANILLA minecraft:igloo — namespace-scoped now).
+
 ### Harness-limit reclassifications (returned to MANUAL_ONLY)
 
 The following checklist items were reclassified MANUAL_ONLY in

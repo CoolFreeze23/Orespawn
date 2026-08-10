@@ -775,12 +775,16 @@ public class DsbOutcomeTests {
                 "igloo (negative origin): ghost spawner keeps its int offset");
 
         // -- DSB-only: no worldgen structure/structure-set registration ------
+        // Triage fix (2026-08-10): scope to the orespawn namespace — the bare
+        // path filter tripped on VANILLA minecraft:igloo.
         helper.assertTrue(level.registryAccess().registryOrThrow(Registries.STRUCTURE)
-                        .keySet().stream().noneMatch(k -> k.getPath().contains("igloo")),
-                "igloo must have NO structure registration (WGEN-071 open, Phase E)");
+                        .keySet().stream().noneMatch(k -> k.getNamespace().equals("orespawn")
+                                && k.getPath().contains("igloo")),
+                "igloo must have NO orespawn structure registration (WGEN-071 open, Phase E)");
         helper.assertTrue(level.registryAccess().registryOrThrow(Registries.STRUCTURE_SET)
-                        .keySet().stream().noneMatch(k -> k.getPath().contains("igloo")),
-                "igloo must have NO structure-set registration (WGEN-071 open, Phase E)");
+                        .keySet().stream().noneMatch(k -> k.getNamespace().equals("orespawn")
+                                && k.getPath().contains("igloo")),
+                "igloo must have NO orespawn structure-set registration (WGEN-071 open, Phase E)");
 
         // -- 16 independent 50% chest slots (statistical) --------------------
         // 30 igloos → 480 Bernoulli(0.5) slot rolls; filled-slot total is

@@ -139,20 +139,23 @@ public class CoreStatTests {
     @GameTest(template = "empty_large", timeoutTicks = 200)
     public void b3_spider_driver_armor_riding_state(GameTestHelper helper) {
         SpiderDriver driver = helper.spawn(ModEntities.SPIDER_DRIVER.get(), new BlockPos(24, 2, 24));
-        SpiderRobot robot = helper.spawn(ModEntities.SPIDER_ROBOT.get(), new BlockPos(24, 2, 28));
-        robot.setNoAi(true); // keep the 1500-HP robot inert inside the shared test grid
-
+        // Triage fix (2026-08-10): spawn the robot only AFTER the on-foot
+        // read — a dismounted driver AUTO-MOUNTS a nearby riderless robot
+        // (port SpiderDriver.java:106, faithful ENT-S-017), which made the
+        // first-run on-foot read see mounted armor 8.
         helper.runAfterDelay(5, () -> {
             // updateArmorModifier runs in customServerAiStep, so read after a few ticks.
             helper.assertValueEqual(driver.getAttributeValue(Attributes.ARMOR), 20.0,
                     "SpiderDriver on-foot armor (orig SpiderDriver.java:100)");
+            SpiderRobot robot = helper.spawn(ModEntities.SPIDER_ROBOT.get(), new BlockPos(24, 2, 28));
+            robot.setNoAi(true); // keep the 1500-HP robot inert inside the shared test grid
             helper.assertTrue(driver.startRiding(robot, true), "driver failed to mount SpiderRobot");
         });
         helper.runAfterDelay(12, () -> {
             helper.assertValueEqual(driver.getAttributeValue(Attributes.ARMOR), 8.0,
                     "SpiderDriver mounted armor (orig SpiderDriver.java:97-99)");
+            if (driver.getVehicle() != null) driver.getVehicle().discard();
             driver.discard();
-            robot.discard();
             helper.succeed();
         });
     }
