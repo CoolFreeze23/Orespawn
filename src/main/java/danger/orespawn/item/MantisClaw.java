@@ -9,12 +9,18 @@ import net.minecraft.world.item.SwordItem;
 
 public class MantisClaw extends SwordItem {
     public MantisClaw(Item.Properties properties) {
-        super(ModToolTiers.AMETHYST, properties);
+        // ENT-K-032: orig OreSpawnMain.java:1661 constructs MantisClaw on
+        // toolEMERALD ("REALEMERALD", stats :1512 — dmg 6, ench 75, emerald
+        // repair). The class's getMaterialName() returning "AMETHYST" is
+        // cosmetic-only in 1.7.10; the tier here drives enchantability and
+        // repair ingredient. Attack attributes come from the registration
+        // (EMERALD, modern +3 base per the ENT-A-045 convention).
+        super(ModToolTiers.EMERALD, properties);
     }
 
     /**
      * orig MantisClaw.java:25 — {@code setMaxDamage(1000)} overrides the
-     * Amethyst tool material's 2000.
+     * Emerald tool material's 1300.
      */
     @Override
     public int getMaxDamage(ItemStack stack) {
