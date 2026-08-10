@@ -15,7 +15,7 @@
   "id": "i003-item-011-012",
   "section": "A. Creative flatworld",
   "sub": "A2 \u2014 Items & blocks",
-  "text": "<strong>ITEM-011/012</strong> \u2014 <code>/give @s orespawn:pizza_item</code> (place), <code>/give @s orespawn:duct_tape_item</code>. Expect: LEFT-click pizza eats a slice; LEFT-click with duct tape repairs held damaged gear."
+  "text": "<strong>ITEM-011/012</strong> \u2014 <code>/give @s orespawn:pizza_item</code> (place), <code>/give @s orespawn:duct_tape</code>. Expect: LEFT-click pizza eats a slice; LEFT-click with duct tape repairs held damaged gear."
  },
  {
   "id": "i004-item-013-014",

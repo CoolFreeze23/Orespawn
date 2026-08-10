@@ -1,25 +1,125 @@
 {
-    "parent": "builtin/entity",
-    "display": {
-        "thirdperson_righthand": {
-            "rotation": [0, 0, 0],
-            "translation": [0, -1.5, 1.75],
-            "scale": [1.1, 1.1, 1.1]
-        },
-        "thirdperson_lefthand": {
-            "rotation": [0, 0, 0],
-            "translation": [0, -1.5, 1.75],
-            "scale": [1.1, 1.1, 1.1]
-        },
-        "firstperson_righthand": {
-            "rotation": [0, -90, 25],
-            "translation": [1.13, 3.2, 1.13],
-            "scale": [0.68, 0.68, 0.68]
-        },
-        "firstperson_lefthand": {
-            "rotation": [0, 90, -25],
-            "translation": [1.13, 3.2, 1.13],
-            "scale": [0.68, 0.68, 0.68]
-        }
+  "parent": "builtin/entity",
+  "__comment": "BEWLR_DISPLAY_INCOMPLETE: gui/ground/fixed are identity on purpose - OreSpawnItemRenderer.renderFlat draws the *_flat sprite model with its own item/generated transforms for those contexts. Hand slots unchanged (model geometry is Y-vertical, blade up, per orig Render*.java).",
+  "display": {
+    "thirdperson_righthand": {
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "translation": [
+        0,
+        -1.5,
+        1.75
+      ],
+      "scale": [
+        1.1,
+        1.1,
+        1.1
+      ]
+    },
+    "thirdperson_lefthand": {
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "translation": [
+        0,
+        -1.5,
+        1.75
+      ],
+      "scale": [
+        1.1,
+        1.1,
+        1.1
+      ]
+    },
+    "firstperson_righthand": {
+      "rotation": [
+        0,
+        -90,
+        25
+      ],
+      "translation": [
+        1.13,
+        3.2,
+        1.13
+      ],
+      "scale": [
+        0.68,
+        0.68,
+        0.68
+      ]
+    },
+    "firstperson_lefthand": {
+      "rotation": [
+        0,
+        90,
+        -25
+      ],
+      "translation": [
+        1.13,
+        3.2,
+        1.13
+      ],
+      "scale": [
+        0.68,
+        0.68,
+        0.68
+      ]
+    },
+    "gui": {
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "translation": [
+        0,
+        0,
+        0
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ]
+    },
+    "ground": {
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "translation": [
+        0,
+        0,
+        0
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ]
+    },
+    "fixed": {
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "translation": [
+        0,
+        0,
+        0
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ]
     }
+  }
 }

@@ -246,3 +246,151 @@ impact estimate, related finding IDs.
 - **Related findings:** ANIM-006 (closed, Phase D2 — the faithful solver this
   replaces); BOSS-002/BOSS-007 (closed — the multi-part precedent); ENT-A-013/014
   (AntRobot ride/stomp behaviors that must survive the swap).
+
+## MOD-015 — Duplicator tree growth pacing config (UX / DELIBERATE DEVIATION CANDIDATE)
+- **Original:** `orig BlockDuplicatorLog.java:25` (`func_149675_a(true)` — random
+  ticks) + `orig Trees.java:121-182` — exactly ONE world write per random tick:
+  soil below (:125-139, the y−2/y−3 probes are dead code), 2 trunk writes
+  (:140-154), leaf cap (:155-159), 3×3 ring of 8 (:160-166), then one copied
+  block per tick from the 5×5 footprint (±2 of the trunk, 20-try source /
+  20-try air dest, :167-181). The port is write-for-write identical
+  (`src/main/java/danger/orespawn/block/BlockDuplicatorLog.java:41-116`).
+- **What's dated:** faithful pacing is genuinely slow: at `randomTickSpeed=3`
+  each block random-ticks every 4096/3 ≈ 68.3 s mean, so the full tree
+  (11 successful ticks) averages ~12.5 min (0.63 MC days; Erlang-11 P99 ≈
+  21.5 min) and the first copy adds ~2 min more — and only if a source block
+  sits INSIDE the ±2 footprint. The manual session (i007/ITEM-027) read this
+  as "super slow" (sleeping skips the game clock with ~0 random ticks, which
+  inflates the perceived MC-day count further).
+- **Proposal:** add config `duplicator_tree_growth_steps` (int, default 1 =
+  faithful): perform N growth/copy writes per `randomTick` call in
+  `BlockDuplicatorLog.randomTick` (loop `duplicatorTree` N times), giving a
+  linear speed-up (e.g. 4 → ~3 min mean to full tree) without touching the
+  tick engine. Default keeps parity.
+- **Impact:** pacing-visible only; trivial effort.
+- **Related findings:** ITEM-027 (closed faithful-pacing, 2026-08-11);
+  WGEN-044 (the one-write-per-random-tick closure this preserves).
+
+## MOD-016 — Chainsaw attached-tree-only felling (UX / DELIBERATE DEVIATION CANDIDATE)
+- **Original:** `orig UltimateSword.java:351-371` (`func_150894_a`) — a blind
+  fixed box i=−5..5, j=−5..+10, k=−5..5 (11×16×11) centered on the broken
+  block; every `canCrush`/`isLeaves` block inside is deleted + dropped with NO
+  connectivity or attachment test; `:383-394` — the last-held-block leaf flag
+  selects leaf-only mode. The port replicates the box exactly
+  (`src/main/java/danger/orespawn/item/Chainsaw.java:142-158`, leaf flag
+  `:216-224`), so neighboring trees inside the box are cut BY DESIGN — the
+  user's attached-only preference (i008/ITEM-037) is a modernization request,
+  not a parity defect.
+- **Proposal:** add config `chainsaw_attached_only` (bool, default false =
+  faithful 11×16×11 box). When true, `Chainsaw.mineBlock` replaces the box
+  scan with a BFS flood-fill seeded at the broken block, expanding through
+  26-neighbor-adjacent blocks that pass `canCrush` (or `isLeaves` in leaf
+  mode), clamped to the original box extents (x/z ±5, y −5..+10) and a
+  visited cap of 11·16·11 = 1936 so the worst case equals current behavior;
+  only the connected tree drops. Drops/sound identical; standing neighbors
+  untouched.
+- **PROVENANCE NOTE (its own delta, predates this entry):** the port maps
+  `canCrush`/`isLeaves` to modern `BlockTags.LOGS`/`LEAVES`
+  (`Chainsaw.java:177-213`), which also cover acacia/dark-oak — 1.7.10's sets
+  (`orig UltimateSword.java:253-349`) listed only `Blocks.log`/`leaves`
+  (log2/leaves2 absent), so those families were NOT crushed originally. A
+  reasonable family mapping already implied by the C6 report; recorded here
+  as a deliberate tag-mapping divergence, independent of the felling-scope
+  config above.
+- **Impact:** gameplay-visible (multi-tree clearcuts vs single-tree felling);
+  small effort.
+- **Related findings:** ITEM-037 (tree-scope half closed faithful, 2026-08-11;
+  held-model half still in the art recheck).
+
+## MOD-017 — Instant Garden click-anchored Y (UX / DELIBERATE DEVIATION CANDIDATE)
+- **Original:** `orig InstantGarden.java:41-43` (`pposy = (int)Player.posY` —
+  server-side FEET Y), `:48-50` (`y = pposy`; the clicked Y parameter is NEVER
+  read for placement), `:73-81` (garden grass floor at feetY−1, crops at
+  feetY). The port is identical
+  (`src/main/java/danger/orespawn/item/InstantGarden.java:39-42, 59-69,
+  73-96`): both versions anchor the plot to the player's feet and ignore the
+  clicked block's Y entirely. Clicking a block that sits AT foot level
+  (upslope ground, side of a ledge) therefore puts the floor one below the
+  clicked block — exactly the "1 block lower" of i010/ITEM-047, reproduced
+  1:1 from 1.7.10.
+- **Proposal:** add config `instant_garden_anchor_clicked` (bool, default
+  false = faithful player-feet anchor). When true, `InstantGarden.useOn`
+  computes `y = clicked.getY() + 1` when the clicked block is solid (garden
+  grass floor placed AT the clicked block's Y, crop surface flush with the
+  clicked block's top — the "same-Y" the user asked for), falling back to
+  the feet anchor when clicking replaceable blocks (grass/snow). One-line
+  change at `InstantGarden.java:41` behind the config; direction gate,
+  layout and rows untouched.
+- **Impact:** placement-feel only; trivial effort.
+- **Related findings:** ITEM-047 (Y-level half closed faithful, 2026-08-11;
+  crop-texture half still in the art recheck).
+
+## MOD-018 — Rocks always throw on use (UX / QoL CANDIDATE)
+- **Original:** 1.7.10 rocks were dual-mode items, never blocks:
+  `orig ItemRock.java:29-73` (`func_77659_a` — throws an EntityThrownRock
+  with a bow sound, but fires only when NOT pointing at a block in reach);
+  `:75-128` (`func_77648_a` — fires FIRST whenever the crosshair is on a
+  block within reach and PLACES a pet Rock entity at the clicked block
+  ±0.5-centered, y+1.01, random yaw, consuming the item — with NO obstruction
+  check, so clicking a wall spawns the rock inside the block above the
+  clicked one). The port replicates the split with the same coordinates
+  (`src/main/java/danger/orespawn/item/ItemRock.java:26-39` throw, `:45-65`
+  place), quirks included — the i019 observation ("clicking ON a block within
+  reach PLACES the rock (even inside glass); must aim at air to throw") is
+  faithful behavior, which reads as a misfire in normal combat use.
+- **Proposal:** add config `rocksAlwaysThrow` (bool, default false =
+  faithful): when true, `ItemRock.useOn` delegates to the throw path so
+  aiming at a nearby block no longer places a pet Rock; pet-Rock placement
+  moves to sneak-use-on-block. Applies to all 12 ItemRock types incl.
+  TNT/crystal variants.
+- **Out of scope here (belongs to the i018 invisible-projectile fix):** the
+  thrown rock renders invisible in flight (`NoopProjectileRenderer` on
+  ENTITY_THROWN_ROCK, `OreSpawnClient.java:179`) vs orig
+  `RenderThrownRock.java`'s camera-facing per-type sprite at scale 0.5; and
+  the throw sound (port SNOWBALL_THROW fixed 0.4 pitch, `ItemRock.java:33`,
+  vs orig `random.bow` vol 0.5 pitch `0.4/(rand*0.4+0.8)`).
+- **Impact:** combat-feel; small effort.
+- **Related findings:** ENT-D-025/026/027, ENT-K-076 (i019 placement half
+  closed faithful, 2026-08-11); i018 (the shared invisible-thrown-item
+  renderer defect, separate scope).
+
+## MOD-019 — Experience gear self-repair / built-in mending (USER-REQUESTED 2.0 CANDIDATE)
+- **Origin:** manual-session i009 request (ITEM-040/057 reconciliation) — the
+  user expected Experience armor to be REPAIRED while holding an experience
+  tool, plus mending-like behavior. The original has NEITHER:
+  `orig ExperienceSword.java:55-103` is an XP trickle only — with the sword
+  anywhere in the inventory, a 1-in-60 inventory-tick roll checks each worn
+  Experience armor piece and grants +1 player XP per piece on per-piece
+  sub-rolls (helmet 1/10, chest 1/20, leggings 1/30, boots 1/40) with a
+  single portal particle at the piece's height. No durability repair, no
+  sword drain, anywhere. The port reproduces the trickle faithfully (the
+  2026-08-11 checklist amendment documents it), so any repair behavior is
+  new content, not a fix.
+- **Proposal:** config-gated candidate, DEFAULT OFF — e.g.
+  `experience_gear_mending` (bool, default false): when true, the same
+  1-in-60 trickle rolls repair damaged worn Experience pieces (and/or the
+  held sword) mending-style instead of — or before — granting the +1 XP,
+  converting the existing roll cadence into durability. Keeps the faithful
+  trickle as the default; numbers to be tuned against vanilla Mending's
+  2-durability-per-XP rate.
+- **Impact:** gameplay-visible for the Experience tier; small effort.
+- **Related findings:** ITEM-040/ITEM-057 (docs amended 2026-08-11 — the old
+  "armor repairs / sword drains" checklist text was an extraction inference);
+  the i009 RECONCILIATION PLAN procedure in TESTING_CHECKLIST §(e).
+
+## MOD-020 — Extractor block: port invention pending remove-or-adopt (PARITY REVIEW)
+- **Origin:** Phase-11 port invention — no Extractor class, art, or mechanic exists
+  anywhere in the 1.7.10 reference dump (verified 2026-08-11 during the asset audit;
+  the block's Javadoc previously claimed a fictitious 1.7.10 provenance, corrected the
+  same day). Its companion "extracting_trex_dna" recipe was already removed as invented
+  in Phase D5.
+- **Current state:** registered block + block item (ModBlocks.java:436 region) with
+  placeholder-grade art (the audit's missing extractor_top/side textures were resolved
+  by the 2026-08-11 asset wave per its report).
+- **Decision needed:** the standing no-procedural-fabrication ruling says REMOVE from
+  the 1.0 parity build (same treatment as kyanite/MOD-009 and the Ancient Dried Egg
+  block/MOD-013); if the DNA-extraction concept is wanted, it returns here as designed
+  2.0 content with real art and a full mechanic.
+- **Impact:** removal touches registrations/tab/lang/models; no worldgen places it, so
+  world compat risk is limited to player-placed instances. Effort: small.
+- **Related findings:** PN-009 (invention-removal precedent), MOD-009, MOD-013.

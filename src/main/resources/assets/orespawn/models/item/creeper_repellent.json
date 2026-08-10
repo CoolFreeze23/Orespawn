@@ -1,3 +1,6 @@
 {
-  "parent": "orespawn:block/creeper_repellent"
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "orespawn:blocks/creeperrepellent"
+  }
 }

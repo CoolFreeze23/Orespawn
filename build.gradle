@@ -108,6 +108,18 @@ configurations {
     runtimeClasspath.extendsFrom localRuntime
 }
 
+// Static asset/renderer completeness audit (2026-08-11, manual-session
+// replacement): fails the build on missing models/textures/blockstates,
+// unrendered entities, or dangling GUI/sound refs. Documented-faithful
+// exceptions live in the script's ACKNOWLEDGED set.
+tasks.register('assetAudit', Exec) {
+    group = 'verification'
+    description = 'Run tools/asset_audit.py (exit 1 on ERROR findings).'
+    workingDir = projectDir
+    commandLine 'python', 'tools/asset_audit.py'
+}
+tasks.named('build') { dependsOn 'assetAudit' }
+
 dependencies {
     implementation "net.neoforged:neoforge:${neo_version}"
     // GeckoLib 4.x for NeoForge 1.21.1 — powers the Queen Geckolib backend

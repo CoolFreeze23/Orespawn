@@ -121,6 +121,12 @@ public class MiscTests {
      * onBlockClicked; FIX_LOG "ITEM-011/012"). Pizza: +4 nutrition / +1 BITES
      * (BlockPizza FOOD_NUTRITION=4, orig slice values); Duct Tape: repairs
      * max(maxDamage/6, 1) and +1 USES (BlockDuctTape REPAIR_FRACTION_DIVISOR).
+     *
+     * <p>TF-027 hardening: the tape block is placed through the
+     * {@code orespawn:duct_tape} BlockItem's {@code useOn} (the item the
+     * crafting recipe now yields), not via setBlock, so the item→block wiring
+     * the inert duct_tape_item bug broke is covered; also asserts max stack 1
+     * (orig OreSpawnMain.java:1620 func_77625_d(1)).</p>
      */
     @GameTest(template = "empty")
     public void item011_012_pizza_ducttape_left_click(GameTestHelper helper) {
@@ -137,9 +143,23 @@ public class MiscTests {
         helper.assertValueEqual(level.getBlockState(pizzaPos).getValue(BlockPizza.BITES), 1,
                 "pizza left-click: BITES increments");
 
+        // TF-027: place the tape via the BlockItem useOn path (survival), as a
+        // player right-clicking the ground with the crafted tape item would.
         BlockPos tapeRel = new BlockPos(4, 2, 2);
-        helper.setBlock(tapeRel, ModBlocks.DUCT_TAPE.get());
+        helper.setBlock(tapeRel.below(), Blocks.STONE);
+        BlockPos tapeGround = helper.absolutePos(tapeRel.below());
         BlockPos tapePos = helper.absolutePos(tapeRel);
+        ItemStack tape = new ItemStack(ModItems.DUCT_TAPE_BLOCK_ITEM.get());
+        helper.assertValueEqual(tape.getMaxStackSize(), 1,
+                "TF-027: duct tape stacks to 1 (orig OreSpawnMain.java:1620)");
+        player.setItemInHand(InteractionHand.MAIN_HAND, tape);
+        tape.getItem().useOn(new UseOnContext(player, InteractionHand.MAIN_HAND,
+                new BlockHitResult(Vec3.atCenterOf(tapeGround), Direction.UP, tapeGround, false)));
+        helper.assertTrue(level.getBlockState(tapePos).is(ModBlocks.DUCT_TAPE.get()),
+                "TF-027: the orespawn:duct_tape item must PLACE the tape block "
+                        + "(orig ItemDuctTape.java:26-66 onItemUse)");
+        helper.assertTrue(player.getItemInHand(InteractionHand.MAIN_HAND).isEmpty(),
+                "TF-027: placing consumes the tape item in survival");
         ItemStack pick = new ItemStack(Items.IRON_PICKAXE);
         pick.setDamageValue(100);
         player.setItemInHand(InteractionHand.MAIN_HAND, pick);

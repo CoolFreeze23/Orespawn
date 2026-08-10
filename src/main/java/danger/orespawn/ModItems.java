@@ -46,7 +46,9 @@ public class ModItems {
     public static final DeferredItem<BlockItem> BLOCK_ENDER_PEARL_ITEM = ITEMS.registerSimpleBlockItem("block_ender_pearl", ModBlocks.BLOCK_ENDER_PEARL);
     public static final DeferredItem<BlockItem> BLOCK_EYE_OF_ENDER_ITEM = ITEMS.registerSimpleBlockItem("block_eye_of_ender", ModBlocks.BLOCK_EYE_OF_ENDER);
     public static final DeferredItem<BlockItem> PIZZA_BLOCK_ITEM = ITEMS.registerSimpleBlockItem("pizza", ModBlocks.PIZZA);
-    public static final DeferredItem<BlockItem> DUCT_TAPE_BLOCK_ITEM = ITEMS.registerSimpleBlockItem("duct_tape", ModBlocks.DUCT_TAPE);
+    // TF-027: the ONE functional duct tape item (crafted via recipe/duct_tape_item.json);
+    // stack size 1 per orig OreSpawnMain.java:1620 func_77625_d(1).
+    public static final DeferredItem<BlockItem> DUCT_TAPE_BLOCK_ITEM = ITEMS.registerSimpleBlockItem("duct_tape", ModBlocks.DUCT_TAPE, new Item.Properties().stacksTo(1));
     public static final DeferredItem<BlockItem> BLOCK_TELEPORT_ITEM = ITEMS.registerSimpleBlockItem("block_teleport", ModBlocks.BLOCK_TELEPORT);
     public static final DeferredItem<BlockItem> MOLE_DIRT_ITEM = ITEMS.registerSimpleBlockItem("mole_dirt", ModBlocks.MOLE_DIRT);
     public static final DeferredItem<BlockItem> CRYSTAL_COAL_ITEM = ITEMS.registerSimpleBlockItem("crystal_coal", ModBlocks.CRYSTAL_COAL);
@@ -230,8 +232,13 @@ public class ModItems {
 
     // The Phase-10 "kyanite"/"pink_tourmaline" gem items were port inventions,
     // removed for parity per PN-009 / MODERNIZATION_NOTES MOD-009.
-    public static final DeferredItem<Item> CRYSTAL_WOOD_LUMBER = ITEMS.registerSimpleItem("crystal_wood_lumber");
-    public static final DeferredItem<Item> CRYSTAL_WOOD_STICK = ITEMS.registerSimpleItem("crystal_wood_stick");
+    // Parity removal (asset audit 2026-08-11, ITEM_TEXTURE_MISSING/crystal_wood_lumber):
+    // the Phase-10 "crystal_wood_lumber" and "crystal_wood_stick" items were also port
+    // inventions with no 1.7.10 counterpart. The original crafts the crystal planks
+    // BLOCK directly from logs (CrystalWood; orig OreSpawnMain.java:1869) with no
+    // intermediate lumber item, and its only stick item is CrystalSticks
+    // (orig OreSpawnMain.java:1728, registered :2280, crafted 2x planks -> 6 at :3375),
+    // which this port already registers faithfully below as CRYSTAL_STICKS.
 
     // Phase 10 â€” Block item for ancient_dried_egg fossil block.
     // Phase D5 (WGEN-005): the invented "ancient_dried_egg" block/item was
@@ -647,7 +654,9 @@ public class ModItems {
             () -> new InstantShelter(new Item.Properties().stacksTo(16)));
     public static final DeferredItem<Item> INSTANT_GARDEN = ITEMS.register("instant_garden",
             () -> new InstantGarden(new Item.Properties().stacksTo(16)));
-    public static final DeferredItem<Item> DUCT_TAPE_ITEM = ITEMS.registerSimpleItem("duct_tape_item");
+    // TF-027: inert "duct_tape_item" registration removed — orig 1.7.10 has a single
+    // duct tape item (OreSpawnMain.java:1619-1620) that places the block; that role is
+    // filled by DUCT_TAPE_BLOCK_ITEM ("orespawn:duct_tape") above.
     public static final DeferredItem<Item> STEP_UP = ITEMS.register("step_up",
             () -> new StepUp(new Item.Properties().stacksTo(16)));
     public static final DeferredItem<Item> STEP_DOWN = ITEMS.register("step_down",

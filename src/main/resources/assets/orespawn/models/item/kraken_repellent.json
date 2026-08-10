@@ -1,3 +1,6 @@
 {
-  "parent": "orespawn:block/kraken_repellent"
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "orespawn:blocks/krakenrepellent"
+  }
 }

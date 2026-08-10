@@ -1,0 +1,8 @@
+{
+  "_comment": "i010: growth-stage model — orig BlockRadish extends BlockCrops (BlockRadish.java:15-16, crop hash render), icon radish_1 of the 4-icon array (BlockRadish.java:44-50)",
+  "parent": "minecraft:block/crop",
+  "render_type": "minecraft:cutout",
+  "textures": {
+    "crop": "orespawn:blocks/radish_1"
+  }
+}

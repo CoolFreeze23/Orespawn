@@ -20,9 +20,14 @@ import org.jetbrains.annotations.Nullable;
  * face (via hopper) are matched against {@code orespawn:extracting} recipes
  * and the result is pushed into the bottom face (typically into another hopper).
  *
- * <p>1.7.10 reference: TheyCallMeDanger's "Extractor" was a manual GUI block
- * pulling DNA from fossils. The 1.21.1 modernization is hopper-driven so it
- * composes with vanilla automation without bringing in a custom screen.</p>
+ * <p>Provenance (audit 2026-08-11): this block is a Phase-11 port modernization
+ * with NO 1.7.10 counterpart. The reference dump (reference_1_7_10_source,
+ * sources + assets) contains no Extractor class, block, or asset, and no
+ * fossil/DNA-extraction mechanic of any kind. An earlier Javadoc here claimed a
+ * 1.7.10 "Extractor" GUI block "pulling DNA from fossils" — that claim was
+ * spurious and has been removed so future parity passes do not chase a
+ * nonexistent original. Whether the block itself is retained is tracked
+ * separately as a MODERNIZATION_NOTES MOD entry (orchestrator-owned).</p>
  */
 public class Extractor extends Block implements EntityBlock {
     public Extractor(BlockBehaviour.Properties properties) {

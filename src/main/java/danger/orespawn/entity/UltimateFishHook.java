@@ -17,6 +17,7 @@ import net.minecraft.tags.FluidTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ExperienceOrb;
+import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.FishingHook;
@@ -136,18 +137,60 @@ public class UltimateFishHook extends FishingHook {
     }
 
     /**
-     * orig UltimateFishHook.java:271-276 — the copied tick counted lava
-     * material toward the in-liquid fraction exactly like water, so the hook
-     * bobbed and fish bit in lava. Vanilla 1.21.1 FishingHook.tick() only
-     * checks FluidTags.WATER, so we replicate its FLYING->BOBBING transition
-     * and BOBBING buoyancy/bite branch for lava after super.tick() runs.
+     * orig UltimateFishHook.java:271-276 — the copied 1.7.10 tick counted lava
+     * material into the in-liquid fraction d10 exactly like water (5 bounding
+     * box slices, orig :265-276), and applied a SINGLE vertical term
+     * {@code motionY += 0.04*(2*d10-1)} with extra 0.9/0.8 damping while
+     * d10 > 0 and no separate gravity in liquid (orig :347-355), so the
+     * bobber settled half-submerged AT the lava surface just like a vanilla
+     * bobber on water.
+     *
+     * TF-028 (i085, ENT-S-059): the previous port ran super.tick() and then
+     * ADDED a lava surface correction on top. Vanilla 1.21.1
+     * FishingHook.tick() (decompiled neoForm patch output,
+     * net/minecraft/world/entity/projectile/FishingHook.java:139-238) is
+     * water-blind: with lava the fluid, f stays 0.0 (:156-161), so its
+     * BOBBING branch (:192-221) anchors the hook to the BOTTOM of the block
+     * (blockpos.getY()+0.0) and its non-water gravity (:224-226) adds
+     * -0.03/tick, then it moves and scales by 0.92 (:228-236). Three
+     * competing vertical forces made the bobber churn ~0.6 blocks under the
+     * surface instead of floating. The lava pass must be EXCLUSIVE, not
+     * additive:
+     *
+     * (1) pre-pass: while BOBBING in lava (hookedIn is always null in
+     *     BOBBING), flip currentState to HOOKED_IN_ENTITY before super.tick().
+     *     With hookedIn null that vanilla branch is a pure no-op return
+     *     (FishingHook.java:179-190), bypassing the f=0 bottom-anchor pull
+     *     (:192-199), the -0.03 gravity (:224-226), the move (:228) and the
+     *     0.92 scale (:234-235) while still running Projectile base ticking,
+     *     the shouldStopFishing discard and the onGround life counter
+     *     (:141-154).
+     * (2) post-pass: restore BOBBING and run one faithful copy of the vanilla
+     *     BOBBING body (:192-236) with f = the LAVA fluid height, and no
+     *     gravity term — matching the original, which applied none while in
+     *     liquid (orig :347-352).
      */
     @Override
     public void tick() {
+        // TF-028 step (1): make vanilla's water-blind physics a no-op while
+        // bobbing in lava. getHookedIn() is null whenever BOBBING (vanilla
+        // only hooks entities from FLYING, FishingHook.java:164-177), checked
+        // anyway so a desynced client can never orphan a real hooked entity.
+        boolean lavaBobbing = this.currentState == FishingHook.FishHookState.BOBBING
+                && this.getHookedIn() == null
+                && this.level().getFluidState(this.blockPosition()).is(FluidTags.LAVA);
+        if (lavaBobbing) {
+            this.currentState = FishingHook.FishHookState.HOOKED_IN_ENTITY;
+        }
         super.tick();
+        if (lavaBobbing) {
+            this.currentState = FishingHook.FishHookState.BOBBING;
+        }
         if (this.isRemoved()) {
             return;
         }
+        // The no-op pass cannot move the hook, so pos/fluid are still valid
+        // for step (2); recomputed because the FLYING path below does move.
         BlockPos pos = this.blockPosition();
         FluidState fluid = this.level().getFluidState(pos);
         if (!fluid.is(FluidTags.LAVA)) {
@@ -157,22 +200,53 @@ public class UltimateFishHook extends FishingHook {
         boolean inLava = height > 0.0f;
         if (this.currentState == FishingHook.FishHookState.FLYING) {
             if (inLava && this.getHookedIn() == null) {
-                // vanilla FishingHook.tick() water entry: damp motion, start bobbing
+                // vanilla FishingHook.tick() water entry (:171-175): damp
+                // motion, start bobbing
                 this.setDeltaMovement(this.getDeltaMovement().multiply(0.3, 0.2, 0.3));
                 this.currentState = FishingHook.FishHookState.BOBBING;
             }
-        } else if (this.currentState == FishingHook.FishHookState.BOBBING) {
-            // vanilla BOBBING branch: pull the bobber toward the fluid surface
+        } else if (lavaBobbing) {
+            // TF-028 step (2): faithful copy of the vanilla BOBBING body
+            // (FishingHook.java:192-221) with f = lava height. This is the
+            // ONLY vertical force this tick, so the bobber holds the lava
+            // surface exactly as the original's single buoyancy term did
+            // (orig :347-355, equilibrium half-submerged at d10 = 0.5).
             Vec3 vec3 = this.getDeltaMovement();
             double d0 = this.getY() + vec3.y - (double) pos.getY() - (double) height;
             if (Math.abs(d0) < 0.01) {
                 d0 += Math.signum(d0) * 0.1;
             }
             this.setDeltaMovement(vec3.x * 0.9, vec3.y - d0 * (double) this.random.nextFloat() * 0.2, vec3.z * 0.9);
+            // openWater/outOfWaterTime bookkeeping (:200-207, :218-220) is
+            // skipped: both fields are private with no AT, and openWater only
+            // feeds vanilla's loot-table treasure gate, which retrieve()
+            // replaces wholesale with the original's pools.
             if (inLava && !this.level().isClientSide) {
-                // drives timeUntilLured/timeUntilHooked/nibble exactly as in water
+                // Biting dunk (vanilla :208-213). Vanilla gates it on the
+                // private synced `biting` flag and draws from the private
+                // syncronizedRandom (neither is access-transformed); on the
+                // server biting == (nibble > 0) exactly (catchingFish sets
+                // DATA_BITING with nibble, :294-299/:347-348), so gate on the
+                // AT'd nibble instead. Server-only matches the ORIGINAL,
+                // whose whole dunk block ran under !isRemote (orig :277,
+                // :343-345); the client still shows the initial -0.4 dip via
+                // DATA_BITING -> onSyncedDataUpdated (:118-123), which the
+                // no-op pass does not suppress.
+                if (this.nibble > 0) {
+                    this.setDeltaMovement(this.getDeltaMovement()
+                            .add(0.0, -0.1 * (double) this.random.nextFloat() * (double) this.random.nextFloat(), 0.0));
+                }
+                // drives timeUntilLured/timeUntilHooked/nibble exactly as in
+                // water (vanilla :215-217)
                 this.catchingFish(pos);
             }
+            // NO gravity here: vanilla's -0.03 (:224-226) only applies out of
+            // water, and the original applied none while in liquid (orig
+            // :277/:347-352).
+            this.move(MoverType.SELF, this.getDeltaMovement());
+            this.updateRotation();
+            this.setDeltaMovement(this.getDeltaMovement().scale(0.92));
+            this.reapplyPosition();
         }
     }
 

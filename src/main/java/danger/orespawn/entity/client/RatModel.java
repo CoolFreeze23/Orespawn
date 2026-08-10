@@ -39,20 +39,35 @@ public class RatModel<T extends EntityRat> extends EntityModel<T> {
     }
 
     public static LayerDefinition createBodyLayer() {
+        // i080: 8 of 12 parts (rfleg, lrleg, rrleg, body2, head, nose, lear, rear)
+        // had invented UVs/geometry; every cube below now matches orig
+        // ModelRat.java:32-103 exactly (texture 64x64, all parts mirrored).
         MeshDefinition mesh = new MeshDefinition();
         PartDefinition root = mesh.getRoot();
+        // orig ModelRat.java:32-37
         root.addOrReplaceChild("body", CubeListBuilder.create().texOffs(27, 0).mirror().addBox(-2.0F, -1.0F, 0.0F, 5, 3, 10), PartPose.offset(0.0F, 20.0F, -3.0F));
+        // orig ModelRat.java:38-43
         root.addOrReplaceChild("tail1", CubeListBuilder.create().texOffs(0, 30).mirror().addBox(-0.5F, -1.0F, 0.0F, 2, 2, 9), PartPose.offset(0.0F, 21.0F, 7.0F));
+        // orig ModelRat.java:44-49
         root.addOrReplaceChild("tail2", CubeListBuilder.create().texOffs(0, 43).mirror().addBox(0.0F, 0.0F, 0.0F, 1, 1, 12), PartPose.offset(0.0F, 21.0F, 16.0F));
+        // orig ModelRat.java:50-55
         root.addOrReplaceChild("lfleg", CubeListBuilder.create().texOffs(0, 14).mirror().addBox(0.0F, 0.0F, 0.0F, 1, 2, 1), PartPose.offset(2.0F, 22.0F, -2.0F));
-        root.addOrReplaceChild("rfleg", CubeListBuilder.create().texOffs(0, 14).mirror().addBox(0.0F, 0.0F, 0.0F, 1, 2, 1), PartPose.offset(-2.0F, 22.0F, -2.0F));
-        root.addOrReplaceChild("lrleg", CubeListBuilder.create().texOffs(0, 14).mirror().addBox(0.0F, 0.0F, 0.0F, 1, 2, 1), PartPose.offset(2.0F, 22.0F, 5.0F));
-        root.addOrReplaceChild("rrleg", CubeListBuilder.create().texOffs(0, 14).mirror().addBox(0.0F, 0.0F, 0.0F, 1, 2, 1), PartPose.offset(-2.0F, 22.0F, 5.0F));
-        root.addOrReplaceChild("body2", CubeListBuilder.create().texOffs(0, 0).mirror().addBox(-1.0F, 0.0F, 0.0F, 3, 2, 10), PartPose.offset(0.0F, 19.0F, -3.0F));
-        root.addOrReplaceChild("head", CubeListBuilder.create().texOffs(27, 14).mirror().addBox(-1.0F, -1.0F, -4.0F, 3, 3, 4), PartPose.offset(0.0F, 20.0F, -3.0F));
-        root.addOrReplaceChild("nose", CubeListBuilder.create().texOffs(27, 22).mirror().addBox(0.0F, 0.0F, -2.0F, 1, 1, 2), PartPose.offset(0.0F, 20.0F, -7.0F));
-        root.addOrReplaceChild("lear", CubeListBuilder.create().texOffs(5, 14).mirror().addBox(0.0F, -3.0F, 0.0F, 2, 3, 1), PartPose.offset(1.0F, 19.0F, -5.0F));
-        root.addOrReplaceChild("rear", CubeListBuilder.create().texOffs(5, 14).mirror().addBox(-2.0F, -3.0F, 0.0F, 2, 3, 1), PartPose.offset(-1.0F, 19.0F, -5.0F));
+        // i080 fix — orig ModelRat.java:56-61 (texOffs was invented as 0,14)
+        root.addOrReplaceChild("rfleg", CubeListBuilder.create().texOffs(10, 14).mirror().addBox(0.0F, 0.0F, 0.0F, 1, 2, 1), PartPose.offset(-2.0F, 22.0F, -2.0F));
+        // i080 fix — orig ModelRat.java:62-67 (haunch: 2x4x2 @ (2,20,4), not a front-leg clone)
+        root.addOrReplaceChild("lrleg", CubeListBuilder.create().texOffs(0, 18).mirror().addBox(0.0F, 0.0F, 0.0F, 2, 4, 2), PartPose.offset(2.0F, 20.0F, 4.0F));
+        // i080 fix — orig ModelRat.java:68-73
+        root.addOrReplaceChild("rrleg", CubeListBuilder.create().texOffs(9, 18).mirror().addBox(0.0F, 0.0F, 0.0F, 2, 4, 2), PartPose.offset(-3.0F, 20.0F, 4.0F));
+        // i080 fix — orig ModelRat.java:74-79 (spine ridge 1x1x6, was a 3x2x10 second torso)
+        root.addOrReplaceChild("body2", CubeListBuilder.create().texOffs(0, 0).mirror().addBox(0.0F, 0.0F, 0.0F, 1, 1, 6), PartPose.offset(0.0F, 18.0F, 0.0F));
+        // i080 fix — orig ModelRat.java:80-85
+        root.addOrReplaceChild("head", CubeListBuilder.create().texOffs(27, 17).mirror().addBox(-1.0F, -2.0F, -3.0F, 3, 2, 4), PartPose.offset(0.0F, 22.0F, -4.0F));
+        // i080 fix — orig ModelRat.java:86-91
+        root.addOrReplaceChild("nose", CubeListBuilder.create().texOffs(27, 25).mirror().addBox(0.0F, -1.0F, -5.0F, 1, 1, 2), PartPose.offset(0.0F, 22.0F, -4.0F));
+        // i080 fix — orig ModelRat.java:92-97 (1x1x1 nub ears, not 2x3x1 mouse ears)
+        root.addOrReplaceChild("lear", CubeListBuilder.create().texOffs(0, 9).mirror().addBox(0.0F, 0.0F, 0.0F, 1, 1, 1), PartPose.offset(1.5F, 19.5F, -4.0F));
+        // i080 fix — orig ModelRat.java:98-103
+        root.addOrReplaceChild("rear", CubeListBuilder.create().texOffs(5, 9).mirror().addBox(0.0F, 0.0F, 0.0F, 1, 1, 1), PartPose.offset(-1.5F, 19.5F, -4.0F));
         return LayerDefinition.create(mesh, 64, 64);
     }
 

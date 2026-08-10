@@ -1,6 +1,8 @@
 {
-  "parent": "minecraft:block/crop",
+  "_comment": "i010: orig BlockCorn extends BlockReed (BlockCorn.java:17-18, render type 1 = sugar-cane X-cross); parent was wrongly minecraft:block/crop",
+  "parent": "minecraft:block/cross",
+  "render_type": "minecraft:cutout",
   "textures": {
-    "crop": "orespawn:blocks/corn_1"
+    "cross": "orespawn:blocks/corn_1"
   }
 }

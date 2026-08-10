@@ -6,6 +6,7 @@ import danger.orespawn.gui.CrystalFurnaceScreen;
 import danger.orespawn.gui.CrystalWorkbenchScreen;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.client.renderer.BiomeColors;
+import net.minecraft.client.renderer.entity.ThrownItemRenderer;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.FoliageColor;
@@ -172,20 +173,72 @@ public class OreSpawnClient {
             event.registerEntityRenderer(ModEntities.RUBY_BIRD.get(), CockateilRenderer::new);
             event.registerEntityRenderer(ModEntities.VAMPIRE_BUTTERFLY.get(), VampireButterflyRenderer::new);
 
-            // Projectiles
-            event.registerEntityRenderer(ModEntities.BETTER_FIREBALL.get(), NoopProjectileRenderer::new);
+            // Projectiles — ENTITY_NOOP_RENDERER fix batch.
+            // Original renderers (reference_1_7_10_source/sources/danger/orespawn/
+            // ClientProxyOreSpawn.java:392-404): every thrown projectile below was a
+            // RenderSpinner subclass drawing a billboarded 16x16 tile of spinners.png,
+            // and each tile is the matching ITEM's icon (tile indexes verified
+            // pixel-identical against the original textures/items/*.png, which the
+            // port's item textures copy 1:1). Vanilla ThrownItemRenderer + an
+            // ItemSupplier impl on each entity therefore reproduces the original art.
+
+            // ENTITY_NOOP_RENDERER/better_fireball — the orig had NO renderer
+            // registration (absent from ClientProxyOreSpawn.java:384-527), so 1.7.10
+            // fell back to RenderManager's Entity.class -> RenderEntity white
+            // bounding-box; the visible body was the fire overlay from its per-tick
+            // self-ignite (orig BetterFireball.java:108). The port entity extends
+            // vanilla LargeFireball, so it takes vanilla's FIREBALL presentation
+            // (EntityRenderers: ThrownItemRenderer(3.0F, fullBright) rendering the
+            // fire_charge stack Fireball.getItem() supplies by default).
+            event.registerEntityRenderer(ModEntities.BETTER_FIREBALL.get(),
+                    ctx -> new ThrownItemRenderer<>(ctx, 3.0F, true));
+            // ENTITY_NOOP_RENDERER/bertha_hit — FAITHFUL NOOP, kept invisible on
+            // purpose: the orig renderer (RenderItemUrchin.java:21-23) early-returns
+            // for BerthaHit and draws nothing; the entity is Big Bertha's
+            // swing-damage proxy, not a visible projectile.
             event.registerEntityRenderer(ModEntities.BERTHA_HIT.get(), NoopProjectileRenderer::new);
-            event.registerEntityRenderer(ModEntities.ENTITY_CAGE.get(), NoopProjectileRenderer::new);
-            event.registerEntityRenderer(ModEntities.ENTITY_THROWN_ROCK.get(), NoopProjectileRenderer::new);
-            event.registerEntityRenderer(ModEntities.INK_SACK.get(), NoopProjectileRenderer::new);
-            event.registerEntityRenderer(ModEntities.LASER_BALL.get(), NoopProjectileRenderer::new);
-            event.registerEntityRenderer(ModEntities.SHOES.get(), NoopProjectileRenderer::new);
-            event.registerEntityRenderer(ModEntities.SUNSPOT_URCHIN.get(), NoopProjectileRenderer::new);
-            event.registerEntityRenderer(ModEntities.THUNDER_BOLT.get(), NoopProjectileRenderer::new);
-            event.registerEntityRenderer(ModEntities.WATER_BALL.get(), NoopProjectileRenderer::new);
-            event.registerEntityRenderer(ModEntities.ICE_BALL.get(), NoopProjectileRenderer::new);
-            event.registerEntityRenderer(ModEntities.ACID.get(), NoopProjectileRenderer::new);
-            event.registerEntityRenderer(ModEntities.DEAD_IRUKANDJI.get(), NoopProjectileRenderer::new);
+            // ENTITY_NOOP_RENDERER/cage — orig RenderCage: spinner tile getCageIndex(),
+            // default 160 == cageempty item icon. Only EMPTY cages are ever thrown
+            // (orig CritterCage.java:36-45 gates the throw on cage_id == CageEmpty;
+            // port EmptyCageItem.java:57 passes 160), so cage_empty is exact.
+            event.registerEntityRenderer(ModEntities.ENTITY_CAGE.get(), ThrownItemRenderer::new);
+            // ENTITY_NOOP_RENDERER/thrown_rock — orig RenderThrownRock billboarded
+            // textures/items/rock*.png selected by getRockType() 1-12; the entity's
+            // getItem() picks the same rock item from its synched rock type.
+            event.registerEntityRenderer(ModEntities.ENTITY_THROWN_ROCK.get(), ThrownItemRenderer::new);
+            // ENTITY_NOOP_RENDERER/ink_sack — orig spinner tile 65 (InkSack.java:22)
+            // is the vanilla ink-sac icon (no orespawn item art exists for it), so
+            // getItem() supplies vanilla Items.INK_SAC.
+            event.registerEntityRenderer(ModEntities.INK_SACK.get(), ThrownItemRenderer::new);
+            // ENTITY_NOOP_RENDERER/laser_ball — orig spinner tile 81 (LaserBall.java:26)
+            // == laserball.png (laser_ball item).
+            event.registerEntityRenderer(ModEntities.LASER_BALL.get(), ThrownItemRenderer::new);
+            // ENTITY_NOOP_RENDERER/shoes — orig RenderShoe: spinner tile getShoeId()
+            // (2 redheels, 3 blackheels, 4 slippers, 5 boots, 6 gamecontroller —
+            // same id table as ModItems' ItemShoes registrations).
+            event.registerEntityRenderer(ModEntities.SHOES.get(), ThrownItemRenderer::new);
+            // ENTITY_NOOP_RENDERER/sunspot_urchin — orig spinner tile 50
+            // (SunspotUrchin.java:20) == sunspoturchin.png (sunspot_urchin item).
+            event.registerEntityRenderer(ModEntities.SUNSPOT_URCHIN.get(), ThrownItemRenderer::new);
+            // ENTITY_NOOP_RENDERER/thunder_bolt — the orig had NO renderer
+            // registration (absent from ClientProxyOreSpawn.java:384-527); 1.7.10
+            // fell back to Entity.class -> RenderEntity, i.e. a solid white
+            // bounding-box cube flying inside the entity's own fireworks-spark
+            // trail (orig ThunderBolt.java:58-64). LegacyFallbackBoxRenderer
+            // replicates that fallback box.
+            event.registerEntityRenderer(ModEntities.THUNDER_BOLT.get(), LegacyFallbackBoxRenderer::new);
+            // ENTITY_NOOP_RENDERER/water_ball — orig spinner tile 49 (WaterBall.java:22)
+            // == waterball.png (water_ball item).
+            event.registerEntityRenderer(ModEntities.WATER_BALL.get(), ThrownItemRenderer::new);
+            // ENTITY_NOOP_RENDERER/ice_ball — orig spinner tile 84 (IceBall.java:16)
+            // == iceball.png (ice_ball item).
+            event.registerEntityRenderer(ModEntities.ICE_BALL.get(), ThrownItemRenderer::new);
+            // ENTITY_NOOP_RENDERER/acid — orig spinner tile 85 (Acid.java:12)
+            // == acid.png (acid item).
+            event.registerEntityRenderer(ModEntities.ACID.get(), ThrownItemRenderer::new);
+            // ENTITY_NOOP_RENDERER/dead_irukandji — orig spinner tile 86
+            // (DeadIrukandji.java:12) == deadirukandji.png (dead_irukandji item).
+            event.registerEntityRenderer(ModEntities.DEAD_IRUKANDJI.get(), ThrownItemRenderer::new);
             event.registerEntityRenderer(ModEntities.ULTIMATE_ARROW.get(),
                     ctx -> new OreSpawnArrowRenderer<>(ctx, net.minecraft.resources.ResourceLocation.withDefaultNamespace("textures/entity/projectiles/arrow.png")));
             event.registerEntityRenderer(ModEntities.IRUKANDJI_ARROW.get(),
@@ -319,7 +372,9 @@ public class OreSpawnClient {
             event.registerLayerDefinition(GhostRenderer.MODEL_LAYER, GhostModel::createBodyLayer);
             event.registerLayerDefinition(GhostSkellyRenderer.MODEL_LAYER, GhostSkellyModel::createBodyLayer);
             event.registerLayerDefinition(MothraRenderer.MODEL_LAYER, ButterflyModel::createBodyLayer);
-            event.registerLayerDefinition(LeonopteryxRenderer.MODEL_LAYER, ButterflyModel::createBodyLayer);
+            // Leonopteryx has no layer of its own: LeonopteryxRenderer bakes
+            // LeonRenderer.MODEL_LAYER (registered above) — 1.7.10 had a single
+            // Leon entity registered as "Leonopteryx" (orig OreSpawnMain.java:4377).
 
             // Misc (mob) - custom models only (RedCow and SpiderDriver use vanilla models)
             event.registerLayerDefinition(AntRobotRenderer.MODEL_LAYER, ModelAntRobot::createBodyLayer);

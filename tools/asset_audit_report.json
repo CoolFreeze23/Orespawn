@@ -1,0 +1,360 @@
+{
+  "root": "C:\\Homework\\Projects\\Orespawn",
+  "parsed": {
+    "items": 564,
+    "block_items": 190,
+    "spawn_eggs": 119,
+    "blocks": 215,
+    "entities": 145,
+    "menus": 2
+  },
+  "error_count": 8,
+  "advisory_count": 39,
+  "errors": [
+    {
+      "level": "ERROR",
+      "category": "BLOCK_TEXTURE_MISSING",
+      "name": "extractor",
+      "detail": "model orespawn:block/extractor slot \"top\" references missing texture orespawn:blocks/extractor_top",
+      "path": "src/main/resources/assets/orespawn/textures/blocks/extractor_top.png"
+    },
+    {
+      "level": "ERROR",
+      "category": "BLOCK_TEXTURE_MISSING",
+      "name": "extractor",
+      "detail": "model orespawn:block/extractor slot \"side\" references missing texture orespawn:blocks/extractor_side",
+      "path": "src/main/resources/assets/orespawn/textures/blocks/extractor_side.png"
+    },
+    {
+      "level": "ERROR",
+      "category": "ITEM_TEXTURE_MISSING",
+      "name": "extractor",
+      "detail": "model orespawn:item/extractor slot \"top\" references missing texture orespawn:blocks/extractor_top",
+      "path": "src/main/resources/assets/orespawn/textures/blocks/extractor_top.png"
+    },
+    {
+      "level": "ERROR",
+      "category": "ITEM_TEXTURE_MISSING",
+      "name": "extractor",
+      "detail": "model orespawn:item/extractor slot \"side\" references missing texture orespawn:blocks/extractor_side",
+      "path": "src/main/resources/assets/orespawn/textures/blocks/extractor_side.png"
+    },
+    {
+      "level": "ERROR",
+      "category": "ITEM_TEXTURE_MISSING",
+      "name": "crystal_wood_lumber",
+      "detail": "model orespawn:item/crystal_wood_lumber slot \"layer0\" references missing texture orespawn:items/crystal_wood_lumber",
+      "path": "src/main/resources/assets/orespawn/textures/items/crystal_wood_lumber.png"
+    },
+    {
+      "level": "ERROR",
+      "category": "ITEM_TEXTURE_MISSING",
+      "name": "crystal_wood_stick",
+      "detail": "model orespawn:item/crystal_wood_stick slot \"layer0\" references missing texture orespawn:items/crystal_wood_stick",
+      "path": "src/main/resources/assets/orespawn/textures/items/crystal_wood_stick.png"
+    },
+    {
+      "level": "ERROR",
+      "category": "TEXTURE_REF_MISSING",
+      "name": "LeonopteryxRenderer",
+      "detail": "Java references missing asset orespawn:textures/entity/leonopteryx.png",
+      "path": "src/main/java/danger/orespawn/entity/client/LeonopteryxRenderer.java"
+    },
+    {
+      "level": "ERROR",
+      "category": "GUI_TEXTURE_MISSING",
+      "name": "CrystalWorkbenchScreen",
+      "detail": "Java references missing asset orespawn:textures/gui/crystal_workbench.png",
+      "path": "src/main/java/danger/orespawn/gui/CrystalWorkbenchScreen.java"
+    }
+  ],
+  "advisories": [
+    {
+      "level": "ADVISORY",
+      "category": "SHAPE_SUSPECT_FULL_CUBE",
+      "name": "pizza",
+      "detail": "block name suggests a torch/cake-style shape but its model chain terminates in a full-cube template (block/cube_bottom_top) - renders as a full block",
+      "path": "src/main/resources/assets/orespawn/blockstates/pizza.json"
+    },
+    {
+      "level": "ADVISORY",
+      "category": "SHAPE_SUSPECT_FULL_CUBE",
+      "name": "kraken_repellent",
+      "detail": "block name suggests a torch/cake-style shape but its model chain terminates in a full-cube template (block/cube_all) - renders as a full block",
+      "path": "src/main/resources/assets/orespawn/blockstates/kraken_repellent.json"
+    },
+    {
+      "level": "ADVISORY",
+      "category": "SHAPE_SUSPECT_FULL_CUBE",
+      "name": "creeper_repellent",
+      "detail": "block name suggests a torch/cake-style shape but its model chain terminates in a full-cube template (block/cube_all) - renders as a full block",
+      "path": "src/main/resources/assets/orespawn/blockstates/creeper_repellent.json"
+    },
+    {
+      "level": "ADVISORY",
+      "category": "BLOCKITEM_FLAT_SPRITE",
+      "name": "pizza",
+      "detail": "block item uses item/generated (flat sprite) while its block model is a full cube (block/cube_bottom_top); original likely rendered as a 3D block/cake shape",
+      "path": "src/main/resources/assets/orespawn/models/item/pizza.json"
+    },
+    {
+      "level": "ADVISORY",
+      "category": "BLOCKITEM_FLAT_SPRITE",
+      "name": "duct_tape",
+      "detail": "block item uses item/generated (flat sprite) while its block model is a full cube (block/cube_bottom_top); original likely rendered as a 3D block/cake shape",
+      "path": "src/main/resources/assets/orespawn/models/item/duct_tape.json"
+    },
+    {
+      "level": "ADVISORY",
+      "category": "TOOL_NO_TRANSFORMS",
+      "name": "hammerhead_spawn_block",
+      "detail": "tool/weapon-named item model has no \"display\" key and no handheld parent (terminal parent: block/cube_all)",
+      "path": "src/main/resources/assets/orespawn/models/item/hammerhead_spawn_block.json"
+    },
+    {
+      "level": "ADVISORY",
+      "category": "TOOL_NO_TRANSFORMS",
+      "name": "rainbow_ant_block",
+      "detail": "tool/weapon-named item model has no \"display\" key and no handheld parent (terminal parent: block/cube_all)",
+      "path": "src/main/resources/assets/orespawn/models/item/rainbow_ant_block.json"
+    },
+    {
+      "level": "ADVISORY",
+      "category": "BEWLR_DISPLAY_INCOMPLETE",
+      "name": "big_bertha",
+      "detail": "builtin/entity item model missing display transforms: fixed, ground, gui",
+      "path": "src/main/resources/assets/orespawn/models/item/big_bertha.json"
+    },
+    {
+      "level": "ADVISORY",
+      "category": "BEWLR_DISPLAY_INCOMPLETE",
+      "name": "slice",
+      "detail": "builtin/entity item model missing display transforms: fixed, ground, gui",
+      "path": "src/main/resources/assets/orespawn/models/item/slice.json"
+    },
+    {
+      "level": "ADVISORY",
+      "category": "BEWLR_DISPLAY_INCOMPLETE",
+      "name": "royal_guardian_sword",
+      "detail": "builtin/entity item model missing display transforms: fixed, ground, gui",
+      "path": "src/main/resources/assets/orespawn/models/item/royal_guardian_sword.json"
+    },
+    {
+      "level": "ADVISORY",
+      "category": "BEWLR_DISPLAY_INCOMPLETE",
+      "name": "battle_axe",
+      "detail": "builtin/entity item model missing display transforms: fixed, ground, gui",
+      "path": "src/main/resources/assets/orespawn/models/item/battle_axe.json"
+    },
+    {
+      "level": "ADVISORY",
+      "category": "BEWLR_DISPLAY_INCOMPLETE",
+      "name": "queen_battle_axe",
+      "detail": "builtin/entity item model missing display transforms: fixed, ground, gui",
+      "path": "src/main/resources/assets/orespawn/models/item/queen_battle_axe.json"
+    },
+    {
+      "level": "ADVISORY",
+      "category": "BEWLR_DISPLAY_INCOMPLETE",
+      "name": "chainsaw",
+      "detail": "builtin/entity item model missing display transforms: fixed, ground, gui",
+      "path": "src/main/resources/assets/orespawn/models/item/chainsaw.json"
+    },
+    {
+      "level": "ADVISORY",
+      "category": "BEWLR_DISPLAY_INCOMPLETE",
+      "name": "attitude_adjuster",
+      "detail": "builtin/entity item model missing display transforms: fixed, ground, gui",
+      "path": "src/main/resources/assets/orespawn/models/item/attitude_adjuster.json"
+    },
+    {
+      "level": "ADVISORY",
+      "category": "TOOL_GENERATED_PARENT",
+      "name": "ultimate_bow",
+      "detail": "tool/weapon-named item uses item/generated; likely needs item/handheld or explicit display transforms",
+      "path": "src/main/resources/assets/orespawn/models/item/ultimate_bow.json"
+    },
+    {
+      "level": "ADVISORY",
+      "category": "TOOL_NO_TRANSFORMS",
+      "name": "ultimate_bow",
+      "detail": "tool/weapon-named item model has no \"display\" key and no handheld parent (terminal parent: item/generated)",
+      "path": "src/main/resources/assets/orespawn/models/item/ultimate_bow.json"
+    },
+    {
+      "level": "ADVISORY",
+      "category": "TOOL_GENERATED_PARENT",
+      "name": "skate_bow",
+      "detail": "tool/weapon-named item uses item/generated; likely needs item/handheld or explicit display transforms",
+      "path": "src/main/resources/assets/orespawn/models/item/skate_bow.json"
+    },
+    {
+      "level": "ADVISORY",
+      "category": "TOOL_NO_TRANSFORMS",
+      "name": "skate_bow",
+      "detail": "tool/weapon-named item model has no \"display\" key and no handheld parent (terminal parent: item/generated)",
+      "path": "src/main/resources/assets/orespawn/models/item/skate_bow.json"
+    },
+    {
+      "level": "ADVISORY",
+      "category": "TOOL_GENERATED_PARENT",
+      "name": "ultimate_fishing_rod",
+      "detail": "tool/weapon-named item uses item/generated; likely needs item/handheld or explicit display transforms",
+      "path": "src/main/resources/assets/orespawn/models/item/ultimate_fishing_rod.json"
+    },
+    {
+      "level": "ADVISORY",
+      "category": "TOOL_NO_TRANSFORMS",
+      "name": "ultimate_fishing_rod",
+      "detail": "tool/weapon-named item model has no \"display\" key and no handheld parent (terminal parent: item/generated)",
+      "path": "src/main/resources/assets/orespawn/models/item/ultimate_fishing_rod.json"
+    },
+    {
+      "level": "ADVISORY",
+      "category": "TOOL_GENERATED_PARENT",
+      "name": "thunder_staff",
+      "detail": "tool/weapon-named item uses item/generated; likely needs item/handheld or explicit display transforms",
+      "path": "src/main/resources/assets/orespawn/models/item/thunder_staff.json"
+    },
+    {
+      "level": "ADVISORY",
+      "category": "TOOL_NO_TRANSFORMS",
+      "name": "thunder_staff",
+      "detail": "tool/weapon-named item model has no \"display\" key and no handheld parent (terminal parent: item/generated)",
+      "path": "src/main/resources/assets/orespawn/models/item/thunder_staff.json"
+    },
+    {
+      "level": "ADVISORY",
+      "category": "BEWLR_DISPLAY_INCOMPLETE",
+      "name": "squid_zooka",
+      "detail": "builtin/entity item model missing display transforms: fixed, ground, gui",
+      "path": "src/main/resources/assets/orespawn/models/item/squid_zooka.json"
+    },
+    {
+      "level": "ADVISORY",
+      "category": "TOOL_GENERATED_PARENT",
+      "name": "boots_shoes",
+      "detail": "tool/weapon-named item uses item/generated; likely needs item/handheld or explicit display transforms",
+      "path": "src/main/resources/assets/orespawn/models/item/boots_shoes.json"
+    },
+    {
+      "level": "ADVISORY",
+      "category": "TOOL_NO_TRANSFORMS",
+      "name": "boots_shoes",
+      "detail": "tool/weapon-named item model has no \"display\" key and no handheld parent (terminal parent: item/generated)",
+      "path": "src/main/resources/assets/orespawn/models/item/boots_shoes.json"
+    },
+    {
+      "level": "ADVISORY",
+      "category": "ENTITY_NOOP_RENDERER",
+      "name": "acid",
+      "detail": "ModEntities.ACID (MobCategory.MISC) is bound to NoopProjectileRenderer - a deliberate do-nothing renderer, so the entity is INVISIBLE in-game (the thrown-rock/shoe/ball projectile class)",
+      "path": "src/main/java/danger/orespawn/OreSpawnClient.java"
+    },
+    {
+      "level": "ADVISORY",
+      "category": "ENTITY_NOOP_RENDERER",
+      "name": "bertha_hit",
+      "detail": "ModEntities.BERTHA_HIT (MobCategory.MISC) is bound to NoopProjectileRenderer - a deliberate do-nothing renderer, so the entity is INVISIBLE in-game (the thrown-rock/shoe/ball projectile class)",
+      "path": "src/main/java/danger/orespawn/OreSpawnClient.java"
+    },
+    {
+      "level": "ADVISORY",
+      "category": "ENTITY_NOOP_RENDERER",
+      "name": "better_fireball",
+      "detail": "ModEntities.BETTER_FIREBALL (MobCategory.MISC) is bound to NoopProjectileRenderer - a deliberate do-nothing renderer, so the entity is INVISIBLE in-game (the thrown-rock/shoe/ball projectile class)",
+      "path": "src/main/java/danger/orespawn/OreSpawnClient.java"
+    },
+    {
+      "level": "ADVISORY",
+      "category": "ENTITY_NOOP_RENDERER",
+      "name": "cage",
+      "detail": "ModEntities.ENTITY_CAGE (MobCategory.MISC) is bound to NoopProjectileRenderer - a deliberate do-nothing renderer, so the entity is INVISIBLE in-game (the thrown-rock/shoe/ball projectile class)",
+      "path": "src/main/java/danger/orespawn/OreSpawnClient.java"
+    },
+    {
+      "level": "ADVISORY",
+      "category": "ENTITY_NOOP_RENDERER",
+      "name": "dead_irukandji",
+      "detail": "ModEntities.DEAD_IRUKANDJI (MobCategory.MISC) is bound to NoopProjectileRenderer - a deliberate do-nothing renderer, so the entity is INVISIBLE in-game (the thrown-rock/shoe/ball projectile class)",
+      "path": "src/main/java/danger/orespawn/OreSpawnClient.java"
+    },
+    {
+      "level": "ADVISORY",
+      "category": "ENTITY_NOOP_RENDERER",
+      "name": "ice_ball",
+      "detail": "ModEntities.ICE_BALL (MobCategory.MISC) is bound to NoopProjectileRenderer - a deliberate do-nothing renderer, so the entity is INVISIBLE in-game (the thrown-rock/shoe/ball projectile class)",
+      "path": "src/main/java/danger/orespawn/OreSpawnClient.java"
+    },
+    {
+      "level": "ADVISORY",
+      "category": "ENTITY_NOOP_RENDERER",
+      "name": "ink_sack",
+      "detail": "ModEntities.INK_SACK (MobCategory.MISC) is bound to NoopProjectileRenderer - a deliberate do-nothing renderer, so the entity is INVISIBLE in-game (the thrown-rock/shoe/ball projectile class)",
+      "path": "src/main/java/danger/orespawn/OreSpawnClient.java"
+    },
+    {
+      "level": "ADVISORY",
+      "category": "ENTITY_NOOP_RENDERER",
+      "name": "laser_ball",
+      "detail": "ModEntities.LASER_BALL (MobCategory.MISC) is bound to NoopProjectileRenderer - a deliberate do-nothing renderer, so the entity is INVISIBLE in-game (the thrown-rock/shoe/ball projectile class)",
+      "path": "src/main/java/danger/orespawn/OreSpawnClient.java"
+    },
+    {
+      "level": "ADVISORY",
+      "category": "ENTITY_NOOP_RENDERER",
+      "name": "shoes",
+      "detail": "ModEntities.SHOES (MobCategory.MISC) is bound to NoopProjectileRenderer - a deliberate do-nothing renderer, so the entity is INVISIBLE in-game (the thrown-rock/shoe/ball projectile class)",
+      "path": "src/main/java/danger/orespawn/OreSpawnClient.java"
+    },
+    {
+      "level": "ADVISORY",
+      "category": "ENTITY_NOOP_RENDERER",
+      "name": "sunspot_urchin",
+      "detail": "ModEntities.SUNSPOT_URCHIN (MobCategory.MISC) is bound to NoopProjectileRenderer - a deliberate do-nothing renderer, so the entity is INVISIBLE in-game (the thrown-rock/shoe/ball projectile class)",
+      "path": "src/main/java/danger/orespawn/OreSpawnClient.java"
+    },
+    {
+      "level": "ADVISORY",
+      "category": "ENTITY_NOOP_RENDERER",
+      "name": "thrown_rock",
+      "detail": "ModEntities.ENTITY_THROWN_ROCK (MobCategory.MISC) is bound to NoopProjectileRenderer - a deliberate do-nothing renderer, so the entity is INVISIBLE in-game (the thrown-rock/shoe/ball projectile class)",
+      "path": "src/main/java/danger/orespawn/OreSpawnClient.java"
+    },
+    {
+      "level": "ADVISORY",
+      "category": "ENTITY_NOOP_RENDERER",
+      "name": "thunder_bolt",
+      "detail": "ModEntities.THUNDER_BOLT (MobCategory.MISC) is bound to NoopProjectileRenderer - a deliberate do-nothing renderer, so the entity is INVISIBLE in-game (the thrown-rock/shoe/ball projectile class)",
+      "path": "src/main/java/danger/orespawn/OreSpawnClient.java"
+    },
+    {
+      "level": "ADVISORY",
+      "category": "ENTITY_NOOP_RENDERER",
+      "name": "water_ball",
+      "detail": "ModEntities.WATER_BALL (MobCategory.MISC) is bound to NoopProjectileRenderer - a deliberate do-nothing renderer, so the entity is INVISIBLE in-game (the thrown-rock/shoe/ball projectile class)",
+      "path": "src/main/java/danger/orespawn/OreSpawnClient.java"
+    },
+    {
+      "level": "ADVISORY",
+      "category": "GUI_LEGACY_ATLAS_BLIT",
+      "name": "CrystalFurnaceScreen",
+      "detail": "screen blits sub-sprites (arrow/flame) from a vanilla container texture at U>=176; in 1.21.1 those sprites live in textures/gui/sprites/** and this region is empty - progress indicators render invisible",
+      "path": "src/main/java/danger/orespawn/gui/CrystalFurnaceScreen.java"
+    }
+  ],
+  "skipped": [
+    {
+      "what": "src/main/java/danger/orespawn/entity/client/BoyfriendRenderer.java",
+      "detail": "concatenated asset path \"textures/entity/boyfriend\" + <expr> - cannot fully verify statically (28 file(s) match prefix on disk)"
+    },
+    {
+      "what": "src/main/java/danger/orespawn/entity/client/ElevatorRenderer.java",
+      "detail": "concatenated asset path \"textures/entity/elevator\" + <expr> - cannot fully verify statically (11 file(s) match prefix on disk)"
+    },
+    {
+      "what": "src/main/java/danger/orespawn/entity/client/GirlfriendRenderer.java",
+      "detail": "concatenated asset path \"textures/entity/girlfriend\" + <expr> - cannot fully verify statically (43 file(s) match prefix on disk)"
+    }
+  ]
+}

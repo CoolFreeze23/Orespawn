@@ -1,7 +1,9 @@
 package danger.orespawn.entity;
 
+import danger.orespawn.ModItems;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.projectile.ThrowableProjectile;
 import net.minecraft.world.level.Level;
@@ -30,6 +32,16 @@ public class IceBall extends LaserBall {
 
     public void enableIceCreation() {
         this.createIce = true;
+    }
+
+    /**
+     * ENTITY_NOOP_RENDERER/ice_ball — orig RenderItemUrchin drew spinner tile 84
+     * (orig IceBall.java:16 my_index=84), the ice_ball item sprite
+     * (textures/items/iceball.png); feeds vanilla ThrownItemRenderer.
+     */
+    @Override
+    public ItemStack getItem() {
+        return new ItemStack(ModItems.ICE_BALL.get());
     }
 
     @Override

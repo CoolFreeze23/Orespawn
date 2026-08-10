@@ -1,7 +1,8 @@
 {
-  "parent": "minecraft:block/crop",
+  "_comment": "i010: orig BlockQuinoa extends BlockReed (BlockQuinoa.java:17-18, render type 1 = sugar-cane X-cross); parent was wrongly minecraft:block/crop",
+  "parent": "minecraft:block/cross",
   "render_type": "minecraft:cutout",
   "textures": {
-    "crop": "orespawn:blocks/quinoa_3"
+    "cross": "orespawn:blocks/quinoa_3"
   }
 }

@@ -1515,6 +1515,31 @@ code after the run (b3 spider-driver read raced the driver's faithful
 auto-mount, port SpiderDriver.java:106; dsb_igloo's registry-absence filter
 tripped on VANILLA minecraft:igloo — namespace-scoped now).
 
+- **TF-030 OPEN (parity review — Leonopteryx/Leon entity duplication):** 1.7.10
+  has ONE entity (class Leon, registered "Leonopteryx"); the port registers TWO
+  (orespawn:leon with the bespoke LeonModel + 256x256 leon.png, and
+  orespawn:leonopteryx on the generic ButterflyModel — whose renderer scrambled
+  the copied texture until the 2026-08-11 asset wave re-pointed it at the Leon
+  layer as a minimal visual fix). Open question for parity review: which id do
+  spawns/structures/eggs reference (LEONOPTERYX_NEST, ride tests, spawn eggs),
+  and should the duplicate be consolidated into one entity with an id alias for
+  existing worlds. Proposed fix: audit every reference, keep orespawn:leon as
+  the canonical entity, alias/remove the twin. Renderer-level symptom fixed;
+  entity-level consolidation deferred to review. Consolidation scope grew at the
+  2026-08-11 cleanup wave: (a) the port's LeonRenderer omits the original's
+  1.75x render scale + 1.75 shadow (orig ClientProxyOreSpawn.java:500); (b)
+  LeonModel draws BOTH the standing and f-prefixed flying part sets every
+  frame (98 parts), z-fighting whichever set is un-animated; (c) the interim
+  Leonopteryx static-pose model gets no wing/leg animation until consolidated.
+- **Session observation (Phase E note):** EntityCage's DATA_CAGE_INDEX synched
+  value is never written server-side (client-only write in tick), so clients
+  always read 160; harmless today (only empty cages are thrown) but a latent
+  sync bug if filled-cage rendering ever lands.
+- **Repellent wall placement gap (logged with the torch-shape fix):** orig
+  Kraken/Creeper repellents extend BlockTorch and wall-mount; the port is
+  floor-only (torch visual + shape landed 2026-08-11; wall variant needs a
+  WallTorchBlock-style twin — small follow-up, Phase E or beta feedback).
+
 ### Harness-limit reclassifications (returned to MANUAL_ONLY)
 
 The following checklist items were reclassified MANUAL_ONLY in
@@ -1574,3 +1599,120 @@ re-derivation, dimension-stub removals above) were applied to TEST CODE ONLY
 (src/gametest and test helpers). No src/main change has been made in this
 session — every TF fix above awaits user approval. Status of all 24 findings:
 OPEN.
+
+### Manual-session fail batch (2026-08-11) — TF-027..TF-029 + behavior triage
+
+Verdicts for the 10 behavior notes from the 2026-08-10/11 manual sitting
+(testing_session fail batch): 3 PORT_BUG findings below, 7 FAITHFUL closures
+summarized after them. All three fixes land in the same batch.
+
+- **TF-027 FIXED (2026-08-11, manual-session fail batch — duct tape inert
+  twin, i003/ITEM-011/012):** two distinct failures compounded. (1) REAL PORT
+  BUG: the port registered duct tape twice — the functional BlockItem
+  `orespawn:duct_tape` (ModItems.java:49, reachable only via the creative tab,
+  ModCreativeTabs.java:80) and a completely inert plain item
+  `orespawn:duct_tape_item` (ModItems.java:650 `registerSimpleItem` — no
+  block-placing or repair behavior; tab entry ModCreativeTabs.java:510, lang
+  key en_us.json:290). The crafting recipe
+  (data/orespawn/recipe/duct_tape_item.json:15-17) AND the checklist give-line
+  (TESTING_CHECKLIST.md:50,509) both yielded the inert one, so in survival the
+  repair mechanic was unreachable — the item placed nothing, clicks did
+  nothing, exactly what the user saw; both ids display "Duct Tape"
+  (en_us.json:25,290), indistinguishable in-game. The gametest
+  (MiscTests.java:140-151) setBlocks the tape directly and never exercised
+  the item path, so it could not catch this. (2) WRONG EXPECTATION: "LEFT-click
+  with duct tape repairs held gear" was never the 1.7.10 flow — the original
+  is cake-style: orig OreSpawnMain.java:1619-1620 (single ItemDuctTape wired
+  to MyDuctTapeBlock, max stack 1), :3331 (slime+string recipe);
+  ItemDuctTape.java:26-66 (onItemUse PLACES the block — the item itself never
+  repairs); BlockDuctTape.java:87-117 (right- AND left-click on the PLACED
+  block with the damaged item as the unstacked MAIN-hand stack repair
+  maxDamage/6 min 1 per click, 6 slices then the block vanishes; no offhand
+  in 1.7.10 at all). The port's block half was already faithful
+  (port BlockDuctTape.java:50-91, gametest-verified). Fix: recipe result
+  re-pointed to `orespawn:duct_tape`; the inert DUCT_TAPE_ITEM registration,
+  its tab entry and lang key removed; the block item registered
+  `.stacksTo(1)` per orig func_77625_d(1); TESTING_CHECKLIST.md:50/509
+  reworded to the give-`duct_tape` place-then-click flow; gametest extension
+  (place via the BlockItem's useOn) flagged optional hardening.
+- **TF-028 FIXED (2026-08-11, manual-session fail batch — lava bobber
+  physics, i085/ENT-S-059):** the port's UltimateFishHook.tick() ran vanilla
+  `super.tick()` FIRST (port UltimateFishHook.java:145-177) — and vanilla
+  1.21.1 FishingHook.tick is water-blind in lava (NeoForge 21.1.223 decompiled
+  FishingHook.java:158-241: lava is not FluidTags.WATER so f stays 0.0, its
+  BOBBING branch pulls the hook toward the BOTTOM of the current block AND
+  applies −0.03/tick gravity, then moves and scales by 0.92) — and only
+  afterwards ADDED a second BOBBING correction toward the lava surface
+  (:164-175): three competing vertical forces per tick where the original had
+  ONE. Orig UltimateFishHook.java:265-276 counts BOTH water and lava material
+  into the in-liquid fraction d10, and :347-355 applies a single buoyancy term
+  `motionY += 0.04*(2*d10-1)` with 0.8/0.9 damping and NO gravity while in
+  liquid — the bobber floats half-submerged AT the lava surface like a vanilla
+  bobber on water. Port symptom (numeric simulation of the exact combined
+  update, scratchpad bobber_sim.py): equilibrium ~0.6 blocks UNDER the 8/9
+  lava surface in a 1-deep pool with erratic 0.0-0.6 excursions, near-floor
+  hang in a 3-deep pool — the user's "bobber starts in lava then starts
+  floating out of it". The bite state machine itself was correctly driven
+  (catchingFish at :174) and the FLYING→BOBBING lava entry (:158-163) fine.
+  Fix: the lava pass made exclusive, not additive — while in lava and
+  BOBBING, currentState is set to HOOKED_IN_ENTITY around super.tick()
+  (hookedIn null makes that vanilla branch a pure no-op return,
+  FishingHook.java:182-193, skipping its f=0 correction, gravity, move and
+  0.92 scale while keeping Projectile base ticking/shouldStopFishing), then
+  BOBBING is restored and one faithful copy of the vanilla BOBBING body runs
+  with `f = fluid.getHeight(...)`: the d0 surface term, |d0|<0.01 kick,
+  0.9/0.9 horizontal damping, biting dunk, catchingFish, then
+  move(SELF)/updateRotation/scale(0.92)/reapplyPosition — and NO gravity in
+  lava, per orig :277/:347-352. No new ATs needed (nibble/currentState/
+  catchingFish already access-transformed per D4 §12).
+- **TF-029 FIXED (2026-08-11, manual-session fail batch — hoverboard seat,
+  i069/D2/ANIM-012):** two compounding porting errors put the board at the
+  rider's waist ("when riding, hoverboard isnt on feet. its in the middle of
+  the player"). (a) Model not re-anchored: the original rendered through a
+  boat-style Render with NO −1.5 living-model offset
+  (orig RenderElevator.java:27-45 — translate to entity pos, scale(−1,−1,1)),
+  so the deck slab (orig ModelElevator.java:46-51, boxes at model y 0..1,
+  rotation point 0) drew its top face at the entity's posY; the port copied
+  the box geometry verbatim (port ModelElevator.java:30-53) but renders it
+  through MobRenderer/EntityModel (ElevatorRenderer.java:21,37), whose
+  convention anchors the model root 1.501 blocks ABOVE the entity origin —
+  deck rendered at boardY+1.44..1.50. (b) Rider offset taken literally: port
+  Elevator.positionRider put the passenger's feet at getY()+0.5
+  (port Elevator.java:180-185), misreading orig :161-163 (getMountedYOffset
+  0.5) + :519 — the 1.7.10 net math is +0.5 + player.getYOffset() (1.12)
+  − setPosition's yOffset (1.62) = feet at boardY exactly (standing,
+  shouldRiderSit=false per orig :121-123), while non-players
+  (getYOffset()=0) genuinely rode 0.5 up. Hitbox registration itself was
+  faithful (ModEntities.java:583-586, 1.25×1.0 per orig :58). Fix: all five
+  model shapes baked with PartPose.offset(0, 24, 0) — 24 px = 1.5 blocks
+  down, deck top back at ~boardY, hit-wobble pivot unchanged (it rotates at
+  the entity origin like orig RenderElevator:30-38); positionRider →
+  players +0.0, non-player passengers keep +0.5; the misreading Javadoc
+  corrected.
+
+**Manual-session behavior triage (2026-08-11):** the other 7 verdicts of the
+10-item fail batch came back FAITHFUL — the observed behavior is the 1.7.10
+original reproduced 1:1, closed in TESTING_CHECKLIST with MOD entries filed
+for the four where the user voiced a preference: **ITEM-013/014** mole dirt
+(0.125 sink + 0.3× drag are the exact orig MoleDirtBlock.java:33-43 values —
+CONFIRMED-INTENDED, no MOD entry); **ITEM-001/005** gem-ore smelting (no
+ruby/amethyst furnace recipe ever existed, orig OreSpawnMain.java:3092-3117 —
+smelting sub-check dropped); **ITEM-027** duplicator pacing
+(one-write-per-random-tick, ~12.5 min mean to full tree; observed ~2 MC days
+was sleep-skip + out-of-range copy source → **MOD-015** growth-steps config);
+**ITEM-037** chainsaw felling (blind 11×16×11 box, orig
+UltimateSword.java:351-371 → **MOD-016** attached-only BFS config, plus its
+provenance note on the LOGS/LEAVES tag mapping); **ITEM-047** instant-garden
+Y (feet-anchored, clicked Y ignored, orig InstantGarden.java:41-50 →
+**MOD-017** click-anchored-Y config); **ENT-A-074/075** CaterKiller transform
+(tree-free 2400-tick metamorphosis, orig CaterKiller.java:438-448, verified
+into decompiled NeoForge Mob.serverAiStep — checklist retest protocol
+amended: real sword through 19 armor, stay in 32 blocks, don't die);
+**i019/ENT-D-025..027** rock place-vs-throw split (in-reach block click
+places a pet Rock with no clearance check by design, orig
+ItemRock.java:75-128 → **MOD-018** always-throw config; the projectile's
+in-flight invisibility is the separate i018 renderer item). **MOD-019**
+(experience-gear self-repair / built-in mending, default-off candidate) was
+additionally filed for the i009 user request — the original's
+ExperienceSword.java:55-103 is an XP trickle only and never repaired
+anything.
