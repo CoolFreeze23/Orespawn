@@ -200,3 +200,37 @@ impact estimate, related finding IDs.
 - **Impact:** gameplay-visible but redundant with crafting; invisible to parity.
   Effort: small.
 - **Related findings:** WGEN-005 (closed, Phase D5); ITEM-062 (closed, Phase D5).
+
+## MOD-014 — Procedural spider overhaul (FLAGSHIP 2.0 CANDIDATE — EXPLICITLY POST-PARITY)
+- **Scope:** replace the faithful 1.7.10 gait solver (the Phase D2 SpiderRobot/AntRobot
+  leg-animation port, orig SpiderRobot.java:111-486 / AntRobot.java:156-510 — see
+  ANIM-006, closed) with modern procedural IK leg animation: world-anchored feet,
+  per-leg step targeting/overstretch relocation driven by inverse kinematics rather
+  than the original's replicated solver. Pair it with MULTI-PART HITBOXES (the vanilla
+  Ender Dragon parent/part pattern, already exercised in this repo by the
+  King/Queen MultiHitBoxLib integration) so collision follows the model per-limb.
+- **Applies to:** SpiderRobot and AntRobot first; potentially the organic spider-type
+  mobs (Spider Driver's mount is the same rig; evaluate CaveFisher/Emperor Scorpion
+  class rigs once the technique lands).
+- **Reference implementation (technique only):**
+  https://github.com/TheCymaera/minecraft-spider — a PAPER PLUGIN, reference-only for
+  the IK/gait approach; VERIFY ITS LICENSE before reusing any actual code, and expect
+  a from-scratch NeoForge implementation regardless (display-entity plugin tech does
+  not transplant to a modded entity renderer).
+- **Dependencies / touch points:** the D2 `RenderSpiderRobotInfo` architecture
+  (entity-side leg state shared by AntRobot/SpiderRobot and their models —
+  AntRobot.java:34/48/316, client/ModelSpiderRobot + ModelAntRobot); targeting,
+  projectile collision, and damage routing once multi-part boxes exist (parent
+  unhittable vs part-forwarding decisions, same questions BOSS-002/007 settled for
+  the King/Queen); the existing GameTest entity suites (EntityLogicTests*,
+  CoreStatTests' SpiderDriver armor/bite tests, the structure tests spawning pad
+  robots) which assert against single-AABB queries and current spawn behavior.
+- **Parity stance:** contradicts the 1.0 faithful-port guarantee BY DESIGN — the D2
+  gait solver is the parity-correct behavior and stays the 1.0 ship. This overhaul is
+  a 2.0 feature; strongly consider a config gate ("classic vs modern movement",
+  default classic) so the faithful solver remains selectable.
+- **Impact:** gameplay- and visually-transformative for the robot line; high effort
+  (renderer, entity, AI, collision, tests). Effort: large.
+- **Related findings:** ANIM-006 (closed, Phase D2 — the faithful solver this
+  replaces); BOSS-002/BOSS-007 (closed — the multi-part precedent); ENT-A-013/014
+  (AntRobot ride/stomp behaviors that must survive the swap).
