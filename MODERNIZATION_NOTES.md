@@ -225,6 +225,18 @@ impact estimate, related finding IDs.
   the King/Queen); the existing GameTest entity suites (EntityLogicTests*,
   CoreStatTests' SpiderDriver armor/bite tests, the structure tests spawning pad
   robots) which assert against single-AABB queries and current spawn behavior.
+- **Multi-part tech already in-repo (use it, don't hand-roll the dragon pattern):**
+  the vendored MultiHitBoxLib + GeckoLib bridge is live on the Queen —
+  `data/orespawn/multihitboxlib/hitbox_profiles/the_queen.json` declares
+  bone-synched part boxes with per-part damage modifiers;
+  `MixinGeoEntityRenderer` attaches `GeckolibBoneInformationCollectorLayer`,
+  which reads `GeoBone#getWorldPosition` per render frame, ships
+  `CPacketBoneInformation`, and `alignSynchedSubParts()` snaps each
+  `MHLibPartEntity` to its bone next `aiStep`. Spider caveat: SpiderRobot/
+  AntRobot are vanilla-model entities, so either migrate the rigs to GeckoLib
+  to ride that layer, or feed MHLib part positions straight from the IK solver
+  — the second is likely cleaner AND server-authoritative (the Queen path
+  trusts client-sourced bone positions; a server-side IK solver would not).
 - **Parity stance:** contradicts the 1.0 faithful-port guarantee BY DESIGN — the D2
   gait solver is the parity-correct behavior and stays the 1.0 ship. This overhaul is
   a 2.0 feature; strongly consider a config gate ("classic vs modern movement",
