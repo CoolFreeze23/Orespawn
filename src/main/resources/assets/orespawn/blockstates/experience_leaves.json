@@ -1,4 +1,4 @@
-﻿{
+{
     "variants":  {
                      "distance=6,persistent=false,waterlogged=true":  {
                                                                           "model":  "orespawn:block/experience_leaves"
