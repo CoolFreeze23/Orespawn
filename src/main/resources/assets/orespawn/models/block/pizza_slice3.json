@@ -1,0 +1,45 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "particle": "orespawn:blocks/pizza_side",
+    "bottom": "orespawn:blocks/pizza_bottom",
+    "top": "orespawn:blocks/pizza_top",
+    "side": "orespawn:blocks/pizza_side",
+    "inside": "orespawn:blocks/pizza_inner"
+  },
+  "elements": [
+    {
+      "from": [
+        7,
+        0,
+        1
+      ],
+      "to": [
+        15,
+        4,
+        15
+      ],
+      "faces": {
+        "down": {
+          "texture": "#bottom",
+          "cullface": "down"
+        },
+        "up": {
+          "texture": "#top"
+        },
+        "north": {
+          "texture": "#side"
+        },
+        "south": {
+          "texture": "#side"
+        },
+        "west": {
+          "texture": "#inside"
+        },
+        "east": {
+          "texture": "#side"
+        }
+      }
+    }
+  ]
+}

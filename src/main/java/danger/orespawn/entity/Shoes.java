@@ -1,5 +1,6 @@
 package danger.orespawn.entity;
 
+import danger.orespawn.ModItems;
 import danger.orespawn.util.SeasonalDates;
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
@@ -12,12 +13,14 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.ItemSupplier;
 import net.minecraft.world.entity.projectile.ThrowableProjectile;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 
-public class Shoes extends ThrowableProjectile {
+public class Shoes extends ThrowableProjectile implements ItemSupplier {
     private static final EntityDataAccessor<Integer> DATA_SHOE_ID =
             SynchedEntityData.defineId(Shoes.class, EntityDataSerializers.INT);
 
@@ -47,6 +50,23 @@ public class Shoes extends ThrowableProjectile {
     }
 
     public int getShoeId() { return this.entityData.get(DATA_SHOE_ID); }
+
+    /**
+     * ENTITY_NOOP_RENDERER/shoes — orig RenderShoe drew spinner tile getShoeId();
+     * tiles 2-6 are pixel-identical to redheels/blackheels/slippers/boots/
+     * gamecontroller item sprites (same id table as ItemShoes registrations in
+     * ModItems); feeds vanilla ThrownItemRenderer.
+     */
+    @Override
+    public ItemStack getItem() {
+        return new ItemStack(switch (this.getShoeId()) {
+            case 3 -> ModItems.BLACK_HEELS.get();
+            case 4 -> ModItems.SLIPPERS.get();
+            case 5 -> ModItems.BOOTS_SHOES.get();
+            case HEAVY_SHOE_ID -> ModItems.GAME_CONTROLLER.get(); // Boyfriend's thrown controller
+            default -> ModItems.RED_HEELS.get(); // id 2 (DEFAULT_SHOE_ID)
+        });
+    }
 
     /** orig Shoes.java:57-79 — damage table in original order (later rules win). */
     @Override

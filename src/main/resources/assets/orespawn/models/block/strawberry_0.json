@@ -1,0 +1,8 @@
+{
+  "_comment": "i010: growth-stage model — orig BlockStrawberry extends BlockCrops (BlockStrawberry.java:15-16, crop hash render), icon strawberry_0 of the 4-icon array (BlockStrawberry.java:44-50)",
+  "parent": "minecraft:block/crop",
+  "render_type": "minecraft:cutout",
+  "textures": {
+    "crop": "orespawn:blocks/strawberry_0"
+  }
+}

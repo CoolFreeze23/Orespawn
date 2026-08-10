@@ -14,6 +14,7 @@ import danger.orespawn.ModEntities;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.ItemSupplier;
 import net.minecraft.world.entity.projectile.ThrowableProjectile;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -25,7 +26,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 
-public class EntityThrownRock extends ThrowableProjectile {
+public class EntityThrownRock extends ThrowableProjectile implements ItemSupplier {
     private static final EntityDataAccessor<Integer> DATA_ROCK_TYPE =
             SynchedEntityData.defineId(EntityThrownRock.class, EntityDataSerializers.INT);
 
@@ -65,6 +66,32 @@ public class EntityThrownRock extends ThrowableProjectile {
     }
 
     public int getRockType() { return this.entityData.get(DATA_ROCK_TYPE); }
+
+    /**
+     * ENTITY_NOOP_RENDERER/thrown_rock — orig RenderThrownRock billboarded
+     * textures/items/rock*.png keyed by getRockType() (RenderThrownRock.java:18-29,
+     * 63-102; type 1 rocksmall ... type 12 rockcrystaltnt, default rocksmall).
+     * The port items reuse those exact textures, so returning the matching rock
+     * item through vanilla ThrownItemRenderer reproduces the original render.
+     * Reads the synched rock type so the client picks the right sprite.
+     */
+    @Override
+    public ItemStack getItem() {
+        return new ItemStack(switch (this.getRockType()) {
+            case 2 -> ModItems.ROCK.get();
+            case 3 -> ModItems.ROCK_RED.get();
+            case 4 -> ModItems.ROCK_GREEN.get();
+            case 5 -> ModItems.ROCK_BLUE.get();
+            case 6 -> ModItems.ROCK_PURPLE.get();
+            case 7 -> ModItems.ROCK_SPIKEY.get();
+            case 8 -> ModItems.ROCK_TNT.get();
+            case 9 -> ModItems.ROCK_CRYSTAL_RED.get();
+            case 10 -> ModItems.ROCK_CRYSTAL_GREEN.get();
+            case 11 -> ModItems.ROCK_CRYSTAL_BLUE.get();
+            case 12 -> ModItems.ROCK_CRYSTAL_TNT.get();
+            default -> ModItems.ROCK_SMALL.get(); // type 1 and orig fallback (texture1)
+        });
+    }
     public void setRockType(int type) {
         if (this.level() == null || this.level().isClientSide) return;
         this.rockType = type;

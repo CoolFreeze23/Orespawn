@@ -409,8 +409,6 @@ public class ModCreativeTabs {
                         output.accept(ModItems.TITANIUM_NUGGET.get());
                         output.accept(ModItems.CRYSTAL_PINK_INGOT.get());
                         output.accept(ModItems.TIGERS_EYE_INGOT.get());
-                        output.accept(ModItems.CRYSTAL_WOOD_LUMBER.get());
-                        output.accept(ModItems.CRYSTAL_WOOD_STICK.get());
                         output.accept(ModItems.SALT.get());
                         output.accept(ModItems.CRYSTAL_STICKS.get());
                         output.accept(ModItems.GREEN_GOO.get());
@@ -507,7 +505,8 @@ public class ModCreativeTabs {
                         output.accept(ModItems.ELEVATOR.get());
                         output.accept(ModItems.INSTANT_SHELTER.get());
                         output.accept(ModItems.INSTANT_GARDEN.get());
-                        output.accept(ModItems.DUCT_TAPE_ITEM.get());
+                        // TF-027: inert DUCT_TAPE_ITEM removed; the functional
+                        // DUCT_TAPE_BLOCK_ITEM is listed with the blocks above.
                         output.accept(ModItems.STEP_UP.get());
                         output.accept(ModItems.STEP_DOWN.get());
                         output.accept(ModItems.STEP_ACROSS.get());

@@ -1,5 +1,6 @@
 {
-  "parent": "minecraft:item/generated",
+  "parent": "minecraft:item/handheld_rod",
+  "__comment": "TOOL_GENERATED_PARENT/TOOL_NO_TRANSFORMS: vanilla rod hold. No cast override - orig UltimateFishingRod.java registers one static icon; no cast texture exists in port or 1.7.10 reference.",
   "textures": {
     "layer0": "orespawn:items/ultimatefishingrod"
   }

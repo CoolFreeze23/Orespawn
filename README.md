@@ -563,9 +563,10 @@ working unchanged. Crystal-Dim worldgen places it via the same
 `add_crystal_dim_ores` biome modifier as kyanite.
 - ~~**Crystal Lumber / Crystal Stick** — the Wood Crystal Sword recipe
 in Wiki §6.1 explicitly requires Crystal Lumber + Crystal Sticks.~~
-**DONE (Phase 10)** — `crystal_wood_lumber` (4× per `crystal_tree_log`)
-and `crystal_wood_stick` (4× per 2 lumber) registered, with 1:1 shapeless
-conversion recipes from the legacy `crystal_planks` / `crystal_sticks`
+**REMOVED (2026-08-11, parity)** — the Phase-10 `crystal_wood_lumber` /
+`crystal_wood_stick` items were port inventions with no 1.7.10 counterpart
+(original crafts crystal planks directly from logs, orig OreSpawnMain.java:1869;
+the faithful stick item is `crystal_sticks`, display name "Crystal Shards").
 items so old worlds keep working. The `crystal_wood_sword` recipe now
 explicitly requires the canonical lumber + stick pair.
 - **Critter Cage filled-variant projectile pickup** — `EntityCage` flies

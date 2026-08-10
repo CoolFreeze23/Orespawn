@@ -45,6 +45,7 @@ import net.minecraft.world.entity.monster.WitherSkeleton;
 import net.minecraft.world.entity.monster.Zombie;
 import net.minecraft.world.entity.npc.Villager;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.ItemSupplier;
 import net.minecraft.world.entity.projectile.ThrowableProjectile;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -52,7 +53,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 
-public class EntityCage extends ThrowableProjectile {
+public class EntityCage extends ThrowableProjectile implements ItemSupplier {
     private static final EntityDataAccessor<Integer> DATA_CAGE_INDEX =
             SynchedEntityData.defineId(EntityCage.class, EntityDataSerializers.INT);
 
@@ -88,6 +89,19 @@ public class EntityCage extends ThrowableProjectile {
     }
 
     public int getCageIndex() { return this.entityData.get(DATA_CAGE_INDEX); }
+
+    /**
+     * ENTITY_NOOP_RENDERER/cage — orig RenderCage drew spinner tile getCageIndex(),
+     * default 160 == the cageempty item icon (pixel-identical to
+     * textures/items/cageempty.png). Only EMPTY cages are ever thrown — orig
+     * CritterCage.java:36-45 gates the throw on cage_id == CageEmpty, and the
+     * port's EmptyCageItem.java:57 always passes 160 — so the cage_empty sprite
+     * is exact for every thrown cage; feeds vanilla ThrownItemRenderer.
+     */
+    @Override
+    public ItemStack getItem() {
+        return new ItemStack(ModItems.CAGE_EMPTY.get());
+    }
 
     /**
      * orig EntityCage.java:179-931 — the species whitelist, first matching branch wins.

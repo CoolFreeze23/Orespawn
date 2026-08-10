@@ -4,16 +4,19 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.Entity;
 import danger.orespawn.ModEntities;
+import danger.orespawn.ModItems;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.ItemSupplier;
 import net.minecraft.world.entity.projectile.ThrowableProjectile;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 
-public class LaserBall extends ThrowableProjectile {
+public class LaserBall extends ThrowableProjectile implements ItemSupplier {
     private static final int MAX_LIFETIME_TICKS = 200;
     private static final float ROTATION_STEP_DEGREES = 50.0f;
     private static final float FULL_ROTATION_DEGREES = 360.0f;
@@ -66,6 +69,17 @@ public class LaserBall extends ThrowableProjectile {
 
     @Override
     protected void defineSynchedData(net.minecraft.network.syncher.SynchedEntityData.Builder builder) {
+    }
+
+    /**
+     * ENTITY_NOOP_RENDERER/laser_ball — orig RenderItemUrchin drew spinner tile 81
+     * (orig LaserBall.java:26 my_index=81), pixel-identical to the laser_ball item
+     * sprite (textures/items/laserball.png); feeds vanilla ThrownItemRenderer.
+     * IceBall/Acid/DeadIrukandji override this with their own tiles (84/85/86).
+     */
+    @Override
+    public ItemStack getItem() {
+        return new ItemStack(ModItems.LASER_BALL.get());
     }
 
     @Override

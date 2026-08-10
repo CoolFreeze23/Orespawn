@@ -177,11 +177,19 @@ public class Elevator extends Mob implements RiderInputPayload.RideableFlyer {
         return super.getControllingPassenger();
     }
 
-    /** Rider stands 0.5 above the board plane (orig Elevator.java:161-163, 517-521). */
+    /**
+     * TF-029: the original placed the rider at posY + getMountedYOffset(0.5)
+     * + rider.getYOffset() and let setPosition subtract the rider's yOffset
+     * again (orig Elevator.java:161-163, 517-521). For a 1.7.10 player
+     * (yOffset 1.62, getYOffset() = yOffset - 0.5 = 1.12) the net was feet at
+     * boardY + 0.5 + 1.12 - 1.62 = boardY + 0.0 — the player stands ON the
+     * board — while non-player entities (getYOffset() = 0) genuinely rode
+     * 0.5 up.
+     */
     @Override
     protected void positionRider(Entity passenger, Entity.MoveFunction move) {
         if (!this.hasPassenger(passenger)) return;
-        move.accept(passenger, this.getX(), this.getY() + 0.5, this.getZ());
+        move.accept(passenger, this.getX(), this.getY() + (passenger instanceof Player ? 0.0 : 0.5), this.getZ());
     }
 
     /**

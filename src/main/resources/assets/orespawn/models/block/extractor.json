@@ -1,8 +1,7 @@
 {
-  "parent": "minecraft:block/cube_bottom_top",
+  "_comment": "Audit BLOCK_TEXTURE_MISSING/ITEM_TEXTURE_MISSING (extractor): the 1.7.10 reference has no Extractor block or extractor_* art (block is a Phase-11 port modernization, see ModBlocks.java). Per no-invented-art rule the model uses the vanilla iron_block texture it already relied on for the bottom face, via cube_all.",
+  "parent": "minecraft:block/cube_all",
   "textures": {
-    "top": "orespawn:blocks/extractor_top",
-    "bottom": "minecraft:block/iron_block",
-    "side": "orespawn:blocks/extractor_side"
+    "all": "minecraft:block/iron_block"
   }
 }

@@ -6,16 +6,19 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.entity.Entity;
 import danger.orespawn.ModEntities;
+import danger.orespawn.ModItems;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.ItemSupplier;
 import net.minecraft.world.entity.projectile.ThrowableProjectile;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 
-public class SunspotUrchin extends ThrowableProjectile {
+public class SunspotUrchin extends ThrowableProjectile implements ItemSupplier {
     private static final float DAMAGE_DEFAULT = 3.0f;
     private static final float DAMAGE_VS_CREEPER = 6.0f;
     private static final int IGNITE_DURATION_SECONDS = 5;
@@ -42,6 +45,16 @@ public class SunspotUrchin extends ThrowableProjectile {
 
     @Override
     protected void defineSynchedData(net.minecraft.network.syncher.SynchedEntityData.Builder builder) {
+    }
+
+    /**
+     * ENTITY_NOOP_RENDERER/sunspot_urchin — orig RenderItemUrchin drew spinner
+     * tile 50 (orig SunspotUrchin.java:20 my_index=50), the sunspot_urchin item
+     * sprite (textures/items/sunspoturchin.png); feeds vanilla ThrownItemRenderer.
+     */
+    @Override
+    public ItemStack getItem() {
+        return new ItemStack(ModItems.SUNSPOT_URCHIN.get());
     }
 
     @Override

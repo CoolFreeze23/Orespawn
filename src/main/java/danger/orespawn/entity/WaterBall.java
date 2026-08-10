@@ -10,12 +10,13 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.ItemSupplier;
 import net.minecraft.world.entity.projectile.ThrowableProjectile;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 
-public class WaterBall extends ThrowableProjectile {
+public class WaterBall extends ThrowableProjectile implements ItemSupplier {
     private static final float DAMAGE_DEFAULT = 2.0f;
     private static final float DAMAGE_VS_CREEPER = 5.0f;
     private static final int CLIENT_IMPACT_PARTICLE_LOOPS = 8;
@@ -40,6 +41,16 @@ public class WaterBall extends ThrowableProjectile {
 
     @Override
     protected void defineSynchedData(net.minecraft.network.syncher.SynchedEntityData.Builder builder) {
+    }
+
+    /**
+     * ENTITY_NOOP_RENDERER/water_ball — orig RenderItemUrchin drew spinner tile 49
+     * (orig WaterBall.java:22 my_index=49), pixel-identical to the water_ball item
+     * sprite (textures/items/waterball.png); feeds vanilla ThrownItemRenderer.
+     */
+    @Override
+    public ItemStack getItem() {
+        return new ItemStack(ModItems.WATER_BALL.get());
     }
 
     @Override

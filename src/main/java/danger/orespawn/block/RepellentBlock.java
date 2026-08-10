@@ -10,11 +10,15 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.monster.Creeper;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
 
 /**
  * Torch-like block that repels matching entities within a 20-block radius,
@@ -43,11 +47,32 @@ public class RepellentBlock extends Block {
     /** orig CreeperRepellent.java:83 — scan box y ±10. */
     private static final double CREEPER_BOX_VERTICAL = 10.0;
 
+    // Shape parity (asset-audit follow-up): orig KrakenRepellent.java:21-22 /
+    // CreeperRepellent.java:22-23 extend BlockTorch, so the block is a standing
+    // torch — mirror vanilla TorchBlock/BaseTorchBlock's shape usage:
+    // Block.box(6, 0, 6, 10, 10, 10) outline and NO collision (vanilla torches
+    // get that via Properties.noCollission(); enforced here in-class since the
+    // registration properties live in ModBlocks). Wall placement (BlockTorch
+    // metadata 1-4 in 1.7.10) remains unimplemented — logged separately.
+    private static final VoxelShape SHAPE = Block.box(6.0, 0.0, 6.0, 10.0, 10.0, 10.0);
+
     private final Variant variant;
 
     public RepellentBlock(BlockBehaviour.Properties properties, Variant variant) {
         super(properties);
         this.variant = variant;
+    }
+
+    /** Vanilla standing-torch outline (see SHAPE comment). */
+    @Override
+    protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+        return SHAPE;
+    }
+
+    /** Torches never collide — orig BlockTorch parent had no collision box. */
+    @Override
+    protected VoxelShape getCollisionShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+        return Shapes.empty();
     }
 
     @Override
