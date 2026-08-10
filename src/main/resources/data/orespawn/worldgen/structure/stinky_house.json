@@ -1,0 +1,8 @@
+{
+  "type": "orespawn:legacy_dungeon",
+  "biomes": "#orespawn:has_structure/stinky_house",
+  "step": "surface_structures",
+  "spawn_overrides": {},
+  "terrain_adaptation": "none",
+  "dungeon_type": "STINKY_HOUSE"
+}

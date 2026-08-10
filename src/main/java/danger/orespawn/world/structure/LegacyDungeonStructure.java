@@ -78,6 +78,23 @@ public class LegacyDungeonStructure extends Structure {
             }
             case SKY_BAND_150 -> skyBand150Origin(context);
             case SWAMP_GRASS_SURFACE -> swampGrassSurfaceOrigin(context);
+            case SAND_SURFACE_MINUS1 -> {
+                // Bouncy Castle (orig OreSpawnWorld.java:1280-1299): identical
+                // scan shape to the swamp-grass one, but the builder receives
+                // posY−1 — the SAND block itself (:1292). Sand identity is
+                // carried by the desert biome list the same way grass was by
+                // the swamp tag.
+                BlockPos air = swampGrassSurfaceOrigin(context);
+                yield air == null ? null : air.below();
+            }
+            case VILLAGE_GRASS_SURFACE -> villageGrassSurfaceOrigin(context);
+            case ISLANDS_GRASS_AIR -> {
+                // Pumpkin (orig OreSpawnWorld.java:2416): the D4 i-roll hands
+                // makePumpkin the AIR block above the grass anchor.
+                BlockPos grass = islandsGrassOrigin(context);
+                yield grass == null ? null : grass.above();
+            }
+            case SKY_BAND_70 -> skyBand70Origin(context);
         };
         if (origin == null) return Optional.empty();
         if (origin.getY() + dungeonType.upExtent + 4 >= context.heightAccessor().getMaxBuildHeight()) {
@@ -264,6 +281,57 @@ public class LegacyDungeonStructure extends Structure {
             return new BlockPos(x, firstFree, z);
         }
         return null;
+    }
+
+    /**
+     * Port of {@code addDamselInDistress}'s anchoring
+     * (orig OreSpawnWorld.java:1301-1317): the Village dimension's grass scan
+     * — up to 4 attempts (:1305) of chunk + nextInt(16) jitter (:1306-1307),
+     * air-over-GRASS scan Y 100→41 (:1309-1310) with the same dry-column
+     * grass approximation as {@link #swampGrassSurfaceOrigin} — but the
+     * builder receives {@code posY - 1}, the GRASS block itself (:1311), and
+     * the original also requires {@code quickSpaceCheck(posX, posY - 1,
+     * posZ)} — a 12×12 all-air plane at anchor+4, offsets −2..+9 on both
+     * axes (:2625-2633) — which maps to the END_SURFACE-style
+     * {@link #footprintClearAbove} approximation (the same pairing
+     * {@code endSurfaceOrigin} uses for the hospital's identical probe).
+     */
+    private BlockPos villageGrassSurfaceOrigin(GenerationContext context) {
+        ChunkPos chunk = context.chunkPos();
+        for (int attempt = 0; attempt < 4; attempt++) {
+            int x = chunk.getMinBlockX() + context.random().nextInt(16);
+            int z = chunk.getMinBlockZ() + context.random().nextInt(16);
+            int firstFree = context.chunkGenerator().getBaseHeight(
+                    x, z, Heightmap.Types.WORLD_SURFACE_WG,
+                    context.heightAccessor(), context.randomState());
+            // orig :1309 — the scan only visits Y 100 down to 41.
+            if (firstFree > 100 || firstFree < 41) continue;
+            int floorY = context.chunkGenerator().getBaseHeight(
+                    x, z, Heightmap.Types.OCEAN_FLOOR_WG,
+                    context.heightAccessor(), context.randomState());
+            // Wet column — the original required grass below, never water.
+            if (floorY != firstFree) continue;
+            int anchorY = firstFree - 1;                     // orig :1311
+            if (!footprintClearAbove(context, x, z, anchorY)) continue;
+            return new BlockPos(x, anchorY, z);
+        }
+        return null;
+    }
+
+    /**
+     * Port of {@code addD4Rainbow}'s anchoring
+     * (orig OreSpawnWorld.java:2430-2436): a line-for-line clone of
+     * {@link #skyBand150Origin} in the 70..89 band. The original drew Y from
+     * the WORLD RNG while X/Z came from the chunk random (:2434); that
+     * mixed-stream quirk collapses into the single seeded structure random,
+     * the same documented delta as the Cloud Shark's.
+     */
+    private BlockPos skyBand70Origin(GenerationContext context) {
+        ChunkPos chunk = context.chunkPos();
+        int x = chunk.getMinBlockX() + 4 + context.random().nextInt(8);
+        int z = chunk.getMinBlockZ() + 4 + context.random().nextInt(8);
+        int y = 70 + context.random().nextInt(20);
+        return new BlockPos(x, y, z);
     }
 
     /**

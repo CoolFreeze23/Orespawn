@@ -191,7 +191,27 @@ public class LegacyDungeonPiece extends StructurePiece {
         // Mini Dungeon (GD:2229-2406): Islands D4 i==10 (addD4Mini).
         MINI_DUNGEON(-7, 10, 1, 12, -1, 10, PlacementMode.ISLANDS_GRASS),
         // Cephadrome Altar (GD:4731-4829): Islands D4 i==12.
-        CEPHADROME_ALTAR(-5, 5, 1, 5, -5, 5, PlacementMode.ISLANDS_GRASS);
+        CEPHADROME_ALTAR(-5, 5, 1, 5, -5, 5, PlacementMode.ISLANDS_GRASS),
+        // Phase D6b batch 3 — specs in phase_d_reports/d6_extraction/.
+        // Bouncy Castle (GD:3106-3205): overworld exact-"Desert" scan
+        // (OSW:1280-1299; anchor = the SAND block, posY−1 at OSW:1292).
+        BOUNCY_CASTLE(-5, 5, 1, 5, -5, 5, PlacementMode.SAND_SURFACE_MINUS1),
+        // Damsel In Distress (GD:3625-3733): Village-dimension cottage
+        // (OSW:1301-1317; anchor = the GRASS block, posY−1 at OSW:1311,
+        // plus the quickSpaceCheck 12×12 clearance probe OSW:2625-2633).
+        DAMSEL_IN_DISTRESS(-5, 5, 1, 10, -5, 5, PlacementMode.VILLAGE_GRASS_SURFACE),
+        // Girlfriend Island (GD:4962-5028): Monster Island's near-twin —
+        // same ocean scan shape (OSW:1378-1396), same box.
+        GIRLFRIEND_ISLAND(-6, 6, 2, 5, -4, 4, PlacementMode.OCEAN_SURFACE),
+        // Stinky House (GD:5314-5381): Islands D4 i==15 (addD4StinkyHouse
+        // OSW:2276-2297, grass anchor like the other D4 adds).
+        STINKY_HOUSE(-6, 20, 1, 4, -5, 13, PlacementMode.ISLANDS_GRASS),
+        // Pumpkin (GD:6041-6182): Islands D4 i==17 (addPumpkin); the
+        // builder receives the AIR block above grass — hence _AIR.
+        PUMPKIN(-1, 14, 1, 18, -1, 12, PlacementMode.ISLANDS_GRASS_AIR),
+        // Rainbow (GD:6260-6393): Islands D4 i==18 (addD4Rainbow
+        // OSW:2430-2436) — unconditional sky placement, Y 70..89.
+        RAINBOW(-15, 14, 0, 41, -4, 4, PlacementMode.SKY_BAND_70);
 
         /** How {@link LegacyDungeonStructure#findGenerationPoint} anchors this type. */
         public enum PlacementMode {
@@ -260,7 +280,45 @@ public class LegacyDungeonPiece extends StructurePiece {
              * window — documented mapping delta, same style as END_SURFACE's
              * clearance approximation.
              */
-            SWAMP_GRASS_SURFACE
+            SWAMP_GRASS_SURFACE,
+            /**
+             * addBouncyCastle (orig OreSpawnWorld.java:1280-1299): the
+             * {@link #SWAMP_GRASS_SURFACE} scan shape (exact-"Desert"
+             * corner-biome gate → biome list, 4 attempts of chunk +
+             * nextInt(16) jitter, air-over-SAND scan Y 100→41 with the
+             * dry-column approximation standing in for the sand identity
+             * test) — but the anchor is the SAND block itself
+             * ({@code posY - 1}, orig :1292), one below the air block
+             * SWAMP_GRASS_SURFACE returns.
+             */
+            SAND_SURFACE_MINUS1,
+            /**
+             * addDamselInDistress (orig OreSpawnWorld.java:1301-1317):
+             * Village-dimension grass scan with the same 4-attempt
+             * Y 100→41 shape; the anchor is the GRASS block
+             * ({@code posY - 1}, orig :1311), and the original's
+             * {@code quickSpaceCheck} 12×12 all-air plane at anchor+4
+             * (orig :2625-2633) is approximated by the END_SURFACE-style
+             * footprint clearance probe.
+             */
+            VILLAGE_GRASS_SURFACE,
+            /**
+             * Pumpkin's variant of {@link #ISLANDS_GRASS}: the D4 i-roll
+             * hands {@code makePumpkin} the AIR block above the grass
+             * anchor (orig OreSpawnWorld.java:2407-2421 chain → :2416),
+             * so this mode is ISLANDS_GRASS plus one on Y.
+             */
+            ISLANDS_GRASS_AIR,
+            /**
+             * addD4Rainbow (orig OreSpawnWorld.java:2430-2436): no scan
+             * at all — X/Z = chunk + 4 + nextInt(8), Y = 70 + nextInt(20),
+             * unconditional; {@link #SKY_BAND_150} in a lower band. The
+             * original drew Y from the WORLD RNG while X/Z came from the
+             * chunk random (:2434); that mixed-stream quirk collapses into
+             * the single seeded structure random (documented delta, same
+             * as the Cloud Shark's).
+             */
+            SKY_BAND_70
         }
 
         public final int minXOff;
@@ -388,6 +446,12 @@ public class LegacyDungeonPiece extends StructurePiece {
                 case LEAF_MONSTER_DUNGEON -> LeafMonsterDungeonGenerator.generate(this, origin, rng);
                 case MINI_DUNGEON -> MiniDungeonGenerator.generate(this, origin, rng);
                 case CEPHADROME_ALTAR -> CephadromeAltarGenerator.generate(this, origin, rng);
+                case BOUNCY_CASTLE -> BouncyCastleGenerator.generate(this, origin, rng);
+                case DAMSEL_IN_DISTRESS -> DamselInDistressGenerator.generate(this, origin, rng);
+                case GIRLFRIEND_ISLAND -> GirlfriendIslandGenerator.generate(this, origin, rng);
+                case STINKY_HOUSE -> StinkyHouseGenerator.generate(this, origin, rng);
+                case PUMPKIN -> PumpkinGenerator.generate(this, origin, rng);
+                case RAINBOW -> RainbowGenerator.generate(this, origin, rng);
             }
         } finally {
             this.pLevel = null;
