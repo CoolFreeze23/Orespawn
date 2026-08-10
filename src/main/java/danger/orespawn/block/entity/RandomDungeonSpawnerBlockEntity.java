@@ -89,6 +89,18 @@ public class RandomDungeonSpawnerBlockEntity extends BlockEntity {
     private static final int TYPE_NIGHTMARE_ROOKERY = 38;
     // orig DungeonSpawnerBlock.java:194-196 — makeEnormousCastleQ (Queen tower)
     private static final int TYPE_ENORMOUS_CASTLE_QUEEN = 47;
+    // orig DungeonSpawnerBlock.java:131-133 — makeBouncyCastle (single call)
+    private static final int TYPE_BOUNCY_CASTLE = 26;
+    // orig DungeonSpawnerBlock.java:137-139 — makeDamselInDistress (single call)
+    private static final int TYPE_DAMSEL_IN_DISTRESS = 28;
+    // orig DungeonSpawnerBlock.java:158-160 — makeGirlfriendIsland (single call)
+    private static final int TYPE_GIRLFRIEND_ISLAND = 35;
+    // orig DungeonSpawnerBlock.java:170-172 — makeStinkyHouse
+    private static final int TYPE_STINKY_HOUSE = 39;
+    // orig DungeonSpawnerBlock.java:185-187 — makePumpkin at clickedY + 1
+    private static final int TYPE_PUMPKIN = 44;
+    // orig DungeonSpawnerBlock.java:191-193 — makeRainbow
+    private static final int TYPE_RAINBOW = 46;
 
     private int delay = TOTAL_DELAY;
 
@@ -256,6 +268,38 @@ public class RandomDungeonSpawnerBlockEntity extends BlockEntity {
             case TYPE_CEPHADROME_ALTAR -> {
                 LegacyDungeonPiece.buildNow(server, pos,
                         LegacyDungeonPiece.DungeonType.CEPHADROME_ALTAR);
+                yield true;
+            }
+            case TYPE_BOUNCY_CASTLE -> {
+                LegacyDungeonPiece.buildNow(server, pos,
+                        LegacyDungeonPiece.DungeonType.BOUNCY_CASTLE);
+                yield true;
+            }
+            case TYPE_DAMSEL_IN_DISTRESS -> {
+                LegacyDungeonPiece.buildNow(server, pos,
+                        LegacyDungeonPiece.DungeonType.DAMSEL_IN_DISTRESS);
+                yield true;
+            }
+            case TYPE_GIRLFRIEND_ISLAND -> {
+                LegacyDungeonPiece.buildNow(server, pos,
+                        LegacyDungeonPiece.DungeonType.GIRLFRIEND_ISLAND);
+                yield true;
+            }
+            case TYPE_STINKY_HOUSE -> {
+                LegacyDungeonPiece.buildNow(server, pos,
+                        LegacyDungeonPiece.DungeonType.STINKY_HOUSE);
+                yield true;
+            }
+            case TYPE_PUMPKIN -> {
+                // orig DSB:186 — makePumpkin receives clickedY + 1; the DSB
+                // already cleared that cell (DSB:50-51 → the tick handler).
+                LegacyDungeonPiece.buildNow(server, pos.above(),
+                        LegacyDungeonPiece.DungeonType.PUMPKIN);
+                yield true;
+            }
+            case TYPE_RAINBOW -> {
+                LegacyDungeonPiece.buildNow(server, pos,
+                        LegacyDungeonPiece.DungeonType.RAINBOW);
                 yield true;
             }
             // Interim fallback for the not-yet-ported structures (Phase D / WGEN-042)

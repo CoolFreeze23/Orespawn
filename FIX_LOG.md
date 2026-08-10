@@ -564,7 +564,7 @@ must not despawn when the player walks away.
 
 ---
 
-## Phase D — slice D6b batches 1-2: mechanical structures (2026-08-08, IN PROGRESS — batches 3-4 pending)
+## Phase D — slice D6b batches 1-3: mechanical structures (2026-08-08/10, IN PROGRESS — batch 4 pending)
 
 - **Pipeline:** every structure ran spec-extract → independent spec-verify →
   implement → per-structure code-verify (specs in `phase_d_reports/d6_extraction/`).
@@ -594,14 +594,49 @@ must not despawn when the player walks away.
   sanctioned pre-build terrain read (read cell == write cell only), now used
   by the royal-altar-style skirts; documented against the pattern doc's
   no-reads contract.
-- **DSB outcome table now covers 27 of 50** (0-3, 7, 12-20, 21-24, 27, 29,
-  30, 34, 37, 38, 47).
-- **Remaining for D6b batches 3-4 (ON HOLD, user usage budget):** BouncyCastle,
-  DamselInDistress, GirlfriendIsland, StinkyHouse, Pumpkin, Rainbow,
-  SpiderHangout, RedAntHangout, FrogPond, RubberDuckyPond + the full DSB
-  outcome sweep + Igloo's placement decision + WGEN-042/ITEM-020 closure +
-  the Phase D rollup.
-- **Build:** full `./gradlew build` SUCCESSFUL both batches.
+- **Batch 3 (2026-08-10, this commit):** BouncyCastle (desert, DSB 26, set
+  15/7, salt 84362, new mode SAND_SURFACE_MINUS1 — anchor is the sand block,
+  OSW:1292), DamselInDistress (Village dim, DSB 28, 16/8, 84363, new mode
+  VILLAGE_GRASS_SURFACE — grass-block anchor + quickSpaceCheck via
+  footprintClearAbove; direct Girlfriend spawn GD:3727-3732 via spawnEntity,
+  persistence inherent to the entity class), GirlfriendIsland (ocean, DSB 35,
+  42/21, 84364 — MonsterIsland's geometry twin, fixed spawner set, no 50/50
+  roll), StinkyHouse (Islands i==15, DSB 39, 44/22, 84365), Pumpkin (Islands
+  i==17, DSB 44 with the original's clickedY+1, 44/22, 84366, new mode
+  ISLANDS_GRASS_AIR, no loot — chest-free builder), Rainbow (Islands i==18,
+  DSB 46, 44/22, 84367, new mode SKY_BAND_70 = Y 70+nextInt(20) sky band;
+  double chest, both halves loot-bound 10-14).
+- **Batch-3 ruling (pattern doc §1 step 5 amended):** a 1.7.10 chest list
+  consumed at more than one fill count ships ONE loot table PER (list, fill
+  formula) pair — generalizes the D6a Kyuubi four-fill precedent; first
+  cross-structure use: `chests/damsel_in_distress.json` (rolls 10-14) vs
+  `chests/girlfriend_island.json` (rolls 4-8), entries identical, twins
+  cross-named via `_shared_list` keys.
+- **Pattern-doc trap corrected (batch 3):** step 6's "some indices fire TWO
+  builders (e.g. type 24)" example was itself the truncated-read trap — a
+  full-dispatch recount (DSB:53-202) shows all 50 blocks are single-call;
+  types 43/44/45 are the only clickedY+1 outliers.
+- **Batch-3 verify pass: 0 critical / 6 minor** (7 verifiers: 6 per-structure
+  + 1 cross-cutting): damsel iron-bar comment mis-justified the repo-wide
+  unconnected-panes approximation (comment fixed; approximation stands),
+  rainbow loop-7 comment credited m>=5 arches for the four +34 rain-cell
+  overwrites that the m=4 bar performs (fixed), pumpkin wiring comments cited
+  OSW:2426 for the :2416 makePumpkin call (fixed in both shared files),
+  damsel spec S10 lacked the superseding strikethrough §3 carries (fixed),
+  70 pre-existing datapack JSONs carry a UTF-8 BOM (Gson-tolerated, tooling
+  hazard — logged as a standalone cleanup task, not batch-3 scope), and the
+  postProcess dispatch is a switch STATEMENT so exhaustiveness is not
+  compiler-enforced (informational; 33/33 cases verified present, no default
+  arm to mask omissions).
+- **DSB outcome table now covers 31 of 50** (0-3, 7, 12-24, 26-30, 34, 35,
+  37-39, 44, 46, 47). NOTE: the batch-2 entry above previously claimed
+  "27 of 50" — that was a miscount; the enumerated types summed to 25
+  (verified by constant/case recount, 25 + batch-3's 6 = 31).
+- **Remaining for D6b batch 4 (ON HOLD, user usage budget):** SpiderHangout,
+  RedAntHangout, FrogPond, RubberDuckyPond + the full DSB outcome sweep +
+  Igloo's placement decision + WGEN-042/ITEM-020 closure + the Phase D
+  rollup.
+- **Build:** full `./gradlew build` SUCCESSFUL all three batches.
 
 ---
 

@@ -295,7 +295,7 @@ still applies).
 
 ---
 
-## D6b batches 1-2 — mechanical structures (added 2026-08-08)
+## D6b batches 1-3 — mechanical structures (added 2026-08-08, batch 3 2026-08-10)
 
 - **PlayPool (overworld ocean)** — `/locate structure orespawn:play_pool`: floating platform 16 blocks above the sea with 4 Attack Squid spawners, twin chests (only the x+1 chest has loot: ink/squid-zooka/gold-nugget/flesh, 3-7 stacks), water channel with flowing caps.
 - **CloudSharkDungeon (Islands sky)** — `/locate structure orespawn:cloud_shark_dungeon` then fly to Y150-159: tiny glowstone cluster with 4 Cloud Shark spawners + 1 chest (4-8 stacks incl. experience tree seeds).
@@ -309,6 +309,13 @@ still applies).
 - **MiniDungeon (Islands)** — per its spec: spawner ring at j=9 (12 spawners), corner caps, floor spawners, chest.
 - **CephadromeAltar (Islands)** — altar per spec with its spawners.
 - **Igloo** — DSB type 20 ONLY (no natural generation yet — placement decision pending): snow/ice dome, west oak door, Rat/Ghost/Ghost-Pumpkin-Skelly spawners, north-facing chest with 16 independent 50% fixed items; at (+,+) build coordinates the apex has a 1x1 skylight, at negative coordinates it closes (faithful float quirk).
+- **BouncyCastle (desert)** — `/locate structure orespawn:bouncy_castle`: lavafoam (bouncy, friction 1.1) castle sunk to the sand surface, 9 spawners (Silverfish/Rat/Scorpion mix), north-facing chest at (+3,+3,+3) with 6-10 stacks (cod/poppy/dandelion/pearl table, weight 180).
+- **DamselInDistress (Village dim)** — `/locate structure orespawn:damsel_in_distress` in the Village dimension: 9×9 mossy-decay cottage with front gable, 7×4 iron-bar jail wall, 2 Scorpion spawners, north-facing chest (10-14 stacks: iron tools + foods), and a live Girlfriend standing in the jail cell (persistent by entity class — she must NOT despawn when you leave and return).
+- **GirlfriendIsland (ocean)** — `/locate structure orespawn:girlfriend_island`: MonsterIsland's twin island/tree geometry, spawners Girlfriend/Boyfriend/Gold Fish×2 (fixed, no random pick), TWO chests each with 4-8 stacks of the damsel food/tool table.
+- **StinkyHouse (Islands)** — `/locate structure orespawn:stinky_house`: 25×17 fenced yard (1/3 fence gaps, 1/10 bushes, never overwrites yard air), 13×10 house with corner-adjacent window panes and 1/10 wall decay, doorway force-cleared, Stink Bug + Stinky spawners, chest (8-12 stacks, weight-215 table incl. both stink eggs).
+- **Pumpkin (Islands)** — `/locate structure orespawn:pumpkin`: 14-wide orange-terracotta jack-o'-lantern floating one block above grass, 48-cell carved face (eyes/nose/mouth) on the −z wall, green stem, interior plank candle with netherrack cap, twin fires, 2 Ghost Pumpkin Skelly spawners, NO chest.
+- **Rainbow (Islands sky)** — `/locate structure orespawn:rainbow` then fly to Y70-89: 8 nested wool arches (red innermost → pink outermost) threading a raining cloud slab, 6 Cloud Shark spawners, roof double chest — BOTH halves filled (10-14 stacks each, weight-150 table incl. magic apple).
+- **DSB batch-3 outcomes** — Random Dungeon Spawner can additionally produce types 26/28/35/39/44/46 (bouncy castle, damsel cottage, girlfriend island, stinky house, pumpkin at +1Y, rainbow) at the block.
 
 ---
 

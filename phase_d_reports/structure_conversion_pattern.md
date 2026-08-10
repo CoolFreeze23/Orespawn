@@ -193,6 +193,17 @@ list. Transcription rules (established Phase C, reaffirmed D5):
   TheKing's 150-random-items), keep a code-side fill — precedent B1 — but
   exhaust the JSON option first. None of the remaining 22 structures needs
   this (their lists are all static).
+- **One list consumed at MORE THAN ONE fill count → one table PER FILL
+  COUNT, entries identical** (D6b batch-3 ruling, generalizing the shipped
+  Kyuubi precedent: `kyuubi_dungeon_blaze_{north,south,east,west}.json` are
+  one 1.7.10 list at four fill formulas, differing only in `rolls`).
+  "One JSON per list" above means per (list, fill formula) pair —
+  `placeLootChest` binds only a table key, so rolls can never vary
+  per-structure on a shared file. First cross-STRUCTURE application:
+  `DamselContentsList` (GD:39) → `chests/damsel_in_distress.json`
+  (rolls 10-14, GD:3725) + `chests/girlfriend_island.json` (rolls 4-8,
+  GD:5021/5026), entries identical. Cross-reference the twin in a comment
+  key ("_shared_list" note) so a future entry edit hits both files.
 
 ### Step 6 — DungeonSpawnerBlock outcome
 
@@ -200,12 +211,14 @@ Every structure has a type number in the original's `nextInt(50)` table
 (orig `DungeonSpawnerBlock.java:52-202`). Add
 `case TYPE_<NAME> -> LegacyDungeonPiece.buildNow(server, pos, DungeonType.<NAME>)`
 in `port:block/entity/RandomDungeonSpawnerBlockEntity.buildForType`, keyed by
-the ORIGINAL index, with the orig line citation. Some indices fire TWO
-builders (e.g. type 24 = EnderDragonHospital + MonsterIsland) — port the
-pair together, and read the original `if (type == N)` block IN FULL before
-wiring (a truncated excerpt once made type 2 look like a two-builder index;
-it is the King castle alone). `buildNow` handles the rest (unclipped write
-window, live RNG).
+the ORIGINAL index, with the orig line citation. Every one of the 50
+`if (type == N)` blocks fires exactly ONE builder (verified against the
+full dispatch, DSB:53-202, D6b batch 3 — 50 blocks, 50 calls; the only
+Y-offset outliers are types 43/44/45, which pass `clickedY + 1`). Still
+read the block IN FULL before wiring: truncated excerpts once faked
+two-builder indices (type 2 "castle pair", type 24 "hospital +
+monster island" — both single-call; MonsterIsland is its own type 37).
+`buildNow` handles the rest (unclipped write window, live RNG).
 
 ### Step 7 — Verification checklist (per structure)
 
