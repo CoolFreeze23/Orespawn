@@ -1126,3 +1126,343 @@ must not despawn when the player walks away.
     distant owner, bite-and-break-off in combat, wing flaps audible; diamond
     regressions teen→baby and adult→teen work; princess blooms terrain at peace and
     vents PurplePower in combat (sparkle aura when charged).
+
+## TESTING_FINDINGS (GameTest suite, 2026-08-10)
+
+Triaged run: **145 GameTests, 48 failed**. Triage split: **24 port-defect findings**
+below (TF-001..TF-024, spanning 25 test methods; 4 flagged expected_red),
+**19 test-infrastructure fixes** applied to TEST CODE ONLY (src/gametest — no
+src/main change), and **6 harness-limit reclassifications** returning checklist
+items to MANUAL_ONLY (listed after the findings). Sixteen HIGH findings
+(TF-002..TF-016, TF-018) share one systemic root cause: the two global loot
+modifiers (add_ruby_to_dungeon / add_amethyst_to_dungeon) carry only a
+random_chance condition and NO loot-table scoping, so ruby/amethyst are injected
+into EVERY loot roll game-wide — the original scoped these gems to three vanilla
+ChestGenHooks pools only (OreSpawnMain.java:5391-5403). Canonical mechanism
+writeups: TF-009 (entity/block side) and TF-010 (structure-chest side + missing
+companion injections). All findings are **status OPEN** — fixes await user
+approval before any src/main change.
+
+- **TF-001 (HIGH)** `cephadrome_targets_and_kraken_bonus` — WaterDragon is
+  unspawnable: its ctor throws IllegalArgumentException "Unsupported mob type for
+  FollowOwnerGoal" (vanilla 1.21 FollowOwnerGoal rejects water-bound navigation);
+  this is the already-logged TEST-005 defect, hit here in phase 3 because
+  WaterDragon is a documented Cephadrome target. Orig:
+  reference_1_7_10_source/sources/danger/orespawn/Cephadrome.java:404-432,515-573;
+  phase_c_reports/C1_entities_A_C.md:63. Port:
+  src/main/java/danger/orespawn/entity/WaterDragon.java:84 (ctor throw);
+  TESTING_CHECKLIST.md:386-394 (TEST-005, OPEN). Fix: per TEST-005 — replace
+  FollowOwnerGoal with a navigation-agnostic follow goal (copy without the ctor
+  navigation check, or an amphibious variant). **EXPECTED_RED** (stays red until
+  TEST-005 is fixed; TEST-005 cross-link comments added). Status: OPEN.
+- **TF-002 (HIGH)** `i033_cockateil_variants_and_type5_ruby` — defect half (infra
+  empty-stack half already fixed in test code): the unscoped add_ruby GLM injects
+  ruby into cockateil rolls regardless of BirdType, killed_by_player, or the 1/3
+  chance, so the hard zero-probability negatives (type-5 without killed_by_player
+  x60, type-2 x60, single-pick ruby AND feather) fail with ~99% probability per
+  run. Orig: Cockateil.java:242-248 (ruby only when BirdType==5 && killedByPlayer
+  && nextInt(3)==1); OreSpawnMain.java:5391-5403. Port:
+  src/main/resources/data/orespawn/loot_modifiers/add_ruby_to_dungeon.json:1-12
+  (unscoped). Fix: TF-009 GLM scoping/codec fix. Status: OPEN.
+- **TF-003 (HIGH)** `i038_gazelle_ostrich_tamed_vs_untamed_kills` — untamed
+  gazelle kill dropped {ruby=1, beef=1}: beef 1 is in the documented 0-2 core, the
+  ruby is GLM-injected into the death roll (foreign-items assert; the
+  OreSpawnTamed-branched JSON was asserted clean in the same test). Orig:
+  Gazelle.java:337-352; OreSpawnMain.java:5391-5403. Port:
+  add_ruby_to_dungeon.json:1-12 (unscoped). Fix: TF-009. Status: OPEN.
+- **TF-004 (HIGH)** `i055_c1_drop_tables` — purest proof of the unscoped GLM:
+  UNTAMED camarasaurus rolled drops from a table whose only pool is gated on
+  OreSpawnTamed:1b, via a direct LootTable.getRandomItems call with no world
+  involvement (contamination impossible; GLM hook verified at patched
+  LootTable.java:136 CommonHooks.modifyLoot). In-game: every drop-nothing kill has
+  ~13.4% chance of dropping a gem. Orig: Camarasaurus.java:303-312;
+  OreSpawnMain.java:5391-5403. Port: add_ruby_to_dungeon.json +
+  add_amethyst_to_dungeon.json (unscoped). Fix: TF-009. Status: OPEN.
+- **TF-005 (HIGH)** `i058_c4_drop_tables` — worm_small rolled items despite the
+  documented EMPTY table (pools.size()==0 asserted in the same test, pure
+  getRandomItems roll); items are GLM-injected into the empty result list. Orig:
+  WormSmall.java:230-232 (drops nothing); OreSpawnMain.java:5391-5403. Port: both
+  GLM JSONs (unscoped). Fix: TF-009. Status: OPEN.
+- **TF-006 (HIGH)** `i059_d4_pet_drop_tables_and_stinky_kills` — untamed Stinky
+  kill dropped {ruby=1}; documented untamed Stinky drops NOTHING (full drop
+  override in the original); the single tamed-only pool was asserted clean
+  immediately before, so the ruby is GLM-injected. Orig: Stinky.java:257-266;
+  OreSpawnMain.java:5391-5403. Port: add_ruby_to_dungeon.json:1-12 (unscoped).
+  Fix: TF-009. Status: OPEN.
+- **TF-007 (HIGH)** `i060_prince_family_drops` — the_prince kill dropped
+  {amethyst_gem=1, beef=2}: beef 2 is in the documented 1-4 band, the amethyst is
+  GLM-injected (documented: beef only, no extras). Orig: ThePrince.java:354-361
+  (nextInt(4)+1 beef, nothing else); OreSpawnMain.java:5391-5403. Port:
+  add_amethyst_to_dungeon.json:1-12 (unscoped). Fix: TF-009. Status: OPEN.
+- **TF-008 (HIGH)** `i105_boss_drops_kraken_godzilla_queen_mothra_dragon` —
+  Mothra kill produced EXACTLY the documented set (painting 1, gold_nugget 53,
+  moth_scale 25, blaze_rod 3, nether_star 1) PLUS a GLM-injected ruby=1, breaking
+  the exact-count assert (boss drop code itself confirmed correct); also poisons
+  the exact-count Queen/King asserts on unlucky rolls. Orig: Mothra.java:341-363;
+  OreSpawnMain.java:5391-5403. Port: add_ruby_to_dungeon.json:1-12 (unscoped).
+  Fix: TF-009. Status: OPEN.
+- **TF-009 (HIGH)** `i115_crystal_egg_ore_breaks` — SHARED ROOT CAUSE (systemic,
+  entity/block side): the port registers both GLMs globally with only a
+  random_chance condition, so EVERY loot roll — entity kills, block breaks,
+  chests, even registered-but-empty tables — gets a bonus orespawn:ruby (eff.
+  0.3x0.25=7.5%) or orespawn:amethyst_gem (0.25x0.25=6.25%) per roll; the
+  original added the gems ONLY to dungeon/pyramid CHESTS via ChestGenHooks. Here:
+  ore_urchin break dropped a stray amethyst_gem at the break position (not
+  cross-cell contamination — same strays appear in pure getRandomItems rolls,
+  TF-004/TF-005). Secondary bug: AddItemsLootModifier.CODEC hardcodes
+  count=1/chance=0.25 via MapCodec.unit, ignoring the JSONs' declared count/chance
+  (ruby JSON says 0.3), and doApply re-rolls chance on top of the conditions
+  (double roll). Orig: OreSpawnMain.java:5391-5403 (ChestGenHooks
+  dungeonChest/pyramidJungleChest/pyramidDesertyChest only;
+  WeightedRandomChestContent ruby/amethyst 1-3 dungeon+jungle, 1-2 desert). Port:
+  src/main/resources/data/orespawn/loot_modifiers/add_ruby_to_dungeon.json:1-12
+  and add_amethyst_to_dungeon.json:1-12 (no neoforge:loot_table_id condition);
+  src/main/java/danger/orespawn/loot/AddItemsLootModifier.java:18-26 (unit codec
+  ignores JSON count/chance), :40-44 (doApply second roll);
+  data/neoforge/loot_modifiers/global_loot_modifiers.json. Fix: scope both
+  modifiers with a neoforge:loot_table_id (or any-of) condition to
+  minecraft:chests/simple_dungeon, minecraft:chests/jungle_temple,
+  minecraft:chests/desert_pyramid — or drop the GLMs for per-table datapack
+  injections; fix the CODEC to actually read count/chance
+  (Codec.INT.fieldOf("count"), Codec.FLOAT.fieldOf("chance")); remove the double
+  roll (keep the coded chance OR the random_chance condition, not both); restore
+  the original chest counts (1-3 dungeon/jungle, 1-2 desert). Status: OPEN.
+- **TF-010 (HIGH)** `i122_basilisk_maze_content_and_sink` — structure-chest side
+  of the TF-009 root cause: the basilisk_maze chest table rolled amethyst_gem,
+  absent from the documented 31-entry list (BM:28) and from the port's own
+  chests/basilisk_maze.json; the original's injection never touched OreSpawn's
+  own structure chests. Same codec bugs as TF-009, plus the port DROPS the
+  original's thunder staff / ant robot kit / spider robot kit injections. Orig:
+  OreSpawnMain.java:5391-5402 (dungeonChest ruby w3/amethyst w3/thunder staff w2;
+  pyramidJungleChest +AntRobotKit w3; pyramidDesertyChest +SpiderRobotKit w2 —
+  vanilla pools ONLY); GenericDungeon.java:280-296 (BasiliskContentsList fills
+  OreSpawn chests directly, no hook). Port: both GLM JSONs (no table
+  restriction); AddItemsLootModifier.java:22-23, :40-45;
+  data/neoforge/loot_modifiers/global_loot_modifiers.json. Fix: TF-009 scoping +
+  codec repair + single-apply chance, PLUS add the missing
+  thunder_staff/ant_robot_kit/spider_robot_kit modifiers, tuning rates to the
+  original's weighted-pool semantics. Status: OPEN.
+- **TF-011 (HIGH)** `i126_challenge_tower_level6_prizes` — unscoped GLM injected
+  ruby into a chests/challenge_tower_level1 roll (emerald-kit tier, GD:57 —
+  contains no ruby; ruby belongs to the level4 table only); all tower-content
+  asserts before loot sampling passed. Orig: OreSpawnMain.java:5391-5402;
+  GenericDungeon.java:57. Port: add_ruby_to_dungeon.json (unscoped);
+  AddItemsLootModifier.java:40-45. Fix: TF-009/TF-010. Status: OPEN.
+- **TF-012 (HIGH)** `i131_spawn_ore_breaks` — silk-touch playerDestroy of
+  spider_spawn_block dropped {amethyst_gem=1, spider_spawn_block=1}: the silk
+  break routes through Block.playerDestroy -> dropResources -> getDrops -> GLM,
+  so the stray is injected into the block's own loot roll (documented: exactly
+  1x itself, silk-independent; single-self-entry JSON assert passed immediately
+  before). Orig: OreSpawnMain.java:5391-5403 (gems are chest-only). Port:
+  add_amethyst_to_dungeon.json:1-12 (unscoped); AddItemsLootModifier.java:40-44.
+  Fix: TF-009. Status: OPEN.
+- **TF-013 (HIGH)** `i138_inca_pyramid_content` — unscoped GLM injected ruby into
+  a chests/inca_pyramid roll (documented 480-weight 14-entry IncaContentsList,
+  GD:38, and the port's inca_pyramid.json contain no ruby); all
+  geometry/grave/spawner asserts passed. Orig: OreSpawnMain.java:5391-5402;
+  GenericDungeon.java:38. Port: add_ruby_to_dungeon.json (unscoped);
+  AddItemsLootModifier.java:40-45. Fix: TF-009/TF-010. Status: OPEN.
+- **TF-014 (HIGH)** `i139_kyuubi_dungeon_content` — unscoped GLM injected
+  amethyst_gem into a chests/kyuubi_dungeon roll (documented 110-weight
+  KyuubiContentsList, GD:53, and kyuubi_dungeon.json contain no amethyst); all
+  hut/shaft/altar/ziggurat asserts passed. Orig: OreSpawnMain.java:5391-5402;
+  GenericDungeon.java:53. Port: add_amethyst_to_dungeon.json (unscoped);
+  AddItemsLootModifier.java:40-45. Fix: TF-009/TF-010. Status: OPEN.
+- **TF-015 (HIGH)** `i140_robot_lab_content_and_redstone` — unscoped GLM injected
+  amethyst_gem into a chests/robot_lab roll (documented 755-weight
+  RobotContentsList and robot_lab.json contain no amethyst); all
+  spawner/railway/assembly/door asserts passed (crusher-piston delayed assert
+  never ran — test aborted at loot stats). Orig: OreSpawnMain.java:5391-5402;
+  orig RobotContentsList (fills GD:4344/4349). Port: add_amethyst_to_dungeon.json
+  (unscoped); AddItemsLootModifier.java:40-45. Fix: TF-009/TF-010. Status: OPEN.
+- **TF-016 (HIGH)** `i141_hospital_content` — unscoped GLM injected amethyst_gem
+  into a chests/hospital roll (documented 210-weight 6-entry
+  HospitalContentsList, GD:44, and hospital.json contain no amethyst); all
+  cage/spawner/crystal-cap asserts passed (delayed 4-crystal/no-dragon assert
+  never ran — test aborted at loot stats). Orig: OreSpawnMain.java:5391-5402;
+  GenericDungeon.java:44. Port: add_amethyst_to_dungeon.json (unscoped);
+  AddItemsLootModifier.java:40-45. Fix: TF-009/TF-010. Status: OPEN.
+- **TF-017 (HIGH)** `item001_005_gem_ores_troll_blocks` — USER-OBSERVED companion
+  defect (not asserted by the current test, which fails earlier on TF-022):
+  ore_ruby/ore_amethyst ALWAYS drop the raw ore block and never the gems. Their
+  loot tables gate the ore-block branch on a match_tool silk-touch predicate in
+  the pre-1.20.5 schema ("enchantments" directly under "predicate"); the 1.21.1
+  ItemPredicate codec only knows items/count/components/predicates (verified in
+  transformed ItemPredicate.java:20-31) and silently ignores the unknown key, so
+  the predicate parses EMPTY and matches ANY tool — the gem branch is dead code.
+  Explains "dropping raw ore + not smelting" exactly (no ore->gem furnace recipe
+  exists; gems unobtainable from mining). Gem entry also lacks the documented
+  count (orig 1 + nextInt(2) = 1-2; port drops exactly 1). SYSTEMIC: the same
+  dead schema appears in 14 tables (blocks/ore_ruby, ore_amethyst, ore_salt,
+  ore_titanium, ore_uranium, tigers_eye_ore, apple_leaves, cherry_leaves,
+  crystal_leaves, crystal_leaves_2, crystal_leaves_3, experience_leaves,
+  peach_leaves, scary_leaves) — every one always takes its "silk" branch. Orig:
+  OreRuby.java:32-42 (func_149650_a returns MyRuby, func_149679_a returns
+  1 + nextInt(2)). Port: data/orespawn/loot_table/blocks/ore_ruby.json and
+  ore_amethyst.json (dead match_tool schema, no set_count on the gem entry) +
+  the 12 further tables listed above. Fix: rewrite the silk gate in all 14
+  tables to the 1.20.5+ schema ("predicate": {"predicates":
+  {"minecraft:enchantments": [{"enchantments": "minecraft:silk_touch", "levels":
+  {"min": 1}}]}}); add set_count uniform 1-2 to the ruby/amethyst gem entries;
+  after the fix, extend item001_005 (or a sibling) to assert drop identity
+  (non-silk break: 1-2 gems, zero ore blocks). **EXPECTED_RED**. Status: OPEN.
+- **TF-018 (HIGH)** `rainbow_islands_sky_i162` (same defect also reddens
+  `rubber_ducky_pond_plains_i168`, `haunted_house_overworld_i169`,
+  `ender_knight_dungeon_i170`) — all four observed "1 orespawn:ruby" inside chest
+  tables whose documented 1.7.10 lists (RainbowContentsList GD:25, duck-pond list
+  GD:27, KnightContentsList GD:50, haunted-house kit GD:950-993) contain no ruby;
+  the table JSONs are clean, the item comes from the unscoped GLM (~7.5%/~6.25%
+  per roll game-wide). Same codec bug (MapCodec.unit(1)/unit(0.25f) drop the
+  JSON's count/chance; declared 0.3 silently runs as 0.25). Orig:
+  OreSpawnMain.java:5391-5402; GenericDungeon.java:25/:27/:50/:950-993. Port:
+  add_ruby_to_dungeon.json + add_amethyst_to_dungeon.json (random_chance only —
+  no neoforge:loot_table_id); AddItemsLootModifier.java:18-26, :40-45. Fix:
+  TF-009 scoping to the modern equivalents of the three vanilla categories with
+  original per-category items and 1-3/1-2 counts + codec repair; all four tests
+  then go green on their loot loops without test changes. Status: OPEN.
+- **TF-019 (MED)** `dragon_beef_tame_heal_bone_diamond` — wrong release item: the
+  original untames a tamed dragon with a DEAD BUSH and has NO TNT interaction
+  (TNT falls into the generic any-item sit-toggle), but the port untames on
+  Items.TNT and lets a dead bush fall through to the sit toggle; undocumented
+  deviation (no FIX_LOG/phase_c_reports/C2 record). The test now asserts the
+  documented dead-bush release as a final phase so phases a-d stay verified.
+  Orig: Dragon.java:1261-1275 (deadbush releases; no TNT branch in func_70085_c).
+  Port: src/main/java/danger/orespawn/entity/Dragon.java:961-971 (stack.is(
+  Items.TNT) release branch). Fix: change the release branch to
+  stack.is(Blocks.DEAD_BUSH.asItem()) and delete the TNT branch (TNT then falls
+  to the generic sit-toggle at Dragon.java:1064-1071, matching the original).
+  **EXPECTED_RED**. Status: OPEN.
+- **TF-020 (MED)** `dragon_beef_tame_heal_bone_diamond` (adjacent, spotted in
+  passing; not covered by any current test assert — reported only) — second
+  interaction-item deviation in the same mobInteract rewrite: the original
+  extinguishes dragon fireballs with an ICE block (ownership-gated), the port
+  uses SOUL_SAND; undocumented substitution. Orig: Dragon.java:1276-1290 (ICE +
+  func_152114_e -> setDragonFire(0), "Dragon fireballs extinguished."). Port:
+  Dragon.java:974-984 (stack.is(Blocks.SOUL_SAND.asItem())). Fix: change the
+  extinguish branch to stack.is(Blocks.ICE.asItem()). Status: OPEN.
+- **TF-021 (MED)** `greenhouse_plants_regression_i172` — greenhouse plots
+  self-erase their mushrooms on the live/DSB buildNow path: empty plots 657/4813
+  = 13.65% vs the documented 1-in-20 (5%); the excess matches the two mushroom
+  slots (2/20 = 10%) dying in ~86% of placements. In 1.21.1 mushrooms cannot
+  survive on farmland (canSurvive needs a solid-render face below; farmland is
+  15/16 tall) and BushBlock.updateShape returns AIR when any later adjacent
+  write lands — which the generator's own subsequent writes provide; flag-2
+  setBlock on a live ServerLevel still runs neighbour SHAPE updates, whereas the
+  1.7.10 setBlockFast flag 2 fired none. Worldgen path (ChunkAccess writes)
+  unaffected — live-path parity gap. Orig: GenericDungeon.java:5075-5080 (t==2/3
+  brown/red mushroom on farmland plots), :5068 (index 8 sole empty roll),
+  :187-189 (FastSetBlock, no neighbour updates). Port:
+  src/main/java/danger/orespawn/world/structure/LegacyDungeonPiece.java:964-987
+  (pickGreenhousePlant cases 2/3), :58/:581-585 (place -> setBlock flag 2). Fix:
+  write with flags 2 | 16 (Block.UPDATE_KNOWN_SHAPE) in LegacyDungeonPiece.place
+  and the other setBlock writers so piece writes stop shape-updating previously
+  placed fragile plants; audit lily pads/wart/cocoa for the same benefit. Test
+  then goes green unchanged. Status: OPEN.
+- **TF-022 (MED)** `item001_005_gem_ores_troll_blocks` — break XP for
+  ore_ruby/ore_amethyst never pops (got 0, documented 5..13 every break): the
+  shared OreRuby class still rolls its 5+nextInt(5)+nextInt(5) XP inside
+  spawnAfterBreak gated on dropExperience, but NeoForge 1.21.1 calls
+  spawnAfterBreak with dropExperience=false on EVERY break path and sources
+  break XP exclusively from IBlockExtension.getExpDrop (verified:
+  CommonHooks.java:538-551 in neoforge-21.1.223; BlockDropsEvent.java:57
+  computes xp from state.getExpDrop even with a null breaker). Exact ITEM-003
+  wiring bug already fixed for OreUranium/OreTitanium/Lavafoam on 2026-08-10 —
+  OreRuby was missed. Orig: OreRuby.java:26-30 (5 + nextInt(5) + nextInt(5)
+  popped on every non-silk break; identical OreAmethyst). Port:
+  src/main/java/danger/orespawn/block/OreRuby.java:30-37 (spawnAfterBreak
+  override, dead code under NeoForge). Fix: move the roll to a getExpDrop
+  override (no Y gate), mirroring OreUranium.java:67-76; delete the
+  spawnAfterBreak XP (silk-no-XP comes free via
+  EnchantmentHelper.processBlockExperience). Test needs no changes. Status: OPEN.
+- **TF-023 (MED)** `red_ant_hangout_village_i165` — buildNow(RED_ANT_HANGOUT)
+  produces no Robot Red Ant: the same-tick typed entity query returned 0 while
+  every block assert (36-nest/220-gravel census, stone base, forced-air volume)
+  passed. The spawn call is present and unconditional (bytecode-verified:
+  generate ends with piece.spawnPersistent(ANT_ROBOT, cx+8, cy+1, cz+8)), the
+  position is inside the piece box, ModSpawnControl cannot cancel it, and the
+  structurally identical Spider Hangout robot spawned in the same run — failure
+  is specific to the AntRobot add/query path; mechanism not yet isolated. Repro
+  lead: this run's ant spawn X fell exactly on a chunk border (block 0 of its
+  chunk); the spider's was mid-chunk. Orig: GenericDungeon.java:7064-7068
+  (unconditional createEntityByName "Robot Red Ant" + spawnEntityInWorld). Port:
+  src/main/java/danger/orespawn/world/structure/RedAntHangoutGenerator.java:159-160
+  + LegacyDungeonPiece.java:646-655 (spawnPersistent: inChunk gate, type.create
+  null-return path, addFreshEntityWithPassengers). Fix: reproduce on a live
+  server with instrumentation in spawnPersistent (log the inChunk gate,
+  EntityType.create null, addFreshEntity return incl. canceled
+  EntityJoinLevelEvent, same-tick queryability; test chunk-border vs mid-chunk
+  spawn X); fix whichever link drops the AntRobot — the test is faithful and
+  stays as-is. Status: OPEN.
+- **TF-024 (LOW)** `bug004_documented_diamond_block_tame_keeps_baby` — the
+  documented BUG-004 flow (diamond-block tame leaves a baby prince that waits
+  for a separate diamond to grow) is violated: the prince transforms instantly,
+  as the user observed live — the tame sets kill/fed/day counters to 1000, which
+  trips the counter-driven growth check on the next AI tick. The 1.7.10 original
+  behaves IDENTICALLY, so this is a docs-vs-source conflict the red test
+  deliberately pins; port parity itself holds. Orig: ThePrince.java:195-206
+  (counters 1000 on tame), :556-568 (growth on counters alone). Port:
+  src/main/java/danger/orespawn/entity/ThePrince.java:583-595, :286-291. Fix:
+  maintainer decision — amend the docs (testing_session/items.json i002 + the
+  FIX_LOG BUG-004 "grow baby->teen" wording) to match the source's instant
+  transform, or set the tame counters to 0 for the two-step flow (deliberate
+  divergence from the original). **EXPECTED_RED**. Status: OPEN.
+
+### Harness-limit reclassifications (returned to MANUAL_ONLY)
+
+The following checklist items were reclassified MANUAL_ONLY in
+testing_session/classification.json (rationale prefix "harness limit:"). Root
+wall for four of them: GameTestServer.create builds its WorldDimensions from the
+FLAT preset against an EMPTY datapack LevelStem registry (decompiled 1.21.1
+GameTestServer.java:97-103), so only the three vanilla dimensions ever exist —
+the run log prepares only minecraft:overworld.
+
+- **i070-d2-hoverboard-crash** — wall-crash branch unreachable headlessly: ridden
+  movement integrates on the CONTROLLING CLIENT (tickRidden gated by
+  isControlledByLocalInstance(), per ANIM-012); every server-side travel() path
+  zeroes horizontal motion, a ServerPlayer is never a local instance, and
+  external movers land between entity ticks — no server path can produce the
+  required >0.75 in-tick horizontal delta. Test method removed from
+  EntityLogicTestsB.java with a stub comment. Manual: ride into a wall above
+  0.75 b/t in a real client — 6-15 sticks + exactly 2 diamonds, rider ejected,
+  no Hoverboard item.
+- **i114-c7-termite-gate-ant-chain-wgen-049** — every hop assertion needs a live
+  destination ServerLevel and server.getLevel(UTOPIA/MINING/ISLANDS/CRYSTAL)
+  returns null on the GameTestServer (confirmed by the run-log failure and the
+  three-dimension shutdown save). Test method removed from EntityLogicTestsB.java
+  with a stub comment; the termite refusal messages were the only
+  destination-free sub-checks and go manual with the rest.
+- **i158-damselindistress-village-dim** — Village LEVEL-existence half only:
+  getServer().getLevel(orespawn:village) is always null in the harness even
+  though data/orespawn/dimension/village.json loads on a real server
+  (runclient). Only that assert was removed; structure-content,
+  orespawn:village_biome binding, and VILLAGE_GRASS_SURFACE placement-mode
+  asserts remain automated and passing.
+- **i162-rainbow-islands-sky** — SKY_BAND_70 anchor sub-check only: the probe
+  needs the orespawn:islands ServerLevel and its real generator
+  (findGenerationPoint against contextFor(islands)). Removed with a
+  HARNESS_LIMIT stub; build/spawner/chest/loot assertions remain automated
+  (loot currently red from TF-018 only).
+- **i164-spiderhangout-village-dim** — SpiderDriverEnable worldgen-gate sub-check
+  only: the positive control needs a Village grass surface inside the Y 41..100
+  scan window; the flat overworld surface at Y -60 fails the scan, so a gate-off
+  empty result would be unattributable to the config gate. Removed with a
+  HARNESS_LIMIT stub; pad/spawner/robot/silent-spawn assertions remain automated
+  and all passed — test expected green.
+- **i170-enderknightdungeon-end-mining** — LOWEST_GRASS_36 Mining-anchor
+  sub-check only: the no-sink probe needs the orespawn:mining
+  ServerLevel/generator (getBaseHeight recomputation), and the flat surface
+  (Y -60) is outside the 31..128 scan window, so no stand-in can form. Removed
+  with a HARNESS_LIMIT stub; octagon/shelf-statistics/spawner/loot assertions
+  remain automated (currently red only from TF-018).
+
+### Infra fixes: test code only
+
+The 19 infrastructure fixes recorded in this triage (empty-stack stripping for
+death-path parity, float32 replica sanity split, in-level SURVIVAL ServerPlayers
+for ownership-gated interactions, biome-fill gamerule raise, creative-tab
+CATEGORY filter, DSB corner/quadrant assert corrections, cage onHitEntity
+bridge, cascade containment wall, terracotta soil bed, vein-smear floor
+re-derivation, dimension-stub removals above) were applied to TEST CODE ONLY
+(src/gametest and test helpers). No src/main change has been made in this
+session — every TF fix above awaits user approval. Status of all 24 findings:
+OPEN.

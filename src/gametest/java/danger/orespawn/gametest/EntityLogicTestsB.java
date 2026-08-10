@@ -280,34 +280,46 @@ public class EntityLogicTestsB {
      * a tamed Velocity Raptor empty-handed does NOT mount (the 1.7.10 raptor
      * has no mount interaction — orig VelocityRaptor.java:223-294); the
      * shift-click sit toggle still works (VelocityRaptor.java:170-176).
+     *
+     * <p>Infra note: the sit toggle is OWNERSHIP-gated in both sources (orig
+     * VelocityRaptor.java:292 {@code func_152114_e}; port VelocityRaptor.java:172
+     * {@code isOwnedBy}), and the owner resolves through the LEVEL's player list
+     * ({@code TamableAnimal.getOwner -> level.getPlayerByUUID}). A detached mock
+     * player is never found there, so the toggle silently fell through to PASS
+     * (the pre-fix red) — the clicker must be a real in-level ServerPlayer.</p>
      */
-    @GameTest(template = "empty_large")
+    @GameTest(template = "empty_large", batch = "orespawnb_players")
     public void i049_velocity_raptor_no_mount_sit_toggle(GameTestHelper helper) {
         floor(helper, 20, 20, 28, 28);
         VelocityRaptor raptor = helper.spawnWithNoFreeWill(ModEntities.VELOCITY_RAPTOR.get(), new BlockPos(24, 1, 24));
-        Player player = helper.makeMockPlayer(GameType.SURVIVAL);
-        Vec3 at = helper.absoluteVec(new Vec3(26.0, 1.0, 24.0));
-        player.moveTo(at.x, at.y, at.z, 0.0f, 0.0f);
+        TestServerPlayer player = null;
+        try {
+            player = addServerPlayer(helper);
+            Vec3 at = helper.absoluteVec(new Vec3(26.0, 1.0, 24.0)); // distSq 4 < the 16.0 gate
+            player.teleportTo(helper.getLevel(), at.x, at.y, at.z, 0.0f, 0.0f);
 
-        raptor.setTame(true, true);
-        raptor.setOwnerUUID(player.getUUID());
-        check(!raptor.isOrderedToSit(), "fresh raptor is not sitting");
+            raptor.setTame(true, true);
+            raptor.setOwnerUUID(player.getUUID());
+            check(!raptor.isOrderedToSit(), "fresh raptor is not sitting");
 
-        // Empty hand, no shift: must not mount, must not toggle sit.
-        player.setShiftKeyDown(false);
-        raptor.mobInteract(player, InteractionHand.MAIN_HAND);
-        check(player.getVehicle() == null, "ENT-S-065: empty-hand click must NOT mount the raptor");
-        check(raptor.getPassengers().isEmpty(), "raptor must carry no passenger");
-        check(!raptor.isOrderedToSit(), "plain click must not toggle sit");
+            // Empty hand, no shift: must not mount, must not toggle sit.
+            player.setShiftKeyDown(false);
+            raptor.mobInteract(player, InteractionHand.MAIN_HAND);
+            check(player.getVehicle() == null, "ENT-S-065: empty-hand click must NOT mount the raptor");
+            check(raptor.getPassengers().isEmpty(), "raptor must carry no passenger");
+            check(!raptor.isOrderedToSit(), "plain click must not toggle sit");
 
-        // Shift-click: sit toggle on, then off (VelocityRaptor.java:172-176).
-        player.setShiftKeyDown(true);
-        InteractionResult r1 = raptor.mobInteract(player, InteractionHand.MAIN_HAND);
-        check(r1 == InteractionResult.SUCCESS, "shift-click sit toggle should return SUCCESS");
-        check(raptor.isOrderedToSit(), "first shift-click must order the raptor to sit");
-        raptor.mobInteract(player, InteractionHand.MAIN_HAND);
-        check(!raptor.isOrderedToSit(), "second shift-click must stand the raptor back up");
-        check(player.getVehicle() == null, "shift-clicks must not mount either");
+            // Shift-click: sit toggle on, then off (VelocityRaptor.java:172-176).
+            player.setShiftKeyDown(true);
+            InteractionResult r1 = raptor.mobInteract(player, InteractionHand.MAIN_HAND);
+            check(r1 == InteractionResult.SUCCESS, "shift-click sit toggle should return SUCCESS");
+            check(raptor.isOrderedToSit(), "first shift-click must order the raptor to sit");
+            raptor.mobInteract(player, InteractionHand.MAIN_HAND);
+            check(!raptor.isOrderedToSit(), "second shift-click must stand the raptor back up");
+            check(player.getVehicle() == null, "shift-clicks must not mount either");
+        } finally {
+            removeServerPlayer(helper, player);
+        }
         helper.succeed();
     }
 
@@ -965,51 +977,34 @@ public class EntityLogicTestsB {
     }
 
     // ================================================================
-    // i070-d2-hoverboard-crash — crash into a wall above 0.75 speed
+    // i070-d2-hoverboard-crash — RECLASSIFIED: HARNESS_LIMIT (MANUAL_ONLY)
     // ================================================================
-
-    /**
-     * Checklist item i070-d2-hoverboard-crash (D2 Hoverboard crash). Riding
-     * into a wall above ~0.75 blocks/tick shatters the board into 6-15 sticks
-     * (6 + nextInt(10)) plus exactly 2 diamonds, ejects the passenger, and
-     * discards the board with NO Hoverboard item back (that drop belongs only
-     * to the hurt-destruction path, Elevator.java:140-141).
-     * Values: Elevator.java:328-387 crash branch, orig Elevator.java:490-498.
-     * The crash check needs only "any passenger" (getFirstPassenger != null);
-     * with a non-player passenger the server integrates the board's own
-     * deltaMovement, so a 2.2 blocks/tick shove into a stone wall trips the
-     * last-two-ticks speed &gt; 0.75 plus the wall probe.
-     */
-    @GameTest(template = "empty_large", timeoutTicks = 200)
-    public void i070_hoverboard_crash(GameTestHelper helper) {
-        floor(helper, 18, 20, 30, 28);
-        // stone wall, 4 high so the board cannot step over it
-        for (int y = 1; y <= 4; y++) {
-            for (int z = 21; z <= 27; z++) {
-                helper.setBlock(new BlockPos(27, y, z), Blocks.STONE);
-            }
-        }
-        ServerLevel level = helper.getLevel();
-        Elevator board = helper.spawn(ModEntities.ELEVATOR.get(), new BlockPos(24, 1, 24));
-        Pig rider = helper.spawnWithNoFreeWill(EntityType.PIG, new BlockPos(24, 1, 24));
-        check(rider.startRiding(board, true), "pig must be able to mount the hoverboard");
-        board.setDeltaMovement(2.2, 0.0, 0.0); // toward the wall at rel x=27
-
-        AABB box = new AABB(helper.absolutePos(new BlockPos(24, 1, 24))).inflate(10, 6, 10);
-        helper.succeedWhen(() -> {
-            check(board.isRemoved(), "board must be discarded after the crash");
-            int sticks = countItems(level, box, Items.STICK);
-            int diamonds = countItems(level, box, Items.DIAMOND);
-            check(sticks >= 6 && sticks <= 15, "crash drops 6-15 sticks (6 + nextInt(10)); saw " + sticks);
-            check(diamonds == 2, "crash drops exactly 2 diamonds; saw " + diamonds);
-            check(countItems(level, box, ModItems.ELEVATOR.get()) == 0,
-                    "crash must NOT return the Hoverboard item (that is the hurt path, Elevator.java:141)");
-            check(!rider.isPassenger(), "passenger must be ejected");
-            check(rider.isAlive(), "passenger survives the crash");
-            rider.discard();
-            discardItems(level, box);
-        });
-    }
+    //
+    // Test method removed in the 2026-08-10 gametest triage. The wall-crash
+    // expectation (orig Elevator.java:490-498 — speed > 0.75 into a wall
+    // shatters the board into 6-15 sticks + 2 diamonds, no Hoverboard item)
+    // CANNOT be verified on the headless GameTestServer:
+    //   * The port's documented ANIM-012 architecture (Elevator class
+    //     Javadoc) integrates ridden movement on the CONTROLLING CLIENT
+    //     (tickRidden, gated by isControlledByLocalInstance()); the server
+    //     detects the crash in serverRiddenTick (Elevator.java:358-385) from
+    //     in-tick position deltas of the client-synced entity.
+    //   * Every server-side travel() path zeroes horizontal motion (riderless
+    //     drift, Elevator.java:544-569, restoring orig :485-488), and a
+    //     ServerPlayer is never a "local instance", so NO server-side code
+    //     path can produce the >0.75 in-tick horizontal position delta the
+    //     crash check requires. External movers (pistons, pushes, teleports)
+    //     land between entity ticks, where baseTick re-captures xo/zo first.
+    //   * The removed test's premise ("with a non-player passenger the server
+    //     integrates the board's own deltaMovement") is false for the port,
+    //     and matches no documented original behavior either: the original's
+    //     ridden branch cast the rider to EntityPlayer (orig Elevator.java
+    //     rider physics), so a pig-ridden board was a ClassCastException, not
+    //     a crash-drop path.
+    // Checklist item i070-d2-hoverboard-crash therefore returns to
+    // MANUAL_ONLY (verify in a real client: ride into a wall above 0.75
+    // blocks/tick; expect 6-15 sticks + exactly 2 diamonds, rider ejected,
+    // no Hoverboard item back).
 
     // ================================================================
     // i083 — hitbox size table + CaterKiller playNicely halving
@@ -1444,162 +1439,27 @@ public class EntityLogicTestsB {
     }
 
     // ================================================================
-    // i114 — C7 termite gate + ant chain (WGEN-049)
+    // i114 — C7 termite gate + ant chain — RECLASSIFIED: HARNESS_LIMIT
     // ================================================================
-
-    /**
-     * Checklist item i114-c7-termite-gate-ant-chain-wgen-049 (WGEN-026/049).
-     * Empty-hand right-click on each ant teleports the ServerPlayer to its
-     * dimension (Ant→Utopia, RedAnt→Mining, UnstableAnt→Islands,
-     * Termite→Crystal — EntityAnt.java:44-51); clicking the same ant type
-     * while already in its dimension returns to the Overworld
-     * (EntityAnt.java:111-115); an 80-tick portal cooldown blocks immediate
-     * re-hops (EntityAnt.java:67-68, 109, 120). Termite-only Crystal entry
-     * gates: any main-inventory/offhand item → "Empty your inventory!", any
-     * armor → "Take off your armor!", no teleport, no cooldown consumed
-     * (EntityTermite.java:54-89, orig Termite.java:96-107); the return trip
-     * has no such check (orig Termite.java:109-110). A FOLLOWING tamed wolf
-     * inside the 48×24×48 departure box travels along; a SITTING one stays
-     * (EntityAnt.java:127-133,144-154, orig OreSpawnTeleporter.java:153-162).
-     */
-    @GameTest(template = "empty_large", batch = "orespawnb_players", timeoutTicks = 400)
-    public void i114_ant_chain_dimensions(GameTestHelper helper) {
-        floor(helper, 18, 18, 30, 30);
-        ServerLevel overworld = helper.getLevel();
-        MinecraftServer server = overworld.getServer();
-        TestServerPlayer player = null;
-        List<Entity> cleanup = new ArrayList<>();
-        try {
-            ServerLevel utopia = server.getLevel(EntityAnt.UTOPIA);
-            ServerLevel mining = server.getLevel(EntityAnt.MINING);
-            ServerLevel islands = server.getLevel(EntityAnt.ISLANDS);
-            ServerLevel crystal = server.getLevel(EntityAnt.CRYSTAL);
-            check(utopia != null && mining != null && islands != null && crystal != null,
-                    "all four ant-chain dimensions must exist on the test server");
-
-            player = addServerPlayer(helper);
-            Vec3 at = helper.absoluteVec(new Vec3(24.5, 1.0, 24.5));
-            player.moveTo(at.x, at.y, at.z, 0.0f, 0.0f);
-            int cx = ((int) Math.floor(at.x)) >> 4;
-            int cz = ((int) Math.floor(at.z)) >> 4;
-            // synchronous chunk load at the arrival column in every destination
-            utopia.getChunk(cx, cz);
-            mining.getChunk(cx, cz);
-            islands.getChunk(cx, cz);
-            crystal.getChunk(cx, cz);
-
-            // tamed wolves: one following, one sitting.
-            Wolf following = EntityType.WOLF.create(overworld);
-            Wolf sitting = EntityType.WOLF.create(overworld);
-            check(following != null && sitting != null, "wolves could not be created");
-            for (Wolf wolf : List.of(following, sitting)) {
-                wolf.moveTo(at.x + 3.0, at.y, at.z, 0.0f, 0.0f);
-                wolf.setTame(true, true);
-                wolf.setOwnerUUID(player.getUUID());
-                overworld.addFreshEntity(wolf);
-                cleanup.add(wolf);
-            }
-            sitting.setOrderedToSit(true);
-
-            // ---- Ant -> Utopia, with the following wolf along and the sitting one left.
-            EntityAnt ant = new EntityAnt(ModEntities.ENTITY_ANT.get(), overworld);
-            ant.moveTo(at.x + 1.0, at.y, at.z, 0.0f, 0.0f);
-            InteractionResult r = ant.mobInteract(player, InteractionHand.MAIN_HAND);
-            check(r == InteractionResult.SUCCESS, "empty-hand ant click must teleport (got " + r + ")");
-            check(player.level().dimension().equals(EntityAnt.UTOPIA), "Ant must send the player to Utopia");
-            check(player.isOnPortalCooldown(), "teleport must arm the 80-tick portal cooldown");
-            List<Wolf> utopiaWolves = utopia.getEntitiesOfClass(Wolf.class,
-                    new AABB(player.blockPosition()).inflate(24, 16, 24));
-            check(!utopiaWolves.isEmpty(), "the FOLLOWING tamed wolf must travel along (WGEN-049)");
-            check(!sitting.isRemoved() && sitting.level().dimension().equals(Level.OVERWORLD),
-                    "the SITTING wolf must stay behind");
-            for (Wolf w : utopiaWolves) w.discard(); // before the return hop would drag it back
-
-            // cooldown gate: same ant type in Utopia refuses while cooling down.
-            EntityAnt antBack = new EntityAnt(ModEntities.ENTITY_ANT.get(), utopia);
-            antBack.moveTo(player.getX() + 1.0, player.getY(), player.getZ(), 0.0f, 0.0f);
-            r = antBack.mobInteract(player, InteractionHand.MAIN_HAND);
-            check(r == InteractionResult.PASS && player.level().dimension().equals(EntityAnt.UTOPIA),
-                    "portal cooldown must block an immediate re-hop");
-            player.setPortalCooldown(0);
-            r = antBack.mobInteract(player, InteractionHand.MAIN_HAND);
-            check(r == InteractionResult.SUCCESS && player.level().dimension().equals(Level.OVERWORLD),
-                    "same ant type in its own dimension must return the player to the Overworld");
-            player.setPortalCooldown(0);
-            player.moveTo(at.x, at.y, at.z, 0.0f, 0.0f);
-
-            // ---- RedAnt -> Mining and back.
-            EntityRedAnt redAnt = new EntityRedAnt(ModEntities.ENTITY_RED_ANT.get(), overworld);
-            redAnt.moveTo(at.x + 1.0, at.y, at.z, 0.0f, 0.0f);
-            check(redAnt.mobInteract(player, InteractionHand.MAIN_HAND) == InteractionResult.SUCCESS
-                            && player.level().dimension().equals(EntityAnt.MINING),
-                    "RedAnt must send the player to Mining");
-            player.setPortalCooldown(0);
-            EntityRedAnt redBack = new EntityRedAnt(ModEntities.ENTITY_RED_ANT.get(), mining);
-            redBack.moveTo(player.getX() + 1.0, player.getY(), player.getZ(), 0.0f, 0.0f);
-            check(redBack.mobInteract(player, InteractionHand.MAIN_HAND) == InteractionResult.SUCCESS
-                            && player.level().dimension().equals(Level.OVERWORLD), "RedAnt return trip");
-            player.setPortalCooldown(0);
-            player.moveTo(at.x, at.y, at.z, 0.0f, 0.0f);
-
-            // ---- UnstableAnt -> Islands and back.
-            EntityUnstableAnt unstable = new EntityUnstableAnt(ModEntities.ENTITY_UNSTABLE_ANT.get(), overworld);
-            unstable.moveTo(at.x + 1.0, at.y, at.z, 0.0f, 0.0f);
-            check(unstable.mobInteract(player, InteractionHand.MAIN_HAND) == InteractionResult.SUCCESS
-                            && player.level().dimension().equals(EntityAnt.ISLANDS),
-                    "UnstableAnt must send the player to Islands");
-            player.setPortalCooldown(0);
-            EntityUnstableAnt unstableBack = new EntityUnstableAnt(ModEntities.ENTITY_UNSTABLE_ANT.get(), islands);
-            unstableBack.moveTo(player.getX() + 1.0, player.getY(), player.getZ(), 0.0f, 0.0f);
-            check(unstableBack.mobInteract(player, InteractionHand.MAIN_HAND) == InteractionResult.SUCCESS
-                            && player.level().dimension().equals(Level.OVERWORLD), "UnstableAnt return trip");
-            player.setPortalCooldown(0);
-            player.moveTo(at.x, at.y, at.z, 0.0f, 0.0f);
-
-            // ---- Termite gates, then -> Crystal and an item-laden return.
-            EntityTermite termite = new EntityTermite(ModEntities.ENTITY_TERMITE.get(), overworld);
-            termite.moveTo(at.x + 1.0, at.y, at.z, 0.0f, 0.0f);
-            player.getInventory().items.set(9, new ItemStack(Items.STONE)); // hand stays empty
-            r = termite.mobInteract(player, InteractionHand.MAIN_HAND);
-            check(r == InteractionResult.PASS && player.level().dimension().equals(Level.OVERWORLD),
-                    "Crystal entry with inventory items must be refused (orig Termite.java:98-102)");
-            check(!player.messages.isEmpty() && "Empty your inventory!".equals(player.messages.get(player.messages.size() - 1)),
-                    "refusal must chat 'Empty your inventory!'");
-            check(!player.isOnPortalCooldown(), "a refused hop must not consume the portal cooldown");
-            player.getInventory().items.set(9, ItemStack.EMPTY);
-
-            player.getInventory().offhand.set(0, new ItemStack(Items.STONE));
-            r = termite.mobInteract(player, InteractionHand.MAIN_HAND);
-            check(r == InteractionResult.PASS
-                            && "Empty your inventory!".equals(player.messages.get(player.messages.size() - 1)),
-                    "offhand counts as inventory for the Crystal gate (EntityTermite.java:72-79)");
-            player.getInventory().offhand.set(0, ItemStack.EMPTY);
-
-            player.getInventory().armor.set(0, new ItemStack(Items.IRON_BOOTS));
-            r = termite.mobInteract(player, InteractionHand.MAIN_HAND);
-            check(r == InteractionResult.PASS
-                            && "Take off your armor!".equals(player.messages.get(player.messages.size() - 1)),
-                    "worn armor must refuse with 'Take off your armor!' (orig Termite.java:103-107)");
-            player.getInventory().armor.set(0, ItemStack.EMPTY);
-
-            check(termite.mobInteract(player, InteractionHand.MAIN_HAND) == InteractionResult.SUCCESS
-                            && player.level().dimension().equals(EntityAnt.CRYSTAL),
-                    "with an empty inventory and no armor the Termite must teleport to Crystal");
-            player.setPortalCooldown(0);
-            player.getInventory().items.set(9, new ItemStack(Items.STONE)); // return trip has NO check (orig :109-110)
-            EntityTermite termiteBack = new EntityTermite(ModEntities.ENTITY_TERMITE.get(), crystal);
-            termiteBack.moveTo(player.getX() + 1.0, player.getY(), player.getZ(), 0.0f, 0.0f);
-            check(termiteBack.mobInteract(player, InteractionHand.MAIN_HAND) == InteractionResult.SUCCESS
-                            && player.level().dimension().equals(Level.OVERWORLD),
-                    "the return trip from Crystal has no inventory gate (orig Termite.java:109-110)");
-            player.getInventory().items.set(9, ItemStack.EMPTY);
-
-            helper.succeed();
-        } finally {
-            for (Entity e : cleanup) e.discard();
-            removeServerPlayer(helper, player);
-        }
-    }
+    //
+    // Test method (i114_ant_chain_dimensions) removed in the 2026-08-10
+    // gametest triage. Checklist item i114-c7-termite-gate-ant-chain-wgen-049
+    // (WGEN-026/049) returns to MANUAL_ONLY: the GameTestServer NEVER
+    // instantiates datapack dimensions. GameTestServer.create builds its
+    // WorldDimensions from the FLAT world preset baked against a freshly
+    // created EMPTY LevelStem registry (decompiled 1.21.1
+    // GameTestServer.java:97-103, build/neoform .../steps/patch/outputs.jar),
+    // so only minecraft:overworld / the_nether / the_end exist and
+    // server.getLevel(EntityAnt.UTOPIA|MINING|ISLANDS|CRYSTAL) returns null
+    // (run log: "all four ant-chain dimensions must exist on the test server";
+    // the shutdown save lists only the three vanilla dimensions). Every hop
+    // assertion needs a live destination ServerLevel, so the chain cannot be
+    // exercised here. The termite entry-gate refusals (orig Termite.java:
+    // 96-107) are the only sub-checks that do not touch a destination level;
+    // they go MANUAL_ONLY with the rest of the item (verify in a real client:
+    // Ant→Utopia, RedAnt→Mining, UnstableAnt→Islands, Termite→Crystal with
+    // empty-inventory/no-armor gates, 80-tick portal cooldown, same-ant
+    // return trips, following-wolf travels / sitting-wolf stays).
 
     // ================================================================
     // i123 — maze Basilisks are persistent

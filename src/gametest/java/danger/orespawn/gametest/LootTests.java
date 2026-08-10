@@ -292,6 +292,15 @@ public class LootTests {
      * THIS_ENTITY / ORIGIN / DAMAGE_SOURCE always, plus LAST_DAMAGE_PLAYER +
      * ATTACKING_ENTITY when simulating a player kill — LAST_DAMAGE_PLAYER is
      * precisely what minecraft:killed_by_player tests.
+     *
+     * <p>Empty stacks are filtered out for death-path parity: a
+     * {@code set_count} 0..2 entry rolling 0 leaves a count-0 stack
+     * (prints as "0 minecraft:air") in the LIST-returning
+     * {@code getRandomItems} — {@code LootTable.createStackSplitter} has no
+     * isEmpty filter — but the real kill path drops via
+     * {@code Entity.spawnAtLocation}, which no-ops on empty stacks. A 0-count
+     * roll therefore IS the documented "vanilla drop core 0-2" rolling
+     * nothing, not a foreign item.</p>
      */
     private static List<ItemStack> rollEntityTable(GameTestHelper helper, LivingEntity mob,
             boolean playerKill, Player player) {
@@ -308,7 +317,10 @@ public class LootTests {
             builder.withParameter(LootContextParams.LAST_DAMAGE_PLAYER, player)
                     .withOptionalParameter(LootContextParams.ATTACKING_ENTITY, player);
         }
-        return table.getRandomItems(builder.create(LootContextParamSets.ENTITY));
+        List<ItemStack> rolled =
+                new ArrayList<>(table.getRandomItems(builder.create(LootContextParamSets.ENTITY)));
+        rolled.removeIf(ItemStack::isEmpty); // death-path parity, see javadoc
+        return rolled;
     }
 
     private static int countOf(List<ItemStack> stacks, Item item) {

@@ -729,6 +729,12 @@ public class MiscTests {
         CreativeModeTabs.tryRebuildTabContents(level.enabledFeatures(), false, level.registryAccess());
         int elevatorEntries = 0;
         for (CreativeModeTab tab : BuiltInRegistries.CREATIVE_MODE_TAB) {
+            // Only player-facing CATEGORY tabs count: the registry also holds
+            // the minecraft:search aggregator tab, which re-lists every item
+            // accepted with the default PARENT_AND_SEARCH_TABS visibility
+            // (CreativeModeTab.Type.SEARCH, CreativeModeTabs.java SEARCH tab
+            // — counting it double-counts the single real entry).
+            if (tab.getType() != CreativeModeTab.Type.CATEGORY) continue;
             for (ItemStack stack : tab.getDisplayItems()) {
                 if (stack.is(ModItems.ELEVATOR.get())) elevatorEntries++;
             }
@@ -853,10 +859,18 @@ public class MiscTests {
             BlockState state = level.getBlockState(p);
             if (!(state.getBlock() instanceof OreGenericEgg)) continue;
             total++;
-            // Roll gate is y in [50,128] (OSW:369); vanilla ore spread can
-            // smear a vein a couple of blocks, hence the >=48 bound.
-            helper.assertTrue(p.getY() >= 48,
-                    "pool veins only in the Y50+ window (MIN_DEPTH=50), found egg at y="
+            // Roll gate is y in [50,128] (OSW:369, SpawnOresPoolFeature.java:232)
+            // and gates the vein ORIGIN; the pool then delegates to vanilla
+            // Feature.ORE (SpawnOresPoolFeature.java:242), whose blob endpoints
+            // sit at origin.y + nextInt(3) - 2 (OreFeature.place, d4/d5) with
+            // per-point radius d9 = ((sin(pi*f)+1)*d3 + 1)/2, d3 < size/16 =
+            // 0.25 for clump 4, so d9 < 0.75 (OreFeature.doPlace), and the
+            // bounding box clamps at origin.y - 2 - ceil(((4/16)*2+1)/2) =
+            // origin.y - 3. Exact hard floor for a min-legal origin of 50:
+            // max(floor(48 - 0.75), 47) = 47 — so >=47, and 46 is impossible.
+            helper.assertTrue(p.getY() >= 47,
+                    "pool veins only in the Y50+ window (MIN_DEPTH=50, origin-gated;"
+                            + " vanilla ore smear hard floor = origin-3), found egg at y="
                             + p.getY());
             if (state.is(ModBlocks.KRAKEN_SPAWN_BLOCK.get())) kraken = true;
             if (state.is(ModBlocks.DRAGON_SPAWN_BLOCK.get())) dragon = true;
