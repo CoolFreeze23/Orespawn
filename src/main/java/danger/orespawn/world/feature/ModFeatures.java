@@ -83,11 +83,19 @@ public class ModFeatures {
     // and biome tag JSONs to enforce the audit's "no procedural
     // fabrications" rule.
 
-    // Phase 13A — Crystal Battle Tower (cylindrical 5-floor tower with the
-    // Vortex spawner on the cap floor; see CrystalBattleTowerFeature for
-    // the floor-by-floor mob ladder ported from the 1.7.10 source).
-    public static final DeferredHolder<Feature<?>, CrystalBattleTowerFeature> CRYSTAL_BATTLE_TOWER =
-            FEATURES.register("crystal_battle_tower", () -> new CrystalBattleTowerFeature(NoneFeatureConfiguration.CODEC));
+    // D6 DSB sweep — Crystal Battle Tower Feature removed (dsb_sweep_spec.md
+    // flag F4): the Phase 13A CrystalBattleTowerFeature was datapack-dead
+    // (zero configured_feature / placed_feature / structure JSONs referenced
+    // orespawn:crystal_battle_tower) and unfaithful — a heightmap re-anchor
+    // plus solid-footing veto the 1.7.10 original never had, and invented
+    // per-floor chest contents matching none of the five original
+    // CrystalBattleTower*ContentsList arrays. The faithful transcription of
+    // GenericDungeon.makeCrystalBattleTower (1.7.10 line 4831) lives in
+    // danger.orespawn.world.CrystalStructures#buildCrystalBattleTower,
+    // reached via crystal worldgen (tryPlaceCrystalBattleTower, 1/280) and
+    // the Random Dungeon Spawner type-33 adapter (buildCrystalBattleTowerAt).
+    // Deleted under the audit's "no procedural fabrications" rule — same
+    // treatment as ChallengeTowerFeature / UfoCrashSiteFeature above.
 
     // Phase 13A — Crystal Dimension Maze. Per-chunk procedural maze, anchored
     // strictly inside the owning chunk's bounding box so it never triggers

@@ -1,0 +1,9 @@
+{
+  "type": "orespawn:legacy_dungeon",
+  "biomes": "#orespawn:has_structure/ender_knight_dungeon_mining",
+  "step": "surface_structures",
+  "spawn_overrides": {},
+  "terrain_adaptation": "none",
+  "dungeon_type": "ENDER_KNIGHT_DUNGEON",
+  "placement_mode": "LOWEST_GRASS_36"
+}

@@ -1,0 +1,11 @@
+{
+  "structures": [
+    { "structure": "orespawn:haunted_house", "weight": 1 }
+  ],
+  "placement": {
+    "type": "minecraft:random_spread",
+    "spacing": 17,
+    "separation": 8,
+    "salt": 84372
+  }
+}

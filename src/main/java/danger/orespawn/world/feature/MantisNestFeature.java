@@ -93,6 +93,31 @@ public class MantisNestFeature extends Feature<NoneFeatureConfiguration> {
         if (cpos.getY() + 20 >= level.getMaxBuildHeight() - 2) return false;
         if (cpos.getY() - 7 <= level.getMinBuildHeight() + 2) return false;
 
+        return buildAt(level, random, cpos);
+    }
+
+    /**
+     * The {@code makeMantisHive} build core (orig GenericDungeon.java:
+     * 1012-1062 + {@code fill_mantishive_chests} :1064-1093), corner-anchored
+     * on the passed {@code cpos} exactly like the original's
+     * {@code (cposx, cposy, cposz)} — including the cap-spawner quirk of
+     * using {@code yoff} as the Z offset (orig :1057).
+     *
+     * <p>Serves TWO trigger paths, the same sharing the original had:</p>
+     * <ol>
+     *   <li><b>Worldgen</b> — {@link #place} keeps its heightmap anchor and
+     *       bounds vetoes (the {@code addANest} grass-tile semantic), then
+     *       delegates here with an unchanged draw sequence.</li>
+     *   <li><b>Play time</b> — Random Dungeon Spawner outcome type 6 (orig
+     *       DungeonSpawnerBlock.java:71-73) calls this at the cleared
+     *       spawner-block position with NO ground gate and NO Y adjustment —
+     *       the original validated nothing, so a floating or buried hive is
+     *       faithful behavior (dsb_sweep_spec.md &sect;C.3).</li>
+     * </ol>
+     *
+     * @return always {@code true} &mdash; the original builds unconditionally
+     */
+    public static boolean buildAt(WorldGenLevel level, Random random, BlockPos cpos) {
         BlockState air = Blocks.AIR.defaultBlockState();
         // QA Fix: legacy 1.7.10 used gold_ore (field_150352_o) and
         // emerald_ore (field_150412_bA), NOT compressed gold_block /

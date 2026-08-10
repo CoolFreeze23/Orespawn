@@ -295,7 +295,7 @@ still applies).
 
 ---
 
-## D6b batches 1-3 — mechanical structures (added 2026-08-08, batch 3 2026-08-10)
+## D6b batches 1-4 — mechanical structures (added 2026-08-08, batches 3-4 2026-08-10)
 
 - **PlayPool (overworld ocean)** — `/locate structure orespawn:play_pool`: floating platform 16 blocks above the sea with 4 Attack Squid spawners, twin chests (only the x+1 chest has loot: ink/squid-zooka/gold-nugget/flesh, 3-7 stacks), water channel with flowing caps.
 - **CloudSharkDungeon (Islands sky)** — `/locate structure orespawn:cloud_shark_dungeon` then fly to Y150-159: tiny glowstone cluster with 4 Cloud Shark spawners + 1 chest (4-8 stacks incl. experience tree seeds).
@@ -316,6 +316,15 @@ still applies).
 - **Pumpkin (Islands)** — `/locate structure orespawn:pumpkin`: 14-wide orange-terracotta jack-o'-lantern floating one block above grass, 48-cell carved face (eyes/nose/mouth) on the −z wall, green stem, interior plank candle with netherrack cap, twin fires, 2 Ghost Pumpkin Skelly spawners, NO chest.
 - **Rainbow (Islands sky)** — `/locate structure orespawn:rainbow` then fly to Y70-89: 8 nested wool arches (red innermost → pink outermost) threading a raining cloud slab, 6 Cloud Shark spawners, roof double chest — BOTH halves filled (10-14 stacks each, weight-150 table incl. magic apple).
 - **DSB batch-3 outcomes** — Random Dungeon Spawner can additionally produce types 26/28/35/39/44/46 (bouncy castle, damsel cottage, girlfriend island, stinky house, pumpkin at +1Y, rainbow) at the block.
+- **SpiderHangout (Village dim)** — `/locate structure orespawn:spider_hangout`: 20×20 gravel pad on a stone slab, 12 Spider Driver spawners in 3-high corner columns, one persistent Robot Spider at the pad centre (no spawn sound), NO chest. With `spiderDriverEnable=false` no new hangouts generate (the Dungeon Spawner Block can still build one — faithful).
+- **RedAntHangout (Village dim)** — `/locate structure orespawn:red_ant_hangout`: 16×16 gravel pad with four 3×3 red-ant-block corner pads, one persistent UNOWNED Robot Red Ant at centre (wrench-claim per its item flow), no spawners, no chest.
+- **FrogPond (plains)** — `/locate structure orespawn:frog_pond`: 7×7 still-water sheet sunk at the grass line, Frog spawner, centre riser with flowing cross, lily-pad cross above.
+- **RubberDuckyPond (plains)** — `/locate structure orespawn:rubber_ducky_pond`: 12×11 sand-rimmed perched pond, glass-capped tower with 2 Rubber Ducky spawners, chest pair at +5 — ONLY the +1 chest has loot (13-entry table, 8-12 stacks); the other is empty (faithful oddity).
+- **HauntedHouse (overworld)** — `/locate structure orespawn:haunted_house`: 7×7 plank house with glass clerestory band and east doorway, furnace/crafting-table/chest furniture row, spawner stack Rat/Ghost/Ghost Pumpkin Skelly; chest has 14 fixed slots each present 50% (porkchops/torches/coal/ore salt etc.).
+- **EnderKnightDungeon (End + Mining)** — `/locate structure orespawn:ender_knight_dungeon_end` and `..._mining`: cobble dungeon with shelf rooms (28 random shelf sites), 2 floating Ender Knight spawners, chest (3-7 of the 5-entry table). Mining version sits ON the lowest grass surface (not sunk — contrast Basilisk Maze).
+- **DSB full sweep** — the Random Dungeon Spawner now produces ALL 50 original outcomes, including: type 5 haunted house, 11 ender knight dungeon, 4/8 bee hives, 6 mantis nest, 25 crystal haunted house, 31/42 King/Queen altars (offset-corrected to the clicked pos), 33 crystal battle tower, 36 greenhouse, 40/43 ponds, 41 white house, 45 round rotator (+1Y), 48/49 hangouts. Royal altars/greenhouse/white house/robot lab DSB builds land exactly at the clicked position (recentring canceled).
+- **Regression: greenhouse plants** — greenhouse plots now roll sugar cane (t=7) and rice (t=19) as in 1.7.10; only t=8 rolls empty.
+- **Regression: royal altars + Alien WTF** — dirt skirts now reach 9 deep, altar air-clear reaches +58, and the Alien WTF south room's far wall is complete (box widenings; worldgen layouts reseed for existing seeds — documented delta).
 
 ---
 

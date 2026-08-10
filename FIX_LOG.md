@@ -564,7 +564,7 @@ must not despawn when the player walks away.
 
 ---
 
-## Phase D — slice D6b batches 1-3: mechanical structures (2026-08-08/10, IN PROGRESS — batch 4 pending)
+## Phase D — slice D6b batches 1-4: mechanical structures (2026-08-08/10, batch 4 COMPLETE — close-out pending)
 
 - **Pipeline:** every structure ran spec-extract → independent spec-verify →
   implement → per-structure code-verify (specs in `phase_d_reports/d6_extraction/`).
@@ -632,11 +632,58 @@ must not despawn when the player walks away.
   37-39, 44, 46, 47). NOTE: the batch-2 entry above previously claimed
   "27 of 50" — that was a miscount; the enumerated types summed to 25
   (verified by constant/case recount, 25 + batch-3's 6 = 31).
-- **Remaining for D6b batch 4 (ON HOLD, user usage budget):** SpiderHangout,
-  RedAntHangout, FrogPond, RubberDuckyPond + the full DSB outcome sweep +
-  Igloo's placement decision + WGEN-042/ITEM-020 closure + the Phase D
-  rollup.
-- **Build:** full `./gradlew build` SUCCESSFUL all three batches.
+- **Batch 4 (2026-08-10, this commit) — structures:** SpiderHangout (Village
+  dim, DSB 48, set 19/9, salt 84368; SpiderDriverEnable worldgen gate honored
+  in findGenerationPoint per orig OSW:1323-1325, LESS_LAG precedent; silent
+  persistent Robot Spider spawn), RedAntHangout (Village dim, DSB 49, 16/8,
+  84369; unowned persistent Robot Red Ant), FrogPond (plains, DSB 43 with
+  clickedY+1, 46/23, 84370; SAND_SURFACE_MINUS1 reused as the biome-agnostic
+  −1-anchor mode), RubberDuckyPond (plains, DSB 40, 17/8, 84371; only the +1
+  chest loot-bound — faithful oddity), **plus two structures the DSB sweep
+  surfaced as unported and absent from the original 22-list**: HauntedHouse
+  (overworld, GD:891-1010, DSB 5 + worldgen ahh-chain OSW:979-997, 17/8,
+  84372; 14-slot 50%-per-slot loot JSON) and EnderKnightDungeon
+  (dual-dimension End+Mining like EnderCastle, GD:1794-1932, DSB 11, sets
+  10/5/84373 + 26/13/84374, new mode LOWEST_GRASS_36 = the 6×6 lowest-surface
+  scan with grass-accept and NO −2 sink, per-JSON placement_mode override).
+- **Batch 4 — DSB outcome sweep (ITEM-020 complete):** the remaining 13
+  non-generator outcomes wired per `dsb_sweep_spec.md`: 9/10/32 direct
+  buildNow; 31/42 (+25,0,+25), 36 (+11,0,+7), 41 (+12,0,+9) buildNow with
+  offsets canceling the ported generators' internal recentring; 25/45(+1)/33
+  via three new CrystalStructures adapters (type 33 redirected to the
+  faithful CS builder); 4/6/8 via new public `buildAt` cores extracted from
+  Beehive/SmallBeehive/MantisNest features (worldgen paths byte-identical).
+  **All 50 DSB outcomes now live.**
+- **Batch 4 — parity fixes landed with the sweep:** F3 (royal altar box
+  4/56 → 10/59: the down-4 box clipped the v=1..9 dirt skirt and the top 2
+  air-clear rows in BOTH paths), F7 (DSB Robot Lab case now pre-offsets
+  +5,0,+25 to cancel the port's recentring), F8 (ALIEN_WTF box widened to
+  (-20,20,25,6,-22,20): the south Part room's far wall at z=origin−21 was
+  ALWAYS dropped on the DSB path, ~1/16 worldgen). Box changes reseed the
+  affected pieces' RNG for existing seeds — documented delta. F4:
+  CrystalBattleTowerFeature DELETED (dead registration, zero datapack refs,
+  invented loot — no-procedural-fabrication rule; superseded by the
+  faithful CrystalStructures builder). F9: stale TYPE_ROTATOR_STATION cite
+  fixed (DSB:62-64).
+- **Batch-4 verify pass: 1 CRITICAL / 10 minor (8 verifiers).** CRITICAL:
+  `pickGreenhousePlant` had silently drifted from GD:5067-5125 — case 7
+  placed PUMPKIN where the original places reeds/sugar cane (GD:5090-5092)
+  and t==19 fell to air though MyRicePlant → ModBlocks.RICE_PLANT exists
+  (GD:5123-5125); both fixed (affects worldgen GREENHOUSE + DSB 36). Minor
+  fixes: silent spawnPersistent variant (the hangouts' originals are bare
+  spawns with no living-sound — the shared helper's ambient one-shot now
+  suppressible), SAND_SURFACE_MINUS1 Javadocs note the frog-pond reuse,
+  4 cite corrections (EKD OSW span, lowestGrassOrigin :2096, Igloo/
+  WaterDragonLair stale CrystalStructures refs), RDS buildForType Javadoc
+  modernized. **Logged for close-out (pre-existing, discovered by the
+  sweep):** DISABLE_OVERWORLD_DUNGEONS config defined but never read (orig
+  OSW:284 gates the whole overworld rotation); the three feature cores drop
+  original chest facings (metas 2-5 → all north); bee/mantis feature loot
+  substitutes GOLDEN_CARROT/SPIDER_EYE for the original egg items on a
+  false "no equivalent" premise. Plus pre-existing F1 (greenhouse doors),
+  F2 (white-house door top half), F5 (CrystalMazeFeature dead registration)
+  from the sweep's full reads.
+- **Build:** full `./gradlew build` SUCCESSFUL all four batches.
 
 ---
 

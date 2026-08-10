@@ -650,6 +650,23 @@ public class CrystalStructures {
     // Original: width=3, length=3, height=3 (7x7x4 building)
     // =====================================================================
 
+    /**
+     * Random Dungeon Spawner outcome type 25 (orig DungeonSpawnerBlock.java:128-130):
+     * {@code MyDungeon.makeCrystalHauntedHouse(world, x, y, z)} at the
+     * (already-cleared) spawner-block position, unmodified — no scan, no
+     * Y adjustment (orig GenericDungeon.java:2993-3104 anchors on the passed
+     * centre and validates nothing). Skips the worldgen
+     * {@link #tryPlaceCrystalHauntedHouse} gate/jitter/scan entirely; the
+     * slot loot and spawners live inside the shared private builder. Same
+     * shared-builder pattern as {@link #buildRotatorStationAt}.
+     *
+     * @return always {@code true} — the original builds unconditionally
+     */
+    public static boolean buildCrystalHauntedHouseAt(ServerLevel level, RandomSource random, BlockPos pos) {
+        buildCrystalHauntedHouse(level, random, pos.getX(), pos.getY(), pos.getZ());
+        return true;
+    }
+
     private static boolean tryPlaceCrystalHauntedHouse(WorldGenLevel level, RandomSource random,
                                                         int chunkX, int chunkZ, BlockState grassState) {
         // orig OreSpawnWorld.java:1669 — 1/230 gate, then 3 attempts (:1672)
@@ -725,6 +742,24 @@ public class CrystalStructures {
     // Original: BEDROCK outer ring, crystal pink inner ring (vertical, X/Y plane)
     // =====================================================================
 
+    /**
+     * Random Dungeon Spawner outcome type 45 (orig DungeonSpawnerBlock.java:188-190):
+     * {@code MyDungeon.makeRoundRotator(world, x, y + 1, z)} — one of only
+     * three {@code clickedY + 1} outliers in the whole DSB table (types
+     * 43/44/45). The caller (RandomDungeonSpawnerBlockEntity) passes
+     * {@code pos.above()}, mirroring the shipped TYPE_PUMPKIN precedent, so
+     * this adapter adds NO offset of its own. No scan, no other adjustment
+     * (orig GenericDungeon.java:6184-6258 floats itself +6 internally); the
+     * Vortex-list chest lives inside the shared private builder. Same
+     * shared-builder pattern as {@link #buildRotatorStationAt}.
+     *
+     * @return always {@code true} — the original builds unconditionally
+     */
+    public static boolean buildRoundRotatorAt(ServerLevel level, RandomSource random, BlockPos pos) {
+        buildRoundRotator(level, random, pos.getX(), pos.getY(), pos.getZ());
+        return true;
+    }
+
     private static boolean tryPlaceRoundRotator(WorldGenLevel level, RandomSource random,
                                                  int chunkX, int chunkZ, BlockState grassState) {
         // orig OreSpawnWorld.java:1632 — 1/150 gate, then 3 attempts (:1635)
@@ -789,6 +824,26 @@ public class CrystalStructures {
     // CRYSTAL BATTLE TOWER - 1/280 chance
     // Original: radius=10, 22 blocks + 2 crystal rim, 5 floors
     // =====================================================================
+
+    /**
+     * Random Dungeon Spawner outcome type 33 (orig DungeonSpawnerBlock.java:152-154):
+     * {@code MyDungeon.makeCrystalBattleTower(world, x, y, z)} at the
+     * (already-cleared) spawner-block position, unmodified — centre-anchored,
+     * base disc at {@code pos.getY()} (orig GenericDungeon.java:4831-4959),
+     * no scan, no Y adjustment. NOT the deleted {@code CrystalBattleTowerFeature}
+     * — that class was the datapack-dead Phase 13A modernization with a
+     * heightmap re-anchor, a solid-footing veto the original never had, and
+     * invented per-floor loot (dsb_sweep_spec.md &sect;C.4, flag F4). The five
+     * {@code battle_tower_*} loot tables and mob ladder live inside the shared
+     * private builder. Same shared-builder pattern as
+     * {@link #buildRotatorStationAt}.
+     *
+     * @return always {@code true} — the original builds unconditionally
+     */
+    public static boolean buildCrystalBattleTowerAt(ServerLevel level, RandomSource random, BlockPos pos) {
+        buildCrystalBattleTower(level, random, pos.getX(), pos.getY(), pos.getZ());
+        return true;
+    }
 
     private static boolean tryPlaceCrystalBattleTower(WorldGenLevel level, RandomSource random,
                                                        int chunkX, int chunkZ, BlockState grassState) {

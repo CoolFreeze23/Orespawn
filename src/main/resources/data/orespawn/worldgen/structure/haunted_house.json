@@ -1,0 +1,8 @@
+{
+  "type": "orespawn:legacy_dungeon",
+  "biomes": "#orespawn:has_structure/haunted_house",
+  "step": "surface_structures",
+  "spawn_overrides": {},
+  "terrain_adaptation": "none",
+  "dungeon_type": "HAUNTED_HOUSE"
+}

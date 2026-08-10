@@ -63,6 +63,15 @@ public class LegacyDungeonStructure extends Structure {
 
     @Override
     public Optional<GenerationStub> findGenerationPoint(GenerationContext context) {
+        // Spider Hangout worldgen honors the SpiderDriverEnable config gate
+        // (orig OreSpawnWorld.java:1323-1325: `if (SpiderDriverEnable == 0)
+        // return false;`) — the LESS_LAG precedent (islandsGrassOrigin). The
+        // Dungeon Spawner Block path never gated (orig DSB:197-199) and goes
+        // through buildNow, untouched by this check.
+        if (dungeonType == LegacyDungeonPiece.DungeonType.SPIDER_HANGOUT
+                && !danger.orespawn.OreSpawnConfig.SPIDER_DRIVER_ENABLE.get()) {
+            return Optional.empty();
+        }
         BlockPos origin = switch (placementOverride.orElse(dungeonType.placement)) {
             case SURFACE_CENTER -> surfaceCenterOrigin(context);
             case LOWEST_SURFACE_36 -> lowestSurfaceOrigin(context);
@@ -83,7 +92,9 @@ public class LegacyDungeonStructure extends Structure {
                 // scan shape to the swamp-grass one, but the builder receives
                 // posY−1 — the SAND block itself (:1292). Sand identity is
                 // carried by the desert biome list the same way grass was by
-                // the swamp tag.
+                // the swamp tag. Second exact user: Frog Pond (addFrogPond
+                // OSW:1156-1174 — grass/Plains, posY−1 at :1168; surface
+                // identity rides on its plains tag).
                 BlockPos air = swampGrassSurfaceOrigin(context);
                 yield air == null ? null : air.below();
             }
@@ -95,6 +106,7 @@ public class LegacyDungeonStructure extends Structure {
                 yield grass == null ? null : grass.above();
             }
             case SKY_BAND_70 -> skyBand70Origin(context);
+            case LOWEST_GRASS_36 -> lowestGrassOrigin(context);
         };
         if (origin == null) return Optional.empty();
         if (origin.getY() + dungeonType.upExtent + 4 >= context.heightAccessor().getMaxBuildHeight()) {
@@ -316,6 +328,48 @@ public class LegacyDungeonStructure extends Structure {
             return new BlockPos(x, anchorY, z);
         }
         return null;
+    }
+
+    /**
+     * Port of {@code addEnderKnight}'s Mining-dimension anchoring
+     * (orig OreSpawnWorld.java:2087-2113): a copy of
+     * {@link #lowestSurfaceOrigin} — same 6×6 column offsets {0,3,6,9,12,15},
+     * same Y 31..128 window mapped to the noise surface, same
+     * strictly-lowest/first-seen-wins accounting, same {@code lowestY > 40}
+     * hard gate, no RNG — with two documented deltas: the original accepts a
+     * GRASS block (:2097, not any-solid like addBasiliskMaze :2583; grass
+     * identity collapses into the same noise-surface probe, the
+     * SWAMP_GRASS_SURFACE-style approximation) and anchors at
+     * {@code lowestY} with NO −2 sink (:2108 vs :2594 — sinking would bury
+     * the dungeon's doorway and floor, a different structure on the
+     * ground). {@code recently_placed} (gate :79, set :2109) collapses into
+     * structure-set separation per C7.
+     */
+    private BlockPos lowestGrassOrigin(GenerationContext context) {
+        ChunkPos chunk = context.chunkPos();
+        int lowestSurfaceY = 128;
+        int lowestX = chunk.getMinBlockX();
+        int lowestZ = chunk.getMinBlockZ();
+        boolean found = false;
+        for (int xOff = 0; xOff <= 15; xOff += 3) {
+            for (int zOff = 0; zOff <= 15; zOff += 3) {
+                int x = chunk.getMinBlockX() + xOff;
+                int z = chunk.getMinBlockZ() + zOff;
+                int surfaceY = context.chunkGenerator().getBaseHeight(
+                        x, z, Heightmap.Types.WORLD_SURFACE_WG,
+                        context.heightAccessor(), context.randomState()) - 1;
+                // orig :2096 — the scan visits Y 128 down to 31 (same
+                // above-window note as lowestSurfaceOrigin).
+                if (surfaceY > 128 || surfaceY < 31) continue;
+                if (surfaceY >= lowestSurfaceY) continue;
+                lowestSurfaceY = surfaceY;
+                lowestX = x;
+                lowestZ = z;
+                found = true;
+            }
+        }
+        if (!found || lowestSurfaceY <= 40) return null;
+        return new BlockPos(lowestX, lowestSurfaceY, lowestZ);   // NO -2 (orig :2108)
     }
 
     /**

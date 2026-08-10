@@ -1,0 +1,8 @@
+{
+  "type": "orespawn:legacy_dungeon",
+  "biomes": "#minecraft:is_end",
+  "step": "surface_structures",
+  "spawn_overrides": {},
+  "terrain_adaptation": "none",
+  "dungeon_type": "ENDER_KNIGHT_DUNGEON"
+}

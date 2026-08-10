@@ -38,7 +38,7 @@ import net.minecraft.world.level.storage.loot.LootTable;
  *       negative axis relative to the raft &mdash; original,
  *       coordinate-sign-dependent behavior. Transcribed VERBATIM
  *       (precedent {@code CrystalStructures.buildCrystalBattleTower},
- *       CrystalStructures.java:801-837); the piece helpers take absolute
+ *       CrystalStructures.java:868); the piece helpers take absolute
  *       world coordinates, so the quirk reproduces itself. {@code currad}/
  *       {@code curdeg} stay float accumulators ({@code += 0.33f} /
  *       {@code += 5.0f}), never recomputed multiples.</li>

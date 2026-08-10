@@ -99,6 +99,29 @@ public class BeehiveFeature extends Feature<NoneFeatureConfiguration> {
         if (cpos.getY() + 1 >= level.getMaxBuildHeight() - 2) return false;
         if (cpos.getY() - HEIGHT - 1 <= level.getMinBuildHeight() + 2) return false;
 
+        return buildAt(level, random, cpos);
+    }
+
+    /**
+     * The {@code makeBeeHive} build core (orig GenericDungeon.java:812-858 +
+     * {@code fill_beehive_chests} :860-889), corner-anchored on the passed
+     * {@code cpos} exactly like the original's {@code (cposx, cposy, cposz)}.
+     *
+     * <p>Serves TWO trigger paths, the same sharing the original had:</p>
+     * <ol>
+     *   <li><b>Worldgen</b> — {@link #place} keeps its heightmap+3 anchor and
+     *       bounds vetoes (the {@code addBeeHive} lowest-grass semantic), then
+     *       delegates here with an unchanged draw sequence.</li>
+     *   <li><b>Play time</b> — Random Dungeon Spawner outcome type 4 (orig
+     *       DungeonSpawnerBlock.java:65-67) calls this at the cleared
+     *       spawner-block position with NO ground gate and NO Y adjustment —
+     *       the original validated nothing, so a floating or buried hive is
+     *       faithful behavior (dsb_sweep_spec.md &sect;C.1).</li>
+     * </ol>
+     *
+     * @return always {@code true} &mdash; the original builds unconditionally
+     */
+    public static boolean buildAt(WorldGenLevel level, Random random, BlockPos cpos) {
         BlockState air = Blocks.AIR.defaultBlockState();
         // QA Fix: legacy 1.7.10 used coal_ore (field_150365_q) and
         // gold_ore (field_150352_o), NOT the compressed coal_block /

@@ -27,10 +27,11 @@ import net.minecraft.world.level.block.state.BlockState;
  *       (orig :52-202 — 50 outcomes, FairyTree → RedAntHangout).</li>
  * </ol>
  *
- * <p>Pool status: only the orig type 21 (MyDungeon.makeDungeon → generic
- * dungeon) and type 22 (RubyDungeon.makeDungeon) builders are ported so far;
- * unported indices currently fall back to the generic dungeon. As WGEN-042
- * ports more of the 50 structures, register them in {@link #buildForType}.</p>
+ * <p>Pool status: ALL 50 outcomes are wired (D6b batch 4 — ITEM-020
+ * complete). Each case is keyed by the ORIGINAL index with its orig
+ * DungeonSpawnerBlock.java block cite; types 43/44/45 carry the original's
+ * {@code clickedY + 1}. The default arm is unreachable defensive fallback
+ * only.</p>
  *
  * <p>Persisted across save/load via {@code Delay} NBT, so chunk unload + reload
  * during the countdown doesn't reset the timer.</p>
@@ -42,7 +43,7 @@ public class RandomDungeonSpawnerBlockEntity extends BlockEntity {
     private static final int STRUCTURE_POOL_SIZE = 50;
     // orig DungeonSpawnerBlock.java:53-55 — OreSpawnTrees.FairyTree
     private static final int TYPE_FAIRY_TREE = 0;
-    // orig DungeonSpawnerBlock.java:71-73 — makeRotatorStation
+    // orig DungeonSpawnerBlock.java:62-64 — makeRotatorStation
     private static final int TYPE_ROTATOR_STATION = 3;
     // orig DungeonSpawnerBlock.java:89-91 — makePlayPool
     private static final int TYPE_PLAY_POOL = 12;
@@ -101,6 +102,47 @@ public class RandomDungeonSpawnerBlockEntity extends BlockEntity {
     private static final int TYPE_PUMPKIN = 44;
     // orig DungeonSpawnerBlock.java:191-193 — makeRainbow
     private static final int TYPE_RAINBOW = 46;
+    // ---- D6b batch 4: the final 19 outcomes (dsb_sweep_spec.md + the six
+    // batch-4 structure specs). All 50 blocks are single-call; 43/44/45 are
+    // the only clickedY+1 outliers. ----
+    // orig DungeonSpawnerBlock.java:65-67 — makeBeeHive
+    private static final int TYPE_BEE_HIVE = 4;
+    // orig DungeonSpawnerBlock.java:68-70 — makeHauntedHouse (overworld)
+    private static final int TYPE_HAUNTED_HOUSE = 5;
+    // orig DungeonSpawnerBlock.java:71-73 — makeMantisHive
+    private static final int TYPE_MANTIS_HIVE = 6;
+    // orig DungeonSpawnerBlock.java:77-79 — makeSmallBeeHive
+    private static final int TYPE_SMALL_BEE_HIVE = 8;
+    // orig DungeonSpawnerBlock.java:80-82 — makeShadowDungeon
+    private static final int TYPE_SHADOW_DUNGEON = 9;
+    // orig DungeonSpawnerBlock.java:83-85 — makeAlienWTFDungeon
+    private static final int TYPE_ALIEN_WTF_DUNGEON = 10;
+    // orig DungeonSpawnerBlock.java:86-88 — makeEnderKnightDungeon
+    private static final int TYPE_ENDER_KNIGHT_DUNGEON = 11;
+    // orig DungeonSpawnerBlock.java:128-130 — makeCrystalHauntedHouse
+    private static final int TYPE_CRYSTAL_HAUNTED_HOUSE = 25;
+    // orig DungeonSpawnerBlock.java:146-148 — makeKingAltar
+    private static final int TYPE_KING_ALTAR = 31;
+    // orig DungeonSpawnerBlock.java:149-151 — makeLeonNest
+    private static final int TYPE_LEON_NEST = 32;
+    // orig DungeonSpawnerBlock.java:152-154 — makeCrystalBattleTower
+    private static final int TYPE_CRYSTAL_BATTLE_TOWER = 33;
+    // orig DungeonSpawnerBlock.java:161-163 — makeGreenhouseDungeon
+    private static final int TYPE_GREENHOUSE_DUNGEON = 36;
+    // orig DungeonSpawnerBlock.java:173-175 — makeRubberDuckyPond
+    private static final int TYPE_RUBBER_DUCKY_POND = 40;
+    // orig DungeonSpawnerBlock.java:176-178 — makeWhiteHouse
+    private static final int TYPE_WHITE_HOUSE = 41;
+    // orig DungeonSpawnerBlock.java:179-181 — makeQueenAltar
+    private static final int TYPE_QUEEN_ALTAR = 42;
+    // orig DungeonSpawnerBlock.java:182-184 — makeFrogPond at clickedY + 1
+    private static final int TYPE_FROG_POND = 43;
+    // orig DungeonSpawnerBlock.java:188-190 — makeRoundRotator at clickedY + 1
+    private static final int TYPE_ROUND_ROTATOR = 45;
+    // orig DungeonSpawnerBlock.java:197-199 — makeSpiderHangout
+    private static final int TYPE_SPIDER_HANGOUT = 48;
+    // orig DungeonSpawnerBlock.java:200-202 — makeRedAntHangout
+    private static final int TYPE_RED_ANT_HANGOUT = 49;
 
     private int delay = TOTAL_DELAY;
 
@@ -147,10 +189,11 @@ public class RandomDungeonSpawnerBlockEntity extends BlockEntity {
 
     /**
      * Table-driven outcome pool keyed by the ORIGINAL type index
-     * (orig DungeonSpawnerBlock.java:52-202). Ported entries: 21 (generic
-     * dungeon), 22 (ruby dungeon). Every still-unported index falls back to
-     * the generic dungeon until WGEN-042 lands those structures — register
-     * new builders here as they are ported.
+     * (orig DungeonSpawnerBlock.java:52-202). ALL 50 outcomes are wired
+     * (D6b batch 4 — ITEM-020): each case cites its original block; the
+     * group-A {@code pos.offset} calls cancel the ported generators'
+     * internal recentring so the build lands exactly where the original's
+     * clicked-pos build did (dsb_sweep_spec.md output table).
      */
     private static boolean buildForType(ServerLevel server, BlockPos pos, int type) {
         return switch (type) {
@@ -207,7 +250,14 @@ public class RandomDungeonSpawnerBlockEntity extends BlockEntity {
                 yield true;
             }
             case TYPE_ROBOT_LAB -> {
-                LegacyDungeonPiece.buildNow(server, pos,
+                // D6b batch-4 F7 fix (dsb_sweep_spec.md): the original
+                // makeRobotLab is corner-anchored at the passed pos
+                // (GD:4053-4059), but generateRobotLab recentres
+                // ox = x - 5, oz = z - 25 (the documented recentring,
+                // robot_lab_audit_spec.md §18 item 10). Passing pos raw
+                // shifted the DSB build (-5, 0, -25) from the original's
+                // clicked-pos build; the +5/+25 pre-offset cancels it.
+                LegacyDungeonPiece.buildNow(server, pos.offset(5, 0, 25),
                         LegacyDungeonPiece.DungeonType.ROBOT_LAB);
                 yield true;
             }
@@ -302,7 +352,127 @@ public class RandomDungeonSpawnerBlockEntity extends BlockEntity {
                         LegacyDungeonPiece.DungeonType.RAINBOW);
                 yield true;
             }
-            // Interim fallback for the not-yet-ported structures (Phase D / WGEN-042)
+            // ---- D6b batch 4: final 19 outcomes. Group-A offsets cancel the
+            // ported generators' internal recentring so the DSB build lands
+            // exactly where the original's clicked-pos build did
+            // (dsb_sweep_spec.md §A + output table). ----
+            case TYPE_BEE_HIVE -> {
+                // orig DSB:66 — makeBeeHive at the clicked pos; extracted
+                // build core (BeehiveFeature.buildAt, orig GD:812-858).
+                danger.orespawn.world.feature.BeehiveFeature.buildAt(
+                        server, new java.util.Random(server.random.nextLong()), pos);
+                yield true;
+            }
+            case TYPE_HAUNTED_HOUSE -> {
+                LegacyDungeonPiece.buildNow(server, pos,
+                        LegacyDungeonPiece.DungeonType.HAUNTED_HOUSE);
+                yield true;
+            }
+            case TYPE_MANTIS_HIVE -> {
+                // orig DSB:72 — makeMantisHive; extracted core
+                // (MantisNestFeature.buildAt, orig GD:1012-1062).
+                danger.orespawn.world.feature.MantisNestFeature.buildAt(
+                        server, new java.util.Random(server.random.nextLong()), pos);
+                yield true;
+            }
+            case TYPE_SMALL_BEE_HIVE -> {
+                // orig DSB:78 — makeSmallBeeHive; extracted core
+                // (SmallBeehiveFeature.buildAt, orig GD:1363-1451).
+                danger.orespawn.world.feature.SmallBeehiveFeature.buildAt(
+                        server, new java.util.Random(server.random.nextLong()), pos);
+                yield true;
+            }
+            case TYPE_SHADOW_DUNGEON -> {
+                LegacyDungeonPiece.buildNow(server, pos,
+                        LegacyDungeonPiece.DungeonType.SHADOW);
+                yield true;
+            }
+            case TYPE_ALIEN_WTF_DUNGEON -> {
+                LegacyDungeonPiece.buildNow(server, pos,
+                        LegacyDungeonPiece.DungeonType.ALIEN_WTF);
+                yield true;
+            }
+            case TYPE_ENDER_KNIGHT_DUNGEON -> {
+                LegacyDungeonPiece.buildNow(server, pos,
+                        LegacyDungeonPiece.DungeonType.ENDER_KNIGHT_DUNGEON);
+                yield true;
+            }
+            case TYPE_CRYSTAL_HAUNTED_HOUSE -> {
+                // orig DSB:129 — new adapter over the private Crystal builder
+                // (CrystalStructures GD:2993-3104 port).
+                danger.orespawn.world.CrystalStructures.buildCrystalHauntedHouseAt(
+                        server, server.random, pos);
+                yield true;
+            }
+            case TYPE_KING_ALTAR -> {
+                // orig DSB:147 — original is corner-anchored; the port
+                // centres (ox = x - 25, oz = z - 25), so pre-offset +25/+25.
+                LegacyDungeonPiece.buildNow(server, pos.offset(25, 0, 25),
+                        LegacyDungeonPiece.DungeonType.KING_ALTAR);
+                yield true;
+            }
+            case TYPE_LEON_NEST -> {
+                LegacyDungeonPiece.buildNow(server, pos,
+                        LegacyDungeonPiece.DungeonType.LEONOPTERYX_NEST);
+                yield true;
+            }
+            case TYPE_CRYSTAL_BATTLE_TOWER -> {
+                // orig DSB:153 — new adapter over the faithful Crystal
+                // builder (NOT the dead CrystalBattleTowerFeature, removed
+                // this batch under the no-fabrication rule — F4).
+                danger.orespawn.world.CrystalStructures.buildCrystalBattleTowerAt(
+                        server, server.random, pos);
+                yield true;
+            }
+            case TYPE_GREENHOUSE_DUNGEON -> {
+                // orig DSB:162 — port centres (ox = x - 11, oz = z - 7).
+                LegacyDungeonPiece.buildNow(server, pos.offset(11, 0, 7),
+                        LegacyDungeonPiece.DungeonType.GREENHOUSE);
+                yield true;
+            }
+            case TYPE_RUBBER_DUCKY_POND -> {
+                LegacyDungeonPiece.buildNow(server, pos,
+                        LegacyDungeonPiece.DungeonType.RUBBER_DUCKY_POND);
+                yield true;
+            }
+            case TYPE_WHITE_HOUSE -> {
+                // orig DSB:177 — port centres (ox = x - 12, oz = z - 9).
+                LegacyDungeonPiece.buildNow(server, pos.offset(12, 0, 9),
+                        LegacyDungeonPiece.DungeonType.WHITE_HOUSE);
+                yield true;
+            }
+            case TYPE_QUEEN_ALTAR -> {
+                // orig DSB:180 — same centring as the King altar.
+                LegacyDungeonPiece.buildNow(server, pos.offset(25, 0, 25),
+                        LegacyDungeonPiece.DungeonType.QUEEN_ALTAR);
+                yield true;
+            }
+            case TYPE_FROG_POND -> {
+                // orig DSB:183 — makeFrogPond receives clickedY + 1.
+                LegacyDungeonPiece.buildNow(server, pos.above(),
+                        LegacyDungeonPiece.DungeonType.FROG_POND);
+                yield true;
+            }
+            case TYPE_ROUND_ROTATOR -> {
+                // orig DSB:189 — makeRoundRotator receives clickedY + 1;
+                // new adapter over the private Crystal builder (GD:6184-6258).
+                danger.orespawn.world.CrystalStructures.buildRoundRotatorAt(
+                        server, server.random, pos.above());
+                yield true;
+            }
+            case TYPE_SPIDER_HANGOUT -> {
+                LegacyDungeonPiece.buildNow(server, pos,
+                        LegacyDungeonPiece.DungeonType.SPIDER_HANGOUT);
+                yield true;
+            }
+            case TYPE_RED_ANT_HANGOUT -> {
+                LegacyDungeonPiece.buildNow(server, pos,
+                        LegacyDungeonPiece.DungeonType.RED_ANT_HANGOUT);
+                yield true;
+            }
+            // All 50 outcomes are wired (D6b batch 4); this arm is
+            // unreachable for nextInt(50) rolls and exists only because an
+            // int-typed switch requires it. Defensive fallback unchanged.
             default -> GenericDungeon.placeGenericDungeonAt(server, server.random, pos);
         };
     }
