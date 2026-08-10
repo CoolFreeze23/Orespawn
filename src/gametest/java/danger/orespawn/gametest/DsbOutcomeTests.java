@@ -11,12 +11,12 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.ChestBlock;
@@ -25,7 +25,12 @@ import net.minecraft.world.level.block.entity.RandomizableContainerBlockEntity;
 import net.minecraft.world.level.block.entity.SpawnerBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.storage.loot.LootParams;
+import net.minecraft.world.level.storage.loot.LootTable;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
@@ -786,12 +791,28 @@ public class DsbOutcomeTests {
                                 && k.getPath().contains("igloo")),
                 "igloo must have NO orespawn structure-set registration (WGEN-071 open, Phase E)");
 
-        // -- 16 independent 50% chest slots (statistical) --------------------
-        // 30 igloos → 480 Bernoulli(0.5) slot rolls; filled-slot total is
+        // -- 16 independent 50% kit pools (statistical) ----------------------
+        // 30 igloos → 480 Bernoulli(0.5) pool rolls; successful-pool total is
         // Binomial(480, 0.5), mean 240. Bound [140, 340] (|dev| = 100):
         // Hoeffding P(|X-240| >= 100) <= 2*exp(-2*100^2/480) = 2*exp(-41.7)
-        // ≈ 1.6e-18 < 1e-9. Per-chest max is 16 (16 pools, 1 stack each).
-        Player looter = helper.makeMockPlayer(GameType.SURVIVAL);
+        // ≈ 1.6e-18 < 1e-9. Per-roll max is 16 (16 pools, 1 stack each).
+        // Triage fix (2026-08-10): sample the bound table via
+        // getRandomItemsRaw (one stack per successful pool) instead of
+        // unpackLootTable + counting nonempty SLOTS — the container fill path
+        // (LootTable.fill → shuffleAndSplitItems, 1.21.1) deliberately splits
+        // multi-count stacks (torch 32, coal 16, porkchop 8, nuggets 6/8/10)
+        // across the 27 chest slots to scatter loot, so nonempty slots
+        // routinely exceed the 16 pools (observed 23) while item totals stay
+        // faithful. Pool successes, not slots, are the documented 50% events
+        // (orig GD:2764-2810 sets one fixed slot per 50% draw).
+        LootTable iglooTable = level.getServer().reloadableRegistries()
+                .getLootTable(ResourceKey.create(Registries.LOOT_TABLE,
+                        ResourceLocation.fromNamespaceAndPath("orespawn", "chests/igloo")));
+        helper.assertTrue(iglooTable != LootTable.EMPTY,
+                "loot table orespawn:chests/igloo is missing");
+        LootParams iglooParams = new LootParams.Builder(level)
+                .withParameter(LootContextParams.ORIGIN, Vec3.atCenterOf(pos))
+                .create(LootContextParamSets.CHEST);
         int filled = 0;
         for (int i = 0; i < 30; i++) {
             BlockPos p = region(helper, 910, 1).offset(0, 0, i * 64);
@@ -799,18 +820,14 @@ public class DsbOutcomeTests {
             BlockEntity be = level.getBlockEntity(p.offset(-3, 1, -3));
             helper.assertTrue(be instanceof RandomizableContainerBlockEntity,
                     "igloo #" + i + ": kit chest present");
-            RandomizableContainerBlockEntity c = (RandomizableContainerBlockEntity) be;
-            c.unpackLootTable(looter);
-            int slots = 0;
-            for (int slot = 0; slot < c.getContainerSize(); slot++) {
-                if (!c.getItem(slot).isEmpty()) slots++;
-            }
-            helper.assertTrue(slots <= 16,
-                    "igloo chest rolls at most its 16 fixed kit slots, got " + slots);
-            filled += slots;
+            List<ItemStack> roll = new ArrayList<>();
+            iglooTable.getRandomItemsRaw(iglooParams, roll::add);
+            helper.assertTrue(roll.size() <= 16,
+                    "igloo table rolls at most its 16 fixed kit pools, got " + roll.size());
+            filled += roll.size();
         }
         helper.assertTrue(filled >= 140 && filled <= 340,
-                "igloo chest slots: expected ~240/480 at 50% each, got " + filled);
+                "igloo kit pools: expected ~240/480 at 50% each, got " + filled);
         helper.succeed();
     }
 }

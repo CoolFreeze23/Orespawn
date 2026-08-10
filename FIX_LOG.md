@@ -1173,11 +1173,43 @@ TF-025 remain OPEN**:
 - **TF-024 CLOSED (docs amended per user ruling):** the instant diamond-block
   transform is faithful (orig ThePrince.java:195-206 + :556-568); the bug004
   test now asserts the faithful flow and items.json i002 is corrected.
-- **TF-023 OPEN:** Red Ant Hangout robot intermittently absent
-  (chunk-border spawn-X hypothesis) — rides the TF-025 instrumentation
-  session rather than this batch.
-- **TF-025 OPEN:** tf025_diag_frog_pond_cascade diagnostic (always-red by
-  design) ships in StructureTestsC; fix proposal follows its dump analysis.
+- **TF-023 CLOSED (harness, port exonerated — residual triage 2026-08-10):**
+  the robot always spawned; freshly force-loaded chunks keep their entity
+  sections HIDDEN until the main thread pumps the FullChunkStatus promotion
+  (ChunkHolder.scheduleFullChunkPromotion → entityManager.updateChunkStatus),
+  so the same-tick AABB query missed it — the chunk-border correlation was
+  the section boundary, not the spawn. Test now pins a FORCED ticket +
+  pre-loads and delays the body. The identical mechanism explained
+  i141's "0 End Crystals" and item001_005's far-region query misses.
+- **Residual-red triage (post-batch run, 29 → 10 → all accounted):** the 7
+  non-expected reds were ALL test infrastructure — i115/i131 still drove the
+  removed spawnAfterBreak site (re-pointed to getExpDrop); item001_005
+  relocated in-template (HIDDEN-section query race); i122/i126 counted
+  STACKS where the docs count PICKS (vanilla createStackSplitter splits
+  over-stack picks — caged_mob 2-4 → singles, zoo_keeper 10-16 → singles —
+  exactly as 1.7.10's generateStacks did in-chest; switched to
+  getRandomItemsRaw); dsb_igloo counted container slots vs pool successes
+  (shuffleAndSplitItems scatters); red_ant per TF-023 above.
+- **Residual-audit completion (Bundle C extension, applied):** the
+  spawnAfterBreak XP audit closed the class — the original had exactly 8
+  XP-popping block classes; OreCrystal (crystal_coal) and OreCrystalCrystal
+  (crystal_crystal/tigers_eye_ore) were the last two still on the dead path
+  (orig OreCrystal.java:71-77 / OreCrystalCrystal.java:66-72 — 5..18 XP
+  below y40). Migrated to getExpDrop with the Y gate, mirroring OreUranium —
+  the same user-approved ITEM-003/TF-022 mechanism, applied as Bundle C's
+  completion (no test currently covers these three ores' XP; flagged for a
+  follow-up assert).
+- **TF-025 OPEN — root cause isolated, fix PROPOSED (spec-side):** the
+  diagnostic dump (t=0..250) shows a faithful build settling STABLE: all
+  cross/riser/sheet blocks placed exactly per GD:6018-6039, flow advancing
+  one block to (+2,+1) then dying — water above water becomes falling flow,
+  which never spreads horizontally, in modern AND 1.7.10 fluid logic. The
+  spec-S9 "spills past the rim" expectation was an extraction-time
+  inference (nothing in GD:6018-6039 generates a spill; it is emergent
+  fluid behavior). PROPOSAL: amend frog_pond spec S9 + re-point i166's
+  cascade assert to the observed stable end-state (sources + the one-block
+  lip flow, air at the rim) — pending the user's in-game memory of the
+  1.7.10 pond as the final arbiter; then delete tf025_diag.
 
 - **TF-001 (HIGH)** `cephadrome_targets_and_kraken_bonus` — WaterDragon is
   unspawnable: its ctor throws IllegalArgumentException "Unsupported mob type for

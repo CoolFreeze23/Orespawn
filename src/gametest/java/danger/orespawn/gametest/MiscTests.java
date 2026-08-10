@@ -507,17 +507,27 @@ public class MiscTests {
      * path at all, OreRuby.java Javadoc); breaking a red-ant/termite troll
      * block as a player erupts 15..20 mobs even WITH Silk Touch (orig
      * OreBasicStone.java:47-58 — {@code 15 + nextInt(6)}, no Silk Touch
-     * escape; port OreBasicStone.java:82-120). FIX_LOG "ITEM-001/005". K=902.
+     * escape; port OreBasicStone.java:82-120). FIX_LOG "ITEM-001/005".
+     *
+     * <p>Runs INSIDE the structure (empty_large), not in a far region
+     * (formerly K=902): a far chunk is loaded synchronously by the first
+     * setBlock, but its FullChunkStatus promotion — and with it the
+     * entity-section flip HIDDEN→TRACKED — is queued via
+     * {@code ChunkHolder.scheduleFullChunkPromotion}'s thenRunAsync and only
+     * pumps after the test method returns, so same-tick
+     * {@code getEntitiesOfClass} sees NO freshly spawned XP orbs / drops /
+     * mobs there ({@code EntitySectionStorage.getEntities} iterates
+     * accessible sections only). Structure chunks are already promoted by
+     * the harness — every LootTests XP/drop assert runs in-structure.</p>
      */
-    @GameTest(template = "empty")
+    @GameTest(template = "empty_large")
     public void item001_005_gem_ores_troll_blocks(GameTestHelper helper) {
         ServerLevel level = helper.getLevel();
-        BlockPos base = region(helper, 902);
         Player player = helper.makeMockPlayer(GameType.SURVIVAL);
 
         Block[] ores = {ModBlocks.ORE_RUBY.get(), ModBlocks.ORE_AMETHYST.get()};
         for (int o = 0; o < ores.length; o++) {
-            BlockPos orePos = base.offset(o * 12, 0, 0);
+            BlockPos orePos = helper.absolutePos(new BlockPos(8, 2, 8 + o * 16));
             // Marker shell that an explosion would destroy.
             for (Direction d : Direction.values()) {
                 level.setBlock(orePos.relative(d), Blocks.DIAMOND_BLOCK.defaultBlockState(), 2);
@@ -557,7 +567,7 @@ public class MiscTests {
                 new Troll(ModBlocks.TERMITE_TROLL.get(), ModEntities.ENTITY_TERMITE.get()));
         for (int t = 0; t < trolls.size(); t++) {
             Troll troll = trolls.get(t);
-            BlockPos pos = base.offset(40 + t * 20, 0, 0);
+            BlockPos pos = helper.absolutePos(new BlockPos(30, 2, 10 + t * 24));
             // ground pad for the swarm
             for (int x = -4; x <= 4; x++) {
                 for (int z = -4; z <= 4; z++) {

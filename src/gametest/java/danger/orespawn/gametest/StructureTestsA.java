@@ -165,7 +165,22 @@ public class StructureTestsA {
                         + (bound == null ? "null" : bound.location().toString()));
     }
 
-    /** Rolls an orespawn chest loot table n times through the CHEST param set. */
+    /**
+     * Rolls an orespawn chest loot table n times through the CHEST param set.
+     *
+     * <p>Triage fix (2026-08-10): rolls via {@code getRandomItemsRaw}, which
+     * emits exactly ONE stack per pool roll, so a sample's stack count equals
+     * its pick count. The previous {@code getRandomItems} path post-processes
+     * through {@code createStackSplitter} (LootTable.java, 1.21.1), which
+     * splits any pick whose count reaches the item's max stack size into
+     * multiple stacks — e.g. one caged_mob pick of 2-4 (unstackable, BM:28)
+     * or one zoo_keeper pick of 10-16 (durability 1 ⇒ unstackable, GD:60)
+     * became 2-16 stacks and tripped the roll-count bounds. The originals
+     * behaved the same in-chest (1.7.10 ChestGenHooks.generateStacks splits
+     * over-limit picks into singles), so the documented 5-10/5-11 ranges are
+     * PICK counts, which the raw path measures directly (same idiom as
+     * StructureTestsB.checkLootRolls).
+     */
     private static List<List<ItemStack>> rollLoot(GameTestHelper helper, String tablePath, int n) {
         ServerLevel level = helper.getLevel();
         LootTable table = level.getServer().reloadableRegistries()
@@ -176,7 +191,9 @@ public class StructureTestsA {
                 .create(LootContextParamSets.CHEST);
         List<List<ItemStack>> out = new ArrayList<>(n);
         for (int i = 0; i < n; i++) {
-            out.add(new ArrayList<>(table.getRandomItems(params)));
+            List<ItemStack> roll = new ArrayList<>();
+            table.getRandomItemsRaw(params, roll::add);
+            out.add(roll);
         }
         return out;
     }
@@ -451,6 +468,46 @@ public class StructureTestsA {
     public void i122_basilisk_maze_content_and_sink(GameTestHelper helper) {
         ServerLevel level = helper.getLevel();
         BlockPos o = farOrigin(helper, 601, 30);
+
+        // TF-023 harness race (proven fix pattern: StructureTestsC red-ant
+        // i165, FIX_LOG TF-023 CLOSED): freshly force-loaded chunks keep their
+        // entity sections HIDDEN until the queued FullChunkStatus promotion
+        // pumps on the main thread, so an entity query against a just-built
+        // far region can miss mobs that ARE in section storage. Pin the maze
+        // footprint under a FORCED ticket and sync-load it a few ticks BEFORE
+        // the build; buildNow then writes into already-promoted chunks and the
+        // Basilisk spawns land in TRACKED (queryable) sections. Footprint XZ
+        // (D only affects Y): pyramid o±8; castle base cb = o+(3,-D-4,-20)
+        // spans local x 0..60, z 0..29 → x o-8..o+63, z o-20..o+10. Ticket
+        // centred on the Basilisk chamber (cb x+30..+60).
+        ServerChunkCache chunkSource = level.getChunkSource();
+        ChunkPos ticketPos = new ChunkPos(o.offset(48, 0, -5));
+        chunkSource.addRegionTicket(TicketType.FORCED, ticketPos, 2, ticketPos);
+        ChunkPos minC = new ChunkPos(o.offset(-8, 0, -20));
+        ChunkPos maxC = new ChunkPos(o.offset(63, 0, 10));
+        for (int ccx = minC.x; ccx <= maxC.x; ccx++) {
+            for (int ccz = minC.z; ccz <= maxC.z; ccz++) {
+                level.getChunk(ccx, ccz); // blocking FULL load now; the queued
+                                          // visibility promotion drains between
+                                          // ticks, before the delayed build
+            }
+        }
+        helper.runAfterDelay(5, () -> {
+            try {
+                basiliskMazeBuildAndAsserts(helper, level, o);
+            } finally {
+                chunkSource.removeRegionTicket(TicketType.FORCED, ticketPos, 2, ticketPos);
+            }
+            helper.succeed();
+        });
+    }
+
+    /** Build + asserts of {@link #i122_basilisk_maze_content_and_sink} (body
+     *  unchanged by the TF-023 infra fix — only moved behind the chunk
+     *  pre-ticketing; the previously-delayed Basilisk query now runs same-tick,
+     *  which the pre-promoted sections make reliable). */
+    private static void basiliskMazeBuildAndAsserts(GameTestHelper helper, ServerLevel level,
+                                                    BlockPos o) {
         LegacyDungeonPiece.buildNow(level, o, LegacyDungeonPiece.DungeonType.BASILISK_MAZE);
 
         // --- Shaft depth D from the lowest bedrock ring layer at the shaft corner
@@ -674,21 +731,19 @@ public class StructureTestsA {
         helper.assertTrue(comparisons >= 1,
                 "no Mining chunk in the sample produced a valid maze anchor to compare");
 
-        // --- Basilisks: entity queries a few ticks after the build so the
-        // freshly force-loaded chunks' entity sections are tracked.
+        // --- Basilisks: same-tick query, reliable now that the chamber chunks
+        // were promoted (entity sections TRACKED) before the build (TF-023 —
+        // the earlier delay-only attempt still raced the promotion queue).
         AABB chamber = new AABB(cb.getX() + 30, cb.getY(), cb.getZ(),
                 cb.getX() + 60, cb.getY() + 7, cb.getZ() + 30);
-        helper.runAfterDelay(10, () -> {
-            List<? extends Mob> basilisks =
-                    level.getEntities(ModEntities.BASILISK.get(), chamber, e -> true);
-            helper.assertTrue(basilisks.size() == 3,
-                    "expected exactly 3 chamber Basilisks (BM:397-410), got " + basilisks.size());
-            for (Mob basilisk : basilisks) {
-                helper.assertTrue(basilisk.isPersistenceRequired(),
-                        "chamber Basilisks must be persistent (orig func_110163_bv, BM:243-252)");
-            }
-            helper.succeed();
-        });
+        List<? extends Mob> basilisks =
+                level.getEntities(ModEntities.BASILISK.get(), chamber, e -> true);
+        helper.assertTrue(basilisks.size() == 3,
+                "expected exactly 3 chamber Basilisks (BM:397-410), got " + basilisks.size());
+        for (Mob basilisk : basilisks) {
+            helper.assertTrue(basilisk.isPersistenceRequired(),
+                    "chamber Basilisks must be persistent (orig func_110163_bv, BM:243-252)");
+        }
     }
 
     // =====================================================================
@@ -751,8 +806,44 @@ public class StructureTestsA {
         }
         helper.assertTrue(origin != null, "no level-6 King tower seed among 200 candidates "
                 + "(P ≈ 5e-29 under seed uniformity)");
-        buildWorldgenPath(level, origin, LegacyDungeonPiece.DungeonType.KING_TOWER);
         final BlockPos o = origin;
+
+        // TF-023 harness race (proven fix pattern: StructureTestsC red-ant
+        // i165, FIX_LOG TF-023 CLOSED): the prize-egg use spawns The Prince
+        // into freshly force-loaded chunks whose entity sections stay HIDDEN
+        // until the queued FullChunkStatus promotion pumps, so the query after
+        // the spawn could miss it. Pin the tower footprint (piece box
+        // ~o..o+28 in XZ) under a FORCED ticket and sync-load it a few ticks
+        // BEFORE the build so the spawn lands in TRACKED (queryable) sections.
+        ServerChunkCache chunkSource = level.getChunkSource();
+        ChunkPos ticketPos = new ChunkPos(o.offset(14, 0, 14));
+        chunkSource.addRegionTicket(TicketType.FORCED, ticketPos, 2, ticketPos);
+        ChunkPos minC = new ChunkPos(o.offset(-2, 0, -2));
+        ChunkPos maxC = new ChunkPos(o.offset(30, 0, 30));
+        for (int ccx = minC.x; ccx <= maxC.x; ccx++) {
+            for (int ccz = minC.z; ccz <= maxC.z; ccz++) {
+                level.getChunk(ccx, ccz); // blocking FULL load now; the queued
+                                          // visibility promotion drains between
+                                          // ticks, before the delayed build
+            }
+        }
+        helper.runAfterDelay(5, () -> {
+            try {
+                challengeTowerBuildAndAsserts(helper, level, o);
+            } finally {
+                chunkSource.removeRegionTicket(TicketType.FORCED, ticketPos, 2, ticketPos);
+            }
+            helper.succeed();
+        });
+    }
+
+    /** Build + asserts of {@link #i126_challenge_tower_level6_prizes} (body
+     *  unchanged by the TF-023 infra fix — only moved behind the chunk
+     *  pre-ticketing; the previously-delayed Prince query now runs same-tick,
+     *  which the pre-promoted sections make reliable). */
+    private static void challengeTowerBuildAndAsserts(GameTestHelper helper, ServerLevel level,
+                                                      BlockPos o) {
+        buildWorldgenPath(level, o, LegacyDungeonPiece.DungeonType.KING_TOWER);
 
         // Sanity: the predicted level-6 tower really built all six floors —
         // floor 6's bedrock CEILING exists (floor 6 corner O+(3,62,3), h=16 ->
@@ -933,14 +1024,14 @@ public class StructureTestsA {
         helper.assertTrue(used.consumesAction(),
                 "using the prize spawn egg on the floor should succeed, got " + used);
         AABB spawnBox = new AABB(spawnFloor).inflate(4.0);
-        helper.runAfterDelay(10, () -> {
-            List<? extends Mob> princes =
-                    level.getEntities(ModEntities.THE_PRINCE.get(), spawnBox, e -> true);
-            helper.assertTrue(!princes.isEmpty(),
-                    "prize spawn egg did not spawn orespawn:the_prince (ITEM-066)");
-            princes.forEach(Mob::discard);
-            helper.succeed();
-        });
+        // Same-tick query, reliable now that the tower chunks were promoted
+        // (entity sections TRACKED) before the build (TF-023 — the earlier
+        // delay-only attempt still raced the promotion queue).
+        List<? extends Mob> princes =
+                level.getEntities(ModEntities.THE_PRINCE.get(), spawnBox, e -> true);
+        helper.assertTrue(!princes.isEmpty(),
+                "prize spawn egg did not spawn orespawn:the_prince (ITEM-066)");
+        princes.forEach(Mob::discard);
     }
 
     /**
@@ -1695,6 +1786,60 @@ public class StructureTestsA {
     public void i141_hospital_content(GameTestHelper helper) {
         ServerLevel level = helper.getLevel();
         BlockPos o = farOrigin(helper, 608, 10);
+
+        // TF-023 harness race (proven fix pattern: StructureTestsC red-ant
+        // i165, FIX_LOG TF-023 CLOSED): the End Crystals are spawnEntity'd
+        // during buildNow into freshly force-loaded chunks whose entity
+        // sections stay HIDDEN until the queued FullChunkStatus promotion
+        // pumps, so the crystal census could read 0 while the crystals WERE in
+        // section storage. Pin the cage + query area (the census AABB spans
+        // o-8..o+18) under a FORCED ticket and sync-load it a few ticks BEFORE
+        // the build so the spawns land in TRACKED (queryable) sections.
+        ServerChunkCache chunkSource = level.getChunkSource();
+        ChunkPos ticketPos = new ChunkPos(o.offset(4, 0, 4));
+        chunkSource.addRegionTicket(TicketType.FORCED, ticketPos, 2, ticketPos);
+        ChunkPos minC = new ChunkPos(o.offset(-8, 0, -8));
+        ChunkPos maxC = new ChunkPos(o.offset(18, 0, 18));
+        for (int ccx = minC.x; ccx <= maxC.x; ccx++) {
+            for (int ccz = minC.z; ccz <= maxC.z; ccz++) {
+                level.getChunk(ccx, ccz); // blocking FULL load now; the queued
+                                          // visibility promotion drains between
+                                          // ticks, before the delayed build
+            }
+        }
+        helper.runAfterDelay(5, () -> {
+            try {
+                hospitalBuildAndAsserts(helper, level, o);
+            } catch (Throwable t) {
+                chunkSource.removeRegionTicket(TicketType.FORCED, ticketPos, 2, ticketPos);
+                throw t;
+            }
+            // TF-023 addendum (i141 triage, 2026-08-10, diagnostic-proven):
+            // the fixed preload + 5-tick delay is NOT always enough — in this
+            // batch the perch chunks still reported entitiesLoaded=false at
+            // t=5 and even a manual addFreshEntity in the assert context was
+            // added=true yet queryable same-tick=0, i.e. the queued
+            // FullChunkStatus promotion that flips entity-SECTION visibility
+            // (ChunkMap.onFullChunkStatusChange -> PersistentEntitySection
+            // Manager.updateChunkStatus) had still not pumped for these far
+            // chunks under batch load. The crystals sit in section storage
+            // either way, so POLL the census until the promotion lands (the
+            // FORCED ticket stays up during the poll and is dropped on the
+            // passing tick; on a timeout the server teardown reclaims it).
+            helper.succeedWhen(() -> {
+                hospitalEntityAsserts(helper, level, o);
+                chunkSource.removeRegionTicket(TicketType.FORCED, ticketPos, 2, ticketPos);
+            });
+        });
+    }
+
+    /** Build + block/loot asserts of {@link #i141_hospital_content} (body
+     *  unchanged by the TF-023 infra fix — only moved behind the chunk
+     *  pre-ticketing; the entity census lives in
+     *  {@link #hospitalEntityAsserts} and is POLLED, see the addendum note
+     *  in the test method). */
+    private static void hospitalBuildAndAsserts(GameTestHelper helper, ServerLevel level,
+                                                BlockPos o) {
         LegacyDungeonPiece.buildNow(level, o, LegacyDungeonPiece.DungeonType.HOSPITAL);
 
         // Cage shell samples (orig :2824-2852).
@@ -1726,19 +1871,23 @@ public class StructureTestsA {
                 Set.of("minecraft:ender_chest", "minecraft:diamond_block", "minecraft:dragon_egg",
                         "orespawn:block_ender_pearl", "minecraft:ender_pearl", "minecraft:ender_eye"),
                 true, "hospital loot (210-weight table)");
+    }
 
-        // Entities a few ticks later (fresh chunks -> tracked sections).
+    /** Entity census of {@link #i141_hospital_content} — polled via
+     *  {@code succeedWhen} until the entity-section visibility promotion
+     *  lands (TF-023 addendum; see the note in the test method). Once the
+     *  crystals are visible the sections are accessible, so the dragon
+     *  absence assert on the same box carries its original strength. */
+    private static void hospitalEntityAsserts(GameTestHelper helper, ServerLevel level,
+                                              BlockPos o) {
         AABB area = new AABB(o.getX() - 8, o.getY() - 2, o.getZ() - 8,
                 o.getX() + 18, o.getY() + 14, o.getZ() + 18);
-        helper.runAfterDelay(10, () -> {
-            int crystals = level.getEntities(EntityType.END_CRYSTAL, area, c -> true).size();
-            helper.assertTrue(crystals == 4,
-                    "expected exactly 4 End Crystals on the perches (orig :2906-2921), got " + crystals);
-            int dragons = level.getEntities(EntityType.ENDER_DRAGON, area, d -> true).size();
-            helper.assertTrue(dragons == 0,
-                    "the Hospital must NOT spawn an Ender Dragon (spec §A2), found " + dragons);
-            helper.succeed();
-        });
+        int crystals = level.getEntities(EntityType.END_CRYSTAL, area, c -> true).size();
+        helper.assertTrue(crystals == 4,
+                "expected exactly 4 End Crystals on the perches (orig :2906-2921), got " + crystals);
+        int dragons = level.getEntities(EntityType.ENDER_DRAGON, area, d -> true).size();
+        helper.assertTrue(dragons == 0,
+                "the Hospital must NOT spawn an Ender Dragon (spec §A2), found " + dragons);
     }
 
     // =====================================================================
