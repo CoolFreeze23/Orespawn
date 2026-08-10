@@ -328,10 +328,19 @@ arises.
 - **S8 — sub-Y50 ponds have dormant spawners in BOTH versions** (§4.1): placement window
   Y 41..100 (OSW:1166) vs Frog's `y >= 50` spawn rule (orig Frog.java:240-251, port
   Frog.java:277-285, no near-spawner bypass). Faithful — noted so nobody "fixes" it.
-- **S9 — the fountain spills, on purpose**: the center riser + flow cross at +1
-  (GD:6030-6034) are five water sources one block above the sheet; they cascade over the
-  pond and off the rim onto the surrounding grass as soon as fluid ticks run. Generated
-  content in both versions — do not flatten the mound or rim the pond.
+- **S9 — the fountain settles STABLE (AMENDED, TF-025 close-out 2026-08-11; the
+  original bullet's "spills off the rim" was an extraction-time INFERENCE, not
+  observed behavior — user-ratified)**: the center riser + flow cross at +1
+  (GD:6030-6034) are five water sources one block above the sheet. Fluid
+  mechanics — identical in 1.7.10 and 1.21.1 for this geometry — refuse a rim
+  spill: flow advancing over the source sheet becomes FALLING water, which
+  never propagates horizontally, so the cascade dies one block off the cross
+  (flowing level-1 water at +2 on the +1 layer, air beyond), while the
+  two-source rule promotes the convex 3×3 around the riser to new sources.
+  Empirically confirmed by the TF-025 instrumented diagnostic (t=0..250 dump,
+  FIX_LOG TESTING_FINDINGS): the pond reaches a stable state with all placed
+  blocks intact. Do not flatten the mound, rim the pond, or expect water on
+  the surrounding grass.
 - **S10 — write order**: spawner first (GD:6020), then the water under and around it
   (GD:6025-6038). Order has no behavioral consequence (no reads, no draws), but keep it in
   the generator for number-by-number diff-ability (pattern §1 step 7.2).

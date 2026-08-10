@@ -1199,7 +1199,11 @@ TF-025 remain OPEN**:
   the same user-approved ITEM-003/TF-022 mechanism, applied as Bundle C's
   completion (no test currently covers these three ores' XP; flagged for a
   follow-up assert).
-- **TF-025 OPEN — root cause isolated, fix PROPOSED (spec-side):** the
+- **TF-025 CLOSED (2026-08-11, user-ratified docs amendment — "the
+  fluid-mechanics analysis is decisive"):** spec S9 amended to the observed
+  stable end-state, i166's cascade asserts re-pointed (one-block lip flow at
+  +2, cascade dead at +3, no rim water), tf025_diag deleted. Original entry
+  (root-cause isolation) follows: the
   diagnostic dump (t=0..250) shows a faithful build settling STABLE: all
   cross/riser/sheet blocks placed exactly per GD:6018-6039, flow advancing
   one block to (+2,+1) then dying — water above water becomes falling flow,

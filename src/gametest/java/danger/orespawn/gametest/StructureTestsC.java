@@ -684,23 +684,23 @@ public class StructureTestsC {
                     "i166: lily pad missing at (" + d[0] + ",+2," + d[1] + ") (orig GD:6035-6038)");
         }
 
-        // After fluid ticks: the +1 sources cascade over the sheet and off
-        // the rim (spec S9); the pads (each on a +1 source) survive.
+        // After fluid ticks the pond settles STABLE (spec S9 as AMENDED at
+        // the TF-025 close-out, 2026-08-11): flow over the source sheet
+        // becomes falling water and never propagates horizontally, so the
+        // cascade dies one block off the cross; the two-source rule
+        // promotes the convex 3x3 around the riser to sources. Asserted
+        // end-state = the TF-025 diagnostic's t=250 dump (FIX_LOG).
         helper.runAfterDelay(100, () -> {
-            // Infra fix (was a wrong assert): the diagonal spread cell gains
-            // TWO horizontal source neighbours ((+1,+1,0) and (0,+1,+1))
-            // over a source sheet, so the infinite-water rule promotes it to
-            // a NEW SOURCE — identical mechanics in both versions (1.7.10
-            // BlockDynamicLiquid: adjacentSourceBlocks >= 2 over solid or
-            // source below; 1.21.1 FlowingFluid.getNewLiquid). Asserting
-            // "flowing, not source" was therefore uncheckable; the spec S9
-            // expectation is water PRESENCE from the cascade.
             BlockState diag = level.getBlockState(origin.offset(1, 1, 1));
             helper.assertTrue(diag.getFluidState().is(FluidTags.WATER),
                     "i166: flow cross did not spread over the sheet (expected water at (+1,+1,+1), spec S9)");
-            BlockState pastRim = level.getBlockState(origin.offset(4, 1, 0));
-            helper.assertTrue(pastRim.getFluidState().is(FluidTags.WATER),
-                    "i166: cascade did not spill past the 7x7 rim (expected water at (+4,+1,0), spec S9)");
+            // One-block lip flow, then the cascade dies (falling-over-water).
+            helper.assertTrue(level.getBlockState(origin.offset(2, 1, 0)).getFluidState().is(FluidTags.WATER),
+                    "i166: expected the one-block lip flow at (+2,+1,0) (spec S9 amended)");
+            helper.assertTrue(level.getBlockState(origin.offset(3, 1, 0)).getFluidState().isEmpty(),
+                    "i166: cascade must DIE at (+3,+1,0) — stable pond, no rim spill (spec S9 amended, TF-025)");
+            helper.assertTrue(level.getBlockState(origin.offset(4, 1, 0)).getFluidState().isEmpty(),
+                    "i166: no water past the rim at (+4,+1,0) (spec S9 amended, TF-025)");
             helper.assertTrue(level.getBlockState(origin.offset(1, 2, 0)).is(Blocks.LILY_PAD),
                     "i166: lily pad at (+1,+2,0) should survive the fluid updates (spec section 5)");
             helper.assertTrue(level.getBlockState(origin.offset(0, 0, 0)).getFluidState().isSource(),
@@ -709,82 +709,6 @@ public class StructureTestsC {
         });
     }
 
-    // ------------------------------------------------------------------
-    // TF-025 diagnostic — TEMPORARY, delete when the finding closes
-    // ------------------------------------------------------------------
-
-    /**
-     * <b>TEMPORARY DIAGNOSTIC for FIX_LOG TF-025 — not a checklist test.
-     * It always FAILS by design (the harness prints fail messages, so the
-     * dump rides out in one) and must be DELETED when TF-025 closes.</b>
-     *
-     * <p>Instrumented repro for {@code frog_pond_plains_i166}'s red rim
-     * assert: the +1 riser/flow-cross sources (orig GenericDungeon.java:
-     * 6030-6034, FrogPondGenerator.java, spec S4) are documented to cascade
-     * over the 7x7 sheet and off the rim (spec S9), but the post-triage run
-     * saw no water at (+4,+1,0) after 300 ticks. This test rebuilds the
-     * i166 environment write-for-write (same dirt plane, same containment
-     * wall, same origin, same {@code buildNow} call), makes NO structure
-     * asserts, and snapshots at t=0/40/100/250 ticks: the riser, the four
-     * flow-cross arms, the sheet edge cells (&plusmn;3 ring, y=0 sheet and
-     * y=+1 spill frontier), the rim overflow line (+4,+1,z=-1..+1), the
-     * water levels along the +x ray to +6 (y=+1 and y=0), pending fluid
-     * ticks ({@code level.getFluidTicks().hasScheduledTick}) per sampled
-     * cell plus a region census, and a source/flowing census of the +1
-     * layer over the sheet — separating "the scheduler starved" from "the
-     * spread reached a stable no-spill fixed point". Each snapshot is also
-     * logged as it is taken, so partial data survives a timeout.</p>
-     *
-     * <p>Code-reading prediction (decompiled 1.21.1 FlowingFluid.java): the
-     * blanket forms but the rim stays dry — {@code getSpread} (:364-405)
-     * rates any direction whose below-cell holds same-type fluid as a
-     * water hole ({@code isWaterHole} :318-325, j=0 at :388) and
-     * {@code map.clear()} (:393-394) then drops every j&ge;1 direction, so
-     * a FLOWING +1 cell over the sheet can never pick the past-rim
-     * direction; and the {@code getNewLiquid} two-source promotion
-     * (:175-181) stops at the convex 3x3 square around the riser (each
-     * cell orthogonally outside it sees at most ONE source), so the rim
-     * ring never becomes the all-source state that would exclude the
-     * over-sheet directions and force the spill. The dump exists to
-     * confirm or kill that prediction before any fix lands.</p>
-     */
-    @GameTest(template = "empty_large", timeoutTicks = 400)
-    public void tf025_diag_frog_pond_cascade(GameTestHelper helper) {
-        ServerLevel level = helper.getLevel();
-        // i166 environment, write-for-write (see frog_pond_plains_i166
-        // above — same 19x19 2-deep dirt plane, same obsidian containment
-        // wall, same origin cell) so the repro matches the red run exactly.
-        for (int x = 15; x <= 33; x++) {
-            for (int z = 15; z <= 33; z++) {
-                helper.setBlock(new BlockPos(x, 1, z), Blocks.DIRT.defaultBlockState());
-                helper.setBlock(new BlockPos(x, 2, z), Blocks.DIRT.defaultBlockState());
-            }
-        }
-        for (int x = 15; x <= 33; x++) {
-            for (int z : new int[]{15, 33}) {
-                helper.setBlock(new BlockPos(x, 3, z), Blocks.OBSIDIAN.defaultBlockState());
-                helper.setBlock(new BlockPos(x, 4, z), Blocks.OBSIDIAN.defaultBlockState());
-            }
-        }
-        for (int z = 16; z <= 32; z++) {
-            for (int x : new int[]{15, 33}) {
-                helper.setBlock(new BlockPos(x, 3, z), Blocks.OBSIDIAN.defaultBlockState());
-                helper.setBlock(new BlockPos(x, 4, z), Blocks.OBSIDIAN.defaultBlockState());
-            }
-        }
-        BlockPos origin = helper.absolutePos(new BlockPos(24, 2, 24));
-        LegacyDungeonPiece.buildNow(level, origin, DungeonType.FROG_POND);
-
-        StringBuilder dump = new StringBuilder("TF-025 frog pond cascade diagnostic");
-        tf025Snapshot(level, origin, dump, 0);
-        helper.runAfterDelay(40, () -> tf025Snapshot(level, origin, dump, 40));
-        helper.runAfterDelay(100, () -> tf025Snapshot(level, origin, dump, 100));
-        helper.runAfterDelay(250, () -> {
-            tf025Snapshot(level, origin, dump, 250);
-            helper.fail("TF-025 TEMPORARY DIAGNOSTIC — always red by design so the harness "
-                    + "prints this dump; delete the test when TF-025 closes.\n" + dump);
-        });
-    }
 
     /**
      * One TF-025 snapshot (support for {@link #tf025_diag_frog_pond_cascade}
