@@ -258,7 +258,10 @@ public class OreSpawnChunkGenerator extends NoiseBasedChunkGenerator {
                         chunk.getPos().getMinBlockX(), chunk.getPos().getMinBlockZ(),
                         this.crystalStructureCooldown);
             } catch (Exception e) {
-                // Non-fatal: a failed structure in one chunk doesn't compromise the world.
+                // Non-fatal: a failed structure in one chunk doesn't compromise
+                // the world — but it must not be invisible either (BUG-021).
+                org.slf4j.LoggerFactory.getLogger(OreSpawnChunkGenerator.class)
+                        .warn("Crystal structure decoration failed for chunk {}", chunk.getPos(), e);
             }
         }
 

@@ -80,10 +80,23 @@ public class RTPBlock extends Block {
                 player.teleportTo(targetX + 0.5, targetY, targetZ + 0.5);
             }
 
-            for (int i = 0; i < TELEPORT_EFFECT_BURST_COUNT; i++) {
-                level.addParticle(ParticleTypes.SMOKE, targetX + 0.5, targetY + TELEPORT_PARTICLE_Y, targetZ + 0.5, 0, 0, 0);
-                level.addParticle(ParticleTypes.EXPLOSION, targetX + 0.5, targetY + TELEPORT_PARTICLE_Y, targetZ + 0.5, 0, 0, 0);
-                level.addParticle(ParticleTypes.DUST_PLUME, targetX + 0.5, targetY + TELEPORT_PARTICLE_Y, targetZ + 0.5, 0, 0, 0);
+            // BUG-028: Level.addParticle is an empty no-op on the server (this
+            // method is server-gated above), so the burst never rendered. In
+            // 1.7.10 only the teleported player's OWN client drew it (orig
+            // RTPBlock.java:51-56 ran in the client's movement replay), so the
+            // per-player sendParticles overload is the faithful delivery.
+            // Particle mapping: orig "smoke"=SMOKE, "explode"=POOF (the small
+            // white puff — modern EXPLOSION is the large blast flash),
+            // "reddust"=red DUST (DUST_PLUME did not exist in 1.7.10).
+            if (player instanceof ServerPlayer serverPlayer && level instanceof ServerLevel serverLevel) {
+                double px = targetX + 0.5, py = targetY + TELEPORT_PARTICLE_Y, pz = targetZ + 0.5;
+                var redDust = new net.minecraft.core.particles.DustParticleOptions(
+                        new org.joml.Vector3f(1.0f, 0.0f, 0.0f), 1.0f);
+                for (int i = 0; i < TELEPORT_EFFECT_BURST_COUNT; i++) {
+                    serverLevel.sendParticles(serverPlayer, ParticleTypes.SMOKE, false, px, py, pz, 1, 0.0, 0.0, 0.0, 0.0);
+                    serverLevel.sendParticles(serverPlayer, ParticleTypes.POOF, false, px, py, pz, 1, 0.0, 0.0, 0.0, 0.0);
+                    serverLevel.sendParticles(serverPlayer, redDust, false, px, py, pz, 1, 0.0, 0.0, 0.0, 0.0);
+                }
             }
             level.playSound(null, new BlockPos(targetX, targetY, targetZ), SoundEvents.GENERIC_EXPLODE.value(), SoundSource.BLOCKS, 1.0f, EXPLODE_SOUND_PITCH);
         }

@@ -255,20 +255,38 @@ public class EntityVortex extends Monster {
 
     @Nullable
     private LivingEntity findSomethingToAttack() {
+        // TF-035: orig Vortex.java:341-344 — PlayNicely disables Vortex
+        // aggression entirely, and the scan sorts with GenericTargetSorter
+        // (creeper-halved / big-mob-prioritized), not plain distance.
+        if (danger.orespawn.OreSpawnConfig.PLAY_NICELY.get()) return null;
         List<LivingEntity> entities = this.level().getEntitiesOfClass(LivingEntity.class,
                 this.getBoundingBox().inflate(16.0, 10.0, 16.0));
-        entities.sort(Comparator.comparingDouble(this::distanceToSqr));
+        entities.sort(new danger.orespawn.entity.ai.GenericTargetSorter(this));
         for (LivingEntity candidate : entities) {
             if (isSuitableTarget(candidate)) return candidate;
         }
         return null;
     }
 
+    /**
+     * TF-035: orig Vortex.java:290-339 — beyond self/dead/LoS/creative, the
+     * original ignores everything in MyUtils.isIgnoreable plus ten explicit
+     * classes: Vortex, Rotator, Mothra, Brutalfly, Peacock, CrystalCow,
+     * Irukandji, Skate, Whale, Flounder, Urchin.
+     */
     private boolean isSuitableTarget(LivingEntity target) {
         if (target == null || target == this || !target.isAlive()) return false;
-        if (target instanceof EntityVortex) return false;
+        if (danger.orespawn.util.MyUtils.isIgnoreable(target)) return false;
         if (!this.getSensing().hasLineOfSight(target)) return false;
-        if (target instanceof Player p) return !p.getAbilities().invulnerable;
+        if (target instanceof Player p && p.getAbilities().instabuild) return false;
+        if (target instanceof EntityVortex || target instanceof EntityRotator
+                || target instanceof Mothra || target instanceof EntityBrutalfly
+                || target instanceof Peacock || target instanceof CrystalCow
+                || target instanceof Irukandji || target instanceof Skate
+                || target instanceof Whale || target instanceof Flounder
+                || target instanceof Urchin) {
+            return false;
+        }
         return true;
     }
 }

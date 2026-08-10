@@ -137,7 +137,17 @@ public class Kraken extends Monster {
         if (this.weatherSet > 0) {
             --this.weatherSet;
             if (this.weatherSet == 0 && this.level() instanceof ServerLevel serverLevel) {
-                serverLevel.setWeatherParameters(0, 6000, true, true);
+                // BUG-018: orig Kraken.java:171-185 refreshes rain+thunder TIME
+                // to 300 ticks each pass (func_76080_g/func_76090_f(300)) and
+                // forces the raining/thundering FLAGS only when NOT already
+                // raining — an existing plain rain is never upgraded to a
+                // thunderstorm. The 100-tick re-arm loop, per-Kraken timers,
+                // and non-persistence of weatherSet are all original behavior.
+                if (!serverLevel.isRaining()) {
+                    serverLevel.setWeatherParameters(0, 300, true, true);
+                } else {
+                    serverLevel.setWeatherParameters(0, 300, true, serverLevel.isThundering());
+                }
                 this.weatherSet = 100;
             }
         }
