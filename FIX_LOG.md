@@ -1805,3 +1805,48 @@ MODERNIZATION_NOTES MOD-021; KNOWN_ISSUES updated.
   (beaver/cassowary/chipmunk/cockateil = ENT-A, gazelle/ostrich/peacock =
   ENT-D/K per category split, ants = WGEN-049 adjunct, cliff_racer =
   TEST-002 overlap).
+
+## Phase E — E2: the 7 UNVERIFIED, evidence gathered (2026-08-11)
+
+All seven reached terminal states; two required code fixes, one removed an
+invented spawn row, four closed VERIFIED-CORRECT with the missing evidence.
+
+- **ENT-D-064 FIXED** — orig IrukandjiArrow deals a FLAT 100 (orig :157),
+  not velocity-scaled: `func_70239_b` is an empty override (:269-270) and
+  `func_70242_d` returns 100 (:272-273); crit adds nextInt(52) (:172-173).
+  Port entity/IrukandjiArrow.java rewritten: custom onHitEntity with the
+  orig flow — ultimateSwordPvp==off no-sells players/Girlfriend/Boyfriend/
+  tamed pets (:158-170), flat 100 + crit, burning-arrow 5s ignite (:176-177),
+  arrow-count increment + Punch knockback (0.6/level along flight, :187-188)
+  + arrow-hit-player ding (:190-192), deflect at -0.1 with yaw flip on
+  no-sell (:195-199). REMOVED the port's invented velocity-scaled 6.0 base
+  AND its three invented on-hit effects (Poison III/Weakness II/Slowness II
+  10s) — the orig arrow applies no potion effects (zero Potion refs).
+- **ENT-K-032 FIXED (tier) / damage VERIFIED** — orig MantisClaw is
+  ItemSword(toolEMERALD) (OreSpawnMain.java:1661; emerald_stats :1512 =
+  1300 uses / dmg 6 / ench 75): 1.7.10 attack = 4+6 = 10. The audit's
+  "dmg 10" cited MantisClaw.java:23's `weaponDamage` — a private field
+  nothing reads (dead). Port already carried EMERALD attack attributes
+  (6.0 tier + accepted +3 base per ENT-A-045) and the 1000-durability
+  override; fixed the ctor's wrong ModToolTiers.AMETHYST →
+  ModToolTiers.EMERALD (enchantability 75 + emerald repair parity).
+- **ENT-K-041 VERIFIED-CORRECT** — zero rider refs in orig Mothra.java
+  (riddenByEntity/field_70153_n/func_70085_c: 0 hits). Not-a-feature.
+- **ENT-S-016 VERIFIED-CORRECT** — the audit read the DEAD `Slice.java`
+  class (never instantiated); shipped Slice is `new Bertha(...)`
+  (OreSpawnMain.java:1646) — the port's ITEM-032 Bertha-clone is faithful.
+  Byproduct: 1.7.10 enchant field map proven (j..o = ids 16-21:
+  field_77338_j=Sharpness, _77339_k=Smite, _77336_l=Bane, _77337_m=
+  Knockback, _77334_n=FireAspect, _77335_o=Looting; _77347_r=Unbreaking),
+  anchored by the ITEM-031-verified Bertha bake.
+- **ENT-S-037 VERIFIED-CORRECT** — no Termite addSpawn in orig (both
+  `Termite.class` refs are registrations); block-driven spawning matches:
+  port CrystalAntBlock.java:64 + OreBasicStone.java:115 troll eruption +
+  add_anthills/add_troll_blocks worldgen.
+- **ENT-S-049 FIXED** — no Triffid spawn registration exists anywhere in
+  the orig; the port's add_overworld_monsters.json w4 1-2 row was invented
+  — removed (egg/spawn-block/cage pathways remain, matching orig).
+- **ENT-S-050 VERIFIED-CORRECT** — orig lockout timer extracted: 300
+  (Triffid.java:224/:229, re-armed on BLOCKED hits too :223-224), open
+  rolls nextInt(80)==2 → nextInt(8)==1 (:248-252). Port EntityTriffid
+  matches all four values/behaviors (:35/:151-155/:164/:201-202).

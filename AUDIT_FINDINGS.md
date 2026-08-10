@@ -1615,6 +1615,7 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 - **Original:** `IrukandjiArrow.java:173-180` — damage scaled by velocity + `nextInt(dmg/2+2)` crit bonus via custom `func_70239_b`; base value buried in decompiled arrow math
 - **Port:** `entity/IrukandjiArrow.java` — extends `AbstractArrow`, base damage 6.0
 - **Fix:** verification failed because the original base damage is entangled in CFR-decompiled velocity/crit math rather than a named constant. Evidence to resolve: trace `func_70239_b` callers in `IrukandjiArrow.java` (and the bow that fires it) to extract the seeded damage value, then compare to the port's 6.0. Do not assume parity.
+- **Resolution:** FIXED (2026-08-11, Phase E2 — audit assumption inverted: the orig arrow is FLAT 100, never velocity-scaled (orig IrukandjiArrow.java:157 `var23 = 100.0f`; `func_70239_b` is an EMPTY override :269-270 so no caller reseeds it; `func_70242_d` returns 100 :272-273); crit adds nextInt(52) :172-173. Port rewritten: flat 100 + crit + the :158-170 ultimateSwordPvp guard (players/Girlfriend/Boyfriend/tamed no-sold) + Punch knockback + deflect-on-no-sell; the port's velocity-scaled 6.0 AND its three invented on-hit potion effects (no potion code exists in the orig arrow) removed. See FIX_LOG Phase E)
 
 ### ENT-D-065 — IrukandjiArrow: debuff durations/amplifiers not number-matched
 
@@ -1958,6 +1959,7 @@ Paths: ORIG = `reference_1_7_10_source\sources\danger\orespawn\`, PORT = `src\ma
 - **Original:** ORIG `MantisClaw.java` — ItemSword, dmg 10, 1000 durability
 - **Port:** `item\MantisClaw.java:12` — SwordItem on `ModToolTiers.AMETHYST`; effective damage/durability come from the tier and were not compared
 - **Fix:** verification failed because the audit did not read `ModToolTiers.AMETHYST` values. Resolve by reading `ModToolTiers.java` (AMETHYST attack bonus + uses) and comparing to 10 dmg / 1000 uses; adjust the tier or use a dedicated constructor if off.
+- **Resolution:** FIXED (2026-08-11, Phase E2 — evidence gathered: orig MantisClaw = ItemSword(toolEMERALD) (OreSpawnMain.java:1661), emerald_stats dmg 6 (:1512), so 1.7.10 attack = 4+6 = 10; the audit's 'dmg 10' was a coincidence — orig MantisClaw.java:17/23 `weaponDamage` is a private field NOTHING reads. Port EMERALD tier carries dmg 6.0 exactly; +3 modern base per the accepted ENT-A-045 convention; durability 1000 ✓ (orig :25 override, port getMaxDamage). Fixed the one real divergence: class ctor passed AMETHYST (ench 70/amethyst repair) where orig uses toolEMERALD (ench 75/emerald repair) — now ModToolTiers.EMERALD. See FIX_LOG Phase E)
 
 ### ENT-K-033 — MantisClaw: lifesteal mechanic simplified
 
@@ -2036,6 +2038,7 @@ Paths: ORIG = `reference_1_7_10_source\sources\danger\orespawn\`, PORT = `src\ma
 - **Fix:** verification failed because the audited prompt asserted a rider feature that neither codebase shows. Resolve by grepping ORIG `Mothra.java` for `riddenByEntity`/`func_70085_c` and the 1.7.10 changelog; if truly absent, close as not-a-feature. Do not implement without evidence.
 
 ---
+- **Resolution:** VERIFIED-CORRECT (2026-08-11, Phase E2 — not-a-feature, proof: zero hits for riddenByEntity/field_70153_n/func_70085_c in orig Mothra.java; neither codebase has rider logic; the audited prompt's claim had no source basis. Nothing implemented, per the finding's own instruction)
 
 ## Nastysaurus
 
@@ -2619,6 +2622,7 @@ Paths: ORIG = `reference_1_7_10_source\sources\danger\orespawn\`, PORT = `src\ma
 - **Fix:** verification failed because the 1.7.10 obfuscated enchantment fields were not mapped. Resolve by consulting MCP 1.7.10 mappings for `field_77338_j`/`field_77336_l`; if they map to something other than Sharpness/Bane, swap the port enchantments accordingly.
 
 ---
+- **Resolution:** VERIFIED-CORRECT (2026-08-11, Phase E2 — the audit read DEAD CODE: `Slice.java` the class is never instantiated (zero `new Slice(` hits in the orig tree); the shipped Slice item is `MySlice = new Bertha(BaseItemID+314, toolBERTHA)` (OreSpawnMain.java:1646), so the port's ITEM-032 Bertha-clone treatment (KB5/Bane1/FireAspect1, tier BERTHA) is the faithful one. Enchantment field mapping proven as a byproduct, anchored by ITEM-031's verified Bertha bake: field_77337_m=Knockback, field_77336_l=Bane, field_77334_n=FireAspect, field_77347_r=Unbreaking, and the dead class's field_77338_j=Sharpness — the j..o suffixes run ids 16-21 consecutively)
 
 ## SpiderDriver
 
@@ -2815,6 +2819,7 @@ Paths: ORIG = `reference_1_7_10_source\sources\danger\orespawn\`, PORT = `src\ma
 - **Fix:** verification failed because neither side's structure/nest spawn data was checked in the audit slice. Resolve by reading the port's structure/feature code (e.g. termite-nest worldgen or block tick spawners) and ORIG nest block classes; confirm termites still appear in-world, else wire a nest spawn.
 
 ---
+- **Resolution:** VERIFIED-CORRECT (2026-08-11, Phase E2 — pathway parity proven: orig has NO Termite addSpawn (both `Termite.class` refs in OreSpawnMain.java are the entity registrations); spawning is block-driven, and the port wires the same pathway: CrystalAntBlock.java:64 (nest blocks emit termites), OreBasicStone.java:115 (termite troll stone erupts on break, ITEM-001/005), with worldgen placement via add_anthills.json + add_troll_blocks.json. Termites appear in-world through blocks exactly as in 1.7.10)
 
 ## TerribleTerror
 
@@ -2923,6 +2928,7 @@ Paths: ORIG = `reference_1_7_10_source\sources\danger\orespawn\`, PORT = `src\ma
 - **Original:** no `addSpawn` found in decompile (presumed spawner/dim driven)
 - **Port:** `BM add_overworld_monsters` w4 (1-2)
 - **Fix:** verification failed because the original spawn source wasn't located. Resolve by grepping ORIG `OreSpawnMain.java`/`BiomeGenUtopianPlains.java` for "Triffid" spawn registrations; if truly absent, the port's w4 overworld spawn is an addition to be removed or config-gated.
+- **Resolution:** FIXED (2026-08-11, Phase E2 — original spawn source located: there is NONE. No addSpawn/SpawnListEntry for Triffid anywhere in OreSpawnMain.java or the BiomeGen* classes; all `Triffid` refs are entity/egg/cage registrations. The port's `add_overworld_monsters.json` w4 (1-2) row was an invented addition — removed per the standing invention ruling. Spawn egg / spawn block / cage remain, matching the orig's only pathways. See FIX_LOG Phase E)
 
 ### ENT-S-050 — Triffid: shell-lockout duration unverified
 
@@ -2932,6 +2938,7 @@ Paths: ORIG = `reference_1_7_10_source\sources\danger\orespawn\`, PORT = `src\ma
 - **Fix:** verification failed because the ORIG timer constant wasn't extracted. Resolve by reading ORIG `Triffid.java` OpenClosed timer logic and matching the port's 300-tick value to it.
 
 ---
+- **Resolution:** VERIFIED-CORRECT (2026-08-11, Phase E2 — timer extracted: orig Triffid.java:224/:229 set `hurt_timer = 300` (blocked hits RE-ARM it :223-224; successful hits re-arm and close :229-230); open rolls nextInt(80)==2 then nextInt(8)==1 (:248-252). Port EntityTriffid matches all four: HURT_LOCKOUT_TICKS=300 (:35), blocked-hit re-arm (:151-155), post-hurt re-arm+close (:164), identical rolls (:201-202))
 
 ## TrooperBug
 
