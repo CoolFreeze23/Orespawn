@@ -164,9 +164,14 @@ public class EntityAnt extends Animal {
     public static int findSafeY(ServerLevel level, BlockPos column) {
         int chunkX = column.getX() >> 4;
         int chunkZ = column.getZ() >> 4;
-        if (!level.hasChunk(chunkX, chunkZ)) {
-            return Math.max(level.getSeaLevel() + 1, 64);
-        }
+        // TEST-004 fix (2026-08-11): on a FIRST visit the destination chunk
+        // does not exist yet; the old !hasChunk bail-out blind-dropped the
+        // player at ~Y64 — inside terrain in stone-heavy dimensions. The
+        // original scanned real blocks because its teleporter force-generated
+        // the chunk (orig OreSpawnTeleporter.java placeInPortal path); do the
+        // same: getChunk blocks until the chunk is generated, then the scan
+        // below reads real terrain.
+        level.getChunk(chunkX, chunkZ);
 
         int minY = level.getMinBuildHeight();
         for (int y = Math.min(256, level.getMaxBuildHeight() - 1); y > minY; y--) {

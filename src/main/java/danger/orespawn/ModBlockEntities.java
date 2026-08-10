@@ -1,6 +1,5 @@
 package danger.orespawn;
 
-import danger.orespawn.block.entity.ExtractorBlockEntity;
 import danger.orespawn.block.entity.RandomDungeonSpawnerBlockEntity;
 import danger.orespawn.gui.CrystalFurnaceBlockEntity;
 import net.minecraft.core.registries.Registries;
@@ -17,12 +16,6 @@ public class ModBlockEntities {
             BLOCK_ENTITIES.register("crystal_furnace",
                     () -> BlockEntityType.Builder.of(CrystalFurnaceBlockEntity::new,
                             ModBlocks.CRYSTAL_FURNACE.get()).build(null));
-
-    // Phase 11 — Extractor BE: hopper-driven processor for orespawn:extracting recipes.
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ExtractorBlockEntity>> EXTRACTOR_BE =
-            BLOCK_ENTITIES.register("extractor",
-                    () -> BlockEntityType.Builder.of(ExtractorBlockEntity::new,
-                            ModBlocks.EXTRACTOR.get()).build(null));
 
     // Phase 11 — Random Dungeon delayed spawner BE.
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<RandomDungeonSpawnerBlockEntity>> RANDOM_DUNGEON_SPAWNER_BE =
