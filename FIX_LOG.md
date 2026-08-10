@@ -1850,3 +1850,63 @@ invented spawn row, four closed VERIFIED-CORRECT with the missing evidence.
   (Triffid.java:224/:229, re-armed on BLOCKED hits too :223-224), open
   rolls nextInt(80)==2 → nextInt(8)==1 (:248-252). Port EntityTriffid
   matches all four values/behaviors (:35/:151-155/:164/:201-202).
+
+## Phase E — E1: the 17 untriaged BUGs, independently-verified triage (2026-08-11)
+
+Method: 11 read-only review passes (grouped by entity/file) produced verdicts
+with orig+port citations; every FAITHFUL claim then went to an independent
+reviewer who tried to refute it by re-opening the cited files. All 13 FAITHFUL
+verdicts survived. Outcome: **13 VERIFIED-CORRECT, 3 FIXED, 1 PARTIAL
+(DEFERRED-pending)** — the audit's proposed "fixes" for the 13 would each
+have broken parity (adding NBT persistence the original never had, clamping
+authentic over-max enchants, smoothing a pull that was always erratic,
+flooring a LoS ray the original truncates).
+
+- **VERIFIED-CORRECT (13):** BUG-014/016/017 (King/Godzilla/Queen transient
+  state — orig persists only its six/zero/five keys; King's attackDamage
+  recomputes per tick from persisted PlayerHits), BUG-019 (Vortex pull —
+  1.7.10 addVelocity never set velocityChanged; yank-on-damage-tick IS the
+  original feel, port reproduces the same markHurt channel), BUG-022 (scan
+  cadence is the orig's own; caching → OPT-004), BUG-023/024/026/030
+  (Mothra/GiantRobot/Kraken-flags/WormMedium — no orig NBT overrides),
+  BUG-027 (Queen LoS (int) truncation is the orig's, floor would diverge),
+  BUG-029 (stale — container-return already implemented, cites orig
+  :165-170), BUG-031 (client heal unguarded in orig onUpdate too), BUG-015
+  (the ~300 random-registry King drops are authentic, orig :200-226).
+  Consolidated MOD entries: MOD-022 (unpersisted transient state),
+  MOD-023 (King loot cap opt-in), MOD-024 (modern-idiom opt-ins).
+- **BUG-018 FIXED (Kraken weather, the MIXED case):** loop/override/
+  non-persistence faithful and kept; two real divergences corrected in
+  port Kraken.java tick — duration 6000→300 (orig func_76080_g/76090_f(300))
+  and no-upgrade-of-existing-rain (flags forced only when !isRaining, else
+  thundering preserved), mirroring orig :171-185 branch-for-branch.
+- **BUG-025 FIXED (superseded):** helper deleted in B1; the real content —
+  orig rolls FORTUNE I-V (not Silk Touch, which appears nowhere in
+  Kraken.java) and over-max levels are authentic — recorded as the MOD-007
+  addendum with an explicit no-clamp instruction.
+- **BUG-028 FIXED (RTP burst):** Level.addParticle is an empty no-op on the
+  server (decompiled 1.21.1 Level.java:465-466) — burst never rendered.
+  Now per-player ServerLevel.sendParticles (in 1.7.10 only the teleported
+  player's own client drew it, orig RTPBlock.java:51-56); mapping corrected
+  smoke=SMOKE, explode=POOF, reddust=red DUST.
+- **BUG-021 PARTIAL (DEFERRED-pending sign-off):** mechanism corrected —
+  WorldGenRegion drops writes beyond its 1-chunk radius; only
+  FairyCastleTree (reach 25-42 blocks) systematically shears (FairyTree ≤2
+  marginal; everything else fits). Observability shipped now: swallow-catch
+  logs, safeSetBlock warns via ensureCanWrite, Javadoc corrected. Remaining:
+  FairyCastleTree → LegacyDungeonStructure conversion (royal-altar
+  precedent) + re-derivation of the D5 dispatch coupling (fairy success
+  suppresses termites/big structures, 50-chunk cooldown, OSW:188-196/1992)
+  — strong-model work, proposed DEFERRED at the phase boundary.
+- **TF-035 FIXED (new, from the BUG-022 investigation):** two unledgered
+  Vortex divergences — (a) target sorting used plain distance where the
+  orig uses GenericTargetSorter (creeper distance halved, large mobs
+  prioritized by silhouette area, orig GenericTargetSorter.java:19-27);
+  (b) isSuitableTarget lacked the PlayNicely gate (orig Vortex.java:341-344)
+  and the ignore-list (MyUtils.isIgnoreable + Vortex/Rotator/Mothra/
+  Brutalfly/Peacock/CrystalCow/Irukandji/Skate/Whale/Flounder/Urchin,
+  :290-339), and checked invulnerable where the orig checks CREATIVE.
+  Ported entity/ai/GenericTargetSorter (shared class restored) and fixed
+  EntityVortex as the reference site. SYSTEMIC remainder: ~51 other entity
+  files sort targets by plain distance — each E4 category batch swaps its
+  entities' comparator during their line-by-line verification.

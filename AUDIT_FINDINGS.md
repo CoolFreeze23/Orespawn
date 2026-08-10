@@ -5228,6 +5228,7 @@ Entries: **79 total** — ANIM 20 (DIVERGENT 8 · PARTIAL 10 · MISSING 2) · BU
 - **Location:** `danger/orespawn/entity/TheKing.java` (fields `lightningStreamCount`, `iceStreamCount`, `ticker`, `backoffTimer`, `largeEntityDetected`, `attackDamage`, `revengeTarget`, `headEntityFound`)
 - **Scenario:** None saved to NBT — relogging mid-fight resets attack streams, backoff, and the buffed `attackDamage`; the boss "forgets" the fight.
 - **Fix:** Serialize `attackDamage`, stream counters, and `backoffTimer` in `addAdditionalSaveData`/`readAdditionalSaveData`.
+- **Resolution:** VERIFIED-CORRECT (2026-08-11, Phase E1 — independently-verified faithful-match: orig TheKing.java:1031-1039 writeEntityToNBT persists ONLY KingHomeX/KingHomeZ/GuardMode/PlayerHits/IsEnd/EndCounter — none of the eight audit-named fields; the port persists the identical six keys (port :1358-1377). The audit's headline (buffed attackDamage forgotten) is false in BOTH versions: attdam is recomputed every tick from persisted PlayerHits + health (orig :244-255, port :466-477), and stream counters refill on the ticker within ~90 ticks. Adding persistence would diverge from 1.7.10)
 
 ### BUG-015 — `TheKing.dropCustomDeathLoot`: up to 300 random-registry item drops
 
@@ -5235,6 +5236,7 @@ Entries: **79 total** — ANIM 20 (DIVERGENT 8 · PARTIAL 10 · MISSING 2) · BU
 - **Location:** `danger/orespawn/entity/TheKing.java:1321–1339`
 - **Scenario:** Two `while (j < 150)` loops draw random IDs from the item/block registries (any mod's items, technical items included) — one kill dumps ~300 item entities: lag spike + exploit-grade loot.
 - **Fix:** Replace registry sampling with a curated loot table (or a small whitelisted item pool) and cap total drops to a sane count (e.g. ≤32).
+- **Resolution:** VERIFIED-CORRECT (2026-08-11, Phase E1 — independently-verified faithful-match: the ~300 random-registry drops ARE the original: orig TheKing.java:200-226 draws 150 uniform-random items + 150 blocks from the full registries, scattered at y+12 ±20 (dropItemRand :178-181); the port's byId(nextInt(size)) loops (:1318-1340) are the uniform-pick equivalent with AIR skips matching 1.7.10's instantly-dead null-item entities. The audit's curated-table fix would break parity. Opt-in cap archived as MOD-023)
 
 ### BUG-016 — `Godzilla`: combat state not persisted
 
@@ -5242,6 +5244,7 @@ Entries: **79 total** — ANIM 20 (DIVERGENT 8 · PARTIAL 10 · MISSING 2) · BU
 - **Location:** `danger/orespawn/entity/Godzilla.java` (fields `ticker`, `streamCount`, `largeUnknownDetected`, `jumped`, `jumpTimer`, `headFound`)
 - **Scenario:** Fire-stream and jump state reset on relog; a mid-air "jumped" Godzilla reloads with `jumped=false` and never runs its landing-damage path, leaving stale state.
 - **Fix:** Persist `jumped`/`jumpTimer`/`streamCount` in NBT.
+- **Resolution:** VERIFIED-CORRECT (2026-08-11, Phase E1 — independently-verified faithful-match: orig Godzilla.java has NO NBT overrides at all (zero func_70014_b/func_70037_a/NBTTagCompound hits in 1778 lines; extends vanilla EntityMob) — all seven fields reset on relog in 1.7.10 exactly as in the port, including the mid-air jumped reset skipping landing damage; stream_count self-refills every 100 ticks (orig :277-279, port :565))
 
 ### BUG-017 — `TheQueen.mood` not persisted — angry queen reloads happy
 
@@ -5249,6 +5252,7 @@ Entries: **79 total** — ANIM 20 (DIVERGENT 8 · PARTIAL 10 · MISSING 2) · BU
 - **Location:** `danger/orespawn/entity/TheQueen.java:179` (mood logic ~707–720)
 - **Scenario:** With `QUEEN_ALWAYS_MAD` off, relogging during a fight resets the Queen to placid — players can defuse aggression by relogging.
 - **Fix:** Write/read `mood` in the existing NBT methods.
+- **Resolution:** VERIFIED-CORRECT (2026-08-11, Phase E1 — independently-verified faithful-match: orig TheQueen.java:964-980 persists exactly KingHomeX/KingHomeZ/GuardMode/PlayerHits/MeanMode — mood was never saved, so the relog-to-placid defuse existed in 1.7.10; port :1320-1340 writes the identical five keys. MeanMode (always_mad) IS persisted in both, so QUEEN_ALWAYS_MAD queens stay mad — only transient mood resets, identically. MOD-022)
 
 ### BUG-018 — `Kraken` weather lock fights the vanilla weather cycle and isn't persisted
 
@@ -5256,6 +5260,7 @@ Entries: **79 total** — ANIM 20 (DIVERGENT 8 · PARTIAL 10 · MISSING 2) · BU
 - **Location:** `danger/orespawn/entity/Kraken.java:57` (decrement), `:135` (`setWeatherParameters`)
 - **Scenario:** Every `weatherSet` expiry re-forces a thunderstorm, overriding `/weather clear` and other mods; timer not saved so relog re-triggers immediately; multiple Krakens each re-arm independently.
 - **Fix:** Set weather once per Kraken (persist a flag in NBT) and/or check `level.isThundering()` before forcing.
+- **Resolution:** FIXED (2026-08-11, Phase E1 — MIXED verdict: the re-force loop, /weather-clear override, per-Kraken timers, and weatherSet non-persistence are ALL original (orig Kraken.java:171-185; NBT :189-197 persists only LongEnough) and stay. Two real port divergences fixed at port Kraken.java tick: duration 6000→300 (orig func_76080_g/func_76090_f(300) — storm dies ~15s after the Kraken stops re-arming) and the flag handling — orig never upgrades an existing plain rain to thunder (flags forced only in the !isRaining branch); port now mirrors both branches exactly. The missing PlayNicely gate (orig :171) belongs to BOSS-017 (E4). See FIX_LOG Phase E)
 
 ### BUG-019 — `EntityVortex`: server-side push/launch velocities on players not synced
 
@@ -5263,6 +5268,7 @@ Entries: **79 total** — ANIM 20 (DIVERGENT 8 · PARTIAL 10 · MISSING 2) · BU
 - **Location:** `danger/orespawn/entity/EntityVortex.java:184–187` (pull), `:244–273` (`skywardLaunch`)
 - **Scenario:** `push()`/`setDeltaMovement()` on a `ServerPlayer` without `hurtMarked = true` sends no motion packet — the signature tornado pull/launch works only erratically (piggy-backing knockback from coincident `doHurtTarget`).
 - **Fix:** Set `victim.hurtMarked = true` for players after modifying `deltaMovement` in both code paths.
+- **Resolution:** VERIFIED-CORRECT (2026-08-11, Phase E1 — independently-verified faithful-match: 1.7.10 func_70024_g/addVelocity never set velocityChanged, and updateAITasks ran server-only — the pull reached a player's screen ONLY as motion flushed by a same-tick damage packet (setBeenAttacked → S12), i.e. the erratic yank the audit complains about WAS the original gameplay. The port reproduces the identical delivery channel (push() + doHurtTarget→markHurt). Adding hurtMarked would create a smooth tractor pull that never existed — parity violation. skywardLaunch (:244-273) is stale: removed with ENT-S-069/070. Smooth-pull opt-in archived as MOD-024)
 
 ### BUG-020 — `Dragon` ridden flight moved server-side while the client owns vehicle movement
 
@@ -5278,6 +5284,7 @@ Entries: **79 total** — ANIM 20 (DIVERGENT 8 · PARTIAL 10 · MISSING 2) · BU
 - **Location:** `danger/orespawn/world/CrystalStructures.java` (large features, e.g. FairyCastleTree); swallow-catch at `OreSpawnChunkGenerator.java:264`
 - **Scenario:** Feature-style generation writes outside the 3×3 writable region during `applyBiomeDecoration`; exceptions are caught and ignored, so big trees/castles generate with sheared-off edges depending on chunk order.
 - **Fix:** Convert oversized pieces to Jigsaw/Structure pieces with proper bounding boxes, or clamp placement to the writable region.
+- **Resolution:** PARTIAL (2026-08-11, Phase E1 — verdict PORT-DEFECT confirmed, mechanism corrected: the shearing comes from WorldGenRegion silently dropping out-of-write-radius setBlock calls (1-chunk radius, ~24 blocks), not from the swallow-catch; only FairyCastleTree (reach ~25-42 blocks, systematic) and FairyTree (≤2 blocks on max rolls, marginal) are affected — battle tower/rotator/haunted house/maze all fit. In 1.7.10 setBlockFast's getChunkFromChunkCoords force-generated the target chunk so every write landed (OreSpawnMain.java:5833-5847). OBSERVABILITY FIXED this phase: the OreSpawnChunkGenerator swallow-catch now logs, CrystalStructures.safeSetBlock warns on dropped writes (ensureCanWrite), and the wrong no-truncation Javadoc claim is corrected. The REMAINING fix — FairyCastleTree conversion to the LegacyDungeonStructure pipeline (royal-altar precedent) with re-derivation of the D5 dispatch coupling (fairy success suppresses termites/big structures + 50-chunk cooldown, OSW:188-196/1992) — is strong-model work proposed for DEFERRED pending owner sign-off at the phase boundary. DSB live-tick adapters are unaffected (ServerLevel writes are unbounded))
 
 ### BUG-022 — `EntityVortex` scans all nearby LivingEntities every tick on both sides
 
@@ -5285,6 +5292,7 @@ Entries: **79 total** — ANIM 20 (DIVERGENT 8 · PARTIAL 10 · MISSING 2) · BU
 - **Location:** `danger/orespawn/entity/EntityVortex.java:101` (`tick()`), `:176` (`customServerAiStep`)
 - **Scenario:** 32×20×32 `getEntitiesOfClass` + per-candidate LoS raycast every tick on server *and* client (client only needs it for smoke particles) — several vortexes measurably hit frame and tick time.
 - **Fix:** Cache the target for ~10 ticks; gate the client particle check behind a cheap distance test. (Perf side covered by OPT-004.)
+- **Resolution:** VERIFIED-CORRECT (2026-08-11, Phase E1 — independently-verified faithful-match: the every-tick both-sides scan is the original's own cadence: orig Vortex.java:114 (onUpdate, both sides — the :117 isRemote gate covers only particles) + :184 (updateAITasks) + :345-346 (same 32×20×32 box + sort + LoS). Caching is a behavior-affecting optimization → OPT-004 (Phase F). The two ADJACENT divergences this investigation surfaced (plain-distance sort vs GenericTargetSorter; missing PlayNicely gate + ignore-list) were real and are fixed under TF-035)
 
 ### BUG-023 — `Mothra`: movement/heal state not persisted
 
@@ -5292,6 +5300,7 @@ Entries: **79 total** — ANIM 20 (DIVERGENT 8 · PARTIAL 10 · MISSING 2) · BU
 - **Location:** `danger/orespawn/entity/Mothra.java:41–45`
 - **Scenario:** `lastX/Y/Z`, `stuckCount`, `healthTicker` reset on relog; stuck-detection and regen restart. Minor hiccup only.
 - **Fix:** Persist `healthTicker` if regen cadence matters; otherwise accept as-is.
+- **Resolution:** VERIFIED-CORRECT (2026-08-11, Phase E1 — independently-verified faithful-match: orig Mothra.java:287-293 NBT overrides are empty super-delegates — lastX/Y/Z, stuck_count, health_ticker were never persisted in 1.7.10; port has no save overrides either, resetting identically (first post-reload heal after 100 ticks, then the 200-tick cycle). MOD-022)
 
 ### BUG-024 — `GiantRobot.reloadTicker` not persisted
 
@@ -5299,6 +5308,7 @@ Entries: **79 total** — ANIM 20 (DIVERGENT 8 · PARTIAL 10 · MISSING 2) · BU
 - **Location:** `danger/orespawn/entity/GiantRobot.java:38`
 - **Scenario:** Relog during the rocket reload window lets the robot fire immediately. Balance-only.
 - **Fix:** Save the ticker in NBT.
+- **Resolution:** VERIFIED-CORRECT (2026-08-11, Phase E1 — independently-verified faithful-match: orig GiantRobot.java (382 lines, full read) has no NBT overrides; reload_ticker resets on relog in 1.7.10 exactly as the port's reloadTicker does (decrement/set sites match :238-240/:276/:279 vs port :106/:173/:177). MOD-022)
 
 ### BUG-025 — `Kraken.enchantToolSilk` rolls Silk Touch I–V (illegal levels)
 
@@ -5306,6 +5316,7 @@ Entries: **79 total** — ANIM 20 (DIVERGENT 8 · PARTIAL 10 · MISSING 2) · BU
 - **Location:** `danger/orespawn/entity/Kraken.java:501`
 - **Scenario:** Drops can carry Silk Touch above max level 1; anvils/grindstones and validation mods treat the stack as illegal.
 - **Fix:** Clamp the rolled level to `enchantment.getMaxLevel()`.
+- **Resolution:** FIXED (2026-08-11, Phase E1 — superseded: the audited enchantToolSilk helper was deleted wholesale in the Phase B1 loot consolidation (drops now data-driven via kraken.json enchant_randomly, the documented PN-005 approximation). The Silk-Touch half WAS a real mistranslation — the original enchants FORTUNE I-V at 1/6 on pickaxes (orig Kraken.java:299-303 field_77346_s) and Silk Touch appears NOWHERE in the file. The audit's clamp-to-getMaxLevel fix is REJECTED: over-max levels (Unbreaking V, Fortune V, Feather Falling V-IX at :387/:535/:687/:796) are authentic 1.7.10 drops and must survive in MOD-007's exact dice implementation — recorded as a MOD-007 addendum so the mistake cannot return)
 
 ### BUG-026 — `Kraken`: `hitByPlayer`/`callReinforcements` not persisted
 
@@ -5313,6 +5324,7 @@ Entries: **79 total** — ANIM 20 (DIVERGENT 8 · PARTIAL 10 · MISSING 2) · BU
 - **Location:** `danger/orespawn/entity/Kraken.java` (fields near top)
 - **Scenario:** Relogging mid-fight re-arms the reinforcement wave — a second squad can spawn.
 - **Fix:** Persist both flags in NBT.
+- **Resolution:** VERIFIED-CORRECT (2026-08-11, Phase E1 — independently-verified faithful-match: orig Kraken.java:189-197 persists only LongEnough — hit_by_player/call_reinforcements were never saved; port matches line-for-line (:477-486). The audit's scenario is also backwards: a relog below 1/4 HP permanently DISARMS the wave in both versions (the hit flag only re-arms while health > max/4, orig :1154/port :420-422, but the call requires health < max/8 and Krakens never heal). MOD-022)
 
 ### BUG-027 — `TheQueen.myCanSee` truncates negative coordinates toward zero
 
@@ -5320,6 +5332,7 @@ Entries: **79 total** — ANIM 20 (DIVERGENT 8 · PARTIAL 10 · MISSING 2) · BU
 - **Location:** `danger/orespawn/entity/TheQueen.java:1189–1230`
 - **Scenario:** `(int)(startx + dx)` rounds toward zero, so in negative-coordinate quadrants the LoS ray samples the wrong block column — Queen occasionally sees through (or fails to see past) corners.
 - **Fix:** Use `Mth.floor`/`BlockPos.containing` for the sample positions.
+- **Resolution:** VERIFIED-CORRECT (2026-08-11, Phase E1 — independently-verified faithful-match: the (int) truncation toward zero IS the original: orig TheQueen.java:880-884 feeds func_147439_a plain (int) casts on the accumulated ray positions; the port mirrors the math step-for-step including pre-increment-then-cast ordering (:1231-1239). Mth.floor would change negative-quadrant LoS results — parity violation. MOD-024)
 
 ### BUG-028 — `RTPBlock` spawns particles via `Level.addParticle` on the server — never visible
 
@@ -5327,6 +5340,7 @@ Entries: **79 total** — ANIM 20 (DIVERGENT 8 · PARTIAL 10 · MISSING 2) · BU
 - **Location:** `danger/orespawn/block/RTPBlock.java:77–81`
 - **Scenario:** `entityInside` returns early on the client then calls `level.addParticle` on the server `Level` (a no-op) — the teleport burst never shows (sound works).
 - **Fix:** Use `((ServerLevel) level).sendParticles(...)`.
+- **Resolution:** FIXED (2026-08-11, Phase E1 — real port defect: Level.addParticle has an EMPTY body on the server (verified in the decompiled 1.21.1 Level.java:465-466) and the method is server-gated, so the burst never rendered anywhere. In 1.7.10 the teleported player's OWN client drew it (orig RTPBlock.java:51-56 ran in the client movement replay; server spawnParticle was a no-op — other players never saw it). Fixed with the per-player ServerLevel.sendParticles overload (the faithful single-viewer delivery), and the particle mapping corrected: orig smoke=SMOKE, explode=POOF (small white puff — modern EXPLOSION is the large blast flash), reddust=red DUST (DUST_PLUME did not exist). Sound was already working. See FIX_LOG Phase E)
 
 ### BUG-029 — `CrystalFurnaceBlockEntity` consumes bucket fuels without returning the container
 
@@ -5334,6 +5348,7 @@ Entries: **79 total** — ANIM 20 (DIVERGENT 8 · PARTIAL 10 · MISSING 2) · BU
 - **Location:** `danger/orespawn/gui/CrystalFurnaceBlockEntity.java:182–189`
 - **Scenario:** Fueling with a lava bucket destroys the bucket (`fuel.shrink(1)`), unlike the vanilla furnace which leaves an empty bucket.
 - **Fix:** After shrinking, place `fuel.getCraftingRemainingItem()` into the fuel slot if it's empty.
+- **Resolution:** VERIFIED-CORRECT (2026-08-11, Phase E1 — independently-verified faithful-match: stale finding — the bare shrink-without-remainder the audit cites was already replaced in an earlier pass: orig TileEntityCrystalFurnace.java:165-170 returns getContainerItem when the stack hits zero (and :306 whitelists extracting empty buckets from the fuel slot), and the port's serverTick :195-199 implements exactly that via getCraftingRemainingItem with a citing comment. Lava buckets leave empty buckets in both versions)
 
 ### BUG-030 — `EntityWormMedium`: `upcount`/`downcount` not persisted
 
@@ -5341,6 +5356,7 @@ Entries: **79 total** — ANIM 20 (DIVERGENT 8 · PARTIAL 10 · MISSING 2) · BU
 - **Location:** `danger/orespawn/entity/EntityWormMedium.java:23–24`
 - **Scenario:** Burrow/emerge cycle resets on relog; purely cosmetic.
 - **Fix:** Persist both counters, or accept.
+- **Resolution:** VERIFIED-CORRECT (2026-08-11, Phase E1 — independently-verified faithful-match: orig WormMedium.java has no NBT overrides (274 lines) — upcount/downcount reset on relog in 1.7.10 and re-seed identically on the first near-player tick (orig :123 = port :121, 25+rand(75)). MOD-022)
 
 ### BUG-031 — `EntityVortex.tick` heals client-side
 
@@ -5348,6 +5364,7 @@ Entries: **79 total** — ANIM 20 (DIVERGENT 8 · PARTIAL 10 · MISSING 2) · BU
 - **Location:** `danger/orespawn/entity/EntityVortex.java:117–119`
 - **Scenario:** `heal(1.0f)` runs on both sides with independent RNG — client's local health copy briefly diverges (visual only; next health sync corrects).
 - **Fix:** Gate the heal behind `!level().isClientSide`.
+- **Resolution:** VERIFIED-CORRECT (2026-08-11, Phase E1 — independently-verified faithful-match: orig Vortex.java:128-130 runs the 1-in-200 heal(1.0f) unguarded in onUpdate, which executed on BOTH sides in 1.7.10 with an independent client RNG — the transient client-health divergence is inherited original behavior, corrected by the next health sync in both engines. MOD-024)
 
 ### BUG-032 — 39 aggregate sound events missing from sounds.json (found 2026-06-13, Phase D3)
 

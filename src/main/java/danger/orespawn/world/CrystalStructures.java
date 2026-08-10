@@ -26,9 +26,16 @@ import net.minecraft.world.level.storage.loot.LootTable;
  * OreSpawnWorld, GenericDungeon, and Trees classes.
  *
  * <p>Invocation: called from {@link OreSpawnChunkGenerator#applyBiomeDecoration}
- * (NOT {@code buildSurface}) so cross-chunk block writes are reliable — by the
- * decoration phase neighboring chunks have already finished terrain generation,
- * preventing the "structures cut off at chunk borders" issue.</p>
+ * (NOT {@code buildSurface}). NOTE (BUG-021): decoration-phase placement does
+ * NOT fully prevent chunk-border truncation — the {@code WorldGenRegion} only
+ * accepts block writes within a 1-chunk radius of the decorated chunk, and
+ * silently drops anything farther. Structures whose geometry fits ~24 blocks
+ * from the anchor are safe (battle tower, rotator, haunted house, maze bits);
+ * FairyCastleTree can reach ~25-42 blocks and gets sheared — its conversion to
+ * the LegacyDungeonStructure pipeline is tracked in BUG-021 (pending
+ * sign-off). The live-tick DSB adapters write to a ServerLevel and are
+ * unaffected. {@link #safeSetBlock} warns when a write is dropped so any
+ * truncation is observable in the log.</p>
  *
  * <p>1.21.1 paradigm notes:</p>
  * <ul>
@@ -1080,9 +1087,26 @@ public class CrystalStructures {
     private static void safeSetBlock(WorldGenLevel level, int x, int y, int z, BlockState state) {
         BlockPos pos = new BlockPos(x, y, z);
         if (y >= level.getMinBuildHeight() && y < level.getMaxBuildHeight()) {
+            // BUG-021: a WorldGenRegion refuses writes outside its 1-chunk
+            // radius (ensureCanWrite=false) and would drop them silently —
+            // surface it so sheared structures are observable in the log
+            // (throttled to one warning per second; plain setBlock's false
+            // return can't be used here, it also fires on same-state writes).
+            if (!level.ensureCanWrite(pos)) {
+                long now = System.currentTimeMillis();
+                if (now - lastDroppedWriteWarnMillis > 1000L) {
+                    lastDroppedWriteWarnMillis = now;
+                    org.slf4j.LoggerFactory.getLogger(CrystalStructures.class)
+                            .warn("Crystal structure write dropped at {} (outside the writable region — BUG-021)", pos);
+                }
+                return;
+            }
             level.setBlock(pos, state, 2);
         }
     }
+
+    /** Throttle for the BUG-021 dropped-write warning. */
+    private static volatile long lastDroppedWriteWarnMillis = 0L;
 
     // =====================================================================
     // CRYSTAL-SPECIFIC CHEST LOOT

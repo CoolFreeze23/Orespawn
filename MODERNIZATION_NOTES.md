@@ -78,6 +78,15 @@ impact estimate, related finding IDs.
 ## MOD-007 — Exact loot enchantment dice (TECH-DEBT)
 - **Original:** Independent per-enchantment rolls on dropped gear (0–7 enchantments,
   Unbreaking-biased); Phase B1 approximates with one `enchant_randomly` per item (PN-005).
+- **Addendum (BUG-025, 2026-08-11):** when implementing the exact dice, the
+  original Kraken pickaxe roll is **FORTUNE** uniform(1,5) at 1-in-6 (orig
+  Kraken.java:299-303, field_77346_s — the old port helper's "Silk Touch I-V"
+  was a mistranslation; field_77348_q/Silk Touch appears nowhere in the file),
+  alongside Unbreaking uniform(2,5) at 1-in-2 and Efficiency uniform(1,5) at
+  1-in-6. Do **NOT** clamp levels to getMaxLevel(): over-max enchants
+  (Unbreaking V, Fortune V, Feather Falling V-IX at :387/:535/:687/:796) are
+  authentic 1.7.10 OreSpawn drops; `minecraft:set_enchantments` /
+  ItemEnchantments builders accept them (engine cap 255).
 - **Proposal:** Register a custom global loot function (`LootItemFunctionType`) that
   reproduces the original dice chains exactly, then reference it from the JSONs — keeps
   the single-source-of-truth architecture AND exact fidelity.
@@ -455,3 +464,53 @@ impact estimate, related finding IDs.
   restores the previous behavior exactly.
 - **Related:** TF-032 (Cephadrome), TF-033 (cow overworld spawns), TF-034
   (lump-file residuals), MOD-009/MOD-020 (invention-removal precedents).
+
+## MOD-022 — Transient combat state is intentionally unpersisted (TECH-DEBT, parity)
+- **Category:** TECH-DEBT (faithful non-persistence, documented against relitigating)
+- **Original behavior:** none of these classes override writeEntityToNBT for the
+  fields in question, so all of it reset on relog/chunk-reload in 1.7.10:
+  TheKing stream counters/backoff/ticker/attdam/revenge/head-scan (persists only
+  KingHomeX/Z, GuardMode, PlayerHits, IsEnd, EndCounter — orig :1031-1039);
+  TheQueen mood (persists KingHomeX/Z, GuardMode, PlayerHits, MeanMode —
+  :964-980); Godzilla jump/stream/head state (NO NBT overrides at all);
+  Kraken hitByPlayer/callReinforcements (persists only LongEnough, :189-197);
+  Mothra stuck/heal tickers (empty super-delegates, :287-293); GiantRobot
+  reloadTicker; WormMedium upcount/downcount (no overrides).
+- **Port:** reproduces each save-set key-for-key. Verified independently in the
+  Phase E1 triage (BUG-014/016/017/023/024/026/030 all VERIFIED-CORRECT).
+- **2.0 proposal:** optional "relog-stable bosses" config persisting the King/
+  Godzilla/Queen/Kraken combat state (QueenMood, ReloadTicker, etc.).
+  Behavior-affecting; default must stay original. Effort: low. Notable quirk
+  worth surfacing in any future changelog: a mid-fight relog below 1/4 HP
+  permanently disarms the Kraken reinforcement wave in both versions.
+- **Related:** BUG-014, BUG-016, BUG-017, BUG-023, BUG-024, BUG-026, BUG-030.
+
+## MOD-023 — TheKing registry-dump death loot cap (BALANCE, opt-in)
+- **Original (faithful, shipped):** ~300 random registry item entities on death
+  — 150 random items + 150 random block-items from the ENTIRE registries
+  (other mods' technical items included), scattered at y+12 within ±20
+  (orig TheKing.java:200-226; port dropCustomDeathLoot :1318-1340 — code-side
+  because it is inexpressible as loot JSON). Known lag spike + exploit-grade
+  loot by design; BUG-015 closed VERIFIED-CORRECT.
+- **2.0 proposal:** config toggle capping total drops (e.g. 32) and/or
+  restricting sampling to a curated pool. Default remains original behavior.
+- **Related:** BUG-015.
+
+## MOD-024 — Modern-idiom opt-ins from the E1 triage (VANILLA-INTEGRATION)
+Faithful-but-dated mechanics confirmed original in the BUG triage; each could
+take an off-by-default modern variant in 2.0:
+- **Vortex smooth pull** (BUG-019): 1.7.10 addVelocity never set
+  velocityChanged, so players felt the pull only as damage-tick yanks; setting
+  `hurtMarked = true` after push() would make a smooth tractor beam that never
+  existed. Behavior-changing, needs sign-off.
+- **Queen LoS floor-sampling** (BUG-027): myCanSee keeps the original's (int)
+  truncation (wrong column at negative coords, orig :880-884); the modern fix
+  is BlockPos.containing.
+- **Kraken polite weather** (BUG-018 residue): skip the re-force when already
+  thundering; the shipped fix already restored the orig 300-tick refresh and
+  no-upgrade-of-plain-rain semantics.
+- **Vortex client-heal gate** (BUG-031): wrap the 1-in-200 heal in
+  !isClientSide — cosmetic only, both engines self-correct.
+- **Vortex scan caching** (BUG-022): owned by OPT-004 (Phase F, behavior-
+  affecting: aggro/particle onset latency).
+- **Related:** BUG-018, BUG-019, BUG-022, BUG-027, BUG-031, OPT-004.
