@@ -195,7 +195,11 @@ public class RandomDungeonSpawnerBlockEntity extends BlockEntity {
      * internal recentring so the build lands exactly where the original's
      * clicked-pos build did (dsb_sweep_spec.md output table).
      */
-    private static boolean buildForType(ServerLevel server, BlockPos pos, int type) {
+    // Visibility widened private -> public (2026-08-10, GameTest seam): the
+    // suite drives every outcome index directly instead of rolling
+    // nextInt(50) four hundred times. No behavioral change; production
+    // callers are unchanged (detonate above).
+    public static boolean buildForType(ServerLevel server, BlockPos pos, int type) {
         return switch (type) {
             case TYPE_RUBY_DUNGEON -> GenericDungeon.placeRubyDungeonAt(server, server.random, pos);
             case TYPE_GENERIC_DUNGEON -> GenericDungeon.placeGenericDungeonAt(server, server.random, pos);

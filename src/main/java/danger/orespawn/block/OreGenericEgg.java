@@ -1,7 +1,6 @@
 package danger.orespawn.block;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockBehaviour;
@@ -29,12 +28,26 @@ public class OreGenericEgg extends Block {
         super(properties);
     }
 
-    /** 50% chance to pop 5..9 XP (orig OreGenericEgg.java:26-29). */
+    /**
+     * 50% chance to pop 5..9 XP (orig OreGenericEgg.java:26-29).
+     *
+     * <p>Implemented via NeoForge's {@code getExpDrop} because every 1.21.1
+     * break path calls {@code spawnAfterBreak(..., dropExperience = false)}
+     * unconditionally and sources break XP exclusively from this hook
+     * (CommonHooks.handleBlockDrops; TESTING_FINDINGS 2026-08-10 — the
+     * previous spawnAfterBreak override never fired). Silk Touch drops no XP
+     * because {@code EnchantmentHelper.processBlockExperience} applies the
+     * enchantment's block_experience=0 effect to this value — the same net
+     * semantics as the 1.7.10 silk-harvest path.</p>
+     */
     @Override
-    protected void spawnAfterBreak(BlockState state, ServerLevel level, BlockPos pos, ItemStack stack, boolean dropExperience) {
-        super.spawnAfterBreak(state, level, pos, stack, dropExperience);
-        if (dropExperience && level.random.nextInt(2) == 1) {
-            popExperience(level, pos, 5 + level.random.nextInt(3) + level.random.nextInt(3));
+    public int getExpDrop(BlockState state, net.minecraft.world.level.LevelAccessor level, BlockPos pos,
+                          net.minecraft.world.level.block.entity.BlockEntity blockEntity,
+                          net.minecraft.world.entity.Entity breaker, ItemStack tool) {
+        var random = level.getRandom();
+        if (random.nextInt(2) == 1) {
+            return 5 + random.nextInt(3) + random.nextInt(3);
         }
+        return 0;
     }
 }
