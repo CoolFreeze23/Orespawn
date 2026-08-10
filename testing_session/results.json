@@ -65,5 +65,29 @@
   "notes": "bow crafing works,",
   "status": "fail",
   "when": "2026-08-10T10:37:00.973Z"
+ },
+ "i018-item-063-d4-dispensers": {
+  "status": "pass",
+  "when": "2026-08-10T20:06:24.579Z"
+ },
+ "i019-ent-d-025-026-027-ent-k-076-rocks": {
+  "notes": "works but if im too close to the glass (where i can actually click on the block) the rock and rock crystal tnt is placed INSIDE the glass. i need to be far enough where theres no block that i can click on, and then it throws. no actual throwing animation tho. like nothing can be seen in the air, the glass is just destroyed.q",
+  "status": "fail",
+  "when": "2026-08-10T20:09:23.145Z"
+ },
+ "i020-item-053": {
+  "notes": "a lot of these work but just like the other one, they dont have an actual item visible when throwing. its invisible",
+  "status": "fail",
+  "when": "2026-08-10T20:10:41.189Z"
+ },
+ "i029-ent-a-074-075": {
+  "notes": "damaged one. put tick rate to 10000 and still didnt see anything",
+  "status": "fail",
+  "when": "2026-08-10T20:16:22.216Z"
+ },
+ "i069-d2-hoverboard-physics": {
+  "notes": "when riding, hoverboard isnt on feet. its in the middle of the player",
+  "status": "fail",
+  "when": "2026-08-10T20:20:47.053Z"
  }
 }

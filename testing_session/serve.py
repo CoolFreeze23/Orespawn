@@ -66,6 +66,10 @@ def parse_checklist():
                 "id": f"i{counter:03d}-{slug}",
                 "label": label,
                 "html": md_inline(body),
+                # fully-automated items can be hidden client-side ("hide
+                # automated" toggle); MOSTLY AUTOMATED keeps a manual half
+                # and always shows.
+                "auto": bool(re.match(r"^\*\*\[AUTOMATED", body)),
             })
         elif line.strip() and cur is not None and cur_sub is not None \
                 and cur_sub["items"] and line.startswith("  "):
@@ -147,6 +151,9 @@ h3 { font-size:13px; color:var(--mut); margin:14px 0 2px; text-transform:upperca
     <button data-f="pass">good</button>
     <button data-f="fail">bad</button>
   </span>
+  <label style="font-size:13px;color:var(--mut);cursor:pointer">
+    <input type="checkbox" id="hideauto"> hide automated
+  </label>
 </header>
 <main id="main"></main>
 <div id="saved">saved ✓</div>
@@ -155,6 +162,7 @@ const DATA = __DATA__;
 let STATE = __STATE__;
 const main = document.getElementById('main');
 let filter = 'all';
+let hideAuto = localStorage.getItem('hideAuto') === '1';
 
 function itemState(id){ return STATE[id] || {}; }
 
@@ -169,6 +177,7 @@ function render(){
         const h3 = document.createElement('h3'); h3.textContent = sub.title; wrap.appendChild(h3);
       }
       for (const it of sub.items){
+        if (hideAuto && it.auto) continue;
         secTotal++;
         const st = itemState(it.id);
         if (st.status) secDone++;
@@ -204,6 +213,7 @@ function escapeHtml(s){ const d=document.createElement('div'); d.textContent=s; 
 function tally(){
   let p=0,f=0,t=0;
   for (const sec of DATA) for (const sub of sec.subs) for (const it of sub.items){
+    if (hideAuto && it.auto) continue;
     t++; const s=itemState(it.id).status; if(s==='pass')p++; if(s==='fail')f++;
   }
   document.getElementById('tally').innerHTML =
@@ -237,6 +247,10 @@ document.querySelectorAll('.filters button').forEach(b=>{
     document.querySelectorAll('.filters button').forEach(x=>x.classList.toggle('on', x===b));
     render(); };
 });
+const hideBox = document.getElementById('hideauto');
+hideBox.checked = hideAuto;
+hideBox.onchange = ()=>{ hideAuto = hideBox.checked;
+  localStorage.setItem('hideAuto', hideAuto ? '1' : '0'); render(); };
 render();
 </script></body></html>"""
 
