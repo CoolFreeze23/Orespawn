@@ -50,11 +50,16 @@ import java.util.Set;
  * {@code 50000 + row*512}, Y forced to 100 so the deepest writes (Basilisk
  * maze −33, orig BasiliskMaze.java:305) stay inside the world height. This
  * file's K values (batch 9): K=904 (i129), 905 (i143), 906 (i150), 907
- * (i163), 908 (i171 full sweep), 909 (i175), 910 (i156 igloo; the
- * negative-quadrant igloo uses the mirrored column −(910*512+256), Z −50000,
- * which no other suite region touches). Blocks at those absolute positions
- * are asserted via {@code helper.getLevel().getBlockState} (never the
- * template-relative {@code helper.assertBlock*}).</p>
+ * (i163), 908 (i171 full sweep), 909 (i175), 910 row 1 (i156 loot igloos —
+ * int-offset chest asserts only, quadrant/precision-immune). The i156 igloo
+ * QUADRANT builds are the exception to the convention: the float-idiom shell
+ * asserts need small-magnitude coordinates of known sign (float32 has no
+ * half-steps beyond 2^23, and the suite's absolute X is negative), so they
+ * use the explicit mirrored columns +(910*512+256), Z +50000 for (+,+) and
+ * −(910*512+256), Z −50000 for the negative quadrant — neither touched by
+ * any other suite region. Blocks at those absolute positions are asserted
+ * via {@code helper.getLevel().getBlockState} (never the template-relative
+ * {@code helper.assertBlock*}).</p>
  */
 @GameTestHolder(OreSpawnMod.MOD_ID)
 @PrefixGameTestTemplate(false)
@@ -296,10 +301,18 @@ public class DsbOutcomeTests {
                 Scan s = scan(level, pos, Set.of(Blocks.SNOW_BLOCK), 35);
                 requireBlock(helper, s, Blocks.SNOW_BLOCK, 20);
             }
-            case 21 -> { // Generic dungeon — GenericDungeon.makeGenericDungeon (orig GD:97-185):
-                         // mossy floor at the corner, spawner at (6,1,6), chest at (6,1,1).
-                requireBlockAt(helper, level, pos, Blocks.MOSSY_COBBLESTONE,
-                        "outcome 21 generic dungeon floor corner");
+            case 21 -> { // Generic dungeon — GenericDungeon.makeDungeon (orig GD:97-185): the
+                         // mossy floor course (orig GD:110-115) is overwritten AT THE EDGES by
+                         // the k=0 / i=0 wall loops, whose j loop starts at 0 and rolls each
+                         // cell 50/50 mossy-or-plain cobblestone via setThisBlock (orig
+                         // GD:67-73,122-136) — so the corner is RANDOM, and only interior
+                         // floor cells (i,k in 1..10) are deterministically mossy.
+                BlockState corner21 = level.getBlockState(pos);
+                helper.assertTrue(corner21.is(Blocks.MOSSY_COBBLESTONE)
+                                || corner21.is(Blocks.COBBLESTONE),
+                        "outcome 21 corner: 50/50 mossy/cobble wall roll (orig GD:67-73,122-136)");
+                requireBlockAt(helper, level, pos.offset(1, 0, 1), Blocks.MOSSY_COBBLESTONE,
+                        "outcome 21 interior floor cell always mossy (orig GD:110-115)");
                 helper.assertTrue(level.getBlockState(pos.offset(6, 1, 6)).is(Blocks.SPAWNER),
                         "outcome 21: 12-mob-ladder spawner at (6,1,6)");
             }
@@ -701,7 +714,17 @@ public class DsbOutcomeTests {
         ServerLevel level = helper.getLevel();
 
         // -- (+,+) quadrant build --------------------------------------------
-        BlockPos pos = region(helper, 910, 0);
+        // NOT region(910,0): the far-region convention lands at absolute
+        // X ≈ −10.02M — a NEGATIVE x (wrong quadrant for this half) whose
+        // magnitude also exceeds 2^23, where float32 has no half-steps, so the
+        // original's verbatim (int)((float)c + cur + 0.5f) idiom (orig
+        // GD:2705-2741, IglooGenerator.java:127-128,189) rounds half-to-even
+        // and the shell drifts off the spec cells entirely. The quadrant
+        // behavior verified by igloo_spec.md §2.7/S5 holds at small-magnitude
+        // coordinates, so this half builds at an explicit positive origin
+        // (+466176, 100, +50000) — the positive mirror of the negative-quadrant
+        // column below, which no other suite region touches.
+        BlockPos pos = new BlockPos(910 * 512 + 256, 100, 50_000);
         helper.assertTrue(RandomDungeonSpawnerBlockEntity.buildForType(level, pos, 20),
                 "buildForType(20) must report placed");
         // Dome wall column at curdeg=0: snow y+1 / ice y+2 / snow y+3 at x+6

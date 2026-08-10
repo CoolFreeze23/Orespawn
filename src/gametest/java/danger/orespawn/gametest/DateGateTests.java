@@ -17,7 +17,9 @@ import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.GameType;
+import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.Biomes;
 import net.minecraft.world.phys.AABB;
 import net.neoforged.neoforge.gametest.GameTestHolder;
@@ -62,6 +64,28 @@ public class DateGateTests {
         }
     }
 
+    /**
+     * {@link GameTestHelper#setBiome} with the gamerule headroom it needs on
+     * the GameTestServer: setBiome runs {@code FillBiomeCommand.fill} over the
+     * whole template bounds, and the {@code empty_large} template (48x16x48)
+     * quantizes to up to 49x17x49 = 40817 biome-fill cells — over the default
+     * {@code commandModificationBlockLimit} of 32768, which made the vanilla
+     * helper abort with "Failed to set biome for test". The limit is raised
+     * only around the fill and restored immediately (the rule is server-wide).
+     */
+    private static void setBiomeRaisingFillLimit(GameTestHelper helper,
+                                                 net.minecraft.resources.ResourceKey<Biome> biome) {
+        GameRules.IntegerValue limit = helper.getLevel().getGameRules()
+                .getRule(GameRules.RULE_COMMAND_MODIFICATION_BLOCK_LIMIT);
+        int previous = limit.get();
+        limit.set(60_000, helper.getLevel().getServer());
+        try {
+            helper.setBiome(biome);
+        } finally {
+            limit.set(previous, helper.getLevel().getServer());
+        }
+    }
+
     private static JsonObject bundledJson(String path) {
         try (InputStream in = DateGateTests.class.getResourceAsStream(path)) {
             return JsonParser.parseReader(new InputStreamReader(in, StandardCharsets.UTF_8))
@@ -90,7 +114,7 @@ public class DateGateTests {
     @GameTest(template = "empty_large", batch = "orespawnDate1", timeoutTicks = 200)
     public void halloween_seasonal_biome_gate(GameTestHelper helper) {
         ServerLevel level = helper.getLevel();
-        helper.setBiome(Biomes.PLAINS);
+        setBiomeRaisingFillLimit(helper, Biomes.PLAINS);
 
         // Data assert straight off the shipped biome modifier JSON.
         JsonObject json = bundledJson(
@@ -169,7 +193,7 @@ public class DateGateTests {
     @GameTest(template = "empty_large", batch = "orespawnDate2", timeoutTicks = 200)
     public void halloween_year_round_biomes(GameTestHelper helper) {
         ServerLevel level = helper.getLevel();
-        helper.setBiome(Biomes.DARK_FOREST);
+        setBiomeRaisingFillLimit(helper, Biomes.DARK_FOREST);
 
         long originalDayTime = level.getDayTime();
         Mob ghost = ModEntities.GHOST.get().create(level);

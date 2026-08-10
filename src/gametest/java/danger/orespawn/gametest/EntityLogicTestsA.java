@@ -75,6 +75,7 @@ import net.minecraft.world.level.block.DoorBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
@@ -876,6 +877,13 @@ public class EntityLogicTestsA {
      * (isSuitableTarget). Positive phases are damage-observed (the scan runs on a
      * 1-in-7 per-tick roll and never calls setTarget); the tamed-Leon phase is a
      * deterministic negative — a tamed Leon is filtered before any dice roll.
+     *
+     * <p>EXPECTED RED until TESTING_CHECKLIST.md TEST-005 is fixed: phase 3 spawns
+     * a WaterDragon, whose ctor throws {@code IllegalArgumentException:
+     * "Unsupported mob type for FollowOwnerGoal"} (port WaterDragon.java:84 — the
+     * vanilla 1.21 FollowOwnerGoal rejects water-bound navigation). WaterDragon is
+     * a DOCUMENTED Cephadrome target (C1:63), so the phase stays; the failure is
+     * the already-logged WaterDragon unspawnable-ctor PORT DEFECT, not this test.
      */
     @GameTest(template = "empty_large", timeoutTicks = 2300)
     public void cephadrome_targets_and_kraken_bonus(GameTestHelper helper) {
@@ -887,6 +895,7 @@ public class EntityLogicTestsA {
                 () -> helper.spawnWithNoFreeWill(ModEntities.MOTHRA.get(), new BlockPos(24, 8, 27)),
                 () -> helper.spawnWithNoFreeWill(ModEntities.ENTITY_LEON.get(), new BlockPos(24, 8, 27)),
                 () -> helper.spawnWithNoFreeWill(ModEntities.ENTITY_GAMMA_METROID.get(), new BlockPos(24, 8, 27)),
+                // Throws until TEST-005 (WaterDragon unspawnable ctor) is fixed — see javadoc.
                 () -> helper.spawnWithNoFreeWill(ModEntities.WATER_DRAGON.get(), new BlockPos(24, 8, 27)));
         final String[] names = {"Mothra", "untamed Leon", "untamed GammaMetroid", "untamed WaterDragon"};
 
@@ -964,38 +973,55 @@ public class EntityLogicTestsA {
      * Documented values: phase_c_reports/C1_entities_A_C.md:64 — tame item is an
      * APPLE at 1-in-2 (orig Chipmunk.java:141), untame item is a DEAD BUSH
      * (orig Chipmunk.java:172). Port: entity/Chipmunk.java:111-160.
+     *
+     * <p>The dead-bush release is OWNERSHIP-gated in both sources (orig
+     * Chipmunk.java:172 {@code func_152114_e}; port Chipmunk.java:146-148
+     * {@code isOwnedBy}), and both resolve the owner through the LEVEL's player
+     * list ({@code TamableAnimal.getOwner -> level.getPlayerByUUID}). A detached
+     * mock player is never found there, so the release branch silently PASSed —
+     * the feeder must be a real in-level ServerPlayer (infra fix; SURVIVAL because
+     * the gametest server defaults to CREATIVE — GameTestServer.java:85 — and the
+     * consumption asserts need {@code instabuild=false}).</p>
      */
+    @SuppressWarnings({"removal", "deprecation"})
     @GameTest(template = "empty_large", timeoutTicks = 100)
     public void chipmunk_apple_tame_dead_bush_release(GameTestHelper helper) {
         Chipmunk chipmunk = helper.spawnWithNoFreeWill(ModEntities.CHIPMUNK.get(), new BlockPos(24, 6, 24));
         chipmunk.setNoGravity(true);
-        Player player = mockPlayerAt(helper, helper.absoluteVec(new Vec3(24.0, 6.0, 25.5)));
+        ServerPlayer player = helper.makeMockServerPlayerInLevel();
+        try {
+            player.setGameMode(GameType.SURVIVAL);
+            Vec3 feedPos = helper.absoluteVec(new Vec3(24.0, 6.0, 25.5)); // distSq 2.25 < the 16.0 gates
+            player.teleportTo(helper.getLevel(), feedPos.x, feedPos.y, feedPos.z, 0.0f, 0.0f);
 
-        // n=150 tame attempts at the documented p=1/2 (nextInt(2)==0), mean 75.
-        // Band [30,120]: Hoeffding P(|X-75| >= 45) <= 2*exp(-2*150*0.09) = 2*exp(-27) ~ 3.7e-12.
-        int successes = 0;
-        int releases = 0;
-        for (int i = 0; i < 150; i++) {
-            helper.assertFalse(chipmunk.isTame(), "attempt starts untamed");
-            player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.APPLE));
-            chipmunk.mobInteract(player, InteractionHand.MAIN_HAND);
-            helper.assertValueEqual(player.getItemInHand(InteractionHand.MAIN_HAND).getCount(), 0,
-                    "apple consumed on every attempt, success or not (orig Chipmunk.java:141)");
-            if (chipmunk.isTame()) {
-                successes++;
-                helper.assertValueEqual(chipmunk.getOwnerUUID(), player.getUUID(), "tame sets the feeding player as owner");
-                // dead bush releases it (orig Chipmunk.java:172)
-                player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.DEAD_BUSH));
+            // n=150 tame attempts at the documented p=1/2 (nextInt(2)==0), mean 75.
+            // Band [30,120]: Hoeffding P(|X-75| >= 45) <= 2*exp(-2*150*0.09) = 2*exp(-27) ~ 3.7e-12.
+            int successes = 0;
+            int releases = 0;
+            for (int i = 0; i < 150; i++) {
+                helper.assertFalse(chipmunk.isTame(), "attempt starts untamed");
+                player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.APPLE));
                 chipmunk.mobInteract(player, InteractionHand.MAIN_HAND);
-                helper.assertValueEqual(player.getItemInHand(InteractionHand.MAIN_HAND).getCount(), 0, "dead bush consumed");
-                helper.assertFalse(chipmunk.isTame(), "dead bush releases the chipmunk");
-                helper.assertTrue(chipmunk.getOwnerUUID() == null, "owner cleared on release");
-                releases++;
+                helper.assertValueEqual(player.getItemInHand(InteractionHand.MAIN_HAND).getCount(), 0,
+                        "apple consumed on every attempt, success or not (orig Chipmunk.java:141)");
+                if (chipmunk.isTame()) {
+                    successes++;
+                    helper.assertValueEqual(chipmunk.getOwnerUUID(), player.getUUID(), "tame sets the feeding player as owner");
+                    // dead bush releases it (orig Chipmunk.java:172)
+                    player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.DEAD_BUSH));
+                    chipmunk.mobInteract(player, InteractionHand.MAIN_HAND);
+                    helper.assertValueEqual(player.getItemInHand(InteractionHand.MAIN_HAND).getCount(), 0, "dead bush consumed");
+                    helper.assertFalse(chipmunk.isTame(), "dead bush releases the chipmunk");
+                    helper.assertTrue(chipmunk.getOwnerUUID() == null, "owner cleared on release");
+                    releases++;
+                }
             }
+            helper.assertTrue(successes >= 30 && successes <= 120,
+                    "tame successes " + successes + "/150 outside [30,120] for the documented 1-in-2 rate");
+            helper.assertValueEqual(releases, successes, "every tame was reversed by a dead bush");
+        } finally {
+            helper.getLevel().getServer().getPlayerList().remove(player);
         }
-        helper.assertTrue(successes >= 30 && successes <= 120,
-                "tame successes " + successes + "/150 outside [30,120] for the documented 1-in-2 rate");
-        helper.assertValueEqual(releases, successes, "every tame was reversed by a dead bush");
         chipmunk.discard();
         helper.succeed();
     }
@@ -1045,73 +1071,117 @@ public class EntityLogicTestsA {
      * 1-in-5 and heals to full (orig Dragon.java:1212-1219,1245-1252); C2:16 — a
      * DIAMOND on a tamed dragon spawns a tamed Spyro and discards the adult
      * (orig Dragon.java:1351-1369). Bones are not an interaction item at all.
-     * Port: entity/Dragon.java:906-1074, mygetMaxHealth()=200 (Dragon.java:146).
-     * Everything runs in a single tick, so the (flying) dragon never moves.
+     * The release item is a DEAD BUSH (orig Dragon.java:1261-1275); the original
+     * has NO TNT interaction. Port: entity/Dragon.java:906-1074,
+     * mygetMaxHealth()=200 (Dragon.java:146). Everything runs in a single tick,
+     * so the (flying) dragon never moves.
+     *
+     * <p>Infra notes: (1) the whole tamed branch is OWNERSHIP-gated in both
+     * sources (orig Dragon.java:1234 {@code func_152114_e -> return false}; port
+     * Dragon.java:932 {@code isOwnedBy -> PASS}), and the owner resolves through
+     * the LEVEL's player list — so the interacting player must be a real in-level
+     * ServerPlayer (SURVIVAL: the gametest server defaults to CREATIVE and the
+     * consumption asserts need {@code instabuild=false}). (2) The statistical
+     * loop resets tameness DIRECTLY (setTame/setOwnerUUID) so the release-item
+     * defect below cannot mask the tame-rate statistics.</p>
+     *
+     * <p>Phase (e) is EXPECTED RED until the release-item PORT DEFECT is fixed:
+     * the port untames on {@code Items.TNT} (port Dragon.java:961-971) and lets a
+     * dead bush fall through to the generic sit-toggle branch, while the original
+     * releases on the dead bush (orig Dragon.java:1261-1275) and has no TNT
+     * branch at all (TNT falls to the orig's generic sit toggle).</p>
      */
+    @SuppressWarnings({"removal", "deprecation"})
     @GameTest(template = "empty_large", timeoutTicks = 100)
     public void dragon_beef_tame_heal_bone_diamond(GameTestHelper helper) {
         Dragon dragon = helper.spawn(ModEntities.DRAGON.get(), new BlockPos(24, 8, 24));
         dragon.setNoGravity(true);
-        Player player = mockPlayerAt(helper, dragon.position().add(2.0, 0.0, 0.0)); // distSq < 25 gates
+        ServerPlayer player = helper.makeMockServerPlayerInLevel();
+        try {
+            player.setGameMode(GameType.SURVIVAL);
+            Vec3 pPos = dragon.position().add(2.0, 0.0, 0.0); // distSq 4 < the 25.0 gates
+            player.teleportTo(helper.getLevel(), pPos.x, pPos.y, pPos.z, 0.0f, 0.0f);
 
-        // (a) statistical taming: n=600 beef attempts at p=1/5 (nextInt(5)==1), mean 120.
-        //     Band [40,220]: Chernoff lower tail exp(-(80)^2/(2*120)) = exp(-26.7) ~ 2.5e-12,
-        //     upper tail exp(-(100)^2/(3*120)) = exp(-27.8) ~ 8e-13 — both << 1e-9.
-        int successes = 0;
-        for (int i = 0; i < 600; i++) {
-            if (dragon.isTame()) { // reset with TNT (release item, entity/Dragon.java:961-971)
-                player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.TNT));
+            // (a) statistical taming: n=600 beef attempts at p=1/5 (nextInt(5)==1), mean 120.
+            //     Band [40,220]: Chernoff lower tail exp(-(80)^2/(2*120)) = exp(-26.7) ~ 2.5e-12,
+            //     upper tail exp(-(100)^2/(3*120)) = exp(-27.8) ~ 8e-13 — both << 1e-9.
+            int successes = 0;
+            for (int i = 0; i < 600; i++) {
+                if (dragon.isTame()) {
+                    // Direct state reset between attempts (NOT an interaction):
+                    // the documented release item is asserted once in phase (e).
+                    dragon.setTame(false, false);
+                    dragon.setOwnerUUID(null);
+                }
+                dragon.setHealth(150.0f); // so a tame success visibly heals to full
+                player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.BEEF));
                 dragon.mobInteract(player, InteractionHand.MAIN_HAND);
-                helper.assertFalse(dragon.isTame(), "TNT releases the dragon between attempts");
+                helper.assertValueEqual(player.getItemInHand(InteractionHand.MAIN_HAND).getCount(), 0,
+                        "beef consumed on every attempt (orig Dragon.java:1212-1219)");
+                if (dragon.isTame()) {
+                    successes++;
+                    helper.assertValueEqual(dragon.getOwnerUUID(), player.getUUID(), "tame success sets owner");
+                    helper.assertValueEqual(dragon.getHealth(), 200.0f,
+                            "tame success heals to mygetMaxHealth()=200 (entity/Dragon.java:146,918)");
+                }
             }
-            dragon.setHealth(150.0f); // so a tame success visibly heals to full
+            helper.assertTrue(successes >= 40 && successes <= 220,
+                    "tame successes " + successes + "/600 outside [40,220] for the documented 1-in-5 rate");
+
+            // (b) bones are ignored on an untamed dragon: no consume, no tame, no action.
+            if (dragon.isTame()) {
+                dragon.setTame(false, false);
+                dragon.setOwnerUUID(null);
+            }
+            player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.BONE));
+            InteractionResult boneResult = dragon.mobInteract(player, InteractionHand.MAIN_HAND);
+            helper.assertValueEqual(player.getItemInHand(InteractionHand.MAIN_HAND).getCount(), 1,
+                    "bone is not consumed (audit-corrected ENT-D-002: beef, not bone)");
+            helper.assertFalse(dragon.isTame(), "bone does not tame");
+            helper.assertFalse(boneResult.consumesAction(), "bone interaction falls through (PASS)");
+
+            // (c) beef heals a damaged TAMED dragon to full (orig Dragon.java:1245-1252).
+            dragon.setTame(true, false);
+            dragon.setOwnerUUID(player.getUUID());
+            dragon.setHealth(100.0f);
             player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.BEEF));
             dragon.mobInteract(player, InteractionHand.MAIN_HAND);
-            helper.assertValueEqual(player.getItemInHand(InteractionHand.MAIN_HAND).getCount(), 0,
-                    "beef consumed on every attempt (orig Dragon.java:1212-1219)");
-            if (dragon.isTame()) {
-                successes++;
-                helper.assertValueEqual(dragon.getOwnerUUID(), player.getUUID(), "tame success sets owner");
-                helper.assertValueEqual(dragon.getHealth(), 200.0f,
-                        "tame success heals to mygetMaxHealth()=200 (entity/Dragon.java:146,918)");
-            }
-        }
-        helper.assertTrue(successes >= 40 && successes <= 220,
-                "tame successes " + successes + "/600 outside [40,220] for the documented 1-in-5 rate");
+            helper.assertValueEqual(dragon.getHealth(), 200.0f, "beef heals a tamed dragon to full");
+            helper.assertValueEqual(player.getItemInHand(InteractionHand.MAIN_HAND).getCount(), 0, "healing beef consumed");
 
-        // (b) bones are ignored on an untamed dragon: no consume, no tame, no action.
-        if (dragon.isTame()) {
-            player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.TNT));
+            // (d) diamond on the TAMED adult -> tamed Spyro replaces it (orig Dragon.java:1351-1369).
+            Vec3 dragonPos = dragon.position();
+            player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.DIAMOND));
             dragon.mobInteract(player, InteractionHand.MAIN_HAND);
+            helper.assertTrue(dragon.isRemoved(), "the adult dragon is discarded");
+            helper.assertValueEqual(player.getItemInHand(InteractionHand.MAIN_HAND).getCount(), 0, "diamond consumed");
+            List<EntitySpyro> spyros = helper.getLevel().getEntitiesOfClass(EntitySpyro.class,
+                    new AABB(BlockPos.containing(dragonPos)).inflate(3.0));
+            helper.assertValueEqual(spyros.size(), 1, "exactly one Spyro spawned at the adult's position");
+            helper.assertTrue(spyros.get(0).isTame(), "the Spyro is tamed (adult was tame)");
+            helper.assertValueEqual(spyros.get(0).getOwnerUUID(), player.getUUID(), "the Spyro keeps the owner");
+            spyros.get(0).discard();
+
+            // (e) documented release item — DEAD BUSH (orig Dragon.java:1261-1275).
+            //     EXPECTED RED vs the current port (TNT instead — see javadoc), kept
+            //     LAST so phases (a)-(d) stay verified while the defect is open.
+            Dragon dragon2 = helper.spawn(ModEntities.DRAGON.get(), new BlockPos(24, 8, 24));
+            dragon2.setNoGravity(true);
+            dragon2.setTame(true, false);
+            dragon2.setOwnerUUID(player.getUUID());
+            player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.DEAD_BUSH));
+            dragon2.mobInteract(player, InteractionHand.MAIN_HAND);
+            boolean released = !dragon2.isTame();
+            boolean ownerCleared = dragon2.getOwnerUUID() == null;
+            int bushLeft = player.getItemInHand(InteractionHand.MAIN_HAND).getCount();
+            dragon2.discard();
+            helper.assertTrue(released,
+                    "dead bush releases a tamed dragon (orig Dragon.java:1261-1275; the port untames on TNT instead — PORT DEFECT)");
+            helper.assertTrue(ownerCleared, "owner cleared on the dead-bush release (orig Dragon.java:1264)");
+            helper.assertValueEqual(bushLeft, 0, "dead bush consumed on release (orig Dragon.java:1268-1273)");
+        } finally {
+            helper.getLevel().getServer().getPlayerList().remove(player);
         }
-        player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.BONE));
-        InteractionResult boneResult = dragon.mobInteract(player, InteractionHand.MAIN_HAND);
-        helper.assertValueEqual(player.getItemInHand(InteractionHand.MAIN_HAND).getCount(), 1,
-                "bone is not consumed (audit-corrected ENT-D-002: beef, not bone)");
-        helper.assertFalse(dragon.isTame(), "bone does not tame");
-        helper.assertFalse(boneResult.consumesAction(), "bone interaction falls through (PASS)");
-
-        // (c) beef heals a damaged TAMED dragon to full (orig Dragon.java:1245-1252).
-        dragon.setTame(true, false);
-        dragon.setOwnerUUID(player.getUUID());
-        dragon.setHealth(100.0f);
-        player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.BEEF));
-        dragon.mobInteract(player, InteractionHand.MAIN_HAND);
-        helper.assertValueEqual(dragon.getHealth(), 200.0f, "beef heals a tamed dragon to full");
-        helper.assertValueEqual(player.getItemInHand(InteractionHand.MAIN_HAND).getCount(), 0, "healing beef consumed");
-
-        // (d) diamond on the TAMED adult -> tamed Spyro replaces it (orig Dragon.java:1351-1369).
-        Vec3 dragonPos = dragon.position();
-        player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.DIAMOND));
-        dragon.mobInteract(player, InteractionHand.MAIN_HAND);
-        helper.assertTrue(dragon.isRemoved(), "the adult dragon is discarded");
-        helper.assertValueEqual(player.getItemInHand(InteractionHand.MAIN_HAND).getCount(), 0, "diamond consumed");
-        List<EntitySpyro> spyros = helper.getLevel().getEntitiesOfClass(EntitySpyro.class,
-                new AABB(BlockPos.containing(dragonPos)).inflate(3.0));
-        helper.assertValueEqual(spyros.size(), 1, "exactly one Spyro spawned at the adult's position");
-        helper.assertTrue(spyros.get(0).isTame(), "the Spyro is tamed (adult was tame)");
-        helper.assertValueEqual(spyros.get(0).getOwnerUUID(), player.getUUID(), "the Spyro keeps the owner");
-        spyros.get(0).discard();
         helper.succeed();
     }
 
@@ -1170,21 +1240,40 @@ public class EntityLogicTestsA {
     private record CageOutcome(int emptyCages, int cagedItems, List<ResourceLocation> cagedIds) {}
 
     /**
-     * Fires one cage at the victim by single-stepping the projectile's own tick()
-     * (the projectile is never added to the level, so the server cannot double-tick
-     * it; onHitEntity runs the identical code path). Returns the classified drops.
+     * Test bridge exposing {@code EntityCage}'s protected {@code onHitEntity} so
+     * the capture matrix invokes the mod's documented hit path directly. The
+     * projectile FLIGHT is vanilla ThrowableProjectile physics — not ENT-D-022
+     * surface (all the documented outcomes live in onHitEntity). The previous
+     * approach (single-stepping {@code tick()} on a never-added projectile so the
+     * vanilla hit-scan would find the victim) proved harness-fragile in the
+     * shared-grid run: cages flew past live victims without resolving, failing
+     * the suite on vanilla flight mechanics rather than mod logic.
+     */
+    private static final class TestCage extends EntityCage {
+        TestCage(ServerLevel level) {
+            super(ModEntities.ENTITY_CAGE.get(), level);
+        }
+
+        void strike(LivingEntity victim) {
+            this.onHitEntity(new EntityHitResult(victim));
+        }
+    }
+
+    /**
+     * Fires one cage at the victim by entering {@code onHitEntity} directly (the
+     * cage entity is never added to the level, so the server cannot double-tick
+     * it; every branch of the hit path ends in discard). Returns the classified
+     * drops swept from around the victim.
      */
     private CageOutcome throwCage(GameTestHelper helper, LivingEntity victim) {
         ServerLevel level = helper.getLevel();
         Vec3 c = victim.getBoundingBox().getCenter();
-        double back = victim.getBbWidth() / 2.0 + 1.5;
-        EntityCage cage = new EntityCage(ModEntities.ENTITY_CAGE.get(), level);
-        cage.setPos(c.x - back, c.y, c.z);
-        cage.setDeltaMovement(back + 1.0, 0.0, 0.0);
-        for (int i = 0; i < 4 && !cage.isRemoved(); i++) {
-            cage.tick();
-        }
-        helper.assertTrue(cage.isRemoved(), "cage projectile must resolve (hit) within 4 ticks");
+        TestCage cage = new TestCage(level);
+        // Park the cage beside the victim so its drops pop inside the sweep box.
+        cage.setPos(c.x - victim.getBbWidth() / 2.0 - 1.2, c.y, c.z);
+        cage.strike(victim);
+        helper.assertTrue(cage.isRemoved(),
+                "cage must resolve (discard) on the hit path (entity/EntityCage.java:213-276)");
         int empty = 0;
         int caged = 0;
         List<ResourceLocation> ids = new ArrayList<>();
@@ -1436,61 +1525,83 @@ public class EntityLogicTestsA {
      * C3:27 — RubberDucky tames with raw COD at 1-in-2 and tempts with cod
      * (orig RubberDucky.java:242), dead bush untames (:273-287); wheat is only the
      * vanilla breeding food and never tames. Port: entity/EntityRubberDucky.java:72,175-216,345.
+     *
+     * <p>Infra note: every tamed-side interaction is OWNERSHIP-gated in both
+     * sources (orig Leon.java:1008 {@code func_152114_e -> return false}; port
+     * EntityLeon.java:733 / EntityRubberDucky.java:198 {@code isOwnedBy}), and the
+     * owner resolves through the LEVEL's player list
+     * ({@code TamableAnimal.getOwner -> level.getPlayerByUUID}). A detached mock
+     * player is never found there, so the untame branches silently PASSed — the
+     * interacting player must be a real in-level ServerPlayer (SURVIVAL because
+     * the gametest server defaults to CREATIVE and the consumption asserts need
+     * {@code instabuild=false}). It is removed from the player list before the
+     * tempt phase so its presence cannot distract that phase's TemptGoal.</p>
      */
     @SuppressWarnings({"removal", "deprecation"})
     @GameTest(template = "empty_large", timeoutTicks = 900)
     public void leon_ducky_tame_untame_tempt(GameTestHelper helper) {
-        // ---- Leon: glass does NOT untame; dead bush does (all in one tick) ----
-        EntityLeon leon = helper.spawnWithNoFreeWill(ModEntities.ENTITY_LEON.get(), new BlockPos(12, 6, 12));
-        leon.setNoGravity(true);
-        Player owner = mockPlayerAt(helper, leon.position().add(2.0, 0.0, 0.0)); // distSq < 49 gates
-        leon.setTame(true, false);
-        leon.setOwnerUUID(owner.getUUID());
+        ServerPlayer owner = helper.makeMockServerPlayerInLevel();
+        try {
+            owner.setGameMode(GameType.SURVIVAL);
 
-        owner.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.GLASS));
-        leon.mobInteract(owner, InteractionHand.MAIN_HAND);
-        helper.assertTrue(leon.isTame(), "glass does NOT untame Leon (audit-corrected ENT-K-019)");
-        helper.assertValueEqual(leon.getOwnerUUID(), owner.getUUID(), "owner intact after glass");
-        helper.assertValueEqual(owner.getItemInHand(InteractionHand.MAIN_HAND).getCount(), 1,
-                "glass not consumed (it only toggles sit, EntityLeon.java:770-778)");
+            // ---- Leon: glass does NOT untame; dead bush does (all in one tick) ----
+            EntityLeon leon = helper.spawnWithNoFreeWill(ModEntities.ENTITY_LEON.get(), new BlockPos(12, 6, 12));
+            leon.setNoGravity(true);
+            Vec3 ownerPos = leon.position().add(2.0, 0.0, 0.0); // distSq 4 < 49 gates
+            owner.teleportTo(helper.getLevel(), ownerPos.x, ownerPos.y, ownerPos.z, 0.0f, 0.0f);
+            leon.setTame(true, false);
+            leon.setOwnerUUID(owner.getUUID());
 
-        owner.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.DEAD_BUSH));
-        leon.mobInteract(owner, InteractionHand.MAIN_HAND);
-        helper.assertFalse(leon.isTame(), "dead bush untames Leon (orig Leon.java:1035)");
-        helper.assertTrue(leon.getOwnerUUID() == null, "owner cleared");
-        helper.assertValueEqual(owner.getItemInHand(InteractionHand.MAIN_HAND).getCount(), 0, "dead bush consumed");
-        leon.discard();
+            owner.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.GLASS));
+            leon.mobInteract(owner, InteractionHand.MAIN_HAND);
+            helper.assertTrue(leon.isTame(), "glass does NOT untame Leon (audit-corrected ENT-K-019)");
+            helper.assertValueEqual(leon.getOwnerUUID(), owner.getUUID(), "owner intact after glass");
+            helper.assertValueEqual(owner.getItemInHand(InteractionHand.MAIN_HAND).getCount(), 1,
+                    "glass not consumed (it only toggles sit, EntityLeon.java:770-778)");
 
-        // ---- RubberDucky: cod tames at 1-in-2; dead bush untames; wheat never tames ----
-        EntityRubberDucky ducky = helper.spawnWithNoFreeWill(ModEntities.ENTITY_RUBBER_DUCKY.get(), new BlockPos(12, 6, 16));
-        ducky.setNoGravity(true);
-        Player feeder = mockPlayerAt(helper, ducky.position().add(1.5, 0.0, 0.0));
-        // n=150 attempts at p=1/2 (nextInt(2)==0), mean 75. Band [30,120]:
-        // Hoeffding 2*exp(-2*150*0.09) = 2*exp(-27) ~ 3.7e-12.
-        int successes = 0;
-        for (int i = 0; i < 150; i++) {
-            feeder.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.COD));
-            ducky.mobInteract(feeder, InteractionHand.MAIN_HAND);
-            helper.assertValueEqual(feeder.getItemInHand(InteractionHand.MAIN_HAND).getCount(), 0,
-                    "cod consumed on every attempt (orig RubberDucky.java:242-272)");
-            if (ducky.isTame()) {
-                successes++;
-                feeder.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.DEAD_BUSH));
-                ducky.mobInteract(feeder, InteractionHand.MAIN_HAND);
-                helper.assertFalse(ducky.isTame(), "dead bush untames the ducky (orig RubberDucky.java:273-287)");
+            owner.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.DEAD_BUSH));
+            leon.mobInteract(owner, InteractionHand.MAIN_HAND);
+            helper.assertFalse(leon.isTame(), "dead bush untames Leon (orig Leon.java:1035)");
+            helper.assertTrue(leon.getOwnerUUID() == null, "owner cleared");
+            helper.assertValueEqual(owner.getItemInHand(InteractionHand.MAIN_HAND).getCount(), 0, "dead bush consumed");
+            leon.discard();
+
+            // ---- RubberDucky: cod tames at 1-in-2; dead bush untames; wheat never tames ----
+            EntityRubberDucky ducky = helper.spawnWithNoFreeWill(ModEntities.ENTITY_RUBBER_DUCKY.get(), new BlockPos(12, 6, 16));
+            ducky.setNoGravity(true);
+            Vec3 feedPos = ducky.position().add(1.5, 0.0, 0.0); // distSq 2.25 < the 16.0 gates
+            owner.teleportTo(helper.getLevel(), feedPos.x, feedPos.y, feedPos.z, 0.0f, 0.0f);
+            // n=150 attempts at p=1/2 (nextInt(2)==0), mean 75. Band [30,120]:
+            // Hoeffding 2*exp(-2*150*0.09) = 2*exp(-27) ~ 3.7e-12.
+            int successes = 0;
+            for (int i = 0; i < 150; i++) {
+                owner.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.COD));
+                ducky.mobInteract(owner, InteractionHand.MAIN_HAND);
+                helper.assertValueEqual(owner.getItemInHand(InteractionHand.MAIN_HAND).getCount(), 0,
+                        "cod consumed on every attempt (orig RubberDucky.java:242-272)");
+                if (ducky.isTame()) {
+                    successes++;
+                    owner.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.DEAD_BUSH));
+                    ducky.mobInteract(owner, InteractionHand.MAIN_HAND);
+                    helper.assertFalse(ducky.isTame(), "dead bush untames the ducky (orig RubberDucky.java:273-287)");
+                }
             }
-        }
-        helper.assertTrue(successes >= 30 && successes <= 120,
-                "cod tame successes " + successes + "/150 outside [30,120] for the documented 1-in-2 rate");
-        ducky.discard();
+            helper.assertTrue(successes >= 30 && successes <= 120,
+                    "cod tame successes " + successes + "/150 outside [30,120] for the documented 1-in-2 rate");
+            ducky.discard();
 
-        EntityRubberDucky wheatDucky = helper.spawnWithNoFreeWill(ModEntities.ENTITY_RUBBER_DUCKY.get(), new BlockPos(12, 6, 16));
-        wheatDucky.setNoGravity(true);
-        feeder.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.WHEAT));
-        wheatDucky.mobInteract(feeder, InteractionHand.MAIN_HAND);
-        helper.assertFalse(wheatDucky.isTame(),
-                "wheat never tames — it is only the vanilla breeding food (EntityRubberDucky.java:345)");
-        wheatDucky.discard();
+            EntityRubberDucky wheatDucky = helper.spawnWithNoFreeWill(ModEntities.ENTITY_RUBBER_DUCKY.get(), new BlockPos(12, 6, 16));
+            wheatDucky.setNoGravity(true);
+            owner.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.WHEAT));
+            wheatDucky.mobInteract(owner, InteractionHand.MAIN_HAND);
+            helper.assertFalse(wheatDucky.isTame(),
+                    "wheat never tames — it is only the vanilla breeding food (EntityRubberDucky.java:345)");
+            wheatDucky.discard();
+        } finally {
+            // Out before the tempt phase: its TemptGoal must only ever see the
+            // cod-holding tempt player below.
+            helper.getLevel().getServer().getPlayerList().remove(owner);
+        }
 
         // ---- cod TEMPT: needs a real ServerPlayer (TemptGoal scans level.players()) ----
         pad(helper, 18, 18, 34, 34, false);
