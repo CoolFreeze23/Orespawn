@@ -129,3 +129,24 @@ with one picture.
   file (BUG-036) — direct hits sometimes registered oddly (head hits
   did double damage, point-blank body shots could feel off). Purely
   server-side; no world data affected.
+
+## 2.0 development notes (unreleased)
+
+- **Modern robot spiders** (the `spiderMovement` config, default MODERN):
+  legs are now real hittable surfaces dealing body-identical damage, the
+  crosshair health bar works on legs (and now also on The King's giant
+  body parts), and a mounted player can steer. Two things that are
+  intended, not bugs: a mid-swing (airborne) leg is a moving target that
+  tracks the server's swing — at high ping, lead it or hit the body,
+  which pays the same; and legs dipping in lava or fire never hurt the
+  spider — only its body touching a hazard does, exactly as in 1.0.
+- **`spiderMovement = "CLASSIC"`** is one config line back to the exact
+  1.0/1.7.10 spider: visual-only legs, body-only hitbox, unsteerable.
+- While a player is actively steering a modern spider, two vanilla
+  rider-physics rules kick in that unridden (or NPC-ridden) spiders do
+  not get: step height rises from 0.6 to a full block, and mid-air
+  steering is stronger. This is the same treatment vanilla gives ridden
+  horses and is kept deliberately — it is what makes stairs feel right
+  from the saddle.
+- Robot **ants** receive the same modern treatment in the next
+  development build (six-legged, with the hover-ride kept intact).

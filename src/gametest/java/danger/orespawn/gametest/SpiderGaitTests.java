@@ -747,12 +747,23 @@ public class SpiderGaitTests {
         }
         final SpiderRobot spider = spawnModern(helper, new BlockPos(8, 3, 24));
         final ModernSpiderGait gait;
-        final net.minecraft.world.entity.player.Player rider;
+        final net.minecraft.world.entity.Entity rider;
         try {
             gait = spider.getModernGait();
             helper.assertTrue(gait != null, "modern spider must carry the gait controller");
-            rider = helper.makeMockPlayer(net.minecraft.world.level.GameType.SURVIVAL);
-            helper.assertTrue(rider.startRiding(spider, true), "mock rider failed to mount");
+            // S5: the rider is a SpiderDriver, not a mock player — a player
+            // rider is now CONTROLLING on modern spiders (Q1), which makes
+            // the server skip travel and freezes a packet-less mock-ridden
+            // spider; the driver is never controlling, keeps the dm drive
+            // alive, and is the classic trample scenario anyway.
+            rider = helper.spawnWithNoFreeWill(danger.orespawn.ModEntities.SPIDER_DRIVER.get(),
+                    new BlockPos(8, 6, 24));
+            // S5 review: the driver's mounted-combat drive lives in
+            // customServerAiStep, which removeFreeWill does NOT strip —
+            // NoAi makes the rider genuinely inert instead of relying on
+            // tick-ordering to shield the test's dm writes.
+            ((net.minecraft.world.entity.Mob) rider).setNoAi(true);
+            helper.assertTrue(rider.startRiding(spider, true), "driver failed to mount");
         } catch (RuntimeException e) {
             spider.discard();
             throw e;
