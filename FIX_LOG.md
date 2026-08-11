@@ -2376,3 +2376,43 @@ tick-stamped result, Medium's TargetingConditions hoisted; Medium/Small
 scan-MERGING found non-neutral post-TF-035 — documented, not applied;
 throttle declined per ruling). LEDGER: 630/630 terminal (628 resolved +
 2 owner-approved DEFERRED). Phase F complete.
+
+# 2.0 — OreSpawn Modernized
+
+## S1: Procedural Spider Overhaul — research + design (2026-08-11)
+
+Design-only slice; no code. Deliverable:
+`phase_s_reports/spider_overhaul_design.md`, awaiting owner approval.
+
+**Research.** Two tracks: (1) TheCymaera/minecraft-spider technique
+study — FABRIK with pre-straighten knee bias, distance-triggered gait
+capsules with inhibitor cooldowns, velocity-projected foot lookahead
+over a 3x3 biased ground scan, stranded-leg dangle, physics body with
+grounded-fraction lift cap (stairs emergent). LICENSE RECORDED: no
+LICENSE file/SPDX; README grants commercial+non-commercial use of
+plugin and source, attribution optional, "do not resell without
+substantial changes" — custom-permissive; we write original Java
+regardless, technique only. (2) D2/B3/suite architecture survey —
+RenderSpiderRobotInfo is a client-written angle bag the models consume
+via forward kinematics (so a new solver can write the same fields and
+render unchanged); SpiderRobot has NO ridden movement path (pre-1.0
+gap, mounted players cannot steer); 16 robot-touching suite tests
+inventoried with their single-AABB assumptions; no EnumValue precedent
+in OreSpawnConfig; crosshair HUD blanks on any PartEntity (King
+already affected). Direct MHLib check: MHLibPartEntity.setPos /
+setPositionAndRotationDirect are public and hurt() routes via
+IMultipartEntity.hurt — a server-side solver can feed profile parts
+directly, bypassing the client-bone trust path (the "third feed"
+MOD-014 predicted).
+
+**Decisions (D1-D5, justified in the design doc).** Server-
+authoritative solve with deterministic client replay of compact step
+events; FABRIK emitting the existing model angle fields (renderers,
+models, assets untouched); MHLib profile parts fed server-side per
+MOD-025 extend-don't-invent, 1 box/leg routing x1.0, body stays
+pickable, zero parts in classic; defineEnum spiderMovement
+(CLASSIC|MODERN) default MODERN per owner directive (overrides
+MOD-014's suggested classic default), construct-time snapshot per the
+BOSS-017 pattern; walk-only gait for S2. Slices S2-S5, risk register,
+and owner questions Q1-Q4 (SpiderRobot ridden path, gallop scope, part
+granularity, organic-rig extension) in the doc.
