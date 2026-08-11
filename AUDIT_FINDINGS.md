@@ -5784,3 +5784,37 @@ Entries: **79 total** — ANIM 20 (DIVERGENT 8 · PARTIAL 10 · MISSING 2) · BU
 - **Resolution:** FIXED (2026-08-11, beta.3 — inner=8 per the original;
   EntityConstructionTests added — constructs all registered orespawn entity
   types every suite run, so this failure class is now a red gate).
+
+### BUG-035 — Queen freezes mid-air: trigger-fired clips can never finish
+
+- **Impact:** HIGH (field) — from her first melee onward, the Queen's whole
+  model is permanently slaved to her last attack clip. The Actions
+  controller's "one-off" triggers use thenPlay (= LoopType.DEFAULT = defer
+  to the animation json), but the json declared bite/tail_whip_left/
+  tail_whip_right as loop:true and roar as hold_on_last_frame. GeckoLib
+  clears a triggered animation only when it FINISHES (state STOPPED;
+  verified in AnimationController source and the pinned 4.8.4 bytecode —
+  LOOP never terminates, HOLD parks PAUSED), so the trigger never clears,
+  the controller never returns to its STOP predicate, and — since every
+  Queen clip keyframes the identical 58-bone set and Actions is registered
+  after Movement — the stuck clip overrides the entire model. Field
+  symptom: frozen mid-roar (or endlessly replaying a swing) while hovering;
+  a hit re-aggros her, the next trigger replaces the stuck clip, and she
+  "starts back up". Parity note: the 1.7.10 Queen NEVER stops animating in
+  any state (ModelTheQueen drives wings/tail/heads off ageInTicks
+  unconditionally), so the freeze is also a parity break, not just a
+  cosmetic bug in the port-invented GeckoLib layer (BOSS-010).
+- **Location:** `assets/orespawn/animations/entity/the_queen.animation.json`
+  (bite :24499, tail_whip_right :26756, tail_whip_left :31026,
+  roar :35296) vs `TheQueen.java:1439-1444`.
+- **Resolution:** FIXED (2026-08-11 — the four one-off attack clips set to
+  loop:false so they finish, clear the trigger, and blend back (5t) to the
+  Movement stance. death KEEPS hold_on_last_frame deliberately: its
+  never-finishing hold is what keeps the corpse posed, and Movement STOPs
+  on isDeadOrDying so nothing fights it. idle/attack keep loop:true.)
+- **Pattern audit (owner-directed):** mechanical scan of every
+  triggerableAnim in src/main/java against every animation json's loop
+  declarations: TheQueen is the ONLY GeckoLib animatable in the codebase
+  (registerControllers appears nowhere else; MHLib's glibplus trigger API
+  is vendored but unused), so there are no sibling defects. Scan flags
+  post-fix: 4 ok + death NEVER-FINISHES (intentional, documented above).

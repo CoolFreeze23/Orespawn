@@ -33,6 +33,14 @@ These came straight out of hand-testing and are fixed in code in this build;
 most still need a second pair of eyes in a real game. If one still looks
 wrong for you, please say so.
 
+**post-beta.3 (in the next build):**
+
+- The Queen no longer freezes mid-air (or endlessly repeats one attack
+  swing) after her first melee — her attack animations now finish and
+  blend back into her flying stance, and she stays animated through
+  combat lulls like the original always did. Her death pose still holds.
+  *(BUG-035)*
+
 **beta.3 (first field reports — thank you!):**
 
 - The mod no longer needs any other mod installed to launch: beta.2 crashed

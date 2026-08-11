@@ -2561,3 +2561,38 @@ GATE: build+assetAudit exit 0 (0 err/0 adv/3 ack); suite exit 0 —
 baseline incl. the hotfix's EntityConstructionTests + 4 new). S2 exit
 criteria met: modern walks flat ground with no planted-foot slide,
 classic bit-identical, suite green in both modes.
+
+## BUG-035 — Queen mid-air animation freeze (2026-08-11)
+
+Owner-reported field bug, root-caused to a code/data contradiction:
+Actions-controller one-off triggers (thenPlay = defer-to-json) against
+json clips declared loop:true / hold_on_last_frame — clips that can never
+finish never clear their trigger, so the controller never returns to its
+STOP predicate and the last attack owns all 58 bones forever. Fixed
+data-only: bite/tail_whip_left/tail_whip_right/roar -> loop:false; death
+keeps hold_on_last_frame (corpse pose relies on it); idle/attack keep
+looping. Verification chain recorded in AUDIT_FINDINGS (GeckoLib
+AnimationController source + pinned 4.8.4 bytecode: thenPlay ->
+LoopType.DEFAULT; hasAnimationFinished requires STOPPED; LOOP/HOLD never
+reach it). Owner-directed pattern scan: no siblings — TheQueen is the
+codebase's only GeckoLib animatable. Client-visual behavior: not suite-
+assertable; owner verifying in-game (first melee cycle -> blend back to
+stance through a combat lull -> full fight to death -> corpse pose).
+
+Queen-pass inputs (three-reader sweep; NOT fixed per design ruling — held
+for the upcoming Queen brief): (1) IS_AWAKE/TRANSITION_TICKS is a
+write-once latch — post-wake there is no calm state, diverging from the
+orig's dynamic getAttacking() keying (calm wings 0.35/0.15 vs aggro
+0.85/0.26 — orig never stops animating); (2) plausible-unverified
+Movement dead-latch: a one-frame client isDeadOrDying() true during
+server-side heal top-ups could STOP Movement permanently (same-
+RawAnimation no-op claim needs GL source verification — the same reviewer
+also mis-claimed thenPlay=PLAY_ONCE, refuted by bytecode); (3) stalled-
+WAKING statue if customServerAiStep stops being reached with
+TRANSITION_TICKS>0 (hurt() re-arm requires ticks==0 — unrecoverable edge);
+(4) WAKE_UP_DURATION_TICKS 60 < idle_to_attack 71.7t (recorded benign,
+audit_sections/08:18); (5) QueenPrimaryGoal lacks requiresUpdateEveryTick
+-> flight impulse + attack triggers at ~half rate vs siblings that
+override it (orig ran every AI tick); (6) hurt() arms the wake-up before
+every damage filter (healed explosions and discarded attackers wake her);
+(7) doc/code mismatch at TheQueen.java:125-127 ("hits 1" vs flip at 0).

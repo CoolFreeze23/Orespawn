@@ -24497,7 +24497,7 @@
 			}
 		},
 		"bite": {
-			"loop": true,
+			"loop": false,
 			"animation_length": 0.8958,
 			"bones": {
 				"Rib1": {
@@ -26754,7 +26754,7 @@
 			}
 		},
 		"tail_whip_right": {
-			"loop": true,
+			"loop": false,
 			"animation_length": 1.75,
 			"bones": {
 				"Rib1": {
@@ -31024,7 +31024,7 @@
 			}
 		},
 		"tail_whip_left": {
-			"loop": true,
+			"loop": false,
 			"animation_length": 1.7917,
 			"bones": {
 				"Rib1": {
@@ -35294,7 +35294,7 @@
 			}
 		},
 		"roar": {
-			"loop": "hold_on_last_frame",
+			"loop": false,
 			"animation_length": 3.5833,
 			"bones": {
 				"Rib1": {
