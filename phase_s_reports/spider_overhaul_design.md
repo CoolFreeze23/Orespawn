@@ -386,6 +386,86 @@ isolated-batch config idiom from BOSS-017 — pinned tests set
     unpickable main box in public betas. Deleted; VanillaParityTests
     pins the no-vanilla-parts contract.
 
+  *S5 as-designed (research complete 2026-08-11; implementation next
+  session — zero re-derivation):*
+  - **Ant ground truth (read from source this session):** per-leg
+    tables (AntRobot.initLegData:610-620): legoff {0.75,0.75,1.0,1.0,
+    1.15,1.15}, ymid {0.0, π, −0.7853982, 3.9269907, 0.7853982,
+    2.3561945}, yrange ±0.2617994 (same magnitude as spider),
+    pairedwith {1,0,3,2,5,4}, yoff all −0.75. Segments 49px =
+    3.0625 blocks (AntRobot:744-746), MAX_REACH 9.1875. Classic probe
+    windows: distance 144/22 px (9/1.375 blocks; AntRobot:732), yaw
+    trigger ×8/6 (vs spider's 8/7), swing-bias factor 0.8 (:858, vs
+    spider 0.875). REST reaches (probe opening values, :839,862-874;
+    NOTE the leg 0/1 override runs AFTER the ≥4 branch): legs 0/1 →
+    6.0, legs 2/3 → 9.0, legs 4/5 → 4.0. ModelAntRobot hip placement
+    and chain advance (:242-245) are STRUCTURALLY IDENTICAL to the
+    spider model (−cos(ymid)·legoff·16 / sin·legoff·16 / yoff·−16;
+    −sin(xRot)·49) — the S2 conversion mapping (α_w = yawRad − α_m,
+    yd = α_w − yawRad + π/2, ud=a2/p2=0 split) carries over UNCHANGED;
+    the render-parity harness generalizes by rig and must run the ant
+    grid too.
+  - **Rig abstraction:** introduce `LegRig` (instance record/class:
+    legCount, segmentLength, maxReach, hipRadial/neutralYaw/
+    hipVertical/swingRange/pairedWith/restReach arrays, legBearing/
+    hipX/hipZ/hipY/restFootX/restFootZ using the classic formulas) —
+    SpiderRigProfile becomes the spider LegRig instance; AntRigProfile
+    the ant's. ModernSpiderGait: SpiderRobot→Mob params + a LegRig
+    ctor field; arrays sized rig.legCount(); solveLegAngles gains a
+    rig param (harness signatures update); scan-window law
+    (SCAN_UP/DOWN 11/14) is CLASSIC PROBE GEOMETRY for the spider —
+    the ANT's classic probe scans a different column (verify
+    AntRobot.findNewFooting's yScan loop and mirror ITS numbers in the
+    ant rig — the law says per-rig probe geometry, not shared numbers).
+    Gait tuning constants that scale with rig size (TRIGGER radii,
+    STEP_SPEED, LIFT_HEIGHT, DANGLE_DROP, VERTICAL_RETRIGGER, tilt
+    spans auto-derived already): move into LegRig with spider values as
+    S2-S3 shipped and ant values scaled ~×(3.0625/6.1875) as the
+    starting tune.
+  - **Shared entity surface:** `IModernLeggedRobot` (getModernGait,
+    isModernMovement, getRenderSpiderRobotInfo — both robots already
+    use RenderSpiderRobotInfo) — payload handlers accept either robot
+    type via the interface; keyframe decoder validates leg count in
+    {6,8} and the HANDLER validates against the entity's rig exactly.
+    Registrar version bumps (wire semantics change) per the standing
+    rule. AntRobot: supplier + ctor-tail single-read + snapshot +
+    onSyncedDataUpdated build (same S4 pattern, DATA accessor on
+    AntRobot), classic updateLegs callsite branch, AntRobotRenderer
+    modern-only tilt branch (same pivot conjugation), profile
+    ant_robot.json: main EXACTLY [2.75, 1.25] (i083 pins these dims —
+    the Size-hook trap), 6 legs leg0..leg5, same routing/lava rule.
+    HOVER-RIDE INTERPLAY: tickRidden hover physics UNTOUCHED — a
+    hovering body strands legs (scan window misses ground) and the
+    stranded-dangle IS the designed look; the ant's dynamics sag floor
+    while ridden applies as on the spider.
+  - **SpiderRobot ridden path (Q1, modern-only):**
+    getControllingPassenger returns the first PLAYER passenger IFF
+    modernGait != null (classic: null — faithful no-steer; the
+    SpiderDriver is never controlling in either mode and its
+    velocity-set shoving coexists untouched). tickRidden ground-walker
+    per the B3 pattern (yaw from rider, WASD travel at the 0.35
+    attribute speed, jump ignored, step-height as-is); the gait needs
+    no steering-specific changes (rest bearings rotate with yaw; the
+    speed-lerped trigger radius already handles 0.35 = FULL_SPEED) —
+    reviewers attack exactly that claim plus mount/dismount mid-swing
+    and driver coexistence. RIDER SEAT RESOLUTION (S3b handoff): while
+    ridden clamp body-dynamics lift AND sag to ±0.15 (near-rigid body
+    so the real-pos-rendered rider stays coherent); test pins it.
+  - **Server-side ride tests** (player-path law honestly applied:
+    player-driven vehicle travel is client-controlled and untestable in
+    gametests — assert the wiring: controlling-passenger truth table
+    both modes, dismount mid-swing state consistency, driver-shove
+    coexistence, ridden lift clamp; the FEEL is the owner's in-game
+    session, recorded as exit evidence).
+  - **Docs:** CHANGELOG 2.0 section framing classic as one-config-line
+    parity preservation (ratified default-modern override), config
+    comment final pass, KNOWN_ISSUES 2.0 notes (swing-leg latency skew
+    tolerance in player terms; ant hover-dangle look).
+  - **Parked ruling to present in the S5 boundary report:** the
+    MixinServerEntity pre-first-keyframe part-stream gate (delta
+    paragraph; owner ratifies or declines there — slice does not hold
+    on it).
+
 Each slice: full gate (build + asset audit + suite, exit-code-guarded),
 FIX_LOG entries under "## 2.0 — Spider Overhaul", commit per slice.
 

@@ -2957,3 +2957,19 @@ MODERN and 170/170 under CLASSIC, pass lines verified (162 baseline +
 8: tests 5-8, election neutrality, part-parent sweep, arrow player-
 path, lava outcome). S4 exit criteria met; S5 (ant rig + ride
 integration + suite sweep) remains.
+
+## S5 research complete — as-designed block recorded (2026-08-11)
+
+Closing-slice research done and recorded in the design doc's "S5
+as-designed" block: the ant's exact per-leg tables/probe
+windows/reaches read from source (incl. the leg-0/1 reach override
+ordering quirk and the 0.8 swing-bias factor), the model-formula
+identity that carries the S2 conversion mapping over unchanged, the
+LegRig abstraction plan (per-rig classic probe geometry per the
+scan-window law), the IModernLeggedRobot payload generalization with a
+registrar bump, the ant S4-pattern part integration (main EXACTLY
+2.75x1.25), the Q1 tickRidden design with the SpiderDriver-never-
+controlling rule, and the S3b rider-seat resolution (ridden dynamics
+clamped to +/-0.15). ESCAPE HATCH: implementation, reviewers and gates
+go to a fresh session with nothing to re-derive; the parked
+MixinServerEntity stream ruling is presented in the boundary report.
