@@ -25,6 +25,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.Vec3;
 
 public class EntityThrownRock extends ThrowableProjectile implements ItemSupplier {
     private static final EntityDataAccessor<Integer> DATA_ROCK_TYPE =
@@ -225,6 +226,12 @@ public class EntityThrownRock extends ThrowableProjectile implements ItemSupplie
 
     @Override
     public void tick() {
+        // orig EntityThrownRock.java:291-293 — the water-skip probe samples the block at
+        // the PRE-move position of this tick (captured before super), and uses plain (int)
+        // casts, not floor: negative coordinates truncate toward zero. Orig bug kept.
+        int preTickX = (int) this.getX();
+        int preTickY = (int) this.getY();
+        int preTickZ = (int) this.getZ();
         super.tick();
         this.visualRotationDegrees += ROTATION_STEP_DEGREES;
         this.visualRotationDegrees %= 360.0f;
@@ -236,6 +243,24 @@ public class EntityThrownRock extends ThrowableProjectile implements ItemSupplie
             this.rockType = this.getRockType();
         } else {
             this.setRockType(this.rockType);
+        }
+
+        // orig :307-312 — stone-skipping: a rock falling gently (-0.55 < motionY < -0.15)
+        // with enough horizontal speed (motionX^2 + motionZ^2 > 0.5, summed as float) that
+        // finds water at the probe position reflects its vertical motion, keeping 3/4 of
+        // the velocity on every axis — so a flat throw skips repeatedly until it slows
+        // below the gate and finally sinks. Runs on both sides, as the orig did.
+        BlockState skipBlock = this.level().getBlockState(new BlockPos(preTickX, preTickY, preTickZ));
+        Vec3 velocity = this.getDeltaMovement();
+        // orig :308 compares against field_150355_j (STILL water, id 9) only — flowing
+        // water (field_150358_i, id 8) never skipped. 1.21 merged both into
+        // minecraft:water, where LEVEL=0 (a source) is exactly the old still block, so
+        // gate on Blocks.WATER + isSource().
+        if (skipBlock.is(Blocks.WATER) && skipBlock.getFluidState().isSource()
+                && velocity.y < (double) -0.15f && velocity.y > (double) -0.55f
+                && (float) (velocity.x * velocity.x + velocity.z * velocity.z) > 0.5f) {
+            // orig :309-311 — motionY = -(motionY*3/4); motionX,Z *= 3/4
+            this.setDeltaMovement(velocity.x * 3.0 / 4.0, -(velocity.y * 3.0 / 4.0), velocity.z * 3.0 / 4.0);
         }
     }
 }
