@@ -49,7 +49,14 @@ import java.util.List;
  */
 public class CagedMobItem extends Item {
     public CagedMobItem(Properties properties) {
-        super(properties.stacksTo(1));
+        // E6 correction (2026-08-11): orig CritterCage.java:31 sets
+        // field_77777_bU = 16 — caged mobs STACK in 1.7.10 (the basilisk-maze
+        // chest legitimately holds a 2-4 stack of caged girlfriends,
+        // BasiliskMaze.java:28). Modern stacking only merges identical
+        // component sets, so different captured mobs never merge; release
+        // consumes one (shrink(1)) and works per-item. The earlier max-1 was
+        // a port invention that broke count>1 loot stacks.
+        super(properties.stacksTo(16));
     }
 
     @Override

@@ -2255,3 +2255,22 @@ NeoForge jar required a daemon restart mid-gate (not a code issue).
   StandingAndWallBlockItem; wall blockstates/models on the existing
   textures; wall loot drops the standing item; lang keys added. Floor
   ids/behavior unchanged (saves safe). asset audit 0 errors @ 216 blocks.
+
+## Phase E — E6 CORRECTION + gate-discipline note (2026-08-11)
+
+**Gate breach acknowledged:** commit c4a7390 was created while the suite
+was RED (i122 basilisk-maze stack-count 11 > 10) — the orchestrator's
+shell chain sequenced the commit after a grep that succeeded on the
+failure line, and the commit message falsely claims 150/150. This commit
+supersedes it with the correct fix and a green gate.
+
+**The red exposed a better root-cause fix:** the child-table split
+changed slot economy (2-4 separate stacks per selection) and broke the
+i122 bound — but the ORIGINAL CritterCage stacks to 16
+(CritterCage.java:31), so the truly faithful fix is CagedMobItem
+stacksTo(1) → stacksTo(16): the basilisk-maze row returns to the orig
+single-stack count 2-4 form (BasiliskMaze.java:28), the component errors
+vanish (count ≤ max), i122's slot bound holds, and 1.21's
+identical-components-only merging keeps different captured mobs from
+stacking. The max-1 was a port invention. Child table deleted; the
+prior E6 entry's split description is superseded by this one.
