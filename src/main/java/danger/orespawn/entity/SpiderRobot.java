@@ -37,6 +37,7 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.resources.ResourceLocation;
 import danger.orespawn.OreSpawnMod;
 import danger.orespawn.entity.client.RenderSpiderRobotInfo;
+import danger.orespawn.entity.gait.ModernSpiderGait;
 
 public class SpiderRobot extends Mob {
     // OPT-011: cached SoundEvents — identical createVariableRangeEvent ids,
@@ -47,11 +48,32 @@ public class SpiderRobot extends Mob {
             ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "robotspidermount"));
     private static final EntityDataAccessor<Integer> DATA_ATTACKING =
             SynchedEntityData.defineId(SpiderRobot.class, EntityDataSerializers.INT);
+    /**
+     * 2.0 S2: the SERVER's construction-time spiderMovement snapshot, synced
+     * to clients. spiderMovement is a COMMON config (per-side files, never
+     * synced), so the client must NEVER consult its own copy — an unsynced
+     * mode split leaves client legs frozen at full stretch (independent
+     * review, multiplayer BLOCKER). Mode-independent infrastructure: defined
+     * in both modes, false for classic.
+     */
+    private static final EntityDataAccessor<Boolean> DATA_MODERN_GAIT =
+            SynchedEntityData.defineId(SpiderRobot.class, EntityDataSerializers.BOOLEAN);
 
     private static final int LEG_COUNT = 8;
     private final RenderSpiderRobotInfo renderInfo = new RenderSpiderRobotInfo(LEG_COUNT);
     /** Lazy one-shot leg-data (re)initialization flag (orig {@code didonce}, SpiderRobot.java:53). */
     private boolean legDataInitialized = false;
+
+    /**
+     * 2.0 spider overhaul (S2): the modern gait controller, or {@code null}
+     * in classic mode. SERVER: fixed at construction from the spiderMovement
+     * config (BOSS-017 snapshot pattern — a config flip affects newly
+     * constructed spiders only). CLIENT: created lazily off the server's
+     * {@link #DATA_MODERN_GAIT synced flag}; the client's own config is
+     * never consulted. Classic-mode spiders on either side never construct
+     * modern state and run the untouched D2 path below.
+     */
+    private ModernSpiderGait modernGait;
 
     // ENT-S-022: the port had invented a ServerBossEvent here. The original
     // SpiderRobot has no boss bar of any kind — it is a rideable vehicle whose
@@ -77,6 +99,33 @@ public class SpiderRobot extends Mob {
         this.targetSorter = new GenericTargetSorter(this);
         // orig SpiderRobot.java:508-511 — entityInit primes the leg data once at construction.
         initLegData();
+        // 2.0 S2: server-side construction snapshot of the movement mode,
+        // published to clients on the synced flag (see DATA_MODERN_GAIT).
+        if (!level.isClientSide()) {
+            boolean modern = OreSpawnConfig.SPIDER_MOVEMENT.get() == OreSpawnConfig.SpiderMovement.MODERN;
+            this.entityData.set(DATA_MODERN_GAIT, modern);
+            if (modern) {
+                this.modernGait = new ModernSpiderGait();
+            }
+        }
+    }
+
+    /** True when this spider runs the modern gait (server snapshot; synced). */
+    public boolean isModernMovement() {
+        return this.level().isClientSide() ? this.entityData.get(DATA_MODERN_GAIT) : this.modernGait != null;
+    }
+
+    /**
+     * The modern gait controller, or {@code null} for classic. On the client
+     * the controller materializes lazily once the synced flag says modern —
+     * this also lets gait payloads arriving before the first client tick
+     * find a controller to apply to.
+     */
+    public ModernSpiderGait getModernGait() {
+        if (this.modernGait == null && this.level().isClientSide() && this.entityData.get(DATA_MODERN_GAIT)) {
+            this.modernGait = new ModernSpiderGait();
+        }
+        return this.modernGait;
     }
 
     @Override
@@ -99,6 +148,7 @@ public class SpiderRobot extends Mob {
     protected void defineSynchedData(SynchedEntityData.Builder builder) {
         super.defineSynchedData(builder);
         builder.define(DATA_ATTACKING, 0);
+        builder.define(DATA_MODERN_GAIT, false);
     }
 
     public int getAttacking() { return this.entityData.get(DATA_ATTACKING); }
@@ -188,8 +238,20 @@ public class SpiderRobot extends Mob {
                         (this.getRandom().nextFloat() - this.getRandom().nextFloat()) / 5.0f,
                         exhaustZ / exhaustOffset + (this.getRandom().nextFloat() - this.getRandom().nextFloat()) / 20.0f);
             }
-            // orig SpiderRobot.java:704 — the leg solver steps once per client tick.
-            updateLegs();
+            // orig SpiderRobot.java:704 — the leg solver steps once per client
+            // tick. 2.0 S2: modern-mode spiders replay the server gait instead
+            // (mode from the synced flag); the classic branch is the untouched
+            // D2 call.
+            if (isModernMovement()) {
+                getModernGait().clientTick(this);
+            } else {
+                updateLegs();
+            }
+        }
+        // 2.0 S2: the server-authoritative modern gait. Never moves the body —
+        // in S2 its only server-visible effects are the gait packets.
+        if (this.modernGait != null && !this.level().isClientSide()) {
+            this.modernGait.serverTick(this);
         }
         if (this.soundCooldown > 0) --this.soundCooldown;
         if (this.getFirstPassenger() != null && this.soundCooldown == 0 && this.getRandom().nextInt(80) == 1) {

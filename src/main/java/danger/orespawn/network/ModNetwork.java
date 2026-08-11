@@ -16,5 +16,16 @@ public class ModNetwork {
                 RiderInputPayload.STREAM_CODEC,
                 RiderInputPayload::handle
         );
+        // 2.0 spider overhaul (S2): modern-gait step events + keyframes.
+        registrar.playToClient(
+                SpiderStepPayload.TYPE,
+                SpiderStepPayload.STREAM_CODEC,
+                SpiderStepPayload::handle
+        );
+        registrar.playToClient(
+                SpiderGaitKeyframePayload.TYPE,
+                SpiderGaitKeyframePayload.STREAM_CODEC,
+                SpiderGaitKeyframePayload::handle
+        );
     }
 }
