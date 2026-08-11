@@ -2470,3 +2470,94 @@ edits), the tree was restored from HEAD, and the reviewed-by-me S2 solver
 files were parked alongside so this hotfix gates exactly the tree it
 commits. S2 resumes per the approved harness-first order; the quarantined
 code may inform but will not be adopted wholesale.
+
+## S2 COMPLETE — FABRIK core, walk gait, sync, config gate (2026-08-11)
+
+Rebuilt cleanly on top of the beta.3 hotfix (ee8041c) after that
+session's set-aside handoff: nothing was copied from the parked
+spillover — the slice was re-applied from the working session's own
+context with the independent-review fixes folded in, then re-gated from
+scratch. Landed: PlanarFabrik (planar 3-segment FABRIK, straighten-bias
+knee seed), SpiderRigProfile (documented hand-mirror of the classic
+initLegData tables + probe geometry; mirror-drift gametest guards it),
+ModernSpiderGait (server-authoritative walk gait per S1 D1/D5 —
+distance-triggered speed-widened capsule, pair/neighbor inhibitors,
+land cooldowns, velocity-projected lookahead with one fixed-point
+refinement; world-joint -> model-angle conversion per D2 writing the
+classic RenderSpiderRobotInfo fields; client replay of step events),
+SpiderStepPayload + SpiderGaitKeyframePayload (+ decoder validation) +
+ModNetwork registrations + start-tracking keyframe, spiderMovement enum
+(default MODERN per design ruling) with SERVER construction snapshot
+published on a synched entity flag, and SpiderGaitTests (render-parity
+harness of 384 cases, FABRIK property/convergence pins, walk invariants
+1-3, construction-snapshot + mirror guard). Classic path untouched
+except the ctor snapshot and the one branch around updateLegs(); the
+D2 solver, models, renderers and assets are byte-identical.
+
+**Harness-first order honored:** the conversion was proven before gait
+trust — derivation validated three ways: algebraically (it reproduces
+classic's own ydisplay formula), by independent reviewer re-derivation
+from the vanilla JOML render chain, and numerically (FK-of-angles onto
+rig hip / FABRIK joints / target within 0.011 blocks across yaws, legs,
+and target classes including the near-extension band).
+
+**Independent review (3 reviewers on the pre-rebuild snapshot), all
+findings resolved or dispositioned:**
+- BLOCKER: FABRIK 20-iteration budget failed the near-extension band
+  (measured 21-275 iterations needed at 18.0-18.56 blocks; up to
+  0.145-block foot error the old harness never sampled). FIXED:
+  MAX_ITERATIONS 300 (mid-range still exits in <=5 via tolerance);
+  harness + property tests now cover 17.0/18.2/18.5/18.55 with a
+  direct residual assertion.
+- BLOCKER (multiplayer): spiderMovement is COMMON config — per-side
+  files, never synced — and both sides snapshotted their OWN copy;
+  mismatched files left client legs frozen at full stretch. FIXED:
+  only the server reads the config; the snapshot rides a synched
+  entity flag (DATA_MODERN_GAIT) and the client materializes its
+  replay controller from that flag alone.
+- MAJOR: vertical-retrigger livelock — a rest column scanning onto a
+  ledge/wall >2 blocks off body level re-stepped (and broadcast)
+  forever. FIXED: vertical-only retriggers now require the candidate
+  footing to differ by >=0.5 blocks.
+- MAJOR: a player starting to track a not-yet-ticked spider received
+  an all-zero keyframe and trusted it up to 40 ticks. FIXED:
+  buildKeyframe self-initializes the rest pose first.
+- MAJOR (test): the walk test drove via setPos, which the server
+  nulls into xo before each entity tick — the gait ran at observed
+  speed 0 and the radius lerp/lookahead had zero coverage. FIXED:
+  the walk drives through entity physics (delta movement re-pinned
+  per tick) with a travel-distance assertion; the radius lerp is
+  additionally pinned as pure math.
+- MINOR fixes: keyframes phase-shifted by entity id (no synchronized
+  bursts); keyframe decoder validates the wire leg count before
+  allocating; barrier-shell interaction documented in the walk test;
+  harness angles round-tripped through float to match the render
+  precision domain; degenerate-fallback epsilon/axis aligned between
+  solver and harness; lookahead duration refined against the
+  displaced target.
+- Documented as FAITHFUL, not fixed (both shared with classic, both
+  cancel from everything the solver computes): the vanilla +1.501
+  vertical render translate, and posing against entity yaw while the
+  renderer uses interpolated body yaw. Changing either would break
+  classic visual parity; revisit only as a deliberate S3+ decision.
+- Accepted-risk notes: client/server clock skew shows as a clamped
+  late swing start (keyframe-corrected); entity-id reuse could
+  misroute one step for <=40 ticks (needs same-tick recycling);
+  mid-swing keyframes snap to the swing target by design.
+- Reviewer verdicts also REFUTED (no change needed): bitmask sign
+  extension, division-by-zero, packet-order races,
+  PacketDistributor signatures, test flakiness (both gait tests
+  traced deterministic against framework tick order and margins).
+
+**Classic pins disposition:** no per-test pins added in S2 — the
+review's parity reviewer verified the modern server tick mutates no
+world/body state (packets only), so every existing test is provably
+mode-agnostic; instead the FULL suite runs under both defaults
+(sweep, below). Per-test pins land with S4/S5 where genuine server
+behavior deltas (parts, tickRidden) first appear.
+
+GATE: build+assetAudit exit 0 (0 err/0 adv/3 ack); suite exit 0 —
+155/155 under spiderMovement=MODERN and 155/155 under CLASSIC (151
+baseline incl. the hotfix's EntityConstructionTests + 4 new). S2 exit
+criteria met: modern walks flat ground with no planted-foot slide,
+classic bit-identical, suite green in both modes.

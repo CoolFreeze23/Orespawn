@@ -189,6 +189,12 @@ snapshot ⇒ D2 `updateLegs` client path exactly as shipped, no parts, no
 server solver, no sync — the modern code is unreachable dead weight for
 that entity.
 
+*S2 amendment (independent review):* the config is COMMON (per-side
+files, never synced), so the SERVER's construction snapshot is published
+to clients on a synched entity flag and the client's own config is never
+consulted — otherwise mismatched client/server files would leave client
+legs frozen at full stretch in multiplayer.
+
 ### D5 — Gait scope for S2 (walk only)
 
 WALK gait only in the first shipping slice: distance-triggered trigger

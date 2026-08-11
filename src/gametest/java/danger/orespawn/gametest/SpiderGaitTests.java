@@ -1,0 +1,451 @@
+package danger.orespawn.gametest;
+
+import danger.orespawn.ModEntities;
+import danger.orespawn.OreSpawnConfig;
+import danger.orespawn.OreSpawnMod;
+import danger.orespawn.entity.SpiderRobot;
+import danger.orespawn.entity.client.RenderSpiderRobotInfo;
+import danger.orespawn.entity.gait.ModernSpiderGait;
+import danger.orespawn.entity.gait.PlanarFabrik;
+import danger.orespawn.entity.gait.SpiderRigProfile;
+
+import net.minecraft.core.BlockPos;
+import net.minecraft.gametest.framework.GameTest;
+import net.minecraft.gametest.framework.GameTestHelper;
+import net.minecraft.util.Mth;
+import net.neoforged.neoforge.gametest.GameTestHolder;
+import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+
+/**
+ * 2.0 spider overhaul, S2 (batch categories: gait).
+ *
+ * <p>The render-parity harness runs first by design mandate (design doc §7 /
+ * owner directive): it proves the world-joint → model-angle conversion exact
+ * against a double-precision reimplementation of the shipped model's forward
+ * kinematics before any gait behavior is trusted. Independent-review
+ * hardening: the target grid includes the near-full-extension band where
+ * FABRIK's convergence is slowest (the original 20-iteration budget failed
+ * exactly there), and the emitted angles are round-tripped through
+ * {@code float} to match the precision domain the real render path uses.
+ * The gait invariant tests then cover the S1 design's invariants 1-3 (no
+ * planted-foot slide, feet grounded at rest, cadence bounds + no adjacent
+ * simultaneous swings), driven through the entity's own physics so the
+ * server gait observes real velocity (a {@code setPos}-driven body reads as
+ * stationary — the framework resets {@code xo} before each entity tick).</p>
+ *
+ * <p>Tests that flip {@code spiderMovement} run in the isolated batch
+ * {@code spiderGaitIsolation} (the BOSS-017 idiom): the flag is global and
+ * snapshotted at entity construction, so it is restored immediately after
+ * the constructions under test — but isolation keeps even that window away
+ * from concurrently scheduled default-batch tests.</p>
+ */
+@GameTestHolder(OreSpawnMod.MOD_ID)
+@PrefixGameTestTemplate(false)
+public class SpiderGaitTests {
+
+    /** Hip placement uses no solved angles — pure double algebra. */
+    private static final double EPS_HIP = 1.0E-6;
+    /**
+     * Joint identities after the float round-trip of the five angles (float
+     * ulp of an angle in [-π,π] is ~1.2e-7 rad; ~2.3e-6 blocks at full
+     * reach — 1e-4 leaves 40× margin while still sub-visual).
+     */
+    private static final double EPS_JOINT = 1.0E-4;
+    /** FABRIK convergence tolerance + float noise + margin. */
+    private static final double EPS_TARGET = 0.011;
+
+    // =====================================================================
+    // S2 render-parity harness (design doc D2's mandated first proof)
+    // =====================================================================
+
+    /**
+     * Double-precision forward kinematics of the shipped leg pose — a direct
+     * reimplementation of {@code ModelSpiderRobot.poseLeg}: model hip pivot
+     * per :325-327, per-segment chain advance per :334-344 (segment direction
+     * {@code (cos(a)·sin(yd), −sin(a), cos(a)·cos(yd))·99px} with
+     * {@code a_i = p_i + ud}), then the render transform's model→world action
+     * for vectors (horizontal azimuth reflection
+     * {@code α_world = yawRad − α_model}, vertical negation, ÷16 — derivation
+     * and the two shared-with-classic absolute-space caveats, the vanilla
+     * +1.501 vertical render translate and entity-vs-body yaw, are documented
+     * in {@code ModernSpiderGait.solveLegAngles}; both are constants/shared
+     * offsets that cancel from every vector this harness asserts on).
+     *
+     * <p>The five input angles are round-tripped through {@code float}
+     * first, because that is the precision the real path stores/consumes
+     * ({@code clientTick} stores float yd/ud; {@code poseLeg} casts the
+     * p-angles to float at consumption).</p>
+     *
+     * @return world positions of hip, knee1, knee2, foot
+     */
+    private static double[][] modelForwardKinematics(int leg, double bodyX, double bodyY, double bodyZ,
+                                                     float yawDeg, double[] angles) {
+        double yd = (float) angles[0];
+        double ud = (float) angles[1];
+        double ymid = SpiderRigProfile.neutralYaw(leg);
+        double legoff = SpiderRigProfile.hipRadial(leg);
+        double yoff = SpiderRigProfile.hipVertical(leg);
+
+        // Model-space chain in pixels (ModelSpiderRobot.poseLeg:325-327, 334-344).
+        double[][] model = new double[4][3];
+        model[0][0] = -Math.cos(ymid) * legoff * 16.0;
+        model[0][1] = yoff * -16.0;
+        model[0][2] = Math.sin(ymid) * legoff * 16.0;
+        double[] segAngles = {
+                (float) angles[2] + (float) ud,
+                (float) angles[3] + (float) ud,
+                (float) angles[4] + (float) ud};
+        for (int i = 0; i < 3; ++i) {
+            double a = segAngles[i];
+            model[i + 1][0] = model[i][0] + Math.cos(a) * Math.sin(yd) * 99.0;
+            model[i + 1][1] = model[i][1] - Math.sin(a) * 99.0;
+            model[i + 1][2] = model[i][2] + Math.cos(a) * Math.cos(yd) * 99.0;
+        }
+
+        // Model → world (vector action of the render transform).
+        double yawRad = Math.toRadians(Mth.wrapDegrees((double) yawDeg));
+        double[][] world = new double[4][3];
+        for (int i = 0; i < 4; ++i) {
+            double h = Math.hypot(model[i][0], model[i][2]);
+            double alphaM = Math.atan2(model[i][2], model[i][0]);
+            double alphaW = yawRad - alphaM;
+            world[i][0] = bodyX + h / 16.0 * Math.cos(alphaW);
+            world[i][1] = bodyY - model[i][1] / 16.0;
+            world[i][2] = bodyZ + h / 16.0 * Math.sin(alphaW);
+        }
+        return world;
+    }
+
+    private static void assertClose(GameTestHelper helper, String what,
+                                    double ax, double ay, double az,
+                                    double bx, double by, double bz, double eps) {
+        double d = Math.sqrt((ax - bx) * (ax - bx) + (ay - by) * (ay - by) + (az - bz) * (az - bz));
+        helper.assertTrue(d <= eps, what + " off by " + d + " (> " + eps + "): ("
+                + ax + "," + ay + "," + az + ") vs (" + bx + "," + by + "," + bz + ")");
+    }
+
+    /**
+     * The mandated conversion proof: for every leg, a spread of body yaws and
+     * foot targets — rest pose, offset, near-fold, raised, and the
+     * near-full-extension band (17.0 / 18.2 / 18.5 of 18.5625 max reach)
+     * where FABRIK converges slowest — the angles emitted by
+     * {@code ModernSpiderGait.solveLegAngles} must, when pushed through the
+     * model's own forward kinematics and the render transform, put the hip
+     * exactly on the rig hip, every knee on the FABRIK joint, and the foot
+     * on the requested target (within the FABRIK convergence tolerance;
+     * unreachable targets get the straight full-reach chain).
+     */
+    @GameTest(template = "empty")
+    public void s2_render_parity_harness(GameTestHelper helper) {
+        double bodyX = 100.5;
+        double bodyY = 64.0;
+        double bodyZ = -200.25;
+        float[] yaws = {0.0f, 37.5f, 90.0f, 180.0f, 271.3f, -45.0f};
+        double[][] joints = {new double[2], new double[2], new double[2], new double[2]};
+        double[] angles = new double[5];
+        int cases = 0;
+
+        for (float yaw : yaws) {
+            for (int leg = 0; leg < SpiderRigProfile.LEG_COUNT; ++leg) {
+                double hx = SpiderRigProfile.hipX(leg, bodyX, yaw);
+                double hy = SpiderRigProfile.hipY(leg, bodyY);
+                double hz = SpiderRigProfile.hipZ(leg, bodyZ, yaw);
+                double bearing = SpiderRigProfile.legBearing(leg, yaw);
+                double outX = -Math.sin(bearing);
+                double outZ = Math.cos(bearing);
+                double rest = SpiderRigProfile.restReach(leg);
+
+                double[][] targets = {
+                        {hx + outX * rest, bodyY, hz + outZ * rest},                    // rest stance
+                        {hx + outX * (rest - 2.0) + 1.0, bodyY - 1.0, hz + outZ * (rest - 2.0) - 1.5}, // drifted
+                        {hx + outX * 3.0, bodyY - 2.0, hz + outZ * 3.0},                // near-fold
+                        {hx + outX * 8.0, bodyY + 3.0, hz + outZ * 8.0},                // raised footing
+                        {hx + outX * 17.0, hy, hz + outZ * 17.0},                       // near-extension band
+                        {hx + outX * 18.2, hy - 2.0, hz + outZ * 18.2},                 // near-extension, low
+                        {hx + outX * 18.5, hy, hz + outZ * 18.5},                       // 99.7% of max reach
+                        {hx + outX * 25.0, bodyY - 1.0, hz + outZ * 25.0},              // unreachable
+                };
+                for (double[] t : targets) {
+                    ModernSpiderGait.solveLegAngles(bodyX, bodyY, bodyZ, yaw,
+                            leg, t[0], t[1], t[2], joints, angles);
+                    double[][] fk = modelForwardKinematics(leg, bodyX, bodyY, bodyZ, yaw, angles);
+
+                    // Hip: the render transform must land exactly on the rig hip.
+                    assertClose(helper, "leg " + leg + " yaw " + yaw + " hip",
+                            fk[0][0], fk[0][1], fk[0][2], hx, hy, hz, EPS_HIP);
+
+                    // Every joint: FK-of-angles == the FABRIK solution mapped to
+                    // world. The u-axis fallback mirrors the solver's own
+                    // (same 1e-6 epsilon, same neutral-bearing axis).
+                    double dx = t[0] - hx;
+                    double dz = t[2] - hz;
+                    double dh = Math.sqrt(dx * dx + dz * dz);
+                    double ux;
+                    double uz;
+                    if (dh > 1.0E-6) {
+                        ux = dx / dh;
+                        uz = dz / dh;
+                    } else {
+                        double fallback = SpiderRigProfile.legBearing(leg, yaw) + Math.PI / 2.0;
+                        ux = Math.cos(fallback);
+                        uz = Math.sin(fallback);
+                    }
+                    for (int j = 1; j <= 3; ++j) {
+                        assertClose(helper, "leg " + leg + " yaw " + yaw + " joint " + j,
+                                fk[j][0], fk[j][1], fk[j][2],
+                                hx + ux * joints[j][0], hy + joints[j][1], hz + uz * joints[j][0],
+                                EPS_JOINT);
+                    }
+
+                    // Foot-on-target for reachable targets; full straight reach otherwise.
+                    double dy = t[1] - hy;
+                    double targetDist = Math.sqrt(dh * dh + dy * dy);
+                    if (targetDist < SpiderRigProfile.MAX_REACH) {
+                        assertClose(helper, "leg " + leg + " yaw " + yaw + " foot (dist "
+                                        + String.format("%.2f", targetDist) + ")",
+                                fk[3][0], fk[3][1], fk[3][2], t[0], t[1], t[2], EPS_TARGET);
+                    } else {
+                        double reach = Math.sqrt(
+                                (fk[3][0] - hx) * (fk[3][0] - hx)
+                                        + (fk[3][1] - hy) * (fk[3][1] - hy)
+                                        + (fk[3][2] - hz) * (fk[3][2] - hz));
+                        helper.assertTrue(Math.abs(reach - SpiderRigProfile.MAX_REACH) < 1.0E-3,
+                                "unreachable target must straighten to full reach, got " + reach);
+                    }
+                    ++cases;
+                }
+            }
+        }
+        helper.assertTrue(cases == yaws.length * SpiderRigProfile.LEG_COUNT * 8,
+                "harness case count mismatch: " + cases);
+        helper.succeed();
+    }
+
+    /**
+     * FABRIK sanity pinned separately from the conversion: solved chains keep
+     * exact segment lengths, the straighten-bias seed folds the knee upward
+     * (knee1 above the hip-foot chord), and — the review's convergence-cliff
+     * canary — the foot lands within tolerance across the near-extension
+     * band that exhausted the original 20-iteration budget. The trigger
+     * radius lerp is pinned here too (its runtime path is exercised by the
+     * physics-driven walk test).
+     */
+    @GameTest(template = "empty")
+    public void s2_fabrik_segment_and_knee_properties(GameTestHelper helper) {
+        double[][] joints = {new double[2], new double[2], new double[2], new double[2]};
+        double L = SpiderRigProfile.SEGMENT_LENGTH;
+        double[][] targets = {
+                {16.0, -0.3}, {10.0, -0.3}, {12.0, 2.0}, {5.0, -3.0}, {3.0, -1.0},
+                {17.5, 1.0}, {17.9, 0.0}, {18.2, -1.0}, {18.5, 0.0}, {18.55, 0.0}};
+        for (double[] t : targets) {
+            PlanarFabrik.solve(L, t[0], t[1], PlanarFabrik.DEFAULT_KNEE_BIAS, joints);
+            for (int i = 0; i < 3; ++i) {
+                double du = joints[i + 1][0] - joints[i][0];
+                double dv = joints[i + 1][1] - joints[i][1];
+                double len = Math.sqrt(du * du + dv * dv);
+                helper.assertTrue(Math.abs(len - L) < 1.0E-9,
+                        "segment " + i + " length " + len + " != " + L + " for target (" + t[0] + "," + t[1] + ")");
+            }
+            // Convergence: reachable targets end within tolerance (the 18.5x
+            // cases needed ~100-275 iterations — the budget must cover them).
+            double dist = Math.sqrt(t[0] * t[0] + t[1] * t[1]);
+            if (dist < SpiderRigProfile.MAX_REACH) {
+                double eu = joints[3][0] - t[0];
+                double ev = joints[3][1] - t[1];
+                double residual = Math.sqrt(eu * eu + ev * ev);
+                helper.assertTrue(residual <= PlanarFabrik.TOLERANCE + 1.0E-9,
+                        "FABRIK residual " + residual + " at target (" + t[0] + "," + t[1] + ")");
+            }
+            // Knee-up: knee1 sits above the straight hip→target chord.
+            double chordV = t[1] * (joints[1][0] / Math.max(t[0], 1.0E-9));
+            helper.assertTrue(joints[1][1] > chordV - 1.0E-9,
+                    "knee folded below the chord for target (" + t[0] + "," + t[1] + ")");
+        }
+        // Trigger-radius lerp endpoints + midpoint monotonicity.
+        helper.assertTrue(ModernSpiderGait.triggerRadius(0.0) == 2.0, "trigger radius at rest");
+        helper.assertTrue(ModernSpiderGait.triggerRadius(1.0) == 5.0, "trigger radius saturates at full speed");
+        double mid = ModernSpiderGait.triggerRadius(0.175);
+        helper.assertTrue(mid > 2.0 && mid < 5.0 && Math.abs(mid - 3.5) < 1.0E-9,
+                "trigger radius half-speed midpoint, got " + mid);
+        helper.succeed();
+    }
+
+    // =====================================================================
+    // Gait invariants 1-3 (design doc §4) — isolated batch, modern mode
+    // =====================================================================
+
+    /**
+     * Invariants over a flat-ground walk: after a settle window every foot is
+     * grounded near floor height (inv 2); planted feet never move between
+     * observations while the body walks ~19 blocks (inv 1, the no-slide
+     * contract); every leg steps at least twice with no leg swinging at the
+     * same time as its mirrored partner or same-side neighbors (inv 3).
+     *
+     * <p>Drive mechanics (independent-review fix): the body is driven by
+     * setting its delta movement each test tick, so the entity's own physics
+     * moves it during its tick and {@code serverTick} observes a real
+     * {@code xo} delta — a {@code setPos}-driven body reads as stationary
+     * (the server resets old-pos immediately before each entity tick),
+     * silently bypassing the speed-radius lerp and velocity lookahead.
+     * Friction is irrelevant because the delta is re-pinned every tick.</p>
+     *
+     * <p>Structure-shell note: the test box is encased in barrier walls by
+     * the framework. Front-leg rest columns sweep past the far wall plane
+     * late in the walk; the column scan then tops out on the barrier
+     * (footing at body Y+3) — legal raised footings under the S2 flat-ground
+     * scan. The vertical-retrigger gain guard keeps that from thrashing
+     * (the pre-review code livelocked exactly here), and the step-count
+     * upper bound would catch a regression.</p>
+     */
+    @GameTest(template = "empty_large", timeoutTicks = 400, batch = "spiderGaitIsolation")
+    public void s2_gait_invariants_flat_walk(GameTestHelper helper) {
+        OreSpawnConfig.SpiderMovement prior = OreSpawnConfig.SPIDER_MOVEMENT.get();
+        final SpiderRobot spider;
+        try {
+            OreSpawnConfig.SPIDER_MOVEMENT.set(OreSpawnConfig.SpiderMovement.MODERN);
+            spider = helper.spawn(ModEntities.SPIDER_ROBOT.get(), new BlockPos(24, 3, 24));
+        } finally {
+            // Construction snapshot taken — restore immediately.
+            OreSpawnConfig.SPIDER_MOVEMENT.set(prior);
+        }
+        ModernSpiderGait gait = spider.getModernGait();
+        helper.assertTrue(gait != null, "spider constructed under MODERN must carry the gait controller");
+
+        final int settleTicks = 30;
+        final int walkTicks = 65;      // ~19.5 blocks at 0.30 blocks/tick
+        final double driveSpeed = 0.30;
+        final double[][] prevFoot = new double[SpiderRigProfile.LEG_COUNT][3];
+        final boolean[] prevPlanted = new boolean[SpiderRigProfile.LEG_COUNT];
+        final boolean[] prevSwinging = new boolean[SpiderRigProfile.LEG_COUNT];
+        final int[] steps = new int[SpiderRigProfile.LEG_COUNT];
+        final int[] tick = {0};
+
+        helper.onEachTick(() -> {
+            try {
+                int t = ++tick[0];
+                if (t < settleTicks) {
+                    return;
+                }
+                if (t == settleTicks) {
+                    // Invariant 2: at rest on flat ground, everything is planted.
+                    for (int leg = 0; leg < SpiderRigProfile.LEG_COUNT; ++leg) {
+                        helper.assertTrue(gait.isGrounded(leg),
+                                "leg " + leg + " not grounded after " + settleTicks + " settle ticks (inv 2)");
+                        helper.assertTrue(Math.abs(gait.footY(leg) - spider.getY()) < 1.5,
+                                "leg " + leg + " foot Y " + gait.footY(leg) + " far from body Y "
+                                        + spider.getY() + " on flat ground (inv 2)");
+                        prevFoot[leg][0] = gait.footX(leg);
+                        prevFoot[leg][1] = gait.footY(leg);
+                        prevFoot[leg][2] = gait.footZ(leg);
+                        prevPlanted[leg] = true;
+                        prevSwinging[leg] = false;
+                    }
+                    return;
+                }
+
+                // Drive the body straight +X through its own physics.
+                spider.setDeltaMovement(driveSpeed, spider.getDeltaMovement().y, 0.0);
+
+                for (int leg = 0; leg < SpiderRigProfile.LEG_COUNT; ++leg) {
+                    boolean planted = gait.isGrounded(leg);
+                    boolean swinging = gait.isSwinging(leg);
+
+                    // Invariant 1: a foot planted across two observations has not moved.
+                    if (planted && prevPlanted[leg]) {
+                        double d = Math.abs(gait.footX(leg) - prevFoot[leg][0])
+                                + Math.abs(gait.footY(leg) - prevFoot[leg][1])
+                                + Math.abs(gait.footZ(leg) - prevFoot[leg][2]);
+                        helper.assertTrue(d < 1.0E-6,
+                                "planted foot " + leg + " slid " + d + " blocks (inv 1)");
+                    }
+                    if (planted) {
+                        prevFoot[leg][0] = gait.footX(leg);
+                        prevFoot[leg][1] = gait.footY(leg);
+                        prevFoot[leg][2] = gait.footZ(leg);
+                    }
+                    prevPlanted[leg] = planted;
+
+                    // Invariant 3a: never simultaneous with partner or side-neighbors.
+                    if (swinging) {
+                        helper.assertFalse(gait.isSwinging(SpiderRigProfile.pairedWith(leg)),
+                                "leg " + leg + " and its pair partner swing simultaneously (inv 3)");
+                        if (leg - 2 >= 0) {
+                            helper.assertFalse(gait.isSwinging(leg - 2),
+                                    "legs " + leg + " and " + (leg - 2) + " (same side) swing simultaneously (inv 3)");
+                        }
+                    }
+                    if (swinging && !prevSwinging[leg]) {
+                        ++steps[leg];
+                    }
+                    prevSwinging[leg] = swinging;
+                }
+
+                if (t == settleTicks + walkTicks) {
+                    // Invariant 3b: cadence over ~19 blocks of travel.
+                    for (int leg = 0; leg < SpiderRigProfile.LEG_COUNT; ++leg) {
+                        helper.assertTrue(steps[leg] >= 2,
+                                "leg " + leg + " stepped only " + steps[leg] + " times over the walk (inv 3)");
+                        helper.assertTrue(steps[leg] <= 20,
+                                "leg " + leg + " stepped " + steps[leg] + " times — thrashing (inv 3)");
+                    }
+                    helper.assertTrue(spider.getX() - helper.absolutePos(new BlockPos(24, 3, 24)).getX() > 10.0,
+                            "drive failed: spider only reached relative x offset "
+                                    + (spider.getX() - helper.absolutePos(new BlockPos(24, 3, 24)).getX()));
+                    spider.discard();
+                    helper.succeed();
+                }
+            } catch (RuntimeException e) {
+                spider.discard(); // don't leak the walker into later plot reuse
+                throw e;
+            }
+        });
+    }
+
+    /**
+     * The construction-time snapshot contract (design doc D4) plus the
+     * deliberate-duplication guard: a spider constructed under CLASSIC has no
+     * modern controller (and a false synced flag) and keeps both through a
+     * config flip; the classic solver's live per-leg tables must equal the
+     * modern rig mirror ({@code SpiderRigProfile} documents why the values
+     * are duplicated rather than shared).
+     */
+    @GameTest(template = "empty", batch = "spiderGaitIsolation")
+    public void s2_movement_mode_construction_snapshot(GameTestHelper helper) {
+        OreSpawnConfig.SpiderMovement prior = OreSpawnConfig.SPIDER_MOVEMENT.get();
+        try {
+            OreSpawnConfig.SPIDER_MOVEMENT.set(OreSpawnConfig.SpiderMovement.CLASSIC);
+            SpiderRobot classic = helper.spawnWithNoFreeWill(ModEntities.SPIDER_ROBOT.get(), new BlockPos(2, 2, 2));
+            helper.assertTrue(classic.getModernGait() == null,
+                    "CLASSIC-constructed spider must not carry a modern gait controller");
+            helper.assertFalse(classic.isModernMovement(),
+                    "CLASSIC-constructed spider must sync a false modern flag");
+
+            // Mirror guard: classic initLegData values == SpiderRigProfile.
+            RenderSpiderRobotInfo r = classic.getRenderSpiderRobotInfo();
+            for (int leg = 0; leg < SpiderRigProfile.LEG_COUNT; ++leg) {
+                helper.assertTrue(r.ymid[leg] == (float) SpiderRigProfile.neutralYaw(leg),
+                        "ymid mirror drift at leg " + leg);
+                helper.assertTrue(r.legoff[leg] == (float) SpiderRigProfile.hipRadial(leg),
+                        "legoff mirror drift at leg " + leg);
+                helper.assertTrue(r.yoff[leg] == (float) SpiderRigProfile.hipVertical(leg),
+                        "yoff mirror drift at leg " + leg);
+                helper.assertTrue(Math.abs(r.yrange[leg]) == (float) SpiderRigProfile.swingRange(leg),
+                        "yrange mirror drift at leg " + leg);
+                helper.assertTrue(r.pairedwith[leg] == SpiderRigProfile.pairedWith(leg),
+                        "pairedwith mirror drift at leg " + leg);
+            }
+
+            OreSpawnConfig.SPIDER_MOVEMENT.set(OreSpawnConfig.SpiderMovement.MODERN);
+            helper.assertTrue(classic.getModernGait() == null && !classic.isModernMovement(),
+                    "config flip must not retrofit a live classic spider (construction snapshot)");
+            SpiderRobot modern = helper.spawnWithNoFreeWill(ModEntities.SPIDER_ROBOT.get(), new BlockPos(2, 2, 4));
+            helper.assertTrue(modern.getModernGait() != null && modern.isModernMovement(),
+                    "MODERN-constructed spider must carry the gait controller + synced flag");
+            classic.discard();
+            modern.discard();
+        } finally {
+            OreSpawnConfig.SPIDER_MOVEMENT.set(prior);
+        }
+        helper.succeed();
+    }
+}

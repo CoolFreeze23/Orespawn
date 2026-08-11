@@ -6,6 +6,17 @@ public class OreSpawnConfig {
     public static final ModConfigSpec SPEC;
     private static final ModConfigSpec.Builder BUILDER = new ModConfigSpec.Builder();
 
+    /**
+     * 2.0 spider overhaul: which gait solver the robot spiders use.
+     * CLASSIC is the untouched 1.7.10-parity client-side gait; MODERN is the
+     * server-authoritative procedural IK gait. Snapshotted at entity
+     * construction ON THE SERVER (BOSS-017 pattern) and synced to clients on
+     * the entity — flipping the value affects newly constructed/loaded
+     * spiders, not live ones, and the client's own copy of this file is
+     * never consulted for the mode.
+     */
+    public enum SpiderMovement { CLASSIC, MODERN }
+
     // Mob toggles
     public static final ModConfigSpec.BooleanValue ALL_MOBS_DISABLE;
     public static final ModConfigSpec.BooleanValue PHASE14_CONTENT_ENABLE;
@@ -128,6 +139,7 @@ public class OreSpawnConfig {
     public static final ModConfigSpec.BooleanValue ROYAL_GLIDE_ENABLE;
     public static final ModConfigSpec.BooleanValue DRAGONFLY_HORSE_FRIENDLY;
     public static final ModConfigSpec.BooleanValue PLAY_NICELY;
+    public static final ModConfigSpec.EnumValue<SpiderMovement> SPIDER_MOVEMENT;
     public static final ModConfigSpec.BooleanValue MINERS_DREAM_EXPENSIVE;
     public static final ModConfigSpec.BooleanValue DISABLE_OVERWORLD_DUNGEONS;
     public static final ModConfigSpec.BooleanValue FULL_POWER_KING_ENABLE;
@@ -278,6 +290,14 @@ public class OreSpawnConfig {
         ROYAL_GLIDE_ENABLE = BUILDER.define("royalGlideEnable", true);
         DRAGONFLY_HORSE_FRIENDLY = BUILDER.define("dragonflyHorseFriendly", false);
         PLAY_NICELY = BUILDER.define("playNicely", false);
+        // 2.0 spider overhaul (design ruling 2026-08-11): default MODERN; one
+        // config line back to full 1.7.10 parity. Server-authoritative: the
+        // server's value at entity construction wins and is synced.
+        SPIDER_MOVEMENT = BUILDER.comment(
+                "Robot spider leg movement. MODERN = procedural IK gait (server-authoritative, 2.0). " +
+                        "CLASSIC = the exact 1.7.10 gait, preserved bit-identically. " +
+                        "Takes effect for newly spawned/loaded spiders; the server's setting wins in multiplayer."
+        ).defineEnum("spiderMovement", SpiderMovement.MODERN);
         MINERS_DREAM_EXPENSIVE = BUILDER.define("minersDreamExpensive", false);
         DISABLE_OVERWORLD_DUNGEONS = BUILDER.define("disableOverworldDungeons", false);
         FULL_POWER_KING_ENABLE = BUILDER.define("fullPowerKingEnable", false);
