@@ -33,6 +33,21 @@ These came straight out of hand-testing and are fixed in code in this build;
 most still need a second pair of eyes in a real game. If one still looks
 wrong for you, please say so.
 
+**beta.3 (first field reports — thank you!):**
+
+- The mod no longer needs any other mod installed to launch: beta.2 crashed
+  on startup unless something else provided the `databuddy` library; it's
+  bundled now. *(BUG-032)*
+- Fixed the game freezing (chunks stop loading, blocks stop breaking) when
+  exploring near Basilisk Mazes or royal trees, most often in the Mining
+  dimension with performance mods like c2me or Distant Horizons' distant
+  generation installed. Frozen worlds are safe — affected chunks
+  regenerate cleanly. *(BUG-033)*
+- The Dungeon Beast actually spawns now (it never could in beta.2, and it
+  spammed "Failed to create mob" into the log while trying). *(BUG-034)*
+
+**beta.2 cycle:**
+
 - Pizza looks like pizza now — a cake-style block you eat slice by slice, not a flat filled-in square. *(i003)*
 - Duct tape actually works now, and it works like cake: right-click the ground to **place** the tape, then click the placed tape with the damaged item (a single one, main hand) to repair. Six uses per tape. *(i003 / TF-027)*
 - Thrown rocks, shoes, water balls, and the other throwables are now visible in flight instead of invisible. *(i018, i019, i020)*

@@ -457,15 +457,32 @@ public class LegacyDungeonPiece extends StructurePiece {
     private final DungeonType dungeonType;
     private final BlockPos origin;
 
-    // Per-postProcess hot-loop cache (canonical RoyalTreePiece pattern).
-    private transient WorldGenLevel pLevel;
-    private transient BlockPos.MutableBlockPos pMut;
-    private transient int pCbMinX;
-    private transient int pCbMaxX;
-    private transient int pCbMinY;
-    private transient int pCbMaxY;
-    private transient int pCbMinZ;
-    private transient int pCbMaxZ;
+    /**
+     * BUG-033 (beta.3): per-pass state for the gated helpers below, held in
+     * a ThreadLocal instead of plain instance fields. One structure piece is
+     * shared by EVERY chunk it spans, and postProcess for different chunks
+     * of the same piece runs concurrently (vanilla worker threads; constantly
+     * under c2me's parallel chunk system, and Distant Horizons' distant
+     * generation drives this generator from its own threads too). The
+     * previous "hot-loop cache" fields raced two ways: a finishing pass
+     * nulled the scratch state out from under a live one (the beta.2
+     * Mining-dimension freeze — NPE in {@link #place}, dead chunk, wedged
+     * chunk system), and two live passes could adopt each other's chunk-clip
+     * boxes, silently writing into the wrong chunk's window. A ThreadLocal
+     * keeps the fix inside this class: the ~35 per-structure generator
+     * classes call back through these helpers, and their signatures must not
+     * change in a hotfix.
+     */
+    private record PassCtx(WorldGenLevel level, BlockPos.MutableBlockPos mut,
+                           int cbMinX, int cbMaxX, int cbMinY, int cbMaxY,
+                           int cbMinZ, int cbMaxZ) {}
+
+    private final transient ThreadLocal<PassCtx> passCtx = new ThreadLocal<>();
+
+    /** The current pass's context; non-null exactly inside postProcess. */
+    private PassCtx ctx() {
+        return passCtx.get();
+    }
 
     public LegacyDungeonPiece(BlockPos origin, DungeonType dungeonType) {
         super(ModStructureTypes.LEGACY_DUNGEON_PIECE.get(), 0,
@@ -515,14 +532,9 @@ public class LegacyDungeonPiece extends StructurePiece {
                 (long) this.boundingBox.minX() * 341873128712L
                         + (long) this.boundingBox.minZ() * 132897987541L);
 
-        this.pLevel = level;
-        this.pMut = new BlockPos.MutableBlockPos();
-        this.pCbMinX = chunkBox.minX();
-        this.pCbMaxX = chunkBox.maxX();
-        this.pCbMinY = chunkBox.minY();
-        this.pCbMaxY = chunkBox.maxY();
-        this.pCbMinZ = chunkBox.minZ();
-        this.pCbMaxZ = chunkBox.maxZ();
+        this.passCtx.set(new PassCtx(level, new BlockPos.MutableBlockPos(),
+                chunkBox.minX(), chunkBox.maxX(), chunkBox.minY(),
+                chunkBox.maxY(), chunkBox.minZ(), chunkBox.maxZ()));
 
         try {
             switch (dungeonType) {
@@ -573,8 +585,9 @@ public class LegacyDungeonPiece extends StructurePiece {
                 case ENDER_KNIGHT_DUNGEON -> EnderKnightDungeonGenerator.generate(this, origin, rng);
             }
         } finally {
-            this.pLevel = null;
-            this.pMut = null;
+            // BUG-033: scoped to this pass only — concurrent passes on other
+            // threads keep their own context.
+            this.passCtx.remove();
         }
     }
 
@@ -606,9 +619,10 @@ public class LegacyDungeonPiece extends StructurePiece {
 
     /** Returns true iff the target cell is inside the per-chunk write window. */
     boolean inChunk(int x, int y, int z) {
-        return x >= pCbMinX && x <= pCbMaxX
-                && y >= pCbMinY && y <= pCbMaxY
-                && z >= pCbMinZ && z <= pCbMaxZ;
+        PassCtx c = ctx();
+        return x >= c.cbMinX() && x <= c.cbMaxX()
+                && y >= c.cbMinY() && y <= c.cbMaxY()
+                && z >= c.cbMinZ() && z <= c.cbMaxZ();
     }
 
     /**
@@ -625,8 +639,9 @@ public class LegacyDungeonPiece extends StructurePiece {
      */
     BlockState terrainStateIfInChunk(int x, int y, int z) {
         if (!inChunk(x, y, z)) return null;
-        pMut.set(x, y, z);
-        return pLevel.getBlockState(pMut);
+        PassCtx c = ctx();
+        c.mut().set(x, y, z);
+        return c.level().getBlockState(c.mut());
     }
 
     /**
@@ -739,18 +754,20 @@ public class LegacyDungeonPiece extends StructurePiece {
      */
     private boolean iglooColumnHasSnowBlockSurface(int x, int z) {
         int firstFree = origin.getY() + 2;   // anchor = firstFree − 2 (orig OSW:1271)
-        pMut.set(x, firstFree, z);
-        BlockState above = pLevel.getBlockState(pMut);
+        PassCtx c = ctx();
+        c.mut().set(x, firstFree, z);
+        BlockState above = c.level().getBlockState(c.mut());
         if (!above.isAir() && !above.is(Blocks.SNOW)) return false;   // orig :1270 air test
-        pMut.set(x, firstFree - 1, z);
-        return pLevel.getBlockState(pMut).is(Blocks.SNOW_BLOCK);      // field_150433_aE, orig :1270
+        c.mut().set(x, firstFree - 1, z);
+        return c.level().getBlockState(c.mut()).is(Blocks.SNOW_BLOCK); // field_150433_aE, orig :1270
     }
 
     /** Gated {@code level.setBlock} ({@link #FLAG_PIECE_WRITE}). */
     void place(int x, int y, int z, BlockState state) {
         if (!inChunk(x, y, z)) return;
-        pMut.set(x, y, z);
-        pLevel.setBlock(pMut, state, FLAG_PIECE_WRITE);
+        PassCtx c = ctx();
+        c.mut().set(x, y, z);
+        c.level().setBlock(c.mut(), state, FLAG_PIECE_WRITE);
     }
 
     /**
@@ -774,8 +791,9 @@ public class LegacyDungeonPiece extends StructurePiece {
     void placeLootChest(int x, int y, int z, Direction facing, ResourceKey<LootTable> lootTable) {
         if (!inChunk(x, y, z)) return;
         BlockPos pos = new BlockPos(x, y, z);
-        pLevel.setBlock(pos, chestState(facing), FLAG_PIECE_WRITE);
-        if (pLevel.getBlockEntity(pos) instanceof RandomizableContainerBlockEntity container) {
+        WorldGenLevel level = ctx().level();
+        level.setBlock(pos, chestState(facing), FLAG_PIECE_WRITE);
+        if (level.getBlockEntity(pos) instanceof RandomizableContainerBlockEntity container) {
             container.setLootTable(lootTable);
         }
     }
@@ -815,11 +833,12 @@ public class LegacyDungeonPiece extends StructurePiece {
     void spawnPersistent(EntityType<? extends Mob> type, double x, double y, double z,
                          float yawDegrees, boolean ambientSound) {
         if (!inChunk(Mth.floor(x), Mth.floor(y), Mth.floor(z))) return;
-        Mob mob = type.create(pLevel.getLevel());
+        WorldGenLevel level = ctx().level();
+        Mob mob = type.create(level.getLevel());
         if (mob == null) return;
         mob.moveTo(x, y, z, yawDegrees, 0.0f);
         mob.setPersistenceRequired();
-        pLevel.addFreshEntityWithPassengers(mob);
+        level.addFreshEntityWithPassengers(mob);
         if (ambientSound) mob.playAmbientSound();
     }
 
@@ -833,10 +852,11 @@ public class LegacyDungeonPiece extends StructurePiece {
     void spawnEntity(EntityType<? extends net.minecraft.world.entity.Entity> type,
                      double x, double y, double z, float yawDegrees) {
         if (!inChunk(Mth.floor(x), Mth.floor(y), Mth.floor(z))) return;
-        net.minecraft.world.entity.Entity entity = type.create(pLevel.getLevel());
+        WorldGenLevel level = ctx().level();
+        net.minecraft.world.entity.Entity entity = type.create(level.getLevel());
         if (entity == null) return;
         entity.moveTo(x, y, z, yawDegrees, 0.0f);
-        pLevel.addFreshEntityWithPassengers(entity);
+        level.addFreshEntityWithPassengers(entity);
     }
 
     /** Gated chest placement + immediate fill (within the same postProcess pass). */
@@ -850,8 +870,9 @@ public class LegacyDungeonPiece extends StructurePiece {
     private void placeChest(int x, int y, int z, Direction facing, ChestFiller filler, RandomSource random) {
         if (!inChunk(x, y, z)) return;
         BlockPos pos = new BlockPos(x, y, z);
-        pLevel.setBlock(pos, chestState(facing), FLAG_PIECE_WRITE);
-        if (pLevel.getBlockEntity(pos) instanceof ChestBlockEntity chest) {
+        WorldGenLevel level = ctx().level();
+        level.setBlock(pos, chestState(facing), FLAG_PIECE_WRITE);
+        if (level.getBlockEntity(pos) instanceof ChestBlockEntity chest) {
             filler.fill(chest, random);
         }
     }
@@ -860,9 +881,10 @@ public class LegacyDungeonPiece extends StructurePiece {
     void placeSpawner(int x, int y, int z, EntityType<?> mob) {
         if (!inChunk(x, y, z)) return;
         BlockPos pos = new BlockPos(x, y, z);
-        pLevel.setBlock(pos, Blocks.SPAWNER.defaultBlockState(), FLAG_PIECE_WRITE);
-        if (pLevel.getBlockEntity(pos) instanceof SpawnerBlockEntity spawner) {
-            spawner.getSpawner().setEntityId(mob, null, pLevel.getRandom(), pos);
+        WorldGenLevel level = ctx().level();
+        level.setBlock(pos, Blocks.SPAWNER.defaultBlockState(), FLAG_PIECE_WRITE);
+        if (level.getBlockEntity(pos) instanceof SpawnerBlockEntity spawner) {
+            spawner.getSpawner().setEntityId(mob, null, level.getRandom(), pos);
         }
     }
 
@@ -2135,7 +2157,7 @@ public class LegacyDungeonPiece extends StructurePiece {
                 place(ox + i, cposy, oz + k, grass);
                 for (int v = 1; v < 10; v++) {
                     if (!inChunk(ox + i, cposy - v, oz + k)) continue;
-                    BlockState here = pLevel.getBlockState(
+                    BlockState here = ctx().level().getBlockState(
                             new BlockPos(ox + i, cposy - v, oz + k));
                     if (here.isAir() || here.is(Blocks.SHORT_GRASS) || here.is(Blocks.WATER)) {
                         place(ox + i, cposy - v, oz + k, dirt);
@@ -2332,8 +2354,9 @@ public class LegacyDungeonPiece extends StructurePiece {
         if (inChunk(cposx, cposy + 4, cposz)) {
             BlockPos chestPos = new BlockPos(cposx, cposy + 4, cposz);
             // Use full update flag so the chest tile entity initialises.
-            pLevel.setBlock(chestPos, Blocks.CHEST.defaultBlockState(), 3);
-            if (pLevel.getBlockEntity(chestPos) instanceof ChestBlockEntity chest) {
+            WorldGenLevel level = ctx().level();
+            level.setBlock(chestPos, Blocks.CHEST.defaultBlockState(), 3);
+            if (level.getBlockEntity(chestPos) instanceof ChestBlockEntity chest) {
                 ItemStack egg = king
                         ? new ItemStack(ModItems.THE_KING_SPAWN_EGG.get())
                         : new ItemStack(ModItems.THE_QUEEN_SPAWN_EGG.get());

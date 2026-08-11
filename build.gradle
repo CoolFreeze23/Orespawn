@@ -120,6 +120,15 @@ tasks.register('assetAudit', Exec) {
 }
 tasks.named('build') { dependsOn 'assetAudit' }
 
+// BUG-032 (beta.3): the DISTRIBUTED jar must be the jarJar output (nested
+// databuddy under META-INF/jarjar). Swap classifiers so the unclassified
+// `orespawn-<version>.jar` — the file everyone downloads — is the combined
+// one, and the library-less variant is clearly labeled `-slim`. jarJar is
+// wired into `build` so no release can be cut without the nested deps.
+tasks.named('jar', Jar) { archiveClassifier = 'slim' }
+tasks.named('jarJar') { archiveClassifier = '' }
+tasks.named('build') { dependsOn 'jarJar' }
+
 dependencies {
     implementation "net.neoforged:neoforge:${neo_version}"
     // GeckoLib 4.x for NeoForge 1.21.1 — powers the Queen Geckolib backend
@@ -139,6 +148,13 @@ dependencies {
     // AnjanathALib) so its class graph never references mod.azure.* —
     // which would otherwise crash with NoClassDefFoundError at runtime.
     implementation "net.commoble.databuddy:databuddy-1.21:6.0.0.0"
+    // BUG-032 (beta.3): databuddy must SHIP inside the jar — implementation
+    // alone only put it on the dev/gametest classpath, so the published
+    // beta.2 jar crashed any instance without databuddy installed
+    // (NoClassDefFoundError from MHLibHitboxTypes.<clinit>). jarJar nests it
+    // under META-INF/jarjar/ and NeoForge loads it as the GAMELIBRARY its
+    // manifest declares. Version range pins the 6.0.x line.
+    jarJar("net.commoble.databuddy:databuddy-1.21:[6.0.0.0,6.1.0)")
 }
 
 tasks.withType(ProcessResources).configureEach {
