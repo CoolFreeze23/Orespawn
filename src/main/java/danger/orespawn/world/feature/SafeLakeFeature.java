@@ -47,15 +47,15 @@ public class SafeLakeFeature extends Feature<LakeFeature.Configuration> {
     }
 
     @Override
-    public boolean place(FeaturePlaceContext<LakeFeature.Configuration> p_159958_) {
-        BlockPos blockpos = p_159958_.origin();
-        WorldGenLevel worldgenlevel = p_159958_.level();
-        RandomSource randomsource = p_159958_.random();
-        LakeFeature.Configuration lakefeature$configuration = p_159958_.config();
+    public boolean place(FeaturePlaceContext<LakeFeature.Configuration> context) {
+        BlockPos blockpos = context.origin();
+        WorldGenLevel worldgenlevel = context.level();
+        RandomSource randomsource = context.random();
+        LakeFeature.Configuration lakefeature$configuration = context.config();
         // Post-in_square origin sits inside the decorated chunk — its bounds
         // are the safe window for biome lookups (see class Javadoc).
-        int chunkMinX = p_159958_.origin().getX() & ~15;
-        int chunkMinZ = p_159958_.origin().getZ() & ~15;
+        int chunkMinX = context.origin().getX() & ~15;
+        int chunkMinZ = context.origin().getZ() & ~15;
         if (blockpos.getY() <= worldgenlevel.getMinBuildHeight() + 4) {
             return false;
         } else {
