@@ -62,7 +62,12 @@ public class BugMeleeAttackGoal extends Goal {
         public static Params herculesBeetle()  { return new Params(1.2, 5.0, 4, 3, 4,   0, 16.0, 6.0); }
         public static Params caterKiller()     { return new Params(1.25, 5.0, 4, 3, 4, 200, 20.0, 8.0); }
         public static Params caveFisher()      { return new Params(1.2, 2.83, 8, 7, 8,  0, 10.0, 3.0); }
-        public static Params dungeonBeast()    { return new Params(1.2, 2.83, 8, 7, 0,  0, 16.0, 3.0); }
+        // BUG-034 (beta.3): shipped inner=0 — the exact slip class the TF-026
+        // guard exists for — so construction threw and the DungeonBeast never
+        // spawned (NaturalSpawner "Failed to create mob" spam). Orig
+        // DungeonBeast.java:172 gates the swing on nextInt(8) (cadence) and
+        // :177 rolls nextInt(7)==0 || nextInt(8)==1 — outer 7, inner 8.
+        public static Params dungeonBeast()    { return new Params(1.2, 2.83, 8, 7, 8,  0, 16.0, 3.0); }
         public static Params spitBug()         { return new Params(0.5, 3.0, 5, 6, 7,   0, 12.0, 7.0); }
         public static Params trooperBug()      { return new Params(1.2, 5.0, 5, 6, 7,   0, 12.0, 7.0); }
     }

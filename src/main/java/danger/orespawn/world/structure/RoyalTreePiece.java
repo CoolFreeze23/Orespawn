@@ -131,26 +131,31 @@ public class RoyalTreePiece extends StructurePiece {
     private final BlockPos origin;
     private final boolean queenVariant;
 
-    // ---- Per-postProcess hot-loop cache ---------------------------------
-    // These transient fields are set at the top of postProcess and read by
-    // the inlined place() helper on every cell. Caching them avoids virtual
-    // calls into WorldGenLevel and per-call BoundingBox accessor overhead in
-    // the algorithm's hot loops. Not serialised — they get rebuilt on every
-    // postProcess invocation. The pCb* fields hold the *per-chunk* clipped
-    // bounding box passed in by vanilla; place() gates against this so each
-    // chunk's pass writes only its own slice of the tree (canonical Mansion
-    // multi-pass stitching). The pBb* fields hold the structure's full
-    // permit bounding box, only used as an outer sanity gate.
-    private transient WorldGenLevel pLevel;
-    private transient BlockPos.MutableBlockPos pMut;
-    private transient int pMinY;
-    private transient int pMaxY;
-    private transient int pCbMinX;
-    private transient int pCbMaxX;
-    private transient int pCbMinY;
-    private transient int pCbMaxY;
-    private transient int pCbMinZ;
-    private transient int pCbMaxZ;
+    // ---- Per-postProcess pass context -----------------------------------
+    // BUG-033 (beta.3): one piece is shared by every chunk it spans, and
+    // postProcess for different chunks of the same piece runs CONCURRENTLY
+    // (vanilla worker threads; constantly under c2me; Distant Horizons'
+    // distant generation too). The former plain instance fields raced: a
+    // finishing pass nulled the scratch state under a live one (NPE → dead
+    // chunk → wedged chunk system) and two live passes could adopt each
+    // other's chunk-clip boxes. Each pass now carries its own context in a
+    // ThreadLocal — see LegacyDungeonPiece.PassCtx for the full rationale.
+    // The cbMin/Max fields hold the *per-chunk* clipped bounding box passed
+    // in by vanilla; place() gates against it so each chunk's pass writes
+    // only its own slice of the tree (canonical Mansion multi-pass
+    // stitching). ThreadLocal.get() in the hot loop costs a few ns per
+    // place() attempt — noise against the ~5µs of an in-chunk write.
+    private record PassCtx(WorldGenLevel level, BlockPos.MutableBlockPos mut,
+                           int minY, int maxY,
+                           int cbMinX, int cbMaxX, int cbMinY, int cbMaxY,
+                           int cbMinZ, int cbMaxZ) {}
+
+    private final transient ThreadLocal<PassCtx> passCtx = new ThreadLocal<>();
+
+    /** The current pass's context; non-null exactly inside postProcess. */
+    private PassCtx ctx() {
+        return passCtx.get();
+    }
 
     public RoyalTreePiece(BlockPos origin, boolean queenVariant) {
         super(ModStructureTypes.ROYAL_TREE_PIECE.get(), 0,
@@ -221,16 +226,10 @@ public class RoyalTreePiece extends StructurePiece {
                 (long) this.boundingBox.minX() * 341873128712L
                         + (long) this.boundingBox.minZ() * 132897987541L);
 
-        this.pLevel = level;
-        this.pMut = new BlockPos.MutableBlockPos();
-        this.pMinY = level.getMinBuildHeight();
-        this.pMaxY = level.getMaxBuildHeight();
-        this.pCbMinX = chunkBox.minX();
-        this.pCbMaxX = chunkBox.maxX();
-        this.pCbMinY = chunkBox.minY();
-        this.pCbMaxY = chunkBox.maxY();
-        this.pCbMinZ = chunkBox.minZ();
-        this.pCbMaxZ = chunkBox.maxZ();
+        this.passCtx.set(new PassCtx(level, new BlockPos.MutableBlockPos(),
+                level.getMinBuildHeight(), level.getMaxBuildHeight(),
+                chunkBox.minX(), chunkBox.maxX(), chunkBox.minY(),
+                chunkBox.maxY(), chunkBox.minZ(), chunkBox.maxZ()));
 
         BlockState trunk;
         BlockState leaves;
@@ -254,9 +253,9 @@ public class RoyalTreePiece extends StructurePiece {
                     trunk, leaves, steps, spawner);
         } finally {
             // Drop the WorldGenLevel reference so this piece can't pin a
-            // world generation context across postProcess invocations.
-            this.pLevel = null;
-            this.pMut = null;
+            // world generation context. BUG-033: scoped to this pass's
+            // thread only — concurrent passes keep their own context.
+            this.passCtx.remove();
         }
     }
 
@@ -271,12 +270,13 @@ public class RoyalTreePiece extends StructurePiece {
      * on every chunk pass and the slices stitch together.
      */
     private void place(int x, int y, int z, BlockState state) {
-        if (y < pMinY || y >= pMaxY) return;
-        if (x < pCbMinX || x > pCbMaxX) return;
-        if (z < pCbMinZ || z > pCbMaxZ) return;
-        if (y < pCbMinY || y > pCbMaxY) return;
-        pMut.set(x, y, z);
-        pLevel.setBlock(pMut, state, FLAG_CLIENTS_ONLY);
+        PassCtx c = ctx();
+        if (y < c.minY() || y >= c.maxY()) return;
+        if (x < c.cbMinX() || x > c.cbMaxX()) return;
+        if (z < c.cbMinZ() || z > c.cbMaxZ()) return;
+        if (y < c.cbMinY() || y > c.cbMaxY()) return;
+        c.mut().set(x, y, z);
+        c.level().setBlock(c.mut(), state, FLAG_CLIENTS_ONLY);
     }
 
     /**
@@ -306,9 +306,10 @@ public class RoyalTreePiece extends StructurePiece {
         int last_last = -1;
 
         // ---- Anchor the four perimeter mid-side pillars down to surface ----
+        int worldMinY = ctx().minY();
         for (int i = -t_radius; i <= t_radius; ++i) {
             for (int j = 0; j < BASE_DEPTH; ++j) {
-                if (y - j <= pMinY) break;
+                if (y - j <= worldMinY) break;
                 place(x + i, y - j, z - t_radius, trunkID);
                 place(x + i, y - j, z + t_radius, trunkID);
                 place(x - t_radius, y - j, z + i, trunkID);

@@ -7,7 +7,9 @@ default **modern** per owner directive — note: MOD-014 suggested default
 classic; the owner's project brief overrides, recorded here).
 **Inviolable:** `classic` is the untouched D2 parity path, bit-identical;
 the 1.0 suite stays green in classic throughout.
-**Status:** DESIGN ONLY — awaiting owner approval. No code exists.
+**Status:** APPROVED 2026-08-11 as written, including the default-modern
+override of MOD-014 (S5's changelog must frame classic as one-config-line
+parity preservation). Rulings recorded in §7. S2 in progress.
 
 ---
 
@@ -246,8 +248,9 @@ isolated-batch config idiom from BOSS-017 — pinned tests set
 - **S4 — multi-part hitboxes.** Profiles, the server-side feed,
   damage routing, HUD unwrap, hitbox tests 5–8.
 - **S5 — ant variant + ride integration.** Ant rig parameters (6-leg,
-  49 px, hover interplay), SpiderRobot ridden path per Q1 ruling, full
-  suite sweep, KNOWN_ISSUES/CHANGELOG/config docs.
+  49 px, hover interplay), SpiderRobot modern-only B3 `tickRidden`
+  (Q1: YES), full suite sweep, KNOWN_ISSUES/CHANGELOG/config docs
+  (changelog frames classic as one-config-line parity preservation).
 
 Each slice: full gate (build + asset audit + suite, exit-code-guarded),
 FIX_LOG entries under "## 2.0 — Spider Overhaul", commit per slice.
@@ -264,23 +267,24 @@ FIX_LOG entries under "## 2.0 — Spider Overhaul", commit per slice.
 | Ant hover + gait interplay looks broken | MED | stranded-dangle design; S5 dedicated ride QA |
 | Suite interference from config flips | LOW | isolated-batch idiom (established) |
 
-## 7. Open questions — design rulings needed
+## 7. Design rulings (2026-08-11) — design APPROVED as written
 
-- **Q1:** SpiderRobot has no ridden movement at all today (pre-existing
-  1.0 gap — a mounted player can't steer). May modern mode add a B3
-  `tickRidden` ground-walker path (S5), leaving classic exactly as
-  shipped? Recommendation: **yes** — it's the single biggest playability
-  win of the overhaul; classic keeps the faithful no-steer behavior.
-- **Q2:** Walk-only for 2.0, or walk + gallop? Gallop in the reference
-  is a manual flag, not speed-automatic. Recommendation: **walk-only**
-  now; gallop as a follow-up once walk feel is proven (it reuses the
-  same scheduler with different pairing).
-- **Q3:** Part granularity — confirm 1 box/leg + pickable body
-  (recommendation), or 2 boxes/leg for finer leg-hit feel at ~2× part
-  count.
-- **Q4:** Extend to organic rigs (CaveFisher, EmperorScorpion) in this
-  project or a later one? Recommendation: **later** — MOD-014 lists them
-  as "evaluate once the technique lands."
+Approved including the default-modern override of MOD-014; S5's
+changelog must frame classic as one-config-line parity preservation.
+
+- **Q1 — SpiderRobot riding: YES.** Modern mode adds a B3-pattern
+  `tickRidden` ground-walker path in S5. Classic keeps the faithful
+  no-steer behavior exactly as shipped (the pre-existing 1.0 gap).
+- **Q2 — Gait scope: walk-only** for 2.0. Gallop is a possible
+  follow-up once walk feel is proven.
+- **Q3 — Part granularity: one box per leg + pickable body.**
+- **Q4 — Organic rigs (CaveFisher, EmperorScorpion): deferred to a
+  later project.**
+
+S2 execution order per the approval directive: the render-parity
+harness comes FIRST — no gait work until the world-joint → model-angle
+conversion is proven within ε. If the conversion fights, stop at the
+harness and show the owner the mismatch rather than tuning blind.
 
 ---
 

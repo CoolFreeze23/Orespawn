@@ -1,3 +1,26 @@
+# OreSpawn for NeoForge 1.21.1 — 1.0.0-beta.3
+
+A same-day hotfix for three problems caught by the first real-world play
+sessions of beta.2. Worlds carry forward; nothing else changed.
+
+- **Fixed: launch crash on clean installs.** beta.2 only launched if some
+  other mod happened to provide the `databuddy` library; without it the
+  game crashed during mod loading. The library now ships inside the
+  OreSpawn jar.
+- **Fixed: game freezes near Basilisk Mazes and royal trees** — chunks stop
+  loading, blocks stop breaking, and the log says `Failed to load chunk`.
+  This hit hardest in the Mining dimension and with parallel chunk engines
+  (c2me, Distant Horizons' distant generation). It was a thread-safety bug
+  in our structure generation; frozen worlds are safe, and the failed
+  chunks regenerate cleanly on your next visit.
+- **Fixed: the Dungeon Beast never spawned.** A bad attack-timing constant
+  made every spawn attempt fail (with "Failed to create mob" log spam).
+  Restored to the original's values, checked against the 1.7.10 source.
+- The test suite now constructs every mob type on every build, so an
+  unspawnable mob can never ship silently again.
+
+---
+
 # OreSpawn for NeoForge 1.21.1 — 1.0.0-beta.2
 
 The classic 1.7.10 OreSpawn, rebuilt for modern Minecraft. This is the first

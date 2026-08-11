@@ -2416,3 +2416,57 @@ MOD-014's suggested classic default), construct-time snapshot per the
 BOSS-017 pattern; walk-only gait for S2. Slices S2-S5, risk register,
 and owner questions Q1-Q4 (SpiderRobot ridden path, gallop scope, part
 granularity, organic-rig extension) in the doc.
+
+## S1 APPROVED — rulings recorded, S2 begins (2026-08-11)
+
+Design approved as written, including default-MODERN (the owner's
+override of MOD-014's suggested classic default; S5's changelog must
+frame classic as one-config-line parity preservation). Rulings:
+Q1 YES — modern-only B3 tickRidden for SpiderRobot lands in S5,
+classic keeps the faithful no-steer gap; Q2 walk-only; Q3 one box per
+leg + pickable body; Q4 organic rigs deferred to a later project.
+S2 order per the approval directive: render-parity harness FIRST (no
+gait work until the world-joint -> model-angle conversion is proven
+within epsilon; if it fights, stop and show the mismatch), then
+flat-ground walk gait (trigger capsule + inhibitors), step-event sync
+with periodic keyframe, spiderMovement enum with construction-time
+snapshot, classic pins via the isolated-batch idiom, gait invariant
+tests 1-3. SpiderRobot only. Exit: modern walks flat ground with no
+foot slide, classic bit-identical, suite green in both modes.
+
+## BETA.3 HOTFIX — three field-confirmed bugs (2026-08-11)
+
+First real-world field reports, all from the owner's DH/Iris instance on
+day one of public beta.2 (log citations in AUDIT_FINDINGS):
+
+- BUG-032 FIXED — databuddy was implementation-only; the published jar
+  crashed every install that lacked it. Now jarJar'd (META-INF/jarjar,
+  [6.0.0.0,6.1.0)). Packaging bugs are invisible to the suite by
+  construction; the release checklist gains a clean-instance launch step.
+- BUG-033 FIXED (CRITICAL) — LegacyDungeonPiece + RoyalTreePiece kept
+  per-pass scratch state in plain instance fields; concurrent postProcess
+  passes for different chunks of the SAME piece (c2me workers and DH
+  distant-gen threads, both in the field logs) raced. Pass A's
+  finally-null NPE'd pass B mid-place → dead chunk → wedged chunk system →
+  the reported "blocks stop breaking" freeze; two live passes could also
+  swap chunk-clip boxes (silent wrong-chunk writes). Both classes now hold
+  the pass state in a ThreadLocal PassCtx; helper signatures unchanged.
+  Sweep found no further offenders on place/postProcess paths.
+- BUG-034 FIXED — dungeonBeast() shipped innerAttackRoll=0 (the TF-026
+  guard slip class); the DungeonBeast was unspawnable with NaturalSpawner
+  log spam. Orig DungeonBeast.java:172/:177: cadence 8, outer 7, inner 8
+  (the ==1 inner quirk is already modeled in the goal). Fixed to 8.
+- NEW TEST — EntityConstructionTests constructs all registered orespawn
+  entity types once per suite run (suite 150 → 151): the gate BUG-034
+  lacked.
+
+INCIDENT DISCLOSURE (process, per the c4a7390 standard): while this hotfix
+was in progress, a side S2 research effort overstepped
+its brief and wrote an unreviewed S2 gait implementation into the working
+tree (edits to OreSpawnConfig/SpiderRobot/ModNetwork + 5 new files).
+Nothing reached a commit. The spillover was moved out to a local
+scratchpad (s2_quarantine/, including a diff patch of the shared-file
+edits), the tree was restored from HEAD, and the reviewed-by-me S2 solver
+files were parked alongside so this hotfix gates exactly the tree it
+commits. S2 resumes per the approved harness-first order; the quarantined
+code may inform but will not be adopted wholesale.

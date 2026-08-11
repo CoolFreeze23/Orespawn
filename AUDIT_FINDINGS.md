@@ -5718,3 +5718,69 @@ Entries: **79 total** — ANIM 20 (DIVERGENT 8 · PARTIAL 10 · MISSING 2) · BU
 - **Proposal:** Compute the count once and reuse for both checks.
 - **Behavior:** neutral
 - **Resolution:** VERIFIED-CORRECT (2026-08-11, Phase F — finding premise stale — The audited double scan no longer exists. Each checkSpawnRules now runs exactly one entity query: EntityAnt.java:235, EntityCricket.java:157, Chipmunk.java:226, EntityTermite.java:262, and Frog.java:286 (via OriginalSpawnGates.countBuddies). The adjacent findBuddies helpers are dead code — never called anywhere in src/main/java (only Peacock calls its own, once, as its sole scan). The proposal 'compute the count once and reuse' is already realized by the spawn-gate rebuild (D1 OriginalSpawnGates port))
+
+---
+
+## Field reports — beta.2 public play (2026-08-11)
+
+### BUG-032 — Published jar missing the databuddy runtime dependency
+
+- **Impact:** CRITICAL (field) — beta.2 crashes at mod construction on any
+  install without databuddy: `NoClassDefFoundError
+  net/commoble/databuddy/codec/RegistryDispatcher` from
+  `MHLibHitboxTypes.<clinit>` (the vendored MHLib builds its hitbox-type
+  registry through databuddy's RegistryDispatcher at class-init).
+- **Location:** `build.gradle:141` (`implementation`-only dependency).
+  First field report: owner instance, crash-2026-08-11_13.58.36-fml.txt.
+- **Root cause of the miss:** dev and gametest classpaths carry
+  implementation deps, so every gate was green while the shipped artifact
+  was broken — the suite cannot see packaging bugs by construction.
+- **Resolution:** FIXED (2026-08-11, beta.3 — databuddy jarJar'd into
+  META-INF/jarjar with a [6.0.0.0,6.1.0) range; presence in the built jar
+  verified structurally).
+
+### BUG-033 — Structure-piece scratch state races under parallel worldgen
+
+- **Impact:** CRITICAL (field) — game-freezing. `LegacyDungeonPiece` and
+  `RoyalTreePiece` cached per-pass state (WorldGenLevel, a shared
+  MutableBlockPos, six chunk-clip bounds) in plain instance fields, set at
+  postProcess start and nulled in a finally. One piece is shared by every
+  chunk it spans and postProcess for different chunks runs CONCURRENTLY —
+  observed in the field under c2me's chunk workers and Distant Horizons'
+  DH-World Gen threads. Race A: a finishing pass nulls the scratch state
+  under a live pass → NPE in place() → "Error upgrading chunk to
+  minecraft:features" → `Failed to load chunk 8,6` (orespawn:mining) →
+  wedged chunk system, server unresponsive (the reported freeze). Race B:
+  two live passes adopt each other's chunk-clip boxes → silent wrong-chunk
+  writes.
+- **Location:** `LegacyDungeonPiece.java` (fields formerly :461-468, NPE at
+  :752 via BasiliskMazeGenerator.buildCastle:384), `RoyalTreePiece.java`
+  (fields formerly :144-153). Field stack: owner instance latest.log
+  14:55:20.
+- **Why the suite missed it:** the GameTest server generates chunks with
+  far less feature-stage parallelism; the race window needs concurrent
+  passes over one piece.
+- **Resolution:** FIXED (2026-08-11, beta.3 — both classes carry the pass
+  state in a ThreadLocal PassCtx record; helper signatures unchanged so the
+  ~35 per-structure generator classes are untouched. Sweep of
+  world/structure/ found no other mutable instance state on
+  place/postProcess paths — `runtimeRandomOverride` is safe because
+  buildNow constructs a fresh piece per call).
+
+### BUG-034 — DungeonBeast unspawnable: Params innerAttackRoll=0
+
+- **Impact:** HIGH (field) — the DungeonBeast could never spawn in beta.2:
+  `BugMeleeAttackGoal.Params.dungeonBeast()` shipped `innerAttackRoll=0`,
+  the TF-026 construction guard threw, and NaturalSpawner logged "Failed to
+  create mob" on every attempt (observed spamming both field sessions).
+- **Location:** `BugMeleeAttackGoal.java:65`. Original values:
+  reference DungeonBeast.java:172 (`nextInt(8)` swing cadence) and :177
+  (`nextInt(7) == 0 || nextInt(8) == 1` — outer 7, inner 8; the goal
+  already reproduces the original's `== 1` inner-roll quirk at
+  BugMeleeAttackGoal.java:144-145).
+- **How the slip survived:** the guard was added by TF-026 for exactly this
+  class of slip — but no suite test constructed every entity type, so a
+  guard trip at construction was invisible to the gates.
+- **Resolution:** FIXED (2026-08-11, beta.3 — inner=8 per the original;
+  EntityConstructionTests added — constructs all registered orespawn entity
+  types every suite run, so this failure class is now a red gate).
