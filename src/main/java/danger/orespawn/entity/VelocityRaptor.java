@@ -167,6 +167,40 @@ public class VelocityRaptor extends TamableAnimal {
             return InteractionResult.SUCCESS;
         }
 
+        // orig VelocityRaptor.java:264-281 — dead bush releases an owned raptor:
+        // untame first, then health reset to the wild max (orig :266-267 —
+        // func_70606_j(mygetMaxHealth()) runs AFTER setTamed(false), so
+        // mygetMaxHealth() is the wild 10, orig :212); owner cleared, smoke
+        // particles (byte 6). The ENT-S-063 tamed MAX_HEALTH bump (20) is rolled
+        // back to 10 to model the same dynamic max. Sitting is NOT reset. The
+        // orig client-side else-branch (:271-273) reset the PLAYER's walk speed
+        // to 0.3 — part of the unported client-side raptor-speed hack (see the
+        // feed branch orig :246-255); intentionally omitted here. ENT-S-064.
+        if (this.isTame() && stack.is(Blocks.DEAD_BUSH.asItem())
+                && this.distanceToSqr(player) < 16.0 && this.isOwnedBy(player)) {
+            if (!this.level().isClientSide) {
+                this.setTame(false, false);
+                this.getAttribute(Attributes.MAX_HEALTH).setBaseValue(10.0);
+                this.setHealth(10.0f);
+                this.setOwnerUUID(null);
+                this.level().broadcastEntityEvent(this, (byte) 6);
+            }
+            if (!player.getAbilities().instabuild) stack.shrink(1);
+            return InteractionResult.SUCCESS;
+        }
+
+        // orig VelocityRaptor.java:282-291 — a name tag renames an owned raptor
+        // to the stack's display name and is consumed. An UNNAMED tag renames it
+        // to the item's own name ("Name Tag") — orig quirk preserved; a named
+        // tag is handled by vanilla's name-tag interaction first, mirroring
+        // 1.7.10's item-before-entity interaction order. ENT-S-064.
+        if (this.isTame() && stack.is(Items.NAME_TAG)
+                && this.distanceToSqr(player) < 16.0 && this.isOwnedBy(player)) {
+            this.setCustomName(stack.getHoverName()); // orig :283
+            if (!player.getAbilities().instabuild) stack.shrink(1);
+            return InteractionResult.SUCCESS;
+        }
+
         // No riding: orig VelocityRaptor.java:223-294 (func_70085_c) has no mount
         // interaction — the 1.7.10 raptor is a plain tameable (EntityCannonFodder).
         if (this.isTame() && this.isOwnedBy(player) && this.distanceToSqr(player) < 16.0 && player.isShiftKeyDown()) {

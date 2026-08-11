@@ -1,8 +1,10 @@
 package danger.orespawn.entity;
 
 import danger.orespawn.MobStats;
+import danger.orespawn.OreSpawnConfig;
+import danger.orespawn.entity.ai.GenericTargetSorter;
+import danger.orespawn.util.MyUtils;
 
-import java.util.Comparator;
 import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
@@ -13,6 +15,7 @@ import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.world.Difficulty;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
@@ -24,17 +27,14 @@ import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
+import net.minecraft.world.entity.monster.CaveSpider;
+import net.minecraft.world.entity.monster.Spider;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
-import net.minecraft.world.phys.Vec3;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerBossEvent;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.BossEvent;
-import net.minecraft.network.chat.Component;
 import danger.orespawn.OreSpawnMod;
 import danger.orespawn.entity.client.RenderSpiderRobotInfo;
 
@@ -47,10 +47,20 @@ public class SpiderRobot extends Mob {
     /** Lazy one-shot leg-data (re)initialization flag (orig {@code didonce}, SpiderRobot.java:53). */
     private boolean legDataInitialized = false;
 
-    private final ServerBossEvent bossEvent = new ServerBossEvent(
-            Component.literal("Spider Robot"), BossEvent.BossBarColor.WHITE, BossEvent.BossBarOverlay.PROGRESS);
+    // ENT-S-022: the port had invented a ServerBossEvent here. The original
+    // SpiderRobot has no boss bar of any kind — it is a rideable vehicle whose
+    // status renders through the dedicated RenderSpiderRobotInfo HUD overlay
+    // (orig SpiderRobot.java:52); nothing in the orig class touches BossStatus.
+    // Removed for parity.
 
-    private final Comparator<Entity> targetSorter;
+    /**
+     * TF-035: orig SpiderRobot.java:50 (field), :60 (ctor) — the original
+     * declares and constructs a GenericTargetSorter but never sorts with it:
+     * findSomethingToAttack (orig :971-986) walks the raw entity list and
+     * returns the first suitable hit. The dead field is kept, typed as the
+     * real sorter, for exactness — do NOT add a sort call.
+     */
+    private final GenericTargetSorter targetSorter;
     private final float moveSpeed = 0.35f;
     private int soundCooldown = 0;
 
@@ -58,7 +68,7 @@ public class SpiderRobot extends Mob {
         super(type, level);
         // orig SpiderRobot.java:64 — XP = SpiderRobot_stats.health / 2 = 1500/2.
         this.xpReward = 750;
-        this.targetSorter = Comparator.comparingDouble(this::distanceToSqr);
+        this.targetSorter = new GenericTargetSorter(this);
         // orig SpiderRobot.java:508-511 — entityInit primes the leg data once at construction.
         initLegData();
     }
@@ -89,20 +99,8 @@ public class SpiderRobot extends Mob {
     public void setAttacking(int value) { this.entityData.set(DATA_ATTACKING, value); }
 
     @Override
-    public void startSeenByPlayer(ServerPlayer player) {
-        super.startSeenByPlayer(player);
-        this.bossEvent.addPlayer(player);
-    }
-
-    @Override
-    public void stopSeenByPlayer(ServerPlayer player) {
-        super.stopSeenByPlayer(player);
-        this.bossEvent.removePlayer(player);
-    }
-
-    @Override
     protected void customServerAiStep() {
-        this.bossEvent.setProgress(this.getHealth() / this.getMaxHealth());
+        // orig SpiderRobot.java:94-102 — AI is fully suspended while dead-flagged or ridden.
         if (this.isRemoved()) return;
         if (this.getFirstPassenger() != null) return;
         super.customServerAiStep();
@@ -127,10 +125,21 @@ public class SpiderRobot extends Mob {
     public void tick() {
         super.tick();
         this.clearFire();
-        if (!this.level().isClientSide() && this.getFirstPassenger() != null && this.getRandom().nextInt(15) == 0) {
+        // ENT-S-021: orig SpiderRobot.java:590-592 — while ridden, the feet
+        // stomp 1-in-40 ticks, hitting EVERY suitable target in the 12-18
+        // block ring at once (that ring is where the feet actually plant:
+        // legoff up to 3.4 plus the 16-block footing probe). PEACEFUL-gated.
+        if (this.level().getDifficulty() != Difficulty.PEACEFUL && !this.level().isClientSide()
+                && this.getFirstPassenger() != null && this.getRandom().nextInt(40) == 0) {
+            this.feetFindSomethingToHit();
+        }
+        // orig SpiderRobot.java:593-604 — 1-in-15 frontal melee while ridden.
+        // ENT-S-021 restores the PEACEFUL gate the port had dropped (orig :593).
+        if (this.level().getDifficulty() != Difficulty.PEACEFUL && !this.level().isClientSide()
+                && this.getFirstPassenger() != null && this.getRandom().nextInt(15) == 0) {
             LivingEntity target = findSomethingToAttack();
             if (target != null) {
-                double meleeRange = (12.0f + target.getBbWidth() / 2.0f);
+                double meleeRange = (12.0f + target.getBbWidth() / 2.0f); // orig :597
                 if (this.distanceToSqr(target) < meleeRange * meleeRange) {
                     this.setAttacking(1);
                     this.doHurtTarget(target);
@@ -139,15 +148,39 @@ public class SpiderRobot extends Mob {
                 this.setAttacking(0);
             }
         }
+        // ENT-S-021: orig SpiderRobot.java:605-616 — the flame-jet exhaust.
+        // Each particle is launched with outward velocity dx/f, dz/f (a full
+        // block/tick horizontally, so the jet streams away from the body) plus
+        // per-axis jitter; the port had spawned them motionless and dropped the
+        // fireworksSpark roll entirely. Client-only exactly as in 1.7.10, where
+        // World.spawnParticle was a WorldClient-only effect.
         float exhaustOffset = 8.0f;
         float exhaustX = (float) (exhaustOffset * Math.cos(Math.toRadians(this.getYRot() - 90.0f)));
         float exhaustZ = (float) (exhaustOffset * Math.sin(Math.toRadians(this.getYRot() - 90.0f)));
         if (this.level().isClientSide()) {
+            // orig :608-609 — flame, 1-in-8, vertical jitter /10.
             if (this.getRandom().nextInt(8) == 0) {
-                this.level().addParticle(ParticleTypes.FLAME, getX() + exhaustX, getY() + 2.0, getZ() + exhaustZ, 0, 0, 0);
+                this.level().addParticle(ParticleTypes.FLAME,
+                        getX() + exhaustX, getY() + 2.0, getZ() + exhaustZ,
+                        exhaustX / exhaustOffset + (this.getRandom().nextFloat() - this.getRandom().nextFloat()) / 20.0f,
+                        (this.getRandom().nextFloat() - this.getRandom().nextFloat()) / 10.0f,
+                        exhaustZ / exhaustOffset + (this.getRandom().nextFloat() - this.getRandom().nextFloat()) / 20.0f);
             }
+            // orig :611-612 — smoke, 1-in-2, vertical jitter /10.
             if (this.getRandom().nextInt(2) == 0) {
-                this.level().addParticle(ParticleTypes.SMOKE, getX() + exhaustX, getY() + 2.0, getZ() + exhaustZ, 0, 0, 0);
+                this.level().addParticle(ParticleTypes.SMOKE,
+                        getX() + exhaustX, getY() + 2.0, getZ() + exhaustZ,
+                        exhaustX / exhaustOffset + (this.getRandom().nextFloat() - this.getRandom().nextFloat()) / 20.0f,
+                        (this.getRandom().nextFloat() - this.getRandom().nextFloat()) / 10.0f,
+                        exhaustZ / exhaustOffset + (this.getRandom().nextFloat() - this.getRandom().nextFloat()) / 20.0f);
+            }
+            // orig :614-615 — fireworksSpark, 1-in-10, the hotter /5 vertical jitter.
+            if (this.getRandom().nextInt(10) == 0) {
+                this.level().addParticle(ParticleTypes.FIREWORK,
+                        getX() + exhaustX, getY() + 2.0, getZ() + exhaustZ,
+                        exhaustX / exhaustOffset + (this.getRandom().nextFloat() - this.getRandom().nextFloat()) / 20.0f,
+                        (this.getRandom().nextFloat() - this.getRandom().nextFloat()) / 5.0f,
+                        exhaustZ / exhaustOffset + (this.getRandom().nextFloat() - this.getRandom().nextFloat()) / 20.0f);
             }
             // orig SpiderRobot.java:704 — the leg solver steps once per client tick.
             updateLegs();
@@ -211,7 +244,13 @@ public class SpiderRobot extends Mob {
     // SpiderRobot has no extra fields to persist, so the inherited behavior is correct.
 
     private LivingEntity findSomethingToAttack() {
-        AABB searchBox = this.getBoundingBox().inflate(20.0, 12.0, 20.0);
+        // ENT-S-021: orig SpiderRobot.java:972-974 — PlayNicely disables the
+        // ridden auto-attack entirely. The list is deliberately NOT sorted:
+        // despite owning a GenericTargetSorter (orig :50,:60) the orig never
+        // sorts here (:975-985), so the first suitable entity in raw scan
+        // order wins — quirk kept.
+        if (OreSpawnConfig.PLAY_NICELY.get()) return null;
+        AABB searchBox = this.getBoundingBox().inflate(20.0, 12.0, 20.0); // orig :975
         List<LivingEntity> entities = this.level().getEntitiesOfClass(LivingEntity.class, searchBox);
         for (LivingEntity e : entities) {
             if (isSuitableTarget(e)) return e;
@@ -219,12 +258,96 @@ public class SpiderRobot extends Mob {
         return null;
     }
 
+    /**
+     * ENT-S-021: orig SpiderRobot.java:988-1038 — the ridden melee is a
+     * FRONTAL attack, not the port's old omnidirectional one. Beyond the
+     * spider-family/passenger exclusions, ignoreables and line of sight, the
+     * target's bearing must sit within 0.75 rad (~43°) of the robot's facing
+     * — unless it is closer than 6 blocks, where the cone (and, orig quirk,
+     * even the creative-player exemption) is bypassed.
+     */
     private boolean isSuitableTarget(LivingEntity target) {
-        if (target == null || target == this || !target.isAlive()) return false;
-        if (target instanceof SpiderRobot) return false;
-        if (target == this.getFirstPassenger()) return false;
-        if (target instanceof Player p && p.getAbilities().instabuild) return false;
-        return true;
+        if (target == null || target == this || !target.isAlive()) return false; // orig :989-996
+        if (target instanceof SpiderRobot) return false;      // orig :998
+        if (target instanceof Spider) return false;           // orig :1001 (EntitySpider)
+        if (target instanceof SpiderDriver) return false;     // orig :1004
+        if (target instanceof CaveSpider) return false;       // orig :1007 (redundant under Spider, kept as written)
+        if (target == this.getFirstPassenger()) return false; // orig :1010
+        if (MyUtils.isIgnoreable(target)) return false;       // orig :1013
+        if (!this.getSensing().hasLineOfSight(target)) return false; // orig :1016
+        // Bearing error to the target (orig :1019-1026; hand-typed pi kept).
+        double bearingToTarget = Math.atan2(target.getZ() - this.getZ(), target.getX() - this.getX());
+        double facing = Math.toRadians((this.getYRot() + 90.0f) % 360.0f);
+        double pi = 3.1415926545;
+        double bearingError = Math.abs(bearingToTarget - facing) % (pi * 2.0);
+        if (bearingError > pi) bearingError -= pi * 2.0;
+        bearingError = Math.abs(bearingError);
+        // orig :1027-1029 — point-blank targets (< 6 blocks) are always valid;
+        // note this runs BEFORE the creative check, so creative players in
+        // that range are attacked too (orig bug, kept).
+        if (this.distanceToSqr(target) < 36.0) return true;
+        if (bearingError > 0.75) return false; // orig :1030-1032
+        if (target instanceof Player p) return !p.getAbilities().instabuild; // orig :1033-1036
+        return true; // orig :1037
+    }
+
+    /**
+     * ENT-S-021: orig SpiderRobot.java:896-910 — the stomp. Every suitable
+     * entity in the 20x8x20-inflated box is hit in the SAME tick (the loop
+     * has no early return); {@link #feetIsSuitableTarget} then keeps only
+     * the 12-18 block ring where the feet actually plant.
+     */
+    private void feetFindSomethingToHit() {
+        if (OreSpawnConfig.PLAY_NICELY.get()) return; // orig :897-899
+        AABB stompBox = this.getBoundingBox().inflate(20.0, 8.0, 20.0); // orig :900
+        List<LivingEntity> entities = this.level().getEntitiesOfClass(LivingEntity.class, stompBox);
+        for (LivingEntity e : entities) {
+            if (feetIsSuitableTarget(e)) this.feetAttackEntityAsMob(e);
+        }
+    }
+
+    /**
+     * orig SpiderRobot.java:912-952 — stomp filter: same spider-family and
+     * passenger exclusions as the frontal attack but NO ignoreable, line-of-
+     * sight or cone checks; instead the center-to-center distance must fall
+     * inside the (12, 18) ring (orig :937-946) — under the feet, not the body.
+     */
+    private boolean feetIsSuitableTarget(LivingEntity target) {
+        if (target == null || target == this || !target.isAlive()) return false; // orig :913-920
+        if (target instanceof SpiderRobot) return false;      // orig :922
+        if (target instanceof Spider) return false;           // orig :925
+        if (target instanceof SpiderDriver) return false;     // orig :928
+        if (target instanceof CaveSpider) return false;       // orig :931
+        if (target == this.getFirstPassenger()) return false; // orig :934
+        float dx = (float) (target.getX() - this.getX());     // orig :937
+        float dy = (float) (target.getY() - this.getY());     // orig :938
+        float dz = (float) (target.getZ() - this.getZ());     // orig :939
+        float dist = (float) Math.sqrt(dx * dx + dy * dy + dz * dz);
+        if (dist > 18.0f) return false; // orig :941-943
+        if (dist < 12.0f) return false; // orig :944-946
+        if (target instanceof Player p) return !p.getAbilities().instabuild; // orig :947-950
+        return true; // orig :951
+    }
+
+    /**
+     * orig SpiderRobot.java:954-969 — the stomp hit: one TENTH of the attack
+     * stat (100 / 10 = 10, orig :960) with gentler knockback than the frontal
+     * melee (0.6/0.1 vs 1.2/0.15), upward component doubled on kills and
+     * against players.
+     */
+    public boolean feetAttackEntityAsMob(Entity target) {
+        if (target instanceof LivingEntity livingTarget) {
+            double knockbackStrength = 0.6; // orig :957
+            double upwardKnockback = 0.1;   // orig :958
+            float angleToTarget = (float) Math.atan2(livingTarget.getZ() - this.getZ(), livingTarget.getX() - this.getX()); // orig :959
+            // orig :960 — SpiderRobot_stats.attack / 10.0f; the attribute holds that stat (OreSpawnMain.java:6474).
+            boolean ret = livingTarget.hurt(this.damageSources().mobAttack(this),
+                    (float) this.getAttributeValue(Attributes.ATTACK_DAMAGE) / 10.0f);
+            if (livingTarget.isRemoved() || livingTarget instanceof Player) upwardKnockback *= 2.0; // orig :961-963
+            if (ret) livingTarget.push(Math.cos(angleToTarget) * knockbackStrength, upwardKnockback, Math.sin(angleToTarget) * knockbackStrength); // orig :964-966
+            return ret;
+        }
+        return false;
     }
 
     /** Live gait-solver state consumed by the model (orig SpiderRobot.java:515-517). */

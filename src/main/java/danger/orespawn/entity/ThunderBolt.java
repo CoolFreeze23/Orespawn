@@ -6,6 +6,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.Entity;
 import danger.orespawn.ModEntities;
 import danger.orespawn.OreSpawnConfig;
+import danger.orespawn.util.MyUtils;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LightningBolt;
 import net.minecraft.world.entity.LivingEntity;
@@ -60,6 +61,17 @@ public class ThunderBolt extends ThrowableProjectile {
 
     @Override
     protected void onHit(HitResult result) {
+        // orig ThunderBolt.java:36-39 — royalty (the King/Queen family,
+        // MyUtils.isRoyalty) absorbs a ThunderBolt outright: the original
+        // setDead()+return fired BEFORE the damage, the smoke/spark particles,
+        // the explosion sound, the 3.0 block explosion, AND the lightning
+        // strike, so a bolt that hits royalty simply vanishes (boss self-fire
+        // never wounds peers or knocks them around). Bail before super.onHit()
+        // so onHitEntity and the whole explosion path never run.
+        if (result instanceof EntityHitResult entityHit && MyUtils.isRoyalty(entityHit.getEntity())) {
+            this.discard();
+            return;
+        }
         super.onHit(result);
         if (!this.level().isClientSide) {
             boolean canGrief = this.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING);

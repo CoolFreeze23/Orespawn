@@ -149,19 +149,80 @@ public class EntityWormMedium extends Monster {
         if (this.isRemoved()) return;
         super.customServerAiStep();
 
-        EntityWormSmall nearbySmall = this.level().getNearestEntity(
-                EntityWormSmall.class, net.minecraft.world.entity.ai.targeting.TargetingConditions.forNonCombat(),
-                this, this.getX(), this.getY(), this.getZ(),
-                this.getBoundingBox().inflate(8.0));
-        if (nearbySmall != null) return;
+        // orig WormMedium.java:186-188 — no attacking/thieving when PlayNicely
+        if (danger.orespawn.OreSpawnConfig.PLAY_NICELY.get()) return;
 
-        Player target = this.level().getNearestPlayer(this, 2.25);
-        if (target != null && !target.getAbilities().invulnerable) {
-            this.pointAtEntity(target);
-            if (this.upcount > 0 && this.random.nextInt(15) == 1) {
-                this.doHurtTarget(target);
+        // orig :189-192 — stand down while any small worm is within 8/8/8
+        if (!this.level().getEntitiesOfClass(EntityWormSmall.class,
+                this.getBoundingBox().inflate(8.0, 8.0, 8.0)).isEmpty()) {
+            return;
+        }
+
+        // orig :193 — func_72857_a: nearest player inside the bounding box
+        // inflated 2.25/8.0/2.25. The 8-block VERTICAL reach matters (the worm
+        // robs players well above its 2-block body), so a spherical
+        // getNearestPlayer(2.25) is not equivalent. Spectators postdate 1.7.10
+        // and are skipped, matching the vanilla NO_SPECTATORS query baseline.
+        Player target = null;
+        double bestDistSq = Double.MAX_VALUE;
+        for (Player p : this.level().getEntitiesOfClass(Player.class,
+                this.getBoundingBox().inflate(2.25, 8.0, 2.25))) {
+            if (p.isSpectator()) continue;
+            double distSq = this.distanceToSqr(p);
+            if (distSq < bestDistSq) {
+                bestDistSq = distSq;
+                target = p;
             }
         }
+        // orig :194-196 — CREATIVE players are nulled (field_75098_d, i.e.
+        // instabuild — not the invulnerable flag) before any aiming
+        if (target != null && target.getAbilities().instabuild) {
+            target = null;
+        }
+        if (target != null) {
+            this.pointAtEntity(target); // orig :198
+            // orig :199-200 — 1-in-15 per-tick swing while surfaced (upcount > 0)
+            if (this.upcount > 0 && this.random.nextInt(15) == 1) {
+                this.doHurtTarget(target);
+                // orig :201-221 — 1-in-6 per swing: rip off the boots, or the
+                // leggings when the feet slot is already bare
+                if (this.random.nextInt(6) == 1) {
+                    if (!stealAndScatter(target, net.minecraft.world.entity.EquipmentSlot.FEET)) {
+                        stealAndScatter(target, net.minecraft.world.entity.EquipmentSlot.LEGS);
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * orig WormMedium.java:202-219 — the stolen stack is removed from the slot,
+     * damaged by remainingDurability/15 (min 1, orig :205-206/:214-215), and
+     * flung 3 blocks up at a ±0-4 x/z scatter (orig :208/:217). A stack that
+     * breaks from the durability hit vanishes (orig func_77972_a zeroes the
+     * stack before the EntityItem spawns) — same convention as WormSmall/20
+     * and WormLarge/10.
+     */
+    private boolean stealAndScatter(Player target, net.minecraft.world.entity.EquipmentSlot slot) {
+        net.minecraft.world.item.ItemStack stack = target.getItemBySlot(slot);
+        if (stack.isEmpty()) return false;
+        target.setItemSlot(slot, net.minecraft.world.item.ItemStack.EMPTY);
+        if (stack.isDamageableItem()) {
+            int remaining = stack.getMaxDamage() - stack.getDamageValue();
+            int hit = remaining > 15 ? remaining / 15 : 1;
+            stack.setDamageValue(stack.getDamageValue() + hit);
+            if (stack.getDamageValue() >= stack.getMaxDamage()) {
+                return true;
+            }
+        }
+        net.minecraft.world.entity.item.ItemEntity drop = new net.minecraft.world.entity.item.ItemEntity(
+                this.level(),
+                this.getX() + this.random.nextInt(5) - this.random.nextInt(5),
+                this.getY() + 3.0,
+                this.getZ() + this.random.nextInt(5) - this.random.nextInt(5),
+                stack);
+        this.level().addFreshEntity(drop);
+        return true;
     }
 
     @Override
