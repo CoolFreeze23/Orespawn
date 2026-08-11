@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:chest",
+  "_note": "E6 (2026-08-11): child table for basilisk_maze.json's caged-girlfriend row. orig BasiliskMaze.java:28 — WeightedRandomChestContent(CagedGirlfriend, min 2, max 4, w15); 1.7.10 CritterCage stacked to 16 so one slot held 2-4. The port's caged_mob is maxStack 1 (component-holding), so a count-2..4 stack fails component validation (the ~130x 'Failed to apply component patch' log errors). This child rolls 2-4 SEPARATE singles per selection - same expected item count, valid stacks.",
+  "pools": [
+    {
+      "rolls": {
+        "type": "minecraft:uniform",
+        "min": 2.0,
+        "max": 4.0
+      },
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "orespawn:caged_mob",
+          "functions": [
+            {
+              "function": "minecraft:set_components",
+              "components": {
+                "orespawn:caged_entity": "orespawn:girlfriend"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

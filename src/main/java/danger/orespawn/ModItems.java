@@ -4,6 +4,7 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.food.FoodProperties;
 import danger.orespawn.item.*;
+import net.minecraft.core.Direction;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.AxeItem;
 import net.minecraft.world.item.BlockItem;
@@ -12,6 +13,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.PickaxeItem;
 import net.minecraft.world.item.ShovelItem;
 import net.minecraft.world.item.SpawnEggItem;
+import net.minecraft.world.item.StandingAndWallBlockItem;
 import net.minecraft.world.item.SwordItem;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredItem;
@@ -40,8 +42,15 @@ public class ModItems {
     public static final DeferredItem<BlockItem> CRYSTAL_FURNACE_ITEM = ITEMS.registerSimpleBlockItem("crystal_furnace", ModBlocks.CRYSTAL_FURNACE);
     public static final DeferredItem<BlockItem> EXTREME_TORCH_ITEM = ITEMS.registerSimpleBlockItem("extreme_torch", ModBlocks.EXTREME_TORCH);
     public static final DeferredItem<BlockItem> CRYSTAL_TORCH_ITEM = ITEMS.registerSimpleBlockItem("crystal_torch", ModBlocks.CRYSTAL_TORCH);
-    public static final DeferredItem<BlockItem> KRAKEN_REPELLENT_ITEM = ITEMS.registerSimpleBlockItem("kraken_repellent", ModBlocks.KRAKEN_REPELLENT);
-    public static final DeferredItem<BlockItem> CREEPER_REPELLENT_ITEM = ITEMS.registerSimpleBlockItem("creeper_repellent", ModBlocks.CREEPER_REPELLENT);
+    // Repellents place floor OR wall like torches (orig extends BlockTorch —
+    // KrakenRepellent.java:21-22 / CreeperRepellent.java:22-23); vanilla
+    // TORCH/WALL_TORCH item precedent.
+    public static final DeferredItem<BlockItem> KRAKEN_REPELLENT_ITEM = ITEMS.register("kraken_repellent",
+            () -> new StandingAndWallBlockItem(ModBlocks.KRAKEN_REPELLENT.get(), ModBlocks.WALL_KRAKEN_REPELLENT.get(),
+                    new Item.Properties(), Direction.DOWN));
+    public static final DeferredItem<BlockItem> CREEPER_REPELLENT_ITEM = ITEMS.register("creeper_repellent",
+            () -> new StandingAndWallBlockItem(ModBlocks.CREEPER_REPELLENT.get(), ModBlocks.WALL_CREEPER_REPELLENT.get(),
+                    new Item.Properties(), Direction.DOWN));
     public static final DeferredItem<BlockItem> ISLAND_ITEM = ITEMS.registerSimpleBlockItem("island", ModBlocks.ISLAND);
     public static final DeferredItem<BlockItem> BLOCK_ENDER_PEARL_ITEM = ITEMS.registerSimpleBlockItem("block_ender_pearl", ModBlocks.BLOCK_ENDER_PEARL);
     public static final DeferredItem<BlockItem> BLOCK_EYE_OF_ENDER_ITEM = ITEMS.registerSimpleBlockItem("block_eye_of_ender", ModBlocks.BLOCK_EYE_OF_ENDER);

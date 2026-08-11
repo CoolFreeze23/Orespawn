@@ -1882,6 +1882,7 @@ Paths: ORIG = `reference_1_7_10_source\sources\danger\orespawn\`, PORT = `src\ma
 - **Original:** ORIG `Leon.java:220` — 4× damage vs Kraken; Ender-Dragon-part hit handling; hurt window 10
 - **Port:** `entity\EntityLeon.java:260-268` — 55 melee + knockback only; hurt window 15
 - **Fix:** in `doHurtTarget`, multiply damage ×4 when target is Kraken; add EnderDragon part handling; set hurt window 10.
+- **Resolution:** FIXED (2026-08-11, Phase E5 — EntityLeon.doHurtTarget ports orig Leon.java:275-301: Ender Dragon hit through a dragon part with an attacker-less explosion source (damageSources().explosion(null,null) = func_94539_a(null)+func_94540_d), 1-in-6 head part else body part (:279-288; body via getSubEntities — only head is public in 1.21.1), 55.0 damage, no knockback; x4 damage vs Kraken (:290-292); knockback 1.25/0.15-0.3 unchanged (:294-298). The audit's 'hurt window 10' misread orig :322 (hurt_timer=15, already ported); orig :83's maxHurtResistantTime=10 is NOT ported — invulnerableDuration is final in 1.21.1 and unobservable behind the 15-tick full-block gate; documented in the ctor)
 
 ### ENT-K-019 — Leon: taming items changed
 
@@ -1915,6 +1916,7 @@ Paths: ORIG = `reference_1_7_10_source\sources\danger\orespawn\`, PORT = `src\ma
 - **Fix:** add `getAmbientSound`/`getHurtSound`/`getDeathSound` returning the leon_* ModSounds in `Leonopteryx.java`.
 
 ---
+- **Resolution:** FIXED (2026-08-11, Phase E5 — by the TF-030 consolidation: orespawn:leonopteryx now runs EntityLeon, which carries the full orig sound set via createVariableRangeEvent: leon_living ambient gated on activity==1 && riderless (orig Leon.java:208-216), leon_hit (:218-220), leon_death (:222-224), volume 1.75 (:226-228), pitch 0.85 (:230-232), the 20-tick mothrawings flap at 0.5f (:508-516). sounds.json already defines every event. The sound-less twin class Leonopteryx.java is deleted)
 
 ## Lizard
 

@@ -2132,3 +2132,126 @@ WaterDragon ranged WaterBall + fireball volleys integrated with the
 TF-001 nav-agnostic goals; Worm boot/leggings theft on both sizes.
 Orchestrator integration note: one leftover-JVM file lock on the
 NeoForge jar required a daemon restart mid-gate (not a code issue).
+
+## Phase E — E6 (part): log-noise investigations closed (2026-08-11)
+
+- **Caged-girlfriend component-patch errors (~130/suite-run) ROOT-CAUSED
+  and FIXED** — chests/basilisk_maze.json rolled `orespawn:caged_mob`
+  (maxStack 1, component-holding) with set_count uniform 2-4 + the
+  girlfriend component; component validation rejects count>1 patched
+  stacks, logging the error and stripping contents. The orig legitimately
+  stacked: BasiliskMaze.java:28 (CagedGirlfriend min2 max4 w15) with
+  CritterCage.java:31 stack-16. Fix preserves the orig semantics with
+  valid stacks: the row now references child table
+  basilisk_maze_caged_girlfriend.json (weight 15 → rolls uniform 2-4 of
+  single-count caged girlfriends). Same expected count, separate slots.
+- **"Unprimed heightmap: OCEAN_FLOOR_WG" ×3/run INVESTIGATED-BENIGN** —
+  the three LegacyDungeonStructure.findGenerationPoint dry-column checks
+  (:287/:337/:370) query OCEAN_FLOOR_WG during placement scans; on a
+  proto-chunk that has not primed that map, vanilla ChunkAccess logs the
+  error and then computes the heightmap on demand — identical to vanilla
+  structures hitting unprimed maps. Self-healing, no behavioral effect,
+  count stable across every green run since E0. No code change.
+
+## Phase E — E5: TF-030 Leon/Leonopteryx consolidation + ENT-K-018/022 (2026-08-11)
+
+- **TF-030 FIXED (consolidation per design ruling: dedup + id alias + 1.75x
+  scale + z-fighting parts + static pose retired).** 1.7.10 has ONE class,
+  Leon, registered as "Leonopteryx" (orig OreSpawnMain.java:4377
+  registerGlobalEntityID / :4381 registerModEntity); the port's twin classes
+  are now one. CANONICAL id: `orespawn:leonopteryx` (snake_case of the orig
+  registration name). SAVE-COMPAT: `orespawn:leon` stays registered as a
+  second EntityType built from the same EntityLeon class — saved entities,
+  caged mobs (EntityCage stores type ids; CaptureSpec keys on
+  `instanceof EntityLeon`, so both ids capture at orig :865-874 odds), both
+  spawn eggs, both loot tables (identical orig drop lists;
+  entities/leon.json + entities/leonopteryx.json), chaos_biome's
+  `orespawn:leon` spawner entry, and the LEONOPTERYX_NEST dungeon spawner all
+  keep resolving. `entity/Leonopteryx.java` DELETED — divergence reconciled
+  against orig Leon.java (the only source of truth): its invented
+  ServerBossEvent boss bar, MEAT-tag taming, FLIGHT_SPEED 0.6/0.4 movement,
+  hurt-window 10-with-no-15-tick-gate, and 4.0x2.0 hitbox all dropped in
+  favor of EntityLeon's faithful port; both registrations now use the orig
+  hitbox 3.5x8.25 (orig Leon.java:80 setSize(3.5f, 8.25f)); rider seat
+  height re-pinned to the orig mounted offset 3.75 (orig Leon.java:238-240
+  func_70042_X) since the old `getBbHeight()*0.85` stand-in only worked with
+  the retired 4.5 height. clientTrackingRange 16 kept for both ids
+  (deliberate modernization; orig tracking 64 blocks, OSM:4381). Renderer:
+  `LeonopteryxRenderer` (interim static-pose band-aid) DELETED; both ids
+  render via LeonRenderer, which now restores the orig 1.75x scale
+  (orig RenderLeon.java:39-41 `GL11.glScalef((float)this.scale, ...)` with
+  scale=1.75f and shadow 1.0f*1.75f from ClientProxyOreSpawn.java:500 —
+  `new RenderLeon(new ModelLeon(0.22f), 1.0f, 1.75f)`) and carries the
+  twin's no-frustum-cull override (mesh far exceeds the hitbox). Model:
+  LeonModel drew ALL 98 parts every frame; orig ModelLeon.java renders
+  exactly one set per state (`if (e.getActivity() == 0)` standing set
+  :803-851, else f-prefixed flying set :1054-1102) — setupAnim now toggles
+  ModelPart.visible per activity, restoring the gate and killing the
+  z-fighting; full wing/leg animation now serves both ids (static pose
+  retired). Misc consolidation follow-through: ModEntityAttributes both ids
+  -> EntityLeon.createAttributes; ModSpawnControl gates the leonopteryx id
+  under the same leonEnable flag (orig has one "Leonopteryx" entry,
+  OSM:6523); GirlfriendOverlay label branch retargeted `instanceof
+  EntityLeon` showing custom-name-or-"Leonopteryx" (orig
+  GirlfriendOverlayGui.java:390-398); lang gains
+  entity.orespawn.leonopteryx + item.orespawn.leonopteryx_spawn_egg and
+  entity.orespawn.leon now reads "Leonopteryx" (orig OSM:4378-4379 both
+  localizations are "Leonopteryx"); stale ButterflyModel-sharing comment in
+  VampireButterflyRenderer corrected. Suite: no test asserted the
+  duplication — CoreStatTests LEONOPTERYX 250/55/16, DsbOutcomeTests case-32
+  nest spawner, EntityLogicTestsA leon tests all hold unchanged. NOT
+  runtime-verified (gradle gated centrally): compile, render scale/pose in
+  client, and ride-seat height at the new hitbox.
+- **ENT-K-018 FIXED** — EntityLeon.doHurtTarget now ports orig
+  Leon.java:275-301 (func_70652_k) faithfully: Ender Dragon branch hits a
+  dragon PART with an attacker-less explosion-typed source
+  (func_94539_a(null)+func_94540_d -> damageSources().explosion(null,null)),
+  1-in-6 head part (field_70986_h) else body part (field_70987_i), 55.0, no
+  knockback (orig :279-288; only `head` is public in 1.21.1, the body part
+  is resolved by name from getSubEntities()); 4x damage vs Kraken
+  (orig :290-292, iskraken=4.0f); knockback 1.25 with 0.15->0.3 in-air
+  doubling unchanged (orig :294-298). Hurt window: the audit's "set hurt
+  window 10" misread orig :322 (hurt_timer=15 — already ported as the
+  hurtTimer full-block gate); orig :83's maxHurtResistantTime=10 is NOT
+  ported — LivingEntity.invulnerableDuration is final in 1.21.1 and the
+  value is unobservable behind the 15-tick gate (vanilla's partial window
+  is at most half of 10 or of the default 20 = 10 ticks < 15), so behavior
+  is identical; documented in the EntityLeon ctor.
+- **ENT-K-022 FIXED (by consolidation)** — the leonopteryx id now runs
+  EntityLeon, which already carries the full orig sound set: leon_living
+  ambient gated activity==1 && no rider (orig Leon.java:208-216), leon_hit
+  hurt (:218-220), leon_death death (:222-224), volume 1.75 (:226-228),
+  pitch 0.85 (:230-232), plus the 20-tick mothrawings flap loop at 0.5f
+  (:508-516) — all via the createVariableRangeEvent idiom; sounds.json
+  already defines leon_living/leon_hit(1-3)/leon_death/mothrawings events.
+  No separate Leonopteryx sound code needed; the sound-less twin is gone.
+
+## Phase E — E6 (close) + E7: TEST-002 registrations + repellent wall-mounting (2026-08-11)
+
+- **TEST-002 RESOLVED** — the six entities (spit_bug, gamma_metroid,
+  island_too, cliff_racer, red_ant, the_princess) + two identical-rule
+  siblings (ant, the_prince) registered in
+  ModEntityAttributes.registerSpawnPlacements: ON_GROUND +
+  MOTION_BLOCKING_NO_LEAVES with the faithful predicate per entity
+  (Monster::checkMonsterSpawnRules for SpitBug — sole Monster subclass;
+  Animal::checkAnimalSpawnRules for IslandToo — no orig override, so the
+  1.7.10 EntityAnimal default applies; Mob::checkMobSpawnRules for the
+  rest — their orig func_70601_bi overrides bypassed the animal
+  grass/light default). Per-entity gates stay in the existing cited
+  checkSpawnRules overrides. EVIDENCE CORRECTION: the actual startup
+  ServerLifecycleHooks ERROR (runs/client/logs/latest.log:622) lists 38
+  unregistered-but-spawning entities, not six — the remaining ~28
+  orespawn ids (ant-family done; girlfriend/boyfriend/dragon/godzilla/
+  robots/etc.) plus two iceandfire externals are a QUEUED E8 follow-up
+  sweep (log-only today: they spawn with NO_RESTRICTIONS semantics, as
+  before). Also flagged for E8: gamma_metroid MobCategory mismatch
+  (registered CREATURE, MONSTER-listed in mining/chaos biome JSONs).
+- **E7 repellent wall-mounting RESOLVED** — 1.7.10 repellents extend
+  BlockTorch (KrakenRepellent.java:21-22, CreeperRepellent.java:22-23;
+  wall-meta particle branches :35-51 prove live wall placement).
+  Port mirrors vanilla torch/wall-torch: WallRepellentBlock extends
+  RepellentBlock (ITEM-019 repel behavior untouched), FACING +
+  wall-torch shapes + sturdy-face survival + pop-off; both items now
+  StandingAndWallBlockItem; wall blockstates/models on the existing
+  textures; wall loot drops the standing item; lang keys added. Floor
+  ids/behavior unchanged (saves safe). asset audit 0 errors @ 216 blocks.

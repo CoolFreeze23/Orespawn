@@ -458,18 +458,26 @@ public class ModEntities {
             ENTITY_TYPES.register("hydrolisc", () -> EntityType.Builder.of(EntityHydrolisc::new, MobCategory.CREATURE)
                     .sized(0.5f, 0.5f).clientTrackingRange(10).build("hydrolisc"));
 
+    // TF-030 consolidation: 1.7.10 has ONE entity — class Leon registered under
+    // the name "Leonopteryx" (orig OreSpawnMain.java:4377/4381) — which the port
+    // had duplicated as EntityLeon ("leon") + Leonopteryx ("leonopteryx").
+    // Both registry ids now build the single EntityLeon class.
+    // CANONICAL id: orespawn:leonopteryx (snake_case of the orig registration
+    // name). orespawn:leon stays registered as a save-compat alias so entities,
+    // cages, spawn eggs and biome spawner lists from existing worlds keep
+    // resolving; new content should reference LEONOPTERYX.
+    // Hitbox 3.5 × 8.25 from orig Leon.java:80 (setSize(3.5f, 8.25f)).
+    // clientTrackingRange=16 chunks kept from the pre-consolidation
+    // leonopteryx registration (deliberate modernization: orig tracking was
+    // 64 blocks, OreSpawnMain.java:4381, too short for a bird that hovers far
+    // above the player).
     public static final DeferredHolder<EntityType<?>, EntityType<EntityLeon>> ENTITY_LEON =
             ENTITY_TYPES.register("leon", () -> EntityType.Builder.of(EntityLeon::new, MobCategory.CREATURE)
-                    .sized(3.0f, 4.5f).clientTrackingRange(12).build("leon"));
+                    .sized(3.5f, 8.25f).clientTrackingRange(16).build("leon"));
 
-    // Leonopteryx — 1.7.10 Mining-Dimension flying boss/mount. Hitbox is
-    // 4 × 2 (the visible silhouette is much larger but a tight AABB lets
-    // the player land a sword swing on the head/wing without invisible
-    // collision walls). clientTrackingRange=16 chunks because the bird
-    // hovers far above the player and must stay rendered during pursuit.
-    public static final DeferredHolder<EntityType<?>, EntityType<Leonopteryx>> LEONOPTERYX =
-            ENTITY_TYPES.register("leonopteryx", () -> EntityType.Builder.of(Leonopteryx::new, MobCategory.CREATURE)
-                    .sized(4.0f, 2.0f).clientTrackingRange(16).build("leonopteryx"));
+    public static final DeferredHolder<EntityType<?>, EntityType<EntityLeon>> LEONOPTERYX =
+            ENTITY_TYPES.register("leonopteryx", () -> EntityType.Builder.of(EntityLeon::new, MobCategory.CREATURE)
+                    .sized(3.5f, 8.25f).clientTrackingRange(16).build("leonopteryx"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<Lizard>> LIZARD =
             ENTITY_TYPES.register("lizard", () -> EntityType.Builder.of(Lizard::new, MobCategory.CREATURE)

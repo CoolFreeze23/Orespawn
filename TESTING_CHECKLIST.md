@@ -347,7 +347,9 @@ date within seconds. Caveats:
   removed from the four biome JSONs; a mechanical scan of biome→placed_feature,
   placed→configured, biome-modifier→placed, set→structure, structure→tag→biome found
   zero other dangling refs. Client relaunched clean.
-- **TEST-002 (OPEN — log observation, not yet gameplay-verified)** — Server startup
+- **TEST-002 (RESOLVED 2026-08-11, E6 — the six + two siblings registered;
+  WIDER SWEEP QUEUED: the actual startup error lists 38 entities, see the
+  E8 boundary report)** — Server startup
   logs `RegisterSpawnPlacementsEvent` errors for six OreSpawn entities that have biome
   spawn entries but no placement rules: `spit_bug`, `gamma_metroid`, `island_too`,
   `cliff_racer`, `red_ant`, `the_princess`. Consequence: NO spawn-location

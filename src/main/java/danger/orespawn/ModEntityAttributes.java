@@ -117,8 +117,10 @@ public class ModEntityAttributes {
         event.put(ModEntities.ENTITY_GAMMA_METROID.get(), EntityGammaMetroid.createAttributes().build());
         event.put(ModEntities.GIRLFRIEND.get(), Girlfriend.createAttributes().build());
         event.put(ModEntities.ENTITY_HYDROLISC.get(), EntityHydrolisc.createAttributes().build());
+        // TF-030: both ids are the one consolidated EntityLeon (orig Leon.java
+        // registered "Leonopteryx", OreSpawnMain.java:4377/4381).
         event.put(ModEntities.ENTITY_LEON.get(), EntityLeon.createAttributes().build());
-        event.put(ModEntities.LEONOPTERYX.get(), Leonopteryx.createAttributes().build());
+        event.put(ModEntities.LEONOPTERYX.get(), EntityLeon.createAttributes().build());
         event.put(ModEntities.LIZARD.get(), Lizard.createAttributes().build());
         event.put(ModEntities.OSTRICH.get(), Ostrich.createAttributes().build());
         event.put(ModEntities.ENTITY_RUBBER_DUCKY.get(), EntityRubberDucky.createAttributes().build());
@@ -323,6 +325,38 @@ public class ModEntityAttributes {
         // permanently dim Chaos dimension regardless of light level.
         event.register(ModEntities.VAMPIRE_BUTTERFLY.get(), SpawnPlacementTypes.NO_RESTRICTIONS,
                 Heightmap.Types.MOTION_BLOCKING, VampireButterfly::checkSpawnRules, RegisterSpawnPlacementsEvent.Operation.AND);
+
+        // TEST-002 (E6, 2026-08-11) — the six unregistered-but-spawning
+        // entities from the startup ServerLifecycleHooks error, plus the two
+        // free-rider siblings sharing identical rules (ant with red_ant via
+        // EntityAnt's inherited gate; the_prince with the_princess via
+        // companion_royalty.json). Placement layer = the 1.7.10 creature/
+        // monster-type solid-ground check (ON_GROUND); the per-entity gates
+        // (darkness/y-level/buddy/day-dice) already live in each entity's
+        // checkSpawnRules instance override with orig citations. SpitBug is
+        // the sole Monster subclass (Monster::checkMonsterSpawnRules per
+        // file convention); GammaMetroid/ThePrincess/ThePrince extend
+        // TamableAnimal and CliffRacer/RedAnt/Ant bypassed the 1.7.10
+        // animal grass/light default (orig func_70601_bi overrides without
+        // super), so they take Mob::checkMobSpawnRules; IslandToo has no
+        // orig override at all, so the faithful mapping is the 1.7.10
+        // EntityAnimal default = Animal::checkAnimalSpawnRules.
+        event.register(ModEntities.ENTITY_SPIT_BUG.get(), SpawnPlacementTypes.ON_GROUND,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Monster::checkMonsterSpawnRules, RegisterSpawnPlacementsEvent.Operation.AND);
+        event.register(ModEntities.ENTITY_GAMMA_METROID.get(), SpawnPlacementTypes.ON_GROUND,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Mob::checkMobSpawnRules, RegisterSpawnPlacementsEvent.Operation.AND);
+        event.register(ModEntities.ISLAND_TOO.get(), SpawnPlacementTypes.ON_GROUND,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Animal::checkAnimalSpawnRules, RegisterSpawnPlacementsEvent.Operation.AND);
+        event.register(ModEntities.ENTITY_CLIFF_RACER.get(), SpawnPlacementTypes.ON_GROUND,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Mob::checkMobSpawnRules, RegisterSpawnPlacementsEvent.Operation.AND);
+        event.register(ModEntities.ENTITY_RED_ANT.get(), SpawnPlacementTypes.ON_GROUND,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Mob::checkMobSpawnRules, RegisterSpawnPlacementsEvent.Operation.AND);
+        event.register(ModEntities.ENTITY_ANT.get(), SpawnPlacementTypes.ON_GROUND,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Mob::checkMobSpawnRules, RegisterSpawnPlacementsEvent.Operation.AND);
+        event.register(ModEntities.THE_PRINCESS.get(), SpawnPlacementTypes.ON_GROUND,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Mob::checkMobSpawnRules, RegisterSpawnPlacementsEvent.Operation.AND);
+        event.register(ModEntities.THE_PRINCE.get(), SpawnPlacementTypes.ON_GROUND,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Mob::checkMobSpawnRules, RegisterSpawnPlacementsEvent.Operation.AND);
     }
 
     /**

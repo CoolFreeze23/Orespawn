@@ -76,6 +76,10 @@ public class ModSpawnControl {
                     Map.entry(ModEntities.ALOSAURUS.get(),           OreSpawnConfig.ALOSAURUS_ENABLE::get),
                     Map.entry(ModEntities.HAMMERHEAD.get(),           OreSpawnConfig.HAMMERHEAD_ENABLE::get),
                     Map.entry(ModEntities.ENTITY_LEON.get(),         OreSpawnConfig.LEON_ENABLE::get),
+                    // TF-030: both registry ids are the one consolidated
+                    // Leon/Leonopteryx, so both obey the single leonEnable flag
+                    // (orig has one "Leonopteryx" entry, OreSpawnMain.java:6523).
+                    Map.entry(ModEntities.LEONOPTERYX.get(),         OreSpawnConfig.LEON_ENABLE::get),
                     Map.entry(ModEntities.ENTITY_CATER_KILLER.get(), OreSpawnConfig.CATERKILLER_ENABLE::get),
                     Map.entry(ModEntities.ENTITY_MOLENOID.get(),     OreSpawnConfig.MOLENOID_ENABLE::get),
                     Map.entry(ModEntities.TREX.get(),                OreSpawnConfig.TREX_ENABLE::get),

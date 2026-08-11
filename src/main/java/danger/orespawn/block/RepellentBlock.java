@@ -53,7 +53,9 @@ public class RepellentBlock extends Block {
     // Block.box(6, 0, 6, 10, 10, 10) outline and NO collision (vanilla torches
     // get that via Properties.noCollission(); enforced here in-class since the
     // registration properties live in ModBlocks). Wall placement (BlockTorch
-    // metadata 1-4 in 1.7.10) remains unimplemented — logged separately.
+    // metadata 1-4 in 1.7.10) is provided by WallRepellentBlock, paired with
+    // this block through StandingAndWallBlockItem in ModItems (vanilla
+    // TORCH/WALL_TORCH pattern).
     private static final VoxelShape SHAPE = Block.box(6.0, 0.0, 6.0, 10.0, 10.0, 10.0);
 
     private final Variant variant;
@@ -157,14 +159,23 @@ public class RepellentBlock extends Block {
                 force * Math.sin(angle), 0, force * Math.cos(angle)));
     }
 
+    /** orig else-branch (standing torch, meta 0/5): particles at x+0.5, y+0.7+0.21, z+0.5. */
     @Override
     public void animateTick(BlockState state, Level level, BlockPos pos, RandomSource random) {
         double x = pos.getX() + 0.5;
         double y = pos.getY() + 0.7;
         double z = pos.getZ() + 0.5;
+        addRepellentParticles(level, x, y + 0.21, z);
+    }
 
-        level.addParticle(ParticleTypes.SMOKE, x, y + 0.21, z, 0, 0, 0);
-        level.addParticle(ParticleTypes.FLAME, x, y + 0.21, z, 0, 0, 0);
-        level.addParticle(ParticleTypes.DUST_PLUME, x, y + 0.21, z, 0, 0, 0);
+    /**
+     * orig KrakenRepellent.java:36-38 (and every other meta branch) — each
+     * repellent particle burst is the smoke + flame + reddust triple at one spot.
+     * Shared with {@link WallRepellentBlock}, whose facing shifts the spot.
+     */
+    protected static void addRepellentParticles(Level level, double x, double y, double z) {
+        level.addParticle(ParticleTypes.SMOKE, x, y, z, 0, 0, 0);
+        level.addParticle(ParticleTypes.FLAME, x, y, z, 0, 0, 0);
+        level.addParticle(ParticleTypes.DUST_PLUME, x, y, z, 0, 0, 0);
     }
 }

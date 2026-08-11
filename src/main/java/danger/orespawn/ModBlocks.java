@@ -144,6 +144,16 @@ public class ModBlocks {
     public static final DeferredBlock<Block> CREEPER_REPELLENT = BLOCKS.register("creeper_repellent",
             () -> new RepellentBlock(BlockBehaviour.Properties.of().strength(1.0f).lightLevel(s -> 12),
                     RepellentBlock.Variant.CREEPER));
+    // Wall-mounted repellent forms — orig KrakenRepellent.java:21-22 / CreeperRepellent.java:22-23
+    // extend BlockTorch, whose metadata 1-4 was wall placement; modern split mirrors vanilla
+    // TORCH/WALL_TORCH and the StandingAndWallBlockItem in ModItems pairs the two. No separate
+    // item: pick-block/drops resolve to the standing repellent's item.
+    public static final DeferredBlock<Block> WALL_KRAKEN_REPELLENT = BLOCKS.register("wall_kraken_repellent",
+            () -> new WallRepellentBlock(BlockBehaviour.Properties.of().strength(1.0f).lightLevel(s -> 12),
+                    RepellentBlock.Variant.KRAKEN));
+    public static final DeferredBlock<Block> WALL_CREEPER_REPELLENT = BLOCKS.register("wall_creeper_repellent",
+            () -> new WallRepellentBlock(BlockBehaviour.Properties.of().strength(1.0f).lightLevel(s -> 12),
+                    RepellentBlock.Variant.CREEPER));
 
     // Island block
     public static final DeferredBlock<Block> ISLAND = BLOCKS.register("island",

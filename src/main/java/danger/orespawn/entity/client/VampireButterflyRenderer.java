@@ -9,8 +9,8 @@ import net.minecraft.resources.ResourceLocation;
 
 /**
  * Renderer for {@link VampireButterfly}. Re-uses the generic
- * {@link ButterflyModel} body layer (same as the ambient butterfly,
- * Mothra, and Leonopteryx) so we don't duplicate the wing-flap math.
+ * {@link ButterflyModel} body layer (same as the ambient butterfly and
+ * Mothra) so we don't duplicate the wing-flap math.
  *
  * <p>Texture defaults to {@code vampire_butterfly.png}; if that asset is
  * missing the user will see Minecraft's standard purple/black "missing
