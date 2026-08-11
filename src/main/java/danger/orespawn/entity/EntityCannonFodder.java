@@ -40,7 +40,9 @@ public class EntityCannonFodder extends TamableAnimal {
 
     public EntityCannonFodder(EntityType<? extends EntityCannonFodder> type, Level level) {
         super(type, level);
-        this.localTargetSorter = Comparator.comparingDouble(this::distanceToSqr);
+        // orig EntityCannonFodder.java:42 — targets rank by GenericTargetSorter (creepers
+        // and large silhouettes outrank nearer small targets), not by raw distance.
+        this.localTargetSorter = new danger.orespawn.entity.ai.GenericTargetSorter(this);
     }
 
     @Override
@@ -156,13 +158,22 @@ public class EntityCannonFodder extends TamableAnimal {
         if (this.random.nextInt(200) == 1) this.setTarget(null);
         if (this.getIsActivated() != 2) return;
 
+        // orig EntityCannonFodder.java:352-358 — species table: base sfreq 7 / dm 4.0f,
+        // but a Chipmunk swings on the 6-gate for 3.0f. (The Lizard and VelocityRaptor
+        // rows of the orig table belong to those entities' own batches.)
+        int swingFrequency = 7;
+        float fodderDamage = 4.0f;
+        if (this instanceof Chipmunk) {
+            fodderDamage = 3.0f;
+            swingFrequency = 6;
+        }
         if (this.level().getDifficulty() != Difficulty.PEACEFUL && this.random.nextInt(5) == 1) {
             LivingEntity attackTarget = this.findSomethingToAttack();
             if (attackTarget != null) {
                 this.getNavigation().moveTo(attackTarget, 1.25);
                 if (this.distanceToSqr(attackTarget) < 9.0
-                        && (this.random.nextInt(8) == 0 || this.random.nextInt(7) == 1)) {
-                    attackTarget.hurt(this.damageSources().mobAttack(this), 4.0f);
+                        && (this.random.nextInt(swingFrequency + 1) == 0 || this.random.nextInt(swingFrequency) == 1)) {
+                    attackTarget.hurt(this.damageSources().mobAttack(this), fodderDamage);
                 }
             } else if (this.isOrderedToSit()) {
                 this.getNavigation().moveTo(this.patrolBlockX, this.patrolBlockY, this.patrolBlockZ, 0.65);

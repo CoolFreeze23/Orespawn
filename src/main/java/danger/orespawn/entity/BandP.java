@@ -2,8 +2,10 @@ package danger.orespawn.entity;
 
 import danger.orespawn.MobStats;
 import danger.orespawn.ModItems;
+import danger.orespawn.OreSpawnConfig;
+import danger.orespawn.entity.ai.GenericTargetSorter;
+import danger.orespawn.entity.ai.MoveIndoorsGoal;
 
-import java.util.Comparator;
 import java.util.List;
 
 import net.minecraft.core.NonNullList;
@@ -16,17 +18,20 @@ import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
+import net.minecraft.world.entity.ai.goal.MoveThroughVillageGoal;
+import net.minecraft.world.entity.ai.goal.OpenDoorGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
+import net.minecraft.world.entity.ai.navigation.GroundPathNavigation;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.monster.Monster;
+import net.minecraft.world.entity.npc.Villager;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -36,7 +41,7 @@ public class BandP extends Monster {
     private static final EntityDataAccessor<Integer> DATA_WHAT =
             SynchedEntityData.defineId(BandP.class, EntityDataSerializers.INT);
 
-    private final Comparator<Entity> targetSorter;
+    private final GenericTargetSorter targetSorter;
     private static final float MOVE_SPEED = 0.32f;
     /** orig BandP.java:46 — MymainInventory is 100 slots. */
     private static final int STASH_SIZE = 100;
@@ -49,14 +54,32 @@ public class BandP extends Monster {
         super(type, level);
         // orig BandP.java:53 — experienceValue = 1000.
         this.xpReward = 1000;
-        this.targetSorter = Comparator.comparingDouble(this::distanceToSqr);
+        // TF-035: orig BandP.java:42,55 — targets sort with GenericTargetSorter
+        // (creeper-halved / big-silhouette-first), not plain distance.
+        this.targetSorter = new GenericTargetSorter(this);
+        // Needed for the OpenDoorGoal (orig BandP.java:60) to path through doors.
+        if (this.getNavigation() instanceof GroundPathNavigation groundNav) {
+            groundNav.setCanOpenDoors(true);
+        }
     }
 
     @Override
     protected void registerGoals() {
-        this.goalSelector.addGoal(0, new WaterAvoidingRandomStrollGoal(this, 0.5));
-        this.goalSelector.addGoal(1, new LookAtPlayerGoal(this, Player.class, 10.0f));
-        this.goalSelector.addGoal(2, new RandomLookAroundGoal(this));
+        // orig BandP.java:56 — EntityAIMoveThroughVillage(0.5, false) at
+        // priority 0. Vanilla MoveThroughVillageGoal is the same goal line;
+        // 1.14+ villages are POI clusters (beds/workstations) rather than
+        // door lists, so it engages only where village POI exists nearby —
+        // the honest modern mapping (documented per the MoveIndoorsGoal
+        // pattern). Door tolerance mirrors the OpenDoor goal below.
+        this.goalSelector.addGoal(0, new MoveThroughVillageGoal(this, 0.5, false, 4, () -> true));
+        // orig :57 — MyEntityAIWanderALot(16, 0.5).
+        this.goalSelector.addGoal(1, new WaterAvoidingRandomStrollGoal(this, 0.5));
+        this.goalSelector.addGoal(2, new LookAtPlayerGoal(this, Player.class, 10.0f)); // orig :58
+        this.goalSelector.addGoal(3, new RandomLookAroundGoal(this)); // orig :59
+        this.goalSelector.addGoal(4, new OpenDoorGoal(this, true)); // orig :60
+        // orig :61 — EntityAIMoveIndoors; 1.21.1 roofed-shelter behavioral
+        // match, see MoveIndoorsGoal Javadoc.
+        this.goalSelector.addGoal(5, new MoveIndoorsGoal(this));
     }
 
     public static AttributeSupplier.Builder createAttributes() {
@@ -215,6 +238,8 @@ public class BandP extends Monster {
     }
 
     private LivingEntity findSomethingToAttack() {
+        // orig BandP.java:253-255 — PlayNicely disables aggression entirely.
+        if (OreSpawnConfig.PLAY_NICELY.get()) return null;
         List<LivingEntity> list = this.level().getEntitiesOfClass(LivingEntity.class,
                 this.getBoundingBox().inflate(20.0, 6.0, 20.0));
         list.sort(this.targetSorter);
@@ -224,10 +249,18 @@ public class BandP extends Monster {
         return null;
     }
 
+    /**
+     * orig BandP.java:226-250 — line of sight required; fair game are
+     * non-creative players, villagers, and the Girlfriend/Boyfriend
+     * companions; everything else is ignored.
+     */
     private boolean isSuitableTarget(LivingEntity target) {
         if (target == null || target == this || !target.isAlive()) return false;
+        if (!this.getSensing().hasLineOfSight(target)) return false; // orig :236-238
         if (target instanceof Player player) return !player.getAbilities().instabuild;
-        return false;
+        if (target instanceof Villager) return true; // orig :243-245
+        if (target instanceof Girlfriend) return true; // orig :246-248
+        return target instanceof Boyfriend; // orig :249
     }
 
     @Override

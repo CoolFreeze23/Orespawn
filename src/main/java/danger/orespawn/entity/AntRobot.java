@@ -2,7 +2,6 @@ package danger.orespawn.entity;
 
 import danger.orespawn.MobStats;
 
-import java.util.Comparator;
 import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
@@ -19,6 +18,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
@@ -27,10 +27,13 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.resources.ResourceLocation;
 import danger.orespawn.OreSpawnMod;
+import danger.orespawn.entity.ai.GenericTargetSorter;
 import danger.orespawn.entity.client.RenderSpiderRobotInfo;
 
 public class AntRobot extends Mob {
@@ -49,7 +52,8 @@ public class AntRobot extends Mob {
     /** Lazy one-shot leg-data (re)initialization flag (orig {@code didonce}, AntRobot.java:47). */
     private boolean legDataInitialized = false;
 
-    private final Comparator<Entity> targetSorter;
+    /** orig AntRobot.java:43 — built but never consulted (the orig scan iterates unsorted); kept unused for parity (TF-035). */
+    private final GenericTargetSorter targetSorter;
     private final float moveSpeed = 0.3f;
     private int playing = 0;
     private int rideTicker = 0;
@@ -58,7 +62,7 @@ public class AntRobot extends Mob {
     public AntRobot(EntityType<? extends AntRobot> type, Level level) {
         super(type, level);
         this.xpReward = 150;
-        this.targetSorter = Comparator.comparingDouble(this::distanceToSqr);
+        this.targetSorter = new GenericTargetSorter(this); // orig AntRobot.java:54
         // orig AntRobot.java:532-535 — entityInit primes the leg data once at construction.
         initLegData();
     }
@@ -252,6 +256,245 @@ public class AntRobot extends Mob {
     @Override
     public boolean shouldRiderSit() {
         return true;
+    }
+
+    // ==================== Riding + hover physics (ENT-A-016) ====================
+
+    /** orig AntRobot.java:544-546 — the chassis cannot be shoved; vanilla pushing would fight the hover model. */
+    @Override
+    public boolean isPushable() {
+        return false;
+    }
+
+    /** Any mounted player steers (orig AntRobot.java:929-935 — mounting is gated only by owned != 0 in mobInteract). */
+    @javax.annotation.Nullable
+    @Override
+    public LivingEntity getControllingPassenger() {
+        if (!this.getPassengers().isEmpty() && this.getPassengers().get(0) instanceof Player player) {
+            return player;
+        }
+        return super.getControllingPassenger();
+    }
+
+    /**
+     * Seat: 1.25 blocks behind center with a ±0.05 fore-aft bob (orig
+     * AntRobot.java:552-558), height 0.55 with a ±0.02 vertical bob (orig
+     * :548-550), both driven by {@code rideTicker}. TF-029 player-offset
+     * convention (see Elevator): the original added rider.getYOffset() and
+     * setPosition subtracted yOffset again, so a 1.7.10 player netted
+     * mountedYOffset - 0.5 while non-players rode the full 0.55.
+     */
+    @Override
+    protected void positionRider(Entity passenger, Entity.MoveFunction move) {
+        if (!this.hasPassenger(passenger)) return;
+        float f = -1.25f;
+        f = (float) ((double) f + Math.cos((float) this.rideTicker * 0.33f) * 0.05);
+        double seatY = 0.55 + Math.cos((float) this.rideTicker * 0.19f) * 0.02;
+        if (passenger instanceof Player) seatY -= 0.5;
+        move.accept(passenger,
+                this.getX() - (double) f * Math.sin(Math.toRadians(this.getYRot())),
+                this.getY() + seatY,
+                this.getZ() + (double) f * Math.cos(Math.toRadians(this.getYRot())));
+    }
+
+    /** orig AntRobot.java:710,746,757,776 — air and liquids (water/lava, both flow states) give no hover support. */
+    private boolean givesHoverSupport(BlockState state) {
+        return !state.isAir() && !state.is(Blocks.WATER) && !state.is(Blocks.LAVA);
+    }
+
+    /**
+     * The original's ridden hover/walk physics (orig AntRobot.java:659-877,
+     * server ridden branch :743-872), run on the controlling client like the
+     * Elevator/B3 mounts: the riding client integrates the move and syncs
+     * position while the server keeps the stomp/melee side effects in
+     * {@link #tick}. Order preserved: motion clamps, ground hover,
+     * obstruction climb, yaw chase, heading sign, throttle, first move with
+     * 0.98 friction, second move with 0.8/0.98/0.8 friction — the original
+     * really did integrate the ridden motion twice per tick (:864 and :869),
+     * which is why the ride outruns the nominal 0.3 cap; kept as ride feel.
+     */
+    @Override
+    protected void tickRidden(Player rider, Vec3 travelVector) {
+        super.tickRidden(rider, travelVector);
+        if (!this.isControlledByLocalInstance()) return;
+
+        Vec3 motion = this.getDeltaMovement();
+        double motionX = motion.x;
+        double motionY = motion.y;
+        double motionZ = motion.z;
+        // orig :661 — tick-start speed drives the obstruction depth and yaw
+        // lag; read before the clamps below.
+        double velocity = Math.sqrt(motionX * motionX + motionZ * motionZ);
+
+        // orig :675-692 — vertical ±0.85, horizontal ±1.25 hard clamps.
+        if (motionY > 0.85) motionY = 0.85;
+        if (motionY < -0.85) motionY = -0.85;
+        if (motionX < -1.25) motionX = -1.25;
+        if (motionX > 1.25) motionX = 1.25;
+        if (motionZ < -1.25) motionZ = -1.25;
+        if (motionZ > 1.25) motionZ = 1.25;
+
+        // orig :743-751 — ridden ground hover: solid ground 2.25 below lifts
+        // motion 0.06 and position 0.03; air or liquid sinks 0.02.
+        BlockPos under = new BlockPos((int) this.getX(), (int) ((float) this.getY() - 2.25f), (int) this.getZ());
+        if (givesHoverSupport(this.level().getBlockState(under))) {
+            motionY += 0.06;
+            this.setPos(this.getX(), this.getY() + 0.03, this.getZ());
+        } else {
+            motionY -= 0.02;
+        }
+
+        // orig :766-782 — obstruction climb: a wedge of probes ahead (depth
+        // 3 + velocity*6, radius up to dist*2, arc ±90° in 30° steps), each
+        // solid block adds 0.02; the total lifts motion AND position ×0.05 so
+        // the ant walks up terrain instead of stalling against it.
+        double obstructionFactor = 0.0;
+        int dist = 3 + (int) (velocity * 6.0);
+        for (int k = 1; k < dist; ++k) {
+            for (int i = 1; i < dist * 2; ++i) {
+                for (int j = -90; j <= 90; j += 30) {
+                    double dx = (double) i * Math.cos(Math.toRadians(this.getYRot() + 90.0f + (float) j));
+                    double dz = (double) i * Math.sin(Math.toRadians(this.getYRot() + 90.0f + (float) j));
+                    BlockPos probe = new BlockPos((int) (this.getX() + dx), (int) this.getY() - k, (int) (this.getZ() + dz));
+                    if (!givesHoverSupport(this.level().getBlockState(probe))) continue;
+                    obstructionFactor += 0.02;
+                }
+            }
+        }
+        motionY += obstructionFactor * 0.05;
+        this.setPos(this.getX(), this.getY() + obstructionFactor * 0.05, this.getZ());
+
+        // orig :783-815 — yaw chases the rider's yaw with a speed-dependent
+        // lag (|1.85 - v| clamped 0.01..0.9); pitch pinned to 0.
+        double riderYaw = rider.getYRot() % 360.0;
+        while (riderYaw < 0.0) riderYaw += 360.0;
+        double bodyYaw = this.getYRot() % 360.0;
+        while (bodyYaw < 0.0) bodyYaw += 360.0;
+        double relativeYaw = (riderYaw - bodyYaw) % 180.0;
+        while (relativeYaw < 0.0) relativeYaw += 180.0;
+        if (relativeYaw > 90.0) relativeYaw -= 180.0;
+        if (velocity > 0.01) {
+            double turnLag = Math.abs(1.85 - velocity);
+            if (turnLag < 0.01) turnLag = 0.01;
+            if (turnLag > 0.9) turnLag = 0.9;
+            this.setYRot(rider.getYRot() + (float) (relativeYaw * turnLag));
+        } else {
+            this.setYRot(rider.getYRot());
+        }
+        this.setXRot(0.0f);
+        this.setRot(this.getYRot(), this.getXRot());
+        this.yBodyRot = this.getYRot();
+        this.yHeadRot = this.getYRot();
+
+        // orig :816-834 — sign the scalar speed against the RIDER's facing:
+        // motion running opposite the rider means the ant is backing up.
+        double max_speed = 0.3; // orig :666
+        double newVelocity = Math.sqrt(motionX * motionX + motionZ * motionZ);
+        double motionHeading = Math.atan2(motionZ, motionX);
+        double riderHeading = Math.toRadians((rider.getYRot() + 90.0f) % 360.0f);
+        // orig :821 — the original's slightly-off hand-typed PI, kept for exactness.
+        double pi = 3.1415926545;
+        double headingDiff = Math.abs(motionHeading - riderHeading) % (pi * 2.0);
+        if (headingDiff > pi) headingDiff -= pi * 2.0;
+        headingDiff = Math.abs(headingDiff);
+        if (Math.abs(newVelocity) < 0.01) headingDiff = 0.0;
+        if (headingDiff > 1.5) newVelocity = -newVelocity;
+
+        // orig :835-863 — throttle ±0.05 per tick, caps 0.3 forward / 0.25
+        // reverse; project the scalar onto the ant's facing (+90 forward,
+        // +270 reverse).
+        float forwardInput = rider.zza;
+        if (Math.abs(forwardInput) > 0.001f) {
+            double deltav;
+            if (forwardInput > 0.0f) {
+                deltav = 0.05;
+            } else {
+                max_speed = 0.25;
+                deltav = -0.05;
+            }
+            newVelocity += deltav;
+            if (newVelocity >= 0.0) {
+                if (newVelocity > max_speed) newVelocity = max_speed;
+                motionX = Math.cos(Math.toRadians(this.getYRot() + 90.0f)) * newVelocity;
+                motionZ = Math.sin(Math.toRadians(this.getYRot() + 90.0f)) * newVelocity;
+            } else {
+                if (newVelocity < -max_speed) newVelocity = -max_speed;
+                newVelocity = -newVelocity;
+                motionX = Math.cos(Math.toRadians(this.getYRot() + 270.0f)) * newVelocity;
+                motionZ = Math.sin(Math.toRadians(this.getYRot() + 270.0f)) * newVelocity;
+            }
+        } else if (newVelocity >= 0.0) {
+            motionX = Math.cos(Math.toRadians(this.getYRot() + 90.0f)) * newVelocity;
+            motionZ = Math.sin(Math.toRadians(this.getYRot() + 90.0f)) * newVelocity;
+        } else {
+            motionX = Math.cos(Math.toRadians(this.getYRot() + 270.0f)) * (newVelocity * -1.0);
+            motionZ = Math.sin(Math.toRadians(this.getYRot() + 270.0f)) * (newVelocity * -1.0);
+        }
+
+        // orig :864-867 — first integration, then 0.98 friction on all axes.
+        this.setDeltaMovement(motionX, motionY, motionZ);
+        this.move(MoverType.SELF, this.getDeltaMovement());
+        Vec3 afterFirst = this.getDeltaMovement();
+        this.setDeltaMovement(afterFirst.x * 0.98, afterFirst.y * 0.98, afterFirst.z * 0.98);
+
+        // orig :869-872 — the shared tail ran again while ridden: a second
+        // integration with 0.8/0.98/0.8 friction. Original quirk, kept.
+        this.move(MoverType.SELF, this.getDeltaMovement());
+        Vec3 afterSecond = this.getDeltaMovement();
+        this.setDeltaMovement(afterSecond.x * 0.8, afterSecond.y * 0.98, afterSecond.z * 0.8);
+        this.calculateEntityAnimation(false);
+    }
+
+    /**
+     * Riderless server physics: vanilla living movement first (orig
+     * AntRobot.java:672-674 ran super.onLivingUpdate), then the motion clamps
+     * (:675-692), the riderless hover (:752-763) and the extra integration
+     * with 0.8/0.98/0.8 friction (:869-872) — the original moved the ant
+     * once in moveEntityWithHeading and once more here, which is what makes
+     * the 0.2 chase impulse from goThisWay effective. While player-ridden the
+     * controlling client already integrated the move in {@link #tickRidden},
+     * so vanilla travel is skipped (Elevator/B3 pattern).
+     */
+    @Override
+    public void travel(Vec3 travelVector) {
+        if (this.isControlledByLocalInstance() && this.getControllingPassenger() instanceof Player) {
+            return;
+        }
+        super.travel(travelVector);
+        if (this.level().isClientSide()) {
+            return;
+        }
+        Vec3 motion = this.getDeltaMovement();
+        double motionX = motion.x;
+        double motionY = motion.y;
+        double motionZ = motion.z;
+        // orig :675-692 — the clamps apply riderless too.
+        if (motionY > 0.85) motionY = 0.85;
+        if (motionY < -0.85) motionY = -0.85;
+        if (motionX < -1.25) motionX = -1.25;
+        if (motionX > 1.25) motionX = 1.25;
+        if (motionZ < -1.25) motionZ = -1.25;
+        if (motionZ > 1.25) motionZ = 1.25;
+        // orig :752-763 — riderless hover: probe 0.75 down, then 1.75 down if
+        // that was air; solid ground lifts motion AND position 0.15, anything
+        // else sinks 0.002 — the ant floats just under a block over terrain.
+        BlockState ground = this.level().getBlockState(
+                new BlockPos((int) this.getX(), (int) ((float) this.getY() - 1.75f + 1.0f), (int) this.getZ()));
+        if (ground.isAir()) {
+            ground = this.level().getBlockState(
+                    new BlockPos((int) this.getX(), (int) ((float) this.getY() - 1.75f), (int) this.getZ()));
+        }
+        if (givesHoverSupport(ground)) {
+            motionY += 0.15;
+            this.setPos(this.getX(), this.getY() + 0.15, this.getZ());
+        } else {
+            motionY -= 0.002;
+        }
+        // orig :869-872 — second integration + 0.8/0.98/0.8 friction.
+        this.setDeltaMovement(motionX, motionY, motionZ);
+        this.move(MoverType.SELF, this.getDeltaMovement());
+        Vec3 after = this.getDeltaMovement();
+        this.setDeltaMovement(after.x * 0.8, after.y * 0.98, after.z * 0.8);
     }
 
     @Override

@@ -2,8 +2,9 @@ package danger.orespawn.entity;
 
 import danger.orespawn.MobStats;
 
+import danger.orespawn.OreSpawnConfig;
 import danger.orespawn.OreSpawnMod;
-import java.util.Comparator;
+import danger.orespawn.entity.ai.GenericTargetSorter;
 import java.util.List;
 import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
@@ -213,22 +214,33 @@ public class EntityBee extends Monster {
 
     @Nullable
     private LivingEntity findSomethingToAttack() {
+        // orig Bee.java:326-328 — PlayNicely disables aggression entirely.
+        if (OreSpawnConfig.PLAY_NICELY.get()) return null;
         List<LivingEntity> entities = this.level().getEntitiesOfClass(LivingEntity.class,
                 this.getBoundingBox().inflate(10.0, 6.0, 10.0));
-        entities.sort(Comparator.comparingDouble(this::distanceToSqr));
+        // TF-035: orig Bee.java:37,50 — targets sort with GenericTargetSorter
+        // (creeper-halved / big-silhouette-first), not plain distance.
+        entities.sort(new GenericTargetSorter(this));
         for (LivingEntity candidate : entities) {
             if (isSuitableTarget(candidate)) return candidate;
         }
         return null;
     }
 
+    /**
+     * orig Bee.java:296-323 — line of sight required, never a submerged
+     * target; fair game are non-creative players, villagers, and the
+     * Girlfriend/Boyfriend companions; everything else is ignored.
+     */
     private boolean isSuitableTarget(LivingEntity target) {
         if (target == null || target == this || !target.isAlive()) return false;
         if (!this.getSensing().hasLineOfSight(target)) return false;
         if (target.isInWater()) return false;
-        if (target instanceof Player p) return !p.getAbilities().invulnerable;
-        if (target instanceof Villager) return true;
-        return false;
+        // orig :312-315 — field_75098_d is isCreativeMode, i.e. instabuild.
+        if (target instanceof Player p) return !p.getAbilities().instabuild;
+        if (target instanceof Villager) return true; // orig :316-318
+        if (target instanceof Girlfriend) return true; // orig :319-321
+        return target instanceof Boyfriend; // orig :322
     }
 
     /** orig Bee.java:253-287 — Islands always allowed; spawner bypass; clear air above; y>=50; daytime. */

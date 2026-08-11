@@ -1,0 +1,5 @@
+{
+  "type": "neoforge:add_spawns",
+  "biomes": "minecraft:forest",
+  "spawners": { "type": "orespawn:chipmunk", "weight": 8, "minCount": 3, "maxCount": 6 }
+}

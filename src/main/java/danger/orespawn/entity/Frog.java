@@ -134,6 +134,7 @@ public class Frog extends Animal {
                     Boyfriend prince = ModEntities.BOYFRIEND.get().create(world);
                     if (prince != null) {
                         prince.moveTo(this.getX(), this.getY(), this.getZ(), 0.0F, 0.0F);
+                        prince.setPrince(1 + world.random.nextInt(2)); // orig Frog.java:135 — FrogPrince skin 1 or 2
                         world.addFreshEntity(prince);
                     }
                 } else {

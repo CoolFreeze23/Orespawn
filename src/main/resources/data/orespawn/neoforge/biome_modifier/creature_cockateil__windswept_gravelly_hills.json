@@ -1,0 +1,5 @@
+{
+  "type": "neoforge:add_spawns",
+  "biomes": "minecraft:windswept_gravelly_hills",
+  "spawners": { "type": "orespawn:cockateil", "weight": 10, "minCount": 2, "maxCount": 4 }
+}

@@ -23,14 +23,16 @@ import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
+import net.minecraft.world.entity.ai.goal.MoveThroughVillageGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
-import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
+import danger.orespawn.OreSpawnConfig;
 import danger.orespawn.OreSpawnMod;
+import danger.orespawn.entity.ai.GenericTargetSorter;
 
 public class Alien extends Monster {
     private static final EntityDataAccessor<Integer> DATA_ATTACKING =
@@ -42,25 +44,37 @@ public class Alien extends Monster {
     private static final double KNOCKBACK_HORIZONTAL = 1.1;
     private static final double KNOCKBACK_VERTICAL = 0.1;
     private static final double PLAYER_KNOCKBACK_VERTICAL_MULTIPLIER = 2.0;
-    private static final double JUMP_BOOST = 0.25;
+    private static final double JUMP_BOOST = 0.25; // orig Alien.java:102 — motionY += 0.25 after super.jump()
 
     public Alien(EntityType<? extends Alien> type, Level level) {
         super(type, level);
         this.xpReward = 100;
-        this.targetSorter = Comparator.comparingDouble(this::distanceToSqr);
+        // orig Alien.java:41,59 — target priority uses the shared
+        // GenericTargetSorter (creepers and large targets outrank nearer
+        // small ones), not plain distance (TF-035).
+        this.targetSorter = new GenericTargetSorter(this);
     }
 
     @Override
     protected void registerGoals() {
-        this.goalSelector.addGoal(0, new FloatGoal(this));
-        // Phase 12 — torch destruction sits at priority 1 so it can outrank
-        // wandering, but never preempts the player-chase goals (handled by
-        // canUse()'s explicit getTarget() != null short-circuit).
+        this.goalSelector.addGoal(0, new FloatGoal(this)); // orig Alien.java:61
+        // orig Alien.java:62 — EntityAIMoveThroughVillage(1.0, false) @1.
+        // Mapping decision: the 1.7.10 goal walked the door list of the
+        // pre-1.14 village object; that framework is gone and vanilla
+        // MoveThroughVillageGoal is its direct descendant driven by village
+        // POI sections. Same speed (1.0), same day-and-night operation (orig
+        // third arg false = not nocturnal-only), vanilla-standard
+        // distanceToPoi 4 (the param has no 1.7.10 analog), no door-breaking
+        // (the 1.7.10 goal never broke doors).
+        this.goalSelector.addGoal(1, new MoveThroughVillageGoal(this, 1.0, false, 4, () -> false));
+        // orig Alien.java:328-343 — torch hunt lived in func_70619_bc,
+        // outside the 1.7.10 task-mutex system; the goal is flagless for the
+        // same reason and self-gates on the orig dice (see AlienTorchSeekGoal).
         this.goalSelector.addGoal(1, new AlienTorchSeekGoal(this));
-        this.goalSelector.addGoal(2, new WaterAvoidingRandomStrollGoal(this, 1.0));
-        this.goalSelector.addGoal(3, new LookAtPlayerGoal(this, Player.class, 8.0f));
-        this.goalSelector.addGoal(4, new RandomLookAroundGoal(this));
-        this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
+        this.goalSelector.addGoal(2, new MyEntityAIWanderALot(this, 10, 1.0)); // orig Alien.java:63
+        this.goalSelector.addGoal(3, new LookAtPlayerGoal(this, Player.class, 8.0f)); // orig Alien.java:64
+        this.goalSelector.addGoal(4, new RandomLookAroundGoal(this)); // orig Alien.java:65
+        this.targetSelector.addGoal(1, new HurtByTargetGoal(this)); // orig Alien.java:66
     }
 
     public static AttributeSupplier.Builder createAttributes() {
@@ -79,6 +93,8 @@ public class Alien extends Monster {
         builder.define(DATA_ATTACKING, 0);
     }
 
+    // orig Alien.java:100-103 (func_70664_aZ) — the original Alien boosts
+    // every jump by +0.25 vertical; this is not a port invention (ENT-A-007).
     @Override
     public void jumpFromGround() {
         super.jumpFromGround();
@@ -188,7 +204,9 @@ public class Alien extends Monster {
                 this.lookAt(target, 10.0f, 10.0f);
                 if (this.distanceToSqr(target) < 16.0) {
                     this.setAttacking(1);
-                    if (this.getRandom().nextInt(4) == 0) {
+                    // orig Alien.java:320 — two swing dice, nextInt(4)==0 OR
+                    // nextInt(5)==1 (~40% per attack tick, not 25%).
+                    if (this.getRandom().nextInt(4) == 0 || this.getRandom().nextInt(5) == 1) {
                         this.doHurtTarget(target);
                     }
                 }
@@ -204,6 +222,9 @@ public class Alien extends Monster {
     }
 
     private LivingEntity findSomethingToAttack() {
+        // orig Alien.java:367-369 — PlayNicely disables target acquisition
+        // entirely, even when a live target is already held.
+        if (OreSpawnConfig.PLAY_NICELY.get()) return null;
         LivingEntity current = this.getTarget();
         if (current != null && current.isAlive()) return current;
         this.setTarget(null);

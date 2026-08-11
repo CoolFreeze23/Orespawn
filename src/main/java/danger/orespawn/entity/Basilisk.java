@@ -2,14 +2,21 @@ package danger.orespawn.entity;
 
 import danger.orespawn.MobStats;
 
+import danger.orespawn.OreSpawnConfig;
 import danger.orespawn.OreSpawnMod;
-import danger.orespawn.entity.ai.BasiliskGazeAttackGoal;
+import danger.orespawn.entity.ai.GenericTargetSorter;
+import danger.orespawn.util.MyUtils;
+
+import java.util.List;
+
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -17,10 +24,10 @@ import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
+import net.minecraft.world.entity.ai.goal.MoveThroughVillageGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
-import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
@@ -35,27 +42,38 @@ public class Basilisk extends Monster {
 
     private int hurtTimer = 0;
     private final float moveSpeed = 0.4f;
+    private final GenericTargetSorter targetSorter;
 
     public Basilisk(EntityType<? extends Basilisk> type, Level level) {
         super(type, level);
         this.xpReward = 150;
+        // TF-035: orig Basilisk.java:43,53 — targets sort with
+        // GenericTargetSorter (creeper-halved / big-silhouette-first).
+        this.targetSorter = new GenericTargetSorter(this);
     }
 
-    // AI: the Basilisk is a melee-only boss in 1.7.10 (no projectile). Its
-    // "ranged" flavour is a debilitating aura — Slowness V on any target
-    // within its 6-block reach — plus Poison on a successful bite. Both are
-    // encapsulated in BasiliskGazeAttackGoal. HurtByTargetGoal handles
-    // retaliation; NearestAttackableTargetGoal replaces the legacy 24×7×24
-    // private AABB scan with modern target sensing.
+    // ENT-A-032: all attacking runs through the customServerAiStep re-scan
+    // below, exactly as the orig's func_70619_bc — no vanilla target-selector
+    // acquisition, no gaze/aura goal (that was invented in the first pass).
     @Override
     protected void registerGoals() {
-        this.goalSelector.addGoal(0, new FloatGoal(this));
-        this.goalSelector.addGoal(1, new BasiliskGazeAttackGoal(this, this::setAttacking));
+        // orig Basilisk.java:54-59 — goal lineup in original priority order.
+        this.goalSelector.addGoal(0, new FloatGoal(this)); // orig :54
+        // orig :55 — EntityAIMoveThroughVillage(1.0, false). Vanilla
+        // MoveThroughVillageGoal is the same goal line; 1.14+ villages are
+        // POI clusters (beds/workstations) rather than door lists, so it
+        // engages only where village POI exists nearby — the honest modern
+        // mapping (documented per the MoveIndoorsGoal pattern). No door AI
+        // in the orig, hence canDealWithDoors=false.
+        this.goalSelector.addGoal(1, new MoveThroughVillageGoal(this, 1.0, false, 4, () -> false));
+        // orig :56 — MyEntityAIWanderALot(20, 1.0).
         this.goalSelector.addGoal(2, new WaterAvoidingRandomStrollGoal(this, 1.0));
-        this.goalSelector.addGoal(3, new LookAtPlayerGoal(this, Player.class, 8.0f));
-        this.goalSelector.addGoal(4, new RandomLookAroundGoal(this));
+        this.goalSelector.addGoal(3, new LookAtPlayerGoal(this, Player.class, 8.0f)); // orig :57
+        this.goalSelector.addGoal(4, new RandomLookAroundGoal(this)); // orig :58
+        // orig :59 — EntityAIHurtByTarget(false): revenge memory only; the
+        // scan in customServerAiStep does all the attacking, so the stored
+        // target is as decorative here as it was in 1.7.10.
         this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
-        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
     }
 
     public static AttributeSupplier.Builder createAttributes() {
@@ -87,7 +105,10 @@ public class Basilisk extends Monster {
     }
 
     public int mygetMaxHealth() {
-        return 500;
+        // orig Basilisk.java:83-85 — reads Basilisk_stats.health (200,
+        // orig OreSpawnMain.java:6487); the 1-in-75 heal gate compares
+        // against this value.
+        return (int) MobStats.BASILISK.maxHealth();
     }
 
     @Override
@@ -132,10 +153,18 @@ public class Basilisk extends Monster {
     public boolean doHurtTarget(Entity target) {
         if (super.doHurtTarget(target)) {
             if (target instanceof LivingEntity living) {
-                // orig Basilisk.java:316-330 — the bite itself carries no
-                // slowness; the 1-in-3 difficulty-scaled POISON lives in
-                // BasiliskGazeAttackGoal#onSuccessfulAttack and the Slowness V
-                // 100t target debuff (orig :373) in onAttackPhaseStart.
+                // orig Basilisk.java:319-327 — Poison duration scales with
+                // difficulty: peaceful 8s, easy 10s, normal 12s, hard 14s.
+                int poisonSeconds = switch (this.level().getDifficulty()) {
+                    case EASY   -> 10;
+                    case NORMAL -> 12;
+                    case HARD   -> 14;
+                    default     -> 8;
+                };
+                // orig :328-330 — 1-in-3 per landed bite.
+                if (this.getRandom().nextInt(3) == 0) {
+                    living.addEffect(new MobEffectInstance(MobEffects.POISON, poisonSeconds * 20, 0));
+                }
                 double verticalKnockback = KNOCKBACK_VERTICAL;
                 float yawToTarget = (float) Math.atan2(target.getZ() - this.getZ(), target.getX() - this.getX());
                 if (target.isRemoved() || target instanceof Player) {
@@ -160,10 +189,10 @@ public class Basilisk extends Monster {
         return super.hurt(source, amount);
     }
 
-    // Slow regen: 1 HP every ~75 cadence ticks while damaged, plus 1 HP on
-    // a 1-in-200 aiStep roll. Kept on the customServerAiStep path so we tick
-    // alongside the legacy hurtTimer i-frame counter without fighting the
-    // goal selector's navigation control.
+    // orig Basilisk.java:352-382 (func_70619_bc) — the entire combat AI is
+    // this 1-in-5 cadence re-scan; there is no persistent vanilla-style
+    // acquisition. Each successful scan re-picks the sorted-nearest suitable
+    // target, so the Basilisk switches victims mid-fight just like 1.7.10.
     @Override
     protected void customServerAiStep() {
         if (this.isRemoved()) return;
@@ -173,9 +202,61 @@ public class Basilisk extends Monster {
             --this.hurtTimer;
         }
 
+        if (this.getRandom().nextInt(5) == 0) { // orig :360
+            LivingEntity e = findSomethingToAttack();
+            if (e != null) {
+                this.lookAt(e, 10.0f, 10.0f); // orig :363
+                // orig :364 — reach is 6 plus the TARGET's half-width.
+                double reach = 6.0f + e.getBbWidth() / 2.0f;
+                if (this.distanceToSqr(e) < reach * reach) {
+                    this.setAttacking(1); // orig :365
+                    // orig :366 — nested swing dice (1/3, else 1/4).
+                    if (this.getRandom().nextInt(3) == 0 || this.getRandom().nextInt(4) == 1) {
+                        this.doHurtTarget(e);
+                    }
+                } else {
+                    this.getNavigation().moveTo(e, 1.25); // orig :370
+                }
+                // orig :372-374 — Slowness V 100t lands on the scanned target
+                // whether IN or OUT of bite reach; the legacy "gaze" is this
+                // unconditional debuff, not a radius aura.
+                e.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 100, 5));
+            } else {
+                this.setAttacking(0); // orig :376
+            }
+        }
+
+        // orig :379-381 — 1-in-75 regen tick while below max health.
         if (this.getRandom().nextInt(75) == 1 && this.getHealth() < this.mygetMaxHealth()) {
             this.heal(1.0f);
         }
+    }
+
+    private LivingEntity findSomethingToAttack() {
+        // orig Basilisk.java:416-418 — PlayNicely disables aggression entirely.
+        if (OreSpawnConfig.PLAY_NICELY.get()) return null;
+        List<LivingEntity> list = this.level().getEntitiesOfClass(LivingEntity.class,
+                this.getBoundingBox().inflate(24.0, 7.0, 24.0)); // orig :419
+        list.sort(this.targetSorter); // orig :420 — GenericTargetSorter
+        for (LivingEntity candidate : list) {
+            if (isSuitableTarget(candidate)) return candidate;
+        }
+        return null;
+    }
+
+    /**
+     * orig Basilisk.java:384-413 — anything living is fair game except
+     * ignoreables, other Basilisks, Leaf Monsters, and creative players;
+     * line of sight required.
+     */
+    private boolean isSuitableTarget(LivingEntity target) {
+        if (target == null || target == this || !target.isAlive()) return false;
+        if (MyUtils.isIgnoreable(target)) return false; // orig :394-396
+        if (!this.getSensing().hasLineOfSight(target)) return false; // orig :397-399
+        if (target instanceof Basilisk) return false; // orig :400-402
+        if (target instanceof EntityLeafMonster) return false; // orig :403-405
+        if (target instanceof Player p && p.getAbilities().instabuild) return false; // orig :406-411
+        return true;
     }
 
     @Override

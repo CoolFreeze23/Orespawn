@@ -17,6 +17,9 @@ import javax.annotation.Nullable;
 public class RubyBird extends Cockateil {
     public RubyBird(EntityType<? extends RubyBird> type, Level level) {
         super(type, level);
+        // orig RubyBird.java:19 (entityInit, every construction) — permanent upward
+        // flight bias via Cockateil.setFlyUp() (orig Cockateil.java:156-158).
+        this.setFlyUp();
     }
 
     public static AttributeSupplier.Builder createAttributes() {

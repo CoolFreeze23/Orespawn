@@ -3,8 +3,10 @@ package danger.orespawn.entity;
 import danger.orespawn.MobStats;
 
 import danger.orespawn.ModEntities;
+import danger.orespawn.OreSpawnConfig;
 import danger.orespawn.OreSpawnMod;
-import java.util.Comparator;
+import danger.orespawn.entity.ai.GenericTargetSorter;
+import danger.orespawn.util.MyUtils;
 import java.util.List;
 import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
@@ -23,8 +25,10 @@ import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.SmallFireball;
 import net.minecraft.world.Difficulty;
+import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.util.Mth;
 
@@ -63,9 +67,12 @@ public class EntityBrutalfly extends Monster {
         return null;
     }
 
+    @Nullable
     @Override
     protected SoundEvent getHurtSound(DamageSource source) {
-        return SoundEvents.GENERIC_HURT;
+        // orig Brutalfly.java:102-104 — func_70621_aR returns null: the
+        // Brutalfly is silent when hurt (only its death explodes).
+        return null;
     }
 
     @Override
@@ -104,6 +111,18 @@ public class EntityBrutalfly extends Monster {
         }
     }
 
+    /**
+     * orig Brutalfly.java:147-149 — clear-path probe from the eye line
+     * (y + 0.75) to a point, used to validate flight-target candidates.
+     */
+    public boolean canSeeTarget(double targetX, double targetY, double targetZ) {
+        Vec3 from = new Vec3(this.getX(), this.getY() + 0.75, this.getZ());
+        Vec3 to = new Vec3(targetX, targetY, targetZ);
+        HitResult result = this.level().clip(new ClipContext(
+                from, to, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, this));
+        return result.getType() == HitResult.Type.MISS;
+    }
+
     @Override
     protected void customServerAiStep() {
         if (this.isRemoved()) return;
@@ -125,25 +144,51 @@ public class EntityBrutalfly extends Monster {
         double distSq = this.currentFlightTarget.distSqr(this.blockPosition());
 
         if (this.stuckCount > 30 || this.random.nextInt(200) == 0 || distSq < 9.0) {
-            this.stuckCount = 0;
+            // orig Brutalfly.java:175-191 — terrain-descent scan: probe the
+            // nine columns at x/z offsets {-5, 0, +5} up to 19 blocks down for
+            // the first non-air block; when even the nearest ground over all
+            // columns is more than 10 below, bias the new flight target down
+            // by (dist - 10 + 1) so the Brutalfly re-hugs the terrain.
+            int dist = 20;
+            for (int i = -5; i <= 5; i += 5) {
+                for (int j = -5; j <= 5; j += 5) {
+                    for (int k = 1; k < 20; ++k) {
+                        BlockPos probe = new BlockPos(
+                                (int) this.getX() + j, (int) this.getY() - k, (int) this.getZ() + i);
+                        if (this.level().getBlockState(probe).isAir()) continue;
+                        if (k < dist) dist = k;
+                        break;
+                    }
+                }
+            }
+            int down = dist > 10 ? dist - 10 + 1 : 0;
+
             int keepTrying = 30;
             while (keepTrying > 0) {
                 int xdir = this.random.nextInt(2) == 0 ? -1 : 1;
                 int zdir = this.random.nextInt(2) == 0 ? -1 : 1;
-                int newx = (this.random.nextInt(20) + 8) * xdir;
+                // orig Brutalfly.java:202-203 — z offset is drawn before x.
                 int newz = (this.random.nextInt(20) + 8) * zdir;
+                int newx = (this.random.nextInt(20) + 8) * xdir;
 
                 BlockPos newTarget = new BlockPos(
                         (int) this.getX() + newx,
-                        (int) this.getY() + this.random.nextInt(7) - 1,
+                        (int) this.getY() + this.random.nextInt(7) - 1 - down,
                         (int) this.getZ() + newz);
 
-                if (this.level().getBlockState(newTarget).isAir()) {
-                    this.currentFlightTarget = newTarget;
+                // orig Brutalfly.java:193-210 — each candidate is written into
+                // currentFlightTarget before validation (func_71571_b mutates
+                // in place), so exhausting all 30 retries leaves the last
+                // failed candidate as the target; a candidate only ends the
+                // loop when it is air AND visible from the eye line.
+                this.currentFlightTarget = newTarget;
+                if (this.level().getBlockState(newTarget).isAir()
+                        && this.canSeeTarget(newTarget.getX(), newTarget.getY(), newTarget.getZ())) {
                     break;
                 }
                 --keepTrying;
             }
+            this.stuckCount = 0;
         }
 
         // orig Brutalfly.java:155,168-170 — barrage odds 1-in-3, 1-in-2 on Hard.
@@ -280,9 +325,14 @@ public class EntityBrutalfly extends Monster {
 
     @Nullable
     private LivingEntity findSomethingToAttack() {
+        // orig Brutalfly.java:444-446 — PlayNicely disables the hunt entirely.
+        if (OreSpawnConfig.PLAY_NICELY.get()) return null;
         List<LivingEntity> entities = this.level().getEntitiesOfClass(LivingEntity.class,
                 this.getBoundingBox().inflate(25.0, 20.0, 25.0));
-        entities.sort(Comparator.comparingDouble(this::distanceToSqr));
+        // TF-035: orig Brutalfly.java:50,60,448 — candidates sort with
+        // GenericTargetSorter (creeper-halved / big-mob-prioritized), not
+        // plain distance.
+        entities.sort(new GenericTargetSorter(this));
         for (LivingEntity candidate : entities) {
             if (isSuitableTarget(candidate)) return candidate;
         }
@@ -292,6 +342,13 @@ public class EntityBrutalfly extends Monster {
     private boolean isSuitableTarget(LivingEntity target) {
         if (target == null || target == this || !target.isAlive()) return false;
         if (target instanceof EntityBrutalfly) return false;
+        // orig Brutalfly.java:421-426 — Mothra and the Vortex are fellow
+        // fliers the Brutalfly never hunts.
+        if (target instanceof Mothra) return false;
+        if (target instanceof EntityVortex) return false;
+        // orig Brutalfly.java:427-429 — shared ignore list (ghosts, fairies,
+        // butterflies, cave fishers, coins, ...).
+        if (MyUtils.isIgnoreable(target)) return false;
         if (!this.getSensing().hasLineOfSight(target)) return false;
         if (target instanceof Monster) return true;
         if (target instanceof Player p) return !p.getAbilities().invulnerable;

@@ -36,6 +36,7 @@ import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
 
 public class EntityCaterKiller extends Monster {
     private static final EntityDataAccessor<Integer> DATA_ATTACKING =
@@ -56,6 +57,14 @@ public class EntityCaterKiller extends Monster {
      */
     private int cobwebCooldown = 0;
     private static final int COBWEB_INTERVAL_TICKS = 40;
+
+    /**
+     * orig CaterKiller.java:450 — field_70134_J (isInWeb), raised by the
+     * cobweb block's collision callback; the AI step consumes it to chew
+     * the mob free. Modern cobwebs report through
+     * {@link #makeStuckInBlock}, so the flag is mirrored there.
+     */
+    private boolean inWeb = false;
 
 
     public EntityCaterKiller(EntityType<? extends EntityCaterKiller> type, Level level) {
@@ -160,6 +169,18 @@ public class EntityCaterKiller extends Monster {
     }
 
     @Override
+    public void makeStuckInBlock(BlockState state, Vec3 motionMultiplier) {
+        // orig CaterKiller.java:450 — only the cobweb raised field_70134_J
+        // (BlockWeb.onEntityCollidedWithBlock -> setInWeb); berry-bush and
+        // powder-snow style stuck states did not exist and must not trigger
+        // the chew-free loop.
+        if (state.is(Blocks.COBWEB)) {
+            this.inWeb = true;
+        }
+        super.makeStuckInBlock(state, motionMultiplier);
+    }
+
+    @Override
     protected void customServerAiStep() {
         if (this.isRemoved()) return;
         super.customServerAiStep();
@@ -191,6 +212,27 @@ public class EntityCaterKiller extends Monster {
                 this.discard();
                 return;
             }
+        }
+
+        // orig CaterKiller.java:450-461 — web-self-clear: while flagged
+        // in-web, every cobweb in the 5x6x5 box around the feet (x -2..2,
+        // y -1..4, z -2..2, toward-zero int coords) is set to air, then the
+        // flag drops. The original does NOT gate this on mobGriefing (only
+        // the tree-eat at :521 is gated).
+        if (this.inWeb) {
+            int bx = (int) this.getX();
+            int by = (int) this.getY();
+            int bz = (int) this.getZ();
+            for (int i = -2; i <= 2; ++i) {
+                for (int j = -1; j < 5; ++j) {
+                    for (int k = -2; k <= 2; ++k) {
+                        BlockPos pos = new BlockPos(bx + i, by + j, bz + k);
+                        if (!this.level().getBlockState(pos).is(Blocks.COBWEB)) continue;
+                        this.level().setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
+                    }
+                }
+            }
+            this.inWeb = false;
         }
 
         if (this.cobwebCooldown > 0) --this.cobwebCooldown;

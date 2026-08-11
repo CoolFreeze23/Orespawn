@@ -18,6 +18,7 @@ import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
+import net.minecraft.world.entity.ai.goal.MoveThroughVillageGoal;
 import net.minecraft.world.entity.ai.goal.PanicGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
@@ -28,6 +29,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.ServerLevelAccessor;
 import danger.orespawn.OreSpawnMod;
+import danger.orespawn.entity.ai.GenericTargetSorter;
 
 public class CreepingHorror extends Monster {
     private static final ResourceKey<Level> CHAOS_DIM = ResourceKey.create(
@@ -42,16 +44,29 @@ public class CreepingHorror extends Monster {
     public CreepingHorror(EntityType<? extends CreepingHorror> type, Level level) {
         super(type, level);
         this.xpReward = 5;
-        this.targetSorter = Comparator.comparingDouble(this::distanceToSqr);
+        // TF-035: orig CreepingHorror.java:42,58 — scans sort with
+        // GenericTargetSorter (creeper-halved / big-silhouette-prioritized),
+        // not plain distance.
+        this.targetSorter = new GenericTargetSorter(this);
     }
 
     @Override
     protected void registerGoals() {
+        // orig CreepingHorror.java:51-57 — swim, panic 1.35, MoveThroughVillage@2,
+        // wander@3, watch-player 8.0 @4, look-idle@5; HurtBy on the target selector.
         this.goalSelector.addGoal(0, new FloatGoal(this));
         this.goalSelector.addGoal(1, new PanicGoal(this, 1.35));
-        this.goalSelector.addGoal(2, new WaterAvoidingRandomStrollGoal(this, 1.0));
-        this.goalSelector.addGoal(3, new LookAtPlayerGoal(this, Player.class, 8.0f));
-        this.goalSelector.addGoal(4, new RandomLookAroundGoal(this));
+        // Mapping decision (orig :53 — EntityAIMoveThroughVillage(this, 1.0, false)):
+        // the 1.7.10 goal walked the village door graph, which the 1.14 village
+        // rework removed. Vanilla MoveThroughVillageGoal is the honest modern
+        // equivalent — it wanders between sections of the POI-based village
+        // instead. Speed 1.0 and onlyAtNight=false are the orig arguments;
+        // distanceToPoi 4 is the vanilla Zombie value (the 1.7.10 ctor had no
+        // such knob) and the horror cannot deal with doors.
+        this.goalSelector.addGoal(2, new MoveThroughVillageGoal(this, 1.0, false, 4, () -> false));
+        this.goalSelector.addGoal(3, new WaterAvoidingRandomStrollGoal(this, 1.0));
+        this.goalSelector.addGoal(4, new LookAtPlayerGoal(this, Player.class, 8.0f));
+        this.goalSelector.addGoal(5, new RandomLookAroundGoal(this));
         this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
     }
 
@@ -141,6 +156,8 @@ public class CreepingHorror extends Monster {
     }
 
     private LivingEntity findSomethingToAttack() {
+        // orig CreepingHorror.java:203-205 — PlayNicely disables aggression entirely.
+        if (danger.orespawn.OreSpawnConfig.PLAY_NICELY.get()) return null;
         List<LivingEntity> list = this.level().getEntitiesOfClass(LivingEntity.class,
                 this.getBoundingBox().inflate(16.0, 4.0, 16.0));
         list.sort(this.targetSorter);
@@ -150,9 +167,28 @@ public class CreepingHorror extends Monster {
         return null;
     }
 
+    /**
+     * orig CreepingHorror.java:147-200 — attacks anything it can SEE (:157)
+     * except its own kind (:160) and the mod's scenery/ally mobs: RockBase
+     * (:163), EnderReaper (:166), LeafMonster (:169), Dragon (:172),
+     * TerribleTerror (:175), LurkingTerror (:178), PitchBlack (:181),
+     * Firefly (:184), Island (:187) and IslandToo (:190). Creative players
+     * are exempt (:193-198); everything else is fair game (:199).
+     */
     private boolean isSuitableTarget(LivingEntity target) {
         if (target == null || target == this || !target.isAlive()) return false;
+        if (!this.getSensing().hasLineOfSight(target)) return false;
         if (target instanceof CreepingHorror) return false;
+        if (target instanceof RockBase) return false;
+        if (target instanceof EnderReaper) return false;
+        if (target instanceof EntityLeafMonster) return false;
+        if (target instanceof Dragon) return false;
+        if (target instanceof EntityTerribleTerror) return false;
+        if (target instanceof EntityLurkingTerror) return false;
+        if (target instanceof PitchBlack) return false;
+        if (target instanceof Firefly) return false;
+        if (target instanceof Island) return false;
+        if (target instanceof IslandToo) return false;
         if (target instanceof Player player) return !player.getAbilities().instabuild;
         return true;
     }

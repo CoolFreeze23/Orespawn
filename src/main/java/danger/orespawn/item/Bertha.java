@@ -5,6 +5,7 @@ import danger.orespawn.entity.BerthaHit;
 import danger.orespawn.entity.Boyfriend;
 import danger.orespawn.entity.Girlfriend;
 import danger.orespawn.util.OreSpawnEnchantHelper;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -16,6 +17,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.SwordItem;
 import net.minecraft.world.item.Tier;
 import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.Enchantments;
+import net.minecraft.world.item.enchantment.ItemEnchantments;
 import net.minecraft.world.level.Level;
 
 /**
@@ -48,13 +51,54 @@ public class Bertha extends SwordItem {
         return 9000;
     }
 
+    /**
+     * orig Bertha.java:35-43 — func_77622_d (onCrafted) bakes the variant's
+     * enchant set the moment the sword is crafted; the inventory-tick path
+     * below only exists to re-bake a stack that was later stripped.
+     */
+    @Override
+    public void onCraftedBy(ItemStack stack, Level level, Player player) {
+        if (!level.isClientSide) {
+            applyBakedEnchants(stack, level);
+        }
+    }
+
     @Override
     public void inventoryTick(ItemStack stack, Level level, Entity entity, int slotId, boolean isSelected) {
-        if (!level.isClientSide && !OreSpawnEnchantHelper.hasAnyEnchantments(stack)) {
-            for (int i = 0; i < enchantKeys.length; i++) {
-                OreSpawnEnchantHelper.applyEnchantment(stack, level, enchantKeys[i], enchantLevels[i]);
+        if (level.isClientSide) {
+            return;
+        }
+        // orig Bertha.java:45-58 — onUsingTick (routed through func_77663_a every
+        // inventory tick) probes Knockback (field_77337_m) and falls back to
+        // Unbreaking (field_77347_r); only when BOTH read 0 does it re-bake. The
+        // two probe keys are the same for every variant — Royal passes via its
+        // baked Unbreaking 5, Hammy re-enters the branch each tick and bakes
+        // nothing. Probing these two specific enchants (not "any enchant")
+        // preserves the orig's re-bake over a stack that carries only, say, a
+        // command-given Fire Aspect.
+        int lvl = enchantLevel(stack, Enchantments.KNOCKBACK);
+        if (lvl == 0) {
+            lvl = enchantLevel(stack, Enchantments.UNBREAKING);
+        }
+        if (lvl <= 0) {
+            applyBakedEnchants(stack, level);
+        }
+    }
+
+    private void applyBakedEnchants(ItemStack stack, Level level) {
+        for (int i = 0; i < enchantKeys.length; i++) {
+            OreSpawnEnchantHelper.applyEnchantment(stack, level, enchantKeys[i], enchantLevels[i]);
+        }
+    }
+
+    /** Component-map equivalent of 1.7.10 EnchantmentHelper.func_77506_a (orig Bertha.java:46-48). */
+    private static int enchantLevel(ItemStack stack, ResourceKey<Enchantment> key) {
+        for (var entry : stack.getOrDefault(DataComponents.ENCHANTMENTS, ItemEnchantments.EMPTY).entrySet()) {
+            if (entry.getKey().is(key)) {
+                return entry.getIntValue();
             }
         }
+        return 0;
     }
 
     @Override

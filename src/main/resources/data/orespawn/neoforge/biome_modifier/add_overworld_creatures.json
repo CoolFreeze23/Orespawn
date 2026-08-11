@@ -2,10 +2,7 @@
   "type": "neoforge:add_spawns",
   "biomes": "#minecraft:is_overworld",
   "spawners": [
-    { "type": "orespawn:beaver", "weight": 8, "minCount": 1, "maxCount": 2 },
     { "type": "orespawn:cassowary", "weight": 5, "minCount": 1, "maxCount": 2 },
-    { "type": "orespawn:chipmunk", "weight": 12, "minCount": 1, "maxCount": 3 },
-    { "type": "orespawn:cockateil", "weight": 8, "minCount": 1, "maxCount": 3 },
     { "type": "orespawn:gazelle", "weight": 8, "minCount": 2, "maxCount": 4 },
     { "type": "orespawn:ostrich", "weight": 6, "minCount": 1, "maxCount": 2 },
     { "type": "orespawn:peacock", "weight": 8, "minCount": 1, "maxCount": 2 },

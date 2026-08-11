@@ -4,7 +4,6 @@ import danger.orespawn.MobStats;
 
 import danger.orespawn.OreSpawnMod;
 import danger.orespawn.entity.ai.BugMeleeAttackGoal;
-import danger.orespawn.entity.ai.CaveFisherAmbushGoal;
 import javax.annotation.Nullable;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -48,16 +47,16 @@ public class CaveFisher extends Monster {
 
     @Override
     protected void registerGoals() {
+        // orig CaveFisher.java:51-55 — swim, wander(14), watch-player(8),
+        // look-idle; no ceiling/ambush behavior exists in the original
+        // (its :163-183 AI is a flat 1-in-8 ground scan handled by
+        // BugMeleeAttackGoal.Params.caveFisher()).
         this.goalSelector.addGoal(0, new FloatGoal(this));
         this.goalSelector.addGoal(1, new BugMeleeAttackGoal(
                 this, this::setAttacking, BugMeleeAttackGoal.Params.caveFisher()));
-        // Priority 2 (above wander) so the spider prefers to hang from the
-        // ceiling and ambush rather than aimlessly stroll past targets.
-        // The ambush goal exits cleanly the moment a target is acquired.
-        this.goalSelector.addGoal(2, new CaveFisherAmbushGoal(this));
-        this.goalSelector.addGoal(3, new MyEntityAIWanderALot(this, 14, 1.0));
-        this.goalSelector.addGoal(4, new LookAtPlayerGoal(this, Player.class, 8.0f));
-        this.goalSelector.addGoal(5, new RandomLookAroundGoal(this));
+        this.goalSelector.addGoal(2, new MyEntityAIWanderALot(this, 14, 1.0));
+        this.goalSelector.addGoal(3, new LookAtPlayerGoal(this, Player.class, 8.0f));
+        this.goalSelector.addGoal(4, new RandomLookAroundGoal(this));
         this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
         this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
         // orig CaveFisher.java:193-228 — also preys on passive mobs (anything
@@ -92,12 +91,8 @@ public class CaveFisher extends Monster {
 
     @Override
     public boolean hurt(DamageSource source, float amount) {
+        // orig CaveFisher.java:185-191 — immune to cactus damage only.
         if (source.type().msgId().equals("cactus")) return false;
-        // If we're currently anchored to a ceiling and a projectile or
-        // ranged attack hits us, drop immediately so we can fight back.
-        // Without this the spider would float in the air taking arrow
-        // hits forever until either it died or a player walked beneath.
-        CaveFisherAmbushGoal.abortAnchor(this);
         return super.hurt(source, amount);
     }
 
