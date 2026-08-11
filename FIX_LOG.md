@@ -2596,3 +2596,89 @@ audit_sections/08:18); (5) QueenPrimaryGoal lacks requiresUpdateEveryTick
 override it (orig ran every AI tick); (6) hurt() arms the wake-up before
 every damage filter (healed explosions and discarded attackers wake her);
 (7) doc/code mismatch at TheQueen.java:125-127 ("hits 1" vs flip at 0).
+
+## S3a COMPLETE — terrain adaptation: scan grid, stranded legs, trample (2026-08-11)
+
+First half of S3 per the escape hatch (body dynamics + pitch/roll +
+renderer tilt are S3b, next session). Landed in ModernSpiderGait + the
+two gait payloads + three new gametests (suite 155 -> 158):
+- 3x3 biased footing scan: nine columns, classic's own probe window
+  (11 up / 14 down, SpiderRobot.findNewFooting:717), every walkable
+  surface per column (multi-surface walk retires S2's wall-column
+  pathology), collision-shape surface heights (slab treads carry feet
+  at +0.5; fence-post shapes >1.0 are not footing), scored against a
+  preferred point raised 1.5 when the body's path is blocked at chest
+  height (ledge/wall climb assist).
+- Classic-style reach CONTRACTION before stranding (0.7/0.45/0.25 of
+  rest reach, floored 3.5 — the analogue of classic's 16->3.5 sweep).
+- Stranded legs: dangle semi-folded below the hip, follow the body,
+  claim no contact, re-step unconditionally; strand transitions ride
+  the step payload (strand flag), keyframes carry a stranded mask.
+- Vertical-retrigger x climb-assist reconciliation (owner-flagged):
+  vertical-only re-steps require >=0.5 improvement of the |footY-bodyY|
+  mismatch; blocked attempts arm a 10-tick rescan cooldown.
+- Server-side trample in modern mode at classic's cadence — EVERY tick
+  a ridden leg is settled, mobGriefing-gated, classic's exact block
+  logic incl. the (int)-truncation quirk (classic's client-side site
+  untouched; on a dedicated server classic tramples nothing, faithfully).
+- Tests: s3_cliff_recovery (invariant 4: fall, strand census, bounded
+  re-plant, no-slide throughout), s3_slab_stairs_climb (emergent stairs;
+  climb >=4 blocks, footing + tight cadence bounds), s3_modern_trample_
+  server_side (ridden walk over a grass field -> dirt on the server).
+
+**Independent review (3 reviewers, owner-mandated), all dispositioned:**
+- BLOCKER: no reach contraction — narrow bridges/ridges stranded every
+  leg whose fixed-distance rest column was off-terrain while classic
+  grips near the hip. FIXED (contraction sweep above).
+- MAJOR: est2 refinement overwrote a valid est1 candidate with null
+  (spurious strand + payload pair at cliff lips). FIXED: refined scan
+  is fallback-only.
+- MAJOR: reach checked from the CURRENT hip against a target projected
+  up to v*est ahead (over-strict by up to ~3.6 blocks; front legs have
+  2.19 blocks of headroom). FIXED: hip projected by the same est.
+- MAJOR: payload registrar still "1.0" across wire-format changes — an
+  S2-era jar would pass negotiation and desync mid-session. FIXED:
+  bumped to "1.1" + STANDING RULE comment: bump on every format change
+  (S3b/S4/S5).
+- MAJOR (test): stairs one-shot grounded assert 30 ticks post-drive had
+  ~3-5 ticks of worst-case margin. FIXED: 60-tick rest window; cadence
+  bounds tightened to falsifiable values (cliff <=12, stairs <=15 — the
+  old <=30 could not catch a 7-tick-period livelock).
+- MINORs FIXED: slab feet floated +0.5 (collision-shape tops now);
+  gate-blocked vertical retriggers rescanned ~230 blocks/leg/tick
+  forever (cooldown); scan window off-by-one vs its names; un-strand
+  swing-start pop (client departs from its own rendered dangle, target
+  stays server-authoritative); trample cadence matched to classic's
+  every-settled-tick (was touchdown-only); mock rider + setup-assert
+  entity leaks in tests; stale absolute/relative comments and floating
+  test terrain (cliff platform now solid from the rel-0 surface).
+- Verified-safe (no change): strand payload rate is bounded (>=5-tick
+  period per leg); trample truncation quirk cannot red the test at
+  negative-coordinate plots (integral foot Y; XZ shift absorbed by the
+  field-wide scan); mock rider provably persists (tickPassenger Player
+  branch); early-payload race self-heals via keyframes.
+- Regression caught by the re-gate (cliff red): the first S3a scan
+  window (4 up / 8 down) was far shorter than classic's probe and,
+  once the test platform stopped floating, stranded a rear leg whose
+  only footing was the cliff-wall top. Fixed by adopting classic's
+  11/14 window — shorter windows are NOT a tuning freedom, they are a
+  parity break with the probe geometry.
+
+**Process notes:** (1) BUG-035 (Queen animation freeze, from a parallel
+session) was found riding uncommitted in the tree by the review's
+slice-contamination check — committed separately as ad129e2 so this
+slice's diff equals its claim. (2) A wedged gametest-server JVM held
+the world's session.lock; the next runGameTestServer FAILED TO START
+yet gradle exited 0 — a false green caught only by reading the pass
+line. GATE RULE HARDENED: a gate is green only when the literal
+"All N required tests passed" line is captured; exit codes alone are
+insufficient. (3) Stranded-leg rescans run every tick by design
+(fast cliff recovery); perpetual stranding (bridge over a deep void)
+pays a contraction sweep per tick — S3b tuning candidate if profiling
+warrants.
+
+GATE: build+assetAudit exit 0 (0 err/0 adv/3 ack); suite 158/158 under
+MODERN and 158/158 under CLASSIC, pass lines verified. Classic path
+untouched this slice (payloads/gait/tests only). S3b remains: body
+height float, pitch/roll from corner legs, renderer tilt with foot
+compensation, plus its own reviewer pass and both-mode gates.

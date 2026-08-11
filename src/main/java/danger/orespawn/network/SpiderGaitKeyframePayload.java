@@ -20,7 +20,7 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
  * verified under independent review).
  */
 public record SpiderGaitKeyframePayload(int entityId, double[] footX, double[] footY,
-                                        double[] footZ, boolean[] grounded)
+                                        double[] footZ, boolean[] grounded, boolean[] stranded)
         implements CustomPacketPayload {
 
     public static final CustomPacketPayload.Type<SpiderGaitKeyframePayload> TYPE =
@@ -32,6 +32,7 @@ public record SpiderGaitKeyframePayload(int entityId, double[] footX, double[] f
                 int legs = p.footX.length;
                 buf.writeByte(legs);
                 int mask = 0;
+                int strandMask = 0;
                 for (int i = 0; i < legs; ++i) {
                     buf.writeDouble(p.footX[i]);
                     buf.writeDouble(p.footY[i]);
@@ -39,8 +40,12 @@ public record SpiderGaitKeyframePayload(int entityId, double[] footX, double[] f
                     if (p.grounded[i]) {
                         mask |= 1 << i;
                     }
+                    if (p.stranded[i]) {
+                        strandMask |= 1 << i;
+                    }
                 }
                 buf.writeByte(mask);
+                buf.writeByte(strandMask);
             },
             buf -> {
                 int entityId = buf.readVarInt();
@@ -60,11 +65,14 @@ public record SpiderGaitKeyframePayload(int entityId, double[] footX, double[] f
                     zs[i] = buf.readDouble();
                 }
                 int mask = buf.readByte();
+                int strandMask = buf.readByte();
                 boolean[] grounded = new boolean[legs];
+                boolean[] stranded = new boolean[legs];
                 for (int i = 0; i < legs; ++i) {
                     grounded[i] = (mask & (1 << i)) != 0;
+                    stranded[i] = (strandMask & (1 << i)) != 0;
                 }
-                return new SpiderGaitKeyframePayload(entityId, xs, ys, zs, grounded);
+                return new SpiderGaitKeyframePayload(entityId, xs, ys, zs, grounded, stranded);
             });
 
     @Override

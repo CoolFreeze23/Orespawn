@@ -10,7 +10,11 @@ import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 public class ModNetwork {
     @SubscribeEvent
     public static void register(RegisterPayloadHandlersEvent event) {
-        PayloadRegistrar registrar = event.registrar(OreSpawnMod.MOD_ID).versioned("1.0");
+        // STANDING RULE (independent review, S3a): bump this version with
+        // ANY payload wire-format change — same-version format drift passes
+        // negotiation and desyncs mid-session instead of failing cleanly at
+        // login. 1.1 = S3a spider-gait strand flag + keyframe strand mask.
+        PayloadRegistrar registrar = event.registrar(OreSpawnMod.MOD_ID).versioned("1.1");
         registrar.playToServer(
                 RiderInputPayload.TYPE,
                 RiderInputPayload.STREAM_CODEC,
