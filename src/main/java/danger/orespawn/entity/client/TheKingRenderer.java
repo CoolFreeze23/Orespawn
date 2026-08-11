@@ -55,7 +55,10 @@ public class TheKingRenderer extends MobRenderer<TheKing, ModelTheKing> {
 
     @Override
     protected void scale(TheKing entity, PoseStack poseStack, float partialTick) {
-        poseStack.scale(SCALE, SCALE, SCALE);
+        // BOSS-017: orig RenderTheKing.java:39-45 — a PlayNicely King renders
+        // at scale/4, tracking the live synced flag.
+        float effectiveScale = entity.getPlayNicely() != 0 ? SCALE / 4.0F : SCALE;
+        poseStack.scale(effectiveScale, effectiveScale, effectiveScale);
     }
 
     @Override

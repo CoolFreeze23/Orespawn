@@ -87,7 +87,8 @@ public class ThePrincess extends TamableAnimal {
         this.xpReward = 50;
         this.noPhysics = false;
         this.setOrderedToSit(false);
-        this.targetSorter = Comparator.comparingDouble(this::distanceToSqr);
+        // TF-035: orig ThePrincess.java:59/:93 — GenericTargetSorter.
+        this.targetSorter = new danger.orespawn.entity.ai.GenericTargetSorter(this);
     }
 
     @Override

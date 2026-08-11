@@ -672,4 +672,68 @@ public class ConfigGateTests {
             helper.succeed();
         });
     }
+
+    /**
+     * BOSS-017 — PlayNicely across the giant bosses. Phase 1 (deterministic,
+     * constructor-time per orig TheKing.java:85-89 / Godzilla.java:71-75):
+     * a King constructed while playNicely=true snapshots the 5.5x6 box, is
+     * directly pickable, and serves NO part surfaces; constructed with the
+     * flag off it is 22x24, unpickable, with 5 parts. Phase 2 (dynamic per
+     * orig TheKing.java:985-988): with playNicely=true a full-size King near
+     * a survival player acquires no target and never spawns the KingHead
+     * sidecar over 80 ticks (the gate fakes headEntityFound=1, orig quirk).
+     *
+     * <p>Isolated in its own batch: the flag is GLOBAL and held true for ~80
+     * ticks here, which pacifies every PlayNicely consumer — concurrently
+     * running default-batch tests (e.g. the Vortex drag-pull test, whose
+     * gate TF-035 restored) would fail spuriously inside that window.</p>
+     */
+    @GameTest(template = "empty_large", timeoutTicks = 300, batch = "playNicelyIsolation")
+    public void boss017_play_nicely_gates(GameTestHelper helper) {
+        final boolean prior = OreSpawnConfig.PLAY_NICELY.get();
+
+        OreSpawnConfig.PLAY_NICELY.set(true);
+        danger.orespawn.entity.TheKing niceKing =
+                helper.spawnWithNoFreeWill(ModEntities.THE_KING.get(), new BlockPos(8, 8, 8));
+        helper.assertTrue(Math.abs(niceKing.getBbWidth() - 5.5f) < 0.01f
+                        && Math.abs(niceKing.getBbHeight() - 6.0f) < 0.01f,
+                "nice King must snapshot 5.5x6 (orig TheKing.java:85-89), got "
+                        + niceKing.getBbWidth() + "x" + niceKing.getBbHeight());
+        helper.assertTrue(niceKing.isPickable(), "nice King is directly hittable (single-box orig)");
+        helper.assertTrue(niceKing.getParts().length == 0, "nice King serves no part surfaces");
+        niceKing.discard();
+
+        OreSpawnConfig.PLAY_NICELY.set(false);
+        danger.orespawn.entity.TheKing meanKing =
+                helper.spawnWithNoFreeWill(ModEntities.THE_KING.get(), new BlockPos(8, 8, 8));
+        helper.assertTrue(Math.abs(meanKing.getBbWidth() - 22.0f) < 0.01f,
+                "full King must be 22 wide (orig TheKing.java:86)");
+        helper.assertTrue(!meanKing.isPickable() && meanKing.getParts().length == 5,
+                "full King routes damage through its 5 parts");
+        meanKing.discard();
+
+        // Phase 2: dynamic pacification of a full-size King.
+        danger.orespawn.entity.TheKing king =
+                helper.spawn(ModEntities.THE_KING.get(), new BlockPos(24, 8, 24));
+        Player bystander = helper.makeMockPlayer(GameType.SURVIVAL);
+        bystander.setPos(king.getX() + 6.0, king.getY(), king.getZ());
+        OreSpawnConfig.PLAY_NICELY.set(true);
+
+        final int[] ticks = {0};
+        helper.onEachTick(() -> {
+            if (++ticks[0] < 80) return;
+            try {
+                helper.assertTrue(king.getTarget() == null,
+                        "playNicely King must never acquire a target (orig TheKing.java:985-988)");
+                helper.assertTrue(helper.getLevel().getEntitiesOfClass(
+                                danger.orespawn.entity.KingHead.class,
+                                king.getBoundingBox().inflate(96.0, 64.0, 96.0)).isEmpty(),
+                        "playNicely King must not spawn the KingHead sidecar (headEntityFound faked)");
+            } finally {
+                OreSpawnConfig.PLAY_NICELY.set(prior);
+                king.discard();
+            }
+            helper.succeed();
+        });
+    }
 }

@@ -102,10 +102,11 @@ public class GodzillaHead extends Mob {
             List<Godzilla> godzillas = this.level().getEntitiesOfClass(Godzilla.class, searchBox);
             if (!godzillas.isEmpty()) {
                 Godzilla godzilla = godzillas.get(0);
+                // BOSS-014: orig GodzillaHead.java:147-149 tracks yHeadRot.
                 this.setPos(
-                        godzilla.getX() - 17.0 * Math.sin(Math.toRadians(godzilla.yBodyRot)),
+                        godzilla.getX() - 17.0 * Math.sin(Math.toRadians(godzilla.getYHeadRot())),
                         godzilla.getY() + 16.0,
-                        godzilla.getZ() + 17.0 * Math.cos(Math.toRadians(godzilla.yBodyRot))
+                        godzilla.getZ() + 17.0 * Math.cos(Math.toRadians(godzilla.getYHeadRot()))
                 );
                 this.setYRot(godzilla.getYRot());
                 this.yBodyRot = godzilla.yBodyRot;

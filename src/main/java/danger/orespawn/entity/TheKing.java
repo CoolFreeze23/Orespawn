@@ -137,6 +137,10 @@ public class TheKing extends Monster implements OreSpawnPartEntity.MultipartBoss
     private int isEnd = 0;
     private int endCounter = 0;
 
+    /** BOSS-017: empty part array served while PlayNicely-shrunk. */
+    private static final PartEntity<?>[] NO_PARTS = new PartEntity<?>[0];
+    /** BOSS-017: constructor-time PlayNicely snapshot (orig TheKing.java:85-89). */
+    private boolean playNicelyShrunk = false;
     private final OreSpawnPartEntity<TheKing> bodyPart;
     private final OreSpawnPartEntity<TheKing> headPart;
     private final OreSpawnPartEntity<TheKing> wingLeft;
@@ -150,7 +154,14 @@ public class TheKing extends Monster implements OreSpawnPartEntity.MultipartBoss
         this.noCulling = true;
         this.noPhysics = true;
         this.setNoGravity(true);
-        this.targetSorter = Comparator.comparingDouble(this::distanceToSqr);
+        // TF-035: orig TheKing.java:64/:95 — GenericTargetSorter, not plain
+        // distance (creepers halved, large targets prioritized).
+        this.targetSorter = new danger.orespawn.entity.ai.GenericTargetSorter(this);
+        // BOSS-017: orig TheKing.java:85-89 — constructor-time PlayNicely
+        // snapshot picks 5.5x6 instead of 22x24; the hitbox never resizes
+        // afterwards even if the config flips (behavioral gates stay dynamic).
+        this.playNicelyShrunk = danger.orespawn.OreSpawnConfig.PLAY_NICELY.get();
+        this.refreshDimensions();
 
         this.bodyPart  = new OreSpawnPartEntity<>(this, "body",  5.0f, 5.0f);
         this.headPart  = new OreSpawnPartEntity<>(this, "head",  3.0f, 3.0f);
@@ -338,6 +349,11 @@ public class TheKing extends Monster implements OreSpawnPartEntity.MultipartBoss
      */
     @Override
     public PartEntity<?>[] getParts() {
+        // BOSS-017: a PlayNicely-shrunk King is the orig's single 5.5x6 box —
+        // no part surfaces; the parent itself is pickable instead.
+        if (this.playNicelyShrunk) {
+            return NO_PARTS;
+        }
         return this.allParts;
     }
 
@@ -365,7 +381,20 @@ public class TheKing extends Monster implements OreSpawnPartEntity.MultipartBoss
      */
     @Override
     public boolean isPickable() {
-        return false;
+        // BOSS-017: shrunk (nice) King is directly hittable like the orig's
+        // single small box; full-size King routes damage through the parts.
+        return this.playNicelyShrunk;
+    }
+
+    /**
+     * BOSS-017: orig TheKing.java:85-89 — 22x24 normally, 5.5x6 when
+     * PlayNicely was set at construction time.
+     */
+    @Override
+    public net.minecraft.world.entity.EntityDimensions getDefaultDimensions(net.minecraft.world.entity.Pose pose) {
+        return this.playNicelyShrunk
+                ? net.minecraft.world.entity.EntityDimensions.fixed(5.5f, 6.0f)
+                : net.minecraft.world.entity.EntityDimensions.fixed(22.0f, 24.0f);
     }
 
     /**
@@ -744,6 +773,11 @@ public class TheKing extends Monster implements OreSpawnPartEntity.MultipartBoss
             // is out of range (guard mode), is a boss part (anti-friendly-
             // fire), or is no longer visible (raytrace fails).
             currentTarget = this.revengeTarget;
+            // BOSS-017: orig TheKing.java:526-529 — PlayNicely also nulls the
+            // revenge target every pass.
+            if (danger.orespawn.OreSpawnConfig.PLAY_NICELY.get()) {
+                currentTarget = null;
+            }
 
             if (currentTarget instanceof TheKing || currentTarget instanceof KingHead) {
                 this.revengeTarget = null;
@@ -1153,6 +1187,14 @@ public class TheKing extends Monster implements OreSpawnPartEntity.MultipartBoss
     }
 
     private LivingEntity findSomethingToAttack() {
+        // BOSS-017: orig TheKing.java:985-988 — PlayNicely pacifies the King
+        // AND fakes head_found=1, which also suppresses the KingHead sidecar
+        // spawn while nice. Dynamic per-call read, like the original's
+        // static-field check.
+        if (danger.orespawn.OreSpawnConfig.PLAY_NICELY.get()) {
+            this.headEntityFound = 1;
+            return null;
+        }
         AABB searchBox = this.getBoundingBox().inflate(80.0, 64.0, 80.0);
 
         if (this.isEnd == 2) {

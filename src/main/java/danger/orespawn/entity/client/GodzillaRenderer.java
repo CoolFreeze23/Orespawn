@@ -21,7 +21,9 @@ public class GodzillaRenderer extends MobRenderer<Godzilla, ModelGodzilla> {
 
     @Override
     protected void scale(Godzilla entity, PoseStack poseStack, float partialTick) {
-        poseStack.scale(3.0F, 3.0F, 3.0F);
+        // BOSS-017: orig RenderGodzilla.java:39-45 — /4 while PlayNicely.
+        float effectiveScale = entity.getPlayNicely() != 0 ? 3.0F / 4.0F : 3.0F;
+        poseStack.scale(effectiveScale, effectiveScale, effectiveScale);
     }
 
     @Override
