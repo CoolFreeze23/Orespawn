@@ -22,6 +22,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import de.dertoaster.multihitboxlib.api.IMHLibFieldAccessor;
 import de.dertoaster.multihitboxlib.api.IMultipartEntity;
 import de.dertoaster.multihitboxlib.entity.MHLibPartEntity;
+import de.dertoaster.multihitboxlib.entity.hitbox.HitboxProfile;
 import de.dertoaster.multihitboxlib.network.client.CPacketBoneInformation;
 import de.dertoaster.multihitboxlib.util.BoneInformation;
 import net.minecraft.world.entity.Entity;
@@ -62,7 +63,25 @@ public abstract class MixinLivingEntity extends Entity implements IMultipartEnti
 	@Unique
 	@Nullable
 	private UUID masterUUID = null;
-	
+
+	// ──────────────────────────────────────────────────────────────────
+	// OPT-001: per-entity hitbox-profile cache. INTENTIONALLY NO FIELD
+	// INITIALIZERS: mixin field initializers are merged into the
+	// LivingEntity constructor body, but getHitboxProfile() can already
+	// run during the Entity super-constructor (EntityEvent.Size fires
+	// from Entity#<init>) and populate these fields — an initializer
+	// would then clobber that first write. JVM defaults (null / 0) are
+	// the "unset" state; a null cachedHitboxProfile always forces a
+	// resolve. Invalidation: the stored generation is checked against
+	// MHLibDatapackLoaders.getProfileCacheGeneration(), which is bumped
+	// on every datapack reload (/reload, server start) and server stop.
+	// ──────────────────────────────────────────────────────────────────
+	@Unique
+	@Nullable
+	private Optional<HitboxProfile> mhlibCachedHitboxProfile;
+	@Unique
+	private int mhlibCachedHitboxProfileGeneration;
+
 	public MixinLivingEntity(EntityType<?> pEntityType, Level pLevel) {
 		super(pEntityType, pLevel);
 	}
@@ -234,6 +253,24 @@ public abstract class MixinLivingEntity extends Entity implements IMultipartEnti
 	@Override
 	public void _mlibAccess_setBoneInfoBuilder(Optional<CPacketBoneInformation.Builder> value) {
 		this.boneInformationBuilder = value;
+	}
+
+	// OPT-001: per-entity profile cache accessors (see field comment above).
+	@Override
+	@Nullable
+	public Optional<HitboxProfile> _mhlibAccess_getCachedHitboxProfile() {
+		return this.mhlibCachedHitboxProfile;
+	}
+
+	@Override
+	public int _mhlibAccess_getCachedHitboxProfileGeneration() {
+		return this.mhlibCachedHitboxProfileGeneration;
+	}
+
+	@Override
+	public void _mhlibAccess_setCachedHitboxProfile(Optional<HitboxProfile> profile, int generation) {
+		this.mhlibCachedHitboxProfile = profile;
+		this.mhlibCachedHitboxProfileGeneration = generation;
 	}
 
 }
