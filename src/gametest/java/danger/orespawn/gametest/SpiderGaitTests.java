@@ -448,4 +448,348 @@ public class SpiderGaitTests {
         }
         helper.succeed();
     }
+
+    // =====================================================================
+    // S3 terrain invariants — cliff recovery (inv 4), stairs, trample
+    // =====================================================================
+
+    /** Spawns a modern-mode spider with the config immediately restored. */
+    private static SpiderRobot spawnModern(GameTestHelper helper, BlockPos pos) {
+        OreSpawnConfig.SpiderMovement prior = OreSpawnConfig.SPIDER_MOVEMENT.get();
+        try {
+            OreSpawnConfig.SPIDER_MOVEMENT.set(OreSpawnConfig.SpiderMovement.MODERN);
+            return helper.spawn(ModEntities.SPIDER_ROBOT.get(), pos);
+        } finally {
+            OreSpawnConfig.SPIDER_MOVEMENT.set(prior);
+        }
+    }
+
+    /**
+     * Shared per-tick tracker: no-slide on planted feet, step counting on
+     * swing starts, and grounded-census. Returns the planted-leg count.
+     */
+    private static int trackTick(GameTestHelper helper, ModernSpiderGait gait,
+                                 double[][] prevFoot, boolean[] prevPlanted,
+                                 boolean[] prevSwinging, int[] steps) {
+        int plantedCount = 0;
+        for (int leg = 0; leg < SpiderRigProfile.LEG_COUNT; ++leg) {
+            boolean planted = gait.isGrounded(leg);
+            boolean swinging = gait.isSwinging(leg);
+            if (planted && prevPlanted[leg]) {
+                double d = Math.abs(gait.footX(leg) - prevFoot[leg][0])
+                        + Math.abs(gait.footY(leg) - prevFoot[leg][1])
+                        + Math.abs(gait.footZ(leg) - prevFoot[leg][2]);
+                helper.assertTrue(d < 1.0E-6, "planted foot " + leg + " slid " + d + " blocks (inv 1)");
+            }
+            if (planted) {
+                prevFoot[leg][0] = gait.footX(leg);
+                prevFoot[leg][1] = gait.footY(leg);
+                prevFoot[leg][2] = gait.footZ(leg);
+                ++plantedCount;
+            }
+            prevPlanted[leg] = planted;
+            if (swinging && !prevSwinging[leg]) {
+                ++steps[leg];
+            }
+            prevSwinging[leg] = swinging;
+        }
+        return plantedCount;
+    }
+
+    /**
+     * Invariant 4 (design doc §4): a spider walked off a cliff edge loses
+     * footing, falls (vanilla gravity; fall damage immunity is classic
+     * behavior), and re-plants every foot within a bounded settle window
+     * with no re-step livelock and the no-slide contract intact throughout.
+     * The platform phase also pins the S2/S3 retrigger reconciliation: legs
+     * planted ~6 blocks below the platform body hold without thrashing until
+     * a genuinely better footing exists.
+     */
+    @GameTest(template = "empty_large", timeoutTicks = 400, batch = "spiderGaitIsolation")
+    public void s3_cliff_recovery(GameTestHelper helper) {
+        // Raised platform (surface y=6) with a cliff edge at x=20; the
+        // template's real walking surface is relative y=0 (all-air template
+        // over the framework support platform), so the platform is filled
+        // from y=0 and the drop off its edge is 6 blocks.
+        for (int x = 2; x <= 20; ++x) {
+            for (int z = 14; z <= 34; ++z) {
+                for (int y = 0; y <= 5; ++y) {
+                    helper.setBlock(new BlockPos(x, y, z), net.minecraft.world.level.block.Blocks.STONE);
+                }
+            }
+        }
+        final SpiderRobot spider = spawnModern(helper, new BlockPos(10, 7, 24));
+        final ModernSpiderGait gait;
+        try {
+            gait = spider.getModernGait();
+            helper.assertTrue(gait != null, "modern spider must carry the gait controller");
+        } catch (RuntimeException e) {
+            spider.discard();
+            throw e;
+        }
+
+        final double[][] prevFoot = new double[SpiderRigProfile.LEG_COUNT][3];
+        final boolean[] prevPlanted = new boolean[SpiderRigProfile.LEG_COUNT];
+        final boolean[] prevSwinging = new boolean[SpiderRigProfile.LEG_COUNT];
+        final int[] steps = new int[SpiderRigProfile.LEG_COUNT];
+        final int[] phase = {0}; // 0 settle, 1 drive+fall, 2 recover
+        final int[] phaseT = {0};
+        final boolean[] sawAirborneLeg = {false};
+        // Positions are ABSOLUTE world coordinates (test plots sit far below
+        // y=0); all thresholds derive from the live settle height.
+        final double[] platformY = {0.0};
+
+        helper.onEachTick(() -> {
+            try {
+                ++phaseT[0];
+                if (phase[0] == 0) {
+                    if (phaseT[0] == 30) {
+                        for (int leg = 0; leg < SpiderRigProfile.LEG_COUNT; ++leg) {
+                            helper.assertTrue(gait.isGrounded(leg),
+                                    "leg " + leg + " not grounded after settling on the platform");
+                            prevFoot[leg][0] = gait.footX(leg);
+                            prevFoot[leg][1] = gait.footY(leg);
+                            prevFoot[leg][2] = gait.footZ(leg);
+                            prevPlanted[leg] = true;
+                            prevSwinging[leg] = false;
+                        }
+                        platformY[0] = spider.getY();
+                        phase[0] = 1;
+                        phaseT[0] = 0;
+                    }
+                    return;
+                }
+                int planted = trackTick(helper, gait, prevFoot, prevPlanted, prevSwinging, steps);
+                if (planted < SpiderRigProfile.LEG_COUNT) {
+                    sawAirborneLeg[0] = true;
+                }
+                if (phase[0] == 1) {
+                    boolean landedLow = spider.onGround() && spider.getY() < platformY[0] - 3.0;
+                    if (!landedLow) {
+                        spider.setDeltaMovement(0.30, spider.getDeltaMovement().y, 0.0);
+                        helper.assertTrue(phaseT[0] < 150, "spider never went over the cliff");
+                    } else {
+                        phase[0] = 2;
+                        phaseT[0] = 0;
+                    }
+                    return;
+                }
+                if (phaseT[0] == 60) {
+                    for (int leg = 0; leg < SpiderRigProfile.LEG_COUNT; ++leg) {
+                        helper.assertTrue(gait.isGrounded(leg),
+                                "leg " + leg + " not re-planted 60 ticks after the cliff landing (inv 4)");
+                        // Cadence bound tight enough to actually catch a
+                        // 7-tick-period retrigger livelock (review: <=30 was
+                        // unfalsifiable over this window).
+                        helper.assertTrue(steps[leg] <= 12,
+                                "leg " + leg + " stepped " + steps[leg] + " times — livelock (inv 4)");
+                    }
+                    helper.assertTrue(sawAirborneLeg[0],
+                            "no leg ever left the ground across the 6-block cliff — census broken");
+                    spider.discard();
+                    helper.succeed();
+                }
+            } catch (RuntimeException e) {
+                spider.discard();
+                throw e;
+            }
+        });
+    }
+
+    /**
+     * Stairs/slopes are emergent (design doc §1): a half-slab ramp is
+     * climbed by the vanilla body (step height covers 0.5 risers) while the
+     * legs adapt purely through the 3x3 scan — no special-case code. Exit
+     * assertions: the body actually climbed, every foot has footing, the
+     * no-slide contract held, and step counts stay bounded (no thrash
+     * against the risers). Per-foot height is deliberately NOT asserted:
+     * with a 16-block leg reach the outer feet legitimately plant far below
+     * body level at the ramp shoulders.
+     */
+    @GameTest(template = "empty_large", timeoutTicks = 400, batch = "spiderGaitIsolation")
+    public void s3_slab_stairs_climb(GameTestHelper helper) {
+        // The empty templates are all air; the framework's support platform
+        // under the structure is the floor, so the walking surface is
+        // relative y=0 and terrain builds start THERE (first-run failure:
+        // a ramp based at y=2 floats overhead and the spider walks under it).
+        // Ramp: risers of 0.5 every 2 blocks along +X, full template width,
+        // then a plateau. surface(k) = k/2 (integer) + 0.5 if k odd.
+        for (int k = 1; k <= 10; ++k) {
+            int full = k / 2;
+            for (int xo = 0; xo <= 1; ++xo) {
+                int x = 14 + 2 * k + xo;
+                for (int z = 4; z <= 44; ++z) {
+                    for (int y = 0; y < full; ++y) {
+                        helper.setBlock(new BlockPos(x, y, z), net.minecraft.world.level.block.Blocks.STONE);
+                    }
+                    if (k % 2 == 1) {
+                        helper.setBlock(new BlockPos(x, full, z),
+                                net.minecraft.world.level.block.Blocks.SMOOTH_STONE_SLAB);
+                    }
+                }
+            }
+        }
+        for (int x = 36; x <= 46; ++x) { // plateau at the ramp top (surface y=5)
+            for (int z = 4; z <= 44; ++z) {
+                for (int y = 0; y <= 4; ++y) {
+                    helper.setBlock(new BlockPos(x, y, z), net.minecraft.world.level.block.Blocks.STONE);
+                }
+            }
+        }
+        final SpiderRobot spider = spawnModern(helper, new BlockPos(8, 1, 24));
+        final ModernSpiderGait gait;
+        try {
+            gait = spider.getModernGait();
+            helper.assertTrue(gait != null, "modern spider must carry the gait controller");
+        } catch (RuntimeException e) {
+            spider.discard();
+            throw e;
+        }
+
+        final double[][] prevFoot = new double[SpiderRigProfile.LEG_COUNT][3];
+        final boolean[] prevPlanted = new boolean[SpiderRigProfile.LEG_COUNT];
+        final boolean[] prevSwinging = new boolean[SpiderRigProfile.LEG_COUNT];
+        final int[] steps = new int[SpiderRigProfile.LEG_COUNT];
+        final int[] tick = {0};
+        final int settleTicks = 30;
+        final int climbTicks = 105;
+        // Positions are ABSOLUTE world coordinates; the climb is measured
+        // from the live settle height, not a template-relative constant.
+        final double[] startY = {0.0};
+
+        helper.onEachTick(() -> {
+            try {
+                int t = ++tick[0];
+                if (t < settleTicks) {
+                    return;
+                }
+                if (t == settleTicks) {
+                    // Build sanity: the ramp must actually exist where built.
+                    helper.assertBlockPresent(net.minecraft.world.level.block.Blocks.SMOOTH_STONE_SLAB,
+                            new BlockPos(16, 0, 24));
+                    helper.assertBlockPresent(net.minecraft.world.level.block.Blocks.STONE,
+                            new BlockPos(38, 4, 24));
+                    for (int leg = 0; leg < SpiderRigProfile.LEG_COUNT; ++leg) {
+                        prevFoot[leg][0] = gait.footX(leg);
+                        prevFoot[leg][1] = gait.footY(leg);
+                        prevFoot[leg][2] = gait.footZ(leg);
+                        prevPlanted[leg] = gait.isGrounded(leg);
+                        prevSwinging[leg] = false;
+                    }
+                    startY[0] = spider.getY();
+                    return;
+                }
+                if (t <= settleTicks + climbTicks) {
+                    spider.setDeltaMovement(0.30, spider.getDeltaMovement().y, 0.0);
+                }
+                trackTick(helper, gait, prevFoot, prevPlanted, prevSwinging, steps);
+                if (t == settleTicks + climbTicks) {
+                    BlockPos origin = helper.absolutePos(BlockPos.ZERO);
+                    double xOffset = spider.getX() - origin.getX();
+                    double zOffset = spider.getZ() - origin.getZ();
+                    double startYRel = startY[0] - origin.getY();
+                    helper.assertTrue(spider.getY() - startY[0] >= 4.0,
+                            "spider only climbed " + (spider.getY() - startY[0])
+                                    + " blocks up the ramp (end rel x " + xOffset
+                                    + ", rel z " + zOffset + ", settle rel y " + startYRel
+                                    + ", onGround " + spider.onGround() + ")");
+                }
+                // Footing/cadence asserts run after a rest phase — a leg can
+                // legitimately be mid-swing on the last driving tick, and the
+                // post-stop settle waves (cooldown-serialized re-steps) need
+                // headroom: 60 ticks per review margin analysis (30 left only
+                // ~3-5 ticks under stacked worst-case timing + spawn-yaw
+                // randomization).
+                if (t == settleTicks + climbTicks + 60) {
+                    for (int leg = 0; leg < SpiderRigProfile.LEG_COUNT; ++leg) {
+                        helper.assertTrue(gait.isGrounded(leg),
+                                "leg " + leg + " without footing at the top of the ramp");
+                        helper.assertTrue(steps[leg] <= 15,
+                                "leg " + leg + " stepped " + steps[leg] + " times on the ramp — thrashing");
+                    }
+                    spider.discard();
+                    helper.succeed();
+                }
+            } catch (RuntimeException e) {
+                spider.discard();
+                throw e;
+            }
+        });
+    }
+
+    /**
+     * S3 server-side trample: a RIDDEN modern spider's foot touchdowns
+     * convert short grass to air and the grass block below to dirt, on the
+     * server, mobGriefing permitting — classic's exact trigger and block
+     * logic run at classic's client-only site untouched (that quirk stays;
+     * on a dedicated server classic tramples nothing, faithfully).
+     */
+    @GameTest(template = "empty_large", timeoutTicks = 400, batch = "spiderGaitIsolation")
+    public void s3_modern_trample_server_side(GameTestHelper helper) {
+        helper.assertTrue(helper.getLevel().getGameRules().getBoolean(
+                        net.minecraft.world.level.GameRules.RULE_MOBGRIEFING),
+                "test assumes mobGriefing=true (vanilla default)");
+        // Grass field across the WHOLE walkable floor, based at the real
+        // surface (relative y=0 — all-air template over the framework
+        // support platform): grass blocks at y=0, short grass at y=1. A
+        // raised band would exceed the body's 0.6 step height and stall the
+        // walk (first-run failure); on a full field the spider spawns and
+        // walks ON the grass tops, so every settled ridden foot is a trample
+        // opportunity. Classic's (int)-truncation quirk (mirrored in modern)
+        // shifts the checked cell one block toward +x/+z at negative absolute
+        // coordinates — absorbed by the field-wide dirt scan below, so do
+        // NOT "fix" the scan to check exact foot columns.
+        for (int x = 2; x <= 46; ++x) {
+            for (int z = 4; z <= 44; ++z) {
+                helper.setBlock(new BlockPos(x, 0, z), net.minecraft.world.level.block.Blocks.GRASS_BLOCK);
+                helper.setBlock(new BlockPos(x, 1, z), net.minecraft.world.level.block.Blocks.SHORT_GRASS);
+            }
+        }
+        final SpiderRobot spider = spawnModern(helper, new BlockPos(8, 3, 24));
+        final ModernSpiderGait gait;
+        final net.minecraft.world.entity.player.Player rider;
+        try {
+            gait = spider.getModernGait();
+            helper.assertTrue(gait != null, "modern spider must carry the gait controller");
+            rider = helper.makeMockPlayer(net.minecraft.world.level.GameType.SURVIVAL);
+            helper.assertTrue(rider.startRiding(spider, true), "mock rider failed to mount");
+        } catch (RuntimeException e) {
+            spider.discard();
+            throw e;
+        }
+
+        final int[] tick = {0};
+        helper.onEachTick(() -> {
+            try {
+                int t = ++tick[0];
+                if (t < 20) {
+                    return;
+                }
+                if (t < 100) {
+                    spider.setDeltaMovement(0.30, spider.getDeltaMovement().y, 0.0);
+                    return;
+                }
+                int dirt = 0;
+                for (int x = 2; x <= 46 && dirt == 0; ++x) {
+                    for (int z = 4; z <= 44 && dirt == 0; ++z) {
+                        if (helper.getBlockState(new BlockPos(x, 0, z))
+                                .is(net.minecraft.world.level.block.Blocks.DIRT)) {
+                            ++dirt;
+                        }
+                    }
+                }
+                helper.assertTrue(dirt >= 1,
+                        "no grass block was trampled to dirt by the ridden modern spider (end x offset "
+                                + (spider.getX() - helper.absolutePos(new BlockPos(8, 3, 24)).getX()) + ")");
+                rider.stopRiding();
+                rider.discard();
+                spider.discard();
+                helper.succeed();
+            } catch (RuntimeException e) {
+                rider.discard();
+                spider.discard();
+                throw e;
+            }
+        });
+    }
 }

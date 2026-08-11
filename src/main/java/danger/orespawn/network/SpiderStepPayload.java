@@ -16,13 +16,16 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
  * deterministic swing curve locally ({@code ModernSpiderGait.clientTick});
  * planted feet are world-anchored constants between events, so a standing
  * spider costs zero gait traffic (the OPT-002/003 change-only philosophy).
+ * With {@code strand=true} (S3) the payload is instead a strand transition:
+ * the leg lost all reachable footing and the client should dangle it locally
+ * (the from/to fields carry the initial dangle anchor).
  *
  * <p>Entity-id reuse note (independent review, accepted): a step arriving
  * for a recycled id could animate one leg of the wrong spider until the next
  * keyframe corrects it (≤ {@code KEYFRAME_INTERVAL} ticks); requires
  * same-tick id recycling, self-healing, not worth a UUID per packet.</p>
  */
-public record SpiderStepPayload(int entityId, int leg,
+public record SpiderStepPayload(int entityId, int leg, boolean strand,
                                 double fromX, double fromY, double fromZ,
                                 double toX, double toY, double toZ,
                                 long startTime, int duration) implements CustomPacketPayload {
@@ -34,6 +37,7 @@ public record SpiderStepPayload(int entityId, int leg,
             (buf, p) -> {
                 buf.writeVarInt(p.entityId);
                 buf.writeByte(p.leg);
+                buf.writeBoolean(p.strand);
                 buf.writeDouble(p.fromX);
                 buf.writeDouble(p.fromY);
                 buf.writeDouble(p.fromZ);
@@ -44,7 +48,7 @@ public record SpiderStepPayload(int entityId, int leg,
                 buf.writeVarInt(p.duration);
             },
             buf -> new SpiderStepPayload(
-                    buf.readVarInt(), buf.readByte(),
+                    buf.readVarInt(), buf.readByte(), buf.readBoolean(),
                     buf.readDouble(), buf.readDouble(), buf.readDouble(),
                     buf.readDouble(), buf.readDouble(), buf.readDouble(),
                     buf.readVarLong(), buf.readVarInt()));

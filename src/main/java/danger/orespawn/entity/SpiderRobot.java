@@ -248,8 +248,9 @@ public class SpiderRobot extends Mob {
                 updateLegs();
             }
         }
-        // 2.0 S2: the server-authoritative modern gait. Never moves the body —
-        // in S2 its only server-visible effects are the gait packets.
+        // 2.0 S2/S3: the server-authoritative modern gait. Never moves the
+        // body — its server-visible effects are the gait packets plus the
+        // mobGriefing-gated, ridden-only trample block changes (S3).
         if (this.modernGait != null && !this.level().isClientSide()) {
             this.modernGait.serverTick(this);
         }
