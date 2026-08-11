@@ -2113,3 +2113,22 @@ type lottery + Y>=50 rule; Rotator 16-species exclusion list restored;
 RubberDucky squid prey + buddy-follow. One integration fix by the
 orchestrator: EnderDragon.body is private in 1.21.1 — PitchBlack's
 body strike now uses getSubEntities()[2] (vanilla part order).
+
+## Phase E — E4 ENT-S batch: all 19 PARTIALs terminal (2026-08-11)
+
+**17 FIXED, 2 VERIFIED-CORRECT (S-012/056, reviewer-upheld).** Highlights:
+Scorpion acquisition brain restored (1-in-6 rescan, 8/3/8 sorted scan,
+full prey/exclusion ladder incl. the prey-on-everything fallthrough) +
+attack sound at the TARGET + cactus immunity + seven per-row spawn files
+(the dropped w28 dark_forest hotspot restored; invented windswept_savanna
+coverage removed); projectile trio: Shoes special-target cases verified/
+fixed, ThunderBolt royalty exemption, WaterBall exemptions + ~10% pickup;
+SpiderRobot frontal flame + faithful stomp, invented boss bar REMOVED;
+Spyro Dragon-evolution/untame/rename + extinguisher corrected;
+VelocityRaptor untame/rename; StinkBug per-biome spawns; TrooperBug
+SpitBug minion summon + cactus/fall immunity; Tshirt night/no-buddy
+gates; UltimateFishHook wait timers + reel-pull (TF-028 float preserved);
+WaterDragon ranged WaterBall + fireball volleys integrated with the
+TF-001 nav-agnostic goals; Worm boot/leggings theft on both sizes.
+Orchestrator integration note: one leftover-JVM file lock on the
+NeoForge jar required a daemon restart mid-gate (not a code issue).

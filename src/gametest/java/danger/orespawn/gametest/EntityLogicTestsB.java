@@ -25,6 +25,7 @@ import danger.orespawn.entity.EntityTrooperBug;
 import danger.orespawn.entity.EntityUnstableAnt;
 import danger.orespawn.entity.EntityVortex;
 import danger.orespawn.entity.EntityWormLarge;
+import danger.orespawn.entity.EntityWormMedium;
 import danger.orespawn.entity.EntityWormSmall;
 import danger.orespawn.entity.GiantRobot;
 import danger.orespawn.entity.InkSack;
@@ -199,6 +200,11 @@ public class EntityLogicTestsB {
 
     private static final class TestWormSmall extends EntityWormSmall {
         TestWormSmall(Level level) { super(ModEntities.ENTITY_WORM_SMALL.get(), level); }
+        void ai() { this.customServerAiStep(); }
+    }
+
+    private static final class TestWormMedium extends EntityWormMedium {
+        TestWormMedium(Level level) { super(ModEntities.ENTITY_WORM_MEDIUM.get(), level); }
         void ai() { this.customServerAiStep(); }
     }
 
@@ -560,6 +566,110 @@ public class EntityLogicTestsB {
     }
 
     // ================================================================
+    // ent-s-082-e4 — WormMedium boots/leggings theft
+    // ================================================================
+
+    /**
+     * Phase E4 ENT-S batch item for ENT-S-082 (WormMedium boots/leggings
+     * theft). Within the bb inflated 2.25/8.0/2.25 of the nearest non-creative
+     * player (EntityWormMedium.customServerAiStep, orig WormMedium.java:193-196),
+     * a surfaced worm (upcount &gt; 0) rolls 1-in-15 to swing (orig :199-200);
+     * each swing carries an inner 1-in-6 theft that strips the FEET slot, or
+     * the LEGS slot when the feet are already bare (orig :201-221); the stolen
+     * piece is damaged remainingDurability/15 (min 1) and scattered as an item
+     * entity 3 blocks up at ±0-4 x/z (orig :205-208/:214-217). The whole
+     * branch is gated off by playNicely (orig :186-188) and while any
+     * WormSmall is within 8/8/8 (orig :189-192).
+     *
+     * <p>Statistics: boots thefts per driven step p = 1/15 · 1/6 = 1/90;
+     * n = 6000 gives mean 66.7 and the accepted band [20, 133] has
+     * false-failure &lt; 2e-10 (Chernoff both tails). The ordering phase needs
+     * ≥2 thefts in 6000 driven steps: P(X ≤ 1) ≈ 68·e^{−66.7} &lt; 1e-26.
+     * Phases 3-4 are deterministic negatives (the gate short-circuits before
+     * any dice roll).
+     */
+    @GameTest(template = "empty_large", batch = "orespawnb_players")
+    public void ent_s_082_worm_medium_boots_leggings_theft(GameTestHelper helper) {
+        floor(helper, 18, 18, 30, 30);
+        boolean playNicelyBefore = OreSpawnConfig.PLAY_NICELY.get();
+        TestServerPlayer player = null;
+        try {
+            OreSpawnConfig.PLAY_NICELY.set(false);
+            player = addServerPlayer(helper);
+            Vec3 wpos = helper.absoluteVec(new Vec3(24.5, 1.0, 24.5));
+            player.moveTo(wpos.x + 1.5, wpos.y, wpos.z, 0.0f, 0.0f);
+            player.setInvulnerable(true); // the 1-in-15 swing lands doHurtTarget (10 ATK) alongside the rolls
+
+            TestWormMedium worm = new TestWormMedium(helper.getLevel());
+            worm.moveTo(wpos.x, wpos.y, wpos.z, 0.0f, 0.0f);
+            worm.upcount = 50; // surfaced — the theft branch requires upcount > 0 (orig :199)
+            // NOT added to the level: aiStep never runs, so upcount never
+            // decays and the driven customServerAiStep is the only actor.
+
+            // Phase 1 — boots theft rate (legs empty).
+            int thefts = 0;
+            for (int i = 0; i < 6000; i++) {
+                player.setItemSlot(EquipmentSlot.FEET, new ItemStack(Items.IRON_BOOTS));
+                worm.ai();
+                if (player.getItemBySlot(EquipmentSlot.FEET).isEmpty()) thefts++;
+            }
+            check(thefts >= 20 && thefts <= 133,
+                    "boots thefts out of statistical band [20,133] for p=1/90 over 6000: " + thefts);
+            AABB box = new AABB(BlockPos.containing(wpos)).inflate(12, 8, 12);
+            check(countItems(helper.getLevel(), box, Items.IRON_BOOTS) >= 1,
+                    "stolen boots must scatter as item entities (orig WormMedium.java:208-209)");
+            player.setItemSlot(EquipmentSlot.FEET, ItemStack.EMPTY);
+
+            // Phase 2 — boots first, leggings only when the feet are bare (orig :202-219).
+            player.setItemSlot(EquipmentSlot.FEET, new ItemStack(Items.IRON_BOOTS));
+            player.setItemSlot(EquipmentSlot.LEGS, new ItemStack(Items.IRON_LEGGINGS));
+            boolean bootsGone = false;
+            boolean legsGone = false;
+            for (int i = 0; i < 6000 && !legsGone; i++) {
+                worm.ai();
+                if (!bootsGone && player.getItemBySlot(EquipmentSlot.FEET).isEmpty()) {
+                    bootsGone = true;
+                    check(!player.getItemBySlot(EquipmentSlot.LEGS).isEmpty(),
+                            "leggings must survive while boots are worn (boots steal first, orig :202-211)");
+                }
+                if (bootsGone && player.getItemBySlot(EquipmentSlot.LEGS).isEmpty()) legsGone = true;
+            }
+            check(bootsGone, "boots were never stolen in 6000 driven ticks (p=1/90/tick)");
+            check(legsGone, "leggings were never stolen after the boots were gone");
+            check(countItems(helper.getLevel(), box, Items.IRON_LEGGINGS) >= 1,
+                    "leggings must scatter as an item entity (orig WormMedium.java:217-218)");
+
+            // Phase 3 — a WormSmall within 8/8/8 suppresses the branch (orig :189-192).
+            // 5 blocks away: inside the medium's 8-block stand-down box, outside
+            // the small's own 1.5-block theft reach; the whole driven loop runs
+            // inside one server tick, so the leveled chaperone never acts.
+            EntityWormSmall chaperone =
+                    new EntityWormSmall(ModEntities.ENTITY_WORM_SMALL.get(), helper.getLevel());
+            Vec3 spos = helper.absoluteVec(new Vec3(24.5, 1.0, 29.5));
+            chaperone.moveTo(spos.x, spos.y, spos.z, 0.0f, 0.0f);
+            helper.getLevel().addFreshEntity(chaperone);
+            player.setItemSlot(EquipmentSlot.FEET, new ItemStack(Items.IRON_BOOTS));
+            for (int i = 0; i < 900; i++) worm.ai();
+            check(!player.getItemBySlot(EquipmentSlot.FEET).isEmpty(),
+                    "no theft while a WormSmall chaperone is within 8 blocks (orig WormMedium.java:189-192)");
+            chaperone.discard();
+
+            // Phase 4 — playNicely=true gates the whole branch (orig :186-188).
+            OreSpawnConfig.PLAY_NICELY.set(true);
+            for (int i = 0; i < 900; i++) worm.ai();
+            check(!player.getItemBySlot(EquipmentSlot.FEET).isEmpty(),
+                    "no theft with playNicely=true (orig WormMedium.java:186-188)");
+
+            worm.discard();
+            discardItems(helper.getLevel(), box);
+            helper.succeed();
+        } finally {
+            OreSpawnConfig.PLAY_NICELY.set(playNicelyBefore);
+            removeServerPlayer(helper, player);
+        }
+    }
+
+    // ================================================================
     // i053-ent-k-047-048-d4 — Peacock hunts termites; egg laying + spawn gates
     // ================================================================
 
@@ -895,6 +1005,34 @@ public class EntityLogicTestsB {
         triffid.causeFallDamage(30.0f, 1.0f, level.damageSources().fall());
         check(triffid.getHealth() == trMax, "no fall damage on the closed Triffid");
         triffid.discard();
+        helper.succeed();
+    }
+
+    /**
+     * ENT-S-053 (Phase E4 ENT-S batch). TrooperBug ignores cactus and fall
+     * damage entirely, exactly like its sibling SpitBug: the orig filters the
+     * "cactus"/"fall" damage-type names before super.attackEntityFrom, so
+     * neither the damage nor the 20-tick hurt-timer arm happens —
+     * EntityTrooperBug.java hurt() cactus/fall early-return, orig
+     * TrooperBug.java:385-402 (:390 name filter). Normal damage still lands.
+     */
+    @GameTest(template = "empty_large")
+    public void ent_s_053_trooperbug_cactus_fall_immunity(GameTestHelper helper) {
+        floor(helper, 18, 18, 30, 30);
+        ServerLevel level = helper.getLevel();
+
+        EntityTrooperBug trooper = helper.spawnWithNoFreeWill(ModEntities.ENTITY_TROOPER_BUG.get(), new BlockPos(24, 1, 24));
+        float tbMax = trooper.getHealth();
+        check(!trooper.hurt(level.damageSources().cactus(), 4.0f), "TrooperBug cactus hurt must be filtered");
+        check(trooper.getHealth() == tbMax, "TrooperBug takes no cactus damage (orig TrooperBug.java:390)");
+        trooper.causeFallDamage(30.0f, 1.0f, level.damageSources().fall());
+        check(trooper.getHealth() == tbMax, "TrooperBug takes no fall damage even from a 30-block fall");
+        // orig :390 filters BEFORE the hurt-timer arm — a cactus tick must not
+        // grant 20 ticks of blanket immunity, so generic damage lands right away.
+        check(trooper.hurt(level.damageSources().generic(), 2.0f),
+                "TrooperBug is not blanket-immune and cactus must not arm the hurt-timer: generic damage must land");
+        check(trooper.getHealth() < tbMax, "generic damage must reduce TrooperBug health");
+        trooper.discard();
         helper.succeed();
     }
 

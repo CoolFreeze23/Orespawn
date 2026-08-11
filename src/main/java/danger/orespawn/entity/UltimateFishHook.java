@@ -15,6 +15,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.stats.Stats;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.util.Mth;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ExperienceOrb;
 import net.minecraft.world.entity.MoverType;
@@ -36,14 +37,18 @@ import net.minecraft.world.phys.Vec3;
 /**
  * Bobber for the Ultimate Fishing Rod. Port of orig UltimateFishHook.java.
  *
- * The original copied vanilla 1.7.10 EntityFishHook wholesale and changed four
+ * The original copied vanilla 1.7.10 EntityFishHook wholesale and changed five
  * things: fire immunity (orig :76-77), lava counted as water for buoyancy and
  * bite timing (orig :271-276), custom weighted catch pools including OreSpawn
- * and lava fish (orig :41-45, :422-449), and 1-6 bonus XP per catch delivered
- * at the player (orig :411). The port keeps vanilla FishingHook mechanics
- * (bite state machine via the access-transformed catchingFish/nibble/
- * currentState) and layers those four deltas on top rather than re-copying the
- * base class.
+ * and lava fish (orig :41-45, :422-449), 1-6 bonus XP per catch delivered
+ * at the player (orig :411), and re-tuned bite state-machine timers
+ * (orig :300/:337/:340-341; ENT-S-060). The port keeps vanilla FishingHook
+ * mechanics (bite state machine via the access-transformed catchingFish/
+ * nibble/currentState) and layers those deltas on top rather than re-copying
+ * the base class; where 1.21.1 vanilla itself drifted from the 1.7.10 base
+ * the original was built on (the sqrt-distance reel kick, orig :389-397),
+ * the drift is overridden too. Vanilla line cites below refer to the neoForm
+ * transformed FishingHook.java (neoFormJoined1.21.1-20240808.144430).
  */
 public class UltimateFishHook extends FishingHook {
 
@@ -247,6 +252,105 @@ public class UltimateFishHook extends FishingHook {
             this.updateRotation();
             this.setDeltaMovement(this.getDeltaMovement().scale(0.92));
             this.reapplyPosition();
+        }
+    }
+
+    /**
+     * ENT-S-060: orig UltimateFishHook.java:286-342 kept the 1.7.10 bite
+     * state machine's structure but re-tuned all three timers:
+     * <ul>
+     * <li>wait-for-bite: 50-300 ticks minus Lure*20*5 (orig :340-341) —
+     *     vanilla 1.21.1 rolls 100-600 minus lureSpeed
+     *     (FishingHook.java:384-385);</li>
+     * <li>fish-approach: 100-200 ticks (orig :337) — vanilla rolls 20-80
+     *     (:381);</li>
+     * <li>bite window: 10-30 ticks (orig :300) — vanilla rolls 20-40
+     *     (:353).</li>
+     * </ul>
+     * Rather than re-copying the whole vanilla body (which would drag in the
+     * private fishAngle/DATA_BITING/particle plumbing), this wrapper
+     * snapshots which state-machine branch vanilla is about to take (branch
+     * order nibble, then timeUntilHooked, then timeUntilLured —
+     * FishingHook.java:300/:307/:356/:383) and immediately re-rolls whichever
+     * timer that branch freshly set, so every countdown the hook actually
+     * runs is distributed exactly as the original's. Costs one discarded
+     * vanilla RNG draw per state transition; decrements, splash-chance ramp
+     * (:358-365 == orig :319-326) and particles stay vanilla's, which the
+     * original had copied unchanged.
+     */
+    @Override
+    public void catchingFish(BlockPos pos) {
+        boolean wasBiting = this.nibble > 0;
+        boolean wasApproaching = !wasBiting && this.timeUntilHooked > 0;
+        boolean wasWaiting = !wasBiting && !wasApproaching && this.timeUntilLured > 0;
+        super.catchingFish(pos);
+        if (!wasBiting && !wasApproaching && !wasWaiting) {
+            // Fresh wait roll (vanilla :383-386). orig :340-341 — 50-300
+            // minus Lure*20*5, Lure read off the angler's HELD rod at roll
+            // time (func_151387_h(angler)); UltimateFishingRod passes
+            // lureSpeed=0 into the ctor (UltimateFishingRod.java:50), so
+            // vanilla's own subtraction (:385) never double-dips. The result
+            // may be <= 0 (re-rolled every tick until positive) and at
+            // Lure III can NEVER go positive (max roll 300 - 300 = 0), so a
+            // Lure III rod never gets a bite — original bug, kept.
+            this.timeUntilLured = Mth.nextInt(this.random, 50, 300) - this.heldRodLureLevel() * 20 * 5;
+        } else if (wasWaiting && this.timeUntilHooked > 0) {
+            // Wait expired this tick: vanilla rolled the approach 20-80
+            // (:379-381); orig :335-337 rolls 100-200. The 0-360 fish angle
+            // vanilla rolled at :380 matches orig :336 and is kept.
+            this.timeUntilHooked = Mth.nextInt(this.random, 100, 200);
+        } else if (wasApproaching && this.nibble > 0) {
+            // Approach expired this tick: vanilla rolled the bite window
+            // 20-40 (:353); orig :298-300 rolls 10-30. DATA_BITING was
+            // already set true alongside it (:354) and stays valid since the
+            // re-roll is > 0.
+            this.nibble = Mth.nextInt(this.random, 10, 30);
+        }
+    }
+
+    /**
+     * orig UltimateFishHook.java:341 (and :424-425 for the catch odds) read
+     * fishing enchants off the angler's currently held item each roll
+     * (EnchantmentHelper.func_151387_h); shouldStopFishing guarantees an
+     * Ultimate Fishing Rod is in one of the hands while the hook is alive
+     * (either hand — same hand semantics as the :127-136 override above).
+     */
+    private int heldRodLureLevel() {
+        Player player = this.getPlayerOwner();
+        if (player == null) {
+            return 0;
+        }
+        ItemStack rod = player.getMainHandItem().is(ModItems.ULTIMATE_FISHING_ROD.get())
+                ? player.getMainHandItem()
+                : player.getOffhandItem();
+        return this.getEnchantLevel(Enchantments.LURE, rod);
+    }
+
+    /**
+     * ENT-S-060: orig UltimateFishHook.java:389-397 — reeling a hooked
+     * entity adds 0.1*delta on each axis PLUS a vertical
+     * sqrt(distance)*0.08 kick (d6 at orig :393 is already the plain
+     * distance, so orig :396 is sqrt(distance)), the same lob formula the
+     * original applied to the caught-item fling (orig :401-408, already
+     * ported in retrieve() below). Vanilla 1.21.1 pullEntity dropped the
+     * sqrt term (FishingHook.java:519-525 — flat 0.1 scale; the term
+     * survives only in the loot fling, :483), so far-away hooked entities
+     * barely lift off the ground. Restored here; the override also serves
+     * the client-side local-player yank via handleEntityEvent(31)
+     * (:510-517), which vanilla routes through the same method.
+     */
+    @Override
+    protected void pullEntity(Entity entity) {
+        // orig :390-392 measured from the angler; the hook's owner IS the
+        // angler (vanilla :519-521 semantics).
+        Entity owner = this.getOwner();
+        if (owner != null) {
+            double d0 = owner.getX() - this.getX();
+            double d1 = owner.getY() - this.getY();
+            double d2 = owner.getZ() - this.getZ();
+            double dist = Math.sqrt(d0 * d0 + d1 * d1 + d2 * d2); // orig :393
+            entity.setDeltaMovement(entity.getDeltaMovement().add(
+                    d0 * 0.1, d1 * 0.1 + Math.sqrt(dist) * 0.08, d2 * 0.1)); // orig :394-397
         }
     }
 

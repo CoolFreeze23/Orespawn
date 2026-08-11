@@ -17,6 +17,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
@@ -42,6 +43,7 @@ import net.minecraft.world.entity.ai.goal.TemptGoal;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.ai.navigation.WaterBoundPathNavigation;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.SmallFireball;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
@@ -50,6 +52,7 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.pathfinder.PathType;
+import net.minecraft.world.phys.Vec3;
 
 public class WaterDragon extends TamableAnimal {
     private static final EntityDataAccessor<Integer> DATA_ATTACKING =
@@ -72,9 +75,9 @@ public class WaterDragon extends TamableAnimal {
         this.setPathfindingMalus(PathType.WATER, 0.0f);
     }
 
-    // AI: tamed WaterDragons follow and breed like a pet; wild ones still
-    // bite on retaliation via DinosaurMeleeAttackGoal (note Presets.waterDragon
-    // sets innerRoll=0 to mimic the single-dice 1.7.10 swing cadence).
+    // AI: tamed WaterDragons follow and breed like a pet; wild ones bite on
+    // retaliation via the WaterCanonAttackGoal (the TF-026 waterDragon melee
+    // preset plus the restored orig ranged watercanon branch, ENT-S-074).
     // RandomSwimmingGoal keeps them gliding through water when idle rather
     // than beaching themselves against currents.
     @Override
@@ -87,8 +90,7 @@ public class WaterDragon extends TamableAnimal {
         // orig WaterDragon.java:71 — MyEntityAIFollowOwner(this, 2.0f, 10.0f, 2.0f).
         this.goalSelector.addGoal(2, new OwnerFollowAnyNavGoal(this, 2.0, 10.0f, 2.0f));
         this.goalSelector.addGoal(3, new TemptGoal(this, 1.2, Ingredient.of(Items.COD), false));
-        this.goalSelector.addGoal(4, new DinosaurMeleeAttackGoal(this, this::setAttacking,
-                DinosaurMeleeAttackGoal.Presets.waterDragon()));
+        this.goalSelector.addGoal(4, new WaterCanonAttackGoal());
         this.goalSelector.addGoal(5, new RandomSwimmingGoal(this, 1.0, 30));
         this.goalSelector.addGoal(6, new MyEntityAIWanderALot(this, 16, 1.0));
         this.goalSelector.addGoal(7, new LookAtPlayerGoal(this, Player.class, 8.0f));
@@ -237,6 +239,9 @@ public class WaterDragon extends TamableAnimal {
         Entity attacker = source.getEntity();
         if (attacker instanceof WaterDragon) return false;
         if (attacker instanceof AttackSquid) return false;
+        // orig WaterDragon.java:476-478 — WaterBall-sourced damage is ignored,
+        // so watercanon volleys (ENT-S-074) never turn dragons on each other.
+        if (attacker instanceof WaterBall) return false;
         boolean ret = false;
         if (this.hurtTimer <= 0) {
             ret = super.hurt(source, amount);
@@ -358,5 +363,92 @@ public class WaterDragon extends TamableAnimal {
             baby.setTame(true, true);
         }
         return baby;
+    }
+
+    /**
+     * ENT-S-074 — orig WaterDragon.java:597-648. The original single AI loop
+     * mixed melee and ranged: past melee reach the dragon kept walking toward
+     * the target at speed 1.0 (orig :607) AND ran watercanon() on the same
+     * 1-in-5 cadence tick (orig :597,:608). The TF-001/TF-026 goal rebuild kept
+     * only the melee half; this subclass restores the ranged half through the
+     * {@code onOutOfMeleeRange} hook (the SpitBugAcidAttackGoal integration
+     * pattern) so the rebuilt goal stack — and the nav-agnostic owner-follow —
+     * stay untouched.
+     */
+    private class WaterCanonAttackGoal extends DinosaurMeleeAttackGoal {
+
+        /** orig WaterDragon.java:52 — stream_count, the 8-round burst counter. */
+        private int streamCount = 0;
+
+        WaterCanonAttackGoal() {
+            super(WaterDragon.this, WaterDragon.this::setAttacking,
+                    DinosaurMeleeAttackGoal.Presets.waterDragon());
+        }
+
+        /** orig WaterDragon.java:620-648 — watercanon(e). */
+        @Override
+        protected void onOutOfMeleeRange(LivingEntity target, double distSq) {
+            WaterDragon dragon = WaterDragon.this;
+            double yoff = 1.75; // orig :621
+            double xzoff = 1.5; // orig :622
+            if (this.streamCount > 0) {
+                dragon.setAttacking(2); // orig :625 — pose 2 opens the jaw (ModelWaterDragon)
+                // orig :626-631 — 1 round in 15 adds a SmallFireball whose accel
+                // is computed from the dragon's CENTER before the muzzle
+                // reposition; both muzzle offsets use the head yaw here.
+                if (dragon.random.nextInt(15) == 1) {
+                    SmallFireball fireball = new SmallFireball(dragon.level(), dragon,
+                            new Vec3(target.getX() - dragon.getX(),
+                                    target.getY() + 0.75 - (dragon.getY() + yoff),
+                                    target.getZ() - dragon.getZ()));
+                    fireball.moveTo(
+                            dragon.getX() - xzoff * Math.sin(Math.toRadians(dragon.yHeadRot)),
+                            dragon.getY() + yoff,
+                            dragon.getZ() + xzoff * Math.cos(Math.toRadians(dragon.yHeadRot)),
+                            dragon.getYRot(), dragon.getXRot()); // orig :628
+                    // orig :629 — "random.bow" 0.75f
+                    dragon.level().playSound(null, dragon, SoundEvents.ARROW_SHOOT,
+                            dragon.getSoundSource(), 0.75f,
+                            1.0f / (dragon.random.nextFloat() * 0.4f + 0.8f));
+                    dragon.level().addFreshEntity(fireball);
+                }
+                // orig :632-633 — every round fires an OWNERLESS WaterBall (the
+                // 3-arg ctor has no shooter, exactly why hurt() exempts
+                // WaterBall sources). The ctor receives the aim delta as a
+                // throwaway position, immediately overwritten by moveTo; the
+                // muzzle x offset uses the HEAD yaw but the z offset uses the
+                // BODY yaw (orig field_70759_as vs field_70177_z) — an original
+                // asymmetry kept bug-for-bug.
+                WaterBall ball = new WaterBall(dragon.level(),
+                        target.getX() - dragon.getX(),
+                        target.getY() + 0.75 - (dragon.getY() + yoff),
+                        target.getZ() - dragon.getZ());
+                ball.moveTo(
+                        dragon.getX() - xzoff * Math.sin(Math.toRadians(dragon.yHeadRot)),
+                        dragon.getY() + yoff,
+                        dragon.getZ() + xzoff * Math.cos(Math.toRadians(dragon.getYRot())),
+                        dragon.yHeadRot, dragon.getXRot());
+                // orig :634-638 — ballistic lift (horizontal distance * 0.2),
+                // then shoot at the target's y+0.25 with 1.4 speed / 5.0 spread.
+                double dx = target.getX() - ball.getX();
+                double dy = target.getY() + 0.25 - ball.getY();
+                double dz = target.getZ() - ball.getZ();
+                float lift = Mth.sqrt((float) (dx * dx + dz * dz)) * 0.2f;
+                ball.shoot(dx, dy + lift, dz, 1.4f, 5.0f);
+                // orig :639 — "random.bow" 0.75f
+                dragon.level().playSound(null, dragon, SoundEvents.ARROW_SHOOT,
+                        dragon.getSoundSource(), 0.75f,
+                        1.0f / (dragon.random.nextFloat() * 0.4f + 0.8f));
+                dragon.level().addFreshEntity(ball);
+                --this.streamCount; // orig :641
+            } else {
+                dragon.setAttacking(0); // orig :643
+            }
+            // orig :645-647 — an empty canon reloads 8 rounds 1 time in 4,
+            // checked even on the tick the burst just ran dry.
+            if (this.streamCount <= 0 && dragon.random.nextInt(4) == 1) {
+                this.streamCount = 8;
+            }
+        }
     }
 }

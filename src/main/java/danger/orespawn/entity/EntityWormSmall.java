@@ -167,8 +167,23 @@ public class EntityWormSmall extends Monster {
         // orig WormSmall.java:176-178 — no thieving when PlayNicely
         if (danger.orespawn.OreSpawnConfig.PLAY_NICELY.get()) return;
 
-        // orig :179-182 — nearest non-creative player within 1.5/4/1.5
-        Player target = this.level().getNearestPlayer(this, 1.5);
+        // orig :179 — func_72857_a: nearest player inside the bounding box
+        // inflated 1.5/4.0/1.5. The 4-block VERTICAL reach matters (a player
+        // standing on a ledge above the worm is still robbed), so a spherical
+        // getNearestPlayer(1.5) is not equivalent. Spectators postdate 1.7.10
+        // and are skipped, matching the vanilla NO_SPECTATORS query baseline.
+        Player target = null;
+        double bestDistSq = Double.MAX_VALUE;
+        for (Player p : this.level().getEntitiesOfClass(Player.class,
+                this.getBoundingBox().inflate(1.5, 4.0, 1.5))) {
+            if (p.isSpectator()) continue;
+            double distSq = this.distanceToSqr(p);
+            if (distSq < bestDistSq) {
+                bestDistSq = distSq;
+                target = p;
+            }
+        }
+        // orig :180-182 — creative players are nulled before any aiming
         if (target != null && !target.getAbilities().instabuild) {
             this.pointAtEntity(target);
             if (this.upcount > 0 && this.random.nextInt(15) == 1) {

@@ -1,7 +1,7 @@
 package danger.orespawn.entity;
 
 import danger.orespawn.MobStats;
-
+import danger.orespawn.ModEntities;
 import danger.orespawn.OreSpawnMod;
 import danger.orespawn.entity.ai.TrooperBugLeapAttackGoal;
 import javax.annotation.Nullable;
@@ -160,6 +160,14 @@ public class EntityTrooperBug extends Monster {
     @Override
     public boolean hurt(DamageSource source, float amount) {
         if (this.hurtTimer > 0) return false;
+        // orig TrooperBug.java:390 — after the hurt-timer lockout, "cactus" and
+        // "fall" damage are filtered out entirely: no damage, no 20-tick timer
+        // arm, no retarget-on-hurt (same idiom as sibling EntitySpitBug.java:151-156,
+        // orig SpitBug.java:244).
+        if (source.is(net.minecraft.tags.DamageTypeTags.IS_FALL)
+                || source.is(net.minecraft.world.damagesource.DamageTypes.CACTUS)) {
+            return false;
+        }
         boolean ret = super.hurt(source, amount);
         this.hurtTimer = 20;
         Entity attacker = source.getEntity();
@@ -175,6 +183,28 @@ public class EntityTrooperBug extends Monster {
         if (this.isRemoved()) return;
         super.customServerAiStep();
         if (this.hurtTimer > 0) --this.hurtTimer;
+        // orig TrooperBug.java:413,441-443 — inside the 1-in-5 AI-tick block,
+        // while a live target exists, a further 1-in-30 roll summons ONE Spit
+        // Bug at the bug<->target midpoint (+- 0-4 block x/z scatter, +1.01 y).
+        // spawnCreature (orig :453-462) gives it a random yaw and plays its
+        // ambient sound. The look/leap/attack halves of that original block
+        // live in TrooperBugLeapAttackGoal; only the summon cadence
+        // (~1/150 per server tick while engaged) is reproduced here.
+        if (this.random.nextInt(5) == 0) {
+            LivingEntity target = this.getTarget();
+            if (target != null && target.isAlive() && this.random.nextInt(30) == 1) {
+                EntitySpitBug minion = ModEntities.ENTITY_SPIT_BUG.get().create(this.level());
+                if (minion != null) {
+                    minion.moveTo(
+                            (this.getX() + target.getX()) / 2.0 + this.random.nextInt(5) - this.random.nextInt(5),
+                            (this.getY() + target.getY()) / 2.0 + 1.01,
+                            (this.getZ() + target.getZ()) / 2.0 + this.random.nextInt(5) - this.random.nextInt(5),
+                            this.random.nextFloat() * 360.0f, 0.0f);
+                    this.level().addFreshEntity(minion);
+                    minion.playAmbientSound();
+                }
+            }
+        }
         if (this.random.nextInt(150) == 1 && this.getHealth() < this.getMaxHealth()) {
             this.heal(1.0f);
         }

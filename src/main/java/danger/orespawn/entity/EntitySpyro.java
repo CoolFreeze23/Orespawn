@@ -1,12 +1,12 @@
 package danger.orespawn.entity;
 
-import java.util.Comparator;
 import java.util.List;
 
 import javax.annotation.Nullable;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -44,9 +44,12 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import danger.orespawn.ModEntities;
 import danger.orespawn.OreSpawnMod;
+import danger.orespawn.entity.ai.GenericTargetSorter;
 
 public class EntitySpyro extends TamableAnimal {
     private static final EntityDataAccessor<Integer> DATA_ACTIVITY =
@@ -62,6 +65,8 @@ public class EntitySpyro extends TamableAnimal {
     private int ownerFlying = 0;
     private boolean targetInSight = false;
     private final float moveSpeed = 0.3f;
+    /** orig Spyro.java:55,:82 — shared weighted target comparator (TF-035). */
+    private final GenericTargetSorter targetSorter = new GenericTargetSorter(this);
 
     public EntitySpyro(EntityType<? extends EntitySpyro> type, Level level) {
         super(type, level);
@@ -140,6 +145,28 @@ public class EntitySpyro extends TamableAnimal {
             this.currentFlightTarget = this.blockPosition();
         }
 
+        // orig Spyro.java:453-466 — 1-in-100000 per server tick a Spyro that is
+        // not persistence-required grows up on its own: a Dragon is spawned in
+        // its place (carrying the tame flag + stored owner if it was tamed) and
+        // the Spyro is removed. ENT-S-027 (Dragon evolution).
+        if (this.random.nextInt(100000) == 1 && !this.isPersistenceRequired()) {
+            Dragon dragon = new Dragon(ModEntities.DRAGON.get(), this.level());
+            // orig :715-724 (spawnCreature helper) — placed at the Spyro's
+            // position with a random yaw, then announces itself.
+            dragon.moveTo(this.getX(), this.getY(), this.getZ(),
+                    this.level().random.nextFloat() * 360.0f, 0.0f);
+            this.level().addFreshEntity(dragon);
+            dragon.playAmbientSound();
+            if (this.isTame()) {
+                // orig :459-462 — only tame flag + owner carry over; the custom
+                // name is NOT copied (original drops it).
+                dragon.setTame(true, false);
+                dragon.setOwnerUUID(this.getOwnerUUID());
+            }
+            this.discard();
+            return;
+        }
+
         if (this.activity == 2) {
             Vec3 motion = this.getDeltaMovement();
             double newY;
@@ -194,21 +221,88 @@ public class EntitySpyro extends TamableAnimal {
             return InteractionResult.sidedSuccess(this.level().isClientSide);
         }
 
-        if (this.isTame() && this.isOwnedBy(player) && stack.is(Items.FLINT_AND_STEEL)) {
+        // orig Spyro.java:250-265 — dead bush releases an owned Spyro: untame,
+        // health reset to full (orig :253, func_70606_j(mygetMaxHealth()) = 200),
+        // owner cleared, smoke particles (byte 6). ENT-S-027 (untame). Sitting is
+        // NOT reset — the original leaves the sit flag alone.
+        if (this.isTame() && stack.is(Blocks.DEAD_BUSH.asItem())
+                && player.distanceToSqr(this) < 16.0 && this.isOwnedBy(player)) {
             if (!this.level().isClientSide) {
-                this.setSpyroFire(1);
+                this.setTame(false, false);
+                this.setHealth(200.0f);
+                this.setOwnerUUID(null);
+                this.level().broadcastEntityEvent(this, (byte) 6);
             }
             if (!player.getAbilities().instabuild) stack.shrink(1);
             return InteractionResult.sidedSuccess(this.level().isClientSide);
         }
 
-        if (this.isTame() && this.isOwnedBy(player) && stack.is(Items.WATER_BUCKET)) {
+        // orig Spyro.java:266-280 — an ICE BLOCK (not a water bucket) turns the
+        // fireballs off; the block is consumed and the original chat line shown.
+        // ENT-S-027 (extinguisher): the invented water-bucket branch is removed.
+        if (this.isTame() && stack.is(Blocks.ICE.asItem())
+                && player.distanceToSqr(this) < 16.0 && this.isOwnedBy(player)) {
             if (!this.level().isClientSide) {
+                this.level().broadcastEntityEvent(this, (byte) 6); // orig :269
                 this.setSpyroFire(0);
+                player.displayClientMessage(
+                        Component.literal("Baby Dragon fireballs extinguished."), false); // orig :271
             }
+            if (!player.getAbilities().instabuild) stack.shrink(1);
             return InteractionResult.sidedSuccess(this.level().isClientSide);
         }
 
+        // orig Spyro.java:281-300 — a diamond evolves an owned Spyro into a
+        // tamed Dragon on the spot. Only the tame flag + owner (the interacting
+        // player, guaranteed to be the owner by this gate) carry over — the
+        // original does NOT copy the custom name, so neither do we. The diamond
+        // is consumed. ENT-S-027 (Dragon evolution).
+        if (this.isTame() && stack.is(Items.DIAMOND)
+                && player.distanceToSqr(this) < 16.0 && this.isOwnedBy(player)) {
+            if (!this.level().isClientSide) {
+                Dragon dragon = new Dragon(ModEntities.DRAGON.get(), this.level());
+                // orig :715-724 (spawnCreature helper) — random yaw, pitch 0,
+                // then the fresh Dragon announces itself.
+                dragon.moveTo(this.getX(), this.getY(), this.getZ(),
+                        this.level().random.nextFloat() * 360.0f, 0.0f);
+                this.level().addFreshEntity(dragon);
+                dragon.playAmbientSound();
+                dragon.setTame(true, false); // orig :287-290
+                dragon.setOwnerUUID(player.getUUID());
+                this.discard(); // orig :291
+            }
+            if (!player.getAbilities().instabuild) stack.shrink(1);
+            return InteractionResult.sidedSuccess(this.level().isClientSide);
+        }
+
+        // orig Spyro.java:301-315 — flint & steel lights the fireballs. The item
+        // is CONSUMED outright (orig decrements stack size rather than damaging
+        // durability — quirk preserved), with the original chat line.
+        if (this.isTame() && stack.is(Items.FLINT_AND_STEEL)
+                && player.distanceToSqr(this) < 16.0 && this.isOwnedBy(player)) {
+            if (!this.level().isClientSide) {
+                this.level().broadcastEntityEvent(this, (byte) 6); // orig :304
+                this.setSpyroFire(1);
+                player.displayClientMessage(
+                        Component.literal("Baby Dragon fireballs lit!"), false); // orig :306
+            }
+            if (!player.getAbilities().instabuild) stack.shrink(1);
+            return InteractionResult.sidedSuccess(this.level().isClientSide);
+        }
+
+        // orig Spyro.java:316-325 — a name tag renames an owned Spyro to the
+        // stack's display name and is consumed. An UNNAMED tag renames it to the
+        // item's own name ("Name Tag") — orig quirk preserved; a named tag is
+        // handled by vanilla's name-tag interaction first, mirroring 1.7.10's
+        // item-before-entity interaction order. ENT-S-027 (rename).
+        if (this.isTame() && stack.is(Items.NAME_TAG)
+                && player.distanceToSqr(this) < 16.0 && this.isOwnedBy(player)) {
+            this.setCustomName(stack.getHoverName()); // orig :317
+            if (!player.getAbilities().instabuild) stack.shrink(1);
+            return InteractionResult.sidedSuccess(this.level().isClientSide);
+        }
+
+        // orig Spyro.java:326-333 — any other interaction while owned: sit toggle.
         if (this.isTame() && this.isOwnedBy(player) && player.distanceToSqr(this) < 16.0) {
             this.setOrderedToSit(!this.isOrderedToSit());
             return InteractionResult.sidedSuccess(this.level().isClientSide);
@@ -378,7 +472,7 @@ public class EntitySpyro extends TamableAnimal {
     private LivingEntity findSomethingToAttack() {
         AABB searchBox = this.getBoundingBox().inflate(12.0, 6.0, 12.0);
         List<LivingEntity> targets = this.level().getEntitiesOfClass(LivingEntity.class, searchBox);
-        targets.sort(Comparator.comparingDouble(this::distanceToSqr));
+        targets.sort(this.targetSorter); // orig :702 — GenericTargetSorter order (TF-035)
         for (LivingEntity target : targets) {
             if (this.isSuitableTarget(target)) return target;
         }

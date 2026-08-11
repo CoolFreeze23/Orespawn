@@ -2556,6 +2556,7 @@ Paths: ORIG = `reference_1_7_10_source\sources\danger\orespawn\`, PORT = `src\ma
 - **Original:** ORIG `Scorpion.java:203-253` — targets creepers, spiders, VelocityRaptor (not other Monsters)
 - **Port:** `entity\EntityScorpion.java:34-48` — HurtBy + NearestAttackableTarget(Player) only
 - **Fix:** add `NearestAttackableTargetGoal` entries for Creeper, Spider, VelocityRaptor.
+- **Resolution:** FIXED (2026-08-11, Phase E4 ENT-S batch — port acquired targets via HurtBy + NearestAttackableTarget(Player) only. Restored the orig acquisition brain: customServerAiStep nextInt(6)==0 rescan (orig Scorpion.java:175-192) calling findSomethingToAttack — PlayNicely gate (:256-258), 8/3/8 scan box (:259), GenericTargetSorter sort (:44 field, :55 ctor, :260 sort; TF-035 rider satisfied) — and the full isSuitableTarget ladder (:203-253): VelocityRaptor/Spider(+CaveSpider)/Creeper prey, Ghost/GhostSkelly/scorpions/other Monsters excluded, creative players excluded, and the orig fallthrough-true (:252) that preys on ALL other livings (animals, villagers, survival players). Invented NAT(Player) goal removed (follow-range-24 plain-distance acquisition; orig only engages the 8-block sorted scan). HurtByTargetGoal kept (orig :62). Port: entity/EntityScorpion.java registerGoals, customServerAiStep, findSomethingToAttack, isSuitableTarget.)
 
 ### ENT-S-003 — Scorpion: attack sound + cactus immunity missing
 
@@ -2563,6 +2564,7 @@ Paths: ORIG = `reference_1_7_10_source\sources\danger\orespawn\`, PORT = `src\ma
 - **Original:** ORIG `Scorpion.java:182-201` — 1/3 chance `orespawn:scorpion_attack` on melee; cactus-immune
 - **Port:** `entity\EntityScorpion.java` — neither present
 - **Fix:** play `scorpion_attack` 1/3 in `doHurtTarget`; add cactus to `isInvulnerableTo`.
+- **Resolution:** FIXED (2026-08-11, Phase E4 ENT-S batch — both halves were absent. (1) doHurtTarget override now rolls nextInt(3)==1 after every swing (hit or miss — orig ignores the func_70652_k return) and plays orespawn:scorpion_attack AT THE TARGET's position, vol 0.75 / pitch 1.5 (orig Scorpion.java:180-184; sounds.json already carries scorpion_attack at :944-946; createVariableRangeEvent idiom per Mothra.java:172-173, play-at-target idiom per Crab.java:268-272). (2) hurt() discards cactus damage before super is consulted (orig :195-201 returns false without calling super), via source.is(DamageTypes.CACTUS) — the EntitySpitBug.java:153-155 precedent for the same orig "cactus" string filter. Port: entity/EntityScorpion.java doHurtTarget, hurt.)
 
 ### ENT-S-004 — Scorpion: nugget drops replaced with bone
 
@@ -2580,6 +2582,7 @@ Paths: ORIG = `reference_1_7_10_source\sources\danger\orespawn\`, PORT = `src\ma
 - **Fix:** add a dark-forest BM entry w28(2-4); restore desert group 3-6 and mesa weights 4–6; gates per ENT-SYS2-004.
 
 ---
+- **Resolution:** FIXED (2026-08-11, Phase E4 ENT-S batch — port lumped w15(2-4) over desert + #is_badlands + #is_savanna. Replaced with seven per-row files per the hostile_leaf_monster__* convention, one per orig addSpawn row: desert 15(3-6) OreSpawnMain.java:4901; dark_forest 28(2-4) :4902 roofedForest; savanna 15(3-5) :4903; savanna_plateau 15(2-4) :4904; badlands 6(1-3) :4905 mesa; wooded_badlands 4(1-3) :4906 mesaPlateau_F; eroded_badlands 5(3-6) :4907 mesaPlateau (eroded_badlands is the sole remaining 1.21 badlands member — mesaPlateau's nearest home, keeping family coverage with orig per-row weights). Tag lumps also over-covered windswept_savanna, absent from orig. Spawner/darkness/y<50 gates already live in EntityScorpion.checkSpawnRules citing orig Scorpion.java:281-299 (closed under ENT-SYS2-004). All changes returned as sharedEdits — biome_modifier JSONs are not editable in this lane.)
 
 ## SeaMonster
 
@@ -2647,6 +2650,7 @@ Paths: ORIG = `reference_1_7_10_source\sources\danger\orespawn\`, PORT = `src\ma
 - **Fix:** add the Girlfriend/Boyfriend 1.0 clamp (if those entities are ported) and the valentines-day (Feb 14 system date) 10-damage override.
 
 ---
+- **Resolution:** VERIFIED-CORRECT (2026-08-11, Phase E4 ENT-S batch — remainder already in port). Port Shoes.java:73-87 reproduces orig Shoes.java:57-78 damage table in exact order: base 2.0 (:59), id-6 heavy 6.0 (:60-62), Creeper +4 (:63-65), Girlfriend=1 (:66-68, port :79), Boyfriend=1 (:69-71, port :80), Player=0 (:72-74, port :81), valentines=10 last so it overrides all (:75-77, port :84 'if (SeasonalDates.isValentines()) damage = 10.0f;'). Girlfriend/Boyfriend are ported (same package). SeasonalDates.isValentines() = Feb 14, orig OreSpawnMain.java:4567-4569; real-time evaluation is the audit's accepted ANIM-016 deviation. Damage source thrown(this, owner) matches func_76356_a. No edits needed.
 
 ## Skate
 
@@ -2733,6 +2737,7 @@ Paths: ORIG = `reference_1_7_10_source\sources\danger\orespawn\`, PORT = `src\ma
 - **Port:** port `SpiderRobot.java:124-135` — when ridden, generic auto-attack within 12 blocks 1/15 tick; no flame attack; procedural sine walk instead of IK (`:221-237`)
 - **Fix:** add the frontal flame/spark attack (particles + fire damage cone ahead); constrain melee to stomp range under the feet instead of 12 blocks.
 - **Note:** the "procedural sine walk instead of IK" clause was closed in Phase D2 (full leg solver ported, orig SpiderRobot.java:111-486 — see ANIM-006); the flame attack + stomp-range remainder stays open (Phase E owner unchanged).
+- **Resolution:** FIXED (2026-08-11, Phase E4 ENT-S batch — stomp + frontal attack restored). Stomp ported: 1/40 tick while ridden (orig SpiderRobot.java:590-592), PlayNicely-gated 20x8x20 scan hitting EVERY target in the 12-18 block ring (orig :896-952) at attack/10 damage with 0.6/0.1 knockback (orig :954-969). Frontal melee now uses the orig filter (orig :988-1038): Spider/SpiderDriver/CaveSpider exclusions, isIgnoreable (:1013), line-of-sight (:1016), 0.75-rad cone (:1030) with <6-block bypass that skips even the creative check (:1027, quirk kept). PEACEFUL gates restored (orig :590,:593). Exhaust particles get orig outward velocities and the dropped 1/10 fireworksSpark (orig :605-616). TF-035: sorter swapped to GenericTargetSorter (orig :50,:60), unused as the orig never sorts (:975-985). Port SpiderRobot.java:129-195,246-351.
 
 ### ENT-S-022 — SpiderRobot: boss bar added (not in original)
 
@@ -2740,6 +2745,7 @@ Paths: ORIG = `reference_1_7_10_source\sources\danger\orespawn\`, PORT = `src\ma
 - **Original:** ORIG — no boss bar (HUD overlay only)
 - **Port:** port `SpiderRobot.java:49-50,86-99` — `ServerBossEvent` added alongside ported HUD
 - **Fix:** decide: remove the boss bar for fidelity, or keep and document as intentional addition (a rideable vehicle with a boss bar is misleading).
+- **Resolution:** FIXED (2026-08-11, Phase E4 ENT-S batch — invented boss bar REMOVED). Decision: removal per parity doctrine; a rideable vehicle with a boss bar is a confirmed invention. Orig SpiderRobot.java contains no BossStatus/boss-bar code anywhere — its status renders via the dedicated RenderSpiderRobotInfo HUD overlay (orig SpiderRobot.java:52), which the port keeps. Deleted the ServerBossEvent field (was port :50-51), the startSeenByPlayer/stopSeenByPlayer overrides (was :91-101), the setProgress call in customServerAiStep (was :105), and the now-unused ServerBossEvent/ServerPlayer/BossEvent/Component imports; parity comment left at the old field site (port SpiderRobot.java:51-55).
 
 ### ENT-S-023 — SpiderRobot: drops changed
 
@@ -2787,6 +2793,7 @@ Paths: ORIG = `reference_1_7_10_source\sources\danger\orespawn\`, PORT = `src\ma
 - **Original:** ORIG `Spyro.java:250-325` — dead-bush untame; ice block turns fireballs OFF; diamond → evolves into tamed Dragon; name-tag rename
 - **Port:** port `EntitySpyro.java:179-210` — beef tame + flint&steel ON ported; OFF via water bucket; evolution/untame/rename absent
 - **Fix:** add diamond-interaction → replace with tamed Dragon entity (copy owner/name); dead-bush untame; name-tag rename; switch extinguisher from water bucket to ice block.
+- **Resolution:** FIXED (2026-08-11, Phase E4 ENT-S batch — interaction ladder rebuilt to orig Spyro.java:213-335 order: dead-bush untame (:250-265; heal-to-200, owner cleared, byte 6), ICE-block extinguisher with orig chat line (:266-280) replacing the invented water-bucket branch, diamond→tamed-Dragon replacement (:281-300 via spawnCreature :715-724 — owner copied, custom name deliberately NOT copied; the audit's 'copy name' is absent from orig), flint&steel lighting given the :301-315 dist<16 gate/byte-6/chat line, name-tag rename (:316-325); natural 1-in-100000 growth into Dragon (:453-466) added to tick(). TF-035 rider: GenericTargetSorter restored (orig :55,:82,:702). Port entity/EntitySpyro.java:148-168,203-312,442. Orig identity confirmed: Spyro.java — ThePrince is an unrelated multi-part boss per INDEX.md.)
 
 ### ENT-S-028 — Spyro: drop changed
 
@@ -2832,6 +2839,7 @@ Paths: ORIG = `reference_1_7_10_source\sources\danger\orespawn\`, PORT = `src\ma
 - **Fix:** split per-biome weights: forest 10, jungle 8, taiga 6, savanna 8(2-5).
 
 ---
+- **Resolution:** FIXED (2026-08-11, Phase E4 ENT-S batch — via sharedEdits: biome_modifier JSONs protected). Deleted the three lumped swarm_stink_bug__* modifiers (invented flat w8 plus invented biomes birch/flower/dark forest, sunflower_plains and is_jungle/is_taiga tags) and split into five per-biome files matching orig OreSpawnMain.java:4894-4898: creature_stink_bug__forest w10 (2-4) :4894; __jungle w8 (2-4) :4895; __windswept_forest w6 (2-4) :4896 taigaHills; __sparse_jungle w4 (2-4) :4897 jungleHills; __savanna w8 (2-5) :4898. Hills mappings follow the hostile_leaf_monster__* precedent (taigaHills→windswept_forest :4913, jungleHills→sparse_jungle :4912); creature_ prefix per port MobCategory.CREATURE registration. Chaos-dim w3 (2-4) row (BiomeGenUtopianPlains.java:389) verified already present in chaos_biome.json creature list.
 
 ## Stinky
 
@@ -2923,6 +2931,7 @@ Paths: ORIG = `reference_1_7_10_source\sources\danger\orespawn\`, PORT = `src\ma
 - **Fix:** skip damage when the hit entity implements the port's royalty marker (TheKing/TheQueen/Princes/Princess) so boss self-fire doesn't hurt peers.
 
 ---
+- **Resolution:** FIXED (2026-08-11, Phase E4 ENT-S batch — royalty exemption ported with full skip semantics). Orig ThunderBolt.java:36-39: isRoyalty target -> setDead()+return BEFORE damage, particles, explode sound, 3.0 explosion, and lightning — the bolt vanishes silently. Port now bails in onHit() before super.onHit() (ThunderBolt.java:62-74): 'if (result instanceof EntityHitResult entityHit && MyUtils.isRoyalty(entityHit.getEntity())) { this.discard(); return; }', so onHitEntity and the entire explosion/lightning path never run. Port MyUtils.isRoyalty (util/MyUtils.java:9-19) matches orig MyUtils.java:46-75 roster (ThePrince/Teen/Adult, ThePrincess, TheKing, KingHead, TheQueen, QueenHead, PurplePower). Import danger.orespawn.util.MyUtils added (BetterFireball.java:3 idiom).
 
 ## TRex
 
@@ -3020,6 +3029,7 @@ Paths: ORIG = `reference_1_7_10_source\sources\danger\orespawn\`, PORT = `src\ma
 - **Original:** ORIG — spawns SpitBugs when attacking
 - **Port:** leap ported (`TrooperBugLeapAttackGoal.java:21-42`); no minion summon
 - **Fix:** on attack start (or hurt), spawn 1–2 EntitySpitBug near the TrooperBug, matching original cadence (read ORIG `TrooperBug.java` for exact roll).
+- **Resolution:** FIXED (2026-08-11, Phase E4 ENT-S batch — SpitBug summon ported into EntityTrooperBug.customServerAiStep: inside the orig 1-in-5 AI-tick gate (orig TrooperBug.java:413), a live target plus a further 1-in-30 roll (:441) summons ONE Spit Bug at the bug↔target midpoint with ±0-4 x/z scatter and +1.01 y (:442), via the spawnCreature idiom (:453-462 — moveTo with random yaw, addFreshEntity, playAmbientSound; same 1.21 pattern as EntityEmperorScorpion.java:174). Net cadence ≈1/150 per engaged server tick, matching orig; the look/leap/attack halves of that original block live in TrooperBugLeapAttackGoal. Audit's '1–2 minions on attack start' guess corrected against orig: exactly one, on an independent per-AI-tick roll, not attack-triggered.)
 
 ### ENT-S-053 — TrooperBug: cactus/fall immunity missing
 
@@ -3027,6 +3037,7 @@ Paths: ORIG = `reference_1_7_10_source\sources\danger\orespawn\`, PORT = `src\ma
 - **Original:** ORIG — cactus- and fall-immune
 - **Port:** 20-tick i-frames only (`:139-155`)
 - **Fix:** add CACTUS to `isInvulnerableTo`; override `causeFallDamage` → false.
+- **Resolution:** FIXED (2026-08-11, Phase E4 ENT-S batch — cactus/fall filter added to EntityTrooperBug.hurt() after the hurt-timer lockout, mirroring orig TrooperBug.java:385-402 exactly: :390 filters damage-type names "cactus"/"fall" before super.attackEntityFrom, so they deal nothing and never arm the 20-tick timer nor trigger the retarget-on-hurt. Same reviewed idiom as sibling EntitySpitBug.java:151-156 (orig SpitBug.java:244): DamageTypeTags.IS_FALL + DamageTypes.CACTUS. Audit's suggested isInvulnerableTo/causeFallDamage mechanism deliberately not used — the in-hurt filter preserves the orig check order (timer first, then name filter). Gametest ent_s_053_trooperbug_cactus_fall_immunity added to EntityLogicTestsB.java asserting no cactus/fall damage, no timer arm (generic damage lands immediately after a cactus tick), and no blanket immunity.)
 
 ### ENT-S-054 — TrooperBug: gear unenchanted, bone missing, double name_tag
 
@@ -3056,6 +3067,7 @@ Paths: ORIG = `reference_1_7_10_source\sources\danger\orespawn\`, PORT = `src\ma
 - **Fix:** add `checkSpawnRules`: night-time + no Tshirt within range (see ENT-SYS2-004).
 
 ---
+- **Resolution:** VERIFIED-CORRECT (2026-08-11, Phase E4 ENT-S batch — port EntityTshirt.java:61-68 already carries the full orig gate set from Tshirt.java:93-103: "if (!OriginalSpawnGates.isDaytime(level)) return false; if (this.getY() < 50.0) return false; return !OriginalSpawnGates.anyOtherNearby(this, level, EntityTshirt.class, 20.0, 8.0, 20.0);" — matching orig :94 !func_72935_r() reject, :97-99 y<50 reject, :100-102 findNearestEntityWithinAABB(Tshirt.class, box±20/8/20, this) must return null. Audit description corrected: func_72935_r is isDaytime, so the orig gate is DAY-only, not 'night-only'; the port matches the original. Village-dim row w2 (1-1) (BiomeGenUtopianPlains.java:324) verified present in village_biome.json creature spawner list.)
 
 ## UltimateArrow (projectile)
 
@@ -3095,6 +3107,7 @@ Paths: ORIG = `reference_1_7_10_source\sources\danger\orespawn\`, PORT = `src\ma
 - **Fix:** port the shortened wait timers and the long-distance reel pull into the hook subclass.
 
 ---
+- **Resolution:** FIXED (2026-08-11, Phase E4 ENT-S batch — both halves ported into port UltimateFishHook.java. Timers: catchingFish override re-rolls each freshly set counter with the original's ranges — wait 50-300 minus Lure*20*5 read live off the held rod (orig :340-341; vanilla 100-600, FishingHook.java:384-385; Lure III can never go positive, bug kept), approach 100-200 (orig :337; vanilla 20-80, :381), bite window 10-30 (orig :300; vanilla 20-40, :353). Reel pull: pullEntity override restores the sqrt(distance)*0.08 vertical kick (orig :389-397) dropped by vanilla 1.21.1 (:519-525). TF-028 lava tick untouched; override applies in lava via the existing catchingFish call, matching orig's single state machine. Ledger cite correction: timers live at orig :286-342, not :384-420. Gametests ent_s060_bite_timer_rerolls / ent_s060_reel_pull_sqrt_kick added. Requires AT sharedEdit below.)
 
 ## Urchin
 
@@ -3132,6 +3145,7 @@ Paths: ORIG = `reference_1_7_10_source\sources\danger\orespawn\`, PORT = `src\ma
 - **Original:** ORIG `:264,282` — dead-bush untame; name-tag rename
 - **Port:** apple tame ported (`:151-165`); untame/rename absent
 - **Fix:** add dead-bush untame interaction and name-tag rename handling.
+- **Resolution:** FIXED (2026-08-11, Phase E4 ENT-S batch — dead-bush untame ported per orig VelocityRaptor.java:264-281: untame first so health resets to the WILD mygetMaxHealth()=10 (:212,:266-267), ENT-S-063's tamed MAX_HEALTH 20 rolled back to base 10, owner cleared, byte 6, bush consumed; name-tag rename ported per :282-291 (unnamed tag renames to 'Name Tag' — orig quirk; named tags hit vanilla's item-first handler, mirroring 1.7.10's item-before-entity order). Orig client-side player walk-speed reset (:271-273) omitted — belongs to the unported rider-speed hack, flagged in notes. Port entity/VelocityRaptor.java:170-202. Sorter N/A: orig VelocityRaptor has no GenericTargetSorter (fields :40-44).)
 
 ### ENT-S-065 — VelocityRaptor: riding is a port invention
 
@@ -3205,6 +3219,7 @@ Paths: ORIG = `reference_1_7_10_source\sources\danger\orespawn\`, PORT = `src\ma
 - **Fix:** early-return 0 damage for WaterDragon/AttackSquid targets; spawn the water_ball item entity on hit.
 
 ---
+- **Resolution:** FIXED (2026-08-11, Phase E4 ENT-S batch — target exemptions ported; drop verified present). Orig WaterBall.java:47-61 exemptions return from func_70184_a before damage, particles, splash sound, and setDead — the ball flies through. Port onHit() now bails before super.onHit() (WaterBall.java:73-90): WaterDragon (orig :47-49), AttackSquid (orig :50-52), Dragon with getDragonType()!=0 (orig :53-55 — missed by the audit fix text, ported per doctrine; port Dragon.java:1121), and the mounted-player check (orig :56-61) moved from onHitEntity so it too flies through instead of splashing/discarding. 1/10 MyWaterBall drop already ported at :66-69 citing orig :63-65 (nextInt(10)==1, spawnAtLocation) — verified. clearFire matches orig :66. AttackSquid's hurt-side WaterBall blank (E4-A, AttackSquid.java:114) kept — both seams existed in orig (AttackSquid.java:373-375).
 
 ## WaterDragon
 
@@ -3222,6 +3237,7 @@ Paths: ORIG = `reference_1_7_10_source\sources\danger\orespawn\`, PORT = `src\ma
 - **Original:** ORIG `WaterDragon.java:624-632` — melee + ranged WaterBall and EntitySmallFireball volleys
 - **Port:** melee only via `DinosaurMeleeAttackGoal` (`:214-225`)
 - **Fix:** add a ranged-attack goal firing WaterBall (and SmallFireball) volleys at the original cadence/range.
+- **Resolution:** FIXED (2026-08-11, Phase E4 ENT-S batch — ranged branch restored as WaterCanonAttackGoal (port WaterDragon.java:368-453), a DinosaurMeleeAttackGoal subclass hooked at onOutOfMeleeRange so the TF-001/TF-026 goal stack and nav-agnostic follow are untouched. Reproduces orig WaterDragon.java:620-648 watercanon: 8-round stream_count bursts with 1-in-4 reload (:645-647), setAttacking(2) pose (:625), 1-in-15 SmallFireball rider aimed center-to-target (:626-631), ownerless WaterBall from muzzle yoff 1.75/xzoff 1.5 keeping the head-yaw-x/body-yaw-z asymmetry (:632-633), lift sqrt(dx²+dz²)*0.2 then shoot 1.4f/5.0f (:634-638), "random.bow" 0.75f→ARROW_SHOOT (:629,:639). Also restored hurt()'s WaterBall exemption (orig :476-478) so volleys never turn dragons on each other.)
 
 ### ENT-S-075 — WaterDragon: double drops + ultimate tools added
 
@@ -3239,6 +3255,7 @@ Paths: ORIG = `reference_1_7_10_source\sources\danger\orespawn\`, PORT = `src\ma
 - **Fix:** raise river to 5 and swamp to 3 in the BM JSONs.
 
 ---
+- **Resolution:** FIXED (2026-08-11, Phase E4 ENT-S batch — sharedEdits: hostile_water_dragon__minecraft_is_river.json weight 2→5 (orig OreSpawnMain.java:4844 — addSpawn river w5) and hostile_water_dragon__direct.json (swamp+mangrove_swamp) weight 2→3 (orig OreSpawnMain.java:4845 — addSpawn swampland w3). Ocean and deep-ocean files verified already correct at w2 (orig :4846-4847); all four files keep minCount/maxCount 1/1 matching the orig addSpawn(…,1,1,waterCreature) rows.)
 
 ## WormSmall
 
@@ -3248,6 +3265,7 @@ Paths: ORIG = `reference_1_7_10_source\sources\danger\orespawn\`, PORT = `src\ma
 - **Original:** ORIG `WormSmall.java:179-197` — within 1.5: 1/15 swing; 1/6 chance to rip off boots, damage durability/20, throw on ground
 - **Port:** port `:135-146` — 1/15 swing only
 - **Fix:** on successful close-range hit, 1/6 roll: remove target's FEET item, damage it `maxDamage/20`, spawn as ItemEntity.
+- **Resolution:** FIXED (2026-08-11, Phase E4 ENT-S batch — the theft itself arrived with ENT-S-078/D4 and quote-verifies against orig WormSmall.java:185-195: 1-in-15 swing while upcount>0, inner 1-in-6, FEET strip, durability hit remaining/20 min 1, scatter y+3 at ±0-4 x/z (port EntityWormSmall.java:187-215). Remaining divergence hunted and fixed: target acquisition was getNearestPlayer(this, 1.5) — a 1.5 sphere — vs orig :179 func_72857_a over the bb inflated 1.5/4.0/1.5, losing the 4-block vertical reach; replaced with an exact AABB nearest-player scan (spectators skipped as a post-1.7.10 concept). Break-at-max drop guard kept per the D4 WormSmall/WormLarge convention. Existing gametest i052 (player at +1.0, inside the box) still valid.)
 
 ### ENT-S-078 — WormSmall: surface-block death check missing
 
@@ -3291,6 +3309,7 @@ Paths: ORIG = `reference_1_7_10_source\sources\danger\orespawn\`, PORT = `src\ma
 - **Original:** ORIG `:193-222` — steals boots or leggings, durability/15
 - **Port:** port `:146-163` — swing only
 - **Fix:** on hit, roll to strip FEET or LEGS slot, damage durability/15, drop as ItemEntity.
+- **Resolution:** FIXED (2026-08-11, Phase E4 ENT-S batch — port EntityWormMedium.java:147-226 now reproduces orig WormMedium.java:186-221: PlayNicely gate (:186-188, was missing), WormSmall-within-8/8/8 stand-down (:189-192), player search via the orig bb.inflate(2.25, 8.0, 2.25) nearest scan (:193 — was a 2.25 sphere losing the 8-block vertical reach), creative nulled via instabuild (:194-196 — was wrongly the invulnerable flag), 1-in-15 swing while upcount>0 (:199-200), inner 1-in-6 theft stripping FEET else LEGS (:201-221), durability hit remaining/15 min 1 (:205-206/:214-215), scatter y+3 at ±0-4 x/z (:208/:217) via a stealAndScatter helper matching the WormLarge/10 convention. New gametest ent_s_082_worm_medium_boots_leggings_theft (EntityLogicTestsB) asserts the 1/90 rate band, boots-before-leggings order, item scatter, chaperone and playNicely gates.)
 
 ### ENT-S-083 — WormMedium: drops changed + doubled
 

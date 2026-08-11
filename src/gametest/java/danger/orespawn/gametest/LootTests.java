@@ -1819,6 +1819,173 @@ public class LootTests {
         });
     }
 
+    /** Exposes the protected pullEntity override for direct assertion (ENT-S-060). */
+    private static final class PullProbe extends UltimateFishHook {
+        PullProbe(ServerPlayer angler, ServerLevel level) {
+            super(angler, level, 0, 0);
+        }
+
+        void pull(Entity target) {
+            this.pullEntity(target);
+        }
+    }
+
+    /**
+     * ENT-S-060 (timers half) — the original's re-tuned bite state-machine
+     * timers.
+     *
+     * <p>Documented values: orig UltimateFishHook.java:340-341 — wait-for-bite
+     * 50-300 ticks minus Lure*20*5 (so a Lure III rod rolls 50-300 minus 300
+     * and can NEVER go positive — the rod stops biting; original bug, kept);
+     * orig :337 — fish-approach 100-200; orig :300 — bite window 10-30. Port
+     * UltimateFishHook.catchingFish override (re-rolls after the vanilla
+     * rolls at FishingHook.java:384-385 / :381 / :353). Each state
+     * transition is forced by presetting the access-transformed
+     * nibble/timeUntilHooked/timeUntilLured counters and calling the real
+     * {@code catchingFish} (public via AT), in the open-sky template so the
+     * tick decrement is always ≥ 1 (canSeeSky true, FishingHook.java:296-298).</p>
+     *
+     * <p>Statistics: approach rolls are DISJOINT from vanilla ([100,200] vs
+     * [20,80]) — every draw is deterministic proof. Wait rolls: each must lie
+     * in [50,300] (any &gt;300 = vanilla 100-600, deterministic fail), plus
+     * at-least-one &lt;100 in 100 draws (false-fail vs orig ≈ (201/251)^100
+     * ≈ 2.2e-10 &lt; 1e-9). Bite rolls: each in [10,30] (any &gt;30 =
+     * vanilla 20-40), plus at-least-one &lt;20 in 60 draws (false-fail
+     * (11/21)^60 ≈ 1.4e-17). Lure III wait rolls: 20 draws all ≤ 0
+     * (deterministic; the hook is built with lureSpeed=0,
+     * UltimateFishingRod.java:50, so a vanilla roll would always be
+     * positive).</p>
+     */
+    @GameTest(template = "empty_large", timeoutTicks = 200, batch = "orespawnLootFishing")
+    public void ent_s060_bite_timer_rerolls(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        Vec3 playerPos = helper.absoluteVec(new Vec3(10.5, 3.0, 10.5));
+        ItemStack rod = new ItemStack(item(NS + ":ultimate_fishing_rod"));
+        ServerPlayer angler = anglerAt(helper, playerPos, rod);
+
+        UltimateFishHook hook = new UltimateFishHook(angler, level, 0, 0);
+        Vec3 hookSpot = helper.absoluteVec(new Vec3(8.5, 4.0, 8.5));
+        hook.setPos(hookSpot.x, hookSpot.y, hookSpot.z);
+        BlockPos pos = hook.blockPosition();
+
+        // Wait-for-bite roll, no Lure: orig :340 — 50-300.
+        boolean sawShortWait = false;
+        for (int i = 0; i < 100; i++) {
+            hook.nibble = 0;
+            hook.timeUntilHooked = 0;
+            hook.timeUntilLured = 0;
+            hook.catchingFish(pos);
+            int wait = hook.timeUntilLured;
+            helper.assertTrue(wait >= 50 && wait <= 300,
+                    "wait-for-bite roll " + wait + " outside orig 50-300 (orig :340;"
+                            + " vanilla rolls 100-600, FishingHook.java:384)");
+            if (wait < 100) {
+                sawShortWait = true;
+            }
+        }
+        helper.assertTrue(sawShortWait,
+                "100 wait rolls all >= 100 (false-fail ~2.2e-10) — orig :340 50-300 range not in effect");
+
+        // Fish-approach roll: orig :337 — 100-200, disjoint from vanilla 20-80.
+        for (int i = 0; i < 40; i++) {
+            hook.nibble = 0;
+            hook.timeUntilHooked = 0;
+            hook.timeUntilLured = 1; // expires this call -> approach roll
+            hook.catchingFish(pos);
+            int approach = hook.timeUntilHooked;
+            helper.assertTrue(approach >= 100 && approach <= 200,
+                    "fish-approach roll " + approach + " outside orig 100-200 (orig :337;"
+                            + " vanilla rolls 20-80, FishingHook.java:381)");
+        }
+
+        // Bite-window roll: orig :300 — 10-30.
+        boolean sawShortBite = false;
+        for (int i = 0; i < 60; i++) {
+            hook.nibble = 0;
+            hook.timeUntilLured = 0;
+            hook.timeUntilHooked = 1; // expires this call -> bite roll
+            hook.catchingFish(pos);
+            int bite = hook.nibble;
+            helper.assertTrue(bite >= 10 && bite <= 30,
+                    "bite-window roll " + bite + " outside orig 10-30 (orig :300;"
+                            + " vanilla rolls 20-40, FishingHook.java:353)");
+            if (bite < 20) {
+                sawShortBite = true;
+            }
+        }
+        helper.assertTrue(sawShortBite,
+                "60 bite rolls all >= 20 (false-fail ~1.4e-17) — orig :300 10-30 range not in effect");
+
+        // Lure III: orig :341 subtracts 3*20*5 = 300 off the held rod's Lure,
+        // so 50-300 minus 300 is never positive — the rod never bites.
+        ItemStack lureRod = new ItemStack(item(NS + ":ultimate_fishing_rod"));
+        lureRod.enchant(level.registryAccess().lookupOrThrow(Registries.ENCHANTMENT)
+                .getOrThrow(Enchantments.LURE), 3);
+        angler.setItemInHand(InteractionHand.MAIN_HAND, lureRod);
+        for (int i = 0; i < 20; i++) {
+            hook.nibble = 0;
+            hook.timeUntilHooked = 0;
+            hook.timeUntilLured = 0;
+            hook.catchingFish(pos);
+            helper.assertTrue(hook.timeUntilLured <= 0,
+                    "Lure III wait roll " + hook.timeUntilLured + " > 0 — orig :340-341 rolls 50-300"
+                            + " minus Lure*100 and can never go positive at Lure III (bug kept)");
+        }
+
+        hook.discard();
+        removeAngler(helper, angler);
+        helper.succeed();
+    }
+
+    /**
+     * ENT-S-060 (reel half) — the sqrt-distance reel kick on hooked entities.
+     *
+     * <p>Documented values: orig UltimateFishHook.java:389-397 — retrieving
+     * with a hooked entity adds (dx*0.1, dy*0.1 + sqrt(distance)*0.08,
+     * dz*0.1) to the entity's motion (d6 at orig :393 is the plain distance).
+     * Vanilla 1.21.1 pullEntity applies only the flat 0.1 scale
+     * (FishingHook.java:519-525), so the port overrides pullEntity. Asserted
+     * deterministically through a probe subclass exposing the protected
+     * override; at the 25.6-block test distance the sqrt term contributes
+     * +0.405 vertical — component-wise epsilon compare, plus an explicit
+     * ≥0.2 excess-over-vanilla assert.</p>
+     */
+    @GameTest(template = "empty_large", timeoutTicks = 200, batch = "orespawnLootFishing")
+    public void ent_s060_reel_pull_sqrt_kick(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        Vec3 playerPos = helper.absoluteVec(new Vec3(4.5, 3.0, 4.5));
+        ItemStack rod = new ItemStack(item(NS + ":ultimate_fishing_rod"));
+        ServerPlayer angler = anglerAt(helper, playerPos, rod);
+
+        PullProbe probe = new PullProbe(angler, level);
+        Vec3 hookSpot = helper.absoluteVec(new Vec3(24.5, 3.0, 20.5));
+        probe.setPos(hookSpot.x, hookSpot.y, hookSpot.z);
+
+        ItemEntity target = new ItemEntity(level, hookSpot.x, hookSpot.y, hookSpot.z,
+                new ItemStack(Items.STICK));
+        target.setDeltaMovement(Vec3.ZERO);
+        probe.pull(target);
+
+        double d0 = angler.getX() - probe.getX();
+        double d1 = angler.getY() - probe.getY();
+        double d2 = angler.getZ() - probe.getZ();
+        double dist = Math.sqrt(d0 * d0 + d1 * d1 + d2 * d2);
+        Vec3 got = target.getDeltaMovement();
+        helper.assertTrue(Math.abs(got.x - d0 * 0.1) < 1.0e-9
+                        && Math.abs(got.y - (d1 * 0.1 + Math.sqrt(dist) * 0.08)) < 1.0e-9
+                        && Math.abs(got.z - d2 * 0.1) < 1.0e-9,
+                "reel pull " + got + " does not match orig :394-397"
+                        + " (dx*0.1, dy*0.1 + sqrt(dist)*0.08, dz*0.1) for dist " + dist);
+        helper.assertTrue(got.y - d1 * 0.1 >= 0.2,
+                "vertical reel kick " + (got.y - d1 * 0.1) + " lacks the sqrt(distance)*0.08 term"
+                        + " (orig :396) — vanilla's flat 0.1 pull (FishingHook.java:522) in effect");
+
+        target.discard();
+        probe.discard();
+        removeAngler(helper, angler);
+        helper.succeed();
+    }
+
     // ==================================================================
     // i115-c7-crystal-egg-ores
     // ==================================================================

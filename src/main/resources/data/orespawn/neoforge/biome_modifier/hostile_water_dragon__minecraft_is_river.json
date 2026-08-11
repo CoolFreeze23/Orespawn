@@ -3,7 +3,7 @@
     "biomes":  "#minecraft:is_river",
     "spawners":  {
                      "type":  "orespawn:water_dragon",
-                     "weight":  2,
+                     "weight":  5,
                      "minCount":  1,
                      "maxCount":  1
                  }

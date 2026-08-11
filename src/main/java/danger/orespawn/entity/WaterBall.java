@@ -55,10 +55,12 @@ public class WaterBall extends ThrowableProjectile implements ItemSupplier {
 
     @Override
     protected void onHitEntity(EntityHitResult result) {
+        // Exempt targets (water faction, typed Dragons, mounted players) never
+        // reach this method — onHit() below bails before dispatching, matching
+        // the original's return-before-everything (orig WaterBall.java:47-61).
         Entity target = result.getEntity();
         float damage = DAMAGE_DEFAULT;
         if (target instanceof Creeper) damage = DAMAGE_VS_CREEPER;
-        if (target instanceof Player player && player.getVehicle() != null) return;
 
         target.hurt(this.damageSources().thrown(this, this.getOwner()), damage);
         // orig WaterBall.java:63-65 — 1/10 chance the target coughs up a water ball
@@ -70,6 +72,22 @@ public class WaterBall extends ThrowableProjectile implements ItemSupplier {
 
     @Override
     protected void onHit(HitResult result) {
+        // orig WaterBall.java:47-61 — the exemptions RETURN from func_70184_a
+        // before any damage, bubble/splash particles, the splash sound, or
+        // setDead(): the ball passes clean through the water faction
+        // (WaterDragon :47-49, AttackSquid :50-52), Dragons of non-zero type
+        // (:53-55), and players riding anything (:56-61) and keeps flying.
+        // Reproduced by bailing before super.onHit() so onHitEntity, the
+        // impact effects, and discard() never run. AttackSquid additionally
+        // blanks WaterBall damage on its own hurt() (orig AttackSquid.java:
+        // 373-375) — both seams existed in the original; keep both.
+        if (result instanceof EntityHitResult entityHit) {
+            Entity target = entityHit.getEntity();
+            if (target instanceof WaterDragon) return;
+            if (target instanceof AttackSquid) return;
+            if (target instanceof Dragon dragon && dragon.getDragonType() != 0) return;
+            if (target instanceof Player player && player.getVehicle() != null) return;
+        }
         super.onHit(result);
         if (this.level().isClientSide) {
             for (int particleIndex = 0; particleIndex < CLIENT_IMPACT_PARTICLE_LOOPS; ++particleIndex) {
