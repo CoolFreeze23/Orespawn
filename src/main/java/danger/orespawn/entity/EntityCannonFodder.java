@@ -1,13 +1,18 @@
 package danger.orespawn.entity;
 
+import danger.orespawn.ModEntities;
+import danger.orespawn.ModItems;
 import java.util.Comparator;
 import java.util.List;
+import java.util.UUID;
 import javax.annotation.Nullable;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -69,47 +74,146 @@ public class EntityCannonFodder extends TamableAnimal {
         this.setIsActivated(activated);
         this.trustedPlayerUuidPrimary = trustedUuidPrimary;
         this.trustedPlayerUuidSecondary = trustedUuidSecondary;
+        this.setPersistenceRequired(); // orig EntityCannonFodder.java:221 func_110163_bv
     }
 
+    // orig EntityCannonFodder.java:77-203 — the full fodder interaction chain, in orig
+    // order: vanilla first, then repeat-interaction ownership promotion, then the three
+    // hat foods (carrot=1, quinoa=2, potato=3), corncob cloning, and the sit-toggle.
     @Override
     public InteractionResult mobInteract(Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
 
-        if (stack.is(Items.GOLDEN_APPLE) && this.distanceToSqr(player) < 16.0) {
-            this.setHatColor(1);
-            if (this.trustedPlayerUuidPrimary == null) this.trustedPlayerUuidPrimary = player.getStringUUID();
-            if (this.getIsActivated() == 0) this.setIsActivated(1);
-            this.setTame(true, true);
-            this.setOwnerUUID(player.getUUID());
-            this.heal(this.getMaxHealth() - this.getHealth());
-            if (!player.getAbilities().instabuild) stack.shrink(1);
-            return InteractionResult.SUCCESS;
-        }
+        // orig :83-85 — vanilla EntityTameable interaction is consulted FIRST and wins.
+        InteractionResult vanillaResult = super.mobInteract(player, hand);
+        if (vanillaResult.consumesAction()) return vanillaResult;
 
-        if (stack.is(Items.ENCHANTED_GOLDEN_APPLE) && this.distanceToSqr(player) < 16.0) {
-            this.setHatColor(3);
-            if (this.trustedPlayerUuidPrimary == null) this.trustedPlayerUuidPrimary = player.getStringUUID();
-            if (this.getIsActivated() == 0) this.setIsActivated(1);
-            this.setTame(true, true);
-            this.setOwnerUUID(player.getUUID());
-            this.heal(this.getMaxHealth() - this.getHealth());
-            if (!player.getAbilities().instabuild) stack.shrink(1);
-            return InteractionResult.SUCCESS;
-        }
-
-        if (this.getIsActivated() == 2 && this.distanceToSqr(player) < 16.0 && stack.isEmpty()) {
-            if (this.isOrderedToSit()) {
-                this.setOrderedToSit(false);
+        // orig :86-106 — interacting with an already-named, tamed fodder promotes it to
+        // is_activated=2 (combat-ready) and rotates the two trusted-name slots. Orig bug
+        // kept: while name_two is still empty, ANY player's click takes over slot one
+        // (orig :100-105); only a fodder with both slots filled blocks strangers (orig :95).
+        if (this.trustedPlayerUuidPrimary != null && this.isTame()) {
+            if (this.trustedPlayerUuidPrimary.equals(player.getStringUUID())) {
+                if (this.trustedPlayerUuidSecondary == null) {
+                    // orig :88-93 — the owner clicking again fills both slots with
+                    // themselves and arms the fodder.
+                    this.trustedPlayerUuidSecondary = this.trustedPlayerUuidPrimary;
+                    this.trustedPlayerUuidPrimary = player.getStringUUID();
+                    this.setOwnerUUID(player.getUUID()); // orig :91 func_152115_b(name_one)
+                    this.setIsActivated(2);
+                }
+            } else if (this.trustedPlayerUuidSecondary != null) {
+                if (!this.trustedPlayerUuidSecondary.equals(player.getStringUUID())) {
+                    // orig :95 — a stranger's interaction is eaten with no effect.
+                    return InteractionResult.SUCCESS;
+                }
+                // orig :96-99 — the slot-two player takes over slot one (and ownership).
+                this.trustedPlayerUuidSecondary = this.trustedPlayerUuidPrimary;
+                this.trustedPlayerUuidPrimary = player.getStringUUID();
+                this.setOwnerUUID(player.getUUID()); // orig :98
+                this.setIsActivated(2);
             } else {
-                this.setOrderedToSit(true);
-                this.patrolBlockX = (int) this.getX();
-                this.patrolBlockY = (int) this.getY();
-                this.patrolBlockZ = (int) this.getZ();
+                // orig :100-105 — a second player fills slot one; the old owner shifts
+                // to slot two.
+                this.trustedPlayerUuidSecondary = this.trustedPlayerUuidPrimary;
+                this.trustedPlayerUuidPrimary = player.getStringUUID();
+                this.setOwnerUUID(player.getUUID()); // orig :103
+                this.setIsActivated(2);
             }
+        }
+
+        // orig :107-125 — CARROT (Items.field_151172_bF) = team hat 1
+        if (stack.is(Items.CARROT) && this.distanceToSqr(player) < 16.0) {
+            return this.applyHatFood(player, stack, 1);
+        }
+        // orig :126-144 — POTATO (Items.field_151174_bG) = team hat 3
+        if (stack.is(Items.POTATO) && this.distanceToSqr(player) < 16.0) {
+            return this.applyHatFood(player, stack, 3);
+        }
+        // orig :145-163 — MyQuinoa = team hat 2
+        if (stack.is(ModItems.QUINOA.get()) && this.distanceToSqr(player) < 16.0) {
+            return this.applyHatFood(player, stack, 2);
+        }
+
+        // orig :164-189 — corncob cloning: a fully-activated (2) fodder fed MyCornCob
+        // spawns a fresh member of the same species with hats/names/owner copied over.
+        if (this.getIsActivated() == 2 && stack.is(ModItems.CORN_COB.get())
+                && this.distanceToSqr(player) < 16.0) {
+            // orig :166-175 — species table keyed by instanceof: default "Ostrich",
+            // then Lizard / Chipmunk / "Velocity Raptor". The port's Lizard and
+            // VelocityRaptor do not (yet) extend EntityCannonFodder, so exact-type
+            // checks stand in for instanceof — equivalent, since no orig fodder
+            // subclass has subclasses of its own.
+            EntityType<?> species = ModEntities.OSTRICH.get(); // orig :166 default
+            if (this.getType() == ModEntities.LIZARD.get()) species = ModEntities.LIZARD.get(); // orig :167-169
+            if (this instanceof Chipmunk) species = ModEntities.CHIPMUNK.get(); // orig :170-172
+            if (this.getType() == ModEntities.VELOCITY_RAPTOR.get()) species = ModEntities.VELOCITY_RAPTOR.get(); // orig :173-175
+            if (!this.level().isClientSide) { // orig :176
+                Entity newborn = species.create(this.level());
+                if (newborn != null) {
+                    // orig :176 + spawnCreature :205-214 — offset by world-random floats
+                    // on x/z, +0.01 on y, random yaw, pitch 0.
+                    newborn.moveTo(this.getX() + this.level().random.nextFloat(),
+                            this.getY() + 0.01,
+                            this.getZ() + this.level().random.nextFloat(),
+                            this.level().random.nextFloat() * 360.0f, 0.0f);
+                    this.level().addFreshEntity(newborn); // orig :210
+                    if (newborn instanceof Mob newbornMob) newbornMob.playAmbientSound(); // orig :211 func_70642_aH
+                    // orig :177-181 casts unconditionally to EntityCannonFodder; guarded
+                    // here so a not-yet-re-parented Ostrich/Lizard/VelocityRaptor spawn
+                    // still succeeds (the stuff-copy self-heals once they re-parent).
+                    if (newborn instanceof EntityCannonFodder newbornFodder) {
+                        newbornFodder.setOwnerUUID(this.getOwnerUUID()); // orig :178 func_152115_b(func_152113_b())
+                        newbornFodder.setTame(true, true); // orig :179 func_70903_f(true)
+                        newbornFodder.setStuff(this.getHatColor(), this.getIsActivated(),
+                                this.trustedPlayerUuidPrimary, this.trustedPlayerUuidSecondary); // orig :180
+                    }
+                }
+            }
+            this.level().broadcastEntityEvent(this, (byte) 7); // orig :182 func_70908_e(true) hearts
+            // orig :183 — "random.explode" played at the PLAYER, volume 0.75f, pitch 2.0f.
+            this.level().playSound(player, player.blockPosition(), SoundEvents.GENERIC_EXPLODE.value(),
+                    SoundSource.NEUTRAL, 0.75f, 2.0f);
+            if (!player.getAbilities().instabuild) stack.shrink(1); // orig :184-188
             return InteractionResult.SUCCESS;
         }
 
-        return super.mobInteract(player, hand);
+        // orig :190-202 — fallthrough: a combat-ready fodder toggles sit/patrol on ANY
+        // other interaction; the orig has no empty-hand requirement.
+        if (this.getIsActivated() != 2 || !(this.distanceToSqr(player) < 16.0)) {
+            return InteractionResult.PASS; // orig :190 returns false
+        }
+        if (this.isOrderedToSit()) {
+            this.setOrderedToSit(false);
+            this.level().broadcastEntityEvent(this, (byte) 7); // orig :193 — hearts on standing up
+        } else {
+            this.setOrderedToSit(true);
+            this.level().broadcastEntityEvent(this, (byte) 6); // orig :197 func_70908_e(false) — smoke on sitting
+            // orig :198-200 — the sit spot becomes the 12-block patrol anchor enforced
+            // in isSuitableTarget.
+            this.patrolBlockX = (int) this.getX();
+            this.patrolBlockY = (int) this.getY();
+            this.patrolBlockZ = (int) this.getZ();
+        }
+        return InteractionResult.SUCCESS; // orig :194,:202
+    }
+
+    // orig :107-125 / :126-144 / :145-163 — the three hat-food blocks are verbatim
+    // copies of one another in the orig except for the hat id, so they share one body
+    // here: set the team hat, claim slot one if empty, bump activation 0->1, tame to
+    // the SLOT-ONE name (orig :116 func_152115_b(name_one) — NOT necessarily the
+    // feeding player), hearts, full heal, persistence, consume one unless creative.
+    private InteractionResult applyHatFood(Player player, ItemStack stack, int hatColor) {
+        this.setHatColor(hatColor); // orig :108/:127/:146
+        if (this.trustedPlayerUuidPrimary == null) this.trustedPlayerUuidPrimary = player.getStringUUID(); // orig :109-111
+        if (this.getIsActivated() == 0) this.setIsActivated(1); // orig :112-114
+        this.setTame(true, true); // orig :115 func_70903_f(true)
+        this.setOwnerUUID(UUID.fromString(this.trustedPlayerUuidPrimary)); // orig :116 — owner stays the slot-one player
+        this.level().broadcastEntityEvent(this, (byte) 7); // orig :117 func_70908_e(true) hearts
+        this.heal(this.getMaxHealth() - this.getHealth()); // orig :118
+        this.setPersistenceRequired(); // orig :119 func_110163_bv
+        if (!player.getAbilities().instabuild) stack.shrink(1); // orig :120-124
+        return InteractionResult.SUCCESS;
     }
 
     private boolean isSuitableTarget(LivingEntity target) {

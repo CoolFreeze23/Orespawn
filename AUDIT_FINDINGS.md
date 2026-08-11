@@ -1121,6 +1121,7 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 - **Original:** custom wing flap sound (alongside `orespawn:roar`/`alo_hurt`/`alo_death`, which are kept)
 - **Port:** flap = `SoundEvents.ENDER_DRAGON_FLAP`
 - **Fix:** register and play the original orespawn flap sound asset instead of the vanilla ender-dragon flap.
+- **Resolution:** FIXED (2026-08-11, Phase E4 ENT-D batch — flap sound restored: orig Dragon.java:641-648 plays custom "orespawn:MothraWings" at 0.5f/1.0f every 21 ticks while flying (activity==1), server-side; port tick() had substituted SoundEvents.ENDER_DRAGON_FLAP with otherwise-identical timing/volume/pitch. Swapped to the orespawn:mothrawings event (already in sounds.json line 611 with 3 variants — no shared edit needed) via SoundEvent.createVariableRangeEvent, matching the Mothra.java:172-173 idiom. TF-035 rider applied: orig Dragon.java:79 (field), :120 (ctor), :581 (Collections.sort) use GenericTargetSorter; port's plain Comparator.comparingDouble(this::distanceToSqr) replaced with new GenericTargetSorter(this).)
 
 ### ENT-D-006 — Dragon: Magic Apple baby-spawn target renamed
 
@@ -1262,6 +1263,7 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 - **Original:** `EnderReaper.java` — explosions on provocation (plus teleport, which is ported)
 - **Port:** `entity/EnderReaper.java` — explosion behavior not present in the port file; could live in a shared handler but none was found by the audit
 - **Fix:** verification gap: search the port for any EnderReaper explosion trigger (e.g. event handlers); if truly absent, port the provocation-explosion logic from the original `EnderReaper.java`. Evidence to resolve: a port code path creating an explosion tied to EnderReaper provocation.
+- **Resolution:** VERIFIED-CORRECT (2026-08-11, Phase E4 ENT-D batch — audit premise refuted: orig EnderReaper.java (full 288-line read) contains NO explosion — no func_72876_a/func_72885_a/newExplosion anywhere. Provocation reactions are screaming+teleports only: hurt() sets screaming (orig :242) and teleports 16x on indirect damage (:243-248); stare triggers "mob.endermen.stare" (:68-70); stared-at player within dist-sq 16 triggers teleportRandomly (:126-130) — all ported (port EnderReaper.java:96-113). Repo greps: none of the 12 orig explosion-creating files reference EnderReaper; none of the 23 orig EnderReaper-referencing files explode; no port shared handler ties an explosion to EnderReaper (RandomDungeonSpawnerBlockEntity:182 / EntityCage:296-300 matches are cosmetic GENERIC_EXPLODE sound/particles for egg placement and cage capture). Port correctly has no explosion.)
 
 ### ENT-D-021 — EnderReaper: overworld (w38 roofed forest) → End-only
 
@@ -1289,6 +1291,7 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 - **Original:** `EntityCannonFodder.java` — multiple hat-item colors define teams; `MyCornCob` spawns new fodder entities
 - **Port:** `entity/EntityCannonFodder.java` — Golden Apple → hat 1, Enchanted Golden Apple → hat 3 only; no corncob spawning
 - **Fix:** restore the full hat-color item set and team-id mapping; implement MyCornCob interaction spawning a new CannonFodder.
+- **Resolution:** FIXED (2026-08-11, Phase E4 ENT-D batch — invented Golden/Enchanted-Apple hats removed; orig interaction chain restored in port entity/EntityCannonFodder.java mobInteract: super-first (orig EntityCannonFodder.java:83-85), name-slot promotion to is_activated=2 incl. the slot-one-steal bug (:86-106), carrot=hat1 (:107-125), potato=hat3 (:126-144), quinoa=hat2 (:145-163) each taming to the SLOT-ONE name (:116) with hearts (:117), full heal (:118), persistence (:119); MyCornCob cloning via species table Ostrich/Lizard/Chipmunk/VelocityRaptor (:164-189, spawnCreature :205-214) copying owner/tame/setStuff (:177-181) with random.explode 0.75f/2.0f (:183); item-agnostic sit-toggle with heart/smoke events (:190-202). setStuff regains setPersistenceRequired (:221). Lizard/VelocityRaptor selected by exact-type checks until their batches re-parent them.)
 
 ## EntityRedAnt
 
@@ -1332,6 +1335,7 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 - **Original:** `:290-313` — water-skip physics (alongside 30°/tick spin + 1000t lifetime, which are ported)
 - **Port:** `:135-148` — spin/lifetime ✓, no water skip
 - **Fix:** on water surface contact with sufficient horizontal velocity, reflect vertical motion (port the original skip branch).
+- **Resolution:** FIXED (2026-08-11, Phase E4 ENT-D batch — water-skip ported into port entity/EntityThrownRock.java tick(): the probe position is captured BEFORE super.tick() with plain (int) truncation, orig bug kept (orig EntityThrownRock.java:291-293); when the probed block is still water and -0.55 < motionY < -0.15 with float-summed horizontal speed squared > 0.5f, vertical motion reflects and all three axes keep 3/4 velocity (orig :307-312, exact 3.0/4.0 math). Orig compares against field_150355_j (still water id 9) only — flowing id 8 never skipped — so the port gates on Blocks.WATER + FluidState.isSource(), the 1.21 equivalent of the old still block. Runs on both sides, as the orig did.)
 
 ## Fairy
 
@@ -1469,6 +1473,7 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 - **Original:** `GiantRobot.java:53-58` — swim(0), WanderALot(1,14,1.0), MoveThroughVillage(2), Watch(3), LookIdle(4)
 - **Port:** `entity/GiantRobot.java:48-54` — Float, Stroll, LookAt, RandomLook only
 - **Fix:** add `MyEntityAIWanderALot(1,14,1.0)` (class exists in port) and a MoveThroughVillage equivalent at priority 2.
+- **Resolution:** FIXED (2026-08-11, Phase E4 ENT-D batch — restored both dropped goals and removed the invented stroll: orig GiantRobot.java:54 MyEntityAIWanderALot(14,1.0) now at priority 1, replacing the port's WaterAvoidingRandomStrollGoal invention; orig :55 EntityAIMoveThroughVillage((double)0.9f,false) mapped to vanilla MoveThroughVillageGoal(0.9f,false,4,()->false) at priority 2 per the established Alien/Alosaurus mapping (POI-driven descendant; distanceToPoi 4 has no 1.7.10 analog; no door-breaking). Float/LookAt/RandomLook priorities 0/3/4 and HurtByTarget already matched orig :53,56-58. TF-035 rider applied: plain Comparator.comparingDouble(this::distanceToSqr) swapped for GenericTargetSorter, citing orig :39 (field), :51 (ctor), :347 (sort). Port: entity/GiantRobot.java:49-76,203.)
 
 ### ENT-D-044 — GiantRobot: signature LaserBall barrage missing
 
@@ -1502,6 +1507,7 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 - **Original:** `Girlfriend.java:569-571` — HP 800 on Valentine's Day (else 80)
 - **Port:** `entity/Girlfriend.java:51-52,83-88` — HP 80 always
 - **Fix:** check system date (Feb 14) on spawn/load and set max health 800 with heal.
+- **Resolution:** FIXED (2026-08-11, Phase E4 ENT-D batch — D3 scaffolding verified: 800/80 mygetMaxHealth (orig Girlfriend.java:569-574), 2.5x8.0 ctor size (:142-144), rose-sword cure (:1081-1094), inWall immunity (:1078-1080) all present. Remainder completed: both mobInteract poppy heals now heal to getMaxHealth() — orig :630,:641-643 heal to mygetMaxHealth (800 mid-valentine); the flat-80 constant under/negative-healed the giant — and onSyncedDataUpdated now refreshDimensions on the feelingBetter accessor so clients shrink the cured giant (orig :600-607 force_sync resize). sharedEdit returned: ModEntities .sized(0.6,1.8) → (0.5,1.6) per orig :141 base size, which getDefaultDimensions falls back to. Port entity/Girlfriend.java:136-149,375-381,388-394.)
 
 ### ENT-D-048 — Girlfriend: dance, jealousy, Valentine targeting, door/indoor AI missing
 
@@ -1509,6 +1515,7 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 - **Original:** `Girlfriend.java:149-173` — `MyEntityAIDance(3)`, OpenDoor(10), MoveIndoors(11); targets MyValentineTarget ×2, MyEntityAIJealousy ×2
 - **Port:** `entity/Girlfriend.java:70-80` — none wired (port's `MyEntityAIDance.java` exists but is NOT registered); no Jealousy/Valentine classes
 - **Fix:** register `MyEntityAIDance` at priority 3; port Jealousy and ValentineTarget goal classes; add OpenDoor/MoveIndoors.
+- **Resolution:** FIXED (2026-08-11, Phase E4 ENT-D batch — goal list completed vs orig Girlfriend.java:149-175: MyEntityAIDance @3 held in the public Dance field (orig :71,151-152; assigned in registerGoals during super-ctor, so no field initializer), PanicGoal(1.5)@6 (:155), OpenDoorGoal@10 + GroundPathNavigation.setCanOpenDoors in ctor (:159; Boyfriend idiom, port Boyfriend.java:95-98), MoveIndoorsGoal@11 (:160, documented mapping), JealousyTargetGoal(Girlfriend.class, 6.0,5)@4 and (3.0,15)@5 (:169-174, PlayNicely gated in-goal per Boyfriend :120-127). Dance made faithful: floor is gold/diamond/emerald+ruby/amethyst/titanium/uranium (orig MyEntityAIDance.java:30 — invented jukebox/noteblock/beacon REMOVED), lowest-id group-sync scan ported bug-for-bug (:127-137), motionY SET to 0.25 in moves 4/10 (:172,238), requiresUpdateEveryTick added; ambient voice hushes mid-dance (orig :858-860). ValentineTarget pair @1/2 verified from D3.)
 
 ### ENT-D-049 — Girlfriend: ranged UltimateArrow attack missing
 
@@ -1660,6 +1667,7 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 - **Fix:** read the original potion-application calls in `IrukandjiArrow.java` and align port durations/amplifiers; current 200t/amps 1–2 are plausible but unconfirmed.
 
 ---
+- **Resolution:** FIXED (2026-08-11, Phase E4 ENT-D batch — superseded by ENT-D-064's E2 rewrite, which extracted the evidence this finding asked for: the ORIGINAL IrukandjiArrow applies NO potion effects at all — zero Potion/func_70690 references anywhere in orig IrukandjiArrow.java; its hit path is a flat 100 damage (:157) with a crit roll and pvp/tamed no-sell guard, nothing else. This finding's 'Original: poison/weakness/slowness applied on hit' premise was an unverified audit assumption; the port's Poison III/Weakness II/Slowness II 200t effects were the invention. They were removed with the E2 flat-100 rewrite (port entity/IrukandjiArrow.java — onHitEntity now mirrors orig :155-200 exactly), so there are no durations/amplifiers left to align. The Irukandji JELLYFISH's sting debuffs are a separate, already-terminal concern)
 
 ## Tally
 

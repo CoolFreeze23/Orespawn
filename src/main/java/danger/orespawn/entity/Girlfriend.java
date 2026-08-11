@@ -25,6 +25,7 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
 import net.minecraft.world.entity.ai.goal.FollowOwnerGoal;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
+import net.minecraft.world.entity.ai.goal.OpenDoorGoal;
 import net.minecraft.world.entity.ai.goal.PanicGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.RangedAttackGoal;
@@ -33,6 +34,7 @@ import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.OwnerHurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.OwnerHurtTargetGoal;
+import net.minecraft.world.entity.ai.navigation.GroundPathNavigation;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.monster.RangedAttackMob;
 import net.minecraft.world.entity.player.Player;
@@ -75,6 +77,12 @@ public class Girlfriend extends TamableAnimal implements RangedAttackMob {
     private int fightSoundTicker = 0;
     private int tauntSoundTicker = 0;
     private int hadTarget = 0;
+    // orig Girlfriend.java:71 — public so nearby girlfriends can copy each
+    // other's dance state (orig MyEntityAIDance.java:127-137) and the ambient
+    // voice can hush mid-dance (orig Girlfriend.java:858-860). No initializer
+    // on purpose: registerGoals() assigns it during the Mob super-ctor, and a
+    // field initializer would run afterwards and null it back out.
+    public MyEntityAIDance Dance;
 
     public Girlfriend(EntityType<? extends Girlfriend> type, Level level) {
         super(type, level);
@@ -82,6 +90,11 @@ public class Girlfriend extends TamableAnimal implements RangedAttackMob {
         this.voice = this.random.nextInt(10);
         this.setTameSkin(this.whichGirl);
         this.setOrderedToSit(false);
+        // Needed for the OpenDoorGoal (orig Girlfriend.java:159) to path
+        // through doors — same idiom as Boyfriend (port Boyfriend.java:95-98).
+        if (this.getNavigation() instanceof GroundPathNavigation groundNav) {
+            groundNav.setCanOpenDoors(true);
+        }
         // orig Girlfriend.java:142-144 — 2.5x8.0 giant on Feb 14 (until cured);
         // orig :198-200 (applyEntityAttributes) reads mygetMaxHealth → 800
         if (SeasonalDates.isValentines()) {
@@ -120,6 +133,21 @@ public class Girlfriend extends TamableAnimal implements RangedAttackMob {
                 : super.getDefaultDimensions(pose);
     }
 
+    /**
+     * orig Girlfriend.java:600-607 — the client's force_sync loop shrank her
+     * (func_70105_a(0.5, 1.6)) the tick it saw feelingBetter turn nonzero.
+     * 1.21.1 equivalent: refresh dimensions whenever the synched flag changes,
+     * so the cured giant shrinks on clients too (the server side already
+     * refreshes in applyValentineState).
+     */
+    @Override
+    public void onSyncedDataUpdated(EntityDataAccessor<?> accessor) {
+        super.onSyncedDataUpdated(accessor);
+        if (DATA_FEELING_BETTER.equals(accessor)) {
+            this.refreshDimensions();
+        }
+    }
+
     @Override
     protected void registerGoals() {
         // orig MyEntityAIFollowOwner.java:48 — Girlfriends never follow their
@@ -131,13 +159,23 @@ public class Girlfriend extends TamableAnimal implements RangedAttackMob {
             }
         });
         this.goalSelector.addGoal(2, new TemptGoal(this, 1.25, Ingredient.of(Items.POPPY), false));
+        // orig Girlfriend.java:151-152 — MyEntityAIDance at priority 3, held in
+        // the public Dance field (see its comment for why other girlfriends and
+        // the ambient-voice check need the reference).
+        this.Dance = new MyEntityAIDance(this);
+        this.goalSelector.addGoal(3, this.Dance);
         // orig Girlfriend.java:153 — EntityAIArrowAttack(this, 1.25, 20t, 10.0f);
         // melee happens separately in customServerAiStep (orig func_70629_bd).
         this.goalSelector.addGoal(4, new RangedAttackGoal(this, 1.25, 20, 10.0f));
         this.goalSelector.addGoal(5, new FloatGoal(this));
+        this.goalSelector.addGoal(6, new PanicGoal(this, 1.5)); // orig :155 — EntityAIPanic(1.5)
         this.goalSelector.addGoal(7, new LookAtPlayerGoal(this, Player.class, 6.0f));
         this.goalSelector.addGoal(8, new WaterAvoidingRandomStrollGoal(this, 0.75));
         this.goalSelector.addGoal(9, new RandomLookAroundGoal(this));
+        this.goalSelector.addGoal(10, new OpenDoorGoal(this, true)); // orig :159
+        // orig :160 — EntityAIMoveIndoors(11); documented 1.21.1 behavioral
+        // match (roofed shelter at night/rain), see MoveIndoorsGoal.
+        this.goalSelector.addGoal(11, new danger.orespawn.entity.ai.MoveIndoorsGoal(this));
 
         // orig Girlfriend.java:161-162 — MyValentineTarget(Player) prio 1 and
         // MyValentineTarget(Boyfriend) prio 2; active only while valentine-angry
@@ -147,6 +185,14 @@ public class Girlfriend extends TamableAnimal implements RangedAttackMob {
         this.targetSelector.addGoal(3, new OwnerHurtByTargetGoal(this));
         this.targetSelector.addGoal(4, new OwnerHurtTargetGoal(this));
         this.targetSelector.addGoal(5, new NearestAttackableTargetGoal<>(this, Monster.class, true));
+        // orig Girlfriend.java:169-174 — Jealousy(Girlfriend.class, 6.0f, 5, true)
+        // @4 and (3.0f, 15, true) @5: she hunts UNTAMED rival girlfriends near
+        // her owner (a tamed rival is never targeted, orig MyEntityAIJealousy
+        // .java:43-45); the original's PlayNicely == 0 gate is checked
+        // dynamically inside the goal — same idiom as Boyfriend (port
+        // Boyfriend.java:120-127).
+        this.targetSelector.addGoal(4, new danger.orespawn.entity.ai.JealousyTargetGoal<>(this, Girlfriend.class, 6.0, 5));
+        this.targetSelector.addGoal(5, new danger.orespawn.entity.ai.JealousyTargetGoal<>(this, Girlfriend.class, 3.0, 15));
     }
 
     /**
@@ -368,7 +414,10 @@ public class Girlfriend extends TamableAnimal implements RangedAttackMob {
                     if (this.random.nextInt(3) == 0) {
                         this.tame(player);
                         this.level().broadcastEntityEvent(this, (byte) 7);
-                        this.heal(MAX_HEALTH - this.getHealth());
+                        // orig Girlfriend.java:630 — heal to mygetMaxHealth(),
+                        // which is 800 mid-valentine; the MAX_HEALTH constant
+                        // under-healed (and negative-healed) the giant
+                        this.heal(this.getMaxHealth() - this.getHealth());
                     } else {
                         this.level().broadcastEntityEvent(this, (byte) 6);
                     }
@@ -377,7 +426,9 @@ public class Girlfriend extends TamableAnimal implements RangedAttackMob {
                 if (!this.level().isClientSide) {
                     this.level().broadcastEntityEvent(this, (byte) 7);
                 }
-                this.heal(MAX_HEALTH - this.getHealth());
+                // orig Girlfriend.java:641-643 — heal to mygetMaxHealth() (800
+                // mid-valentine), not the flat 80 constant
+                this.heal(this.getMaxHealth() - this.getHealth());
             }
             if (!player.getAbilities().instabuild) stack.shrink(1);
             return InteractionResult.sidedSuccess(this.level().isClientSide);
@@ -516,6 +567,8 @@ public class Girlfriend extends TamableAnimal implements RangedAttackMob {
     @Override
     protected SoundEvent getAmbientSound() {
         if (this.isOrderedToSit() || this.voiceEnable == 0) return null;
+        // orig Girlfriend.java:858-860 — no ambient voice while dancing
+        if (this.Dance != null && this.Dance.is_dancing != 0) return null;
         if (this.getRandom().nextInt(11) == 1) {
             if (this.isTame()) {
                 // orig Girlfriend.java:886-889 — hurt voice also while valentine-angry

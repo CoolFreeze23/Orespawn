@@ -2,13 +2,21 @@ package danger.orespawn.entity;
 
 import danger.orespawn.ModBlocks;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
+/**
+ * Port of the original MyEntityAIDance (orig MyEntityAIDance.java) — between
+ * 14000 and 22000 world time a non-sitting Girlfriend standing near a "dance
+ * floor" of precious blocks (orig :30) walks to its center and cycles through
+ * 10 dance moves, synchronizing her ticker/move with the lowest-id dancing
+ * Girlfriend nearby (orig :127-137). Girlfriend-only in the original — the
+ * ctor took a Girlfriend (orig :24) and Boyfriend never registers it.
+ */
 public class MyEntityAIDance extends Goal {
     private static final long DAY_LENGTH_TICKS = 24000L;
     private static final long DANCE_TIME_START = 14000L;
@@ -27,19 +35,29 @@ public class MyEntityAIDance extends Goal {
     private static final float YAW_STEP_DEGREES = 10.0f;
     private static final double VERTICAL_NUDGE = 0.25;
 
-    private final TamableAnimal pet;
+    private final Girlfriend pet;
     private final Level level;
     public int ticker = 0;
     public int dance_move = 0;
     public int is_dancing = 0;
 
-    public MyEntityAIDance(TamableAnimal pet) {
+    // orig MyEntityAIDance.java:24-27 — the original ctor takes a Girlfriend;
+    // the sync scan in tick() reads other girlfriends' public Dance field.
+    public MyEntityAIDance(Girlfriend pet) {
         this.pet = pet;
         this.level = pet.level();
     }
 
+    /**
+     * orig MyEntityAIDance.java:29-31 — the dance floor is precious blocks:
+     * gold (field_150340_R), diamond (field_150484_ah), emerald
+     * (field_150475_bE), plus the mod's ruby/amethyst/titanium/uranium blocks.
+     * (An earlier port draft invented jukebox/note block/beacon here — removed
+     * for parity, ENT-D-048.)
+     */
     public boolean isDanceBlock(Block block) {
-        return block == Blocks.JUKEBOX || block == Blocks.NOTE_BLOCK || block == Blocks.BEACON
+        return block == Blocks.GOLD_BLOCK || block == Blocks.DIAMOND_BLOCK
+                || block == Blocks.EMERALD_BLOCK
                 || block == ModBlocks.BLOCK_RUBY.get()
                 || block == ModBlocks.BLOCK_AMETHYST.get()
                 || block == ModBlocks.BLOCK_TITANIUM.get()
@@ -155,10 +173,37 @@ public class MyEntityAIDance extends Goal {
         return count;
     }
 
+    /**
+     * orig func_75246_d ran every tick in 1.7.10; the phase math
+     * ({@code ticker % halfCycle == 1} etc.) breaks on skipped ticks.
+     */
+    @Override
+    public boolean requiresUpdateEveryTick() {
+        return true;
+    }
+
     @Override
     public void tick() {
         int halfCycle = DANCE_TICK_CYCLE / 2;
         int moveDurationTicks = DANCE_TICK_CYCLE * DANCE_MOVE_DURATION_CYCLES;
+
+        // orig MyEntityAIDance.java:127-137 — synchronized group dancing: scan
+        // girlfriends in a +/-4 x/z, +/-3 y box and adopt the ticker/move of a
+        // dancing one with a LOWER entity id. Quirk preserved: tempid updates
+        // to each lower id even when that girl is not dancing, so which dancer
+        // wins depends on list order — reproduced bug-for-bug.
+        int tempid = this.pet.getId();
+        AABB box = new AABB(
+                this.pet.getX() - 4.0, this.pet.getY() - 3.0, this.pet.getZ() - 4.0,
+                this.pet.getX() + 4.0, this.pet.getY() + 3.0, this.pet.getZ() + 4.0);
+        for (Girlfriend other : this.level.getEntitiesOfClass(Girlfriend.class, box)) {
+            if (other.getId() >= tempid) continue;
+            if (other.Dance != null && other.Dance.is_dancing == 1) {
+                this.ticker = other.Dance.ticker;
+                this.dance_move = other.Dance.dance_move;
+            }
+            tempid = other.getId();
+        }
 
         ++this.ticker;
         if (this.dance_move == 0) {
@@ -184,7 +229,9 @@ public class MyEntityAIDance extends Goal {
             case 4 -> {
                 if (this.ticker % halfCycle == 1) {
                     this.pet.swing(this.pet.getUsedItemHand());
-                    this.pet.setDeltaMovement(this.pet.getDeltaMovement().add(0, VERTICAL_NUDGE, 0));
+                    // orig :172 — motionY is SET to 0.25 (assignment, not +=)
+                    Vec3 m4 = this.pet.getDeltaMovement();
+                    this.pet.setDeltaMovement(m4.x, VERTICAL_NUDGE, m4.z);
                 }
                 if (this.ticker > moveDurationTicks) this.dance_move = 0;
             }
@@ -220,7 +267,10 @@ public class MyEntityAIDance extends Goal {
             case 10 -> {
                 if (this.ticker % DANCE_TICK_CYCLE < halfCycle) {
                     this.pet.setShiftKeyDown(false);
-                    this.pet.setDeltaMovement(this.pet.getDeltaMovement().add(0, VERTICAL_NUDGE, 0));
+                    // orig :238 — motionY is SET to 0.25 every tick of the
+                    // first half-cycle (assignment, not +=)
+                    Vec3 m10 = this.pet.getDeltaMovement();
+                    this.pet.setDeltaMovement(m10.x, VERTICAL_NUDGE, m10.z);
                 } else {
                     this.pet.setShiftKeyDown(true);
                 }

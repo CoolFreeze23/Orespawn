@@ -2072,3 +2072,22 @@ EntityCannonFodder (Chipmunk inherits). Flag from the Alien sweep for a
 future pass: port Alien.hurt() invents a 5-tick retaliation cooldown the
 orig lacks (orig :225-241) — logged as an E8-report observation, not
 fixed (outside the finding's scope).
+
+## Phase E — E4 ENT-D batch: all 8 PARTIALs terminal (2026-08-11)
+
+**7 FIXED, 1 VERIFIED-CORRECT (ENT-D-020, reviewer-upheld).** Per-finding
+citations in the ledger. Highlights: Dragon regained the orespawn
+MothraWings flap (port had ender-dragon audio) + sorter; ENT-D-020's
+"provocation explosions" premise REFUTED (zero explosion calls in the
+288-line orig — screaming+teleport only; the sweep flagged wet-teleport /
+daylight-gate / pumpkin-stare gaps as E8-report observations); CannonFodder
+invented apple hats removed and the orig carrot/potato/quinoa hat chain +
+slot-one-steal bug + corncob cloning table restored; ThrownRock water-skip
+ported with the (int)-truncation probe bug kept; GiantRobot regained
+WanderALot(14) + MoveThroughVillage and lost the invented stroll;
+Girlfriend valentine-mode remainder completed + base size 0.5x1.6
+(ModEntities) + her full goal-list gap set closed (jealousy pair, Panic,
+OpenDoor+door-nav, MoveIndoors, dance — ENT-D-048). ENT-D-065 closed via
+the E2 evidence (orig arrow has NO debuffs; the port's were the invention,
+already removed). E6 input: the caged-girlfriend component-patch errors
+remain queued for the E6 root-cause as directed.

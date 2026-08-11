@@ -18,8 +18,8 @@ import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
+import net.minecraft.world.entity.ai.goal.MoveThroughVillageGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
-import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
@@ -28,6 +28,7 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.resources.ResourceLocation;
 import danger.orespawn.OreSpawnMod;
+import danger.orespawn.entity.ai.GenericTargetSorter;
 
 public class GiantRobot extends Monster {
     private static final double MELEE_KNOCKBACK_HORIZONTAL = 2.2;
@@ -45,16 +46,33 @@ public class GiantRobot extends Monster {
         super(type, level);
         // orig GiantRobot.java:48 — XP = Jeffery_stats.health / 2 = 550/2.
         this.xpReward = 275;
-        this.targetSorter = Comparator.comparingDouble(this::distanceToSqr);
+        // TF-035: orig GiantRobot.java:39,51 — targets sort with the shared
+        // GenericTargetSorter (creeper distance halved, large silhouettes
+        // prioritized), not plain distance; consumed by the
+        // findSomethingToAttack scan (orig :347).
+        this.targetSorter = new GenericTargetSorter(this);
     }
 
     @Override
     protected void registerGoals() {
-        this.goalSelector.addGoal(0, new FloatGoal(this));
-        this.goalSelector.addGoal(1, new WaterAvoidingRandomStrollGoal(this, 1.0));
-        this.goalSelector.addGoal(3, new LookAtPlayerGoal(this, Player.class, 8.0f));
-        this.goalSelector.addGoal(4, new RandomLookAroundGoal(this));
-        this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
+        this.goalSelector.addGoal(0, new FloatGoal(this)); // orig GiantRobot.java:53
+        // orig GiantRobot.java:54 — MyEntityAIWanderALot(14, 1.0) @1, not a
+        // vanilla stroll: 1-in-30 roll per tick, 14-block xz range, and it
+        // keeps wandering even when that would path through water.
+        this.goalSelector.addGoal(1, new MyEntityAIWanderALot(this, 14, 1.0));
+        // orig GiantRobot.java:55 — EntityAIMoveThroughVillage(0.9f, false) @2.
+        // Mapping decision (same as the Alien/Alosaurus batches): the 1.7.10
+        // goal walked the door list of the pre-1.14 village object; that
+        // framework is gone and vanilla MoveThroughVillageGoal is its direct
+        // POI-driven descendant. Same speed (0.9f, widened exactly as the
+        // orig's (double)0.9f cast), same day-and-night operation (orig third
+        // arg false = not nocturnal-only), vanilla-standard distanceToPoi 4
+        // (the param has no 1.7.10 analog), no door-breaking (the 1.7.10 goal
+        // never broke doors).
+        this.goalSelector.addGoal(2, new MoveThroughVillageGoal(this, 0.9f, false, 4, () -> false));
+        this.goalSelector.addGoal(3, new LookAtPlayerGoal(this, Player.class, 8.0f)); // orig GiantRobot.java:56
+        this.goalSelector.addGoal(4, new RandomLookAroundGoal(this)); // orig GiantRobot.java:57
+        this.targetSelector.addGoal(1, new HurtByTargetGoal(this)); // orig GiantRobot.java:58
     }
 
     public static AttributeSupplier.Builder createAttributes() {
@@ -195,7 +213,7 @@ public class GiantRobot extends Monster {
     private LivingEntity findSomethingToAttack() {
         AABB searchBox = this.getBoundingBox().inflate(16.0, 12.0, 16.0);
         List<LivingEntity> entities = this.level().getEntitiesOfClass(LivingEntity.class, searchBox);
-        entities.sort(this.targetSorter);
+        entities.sort(this.targetSorter); // orig GiantRobot.java:347 — GenericTargetSorter order
         for (LivingEntity targetEntity : entities) {
             if (isSuitableTarget(targetEntity)) return targetEntity;
         }

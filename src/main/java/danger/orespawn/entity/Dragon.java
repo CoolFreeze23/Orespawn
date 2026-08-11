@@ -10,6 +10,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
@@ -30,6 +31,7 @@ import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import danger.orespawn.ModSounds;
 import danger.orespawn.ModEntities;
+import danger.orespawn.OreSpawnMod;
 import danger.orespawn.util.MyUtils;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
 import net.minecraft.world.entity.ai.goal.FollowOwnerGoal;
@@ -85,6 +87,8 @@ public class Dragon extends TamableAnimal implements danger.orespawn.network.Rid
     private boolean riderFlyUp = false;
     private boolean riderFlyDown = false;
 
+    // TF-035: orig Dragon.java:79 declares a GenericTargetSorter field (built at :120,
+    // used at :581) — creeper/large-target weighting, not plain distance.
     private final Comparator<Entity> targetSorter;
     private final float moveSpeed = 0.32f;
     private int hurtTimer = 0;
@@ -105,7 +109,7 @@ public class Dragon extends TamableAnimal implements danger.orespawn.network.Rid
     public Dragon(EntityType<? extends Dragon> type, Level level) {
         super(type, level);
         this.xpReward = 100;
-        this.targetSorter = Comparator.comparingDouble(this::distanceToSqr);
+        this.targetSorter = new danger.orespawn.entity.ai.GenericTargetSorter(this); // orig Dragon.java:120
     }
 
     @Override
@@ -304,8 +308,15 @@ public class Dragon extends TamableAnimal implements danger.orespawn.network.Rid
             ++this.wingSound;
             if (this.wingSound > 20) {
                 if (!this.level().isClientSide) {
+                    // Orig Dragon.java:645 plays the custom "orespawn:MothraWings" event
+                    // (volume 0.5f, pitch 1.0f) while flying, NOT the vanilla ender-dragon
+                    // flap. sounds.json already defines "mothrawings" (3 random variants),
+                    // so reference it by id like Mothra.java does rather than adding a
+                    // new registration.
                     this.level().playSound(null, this.getX(), this.getY(), this.getZ(),
-                            SoundEvents.ENDER_DRAGON_FLAP, SoundSource.NEUTRAL, 0.5f, 1.0f);
+                            SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(
+                                    OreSpawnMod.MOD_ID, "mothrawings")),
+                            SoundSource.NEUTRAL, 0.5f, 1.0f);
                 }
                 this.wingSound = 0;
             }

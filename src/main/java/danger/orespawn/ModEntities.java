@@ -450,7 +450,9 @@ public class ModEntities {
 
     public static final DeferredHolder<EntityType<?>, EntityType<Girlfriend>> GIRLFRIEND =
             ENTITY_TYPES.register("girlfriend", () -> EntityType.Builder.of(Girlfriend::new, MobCategory.CREATURE)
-                    .sized(0.6f, 1.8f).clientTrackingRange(10).build("girlfriend"));
+                    // orig Girlfriend.java:141 — func_70105_a(0.5f, 1.6f) base size;
+                    // the valentine 2.5x8.0 giant overrides via getDefaultDimensions
+                    .sized(0.5f, 1.6f).clientTrackingRange(10).build("girlfriend"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<EntityHydrolisc>> ENTITY_HYDROLISC =
             ENTITY_TYPES.register("hydrolisc", () -> EntityType.Builder.of(EntityHydrolisc::new, MobCategory.CREATURE)
