@@ -29,11 +29,18 @@ import danger.orespawn.ModItems;
 import danger.orespawn.OreSpawnMod;
 
 public class EasterBunny extends Animal {
+    // OPT-011: cached SoundEvents — identical createVariableRangeEvent ids,
+    // allocated once per class instead of on every sound query.
+    private static final SoundEvent SND_DUCK_HURT = SoundEvent.createVariableRangeEvent(
+            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "duck_hurt"));
     private static final float MOVE_SPEED = 0.45f;
     private static final int MAX_HEALTH = 10;
 
     public EasterBunny(EntityType<? extends EasterBunny> type, Level level) {
         super(type, level);
+        // OPT-009: constant speed - assert the attribute base once here instead
+        // of re-writing it every tick (same value the removed per-tick call set).
+        this.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(MOVE_SPEED);
         this.xpReward = 5;
     }
 
@@ -61,12 +68,6 @@ public class EasterBunny extends Animal {
         return !this.isPersistenceRequired();
     }
 
-    @Override
-    public void tick() {
-        this.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(MOVE_SPEED);
-        super.tick();
-    }
-
     @Nullable
     @Override
     protected SoundEvent getAmbientSound() {
@@ -75,14 +76,12 @@ public class EasterBunny extends Animal {
 
     @Override
     protected SoundEvent getHurtSound(DamageSource source) {
-        return SoundEvent.createVariableRangeEvent(
-                ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "duck_hurt"));
+        return SND_DUCK_HURT;
     }
 
     @Override
     protected SoundEvent getDeathSound() {
-        return SoundEvent.createVariableRangeEvent(
-                ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "duck_hurt"));
+        return SND_DUCK_HURT;
     }
 
     @Override

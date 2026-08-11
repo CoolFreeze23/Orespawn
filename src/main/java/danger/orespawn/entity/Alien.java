@@ -33,8 +33,18 @@ import net.minecraft.world.phys.Vec3;
 import danger.orespawn.OreSpawnConfig;
 import danger.orespawn.OreSpawnMod;
 import danger.orespawn.entity.ai.GenericTargetSorter;
+import danger.orespawn.entity.ai.TargetSelection;
 
 public class Alien extends Monster {
+    // OPT-011: cached SoundEvents — identical createVariableRangeEvent ids,
+    // allocated once per class instead of on every sound query.
+    private static final SoundEvent SND_ALIEN_LIVING = SoundEvent.createVariableRangeEvent(
+            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "alien_living"));
+    private static final SoundEvent SND_ALIEN_HURT = SoundEvent.createVariableRangeEvent(
+            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "alien_hurt"));
+    private static final SoundEvent SND_ALIEN_DEATH = SoundEvent.createVariableRangeEvent(
+            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "alien_death"));
+
     private static final EntityDataAccessor<Integer> DATA_ATTACKING =
             SynchedEntityData.defineId(Alien.class, EntityDataSerializers.INT);
 
@@ -47,6 +57,9 @@ public class Alien extends Monster {
 
     public Alien(EntityType<? extends Alien> type, Level level) {
         super(type, level);
+        // OPT-009: constant speed - assert the attribute base once here instead
+        // of re-writing it every tick (same value the removed per-tick call set).
+        this.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(MOVE_SPEED);
         this.xpReward = 100;
         // orig Alien.java:41,59 — target priority uses the shared
         // GenericTargetSorter (creepers and large targets outrank nearer
@@ -115,30 +128,21 @@ public class Alien extends Monster {
     }
 
     @Override
-    public void tick() {
-        this.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(MOVE_SPEED);
-        super.tick();
-    }
-
-    @Override
     protected SoundEvent getAmbientSound() {
         if (this.getRandom().nextInt(4) == 0) {
-            return SoundEvent.createVariableRangeEvent(
-                    ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "alien_living"));
+            return SND_ALIEN_LIVING;
         }
         return null;
     }
 
     @Override
     protected SoundEvent getHurtSound(DamageSource source) {
-        return SoundEvent.createVariableRangeEvent(
-                ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "alien_hurt"));
+        return SND_ALIEN_HURT;
     }
 
     @Override
     protected SoundEvent getDeathSound() {
-        return SoundEvent.createVariableRangeEvent(
-                ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "alien_death"));
+        return SND_ALIEN_DEATH;
     }
 
     @Override
@@ -235,11 +239,9 @@ public class Alien extends Monster {
 
         List<LivingEntity> list = this.level().getEntitiesOfClass(LivingEntity.class,
                 this.getBoundingBox().inflate(12.0, 4.0, 12.0));
-        list.sort(this.targetSorter);
-        for (LivingEntity candidate : list) {
-            if (isSuitableTarget(candidate)) return candidate;
-        }
-        return null;
+        // OPT-021: nearest-first pick without the full list sort; TargetSelection
+        // preserves the removed sort's order and stable-tie semantics exactly.
+        return TargetSelection.firstMatch(list, this.targetSorter, this::isSuitableTarget);
     }
 
     private boolean isSuitableTarget(LivingEntity target) {

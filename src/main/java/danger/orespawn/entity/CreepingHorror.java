@@ -30,8 +30,17 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.ServerLevelAccessor;
 import danger.orespawn.OreSpawnMod;
 import danger.orespawn.entity.ai.GenericTargetSorter;
+import danger.orespawn.entity.ai.TargetSelection;
 
 public class CreepingHorror extends Monster {
+    // OPT-011: cached SoundEvents — identical createVariableRangeEvent ids,
+    // allocated once per class instead of on every sound query.
+    private static final SoundEvent SND_CREEPINGHORROR_LIVING = SoundEvent.createVariableRangeEvent(
+            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "creepinghorror_living"));
+    private static final SoundEvent SND_CREEPINGHORROR_HIT = SoundEvent.createVariableRangeEvent(
+            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "creepinghorror_hit"));
+    private static final SoundEvent SND_CREEPINGHORROR_DEAD = SoundEvent.createVariableRangeEvent(
+            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "creepinghorror_dead"));
     private static final ResourceKey<Level> CHAOS_DIM = ResourceKey.create(
             Registries.DIMENSION, ResourceLocation.fromNamespaceAndPath("orespawn", "chaos"));
     private static final long DAYTIME_TICKS = 24000L;
@@ -43,6 +52,9 @@ public class CreepingHorror extends Monster {
 
     public CreepingHorror(EntityType<? extends CreepingHorror> type, Level level) {
         super(type, level);
+        // OPT-009: constant speed - assert the attribute base once here instead
+        // of re-writing it every tick (same value the removed per-tick call set).
+        this.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(MOVE_SPEED);
         this.xpReward = 5;
         // TF-035: orig CreepingHorror.java:42,58 — scans sort with
         // GenericTargetSorter (creeper-halved / big-silhouette-prioritized),
@@ -101,7 +113,6 @@ public class CreepingHorror extends Monster {
 
     @Override
     public void tick() {
-        this.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(MOVE_SPEED);
         super.tick();
         if (this.isPersistenceRequired()) return;
         long timeOfDay = this.level().getDayTime() % DAYTIME_TICKS;
@@ -113,20 +124,17 @@ public class CreepingHorror extends Monster {
 
     @Override
     protected SoundEvent getAmbientSound() {
-        return SoundEvent.createVariableRangeEvent(
-                ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "creepinghorror_living"));
+        return SND_CREEPINGHORROR_LIVING;
     }
 
     @Override
     protected SoundEvent getHurtSound(DamageSource source) {
-        return SoundEvent.createVariableRangeEvent(
-                ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "creepinghorror_hit"));
+        return SND_CREEPINGHORROR_HIT;
     }
 
     @Override
     protected SoundEvent getDeathSound() {
-        return SoundEvent.createVariableRangeEvent(
-                ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "creepinghorror_dead"));
+        return SND_CREEPINGHORROR_DEAD;
     }
 
     @Override
@@ -160,11 +168,9 @@ public class CreepingHorror extends Monster {
         if (danger.orespawn.OreSpawnConfig.PLAY_NICELY.get()) return null;
         List<LivingEntity> list = this.level().getEntitiesOfClass(LivingEntity.class,
                 this.getBoundingBox().inflate(16.0, 4.0, 16.0));
-        list.sort(this.targetSorter);
-        for (LivingEntity candidate : list) {
-            if (isSuitableTarget(candidate)) return candidate;
-        }
-        return null;
+        // OPT-021: nearest-first pick without the full list sort; TargetSelection
+        // preserves the removed sort's order and stable-tie semantics exactly.
+        return TargetSelection.firstMatch(list, this.targetSorter, this::isSuitableTarget);
     }
 
     /**

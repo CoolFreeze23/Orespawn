@@ -37,8 +37,17 @@ import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import danger.orespawn.OreSpawnMod;
+import danger.orespawn.entity.ai.TargetSelection;
 
 public class EntityMolenoid extends Monster {
+    // OPT-011: cached SoundEvents — identical createVariableRangeEvent ids,
+    // allocated once per class instead of on every sound query.
+    private static final SoundEvent SND_MOLENOID_LIVING = SoundEvent.createVariableRangeEvent(
+            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "molenoid_living"));
+    private static final SoundEvent SND_MOLENOID_HIT = SoundEvent.createVariableRangeEvent(
+            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "molenoid_hit"));
+    private static final SoundEvent SND_MOLENOID_DEATH = SoundEvent.createVariableRangeEvent(
+            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "molenoid_death"));
     private static final EntityDataAccessor<Integer> DATA_ATTACKING =
             SynchedEntityData.defineId(EntityMolenoid.class, EntityDataSerializers.INT);
 
@@ -50,6 +59,9 @@ public class EntityMolenoid extends Monster {
 
     public EntityMolenoid(EntityType<? extends EntityMolenoid> type, Level level) {
         super(type, level);
+        // OPT-009: constant speed - assert the attribute base once here instead
+        // of re-writing it every tick (same value the removed per-tick call set).
+        this.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(this.moveSpeed);
         this.xpReward = 40;
     }
 
@@ -90,12 +102,6 @@ public class EntityMolenoid extends Monster {
     @Override
     public boolean removeWhenFarAway(double dist) {
         return !this.isPersistenceRequired();
-    }
-
-    @Override
-    public void tick() {
-        this.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(this.moveSpeed);
-        super.tick();
     }
 
     @Override
@@ -290,11 +296,9 @@ public class EntityMolenoid extends Monster {
         List<LivingEntity> targets = this.level().getEntitiesOfClass(LivingEntity.class, searchBox);
         // TF-035: orig Molenoid.java:38,47 — targets sort with GenericTargetSorter
         // (creeper-halved / big-silhouette-first, sorted at :282), not plain distance.
-        targets.sort(new GenericTargetSorter(this));
-        for (LivingEntity target : targets) {
-            if (this.isSuitableTarget(target)) return target;
-        }
-        return null;
+        // OPT-021: nearest-first pick without the full list sort; TargetSelection
+        // preserves the removed sort's order and stable-tie semantics exactly.
+        return TargetSelection.firstMatch(targets, new GenericTargetSorter(this), this::isSuitableTarget);
     }
 
     /**
@@ -360,22 +364,19 @@ public class EntityMolenoid extends Monster {
     @Override
     protected SoundEvent getAmbientSound() {
         if (this.random.nextInt(3) == 0) {
-            return SoundEvent.createVariableRangeEvent(
-                    ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "molenoid_living"));
+            return SND_MOLENOID_LIVING;
         }
         return null;
     }
 
     @Override
     protected SoundEvent getHurtSound(DamageSource source) {
-        return SoundEvent.createVariableRangeEvent(
-                ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "molenoid_hit"));
+        return SND_MOLENOID_HIT;
     }
 
     @Override
     protected SoundEvent getDeathSound() {
-        return SoundEvent.createVariableRangeEvent(
-                ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "molenoid_death"));
+        return SND_MOLENOID_DEATH;
     }
 
     @Override

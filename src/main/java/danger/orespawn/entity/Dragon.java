@@ -50,8 +50,13 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import danger.orespawn.entity.ai.TargetSelection;
 
 public class Dragon extends TamableAnimal implements danger.orespawn.network.RiderInputPayload.RideableFlyer {
+    // OPT-011: cached SoundEvent — identical createVariableRangeEvent id,
+    // allocated once per class instead of on every wing-flap sound.
+    private static final SoundEvent SND_MOTHRAWINGS = SoundEvent.createVariableRangeEvent(
+            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "mothrawings"));
 
     private static final EntityDataAccessor<Integer> DATA_ATTACKING =
             SynchedEntityData.defineId(Dragon.class, EntityDataSerializers.INT);
@@ -108,6 +113,9 @@ public class Dragon extends TamableAnimal implements danger.orespawn.network.Rid
 
     public Dragon(EntityType<? extends Dragon> type, Level level) {
         super(type, level);
+        // OPT-009: constant speed - assert the attribute base once here instead
+        // of re-writing it every tick (same value the removed per-tick call set).
+        this.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(this.moveSpeed);
         this.xpReward = 100;
         this.targetSorter = new danger.orespawn.entity.ai.GenericTargetSorter(this); // orig Dragon.java:120
     }
@@ -297,7 +305,6 @@ public class Dragon extends TamableAnimal implements danger.orespawn.network.Rid
 
     @Override
     public void tick() {
-        this.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(this.moveSpeed);
         super.tick();
 
         if (this.hurtTimer > 0) {
@@ -314,9 +321,7 @@ public class Dragon extends TamableAnimal implements danger.orespawn.network.Rid
                     // so reference it by id like Mothra.java does rather than adding a
                     // new registration.
                     this.level().playSound(null, this.getX(), this.getY(), this.getZ(),
-                            SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(
-                                    OreSpawnMod.MOD_ID, "mothrawings")),
-                            SoundSource.NEUTRAL, 0.5f, 1.0f);
+                            SND_MOTHRAWINGS, SoundSource.NEUTRAL, 0.5f, 1.0f);
                 }
                 this.wingSound = 0;
             }
@@ -422,11 +427,18 @@ public class Dragon extends TamableAnimal implements danger.orespawn.network.Rid
         }
 
         AABB pushBox = this.getBoundingBox().inflate(2.25, 2.0, 2.25);
-        List<Entity> nearby = this.level().getEntities(this, pushBox);
+        // OPT-024: fold the loop's filter into the query predicate so the list
+        // only ever holds entities that get pushed. Same result set: the 2-arg
+        // getEntities overload applied EntitySelector.NO_SPECTATORS (mirrored
+        // here as !isSpectator), and a push() only alters deltaMovement, so
+        // isRemoved/isPushable answers can't change mid-loop. getFirstPassenger
+        // is hoisted — pushes never mutate this dragon's passenger list.
+        Entity rider0 = this.getFirstPassenger();
+        List<Entity> nearby = this.level().getEntities(this, pushBox,
+                entity -> !entity.isSpectator() && entity != rider0
+                        && !entity.isRemoved() && entity.isPushable());
         for (Entity entity : nearby) {
-            if (entity != this.getFirstPassenger() && !entity.isRemoved() && entity.isPushable()) {
-                entity.push(this);
-            }
+            entity.push(this);
         }
 
         handleRiderCombat();
@@ -905,11 +917,9 @@ public class Dragon extends TamableAnimal implements danger.orespawn.network.Rid
     private LivingEntity findSomethingToAttack() {
         AABB searchBox = this.getBoundingBox().inflate(20.0, 20.0, 20.0);
         List<LivingEntity> entities = this.level().getEntitiesOfClass(LivingEntity.class, searchBox);
-        entities.sort(this.targetSorter);
-        for (LivingEntity entity : entities) {
-            if (isSuitableTarget(entity)) return entity;
-        }
-        return null;
+        // OPT-021: nearest-first pick without the full list sort; TargetSelection
+        // preserves the removed sort's order and stable-tie semantics exactly.
+        return TargetSelection.firstMatch(entities, this.targetSorter, this::isSuitableTarget);
     }
 
     // ==================== Interaction ====================

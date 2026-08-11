@@ -34,6 +34,12 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
 public class EntityEmperorScorpion extends Monster {
+    // OPT-011: cached SoundEvents — identical createVariableRangeEvent ids,
+    // allocated once per class instead of on every sound query.
+    private static final SoundEvent SND_ALO_HURT = SoundEvent.createVariableRangeEvent(
+            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "alo_hurt"));
+    private static final SoundEvent SND_EMPERORSCORPION_DEATH = SoundEvent.createVariableRangeEvent(
+            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "emperorscorpion_death"));
     private static final EntityDataAccessor<Integer> DATA_ATTACKING =
             SynchedEntityData.defineId(EntityEmperorScorpion.class, EntityDataSerializers.INT);
 
@@ -93,14 +99,12 @@ public class EntityEmperorScorpion extends Monster {
 
     @Override
     protected SoundEvent getHurtSound(DamageSource source) {
-        return SoundEvent.createVariableRangeEvent(
-                ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "alo_hurt"));
+        return SND_ALO_HURT;
     }
 
     @Override
     protected SoundEvent getDeathSound() {
-        return SoundEvent.createVariableRangeEvent(
-                ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "emperorscorpion_death"));
+        return SND_EMPERORSCORPION_DEATH;
     }
 
     @Override

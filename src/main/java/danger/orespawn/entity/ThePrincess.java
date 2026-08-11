@@ -52,8 +52,17 @@ import danger.orespawn.ModEntities;
 import danger.orespawn.OreSpawnConfig;
 import danger.orespawn.OreSpawnMod;
 import danger.orespawn.util.MyUtils;
+import danger.orespawn.entity.ai.TargetSelection;
 
 public class ThePrincess extends TamableAnimal {
+    // OPT-011: cached SoundEvents — identical createVariableRangeEvent ids,
+    // allocated once per class instead of on every sound query.
+    private static final SoundEvent SND_ROAR = SoundEvent.createVariableRangeEvent(
+            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "roar"));
+    private static final SoundEvent SND_DUCK_HURT = SoundEvent.createVariableRangeEvent(
+            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "duck_hurt"));
+    private static final SoundEvent SND_CRYO_DEATH = SoundEvent.createVariableRangeEvent(
+            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "cryo_death"));
     private static final EntityDataAccessor<Integer> DATA_ACTIVITY =
             SynchedEntityData.defineId(ThePrincess.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Integer> DATA_FIRE =
@@ -585,11 +594,9 @@ public class ThePrincess extends TamableAnimal {
         if (OreSpawnConfig.PLAY_NICELY.get()) return null;
         AABB box = this.getBoundingBox().inflate(12.0, 6.0, 12.0);
         List<LivingEntity> targets = this.level().getEntitiesOfClass(LivingEntity.class, box);
-        targets.sort(this.targetSorter);
-        for (LivingEntity t : targets) {
-            if (this.isSuitableTarget(t)) return t;
-        }
-        return null;
+        // OPT-021: nearest-first pick without the full list sort; TargetSelection
+        // preserves the removed sort's order and stable-tie semantics exactly.
+        return TargetSelection.firstMatch(targets, this.targetSorter, this::isSuitableTarget);
     }
 
     /**
@@ -742,10 +749,10 @@ public class ThePrincess extends TamableAnimal {
 
     @Override protected SoundEvent getAmbientSound() {
         if (this.isOrderedToSit() || this.getAttacking() == 0) return null;
-        return SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "roar"));
+        return SND_ROAR;
     }
-    @Override protected SoundEvent getHurtSound(DamageSource s) { return SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "duck_hurt")); }
-    @Override protected SoundEvent getDeathSound() { return SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "cryo_death")); }
+    @Override protected SoundEvent getHurtSound(DamageSource s) { return SND_DUCK_HURT; }
+    @Override protected SoundEvent getDeathSound() { return SND_CRYO_DEATH; }
     @Override protected float getSoundVolume() { return 0.6f; }
     @Override public boolean removeWhenFarAway(double d) { return false; }
     @Override public boolean isFood(ItemStack s) { return s.is(Items.BEEF); }

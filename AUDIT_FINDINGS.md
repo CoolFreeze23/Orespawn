@@ -5483,6 +5483,7 @@ Entries: **79 total** — ANIM 20 (DIVERGENT 8 · PARTIAL 10 · MISSING 2) · BU
 - **Cost:** `BuiltInRegistries.ENTITY_TYPE.getKey()` + datapack-registry map lookup + `Optional` alloc × part count × tick rate (server) and × bone count × frame rate (client) for every multipart boss.
 - **Proposal:** Cache `Optional<HitboxProfile>` in a field on the entity (via `IMHLibFieldAccessor`), populated in `mhlibOnConstructor`, invalidated on datapack reload.
 - **Behavior:** neutral (identical results; only `/reload` invalidation must be wired)
+- **Resolution:** FIXED (2026-08-11, Phase F — Per-entity Optional<HitboxProfile> cache guarded by a global generation stamp; /reload (AddReloadListenerEvent) and ServerStoppedEvent bump the generation and clear the static cache; hot alignment/AI/pickable/read sites hoist to one lookup per call; ICustomHitboxProfileSupplier path deliberately uncached. Registry content is immutable per instance, so staleness is only possible across a reload — exactly what the stamp covers)
 
 ### OPT-002 — MHLib sends a full multipart update packet every tick even when nothing moved
 
@@ -5491,6 +5492,7 @@ Entries: **79 total** — ANIM 20 (DIVERGENT 8 · PARTIAL 10 · MISSING 2) · BU
 - **Cost:** Per tick × per multipart entity × per tracking player: full pos/rot/size for all parts + `ArrayList` + one `PartDataHolder` record per part per tick.
 - **Proposal:** Track last-sent part transforms; skip the send when no part moved beyond epsilon and no part data is dirty (or throttle unchanged syncs to every 10 ticks as keepalive).
 - **Behavior:** neutral (positions identical for idle bosses; strict change-only send alters nothing visible)
+- **Resolution:** FIXED (2026-08-11, Phase F — Change-only multipart sends: last-sent PartDataHolder list compared field-by-field (exact primitive equality, NaN=changed); unchanged payloads re-broadcast bit-identically for a linger window sized to drain client interpolation, then skipped; new trackers get their first packet same-tick via the addPairing inject. Moving bosses send at legacy cadence bit-identically. The finding's epsilon/throttle alternative deliberately NOT applied (would break bit-identity))
 
 ### OPT-003 — MHLib master client streams `CPacketBoneInformation` continuously regardless of change
 
@@ -5515,6 +5517,7 @@ Entries: **79 total** — ANIM 20 (DIVERGENT 8 · PARTIAL 10 · MISSING 2) · BU
 - **Cost:** Per frame (60–240 Hz): AABB alloc, predicate entity query, list alloc, 2+ string allocs per girlfriend.
 - **Proposal:** Move the scan to a `ClientTickEvent.Post` handler refreshing a cached list (with pre-formatted name/health strings) every 10 ticks; `render` only draws the cache.
 - **Behavior:** neutral (HUD data at most 0.5 s stale — cosmetic latency only)
+- **Resolution:** VERIFIED-CORRECT (2026-08-11, Phase F — finding premise stale — Premise stale: GirlfriendOverlay was rebuilt (crosshair-pick HUD) since the audit — the cited per-frame girlfriend-list AABB scan and per-girlfriend string concats no longer exist. Current code does one vanilla crosshairPickEntity read plus a single 16-block fallback entity ray per frame (parity with orig OreSpawnMain.java:5795-5831), builds strings only for the one pointed-at eligible entity, and short-circuits on the config gate first. The audit's 10-tick cached-scan proposal would now add crosshair lag absent today, so no change was made)
 
 ### OPT-006 — Kraken obstruction probe: 95 block reads every server tick, unconditionally
 
@@ -5539,6 +5542,7 @@ Entries: **79 total** — ANIM 20 (DIVERGENT 8 · PARTIAL 10 · MISSING 2) · BU
 - **Cost:** ~100k+ short-lived `BlockPos` allocations and full-height state reads per chunk on worldgen worker threads.
 - **Proposal:** Reuse one `BlockPos.MutableBlockPos` per column; start the downward scan at `chunk.getHeight(WORLD_SURFACE_WG, x, z)`; merge `fillShallowWater` into the same column walk.
 - **Behavior:** neutral (identical block output; heightmap start is safe — everything above surface is air)
+- **Resolution:** FIXED (2026-08-11, Phase F — replaceTerrain now walks each column once from the WORLD_SURFACE_WG heightmap (everything above is air by the heightmap's NOT_AIR predicate; all pipeline writers use chunk.setBlockState so WG heightmaps stay accurate) with one reusable MutableBlockPos, and fillShallowWater is fused in as an inline state machine engaging at its old Y70 start. Fill writes land only in the water/air span the replacement logic never writes, and hitSurface is forced true on fill to mirror the old pass seeing the crystal-grass cap first — block output identical, ~98k BlockPos allocations and ~250 air reads per column eliminated)
 
 ### OPT-009 — ~35 entity classes reset MOVEMENT_SPEED base value every tick
 
@@ -5547,6 +5551,7 @@ Entries: **79 total** — ANIM 20 (DIVERGENT 8 · PARTIAL 10 · MISSING 2) · BU
 - **Cost:** Attribute-map lookup per entity per tick across ~140 entity types (no sync spam — `setBaseValue` early-exits on equal — but the lookup is pure waste for constants).
 - **Proposal:** Delete the per-tick call for constant speeds and set the value in `createAttributes()`; for water/land mirrors (SeaViper, WaterDragon, Crab) cache the `AttributeInstance` and only call `setBaseValue` on medium change.
 - **Behavior:** neutral
+- **Resolution:** FIXED (2026-08-11, Phase F — 30 constant-speed entities: per-tick MOVEMENT_SPEED setBaseValue deleted from tick()/aiStep and asserted once in the constructor with the identical expression (ctor-once is exactly value-preserving even where the float-literal set differs in double bits from createAttributes, e.g. ThePrinceTeen 0.35f vs registered 0.32). 17 tick() overrides that became super-only were removed. 4 genuinely dynamic entities (Crab water/land×scale, SeaMonster, SeaViper, WaterDragon water/land) keep the per-tick write but through a constructor-cached AttributeInstance; setBaseValue's internal equality early-exit provides the guard-on-change)
 
 ### OPT-010 — Godzilla allocates a Vec3 array + Vec3 per part every tick
 
@@ -5555,6 +5560,7 @@ Entries: **79 total** — ANIM 20 (DIVERGENT 8 · PARTIAL 10 · MISSING 2) · BU
 - **Cost:** `new Vec3[allParts.length]` + one `Vec3` per part per tick (server + client).
 - **Proposal:** Replace with three reusable `double[]` fields (or store prev positions on the parts themselves).
 - **Behavior:** neutral
+- **Resolution:** FIXED (2026-08-11, Phase F — Godzilla.tick() no longer allocates a Vec3[] plus one Vec3 per part per tick. Three final double[] scratch buffers (partOldX/Y/Z, sized once in the constructor to allParts.length) capture the pre-super.tick() part positions and restore xo/yo/zo/xOld/yOld/zOld afterwards — bit-identical values, zero per-tick allocation)
 
 ### OPT-011 — ~37 sound getters allocate a new SoundEvent + ResourceLocation on every call
 
@@ -5563,6 +5569,7 @@ Entries: **79 total** — ANIM 20 (DIVERGENT 8 · PARTIAL 10 · MISSING 2) · BU
 - **Cost:** `SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(...))` per ambient/hurt/death sound query (ambient polled periodically per mob); two allocs + string handling per call; bypasses the 100 registered `ModSounds` entries.
 - **Proposal:** Replace with the corresponding `ModSounds.X.get()` holder (or a `static final SoundEvent` per class).
 - **Behavior:** neutral (same sound id; registered events also serialize properly to clients)
+- **Resolution:** FIXED (2026-08-11, Phase F — All 200+ per-call SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(MOD_ID, "...")) sites across ~92 classes hoisted to private static final SoundEvent fields (SND_*) — the createVariableRangeEvent idiom kept verbatim, allocated once per class per the finding's neutral variant. Multi-line variants handled: Dragon's mothrawings wing-flap, Crab's conditional scorpion_attack/scorpion_living swing pick (cached both, kept the 1-in-3 roll), Boyfriend's orespawnSound(literal) helper calls (helper retained, now used only by static initializers). ModSounds registry lambdas intentionally untouched)
 
 ### OPT-012 — Oversized-weapon culling mixin: 8 deferred-holder item checks per entity per frame
 
@@ -5571,6 +5578,7 @@ Entries: **79 total** — ANIM 20 (DIVERGENT 8 · PARTIAL 10 · MISSING 2) · BU
 - **Cost:** Inside `getBoundingBoxForCulling` for every entity (vanilla included) every frame: `getMainHandItem` + up to 8 `ModItems.X.get()` + `is()` checks + `inflate(5.0)` AABB alloc on match.
 - **Proposal:** Replace the 8 checks with a single item-tag test (`mainHand.is(OVERSIZED_WEAPONS_TAG)`) or a lazily-built `static Set<Item>`; `stack.isEmpty()` early-out already exists.
 - **Behavior:** neutral
+- **Resolution:** FIXED (2026-08-11, Phase F — EntityCullingMixin now builds a lazily-initialized @Unique static Set<Item> of the 8 oversized weapons (resolved once from the deferred holders on first frame) and tests mainHand.getItem() membership — identity-equivalent to the removed is() chain, so the culled set is unchanged. Invalidation story documented in-code: the item registry is frozen at startup and registered Item instances are never replaced (resource/datapack reloads do not touch them), so the set cannot go stale for the JVM lifetime)
 
 ### OPT-013 — Twelve big-mob renderers disable frustum culling entirely
 
@@ -5579,6 +5587,7 @@ Entries: **79 total** — ANIM 20 (DIVERGENT 8 · PARTIAL 10 · MISSING 2) · BU
 - **Cost:** Full model render every frame whenever the entity is loaded, even fully off-screen — for the largest models in the mod.
 - **Proposal:** Keep culling but size `Entity.getBoundingBoxForCulling()` (or `shouldRender` calling super with an inflated AABB, ~30 blocks) to the real part envelope instead of returning `true` unconditionally.
 - **Behavior:** neutral (visually, if the inflated box covers the part envelope — flag for visual verification on wing/tail extremes)
+- **Resolution:** VERIFIED-CORRECT (2026-08-11, Phase F — proposal precondition unmet, current code correct — Evaluated all 12 renderers; no cull box was provably covering. Nine active shouldRender→true overrides (Queen, King, Godzilla, Kraken, Mothra, DungeonBeast, SeaMonster, PitchBlack, Leon) render animated envelopes — GeckoLib/MHLib bone-driven parts or code-model limb rotations — whose maximum reach is not statically derivable from any constant, and an under-sized box causes visible edge pop-out (a behavior change the audit itself flags for visual verification, which this pass cannot perform). The three head renderers already return false. Left noCulling everywhere and documented the decision in each file per instruction)
 
 ### OPT-014 — Alien torch scan probes 4,913 blocks per scan (docs claim 256)
 
@@ -5587,6 +5596,7 @@ Entries: **79 total** — ANIM 20 (DIVERGENT 8 · PARTIAL 10 · MISSING 2) · BU
 - **Cost:** ~4,900 block reads per alien per ~30 ticks, multiplied by alien pack sizes.
 - **Proposal:** Scan in expanding shells with early exit once a torch is found within the legacy ≈5-block break distance, or cap radius to the documented 256-candidate budget; keep the existing `MutableBlockPos`.
 - **Behavior:** neutral for early-exit-on-nearest; affecting if radius is reduced (smaller seek range — flag)
+- **Resolution:** VERIFIED-CORRECT (2026-08-11, Phase F — finding premise stale — Orig scan_it (1.7.10 Alien.java:243-304) never early-exits within a shell — it probes all six faces and returns found != 0. The only orig early-exit is the shell loop (Alien.java:333): 'for (int i = 2; i < 15 && !this.scan_it(..., i, i, i); ++i)' — stop at the first shell containing a torch. E4's AlienTorchSeekGoal.java:69 reproduces exactly that ('for (int i = 2; i < 15 && !this.scanShell(x, y, z, i); ++i)') plus a neutral distSq-before-read gate in checkTorch. The 17-cube premise is gone; nothing neutral left to add)
 
 ### OPT-015 — Godzilla block crushing re-resolves deferred block holders per block
 
@@ -5595,6 +5605,7 @@ Entries: **79 total** — ANIM 20 (DIVERGENT 8 · PARTIAL 10 · MISSING 2) · BU
 - **Cost:** ~1,700 block reads + up to ~34k comparisons per 4 ticks while loaded; `BlockPos.containing` alloc per block.
 - **Proposal:** Build a lazily-initialized `static Set<Block>` of non-crushables (resolve `ModBlocks` holders once) and iterate with a `MutableBlockPos`.
 - **Behavior:** neutral
+- **Resolution:** FIXED (2026-08-11, Phase F — Godzilla.isCrushable now consults a lazily-initialized static Set<Block> of the 22 non-crushables, resolving the six ModBlocks deferred holders once instead of per probed block; Set membership is identity equals/hashCode (Block overrides neither), exactly the old == chain. crushBlocks reuses one MutableBlockPos for probes (Mth.floor per axis = BlockPos.containing's arithmetic; Y floor hoisted — position cannot change mid-loop) and passes immutable() copies only at actual setBlock sites since Level.setBlock side effects may retain the pos. Cache invalidation: none needed — Blocks are registry singletons for the JVM lifetime; datapack reloads never swap Block objects)
 
 ### OPT-016 — King/Queen target scans sort the entire 80×64×80 entity list
 
@@ -5603,6 +5614,7 @@ Entries: **79 total** — ANIM 20 (DIVERGENT 8 · PARTIAL 10 · MISSING 2) · BU
 - **Cost:** Every ~3–5 ticks per boss: full `LivingEntity` query over a 160×128×160 region + O(n log n) sort, when only nearest-suitable + a "head exists" flag are needed.
 - **Proposal:** Replace sort-then-scan with single-pass nearest-suitable selection (track min distance); reuse one scan result for `findSomethingToAttack`/`findNearestPlayer` within the same tick.
 - **Behavior:** neutral (nearest-first selection preserved)
+- **Resolution:** FIXED (2026-08-11, Phase F — TheKing/TheQueen scans no longer sort the full 160-block-box entity list. New TargetSelection helper (entity/ai) provides first() (single-pass min, strict-less so equal-weight ties keep the first-encountered element — matching List.sort stability) and firstMatch() (lazy index-heap ordered by (comparator, original index), reproducing stable-sort tie order bit-for-bit and invoking isSuitableTarget on the same candidates in the same order). Applied to King's isEnd==2 player pick, general scan (headEntityFound now via a plain any-KingHead pass — provably the old loop's net effect), findNearestPlayer, and Queen's findSomethingToAttack. doJumpDamage/doAreaDamage process-all sorts untouched)
 
 ### OPT-017 — Ghost / GhostSkelly poll getNearestPlayer every idle tick
 
@@ -5611,6 +5623,7 @@ Entries: **79 total** — ANIM 20 (DIVERGENT 8 · PARTIAL 10 · MISSING 2) · BU
 - **Cost:** Player-list distance scan per ghost per tick (cheap per call but ungated; contact range ~2 blocks).
 - **Proposal:** Early-exit with a squared-distance check against the cached flight-target player, or gate the fallback poll to every 5 ticks.
 - **Behavior:** neutral for the distance-early-exit variant; affecting if throttled (≤5 ticks contact-damage latency — flag)
+- **Resolution:** FIXED (2026-08-11, Phase F — Applied the strictly neutral subset: the per-tick Math.sqrt(CONTACT_DAMAGE_RANGE_SQ) in the ungated fallback poll is hoisted to a static final CONTACT_DAMAGE_RANGE in both Ghost and GhostSkelly. The audited "squared-distance early-exit against the cached flight-target player" was evaluated against current code and rejected as NOT behavior-neutral: the flight target is a BlockPos (no player is cached), and any cached-candidate shortcut changes which player takes contact damage the tick a different player drifts into range in multiplayer. The fresh getNearestPlayer poll therefore stays; the throttle variant was already flagged affecting and was not applied)
 
 ### OPT-018 — MHLib runs a hitbox-profile registry lookup in every LivingEntity constructor
 
@@ -5619,6 +5632,7 @@ Entries: **79 total** — ANIM 20 (DIVERGENT 8 · PARTIAL 10 · MISSING 2) · BU
 - **Cost:** Registry `getKey` + datapack lookup × 4 for every living entity constructed JVM-wide (vanilla mobs included) — significant during chunk load / spawn waves.
 - **Proposal:** Memoize per `EntityType` in a static `Map<EntityType<?>, Optional<HitboxProfile>>` invalidated on datapack reload; bail out on cached empty.
 - **Behavior:** neutral
+- **Resolution:** FIXED (2026-08-11, Phase F — getHitboxProfile(EntityType, RegistryAccess) memoized in a two-level ConcurrentHashMap keyed by Registry instance + EntityType (vanilla mobs bail on cached empty); constructor path collapsed to one lookup; invalidation via registry-identity keying + the OPT-001 event clears + a size guard; worldgen-thread safe)
 
 ### OPT-019 — MHLib part alignment allocates ~6 Vec3 per part per tick with linear `contains`
 
@@ -5627,6 +5641,7 @@ Entries: **79 total** — ANIM 20 (DIVERGENT 8 · PARTIAL 10 · MISSING 2) · BU
 - **Cost:** Per part per tick for every multipart boss on the server.
 - **Proposal:** Precompute a per-part `isSynched` boolean at construction; fold the rotation/scale/translate chain into inline double math; only build the fallback `BoneInformation` when the sync map lacks the bone.
 - **Behavior:** neutral
+- **Resolution:** FIXED (2026-08-11, Phase F — Part alignment allocation-free: rotation/scale/translate Vec3 chain folded to inline double math mirroring decompiled Vec3.xRot/yRot/zRot/scale/add verbatim (bit-identical by construction); sync-bone flags precomputed at part construction from the lifetime-fixed profile; value-reusing setScaling skips Tuple/Optional churn; fallback BoneInformation built only when the sync map lacks the bone)
 
 ### OPT-020 — Boss bars updated every tick
 
@@ -5635,6 +5650,7 @@ Entries: **79 total** — ANIM 20 (DIVERGENT 8 · PARTIAL 10 · MISSING 2) · BU
 - **Cost:** Negligible — `ServerBossEvent.setProgress` only broadcasts on change.
 - **Proposal:** No action needed; listed to close out the checklist item.
 - **Behavior:** neutral (N/A — no change proposed)
+- **Resolution:** VERIFIED-CORRECT (2026-08-11, Phase F — no change needed per the finding itself — Closed as proposed by the audit: no change needed — ServerBossEvent.setProgress already broadcasts only on change, so per-tick updates cost nothing meaningful)
 
 ### OPT-021 — Sort-then-first-match pattern in ~25 small mobs
 
@@ -5643,6 +5659,7 @@ Entries: **79 total** — ANIM 20 (DIVERGENT 8 · PARTIAL 10 · MISSING 2) · BU
 - **Cost:** O(n log n) sort of a small list every scan where a single-pass min would do.
 - **Proposal:** Shared single-pass nearest-suitable selection helper in a util class.
 - **Behavior:** neutral
+- **Resolution:** FIXED (2026-08-11, Phase F — All sort-then-first-match target scans (44 mechanical + 8 hand-converted sites: Beaver/Peacock sort+get(0), Frog/Gazelle stream findFirst, SpiderDriver x2, RubberDucky, DragonflyHuntGoal) now use the shared TargetSelection helper: firstMatch() lazy index-heap / first() single-pass min. Order equivalence to the removed stable sort is exact, including equal-weight ties (original-index tiebreak = List.sort stability) and identical predicate call order/count, so side-effecting predicates (LoS rays, Molenoid MyCanSee) see the same sequence. Beaver's self-at-distance-0 parity bug is preserved. Cost never exceeds the removed sort even when every candidate is rejected)
 
 ### OPT-022 — Armor auto-enchant check runs per armor piece per inventory tick
 
@@ -5659,6 +5676,7 @@ Entries: **79 total** — ANIM 20 (DIVERGENT 8 · PARTIAL 10 · MISSING 2) · BU
 - **Cost:** `overworld().getDataStorage().computeIfAbsent` map lookup per tick (markSpawned is idempotent-guarded).
 - **Proposal:** Cache a local `markedSpawned` boolean on the entity and skip after first success.
 - **Behavior:** neutral
+- **Resolution:** FIXED (2026-08-11, Phase F — Godzilla no longer walks server→overworld→dataStorage.computeIfAbsent every tick. The MobzillaSpawnTracker instance is cached on the entity, keyed on its current ServerLevel and re-resolved if the level ever differs (dimension moves construct fresh entities, so the key check is belt-and-suspenders); SavedData instances are never evicted from data storage, so the reference cannot go stale within a server run. markSpawned() is still invoked every tick, deliberately preserving the port's continuous re-assert semantics (e.g. after an external reset()) rather than the audit's skip-after-first-success boolean, which would drop that re-assert)
 
 ### OPT-024 — Dragon rider-mode pushes via a broad `getEntities` query per tick
 
@@ -5667,6 +5685,7 @@ Entries: **79 total** — ANIM 20 (DIVERGENT 8 · PARTIAL 10 · MISSING 2) · BU
 - **Cost:** Per tick while ridden: AABB alloc + all-entity query (mirrors vanilla `pushEntities`, acceptable).
 - **Proposal:** Optional: pass a `pushable` predicate into the query to skip the post-filter.
 - **Behavior:** neutral
+- **Resolution:** FIXED (2026-08-11, Phase F — Dragon.serverRiddenTick's push query now passes the loop's exact filter as the getEntities predicate (plus an explicit !isSpectator mirroring the EntitySelector.NO_SPECTATORS the 2-arg overload applied), so the returned list holds only entities that get pushed — same result set, no post-filter pass or oversized list. getFirstPassenger is hoisted to a local; equivalence argument (pushes only alter deltaMovement, so isRemoved/isPushable/passenger answers cannot change mid-loop) documented in-code)
 
 ### OPT-025 — Worldgen flora helpers allocate BlockPos pairs in descending column loops
 
@@ -5675,6 +5694,7 @@ Entries: **79 total** — ANIM 20 (DIVERGENT 8 · PARTIAL 10 · MISSING 2) · BU
 - **Cost:** Per chunk: a few thousand short-lived `BlockPos` allocations; `equals` instead of `==`/`is()` on interned states.
 - **Proposal:** Reuse a `MutableBlockPos`; start scans at the heightmap; compare states with `.is(block)`.
 - **Behavior:** neutral
+- **Resolution:** FIXED (2026-08-11, Phase F — All descending flora/tree scans (crystal flowers, rice, quinoa, termite mounds, Islands scraggly trees, and the identical Chaos scraggly loop) now reuse one MutableBlockPos and start at min(origStart, WORLD_SURFACE_WG+1) — a hit requires non-air at y-1, so every skipped level was a guaranteed miss, and none of these y loops roll randomness, so RNG sequences and placements are bit-identical. generateOreVein reuses a cursor and compares states with == instead of .equals (BlockState has no equals override — identity either way, minus the virtual call))
 
 ### OPT-026 — TheKing line-of-sight: manual 20+-step block ray per candidate
 
@@ -5683,6 +5703,7 @@ Entries: **79 total** — ANIM 20 (DIVERGENT 8 · PARTIAL 10 · MISSING 2) · BU
 - **Cost:** Up to ~20–60 `getBlockState` + `BlockPos.containing` allocs per candidate per scan (scan throttled ~1/3–5 ticks).
 - **Proposal:** Evaluate `MyCanSee` only for the current best candidate (after the distance min-pass) and reuse a `MutableBlockPos` in the march.
 - **Behavior:** neutral (if applied only to the selected candidate in the same order)
+- **Resolution:** FIXED (2026-08-11, Phase F — Both halves of the finding applied to TheKing. (1) Via the OPT-016 TargetSelection restructure, isSuitableTarget — and thus the MyCanSee 20-60-step block ray — now runs only for the current best candidate in exact weighted-sorted order until one passes, never for the whole list, matching the finding's "selected candidate in the same order" neutrality condition. (2) MyCanSee itself reuses a single BlockPos.MutableBlockPos for the whole march instead of a BlockPos.containing allocation per step (identical floor semantics))
 
 ### OPT-027 — Spawn-cluster checks scan twice per spawn attempt
 
@@ -5691,4 +5712,4 @@ Entries: **79 total** — ANIM 20 (DIVERGENT 8 · PARTIAL 10 · MISSING 2) · BU
 - **Cost:** Spawn-time only: duplicate entity query per `checkSpawnRules` call during spawn cycles.
 - **Proposal:** Compute the count once and reuse for both checks.
 - **Behavior:** neutral
-
+- **Resolution:** VERIFIED-CORRECT (2026-08-11, Phase F — finding premise stale — The audited double scan no longer exists. Each checkSpawnRules now runs exactly one entity query: EntityAnt.java:235, EntityCricket.java:157, Chipmunk.java:226, EntityTermite.java:262, and Frog.java:286 (via OriginalSpawnGates.countBuddies). The adjacent findBuddies helpers are dead code — never called anywhere in src/main/java (only Peacock calls its own, once, as its sole scan). The proposal 'compute the count once and reuse' is already realized by the spawn-gate rebuild (D1 OriginalSpawnGates port))

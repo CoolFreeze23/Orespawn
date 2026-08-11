@@ -32,7 +32,13 @@ import danger.orespawn.OreSpawnMod;
  * the silhouette and movement cadence are preserved.
  */
 public class Ghost extends AmbientCreature {
+    // OPT-011: cached SoundEvents — identical createVariableRangeEvent ids,
+    // allocated once per class instead of on every sound query.
+    private static final SoundEvent SND_GHOST_SOUND = SoundEvent.createVariableRangeEvent(
+            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "ghost_sound"));
     private static final double CONTACT_DAMAGE_RANGE_SQ = 1.5 * 1.5;
+    /** OPT-017: hoisted out of the per-tick fallback poll (was Math.sqrt every idle tick). */
+    private static final double CONTACT_DAMAGE_RANGE = Math.sqrt(CONTACT_DAMAGE_RANGE_SQ);
     private static final int ATTACK_COOLDOWN_TICKS = 20;
 
     private BlockPos currentFlightTarget = null;
@@ -96,7 +102,12 @@ public class Ghost extends AmbientCreature {
         if (this.attackCooldown == 0) {
             LivingEntity aggroTarget = this.getTarget();
             if (aggroTarget == null) {
-                aggroTarget = this.level().getNearestPlayer(this, Math.sqrt(CONTACT_DAMAGE_RANGE_SQ));
+                // OPT-017: the fresh per-tick poll stays — caching a candidate
+                // player would change which player takes contact damage the tick
+                // someone new drifts into range (multiplayer). Only the constant
+                // sqrt was hoisted; the throttled variant was rejected as
+                // behavior-affecting.
+                aggroTarget = this.level().getNearestPlayer(this, CONTACT_DAMAGE_RANGE);
             }
             if (aggroTarget != null && aggroTarget.isAlive()
                     && this.distanceToSqr(aggroTarget) <= CONTACT_DAMAGE_RANGE_SQ) {
@@ -158,7 +169,7 @@ public class Ghost extends AmbientCreature {
     @Override
     protected SoundEvent getAmbientSound() {
         if (this.random.nextInt(2) == 0) {
-            return SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "ghost_sound"));
+            return SND_GHOST_SOUND;
         }
         return null;
     }

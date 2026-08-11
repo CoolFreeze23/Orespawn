@@ -50,8 +50,17 @@ import net.minecraft.world.phys.Vec3;
 import danger.orespawn.ModEntities;
 import danger.orespawn.OreSpawnMod;
 import danger.orespawn.entity.ai.GenericTargetSorter;
+import danger.orespawn.entity.ai.TargetSelection;
 
 public class EntitySpyro extends TamableAnimal {
+    // OPT-011: cached SoundEvents — identical createVariableRangeEvent ids,
+    // allocated once per class instead of on every sound query.
+    private static final SoundEvent SND_ROAR = SoundEvent.createVariableRangeEvent(
+            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "roar"));
+    private static final SoundEvent SND_DUCK_HURT = SoundEvent.createVariableRangeEvent(
+            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "duck_hurt"));
+    private static final SoundEvent SND_CRYO_DEATH = SoundEvent.createVariableRangeEvent(
+            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "cryo_death"));
     private static final EntityDataAccessor<Integer> DATA_ACTIVITY =
             SynchedEntityData.defineId(EntitySpyro.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Integer> DATA_SPYRO_FIRE =
@@ -70,6 +79,9 @@ public class EntitySpyro extends TamableAnimal {
 
     public EntitySpyro(EntityType<? extends EntitySpyro> type, Level level) {
         super(type, level);
+        // OPT-009: constant speed - assert the attribute base once here instead
+        // of re-writing it every tick (same value the removed per-tick call set).
+        this.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(this.moveSpeed);
         this.xpReward = 35;
         this.noPhysics = false;
         this.setOrderedToSit(false);
@@ -131,7 +143,6 @@ public class EntitySpyro extends TamableAnimal {
 
     @Override
     public void tick() {
-        this.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(this.moveSpeed);
         super.tick();
 
         if (this.isInWater()) {
@@ -472,11 +483,10 @@ public class EntitySpyro extends TamableAnimal {
     private LivingEntity findSomethingToAttack() {
         AABB searchBox = this.getBoundingBox().inflate(12.0, 6.0, 12.0);
         List<LivingEntity> targets = this.level().getEntitiesOfClass(LivingEntity.class, searchBox);
-        targets.sort(this.targetSorter); // orig :702 — GenericTargetSorter order (TF-035)
-        for (LivingEntity target : targets) {
-            if (this.isSuitableTarget(target)) return target;
-        }
-        return null;
+        // OPT-021: nearest-first pick without the full list sort; TargetSelection
+        // preserves the removed sort's order and stable-tie semantics exactly.
+        // (was: .sort orig :702 — GenericTargetSorter order (TF-035))
+        return TargetSelection.firstMatch(targets, this.targetSorter, this::isSuitableTarget);
     }
 
     @Override
@@ -514,20 +524,17 @@ public class EntitySpyro extends TamableAnimal {
     protected SoundEvent getAmbientSound() {
         if (this.isOrderedToSit()) return null;
         if (this.getActivity() != 2) return null;
-        return SoundEvent.createVariableRangeEvent(
-                ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "roar"));
+        return SND_ROAR;
     }
 
     @Override
     protected SoundEvent getHurtSound(DamageSource source) {
-        return SoundEvent.createVariableRangeEvent(
-                ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "duck_hurt"));
+        return SND_DUCK_HURT;
     }
 
     @Override
     protected SoundEvent getDeathSound() {
-        return SoundEvent.createVariableRangeEvent(
-                ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "cryo_death"));
+        return SND_CRYO_DEATH;
     }
 
     @Override

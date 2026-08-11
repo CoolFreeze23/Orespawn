@@ -51,6 +51,25 @@ import danger.orespawn.OreSpawnMod;
 import danger.orespawn.item.ItemOreSpawnArmor;
 
 public class Boyfriend extends TamableAnimal implements RangedAttackMob {
+    // OPT-011: cached SoundEvents — identical createVariableRangeEvent ids,
+    // allocated once per class instead of on every sound query.
+    private static final SoundEvent SND_B_FIGHT = SoundEvent.createVariableRangeEvent(
+            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "b_fight"));
+    private static final SoundEvent SND_B_TAUNT = SoundEvent.createVariableRangeEvent(
+            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "b_taunt"));
+    private static final SoundEvent SND_B_WOOHOO = SoundEvent.createVariableRangeEvent(
+            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "b_woohoo"));
+    private static final SoundEvent SND_B_WATER = orespawnSound("b_water");
+    private static final SoundEvent SND_B_THUNDER = orespawnSound("b_thunder");
+    private static final SoundEvent SND_B_RAIN = orespawnSound("b_rain");
+    private static final SoundEvent SND_B_DARK = orespawnSound("b_dark");
+    private static final SoundEvent SND_B_HURT = orespawnSound("b_hurt");
+    private static final SoundEvent SND_BB_HAPPY = orespawnSound("bb_happy");
+    private static final SoundEvent SND_B_HAPPY = orespawnSound("b_happy");
+    private static final SoundEvent SND_B_OW = orespawnSound("b_ow");
+    private static final SoundEvent SND_B_DEATH_BOYFRIEND = orespawnSound("b_death_boyfriend");
+    private static final SoundEvent SND_B_DEATH_SINGLE = orespawnSound("b_death_single");
+
     private static final EntityDataAccessor<Integer> DATA_SKIN =
             SynchedEntityData.defineId(Boyfriend.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Integer> DATA_VOICE =
@@ -86,6 +105,9 @@ public class Boyfriend extends TamableAnimal implements RangedAttackMob {
 
     public Boyfriend(EntityType<? extends Boyfriend> type, Level level) {
         super(type, level);
+        // OPT-009: constant speed - assert the attribute base once here instead
+        // of re-writing it every tick (same value the removed per-tick call set).
+        this.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(MOVE_SPEED);
         this.whichGuy = this.random.nextInt(MAX_SKINS);
         this.whichWetGuy = this.random.nextInt(MAX_WET_SKINS); // orig Boyfriend.java:121,157
         this.voice = this.random.nextInt(10);
@@ -206,12 +228,6 @@ public class Boyfriend extends TamableAnimal implements RangedAttackMob {
     }
 
     @Override
-    public void tick() {
-        this.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(MOVE_SPEED);
-        super.tick();
-    }
-
-    @Override
     public void aiStep() {
         super.aiStep();
         // orig Boyfriend.java:498-502 — water soaks him for 500 ticks; both
@@ -282,8 +298,7 @@ public class Boyfriend extends TamableAnimal implements RangedAttackMob {
                         if (this.fightSoundTicker <= 0) {
                             if (this.voiceEnable != 0) {
                                 this.level().playSound(null, this,
-                                        SoundEvent.createVariableRangeEvent(
-                                                ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "b_fight")),
+                                        SND_B_FIGHT,
                                         this.getSoundSource(), 0.5f, this.getVoicePitch());
                             }
                             this.fightSoundTicker = 3;
@@ -295,8 +310,7 @@ public class Boyfriend extends TamableAnimal implements RangedAttackMob {
                     if (this.tauntSoundTicker <= 0) {
                         if (this.voiceEnable != 0) {
                             this.level().playSound(null, this,
-                                    SoundEvent.createVariableRangeEvent(
-                                            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "b_taunt")),
+                                    SND_B_TAUNT,
                                     this.getSoundSource(), 0.5f, this.getVoicePitch());
                         }
                         this.tauntSoundTicker = 300;
@@ -310,8 +324,7 @@ public class Boyfriend extends TamableAnimal implements RangedAttackMob {
                     this.hadTarget = 0;
                     if (this.voiceEnable != 0) {
                         this.level().playSound(null, this,
-                                SoundEvent.createVariableRangeEvent(
-                                        ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "b_woohoo")),
+                                SND_B_WOOHOO,
                                 this.getSoundSource(), 0.4f, this.getVoicePitch());
                     }
                 }
@@ -638,19 +651,19 @@ public class Boyfriend extends TamableAnimal implements RangedAttackMob {
         }
         if (this.getRandom().nextInt(11) == 1) {
             if (this.getTarget() != null) return null; // orig :776-779
-            if (this.isInWater()) return orespawnSound("b_water"); // orig :780-782
+            if (this.isInWater()) return SND_B_WATER; // orig :780-782
             if (this.getRandom().nextInt(4) != 0) { // orig :783
                 if (this.getY() < 60.0) return null; // orig :784-786
-                if (this.level().isThundering()) return orespawnSound("b_thunder"); // orig :787-789
-                if (this.level().isRaining()) return orespawnSound("b_rain"); // orig :790-792
+                if (this.level().isThundering()) return SND_B_THUNDER; // orig :787-789
+                if (this.level().isRaining()) return SND_B_RAIN; // orig :790-792
                 if (!this.level().isDay() && this.level().canSeeSky(this.blockPosition())) { // orig :793
-                    return this.getRandom().nextInt(3) == 0 ? orespawnSound("b_dark") : null; // orig :794-798
+                    return this.getRandom().nextInt(3) == 0 ? SND_B_DARK : null; // orig :794-798
                 }
             }
             if (this.isTame()) { // orig :800-808
-                if (this.getHealth() < this.getMaxHealth()) return orespawnSound("b_hurt");
-                if (OreSpawnConfig.BOYFRIEND_BRO_MODE.get()) return orespawnSound("bb_happy"); // orig :804-806
-                return orespawnSound("b_happy");
+                if (this.getHealth() < this.getMaxHealth()) return SND_B_HURT;
+                if (OreSpawnConfig.BOYFRIEND_BRO_MODE.get()) return SND_BB_HAPPY; // orig :804-806
+                return SND_B_HAPPY;
             }
         }
         return null;
@@ -662,7 +675,7 @@ public class Boyfriend extends TamableAnimal implements RangedAttackMob {
         if (OreSpawnConfig.BOYFRIEND_BRO_MODE.get() && this.getRandom().nextInt(2) == 1) {
             return null; // orig Boyfriend.java:818-820 — bro mode drops half the "ow"s
         }
-        return orespawnSound("b_ow");
+        return SND_B_OW;
     }
 
     @Override
@@ -670,7 +683,7 @@ public class Boyfriend extends TamableAnimal implements RangedAttackMob {
         if (OreSpawnConfig.BOYFRIEND_BRO_MODE.get()) {
             return null; // orig Boyfriend.java:825-827 — bros die silently
         }
-        return this.isTame() ? orespawnSound("b_death_boyfriend") : orespawnSound("b_death_single");
+        return this.isTame() ? SND_B_DEATH_BOYFRIEND : SND_B_DEATH_SINGLE;
     }
 
     @Override

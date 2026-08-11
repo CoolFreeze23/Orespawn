@@ -36,6 +36,7 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import danger.orespawn.entity.ai.TargetSelection;
 
 public class BandP extends Monster {
     private static final EntityDataAccessor<Integer> DATA_WHAT =
@@ -52,6 +53,9 @@ public class BandP extends Monster {
 
     public BandP(EntityType<? extends BandP> type, Level level) {
         super(type, level);
+        // OPT-009: constant speed - assert the attribute base once here instead
+        // of re-writing it every tick (same value the removed per-tick call set).
+        this.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(MOVE_SPEED);
         // orig BandP.java:53 — experienceValue = 1000.
         this.xpReward = 1000;
         // TF-035: orig BandP.java:42,55 — targets sort with GenericTargetSorter
@@ -115,7 +119,6 @@ public class BandP extends Monster {
 
     @Override
     public void tick() {
-        this.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(MOVE_SPEED);
         super.tick();
         if (!this.level().isClientSide && this.whatset == 0) {
             this.whatset = 1;
@@ -242,11 +245,9 @@ public class BandP extends Monster {
         if (OreSpawnConfig.PLAY_NICELY.get()) return null;
         List<LivingEntity> list = this.level().getEntitiesOfClass(LivingEntity.class,
                 this.getBoundingBox().inflate(20.0, 6.0, 20.0));
-        list.sort(this.targetSorter);
-        for (LivingEntity candidate : list) {
-            if (isSuitableTarget(candidate)) return candidate;
-        }
-        return null;
+        // OPT-021: nearest-first pick without the full list sort; TargetSelection
+        // preserves the removed sort's order and stable-tie semantics exactly.
+        return TargetSelection.firstMatch(list, this.targetSorter, this::isSuitableTarget);
     }
 
     /**

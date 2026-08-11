@@ -32,6 +32,9 @@ public class TRex extends Monster {
 
     public TRex(EntityType<? extends TRex> type, Level level) {
         super(type, level);
+        // OPT-009: constant speed - assert the attribute base once here instead
+        // of re-writing it every tick (same value the removed per-tick call set).
+        this.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(this.moveSpeed);
         this.xpReward = 150;
     }
 
@@ -73,12 +76,6 @@ public class TRex extends Monster {
     @Override
     public boolean removeWhenFarAway(double dist) {
         return !this.isPersistenceRequired();
-    }
-
-    @Override
-    public void tick() {
-        this.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(this.moveSpeed);
-        super.tick();
     }
 
     public int mygetMaxHealth() {

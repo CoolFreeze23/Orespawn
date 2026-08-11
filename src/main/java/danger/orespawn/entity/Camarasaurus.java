@@ -36,6 +36,13 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import danger.orespawn.OreSpawnMod;
 public class Camarasaurus extends TamableAnimal {
+    // OPT-011: cached SoundEvents — identical createVariableRangeEvent ids,
+    // allocated once per class instead of on every sound query.
+    private static final SoundEvent SND_CRYO_HURT = SoundEvent.createVariableRangeEvent(
+            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "cryo_hurt"));
+    private static final SoundEvent SND_CRYO_DEATH = SoundEvent.createVariableRangeEvent(
+            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "cryo_death"));
+
     private static final int MAX_HEALTH = 20;
     private static final int NO_FOOD_FOUND_SENTINEL = 99999;
     private static final int GRAZE_INTERACTION_RANGE_SQ = 12;
@@ -48,6 +55,9 @@ public class Camarasaurus extends TamableAnimal {
 
     public Camarasaurus(EntityType<? extends Camarasaurus> type, Level level) {
         super(type, level);
+        // OPT-009: constant speed - assert the attribute base once here instead
+        // of re-writing it every tick (same value the removed per-tick call set).
+        this.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(this.moveSpeed);
         this.xpReward = 5;
         this.setOrderedToSit(false);
     }
@@ -75,12 +85,6 @@ public class Camarasaurus extends TamableAnimal {
                 .add(Attributes.MAX_HEALTH, MAX_HEALTH)
                 .add(Attributes.MOVEMENT_SPEED, 0.2)
                 .add(Attributes.ATTACK_DAMAGE, 1.0);
-    }
-
-    @Override
-    public void tick() {
-        this.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(this.moveSpeed);
-        super.tick();
     }
 
     @Override
@@ -248,14 +252,12 @@ public class Camarasaurus extends TamableAnimal {
 
     @Override
     protected SoundEvent getHurtSound(DamageSource source) {
-        return SoundEvent.createVariableRangeEvent(
-                ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "cryo_hurt"));
+        return SND_CRYO_HURT;
     }
 
     @Override
     protected SoundEvent getDeathSound() {
-        return SoundEvent.createVariableRangeEvent(
-                ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "cryo_death"));
+        return SND_CRYO_DEATH;
     }
 
     @Override

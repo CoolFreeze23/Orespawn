@@ -22,6 +22,10 @@ import net.minecraft.world.phys.Vec3;
 import danger.orespawn.OreSpawnMod;
 
 public class EntityCliffRacer extends Animal {
+    // OPT-011: cached SoundEvents — identical createVariableRangeEvent ids,
+    // allocated once per class instead of on every sound query.
+    private static final SoundEvent SND_CLIFFRACER = SoundEvent.createVariableRangeEvent(
+            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "cliffracer"));
     @Nullable
     private BlockPos currentFlightTarget = null;
 
@@ -120,8 +124,7 @@ public class EntityCliffRacer extends Animal {
     @Nullable
     @Override
     protected SoundEvent getAmbientSound() {
-        return SoundEvent.createVariableRangeEvent(
-                ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "cliffracer"));
+        return SND_CLIFFRACER;
     }
 
     @Override

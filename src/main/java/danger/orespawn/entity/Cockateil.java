@@ -34,6 +34,12 @@ import danger.orespawn.ModDimensionKeys;
 import danger.orespawn.OreSpawnMod;
 
 public class Cockateil extends Animal {
+    // OPT-011: cached SoundEvents — identical createVariableRangeEvent ids,
+    // allocated once per class instead of on every sound query.
+    private static final SoundEvent SND_BIRDS = SoundEvent.createVariableRangeEvent(
+            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "birds"));
+    private static final SoundEvent SND_DUCK_HURT = SoundEvent.createVariableRangeEvent(
+            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "duck_hurt"));
     private static final EntityDataAccessor<Integer> DATA_BIRD_TYPE =
             SynchedEntityData.defineId(Cockateil.class, EntityDataSerializers.INT);
 
@@ -221,22 +227,19 @@ public class Cockateil extends Animal {
     @Override
     protected SoundEvent getAmbientSound() {
         if (this.level().isDay() && !this.level().isRaining()) {
-            return SoundEvent.createVariableRangeEvent(
-                    ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "birds"));
+            return SND_BIRDS;
         }
         return null;
     }
 
     @Override
     protected SoundEvent getHurtSound(DamageSource source) {
-        return SoundEvent.createVariableRangeEvent(
-                ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "duck_hurt"));
+        return SND_DUCK_HURT;
     }
 
     @Override
     protected SoundEvent getDeathSound() {
-        return SoundEvent.createVariableRangeEvent(
-                ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "duck_hurt"));
+        return SND_DUCK_HURT;
     }
 
     @Override

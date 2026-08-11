@@ -30,6 +30,14 @@ import danger.orespawn.entity.ai.DragonflyHuntGoal;
  * breeding (disabled).
  */
 public class EntityDragonfly extends Animal {
+    // OPT-011: cached SoundEvents — identical createVariableRangeEvent ids,
+    // allocated once per class instead of on every sound query.
+    private static final SoundEvent SND_DRAGONFLY_LIVING = SoundEvent.createVariableRangeEvent(
+            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "dragonfly_living"));
+    private static final SoundEvent SND_DRAGONFLY_HURT = SoundEvent.createVariableRangeEvent(
+            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "dragonfly_hurt"));
+    private static final SoundEvent SND_DRAGONFLY_DEATH = SoundEvent.createVariableRangeEvent(
+            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "dragonfly_death"));
 
     /**
      * Reference to the hunt goal so {@link #hurt} can retarget the flight
@@ -103,20 +111,17 @@ public class EntityDragonfly extends Animal {
 
     @Override
     protected SoundEvent getAmbientSound() {
-        return SoundEvent.createVariableRangeEvent(
-                ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "dragonfly_living"));
+        return SND_DRAGONFLY_LIVING;
     }
 
     @Override
     protected SoundEvent getHurtSound(DamageSource source) {
-        return SoundEvent.createVariableRangeEvent(
-                ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "dragonfly_hurt"));
+        return SND_DRAGONFLY_HURT;
     }
 
     @Override
     protected SoundEvent getDeathSound() {
-        return SoundEvent.createVariableRangeEvent(
-                ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "dragonfly_death"));
+        return SND_DRAGONFLY_DEATH;
     }
 
     @Override

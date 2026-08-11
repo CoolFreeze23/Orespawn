@@ -48,6 +48,7 @@ import net.minecraft.world.BossEvent;
 import net.minecraft.network.chat.Component;
 import danger.orespawn.OreSpawnConfig;
 import danger.orespawn.OreSpawnMod;
+import danger.orespawn.entity.ai.TargetSelection;
 
 /**
  * The Nightmare — Danger Dimension apex predator.
@@ -74,6 +75,16 @@ import danger.orespawn.OreSpawnMod;
  * {@code Fscale} NBT field are still read so older saves migrate cleanly.</p>
  */
 public class PitchBlack extends Monster {
+    // OPT-011: cached SoundEvents — identical createVariableRangeEvent ids,
+    // allocated once per class instead of on every sound query.
+    private static final SoundEvent SND_MOTHRAWINGS = SoundEvent.createVariableRangeEvent(
+            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "mothrawings"));
+    private static final SoundEvent SND_PITCHBLACK_LIVING = SoundEvent.createVariableRangeEvent(
+            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "pitchblack_living"));
+    private static final SoundEvent SND_PITCHBLACK_HIT = SoundEvent.createVariableRangeEvent(
+            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "pitchblack_hit"));
+    private static final SoundEvent SND_PITCHBLACK_DEAD = SoundEvent.createVariableRangeEvent(
+            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "pitchblack_dead"));
     private static final EntityDataAccessor<Integer> DATA_ATTACKING =
             SynchedEntityData.defineId(PitchBlack.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Integer> DATA_ACTIVITY =
@@ -367,8 +378,7 @@ public class PitchBlack extends Monster {
         ++this.wingSound;
         if (this.wingSound > 20) {
             if (!this.level().isClientSide()) {
-                this.playSound(SoundEvent.createVariableRangeEvent(
-                        ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "mothrawings")), 1.0f, 1.0f);
+                this.playSound(SND_MOTHRAWINGS, 1.0f, 1.0f);
             }
             this.wingSound = 0;
         }
@@ -486,11 +496,9 @@ public class PitchBlack extends Monster {
         double verticalReach = 10.0 + scale * 4.0;
         AABB searchBox = this.getBoundingBox().inflate(horizontalReach, verticalReach, horizontalReach);
         List<LivingEntity> entities = this.level().getEntitiesOfClass(LivingEntity.class, searchBox);
-        entities.sort(this.targetSorter);
-        for (LivingEntity candidate : entities) {
-            if (isSuitableTarget(candidate)) return candidate;
-        }
-        return null;
+        // OPT-021: nearest-first pick without the full list sort; TargetSelection
+        // preserves the removed sort's order and stable-tie semantics exactly.
+        return TargetSelection.firstMatch(entities, this.targetSorter, this::isSuitableTarget);
     }
 
     private boolean isSuitableTarget(LivingEntity target) {
@@ -503,17 +511,17 @@ public class PitchBlack extends Monster {
     @Override
     protected SoundEvent getAmbientSound() {
         if (this.getRandom().nextInt(5) != 2) return null;
-        return SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "pitchblack_living"));
+        return SND_PITCHBLACK_LIVING;
     }
 
     @Override
     protected SoundEvent getHurtSound(DamageSource ds) {
-        return SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "pitchblack_hit"));
+        return SND_PITCHBLACK_HIT;
     }
 
     @Override
     protected SoundEvent getDeathSound() {
-        return SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "pitchblack_dead"));
+        return SND_PITCHBLACK_DEAD;
     }
 
     // ---- Drops ----

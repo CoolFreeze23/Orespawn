@@ -46,9 +46,20 @@ import net.minecraft.world.phys.Vec3;
 import danger.orespawn.ModEntities;
 import danger.orespawn.OreSpawnConfig;
 import danger.orespawn.OreSpawnMod;
+import danger.orespawn.entity.ai.TargetSelection;
 
 public class ThePrinceAdult extends TamableAnimal
         implements danger.orespawn.network.RiderInputPayload.RideableFlyer {
+    // OPT-011: cached SoundEvents — identical createVariableRangeEvent ids,
+    // allocated once per class instead of on every sound query.
+    private static final SoundEvent SND_MOTHRAWINGS = SoundEvent.createVariableRangeEvent(
+            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "mothrawings"));
+    private static final SoundEvent SND_KING_LIVING = SoundEvent.createVariableRangeEvent(
+            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "king_living"));
+    private static final SoundEvent SND_KING_HIT = SoundEvent.createVariableRangeEvent(
+            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "king_hit"));
+    private static final SoundEvent SND_TREX_DEATH = SoundEvent.createVariableRangeEvent(
+            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "trex_death"));
     private static final EntityDataAccessor<Integer> DATA_ATTACKING =
             SynchedEntityData.defineId(ThePrinceAdult.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Integer> DATA_ACTIVITY =
@@ -110,6 +121,9 @@ public class ThePrinceAdult extends TamableAnimal
 
     public ThePrinceAdult(EntityType<? extends ThePrinceAdult> type, Level level) {
         super(type, level);
+        // OPT-009: constant speed - assert the attribute base once here instead
+        // of re-writing it every tick (same value the removed per-tick call set).
+        this.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(this.moveSpeed);
         this.xpReward = 3000;
         this.noPhysics = false;
         this.setOrderedToSit(false);
@@ -168,7 +182,6 @@ public class ThePrinceAdult extends TamableAnimal
 
     @Override
     public void tick() {
-        this.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(this.moveSpeed);
         super.tick();
         // orig ThePrinceAdult.java:570 — any flight activity ghosts through terrain.
         this.noPhysics = this.getActivity() != 0;
@@ -182,8 +195,7 @@ public class ThePrinceAdult extends TamableAnimal
             if (this.wingSound > 30) {
                 if (!this.level().isClientSide) {
                     this.level().playSound(null, this.getX(), this.getY(), this.getZ(),
-                            SoundEvent.createVariableRangeEvent(
-                                    ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "mothrawings")),
+                            SND_MOTHRAWINGS,
                             this.getSoundSource(), 0.5f, 1.0f);
                 }
                 this.wingSound = 0;
@@ -843,11 +855,9 @@ public class ThePrinceAdult extends TamableAnimal
         if (OreSpawnConfig.PLAY_NICELY.get()) return null;
         AABB searchBox = this.getBoundingBox().inflate(32.0, 20.0, 32.0);
         List<LivingEntity> targets = this.level().getEntitiesOfClass(LivingEntity.class, searchBox);
-        targets.sort(this.targetSorter);
-        for (LivingEntity target : targets) {
-            if (this.isSuitableTarget(target)) return target;
-        }
-        return null;
+        // OPT-021: nearest-first pick without the full list sort; TargetSelection
+        // preserves the removed sort's order and stable-tie semantics exactly.
+        return TargetSelection.firstMatch(targets, this.targetSorter, this::isSuitableTarget);
     }
 
     private void transformToKing() {
@@ -991,8 +1001,7 @@ public class ThePrinceAdult extends TamableAnimal
         // while aggro (activity 1), riderless and not sitting; silent otherwise.
         if (this.isOrderedToSit()) return null;
         if (this.getActivity() == 1 && !this.isVehicle()) {
-            return SoundEvent.createVariableRangeEvent(
-                    ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "king_living"));
+            return SND_KING_LIVING;
         }
         return null;
     }
@@ -1000,15 +1009,13 @@ public class ThePrinceAdult extends TamableAnimal
     @Override
     protected SoundEvent getHurtSound(DamageSource source) {
         // orig ThePrinceAdult.java:275-277 — "orespawn:king_hit".
-        return SoundEvent.createVariableRangeEvent(
-                ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "king_hit"));
+        return SND_KING_HIT;
     }
 
     @Override
     protected SoundEvent getDeathSound() {
         // orig ThePrinceAdult.java:279-281 — "orespawn:trex_death".
-        return SoundEvent.createVariableRangeEvent(
-                ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "trex_death"));
+        return SND_TREX_DEATH;
     }
 
     @Override protected float getSoundVolume() { return 1.5f; }

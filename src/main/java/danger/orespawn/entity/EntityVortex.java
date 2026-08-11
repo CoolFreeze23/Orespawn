@@ -23,8 +23,13 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.util.Mth;
+import danger.orespawn.entity.ai.TargetSelection;
 
 public class EntityVortex extends Monster {
+    // OPT-011: cached SoundEvents — identical createVariableRangeEvent ids,
+    // allocated once per class instead of on every sound query.
+    private static final SoundEvent SND_VORTEXLIVE = SoundEvent.createVariableRangeEvent(
+            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "vortexlive"));
     private static final long DAY_LENGTH_TICKS = 24000L;
     private static final long DAYTIME_DESPAWN_BEFORE = 12000L;
     private static final double PULL_RANGE_DIST_SQ = 81.0;
@@ -70,8 +75,7 @@ public class EntityVortex extends Monster {
     @Nullable
     @Override
     protected SoundEvent getAmbientSound() {
-        return SoundEvent.createVariableRangeEvent(
-                ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "vortexlive"));
+        return SND_VORTEXLIVE;
     }
 
     @Override
@@ -81,8 +85,7 @@ public class EntityVortex extends Monster {
 
     @Override
     protected SoundEvent getDeathSound() {
-        return SoundEvent.createVariableRangeEvent(
-                ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "vortexlive"));
+        return SND_VORTEXLIVE;
     }
 
     @Override
@@ -261,11 +264,9 @@ public class EntityVortex extends Monster {
         if (danger.orespawn.OreSpawnConfig.PLAY_NICELY.get()) return null;
         List<LivingEntity> entities = this.level().getEntitiesOfClass(LivingEntity.class,
                 this.getBoundingBox().inflate(16.0, 10.0, 16.0));
-        entities.sort(new danger.orespawn.entity.ai.GenericTargetSorter(this));
-        for (LivingEntity candidate : entities) {
-            if (isSuitableTarget(candidate)) return candidate;
-        }
-        return null;
+        // OPT-021: nearest-first pick without the full list sort; TargetSelection
+        // preserves the removed sort's order and stable-tie semantics exactly.
+        return TargetSelection.firstMatch(entities, new danger.orespawn.entity.ai.GenericTargetSorter(this), this::isSuitableTarget);
     }
 
     /**

@@ -14,6 +14,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.chunk.ChunkGenerator;
+import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.NoiseBasedChunkGenerator;
 import net.minecraft.world.level.levelgen.NoiseGeneratorSettings;
 import net.minecraft.world.level.WorldGenLevel;
@@ -202,12 +203,18 @@ public class OreSpawnChunkGenerator extends NoiseBasedChunkGenerator {
 
         // orig ChunkProviderOreSpawn4.java:110 — howmany = 1 + nextInt(10)
         int attempts = 1 + random.nextInt(10);
+        BlockPos.MutableBlockPos cursor = new BlockPos.MutableBlockPos();
         for (int i = 0; i < attempts; i++) {
             int x = 2 + minX + random.nextInt(12);
             int z = 2 + minZ + random.nextInt(12);
-            // orig ChunkProviderOreSpawn4.java:123 — scan Y20 down to Y3 for grass below
-            for (int y = 20; y > 2; y--) {
-                if (chunk.getBlockState(new BlockPos(x, y - 1, z)).is(Blocks.GRASS_BLOCK)) {
+            // orig ChunkProviderOreSpawn4.java:123 — scan Y20 down to Y3 for grass below.
+            // OPT-025: reuse one cursor and cap the start at one above the WG
+            // heightmap — a hit needs a non-air block at y-1, so every level
+            // above heightmap+1 was a guaranteed miss (the y loop rolls no
+            // randomness, so skipping it is output-identical).
+            int startY = Math.min(20, chunk.getHeight(Heightmap.Types.WORLD_SURFACE_WG, x, z) + 1);
+            for (int y = startY; y > 2; y--) {
+                if (chunk.getBlockState(cursor.set(x, y - 1, z)).is(Blocks.GRASS_BLOCK)) {
                     ScragglyTrees.scragglyTreeWithBranches(chunk, random, x, y, z);
                     break;
                 }
@@ -229,12 +236,16 @@ public class OreSpawnChunkGenerator extends NoiseBasedChunkGenerator {
         // orig ChunkProviderOreSpawn6.java:336-339 — count rolled BEFORE the 1/4 gate
         int attempts = 1 + random.nextInt(5);
         if (random.nextInt(4) != 0) return;
+        BlockPos.MutableBlockPos cursor = new BlockPos.MutableBlockPos();
         for (int i = 0; i < attempts; i++) {
             int x = 2 + minX + random.nextInt(12);
             int z = 2 + minZ + random.nextInt(12);
-            // orig ChunkProviderOreSpawn6.java:352 — scan Y120 down to Y51
-            for (int y = 120; y > 50; y--) {
-                if (chunk.getBlockState(new BlockPos(x, y - 1, z)).is(Blocks.GRASS_BLOCK)) {
+            // orig ChunkProviderOreSpawn6.java:352 — scan Y120 down to Y51.
+            // OPT-025: same neutral heightmap cap + cursor reuse as
+            // applyIslandsSurface (the y loop rolls no randomness).
+            int startY = Math.min(120, chunk.getHeight(Heightmap.Types.WORLD_SURFACE_WG, x, z) + 1);
+            for (int y = startY; y > 50; y--) {
+                if (chunk.getBlockState(cursor.set(x, y - 1, z)).is(Blocks.GRASS_BLOCK)) {
                     ScragglyTrees.scragglyTreeWithBranches(chunk, random, x, y, z);
                     break;
                 }
@@ -290,6 +301,18 @@ public class OreSpawnChunkGenerator extends NoiseBasedChunkGenerator {
      * Also fills in shallow water (Y >= 56) with crystal stone to reduce the
      * oversized oceans that vanilla overworld noise creates. The original 1.7.10
      * dimension had custom noise that generated mostly land.
+     *
+     * <p><b>OPT-008:</b> the old implementation walked every column from the
+     * build ceiling and ran a separate {@code fillShallowWater} pre-pass over
+     * the same column (~98k {@code new BlockPos} + full-height state reads per
+     * chunk). Now each column is walked once, starting at the
+     * {@code WORLD_SURFACE_WG} heightmap (the highest non-air block — water
+     * counts as non-air — so every skipped level was a guaranteed
+     * {@code isAir() -> continue} iteration), with one reusable cursor. The
+     * heightmap is maintained by {@code ProtoChunk.setBlockState}, so our own
+     * writes can never leave it stale-low. The shallow-water fill is fused in
+     * as an inline state machine; block output is identical to the old
+     * fill-then-replace sequence (see inline comments for the invariants).</p>
      */
     private void replaceTerrain(ChunkAccess chunk) {
         BlockState crystalGrass = ModBlocks.CRYSTAL_GRASS.get().defaultBlockState();
@@ -297,18 +320,62 @@ public class OreSpawnChunkGenerator extends NoiseBasedChunkGenerator {
         BlockState air = Blocks.AIR.defaultBlockState();
         int minX = chunk.getPos().getMinBlockX();
         int minZ = chunk.getPos().getMinBlockZ();
+        int minY = chunk.getMinBuildHeight();
+        BlockPos.MutableBlockPos cursor = new BlockPos.MutableBlockPos();
 
         for (int x = 0; x < 16; x++) {
             for (int z = 0; z < 16; z++) {
                 int worldX = minX + x;
                 int worldZ = minZ + z;
 
-                fillShallowWater(chunk, worldX, worldZ, crystalStone, crystalGrass, air);
+                int top = chunk.getHeight(Heightmap.Types.WORLD_SURFACE_WG, worldX, worldZ);
 
+                // OPT-008: shallow-water fill state machine (the old
+                // fillShallowWater pre-pass, fused into this descent). It only
+                // engages at Y<=70 — the old pass started its scan at Y70, and
+                // any levels between the heightmap and Y70 were air
+                // fall-throughs for it anyway. Its writes all land strictly
+                // above the seabed, inside the water/air span that the
+                // replacement logic below never writes to (pre-fill those
+                // levels are water/air and get skipped; post-fill they are
+                // crystal blocks the old replacement pass matched nothing on),
+                // so the write set is identical to the old two-pass order.
                 boolean hitSurface = false;
-                for (int y = chunk.getMaxBuildHeight() - 1; y >= chunk.getMinBuildHeight(); y--) {
-                    BlockPos pos = new BlockPos(worldX, y, worldZ);
-                    BlockState state = chunk.getBlockState(pos);
+                int waterTopY = -1;
+                boolean waterScanDone = false;
+
+                for (int y = top; y >= minY; y--) {
+                    BlockState state = chunk.getBlockState(cursor.set(worldX, y, worldZ));
+
+                    if (!waterScanDone && y <= 70) {
+                        if (state.is(Blocks.WATER)) {
+                            if (waterTopY == -1) waterTopY = y;
+                        } else if (!state.isAir()) {
+                            // First non-air at/below Y70: the old pre-pass
+                            // stopped here — it is the seabed if water was
+                            // seen above, otherwise there is nothing to fill.
+                            if (waterTopY != -1 && y >= 56) {
+                                // Shallow sea: fill the water column with
+                                // crystal stone, cap it with crystal grass and
+                                // clear one water block above the cap —
+                                // exactly the old fillShallowWater writes.
+                                for (int fy = y + 1; fy <= waterTopY; fy++) {
+                                    chunk.setBlockState(cursor.set(worldX, fy, worldZ), crystalStone, false);
+                                }
+                                chunk.setBlockState(cursor.set(worldX, waterTopY, worldZ), crystalGrass, false);
+                                if (chunk.getBlockState(cursor.set(worldX, waterTopY + 1, worldZ)).is(Blocks.WATER)) {
+                                    chunk.setBlockState(cursor, air, false);
+                                }
+                                // The old replacement pass ran after the fill
+                                // and saw the crystal-grass cap as this
+                                // column's first non-air block, so the seabed
+                                // below it was never surface-converted —
+                                // mirror that by marking the surface as hit.
+                                hitSurface = true;
+                            }
+                            waterScanDone = true;
+                        }
+                    }
 
                     if (state.isAir() || state.is(Blocks.WATER) || state.is(Blocks.LAVA)) {
                         continue;
@@ -322,56 +389,16 @@ public class OreSpawnChunkGenerator extends NoiseBasedChunkGenerator {
                         hitSurface = true;
                         if (state.is(Blocks.GRASS_BLOCK) || state.is(Blocks.SAND)
                                 || state.is(Blocks.MYCELIUM) || state.is(Blocks.DIRT)) {
-                            chunk.setBlockState(pos, crystalGrass, false);
+                            chunk.setBlockState(cursor.set(worldX, y, worldZ), crystalGrass, false);
                             continue;
                         }
                     }
 
                     if (isReplaceableStone(state)) {
-                        chunk.setBlockState(pos, crystalStone, false);
+                        chunk.setBlockState(cursor.set(worldX, y, worldZ), crystalStone, false);
                     }
                 }
             }
-        }
-    }
-
-    /**
-     * Fills in shallow water columns with crystal stone + grass.
-     * Scans downward; if water is found at Y >= 56, fills the entire water
-     * column with crystal stone and places crystal grass on top.
-     * Leaves deep water (seabed below Y 56) as actual water features.
-     */
-    private void fillShallowWater(ChunkAccess chunk, int worldX, int worldZ,
-                                   BlockState crystalStone, BlockState crystalGrass, BlockState air) {
-        int seabedY = -1;
-        int waterTopY = -1;
-
-        for (int y = 70; y >= chunk.getMinBuildHeight(); y--) {
-            BlockPos pos = new BlockPos(worldX, y, worldZ);
-            BlockState state = chunk.getBlockState(pos);
-            if (state.is(Blocks.WATER)) {
-                if (waterTopY == -1) waterTopY = y;
-                continue;
-            }
-            if (waterTopY != -1 && !state.isAir()) {
-                seabedY = y;
-                break;
-            }
-            if (!state.isAir()) break;
-        }
-
-        if (waterTopY == -1 || seabedY == -1) return;
-        if (seabedY < 56) return;
-
-        for (int y = seabedY + 1; y <= waterTopY; y++) {
-            BlockPos pos = new BlockPos(worldX, y, worldZ);
-            chunk.setBlockState(pos, crystalStone, false);
-        }
-        BlockPos topPos = new BlockPos(worldX, waterTopY, worldZ);
-        chunk.setBlockState(topPos, crystalGrass, false);
-        BlockPos abovePos = new BlockPos(worldX, waterTopY + 1, worldZ);
-        if (chunk.getBlockState(abovePos).is(Blocks.WATER)) {
-            chunk.setBlockState(abovePos, air, false);
         }
     }
 
@@ -556,6 +583,11 @@ public class OreSpawnChunkGenerator extends NoiseBasedChunkGenerator {
         double d4 = posY + random.nextInt(3) - 2;
         double d5 = posY + random.nextInt(3) - 2;
 
+        // OPT-025: one reusable cursor per vein instead of a BlockPos per
+        // probed cell; identity compare — BlockState has no equals override,
+        // so == is exactly what .equals() did on interned states.
+        BlockPos.MutableBlockPos cursor = new BlockPos.MutableBlockPos();
+
         for (int l = 0; l <= veinSize; l++) {
             double cx = d0 + (d1 - d0) * l / veinSize;
             double cy = d4 + (d5 - d4) * l / veinSize;
@@ -581,9 +613,8 @@ public class OreSpawnChunkGenerator extends NoiseBasedChunkGenerator {
                         double dz2 = (bz + 0.5 - cz) / (xr / 2.0);
                         if (dx2 * dx2 + dy2 * dy2 + dz2 * dz2 >= 1.0) continue;
                         if (!isInChunk(chunk, bx, bz)) continue;
-                        BlockPos p = new BlockPos(bx, by, bz);
-                        if (chunk.getBlockState(p).equals(targetBlock)) {
-                            chunk.setBlockState(p, newBlock, false);
+                        if (chunk.getBlockState(cursor.set(bx, by, bz)) == targetBlock) {
+                            chunk.setBlockState(cursor, newBlock, false);
                         }
                     }
                 }
@@ -610,14 +641,20 @@ public class OreSpawnChunkGenerator extends NoiseBasedChunkGenerator {
         int minX = chunk.getPos().getMinBlockX();
         int minZ = chunk.getPos().getMinBlockZ();
 
+        // OPT-025: one reusable cursor instead of two BlockPos per probed
+        // level; start one above the WG heightmap (a hit needs non-air at
+        // py-1, so higher levels were guaranteed misses; the py loop rolls no
+        // randomness). BlockState has no equals override, so == is the exact
+        // interned-state comparison .equals() compiled to.
+        BlockPos.MutableBlockPos cursor = new BlockPos.MutableBlockPos();
         for (int i = 0; i < howmany; i++) {
             int px = minX + random.nextInt(16);
             int pz = minZ + random.nextInt(16);
-            for (int py = 128; py > 40; py--) {
-                BlockPos pos = new BlockPos(px, py, pz);
-                BlockPos below = new BlockPos(px, py - 1, pz);
-                if (chunk.getBlockState(pos).isAir() && chunk.getBlockState(below).equals(crystalGrass)) {
-                    chunk.setBlockState(pos, flower, false);
+            int startY = Math.min(128, chunk.getHeight(Heightmap.Types.WORLD_SURFACE_WG, px, pz) + 1);
+            for (int py = startY; py > 40; py--) {
+                if (chunk.getBlockState(cursor.set(px, py, pz)).isAir()
+                        && chunk.getBlockState(cursor.set(px, py - 1, pz)) == crystalGrass) {
+                    chunk.setBlockState(cursor.set(px, py, pz), flower, false);
                     break;
                 }
             }
@@ -633,14 +670,17 @@ public class OreSpawnChunkGenerator extends NoiseBasedChunkGenerator {
         int minX = chunk.getPos().getMinBlockX();
         int minZ = chunk.getPos().getMinBlockZ();
 
+        // OPT-025: cursor reuse + heightmap start + identity compare, same
+        // neutral rationale as placeCrystalFlowers.
+        BlockPos.MutableBlockPos cursor = new BlockPos.MutableBlockPos();
         for (int i = 0; i < 5; i++) {
             int px = minX + random.nextInt(16);
             int pz = minZ + random.nextInt(16);
-            for (int py = 128; py > 40; py--) {
-                BlockPos pos = new BlockPos(px, py, pz);
-                BlockPos below = new BlockPos(px, py - 1, pz);
-                if (chunk.getBlockState(pos).isAir() && chunk.getBlockState(below).equals(crystalGrass)) {
-                    chunk.setBlockState(pos, rice, false);
+            int startY = Math.min(128, chunk.getHeight(Heightmap.Types.WORLD_SURFACE_WG, px, pz) + 1);
+            for (int py = startY; py > 40; py--) {
+                if (chunk.getBlockState(cursor.set(px, py, pz)).isAir()
+                        && chunk.getBlockState(cursor.set(px, py - 1, pz)) == crystalGrass) {
+                    chunk.setBlockState(cursor.set(px, py, pz), rice, false);
                     break;
                 }
             }
@@ -656,14 +696,17 @@ public class OreSpawnChunkGenerator extends NoiseBasedChunkGenerator {
         int minX = chunk.getPos().getMinBlockX();
         int minZ = chunk.getPos().getMinBlockZ();
 
+        // OPT-025: cursor reuse + heightmap start + identity compare, same
+        // neutral rationale as placeCrystalFlowers.
+        BlockPos.MutableBlockPos cursor = new BlockPos.MutableBlockPos();
         for (int i = 0; i < 5; i++) {
             int px = minX + random.nextInt(16);
             int pz = minZ + random.nextInt(16);
-            for (int py = 128; py > 40; py--) {
-                BlockPos pos = new BlockPos(px, py, pz);
-                BlockPos below = new BlockPos(px, py - 1, pz);
-                if (chunk.getBlockState(pos).isAir() && chunk.getBlockState(below).equals(crystalGrass)) {
-                    chunk.setBlockState(pos, quinoa, false);
+            int startY = Math.min(128, chunk.getHeight(Heightmap.Types.WORLD_SURFACE_WG, px, pz) + 1);
+            for (int py = startY; py > 40; py--) {
+                if (chunk.getBlockState(cursor.set(px, py, pz)).isAir()
+                        && chunk.getBlockState(cursor.set(px, py - 1, pz)) == crystalGrass) {
+                    chunk.setBlockState(cursor.set(px, py, pz), quinoa, false);
                     break;
                 }
             }
@@ -679,14 +722,17 @@ public class OreSpawnChunkGenerator extends NoiseBasedChunkGenerator {
         int minX = chunk.getPos().getMinBlockX();
         int minZ = chunk.getPos().getMinBlockZ();
 
+        // OPT-025: cursor reuse + heightmap start + identity compare, same
+        // neutral rationale as placeCrystalFlowers (write goes to py-1 here).
+        BlockPos.MutableBlockPos cursor = new BlockPos.MutableBlockPos();
         for (int i = 0; i < 3; i++) {
             int px = minX + random.nextInt(16);
             int pz = minZ + random.nextInt(16);
-            for (int py = 100; py > 50; py--) {
-                BlockPos pos = new BlockPos(px, py, pz);
-                BlockPos below = new BlockPos(px, py - 1, pz);
-                if (chunk.getBlockState(pos).isAir() && chunk.getBlockState(below).equals(crystalGrass)) {
-                    chunk.setBlockState(below, termiteBlock, false);
+            int startY = Math.min(100, chunk.getHeight(Heightmap.Types.WORLD_SURFACE_WG, px, pz) + 1);
+            for (int py = startY; py > 50; py--) {
+                if (chunk.getBlockState(cursor.set(px, py, pz)).isAir()
+                        && chunk.getBlockState(cursor.set(px, py - 1, pz)) == crystalGrass) {
+                    chunk.setBlockState(cursor, termiteBlock, false);
                     break;
                 }
             }

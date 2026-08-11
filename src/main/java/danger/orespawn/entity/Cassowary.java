@@ -25,10 +25,18 @@ import danger.orespawn.OreSpawnMod;
 import danger.orespawn.ModItems;
 
 public class Cassowary extends Animal {
+    // OPT-011: cached SoundEvents — identical createVariableRangeEvent ids,
+    // allocated once per class instead of on every sound query.
+    private static final SoundEvent SND_DUCK_HURT = SoundEvent.createVariableRangeEvent(
+            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "duck_hurt"));
+
     private final float moveSpeed = 0.25f;
 
     public Cassowary(EntityType<? extends Cassowary> type, Level level) {
         super(type, level);
+        // OPT-009: constant speed - assert the attribute base once here instead
+        // of re-writing it every tick (same value the removed per-tick call set).
+        this.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(this.moveSpeed);
         this.xpReward = 5;
     }
 
@@ -52,12 +60,6 @@ public class Cassowary extends Animal {
     }
 
     @Override
-    public void tick() {
-        this.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(this.moveSpeed);
-        super.tick();
-    }
-
-    @Override
     protected void customServerAiStep() {
         if (this.random.nextInt(200) == 1) {
             this.setTarget(null);
@@ -72,14 +74,12 @@ public class Cassowary extends Animal {
 
     @Override
     protected SoundEvent getHurtSound(DamageSource source) {
-        return SoundEvent.createVariableRangeEvent(
-                ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "duck_hurt"));
+        return SND_DUCK_HURT;
     }
 
     @Override
     protected SoundEvent getDeathSound() {
-        return SoundEvent.createVariableRangeEvent(
-                ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "duck_hurt"));
+        return SND_DUCK_HURT;
     }
 
     @Override

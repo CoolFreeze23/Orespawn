@@ -38,8 +38,17 @@ import danger.orespawn.OreSpawnMod;
 import danger.orespawn.entity.ai.GenericTargetSorter;
 import danger.orespawn.util.MyUtils;
 import net.minecraft.world.entity.npc.Villager;
+import danger.orespawn.entity.ai.TargetSelection;
 
 public class Crab extends Monster {
+    // OPT-011: cached SoundEvents — identical createVariableRangeEvent ids,
+    // allocated once per class instead of on every sound query.
+    private static final SoundEvent SND_SCORPION_ATTACK = SoundEvent.createVariableRangeEvent(
+            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "scorpion_attack"));
+    private static final SoundEvent SND_SCORPION_LIVING = SoundEvent.createVariableRangeEvent(
+            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "scorpion_living"));
+    private static final SoundEvent SND_LEAVES_HIT = SoundEvent.createVariableRangeEvent(
+            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "leaves_hit"));
     private static final EntityDataAccessor<Integer> DATA_ATTACKING =
             SynchedEntityData.defineId(Crab.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Integer> DATA_SCALE =
@@ -53,6 +62,14 @@ public class Crab extends Monster {
     private static final double PLAYER_VERTICAL_KNOCKBACK_MULTIPLIER = 2.0;
     /** Scale whose stats were last pushed into the live attributes; -1 = never. */
     private float lastAppliedStatScale = -1.0f;
+    /**
+     * OPT-009: the crab's speed genuinely varies (water/land × growth scale), so
+     * the per-tick write stays, but the AttributeInstance is resolved once here
+     * instead of via a map lookup every tick. Attribute instances are created
+     * with the entity and live exactly as long as it does (a dimension change
+     * constructs a fresh entity), so this reference can never go stale.
+     */
+    private final net.minecraft.world.entity.ai.attributes.AttributeInstance movementSpeedAttribute;
 
     public Crab(EntityType<? extends Crab> type, Level level) {
         super(type, level);
@@ -60,6 +77,7 @@ public class Crab extends Monster {
         // TF-035: orig Crab.java:43,58 — scans sort with GenericTargetSorter
         // (creeper-halved / big-silhouette-prioritized), not plain distance.
         this.targetSorter = new GenericTargetSorter(this);
+        this.movementSpeedAttribute = this.getAttribute(Attributes.MOVEMENT_SPEED);
     }
 
     @Override
@@ -179,7 +197,8 @@ public class Crab extends Monster {
     @Override
     public void tick() {
         this.moveSpeed = this.isInWater() ? 0.95f : 0.55f;
-        this.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(this.moveSpeed * this.getCrabScale());
+        // OPT-009: cached instance; setBaseValue itself no-ops when unchanged.
+        this.movementSpeedAttribute.setBaseValue(this.moveSpeed * this.getCrabScale());
         if (!this.level().isClientSide && this.getCrabScale() != this.lastAppliedStatScale) {
             applyScaleStats();
         }
@@ -265,9 +284,10 @@ public class Crab extends Monster {
                         this.doHurtTarget(currentTarget);
                         // orig Crab.java:358-364 — scorpion_attack 1-in-3, else
                         // scorpion_living; vol 0.75, pitch 1.5, at the target.
-                        SoundEvent swingSound = SoundEvent.createVariableRangeEvent(
-                                ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID,
-                                        this.getRandom().nextInt(3) == 1 ? "scorpion_attack" : "scorpion_living"));
+                        // OPT-011: same 1-in-3 pick, cached events instead of a
+                        // fresh SoundEvent + ResourceLocation per swing.
+                        SoundEvent swingSound = this.getRandom().nextInt(3) == 1
+                                ? SND_SCORPION_ATTACK : SND_SCORPION_LIVING;
                         this.level().playSound(null, currentTarget.getX(), currentTarget.getY(),
                                 currentTarget.getZ(), swingSound, this.getSoundSource(), 0.75f, 1.5f);
                     }
@@ -319,11 +339,9 @@ public class Crab extends Monster {
         if (danger.orespawn.OreSpawnConfig.PLAY_NICELY.get()) return null;
         List<LivingEntity> list = this.level().getEntitiesOfClass(LivingEntity.class,
                 this.getBoundingBox().inflate(16.0, 6.0, 16.0));
-        list.sort(this.targetSorter);
-        for (LivingEntity candidate : list) {
-            if (isSuitableTarget(candidate)) return candidate;
-        }
-        return null;
+        // OPT-021: nearest-first pick without the full list sort; TargetSelection
+        // preserves the removed sort's order and stable-tie semantics exactly.
+        return TargetSelection.firstMatch(list, this.targetSorter, this::isSuitableTarget);
     }
 
     /**
@@ -356,8 +374,7 @@ public class Crab extends Monster {
 
     @Override
     protected SoundEvent getHurtSound(DamageSource source) {
-        return SoundEvent.createVariableRangeEvent(
-                ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "leaves_hit"));
+        return SND_LEAVES_HIT;
     }
 
     @Override

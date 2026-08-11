@@ -30,8 +30,17 @@ import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.monster.Spider;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import danger.orespawn.entity.ai.TargetSelection;
 
 public class EntityScorpion extends Monster {
+    // OPT-011: cached SoundEvents — identical createVariableRangeEvent ids,
+    // allocated once per class instead of on every sound query.
+    private static final SoundEvent SND_SCORPION_HIT = SoundEvent.createVariableRangeEvent(
+            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "scorpion_hit"));
+    private static final SoundEvent SND_CRYO_DEATH = SoundEvent.createVariableRangeEvent(
+            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "cryo_death"));
+    private static final SoundEvent SND_SCORPION_ATTACK = SoundEvent.createVariableRangeEvent(
+            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "scorpion_attack"));
     private static final EntityDataAccessor<Integer> DATA_ATTACKING =
             SynchedEntityData.defineId(EntityScorpion.class, EntityDataSerializers.INT);
 
@@ -93,14 +102,12 @@ public class EntityScorpion extends Monster {
 
     @Override
     protected SoundEvent getHurtSound(DamageSource source) {
-        return SoundEvent.createVariableRangeEvent(
-                ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "scorpion_hit"));
+        return SND_SCORPION_HIT;
     }
 
     @Override
     protected SoundEvent getDeathSound() {
-        return SoundEvent.createVariableRangeEvent(
-                ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "cryo_death"));
+        return SND_CRYO_DEATH;
     }
 
     @Override
@@ -134,8 +141,7 @@ public class EntityScorpion extends Monster {
         boolean hit = super.doHurtTarget(target);
         if (this.random.nextInt(3) == 1) {
             this.level().playSound(null, target.getX(), target.getY(), target.getZ(),
-                    SoundEvent.createVariableRangeEvent(
-                            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "scorpion_attack")),
+                    SND_SCORPION_ATTACK,
                     this.getSoundSource(), 0.75f, 1.5f);
         }
         return hit;
@@ -159,11 +165,9 @@ public class EntityScorpion extends Monster {
         // TF-035: orig Scorpion.java:44 (TargetSorter field), :55 (ctor), :260
         // (Collections.sort) — candidates rank by GenericTargetSorter
         // (creeper-halved / big-silhouette-first), not plain distance.
-        entities.sort(new GenericTargetSorter(this));
-        for (LivingEntity candidate : entities) {
-            if (isSuitableTarget(candidate)) return candidate;
-        }
-        return null;
+        // OPT-021: nearest-first pick without the full list sort; TargetSelection
+        // preserves the removed sort's order and stable-tie semantics exactly.
+        return TargetSelection.firstMatch(entities, new GenericTargetSorter(this), this::isSuitableTarget);
     }
 
     /**

@@ -25,8 +25,15 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.Vec3;
+import danger.orespawn.entity.ai.TargetSelection;
 
 public class CloudShark extends Monster {
+    // OPT-011: cached SoundEvents — identical createVariableRangeEvent ids,
+    // allocated once per class instead of on every sound query.
+    private static final SoundEvent SND_LITTLE_SPLAT = SoundEvent.createVariableRangeEvent(
+            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "little_splat"));
+    private static final SoundEvent SND_BIG_SPLAT = SoundEvent.createVariableRangeEvent(
+            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "big_splat"));
     private static final int MIN_CRUISE_ALTITUDE = 120;
     private static final int MAX_CRUISE_ALTITUDE = 140;
     private static final int ALTITUDE_BIAS_UP = 2;
@@ -160,11 +167,10 @@ public class CloudShark extends Monster {
         if (OreSpawnConfig.PLAY_NICELY.get()) return null; // orig :246-248
         List<LivingEntity> candidates = this.level().getEntitiesOfClass(LivingEntity.class,
                 this.getBoundingBox().inflate(12.0, 10.0, 12.0)); // orig :249
-        candidates.sort(this.targetSorter); // orig :250
-        for (LivingEntity candidate : candidates) {
-            if (this.isSuitableTarget(candidate)) return candidate;
-        }
-        return null;
+        // OPT-021: nearest-first pick without the full list sort; TargetSelection
+        // preserves the removed sort's order and stable-tie semantics exactly.
+        // (was: .sort orig :250)
+        return TargetSelection.firstMatch(candidates, this.targetSorter, this::isSuitableTarget);
     }
 
     /**
@@ -199,14 +205,12 @@ public class CloudShark extends Monster {
 
     @Override
     protected SoundEvent getHurtSound(DamageSource source) {
-        return SoundEvent.createVariableRangeEvent(
-                ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "little_splat"));
+        return SND_LITTLE_SPLAT;
     }
 
     @Override
     protected SoundEvent getDeathSound() {
-        return SoundEvent.createVariableRangeEvent(
-                ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "big_splat"));
+        return SND_BIG_SPLAT;
     }
 
     @Override

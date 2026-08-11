@@ -25,6 +25,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.resources.ResourceLocation;
 import danger.orespawn.OreSpawnMod;
+import danger.orespawn.entity.ai.TargetSelection;
 
 /**
  * Robot1 — RoboSpinner role.
@@ -38,6 +39,14 @@ import danger.orespawn.OreSpawnMod;
  * detonation coming. Registry ID kept as "robot_1" for save compat.
  */
 public class Robot1 extends Monster {
+    // OPT-011: cached SoundEvents — identical createVariableRangeEvent ids,
+    // allocated once per class instead of on every sound query.
+    private static final SoundEvent SND_KYUUBI_LIVING = SoundEvent.createVariableRangeEvent(
+            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "kyuubi_living"));
+    private static final SoundEvent SND_SCORPION_HIT = SoundEvent.createVariableRangeEvent(
+            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "scorpion_hit"));
+    private static final SoundEvent SND_ROBOT1_DEATH = SoundEvent.createVariableRangeEvent(
+            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "robot1_death"));
     private static final EntityDataAccessor<Integer> DATA_ATTACKING =
             SynchedEntityData.defineId(Robot1.class, EntityDataSerializers.INT);
 
@@ -131,11 +140,9 @@ public class Robot1 extends Monster {
     private LivingEntity findSomethingToAttack() {
         AABB searchBox = this.getBoundingBox().inflate(8.0, 3.0, 8.0);
         List<LivingEntity> entities = this.level().getEntitiesOfClass(LivingEntity.class, searchBox);
-        entities.sort(this.targetSorter);
-        for (LivingEntity e : entities) {
-            if (isSuitableTarget(e)) return e;
-        }
-        return null;
+        // OPT-021: nearest-first pick without the full list sort; TargetSelection
+        // preserves the removed sort's order and stable-tie semantics exactly.
+        return TargetSelection.firstMatch(entities, this.targetSorter, this::isSuitableTarget);
     }
 
     private boolean isSuitableTarget(LivingEntity target) {
@@ -147,17 +154,17 @@ public class Robot1 extends Monster {
 
     @Override
     protected SoundEvent getAmbientSound() {
-        return SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "kyuubi_living"));
+        return SND_KYUUBI_LIVING;
     }
 
     @Override
     protected SoundEvent getHurtSound(DamageSource ds) {
-        return SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "scorpion_hit"));
+        return SND_SCORPION_HIT;
     }
 
     @Override
     protected SoundEvent getDeathSound() {
-        return SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "robot1_death"));
+        return SND_ROBOT1_DEATH;
     }
 
     /** orig Robot1.java:226-234 — y>=50; darkness; night. */

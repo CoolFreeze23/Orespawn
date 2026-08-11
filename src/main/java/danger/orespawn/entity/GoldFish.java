@@ -23,6 +23,10 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.Vec3;
 
 public class GoldFish extends Animal {
+    // OPT-011: cached SoundEvents — identical createVariableRangeEvent ids,
+    // allocated once per class instead of on every sound query.
+    private static final SoundEvent SND_LITTLE_SPLAT = SoundEvent.createVariableRangeEvent(
+            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "little_splat"));
     private static final int MAX_HEALTH = 6;
     private static final int LOW_ALTITUDE_Y = 120;
     private static final int HIGH_ALTITUDE_Y = 140;
@@ -124,8 +128,7 @@ public class GoldFish extends Animal {
 
     @Override
     protected SoundEvent getDeathSound() {
-        return SoundEvent.createVariableRangeEvent(
-                ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "little_splat"));
+        return SND_LITTLE_SPLAT;
     }
 
     @Override

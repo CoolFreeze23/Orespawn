@@ -43,8 +43,15 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import danger.orespawn.ModEntities;
 import danger.orespawn.OreSpawnMod;
+import danger.orespawn.entity.ai.TargetSelection;
 
 public class Lizard extends TamableAnimal {
+    // OPT-011: cached SoundEvents — identical createVariableRangeEvent ids,
+    // allocated once per class instead of on every sound query.
+    private static final SoundEvent SND_ALO_HURT = SoundEvent.createVariableRangeEvent(
+            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "alo_hurt"));
+    private static final SoundEvent SND_ALO_DEATH = SoundEvent.createVariableRangeEvent(
+            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "alo_death"));
     private static final EntityDataAccessor<Byte> ATTACKING =
             SynchedEntityData.defineId(Lizard.class, EntityDataSerializers.BYTE);
 
@@ -139,11 +146,9 @@ public class Lizard extends TamableAnimal {
 
         List<LivingEntity> entities = this.level().getEntitiesOfClass(LivingEntity.class,
                 this.getBoundingBox().inflate(12.0, 4.0, 12.0));
-        entities.sort(this.targetSorter);
-        for (LivingEntity targetEntity : entities) {
-            if (this.isSuitableTarget(targetEntity)) return targetEntity;
-        }
-        return null;
+        // OPT-021: nearest-first pick without the full list sort; TargetSelection
+        // preserves the removed sort's order and stable-tie semantics exactly.
+        return TargetSelection.firstMatch(entities, this.targetSorter, this::isSuitableTarget);
     }
 
     // orig Lizard.java:175-236 scan_it seeks water/flowing_water blocks (field_150355_j/field_150358_i), not fire
@@ -234,12 +239,12 @@ public class Lizard extends TamableAnimal {
 
     @Override
     protected SoundEvent getHurtSound(DamageSource source) {
-        return SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "alo_hurt"));
+        return SND_ALO_HURT;
     }
 
     @Override
     protected SoundEvent getDeathSound() {
-        return SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "alo_death"));
+        return SND_ALO_DEATH;
     }
 
     @Override

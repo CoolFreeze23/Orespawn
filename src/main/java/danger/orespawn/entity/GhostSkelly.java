@@ -29,7 +29,13 @@ import danger.orespawn.OreSpawnMod;
  * 1.7.10 -> 1.21.1 monster-category upgrade.
  */
 public class GhostSkelly extends AmbientCreature {
+    // OPT-011: cached SoundEvents — identical createVariableRangeEvent ids,
+    // allocated once per class instead of on every sound query.
+    private static final SoundEvent SND_CHAIN_RATTLES = SoundEvent.createVariableRangeEvent(
+            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "chain_rattles"));
     private static final double CONTACT_DAMAGE_RANGE_SQ = 1.8 * 1.8;
+    /** OPT-017: hoisted out of the per-tick fallback poll (was Math.sqrt every idle tick). */
+    private static final double CONTACT_DAMAGE_RANGE = Math.sqrt(CONTACT_DAMAGE_RANGE_SQ);
     private static final int ATTACK_COOLDOWN_TICKS = 20;
 
     private BlockPos currentFlightTarget = null;
@@ -87,7 +93,10 @@ public class GhostSkelly extends AmbientCreature {
         if (this.attackCooldown == 0) {
             LivingEntity aggroTarget = this.getTarget();
             if (aggroTarget == null) {
-                aggroTarget = this.level().getNearestPlayer(this, Math.sqrt(CONTACT_DAMAGE_RANGE_SQ));
+                // OPT-017: see Ghost.java — fresh per-tick poll kept (candidate
+                // caching or throttling would be behavior-affecting); only the
+                // constant sqrt was hoisted.
+                aggroTarget = this.level().getNearestPlayer(this, CONTACT_DAMAGE_RANGE);
             }
             if (aggroTarget != null && aggroTarget.isAlive()
                     && this.distanceToSqr(aggroTarget) <= CONTACT_DAMAGE_RANGE_SQ) {
@@ -149,7 +158,7 @@ public class GhostSkelly extends AmbientCreature {
     @Override
     protected SoundEvent getAmbientSound() {
         if (this.random.nextInt(2) == 0) {
-            return SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "chain_rattles"));
+            return SND_CHAIN_RATTLES;
         }
         return null;
     }

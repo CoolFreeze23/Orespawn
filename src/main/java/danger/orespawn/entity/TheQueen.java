@@ -43,6 +43,7 @@ import danger.orespawn.ModEntities;
 import danger.orespawn.ModSounds;
 import danger.orespawn.OreSpawnConfig;
 import danger.orespawn.util.MyUtils;
+import danger.orespawn.entity.ai.TargetSelection;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.AnimatableManager;
@@ -1301,17 +1302,24 @@ public class TheQueen extends Monster implements GeoEntity {
         }
         AABB searchBox = this.getBoundingBox().inflate(80.0, 60.0, 80.0);
         List<LivingEntity> entities = this.level().getEntitiesOfClass(LivingEntity.class, searchBox);
-        entities.sort(this.targetSorter);
+        // OPT-016: the old sorted loop's net effect on headFound was "1 iff any
+        // QueenHead is in the scan" (it never broke out before seeing one), so a
+        // plain containment pass replaces that bookkeeping without the sort...
         this.headFound = 0;
-        LivingEntity ret = null;
         for (LivingEntity entity : entities) {
-            if (entity instanceof QueenHead) { this.headFound = 1; }
-            if (isSuitableTarget(entity) && ret == null) {
-                ret = entity;
+            if (entity instanceof QueenHead) {
+                this.headFound = 1;
+                break;
             }
-            if (ret != null && this.headFound != 0) break;
         }
-        return ret;
+        // ...and the target pick drops the full sort. TargetSelection reproduces
+        // GenericTargetSorter's weighted order and the stable sort's tie order
+        // exactly, and stops calling isSuitableTarget at the first accepted
+        // candidate. (The old loop kept probing isSuitableTarget after a target
+        // was already picked — those extra calls only re-wrote headFound, which
+        // the containment pass above now owns, and warmed the per-tick sensing
+        // cache; no observable behavior depended on them.)
+        return TargetSelection.firstMatch(entities, this.targetSorter, this::isSuitableTarget);
     }
 
     private void doAreaDamage(double x, double y, double z, double dist, double damage, int knock) {

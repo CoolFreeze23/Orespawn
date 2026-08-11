@@ -45,6 +45,10 @@ import danger.orespawn.ModEntities;
 import danger.orespawn.OreSpawnMod;
 
 public class EntityRubberDucky extends TamableAnimal {
+    // OPT-011: cached SoundEvents — identical createVariableRangeEvent ids,
+    // allocated once per class instead of on every sound query.
+    private static final SoundEvent SND_DUCK_HURT = SoundEvent.createVariableRangeEvent(
+            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "duck_hurt"));
     private static final EntityDataAccessor<Integer> DATA_KILL_COUNT =
             SynchedEntityData.defineId(EntityRubberDucky.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Integer> DATA_ATTACKING =
@@ -69,6 +73,9 @@ public class EntityRubberDucky extends TamableAnimal {
 
     public EntityRubberDucky(EntityType<? extends EntityRubberDucky> type, Level level) {
         super(type, level);
+        // OPT-009: constant speed - assert the attribute base once here instead
+        // of re-writing it every tick (same value the removed per-tick call set).
+        this.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(0.22);
         this.xpReward = 15;
     }
 
@@ -125,7 +132,6 @@ public class EntityRubberDucky extends TamableAnimal {
 
     @Override
     public void tick() {
-        this.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(0.22);
         super.tick();
         if (this.isInWater()) {
             Vec3 motion = this.getDeltaMovement();
@@ -356,15 +362,16 @@ public class EntityRubberDucky extends TamableAnimal {
         if (danger.orespawn.OreSpawnConfig.PLAY_NICELY.get()) return null;
         AABB searchBox = this.getBoundingBox().inflate(8.0, 4.0, 8.0);
         List<LivingEntity> targets = this.level().getEntitiesOfClass(LivingEntity.class, searchBox);
-        targets.sort(new danger.orespawn.entity.ai.GenericTargetSorter(this));
         LivingEntity current = this.getTarget();
         if (current != null && current.isAlive()) return current;
         this.setTarget(null);
         this.buddy = null;
-        for (LivingEntity target : targets) {
-            if (this.isSuitableTarget(target)) return target;
-        }
-        return null;
+        // OPT-021: nearest-first pick without the full list sort (the removed
+        // sort ran before the keep-current early-return but only ordered the
+        // local list, so selecting here is observably identical); TargetSelection
+        // preserves the sort's order and stable-tie semantics exactly.
+        return danger.orespawn.entity.ai.TargetSelection.firstMatch(targets,
+                new danger.orespawn.entity.ai.GenericTargetSorter(this), this::isSuitableTarget);
     }
 
     @Override
@@ -395,22 +402,19 @@ public class EntityRubberDucky extends TamableAnimal {
     @Override
     protected SoundEvent getAmbientSound() {
         if (this.random.nextInt(10) == 1) {
-            return SoundEvent.createVariableRangeEvent(
-                    ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "duck_hurt"));
+            return SND_DUCK_HURT;
         }
         return null;
     }
 
     @Override
     protected SoundEvent getHurtSound(DamageSource source) {
-        return SoundEvent.createVariableRangeEvent(
-                ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "duck_hurt"));
+        return SND_DUCK_HURT;
     }
 
     @Override
     protected SoundEvent getDeathSound() {
-        return SoundEvent.createVariableRangeEvent(
-                ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "duck_hurt"));
+        return SND_DUCK_HURT;
     }
 
     @Override

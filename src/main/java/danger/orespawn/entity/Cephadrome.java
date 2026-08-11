@@ -34,9 +34,18 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import danger.orespawn.OreSpawnMod;
+import danger.orespawn.entity.ai.TargetSelection;
 
 public class Cephadrome extends PathfinderMob
         implements danger.orespawn.network.RiderInputPayload.RideableFlyer {
+    // OPT-011: cached SoundEvents — identical createVariableRangeEvent ids,
+    // allocated once per class instead of on every sound query.
+    private static final SoundEvent SND_MOTHRAWINGS = SoundEvent.createVariableRangeEvent(
+            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "mothrawings"));
+    private static final SoundEvent SND_ALO_HURT = SoundEvent.createVariableRangeEvent(
+            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "alo_hurt"));
+    private static final SoundEvent SND_ALO_DEATH = SoundEvent.createVariableRangeEvent(
+            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "alo_death"));
     private static final EntityDataAccessor<Integer> DATA_ATTACKING =
             SynchedEntityData.defineId(Cephadrome.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Integer> DATA_ACTIVITY =
@@ -93,6 +102,9 @@ public class Cephadrome extends PathfinderMob
 
     public Cephadrome(EntityType<? extends Cephadrome> type, Level level) {
         super(type, level);
+        // OPT-009: constant speed - assert the attribute base once here instead
+        // of re-writing it every tick (same value the removed per-tick call set).
+        this.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(this.moveSpeed);
         this.xpReward = 200;
         this.targetSorter = Comparator.comparingDouble(this::distanceToSqr);
     }
@@ -129,7 +141,6 @@ public class Cephadrome extends PathfinderMob
 
     @Override
     public void tick() {
-        this.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(this.moveSpeed);
         super.tick();
 
         if (this.level().isClientSide) return;
@@ -139,8 +150,7 @@ public class Cephadrome extends PathfinderMob
         if (this.getActivity() == 1) {
             if (++this.wingSoundTicks > 22) {
                 this.level().playSound(null, this,
-                        SoundEvent.createVariableRangeEvent(
-                                ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "mothrawings")),
+                        SND_MOTHRAWINGS,
                         this.getSoundSource(), 0.5f, 1.0f);
                 this.wingSoundTicks = 0;
             }
@@ -259,22 +269,19 @@ public class Cephadrome extends PathfinderMob
     @Override
     protected SoundEvent getAmbientSound() {
         if (this.getActivity() != 1 && this.random.nextInt(6) == 1) {
-            return SoundEvent.createVariableRangeEvent(
-                    ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "mothrawings"));
+            return SND_MOTHRAWINGS;
         }
         return null;
     }
 
     @Override
     protected SoundEvent getHurtSound(DamageSource source) {
-        return SoundEvent.createVariableRangeEvent(
-                ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "alo_hurt"));
+        return SND_ALO_HURT;
     }
 
     @Override
     protected SoundEvent getDeathSound() {
-        return SoundEvent.createVariableRangeEvent(
-                ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "alo_death"));
+        return SND_ALO_DEATH;
     }
 
     @Override
@@ -381,11 +388,9 @@ public class Cephadrome extends PathfinderMob
     private LivingEntity findSomethingToAttack() {
         AABB searchBox = this.getBoundingBox().inflate(16.0, 20.0, 16.0);
         List<LivingEntity> targets = this.level().getEntitiesOfClass(LivingEntity.class, searchBox);
-        targets.sort(this.targetSorter::compare);
-        for (LivingEntity target : targets) {
-            if (this.isSuitableTarget(target)) return target;
-        }
-        return null;
+        // OPT-021: nearest-first pick without the full list sort; TargetSelection
+        // preserves the removed sort's order and stable-tie semantics exactly.
+        return TargetSelection.firstMatch(targets, this.targetSorter, this::isSuitableTarget);
     }
 
     @Override

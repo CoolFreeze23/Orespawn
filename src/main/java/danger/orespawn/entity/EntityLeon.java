@@ -47,6 +47,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import danger.orespawn.OreSpawnMod;
+import danger.orespawn.entity.ai.TargetSelection;
 
 /**
  * The consolidated Leon/Leonopteryx (TF-030). 1.7.10 has a single class
@@ -60,6 +61,16 @@ import danger.orespawn.OreSpawnMod;
  */
 public class EntityLeon extends TamableAnimal
         implements danger.orespawn.network.RiderInputPayload.RideableFlyer {
+    // OPT-011: cached SoundEvents — identical createVariableRangeEvent ids,
+    // allocated once per class instead of on every sound query.
+    private static final SoundEvent SND_LEON_LIVING = SoundEvent.createVariableRangeEvent(
+            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "leon_living"));
+    private static final SoundEvent SND_LEON_HIT = SoundEvent.createVariableRangeEvent(
+            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "leon_hit"));
+    private static final SoundEvent SND_LEON_DEATH = SoundEvent.createVariableRangeEvent(
+            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "leon_death"));
+    private static final SoundEvent SND_MOTHRAWINGS = SoundEvent.createVariableRangeEvent(
+            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "mothrawings"));
 
     private static final EntityDataAccessor<Integer> DATA_ATTACKING =
             SynchedEntityData.defineId(EntityLeon.class, EntityDataSerializers.INT);
@@ -109,6 +120,9 @@ public class EntityLeon extends TamableAnimal
 
     public EntityLeon(EntityType<? extends EntityLeon> type, Level level) {
         super(type, level);
+        // OPT-009: constant speed - assert the attribute base once here instead
+        // of re-writing it every tick (same value the removed per-tick call set).
+        this.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(this.moveSpeed);
         this.xpReward = 300;
         // orig Leon.java:83 sets maxHurtResistantTime=10 alongside the 15-tick
         // hurt_timer gate (orig :306/:322, ported as hurtTimer). NOT ported:
@@ -299,22 +313,19 @@ public class EntityLeon extends TamableAnimal
     protected SoundEvent getAmbientSound() {
         if (this.isOrderedToSit()) return null;
         if (this.getActivity() == 1 && this.getPassengers().isEmpty()) {
-            return SoundEvent.createVariableRangeEvent(
-                    ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "leon_living"));
+            return SND_LEON_LIVING;
         }
         return null;
     }
 
     @Override
     protected SoundEvent getHurtSound(DamageSource source) {
-        return SoundEvent.createVariableRangeEvent(
-                ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "leon_hit"));
+        return SND_LEON_HIT;
     }
 
     @Override
     protected SoundEvent getDeathSound() {
-        return SoundEvent.createVariableRangeEvent(
-                ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "leon_death"));
+        return SND_LEON_DEATH;
     }
 
     @Override
@@ -390,7 +401,6 @@ public class EntityLeon extends TamableAnimal
 
     @Override
     public void tick() {
-        this.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(this.moveSpeed);
         super.tick();
 
         if (this.hurtTimer > 0) --this.hurtTimer;
@@ -400,8 +410,7 @@ public class EntityLeon extends TamableAnimal
             if (this.wingSound > 20) {
                 if (!this.level().isClientSide) {
                     this.level().playSound(null, this.blockPosition(),
-                            SoundEvent.createVariableRangeEvent(
-                                    ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "mothrawings")),
+                            SND_MOTHRAWINGS,
                             this.getSoundSource(), 0.5f, 1.0f);
                 }
                 this.wingSound = 0;
@@ -704,11 +713,9 @@ public class EntityLeon extends TamableAnimal
     private LivingEntity findSomethingToAttack() {
         List<LivingEntity> entities = this.level().getEntitiesOfClass(LivingEntity.class,
                 this.getBoundingBox().inflate(20.0, 20.0, 20.0));
-        entities.sort(Comparator.comparingDouble(this::distanceToSqr));
-        for (LivingEntity candidate : entities) {
-            if (isSuitableTarget(candidate)) return candidate;
-        }
-        return null;
+        // OPT-021: nearest-first pick without the full list sort; TargetSelection
+        // preserves the removed sort's order and stable-tie semantics exactly.
+        return TargetSelection.firstMatch(entities, Comparator.comparingDouble(this::distanceToSqr), this::isSuitableTarget);
     }
 
     private boolean isSuitableTarget(LivingEntity target) {

@@ -30,6 +30,11 @@ import danger.orespawn.OreSpawnMod;
 import danger.orespawn.ModItems;
 
 public class Baryonyx extends Animal {
+    // OPT-011: cached SoundEvents — identical createVariableRangeEvent ids,
+    // allocated once per class instead of on every sound query.
+    private static final SoundEvent SND_DUCK_HURT = SoundEvent.createVariableRangeEvent(
+            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "duck_hurt"));
+
     private static final int NO_GRASS_FOUND_SENTINEL = 99999;
     private static final int GRASS_INTERACTION_RANGE_SQ = 12;
 
@@ -41,6 +46,9 @@ public class Baryonyx extends Animal {
 
     public Baryonyx(EntityType<? extends Baryonyx> type, Level level) {
         super(type, level);
+        // OPT-009: constant speed - assert the attribute base once here instead
+        // of re-writing it every tick (same value the removed per-tick call set).
+        this.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(this.moveSpeed);
         this.xpReward = 5;
     }
 
@@ -63,26 +71,18 @@ public class Baryonyx extends Animal {
     }
 
     @Override
-    public void tick() {
-        this.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(this.moveSpeed);
-        super.tick();
-    }
-
-    @Override
     protected SoundEvent getAmbientSound() {
         return null;
     }
 
     @Override
     protected SoundEvent getHurtSound(DamageSource source) {
-        return SoundEvent.createVariableRangeEvent(
-                ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "duck_hurt"));
+        return SND_DUCK_HURT;
     }
 
     @Override
     protected SoundEvent getDeathSound() {
-        return SoundEvent.createVariableRangeEvent(
-                ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "duck_hurt"));
+        return SND_DUCK_HURT;
     }
 
     @Override

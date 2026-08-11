@@ -31,8 +31,18 @@ import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import danger.orespawn.entity.ai.TargetSelection;
 
 public class Basilisk extends Monster {
+    // OPT-011: cached SoundEvents — identical createVariableRangeEvent ids,
+    // allocated once per class instead of on every sound query.
+    private static final SoundEvent SND_BASILISK_LIVING = SoundEvent.createVariableRangeEvent(
+            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "basilisk_living"));
+    private static final SoundEvent SND_ALO_HURT = SoundEvent.createVariableRangeEvent(
+            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "alo_hurt"));
+    private static final SoundEvent SND_EMPERORSCORPION_DEATH = SoundEvent.createVariableRangeEvent(
+            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "emperorscorpion_death"));
+
     private static final EntityDataAccessor<Integer> DATA_ATTACKING =
             SynchedEntityData.defineId(Basilisk.class, EntityDataSerializers.INT);
 
@@ -46,6 +56,9 @@ public class Basilisk extends Monster {
 
     public Basilisk(EntityType<? extends Basilisk> type, Level level) {
         super(type, level);
+        // OPT-009: constant speed - assert the attribute base once here instead
+        // of re-writing it every tick (same value the removed per-tick call set).
+        this.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(this.moveSpeed);
         this.xpReward = 150;
         // TF-035: orig Basilisk.java:43,53 — targets sort with
         // GenericTargetSorter (creeper-halved / big-silhouette-first).
@@ -98,12 +111,6 @@ public class Basilisk extends Monster {
         return !this.isPersistenceRequired();
     }
 
-    @Override
-    public void tick() {
-        this.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(this.moveSpeed);
-        super.tick();
-    }
-
     public int mygetMaxHealth() {
         // orig Basilisk.java:83-85 — reads Basilisk_stats.health (200,
         // orig OreSpawnMain.java:6487); the 1-in-75 heal gate compares
@@ -115,8 +122,7 @@ public class Basilisk extends Monster {
     protected SoundEvent getAmbientSound() {
         // orig Basilisk.java:114-119 — basilisk_living 1-in-2, else silent.
         if (this.getRandom().nextInt(2) == 0) {
-            return SoundEvent.createVariableRangeEvent(
-                    ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "basilisk_living"));
+            return SND_BASILISK_LIVING;
         }
         return null;
     }
@@ -124,15 +130,13 @@ public class Basilisk extends Monster {
     @Override
     protected SoundEvent getHurtSound(DamageSource source) {
         // orig Basilisk.java:121-123
-        return SoundEvent.createVariableRangeEvent(
-                ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "alo_hurt"));
+        return SND_ALO_HURT;
     }
 
     @Override
     protected SoundEvent getDeathSound() {
         // orig Basilisk.java:125-127
-        return SoundEvent.createVariableRangeEvent(
-                ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "emperorscorpion_death"));
+        return SND_EMPERORSCORPION_DEATH;
     }
 
     @Override
@@ -237,11 +241,10 @@ public class Basilisk extends Monster {
         if (OreSpawnConfig.PLAY_NICELY.get()) return null;
         List<LivingEntity> list = this.level().getEntitiesOfClass(LivingEntity.class,
                 this.getBoundingBox().inflate(24.0, 7.0, 24.0)); // orig :419
-        list.sort(this.targetSorter); // orig :420 — GenericTargetSorter
-        for (LivingEntity candidate : list) {
-            if (isSuitableTarget(candidate)) return candidate;
-        }
-        return null;
+        // OPT-021: nearest-first pick without the full list sort; TargetSelection
+        // preserves the removed sort's order and stable-tie semantics exactly.
+        // (was: .sort orig :420 — GenericTargetSorter)
+        return TargetSelection.firstMatch(list, this.targetSorter, this::isSuitableTarget);
     }
 
     /**

@@ -31,6 +31,12 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 
 public class Flounder extends Animal {
+    // OPT-011: cached SoundEvents — identical createVariableRangeEvent ids,
+    // allocated once per class instead of on every sound query.
+    private static final SoundEvent SND_LITTLE_SPLAT = SoundEvent.createVariableRangeEvent(
+            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "little_splat"));
+    private static final SoundEvent SND_RATDEAD = SoundEvent.createVariableRangeEvent(
+            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "ratdead"));
     private static final int MAX_HEALTH = 5;
     private static final double MOVE_SPEED = 0.25;
     private static final int NO_WATER_FOUND_SENTINEL = 99999;
@@ -162,14 +168,12 @@ public class Flounder extends Animal {
 
     @Override
     protected SoundEvent getHurtSound(DamageSource source) {
-        return SoundEvent.createVariableRangeEvent(
-                ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "little_splat"));
+        return SND_LITTLE_SPLAT;
     }
 
     @Override
     protected SoundEvent getDeathSound() {
-        return SoundEvent.createVariableRangeEvent(
-                ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "ratdead"));
+        return SND_RATDEAD;
     }
 
     @Override

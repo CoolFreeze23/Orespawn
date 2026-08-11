@@ -41,6 +41,12 @@ import danger.orespawn.ModEntities;
 import danger.orespawn.OreSpawnMod;
 
 public class VelocityRaptor extends TamableAnimal {
+    // OPT-011: cached SoundEvents — identical createVariableRangeEvent ids,
+    // allocated once per class instead of on every sound query.
+    private static final SoundEvent SND_CRYO_HURT = SoundEvent.createVariableRangeEvent(
+            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "cryo_hurt"));
+    private static final SoundEvent SND_CRYO_DEATH = SoundEvent.createVariableRangeEvent(
+            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "cryo_death"));
     private int closestPlantDistance = 99999;
     private int targetX = 0, targetY = 0, targetZ = 0;
 
@@ -227,12 +233,12 @@ public class VelocityRaptor extends TamableAnimal {
 
     @Override
     protected SoundEvent getHurtSound(DamageSource source) {
-        return SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "cryo_hurt"));
+        return SND_CRYO_HURT;
     }
 
     @Override
     protected SoundEvent getDeathSound() {
-        return SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "cryo_death"));
+        return SND_CRYO_DEATH;
     }
 
     @Override

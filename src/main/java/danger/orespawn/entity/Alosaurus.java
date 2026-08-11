@@ -29,8 +29,18 @@ import danger.orespawn.OreSpawnMod;
 import danger.orespawn.entity.ai.DinosaurMeleeAttackGoal;
 import danger.orespawn.entity.ai.GenericTargetSorter;
 import danger.orespawn.util.MyUtils;
+import danger.orespawn.entity.ai.TargetSelection;
 
 public class Alosaurus extends Monster {
+    // OPT-011: cached SoundEvents — identical createVariableRangeEvent ids,
+    // allocated once per class instead of on every sound query.
+    private static final SoundEvent SND_ALO_LIVING = SoundEvent.createVariableRangeEvent(
+            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "alo_living"));
+    private static final SoundEvent SND_ALO_HURT = SoundEvent.createVariableRangeEvent(
+            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "alo_hurt"));
+    private static final SoundEvent SND_ALO_DEATH = SoundEvent.createVariableRangeEvent(
+            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "alo_death"));
+
     private static final EntityDataAccessor<Integer> DATA_ATTACKING =
             SynchedEntityData.defineId(Alosaurus.class, EntityDataSerializers.INT);
 
@@ -42,6 +52,9 @@ public class Alosaurus extends Monster {
 
     public Alosaurus(EntityType<? extends Alosaurus> type, Level level) {
         super(type, level);
+        // OPT-009: constant speed - assert the attribute base once here instead
+        // of re-writing it every tick (same value the removed per-tick call set).
+        this.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(this.moveSpeed);
         this.xpReward = 40;
         // orig Alosaurus.java:39,48 — target priority uses the shared
         // GenericTargetSorter (creepers and large targets outrank nearer
@@ -99,30 +112,21 @@ public class Alosaurus extends Monster {
     }
 
     @Override
-    public void tick() {
-        this.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(this.moveSpeed);
-        super.tick();
-    }
-
-    @Override
     protected SoundEvent getAmbientSound() {
         if (this.random.nextInt(4) == 0) {
-            return SoundEvent.createVariableRangeEvent(
-                    ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "alo_living"));
+            return SND_ALO_LIVING;
         }
         return null;
     }
 
     @Override
     protected SoundEvent getHurtSound(DamageSource source) {
-        return SoundEvent.createVariableRangeEvent(
-                ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "alo_hurt"));
+        return SND_ALO_HURT;
     }
 
     @Override
     protected SoundEvent getDeathSound() {
-        return SoundEvent.createVariableRangeEvent(
-                ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "alo_death"));
+        return SND_ALO_DEATH;
     }
 
     @Override
@@ -193,11 +197,10 @@ public class Alosaurus extends Monster {
         if (OreSpawnConfig.PLAY_NICELY.get()) return null; // orig :215-217
         List<LivingEntity> candidates = this.level().getEntitiesOfClass(
                 LivingEntity.class, this.getBoundingBox().inflate(12.0, 5.0, 12.0)); // orig :218
-        candidates.sort(this.targetSorter); // orig :219
-        for (LivingEntity candidate : candidates) {
-            if (this.isSuitableTarget(candidate)) return candidate;
-        }
-        return null;
+        // OPT-021: nearest-first pick without the full list sort; TargetSelection
+        // preserves the removed sort's order and stable-tie semantics exactly.
+        // (was: .sort orig :219)
+        return TargetSelection.firstMatch(candidates, this.targetSorter, this::isSuitableTarget);
     }
 
     public int getAttacking() {

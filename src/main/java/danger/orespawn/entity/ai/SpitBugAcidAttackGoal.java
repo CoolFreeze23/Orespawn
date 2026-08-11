@@ -32,6 +32,11 @@ import danger.orespawn.entity.Acid;
  */
 public class SpitBugAcidAttackGoal extends BugMeleeAttackGoal {
 
+    // OPT-011: cached SoundEvents — identical createVariableRangeEvent ids,
+    // allocated once per class instead of on every sound query.
+    private static final SoundEvent SND_CLATTER = SoundEvent.createVariableRangeEvent(
+            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "clatter"));
+
     private static final double MAX_ENGAGEMENT_RANGE_SQ = 20.0 * 20.0;
     private static final double VERTICAL_MOUTH_OFFSET = 1.5;
     private static final double HORIZONTAL_MOUTH_OFFSET = 1.5;
@@ -81,8 +86,7 @@ public class SpitBugAcidAttackGoal extends BugMeleeAttackGoal {
 
         BlockPos at = this.mob.blockPosition();
         this.mob.level().playSound(null, at,
-                SoundEvent.createVariableRangeEvent(
-                        ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "clatter")),
+                SND_CLATTER,
                 this.mob.getSoundSource(),
                 0.75f,
                 1.0f / (this.mob.getRandom().nextFloat() * 0.4f + 0.8f));

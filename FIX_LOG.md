@@ -2343,3 +2343,20 @@ prior E6 entry's split description is superseded by this one.
   CannonFodder LOS gate (orig :288-290) + activated armor-3 (orig
   :330-335); INDEX.md field_70174_ab row corrected to fireResistance
   (ENT-K-002 verification credited). No orphan observations remain.
+
+## Phase F — behavior-neutral OPT items applied (2026-08-11)
+
+**22 of 27 OPT findings terminal** (batch 1 MHLib 4, batch 2 18 incl. the
+OPT-020 no-op): 15 FIXED under the hard bit-identity contract, 3 STALE
+(005 overlay rewrite, 014 orig-never-early-exits + E4 faithful rebuild,
+027 double-scan already gone), 1 precondition-unmet (013 noCulling stays
+— no cull box provably covers the part envelopes), OPT-020 no-op.
+Notables: OPT-009 30 ctor-once speed asserts + 4 genuinely-dynamic kept
+per-tick through cached AttributeInstance; OPT-011 200+ sound getters
+hoisted to statics across ~92 classes; OPT-016/021/026 single-pass min
+with sort-stability tie preservation via the new TargetSelection helper;
+OPT-002 change-only multipart sends with interpolation-draining linger.
+REMAINING FIVE await the owner's one-pass ruling: OPT-003/004/006/022
+(behavior-affecting) + OPT-007 (mixed; its neutral half withheld to
+present the item whole). Suite delta this phase: zero (the neutrality
+contract held).

@@ -25,12 +25,24 @@ import net.minecraft.world.level.Level;
 import danger.orespawn.OreSpawnConfig;
 import danger.orespawn.OreSpawnMod;
 import danger.orespawn.entity.ai.DinosaurMeleeAttackGoal;
+import danger.orespawn.entity.ai.TargetSelection;
 
 public class Cryolophosaurus extends Monster {
+    // OPT-011: cached SoundEvents — identical createVariableRangeEvent ids,
+    // allocated once per class instead of on every sound query.
+    private static final SoundEvent SND_CRYO_LIVING = SoundEvent.createVariableRangeEvent(
+            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "cryo_living"));
+    private static final SoundEvent SND_CRYO_HURT = SoundEvent.createVariableRangeEvent(
+            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "cryo_hurt"));
+    private static final SoundEvent SND_CRYO_DEATH = SoundEvent.createVariableRangeEvent(
+            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "cryo_death"));
     private final float moveSpeed = 0.25f;
 
     public Cryolophosaurus(EntityType<? extends Cryolophosaurus> type, Level level) {
         super(type, level);
+        // OPT-009: constant speed - assert the attribute base once here instead
+        // of re-writing it every tick (same value the removed per-tick call set).
+        this.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(this.moveSpeed);
         this.xpReward = 10;
     }
 
@@ -115,38 +127,27 @@ public class Cryolophosaurus extends Monster {
         if (OreSpawnConfig.PLAY_NICELY.get()) return null;
         List<LivingEntity> candidates = this.level().getEntitiesOfClass(
                 LivingEntity.class, this.getBoundingBox().inflate(9.0, 2.0, 9.0));
-        candidates.sort(Comparator.comparingDouble(this::distanceToSqr));
-        for (LivingEntity candidate : candidates) {
-            if (this.isSuitableTarget(candidate)) return candidate;
-        }
-        return null;
-    }
-
-    @Override
-    public void tick() {
-        this.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(this.moveSpeed);
-        super.tick();
+        // OPT-021: nearest-first pick without the full list sort; TargetSelection
+        // preserves the removed sort's order and stable-tie semantics exactly.
+        return TargetSelection.firstMatch(candidates, Comparator.comparingDouble(this::distanceToSqr), this::isSuitableTarget);
     }
 
     @Override
     protected SoundEvent getAmbientSound() {
         if (this.random.nextInt(6) == 0) {
-            return SoundEvent.createVariableRangeEvent(
-                    ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "cryo_living"));
+            return SND_CRYO_LIVING;
         }
         return null;
     }
 
     @Override
     protected SoundEvent getHurtSound(DamageSource source) {
-        return SoundEvent.createVariableRangeEvent(
-                ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "cryo_hurt"));
+        return SND_CRYO_HURT;
     }
 
     @Override
     protected SoundEvent getDeathSound() {
-        return SoundEvent.createVariableRangeEvent(
-                ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "cryo_death"));
+        return SND_CRYO_DEATH;
     }
 
     @Override

@@ -45,6 +45,12 @@ import danger.orespawn.entity.ai.MoveIndoorsGoal;
 // orig Chipmunk.java:40-41 — extends EntityCannonFodder, which carries the shared
 // hat-taming / activated-guard behavior a chipmunk shares with the other fodder pets.
 public class Chipmunk extends EntityCannonFodder {
+    // OPT-011: cached SoundEvents — identical createVariableRangeEvent ids,
+    // allocated once per class instead of on every sound query.
+    private static final SoundEvent SND_SCORPION_HIT = SoundEvent.createVariableRangeEvent(
+            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "scorpion_hit"));
+    private static final SoundEvent SND_CRYO_DEATH = SoundEvent.createVariableRangeEvent(
+            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "cryo_death"));
     private static final int MAX_HEALTH = 5;
     private static final double MOVE_SPEED = 0.38;
 
@@ -193,14 +199,12 @@ public class Chipmunk extends EntityCannonFodder {
 
     @Override
     protected SoundEvent getHurtSound(DamageSource source) {
-        return SoundEvent.createVariableRangeEvent(
-                ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "scorpion_hit"));
+        return SND_SCORPION_HIT;
     }
 
     @Override
     protected SoundEvent getDeathSound() {
-        return SoundEvent.createVariableRangeEvent(
-                ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "cryo_death"));
+        return SND_CRYO_DEATH;
     }
 
     @Override

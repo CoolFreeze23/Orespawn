@@ -69,17 +69,17 @@ public class DragonflyHuntGoal extends AmbientFlightGoal {
     private LivingEntity findPrey() {
         List<LivingEntity> candidates = this.mob.level().getEntitiesOfClass(LivingEntity.class,
                 this.mob.getBoundingBox().inflate(SCAN_X, SCAN_Y, SCAN_Z));
-        candidates.sort(Comparator.comparingDouble(this.mob::distanceToSqr));
-        for (LivingEntity candidate : candidates) {
-            if (candidate == this.mob || !candidate.isAlive()) continue;
-            if (candidate instanceof EntityDragonfly) continue;
-            if (candidate instanceof Player) continue;
-            if (OreSpawnConfig.DRAGONFLY_HORSE_FRIENDLY.get()
-                    && candidate instanceof AbstractHorse) continue;
-            if (candidate.getBbWidth() > MAX_PREY_WIDTH) continue;
-            if (!this.dragonfly.getSensing().hasLineOfSight(candidate)) continue;
-            return candidate;
-        }
-        return null;
+        // OPT-021: nearest-first pick without the full list sort; TargetSelection
+        // preserves the removed sort's order and stable-tie semantics exactly,
+        // and the predicate keeps the original filter chain's order/short-circuit.
+        return TargetSelection.firstMatch(candidates,
+                Comparator.comparingDouble(this.mob::distanceToSqr),
+                candidate -> candidate != this.mob && candidate.isAlive()
+                        && !(candidate instanceof EntityDragonfly)
+                        && !(candidate instanceof Player)
+                        && !(OreSpawnConfig.DRAGONFLY_HORSE_FRIENDLY.get()
+                                && candidate instanceof AbstractHorse)
+                        && candidate.getBbWidth() <= MAX_PREY_WIDTH
+                        && this.dragonfly.getSensing().hasLineOfSight(candidate));
     }
 }

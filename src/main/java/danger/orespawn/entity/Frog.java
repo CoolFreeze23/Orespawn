@@ -38,6 +38,14 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 
 public class Frog extends Animal {
+    // OPT-011: cached SoundEvents — identical createVariableRangeEvent ids,
+    // allocated once per class instead of on every sound query.
+    private static final SoundEvent SND_FROG = SoundEvent.createVariableRangeEvent(
+            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "frog"));
+    private static final SoundEvent SND_SCORPION_HIT = SoundEvent.createVariableRangeEvent(
+            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "scorpion_hit"));
+    private static final SoundEvent SND_BIG_SPLAT = SoundEvent.createVariableRangeEvent(
+            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "big_splat"));
     private static final EntityDataAccessor<Integer> DATA_SINGING =
             SynchedEntityData.defineId(Frog.class, EntityDataSerializers.INT);
 
@@ -180,20 +188,17 @@ public class Frog extends Animal {
             this.singing = 35;
             this.setSinging(this.singing);
         }
-        return SoundEvent.createVariableRangeEvent(
-                ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "frog"));
+        return SND_FROG;
     }
 
     @Override
     protected SoundEvent getHurtSound(DamageSource source) {
-        return SoundEvent.createVariableRangeEvent(
-                ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "scorpion_hit"));
+        return SND_SCORPION_HIT;
     }
 
     @Override
     protected SoundEvent getDeathSound() {
-        return SoundEvent.createVariableRangeEvent(
-                ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "big_splat"));
+        return SND_BIG_SPLAT;
     }
 
     @Override
@@ -251,11 +256,10 @@ public class Frog extends Animal {
     private LivingEntity findInsectTarget() {
         List<LivingEntity> entities = this.level().getEntitiesOfClass(LivingEntity.class,
                 this.getBoundingBox().inflate(8.0, 3.0, 8.0));
-        entities.sort(Comparator.comparingDouble(this::distanceToSqr));
-        return entities.stream()
-                .filter(this::isInsectTarget)
-                .findFirst()
-                .orElse(null);
+        // OPT-021: nearest-first pick without the full list sort; TargetSelection
+        // preserves the removed sort's order and stable-tie semantics exactly.
+        return danger.orespawn.entity.ai.TargetSelection.firstMatch(entities,
+                Comparator.comparingDouble(this::distanceToSqr), this::isInsectTarget);
     }
 
     private boolean isInsectTarget(LivingEntity entity) {
