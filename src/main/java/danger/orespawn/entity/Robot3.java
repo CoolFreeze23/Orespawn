@@ -1,15 +1,16 @@
 package danger.orespawn.entity;
 
 import danger.orespawn.MobStats;
+import danger.orespawn.entity.ai.GenericTargetSorter;
 
-import java.util.Comparator;
 import java.util.List;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
@@ -42,7 +43,9 @@ public class Robot3 extends Monster {
     private static final EntityDataAccessor<Integer> DATA_ATTACKING =
             SynchedEntityData.defineId(Robot3.class, EntityDataSerializers.INT);
 
-    private final Comparator<Entity> targetSorter;
+    // TF-035: orig Robot3.java:39,51 — targets sort with GenericTargetSorter
+    // (creeper-halved / big-silhouette-first), not plain distance.
+    private final GenericTargetSorter targetSorter;
     private int reloadTicker = 0;
     private final float moveSpeed = 0.35f;
 
@@ -62,7 +65,7 @@ public class Robot3 extends Monster {
     public Robot3(EntityType<? extends Robot3> type, Level level) {
         super(type, level);
         this.xpReward = 60;
-        this.targetSorter = Comparator.comparingDouble(this::distanceToSqr);
+        this.targetSorter = new GenericTargetSorter(this);
     }
 
     @Override
@@ -142,6 +145,10 @@ public class Robot3 extends Monster {
         double dy = target.getY() + target.getBbHeight() * 0.5 - (this.getY() + 1.4);
         double dz = target.getZ() - this.getZ();
         projectile.shoot(dx, dy, dz, 1.6f, 1.0f);
+        // ENT-K-067: orig Robot3.java:273 — every shot plays "fireworks.launch"
+        // at 3.0 volume / 1.0 pitch (vanilla firework-rocket launch report).
+        this.level().playSound(null, this.getX(), this.getY(), this.getZ(),
+                SoundEvents.FIREWORK_ROCKET_LAUNCH, SoundSource.HOSTILE, 3.0f, 1.0f);
         this.level().addFreshEntity(projectile);
     }
 

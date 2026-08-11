@@ -32,11 +32,14 @@ public class Peacock extends Animal {
     private int myBlink = 20;
     private int blinkcount = 0;
     private int blinker = 0;
+    /** TF-035: orig Peacock.java:45 — the shared weighted target comparator. */
+    private final danger.orespawn.entity.ai.GenericTargetSorter targetSorter;
 
     public Peacock(EntityType<? extends Peacock> type, Level level) {
         super(type, level);
         this.xpReward = 8;
         this.myBlink = 20 + this.random.nextInt(50);
+        this.targetSorter = new danger.orespawn.entity.ai.GenericTargetSorter(this); // orig Peacock.java:55
     }
 
     @Override
@@ -108,6 +111,7 @@ public class Peacock extends Animal {
         return 0.4f;
     }
 
+    /** orig Peacock.java:263-266 — all Peacocks inside the bounding box inflated 16/10/16. */
     private int findBuddies() {
         return this.level().getEntitiesOfClass(Peacock.class,
                 this.getBoundingBox().inflate(16.0, 10.0, 16.0)).size();
@@ -160,12 +164,14 @@ public class Peacock extends Animal {
         if (danger.orespawn.OreSpawnConfig.PLAY_NICELY.get()) {
             return null;
         }
-        return this.level().getEntitiesOfClass(EntityTermite.class,
-                        this.getBoundingBox().inflate(10.0, 2.0, 10.0),
-                        t -> t.isAlive() && this.getSensing().hasLineOfSight(t))
-                .stream()
-                .min(java.util.Comparator.comparingDouble(this::distanceToSqr))
-                .orElse(null);
+        // TF-035: orig :226 sorts the candidate list with the shared
+        // GenericTargetSorter (creeper/large-silhouette weighting), then takes
+        // the first live, visible Termite (:227-235).
+        java.util.List<EntityTermite> termites = this.level().getEntitiesOfClass(EntityTermite.class,
+                this.getBoundingBox().inflate(10.0, 2.0, 10.0),
+                t -> t.isAlive() && this.getSensing().hasLineOfSight(t));
+        termites.sort(this.targetSorter);
+        return termites.isEmpty() ? null : termites.get(0);
     }
 
     @Override
@@ -179,13 +185,13 @@ public class Peacock extends Animal {
         return new Peacock(ModEntities.PEACOCK.get(), level);
     }
 
-    /** orig Peacock.java:101-119 — clear air above; first half of the day only; 50<=y<=100; at most 2 buddies within 16/10/16 (restores the never-called findBuddies()). */
+    /** orig Peacock.java:101-119 — clear air above; first half of the day only; 50<=y<=100; at most 2 buddies within 16/10/16 (restores the never-called findBuddies(), orig :118). */
     @Override
     public boolean checkSpawnRules(net.minecraft.world.level.LevelAccessor level,
                                    net.minecraft.world.entity.MobSpawnType spawnType) {
         if (!OriginalSpawnGates.airBox(this, level, -1, 0, 1, 2, -1, 0)) return false;
         if (level.dayTime() % 24000L > 12000L) return false;
         if (this.getY() < 50.0 || this.getY() > 100.0) return false;
-        return OriginalSpawnGates.countBuddies(this, level, Peacock.class, 16.0, 10.0, 16.0) <= 2;
+        return this.findBuddies() <= 2;
     }
 }

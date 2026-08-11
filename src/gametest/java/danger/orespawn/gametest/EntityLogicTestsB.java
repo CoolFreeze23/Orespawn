@@ -913,7 +913,7 @@ public class EntityLogicTestsB {
      *       false = the projectile flies through.</li>
      *   <li>Acid balls vanish harmlessly on the acid bugs (TrooperBug/SpitBug):
      *       discard with zero damage — LaserBall.onHitEntity
-     *       (LaserBall.java:82-87, orig LaserBall.java:83-92) — while a
+     *       (LaserBall.java:103-108, orig LaserBall.java:83-92) — while a
      *       non-spared target in identical geometry does take the hit
      *       (control proves the entity-hit happens before any block hit).</li>
      * </ul>
@@ -965,7 +965,7 @@ public class EntityLogicTestsB {
             check(acidA.isRemoved(), "acid on TrooperBug must be discarded on impact");
             check(acidB.isRemoved(), "acid on SpitBug must be discarded on impact");
             check(trooper.getHealth() == trooperHp,
-                    "acid must not damage TrooperBug (LaserBall.java:82-87)");
+                    "acid must not damage TrooperBug (LaserBall.java:103-108)");
             check(spitBug.getHealth() == spitHp, "acid must not damage SpitBug");
             check(control.getHealth() < controlHp || control.isRemoved() || control.isDeadOrDying(),
                     "control: identical acid drop must damage a non-spared mob (16.0 thrown)");

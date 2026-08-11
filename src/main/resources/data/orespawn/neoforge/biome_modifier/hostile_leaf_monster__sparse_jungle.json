@@ -1,0 +1,5 @@
+{
+  "type": "neoforge:add_spawns",
+  "biomes": "minecraft:sparse_jungle",
+  "spawners": { "type": "orespawn:leaf_monster", "weight": 3, "minCount": 2, "maxCount": 4 }
+}

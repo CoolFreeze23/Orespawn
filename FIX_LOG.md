@@ -2091,3 +2091,25 @@ OpenDoor+door-nav, MoveIndoors, dance — ENT-D-048). ENT-D-065 closed via
 the E2 evidence (orig arrow has NO debuffs; the port's were the invention,
 already removed). E6 input: the caged-girlfriend component-patch errors
 remain queued for the E6 root-cause as directed.
+
+## Phase E — E4 ENT-K batch: all 21 in-batch PARTIALs terminal (2026-08-11)
+
+**18 FIXED, 3 VERIFIED-CORRECT (K-002/070/077, reviewer-upheld).**
+(K-018/K-022 reserved for the E5 Leon/Leonopteryx consolidation.)
+Highlights: K-002's "4x shorter invuln" premise refuted — the orig's
+ctor-set field_70174_ab=120 is the vestigial fireResistance field vanilla
+never reads (INDEX.md cheatsheet row wrong; correction queued E8), the
+real gate is hurt_timer=30 matched by the port; LaserBall regained the
+irukandji miss-drop, full impact-effects block (incl. the missing
+'-nextFloat()' smoke-Z bug), corrected explosion flags, and the
+reddust-args-as-velocity trail bug; LeafMonster + Peacock + Molenoid +
+LurkingTerror spawn lumps replaced with per-biome files (orig addSpawn
+row cites) + checkSpawnRules gates; Mantis butterfly prey; Molenoid dig
+direction un-inverted + MoleDirt placement; Mothra difficulty-scaled
+BetterFireball; PitchBlack ender-dragon part-wise explosion damage (head
+1-in-8) + drop extras; Robot fleet: griefing moved to Robot4 with ranged
+LaserBall + live shielding, shot sounds on 3/5; RockBase Crystal-dim
+type lottery + Y>=50 rule; Rotator 16-species exclusion list restored;
+RubberDucky squid prey + buddy-follow. One integration fix by the
+orchestrator: EnderDragon.body is private in 1.21.1 — PitchBlack's
+body strike now uses getSubEntities()[2] (vanilla part order).

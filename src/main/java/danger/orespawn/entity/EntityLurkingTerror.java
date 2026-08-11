@@ -2,8 +2,9 @@ package danger.orespawn.entity;
 
 import danger.orespawn.MobStats;
 
+import danger.orespawn.OreSpawnConfig;
 import danger.orespawn.OreSpawnMod;
-import java.util.Comparator;
+import danger.orespawn.entity.ai.GenericTargetSorter;
 import java.util.List;
 import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
@@ -183,20 +184,47 @@ public class EntityLurkingTerror extends Monster {
 
     @Nullable
     private LivingEntity findSomethingToAttack() {
+        if (OreSpawnConfig.PLAY_NICELY.get()) return null; // orig LurkingTerror.java:350-353
         List<LivingEntity> entities = this.level().getEntitiesOfClass(LivingEntity.class,
                 this.getBoundingBox().inflate(12.0, 8.0, 12.0));
-        entities.sort(Comparator.comparingDouble(this::distanceToSqr));
+        // TF-035: orig sorts candidates with GenericTargetSorter (LurkingTerror.java:48 field,
+        // :58 ctor, :355 Collections.sort), not plain distance — creepers/large targets rank closer.
+        entities.sort(new GenericTargetSorter(this));
         for (LivingEntity candidate : entities) {
             if (isSuitableTarget(candidate)) return candidate;
         }
         return null;
     }
 
+    /**
+     * orig LurkingTerror.java:271-348 — attacks EVERYTHING alive and visible except
+     * its own kind, a fixed list of OreSpawn species (mostly the other custom-AI
+     * flyers/plants it would dogfight forever), and creative players. The original
+     * checks Triffid twice (:317 and :338, a copy-paste slip) — behavior-identical,
+     * reproduced as one check.
+     */
     private boolean isSuitableTarget(LivingEntity target) {
         if (target == null || target == this || !target.isAlive()) return false;
-        if (target instanceof EntityLurkingTerror) return false;
-        if (!this.getSensing().hasLineOfSight(target)) return false;
-        if (target instanceof Player p) return !p.getAbilities().invulnerable;
+        if (!this.getSensing().hasLineOfSight(target)) return false; // orig :281
+        if (target instanceof EntityLurkingTerror) return false;     // orig :284
+        if (target instanceof RockBase) return false;                // orig :287
+        if (target instanceof EnderReaper) return false;             // orig :290
+        if (target instanceof EntityLeafMonster) return false;       // orig :293
+        if (target instanceof EntityTerribleTerror) return false;    // orig :296
+        if (target instanceof Mothra) return false;                  // orig :299
+        if (target instanceof CloudShark) return false;              // orig :302
+        if (target instanceof EntityRotator) return false;           // orig :305
+        if (target instanceof EntityBee) return false;               // orig :308
+        if (target instanceof EntityMantis) return false;            // orig :311
+        if (target instanceof CreepingHorror) return false;          // orig :314
+        if (target instanceof EntityTriffid) return false;           // orig :317 (+dupe :338)
+        if (target instanceof PitchBlack) return false;              // orig :320
+        if (target instanceof Dragon) return false;                  // orig :323
+        if (target instanceof Island) return false;                  // orig :326
+        if (target instanceof IslandToo) return false;               // orig :329
+        if (target instanceof EntityButterfly) return false;         // orig :332
+        if (target instanceof Firefly) return false;                 // orig :335
+        if (target instanceof Player p) return !p.getAbilities().invulnerable; // orig :341-346
         return true;
     }
 

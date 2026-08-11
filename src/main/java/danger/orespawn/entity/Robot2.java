@@ -1,9 +1,11 @@
 package danger.orespawn.entity;
 
 import danger.orespawn.MobStats;
+import danger.orespawn.OreSpawnConfig;
+import danger.orespawn.entity.ai.GenericTargetSorter;
 
-import java.util.Comparator;
 import java.util.List;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -22,30 +24,39 @@ import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.resources.ResourceLocation;
 import danger.orespawn.OreSpawnMod;
 
 /**
- * Robot2 — RoboWarrior role.
+ * Robot2 — the Robo-Pounder (orig Robot2.java:416 spawner tag).
  *
- * Heavy front-line melee chassis (500 HP, 30 ATK, 8 ARM). Uses pack-alert
- * HurtByTargetGoal so all RoboWarriors in earshot of a hit aggro the
- * attacker simultaneously, mirroring the 1.7.10 robot-army "swarm a
- * threat" reaction. Closes to ~5-block reach and swings on a stochastic
- * cadence (nextInt(5)==0 || nextInt(6)==1) — the same tuning as the
- * 1.7.10 reference's func_70619_bc swing logic — and otherwise idles
- * with brief windup animations to telegraph attack readiness. Registry
- * ID kept as "robot_2" for save compat.
+ * Heavy front-line melee chassis (200 HP / 22 ATK / 18 armor, orig
+ * OreSpawnMain.java:6495) whose signature move is terrain destruction:
+ * a landed swing rips 6 blocks out from under the target
+ * (orig Robot2.java:304-309) and every in-range attack tick shreds a
+ * ±6.5 x/z, +8.5 y envelope of terrain around the robot itself
+ * (orig :263-272, :310), all gated on the mobGriefing gamerule and
+ * PlayNicely-off. While idle it can also throw a 50-tick "just for fun"
+ * tantrum, tearing up scenery with no target at all (orig :320-335).
+ * ENT-K-063: this griefing had been relocated to the port's Robot4 —
+ * restored here to keep each robot's original identity. Registry ID
+ * kept as "robot_2" for save compat.
  */
 public class Robot2 extends Monster {
     private static final EntityDataAccessor<Integer> DATA_ATTACKING =
             SynchedEntityData.defineId(Robot2.class, EntityDataSerializers.INT);
 
-    private final Comparator<Entity> targetSorter;
-    private int idleAnimationTimer = 0;
+    // TF-035: orig Robot2.java:38,50 — targets sort with GenericTargetSorter
+    // (creeper-halved / big-silhouette-first), not plain distance.
+    private final GenericTargetSorter targetSorter;
+    /** orig Robot2.java:40 {@code just_for_fun} — idle-tantrum countdown. */
+    private int justForFun = 0;
     private final float moveSpeed = 0.3f;
 
     /**
@@ -64,7 +75,7 @@ public class Robot2 extends Monster {
     public Robot2(EntityType<? extends Robot2> type, Level level) {
         super(type, level);
         this.xpReward = 100;
-        this.targetSorter = Comparator.comparingDouble(this::distanceToSqr);
+        this.targetSorter = new GenericTargetSorter(this);
     }
 
     @Override
@@ -106,23 +117,96 @@ public class Robot2 extends Monster {
         super.jumpFromGround();
     }
 
+    /**
+     * ENT-K-063: orig Robot2.java:232-261 — pull one random block out from
+     * under the target's feet (x/z jittered by two nextFloat rolls, y - 1).
+     * Obsidian, bedrock, quartz block, spawners, redstone blocks, iron
+     * blocks and chests are spared; anything else is set to air with NO
+     * drops, gated on the mobGriefing gamerule. Coordinates truncate with
+     * an (int) cast exactly as the original did, so at negative coords the
+     * probe lands one block off — kept bug-for-bug.
+     */
+    private void destroyBlock(LivingEntity target) {
+        double x = target.getX() + this.getRandom().nextFloat() - this.getRandom().nextFloat();
+        double y = target.getY() - 1.0;
+        double z = target.getZ() + this.getRandom().nextFloat() - this.getRandom().nextFloat();
+        BlockPos pos = new BlockPos((int) x, (int) y, (int) z);
+        var state = this.level().getBlockState(pos);
+        Block block = state.getBlock();
+        // orig Robot2.java:237-257 — protected-block early returns.
+        if (block == Blocks.OBSIDIAN || block == Blocks.BEDROCK
+                || block == Blocks.QUARTZ_BLOCK || block == Blocks.SPAWNER
+                || block == Blocks.REDSTONE_BLOCK || block == Blocks.IRON_BLOCK
+                || block == Blocks.CHEST) {
+            return;
+        }
+        // orig Robot2.java:258-260 — non-air + mobGriefing → replaced by air.
+        if (!state.isAir() && this.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)) {
+            this.level().setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
+        }
+    }
+
+    /**
+     * ENT-K-063: orig Robot2.java:263-272 — 50 random probes in a ±6.5 x/z,
+     * +0.1..+8.6 y envelope around the Pounder; each probe on a non-air,
+     * non-protected block vaporizes it (no drops), mobGriefing-gated. Same
+     * protected list and (int)-truncation quirk as {@link #destroyBlock}.
+     */
+    private void destroyNearbyBlocks() {
+        for (int i = 0; i < 50; ++i) {
+            double x = this.getX() + this.getRandom().nextFloat() * 6.5 - this.getRandom().nextFloat() * 6.5;
+            double y = this.getY() + 0.1 + this.getRandom().nextFloat() * 8.5;
+            double z = this.getZ() + this.getRandom().nextFloat() * 6.5 - this.getRandom().nextFloat() * 6.5;
+            BlockPos pos = new BlockPos((int) x, (int) y, (int) z);
+            var state = this.level().getBlockState(pos);
+            Block block = state.getBlock();
+            if (block == Blocks.OBSIDIAN || block == Blocks.BEDROCK
+                    || block == Blocks.QUARTZ_BLOCK || block == Blocks.SPAWNER
+                    || block == Blocks.REDSTONE_BLOCK || block == Blocks.IRON_BLOCK
+                    || block == Blocks.CHEST || state.isAir()
+                    || !this.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)) {
+                continue;
+            }
+            this.level().setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
+        }
+    }
+
+    /** ENT-K-063: orig Robot2.java:274-336 — attack + griefing think loop. */
     @Override
     protected void customServerAiStep() {
         if (this.isRemoved()) return;
         super.customServerAiStep();
-        if (this.getRandom().nextInt(6) == 1) {
+        // orig :279 — think-tick runs on a 1-in-6 roll, PlayNicely off only.
+        if (this.getRandom().nextInt(6) == 1 && !OreSpawnConfig.PLAY_NICELY.get()) {
             LivingEntity target = this.getTarget();
             if (this.getRandom().nextInt(50) == 1) this.setTarget(null);
             if (target != null && !target.isAlive()) { this.setTarget(null); target = null; }
             if (target == null) target = findSomethingToAttack();
             if (target != null) {
-                this.lookAt(target, 10.0f, 10.0f);
-                double dist = this.distanceToSqr(target);
-                double meleeRange = (5.0f + target.getBbWidth() / 2.0f);
-                if (dist < meleeRange * meleeRange) {
-                    this.setAttacking(1);
-                    if (this.getRandom().nextInt(5) == 0 || this.getRandom().nextInt(6) == 1) {
-                        this.doHurtTarget(target);
+                // orig :292-299 — swings/griefs only when the target sits
+                // within 1.25 rad of the body facing (yRot + 90).
+                double rr = Math.atan2(target.getZ() - this.getZ(), target.getX() - this.getX());
+                double rhdir = Math.toRadians((this.getYRot() + 90.0f) % 360.0f);
+                double pi = 3.1415926545; // orig :294 — truncated pi constant
+                double rdd = Math.abs(rr - rhdir) % (pi * 2.0);
+                if (rdd > pi) rdd -= pi * 2.0;
+                rdd = Math.abs(rdd);
+                this.lookAt(target, 10.0f, 10.0f); // orig :300
+                if (rdd < 1.25) {
+                    double meleeRange = 5.0f + target.getBbWidth() / 2.0f;
+                    if (this.distanceToSqr(target) < meleeRange * meleeRange) {
+                        this.setAttacking(1);
+                        // orig :304-309 — two swing dice; a landed swing also
+                        // rips 6 blocks out from under the target.
+                        if (this.getRandom().nextInt(5) == 0 || this.getRandom().nextInt(6) == 1) {
+                            this.doHurtTarget(target);
+                            for (int i = 0; i < 6; ++i) {
+                                this.destroyBlock(target);
+                            }
+                        }
+                        // orig :310 — every in-range think-tick tears up the
+                        // surrounding terrain, whether or not the swing landed.
+                        this.destroyNearbyBlocks();
                     }
                 } else {
                     this.setAttacking(0);
@@ -132,11 +216,17 @@ public class Robot2 extends Monster {
                 this.setAttacking(0);
             }
         }
-        if (this.getAttacking() == 0) {
-            if (this.getRandom().nextInt(450) == 1) this.idleAnimationTimer = 50;
-            if (this.idleAnimationTimer > 0) --this.idleAnimationTimer;
-            if (this.idleAnimationTimer > 0) {
+        // orig :320-335 — "just for fun": while idle (PlayNicely off) a
+        // 1-in-450 roll starts a 50-tick tantrum; the Pounder holds its
+        // attack pose and shreds nearby terrain on a 1-in-3 roll per tick.
+        if (this.getAttacking() == 0 && !OreSpawnConfig.PLAY_NICELY.get()) {
+            if (this.getRandom().nextInt(450) == 1) this.justForFun = 50;
+            if (this.justForFun > 0) --this.justForFun;
+            if (this.justForFun > 0) {
                 this.setAttacking(1);
+                if (this.getRandom().nextInt(3) == 1) {
+                    this.destroyNearbyBlocks();
+                }
             } else {
                 this.setAttacking(0);
             }
@@ -156,9 +246,11 @@ public class Robot2 extends Monster {
     }
 
     private LivingEntity findSomethingToAttack() {
+        // orig Robot2.java:382-384 — PlayNicely disables acquisition entirely.
+        if (OreSpawnConfig.PLAY_NICELY.get()) return null;
         AABB searchBox = this.getBoundingBox().inflate(14.0, 3.0, 14.0);
         List<LivingEntity> entities = this.level().getEntitiesOfClass(LivingEntity.class, searchBox);
-        entities.sort(this.targetSorter);
+        entities.sort(this.targetSorter); // orig :386 — GenericTargetSorter
         for (LivingEntity e : entities) {
             if (isSuitableTarget(e)) return e;
         }

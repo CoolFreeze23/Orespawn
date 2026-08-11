@@ -2,6 +2,7 @@ package danger.orespawn.entity;
 
 import danger.orespawn.MobStats;
 import danger.orespawn.ModSounds;
+import danger.orespawn.entity.ai.GenericTargetSorter;
 
 import java.util.Comparator;
 import java.util.List;
@@ -67,7 +68,10 @@ public class Kraken extends Monster {
     public Kraken(EntityType<? extends Kraken> type, Level level) {
         super(type, level);
         this.xpReward = 500;
-        this.targetSorter = Comparator.comparingDouble(this::distanceToSqr);
+        // orig Kraken.java:57,81 — target priority uses the shared
+        // GenericTargetSorter (creepers and large targets outrank nearer
+        // small ones), not plain distance (TF-035).
+        this.targetSorter = new GenericTargetSorter(this);
     }
 
     @Override
@@ -433,6 +437,14 @@ public class Kraken extends Monster {
             this.currentFlightTarget = new BlockPos(
                     (int) attacker.getX(), (int) attacker.getY() + 15, (int) attacker.getZ());
         }
+        // ENT-K-002: the effective re-hit window is this custom 30-tick timer
+        // (orig Kraken.java:1158-1161), decremented once per AI step (orig
+        // Kraken.java:908-910; port customServerAiStep). The oft-cited
+        // "field_70174_ab = 120" sits ONCE in the constructor (orig
+        // Kraken.java:79), not in the hurt path, and is 1.7.10
+        // Entity.fireResistance — a vestigial field vanilla never reads — so
+        // no 120-tick invulnerability ever existed in the original; it is
+        // deliberately not ported.
         if (this.hurtTimer > 0) return false;
         this.hurtTimer = 30;
         boolean ret = super.hurt(source, amount);

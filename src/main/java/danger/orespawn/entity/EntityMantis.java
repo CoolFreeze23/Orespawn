@@ -2,8 +2,10 @@ package danger.orespawn.entity;
 
 import danger.orespawn.MobStats;
 
+import danger.orespawn.OreSpawnConfig;
 import danger.orespawn.OreSpawnMod;
-import java.util.Comparator;
+import danger.orespawn.entity.ai.GenericTargetSorter;
+import danger.orespawn.util.MyUtils;
 import java.util.List;
 import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
@@ -21,6 +23,7 @@ import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
+import net.minecraft.world.entity.animal.Squid;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
@@ -221,24 +224,55 @@ public class EntityMantis extends Monster {
 
     @Nullable
     private LivingEntity findSomethingToAttack() {
+        // orig Mantis.java:395-397 — PlayNicely disables aggression entirely.
+        if (OreSpawnConfig.PLAY_NICELY.get()) return null;
         List<LivingEntity> entities = this.level().getEntitiesOfClass(LivingEntity.class,
                 this.getBoundingBox().inflate(16.0, 8.0, 16.0));
-        entities.sort(Comparator.comparingDouble(this::distanceToSqr));
+        // TF-035: orig Mantis.java:49,62 — targets sort with GenericTargetSorter
+        // (creeper-halved / big-silhouette-first, sorted at :399), not plain distance.
+        entities.sort(new GenericTargetSorter(this));
         for (LivingEntity candidate : entities) {
             if (isSuitableTarget(candidate)) return candidate;
         }
         return null;
     }
 
+    /**
+     * orig Mantis.java:311-392 — the mantis prey list, in original order.
+     * Players are decided FIRST (:327-330), before any species branch. Then a
+     * long exclusion list of water fauna and fellow flyers (:331-372); then
+     * the prey grants: any monster (:373-375), butterflies (:376-378),
+     * cockateils (:379-381) and fairies (:382-384) — ENT-K-030's lost
+     * butterfly-prey behavior. The second player branch (:385-390) is
+     * unreachable (players already returned above; quirk kept out — it cannot
+     * execute) and everything else falls to the shared attackable-non-mob
+     * boss list (:391).
+     */
     private boolean isSuitableTarget(LivingEntity target) {
         if (target == null || target == this || !target.isAlive()) return false;
         if (!this.getSensing().hasLineOfSight(target)) return false;
         if (target.isInWater()) return false;
+        // orig :327-330 — field_75098_d is isCreativeMode, i.e. instabuild.
+        if (target instanceof Player p) return !p.getAbilities().instabuild;
         if (target instanceof EntityMantis) return false;
-        if (target instanceof EntityBee) return false;
-        if (target instanceof Player p) return !p.getAbilities().invulnerable;
-        if (target instanceof Monster) return true;
-        return false;
+        if (target instanceof Irukandji) return false;      // orig :334
+        if (target instanceof Skate) return false;          // orig :337
+        if (target instanceof Flounder) return false;       // orig :340
+        if (target instanceof Whale) return false;          // orig :343
+        if (target instanceof Squid) return false;          // orig :346 (EntitySquid)
+        if (target instanceof WaterDragon) return false;    // orig :349
+        if (target instanceof AttackSquid) return false;    // orig :352
+        if (target instanceof EntityTerribleTerror) return false; // orig :355
+        if (target instanceof EntityLurkingTerror) return false;  // orig :358
+        if (target instanceof CloudShark) return false;     // orig :361
+        if (target instanceof EntityRotator) return false;  // orig :364
+        if (target instanceof EntityBee) return false;      // orig :367
+        if (target instanceof Mothra) return false;         // orig :370
+        if (target instanceof Monster) return true;         // orig :373 (EntityMob)
+        if (target instanceof EntityButterfly) return true; // orig :376
+        if (target instanceof Cockateil) return true;       // orig :379
+        if (target instanceof Fairy) return true;           // orig :382
+        return MyUtils.isAttackableNonMob(target);          // orig :391
     }
 
     /** orig Mantis.java:263-302 — spawner bypass; clear-air volume; extra 1-in-6 dice in Chaos; y>=50; daytime; no other Mantis within 32/16/32. */

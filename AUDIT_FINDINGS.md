@@ -1734,6 +1734,7 @@ Paths: ORIG = `reference_1_7_10_source\sources\danger\orespawn\`, PORT = `src\ma
 - **Original:** ORIG `Kraken.java` — `field_70174_ab = 120` after hurt
 - **Port:** `entity\Kraken.java:409` — `hurtTimer = 30`; Kraken can be re-damaged 4× faster
 - **Fix:** set `hurtTimer = 120` at `Kraken.java:409`.
+- **Resolution:** VERIFIED-CORRECT (2026-08-11, Phase E4 ENT-K batch — the claimed 120-tick window never existed. Orig Kraken.java:79 sets field_70174_ab=120 ONCE in the ctor, and that SRG is 1.7.10 Entity.fireResistance, a vestigial field vanilla never reads (INDEX.md's invulnerableTime row is wrong for it). The real per-hit gate is the custom timer, orig Kraken.java:1158-1161: `if (this.hurt_timer > 0) return false; this.hurt_timer = 30;`, decremented in updateAITasks orig :908-910 — matched verbatim by port Kraken.java hurt() (`hurtTimer = 30` gate) and the customServerAiStep decrement. Setting hurtTimer=120 would CREATE a 4x divergence; not applied. Analysis documented in-code. TF-035 rider applied: plain distance comparator swapped for GenericTargetSorter per orig Kraken.java:57,81.)
 
 ### ENT-K-003 — Kraken: drop substitutions + extra loot-table layer
 
@@ -1807,6 +1808,7 @@ Paths: ORIG = `reference_1_7_10_source\sources\danger\orespawn\`, PORT = `src\ma
 - **Fix:** in `onHitBlock`/miss-discard path, spawn the irukandji item entity for irukandji-type balls; port the original special-type extra effects.
 
 ---
+- **Resolution:** FIXED (2026-08-11, Phase E4 ENT-K batch — irukandji miss-drop restored: new onHitBlock drops one dead_irukandji (orig LaserBall.java:137-139 func_145779_a(MyIrukandji,1); item identity orig OreSpawnMain.java:1750,2299). Impact-effects block ported (orig :140-155): smoke/largesmoke/fireworksSpark burst x10, x20 when special (orig :141-149; the missing '- nextFloat()' on the smoke Z is reproduced), explode sound 0.5 vol / 1.0±0.5 pitch on every non-acid impact (orig :150), and spared-target early-returns now skip ALL effects (orig :78-132) — the port previously exploded special balls on immune robots/ridden dragons. Explosion fire flag corrected to false (orig :151-153: isSmoking=mobGriefing via ExplosionInteraction.MOB, isFlaming always false; port was passing mobGriefing as fire). In-flight reddust trail added, reproducing the 1.7.10 color-args-as-velocity bug (orig :182-183).)
 
 ## Lavafoam (block)
 
@@ -1854,6 +1856,7 @@ Paths: ORIG = `reference_1_7_10_source\sources\danger\orespawn\`, PORT = `src\ma
 - **Fix:** add `checkSpawnRules` (darkness + ≤4 nearby LeafMonsters); see ENT-SYS2-004.
 
 ---
+- **Resolution:** FIXED (2026-08-11, Phase E4 ENT-K batch — invented all-overworld w4/1-2 lump row removed from add_overworld_monsters.json; replaced by 7 per-biome hostile_leaf_monster__*.json reproducing all 8 orig ambient addSpawn rows (OreSpawnMain.java:4910-4917): jungle 5/2-6, forest 5/1-2, sparse_jungle=jungleHills 3/2-4, windswept_forest=forestHills 3/1-2, birch_forest 3/3-6, old_growth_birch=birchForestHills 2/3-6, taigas merged megaTaiga+taiga 2/2-5 per bee/beaver precedent. Gating half verified already correct: EntityLeafMonster.checkSpawnRules:182-194 matches orig LeafMonster.java:227-251 (spawner bypass -3..2/0..4, darkness, !daytime, Islands y<=20 else y>=50, <=4 buddies 20/10/20). TF-035: plain comparator swapped for GenericTargetSorter per orig :36/:48/:214.)
 
 ## Leon (Leonopteryx)
 
@@ -1949,6 +1952,7 @@ Paths: ORIG = `reference_1_7_10_source\sources\danger\orespawn\`, PORT = `src\ma
 - **Original:** ORIG `LurkingTerror.java` — excluded flying mobs and a long list of OreSpawn species
 - **Port:** `entity\EntityLurkingTerror.java:191-197` — excludes only other LurkingTerrors
 - **Fix:** add exclusions for flying mobs (`entity.isNoGravity()`/flying flag) and the original species list to the target predicate.
+- **Resolution:** FIXED (2026-08-11, Phase E4 ENT-K batch — EntityLurkingTerror.isSuitableTarget rewritten to full orig exclusion list (LurkingTerror.java:271-348): own kind, RockBase, EnderReaper, LeafMonster, TerribleTerror, Mothra, CloudShark, Rotator, Bee, Mantis, CreepingHorror, Triffid (orig dupe-check :317/:338 noted in comment), PitchBlack, Dragon, Island, IslandToo, Butterfly, Firefly, creative players; everything else targetable. Audit's 'flying mobs' was a paraphrase — orig has no isNoGravity check, only this class list. Also restored missing PlayNicely gate in findSomethingToAttack (orig :350-353, matching LeafMonster port idiom) and TF-035 GenericTargetSorter swap (orig :48 field, :58 ctor, :355 sort).)
 
 ### ENT-K-027 — LurkingTerror: drops changed
 
@@ -1966,6 +1970,7 @@ Paths: ORIG = `reference_1_7_10_source\sources\danger\orespawn\`, PORT = `src\ma
 - **Fix:** add `checkSpawnRules` (light + Y>10 + no nearby LurkingTerror); see ENT-SYS2-004.
 
 ---
+- **Resolution:** FIXED (2026-08-11, Phase E4 ENT-K batch — orig has NO addSpawn row for LurkingTerror anywhere (grepped whole reference source; spawner/egg paths only), so the port's overworld w2/1-1 lump row was invented — removed from add_overworld_monsters.json; no replacement BM files. Rule gates verified already correct: port checkSpawnRules (EntityLurkingTerror.java:204-215 pre-edit numbering) matches orig LurkingTerror.java:237-269 — spawner bypass -2..1/0..4, darkness, DAYTIME required (orig quirk, :255), 1-in-2 dice (:258), Chaos extra 1-in-6 (:261, DimensionID6→orespawn:chaos per ModDimensionKeys — audit's 'Islands-dim special' was wrong), no other LT in 32/16/32 (:264), y>=10 (:268).)
 
 ## Mantis
 
@@ -1983,6 +1988,7 @@ Paths: ORIG = `reference_1_7_10_source\sources\danger\orespawn\`, PORT = `src\ma
 - **Original:** ORIG `Mantis.java` — targets players, mobs, butterflies, Cockateil, Fairy; avoided water/mantises/many species
 - **Port:** `entity\EntityMantis.java:239-248` — players + Monster only, excludes Mantis/Bee/in-water
 - **Fix:** add Butterfly/Cockateil (and Fairy if ported) to the target predicate.
+- **Resolution:** FIXED (2026-08-11, Phase E4 ENT-K batch — full orig prey list restored in EntityMantis.isSuitableTarget: non-creative players decided first (orig Mantis.java:327-330, instabuild), exclusions Irukandji/Skate/Flounder/Whale/Squid/WaterDragon/AttackSquid/TerribleTerror/LurkingTerror/CloudShark/Rotator/Bee/Mothra in original order (:331-372), then prey grants Monster (:373), EntityButterfly (:376), Cockateil (:379), Fairy (:382) and the MyUtils.isAttackableNonMob fallback (:391); the second player branch (:385-390) is unreachable dead code, noted not reproduced. findSomethingToAttack gains the missing PlayNicely gate (:395-397) and GenericTargetSorter per TF-035 (field :49, ctor :62, sort :399). Port: EntityMantis.java:226-276.)
 
 ### ENT-K-031 — Mantis: drop substitutions + double path
 
@@ -2030,6 +2036,7 @@ Paths: ORIG = `reference_1_7_10_source\sources\danger\orespawn\`, PORT = `src\ma
 - **Original:** ORIG `Molenoid.java` — places `MyMoleDirtBlock` while moving + destroys dirt/grass/sand/gravel AHEAD
 - **Port:** `entity\EntityMolenoid.java:169-186` — `clearPathBehind()` destroys 3-high BEHIND; `throwBlocksAtTarget` (`:151-167`) places vanilla DIRT near target; both mobGriefing-gated
 - **Fix:** change `clearPathBehind` to clear ahead of movement direction; port `MoleDirtBlock` (or keep vanilla dirt but place along the dug path, not at target).
+- **Resolution:** FIXED (2026-08-11, Phase E4 ENT-K batch — audit half-right: port's -3sin/+3cos clear column already pointed AHEAD (orig Molenoid.java:226-227); renamed clearPathAhead and completed with target-relative column base dir 0/1/2 (:230-238), classic-leaves clearing (:242, 4-variant field_150362_t mapping per Camarasaurus precedent), ungated mole-dirt self-clear (:245-246), PlayNicely gate (:239). Ported the missing speed-proportional mole-dirt spoil 6 blocks BEHIND the head (:207-225). throwBlocksAtTarget now places ModBlocks.MOLE_DIRT not vanilla DIRT, PlayNicely-gated, invented mobGriefing gate removed (:183-196). Also restored MyCanSee dig-vision raycast (:344-394), orig prey predicate incl. no-passive-animals (:251-275), PlayNicely + GenericTargetSorter in findSomethingToAttack (:278-282; TF-035 field :38, ctor :47). Port: EntityMolenoid.java:126-355.)
 
 ### ENT-K-036 — Molenoid: drops doubled (nose drops twice) + substitutions
 
@@ -2047,6 +2054,7 @@ Paths: ORIG = `reference_1_7_10_source\sources\danger\orespawn\`, PORT = `src\ma
 - **Fix:** reduce weight to 2 in `add_cave_spawns.json`; gates per ENT-SYS2-004.
 
 ---
+- **Resolution:** FIXED (2026-08-11, Phase E4 ENT-K batch — lump row w8/1-2 #minecraft:is_overworld removed from add_cave_spawns.json (sharedEdit; rotator row untouched); replaced by three per-biome convention files: ambient_molenoid__plains.json w2/1-2 (orig OreSpawnMain.java:4741, field_76772_c=plains), ambient_molenoid__savanna.json w2/1-1 (:4742, field_150588_X), ambient_molenoid__savanna_plateau.json w2/1-1 (:4743, field_150587_Y). Spawn-rule gates already present per ENT-SYS2-004 and verified against orig Molenoid.java:303-342: spawner bypass -3..2/0..4, darkness, y>=50, night, 2x2x3 air box, no other Molenoid within 16/8/16 (port EntityMolenoid.checkSpawnRules).)
 
 ## Mothra
 
@@ -2064,6 +2072,7 @@ Paths: ORIG = `reference_1_7_10_source\sources\danger\orespawn\`, PORT = `src\ma
 - **Original:** ORIG `Mothra.java` — fired `BetterFireball` on normal/hard difficulty
 - **Port:** `entity\Mothra.java:211-221` — `SmallFireball` only
 - **Fix:** in the fireball spawn, branch on `level.getDifficulty()` and fire `BetterFireball` for NORMAL/HARD.
+- **Resolution:** FIXED (2026-08-11, Phase E4 ENT-K batch — difficulty variant restored in attackWithFireball: Easy=SmallFireball, Normal=coin-flip small/Better (nextInt(2)==0), Hard=always BetterFireball+setNotMe (orig Mothra.java:390-418,:407,:415); bow 0.75f / fuse 1.0f sounds (:394,:408,:416 — invented BLAZE_SHOOT replaced), MothraPeaceful+Peaceful guards (:382-387), post-shot 1 HP heal (:419-421). Variant's second half: attack roll 1-in-3, 1-in-2 on Hard (:165,:178-180 at :229,:242) — port hardcoded 3. Same-file parity per ENT-A-003 precedent: isSuitableTarget full filter (isIgnoreable, line-of-sight, 10 species exclusions, :424-483), PlayNicely gate in findSomethingToAttack (:486-488). TF-035: GenericTargetSorter swapped in (:60,:70). BetterFireball entity/registration already present (ModEntities.java:699); no shared edits.)
 
 ### ENT-K-040 — Mothra: death moth-swarm missing + drop substitutions/doubling
 
@@ -2155,6 +2164,7 @@ Paths: ORIG = `reference_1_7_10_source\sources\danger\orespawn\`, PORT = `src\ma
 - **Original:** ORIG — w1/1-3 select biomes + daytime + Y 50–100 + ≤2 nearby
 - **Port:** overworld w8/1-2 + crystal dim w5/4-8; `findBuddies()` exists (`Peacock.java:111-114`) but is never called
 - **Fix:** call `findBuddies()` from a `checkSpawnRules` override (daytime + Y 50–100 + ≤2 nearby); lower overworld weight to ~1/1-3.
+- **Resolution:** FIXED (2026-08-11, Phase E4 ENT-K batch — gate half already ported (Peacock.checkSpawnRules per orig Peacock.java:101-119, gametest i053); remainder closed: checkSpawnRules now calls the formerly-dead findBuddies() (orig :118, :263-266); TF-035 sorter restored (orig :45,:55,:226). Weights via sharedEdits: invented overworld lump row w8/1-2 removed from add_overworld_creatures.json; NEW ambient_peacock__badlands.json w1/1-3 per orig OreSpawnMain.java:4970 (mesa) + :4971 (mesaPlateau), both collapsing to modern badlands (hostile_brutalfly.json precedent); PEACOCK MobCategory CREATURE→AMBIENT (orig EnumCreatureType.ambient; chipmunk precedent ModEntities.java:315). Crystal w5/4-8 verified correct (BiomeGenUtopianPlains.java:216-217); chaos w2/2-4 matches :385-386 but sits in the creature list — systemic chaos_biome issue, noted.)
 
 ### ENT-K-050 — Peacock: breeding item changed
 
@@ -2182,6 +2192,7 @@ Paths: ORIG = `reference_1_7_10_source\sources\danger\orespawn\`, PORT = `src\ma
 - **Original:** ORIG `PitchBlack.java` — bonus damage vs EntityDragon/Godzilla
 - **Port:** `entity\PitchBlack.java:296-313` — melee + scaled knockback only
 - **Fix:** in `doHurtTarget`, add the original damage multiplier when target is EnderDragon or Godzilla.
+- **Resolution:** FIXED (2026-08-11, Phase E4 ENT-K batch — audit's 'damage multiplier' was imprecise; actual orig mechanics restored: (1) doHurtTarget dragon branch (orig PitchBlack.java:293-303) — explosion-typed source (:295-297 setExplosionSource(null)+setExplosion → damageSources().explosion(null,null)), 1-in-8 hits the dragon HEAD part (:298-299, full damage) else BODY part (:301, vanilla quarters it), for attack×scale = the per-tier ATTACK_DAMAGE base, returns true, no knockback; (2) customServerAiStep squared-melee-reach floor of 100 vs EnderDragon/Godzilla/GodzillaHead (orig :369-377) — previously missing, so the Nightmare could never actually land hits on those bosses. TF-035 rider: plain Comparator.comparingDouble(distanceToSqr) swapped for GenericTargetSorter (orig :54 field, :67 ctor).)
 
 ### ENT-K-053 — PitchBlack: minor drop extras missing
 
@@ -2191,6 +2202,7 @@ Paths: ORIG = `reference_1_7_10_source\sources\danger\orespawn\`, PORT = `src\ma
 - **Fix:** adjust `pitch_black.json`: scale ×1, zoo_keeper 2–7, add the random junk-extras pool. (Natural spawning: see ENT-SYS2-003.)
 
 ---
+- **Resolution:** FIXED (2026-08-11, Phase E4 ENT-K batch — port inventions removed: 3-8 bone, xp bottle, scale 1-3, flat zoo_keeper 1-5. pitch_black.json now holds only the fixed drops: 1 nightmare_scale (orig PitchBlack.java:590) + 1 painting (:591, field_151160_bD → minecraft:painting per repo-wide convention, cf. kraken.json/mothra.json). Scale-dependent drops restored in dropCustomDeathLoot (TheKing/B1 exception precedent — counts read getPitchBlackScale(), inexpressible in loot JSON): 3+rand(2+(int)(5t)) rotten flesh, each with a 1-in-10 feather/string/flint/raw-beef extra (orig :574-589); 2+(int)t+rand(2+(int)(5t)) Zoo Keepers (:592-595); all scattered ±rand(5)×scale at y+1 via dropItemRand (:562-570). Audit's 'stick/feather/arrow/flesh/carrot' extras claim wrong — verified extras are feather/string/flint/beef; '2-7 zoo_keeper' is only the t=0.5..1 envelope.)
 
 ## Pointysaurus
 
@@ -2288,6 +2300,7 @@ Paths: ORIG = `reference_1_7_10_source\sources\danger\orespawn\`, PORT = `src\ma
 - **Original:** ORIG `Robot2.java` — destroys blocks around self/target (PlayNicely-gated)
 - **Port:** `entity\Robot2.java` — melee only; the griefing was relocated to port Robot4 (`Robot4.java:118-206`)
 - **Fix:** move/copy the ground-pound terrain destruction from Robot4 back into Robot2 (mobGriefing-gated), restoring each robot's original identity.
+- **Resolution:** FIXED (2026-08-11, Phase E4 ENT-K batch — griefing returned to Robot2). customServerAiStep now ports orig Robot2.java:274-336: 1-in-6 PlayNicely-gated think-tick, 1.25-rad body-facing gate (:292-301), swing dice with 6x destroyBlock(target) on a landed hit (:304-309), destroyNearbyBlocks() every in-range tick (:310), and the idle 1-in-450 / 50-tick just_for_fun tantrum with 1-in-3 shredding (:320-335). destroyBlock (:232-261) and destroyNearbyBlocks (:263-272) ported exactly: obsidian/bedrock/quartz/spawner/redstone-block/iron-block/chest spared, blocks set to air with NO drops, mobGriefing-gated, (int)-truncation quirk kept. PlayNicely gate added to findSomethingToAttack (:382-384). TF-035 rider: GenericTargetSorter swapped in (orig :38,50). Robot4's invented relocation removed under ENT-K-069.
 
 ### ENT-K-064 — Robot2: drops slashed
 
@@ -2325,6 +2338,7 @@ Paths: ORIG = `reference_1_7_10_source\sources\danger\orespawn\`, PORT = `src\ma
 - **Fix:** play `SoundEvents.FIREWORK_ROCKET_LAUNCH` in `fireLaserAt`.
 
 ---
+- **Resolution:** FIXED (2026-08-11, Phase E4 ENT-K batch — shot sound restored). fireLaserAt (port Robot3.java:137-152) now plays SoundEvents.FIREWORK_ROCKET_LAUNCH at 3.0f volume / 1.0f pitch on every shot, matching orig Robot3.java:273 world.playSoundAtEntity(this, "fireworks.launch", 3.0f, 1.0f), via the codebase's level().playSound(null, x, y, z, ..., SoundSource.HOSTILE, ...) idiom (cf. Dragon.java:507-509). TF-035 rider: plain distance comparator swapped for GenericTargetSorter (orig Robot3.java:39 field, :51 ctor).
 
 ## Robot4 (Robo-Warrior)
 
@@ -2342,6 +2356,7 @@ Paths: ORIG = `reference_1_7_10_source\sources\danger\orespawn\`, PORT = `src\ma
 - **Original:** ORIG `Robot4.java` — hybrid melee/ranged: LaserBall normal + special variants
 - **Port:** `entity\Robot4.java` — melee bruiser only; also carries Robot2's relocated griefing (`:118-206`)
 - **Fix:** add a ranged LaserBall attack loop (normal + special types) mirroring Robot3's `fireLaserAt` plumbing; return the griefing to Robot2 (ENT-K-063).
+- **Resolution:** FIXED (2026-08-11, Phase E4 ENT-K batch — hybrid ranged restored, invented griefing removed). customServerAiStep now ports orig Robot4.java:269-334: melee only inside (3+w/2)^2 with no reload cost (:294-296); otherwise a 0.5-rad HEAD-facing gate (:298-305) and fireLaserAt (:305-324): ball spawns 1.75 out at yRot+45deg, +2.0y (:306-309), 0.2x horizontal-distance arc boost (:313), shoot 2.0f/4.0f (:314); distSq>65 sets special + reload 30 + launch 3.5f/0.5f (:315-318), else reload 10 + 2.5f/1.0f (:319-322); setAttacking(1) :325, moveTo 0.75 :327. Deleted poundGroundInFront/isShatterable/pound fields (orig Robot4 breaks no blocks); restored orig aiStep client particles (:133-143 smoke y-jitter + attacking reddust), hurt ret=true (:350), PlayNicely gate (:386-388). TF-035: sorter swapped (orig :41,54).
 
 ### ENT-K-070 — Robot4: shielding is dead state
 
@@ -2349,6 +2364,7 @@ Paths: ORIG = `reference_1_7_10_source\sources\danger\orespawn\`, PORT = `src\ma
 - **Original:** ORIG `Robot4.java` — active shielding window after being hit
 - **Port:** `entity\Robot4.java:252` — `DATA_SHIELDING` defined + checked in `hurt()` but no code ever calls `setShielding(1)`
 - **Fix:** call `setShielding(1)` when hurt (tie to the existing 65-tick `wasAttackedTicker`) and clear when it expires.
+- **Resolution:** VERIFIED-CORRECT (2026-08-11, Phase E4 ENT-K batch — audit premise wrong; dead state IS the original). The ONLY setShielding(1) caller in the entire original mod is the client model: ModelRobot4.java:447-451 "if ((double)newangle > (double)amp / 3.0) { e.setShielding(1); }" during the attack arm-pump. A client-side DataWatcher write never syncs to the server, so orig Robot4.java:339's shielding check always read 0 server-side — the real post-hit immunity is was_attacked_ticker=65 (:342). Port matches bug-for-bug: port ModelRobot4 setupAnim performs the identical client-local write, and Robot4.hurt gates "if (this.getShielding() != 0 || this.wasAttackedTicker != 0) return false;". The proposed setShielding(1)-on-hurt would invent a shield the original never had. Documented in Robot4.hurt javadoc and ModelRobot4 comment.
 
 ### ENT-K-071 — Robot4: RayGun + ammo drops missing
 
@@ -2386,6 +2402,7 @@ Paths: ORIG = `reference_1_7_10_source\sources\danger\orespawn\`, PORT = `src\ma
 - **Fix:** play `SoundEvents.FIREWORK_ROCKET_LAUNCH` in `fireLaserAt`.
 
 ---
+- **Resolution:** FIXED (2026-08-11, Phase E4 ENT-K batch — shot sound restored). fireLaserAt (port Robot5.java:127-142) now plays SoundEvents.FIREWORK_ROCKET_LAUNCH at 3.0f volume / 1.0f pitch on every shot, matching orig Robot5.java:245 world.playSoundAtEntity(this, "fireworks.launch", 3.0f, 1.0f), same level().playSound HOSTILE idiom as the ENT-K-067 Robot3 fix. TF-035 rider: plain distance comparator swapped for GenericTargetSorter (orig Robot5.java:39 field, :50 ctor).
 
 ## RockBase
 
@@ -2395,6 +2412,7 @@ Paths: ORIG = `reference_1_7_10_source\sources\danger\orespawn\`, PORT = `src\ma
 - **Original:** ORIG `RockBase.java:129-140` — Crystal-dimension branch forces types 9–12
 - **Port:** `entity\RockBase.java:95-106` — single overworld lottery (1→12) only
 - **Fix:** in the type-roll, branch on Crystal dimension and constrain types to 9–12.
+- **Resolution:** FIXED (2026-08-11, Phase E4 ENT-K batch — tick() type lottery now branches on the Crystal dimension per orig RockBase.java:93-140: the non-Crystal path keeps the 1-12 rising-rarity rolls (orig :95-128), while inside DimensionID5 the mob is forced to crystal types — base 9, nextInt(3)==0 -> 10, nextInt(5)==0 -> 11, nextInt(10)==0 -> 12 (orig :129-140). Dimension test uses the established ModDimensionKeys.isIn(level, CRYSTAL) idiom (DimensionID5 -> orespawn:crystal per ModDimensionKeys javadoc). HP re-derivation 1+type/4 unchanged (orig :141-142). Port: entity/RockBase.java tick().)
 
 ### ENT-K-076 — RockBase: death drops missing + placed rocks lose type
 
@@ -2412,6 +2430,7 @@ Paths: ORIG = `reference_1_7_10_source\sources\danger\orespawn\`, PORT = `src\ma
 - **Fix:** add Y≥50 check in `checkSpawnRules` (low priority — placement is mostly structural).
 
 ---
+- **Resolution:** VERIFIED-CORRECT (2026-08-11, Phase E4 ENT-K batch — the stated remainder is already implemented: port entity/RockBase.java overrides checkSpawnRules(LevelAccessor, MobSpawnType) with `return this.getY() >= 50.0;`, commented "orig RockBase.java:191-193 — y>=50". Orig func_70601_bi is `return !(this.field_70163_u < 50.0);` (orig RockBase.java:191-193), a full override with no super call and no other conditions — the port matches exactly, including replacing rather than AND-ing the vanilla check. Evidently added alongside the D4 ENT-K-076 RockBase work (same comment style as the die() override); the ledger entry was never updated. No code change made.)
 
 ## Rotator
 
@@ -2429,6 +2448,7 @@ Paths: ORIG = `reference_1_7_10_source\sources\danger\orespawn\`, PORT = `src\ma
 - **Original:** ORIG `Rotator.java` — excluded Termite, Vortex, DungeonBeast, CrystalCow, Irukandji, Skate, Whale, Flounder, Urchin, TerribleTerror, LurkingTerror, CloudShark, Mothra, Bee, Mantis, etc.
 - **Port:** `entity\EntityRotator.java:168-179` — excludes Rotator/Peacock/CloudShark/TerribleTerror only
 - **Fix:** extend the exclusion predicate to the full original species list (those that exist in the port).
+- **Resolution:** FIXED (2026-08-11, Phase E4 ENT-K batch — isSuitableTarget rebuilt to the full orig predicate (orig Rotator.java:294-365): null/self/dead, MyUtils.isIgnoreable (:304), line of sight (:307), creative players (:310-315, aligned invulnerable->instabuild), then all sixteen spared species — Termite :316, Vortex :319, DungeonBeast :325, Peacock :328, CrystalCow :331, Irukandji :334, Skate :337, Whale :340, Flounder :343, Urchin :346, TerribleTerror :349, LurkingTerror :352, CloudShark :355, Mothra :358, Bee :361, Mantis :364 — plus Rotator itself :322; every species exists in the port. findSomethingToAttack gains the PlayNicely gate (orig :368-370) and swaps the plain distance comparator for GenericTargetSorter (TF-035 rider; orig field :49, ctor :60, sort :372). Port: entity/EntityRotator.java:209-255.)
 
 ### ENT-K-080 — Rotator: `was_spawnered` persistence missing
 
@@ -2456,6 +2476,7 @@ Paths: ORIG = `reference_1_7_10_source\sources\danger\orespawn\`, PORT = `src\ma
 - **Original:** ORIG `RubberDucky.java:440-448` — at killCount≥5 also hunted EntitySquid/AttackSquid; followed buddy ducks
 - **Port:** `entity\EntityRubberDucky.java:292-301` — players only at killCount≥5
 - **Fix:** add Squid/AttackSquid to the vengeance target scan; restore buddy-follow movement bias.
+- **Resolution:** FIXED (2026-08-11, Phase E4 ENT-K batch — squid prey restored: AttackSquid (orig RubberDucky.java:440-442) and vanilla Squid (:443-445) are suitable targets unconditionally — orig hunts squids at any kill count; the ledger's killCount>=5 framing applied only to players (:449-452, creative aligned to instabuild). Buddy-follow restored: transient buddy field (orig :51), 1-in-10 adoption while scanning a fellow ducky (:446-448), cleared each rescan (:470), 1-in-15 follow at speed 1.0 when no target (:404-407) and independent 1-in-20 follow (:410-412). findSomethingToAttack also gains the PlayNicely gate (:457-459), GenericTargetSorter (TF-035 rider; field :49, ctor :69, sort :461), and current-target retention via getTarget/setTarget (:465-469) replacing the getLastHurtByMob approximation. Port: entity/EntityRubberDucky.java.)
 
 ### ENT-K-083 — RubberDucky: tame item changed, untame missing
 

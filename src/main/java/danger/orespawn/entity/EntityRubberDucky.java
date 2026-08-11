@@ -1,6 +1,5 @@
 package danger.orespawn.entity;
 
-import java.util.Comparator;
 import java.util.List;
 
 import javax.annotation.Nullable;
@@ -33,6 +32,7 @@ import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.TemptGoal;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.animal.Animal;
+import net.minecraft.world.entity.animal.Squid;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -54,6 +54,14 @@ public class EntityRubberDucky extends TamableAnimal {
 
     private int killCount = 0;
     private int died = 0;
+    /**
+     * orig RubberDucky.java:51 {@code buddy} — another duck adopted at 1-in-10
+     * while scanning targets (orig :446-448); the duck drifts toward it (orig
+     * :404-412). Cleared on every fresh target scan (orig :470). Not persisted,
+     * matching the original.
+     */
+    @Nullable
+    private LivingEntity buddy = null;
     private int closestWaterDistSq = NO_CLOSEST_MATCH;
     private int targetX = 0;
     private int targetY = 0;
@@ -246,8 +254,19 @@ public class EntityRubberDucky extends TamableAnimal {
                     this.getNavigation().moveTo(target, 1.2);
                 }
             } else {
+                // orig RubberDucky.java:404-407 — with nothing to fight, a 1-in-15
+                // roll paddles toward the buddy duck at speed 1.0.
+                if (this.buddy != null && !this.buddy.isRemoved() && this.random.nextInt(15) == 1) {
+                    this.getNavigation().moveTo(this.buddy, 1.0);
+                }
                 this.setAttacking(0);
             }
+        }
+
+        // orig RubberDucky.java:410-412 — independent 1-in-20 buddy-follow bias,
+        // applied every AI tick even outside the combat roll.
+        if (this.buddy != null && !this.buddy.isRemoved() && this.random.nextInt(20) == 1) {
+            this.getNavigation().moveTo(this.buddy, 1.0);
         }
     }
 
@@ -305,23 +324,43 @@ public class EntityRubberDucky extends TamableAnimal {
         return target.hurt(this.damageSources().mobAttack(this), attackDamage);
     }
 
+    /**
+     * orig RubberDucky.java:424-454 — ducks always hunt squids: AttackSquid
+     * (:440-442) and vanilla EntitySquid (:443-445) are suitable regardless of
+     * kill count. A fellow RubberDucky is never a target, but a 1-in-10 roll
+     * adopts it as the {@code buddy} (:446-448) — a side effect of the scan,
+     * exactly as in the original. Players only become prey at killCount >= 5,
+     * creative excepted (:449-452); everything else is ignored (:453).
+     */
     private boolean isSuitableTarget(LivingEntity target) {
-        if (this.level().getDifficulty() == Difficulty.PEACEFUL) return false;
+        if (this.level().getDifficulty() == Difficulty.PEACEFUL) return false; // orig :425-427
         if (target == null || target == this || !target.isAlive()) return false;
         if (!this.getSensing().hasLineOfSight(target)) return false;
-        if (target instanceof EntityRubberDucky) return false;
+        if (target instanceof AttackSquid) return true; // orig :440-442
+        if (target instanceof Squid) return true;       // orig :443-445 EntitySquid
+        if (target instanceof EntityRubberDucky && this.random.nextInt(10) == 1) {
+            this.buddy = target; // orig :446-448 — adopt, do not attack
+        }
         if (this.getKillCount() >= 5 && target instanceof Player player) {
-            return !player.getAbilities().invulnerable;
+            return !player.getAbilities().instabuild; // orig :449-452 creative check
         }
         return false;
     }
 
     private LivingEntity findSomethingToAttack() {
-        LivingEntity revenge = this.getLastHurtByMob();
-        if (revenge != null && revenge.isAlive()) return revenge;
+        // TF-035: orig RubberDucky.java:456-478 — PlayNicely disables duck
+        // aggression entirely (:457-459), and the scan sorts with
+        // GenericTargetSorter (field :49, ctor :69, sort :461), not plain
+        // distance. The current attack target is kept while it lives (:465-468);
+        // otherwise both it and the buddy are cleared before rescanning (:469-470).
+        if (danger.orespawn.OreSpawnConfig.PLAY_NICELY.get()) return null;
         AABB searchBox = this.getBoundingBox().inflate(8.0, 4.0, 8.0);
         List<LivingEntity> targets = this.level().getEntitiesOfClass(LivingEntity.class, searchBox);
-        targets.sort(Comparator.comparingDouble(this::distanceToSqr));
+        targets.sort(new danger.orespawn.entity.ai.GenericTargetSorter(this));
+        LivingEntity current = this.getTarget();
+        if (current != null && current.isAlive()) return current;
+        this.setTarget(null);
+        this.buddy = null;
         for (LivingEntity target : targets) {
             if (this.isSuitableTarget(target)) return target;
         }
