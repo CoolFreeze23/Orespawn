@@ -4,6 +4,7 @@ import java.util.Optional;
 
 import de.dertoaster.multihitboxlib.api.IMHLibSizeCallback;
 import de.dertoaster.multihitboxlib.api.IMultipartEntity;
+import de.dertoaster.multihitboxlib.entity.hitbox.HitboxProfile;
 import de.dertoaster.multihitboxlib.entity.hitbox.SubPartConfig;
 import de.dertoaster.multihitboxlib.network.server.SPacketUpdateMultipart;
 import de.dertoaster.multihitboxlib.util.BoneInformation;
@@ -42,6 +43,21 @@ public class MHLibPartEntity<T extends Entity> extends PartEntity<T> {
 	private boolean enabled = true;
 	
 	private final LazyLoadField<Boolean> isSynched = new LazyLoadField<>(this::isSynched, 5000);
+
+	// ──────────────────────────────────────────────────────────────────
+	// OPT-019: synched-bone flags precomputed at part construction from
+	// the profile that created this part (createSubPartsFromProfile).
+	// Invalidation story: none needed — a part only exists as long as its
+	// parent entity, the parent's profile is fixed for the entity's
+	// lifetime (per-entity cache in IMultipartEntity.getHitboxProfile +
+	// immutable per-instance registry content), and the part layout
+	// itself is already baked from that same profile at construction. A
+	// datapack reload can only affect NEWLY constructed entities, whose
+	// parts are precomputed from the new profile. null = not precomputed
+	// (dynamic ICustomHitboxProfileSupplier parents) -> live lookup.
+	// ──────────────────────────────────────────────────────────────────
+	private Boolean precomputedListedAsSynchedBone = null;
+	private Boolean precomputedIsSynched = null;
 
 	private Optional<Tuple<Float, Float>> currentSizeModifier = Optional.empty();
 	
@@ -110,15 +126,55 @@ public class MHLibPartEntity<T extends Entity> extends PartEntity<T> {
 			xRotO += 360F;
 	}
 	
-	public final boolean isSynched() {
+	/**
+	 * OPT-019: seeds the precomputed synched flags from the profile this
+	 * part was created from. Called once per part by
+	 * {@code IMultipartEntity.createSubPartsFromProfile}; see the field
+	 * comment for why no later invalidation is required.
+	 */
+	public void mhlibPrecomputeSynchedFlags(final HitboxProfile profile) {
+		final boolean listed = profile.synchedBones().contains(this.getConfigName());
+		this.precomputedListedAsSynchedBone = listed;
+		// Mirrors isSynched(): profile present (it created us) && syncToModel && listed.
+		this.precomputedIsSynched = profile.syncToModel() && listed;
+	}
+
+	/**
+	 * OPT-019: constant-time replacement for the per-part-per-tick
+	 * "profile.isPresent() && profile.synchedBones().contains(name)" check
+	 * in {@code alignSubParts} (which did a registry lookup plus a linear
+	 * list scan). Falls back to the bit-identical live check when the
+	 * flags were not precomputed.
+	 */
+	public final boolean mhlibIsListedAsSynchedBone() {
+		final Boolean precomputed = this.precomputedListedAsSynchedBone;
+		if (precomputed != null) {
+			return precomputed;
+		}
 		if (this.getParent() instanceof IMultipartEntity<?> ime) {
-			if (!ime.getHitboxProfile().isPresent()) {
+			final Optional<HitboxProfile> profile = ime.getHitboxProfile();
+			return profile.isPresent() && profile.get().synchedBones().contains(this.getConfigName());
+		}
+		return false;
+	}
+
+	public final boolean isSynched() {
+		// OPT-019: precomputed fast path (see field comment for why this
+		// cannot go stale); legacy live lookup otherwise.
+		final Boolean precomputed = this.precomputedIsSynched;
+		if (precomputed != null) {
+			return precomputed;
+		}
+		if (this.getParent() instanceof IMultipartEntity<?> ime) {
+			// OPT-001: hoisted — one profile fetch instead of three.
+			final Optional<HitboxProfile> profile = ime.getHitboxProfile();
+			if (!profile.isPresent()) {
 				return false;
 			}
-			if (!ime.getHitboxProfile().get().syncToModel()) {
+			if (!profile.get().syncToModel()) {
 				return false;
 			}
-			if (ime.getHitboxProfile().get().synchedBones().contains(this.getConfigName())) {
+			if (profile.get().synchedBones().contains(this.getConfigName())) {
 				return true;
 			}
 		}
@@ -140,12 +196,40 @@ public class MHLibPartEntity<T extends Entity> extends PartEntity<T> {
 
 	}
 
+	/**
+	 * OPT-002: allocation-free change probe for the multipart update
+	 * broadcast (MixinServerEntity). Returns true only when a
+	 * {@link #writeData()} call right now would produce a payload
+	 * bit-identical to {@code last}: every field compared here is exactly
+	 * the field writeData captures, compared with primitive equality (no
+	 * epsilon — NaN or any real difference reports "changed" and forces a
+	 * send). The entity-data dirty probe uses {@code isDirty()} only, so
+	 * this check has no side effects ({@code packDirty()} is left to the
+	 * actual send path).
+	 */
+	public final boolean mhlibDataUnchangedSince(final SPacketUpdateMultipart.PartDataHolder last) {
+		if (this.getEntityData().isDirty()) {
+			return false;
+		}
+		return last.x() == this.getX()
+				&& last.y() == this.getY()
+				&& last.z() == this.getZ()
+				&& last.yRot() == this.getYRot()
+				&& last.xRot() == this.getXRot()
+				&& last.width() == this.baseSize.width()
+				&& last.height() == this.baseSize.height()
+				&& last.fixed() == this.baseSize.fixed();
+	}
+
 	public void readData(SPacketUpdateMultipart.PartDataHolder data) {
 		int updateSteps = 3;
 		if (this.getParent() instanceof IMultipartEntity<?> ime) {
-			updateSteps = ime.getHitboxProfile().isPresent() ? ime.getHitboxProfile().get().partUpdateSteps() : updateSteps;
+			// OPT-001: hoisted — one profile fetch instead of up to four
+			// per received packet; the value is stable within a call.
+			final Optional<HitboxProfile> profile = ime.getHitboxProfile();
+			updateSteps = profile.isPresent() ? profile.get().partUpdateSteps() : updateSteps;
 			if (this.isSynched.get()) {
-				updateSteps = ime.getHitboxProfile().isPresent() ? ime.getHitboxProfile().get().synchedPartUpdateSteps() : updateSteps;
+				updateSteps = profile.isPresent() ? profile.get().synchedPartUpdateSteps() : updateSteps;
 			}
 		}
 		
@@ -271,7 +355,28 @@ public class MHLibPartEntity<T extends Entity> extends PartEntity<T> {
 	}
 
 	public void setScaling(Vec3 scale) {
-		this.currentSizeModifier = Optional.ofNullable(new Tuple<Float, Float>((float)scale.x(), (float)scale.y()));
+		this.setScaling((float)scale.x(), (float)scale.y());
+	}
+
+	/**
+	 * OPT-019: value-based variant of {@link #setScaling(Vec3)} that skips
+	 * the Tuple + Optional allocation when the scale is unchanged (the
+	 * common case: alignSubParts re-applies a constant entity scale every
+	 * tick). Neutral: {@code getDimensions} only reads getA()/getB(), so
+	 * reusing a tuple holding the exact same float values is
+	 * indistinguishable; the float casts match the legacy
+	 * {@code new Tuple<>((float)scale.x(), (float)scale.y())} path, and a
+	 * NaN never compares equal, so it can only re-store, never wrongly
+	 * reuse. Nothing mutates the stored tuple (setA/setB are unused).
+	 */
+	public void setScaling(float horizontal, float vertical) {
+		if (this.currentSizeModifier != null && this.currentSizeModifier.isPresent()) {
+			final Tuple<Float, Float> current = this.currentSizeModifier.get();
+			if (current.getA() == horizontal && current.getB() == vertical) {
+				return;
+			}
+		}
+		this.currentSizeModifier = Optional.of(new Tuple<Float, Float>(horizontal, vertical));
 	}
 
 	public Vec3 getPivot() {

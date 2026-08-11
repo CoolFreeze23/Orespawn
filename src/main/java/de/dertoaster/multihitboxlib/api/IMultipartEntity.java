@@ -10,6 +10,7 @@ import de.dertoaster.multihitboxlib.util.BoneInformation;
 import de.dertoaster.multihitboxlib.util.ClientOnlyMethods;
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.entity.Entity;
@@ -110,11 +111,22 @@ public interface IMultipartEntity<T extends Entity> {
 	}
 	
 	public default void createSubPartsFromProfile(final HitboxProfile profile, final T parentEntity, final BiConsumer<String, MHLibPartEntity<T>> storageFunction) {
+		// OPT-019: precompute each part's synched-bone flags from the very
+		// profile that creates it. Safe because the profile an entity
+		// resolves is fixed for its lifetime (per-entity cache + immutable
+		// registry content, see getHitboxProfile) — EXCEPT for a dynamic
+		// ICustomHitboxProfileSupplier, which could legally return a
+		// different profile per call; those keep the live lookup path
+		// (no implementor exists in this codebase, this is API hygiene).
+		final boolean stableProfile = !(this instanceof ICustomHitboxProfileSupplier);
 		int subPartNumber = 0;
 		for(SubPartConfig spc : profile.partConfigs()) {
 			MHLibPartEntity<T> part = this.createNewPartFrom(spc, parentEntity, subPartNumber);
 			subPartNumber++;
-			
+			if (stableProfile) {
+				part.mhlibPrecomputeSynchedFlags(profile);
+			}
+
 			storageFunction.accept(spc.name(), part);
 		}
 	}
@@ -163,32 +175,65 @@ public interface IMultipartEntity<T extends Entity> {
 		final double curX = entity.getX();
 		final double curY = entity.getY();
 		final double curZ = entity.getZ();
-		
+
 		final float rotX = (float) (this.mhlibGetEntityRotationXForPartOffset() + Math.toRadians(entity.getXRot()));
 		// TODO: Unsure what to do with this as this could mess up the position if we just add the y rot to it...
 		// ... Otherwise this is for non synched parts, so it should be alright
 		final float rotY = (float) (this.mhlibGetEntityRotationYForPartOffset() + Math.toRadians(entity.getYRot()));
 		final float rotZ = this.mhlibGetEntityRotationZForPartOffset();
-		
+
 		final double entityScale = this.mhlibGetEntitySizeInternally(entity);
-		
+
+		// ──────────────────────────────────────────────────────────────
+		// OPT-019: the former per-part Vec3 chain
+		// (xRot -> yRot -> zRot -> scale -> add -> subtract, ~6 Vec3
+		// allocs per part per tick) is folded into inline double math.
+		// Neutrality: the sin/cos factors are hoisted once per call —
+		// Vec3.xRot/yRot/zRot recompute Mth.cos/Mth.sin per part from the
+		// SAME constant angles, and Mth trig is a pure table lookup, so
+		// the factors are bit-identical. They are kept as floats so each
+		// float*double promotion matches Vec3's arithmetic exactly, the
+		// operand order below mirrors Vec3.xRot/yRot/zRot/scale/add
+		// verbatim, and IEEE-754 defines a - b == a + (-b), which makes
+		// the final "(rotated*scale + cur) - pivot" identical to the old
+		// add().subtract() chain. Scaling is applied through the
+		// value-reusing setScaling(float, float) overload (same float
+		// casts as the old new Vec3 -> Tuple path).
+		// ──────────────────────────────────────────────────────────────
+		final float cosRotX = Mth.cos(rotX);
+		final float sinRotX = Mth.sin(rotX);
+		final float cosRotY = Mth.cos(rotY);
+		final float sinRotY = Mth.sin(rotY);
+		final float cosRotZ = Mth.cos(rotZ);
+		final float sinRotZ = Mth.sin(rotZ);
+		final float scaleA = (float) entityScale;
+
 		for(MHLibPartEntity<T> part : parts) {
-			if (this.getHitboxProfile().isPresent() && this.getHitboxProfile().get().synchedBones().contains(part.getConfigName())) {
+			// OPT-019: precomputed at part construction (profile content is
+			// immutable per entity lifetime); falls back to the identical
+			// live profile check when no precomputed flag exists.
+			if (part.mhlibIsListedAsSynchedBone()) {
 				continue;
 			}
-			Vec3 partOffset = part.getConfigPositionOffset();
-			partOffset = partOffset.xRot(rotX);
-			partOffset = partOffset.yRot(rotY);
-			partOffset = partOffset.zRot(rotZ);
-			
-			partOffset = partOffset.scale(entityScale);
+			final Vec3 base = part.getConfigPositionOffset();
+			// Vec3.xRot(rotX)
+			final double x1 = base.x;
+			final double y1 = base.y * cosRotX + base.z * sinRotX;
+			final double z1 = base.z * cosRotX - base.y * sinRotX;
+			// .yRot(rotY)
+			final double x2 = x1 * cosRotY + z1 * sinRotY;
+			final double z2 = z1 * cosRotY - x1 * sinRotY;
+			// .zRot(rotZ)
+			final double x3 = x2 * cosRotZ + y1 * sinRotZ;
+			final double y3 = y1 * cosRotZ - x2 * sinRotZ;
+			// .scale(entityScale), .add(cur...), .subtract(pivot)
+			final Vec3 pivot = part.getPivot();
 
-			partOffset = partOffset.add(curX, curY, curZ);
-			// Subtract pivot so the position is correct
-			partOffset = partOffset.subtract(part.getPivot());
-
-			part.setScaling(new Vec3(entityScale, entityScale, entityScale));
-			part.setPos(partOffset);
+			part.setScaling(scaleA, scaleA);
+			part.setPos(
+					(x3 * entityScale + curX) - pivot.x,
+					(y3 * entityScale + curY) - pivot.y,
+					(z2 * entityScale + curZ) - pivot.z);
 		}
 	}
 	
@@ -205,9 +250,13 @@ public interface IMultipartEntity<T extends Entity> {
 		final float rotZ = this.mhlibGetEntityRotationZForPartOffset();
 
 		final double entityScale = this.mhlibGetEntitySizeInternally(entity);
-		
+
+		// OPT-001: hoisted — one cached profile fetch for the whole pass
+		// (the profile cannot change within a tick; see getHitboxProfile).
+		final HitboxProfile profile = this.getHitboxProfile().get();
+
 		// Evaluate model data
-		for (String syncedBone : this.getHitboxProfile().get().synchedBones()) {
+		for (String syncedBone : profile.synchedBones()) {
 			//System.out.println("Synching bone: " + syncedBone);
 			Optional<MHLibPartEntity<T>> optPart = this.getPartByName(syncedBone);
 			if (optPart.isEmpty()) {
@@ -215,22 +264,38 @@ public interface IMultipartEntity<T extends Entity> {
 				continue;
 			}
 			MHLibPartEntity<T> part = optPart.get();
-			
-			Vec3 partOffset = part.getConfigPositionOffset();
-			partOffset = partOffset.xRot(rotX);
-			partOffset = partOffset.yRot(rotY);
-			partOffset = partOffset.zRot(rotZ);
 
-			partOffset = partOffset.scale(entityScale);
-			
-			//System.out.println("SynchedDataMap contents: " + this.syncDataMap.keySet().toString());
-			BoneInformation bi = infoRetrievalFunction.apply(syncedBone, new BoneInformation(
-					syncedBone, 
-					false, 
-					part.getConfig() != null ? partOffset.add(curX, curY, curZ) : Vec3.ZERO, 
-					BoneInformation.DEFAULT_SCALING,
-					part.getConfig() != null ? part.getConfig().hitboxType().getBaseRotation() : Vec3.ZERO
-			));
+			// ──────────────────────────────────────────────────────────
+			// OPT-019: the fallback BoneInformation (plus its rotated
+			// Vec3 offset chain) used to be built for EVERY synced bone
+			// every tick, only to be discarded whenever the sync map had
+			// data. We now probe with a null fallback and construct the
+			// fallback lazily, only when the map lacks the bone.
+			// Neutrality: the only retrieval function ever passed in is
+			// syncMap::getOrDefault (mhlibAiStep) on a HashMap whose
+			// values are never null, so apply(bone, null) == null exactly
+			// when apply(bone, fallback) would have returned the
+			// fallback — and in that case the fallback constructed below
+			// is identical to the legacy eager one.
+			// ──────────────────────────────────────────────────────────
+			BoneInformation bi = infoRetrievalFunction.apply(syncedBone, null);
+			if (bi == null) {
+				Vec3 partOffset = part.getConfigPositionOffset();
+				partOffset = partOffset.xRot(rotX);
+				partOffset = partOffset.yRot(rotY);
+				partOffset = partOffset.zRot(rotZ);
+
+				partOffset = partOffset.scale(entityScale);
+
+				//System.out.println("SynchedDataMap contents: " + this.syncDataMap.keySet().toString());
+				bi = new BoneInformation(
+						syncedBone,
+						false,
+						part.getConfig() != null ? partOffset.add(curX, curY, curZ) : Vec3.ZERO,
+						BoneInformation.DEFAULT_SCALING,
+						part.getConfig() != null ? part.getConfig().hitboxType().getBaseRotation() : Vec3.ZERO
+				);
+			}
 			bi = bi.scale(entityScale);
 			//System.out.println("Sync data: " + bi.toString());
 
@@ -265,7 +330,9 @@ public interface IMultipartEntity<T extends Entity> {
 			this.alignSubParts((T)(Object)this, access._mhlibAccess_getPartMap().values());
 
 			// Now, handle synched parts
-			if (this.getHitboxProfile().isPresent() && this.getHitboxProfile().get().syncToModel()) {
+			// OPT-001: hoisted single lookup (was two); same-tick value cannot change.
+			final Optional<HitboxProfile> profile = this.getHitboxProfile();
+			if (profile.isPresent() && profile.get().syncToModel()) {
 				Map<String, BoneInformation> syncMap = access._mhlibAccess_getSynchMap();
 				this.alignSynchedSubParts((T)(Object)this, syncMap::getOrDefault);
 				access._mhlibAccess_getSynchMap().clear();
@@ -344,12 +411,40 @@ public interface IMultipartEntity<T extends Entity> {
 	
 	public default Optional<HitboxProfile> getHitboxProfile() {
 		if (this instanceof ICustomHitboxProfileSupplier ichps) {
+			// Never cached: a custom supplier may be dynamic, so it keeps the
+			// exact legacy call-through semantics (null falls through below).
 			Optional<HitboxProfile> resTmp = ichps.getHitboxProfile();
 			if (resTmp != null) {
 				return resTmp;
 			}
 		}
 		if (this instanceof Entity ent && ent.level() != null) {
+			// ──────────────────────────────────────────────────────────
+			// OPT-001: per-entity memoization of the datapack profile
+			// lookup. The uncached path (registry getKey + datapack map
+			// walk + Optional allocs) ran per part per tick on the server
+			// and per bone per frame on the client. An entity's
+			// level().registryAccess() is fixed for its lifetime, and
+			// datapack-registry content is immutable per registry
+			// instance, so the resolved Optional can only become stale
+			// across a datapack reload — which is covered by the
+			// generation stamp: MHLibDatapackLoaders bumps its generation
+			// on AddReloadListenerEvent (server start + /reload) and
+			// ServerStoppedEvent, forcing a re-resolve here. The
+			// generation is read BEFORE resolving, so a reload racing
+			// this lookup can only cause a redundant re-resolve, never a
+			// stale serve.
+			// ──────────────────────────────────────────────────────────
+			if (this instanceof IMHLibFieldAccessor<?> access) {
+				final int generation = MHLibDatapackLoaders.getProfileCacheGeneration();
+				final Optional<HitboxProfile> cached = access._mhlibAccess_getCachedHitboxProfile();
+				if (cached != null && access._mhlibAccess_getCachedHitboxProfileGeneration() == generation) {
+					return cached;
+				}
+				final Optional<HitboxProfile> resolved = MHLibDatapackLoaders.getHitboxProfile(ent.getType(), ent.level().registryAccess());
+				access._mhlibAccess_setCachedHitboxProfile(resolved, generation);
+				return resolved;
+			}
 			EntityType<?> type = ent.getType();
 			return MHLibDatapackLoaders.getHitboxProfile(type, ent.level().registryAccess());
 		}
@@ -367,10 +462,15 @@ public interface IMultipartEntity<T extends Entity> {
 		if (myMaster == null || !myMaster.equals(ClientOnlyMethods.getClientPlayer().getUUID())) {
 			return false;
 		}
-		if (this.getHitboxProfile().isEmpty()) {
+		// OPT-001: hoisted — this method ran up to five profile lookups per
+		// bone per frame on the master client; the value is stable within a
+		// call, so one cached fetch is equivalent.
+		final Optional<HitboxProfile> optProfile = this.getHitboxProfile();
+		if (optProfile.isEmpty()) {
 			return false;
 		}
-		if (this.getHitboxProfile().isPresent() && !this.getHitboxProfile().get().syncToModel()) {
+		final HitboxProfile profile = optProfile.get();
+		if (!profile.syncToModel()) {
 			return false;
 		}
 		if (access._mlibAccess_getBoneInfoBuilder().isEmpty()) {
@@ -388,13 +488,13 @@ public interface IMultipartEntity<T extends Entity> {
 		}
 
 		// Now, if we have the freedom ... directly apply the information...
-		if (this.getHitboxProfile().get().trustClient()) {
+		if (profile.trustClient()) {
 			Optional<MHLibPartEntity<T>> optPart = this.getPartByName(boneName);
 			if (optPart.isPresent() && optPart.get().isSynched()) {
 				final double distance = Math.abs(optPart.get().position().distanceToSqr(position));
 				if (distance <= optPart.get().getConfig().maxDeviationFromServer()) {
 					// You may
-					optPart.get().setPositionAndRotationDirect(position.x(), position.y(), position.z(), (float)rotation.y(), (float)rotation.x(), this.getHitboxProfile().get().synchedPartUpdateSteps());
+					optPart.get().setPositionAndRotationDirect(position.x(), position.y(), position.z(), (float)rotation.y(), (float)rotation.x(), profile.synchedPartUpdateSteps());
 				}
 			}
 		}
@@ -452,8 +552,11 @@ public interface IMultipartEntity<T extends Entity> {
 	}
 
 	public default boolean mhLibIsPickable(boolean entityClassResult) {
-		if(this.getHitboxProfile() != null && this.getHitboxProfile().isPresent()) {
-			return entityClassResult && this.getHitboxProfile().get().mainHitboxConfig().canReceiveDamage();
+		// OPT-001: hoisted — isPickable is queried per raycast; one cached
+		// profile fetch replaces three (value stable within the call).
+		final Optional<HitboxProfile> profile = this.getHitboxProfile();
+		if(profile != null && profile.isPresent()) {
+			return entityClassResult && profile.get().mainHitboxConfig().canReceiveDamage();
 		}
 		return entityClassResult;
 	}
@@ -472,28 +575,36 @@ public interface IMultipartEntity<T extends Entity> {
 		// Load base profile
 		// this.HITBOX_PROFILE = MHLibDatapackLoaders.getHitboxProfile(this.getType());
 
-		if(!this.getHitboxProfile().isPresent()) {
+		// OPT-018: this hook runs for EVERY LivingEntity constructed
+		// JVM-wide (vanilla mobs included) and used to trigger up to four
+		// registry-key + datapack-map lookups. It now resolves the profile
+		// ONCE — through the per-entity cache (OPT-001), whose miss path
+		// hits the EntityType-memoized static cache in
+		// MHLibDatapackLoaders, so non-multipart mobs bail on a cached
+		// Optional.empty(). Collapsing the redundant isPresent() branches
+		// is neutral: they were all dominated by the early return below.
+		final Optional<HitboxProfile> optProfile = this.getHitboxProfile();
+		if(!optProfile.isPresent()) {
 			return;
 		}
+		final HitboxProfile profile = optProfile.get();
 
 		// Initialize map and array
-		int partCount = this.getHitboxProfile().isPresent() ? this.getHitboxProfile().get().partConfigs().size() : 0;
+		int partCount = profile.partConfigs().size();
 
 		Map<String, MHLibPartEntity<T>> partMap = new Object2ObjectArrayMap<>(partCount);
 		PartEntity<?>[] partArray = new PartEntity<?>[partCount];
 
-		if(this.getHitboxProfile().isPresent()) {
-			// At last, create the parts themselves
-			final BiConsumer<String, MHLibPartEntity<T>> storageFunction = (str, part) -> {
-				int id = 0;
-				while(partArray[id] != null) {
-					id++;
-				}
-				partArray[id] = part;
-				partMap.put(str, part);
-			};
-			this.createSubPartsFromProfile(this.getHitboxProfile().get(), (T)((Object)this), storageFunction);
-		}
+		// At last, create the parts themselves
+		final BiConsumer<String, MHLibPartEntity<T>> storageFunction = (str, part) -> {
+			int id = 0;
+			while(partArray[id] != null) {
+				id++;
+			}
+			partArray[id] = part;
+			partMap.put(str, part);
+		};
+		this.createSubPartsFromProfile(profile, (T)((Object)this), storageFunction);
 
 		access._mhlibAccess_setPartMap(partMap);
 		access._mhlibAccess_setPartArray(partArray);

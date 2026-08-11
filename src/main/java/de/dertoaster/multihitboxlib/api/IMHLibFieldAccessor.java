@@ -1,6 +1,7 @@
 package de.dertoaster.multihitboxlib.api;
 
 import de.dertoaster.multihitboxlib.entity.MHLibPartEntity;
+import de.dertoaster.multihitboxlib.entity.hitbox.HitboxProfile;
 import de.dertoaster.multihitboxlib.network.client.CPacketBoneInformation;
 import de.dertoaster.multihitboxlib.util.BoneInformation;
 import net.minecraft.world.entity.LivingEntity;
@@ -60,6 +61,29 @@ public interface IMHLibFieldAccessor<T extends LivingEntity> {
     }
 
     public default void _mlibAccess_setBoneInfoBuilder(Optional<CPacketBoneInformation.Builder> value) {
+        throw new NotImplementedException();
+    }
+
+    // ──────────────────────────────────────────────────────────────────
+    // OPT-001: per-entity hitbox-profile cache backing fields (see
+    // IMultipartEntity.getHitboxProfile for the cache logic and
+    // MHLibDatapackLoaders.invalidateProfileCache for the invalidation
+    // story: the stored generation is compared against the global
+    // profile-cache generation, which is bumped on every datapack
+    // reload / server stop, forcing a re-resolve).
+    // ──────────────────────────────────────────────────────────────────
+
+    /** Cached profile, or {@code null} if never resolved for this entity. */
+    public default Optional<HitboxProfile> _mhlibAccess_getCachedHitboxProfile() {
+        throw new NotImplementedException();
+    }
+
+    /** Generation stamp captured when the cached profile was resolved. */
+    public default int _mhlibAccess_getCachedHitboxProfileGeneration() {
+        throw new NotImplementedException();
+    }
+
+    public default void _mhlibAccess_setCachedHitboxProfile(Optional<HitboxProfile> profile, int generation) {
         throw new NotImplementedException();
     }
 
