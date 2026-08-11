@@ -2814,3 +2814,146 @@ creeper profile shipped in the jar — vanilla creepers had multipart
 hitboxes and an unpickable main box in public beta.2/3. Data file
 deleted; VanillaParityTests pins the no-vanilla-parts contract
 (suite 161 -> 162). Full record in AUDIT_FINDINGS BUG-036.
+
+## S4 RED — three-reviewer review REFUTED the slice; parked uncommitted (2026-08-11)
+
+The S4 implementation (profile, supplier gate, part feed, updateSynching
+server gate, HUD unwrap, tests 5-8) is complete in the working tree and
+suite-green 168/168 BOTH modes — and the review proved that green is
+worthless here: no gametest exercises a client, a raycast, a projectile
+or a swinging leg, and all four independent BLOCKER/MAJOR reachability
+defects live exactly there. RED-GATE LAW: nothing commits. Tree parked
+uncommitted under the one-writer rule; this entry is the complete fix
+docket so the next session implements with zero re-derivation.
+
+**BLOCKERS (all confirmed with decompiled-source traces):**
+1. PARTS UNHITTABLE: profile collidable:false makes
+   MHLibPartEntity.isPickable() false (:345-347 — collidable && enabled;
+   there IS no separate pickable flag) -> excluded from melee crosshair
+   pick (GameRenderer.pick), ALL projectiles (canBeHitByProjectile =
+   alive && pickable) and the overlay ray fallback. can-receive-damage
+   is unreachable; test 6 masked it by calling part.hurt() directly.
+   FIX: vendored — isPickable() := (collidable || canReceiveDamage) &&
+   enabled (Queen-neutral: her parts are collidable:true), do NOT flip
+   collidable (hard collision classic never had); add a real pick-path
+   test (canBeHitByProjectile + a GameRenderer-style predicate).
+2. LAZY CLIENT BUILD CLOBBERS THE NETWORK ID: mhlibOnConstructor's tail
+   setId(ENTITY_COUNTER...) runs AFTER the client applied the server id;
+   the follow-up setId(getId()) re-propagates the WRONG id -> every
+   client attack/interact packet misaddresses (spider unattackable/
+   unrideable; multiplayer id collisions can misdirect onto other
+   entities; EntityLookup removal leaks). AND lazily built parts are
+   never registered in ClientLevel.partEntities (add-time-only,
+   onTrackingStart) so client picking stays blind regardless.
+   FIX: build from an onSyncedDataUpdated(DATA_MODERN_GAIT) override
+   with id capture/restore (final int syncedId = getId(); build;
+   setId(syncedId) — cascade then matches the server's base+1..+8), plus
+   a small vendored ClientLevel.partEntities re-registration helper
+   (accessor mixin); keep classic zero-part (eager-disabled-parts
+   alternative violates D3). Consider the parity reviewer's hardening:
+   guard mhlibOnConstructor's re-id with isClientSide inside MHLib.
+3. SWING-PHASE SKEW IS THE FLOOR NOT THE CEILING — OWNER RULING NEEDED:
+   client swing replay runs one full latency behind the server clock for
+   the WHOLE 4-12-tick swing -> server-fed parts lead rendered swinging
+   legs by ~2.3 blocks/latency-tick (4-11 blocks realistic), ~7x the
+   accepted dynamics-skew ceiling; planted legs meet tolerance (~1e-3).
+   Options: (a) RESTATE the tolerance honestly (planted exact; swinging
+   = server-true trajectory, client view lags by latency; gameplay
+   impact bounded — legs route x1.0 so a missed swing-leg costs nothing
+   vs aiming at the body); (b) grace-clamp server swing progress by a
+   latency budget (parts lag truth instead of leading the view).
+   Recommendation: (a); await ruling.
+4. NEW LAVA CHANNEL (MAJOR, damage reviewer): part baseTick fires
+   lavaHurt -> routes to parent; "lava" is not in SpiderRobot.hurt's
+   msgId filter -> stranded/dangling shin boxes over lava damage a
+   spider classic never damaged. FIX (Queen-safe rule): in the part-hurt
+   router, drop source-less environmental damage ONLY when the profile's
+   MAIN hitbox canReceiveDamage (spider: env acts on the body, parts are
+   directed-attack surfaces); when main cannot receive damage (Queen),
+   parts stay the only channel — unchanged.
+
+**MAJORS/MINORS to fix in the same pass:** mirror the syncWithModel gate
+into updateSynching's CLIENT branch (empty 8-tick keepalive packets per
+tracked spider) AND the two tracking-hook elections (EntityEventHandler
+start/stop — the gametest's "never elects" wording currently overstates:
+it seeds the queue directly and no tracking events fire); rewrite test
+7's typed-query assertion to getEntitiesOfClass (typed EntityType
+queries DO return parts as their parent's type once fed — the current
+assert is green only because unticked parts idle at world origin; audit
+i164's same-family query); test 8: tag.remove("UUID") before load()
+(current sequence leaks a stale byUuid entry for the rest of the run);
+ctor-tear hardening: make the supplier's ctor-tail config read the ONE
+authoritative read (store the decision; ctor body consumes it — kills
+the worldgen-thread two-read tear that could build parts on a
+CLASSIC-snapshot spider); positionLegPart degenerate-bearing fallback
+must mirror solveLegAngles' (legBearing+PI/2 at dh<=1e-6, drop the 1e-9
+world-+X fallback) incl. the test mirror; document the explosion
+closest-surface note (9-box blast profile is a strictly larger honest
+surface — carve out of the profile's "identical damage-in" comment);
+ruling wanted: MixinServerEntity's per-tick 8-part S2C stream is
+overwritten by the client mirror every tick — document as pre-keyframe
+fallback or gate for boneless+no-deviation profiles (change-only law).
+
+**Verified clean by the same review (keep, do not re-litigate):**
+routing math exact (x1.0, armor/filters identical part-vs-body,
+invulnerability window nets ALL multi-surface scenarios to max-not-sum:
+same-tick multi-leg, pierce, sweep — parts aren't LivingEntities — and
+explosions); dims bit-identical classic (scalable(2.0,1.5) == .sized);
+classic bit-identity end-to-end incl. the Size hook and client ctor
+flag read; the damage-funnel window is UNOBSERVABLE (sequential entity
+ticks); PART_HALF_HEIGHT anchoring and bearing math correct; the
+election test IS deterministic; the four-boss sweep cannot interfere;
+no MHLib layer caches a stale empty for the lazy path.
+
+## S4 GREEN — docket implemented, fix-review triple-PASS, committed (2026-08-11)
+
+**PROJECT LAW (owner-ratified from the S4 red): a test must exercise the
+path the player uses, not the API beneath it.** The arrow-through-a-leg
+flight test, the lava scenario outcome test and the pick-gate asserts
+are that law's enforcement. **Skew ruling: OPTION A** — tolerance
+restated honestly (planted legs exact ~1e-3; swinging legs are
+SERVER-TRUE and the client view lags by latency; x1.0 routing bounds
+the impact; grace-clamp REJECTED: server truth does not bend to client
+rendering). Design doc updated; the tracking test asserts the server
+trajectory.
+
+Every S4 RED docket finding implemented and then re-verified by a
+second three-reviewer pass (verdicts: PASS / GREEN / PASS — no new
+defects, nothing masked): isPickable := (collidable||canReceiveDamage)
+&& enabled (Queen truth table unchanged; King/Godzilla manual parts
+use their own isPickable, unaffected); the client part build moved to
+onSyncedDataUpdated with id capture/restore (cascade == server's
+base+1..+8, bytecode-verified fire order: SetEntityData bundles after
+AddEntity) + MHLibClientPartRegistration/AccessorClientLevel
+(field javap-verified); env-damage routing rule (drop source-less via
+parts iff MAIN canReceiveDamage — Queen keeps full routing; explosions
+provably safe: even unowned TNT is its own direct source); all three
+election/keepalive gates (updateSynching server+client, both tracking
+hooks); ctor-tear single-read; degenerate-bearing mirrors (production
+AND test); sourced-damage twins; class-based counts + untyped
+type-census pin (typed queries DO see parts — EnderDragon parity —
+and the heap-pollution hazard bit our own first pin as predicted);
+part-id cascade pin; UUID-strip; i164/i165 query conversions; honest
+election wording; stale-javadoc sweep.
+
+**New mechanism finding (recorded):** MHLib's alignSubParts stomp
+re-stacks parts at the BODY before tickParts, so parts fluid-sample at
+the body position every tick — the lava channel was UNREACHABLE in
+production (the red-docket finding was right about routing, wrong
+about reachability); the routing rule stays as the defensive second
+wall, with both arms directly pinned. The MixinServerEntity per-tick
+part stream is DOCUMENTED as the pre-first-keyframe/non-mirrored-
+client fallback (client mirror overwrites it; gating = S5 change-only
+candidate, recorded not ruled).
+
+**Open item (by design, not omission):** the client half (id restore,
+pick registration, HUD unwrap on legs) is untestable in server-only
+gametests — bytecode-traced by two independent reviewers, and queued
+for the owner's in-game verification session per the recorded exit
+evidence (KNOWN territory: first client session validates it).
+
+GATE: build+assetAudit exit 0 (0 err/0 adv/3 ack); suite 170/170 under
+MODERN and 170/170 under CLASSIC, pass lines verified (162 baseline +
+8: tests 5-8, election neutrality, part-parent sweep, arrow player-
+path, lava outcome). S4 exit criteria met; S5 (ant rig + ride
+integration + suite sweep) remains.

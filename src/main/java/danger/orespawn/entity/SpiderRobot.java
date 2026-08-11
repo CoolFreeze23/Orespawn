@@ -38,8 +38,14 @@ import net.minecraft.resources.ResourceLocation;
 import danger.orespawn.OreSpawnMod;
 import danger.orespawn.entity.client.RenderSpiderRobotInfo;
 import danger.orespawn.entity.gait.ModernSpiderGait;
+import de.dertoaster.multihitboxlib.api.ICustomHitboxProfileSupplier;
+import de.dertoaster.multihitboxlib.api.IMultipartEntity;
+import de.dertoaster.multihitboxlib.entity.hitbox.HitboxProfile;
+import de.dertoaster.multihitboxlib.init.MHLibDatapackLoaders;
 
-public class SpiderRobot extends Mob {
+import java.util.Optional;
+
+public class SpiderRobot extends Mob implements ICustomHitboxProfileSupplier {
     // OPT-011: cached SoundEvents — identical createVariableRangeEvent ids,
     // allocated once per class instead of on every sound query.
     private static final SoundEvent SND_ROBOTSPIDER = SoundEvent.createVariableRangeEvent(
@@ -99,13 +105,100 @@ public class SpiderRobot extends Mob {
         this.targetSorter = new GenericTargetSorter(this);
         // orig SpiderRobot.java:508-511 — entityInit primes the leg data once at construction.
         initLegData();
-        // 2.0 S2: server-side construction snapshot of the movement mode,
+        // 2.0 S2/S4: server-side construction snapshot of the movement mode,
         // published to clients on the synced flag (see DATA_MODERN_GAIT).
+        // The mode was already read ONCE at the LivingEntity ctor tail by the
+        // profile supplier (ctorTailModernDecision) — consume that same
+        // decision here rather than re-reading the config: entity ctors can
+        // run on worldgen worker threads, and a config flip between two
+        // independent reads could have built parts on a CLASSIC-snapshot
+        // spider (review: the ctor tear).
         if (!level.isClientSide()) {
-            boolean modern = OreSpawnConfig.SPIDER_MOVEMENT.get() == OreSpawnConfig.SpiderMovement.MODERN;
+            boolean modern = this.ctorTailModernDecision != null
+                    ? this.ctorTailModernDecision
+                    : OreSpawnConfig.SPIDER_MOVEMENT.get() == OreSpawnConfig.SpiderMovement.MODERN;
             this.entityData.set(DATA_MODERN_GAIT, modern);
             if (modern) {
                 this.modernGait = new ModernSpiderGait();
+            }
+        }
+        // 2.0 S4: the profile supplier below may already have been consulted
+        // from the LivingEntity ctor tail (before this body ran); from here
+        // on the snapshot field is the authority.
+        this.movementModeDecided = true;
+    }
+
+    /**
+     * 2.0 S4: true once this ctor's body has run — the MHLib profile
+     * supplier is consulted from the LivingEntity ctor TAIL, before the
+     * movement-mode snapshot field assigns, and decides from the config
+     * exactly once in that window (stored below; the ctor body consumes
+     * the SAME decision — single authoritative read, no tear).
+     */
+    private boolean movementModeDecided;
+    /** The one ctor-tail config read (server); null until the supplier ran. */
+    private Boolean ctorTailModernDecision;
+
+    /**
+     * 2.0 S4 — the MHLib part gate (design D3: classic constructs ZERO
+     * parts). MHLib's first {@code ICustomHitboxProfileSupplier}
+     * implementor. IMPORTANT dispatch note (corrects the S4 as-designed
+     * sketch): this method has the same signature as
+     * {@code IMultipartEntity.getHitboxProfile}'s default, so it SHADOWS
+     * MHLib's entire resolution — every internal MHLib call (part build,
+     * pickability, damage routing, alignment) lands here. It must therefore
+     * return the REAL profile for modern spiders itself (via the
+     * EntityType-memoized datapack lookup) and {@code Optional.empty()} for
+     * classic — never {@code null}. Mode source: server = the snapshot
+     * (config during the ctor-tail window); client = the synced flag, with
+     * the client part build in {@link #onSyncedDataUpdated} (id-restore +
+     * pick registration).
+     */
+    @Override
+    public Optional<HitboxProfile> getHitboxProfile() {
+        final boolean modern;
+        if (this.level().isClientSide()) {
+            modern = this.entityData.get(DATA_MODERN_GAIT);
+        } else if (this.movementModeDecided) {
+            modern = this.modernGait != null;
+        } else {
+            // Single authoritative ctor-tail read (see ctorTailModernDecision).
+            if (this.ctorTailModernDecision == null) {
+                this.ctorTailModernDecision =
+                        OreSpawnConfig.SPIDER_MOVEMENT.get() == OreSpawnConfig.SpiderMovement.MODERN;
+            }
+            modern = this.ctorTailModernDecision;
+        }
+        if (!modern) {
+            return Optional.empty();
+        }
+        return MHLibDatapackLoaders.getHitboxProfile(this.getType(), this.level().registryAccess());
+    }
+
+    /**
+     * 2.0 S4: the client part build, moved OFF the lazy getModernGait path
+     * (review BLOCKER: building there ran after the network id was applied,
+     * and MHLib's ctor-tail re-id clobbered it — modern spiders became
+     * unattackable from the client). Building here, when the server's mode
+     * flag arrives: (1) the synced id is captured and RESTORED after the
+     * build, so the setId cascade gives the parts syncedId+1..+8 — exactly
+     * the server's part ids; (2) the parts are then registered in the
+     * client pick registry, which NeoForge only populates at add time
+     * (vendored MHLibClientPartRegistration).
+     */
+    @Override
+    public void onSyncedDataUpdated(EntityDataAccessor<?> dataAccessor) {
+        super.onSyncedDataUpdated(dataAccessor);
+        if (DATA_MODERN_GAIT.equals(dataAccessor)
+                && this.level().isClientSide()
+                && this.entityData.get(DATA_MODERN_GAIT)
+                && (this.getParts() == null || this.getParts().length == 0)) {
+            Object self = this;
+            if (self instanceof IMultipartEntity<?> multipart) {
+                final int syncedId = this.getId();
+                multipart.mhlibOnConstructor();
+                this.setId(syncedId);
+                de.dertoaster.multihitboxlib.client.MHLibClientPartRegistration.registerParts(this);
             }
         }
     }
@@ -123,6 +216,8 @@ public class SpiderRobot extends Mob {
      */
     public ModernSpiderGait getModernGait() {
         if (this.modernGait == null && this.level().isClientSide() && this.entityData.get(DATA_MODERN_GAIT)) {
+            // Client replay controller only — the client PART build lives in
+            // onSyncedDataUpdated (id-restore + pick registration; see there).
             this.modernGait = new ModernSpiderGait();
         }
         return this.modernGait;

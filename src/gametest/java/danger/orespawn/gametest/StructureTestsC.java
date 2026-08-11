@@ -453,7 +453,11 @@ public class StructureTestsC {
         }
         // One persistent Robot Spider parked on the block CORNER at
         // (+10,+1,+10) — int casts, not +0.5 centred (spec S9).
-        List<SpiderRobot> robots = level.getEntities(ModEntities.SPIDER_ROBOT.get(),
+        // S4 audit: CLASS-based query — typed EntityType queries return
+        // MHLib part entities as their parent's type once the parts are
+        // positioned (NeoForge Level.getEntities part appending), so the
+        // old typed query was one spider-tick away from counting 9.
+        List<SpiderRobot> robots = level.getEntitiesOfClass(SpiderRobot.class,
                 new AABB(p.getX() - 2, p.getY() - 2, p.getZ() - 2,
                         p.getX() + 22, p.getY() + 22, p.getZ() + 22), e -> true);
         helper.assertValueEqual(robots.size(), 1, "i164: Robot Spider count on the pad");
@@ -593,7 +597,9 @@ public class StructureTestsC {
         // The wild robot: exactly one, persistent, UNOWNED, on the block
         // corner at (+8,+1,+8) (orig :7064-7068, spec S8/S9; persistence per
         // orig AntRobot.java:80-82/:534 — spawnPersistent carries it).
-        List<AntRobot> robots = level.getEntities(ModEntities.ANT_ROBOT.get(),
+        // S4 audit: class-based for the same reason as i164 (future-proofs
+        // the S5 ant parts).
+        List<AntRobot> robots = level.getEntitiesOfClass(AntRobot.class,
                 new AABB(p.getX() - 2, p.getY() - 2, p.getZ() - 2,
                         p.getX() + 18, p.getY() + 18, p.getZ() + 18), e -> true);
         helper.assertValueEqual(robots.size(), 1, "i165: Robot Red Ant count on the pad");

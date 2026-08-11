@@ -116,11 +116,23 @@ public class GirlfriendOverlay {
         // entity first, then a 16-block entity ray trace fallback that must
         // yield a living entity.
         Entity entity = mc.crosshairPickEntity;
+        boolean fromRayTrace = false;
         if (entity == null) {
             entity = rayTraceEntity(player);
             if (entity == null) return;
-            if (!(entity instanceof LivingEntity)) return;
+            fromRayTrace = true;
         }
+        // 2.0 S4: multipart surfaces resolve to their PARENT entity — fixes
+        // the blank bar when aiming at the King's manual parts (the
+        // pre-existing C8 gap), the Queen's MHLib parts, and the modern
+        // spider's leg boxes. The classic quirk that the vanilla crosshair
+        // pick skips the LivingEntity requirement (orig
+        // GirlfriendOverlayGui.java:105-114) is preserved: that check still
+        // applies only to the ray-trace fallback, now against the parent.
+        if (entity instanceof net.neoforged.neoforge.entity.PartEntity<?> partEntity) {
+            entity = partEntity.getParent();
+        }
+        if (fromRayTrace && !(entity instanceof LivingEntity)) return;
 
         String label = null;
         float healthFraction = 0.0f;

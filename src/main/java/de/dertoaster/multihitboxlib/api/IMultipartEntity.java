@@ -33,6 +33,25 @@ public interface IMultipartEntity<T extends Entity> {
 			throw new IllegalStateException("implementing class must extend " + Entity.class.descriptorString());
 		}
 		Entity entity = (Entity)this;
+		// ──────────────────────────────────────────────────────────────
+		// 2.0 S4 (vendored change, Queen-safe): ENVIRONMENTAL (source-less)
+		// damage arriving VIA a part is dropped when the profile's MAIN
+		// hitbox can receive damage itself. Rationale: on such profiles
+		// (the spider) parts are directed-attack surfaces and the
+		// environment already acts on the body — part boxes ticking their
+		// own baseTick (lava, etc.) otherwise open damage channels the
+		// classic single-box entity never had (review: dangling shins over
+		// lava). Profiles whose main hitbox CANNOT receive damage
+		// (TheQueen) keep routing everything: parts are their ONLY damage
+		// channel, environment included — behavior unchanged.
+		// ──────────────────────────────────────────────────────────────
+		if (source.getEntity() == null && source.getDirectEntity() == null) {
+			final Optional<HitboxProfile> profile = this.getHitboxProfile();
+			if (profile != null && profile.isPresent()
+					&& profile.get().mainHitboxConfig().canReceiveDamage()) {
+				return false;
+			}
+		}
 		return entity.hurt(source, damage);
 	}
 	
@@ -141,7 +160,8 @@ public interface IMultipartEntity<T extends Entity> {
 		// registry content, see getHitboxProfile) — EXCEPT for a dynamic
 		// ICustomHitboxProfileSupplier, which could legally return a
 		// different profile per call; those keep the live lookup path
-		// (no implementor exists in this codebase, this is API hygiene).
+		// (SpiderRobot is the codebase's implementor since 2.0 S4 — its
+		// mode-gated supplier is exactly the dynamic case this guards).
 		final boolean stableProfile = !(this instanceof ICustomHitboxProfileSupplier);
 		int subPartNumber = 0;
 		for(SubPartConfig spc : profile.partConfigs()) {
@@ -399,6 +419,20 @@ public interface IMultipartEntity<T extends Entity> {
 	 */
 	public default <E extends Entity & IMultipartEntity<?>> void updateSynching(E entity) {
 		if (!entity.level().isClientSide()) {
+			// ──────────────────────────────────────────────────────────
+			// 2.0 S4 (vendored change, Queen-neutral): profiles that never
+			// stream bones (sync-with-model = false, e.g. the solver-fed
+			// spider legs) have no use for master election. Without this
+			// gate the 10-tick answer timeout below re-elected a master and
+			// broadcast SPacketSetMaster forever — one packet per ~10 ticks
+			// per tracked boneless multipart entity — pure churn against
+			// the change-only traffic law. sync-with-model = true entities
+			// (TheQueen) take the original path unchanged; the
+			// HitboxPartTests election test pins BOTH behaviors.
+			// ──────────────────────────────────────────────────────────
+			if (!this.syncWithModel()) {
+				return;
+			}
 			// If you already have a master, let's check them...
 			// If there was no packet for quite some time => elect a new master
 			// System.out.println("Checking master answer time...");
@@ -421,6 +455,15 @@ public interface IMultipartEntity<T extends Entity> {
 			}
 		}
 		else {
+			// 2.0 S4 (vendored, Queen-neutral): mirror the server gate on the
+			// CLIENT branch — without it every client tracking a boneless-
+			// profile multipart built and keepalive-sent an EMPTY
+			// CPacketBoneInformation every 8 ticks per entity (the server
+			// handler drops them for such profiles: guaranteed-useless C2S
+			// traffic the first gate's own rationale condemns).
+			if (!this.syncWithModel()) {
+				return;
+			}
 			if (!(this instanceof IMHLibFieldAccessor<?> access)) {
 				throw new IllegalStateException("Access interface not implemented");
 			}
@@ -636,6 +679,13 @@ public interface IMultipartEntity<T extends Entity> {
 	}
 	
 	public default void mhLibOnStartTrackingEvent(ServerPlayer sp) {
+		// 2.0 S4 (vendored, Queen-neutral): boneless profiles never stream
+		// bones, so tracking-start must not elect a master or broadcast
+		// SPacketSetMaster — the same rationale as updateSynching's gate
+		// (the review found this hook was the leak the first gate missed).
+		if (!this.syncWithModel()) {
+			return;
+		}
 		IMHLibFieldAccessor access = (IMHLibFieldAccessor) this;
 		// System.out.println("Adding tracker: " + sp.getUUID() != null ? sp.getUUID().toString() : "NONE");
 		if (!access._mhlibAccess_getTrackerQueue().contains(sp.getUUID())) {
@@ -646,8 +696,12 @@ public interface IMultipartEntity<T extends Entity> {
 			this.setMasterUUID(q.poll());
 		}
 	}
-	
+
 	public default void mhLibOnStopTrackingEvent(ServerPlayer sp) {
+		// 2.0 S4: same gate as start-tracking (see above).
+		if (!this.syncWithModel()) {
+			return;
+		}
 		if (this.getTrackerQueue().contains(sp.getUUID())) {
 			this.getTrackerQueue().remove(sp.getUUID());
 		}

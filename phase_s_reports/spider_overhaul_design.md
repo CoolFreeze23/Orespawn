@@ -322,11 +322,22 @@ isolated-batch config idiom from BOSS-017 — pinned tests set
     static alignment runs earlier in the same tick (aiStep TAIL, inside
     super.tick()) and is harmlessly overwritten by the feed — verified
     ordering, no MHLib alignment change needed.
-  - **Vendored MHLib change (one, Queen-neutral):** `updateSynching`'s
-    server master-election churns a SPacketSetMaster broadcast every
-    ~10 ticks per tracked entity whose profile never streams bones —
-    gate the server branch on `syncWithModel()` (Queen: true,
-    unaffected; spiders: false, machinery idles). Change-only law.
+  - **Vendored MHLib changes (as-built, all Queen-neutral —
+    fix-review-verified per consumer):** (1) `isPickable :=
+    (collidable || canReceiveDamage) && enabled` — pickability decoupled
+    from hard collision (her parts are collidable:true, truth table
+    unchanged); (2) the env-damage routing rule (drop source-less
+    damage via parts iff the MAIN hitbox can receive damage — her main
+    cannot, so she keeps full routing; explosions are safe on both
+    profiles: even unowned TNT carries itself as direct source);
+    (3) `syncWithModel()` gates on updateSynching's server AND client
+    branches plus both tracking hooks (election/keepalive churn dead
+    for boneless profiles); (4) `MHLibClientPartRegistration` +
+    `AccessorClientLevel` (field javap-verified) for post-add client
+    part registration. The per-tick `MixinServerEntity` part stream is
+    DOCUMENTED as the pre-first-keyframe / non-mirrored-client fallback
+    (the client mirror overwrites it; gating it is an S5 change-only
+    candidate if profiling warrants — recorded, not ruled).
   - **Profile** (`data/orespawn/multihitboxlib/hitbox_profiles/
     spider_robot.json`, Queen format): sync-with-model false,
     trust-client false, synched-bones [], main-hitbox {collidable
@@ -336,16 +347,21 @@ isolated-batch config idiom from BOSS-017 — pinned tests set
     classic or dims tests break)}; parts leg0..leg7: collidable false,
     can-receive-damage true, damage-modifier 1.0,
     max-deviation-from-server 0, box multihitboxlib:aabb 0.6×0.6.
-  - **Skew decision (S3b handoff, resolved):** parts TOLERATE the
-    ~latency+1-tick dynamics skew; the keyframe payload does NOT grow.
-    Justification: (a) a server hitbox lagging the rendered pose by
-    latency is vanilla's universal condition for every entity — scalars
-    in the keyframe cannot fix latency, only the ≤1-tick dynamics gap,
-    which self-heals with a 2-tick half-life at ≤0.03 rad / 0.19
-    blocks; (b) change-only traffic law — keyframes stay foot-state-
-    only. Pre-approved fallback if play-testing shows out-of-family
-    mismatch: the four scalars ride the EXISTING 40-tick keyframe
-    (32 bytes), never a new per-tick channel.
+  - **Skew tolerance (design ruling, Option A — restated honestly after
+    the S4 review proved the original ceiling wrong):** the keyframe
+    payload does NOT grow, and server truth does not bend to client
+    rendering (grace-clamp REJECTED). The contract: PLANTED legs — parts
+    match the visual leg to ~1e-3 (dynamics skew self-heals, 2-tick
+    half-life). SWINGING legs — parts follow the SERVER-TRUE swing
+    trajectory; the client's rendered leg lags that trajectory by
+    network latency for the swing's duration (~2.3 blocks per latency
+    tick, bounded by swing amplitude). Bounded-impact rationale: legs
+    route ×1.0, so a whiffed swing-leg shot costs the player nothing
+    versus aiming at the body, and vanilla mobs carry the identical
+    latency skew on their whole body. The invariant tests assert this
+    restated contract (planted exact; swinging vs the server
+    trajectory). Pre-approved fallback unchanged: four scalars on the
+    existing 40-tick keyframe, never a per-tick channel.
   - **Ant deferral:** ant_robot.json ships in S5 WITH the ant's
     supplier + gait — a profile without a feed would give every ant
     (classic included, absent a supplier) static misplaced boxes,

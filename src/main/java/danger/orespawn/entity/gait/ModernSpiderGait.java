@@ -4,6 +4,8 @@ import danger.orespawn.entity.SpiderRobot;
 import danger.orespawn.entity.client.RenderSpiderRobotInfo;
 import danger.orespawn.network.SpiderGaitKeyframePayload;
 import danger.orespawn.network.SpiderStepPayload;
+import de.dertoaster.multihitboxlib.api.IMultipartEntity;
+import de.dertoaster.multihitboxlib.entity.MHLibPartEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.Mth;
@@ -248,6 +250,14 @@ public final class ModernSpiderGait {
     // Scratch buffers for the per-leg solve (single-threaded per side).
     private final double[][] jointScratch = {new double[2], new double[2], new double[2], new double[2]};
     private final double[] angleScratch = new double[5];
+    private final double[] footScratch = new double[3];
+    private final double[] compScratch = new double[3];
+
+    // ---- S4: MHLib leg-part feed ----
+    /** The profile's leg boxes are 0.6 tall; setPos anchors at the bottom. */
+    static final double PART_HALF_HEIGHT = 0.3;
+    /** Resolved once per side after parts exist ({@code null} slots = absent). */
+    private MHLibPartEntity<?>[] legParts;
 
     // ---- Test/S4 accessors (server state) ----
     public boolean isGrounded(int leg) {
@@ -635,9 +645,14 @@ public final class ModernSpiderGait {
             beginStep(spider, leg, cand[0], cand[1], cand[2], time);
         }
 
-        // S3b: visual body dynamics from the post-land foot state (the
-        // server's copy will feed the S4 parts).
+        // S3b: visual body dynamics from the post-land foot state.
         updateBodyDynamics(spider);
+
+        // S4: feed the MHLib leg parts from this tick's solve — server truth
+        // for damage. MHLib's own alignSubParts static alignment ran earlier
+        // this tick (aiStep TAIL, inside super.tick()) and is deliberately
+        // overwritten here.
+        feedParts(spider, time);
 
         // Keyframes phase-shifted by entity id so multiple spiders don't
         // burst-send on the same global tick.
@@ -982,7 +997,6 @@ public final class ModernSpiderGait {
         // reach the dynamics next tick — a deliberate 1-tick lag, matching
         // the server's post-land ordering closely enough to converge).
         updateBodyDynamics(spider);
-        double[] compensated = new double[3];
         for (int leg = 0; leg < LEGS; ++leg) {
             double fx;
             double fy;
@@ -1017,32 +1031,13 @@ public final class ModernSpiderGait {
             // the whole model, so the solve targets the INVERSE-transformed
             // foot — the tilted render then lands the foot back on its true
             // world anchor and planted feet stay motionless under tilt.
-            compensated[0] = fx - spider.getX();
-            compensated[1] = fy - spider.getY();
-            compensated[2] = fz - spider.getZ();
-            inverseBodyTransform(yaw, bodyPitch, bodyRoll, bodyLift, compensated);
-            // Reach guard (review): near-max grips under high tilt can push
-            // the compensated target beyond leg reach; pull it back along
-            // the hip ray so the shortfall stays graceful (the same straight-
-            // stretch family as untilted overreach) instead of the foot
-            // creeping off its anchor unpredictably.
-            double chx = SpiderRigProfile.hipX(leg, spider.getX(), yaw) - spider.getX();
-            double chy = SpiderRigProfile.hipY(leg, spider.getY()) - spider.getY();
-            double chz = SpiderRigProfile.hipZ(leg, spider.getZ(), yaw) - spider.getZ();
-            double rx = compensated[0] - chx;
-            double ry = compensated[1] - chy;
-            double rz = compensated[2] - chz;
-            double reachDist = Math.sqrt(rx * rx + ry * ry + rz * rz);
-            double reachCap = SpiderRigProfile.MAX_REACH * REACH_MARGIN;
-            if (reachDist > reachCap) {
-                double scale = reachCap / reachDist;
-                compensated[0] = chx + rx * scale;
-                compensated[1] = chy + ry * scale;
-                compensated[2] = chz + rz * scale;
-            }
+            compensateFoot(spider, leg, fx, fy, fz, compScratch);
             solveLegAngles(spider.getX(), spider.getY(), spider.getZ(), yaw,
-                    leg, spider.getX() + compensated[0], spider.getY() + compensated[1],
-                    spider.getZ() + compensated[2], jointScratch, angleScratch);
+                    leg, compScratch[0], compScratch[1], compScratch[2],
+                    jointScratch, angleScratch);
+            // S4: mirror the leg part locally (client picking) from the
+            // same solve that just filled the joint scratch.
+            positionLegPart(spider, leg, compScratch[0], compScratch[2]);
             r.ydisplayangle[leg] = (float) angleScratch[0];
             r.uddisplayangle[leg] = (float) angleScratch[1];
             r.p1xangle[leg] = angleScratch[2];
@@ -1058,6 +1053,154 @@ public final class ModernSpiderGait {
             r.realposz[leg] = (float) SpiderRigProfile.hipZ(leg, spider.getZ(), yaw);
             r.footup[leg] = swinging[leg] || stranded[leg] ? 1 : 0;
         }
+    }
+
+    // ==================== S4: MHLib LEG-PART FEED ====================
+
+    /**
+     * The compensated solve target for a foot's world anchor: inverse body
+     * transform, then the reach guard pulling over-reach back along the hip
+     * ray (S3b review — the shortfall stays in the graceful straight-stretch
+     * family). Output is WORLD coordinates ready for {@code solveLegAngles}.
+     */
+    private void compensateFoot(SpiderRobot spider, int leg,
+                                double fx, double fy, double fz, double[] out) {
+        float yaw = spider.getYRot();
+        out[0] = fx - spider.getX();
+        out[1] = fy - spider.getY();
+        out[2] = fz - spider.getZ();
+        inverseBodyTransform(yaw, bodyPitch, bodyRoll, bodyLift, out);
+        double chx = SpiderRigProfile.hipX(leg, spider.getX(), yaw) - spider.getX();
+        double chy = SpiderRigProfile.hipY(leg, spider.getY()) - spider.getY();
+        double chz = SpiderRigProfile.hipZ(leg, spider.getZ(), yaw) - spider.getZ();
+        double rx = out[0] - chx;
+        double ry = out[1] - chy;
+        double rz = out[2] - chz;
+        double reachDist = Math.sqrt(rx * rx + ry * ry + rz * rz);
+        double reachCap = SpiderRigProfile.MAX_REACH * REACH_MARGIN;
+        if (reachDist > reachCap) {
+            double scale = reachCap / reachDist;
+            out[0] = chx + rx * scale;
+            out[1] = chy + ry * scale;
+            out[2] = chz + rz * scale;
+        }
+        out[0] += spider.getX();
+        out[1] += spider.getY();
+        out[2] += spider.getZ();
+    }
+
+    /**
+     * Public view of the live foot trajectory (planted anchor, swing
+     * interpolation, or dangle) — the SERVER-true position the S4 part feed
+     * follows. Exposed for the invariant tests' restated-tolerance contract
+     * (design ruling: swinging parts assert against the SERVER trajectory,
+     * never the latency-lagged rendered leg).
+     */
+    public void currentFootPos(int leg, long time, double[] out) {
+        interpolatedFootPos(leg, time, out);
+    }
+
+    /** Current foot position incl. swing interpolation (shared server/client). */
+    private void interpolatedFootPos(int leg, long time, double[] out) {
+        if (swinging[leg]) {
+            double progress = Mth.clamp(
+                    (time - swingStart[leg]) / (double) swingDuration[leg], 0.0, 1.0);
+            out[0] = Mth.lerp(progress, fromX[leg], toX[leg]);
+            out[2] = Mth.lerp(progress, fromZ[leg], toZ[leg]);
+            out[1] = Mth.lerp(progress, fromY[leg], toY[leg])
+                    + LIFT_HEIGHT * 4.0 * progress * (1.0 - progress);
+        } else {
+            out[0] = footX[leg];
+            out[1] = footY[leg];
+            out[2] = footZ[leg];
+        }
+    }
+
+    /** Resolves the profile's named leg parts once per side (design D3: leg0..leg7). */
+    private void resolveLegParts(SpiderRobot spider) {
+        if (legParts != null) {
+            return;
+        }
+        if (spider.getParts() == null || spider.getParts().length == 0) {
+            return;
+        }
+        Object self = spider;
+        if (!(self instanceof IMultipartEntity<?> multipart)) {
+            return;
+        }
+        MHLibPartEntity<?>[] resolved = new MHLibPartEntity<?>[LEGS];
+        for (int leg = 0; leg < LEGS; ++leg) {
+            resolved[leg] = multipart.getPartByName("leg" + leg).orElse(null);
+        }
+        legParts = resolved;
+    }
+
+    /**
+     * S4 server feed (design D3): every tick, each leg's hitbox part is
+     * placed on the lower-segment (knee2→foot) midpoint of the SAME
+     * compensated solve the client renders from — server truth for damage,
+     * no client authority. Runs after {@code updateBodyDynamics} so parts
+     * carry this tick's tilt.
+     */
+    private void feedParts(SpiderRobot spider, long time) {
+        resolveLegParts(spider);
+        if (legParts == null) {
+            return;
+        }
+        float yaw = spider.getYRot();
+        for (int leg = 0; leg < LEGS; ++leg) {
+            if (legParts[leg] == null) {
+                continue;
+            }
+            interpolatedFootPos(leg, time, footScratch);
+            compensateFoot(spider, leg, footScratch[0], footScratch[1], footScratch[2], compScratch);
+            solveLegAngles(spider.getX(), spider.getY(), spider.getZ(), yaw,
+                    leg, compScratch[0], compScratch[1], compScratch[2],
+                    jointScratch, angleScratch);
+            positionLegPart(spider, leg, compScratch[0], compScratch[2]);
+        }
+    }
+
+    /**
+     * Places leg {@code leg}'s part from the joint scratch the caller just
+     * filled: solver-frame knee2/foot joints → untilted body frame along the
+     * compensated target's bearing → {@link #bodyTransform} → world;
+     * {@code setPos} anchors the 0.6-cube's bottom center.
+     */
+    private void positionLegPart(SpiderRobot spider, int leg, double compWorldX, double compWorldZ) {
+        resolveLegParts(spider);
+        if (legParts == null || legParts[leg] == null) {
+            return;
+        }
+        float yaw = spider.getYRot();
+        double hipRelX = SpiderRigProfile.hipX(leg, spider.getX(), yaw) - spider.getX();
+        double hipRelY = SpiderRigProfile.hipY(leg, spider.getY()) - spider.getY();
+        double hipRelZ = SpiderRigProfile.hipZ(leg, spider.getZ(), yaw) - spider.getZ();
+        double dx = (compWorldX - spider.getX()) - hipRelX;
+        double dz = (compWorldZ - spider.getZ()) - hipRelZ;
+        double dh = Math.sqrt(dx * dx + dz * dz);
+        // Degenerate-bearing fallback MIRRORS solveLegAngles exactly (same
+        // 1e-6 threshold, same neutral-bearing axis) — review: a 1e-9/world-
+        // +X fallback here could place a part blocks away from the rendered
+        // leg in the (unreachable in practice) foot-over-hip case.
+        final double ux;
+        final double uz;
+        if (dh > 1.0E-6) {
+            ux = dx / dh;
+            uz = dz / dh;
+        } else {
+            double alphaW = SpiderRigProfile.legBearing(leg, yaw) + Math.PI / 2.0;
+            ux = Math.cos(alphaW);
+            uz = Math.sin(alphaW);
+        }
+        double midU = (jointScratch[2][0] + jointScratch[3][0]) * 0.5;
+        double midV = (jointScratch[2][1] + jointScratch[3][1]) * 0.5;
+        double[] world = {hipRelX + ux * midU, hipRelY + midV, hipRelZ + uz * midU};
+        bodyTransform(yaw, bodyPitch, bodyRoll, bodyLift, world);
+        legParts[leg].setPos(
+                spider.getX() + world[0],
+                spider.getY() + world[1] - PART_HALF_HEIGHT,
+                spider.getZ() + world[2]);
     }
 
     // ==================== THE CONVERSION (design doc D2) ====================
