@@ -3044,3 +3044,87 @@ substance (axis swap) was real and drove the robust shelf.
 GATE: suite 175/175 MODERN and 175/175 CLASSIC (pass lines captured
 literally), build+assetAudit 0 err / 0 adv / 3 ack. Nothing pushes;
 the owner's in-game sitting decides the release. S5b remains.
+
+## S5b COMPLETE — LegRig refactor + ant rig: THE OVERHAUL IS DONE (2026-08-11)
+
+The closing slice. Two phases, each gated:
+
+**Phase 1 — LegRig refactor, neutrality PROVEN.** LegRig (per-rig
+tables + classic probe geometry + rig-scaled tuning + ctor-derived
+tilt spans + pitchGroup + reachMargin + tramples flag);
+SpiderRigProfile -> static facade over its LegRig (numbers verbatim);
+ModernSpiderGait rig-parameterized (Mob params, arrays sized
+legCount, solveLegAngles takes the rig); IModernLeggedRobot; payload
+handlers generalized (keyframe decoder envelope {6,8}; handlers
+validate the target entity's rig EXACTLY); registrar 1.3 (real
+format-envelope change: leg count 6 now legal on the wire);
+GaitSyncEvents generalized. Neutrality was gated as its own
+checkpoint: the FULL 175-test suite green under BOTH modes on the
+refactored spider before any ant code landed — every S2-S5a invariant
+re-run against the refactor, plus a line-by-line reviewer diff proof
+(every moved constant verbatim; span derivation bit-identical
+per-term division; sagFloorEff init timing; trample condition order).
+
+**Phase 2 — the ant.** AntRigProfile from the recorded tables (all
+verified digit-for-digit vs initLegData by review AND by a live
+classic ant in-suite); scan window 8/8 (the exact foot-space reading
+of the classic yScan loop — adjudicated more faithful than the
+spider's historical 11/14); rest reaches 6/9/4 with the leg-0/1
+override-order quirk mirrored; tuning x0.495 starting tune; lift/sag
++/-0.5; NO trample (classic ant feet have no block side effects — a
+rig flag, caught at design-derivation time); reach margin 0.995 (the
+law-bound 9.0 opening + 0.75 hip drop = 98.3% of max reach; the
+spider's 0.98 would have rejected the ant's own classic rest stance).
+AntRobot integrated on the S4 pattern verbatim (supplier shadowing,
+ctor-tail single read, DATA_MODERN_GAIT, onSyncedDataUpdated
+id-restore + pick registration, cascade +1..+6); hover-ride physics,
+positionRider seat and getControllingPassenger UNTOUCHED — a hovering
+body strands legs and the dangle is the designed look.
+ant_robot.json: main EXACTLY [2.75, 1.25] (i083 Size-hook pin holds
+in-suite both modes), 6x 0.4-cube legs, spider damage conventions.
+AntRobotRenderer: the S3b pivot-conjugated tilt transcription.
+
+**Tests +8 (=183):** ant render-parity harness (rig-parameterized,
+INDEPENDENT 49px transcription after review caught a self-referential
+segment length), construction snapshot vs a live classic ant, mode
+gate + id cascade + dims pin, flat walk, hover all-legs-stranded
+degenerate + re-plant (needed the new 34-high empty_tall template —
+the 16-high cages' invisible BARRIER ceiling sat inside the ant's
+scan window and the gait CORRECTLY planted on it; census-proven, and
+no strand band exists in a 16-high cage), part damage twins + env
+rule (third-ant fix for the vanilla hurt-cooldown), stream-gate
+predicate, keyframe round-trip at 6 + negative path (legs=7 dies at
+decode). Rig span pins added BOTH rigs (independent table recompute).
+
+**Three-reviewer pass:** neutrality PROVEN (no finding); one MAJOR
+(both remaining reviewers converged): the ant contraction floor
+mirrored the WRONG classic constant — 1.375 (22 px) is classic's
+relocation-trigger window, the probe sweep's floor is 2.5 — fixed to
+2.5 per the spider's sweep-floor convention, design doc amended (the
+S5 research note itself carried the misattribution). Minors fixed:
+harness self-reference, "diagonal pairs" doc error (the classic
+transcription comment was wrong against its own table — corrected in
+both places), out-of-cap harness target relabeled in-cap, orphaned
+javadoc removed, test ants hardened (owned=1 — customServerAiStep
+combat survives removeFreeWill). Recorded as accepted tuning: the
++/-2 index-neighbor inhibitor permits ant mid+rear same-side co-swing
+(review-verified deadlock-free, pairs never co-swing, >=3 legs always
+planted, classic's own scheduler was looser).
+
+GATE: suite 183/183 MODERN and 183/183 CLASSIC (pass lines captured
+literally), build+assetAudit 0 err / 0 adv / 3 ack.
+
+**THE 2.0 SPIDER OVERHAUL LEDGER — CLOSED:**
+- S1 design + approval ................ aa73329
+- S2 gait core (FABRIK, sync, gate) ... ef5f14a  (+ BUG-035 ad129e2)
+- S3a terrain ......................... a8fe2f2
+- S3b body dynamics ................... beafdd4  (+ laws/research 5ecfe1a)
+- S4 multi-part hitboxes .............. 9fc2389  (red-gate cycle honored)
+- S5 research ......................... f783d78
+- S5a ride + stream gate + seat ....... 893147f
+- S5b LegRig + ant (this commit) ...... closes the ledger
+Laws in force throughout: pass-line gates, harness independence,
+player-path testing, one-writer, per-rig classic probe geometry,
+wire-change registrar bumps, three-reviewer review per slice,
+red-gate, escape hatch. Nothing pushed — the owner's in-game sitting
+decides the release.

@@ -166,7 +166,7 @@ public class SpiderGaitTests {
                         {hx + outX * 25.0, bodyY - 1.0, hz + outZ * 25.0},              // unreachable
                 };
                 for (double[] t : targets) {
-                    ModernSpiderGait.solveLegAngles(bodyX, bodyY, bodyZ, yaw,
+                    ModernSpiderGait.solveLegAngles(SpiderRigProfile.RIG, bodyX, bodyY, bodyZ, yaw,
                             leg, t[0], t[1], t[2], joints, angles);
                     double[][] fk = modelForwardKinematics(leg, bodyX, bodyY, bodyZ, yaw, angles);
 
@@ -261,12 +261,43 @@ public class SpiderGaitTests {
             helper.assertTrue(joints[1][1] > chordV - 1.0E-9,
                     "knee folded below the chord for target (" + t[0] + "," + t[1] + ")");
         }
-        // Trigger-radius lerp endpoints + midpoint monotonicity.
-        helper.assertTrue(ModernSpiderGait.triggerRadius(0.0) == 2.0, "trigger radius at rest");
-        helper.assertTrue(ModernSpiderGait.triggerRadius(1.0) == 5.0, "trigger radius saturates at full speed");
-        double mid = ModernSpiderGait.triggerRadius(0.175);
+        // Trigger-radius lerp endpoints + midpoint monotonicity (S5b: the
+        // radius lives on the rig; the spider's numbers are unchanged).
+        helper.assertTrue(SpiderRigProfile.RIG.triggerRadius(0.0) == 2.0, "trigger radius at rest");
+        helper.assertTrue(SpiderRigProfile.RIG.triggerRadius(1.0) == 5.0, "trigger radius saturates at full speed");
+        double mid = SpiderRigProfile.RIG.triggerRadius(0.175);
         helper.assertTrue(mid > 2.0 && mid < 5.0 && Math.abs(mid - 3.5) < 1.0E-9,
                 "trigger radius half-speed midpoint, got " + mid);
+        // S5b review: pin the rig-derived tilt spans against an independent
+        // recompute from the RAW classic tables (the spans replaced
+        // compile-time constants in the LegRig refactor and were otherwise
+        // covered only by loose sign bounds).
+        double[] legoffT = {1.25, 1.25, 2.0, 2.0, 1.75, 1.75, 3.4, 3.4};
+        double[] ymidT = {-0.32, 3.4615927, -1.0, 4.1415925, 0.62831855, 2.5132742, 1.05, 2.0915928};
+        double[] restT = {16.0, 16.0, 16.0, 16.0, 10.0, 10.0, 10.0, 10.0};
+        double frontZ = 0.0;
+        double rearZ = 0.0;
+        double evenX = 0.0;
+        double oddX = 0.0;
+        for (int leg = 0; leg < 8; ++leg) {
+            double radius = legoffT[leg] + restT[leg];
+            double x = -radius * Math.cos(ymidT[leg]);
+            double z = -radius * Math.sin(ymidT[leg]);
+            if (leg < 4) {
+                frontZ += z / 4.0;
+            } else {
+                rearZ += z / 4.0;
+            }
+            if ((leg & 1) == 0) {
+                evenX += x / 4.0;
+            } else {
+                oddX += x / 4.0;
+            }
+        }
+        helper.assertTrue(Math.abs(SpiderRigProfile.RIG.pitchSpan() - Math.abs(frontZ - rearZ)) < 1.0E-9,
+                "spider pitchSpan drifted from the table-derived value: " + SpiderRigProfile.RIG.pitchSpan());
+        helper.assertTrue(Math.abs(SpiderRigProfile.RIG.rollSpan() - Math.abs(oddX - evenX)) < 1.0E-9,
+                "spider rollSpan drifted from the table-derived value: " + SpiderRigProfile.RIG.rollSpan());
         helper.succeed();
     }
 
@@ -921,7 +952,7 @@ public class SpiderGaitTests {
                                 } else {
                                     ++exact;
                                 }
-                                ModernSpiderGait.solveLegAngles(bodyX, bodyY, bodyZ, yaw,
+                                ModernSpiderGait.solveLegAngles(SpiderRigProfile.RIG, bodyX, bodyY, bodyZ, yaw,
                                         leg, bodyX + rel[0], bodyY + rel[1], bodyZ + rel[2],
                                         joints, angles);
                                 double[][] fk = modelForwardKinematics(leg, bodyX, bodyY, bodyZ, yaw, angles);

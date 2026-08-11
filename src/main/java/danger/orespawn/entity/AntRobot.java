@@ -32,11 +32,20 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.resources.ResourceLocation;
+import danger.orespawn.OreSpawnConfig;
 import danger.orespawn.OreSpawnMod;
 import danger.orespawn.entity.ai.GenericTargetSorter;
 import danger.orespawn.entity.client.RenderSpiderRobotInfo;
+import danger.orespawn.entity.gait.AntRigProfile;
+import danger.orespawn.entity.gait.ModernSpiderGait;
+import de.dertoaster.multihitboxlib.api.ICustomHitboxProfileSupplier;
+import de.dertoaster.multihitboxlib.api.IMultipartEntity;
+import de.dertoaster.multihitboxlib.entity.hitbox.HitboxProfile;
+import de.dertoaster.multihitboxlib.init.MHLibDatapackLoaders;
 
-public class AntRobot extends Mob {
+import java.util.Optional;
+
+public class AntRobot extends Mob implements ICustomHitboxProfileSupplier, IModernLeggedRobot {
     // OPT-011: cached SoundEvents — identical createVariableRangeEvent ids,
     // allocated once per class instead of on every sound query.
     private static final SoundEvent SND_ROBOTSPIDER = SoundEvent.createVariableRangeEvent(
@@ -46,6 +55,14 @@ public class AntRobot extends Mob {
 
     private static final EntityDataAccessor<Integer> DATA_ATTACKING =
             SynchedEntityData.defineId(AntRobot.class, EntityDataSerializers.INT);
+    /**
+     * 2.0 S5b: the server's construction-time spiderMovement snapshot for
+     * the ANT, synced so clients build the replay controller and parts off
+     * the server's decision, never their own config — the exact
+     * DATA_MODERN_GAIT pattern from SpiderRobot (S2/S4 review lineage).
+     */
+    private static final EntityDataAccessor<Boolean> DATA_MODERN_GAIT =
+            SynchedEntityData.defineId(AntRobot.class, EntityDataSerializers.BOOLEAN);
 
     private static final double CHASE_SPEED = 0.2;
     private static final double KNOCKBACK_HORIZONTAL = 0.7;
@@ -66,12 +83,104 @@ public class AntRobot extends Mob {
     private int rideTicker = 0;
     private int owned = 0;
 
+    /**
+     * 2.0 S5b: the modern gait controller (ant rig), or {@code null} in
+     * classic mode — the SpiderRobot S2 snapshot pattern verbatim: server
+     * fixes it at construction, clients materialize lazily off the synced
+     * flag. Classic ants never construct modern state; the classic leg
+     * solver below is untouched.
+     */
+    private ModernSpiderGait modernGait;
+    /** 2.0 S5b: true once this ctor's body has run (see SpiderRobot's twin field). */
+    private boolean movementModeDecided;
+    /** The one ctor-tail config read (server); null until the supplier ran. */
+    private Boolean ctorTailModernDecision;
+
     public AntRobot(EntityType<? extends AntRobot> type, Level level) {
         super(type, level);
         this.xpReward = 150;
         this.targetSorter = new GenericTargetSorter(this); // orig AntRobot.java:54
         // orig AntRobot.java:532-535 — entityInit primes the leg data once at construction.
         initLegData();
+        // 2.0 S5b: consume the single ctor-tail mode read (the profile
+        // supplier may have run from the LivingEntity ctor tail before this
+        // body) — the SpiderRobot ctor-tear rule, applied identically.
+        if (!level.isClientSide()) {
+            boolean modern = this.ctorTailModernDecision != null
+                    ? this.ctorTailModernDecision
+                    : OreSpawnConfig.SPIDER_MOVEMENT.get() == OreSpawnConfig.SpiderMovement.MODERN;
+            this.entityData.set(DATA_MODERN_GAIT, modern);
+            if (modern) {
+                this.modernGait = new ModernSpiderGait(AntRigProfile.RIG);
+            }
+        }
+        this.movementModeDecided = true;
+    }
+
+    /**
+     * 2.0 S5b — the MHLib part gate for the ant (S4 pattern: this SHADOWS
+     * IMultipartEntity's entire profile resolution and must return the REAL
+     * profile for modern ants, Optional.empty() for classic — never null).
+     * The profile's main size is EXACTLY [2.75, 1.25]: MHLib applies it via
+     * the EntityEvent.Size hook and i083 pins the ant's classic dims.
+     */
+    @Override
+    public Optional<HitboxProfile> getHitboxProfile() {
+        final boolean modern;
+        if (this.level().isClientSide()) {
+            modern = this.entityData.get(DATA_MODERN_GAIT);
+        } else if (this.movementModeDecided) {
+            modern = this.modernGait != null;
+        } else {
+            if (this.ctorTailModernDecision == null) {
+                this.ctorTailModernDecision =
+                        OreSpawnConfig.SPIDER_MOVEMENT.get() == OreSpawnConfig.SpiderMovement.MODERN;
+            }
+            modern = this.ctorTailModernDecision;
+        }
+        if (!modern) {
+            return Optional.empty();
+        }
+        return MHLibDatapackLoaders.getHitboxProfile(this.getType(), this.level().registryAccess());
+    }
+
+    /**
+     * 2.0 S5b: the client part build on the synced flag's arrival — S4's
+     * id-capture/restore so the setId cascade gives the parts
+     * syncedId+1..+6 (the server's part ids), then client pick
+     * registration. See SpiderRobot.onSyncedDataUpdated for the review
+     * lineage (building lazily instead cost the network id).
+     */
+    @Override
+    public void onSyncedDataUpdated(EntityDataAccessor<?> dataAccessor) {
+        super.onSyncedDataUpdated(dataAccessor);
+        if (DATA_MODERN_GAIT.equals(dataAccessor)
+                && this.level().isClientSide()
+                && this.entityData.get(DATA_MODERN_GAIT)
+                && (this.getParts() == null || this.getParts().length == 0)) {
+            Object self = this;
+            if (self instanceof IMultipartEntity<?> multipart) {
+                final int syncedId = this.getId();
+                multipart.mhlibOnConstructor();
+                this.setId(syncedId);
+                de.dertoaster.multihitboxlib.client.MHLibClientPartRegistration.registerParts(this);
+            }
+        }
+    }
+
+    /** True when this ant runs the modern gait (server snapshot; synced). */
+    @Override
+    public boolean isModernMovement() {
+        return this.level().isClientSide() ? this.entityData.get(DATA_MODERN_GAIT) : this.modernGait != null;
+    }
+
+    /** The modern gait controller, or {@code null} for classic (client-lazy, as on the spider). */
+    @Override
+    public ModernSpiderGait getModernGait() {
+        if (this.modernGait == null && this.level().isClientSide() && this.entityData.get(DATA_MODERN_GAIT)) {
+            this.modernGait = new ModernSpiderGait(AntRigProfile.RIG);
+        }
+        return this.modernGait;
     }
 
     @Override
@@ -94,6 +203,7 @@ public class AntRobot extends Mob {
     protected void defineSynchedData(SynchedEntityData.Builder builder) {
         super.defineSynchedData(builder);
         builder.define(DATA_ATTACKING, 0);
+        builder.define(DATA_MODERN_GAIT, false);
     }
 
     public int getAttacking() { return this.entityData.get(DATA_ATTACKING); }
@@ -192,8 +302,14 @@ public class AntRobot extends Mob {
         float particleOffsetX = (float) (PARTICLE_OFFSET_BLOCKS * Math.cos(Math.toRadians(this.getYRot() - 80.0f)));
         float particleOffsetZ = (float) (PARTICLE_OFFSET_BLOCKS * Math.sin(Math.toRadians(this.getYRot() - 80.0f)));
         if (this.level().isClientSide()) {
-            // orig AntRobot.java:740 — the leg solver steps once per client tick.
-            updateLegs();
+            // orig AntRobot.java:740 — the leg solver steps once per client
+            // tick. 2.0 S5b: modern-mode ants replay the server gait instead
+            // (mode from the synced flag); the classic branch is untouched.
+            if (isModernMovement()) {
+                getModernGait().clientTick(this);
+            } else {
+                updateLegs();
+            }
             if (this.getRandom().nextInt(18) == 0) {
                 this.level().addParticle(ParticleTypes.FLAME,
                         getX() + particleOffsetX, getY() + 0.5, getZ() + particleOffsetZ, 0, 0, 0);
@@ -202,6 +318,14 @@ public class AntRobot extends Mob {
                 this.level().addParticle(ParticleTypes.SMOKE,
                         getX() + particleOffsetX, getY() + 0.5, getZ() + particleOffsetZ, 0, 0, 0);
             }
+        }
+
+        // 2.0 S5b: the server-authoritative modern gait. Never moves the
+        // body and never touches the hover-ride physics — a hovering body
+        // whose scan window misses the ground STRANDS its legs, and the
+        // stranded dangle IS the designed hover look (S5 as-designed).
+        if (this.modernGait != null && !this.level().isClientSide()) {
+            this.modernGait.serverTick(this);
         }
 
         if (this.playing > 0) --this.playing;
@@ -574,7 +698,9 @@ public class AntRobot extends Mob {
 
     /**
      * Per-leg constants and initial state (orig AntRobot.java:156-229).
-     * Pairs: 0-1 front/back center, 2-3 and 4-5 diagonal side pairs.
+     * Pairs (S5b review corrected this note against the table itself):
+     * all three are MIRRORED −X/+X pairs by z-band — (0,1) the z≈0 mids,
+     * (2,3) the front pair, (4,5) the rear pair.
      */
     private void initLegData() {
         for (int leg = 0; leg < LEG_COUNT; ++leg) {

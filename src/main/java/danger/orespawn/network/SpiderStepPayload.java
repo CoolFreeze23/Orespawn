@@ -1,7 +1,7 @@
 package danger.orespawn.network;
 
 import danger.orespawn.OreSpawnMod;
-import danger.orespawn.entity.SpiderRobot;
+import danger.orespawn.entity.IModernLeggedRobot;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
@@ -60,13 +60,18 @@ public record SpiderStepPayload(int entityId, int leg, boolean strand,
 
     public static void handle(SpiderStepPayload payload, IPayloadContext context) {
         context.enqueueWork(() -> {
+            // S5b: rig-generalized — the loose static bound rejects garbage
+            // before the entity lookup; the EXACT bound is the entity's own
+            // rig (a 6-leg ant drops leg indices 6-7 that would fit a
+            // spider's payload).
             if (payload.leg() < 0 || payload.leg() >= danger.orespawn.entity.gait.SpiderRigProfile.LEG_COUNT
                     || payload.duration() <= 0) {
                 return;
             }
             Entity entity = context.player().level().getEntity(payload.entityId());
-            if (entity instanceof SpiderRobot spider && spider.getModernGait() != null) {
-                spider.getModernGait().applyStep(payload);
+            if (entity instanceof IModernLeggedRobot robot && robot.getModernGait() != null
+                    && payload.leg() < robot.getModernGait().legCount()) {
+                robot.getModernGait().applyStep(payload);
             }
         });
     }

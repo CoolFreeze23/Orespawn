@@ -10,6 +10,11 @@ footing is lost; the legs are real hitboxes you can shoot and strike
 health bar works when aiming at a leg (and now also on The King's
 giant parts); and a mounted player can finally STEER the spider.
 
+The **Robot Ant** walks the same walk: six procedurally planted legs,
+real per-leg hitboxes with the same damage rules, and its beloved
+hover-ride untouched — airborne legs fold into a dangle and re-plant
+on touchdown.
+
 **Classic is one config line away**: `spiderMovement = "CLASSIC"`
 restores the 1.7.10 spider bit-identically — the same client-side leg
 animation, body-only hitbox and famously unsteerable saddle the

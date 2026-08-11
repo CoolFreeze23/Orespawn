@@ -1,7 +1,8 @@
 package danger.orespawn.network;
 
 import danger.orespawn.OreSpawnMod;
-import danger.orespawn.entity.SpiderRobot;
+import danger.orespawn.entity.IModernLeggedRobot;
+import danger.orespawn.entity.gait.AntRigProfile;
 import danger.orespawn.entity.gait.SpiderRigProfile;
 import io.netty.handler.codec.DecoderException;
 import net.minecraft.network.FriendlyByteBuf;
@@ -52,8 +53,11 @@ public record SpiderGaitKeyframePayload(int entityId, double[] footX, double[] f
                 // Validate the wire length BEFORE allocating from it — a
                 // corrupt byte must not become a NegativeArraySizeException
                 // on the network thread (independent-review finding).
+                // S5b: the decoder validates the leg count against the two
+                // shipped rigs; the HANDLER then validates it against the
+                // target entity's rig EXACTLY.
                 int legs = buf.readByte();
-                if (legs != SpiderRigProfile.LEG_COUNT) {
+                if (legs != SpiderRigProfile.LEG_COUNT && legs != AntRigProfile.LEG_COUNT) {
                     throw new DecoderException("spider_gait_keyframe: bad leg count " + legs);
                 }
                 double[] xs = new double[legs];
@@ -83,8 +87,9 @@ public record SpiderGaitKeyframePayload(int entityId, double[] footX, double[] f
     public static void handle(SpiderGaitKeyframePayload payload, IPayloadContext context) {
         context.enqueueWork(() -> {
             Entity entity = context.player().level().getEntity(payload.entityId());
-            if (entity instanceof SpiderRobot spider && spider.getModernGait() != null) {
-                spider.getModernGait().applyKeyframe(payload);
+            if (entity instanceof IModernLeggedRobot robot && robot.getModernGait() != null
+                    && payload.footX().length == robot.getModernGait().legCount()) {
+                robot.getModernGait().applyKeyframe(payload);
             }
         });
     }

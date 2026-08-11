@@ -466,6 +466,25 @@ isolated-batch config idiom from BOSS-017 — pinned tests set
     paragraph; owner ratifies or declines there — slice does not hold
     on it).
 
+  *S5b implementation amendments (independent review, 2026-08-11):*
+  the as-designed block's "144/22 px (9/1.375 blocks)" probe-window
+  note MISATTRIBUTED the 22 px figure — it is classic updateLegs'
+  foot-too-close RELOCATION-trigger window (AntRobot.java:856), not
+  probe geometry; the classic contraction sweep's floor is 2.5 blocks
+  ({@code while (!found && reach > 2.5f)}, :1010), and the shipped ant
+  rig carries 2.5 per the spider's sweep-floor convention. Ant scan
+  window 8/8 is the exact foot-space translation of its yScan loop
+  (adjudicated MORE faithful than the spider's historical loop-literal
+  11/14 — future rigs copy the ant's derivation). Ant pairs are
+  MIRRORED −X/+X by z-band (mid/front/rear), not "diagonal" as both
+  the research note and the classic transcription comment claimed; the
+  pitch grouping is per-rig data ({0,0,1,1,−1,−1}) because the ant's
+  index order is not front-to-rear. The ant rig's reach margin is
+  0.995 (its law-bound 9.0 opening + 0.75 hip drop = 98.3% of max
+  reach — the spider's 0.98 would reject the ant's own rest stance);
+  reach margins are modern IK guards, not probe geometry. NO trample
+  on the ant (classic ant feet have no block side effects — rig flag).
+
 Each slice: full gate (build + asset audit + suite, exit-code-guarded),
 FIX_LOG entries under "## 2.0 — Spider Overhaul", commit per slice.
 

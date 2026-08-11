@@ -1,6 +1,7 @@
 package danger.orespawn.entity.gait;
 
-import danger.orespawn.entity.SpiderRobot;
+import danger.orespawn.entity.IModernLeggedRobot;
+import net.minecraft.world.entity.Mob;
 import danger.orespawn.entity.client.RenderSpiderRobotInfo;
 import danger.orespawn.network.SpiderGaitKeyframePayload;
 import danger.orespawn.network.SpiderStepPayload;
@@ -17,8 +18,10 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 /**
- * 2.0 spider overhaul (S2/S3): the modern gait controller for
- * {@link SpiderRobot}.
+ * 2.0 spider overhaul (S2/S3, rig-abstracted in S5b): the modern gait
+ * controller for the legged robots ({@code SpiderRobot},
+ * {@code AntRobot} — one instance per robot per side, parameterized by
+ * its {@link LegRig}).
  *
  * <p><b>Architecture</b> (design doc D1): the SERVER owns the gait — planted
  * feet are server state, step decisions are server decisions, and (from S4)
@@ -87,45 +90,60 @@ import net.neoforged.neoforge.network.PacketDistributor;
  */
 public final class ModernSpiderGait {
 
-    // ---- Gait tuning (initial tune, S2/S3; revisit against ride feel in S5) ----
-    /** Trigger radius around the rest target while standing, blocks. */
-    static final double TRIGGER_RADIUS_MIN = 2.0;
-    /** Trigger radius at full speed, blocks (reference: radius lerps with speed). */
-    static final double TRIGGER_RADIUS_MAX = 5.0;
-    /** Speed treated as "full" for the radius lerp — the rig's movement-speed attribute. */
-    static final double FULL_SPEED = 0.35;
-    /** Foot travel speed during a swing, blocks/tick (sets step duration). */
-    static final double STEP_SPEED = 1.1;
+    /**
+     * S5b: the rig this controller drives — tables, classic probe geometry
+     * and rig-scaled tuning all come from here ({@code SpiderRigProfile.RIG}
+     * or {@code AntRigProfile.RIG}). One controller instance per robot per
+     * side, created with that robot's rig; per-leg arrays size to
+     * {@link LegRig#legCount()}.
+     */
+    private final LegRig rig;
+    private final int legCount;
+
+    public ModernSpiderGait(LegRig rig) {
+        this.rig = rig;
+        this.legCount = rig.legCount();
+        this.footX = new double[legCount];
+        this.footY = new double[legCount];
+        this.footZ = new double[legCount];
+        this.grounded = new boolean[legCount];
+        this.swinging = new boolean[legCount];
+        this.stranded = new boolean[legCount];
+        this.fromX = new double[legCount];
+        this.fromY = new double[legCount];
+        this.fromZ = new double[legCount];
+        this.toX = new double[legCount];
+        this.toY = new double[legCount];
+        this.toZ = new double[legCount];
+        this.swingStart = new long[legCount];
+        this.swingDuration = new int[legCount];
+        this.lastLand = new long[legCount];
+        this.verticalRetryAt = new long[legCount];
+        this.sagFloorEff = rig.maxSag();
+        this.liftCeilEff = rig.maxLift();
+    }
+
+    /** The rig's leg count (payload handlers validate against it exactly). */
+    public int legCount() {
+        return legCount;
+    }
+
+    // ---- Gait tuning (shared across rigs; rig-scaled values live in LegRig) ----
     static final int MIN_STEP_TICKS = 4;
     static final int MAX_STEP_TICKS = 12;
-    /** Parabolic swing lift peak, blocks (reference 4t(1-t) profile). */
-    static final double LIFT_HEIGHT = 2.0;
     /** Ticks a fresh-landed foot (or its pair partner) refuses to step again. */
     static final int LAND_COOLDOWN_TICKS = 3;
-    /** Vertical foot-vs-body mismatch that can force a re-step, blocks. */
-    static final double VERTICAL_RETRIGGER = 2.0;
     /** A vertical-only re-step must improve the mismatch at least this much. */
     static final double VERTICAL_RETRIGGER_GAIN = 0.5;
     /** Periodic full-state broadcast interval, ticks (drift snap + late joiners). */
     static final int KEYFRAME_INTERVAL = 40;
 
-    // ---- Terrain scan tuning (S3) ----
-    /**
-     * Scan window above/below body level, blocks — classic's own probe
-     * column ({@code SpiderRobot.findNewFooting:717}: yScan 11 → −14). A
-     * shorter window (first S3a cut used 4/−8) cannot see a cliff-wall top
-     * beside a landed body, stranding rear legs the classic probe would
-     * plant up the wall (independent-review regression, cliff test).
-     */
-    static final int SCAN_UP = 11;
-    static final int SCAN_DOWN = 14;
+    // ---- Terrain scan tuning (S3; the scan WINDOW is per-rig classic
+    // probe geometry and lives on LegRig — see its scanUp/scanDown docs) ----
     /** Preferred-footing height raise when the column ahead is blocked. */
     static final double CLIMB_HEIGHT_BIAS = 1.5;
-    /** Candidates are rejected beyond this fraction of full leg reach. */
-    static final double REACH_MARGIN = 0.98;
     /** Stranded dangle: horizontal fraction of rest reach, and drop below hip. */
     static final double DANGLE_REACH_FRAC = 0.45;
-    static final double DANGLE_DROP = 4.0;
     /** Lookahead ticks when probing footing for a stranded leg. */
     static final int STRANDED_LOOKAHEAD_TICKS = 8;
     /**
@@ -137,31 +155,28 @@ public final class ModernSpiderGait {
      * the terrain, while classic grips near the hip.
      */
     private static final double[] CONTRACTION_FRACTIONS = {0.7, 0.45, 0.25};
-    /** Contraction never probes closer than this to the hip, blocks (classic floor 3.5). */
-    static final double MIN_CONTRACTED_REACH = 3.5;
     /** Ticks a gate-blocked vertical retrigger waits before rescanning. */
     static final int VERTICAL_RETRY_COOLDOWN = 10;
 
-    private static final int LEGS = SpiderRigProfile.LEG_COUNT;
 
     // ---- Per-leg state (server-authoritative; client mirrors via payloads) ----
-    private final double[] footX = new double[LEGS];
-    private final double[] footY = new double[LEGS];
-    private final double[] footZ = new double[LEGS];
-    private final boolean[] grounded = new boolean[LEGS];
-    private final boolean[] swinging = new boolean[LEGS];
-    private final boolean[] stranded = new boolean[LEGS];
-    private final double[] fromX = new double[LEGS];
-    private final double[] fromY = new double[LEGS];
-    private final double[] fromZ = new double[LEGS];
-    private final double[] toX = new double[LEGS];
-    private final double[] toY = new double[LEGS];
-    private final double[] toZ = new double[LEGS];
-    private final long[] swingStart = new long[LEGS];
-    private final int[] swingDuration = new int[LEGS];
-    private final long[] lastLand = new long[LEGS];
+    private final double[] footX;
+    private final double[] footY;
+    private final double[] footZ;
+    private final boolean[] grounded;
+    private final boolean[] swinging;
+    private final boolean[] stranded;
+    private final double[] fromX;
+    private final double[] fromY;
+    private final double[] fromZ;
+    private final double[] toX;
+    private final double[] toY;
+    private final double[] toZ;
+    private final long[] swingStart;
+    private final int[] swingDuration;
+    private final long[] lastLand;
     /** Per-leg wait-until time for re-evaluating a gate-blocked vertical retrigger. */
-    private final long[] verticalRetryAt = new long[LEGS];
+    private final long[] verticalRetryAt;
     private boolean initialized = false;
 
     // ---- S3b body dynamics (VISUAL layer — never touches entity physics) ----
@@ -175,8 +190,6 @@ public final class ModernSpiderGait {
      * scaled by the grounded-leg fraction — stranded legs sag the body.
      */
     static final double LIFT_FORCE_CAP = 0.32;
-    static final double MAX_LIFT = 1.0;
-    static final double MAX_SAG = -1.0;
     /** Low-pass factor for pitch/roll convergence (reference 0.3). */
     static final double TILT_SMOOTH = 0.3;
     /** Tilt clamp, radians (~20°). */
@@ -189,22 +202,8 @@ public final class ModernSpiderGait {
      */
     static final double TILT_RATE_LIMIT = 0.02;
     static final double LIFT_RATE_LIMIT = 0.15;
-    /**
-     * S5 (independent review): rest bearings follow a dead-banded,
-     * rate-limited heading instead of raw body yaw. Ridden steering couples
-     * body yaw 1:1 to the rider's look; at a ~17-block rest radius even a
-     * 6.6° look-flick displaces rest targets past the stationary trigger
-     * radius (2.0) and would dance all eight legs (and trample-grind the
-     * ring). The dead-band (8.6° ≈ 2.6 blocks of chord at the 17-18-block
-     * front rest radii — the settled stance may sit rotated that far from
-     * true heading) makes look-jitter move nothing; beyond it the heading
-     * chases at a rate whose worst-case rest displacement (17.25 × 0.0593
-     * rad ≈ 1.02 b/t) stays under STEP_SPEED, so genuine turns re-plant the
-     * legs chasably. Legs may settle up to the dead-band rotated from true
-     * heading — invisible on a radial 8-leg rig.
-     */
-    static final float REST_YAW_DEADBAND_DEG = 8.6f;
-    static final float REST_YAW_RATE_DEG = 3.4f;
+    // The S5 rest-heading dead-band/rate constants are per-rig (LegRig
+    // restYawDeadbandDeg/restYawRateDeg — full anti-dance rationale there).
     /**
      * The vanilla render chain draws the model this far ABOVE the entity
      * anchor (LivingEntityRenderer's translate(0,−1.501,0) after the
@@ -214,39 +213,8 @@ public final class ModernSpiderGait {
      * (independent-review BLOCKER).
      */
     public static final float VANILLA_RENDER_Y_OFFSET = 1.501f;
-    /**
-     * Longitudinal/lateral foot-centroid spans for the tilt targets, derived
-     * from the rig's actual rest stance (review: a shared magic 14 over-read
-     * slopes by 1.4–1.5× and saturated the clamp early). Computed once from
-     * SpiderRigProfile at yaw 0: distance between the front(0-3)/rear(4-7)
-     * rest-foot centroids along the facing axis, and even/odd across it.
-     */
-    static final double PITCH_SPAN;
-    static final double ROLL_SPAN;
-
-    static {
-        double frontAxis = 0.0;
-        double rearAxis = 0.0;
-        double evenAxis = 0.0;
-        double oddAxis = 0.0;
-        for (int leg = 0; leg < SpiderRigProfile.LEG_COUNT; ++leg) {
-            // Rest foot at yaw 0, facing axis = +Z, lateral = +X.
-            double z = SpiderRigProfile.restFootZ(leg, 0.0, 0.0f);
-            double x = SpiderRigProfile.restFootX(leg, 0.0, 0.0f);
-            if (leg < 4) {
-                frontAxis += z / 4.0;
-            } else {
-                rearAxis += z / 4.0;
-            }
-            if ((leg & 1) == 0) {
-                evenAxis += x / 4.0;
-            } else {
-                oddAxis += x / 4.0;
-            }
-        }
-        PITCH_SPAN = Math.abs(frontAxis - rearAxis);
-        ROLL_SPAN = Math.abs(oddAxis - evenAxis);
-    }
+    // The tilt-target centroid spans are rig-derived (LegRig pitchSpan/
+    // rollSpan, computed in its ctor from the rest stance at yaw 0).
 
     /**
      * Visual body offset state, one set per side (server's copy will feed
@@ -270,8 +238,6 @@ public final class ModernSpiderGait {
     private final double[] compScratch = new double[3];
 
     // ---- S4: MHLib leg-part feed ----
-    /** The profile's leg boxes are 0.6 tall; setPos anchors at the bottom. */
-    static final double PART_HALF_HEIGHT = 0.3;
     /** Resolved once per side after parts exist ({@code null} slots = absent). */
     private MHLibPartEntity<?>[] legParts;
 
@@ -306,9 +272,8 @@ public final class ModernSpiderGait {
     }
 
     /** The speed-widened trigger radius (exposed pure for the gait tests). */
-    public static double triggerRadius(double bodySpeed) {
-        double speedFrac = Math.min(1.0, bodySpeed / FULL_SPEED);
-        return Mth.lerp(speedFrac, TRIGGER_RADIUS_MIN, TRIGGER_RADIUS_MAX);
+    public double triggerRadius(double bodySpeed) {
+        return rig.triggerRadius(bodySpeed);
     }
 
     // ---- S3b body-dynamics accessors ----
@@ -415,8 +380,8 @@ public final class ModernSpiderGait {
      * free (MAX_LIFT/MAX_SAG) targets at LIFT_RATE_LIMIT per tick, so the
      * mount/dismount transitions never snap the body.
      */
-    private double sagFloorEff = MAX_SAG;
-    private double liftCeilEff = MAX_LIFT;
+    private double sagFloorEff;
+    private double liftCeilEff;
 
     /**
      * S3b body dynamics tick (both sides, deterministic from foot state —
@@ -430,7 +395,7 @@ public final class ModernSpiderGait {
      * planted front/rear and left/right foot-group centroids; a side with
      * no planted feet holds its previous target.
      */
-    private void updateBodyDynamics(SpiderRobot spider) {
+    private void updateBodyDynamics(Mob robot) {
         int planted = 0;
         double sumY = 0.0;
         double frontSum = 0.0;
@@ -441,7 +406,7 @@ public final class ModernSpiderGait {
         int evenCount = 0;
         double oddSum = 0.0;
         int oddCount = 0;
-        for (int leg = 0; leg < LEGS; ++leg) {
+        for (int leg = 0; leg < legCount; ++leg) {
             if (stranded[leg]) {
                 continue;
             }
@@ -454,10 +419,14 @@ public final class ModernSpiderGait {
                 ++planted;
                 sumY += footY[leg];
             }
-            if (leg < 4) {
+            // S5b: pitch-group membership is rig data (the spider's is the
+            // exact leg<4 split this code shipped with; the ant's mid pair
+            // sits out of the pitch centroids).
+            int pitchGroup = rig.pitchGroup(leg);
+            if (pitchGroup > 0) {
                 frontSum += y;
                 ++frontCount;
-            } else {
+            } else if (pitchGroup < 0) {
                 rearSum += y;
                 ++rearCount;
             }
@@ -470,7 +439,7 @@ public final class ModernSpiderGait {
             }
         }
 
-        double supportFraction = planted / (double) LEGS;
+        double supportFraction = planted / (double) legCount;
         // S5 seat resolution (the S3b handoff, resolved per the ride design):
         // while ridden the visual body goes NEAR-RIGID — lift AND sag both
         // clamped to ±0.15 — because the passenger renders from real entity
@@ -479,15 +448,15 @@ public final class ModernSpiderGait {
         // (independent review: a rider mounting a climbing/sagged spider at
         // |lift| up to 1.0 would otherwise teleport the body up to 0.85
         // blocks in one tick, 5.7x the rate limit the dynamics promise).
-        boolean ridden = spider.getFirstPassenger() != null;
-        double sagTarget = ridden ? -0.15 : MAX_SAG;
-        double liftTarget = ridden ? 0.15 : MAX_LIFT;
+        boolean ridden = robot.getFirstPassenger() != null;
+        double sagTarget = ridden ? -0.15 : rig.maxSag();
+        double liftTarget = ridden ? 0.15 : rig.maxLift();
         sagFloorEff += Mth.clamp(sagTarget - sagFloorEff, -LIFT_RATE_LIMIT, LIFT_RATE_LIMIT);
         liftCeilEff += Mth.clamp(liftTarget - liftCeilEff, -LIFT_RATE_LIMIT, LIFT_RATE_LIMIT);
         double sagFloor = sagFloorEff;
         double liftCeil = liftCeilEff;
         double targetLift = planted > 0
-                ? Mth.clamp(sumY / planted - spider.getY(), sagFloor, liftCeil)
+                ? Mth.clamp(sumY / planted - robot.getY(), sagFloor, liftCeil)
                 : sagFloor;
         // PD acceleration the spring wants; the legs may only PUSH UP
         // (normal force), capped by available support — gravity always acts.
@@ -515,7 +484,7 @@ public final class ModernSpiderGait {
         double pitchStep;
         if (frontCount > 0 && rearCount > 0) {
             double pitchTarget = Mth.clamp(
-                    Math.atan2(rearSum / rearCount - frontSum / frontCount, PITCH_SPAN),
+                    Math.atan2(rearSum / rearCount - frontSum / frontCount, rig.pitchSpan()),
                     -MAX_TILT, MAX_TILT);
             pitchStep = (pitchTarget - bodyPitch) * TILT_SMOOTH;
         } else {
@@ -526,7 +495,7 @@ public final class ModernSpiderGait {
         double rollStep;
         if (evenCount > 0 && oddCount > 0) {
             double rollTarget = Mth.clamp(
-                    Math.atan2(oddSum / oddCount - evenSum / evenCount, ROLL_SPAN),
+                    Math.atan2(oddSum / oddCount - evenSum / evenCount, rig.rollSpan()),
                     -MAX_TILT, MAX_TILT);
             rollStep = (rollTarget - bodyRoll) * TILT_SMOOTH;
         } else {
@@ -542,13 +511,13 @@ public final class ModernSpiderGait {
      * Runs lazily on both sides (the client's copy is overwritten by the
      * first keyframe).
      */
-    private void initFeet(SpiderRobot spider) {
-        float yaw = spider.getYRot();
-        long time = spider.level().getGameTime();
-        for (int leg = 0; leg < LEGS; ++leg) {
-            double rx = SpiderRigProfile.restFootX(leg, spider.getX(), yaw);
-            double rz = SpiderRigProfile.restFootZ(leg, spider.getZ(), yaw);
-            double[] found = scanFootingContracted(spider, leg, rx, rz, 0.0, 0.0, 0);
+    private void initFeet(Mob robot) {
+        float yaw = robot.getYRot();
+        long time = robot.level().getGameTime();
+        for (int leg = 0; leg < legCount; ++leg) {
+            double rx = rig.restFootX(leg, robot.getX(), yaw);
+            double rz = rig.restFootZ(leg, robot.getZ(), yaw);
+            double[] found = scanFootingContracted(robot, leg, rx, rz, 0.0, 0.0, 0);
             if (found != null) {
                 footX[leg] = found[0];
                 footY[leg] = found[1];
@@ -558,38 +527,38 @@ public final class ModernSpiderGait {
             } else {
                 stranded[leg] = true;
                 grounded[leg] = false;
-                dangle(spider, leg, yaw);
+                dangle(robot, leg, yaw);
             }
             swinging[leg] = false;
             lastLand[leg] = time;
         }
         // S5: seed the rest-heading follower at the spawn heading so the
         // first server tick doesn't chase from 0° and mass-retrigger.
-        restYawDeg = spider.getYRot();
+        restYawDeg = robot.getYRot();
         initialized = true;
     }
 
     /** Places a stranded foot at its semi-folded dangle point (follows the body). */
-    private void dangle(SpiderRobot spider, int leg, float yaw) {
-        double bearing = SpiderRigProfile.legBearing(leg, yaw);
-        double reach = SpiderRigProfile.restReach(leg) * DANGLE_REACH_FRAC;
-        footX[leg] = SpiderRigProfile.hipX(leg, spider.getX(), yaw) - reach * Math.sin(bearing);
-        footZ[leg] = SpiderRigProfile.hipZ(leg, spider.getZ(), yaw) + reach * Math.cos(bearing);
-        footY[leg] = SpiderRigProfile.hipY(leg, spider.getY()) - DANGLE_DROP;
+    private void dangle(Mob robot, int leg, float yaw) {
+        double bearing = rig.legBearing(leg, yaw);
+        double reach = rig.restReach(leg) * DANGLE_REACH_FRAC;
+        footX[leg] = rig.hipX(leg, robot.getX(), yaw) - reach * Math.sin(bearing);
+        footZ[leg] = rig.hipZ(leg, robot.getZ(), yaw) + reach * Math.cos(bearing);
+        footY[leg] = rig.hipY(leg, robot.getY()) - rig.dangleDrop();
     }
 
     // ==================== SERVER ====================
 
-    /** One server gait tick; called from {@code SpiderRobot.tick()} (modern mode, server side). */
-    public void serverTick(SpiderRobot spider) {
+    /** One server gait tick; called from the robot's {@code tick()} (modern mode, server side). */
+    public void serverTick(Mob robot) {
         if (!initialized) {
-            initFeet(spider);
+            initFeet(robot);
         }
-        Level level = spider.level();
+        Level level = robot.level();
         long time = level.getGameTime();
 
         // Land finished swings.
-        for (int leg = 0; leg < LEGS; ++leg) {
+        for (int leg = 0; leg < legCount; ++leg) {
             if (swinging[leg] && time - swingStart[leg] >= swingDuration[leg]) {
                 land(leg, time);
             }
@@ -599,18 +568,18 @@ public final class ModernSpiderGait {
         // :697-711 runs whenever all three axes settle) — mirrored here per
         // independent review so a rider mounting a standing spider, or grass
         // regrowing under a planted foot, tramples exactly as in classic.
-        if (spider.getFirstPassenger() != null
+        if (rig.tramples() && robot.getFirstPassenger() != null
                 && level.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)) {
-            for (int leg = 0; leg < LEGS; ++leg) {
+            for (int leg = 0; leg < legCount; ++leg) {
                 if (grounded[leg] && !swinging[leg] && !stranded[leg]) {
-                    trampleAt(spider, leg);
+                    trampleAt(robot, leg);
                 }
             }
         }
 
         // Body speed drives the trigger radius (blocks moved this tick).
-        double vx = spider.getX() - spider.xo;
-        double vz = spider.getZ() - spider.zo;
+        double vx = robot.getX() - robot.xo;
+        double vz = robot.getZ() - robot.zo;
         double speed = Math.sqrt(vx * vx + vz * vz);
         double radius = triggerRadius(speed);
 
@@ -622,32 +591,32 @@ public final class ModernSpiderGait {
         // both sides), so the server dangle must use the same yaw the
         // client's dangle uses or the leg-part hitboxes would drift off
         // the rendered stranded legs (verify pass caught the mismatch).
-        float yawTrue = spider.getYRot();
+        float yawTrue = robot.getYRot();
         float yawDelta = Mth.degreesDifference(restYawDeg, yawTrue);
         float yawAbs = Math.abs(yawDelta);
-        if (yawAbs > REST_YAW_DEADBAND_DEG) {
+        if (yawAbs > rig.restYawDeadbandDeg()) {
             restYawDeg = Mth.wrapDegrees(restYawDeg
-                    + Math.signum(yawDelta) * Math.min(yawAbs - REST_YAW_DEADBAND_DEG, REST_YAW_RATE_DEG));
+                    + Math.signum(yawDelta) * Math.min(yawAbs - rig.restYawDeadbandDeg(), rig.restYawRateDeg()));
         }
         float yaw = restYawDeg;
-        for (int leg = 0; leg < LEGS; ++leg) {
+        for (int leg = 0; leg < legCount; ++leg) {
             if (swinging[leg]) {
                 continue;
             }
-            double restX = SpiderRigProfile.restFootX(leg, spider.getX(), yaw);
-            double restZ = SpiderRigProfile.restFootZ(leg, spider.getZ(), yaw);
+            double restX = rig.restFootX(leg, robot.getX(), yaw);
+            double restZ = rig.restFootZ(leg, robot.getZ(), yaw);
 
             if (stranded[leg]) {
                 // Dangle follows the body; re-step UNCONDITIONALLY (no
                 // inhibitors, per the reference) onto any footing that appears
                 // — including contracted footing near the hip. TRUE yaw: the
                 // client computes the same dangle from its own getYRot.
-                dangle(spider, leg, yawTrue);
-                double[] found = scanFootingContracted(spider, leg,
+                dangle(robot, leg, yawTrue);
+                double[] found = scanFootingContracted(robot, leg,
                         restX + vx * STRANDED_LOOKAHEAD_TICKS,
                         restZ + vz * STRANDED_LOOKAHEAD_TICKS, vx, vz, STRANDED_LOOKAHEAD_TICKS);
                 if (found != null) {
-                    beginStep(spider, leg, found[0], found[1], found[2], time);
+                    beginStep(robot, leg, found[0], found[1], found[2], time);
                 }
                 continue;
             }
@@ -659,7 +628,7 @@ public final class ModernSpiderGait {
             double dz = footZ[leg] - restZ;
             boolean drift = dx * dx + dz * dz > radius * radius;
             boolean verticalMismatch = time >= verticalRetryAt[leg]
-                    && Math.abs(footY[leg] - spider.getY()) > VERTICAL_RETRIGGER;
+                    && Math.abs(footY[leg] - robot.getY()) > rig.verticalRetrigger();
             if (!drift && !verticalMismatch) {
                 continue;
             }
@@ -670,15 +639,15 @@ public final class ModernSpiderGait {
             // empty (review finding — the overwrite spuriously stranded legs
             // at cliff lips).
             double drift2d = Math.sqrt(dx * dx + dz * dz);
-            int est = Mth.clamp((int) Math.round(drift2d / STEP_SPEED), MIN_STEP_TICKS, MAX_STEP_TICKS);
-            double[] cand = scanFootingContracted(spider, leg, restX + vx * est, restZ + vz * est, vx, vz, est);
+            int est = Mth.clamp((int) Math.round(drift2d / rig.stepSpeed()), MIN_STEP_TICKS, MAX_STEP_TICKS);
+            double[] cand = scanFootingContracted(robot, leg, restX + vx * est, restZ + vz * est, vx, vz, est);
             if (cand != null) {
                 double stepDist = Math.sqrt((cand[0] - footX[leg]) * (cand[0] - footX[leg])
                         + (cand[1] - footY[leg]) * (cand[1] - footY[leg])
                         + (cand[2] - footZ[leg]) * (cand[2] - footZ[leg]));
-                int est2 = Mth.clamp((int) Math.round(stepDist / STEP_SPEED), MIN_STEP_TICKS, MAX_STEP_TICKS);
+                int est2 = Mth.clamp((int) Math.round(stepDist / rig.stepSpeed()), MIN_STEP_TICKS, MAX_STEP_TICKS);
                 if (est2 != est) {
-                    double[] refined = scanFooting(spider, leg, restX + vx * est2, restZ + vz * est2,
+                    double[] refined = scanFooting(robot, leg, restX + vx * est2, restZ + vz * est2,
                             vx, vz, est2);
                     if (refined != null) {
                         cand = refined;
@@ -689,7 +658,7 @@ public final class ModernSpiderGait {
                 // Neither the projected patch nor the contracted sweep down
                 // to ~3.5 blocks from the hip found footing: strand (TRUE
                 // yaw — the strand dangle must match the client's).
-                strand(spider, leg, yawTrue);
+                strand(robot, leg, yawTrue);
                 continue;
             }
             if (!drift) {
@@ -697,29 +666,29 @@ public final class ModernSpiderGait {
                 // (livelock guard vs climb assist — see class javadoc). A
                 // blocked attempt arms a short cooldown so an idle spider by
                 // a ledge doesn't re-scan ~230 blocks per leg every tick.
-                double curMismatch = Math.abs(footY[leg] - spider.getY());
-                double newMismatch = Math.abs(cand[1] - spider.getY());
+                double curMismatch = Math.abs(footY[leg] - robot.getY());
+                double newMismatch = Math.abs(cand[1] - robot.getY());
                 if (curMismatch - newMismatch < VERTICAL_RETRIGGER_GAIN) {
                     verticalRetryAt[leg] = time + VERTICAL_RETRY_COOLDOWN;
                     continue;
                 }
             }
-            beginStep(spider, leg, cand[0], cand[1], cand[2], time);
+            beginStep(robot, leg, cand[0], cand[1], cand[2], time);
         }
 
         // S3b: visual body dynamics from the post-land foot state.
-        updateBodyDynamics(spider);
+        updateBodyDynamics(robot);
 
         // S4: feed the MHLib leg parts from this tick's solve — server truth
         // for damage. MHLib's own alignSubParts static alignment ran earlier
         // this tick (aiStep TAIL, inside super.tick()) and is deliberately
         // overwritten here.
-        feedParts(spider, time);
+        feedParts(robot, time);
 
         // Keyframes phase-shifted by entity id so multiple spiders don't
         // burst-send on the same global tick.
-        if ((time + spider.getId()) % KEYFRAME_INTERVAL == 0) {
-            PacketDistributor.sendToPlayersTrackingEntity(spider, buildKeyframe(spider));
+        if ((time + robot.getId()) % KEYFRAME_INTERVAL == 0) {
+            PacketDistributor.sendToPlayersTrackingEntity(robot, buildKeyframe(robot));
         }
     }
 
@@ -730,7 +699,7 @@ public final class ModernSpiderGait {
      * the cooldown window. Stranded legs bypass this entirely.
      */
     private boolean stepAllowed(int leg, long time) {
-        int partner = SpiderRigProfile.pairedWith(leg);
+        int partner = rig.pairedWith(leg);
         if (swinging[partner]) {
             return false;
         }
@@ -741,14 +710,14 @@ public final class ModernSpiderGait {
         if (fore >= 0 && swinging[fore]) {
             return false;
         }
-        if (aft < LEGS && swinging[aft]) {
+        if (aft < legCount && swinging[aft]) {
             return false;
         }
         return time - lastLand[leg] >= LAND_COOLDOWN_TICKS
                 && time - lastLand[partner] >= LAND_COOLDOWN_TICKS;
     }
 
-    private void beginStep(SpiderRobot spider, int leg, double tx, double ty, double tz, long time) {
+    private void beginStep(Mob robot, int leg, double tx, double ty, double tz, long time) {
         stranded[leg] = false;
         fromX[leg] = footX[leg];
         fromY[leg] = footY[leg];
@@ -760,13 +729,13 @@ public final class ModernSpiderGait {
                 (tx - fromX[leg]) * (tx - fromX[leg])
                         + (ty - fromY[leg]) * (ty - fromY[leg])
                         + (tz - fromZ[leg]) * (tz - fromZ[leg]));
-        swingDuration[leg] = Mth.clamp((int) Math.round(dist / STEP_SPEED), MIN_STEP_TICKS, MAX_STEP_TICKS);
+        swingDuration[leg] = Mth.clamp((int) Math.round(dist / rig.stepSpeed()), MIN_STEP_TICKS, MAX_STEP_TICKS);
         swingStart[leg] = time;
         swinging[leg] = true;
         grounded[leg] = false;
-        if (!spider.level().isClientSide()) {
-            PacketDistributor.sendToPlayersTrackingEntity(spider, new SpiderStepPayload(
-                    spider.getId(), leg, false,
+        if (!robot.level().isClientSide()) {
+            PacketDistributor.sendToPlayersTrackingEntity(robot, new SpiderStepPayload(
+                    robot.getId(), leg, false,
                     fromX[leg], fromY[leg], fromZ[leg],
                     tx, ty, tz,
                     time, swingDuration[leg]));
@@ -774,17 +743,17 @@ public final class ModernSpiderGait {
     }
 
     /** Server: marks a leg stranded and tells trackers (the dangle itself is computed per side). */
-    private void strand(SpiderRobot spider, int leg, float yaw) {
+    private void strand(Mob robot, int leg, float yaw) {
         stranded[leg] = true;
         grounded[leg] = false;
         swinging[leg] = false;
-        dangle(spider, leg, yaw);
-        if (!spider.level().isClientSide()) {
-            PacketDistributor.sendToPlayersTrackingEntity(spider, new SpiderStepPayload(
-                    spider.getId(), leg, true,
+        dangle(robot, leg, yaw);
+        if (!robot.level().isClientSide()) {
+            PacketDistributor.sendToPlayersTrackingEntity(robot, new SpiderStepPayload(
+                    robot.getId(), leg, true,
                     footX[leg], footY[leg], footZ[leg],
                     footX[leg], footY[leg], footZ[leg],
-                    spider.level().getGameTime(), MIN_STEP_TICKS));
+                    robot.level().getGameTime(), MIN_STEP_TICKS));
         }
     }
 
@@ -808,9 +777,9 @@ public final class ModernSpiderGait {
      * stays live). Classic mode keeps its faithful client-side trample
      * untouched — on a dedicated server classic tramples nothing, faithfully.
      */
-    private void trampleAt(SpiderRobot spider, int leg) {
-        Level level = spider.level();
-        if (level.isClientSide() || spider.getFirstPassenger() == null
+    private void trampleAt(Mob robot, int leg) {
+        Level level = robot.level();
+        if (!rig.tramples() || level.isClientSide() || robot.getFirstPassenger() == null
                 || !level.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)) {
             return;
         }
@@ -835,21 +804,21 @@ public final class ModernSpiderGait {
      * narrow bridge or ridge under the body therefore grips near the hips
      * exactly as classic does.
      */
-    private double[] scanFootingContracted(SpiderRobot spider, int leg, double tx, double tz,
+    private double[] scanFootingContracted(Mob robot, int leg, double tx, double tz,
                                            double vx, double vz, int projTicks) {
-        double[] found = scanFooting(spider, leg, tx, tz, vx, vz, projTicks);
+        double[] found = scanFooting(robot, leg, tx, tz, vx, vz, projTicks);
         if (found != null) {
             return found;
         }
-        float yaw = spider.getYRot();
-        double bearing = SpiderRigProfile.legBearing(leg, yaw);
-        double hipX = SpiderRigProfile.hipX(leg, spider.getX(), yaw);
-        double hipZ = SpiderRigProfile.hipZ(leg, spider.getZ(), yaw);
+        float yaw = robot.getYRot();
+        double bearing = rig.legBearing(leg, yaw);
+        double hipX = rig.hipX(leg, robot.getX(), yaw);
+        double hipZ = rig.hipZ(leg, robot.getZ(), yaw);
         for (double frac : CONTRACTION_FRACTIONS) {
-            double r = Math.max(MIN_CONTRACTED_REACH, SpiderRigProfile.restReach(leg) * frac);
+            double r = Math.max(rig.minContractedReach(), rig.restReach(leg) * frac);
             double cx = hipX - r * Math.sin(bearing);
             double cz = hipZ + r * Math.cos(bearing);
-            found = scanFooting(spider, leg, cx, cz, vx, vz, 0);
+            found = scanFooting(robot, leg, cx, cz, vx, vz, 0);
             if (found != null) {
                 return found;
             }
@@ -880,16 +849,16 @@ public final class ModernSpiderGait {
      * surface, and the neighbor columns outscore it instead of the leg
      * thrashing against it.</p>
      */
-    private double[] scanFooting(SpiderRobot spider, int leg, double tx, double tz,
+    private double[] scanFooting(Mob robot, int leg, double tx, double tz,
                                  double vx, double vz, int projTicks) {
-        Level level = spider.level();
-        double bodyY = spider.getY();
-        float yaw = spider.getYRot();
-        double hipX = SpiderRigProfile.hipX(leg, spider.getX() + vx * projTicks, yaw);
-        double hipY = SpiderRigProfile.hipY(leg, bodyY);
-        double hipZ = SpiderRigProfile.hipZ(leg, spider.getZ() + vz * projTicks, yaw);
-        double maxReachSq = SpiderRigProfile.MAX_REACH * REACH_MARGIN
-                * SpiderRigProfile.MAX_REACH * REACH_MARGIN;
+        Level level = robot.level();
+        double bodyY = robot.getY();
+        float yaw = robot.getYRot();
+        double hipX = rig.hipX(leg, robot.getX() + vx * projTicks, yaw);
+        double hipY = rig.hipY(leg, bodyY);
+        double hipZ = rig.hipZ(leg, robot.getZ() + vz * projTicks, yaw);
+        double maxReachSq = rig.maxReach() * rig.reachMargin()
+                * rig.maxReach() * rig.reachMargin();
 
         // Climb assist: preferred footing height rises when the body's path
         // is blocked at chest height.
@@ -897,9 +866,9 @@ public final class ModernSpiderGait {
         double speed = Math.sqrt(vx * vx + vz * vz);
         if (speed > 0.05) {
             BlockPos ahead = BlockPos.containing(
-                    spider.getX() + vx / speed * 2.5,
+                    robot.getX() + vx / speed * 2.5,
                     bodyY + 0.5,
-                    spider.getZ() + vz / speed * 2.5);
+                    robot.getZ() + vz / speed * 2.5);
             if (level.getBlockState(ahead).isSolid()) {
                 preferY += CLIMB_HEIGHT_BIAS;
             }
@@ -907,8 +876,8 @@ public final class ModernSpiderGait {
 
         // Foot-height space [floor-SCAN_DOWN, floor+SCAN_UP] — block rows
         // [bottom, top] with the occupancy seed one above the window.
-        int top = Mth.floor(bodyY) + SCAN_UP - 1;
-        int bottom = Mth.floor(bodyY) - SCAN_DOWN - 1;
+        int top = Mth.floor(bodyY) + rig.scanUp() - 1;
+        int bottom = Mth.floor(bodyY) - rig.scanDown() - 1;
         BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
         double bestScore = Double.MAX_VALUE;
         double[] best = null;
@@ -954,16 +923,16 @@ public final class ModernSpiderGait {
      * first: a player can start tracking a fresh spawn before its first
      * server tick, and the all-zero placeholder must never reach the wire.
      */
-    public SpiderGaitKeyframePayload buildKeyframe(SpiderRobot spider) {
+    public SpiderGaitKeyframePayload buildKeyframe(Mob robot) {
         if (!initialized) {
-            initFeet(spider);
+            initFeet(robot);
         }
-        double[] xs = new double[LEGS];
-        double[] ys = new double[LEGS];
-        double[] zs = new double[LEGS];
-        boolean[] g = new boolean[LEGS];
-        boolean[] s = new boolean[LEGS];
-        for (int leg = 0; leg < LEGS; ++leg) {
+        double[] xs = new double[legCount];
+        double[] ys = new double[legCount];
+        double[] zs = new double[legCount];
+        boolean[] g = new boolean[legCount];
+        boolean[] s = new boolean[legCount];
+        for (int leg = 0; leg < legCount; ++leg) {
             // A swinging leg keyframes its TARGET: a late-joining client sees
             // the landed pose one swing early rather than a stale origin.
             xs[leg] = swinging[leg] ? toX[leg] : footX[leg];
@@ -972,7 +941,7 @@ public final class ModernSpiderGait {
             g[leg] = !swinging[leg] && grounded[leg];
             s[leg] = stranded[leg];
         }
-        return new SpiderGaitKeyframePayload(spider.getId(), xs, ys, zs, g, s);
+        return new SpiderGaitKeyframePayload(robot.getId(), xs, ys, zs, g, s);
     }
 
     // ==================== CLIENT ====================
@@ -1017,7 +986,7 @@ public final class ModernSpiderGait {
 
     /** Applies a received keyframe (client, main thread): snaps planted feet. */
     public void applyKeyframe(SpiderGaitKeyframePayload payload) {
-        for (int leg = 0; leg < LEGS; ++leg) {
+        for (int leg = 0; leg < legCount; ++leg) {
             if (payload.stranded()[leg]) {
                 stranded[leg] = true;
                 swinging[leg] = false;
@@ -1043,28 +1012,28 @@ public final class ModernSpiderGait {
     }
 
     /**
-     * One client gait tick; called from {@code SpiderRobot.tick()} (modern
+     * One client gait tick; called from the robot's {@code tick()} (modern
      * mode, client side) — replays swings, follows stranded dangles, and
      * writes the classic render fields the shipped model consumes.
      */
-    public void clientTick(SpiderRobot spider) {
+    public void clientTick(Mob robot) {
         if (!initialized) {
-            initFeet(spider); // placeholder pose until the first keyframe
+            initFeet(robot); // placeholder pose until the first keyframe
         }
-        long time = spider.level().getGameTime();
-        float yaw = spider.getYRot();
-        RenderSpiderRobotInfo r = spider.getRenderSpiderRobotInfo();
+        long time = robot.level().getGameTime();
+        float yaw = robot.getYRot();
+        RenderSpiderRobotInfo r = ((IModernLeggedRobot) robot).getRenderSpiderRobotInfo();
         ++r.gpcounter; // classic frame counter — keeps the jaw-snap animation alive
         // S3b: dynamics from last tick's replayed feet (in-loop lands below
         // reach the dynamics next tick — a deliberate 1-tick lag, matching
         // the server's post-land ordering closely enough to converge).
-        updateBodyDynamics(spider);
-        for (int leg = 0; leg < LEGS; ++leg) {
+        updateBodyDynamics(robot);
+        for (int leg = 0; leg < legCount; ++leg) {
             double fx;
             double fy;
             double fz;
             if (stranded[leg]) {
-                dangle(spider, leg, yaw);
+                dangle(robot, leg, yaw);
                 fx = footX[leg];
                 fy = footY[leg];
                 fz = footZ[leg];
@@ -1081,7 +1050,7 @@ public final class ModernSpiderGait {
                     fz = Mth.lerp(progress, fromZ[leg], toZ[leg]);
                     // Parabolic lift over the endpoint lerp (reference 4t(1-t)).
                     fy = Mth.lerp(progress, fromY[leg], toY[leg])
-                            + LIFT_HEIGHT * 4.0 * progress * (1.0 - progress);
+                            + rig.liftHeight() * 4.0 * progress * (1.0 - progress);
                 }
             } else {
                 fx = footX[leg];
@@ -1093,13 +1062,13 @@ public final class ModernSpiderGait {
             // the whole model, so the solve targets the INVERSE-transformed
             // foot — the tilted render then lands the foot back on its true
             // world anchor and planted feet stay motionless under tilt.
-            compensateFoot(spider, leg, fx, fy, fz, compScratch);
-            solveLegAngles(spider.getX(), spider.getY(), spider.getZ(), yaw,
+            compensateFoot(robot, leg, fx, fy, fz, compScratch);
+            solveLegAngles(rig, robot.getX(), robot.getY(), robot.getZ(), yaw,
                     leg, compScratch[0], compScratch[1], compScratch[2],
                     jointScratch, angleScratch);
             // S4: mirror the leg part locally (client picking) from the
             // same solve that just filled the joint scratch.
-            positionLegPart(spider, leg, compScratch[0], compScratch[2]);
+            positionLegPart(robot, leg, compScratch[0], compScratch[2]);
             r.ydisplayangle[leg] = (float) angleScratch[0];
             r.uddisplayangle[leg] = (float) angleScratch[1];
             r.p1xangle[leg] = angleScratch[2];
@@ -1110,9 +1079,9 @@ public final class ModernSpiderGait {
             r.foot_xpos[leg] = (float) fx;
             r.foot_ypos[leg] = (float) fy;
             r.foot_zpos[leg] = (float) fz;
-            r.realposx[leg] = (float) SpiderRigProfile.hipX(leg, spider.getX(), yaw);
-            r.realposy[leg] = (float) SpiderRigProfile.hipY(leg, spider.getY());
-            r.realposz[leg] = (float) SpiderRigProfile.hipZ(leg, spider.getZ(), yaw);
+            r.realposx[leg] = (float) rig.hipX(leg, robot.getX(), yaw);
+            r.realposy[leg] = (float) rig.hipY(leg, robot.getY());
+            r.realposz[leg] = (float) rig.hipZ(leg, robot.getZ(), yaw);
             r.footup[leg] = swinging[leg] || stranded[leg] ? 1 : 0;
         }
     }
@@ -1125,30 +1094,30 @@ public final class ModernSpiderGait {
      * ray (S3b review — the shortfall stays in the graceful straight-stretch
      * family). Output is WORLD coordinates ready for {@code solveLegAngles}.
      */
-    private void compensateFoot(SpiderRobot spider, int leg,
+    private void compensateFoot(Mob robot, int leg,
                                 double fx, double fy, double fz, double[] out) {
-        float yaw = spider.getYRot();
-        out[0] = fx - spider.getX();
-        out[1] = fy - spider.getY();
-        out[2] = fz - spider.getZ();
+        float yaw = robot.getYRot();
+        out[0] = fx - robot.getX();
+        out[1] = fy - robot.getY();
+        out[2] = fz - robot.getZ();
         inverseBodyTransform(yaw, bodyPitch, bodyRoll, bodyLift, out);
-        double chx = SpiderRigProfile.hipX(leg, spider.getX(), yaw) - spider.getX();
-        double chy = SpiderRigProfile.hipY(leg, spider.getY()) - spider.getY();
-        double chz = SpiderRigProfile.hipZ(leg, spider.getZ(), yaw) - spider.getZ();
+        double chx = rig.hipX(leg, robot.getX(), yaw) - robot.getX();
+        double chy = rig.hipY(leg, robot.getY()) - robot.getY();
+        double chz = rig.hipZ(leg, robot.getZ(), yaw) - robot.getZ();
         double rx = out[0] - chx;
         double ry = out[1] - chy;
         double rz = out[2] - chz;
         double reachDist = Math.sqrt(rx * rx + ry * ry + rz * rz);
-        double reachCap = SpiderRigProfile.MAX_REACH * REACH_MARGIN;
+        double reachCap = rig.maxReach() * rig.reachMargin();
         if (reachDist > reachCap) {
             double scale = reachCap / reachDist;
             out[0] = chx + rx * scale;
             out[1] = chy + ry * scale;
             out[2] = chz + rz * scale;
         }
-        out[0] += spider.getX();
-        out[1] += spider.getY();
-        out[2] += spider.getZ();
+        out[0] += robot.getX();
+        out[1] += robot.getY();
+        out[2] += robot.getZ();
     }
 
     /**
@@ -1170,7 +1139,7 @@ public final class ModernSpiderGait {
             out[0] = Mth.lerp(progress, fromX[leg], toX[leg]);
             out[2] = Mth.lerp(progress, fromZ[leg], toZ[leg]);
             out[1] = Mth.lerp(progress, fromY[leg], toY[leg])
-                    + LIFT_HEIGHT * 4.0 * progress * (1.0 - progress);
+                    + rig.liftHeight() * 4.0 * progress * (1.0 - progress);
         } else {
             out[0] = footX[leg];
             out[1] = footY[leg];
@@ -1179,19 +1148,19 @@ public final class ModernSpiderGait {
     }
 
     /** Resolves the profile's named leg parts once per side (design D3: leg0..leg7). */
-    private void resolveLegParts(SpiderRobot spider) {
+    private void resolveLegParts(Mob robot) {
         if (legParts != null) {
             return;
         }
-        if (spider.getParts() == null || spider.getParts().length == 0) {
+        if (robot.getParts() == null || robot.getParts().length == 0) {
             return;
         }
-        Object self = spider;
+        Object self = robot;
         if (!(self instanceof IMultipartEntity<?> multipart)) {
             return;
         }
-        MHLibPartEntity<?>[] resolved = new MHLibPartEntity<?>[LEGS];
-        for (int leg = 0; leg < LEGS; ++leg) {
+        MHLibPartEntity<?>[] resolved = new MHLibPartEntity<?>[legCount];
+        for (int leg = 0; leg < legCount; ++leg) {
             resolved[leg] = multipart.getPartByName("leg" + leg).orElse(null);
         }
         legParts = resolved;
@@ -1204,22 +1173,22 @@ public final class ModernSpiderGait {
      * no client authority. Runs after {@code updateBodyDynamics} so parts
      * carry this tick's tilt.
      */
-    private void feedParts(SpiderRobot spider, long time) {
-        resolveLegParts(spider);
+    private void feedParts(Mob robot, long time) {
+        resolveLegParts(robot);
         if (legParts == null) {
             return;
         }
-        float yaw = spider.getYRot();
-        for (int leg = 0; leg < LEGS; ++leg) {
+        float yaw = robot.getYRot();
+        for (int leg = 0; leg < legCount; ++leg) {
             if (legParts[leg] == null) {
                 continue;
             }
             interpolatedFootPos(leg, time, footScratch);
-            compensateFoot(spider, leg, footScratch[0], footScratch[1], footScratch[2], compScratch);
-            solveLegAngles(spider.getX(), spider.getY(), spider.getZ(), yaw,
+            compensateFoot(robot, leg, footScratch[0], footScratch[1], footScratch[2], compScratch);
+            solveLegAngles(rig, robot.getX(), robot.getY(), robot.getZ(), yaw,
                     leg, compScratch[0], compScratch[1], compScratch[2],
                     jointScratch, angleScratch);
-            positionLegPart(spider, leg, compScratch[0], compScratch[2]);
+            positionLegPart(robot, leg, compScratch[0], compScratch[2]);
         }
     }
 
@@ -1229,17 +1198,17 @@ public final class ModernSpiderGait {
      * compensated target's bearing → {@link #bodyTransform} → world;
      * {@code setPos} anchors the 0.6-cube's bottom center.
      */
-    private void positionLegPart(SpiderRobot spider, int leg, double compWorldX, double compWorldZ) {
-        resolveLegParts(spider);
+    private void positionLegPart(Mob robot, int leg, double compWorldX, double compWorldZ) {
+        resolveLegParts(robot);
         if (legParts == null || legParts[leg] == null) {
             return;
         }
-        float yaw = spider.getYRot();
-        double hipRelX = SpiderRigProfile.hipX(leg, spider.getX(), yaw) - spider.getX();
-        double hipRelY = SpiderRigProfile.hipY(leg, spider.getY()) - spider.getY();
-        double hipRelZ = SpiderRigProfile.hipZ(leg, spider.getZ(), yaw) - spider.getZ();
-        double dx = (compWorldX - spider.getX()) - hipRelX;
-        double dz = (compWorldZ - spider.getZ()) - hipRelZ;
+        float yaw = robot.getYRot();
+        double hipRelX = rig.hipX(leg, robot.getX(), yaw) - robot.getX();
+        double hipRelY = rig.hipY(leg, robot.getY()) - robot.getY();
+        double hipRelZ = rig.hipZ(leg, robot.getZ(), yaw) - robot.getZ();
+        double dx = (compWorldX - robot.getX()) - hipRelX;
+        double dz = (compWorldZ - robot.getZ()) - hipRelZ;
         double dh = Math.sqrt(dx * dx + dz * dz);
         // Degenerate-bearing fallback MIRRORS solveLegAngles exactly (same
         // 1e-6 threshold, same neutral-bearing axis) — review: a 1e-9/world-
@@ -1251,7 +1220,7 @@ public final class ModernSpiderGait {
             ux = dx / dh;
             uz = dz / dh;
         } else {
-            double alphaW = SpiderRigProfile.legBearing(leg, yaw) + Math.PI / 2.0;
+            double alphaW = rig.legBearing(leg, yaw) + Math.PI / 2.0;
             ux = Math.cos(alphaW);
             uz = Math.sin(alphaW);
         }
@@ -1260,9 +1229,9 @@ public final class ModernSpiderGait {
         double[] world = {hipRelX + ux * midU, hipRelY + midV, hipRelZ + uz * midU};
         bodyTransform(yaw, bodyPitch, bodyRoll, bodyLift, world);
         legParts[leg].setPos(
-                spider.getX() + world[0],
-                spider.getY() + world[1] - PART_HALF_HEIGHT,
-                spider.getZ() + world[2]);
+                robot.getX() + world[0],
+                robot.getY() + world[1] - rig.partHalfHeight(),
+                robot.getZ() + world[2]);
     }
 
     // ==================== THE CONVERSION (design doc D2) ====================
@@ -1310,15 +1279,21 @@ public final class ModernSpiderGait {
      * {@code p2 = 0}, {@code p3 = a_3 − a_2} — modern poses stay inside the
      * classic field distribution.</p>
      *
+     * <p>S5b: the mapping is rig-parameterized — the ant's
+     * {@code ModelAntRobot} hip placement and chain advance are structurally
+     * identical (49px segments in place of 99px), so the SAME conversion
+     * serves both rigs; the render-parity harness runs both grids.</p>
+     *
+     * @param rig    the leg rig supplying hip geometry and segment length
      * @param joints scratch {@code double[4][2]} for the FABRIK solve
      * @param out    {@code [yd, ud, p1, p2, p3]} (radians; yd/ud floats upstream)
      */
-    public static void solveLegAngles(double bodyX, double bodyY, double bodyZ, float yawDeg,
+    public static void solveLegAngles(LegRig rig, double bodyX, double bodyY, double bodyZ, float yawDeg,
                                       int leg, double footWX, double footWY, double footWZ,
                                       double[][] joints, double[] out) {
-        double hx = SpiderRigProfile.hipX(leg, bodyX, yawDeg);
-        double hy = SpiderRigProfile.hipY(leg, bodyY);
-        double hz = SpiderRigProfile.hipZ(leg, bodyZ, yawDeg);
+        double hx = rig.hipX(leg, bodyX, yawDeg);
+        double hy = rig.hipY(leg, bodyY);
+        double hz = rig.hipZ(leg, bodyZ, yawDeg);
         double dx = footWX - hx;
         double dy = footWY - hy;
         double dz = footWZ - hz;
@@ -1329,10 +1304,10 @@ public final class ModernSpiderGait {
         // azimuth; hold the leg's neutral bearing (cannot occur in practice —
         // rest reach is 10-16 blocks, dangles hang at ~45% of it).
         double alphaW = dh > 1.0E-6 ? Math.atan2(dz, dx)
-                : SpiderRigProfile.legBearing(leg, yawDeg) + Math.PI / 2.0;
+                : rig.legBearing(leg, yawDeg) + Math.PI / 2.0;
         out[0] = wrapPi(alphaW - yawRad + Math.PI / 2.0);
 
-        PlanarFabrik.solve(SpiderRigProfile.SEGMENT_LENGTH, dh, dy, PlanarFabrik.DEFAULT_KNEE_BIAS, joints);
+        PlanarFabrik.solve(rig.segmentLength(), dh, dy, PlanarFabrik.DEFAULT_KNEE_BIAS, joints);
         double a1 = Math.atan2(joints[1][1] - joints[0][1], joints[1][0] - joints[0][0]);
         double a2 = Math.atan2(joints[2][1] - joints[1][1], joints[2][0] - joints[1][0]);
         double a3 = Math.atan2(joints[3][1] - joints[2][1], joints[3][0] - joints[2][0]);

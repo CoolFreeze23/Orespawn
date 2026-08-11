@@ -1,0 +1,50 @@
+{
+	"_comment": [
+		"MultiHitBoxLib hitbox profile for orespawn:ant_robot (2.0 S5b).",
+		"",
+		"MODERN-GAIT ONLY: AntRobot implements ICustomHitboxProfileSupplier",
+		"and returns Optional.empty() for classic-mode ants (construction",
+		"snapshot), so this profile only ever builds parts for modern ants.",
+		"",
+		"Same architecture as spider_robot.json (S4): sync-with-model=false,",
+		"no synched bones — parts are fed SERVER-SIDE by the gait solver on",
+		"each leg's lower-segment midpoint; clients mirror locally from the",
+		"replayed solve. Zero max-deviation => the S5 part-stream gate holds",
+		"after the pairing seed.",
+		"",
+		"main-hitbox: size MUST stay exactly [2.75, 1.25] — MHLib applies",
+		"the profile main size through its EntityEvent.Size hook and i083",
+		"pins the ant's classic dims (the Size-hook trap the S5 design block",
+		"names). canReceiveDamage=true keeps the BODY pickable/damageable —",
+		"legs are additional honest surfaces, never a forced routing.",
+		"",
+		"Legs: 6 (leg0..leg5), 0.4-cubes on the ant's 49px segments (the",
+		"spider's 0.6 scaled to the smaller rig), damage-modifier 1.0,",
+		"non-collidable, zero deviation. Same env-damage rule as the spider:",
+		"source-less damage never routes through legs; the body takes it",
+		"directly on this profile."
+	],
+	"synched-assets": {
+		"models": [],
+		"animations": [],
+		"textures": []
+	},
+	"sync-with-model": false,
+	"trust-client": false,
+	"part-update-steps": 3,
+	"synched-part-update-steps": 1,
+	"synched-bones": [],
+	"main-hitbox": {
+		"collidable": false,
+		"canReceiveDamage": true,
+		"size": [2.75, 1.25]
+	},
+	"parts": [
+		{ "name": "leg0", "collidable": false, "can-receive-damage": true, "damage-modifier": 1.0, "max-deviation-from-server": 0.0, "box": { "type": "multihitboxlib:aabb", "size": [0.4, 0.4], "position": [0, 0, 0], "pivot": [0, 0, 0] } },
+		{ "name": "leg1", "collidable": false, "can-receive-damage": true, "damage-modifier": 1.0, "max-deviation-from-server": 0.0, "box": { "type": "multihitboxlib:aabb", "size": [0.4, 0.4], "position": [0, 0, 0], "pivot": [0, 0, 0] } },
+		{ "name": "leg2", "collidable": false, "can-receive-damage": true, "damage-modifier": 1.0, "max-deviation-from-server": 0.0, "box": { "type": "multihitboxlib:aabb", "size": [0.4, 0.4], "position": [0, 0, 0], "pivot": [0, 0, 0] } },
+		{ "name": "leg3", "collidable": false, "can-receive-damage": true, "damage-modifier": 1.0, "max-deviation-from-server": 0.0, "box": { "type": "multihitboxlib:aabb", "size": [0.4, 0.4], "position": [0, 0, 0], "pivot": [0, 0, 0] } },
+		{ "name": "leg4", "collidable": false, "can-receive-damage": true, "damage-modifier": 1.0, "max-deviation-from-server": 0.0, "box": { "type": "multihitboxlib:aabb", "size": [0.4, 0.4], "position": [0, 0, 0], "pivot": [0, 0, 0] } },
+		{ "name": "leg5", "collidable": false, "can-receive-damage": true, "damage-modifier": 1.0, "max-deviation-from-server": 0.0, "box": { "type": "multihitboxlib:aabb", "size": [0.4, 0.4], "position": [0, 0, 0], "pivot": [0, 0, 0] } }
+	]
+}
