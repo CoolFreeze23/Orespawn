@@ -35,6 +35,8 @@ import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.OwnerHurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.OwnerHurtTargetGoal;
+import net.minecraft.world.entity.boss.EnderDragonPart;
+import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -46,6 +48,16 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import danger.orespawn.OreSpawnMod;
 
+/**
+ * The consolidated Leon/Leonopteryx (TF-030). 1.7.10 has a single class
+ * {@code Leon} registered under the entity name "Leonopteryx"
+ * (orig OreSpawnMain.java:4377/4381); the port had split it into EntityLeon +
+ * a divergent Leonopteryx twin. This one class now backs BOTH registry ids —
+ * orespawn:leonopteryx (canonical) and orespawn:leon (save-compat alias) —
+ * see ModEntities. The retired twin's inventions (ServerBossEvent boss bar,
+ * MEAT-tag taming, 300/40 stats, invented flight constants) had no basis in
+ * orig Leon.java and were dropped in favor of this faithful port.
+ */
 public class EntityLeon extends TamableAnimal
         implements danger.orespawn.network.RiderInputPayload.RideableFlyer {
 
@@ -98,6 +110,12 @@ public class EntityLeon extends TamableAnimal
     public EntityLeon(EntityType<? extends EntityLeon> type, Level level) {
         super(type, level);
         this.xpReward = 300;
+        // orig Leon.java:83 sets maxHurtResistantTime=10 alongside the 15-tick
+        // hurt_timer gate (orig :306/:322, ported as hurtTimer). NOT ported:
+        // LivingEntity.invulnerableDuration is final in 1.21.1, and the value
+        // is unobservable anyway — the vanilla i-frame window (half of 10 or
+        // of the default 20 = at most 10 ticks) is strictly inside the
+        // 15-tick hurtTimer full block, so behavior is identical either way.
         this.setOrderedToSit(false);
     }
 
@@ -204,13 +222,17 @@ public class EntityLeon extends TamableAnimal
 
     /**
      * Seats the rider 0.65 blocks ahead of center (orig Leon.java:943-948,
-     * {@code updateRiderPosition} forward offset 0.65f).
+     * {@code updateRiderPosition} forward offset 0.65f) at the original mount
+     * height of 3.75 (orig Leon.java:238-240, {@code func_70042_X}). The old
+     * {@code getBbHeight() * 0.85} stand-in only equalled ~3.8 with the
+     * pre-consolidation 4.5 hitbox; with the orig 8.25 height restored
+     * (Leon.java:80) the explicit 3.75 is required.
      */
     @Override
     protected void positionRider(Entity passenger, Entity.MoveFunction callback) {
         if (!this.hasPassenger(passenger)) return;
         double rx = this.getX() - 0.65 * Math.sin(Math.toRadians(this.getYRot()));
-        double ry = this.getY() + this.getBbHeight() * 0.85;
+        double ry = this.getY() + 3.75;
         double rz = this.getZ() + 0.65 * Math.cos(Math.toRadians(this.getYRot()));
         callback.accept(passenger, rx, ry, rz);
     }
@@ -307,10 +329,32 @@ public class EntityLeon extends TamableAnimal
 
     // ==================== Combat ====================
 
+    /** orig Leon.java:275-301 ({@code func_70652_k}) — special-damage rules (ENT-K-018). */
     @Override
     public boolean doHurtTarget(Entity target) {
+        // orig :279-288 — the Ender Dragon is hit through a dragon PART with an
+        // attacker-less explosion-typed source (func_94539_a(null) +
+        // func_94540_d) for 55: 1-in-6 rolls the head part (field_70986_h),
+        // otherwise the body part (field_70987_i). No knockback on this branch.
+        if (target instanceof EnderDragon dragon) {
+            EnderDragonPart part = dragon.head;
+            if (this.random.nextInt(6) != 1) {
+                // Only `head` is a public field in 1.21.1; resolve the body
+                // part by its name from the sub-entity array.
+                for (EnderDragonPart sub : dragon.getSubEntities()) {
+                    if ("body".equals(sub.name)) {
+                        part = sub;
+                        break;
+                    }
+                }
+            }
+            dragon.hurt(part, this.damageSources().explosion(null, null), 55.0f);
+            return true;
+        }
         if (target instanceof LivingEntity living) {
-            living.hurt(this.damageSources().mobAttack(this), 55.0f);
+            // orig :290-292 — 4x damage vs the Kraken.
+            float krakenFactor = target instanceof Kraken ? 4.0f : 1.0f;
+            living.hurt(this.damageSources().mobAttack(this), krakenFactor * 55.0f);
             float angle = (float) Math.atan2(target.getZ() - this.getZ(), target.getX() - this.getX());
             double knockbackStrength = 1.25;
             double verticalKnockback = target.isRemoved() || target instanceof Player ? 0.3 : 0.15;

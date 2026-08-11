@@ -29,7 +29,7 @@ import danger.orespawn.entity.Godzilla;
 import danger.orespawn.entity.Hammerhead;
 import danger.orespawn.entity.Irukandji;
 import danger.orespawn.entity.Kraken;
-import danger.orespawn.entity.Leonopteryx;
+import danger.orespawn.entity.EntityLeon;
 import danger.orespawn.entity.Mothra;
 import danger.orespawn.entity.Nastysaurus;
 import danger.orespawn.entity.PitchBlack;
@@ -295,7 +295,9 @@ public class GirlfriendOverlay {
             label = "CaterKiller";
             healthFraction = target.getHealth() / target.getMaxHealth();
         }
-        if (entity instanceof Leonopteryx target) {
+        // orig GirlfriendOverlayGui.java:390-398 — Leon shows its custom name
+        // or "Leonopteryx". TF-030: consolidated EntityLeon covers both ids.
+        if (entity instanceof EntityLeon target) {
             label = customNameOr(target, "Leonopteryx");
             healthFraction = target.getHealth() / target.getMaxHealth();
         }

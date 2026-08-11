@@ -112,6 +112,19 @@ public class LeonModel extends EntityModel<EntityLeon> {
     private final ModelPart fwing_6_R;
     private final ModelPart fwing_7_R;
 
+    /**
+     * The two mutually-exclusive part sets. Orig ModelLeon.java:729-852 renders
+     * ONLY one set per frame — {@code if (e.getActivity() == 0)} draws the
+     * standing parts (orig :803-851, {@code this.chest.func_78785_a(f5)} …)
+     * {@code else} the f-prefixed flying parts (orig :1054-1102,
+     * {@code this.fchest.func_78785_a(f5)} …). The port initially drew both
+     * sets every frame, z-fighting whichever set was un-animated (TF-030);
+     * {@link #setupAnim} now toggles {@link ModelPart#visible} to restore the
+     * original gating.
+     */
+    private final ModelPart[] standingParts;
+    private final ModelPart[] flyingParts;
+
     public LeonModel(ModelPart root) {
         this.chest = root.getChild("chest");
         this.neck_1 = root.getChild("neck_1");
@@ -211,6 +224,28 @@ public class LeonModel extends EntityModel<EntityLeon> {
         this.fwing_5_R = root.getChild("fwing_5_R");
         this.fwing_6_R = root.getChild("fwing_6_R");
         this.fwing_7_R = root.getChild("fwing_7_R");
+        this.standingParts = new ModelPart[] {
+                chest, neck_1, neck_2, neck_3, abdomen, head, upper_jaw, bottom_jaw,
+                chest_ridge, upper_sail_1, upper_sail2_, upper_sail3,
+                lower_sail1, lower_sail2, lower_sail_3, eye_ridge_L, eye_ridge_R,
+                anntena_1_L, anntena_1_R, anntena_2_L, anntena_2_R,
+                arm_1_L, arm_2_L, wing_1_L, wing_2_L, arm_1_R, arm_2_R, wing_1_R, wing_2_R,
+                leg_1_L, leg_1_R, leg_2_L, leg_2_R, footL, footR,
+                wing_3_L, wing_3_R, wing_4_L, wing_4_R,
+                claw_L, claw_R, claw_L2, claw_R_2,
+                wing_5_L, wing_6_L, wing_7_L, wing_5_R, wing_6_R, wing_7_R,
+        };
+        this.flyingParts = new ModelPart[] {
+                fchest, fneck_1, fneck_2, fneck_3, fabdomen, fhead, fupper_jaw, fbottom_jaw,
+                fchest_ridge, fupper_sail_1, fupper_sail2_, fupper_sail3,
+                flower_sail1, flower_sail2, flower_sail_3, feye_ridge_L, feye_ridge_R,
+                fanntena_1_L, fanntena_1_R, fanntena_2_L, fanntena_2_R,
+                farm_1_L, farm_2_L, fwing_1_L, fwing_2_L, farm_1_R, farm_2_R, fwing_1_R, fwing_2_R,
+                fleg_1_L, fleg_1_R, fleg_2_L, fleg_2_R, ffootL, ffootR,
+                fwing_3_L, fwing_3_R, fwing_4_L, fwing_4_R,
+                fclaw_L, fclaw_R, fclaw_L2, fclaw_R_2,
+                fwing_5_L, fwing_6_L, fwing_7_L, fwing_5_R, fwing_6_R, fwing_7_R,
+        };
     }
 
     public static LayerDefinition createBodyLayer() {
@@ -727,6 +762,12 @@ public class LeonModel extends EntityModel<EntityLeon> {
         newangle2 = 0.0f;
         }
         }
+        // Orig ModelLeon.java:729/852 — exactly one part set renders per frame,
+        // selected by activity (0 = standing, else flying). Toggling .visible
+        // here replicates the original's state-gated func_78785_a calls.
+        boolean flying = entity.getActivity() != 0;
+        for (ModelPart part : this.standingParts) part.visible = !flying;
+        for (ModelPart part : this.flyingParts) part.visible = flying;
         if (entity.getActivity() == 0) {
         this.leg_1_L.xRot = -0.611f + newangle;
         this.leg_1_R.xRot = -0.611f - newangle;

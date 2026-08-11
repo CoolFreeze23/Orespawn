@@ -151,7 +151,8 @@ public class OreSpawnClient {
             event.registerEntityRenderer(ModEntities.GHOST.get(), GhostRenderer::new);
             event.registerEntityRenderer(ModEntities.GHOST_SKELLY.get(), GhostSkellyRenderer::new);
             event.registerEntityRenderer(ModEntities.MOTHRA.get(), MothraRenderer::new);
-            event.registerEntityRenderer(ModEntities.LEONOPTERYX.get(), LeonopteryxRenderer::new);
+            // TF-030: alias id — same consolidated EntityLeon, same renderer.
+            event.registerEntityRenderer(ModEntities.LEONOPTERYX.get(), LeonRenderer::new);
 
             // Misc (mob)
             event.registerEntityRenderer(ModEntities.ANT_ROBOT.get(), AntRobotRenderer::new);
@@ -372,7 +373,7 @@ public class OreSpawnClient {
             event.registerLayerDefinition(GhostRenderer.MODEL_LAYER, GhostModel::createBodyLayer);
             event.registerLayerDefinition(GhostSkellyRenderer.MODEL_LAYER, GhostSkellyModel::createBodyLayer);
             event.registerLayerDefinition(MothraRenderer.MODEL_LAYER, ButterflyModel::createBodyLayer);
-            // Leonopteryx has no layer of its own: LeonopteryxRenderer bakes
+            // Leonopteryx has no layer of its own: both ids render through
             // LeonRenderer.MODEL_LAYER (registered above) — 1.7.10 had a single
             // Leon entity registered as "Leonopteryx" (orig OreSpawnMain.java:4377).
 
