@@ -27,7 +27,7 @@ Originally by TheyCallMeDanger (1.7.10 / 1.8). Ported and modernized for NeoForg
 [[dependencies.${mod_id}]]
 modId="neoforge"
 type="required"
-versionRange="[${neo_version},)"
+versionRange="${neo_version_range}"
 ordering="NONE"
 side="BOTH"
 
@@ -74,7 +74,7 @@ data/orespawn/multihitboxlib/hitbox_profiles/the_queen.json).
 [[dependencies.multihitboxlib]]
 modId="neoforge"
 type="required"
-versionRange="[${neo_version},)"
+versionRange="${neo_version_range}"
 ordering="NONE"
 side="BOTH"
 
