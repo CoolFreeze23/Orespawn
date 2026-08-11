@@ -445,7 +445,12 @@ public class ModEntities {
                     .sized(0.6f, 0.6f).clientTrackingRange(10).build("cannon_fodder"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<EntityGammaMetroid>> ENTITY_GAMMA_METROID =
-            ENTITY_TYPES.register("gamma_metroid", () -> EntityType.Builder.of(EntityGammaMetroid::new, MobCategory.CREATURE)
+            // orig ChunkProviderOreSpawn2.java:385-386 (EnumCreatureType.monster branch :370,
+            // weight 35 / 4-7) + BiomeGenUtopianPlains.java:513-514 (field_76761_J
+            // spawnableMonsterList, 1/1/1): GammaMetroid only ever spawns from monster
+            // lists, so MONSTER is the faithful category (GAMMA-CAT); the biome JSONs'
+            // monster entries already agree.
+            ENTITY_TYPES.register("gamma_metroid", () -> EntityType.Builder.of(EntityGammaMetroid::new, MobCategory.MONSTER)
                     .sized(1.5f, 1.5f).clientTrackingRange(10).build("gamma_metroid"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<Girlfriend>> GIRLFRIEND =

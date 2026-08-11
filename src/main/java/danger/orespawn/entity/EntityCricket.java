@@ -150,6 +150,7 @@ public class EntityCricket extends Animal {
         return null;
     }
 
+    /** orig Cricket.java:137-142 — y&gt;=30; at most 5 Crickets within 20/10/20 (orig findBuddies, Cricket.java:144-147). */
     @Override
     public boolean checkSpawnRules(LevelAccessor level, MobSpawnType spawnType) {
         if (this.getY() < 30.0) return false;

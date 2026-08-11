@@ -133,6 +133,7 @@ public class GoldFish extends Animal {
         return 0.45f;
     }
 
+    /** orig GoldFish.java:153-155 — always allowed. */
     @Override
     public boolean checkSpawnRules(LevelAccessor level, MobSpawnType spawnType) {
         return true;

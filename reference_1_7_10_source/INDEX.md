@@ -60,7 +60,7 @@ output is riddled with `func_*` / `field_*` identifiers. The common ones:
 | `field_70160_al`           | `hasImpulse` / `horizontalCollision` | (varies; read context)          |
 | `field_70178_ae`           | `fireImmune()` / fire-immune flag | legacy "immune to fire"           |
 | `field_70153_n`            | `getVehicle()`                   | what this entity is riding on     |
-| `field_70174_ab`           | `invulnerableTime` / `hurtTime`  | iframes                           |
+| `field_70174_ab`           | *(none — do not port)*           | `Entity.fireResistance`: vestigial 1.7.10 constant (1), never read by vanilla; NOT invulnerableTime/iframes. Orig writes (e.g. `GammaMetroid.java:58` `= 1000`) are no-ops — verified during ENT-K-002 |
 | `field_70128_L`            | `isRemoved()`                    | removed flag                      |
 | `func_70071_h_()`          | `tick()`                         | per-tick hook                     |
 | `func_70088_a()`           | `defineSynchedData(Builder)`     | data-watcher registration         |

@@ -219,6 +219,10 @@ public class EntityCannonFodder extends TamableAnimal {
     private boolean isSuitableTarget(LivingEntity target) {
         if (this.level().getDifficulty() == Difficulty.PEACEFUL) return false;
         if (target == null || target == this || !target.isAlive()) return false;
+        // orig EntityCannonFodder.java:288-290 — line-of-sight gate: the fodder
+        // only considers targets its senses can see (func_70635_at().func_75522_a),
+        // checked before the sit-anchor and faction logic.
+        if (!this.getSensing().hasLineOfSight(target)) return false;
 
         if (this.isOrderedToSit()) {
             double deltaXToSitAnchor = this.patrolBlockX - target.getX();
@@ -253,6 +257,13 @@ public class EntityCannonFodder extends TamableAnimal {
             if (this.isSuitableTarget(candidate)) return candidate;
         }
         return null;
+    }
+
+    // orig EntityCannonFodder.java:330-335 (func_70658_aO / getTotalArmorValue) —
+    // armor is 3 only while fully combat-activated (is_activated == 2), else 0.
+    @Override
+    public int getArmorValue() {
+        return this.getIsActivated() == 2 ? 3 : 0;
     }
 
     @Override

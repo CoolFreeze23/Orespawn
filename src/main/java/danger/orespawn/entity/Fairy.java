@@ -256,6 +256,7 @@ public class Fairy extends AmbientCreature {
         return this.myowner == null;
     }
 
+    /** orig Fairy.java:334-347 — at least 6 of the 9 foot-level ring blocks must be air; y&gt;=50 (orig int-cast coords preserved below). */
     @Override
     public boolean checkSpawnRules(LevelAccessor level, MobSpawnType spawnType) {
         int airCount = 0;

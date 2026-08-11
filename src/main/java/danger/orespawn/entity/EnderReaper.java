@@ -11,6 +11,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
@@ -22,7 +23,10 @@ import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.phys.Vec3;
 
 public class EnderReaper extends Monster {
     private static final EntityDataAccessor<Boolean> DATA_SCREAMING =
@@ -41,7 +45,31 @@ public class EnderReaper extends Monster {
         this.goalSelector.addGoal(3, new LookAtPlayerGoal(this, Player.class, 8.0f));
         this.goalSelector.addGoal(4, new RandomLookAroundGoal(this));
         this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
-        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
+        // orig EnderReaper.java:67 — unprovoked player targeting runs through the
+        // pumpkin-stare test (shouldAttackPlayer), never proximity alone.
+        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, 10, true, false,
+                e -> e instanceof Player p && this.shouldAttackPlayer(p)));
+    }
+
+    // orig EnderReaper.java:83-93 — pumpkin-stare gate. A pumpkin on the head
+    // (:84-87; the wearable 1.7.10 pumpkin block maps to the modern carved
+    // pumpkin) hides the player entirely; otherwise the reaper attacks only when
+    // the player's look vector lines up with the reaper's mid-height
+    // (d1 > 1.0 - 0.025/d0, :88-91) and the player has line of sight to it (:92).
+    // Same math as vanilla EnderMan.isLookingAtMe.
+    boolean shouldAttackPlayer(Player player) {
+        ItemStack helmet = player.getItemBySlot(EquipmentSlot.HEAD); // orig :84 armor slot 3
+        if (helmet.is(Blocks.CARVED_PUMPKIN.asItem())) {
+            return false; // orig :85-87
+        }
+        Vec3 look = player.getViewVector(1.0f).normalize(); // orig :88
+        Vec3 toReaper = new Vec3(
+                this.getX() - player.getX(),
+                this.getY() + this.getBbHeight() / 2.0f - player.getEyeY(),
+                this.getZ() - player.getZ()); // orig :89 — bb minY + height/2 vs player eye
+        double dist = toReaper.length(); // orig :90
+        double dot = look.dot(toReaper.normalize()); // orig :91
+        return dot > 1.0 - 0.025 / dist && player.hasLineOfSight(this); // orig :92
     }
 
     public static AttributeSupplier.Builder createAttributes() {
@@ -86,7 +114,24 @@ public class EnderReaper extends Monster {
             }
         }
 
-        if (this.isOnFire()) {
+        // orig EnderReaper.java:111-115 — daylight escape: server-side, in
+        // daytime, when brightness > 0.5 and the sky is visible overhead, a
+        // brightness-scaled dice (rand*30 < (f-0.4)*2) drops the target, stops
+        // screaming, and teleports away.
+        if (this.level().isDay() && !this.level().isClientSide) {
+            float brightness = this.getLightLevelDependentMagicValue(); // orig :111 func_70013_c(1.0f)
+            if (brightness > 0.5f
+                    && this.level().canSeeSky(this.blockPosition())
+                    && this.random.nextFloat() * 30.0f < (brightness - 0.4f) * 2.0f) {
+                this.setTarget(null);
+                this.setScreaming(false);
+                teleportRandomly();
+            }
+        }
+
+        // orig EnderReaper.java:116-119 — wet (func_70026_G) OR burning
+        // (func_70027_ad) → stop screaming and teleport.
+        if (this.isInWaterRainOrBubble() || this.isOnFire()) {
             this.setScreaming(false);
             teleportRandomly();
         }
