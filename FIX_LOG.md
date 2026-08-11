@@ -1996,3 +1996,18 @@ flooring a LoS ray the original truncates).
   ~120-150 per run — something builds caged-girlfriend stacks above the
   max-1 stack limit (EntityCage/caged-item interplay; candidate for the
   E4 ENT-D cage batch or E6). Neither fails a test.
+
+## Phase E — BUG-021 ruling applied (2026-08-11)
+
+**DEFERRED approved by owner — designated FIRST POST-BETA PATCH ITEM; does
+not block the beta.** Routing: (1) AUDIT_FINDINGS BUG-021 resolution updated
+to DEFERRED with the full scope; (2) player-language entry added to
+KNOWN_ISSUES.md open items (what shears, ~1-in-25 Crystal-chunk castle-tree
+frequency, the log signature to look for, and the patch commitment);
+(3) the deferred work is a DEDICATED STRONG-MODEL SESSION: FairyCastleTree →
+LegacyDungeonStructure conversion (royal-altar precedent) with
+findGenerationPoint reproducing addFairyTree (OSW:1968-1986, 1/5 castle
+roll) plus re-derivation of the D5 dispatch coupling (fairy success
+suppresses termites/big structures + 50-chunk cooldown, OSW:188-196/1992).
+Observability shipped in E1 stays as the beta-period tripwire. Ledger after
+this ruling: **511 terminal / 119 open** (92 entity PARTIALs + 27 OPT).
