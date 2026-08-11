@@ -128,7 +128,20 @@ public class ItemOreSpawnArmor extends ArmorItem {
     public void inventoryTick(ItemStack stack, Level level, Entity entity, int slotId, boolean isSelected) {
         if (level.isClientSide) return;
 
-        if (!OreSpawnEnchantHelper.hasAnyEnchantments(stack)) {
+        // OPT-022 (ruled apply 2026-08-11 — 20-TICK-GATE variant): the
+        // auto-enchant presence poll runs every 20 ticks instead of every
+        // inventory tick, keyed to entity.tickCount so holders stagger
+        // naturally rather than all polling on the same global tick. Gate
+        // story: a freshly obtained un-enchanted piece can sit plain for
+        // <=1 s (<=20 ticks) before the poll lands — accepted by the ruling.
+        // The finding's alternative, migrating the enchant to
+        // onCraftedBy/first-pickup, was REJECTED by the same ruling: it would
+        // change WHEN loot-table, creative-given, and pre-existing stacks get
+        // enchanted, and this poll is the contract that every acquisition
+        // path (crafting, /give, dungeon loot, old saves) self-heals. The
+        // glide handling below intentionally stays per-tick — it caps fall
+        // velocity every tick and must not be gated.
+        if (entity.tickCount % 20 == 0 && !OreSpawnEnchantHelper.hasAnyEnchantments(stack)) {
             ArmorEnchants enchants = ENCHANT_TABLE.get(armorMaterialName);
             if (enchants != null) {
                 for (EnchantEntry e : enchants.allPieces()) {

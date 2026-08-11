@@ -91,6 +91,15 @@ public class EntityWormSmall extends Monster {
         super.aiStep();
         if (this.level().isClientSide) return;
 
+        // OPT-007 (ruled apply 2026-08-11, NEUTRAL HALF ONLY): no once-per-tick
+        // sharing is possible in the small worm — this spherical-8 burrow/aim
+        // scan and customServerAiStep's 1.5/4.0/1.5 box robbery scan are
+        // deliberately different queries after the TF-035 vertical-reach fix
+        // (see the comment there) and can select different players, so merging
+        // them is not neutral. There is also no per-tick TargetingConditions
+        // allocation here to hoist. Both scans stay per-tick: the audit's
+        // throttle was DECLINED by the ruling — same-tick freshness is the
+        // worm-responsiveness contract.
         Player target = this.level().getNearestPlayer(this, 8.0);
 
         // orig WormSmall.java:94 — the up/down burrow cycle also runs (without

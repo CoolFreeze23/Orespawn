@@ -48,6 +48,14 @@ public interface IMultipartEntity<T extends Entity> {
 				// System.out.println("Clientside, not setting master!");
 				// TODO: Why are we just setting it here anywa?!
 				access._mhlibAccess_setMasterUUID(id);
+				// OPT-003 (ruled 2026-08-11): any client-visible mastership
+				// change invalidates the change-only streaming cache (see
+				// updateSynching). The server's election loop re-rotates
+				// every tick until the elected master's first packet arrives
+				// (ticksSinceLastSynch is NOT reset by election), so the
+				// first payload after a master change must go out at legacy
+				// timing — a null last-sent cache forces exactly that.
+				access._mhlibAccess_setLastSentBoneInformation(null);
 				return;
 			}
 			access._mhlibAccess_setMasterUUID(id);
@@ -72,6 +80,14 @@ public interface IMultipartEntity<T extends Entity> {
 			// been updated above so the server's view is consistent.
 			// ──────────────────────────────────────────────────────────
 			if (id == null) {
+				// OPT-003 (ruled 2026-08-11): a server-side master reset only
+				// happens when the bone stream is dead (the 10-tick timeout
+				// in updateSynching, or the master stopped tracking) — the
+				// retained sync map (see mhlibAiStep) is no longer backed by
+				// a live stream, so drop it here; synched parts fall back to
+				// config offsets exactly as the legacy per-tick-cleared map
+				// behaved during genuine master silence.
+				access._mhlibAccess_getSynchMap().clear();
 				return;
 			}
 			SPacketSetMaster masterPacket = new SPacketSetMaster(this);
@@ -93,6 +109,14 @@ public interface IMultipartEntity<T extends Entity> {
 	
 	public default void processBoneInformation(final Map<String, BoneInformation> boneInformation) {
 		if (this instanceof IMHLibFieldAccessor<?> access) {
+			// OPT-003 (ruled 2026-08-11): every accepted packet REPLACES the
+			// retained sync map wholesale (clear-then-put). The payload is
+			// the master's complete synched-bone state for its tick, so a
+			// bone absent from it (e.g. the master stopped rendering the
+			// entity and now streams empty payloads) must fall back to
+			// config offsets — just like the legacy per-tick-cleared map
+			// did. Retention between packets lives in mhlibAiStep.
+			access._mhlibAccess_getSynchMap().clear();
 			// Process the bones...
 			for (Map.Entry<String, BoneInformation> entry : boneInformation.entrySet()) {
 				Optional<MHLibPartEntity<T>> optPart = this.getPartByName(entry.getKey());
@@ -335,7 +359,23 @@ public interface IMultipartEntity<T extends Entity> {
 			if (profile.isPresent() && profile.get().syncToModel()) {
 				Map<String, BoneInformation> syncMap = access._mhlibAccess_getSynchMap();
 				this.alignSynchedSubParts((T)(Object)this, syncMap::getOrDefault);
-				access._mhlibAccess_getSynchMap().clear();
+				// ──────────────────────────────────────────────────────
+				// OPT-003 (ruled 2026-08-11): the sync map is RETAINED
+				// between packets instead of being cleared here every
+				// tick. Legacy could clear it because the master client
+				// re-sent an (identical) packet every tick; the master now
+				// skips provably unchanged payloads (see updateSynching),
+				// so a skipped tick must re-apply the last received bone
+				// state — which is exactly, bit-identically, what the
+				// legacy identical-packet stream produced on such ticks.
+				// Cache invalidation story: the map is replaced wholesale
+				// by every accepted master packet (processBoneInformation)
+				// and dropped on a server-side master reset
+				// (setMasterUUID(null): the 10-tick timeout or the master
+				// untracking), after which alignment falls back to config
+				// offsets exactly as the legacy cleared-map path did
+				// during genuine master silence.
+				// ──────────────────────────────────────────────────────
 			}
 
 		} else {
@@ -343,9 +383,19 @@ public interface IMultipartEntity<T extends Entity> {
 		}
 	}
 
+	/**
+	 * OPT-003 (ruled 2026-08-11): keepalive interval for the master client's
+	 * change-only bone streaming (see updateSynching). A provably unchanged
+	 * payload is re-sent at least this often so the server's 10-tick master
+	 * timeout below can never fire from protocol silence — 8 leaves a 2-tick
+	 * margin under that timeout for tick alignment and latency jitter.
+	 */
+	public static final int BONE_INFORMATION_KEEPALIVE_TICKS = 8;
+
 	/*
 	 * Updates and resets the master entity on server side.
 	 * On client, if a boneinfobuilder is present, it compiles a packet and sends it to the server, afterwise, the builder gets cleared
+	 * OPT-003 (ruled 2026-08-11): the client send is now change-only with a keepalive — see the comment in the client branch.
 	 */
 	public default <E extends Entity & IMultipartEntity<?>> void updateSynching(E entity) {
 		if (!entity.level().isClientSide()) {
@@ -371,12 +421,59 @@ public interface IMultipartEntity<T extends Entity> {
 			}
 		}
 		else {
+			if (!(this instanceof IMHLibFieldAccessor<?> access)) {
+				throw new IllegalStateException("Access interface not implemented");
+			}
+			// ──────────────────────────────────────────────────────────
+			// OPT-003 (ruled 2026-08-11): change-only bone streaming from
+			// the master client, with a keepalive. Legacy built and sent a
+			// CPacketBoneInformation effectively every client tick (a
+			// populated one per rendered tick on the master, an empty one
+			// every other tick otherwise) purely so the server's 10-tick
+			// master timeout never fired. The freshly built payload is now
+			// diffed against the last packet actually sent:
+			//
+			//  1. Any difference — bone set, hidden flag, or any position/
+			//     scale/rotation component (exact primitive equality, no
+			//     epsilon; NaN compares as changed and fails open to a
+			//     send, mirroring OPT-002's server-side
+			//     MHLibPartEntity#mhlibDataUnchangedSince) — sends
+			//     immediately: moving/animating bones stream at the legacy
+			//     cadence with bit-identical payloads.
+			//  2. A provably identical payload is skipped, but never for
+			//     longer than BONE_INFORMATION_KEEPALIVE_TICKS (8) ticks —
+			//     the keepalive re-sends the identical packet with a
+			//     2-tick margin under the server's 10-tick master timeout
+			//     (server branch above), so master election never rotates
+			//     from protocol silence.
+			//
+			// Throttle invalidation story: the last-sent cache is
+			// (a) compared field-by-field against every built payload, so
+			// it self-invalidates on any change; (b) force-expired by the
+			// keepalive counter (clamped at the interval so it cannot
+			// overflow); (c) nulled on every client-visible mastership
+			// change (setMasterUUID client branch), which pushes the first
+			// payload after an election out at legacy timing. The server
+			// covers skipped ticks with the retained sync map — see
+			// mhlibAiStep / processBoneInformation.
+			// ──────────────────────────────────────────────────────────
+			final int sinceLastSend = Math.min(access._mhlibAccess_getTicksSinceLastBoneInfoSend() + 1, BONE_INFORMATION_KEEPALIVE_TICKS);
+			access._mhlibAccess_setTicksSinceLastBoneInfoSend(sinceLastSend);
 			// System.out.println("Beginning bone information collection...");
 			if (this.getBoneInfoBuilder().isPresent()) {
 				// Send packet
 				// System.out.println("Sending bone information...");
 				CPacketBoneInformation packet = this.getBoneInfoBuilder().get().build();
-				packet.send();
+				final Map<String, BoneInformation> lastSent = access._mhlibAccess_getLastSentBoneInformation();
+				if (lastSent == null
+						|| sinceLastSend >= BONE_INFORMATION_KEEPALIVE_TICKS
+						|| !mhlibBoneInformationUnchanged(lastSent, packet.boneInformation())) {
+					packet.send();
+					access._mhlibAccess_setLastSentBoneInformation(packet.boneInformation());
+					access._mhlibAccess_setTicksSinceLastBoneInfoSend(0);
+				}
+				// else: payload proven bit-identical to the last-sent packet
+				// inside the keepalive window — the send is skipped.
 				this.clearBoneInfoBuilder();
 			} else {
 				// System.out.println("creating new packet");
@@ -384,6 +481,42 @@ public interface IMultipartEntity<T extends Entity> {
 				this.setBoneInfoBuilderContent(builder);
 			}
 		}
+	}
+
+	/**
+	 * OPT-003 (ruled 2026-08-11): true only when {@code current} would put the
+	 * server into exactly the state {@code lastSent} already did — same bone
+	 * set and every field of every {@link BoneInformation} identical. Field
+	 * comparison uses exact primitive equality (no epsilon; NaN reports
+	 * "changed" and fails open to a send), mirroring the OPT-002 server-side
+	 * probe {@code MHLibPartEntity#mhlibDataUnchangedSince}.
+	 */
+	private static boolean mhlibBoneInformationUnchanged(final Map<String, BoneInformation> lastSent, final Map<String, BoneInformation> current) {
+		if (lastSent.size() != current.size()) {
+			return false;
+		}
+		for (Map.Entry<String, BoneInformation> entry : current.entrySet()) {
+			final BoneInformation prev = lastSent.get(entry.getKey());
+			final BoneInformation cur = entry.getValue();
+			// name() needs no explicit compare: compileMap keys every entry by
+			// name(), so matching keys imply matching names.
+			if (prev == null
+					|| prev.hidden() != cur.hidden()
+					|| !mhlibVecUnchanged(prev.worldPos(), cur.worldPos())
+					|| !mhlibVecUnchanged(prev.scale(), cur.scale())
+					|| !mhlibVecUnchanged(prev.rotation(), cur.rotation())) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	/**
+	 * OPT-003: exact primitive equality — NaN != NaN reports "changed" (fail
+	 * open to a send); no epsilon, per the OPT-002 diffing philosophy.
+	 */
+	private static boolean mhlibVecUnchanged(final Vec3 a, final Vec3 b) {
+		return a.x == b.x && a.y == b.y && a.z == b.z;
 	}
 	
 	public default void tickParts(final Collection<MHLibPartEntity<T>> parts) {

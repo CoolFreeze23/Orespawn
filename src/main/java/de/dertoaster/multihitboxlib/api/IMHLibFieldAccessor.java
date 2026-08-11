@@ -87,4 +87,32 @@ public interface IMHLibFieldAccessor<T extends LivingEntity> {
         throw new NotImplementedException();
     }
 
+    // ──────────────────────────────────────────────────────────────────
+    // OPT-003 (ruled 2026-08-11): client-side change-only bone-streaming
+    // state backing fields (see IMultipartEntity.updateSynching for the
+    // throttle and its invalidation story). The last-sent map is the
+    // boneInformation of the last CPacketBoneInformation actually sent —
+    // null means "nothing sent yet" or "cache invalidated by a mastership
+    // change" and always forces the next built payload out. The tick
+    // counter is clamped at BONE_INFORMATION_KEEPALIVE_TICKS and forces a
+    // keepalive re-send when it reaches that interval.
+    // ──────────────────────────────────────────────────────────────────
+
+    /** Bone map of the last {@code CPacketBoneInformation} actually sent, or {@code null}. */
+    public default Map<String, BoneInformation> _mhlibAccess_getLastSentBoneInformation() {
+        throw new NotImplementedException();
+    }
+
+    public default void _mhlibAccess_setLastSentBoneInformation(Map<String, BoneInformation> value) {
+        throw new NotImplementedException();
+    }
+
+    public default int _mhlibAccess_getTicksSinceLastBoneInfoSend() {
+        throw new NotImplementedException();
+    }
+
+    public default void _mhlibAccess_setTicksSinceLastBoneInfoSend(int value) {
+        throw new NotImplementedException();
+    }
+
 }

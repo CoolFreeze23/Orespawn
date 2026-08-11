@@ -36,6 +36,12 @@ public class EntityWormLarge extends Monster {
             ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "alo_death"));
     private int wormsSpawned = 0;
 
+    // OPT-007 (ruled apply 2026-08-11, neutral half only): per-tick shared
+    // nearest-player result; see nearestPlayerWithin8().
+    @Nullable
+    private Player cachedNearestPlayer = null;
+    private int nearestPlayerScanTick = -1;
+
     public EntityWormLarge(EntityType<? extends EntityWormLarge> type, Level level) {
         super(type, level);
         this.xpReward = 2050;
@@ -93,6 +99,30 @@ public class EntityWormLarge extends Monster {
         this.yBodyRot = angle;
     }
 
+    /**
+     * OPT-007 (ruled apply 2026-08-11, NEUTRAL HALF ONLY): aiStep and
+     * customServerAiStep both ran the IDENTICAL
+     * {@code getNearestPlayer(this, 8.0)} scan every server tick; the result
+     * is now computed once per tick — lazily, by whichever caller runs first
+     * (customServerAiStep, inside super.aiStep(), unless its PlayNicely /
+     * segment-nearby guards return early) — and shared by the other.
+     * <p>Invalidation story: the tick stamp IS the invalidation — the cached
+     * value can never survive into the next tick, so same-tick freshness is
+     * preserved exactly, as the ruling requires. The audit's every-2-4-ticks
+     * throttle was DECLINED by the same ruling (worm responsiveness is the
+     * contract) and is deliberately not implemented. Only delta vs the old
+     * duplicate scans: the second caller sees the first caller's result
+     * instead of re-querying after the sub-block intra-tick travel movement.
+     */
+    @Nullable
+    private Player nearestPlayerWithin8() {
+        if (this.tickCount != this.nearestPlayerScanTick) {
+            this.nearestPlayerScanTick = this.tickCount;
+            this.cachedNearestPlayer = this.level().getNearestPlayer(this, 8.0);
+        }
+        return this.cachedNearestPlayer;
+    }
+
     @Override
     public void tick() {
         if (this.isVehicle()) {
@@ -108,7 +138,7 @@ public class EntityWormLarge extends Monster {
         super.aiStep();
         if (this.level().isClientSide) return;
 
-        Player target = this.level().getNearestPlayer(this, 8.0);
+        Player target = this.nearestPlayerWithin8(); // OPT-007: shared per-tick scan
 
         if (target != null) {
             this.pointAtEntity(target);
@@ -178,7 +208,7 @@ public class EntityWormLarge extends Monster {
         }
 
         // orig :199-202 — nearest non-creative player within 8 blocks
-        Player target = this.level().getNearestPlayer(this, 8.0);
+        Player target = this.nearestPlayerWithin8(); // OPT-007: shared per-tick scan
         if (target != null && !target.getAbilities().instabuild) {
             this.pointAtEntity(target);
             this.getNavigation().moveTo(target.getX(), target.getY(), target.getZ(), 1.0);

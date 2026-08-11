@@ -53,6 +53,14 @@ public class EntityVortex extends Monster {
     /** orig Vortex.java:45 {@code busy_fighting} — refreshed every tick; guards both despawn paths. */
     private boolean busyFighting = false;
 
+    // OPT-004 (ruled apply 2026-08-11): one cached pull target, rescanned every
+    // 5 ticks, shared between tick() and customServerAiStep() — replaces the
+    // ungated 16x10x16 AABB scans that ran 2-3x per tick. See currentPullTarget().
+    private static final int TARGET_RESCAN_INTERVAL_TICKS = 5;
+    @Nullable
+    private LivingEntity cachedPullTarget = null;
+    private int lastTargetScanTick = -TARGET_RESCAN_INTERVAL_TICKS;
+
     public EntityVortex(EntityType<? extends EntityVortex> type, Level level) {
         super(type, level);
         this.xpReward = 200;
@@ -99,7 +107,7 @@ public class EntityVortex extends Monster {
         Vec3 motion = this.getDeltaMovement();
         this.setDeltaMovement(motion.x, motion.y * 0.6, motion.z);
 
-        LivingEntity pullTarget = findSomethingToAttack();
+        LivingEntity pullTarget = currentPullTarget(); // OPT-004: shared 5-tick cache
         this.busyFighting = pullTarget != null; // orig Vortex.java:113-116
         if (pullTarget != null && this.level().isClientSide) {
             for (int i = 0; i < 20; ++i) {
@@ -200,7 +208,7 @@ public class EntityVortex extends Monster {
             }
         }
 
-        LivingEntity currentTarget = findSomethingToAttack();
+        LivingEntity currentTarget = currentPullTarget(); // OPT-004: shared 5-tick cache
         if (currentTarget != null) {
             this.currentFlightTarget = currentTarget.blockPosition();
             double distSqToTarget = this.distanceToSqr(currentTarget);
@@ -254,6 +262,36 @@ public class EntityVortex extends Monster {
         }
         this.windedCooldownTicks = WINDED_COOLDOWN_TICKS;
         return ret;
+    }
+
+    /**
+     * OPT-004 (ruled apply 2026-08-11): the target scan runs at most once every
+     * {@value #TARGET_RESCAN_INTERVAL_TICKS} ticks and the result is shared
+     * between {@link #tick()} (which only needs has-target for busyFighting and
+     * the client particle burst) and {@link #customServerAiStep()} — on the
+     * server both run in the same game tick (customServerAiStep first, inside
+     * super.tick()) and see one scan, not two.
+     * <p>Cache invalidation story: a cached target that has died or been
+     * removed (killed, unloaded, changed dimension) is dropped IMMEDIATELY on
+     * the next call — a dead target never lingers for the rest of the
+     * interval, so busyFighting (which gates both despawn paths) and the pull
+     * stop the same tick the target dies, exactly like the old per-tick scan.
+     * Acquiring a fresh/replacement target, and re-checking suitability (line
+     * of sight, creative toggle) of a live one, may lag by up to 5 ticks: the
+     * pull/aggro/particle-onset latency the ruling accepts. The client-side
+     * instance keeps its own independent cache for the particle check.
+     */
+    @Nullable
+    private LivingEntity currentPullTarget() {
+        if (this.cachedPullTarget != null
+                && (this.cachedPullTarget.isRemoved() || !this.cachedPullTarget.isAlive())) {
+            this.cachedPullTarget = null;
+        }
+        if (this.tickCount - this.lastTargetScanTick >= TARGET_RESCAN_INTERVAL_TICKS) {
+            this.lastTargetScanTick = this.tickCount;
+            this.cachedPullTarget = findSomethingToAttack();
+        }
+        return this.cachedPullTarget;
     }
 
     @Nullable

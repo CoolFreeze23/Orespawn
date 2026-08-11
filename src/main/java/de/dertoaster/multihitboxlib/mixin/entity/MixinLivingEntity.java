@@ -82,6 +82,22 @@ public abstract class MixinLivingEntity extends Entity implements IMultipartEnti
 	@Unique
 	private int mhlibCachedHitboxProfileGeneration;
 
+	// ──────────────────────────────────────────────────────────────────
+	// OPT-003 (ruled 2026-08-11): client-side change-only bone-streaming
+	// state (see IMultipartEntity.updateSynching for the throttle and its
+	// invalidation story: self-invalidating field-by-field diff, 8-tick
+	// keepalive under the server's 10-tick master timeout, nulled on
+	// mastership change). INTENTIONALLY NO FIELD INITIALIZERS — same
+	// mixin-constructor-merge rationale as the OPT-001 fields above; the
+	// JVM defaults (null / 0) are the "nothing sent yet" state, and a
+	// null last-sent map always forces the next built payload out.
+	// ──────────────────────────────────────────────────────────────────
+	@Unique
+	@Nullable
+	private Map<String, BoneInformation> mhlibLastSentBoneInformation;
+	@Unique
+	private int mhlibTicksSinceLastBoneInfoSend;
+
 	public MixinLivingEntity(EntityType<?> pEntityType, Level pLevel) {
 		super(pEntityType, pLevel);
 	}
@@ -271,6 +287,28 @@ public abstract class MixinLivingEntity extends Entity implements IMultipartEnti
 	public void _mhlibAccess_setCachedHitboxProfile(Optional<HitboxProfile> profile, int generation) {
 		this.mhlibCachedHitboxProfile = profile;
 		this.mhlibCachedHitboxProfileGeneration = generation;
+	}
+
+	// OPT-003: change-only bone-streaming state accessors (see field comment above).
+	@Override
+	@Nullable
+	public Map<String, BoneInformation> _mhlibAccess_getLastSentBoneInformation() {
+		return this.mhlibLastSentBoneInformation;
+	}
+
+	@Override
+	public void _mhlibAccess_setLastSentBoneInformation(@Nullable Map<String, BoneInformation> value) {
+		this.mhlibLastSentBoneInformation = value;
+	}
+
+	@Override
+	public int _mhlibAccess_getTicksSinceLastBoneInfoSend() {
+		return this.mhlibTicksSinceLastBoneInfoSend;
+	}
+
+	@Override
+	public void _mhlibAccess_setTicksSinceLastBoneInfoSend(int value) {
+		this.mhlibTicksSinceLastBoneInfoSend = value;
 	}
 
 }

@@ -56,6 +56,10 @@ public class Kraken extends Monster {
     private boolean hitByPlayer = false;
     private int straightDown = 1;
     private int hurtTimer = 0;
+    // OPT-006 (ruled apply 2026-08-11): obstruction probe cadence; see
+    // applyObstructionAvoidance for the throttle/impulse-scaling story.
+    private static final int OBSTRUCTION_PROBE_INTERVAL_TICKS = 5;
+    private int obstructionProbeCooldown = 0;
 
     /**
      * Per-entity render scratch (orig Kraken.java:58 {@code renderdata = new RenderInfo()},
@@ -369,26 +373,47 @@ public class Kraken extends Monster {
         this.setYRot(this.getYRot() + yawDiff / 5.0f);
     }
 
+    /**
+     * OPT-006 (ruled apply 2026-08-11): the 19x5 = 95-block obstruction probe
+     * now runs once every {@value #OBSTRUCTION_PROBE_INTERVAL_TICKS} server
+     * ticks with a single reused {@link BlockPos.MutableBlockPos} instead of
+     * 95 fresh {@code new BlockPos} allocations every tick. The lift impulse
+     * (both the deltaMovement add and the direct position shift) is scaled by
+     * the interval so net buoyancy over any 5-tick window is identical — the
+     * finding's own math, accepted by the ruling.
+     * <p>Throttle story: obstruction response can lag by up to 4 ticks (the
+     * Kraken keeps its damped drift for the skipped ticks, then receives the
+     * whole interval's lift at once); the cooldown is deliberately not
+     * persisted (same convention as weatherSet), so a reloaded Kraken simply
+     * probes on its first AI step and the cadence re-arms from there.
+     */
     private void applyObstructionAvoidance() {
+        if (this.obstructionProbeCooldown > 0) {
+            --this.obstructionProbeCooldown;
+            return;
+        }
+        this.obstructionProbeCooldown = OBSTRUCTION_PROBE_INTERVAL_TICKS - 1;
         double obstructionFactor = 0.0;
+        BlockPos.MutableBlockPos probePos = new BlockPos.MutableBlockPos();
         for (int k = -20; k < 18; k += 2) {
             for (int i = 1; i < 10; i += 2) {
                 double dx = (double) i * Math.cos(Math.toRadians(this.getYRot() + 90.0f));
                 double dz = (double) i * Math.sin(Math.toRadians(this.getYRot() + 90.0f));
-                BlockPos checkPos = new BlockPos(
+                probePos.set(
                         (int) (this.getX() + dx),
                         (int) this.getY() + k,
                         (int) (this.getZ() + dz));
-                if (!this.level().getBlockState(checkPos).isAir()) {
+                if (!this.level().getBlockState(probePos).isAir()) {
                     obstructionFactor += 0.1;
                 }
             }
         }
         if (obstructionFactor > 0) {
+            double lift = obstructionFactor * 0.08 * OBSTRUCTION_PROBE_INTERVAL_TICKS;
             this.setDeltaMovement(
-                    this.getDeltaMovement().add(0, obstructionFactor * 0.08, 0));
+                    this.getDeltaMovement().add(0, lift, 0));
             this.setPos(this.getX(),
-                    this.getY() + obstructionFactor * 0.08, this.getZ());
+                    this.getY() + lift, this.getZ());
         }
     }
 

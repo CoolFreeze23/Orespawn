@@ -12,8 +12,8 @@ import net.minecraft.world.phys.Vec2;
 public class UtilityCodecs {
 
     public static final Codec<Vec2> VEC2_CODEC = Codec.FLOAT.listOf().comapFlatMap((instance) -> {
-        return Util.fixedSize(instance, 2).map((p_231081_) -> {
-            return new Vec2(p_231081_.get(0), p_231081_.get(1));
+        return Util.fixedSize(instance, 2).map((vecValues) -> {
+            return new Vec2(vecValues.get(0), vecValues.get(1));
         });
     }, (instance) -> {
         return List.of(instance.x, instance.y);

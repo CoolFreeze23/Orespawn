@@ -5501,6 +5501,7 @@ Entries: **79 total** — ANIM 20 (DIVERGENT 8 · PARTIAL 10 · MISSING 2) · BU
 - **Cost:** Per-tick C2S packet per mastered multipart entity + per-frame `synchronized tryAddBoneInformation` (`mixin/entity/MixinLivingEntity.java:134`) + Optional/HashSet churn per bone.
 - **Proposal:** Diff bone info against the last sent packet and only send on change, plus a low-rate keepalive so the 10-tick master-timeout (`updateSynching:288`) doesn't rotate masters.
 - **Behavior:** affecting (server-side hitbox positions for static poses update less often — no visible difference; keepalive required to preserve master-election behavior)
+- **Resolution:** FIXED (2026-08-11, Phase F close, owner-ruled — Applied per 2026-08-11 ruling: apply WITH keepalive. Master client now diffs each built CPacketBoneInformation against the last-sent map (exact primitive equality, no epsilon, NaN=changed — mirrors OPT-002) and skips only provably identical payloads, re-sending an identical keepalive every 8 ticks — 2-tick margin under the 10-tick master timeout, so election never rotates from protocol silence. Moving/animating bones stream at legacy cadence bit-identically. Soundness: server retains the sync map between packets (each accepted packet replaces it wholesale; server-side master reset clears it), because mhlibAiStep formerly cleared it per tick and skipped ticks would have snapped synced parts to fallback offsets. Mastership change nulls the client cache (first payload after election at legacy timing))
 
 ### OPT-004 — EntityVortex: up to 3 ungated AABB scans per tick on both sides
 
@@ -5509,6 +5510,7 @@ Entries: **79 total** — ANIM 20 (DIVERGENT 8 · PARTIAL 10 · MISSING 2) · BU
 - **Cost:** 2–3 `getEntitiesOfClass(LivingEntity, inflate(16,10,16))` + full list sort per vortex per tick — worst ungated per-tick scan in the port.
 - **Proposal:** Cache the found target in a field, rescan every 5 ticks, reuse the result between `tick()` (particles only need "has target") and `customServerAiStep()`.
 - **Behavior:** affecting (pull/aggro and particle-onset latency goes from 0 to ≤5 ticks — flag for sign-off)
+- **Resolution:** FIXED (2026-08-11 ruling: apply). EntityVortex now holds one cached pull target rescanned every 5 ticks via currentPullTarget(), shared between tick() (has-target only, for busyFighting and the particle burst) and customServerAiStep() — one 16x10x16 AABB scan per 5 ticks per side replaces 2-3 per tick. Per the ruling, a dead or removed cached target is invalidated IMMEDIATELY on the next lookup, so busyFighting and the pull stop the same tick the target dies and the despawn guards never see a stale corpse; fresh-target acquisition and suitability re-checks (LoS, creative) lag <=5 ticks, the accepted pull/aggro/particle-onset latency.
 
 ### OPT-005 — GirlfriendOverlay: entity scan + string concat every rendered frame
 
@@ -5526,6 +5528,7 @@ Entries: **79 total** — ANIM 20 (DIVERGENT 8 · PARTIAL 10 · MISSING 2) · BU
 - **Cost:** ~95 `getBlockState` + ~95 `BlockPos` allocs per Kraken per tick; Krakens spawn in packs of 1–10 (`KrakenRevengeHandler`, reinforcements at `Kraken.java:247-258`).
 - **Proposal:** Run the probe every 4–5 ticks with one `BlockPos.MutableBlockPos`, scaling the lift impulse by the interval to keep net buoyancy identical.
 - **Behavior:** affecting (obstruction-response latency up to 5 ticks; impulse scaling keeps average motion equal — flag)
+- **Resolution:** FIXED (2026-08-11 ruling: apply). Kraken.applyObstructionAvoidance now runs its 19x5 = 95-block probe once every 5 server ticks (within the ruled 4-5) using a single reused BlockPos.MutableBlockPos instead of 95 fresh BlockPos allocations per tick. The lift impulse — both the deltaMovement add and the direct setPos shift — is scaled by the interval (x5), so net buoyancy over any 5-tick window is identical, per the finding's own math the ruling accepts. Throttle story documented in-code: obstruction response may lag up to 4 ticks; the cooldown is not persisted (weatherSet convention), so a reloaded Kraken probes on its first AI step.
 
 ### OPT-007 — Worm chain: duplicate player/segment scans twice per tick with allocations
 
@@ -5534,6 +5537,7 @@ Entries: **79 total** — ANIM 20 (DIVERGENT 8 · PARTIAL 10 · MISSING 2) · BU
 - **Cost:** 2 player-list scans per worm per tick; Medium adds 2 entity scans + 2 `TargetingConditions` allocs per tick.
 - **Proposal:** Hoist `TargetingConditions.forNonCombat()` to a `static final`; compute nearest-player/nearest-small-worm once per tick and share between `aiStep` and `customServerAiStep`.
 - **Behavior:** neutral (hoist + same-tick sharing); any further throttling (every 2–4 ticks) is affecting (tracking latency) — flag separately
+- **Resolution:** FIXED (2026-08-11 ruling: NEUTRAL HALF ONLY; throttle DECLINED — same-tick freshness preserved exactly). EntityWormLarge: the identical getNearestPlayer(this, 8.0) scans in aiStep and customServerAiStep now share one tick-stamped per-tick result; the stamp is the invalidation — the cache never crosses a tick. EntityWormMedium: the per-tick TargetingConditions.forNonCombat() allocation is hoisted to a never-mutated static final. Medium/Small scan-sharing was found inapplicable: the TF-035 vertical-reach rework made their customServerAiStep box scans semantically different from aiStep's spherical queries, so merging would alter target selection — not neutral; documented in-code in all three classes. No cross-tick throttling anywhere.
 
 ### OPT-008 — Crystal-dimension terrain rewrite scans the full world column with a BlockPos per block
 
@@ -5668,6 +5672,7 @@ Entries: **79 total** — ANIM 20 (DIVERGENT 8 · PARTIAL 10 · MISSING 2) · BU
 - **Cost:** One data-component presence check per OreSpawn armor stack per tick (cheap; enchant application itself is once).
 - **Proposal:** Apply enchants in `onCraftedBy`/first pickup instead of polling `inventoryTick`, or gate the check to every 20 ticks.
 - **Behavior:** affecting (`onCraftedBy` migration changes when loot/creative-given stacks get enchanted; the 20-tick gate delays first-tick enchanting by ≤1 s — flag whichever is chosen)
+- **Resolution:** FIXED (2026-08-11 ruling: apply 20-TICK-GATE variant; onCraftedBy migration REJECTED). ItemOreSpawnArmor.inventoryTick now gates the auto-enchant presence poll behind entity.tickCount % 20 == 0, cutting the per-piece data-component check to once a second, staggered per holder rather than spiking on a global tick. A freshly obtained un-enchanted piece may sit plain for <=1 s before the poll lands — accepted by the ruling. The code comment records the rejection: onCraftedBy would change when loot-table/creative-given/pre-existing stacks get enchanted, and the poll is the self-healing contract for every acquisition path. Glide handling deliberately remains ungated per-tick.
 
 ### OPT-023 — Godzilla re-resolves the Mobzilla SavedData every tick
 

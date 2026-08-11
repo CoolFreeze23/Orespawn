@@ -26,6 +26,28 @@ public class EntityWormMedium extends Monster {
             ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "little_splat"));
     private static final SoundEvent SND_BIG_SPLAT = SoundEvent.createVariableRangeEvent(
             ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "big_splat"));
+
+    /**
+     * OPT-007 (ruled apply 2026-08-11, NEUTRAL HALF ONLY): the per-tick
+     * {@code TargetingConditions.forNonCombat()} allocation in aiStep is
+     * hoisted to a shared static final. It is never mutated after construction
+     * (no range()/selector() calls anywhere) and test() is stateless, so
+     * sharing one instance across all medium worms is exact — the same pattern
+     * vanilla uses for its own static TargetingConditions.
+     * <p>The finding's other half — computing the small-worm/player scans once
+     * per tick shared between aiStep and customServerAiStep — has no identical
+     * query pair left in this class: the TF-035 vertical-reach rework made
+     * customServerAiStep's queries (raw small-worm isEmpty in 8/8/8; nearest
+     * non-spectator player in the 2.25/8.0/2.25 box) semantically different
+     * from aiStep's forNonCombat nearest-small and spherical-8 player scans,
+     * and merging them could change which worm/player is selected — not
+     * neutral, so each site keeps its own scan. Both stay same-tick fresh:
+     * the audit's every-2-4-ticks throttle was DECLINED by the ruling (worm
+     * responsiveness is the contract).
+     */
+    private static final net.minecraft.world.entity.ai.targeting.TargetingConditions NON_COMBAT_TARGETING =
+            net.minecraft.world.entity.ai.targeting.TargetingConditions.forNonCombat();
+
     public int upcount = 0;
     public int downcount = 0;
 
@@ -94,7 +116,7 @@ public class EntityWormMedium extends Monster {
         if (this.level().isClientSide) return;
 
         EntityWormSmall nearbySmall = this.level().getNearestEntity(
-                EntityWormSmall.class, net.minecraft.world.entity.ai.targeting.TargetingConditions.forNonCombat(),
+                EntityWormSmall.class, NON_COMBAT_TARGETING, // OPT-007: hoisted static final
                 this, this.getX(), this.getY(), this.getZ(),
                 this.getBoundingBox().inflate(8.0));
 

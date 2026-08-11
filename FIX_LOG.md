@@ -2360,3 +2360,19 @@ REMAINING FIVE await the owner's one-pass ruling: OPT-003/004/006/022
 (behavior-affecting) + OPT-007 (mixed; its neutral half withheld to
 present the item whole). Suite delta this phase: zero (the neutrality
 contract held).
+
+## Phase F CLOSED — the five owner-ruled OPT items applied (2026-08-11)
+
+OPT-003 (with keepalive @8t under the 10t master timeout + a required
+soundness addition the audit missed: server-side sync-map retention,
+wholesale-replaced per packet, cleared on master reset — without it,
+client-side skipping would have flapped synced parts to fallback
+offsets), OPT-004 (5-tick shared Vortex target cache, immediate
+dead-target invalidation), OPT-006 (5-tick Kraken probe, interval-scaled
+impulse, byte-identical probe coordinates), OPT-022 (20-tick gate;
+onCraftedBy migration REJECTED per ruling, rejection recorded in-code),
+OPT-007 (neutral half only; Large's duplicate scan pair shares one
+tick-stamped result, Medium's TargetingConditions hoisted; Medium/Small
+scan-MERGING found non-neutral post-TF-035 — documented, not applied;
+throttle declined per ruling). LEDGER: 630/630 terminal (628 resolved +
+2 owner-approved DEFERRED). Phase F complete.
