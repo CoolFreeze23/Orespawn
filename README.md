@@ -84,8 +84,7 @@ asset files, inventoried in
 [provenance_byte_identical_assets.txt](provenance_byte_identical_assets.txt))
 and, honestly noted: this repository also contains the decompiled 1.7.10
 reference source (`reference_1_7_10_source/`) that the parity audit was
-verified against — which is part of why this repository is private pending
-the license resolution. If you are an original author and want anything
+verified against. If you are an original author and want anything
 changed or removed, it will be — immediately.
 
 `mods.toml` license field: **All Rights Reserved** (the original's rights,
