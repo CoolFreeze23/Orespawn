@@ -39,7 +39,6 @@ public class Alien extends Monster {
             SynchedEntityData.defineId(Alien.class, EntityDataSerializers.INT);
 
     private final Comparator<Entity> targetSorter;
-    private int hurtTimer = 0;
     private static final double MOVE_SPEED = 0.65;
     private static final double KNOCKBACK_HORIZONTAL = 1.1;
     private static final double KNOCKBACK_VERTICAL = 0.1;
@@ -176,27 +175,32 @@ public class Alien extends Monster {
 
     @Override
     public boolean hurt(DamageSource source, float amount) {
+        // orig Alien.java:228-230 — cactus damage is ignored outright.
         if (source.getMsgId().equals("cactus")) {
             return false;
         }
-        if (this.hurtTimer <= 0) {
-            this.hurtTimer = 5;
-            return super.hurt(source, amount);
+        // orig Alien.java:231-233 — hurt_timer is declared 0 (:43) and decremented
+        // (:311-313) but never set above zero anywhere, so the gate always passes:
+        // damage lands on EVERY hit; there is no retaliation cooldown (TF-036).
+        boolean ret = super.hurt(source, amount);
+        // orig Alien.java:234-239 — every hurt retaliates: target the attacker,
+        // navigate to it at 1.2, and force a true return. The orig instanceof is
+        // EntityLiving (the Mob base class), which excludes players; player
+        // attackers are handled by HurtByTargetGoal (orig :66) as before.
+        // (orig :236 func_70784_b set the legacy EntityCreature "target" field,
+        // which has no modern analog.)
+        if (source.getEntity() instanceof Mob attacker) {
+            this.setTarget(attacker);
+            this.getNavigation().moveTo(attacker, 1.2);
+            return true;
         }
-        Entity attacker = source.getEntity();
-        if (attacker instanceof LivingEntity living) {
-            this.setTarget(living);
-            this.getNavigation().moveTo(living, 1.2);
-        }
-        return false;
+        return ret;
     }
 
     @Override
     protected void customServerAiStep() {
         if (this.isRemoved()) return;
         super.customServerAiStep();
-
-        if (this.hurtTimer > 0) --this.hurtTimer;
 
         if (this.getRandom().nextInt(8) == 0) {
             LivingEntity target = findSomethingToAttack();

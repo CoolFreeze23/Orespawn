@@ -2274,3 +2274,72 @@ vanish (count ≤ max), i122's slot bound holds, and 1.21's
 identical-components-only merging keeps different captured mobs from
 stacking. The max-1 was a port invention. Child table deleted; the
 prior E6 entry's split description is superseded by this one.
+
+## Phase E — pre-F promotions
+
+- **TF-036 FIXED (parity — Alien invented retaliation cooldown):** the
+  port's Alien.hurt() gated damage behind a 5-tick hurtTimer and returned
+  false while it ran; orig Alien.java:225-241 has no working gate —
+  hurt_timer is declared 0 (:43) and decremented (:311-313) but never set
+  above zero, so super.hurt lands on every hit, and every hurt with a mob
+  attacker (:234 instanceof EntityLiving — excludes players) targets it,
+  navigates to it at 1.2, and forces a true return (:235-238). Port now
+  mirrors that flow exactly (cactus immunity :228-230 kept); the invented
+  hurtTimer field and its decrement are deleted. (entity/Alien.java)
+- **TF-037 FIXED (parity — EnderReaper missing Enderman-family
+  behaviors):** three orig behaviors ported: (1) wet-teleport — orig
+  EnderReaper.java:116-119 teleports when wet OR burning; the port only
+  checked isOnFire, now isInWaterRainOrBubble() || isOnFire(); (2)
+  daylight gate — orig :111-115: server-side, daytime, brightness > 0.5,
+  sky visible, dice rand*30 < (f-0.4)*2 → target null, screaming off,
+  teleportRandomly (mapped via getLightLevelDependentMagicValue +
+  canSeeSky, the vanilla EnderMan idiom); (3) pumpkin-stare
+  shouldAttackPlayer — orig :83-93: pumpkin helmet hides the player
+  (:84-87; 1.7.10 wearable pumpkin → modern carved pumpkin), else attack
+  only when the look vector aligns (d1 > 1.0 - 0.025/d0, :88-91) and the
+  player can see the reaper (:92); wired as the predicate on the Player
+  NearestAttackableTargetGoal, matching the orig func_70782_k gate (:67).
+  (entity/EnderReaper.java)
+- **TF-038 FIXED (parity — CannonFodder LOS gate + conditional armor):**
+  isSuitableTarget now requires getSensing().hasLineOfSight(target)
+  before the sit-anchor/faction checks (orig EntityCannonFodder.java:
+  288-290 func_70635_at().func_75522_a); getArmorValue() override added
+  returning 3 only while is_activated == 2, else 0 (orig :330-335
+  func_70658_aO) — previously armor was 0 in all states.
+  (entity/EntityCannonFodder.java)
+- **TF-039 FIXED (reference docs — INDEX.md field_70174_ab row):** the
+  CFR cheatsheet mapped field_70174_ab to invulnerableTime/hurtTime
+  ("iframes"); it is actually Entity.fireResistance, a vestigial 1.7.10
+  constant (1) that vanilla never reads — orig writes such as
+  GammaMetroid.java:58 (= 1000) were no-ops and must not be ported as
+  invulnerability. Row corrected with a do-not-port note; verification
+  credit: ENT-K-002. (reference_1_7_10_source/INDEX.md)
+
+## Pre-F batch: 38-entity placement sweep complete + gamma category + observation promotions (2026-08-11)
+
+- **Spawn-placement sweep DONE** — all remaining orespawn ids from the
+  startup ServerLifecycleHooks error now carry faithful placement layers
+  (32 registrations spliced this batch; TEST-002's eight landed earlier).
+  Per-entity orig func_70601_bi evidence recorded by the sweep passes;
+  predicate choice follows FUNCTION over convention (documented at the
+  splice): daytime-required Monster subclasses (BandP/Bee/Crab/...) take
+  Mob::checkMobSpawnRules — the Monster darkness predicate would
+  dead-gate them; super-calling overrides (Boyfriend/Girlfriend/...)
+  keep the 1.7.10 animal default via Animal::checkAnimalSpawnRules;
+  Kyuubi's unconditional-true orig gate takes Mob (strict parity over
+  convention — the sweep's own nuance, adopted); flyers/water use
+  NO_RESTRICTIONS / IN_WATER precedents; leon + leonopteryx registered
+  identically per TF-030. The four iceandfire:* ids in the same error are
+  CONFIRMED external (zero references in our tree; IceAndFireCE jar in
+  the dev-client mods folder) — another mod's leakage, ignored per ruling.
+- **gamma_metroid category ALIGNED** — orig registers its spawns as
+  monster-list entries (ChunkProviderOreSpawn2 + BiomeGenUtopianPlains
+  monster list); registration moved CREATURE → MONSTER to match, biome
+  JSONs already agreed. Knock-on (despawn semantics for the tameable in
+  MONSTER category) noted in the sweep record.
+- **TF-036..TF-039 promoted and CLOSED** — Alien's invented 5-tick
+  retaliation cooldown removed (orig :225-241); EnderReaper wet-teleport
+  + daylight gate + pumpkin-stare ported (orig :83-93/:111-119);
+  CannonFodder LOS gate (orig :288-290) + activated armor-3 (orig
+  :330-335); INDEX.md field_70174_ab row corrected to fireResistance
+  (ENT-K-002 verification credited). No orphan observations remain.

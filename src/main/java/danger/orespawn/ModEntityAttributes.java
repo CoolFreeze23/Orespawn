@@ -287,8 +287,6 @@ public class ModEntityAttributes {
                 Heightmap.Types.MOTION_BLOCKING, Monster::checkMonsterSpawnRules, RegisterSpawnPlacementsEvent.Operation.AND);
         event.register(ModEntities.MOTHRA.get(), SpawnPlacementTypes.NO_RESTRICTIONS,
                 Heightmap.Types.MOTION_BLOCKING, Mob::checkMobSpawnRules, RegisterSpawnPlacementsEvent.Operation.AND);
-        event.register(ModEntities.LEONOPTERYX.get(), SpawnPlacementTypes.NO_RESTRICTIONS,
-                Heightmap.Types.MOTION_BLOCKING, Animal::checkAnimalSpawnRules, RegisterSpawnPlacementsEvent.Operation.AND);
 
         // Cave mobs
         event.register(ModEntities.ENTITY_MOLENOID.get(), SpawnPlacementTypes.ON_GROUND,
@@ -356,6 +354,116 @@ public class ModEntityAttributes {
         event.register(ModEntities.THE_PRINCESS.get(), SpawnPlacementTypes.ON_GROUND,
                 Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Mob::checkMobSpawnRules, RegisterSpawnPlacementsEvent.Operation.AND);
         event.register(ModEntities.THE_PRINCE.get(), SpawnPlacementTypes.ON_GROUND,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Mob::checkMobSpawnRules, RegisterSpawnPlacementsEvent.Operation.AND);
+
+        // Pre-F sweep (2026-08-11) — the remaining unregistered-but-spawning
+        // ids from the startup ServerLifecycleHooks error, each with its orig
+        // func_70601_bi evidence (see FIX_LOG pre-F entry). Predicate choice
+        // follows FUNCTION over convention: daytime-required Monster
+        // subclasses (BandP/Bee/Crab/...) take Mob::checkMobSpawnRules because
+        // Monster::checkMonsterSpawnRules would dead-gate them; super-calling
+        // overrides (Boyfriend/Girlfriend/...) keep the 1.7.10 animal default
+        // via Animal::checkAnimalSpawnRules; flyers/water use the
+        // NO_RESTRICTIONS / IN_WATER precedents.
+        // orig BandP.java:278-309 — daytime mob (no super, monster darkness default dropped): gates live in BandP.checkSpawnRules
+        event.register(ModEntities.BAND_P.get(), SpawnPlacementTypes.ON_GROUND,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Mob::checkMobSpawnRules, RegisterSpawnPlacementsEvent.Operation.AND);
+        // orig Bee.java:253-287 — daytime flyer (no super, monster darkness default dropped): gates in EntityBee.checkSpawnRules; NO_RESTRICTIONS per CloudShark/Mothra flyer precedent
+        event.register(ModEntities.ENTITY_BEE.get(), SpawnPlacementTypes.NO_RESTRICTIONS,
+                Heightmap.Types.MOTION_BLOCKING, Mob::checkMobSpawnRules, RegisterSpawnPlacementsEvent.Operation.AND);
+        // orig Boyfriend.java:978-993 — spawner bypass then super.func_70601_bi(): EntityAnimal grass/light default retained, so Animal rules
+        event.register(ModEntities.BOYFRIEND.get(), SpawnPlacementTypes.ON_GROUND,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Animal::checkAnimalSpawnRules, RegisterSpawnPlacementsEvent.Operation.AND);
+        // orig Girlfriend.java:1100-1115 — spawner bypass then super.func_70601_bi(): EntityAnimal grass/light default retained, so Animal rules
+        event.register(ModEntities.GIRLFRIEND.get(), SpawnPlacementTypes.ON_GROUND,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Animal::checkAnimalSpawnRules, RegisterSpawnPlacementsEvent.Operation.AND);
+        // orig Brutalfly.java:290-329 — night flyer keeping the monster darkness check (func_70814_o): gates in EntityBrutalfly.checkSpawnRules; NO_RESTRICTIONS per CloudShark precedent
+        event.register(ModEntities.ENTITY_BRUTALFLY.get(), SpawnPlacementTypes.NO_RESTRICTIONS,
+                Heightmap.Types.MOTION_BLOCKING, Monster::checkMonsterSpawnRules, RegisterSpawnPlacementsEvent.Operation.AND);
+        // orig Crab.java:456-486 — daytime mob (no super, monster darkness default dropped): gates live in Crab.checkSpawnRules
+        event.register(ModEntities.CRAB.get(), SpawnPlacementTypes.ON_GROUND,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Mob::checkMobSpawnRules, RegisterSpawnPlacementsEvent.Operation.AND);
+        // orig Cricket.java:137-142 — override bypassed the animal grass/light default (no super): gates live in EntityCricket.checkSpawnRules
+        event.register(ModEntities.ENTITY_CRICKET.get(), SpawnPlacementTypes.ON_GROUND,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Mob::checkMobSpawnRules, RegisterSpawnPlacementsEvent.Operation.AND);
+        // orig Fairy.java:334-347 — ambient flyer (EntityAmbientCreature): open-air/y>=50 gates in Fairy.checkSpawnRules; NO_RESTRICTIONS per Firefly/Ghost precedent
+        event.register(ModEntities.FAIRY.get(), SpawnPlacementTypes.NO_RESTRICTIONS,
+                Heightmap.Types.MOTION_BLOCKING, Mob::checkMobSpawnRules, RegisterSpawnPlacementsEvent.Operation.AND);
+        // orig Dragon.java:598-611 — TamableAnimal whose override bypassed the animal grass/light default (day/buddy/Islands-or-y>=50 gates live in Dragon.checkSpawnRules)
+        event.register(ModEntities.DRAGON.get(), SpawnPlacementTypes.ON_GROUND,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Mob::checkMobSpawnRules, RegisterSpawnPlacementsEvent.Operation.AND);
+        // orig GiantRobot.java:364-381 — EntityMob keeping the darkness default (y>=50/night/air-or-grass clearance gates live in GiantRobot.checkSpawnRules)
+        event.register(ModEntities.GIANT_ROBOT.get(), SpawnPlacementTypes.ON_GROUND,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Monster::checkMonsterSpawnRules, RegisterSpawnPlacementsEvent.Operation.AND);
+        // orig Godzilla.java:557-591 — EntityMob; orig checked func_70814_o darkness first, supplied here by the monster default (night/y/dice/air-pocket/sibling/one-shot gates live in Godzilla.checkSpawnRules)
+        event.register(ModEntities.GODZILLA.get(), SpawnPlacementTypes.ON_GROUND,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Monster::checkMonsterSpawnRules, RegisterSpawnPlacementsEvent.Operation.AND);
+        // orig GoldFish.java:153-155 — EntityAnimal whose override returned true (bypassed the animal default); creature-category ground spawn in all four port biomes, not a water spawn
+        event.register(ModEntities.GOLD_FISH.get(), SpawnPlacementTypes.ON_GROUND,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Mob::checkMobSpawnRules, RegisterSpawnPlacementsEvent.Operation.AND);
+        // orig HerculesBeetle.java:442-481 — EntityMob keeping the darkness default (spawner-bypass/night/y>=50/air-box/buddy gates live in EntityHerculesBeetle.checkSpawnRules)
+        event.register(ModEntities.ENTITY_HERCULES_BEETLE.get(), SpawnPlacementTypes.ON_GROUND,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Monster::checkMonsterSpawnRules, RegisterSpawnPlacementsEvent.Operation.AND);
+        // orig Hydrolisc.java — no func_70601_bi override; faithful mapping is the 1.7.10 EntityAnimal default (grass + light)
+        event.register(ModEntities.ENTITY_HYDROLISC.get(), SpawnPlacementTypes.ON_GROUND,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Animal::checkAnimalSpawnRules, RegisterSpawnPlacementsEvent.Operation.AND);
+        // orig Island.java — no func_70601_bi override; 1.7.10 EntityAnimal default, same mapping as the IslandToo sibling
+        event.register(ModEntities.ISLAND.get(), SpawnPlacementTypes.ON_GROUND,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Animal::checkAnimalSpawnRules, RegisterSpawnPlacementsEvent.Operation.AND);
+        // orig Kyuubi.java:222-224 — func_70601_bi returns unconditional true
+        // (no darkness/difficulty gate). STRICT PARITY over file convention:
+        // Mob::checkMobSpawnRules, because the Monster predicate would layer a
+        // darkness default the 1.7.10 code lacked (suppressing Nether spawns
+        // near lava/glowstone and darkening its dungeon-spawner requirement).
+        event.register(ModEntities.ENTITY_KYUUBI.get(), SpawnPlacementTypes.ON_GROUND,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Mob::checkMobSpawnRules, RegisterSpawnPlacementsEvent.Operation.AND);
+        // leon — orig Leon.java:452-478 (flying tameable; func_70601_bi override w/o super bypasses the animal default -> Mob predicate; TF-030: one class, two save-compat ids, both registered identically)
+        event.register(ModEntities.ENTITY_LEON.get(), SpawnPlacementTypes.NO_RESTRICTIONS,
+                Heightmap.Types.MOTION_BLOCKING, Mob::checkMobSpawnRules, RegisterSpawnPlacementsEvent.Operation.AND);
+        // leonopteryx — same class + rules as leon (orig Leon.java:452-478); supersedes the old Animal-predicate line in the "Flying mobs" block (removed via sharedEdits)
+        event.register(ModEntities.LEONOPTERYX.get(), SpawnPlacementTypes.NO_RESTRICTIONS,
+                Heightmap.Types.MOTION_BLOCKING, Mob::checkMobSpawnRules, RegisterSpawnPlacementsEvent.Operation.AND);
+        // pitch_black — orig PitchBlack.java:429-483 (EntityMob ground monster; per-entity gates live in PitchBlack.checkSpawnRules)
+        event.register(ModEntities.PITCH_BLACK.get(), SpawnPlacementTypes.ON_GROUND,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Monster::checkMonsterSpawnRules, RegisterSpawnPlacementsEvent.Operation.AND);
+        // rat — orig Rat.java:302-339 (EntityMob ground monster; per-entity gates live in EntityRat.checkSpawnRules)
+        event.register(ModEntities.ENTITY_RAT.get(), SpawnPlacementTypes.ON_GROUND,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Monster::checkMonsterSpawnRules, RegisterSpawnPlacementsEvent.Operation.AND);
+        // robot_1 — orig Robot1.java:226-234 (EntityMob ground monster; y/darkness/night gates live in Robot1.checkSpawnRules)
+        event.register(ModEntities.ROBOT_1.get(), SpawnPlacementTypes.ON_GROUND,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Monster::checkMonsterSpawnRules, RegisterSpawnPlacementsEvent.Operation.AND);
+        // robot_2 — orig Robot2.java:403-437 (EntityMob ground monster; spawner/y/night/clearance/darkness gates live in Robot2.checkSpawnRules)
+        event.register(ModEntities.ROBOT_2.get(), SpawnPlacementTypes.ON_GROUND,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Monster::checkMonsterSpawnRules, RegisterSpawnPlacementsEvent.Operation.AND);
+        // robot_3 — orig Robot3.java:343-360 (EntityMob ground monster, no spawner bypass; gates live in Robot3.checkSpawnRules)
+        event.register(ModEntities.ROBOT_3.get(), SpawnPlacementTypes.ON_GROUND,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Monster::checkMonsterSpawnRules, RegisterSpawnPlacementsEvent.Operation.AND);
+        // robot_4 — orig Robot4.java:415-449 (EntityMob ground monster; spawner/y/night/clearance/darkness gates live in Robot4.checkSpawnRules)
+        event.register(ModEntities.ROBOT_4.get(), SpawnPlacementTypes.ON_GROUND,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Monster::checkMonsterSpawnRules, RegisterSpawnPlacementsEvent.Operation.AND);
+        // robot_5 — orig Robot5.java:317-351 (EntityMob ground monster; spawner/y/night/short-clearance/darkness gates live in Robot5.checkSpawnRules)
+        event.register(ModEntities.ROBOT_5.get(), SpawnPlacementTypes.ON_GROUND,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Monster::checkMonsterSpawnRules, RegisterSpawnPlacementsEvent.Operation.AND);
+        // orig Rotator.java:255-288 — spawner-bypass/darkness/air-box/night gates live in EntityRotator#checkSpawnRules; flying Monster => CloudShark precedent
+        event.register(ModEntities.ENTITY_ROTATOR.get(), SpawnPlacementTypes.NO_RESTRICTIONS,
+                Heightmap.Types.MOTION_BLOCKING, Monster::checkMonsterSpawnRules, RegisterSpawnPlacementsEvent.Operation.AND);
+        // orig Spyro.java:407-412 — daytime + y>=50 gates live in EntitySpyro#checkSpawnRules; flying TamableAnimal whose orig override bypassed the animal default => Mothra precedent
+        event.register(ModEntities.ENTITY_SPYRO.get(), SpawnPlacementTypes.NO_RESTRICTIONS,
+                Heightmap.Types.MOTION_BLOCKING, Mob::checkMobSpawnRules, RegisterSpawnPlacementsEvent.Operation.AND);
+        // orig Stinky.java:286-291 — daytime + buddy-cap (findBuddies :705-708) gates live in EntityStinky#checkSpawnRules; flying TamableAnimal whose orig override bypassed the animal default => Mothra precedent
+        event.register(ModEntities.ENTITY_STINKY.get(), SpawnPlacementTypes.NO_RESTRICTIONS,
+                Heightmap.Types.MOTION_BLOCKING, Mob::checkMobSpawnRules, RegisterSpawnPlacementsEvent.Operation.AND);
+        // orig TerribleTerror.java:193-214 — spawner-bypass/darkness/night/(Chaos or y<=40) gates live in EntityTerribleTerror#checkSpawnRules; flying Monster => CloudShark precedent
+        event.register(ModEntities.ENTITY_TERRIBLE_TERROR.get(), SpawnPlacementTypes.NO_RESTRICTIONS,
+                Heightmap.Types.MOTION_BLOCKING, Monster::checkMonsterSpawnRules, RegisterSpawnPlacementsEvent.Operation.AND);
+        // orig Urchin.java:298-332 — spawner-bypass/headroom/darkness/late-night gates live in Urchin#checkSpawnRules; walking ground Monster
+        event.register(ModEntities.URCHIN.get(), SpawnPlacementTypes.ON_GROUND,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Monster::checkMonsterSpawnRules, RegisterSpawnPlacementsEvent.Operation.AND);
+        // orig Vortex.java:240-284 — spawner-bypass/air-box/darkness/y>=50/night/dice/solo gates live in EntityVortex#checkSpawnRules; flying Monster => CloudShark precedent
+        event.register(ModEntities.ENTITY_VORTEX.get(), SpawnPlacementTypes.NO_RESTRICTIONS,
+                Heightmap.Types.MOTION_BLOCKING, Monster::checkMonsterSpawnRules, RegisterSpawnPlacementsEvent.Operation.AND);
+        // orig OreSpawnMain.java:4844-4847 — waterCreature spawn lists; y>=50/daytime/solo gates live in WaterDragon#checkSpawnRules (orig WaterDragon.java:716-739)
+        event.register(ModEntities.WATER_DRAGON.get(), SpawnPlacementTypes.IN_WATER,
                 Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Mob::checkMobSpawnRules, RegisterSpawnPlacementsEvent.Operation.AND);
     }
 
