@@ -343,7 +343,19 @@ public class MHLibPartEntity<T extends Entity> extends PartEntity<T> {
 
 	@Override
 	public boolean isPickable() {
-		return this.config.collidable() && this.isPartEnabled();
+		// ──────────────────────────────────────────────────────────────
+		// 2.0 S4 (vendored change): pickability must not require hard
+		// collision. Upstream tied isPickable to collidable alone, which
+		// silently excluded every non-collidable part from melee crosshair
+		// picking (GameRenderer.pick), ALL projectiles (canBeHitByProjectile
+		// = isAlive && isPickable) and ray traces — making
+		// can-receive-damage:true unreachable for such parts. A part is now
+		// pickable when it is a collider OR a damage surface. Queen-neutral:
+		// all her parts are collidable:true (unchanged truth table); the
+		// spider's non-collidable damage-surface legs become hittable, which
+		// is the whole point (S4 pick-path law test pins this).
+		// ──────────────────────────────────────────────────────────────
+		return (this.config.collidable() || this.config.canReceiveDamage()) && this.isPartEnabled();
 	}
 
 	public void setHidden(boolean hidden) {

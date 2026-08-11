@@ -1,0 +1,61 @@
+{
+	"_comment": [
+		"MultiHitBoxLib hitbox profile for orespawn:spider_robot (2.0 S4).",
+		"",
+		"MODERN-GAIT ONLY: SpiderRobot implements ICustomHitboxProfileSupplier",
+		"and returns Optional.empty() for classic-mode spiders (construction",
+		"snapshot), so this profile only ever builds parts for modern spiders.",
+		"",
+		"No synched bones and sync-with-model=false: these parts are fed",
+		"SERVER-SIDE by the gait solver (ModernSpiderGait positions each part",
+		"on its leg's lower-segment midpoint every tick; the client mirrors",
+		"locally from the replayed solve). The GeckoLib bone-collection path,",
+		"bone packets and client trust are entirely uninvolved.",
+		"",
+		"main-hitbox: size MUST stay exactly [2.0, 1.5] — MHLib applies the",
+		"profile main size through its EntityEvent.Size hook, and classic",
+		"parity pins the spider's dims (the ant's i083 test guards the same",
+		"contract family). canReceiveDamage=true keeps the BODY pickable and",
+		"damageable (design D3: legs are additional honest surfaces, never a",
+		"forced routing like the Queen's).",
+		"",
+		"Legs: damage-modifier 1.0 (no new weak points), non-collidable",
+		"(classic legs never collided; pickability comes from the S4",
+		"isPickable fix: collidable OR can-receive-damage),",
+		"max-deviation-from-server 0 (no client authority).",
+		"",
+		"Accepted honest-surfaces delta vs classic (review-recorded): melee",
+		"and projectiles on legs deal body-identical damage, but an",
+		"explosion near a foot now damages by the closest of NINE surfaces",
+		"(max-not-sum via the parent hurt cooldown) — a strictly larger",
+		"blast profile than classic's body-only box. Environmental",
+		"(source-less) damage NEVER routes through legs (S4 lava rule):",
+		"the environment acts on the body, which can receive damage",
+		"directly on this profile."
+	],
+	"synched-assets": {
+		"models": [],
+		"animations": [],
+		"textures": []
+	},
+	"sync-with-model": false,
+	"trust-client": false,
+	"part-update-steps": 3,
+	"synched-part-update-steps": 1,
+	"synched-bones": [],
+	"main-hitbox": {
+		"collidable": false,
+		"canReceiveDamage": true,
+		"size": [2.0, 1.5]
+	},
+	"parts": [
+		{ "name": "leg0", "collidable": false, "can-receive-damage": true, "damage-modifier": 1.0, "max-deviation-from-server": 0.0, "box": { "type": "multihitboxlib:aabb", "size": [0.6, 0.6], "position": [0, 0, 0], "pivot": [0, 0, 0] } },
+		{ "name": "leg1", "collidable": false, "can-receive-damage": true, "damage-modifier": 1.0, "max-deviation-from-server": 0.0, "box": { "type": "multihitboxlib:aabb", "size": [0.6, 0.6], "position": [0, 0, 0], "pivot": [0, 0, 0] } },
+		{ "name": "leg2", "collidable": false, "can-receive-damage": true, "damage-modifier": 1.0, "max-deviation-from-server": 0.0, "box": { "type": "multihitboxlib:aabb", "size": [0.6, 0.6], "position": [0, 0, 0], "pivot": [0, 0, 0] } },
+		{ "name": "leg3", "collidable": false, "can-receive-damage": true, "damage-modifier": 1.0, "max-deviation-from-server": 0.0, "box": { "type": "multihitboxlib:aabb", "size": [0.6, 0.6], "position": [0, 0, 0], "pivot": [0, 0, 0] } },
+		{ "name": "leg4", "collidable": false, "can-receive-damage": true, "damage-modifier": 1.0, "max-deviation-from-server": 0.0, "box": { "type": "multihitboxlib:aabb", "size": [0.6, 0.6], "position": [0, 0, 0], "pivot": [0, 0, 0] } },
+		{ "name": "leg5", "collidable": false, "can-receive-damage": true, "damage-modifier": 1.0, "max-deviation-from-server": 0.0, "box": { "type": "multihitboxlib:aabb", "size": [0.6, 0.6], "position": [0, 0, 0], "pivot": [0, 0, 0] } },
+		{ "name": "leg6", "collidable": false, "can-receive-damage": true, "damage-modifier": 1.0, "max-deviation-from-server": 0.0, "box": { "type": "multihitboxlib:aabb", "size": [0.6, 0.6], "position": [0, 0, 0], "pivot": [0, 0, 0] } },
+		{ "name": "leg7", "collidable": false, "can-receive-damage": true, "damage-modifier": 1.0, "max-deviation-from-server": 0.0, "box": { "type": "multihitboxlib:aabb", "size": [0.6, 0.6], "position": [0, 0, 0], "pivot": [0, 0, 0] } }
+	]
+}

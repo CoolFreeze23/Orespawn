@@ -14,6 +14,7 @@
 		"minecraft.MixinPacketBuffer"
 	],
 	"client": [
+		"accessor.AccessorClientLevel",
 		"accessor.AccessorEntityRenderer",
 		"minecraft.MixinMinecraft",
 		"minecraft.client.MixinClientboundCustomPayloadPacket"
