@@ -190,6 +190,22 @@ public final class ModernSpiderGait {
     static final double TILT_RATE_LIMIT = 0.02;
     static final double LIFT_RATE_LIMIT = 0.15;
     /**
+     * S5 (independent review): rest bearings follow a dead-banded,
+     * rate-limited heading instead of raw body yaw. Ridden steering couples
+     * body yaw 1:1 to the rider's look; at a ~17-block rest radius even a
+     * 6.6° look-flick displaces rest targets past the stationary trigger
+     * radius (2.0) and would dance all eight legs (and trample-grind the
+     * ring). The dead-band (8.6° ≈ 2.6 blocks of chord at the 17-18-block
+     * front rest radii — the settled stance may sit rotated that far from
+     * true heading) makes look-jitter move nothing; beyond it the heading
+     * chases at a rate whose worst-case rest displacement (17.25 × 0.0593
+     * rad ≈ 1.02 b/t) stays under STEP_SPEED, so genuine turns re-plant the
+     * legs chasably. Legs may settle up to the dead-band rotated from true
+     * heading — invisible on a radial 8-leg rig.
+     */
+    static final float REST_YAW_DEADBAND_DEG = 8.6f;
+    static final float REST_YAW_RATE_DEG = 3.4f;
+    /**
      * The vanilla render chain draws the model this far ABOVE the entity
      * anchor (LivingEntityRenderer's translate(0,−1.501,0) after the
      * (−1,−1,1) flip). The tilt must be conjugated about THAT pivot — a
@@ -282,6 +298,11 @@ public final class ModernSpiderGait {
 
     public double footZ(int leg) {
         return footZ[leg];
+    }
+
+    /** S5: the dead-banded rest heading, degrees (exposed for the gait tests). */
+    public float restYawDeg() {
+        return restYawDeg;
     }
 
     /** The speed-widened trigger radius (exposed pure for the gait tests). */
@@ -387,6 +408,16 @@ public final class ModernSpiderGait {
         v[1] = y;
     }
 
+    /** S5: the dead-banded rest heading (deg) — server decision state. */
+    private float restYawDeg;
+    /**
+     * S5: effective lift/sag bounds — converge toward the ridden (±0.15) or
+     * free (MAX_LIFT/MAX_SAG) targets at LIFT_RATE_LIMIT per tick, so the
+     * mount/dismount transitions never snap the body.
+     */
+    private double sagFloorEff = MAX_SAG;
+    private double liftCeilEff = MAX_LIFT;
+
     /**
      * S3b body dynamics tick (both sides, deterministic from foot state —
      * VISUAL ONLY: gait triggers, scans and the entity's physics all keep
@@ -440,12 +471,23 @@ public final class ModernSpiderGait {
         }
 
         double supportFraction = planted / (double) LEGS;
-        // Rider hover guard (review): the passenger renders from real entity
-        // state and cannot follow the visual sag — attenuate sag while
-        // ridden until S5's ride integration reconciles seat + dynamics.
-        double sagFloor = spider.getFirstPassenger() != null ? -0.15 : MAX_SAG;
+        // S5 seat resolution (the S3b handoff, resolved per the ride design):
+        // while ridden the visual body goes NEAR-RIGID — lift AND sag both
+        // clamped to ±0.15 — because the passenger renders from real entity
+        // state and any larger body offset visibly detaches the seat.
+        // The bounds TIGHTEN at LIFT_RATE_LIMIT rather than snapping
+        // (independent review: a rider mounting a climbing/sagged spider at
+        // |lift| up to 1.0 would otherwise teleport the body up to 0.85
+        // blocks in one tick, 5.7x the rate limit the dynamics promise).
+        boolean ridden = spider.getFirstPassenger() != null;
+        double sagTarget = ridden ? -0.15 : MAX_SAG;
+        double liftTarget = ridden ? 0.15 : MAX_LIFT;
+        sagFloorEff += Mth.clamp(sagTarget - sagFloorEff, -LIFT_RATE_LIMIT, LIFT_RATE_LIMIT);
+        liftCeilEff += Mth.clamp(liftTarget - liftCeilEff, -LIFT_RATE_LIMIT, LIFT_RATE_LIMIT);
+        double sagFloor = sagFloorEff;
+        double liftCeil = liftCeilEff;
         double targetLift = planted > 0
-                ? Mth.clamp(sumY / planted - spider.getY(), sagFloor, MAX_LIFT)
+                ? Mth.clamp(sumY / planted - spider.getY(), sagFloor, liftCeil)
                 : sagFloor;
         // PD acceleration the spring wants; the legs may only PUSH UP
         // (normal force), capped by available support — gravity always acts.
@@ -454,8 +496,8 @@ public final class ModernSpiderGait {
         bodyLiftVel += BODY_GRAVITY + legPush;
         bodyLiftVel = Mth.clamp(bodyLiftVel, -LIFT_RATE_LIMIT, LIFT_RATE_LIMIT);
         bodyLift += bodyLiftVel;
-        if (bodyLift > MAX_LIFT) {
-            bodyLift = MAX_LIFT;
+        if (bodyLift > liftCeil) {
+            bodyLift = liftCeil;
             bodyLiftVel = Math.min(bodyLiftVel, 0.0);
         }
         if (bodyLift < sagFloor) {
@@ -521,6 +563,9 @@ public final class ModernSpiderGait {
             swinging[leg] = false;
             lastLand[leg] = time;
         }
+        // S5: seed the rest-heading follower at the spawn heading so the
+        // first server tick doesn't chase from 0° and mass-retrigger.
+        restYawDeg = spider.getYRot();
         initialized = true;
     }
 
@@ -569,7 +614,22 @@ public final class ModernSpiderGait {
         double speed = Math.sqrt(vx * vx + vz * vz);
         double radius = triggerRadius(speed);
 
-        float yaw = spider.getYRot();
+        // S5: dead-banded, rate-limited rest heading (see REST_YAW_* docs).
+        // Server-only decision state for REST TARGETS — the anti-dance
+        // property lives entirely in the trigger math. Dangle/strand
+        // placement below stays on TRUE yaw: keyframes sync only the
+        // stranded FLAG (dangle points are recomputed locally each tick on
+        // both sides), so the server dangle must use the same yaw the
+        // client's dangle uses or the leg-part hitboxes would drift off
+        // the rendered stranded legs (verify pass caught the mismatch).
+        float yawTrue = spider.getYRot();
+        float yawDelta = Mth.degreesDifference(restYawDeg, yawTrue);
+        float yawAbs = Math.abs(yawDelta);
+        if (yawAbs > REST_YAW_DEADBAND_DEG) {
+            restYawDeg = Mth.wrapDegrees(restYawDeg
+                    + Math.signum(yawDelta) * Math.min(yawAbs - REST_YAW_DEADBAND_DEG, REST_YAW_RATE_DEG));
+        }
+        float yaw = restYawDeg;
         for (int leg = 0; leg < LEGS; ++leg) {
             if (swinging[leg]) {
                 continue;
@@ -580,8 +640,9 @@ public final class ModernSpiderGait {
             if (stranded[leg]) {
                 // Dangle follows the body; re-step UNCONDITIONALLY (no
                 // inhibitors, per the reference) onto any footing that appears
-                // — including contracted footing near the hip.
-                dangle(spider, leg, yaw);
+                // — including contracted footing near the hip. TRUE yaw: the
+                // client computes the same dangle from its own getYRot.
+                dangle(spider, leg, yawTrue);
                 double[] found = scanFootingContracted(spider, leg,
                         restX + vx * STRANDED_LOOKAHEAD_TICKS,
                         restZ + vz * STRANDED_LOOKAHEAD_TICKS, vx, vz, STRANDED_LOOKAHEAD_TICKS);
@@ -626,8 +687,9 @@ public final class ModernSpiderGait {
             }
             if (cand == null) {
                 // Neither the projected patch nor the contracted sweep down
-                // to ~3.5 blocks from the hip found footing: strand.
-                strand(spider, leg, yaw);
+                // to ~3.5 blocks from the hip found footing: strand (TRUE
+                // yaw — the strand dangle must match the client's).
+                strand(spider, leg, yawTrue);
                 continue;
             }
             if (!drift) {

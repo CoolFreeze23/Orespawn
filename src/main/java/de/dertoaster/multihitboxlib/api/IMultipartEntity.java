@@ -152,6 +152,38 @@ public interface IMultipartEntity<T extends Entity> {
 	public default boolean syncWithModel() {
 		return this.getHitboxProfile().isPresent() && this.getHitboxProfile().get().syncToModel();
 	}
+
+	/**
+	 * 2.0 S5 (vendored change, owner-RATIFIED ruling): whether the per-tick
+	 * {@code SPacketUpdateMultipart} stream serves this entity's trackers.
+	 * Profiles that never sync with the model AND grant zero client
+	 * deviation are locally mirrored by their clients — every streamed
+	 * position is overwritten on arrival (~4 KB/s per tracked robot of
+	 * dead traffic). Contract (corrected by the S5 independent review):
+	 * a gated entity sends exactly ONE full compile per gained tracker —
+	 * the pairing-time seed, implemented in MixinServerEntity as a
+	 * null-cache pass-through after addPairing — and NOTHING else; part
+	 * synched entity data and part dimension changes do not stream past
+	 * the seed. Returning false therefore asserts "my clients position
+	 * (and re-dimension) parts from a local mirror" — true for the modern
+	 * spider, whose client replays the gait and places parts itself.
+	 * TheQueen (sync-to-model) streams unchanged.
+	 */
+	public default boolean mhlibShouldStreamParts() {
+		final Optional<HitboxProfile> profile = this.getHitboxProfile();
+		if (profile == null || !profile.isPresent()) {
+			return true;
+		}
+		if (profile.get().syncToModel()) {
+			return true;
+		}
+		for (SubPartConfig partConfig : profile.get().partConfigs()) {
+			if (partConfig.maxDeviationFromServer() > 0.0D) {
+				return true;
+			}
+		}
+		return false;
+	}
 	
 	public default void createSubPartsFromProfile(final HitboxProfile profile, final T parentEntity, final BiConsumer<String, MHLibPartEntity<T>> storageFunction) {
 		// OPT-019: precompute each part's synched-bone flags from the very

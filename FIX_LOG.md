@@ -2973,3 +2973,74 @@ controlling rule, and the S3b rider-seat resolution (ridden dynamics
 clamped to +/-0.15). ESCAPE HATCH: implementation, reviewers and gates
 go to a fresh session with nothing to re-derive; the parked
 MixinServerEntity stream ruling is presented in the boundary report.
+
+## S5a — ridden path + ratified stream gate + seat resolution (2026-08-11)
+
+HONEST SCOPE SPLIT (escape hatch invoked): the directed S5 slice is
+larger than one session closes truthfully. S5a (this entry) delivers
+the spider-scoped closing work — the Q1 ridden path, the owner-ratified
+MixinServerEntity part-stream gate, the S3b seat resolution, and the
+player-facing docs. S5b (one further session) carries the LegRig
+refactor, the full ant integration (tables already recorded in the
+design doc's "S5 as-designed" block), and the overhaul's closing
+report. The overhaul ledger stays OPEN until S5b.
+
+Implemented:
+- RATIFIED stream gate: IMultipartEntity.mhlibShouldStreamParts()
+  (absent profile / sync-to-model / any deviation>0 -> stream; else
+  gate) + MixinServerEntity guard. The review found the ruling's
+  pairing-time-seed premise FALSE as first written (addPairing only
+  nulls the cache; an unconditional early return sent nothing, ever) —
+  fixed by gating only on a non-null cache, which makes the ratified
+  seed REAL: exactly one full compile+broadcast per gained tracker,
+  then silence. Gated profiles assert local client mirroring (the
+  modern spider's gait replay); Queen streams byte-identically.
+- Q1 ride: getControllingPassenger (modern owns the decision — player
+  controls, non-player NEVER; classic = pure super, bit-identity
+  CONFIRMED by decompiled-dispatch trace incl. the jockey branch),
+  B3 tickRidden (setRot rider yaw, pitch 0), getRiddenInput (full
+  forward, half strafe, quarter reverse, no jump), getRiddenSpeed
+  (MOVEMENT_SPEED 0.35). First suite run RED: vanilla's jockey branch
+  handed control to the SpiderDriver via super — modern arm now decides
+  outright. updateControlFlags override added (modern+ridden -> LOOK
+  off): the jockey branch's REAL vanilla consumer is goal suppression,
+  not travel interception (reviewer trace) — this preserves pre-S5
+  driver-ridden head stillness AND stops server look goals fighting a
+  steering rider; classic keeps both vanilla behaviors untouched.
+- Seat resolution (S3b handoff): ridden body dynamics clamped to
+  +/-0.15 lift AND sag; bounds CONVERGE at LIFT_RATE_LIMIT (review: a
+  hard flip snapped the body up to 0.85 blocks at mount).
+- Rest-heading follower (review MAJOR): rider-yaw 1:1 coupling meant a
+  ~6.6-degree look-flick displaced 17-block rest targets past the 2.0
+  stationary trigger — perpetual leg dance + trample grinding. Rest
+  targets now follow a dead-banded (8.6 deg), rate-limited (3.4 deg/t,
+  worst-case rest displacement 1.02 b/t < STEP_SPEED 1.1) heading;
+  dangle/strand stay on TRUE yaw (keyframes sync only the stranded
+  flag — verify pass caught the server/client dangle mismatch).
+- Registrar 1.2: conservative compat fence (comment honest: traffic
+  pattern changed on MHLib's channel, no wire format changed).
+- Docs: CHANGELOG 2.0 section (classic = one-config-line parity
+  preservation), KNOWN_ISSUES 2.0 notes (leg surfaces, swing-latency
+  in player terms, lava rule, steered step-height 1.0 + air-accel
+  vanilla buffs kept deliberately, ant deferral), config comment.
+- Tests +5 (=175): ride control truth table (+ driver shove), ridden
+  seat clamp (discriminating +Z shelf, both scan windows fully on it
+  after the verify pass caught an axis-swapped first cut + dismount
+  control phase proving the terrain lifts), mount/dismount mid-swing
+  (windowed census), yaw-jitter-no-dance (zero triggers in-band, 90
+  deg turn re-plants), stream-gate predicate both arms. All three
+  SpiderDriver test riders setNoAi (their combat drive lives in
+  customServerAiStep — removeFreeWill does NOT strip it); S4 trample
+  rider swapped player->driver (a controlling mock player freezes
+  server-side vehicle travel — the exact Q1 dispatch working).
+
+Three-reviewer pass (ride / classic-parity / gate+tests): no blockers;
+3 MAJOR + minors, all fixed above. Verify pass on the fixes (3
+verifiers): fixes confirmed, 1 test-geometry fragility + 3 doc
+residuals, all fixed; one verifier's "deterministic fail" claim on the
+seat test was empirically refuted by green runs but its geometric
+substance (axis swap) was real and drove the robust shelf.
+
+GATE: suite 175/175 MODERN and 175/175 CLASSIC (pass lines captured
+literally), build+assetAudit 0 err / 0 adv / 3 ack. Nothing pushes;
+the owner's in-game sitting decides the release. S5b remains.

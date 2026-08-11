@@ -294,8 +294,11 @@ public class OreSpawnConfig {
         // config line back to full 1.7.10 parity. Server-authoritative: the
         // server's value at entity construction wins and is synced.
         SPIDER_MOVEMENT = BUILDER.comment(
-                "Robot spider leg movement. MODERN = procedural IK gait (server-authoritative, 2.0). " +
-                        "CLASSIC = the exact 1.7.10 gait, preserved bit-identically. " +
+                "Robot spider leg movement. MODERN = procedural IK gait (server-authoritative, 2.0): " +
+                        "legs plant and climb terrain, the body tilts and sags, legs are real hittable " +
+                        "hitboxes, and a mounted player can STEER. " +
+                        "CLASSIC = the exact 1.7.10 behavior, preserved bit-identically (visual-only legs, " +
+                        "body-only hitbox, unsteerable when ridden). " +
                         "Takes effect for newly spawned/loaded spiders; the server's setting wins in multiplayer."
         ).defineEnum("spiderMovement", SpiderMovement.MODERN);
         MINERS_DREAM_EXPENSIVE = BUILDER.define("minersDreamExpensive", false);

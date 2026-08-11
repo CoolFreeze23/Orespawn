@@ -25,6 +25,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.monster.CaveSpider;
@@ -34,6 +35,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 import net.minecraft.resources.ResourceLocation;
 import danger.orespawn.OreSpawnMod;
 import danger.orespawn.entity.client.RenderSpiderRobotInfo;
@@ -398,6 +400,107 @@ public class SpiderRobot extends Mob implements ICustomHitboxProfileSupplier {
     @Override
     public boolean shouldRiderSit() {
         return false;
+    }
+
+    // ==================== 2.0 S5 — the Q1 ridden path (modern-only) ====================
+
+    /**
+     * Q1 ruling: modern-mode spiders are STEERABLE by a mounted player;
+     * classic keeps the faithful 1.0 gap (a mounted player cannot steer —
+     * this returns the vanilla null). The SpiderDriver is NEVER controlling
+     * in either mode (it is not a Player); its classic velocity-set shoving
+     * coexists untouched with this path.
+     */
+    @javax.annotation.Nullable
+    @Override
+    public LivingEntity getControllingPassenger() {
+        if (this.isModernMovement()) {
+            // Modern owns the decision outright: a mounted player steers,
+            // and any non-player rider (the SpiderDriver) is NEVER
+            // controlling. Vanilla Mob's default hands control to a MOB
+            // first-passenger (the jockey branch) — which, reviewed against
+            // decompiled 1.21.1 dispatch, does NOT intercept the driver's
+            // velocity-set shoving (only a Player controller diverts travel
+            // into travelRidden); its real consumers are updateControlFlags
+            // (goal suppression — reasserted for any rider by our override
+            // below) and the rider nav/moveControl aliasing, which must
+            // never alias a driver onto the modern gait.
+            if (!this.getPassengers().isEmpty()
+                    && this.getPassengers().get(0) instanceof Player player) {
+                return player;
+            }
+            return null;
+        }
+        // Classic: the exact pre-S5 vanilla dispatch, untouched (players
+        // were never controlling there — the faithful no-steer gap).
+        return super.getControllingPassenger();
+    }
+
+    /**
+     * S5 (independent review): while carrying ANY rider, a MODERN spider's
+     * look goals are suppressed. This preserves the pre-S5 driver-ridden
+     * behavior — vanilla's jockey branch (a controlling MOB) cleared the
+     * LOOK flag through this very method, and the null-for-driver arm above
+     * would silently re-enable it — and it keeps the server's head-look
+     * from fighting a steering rider's yaw for observers (a Player
+     * controller never clears goal flags in vanilla, and vanilla steerables
+     * carry no look goals; this spider does). Classic takes pure super:
+     * the jockey suppression while driver-ridden AND the look-around while
+     * player-ridden both stay bit-identical to pre-S5. Two scope notes:
+     * vanilla calls this every 5 server ticks, so suppression lags a mount
+     * by up to 5 ticks (the identical cadence the jockey branch always
+     * had), and only LOOK is re-cleared — the pre-S5-preservation claim
+     * holds because this spider registers LOOK-flag goals exclusively; a
+     * future MOVE/JUMP goal would need re-clearing here too.
+     */
+    @Override
+    protected void updateControlFlags() {
+        super.updateControlFlags();
+        if (this.isModernMovement() && this.isVehicle()) {
+            this.goalSelector.setControlFlag(Goal.Flag.LOOK, false);
+        }
+    }
+
+    /**
+     * B3-family ground-walker steering (the ant's tickRidden is the hover
+     * member of this family; the spider is the ground member): body yaw
+     * follows the rider directly, pitch stays flat. Travel itself flows
+     * through the vanilla ridden pipeline via {@link #getRiddenInput} /
+     * {@link #getRiddenSpeed} — collisions, step height and the modern gait
+     * all see ordinary body movement. The steering-specific guard lives in
+     * the gait, not here: rest bearings follow a DEAD-BANDED, rate-limited
+     * heading (ModernSpiderGait REST_YAW_*) so a rider's look-jitter cannot
+     * dance the legs. Two honest notes from the S5 review: actual ground
+     * displacement at speed-attribute 0.35 is ~0.65-0.7 blocks/tick under
+     * vanilla physics (~2x the gait's FULL_SPEED constant — speedFrac just
+     * saturates at 1.0 and STEP_SPEED still outruns it), and vanilla grants
+     * a player-CONTROLLED living entity two ride buffs we keep deliberately
+     * (horse-family consistency, stair feel): maxUpStep becomes
+     * max(attr, 1.0) while steered (0.6 otherwise) and airborne
+     * acceleration rises to speed*0.1. Both recorded in KNOWN_ISSUES.
+     */
+    @Override
+    protected void tickRidden(Player rider, Vec3 travelVector) {
+        super.tickRidden(rider, travelVector);
+        this.setRot(rider.getYRot(), 0.0f);
+        this.yRotO = this.yBodyRot = this.yHeadRot = this.getYRot();
+    }
+
+    /** WASD → travel vector: full forward, half strafe, quarter reverse, no jump. */
+    @Override
+    protected Vec3 getRiddenInput(Player rider, Vec3 travelVector) {
+        float sideways = rider.xxa * 0.5f;
+        float forward = rider.zza;
+        if (forward <= 0.0f) {
+            forward *= 0.25f;
+        }
+        return new Vec3(sideways, 0.0, forward);
+    }
+
+    /** Ridden speed = the rig's own movement-speed attribute (0.35). */
+    @Override
+    protected float getRiddenSpeed(Player rider) {
+        return (float) this.getAttributeValue(Attributes.MOVEMENT_SPEED);
     }
 
     // The previous empty overrides dropped the super call, so Health, effects,

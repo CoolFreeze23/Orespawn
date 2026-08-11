@@ -83,6 +83,21 @@ public abstract class MixinServerEntity {
 	)
 	private void mixinSendDirtyEntityData(CallbackInfo co) {
 		if (this.entity.isMultipartEntity() && this.entity instanceof IMultipartEntity<?> ime) {
+			// 2.0 S5 (owner-ratified): locally-mirrored profiles skip the
+			// STEADY-STATE stream only. The ratified pairing-time seed is
+			// implemented by the cache check: addPairing nulls the cache, so
+			// a null cache here means a tracker was just gained (or the
+			// entity is brand new) and exactly ONE full compile+broadcast
+			// below runs as the seed before the gate holds again.
+			// (Independent review S5: an unconditional early return had NO
+			// seed at all — addPairing itself sends nothing.) Past the seed,
+			// gated entities send no part packets: opting out via
+			// mhlibShouldStreamParts asserts the clients position parts from
+			// a LOCAL mirror (the modern spider's gait replay), and part
+			// synched-data or dimension changes do NOT stream.
+			if (this.mhlib$lastSentPartData != null && !ime.mhlibShouldStreamParts()) {
+				return;
+			}
 			final List<SPacketUpdateMultipart.PartDataHolder> lastSent = this.mhlib$lastSentPartData;
 			if (lastSent != null && this.mhlib$partDataUnchanged(lastSent)) {
 				if (this.mhlib$unchangedDataTicks >= this.mhlib$lingerTicks(ime)) {

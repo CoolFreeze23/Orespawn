@@ -1,3 +1,21 @@
+# 2.0 "OreSpawn Modernized" — in development
+
+The parity port replicated 1.7.10 exactly; 2.0 is where the deliberate
+improvements live, and the robot spider leads. With the default
+`spiderMovement = "MODERN"` config, the Giant Robot Spider walks on
+procedurally animated legs that genuinely plant on, climb and descend
+terrain; its body rides the legs — tilting up slopes, sagging when
+footing is lost; the legs are real hitboxes you can shoot and strike
+(dealing exactly body damage — no new weak points); the crosshair
+health bar works when aiming at a leg (and now also on The King's
+giant parts); and a mounted player can finally STEER the spider.
+
+**Classic is one config line away**: `spiderMovement = "CLASSIC"`
+restores the 1.7.10 spider bit-identically — the same client-side leg
+animation, body-only hitbox and famously unsteerable saddle the
+parity port shipped. Preservation stays the default promise; MODERN is
+simply the default setting.
+
 # OreSpawn for NeoForge 1.21.1 — 1.0.0-beta.3
 
 A same-day hotfix for three problems caught by the first real-world play
