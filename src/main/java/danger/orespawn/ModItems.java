@@ -880,17 +880,21 @@ public class ModItems {
             () -> new ItemOreSpawnArmor(ModArmorMaterials.QUEEN, ArmorItem.Type.BOOTS,
                     new Item.Properties().durability(ArmorItem.Type.BOOTS.getDurability(1500)), "queen"));
 
-    // Zoo cages (legacy, kept for backwards compat)
+    // Zoo cages — ITEM-023 (E3): cage_size values are the ORIGINAL ctor args
+    // (orig OreSpawnMain.java:1931-1935: zoo2=3, zoo4=5, zoo6=9, zoo8=13,
+    // zoo10=17 — the item NAME numbers are not the size parameter). Enclosure
+    // half-extent = size/2 + 1 (orig ZooCage.java:31), so full widths are
+    // 5 / 7 / 11 / 15 / 19.
     public static final DeferredItem<Item> ZOO_CAGE_2 = ITEMS.register("zoo_cage_2",
-            () -> new ZooCageItem(new Item.Properties(), 2));
+            () -> new ZooCageItem(new Item.Properties(), 3));
     public static final DeferredItem<Item> ZOO_CAGE_4 = ITEMS.register("zoo_cage_4",
-            () -> new ZooCageItem(new Item.Properties(), 4));
+            () -> new ZooCageItem(new Item.Properties(), 5));
     public static final DeferredItem<Item> ZOO_CAGE_6 = ITEMS.register("zoo_cage_6",
-            () -> new ZooCageItem(new Item.Properties(), 6));
+            () -> new ZooCageItem(new Item.Properties(), 9));
     public static final DeferredItem<Item> ZOO_CAGE_8 = ITEMS.register("zoo_cage_8",
-            () -> new ZooCageItem(new Item.Properties(), 8));
+            () -> new ZooCageItem(new Item.Properties(), 13));
     public static final DeferredItem<Item> ZOO_CAGE_10 = ITEMS.register("zoo_cage_10",
-            () -> new ZooCageItem(new Item.Properties(), 10));
+            () -> new ZooCageItem(new Item.Properties(), 17));
     public static final DeferredItem<Item> CAGE_EMPTY = ITEMS.register("cage_empty",
             () -> new EmptyCageItem(new Item.Properties()));
 

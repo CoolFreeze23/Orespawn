@@ -1,0 +1,6 @@
+{
+  "type": "orespawn:wild_crops",
+  "config": {
+    "crop": "corn"
+  }
+}

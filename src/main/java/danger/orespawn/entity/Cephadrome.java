@@ -79,6 +79,8 @@ public class Cephadrome extends PathfinderMob
     private final float moveSpeed = 0.25f;
     private int hurtTimer = 0;
     private int wasfed = 0;
+    /** orig Cephadrome.java:66 wing_sound — ridden wing-beat cadence counter. */
+    private int wingSoundTicks = 0;
     private int shouldattack = 0;
     private int hitByPlayer = 0;
     private int badmood = 0;
@@ -131,6 +133,18 @@ public class Cephadrome extends PathfinderMob
         super.tick();
 
         if (this.level().isClientSide) return;
+
+        // ENT-A-083: orig Cephadrome.java:652-659 — while ridden (activity 1)
+        // a wing beat plays every 22 ticks at 0.5 volume, server side.
+        if (this.getActivity() == 1) {
+            if (++this.wingSoundTicks > 22) {
+                this.level().playSound(null, this,
+                        SoundEvent.createVariableRangeEvent(
+                                ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "mothrawings")),
+                        this.getSoundSource(), 0.5f, 1.0f);
+                this.wingSoundTicks = 0;
+            }
+        }
 
         // orig Cephadrome.java:661-663 — with PlayNicely off, every Cephadrome
         // counts as fed, so any player can hop on without offering meat first.

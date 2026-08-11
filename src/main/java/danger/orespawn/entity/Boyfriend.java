@@ -83,8 +83,7 @@ public class Boyfriend extends TamableAnimal implements RangedAttackMob {
 
     @Override
     protected void registerGoals() {
-        // orig Boyfriend.java:127-148. MoveIndoors(11) and the Jealousy goals
-        // have no ported equivalent yet (Phase D/E).
+        // orig Boyfriend.java:127-148 — complete as of ENT-A-054 (E3).
         this.goalSelector.addGoal(1, new FollowOwnerGoal(this, 1.4, 12.0f, 1.5f));
         this.goalSelector.addGoal(2, new TemptGoal(this, 1.25,
                 Ingredient.of(Items.COOKED_BEEF), false)); // orig :128 — cooked beef
@@ -97,10 +96,18 @@ public class Boyfriend extends TamableAnimal implements RangedAttackMob {
         this.goalSelector.addGoal(8, new WaterAvoidingRandomStrollGoal(this, 0.75));
         this.goalSelector.addGoal(9, new RandomLookAroundGoal(this));
         this.goalSelector.addGoal(10, new OpenDoorGoal(this, true)); // orig :135
+        // orig :136 — EntityAIMoveIndoors(11); documented 1.21.1 behavioral
+        // match (roofed-shelter at night/rain), see MoveIndoorsGoal.
+        this.goalSelector.addGoal(11, new danger.orespawn.entity.ai.MoveIndoorsGoal(this));
 
         this.targetSelector.addGoal(1, new OwnerHurtByTargetGoal(this));
         this.targetSelector.addGoal(2, new OwnerHurtTargetGoal(this));
         this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, Monster.class, true));
+        // orig :146-147 — Jealousy(Boyfriend.class, 6.0f, 5, true) @4 and
+        // (3.0f, 15, true) @5; a tamed rival is never targeted; PlayNicely
+        // gates dynamically inside the goal (ENT-A-054).
+        this.targetSelector.addGoal(4, new danger.orespawn.entity.ai.JealousyTargetGoal<>(this, Boyfriend.class, 6.0, 5));
+        this.targetSelector.addGoal(5, new danger.orespawn.entity.ai.JealousyTargetGoal<>(this, Boyfriend.class, 3.0, 15));
     }
 
     public static AttributeSupplier.Builder createAttributes() {

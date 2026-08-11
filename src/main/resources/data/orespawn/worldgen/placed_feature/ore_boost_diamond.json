@@ -1,0 +1,18 @@
+{
+  "feature": "orespawn:ore_boost_diamond",
+  "placement": [
+    {
+      "type": "orespawn:vein_count",
+      "count": 4,
+      "min_y": 0,
+      "max_y": 30,
+      "less_ore_passes": 0
+    },
+    {
+      "type": "minecraft:in_square"
+    },
+    {
+      "type": "minecraft:biome"
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "feature": "orespawn:ore_block_ruby",
+  "placement": [
+    {
+      "type": "orespawn:vein_count",
+      "count": 1,
+      "min_y": 0,
+      "max_y": 15,
+      "passes": 3,
+      "less_ore_passes": 0
+    },
+    {
+      "type": "minecraft:in_square"
+    },
+    {
+      "type": "minecraft:biome"
+    }
+  ]
+}

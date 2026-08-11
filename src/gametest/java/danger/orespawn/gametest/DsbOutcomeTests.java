@@ -779,17 +779,20 @@ public class DsbOutcomeTests {
         requireSpawnerAt(helper, level, neg.offset(-1, 1, 1), ModEntities.GHOST.get(),
                 "igloo (negative origin): ghost spawner keeps its int offset");
 
-        // -- DSB-only: no worldgen structure/structure-set registration ------
-        // Triage fix (2026-08-10): scope to the orespawn namespace — the bare
-        // path filter tripped on VANILLA minecraft:igloo.
+        // -- Worldgen structure/structure-set registration (WGEN-071 FIXED
+        // 2026-08-11, E3) — the guard used to assert ABSENCE while the finding
+        // was open; the igloo now ships a natural-generation pipeline
+        // (orespawn:igloo structure + structure_set, snowy_plains tag,
+        // SNOW_SURFACE_MINUS2 mode per igloo_spec §7.2-7.3), so presence is
+        // the requirement. Namespace-scoped (vanilla minecraft:igloo exists).
         helper.assertTrue(level.registryAccess().registryOrThrow(Registries.STRUCTURE)
-                        .keySet().stream().noneMatch(k -> k.getNamespace().equals("orespawn")
-                                && k.getPath().contains("igloo")),
-                "igloo must have NO orespawn structure registration (WGEN-071 open, Phase E)");
+                        .keySet().stream().anyMatch(k -> k.getNamespace().equals("orespawn")
+                                && k.getPath().equals("igloo")),
+                "orespawn:igloo structure registration must exist (WGEN-071 fixed, E3)");
         helper.assertTrue(level.registryAccess().registryOrThrow(Registries.STRUCTURE_SET)
-                        .keySet().stream().noneMatch(k -> k.getNamespace().equals("orespawn")
-                                && k.getPath().contains("igloo")),
-                "igloo must have NO orespawn structure-set registration (WGEN-071 open, Phase E)");
+                        .keySet().stream().anyMatch(k -> k.getNamespace().equals("orespawn")
+                                && k.getPath().equals("igloo")),
+                "orespawn:igloo structure-set registration must exist (WGEN-071 fixed, E3)");
 
         // -- 16 independent 50% kit pools (statistical) ----------------------
         // 30 igloos → 480 Bernoulli(0.5) pool rolls; successful-pool total is

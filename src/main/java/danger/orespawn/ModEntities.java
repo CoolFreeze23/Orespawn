@@ -632,8 +632,9 @@ public class ModEntities {
     // snowy-biome spawns (orig OreSpawnMain.java:4774-4775); was MISC, which
     // made natural spawning impossible.
     public static final DeferredHolder<EntityType<?>, EntityType<Cephadrome>> CEPHADROME =
+            // ENT-A-083: orig Cephadrome.java:73 — setSize(2.5f, 2.25f)
             ENTITY_TYPES.register("cephadrome", () -> EntityType.Builder.of(Cephadrome::new, MobCategory.AMBIENT)
-                    .sized(1.5f, 1.5f).clientTrackingRange(10).build("cephadrome"));
+                    .sized(2.5f, 2.25f).clientTrackingRange(10).build("cephadrome"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<RedCow>> RED_COW =
             ENTITY_TYPES.register("red_cow", () -> EntityType.Builder.of(RedCow::new, MobCategory.MISC)

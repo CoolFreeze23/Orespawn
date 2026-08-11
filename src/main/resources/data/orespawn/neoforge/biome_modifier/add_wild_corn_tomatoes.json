@@ -1,0 +1,9 @@
+{
+  "type": "neoforge:add_features",
+  "biomes": "minecraft:plains",
+  "features": [
+    "orespawn:wild_corn",
+    "orespawn:wild_tomatoes"
+  ],
+  "step": "vegetal_decoration"
+}

@@ -383,7 +383,9 @@
       "minecraft:flower_default",
       "minecraft:patch_grass_plain",
       "orespawn:anthill",
-      "orespawn:magic_apple_tree"
+      "orespawn:magic_apple_tree",
+      "orespawn:wild_corn",
+      "orespawn:wild_tomatoes"
     ],
     [
       "minecraft:freeze_top_layer"
