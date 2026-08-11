@@ -17,7 +17,9 @@ import net.minecraft.util.Mth;
  * mirror against a live classic spider's tables.</p>
  *
  * <p><b>Leg indexing</b> (unchanged from classic): legs form mirrored pairs
- * — even = left of body, odd = right — front to rear: (0,1) front,
+ * — even legs sit on the −X side at yaw 0, odd on +X (avoid left/right
+ * labels: at Minecraft yaw 0 the entity faces +Z, making +X its LEFT) —
+ * front to rear: (0,1) front,
  * (2,3) mid-front, (4,5) mid-rear, (6,7) rear. {@code neutralYawRad} is the
  * leg's resting direction as a body-relative bearing <i>offset added inside
  * the classic hip formula</i>; all uses below reproduce that formula

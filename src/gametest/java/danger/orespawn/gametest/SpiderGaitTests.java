@@ -792,4 +792,301 @@ public class SpiderGaitTests {
             }
         });
     }
+
+    // =====================================================================
+    // S3b body dynamics — tilt-compensation harness (FIRST, per directive),
+    // flat settle/sag, ramp tilt sign
+    // =====================================================================
+
+    /**
+     * S3b's mandated first proof (the S2 angle-conversion of this slice),
+     * hardened per independent review. Three layers, weakest to strongest:
+     * (1) T∘T⁻¹ identity on probe vectors; (2) a JOML replay of the
+     * renderer's EXACT op sequence (translate(lift+1.501), Ry(a), Rx(p),
+     * Rz(r), Ry(−a), translate(−1.501)) asserted equal to the double-math
+     * {@code bodyTransform} — this catches transcription drift
+     * (order/handedness/sign/pivot), the blind spot in which the review
+     * found the anchor-pivot BLOCKER; (3) the full compensation round trip:
+     * inverse-transform the target (with production's reach clamp
+     * mirrored), solve, FK, forward-transform, and assert the foot back on
+     * its anchor — exact for unclamped cases, bounded graceful shortfall
+     * for clamped ones. Every grid cell is accounted for; nothing is
+     * silently skipped. What remains render-untestable (per-frame vanilla
+     * yaw interpolation) is the classic-shared quirk family documented in
+     * solveLegAngles.
+     */
+    @GameTest(template = "empty")
+    public void s3b_tilt_compensation_harness(GameTestHelper helper) {
+        double renderOffset = ModernSpiderGait.VANILLA_RENDER_Y_OFFSET;
+
+        // (1) Transform-pair identity on representative vectors.
+        double[][] probes = {{17.2, -0.4, 3.1}, {-9.5, 5.9, -12.0}, {0.1, -6.0, 16.4}};
+        for (double[] p : probes) {
+            double[] v = {p[0], p[1], p[2]};
+            ModernSpiderGait.bodyTransform(37.5, 0.3, -0.22, 0.7, v);
+            ModernSpiderGait.inverseBodyTransform(37.5, 0.3, -0.22, 0.7, v);
+            assertClose(helper, "T^-1(T(v)) identity", v[0], v[1], v[2], p[0], p[1], p[2], 1.0E-9);
+        }
+
+        // (2) Renderer-transcription replay: the PoseStack op sequence as a
+        // JOML matrix must act on model-chain points (solver vector + the
+        // vanilla +1.501 offset) exactly as bodyTransform acts on solver
+        // vectors.
+        double[][] replayCases = {{0.0, 0.35, 0.0, 0.0}, {37.5, -0.3, 0.2, -0.6}, {-90.0, 0.25, -0.35, 1.0}};
+        for (double[] c : replayCases) {
+            float a = (float) -Math.toRadians(Mth.wrapDegrees(c[0]));
+            org.joml.Matrix4f m = new org.joml.Matrix4f();
+            m.translate(0.0f, (float) (c[3] + renderOffset), 0.0f);
+            m.rotateY(a);
+            m.rotateX((float) c[1]);
+            m.rotateZ((float) c[2]);
+            m.rotateY(-a);
+            m.translate(0.0f, (float) -renderOffset, 0.0f);
+            for (double[] p : probes) {
+                org.joml.Vector4f v = new org.joml.Vector4f(
+                        (float) p[0], (float) (p[1] + renderOffset), (float) p[2], 1.0f);
+                m.transform(v);
+                double[] expect = {p[0], p[1], p[2]};
+                ModernSpiderGait.bodyTransform(c[0], c[1], c[2], c[3], expect);
+                assertClose(helper, "renderer-replay vs bodyTransform (yaw " + c[0] + ")",
+                        v.x(), v.y(), v.z(),
+                        expect[0], expect[1] + renderOffset, expect[2], 1.0E-3);
+            }
+        }
+
+        // (3) Full compensation round trip.
+        double bodyX = 100.5;
+        double bodyY = 64.0;
+        double bodyZ = -200.25;
+        float[] yaws = {0.0f, 37.5f, 217.0f, -90.0f};
+        double[] lifts = {-0.8, 0.0, 0.6, 1.0};
+        double[] pitches = {-0.3, 0.0, 0.25};
+        double[] rolls = {-0.2, 0.0, 0.3};
+        double[][] joints = {new double[2], new double[2], new double[2], new double[2]};
+        double[] angles = new double[5];
+        double[] rel = new double[3];
+        double reachCap = SpiderRigProfile.MAX_REACH * 0.98; // production REACH_MARGIN
+        int exact = 0;
+        int clamped = 0;
+        int total = 0;
+
+        for (float yaw : yaws) {
+            for (double lift : lifts) {
+                for (double pitch : pitches) {
+                    for (double roll : rolls) {
+                        for (int leg = 0; leg < SpiderRigProfile.LEG_COUNT; ++leg) {
+                            double hx = SpiderRigProfile.hipX(leg, bodyX, yaw);
+                            double hy = SpiderRigProfile.hipY(leg, bodyY);
+                            double hz = SpiderRigProfile.hipZ(leg, bodyZ, yaw);
+                            double bearing = SpiderRigProfile.legBearing(leg, yaw);
+                            double outX = -Math.sin(bearing);
+                            double outZ = Math.cos(bearing);
+                            double rest = SpiderRigProfile.restReach(leg);
+                            double[][] targets = {
+                                    {hx + outX * rest, bodyY, hz + outZ * rest}, // true stance radius
+                                    {hx + outX * rest * 0.75, bodyY, hz + outZ * rest * 0.75},
+                                    {hx + outX * 5.0, bodyY - 1.5, hz + outZ * 5.0},
+                                    {hx + outX * (rest * 0.6), bodyY + 1.0, hz + outZ * (rest * 0.6)},
+                            };
+                            for (double[] t : targets) {
+                                ++total;
+                                rel[0] = t[0] - bodyX;
+                                rel[1] = t[1] - bodyY;
+                                rel[2] = t[2] - bodyZ;
+                                ModernSpiderGait.inverseBodyTransform(yaw, pitch, roll, lift, rel);
+                                // Production's reach clamp, mirrored exactly.
+                                double rdx = (bodyX + rel[0]) - hx;
+                                double rdy = (bodyY + rel[1]) - hy;
+                                double rdz = (bodyZ + rel[2]) - hz;
+                                double dist = Math.sqrt(rdx * rdx + rdy * rdy + rdz * rdz);
+                                double shortfall = 0.0;
+                                if (dist > reachCap) {
+                                    double scale = reachCap / dist;
+                                    rel[0] = (hx - bodyX) + rdx * scale;
+                                    rel[1] = (hy - bodyY) + rdy * scale;
+                                    rel[2] = (hz - bodyZ) + rdz * scale;
+                                    shortfall = dist - reachCap;
+                                    ++clamped;
+                                } else {
+                                    ++exact;
+                                }
+                                ModernSpiderGait.solveLegAngles(bodyX, bodyY, bodyZ, yaw,
+                                        leg, bodyX + rel[0], bodyY + rel[1], bodyZ + rel[2],
+                                        joints, angles);
+                                double[][] fk = modelForwardKinematics(leg, bodyX, bodyY, bodyZ, yaw, angles);
+                                rel[0] = fk[3][0] - bodyX;
+                                rel[1] = fk[3][1] - bodyY;
+                                rel[2] = fk[3][2] - bodyZ;
+                                ModernSpiderGait.bodyTransform(yaw, pitch, roll, lift, rel);
+                                double miss = Math.sqrt(
+                                        (bodyX + rel[0] - t[0]) * (bodyX + rel[0] - t[0])
+                                                + (bodyY + rel[1] - t[1]) * (bodyY + rel[1] - t[1])
+                                                + (bodyZ + rel[2] - t[2]) * (bodyZ + rel[2] - t[2]));
+                                helper.assertTrue(miss <= shortfall + 0.012,
+                                        "tilted foot miss " + miss + " > shortfall " + shortfall
+                                                + " + tol (leg " + leg + " yaw " + yaw + " lift " + lift
+                                                + " pitch " + pitch + " roll " + roll + ")");
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        helper.assertTrue(exact + clamped == total,
+                "tilt harness accounting broke: " + exact + " + " + clamped + " != " + total);
+        helper.assertTrue(exact >= total * 7 / 10,
+                "tilt harness clamped too much of the grid: exact " + exact + " of " + total);
+        helper.succeed();
+    }
+
+    /**
+     * S3b invariant: on flat ground the body settles at its preferred
+     * height (lift ≈ 0) without oscillation; a sudden 8-block teleport up
+     * (feet left below, support collapsing) sags the visual body toward
+     * MAX_SAG, and after the vanilla fall + re-plant it settles again.
+     */
+    @GameTest(template = "empty_large", timeoutTicks = 400, batch = "spiderGaitIsolation")
+    public void s3b_body_settles_flat_and_sags(GameTestHelper helper) {
+        final SpiderRobot spider = spawnModern(helper, new BlockPos(24, 2, 24));
+        final ModernSpiderGait gait;
+        try {
+            gait = spider.getModernGait();
+            helper.assertTrue(gait != null, "modern spider must carry the gait controller");
+        } catch (RuntimeException e) {
+            spider.discard();
+            throw e;
+        }
+        final int[] tick = {0};
+        final double[] lastLift = {0.0};
+        final double[] maxDelta = {0.0};
+        final double[] minLiftDuringSag = {Double.MAX_VALUE};
+
+        helper.onEachTick(() -> {
+            try {
+                int t = ++tick[0];
+                double lift = gait.bodyLift();
+                if (t > 30 && t <= 40) {
+                    // Settle-stability window: small lift, no oscillation.
+                    maxDelta[0] = Math.max(maxDelta[0], Math.abs(lift - lastLift[0]));
+                }
+                lastLift[0] = lift;
+                if (t == 40) {
+                    helper.assertTrue(Math.abs(lift) < 0.2,
+                            "body lift " + lift + " not settled near preferred height on flat ground");
+                    helper.assertTrue(maxDelta[0] < 0.05,
+                            "body lift oscillating on flat ground (max per-tick delta " + maxDelta[0] + ")");
+                    spider.setPos(spider.getX(), spider.getY() + 8.0, spider.getZ());
+                    return;
+                }
+                if (t > 40 && t <= 70) {
+                    minLiftDuringSag[0] = Math.min(minLiftDuringSag[0], lift);
+                }
+                if (t == 120) {
+                    helper.assertTrue(minLiftDuringSag[0] < -0.2,
+                            "body never sagged after losing support (min lift " + minLiftDuringSag[0] + ")");
+                    for (int leg = 0; leg < SpiderRigProfile.LEG_COUNT; ++leg) {
+                        helper.assertTrue(gait.isGrounded(leg),
+                                "leg " + leg + " not re-planted after the drop");
+                    }
+                    helper.assertTrue(Math.abs(gait.bodyLift()) < 0.25,
+                            "body lift " + gait.bodyLift() + " did not re-settle after landing");
+                    spider.discard();
+                    helper.succeed();
+                }
+            } catch (RuntimeException e) {
+                spider.discard();
+                throw e;
+            }
+        });
+    }
+
+    /**
+     * S3b invariant: climbing the slab ramp nose-first, the body pitches
+     * NOSE-UP (negative in the bodyTransform convention: +pitch tips the
+     * face down) while roll stays near zero (the ramp is laterally
+     * symmetric), with the no-slide contract intact throughout. Yaw is
+     * pinned to −90° (facing +X, the drive direction) so the slope loads
+     * the pitch axis, not roll.
+     */
+    @GameTest(template = "empty_large", timeoutTicks = 400, batch = "spiderGaitIsolation")
+    public void s3b_ramp_pitch_sign(GameTestHelper helper) {
+        for (int k = 1; k <= 10; ++k) { // same geometry as s3_slab_stairs_climb
+            int full = k / 2;
+            for (int xo = 0; xo <= 1; ++xo) {
+                int x = 14 + 2 * k + xo;
+                for (int z = 4; z <= 44; ++z) {
+                    for (int y = 0; y < full; ++y) {
+                        helper.setBlock(new BlockPos(x, y, z), net.minecraft.world.level.block.Blocks.STONE);
+                    }
+                    if (k % 2 == 1) {
+                        helper.setBlock(new BlockPos(x, full, z),
+                                net.minecraft.world.level.block.Blocks.SMOOTH_STONE_SLAB);
+                    }
+                }
+            }
+        }
+        for (int x = 36; x <= 46; ++x) {
+            for (int z = 4; z <= 44; ++z) {
+                for (int y = 0; y <= 4; ++y) {
+                    helper.setBlock(new BlockPos(x, y, z), net.minecraft.world.level.block.Blocks.STONE);
+                }
+            }
+        }
+        final SpiderRobot spider = spawnModern(helper, new BlockPos(8, 1, 24));
+        final ModernSpiderGait gait;
+        try {
+            gait = spider.getModernGait();
+            helper.assertTrue(gait != null, "modern spider must carry the gait controller");
+        } catch (RuntimeException e) {
+            spider.discard();
+            throw e;
+        }
+        final double[][] prevFoot = new double[SpiderRigProfile.LEG_COUNT][3];
+        final boolean[] prevPlanted = new boolean[SpiderRigProfile.LEG_COUNT];
+        final boolean[] prevSwinging = new boolean[SpiderRigProfile.LEG_COUNT];
+        final int[] steps = new int[SpiderRigProfile.LEG_COUNT];
+        final int[] tick = {0};
+        final double[] minPitch = {Double.MAX_VALUE};
+        final double[] maxAbsRoll = {0.0};
+
+        helper.onEachTick(() -> {
+            try {
+                int t = ++tick[0];
+                spider.setYRot(-90.0f); // face +X so the slope is longitudinal
+                if (t < 30) {
+                    return;
+                }
+                if (t == 30) {
+                    for (int leg = 0; leg < SpiderRigProfile.LEG_COUNT; ++leg) {
+                        prevFoot[leg][0] = gait.footX(leg);
+                        prevFoot[leg][1] = gait.footY(leg);
+                        prevFoot[leg][2] = gait.footZ(leg);
+                        prevPlanted[leg] = gait.isGrounded(leg);
+                        prevSwinging[leg] = false;
+                    }
+                    return;
+                }
+                if (t <= 100) {
+                    spider.setDeltaMovement(0.30, spider.getDeltaMovement().y, 0.0);
+                }
+                trackTick(helper, gait, prevFoot, prevPlanted, prevSwinging, steps);
+                if (t > 55 && t <= 100) {
+                    // Mid-climb window: the ramp is under the whole rig.
+                    minPitch[0] = Math.min(minPitch[0], gait.bodyPitch());
+                    maxAbsRoll[0] = Math.max(maxAbsRoll[0], Math.abs(gait.bodyRoll()));
+                }
+                if (t == 110) {
+                    helper.assertTrue(minPitch[0] < -0.05,
+                            "body never pitched nose-up on the ramp (min pitch " + minPitch[0] + ")");
+                    helper.assertTrue(maxAbsRoll[0] < 0.2,
+                            "body rolled " + maxAbsRoll[0] + " on a laterally symmetric ramp");
+                    spider.discard();
+                    helper.succeed();
+                }
+            } catch (RuntimeException e) {
+                spider.discard();
+                throw e;
+            }
+        });
+    }
 }

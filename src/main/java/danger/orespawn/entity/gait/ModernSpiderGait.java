@@ -162,6 +162,89 @@ public final class ModernSpiderGait {
     private final long[] verticalRetryAt = new long[LEGS];
     private boolean initialized = false;
 
+    // ---- S3b body dynamics (VISUAL layer — never touches entity physics) ----
+    /** Reference gravity pulling the visual body down, blocks/tick². */
+    static final double BODY_GRAVITY = -0.08;
+    /** PD spring toward the preferred height. */
+    static final double LIFT_STIFFNESS = 0.15;
+    static final double LIFT_DAMPING = 0.5;
+    /**
+     * Max upward leg force at full support, blocks/tick² (reference 0.32),
+     * scaled by the grounded-leg fraction — stranded legs sag the body.
+     */
+    static final double LIFT_FORCE_CAP = 0.32;
+    static final double MAX_LIFT = 1.0;
+    static final double MAX_SAG = -1.0;
+    /** Low-pass factor for pitch/roll convergence (reference 0.3). */
+    static final double TILT_SMOOTH = 0.3;
+    /** Tilt clamp, radians (~20°). */
+    static final double MAX_TILT = 0.35;
+    /**
+     * Per-tick rate limits on the visual dynamics (review: the renderer uses
+     * raw tick values so planted-foot compensation is exact every frame; the
+     * body pose therefore steps once per tick, and these keep each step
+     * sub-visual — ≤0.02 rad tilt ≈ 0.06 blocks at body scale).
+     */
+    static final double TILT_RATE_LIMIT = 0.02;
+    static final double LIFT_RATE_LIMIT = 0.15;
+    /**
+     * The vanilla render chain draws the model this far ABOVE the entity
+     * anchor (LivingEntityRenderer's translate(0,−1.501,0) after the
+     * (−1,−1,1) flip). The tilt must be conjugated about THAT pivot — a
+     * rotation about the bare anchor displaces every planted foot by
+     * (R−I)·(0,1.501,0), up to ~0.52 blocks at the tilt clamp
+     * (independent-review BLOCKER).
+     */
+    public static final float VANILLA_RENDER_Y_OFFSET = 1.501f;
+    /**
+     * Longitudinal/lateral foot-centroid spans for the tilt targets, derived
+     * from the rig's actual rest stance (review: a shared magic 14 over-read
+     * slopes by 1.4–1.5× and saturated the clamp early). Computed once from
+     * SpiderRigProfile at yaw 0: distance between the front(0-3)/rear(4-7)
+     * rest-foot centroids along the facing axis, and even/odd across it.
+     */
+    static final double PITCH_SPAN;
+    static final double ROLL_SPAN;
+
+    static {
+        double frontAxis = 0.0;
+        double rearAxis = 0.0;
+        double evenAxis = 0.0;
+        double oddAxis = 0.0;
+        for (int leg = 0; leg < SpiderRigProfile.LEG_COUNT; ++leg) {
+            // Rest foot at yaw 0, facing axis = +Z, lateral = +X.
+            double z = SpiderRigProfile.restFootZ(leg, 0.0, 0.0f);
+            double x = SpiderRigProfile.restFootX(leg, 0.0, 0.0f);
+            if (leg < 4) {
+                frontAxis += z / 4.0;
+            } else {
+                rearAxis += z / 4.0;
+            }
+            if ((leg & 1) == 0) {
+                evenAxis += x / 4.0;
+            } else {
+                oddAxis += x / 4.0;
+            }
+        }
+        PITCH_SPAN = Math.abs(frontAxis - rearAxis);
+        ROLL_SPAN = Math.abs(oddAxis - evenAxis);
+    }
+
+    /**
+     * Visual body offset state, one set per side (server's copy will feed
+     * the S4 parts; the client's copy drives the renderer). The renderer
+     * consumes the RAW tick values — no per-frame interpolation — so the
+     * foot compensation baked into this tick's leg angles cancels the
+     * render transform exactly on every frame (review: lerping prev→cur
+     * against tick-solved angles produced a per-tick sawtooth foot slide of
+     * up to ~1.7 blocks on far legs); the rate limits above keep the
+     * resulting once-per-tick body stepping sub-visual instead.
+     */
+    private double bodyLift;
+    private double bodyLiftVel;
+    private double bodyPitch;
+    private double bodyRoll;
+
     // Scratch buffers for the per-leg solve (single-threaded per side).
     private final double[][] jointScratch = {new double[2], new double[2], new double[2], new double[2]};
     private final double[] angleScratch = new double[5];
@@ -195,6 +278,209 @@ public final class ModernSpiderGait {
     public static double triggerRadius(double bodySpeed) {
         double speedFrac = Math.min(1.0, bodySpeed / FULL_SPEED);
         return Mth.lerp(speedFrac, TRIGGER_RADIUS_MIN, TRIGGER_RADIUS_MAX);
+    }
+
+    // ---- S3b body-dynamics accessors ----
+    public double bodyLift() {
+        return bodyLift;
+    }
+
+    public double bodyPitch() {
+        return bodyPitch;
+    }
+
+    public double bodyRoll() {
+        return bodyRoll;
+    }
+
+    /**
+     * Body lift for rendering — deliberately NOT partial-tick interpolated:
+     * the leg angles were compensated against exactly these tick values, so
+     * only these values cancel the render transform and lock planted feet
+     * (see the state javadoc; the rate limits keep the stepping smooth).
+     */
+    public float renderLift() {
+        return (float) bodyLift;
+    }
+
+    /** Body pitch for rendering, radians (+ tips the face down); un-interpolated by design. */
+    public float renderPitch() {
+        return (float) bodyPitch;
+    }
+
+    /** Body roll for rendering, radians (+ raises the odd-leg, +X-at-yaw-0 side); un-interpolated by design. */
+    public float renderRoll() {
+        return (float) bodyRoll;
+    }
+
+    // ==================== S3b BODY TRANSFORM (canonical pair) ====================
+
+    /**
+     * The visual body transform, defined ONCE — the renderer transcribes
+     * this exact formula with PoseStack ops and the client solve inverts it,
+     * so planted feet stay planted while the body tilts around them.
+     *
+     * <p>{@code T(v) = Ry(a)·Rx(pitch)·Rz(roll)·Ry(−a)·v + (0, lift, 0)}
+     * with {@code v} relative to the entity anchor and
+     * {@code a = −toRadians(wrapDegrees(yaw))}: the conjugation aligns the
+     * pitch axis with the body's lateral axis and the roll axis with its
+     * facing axis at any yaw (verified: yaw 0 → pitch about world X̂; yaw 90°
+     * → pitch about world Ẑ). All rotations are standard right-handed about
+     * the positive axes, matching JOML's {@code Axis.*.rotation}. Sign
+     * conventions: {@code +pitch} tips the FACE toward the ground,
+     * {@code +roll} raises the odd-leg (right at yaw 0… body-relative) side
+     * — the dynamics targets are built against these signs.</p>
+     */
+    public static void bodyTransform(double yawDeg, double pitch, double roll, double lift, double[] v) {
+        double a = -Math.toRadians(Mth.wrapDegrees(yawDeg));
+        rotateY(v, -a);
+        rotateZ(v, roll);
+        rotateX(v, pitch);
+        rotateY(v, a);
+        v[1] += lift;
+    }
+
+    /** Exact inverse of {@link #bodyTransform}. */
+    public static void inverseBodyTransform(double yawDeg, double pitch, double roll, double lift, double[] v) {
+        double a = -Math.toRadians(Mth.wrapDegrees(yawDeg));
+        v[1] -= lift;
+        rotateY(v, -a);
+        rotateX(v, -pitch);
+        rotateZ(v, -roll);
+        rotateY(v, a);
+    }
+
+    private static void rotateX(double[] v, double angle) {
+        double cos = Math.cos(angle);
+        double sin = Math.sin(angle);
+        double y = v[1] * cos - v[2] * sin;
+        double z = v[1] * sin + v[2] * cos;
+        v[1] = y;
+        v[2] = z;
+    }
+
+    private static void rotateY(double[] v, double angle) {
+        double cos = Math.cos(angle);
+        double sin = Math.sin(angle);
+        double x = v[0] * cos + v[2] * sin;
+        double z = -v[0] * sin + v[2] * cos;
+        v[0] = x;
+        v[2] = z;
+    }
+
+    private static void rotateZ(double[] v, double angle) {
+        double cos = Math.cos(angle);
+        double sin = Math.sin(angle);
+        double x = v[0] * cos - v[1] * sin;
+        double y = v[0] * sin + v[1] * cos;
+        v[0] = x;
+        v[1] = y;
+    }
+
+    /**
+     * S3b body dynamics tick (both sides, deterministic from foot state —
+     * VISUAL ONLY: gait triggers, scans and the entity's physics all keep
+     * using the real body position). Height: a PD spring toward the average
+     * planted-foot height with gravity always pulling and the legs pushing
+     * up only, capped by {@link #LIFT_FORCE_CAP} × grounded fraction — a
+     * spider with stranded legs (mid-fall, over a void) sags toward
+     * {@link #MAX_SAG} and recovers as feet re-plant, per the reference's
+     * emergent-sag behavior. Pitch/roll: low-passed toward the tilt of the
+     * planted front/rear and left/right foot-group centroids; a side with
+     * no planted feet holds its previous target.
+     */
+    private void updateBodyDynamics(SpiderRobot spider) {
+        int planted = 0;
+        double sumY = 0.0;
+        double frontSum = 0.0;
+        int frontCount = 0;
+        double rearSum = 0.0;
+        int rearCount = 0;
+        double evenSum = 0.0;
+        int evenCount = 0;
+        double oddSum = 0.0;
+        int oddCount = 0;
+        for (int leg = 0; leg < LEGS; ++leg) {
+            if (stranded[leg]) {
+                continue;
+            }
+            // Tilt centroids stay CONTINUOUS across step transitions
+            // (review: dropping a swinging far leg from a 4-member average
+            // hopped the roll target ~5° every stride — a cadence-locked
+            // sway): a swinging leg contributes its swing DESTINATION.
+            double y = swinging[leg] ? toY[leg] : footY[leg];
+            if (!swinging[leg] && grounded[leg]) {
+                ++planted;
+                sumY += footY[leg];
+            }
+            if (leg < 4) {
+                frontSum += y;
+                ++frontCount;
+            } else {
+                rearSum += y;
+                ++rearCount;
+            }
+            if ((leg & 1) == 0) {
+                evenSum += y;
+                ++evenCount;
+            } else {
+                oddSum += y;
+                ++oddCount;
+            }
+        }
+
+        double supportFraction = planted / (double) LEGS;
+        // Rider hover guard (review): the passenger renders from real entity
+        // state and cannot follow the visual sag — attenuate sag while
+        // ridden until S5's ride integration reconciles seat + dynamics.
+        double sagFloor = spider.getFirstPassenger() != null ? -0.15 : MAX_SAG;
+        double targetLift = planted > 0
+                ? Mth.clamp(sumY / planted - spider.getY(), sagFloor, MAX_LIFT)
+                : sagFloor;
+        // PD acceleration the spring wants; the legs may only PUSH UP
+        // (normal force), capped by available support — gravity always acts.
+        double wanted = (targetLift - bodyLift) * LIFT_STIFFNESS - bodyLiftVel * LIFT_DAMPING;
+        double legPush = Mth.clamp(wanted - BODY_GRAVITY, 0.0, LIFT_FORCE_CAP * supportFraction);
+        bodyLiftVel += BODY_GRAVITY + legPush;
+        bodyLiftVel = Mth.clamp(bodyLiftVel, -LIFT_RATE_LIMIT, LIFT_RATE_LIMIT);
+        bodyLift += bodyLiftVel;
+        if (bodyLift > MAX_LIFT) {
+            bodyLift = MAX_LIFT;
+            bodyLiftVel = Math.min(bodyLiftVel, 0.0);
+        }
+        if (bodyLift < sagFloor) {
+            bodyLift = sagFloor;
+            bodyLiftVel = Math.max(bodyLiftVel, 0.0);
+        }
+
+        // Tilt targets from corner-group centroids. Signs per bodyTransform:
+        // +pitch = face down, so climbing terrain (front feet higher) yields
+        // a NEGATIVE target (nose up); +roll raises the odd (+X at yaw 0)
+        // side. A group with no usable legs (all stranded) DECAYS toward
+        // level rather than freezing mid-tilt (review: a knocked-off spider
+        // fell with a stale 0.35 rad tilt locked in). Rate-limited per tick
+        // so the un-interpolated render stepping stays sub-visual.
+        double pitchStep;
+        if (frontCount > 0 && rearCount > 0) {
+            double pitchTarget = Mth.clamp(
+                    Math.atan2(rearSum / rearCount - frontSum / frontCount, PITCH_SPAN),
+                    -MAX_TILT, MAX_TILT);
+            pitchStep = (pitchTarget - bodyPitch) * TILT_SMOOTH;
+        } else {
+            pitchStep = -bodyPitch * TILT_SMOOTH;
+        }
+        bodyPitch += Mth.clamp(pitchStep, -TILT_RATE_LIMIT, TILT_RATE_LIMIT);
+
+        double rollStep;
+        if (evenCount > 0 && oddCount > 0) {
+            double rollTarget = Mth.clamp(
+                    Math.atan2(oddSum / oddCount - evenSum / evenCount, ROLL_SPAN),
+                    -MAX_TILT, MAX_TILT);
+            rollStep = (rollTarget - bodyRoll) * TILT_SMOOTH;
+        } else {
+            rollStep = -bodyRoll * TILT_SMOOTH;
+        }
+        bodyRoll += Mth.clamp(rollStep, -TILT_RATE_LIMIT, TILT_RATE_LIMIT);
     }
 
     /**
@@ -348,6 +634,10 @@ public final class ModernSpiderGait {
             }
             beginStep(spider, leg, cand[0], cand[1], cand[2], time);
         }
+
+        // S3b: visual body dynamics from the post-land foot state (the
+        // server's copy will feed the S4 parts).
+        updateBodyDynamics(spider);
 
         // Keyframes phase-shifted by entity id so multiple spiders don't
         // burst-send on the same global tick.
@@ -688,6 +978,11 @@ public final class ModernSpiderGait {
         float yaw = spider.getYRot();
         RenderSpiderRobotInfo r = spider.getRenderSpiderRobotInfo();
         ++r.gpcounter; // classic frame counter — keeps the jaw-snap animation alive
+        // S3b: dynamics from last tick's replayed feet (in-loop lands below
+        // reach the dynamics next tick — a deliberate 1-tick lag, matching
+        // the server's post-land ordering closely enough to converge).
+        updateBodyDynamics(spider);
+        double[] compensated = new double[3];
         for (int leg = 0; leg < LEGS; ++leg) {
             double fx;
             double fy;
@@ -717,8 +1012,37 @@ public final class ModernSpiderGait {
                 fy = footY[leg];
                 fz = footZ[leg];
             }
+            // S3b foot compensation: the renderer applies bodyTransform
+            // (pivot-conjugated about the vanilla +1.501 model offset) to
+            // the whole model, so the solve targets the INVERSE-transformed
+            // foot — the tilted render then lands the foot back on its true
+            // world anchor and planted feet stay motionless under tilt.
+            compensated[0] = fx - spider.getX();
+            compensated[1] = fy - spider.getY();
+            compensated[2] = fz - spider.getZ();
+            inverseBodyTransform(yaw, bodyPitch, bodyRoll, bodyLift, compensated);
+            // Reach guard (review): near-max grips under high tilt can push
+            // the compensated target beyond leg reach; pull it back along
+            // the hip ray so the shortfall stays graceful (the same straight-
+            // stretch family as untilted overreach) instead of the foot
+            // creeping off its anchor unpredictably.
+            double chx = SpiderRigProfile.hipX(leg, spider.getX(), yaw) - spider.getX();
+            double chy = SpiderRigProfile.hipY(leg, spider.getY()) - spider.getY();
+            double chz = SpiderRigProfile.hipZ(leg, spider.getZ(), yaw) - spider.getZ();
+            double rx = compensated[0] - chx;
+            double ry = compensated[1] - chy;
+            double rz = compensated[2] - chz;
+            double reachDist = Math.sqrt(rx * rx + ry * ry + rz * rz);
+            double reachCap = SpiderRigProfile.MAX_REACH * REACH_MARGIN;
+            if (reachDist > reachCap) {
+                double scale = reachCap / reachDist;
+                compensated[0] = chx + rx * scale;
+                compensated[1] = chy + ry * scale;
+                compensated[2] = chz + rz * scale;
+            }
             solveLegAngles(spider.getX(), spider.getY(), spider.getZ(), yaw,
-                    leg, fx, fy, fz, jointScratch, angleScratch);
+                    leg, spider.getX() + compensated[0], spider.getY() + compensated[1],
+                    spider.getZ() + compensated[2], jointScratch, angleScratch);
             r.ydisplayangle[leg] = (float) angleScratch[0];
             r.uddisplayangle[leg] = (float) angleScratch[1];
             r.p1xangle[leg] = angleScratch[2];

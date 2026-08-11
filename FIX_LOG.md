@@ -2682,3 +2682,90 @@ MODERN and 158/158 under CLASSIC, pass lines verified. Classic path
 untouched this slice (payloads/gait/tests only). S3b remains: body
 height float, pitch/roll from corner legs, renderer tilt with foot
 compensation, plus its own reviewer pass and both-mode gates.
+
+## S3b COMPLETE — body dynamics: height float, pitch/roll, renderer tilt (2026-08-11)
+
+S3 is now fully landed (S3a terrain + this). Harness-FIRST honored per
+the directive: the tilt-compensation harness existed and passed before
+the dynamics were trusted — and the reviewer pass then proved the first
+harness had a structural blind spot (below). Landed:
+- Height float: PD spring toward the planted-feet average (stiffness
+  0.15 / damping 0.5, spectral radius sqrt(0.5)/tick — reviewer-derived,
+  no limit cycles possible: both cap-saturated regimes are constant-
+  force), gravity -0.08 always acting, leg force up-only capped by
+  0.32 x grounded fraction — sag emerges when support collapses; exact
+  zero-lift equilibrium on flat ground. Rate-limited (0.15/tick).
+- Pitch/roll: low-passed (0.3) toward planted corner-group centroid
+  tilt, spans DERIVED from the rig's real rest stance (review: magic 14
+  vs real 19.55/21.14 over-read slopes 1.4-1.5x), clamp 0.35 rad, rate
+  limit 0.02 rad/tick; swinging legs contribute their swing DESTINATION
+  so centroids stay continuous (review: dropping a far swing leg hopped
+  the roll target ~5 deg every stride); empty groups decay toward level
+  (review: falling spiders kept stale tilt frozen); sag attenuated to
+  -0.15 while ridden (review: passengers render from real entity state
+  and would hover over a sagged body — S5 reconciles the seat).
+- Renderer (modern-only branch, classic render byte-identical):
+  T = translate(lift) conjugated about the VANILLA +1.501 MODEL PIVOT
+  with Ry(a)Rx(pitch)Rz(roll)Ry(-a), a = -yawRad, raw tick values.
+- Client solve compensates with the exact inverse + production's reach
+  clamp pulled per-leg along the hip ray (review: near-max grips under
+  high tilt pushed compensated targets past leg reach -> unpredictable
+  foot creep; now the shortfall is the same graceful straight-stretch
+  family as untilted overreach).
+
+**Independent review (3 reviewers), all dispositioned:**
+- BLOCKER (drift): the tilt rotated about the ENTITY ANCHOR while
+  vanilla draws the model +1.501 above it — planted feet slid by
+  (R-I)*(0,1.501,0), up to 0.52 blocks at the clamp, at exactly the
+  held-tilt poses ramps produce. FIXED: pivot conjugation in the
+  renderer (the existing math pair then becomes exactly true; feet land
+  on their classic-quirk anchors under any tilt).
+- MAJOR (drift): per-frame lerp of dynamics values against tick-solved
+  compensation angles = up to ~1.7-block sawtooth foot slide on far
+  legs. FIXED: renderer consumes raw tick values (compensation cancels
+  exactly every frame) + per-tick rate limits keep body stepping
+  sub-visual.
+- MAJOR (harness): the first harness closed its loop through
+  production's own bodyTransform — structurally blind to transcription
+  and render-chain divergence (the BLOCKER lived exactly there), and
+  its "skip" path was dead code (parity reviewer: deterministic 3456/0).
+  FIXED: JOML replay of the renderer's exact op sequence asserted
+  against the double math; a true-stance-radius (16-block) target class
+  added; production's reach clamp mirrored; every cell accounted for
+  (exact + clamped == total, exact >= 70%); design-doc claim reworded
+  to what is actually proven.
+- MAJOR (dynamics): reach overflow of compensated targets — FIXED via
+  the per-leg clamp above + harness coverage.
+- MINORs FIXED: rig-derived spans; centroid continuity; rider sag
+  floor; group-empty decay + javadoc; left/right handedness labels
+  corrected to world axes in both files (odd legs = +X at yaw 0 =
+  body-LEFT; the S2 'right' label was inverted).
+- Verified clean (no change): PoseStack transcription order/handedness/
+  conjugation sign (term-for-term vs JOML, both yaws hand-checked);
+  discrete PD stability (roots 0.675 +/- 0.211i, 2.65% overshoot, cap
+  cannot inject energy; the 'lift dips every swing' attack REFUTED —
+  holding needs only f >= 0.25); the NO-FEEDBACK property (body state
+  has zero server-side readers; scans/triggers/physics never see it —
+  every pre-S3b test provably unaffected); test determinism incl. the
+  teleport-sag trajectory, barrier-ceiling non-interference, and the
+  free-will yaw concern (SpiderRobot has no movement goals, look goals
+  are head-only).
+- Accepted, documented: entity-yaw vs interpolated-body-yaw remains the
+  classic-shared quirk (commutator term ~0.1-0.2 blocks in plausible
+  turns); 1-tick client dynamics lag self-heals (~2-tick half-life);
+  S4 design note added — server-fed parts must tolerate ~latency+1
+  ticks of dynamics skew or the keyframe grows the four scalars.
+
+Tests: s3b_tilt_compensation_harness (identity + JOML transcription
+replay + 4608-cell clamp-mirrored round trip), s3b_body_settles_flat_
+and_sags (settle without oscillation, teleport-sag, re-settle),
+s3b_ramp_pitch_sign (nose-up on the ramp, near-zero roll, no-slide
+throughout). Suite 158 -> 161.
+
+GATE: build+assetAudit exit 0 (0 err/0 adv/3 ack); suite 161/161 under
+MODERN and 161/161 under CLASSIC, pass lines verified. S3 exit criteria
+met: the modern spider's body rides its legs — sagging, tilting,
+settling — with planted feet motionless in world space (tick-domain
+proven; render-chain transcription-checked); classic bit-identical;
+suite green both modes. Next: S4 (multi-part hitboxes) per the slice
+plan, on the owner's go.

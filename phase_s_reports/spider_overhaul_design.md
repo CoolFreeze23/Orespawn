@@ -251,6 +251,38 @@ isolated-batch config idiom from BOSS-017 — pinned tests set
 - **S3 — terrain adaptation + body dynamics.** Ground-scan grid with
   height bias, stranded legs, body height float + pitch/roll from leg
   geometry, stairs/slopes, cliff-recovery test 4, server-side trample.
+
+  *S3 as-built amendments:* the scan window is classic's own probe
+  column (11 up / 14 down, findNewFooting:717) — shorter windows are a
+  parity break, not a tuning freedom; reach CONTRACTION (0.7/0.45/0.25
+  of rest reach, floored 3.5) precedes stranding, mirroring classic's
+  16→3.5 sweep. **Body dynamics are a VISUAL layer** (the reference's
+  physics body adapted to a vanilla Mob): deterministic shared state
+  (lift PD spring with gravity and support-capped leg force; pitch/roll
+  low-passed from planted corner-group centroids) drives a conjugated
+  render transform `T = translate(lift) ∘ Ry(a)Rx(pitch)Rz(roll)Ry(−a)`
+  (a = −yawRad) applied MODERN-ONLY in the renderer — CONJUGATED ABOUT
+  the vanilla +1.501 model pivot (rotating about the bare anchor slid
+  planted feet by (R−I)·c, the S3b review BLOCKER) — while the client
+  solve targets inverse-transformed feet (with the production reach
+  clamp) so planted feet stay motionless in world space under tilt.
+  Proven in the tick domain by the hardened harness: math-pair identity,
+  a JOML replay of the renderer's exact op sequence against the double
+  math (the transcription check the first harness lacked), and the full
+  clamp-mirrored compensation round trip with every grid cell accounted
+  for. The renderer consumes RAW tick dynamics values (no partial-tick
+  lerp — lerping against tick-solved angles sawtoothed feet up to ~1.7
+  blocks) with per-tick rate limits keeping body stepping sub-visual;
+  the residual render-domain caveats (vanilla body-yaw interpolation)
+  are the classic-shared quirk family. Entity physics, hitboxes, gait
+  triggers and scans all keep using the real body position — classic
+  renders byte-identically. Sag emerges from the support-scaled force
+  cap exactly as the reference intends; sag is attenuated while ridden
+  until S5 reconciles the seat. **S4 note (review):** the server and
+  client integrate independent dynamics copies (self-healing, gap
+  halves ~every 2 ticks); server-fed parts must either tolerate
+  ~latency+1 ticks of body-dynamics skew or the keyframe payload gains
+  the four dynamics scalars.
 - **S4 — multi-part hitboxes.** Profiles, the server-side feed,
   damage routing, HUD unwrap, hitbox tests 5–8.
 - **S5 — ant variant + ride integration.** Ant rig parameters (6-leg,
