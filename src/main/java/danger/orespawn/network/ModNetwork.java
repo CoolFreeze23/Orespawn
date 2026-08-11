@@ -18,8 +18,10 @@ public class ModNetwork {
         // change (the gated stream rides MHLib's channel and both mixed
         // pairings would interoperate); it exists to refuse mixed dev
         // builds cleanly rather than because the rule's wire-format
-        // trigger fired.
-        PayloadRegistrar registrar = event.registrar(OreSpawnMod.MOD_ID).versioned("1.2");
+        // trigger fired. 1.3 = S5b rig generalization: the keyframe wire
+        // now legally carries leg count 6 (ant) — a REAL format-envelope
+        // change; old clients would DecoderException on an ant keyframe.
+        PayloadRegistrar registrar = event.registrar(OreSpawnMod.MOD_ID).versioned("1.3");
         registrar.playToServer(
                 RiderInputPayload.TYPE,
                 RiderInputPayload.STREAM_CODEC,

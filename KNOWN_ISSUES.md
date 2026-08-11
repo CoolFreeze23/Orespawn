@@ -148,5 +148,9 @@ with one picture.
   steering is stronger. This is the same treatment vanilla gives ridden
   horses and is kept deliberately — it is what makes stairs feel right
   from the saddle.
-- Robot **ants** receive the same modern treatment in the next
-  development build (six-legged, with the hover-ride kept intact).
+- Robot **ants** get the same modern treatment (six real leg hitboxes,
+  terrain-planting feet, same damage rules). The ant's hover-ride is
+  untouched — and hovering means its legs can lose the ground: they
+  fold into a dangle under the body while airborne and re-plant on
+  landing. That dangling-flight look is the intended design, not a
+  glitch.

@@ -47,7 +47,7 @@ import de.dertoaster.multihitboxlib.init.MHLibDatapackLoaders;
 
 import java.util.Optional;
 
-public class SpiderRobot extends Mob implements ICustomHitboxProfileSupplier {
+public class SpiderRobot extends Mob implements ICustomHitboxProfileSupplier, IModernLeggedRobot {
     // OPT-011: cached SoundEvents — identical createVariableRangeEvent ids,
     // allocated once per class instead of on every sound query.
     private static final SoundEvent SND_ROBOTSPIDER = SoundEvent.createVariableRangeEvent(
@@ -121,7 +121,7 @@ public class SpiderRobot extends Mob implements ICustomHitboxProfileSupplier {
                     : OreSpawnConfig.SPIDER_MOVEMENT.get() == OreSpawnConfig.SpiderMovement.MODERN;
             this.entityData.set(DATA_MODERN_GAIT, modern);
             if (modern) {
-                this.modernGait = new ModernSpiderGait();
+                this.modernGait = new ModernSpiderGait(danger.orespawn.entity.gait.SpiderRigProfile.RIG);
             }
         }
         // 2.0 S4: the profile supplier below may already have been consulted
@@ -220,7 +220,7 @@ public class SpiderRobot extends Mob implements ICustomHitboxProfileSupplier {
         if (this.modernGait == null && this.level().isClientSide() && this.entityData.get(DATA_MODERN_GAIT)) {
             // Client replay controller only — the client PART build lives in
             // onSyncedDataUpdated (id-restore + pick registration; see there).
-            this.modernGait = new ModernSpiderGait();
+            this.modernGait = new ModernSpiderGait(danger.orespawn.entity.gait.SpiderRigProfile.RIG);
         }
         return this.modernGait;
     }

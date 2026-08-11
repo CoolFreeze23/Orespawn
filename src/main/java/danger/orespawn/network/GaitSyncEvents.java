@@ -1,7 +1,7 @@
 package danger.orespawn.network;
 
 import danger.orespawn.OreSpawnMod;
-import danger.orespawn.entity.SpiderRobot;
+import danger.orespawn.entity.IModernLeggedRobot;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -24,10 +24,12 @@ public final class GaitSyncEvents {
 
     @SubscribeEvent
     public static void onStartTracking(PlayerEvent.StartTracking event) {
-        if (event.getTarget() instanceof SpiderRobot spider
-                && spider.getModernGait() != null
+        // S5b: rig-generalized — spider and ant alike seed new trackers.
+        if (event.getTarget() instanceof IModernLeggedRobot robot
+                && robot.getModernGait() != null
+                && event.getTarget() instanceof net.minecraft.world.entity.Mob mob
                 && event.getEntity() instanceof ServerPlayer player) {
-            PacketDistributor.sendToPlayer(player, spider.getModernGait().buildKeyframe(spider));
+            PacketDistributor.sendToPlayer(player, robot.getModernGait().buildKeyframe(mob));
         }
     }
 }
