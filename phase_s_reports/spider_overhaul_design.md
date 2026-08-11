@@ -282,13 +282,93 @@ isolated-batch config idiom from BOSS-017 — pinned tests set
   client integrate independent dynamics copies (self-healing, gap
   halves ~every 2 ticks); server-fed parts must either tolerate
   ~latency+1 ticks of body-dynamics skew or the keyframe payload gains
-  the four dynamics scalars.
+  the four dynamics scalars. *Aim-offset composability (reference video
+  notes, V3):* the tilt pipeline does NOT preclude the reference's
+  ~30° aim leeway — pitch/roll are single scalars consumed symmetrically
+  by the renderer and the foot compensation from one source, so a later
+  bounded combat/look offset simply adds into the final values before
+  both consumers pick them up; no S3b change needed. The COM/support-
+  polygon gravity from the same notes is deliberately NOT retrofitted
+  (design ruling: scalar lift is committed and stability-proven) — banked
+  as MOD-026 with the gallop it was co-designed with.
 - **S4 — multi-part hitboxes.** Profiles, the server-side feed,
   damage routing, HUD unwrap, hitbox tests 5–8.
 - **S5 — ant variant + ride integration.** Ant rig parameters (6-leg,
   49 px, hover interplay), SpiderRobot modern-only B3 `tickRidden`
   (Q1: YES), full suite sweep, KNOWN_ISSUES/CHANGELOG/config docs
   (changelog frames classic as one-config-line parity preservation).
+
+  *S4 as-designed (research complete 2026-08-11; implementation next
+  session — recorded here so nothing is re-derived):*
+  - **Gate mechanism:** SpiderRobot implements MHLib's
+    `ICustomHitboxProfileSupplier` (its first implementor; the API
+    explicitly anticipates dynamic suppliers and never caches them).
+    Return `Optional.empty()` = zero parts (classic); return `null` =
+    fall through to the OPT-001-cached datapack lookup (modern).
+    **Ctor timing:** `mhlibOnConstructor` runs at LivingEntity ctor
+    TAIL — before SpiderRobot's snapshot field assigns — so the
+    supplier decides via: server = `movementModeDecided ? modernGait !=
+    null : config == MODERN` (a ctor-end flag; ctor-time config IS the
+    snapshot-to-be); client = the synced DATA_MODERN_GAIT flag, with a
+    LAZY part build (`mhlibOnConstructor()` re-invoked once the flag
+    arrives — partArray null-check guards double-build). Client parts
+    are needed for crosshair/reach picking and are positioned locally
+    from the replayed solve (no new packets).
+  - **Feed:** serverTick (and clientTick for the local parts) computes
+    per-leg world joints via the S3b-proven pipeline — inverse-
+    transform the foot (reach-clamped), planar solve, forward-transform
+    the joints — and `MHLibPartEntity.setPos` centers each part on the
+    lower-segment (knee2→foot) midpoint. MHLib's own `alignSubParts`
+    static alignment runs earlier in the same tick (aiStep TAIL, inside
+    super.tick()) and is harmlessly overwritten by the feed — verified
+    ordering, no MHLib alignment change needed.
+  - **Vendored MHLib change (one, Queen-neutral):** `updateSynching`'s
+    server master-election churns a SPacketSetMaster broadcast every
+    ~10 ticks per tracked entity whose profile never streams bones —
+    gate the server branch on `syncWithModel()` (Queen: true,
+    unaffected; spiders: false, machinery idles). Change-only law.
+  - **Profile** (`data/orespawn/multihitboxlib/hitbox_profiles/
+    spider_robot.json`, Queen format): sync-with-model false,
+    trust-client false, synched-bones [], main-hitbox {collidable
+    false, canReceiveDamage TRUE (body stays pickable + damageable —
+    D3 law), size [2.0, 1.5] EXACTLY (classic dims — MHLib hooks
+    EntityEvent.Size from the profile, so the size field must equal
+    classic or dims tests break)}; parts leg0..leg7: collidable false,
+    can-receive-damage true, damage-modifier 1.0,
+    max-deviation-from-server 0, box multihitboxlib:aabb 0.6×0.6.
+  - **Skew decision (S3b handoff, resolved):** parts TOLERATE the
+    ~latency+1-tick dynamics skew; the keyframe payload does NOT grow.
+    Justification: (a) a server hitbox lagging the rendered pose by
+    latency is vanilla's universal condition for every entity — scalars
+    in the keyframe cannot fix latency, only the ≤1-tick dynamics gap,
+    which self-heals with a 2-tick half-life at ≤0.03 rad / 0.19
+    blocks; (b) change-only traffic law — keyframes stay foot-state-
+    only. Pre-approved fallback if play-testing shows out-of-family
+    mismatch: the four scalars ride the EXISTING 40-tick keyframe
+    (32 bytes), never a new per-tick channel.
+  - **Ant deferral:** ant_robot.json ships in S5 WITH the ant's
+    supplier + gait — a profile without a feed would give every ant
+    (classic included, absent a supplier) static misplaced boxes,
+    violating zero-parts-in-classic.
+  - **HUD unwrap** (GirlfriendOverlay): unwrap `PartEntity.getParent()`
+    BEFORE the LivingEntity checks — fixes spider legs AND the King's
+    pre-existing blank bar; reviewers must sweep every part-bearing
+    entity (King, Queen, Godzilla, sidecars).
+  - **Tests 5–8:** (5) part centers track the test-side FK recompute of
+    the lower-segment midpoints while walking (ε honest about the
+    float domain; independence law — the test FK is the anchor, with
+    bodyTransform's JOML replay as its validation); (6) equal damage
+    through a leg part vs the body on twin spiders = equal health loss
+    (×1.0); (7) classic zero parts + pickable parent + typed-count
+    parity, modern 8 parts + parent STILL pickable; (8) NBT round-trip
+    spider re-settles all parts within reach (gait state is transient
+    by design, MOD-022 family — "identical positions" is settle-
+    equivalence, not bit equality).
+  - **BUG-036 found during this research** (fixed ahead of S4): MHLib's
+    upstream demo profile `data/minecraft/.../creeper.json` shipped in
+    the jar — every vanilla creeper had multipart hitboxes and an
+    unpickable main box in public betas. Deleted; VanillaParityTests
+    pins the no-vanilla-parts contract.
 
 Each slice: full gate (build + asset audit + suite, exit-code-guarded),
 FIX_LOG entries under "## 2.0 — Spider Overhaul", commit per slice.

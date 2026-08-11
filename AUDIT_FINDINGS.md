@@ -5818,3 +5818,25 @@ Entries: **79 total** — ANIM 20 (DIVERGENT 8 · PARTIAL 10 · MISSING 2) · BU
   (registerControllers appears nowhere else; MHLib's glibplus trigger API
   is vendored but unused), so there are no sibling defects. Scan flags
   post-fix: 4 ok + death NEVER-FINISHES (intentional, documented above).
+
+### BUG-036 — vendored MHLib demo profile gave vanilla creepers multipart hitboxes (FIXED 2026-08-11)
+
+Found during S4 research (2.0 spider overhaul), live in public beta.2
+and beta.3: the vendored MultiHitboxLib carried its upstream DEMO
+profile `data/minecraft/multihitboxlib/hitbox_profiles/creeper.json`
+into the shipped jar. Effect on every vanilla creeper: MHLib's
+LivingEntity ctor mixin resolved the profile and built three
+PartEntities (feet 0.5x / body 1.0x / head 2.0x damage modifiers), the
+profile's main-hitbox canReceiveDamage=false made the creeper's own
+body UNPICKABLE via IMultipartEntity.mhLibIsPickable (direct
+crosshair/ray hits resolve only through the part boxes), and
+isMultipartEntity() reported true — silent vanilla-behavior deviation,
+against the parity law's hardest form (vanilla mobs must be untouched).
+Not caught earlier because no suite test asserted vanilla-mob
+neutrality and creeper combat still "worked" through the part
+surfaces. FIX: the stowaway data file is deleted (data-only; MHLib
+code untouched); gametest
+VanillaParityTests.bug036_vanilla_creeper_has_no_mhlib_parts pins
+zero parts + isMultipartEntity false + directly pickable so a future
+vendoring refresh cannot reintroduce a demo profile. Ships with the
+next release.

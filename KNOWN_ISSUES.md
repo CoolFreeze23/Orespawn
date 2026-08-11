@@ -123,3 +123,9 @@ and whether the world was fresh or upgraded. Side-by-side comparisons with
 1.7.10 screenshots are gold — a lot of this beta's remaining work is exactly
 that kind of visual verification, and you can settle an item for everyone
 with one picture.
+
+- **Fixed for the next release:** vanilla creepers in beta.2/beta.3
+  carried invisible extra hitbox surfaces from a bundled-library demo
+  file (BUG-036) — direct hits sometimes registered oddly (head hits
+  did double damage, point-blank body shots could feel off). Purely
+  server-side; no world data affected.

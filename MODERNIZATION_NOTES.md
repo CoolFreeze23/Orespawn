@@ -526,3 +526,45 @@ take an off-by-default modern variant in 2.0:
   evaluate folding the sidecar role into a bone-tracked far-head part.
   Visual-fidelity work; needs in-game verification per boss.
 - **Related:** BOSS-044, BOSS-002/007, MOD-014 (procedural spider flagship).
+
+## MOD-026 — Gallop follow-up bundle: gait spec + COM/support-polygon gravity + tilt polish (2.0 spider, post-S5)
+
+Banked from the reference creator's own video series
+(phase_s_reports/reference_video_notes.md, ingested 2026-08-11) per the
+owner's post-S3b ruling: S3b's scalar lift (grounded-fraction-capped PD
+spring) is committed, gated and stability-proven, and the polygon system
+was co-designed with gallop in the reference — so the two land together
+as one follow-up, after S5, if pursued.
+
+- **Gallop gait** (Q2-deferred): horizontal leg pairs with a dominant
+  leg — when the dominant exits its trigger threshold BOTH legs of the
+  pair swing together; cooldown between vertical pairs prevents
+  leap-frogging; cooldown between horizontal pairs tunes gait feel;
+  selection is a manual flag, never speed-automatic. (Video 2; matches
+  the S1 §1 extraction.)
+- **Gravity v2 — COM + support polygon** (the gravity half): pick a
+  believable center of mass; build the polygon of grounded feet; COM
+  inside → full counter-gravity, COM outside → the force applies at an
+  angle from the CLOSEST POINT on the polygon, so the body tips toward
+  its unsupported side and falls off ledges convincingly instead of
+  hovering. Point-in-polygon via odd/even ray-cast. Replaces S3b's
+  scalar sag (which never TIPS: four right feet grounded gives 50%
+  straight-up lift where the polygon rolls the body leftward off the
+  ledge). **Degenerate-polygon note:** with ≤2 grounded feet the
+  polygon collapses to a segment or point — the inside test must treat
+  degenerate polygons as "outside" (closest-point force still
+  well-defined); the ray-cast parity test needs those cases pinned
+  explicitly or 1-2-footed spiders divide by zero on the tip axis.
+- **Spring-damper tilt** (optional polish, same bundle): replace/augment
+  the 0.3 first-order low-pass with a damped spring so tilt overshoots
+  and settles organically (the reference's accidental-feature wobble);
+  natural home for hit-reaction tilt (damage impulse into the spring)
+  if contact work ever extends to the spiders.
+- **Per-segment initial rotation** (S5+ upgrade path, only if a rig
+  demands it): promote S2's single scalar knee bias to a per-segment
+  vector applied at the pre-straighten stage (Video 3's mechanism) —
+  the ant or organic rigs are the candidates that could need it.
+
+Parity stance: all of this is modern-mode-only polish; classic remains
+untouched by law. The aim-offset composability note from the same doc
+was folded into the S3 design amendment instead (live now, not banked).

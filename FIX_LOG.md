@@ -2769,3 +2769,48 @@ settling — with planted feet motionless in world space (tick-domain
 proven; render-chain transcription-checked); classic bit-identical;
 suite green both modes. Next: S4 (multi-part hitboxes) per the slice
 plan, on the owner's go.
+
+## PROJECT LAW ADDITION + reference-video ingestion (2026-08-11, post-S3b)
+
+**LAW (owner-ratified from the S3b review): a verification harness must
+not close its loop through the code it verifies.** A harness that
+asserts production math against production's own transform proves only
+self-consistency — the S3b pivot BLOCKER lived exactly in that blind
+spot. Every future harness must anchor at least one leg of its loop in
+an independent formulation (a literal transcription replay, an
+independently-derived reference, or ground-truth data). Stands
+alongside: the literal-pass-line gate rule, classic probe geometry,
+and the payload-version bump rule.
+
+Ingested phase_s_reports/reference_video_notes.md — the reference
+creator's own 3-video explanation, cross-marked against our design.
+Confirmations throughout (FABRIK shape, pre-straighten as the whole
+knee system re-confirmed per-solve, trigger/inhibitor/lookahead rules,
+3x3 grid with the exact 0.5 climb bias, pitch/roll from corner legs).
+Design rulings on its net-new items: COM + support-polygon gravity NOT
+retrofitted over S3b's committed scalar lift — banked as MOD-026 with
+the gallop spec, spring-damper tilt and per-segment rotation; the
+aim-offset composability note folded into the S3 design amendment
+(verified: the tilt pipeline composes cleanly, no code change).
+
+## BUG-036 + S4 research complete — implementation next session (2026-08-11)
+
+S4 (multi-part hitboxes) research finished and recorded as the design
+doc's "S4 as-designed" block: the ICustomHitboxProfileSupplier gate
+(with the ctor-timing flag and lazy client part build), the
+alignSubParts same-tick overwrite ordering, the one Queen-neutral
+vendored change (updateSynching gated on syncWithModel — kills a
+~10-tick SPacketSetMaster churn for boneless profiles), the exact
+profile spec (main size MUST equal classic dims — MHLib hooks
+EntityEvent.Size), the skew ruling (parts tolerate ~latency+1 ticks;
+keyframes stay foot-state-only; the four scalars are the pre-approved
+fallback on the existing 40-tick keyframe), the ant-profile deferral
+to S5, the HUD unwrap plan, and tests 5-8 shapes. ESCAPE HATCH
+invoked for the implementation: research + BUG-036 fit this session
+honestly; the build-out, reviewer pass and both-mode gates do not.
+
+BUG-036 (found by that research, FIXED here): MHLib's upstream demo
+creeper profile shipped in the jar — vanilla creepers had multipart
+hitboxes and an unpickable main box in public beta.2/3. Data file
+deleted; VanillaParityTests pins the no-vanilla-parts contract
+(suite 161 -> 162). Full record in AUDIT_FINDINGS BUG-036.
