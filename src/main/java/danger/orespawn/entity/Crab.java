@@ -35,6 +35,9 @@ import net.minecraft.world.level.block.Blocks;
 import javax.annotation.Nullable;
 import danger.orespawn.MobStats;
 import danger.orespawn.OreSpawnMod;
+import danger.orespawn.entity.ai.GenericTargetSorter;
+import danger.orespawn.util.MyUtils;
+import net.minecraft.world.entity.npc.Villager;
 
 public class Crab extends Monster {
     private static final EntityDataAccessor<Integer> DATA_ATTACKING =
@@ -54,7 +57,9 @@ public class Crab extends Monster {
     public Crab(EntityType<? extends Crab> type, Level level) {
         super(type, level);
         this.xpReward = 150;
-        this.targetSorter = Comparator.comparingDouble(this::distanceToSqr);
+        // TF-035: orig Crab.java:43,58 — scans sort with GenericTargetSorter
+        // (creeper-halved / big-silhouette-prioritized), not plain distance.
+        this.targetSorter = new GenericTargetSorter(this);
     }
 
     @Override
@@ -310,6 +315,8 @@ public class Crab extends Monster {
     }
 
     private LivingEntity findSomethingToAttack() {
+        // orig Crab.java:421-423 — PlayNicely disables crab aggression entirely.
+        if (danger.orespawn.OreSpawnConfig.PLAY_NICELY.get()) return null;
         List<LivingEntity> list = this.level().getEntitiesOfClass(LivingEntity.class,
                 this.getBoundingBox().inflate(16.0, 6.0, 16.0));
         list.sort(this.targetSorter);
@@ -319,12 +326,26 @@ public class Crab extends Monster {
         return null;
     }
 
+    /**
+     * orig Crab.java:379-418 — the crab is an equal-opportunity predator:
+     * beyond non-creative players (:392-395) and all monsters (:399-401) it
+     * hunts Lizards (:402), RubberDuckies (:405), Villagers (:408),
+     * Girlfriends (:411) and Boyfriends (:414), then falls through to the
+     * shared attackable-non-mob list (:417). Line of sight is required up
+     * front (:389); fellow crabs are never targets (:396-398).
+     */
     private boolean isSuitableTarget(LivingEntity target) {
         if (target == null || target == this || !target.isAlive()) return false;
-        if (target instanceof Crab) return false;
+        if (!this.getSensing().hasLineOfSight(target)) return false;
         if (target instanceof Player player) return !player.getAbilities().instabuild;
+        if (target instanceof Crab) return false;
         if (target instanceof Monster) return true;
-        return false;
+        if (target instanceof Lizard) return true;
+        if (target instanceof EntityRubberDucky) return true;
+        if (target instanceof Villager) return true;
+        if (target instanceof Girlfriend) return true;
+        if (target instanceof Boyfriend) return true;
+        return MyUtils.isAttackableNonMob(target);
     }
 
     @Nullable
@@ -347,6 +368,14 @@ public class Crab extends Monster {
     @Override
     protected float getSoundVolume() {
         return 0.75f;
+    }
+
+    @Override
+    public float getVoicePitch() {
+        // orig Crab.java:172-174 — deterministic pitch by size, 2.0 − 0.3/scale
+        // (mini 0.25 → 0.8, mid 0.5 → 1.4, giant 1.0 → 1.7); replaces the
+        // vanilla random jitter entirely.
+        return 2.0f - 0.3f * (1.0f / this.getCrabScale());
     }
 
     @Override

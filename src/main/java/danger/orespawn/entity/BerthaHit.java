@@ -8,7 +8,6 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.ThrowableProjectile;
-import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
@@ -17,7 +16,12 @@ public class BerthaHit extends ThrowableProjectile {
     private static final int HIT_TYPE_DEFAULT = 0;
     private static final int HIT_TYPE_MEDIUM = 2;
     private static final int HIT_TYPE_EXPLOSIVE = 3;
-    private static final float EXPLOSION_POWER = 2.1f;
+    // orig BerthaHit.java:107 — smaller blast when the shockwave connects with an entity
+    private static final float EXPLOSION_POWER_ENTITY_HIT = 1.5f;
+    // orig BerthaHit.java:111 — bigger blast when it hits anything else (block impact)
+    private static final float EXPLOSION_POWER_MISS = 2.1f;
+    // orig BerthaHit.java:106,110 — both blasts only fire within distSq 64 of the shooter
+    private static final double EXPLOSION_RANGE_SQ = 64.0;
     private static final int IGNITE_SECONDS_DEFAULT = 10;
 
     private int hitType = 0;
@@ -83,16 +87,36 @@ public class BerthaHit extends ThrowableProjectile {
             float angle = (float) Math.atan2(entity.getZ() - owner.getZ(), entity.getX() - owner.getX());
             if (entity.isRemoved()) verticalKnock *= 2.0;
             entity.push(Math.cos(angle) * knockback, verticalKnock, Math.sin(angle) * knockback);
+            // orig BerthaHit.java:106-108 — a Hammy shockwave that connects with an
+            // entity detonates at the smaller 1.5 radius, inside the same
+            // hit_type==3 / distSq<64 guard as the damage (EXPLOSION_RANGE_SQ ==
+            // the type-3 maxRangeSq). isFlaming is unconditionally true; block
+            // destruction follows mobGriefing (orig isSmoking flag →
+            // ExplosionInteraction.MOB, which reads the same gamerule).
+            if (this.hitType == HIT_TYPE_EXPLOSIVE) {
+                this.level().explode(null, this.getX(), this.getY(), this.getZ(),
+                        EXPLOSION_POWER_ENTITY_HIT, true, Level.ExplosionInteraction.MOB);
+            }
         }
     }
 
     @Override
     protected void onHit(HitResult result) {
         super.onHit(result);
-        if (!this.level().isClientSide && this.hitType == HIT_TYPE_EXPLOSIVE) {
-            boolean canGrief = this.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING);
-            this.level().explode(null, this.getX(), this.getY(), this.getZ(), EXPLOSION_POWER,
-                    canGrief, Level.ExplosionInteraction.MOB);
+        // orig BerthaHit.java:110-112 — the 2.1-radius blast is the else-branch of
+        // the entity-hit path: it fires only when NO entity was struck (block
+        // impact), and only within distSq 64 of the shooter. Entity hits use the
+        // 1.5-radius branch in onHitEntity; the orig's pvp early-returns
+        // (func_70106_y + return) likewise never reached this blast. A null owner
+        // is skipped where the orig would NPE on func_70068_e(null) — a server
+        // crash is not reproducible behavior.
+        if (!this.level().isClientSide && this.hitType == HIT_TYPE_EXPLOSIVE
+                && result.getType() != HitResult.Type.ENTITY) {
+            Entity owner = this.getOwner();
+            if (owner != null && this.distanceToSqr(owner) < EXPLOSION_RANGE_SQ) {
+                this.level().explode(null, this.getX(), this.getY(), this.getZ(),
+                        EXPLOSION_POWER_MISS, true, Level.ExplosionInteraction.MOB);
+            }
         }
         this.discard();
     }

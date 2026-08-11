@@ -103,6 +103,16 @@ public class AttackSquid extends Monster {
         if (this.isRemoved()) return false;
         Entity attacker = source.getEntity();
         if (attacker instanceof AttackSquid) return false;
+        // orig AttackSquid.java:373-378 — the water faction's own weapons
+        // never wound a squid: damage whose true source is a WaterBall or a
+        // WaterDragon is discarded before any retaliation. The original read
+        // func_76346_g (the modern getEntity()); under the modern split
+        // source model a projectile travels as the DIRECT entity with its
+        // shooter as the true source, so the WaterBall check covers both
+        // seams to keep "WaterBall fire never lands" — the original also
+        // blanked that target-side (orig WaterBall.java:47-52).
+        if (attacker instanceof WaterBall || source.getDirectEntity() instanceof WaterBall) return false;
+        if (attacker instanceof WaterDragon) return false;
         if (attacker instanceof Mob mob) {
             this.setTarget(mob);
             this.getNavigation().moveTo(mob, 1.2);

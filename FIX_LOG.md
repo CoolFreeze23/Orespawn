@@ -2047,3 +2047,28 @@ consumed, BOSS-037 NBT key rename); BOSS-043 was already implemented
   (orig fields/ctors cited per class: TheKing :64/:95, TheQueen :56/:88,
   Godzilla :57/:85, ThePrince :61/:93, ThePrincess :59/:93, ThePrinceAdult
   :78/:117). ~45 non-boss call sites remain for the ENT-* batches.
+
+## Phase E — E4 ENT-A batch: all 34 PARTIALs terminal (2026-08-11)
+
+**30 FIXED, 4 VERIFIED-CORRECT (ENT-A-007/030/039/116, all reviewer-upheld).**
+The ten entity-cluster line-by-line verifications completed with
+per-value orig citations (full per-finding record in the ledger). Highlights:
+Alien village/torch AI faithfully rebuilt (flagless one-shot torch seek,
+interior-blind cube-shell scan bug kept); AntRobot rider hover physics
+ported number-for-number (orig :659-877) as client-predicted tickRidden;
+Boyfriend regained armor floor/fire immunity/0.5x1.6 size, tamed poppy
+drop, ambient voice lines, wet-skin + untame + voice toggle + health
+report + FrogPrince (Frog.java kiss now sets prince status); Camarasaurus
+shrank to the orig 0.5x1.2 and lost invented rideability/targets;
+CloudShark regained its prey ecosystem and orig persistence; Crab/
+CreepingHorror target lists and LOS restored; CrystalCow invented
+never-despawn flag removed. TF-034 riders: beaver (5 per-biome files),
+chipmunk (9 ambient files + MobCategory.AMBIENT re-category per orig
+EnumCreatureType.ambient), cockateil (14 per-biome files incl. the w35
+jungle hotspot) replace their flat lump rows; cassowary flagged
+report-only (no open finding — its lump row remains, noted for E8).
+TF-035 riders: sorters swapped in Alien, Alosaurus, AntRobot,
+EntityCannonFodder (Chipmunk inherits). Flag from the Alien sweep for a
+future pass: port Alien.hurt() invents a 5-tick retaliation cooldown the
+orig lacks (orig :225-241) — logged as an E8-report observation, not
+fixed (outside the finding's scope).

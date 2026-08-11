@@ -320,8 +320,9 @@ public class EntityLogicTestsA {
             });
             helper.runAfterDelay(5 + i * 6L, () -> {
                 float delta = 2000.0f - dmgVictim[0].getHealth();
-                // hitType 3's own 2.1-power explosion lands inside the 496>82>expl
-                // invulnerability window, so the delta stays exactly the doc value.
+                // hitType 3's entity-hit 1.5-power explosion (orig BerthaHit.java:106-108)
+                // lands inside the invulnerability window of the larger 82 hit, so the
+                // delta stays exactly the doc value.
                 helper.assertValueEqual(delta, (float) typeAndDamage[idx][1],
                         "BerthaHit type " + typeAndDamage[idx][0] + " damage (orig BerthaHit.java:76-105)");
                 if (typeAndDamage[idx][0] == 0) {

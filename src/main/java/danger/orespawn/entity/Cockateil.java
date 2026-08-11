@@ -3,6 +3,7 @@ package danger.orespawn.entity;
 import javax.annotation.Nullable;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Vec3i;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -10,6 +11,7 @@ import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.entity.AgeableMob;
@@ -24,8 +26,11 @@ import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
+import danger.orespawn.ModDimensionKeys;
 import danger.orespawn.OreSpawnMod;
 
 public class Cockateil extends Animal {
@@ -38,6 +43,10 @@ public class Cockateil extends Animal {
     private int stuckCount = 0;
     private int lastX = 0;
     private int lastZ = 0;
+    // orig Cockateil.java:38 — starts 0; setFlyUp() latches it to 2 forever
+    // (never reset), shrinking horizontal retarget reach and raising the
+    // vertical offset. Only RubyBird's entityInit calls it (orig RubyBird.java:19).
+    private int flyup = 0;
 
     public Cockateil(EntityType<? extends Cockateil> type, Level level) {
         super(type, level);
@@ -85,10 +94,22 @@ public class Cockateil extends Animal {
         return !this.isPersistenceRequired();
     }
 
+    /** orig Cockateil.java:156-158 — latches the permanent upward flight bias (RubyBird.java:19). */
+    public void setFlyUp() {
+        this.flyup = 2;
+    }
+
     @Override
     public void tick() {
         super.tick();
-        if (this.currentFlightTarget != null) {
+        // orig Cockateil.java:143-150 — init the target when absent, else damp
+        // vertical motion (0.7 below the target, 0.5 at/above it). (int) casts
+        // kept over blockPosition(): the orig truncates toward zero, which
+        // differs from floor at negative coordinates.
+        if (this.currentFlightTarget == null) {
+            this.currentFlightTarget =
+                    new BlockPos((int) this.getX(), (int) this.getY(), (int) this.getZ());
+        } else {
             Vec3 currentMotion = this.getDeltaMovement();
             if (this.getY() < this.currentFlightTarget.getY()) {
                 this.setDeltaMovement(currentMotion.x, currentMotion.y * 0.7, currentMotion.z);
@@ -96,6 +117,14 @@ public class Cockateil extends Animal {
                 this.setDeltaMovement(currentMotion.x, currentMotion.y * 0.5, currentMotion.z);
             }
         }
+    }
+
+    /** orig Cockateil.java:166-168 — block-only LOS from eye height 0.75 to the target's corner. */
+    public boolean canSeeTarget(double px, double py, double pz) {
+        return this.level().clip(new ClipContext(
+                new Vec3(this.getX(), this.getY() + 0.75, this.getZ()), new Vec3(px, py, pz),
+                ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, this)).getType()
+                == HitResult.Type.MISS;
     }
 
     @Override
@@ -114,8 +143,17 @@ public class Cockateil extends Animal {
 
     @Override
     protected void customServerAiStep() {
+        // orig Cockateil.java:170-222 (func_70619_bc), ported line-for-line.
+        int keepTrying = 35;
+        int stayup = 0;
         if (this.isRemoved()) return;
         super.customServerAiStep();
+
+        // orig :179-181 — DimensionID4 (Islands, ModDimensionKeys javadoc) biases
+        // retargeting upward: taller nextInt(9 + stayup) vertical range.
+        if (ModDimensionKeys.isIn(this.level(), ModDimensionKeys.ISLANDS)) {
+            stayup = 2;
+        }
 
         if (this.lastX == (int) this.getX() && this.lastZ == (int) this.getZ()) {
             ++this.stuckCount;
@@ -126,30 +164,57 @@ public class Cockateil extends Animal {
         }
 
         if (this.currentFlightTarget == null) {
-            this.currentFlightTarget = this.blockPosition();
+            this.currentFlightTarget =
+                    new BlockPos((int) this.getX(), (int) this.getY(), (int) this.getZ());
         }
 
         if (this.stuckCount > 40 || this.random.nextInt(250) == 0
-                || this.currentFlightTarget.distSqr(this.blockPosition()) < 4.1) {
+                || this.currentFlightTarget.distSqr(
+                        new Vec3i((int) this.getX(), (int) this.getY(), (int) this.getZ())) < 4.1) {
+            // orig :193-210 — up to 35 tries for an AIR target the bird can SEE;
+            // a failed last try still leaves currentFlightTarget at that spot
+            // (the orig keeps it too). zdir before xdir preserves the orig RNG
+            // draw order; flyup*2 shortens reach, +flyup raises the offset.
             this.stuckCount = 0;
-            int xdir = this.random.nextInt(8) + 5;
-            int zdir = this.random.nextInt(8) + 5;
-            if (this.random.nextInt(2) == 0) zdir = -zdir;
-            if (this.random.nextInt(2) == 0) xdir = -xdir;
-            this.currentFlightTarget = new BlockPos(
-                    (int) this.getX() + xdir,
-                    (int) this.getY() + this.random.nextInt(9) - 5,
-                    (int) this.getZ() + zdir);
+            boolean accepted = false;
+            while (!accepted && keepTrying != 0) {
+                int zdir = this.random.nextInt(8) + 5 - this.flyup * 2;
+                int xdir = this.random.nextInt(8) + 5 - this.flyup * 2;
+                if (this.random.nextInt(2) == 0) {
+                    zdir = -zdir;
+                }
+                if (this.random.nextInt(2) == 0) {
+                    xdir = -xdir;
+                }
+                this.currentFlightTarget = new BlockPos(
+                        (int) this.getX() + xdir,
+                        (int) this.getY() + this.random.nextInt(9 + stayup) - 5 + this.flyup,
+                        (int) this.getZ() + zdir);
+                accepted = this.level().getBlockState(this.currentFlightTarget).isAir()
+                        && this.canSeeTarget(this.currentFlightTarget.getX(),
+                                this.currentFlightTarget.getY(), this.currentFlightTarget.getZ());
+                --keepTrying;
+            }
         }
 
+        // orig :212-217 — decompiler literals 0.699999 / 0.200000001 kept verbatim.
         double deltaX = this.currentFlightTarget.getX() + 0.3 - this.getX();
         double deltaY = this.currentFlightTarget.getY() + 0.1 - this.getY();
         double deltaZ = this.currentFlightTarget.getZ() + 0.3 - this.getZ();
         Vec3 currentMotion = this.getDeltaMovement();
-        this.setDeltaMovement(
-                currentMotion.x + (Math.signum(deltaX) * 0.3 - currentMotion.x) * 0.25,
-                currentMotion.y + (Math.signum(deltaY) * 0.7 - currentMotion.y) * 0.2,
-                currentMotion.z + (Math.signum(deltaZ) * 0.3 - currentMotion.z) * 0.25);
+        double newMotionX = currentMotion.x + (Math.signum(deltaX) * 0.3 - currentMotion.x) * 0.25;
+        double newMotionY = currentMotion.y + (Math.signum(deltaY) * 0.699999 - currentMotion.y) * 0.200000001;
+        double newMotionZ = currentMotion.z + (Math.signum(deltaZ) * 0.3 - currentMotion.z) * 0.25;
+        this.setDeltaMovement(newMotionX, newMotionY, newMotionZ);
+
+        // orig :218-221 — heading from the fresh motion, yaw blended by a third
+        // of the wrapped difference each tick; forward impulse 0.8 (kept even
+        // though the move control zeroes zza right after this hook, exactly as
+        // the orig's moveHelper zeroed moveForward right after updateAITasks).
+        float heading = (float) (Math.atan2(newMotionZ, newMotionX) * 180.0 / Math.PI) - 90.0f;
+        float yawDelta = Mth.wrapDegrees(heading - this.getYRot());
+        this.zza = 0.8f;
+        this.setYRot(this.getYRot() + yawDelta / 3.0f);
     }
 
     @Nullable

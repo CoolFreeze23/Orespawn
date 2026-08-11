@@ -118,6 +118,7 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 - **Original:** `Alien.java` — `EntityAIMoveThroughVillage`; torch destruction in `func_70619_bc` scanning ≤15 blocks for torch/ExtremeTorch
 - **Port:** `entity/Alien.java` — no village goal; `AlienTorchSeekGoal` adds mobGriefing check + throttle, different scan
 - **Fix:** add a MoveThroughVillage-equivalent goal at original priority; align `AlienTorchSeekGoal` scan radius to 15 blocks and remove throttling beyond the original cadence.
+- **Resolution:** FIXED (2026-08-11, Phase E4 ENT-A batch — village goal restored: MoveThroughVillageGoal(1.0, false, 4, no-doors) @1, POI-driven descendant of the removed door-list goal, mapping documented inline (orig Alien.java:62). AlienTorchSeekGoal rewritten as a faithful flagless one-shot port of orig Alien.java:328-343 + scan_it :243-304: cube shells r=2-14 (11/13 skipped, interior blind — bug kept), 1-in-30 cadence on non-attack (7/8) ticks, PlayNicely gate, torch/wall-torch/ExtremeTorch only (invented soul-torch match, cooldowns, 8-block cube, 2.5-block arrival-break removed); mobGriefing gates only the removal (instant at distSq<27, setBlock air flag 2), nav 1.0. Same-file parity: wander back to MyEntityAIWanderALot(10,1.0) (orig :63), swing dice nextInt(4)==0||nextInt(5)==1 (orig :320), PlayNicely gate in findSomethingToAttack (orig :367-369). TF-035: GenericTargetSorter swapped in (orig :41,59).)
 
 ### ENT-A-004 — Alien: hunger-effect duration no longer difficulty-scaled
 
@@ -149,6 +150,7 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 - **Original:** `Alien.java` — no jump modification (and no fire immunity)
 - **Port:** `entity/Alien.java` `jumpFromGround` — jump boost added (new behavior)
 - **Fix:** delete the `jumpFromGround` override unless intentionally kept as a port feature.
+- **Resolution:** VERIFIED-CORRECT (2026-08-11, Phase E4 ENT-A batch — audit misread the original: orig Alien.java:100-103 overrides func_70664_aZ (jump) with 'super.func_70664_aZ(); this.field_70181_x += 0.25;' — a +0.25 motionY boost on every jump. Port Alien.jumpFromGround adds exactly 0.25 after super.jumpFromGround() (port Alien.java jumpFromGround/JUMP_BOOST) — faithful, not invented. Fire-immunity half verified too: orig Alien.java:57 sets field_70178_ae=false (not fire-immune) and the port has no fireImmune() on the ALIEN EntityType nor any override. Citation comments added at the override and the JUMP_BOOST constant.)
 
 ## Alosaurus
 
@@ -166,6 +168,7 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 - **Original:** `Alosaurus.java` — Swim, MoveThroughVillage, WanderALot(2,16), Watch(8), LookIdle; attack via `func_70619_bc` (1-in-5 find, ~40% swing); no standing player-target goal
 - **Port:** `entity/Alosaurus.java` — no MoveThroughVillage; adds `NearestAttackableTargetGoal<Player>` and HurtBy(alertOthers)
 - **Fix:** add MoveThroughVillage-equivalent; remove the always-on player target goal (original only acquired targets via its tick scan) or gate it to match original 1-in-5 acquisition.
+- **Resolution:** FIXED (2026-08-11, Phase E4 ENT-A batch — invented targeting removed: NearestAttackableTargetGoal<Player> deleted and HurtByTargetGoal(this, Alosaurus.class).setAlertOthers() reverted to plain HurtByTargetGoal(this) (orig Alosaurus.java:54 — EntityAIHurtByTarget(this,false): no ignore list, no pack alert). Acquisition restored as the orig 1-in-5 tick scan in customServerAiStep (orig :159-179): PlayNicely-gated 12/5/12 box (:215-218), GenericTargetSorter order (:39,48 — TF-035 swap included), prey = everything living except isIgnoreable/Alosaurus/Cryolophosaurus/VelocityRaptor/no-line-of-sight/creative players (:182-212); the pick feeds the accepted DinosaurMeleeAttackGoal mapping via setTarget, and an empty scan clears it (:176-178). MoveThroughVillageGoal(1.0,false,4,no-doors) added @2 under the melee slot (orig :50 @1); wander/look goals renumbered, relative order preserved.)
 
 ### ENT-A-010 — Alosaurus: loot content invented (gunpowder + diamonds)
 
@@ -224,6 +227,7 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 - **Port:** `entity/AntRobot.java` — vanilla `startRiding` only; legs replaced with sine-wave approximation
 - **Fix:** implement rider-controlled `travel()` replicating the original velocity/obstruction-climb model (compare the `entity/Elevator.java` `tickRidden` port for the pattern); restore leg animation from `updateLegs` data.
 - **Note:** the `updateLegs` leg-animation half was closed in Phase D2 (full solver ported, ant constants, orig AntRobot.java:156-510 — see ANIM-006); the rider-controlled hover-physics half remains open (Phase E owner unchanged).
+- **Resolution:** FIXED (2026-08-11, Phase E4 ENT-A batch — rider hover physics were absent (vanilla startRiding only). Ported orig AntRobot.java:659-877 as client-predicted tickRidden per the Elevator/B3 pattern: clamps ±0.85/±1.25 (:675-692), ridden hover probe 2.25 down +0.06/+0.03 else −0.02 (:743-751), obstruction-climb wedge depth 3+v*6, ±90° arc, 0.02/block ×0.05 (:766-782), yaw chase lag |1.85−v| clamped 0.01-0.9, pitch 0 (:783-815), heading sign vs rider facing with hand-typed PI (:816-834), throttle ±0.05 caps 0.3 fwd/0.25 rev (:835-863), double integration 0.98 then 0.8/0.98/0.8 (:864-872). Riderless hover +0.15/−0.002 plus second integration in travel() (:752-763,:869-872); seat 1.25 back, 0.55 up with rideTicker bobs (:548-558, TF-029 convention); isPushable false (:544-546). TF-035: GenericTargetSorter restored, unused as in orig (:43,:54). Port: entity/AntRobot.java:261-499.)
 
 ## AttackSquid
 
@@ -273,6 +277,7 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 - **Original:** `AttackSquid.java` — `hurt()` ignored WaterBall/WaterDragon damage from squids
 - **Port:** `entity/AttackSquid.java` — exclusions absent
 - **Fix:** in `hurt()`, return false when damage source is a WaterBall or WaterDragon originating from a squid.
+- **Resolution:** FIXED (2026-08-11, Phase E4 ENT-A batch — hurt() lacked the WaterBall/WaterDragon exclusions (orig AttackSquid.java:373-378: true source func_76346_g instanceof WaterBall or WaterDragon returns false before any retaliation). Added both checks after the existing AttackSquid check, mapping func_76346_g to source.getEntity(); because the modern damage model carries the projectile as the DIRECT entity (the port's WaterBall passes an owner where the orig passed null), the WaterBall check also covers source.getDirectEntity() so WaterBall fire never lands, matching the orig's net behavior (the orig also blanked it target-side, WaterBall.java:47-52). Kraken revenge (orig :392-397) verified already centralized in KrakenRevengeHandler — intentional architecture, untouched. Port: entity/AttackSquid.java:102-121, exclusions :106-115.)
 
 ## BandP (Burglar & Pickpocket)
 
@@ -290,6 +295,7 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 - **Original:** `BandP.java` — MoveThroughVillage, OpenDoor, MoveIndoors goals; targets Player/Villager/Girlfriend/Boyfriend (1-in-12 aggro)
 - **Port:** `entity/BandP.java` — those 3 goals absent; targets Player only
 - **Fix:** add MoveThroughVillage/OpenDoor/MoveIndoors equivalents; extend the 1-in-12 aggro scan to Villager, Girlfriend, Boyfriend.
+- **Resolution:** FIXED (2026-08-11, Phase E4 ENT-A batch — port had 3-goal lineup and Player-only targets. Restored orig BandP.java:56-61 lineup: MoveThroughVillageGoal(0.5,false)@0 (vanilla goal is the honest 1.14+ POI mapping, documented inline), stroll@1, LookAtPlayer@2, RandomLookAround@3, OpenDoorGoal(true)@4 with nav setCanOpenDoors, MoveIndoorsGoal@5 (roofed-shelter match per E3). Aggro filter extended to Villager/Girlfriend/Boyfriend with line-of-sight and PlayNicely gate (orig :226-255); 1-in-12 cadence already matched orig :181. TF-035 rider: GenericTargetSorter swapped in (orig :42,55). Port: entity/BandP.java registerGoals/isSuitableTarget/findSomethingToAttack.)
 
 ### ENT-A-025 — BandP: stealing mechanic nerfed
 
@@ -339,6 +345,7 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 - **Original:** breeds with wheat or crystal apple
 - **Port:** `entity/Baryonyx.java` — breeds with `CRYSTAL_APPLE` only
 - **Fix:** include `Items.WHEAT` in `isFood`.
+- **Resolution:** VERIFIED-CORRECT (2026-08-11, Phase E4 ENT-A batch — orig Baryonyx.java:240-242 func_70877_b: "return par1ItemStack.func_77973_b() == OreSpawnMain.MyCrystalApple;" — crystal apple ONLY. The isWheat helper (:236-238) is dead code: grep ".isWheat(" finds zero callers in the entire 1.7.10 source, and it tests Items.field_151034_e, the APPLE, not wheat (wheat is field_151015_O). Port entity/Baryonyx.java:170-173 isFood == CRYSTAL_APPLE matches the original exactly; adding WHEAT would have invented a breeding item. TF-035: orig Baryonyx.java contains no GenericTargetSorter — nothing to swap.)
 
 ## Basilisk
 
@@ -356,6 +363,7 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 - **Original:** `Basilisk.java` — plain melee acquisition in `func_70619_bc` (1-in-5 find, 1-in-3/1-in-4 swing); no aura, no poison
 - **Port:** `BasiliskGazeAttackGoal` — Slowness V aura 6 blocks + Poison on bite (invented); adds `NearestAttackableTargetGoal<Player>`
 - **Fix:** remove the gaze aura and bite poison (or keep behind a config flag); restore original tick-scan acquisition cadence.
+- **Resolution:** FIXED (2026-08-11, Phase E4 ENT-A batch — audit partly corrected: orig DOES apply Slowness V 100t (Basilisk.java:372-374, to the scanned target in OR out of reach) and Poison on bite (:319-330, 1-in-3, 8/10/12/14s by difficulty). Inventions removed: BasiliskGazeAttackGoal deleted, NearestAttackableTargetGoal<Player> removed. Orig func_70619_bc scan restored in customServerAiStep: 1-in-5 cadence (:360), 24x7x24 GenericTargetSorter scan + PlayNicely gate (:416-420), filter excl. ignoreables/LoS-fail/Basilisk/LeafMonster/creative (:384-413), reach 6+width/2 (:364), swing 1/3-else-1/4 (:366), navigate 1.25 (:370). Poison relocated to doHurtTarget (:319-330). MoveThroughVillage@1 restored (:55); mygetMaxHealth 500->200 so the 1-in-75 heal gate (:379-381) works. TF-035: sorter per orig :43,53. This supersedes ENT-A-033's note that the gaze goal carries the effects.)
 
 ### ENT-A-033 — Basilisk: melee slowness effect parameters changed
 
@@ -405,6 +413,7 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 - **Original:** forest/jungle w10 2–4 (rules y 50–100 + ground-block check, which the port kept)
 - **Port:** `add_overworld_creatures.json` w8 1–2
 - **Fix:** dedicated forest/jungle modifier w10 2–4.
+- **Resolution:** FIXED (2026-08-11, Phase E4 ENT-A batch — lump add_overworld_creatures.json beaver row (w8 1-2, #minecraft:is_overworld) replaced by five per-biome modifiers per orig OreSpawnMain.java:4602-4607: river w10 2-4, forest w3 2-4, birch_forest w2 2-4, birchForestHills→old_growth_birch_forest w2 2-5, megaTaiga+taiga→old_growth_pine_taiga+taiga w5 2-5 (creature_red_cow__ TF-033 precedent; category CREATURE already correct in ModEntities). Returned as sharedEdits. TF-035 rider closed in the same pass: Beaver.findBuddy swapped plain distance comparator for GenericTargetSorter (orig Beaver.java:38,51,221) and dropped the port's invented self-exclusion filter — orig func_72872_a includes the caller, which always sorts first, so the 1-in-200 buddy stroll pathed to its own position; original bug kept.)
 
 ### ENT-A-039 — Beaver: wheat breeding lost
 
@@ -412,6 +421,7 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 - **Original:** breed wheat/crystal apple
 - **Port:** crystal apple only
 - **Fix:** add `Items.WHEAT` to `isFood`.
+- **Resolution:** VERIFIED-CORRECT (2026-08-11, Phase E4 ENT-A batch — orig Beaver.java:300-302 func_70877_b: "return par1ItemStack.func_77973_b() == OreSpawnMain.MyCrystalApple;" — crystal apple ONLY. The isWheat helper (:296-298) is dead code with zero callers across the entire 1.7.10 source (grep ".isWheat(") and tests Items.field_151034_e, the APPLE, not wheat. In 1.7.10 EntityAnimal the only breeding-item hook is func_70877_b; nothing routes through isWheat. Port entity/Beaver.java isFood == CRYSTAL_APPLE matches the original exactly — adding WHEAT would invent a breeding item.)
 
 ## Bee
 
@@ -429,6 +439,7 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 - **Original:** `Bee.java` — flight seek targets Player/Villager/Girlfriend/Boyfriend
 - **Port:** `entity/EntityBee.java` — Player/Villager only
 - **Fix:** include Girlfriend and Boyfriend entities in the seek-target filter.
+- **Resolution:** FIXED (2026-08-11, Phase E4 ENT-A batch — port seek filter stopped at Player/Villager. Added Girlfriend and Boyfriend (orig Bee.java:319-322), corrected the creative check from getAbilities().invulnerable to instabuild (orig :312-315, field_75098_d is isCreativeMode), and added the missing PlayNicely aggression gate (orig :326-328). TF-035 rider: orig Bee.java:37,50 constructs GenericTargetSorter — port's plain Comparator.comparingDouble(distanceToSqr) swapped for new GenericTargetSorter(this). Port: entity/EntityBee.java findSomethingToAttack/isSuitableTarget; LoS and in-water exclusions already matched orig :306-311.)
 
 ### ENT-A-042 — Bee: attack effect swapped Hunger→Poison
 
@@ -470,6 +481,7 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 - **Original:** enchants applied in `onUsingTick`/`func_77622_d`
 - **Port:** enchants via `OreSpawnEnchantHelper.inventoryTick`
 - **Fix:** verify the helper applies the same enchant IDs/levels at the same trigger points; align if not.
+- **Resolution:** FIXED (2026-08-11, Phase E4 ENT-A batch — enchant IDs/levels already matched (KB5/Bane1/FA1 type-0, Unbreaking5 Royal, none Hammy; field_77337_m=knockback, 77336_l=bane, 77334_n=fireAspect, 77347_r=unbreaking, anchored via Boyfriend.java:947-948 vanilla fire-aspect formula and AttackSquid.java:188-242 tool-drop pattern), but two trigger paths diverged: port re-baked only when the stack had NO enchantments, while orig probes Knockback then Unbreaking levels and re-bakes when both read 0 (orig Bertha.java:45-58); and orig also bakes at craft time via func_77622_d (orig Bertha.java:35-43), which the port lacked. Port item/Bertha.java now probes KNOCKBACK→UNBREAKING in inventoryTick and adds onCraftedBy.)
 
 ### ENT-A-047 — Bertha: PvP config gate hardcoded
 
@@ -503,6 +515,7 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 - **Original:** type 3 explosion radius 1.5 **or** 2.1 (conditional) + mobGriefing
 - **Port:** radius 2.1 only
 - **Fix:** restore the conditional 1.5-radius branch from `BerthaHit.java`.
+- **Resolution:** FIXED (2026-08-11, Phase E4 ENT-A batch — port exploded 2.1 on EVERY type-3 impact (even entity hits and pvp-spared hits), with fire wrongly tied to mobGriefing. Orig: entity-hit branch detonates 1.5f inside the hit_type==3/distSq<64 damage guard (orig BerthaHit.java:106-108); the 2.1f blast is the no-entity-hit else-branch, also gated distSq(shooter)<64 (orig BerthaHit.java:110-112); both pass isFlaming=true, isSmoking=mobGriefing. Port entity/BerthaHit.java: 1.5f explosion restored inside onHitEntity's range-gated type-3 block; onHit 2.1f now gated on non-entity HitResult + owner distSq<64; fire=true with ExplosionInteraction.MOB (reads mobGriefing). Null owner skipped where orig would NPE. Stale test comment updated in EntityLogicTestsA.java, assertion unchanged.)
 
 ### ENT-A-051 — BerthaHit: PvP config gate hardcoded
 
@@ -530,6 +543,7 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 - **Original:** `Boyfriend.java:123,179-193,492` — HP 80, fire-immune, armor clamp 8–23 from worn gear; size 0.5×1.6
 - **Port:** `entity/Boyfriend.java:84-89`, `ModEntities.java:391` — HP 80 ✓; no fire immunity, no min-armor-8 floor; size 0.6×1.8
 - **Fix:** add `fireImmune()`; override armor getter to clamp 8–23 based on equipment; size 0.5×1.6.
+- **Resolution:** FIXED (2026-08-11, Phase E4 ENT-A batch — armor floor/clamp restored: getArmorValue() sums worn ArmorItem defense over all equipment slots and clamps 8..23 (orig Boyfriend.java:179-193 func_70658_aO; port entity/Boyfriend.java getArmorValue). HP 80 already correct (orig :491-493). Size and fire immunity live in the shared registry: sharedEdits change ModEntities.java BOYFRIEND to .sized(0.5f,1.6f) (orig :122 func_70105_a) + .fireImmune() (orig :123 field_70178_ae=true), matching the Brutalfly ENT-A-060 precedent of setting both on the EntityType builder.)
 
 ### ENT-A-054 — Boyfriend: AI set diverged (ranged→melee, goals missing, tempt item changed)
 
@@ -553,6 +567,7 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 - **Original:** `Boyfriend.java:839-872` — tamed: 2–6 poppies; always 10–35 game controllers; all equipped gear
 - **Port:** `boyfriend.json` — game controller 10–36; equipment ✓; no poppies
 - **Fix:** add poppy 2–6 (condition: tamed) to loot or `dropCustomDeathLoot`; correct controller max 35.
+- **Resolution:** FIXED (2026-08-11, Phase E4 ENT-A batch — controller max corrected 36→35 in boyfriend.json (orig Boyfriend.java:848-850, nextInt(26)+10 = 10..35); tamed-only drops ported in dropCustomDeathLoot: 2-6 poppies (nextInt(5)+2, orig :840-847) and ALL equipped gear at full count in the orig slot order held/boots/legs/chest/helmet (orig :854-871). No super call, so vanilla's 8.5% chance-based equipment roll is suppressed — a tamed Boyfriend always drops every piece and an untamed one drops none, exactly as orig func_70628_a. Port: entity/Boyfriend.java dropCustomDeathLoot; data/orespawn/loot_table/entities/boyfriend.json.)
 
 ### ENT-A-057 — Boyfriend: rich per-biome spawn list flattened
 
@@ -568,6 +583,7 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 - **Original:** `Boyfriend.java:768-812` — ambient `b_water`/`b_thunder`/`b_rain`/`b_dark`/`b_hurt`/`b_happy` (+`bb_happy` bro_mode)
 - **Port:** `entity/Boyfriend.java:268-307` — only `b_hurt`/`b_happy` branch
 - **Fix:** restore the weather/water/darkness ambient branches selecting `b_water`, `b_thunder`, `b_rain`, `b_dark` (and `bb_happy` when bro mode).
+- **Resolution:** FIXED (2026-08-11, Phase E4 ENT-A batch — full ambient tree restored in getAmbientSound per orig Boyfriend.java:768-812: bro-mode half-silence roll (:772-774), silence while fighting (:776-779), b_water when swimming (:780-782), then 3-in-4 surroundings block — silent below y=60 (:784-786), b_thunder (:787-789), b_rain (:790-792), b_dark 1-in-3 under a night sky else silent (:793-798) — falling through to tamed b_hurt / bb_happy (bro mode) / b_happy (:800-808). Also restored the bro-mode gates the D3 note assigned here: getHurtSound half-silence (:818-820) and getDeathSound full silence (:825-827). bro_mode maps to existing OreSpawnConfig.BOYFRIEND_BRO_MODE (default false = orig default 0, OreSpawnMain.java:1481). All events (b_water/b_thunder/b_rain/b_dark/bb_happy) already in sounds.json — no shared edit.)
 
 ### ENT-A-059 — Boyfriend: wet-skin, untame, voice toggle, health report, FrogPrince missing
 
@@ -575,6 +591,7 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 - **Original:** `Boyfriend.java` — untame via dead bush; voice off Ruby / on Amethyst; wet-skin system (18 swimshorts textures, wet_count 500); diamond-in-hand guard mode; health report chat; Peacock alt tame item; FrogPrince textures
 - **Port:** `entity/Boyfriend.java` — none of these; skin cycle moved to DANDELION (dry only); new BOYFRIEND_BRO_MODE config
 - **Fix:** port the item interactions (dead bush untame, Ruby/Amethyst voice toggle, Peacock tame), wet-skin texture state (wet_count 500), and health-report chat message.
+- **Resolution:** FIXED (2026-08-11, Phase E4 ENT-A batch — ported: dead-bush untame (orig :567-581), Ruby voice-off/Amethyst voice-on (:582-611), cooked-peacock alt tame + breeding item (:536, :760-762; MyPeacock=cookedpeacock, OreSpawnMain.java:1873), leather/peacock-feather wet-aware skin cycle (:612-640) replacing the invented DANDELION cycle, wet_count-500 both-sides simulation (:498-502), diamond guard-sit inside the orig whole-stack give-item flow with OreSpawn-armor-only auto-slot (:657-698), diamond-block re-claim with no owner check (:701-714), empty-hand gear return in orig slot order 0-4 plus 'I have %d health' chat (:725-756) replacing the invented sit toggle; FrogPrince: setPrince (:291-293), 20-tick sync incl. orig save-the-watcher bug (:516/:521/:222), NBT WetGuyType/IsPrince, renderer wet/prince selection (:295-446; frogprince.png/frogprince2.png/swimshorts0-17 assets present). sharedEdit: Frog.java setPrince call (orig Frog.java:135).)
 
 ## Brutalfly
 
@@ -592,6 +609,7 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 - **Original:** `Brutalfly.java:151-253` — drops target if >10 above ground (terrain-descent scan); hunt excludes Brutalfly/Mothra/Vortex/ignoreables
 - **Port:** `EntityBrutalfly.java:100-174` — same flight skeleton; descent scan missing; Mothra/Vortex exclusions missing
 - **Fix:** add ground-clearance check that releases targets >10 blocks above terrain; extend exclusion filter with Mothra and Vortex.
+- **Resolution:** FIXED (2026-08-11, Phase E4 ENT-A batch — retarget now runs the orig terrain-descent scan (nine columns at x/z {-5,0,+5}, 19 deep; ground >10 below biases target y by dist-10+1; orig Brutalfly.java:175-191,204) and candidates must be air AND pass the eye-line clip probe from y+0.75 (orig :147-149,205-208), keeping the orig quirk that each candidate is written to currentFlightTarget before validation so 30 failures leave the last one (:193-210). Hunt filter regains Mothra/Vortex/MyUtils.isIgnoreable exclusions (orig :418-429) and findSomethingToAttack the PlayNicely gate (orig :444-446). TF-035: plain distance comparator swapped for GenericTargetSorter (orig :50,60,448). Port: EntityBrutalfly.java canSeeTarget/customServerAiStep/findSomethingToAttack/isSuitableTarget.)
 
 ### ENT-A-062 — Brutalfly: signature fireball barrage missing
 
@@ -623,6 +641,7 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 - **Original:** no living/hurt sound; death `random.explode`
 - **Port:** hurt = GENERIC_HURT (added)
 - **Fix:** return null/empty for hurt sound to match the original silent profile.
+- **Resolution:** FIXED (2026-08-11, Phase E4 ENT-A batch — invented hurt sound removed: getHurtSound now returns null (@Nullable), matching orig Brutalfly.java:102-104 where func_70621_aR returns null; ambient was already null (orig :98-100) and death stays GENERIC_EXPLODE = orig random.explode (:106-108). LivingEntity.makeSound is null-safe, so the null return is silent exactly like 1.7.10; same idiom already used by the port's Boyfriend.java:432. Port: EntityBrutalfly.java getHurtSound.)
 
 ## Camarasaurus
 
@@ -632,6 +651,7 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 - **Original:** `Camarasaurus.java:47` — size 0.5×1.2
 - **Port:** `ModEntities.java:395` — size 1.4×2.6
 - **Fix:** set dimensions 0.5×1.2.
+- **Resolution:** FIXED (2026-08-11, Phase E4 ENT-A batch — port registered Camarasaurus at 1.4x2.6; orig is func_70105_a(0.5f, 1.2f) (Camarasaurus.java:47). ModEntities is shared, so the fix ships as a sharedEdit: CAMARASAURUS .sized(1.4f, 2.6f) -> .sized(0.5f, 1.2f) with the orig cite inline; the tiny box under the huge sauropod model is an original quirk kept per doctrine. No gametest asserts the old size, so no test updates.)
 
 ### ENT-A-067 — Camarasaurus: MoveIndoors missing; target goals invented
 
@@ -639,6 +659,7 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 - **Original:** `Camarasaurus.java:53-63` — goal 9 MoveIndoors; no owner-combat target goals
 - **Port:** `entity/Camarasaurus.java:60-74` — MoveIndoors absent; OwnerHurtBy/OwnerHurt/HurtBy targets added
 - **Fix:** add a MoveIndoors-equivalent goal; remove the added combat target goals (passive pet in original).
+- **Resolution:** FIXED (2026-08-11, Phase E4 ENT-A batch — orig registers tasks 0-9 only, goal 9 EntityAIMoveIndoors, and NO target goals (Camarasaurus.java:53-62; field_70715_bh never touched); port had dropped MoveIndoors and invented OwnerHurtBy/OwnerHurt/HurtBy target goals (entity/Camarasaurus.java:73-75). Removed all three target goals and added goalSelector priority 9 -> danger.orespawn.entity.ai.MoveIndoorsGoal (E3 roofed-shelter mapping for the removed 1.14 village/door framework, mapping documented in that class's Javadoc), citing orig :62. TF-035: orig Camarasaurus.java contains no GenericTargetSorter — no sorter swap applies.)
 
 ### ENT-A-068 — Camarasaurus: graze diet inverted (tree browser → crop raider)
 
@@ -654,6 +675,7 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 - **Original:** `Camarasaurus.java:219-278` — tame with apple 1-in-2, name tag, sit toggle; not rideable
 - **Port:** `entity/Camarasaurus.java:225-233` — adds player riding + `tickRidden` with ×1.5 speed
 - **Fix:** remove the riding code (or keep behind a config flag documenting it as a port addition).
+- **Resolution:** FIXED (2026-08-11, Phase E4 ENT-A batch — orig interact is apple-tame 1-in-2, name-tag rename, sit toggle; no riding code exists anywhere in the class (Camarasaurus.java:219-278). Removed the port's invented ride branch in mobInteract (empty-hand <49 startRiding) plus getControllingPassenger/positionRider/tickRidden/getRiddenInput/getRiddenSpeed x1.5 and the riding-only isPushable override (port entity/Camarasaurus.java:237-305 pre-fix); interact order is now apple -> name tag -> sit toggle, matching orig. Unused Entity/LivingEntity/Vec3 imports dropped. Invention removed outright per doctrine, no config flag.)
 
 ### ENT-A-070 — Camarasaurus: tamed-only poppy drop replaced with always-bones
 
@@ -687,6 +709,7 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 - **Original:** `CaterKiller.java:430-531` — clears cobwebs it collides with (web-self-clear)
 - **Port:** `EntityCaterKiller.java:175-209` — places webs under fleeing targets ✓ but never clears webs on self-collision
 - **Fix:** when colliding with a cobweb block, remove it (mobGriefing-gated) as in the original loop.
+- **Resolution:** FIXED (2026-08-11, Phase E4 ENT-A batch — web-self-clear ported: makeStuckInBlock override mirrors 1.7.10 field_70134_J, raised only by cobwebs (orig CaterKiller.java:450; BlockWeb->setInWeb), and the AI step then sets every cobweb in the 5x6x5 feet box (x -2..2 / y -1..4 / z -2..2, toward-zero int coords) to air with update flag 3 before dropping the flag (orig :450-461), placed between metamorphosis (:438-448) and combat exactly as in orig. Deliberately NOT mobGriefing-gated: the original loop has no gate — only the tree-eat at :521 is gated — so the finding's '(mobGriefing-gated)' fix hint was wrong per parity doctrine. Port: EntityCaterKiller.java makeStuckInBlock + customServerAiStep.)
 
 ### ENT-A-074 — CaterKiller: metamorphosis logic inverted
 
@@ -736,6 +759,7 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 - **Original:** `CaveFisher.java:163-183` — simple 1-in-8 scan, attack at distSq<8 with ~26% swing
 - **Port:** `CaveFisherAmbushGoal` (new ceiling ambush) added
 - **Fix:** remove the ambush goal or gate it behind config; ensure base attack cadence matches 1-in-8 scan / ~26% swing.
+- **Resolution:** FIXED (2026-08-11, Phase E4 ENT-A batch — invented ceiling-ambush removed: CaveFisherAmbushGoal.java deleted, its priority-2 registration stripped and the hurt()-side abortAnchor call removed (orig CaveFisher.java:51-55 registers only swim/wander(14)/watch-player(8)/look-idle; :163-183 is a flat 1-in-8 ground scan with no ceiling logic; :185-191 hurt is cactus-immunity only). Remaining goals renumbered 0-4. Base cadence verified against orig :168-177: BugMeleeAttackGoal.Params.caveFisher() = cadence 8 (nextInt(8)==0 scan), swing nextInt(7)==0 || nextInt(8)==1 (~25%), nav speed 1.2, reach 2.83 ~ sqrt(8) matching distSq<8. Port: CaveFisher.java registerGoals/hurt.)
 
 ### ENT-A-080 — CaveFisher: prey selection inverted (passive-mob predator → player hunter)
 
@@ -795,6 +819,7 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 - **Original:** `Chipmunk.java:52-63` — Tempt(apple)@4; MoveIndoors@11
 - **Port:** `entity/Chipmunk.java:56-68` — Tempt(WHEAT)@4; no MoveIndoors
 - **Fix:** tempt with `Items.APPLE`; add MoveIndoors-equivalent goal.
+- **Resolution:** FIXED (2026-08-11, Phase E4 ENT-A batch — tempt item restored to APPLE (orig Chipmunk.java:56, EntityAITempt speed 1.2 apple field_151034_e, no-scare; port had WHEAT) and MoveIndoorsGoal added at the orig lowest-priority slot 11 (orig Chipmunk.java:63 EntityAIMoveIndoors; E3 roofed-shelter mapping, same as Camarasaurus/BandP); port entity/Chipmunk.java registerGoals. TF-034 rider: lump chipmunk row (w12 1-3, all-overworld) replaced by nine per-biome modifiers per orig OreSpawnMain.java:4757-4765 — forest w8 3-6, forestHills→windswept_forest w5 3-6, jungle w4 3-6, plains w2 1-2, birch_forest w5 3-6, birchForestHills→old_growth_birch w4 3-6, roofedForest→dark_forest w10 2-5, megaTaiga→old_growth_pine_taiga w2 2-5, taiga w6 2-5 — plus ModEntities CREATURE→AMBIENT (orig rows are EnumCreatureType.ambient; ENT-A-085 precedent), all as sharedEdits.)
 
 ### ENT-A-087 — Chipmunk: tame/untame items both changed
 
@@ -818,6 +843,7 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 - **Original:** extends `EntityCannonFodder` (jukebox dance behavior)
 - **Port:** extends `TamableAnimal` directly
 - **Fix:** re-parent to the port's EntityCannonFodder (or copy its dance handler) to restore dancing near jukeboxes.
+- **Resolution:** FIXED (2026-08-11, Phase E4 ENT-A batch — re-parented port Chipmunk from TamableAnimal to the port's EntityCannonFodder (orig Chipmunk.java:40-41 "public class Chipmunk extends EntityCannonFodder"), restoring the fodder lineage: hat-tame interact chain, activated-guard combat, NameOne/NameTwo + hat NBT. Audit's "jukebox dance" premise is wrong — dancing is MyEntityAIDance, wired only in Girlfriend (orig Girlfriend.java:151-152); orig EntityCannonFodder contains no dance code, so no dance handler was copied. sharedEdits restore Chipmunk-relevant fidelity inside the shared parent: target ranking via GenericTargetSorter (orig EntityCannonFodder.java:42, TF-035 style) and the orig species combat row — Chipmunk swings on the 6-gate for 3.0 damage (orig EntityCannonFodder.java:355-358) instead of the port's hardcoded 7/4.0 defaults.)
 
 ## CliffRacer
 
@@ -845,6 +871,7 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 - **Original:** `CloudShark.java:202-243` — preys on Butterfly, Cockateil, Mosquito, Firefly, GoldFish, CliffRacer, Player
 - **Port:** `entity/CloudShark.java:109-117` — Player only
 - **Fix:** extend the 1-in-9 hunt scan to include the six prey species.
+- **Resolution:** FIXED (2026-08-11, Phase E4 ENT-A batch — port's 1-in-9 hunt used only getNearestPlayer(12); prey ecosystem restored: findSomethingToAttack with PlayNicely gate (orig CloudShark.java:246-248), 12x10x12 LivingEntity scan (:249) sorted by GenericTargetSorter (:250; field :37, ctor init :45 — TF-035 swap-in), plus isSuitableTarget whitelist (:202-243): Butterfly/Cockateil/Mosquito/Firefly/non-creative Player/GoldFish/CliffRacer with RockBase+EntityAnt pre-exclusions and self/dead/LOS guards; creative players fall through to false exactly as orig :233-242. Steer-at-prey and distSq<9 bite kept (orig :153-162). Port: entity/CloudShark.java:37,126-136,152-192.)
 
 ### ENT-A-093 — CloudShark: drops replaced
 
@@ -860,6 +887,7 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 - **Original:** `func_70692_ba` — despawns only at night (inverse-persistent by day)
 - **Port:** vanilla despawn
 - **Fix:** override `removeWhenFarAway`/despawn check to only allow despawning at night.
+- **Resolution:** FIXED (2026-08-11, Phase E4 ENT-A batch — port used vanilla despawn (no removeWhenFarAway override); added override returning !level().isDay() behind an isPersistenceRequired guard, reproducing func_70692_ba (orig CloudShark.java:61-66: persistence check :62-64, !isDaytime :65) — despawning permitted only at night. Modern Mob.checkDespawn routes both the hard-distance and idle-random despawn paths through removeWhenFarAway, so the single override gates both, matching 1.7.10 canDespawn semantics; mirrors the port's EntityTerribleTerror precedent. Port: entity/CloudShark.java:84-91.)
 
 ## Cockateil
 
@@ -877,6 +905,7 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 - **Original:** `Cockateil.java:170-222` — LOS+air target validation; `flyup` hook; dim-4 stayup bias; yaw/3 turn
 - **Port:** `entity/Cockateil.java:101-138` — validation gone; yaw never updated (no setYRot); hooks gone
 - **Fix:** apply `setYRot` with yaw/3 blending each tick; re-add air+LOS target validation and the dim-bias hook.
+- **Resolution:** FIXED (2026-08-11, Phase E4 ENT-A batch — customServerAiStep now ports func_70619_bc line-for-line: 35-try retarget loop accepting only AIR targets that pass the 0.75-eye block-only LOS ray (orig Cockateil.java:166-168, 193-210), zdir-before-xdir RNG order, flyup field + setFlyUp() hook (:38, 156-158), Islands stayup=2 bias (:179-181; DimensionID4 = Dimension-Islands, WorldProviderOreSpawn4.java:23), decompiler literals 0.699999/0.200000001 (:216), heading atan2-90 with yaw += wrapDegrees(delta)/3 via setYRot, zza=0.8 (:218-221, clobbered by moveControl exactly as orig moveHelper clobbered moveForward); tick() restores null-init-else-damp with (int)-cast coords (:143-150). sharedEdit restores this.setFlyUp() in RubyBird's ctor (orig RubyBird.java:19, sole caller). TF-034 spawn-row replacement in sharedEdits.)
 
 ### ENT-A-097 — Cockateil: ruby drop no longer gated on bird type 5
 
@@ -944,6 +973,7 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 - **Original:** `Crab.java:379-418` — Player, Mobs, Lizard, RubberDucky, Villager, Girlfriend, Boyfriend
 - **Port:** `Crab.java:182-188` — Player + Monster only
 - **Fix:** add Lizard, RubberDucky, Villager, Girlfriend, Boyfriend to the suitable-target filter.
+- **Resolution:** FIXED (2026-08-11, Phase E4 ENT-A batch — port's filter allowed only Player+Monster; restored the full orig predicate (orig Crab.java:379-418): line-of-sight gate (:389), non-creative players (:392-395), fellow-crab exemption (:396-398), monsters (:399-401), plus Lizard (:402), RubberDucky (:405), Villager (:408), Girlfriend (:411), Boyfriend (:414) and the MyUtils.isAttackableNonMob fallthrough (:417). Also restored the PlayNicely aggression gate in findSomethingToAttack (orig :421-423) and swapped the plain distance comparator for GenericTargetSorter per TF-035 (orig :43,58,425), matching the EntityVortex reference migration. Port: entity/Crab.java isSuitableTarget/findSomethingToAttack/ctor.)
 
 ### ENT-A-105 — Crab: scale-based sound pitch formula missing
 
@@ -951,6 +981,7 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 - **Original:** `Crab.java` — pitch 2.0 − 0.3/scale
 - **Port:** `Crab.java:190-210` — vol 0.75 ✓ but pitch formula absent
 - **Fix:** apply `getVoicePitch() = 2.0f - 0.3f/scale`.
+- **Resolution:** FIXED (2026-08-11, Phase E4 ENT-A batch — port had vol 0.75 but kept the vanilla random pitch jitter; added getVoicePitch() = 2.0f − 0.3f × (1/scale) (orig Crab.java:172-174 func_70647_i), deterministic by size: scale 0.25 → 0.8, 0.5 → 1.4, 1.0 → 1.7. Applies to the leaves_hit hurt voice (orig :160-162); the scorpion_attack/scorpion_living swing sounds keep their explicit 1.5 pitch (orig :360-362), untouched. Port: entity/Crab.java getVoicePitch.)
 
 ## CreepingHorror
 
@@ -968,6 +999,7 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 - **Original:** `CreepingHorror.java:51-57` — MoveThroughVillage@2
 - **Port:** plain Stroll@2
 - **Fix:** add MoveThroughVillage-equivalent at priority 2.
+- **Resolution:** FIXED (2026-08-11, Phase E4 ENT-A batch — port lacked the village goal; added vanilla MoveThroughVillageGoal at priority 2 (orig CreepingHorror.java:53 — EntityAIMoveThroughVillage(this, 1.0, false)): speed 1.0 and onlyAtNight=false are the orig arguments; distanceToPoi 4 is the vanilla Zombie value (the 1.7.10 ctor had no such knob); canDealWithDoors=false. Mapping decision documented in the registerGoals Javadoc per the MoveIndoorsGoal precedent: the 1.7.10 door-graph village framework was removed in the 1.14 rework, so vanilla's POI-based goal is the honest modern equivalent. Remaining goals re-aligned to orig priorities :51-57 — wander@3, watch-player@4, look-idle@5. Port: entity/CreepingHorror.java registerGoals.)
 
 ### ENT-A-108 — CreepingHorror: target exclusions and LOS check dropped
 
@@ -975,6 +1007,7 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 - **Original:** `CreepingHorror.java:147-200` — excludes RockBase, EnderReaper, LeafMonster, Dragon, TerribleTerror, LurkingTerror, PitchBlack, Firefly, Island(s); LOS required
 - **Port:** `CreepingHorror.java:130-135` — excludes self-kind only; no LOS
 - **Fix:** restore the exclusion list and `hasLineOfSight` requirement in target selection.
+- **Resolution:** FIXED (2026-08-11, Phase E4 ENT-A batch — port excluded only self-kind with no LOS; restored orig CreepingHorror.java:147-200: getSensing().hasLineOfSight gate (:157) and the full exclusion list — RockBase (:163), EnderReaper (:166), LeafMonster (:169), Dragon (:172), TerribleTerror (:175), LurkingTerror (:178), PitchBlack (:181), Firefly (:184), Island (:187), IslandToo (:190) — creative players exempt (:193-198), everything else fair game (:199). Also restored the PlayNicely aggression gate in findSomethingToAttack (orig :203-205) and swapped the plain distance comparator for GenericTargetSorter per TF-035 (orig :42,58,207). Port: entity/CreepingHorror.java isSuitableTarget/findSomethingToAttack/ctor.)
 
 ### ENT-A-109 — CreepingHorror: drop quantity inflated
 
@@ -1046,6 +1079,7 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 ---
 
 # Entities D–I (file 02)
+- **Resolution:** VERIFIED-CORRECT (2026-08-11, Phase E4 ENT-A batch — the flagged override no longer exists in CrystalCow.java: after ENT-A-114 re-parented it to RedCow, never-despawn comes by inheritance exactly as the orig — 'public class CrystalCow extends RedCow' (orig CrystalCow.java:13-14) inherits 'protected boolean func_70692_ba() { return false; }' (orig RedCow.java:40-42), faithfully ported as RedCow.removeWhenFarAway→false (port RedCow.java:31-34). The inheritance is documented in the CrystalCow header comment (port CrystalCow.java:15-16), satisfying the 'document if kept' remainder. Behavior is additionally identical on every path: 1.7.10 EntityAnimal.canDespawn and 1.21.1 Animal.removeWhenFarAway both already return false for animals.)
 
 ## Dragon
 

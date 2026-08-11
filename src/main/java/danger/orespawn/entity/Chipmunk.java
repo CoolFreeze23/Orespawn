@@ -19,7 +19,6 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobSpawnType;
-import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.AvoidEntityGoal;
@@ -41,8 +40,11 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import danger.orespawn.entity.ai.MoveIndoorsGoal;
 
-public class Chipmunk extends TamableAnimal {
+// orig Chipmunk.java:40-41 — extends EntityCannonFodder, which carries the shared
+// hat-taming / activated-guard behavior a chipmunk shares with the other fodder pets.
+public class Chipmunk extends EntityCannonFodder {
     private static final int MAX_HEALTH = 5;
     private static final double MOVE_SPEED = 0.38;
 
@@ -58,13 +60,17 @@ public class Chipmunk extends TamableAnimal {
         this.goalSelector.addGoal(1, new BreedGoal(this, 1.0));
         this.goalSelector.addGoal(2, new FollowOwnerGoal(this, 2.0, 10.0f, 2.0f));
         this.goalSelector.addGoal(3, new AvoidEntityGoal<>(this, Monster.class, 8.0f, 1.0, 1.6));
-        this.goalSelector.addGoal(4, new TemptGoal(this, 1.2, Ingredient.of(Items.WHEAT), false));
+        // orig Chipmunk.java:56 — the tempt item is an APPLE (field_151034_e), matching
+        // the apple taming food; wheat is only its untamed death drop.
+        this.goalSelector.addGoal(4, new TemptGoal(this, 1.2, Ingredient.of(Items.APPLE), false));
         this.goalSelector.addGoal(5, new PanicGoal(this, 1.5));
         this.goalSelector.addGoal(6, new AvoidEntityGoal<>(this, Player.class, 8.0f, 1.0, 1.4));
         this.goalSelector.addGoal(7, new LookAtPlayerGoal(this, Player.class, 6.0f));
         this.goalSelector.addGoal(8, new LookAtPlayerGoal(this, Mob.class, 5.0f));
         this.goalSelector.addGoal(9, new MyEntityAIWanderALot(this, 10, 1.0));
         this.goalSelector.addGoal(10, new RandomLookAroundGoal(this));
+        // orig Chipmunk.java:63 — EntityAIMoveIndoors in the same lowest-priority slot 11.
+        this.goalSelector.addGoal(11, new MoveIndoorsGoal(this));
     }
 
     public static AttributeSupplier.Builder createAttributes() {

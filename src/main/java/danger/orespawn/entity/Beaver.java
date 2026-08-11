@@ -3,7 +3,7 @@ package danger.orespawn.entity;
 import danger.orespawn.ModEntities;
 import danger.orespawn.ModItems;
 import danger.orespawn.OreSpawnMod;
-import java.util.Comparator;
+import danger.orespawn.entity.ai.GenericTargetSorter;
 import java.util.List;
 import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
@@ -199,13 +199,14 @@ public class Beaver extends Animal {
 
     @Nullable
     private Beaver findBuddy() {
+        // orig Beaver.java:38,51,219-231 — sorts with GenericTargetSorter and takes the
+        // FIRST entry of a getEntitiesWithinAABB query, which includes this beaver itself;
+        // at distance 0 it always ranks first, so the 1-in-200 "visit a buddy" stroll
+        // pathed to the beaver's own position. Kept, bug and all, for parity.
         List<Beaver> buddies = this.level().getEntitiesOfClass(Beaver.class,
                 this.getBoundingBox().inflate(16.0, 6.0, 16.0));
-        buddies.sort(Comparator.comparingDouble(this::distanceToSqr));
-        return buddies.stream()
-                .filter(otherBeaver -> otherBeaver != this)
-                .findFirst()
-                .orElse(null);
+        buddies.sort(new GenericTargetSorter(this));
+        return buddies.isEmpty() ? null : buddies.get(0);
     }
 
     @Override

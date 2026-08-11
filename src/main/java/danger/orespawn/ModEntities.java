@@ -309,8 +309,10 @@ public class ModEntities {
             ENTITY_TYPES.register("cassowary", () -> EntityType.Builder.of(Cassowary::new, MobCategory.CREATURE)
                     .sized(0.5f, 1.2f).clientTrackingRange(10).build("cassowary"));
 
+    // orig OreSpawnMain.java:4757-4765 — every Chipmunk addSpawn row is EnumCreatureType.ambient,
+    // so it fills the ambient mob cap, not the creature cap (same mapping as the ENT-A-085 Cephadrome fix).
     public static final DeferredHolder<EntityType<?>, EntityType<Chipmunk>> CHIPMUNK =
-            ENTITY_TYPES.register("chipmunk", () -> EntityType.Builder.of(Chipmunk::new, MobCategory.CREATURE)
+            ENTITY_TYPES.register("chipmunk", () -> EntityType.Builder.of(Chipmunk::new, MobCategory.AMBIENT)
                     .sized(0.35f, 0.35f).clientTrackingRange(8).build("chipmunk"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<Cockateil>> COCKATEIL =
@@ -416,11 +418,15 @@ public class ModEntities {
 
     public static final DeferredHolder<EntityType<?>, EntityType<Boyfriend>> BOYFRIEND =
             ENTITY_TYPES.register("boyfriend", () -> EntityType.Builder.of(Boyfriend::new, MobCategory.CREATURE)
-                    .sized(0.6f, 1.8f).clientTrackingRange(10).build("boyfriend"));
+                    .sized(0.5f, 1.6f) // orig Boyfriend.java:122
+                    .fireImmune() // orig Boyfriend.java:123 (field_70178_ae = true)
+                    .clientTrackingRange(10).build("boyfriend"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<Camarasaurus>> CAMARASAURUS =
             ENTITY_TYPES.register("camarasaurus", () -> EntityType.Builder.of(Camarasaurus::new, MobCategory.CREATURE)
-                    .sized(1.4f, 2.6f).clientTrackingRange(10).build("camarasaurus"));
+                    // orig Camarasaurus.java:47 — func_70105_a(0.5f, 1.2f); the tiny box
+                    // under the huge model is an original quirk, kept.
+                    .sized(0.5f, 1.2f).clientTrackingRange(10).build("camarasaurus"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<Dragon>> DRAGON =
             ENTITY_TYPES.register("dragon", () -> EntityType.Builder.of(Dragon::new, MobCategory.CREATURE)

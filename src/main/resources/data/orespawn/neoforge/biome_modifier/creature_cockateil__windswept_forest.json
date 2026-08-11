@@ -1,0 +1,5 @@
+{
+  "type": "neoforge:add_spawns",
+  "biomes": "minecraft:windswept_forest",
+  "spawners": { "type": "orespawn:cockateil", "weight": 20, "minCount": 3, "maxCount": 6 }
+}
