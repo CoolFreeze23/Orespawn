@@ -25,6 +25,10 @@ import net.minecraft.world.phys.Vec3;
  * fall-damage suppression, and the trivially-true 1.7.10 spawn rule.
  */
 public class EntityMosquito extends AmbientCreature {
+    // OPT-011: cached SoundEvents — identical createVariableRangeEvent ids,
+    // allocated once per class instead of on every sound query.
+    private static final SoundEvent SND_MOSQUITO = SoundEvent.createVariableRangeEvent(
+            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "mosquito"));
     private static final double VERTICAL_DRAG = 0.6;
 
     public EntityMosquito(EntityType<? extends EntityMosquito> type, Level level) {
@@ -55,8 +59,7 @@ public class EntityMosquito extends AmbientCreature {
     @Nullable
     @Override
     protected SoundEvent getAmbientSound() {
-        return SoundEvent.createVariableRangeEvent(
-                ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "mosquito"));
+        return SND_MOSQUITO;
     }
 
     @Override

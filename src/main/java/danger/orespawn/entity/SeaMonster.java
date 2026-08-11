@@ -33,6 +33,14 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 
 public class SeaMonster extends Monster {
+    // OPT-011: cached SoundEvents — identical createVariableRangeEvent ids,
+    // allocated once per class instead of on every sound query.
+    private static final SoundEvent SND_SEAMONSTER_LIVING = SoundEvent.createVariableRangeEvent(
+            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "seamonster_living"));
+    private static final SoundEvent SND_SEAMONSTER_HIT = SoundEvent.createVariableRangeEvent(
+            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "seamonster_hit"));
+    private static final SoundEvent SND_SEAMONSTER_DEATH = SoundEvent.createVariableRangeEvent(
+            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "seamonster_death"));
     private static final EntityDataAccessor<Integer> DATA_ATTACKING =
             SynchedEntityData.defineId(SeaMonster.class, EntityDataSerializers.INT);
 
@@ -43,9 +51,18 @@ public class SeaMonster extends Monster {
     private int closestWaterDistance = 99999;
     private int targetX = 0, targetY = 0, targetZ = 0;
 
+    /**
+     * OPT-009: the speed genuinely varies (water/land), so the per-tick write
+     * stays, but the AttributeInstance is resolved once instead of via a map
+     * lookup every tick. Attribute instances live exactly as long as the entity
+     * (a dimension change constructs a fresh entity), so this cannot go stale.
+     */
+    private final net.minecraft.world.entity.ai.attributes.AttributeInstance movementSpeedAttribute;
+
     public SeaMonster(EntityType<? extends SeaMonster> type, Level level) {
         super(type, level);
         this.xpReward = 150;
+        this.movementSpeedAttribute = this.getAttribute(Attributes.MOVEMENT_SPEED);
     }
 
     @Override
@@ -87,7 +104,8 @@ public class SeaMonster extends Monster {
         // orig SeaMonster.java:126 — onLivingUpdate sets moveSpeed to 0.55 in water / 0.25 on land,
         // and orig SeaMonster.java:93 — onUpdate writes it into the MOVEMENT_SPEED attribute every tick.
         this.dynamicMoveSpeed = this.isInWater() ? 0.55f : 0.25f;
-        this.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(this.dynamicMoveSpeed);
+        // OPT-009: cached instance; setBaseValue itself no-ops when unchanged.
+        this.movementSpeedAttribute.setBaseValue(this.dynamicMoveSpeed);
     }
 
     @Override
@@ -215,22 +233,19 @@ public class SeaMonster extends Monster {
     @Override
     protected SoundEvent getAmbientSound() {
         if (this.random.nextInt(3) == 0) {
-            return SoundEvent.createVariableRangeEvent(
-                    ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "seamonster_living"));
+            return SND_SEAMONSTER_LIVING;
         }
         return null;
     }
 
     @Override
     protected SoundEvent getHurtSound(DamageSource source) {
-        return SoundEvent.createVariableRangeEvent(
-                ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "seamonster_hit"));
+        return SND_SEAMONSTER_HIT;
     }
 
     @Override
     protected SoundEvent getDeathSound() {
-        return SoundEvent.createVariableRangeEvent(
-                ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "seamonster_death"));
+        return SND_SEAMONSTER_DEATH;
     }
 
     /** orig SeaMonster.java:544-570 — "Sea Monster" spawner bypass; y>=50; night; darkness; no other SeaMonster within 16/5/16. */

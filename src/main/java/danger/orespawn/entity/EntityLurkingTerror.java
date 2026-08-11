@@ -26,8 +26,17 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.util.Mth;
+import danger.orespawn.entity.ai.TargetSelection;
 
 public class EntityLurkingTerror extends Monster {
+    // OPT-011: cached SoundEvents — identical createVariableRangeEvent ids,
+    // allocated once per class instead of on every sound query.
+    private static final SoundEvent SND_LURKINGHORROR_LIVING = SoundEvent.createVariableRangeEvent(
+            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "lurkinghorror_living"));
+    private static final SoundEvent SND_LURKINGHORROR_HIT = SoundEvent.createVariableRangeEvent(
+            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "lurkinghorror_hit"));
+    private static final SoundEvent SND_LURKINGHORROR_DEAD = SoundEvent.createVariableRangeEvent(
+            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "lurkinghorror_dead"));
     private static final EntityDataAccessor<Integer> DATA_ATTACKING =
             SynchedEntityData.defineId(EntityLurkingTerror.class, EntityDataSerializers.INT);
 
@@ -73,20 +82,17 @@ public class EntityLurkingTerror extends Monster {
     @Nullable
     @Override
     protected SoundEvent getAmbientSound() {
-        return SoundEvent.createVariableRangeEvent(
-                ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "lurkinghorror_living"));
+        return SND_LURKINGHORROR_LIVING;
     }
 
     @Override
     protected SoundEvent getHurtSound(DamageSource source) {
-        return SoundEvent.createVariableRangeEvent(
-                ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "lurkinghorror_hit"));
+        return SND_LURKINGHORROR_HIT;
     }
 
     @Override
     protected SoundEvent getDeathSound() {
-        return SoundEvent.createVariableRangeEvent(
-                ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "lurkinghorror_dead"));
+        return SND_LURKINGHORROR_DEAD;
     }
 
     @Override
@@ -189,11 +195,9 @@ public class EntityLurkingTerror extends Monster {
                 this.getBoundingBox().inflate(12.0, 8.0, 12.0));
         // TF-035: orig sorts candidates with GenericTargetSorter (LurkingTerror.java:48 field,
         // :58 ctor, :355 Collections.sort), not plain distance — creepers/large targets rank closer.
-        entities.sort(new GenericTargetSorter(this));
-        for (LivingEntity candidate : entities) {
-            if (isSuitableTarget(candidate)) return candidate;
-        }
-        return null;
+        // OPT-021: nearest-first pick without the full list sort; TargetSelection
+        // preserves the removed sort's order and stable-tie semantics exactly.
+        return TargetSelection.firstMatch(entities, new GenericTargetSorter(this), this::isSuitableTarget);
     }
 
     /**

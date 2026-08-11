@@ -51,6 +51,24 @@ import danger.orespawn.OreSpawnMod;
 import danger.orespawn.util.SeasonalDates;
 
 public class Girlfriend extends TamableAnimal implements RangedAttackMob {
+    // OPT-011: cached SoundEvents — identical createVariableRangeEvent ids,
+    // allocated once per class instead of on every sound query.
+    private static final SoundEvent SND_O_FIGHT = SoundEvent.createVariableRangeEvent(
+            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "o_fight"));
+    private static final SoundEvent SND_O_TAUNT = SoundEvent.createVariableRangeEvent(
+            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "o_taunt"));
+    private static final SoundEvent SND_O_WOOHOO = SoundEvent.createVariableRangeEvent(
+            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "o_woohoo"));
+    private static final SoundEvent SND_O_HURT = SoundEvent.createVariableRangeEvent(
+            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "o_hurt"));
+    private static final SoundEvent SND_O_HAPPY = SoundEvent.createVariableRangeEvent(
+            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "o_happy"));
+    private static final SoundEvent SND_O_OW = SoundEvent.createVariableRangeEvent(
+            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "o_ow"));
+    private static final SoundEvent SND_O_DEATH_GIRLFRIEND = SoundEvent.createVariableRangeEvent(
+            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "o_death_girlfriend"));
+    private static final SoundEvent SND_O_DEATH_SINGLE = SoundEvent.createVariableRangeEvent(
+            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "o_death_single"));
     private static final EntityDataAccessor<Integer> DATA_SKIN =
             SynchedEntityData.defineId(Girlfriend.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Integer> DATA_VOICE =
@@ -86,6 +104,9 @@ public class Girlfriend extends TamableAnimal implements RangedAttackMob {
 
     public Girlfriend(EntityType<? extends Girlfriend> type, Level level) {
         super(type, level);
+        // OPT-009: constant speed - assert the attribute base once here instead
+        // of re-writing it every tick (same value the removed per-tick call set).
+        this.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(MOVE_SPEED);
         this.whichGirl = this.random.nextInt(MAX_SKINS);
         this.voice = this.random.nextInt(10);
         this.setTameSkin(this.whichGirl);
@@ -261,12 +282,6 @@ public class Girlfriend extends TamableAnimal implements RangedAttackMob {
     }
 
     @Override
-    public void tick() {
-        this.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(MOVE_SPEED);
-        super.tick();
-    }
-
-    @Override
     public void aiStep() {
         super.aiStep();
         --this.autoHeal;
@@ -324,8 +339,7 @@ public class Girlfriend extends TamableAnimal implements RangedAttackMob {
                         if (this.fightSoundTicker <= 0) {
                             if (this.voiceEnable != 0) {
                                 this.level().playSound(null, this,
-                                        SoundEvent.createVariableRangeEvent(
-                                                ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "o_fight")),
+                                        SND_O_FIGHT,
                                         this.getSoundSource(), 0.5f, this.getVoicePitch());
                             }
                             this.fightSoundTicker = 3;
@@ -337,8 +351,7 @@ public class Girlfriend extends TamableAnimal implements RangedAttackMob {
                     if (this.tauntSoundTicker <= 0) {
                         if (this.voiceEnable != 0) {
                             this.level().playSound(null, this,
-                                    SoundEvent.createVariableRangeEvent(
-                                            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "o_taunt")),
+                                    SND_O_TAUNT,
                                     this.getSoundSource(), 0.5f, this.getVoicePitch());
                         }
                         this.tauntSoundTicker = 300;
@@ -352,8 +365,7 @@ public class Girlfriend extends TamableAnimal implements RangedAttackMob {
                     this.hadTarget = 0;
                     if (this.voiceEnable != 0) {
                         this.level().playSound(null, this,
-                                SoundEvent.createVariableRangeEvent(
-                                        ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "o_woohoo")),
+                                SND_O_WOOHOO,
                                 this.getSoundSource(), 0.4f, this.getVoicePitch());
                     }
                 }
@@ -573,11 +585,9 @@ public class Girlfriend extends TamableAnimal implements RangedAttackMob {
             if (this.isTame()) {
                 // orig Girlfriend.java:886-889 — hurt voice also while valentine-angry
                 if (this.getHealth() < this.getMaxHealth() || this.isValentineAngry()) {
-                    return SoundEvent.createVariableRangeEvent(
-                            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "o_hurt"));
+                    return SND_O_HURT;
                 }
-                return SoundEvent.createVariableRangeEvent(
-                        ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "o_happy"));
+                return SND_O_HAPPY;
             }
         }
         return null;
@@ -586,17 +596,14 @@ public class Girlfriend extends TamableAnimal implements RangedAttackMob {
     @Override
     protected SoundEvent getHurtSound(DamageSource source) {
         if (this.voiceEnable == 0) return null;
-        return SoundEvent.createVariableRangeEvent(
-                ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "o_ow"));
+        return SND_O_OW;
     }
 
     @Override
     protected SoundEvent getDeathSound() {
         return this.isTame()
-                ? SoundEvent.createVariableRangeEvent(
-                        ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "o_death_girlfriend"))
-                : SoundEvent.createVariableRangeEvent(
-                        ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "o_death_single"));
+                ? SND_O_DEATH_GIRLFRIEND
+                : SND_O_DEATH_SINGLE;
     }
 
     @Override

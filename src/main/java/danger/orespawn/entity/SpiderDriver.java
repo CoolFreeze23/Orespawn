@@ -25,6 +25,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import danger.orespawn.OreSpawnMod;
+import danger.orespawn.entity.ai.TargetSelection;
 
 public class SpiderDriver extends Spider {
 
@@ -146,11 +147,9 @@ public class SpiderDriver extends Spider {
     private LivingEntity findSpiderRobot() {
         List<SpiderRobot> robots = this.level().getEntitiesOfClass(SpiderRobot.class,
                 this.getBoundingBox().inflate(25.0, 15.0, 25.0));
-        robots.sort(this.targetSorter);
-        for (SpiderRobot robot : robots) {
-            if (!robot.isVehicle()) return robot;
-        }
-        return null;
+        // OPT-021: nearest-first pick without the full list sort; TargetSelection
+        // preserves the removed sort's order and stable-tie semantics exactly.
+        return TargetSelection.firstMatch(robots, this.targetSorter, robot -> !robot.isVehicle());
     }
 
     private boolean isSuitableTarget(LivingEntity target) {
@@ -165,11 +164,8 @@ public class SpiderDriver extends Spider {
     private LivingEntity findSomethingToAttack() {
         List<LivingEntity> entities = this.level().getEntitiesOfClass(LivingEntity.class,
                 this.getBoundingBox().inflate(35.0, 15.0, 35.0));
-        entities.sort(this.targetSorter);
-        for (LivingEntity e : entities) {
-            if (this.isSuitableTarget(e)) return e;
-        }
-        return null;
+        // OPT-021: nearest-first pick without the full list sort (see above).
+        return TargetSelection.firstMatch(entities, this.targetSorter, this::isSuitableTarget);
     }
 
     @Override

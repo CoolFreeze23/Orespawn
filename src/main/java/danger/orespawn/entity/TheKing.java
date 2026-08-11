@@ -49,6 +49,7 @@ import danger.orespawn.ModEntities;
 import danger.orespawn.OreSpawnConfig;
 import danger.orespawn.ModSounds;
 import danger.orespawn.util.MyUtils;
+import danger.orespawn.entity.ai.TargetSelection;
 import net.neoforged.neoforge.entity.PartEntity;
 
 /**
@@ -1199,25 +1200,33 @@ public class TheKing extends Monster implements OreSpawnPartEntity.MultipartBoss
 
         if (this.isEnd == 2) {
             List<Player> players = this.level().getEntitiesOfClass(Player.class, searchBox);
-            players.sort(this.targetSorter);
             this.headEntityFound = 1;
-            for (Player player : players) {
-                if (this.isSuitableTarget(player)) return player;
-            }
+            // OPT-016: nearest-suitable player without sorting the whole list.
+            // TargetSelection reproduces GenericTargetSorter's weighted order
+            // and the stable sort's tie order exactly, and calls
+            // isSuitableTarget on the same players in the same order.
+            Player picked = TargetSelection.firstMatch(players, this.targetSorter, this::isSuitableTarget);
+            if (picked != null) return picked;
         }
 
         List<LivingEntity> entities = this.level().getEntitiesOfClass(LivingEntity.class, searchBox);
-        entities.sort(this.targetSorter);
-        LivingEntity ret = null;
+        // OPT-016: the old sorted loop's net effect on headEntityFound was
+        // simply "1 iff any KingHead is in the scan" (it never broke out of
+        // the loop before seeing one), so a plain containment pass replaces
+        // that bookkeeping without the sort...
         this.headEntityFound = 0;
         for (LivingEntity entity : entities) {
-            if (entity instanceof KingHead) { this.headEntityFound = 1; }
-            if (ret == null && this.isSuitableTarget(entity)) {
-                ret = entity;
+            if (entity instanceof KingHead) {
+                this.headEntityFound = 1;
+                break;
             }
-            if (ret != null && this.headEntityFound != 0) break;
         }
-        return ret;
+        // ...and the target pick drops the full sort. TargetSelection preserves
+        // the weighted order + stable ties and evaluates isSuitableTarget for
+        // candidates in exactly the order the sorted loop did — so the MyCanSee
+        // block ray (OPT-026) still runs only for the current-best candidate
+        // until one passes, never for the whole list.
+        return TargetSelection.firstMatch(entities, this.targetSorter, this::isSuitableTarget);
     }
 
     // ---- Helpers ----
@@ -1261,11 +1270,14 @@ public class TheKing extends Monster implements OreSpawnPartEntity.MultipartBoss
             dz = Mth.clamp(dz, -1.0f, 1.0f);
         }
 
+        // OPT-026: one reusable MutableBlockPos for the whole march instead of a
+        // BlockPos.containing allocation per step (identical floor semantics).
+        BlockPos.MutableBlockPos rayPos = new BlockPos.MutableBlockPos();
         for (int i = 0; i < nblks; i++) {
             startx += dx;
             starty += dy;
             startz += dz;
-            BlockState state = this.level().getBlockState(BlockPos.containing(startx, starty, startz));
+            BlockState state = this.level().getBlockState(rayPos.set(startx, starty, startz));
             if (state.isAir() || !state.getFluidState().isEmpty()) continue;
             return false;
         }
@@ -1328,8 +1340,9 @@ public class TheKing extends Monster implements OreSpawnPartEntity.MultipartBoss
     private Player findNearestPlayer() {
         List<Player> players = this.level().getEntitiesOfClass(Player.class,
                 this.getBoundingBox().inflate(80.0, 64.0, 80.0));
-        players.sort(this.targetSorter);
-        return players.isEmpty() ? null : players.get(0);
+        // OPT-016: single-pass min instead of sort+get(0) — same player, same
+        // weighted order, first-encountered element on ties (stable-sort order).
+        return TargetSelection.first(players, this.targetSorter);
     }
 
     public void setGuardMode(int i) {

@@ -50,8 +50,17 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import danger.orespawn.ModItems;
 import danger.orespawn.OreSpawnMod;
+import danger.orespawn.entity.ai.TargetSelection;
 
 public class EntityStinky extends TamableAnimal {
+    // OPT-011: cached SoundEvents — identical createVariableRangeEvent ids,
+    // allocated once per class instead of on every sound query.
+    private static final SoundEvent SND_FART = SoundEvent.createVariableRangeEvent(
+            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "fart"));
+    private static final SoundEvent SND_DUCK_HURT = SoundEvent.createVariableRangeEvent(
+            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "duck_hurt"));
+    private static final SoundEvent SND_CRYO_DEATH = SoundEvent.createVariableRangeEvent(
+            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "cryo_death"));
     private static final EntityDataAccessor<Integer> DATA_SPYRO_FIRE =
             SynchedEntityData.defineId(EntityStinky.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Integer> DATA_ACTIVITY =
@@ -71,6 +80,9 @@ public class EntityStinky extends TamableAnimal {
 
     public EntityStinky(EntityType<? extends EntityStinky> type, Level level) {
         super(type, level);
+        // OPT-009: constant speed - assert the attribute base once here instead
+        // of re-writing it every tick (same value the removed per-tick call set).
+        this.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(this.moveSpeed);
         this.xpReward = 35;
         this.noPhysics = false;
         this.setOrderedToSit(false);
@@ -144,7 +156,6 @@ public class EntityStinky extends TamableAnimal {
 
     @Override
     public void tick() {
-        this.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(this.moveSpeed);
         super.tick();
 
         if (this.isInWater()) {
@@ -160,8 +171,7 @@ public class EntityStinky extends TamableAnimal {
 
         // orig Stinky.java:339-398 — 1-in-2000: "orespawn:fart" (pitch 1.5) + skin-indexed rear drop.
         if (!this.level().isClientSide && this.random.nextInt(2000) == 2) {
-            this.playSound(SoundEvent.createVariableRangeEvent(
-                    ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "fart")), 1.0f, 1.5f);
+            this.playSound(SND_FART, 1.0f, 1.5f);
             dropRandomItemRear();
         }
 
@@ -439,11 +449,9 @@ public class EntityStinky extends TamableAnimal {
     private LivingEntity findSomethingToAttack() {
         AABB searchBox = this.getBoundingBox().inflate(12.0, 6.0, 12.0);
         List<LivingEntity> targets = this.level().getEntitiesOfClass(LivingEntity.class, searchBox);
-        targets.sort(Comparator.comparingDouble(this::distanceToSqr));
-        for (LivingEntity target : targets) {
-            if (this.isSuitableTarget(target)) return target;
-        }
-        return null;
+        // OPT-021: nearest-first pick without the full list sort; TargetSelection
+        // preserves the removed sort's order and stable-tie semantics exactly.
+        return TargetSelection.firstMatch(targets, Comparator.comparingDouble(this::distanceToSqr), this::isSuitableTarget);
     }
 
     @Override
@@ -487,14 +495,12 @@ public class EntityStinky extends TamableAnimal {
 
     @Override
     protected SoundEvent getHurtSound(DamageSource source) {
-        return SoundEvent.createVariableRangeEvent(
-                ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "duck_hurt"));
+        return SND_DUCK_HURT;
     }
 
     @Override
     protected SoundEvent getDeathSound() {
-        return SoundEvent.createVariableRangeEvent(
-                ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "cryo_death"));
+        return SND_CRYO_DEATH;
     }
 
     @Override

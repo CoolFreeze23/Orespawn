@@ -55,6 +55,12 @@ import net.minecraft.world.level.pathfinder.PathType;
 import net.minecraft.world.phys.Vec3;
 
 public class WaterDragon extends TamableAnimal {
+    // OPT-011: cached SoundEvents — identical createVariableRangeEvent ids,
+    // allocated once per class instead of on every sound query.
+    private static final SoundEvent SND_WATERDRAGON_HURT = SoundEvent.createVariableRangeEvent(
+            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "waterdragon_hurt"));
+    private static final SoundEvent SND_WATERDRAGON_DEATH = SoundEvent.createVariableRangeEvent(
+            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "waterdragon_death"));
     private static final EntityDataAccessor<Integer> DATA_ATTACKING =
             SynchedEntityData.defineId(WaterDragon.class, EntityDataSerializers.INT);
 
@@ -65,8 +71,17 @@ public class WaterDragon extends TamableAnimal {
     private int closestWaterDistance = 99999;
     private int targetX = 0, targetY = 0, targetZ = 0;
 
+    /**
+     * OPT-009: the speed genuinely varies (water/land), so the per-tick write
+     * stays, but the AttributeInstance is resolved once instead of via a map
+     * lookup every tick. Attribute instances live exactly as long as the entity
+     * (a dimension change constructs a fresh entity), so this cannot go stale.
+     */
+    private final net.minecraft.world.entity.ai.attributes.AttributeInstance movementSpeedAttribute;
+
     public WaterDragon(EntityType<? extends WaterDragon> type, Level level) {
         super(type, level);
+        this.movementSpeedAttribute = this.getAttribute(Attributes.MOVEMENT_SPEED);
         this.xpReward = 100;
         // Smooth swimming control mirrors vanilla Dolphin/Turtle idioms and
         // is a 1:1 behavioural upgrade from the 1.7.10 EntityAISwimming.
@@ -156,7 +171,8 @@ public class WaterDragon extends TamableAnimal {
     @Override
     public void aiStep() {
         super.aiStep();
-        this.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(
+        // OPT-009: cached instance; setBaseValue itself no-ops when unchanged.
+        this.movementSpeedAttribute.setBaseValue(
                 this.isInWater() ? MOVE_SPEED_IN_WATER : MOVE_SPEED_OUT_OF_WATER);
     }
 
@@ -328,14 +344,12 @@ public class WaterDragon extends TamableAnimal {
 
     @Override
     protected SoundEvent getHurtSound(DamageSource source) {
-        return SoundEvent.createVariableRangeEvent(
-                ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "waterdragon_hurt"));
+        return SND_WATERDRAGON_HURT;
     }
 
     @Override
     protected SoundEvent getDeathSound() {
-        return SoundEvent.createVariableRangeEvent(
-                ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "waterdragon_death"));
+        return SND_WATERDRAGON_DEATH;
     }
 
     @Override

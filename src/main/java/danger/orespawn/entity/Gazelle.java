@@ -43,6 +43,12 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 
 public class Gazelle extends TamableAnimal {
+    // OPT-011: cached SoundEvents — identical createVariableRangeEvent ids,
+    // allocated once per class instead of on every sound query.
+    private static final SoundEvent SND_SCORPION_HIT = SoundEvent.createVariableRangeEvent(
+            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "scorpion_hit"));
+    private static final SoundEvent SND_CRYO_DEATH = SoundEvent.createVariableRangeEvent(
+            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "cryo_death"));
     private static final int MAX_HEALTH = 15;
     private static final double MOVE_SPEED = 0.3;
     private static final int NO_FOOD_FOUND_SENTINEL = 99999;
@@ -194,11 +200,10 @@ public class Gazelle extends TamableAnimal {
     private Gazelle findBuddy() {
         List<Gazelle> buddies = this.level().getEntitiesOfClass(Gazelle.class,
                 this.getBoundingBox().inflate(16.0, 6.0, 16.0));
-        buddies.sort(Comparator.comparingDouble(this::distanceToSqr));
-        return buddies.stream()
-                .filter(otherGazelle -> otherGazelle != this)
-                .findFirst()
-                .orElse(null);
+        // OPT-021: nearest-first pick without the full list sort; TargetSelection
+        // preserves the removed sort's order and stable-tie semantics exactly.
+        return danger.orespawn.entity.ai.TargetSelection.firstMatch(buddies,
+                Comparator.comparingDouble(this::distanceToSqr), otherGazelle -> otherGazelle != this);
     }
 
     @Override
@@ -296,14 +301,12 @@ public class Gazelle extends TamableAnimal {
 
     @Override
     protected SoundEvent getHurtSound(DamageSource source) {
-        return SoundEvent.createVariableRangeEvent(
-                ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "scorpion_hit"));
+        return SND_SCORPION_HIT;
     }
 
     @Override
     protected SoundEvent getDeathSound() {
-        return SoundEvent.createVariableRangeEvent(
-                ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "cryo_death"));
+        return SND_CRYO_DEATH;
     }
 
     @Override

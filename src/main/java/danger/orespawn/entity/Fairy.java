@@ -32,6 +32,7 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import danger.orespawn.OreSpawnMod;
+import danger.orespawn.entity.ai.TargetSelection;
 
 /**
  * Fairy — ambient flying helper mob ported from 1.7.10 OreSpawn.
@@ -56,6 +57,12 @@ import danger.orespawn.OreSpawnMod;
  *   a malformed UUID never crashes the server AI tick loop.
  */
 public class Fairy extends AmbientCreature {
+    // OPT-011: cached SoundEvents — identical createVariableRangeEvent ids,
+    // allocated once per class instead of on every sound query.
+    private static final SoundEvent SND_RAT_HIT = SoundEvent.createVariableRangeEvent(
+            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "rat_hit"));
+    private static final SoundEvent SND_BIG_SPLAT = SoundEvent.createVariableRangeEvent(
+            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "big_splat"));
     private static final long DAY_LENGTH_TICKS = 24000L;
     private static final long DAYTIME_BLINK_END_TICK = 12000L;
     private static final double FLIGHT_SEARCH_RANGE = 8.0;
@@ -144,11 +151,9 @@ public class Fairy extends AmbientCreature {
     private LivingEntity findSomethingToAttack() {
         List<LivingEntity> entities = this.level().getEntitiesOfClass(LivingEntity.class,
                 this.getBoundingBox().inflate(FLIGHT_SEARCH_RANGE, FLIGHT_SEARCH_RANGE, FLIGHT_SEARCH_RANGE));
-        entities.sort(this.targetSorter);
-        for (LivingEntity targetEntity : entities) {
-            if (this.isSuitableTarget(targetEntity)) return targetEntity;
-        }
-        return null;
+        // OPT-021: nearest-first pick without the full list sort; TargetSelection
+        // preserves the removed sort's order and stable-tie semantics exactly.
+        return TargetSelection.firstMatch(entities, this.targetSorter, this::isSuitableTarget);
     }
 
     @Override
@@ -233,12 +238,12 @@ public class Fairy extends AmbientCreature {
 
     @Override
     protected SoundEvent getHurtSound(DamageSource source) {
-        return SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "rat_hit"));
+        return SND_RAT_HIT;
     }
 
     @Override
     protected SoundEvent getDeathSound() {
-        return SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "big_splat"));
+        return SND_BIG_SPLAT;
     }
 
     @Override

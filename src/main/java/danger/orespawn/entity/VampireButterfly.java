@@ -54,6 +54,10 @@ import net.minecraft.world.phys.Vec3;
  * sensing range.
  */
 public class VampireButterfly extends Monster {
+    // OPT-011: cached SoundEvents — identical createVariableRangeEvent ids,
+    // allocated once per class instead of on every sound query.
+    private static final SoundEvent SND_MOSQUITO = SoundEvent.createVariableRangeEvent(
+            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "mosquito"));
     private static final EntityDataAccessor<Integer> ATTACKING_TICKS =
             SynchedEntityData.defineId(VampireButterfly.class, EntityDataSerializers.INT);
 
@@ -171,8 +175,7 @@ public class VampireButterfly extends Monster {
 
     @Override
     protected SoundEvent getHurtSound(DamageSource source) {
-        return SoundEvent.createVariableRangeEvent(
-                ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "mosquito"));
+        return SND_MOSQUITO;
     }
 
     @Override

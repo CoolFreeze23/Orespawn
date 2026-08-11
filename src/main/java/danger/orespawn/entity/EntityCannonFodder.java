@@ -29,6 +29,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
+import danger.orespawn.entity.ai.TargetSelection;
 
 public class EntityCannonFodder extends TamableAnimal {
     private static final EntityDataAccessor<Integer> IS_ACTIVATED =
@@ -252,11 +253,9 @@ public class EntityCannonFodder extends TamableAnimal {
     private LivingEntity findSomethingToAttack() {
         List<LivingEntity> entities = this.level().getEntitiesOfClass(LivingEntity.class,
                 this.getBoundingBox().inflate(10.0, 4.0, 10.0));
-        entities.sort(this.localTargetSorter);
-        for (LivingEntity candidate : entities) {
-            if (this.isSuitableTarget(candidate)) return candidate;
-        }
-        return null;
+        // OPT-021: nearest-first pick without the full list sort; TargetSelection
+        // preserves the removed sort's order and stable-tie semantics exactly.
+        return TargetSelection.firstMatch(entities, this.localTargetSorter, this::isSuitableTarget);
     }
 
     // orig EntityCannonFodder.java:330-335 (func_70658_aO / getTotalArmorValue) —

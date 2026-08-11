@@ -45,6 +45,10 @@ public class LeonRenderer extends MobRenderer<EntityLeon, LeonModel> {
         // the registered hitbox; skip frustum culling so the boss doesn't pop
         // out at screen edges. Carried over from the retired interim
         // LeonopteryxRenderer.
+        // OPT-013: evaluated for replacement with a finite inflated cull box and
+        // intentionally left as-is — the animated wing envelope is not statically
+        // provable, and an under-sized box would visibly pop the boss out at the
+        // screen edge (a behavior change). Unconditional true stays.
         return true;
     }
 

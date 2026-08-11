@@ -34,6 +34,12 @@ public class PitchBlackRenderer extends MobRenderer<PitchBlack, ModelPitchBlack>
         poseStack.popPose();
     }
 
+    // OPT-013: evaluated for replacement with a finite inflated cull box and
+    // intentionally left as-is. The animated model envelope (GeckoLib/MHLib
+    // bone-driven parts, code-model limb rotations) is not statically provable
+    // from any constant in this codebase, and an under-sized box would visibly
+    // pop the boss out at the screen edge — a behavior change. Keeping
+    // unconditional true is the strictly-neutral choice.
     @Override
     public boolean shouldRender(PitchBlack entity, Frustum frustum, double x, double y, double z) {
         return true;

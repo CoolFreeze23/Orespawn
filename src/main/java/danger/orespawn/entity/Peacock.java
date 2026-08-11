@@ -27,6 +27,14 @@ import danger.orespawn.ModItems;
 import danger.orespawn.OreSpawnMod;
 
 public class Peacock extends Animal {
+    // OPT-011: cached SoundEvents — identical createVariableRangeEvent ids,
+    // allocated once per class instead of on every sound query.
+    private static final SoundEvent SND_PEACOCKLIVE = SoundEvent.createVariableRangeEvent(
+            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "peacocklive"));
+    private static final SoundEvent SND_PEACOCKHIT = SoundEvent.createVariableRangeEvent(
+            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "peacockhit"));
+    private static final SoundEvent SND_PEACOCKDEAD = SoundEvent.createVariableRangeEvent(
+            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "peacockdead"));
     private static final float MOVE_SPEED = 0.38f;
     private static final int MAX_HEALTH = 15;
     private int myBlink = 20;
@@ -37,6 +45,9 @@ public class Peacock extends Animal {
 
     public Peacock(EntityType<? extends Peacock> type, Level level) {
         super(type, level);
+        // OPT-009: constant speed - assert the attribute base once here instead
+        // of re-writing it every tick (same value the removed per-tick call set).
+        this.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(MOVE_SPEED);
         this.xpReward = 8;
         this.myBlink = 20 + this.random.nextInt(50);
         this.targetSorter = new danger.orespawn.entity.ai.GenericTargetSorter(this); // orig Peacock.java:55
@@ -66,7 +77,6 @@ public class Peacock extends Animal {
 
     @Override
     public void tick() {
-        this.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(MOVE_SPEED);
         super.tick();
         ++this.blinkcount;
         if (this.blinkcount > this.myBlink) {
@@ -90,20 +100,17 @@ public class Peacock extends Animal {
     @Override
     protected SoundEvent getAmbientSound() {
         if (this.getRandom().nextInt(8) != 1) return null;
-        return SoundEvent.createVariableRangeEvent(
-                ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "peacocklive"));
+        return SND_PEACOCKLIVE;
     }
 
     @Override
     protected SoundEvent getHurtSound(DamageSource source) {
-        return SoundEvent.createVariableRangeEvent(
-                ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "peacockhit"));
+        return SND_PEACOCKHIT;
     }
 
     @Override
     protected SoundEvent getDeathSound() {
-        return SoundEvent.createVariableRangeEvent(
-                ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "peacockdead"));
+        return SND_PEACOCKDEAD;
     }
 
     @Override
@@ -170,8 +177,9 @@ public class Peacock extends Animal {
         java.util.List<EntityTermite> termites = this.level().getEntitiesOfClass(EntityTermite.class,
                 this.getBoundingBox().inflate(10.0, 2.0, 10.0),
                 t -> t.isAlive() && this.getSensing().hasLineOfSight(t));
-        termites.sort(this.targetSorter);
-        return termites.isEmpty() ? null : termites.get(0);
+        // OPT-021: single-pass min instead of sort+get(0) — same element,
+        // same stable-tie order as the removed sort.
+        return danger.orespawn.entity.ai.TargetSelection.first(termites, this.targetSorter);
     }
 
     @Override

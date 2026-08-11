@@ -55,6 +55,14 @@ import net.minecraft.util.Mth;
 import net.neoforged.neoforge.entity.PartEntity;
 
 public class Godzilla extends Monster implements OreSpawnPartEntity.MultipartBoss {
+    // OPT-011: cached SoundEvents — identical createVariableRangeEvent ids,
+    // allocated once per class instead of on every sound query.
+    private static final SoundEvent SND_GODZILLA_LIVING = SoundEvent.createVariableRangeEvent(
+            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "godzilla_living"));
+    private static final SoundEvent SND_ALO_HURT = SoundEvent.createVariableRangeEvent(
+            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "alo_hurt"));
+    private static final SoundEvent SND_GODZILLA_DEATH = SoundEvent.createVariableRangeEvent(
+            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "godzilla_death"));
     private static final int CONFIGURED_MAX_HEALTH = 6000;
     private static final double MELEE_PUSH_HORIZONTAL = 3.2;
     private static final double MELEE_PUSH_VERTICAL = 0.3;
@@ -80,6 +88,9 @@ public class Godzilla extends Monster implements OreSpawnPartEntity.MultipartBos
 
     private final Comparator<Entity> targetSorter;
     private final float moveSpeed = 0.75f;
+    /** OPT-023: per-level cache of the Mobzilla SavedData (see customServerAiStep). */
+    private MobzillaSpawnTracker spawnTrackerCache;
+    private ServerLevel spawnTrackerCacheLevel;
     private int hurtTimer = 0;
     private int jumped = 0;
     private int jumpTimer = 0;
@@ -93,9 +104,20 @@ public class Godzilla extends Monster implements OreSpawnPartEntity.MultipartBos
     private final OreSpawnPartEntity<Godzilla> headPart;
     private final OreSpawnPartEntity<Godzilla> tail;
     private final PartEntity<?>[] allParts;
+    /**
+     * OPT-010: reusable scratch buffers for the pre-{@code super.tick()} part
+     * positions, replacing a fresh {@code Vec3[]} + one {@code Vec3} per part
+     * every tick. Only written and read within a single {@link #tick()} call.
+     */
+    private final double[] partOldX;
+    private final double[] partOldY;
+    private final double[] partOldZ;
 
     public Godzilla(EntityType<? extends Godzilla> type, Level level) {
         super(type, level);
+        // OPT-009: constant speed - assert the attribute base once here instead
+        // of re-writing it every tick (same value the removed per-tick call set).
+        this.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(this.moveSpeed);
         this.xpReward = 10000;
         // TF-035: orig Godzilla.java:57/:85 — GenericTargetSorter.
         this.targetSorter = new danger.orespawn.entity.ai.GenericTargetSorter(this);
@@ -109,6 +131,9 @@ public class Godzilla extends Monster implements OreSpawnPartEntity.MultipartBos
         this.headPart  = new OreSpawnPartEntity<>(this, "head",     5.0f, 5.0f);
         this.tail      = new OreSpawnPartEntity<>(this, "tail",     4.0f, 4.0f);
         this.allParts = new PartEntity<?>[]{ bodyLower, bodyUpper, headPart, tail };
+        this.partOldX = new double[this.allParts.length];
+        this.partOldY = new double[this.allParts.length];
+        this.partOldZ = new double[this.allParts.length];
     }
 
     @Override
@@ -252,12 +277,14 @@ public class Godzilla extends Monster implements OreSpawnPartEntity.MultipartBos
 
     @Override
     public void tick() {
-        Vec3[] oldPos = new Vec3[allParts.length];
+        // OPT-010: snapshot part positions into reusable double[] scratch
+        // buffers (same values the old per-tick Vec3 array captured).
         for (int i = 0; i < allParts.length; i++) {
-            oldPos[i] = new Vec3(allParts[i].getX(), allParts[i].getY(), allParts[i].getZ());
+            partOldX[i] = allParts[i].getX();
+            partOldY[i] = allParts[i].getY();
+            partOldZ[i] = allParts[i].getZ();
         }
 
-        this.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(this.moveSpeed);
         super.tick();
         positionPart(bodyLower,  0.0,  2.0,   0.0);
         positionPart(bodyUpper,  0.0, 12.0,   0.0);
@@ -265,12 +292,12 @@ public class Godzilla extends Monster implements OreSpawnPartEntity.MultipartBos
         positionPart(tail,       0.0,  4.0,  10.0);
 
         for (int i = 0; i < allParts.length; i++) {
-            allParts[i].xo = oldPos[i].x;
-            allParts[i].yo = oldPos[i].y;
-            allParts[i].zo = oldPos[i].z;
-            allParts[i].xOld = oldPos[i].x;
-            allParts[i].yOld = oldPos[i].y;
-            allParts[i].zOld = oldPos[i].z;
+            allParts[i].xo = partOldX[i];
+            allParts[i].yo = partOldY[i];
+            allParts[i].zo = partOldZ[i];
+            allParts[i].xOld = partOldX[i];
+            allParts[i].yOld = partOldY[i];
+            allParts[i].zOld = partOldZ[i];
         }
 
         if (this.onGround()) {
@@ -299,8 +326,7 @@ public class Godzilla extends Monster implements OreSpawnPartEntity.MultipartBos
     protected SoundEvent getAmbientSound() {
         // orig Godzilla.java:176-181 — "orespawn:godzilla_living" 1 time in 5.
         if (this.getRandom().nextInt(5) == 0) {
-            return SoundEvent.createVariableRangeEvent(
-                    ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "godzilla_living"));
+            return SND_GODZILLA_LIVING;
         }
         return null;
     }
@@ -308,15 +334,13 @@ public class Godzilla extends Monster implements OreSpawnPartEntity.MultipartBos
     @Override
     protected SoundEvent getHurtSound(DamageSource source) {
         // orig Godzilla.java:183-185 — "orespawn:alo_hurt".
-        return SoundEvent.createVariableRangeEvent(
-                ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "alo_hurt"));
+        return SND_ALO_HURT;
     }
 
     @Override
     protected SoundEvent getDeathSound() {
         // orig Godzilla.java:187-189 — "orespawn:godzilla_death".
-        return SoundEvent.createVariableRangeEvent(
-                ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "godzilla_death"));
+        return SND_GODZILLA_DEATH;
     }
 
     @Override
@@ -394,44 +418,65 @@ public class Godzilla extends Monster implements OreSpawnPartEntity.MultipartBos
 
     // ---- Block crushing ----
 
+    /**
+     * OPT-015: the non-crushable block set, built once on first use instead of
+     * ~20 identity compares — six of them {@code ModBlocks.X.get()} deferred
+     * holder resolutions — per probed block (~1,700 probes per 4 ticks).
+     * Lazily initialized rather than {@code static final} so classloading
+     * Godzilla can never resolve holders before the block registry is bound;
+     * first use happens during a server tick, long after registry freeze.
+     * Cache invalidation: none needed — Block instances are registry
+     * singletons fixed for the JVM lifetime (datapack reloads swap tags and
+     * recipes, never Block objects), so this set can never go stale. Set
+     * membership uses identity equals/hashCode (Block overrides neither), so
+     * lookups are exactly the old == chain.
+     */
+    private static java.util.Set<Block> nonCrushables;
+
+    private static java.util.Set<Block> nonCrushables() {
+        java.util.Set<Block> set = nonCrushables;
+        if (set == null) {
+            set = java.util.Set.of(
+                    Blocks.GRASS_BLOCK, Blocks.DIRT, Blocks.STONE, Blocks.MYCELIUM,
+                    Blocks.LAVA, Blocks.WATER, Blocks.BEDROCK, Blocks.OBSIDIAN,
+                    Blocks.SAND, Blocks.GRAVEL, Blocks.IRON_BLOCK, Blocks.DIAMOND_BLOCK,
+                    Blocks.EMERALD_BLOCK, Blocks.GOLD_BLOCK, Blocks.ENDER_CHEST,
+                    Blocks.COMMAND_BLOCK,
+                    ModBlocks.BLOCK_AMETHYST.get(), ModBlocks.BLOCK_RUBY.get(),
+                    ModBlocks.BLOCK_URANIUM.get(), ModBlocks.BLOCK_TITANIUM.get(),
+                    ModBlocks.CRYSTAL_STONE.get(), ModBlocks.CRYSTAL_GRASS.get());
+            nonCrushables = set;
+        }
+        return set;
+    }
+
     private boolean isCrushable(Block block) {
         if (block == null) return false;
         if (!this.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)) return false;
-        if (block == Blocks.GRASS_BLOCK) return false;
-        if (block == Blocks.DIRT) return false;
-        if (block == Blocks.STONE) return false;
-        if (block == Blocks.MYCELIUM) return false;
-        if (block == Blocks.LAVA) return false;
-        if (block == Blocks.WATER) return false;
-        if (block == Blocks.BEDROCK) return false;
-        if (block == Blocks.OBSIDIAN) return false;
-        if (block == Blocks.SAND) return false;
-        if (block == Blocks.GRAVEL) return false;
-        if (block == Blocks.IRON_BLOCK) return false;
-        if (block == Blocks.DIAMOND_BLOCK) return false;
-        if (block == Blocks.EMERALD_BLOCK) return false;
-        if (block == Blocks.GOLD_BLOCK) return false;
-        if (block == Blocks.ENDER_CHEST) return false;
-        if (block == Blocks.COMMAND_BLOCK) return false;
-        if (block == ModBlocks.BLOCK_AMETHYST.get()) return false;
-        if (block == ModBlocks.BLOCK_RUBY.get()) return false;
-        if (block == ModBlocks.BLOCK_URANIUM.get()) return false;
-        if (block == ModBlocks.BLOCK_TITANIUM.get()) return false;
-        if (block == ModBlocks.CRYSTAL_STONE.get()) return false;
-        if (block == ModBlocks.CRYSTAL_GRASS.get()) return false;
-        return true;
+        return !nonCrushables().contains(block);
     }
 
     private void crushBlocks(double cx, double cz, int xzrange, int k) {
         if (!this.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)) return;
+        // OPT-015: one reusable cursor for the probe slice instead of a
+        // BlockPos.containing allocation per block. Mth.floor per axis is
+        // exactly the arithmetic BlockPos.containing performed; the Y floor is
+        // hoisted because getY() and k cannot change mid-loop (block pushes
+        // move entities during entity ticking, never synchronously inside
+        // setBlock). The cursor is only handed to getBlockState (which never
+        // retains the pos); actual writes pass an immutable copy because
+        // Level.setBlock side effects (scheduled ticks, neighbor updates) may
+        // hold onto the pos beyond the call.
+        BlockPos.MutableBlockPos cursor = new BlockPos.MutableBlockPos();
+        int by = Mth.floor(this.getY() + k);
         for (int i = -xzrange; i <= xzrange; i++) {
+            int bx = Mth.floor(cx + i);
             for (int j = -xzrange; j <= xzrange; j++) {
-                BlockPos pos = BlockPos.containing(cx + i, this.getY() + k, cz + j);
-                Block block = this.level().getBlockState(pos).getBlock();
+                Block block = this.level().getBlockState(cursor.set(bx, by, Mth.floor(cz + j))).getBlock();
                 if (isCrushable(block)) {
-                    this.level().setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
+                    this.level().setBlock(cursor.immutable(), Blocks.AIR.defaultBlockState(), 3);
                 } else if (block == Blocks.GRASS_BLOCK || block == Blocks.MYCELIUM) {
-                    this.level().setBlock(pos, Blocks.DIRT.defaultBlockState(), 3);
+                    this.level().setBlock(cursor.immutable(), Blocks.DIRT.defaultBlockState(), 3);
                 }
             }
         }
@@ -605,8 +650,20 @@ public class Godzilla extends Monster implements OreSpawnPartEntity.MultipartBos
         // spawned" flag while alive so chunk-load races can't sneak a second
         // ambient spawn in. The config gate lets servers opt into the legacy
         // multi-spawn behavior if they want.
+        // OPT-023: resolve the SavedData once per level instead of walking
+        // server->overworld->dataStorage->computeIfAbsent every tick. The
+        // tracker instance is stable for the server's lifetime (SavedData is
+        // never evicted from data storage), and the cache is keyed on this
+        // entity's current ServerLevel — invalidated if the level ever differs
+        // (dimension moves construct a fresh entity anyway, so this is belt-and-
+        // suspenders). markSpawned() is still called every tick, preserving the
+        // continuous re-assert semantics (e.g. after an external reset()).
         if (OreSpawnConfig.MOBZILLA_SINGLE_SPAWN.get() && this.level() instanceof ServerLevel sl) {
-            MobzillaSpawnTracker.get(sl).markSpawned();
+            if (this.spawnTrackerCacheLevel != sl) {
+                this.spawnTrackerCache = MobzillaSpawnTracker.get(sl);
+                this.spawnTrackerCacheLevel = sl;
+            }
+            this.spawnTrackerCache.markSpawned();
         }
 
         ++this.ticker;

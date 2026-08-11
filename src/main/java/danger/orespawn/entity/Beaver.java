@@ -4,6 +4,7 @@ import danger.orespawn.ModEntities;
 import danger.orespawn.ModItems;
 import danger.orespawn.OreSpawnMod;
 import danger.orespawn.entity.ai.GenericTargetSorter;
+import danger.orespawn.entity.ai.TargetSelection;
 import java.util.List;
 import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
@@ -37,6 +38,15 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 
 public class Beaver extends Animal {
+    // OPT-011: cached SoundEvents — identical createVariableRangeEvent ids,
+    // allocated once per class instead of on every sound query.
+    private static final SoundEvent SND_CHAINSAW = SoundEvent.createVariableRangeEvent(
+            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "chainsaw"));
+    private static final SoundEvent SND_SCORPION_HIT = SoundEvent.createVariableRangeEvent(
+            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "scorpion_hit"));
+    private static final SoundEvent SND_CRYO_DEATH = SoundEvent.createVariableRangeEvent(
+            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "cryo_death"));
+
     private static final int MAX_HEALTH = 15;
     private static final double MOVE_SPEED = 0.2;
     private static final int NO_WOOD_FOUND_SENTINEL = 99999;
@@ -180,8 +190,7 @@ public class Beaver extends Animal {
                     }
                     this.heal(1.0f);
                     this.playSound(
-                            SoundEvent.createVariableRangeEvent(
-                                    ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "chainsaw")),
+                            SND_CHAINSAW,
                             1.0f, this.random.nextFloat() * 0.2f + 0.9f);
                 }
             }
@@ -205,8 +214,9 @@ public class Beaver extends Animal {
         // pathed to the beaver's own position. Kept, bug and all, for parity.
         List<Beaver> buddies = this.level().getEntitiesOfClass(Beaver.class,
                 this.getBoundingBox().inflate(16.0, 6.0, 16.0));
-        buddies.sort(new GenericTargetSorter(this));
-        return buddies.isEmpty() ? null : buddies.get(0);
+        // OPT-021: single-pass min instead of sort+get(0) — same element, same
+        // stable-tie order; the self-at-distance-0 parity bug is preserved.
+        return TargetSelection.first(buddies, new GenericTargetSorter(this));
     }
 
     @Override
@@ -231,14 +241,12 @@ public class Beaver extends Animal {
 
     @Override
     protected SoundEvent getHurtSound(DamageSource source) {
-        return SoundEvent.createVariableRangeEvent(
-                ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "scorpion_hit"));
+        return SND_SCORPION_HIT;
     }
 
     @Override
     protected SoundEvent getDeathSound() {
-        return SoundEvent.createVariableRangeEvent(
-                ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "cryo_death"));
+        return SND_CRYO_DEATH;
     }
 
     @Override

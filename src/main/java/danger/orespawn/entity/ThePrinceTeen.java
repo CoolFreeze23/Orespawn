@@ -46,9 +46,20 @@ import danger.orespawn.ModEntities;
 import danger.orespawn.OreSpawnConfig;
 import danger.orespawn.OreSpawnMod;
 import danger.orespawn.util.MyUtils;
+import danger.orespawn.entity.ai.TargetSelection;
 
 public class ThePrinceTeen extends TamableAnimal
         implements danger.orespawn.network.RiderInputPayload.RideableFlyer {
+    // OPT-011: cached SoundEvents — identical createVariableRangeEvent ids,
+    // allocated once per class instead of on every sound query.
+    private static final SoundEvent SND_MOTHRAWINGS = SoundEvent.createVariableRangeEvent(
+            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "mothrawings"));
+    private static final SoundEvent SND_ROAR = SoundEvent.createVariableRangeEvent(
+            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "roar"));
+    private static final SoundEvent SND_ALO_HURT = SoundEvent.createVariableRangeEvent(
+            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "alo_hurt"));
+    private static final SoundEvent SND_ALO_DEATH = SoundEvent.createVariableRangeEvent(
+            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "alo_death"));
     private static final EntityDataAccessor<Integer> DATA_ATTACKING =
             SynchedEntityData.defineId(ThePrinceTeen.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Integer> DATA_ACTIVITY =
@@ -112,6 +123,9 @@ public class ThePrinceTeen extends TamableAnimal
 
     public ThePrinceTeen(EntityType<? extends ThePrinceTeen> type, Level level) {
         super(type, level);
+        // OPT-009: constant speed - assert the attribute base once here instead
+        // of re-writing it every tick (same value the removed per-tick call set).
+        this.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(this.moveSpeed);
         // orig ThePrinceTeen.java:105 — experienceValue = 300.
         this.xpReward = 300;
         this.noPhysics = false;
@@ -167,7 +181,6 @@ public class ThePrinceTeen extends TamableAnimal
 
     @Override
     public void tick() {
-        this.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(this.moveSpeed);
         super.tick();
         // orig ThePrinceTeen.java:590 — any flight activity ghosts through terrain.
         this.noPhysics = this.getActivity() != 0;
@@ -181,8 +194,7 @@ public class ThePrinceTeen extends TamableAnimal
             if (this.wingSound > 20) {
                 if (!this.level().isClientSide) {
                     this.level().playSound(null, this.getX(), this.getY(), this.getZ(),
-                            SoundEvent.createVariableRangeEvent(
-                                    ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "mothrawings")),
+                            SND_MOTHRAWINGS,
                             this.getSoundSource(), 0.5f, 1.0f);
                 }
                 this.wingSound = 0;
@@ -853,11 +865,9 @@ public class ThePrinceTeen extends TamableAnimal
         if (OreSpawnConfig.PLAY_NICELY.get()) return null;
         AABB box = this.getBoundingBox().inflate(25.0, 20.0, 25.0);
         List<LivingEntity> targets = this.level().getEntitiesOfClass(LivingEntity.class, box);
-        targets.sort(this.targetSorter);
-        for (LivingEntity t : targets) {
-            if (this.isSuitableTarget(t)) return t;
-        }
-        return null;
+        // OPT-021: nearest-first pick without the full list sort; TargetSelection
+        // preserves the removed sort's order and stable-tie semantics exactly.
+        return TargetSelection.firstMatch(targets, this.targetSorter, this::isSuitableTarget);
     }
 
     @Override
@@ -986,9 +996,9 @@ public class ThePrinceTeen extends TamableAnimal
         this.discard();
     }
 
-    @Override protected SoundEvent getAmbientSound() { return SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "roar")); }
-    @Override protected SoundEvent getHurtSound(DamageSource s) { return SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "alo_hurt")); }
-    @Override protected SoundEvent getDeathSound() { return SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "alo_death")); }
+    @Override protected SoundEvent getAmbientSound() { return SND_ROAR; }
+    @Override protected SoundEvent getHurtSound(DamageSource s) { return SND_ALO_HURT; }
+    @Override protected SoundEvent getDeathSound() { return SND_ALO_DEATH; }
     @Override protected float getSoundVolume() { return 1.0f; }
     @Override public boolean removeWhenFarAway(double d) { return false; }
     @Override public boolean isFood(ItemStack s) { return s.is(Items.BEEF); }

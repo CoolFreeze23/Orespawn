@@ -31,8 +31,13 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.util.Mth;
+import danger.orespawn.entity.ai.TargetSelection;
 
 public class EntityBrutalfly extends Monster {
+    // OPT-011: cached SoundEvents — identical createVariableRangeEvent ids,
+    // allocated once per class instead of on every sound query.
+    private static final SoundEvent SND_MOTHRAWINGS = SoundEvent.createVariableRangeEvent(
+            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "mothrawings"));
     private BlockPos currentFlightTarget = null;
     private int lastX = 0;
     private int lastZ = 0;
@@ -95,8 +100,7 @@ public class EntityBrutalfly extends Monster {
         if (this.wingSound > 30) {
             if (!this.level().isClientSide) {
                 this.level().playSound(null, this.blockPosition(),
-                        SoundEvent.createVariableRangeEvent(
-                                ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "mothrawings")),
+                        SND_MOTHRAWINGS,
                         this.getSoundSource(), 1.0f, 1.0f);
             }
             this.wingSound = 0;
@@ -332,11 +336,9 @@ public class EntityBrutalfly extends Monster {
         // TF-035: orig Brutalfly.java:50,60,448 — candidates sort with
         // GenericTargetSorter (creeper-halved / big-mob-prioritized), not
         // plain distance.
-        entities.sort(new GenericTargetSorter(this));
-        for (LivingEntity candidate : entities) {
-            if (isSuitableTarget(candidate)) return candidate;
-        }
-        return null;
+        // OPT-021: nearest-first pick without the full list sort; TargetSelection
+        // preserves the removed sort's order and stable-tie semantics exactly.
+        return TargetSelection.firstMatch(entities, new GenericTargetSorter(this), this::isSuitableTarget);
     }
 
     private boolean isSuitableTarget(LivingEntity target) {

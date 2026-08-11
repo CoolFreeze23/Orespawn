@@ -39,6 +39,12 @@ import danger.orespawn.OreSpawnMod;
 import danger.orespawn.entity.client.RenderSpiderRobotInfo;
 
 public class SpiderRobot extends Mob {
+    // OPT-011: cached SoundEvents — identical createVariableRangeEvent ids,
+    // allocated once per class instead of on every sound query.
+    private static final SoundEvent SND_ROBOTSPIDER = SoundEvent.createVariableRangeEvent(
+            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "robotspider"));
+    private static final SoundEvent SND_ROBOTSPIDERMOUNT = SoundEvent.createVariableRangeEvent(
+            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "robotspidermount"));
     private static final EntityDataAccessor<Integer> DATA_ATTACKING =
             SynchedEntityData.defineId(SpiderRobot.class, EntityDataSerializers.INT);
 
@@ -187,8 +193,7 @@ public class SpiderRobot extends Mob {
         }
         if (this.soundCooldown > 0) --this.soundCooldown;
         if (this.getFirstPassenger() != null && this.soundCooldown == 0 && this.getRandom().nextInt(80) == 1) {
-            this.playSound(SoundEvent.createVariableRangeEvent(
-                    ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "robotspider")), 0.45f, 1.0f);
+            this.playSound(SND_ROBOTSPIDER, 0.45f, 1.0f);
             this.soundCooldown = 125;
         }
     }
@@ -227,8 +232,7 @@ public class SpiderRobot extends Mob {
         }
         if (!this.level().isClientSide() && this.getFirstPassenger() == null && this.distanceToSqr(player) < 16.0) {
             player.startRiding(this);
-            this.playSound(SoundEvent.createVariableRangeEvent(
-                    ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "robotspidermount")), 0.65f, 1.0f);
+            this.playSound(SND_ROBOTSPIDERMOUNT, 0.65f, 1.0f);
         }
         return InteractionResult.sidedSuccess(this.level().isClientSide());
     }

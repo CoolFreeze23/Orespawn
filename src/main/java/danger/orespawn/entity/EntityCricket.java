@@ -26,6 +26,10 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 
 public class EntityCricket extends Animal {
+    // OPT-011: cached SoundEvents — identical createVariableRangeEvent ids,
+    // allocated once per class instead of on every sound query.
+    private static final SoundEvent SND_CRICKET = SoundEvent.createVariableRangeEvent(
+            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "cricket"));
     private static final EntityDataAccessor<Integer> DATA_SINGING =
             SynchedEntityData.defineId(EntityCricket.class, EntityDataSerializers.INT);
 
@@ -107,8 +111,7 @@ public class EntityCricket extends Animal {
             this.singing = 40;
             this.setSinging(this.singing);
         }
-        return SoundEvent.createVariableRangeEvent(
-                ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "cricket"));
+        return SND_CRICKET;
     }
 
     @Override

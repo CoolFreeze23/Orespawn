@@ -33,6 +33,10 @@ import net.minecraft.world.phys.AABB;
 import java.util.List;
 
 public class EntityStinkBug extends Animal {
+    // OPT-011: cached SoundEvents — identical createVariableRangeEvent ids,
+    // allocated once per class instead of on every sound query.
+    private static final SoundEvent SND_FART = SoundEvent.createVariableRangeEvent(
+            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "fart"));
 
     public EntityStinkBug(EntityType<? extends EntityStinkBug> type, Level level) {
         super(type, level);
@@ -70,8 +74,7 @@ public class EntityStinkBug extends Animal {
 
     @Override
     protected SoundEvent getDeathSound() {
-        return SoundEvent.createVariableRangeEvent(
-                ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "fart"));
+        return SND_FART;
     }
 
     @Override

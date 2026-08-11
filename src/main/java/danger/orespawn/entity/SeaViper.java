@@ -41,6 +41,14 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.pathfinder.PathType;
 
 public class SeaViper extends Monster {
+    // OPT-011: cached SoundEvents — identical createVariableRangeEvent ids,
+    // allocated once per class instead of on every sound query.
+    private static final SoundEvent SND_SEAVIPER_LIVING = SoundEvent.createVariableRangeEvent(
+            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "seaviper_living"));
+    private static final SoundEvent SND_SEAVIPER_HIT = SoundEvent.createVariableRangeEvent(
+            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "seaviper_hit"));
+    private static final SoundEvent SND_SEAVIPER_DEATH = SoundEvent.createVariableRangeEvent(
+            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "seaviper_death"));
     private static final EntityDataAccessor<Integer> DATA_ATTACKING =
             SynchedEntityData.defineId(SeaViper.class, EntityDataSerializers.INT);
 
@@ -51,8 +59,17 @@ public class SeaViper extends Monster {
     private int closestWaterDistance = 99999;
     private int targetX = 0, targetY = 0, targetZ = 0;
 
+    /**
+     * OPT-009: the speed genuinely varies (water/land), so the per-tick write
+     * stays, but the AttributeInstance is resolved once instead of via a map
+     * lookup every tick. Attribute instances live exactly as long as the entity
+     * (a dimension change constructs a fresh entity), so this cannot go stale.
+     */
+    private final net.minecraft.world.entity.ai.attributes.AttributeInstance movementSpeedAttribute;
+
     public SeaViper(EntityType<? extends SeaViper> type, Level level) {
         super(type, level);
+        this.movementSpeedAttribute = this.getAttribute(Attributes.MOVEMENT_SPEED);
         this.xpReward = 120;
         // Smooth amphibious move/look — modern 1.21.1 equivalent of the
         // 1.7.10 EntityAISwimming + func_70648_aU (breathes underwater) combo.
@@ -147,7 +164,8 @@ public class SeaViper extends Monster {
     @Override
     public void aiStep() {
         super.aiStep();
-        this.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(
+        // OPT-009: cached instance; setBaseValue itself no-ops when unchanged.
+        this.movementSpeedAttribute.setBaseValue(
                 this.isInWater() ? MOVE_SPEED_IN_WATER : MOVE_SPEED_OUT_OF_WATER);
     }
 
@@ -259,22 +277,19 @@ public class SeaViper extends Monster {
     @Override
     protected SoundEvent getAmbientSound() {
         if (this.random.nextInt(2) == 0) {
-            return SoundEvent.createVariableRangeEvent(
-                    ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "seaviper_living"));
+            return SND_SEAVIPER_LIVING;
         }
         return null;
     }
 
     @Override
     protected SoundEvent getHurtSound(DamageSource source) {
-        return SoundEvent.createVariableRangeEvent(
-                ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "seaviper_hit"));
+        return SND_SEAVIPER_HIT;
     }
 
     @Override
     protected SoundEvent getDeathSound() {
-        return SoundEvent.createVariableRangeEvent(
-                ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "seaviper_death"));
+        return SND_SEAVIPER_DEATH;
     }
 
     // Keep legacy "near-surface water" spawn rule: Y >= 50 (vanilla sea level

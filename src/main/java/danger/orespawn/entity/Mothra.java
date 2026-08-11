@@ -39,8 +39,13 @@ import danger.orespawn.OreSpawnMod;
 import danger.orespawn.entity.ai.GenericTargetSorter;
 import danger.orespawn.util.MyUtils;
 import net.neoforged.neoforge.entity.PartEntity;
+import danger.orespawn.entity.ai.TargetSelection;
 
 public class Mothra extends EntityButterfly implements OreSpawnPartEntity.MultipartBoss {
+    // OPT-011: cached SoundEvents — identical createVariableRangeEvent ids,
+    // allocated once per class instead of on every sound query.
+    private static final SoundEvent SND_MOTHRAWINGS = SoundEvent.createVariableRangeEvent(
+            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "mothrawings"));
     private BlockPos currentFlightTarget = null;
     private int lastX = 0, lastZ = 0, lastY = 0;
     private int stuckCount = 0;
@@ -174,8 +179,7 @@ public class Mothra extends EntityButterfly implements OreSpawnPartEntity.Multip
         this.wingSound++;
         if (this.wingSound > 30) {
             if (!this.level().isClientSide) {
-                this.playSound(SoundEvent.createVariableRangeEvent(
-                        ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "mothrawings")), 1.0f, 1.0f);
+                this.playSound(SND_MOTHRAWINGS, 1.0f, 1.0f);
             }
             this.wingSound = 0;
         }
@@ -232,11 +236,9 @@ public class Mothra extends EntityButterfly implements OreSpawnPartEntity.Multip
         if (OreSpawnConfig.PLAY_NICELY.get()) return null;
         List<LivingEntity> entities = this.level().getEntitiesOfClass(LivingEntity.class,
                 this.getBoundingBox().inflate(15.0, 20.0, 15.0));
-        entities.sort(this.targetSorter);
-        for (LivingEntity targetEntity : entities) {
-            if (this.isSuitableTarget(targetEntity)) return targetEntity;
-        }
-        return null;
+        // OPT-021: nearest-first pick without the full list sort; TargetSelection
+        // preserves the removed sort's order and stable-tie semantics exactly.
+        return TargetSelection.firstMatch(entities, this.targetSorter, this::isSuitableTarget);
     }
 
     /**

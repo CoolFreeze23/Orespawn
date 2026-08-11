@@ -25,8 +25,15 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import danger.orespawn.OreSpawnConfig;
 import danger.orespawn.OreSpawnMod;
+import danger.orespawn.entity.ai.TargetSelection;
 
 public class EntityLeafMonster extends Monster {
+    // OPT-011: cached SoundEvents — identical createVariableRangeEvent ids,
+    // allocated once per class instead of on every sound query.
+    private static final SoundEvent SND_LEAVES_HIT = SoundEvent.createVariableRangeEvent(
+            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "leaves_hit"));
+    private static final SoundEvent SND_LEAVES_DEATH = SoundEvent.createVariableRangeEvent(
+            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "leaves_death"));
     private static final EntityDataAccessor<Integer> DATA_ATTACKING =
             SynchedEntityData.defineId(EntityLeafMonster.class, EntityDataSerializers.INT);
 
@@ -34,6 +41,9 @@ public class EntityLeafMonster extends Monster {
 
     public EntityLeafMonster(EntityType<? extends EntityLeafMonster> type, Level level) {
         super(type, level);
+        // OPT-009: constant speed - assert the attribute base once here instead
+        // of re-writing it every tick (same value the removed per-tick call set).
+        this.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(this.moveSpeed);
         this.xpReward = 5;
     }
 
@@ -74,7 +84,6 @@ public class EntityLeafMonster extends Monster {
 
     @Override
     public void tick() {
-        this.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(this.moveSpeed);
         super.tick();
 
         if (this.getAttacking() == 0) {
@@ -137,11 +146,9 @@ public class EntityLeafMonster extends Monster {
                 this.getBoundingBox().inflate(4.0, 6.0, 4.0));
         // TF-035: orig sorts candidates with GenericTargetSorter (LeafMonster.java:36 field,
         // :48 ctor, :214 Collections.sort), not plain distance — creepers/large targets rank closer.
-        entities.sort(new GenericTargetSorter(this));
-        for (LivingEntity candidate : entities) {
-            if (isSuitableTarget(candidate)) return candidate;
-        }
-        return null;
+        // OPT-021: nearest-first pick without the full list sort; TargetSelection
+        // preserves the removed sort's order and stable-tie semantics exactly.
+        return TargetSelection.firstMatch(entities, new GenericTargetSorter(this), this::isSuitableTarget);
     }
 
     // orig LeafMonster.java:178-207 — explicit prey list: Ant, Butterfly, LunaMoth, non-creative players
@@ -165,14 +172,12 @@ public class EntityLeafMonster extends Monster {
 
     @Override
     protected SoundEvent getHurtSound(DamageSource source) {
-        return SoundEvent.createVariableRangeEvent(
-                ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "leaves_hit"));
+        return SND_LEAVES_HIT;
     }
 
     @Override
     protected SoundEvent getDeathSound() {
-        return SoundEvent.createVariableRangeEvent(
-                ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "leaves_death"));
+        return SND_LEAVES_DEATH;
     }
 
     @Override

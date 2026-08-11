@@ -27,6 +27,7 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.resources.ResourceLocation;
 import danger.orespawn.OreSpawnMod;
+import danger.orespawn.entity.ai.TargetSelection;
 
 /**
  * Robot5 — RoboSniper role.
@@ -41,6 +42,14 @@ import danger.orespawn.OreSpawnMod;
  * Registry ID kept as "robot_5" for save compat.
  */
 public class Robot5 extends Monster {
+    // OPT-011: cached SoundEvents — identical createVariableRangeEvent ids,
+    // allocated once per class instead of on every sound query.
+    private static final SoundEvent SND_ROBOT_LIVING = SoundEvent.createVariableRangeEvent(
+            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "robot_living"));
+    private static final SoundEvent SND_ROBOT_HURT = SoundEvent.createVariableRangeEvent(
+            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "robot_hurt"));
+    private static final SoundEvent SND_ROBOT_DEATH = SoundEvent.createVariableRangeEvent(
+            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "robot_death"));
     private static final EntityDataAccessor<Integer> DATA_ATTACKING =
             SynchedEntityData.defineId(Robot5.class, EntityDataSerializers.INT);
 
@@ -151,11 +160,9 @@ public class Robot5 extends Monster {
     private LivingEntity findSomethingToAttack() {
         AABB searchBox = this.getBoundingBox().inflate(30.0, 6.0, 30.0);
         List<LivingEntity> entities = this.level().getEntitiesOfClass(LivingEntity.class, searchBox);
-        entities.sort(this.targetSorter);
-        for (LivingEntity e : entities) {
-            if (isSuitableTarget(e)) return e;
-        }
-        return null;
+        // OPT-021: nearest-first pick without the full list sort; TargetSelection
+        // preserves the removed sort's order and stable-tie semantics exactly.
+        return TargetSelection.firstMatch(entities, this.targetSorter, this::isSuitableTarget);
     }
 
     private boolean isSuitableTarget(LivingEntity target) {
@@ -168,18 +175,18 @@ public class Robot5 extends Monster {
     @Override
     protected SoundEvent getAmbientSound() {
         if (this.getRandom().nextInt(4) == 0)
-            return SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "robot_living"));
+            return SND_ROBOT_LIVING;
         return null;
     }
 
     @Override
     protected SoundEvent getHurtSound(DamageSource ds) {
-        return SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "robot_hurt"));
+        return SND_ROBOT_HURT;
     }
 
     @Override
     protected SoundEvent getDeathSound() {
-        return SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "robot_death"));
+        return SND_ROBOT_DEATH;
     }
 
     /** orig Robot5.java:317-351 — "Robo-Sniper" spawner bypass; y>=50; night; shorter (y+1..+2) air/short-grass clearance; darkness. */

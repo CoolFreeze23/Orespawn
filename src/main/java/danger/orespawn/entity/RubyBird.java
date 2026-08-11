@@ -15,6 +15,10 @@ import net.minecraft.world.level.Level;
 import javax.annotation.Nullable;
 
 public class RubyBird extends Cockateil {
+    // OPT-011: cached SoundEvents — identical createVariableRangeEvent ids,
+    // allocated once per class instead of on every sound query.
+    private static final SoundEvent SND_RUBYBIRD = SoundEvent.createVariableRangeEvent(
+            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "rubybird"));
     public RubyBird(EntityType<? extends RubyBird> type, Level level) {
         super(type, level);
         // orig RubyBird.java:19 (entityInit, every construction) — permanent upward
@@ -36,8 +40,7 @@ public class RubyBird extends Cockateil {
     protected SoundEvent getAmbientSound() {
         // orig RubyBird.java:22-27 — bespoke "orespawn:rubybird" when day and not raining, else silent
         if (this.level().isDay() && !this.level().isRaining()) {
-            return SoundEvent.createVariableRangeEvent(
-                    ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "rubybird"));
+            return SND_RUBYBIRD;
         }
         return null;
     }

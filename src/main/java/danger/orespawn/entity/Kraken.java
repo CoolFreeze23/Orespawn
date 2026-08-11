@@ -36,6 +36,7 @@ import net.minecraft.server.level.ServerBossEvent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.BossEvent;
 import net.minecraft.network.chat.Component;
+import danger.orespawn.entity.ai.TargetSelection;
 
 public class Kraken extends Monster {
     private static final EntityDataAccessor<Integer> DATA_ATTACKING =
@@ -528,11 +529,9 @@ public class Kraken extends Monster {
         AABB searchBox = this.getBoundingBox().inflate(20.0, 40.0, 20.0);
         List<LivingEntity> entities = this.level().getEntitiesOfClass(
                 LivingEntity.class, searchBox);
-        entities.sort(this.targetSorter);
-        for (LivingEntity entity : entities) {
-            if (isSuitableTarget(entity)) return entity;
-        }
-        return null;
+        // OPT-021: nearest-first pick without the full list sort; TargetSelection
+        // preserves the removed sort's order and stable-tie semantics exactly.
+        return TargetSelection.firstMatch(entities, this.targetSorter, this::isSuitableTarget);
     }
 
     public final int getAttacking() {
