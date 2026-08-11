@@ -61,6 +61,17 @@ public class Godzilla extends Monster implements OreSpawnPartEntity.MultipartBos
     private static final float INCOMING_DAMAGE_CAP = 750.0f;
     private static final int LARGE_ENTITY_AREA_THRESHOLD = 30;
 
+    /** BOSS-017: empty part array served while PlayNicely-shrunk. */
+    private static final PartEntity<?>[] NO_PARTS = new PartEntity<?>[0];
+    /** BOSS-017: constructor-time PlayNicely snapshot (orig Godzilla.java:71-75). */
+    private boolean playNicelyShrunk = false;
+    /**
+     * BOSS-017: orig Godzilla.java:101/:271 — DataWatcher slot 21 mirrors
+     * the live PlayNicely flag every tick so the client renderer can apply
+     * the /4 visual shrink dynamically (orig RenderGodzilla.java:39-45).
+     */
+    private static final EntityDataAccessor<Integer> DATA_PLAY_NICELY =
+            SynchedEntityData.defineId(Godzilla.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Integer> DATA_ATTACKING =
             SynchedEntityData.defineId(Godzilla.class, EntityDataSerializers.INT);
 
@@ -86,7 +97,12 @@ public class Godzilla extends Monster implements OreSpawnPartEntity.MultipartBos
     public Godzilla(EntityType<? extends Godzilla> type, Level level) {
         super(type, level);
         this.xpReward = 10000;
-        this.targetSorter = Comparator.comparingDouble(this::distanceToSqr);
+        // TF-035: orig Godzilla.java:57/:85 — GenericTargetSorter.
+        this.targetSorter = new danger.orespawn.entity.ai.GenericTargetSorter(this);
+        // BOSS-017: orig Godzilla.java:71-75 — constructor-time PlayNicely
+        // snapshot: 2.475x6.25 instead of 9.9x25.
+        this.playNicelyShrunk = danger.orespawn.OreSpawnConfig.PLAY_NICELY.get();
+        this.refreshDimensions();
 
         this.bodyLower = new OreSpawnPartEntity<>(this, "bodyLow",  8.0f, 8.0f);
         this.bodyUpper = new OreSpawnPartEntity<>(this, "bodyUp",   6.0f, 6.0f);
@@ -121,12 +137,15 @@ public class Godzilla extends Monster implements OreSpawnPartEntity.MultipartBos
     @Override
     protected void defineSynchedData(SynchedEntityData.Builder builder) {
         super.defineSynchedData(builder);
+        builder.define(DATA_PLAY_NICELY, 0);
         builder.define(DATA_ATTACKING, 0);
     }
 
     @Override
     public boolean removeWhenFarAway(double dist) {
-        return false;
+        // BOSS-017: orig Godzilla.java:134-138 func_70692_ba — a "nice"
+        // Godzilla is allowed to despawn; a hostile one never does.
+        return danger.orespawn.OreSpawnConfig.PLAY_NICELY.get();
     }
 
     /**
@@ -176,6 +195,11 @@ public class Godzilla extends Monster implements OreSpawnPartEntity.MultipartBos
 
     @Override
     public PartEntity<?>[] getParts() {
+        // BOSS-017: a PlayNicely-shrunk Godzilla is the orig's single
+        // 2.475x6.25 box — no part surfaces, parent pickable instead.
+        if (this.playNicelyShrunk) {
+            return NO_PARTS;
+        }
         return this.allParts;
     }
 
@@ -189,7 +213,21 @@ public class Godzilla extends Monster implements OreSpawnPartEntity.MultipartBos
 
     @Override
     public boolean isPickable() {
-        return false;
+        // BOSS-017: shrunk (nice) Godzilla is directly hittable like the
+        // orig's single small box.
+        return this.playNicelyShrunk;
+    }
+
+    /**
+     * BOSS-017: orig Godzilla.java:71-75 — 9.9x25 normally (port registers
+     * 10x25, documented at ModEntities), 2.475x6.25 when PlayNicely was set
+     * at construction time.
+     */
+    @Override
+    public net.minecraft.world.entity.EntityDimensions getDefaultDimensions(net.minecraft.world.entity.Pose pose) {
+        return this.playNicelyShrunk
+                ? net.minecraft.world.entity.EntityDimensions.fixed(2.475f, 6.25f)
+                : net.minecraft.world.entity.EntityDimensions.fixed(10.0f, 25.0f);
     }
 
     @Override
@@ -292,6 +330,11 @@ public class Godzilla extends Monster implements OreSpawnPartEntity.MultipartBos
     }
 
     // ---- Synched data accessors ----
+
+    /** BOSS-017: client-side accessor for the /4 render shrink (orig watcher 21). */
+    public final int getPlayNicely() {
+        return this.entityData.get(DATA_PLAY_NICELY);
+    }
 
     public final int getAttacking() {
         return this.entityData.get(DATA_ATTACKING);
@@ -511,6 +554,12 @@ public class Godzilla extends Monster implements OreSpawnPartEntity.MultipartBos
     }
 
     private LivingEntity findSomethingToAttack() {
+        // BOSS-017: orig Godzilla.java:524-527 — PlayNicely pacifies AND
+        // fakes headFound=1, also suppressing the GodzillaHead sidecar.
+        if (danger.orespawn.OreSpawnConfig.PLAY_NICELY.get()) {
+            this.headFound = 1;
+            return null;
+        }
         AABB searchBox = this.getBoundingBox().inflate(64.0, 40.0, 64.0);
         List<LivingEntity> entities = this.level().getEntitiesOfClass(LivingEntity.class, searchBox);
         entities.sort(this.targetSorter);
@@ -570,8 +619,17 @@ public class Godzilla extends Monster implements OreSpawnPartEntity.MultipartBos
             this.setTarget(null);
         }
 
+        // BOSS-017: orig Godzilla.java:290 gates jump detection (and thus the
+        // landing damage), and :313/:334/:352 gate both crush loops and the
+        // front jump-damage pulse, all behind PlayNicely == 0. Dynamic read
+        // like every other consumer.
+        boolean playNicely = danger.orespawn.OreSpawnConfig.PLAY_NICELY.get();
+        // orig :271 — per-tick client sync of the flag (watcher slot 21).
+        this.entityData.set(DATA_PLAY_NICELY, playNicely ? 1 : 0);
+
         // --- Jump landing damage ---
         Vec3 motion = this.getDeltaMovement();
+        if (!playNicely) {
         if (motion.y < -0.95) this.jumped = 1;
         if (motion.y < -1.5) this.jumped = 2;
         if (this.jumped != 0 && motion.y > -0.1) {
@@ -604,9 +662,15 @@ public class Godzilla extends Monster implements OreSpawnPartEntity.MultipartBos
                 this.doJumpDamage(frontX, this.getY(), frontZ, 15.0, 75.0, 1);
             }
         }
+        } // end !playNicely (BOSS-017 crush/jump gate)
 
         // --- Target acquisition and combat ---
         if (this.getRandom().nextInt(Math.max(1, 5 - this.largeUnknownDetected)) == 1) {
+            // BOSS-017: orig Godzilla.java:356-359 — PlayNicely nulls the
+            // current target every combat pass.
+            if (playNicely) {
+                this.setTarget(null);
+            }
             LivingEntity currentTarget = this.getTarget();
             if (currentTarget != null) {
                 if (!currentTarget.isAlive()) {

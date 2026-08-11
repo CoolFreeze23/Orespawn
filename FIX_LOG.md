@@ -2011,3 +2011,39 @@ roll) plus re-derivation of the D5 dispatch coupling (fairy success
 suppresses termites/big structures + 50-chunk cooldown, OSW:188-196/1992).
 Observability shipped in E1 stays as the beta-period tripwire. Ledger after
 this ruling: **511 terminal / 119 open** (92 entity PARTIALs + 27 OPT).
+
+## Phase E — E4 BOSS batch: all 8 PARTIALs terminal (2026-08-11)
+
+**7 FIXED, 1 VERIFIED-CORRECT (stale).** Defects found vs faithful split:
+6 findings surfaced real divergences (BOSS-003/008/014 degraded sidecars,
+BOSS-009 missing Bird variant + invented offsets, BOSS-017 flag never
+consumed, BOSS-037 NBT key rename); BOSS-043 was already implemented
+(BOSS-005/012 work); BOSS-044 was a design decision, now documented.
+
+- **BOSS-003/008/014** — the head sidecars are FAITHFUL ORIGINALS
+  (invisible 19.9x10 / 9.9x10 boxes teleporting 30/17 blocks along the
+  GAZE at y+12/+16, orig KingHead/QueenHead/GodzillaHead.java:33,147-149;
+  orig renderers were empty stubs). Restored registration sizes
+  (3x3/2x2/3x3 -> orig) and the yBodyRot->yHeadRot basis; stale
+  "deprecated/future removal" rationale in ModEntities rewritten.
+- **BOSS-009** — Queen happy discharge restored to orig :424-430: air-gated
+  attempts at ±14/y+0..19 offsets, 50/50 Butterfly vs Cockateil (orig
+  registers Cockateil under the name "Bird", OreSpawnMain.java:3831).
+- **BOSS-017** — PlayNicely now consumed everywhere the orig consumed it:
+  King/Queen/Godzilla targeting + revenge gates (Queen regains the
+  PlayNicely half of her `|| isHappy` gates), Godzilla crush/jump gates +
+  despawn-when-nice + the missing DATA_PLAY_NICELY sync, constructor-time
+  size snapshots (5.5x6 / 5.5x6 / 2.475x6.25 — shrunk King/Godzilla serve
+  no parts and are directly pickable, the orig single-box shape), and /4
+  render scale on all three renderers (GeckoLib preRender for the Queen).
+  ThePrincess leg was stale (gate existed, port :584). New suite test
+  ConfigGateTests#boss017_play_nicely_gates.
+- **BOSS-037** — "ThePrinceAdultGrow" legacy NBT fallback (orig :1318).
+- **BOSS-043** — VERIFIED-CORRECT stale (config + spawner blocks + spawn
+  gates + fizzle tests all shipped earlier).
+- **BOSS-044** — manual parts FINAL for King/Godzilla, MHLib Queen-only,
+  sidecars kept as faithful originals; MHLib-everywhere archived as MOD-025.
+- **TF-035 riders** — all six boss classes swapped to GenericTargetSorter
+  (orig fields/ctors cited per class: TheKing :64/:95, TheQueen :56/:88,
+  Godzilla :57/:85, ThePrince :61/:93, ThePrincess :59/:93, ThePrinceAdult
+  :78/:117). ~45 non-boss call sites remain for the ENT-* batches.

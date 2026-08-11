@@ -89,10 +89,11 @@ public class QueenHead extends Mob {
             List<TheQueen> queens = this.level().getEntitiesOfClass(TheQueen.class, searchBox);
             if (!queens.isEmpty()) {
                 TheQueen queen = queens.get(0);
+                // BOSS-008: orig QueenHead.java:147-149 tracks yHeadRot.
                 this.setPos(
-                        queen.getX() - 30.0 * Math.sin(Math.toRadians(queen.yBodyRot)),
+                        queen.getX() - 30.0 * Math.sin(Math.toRadians(queen.getYHeadRot())),
                         queen.getY() + 12.0,
-                        queen.getZ() + 30.0 * Math.cos(Math.toRadians(queen.yBodyRot))
+                        queen.getZ() + 30.0 * Math.cos(Math.toRadians(queen.getYHeadRot()))
                 );
                 this.setYRot(queen.getYRot());
                 this.yBodyRot = queen.yBodyRot;

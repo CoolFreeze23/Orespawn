@@ -5,6 +5,7 @@ import danger.orespawn.MobStats;
 import java.util.Comparator;
 import java.util.List;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -160,6 +161,8 @@ public class TheQueen extends Monster implements GeoEntity {
             Component.literal("The Queen"), BossEvent.BossBarColor.PINK, BossEvent.BossBarOverlay.PROGRESS);
 
     private final Comparator<Entity> targetSorter;
+    /** BOSS-017: constructor-time PlayNicely snapshot (orig TheQueen.java:78-82). */
+    private boolean playNicelyShrunk = false;
     private BlockPos currentFlightTarget = null;
     private LivingEntity revengeTarget = null;
     private double attackDamage = ATTACK_DAMAGE_VALUE;
@@ -194,7 +197,12 @@ public class TheQueen extends Monster implements GeoEntity {
         this.xpReward = 25000;
         this.noCulling = true;
         this.noPhysics = true;
-        this.targetSorter = Comparator.comparingDouble(this::distanceToSqr);
+        // TF-035: orig TheQueen.java:56/:88 — GenericTargetSorter.
+        this.targetSorter = new danger.orespawn.entity.ai.GenericTargetSorter(this);
+        // BOSS-017: orig TheQueen.java:78-82 — constructor-time PlayNicely
+        // snapshot picks the 5.5x6 box (see getDefaultDimensions).
+        this.playNicelyShrunk = danger.orespawn.OreSpawnConfig.PLAY_NICELY.get();
+        this.refreshDimensions();
         // No part construction here -- MHLib's mixin into LivingEntity#<init>
         // (mhlibOnConstructor) reads the hitbox profile keyed by this
         // entity's type ("orespawn:the_queen") and creates one
@@ -402,7 +410,13 @@ public class TheQueen extends Monster implements GeoEntity {
 
     @Override
     public EntityDimensions getDefaultDimensions(Pose pose) {
-        return EntityDimensions.fixed(16.0f, 12.0f);
+        // BOSS-017: orig TheQueen.java:78-82 — 5.5x6 when PlayNicely was set
+        // at construction; full size keeps the BOSS-007-era 16x12 parent box
+        // (the MHLib bone parts are the hit surface either way — they track
+        // the /4-scaled model, so the nice Queen's surfaces shrink with it).
+        return this.playNicelyShrunk
+                ? EntityDimensions.fixed(5.5f, 6.0f)
+                : EntityDimensions.fixed(16.0f, 12.0f);
     }
 
     @Override
@@ -786,7 +800,9 @@ public class TheQueen extends Monster implements GeoEntity {
      * {@code doMobGriefing} game rule. Performs 25 soil-transform
      * attempts in a 25Ã—40Ã—25 region around The Queen â€” grassâ†’flower,
      * dirtâ†’grass, stoneâ†’dirt cap, gravelâ†’dirt (or dead bush 50/50),
-     * sandâ†’water, cobbleâ†’stone. Then spawns 10 butterflies.</p>
+     * sandâ†’water, cobbleâ†’stone. Then rolls up to 10 discharge spawns
+     * at air-checked offsets, each 50/50 Butterfly vs Cockateil ("Bird",
+     * orig TheQueen.java:430; BOSS-009).</p>
      *
      * <p>This is the heaviest single behaviour block in the boss
      * framework: up to 25Ã—40 = 1000 block-state lookups and up to 25
@@ -873,15 +889,25 @@ public class TheQueen extends Monster implements GeoEntity {
                     }
                 }
             }
+            // BOSS-009: orig TheQueen.java:424-430 — 10 attempts at offsets
+            // x/z = nextInt(15)-nextInt(15), y = +nextInt(20); an attempt is
+            // SKIPPED unless its block is air; each survivor rolls 50/50
+            // Butterfly vs "Bird" (= Cockateil, orig OreSpawnMain.java:3831
+            // registers Cockateil.class under the name "Bird").
             for (int m = 0; m < 10; m++) {
-                EntityButterfly butterfly = ModEntities.ENTITY_BUTTERFLY.get().create(this.level());
-                if (butterfly != null) {
-                    butterfly.moveTo(
-                            this.getX() + this.getRandom().nextInt(20) - 10,
-                            this.getY() + 5 + this.getRandom().nextInt(10),
-                            this.getZ() + this.getRandom().nextInt(20) - 10,
+                int offsetX = this.getRandom().nextInt(15) - this.getRandom().nextInt(15);
+                int offsetZ = this.getRandom().nextInt(15) - this.getRandom().nextInt(15);
+                int offsetY = this.getRandom().nextInt(20);
+                BlockPos candidate = BlockPos.containing(
+                        this.getX() + offsetX, this.getY() + offsetY, this.getZ() + offsetZ);
+                if (!this.level().getBlockState(candidate).isAir()) continue;
+                Mob discharge = this.getRandom().nextInt(2) == 0
+                        ? ModEntities.ENTITY_BUTTERFLY.get().create(this.level())
+                        : ModEntities.COCKATEIL.get().create(this.level());
+                if (discharge != null) {
+                    discharge.moveTo(candidate.getX(), candidate.getY(), candidate.getZ(),
                             this.getRandom().nextFloat() * 360.0F, 0.0F);
-                    this.level().addFreshEntity(butterfly);
+                    this.level().addFreshEntity(discharge);
                 }
             }
         }
@@ -956,7 +982,10 @@ public class TheQueen extends Monster implements GeoEntity {
             }
         } else if (this.getRandom().nextInt(attackChance) == 0) {
             currentTarget = this.revengeTarget;
-            if (this.isHappy()) {
+            // BOSS-017: orig TheQueen.java:531-534 — `PlayNicely != 0 ||
+            // isHappy()` nulls the revenge target; only the happy half had
+            // been ported.
+            if (danger.orespawn.OreSpawnConfig.PLAY_NICELY.get() || this.isHappy()) {
                 currentTarget = null;
             }
 
@@ -1263,7 +1292,10 @@ public class TheQueen extends Monster implements GeoEntity {
     }
 
     private LivingEntity findSomethingToAttack() {
-        if (this.isHappy()) {
+        // BOSS-017: orig TheQueen.java:933-936 — `PlayNicely != 0 ||
+        // isHappy()`; both pacify AND fake headFound=1, which also keeps the
+        // QueenHead sidecar unspawned while nice/happy.
+        if (danger.orespawn.OreSpawnConfig.PLAY_NICELY.get() || this.isHappy()) {
             this.headFound = 1;
             return null;
         }

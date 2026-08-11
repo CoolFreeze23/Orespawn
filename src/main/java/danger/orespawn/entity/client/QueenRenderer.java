@@ -50,4 +50,24 @@ public class QueenRenderer extends GeoEntityRenderer<TheQueen> {
     public boolean shouldRender(TheQueen entity, Frustum frustum, double cameraX, double cameraY, double cameraZ) {
         return true;
     }
+
+    /**
+     * BOSS-017: orig RenderTheQueen.java:40-46 — a PlayNicely Queen renders
+     * at scale/4, tracking the live synced flag. GeckoLib pathway: scale the
+     * pose before the model renders; MHLib's bone-tracked hitbox parts
+     * follow the scaled bones, so the nice Queen's hit surfaces shrink too.
+     */
+    @Override
+    public void preRender(com.mojang.blaze3d.vertex.PoseStack poseStack, TheQueen animatable,
+                          software.bernie.geckolib.cache.object.BakedGeoModel model,
+                          net.minecraft.client.renderer.MultiBufferSource bufferSource,
+                          com.mojang.blaze3d.vertex.VertexConsumer buffer, boolean isReRender,
+                          float partialTick, int packedLight, int packedOverlay,
+                          int colour) {
+        if (animatable.getPlayNicely() != 0) {
+            poseStack.scale(0.25f, 0.25f, 0.25f);
+        }
+        super.preRender(poseStack, animatable, model, bufferSource, buffer, isReRender,
+                partialTick, packedLight, packedOverlay, colour);
+    }
 }

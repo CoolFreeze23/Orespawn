@@ -514,3 +514,15 @@ take an off-by-default modern variant in 2.0:
 - **Vortex scan caching** (BUG-022): owned by OPT-004 (Phase F, behavior-
   affecting: aggro/particle onset latency).
 - **Related:** BUG-018, BUG-019, BUG-022, BUG-027, BUG-031, OPT-004.
+
+## MOD-025 — Uniform bone-synced hitboxes for King/Godzilla (TECH-DEBT, 2.0 polish)
+- **Current (final for 1.x, BOSS-044):** TheKing and Godzilla use manual
+  `OreSpawnPartEntity` layouts (envelopes verified in BOSS-002/007); TheQueen
+  uses the MHLib bone-synced profile (hitbox_profiles/the_queen.json); the
+  faithful 1.7.10 head sidecars (19.9x10 / 9.9x10 gaze-tracking boxes,
+  BOSS-003/008/014) coexist with both.
+- **Proposal:** author the_king.json / godzilla.json MHLib profiles with the
+  Queen's damage-multiplier scheme, migrate off manual part offsets, and
+  evaluate folding the sidecar role into a bone-tracked far-head part.
+  Visual-fidelity work; needs in-game verification per boss.
+- **Related:** BOSS-044, BOSS-002/007, MOD-014 (procedural spider flagship).

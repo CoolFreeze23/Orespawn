@@ -104,10 +104,13 @@ public class KingHead extends Mob {
             List<TheKing> kings = this.level().getEntitiesOfClass(TheKing.class, searchBox);
             if (!kings.isEmpty()) {
                 TheKing king = kings.get(0);
+                // BOSS-003: orig KingHead.java:147-149 tracks field_70759_as
+                // (yHeadRot), not the body rotation — the head box leads the
+                // gaze, not the torso.
                 this.setPos(
-                        king.getX() - 30.0 * Math.sin(Math.toRadians(king.yBodyRot)),
+                        king.getX() - 30.0 * Math.sin(Math.toRadians(king.getYHeadRot())),
                         king.getY() + 12.0,
-                        king.getZ() + 30.0 * Math.cos(Math.toRadians(king.yBodyRot))
+                        king.getZ() + 30.0 * Math.cos(Math.toRadians(king.getYHeadRot()))
                 );
                 this.setYRot(king.getYRot());
                 this.yBodyRot = king.yBodyRot;

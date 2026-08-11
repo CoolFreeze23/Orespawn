@@ -3299,6 +3299,7 @@ Paths: ORIG = `reference_1_7_10_source\sources\danger\orespawn\`, PORT = `src\ma
 - **Original:** ORIG `KingHead.java:33,42,69-89,147-157` — 19.9×10 sidecar; teleports to `(x−30·sin(yHeadRot), y+12, z+30·cos)`; forwards damage to parent
 - **Port:** `PORT\entity\KingHead.java:61-63,107-111`, `ModEntities.java:581-583` — `@Deprecated` but still spawned by AI (`TheKing.java:765-772`); uses `yBodyRot` instead of `yHeadRot`; registered 3×3
 - **Fix:** either stop spawning KingHead (rely on the 5-part system) or fix it: size 19.9×10 and offset from `yHeadRot`. Don't ship both half-working.
+- **Resolution:** FIXED (2026-08-11, Phase E4 BOSS batch — the sidecar is a FAITHFUL ORIGINAL, not a shim: orig KingHead.java:33 sizes it 19.9x10 and :147-149 teleports it 30 blocks along the GAZE (field_70759_as = yHeadRot) at y+12 — an invisible far-forward head surface separate from the model-local part system (orig Render* classes were empty stubs, so port shouldRender()=false is faithful). Restored: registration 3x3 -> 19.9x10 (ModEntities), teleport basis yBodyRot -> getYHeadRot() (port KingHead). The 1.0x damage-forward matches the orig. Spawn/despawn cadence was already faithful (headEntityFound gate = orig head_found, self-discard without a parent). The new BOSS-017 targeting gate fakes headEntityFound=1 while PlayNicely, suppressing the sidecar exactly as orig :985-988 did)
 
 ### BOSS-004 — TheKing: loot double-dips + invented additions
 
@@ -3342,6 +3343,7 @@ Paths: ORIG = `reference_1_7_10_source\sources\danger\orespawn\`, PORT = `src\ma
 - **Original:** ORIG `QueenHead.java` (pattern `KingHead.java:33,42,147-157`) — 19.9×10, yHeadRot-based teleport, damage-forward
 - **Port:** `PORT\entity\QueenHead.java:92-99`, `ModEntities.java:585-587` — `@Deprecated` 2×2 entity, yBodyRot basis; spawned only when `mood==1` (`TheQueen.java:971-978`, gate matches orig)
 - **Fix:** since MHLib parts already track 3 heads at ×1.0 damage, stop spawning QueenHead; otherwise restore 19.9×10 + yHeadRot.
+- **Resolution:** FIXED (2026-08-11, Phase E4 BOSS batch — same restoration as BOSS-003 for the Queen: orig QueenHead.java:33 = 19.9x10 (registration was 2x2), :147-149 = yHeadRot basis at 30/+12 (was yBodyRot). The mood==1 spawn gate was already faithful (orig TheQueen.java:552-553); the restored BOSS-017 `PlayNicely || isHappy` gate fakes headFound=1, suppressing the sidecar while nice/happy per orig :933-936. The sidecar's direct-to-TheQueen.hurt forward (bypassing MHLib part interception) matches the orig's damage-forward + mood=1-on-hurt behavior)
 
 ### BOSS-009 — TheQueen: happy-discharge Bird variant dropped
 
@@ -3349,6 +3351,7 @@ Paths: ORIG = `reference_1_7_10_source\sources\danger\orespawn\`, PORT = `src\ma
 - **Original:** ORIG `TheQueen.java:355,430` — happy discharge: 25 soil/flower transforms + 10 Butterfly OR Bird
 - **Port:** `TheQueen.java:787-878`, `QueenMoodGoal` — transforms + 10 butterflies only
 - **Fix:** in `QueenMoodGoal` happy branch, roll 50/50 between Butterfly and Bird (Cockateil/bird entity) per original.
+- **Resolution:** FIXED (2026-08-11, Phase E4 BOSS batch — happy-discharge restored to orig TheQueen.java:424-430: 10 attempts at offsets x/z = nextInt(15)-nextInt(15), y = +nextInt(20); attempts SKIP unless the block is air; each survivor rolls nextInt(2) 50/50 Butterfly vs Cockateil — the orig registers Cockateil.class under the entity name "Bird" (OreSpawnMain.java:3831/:3835). Replaces the port's unconditional 10-butterfly loop with invented offsets (±10, y+5..14) and no air gate. Doc comments updated)
 
 ### BOSS-010 — TheQueen: invulnerable dormant wake-up phase added
 
@@ -3392,6 +3395,7 @@ Paths: ORIG = `reference_1_7_10_source\sources\danger\orespawn\`, PORT = `src\ma
 - **Original:** ORIG `GodzillaHead.java:33,147-157` — 9.9×10; teleport `(x−17·sin(yHeadRot), y+16, z+17·cos)`; damage-forward AABB
 - **Port:** `PORT\entity\GodzillaHead.java:96-118`, `ModEntities.java:589-591` — `@Deprecated`, same 17/16 offsets but yBodyRot, registered 3×3; still spawned (`Godzilla.java:642-649`)
 - **Fix:** stop spawning it (4-part system already includes a 5×5 head at ×1.0 dmg, `Godzilla.java:95-99,196-227`) or restore 9.9×10 + yHeadRot.
+- **Resolution:** FIXED (2026-08-11, Phase E4 BOSS batch — same restoration for Godzilla: orig GodzillaHead.java:33 = 9.9x10 (registration was 3x3), :147-149 = yHeadRot basis at 17/+16 (was yBodyRot). The new BOSS-017 gate fakes headFound=1 while PlayNicely per orig Godzilla.java:524-527)
 
 ### BOSS-015 — Godzilla: drops re-themed + full double drop
 
@@ -3421,6 +3425,7 @@ Paths: ORIG = `reference_1_7_10_source\sources\danger\orespawn\`, PORT = `src\ma
 - **Fix:** consume the synced flag: (1) return null from boss `findTarget`/targeting goals when PlayNicely is set, (2) apply the dimension/render scale shrink for King/Queen/Godzilla, (3) restore ThePrincess's targeting gate. One shared helper, applied in all four classes.
 
 ---
+- **Resolution:** FIXED (2026-08-11, Phase E4 BOSS batch — the synced-but-never-consumed flag is now consumed everywhere the original consumed it, with per-call dynamic reads matching the orig's static-field checks: TARGETING — TheKing.findSomethingToAttack pacifies + fakes headEntityFound=1 (orig :985-988) and the revenge target nulls (orig :526-529); TheQueen gains the PlayNicely half of both `PlayNicely || isHappy` gates (orig :933-936, :531-534 — only isHappy had been ported); Godzilla.findSomethingToAttack gate (orig :524-527), per-pass target null (orig :356-359), jump-detection/landing-damage + both crushBlocks loops + front jump pulse gated (orig :290/:313/:334/:352), and removeWhenFarAway returns PlayNicely (orig :138 — a nice Godzilla may despawn); ThePrincess's gate already existed (port :584, orig :845-848 — that leg was stale). SIZE — constructor-time snapshot exactly like the orig (never resizes after spawn): King 22x24 -> 5.5x6 (orig :85-89), Queen -> 5.5x6 (orig :78-82; full size keeps the BOSS-007 16x12 parent), Godzilla -> 2.475x6.25 (orig :71-75); while shrunk, King/Godzilla serve NO part surfaces and become directly pickable (the orig single-small-box shape); RENDER — /4 model scale tracking the live synced flag (orig RenderTheKing.java:39-45 pattern) in TheKingRenderer/GodzillaRenderer (scale override) and QueenRenderer (GeckoLib preRender; MHLib bone parts follow the scaled bones); Godzilla gained the missing DATA_PLAY_NICELY watcher + per-tick sync (orig :101/:271). Suite: ConfigGateTests#boss017_play_nicely_gates covers ctor-snapshot dims/pickability/parts and the dynamic no-target/no-sidecar gate)
 
 ## ThePrince (baby)
 
@@ -3592,6 +3597,7 @@ Paths: ORIG = `reference_1_7_10_source\sources\danger\orespawn\`, PORT = `src\ma
 - **Fix:** in `readAdditionalSaveData`, fall back to reading `ThePrinceAdultGrow` when `PrinceGrow` is absent (one-line legacy migration).
 
 ---
+- **Resolution:** FIXED (2026-08-11, Phase E4 BOSS batch — legacy NBT migration added: readAdditionalSaveData falls back to the orig key "ThePrinceAdultGrow" (orig ThePrinceAdult.java:1318/:1326) when "PrinceGrow" is absent, so pre-rename saves keep their grow progress. Actual port lines were 1026/1035, not the audit's ~302)
 
 ## ThePrincess
 
@@ -3659,6 +3665,7 @@ Paths: ORIG = `reference_1_7_10_source\sources\danger\orespawn\`, PORT = `src\ma
 - **Original:** `OreSpawnMain.java:6434-6435` — `TheKingEnable` / `TheQueenEnable` gate boss spawning
 - **Port:** `OreSpawnConfig.java` — no equivalents (`MOBZILLA_SINGLE_SPAWN` :128 exists for Godzilla; `FULL_POWER_KING_ENABLE` :159 repurposed)
 - **Fix:** add `THE_KING_ENABLE`/`THE_QUEEN_ENABLE` booleans and consume them in the spawner blocks (ties into BOSS-005/012).
+- **Resolution:** VERIFIED-CORRECT (2026-08-11, Phase E4 BOSS batch — stale finding, fully implemented by the BOSS-005/012 spawner work: THE_KING_ENABLE/THE_QUEEN_ENABLE defined at OreSpawnConfig.java:285-290 citing orig OreSpawnMain.java:6434-6435, consumed by both BossSpawnerBlock registrations (ModBlocks.java:420-425) AND the natural-spawn gates (ModSpawnControl.java:135-136), suite-covered by ConfigGateTests boss005/boss012 fizzle tests)
 
 ### BOSS-044 — MultiHitboxLib only used by TheQueen
 
@@ -3668,6 +3675,7 @@ Paths: ORIG = `reference_1_7_10_source\sources\danger\orespawn\`, PORT = `src\ma
 - **Fix:** author `the_king.json` and `godzilla.json` MHLib hitbox profiles (bone-tracked, mirroring the Queen's damage-multiplier scheme) and migrate both bosses off manual part offsets — or document manual parts as final and delete the deprecated head sidecars (BOSS-003/008/014).
 
 ---
+- **Resolution:** FIXED (2026-08-11, Phase E4 BOSS batch — decision documented per the finding's second option: the MANUAL OreSpawnPartEntity systems are FINAL for TheKing/Godzilla (their envelopes were verified under BOSS-002/BOSS-007), MHLib stays Queen-only, and the head sidecars are NOT deleted — BOSS-003/008/014 established they are faithful originals (the far-forward gaze-tracking head surface) restored to spec, orthogonal to the part systems. A uniform bone-synced MHLib migration for King/Godzilla is archived as the MOD-025 2.0 polish item)
 
 ## Register totals
 

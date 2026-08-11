@@ -587,34 +587,32 @@ public class ModEntities {
                     // the class's getUpdateFrequency()=10 was dead code).
                     .sized(1.25f, 1.0f).clientTrackingRange(8).updateInterval(1).build("elevator"));
 
-    // Legacy 1.7.10 sidecar heads ─ deprecated but kept for save compat.
-    // In 1.7.10 each giant boss's "head" was a separate tracked entity that
-    // teleported next to the parent every tick; see KingHead.java,
-    // QueenHead.java, and GodzillaHead.java for the per-tick positioning
-    // loops. In 1.21.1 this role is filled by OreSpawnPartEntity instances
-    // owned by TheKing / TheQueen / Godzilla (Mobzilla), but the registry
-    // entries must survive because:
-    //   1. Existing saves contain instances of these entity types.
-    //   2. TheKing / TheQueen / Godzilla still spawn one each to keep the
-    //      1.7.10 flight-hook and AI-targeting parity.
-    // Their client-side renderers (KingHeadRenderer, QueenHeadRenderer,
-    // GodzillaHeadRenderer) all short-circuit shouldRender()=false so they
-    // are invisible and have zero rendering cost — matching the 1.7.10
-    // behaviour where those Render* classes were empty stubs.
-    // Future removal: delete the spawn calls, bump the save-data version,
-    // then drop these registrations.
+    // 1.7.10 sidecar heads — FAITHFUL ORIGINALS, not legacy shims
+    // (BOSS-003/008/014, E4 ruling 2026-08-11). In 1.7.10 each giant boss
+    // projected a huge INVISIBLE hittable head box ~30 (17 for Godzilla)
+    // blocks ahead along its GAZE (yHeadRot), teleporting every tick and
+    // forwarding damage to the parent at 1.0x (orig KingHead.java:33,
+    // 147-157 and twins). The OreSpawnPartEntity systems cover the model
+    // body; the sidecar is the separate far-forward head surface the
+    // original shipped — both are intended to coexist. Renderers
+    // short-circuit shouldRender()=false, matching the 1.7.10 empty
+    // Render* stubs (the box was invisible there too). Sizes below are the
+    // orig func_70105_a values.
 
     public static final DeferredHolder<EntityType<?>, EntityType<KingHead>> KING_HEAD =
             ENTITY_TYPES.register("king_head", () -> EntityType.Builder.of(KingHead::new, MobCategory.MISC)
-                    .sized(3.0f, 3.0f).clientTrackingRange(10).build("king_head"));
+                    // orig KingHead.java:33 — 19.9 x 10
+                    .sized(19.9f, 10.0f).clientTrackingRange(10).build("king_head"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<QueenHead>> QUEEN_HEAD =
             ENTITY_TYPES.register("queen_head", () -> EntityType.Builder.of(QueenHead::new, MobCategory.MISC)
-                    .sized(2.0f, 2.0f).clientTrackingRange(10).build("queen_head"));
+                    // orig QueenHead.java:33 — 19.9 x 10
+                    .sized(19.9f, 10.0f).clientTrackingRange(10).build("queen_head"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<GodzillaHead>> GODZILLA_HEAD =
             ENTITY_TYPES.register("godzilla_head", () -> EntityType.Builder.of(GodzillaHead::new, MobCategory.MISC)
-                    .sized(3.0f, 3.0f).clientTrackingRange(10).build("godzilla_head"));
+                    // orig GodzillaHead.java:33 — 9.9 x 10
+                    .sized(9.9f, 10.0f).clientTrackingRange(10).build("godzilla_head"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<PurplePower>> PURPLE_POWER =
             ENTITY_TYPES.register("purple_power", () -> EntityType.Builder.of(PurplePower::new, MobCategory.MISC)

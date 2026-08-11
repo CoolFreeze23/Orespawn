@@ -113,7 +113,8 @@ public class ThePrinceAdult extends TamableAnimal
         this.xpReward = 3000;
         this.noPhysics = false;
         this.setOrderedToSit(false);
-        this.targetSorter = Comparator.comparingDouble(this::distanceToSqr);
+        // TF-035: orig ThePrinceAdult.java:78/:117 — GenericTargetSorter.
+        this.targetSorter = new danger.orespawn.entity.ai.GenericTargetSorter(this);
     }
 
     @Override
@@ -1032,7 +1033,11 @@ public class ThePrinceAdult extends TamableAnimal
         this.setActivity(tag.getInt("PrinceActivity"));
         this.setAttacking(tag.getInt("PrinceAttacking"));
         this.entityData.set(DATA_FIRE, tag.getInt("PrinceFire"));
-        this.growCounter = tag.getInt("PrinceGrow");
+        // BOSS-037: legacy migration — orig ThePrinceAdult.java:1318 saved the
+        // grow counter under "ThePrinceAdultGrow"; old saves keep progress.
+        this.growCounter = tag.contains("PrinceGrow")
+                ? tag.getInt("PrinceGrow")
+                : tag.getInt("ThePrinceAdultGrow");
     }
 
     /** orig ThePrinceAdult.java:541-543 — never spawns naturally (growth stage, spawned by promotion only). */
