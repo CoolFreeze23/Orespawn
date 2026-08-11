@@ -364,7 +364,7 @@ public class ModEntities {
                     .sized(0.5f, 0.5f).clientTrackingRange(16).build("island_too"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<Peacock>> PEACOCK =
-            ENTITY_TYPES.register("peacock", () -> EntityType.Builder.of(Peacock::new, MobCategory.CREATURE)
+            ENTITY_TYPES.register("peacock", () -> EntityType.Builder.of(Peacock::new, MobCategory.AMBIENT)
                     .sized(0.65f, 1.2f).clientTrackingRange(10).build("peacock"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<Whale>> WHALE =

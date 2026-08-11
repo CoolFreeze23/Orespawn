@@ -36,6 +36,8 @@ import net.minecraft.world.phys.Vec3;
 import danger.orespawn.ModEntities;
 import danger.orespawn.OreSpawnConfig;
 import danger.orespawn.OreSpawnMod;
+import danger.orespawn.entity.ai.GenericTargetSorter;
+import danger.orespawn.util.MyUtils;
 import net.neoforged.neoforge.entity.PartEntity;
 
 public class Mothra extends EntityButterfly implements OreSpawnPartEntity.MultipartBoss {
@@ -58,7 +60,10 @@ public class Mothra extends EntityButterfly implements OreSpawnPartEntity.Multip
     public Mothra(EntityType<? extends Mothra> type, Level level) {
         super(type, level);
         this.xpReward = 100;
-        this.targetSorter = Comparator.comparingDouble(this::distanceToSqr);
+        // TF-035: orig Mothra.java:60,70 — targets sort by the shared
+        // GenericTargetSorter (creepers and large mobs outrank closer small
+        // ones), not by plain distance.
+        this.targetSorter = new GenericTargetSorter(this);
 
         this.bodyPart  = new OreSpawnPartEntity<>(this, "body",  4.0f, 3.0f);
         this.wingLeft  = new OreSpawnPartEntity<>(this, "wingL", 5.0f, 1.5f);
@@ -192,17 +197,39 @@ public class Mothra extends EntityButterfly implements OreSpawnPartEntity.Multip
         return ret;
     }
 
+    /**
+     * orig Mothra.java:424-483 (isSuitableTarget) — anything alive qualifies
+     * except: peaceful difficulty, self, dead things, the shared ignore list,
+     * targets out of line of sight, fellow OreSpawn fliers/hunters (Mothra,
+     * Brutalfly, Vortex, VelocityRaptor, Cryolophosaurus, TerribleTerror,
+     * LurkingTerror, CloudShark, Rotator, Bee, Mantis) and creative players.
+     * The MothraPeaceful option is NOT checked here — the original gated it
+     * in the AI step (:222) and in attackWithSomething (:382), which the port
+     * mirrors, so behavior is identical with the flag on.
+     */
     private boolean isSuitableTarget(LivingEntity target) {
-        // Config-driven peaceful mode: Mothra won't attack anything
-        if (OreSpawnConfig.MOTHRA_PEACEFUL.get()) return false;
-        if (this.level().getDifficulty() == Difficulty.PEACEFUL) return false;
-        if (target == null || target == this || !target.isAlive()) return false;
-        if (target instanceof Mothra) return false;
-        if (target instanceof Player p && p.getAbilities().instabuild) return false;
+        if (this.level().getDifficulty() == Difficulty.PEACEFUL) return false; // orig :425-427
+        if (target == null || target == this || !target.isAlive()) return false; // orig :428-436
+        if (MyUtils.isIgnoreable(target)) return false;              // orig :437-439
+        if (!this.getSensing().hasLineOfSight(target)) return false; // orig :440-442
+        if (target instanceof Mothra) return false;                  // orig :443-445
+        if (target instanceof EntityBrutalfly) return false;         // orig :446-448
+        if (target instanceof EntityVortex) return false;            // orig :449-451
+        if (target instanceof VelocityRaptor) return false;          // orig :452-454
+        if (target instanceof Cryolophosaurus) return false;         // orig :455-457
+        if (target instanceof EntityTerribleTerror) return false;    // orig :458-460
+        if (target instanceof EntityLurkingTerror) return false;     // orig :461-463
+        if (target instanceof CloudShark) return false;              // orig :464-466
+        if (target instanceof EntityRotator) return false;           // orig :467-469
+        if (target instanceof EntityBee) return false;               // orig :470-472
+        if (target instanceof EntityMantis) return false;            // orig :473-475
+        if (target instanceof Player p && p.getAbilities().instabuild) return false; // orig :476-481
         return true;
     }
 
     private LivingEntity findSomethingToAttack() {
+        // orig Mothra.java:486-488 — PlayNicely servers get no mob-vs-mob hunts
+        if (OreSpawnConfig.PLAY_NICELY.get()) return null;
         List<LivingEntity> entities = this.level().getEntitiesOfClass(LivingEntity.class,
                 this.getBoundingBox().inflate(15.0, 20.0, 15.0));
         entities.sort(this.targetSorter);
@@ -212,16 +239,52 @@ public class Mothra extends EntityButterfly implements OreSpawnPartEntity.Multip
         return null;
     }
 
+    /**
+     * orig Mothra.java:379-422 (attackWithSomething) — difficulty-keyed
+     * fireball from a muzzle 2.25 blocks ahead, aimed at the target's y+0.55:
+     * Easy = vanilla SmallFireball; Normal = 50/50 SmallFireball or
+     * BetterFireball; otherwise (Hard) always BetterFireball. BetterFireballs
+     * get setNotMe() so they spare players/Dragons/Mothra on sweep. Small
+     * fireballs play the bow sound at 0.75 volume, BetterFireballs the fuse
+     * sound at 1.0; every shot self-heals 1 HP when below max.
+     */
     private void attackWithFireball(LivingEntity target) {
+        // orig Mothra.java:382-387 — MothraPeaceful option and peaceful
+        // difficulty both silence the attack even when a target was found.
+        if (OreSpawnConfig.MOTHRA_PEACEFUL.get()) return;
         if (this.level().getDifficulty() == Difficulty.PEACEFUL) return;
-        double xzoff = 2.25;
+        double xzoff = 2.25; // orig Mothra.java:380
+        double yoff = 0.0;   // orig Mothra.java:381
         double cx = this.getX() - xzoff * Math.sin(Math.toRadians(this.getYRot()));
         double cz = this.getZ() + xzoff * Math.cos(Math.toRadians(this.getYRot()));
-        SmallFireball fireball = new SmallFireball(this.level(), this,
-                new Vec3(target.getX() - cx, target.getY() + 0.55 - this.getY(), target.getZ() - cz));
-        fireball.setPos(cx, this.getY(), cz);
-        this.playSound(SoundEvents.BLAZE_SHOOT, 0.75f, 1.0f / (this.getRandom().nextFloat() * 0.4f + 0.8f));
-        this.level().addFreshEntity(fireball);
+        Vec3 accel = new Vec3(target.getX() - cx,
+                target.getY() + 0.55 - (this.getY() + yoff),
+                target.getZ() - cz);
+
+        // orig Mothra.java:390-418 — Easy always small, Normal coin-flips
+        // (nextInt(2)==0 small), the remaining branch (Hard) is always Better.
+        boolean small = this.level().getDifficulty() == Difficulty.EASY
+                || (this.level().getDifficulty() == Difficulty.NORMAL && this.random.nextInt(2) == 0);
+        if (small) {
+            SmallFireball fireball = new SmallFireball(this.level(), this, accel);
+            fireball.setPos(cx, this.getY() + yoff, cz);
+            // orig Mothra.java:394 — "random.bow", 0.75f
+            this.level().playSound(null, this, SoundEvents.ARROW_SHOOT, this.getSoundSource(),
+                    0.75f, 1.0f / (this.random.nextFloat() * 0.4f + 0.8f));
+            this.level().addFreshEntity(fireball);
+        } else {
+            BetterFireball fireball = new BetterFireball(this.level(), this, accel);
+            fireball.setPos(cx, this.getY() + yoff, cz);
+            fireball.setNotMe(); // orig Mothra.java:407,415
+            // orig Mothra.java:408,416 — "random.fuse", 1.0f
+            this.level().playSound(null, this, SoundEvents.TNT_PRIMED, this.getSoundSource(),
+                    1.0f, 1.0f / (this.random.nextFloat() * 0.4f + 0.8f));
+            this.level().addFreshEntity(fireball);
+        }
+        // orig Mothra.java:419-421 — firing regenerates 1 HP when hurt
+        if (this.getHealth() < this.getMaxHealth()) {
+            this.heal(1.0f);
+        }
     }
 
     @Override
@@ -247,6 +310,10 @@ public class Mothra extends EntityButterfly implements OreSpawnPartEntity.Multip
             this.stuckCount = 0;
             this.lastX = (int) this.getX(); this.lastY = (int) this.getY(); this.lastZ = (int) this.getZ();
         }
+
+        // orig Mothra.java:165,178-180 — attack roll is 1-in-3 by default,
+        // tightened to 1-in-2 on Hard (the other half of the difficulty variant).
+        int shoot = this.level().getDifficulty() == Difficulty.HARD ? 2 : 3;
 
         if (this.currentFlightTarget == null) {
             this.currentFlightTarget = this.blockPosition();
@@ -274,13 +341,13 @@ public class Mothra extends EntityButterfly implements OreSpawnPartEntity.Multip
             Player target = this.level().getNearestPlayer(this, 25.0);
             if (target != null && !target.getAbilities().instabuild) {
                 this.currentFlightTarget = new BlockPos((int) target.getX(), (int) target.getY() + 4, (int) target.getZ());
-                if (this.random.nextInt(3) == 0) this.attackWithFireball(target);
+                if (this.random.nextInt(shoot) == 0) this.attackWithFireball(target); // orig Mothra.java:229
             }
             if (target == null && this.random.nextInt(3) == 0) {
                 LivingEntity hostile = this.findSomethingToAttack();
                 if (hostile != null) {
                     this.currentFlightTarget = new BlockPos((int) hostile.getX(), (int) hostile.getY() + 5, (int) hostile.getZ());
-                    if (this.random.nextInt(3) == 0) this.attackWithFireball(hostile);
+                    if (this.random.nextInt(shoot) == 0) this.attackWithFireball(hostile); // orig Mothra.java:242
                 }
             }
         }

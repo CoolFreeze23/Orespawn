@@ -22,6 +22,13 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.SpawnGroupData;
+import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.server.level.ServerLevel;
+import danger.orespawn.ModItems;
+import danger.orespawn.entity.ai.GenericTargetSorter;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -122,7 +129,9 @@ public class PitchBlack extends Monster {
 
     public PitchBlack(EntityType<? extends PitchBlack> type, Level level) {
         super(type, level);
-        this.targetSorter = Comparator.comparingDouble(this::distanceToSqr);
+        // TF-035: orig PitchBlack.java:54 (field), :67 (ctor) — the shared
+        // GenericTargetSorter, not a plain distance comparator.
+        this.targetSorter = new GenericTargetSorter(this);
     }
 
     @Override
@@ -315,6 +324,25 @@ public class PitchBlack extends Monster {
 
     @Override
     public boolean doHurtTarget(Entity target) {
+        // orig PitchBlack.java:293-303 — Ender Dragons are hit part-wise with an
+        // explosion-typed damage source (:295-297, setExplosionSource(null) +
+        // setExplosion()): a 1-in-8 roll strikes the HEAD part (:298-299, full
+        // damage) and otherwise the BODY part (:301, which vanilla quarters),
+        // always for attack×scale — the per-tier ATTACK_DAMAGE base here.
+        // This branch never applies knockback and always reports a hit (:303).
+        if (target instanceof EnderDragon dragon) {
+            DamageSource explosion = this.damageSources().explosion(null, null);
+            float damage = (float) this.getAttributeValue(Attributes.ATTACK_DAMAGE);
+            if (this.random.nextInt(8) == 1) {
+                dragon.hurt(dragon.head, explosion, damage);
+            } else {
+                // EnderDragon.body is private in 1.21.1; subEntities[2] is the
+                // body part (vanilla order: head, neck, body, tail1-3, wing1-2).
+                dragon.hurt((net.minecraft.world.entity.boss.EnderDragonPart) dragon.getSubEntities()[2],
+                        explosion, damage);
+            }
+            return true;
+        }
         if (target instanceof LivingEntity le) {
             float scale = this.getPitchBlackScale();
             // Use the per-tier attack base (already on Attributes.ATTACK_DAMAGE)
@@ -395,9 +423,23 @@ public class PitchBlack extends Monster {
             LivingEntity chaseTarget = findSomethingToAttack();
             if (chaseTarget != null) {
                 double meleeRadius = 5.0 + chaseTarget.getBbWidth() / 2.0f + scale;
+                double meleeRadiusSq = meleeRadius * meleeRadius;
                 this.setAttacking(1);
+                // orig PitchBlack.java:369-377 — giant targets (Ender Dragon,
+                // Godzilla, Godzilla head) get the SQUARED melee reach floored
+                // at 100 (i.e. 10 blocks), so the Nightmare can land hits on
+                // bosses whose centers its normal reach never touches.
+                if (chaseTarget instanceof EnderDragon && meleeRadiusSq < 100.0) {
+                    meleeRadiusSq = 100.0;
+                }
+                if (chaseTarget instanceof Godzilla && meleeRadiusSq < 100.0) {
+                    meleeRadiusSq = 100.0;
+                }
+                if (chaseTarget instanceof GodzillaHead && meleeRadiusSq < 100.0) {
+                    meleeRadiusSq = 100.0;
+                }
                 this.currentFlightTarget = new BlockPos((int) chaseTarget.getX(), (int) (chaseTarget.getY() + 2), (int) chaseTarget.getZ());
-                if (this.distanceToSqr(chaseTarget) < meleeRadius * meleeRadius) {
+                if (this.distanceToSqr(chaseTarget) < meleeRadiusSq) {
                     this.doHurtTarget(chaseTarget);
                 }
             } else {
@@ -472,6 +514,52 @@ public class PitchBlack extends Monster {
     @Override
     protected SoundEvent getDeathSound() {
         return SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "pitchblack_dead"));
+    }
+
+    // ---- Drops ----
+
+    /**
+     * orig PitchBlack.java:562-570 (dropItemRand) — every drop is scattered
+     * around the corpse by ±(nextInt(5)×scale) on x and z, at y+1, so a big
+     * Nightmare strews its loot over a wide area.
+     */
+    private void dropItemRand(ItemStack stack) {
+        float scale = this.getPitchBlackScale();
+        double ox = this.getX() + this.random.nextInt(5) * scale - this.random.nextInt(5) * scale;
+        double oz = this.getZ() + this.random.nextInt(5) * scale - this.random.nextInt(5) * scale;
+        this.level().addFreshEntity(new ItemEntity(this.level(), ox, this.getY() + 1.0, oz, stack));
+    }
+
+    /**
+     * orig PitchBlack.java:572-596 (func_70628_a). The variable drops read
+     * {@code getPitchBlackScale()} for their counts, which a loot JSON cannot
+     * express — so this code path keeps them (same split as TheKing, see
+     * phase_b_reports/B1_drops.md). The fixed drops — 1 nightmare scale
+     * (orig :590) and 1 painting (orig :591) — live in
+     * {@code loot_table/entities/pitch_black.json} (one path per drop).
+     */
+    @Override
+    protected void dropCustomDeathLoot(ServerLevel level, DamageSource source, boolean recentlyHit) {
+        super.dropCustomDeathLoot(level, source, recentlyHit);
+        float scale = this.getPitchBlackScale();
+        // orig :574-589 — 3 + nextInt(2 + (int)(5×scale)) rotten flesh; each
+        // iteration also rolls nextInt(10): 0 → feather, 1 → string,
+        // 2 → flint, 3 → raw beef (one junk extra at most per flesh).
+        int count = 3 + this.random.nextInt(2 + (int) (5.0f * scale));
+        for (int n = 0; n < count; ++n) {
+            this.dropItemRand(new ItemStack(Items.ROTTEN_FLESH));
+            int j = this.random.nextInt(10);
+            if (j == 0) this.dropItemRand(new ItemStack(Items.FEATHER));
+            if (j == 1) this.dropItemRand(new ItemStack(Items.STRING));
+            if (j == 2) this.dropItemRand(new ItemStack(Items.FLINT));
+            if (j == 3) this.dropItemRand(new ItemStack(Items.BEEF));
+        }
+        // orig :592-595 — 2 + (int)scale + nextInt(2 + (int)(5×scale)) Zoo
+        // Keepers (2-5 at t=0.5 up to 6-27 at t=4), NOT a flat 1-5.
+        count = 2 + (int) scale + this.random.nextInt(2 + (int) (5.0f * scale));
+        for (int n = 0; n < count; ++n) {
+            this.dropItemRand(new ItemStack(ModItems.ZOO_KEEPER.get()));
+        }
     }
 
     /**

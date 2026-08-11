@@ -92,18 +92,31 @@ public class RockBase extends Mob {
         }
 
         if (!this.level().isClientSide() && this.rockType == 0) {
-            this.rockType = 1;
-            if (this.getRandom().nextInt(10) == 0) this.rockType = 2;
-            if (this.getRandom().nextInt(20) == 0) this.rockType = 3;
-            if (this.getRandom().nextInt(30) == 0) this.rockType = 4;
-            if (this.getRandom().nextInt(40) == 0) this.rockType = 5;
-            if (this.getRandom().nextInt(50) == 0) this.rockType = 6;
-            if (this.getRandom().nextInt(100) == 0) this.rockType = 7;
-            if (this.getRandom().nextInt(200) == 0) this.rockType = 8;
-            if (this.getRandom().nextInt(500) == 0) this.rockType = 9;
-            if (this.getRandom().nextInt(500) == 0) this.rockType = 10;
-            if (this.getRandom().nextInt(500) == 0) this.rockType = 11;
-            if (this.getRandom().nextInt(1000) == 0) this.rockType = 12;
+            // orig RockBase.java:93-143 — the one-shot type lottery branches on the
+            // dimension: outside DimensionID5 (Crystal) all twelve types roll with
+            // rising rarity; inside it the mob is forced to the crystal types 9-12
+            // so Crystal-dimension rocks never come up mundane.
+            if (!danger.orespawn.ModDimensionKeys.isIn(this.level(), danger.orespawn.ModDimensionKeys.CRYSTAL)) {
+                this.rockType = 1;
+                if (this.getRandom().nextInt(10) == 0) this.rockType = 2;
+                if (this.getRandom().nextInt(20) == 0) this.rockType = 3;
+                if (this.getRandom().nextInt(30) == 0) this.rockType = 4;
+                if (this.getRandom().nextInt(40) == 0) this.rockType = 5;
+                if (this.getRandom().nextInt(50) == 0) this.rockType = 6;
+                if (this.getRandom().nextInt(100) == 0) this.rockType = 7;
+                if (this.getRandom().nextInt(200) == 0) this.rockType = 8;
+                if (this.getRandom().nextInt(500) == 0) this.rockType = 9;
+                if (this.getRandom().nextInt(500) == 0) this.rockType = 10;
+                if (this.getRandom().nextInt(500) == 0) this.rockType = 11;
+                if (this.getRandom().nextInt(1000) == 0) this.rockType = 12;
+            } else {
+                // orig RockBase.java:129-140 — Crystal-dimension lottery:
+                // base 9, 1-in-3 -> 10, 1-in-5 -> 11, 1-in-10 -> 12.
+                this.rockType = 9;
+                if (this.getRandom().nextInt(3) == 0) this.rockType = 10;
+                if (this.getRandom().nextInt(5) == 0) this.rockType = 11;
+                if (this.getRandom().nextInt(10) == 0) this.rockType = 12;
+            }
             this.getAttribute(Attributes.MAX_HEALTH).setBaseValue(1 + this.rockType / 4.0);
             this.setHealth(1 + this.rockType / 4.0f);
         }

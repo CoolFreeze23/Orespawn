@@ -2,7 +2,6 @@ package danger.orespawn.entity;
 
 import danger.orespawn.MobStats;
 
-import java.util.Comparator;
 import java.util.List;
 
 import javax.annotation.Nullable;
@@ -207,23 +206,48 @@ public class EntityRotator extends Monster {
         this.setYRot(this.getYRot() + yawDelta / 4.0f);
     }
 
+    /**
+     * orig Rotator.java:294-365 — beyond null/self/dead (:295-303),
+     * MyUtils.isIgnoreable (:304-306), line of sight (:307-309), and creative
+     * players (:310-315), the original spares sixteen species besides itself:
+     * Termite (:316), Vortex (:319), DungeonBeast (:325), Peacock (:328),
+     * CrystalCow (:331), Irukandji (:334), Skate (:337), Whale (:340),
+     * Flounder (:343), Urchin (:346), TerribleTerror (:349), LurkingTerror (:352),
+     * CloudShark (:355), Mothra (:358), Bee (:361), Mantis (:364). Everything
+     * else — players included — is fair game.
+     */
     private boolean isSuitableTarget(LivingEntity target) {
         if (target == null || target == this || !target.isAlive()) return false;
-        if (!this.getSensing().hasLineOfSight(target)) return false;
-        if (target instanceof EntityRotator) return false;
-        if (target instanceof Peacock) return false;
-        if (target instanceof CloudShark) return false;
-        if (target instanceof EntityTerribleTerror) return false;
-        if (target instanceof Player player) {
-            return !player.getAbilities().invulnerable;
-        }
-        return true;
+        if (danger.orespawn.util.MyUtils.isIgnoreable(target)) return false; // orig :304
+        if (!this.getSensing().hasLineOfSight(target)) return false; // orig :307
+        if (target instanceof Player p && p.getAbilities().instabuild) return false; // orig :310-315 creative
+        if (target instanceof EntityTermite) return false;        // orig :316
+        if (target instanceof EntityVortex) return false;         // orig :319
+        if (target instanceof EntityRotator) return false;        // orig :322
+        if (target instanceof DungeonBeast) return false;         // orig :325
+        if (target instanceof Peacock) return false;              // orig :328
+        if (target instanceof CrystalCow) return false;           // orig :331
+        if (target instanceof Irukandji) return false;            // orig :334
+        if (target instanceof Skate) return false;                // orig :337
+        if (target instanceof Whale) return false;                // orig :340
+        if (target instanceof Flounder) return false;             // orig :343
+        if (target instanceof Urchin) return false;               // orig :346
+        if (target instanceof EntityTerribleTerror) return false; // orig :349
+        if (target instanceof EntityLurkingTerror) return false;  // orig :352
+        if (target instanceof CloudShark) return false;           // orig :355
+        if (target instanceof Mothra) return false;               // orig :358
+        if (target instanceof EntityBee) return false;            // orig :361
+        return !(target instanceof EntityMantis);                 // orig :364
     }
 
     private LivingEntity findSomethingToAttack() {
+        // TF-035: orig Rotator.java:367-383 — PlayNicely disables Rotator aggression
+        // entirely (:368-370), and the scan sorts with GenericTargetSorter
+        // (field :49, ctor :60, sort :372), not plain distance.
+        if (danger.orespawn.OreSpawnConfig.PLAY_NICELY.get()) return null;
         AABB searchBox = this.getBoundingBox().inflate(12.0, 10.0, 12.0);
         List<LivingEntity> targets = this.level().getEntitiesOfClass(LivingEntity.class, searchBox);
-        targets.sort(Comparator.comparingDouble(this::distanceToSqr));
+        targets.sort(new danger.orespawn.entity.ai.GenericTargetSorter(this));
         for (LivingEntity target : targets) {
             if (this.isSuitableTarget(target)) return target;
         }

@@ -446,9 +446,12 @@ public class ModelRobot4 extends EntityModel<Robot4> {
 
         // orig ModelRobot4.java:439-451 — shield arm pumps only while
         // getAttacking() != 0 (|cos| * 45° + 0.75 rad), rests at 0 when idle;
-        // shielding flag raised while the arm is above amp/3 (as in the
-        // original, this is a client-local datawatcher write — the server
-        // copy is driven by gameplay code, not the renderer).
+        // shielding flag raised while the arm is above amp/3. ENT-K-070: this
+        // render-path write was the ONLY setShielding(1) caller in the whole
+        // original mod, and a client-side datawatcher write never reaches the
+        // server — so the shielding check in Robot4#hurt (orig Robot4.java:339)
+        // always read 0 there and the "shield" never actually blocked damage.
+        // Kept bug-for-bug: client-local write here, no server writer at all.
         float amp = 0.7853982F;
         float armAngle;
         if (entity.getAttacking() != 0) {

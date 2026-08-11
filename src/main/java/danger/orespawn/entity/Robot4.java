@@ -1,15 +1,18 @@
 package danger.orespawn.entity;
 
 import danger.orespawn.MobStats;
+import danger.orespawn.OreSpawnConfig;
+import danger.orespawn.entity.ai.GenericTargetSorter;
 
-import java.util.Comparator;
 import java.util.List;
-import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -24,29 +27,28 @@ import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.resources.ResourceLocation;
 import danger.orespawn.OreSpawnMod;
 
 /**
- * Robot4 — RoboPounder role.
+ * Robot4 — the Robo-Warrior (orig Robot4.java:428 spawner tag).
  *
- * Heavy melee assault platform (750 HP, 40 ATK, 10 ARM) with a soft
- * shielding state ({@link #setShielding}) that fully nullifies one
- * incoming hit per attack window — emulating the 1.7.10 "armored stance"
- * pattern. Doubles vertical knockback on player hits so the slam reads
- * as a hammer-blow rather than a tap. The Pounder is also the source of
- * the throttled ground-tearing terrain destruction implemented in
- * {@link #aiStep()}: when actively attacking and adjacent to a non-air
- * block in front of it, it shatters the block once every
- * {@link #POUND_BLOCK_INTERVAL_TICKS} ticks (Mobzilla-style throttling
- * to keep TPS stable when several Pounders are active simultaneously).
- * Registry ID kept as "robot_4" for save compat.
+ * Hybrid melee/ranged platform (170 HP / 12 ATK / 18 armor, orig
+ * OreSpawnMain.java:6497). Point-blank it hammers with a doubled-lift
+ * knockback swing (orig :256-267); past melee reach it shoulder-fires
+ * {@link LaserBall}s whenever the target is within 0.5 rad of its head
+ * facing, and beyond distSq 65 the ball is upgraded to the "special"
+ * (explosive) variant with a longer 30-tick reload (orig :294-326,
+ * ENT-K-069). It destroys no terrain — the block-griefing this port
+ * once carried belongs to Robot2, the Robo-Pounder (ENT-K-063). The
+ * shielding flag ({@link #setShielding}) is written only by the client
+ * model's arm-pump animation, exactly like the original's
+ * ModelRobot4:447-451 (see {@link #hurt} for why that leaves the
+ * server-side shield gate permanently cold, ENT-K-070). Registry ID
+ * kept as "robot_4" for save compat.
  */
 public class Robot4 extends Monster {
     private static final EntityDataAccessor<Integer> DATA_ATTACKING =
@@ -54,31 +56,17 @@ public class Robot4 extends Monster {
     private static final EntityDataAccessor<Integer> DATA_SHIELDING =
             SynchedEntityData.defineId(Robot4.class, EntityDataSerializers.INT);
 
-    private final Comparator<Entity> targetSorter;
+    // TF-035: orig Robot4.java:41,54 — targets sort with GenericTargetSorter
+    // (creeper-halved / big-silhouette-first), not plain distance.
+    private final GenericTargetSorter targetSorter;
     private int reloadTicker = 0;
     private int wasAttackedTicker = 0;
-    private int poundCooldown = 0;
     private final float moveSpeed = 0.34f;
-
-    /**
-     * Number of ticks between successive ground-tear sweeps. Mobzilla's
-     * own crushBlocks runs every server tick during the slam frame; for
-     * the Pounder we space sweeps out to ~30 ticks (1.5 s) so a Pounder
-     * army cannot turn a chunk into hashed-up cobblestone debris faster
-     * than the chunk can replicate to clients. With ~5 Pounders active
-     * and {@link #BLOCKS_PER_SWING} blocks per swing this caps at
-     * ~33 setBlock calls/sec across the group, well below the natural
-     * NeoForge chunk-update budget. Adjust if Pounders are ever spawned
-     * in raid-scale waves.
-     */
-    private static final int POUND_BLOCK_INTERVAL_TICKS = 30;
-    /** Blocks shattered per ground-tear sweep (front-arc, two-block tall). */
-    private static final int BLOCKS_PER_SWING = 4;
 
     public Robot4(EntityType<? extends Robot4> type, Level level) {
         super(type, level);
         this.xpReward = 120;
-        this.targetSorter = Comparator.comparingDouble(this::distanceToSqr);
+        this.targetSorter = new GenericTargetSorter(this);
     }
 
     @Override
@@ -118,94 +106,37 @@ public class Robot4 extends Monster {
         super.jumpFromGround();
     }
 
+    /**
+     * ENT-K-069: orig Robot4.java:133-143 — client-side ambience only. The
+     * invented block-griefing that used to live here was a relocation of
+     * Robot2's terrain destruction; orig Robot4 never breaks a block
+     * (removed, see ENT-K-063 for the restored Robot2 version).
+     */
     @Override
     public void aiStep() {
         super.aiStep();
         if (this.level().isClientSide()) {
+            // orig :136-138 — exhaust smoke behind the body (yRot + 180) on a
+            // 1-in-3 roll, y jittered +3.0..+4.0.
             if (this.getRandom().nextInt(3) == 1) {
                 double angle = Math.toRadians(this.getYRot() + 180.0f);
                 this.level().addParticle(ParticleTypes.SMOKE,
-                        getX() - 1.25 * Math.sin(angle), getY() + 3.0, getZ() + 1.25 * Math.cos(angle),
+                        getX() - 1.25 * Math.sin(angle),
+                        getY() + 3.0 + this.getRandom().nextFloat(),
+                        getZ() + 1.25 * Math.cos(angle),
                         0, this.getRandom().nextFloat() / 2.0, 0);
             }
-            return;
-        }
-        if (this.poundCooldown > 0) --this.poundCooldown;
-        if (this.getAttacking() != 0 && this.poundCooldown == 0
-                && this.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)) {
-            poundGroundInFront();
-            this.poundCooldown = POUND_BLOCK_INTERVAL_TICKS;
-        }
-    }
-
-    /**
-     * Throttled ground-tearing sweep. Selects up to {@link #BLOCKS_PER_SWING}
-     * non-air, breakable blocks in the 3x2x3 column directly in front of the
-     * Pounder (front arc derived from yRot, two-block tall to cover legs +
-     * waist height) and shatters them with the standard "drop loot" path.
-     *
-     * Block whitelist mirrors {@link Godzilla#isCrushable}: bedrock,
-     * end portal frames, and other unbreakable blocks are skipped so the
-     * Pounder can't escape arenas or grief world boundaries. We also skip
-     * tile entities (chests, spawners, beacons) to keep the destruction
-     * "terrain only" -- losing player loot to a wandering robot would feel
-     * brutal in a way 1.7.10 never intended.
-     *
-     * Called once per {@link #POUND_BLOCK_INTERVAL_TICKS} ticks per Pounder
-     * (server-side only, gated behind doMobGriefing).
-     */
-    private void poundGroundInFront() {
-        double yawRad = Math.toRadians(this.getYRot());
-        double fx = -Math.sin(yawRad);
-        double fz =  Math.cos(yawRad);
-        // Anchor swing two blocks ahead at chest height -- the arms in the
-        // 1.7.10 model swung roughly that far forward of the body pivot.
-        double cx = this.getX() + fx * 2.0;
-        double cz = this.getZ() + fz * 2.0;
-        int baseY = (int) Math.floor(this.getY());
-        int broken = 0;
-        outer:
-        for (int dy = 0; dy <= 1 && broken < BLOCKS_PER_SWING; dy++) {
-            for (int dx = -1; dx <= 1 && broken < BLOCKS_PER_SWING; dx++) {
-                for (int dz = -1; dz <= 1 && broken < BLOCKS_PER_SWING; dz++) {
-                    BlockPos pos = BlockPos.containing(cx + dx, baseY + dy, cz + dz);
-                    if (!isShatterable(pos)) continue;
-                    Block block = this.level().getBlockState(pos).getBlock();
-                    this.level().destroyBlock(pos, true, this);
-                    // Replace with air explicitly in case destroyBlock is
-                    // intercepted by a mod that converts the call to a
-                    // no-op while still firing the event.
-                    this.level().setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
-                    broken++;
-                    if (broken >= BLOCKS_PER_SWING) break outer;
-                    if (block == Blocks.OBSIDIAN) {
-                        // Obsidian counts double against the swing budget --
-                        // tougher block, fewer follow-up breaks per cycle.
-                        broken++;
-                    }
-                }
+            // orig :139-141 — "reddust" stream off the cannon side (yRot + 35)
+            // every client tick while the attack pose is up.
+            if (this.getAttacking() != 0) {
+                double angle = Math.toRadians(this.getYRot() + 35.0f);
+                this.level().addParticle(DustParticleOptions.REDSTONE,
+                        getX() - 1.55 * Math.sin(angle),
+                        getY() + 2.25 + this.getRandom().nextFloat(),
+                        getZ() + 1.55 * Math.cos(angle),
+                        0, this.getRandom().nextFloat(), 0);
             }
         }
-    }
-
-    /**
-     * Mirrors Godzilla.isCrushable's intent: skip air, fluids, blocks with
-     * a tile entity, and the standard "indestructible" set so Pounders stay
-     * inside their intended arenas.
-     */
-    private boolean isShatterable(BlockPos pos) {
-        var state = this.level().getBlockState(pos);
-        if (state.isAir()) return false;
-        if (!state.getFluidState().isEmpty()) return false;
-        if (state.hasBlockEntity()) return false;
-        float hardness = state.getDestroySpeed(this.level(), pos);
-        if (hardness < 0.0f) return false; // bedrock / barrier
-        Block b = state.getBlock();
-        if (b == Blocks.BEDROCK || b == Blocks.BARRIER || b == Blocks.END_PORTAL_FRAME
-                || b == Blocks.END_PORTAL || b == Blocks.NETHER_PORTAL
-                || b == Blocks.COMMAND_BLOCK || b == Blocks.STRUCTURE_BLOCK
-                || b == Blocks.STRUCTURE_VOID || b == Blocks.JIGSAW) return false;
-        return true;
     }
 
     @Override
@@ -220,12 +151,14 @@ public class Robot4 extends Monster {
         return super.doHurtTarget(target);
     }
 
+    /** ENT-K-069: orig Robot4.java:269-334 — hybrid melee/ranged think loop. */
     @Override
     protected void customServerAiStep() {
         if (this.isRemoved()) return;
         super.customServerAiStep();
         if (this.reloadTicker > 0) --this.reloadTicker;
         if (this.wasAttackedTicker > 0) --this.wasAttackedTicker;
+        // orig :280 — think-tick gated on reload done + a 1-in-8 roll.
         if (this.reloadTicker == 0 && this.getRandom().nextInt(8) == 1) {
             LivingEntity target = this.getTarget();
             if (this.getRandom().nextInt(50) == 1) this.setTarget(null);
@@ -234,21 +167,83 @@ public class Robot4 extends Monster {
             if (target != null) {
                 this.lookAt(target, 10.0f, 10.0f);
                 if (this.distanceToSqr(target) < 256.0) {
-                    double meleeRange = (3.0f + target.getBbWidth() / 2.0f);
+                    double meleeRange = 3.0f + target.getBbWidth() / 2.0f;
                     if (this.distanceToSqr(target) < meleeRange * meleeRange) {
+                        // orig :295-296 — point-blank hammer swing; no reload
+                        // cost and no attack-pose latch on the melee path.
                         this.doHurtTarget(target);
+                    } else {
+                        // orig :298-305 — the cannon fires only when the
+                        // target is within 0.5 rad of the HEAD facing
+                        // (yHeadRot + 90), a tighter cone than Robot2's 1.25.
+                        double rr = Math.atan2(target.getZ() - this.getZ(), target.getX() - this.getX());
+                        double rhdir = Math.toRadians((this.yHeadRot + 90.0f) % 360.0f);
+                        double pi = 3.1415926545; // orig :300 — truncated pi constant
+                        double rdd = Math.abs(rr - rhdir) % (pi * 2.0);
+                        if (rdd > pi) rdd -= pi * 2.0;
+                        rdd = Math.abs(rdd);
+                        if (rdd < 0.5) {
+                            fireLaserAt(target);
+                        }
+                        this.setAttacking(1); // orig :325 — raised on any ranged think-tick, aimed or not
                     }
-                    this.setAttacking(1);
-                    this.reloadTicker = 10;
-                    this.getNavigation().moveTo(target, 0.75);
+                    this.getNavigation().moveTo(target, 0.75); // orig :327
                 }
             }
         }
+        // orig :331-333 — the attack pose drops only once both the reload and
+        // the 65-tick post-hit window have run out.
         if (this.reloadTicker <= 0 && this.wasAttackedTicker <= 0) {
             this.setAttacking(0);
         }
     }
 
+    /**
+     * ENT-K-069: orig Robot4.java:305-324 — shoulder-cannon shot. The ball
+     * spawns 1.75 blocks out at (yRot + 45°) and 2.0 up, is lobbed with a
+     * 0.2 × horizontal-distance arc boost at speed 2.0 / inaccuracy 4.0.
+     * Beyond distSq 65 it becomes the "special" (explosive) variant with a
+     * 30-tick reload and a deep launch report (3.5 vol / 0.5 pitch); inside
+     * that it stays normal on a fast 10-tick reload (2.5 vol / 1.0 pitch).
+     * Plumbing mirrors Robot3#fireLaserAt (shooter-ctor for kill credit).
+     */
+    private void fireLaserAt(LivingEntity target) {
+        if (this.level().isClientSide) return;
+        LaserBall ball = new LaserBall(this.level(), this);
+        double yoff = 2.0;   // orig :306
+        double xzoff = 1.75; // orig :307
+        ball.setPos(this.getX() - xzoff * Math.sin(Math.toRadians(this.getYRot() + 45.0f)),
+                this.getY() + yoff,
+                this.getZ() + xzoff * Math.cos(Math.toRadians(this.getYRot() + 45.0f))); // orig :309
+        double dx = target.getX() - ball.getX();
+        double dy = target.getY() - ball.getY();
+        double dz = target.getZ() - ball.getZ();
+        float arc = (float) Math.sqrt(dx * dx + dz * dz) * 0.2f; // orig :313
+        ball.shoot(dx, dy + arc, dz, 2.0f, 4.0f); // orig :314
+        if (this.distanceToSqr(target) > 65.0) {
+            ball.setSpecial();      // orig :316
+            this.reloadTicker = 30; // orig :317
+            // orig :318 — "fireworks.launch" 3.5f / 0.5f for the special shot.
+            this.level().playSound(null, this.getX(), this.getY(), this.getZ(),
+                    SoundEvents.FIREWORK_ROCKET_LAUNCH, SoundSource.HOSTILE, 3.5f, 0.5f);
+        } else {
+            this.reloadTicker = 10; // orig :320
+            // orig :321 — "fireworks.launch" 2.5f / 1.0f for the normal shot.
+            this.level().playSound(null, this.getX(), this.getY(), this.getZ(),
+                    SoundEvents.FIREWORK_ROCKET_LAUNCH, SoundSource.HOSTILE, 2.5f, 1.0f);
+        }
+        this.level().addFreshEntity(ball); // orig :323
+    }
+
+    /**
+     * orig Robot4.java:336-355. ENT-K-070 note: the shielding half of the
+     * :339 gate is permanently cold on the server — the only setShielding(1)
+     * caller in the ORIGINAL is the client model's arm-pump animation
+     * (ModelRobot4.java:447-451), whose datawatcher write never reaches the
+     * server. The port's ModelRobot4 reproduces that client-side write, so
+     * the effective post-hit immunity here is the 65-tick wasAttackedTicker
+     * window (orig :342), bug-for-bug.
+     */
     @Override
     public boolean hurt(DamageSource source, float amount) {
         if (source.getMsgId().equals("cactus")) return false;
@@ -260,14 +255,17 @@ public class Robot4 extends Monster {
         if (attacker instanceof Mob mob) {
             this.setTarget(mob);
             this.getNavigation().moveTo(mob, 1.2);
+            ret = true; // orig :350 — forced true for mob attackers
         }
         return ret;
     }
 
     private LivingEntity findSomethingToAttack() {
+        // orig Robot4.java:386-388 — PlayNicely disables acquisition entirely.
+        if (OreSpawnConfig.PLAY_NICELY.get()) return null;
         AABB searchBox = this.getBoundingBox().inflate(16.0, 4.0, 16.0);
         List<LivingEntity> entities = this.level().getEntitiesOfClass(LivingEntity.class, searchBox);
-        entities.sort(this.targetSorter);
+        entities.sort(this.targetSorter); // orig :390 — GenericTargetSorter
         for (LivingEntity e : entities) {
             if (isSuitableTarget(e)) return e;
         }

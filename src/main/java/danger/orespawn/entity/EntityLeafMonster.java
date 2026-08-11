@@ -1,8 +1,8 @@
 package danger.orespawn.entity;
 
 import danger.orespawn.MobStats;
+import danger.orespawn.entity.ai.GenericTargetSorter;
 
-import java.util.Comparator;
 import java.util.List;
 import javax.annotation.Nullable;
 
@@ -135,7 +135,9 @@ public class EntityLeafMonster extends Monster {
         if (OreSpawnConfig.PLAY_NICELY.get()) return null; // orig LeafMonster.java:210-212
         List<LivingEntity> entities = this.level().getEntitiesOfClass(LivingEntity.class,
                 this.getBoundingBox().inflate(4.0, 6.0, 4.0));
-        entities.sort(Comparator.comparingDouble(this::distanceToSqr));
+        // TF-035: orig sorts candidates with GenericTargetSorter (LeafMonster.java:36 field,
+        // :48 ctor, :214 Collections.sort), not plain distance — creepers/large targets rank closer.
+        entities.sort(new GenericTargetSorter(this));
         for (LivingEntity candidate : entities) {
             if (isSuitableTarget(candidate)) return candidate;
         }
