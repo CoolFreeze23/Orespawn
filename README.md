@@ -43,12 +43,12 @@ Drop the produced JAR into your NeoForge 1.21.1 mods folder. No additional depen
 | Subsystem                                                                 | Implemented | Wiki Total | % Complete |
 | ------------------------------------------------------------------------- | ----------- | ---------- | ---------- |
 | **Dimensions** (Utopia / Mining / Village / Crystal / Chaos / Danger)     | 6           | 6          | **100.0%** |
-| **Armor Sets** (Wiki §6.2 — Kyanite added Phase 10)                       | 11          | 11         | **100.0%** |
-| **Top-tier Weapons** (Wiki §6.1 — Kyanite Sword added Phase 10)           | 25          | 25         | **100.0%** |
+| **Armor Sets** (Wiki §6.2)                                                | 11          | 11         | **100.0%** |
+| **Top-tier Weapons** (Wiki §6.1)                                          | 25          | 25         | **100.0%** |
 | **Bosses & Titans** (Wiki §13 + §14 + §15, excluding Scorpion sub-mob)    | 13          | 13         | **100.0%** |
-| **Hostile / Neutral Mobs** (Wiki mobs page §2–§13.8 — Vampire Butterfly + Apple Cow + Golden Apple Cow added Phase 14) | 56          | 56         | **100.0%** |
-| **Companion / Tame Mobs** (Wiki-listed pets only — Cephadrome porkchop tame added Phase 14) | 7           | 7          | **100.0%** |
-| **General Utility Items** (Wiki §6, items above §6.1 — Coin + Extractor added Phase 11) | 20          | 20         | **100.0%** |
+| **Hostile / Neutral Mobs** (Wiki mobs page §2–§13.8 — Vampire Butterfly + Apple Cow + Golden Apple Cow are wiki-only, absent from the 1.7.10 source, and ship disabled behind `phase14ContentEnable`; see MODERNIZATION_NOTES MOD-021) | 56          | 56         | **100.0%** |
+| **Companion / Tame Mobs** (Wiki-listed pets only — the Cephadrome is feed-to-ride per the 1.7.10 source: raw beef/chicken/porkchop arms one mount, no persistent tame; TF-032) | 7           | 7          | **100.0%** |
+| **General Utility Items** (Wiki §6, items above §6.1 — Coin added Phase 11) | 20          | 20         | **100.0%** |
 | **Dungeons / Hand-Built Structures** (Wiki §5 — Crystal Battle Tower + Crystal Maze added Phase 13A; Robot Lab + Shadow Dungeon added Phase 13B; Royal Trees added Phase 13C, ported byte-for-byte from `ItemMagicApple.java#L248-L469`) | 15          | 15         | **100.0%** |
 
 
@@ -63,21 +63,26 @@ bonus content, multi-slot armor pieces, etc.).
 
 | Registry                                      | Count   |
 | --------------------------------------------- | ------- |
-| Entity types (`ModEntities.ENTITY_TYPES`)     | **146** |
-| Item types (`ModItems.ITEMS`)                 | **335** |
-| Block types (`ModBlocks.BLOCKS`)              | **102** |
-| Crafting / smelting recipes                   | **237** |
-| Entity loot tables                            | **117** |
-| Biome modifier JSONs                          | **93**  |
-| Worldgen configured features                  | **30**  |
-| Worldgen structures (`/locate`-able)          | **13**  |
-| Custom recipe types (`orespawn:extracting`)   | **1**   |
+| Entity types (`ModEntities.ENTITY_TYPES`)     | **145** |
+| Item types (`ModItems.ITEMS`)                 | **560** |
+| Block types (`ModBlocks.BLOCKS`)              | **214** |
+| Menus (`ModMenus`)                            | **2**   |
+| Crafting / smelting recipes                   | **328** |
+| Entity loot tables                            | **122** |
+| Biome modifier JSONs                          | **154** |
+| Worldgen configured features                  | **40**  |
+| Worldgen structures (`/locate`-able)          | **47**  |
 | Dimensions (`data/orespawn/dimension/*.json`) | **6**   |
+
+Counts are as parsed by the permanent build check `tools/asset_audit.py`
+(items/blocks/entities/menus) and the datapack file counts, 2026-08-11. The
+former `orespawn:extracting` custom recipe type row is gone with the
+Extractor's removal (MODERNIZATION_NOTES MOD-020).
 
 
 > **Why the wiki count is the canonical baseline.** The Wiki *does not* enumerate
 > every block, food item, spawn egg, or projectile — only headline gameplay
-> entries. Comparing our 314 items to "all items the Wiki ever mentions" would
+> entries. Comparing our 560 items to "all items the Wiki ever mentions" would
 > be apples-to-oranges. Comparing our implementation to *exact wiki entries*
 > gives the only honest "% of original mod content shipped" number.
 
@@ -90,7 +95,7 @@ attack stacks, and faithful 1.7.10 health-pool / damage-cap mechanics.
 - **The Big Bertha Arsenal.** Big Bertha, Sliced, Royal Guardian Sword, Queen Scale
 Battle Axe, Battle Axe, Big Hammer, SLYR Chainsaw, Ultimate Sword/Bow, Skate Bow,
 Irukandji Arrows, Ray Gun (with redstone reload), Nightmare Sword, Mantis Claw,
-the Crystal Dimension gem swords (Pink Tourmaline, Tigers Eye, Ruby, Amethyst,
+the Crystal Dimension gem swords (Pink Crystal, Tigers Eye, Ruby, Amethyst,
 Crystal Stone, Crystal Wood), the Squid Zooka, the Thunder Staff, and the
 classic Rose Sword + Poison Sword + Experience Sword.
 - **The Six Dimensions.** Utopia, Mining, Village, Crystal, Chaos, and the
@@ -132,7 +137,7 @@ the 85.7% companion-completion metric above. Boyfriend / Girlfriend / Stinky
 / Spyro / Leon / Velocity Raptor / Camarasaurus / Hydrolisc / Gamma Metroid
 are real 1.7.10 mobs that the Namu Wiki page never enumerated, so they ship
 as bonus content rather than as percentage credit.)
-- **Faithful Power Curve.** Emerald → Experience → Amethyst → Pink Tourmaline →
+- **Faithful Power Curve.** Emerald → Experience → Amethyst → Crystal Pink →
 Tigers Eye → Ruby → Ultimate → Mobzilla → Royal Guardian → Queen Scale armor
 ladder with exact 1.7.10 defense values, durabilities, and recipe layouts.
 
@@ -144,18 +149,20 @@ ladder with exact 1.7.10 defense values, durabilities, and recipe layouts.
 > the next minor release; items marked **[v2.0]** require non-trivial new
 > subsystems (custom structure generators, jigsaw pools, gameplay framework).
 
-> ### 🎉 v1.1 Mechanical Feature Set: Complete (Phase 14)
+> ### 🎉 v1.1 Mechanical Feature Set: Complete (Phase 14) — superseded by the source-parity audit
 >
-> As of Phase 14 the port has reached **100% mechanical parity with the
-> Wiki catalog (153 / 153 enumerated entries)**. Every Wiki-enumerated
-> dimension, armor set, top-tier weapon, boss, hostile / neutral mob,
-> companion / tame mob, utility item, and hand-built structure has a
-> shipping 1.21.1 implementation. All `[v1.1]`-tagged entries below
-> were closed out in Phases 8 → 14; the strikethroughs trace the path.
-> Remaining `[v2.0]` items require new subsystems beyond the Wiki's
-> enumerated baseline (jigsaw pools, custom structure generators,
-> non-canonical gameplay frameworks) and are out of scope for the
-> "wiki-canon completion" milestone.
+> As of Phase 14 the port reached **100% mechanical coverage of the Wiki
+> catalog (153 / 153 enumerated entries)**. Since then, the line-by-line
+> source-parity audit (Phases A–E, see `AUDIT_FINDINGS.md` / `FIX_LOG.md`)
+> became the ground truth: parity is defined by the decompiled 1.7.10
+> SOURCE, not the Wiki. Where the two disagreed, the source won — several
+> Phase 8–14 additions with no source counterpart were removed
+> (Extractor → MOD-020, kyanite/pink-tourmaline branch → MOD-009,
+> crystal lumber/stick, Cephadrome porkchop tame → TF-032) or moved
+> behind the `phase14ContentEnable` config (Vampire Butterfly, Apple Cow,
+> Golden Apple Cow → MOD-021). The strikethrough bullets below trace the
+> Phase 8–14 path; entries later corrected by the audit carry an
+> UPDATED/REMOVED note rather than being rewritten as history.
 
 ### 1. Missing Bosses & Minibosses
 
@@ -209,25 +216,26 @@ holding stolen items pins the mob (`removeWhenFarAway` returns false).
 - ~~**Vampire Butterfly** — hostile butterfly variant in the Danger
 Dimension. Currently we only have the passive `butterfly` ambient mob.
 Should be a separate registration with attack AI + blood-drain effect.~~
-**DONE (Phase 14)** — `VampireButterfly` registered under
-`MobCategory.MONSTER`, separate entity ID from the ambient
-`EntityButterfly` (which keeps its right-click → Chaos teleport
-contract). Hostile target selectors (`HurtByTargetGoal` +
-`NearestAttackableTargetGoal<Player>`) plus a tick-driven steer-and-touch
-attack loop apply Hunger (10s) + Weakness (6s) on every hit — the
-"blood drain" debuff. Spawns in `orespawn:chaos_biome` (the Wiki's
-"Danger Dimension") at weight 18, packs of 3–6.
+**DONE (Phase 14), now OPTIONAL (2026-08-11)** — `VampireButterfly`
+remains registered (`MobCategory.MONSTER`, separate id from the ambient
+`EntityButterfly`) with its attack AI and Hunger/Weakness "blood drain"
+debuff, but the mob has **no class in the 1.7.10 source** — under the
+source-parity ruling it ships disabled: no natural spawns, and its spawn
+egg is creative-visible only with `phase14ContentEnable = true`. Full
+provenance + disposition in MODERNIZATION_NOTES **MOD-021**.
 - ~~**Apple Cow / Golden Apple Cow** — the regular surface cows that drop
 apples / golden apples. We have `red_cow`, `gold_cow`, `enchanted_apple_cow`
 (post-consolidation; was `enchanted_cow`), `crystal_cow` (the
 dimension-local cows) but not the standard overworld
-apple-dropping variants.~~ **DONE (Phase 14)** — `AppleCow` and
-`GoldenAppleCow` extend vanilla `Cow` and override
-`dropCustomDeathLoot` to spawn 1–3 apples / 1–2 golden apples (matches
-`RedCow`'s wheat-drop cadence). Both have spawn eggs (the golden one
-ships with the foil flag, mirroring `enchanted_apple_cow`), are added to the
-overworld creature spawn pool with weight 6 / 2 respectively in
-`add_overworld_creatures.json`, and breed true via `getBreedOffspring`.
+apple-dropping variants.~~ **DONE (Phase 14), now OPTIONAL (2026-08-11)** —
+`AppleCow` and `GoldenAppleCow` remain registered with their apple/golden-
+apple drops and breeding, but neither has a class in the 1.7.10 source —
+under the source-parity ruling their natural spawns and creative spawn
+eggs are gated behind `phase14ContentEnable` (default off). The
+**Enchanted Golden Apple Cow is unaffected** — it IS the original
+`EnchantedCow` (orig `OreSpawnMain.java:3599`) and is always enabled,
+with its overworld spawns restored per-biome from the source (TF-033).
+Disposition: MODERNIZATION_NOTES **MOD-021**.
 - ~~**Dinosaur AI Polish** — Pointysaurus eye-contact aggression trigger
 (matches Enderman behaviour); Allosaurus group-spawn coordination;
 T-Rex's Big-Bertha-tooth drop weight tuning.~~ **DONE (Phase 8/9/10)** —
@@ -249,16 +257,14 @@ transformation into Brutalfly + butterflies on death.~~
 throttle, dies into a Brutalfly + 3-5 standard butterflies, drops
 `minecraft:cobweb` under the chased player on a 40-tick cadence.
 - ~~**Cephadrome** taming via raw pork-chop — currently only listens for
-generic meat.~~ **DONE (Phase 14)** — Cephadrome's `mobInteract` now
-opens with a strict `Ingredient.of(Items.PORKCHOP)` tame branch that
-flips a synced `DATA_TAMED` boolean (NBT-persistent under
-`CephaTamed`); the legacy beef/cooked-beef/feather/porkchop heal
-branch survives so already-tamed sand swimmers can still be
-top-healed. A `TemptGoal` at priority 1 leads untamed Cephadromes
-toward porkchop holders so the tameability is discoverable. Tamed
-Cephadromes never re-target the player (`isSuitableTarget` short-
-circuits on `isTamed()`), completing the wiki-canon companion
-contract and pushing the Companion roster to 7/7.
+generic meat.~~ **REMOVED (2026-08-11, TF-032 — source wins)** — the
+1.7.10 source has **no tame state** (orig `Cephadrome.java:878-904`):
+any raw beef / chicken / porkchop heals to full and arms a one-ride
+`wasfed` gate consumed on mount, with heart particles. The Phase 14
+porkchop-tame flag, `TemptGoal`, and player-aggro immunity were
+non-source behavior and were removed; the source feed-to-ride flow is
+what ships (and is GameTest-covered). The wiki-flavored tame design is
+archived in MODERNIZATION_NOTES **MOD-021** for an optional 2.0 return.
 - **Crab** size variants: only one `crab` registration. 1.7.10 has small
 (62 HP), medium (125 HP), and large (250 HP) Rainbow Crabs, each with
 escalating defense. Wiki documents all 3 as separate stat blocks. **[v1.1]**
@@ -524,43 +530,38 @@ sword/axe/shovel/pickaxe/hoe + bonus emerald roll, all weight-10 ×
 Drops auto-insert into player inventory or fall to the world if full;
 10-tick interaction cooldown prevents auto-clickers; XP-orb pickup
 sound on success.
-- ~~**Extractor** — the multi-block ore-purification gadget.~~ **DONE
-(Phase 11)** — `Extractor` block + `ExtractorBlockEntity` provide a
-hopper-driven 1-input/1-output processor. New custom recipe type
-`orespawn:extracting` (codec-defined `ExtractingRecipe` with
-`ingredient`, `result`, `processtime`) and serializer registered via
-`ModRecipes`. Three sample recipes ship: ore_kyanite → 2 kyanite
-(200 t), ore_pink_tourmaline → 2 pink_tourmaline (200 t), and
-ancient_dried_egg → trex_tooth (400 t — "DNA extraction"). Tick logic
-caches the matched RecipeHolder per cycle, drops it on input change,
-and is throttled to 1 progress increment per server tick to protect
-TPS. Hopper-friendly: top face = input, bottom face = output, sides
-locked closed.
+- **Extractor** — **REMOVED (2026-08-11, MOD-020 ruling)**. The Phase 11
+"multi-block ore-purification gadget" was a port invention: no Extractor
+class, art, or mechanic exists anywhere in the 1.7.10 source (the earlier
+provenance claim was fictitious). The block, `ExtractorBlockEntity`, the
+`orespawn:extracting` recipe type, and all recipes/assets were deleted;
+player-placed Extractors disappear from existing worlds on load. The
+complete design (hopper-driven 1-in/1-out processor, codec recipe type,
+sample recipes) is archived inside MODERNIZATION_NOTES **MOD-009**'s
+kyanite 2.0 package via **MOD-020**, so a deliberate 2.0 revival has the
+full picture.
 - ~~**Duplicator Tree (functional)** — the `duplicator_log` block exists
 but does not yet duplicate adjacent saplings/items as in 1.7.10.~~
-**DONE (Phase 11)** — `BlockDuplicatorLog.tryDuplicateAdjacent`
-now runs on every random tick (20 % chance) alongside the legacy
-tree-growth path. Scans the 4 horizontal neighbours for sapling blocks
-and copies the sapling onto a free dirt-bordered tile, OR grows a
-random adjacent dropped `ItemEntity`'s stack by 1 if one exists in the
-1-block AABB. Tree-growth still gated by `OreSpawnConfig.DUPLICATOR_TREE_ENABLE`.
-- ~~**Kyanite Sword + Kyanite Armor + Kyanite Ore** — the Crystal
-Dimension's blue gem branch is missing entirely.~~ **DONE (Phase 10)** —
-`ore_kyanite` block (size-6 veins, Y=-32..80) generates only in the
-Crystal Dimension via `add_crystal_dim_ores` biome modifier; drops the
-new `kyanite` gem (silk-touch preserves the ore). Full tier ladder
-shipped: `KYANITE` `SimpleTier` (1300 dur, 11.0 efficiency, 7.5 attack,
-60 enchantability, diamond mining-class), `KYANITE` `ArmorMaterial`
-(3/6/8/4 defense, 70 durability, 1.0 toughness), and the canonical
-sword + pickaxe + axe + shovel + hoe + 4-slot armor recipes (kyanite +
-crystal_wood_stick).
-- ~~**Pink Tourmaline gem item + ore block** — no `pink_tourmaline`
-raw gem and no `ore_pink_tourmaline` block.~~ **DONE (Phase 10)** —
-`ore_pink_tourmaline` block + `pink_tourmaline` gem registered;
-1:1 shapeless conversion recipes both directions with the legacy
-`crystal_pink_ingot` to keep existing `pink_*` armor / sword recipes
-working unchanged. Crystal-Dim worldgen places it via the same
-`add_crystal_dim_ores` biome modifier as kyanite.
+**DONE (Phase 11), corrected by the audit (ITEM-027)** — the Phase 11
+sapling/item-stack duplication was invented and is gone; the shipped
+behavior is the faithful 1.7.10 mechanic: the duplicator tree grows
+block-by-block on random ticks (~12.5 min mean to a full tree, the
+original pacing — MOD-015 tracks a faster 2.0 option), then copies a
+random block from the 5×5 area at trunk-base level into a random air
+slot. Gated by `OreSpawnConfig.DUPLICATOR_TREE_ENABLE`.
+- **Kyanite Sword + Kyanite Armor + Kyanite Ore** — **REMOVED
+(2026-06-13, MOD-009 / PN-009 Option A)**. The Phase 10 "blue gem
+branch" was a port invention: 1.7.10 has no kyanite gem, ore, tools, or
+armor — its "Kyanite" is only the display name of the CrystalStone
+terrain block (orig `OreSpawnMain.java:3029`), which the port keeps as
+`crystal_stone`. The full removed design (blocks, gem, `KYANITE` tier
+and armor material, recipes) is archived verbatim in
+MODERNIZATION_NOTES **MOD-009** as a deliberate 2.0 content candidate.
+- **Pink Tourmaline gem item + ore block** — **REMOVED (2026-06-13,
+MOD-009 / PN-009 Option A, same branch as kyanite)**. 1.7.10 has no
+`pink_tourmaline`; the real material is the legacy `crystal_pink_ingot`,
+which the `pink_*` armor / sword recipes use directly. Design archived
+in MODERNIZATION_NOTES **MOD-009**.
 - ~~**Crystal Lumber / Crystal Stick** — the Wood Crystal Sword recipe
 in Wiki §6.1 explicitly requires Crystal Lumber + Crystal Sticks.~~
 **REMOVED (2026-08-11, parity)** — the Phase-10 `crystal_wood_lumber` /

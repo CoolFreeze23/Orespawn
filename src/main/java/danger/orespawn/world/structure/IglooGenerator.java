@@ -71,18 +71,21 @@ import net.minecraft.world.level.storage.loot.LootTable;
  *     {@code placeSpawner}/{@code placeLootChest} helpers, plus the door
  *     helper's modeled hinge probe above; no pre-build terrain reads exist
  *     (spec &sect;10.3).</li>
- * <li><b>Worldgen placement is deliberately NOT wired</b> &mdash; no
- *     structure / structure-set / biome-tag JSON exists for the igloo. The
+ * <li><b>Worldgen placement (WGEN-071, spec &sect;7.3 ruling):</b> the
  *     original's "Ice Plains" exact-name gate (orig OreSpawnWorld.java:
  *     1263-1264) and its snow-BLOCK-below column scan (OSW:1270) are
  *     mutually inconsistent on plain Ice Plains terrain, making natural
- *     igloos a rare biome-border artifact; the port biome-tag/frequency
- *     decision is NEEDS_DESIGN_RULING (spec &sect;7.3/S7) and is left
- *     unresolved. This builder is reachable ONLY via the Random Dungeon
- *     Spawner, type 20 (orig DungeonSpawnerBlock.java:113-115), which
- *     bypasses biome, scan, and the &minus;2 sink &mdash; a shell perched on
- *     or embedded in the clicked terrain is faithful behavior
- *     (spec &sect;9).</li>
+ *     igloos a rare biome-border artifact (spec &sect;1.3/S7). The wired
+ *     placement reproduces BOTH gates mechanically &mdash; a
+ *     snowy_plains-only biome tag plus
+ *     {@code LegacyDungeonPiece.resolveIglooWorldgenSite}'s generation-time
+ *     TRUE-surface re-verification (which hands this generator its build
+ *     origin, possibly relocated within the anchor chunk, or suppresses the
+ *     build entirely) &mdash; with no invented frequency. The Random
+ *     Dungeon Spawner path, type 20 (orig DungeonSpawnerBlock.java:
+ *     113-115), still bypasses biome, scan, and the &minus;2 sink &mdash;
+ *     a shell perched on or embedded in the clicked terrain is faithful
+ *     behavior (spec &sect;9).</li>
  * </ul>
  *
  * <p>Chest loot: {@code orespawn:chests/igloo} &mdash; the InstantShelter
@@ -103,9 +106,11 @@ final class IglooGenerator {
      * Direct port of {@code makeIgloo(world, cposx, cposy, cposz)}
      * (orig GenericDungeon.java:2698-2813). {@code origin} is the Dungeon
      * Spawner Block position (type 20, orig DungeonSpawnerBlock.java:113-115,
-     * no Y offset); the original worldgen anchor ({@code posY - 2}, one below
-     * the snow surface block, orig OreSpawnWorld.java:1271) is deliberately
-     * unwired &mdash; see the class Javadoc.
+     * no Y offset) or, on the worldgen path, the site resolved by
+     * {@code LegacyDungeonPiece.resolveIglooWorldgenSite} &mdash; the
+     * original anchor {@code posY - 2}, one below the snow surface block
+     * (orig OreSpawnWorld.java:1271), re-verified against the real chunk
+     * per the spec &sect;7.3 ruling (WGEN-071; see the class Javadoc).
      */
     static void generate(LegacyDungeonPiece piece, BlockPos origin, RandomSource random) {
         BlockState snowBlock = Blocks.SNOW_BLOCK.defaultBlockState(); // field_150433_aE — the FULL block

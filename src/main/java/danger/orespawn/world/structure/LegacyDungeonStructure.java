@@ -48,12 +48,12 @@ public class LegacyDungeonStructure extends Structure {
             mode.map(LegacyDungeonPiece.DungeonType.PlacementMode::valueOf))));
 
     /**
-     * The 11 wired overworld dungeon types the original gated behind
+     * The 12 wired overworld dungeon types the original gated behind
      * {@code DisableOverworldDungeons == 0} (orig OreSpawnWorld.java:284):
      * the 6-way rotation (:285-303) + the ahh fall-through chain (:304-321).
-     * addANest's ant nests live in the ant features, and the Igloo's
-     * worldgen placement is deliberately unwired (igloo_spec.md §7.3) — a
-     * future Igloo placement must honor this gate too.
+     * addANest's ant nests live in the ant features. The Igloo (addIgloo,
+     * chain link OSW:314) joined the set when WGEN-071 wired its worldgen
+     * placement (igloo_spec.md §7.3 ruling).
      */
     private static final java.util.EnumSet<LegacyDungeonPiece.DungeonType> OVERWORLD_DUNGEON_TYPES =
             java.util.EnumSet.of(
@@ -66,6 +66,7 @@ public class LegacyDungeonStructure extends Structure {
                     LegacyDungeonPiece.DungeonType.HAUNTED_HOUSE,
                     LegacyDungeonPiece.DungeonType.LEAF_MONSTER_DUNGEON,
                     LegacyDungeonPiece.DungeonType.SPIT_BUG_LAIR,
+                    LegacyDungeonPiece.DungeonType.IGLOO,
                     LegacyDungeonPiece.DungeonType.BOUNCY_CASTLE,
                     LegacyDungeonPiece.DungeonType.RUBBER_DUCKY_POND);
 
@@ -138,6 +139,22 @@ public class LegacyDungeonStructure extends Structure {
             }
             case SKY_BAND_70 -> skyBand70Origin(context);
             case LOWEST_GRASS_36 -> lowestGrassOrigin(context);
+            case SNOW_SURFACE_MINUS2 -> {
+                // Igloo (WGEN-071; orig OreSpawnWorld.java:1265-1275): the
+                // SWAMP_GRASS_SURFACE scan shape — exact-name "Ice Plains"
+                // corner gate (:1263-1264) → the structure's snowy_plains-only
+                // biome tag, 4 attempts of chunk + nextInt(16) jitter
+                // (:1265-1267), Y 100→41 window (:1269), dry-column
+                // approximation — but anchored TWO below the first free block
+                // ({@code posY - 2}, :1271: cposy = one below the surface
+                // block). The original's second gate, a snow BLOCK (not snow
+                // layer) surface (:1270), cannot be predicted from noise; the
+                // piece re-verifies it against real blocks at generation time
+                // and generates nothing when it fails (igloo_spec.md §7.3
+                // ruling — see LegacyDungeonPiece.resolveIglooWorldgenSite).
+                BlockPos air = swampGrassSurfaceOrigin(context);
+                yield air == null ? null : air.below(2);
+            }
         };
         if (origin == null) return Optional.empty();
         if (origin.getY() + dungeonType.upExtent + 4 >= context.heightAccessor().getMaxBuildHeight()) {

@@ -1910,3 +1910,89 @@ flooring a LoS ray the original truncates).
   EntityVortex as the reference site. SYSTEMIC remainder: ~51 other entity
   files sort targets by plain distance — each E4 category batch swaps its
   entities' comparator during their line-by-line verification.
+
+## Phase E — E3: MISSING implementations + carried remainders (2026-08-11)
+
+- **ENT-A-083 FIXED (residuals)** — the flying-mount system itself shipped in
+  B3 and the tame-flag half died with TF-032; fixed the two true residuals:
+  hitbox 1.5x1.5 → 2.5x2.25 (orig Cephadrome.java:73) and the ridden
+  22-tick MothraWings wing beat at 0.5 volume (orig :652-659), server-side
+  in tick(), distinct from the faithful 1-in-6 unridden ambient (orig
+  :184-189).
+- **WGEN-003 + WGEN-004 FIXED** — 7 boost features (block_ruby 1/2/Y0-15;
+  diamond 4/6/Y0-30; diamond_block 2/4/Y0-20; emerald 4/6/Y0-40;
+  emerald_block 2/4/Y0-20; gold 4/8/Y0-40; gold_block 2/4/Y0-25 — orig
+  OreSpawnMain.java:1573-1585) as minecraft:ore configured features (stone +
+  deepslate targets, deepslate ore variants where vanilla has them) placed
+  via orespawn:vein_count with less_ore_passes 0 — the entire boost block
+  sits inside the orig's LessOre==0 gate, so LessOre worlds get none, exactly
+  as 1.7.10. Wired into add_ores.json (overworld) AND, closing a gap the
+  implementation surfaced, into mining_biome.json via 7 *_mining placed
+  features at passes 3 / less_ore_passes 0 (the orig Mining provider calls
+  the same boost block up to 3x; the mining biome previously had NO boosts
+  and zero emerald of any kind).
+- **WGEN-007 FIXED** — WildCropsFeature ports addStrawberries /
+  addCorn / addTomatoes line-for-line (gates 1/20, 1/35, 1/70; LessLag
+  attempt scaling 6/5/3; Y100→41 grass-below scan; the 9-air-above column
+  veto; the exact multi-block stalk grammars — corn_0/1/3 and tomato_0/1/2/3
+  per the BlockCorn.java:21-23 authoritative mapping). Overworld modifiers:
+  strawberries → forest/windswept_forest/birch_forest/old_growth_birch_forest
+  (established C1 ForestHills mapping), corn+tomatoes → plains. Dimension
+  wiring per the orig gates: all three in Utopia, corn+tomatoes in Village
+  (orig :966 excludes strawberries from DimensionID3).
+- **WGEN-070 FIXED** — dead divergent CrystalMazeFeature retired (class
+  deleted + tombstone comment); world/CrystalMaze via OreSpawnChunkGenerator
+  remains the single faithful mechanism (WGEN-027).
+- **ENT-A-054 FIXED (final remainders)** — JealousyTargetGoal ported
+  (tamed/non-sitting/owner-holding companion hunts UNTAMED same-kind rivals,
+  never tamed ones, orig MyEntityAIJealousy.java:31-48; per-goal ranges 6/3
+  chance 5/15 per orig Boyfriend.java:146-147; PlayNicely gated dynamically)
+  + MoveIndoorsGoal @11 (documented 1.21.1 behavioral match: roofed-shelter
+  seeking at night/rain — vanilla removed the 1.7.10 door/village framework
+  in 1.14; mapping decision in the Javadoc). Girlfriend's mirror gaps (her
+  jealousy pair, Panic@6, OpenDoor@10, MoveIndoors@11, orig
+  Girlfriend.java:155-175) are NOTED FOR THE E4 ENT-D BATCH — her goal-list
+  completion belongs to her own open partial.
+- **ITEM-023 FIXED** — block-form question terminally closed: orig ZooCage
+  is an ITEM building a quartz/glass enclosure at the player (ZooCage.java,
+  77 lines, full read); NO cage block exists in 1.7.10, so the item-based
+  flow is the faithful shape. Real divergence corrected: port cage_size args
+  were 2/4/6/8/10; orig passes 3/5/9/13/17 (OreSpawnMain.java:1931-1935),
+  so zoo_cage_6/8/10 built undersized — widths now 5/7/11/15/19 (half =
+  size/2+1, orig ZooCage.java:31).
+- **WGEN-071 FIXED (the §7.3 igloo ruling)** — placement wired as a DOUBLE
+  mechanical gate reproducing the original's border-artifact rarity with no
+  invented frequency: biome tag = minecraft:snowy_plains ONLY (exact-name
+  "Ice Plains" mapping, Spikes excluded) AND the piece verifies a true
+  air-over-snow_BLOCK column at generation time (orig OSW:1270-1272),
+  relocating among the 4 jitter attempts and no-op'ing silently when none
+  passes — snow-block surfaces inside snowy_plains occur essentially only
+  at ice_spikes borders, so the orig's ~zero-in-plain-biome frequency
+  emerges mechanically. New SNOW_SURFACE_MINUS2 mode (spec §7.2: 4
+  attempts, 41≤Y≤100, anchor firstFree−2); structure_set 15/7/84356
+  (§8 C7 numbers); IGLOO joins OVERWORLD_DUNGEON_TYPES (WGEN-064 gate;
+  DSB type-20 buildNow stays ungated per §9). Documented deltas: relocation
+  box −22..+23, snow-layer admissible in the air cell only (freeze_top_layer
+  cross-pass stability), fixed-Y retry checks, piece-RNG retry draws.
+  §1.3 vanilla-terrain caveat retained in the Javadoc.
+- **README reconciliation (user directive, 2026-08-11)** — coverage-table
+  parentheticals purged of removed content (kyanite ×2, Extractor; Phase 14
+  rows now state the MOD-021 gate and the TF-032 feed-to-ride truth);
+  registry table recounted from asset_audit parses + datapack file counts
+  (145 entities / 560 items / 214 blocks / 2 menus / 328 recipes / 122
+  entity loot tables / 154 modifiers / 40 configured features / 47
+  structures / 6 dimensions; orespawn:extracting row deleted); v1.1 banner
+  now records the audit superseding the wiki milestone; roadmap bullets for
+  Extractor / kyanite / pink tourmaline rewritten as REMOVED with MOD-020 /
+  MOD-009 pointers; VampireButterfly + AppleCow bullets re-marked OPTIONAL
+  (MOD-021), Cephadrome tame bullet REMOVED (TF-032), Duplicator bullet
+  corrected to the ITEM-027 faithful mechanic, "Pink Tourmaline" arsenal /
+  power-curve mentions renamed to the shipped Pink Crystal line.
+- **E6 sweep inputs noted during the E3 gate (both PRE-EXISTING — identical
+  counts in every earlier green run):** (1) "Unprimed heightmap:
+  OCEAN_FLOOR_WG" ×3 per suite run (vanilla logs then self-primes;
+  predates the igloo mode); (2) "Failed to apply component patch
+  {orespawn:caged_entity=>orespawn:girlfriend} ... stack size N > max 1"
+  ~120-150 per run — something builds caged-girlfriend stacks above the
+  max-1 stack limit (EntityCage/caged-item interplay; candidate for the
+  E4 ENT-D cage batch or E6). Neither fails a test.

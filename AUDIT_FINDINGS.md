@@ -537,7 +537,7 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 - **Original:** `Boyfriend.java:127-148` — Tempt(cooked beef), `EntityAIArrowAttack(4, 1.25, 20t, 10.0f)`, Panic(6), OpenDoor(10), MoveIndoors(11); Jealousy target goals @4/5
 - **Port:** `entity/Boyfriend.java:70-82` — Tempt(DIAMOND), `MeleeAttackGoal(4)`; no Panic/OpenDoor/MoveIndoors/Jealousy
 - **Fix:** tempt with cooked beef; replace MeleeAttackGoal with a ranged-attack goal (see ENT-A-055); add Panic, OpenDoor, MoveIndoors and Jealousy goals.
-- **Resolution:** PARTIAL (2026-06-11, Phase C — tempt food cooked beef, PanicGoal(1.5)@6, OpenDoorGoal@10 + door navigation added; ranged attack (ENT-A-055), Jealousy goals, MoveIndoors remain (Phase D); see FIX_LOG.md and phase_c_reports/C1_entities_A_C.md)
+- **Resolution:** FIXED (2026-08-11, Phase E3 — final remainders closed: the two Jealousy target goals ported as JealousyTargetGoal (tamed non-sitting owner-holding Boyfriend hunts UNTAMED Boyfriend rivals; tamed victims never targeted, orig MyEntityAIJealousy.java:31-48; per-goal ranges override follow-range like the orig's targetDistance) registered @4 (6.0, chance 5) and @5 (3.0, chance 15) per orig Boyfriend.java:146-147, PlayNicely-gated dynamically; MoveIndoors ported as MoveIndoorsGoal @11 — documented 1.21.1 behavioral match (roofed-shelter seeking at night/rain; the vanilla door/village framework the 1.7.10 goal used was removed in 1.14; mapping decision in the class Javadoc per plan ground rule 5). Ranged/melee/sounds half was ENT-A-055 (FIXED, D3). Girlfriend-side goal-list gaps (her jealousy pair, Panic@6, OpenDoor@10, MoveIndoors@11) noted for her open ENT-D partial in the E4 batch. See FIX_LOG Phase E. Previously: PARTIAL (2026-06-11, Phase C — tempt food cooked beef, PanicGoal(1.5)@6, OpenDoorGoal@10 + door navigation added; ranged attack (ENT-A-055), Jealousy goals, MoveIndoors remain (Phase D); see FIX_LOG.md and phase_c_reports/C1_entities_A_C.md))
 
 ### ENT-A-055 — Boyfriend: entire weapon/ranged system missing
 
@@ -769,6 +769,7 @@ Entries cover every audited row whose status is MISSING / PARTIAL / DIVERGENT / 
 - **Original:** `Cephadrome.java:666-850,872-908` — feed meat → mount; full custom flight physics, flyup key, wing sound every 22t while ridden, obstruction climb
 - **Port:** no riding; replaced by invented porkchop "taming" flag (`DATA_TAMED`, `mobInteract:268-307`) + TemptGoal(porkchop)
 - **Fix:** implement rider-controlled flight in `travel()` (lift on jump-key, obstruction climb, 22t wing-beat sound) triggered by feeding meat; remove the invented tame flag/tempt goal. Also restore size 2.5×2.25 (`ModEntities.java:605` shrunk it to 1.5×1.5).
+- **Resolution:** FIXED (2026-08-11, Phase E3 — the finding was mostly stale: the full rider-flight system shipped in Phase B3 (port Cephadrome RIDER_FLIGHT_CONFIG cites orig :703-835 number-for-number: hover probe 1.55, +0.07/+0.1 lift, 0.018 glide-fall, terrain-scan climb, throttle/friction; mount flow :893-904) and the invented porkchop-tame flag/TemptGoal were removed by TF-032 (E0). The two REAL residuals fixed now: hitbox restored to 2.5x2.25 (orig Cephadrome.java:73 setSize; ModEntities had 1.5x1.5) and the ridden wing-beat added — activity==1 plays orespawn MothraWings 0.5f every 22 ticks server-side (orig :652-659), distinct from the already-faithful 1-in-6 unridden ambient (orig :184-189). See FIX_LOG Phase E)
 
 ### ENT-A-084 — Cephadrome: gear-roll drops missing
 
@@ -3898,6 +3899,7 @@ Only MISSING / PARTIAL / DIVERGENT / UNVERIFIED items are listed; fully PORTED i
 - **Original:** `ZooCage.java` — cage blocks/entities
 - **Port:** `ZooCageItem`/`EmptyCageItem`/`CagedMobItem` + EntityCage — capture flow modernized, block form dropped
 - **Fix:** Accept the item-based modernization as design; if block parity is required, add a placed-cage block that renders/holds the captured mob NBT. Document the decision either way.
+- **Resolution:** FIXED (2026-08-11, Phase E3 — decision documented + real divergence corrected. The orig ZooCage (ZooCage.java, 77 lines, full read) is an ITEM that instantly builds a quartz-floor/ceiling + glass-wall enclosure anchored at the player — there is NO cage block anywhere in 1.7.10, so no block form exists to port and the item-based capture flow (Phase C acceptance) is the faithful shape, closing the block-form question terminally. Divergence found during completion: the port passed cage_size 2/4/6/8/10 where the orig passes 3/5/9/13/17 (orig OreSpawnMain.java:1931-1935 — the item NAME numbers are not the ctor arg), shrinking three enclosures; fixed, full widths now 5/7/11/15/19 per orig ZooCage.java:31 half=size/2+1. See FIX_LOG Phase E)
 
 ## Plants, crops, leaves
 
@@ -4356,6 +4358,7 @@ Only MISSING / PARTIAL / DIVERGENT / UNVERIFIED items are listed; fully PORTED i
 - **Original:** `OreSpawnMain` BlockRuby_stats — 1 vein / clump 2 / Y0–15
 - **Port:** absent — no feature for ruby-block veins
 - **Fix:** Add configured+placed features generating `block_ruby` veins: count 1, size 2, Y 0..15, and include them in `add_ores.json`.
+- **Resolution:** FIXED (2026-08-11, Phase E3 — orespawn:ore_block_ruby configured (minecraft:ore size 2, stone+deepslate targets -> block_ruby) + placed (orespawn:vein_count count 1, Y 0-15, less_ore_passes 0 — the whole boost block sits inside the orig's LessOre==0 gate) + add_ores.json entry; values verified against orig OreSpawnMain.java:1574 get_orestats(BlockRuby, 1, 2, 0, 15) and the loop at orig OreSpawnWorld.java:949-957. Mining-dim triple pass added too (ore_block_ruby_mining, passes 3/less_ore_passes 0, per orig ChunkOreGenerator sharing the same boost block + ChunkProviderOreSpawn2's 3-call pattern). See FIX_LOG Phase E)
 
 ### WGEN-004 — Vanilla-ore boost generation absent
 
@@ -4363,6 +4366,7 @@ Only MISSING / PARTIAL / DIVERGENT / UNVERIFIED items are listed; fully PORTED i
 - **Original:** `ChunkOreGenerator.generateOresInChunk` — extra Diamond 4/6/Y0–30, Diamond Block 2/4/Y0–20, Emerald 4/6/Y0–40, Emerald Block 2/4/Y0–20, Gold 4/8/Y0–40, Gold Block 2/4/Y0–25 on top of vanilla
 - **Port:** absent — only vanilla defaults generate
 - **Fix:** Add six configured/placed features with the listed rate/clump/Y values and register via the `add_ores` biome modifier.
+- **Resolution:** FIXED (2026-08-11, Phase E3 — six boost features added exactly per orig OreSpawnMain.java:1580-1585 stats and the OreSpawnWorld/ChunkOreGenerator boost loops: diamond 4/6/Y0-30, diamond_block 2/4/Y0-20, emerald 4/6/Y0-40, emerald_block 2/4/Y0-20, gold 4/8/Y0-40, gold_block 2/4/Y0-25; vein_count placement with less_ore_passes 0 (boosts vanish entirely under LessOre, matching the orig gate), plain count (no extra dice in the boost loops), deepslate ore variants on the deepslate target for the three vanilla ores. Overworld via add_ores.json AND the Mining-dim gap the implementation surfaced (mining_biome.json had NO boosts and zero emerald of any kind) closed with 7 *_mining placed features at passes 3/less_ore_passes 0. See FIX_LOG Phase E)
 
 ### WGEN-005 — SpawnOres system reduced from ~105 block types to 2
 
@@ -4386,6 +4390,7 @@ Only MISSING / PARTIAL / DIVERGENT / UNVERIFIED items are listed; fully PORTED i
 - **Original:** `OreSpawnWorld.generateSurface` — strawberry patches in forest biomes; corn (~1%) and tomato patches in plains
 - **Port:** absent — crop blocks exist but have no wild generation
 - **Fix:** Add three random-patch configured/placed features (strawberry → `#is_forest`; corn ~1%/chunk and tomato → plains) via biome modifiers.
+- **Resolution:** FIXED (2026-08-11, Phase E3 — WildCropsFeature ports all three generators line-for-line: strawberries 1-in-20 gate, 5 attempts, Y100->41 air scan onto grass (orig OreSpawnWorld.java:961-978); corn 1-in-35 gate, 6/5/3 attempts by LessLag, 9-air-above column check, height 1+nextInt(5) with the corn_0/corn_1/corn_3 stalk grammar (orig :1023-1068; block mapping authoritative from BlockCorn.java:21-23 Javadoc); tomatoes 1-in-70, 5 attempts, height 1+nextInt(3), tomato_0/1/2/3 grammar (orig :1069-1110). Overworld: strawberries -> forest/windswept_forest/birch_forest/old_growth_birch_forest (the established C1 ForestHills mapping), corn+tomatoes -> plains exact. Dimensions per the orig gates: strawberries + corn + tomatoes in Utopia (utopia_plains.json), corn + tomatoes in Village (orig :966 excludes strawberries from DimensionID3). See FIX_LOG Phase E)
 
 ## Utopia dimension
 
@@ -4923,6 +4928,7 @@ Entries: **79 total** — ANIM 20 (DIVERGENT 8 · PARTIAL 10 · MISSING 2) · BU
 - **Original:** CrystalMaze.java buildCrystalMaze (called per Crystal chunk at Y=25, ChunkProviderOreSpawn5.java:213-214) — REAL original code, so the F4 deletion rule does not apply.
 - **Port:** the live faithful path is world/CrystalMaze via OreSpawnChunkGenerator.java:177 (WGEN-027 resolution made it the single placement mechanism); the parallel CrystalMazeFeature registration is datapack-orphaned AND divergent (stamps outer boundary walls, skips openCrystalMaze's perimeter carve, bedrock ordering differs).
 - **Fix:** retire the Feature class + registration, or reconcile it to the original and re-wire — either way ONE mechanism should remain. Phase E owner (audit cleanup).
+- **Resolution:** FIXED (2026-08-11, Phase E3 — the dead CrystalMazeFeature retired: class deleted, ModFeatures registration replaced with a tombstone comment. The live faithful path remains world/CrystalMaze via OreSpawnChunkGenerator (WGEN-027's single placement mechanism, orig ChunkProviderOreSpawn5.java:213-214); the retired Feature was datapack-orphaned (zero JSON references) AND divergent (stamped outer boundary walls, skipped openCrystalMaze's perimeter carve, different bedrock ordering). ONE mechanism remains, per the finding's requirement)
 
 ### WGEN-071 — Igloo: worldgen placement undecided (carved from WGEN-042 at the D close-out)
 
@@ -4930,6 +4936,7 @@ Entries: **79 total** — ANIM 20 (DIVERGENT 8 · PARTIAL 10 · MISSING 2) · BU
 - **Original:** addIgloo generates on snow-biome borders inside the overworld ahh chain (OreSpawnWorld.java:304-321 dispatch; scan per igloo_spec.md §7.3).
 - **Port:** builder + DSB type 20 shipped (D6b batch 2); worldgen placement deliberately unwired — the border-biome/frequency mapping has no clean biome-tag equivalent (NEEDS_DESIGN_RULING, igloo_spec.md §7.3).
 - **Fix:** decide the border mapping + frequency and add the JSON pair; the placement must honor the DisableOverworldDungeons gate (WGEN-064). Phase E owner.
+- **Resolution:** FIXED (2026-08-11, Phase E3 — the section-7.3 border-mapping decision ruled and implemented as a DOUBLE MECHANICAL GATE with no invented frequency: (1) biome tag has_structure/igloo = minecraft:snowy_plains ONLY (the exact-name mapping of the orig's "Ice Plains" corner gate, which EXCLUDED Ice Plains Spikes); (2) the piece re-verifies the TRUE surface at generation time — air over a full minecraft:snow_block (orig OreSpawnWorld.java:1270-1272), trying the 4 jittered attempt columns and silently no-op'ing if none passes. Snow-BLOCK surfaces inside snowy_plains occur essentially only where ice_spikes floor noise bleeds across the border, so the original's border-artifact rarity emerges mechanically. New placement mode SNOW_SURFACE_MINUS2 (4 attempts chunk+nextInt(16), accept 41<=firstFree<=100, anchor firstFree-2, per igloo_spec section 7.2); structure_set spacing 15/separation 7/salt 84356 (section 8 C7-sqrt numbers, gate odds 1/220); IGLOO added to OVERWORLD_DUNGEON_TYPES honoring DisableOverworldDungeons (WGEN-064) — worldgen-only, DSB buildNow ungated per spec section 9. Documented mechanical deltas (all in Javadoc): relocation to the passing attempt column (box widened to -22..+23), snow LAYER admissible in the air cell only (cross-pass stability against the anchor chunk's later freeze_top_layer; cannot admit a strictly-rejected column), fixed-Y retry checks (stable against igloo self-writes), retries re-drawn from the piece RNG. Section 1.3 caveat retained: the 1.7.10-vanilla snow-block terrain claim is unverified against 1.7.10 vanilla itself. See FIX_LOG Phase E)
 
 ### ITEM-067 — DSB Robot Lab outcome built shifted from the clicked pos (found 2026-08-10, D6b batch 4, sweep flag F7)
 

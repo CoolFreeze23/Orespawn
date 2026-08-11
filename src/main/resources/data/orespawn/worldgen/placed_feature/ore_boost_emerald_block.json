@@ -1,0 +1,18 @@
+{
+  "feature": "orespawn:ore_boost_emerald_block",
+  "placement": [
+    {
+      "type": "orespawn:vein_count",
+      "count": 2,
+      "min_y": 0,
+      "max_y": 20,
+      "less_ore_passes": 0
+    },
+    {
+      "type": "minecraft:in_square"
+    },
+    {
+      "type": "minecraft:biome"
+    }
+  ]
+}

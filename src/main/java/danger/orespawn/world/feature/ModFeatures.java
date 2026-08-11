@@ -105,11 +105,13 @@ public class ModFeatures {
     // Deleted under the audit's "no procedural fabrications" rule — same
     // treatment as ChallengeTowerFeature / UfoCrashSiteFeature above.
 
-    // Phase 13A — Crystal Dimension Maze. Per-chunk procedural maze, anchored
-    // strictly inside the owning chunk's bounding box so it never triggers
-    // cross-chunk runaway worldgen.
-    public static final DeferredHolder<Feature<?>, CrystalMazeFeature> CRYSTAL_MAZE =
-            FEATURES.register("crystal_maze", () -> new CrystalMazeFeature(NoneFeatureConfiguration.CODEC));
+    // WGEN-070 (2026-08-11): the Phase-13A CrystalMazeFeature registration was
+    // a dead datapack-orphaned DUPLICATE of the live faithful maze — world/
+    // CrystalMaze via OreSpawnChunkGenerator (the WGEN-027 single placement
+    // mechanism, orig ChunkProviderOreSpawn5.java:213-214) — and it diverged
+    // (stamped outer boundary walls, skipped openCrystalMaze's perimeter
+    // carve, different bedrock ordering). Feature class + registration
+    // retired; ONE mechanism remains.
 
     // Audit Part 2 — Robot Lab + Shadow Dungeon promoted from Features to
     // a dedicated Structure + StructurePiece (LegacyDungeonStructure with
@@ -160,6 +162,12 @@ public class ModFeatures {
     // (orig OreSpawnWorld.addVeggies, OreSpawnWorld.java:1882-1921).
     public static final DeferredHolder<Feature<?>, VeggiePatchFeature> VEGGIE_PATCH =
             FEATURES.register("veggie_patch", () -> new VeggiePatchFeature(NoneFeatureConfiguration.CODEC));
+
+    // WGEN-007 — wild strawberry / corn / tomato patches
+    // (orig OreSpawnWorld.addStrawberries :961-978, addCorn :1023-1068,
+    // addTomatoes :1069-1110); config selects which generator runs.
+    public static final DeferredHolder<Feature<?>, WildCropsFeature> WILD_CROPS =
+            FEATURES.register("wild_crops", () -> new WildCropsFeature(WildCropsFeature.Config.CODEC));
 
     // Phase 13C-fix2 — Royal Trees were promoted from a Feature to a
     // dedicated Structure + StructurePiece (see

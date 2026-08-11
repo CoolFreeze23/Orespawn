@@ -271,7 +271,10 @@
       "minecraft:patch_sugar_cane",
       "minecraft:patch_pumpkin",
       "orespawn:anthill",
-      "orespawn:veggie_patch_utopia"
+      "orespawn:veggie_patch_utopia",
+      "orespawn:wild_strawberries",
+      "orespawn:wild_corn",
+      "orespawn:wild_tomatoes"
     ],
     [
       "minecraft:freeze_top_layer"

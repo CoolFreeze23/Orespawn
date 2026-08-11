@@ -200,11 +200,18 @@ public class LegacyDungeonPiece extends StructurePiece {
         // (OSW:1236-1256; exact-name "Swampland" → minecraft:swamp only).
         SPIT_BUG_LAIR(-9, 9, 1, 13, -9, 9, PlacementMode.SWAMP_GRASS_SURFACE),
         // Phase D6b batch 2 — specs in phase_d_reports/d6_extraction/.
-        // Igloo (GD:2698-2813): builder + DSB type 20 only. Worldgen placement
-        // is deliberately NOT wired — the snow-biome-border frequency/biome
-        // decision is unresolved (igloo_spec.md §7.3, NEEDS_DESIGN_RULING per
-        // the D6b rule); the mode below is inert until a structure JSON exists.
-        IGLOO(-7, 8, 1, 6, -7, 8, PlacementMode.SURFACE_CENTER),
+        // Igloo (GD:2698-2813): worldgen placement wired by WGEN-071 per the
+        // igloo_spec.md §7.3 ruling (both original gates reproduced
+        // mechanically — snowy_plains-only biome tag + a generation-time
+        // TRUE-surface re-verification; no invented frequency). The anchor
+        // is SNOW_SURFACE_MINUS2; the piece check may RELOCATE the build to
+        // one of the original's remaining jittered attempt columns anywhere
+        // in the anchor chunk (orig OreSpawnWorld.java:1265-1275), so the
+        // box covers the shell's −6..+7 drift union (spec §6) around ANY
+        // in-chunk column: ±15 jitter → −(15+6+1)..+(15+7+1) = −22..+23 on
+        // both axes. DSB type 20 (buildNow) still bypasses biome, scan and
+        // the −2 sink (spec §9) — the wider write window is harmless there.
+        IGLOO(-22, 23, 1, 6, -22, 23, PlacementMode.SNOW_SURFACE_MINUS2),
         // Ender Reaper Graveyard (GD:2490-2563 + makeAGrave :2565-2576):
         // End-exclusive (addEndReapers OSW:1527-1540, quickSpaceCheck 12×12).
         ENDER_REAPER_GRAVEYARD(-1, 11, 5, 5, -1, 13, PlacementMode.END_SURFACE),
@@ -392,7 +399,33 @@ public class LegacyDungeonPiece extends StructurePiece {
              * rewired this slice) and addBeeHive (OSW:2031-2057, at
              * lowestY + 3).
              */
-            LOWEST_GRASS_36
+            LOWEST_GRASS_36,
+            /**
+             * addIgloo (WGEN-071; orig OreSpawnWorld.java:1265-1275): the
+             * {@link #SWAMP_GRASS_SURFACE} scan shape — 4 attempts of chunk +
+             * nextInt(16) jitter (:1265-1267), Y 100→41 accept window
+             * (:1269), dry-column approximation — anchored TWO below the
+             * first free block ({@code posY - 2}, :1271; cposy = one below
+             * the surface block). The original double-gated: the corner biome
+             * name had to be EXACTLY "Ice Plains" (:1263-1264 — excluding
+             * "Ice Plains Spikes"), mapped to a minecraft:snowy_plains-ONLY
+             * biome tag; AND the scanned column had to be air directly over a
+             * SNOW BLOCK ({@code field_150433_aE} — the full block, NOT the
+             * snow layer, :1270). Snow-block identity cannot ride on the
+             * biome tag (plain snowy-plains surfaces are grass under a snow
+             * LAYER, which the original scan rejected — igloo_spec.md §1.3),
+             * so per the §7.3 ruling BOTH gates are reproduced mechanically
+             * instead of inventing a frequency: this mode carries the scan
+             * shape/window, and the piece re-verifies the TRUE snow-block
+             * surface against real blocks at generation time, generating
+             * NOTHING when every attempted column fails
+             * ({@link LegacyDungeonPiece#resolveIglooWorldgenSite}). §1.3
+             * caveat: the underlying 1.7.10 vanilla-terrain claim (plain Ice
+             * Plains never exposing snow blocks) is unverified against
+             * 1.7.10 vanilla itself — vanilla sources are not in the
+             * reference tree.
+             */
+            SNOW_SURFACE_MINUS2
         }
 
         public final int minXOff;
@@ -514,7 +547,13 @@ public class LegacyDungeonPiece extends StructurePiece {
                 case CLOUD_SHARK_DUNGEON -> CloudSharkDungeonGenerator.generate(this, origin, rng);
                 case GOLD_FISH_BOWL -> GoldFishBowlGenerator.generate(this, origin, rng);
                 case SPIT_BUG_LAIR -> SpitBugLairGenerator.generate(this, origin, rng);
-                case IGLOO -> IglooGenerator.generate(this, origin, rng);
+                case IGLOO -> {
+                    // WGEN-071: worldgen passes re-verify the TRUE snow-block
+                    // surface (and may relocate within the anchor chunk)
+                    // before building; buildNow bypasses the check (spec §9).
+                    BlockPos iglooSite = resolveIglooWorldgenSite(rng, chunkPos);
+                    if (iglooSite != null) IglooGenerator.generate(this, iglooSite, rng);
+                }
                 case ENDER_REAPER_GRAVEYARD -> EnderReaperGraveyardGenerator.generate(this, origin, rng);
                 case WATER_DRAGON_LAIR -> WaterDragonLairGenerator.generate(this, origin, rng);
                 case LEAF_MONSTER_DUNGEON -> LeafMonsterDungeonGenerator.generate(this, origin, rng);
@@ -588,6 +627,123 @@ public class LegacyDungeonPiece extends StructurePiece {
         if (!inChunk(x, y, z)) return null;
         pMut.set(x, y, z);
         return pLevel.getBlockState(pMut);
+    }
+
+    /**
+     * WGEN-071 &mdash; the Igloo's generation-time TRUE-surface
+     * re-verification (igloo_spec.md &sect;7.3 ruling; orig
+     * OreSpawnWorld.java:1265-1275). The original double-gated worldgen
+     * igloos: corner biome named EXACTLY "Ice Plains" (:1263-1264, excludes
+     * "Ice Plains Spikes") AND, per attempted column, air directly over a
+     * SNOW BLOCK &mdash; {@code field_150433_aE}, the full block, NOT the
+     * snow layer (:1270). The biome half rides on the structure's
+     * snowy_plains-only tag; the snow-block half cannot (plain snowy-plains
+     * surfaces are grass under a snow LAYER, which the original scan
+     * rejected &mdash; spec &sect;1.3), so per the &sect;7.3 ruling BOTH
+     * gates are reproduced mechanically, with NO invented frequency: this
+     * check probes the real chunk at generation time and, when the anchored
+     * column fails, tries the original's remaining jittered attempts within
+     * the anchor chunk (4 total, :1265-1267), RELOCATING the build to the
+     * first column that passes. When none passes the igloo generates
+     * NOTHING (silent no-op) &mdash; the faithful border-artifact filter:
+     * in modern snowy_plains, snow-block surfaces occur almost exclusively
+     * where ice_spikes floor noise bleeds across the biome border,
+     * reproducing the original's ~zero frequency inside plain Ice Plains.
+     * &sect;1.3 caveat: the 1.7.10 vanilla-terrain claim behind that story
+     * is unverified against 1.7.10 vanilla itself (vanilla sources are not
+     * in the reference tree).
+     *
+     * <p>Stitching-contract notes (why this read shape is legal even though
+     * it is not read-cell == write-cell):</p>
+     * <ul>
+     * <li><b>Reads are region-safe.</b> Every candidate column lies in the
+     *     ANCHOR chunk, and every chunk pass that can reach the probe is
+     *     within 1 chunk of it (the early exit below), so the reads stay
+     *     inside the features-stage 3&times;3 read neighbourhood.</li>
+     * <li><b>Verdicts are pass-stable against self-writes.</b> The check
+     *     reads exactly two fixed-Y cells per column ({@code anchorY + 2}
+     *     air, {@code anchorY + 1} snow block). The igloo's own writes can
+     *     never flip a verdict: wall cells pair snow at +1 with ICE at +2
+     *     (fails the air test), the doorway punch pairs air at +2 with a
+     *     door at +1, spawners/chest replace +1 with non-snow, and the
+     *     build column's own two probe cells are never written (spec
+     *     &sect;2). Columns are consulted in a fixed order and the first
+     *     pass wins, so every chunk replay reaches the same verdict.</li>
+     * <li><b>Snow LAYERS count as the air cell, never the block below.</b>
+     *     At surface_structures time in a pre-decoration chunk no layer can
+     *     exist yet, so this never admits a column the strict air test
+     *     would reject; it exists solely so passes that re-run the check
+     *     AFTER the anchor chunk's freeze_top_layer step (which drops a
+     *     layer onto open snow surfaces &mdash; including through the
+     *     dome's apex skylight) still reach the same verdict instead of
+     *     shearing the neighbour slices. Later-step vegetal features
+     *     overwriting a probe cell between passes remain a residual,
+     *     accepted hazard (same family as every terrain probe's).</li>
+     * <li><b>RNG:</b> the 3 remaining jitter attempts are drawn up front,
+     *     unconditionally, from the deterministic piece random &mdash;
+     *     identical in every pass. (findGenerationPoint's own 4 noise-level
+     *     attempts ran on the structure-seed stream and are not replayable
+     *     here; the piece re-draws its retries &mdash; documented delta.)
+     *     The far-chunk early exit skips the draws, which is safe because
+     *     the igloo generator itself consumes ZERO draws (spec &sect;11);
+     *     revisit if that ever changes.</li>
+     * </ul>
+     *
+     * @return the build origin for this igloo (the anchored column or a
+     *         relocated in-chunk attempt column at the same Y), or
+     *         {@code null} to generate nothing. The buildNow path (DSB type
+     *         20, orig DungeonSpawnerBlock.java:113-115) returns the origin
+     *         unconditionally &mdash; it bypassed biome, scan and the
+     *         &minus;2 sink in the original too (spec &sect;9).
+     */
+    private BlockPos resolveIglooWorldgenSite(RandomSource rng, ChunkPos chunkPos) {
+        if (runtimeRandomOverride != null) return origin;   // DSB type 20 — no gates (spec §9)
+        ChunkPos anchorChunk = new ChunkPos(origin);
+        // Chunks more than 1 chunk from the anchor chunk can never contain
+        // igloo writes (candidate columns span the anchor chunk; the shell
+        // reaches at most −6..+7 from its column) — nothing to do there.
+        if (Math.abs(chunkPos.x - anchorChunk.x) > 1
+                || Math.abs(chunkPos.z - anchorChunk.z) > 1) {
+            return null;
+        }
+        // The original's remaining jitter attempts (orig :1265-1267; attempt
+        // #1 is the column findGenerationPoint anchored). Drawn up front,
+        // unconditionally — see the RNG note in the Javadoc.
+        int[] jitterX = new int[3];
+        int[] jitterZ = new int[3];
+        for (int i = 0; i < 3; i++) {
+            jitterX[i] = anchorChunk.getMinBlockX() + rng.nextInt(16);
+            jitterZ[i] = anchorChunk.getMinBlockZ() + rng.nextInt(16);
+        }
+        if (iglooColumnHasSnowBlockSurface(origin.getX(), origin.getZ())) {
+            return origin;
+        }
+        for (int i = 0; i < 3; i++) {
+            if (iglooColumnHasSnowBlockSurface(jitterX[i], jitterZ[i])) {
+                return new BlockPos(jitterX[i], origin.getY(), jitterZ[i]);
+            }
+        }
+        return null;   // silent no-op — the faithful border-artifact filter
+    }
+
+    /**
+     * One column of {@link #resolveIglooWorldgenSite}'s probe, mirroring
+     * orig OreSpawnWorld.java:1270-1272 at the anchored Y: air (or a
+     * post-decoration snow LAYER &mdash; see the stability note above) at
+     * {@code firstFree = anchorY + 2}, and {@code minecraft:snow_block}
+     * &mdash; the FULL block, never the layer &mdash; at {@code firstFree
+     * - 1}. Retry columns are held to the anchor's Y rather than re-scanned
+     * Y 100&rarr;41: the piece box fixes the build Y, and a full re-scan
+     * would read cells the igloo itself writes (air above wall snow),
+     * breaking pass stability &mdash; documented mechanical delta.
+     */
+    private boolean iglooColumnHasSnowBlockSurface(int x, int z) {
+        int firstFree = origin.getY() + 2;   // anchor = firstFree − 2 (orig OSW:1271)
+        pMut.set(x, firstFree, z);
+        BlockState above = pLevel.getBlockState(pMut);
+        if (!above.isAir() && !above.is(Blocks.SNOW)) return false;   // orig :1270 air test
+        pMut.set(x, firstFree - 1, z);
+        return pLevel.getBlockState(pMut).is(Blocks.SNOW_BLOCK);      // field_150433_aE, orig :1270
     }
 
     /** Gated {@code level.setBlock} ({@link #FLAG_PIECE_WRITE}). */

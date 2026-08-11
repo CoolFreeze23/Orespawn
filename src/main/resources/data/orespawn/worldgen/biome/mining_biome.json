@@ -237,7 +237,14 @@
       "orespawn:red_ant_troll_mining",
       "orespawn:termite_troll_mining",
       "orespawn:ore_lapis_mining_large",
-      "orespawn:ore_lapis_mining_small"
+      "orespawn:ore_lapis_mining_small",
+      "orespawn:ore_block_ruby_mining",
+      "orespawn:ore_boost_diamond_mining",
+      "orespawn:ore_boost_diamond_block_mining",
+      "orespawn:ore_boost_emerald_mining",
+      "orespawn:ore_boost_emerald_block_mining",
+      "orespawn:ore_boost_gold_mining",
+      "orespawn:ore_boost_gold_block_mining"
     ],
     [],
     [
