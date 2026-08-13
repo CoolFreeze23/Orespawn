@@ -420,10 +420,23 @@ public class AntRobot extends Mob implements ICustomHitboxProfileSupplier, IMode
         f = (float) ((double) f + Math.cos((float) this.rideTicker * 0.33f) * 0.05);
         double seatY = 0.55 + Math.cos((float) this.rideTicker * 0.19f) * 0.02;
         if (passenger instanceof Player) seatY -= 0.5;
-        move.accept(passenger,
-                this.getX() - (double) f * Math.sin(Math.toRadians(this.getYRot())),
-                this.getY() + seatY,
-                this.getZ() + (double) f * Math.cos(Math.toRadians(this.getYRot())));
+        double seatX = this.getX() - (double) f * Math.sin(Math.toRadians(this.getYRot()));
+        double seatZ = this.getZ() + (double) f * Math.cos(Math.toRadians(this.getYRot()));
+        // S7a (sitting OBS-1 → modern-only fix, same mechanism as the
+        // spider's): MODERN raises the seat onto the visual back (+0.9,
+        // MOD-027) and composes it through the body dynamics; CLASSIC
+        // keeps the faithful 1.0 seat (rider inside the shell) untouched.
+        danger.orespawn.entity.gait.ModernSpiderGait gait =
+                this.isModernMovement() ? this.getModernGait() : null;
+        if (gait != null) {
+            double[] seat = {seatX - this.getX(), seatY + 0.9, seatZ - this.getZ()};
+            danger.orespawn.entity.gait.ModernSpiderGait.bodyTransform(this.getYRot(),
+                    gait.bodyPitch(), gait.bodyRoll(), gait.bodyLift(), seat);
+            move.accept(passenger,
+                    this.getX() + seat[0], this.getY() + seat[1], this.getZ() + seat[2]);
+            return;
+        }
+        move.accept(passenger, seatX, this.getY() + seatY, seatZ);
     }
 
     /** orig AntRobot.java:710,746,757,776 — air and liquids (water/lava, both flow states) give no hover support. */
