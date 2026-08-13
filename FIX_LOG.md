@@ -3128,3 +3128,36 @@ player-path testing, one-writer, per-rig classic probe geometry,
 wire-change registrar bumps, three-reviewer review per slice,
 red-gate, escape hatch. Nothing pushed — the owner's in-game sitting
 decides the release.
+
+## S6a — sitting F-1: part interact forwarding + OBS logging (2026-08-13)
+
+The 2.0 verification sitting (SITTING_2_0.md) settled F-1: spider
+mount wiring was CORRECT and classic-faithful all along (the box is
+the ground-level core, as in 1.0; ids exonerated by body melee) —
+the one real regression was that MHLibPartEntity swallowed
+interactions (no interact override; part clicks died as PASS, giving
+modern robots FEWER working click angles than classic). Vendored
+fix, owner-ratified as a deliberate better-than-classic delta: parts
+forward interact() to the parent's full vanilla chain — legs are now
+clickable mount surfaces. Neutrality: Queen has no mobInteract (part
+clicks route to the same vanilla default as her body); King/Godzilla
+parts are OreSpawnPartEntity, untouched. No wire change (no
+registrar bump).
+
+Also per sitting rulings: OBS-1 (rider inside ant shell) verified
+1.0-parity BY CONSTRUCTION (positionRider not mode-gated; dynamics
+never move the rider) — kept, MOD-027 records the seat-raise
+candidate. OBS-2 (one-box leg alignment) logged as the accepted Q3
+design cost — MOD-028 records the per-segment upgrade; new suite pin
+locks live part boxes to the solver's chord anchor within 1e-6 so
+drift can never go silent. KNOWN_ISSUES: mount-spot guidance (ground
+core, as in 1.0), legs-clickable delta, ant ownership gate
+({AntRobotOwned:1} for summons).
+
+Tests +3 (=186): s6_mount_through_leg_part (player-path: interact
+driven through a real leg part → mounted; classic body-click parity
+control alongside), s6_queen_part_interact_neutrality (part result
+== body result, never mountable), s6_part_anchor_chord_pin.
+
+GATE: suite 186/186 MODERN and 186/186 CLASSIC (pass lines
+captured), build+assetAudit 0 err / 0 adv / 3 ack. Nothing pushes.

@@ -1234,6 +1234,47 @@ public final class ModernSpiderGait {
                 robot.getZ() + world[2]);
     }
 
+    /**
+     * S6a (sitting OBS-2 pin): the part-anchor position (box BOTTOM center)
+     * the feed would set THIS tick for {@code leg}, recomputed from live
+     * gait state through the same interpolate→compensate→solve→transform
+     * sequence {@link #feedParts} runs. The suite pins the live part
+     * entities to this within epsilon so box-vs-solver drift can never go
+     * silent (the boxes' one-cube-per-leg offset from the VISUAL leg is
+     * the accepted Q3 design cost; drift from the SOLVER is a defect).
+     */
+    public void currentLegPartAnchor(Mob robot, int leg, long time, double[] out) {
+        interpolatedFootPos(leg, time, footScratch);
+        compensateFoot(robot, leg, footScratch[0], footScratch[1], footScratch[2], compScratch);
+        float yaw = robot.getYRot();
+        solveLegAngles(rig, robot.getX(), robot.getY(), robot.getZ(), yaw,
+                leg, compScratch[0], compScratch[1], compScratch[2],
+                jointScratch, angleScratch);
+        double hipRelX = rig.hipX(leg, robot.getX(), yaw) - robot.getX();
+        double hipRelY = rig.hipY(leg, robot.getY()) - robot.getY();
+        double hipRelZ = rig.hipZ(leg, robot.getZ(), yaw) - robot.getZ();
+        double dx = (compScratch[0] - robot.getX()) - hipRelX;
+        double dz = (compScratch[2] - robot.getZ()) - hipRelZ;
+        double dh = Math.sqrt(dx * dx + dz * dz);
+        final double ux;
+        final double uz;
+        if (dh > 1.0E-6) {
+            ux = dx / dh;
+            uz = dz / dh;
+        } else {
+            double alphaW = rig.legBearing(leg, yaw) + Math.PI / 2.0;
+            ux = Math.cos(alphaW);
+            uz = Math.sin(alphaW);
+        }
+        double midU = (jointScratch[2][0] + jointScratch[3][0]) * 0.5;
+        double midV = (jointScratch[2][1] + jointScratch[3][1]) * 0.5;
+        double[] world = {hipRelX + ux * midU, hipRelY + midV, hipRelZ + uz * midU};
+        bodyTransform(yaw, bodyPitch, bodyRoll, bodyLift, world);
+        out[0] = robot.getX() + world[0];
+        out[1] = robot.getY() + world[1] - rig.partHalfHeight();
+        out[2] = robot.getZ() + world[2];
+    }
+
     // ==================== THE CONVERSION (design doc D2) ====================
 
     /**

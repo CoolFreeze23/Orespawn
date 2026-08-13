@@ -568,3 +568,29 @@ as one follow-up, after S5, if pursued.
 Parity stance: all of this is modern-mode-only polish; classic remains
 untouched by law. The aim-offset composability note from the same doc
 was folded into the S3 design amendment instead (live now, not banked).
+
+## MOD-027 — Ant rider seat raise (RIDE-FEEL, 2.0 sitting OBS-1)
+
+The 2.0 verification sitting found the rider sits INSIDE the ant's
+visual shell (F5 required to see anything). This is 1.0 PARITY by
+construction: AntRobot.positionRider is not mode-gated — the same
+faithful orig seat math (1.25 behind center, seat 0.55 with the
+TF-029 player −0.5 offset ≈ 0.05 above the anchor) runs in classic
+and modern alike, and the modern visual dynamics never move the
+rider (ridden sag clamped ±0.15, visual-only). Kept faithful per the
+owner's OBS-1 ruling. Candidate improvement: a modern-only seat
+raise (~+0.8-1.0) putting the rider on the ant's back, config- or
+mode-gated, classic seat untouched.
+
+## MOD-028 — Per-segment leg part boxes (COMBAT-FEEL, 2.0 sitting OBS-2)
+
+The sitting judged the one-box-per-leg hitboxes (design ruling Q3) "a
+little misaligned" from the visual legs — the accepted design cost:
+one axis-aligned cube on the lower-segment chord midpoint covers a
+fraction of a three-segment leg and protrudes slightly off steep
+segments. Upgrade candidate: two (or three) boxes per leg on the
+per-segment chord midpoints — the solver already produces every
+joint position each tick, so the feed generalizes directly; costs
+8-16 more part entities per spider and a profile/registrar rev. The
+S6a suite pins live boxes to the solver chord (s6_part_anchor_chord
+_pin) so alignment drift is caught regardless.

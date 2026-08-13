@@ -13,10 +13,13 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.util.Mth;
 import net.minecraft.util.Tuple;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.Pose;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.entity.PartEntity;
@@ -356,6 +359,28 @@ public class MHLibPartEntity<T extends Entity> extends PartEntity<T> {
 		// is the whole point (S4 pick-path law test pins this).
 		// ──────────────────────────────────────────────────────────────
 		return (this.config.collidable() || this.config.canReceiveDamage()) && this.isPartEnabled();
+	}
+
+	@Override
+	public InteractionResult interact(Player player, InteractionHand hand) {
+		// ──────────────────────────────────────────────────────────────
+		// 2.0 S6a (vendored change; sitting finding F-1, owner-ratified):
+		// parts forward INTERACTIONS to the parent's full interact chain,
+		// the same way S4 forwards damage. Without this, every pickable
+		// part is an interaction-dead surface: vanilla routes the click
+		// packet to the part (getEntityOrPart), Entity.interact returns
+		// PASS, and the click dies — a modern robot had FEWER working
+		// mount-click angles than classic, whose rays passed through
+		// legless air to the body box. Forwarding through the PARENT'S
+		// interact() (not mobInteract directly) preserves the whole
+		// vanilla chain (leads, spawn eggs, then mobInteract). Ratified
+		// as a deliberate better-than-classic delta: legs become
+		// clickable mount surfaces. Neutrality: TheQueen has no
+		// mobInteract, so her part clicks route to the same vanilla
+		// default her body clicks always had; King/Godzilla parts are
+		// OreSpawnPartEntity, not this class — untouched.
+		// ──────────────────────────────────────────────────────────────
+		return this.getParent().interact(player, hand);
 	}
 
 	public void setHidden(boolean hidden) {
