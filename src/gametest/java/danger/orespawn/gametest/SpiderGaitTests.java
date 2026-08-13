@@ -396,13 +396,23 @@ public class SpiderGaitTests {
                     }
                     prevPlanted[leg] = planted;
 
-                    // Invariant 3a: never simultaneous with partner or side-neighbors.
+                    // Invariant 3a (amended S6b, owner-ratified reference
+                    // behavior): comfort-invalidated and stranded lifts
+                    // BYPASS the inhibitors (canMoveLeg's unconditional
+                    // first line in the reference), so co-swing is legal
+                    // iff at least one of the two swings was FORCED.
+                    // Ordinary drift steps still never co-swing.
                     if (swinging) {
-                        helper.assertFalse(gait.isSwinging(SpiderRigProfile.pairedWith(leg)),
-                                "leg " + leg + " and its pair partner swing simultaneously (inv 3)");
-                        if (leg - 2 >= 0) {
-                            helper.assertFalse(gait.isSwinging(leg - 2),
-                                    "legs " + leg + " and " + (leg - 2) + " (same side) swing simultaneously (inv 3)");
+                        int partner = SpiderRigProfile.pairedWith(leg);
+                        if (gait.isSwinging(partner)) {
+                            helper.assertTrue(gait.isForcedLift(leg) || gait.isForcedLift(partner),
+                                    "leg " + leg + " and its pair partner swing simultaneously "
+                                            + "with neither lift forced (inv 3)");
+                        }
+                        if (leg - 2 >= 0 && gait.isSwinging(leg - 2)) {
+                            helper.assertTrue(gait.isForcedLift(leg) || gait.isForcedLift(leg - 2),
+                                    "legs " + leg + " and " + (leg - 2) + " (same side) swing "
+                                            + "simultaneously with neither lift forced (inv 3)");
                         }
                     }
                     if (swinging && !prevSwinging[leg]) {

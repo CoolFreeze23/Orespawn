@@ -119,6 +119,7 @@ public final class ModernSpiderGait {
         this.swingDuration = new int[legCount];
         this.lastLand = new long[legCount];
         this.verticalRetryAt = new long[legCount];
+        this.forcedLift = new boolean[legCount];
         this.sagFloorEff = rig.maxSag();
         this.liftCeilEff = rig.maxLift();
     }
@@ -177,6 +178,14 @@ public final class ModernSpiderGait {
     private final long[] lastLand;
     /** Per-leg wait-until time for re-evaluating a gate-blocked vertical retrigger. */
     private final long[] verticalRetryAt;
+    /**
+     * S6b: true while a leg's current/latest swing was FORCED — begun by
+     * comfort invalidation or the stranded re-step, the two owner-ratified
+     * inhibitor-bypass classes (reference: canMoveLeg's unconditional
+     * first line). Server-side observability for the amended S2 rhythm
+     * invariant: ordinary drift steps still never co-swing with a partner.
+     */
+    private final boolean[] forcedLift;
     private boolean initialized = false;
 
     // ---- S3b body dynamics (VISUAL layer — never touches entity physics) ----
@@ -254,6 +263,24 @@ public final class ModernSpiderGait {
         return stranded[leg];
     }
 
+    /** S6b: whether the leg's current/latest swing was a FORCED lift (comfort/stranded bypass; server observability). */
+    public boolean isForcedLift(int leg) {
+        return forcedLift[leg];
+    }
+
+    /**
+     * S6b (test observability): whether the leg's CURRENT foot lies in the
+     * valid plant region of the current rest frame — the exact
+     * comfort-or-corridor predicate the gait invalidates against.
+     */
+    public boolean plantWithinComfort(Mob robot, int leg) {
+        float yaw = robot.getYRot();
+        return candidateComfortable(
+                footX[leg], footZ[leg],
+                rig.restFootX(leg, robot.getX(), yaw), rig.restFootZ(leg, robot.getZ(), yaw),
+                rig.hipX(leg, robot.getX(), yaw), rig.hipZ(leg, robot.getZ(), yaw));
+    }
+
     public double footX(int leg) {
         return footX[leg];
     }
@@ -264,11 +291,6 @@ public final class ModernSpiderGait {
 
     public double footZ(int leg) {
         return footZ[leg];
-    }
-
-    /** S5: the dead-banded rest heading, degrees (exposed for the gait tests). */
-    public float restYawDeg() {
-        return restYawDeg;
     }
 
     /** The speed-widened trigger radius (exposed pure for the gait tests). */
@@ -373,8 +395,35 @@ public final class ModernSpiderGait {
         v[1] = y;
     }
 
-    /** S5: the dead-banded rest heading (deg) — server decision state. */
-    private float restYawDeg;
+    // ---- S6b (THE LEG FIX) rotation state, both sides ----
+    /** Per-tick yaw delta above this arms the rotation latch (deg/tick). */
+    static final float ROTATING_YAW_THRESHOLD_DEG = 0.5f;
+    /**
+     * Ticks the widened trigger radius persists after rotation stops —
+     * the anti-dance duty the S5a dead-band chase used to carry
+     * (reference: lerpedGait forces the full moving radius while
+     * isRotatingYaw; the latch bridges vanilla's tick-to-tick yaw jitter).
+     */
+    static final int ROTATION_LATCH_TICKS = 10;
+    /**
+     * Half-width of the classic contraction corridor for candidate
+     * validity, blocks — covers the contracted probe aims on the
+     * hip-to-rest ray plus their +-1 scan columns (max perpendicular ~1.41).
+     */
+    static final double CORRIDOR_HALF_WIDTH = 1.5;
+    /** Last tick's body yaw (deg) — yaw-rate input for latch/advection. */
+    private float lastYawDeg;
+    /**
+     * S6b review: lastYawDeg needs an explicit seed — a CLIENT gait can be
+     * initialized by a payload (applyStep/applyKeyframe) before its first
+     * clientTick, and an unseeded delta from the 0.0 default would rotate
+     * in-flight swing origins by up to 180 degrees in one tick.
+     */
+    private boolean yawSeeded;
+    /** Max per-tick yaw rotation applied as scan-target lead, radians (~10 deg — snaps self-correct via mid-swing revalidation instead). */
+    static final double MAX_LEAD_RAD = 0.1745;
+    /** Remaining ticks of the post-rotation trigger-radius latch (server). */
+    private int rotatingYawLatch;
     /**
      * S5: effective lift/sag bounds — converge toward the ridden (±0.15) or
      * free (MAX_LIFT/MAX_SAG) targets at LIFT_RATE_LIMIT per tick, so the
@@ -532,9 +581,10 @@ public final class ModernSpiderGait {
             swinging[leg] = false;
             lastLand[leg] = time;
         }
-        // S5: seed the rest-heading follower at the spawn heading so the
-        // first server tick doesn't chase from 0° and mass-retrigger.
-        restYawDeg = robot.getYRot();
+        // S6b: seed the yaw-rate tracker at the spawn heading so the first
+        // tick reads a zero delta, not a chase from 0 degrees.
+        lastYawDeg = robot.getYRot();
+        yawSeeded = true;
         initialized = true;
     }
 
@@ -583,24 +633,62 @@ public final class ModernSpiderGait {
         double speed = Math.sqrt(vx * vx + vz * vz);
         double radius = triggerRadius(speed);
 
-        // S5: dead-banded, rate-limited rest heading (see REST_YAW_* docs).
-        // Server-only decision state for REST TARGETS — the anti-dance
-        // property lives entirely in the trigger math. Dangle/strand
-        // placement below stays on TRUE yaw: keyframes sync only the
-        // stranded FLAG (dangle points are recomputed locally each tick on
-        // both sides), so the server dangle must use the same yaw the
-        // client's dangle uses or the leg-part hitboxes would drift off
-        // the rendered stranded legs (verify pass caught the mismatch).
+        // S6b (THE LEG FIX; reference Leg.updateMemo): the rest frame is a
+        // pure function of CURRENT body yaw — zero lag, recomputed every
+        // tick. The S5a dead-band CHASE this replaces lagged the frame by
+        // design, which left planted feet sitting contralateral in the new
+        // body frame during every fast turn (the sitting-confirmed
+        // midline-crossing mechanism). The anti-dance duty moves to where
+        // the reference keeps it: while the body yaw-rotates — with a
+        // short latch over vanilla's tick-to-tick jitter — the trigger
+        // radius is FORCED to the full moving value (SpiderBody.lerpedGait
+        // :66-73), so look-jitter sweeps rests inside a wide trigger band
+        // and moves nothing, while genuine turns re-plant promptly against
+        // yaw-fresh rests.
         float yawTrue = robot.getYRot();
-        float yawDelta = Mth.degreesDifference(restYawDeg, yawTrue);
-        float yawAbs = Math.abs(yawDelta);
-        if (yawAbs > rig.restYawDeadbandDeg()) {
-            restYawDeg = Mth.wrapDegrees(restYawDeg
-                    + Math.signum(yawDelta) * Math.min(yawAbs - rig.restYawDeadbandDeg(), rig.restYawRateDeg()));
+        float yaw = yawTrue;
+        float yawDeltaDeg = Mth.degreesDifference(lastYawDeg, yawTrue);
+        lastYawDeg = yawTrue;
+        double yawStepRad = Math.toRadians(yawDeltaDeg);
+        if (Math.abs(yawDeltaDeg) > ROTATING_YAW_THRESHOLD_DEG) {
+            rotatingYawLatch = ROTATION_LATCH_TICKS;
+        } else if (rotatingYawLatch > 0) {
+            --rotatingYawLatch;
         }
-        float yaw = restYawDeg;
+        if (rotatingYawLatch > 0) {
+            radius = rig.triggerRadiusMax();
+        }
         for (int leg = 0; leg < legCount; ++leg) {
             if (swinging[leg]) {
+                // S6b (reference applyBodyMotion, Leg.kt:189-192): the
+                // swing ORIGIN inherits body translation and yaw rotation
+                // each tick, so in-flight feet track a moving, turning
+                // body.
+                advectSwingOrigin(robot, leg, vx, vz, yawStepRad);
+                // S6b review MAJOR: the in-flight TARGET is revalidated
+                // against the CURRENT frame every tick (reference:
+                // locateGroundTarget runs per tick and softResetStep
+                // retargets mid-flight, Leg.kt:137-155/238-241). Frozen
+                // landings went stale above ~4.5 deg/tick of sustained
+                // rotation and re-invalidated the moment they landed — a
+                // perpetual forced-lift churn the reference cannot enter.
+                double restXNow = rig.restFootX(leg, robot.getX(), yaw);
+                double restZNow = rig.restFootZ(leg, robot.getZ(), yaw);
+                if (!candidateComfortable(toX[leg], toZ[leg], restXNow, restZNow,
+                        rig.hipX(leg, robot.getX(), yaw), rig.hipZ(leg, robot.getZ(), yaw))) {
+                    interpolatedFootPos(leg, time, footScratch);
+                    footX[leg] = footScratch[0];
+                    footY[leg] = footScratch[1];
+                    footZ[leg] = footScratch[2];
+                    double[] retarget = scanFootingContracted(robot, leg,
+                            restXNow + vx * MIN_STEP_TICKS, restZNow + vz * MIN_STEP_TICKS,
+                            vx, vz, MIN_STEP_TICKS);
+                    if (retarget != null) {
+                        beginStep(robot, leg, retarget[0], retarget[1], retarget[2], time, true);
+                    } else {
+                        strand(robot, leg, yawTrue);
+                    }
+                }
                 continue;
             }
             double restX = rig.restFootX(leg, robot.getX(), yaw);
@@ -616,17 +704,46 @@ public final class ModernSpiderGait {
                         restX + vx * STRANDED_LOOKAHEAD_TICKS,
                         restZ + vz * STRANDED_LOOKAHEAD_TICKS, vx, vz, STRANDED_LOOKAHEAD_TICKS);
                 if (found != null) {
-                    beginStep(robot, leg, found[0], found[1], found[2], time);
+                    beginStep(robot, leg, found[0], found[1], found[2], time, true);
                 }
                 continue;
             }
 
-            if (!stepAllowed(leg, time)) {
-                continue;
-            }
             double dx = footX[leg] - restX;
             double dz = footZ[leg] - restZ;
-            boolean drift = dx * dx + dz * dz > radius * radius;
+            // S6b comfort invalidation (reference: updateMovement's target
+            // swap, Leg.kt:147-149, + canMoveLeg's unconditional first
+            // line, GaitType.kt:22): a planted foot outside the VALID
+            // plant region of the CURRENT rest frame is INVALID — it lifts
+            // NOW, bypassing the pair/neighbor inhibitors exactly as
+            // stranded legs always have. The region is the SAME
+            // comfort-or-corridor set candidates are drawn from (first-run
+            // red: comfort-only invalidation made a legal classic
+            // corridor edge-grip oscillate plant->invalidate forever);
+            // corridor plants are near-hip FOLDED grips — ipsilateral and
+            // short — so neither crossing nor stretching re-enters.
+            boolean uncomfortable = !candidateComfortable(
+                    footX[leg], footZ[leg], restX, restZ,
+                    rig.hipX(leg, robot.getX(), yaw), rig.hipZ(leg, robot.getZ(), yaw));
+            if (!uncomfortable) {
+                // S6b review MAJOR: a plant must KEEP satisfying the same
+                // 3D reach guard its candidate passed at scan time — the
+                // body walking or hover-bobbing away from a legally planted
+                // foot otherwise parks a PERMANENT render-clamp slide (ant
+                // front pair: settled demand up to ~10.0 vs the 9.14 cap,
+                // ~0.9 blocks of standing clamp slide — not sub-visual).
+                double reachDx = footX[leg] - rig.hipX(leg, robot.getX(), yaw);
+                double reachDy = footY[leg] - rig.hipY(leg, robot.getY());
+                double reachDz = footZ[leg] - rig.hipZ(leg, robot.getZ(), yaw);
+                double reachCap = rig.maxReach() * rig.reachMargin();
+                if (reachDx * reachDx + reachDy * reachDy + reachDz * reachDz > reachCap * reachCap) {
+                    uncomfortable = true;
+                }
+            }
+            if (!uncomfortable && !stepAllowed(leg, time)) {
+                continue;
+            }
+            boolean drift = uncomfortable || dx * dx + dz * dz > radius * radius;
             boolean verticalMismatch = time >= verticalRetryAt[leg]
                     && Math.abs(footY[leg] - robot.getY()) > rig.verticalRetrigger();
             if (!drift && !verticalMismatch) {
@@ -640,7 +757,25 @@ public final class ModernSpiderGait {
             // at cliff lips).
             double drift2d = Math.sqrt(dx * dx + dz * dz);
             int est = Mth.clamp((int) Math.round(drift2d / rig.stepSpeed()), MIN_STEP_TICKS, MAX_STEP_TICKS);
-            double[] cand = scanFootingContracted(robot, leg, restX + vx * est, restZ + vz * est, vx, vz, est);
+            // S6b (reference lookAheadPosition, Leg.kt:253): the scan
+            // target leads the turn by ONE tick's yaw rate, rotated about
+            // the body — footfalls land where the rest ring is going.
+            double targetX = restX + vx * est;
+            double targetZ = restZ + vz * est;
+            // Lead CLAMPED to a sustained-rotation bound (review: the raw
+            // per-tick delta over-rotates the scan on snap turns — a 180
+            // flick aimed the scan at the PRE-flick rests; the reference's
+            // lead uses a physics-bounded angular velocity, Leg.kt:253).
+            double leadRad = Mth.clamp(yawStepRad, -MAX_LEAD_RAD, MAX_LEAD_RAD);
+            if (leadRad != 0.0) {
+                double relX = targetX - robot.getX();
+                double relZ = targetZ - robot.getZ();
+                double cosR = Math.cos(leadRad);
+                double sinR = Math.sin(leadRad);
+                targetX = robot.getX() + relX * cosR - relZ * sinR;
+                targetZ = robot.getZ() + relX * sinR + relZ * cosR;
+            }
+            double[] cand = scanFootingContracted(robot, leg, targetX, targetZ, vx, vz, est);
             if (cand != null) {
                 double stepDist = Math.sqrt((cand[0] - footX[leg]) * (cand[0] - footX[leg])
                         + (cand[1] - footY[leg]) * (cand[1] - footY[leg])
@@ -673,7 +808,7 @@ public final class ModernSpiderGait {
                     continue;
                 }
             }
-            beginStep(robot, leg, cand[0], cand[1], cand[2], time);
+            beginStep(robot, leg, cand[0], cand[1], cand[2], time, uncomfortable);
         }
 
         // S3b: visual body dynamics from the post-land foot state.
@@ -717,7 +852,8 @@ public final class ModernSpiderGait {
                 && time - lastLand[partner] >= LAND_COOLDOWN_TICKS;
     }
 
-    private void beginStep(Mob robot, int leg, double tx, double ty, double tz, long time) {
+    private void beginStep(Mob robot, int leg, double tx, double ty, double tz, long time, boolean forced) {
+        forcedLift[leg] = forced;
         stranded[leg] = false;
         fromX[leg] = footX[leg];
         fromY[leg] = footY[leg];
@@ -857,6 +993,11 @@ public final class ModernSpiderGait {
         double hipX = rig.hipX(leg, robot.getX() + vx * projTicks, yaw);
         double hipY = rig.hipY(leg, bodyY);
         double hipZ = rig.hipZ(leg, robot.getZ() + vz * projTicks, yaw);
+        // S6b: candidate validity is anchored on the PROJECTED rest (the
+        // rest the foot will serve when it lands) and the projected
+        // hip-to-rest ray (the classic contraction corridor).
+        double projRestX = rig.restFootX(leg, robot.getX() + vx * projTicks, yaw);
+        double projRestZ = rig.restFootZ(leg, robot.getZ() + vz * projTicks, yaw);
         double maxReachSq = rig.maxReach() * rig.reachMargin()
                 * rig.maxReach() * rig.reachMargin();
 
@@ -899,7 +1040,8 @@ public final class ModernSpiderGait {
                             double rdx = cx - hipX;
                             double rdy = candY - hipY;
                             double rdz = cz - hipZ;
-                            if (rdx * rdx + rdy * rdy + rdz * rdz <= maxReachSq) {
+                            if (rdx * rdx + rdy * rdy + rdz * rdz <= maxReachSq
+                                    && candidateComfortable(cx, cz, projRestX, projRestZ, hipX, hipZ)) {
                                 double sdx = cx - tx;
                                 double sdy = candY - preferY;
                                 double sdz = cz - tz;
@@ -916,6 +1058,55 @@ public final class ModernSpiderGait {
             }
         }
         return best;
+    }
+
+    /** S6b: per-tick body-motion inheritance for a swing origin (reference applyBodyMotion). */
+    private void advectSwingOrigin(Mob robot, int leg, double vx, double vz, double yawStepRad) {
+        fromX[leg] += vx;
+        fromZ[leg] += vz;
+        if (yawStepRad != 0.0) {
+            double relX = fromX[leg] - robot.getX();
+            double relZ = fromZ[leg] - robot.getZ();
+            double cosR = Math.cos(yawStepRad);
+            double sinR = Math.sin(yawStepRad);
+            fromX[leg] = robot.getX() + relX * cosR - relZ * sinR;
+            fromZ[leg] = robot.getZ() + relX * sinR + relZ * cosR;
+        }
+    }
+
+    /**
+     * S6b candidate validity (reference: locateGroundTarget's comfort
+     * rejection, Leg.kt:314-316 — his generator is structurally unable to
+     * emit a contralateral point; ours gets the same guarantee here): a
+     * candidate must sit inside the comfort radius of the projected rest,
+     * OR inside the classic contraction corridor — within
+     * {@link #CORRIDOR_HALF_WIDTH} of the projected hip-to-rest ray, no
+     * closer to the hip than the rig's classic sweep floor (so the
+     * corridor's near end stays ipsilateral even on the ant's
+     * 0.75-block hip radius).
+     */
+    private boolean candidateComfortable(double cx, double cz, double restX, double restZ,
+                                         double hipX, double hipZ) {
+        double dx = cx - restX;
+        double dz = cz - restZ;
+        double comfort = rig.comfortRadius();
+        if (dx * dx + dz * dz <= comfort * comfort) {
+            return true;
+        }
+        double sx = restX - hipX;
+        double sz = restZ - hipZ;
+        double lenSq = sx * sx + sz * sz;
+        if (lenSq < 1.0E-9) {
+            return false;
+        }
+        double len = Math.sqrt(lenSq);
+        double tMin = Math.min(1.0, rig.minContractedReach() / len);
+        double t = Mth.clamp(((cx - hipX) * sx + (cz - hipZ) * sz) / lenSq, tMin, 1.0);
+        double px = hipX + sx * t;
+        double pz = hipZ + sz * t;
+        double ddx = cx - px;
+        double ddz = cz - pz;
+        return ddx * ddx + ddz * ddz <= CORRIDOR_HALF_WIDTH * CORRIDOR_HALF_WIDTH;
     }
 
     /**
@@ -1022,6 +1213,18 @@ public final class ModernSpiderGait {
         }
         long time = robot.level().getGameTime();
         float yaw = robot.getYRot();
+        // S6b: the client replays the same swing-origin advection from its
+        // own view of body motion (deterministic per side; landings are the
+        // synced fixed targets, so the sides converge exactly at land).
+        double clientVx = robot.getX() - robot.xo;
+        double clientVz = robot.getZ() - robot.zo;
+        if (!yawSeeded) {
+            // Payload-initialized client gait: seed now, no spurious delta.
+            lastYawDeg = yaw;
+            yawSeeded = true;
+        }
+        double clientYawStepRad = Math.toRadians(Mth.degreesDifference(lastYawDeg, yaw));
+        lastYawDeg = yaw;
         RenderSpiderRobotInfo r = ((IModernLeggedRobot) robot).getRenderSpiderRobotInfo();
         ++r.gpcounter; // classic frame counter — keeps the jaw-snap animation alive
         // S3b: dynamics from last tick's replayed feet (in-loop lands below
@@ -1038,6 +1241,7 @@ public final class ModernSpiderGait {
                 fy = footY[leg];
                 fz = footZ[leg];
             } else if (swinging[leg]) {
+                advectSwingOrigin(robot, leg, clientVx, clientVz, clientYawStepRad);
                 double progress = (time - swingStart[leg]) / (double) swingDuration[leg];
                 if (progress >= 1.0) {
                     land(leg, time);

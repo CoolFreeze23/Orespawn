@@ -177,10 +177,11 @@ public class RideTests {
     }
 
     /**
-     * S5 (independent review): look-jitter must not dance the legs. Rest
-     * bearings follow a dead-banded heading, so yaw wobble inside the band
-     * triggers ZERO steps — while a genuine 90° turn re-plants every leg
-     * chasably onto the new heading. Server-observable: yaw is the gait's
+     * S5 pin, mechanism replaced in S6b: look-jitter must not dance the
+     * legs. The rotation-latched trigger radius (which replaced the S5a
+     * dead-band chase) absorbs yaw wobble — ZERO steps — while a genuine
+     * 90° turn re-plants every leg onto the yaw-fresh rests immediately
+     * (zero-lag rest frame + comfort invalidation). Server-observable: yaw is the gait's
      * input regardless of whether a rider's vehicle packets or a test
      * produced it, so this sits inside the recorded honest testing limit.
      */
@@ -206,9 +207,12 @@ public class RideTests {
                     return; // settle from spawn
                 }
                 if (t <= 140) {
-                    // Phase A: ±6° look-jitter (12° swings — well past the
-                    // pre-fix ~6.6° dance threshold, inside the dead-band).
-                    spider.setYRot(((t / 5) % 2 == 0) ? 6.0f : -6.0f);
+                    // Phase A: ±10° look-jitter (20° swings — rest
+                    // displacement 3.14 sits in the LATCH-ONLY band
+                    // (stationary 2.0 < 3.14 < forced 5.0), so this pin
+                    // DISCRIMINATES the rotation latch; review: the old ±6°
+                    // passed latch-deleted).
+                    spider.setYRot(((t / 5) % 2 == 0) ? 10.0f : -10.0f);
                     for (int leg = 0; leg < SpiderRigProfile.LEG_COUNT; ++leg) {
                         boolean s = gait.isSwinging(leg);
                         if (s && !wasSwinging[leg]) {
@@ -224,19 +228,19 @@ public class RideTests {
                     return;
                 }
                 if (t == 300) {
-                    float headingLag = Math.abs(Mth.degreesDifference(gait.restYawDeg(), 90.0f));
-                    helper.assertTrue(headingLag <= 8.6f + 1.0e-3f,
-                            "rest heading failed to chase a genuine 90° turn (lag " + headingLag + "°)");
+                    // S6b: the rest frame is ZERO-LAG now — feet must have
+                    // re-planted around the yaw-90 rests themselves (the
+                    // S5a heading-chase assertions died with the chase).
                     for (int leg = 0; leg < SpiderRigProfile.LEG_COUNT; ++leg) {
                         helper.assertFalse(gait.isSwinging(leg),
                                 "leg " + leg + " still stepping long after the turn");
                         helper.assertTrue(gait.isGrounded(leg),
                                 "leg " + leg + " not grounded after the turn");
                         double dx = gait.footX(leg)
-                                - SpiderRigProfile.restFootX(leg, spider.getX(), gait.restYawDeg());
+                                - SpiderRigProfile.restFootX(leg, spider.getX(), 90.0f);
                         double dz = gait.footZ(leg)
-                                - SpiderRigProfile.restFootZ(leg, spider.getZ(), gait.restYawDeg());
-                        helper.assertTrue(dx * dx + dz * dz <= (2.0 + 1.0e-6) * (2.0 + 1.0e-6),
+                                - SpiderRigProfile.restFootZ(leg, spider.getZ(), 90.0f);
+                        helper.assertTrue(dx * dx + dz * dz <= 2.5 * 2.5,
                                 "leg " + leg + " never re-planted to the turned heading");
                     }
                     spider.discard();

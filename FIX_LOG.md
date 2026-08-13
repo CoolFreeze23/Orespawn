@@ -3161,3 +3161,81 @@ control alongside), s6_queen_part_interact_neutrality (part result
 
 GATE: suite 186/186 MODERN and 186/186 CLASSIC (pass lines
 captured), build+assetAudit 0 err / 0 adv / 3 ack. Nothing pushes.
+
+## S6b — THE LEG FIX: reference mechanisms replace ours (2026-08-13)
+
+Owner-approved P1+P2+P3 from the reference-code addendum; the cloned
+reference source was re-read per mechanism before implementing
+(code-as-authority rule), and each mechanism was reviewer-verified
+side-by-side at the boundaries.
+
+**P1 — zero-lag rest frame + rotation-latched trigger** (reference
+Leg.updateMemo + lerpedGait/isRotatingYaw): the S5a dead-band chase
+is DELETED — it lagged the rest frame by design, which is exactly
+what parked planted feet contralateral through every fast turn (the
+sitting's crossing mechanism). Rests are now pure functions of
+current yaw; the anti-dance duty moved to a rotation-forced trigger
+radius (>0.5 deg/tick arms a 10-tick latch forcing the moving
+radius). The look-jitter zero-motion pin stays green — and is now
+DISCRIMINATING (spider pin widened to +/-10 deg, the latch-only
+band; new ant +/-6 deg pin where the latch is load-bearing).
+
+**P2 — comfort invalidation + candidate validity** (reference
+comfort capsule + canMoveLeg's unconditional first line): a planted
+foot outside the valid plant region — comfort disc around the
+CURRENT rest (spider 6.0, ant 3.0, both under the rig's min lateral
+rest offset so a valid foot can NEVER cross the midline) OR the
+classic contraction corridor (1.5 half-width along the hip->rest
+ray, floored at the classic sweep floor — our deliberate divergence
+from the reference, which has no corridor: the classic bridge-grip
+law) — lifts IMMEDIATELY, bypassing the pair/neighbor inhibitors
+(forcedLift observability; S2 inv3 amended: co-swing legal iff a
+lift was forced). Candidates are filtered by the SAME predicate, so
+the generator is structurally unable to emit a contralateral plant.
+Implementation reds that taught real lessons: comfort-ONLY
+invalidation oscillated against legal corridor edge-grips
+(plant->invalidate loop) — unified to one predicate both places; and
+plants must KEEP satisfying the 3D reach guard their candidates
+passed (reviewer MAJOR: the ant front pair could SETTLE ~0.9 past the
+render cap — a standing clamp slide, not sub-visual) — the plant
+validity now includes the reach cap, and the ant walk test regained
+its independent literal 3D bound.
+
+**P3 — swing advection + clamped yaw lead** (reference
+applyBodyMotion + lookAheadPosition): in-flight swing origins
+inherit body translation + yaw rotation per tick (both sides); the
+drift-scan target leads by one tick of yaw rate CLAMPED to ~10 deg
+(the raw delta over-rotated on snap turns). Plus the review MAJOR:
+**mid-swing target revalidation** — in-flight targets are re-judged
+against the current frame every tick and re-targeted (fresh step
+payload) or stranded, the reference's locateGroundTarget-per-tick +
+softResetStep behavior; without it, landings went stale above ~4.5
+deg/tick of sustained rotation and churned. Pinned by a 6 deg/t
+churn phase asserting real plant streaks. Client cold-start yaw
+seeding fixed (payload-initialized gaits rotated swing origins up to
+180 deg on their first tick).
+
+**Recorded for owner sign-off (boundary report): sprint forced
+lifts.** At high straight-line speed the comfort margin is smaller
+than the inhibition windows, so inhibited steps convert to forced
+lifts — the reference behaves identically EXCEPT its body brakes
+(uncomfortableSpeedMultiplier 0.0) prevent sustained max-speed
+discomfort; our vanilla-driven bodies cannot brake, so we churn
+forced lifts at sprint instead of slowing. Ratify or direct the
+velocity-compensated-anchor alternative. Also recorded: the latch
+threshold (0.5 deg/t vs the reference's ~0.06 desired-omega — an
+external-yaw adaptation; slow-turn band accepted as tuning), no
+vertical bound in the comfort disc (the 3D reach cap + vertical
+retrigger bound that axis), no airborne step gate (reference has
+one; our stranded/dangle covers true airborne), and the pre-existing
+S3-era in-place re-step cycling at long-term corridor grips (out of
+scope, logged).
+
+Tests: net +4 (=190): spider spin/churn/flick side+comfort
+invariants every tick, ant spin/flick, edge-platform no-crossing +
+resolution, ant look-jitter; jitter pin widened; inv3 amended; ant
+walk bound restored; independent envelope bounds added alongside the
+predicate oracles (review: self-referential-oracle guard).
+
+GATE: suite 190/190 MODERN and 190/190 CLASSIC (pass lines
+captured), build+assetAudit 0 err / 0 adv / 3 ack. Nothing pushes.
