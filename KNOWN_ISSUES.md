@@ -148,6 +148,15 @@ with one picture.
   steering is stronger. This is the same treatment vanilla gives ridden
   horses and is kept deliberately — it is what makes stairs feel right
   from the saddle.
+- **Mounting the spider**: the clickable body has always been the
+  small core at GROUND level between the legs — in 1.0 too; the big
+  visual body overhead was never the hitbox. Aim low and center. As a
+  modern improvement, the LEGS are also clickable mount surfaces now
+  (a leg click mounts you, something classic's click geometry never
+  offered).
+- Robot ants only obey (heal, mount) their OWNER, exactly as in 1.0 —
+  a wild or command-summoned ant ignores you unless summoned with
+  `{AntRobotOwned:1}`.
 - Robot **ants** get the same modern treatment (six real leg hitboxes,
   terrain-planting feet, same damage rules). The ant's hover-ride is
   untouched — and hovering means its legs can lose the ground: they
