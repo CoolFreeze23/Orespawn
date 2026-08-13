@@ -37,7 +37,9 @@ package danger.orespawn.entity.gait;
  * numbers that stay documentation, not modern parameters: yaw trigger
  * ×8/6 and swing bias 0.8 (the modern gait uses drift radii and velocity
  * projection instead, as on the spider). NO trample: the classic ant's
- * foot landing has no block side effects.</p>
+ * foot landing has no block side effects. S6b (THE LEG FIX) replaced the
+ * rest-yaw chase (2.8°/t — the sitting-confirmed crossing mechanism at
+ * ant scale) with the zero-lag rest frame + comfort radius 3.0.</p>
  */
 public final class AntRigProfile {
 
@@ -70,7 +72,8 @@ public final class AntRigProfile {
             1.0, 2.5, 0.3,
             0.55, 1.0, 1.0,
             2.0, 0.5, -0.5,
-            8.6f, 2.8f,
+            // S6b comfort radius: > trigger max 2.5, < min lateral rest 3.64.
+            3.0,
             0.2, false);
 
     private AntRigProfile() {

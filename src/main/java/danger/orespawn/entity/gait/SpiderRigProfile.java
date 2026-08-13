@@ -27,7 +27,9 @@ package danger.orespawn.entity.gait;
  * <p>Gait tuning riding on the rig (S5b): trigger radii 2.0/5.0 at full
  * speed 0.35, step speed 1.1, lift 2.0, vertical retrigger 2.0, dangle
  * drop 4.0, lift/sag ±1.0, rest-yaw dead-band 8.6°/3.4°·t — exactly the
- * S2-S5a shipped constants, moved, not retuned.</p>
+ * S2-S5a shipped constants, moved, not retuned. S6b (THE LEG FIX)
+ * replaced the S5a rest-yaw dead-band chase with the zero-lag rest
+ * frame + comfort radius 6.0 (see LegRig).</p>
  */
 public final class SpiderRigProfile {
 
@@ -63,7 +65,8 @@ public final class SpiderRigProfile {
             2.0, 5.0, 0.35,
             1.1, 2.0, 2.0,
             4.0, 1.0, -1.0,
-            8.6f, 3.4f,
+            // S6b comfort radius: > trigger max 5.0, < min lateral rest 6.67.
+            6.0,
             0.3, true);
 
     private SpiderRigProfile() {

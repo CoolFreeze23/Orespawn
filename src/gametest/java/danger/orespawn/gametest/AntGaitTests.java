@@ -320,11 +320,27 @@ public class AntGaitTests {
                     for (int leg = 0; leg < 6; ++leg) {
                         helper.assertFalse(gait.isSwinging(leg), "leg " + leg + " stuck mid-swing");
                         helper.assertTrue(gait.isGrounded(leg), "leg " + leg + " not settled");
-                        double dx = gait.footX(leg) - AntRigProfile.RIG.hipX(leg, ant.getX(), ant.getYRot());
-                        double dy = gait.footY(leg) - AntRigProfile.RIG.hipY(leg, ant.getY());
-                        double dz = gait.footZ(leg) - AntRigProfile.RIG.hipZ(leg, ant.getZ(), ant.getYRot());
-                        helper.assertTrue(Math.sqrt(dx * dx + dy * dy + dz * dz) <= AntRigProfile.MAX_REACH,
-                                "leg " + leg + " planted beyond max reach");
+                        // S6b: the honest planted-foot bound is the comfort
+                        // contract (horizontal drift from the CURRENT rest),
+                        // not 3D chain length — the hover bob legally raises
+                        // the body over a planted foot, and rest itself is
+                        // 98.3% of the chain; the render clamp handles the
+                        // sub-visual shortfall (S3b graceful-stretch family).
+                        helper.assertTrue(gait.plantWithinComfort(ant, leg),
+                                "leg " + leg + " settled outside the valid plant region"
+                                        + " (foot=(" + gait.footX(leg) + "," + gait.footY(leg) + ","
+                                        + gait.footZ(leg) + ") body=(" + ant.getX() + "," + ant.getY()
+                                        + "," + ant.getZ() + "))");
+                        // INDEPENDENT numeric bound (review: the predicate
+                        // above is the gait's own oracle): a settled plant
+                        // must satisfy the literal 3D reach cap — S6b's
+                        // plant-validity reach bound guarantees it now.
+                        double rdx = gait.footX(leg) - AntRigProfile.RIG.hipX(leg, ant.getX(), ant.getYRot());
+                        double rdy = gait.footY(leg) - AntRigProfile.RIG.hipY(leg, ant.getY());
+                        double rdz = gait.footZ(leg) - AntRigProfile.RIG.hipZ(leg, ant.getZ(), ant.getYRot());
+                        helper.assertTrue(Math.sqrt(rdx * rdx + rdy * rdy + rdz * rdz) <= 9.1875 * 0.995 + 1.0E-6,
+                                "leg " + leg + " settled past the literal reach cap: "
+                                        + Math.sqrt(rdx * rdx + rdy * rdy + rdz * rdz));
                     }
                     ant.discard();
                     helper.succeed();
@@ -533,6 +549,51 @@ public class AntGaitTests {
             ant.discard();
         }
         helper.succeed();
+    }
+
+    /**
+     * S6b review: the ant look-jitter pin — the rotation LATCH is
+     * load-bearing at this rig's scale (±6° flips displace front rests
+     * 1.05, past the 1.0 stationary radius; only the latched 2.5 radius
+     * keeps them still), so this test discriminates a latch regression
+     * the spider pin cannot.
+     */
+    @GameTest(template = "empty_large", timeoutTicks = 400, batch = "spiderGaitIsolation")
+    public void s6b_ant_look_jitter_zero_steps(GameTestHelper helper) {
+        final AntRobot ant = spawnModeNoFreeWill(helper, new BlockPos(24, 2, 24));
+        ant.setYRot(0.0f);
+        final ModernSpiderGait gait = ant.getModernGait();
+        helper.assertTrue(gait != null, "modern ant must carry the gait controller");
+        final int[] tick = {0};
+        final int[] steps = {0};
+        final boolean[] was = new boolean[6];
+        helper.onEachTick(() -> {
+            try {
+                int t = ++tick[0];
+                if (t < 40) {
+                    return;
+                }
+                if (t <= 140) {
+                    ant.setYRot(((t / 5) % 2 == 0) ? 6.0f : -6.0f);
+                    for (int leg = 0; leg < 6; ++leg) {
+                        boolean sw = gait.isSwinging(leg);
+                        if (sw && !was[leg]) {
+                            ++steps[0];
+                        }
+                        was[leg] = sw;
+                    }
+                    if (t == 140) {
+                        helper.assertTrue(steps[0] == 0,
+                                "ant look-jitter danced the legs: " + steps[0] + " steps");
+                        ant.discard();
+                        helper.succeed();
+                    }
+                }
+            } catch (RuntimeException e) {
+                ant.discard();
+                throw e;
+            }
+        });
     }
 
     /**

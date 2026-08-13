@@ -76,8 +76,19 @@ public final class LegRig {
     private final double dangleDrop;
     private final double maxLift;
     private final double maxSag;
-    private final float restYawDeadbandDeg;
-    private final float restYawRateDeg;
+    /**
+     * S6b (THE LEG FIX, reference: comfortZoneRadius, Gait.kt:87 +
+     * Leg.updateMemo capsules): horizontal radius around the CURRENT rest
+     * point outside which a planted foot is INVALID — it lifts
+     * immediately, bypassing the step inhibitors, and candidates outside
+     * it are never generated. Sized above the rig's max trigger radius
+     * (steps fire long before discomfort, his 0.8-vs-1.2 split) and BELOW
+     * the rig's smallest lateral rest offset, so a comfortable foot can
+     * never sit across the body midline (spider min lateral 6.67, leg 6 —
+     * the first S6b note misread leg 6's Z for its X → 6.0; ant min
+     * lateral 3.64 → 3.0).
+     */
+    private final double comfortRadius;
     private final double partHalfHeight;
     /**
      * Whether settled ridden feet run the classic trample (SHORT_GRASS /
@@ -99,7 +110,7 @@ public final class LegRig {
                   double triggerRadiusMin, double triggerRadiusMax, double fullSpeed,
                   double stepSpeed, double liftHeight, double verticalRetrigger,
                   double dangleDrop, double maxLift, double maxSag,
-                  float restYawDeadbandDeg, float restYawRateDeg,
+                  double comfortRadius,
                   double partHalfHeight, boolean tramples) {
         this.legCount = legCount;
         this.segmentLength = segmentLength;
@@ -124,8 +135,7 @@ public final class LegRig {
         this.dangleDrop = dangleDrop;
         this.maxLift = maxLift;
         this.maxSag = maxSag;
-        this.restYawDeadbandDeg = restYawDeadbandDeg;
-        this.restYawRateDeg = restYawRateDeg;
+        this.comfortRadius = comfortRadius;
         this.partHalfHeight = partHalfHeight;
         this.tramples = tramples;
 
@@ -247,12 +257,13 @@ public final class LegRig {
         return maxSag;
     }
 
-    public float restYawDeadbandDeg() {
-        return restYawDeadbandDeg;
+    public double comfortRadius() {
+        return comfortRadius;
     }
 
-    public float restYawRateDeg() {
-        return restYawRateDeg;
+    /** The full moving-speed trigger radius (forced while the body yaw-rotates — reference lerpedGait, SpiderBody.kt:66-73). */
+    public double triggerRadiusMax() {
+        return triggerRadiusMax;
     }
 
     public double partHalfHeight() {
