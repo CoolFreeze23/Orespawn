@@ -1,12 +1,13 @@
 {
-    "required": true,
-    "package": "danger.orespawn.mixin",
-    "compatibilityLevel": "JAVA_21",
-    "mixins": [],
-    "client": [
-        "EntityCullingMixin"
-    ],
-    "injectors": {
-        "defaultRequire": 1
-    }
+  "required": true,
+  "package": "danger.orespawn.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [],
+  "client": [
+    "EntityCullingMixin",
+    "MountCameraMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
 }
