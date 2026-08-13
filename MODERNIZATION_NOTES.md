@@ -577,10 +577,12 @@ construction: AntRobot.positionRider is not mode-gated — the same
 faithful orig seat math (1.25 behind center, seat 0.55 with the
 TF-029 player −0.5 offset ≈ 0.05 above the anchor) runs in classic
 and modern alike, and the modern visual dynamics never move the
-rider (ridden sag clamped ±0.15, visual-only). Kept faithful per the
-owner's OBS-1 ruling. Candidate improvement: a modern-only seat
-raise (~+0.8-1.0) putting the rider on the ant's back, config- or
-mode-gated, classic seat untouched.
+rider (ridden sag clamped ±0.15, visual-only). SHIPPED in S7a (2026-08-13): the
+modern-only seat raise (+0.9, composed through the S3b body
+transform) puts the rider on the ant's back; the classic seat stays
+bit-identical to 1.0. The spider's seat turned out to be a LOST
+PARITY FEATURE (the orig positionRider was never ported) — restored
+for both modes in the same slice.
 
 ## MOD-028 — Per-segment leg part boxes (COMBAT-FEEL, 2.0 sitting OBS-2)
 

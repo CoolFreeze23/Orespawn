@@ -177,6 +177,133 @@ public class RideTests {
     }
 
     /**
+     * S7a seat geometry (sitting FAIL-3): the spider's ORIGINAL seat was
+     * never ported (orig :523-536 — a classic parity bug, restored) and
+     * the modern seat composes through the S3b body transform. Driver
+     * seats are bob-free on the spider (flat 2.0) — near-exact asserts;
+     * fore-aft carries the ±0.05 bob. The modern assert inverse-transforms
+     * the rider through the PUBLIC bodyTransform pair and checks the
+     * seat-frame coordinates, with tolerance for one tick of rate-limited
+     * dynamics drift between positioning and sampling.
+     */
+    @GameTest(template = "empty_large", timeoutTicks = 300, batch = "spiderGaitIsolation")
+    public void s7_seat_geometry(GameTestHelper helper) {
+        // Reviewer finding: on flat ground the dynamics converge to ~zero and
+        // the inverse-transform assert degenerates to identity — seed a
+        // 2-high shelf under the modern mounts' forward legs so pitch/lift
+        // are NONZERO and a dropped/mis-signed composition cannot pass.
+        for (int x = 20; x <= 44; ++x) {
+            for (int z = 18; z <= 28; ++z) {
+                for (int y = 0; y <= 1; ++y) {
+                    helper.setBlock(new BlockPos(x, y, z), net.minecraft.world.level.block.Blocks.STONE);
+                }
+            }
+        }
+        final SpiderRobot classic = spawnMode(helper, new BlockPos(10, 2, 30), OreSpawnConfig.SpiderMovement.CLASSIC);
+        final SpiderRobot modern = spawnMode(helper, new BlockPos(30, 2, 10), OreSpawnConfig.SpiderMovement.MODERN);
+        final danger.orespawn.entity.AntRobot antClassic;
+        final danger.orespawn.entity.AntRobot antModern;
+        final Mob[] riders = new Mob[4];
+        {
+            OreSpawnConfig.SpiderMovement prior = OreSpawnConfig.SPIDER_MOVEMENT.get();
+            try {
+                OreSpawnConfig.SPIDER_MOVEMENT.set(OreSpawnConfig.SpiderMovement.CLASSIC);
+                antClassic = helper.spawn(ModEntities.ANT_ROBOT.get(), new BlockPos(10, 2, 10));
+                OreSpawnConfig.SPIDER_MOVEMENT.set(OreSpawnConfig.SpiderMovement.MODERN);
+                antModern = helper.spawn(ModEntities.ANT_ROBOT.get(), new BlockPos(30, 2, 30));
+            } finally {
+                OreSpawnConfig.SPIDER_MOVEMENT.set(prior);
+            }
+        }
+        try {
+            Mob[] mounts = {classic, modern, antClassic, antModern};
+            BlockPos[] at = {new BlockPos(10, 5, 30), new BlockPos(30, 5, 10),
+                    new BlockPos(10, 5, 10), new BlockPos(30, 5, 30)};
+            for (int i = 0; i < 4; ++i) {
+                riders[i] = helper.spawnWithNoFreeWill(ModEntities.SPIDER_DRIVER.get(), at[i]);
+                riders[i].setNoAi(true);
+                helper.assertTrue(riders[i].startRiding(mounts[i], true), "mount " + i + " failed");
+            }
+        } catch (RuntimeException e) {
+            classic.discard();
+            modern.discard();
+            antClassic.discard();
+            antModern.discard();
+            throw e;
+        }
+        final int[] tick = {0};
+        final Player[] playerRider = new Player[1];
+        helper.onEachTick(() -> {
+            try {
+                int t = ++tick[0];
+                if (t < 20) {
+                    return;
+                }
+                // Classic spider: EXACT orig math — driver flat 2.0 up,
+                // ~3.0 behind (t<30); then the PLAYER branch (reviewer
+                // finding: the −0.5 TF-029 arm was untested): 2.125±bob.
+                if (t < 30) {
+                    double cy = riders[0].getY() - classic.getY();
+                    helper.assertTrue(Math.abs(cy - 2.0) < 1.0E-6,
+                            "classic spider driver seat height " + cy + " != orig 2.0");
+                    double chor = Math.hypot(riders[0].getX() - classic.getX(), riders[0].getZ() - classic.getZ());
+                    helper.assertTrue(Math.abs(chor - 3.0) <= 0.051,
+                            "classic spider driver offset " + chor + " != orig 3.0±0.05");
+                } else if (t == 30) {
+                    riders[0].stopRiding();
+                    playerRider[0] = helper.makeMockPlayer(GameType.SURVIVAL);
+                    helper.assertTrue(playerRider[0].startRiding(classic, true), "player mount failed");
+                } else if (t >= 45) {
+                    double py = playerRider[0].getY() - classic.getY();
+                    helper.assertTrue(py >= 2.10 && py <= 2.15,
+                            "classic PLAYER seat height " + py + " != orig 2.125±bob (TF-029)");
+                }
+                // Modern spider: seat-frame coords via inverse transform.
+                ModernSpiderGait sg = modern.getModernGait();
+                double[] v = {riders[1].getX() - modern.getX(), riders[1].getY() - modern.getY(),
+                        riders[1].getZ() - modern.getZ()};
+                ModernSpiderGait.inverseBodyTransform(modern.getYRot(),
+                        sg.bodyPitch(), sg.bodyRoll(), sg.bodyLift(), v);
+                helper.assertTrue(Math.abs(v[1] - 2.0) <= 0.25,
+                        "modern spider seat-frame height " + v[1] + " != 2.0 (composed)");
+                helper.assertTrue(Math.abs(Math.hypot(v[0], v[2]) - 3.0) <= 0.2,
+                        "modern spider seat-frame offset " + Math.hypot(v[0], v[2]));
+                // Classic ant: unchanged 1.0 seat (driver 0.55±0.02, 1.25±0.05 behind).
+                double ay = riders[2].getY() - antClassic.getY();
+                helper.assertTrue(ay >= 0.52 && ay <= 0.58,
+                        "classic ant driver seat height " + ay + " != orig 0.55±0.02");
+                // Modern ant: raised +0.9 and composed.
+                ModernSpiderGait ag = antModern.getModernGait();
+                double[] av = {riders[3].getX() - antModern.getX(), riders[3].getY() - antModern.getY(),
+                        riders[3].getZ() - antModern.getZ()};
+                ModernSpiderGait.inverseBodyTransform(antModern.getYRot(),
+                        ag.bodyPitch(), ag.bodyRoll(), ag.bodyLift(), av);
+                helper.assertTrue(av[1] >= 1.42 - 0.25 && av[1] <= 1.48 + 0.25,
+                        "modern ant seat-frame height " + av[1] + " != 1.45±bob (raised+composed)");
+                if (t == 70) {
+                    for (Mob r : riders) {
+                        r.discard();
+                    }
+                    if (playerRider[0] != null) {
+                        playerRider[0].stopRiding();
+                    }
+                    classic.discard();
+                    modern.discard();
+                    antClassic.discard();
+                    antModern.discard();
+                    helper.succeed();
+                }
+            } catch (RuntimeException e) {
+                classic.discard();
+                modern.discard();
+                antClassic.discard();
+                antModern.discard();
+                throw e;
+            }
+        });
+    }
+
+    /**
      * S5 pin, mechanism replaced in S6b: look-jitter must not dance the
      * legs. The rotation-latched trigger radius (which replaced the S5a
      * dead-band chase) absorbs yaw wobble — ZERO steps — while a genuine

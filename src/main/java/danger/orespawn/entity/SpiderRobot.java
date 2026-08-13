@@ -99,6 +99,8 @@ public class SpiderRobot extends Mob implements ICustomHitboxProfileSupplier, IM
     private final GenericTargetSorter targetSorter;
     private final float moveSpeed = 0.35f;
     private int soundCooldown = 0;
+    /** Seat-bob clock (orig SpiderRobot.java:54,656) — restored in S7a with the lost seat. */
+    private int rideTicker = 0;
 
     public SpiderRobot(EntityType<? extends SpiderRobot> type, Level level) {
         super(type, level);
@@ -351,6 +353,8 @@ public class SpiderRobot extends Mob implements ICustomHitboxProfileSupplier, IM
         if (this.modernGait != null && !this.level().isClientSide()) {
             this.modernGait.serverTick(this);
         }
+        // orig SpiderRobot.java:656 — the seat-bob clock advances 0-2/tick.
+        this.rideTicker += this.getRandom().nextInt(3);
         if (this.soundCooldown > 0) --this.soundCooldown;
         if (this.getFirstPassenger() != null && this.soundCooldown == 0 && this.getRandom().nextInt(80) == 1) {
             this.playSound(SND_ROBOTSPIDER, 0.45f, 1.0f);
@@ -400,6 +404,52 @@ public class SpiderRobot extends Mob implements ICustomHitboxProfileSupplier, IM
     @Override
     public boolean shouldRiderSit() {
         return false;
+    }
+
+    /**
+     * S7a (sitting FAIL-3): the original's seat was NEVER PORTED — orig
+     * SpiderRobot.java:523-536 seats the rider 3.0 blocks behind center
+     * (±0.05 fore-aft bob) and 2.625 up (±0.02 bob; the SpiderDriver flat
+     * 2.0), players netting −0.5 by the TF-029 offset convention (see
+     * AntRobot.positionRider) — while the port silently fell back to the
+     * vanilla anchor-level seat. A CLASSIC PARITY BUG, restored here for
+     * BOTH modes. MODERN additionally composes the seat point through the
+     * S3b body transform — the same transform the leg parts ride. Honest
+     * bounds (reviewer-corrected): only LIFT/SAG carry the ridden ±0.15
+     * clamp; pitch/roll keep MAX_TILT 0.35, so the composed seat may
+     * swing up to ~1.3 blocks on steep terrain, and under tilt the rider
+     * slips vs the RENDERED shell by ~1.501·sin(tilt) (the render is
+     * pivot-conjugated about the vanilla +1.501 offset, the seat about
+     * the anchor — the same accepted constant-quirk family the leg part
+     * boxes carry). Classic applies the untransformed original math —
+     * bit-identical to 1.0.
+     */
+    @Override
+    protected void positionRider(Entity passenger, Entity.MoveFunction move) {
+        if (!this.hasPassenger(passenger)) {
+            return;
+        }
+        float foreAft = -3.0f;
+        foreAft = (float) ((double) foreAft + Math.cos((float) this.rideTicker * 0.33f) * 0.05);
+        double seatY = passenger instanceof SpiderDriver
+                ? 2.0
+                : 2.625 + Math.cos((float) this.rideTicker * 0.19f) * 0.02;
+        if (passenger instanceof Player) {
+            seatY -= 0.5;
+        }
+        double seatX = -(double) foreAft * Math.sin(Math.toRadians(this.getYRot()));
+        double seatZ = (double) foreAft * Math.cos(Math.toRadians(this.getYRot()));
+        ModernSpiderGait gait = this.isModernMovement() ? this.getModernGait() : null;
+        if (gait != null) {
+            double[] seat = {seatX, seatY, seatZ};
+            ModernSpiderGait.bodyTransform(this.getYRot(),
+                    gait.bodyPitch(), gait.bodyRoll(), gait.bodyLift(), seat);
+            move.accept(passenger,
+                    this.getX() + seat[0], this.getY() + seat[1], this.getZ() + seat[2]);
+        } else {
+            move.accept(passenger,
+                    this.getX() + seatX, this.getY() + seatY, this.getZ() + seatZ);
+        }
     }
 
     // ==================== 2.0 S5 — the Q1 ridden path (modern-only) ====================

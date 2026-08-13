@@ -3239,3 +3239,32 @@ predicate oracles (review: self-referential-oracle guard).
 
 GATE: suite 190/190 MODERN and 190/190 CLASSIC (pass lines
 captured), build+assetAudit 0 err / 0 adv / 3 ack. Nothing pushes.
+
+## S7a — the LOST SEAT restored + modern composition (2026-08-13)
+
+Sitting-3 FAIL-3 triage found a parity bug older than the overhaul:
+the spider's ORIGINAL seat system (orig SpiderRobot.java:523-536,656
+— rider 3.0 behind ±0.05 bob, 2.625 up ±0.02 bob, SpiderDriver flat
+2.0, players −0.5 per TF-029, rideTicker clock) was NEVER PORTED; the
+port fell back to the vanilla anchor-level seat. Restored for BOTH
+modes (classic = term-for-term the original, reviewer-verified).
+MODERN composes the seat point through the S3b body transform — the
+same frame the leg parts ride — so the rider rides the visual body;
+honest bounds: ridden clamp covers lift only, pitch/roll keep
+MAX_TILT (seat may swing ~1.3 on steep terrain), and under tilt the
+rider slips vs the rendered shell by ~1.501·sin(tilt) (accepted
+constant-quirk family). Ant: modern-only +0.9 raise + composition
+(MOD-027 shipped); classic ant seat untouched. Test s7_seat_geometry
+(=191): classic exact pins (driver 2.0/3.0, player 2.125 TF-029 arm),
+modern inverse-transform pins over DISCRIMINATING tilt terrain
+(reviewer: flat ground degenerated the assert to identity). Reviewer
+verdict: approve, no functional blocker; new sitting item recorded
+(180° flick × the 3-block seat arm — eyes-on; seat-yaw smoothing is
+the fallback). Out-of-scope catch escalated separately: ModEntities
+spider .sized(2.0,1.5) vs orig setSize(3.25,2.25) — possible
+pre-existing dims parity deviation, needs its own investigation
+(touches the S4 profile main-size law if real).
+
+GATE: 191/191 MODERN + 191/191 CLASSIC (pass lines captured), build
+0/0/3. Camera (FAIL-4) design presented; implementation awaits the
+owner's paragraph approval. Nothing pushes.
