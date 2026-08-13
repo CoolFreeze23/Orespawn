@@ -3268,3 +3268,19 @@ pre-existing dims parity deviation, needs its own investigation
 GATE: 191/191 MODERN + 191/191 CLASSIC (pass lines captured), build
 0/0/3. Camera (FAIL-4) design presented; implementation awaits the
 owner's paragraph approval. Nothing pushes.
+
+## S7b — the riding camera (2026-08-13)
+
+Sitting FAIL-4, owner-approved design, SSR technique (MIT, studied
+not copied): WrapOperation on Camera.setup's zoom-arm move (ordinal
+0; WrapOperation so SSR's own redirect of the same instruction
+chains instead of crashing — reviewer MEDIUM), arm-only time-based
+smoothing (~0.25s constant; pivot rides the S7a seat RAW so the two
+systems cannot stack — the owner-flagged interaction, refuted with
+mechanism by the reviewer), 8-corner collision snap-in/glide-out
+(recovery time-based per reviewer), spider 10 / ant 6 + up 2 +
+shoulder 1.5, mountCamera config (default on), byte-identical
+vanilla fall-through (verified against bytecode). Stale-state
+1s-gap reset. Client-visual only; suite 191/191 both modes
+(camera untestable server-side — reviewer-verified vs the mapped
+jar; feel is the owner's next sitting).

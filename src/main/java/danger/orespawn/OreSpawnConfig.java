@@ -140,6 +140,8 @@ public class OreSpawnConfig {
     public static final ModConfigSpec.BooleanValue DRAGONFLY_HORSE_FRIENDLY;
     public static final ModConfigSpec.BooleanValue PLAY_NICELY;
     public static final ModConfigSpec.EnumValue<SpiderMovement> SPIDER_MOVEMENT;
+    /** S7b: the modern-mount riding camera (client-visual only). */
+    public static final ModConfigSpec.BooleanValue MOUNT_CAMERA;
     public static final ModConfigSpec.BooleanValue MINERS_DREAM_EXPENSIVE;
     public static final ModConfigSpec.BooleanValue DISABLE_OVERWORLD_DUNGEONS;
     public static final ModConfigSpec.BooleanValue FULL_POWER_KING_ENABLE;
@@ -293,6 +295,12 @@ public class OreSpawnConfig {
         // 2.0 spider overhaul (design ruling 2026-08-11): default MODERN; one
         // config line back to full 1.7.10 parity. Server-authoritative: the
         // server's value at entity construction wins and is synced.
+        MOUNT_CAMERA = BUILDER.comment(
+                "Riding camera for the modern robot mounts (spider/ant): pulls the third-person " +
+                        "camera back and up, smoothed, with terrain collision, so the mount does not " +
+                        "fill the screen. Client-visual only; no effect unridden, in CLASSIC mode, " +
+                        "or when disabled — the vanilla camera is untouched then."
+        ).define("mountCamera", true);
         SPIDER_MOVEMENT = BUILDER.comment(
                 "Robot leg movement (Giant Robot Spider AND Robot Ant). MODERN = procedural IK gait " +
                         "(server-authoritative, 2.0): legs plant and climb terrain, the body tilts and " +
