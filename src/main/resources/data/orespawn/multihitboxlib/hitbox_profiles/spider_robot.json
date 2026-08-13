@@ -12,10 +12,15 @@
 		"locally from the replayed solve). The GeckoLib bone-collection path,",
 		"bone packets and client trust are entirely uninvolved.",
 		"",
-		"main-hitbox: size MUST stay exactly [2.0, 1.5] — MHLib applies the",
-		"profile main size through its EntityEvent.Size hook, and classic",
-		"parity pins the spider's dims (the ant's i083 test guards the same",
-		"contract family). canReceiveDamage=true keeps the BODY pickable and",
+		"main-hitbox size — THE LAW (general rule): the profile main size",
+		"must equal the classic EntityType dims EXACTLY. MHLib applies the",
+		"profile main size through its EntityEvent.Size hook, so a",
+		"profile/EntityType mismatch silently forks modern dims from",
+		"classic. Both sit at [3.25, 2.25] = orig SpiderRobot.java:58",
+		"setSize (ENT-S-088 restored them; port 1.0 had shipped a shrunken,",
+		"never-audited 2.0x1.5). Drift in EITHER mode is pinned by",
+		"s4_part_counts_and_classic_zero; the ant's s5b/i083 pins guard the",
+		"same contract family. canReceiveDamage=true keeps the BODY pickable and",
 		"damageable (design D3: legs are additional honest surfaces, never a",
 		"forced routing like the Queen's).",
 		"",
@@ -46,7 +51,7 @@
 	"main-hitbox": {
 		"collidable": false,
 		"canReceiveDamage": true,
-		"size": [2.0, 1.5]
+		"size": [3.25, 2.25]
 	},
 	"parts": [
 		{ "name": "leg0", "collidable": false, "can-receive-damage": true, "damage-modifier": 1.0, "max-deviation-from-server": 0.0, "box": { "type": "multihitboxlib:aabb", "size": [0.6, 0.6], "position": [0, 0, 0], "pivot": [0, 0, 0] } },

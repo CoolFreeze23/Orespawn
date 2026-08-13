@@ -6,8 +6,9 @@ modes). No code changes mid-session; FAILs get triage only. Marks:
 release conversation is next.
 
 Summon notes: ants need `{AntRobotOwned:1}` to obey you; the spider
-mount spot is the ground-level core under the body — or, new in S6a,
-any LEG.
+mount spot is the body box — since S7c the full-size 3.25×2.25
+original box (no more aiming for a small ground core) — or, new in
+S6a, any LEG.
 
 ---
 
@@ -42,8 +43,21 @@ any LEG.
   NEW sitting item from the reviewer: 180° look-flicks now sweep the
   3-block seat arm ~6 blocks/tick — eyes-on the flick feel with the
   restored seat; seat-yaw smoothing is the fallback.
-- **FAIL-4 (riding camera): design approved-pending — one-paragraph
-  proposal presented; implementation awaits the owner's go.**
+- **FAIL-4 (riding camera): FIXED in S7b** (owner-approved design;
+  arm-only smoothing over the raw S7a seat pivot, 8-corner collision,
+  reviewer-verified; feel is eyes-on at this sitting). S7c (spider dims
+  restored to the orig 3.25×2.25, ENT-S-088) landed AFTER the camera's
+  reviewer pass, so the camera reviewer list now carries two added
+  items, re-verified analytically in S7c (pivot rides the absolute
+  seat constants, arm constants absolute, collision clips BLOCKS
+  only — the camera is dims-independent in code) and eyes-on here:
+  (1) framing correctness with the taller/wider body; (2) the
+  collision arm in tight spaces, where the bigger suffocation
+  profile changes which spaces the spider can even enter.
+- **S7c (spider dims)**: eyes-on the restored full-size body box —
+  mount clicks anywhere in the 3.25×2.25 box, F3+B vs the visual
+  body, and the SpiderDriver's slightly longer mount-seek/drive
+  ranges (both derive from live width and now match the original).
 
 ## Close-out
 

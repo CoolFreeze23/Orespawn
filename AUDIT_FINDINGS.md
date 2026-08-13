@@ -2757,6 +2757,15 @@ Paths: ORIG = `reference_1_7_10_source\sources\danger\orespawn\`, PORT = `src\ma
 - **Fix:** read ORIG `SpiderRobot.java` drop method and port the block/item list into `spider_robot.json`.
 - **Resolution:** FIXED (2026-06-11, Phase C — see FIX_LOG.md and phase_c_reports/C4_entities_S_Z.md)
 
+### ENT-S-088 — SpiderRobot: hitbox shrunk (audit gap — size was never examined)
+
+- **Status:** DIVERGENT
+- **Original:** ORIG `SpiderRobot.java:58` — `setSize(3.25f, 2.25f)` in the ctor; the ONLY size call in the class (no ridden/child/state resize anywhere), and 1.12.2 has no SpiderRobot entity (texture only), so 1.7.10 is the sole baseline
+- **Port:** `ModEntities.java` — `.sized(2.0f, 1.5f)`, uncited. The ENT-S-020 stats row never listed size, so the audit never ruled on it — the same port-shrunk-box pattern it caught and fixed on Alien (ENT-A-002), Cephadrome (ENT-A-083) and PrinceTeen (BOSS-026). The S4 profile then codified 2.0×1.5 as "classic dims" without a parity check. Caught by the S7a reviewer as an out-of-scope escalation (FIX_LOG S7a).
+- **Fix:** restore `.sized(3.25f, 2.25f)` with the orig citation; move the MHLib profile main size to [3.25, 2.25] in lockstep (Size-hook law — profile main size must equal the classic EntityType dims exactly); pin both modes' dims in `s4_part_counts_and_classic_zero` (the guard gap the drift exploited — the ant had s5b/i083 pins, the spider had none); rewrite the KNOWN_ISSUES mount-spot paragraph.
+- **Note:** cross-check prompted by this gap — **AntRobot verified clean**: orig `AntRobot.java:52` `setSize(2.75f, 1.25f)` == port registration (cited in `ModEntities.java`) == profile `ant_robot.json` == i083 + s5b pins. Both robots' dims are now positively parity-cited, not assumed. Derived ranges self-correct with the restored width (they read live `getBbWidth()`): SpiderDriver mount-seek `(4+w/2)²` 5.0→5.625 and drive range `11+w/2` 12.0→12.625, both now the values the original computed from its 3.25 width; default eye height 0.85·h 1.275→1.9125 likewise matches the 1.7.10 default.
+- **Resolution:** FIXED (2026-08-13, S7c — design ruling "original wins, per law"; see FIX_LOG.md S7c)
+
 ---
 
 ## SpitBug

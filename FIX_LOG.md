@@ -3284,3 +3284,59 @@ vanilla fall-through (verified against bytecode). Stale-state
 1s-gap reset. Client-visual only; suite 191/191 both modes
 (camera untestable server-side — reviewer-verified vs the mapped
 jar; feel is the owner's next sitting).
+
+## S7c — spider dims parity restored: ENT-S-088 (2026-08-13)
+
+The S7a out-of-scope catch, investigated and owner-ruled: "original
+wins, per law." ORIG SpiderRobot.java:58 sets 3.25x2.25 in the ctor
+— the ONLY size call in the class, no ridden/child restate, and
+1.12.2 has no SpiderRobot at all — while the port registered an
+uncited 2.0x1.5. NOT a ruled deviation: the ENT-S-020 stats row
+never examined size, so the spider slipped through the exact
+audit crack the Phase C sweep caught on Alien/Cephadrome/PrinceTeen;
+the S4 profile then codified 2.0x1.5 as "classic dims" unverified.
+
+Restored 3.25x2.25 in LOCKSTEP per the Size-hook law: ModEntities
+.sized(3.25, 2.25) with the orig citation + profile
+spider_robot.json main [3.25, 2.25], law comment rewritten to state
+the GENERAL rule (profile main size = classic EntityType dims,
+EXACTLY — a mismatch silently forks modern dims from classic via
+MHLib's EntityEvent.Size hook). Guard gap the drift exploited now
+closed: s4_part_counts_and_classic_zero pins 3.25x2.25 in BOTH
+modes (the ant's s5b/i083 mirror; the spider had NO dims pin — no
+gametest anywhere asserted its box, i083's table is A-entities
+only). Net test count unchanged (=191, amended not added).
+
+Derived ranges self-correct (live getBbWidth reads): SpiderDriver
+mount-seek (4+w/2)^2 5.0->5.625 and drive range 11+w/2
+12.0->12.625 — both now the numbers the original computed from its
+3.25 width; default eye height 0.85h 1.275->1.9125 = the 1.7.10
+default. Seat unaffected (S7a constants are absolute orig values —
+designed for the 2.25-tall box, so the restored dims make the seat
+MORE coherent, not less). KNOWN_ISSUES mount-spot paragraph
+rewritten; its "in 1.0 too / never was the hitbox" claim corrected
+honestly (true of port 1.0's small box, false of 1.7.10).
+
+ANT CROSS-CHECK (owner-ordered, same audit crack): AntRobot is
+CLEAN — orig AntRobot.java:52 setSize(2.75, 1.25) == port
+registration (cited) == ant_robot.json profile == i083 + s5b pins.
+Both robots' dims are now positively parity-cited, not assumed
+(recorded in ENT-S-088's note).
+
+CAMERA RE-VERIFY (S7b landed before this slice; owner sequencing):
+analytically dims-independent — the pivot rides the S7a seat's
+absolute constants, the arm constants (10/6, up 2, shoulder 1.5)
+are absolute, and collision clips BLOCKS only (ClipContext VISUAL;
+the vehicle entity never occludes its own camera), so the bigger
+box cannot move the camera in code. The real interplay is
+INDIRECT: 3.25x2.25 changes which tight spaces the spider can
+enter at all. Two items added to the camera reviewer list and
+recorded as sitting eyes-on (SITTING_2_0.md): framing correctness
+with the taller/wider body; the collision arm against the bigger
+suffocation profile in tight spaces.
+
+GATE: suite 191/191 MODERN and 191/191 CLASSIC (pass lines
+captured; the flagged seat/ride tests green in both modes — the
+S7a seat constants are absolute, so the dims change never touches
+them), build+assetAudit 0 err / 0 adv / 3 ack. Nothing pushes;
+eyes-on items go to the owner's sitting.
