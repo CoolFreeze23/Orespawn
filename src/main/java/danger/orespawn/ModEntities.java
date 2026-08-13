@@ -645,7 +645,10 @@ public class ModEntities {
 
     public static final DeferredHolder<EntityType<?>, EntityType<SpiderRobot>> SPIDER_ROBOT =
             ENTITY_TYPES.register("spider_robot", () -> EntityType.Builder.of(SpiderRobot::new, MobCategory.MISC)
-                    .sized(2.0f, 1.5f).clientTrackingRange(10).build("spider_robot"));
+                    // ENT-S-088: orig SpiderRobot.java:58 — setSize(3.25f, 2.25f). Must match
+                    // the MHLib profile main size (hitbox_profiles/spider_robot.json) EXACTLY
+                    // or modern-mode dims silently fork from classic (EntityEvent.Size hook).
+                    .sized(3.25f, 2.25f).clientTrackingRange(10).build("spider_robot"));
 
     // Phase D1 (ENT-A-085) — AMBIENT to match the original's ambient w1 1-1
     // snowy-biome spawns (orig OreSpawnMain.java:4774-4775); was MISC, which

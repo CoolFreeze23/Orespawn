@@ -148,12 +148,19 @@ with one picture.
   steering is stronger. This is the same treatment vanilla gives ridden
   horses and is kept deliberately — it is what makes stairs feel right
   from the saddle.
-- **Mounting the spider**: the clickable body has always been the
-  small core at GROUND level between the legs — in 1.0 too; the big
-  visual body overhead was never the hitbox. Aim low and center. As a
-  modern improvement, the LEGS are also clickable mount surfaces now
-  (a leg click mounts you, something classic's click geometry never
-  offered).
+- **Mounting the spider**: the clickable body is now the full-size
+  3.25×2.25 box of the 1.7.10 original — 2.0.0 restored it after
+  port 1.0 shipped a shrunken, never-audited 2.0×1.5 box
+  (ENT-S-088). An earlier version of this note claimed the small
+  ground-level core was the hitbox "in 1.0 too" and that the big
+  body "was never the hitbox" — that was true of port 1.0's small
+  box, but NOT of 1.7.10, which always had the big box. Aim
+  anywhere in the box between/under the visual body (it spans
+  ground level to 2.25 high and 3.25 wide, so it is a much easier
+  target than before; the visual body overhead can still sit partly
+  above it). As a modern improvement, the LEGS are also clickable
+  mount surfaces (a leg click mounts you, something classic's click
+  geometry never offered).
 - Robot ants only obey (heal, mount) their OWNER, exactly as in 1.0 —
   a wild or command-summoned ant ignores you unless summoned with
   `{AntRobotOwned:1}`.

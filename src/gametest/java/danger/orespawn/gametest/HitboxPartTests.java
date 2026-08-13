@@ -65,7 +65,12 @@ public class HitboxPartTests {
      * Test 7 (design doc): classic constructs ZERO parts and stays exactly
      * the 1.0 entity (pickable, not multipart); modern carries 8 leg parts
      * with the body STILL pickable (D3: legs are additional surfaces, never
-     * forced routing), and typed queries see no part contamination.
+     * forced routing), and typed queries see no part contamination. Plus
+     * the ENT-S-088 dims pin, both modes: 3.25×2.25 (orig
+     * SpiderRobot.java:58) — the modern arm is the Size-hook trap (MHLib
+     * applies the PROFILE main size via EntityEvent.Size, so a profile
+     * drift would silently resize every modern spider; the ant's mirror
+     * pin is s5b_ant_mode_gate_and_dims).
      */
     @GameTest(template = "empty", batch = "spiderGaitIsolation")
     public void s4_part_counts_and_classic_zero(GameTestHelper helper) {
@@ -77,6 +82,9 @@ public class HitboxPartTests {
                     "CLASSIC spider constructed MHLib parts (D3 zero-parts law)");
             helper.assertFalse(classic.isMultipartEntity(), "CLASSIC spider reports multipart");
             helper.assertTrue(classic.isPickable(), "CLASSIC spider must stay pickable");
+            helper.assertTrue(classic.getBbWidth() == 3.25f && classic.getBbHeight() == 2.25f,
+                    "classic spider dims drifted from orig SpiderRobot.java:58 (ENT-S-088): "
+                            + classic.getBbWidth() + "x" + classic.getBbHeight());
 
             OreSpawnConfig.SPIDER_MOVEMENT.set(OreSpawnConfig.SpiderMovement.MODERN);
             SpiderRobot modern = helper.spawnWithNoFreeWill(ModEntities.SPIDER_ROBOT.get(), new BlockPos(2, 2, 6));
@@ -86,6 +94,9 @@ public class HitboxPartTests {
             helper.assertTrue(modern.isMultipartEntity(), "MODERN spider must report multipart");
             helper.assertTrue(modern.isPickable(),
                     "MODERN spider body must STAY pickable (profile main canReceiveDamage=true)");
+            helper.assertTrue(modern.getBbWidth() == 3.25f && modern.getBbHeight() == 2.25f,
+                    "modern spider dims drifted (Size-hook trap, ENT-S-088): "
+                            + modern.getBbWidth() + "x" + modern.getBbHeight());
             // Server part-id cascade contract — the exact sequence the
             // client's id-restore build must reproduce (multiplayer id
             // integrity; the client half is client-only code, TO BE
