@@ -3340,3 +3340,24 @@ captured; the flagged seat/ride tests green in both modes — the
 S7a seat constants are absolute, so the dims change never touches
 them), build+assetAudit 0 err / 0 adv / 3 ack. Nothing pushes;
 eyes-on items go to the owner's sitting.
+
+## BUG-036 — invented wild royal spawns deleted + TEST-003 partial (2026-08-11)
+
+Field report (owner, CrazyCraft 5.0): Princess spawned beside the player
+on a fresh world. Verified NOT original: the complete orig addSpawn
+roster (55 classes) has no royalty; companion_royalty.json was pre-audit
+Phase 4E content — the lone survivor of six invented companion-spawn
+files (its five siblings were deleted during the audit) and covered by
+no finding. Deleted per the faithful-first contract (option D over the
+reporter's A-C: gating/narrowing would preserve invented content).
+checkSpawnRules stay faithfully always-true (orig :369-371/:381-383);
+chunk-gen pre-population of roster-backed CREATUREs (girlfriends at
+world spawn!) is original behavior, untouched. Regression net in
+SpawnGateTests with a positive control. TEST-003 opened: boss005/boss012
+moved to per-test isolated batches (the proven default-batch detonators);
+remaining unbatched config-flip sites listed for an design ruling.
+Pre-audit-provenance sweep flagged ~48 modifier files whose last content
+touch predates Phase C — most were verified-without-modification by
+C/D/E phases, but the royalty case proves unvalidated survivors exist:
+a modifier-provenance audit (each file's spawner list diffed against the
+orig addSpawn table + dimension rosters) is proposed as a follow-up.

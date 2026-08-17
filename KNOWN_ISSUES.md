@@ -35,6 +35,12 @@ wrong for you, please say so.
 
 **post-beta.3 (in the next build):**
 
+- The Princess and The Prince no longer spawn wild in the overworld (they
+  could even appear right at world spawn on a brand-new world). This was
+  leftover invented content — in the original they only come from spawn
+  eggs, the Queen's death, and structures. Girlfriends and Boyfriends
+  still roam wild exactly like 1.7.10. *(BUG-036)*
+
 - The Queen no longer freezes mid-air (or endlessly repeats one attack
   swing) after her first melee — her attack animations now finish and
   blend back into her flying stance, and she stays animated through

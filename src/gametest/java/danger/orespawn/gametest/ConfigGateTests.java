@@ -628,7 +628,12 @@ public class ConfigGateTests {
      * only King-spawner detonation and King natural spawns, which no
      * concurrent test exercises.</p>
      */
-    @GameTest(template = "empty_large", timeoutTicks = 300)
+    // TEST-003: this test holds a GLOBAL config flag flipped across a
+    // 140-tick window and then scans a 40-block radius — in the concurrent
+    // default batch, both are interference channels (which 50 tests share a
+    // bucket is a function of total test count, so ANY suite growth can hand
+    // it a King-spawning neighbor; first detonation 2026-08-11). Own batch.
+    @GameTest(template = "empty_large", timeoutTicks = 300, batch = "bossGate005")
     public void boss005_king_spawner_fizzles_when_disabled(GameTestHelper helper) {
         boolean prior = OreSpawnConfig.THE_KING_ENABLE.get();
         OreSpawnConfig.THE_KING_ENABLE.set(false);
@@ -653,7 +658,8 @@ public class ConfigGateTests {
      * the King's (orig QueenSpawnerBlock, gate orig OreSpawnMain.java:6435;
      * port BossSpawnerBlock.java:93-101 + OreSpawnConfig.java:287-289).
      */
-    @GameTest(template = "empty_large", timeoutTicks = 300)
+    // TEST-003: same isolation rationale as boss005 above.
+    @GameTest(template = "empty_large", timeoutTicks = 300, batch = "bossGate012")
     public void boss012_queen_spawner_fizzles_when_disabled(GameTestHelper helper) {
         boolean prior = OreSpawnConfig.THE_QUEEN_ENABLE.get();
         OreSpawnConfig.THE_QUEEN_ENABLE.set(false);

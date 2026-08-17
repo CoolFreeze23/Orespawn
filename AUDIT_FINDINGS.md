@@ -5849,3 +5849,51 @@ VanillaParityTests.bug036_vanilla_creeper_has_no_mhlib_parts pins
 zero parts + isMultipartEntity false + directly pickable so a future
 vendoring refresh cannot reintroduce a demo profile. Ships with the
 next release.
+
+### BUG-036 — Invented wild royal spawns: Princess/Prince at world creation
+
+- **Impact:** HIGH (field, CrazyCraft 5.0 pack report) — a brand-new world
+  could generate with ThePrincess (or ThePrince) standing at the player's
+  feet. Three pieces: (1) companion_royalty.json (neoforge:add_spawns)
+  put both royals in the CREATURE pool of every #minecraft:is_overworld
+  biome at weight 1; (2) both are MobCategory.CREATURE, the category
+  vanilla PRE-POPULATES into newly generated chunks
+  (NaturalSpawner.spawnMobsForChunkGeneration, CHUNK_GENERATION) and
+  makes persistent-by-category; (3) both checkSpawnRules return true
+  unconditionally (faithful: orig ThePrincess.java:369-371 /
+  ThePrince.java:381-383).
+- **Original contract:** the royals appear in NO spawn list. The complete
+  EntityRegistry.addSpawn roster (orig OreSpawnMain.java:4522+, 55
+  classes) and the dimension-biome spawn architecture contain neither;
+  they are obtainable via spawn egg, the Queen's death (orig :193), and
+  structures. Wild spawning is invented content.
+- **Provenance:** companion_royalty.json was added pre-audit (8928c67
+  Phase 4E) alongside five sibling invented companion files
+  (camarasaurus, gamma_metroid, leon, spyro, velocity_raptor) that the
+  audit later deleted — royalty was the lone survivor; no audit finding
+  ever covered it (grep-verified).
+- **Resolution:** FIXED (2026-08-11 — companion_royalty.json deleted,
+  option D: the original never had wild royals, so gating or narrowing
+  it would preserve invented content. Spawn RULES untouched (faithful).
+  Regression net: SpawnGateTests#bug036_no_wild_royalty_in_creature_pools
+  asserts both royals absent from overworld CREATURE pools with the
+  Girlfriend's faithful plains entry as positive control — girlfriends
+  at world spawn on a new world ARE original behavior, chunk-gen
+  pre-population of roster-backed creatures is faithful and untouched.)
+
+### TEST-003 — Config-flipping gametests in the concurrent default batch
+
+- **Impact:** MEDIUM (suite reliability) — boss005/boss012 flip a global
+  boss-enable across a 140-tick window then scan a 40-block radius, in
+  the concurrent 50-test default batch. Bucket composition is a function
+  of total test count, so any suite growth reshuffles neighbors; first
+  detonation 2026-08-11 (boss005 false-failed after +3 uncommitted gait
+  tests re-bucketed the batch). Broader exposure (unbatched .set()
+  call sites, sweep 2026-08-11): EntityLogicTestsA (13), SpawnGateTests
+  (12, synchronous-with-finally by design note), StructureTestsA (4).
+- **Resolution:** PARTIAL (2026-08-11 — boss005 -> batch "bossGate005",
+  boss012 -> "bossGate012" (the two proven-shape offenders; one test per
+  batch, since same-batch tests run concurrently). REMAINING: audit the
+  other unbatched .set() sites for window-shaped mutations — proposed as
+  a follow-up ruling; the synchronous set-assert-restore-in-one-tick
+  pattern (SpawnGateTests' documented contract) is believed safe.)
