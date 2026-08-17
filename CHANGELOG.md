@@ -1,25 +1,92 @@
-# 2.0 "OreSpawn Modernized" — in development
+# OreSpawn for NeoForge 1.21.1 — 2.0.0-beta.1 "OreSpawn Modernized"
 
-The parity port replicated 1.7.10 exactly; 2.0 is where the deliberate
-improvements live, and the robot spider leads. With the default
-`spiderMovement = "MODERN"` config, the Giant Robot Spider walks on
-procedurally animated legs that genuinely plant on, climb and descend
-terrain; its body rides the legs — tilting up slopes, sagging when
-footing is lost; the legs are real hitboxes you can shoot and strike
-(dealing exactly body damage — no new weak points); the crosshair
-health bar works when aiming at a leg (and now also on The King's
-giant parts); and a mounted player can finally STEER the spider.
+The first public build of OreSpawn 2.0. The 1.0 line replicated 1.7.10
+exactly; 2.0 is where the deliberate improvements live — clearly
+labeled, and always one config line away from pure 1.7.10. Worlds
+carry forward from any 1.0 beta.
 
-The **Robot Ant** walks the same walk: six procedurally planted legs,
-real per-leg hitboxes with the same damage rules, and its beloved
-hover-ride untouched — airborne legs fold into a dangle and re-plant
-on touchdown.
+## The headline: the Procedural Spider Overhaul
 
-**Classic is one config line away**: `spiderMovement = "CLASSIC"`
-restores the 1.7.10 spider bit-identically — the same client-side leg
-animation, body-only hitbox and famously unsteerable saddle the
-parity port shipped. Preservation stays the default promise; MODERN is
-simply the default setting.
+- **The Giant Robot Spider and Robot Ant walk for real now.** With the
+  default `spiderMovement = "MODERN"`, the legs are procedural and
+  genuinely plant: feet stay put in the world while the body moves,
+  find footing on stairs, slabs and ledges, contract on narrow
+  bridges, and dangle-and-re-step when there's nothing to stand on.
+  The body rides its legs — tilting up slopes, sagging when footing
+  collapses, settling level on flat ground.
+- **Every leg is a real, hittable surface.** All 8 spider legs and 6
+  ant legs take hits and deal exactly body damage — no new weak
+  points — and the crosshair health bar now works when you aim at a
+  leg (and, bonus, on The King's giant body parts, which never showed
+  a bar before).
+- **The spider is RIDEABLE — actually steerable — for the first time
+  ever.** In 1.7.10 and the 1.0 port you could sit on the spider but
+  never drive it. Modern mode gives the saddle real steering (full
+  speed forward, half strafe, quarter reverse), stairs feel right
+  from the saddle, and clicking a LEG mounts you — no more hunting
+  for the body between the legs.
+- **A smart riding camera.** Mounting glides the camera back so the
+  huge body sits low in your view, with collision handling for caves
+  and tree cover; dismounting snaps instantly back to vanilla.
+- **Classic is one config line away.** `spiderMovement = "CLASSIC"` is
+  the exact 1.7.10 robots, bit-identical — the same client-side leg
+  animation, body-only hitbox, and famously unsteerable saddle. The
+  automated suite runs green in BOTH modes on every build (192 tests
+  under MODERN and under CLASSIC), so preservation stays a tested
+  promise, not a checkbox.
+
+## Also fixed in this build
+
+- **The Queen no longer freezes mid-air** (or endlessly repeats one
+  attack swing) after her first melee — her attack animations now
+  finish and blend back into her flying stance, and she stays animated
+  through combat lulls like the original always did. Her death pose
+  still holds. *(BUG-035)*
+- **Vanilla creepers had stowaway hitboxes** in beta.2/beta.3: a
+  bundled-library demo file gave every vanilla creeper invisible extra
+  hit surfaces (head hits could deal double damage). Removed; an
+  automated test now pins "no OreSpawn parts on vanilla mobs".
+  *(BUG-036)*
+- **The Princess and The Prince no longer spawn wild** — they could
+  even appear right at world spawn on a brand-new world. Leftover
+  invented content; in the original they only come from spawn eggs,
+  the Queen's death, and structures. Girlfriends and Boyfriends still
+  roam wild exactly like 1.7.10. *(BUG-037)*
+- **Riders sit on the spider properly again.** The classic seat had
+  been wrong since the very first beta (riders sat half-buried in the
+  body); the faithful 1.7.10 seat is restored in both modes, composed
+  with the modern body motion so it stays right on slopes and sags.
+  *(S7a)*
+- **The spider's body hitbox is the original's again**: the full
+  3.25×2.25 box from 1.7.10, restored after the 1.0 port shipped a
+  shrunken, never-audited 2.0×1.5 box — a much easier target to click
+  and to hit. *(ENT-S-088)*
+
+## Known issues & tuning — beta players are the tuners now
+
+[KNOWN_ISSUES.md](KNOWN_ISSUES.md) has the full list. The short
+version:
+
+- **Mid-swing legs lead your view on laggy servers.** An airborne,
+  stepping leg is a moving target that tracks the server's swing — at
+  high ping, lead it slightly or just hit the body, which pays exactly
+  the same. Planted legs are always precisely where they look.
+- **Tuning feedback wanted.** At sustained sprint the spider's legs
+  churn faster than a clean walk cycle (the body never slows down, so
+  steps convert into quick forced lifts) — and the Robot Ant's step
+  tempo is a first-pass tune. If a stride reads wrong to you, that
+  report is exactly what this beta is for.
+- The ant's dangling legs during hover-flight are intended; robot ants
+  still only obey their owner; and modern spiders genuinely trample
+  grass under a rider (with mobGriefing on) — the original tried to,
+  but its client-side trample rarely stuck on servers.
+
+## What's next
+
+The **Queen Coherence pass**: the freeze fix in this build came out of
+a full review of her animation stack, and the follow-ups that review
+surfaced — a real calm-vs-aggro flight state like the original's,
+wake-up polish, attack cadence — are the teased next milestone.
 
 # OreSpawn for NeoForge 1.21.1 — 1.0.0-beta.3
 

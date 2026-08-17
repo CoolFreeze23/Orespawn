@@ -1,7 +1,8 @@
 # Known Issues — OreSpawn Port (BETA)
 
 **This release is a beta.** The game logic underneath has been through a
-144-test automated suite (all green) plus a hands-on play session, but a lot
+192-test automated suite (all green, in both robot modes) plus hands-on
+play sessions, but a lot
 of the *visual and audio* polish has deliberately been left open for
 community feedback. You will find rough edges — and we want to hear about
 every one of them.
@@ -136,7 +137,17 @@ with one picture.
   did double damage, point-blank body shots could feel off). Purely
   server-side; no world data affected.
 
-## 2.0 development notes (unreleased)
+## The 2.0 robot overhaul (new in 2.0.0-beta.1)
+
+**Tuning feedback welcome — beta players are the tuners now.** Two
+feel items shipped as-built on purpose, and your reports decide their
+final tune: (1) at sustained full sprint the spider's legs churn —
+stepping faster and scrappier than a clean walk cycle, because the
+body never slows down and inhibited steps convert to quick forced
+lifts; it disappears at normal speeds. (2) The Robot Ant's step tempo
+and re-step eagerness are a first-pass tune — if its six-legged walk
+reads mincing or twitchy to you, say so. Neither affects damage,
+mounting, or hover behavior.
 
 - **Modern robot spiders** (the `spiderMovement` config, default MODERN):
   legs are now real hittable surfaces dealing body-identical damage, the
