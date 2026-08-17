@@ -39,7 +39,7 @@ wrong for you, please say so.
   could even appear right at world spawn on a brand-new world). This was
   leftover invented content — in the original they only come from spawn
   eggs, the Queen's death, and structures. Girlfriends and Boyfriends
-  still roam wild exactly like 1.7.10. *(BUG-036)*
+  still roam wild exactly like 1.7.10. *(BUG-037)*
 
 - The Queen no longer freezes mid-air (or endlessly repeats one attack
   swing) after her first melee — her attack animations now finish and

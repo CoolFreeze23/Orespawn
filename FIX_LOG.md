@@ -3341,7 +3341,12 @@ S7a seat constants are absolute, so the dims change never touches
 them), build+assetAudit 0 err / 0 adv / 3 ack. Nothing pushes;
 eyes-on items go to the owner's sitting.
 
-## BUG-036 — invented wild royal spawns deleted + TEST-003 partial (2026-08-11)
+## BUG-037 — invented wild royal spawns deleted + TEST-003 partial (2026-08-11)
+
+(Renumbered from BUG-036 at release prep: two parallel sessions both
+assigned BUG-036 on 2026-08-11 — the creeper demo-profile fix keeps the
+ID, this later royal-spawns entry becomes BUG-037. Commit 4ea395c's
+message retains the old number; history is not rewritten.)
 
 Field report (owner, CrazyCraft 5.0): Princess spawned beside the player
 on a fresh world. Verified NOT original: the complete orig addSpawn

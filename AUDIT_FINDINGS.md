@@ -5850,7 +5850,11 @@ zero parts + isMultipartEntity false + directly pickable so a future
 vendoring refresh cannot reintroduce a demo profile. Ships with the
 next release.
 
-### BUG-036 — Invented wild royal spawns: Princess/Prince at world creation
+### BUG-037 — Invented wild royal spawns: Princess/Prince at world creation
+
+*(Renumbered from BUG-036 at 2.0.0-beta.1 release prep — duplicate ID
+assigned by parallel sessions; the creeper demo-profile finding above
+keeps BUG-036. Commit 4ea395c's message retains the old number.)*
 
 - **Impact:** HIGH (field, CrazyCraft 5.0 pack report) — a brand-new world
   could generate with ThePrincess (or ThePrince) standing at the player's
@@ -5875,7 +5879,7 @@ next release.
 - **Resolution:** FIXED (2026-08-11 — companion_royalty.json deleted,
   option D: the original never had wild royals, so gating or narrowing
   it would preserve invented content. Spawn RULES untouched (faithful).
-  Regression net: SpawnGateTests#bug036_no_wild_royalty_in_creature_pools
+  Regression net: SpawnGateTests#bug037_no_wild_royalty_in_creature_pools
   asserts both royals absent from overworld CREATURE pools with the
   Girlfriend's faithful plains entry as positive control — girlfriends
   at world spawn on a new world ARE original behavior, chunk-gen
