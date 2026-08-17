@@ -191,4 +191,44 @@ public class SpawnGateTests {
         }
         helper.succeed();
     }
+
+    /**
+     * BUG-036 regression net: the royals must never sit in any biome's
+     * natural CREATURE spawn pool. A pre-audit biome modifier
+     * (companion_royalty.json, Phase 4E) had added ThePrince + ThePrincess
+     * to {@code #minecraft:is_overworld} at weight 1 — and because vanilla
+     * pre-populates newly generated chunks with CREATURE-category mobs
+     * during worldgen ({@code NaturalSpawner.spawnMobsForChunkGeneration},
+     * {@code MobSpawnType.CHUNK_GENERATION}), a fresh world could roll a
+     * persistent-by-category Princess right at world spawn. The original
+     * registers NEITHER royal in any spawn list (the complete
+     * EntityRegistry.addSpawn roster, orig OreSpawnMain.java:4522+, has no
+     * royalty — they come from eggs, the Queen's death, and structures
+     * only; their always-true spawn rules, orig ThePrincess.java:369-371 /
+     * ThePrince.java:381-383, are moot without a list entry and are kept
+     * faithfully). The Girlfriend assertion is the positive control: her
+     * plains CREATURE entry IS faithful (orig addSpawn(Girlfriend.class)) —
+     * and being in that same chunk-generation pool, girlfriends at world
+     * spawn on a new world are original behavior — so it proves this test
+     * reads the modifier-baked pools.
+     */
+    @GameTest(template = "empty")
+    public void bug036_no_wild_royalty_in_creature_pools(GameTestHelper helper) {
+        var biomes = helper.getLevel().registryAccess()
+                .registryOrThrow(net.minecraft.core.registries.Registries.BIOME);
+        for (var biomeKey : List.of(net.minecraft.world.level.biome.Biomes.PLAINS,
+                net.minecraft.world.level.biome.Biomes.DESERT)) {
+            var pool = biomes.getHolderOrThrow(biomeKey).value().getMobSettings()
+                    .getMobs(net.minecraft.world.entity.MobCategory.CREATURE).unwrap();
+            helper.assertTrue(pool.stream().noneMatch(s ->
+                            s.type == ModEntities.THE_PRINCESS.get() || s.type == ModEntities.THE_PRINCE.get()),
+                    "a royal is in the " + biomeKey.location() + " CREATURE pool (BUG-036 regression)");
+        }
+        var plainsPool = biomes.getHolderOrThrow(net.minecraft.world.level.biome.Biomes.PLAINS)
+                .value().getMobSettings()
+                .getMobs(net.minecraft.world.entity.MobCategory.CREATURE).unwrap();
+        helper.assertTrue(plainsPool.stream().anyMatch(s -> s.type == ModEntities.GIRLFRIEND.get()),
+                "positive control failed: Girlfriend missing from the plains CREATURE pool");
+        helper.succeed();
+    }
 }
