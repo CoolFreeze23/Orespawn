@@ -3,8 +3,9 @@
 > *"Just plain fun!"* — the classic 1.7.10 OreSpawn, rebuilt for modern
 > Minecraft with 100% source-verified parity.
 
-**Version:** 1.21.1-1.0.0-beta.3 · **Loader:** NeoForge 21.1+ · **Minecraft:** 1.21.1
-**Status:** public beta — gameplay-complete, visual/audio polish in community review
+**Version:** 1.21.1-2.0.0-beta.1 · **Loader:** NeoForge 21.1+ · **Minecraft:** 1.21.1
+**Status:** public beta — the 2.0 robot overhaul is live; the 1.0 parity
+core underneath is stable, with visual/audio polish in community review
 
 ---
 
@@ -22,7 +23,7 @@ defined "overpowered fun" for a generation of players. The original, by
 An unofficial **preservation port** to NeoForge 1.21.1. Not a re-imagining:
 the goal was the original, exactly — every stat, drop table, spawn rule, AI
 quirk, and yes, every famous bug, verified line-by-line against the
-original's source. 630 audited findings tracked to closure; a 150-test
+original's source. 630 audited findings tracked to closure; a 192-test
 automated regression suite guards the result.
 
 - Faithful first: if 1.7.10 did something weird, this port does it too.
@@ -51,6 +52,7 @@ automated regression suite guards the result.
 | **The arsenal** | Big Bertha to Ultimate gear, the gemstone armory, Royal Guardian glide. *(screenshot)* |
 | **Companions** | Girlfriends, Boyfriends, tameable everything, rideable robots and dragons. *(screenshot)* |
 | **A living world** | 47 structures, wild crops, anthills, troll blocks, boosted ores. *(screenshot)* |
+| **Modern robots** *(new in 2.0)* | Procedural spider & ant: legs that really plant and climb, per-leg hitboxes, a steerable spider saddle with a smart camera — or `spiderMovement = "CLASSIC"` for the exact 1.7.10 robots. *(screenshot)* |
 
 ## Beta status — read this
 
@@ -65,11 +67,16 @@ post-beta patch.
 
 ## Roadmap
 
-- **1.0.0**: after the castle-tree patch and the community visual pass.
-- **2.0 "OreSpawn Modernized"** ([the backlog](MODERNIZATION_NOTES.md)):
-  procedural spider with true multi-part hitboxes, bone-synced boss
-  hitboxes, config toggles for the original's roughest edges, and the
-  archived kyanite branch as optional content. Parity stays the default.
+- **2.0.0-beta.1 (this build)**: the Procedural Spider Overhaul —
+  see [CHANGELOG.md](CHANGELOG.md). Classic 1.7.10 behavior remains
+  one config line away and is regression-tested on every build.
+- **Next**: the Queen Coherence pass (flight-state and animation
+  polish for The Queen), plus the remaining 2.0 backlog
+  ([MODERNIZATION_NOTES.md](MODERNIZATION_NOTES.md)) — bone-synced
+  boss hitboxes for King/Godzilla, config toggles for the original's
+  roughest edges, the archived kyanite branch as optional content.
+- **1.0 parity line**: the castle-tree patch (BUG-021) remains the
+  designated parity fix and rides into a future build.
 
 ## License & Ownership
 
@@ -97,7 +104,7 @@ ship in-repo: [AUDIT_FINDINGS.md](AUDIT_FINDINGS.md) (630 findings, each
 with original file:line citations and a terminal resolution),
 [FIX_LOG.md](FIX_LOG.md) (the phase-by-phase work record),
 [PARITY_NOTES.md](PARITY_NOTES.md) (every intentional deviation and
-preserved original bug), a 150-test GameTest suite, and a static asset
+preserved original bug), a 192-test GameTest suite, and a static asset
 audit that runs on every build. The commit history is the audit trail —
 each slice of work landed gated on a green build, asset audit, and test
 suite.
