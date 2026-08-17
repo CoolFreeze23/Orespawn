@@ -193,7 +193,8 @@ public class SpawnGateTests {
     }
 
     /**
-     * BUG-036 regression net: the royals must never sit in any biome's
+     * BUG-037 (renumbered from BUG-036 — duplicate id) regression net: the
+     * royals must never sit in any biome's
      * natural CREATURE spawn pool. A pre-audit biome modifier
      * (companion_royalty.json, Phase 4E) had added ThePrince + ThePrincess
      * to {@code #minecraft:is_overworld} at weight 1 — and because vanilla
@@ -213,7 +214,7 @@ public class SpawnGateTests {
      * reads the modifier-baked pools.
      */
     @GameTest(template = "empty")
-    public void bug036_no_wild_royalty_in_creature_pools(GameTestHelper helper) {
+    public void bug037_no_wild_royalty_in_creature_pools(GameTestHelper helper) {
         var biomes = helper.getLevel().registryAccess()
                 .registryOrThrow(net.minecraft.core.registries.Registries.BIOME);
         for (var biomeKey : List.of(net.minecraft.world.level.biome.Biomes.PLAINS,
@@ -222,7 +223,7 @@ public class SpawnGateTests {
                     .getMobs(net.minecraft.world.entity.MobCategory.CREATURE).unwrap();
             helper.assertTrue(pool.stream().noneMatch(s ->
                             s.type == ModEntities.THE_PRINCESS.get() || s.type == ModEntities.THE_PRINCE.get()),
-                    "a royal is in the " + biomeKey.location() + " CREATURE pool (BUG-036 regression)");
+                    "a royal is in the " + biomeKey.location() + " CREATURE pool (BUG-037 regression)");
         }
         var plainsPool = biomes.getHolderOrThrow(net.minecraft.world.level.biome.Biomes.PLAINS)
                 .value().getMobSettings()
