@@ -1,6 +1,9 @@
 # OreSpawn for NeoForge 1.21.1 — 2.0.0-beta.3
 
-Hotfix for a world-generation crash.
+A server-killing worldgen crash fixed, plus the full close-out of the
+Queen animation review. Worlds carry forward from any earlier beta.
+
+## World generation
 
 - **Village/Mining dimension lake crash fixed.** Generating a new chunk
   with a classic lake could kill the whole server with
