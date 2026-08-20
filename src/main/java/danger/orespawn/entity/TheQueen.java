@@ -122,16 +122,23 @@ public class TheQueen extends Monster implements GeoEntity {
     // â”€â”€â”€ Geckolib phase-shift state â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     // IS_AWAKE drives the dynamic texture swap (blue idle â†’ red aggro)
     // and the controller's animation choice. TRANSITION_TICKS counts
-    // down from 60 while the idle_to_attack animation plays; when it
-    // hits 1, we flip IS_AWAKE on so the controller falls through to
-    // the looping "attack" stance.
+    // down from WAKE_UP_DURATION_TICKS while the idle_to_attack
+    // animation plays; when it hits 0 (decremented in tick()), we flip
+    // IS_AWAKE on so the controller falls through to the looping
+    // "attack" stance.
     private static final EntityDataAccessor<Boolean> IS_AWAKE =
             SynchedEntityData.defineId(TheQueen.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Integer> TRANSITION_TICKS =
             SynchedEntityData.defineId(TheQueen.class, EntityDataSerializers.INT);
 
-    /** Length (ticks) of the idle_to_attack wake-up animation. */
-    public static final int WAKE_UP_DURATION_TICKS = 60;
+    /**
+     * Length (ticks) of the idle_to_attack wake-up animation.
+     * The authored clip is 3.5833s = ~71.7 ticks (hold_on_last_frame);
+     * 72 lets it play out fully before the stance promotion. Was 60,
+     * which cut the final 12 ticks of the wake-up (BUG-035 follow-up,
+     * sweep item 4).
+     */
+    public static final int WAKE_UP_DURATION_TICKS = 72;
 
     // â”€â”€â”€ Geckolib animation cache + attack windup â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     private final AnimatableInstanceCache animCache = GeckoLibUtil.createInstanceCache(this);
@@ -443,6 +450,26 @@ public class TheQueen extends Monster implements GeoEntity {
         Vec3 velocity = this.getDeltaMovement();
         this.setDeltaMovement(velocity.x, velocity.y * 0.6, velocity.z);
 
+        // â”€â”€â”€ Phase-shift transition counter (BUG-035 follow-up) â”€â”€â”€â”€â”€â”€â”€
+        // While idle_to_attack plays we count down from
+        // WAKE_UP_DURATION_TICKS; when the counter hits 0 we flip
+        // IS_AWAKE so the Movement controller promotes her to the
+        // looping "attack" stance and the model swaps to the red
+        // texture from now on. Lives in tick() rather than
+        // customServerAiStep() so the countdown cannot stall with
+        // TRANSITION_TICKS>0 if AI stops being reached (hurt() only
+        // re-arms at ticks==0, so a stall here was unrecoverable).
+        if (!this.level().isClientSide) {
+            int transition = this.getTransitionTicks();
+            if (transition > 0) {
+                transition--;
+                this.setTransitionTicks(transition);
+                if (transition == 0) {
+                    this.setAwake(true);
+                }
+            }
+        }
+
         if (this.playerHitCount < 10 && this.getHealth() < (float)(this.mygetMaxHealth() * 3 / 4)) {
             this.attackDamage = ATTACK_DAMAGE_VALUE * 20;
         }
@@ -540,18 +567,6 @@ public class TheQueen extends Monster implements GeoEntity {
 
     @Override
     public boolean hurt(DamageSource source, float amount) {
-        // â”€â”€â”€ Geckolib phase-shift trigger (cosmetic only, BOSS-010) â”€â”€â”€
-        // The Queen spawns in the dormant blue pose; the first hit kicks
-        // off the 60-tick idle_to_attack animation (texture swap handled
-        // by the Movement controller). The 1.7.10 Queen had NO dormant
-        // phase â€” every hit dealt normal damage from the start â€” so the
-        // transition must not absorb damage or clear her target: the
-        // triggering hit and all hits during the wake-up window fall
-        // through to the normal damage path below.
-        if (!this.level().isClientSide && !this.isAwake() && this.getTransitionTicks() == 0) {
-            this.setTransitionTicks(WAKE_UP_DURATION_TICKS);
-        }
-
         if (this.hurtTimer > 0) {
             return false;
         }
@@ -584,6 +599,21 @@ public class TheQueen extends Monster implements GeoEntity {
         }
 
         if (!source.getMsgId().equals("cactus")) {
+            // â”€â”€â”€ Geckolib phase-shift trigger (cosmetic only, BOSS-010) â”€â”€â”€
+            // The Queen spawns in the dormant blue pose; the first hit that
+            // actually deals damage kicks off the idle_to_attack wake-up
+            // animation (texture swap handled by the Movement controller).
+            // The 1.7.10 Queen had NO dormant phase â€” every hit dealt
+            // normal damage from the start â€” so the transition must not
+            // absorb damage or clear her target: the triggering hit and all
+            // hits during the wake-up window fall through to the normal
+            // damage path. Armed here, AFTER the damage filters, so
+            // filtered non-hits (healed explosions, discarded tiny-monster
+            // attackers, inWall) no longer wake her (BUG-035 follow-up,
+            // sweep item 6).
+            if (!this.level().isClientSide && !this.isAwake() && this.getTransitionTicks() == 0) {
+                this.setTransitionTicks(WAKE_UP_DURATION_TICKS);
+            }
             this.hurtTimer = 20;
             boolean ret = super.hurt(source, clampedDamage);
             if (attacker instanceof Player) {
@@ -692,20 +722,6 @@ public class TheQueen extends Monster implements GeoEntity {
         }
         if (this.hurtTimer > 0) {
             this.hurtTimer--;
-        }
-
-        // â”€â”€â”€ Phase-shift transition counter â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-        // While idle_to_attack plays we count down from 60. When the
-        // counter hits 1, flip IS_AWAKE so the Movement controller
-        // promotes her to the looping "attack" stance and the model
-        // swaps to the red texture from now on.
-        int transition = this.getTransitionTicks();
-        if (transition > 0) {
-            transition--;
-            this.setTransitionTicks(transition);
-            if (transition == 0) {
-                this.setAwake(true);
-            }
         }
 
         // â”€â”€â”€ Melee windup resolution â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
@@ -1425,6 +1441,14 @@ public class TheQueen extends Monster implements GeoEntity {
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
         controllers.add(new AnimationController<>(this, "Movement", 5, state -> {
             if (this.isDeadOrDying()) {
+                // Defensive (BUG-035 follow-up, sweep item 2): mark the
+                // controller for reload so that if isDeadOrDying() ever
+                // flickers true for a frame client-side (e.g. around a
+                // server-side heal top-up), resuming with the same
+                // RawAnimation instance restarts it instead of leaving
+                // the controller latched in STOPPED. On a real death
+                // this is a no-op â€” the entity is removed shortly after.
+                state.getController().forceAnimationReset();
                 return PlayState.STOP;
             }
             if (this.getTransitionTicks() > 0) {

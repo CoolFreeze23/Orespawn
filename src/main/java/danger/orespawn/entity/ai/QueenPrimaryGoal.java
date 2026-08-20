@@ -80,6 +80,18 @@ public class QueenPrimaryGoal extends Goal {
         return this.queen.isAlive();
     }
 
+    /**
+     * The 1.7.10 original ran this combat flow every AI tick from
+     * {@code func_70030_z_}; without this override the modern goal
+     * system only ticks running goals on alternate server ticks, which
+     * halved her flight impulse and attack cadence (BUG-035 follow-up,
+     * sweep item 5).
+     */
+    @Override
+    public boolean requiresUpdateEveryTick() {
+        return true;
+    }
+
     @Override
     public void tick() {
         this.queen.aiStepPrimary();

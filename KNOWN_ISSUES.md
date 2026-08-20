@@ -48,6 +48,14 @@ wrong for you, please say so.
   combat lulls like the original always did. Her death pose still holds.
   *(BUG-035)*
 
+- Queen follow-ups from the same review: she flies and attacks at the
+  original's full cadence (was half rate), her wake-up animation plays
+  to the end, only hits that actually damage her wake her from the
+  dormant blue phase, and two theoretical freeze edges are guarded.
+  Watch for: her fight feeling noticeably more aggressive than the
+  last build — that's the original's pace, not a bug. *(BUG-035
+  follow-up)*
+
 **beta.3 (first field reports — thank you!):**
 
 - The mod no longer needs any other mod installed to launch: beta.2 crashed
