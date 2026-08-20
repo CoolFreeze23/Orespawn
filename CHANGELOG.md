@@ -16,6 +16,24 @@ Hotfix for a world-generation crash.
   the season on the day the chunk happened to generate (the saner
   behavior anyway).
 
+## The Queen — animation-review follow-ups
+
+The held findings from the Queen animation review (the same pass that
+fixed her mid-air freeze) are now closed out:
+
+- **She fights at full speed again.** Her flight impulses and attack
+  cadence were running at half the original's rate — the modern goal
+  system only ticks a boss's behavior every other tick unless the goal
+  opts into every-tick updates, which the 1.7.10 Queen effectively had.
+- **Her wake-up plays out fully.** The dormant-to-aggro transition was
+  being cut off 12 ticks before the animation's final pose.
+- **Only real hits wake her.** Explosions (which heal her) and other
+  filtered non-hits no longer flip her out of the dormant blue phase.
+- **Two freeze-proofing guards.** The wake-up countdown can no longer
+  stall permanently if her AI is interrupted mid-transition, and her
+  stance controller can no longer latch off from a one-frame
+  client-side death-state flicker.
+
 # OreSpawn for NeoForge 1.21.1 — 2.0.0-beta.2
 
 A field-report patch: everything in it came from walking around a real

@@ -3366,3 +3366,46 @@ touch predates Phase C — most were verified-without-modification by
 C/D/E phases, but the royalty case proves unvalidated survivors exist:
 a modifier-provenance audit (each file's spawner list diffed against the
 orig addSpawn table + dimension rosters) is proposed as a follow-up.
+
+## BUG-035 follow-up — Queen sweep items dispositioned (2026-08-20)
+
+Owner directed the held Queen-pass inputs (BUG-035 entry above) be
+finished. Verified first: the BUG-035 loop:false fix is in-tree and in
+the shipped beta jar; melee trigger keys match the registered
+triggerableAnims; all 10 MHLib hitbox-profile bone refs and every
+animation-keyed bone exist in the geo (110 bones). Dispositions:
+
+- (2) Movement dead-latch — FIXED (defensive): predicate now calls
+  forceAnimationReset() before returning STOP on isDeadOrDying(), so a
+  one-frame client-side flicker can no longer latch the controller
+  STOPPED against an unchanged RawAnimation instance. Real death path
+  unaffected (entity removed shortly after). The underlying same-
+  RawAnimation no-op claim remains unverified against GL bytecode; the
+  guard is correct in either case (forceAnimationReset() confirmed
+  present in pinned 4.8.4 via javap).
+- (3) Stalled-WAKING statue — FIXED: the TRANSITION_TICKS countdown
+  moved from customServerAiStep() to tick() (server-side guarded), so
+  the wake-up can no longer stall unrecoverably if AI stops being
+  reached while ticks>0.
+- (4) WAKE_UP_DURATION_TICKS 60 vs 71.7t clip — FIXED: 72. Previously
+  recorded benign, but it cut the final 12 ticks of the authored
+  wake-up before the stance promotion; 72 lets the clip play out.
+- (5) QueenPrimaryGoal cadence — FIXED: requiresUpdateEveryTick()
+  override added (orig func_70030_z_ ran every AI tick; the modern
+  goal system ticks running goals on alternate ticks without it).
+  NOTE: KingPrimaryGoal has the same gap — NOT fixed here (out of the
+  Queen brief's scope; the King was field-tested at current cadence).
+  Recorded as a follow-up candidate.
+- (6) hurt() wake-arm ordering — FIXED: the transition arm moved from
+  the top of hurt() to after the damage filters (immediately before
+  super.hurt), so healed explosions, discarded tiny-monster attackers,
+  inWall, and invuln-window hits no longer wake her.
+- (7) doc/code mismatch ("hits 1" vs flip at 0) — FIXED with (3): the
+  relocated comment now says hits 0, matching the code.
+- (1) post-wake calm-state divergence (write-once IS_AWAKE latch vs
+  orig's dynamic getAttacking() wing keying) — STILL HELD: a return-to-
+  calm would also revert the invented blue/red texture phase mid-fight;
+  that is a presentation design decision, not a defect. Owner call.
+
+Client-visual items ((2), (4)) are not suite-assertable; (3), (5), (6)
+are server logic. Gate: full build green (see commit).
