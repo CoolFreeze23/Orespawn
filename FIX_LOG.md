@@ -3409,3 +3409,43 @@ animation-keyed bone exist in the geo (110 bones). Dispositions:
 
 Client-visual items ((2), (4)) are not suite-assertable; (3), (5), (6)
 are server logic. Gate: full build green (see commit).
+
+## WGEN Chaos round 2 — density inversion + BlendedNoise unit conversion (2026-08-21)
+
+Owner field reports, two rounds: "giant flatworld of stone", then after
+the first fix "still doesn't look right — more verticalness, hills and
+mountains". Three source-verified faithfulness bugs, each alone enough
+to flatten the dimension:
+
+1. INVERTED THRESHOLD. orig ChunkProviderOreSpawn6.func_147419_a
+   renders the density field as stone-by-default with AIR where
+   d15 > 0 — the photographic negative of the Nether (whose math it
+   copies verbatim). The port used the standard positive=solid
+   convention. Fix: final_density wrapped in mul(-1).
+2. CELL-vs-BLOCK SAMPLING. Legacy noise coords are per 4x8x4 CELL;
+   modern BlendedNoise samples per BLOCK (compute(): blockX() *
+   684.412 * xz_scale — verified in the decompiled 1.21.1 source).
+   Correct conversion is xz_scale 0.25 / y_scale 0.375 — exactly what
+   vanilla's own legacy-Nether port uses (nether/base_3d_noise.json).
+   The port had 1.0/3.0: 4x too fine horizontally, 8x vertically.
+3. /128 NORMALIZATION. BlendedNoise.compute() returns
+   clampedLerp(min/512, max/512, sel) / 128.0 (same decompiled source,
+   last line). The port's spline/blends are in legacy raw units, so the
+   noise arrived ~128x too weak and the ±2 cosine band dictated the
+   shape: deterministic flat plates at band heights. Fix: mul(128) on
+   the noise term, keeping the whole router in legacy units.
+
+Also this round: no sea (orig places no fluid; water branch at
+replaceBiomeBlocks:161 is dead code; default_fluid air / sea_level 0),
+grass+dirt default surface at ALL heights with the Y60-65 band the only
+patchy zone (orig :137-160 — the first fix had this backwards), and the
+teleporter landing hunt ported (orig OreSpawnTeleporter.justPutMe:88-129
+random-walk; findSafeY -> findSafeSpot, void columns no longer
+blind-drop at Y64).
+
+Verification: tools/chaos_slice.py re-implements the legacy octave
+stack and renders orig math vs shipped-bug vs fixed JSON side by side —
+fixed is numerically identical to orig (max |A-C| = 0.0) and shows the
+rolling grass highlands/mountains from the field report; the shipped
+bug reproduces the reported flat plates. Gates: build+assetAudit exit 0,
+gametest 192/192.
