@@ -10,6 +10,7 @@ import net.minecraft.client.renderer.entity.ThrownItemRenderer;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.FoliageColor;
+import net.minecraft.world.level.GrassColor;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -428,6 +429,20 @@ public class OreSpawnClient {
                     ModBlocks.CHERRY_LEAVES.get(),
                     ModBlocks.PEACH_LEAVES.get(),
                     ModBlocks.EXPERIENCE_LEAVES.get());
+            // Anthill grass tint (orig AntBlock extends BlockGrass;
+            // func_149720_d averages the 3x3 biome grass colour). Without the
+            // tint the raw antnest_side texture reads as a copper block
+            // littering the landscape. The crystal termite block is exempt:
+            // orig CrystalAntBlock extends plain Block, no tint.
+            event.register((state, level, pos, tintIndex) -> {
+                if (level != null && pos != null) return BiomeColors.getAverageGrassColor(level, pos);
+                return GrassColor.getDefaultColor();
+            },
+                    ModBlocks.ANT_BLOCK.get(),
+                    ModBlocks.RED_ANT_BLOCK.get(),
+                    ModBlocks.RAINBOW_ANT_BLOCK.get(),
+                    ModBlocks.UNSTABLE_ANT_BLOCK.get(),
+                    ModBlocks.TERMITE_BLOCK.get());
         }
 
         @SubscribeEvent
@@ -438,6 +453,13 @@ public class OreSpawnClient {
                     ModBlocks.CHERRY_LEAVES.get(),
                     ModBlocks.PEACH_LEAVES.get(),
                     ModBlocks.EXPERIENCE_LEAVES.get());
+            // orig AntBlock.func_149635_D: ColorizerGrass.getGrassColor(0.5, 1.0)
+            event.register((stack, tintIndex) -> GrassColor.get(0.5, 1.0),
+                    ModBlocks.ANT_BLOCK.get(),
+                    ModBlocks.RED_ANT_BLOCK.get(),
+                    ModBlocks.RAINBOW_ANT_BLOCK.get(),
+                    ModBlocks.UNSTABLE_ANT_BLOCK.get(),
+                    ModBlocks.TERMITE_BLOCK.get());
         }
 
         @SubscribeEvent

@@ -229,6 +229,21 @@ public class EntityAnt extends Animal {
         return null;
     }
 
+    /**
+     * Despawn parity (orig EntityAnt.java:70-72): the original overrode
+     * canDespawn ({@code func_70692_ba}) to {@code !isNoDespawnRequired()},
+     * so ants despawned like monsters despite extending EntityAnimal.
+     * {@link Animal#removeWhenFarAway} returns false, which made ported
+     * ants immortal — anthill blocks spew 2-7 ants per random tick, so
+     * without despawning the population grows forever. Vanilla checks
+     * persistence (name tags etc.) before calling this, matching the
+     * original's isNoDespawnRequired guard.
+     */
+    @Override
+    public boolean removeWhenFarAway(double distanceToClosestPlayer) {
+        return true;
+    }
+
     @Override
     public boolean checkSpawnRules(LevelAccessor level, MobSpawnType spawnType) {
         if (this.getY() < 50.0) return false;

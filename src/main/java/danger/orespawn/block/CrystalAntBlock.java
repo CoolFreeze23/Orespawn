@@ -10,6 +10,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.TransparentBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
 import danger.orespawn.ModEntities;
 
 /**
@@ -20,6 +21,17 @@ import danger.orespawn.ModEntities;
 public class CrystalAntBlock extends TransparentBlock {
     private static final int MIN_ANTS_PER_TICK = 2;
     private static final int MAX_EXTRA_ANTS = 6;
+    /**
+     * Deliberate deviation (optimization): the original AntBlock spawned its
+     * 2-7 ant burst unconditionally every random tick (orig AntBlock.java:
+     * 59-93) and relied on monster-style despawning to keep populations in
+     * check. That still allows hundreds of persistent entities to pile up
+     * while a player idles within despawn range of a nest, so the burst is
+     * skipped once the area around the nest is already saturated. 10 matches
+     * the original termite replication cap (orig Termite.java:245).
+     */
+    private static final int NEARBY_ANT_CAP = 10;
+    private static final double NEARBY_ANT_RANGE = 20.0;
 
     public enum AntType { BLACK_ANT, RED_ANT, UNSTABLE_ANT, TERMITE, CRYSTAL_TERMITE, RAINBOW_ANT }
 
@@ -48,7 +60,11 @@ public class CrystalAntBlock extends TransparentBlock {
         BlockPos above = pos.above();
         if (!level.getBlockState(above).is(Blocks.AIR)) return;
 
-        int antCount = random.nextInt(MAX_EXTRA_ANTS) + MIN_ANTS_PER_TICK;
+        int nearby = level.getEntitiesOfClass(danger.orespawn.entity.EntityAnt.class,
+                new AABB(pos).inflate(NEARBY_ANT_RANGE, NEARBY_ANT_RANGE / 2.0, NEARBY_ANT_RANGE)).size();
+        if (nearby >= NEARBY_ANT_CAP) return;
+
+        int antCount = Math.min(random.nextInt(MAX_EXTRA_ANTS) + MIN_ANTS_PER_TICK, NEARBY_ANT_CAP - nearby);
         for (int i = 0; i < antCount; i++) {
             EntityType<? extends Mob> entityType = getEntityType();
             if (entityType == null) continue;
