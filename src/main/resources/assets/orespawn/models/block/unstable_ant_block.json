@@ -1,6 +1,3 @@
 {
-  "parent": "minecraft:block/cube_all",
-  "textures": {
-    "all": "orespawn:blocks/antnest_side"
-  }
+  "parent": "orespawn:block/ant_block"
 }

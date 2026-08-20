@@ -15,8 +15,22 @@ public class AntRenderer extends MobRenderer<EntityAnt, AntModel<EntityAnt>> {
     public static final ModelLayerLocation MODEL_LAYER =
             new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "ant"), "main");
 
+    /** orig ClientProxyOreSpawn: RenderAnt(new ModelAnt(), 0.1f shadow, 0.25f scale). */
+    private static final float SCALE = 0.25f;
+
     public AntRenderer(EntityRendererProvider.Context context) {
-        super(context, new AntModel<>(context.bakeLayer(MODEL_LAYER)), 0.1f);
+        // orig RenderAnt ctor: shadow = par2 * par3 = 0.1 * 0.25
+        super(context, new AntModel<>(context.bakeLayer(MODEL_LAYER)), 0.1f * SCALE);
+    }
+
+    /**
+     * orig RenderAnt.preRenderScale (RenderAnt.java:38-40): glScalef by the
+     * per-type scale. Without this the ant renders 4x the original size,
+     * which makes the body-center-pivoted leg swing look wildly glitched.
+     */
+    @Override
+    protected void scale(EntityAnt entity, PoseStack poseStack, float partialTick) {
+        poseStack.scale(SCALE, SCALE, SCALE);
     }
 
     @Override

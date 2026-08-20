@@ -33,6 +33,8 @@ public class EntityTermite extends EntityAnt {
     private static final int CLOSE_ENOUGH_TO_EAT_DIST_SQ = 6;
     private static final int MIN_SPAWN_Y = 50;
     private static final int MAX_NEARBY_CLUSTER = 4;
+    /** orig Termite.java:245,252 — no new termite when >=10 buddies within 3 blocks. */
+    private static final int REPLICATION_CAP = 10;
 
     private int attackDelay = ATTACK_DELAY_TICKS;
     private int closestWoodDistSq = NO_CLOSEST_MATCH;
@@ -241,12 +243,28 @@ public class EntityTermite extends EntityAnt {
             if (this.closestWoodDistSq < NO_CLOSEST_MATCH) {
                 this.getNavigation().moveTo(this.targetX, this.targetY, this.targetZ, 1.0);
                 if (this.closestWoodDistSq < CLOSE_ENOUGH_TO_EAT_DIST_SQ) {
+                    // orig Termite.java:241-257 — 2-in-3 the wood turns to dirt and a new
+                    // termite spawns at the termite's own position; 1-in-3 it turns to air
+                    // and the new termite spawns at the eaten block. Replication is capped
+                    // by the ORIGINAL's dedicated 3-block-box count (<10, orig :263-266);
+                    // block griefing honours mobGriefing, replication runs regardless
+                    // (matching the original's control flow).
                     BlockPos targetPos = new BlockPos(this.targetX, this.targetY, this.targetZ);
-                    if (this.level().getGameRules().getBoolean(net.minecraft.world.level.GameRules.RULE_MOBGRIEFING)) {
-                        if (this.random.nextInt(3) != 0) {
+                    boolean griefing = this.level().getGameRules()
+                            .getBoolean(net.minecraft.world.level.GameRules.RULE_MOBGRIEFING);
+                    if (this.random.nextInt(3) != 0) {
+                        if (griefing) {
                             this.level().setBlock(targetPos, Blocks.DIRT.defaultBlockState(), 2);
-                        } else {
+                        }
+                        if (this.countReplicationBuddies() < REPLICATION_CAP) {
+                            this.spawnBuddyTermite(this.getX() + 0.1, this.getY() + 0.1, this.getZ() + 0.1);
+                        }
+                    } else {
+                        if (griefing) {
                             this.level().setBlock(targetPos, Blocks.AIR.defaultBlockState(), 2);
+                        }
+                        if (this.countReplicationBuddies() < REPLICATION_CAP) {
+                            this.spawnBuddyTermite(this.targetX + 0.1, this.targetY + 0.1, this.targetZ + 0.1);
                         }
                     }
                     this.heal(1.0f);
@@ -254,6 +272,22 @@ public class EntityTermite extends EntityAnt {
             }
         }
         super.customServerAiStep();
+    }
+
+    /** orig Termite.java:263-266 — replication cap counts termites in a 3-block box. */
+    private int countReplicationBuddies() {
+        return this.level().getEntitiesOfClass(EntityTermite.class,
+                this.getBoundingBox().inflate(3.0, 3.0, 3.0)).size();
+    }
+
+    /** orig Termite.spawnCreature (Termite.java:268-276) — direct spawn with random yaw. */
+    private void spawnBuddyTermite(double x, double y, double z) {
+        if (!(this.level() instanceof net.minecraft.server.level.ServerLevel serverLevel)) return;
+        EntityTermite buddy = danger.orespawn.ModEntities.ENTITY_TERMITE.get().create(serverLevel);
+        if (buddy != null) {
+            buddy.moveTo(x, y, z, this.random.nextFloat() * 360.0f, 0.0f);
+            serverLevel.addFreshEntity(buddy);
+        }
     }
 
     @Override
