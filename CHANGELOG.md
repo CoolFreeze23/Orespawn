@@ -1,3 +1,51 @@
+# OreSpawn for NeoForge 1.21.1 — 2.0.0-beta.2
+
+A field-report patch: everything in it came from walking around a real
+modded world and asking "did the original actually do this?" Worlds
+carry forward from any earlier beta.
+
+## The ant & termite overhaul
+
+- **Ant armageddon fixed.** Ants and Red Ants were spawning naturally
+  in every overworld biome at cow-level frequency — invented content;
+  the original 1.7.10 registered natural spawns for 55 creatures and
+  the ants were never among them. They come from anthills, ambushes,
+  and eggs, exactly like the original. On top of that the port's ants
+  were immortal: the original let them despawn like monsters, and
+  that's restored — so the swarms your world has already accumulated
+  will clear themselves out as you play.
+- **Anthills no longer disguise themselves as copper blocks.** The
+  red/rainbow/unstable nests rendered as bare orange cubes and the
+  termite nest wore the Crystal-dimension texture by mistake. All five
+  overworld nests use the original antnest look again, with the
+  original's biome grass tint, so they sit in the landscape like the
+  grassy mounds they always were.
+- **Ants are ant-sized again.** The original rendered ants at quarter
+  scale (Red Ants and Termites at 0.35×); the port lost the scale-down
+  and drew them 4× too big, which also made the classic leg-scurry
+  animation look broken. Original sizes and shadows restored.
+- **Termites multiply while eating your house again** — the original's
+  replication-on-eat (with its own 10-termite crowd cap) had been
+  dropped in the port. Wood still turns to dirt or vanishes under
+  mobGriefing, exactly per the original's dice.
+- **One deliberate deviation, clearly labeled:** a nest block now skips
+  its 2-7 ant burst once 10+ ants are already nearby, so idling next
+  to an anthill can't snowball into hundreds of entities. The original
+  relied on despawning alone; with modern render distances that still
+  let populations pile up within despawn range.
+
+## Also in this build
+
+- **The Mining dimension has daylight again.** The original's Mining
+  dimension is an open-sky mountain world with a day/night cycle and
+  sleepable beds; the port had declared it a skylight-less ceiling
+  world at 0.1 ambient light, rendering it near-black. Chunks you
+  explored before this fix were saved without skylight data and may
+  stay dark until the light engine touches them (or you visit fresh
+  terrain) — new chunks are properly sunlit.
+
+---
+
 # OreSpawn for NeoForge 1.21.1 — 2.0.0-beta.1 "OreSpawn Modernized"
 
 The first public build of OreSpawn 2.0. The 1.0 line replicated 1.7.10
