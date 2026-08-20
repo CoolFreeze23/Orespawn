@@ -223,15 +223,51 @@ public class OreSpawnChunkGenerator extends NoiseBasedChunkGenerator {
     }
 
     /**
-     * Chaos surface post-process — scraggly tree scatter, faithful to 1.7.10
-     * {@code ChunkProviderOreSpawn6.addScragglyTrees}
-     * (orig ChunkProviderOreSpawn6.java:335-358): roll {@code 1 + nextInt(5)}
-     * trees but only proceed on a 1-in-4 chunk gate; positions
-     * {@code 2 + nextInt(12)}, scanning Y120 down to Y51 for grass.
+     * Chaos surface post-process — the dither scrape of the world shell plus
+     * the scraggly tree scatter, both faithful to 1.7.10
+     * {@code ChunkProviderOreSpawn6}:
+     *
+     * <ul>
+     *   <li><b>Shell scrape</b> (orig replaceBiomeBlocks:139-181): every block
+     *       survives only while {@code y < 127 - rng(5) && y > rng(5)}, else
+     *       air. Only Y123-127 (top) and Y0-4 (bottom) are ever affected —
+     *       this is what turns the sealed noise roof into the original's
+     *       rugged, crumbly stone surface instead of a dead-flat plain, and
+     *       pits the floor (Y0 is always air; the original had no bedrock
+     *       here). Statistical parity: same per-block keep probabilities,
+     *       different RNG stream (the modern pipeline reseeds differently).</li>
+     *   <li><b>Scraggly trees</b> (orig addScragglyTrees:335-358): roll
+     *       {@code 1 + nextInt(5)} trees but only proceed on a 1-in-4 chunk
+     *       gate; positions {@code 2 + nextInt(12)}, scanning Y120 down to
+     *       Y51 for grass.</li>
+     * </ul>
      */
     private void applyChaosSurface(ChunkAccess chunk, RandomSource random) {
         int minX = chunk.getPos().getMinBlockX();
         int minZ = chunk.getPos().getMinBlockZ();
+
+        BlockState air = Blocks.AIR.defaultBlockState();
+        BlockPos.MutableBlockPos scrapeCursor = new BlockPos.MutableBlockPos();
+        for (int lx = 0; lx < 16; lx++) {
+            for (int lz = 0; lz < 16; lz++) {
+                int wx = minX + lx;
+                int wz = minZ + lz;
+                // Top shell: y kept only if y < 127 - rng(5).
+                for (int y = 127; y >= 123; y--) {
+                    if (y >= 127 - random.nextInt(5)
+                            && !chunk.getBlockState(scrapeCursor.set(wx, y, wz)).isAir()) {
+                        chunk.setBlockState(scrapeCursor, air, false);
+                    }
+                }
+                // Bottom shell: y kept only if y > rng(5). Y0 never survives.
+                for (int y = 4; y >= 0; y--) {
+                    if (y <= random.nextInt(5)
+                            && !chunk.getBlockState(scrapeCursor.set(wx, y, wz)).isAir()) {
+                        chunk.setBlockState(scrapeCursor, air, false);
+                    }
+                }
+            }
+        }
 
         // orig ChunkProviderOreSpawn6.java:336-339 — count rolled BEFORE the 1/4 gate
         int attempts = 1 + random.nextInt(5);

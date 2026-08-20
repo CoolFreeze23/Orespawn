@@ -1,0 +1,44 @@
+Chaos dimension terrain parity: restore the original generator's shape (2.0.0-beta.4)
+
+Field report: Chaos presented as a giant flat stone world. Full audit of
+the port against orig ChunkProviderOreSpawn6 / WorldProviderOreSpawn6 /
+BiomeGenUtopianPlains.setChaosCreatures:
+
+VERIFIED FAITHFUL (unchanged): the complete mob roster (monster/
+creature/ambient weights+counts all match setChaosCreatures), features
+(scraggly trees incl. the pre-gate count roll, anthills, veggie patches,
+vanilla+orespawn ores, springs, trees/flowers/grass), carvers, water sea
+at Y64, open sky above Y128.
+
+ROOT CAUSE: noise_settings/chaos.json had vanilla's modern nether router
+copied verbatim - wrong noise scales, no cavern banding, and a smooth
+sealed cap at Y104-128. Entry placement (findSafeY) lands on top of that
+cap, so the player only ever saw a dead-flat stone plain. (The original
+also seals its roof - its teleporter fallback landed on top too - but
+the surface was rugged, not flat, and the interior was layered caverns.)
+
+FIXES:
+- final_density rewritten as a faithful translation of orig
+  initializeNoiseField: old_blended_noise at the original scales
+  (684.412/2053.236 = xz_scale 1 / y_scale 3, factors 80/60), the
+  cos(y*6pi/136)*2 cavern banding + (4-d)^3*10 edge falloff as an exact
+  17-knot spline (evaluation happens only at the 8-block cell corners,
+  where the knots sit - orig trilinear interpolation is reproduced by
+  interpolated + size 1/2), and the orig's top blend to -10 over
+  Y104-128. Dropped vanilla's squeeze (orig had none; sign-neutral).
+- applyChaosSurface now runs the orig replaceBiomeBlocks dither scrape:
+  each block in the top/bottom 5 layers survives per-block dice
+  (y < 127-rng(5) && y > rng(5)), restoring the rugged crumbly surface
+  and the no-bedrock pitted floor (Y0 always open, orig parity).
+- Surface rule: grass/dirt band at Y60-66 now gated on a surface-noise
+  threshold, approximating the orig's slowsand/gravel-noise grass
+  patches (~3:1 grass:stone) instead of a uniform carpet.
+- dimension_type bed_works false -> true (orig canRespawnHere = true;
+  same reasoning as the Mining dimension fix).
+
+Gate: build+assetAudit exit 0 (0 err / 0 adv / 3 ack); gametest suite
+"All 192 required tests passed" (pass line captured), which also
+validates the new worldgen JSON parses and boots.
+
+Note for existing worlds: already-generated Chaos chunks keep the old
+flat shape; new chunks (or a regenerated dimension) show the fix.

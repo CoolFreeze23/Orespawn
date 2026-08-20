@@ -56,6 +56,13 @@ wrong for you, please say so.
   last build — that's the original's pace, not a bug. *(BUG-035
   follow-up)*
 
+- The Chaos dimension is no longer a flat stone slab: terrain now uses
+  the original 1.7.10 noise (banded caverns inside, rugged crumbly
+  surface on top, no bedrock at the pitted floor), grass comes in
+  patches, and beds work. Note: Chaos chunks you already generated
+  keep their old flat shape — explore new areas or delete the
+  dimension's region folder to regenerate. *(field report)*
+
 **beta.3 (first field reports — thank you!):**
 
 - The mod no longer needs any other mod installed to launch: beta.2 crashed
