@@ -6,9 +6,13 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.WorldGenLevel;
+import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
 import net.minecraft.world.level.levelgen.feature.LakeFeature;
@@ -172,7 +176,7 @@ public class SafeLakeFeature extends Feature<LakeFeature.Configuration> {
                                 Mth.clamp(blockpos2.getX(), chunkMinX, chunkMinX + 15),
                                 blockpos2.getY(),
                                 Mth.clamp(blockpos2.getZ(), chunkMinZ, chunkMinZ + 15));
-                        if (worldgenlevel.getBiome(biomeSample).value().shouldFreeze(worldgenlevel, blockpos2, false)
+                        if (shouldFreezeAt(worldgenlevel, blockpos2, biomeSample)
                             && this.canReplaceBlock(worldgenlevel.getBlockState(blockpos2))) {
                             worldgenlevel.setBlock(blockpos2, Blocks.ICE.defaultBlockState(), 2);
                         }
@@ -186,5 +190,35 @@ public class SafeLakeFeature extends Feature<LakeFeature.Configuration> {
 
     private boolean canReplaceBlock(BlockState state) {
         return !state.is(BlockTags.FEATURES_CANNOT_REPLACE);
+    }
+
+    /**
+     * Inlined copy of {@code Biome.shouldFreeze(level, pos, mustBeAtEdge=false)}.
+     *
+     * <p><b>Why not call shouldFreeze directly (crash 2026-08-20, Village dim):</b>
+     * Serene Seasons redirects the {@code warmEnoughToRain} call <i>inside</i>
+     * {@code Biome.shouldFreeze} to a seasonal hook that performs its own
+     * {@code level.getBiome(pos)} on the raw position — undoing this class's
+     * clamped-sample guarantee and throwing {@code IllegalStateException:
+     * Requested chunk unavailable during world generation} when the lake hugs
+     * the decorated chunk's +x/+z corner. Inlining the vanilla logic keeps all
+     * biome/temperature sampling on the clamped position and out of reach of
+     * call-site redirects. Delta: generation-time ice ignores the current
+     * season (base climate only), which is the saner behavior for worldgen
+     * anyway.</p>
+     */
+    private static boolean shouldFreezeAt(WorldGenLevel level, BlockPos pos, BlockPos biomeSample) {
+        Biome biome = level.getBiome(biomeSample).value();
+        if (biome.warmEnoughToRain(biomeSample)) {
+            return false;
+        }
+        if (pos.getY() < level.getMinBuildHeight() || pos.getY() >= level.getMaxBuildHeight()) {
+            return false;
+        }
+        if (level.getBrightness(LightLayer.BLOCK, pos) >= 10) {
+            return false;
+        }
+        BlockState state = level.getBlockState(pos);
+        return level.getFluidState(pos).getType() == Fluids.WATER && state.getBlock() instanceof LiquidBlock;
     }
 }

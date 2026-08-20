@@ -1,3 +1,21 @@
+# OreSpawn for NeoForge 1.21.1 — 2.0.0-beta.3
+
+Hotfix for a world-generation crash.
+
+- **Village/Mining dimension lake crash fixed.** Generating a new chunk
+  with a classic lake could kill the whole server with
+  `IllegalStateException: Requested chunk unavailable during world
+  generation` when Serene Seasons is installed. Our lake feature already
+  clamped its own biome lookups to the guaranteed worldgen region, but
+  Serene Seasons redirects the freeze check *inside* vanilla's
+  `Biome.shouldFreeze` to a seasonal hook that performs its own
+  unclamped biome lookup — which can sample a chunk outside the region
+  when a lake hugs a chunk corner. The freeze check is now inlined with
+  all sampling on the clamped position, out of reach of the redirect.
+  Generation-time ice now reflects the biome's base climate rather than
+  the season on the day the chunk happened to generate (the saner
+  behavior anyway).
+
 # OreSpawn for NeoForge 1.21.1 — 2.0.0-beta.2
 
 A field-report patch: everything in it came from walking around a real
