@@ -1,79 +1,53 @@
-# 2.0 Verification Sitting — session 3 (final order), 2026-08-13
+# 2.0 FINAL Sitting — closing order, 2026-08-13
 
-At `b27c44e` (S6a interact forwarding + S6b THE LEG FIX, 190/190 both
-modes). No code changes mid-session; FAILs get triage only. Marks:
-**PASS / FAIL / TUNE / RATIFIED**. A fully green sitting → the 2.0
-release conversation is next.
+At `d63b079` (S6a interact → S6b LEG FIX → S7a seat → S7b camera →
+S7c dims 3.25×2.25). No code changes mid-session. Marks:
+**PASS / FAIL / TUNE / RATIFIED**. Green sitting → next session is
+THE RELEASE. Ants: summon with `{AntRobotOwned:1}`.
 
-Summon notes: ants need `{AntRobotOwned:1}` to obey you; the spider
-mount spot is the body box — since S7c the full-size 3.25×2.25
-original box (no more aiming for a small ground core) — or, new in
-S6a, any LEG.
-
----
-
-## PRIORITY — the leg fix's exit criteria (pass/fail on S6b)
+## A. THE NEW WORK (S7a/b/c)
 
 | # | Check | Mark | Notes |
 |---|---|---|---|
-| 1 | **ANT WALK (the S6b verdict)**: `/summon orespawn:ant_robot ~ ~ ~5 {AntRobotOwned:1}` — watch it walk and turn. Legs stay on their OWN sides (no crossing), no hyper-straight stretching, stepping reads as insect movement — planting and lifting in a natural rhythm. | | |
-| 2 | **SPIDER FLICKS**: mount a fresh spider — hard 180° look-flicks and fast sustained turns. Deliberate re-plant (a quick recovery hop on flicks is designed), no skitter, no crossing under rotation. Stationary look-jitter still moves nothing. | | |
-| 3 | **SPRINT RATIFICATION**: sustained full-sprint, straight line. At sprint the legs lift aggressively (forced lifts — the reference brakes its body instead, ours can't). Reads fine → RATIFIED as-built; reads badly → the velocity-compensated fallback (FIX_LOG S6b) gets scheduled. Wording captured verbatim. | | |
-| 4 | **MOUNT THROUGH A LEG**: empty-hand right-click directly on a leg part → mounts (F-1/S6a forwarding). | | |
+| 1 | Mount the spider — the box is now the FULL 3.25×2.25 body (easy click, no ground-box hunt). Seat: ON TOP of the body (3 back, 2.6 up), not inside it. | | |
+| 2 | Camera: glide-back on mount, body in lower third, clear view walking, no jerk from float/tilt, F5 clean, dismount = instant vanilla. Eyes-on: framing vs the taller body; collision arm in a tight cave/under trees (instant shorten, glide back, never clips). | | |
+| 3 | Seat flick-sweep: hard 180° flicks — right or whiplash? (Fallback: seat-yaw smoothing, recorded.) | | |
+| 4 | Mount THROUGH A LEG: right-click a leg part → mounts (F-1). | | |
 
-## CARRIED FORWARD — the unfinished phases
+## B. RATIFICATIONS (verbatim capture)
 
 | # | Check | Mark | Notes |
 |---|---|---|---|
-| 5 | Leg melee + arrow into a leg (spider AND ant) → body-rate damage, HUD bar on legs; `/summon orespawn:the_king` → bar on his parts (formerly blank). | | |
-| 6 | Ant hover (mounted, Left Alt): dangle look in flight, re-plant on landing; body sag hovering low over planted feet. | | |
-| 7 | **c5 TUNE**: with the gait fixed, judge the ant's ×0.495 tune — step speed, trigger radii. Twitchy/sluggish/steps too long or short — verbatim capture for the tuning docket. | | |
-| 8 | **Phase d classic pin**: quit world → `runs/client/config/orespawn-common.toml` → `spiderMovement = "CLASSIC"` → reopen → FRESH-summon both. Legs pass-through, unsteerable spider saddle, 1.0 feel — plus OBS-1: is the rider equally buried in the CLASSIC ant (expected: yes, parity)? | | |
+| 5 | SPRINT: sustained full-sprint forced-lift feel — RATIFIED as-built, or invoke the velocity-compensated fallback (FIX_LOG S6b). | | |
+| 6 | c5 TUNE: ant ×0.495 feel — step speed, trigger radii. | | |
+
+## C. CARRIED ITEMS
+
+| # | Check | Mark | Notes |
+|---|---|---|---|
+| 7 | Leg melee + arrows (both robots) → body-rate damage + HUD bar; King's bar on parts; ant hover dangle + low-hover sag. | | |
+
+## D. CLASSIC PASS
+
+| # | Check | Mark | Notes |
+|---|---|---|---|
+| 8 | `spiderMovement = "CLASSIC"`, fresh-summon both: legs pass-through, spider unsteerable, the RESTORED classic seat (3 back / 2.6 up — different from every prior build, and correct), camera inactive, 1.0 feel. OBS-1: rider equally buried in the classic ant (expected: yes). | | |
 
 ## Findings log
 
-- Items 1-2: **PASS** (owner verdict: "the legs look good" — THE LEG
-  FIX holds in-game).
-- **FAIL-3 (seat math): FIXED in S7a.** Root cause bigger than
-  diagnosed: the spider's ORIGINAL seat (3.0 back, 2.625 up, driver
-  2.0, orig :523-536) was never ported — the vanilla anchor seat was
-  a classic PARITY BUG. Restored both modes; modern composes through
-  the S3b body transform; ant raised +0.9 modern-only (OBS-1/MOD-027
-  shipped). Suite-pinned (s7_seat_geometry, discriminating tilt).
-  NEW sitting item from the reviewer: 180° look-flicks now sweep the
-  3-block seat arm ~6 blocks/tick — eyes-on the flick feel with the
-  restored seat; seat-yaw smoothing is the fallback.
-- **FAIL-4 (riding camera): FIXED in S7b** (owner-approved design;
-  arm-only smoothing over the raw S7a seat pivot, 8-corner collision,
-  reviewer-verified; feel is eyes-on at this sitting). S7c (spider dims
-  restored to the orig 3.25×2.25, ENT-S-088) landed AFTER the camera's
-  reviewer pass, so the camera reviewer list now carries two added
-  items, re-verified analytically in S7c (pivot rides the absolute
-  seat constants, arm constants absolute, collision clips BLOCKS
-  only — the camera is dims-independent in code) and eyes-on here:
-  (1) framing correctness with the taller/wider body; (2) the
-  collision arm in tight spaces, where the bigger suffocation
-  profile changes which spaces the spider can even enter.
-- **S7c (spider dims)**: eyes-on the restored full-size body box —
-  mount clicks anywhere in the 3.25×2.25 box, F3+B vs the visual
-  body, and the SpiderDriver's slightly longer mount-seek/drive
-  ranges (both derive from live width and now match the original).
+(FAILs triaged here; no mid-session fixes.)
 
 ## Close-out
 
-(On "done": verdicts, fix docket if any, the c5 tuning docket, and
-the release-readiness assessment.)
+(On "done": verdicts, remaining fix/tuning dockets, and the RELEASE
+READINESS ASSESSMENT — everything since beta.3: BUG-035 Queen
+freeze, BUG-036 creeper stowaway, the spider overhaul S1–S5b, the
+sitting fixes S6a/S6b/S7a/S7b/S7c, seat + dims parity restorations;
+proposed version; the changelog headline story.)
 
 ---
 
-## Prior-session record (compressed)
-
-Session 1-2 results: F-0 idle-stand = classic parity (PASS); F-1
-spider mount = reclassified, wiring correct, part interaction
-swallowing fixed in S6a `f1d6cfa` (legs now clickable — deliberate
-delta, ratified); F-2 ant leg visuals = root-caused via the
-reference-code addendum and fixed in S6b `b27c44e` (zero-lag rest
-frame + comfort invalidation + swing advection/revalidation); X1 ant
-mounts (owned), X2 body melee lands + ground-center mount works;
-OBS-1 rider-in-ant-shell = 1.0 parity (MOD-027 candidate); OBS-2
-one-box hitbox offset = Q3 design cost (MOD-028, chord pin added).
+Prior sessions (compressed): legs PASS in-game; F-1 fixed S6a
+`f1d6cfa`; F-2 fixed S6b `b27c44e`; seat restored S7a `21ac038`;
+camera S7b `0ec1d00`; dims S7c `d63b079` (parallel session). All
+triple-gated, suite 191/191+ both modes at each step.
