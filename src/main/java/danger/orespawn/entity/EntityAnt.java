@@ -122,7 +122,7 @@ public class EntityAnt extends Animal {
         double x = serverPlayer.getX();
         double oldY = serverPlayer.getY();
         double z = serverPlayer.getZ();
-        int safeY = findSafeY(destLevel, BlockPos.containing(x, 0, z));
+        BlockPos landing = findSafeSpot(destLevel, BlockPos.containing(x, 0, z));
 
         // WGEN-049: orig OreSpawnTeleporter.java:153-162 — tamed, non-sitting pets
         // owned by the player inside a 48x24x48 box around the departure point
@@ -132,9 +132,13 @@ public class EntityAnt extends Animal {
                 new AABB(x - 24.0, oldY - 12.0, z - 24.0, x + 24.0, oldY + 12.0, z + 24.0),
                 pet -> pet.isTame() && pet.isOwnedBy(serverPlayer) && !pet.isOrderedToSit());
 
+        // orig OreSpawnTeleporter.java:142-143 — the landing is block-centered
+        // (the hunt may have wandered off the departure column in dimensions
+        // with floating terrain).
+        Vec3 arrival = new Vec3(landing.getX() + 0.5, landing.getY(), landing.getZ() + 0.5);
         DimensionTransition transition = new DimensionTransition(
                 destLevel,
-                new Vec3(x, safeY, z),
+                arrival,
                 Vec3.ZERO,
                 serverPlayer.getYRot(),
                 serverPlayer.getXRot(),
@@ -145,7 +149,7 @@ public class EntityAnt extends Animal {
             // orig OreSpawnTeleporter.java:161 — sendToThisDimension(pet, newX, newY, newZ)
             pet.changeDimension(new DimensionTransition(
                     destLevel,
-                    new Vec3(x, safeY, z),
+                    arrival,
                     Vec3.ZERO,
                     pet.getYRot(),
                     pet.getXRot(),
@@ -156,14 +160,38 @@ public class EntityAnt extends Animal {
     }
 
     /**
-     * Scans from Y=256 downward to find a safe landing spot (solid block with
-     * 2 air blocks above). Falls back to Y=64 if nothing suitable is found.
-     * Skips the scan entirely for unloaded chunks to avoid triggering
-     * synchronous chunk generation that freezes the server thread.
+     * Finds a safe landing spot for a dimension arrival. Scans the arrival
+     * column from Y=256 downward for solid ground with 2 passable blocks
+     * above; if the column has no ground at all (Chaos and Islands terrain
+     * floats over open void), it random-walks to nearby columns with a
+     * slowly widening spread, exactly like the original teleporter's hunt
+     * (orig OreSpawnTeleporter.java:88-129: retry loop re-rolling
+     * posX/posZ = start + rand(3 + i/5) - rand(3 + i/5)). Falls back to the
+     * original column at Y64 only if the whole hunt fails.
      */
-    public static int findSafeY(ServerLevel level, BlockPos column) {
-        int chunkX = column.getX() >> 4;
-        int chunkZ = column.getZ() >> 4;
+    public static BlockPos findSafeSpot(ServerLevel level, BlockPos column) {
+        int startX = column.getX();
+        int startZ = column.getZ();
+        int x = startX;
+        int z = startZ;
+        for (int attempt = 0; attempt < 200; attempt++) {
+            int y = scanColumnForLanding(level, x, z);
+            if (y != Integer.MIN_VALUE) {
+                return new BlockPos(x, y, z);
+            }
+            int spread = 3 + attempt / 5;
+            x = startX + level.random.nextInt(spread) - level.random.nextInt(spread);
+            z = startZ + level.random.nextInt(spread) - level.random.nextInt(spread);
+        }
+        return new BlockPos(startX, Math.max(level.getMinBuildHeight() + 1, 64), startZ);
+    }
+
+    /**
+     * Single-column landing scan; returns {@link Integer#MIN_VALUE} when the
+     * column offers no landing (all air, or no passable head-room above
+     * ground).
+     */
+    private static int scanColumnForLanding(ServerLevel level, int x, int z) {
         // TEST-004 fix (2026-08-11): on a FIRST visit the destination chunk
         // does not exist yet; the old !hasChunk bail-out blind-dropped the
         // player at ~Y64 — inside terrain in stone-heavy dimensions. The
@@ -171,11 +199,11 @@ public class EntityAnt extends Animal {
         // the chunk (orig OreSpawnTeleporter.java placeInPortal path); do the
         // same: getChunk blocks until the chunk is generated, then the scan
         // below reads real terrain.
-        level.getChunk(chunkX, chunkZ);
+        level.getChunk(x >> 4, z >> 4);
 
         int minY = level.getMinBuildHeight();
         for (int y = Math.min(256, level.getMaxBuildHeight() - 1); y > minY; y--) {
-            BlockPos feet = new BlockPos(column.getX(), y, column.getZ());
+            BlockPos feet = new BlockPos(x, y, z);
             BlockPos below = feet.below();
             BlockState ground = level.getBlockState(below);
             if (ground.isAir() || ground.is(Blocks.LAVA) || ground.liquid()) continue;
@@ -185,7 +213,7 @@ public class EntityAnt extends Animal {
                 return y;
             }
         }
-        return Math.max(minY + 1, 64);
+        return Integer.MIN_VALUE;
     }
 
     @Nullable

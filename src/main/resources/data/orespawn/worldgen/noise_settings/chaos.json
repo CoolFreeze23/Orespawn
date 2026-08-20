@@ -4,10 +4,7 @@
     "Name": "minecraft:stone"
   },
   "default_fluid": {
-    "Name": "minecraft:water",
-    "Properties": {
-      "level": "0"
-    }
+    "Name": "minecraft:air"
   },
   "disable_mob_generation": false,
   "legacy_random_source": true,
@@ -27,76 +24,80 @@
       "argument": {
         "type": "minecraft:blend_density",
         "argument": {
-          "type": "minecraft:add",
-          "argument1": {
-            "type": "minecraft:mul",
+          "type": "minecraft:mul",
+          "argument1": -1.0,
+          "argument2": {
+            "type": "minecraft:add",
             "argument1": {
-              "type": "minecraft:add",
+              "type": "minecraft:mul",
               "argument1": {
-                "type": "minecraft:spline",
-                "spline": {
-                  "coordinate": {
-                    "type": "minecraft:y_clamped_gradient",
-                    "from_y": 0,
-                    "to_y": 128,
-                    "from_value": 0.0,
-                    "to_value": 128.0
-                  },
-                  "points": [
-                    { "location": 0.0,   "value": 638.0,    "derivative": 0.0 },
-                    { "location": 8.0,   "value": 269.1085, "derivative": 0.0 },
-                    { "location": 16.0,  "value": 81.2053,  "derivative": 0.0 },
-                    { "location": 24.0,  "value": 11.9659,  "derivative": 0.0 },
-                    { "location": 32.0,  "value": 0.5473,   "derivative": 0.0 },
-                    { "location": 40.0,  "value": -1.478,   "derivative": 0.0 },
-                    { "location": 48.0,  "value": -1.8649,  "derivative": 0.0 },
-                    { "location": 56.0,  "value": -0.1845,  "derivative": 0.0 },
-                    { "location": 64.0,  "value": 1.7004,   "derivative": 0.0 },
-                    { "location": 72.0,  "value": 1.7004,   "derivative": 0.0 },
-                    { "location": 80.0,  "value": -0.1845,  "derivative": 0.0 },
-                    { "location": 88.0,  "value": -1.8649,  "derivative": 0.0 },
-                    { "location": 96.0,  "value": -1.478,   "derivative": 0.0 },
-                    { "location": 104.0, "value": 10.5473,  "derivative": 0.0 },
-                    { "location": 112.0, "value": 81.9659,  "derivative": 0.0 },
-                    { "location": 120.0, "value": 271.2053, "derivative": 0.0 },
-                    { "location": 128.0, "value": 639.1085, "derivative": 0.0 }
-                  ]
+                "type": "minecraft:add",
+                "argument1": {
+                  "type": "minecraft:spline",
+                  "spline": {
+                    "coordinate": {
+                      "type": "minecraft:y_clamped_gradient",
+                      "from_y": 0,
+                      "to_y": 128,
+                      "from_value": 0.0,
+                      "to_value": 128.0
+                    },
+                    "points": [
+                      { "location": 0.0,   "value": 638.0,    "derivative": 0.0 },
+                      { "location": 8.0,   "value": 269.1085, "derivative": 0.0 },
+                      { "location": 16.0,  "value": 81.2053,  "derivative": 0.0 },
+                      { "location": 24.0,  "value": 11.9659,  "derivative": 0.0 },
+                      { "location": 32.0,  "value": 0.5473,   "derivative": 0.0 },
+                      { "location": 40.0,  "value": -1.478,   "derivative": 0.0 },
+                      { "location": 48.0,  "value": -1.8649,  "derivative": 0.0 },
+                      { "location": 56.0,  "value": -0.1845,  "derivative": 0.0 },
+                      { "location": 64.0,  "value": 1.7004,   "derivative": 0.0 },
+                      { "location": 72.0,  "value": 1.7004,   "derivative": 0.0 },
+                      { "location": 80.0,  "value": -0.1845,  "derivative": 0.0 },
+                      { "location": 88.0,  "value": -1.8649,  "derivative": 0.0 },
+                      { "location": 96.0,  "value": -1.478,   "derivative": 0.0 },
+                      { "location": 104.0, "value": 10.5473,  "derivative": 0.0 },
+                      { "location": 112.0, "value": 81.9659,  "derivative": 0.0 },
+                      { "location": 120.0, "value": 271.2053, "derivative": 0.0 },
+                      { "location": 128.0, "value": 639.1085, "derivative": 0.0 }
+                    ]
+                  }
+                },
+                "argument2": {
+                  "type": "minecraft:old_blended_noise",
+                  "xz_scale": 1.0,
+                  "y_scale": 3.0,
+                  "xz_factor": 80.0,
+                  "y_factor": 60.0,
+                  "smear_scale_multiplier": 8.0
                 }
               },
               "argument2": {
-                "type": "minecraft:old_blended_noise",
-                "xz_scale": 1.0,
-                "y_scale": 3.0,
-                "xz_factor": 80.0,
-                "y_factor": 60.0,
-                "smear_scale_multiplier": 8.0
+                "type": "minecraft:add",
+                "argument1": 1.0,
+                "argument2": {
+                  "type": "minecraft:mul",
+                  "argument1": -1.0,
+                  "argument2": {
+                    "type": "minecraft:y_clamped_gradient",
+                    "from_y": 104,
+                    "to_y": 128,
+                    "from_value": 0.0,
+                    "to_value": 1.0
+                  }
+                }
               }
             },
             "argument2": {
-              "type": "minecraft:add",
-              "argument1": 1.0,
+              "type": "minecraft:mul",
+              "argument1": -10.0,
               "argument2": {
-                "type": "minecraft:mul",
-                "argument1": -1.0,
-                "argument2": {
-                  "type": "minecraft:y_clamped_gradient",
-                  "from_y": 104,
-                  "to_y": 128,
-                  "from_value": 0.0,
-                  "to_value": 1.0
-                }
+                "type": "minecraft:y_clamped_gradient",
+                "from_y": 104,
+                "to_y": 128,
+                "from_value": 0.0,
+                "to_value": 1.0
               }
-            }
-          },
-          "argument2": {
-            "type": "minecraft:mul",
-            "argument1": -10.0,
-            "argument2": {
-              "type": "minecraft:y_clamped_gradient",
-              "from_y": 104,
-              "to_y": 128,
-              "from_value": 0.0,
-              "to_value": 1.0
             }
           }
         }
@@ -114,7 +115,7 @@
     "vein_toggle": 0.0
   },
   "ore_veins_enabled": false,
-  "sea_level": 64,
+  "sea_level": 0,
   "spawn_target": [],
   "surface_rule": {
     "type": "minecraft:sequence",
@@ -122,10 +123,11 @@
       {
         "type": "minecraft:condition",
         "if_true": {
-          "type": "minecraft:noise_threshold",
-          "noise": "minecraft:surface",
-          "min_threshold": -0.4,
-          "max_threshold": 10000.0
+          "type": "minecraft:stone_depth",
+          "add_surface_depth": false,
+          "offset": 0,
+          "secondary_depth_range": 0,
+          "surface_type": "floor"
         },
         "then_run": {
           "type": "minecraft:sequence",
@@ -133,86 +135,136 @@
             {
               "type": "minecraft:condition",
               "if_true": {
-                "type": "minecraft:stone_depth",
-                "add_surface_depth": false,
-                "offset": 0,
-                "secondary_depth_range": 0,
-                "surface_type": "floor"
+                "type": "minecraft:y_above",
+                "add_stone_depth": false,
+                "anchor": {
+                  "absolute": 60
+                },
+                "surface_depth_multiplier": 0
               },
               "then_run": {
                 "type": "minecraft:condition",
                 "if_true": {
-                  "type": "minecraft:y_above",
-                  "add_stone_depth": false,
-                  "anchor": {
-                    "absolute": 60
-                  },
-                  "surface_depth_multiplier": 0
+                  "type": "minecraft:not",
+                  "invert": {
+                    "type": "minecraft:y_above",
+                    "add_stone_depth": false,
+                    "anchor": {
+                      "absolute": 66
+                    },
+                    "surface_depth_multiplier": 0
+                  }
                 },
                 "then_run": {
-                  "type": "minecraft:condition",
-                  "if_true": {
-                    "type": "minecraft:not",
-                    "invert": {
-                      "type": "minecraft:y_above",
-                      "add_stone_depth": false,
-                      "anchor": {
-                        "absolute": 66
+                  "type": "minecraft:sequence",
+                  "sequence": [
+                    {
+                      "type": "minecraft:condition",
+                      "if_true": {
+                        "type": "minecraft:noise_threshold",
+                        "noise": "minecraft:surface",
+                        "min_threshold": -0.4,
+                        "max_threshold": 10000.0
                       },
-                      "surface_depth_multiplier": 0
-                    }
-                  },
-                  "then_run": {
-                    "type": "minecraft:block",
-                    "result_state": {
-                      "Name": "minecraft:grass_block",
-                      "Properties": {
-                        "snowy": "false"
+                      "then_run": {
+                        "type": "minecraft:block",
+                        "result_state": {
+                          "Name": "minecraft:grass_block",
+                          "Properties": {
+                            "snowy": "false"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "type": "minecraft:block",
+                      "result_state": {
+                        "Name": "minecraft:stone"
                       }
                     }
-                  }
+                  ]
                 }
               }
             },
             {
+              "type": "minecraft:block",
+              "result_state": {
+                "Name": "minecraft:grass_block",
+                "Properties": {
+                  "snowy": "false"
+                }
+              }
+            }
+          ]
+        }
+      },
+      {
+        "type": "minecraft:condition",
+        "if_true": {
+          "type": "minecraft:stone_depth",
+          "add_surface_depth": true,
+          "offset": 0,
+          "secondary_depth_range": 0,
+          "surface_type": "floor"
+        },
+        "then_run": {
+          "type": "minecraft:sequence",
+          "sequence": [
+            {
               "type": "minecraft:condition",
               "if_true": {
-                "type": "minecraft:stone_depth",
-                "add_surface_depth": true,
-                "offset": 0,
-                "secondary_depth_range": 0,
-                "surface_type": "floor"
+                "type": "minecraft:y_above",
+                "add_stone_depth": true,
+                "anchor": {
+                  "absolute": 60
+                },
+                "surface_depth_multiplier": 0
               },
               "then_run": {
                 "type": "minecraft:condition",
                 "if_true": {
-                  "type": "minecraft:y_above",
-                  "add_stone_depth": true,
-                  "anchor": {
-                    "absolute": 60
-                  },
-                  "surface_depth_multiplier": 0
+                  "type": "minecraft:not",
+                  "invert": {
+                    "type": "minecraft:y_above",
+                    "add_stone_depth": true,
+                    "anchor": {
+                      "absolute": 66
+                    },
+                    "surface_depth_multiplier": 0
+                  }
                 },
                 "then_run": {
-                  "type": "minecraft:condition",
-                  "if_true": {
-                    "type": "minecraft:not",
-                    "invert": {
-                      "type": "minecraft:y_above",
-                      "add_stone_depth": true,
-                      "anchor": {
-                        "absolute": 66
+                  "type": "minecraft:sequence",
+                  "sequence": [
+                    {
+                      "type": "minecraft:condition",
+                      "if_true": {
+                        "type": "minecraft:noise_threshold",
+                        "noise": "minecraft:surface",
+                        "min_threshold": -0.4,
+                        "max_threshold": 10000.0
                       },
-                      "surface_depth_multiplier": 0
+                      "then_run": {
+                        "type": "minecraft:block",
+                        "result_state": {
+                          "Name": "minecraft:dirt"
+                        }
+                      }
+                    },
+                    {
+                      "type": "minecraft:block",
+                      "result_state": {
+                        "Name": "minecraft:stone"
+                      }
                     }
-                  },
-                  "then_run": {
-                    "type": "minecraft:block",
-                    "result_state": {
-                      "Name": "minecraft:dirt"
-                    }
-                  }
+                  ]
                 }
+              }
+            },
+            {
+              "type": "minecraft:block",
+              "result_state": {
+                "Name": "minecraft:dirt"
               }
             }
           ]

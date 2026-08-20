@@ -124,11 +124,13 @@ public class EntityButterfly extends AmbientCreature {
 
         double x = serverPlayer.getX();
         double z = serverPlayer.getZ();
-        int safeY = EntityAnt.findSafeY(destLevel, BlockPos.containing(x, 0, z));
+        // Chaos floats over open void, so the landing hunt may wander off the
+        // departure column exactly like the original teleporter's retry loop.
+        BlockPos landing = EntityAnt.findSafeSpot(destLevel, BlockPos.containing(x, 0, z));
 
         DimensionTransition transition = new DimensionTransition(
                 destLevel,
-                new Vec3(x, safeY, z),
+                new Vec3(landing.getX() + 0.5, landing.getY(), landing.getZ() + 0.5),
                 Vec3.ZERO,
                 serverPlayer.getYRot(),
                 serverPlayer.getXRot(),

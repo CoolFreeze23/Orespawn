@@ -926,7 +926,9 @@ public class MiscTests {
      * bands and the i156 mirrored columns), so the chunk is genuinely fresh.
      * Asserts the ported safe-landing contract itself (EntityAnt.java:
      * ground non-air/non-liquid, feet and head non-motion-blocking) rather
-     * than a fixed Y value.
+     * than a fixed position — findSafeSpot may wander off the departure
+     * column when it offers no ground (orig OreSpawnTeleporter.java:88-129
+     * retry hunt, ported for the void-floored Chaos terrain).
      */
     @GameTest(template = "empty", timeoutTicks = 200)
     public void test004_ant_teleport_first_visit_safe_y(GameTestHelper helper) {
@@ -935,9 +937,7 @@ public class MiscTests {
         helper.assertTrue(!level.hasChunk(column.getX() >> 4, column.getZ() >> 4),
                 "TEST-004 precondition: the stand-in first-visit chunk must not be generated yet");
 
-        int y = danger.orespawn.entity.EntityAnt.findSafeY(level, column);
-
-        BlockPos feet = new BlockPos(column.getX(), y, column.getZ());
+        BlockPos feet = danger.orespawn.entity.EntityAnt.findSafeSpot(level, column);
         var ground = level.getBlockState(feet.below());
         helper.assertTrue(!ground.isAir() && !ground.liquid(),
                 "TEST-004: ground below the arrival Y must be solid (got " + ground + " at " + feet.below() + ")");
