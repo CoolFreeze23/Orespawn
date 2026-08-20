@@ -1,3 +1,77 @@
+# OreSpawn for NeoForge 1.21.1 — 2.0.0-beta.4
+
+The Chaos dimension gets its real terrain back. Worlds carry forward;
+already-generated Chaos chunks keep their old shape, so ungenerated
+areas (or a fresh visit after deleting the dimension's region files)
+show the fix.
+
+## The Chaos dimension — terrain restored
+
+- **No more "giant flat stone world."** The port had borrowed vanilla's
+  modern Nether noise router wholesale, which produces a dead-flat
+  sealed stone cap at the top of the dimension — and since you arrive
+  on top of it, the whole dimension read as an endless flat plain. The
+  router is now a faithful translation of the original 1.7.10
+  generator's math (`ChunkProviderOreSpawn6.initializeNoiseField`):
+  the original noise scales (684.412 / 2053.236 — the modern nether
+  runs different ones), the signature cosine cavern banding that layers
+  the interior into three stacked cavern strata, the solid floor and
+  roof edge falloff, and the blend-to-air at the very top.
+- **The crumbly shell is back.** The original dithered away the top and
+  bottom five layers block-by-block (each block survives on a die
+  roll), turning the sealed cap into the rugged, pitted stone surface
+  you actually walk on — and pitting the floor, which faithfully has no
+  bedrock (Y0 is open, watch your step). The port never did this scrape;
+  now it does, with the original's exact per-layer probabilities.
+- **Patchy grass, like the original.** The grass/dirt band at Y60-66
+  inside the caverns now comes and goes in noise-driven patches (the
+  original mixed grass and bare stone at roughly 3:1); it used to be a
+  uniform grass carpet.
+- **Beds work.** The original allowed respawning in Chaos; the ported
+  dimension type wrongly said no.
+
+Mob spawns, features (scraggly trees, anthills, veggie patches, ores),
+carvers, and the water sea at Y64 were verified against the original
+`setChaosCreatures` roster and chunk provider — all already faithful,
+unchanged.
+
+# OreSpawn for NeoForge 1.21.1 — 2.0.0-beta.4
+
+The Chaos dimension gets its real terrain back. Worlds carry forward;
+already-generated Chaos chunks keep their old shape, so ungenerated
+areas (or a fresh visit after deleting the dimension's region files)
+show the fix.
+
+## The Chaos dimension — terrain restored
+
+- **No more "giant flat stone world."** The port had borrowed vanilla's
+  modern Nether noise router wholesale, which produces a dead-flat
+  sealed stone cap at the top of the dimension — and since you arrive
+  on top of it, the whole dimension read as an endless flat plain. The
+  router is now a faithful translation of the original 1.7.10
+  generator's math (`ChunkProviderOreSpawn6.initializeNoiseField`):
+  the original noise scales (684.412 / 2053.236 — the modern nether
+  runs different ones), the signature cosine cavern banding that layers
+  the interior into three stacked cavern strata, the solid floor and
+  roof edge falloff, and the blend-to-air at the very top.
+- **The crumbly shell is back.** The original dithered away the top and
+  bottom five layers block-by-block (each block survives on a die
+  roll), turning the sealed cap into the rugged, pitted stone surface
+  you actually walk on — and pitting the floor, which faithfully has no
+  bedrock (Y0 is open, watch your step). The port never did this scrape;
+  now it does, with the original's exact per-layer probabilities.
+- **Patchy grass, like the original.** The grass/dirt band at Y60-66
+  inside the caverns now comes and goes in noise-driven patches (the
+  original mixed grass and bare stone at roughly 3:1); it used to be a
+  uniform grass carpet.
+- **Beds work.** The original allowed respawning in Chaos; the ported
+  dimension type wrongly said no.
+
+Mob spawns, features (scraggly trees, anthills, veggie patches, ores),
+carvers, and the water sea at Y64 were verified against the original
+`setChaosCreatures` roster and chunk provider — all already faithful,
+unchanged.
+
 # OreSpawn for NeoForge 1.21.1 — 2.0.0-beta.3
 
 A server-killing worldgen crash fixed, plus the full close-out of the

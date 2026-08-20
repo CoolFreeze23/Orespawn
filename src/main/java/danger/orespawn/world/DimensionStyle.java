@@ -45,8 +45,13 @@ import java.util.Locale;
  *       does the usual dungeon pass but skips the crystal-only rewrite.
  *       Scraggly oak-style trees are scattered on top of the islands to echo
  *       the original 1.7.10 {@code ChunkProviderOreSpawn4.addScragglyTrees}.</li>
- *   <li>{@link #CHAOS} — pass-through terrain but with a chaos-specific light
- *       decoration pass (future: hellish flora, nightmare dungeon placement).</li>
+ *   <li>{@link #CHAOS} — terrain shape is data-driven via the
+ *       {@code orespawn:chaos} noise settings (a faithful translation of
+ *       1.7.10 {@code ChunkProviderOreSpawn6.initializeNoiseField}: legacy
+ *       blended noise at the original 684.412/2053.236 scales, the cosine
+ *       cavern banding, solid floor/roof edge falloff, and the top blend to
+ *       air). The style hook adds the per-block dither scrape of the world
+ *       shell (rugged top, pitted no-bedrock floor) and scraggly trees.</li>
  *   <li>{@link #VILLAGE} — identical to {@code DEFAULT} for now; the hook lets
  *       us later wire in 1.7.10's {@code MapGenMoreVillages} frequency bump
  *       without touching the codec surface.</li>
