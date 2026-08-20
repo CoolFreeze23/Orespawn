@@ -56,12 +56,21 @@ wrong for you, please say so.
   last build — that's the original's pace, not a bug. *(BUG-035
   follow-up)*
 
-- The Chaos dimension is no longer a flat stone slab: terrain now uses
-  the original 1.7.10 noise (banded caverns inside, rugged crumbly
-  surface on top, no bedrock at the pitted floor), grass comes in
-  patches, and beds work. Note: Chaos chunks you already generated
-  keep their old flat shape — explore new areas or delete the
-  dimension's region folder to regenerate. *(field report)*
+- The Chaos dimension is no longer a flat stone slab: it's back to the
+  original's floating grassy islands over open void. The first fix
+  attempt translated the original noise math faithfully but missed that
+  the 1.7.10 generator INVERTS the Nether density field (stone where
+  the Nether has air, air where it has rock — a photographic negative);
+  a second field report ("I remember grass and floating islands")
+  caught it. Also fixed in the same pass: the port's invented water sea
+  under Y64 is gone (the original places no fluid), grass+dirt is the
+  default surface on every island top (was wrongly confined to the
+  Y60-65 band, which is the one place the original makes it patchy),
+  beds work, and dimension arrivals hunt for an island to land on like
+  the original teleporter instead of blind-dropping into the void.
+  Note: Chaos chunks you already generated keep their old shape —
+  explore new areas or delete the dimension's region folder to
+  regenerate. *(field reports)*
 
 **beta.3 (first field reports — thank you!):**
 

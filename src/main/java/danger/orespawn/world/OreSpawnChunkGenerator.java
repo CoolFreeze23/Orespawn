@@ -230,12 +230,14 @@ public class OreSpawnChunkGenerator extends NoiseBasedChunkGenerator {
      * <ul>
      *   <li><b>Shell scrape</b> (orig replaceBiomeBlocks:139-181): every block
      *       survives only while {@code y < 127 - rng(5) && y > rng(5)}, else
-     *       air. Only Y123-127 (top) and Y0-4 (bottom) are ever affected —
-     *       this is what turns the sealed noise roof into the original's
-     *       rugged, crumbly stone surface instead of a dead-flat plain, and
-     *       pits the floor (Y0 is always air; the original had no bedrock
-     *       here). Statistical parity: same per-block keep probabilities,
-     *       different RNG stream (the modern pipeline reseeds differently).</li>
+     *       air. Only Y123-127 (top) and Y0-4 (bottom) are ever affected.
+     *       With the inverted-density router (islands over void) these bands
+     *       are mostly air already; the scrape dithers away whatever stone
+     *       crumbs the noise leaves near the build limits so they stay
+     *       rugged instead of forming plates (and Y0 is always air; the
+     *       original had no bedrock here). Statistical parity: same
+     *       per-block keep probabilities, different RNG stream (the modern
+     *       pipeline reseeds differently).</li>
      *   <li><b>Scraggly trees</b> (orig addScragglyTrees:335-358): roll
      *       {@code 1 + nextInt(5)} trees but only proceed on a 1-in-4 chunk
      *       gate; positions {@code 2 + nextInt(12)}, scanning Y120 down to
