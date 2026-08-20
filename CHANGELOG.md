@@ -16,9 +16,23 @@ after deleting the dimension's region files) show the fix.
   convention, which produced the inverse world: a near-solid stone mass
   with a flat sealed cap you arrived on top of. The router is now the
   faithful translation WITH the inversion: original noise scales
-  (684.412 / 2053.236), the cosine banding that layers the islands into
-  three strata, and edge falloffs that leave the top and bottom of the
-  world fully open.
+  (684.412 / 2053.236), the cosine banding, and edge falloffs that
+  leave the top and bottom of the world fully open.
+- **Hills and mountains restored.** Two unit-conversion errors verified
+  against the decompiled modern engine (`BlendedNoise.java`): the
+  legacy generator sampled noise per 4x8-block CELL while the modern
+  `old_blended_noise` samples per BLOCK (so the scales must be 0.25 /
+  0.375, exactly as vanilla's own port of the legacy Nether does in
+  `nether/base_3d_noise.json` — the port had 1.0 / 3.0, making terrain
+  4x too fine horizontally and 8x vertically), and the modern function
+  divides its output by 128 (the port left the banding spline in legacy
+  units, so the noise was ~128x too weak and the +/-2 cosine band —
+  meant as a subtle bias against noise swinging +/-50 — dictated the
+  whole shape as dead-flat plates). With both fixed, a side-by-side
+  render of the original `initializeNoiseField` math and the port's
+  router is numerically identical: rolling grass-topped highlands with
+  real mountains, cliffs, overhangs and hanging islands
+  (`tools/chaos_slice.py`).
 - **No sea.** The original places no fluid at all — its Nether-inherited
   lava fill was deleted and the water branch is unreachable dead code.
   The port wrongly declared a water ocean below Y64, which under

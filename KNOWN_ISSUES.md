@@ -62,7 +62,14 @@ wrong for you, please say so.
   the 1.7.10 generator INVERTS the Nether density field (stone where
   the Nether has air, air where it has rock — a photographic negative);
   a second field report ("I remember grass and floating islands")
-  caught it. Also fixed in the same pass: the port's invented water sea
+  caught it. A third report ("more verticalness, hills and mountains")
+  then caught two unit-conversion errors against the modern engine:
+  noise sampled per-block instead of per-cell (terrain 4x/8x too fine)
+  and the modern noise's /128 output normalization uncompensated
+  (noise 128x too weak, so the banding curve flattened everything into
+  plates). Both are now verified against the decompiled engine source,
+  and a side-by-side render of the original math vs the fixed router
+  is numerically identical. Also fixed: the port's invented water sea
   under Y64 is gone (the original places no fluid), grass+dirt is the
   default surface on every island top (was wrongly confined to the
   Y60-65 band, which is the one place the original makes it patchy),
