@@ -48,3 +48,4 @@ compile_queen_animation.py
 simplify_animation.py
 verify_hierarchy.py
 commit_msg.txt
+__pycache__/
