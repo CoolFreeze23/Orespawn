@@ -1,0 +1,120 @@
+{
+  "schema_version": 1,
+  "geckolib_version": "4.8.4",
+  "runtime_versions": {
+    "minecraft": "1.21.1",
+    "neoforge": "21.1.223",
+    "geckolib": "4.8.4"
+  },
+  "ticks_per_second": 20.0,
+  "thresholds": {
+    "geometry_epsilon_blocks": 1.0e-5,
+    "animation_epsilon_radians": 2.0e-6,
+    "uv_epsilon_normalized": 1.0e-7,
+    "normal_epsilon": 1.0e-6,
+    "pixel_channel_tolerance": 2,
+    "pixel_changed_fraction": 0.001,
+    "pixel_mean_absolute_error": 0.25,
+    "minimum_foreground_fraction": 0.001
+  },
+  "models": [
+    {
+      "id": "model_elevator",
+      "tier": 3,
+      "class": "danger.orespawn.entity.client.ModelElevator",
+      "texture": "src/main/resources/assets/orespawn/textures/entity/Elevator1.png",
+      "animation_kind": "static",
+      "loop_period_age_ticks": 20.0,
+      "sample_fractions": [0.0, 0.25, 0.5, 0.75, 1.0],
+      "limb_swing": 0.0,
+      "limb_swing_amount": 0.0,
+      "camera": {"yaw_degrees": 34.0, "pitch_degrees": -28.0},
+      "channels": []
+    },
+    {
+      "id": "model_beaver",
+      "tier": 2,
+      "class": "danger.orespawn.entity.client.ModelBeaver",
+      "texture": "src/main/resources/assets/orespawn/textures/entity/beaver.png",
+      "animation_kind": "gait_scaled",
+      "ambient_clip_name": "animation.orespawn.model_beaver.g1_ambient_probe",
+      "unit_gait_clip_name": "animation.orespawn.model_beaver.g1_unit_gait_probe",
+      "loop_period_age_ticks": 62.83185307179586,
+      "dense_transform_sample_count": 593,
+      "dense_transform_probe_offset": 0.6180339887498948,
+      "probe_key_coincidence_epsilon_ticks": 1.0e-9,
+      "animation_bake_subdivisions_per_dense_interval": 8,
+      "animation_interpolation": "catmullrom",
+      "candidate_animation_path": "geckolib_custom_animation_code",
+      "emitted_clip_role": "REFERENCE_ONLY_NOT_RUNTIME_ACCEPTANCE",
+      "sample_fractions": [0.0, 0.25, 0.5, 0.75, 1.0],
+      "limb_swing": 0.0,
+      "limb_swing_amount_samples": [0.0, 0.25, 0.5, 1.0],
+      "visual_sample_ids": ["bind", "a1_t0", "a1_t_quarter", "a1_t_half", "a1_t_three_quarter"],
+      "camera": {"yaw_degrees": 38.0, "pitch_degrees": -22.0},
+      "channels": [
+        {
+          "bones": ["rff", "lrf"],
+          "axis": "x",
+          "formula": "cosine",
+          "frequency_radians_per_age_tick": 3.7,
+          "pi_scale": 0.45,
+          "limb_swing_scaled": true,
+          "sign": 1.0,
+          "source": "ModelBeaver.setupAnim: cos(ageInTicks * 3.7F) * PI * 0.45F * limbSwingAmount"
+        },
+        {
+          "bones": ["lff", "rrf"],
+          "axis": "x",
+          "formula": "cosine",
+          "frequency_radians_per_age_tick": 3.7,
+          "pi_scale": 0.45,
+          "limb_swing_scaled": true,
+          "sign": -1.0,
+          "source": "ModelBeaver.setupAnim: opposite sign of the 3.7F leg formula"
+        },
+        {
+          "bones": ["teeth"],
+          "axis": "x",
+          "formula": "cosine",
+          "frequency_radians_per_age_tick": 2.7,
+          "pi_scale": 0.25,
+          "limb_swing_scaled": false,
+          "sign": 1.0,
+          "source": "ModelBeaver.setupAnim: cos(ageInTicks * 2.7F) * PI * 0.25F"
+        },
+        {
+          "bones": ["tail"],
+          "axis": "x",
+          "formula": "cosine",
+          "frequency_radians_per_age_tick": 0.5,
+          "pi_scale": 0.05,
+          "limb_swing_scaled": false,
+          "sign": 1.0,
+          "source": "ModelBeaver.setupAnim: cos(ageInTicks * 0.5F) * PI * 0.05F"
+        }
+      ]
+    }
+  ],
+  "fixtures": [
+    {
+      "id": "fixture_nested_nonmirrored_rotated_inflate",
+      "proof_scope": "non_production_converter_fixture",
+      "tier": 0,
+      "class": "danger.orespawn.g1.G1ConverterFixtureModel",
+      "texture": "src/main/resources/assets/orespawn/textures/entity/Elevator1.png",
+      "animation_kind": "static",
+      "loop_period_age_ticks": 20.0,
+      "sample_fractions": [],
+      "limb_swing": 0.0,
+      "limb_swing_amount": 0.0,
+      "channels": [],
+      "required_coverage": [
+        "nested_parent_bone",
+        "non_mirrored_uv",
+        "nonzero_bind_rotation",
+        "uniform_inflate"
+      ]
+    }
+  ]
+}

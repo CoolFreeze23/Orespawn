@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "model_id": "fixture_nested_nonmirrored_rotated_inflate",
+  "tier": 0,
+  "proof_scope": "non_production_converter_fixture",
+  "ground_truth": "executed compiled LayerDefinition and baked ModelPart",
+  "source_class": "danger.orespawn.g1.G1ConverterFixtureModel",
+  "source_class_sha256": "2802d00cd78514cfd9ca08d7660c322e4819fedf20bf1cd5ca239bf4186559a7",
+  "compiled_dump_sha256": "cc7f12ce51ae7e273005c166319d7637ab07ba0addec4baf2cffdfb2a490d6cc",
+  "geometry_sha256": "77fcd0fc50ae46f51de47da6ecb10f79528646e937195701720eab9c00521af2",
+  "animation_sha256": "7882082857fdb11e02f158ebc3a6d3f970e2ac60d54813f0e903ee97b2293749",
+  "animation_contract_sha256": "46dabc21cf9f3eeb0d8b8c6560fd4c216b2743a0ee0c5cc03a954f3ab99ec4c3",
+  "bone_count": 2,
+  "cube_count": 2,
+  "mirrored_cube_count": 0,
+  "mirrored_uv_strategy": "source flag retained as modelpart_mirror; semantics baked into explicit faces; incompatible GeckoLib native mirror disabled",
+  "exact_bone_names": [
+    "fixture_child",
+    "fixture_parent"
+  ],
+  "animation_contract": {
+    "schema_version": 1,
+    "kind": "static",
+    "controller_required": false,
+    "source_setup_anim_expected_identity": true,
+    "sample_ids": [
+      "bind"
+    ]
+  },
+  "reference_animation_schema": {
+    "status": "SCHEMA_VALID_REFERENCE_ONLY",
+    "clip_count": 0,
+    "constant_vector_count": 0,
+    "runtime_acceptance": false
+  },
+  "accepted_animation_evidence": "static bind pose; no controller",
+  "artist_editable_math_to_keyframes_status": "NOT_APPLICABLE",
+  "compiled_animation_bake_sample_count": 0,
+  "reference_clip_keys_source": "compiled setupAnim output; no Python formula evaluation",
+  "source_animation_channel_inventory": []
+}
