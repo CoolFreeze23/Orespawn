@@ -3498,3 +3498,78 @@ advisory(ies), 3 acknowledged -> exit 0`; runGameTestServer explicit exit
 0 with literal suite line `All 192 required tests passed` (N verified as
 192). G0 STOPS at the owner approval gate; no G1-G5 work follows this
 entry.
+
+## PHASE G1 — LayerDefinition converter + independent parity harness (2026-08-31)
+
+WHAT: built a non-production `g1tool` source set which executes each compiled
+`createBodyLayer()`, serializes the definition and baked `ModelPart` trees with
+fixed LF output, converts those trees to Bedrock geo, bakes the result through
+GeckoLib 4.8.4, and captures the real `ModelPart.Cube.compile` and
+`GeoRenderer` vertex paths. Exact source bone names are mandatory. Explicit
+per-face UV output preserves mirrored ModelPart semantics without GeckoLib's
+incompatible native mirror. `ModelElevator` is the genuinely static visible
+Tier-3 proof; `ModelBeaver` is the Tier-2 proof. A deterministic, non-production
+fixture separately covers nested parents, non-mirrored UVs, nonzero bind
+rotations, and uniform inflate. No production model, renderer, entity, resource
+registration, or shipped asset was migrated; G2 did not begin.
+
+ANIMATION SCOPE: Elevator stays at its static bind pose with no controller.
+Beaver uses the owner-approved G1 legacy-parity exception: a fresh GeckoLib
+`BakedGeoModel` invokes the exact legacy `Mth.cos` formulas through
+`GeoModel.setCustomAnimations`. Compiled Java independently executes
+`ModelBeaver.setupAnim`; Python only compares the two captured results. The
+emitted `model_beaver.animation.json` is mechanically labeled
+`REFERENCE_ONLY_NOT_RUNTIME_ACCEPTANCE`, is never loaded or used by acceptance,
+and has a throwing `getAnimationResource` guard. Its 4,745 authored timestamps
+per channel / 28,470 constant vectors pass generic schema checks only. This does
+NOT claim baked-keyframe runtime acceptance or completion of PHASE_G_PROMPT's G3
+math-to-artist-editable-keyframes work; that remains `OUTSTANDING_G3`.
+
+PARITY EVIDENCE: immutable regeneration is green against
+`phase_g_reports/g1_proof/evidence/report.json`. Elevator has 5 exact bones / 5
+cubes, maximum geometry, UV, normal, animation, changed-pixel, and pixel-MAE
+deltas all `0`. Beaver has 9 exact bones / 9 cubes: maximum corner delta
+`2.00000000116773e-7` blocks, UV/normal delta `0`, actual-candidate rotation
+delta `0` radians, changed-pixel fraction `1.52587890625e-5` (limit `0.001`), and
+MAE `0.00335184733072917` (limit `0.25`). Its runtime-pose gate covers 2,401
+samples total: 2,380 dense samples including endpoints across amplitudes
+`0/.25/.5/1`, of which 2,372 are off-grid interiors. Zero probes coincide with
+reference keys within `1e-9` tick; minimum separation is
+`0.0007339999999942393` tick. Maximum dense runtime-pose error is `0`; maximum
+candidate gait-amplitude proportionality error is `5.00000000291934e-8`
+radians, and unscaled teeth/tail amplitude error is `0` (all below `2e-6`). The
+fixture's max corner/normal deltas are `1.41509716908816e-7` /
+`1.51327459479588e-7`, with UV delta `0`. All 18 generated text captures are LF.
+The visual output directory is cleared first and contains exactly the 30 PNGs
+referenced by the report; stale Coin and old Beaver captures are rejected.
+
+PERFORMANCE EVIDENCE: the checked-in report is deliberately labeled
+`SMOKE_ONLY / COMPONENT_PROXY_ONLY / PENDING_LIVE_PRECUTOVER`. It executes the
+current compiled classic pose and current generated-geo/custom-hook candidate;
+any `*.poses.json` makes the benchmark fail. Two measured runs per scene use
+AB/BA alternation per timing batch. Seed, camera, and resolution are `N/A`.
+The mixed-100 component proxy measured classic/candidate median
+`0.08837500000000001 / 0.16547 ms` and p95
+`0.108845 / 0.20591 ms`, producing exact WARNING numbers
+`87.23620933521923%` median-ratio delta and `0.09706500000000001 ms` p95 delta.
+These component-only warnings are not evaluated against or substituted for Q6.
+The validator independently recomputes per-run/aggregate 1% lows, aggregate
+median/p95/p99, scene regressions, the configured budget scene and both warning
+fields, and cross-checks the provisional/live limits. Evidence is bound to base
+revision `aa5b8637b2457a987445161b1c7f2f6ebe0b9d59`, exact benchmark/gate/build/
+manifest source hashes, compiled dumps, generated geo/current candidate inputs,
+and loaded GeckoLib/NeoForge/Minecraft artifacts and representative class hashes.
+The real same-machine 60-second warmup + five 120-second runs for every live
+scene—including actual off-screen/culling, Tier-1, GPU, server, allocation/GC,
+MHLib packets and part-count metrics—remains a mandatory pre-cutover Q6 gate.
+
+REVIEW: controller-side independent read-only re-reviews returned PASS for
+parity, fixture coverage, stale-proof rejection, benchmark provenance, and the
+recomputing validator. Both proof writers were followed by immutable no-write
+verification (`g1Parity` + `g1BenchmarkVerify`, exit 0).
+
+FINAL GATE: guarded `build` exit 0; `assetAudit` printed literal `RESULT: 0
+error(s), 0 advisory(ies), 3 acknowledged -> exit 0`; immutable parity and
+benchmark proof verification passed; `jarJar` completed; `runGameTestServer`
+exit 0 with literal `All 192 required tests passed`. G1 closes here. Q6 remains
+`PENDING_LIVE_PRECUTOVER`; no production cutover, push, or G2 work occurred.

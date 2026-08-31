@@ -1,0 +1,547 @@
+{
+  "schema_version": 1,
+  "status": "SMOKE_ONLY",
+  "qualification": "COMPONENT_PROXY_ONLY",
+  "q6_status": "PENDING_LIVE_PRECUTOVER",
+  "benchmark_kind": "SMOKE_ONLY / COMPONENT_PROXY_ONLY / PENDING_LIVE_PRECUTOVER",
+  "fixed_seed": "N/A — no randomized world exists in the headless component proxy",
+  "profile": "smoke",
+  "captured_at_utc": "2026-08-31T11:23:44.680068900Z",
+  "manifest_sha256": "03a6642d1223fef1dd69e97030d71789bb41bf33069088976b4d064df9b731a2",
+  "protocol_sha256": "19e3f79456089a654835ddf748f7fd424efde71f63f0714c38651176a6a07b4a",
+  "provenance": {
+    "repository_base_revision": "aa5b8637b2457a987445161b1c7f2f6ebe0b9d59",
+    "revision_semantics": "base revision plus exact working-tree source/input hashes below",
+    "source_files_sha256": {
+      "src/g1tool/java/danger/orespawn/g1/G1PerformanceBenchmark.java": "c4015dcd973f575c547fc1dc0753b5c304efda109ac27e056a63eefa8e3c66db",
+      "src/g1tool/java/danger/orespawn/g1/G1AnimationRuntime.java": "75d4df9d23b4586c57e369e3d93b61bfaf88ba9f911b391562d31196ebb5dc84",
+      "tools/g1_benchmark_gate.py": "a39c40dafe3c4f39065f773ce335bbe0af68637c4b42bf5f53d6d9c330c0aa0f",
+      "tools/g1_performance_benchmark.json": "19e3f79456089a654835ddf748f7fd424efde71f63f0714c38651176a6a07b4a",
+      "tools/g1_model_proofs.json": "03a6642d1223fef1dd69e97030d71789bb41bf33069088976b4d064df9b731a2",
+      "build.gradle": "fcd27607568eccbe3cc3876fe2099edefe33103dea2fad92b30ecf4060814a37"
+    },
+    "manifest_path": "tools/g1_model_proofs.json",
+    "protocol_path": "tools/g1_performance_benchmark.json",
+    "model_inputs": {
+      "model_elevator": {
+        "compiled_dump_sha256": "a70c672bf8babe2eec1f93e470e2b96cd362a645a531df7eb78b6eca7449cd4e",
+        "generated_geo_sha256": "d4af956445fa2426b7f7cd0a96f513601db94c0cad92125d173a77a411771cb7",
+        "conversion_report_sha256": "5269c1a9c721687dbdb491943f92fcb72103c4b2adadcccad850456245339de9",
+        "accepted_candidate_path": "static_bind_pose",
+        "reference_animation_used": false,
+        "stale_pose_artifact_present": false
+      },
+      "model_beaver": {
+        "compiled_dump_sha256": "ef99fe581ade9a5704422a6ba6db142a4ce8d38866f2fa339435e2be95e77dbd",
+        "generated_geo_sha256": "486883a1918a74c96dc61422e3d40c5a2f13094a24d2296caeea2fc244feb67d",
+        "conversion_report_sha256": "aff8ac4d04b3eb4d967617604ba04b9c1d9dee4e7755e007310d3c3af4db0288",
+        "accepted_candidate_path": "geckolib_custom_animation_code",
+        "reference_animation_used": false,
+        "stale_pose_artifact_present": false
+      }
+    },
+    "declared_runtime_versions": {
+      "minecraft": "1.21.1",
+      "neoforge": "21.1.223",
+      "geckolib": "4.8.4"
+    },
+    "runtime_classpath": {
+      "benchmark_harness": {
+        "declared_version": "G1 benchmark harness",
+        "representative_class": "danger.orespawn.g1.G1PerformanceBenchmark",
+        "class_resource": "danger/orespawn/g1/G1PerformanceBenchmark.class",
+        "class_sha256": "7a4180fb97c3532fd5df27b8d2b7cb2149b4501bf6741f0f0387286052150d91",
+        "classpath_entry_name": "g1tool",
+        "classpath_entry_kind": "directory",
+        "classpath_entry_sha256": "f5610ef532c8e634db7cc123be2e2e13fa7e1c517f1a7409798568c7deac923c"
+      },
+      "candidate_animation_runtime": {
+        "declared_version": "G1 candidate custom-animation runtime",
+        "representative_class": "danger.orespawn.g1.G1AnimationRuntime",
+        "class_resource": "danger/orespawn/g1/G1AnimationRuntime.class",
+        "class_sha256": "2482c13664567a786ca18c4e71a6de2b2fd358d5420fef8fd8d20f011369402c",
+        "classpath_entry_name": "g1tool",
+        "classpath_entry_kind": "directory",
+        "classpath_entry_sha256": "f5610ef532c8e634db7cc123be2e2e13fa7e1c517f1a7409798568c7deac923c"
+      },
+      "geckolib": {
+        "declared_version": "GeckoLib 4.8.4",
+        "representative_class": "software.bernie.geckolib.renderer.GeoRenderer",
+        "class_resource": "software/bernie/geckolib/renderer/GeoRenderer.class",
+        "class_sha256": "22e70dbb7780ecc16dc4c95ccc0b1d43e37f66a66f6bc04c4ba61643ee28d087",
+        "classpath_entry_name": "geckolib-neoforge-1.21.1-4.8.4.jar",
+        "classpath_entry_kind": "file",
+        "classpath_entry_sha256": "a1b6ce25e8627aa7e748672eedb6b71af68e0993462313649c259f38e42bcac9"
+      },
+      "neoforge": {
+        "declared_version": "NeoForge 21.1.223",
+        "representative_class": "net.neoforged.neoforge.common.NeoForge",
+        "class_resource": "net/neoforged/neoforge/common/NeoForge.class",
+        "class_sha256": "903e5ac9b59d208af8c118bf781d5e4c4e381fa17735b50a8ebca1bee9689953",
+        "classpath_entry_name": "neoforge-21.1.223.jar",
+        "classpath_entry_kind": "file",
+        "classpath_entry_sha256": "7fdde7231c51f2e69606e79b64b3585bd380089f8a9218c23cc65bb94a1f8edd"
+      },
+      "minecraft": {
+        "declared_version": "Minecraft 1.21.1",
+        "representative_class": "net.minecraft.client.model.geom.ModelPart",
+        "class_resource": "net/minecraft/client/model/geom/ModelPart.class",
+        "class_sha256": "78eb6811062aa5688d88b5d6b4d32de84da1eb75ab56c4c29e5fbfc4213727db",
+        "classpath_entry_name": "neoforge-21.1.223.jar",
+        "classpath_entry_kind": "file",
+        "classpath_entry_sha256": "7fdde7231c51f2e69606e79b64b3585bd380089f8a9218c23cc65bb94a1f8edd"
+      }
+    }
+  },
+  "profile_settings": {
+    "warmup_seconds": 1,
+    "run_seconds": 2,
+    "runs": 2,
+    "allocation_probe_frames": 200
+  },
+  "fixed_settings": {
+    "virtual_capture_resolution": "N/A — no window, raster target, or GPU submission",
+    "render_distance": "not applicable: headless renderer-component proxy",
+    "graphics_mode": "not applicable: no GPU submission",
+    "camera_path": "N/A — the proxy submits no camera or view transform",
+    "entity_state": "fixed bind/static or Beaver full-amplitude quarter-cycle pose",
+    "model_instances": "one baked renderer model reused sequentially, matching renderer ownership",
+    "timing_order": "paired AB/BA alternation per measured batch; smoke run 1 starts classic/candidate and run 2 starts candidate/classic",
+    "aggregation": "smoke only: median of two per-run medians and median of two per-run p95/p99 values; live Q6 separately requires five runs"
+  },
+  "environment": {
+    "os_name": "Windows 11",
+    "os_version": "10.0",
+    "os_arch": "amd64",
+    "processor_identifier": "Intel64 Family 6 Model 198 Stepping 2, GenuineIntel",
+    "available_processors": 24,
+    "max_heap_bytes": 8447328256,
+    "java_version": "21.0.7",
+    "java_vendor": "Microsoft",
+    "java_vm": "OpenJDK 64-Bit Server VM",
+    "java_home": "C:\\Users\\alvin\\AppData\\Roaming\\PrismLauncher\\java\\java-runtime-delta",
+    "jvm_flags": [
+      "-Dfile.encoding=UTF-8",
+      "-Duser.country=US",
+      "-Duser.language=en",
+      "-Duser.variant"
+    ]
+  },
+  "scenes": [
+    {
+      "id": "elevator_100_visible",
+      "status": "COMPONENT_PROXY_MEASURED",
+      "visible": true,
+      "proxy_scope": "renderer vertex submission only; no window, GPU, client tick, or server",
+      "timing_batch_frames": 10,
+      "entity_count": 100,
+      "model_bone_count": 500,
+      "mhlib_part_count": 0,
+      "classic_vertices_per_frame": 12000,
+      "candidate_vertices_per_frame": 12000,
+      "runs": [
+        {
+          "run": 1,
+          "starting_order": "classic/candidate",
+          "alternation_unit": "timing batch",
+          "classic": {
+            "sample_count": 1022,
+            "median_frame_ms": 0.04883,
+            "p95_frame_ms": 0.06671,
+            "p99_frame_ms": 0.07749,
+            "one_percent_low_fps": 12904.890953671442
+          },
+          "candidate": {
+            "sample_count": 1022,
+            "median_frame_ms": 0.13899,
+            "p95_frame_ms": 0.17689,
+            "p99_frame_ms": 0.22759,
+            "one_percent_low_fps": 4393.86616283668
+          },
+          "paired_wall_seconds": 2.0005147,
+          "client_cpu_percent_single_thread": 97.63112463007646,
+          "gc_collections": 14,
+          "gc_time_ms": 19
+        },
+        {
+          "run": 2,
+          "starting_order": "candidate/classic",
+          "alternation_unit": "timing batch",
+          "classic": {
+            "sample_count": 987,
+            "median_frame_ms": 0.05169,
+            "p95_frame_ms": 0.06482,
+            "p99_frame_ms": 0.07648,
+            "one_percent_low_fps": 13075.31380753138
+          },
+          "candidate": {
+            "sample_count": 987,
+            "median_frame_ms": 0.14974,
+            "p95_frame_ms": 0.18411,
+            "p99_frame_ms": 0.21426,
+            "one_percent_low_fps": 4667.2267338747315
+          },
+          "paired_wall_seconds": 2.0017902,
+          "client_cpu_percent_single_thread": 99.91057004874936,
+          "gc_collections": 13,
+          "gc_time_ms": 9
+        }
+      ],
+      "classic": {
+        "aggregation": "median of per-run metric",
+        "median_frame_ms": 0.05026,
+        "p95_frame_ms": 0.065765,
+        "p99_frame_ms": 0.076985,
+        "one_percent_low_fps": 12989.543417548874
+      },
+      "candidate": {
+        "aggregation": "median of per-run metric",
+        "median_frame_ms": 0.14436500000000002,
+        "p95_frame_ms": 0.1805,
+        "p99_frame_ms": 0.22092499999999998,
+        "one_percent_low_fps": 4526.422994228811
+      },
+      "allocation": {
+        "classic_bytes_per_frame": 93880.0,
+        "candidate_bytes_per_frame": 346680.0,
+        "supported": true
+      },
+      "median_regression_percent": 187.23637087146844,
+      "p95_regression_ms": 0.11473499999999999,
+      "budget_scene": false
+    },
+    {
+      "id": "beaver_100_visible",
+      "status": "COMPONENT_PROXY_MEASURED",
+      "visible": true,
+      "proxy_scope": "renderer vertex submission only; no window, GPU, client tick, or server",
+      "timing_batch_frames": 10,
+      "entity_count": 100,
+      "model_bone_count": 900,
+      "mhlib_part_count": 0,
+      "classic_vertices_per_frame": 21600,
+      "candidate_vertices_per_frame": 21600,
+      "runs": [
+        {
+          "run": 1,
+          "starting_order": "classic/candidate",
+          "alternation_unit": "timing batch",
+          "classic": {
+            "sample_count": 576,
+            "median_frame_ms": 0.1165,
+            "p95_frame_ms": 0.15462,
+            "p99_frame_ms": 0.17167,
+            "one_percent_low_fps": 5825.129609133804
+          },
+          "candidate": {
+            "sample_count": 576,
+            "median_frame_ms": 0.21748,
+            "p95_frame_ms": 0.28804,
+            "p99_frame_ms": 0.31965,
+            "one_percent_low_fps": 3128.4217112466763
+          },
+          "paired_wall_seconds": 2.0018853,
+          "client_cpu_percent_single_thread": 96.00325253399883,
+          "gc_collections": 9,
+          "gc_time_ms": 6
+        },
+        {
+          "run": 2,
+          "starting_order": "candidate/classic",
+          "alternation_unit": "timing batch",
+          "classic": {
+            "sample_count": 584,
+            "median_frame_ms": 0.11794,
+            "p95_frame_ms": 0.15829,
+            "p99_frame_ms": 0.1919,
+            "one_percent_low_fps": 5211.047420531527
+          },
+          "candidate": {
+            "sample_count": 584,
+            "median_frame_ms": 0.21438,
+            "p95_frame_ms": 0.27266,
+            "p99_frame_ms": 0.31208,
+            "one_percent_low_fps": 3204.306588054345
+          },
+          "paired_wall_seconds": 2.0022412,
+          "client_cpu_percent_single_thread": 99.10768992267265,
+          "gc_collections": 10,
+          "gc_time_ms": 7
+        }
+      ],
+      "classic": {
+        "aggregation": "median of per-run metric",
+        "median_frame_ms": 0.11722,
+        "p95_frame_ms": 0.156455,
+        "p99_frame_ms": 0.18178499999999997,
+        "one_percent_low_fps": 5501.003933217813
+      },
+      "candidate": {
+        "aggregation": "median of per-run metric",
+        "median_frame_ms": 0.21593,
+        "p95_frame_ms": 0.28035,
+        "p99_frame_ms": 0.315865,
+        "one_percent_low_fps": 3165.9094866477767
+      },
+      "allocation": {
+        "classic_bytes_per_frame": 171480.0,
+        "candidate_bytes_per_frame": 394680.0,
+        "supported": true
+      },
+      "median_regression_percent": 84.209179320935,
+      "p95_regression_ms": 0.12389499999999998,
+      "budget_scene": false
+    },
+    {
+      "id": "mixed_100_visible",
+      "status": "COMPONENT_PROXY_MEASURED",
+      "visible": true,
+      "proxy_scope": "renderer vertex submission only; no window, GPU, client tick, or server",
+      "timing_batch_frames": 10,
+      "entity_count": 100,
+      "model_bone_count": 700,
+      "mhlib_part_count": 0,
+      "classic_vertices_per_frame": 16800,
+      "candidate_vertices_per_frame": 16800,
+      "runs": [
+        {
+          "run": 1,
+          "starting_order": "classic/candidate",
+          "alternation_unit": "timing batch",
+          "classic": {
+            "sample_count": 769,
+            "median_frame_ms": 0.08709,
+            "p95_frame_ms": 0.11017,
+            "p99_frame_ms": 0.13314,
+            "one_percent_low_fps": 7510.890791647889
+          },
+          "candidate": {
+            "sample_count": 769,
+            "median_frame_ms": 0.16279,
+            "p95_frame_ms": 0.20982,
+            "p99_frame_ms": 0.23326,
+            "one_percent_low_fps": 4287.061647946498
+          },
+          "paired_wall_seconds": 2.0020347,
+          "client_cpu_percent_single_thread": 99.11791239182817,
+          "gc_collections": 10,
+          "gc_time_ms": 5
+        },
+        {
+          "run": 2,
+          "starting_order": "candidate/classic",
+          "alternation_unit": "timing batch",
+          "classic": {
+            "sample_count": 771,
+            "median_frame_ms": 0.08966,
+            "p95_frame_ms": 0.10752,
+            "p99_frame_ms": 0.13888,
+            "one_percent_low_fps": 7200.460829493088
+          },
+          "candidate": {
+            "sample_count": 771,
+            "median_frame_ms": 0.16815,
+            "p95_frame_ms": 0.202,
+            "p99_frame_ms": 0.24071,
+            "one_percent_low_fps": 4154.3766357858
+          },
+          "paired_wall_seconds": 2.0006799,
+          "client_cpu_percent_single_thread": 99.18503204835517,
+          "gc_collections": 10,
+          "gc_time_ms": 6
+        }
+      ],
+      "classic": {
+        "aggregation": "median of per-run metric",
+        "median_frame_ms": 0.08837500000000001,
+        "p95_frame_ms": 0.108845,
+        "p99_frame_ms": 0.13601000000000002,
+        "one_percent_low_fps": 7352.400558782441
+      },
+      "candidate": {
+        "aggregation": "median of per-run metric",
+        "median_frame_ms": 0.16547,
+        "p95_frame_ms": 0.20591,
+        "p99_frame_ms": 0.236985,
+        "one_percent_low_fps": 4219.676350823892
+      },
+      "allocation": {
+        "classic_bytes_per_frame": 132680.0,
+        "candidate_bytes_per_frame": 305080.0,
+        "supported": true
+      },
+      "median_regression_percent": 87.23620933521923,
+      "p95_regression_ms": 0.09706500000000001,
+      "budget_scene": true
+    },
+    {
+      "id": "mixed_100_rotation_state_only",
+      "status": "COMPONENT_PROXY_MEASURED",
+      "visible": false,
+      "proxy_scope": "rotation-state iteration only; not offscreen rendering, culling, or controller work",
+      "timing_batch_frames": 1000,
+      "entity_count": 100,
+      "model_bone_count": 700,
+      "mhlib_part_count": 0,
+      "classic_vertices_per_frame": 0,
+      "candidate_vertices_per_frame": 0,
+      "runs": [
+        {
+          "run": 1,
+          "starting_order": "classic/candidate",
+          "alternation_unit": "timing batch",
+          "classic": {
+            "sample_count": 512,
+            "median_frame_ms": 0.00124,
+            "p95_frame_ms": 0.001592,
+            "p99_frame_ms": 0.001742,
+            "one_percent_low_fps": 574052.8128587829
+          },
+          "candidate": {
+            "sample_count": 512,
+            "median_frame_ms": 0.002572,
+            "p95_frame_ms": 0.003348,
+            "p99_frame_ms": 0.003632,
+            "one_percent_low_fps": 275330.3964757709
+          },
+          "paired_wall_seconds": 2.0032892,
+          "client_cpu_percent_single_thread": 99.05584276099526,
+          "gc_collections": 1,
+          "gc_time_ms": 1
+        },
+        {
+          "run": 2,
+          "starting_order": "candidate/classic",
+          "alternation_unit": "timing batch",
+          "classic": {
+            "sample_count": 526,
+            "median_frame_ms": 0.001184,
+            "p95_frame_ms": 0.00156,
+            "p99_frame_ms": 0.001684,
+            "one_percent_low_fps": 593824.2280285036
+          },
+          "candidate": {
+            "sample_count": 526,
+            "median_frame_ms": 0.002451,
+            "p95_frame_ms": 0.003173,
+            "p99_frame_ms": 0.003468,
+            "one_percent_low_fps": 288350.63437139563
+          },
+          "paired_wall_seconds": 2.001294,
+          "client_cpu_percent_single_thread": 99.9353418338335,
+          "gc_collections": 1,
+          "gc_time_ms": 1
+        }
+      ],
+      "classic": {
+        "aggregation": "median of per-run metric",
+        "median_frame_ms": 0.001212,
+        "p95_frame_ms": 0.0015760000000000001,
+        "p99_frame_ms": 0.0017130000000000001,
+        "one_percent_low_fps": 583771.1617046117
+      },
+      "candidate": {
+        "aggregation": "median of per-run metric",
+        "median_frame_ms": 0.0025115,
+        "p95_frame_ms": 0.0032605,
+        "p99_frame_ms": 0.00355,
+        "one_percent_low_fps": 281690.1408450704
+      },
+      "allocation": {
+        "classic_bytes_per_frame": 280.0,
+        "candidate_bytes_per_frame": 280.0,
+        "supported": true
+      },
+      "median_regression_percent": 107.2194719471947,
+      "p95_regression_ms": 0.0016844999999999998,
+      "budget_scene": false
+    }
+  ],
+  "deferred_live_scenes": [
+    {
+      "id": "largest_tier1_single",
+      "reason": "G1 intentionally converts no Tier-1 model and installs no runtime renderer"
+    },
+    {
+      "id": "largest_tier1_ten_with_synced_parts",
+      "reason": "requires a later Tier-1 candidate, live server-fed MHLib parts, and runtime renderer"
+    },
+    {
+      "id": "offscreen_culling_control",
+      "reason": "the headless rotation-state proxy has no camera, culling, controller ticking, GPU, or live entities"
+    }
+  ],
+  "live_only_metrics": [
+    "GPU frame time",
+    "whole-client frame time and 1% low FPS",
+    "server MSPT and p95",
+    "MHLib packets per second",
+    "synced part count"
+  ],
+  "provisional_budget": {
+    "scene": "mixed_100_visible",
+    "max_median_frame_regression_percent": 10.0,
+    "max_p95_frame_regression_ms": 2.0,
+    "max_server_p95_ms": 50.0,
+    "sustained_mhlib_packet_growth_allowed": false,
+    "component_proxy_policy": "warning numbers only; never evaluate or describe this smoke as a Q6 pass"
+  },
+  "binding_live_acceptance_protocol": {
+    "status": "PENDING_LIVE_PRECUTOVER — mandatory before first production renderer cutover",
+    "same_machine_controls": [
+      "machine and GPU",
+      "JDK and JVM flags",
+      "resolution",
+      "render distance",
+      "graphics settings",
+      "camera path",
+      "fixed seed"
+    ],
+    "warmup_seconds_per_scene": 60,
+    "run_seconds": 120,
+    "runs_per_scene": 5,
+    "scenes": [
+      "100 copies of each converted species in view with fixed walking/attack state",
+      "100 mixed species representative of the final tier distribution",
+      "largest Tier-1 boss alone with every synced part active",
+      "ten copies of the largest Tier-1 boss with every synced part active",
+      "off-screen control for culling and continuing controller work"
+    ],
+    "metrics": [
+      "median and p95 whole-client frame time",
+      "1% low FPS",
+      "client CPU",
+      "allocation and GC rate",
+      "GPU frame time where available",
+      "server MSPT and p95",
+      "MHLib packets per second",
+      "part count"
+    ],
+    "budgets": {
+      "max_mixed_100_median_frame_regression_percent": 10.0,
+      "max_mixed_100_p95_frame_regression_ms": 2.0,
+      "max_server_p95_ms": 50.0,
+      "sustained_mhlib_packet_growth_allowed": false
+    },
+    "failure_action": "keep classic renderer installed and return to owner"
+  },
+  "budget_evaluation": {
+    "status": "Q6_PENDING_LIVE_PRECUTOVER",
+    "scene": "mixed_100_visible",
+    "comparison_to_q6_budget_prohibited": true,
+    "component_proxy_warning_median_regression_percent": 87.23620933521923,
+    "component_proxy_warning_p95_regression_ms": 0.09706500000000001,
+    "provisional_limits_not_applied_to_component_proxy": {
+      "max_median_frame_regression_percent": 10.0,
+      "max_p95_frame_regression_ms": 2.0,
+      "max_server_p95_ms": 50.0,
+      "sustained_mhlib_packet_growth_allowed": false
+    },
+    "reason": "The reported percentage uses renderer-component time as its denominator and cannot be compared to Q6's whole-client frame percentage. Final Q6 evaluation requires an installed candidate renderer, GPU submission, server, and MHLib packet stream; the absolute component p95 delta is recorded now."
+  },
+  "mhlib_part_count": 0,
+  "mhlib_packets_per_second": "not measured: no runtime entity/server in G1 proxy",
+  "server_mspt_p95": "not measured: no runtime server in G1 proxy",
+  "gpu_frame_time_ms": "not measured: no GPU submission in G1 proxy",
+  "vertex_checksum": "2486415949730758588"
+}

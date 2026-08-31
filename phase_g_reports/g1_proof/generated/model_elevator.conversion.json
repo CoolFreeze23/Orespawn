@@ -1,0 +1,49 @@
+{
+  "schema_version": 1,
+  "model_id": "model_elevator",
+  "tier": 3,
+  "proof_scope": "production_proof_model",
+  "ground_truth": "executed compiled LayerDefinition and baked ModelPart",
+  "source_class": "danger.orespawn.entity.client.ModelElevator",
+  "source_class_sha256": "08a9699a4bb2b5e8d6926d7cf6d640bb907daca37d11daa5bcf9cf25e669d465",
+  "compiled_dump_sha256": "a70c672bf8babe2eec1f93e470e2b96cd362a645a531df7eb78b6eca7449cd4e",
+  "geometry_sha256": "d4af956445fa2426b7f7cd0a96f513601db94c0cad92125d173a77a411771cb7",
+  "animation_sha256": "7882082857fdb11e02f158ebc3a6d3f970e2ac60d54813f0e903ee97b2293749",
+  "animation_contract_sha256": "ef25a2b4eb7640daad7b902fc72c12e0e99737cd0882ac83ea702e72c92a7acd",
+  "bone_count": 5,
+  "cube_count": 5,
+  "mirrored_cube_count": 5,
+  "mirrored_uv_strategy": "source flag retained as modelpart_mirror; semantics baked into explicit faces; incompatible GeckoLib native mirror disabled",
+  "exact_bone_names": [
+    "shape1",
+    "shape2",
+    "shape3",
+    "shape4",
+    "shape5"
+  ],
+  "animation_contract": {
+    "schema_version": 1,
+    "kind": "static",
+    "controller_required": false,
+    "source_setup_anim_expected_identity": true,
+    "sample_ids": [
+      "bind",
+      "t0",
+      "t_quarter",
+      "t_half",
+      "t_three_quarter",
+      "t_end"
+    ]
+  },
+  "reference_animation_schema": {
+    "status": "SCHEMA_VALID_REFERENCE_ONLY",
+    "clip_count": 0,
+    "constant_vector_count": 0,
+    "runtime_acceptance": false
+  },
+  "accepted_animation_evidence": "static bind pose; no controller",
+  "artist_editable_math_to_keyframes_status": "NOT_APPLICABLE",
+  "compiled_animation_bake_sample_count": 0,
+  "reference_clip_keys_source": "compiled setupAnim output; no Python formula evaluation",
+  "source_animation_channel_inventory": []
+}

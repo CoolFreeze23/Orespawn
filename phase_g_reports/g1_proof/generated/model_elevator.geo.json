@@ -1,0 +1,439 @@
+{
+  "format_version": "1.12.0",
+  "minecraft:geometry": [
+    {
+      "description": {
+        "identifier": "geometry.orespawn.g1.model_elevator",
+        "texture_width": 64,
+        "texture_height": 64
+      },
+      "bones": [
+        {
+          "name": "shape1",
+          "pivot": [
+            0,
+            0,
+            0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -4,
+                -1,
+                -8
+              ],
+              "size": [
+                8,
+                1,
+                16
+              ],
+              "uv": {
+                "west": {
+                  "uv": [
+                    24,
+                    16
+                  ],
+                  "uv_size": [
+                    16,
+                    1
+                  ]
+                },
+                "east": {
+                  "uv": [
+                    0,
+                    16
+                  ],
+                  "uv_size": [
+                    16,
+                    1
+                  ]
+                },
+                "north": {
+                  "uv": [
+                    16,
+                    16
+                  ],
+                  "uv_size": [
+                    8,
+                    1
+                  ]
+                },
+                "south": {
+                  "uv": [
+                    40,
+                    16
+                  ],
+                  "uv_size": [
+                    8,
+                    1
+                  ]
+                },
+                "up": {
+                  "uv": [
+                    16,
+                    0
+                  ],
+                  "uv_size": [
+                    8,
+                    16
+                  ]
+                },
+                "down": {
+                  "uv": [
+                    24,
+                    16
+                  ],
+                  "uv_size": [
+                    8,
+                    -16
+                  ]
+                }
+              },
+              "modelpart_mirror": true
+            }
+          ]
+        },
+        {
+          "name": "shape2",
+          "pivot": [
+            0,
+            0,
+            0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -3,
+                -1,
+                -9
+              ],
+              "size": [
+                6,
+                1,
+                1
+              ],
+              "uv": {
+                "west": {
+                  "uv": [
+                    7,
+                    19
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "east": {
+                  "uv": [
+                    0,
+                    19
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "north": {
+                  "uv": [
+                    1,
+                    19
+                  ],
+                  "uv_size": [
+                    6,
+                    1
+                  ]
+                },
+                "south": {
+                  "uv": [
+                    8,
+                    19
+                  ],
+                  "uv_size": [
+                    6,
+                    1
+                  ]
+                },
+                "up": {
+                  "uv": [
+                    1,
+                    18
+                  ],
+                  "uv_size": [
+                    6,
+                    1
+                  ]
+                },
+                "down": {
+                  "uv": [
+                    7,
+                    19
+                  ],
+                  "uv_size": [
+                    6,
+                    -1
+                  ]
+                }
+              },
+              "modelpart_mirror": true
+            }
+          ]
+        },
+        {
+          "name": "shape3",
+          "pivot": [
+            0,
+            0,
+            0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -1,
+                -1,
+                -10
+              ],
+              "size": [
+                2,
+                1,
+                1
+              ],
+              "uv": {
+                "west": {
+                  "uv": [
+                    3,
+                    22
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "east": {
+                  "uv": [
+                    0,
+                    22
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "north": {
+                  "uv": [
+                    1,
+                    22
+                  ],
+                  "uv_size": [
+                    2,
+                    1
+                  ]
+                },
+                "south": {
+                  "uv": [
+                    4,
+                    22
+                  ],
+                  "uv_size": [
+                    2,
+                    1
+                  ]
+                },
+                "up": {
+                  "uv": [
+                    1,
+                    21
+                  ],
+                  "uv_size": [
+                    2,
+                    1
+                  ]
+                },
+                "down": {
+                  "uv": [
+                    3,
+                    22
+                  ],
+                  "uv_size": [
+                    2,
+                    -1
+                  ]
+                }
+              },
+              "modelpart_mirror": true
+            }
+          ]
+        },
+        {
+          "name": "shape4",
+          "pivot": [
+            0,
+            0,
+            0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -3,
+                -1,
+                8
+              ],
+              "size": [
+                6,
+                1,
+                1
+              ],
+              "uv": {
+                "west": {
+                  "uv": [
+                    24,
+                    19
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "east": {
+                  "uv": [
+                    17,
+                    19
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "north": {
+                  "uv": [
+                    18,
+                    19
+                  ],
+                  "uv_size": [
+                    6,
+                    1
+                  ]
+                },
+                "south": {
+                  "uv": [
+                    25,
+                    19
+                  ],
+                  "uv_size": [
+                    6,
+                    1
+                  ]
+                },
+                "up": {
+                  "uv": [
+                    18,
+                    18
+                  ],
+                  "uv_size": [
+                    6,
+                    1
+                  ]
+                },
+                "down": {
+                  "uv": [
+                    24,
+                    19
+                  ],
+                  "uv_size": [
+                    6,
+                    -1
+                  ]
+                }
+              },
+              "modelpart_mirror": true
+            }
+          ]
+        },
+        {
+          "name": "shape5",
+          "pivot": [
+            0,
+            0,
+            0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -1,
+                -1,
+                9
+              ],
+              "size": [
+                2,
+                1,
+                1
+              ],
+              "uv": {
+                "west": {
+                  "uv": [
+                    20,
+                    22
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "east": {
+                  "uv": [
+                    17,
+                    22
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "north": {
+                  "uv": [
+                    18,
+                    22
+                  ],
+                  "uv_size": [
+                    2,
+                    1
+                  ]
+                },
+                "south": {
+                  "uv": [
+                    21,
+                    22
+                  ],
+                  "uv_size": [
+                    2,
+                    1
+                  ]
+                },
+                "up": {
+                  "uv": [
+                    18,
+                    21
+                  ],
+                  "uv_size": [
+                    2,
+                    1
+                  ]
+                },
+                "down": {
+                  "uv": [
+                    20,
+                    22
+                  ],
+                  "uv_size": [
+                    2,
+                    -1
+                  ]
+                }
+              },
+              "modelpart_mirror": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

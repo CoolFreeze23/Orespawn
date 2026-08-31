@@ -71,10 +71,18 @@ sourceSets {
         compileClasspath += sourceSets.main.output
         runtimeClasspath += sourceSets.main.output
     }
+    // Phase G1 conversion/parity tooling. This executes the compiled client
+    // model classes but never ships in the mod jar.
+    g1tool {
+        compileClasspath += sourceSets.main.output
+        runtimeClasspath += sourceSets.main.output
+    }
 }
 configurations {
     gametestImplementation.extendsFrom implementation
     gametestRuntimeOnly.extendsFrom runtimeOnly
+    g1toolImplementation.extendsFrom implementation
+    g1toolRuntimeOnly.extendsFrom runtimeOnly
 }
 
 runs {
@@ -119,6 +127,113 @@ tasks.register('assetAudit', Exec) {
     commandLine 'python', 'tools/asset_audit.py'
 }
 tasks.named('build') { dependsOn 'assetAudit' }
+
+// Phase G1 harness: execute each createBodyLayer() from compiled bytecode,
+// convert the resulting definition tree, bake the generated geo through the
+// pinned GeckoLib 4.8.4 implementation, and compare geometry/animation/pixels
+// through independent formulations. Checked-in proof evidence is immutable;
+// the task regenerates into build/g1 and byte-compares it with that evidence.
+def g1Manifest = file('tools/g1_model_proofs.json')
+def g1BenchmarkProtocol = file('tools/g1_performance_benchmark.json')
+def g1BuildDir = layout.buildDirectory.dir('g1')
+def g1RuntimeClasspathFile = g1BuildDir.map { it.file('runtime-classpath.txt') }
+def g1RuntimeClasspath = sourceSets.g1tool.runtimeClasspath
+
+tasks.register('g1WriteRuntimeClasspath') {
+    group = 'verification'
+    description = 'Record the exact G1 runtime classpath for independent benchmark provenance checks.'
+    dependsOn tasks.named('g1toolClasses')
+    outputs.file(g1RuntimeClasspathFile)
+    outputs.upToDateWhen { false }
+    doLast {
+        def output = g1RuntimeClasspathFile.get().asFile
+        output.parentFile.mkdirs()
+        output.setText(g1RuntimeClasspath.files
+                .collect { it.absolutePath }.join('\n') + '\n', 'UTF-8')
+    }
+}
+
+tasks.register('g1DumpCompiledModels', JavaExec) {
+    group = 'verification'
+    description = 'Dump compiled/baked LayerDefinition trees for the G1 proof models.'
+    dependsOn tasks.named('g1toolClasses')
+    classpath = sourceSets.g1tool.runtimeClasspath
+    mainClass = 'danger.orespawn.g1.G1ModelProbe'
+    args 'vanilla', g1Manifest.absolutePath,
+            g1BuildDir.get().dir('vanilla').asFile.absolutePath
+}
+
+tasks.register('g1ConvertModels', Exec) {
+    group = 'verification'
+    description = 'Convert compiled G1 dumps to Bedrock geo plus explicitly reference-only animation artifacts.'
+    dependsOn tasks.named('g1DumpCompiledModels')
+    workingDir = projectDir
+    commandLine 'python', 'tools/layer_definition_to_geo.py',
+            '--manifest', g1Manifest.absolutePath,
+            '--dump-dir', g1BuildDir.get().dir('vanilla').asFile.absolutePath,
+            '--output-dir', g1BuildDir.get().dir('generated').asFile.absolutePath
+}
+
+tasks.register('g1ProbeGeoRenderer', JavaExec) {
+    group = 'verification'
+    description = 'Bake and capture generated geometry through GeckoLib GeoRenderer.'
+    dependsOn tasks.named('g1ConvertModels')
+    classpath = sourceSets.g1tool.runtimeClasspath
+    mainClass = 'danger.orespawn.g1.G1ModelProbe'
+    args 'geo', g1Manifest.absolutePath,
+            g1BuildDir.get().dir('generated').asFile.absolutePath,
+            g1BuildDir.get().dir('geo').asFile.absolutePath
+}
+
+tasks.register('g1Benchmark', JavaExec) {
+    group = 'verification'
+    description = 'Run the non-acceptance G1 SMOKE_ONLY / COMPONENT_PROXY_ONLY / PENDING_LIVE_PRECUTOVER benchmark.'
+    dependsOn tasks.named('g1ConvertModels')
+    classpath = sourceSets.g1tool.runtimeClasspath
+    mainClass = 'danger.orespawn.g1.G1PerformanceBenchmark'
+    args g1Manifest.absolutePath,
+            g1BuildDir.get().dir('generated').asFile.absolutePath,
+            g1BuildDir.get().dir('vanilla').asFile.absolutePath,
+            g1BenchmarkProtocol.absolutePath,
+            'smoke',
+            projectDir.absolutePath,
+            g1BuildDir.get().dir('benchmark').file('report.json').asFile.absolutePath
+}
+
+tasks.register('g1BenchmarkVerify', Exec) {
+    group = 'verification'
+    description = 'Validate checked-in component-smoke evidence without making a Q6 pass claim.'
+    dependsOn tasks.named('g1ConvertModels')
+    dependsOn tasks.named('g1WriteRuntimeClasspath')
+    workingDir = projectDir
+    commandLine 'python', 'tools/g1_benchmark_gate.py',
+            '--protocol', g1BenchmarkProtocol.absolutePath,
+            '--manifest', g1Manifest.absolutePath,
+            '--report', file('phase_g_reports/g1_proof/benchmark/report.json').absolutePath,
+            '--proof-dir', file('phase_g_reports/g1_proof').absolutePath,
+            '--repository-root', projectDir.absolutePath,
+            '--generated-dir', g1BuildDir.get().dir('generated').asFile.absolutePath,
+            '--compiled-dir', g1BuildDir.get().dir('vanilla').asFile.absolutePath,
+            '--runtime-classpath-file', g1RuntimeClasspathFile.get().asFile.absolutePath
+}
+
+tasks.register('g1Parity', Exec) {
+    group = 'verification'
+    description = 'Run independent G1 geometry, animation, and visual parity gates.'
+    dependsOn tasks.named('g1ProbeGeoRenderer')
+    workingDir = projectDir
+    commandLine 'python', 'tools/g1_render_parity.py',
+            '--manifest', g1Manifest.absolutePath,
+            '--vanilla-dir', g1BuildDir.get().dir('vanilla').asFile.absolutePath,
+            '--generated-dir', g1BuildDir.get().dir('generated').asFile.absolutePath,
+            '--geo-dir', g1BuildDir.get().dir('geo').asFile.absolutePath,
+            '--output-dir', g1BuildDir.get().dir('evidence').asFile.absolutePath,
+            '--proof-dir', file('phase_g_reports/g1_proof').absolutePath
+}
+tasks.named('check') {
+    dependsOn tasks.named('g1Parity')
+    dependsOn tasks.named('g1BenchmarkVerify')
+}
 
 // BUG-032 (beta.3): the DISTRIBUTED jar must be the jarJar output (nested
 // databuddy under META-INF/jarjar). Swap classifiers so the unclassified

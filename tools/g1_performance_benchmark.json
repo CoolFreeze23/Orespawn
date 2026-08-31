@@ -1,0 +1,128 @@
+{
+  "schema_version": 1,
+  "benchmark_kind": "SMOKE_ONLY / COMPONENT_PROXY_ONLY / PENDING_LIVE_PRECUTOVER",
+  "fixed_seed": "N/A — no randomized world exists in the headless component proxy",
+  "profiles": {
+    "smoke": {
+      "warmup_seconds": 1,
+      "run_seconds": 2,
+      "runs": 2,
+      "allocation_probe_frames": 200
+    }
+  },
+  "live_acceptance_protocol": {
+    "status": "PENDING_LIVE_PRECUTOVER — mandatory before first production renderer cutover",
+    "same_machine_controls": [
+      "machine and GPU",
+      "JDK and JVM flags",
+      "resolution",
+      "render distance",
+      "graphics settings",
+      "camera path",
+      "fixed seed"
+    ],
+    "warmup_seconds_per_scene": 60,
+    "run_seconds": 120,
+    "runs_per_scene": 5,
+    "scenes": [
+      "100 copies of each converted species in view with fixed walking/attack state",
+      "100 mixed species representative of the final tier distribution",
+      "largest Tier-1 boss alone with every synced part active",
+      "ten copies of the largest Tier-1 boss with every synced part active",
+      "off-screen control for culling and continuing controller work"
+    ],
+    "metrics": [
+      "median and p95 whole-client frame time",
+      "1% low FPS",
+      "client CPU",
+      "allocation and GC rate",
+      "GPU frame time where available",
+      "server MSPT and p95",
+      "MHLib packets per second",
+      "part count"
+    ],
+    "budgets": {
+      "max_mixed_100_median_frame_regression_percent": 10.0,
+      "max_mixed_100_p95_frame_regression_ms": 2.0,
+      "max_server_p95_ms": 50.0,
+      "sustained_mhlib_packet_growth_allowed": false
+    },
+    "failure_action": "keep classic renderer installed and return to owner"
+  },
+  "settings": {
+    "virtual_capture_resolution": "N/A — no window, raster target, or GPU submission",
+    "render_distance": "not applicable: headless renderer-component proxy",
+    "graphics_mode": "not applicable: no GPU submission",
+    "camera_path": "N/A — the proxy submits no camera or view transform",
+    "entity_state": "fixed bind/static or Beaver full-amplitude quarter-cycle pose",
+    "model_instances": "one baked renderer model reused sequentially, matching renderer ownership",
+    "timing_order": "paired AB/BA alternation per measured batch; smoke run 1 starts classic/candidate and run 2 starts candidate/classic",
+    "aggregation": "smoke only: median of two per-run medians and median of two per-run p95/p99 values; live Q6 separately requires five runs"
+  },
+  "scenes": [
+    {
+      "id": "elevator_100_visible",
+      "visible": true,
+      "timing_batch_frames": 10,
+      "models": [{"id": "model_elevator", "count": 100, "sample": "bind"}],
+      "budget_scene": false
+    },
+    {
+      "id": "beaver_100_visible",
+      "visible": true,
+      "timing_batch_frames": 10,
+      "models": [{"id": "model_beaver", "count": 100, "sample": "a1_t_quarter"}],
+      "budget_scene": false
+    },
+    {
+      "id": "mixed_100_visible",
+      "visible": true,
+      "timing_batch_frames": 10,
+      "models": [
+        {"id": "model_elevator", "count": 50, "sample": "bind"},
+        {"id": "model_beaver", "count": 50, "sample": "a1_t_quarter"}
+      ],
+      "budget_scene": true
+    },
+    {
+      "id": "mixed_100_rotation_state_only",
+      "visible": false,
+      "proxy_scope": "rotation-state iteration only; not offscreen rendering, culling, or controller work",
+      "timing_batch_frames": 1000,
+      "models": [
+        {"id": "model_elevator", "count": 50, "sample": "bind"},
+        {"id": "model_beaver", "count": 50, "sample": "a1_t_quarter"}
+      ],
+      "budget_scene": false
+    }
+  ],
+  "deferred_live_scenes": [
+    {
+      "id": "largest_tier1_single",
+      "reason": "G1 intentionally converts no Tier-1 model and installs no runtime renderer"
+    },
+    {
+      "id": "largest_tier1_ten_with_synced_parts",
+      "reason": "requires a later Tier-1 candidate, live server-fed MHLib parts, and runtime renderer"
+    },
+    {
+      "id": "offscreen_culling_control",
+      "reason": "the headless rotation-state proxy has no camera, culling, controller ticking, GPU, or live entities"
+    }
+  ],
+  "provisional_budget": {
+    "scene": "mixed_100_visible",
+    "max_median_frame_regression_percent": 10.0,
+    "max_p95_frame_regression_ms": 2.0,
+    "max_server_p95_ms": 50.0,
+    "sustained_mhlib_packet_growth_allowed": false,
+    "component_proxy_policy": "warning numbers only; never evaluate or describe this smoke as a Q6 pass"
+  },
+  "live_only_metrics": [
+    "GPU frame time",
+    "whole-client frame time and 1% low FPS",
+    "server MSPT and p95",
+    "MHLib packets per second",
+    "synced part count"
+  ]
+}

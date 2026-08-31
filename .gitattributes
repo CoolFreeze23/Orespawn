@@ -1,0 +1,12 @@
+# Phase G1 evidence is byte-compared and generated with deterministic LF.
+/.gitattributes text eol=lf
+/build.gradle text eol=lf
+/src/g1tool/**/*.java text eol=lf
+/tools/g1_benchmark_gate.py text eol=lf
+/tools/g1_model_proofs.json text eol=lf
+/tools/g1_performance_benchmark.json text eol=lf
+/tools/g1_render_parity.py text eol=lf
+/tools/layer_definition_to_geo.py text eol=lf
+/phase_g_reports/g1_proof/**/*.json text eol=lf
+/phase_g_reports/g1_proof/**/*.md text eol=lf
+/phase_g_reports/g1_proof/**/*.png binary

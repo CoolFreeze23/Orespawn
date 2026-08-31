@@ -1,0 +1,432 @@
+{
+  "schema_version": 1,
+  "status": "PASS",
+  "ground_truth": "executed compiled LayerDefinition + baked ModelPart trees",
+  "geckolib_version": "4.8.4",
+  "thresholds": {
+    "geometry_epsilon_blocks": 1e-05,
+    "animation_epsilon_radians": 2e-06,
+    "uv_epsilon_normalized": 1e-07,
+    "normal_epsilon": 1e-06,
+    "pixel_channel_tolerance": 2,
+    "pixel_changed_fraction": 0.001,
+    "pixel_mean_absolute_error": 0.25,
+    "minimum_foreground_fraction": 0.001
+  },
+  "models": [
+    {
+      "model_id": "model_elevator",
+      "tier": 3,
+      "proof_scope": "production_proof_model",
+      "source_class": "danger.orespawn.entity.client.ModelElevator",
+      "source_class_sha256": "08a9699a4bb2b5e8d6926d7cf6d640bb907daca37d11daa5bcf9cf25e669d465",
+      "compiled_dump_sha256": "a70c672bf8babe2eec1f93e470e2b96cd362a645a531df7eb78b6eca7449cd4e",
+      "bone_count": 5,
+      "cube_count": 5,
+      "geometry_sha256": "d4af956445fa2426b7f7cd0a96f513601db94c0cad92125d173a77a411771cb7",
+      "animation_sha256": "7882082857fdb11e02f158ebc3a6d3f970e2ac60d54813f0e903ee97b2293749",
+      "animation_contract_sha256": "ef25a2b4eb7640daad7b902fc72c12e0e99737cd0882ac83ea702e72c92a7acd",
+      "geometry": {
+        "status": "PASS",
+        "epsilon_blocks": 1e-05,
+        "max_corner_delta_blocks": 0.0,
+        "worst_case": "exact",
+        "sample_count": 6,
+        "cube_sample_count": 30
+      },
+      "surface_mapping": {
+        "status": "PASS",
+        "position_epsilon_blocks": 1e-05,
+        "normal_epsilon": 1e-06,
+        "uv_epsilon_normalized": 1e-07,
+        "max_position_delta_blocks": 0.0,
+        "max_normal_delta": 0.0,
+        "max_uv_delta_normalized": 0.0,
+        "vertex_samples": 720,
+        "worst_case": "exact",
+        "evidence": "position/normal/UV tuples from baked ModelPart.Cube.compile versus pinned GeckoLib BakedModelFactory rendered through GeoRenderer"
+      },
+      "animation": {
+        "status": "PASS",
+        "epsilon_radians": 2e-06,
+        "accepted_pose_comparison": "compiled setupAnim versus actual fresh-baked GeckoLib candidate",
+        "reference_animation_used_for_acceptance": false,
+        "sample_count": 6,
+        "max_rotation_delta_radians": 0.0,
+        "max_dense_rotation_delta_radians": 0.0,
+        "max_unexpected_position_or_scale_delta": 0.0,
+        "worst_case": "exact",
+        "dense_worst_case": "exact",
+        "rotation_channel_samples": 90,
+        "dense_rotation_channel_samples": 0,
+        "contract": {
+          "kind": "static",
+          "controller_required": false,
+          "accepted_runtime_path": "static bind pose; no controller",
+          "max_identity_rotation_motion": 0.0
+        }
+      },
+      "reference_animation": {
+        "status": "SCHEMA_VALID_REFERENCE_ONLY",
+        "role": "NOT_APPLICABLE_STATIC_MODEL",
+        "clip_count": 0,
+        "constant_vector_count": 0,
+        "runtime_acceptance": false
+      },
+      "visual": {
+        "status": "PASS",
+        "image_size": [
+          256,
+          256
+        ],
+        "camera": {
+          "yaw_degrees": 34.0,
+          "pitch_degrees": -28.0
+        },
+        "channel_tolerance": 2,
+        "changed_fraction_threshold": 0.001,
+        "mean_absolute_error_threshold": 0.25,
+        "minimum_foreground_fraction_threshold": 0.001,
+        "max_changed_fraction": 0.0,
+        "max_mean_absolute_error": 0.0,
+        "minimum_observed_foreground_fraction": 0.2774658203125,
+        "samples": [
+          {
+            "sample": "bind",
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "vanilla_foreground_fraction": 0.2774658203125,
+            "geo_foreground_fraction": 0.2774658203125,
+            "vanilla_capture": "visual/model_elevator/bind.vanilla.png",
+            "geo_capture": "visual/model_elevator/bind.geo.png",
+            "diff_capture": "visual/model_elevator/bind.diff.png"
+          },
+          {
+            "sample": "t0",
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "vanilla_foreground_fraction": 0.2774658203125,
+            "geo_foreground_fraction": 0.2774658203125,
+            "vanilla_capture": "visual/model_elevator/t0.vanilla.png",
+            "geo_capture": "visual/model_elevator/t0.geo.png",
+            "diff_capture": "visual/model_elevator/t0.diff.png"
+          },
+          {
+            "sample": "t_quarter",
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "vanilla_foreground_fraction": 0.2774658203125,
+            "geo_foreground_fraction": 0.2774658203125,
+            "vanilla_capture": "visual/model_elevator/t_quarter.vanilla.png",
+            "geo_capture": "visual/model_elevator/t_quarter.geo.png",
+            "diff_capture": "visual/model_elevator/t_quarter.diff.png"
+          },
+          {
+            "sample": "t_half",
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "vanilla_foreground_fraction": 0.2774658203125,
+            "geo_foreground_fraction": 0.2774658203125,
+            "vanilla_capture": "visual/model_elevator/t_half.vanilla.png",
+            "geo_capture": "visual/model_elevator/t_half.geo.png",
+            "diff_capture": "visual/model_elevator/t_half.diff.png"
+          },
+          {
+            "sample": "t_three_quarter",
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "vanilla_foreground_fraction": 0.2774658203125,
+            "geo_foreground_fraction": 0.2774658203125,
+            "vanilla_capture": "visual/model_elevator/t_three_quarter.vanilla.png",
+            "geo_capture": "visual/model_elevator/t_three_quarter.geo.png",
+            "diff_capture": "visual/model_elevator/t_three_quarter.diff.png"
+          }
+        ]
+      }
+    },
+    {
+      "model_id": "model_beaver",
+      "tier": 2,
+      "proof_scope": "production_proof_model",
+      "source_class": "danger.orespawn.entity.client.ModelBeaver",
+      "source_class_sha256": "91e93750c144a368478084bb3fe75738af158d2dfc856652dfc7b944eaa75207",
+      "compiled_dump_sha256": "ef99fe581ade9a5704422a6ba6db142a4ce8d38866f2fa339435e2be95e77dbd",
+      "bone_count": 9,
+      "cube_count": 9,
+      "geometry_sha256": "486883a1918a74c96dc61422e3d40c5a2f13094a24d2296caeea2fc244feb67d",
+      "animation_sha256": "c845420d205f2d5b608b17ddde0ac27f39745316c60a741ada2b8c5b4f5f332d",
+      "animation_contract_sha256": "86236c1dc332a52c228a3f0e906272b23527353ec412751ce30c5d3a9a4b727e",
+      "geometry": {
+        "status": "PASS",
+        "epsilon_blocks": 1e-05,
+        "max_corner_delta_blocks": 2.0000000011677344e-07,
+        "worst_case": "a0_5_t0:lff#0",
+        "sample_count": 21,
+        "cube_sample_count": 189
+      },
+      "surface_mapping": {
+        "status": "PASS",
+        "position_epsilon_blocks": 1e-05,
+        "normal_epsilon": 1e-06,
+        "uv_epsilon_normalized": 1e-07,
+        "max_position_delta_blocks": 2.0000000011677344e-07,
+        "max_normal_delta": 0.0,
+        "max_uv_delta_normalized": 0.0,
+        "vertex_samples": 4536,
+        "worst_case": "a0_5_t0:lff#0",
+        "evidence": "position/normal/UV tuples from baked ModelPart.Cube.compile versus pinned GeckoLib BakedModelFactory rendered through GeoRenderer"
+      },
+      "animation": {
+        "status": "PASS",
+        "epsilon_radians": 2e-06,
+        "accepted_pose_comparison": "compiled setupAnim versus actual fresh-baked GeckoLib candidate",
+        "reference_animation_used_for_acceptance": false,
+        "sample_count": 2401,
+        "max_rotation_delta_radians": 0.0,
+        "max_dense_rotation_delta_radians": 0.0,
+        "max_unexpected_position_or_scale_delta": 0.0,
+        "worst_case": "exact",
+        "dense_worst_case": "exact",
+        "rotation_channel_samples": 64827,
+        "dense_rotation_channel_samples": 64260,
+        "contract": {
+          "kind": "gait_scaled",
+          "accepted_runtime_path": "exact Mth.cos GeoModel.setCustomAnimations legacy-parity exception",
+          "baked_keyframe_runtime_acceptance": false,
+          "artist_editable_math_to_keyframes_status": "OUTSTANDING_G3",
+          "reference_animation_role": "REFERENCE_ONLY_NOT_RUNTIME_ACCEPTANCE",
+          "limb_swing_amount_samples": [
+            0.0,
+            0.25,
+            0.5,
+            1.0
+          ],
+          "composition": "bind + ambient_delta + limbSwingAmount * unit_gait_delta",
+          "scaled_bones": [
+            "lff",
+            "lrf",
+            "rff",
+            "rrf"
+          ],
+          "unscaled_bones": [
+            "tail",
+            "teeth"
+          ],
+          "dense_transform_sample_count_per_amplitude_including_endpoints": 595,
+          "dense_transform_sample_count_total": 2380,
+          "off_grid_probe_count_per_amplitude": 593,
+          "off_grid_probe_count_total": 2372,
+          "endpoint_anchor_count_total": 8,
+          "off_grid_probe_key_coincidences": 0,
+          "minimum_key_probe_separation_age_ticks": 0.0007339999999942393,
+          "max_candidate_gait_proportionality_delta_radians": 5.000000002919336e-08,
+          "max_compiled_gait_proportionality_delta_radians": 5.000000002919336e-08,
+          "max_candidate_unscaled_channel_amplitude_delta_radians": 0.0,
+          "max_compiled_unscaled_channel_amplitude_delta_radians": 0.0,
+          "proportional_channel_samples": 9600,
+          "frequency_radians_per_age_tick": [
+            0.5,
+            2.7,
+            3.7
+          ]
+        }
+      },
+      "reference_animation": {
+        "status": "SCHEMA_VALID_REFERENCE_ONLY",
+        "role": "REFERENCE_ONLY_NOT_RUNTIME_ACCEPTANCE",
+        "runtime_acceptance": false,
+        "accepted_pose_dependency": false,
+        "artist_editable_math_to_keyframes_status": "OUTSTANDING_G3",
+        "clip_count": 2,
+        "authored_key_count_per_channel": 4745,
+        "constant_vector_count": 28470,
+        "off_grid_probe_count": 593,
+        "probe_key_coincidences_within_epsilon": 0,
+        "coincidence_epsilon_age_ticks": 1e-09,
+        "minimum_key_probe_separation_age_ticks": 0.0007339999999942393,
+        "evaluation_for_runtime_acceptance": "NOT_PERFORMED_REFERENCE_ONLY"
+      },
+      "visual": {
+        "status": "PASS",
+        "image_size": [
+          256,
+          256
+        ],
+        "camera": {
+          "yaw_degrees": 38.0,
+          "pitch_degrees": -22.0
+        },
+        "channel_tolerance": 2,
+        "changed_fraction_threshold": 0.001,
+        "mean_absolute_error_threshold": 0.25,
+        "minimum_foreground_fraction_threshold": 0.001,
+        "max_changed_fraction": 1.52587890625e-05,
+        "max_mean_absolute_error": 0.0033518473307291665,
+        "minimum_observed_foreground_fraction": 0.3699493408203125,
+        "samples": [
+          {
+            "sample": "bind",
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "vanilla_foreground_fraction": 0.38946533203125,
+            "geo_foreground_fraction": 0.38946533203125,
+            "vanilla_capture": "visual/model_beaver/bind.vanilla.png",
+            "geo_capture": "visual/model_beaver/bind.geo.png",
+            "diff_capture": "visual/model_beaver/bind.diff.png"
+          },
+          {
+            "sample": "a1_t0",
+            "changed_fraction": 1.52587890625e-05,
+            "mean_absolute_error": 0.0033518473307291665,
+            "vanilla_foreground_fraction": 0.3699493408203125,
+            "geo_foreground_fraction": 0.3699493408203125,
+            "vanilla_capture": "visual/model_beaver/a1_t0.vanilla.png",
+            "geo_capture": "visual/model_beaver/a1_t0.geo.png",
+            "diff_capture": "visual/model_beaver/a1_t0.diff.png"
+          },
+          {
+            "sample": "a1_t_quarter",
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "vanilla_foreground_fraction": 0.38946533203125,
+            "geo_foreground_fraction": 0.38946533203125,
+            "vanilla_capture": "visual/model_beaver/a1_t_quarter.vanilla.png",
+            "geo_capture": "visual/model_beaver/a1_t_quarter.geo.png",
+            "diff_capture": "visual/model_beaver/a1_t_quarter.diff.png"
+          },
+          {
+            "sample": "a1_t_half",
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "vanilla_foreground_fraction": 0.389190673828125,
+            "geo_foreground_fraction": 0.389190673828125,
+            "vanilla_capture": "visual/model_beaver/a1_t_half.vanilla.png",
+            "geo_capture": "visual/model_beaver/a1_t_half.geo.png",
+            "diff_capture": "visual/model_beaver/a1_t_half.diff.png"
+          },
+          {
+            "sample": "a1_t_three_quarter",
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "vanilla_foreground_fraction": 0.38946533203125,
+            "geo_foreground_fraction": 0.38946533203125,
+            "vanilla_capture": "visual/model_beaver/a1_t_three_quarter.vanilla.png",
+            "geo_capture": "visual/model_beaver/a1_t_three_quarter.geo.png",
+            "diff_capture": "visual/model_beaver/a1_t_three_quarter.diff.png"
+          }
+        ]
+      }
+    }
+  ],
+  "fixtures": [
+    {
+      "model_id": "fixture_nested_nonmirrored_rotated_inflate",
+      "tier": 0,
+      "proof_scope": "non_production_converter_fixture",
+      "source_class": "danger.orespawn.g1.G1ConverterFixtureModel",
+      "source_class_sha256": "2802d00cd78514cfd9ca08d7660c322e4819fedf20bf1cd5ca239bf4186559a7",
+      "compiled_dump_sha256": "cc7f12ce51ae7e273005c166319d7637ab07ba0addec4baf2cffdfb2a490d6cc",
+      "bone_count": 2,
+      "cube_count": 2,
+      "geometry_sha256": "77fcd0fc50ae46f51de47da6ecb10f79528646e937195701720eab9c00521af2",
+      "animation_sha256": "7882082857fdb11e02f158ebc3a6d3f970e2ac60d54813f0e903ee97b2293749",
+      "animation_contract_sha256": "46dabc21cf9f3eeb0d8b8c6560fd4c216b2743a0ee0c5cc03a954f3ab99ec4c3",
+      "geometry": {
+        "status": "PASS",
+        "epsilon_blocks": 1e-05,
+        "max_corner_delta_blocks": 1.4150971690881633e-07,
+        "worst_case": "bind:fixture_child#0",
+        "sample_count": 1,
+        "cube_sample_count": 2
+      },
+      "surface_mapping": {
+        "status": "PASS",
+        "position_epsilon_blocks": 1e-05,
+        "normal_epsilon": 1e-06,
+        "uv_epsilon_normalized": 1e-07,
+        "max_position_delta_blocks": 1.4150971690881633e-07,
+        "max_normal_delta": 1.5132745947958766e-07,
+        "max_uv_delta_normalized": 0.0,
+        "vertex_samples": 48,
+        "worst_case": "bind:fixture_child#0",
+        "evidence": "position/normal/UV tuples from baked ModelPart.Cube.compile versus pinned GeckoLib BakedModelFactory rendered through GeoRenderer"
+      },
+      "animation": {
+        "status": "PASS",
+        "epsilon_radians": 2e-06,
+        "accepted_pose_comparison": "compiled setupAnim versus actual fresh-baked GeckoLib candidate",
+        "reference_animation_used_for_acceptance": false,
+        "sample_count": 1,
+        "max_rotation_delta_radians": 0.0,
+        "max_dense_rotation_delta_radians": 0.0,
+        "max_unexpected_position_or_scale_delta": 0.0,
+        "worst_case": "exact",
+        "dense_worst_case": "exact",
+        "rotation_channel_samples": 6,
+        "dense_rotation_channel_samples": 0,
+        "contract": {
+          "kind": "static",
+          "controller_required": false,
+          "accepted_runtime_path": "static bind pose; no controller",
+          "max_identity_rotation_motion": 0.0
+        }
+      },
+      "reference_animation": {
+        "status": "SCHEMA_VALID_REFERENCE_ONLY",
+        "role": "NOT_APPLICABLE_STATIC_MODEL",
+        "clip_count": 0,
+        "constant_vector_count": 0,
+        "runtime_acceptance": false
+      },
+      "fixture_coverage": {
+        "status": "PASS",
+        "proof_scope": "non_production_converter_fixture",
+        "required_coverage": [
+          "nested_parent_bone",
+          "non_mirrored_uv",
+          "nonzero_bind_rotation",
+          "uniform_inflate"
+        ],
+        "compiled_tree_observed": {
+          "nested_parent_bone": true,
+          "non_mirrored_uv": true,
+          "nonzero_bind_rotation": true,
+          "uniform_inflate": true
+        },
+        "generated_geo_observed": {
+          "nested_parent_bone": true,
+          "non_mirrored_uv": true,
+          "nonzero_bind_rotation": true,
+          "uniform_inflate": true
+        }
+      }
+    }
+  ],
+  "deterministic_text_outputs": {
+    "status": "PASS",
+    "line_ending": "LF",
+    "file_count": 18,
+    "files": [
+      "model_elevator.compiled.json",
+      "model_elevator.geo-render.json",
+      "model_elevator.geo.json",
+      "model_elevator.animation.json",
+      "model_elevator.animation-contract.json",
+      "model_elevator.conversion.json",
+      "model_beaver.compiled.json",
+      "model_beaver.geo-render.json",
+      "model_beaver.geo.json",
+      "model_beaver.animation.json",
+      "model_beaver.animation-contract.json",
+      "model_beaver.conversion.json",
+      "fixture_nested_nonmirrored_rotated_inflate.compiled.json",
+      "fixture_nested_nonmirrored_rotated_inflate.geo-render.json",
+      "fixture_nested_nonmirrored_rotated_inflate.geo.json",
+      "fixture_nested_nonmirrored_rotated_inflate.animation.json",
+      "fixture_nested_nonmirrored_rotated_inflate.animation-contract.json",
+      "fixture_nested_nonmirrored_rotated_inflate.conversion.json"
+    ]
+  },
+  "visual_artifact_count": 30,
+  "visual_artifact_policy": "output cleared first; exact report-referenced PNG set only"
+}

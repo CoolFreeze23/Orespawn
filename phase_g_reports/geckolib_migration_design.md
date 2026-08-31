@@ -296,6 +296,21 @@ stays below 50 ms with no sustained packet growth. A species that misses stays o
 the classic renderer pending an owner ruling; aggregate results are measured again
 after each 10–20-entity batch because individually cheap controllers can sum badly.
 
+**Owner fast-path ruling (2026-08-31):** G1's headless measurement is only
+`SMOKE_ONLY / COMPONENT_PROXY_ONLY / PENDING_LIVE_PRECUTOVER`; it is not and
+cannot be described as a Q6 pass. Seed, camera, and resolution are `N/A` in this
+headless proxy because it has no world, camera, raster target, or GPU submission.
+The full live protocol above is deferred to the first runtime-integrated
+conversion slice, where it becomes a mandatory pre-cutover gate. Before any
+production renderer replacement, classic and candidate must run on the same
+machine/JDK/JVM flags/resolution/render distance/graphics settings/camera path/
+seed; every listed live scene must warm for 60 seconds and record five 120-second
+runs; every listed client, GPU, server, allocation/GC, packet, and part metric must
+be reported; and the ≤10% median, ≤2 ms p95, server-p95 <50 ms, and no-sustained-
+packet-growth budgets remain binding. A red or incomplete live result leaves the
+classic renderer installed and returns to the owner. Neither sunk conversion work
+nor a green component proxy can waive this gate.
+
 ## 5. Animation conversion policy
 
 The inventory buckets are migration-risk classes, not claims that every source
@@ -335,6 +350,35 @@ not the source frequency. Recommendation by tier:
 - Molang `query.ground_speed` is allowed only if its numeric mapping is verified
   against `limbSwingAmount`. Custom code-driven bones are a last resort because
   artists cannot edit them.
+
+#### Beaver G1 legacy-parity exception
+
+The owner approved the documented last-resort custom path for Beaver in G1 only.
+The accepted candidate is a fresh GeckoLib `BakedGeoModel` whose
+`GeoModel.setCustomAnimations` hook executes the exact legacy `Mth.cos` formulas
+and the exact `limbSwingAmount` composition. Independent Java executes compiled
+`ModelBeaver.setupAnim`; the candidate Java independently invokes the custom hook;
+Python only compares their captured rotations. This proves the runtime pose while
+avoiding the NeoForge mod-list bootstrap needed by `BakedAnimationsAdapter` in a
+headless tool.
+
+This is explicitly an exception to PHASE_G_PROMPT's G1 baked-keyframe animation
+leg. The emitted `model_beaver.animation.json` is retained only as
+`REFERENCE_ONLY_NOT_RUNTIME_ACCEPTANCE`; the acceptance runtime must not load it,
+and `getAnimationResource` throws if that path is requested. The Catmull-Rom
+reference is not accepted at the unchanged `2e-6` threshold: the independent
+guard found maximum errors of `7.236e-5` radians for gait, `5.895e-5` for teeth,
+and `1.310e-5` for tail because Minecraft's `Mth.cos` uses a discontinuous LUT.
+Millions of step keys and probe-specific overfitting are prohibited.
+
+The dense acceptance grid uses 593 deterministic golden-offset interior probes
+plus both endpoints at amplitudes `0`, `.25`, `.5`, and `1`. The reference bake
+uses eight subdivisions per dense interval only for schema/reference output. The
+harness must mechanically prove that no interior probe coincides with an authored
+reference key, report the minimum separation, and apply `2e-6` only to the actual
+fresh-baked custom-hook path. Artist-editable math-to-keyframe conversion and
+controller/blend resolution remain **OUTSTANDING G3 WORK**; no G1 report, FIX_LOG
+entry, or commit may claim Beaver keyframe runtime acceptance or G3 completion.
 
 ### State-branching
 
@@ -520,7 +564,9 @@ under `modelStyle = GECKOLIB|CLASSIC`?
 captures. Leave a disputed species classic; do not permanently double every
 renderer path merely as a migration fallback.
 
-**Owner ruling:** _Pending._
+**Owner ruling (2026-08-31):** Adopt the recommendation as written: use outright
+per-species replacement after owner-reviewed harness captures; leave any disputed
+species classic rather than permanently doubling renderer paths.
 
 ### Q2 — Approve the proposed Tier 0/1/2/3 assignments?
 
@@ -533,7 +579,9 @@ Tier-1-to-2 demotion when G1 envelope or performance evidence shows multipart
 damage adds cost without aimable value. Never promote the solver robots or Queen
 into conversion work.
 
-**Owner ruling:** _Pending._
+**Owner ruling (2026-08-31):** Adopt the recommendation as written: approve the
+proposed tiers as the planning baseline, allow evidence-backed Tier-1-to-2
+demotions, and never move the solver robots or Queen into conversion work.
 
 ### Q3 — Which authority owns Tier-1 damage-bone positions?
 
@@ -545,7 +593,9 @@ profiles. Retain current single/manual hitboxes until a deterministic server pos
 matches the rendered rig. Treat Queen as a documented legacy exception, not the
 security template.
 
-**Owner ruling:** _Pending._
+**Owner ruling (2026-08-31):** Adopt the recommendation as written: all new Tier-1
+damage positions must be server-fed; current hitboxes remain until deterministic
+server pose parity, and Queen remains a documented legacy exception.
 
 ### Q4 — What is the final King/Godzilla manual-part and head-sidecar policy?
 
@@ -558,7 +608,9 @@ the 19.9x10 King and 9.9x10 Godzilla sidecars unchanged. Any fold/removal change
 faithful gameplay and requires its own evidence and explicit ruling. Queen's
 19.9x10 sidecar remains out of scope.
 
-**Owner ruling:** _Pending._
+**Owner ruling (2026-08-31):** Adopt the recommendation as written: replace manual
+parts atomically only after full parity, retain the King and Godzilla head sidecars
+unchanged, and keep Queen's sidecar out of scope.
 
 ### Q5 — Approve the initial Tier-1 topology and damage scheme?
 
@@ -570,7 +622,10 @@ G1 independently measures envelopes and fixed animation phases; any gap leaves
 main-box damage enabled and returns to the owner rather than growing invisible
 boxes by feel.
 
-**Owner ruling:** _Pending._
+**Owner ruling (2026-08-31):** Adopt the recommendation as written: treat the
+initial topology and damage scheme as a measurement hypothesis, keep main-box
+damage enabled on any gap, and return mismatches to the owner instead of enlarging
+invisible boxes by eye.
 
 ### Q6 — Approve the performance benchmark and acceptance budget?
 
@@ -582,7 +637,18 @@ below 50 ms?
 hardware/settings with every result. Revisit only from captured data, never by
 waiving a slow batch after conversion work is sunk.
 
-**Owner ruling:** _Pending._
+**Owner ruling (2026-08-31):** Adopt the recommendation as written: provisionally
+require the spawn-100/mixed-100 limits, record absolute hardware and settings, and
+revisit limits only from captured data.
+
+**Fast-path amendment (2026-08-31):** Defer this full live acceptance run until
+the first runtime-integrated slice, but require it before that slice can replace a
+production renderer. G1 may record a short headless component smoke only when its
+artifact is labeled `SMOKE_ONLY / COMPONENT_PROXY_ONLY /
+PENDING_LIVE_PRECUTOVER` and makes no Q6-pass claim. The proxy's seed, camera,
+and resolution are `N/A`; its rotation-state-only loop is not an off-screen or
+culling measurement. The real off-screen control remains in live Q6. All live
+scenes, five-run durations, metrics, and budgets in §4 remain unchanged.
 
 ### Q7 — Dedupe only the artist package, or rename shipped texture assets too?
 
@@ -592,7 +658,9 @@ all jar paths and dedupe only the editable handoff through `TEXTURE_MAP.csv`?
 **Recommendation:** Keep all 428 shipped names. Dedupe only the artist-facing
 canonical copies and mechanically fan approved edits back to aliases.
 
-**Owner ruling:** _Pending._
+**Owner ruling (2026-08-31):** Adopt the recommendation as written: preserve all
+428 shipped texture names and deduplicate only artist-facing canonical copies,
+with approved edits mechanically fanned back to aliases.
 
 ### Q8 — Which tiers receive discretionary artist changes?
 
@@ -604,7 +672,10 @@ and combat-readability review after hitbox topology is proven; Tier 3 receives n
 discretionary pass; Tier 0 remains untouched. Every deviation from current visual
 behavior still needs owner acceptance.
 
-**Owner ruling:** _Pending._
+**Owner ruling (2026-08-31):** Adopt the recommendation as written: Tier 2 gets the
+normal improvement pass, Tier 1 gets silhouette and combat-readability review only
+after topology proof, Tier 3 gets no discretionary pass, and Tier 0 remains
+untouched; visual deviations still require owner acceptance.
 
 ### Q9 — How should shared rigs and live renderer/entity scales map to profiles?
 
@@ -618,7 +689,10 @@ verified server-side part-scale input (or retain the classic/manual damage path)
 for baby/PlayNicely variants; never rely on client pose scale or violate the exact
 registered-main-size law.
 
-**Owner ruling:** _Pending._
+**Owner ruling (2026-08-31):** Adopt the recommendation as written: use one profile
+per registry path, require verified server-side part scaling (or retain classic
+damage) for baby and PlayNicely variants, and never derive authoritative hitboxes
+from client pose scale or violate registered main size.
 
 ### Q10 — What enters the artist package from dormant assets and staging roots?
 
@@ -630,7 +704,49 @@ consumers and intentional variants in entity folders. Keep the three staging roo
 read-only provenance; do not import their duplicate Java/classes or treat them as
 conversion ground truth.
 
-**Owner ruling:** _Pending._
+**Owner ruling (2026-08-31):** Adopt the recommendation as written: map all 428 PNG
+names globally, include only verified runtime consumers and intentional variants
+in entity folders, and keep all three staging roots as read-only provenance rather
+than conversion ground truth.
 
-**STOP:** G0 ends here. No G1–G5 work begins until the owner rules on these
-questions.
+## 9. G1 execution rulings
+
+The owner authorized G1 on 2026-08-31 with these additional, binding constraints:
+
+- Use `ModelElevator` as the Tier-3 proof. It is a visible renderer model with five
+  textured cubes and an empty `setupAnim`; no generated idle motion or other
+  invented animation is permitted. Use Beaver as the simple Tier-2 proof.
+- Preserve Beaver's gait contract, not merely its full-amplitude pose: leg
+  amplitude must remain proportional to `limbSwingAmount`, while the 3.7-radian
+  phase frequency and the unscaled teeth/tail channels remain unchanged.
+- Accept Beaver's exact `Mth.cos` `GeoModel.setCustomAnimations` path as the G1
+  legacy-parity exception described in §5. Its emitted animation JSON is
+  `REFERENCE_ONLY_NOT_RUNTIME_ACCEPTANCE`; it is not a completed editable
+  keyframe conversion, and that resolution remains mandatory in G3.
+- Exercise 593 noncommensurate dense interior probes plus endpoints at amplitudes
+  `0`, `.25`, `.5`, and `1`; mechanically reject any interior probe/authored-key
+  coincidence and report the minimum separation. Keep the `2e-6` runtime-pose
+  threshold unchanged.
+- Include the deterministic non-production fixture for nested parent bones,
+  non-mirrored UVs, nonzero bind rotations, and uniform inflate. Every generated
+  text artifact uses fixed LF endings.
+- Include the repeatable benchmark protocol and provisional Q6 budget from §4.
+  G1 records only the explicitly non-acceptance `SMOKE_ONLY /
+  COMPONENT_PROXY_ONLY / PENDING_LIVE_PRECUTOVER` component smoke and its exact
+  warning numbers; the full live acceptance run follows the §4 pre-cutover ruling.
+  Record the absolute hardware, software, JVM, and scene settings with the result.
+- Before the guarded gate, obtain independent read-only reviews of the converter,
+  all three parity legs, the animation-amplitude proof, and the benchmark evidence.
+- The final G1 handoff must report converter output, geometry, pixel, animation,
+  and benchmark numbers and link the deterministic capture artifacts.
+
+After the first Beaver proof reported a `0.339767456` changed-pixel fraction, the
+owner further authorized an evidence-based investigation of UV mapping, mirroring,
+transform order, rasterization, and renderer behavior. The `0.001` threshold is
+fixed. Change the converter or harness only when independent deterministic traces
+prove its existing behavior wrong; never tune a result by eye. If Beaver remains
+red after the evidenced correction, stop and report the mismatch again.
+
+The G0 stop was satisfied at commit `aa5b8637b2457a987445161b1c7f2f6ebe0b9d59`.
+The subsequent owner rulings authorize G1 only. G2–G5 remain out of scope until a
+later owner direction.
