@@ -3449,3 +3449,52 @@ fixed is numerically identical to orig (max |A-C| = 0.0) and shows the
 rolling grass highlands/mountains from the field report; the shipped
 bug reproduces the reported flat plates. Gates: build+assetAudit exit 0,
 gametest 192/192.
+
+## PHASE G0 — GeckoLib inventory, tier proposal, and approval stop (2026-08-31)
+
+WHAT: added the read-only mechanical inventory generator
+`tools/phase_g_inventory.py` and its generated 109-row design report at
+`phase_g_reports/geckolib_migration_design.md`. The report inventories
+108 hand-coded models plus the completed Queen GeoModel (36,403 model
+LOC), all 121 custom-model registry consumers, the seven vanilla-model
+reuse consumers, registered dimensions, renderer scales, animation-risk
+classes, audit references, and texture/provenance data. It proposes 3 / 20 /
+70 / 16 custom rigs in Tiers 0 / 1 / 2 / 3, gives a server-authoritative
+multipart design for every Tier-1 rig, records the visual-parity and
+performance policies, and ends at ten numbered owner questions. No geo,
+animation, profile, entity, renderer, or shipped asset was converted or
+changed.
+
+WHY: Phase G spans 100+ visual migrations and can silently change classic
+presentation, damage surfaces, and frame/server cost. G0 makes the source
+set and policy choices reviewable before any irreversible-looking batch
+work. King/Godzilla/Mothra manual parts remain in the recommendation until
+their replacements pass independently formulated parity; the faithful
+King/Queen/Godzilla head sidecars remain unless the owner explicitly rules
+otherwise. New Tier-1 damage positions are recommended server-fed rather
+than extending the Queen's client-trusted exception.
+
+EVIDENCE: the generator hard-fails unless it sees 109 models, 108
+hand-coded models, 36,403 model LOC, 428 entity PNGs, 426 provenance rows,
+and seven vanilla reuse renderers. Its scan found 338 unique PNG payloads,
+86 duplicate groups / 90 redundant names, 254 renderer-referenced names,
+and only `blue_queen.png` / `red_queen.png` without byte-identical 1.7.10
+provenance. A document check proved 109 non-empty model rows, 20 matching
+Tier-1 hitbox designs, ten owner questions, and byte equality of the copied
+603-line `PHASE_G_PROMPT.md`; certutil reproduced SHA-256
+706CB5D662B6E1FF98D952DA3DF3994050A2E9A0FB394F91E712B9792D15641D.
+The read-only staging survey recorded tracked `extracted/` (1,370 files),
+main-checkout-only `temp_queen/` (eight scratch files), and
+`blockbench_exports/` (373 files) without importing or modifying them.
+
+BASELINE NOTE: the first baseline build stopped making progress inside a
+NeoGradle PIDBasedFileLock wait. It was interrupted after diagnosis,
+`gradlew --stop` returned 0, and one non-concurrent retry completed with
+`RESULT: 0 error(s), 0 advisory(ies), 3 acknowledged -> exit 0` and build
+exit 0. No Gradle invocations overlapped.
+
+GATE: build exit 0 with literal asset-audit line `RESULT: 0 error(s), 0
+advisory(ies), 3 acknowledged -> exit 0`; runGameTestServer explicit exit
+0 with literal suite line `All 192 required tests passed` (N verified as
+192). G0 STOPS at the owner approval gate; no G1-G5 work follows this
+entry.
