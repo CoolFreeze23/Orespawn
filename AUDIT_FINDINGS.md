@@ -6003,6 +6003,31 @@ keeps BUG-036. Commit 4ea395c's message retains the old number.)*
   write-before-validate quirk; plus a gametest for target acquisition with a
   survival player vs a creative player.
 
+### BUG-040 — Coin renders nothing: the port's ModelCoin is not the 1.7.10 model (REPORT, 2026-09-02)
+
+- **Impact:** HIGH-visual — the classic `orespawn:coin` entity is invisible in
+  the port. Found by the Slice 4b harness: the visual leg's foreground was 0 on
+  BOTH sides for every capture.
+- **Evidence:** port `ModelCoin.createBodyLayer` is one 16x16x4 box at
+  `texOffs(0, 0)` on a 512x512 sheet, so it samples the sheet's top-left
+  40x20 texels; every one of those 800 texels in `coin.png` (byte-identical
+  to `cointexture.png` and to the reference `Cointexture.png`) has alpha 0,
+  and `entityCutoutNoCull` discards them. `setupAnim` spins `coin.yRot =
+  ageInTicks * 0.1F`.
+- **Original contract** (`reference_1_7_10_source/.../ModelCoin.java`,
+  `RenderCoin.java:20`, `ClientProxyOreSpawn.java:491`): texture 512x512;
+  ONE `ModelRenderer` at texture offset (0,0) with `addBox(-128, -128, 0,
+  256, 256, 1)`, rotation point (0, -109, 0), `mirror = true`; yaw
+  `cos(ageInTicks * 0.05 * wingspeed) * PI` with wingspeed 0.22 (an
+  oscillation, not a spin); rendered at scale 0.125 with shadow 0.75 through
+  `RenderCoin`. The 256x256 faces map the sheet's opaque 512x267 region.
+- **Resolution:** OPEN — report only, per the owner's rule for out-of-slice
+  findings. Proposed fix (own commit): rebuild `ModelCoin` as the original
+  quad (256x256x1, mirror, pivot y -109), restore the cosine yaw and the
+  0.125 render scale in `CoinRenderer`, then convert it (it returns to
+  Slice 4b-2 as a code-driven candidate; the pulled `CoinGeoReplacement` is
+  in git history at the Slice 4b working tree).
+
 ### TEST-003 — Config-flipping gametests in the concurrent default batch
 
 - **Impact:** MEDIUM (suite reliability) — boss005/boss012 flip a global

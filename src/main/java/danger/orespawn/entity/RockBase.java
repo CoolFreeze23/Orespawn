@@ -1,5 +1,6 @@
 package danger.orespawn.entity;
 
+import danger.orespawn.entity.pose.RockBasePose;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -15,7 +16,7 @@ import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.level.Level;
 
-public class RockBase extends Mob {
+public class RockBase extends Mob implements RockBasePose {
     private static final EntityDataAccessor<Integer> DATA_ROCK_TYPE =
             SynchedEntityData.defineId(RockBase.class, EntityDataSerializers.INT);
 

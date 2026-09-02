@@ -10,6 +10,7 @@
   "thresholds": {
     "geometry_epsilon_blocks": 1e-05,
     "animation_epsilon_radians": 2e-06,
+    "position_epsilon_model_units": 0.0001,
     "uv_epsilon_normalized": 1e-07,
     "normal_epsilon": 1e-06,
     "pixel_channel_tolerance": 2,
@@ -69,7 +70,422 @@
         }
       ],
       "channels": []
+    },
+    {
+      "id": "model_island",
+      "tier": 3,
+      "class": "danger.orespawn.entity.client.ModelIsland",
+      "texture": "src/main/resources/assets/orespawn/textures/entity/island.png",
+      "animation_kind": "code_driven",
+      "candidate_animation_path": "production_replacement_hook",
+      "candidate_class": "danger.orespawn.entity.client.IslandGeoReplacement",
+      "loop_period_age_ticks": 20.0,
+      "sample_fractions": [
+        0.0,
+        0.5
+      ],
+      "limb_swing": 3.7,
+      "limb_swing_amount": 0.0,
+      "limb_swing_amount_samples": [
+        0.0,
+        0.5,
+        1.0
+      ],
+      "net_head_yaw": 25.0,
+      "head_pitch": -12.0,
+      "visual_sample_ids": [
+        "bind",
+        "a0_t0",
+        "a0_5_t_half",
+        "a1_t0"
+      ],
+      "camera": {
+        "yaw_degrees": 34.0,
+        "pitch_degrees": -28.0
+      },
+      "channels": []
+    },
+    {
+      "id": "model_islandtoo",
+      "tier": 3,
+      "class": "danger.orespawn.entity.client.ModelIslandToo",
+      "texture": "src/main/resources/assets/orespawn/textures/entity/islandtoo.png",
+      "animation_kind": "code_driven",
+      "candidate_animation_path": "production_replacement_hook",
+      "candidate_class": "danger.orespawn.entity.client.IslandTooGeoReplacement",
+      "loop_period_age_ticks": 20.0,
+      "sample_fractions": [
+        0.0,
+        0.5
+      ],
+      "limb_swing": 3.7,
+      "limb_swing_amount": 0.0,
+      "limb_swing_amount_samples": [
+        0.0,
+        0.5,
+        1.0
+      ],
+      "net_head_yaw": 25.0,
+      "head_pitch": -12.0,
+      "visual_sample_ids": [
+        "bind",
+        "a0_t0",
+        "a0_5_t_half",
+        "a1_t0"
+      ],
+      "camera": {
+        "yaw_degrees": 34.0,
+        "pitch_degrees": -28.0
+      },
+      "channels": []
+    },
+    {
+      "id": "model_robot1",
+      "tier": 3,
+      "class": "danger.orespawn.entity.client.ModelRobot1",
+      "texture": "src/main/resources/assets/orespawn/textures/entity/robot1.png",
+      "animation_kind": "code_driven",
+      "candidate_animation_path": "production_replacement_hook",
+      "candidate_class": "danger.orespawn.entity.client.Robot1GeoReplacement",
+      "loop_period_age_ticks": 20.0,
+      "sample_fractions": [
+        0.0,
+        0.25,
+        0.5,
+        0.75,
+        1.0
+      ],
+      "limb_swing": 6.1,
+      "limb_swing_amount": 0.0,
+      "limb_swing_amount_samples": [
+        0.05,
+        0.5
+      ],
+      "net_head_yaw": 0.0,
+      "head_pitch": 0.0,
+      "visual_sample_ids": [
+        "bind",
+        "a0_05000000074505806_t0",
+        "a0_5_t0",
+        "a0_5_t_half",
+        "a0_5_t_three_quarter"
+      ],
+      "camera": {
+        "yaw_degrees": 34.0,
+        "pitch_degrees": -28.0
+      },
+      "channels": []
+    },
+    {
+      "id": "model_robot5",
+      "tier": 3,
+      "class": "danger.orespawn.entity.client.ModelRobot5",
+      "texture": "src/main/resources/assets/orespawn/textures/entity/robot5.png",
+      "animation_kind": "code_driven",
+      "candidate_animation_path": "production_replacement_hook",
+      "candidate_class": "danger.orespawn.entity.client.Robot5GeoReplacement",
+      "loop_period_age_ticks": 20.0,
+      "sample_fractions": [
+        0.0,
+        0.5
+      ],
+      "limb_swing": 37.3,
+      "limb_swing_amount": 0.0,
+      "limb_swing_amount_samples": [
+        0.05,
+        1.0
+      ],
+      "net_head_yaw": 40.0,
+      "head_pitch": 0.0,
+      "visual_sample_ids": [
+        "a0_05000000074505806_t0",
+        "a1_t0"
+      ],
+      "camera": {
+        "yaw_degrees": 34.0,
+        "pitch_degrees": -28.0
+      },
+      "channels": [],
+      "visual_note": "bind excluded: lwheel2/rwheel2 sit superimposed on lwheel1/rwheel1 until the pose adds their 0.785 rad offset (ruling 2, 2026-09-02: superimposed-at-bind is not a player-visible state); the posed samples show the wheels"
+    },
+    {
+      "id": "model_robot2",
+      "tier": 3,
+      "class": "danger.orespawn.entity.client.ModelRobot2",
+      "texture": "src/main/resources/assets/orespawn/textures/entity/robot2.png",
+      "animation_kind": "entity_state",
+      "candidate_animation_path": "production_replacement_hook",
+      "candidate_class": "danger.orespawn.entity.client.Robot2GeoReplacement",
+      "loop_period_age_ticks": 20.0,
+      "sample_fractions": [
+        0.5,
+        0.898
+      ],
+      "limb_swing": 0.0,
+      "limb_swing_amount": 0.0,
+      "limb_swing_amount_samples": [
+        0.0,
+        0.5
+      ],
+      "net_head_yaw": 30.0,
+      "head_pitch": 0.0,
+      "entity_states": [
+        {
+          "name": "idle_ri0",
+          "attacking": 0,
+          "ri1": 0
+        },
+        {
+          "name": "idle_ri1",
+          "attacking": 0,
+          "ri1": 1
+        },
+        {
+          "name": "idle_ri2",
+          "attacking": 0,
+          "ri1": 2
+        },
+        {
+          "name": "idle_ri3",
+          "attacking": 0,
+          "ri1": 3
+        },
+        {
+          "name": "attacking_seeded",
+          "attacking": 1,
+          "ri1": 0,
+          "seed": 12345
+        }
+      ],
+      "visual_sample_ids": [
+        "s_idle_ri0_a0_t_half",
+        "s_idle_ri3_a0_5_t_half",
+        "s_attacking_seeded_a0_5_t_0_898000"
+      ],
+      "camera": {
+        "yaw_degrees": 34.0,
+        "pitch_degrees": -28.0
+      },
+      "channels": [],
+      "visual_note": "bind excluded: the classic model overlaps arm segments until posed; the posed samples are the player-visible states"
+    },
+    {
+      "id": "model_robot3",
+      "tier": 3,
+      "class": "danger.orespawn.entity.client.ModelRobot3",
+      "texture": "src/main/resources/assets/orespawn/textures/entity/robot3.png",
+      "animation_kind": "entity_state",
+      "candidate_animation_path": "production_replacement_hook",
+      "candidate_class": "danger.orespawn.entity.client.Robot3GeoReplacement",
+      "loop_period_age_ticks": 20.0,
+      "sample_fractions": [
+        0.1,
+        0.23
+      ],
+      "limb_swing": 0.0,
+      "limb_swing_amount": 0.0,
+      "limb_swing_amount_samples": [
+        0.0,
+        0.5
+      ],
+      "net_head_yaw": 50.0,
+      "head_pitch": 0.0,
+      "entity_states": [
+        {
+          "name": "idle_ri0",
+          "attacking": 0,
+          "ri1": 0
+        },
+        {
+          "name": "idle_ri1",
+          "attacking": 0,
+          "ri1": 1
+        },
+        {
+          "name": "attacking_ri0",
+          "attacking": 1,
+          "ri1": 0
+        }
+      ],
+      "visual_sample_ids": [
+        "s_idle_ri1_a0_5_t_0_100000",
+        "s_attacking_ri0_a0_5_t_0_230000"
+      ],
+      "camera": {
+        "yaw_degrees": 34.0,
+        "pitch_degrees": -28.0
+      },
+      "channels": []
+    },
+    {
+      "id": "model_robot4",
+      "tier": 3,
+      "class": "danger.orespawn.entity.client.ModelRobot4",
+      "texture": "src/main/resources/assets/orespawn/textures/entity/robot4.png",
+      "animation_kind": "entity_state",
+      "candidate_animation_path": "production_replacement_hook",
+      "candidate_class": "danger.orespawn.entity.client.Robot4GeoReplacement",
+      "loop_period_age_ticks": 20.0,
+      "sample_fractions": [
+        0.0,
+        0.375,
+        1.0
+      ],
+      "limb_swing": 0.0,
+      "limb_swing_amount": 0.0,
+      "limb_swing_amount_samples": [
+        0.0,
+        0.5
+      ],
+      "net_head_yaw": 45.0,
+      "head_pitch": 0.0,
+      "entity_states": [
+        {
+          "name": "idle",
+          "attacking": 0
+        },
+        {
+          "name": "attacking",
+          "attacking": 1
+        }
+      ],
+      "visual_sample_ids": [
+        "s_idle_a0_t0",
+        "s_attacking_a0_5_t_0_375000",
+        "s_attacking_a0_5_t_end"
+      ],
+      "camera": {
+        "yaw_degrees": 34.0,
+        "pitch_degrees": -28.0
+      },
+      "channels": []
+    },
+    {
+      "id": "model_rockbase",
+      "tier": 3,
+      "class": "danger.orespawn.entity.client.ModelRockBase",
+      "texture": "src/main/resources/assets/orespawn/textures/entity/rocktexture.png",
+      "animation_kind": "entity_state",
+      "candidate_animation_path": "production_replacement_hook",
+      "candidate_class": "danger.orespawn.entity.client.RockBaseGeoReplacement",
+      "loop_period_age_ticks": 20.0,
+      "sample_fractions": [
+        0.0
+      ],
+      "limb_swing": 0.0,
+      "limb_swing_amount": 0.0,
+      "net_head_yaw": 0.0,
+      "head_pitch": 0.0,
+      "entity_states": [
+        {
+          "name": "type_0",
+          "rock_type": 0
+        },
+        {
+          "name": "type_1",
+          "rock_type": 1
+        },
+        {
+          "name": "type_2",
+          "rock_type": 2
+        },
+        {
+          "name": "type_3",
+          "rock_type": 3
+        },
+        {
+          "name": "type_4",
+          "rock_type": 4
+        },
+        {
+          "name": "type_5",
+          "rock_type": 5
+        },
+        {
+          "name": "type_6",
+          "rock_type": 6
+        },
+        {
+          "name": "type_7",
+          "rock_type": 7
+        },
+        {
+          "name": "type_8",
+          "rock_type": 8
+        },
+        {
+          "name": "type_9",
+          "rock_type": 9
+        },
+        {
+          "name": "type_10",
+          "rock_type": 10
+        },
+        {
+          "name": "type_11",
+          "rock_type": 11
+        },
+        {
+          "name": "type_12",
+          "rock_type": 12
+        },
+        {
+          "name": "type_13",
+          "rock_type": 13
+        }
+      ],
+      "visual_sample_ids": [
+        "s_type_1_t0",
+        "s_type_2_t0",
+        "s_type_3_t0",
+        "s_type_4_t0",
+        "s_type_5_t0",
+        "s_type_6_t0",
+        "s_type_7_t0",
+        "s_type_8_t0",
+        "s_type_9_t0",
+        "s_type_10_t0",
+        "s_type_11_t0",
+        "s_type_12_t0"
+      ],
+      "camera": {
+        "yaw_degrees": 34.0,
+        "pitch_degrees": -28.0
+      },
+      "channels": [],
+      "visual_note": "types 0 and 13 draw nothing (classic early return) and are proven by the hidden-bone check, not the visual leg; bind (all 22 parts superimposed) is excluded under ruling 2"
     }
   ],
-  "fixtures": []
+  "fixtures": [
+    {
+      "id": "fixture_runtime_basis_yz",
+      "proof_scope": "non_production_converter_fixture",
+      "tier": 0,
+      "class": "danger.orespawn.g1.G1RuntimeBasisFixtureModel",
+      "texture": "src/main/resources/assets/orespawn/textures/entity/elevator1.png",
+      "animation_kind": "code_driven",
+      "candidate_animation_path": "production_replacement_hook",
+      "candidate_class": "danger.orespawn.g1.G1RuntimeBasisFixtureReplacement",
+      "loop_period_age_ticks": 20.0,
+      "sample_fractions": [
+        0.0,
+        0.25,
+        0.375,
+        0.5,
+        0.75,
+        1.0
+      ],
+      "limb_swing": 2.0,
+      "limb_swing_amount": 0.5,
+      "net_head_yaw": 30.0,
+      "head_pitch": -20.0,
+      "channels": [],
+      "required_coverage": [
+        "nested_parent_bone",
+        "non_mirrored_uv",
+        "nonzero_bind_rotation",
+        "uniform_inflate"
+      ]
+    }
+  ]
 }

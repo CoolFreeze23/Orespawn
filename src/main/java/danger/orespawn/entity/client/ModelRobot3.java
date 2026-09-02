@@ -1,5 +1,6 @@
 package danger.orespawn.entity.client;
 
+import danger.orespawn.entity.pose.Robot3Pose;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.model.EntityModel;
@@ -154,8 +155,14 @@ public class ModelRobot3 extends EntityModel<Robot3> {
         return LayerDefinition.create(meshdefinition, 512, 512);
     }
 
-    @Override
+        @Override
     public void setupAnim(Robot3 entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
+        // The body lives in poseFrom so the parity harness can drive it from a declared
+        // state without a live entity (Slice 4b); the entity satisfies the interface.
+        poseFrom(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
+    }
+
+    public void poseFrom(Robot3Pose entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
         // orig ModelRobot3.java:163-167 — legs swing on time at 0.55*wingspeed
         // (wingspeed 1.0, orig ClientProxyOreSpawn.java:441), amplitude scaled
         // by limbSwingAmount, frozen below the 0.1 movement threshold.

@@ -1,0 +1,53 @@
+{
+  "schema_version": 1,
+  "model_id": "model_island",
+  "tier": 3,
+  "proof_scope": "production_proof_model",
+  "ground_truth": "executed compiled LayerDefinition and baked ModelPart",
+  "source_class": "danger.orespawn.entity.client.ModelIsland",
+  "source_class_sha256": "0199449ecd72805ee2923283cf22697c4e8709871f5fbff66ff55dcc99ee867f",
+  "compiled_dump_sha256": "d6b4eeb0cfbcf182b77f61fff6dd9ed34b161cd57f746cc98f68af23a29081b4",
+  "geometry_sha256": "5a2f0670ff66d013dabda46a192d5dbca19d491a8b56117c790c481c11ebaeac",
+  "animation_sha256": "7882082857fdb11e02f158ebc3a6d3f970e2ac60d54813f0e903ee97b2293749",
+  "animation_contract_sha256": "abc28ea5cb736c5d6e0d3ac3e18b56ac473e7446a85c55ce96d072f2ad56ce1a",
+  "bone_count": 6,
+  "cube_count": 6,
+  "mirrored_cube_count": 0,
+  "mirrored_uv_strategy": "source flag retained as modelpart_mirror; semantics baked into explicit faces; incompatible GeckoLib native mirror disabled",
+  "exact_bone_names": [
+    "body",
+    "head",
+    "leg1",
+    "leg2",
+    "leg3",
+    "leg4"
+  ],
+  "animation_contract": {
+    "schema_version": 1,
+    "kind": "code_driven",
+    "controller_required": false,
+    "candidate_animation_path": "production_replacement_hook",
+    "candidate_class": "danger.orespawn.entity.client.IslandGeoReplacement",
+    "candidate_acceptance_path": "production OreSpawnGeoReplacementModel.setCustomAnimations (Amendment 1 Tier-3 code-driven)",
+    "sample_ids": [
+      "bind",
+      "a0_t0",
+      "a0_t_half",
+      "a0_5_t0",
+      "a0_5_t_half",
+      "a1_t0",
+      "a1_t_half"
+    ]
+  },
+  "reference_animation_schema": {
+    "status": "SCHEMA_VALID_REFERENCE_ONLY",
+    "clip_count": 0,
+    "constant_vector_count": 0,
+    "runtime_acceptance": false
+  },
+  "accepted_animation_evidence": "production OreSpawnGeoReplacement hook through OreSpawnGeoReplacementModel.setCustomAnimations (Amendment 1 Tier-3 code-driven)",
+  "artist_editable_math_to_keyframes_status": "NOT_APPLICABLE_TIER3_CODE_DRIVEN",
+  "compiled_animation_bake_sample_count": 0,
+  "reference_clip_keys_source": "compiled setupAnim output; no Python formula evaluation",
+  "source_animation_channel_inventory": []
+}

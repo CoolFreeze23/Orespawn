@@ -57,15 +57,16 @@ public final class BeaverGeoReplacement extends OreSpawnGeoReplacement<Beaver> {
         // Z rotations yet — derive and harness-prove those signs before
         // relying on them (see the basis notes in tools/layer_definition_to_geo.py).
         float gait = Mth.cos(ageInTicks * 3.7F) * (float) Math.PI * 0.45F * limbSwingAmount;
-        rotateX(processor, "rff", -gait);
-        rotateX(processor, "lrf", -gait);
-        rotateX(processor, "lff", gait);
-        rotateX(processor, "rrf", gait);
-        rotateX(processor, "teeth", -Mth.cos(ageInTicks * 2.7F) * (float) Math.PI * 0.25F);
-        rotateX(processor, "tail", -Mth.cos(ageInTicks * 0.5F) * (float) Math.PI * 0.05F);
+        setInternalRotX(processor, "rff", -gait);
+        setInternalRotX(processor, "lrf", -gait);
+        setInternalRotX(processor, "lff", gait);
+        setInternalRotX(processor, "rrf", gait);
+        setInternalRotX(processor, "teeth", -Mth.cos(ageInTicks * 2.7F) * (float) Math.PI * 0.25F);
+        setInternalRotX(processor, "tail", -Mth.cos(ageInTicks * 0.5F) * (float) Math.PI * 0.05F);
     }
 
-    private static void rotateX(AnimationProcessor<?> processor, String boneName, float rotation) {
+    /** Internal-basis write (the caller negates X); predates the classic-vocabulary helpers on the base class. */
+    private static void setInternalRotX(AnimationProcessor<?> processor, String boneName, float rotation) {
         GeoBone bone = processor.getBone(boneName);
         if (bone == null) {
             throw new IllegalStateException("beaver.geo.json is missing bone " + boneName);

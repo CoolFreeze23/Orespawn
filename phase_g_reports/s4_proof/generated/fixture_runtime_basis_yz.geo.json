@@ -1,0 +1,194 @@
+{
+  "format_version": "1.12.0",
+  "minecraft:geometry": [
+    {
+      "description": {
+        "identifier": "geometry.orespawn.g1.fixture_runtime_basis_yz",
+        "texture_width": 64,
+        "texture_height": 64
+      },
+      "bones": [
+        {
+          "name": "basis_parent",
+          "pivot": [
+            -2.5,
+            17,
+            -1.5
+          ],
+          "rotation": [
+            13.178029288,
+            17.7616916491,
+            -9.7402825172
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -4.5,
+                15,
+                -4.5
+              ],
+              "size": [
+                4,
+                3,
+                5
+              ],
+              "uv": {
+                "west": {
+                  "uv": [
+                    8,
+                    10
+                  ],
+                  "uv_size": [
+                    -5,
+                    3
+                  ]
+                },
+                "east": {
+                  "uv": [
+                    17,
+                    10
+                  ],
+                  "uv_size": [
+                    -5,
+                    3
+                  ]
+                },
+                "north": {
+                  "uv": [
+                    12,
+                    10
+                  ],
+                  "uv_size": [
+                    -4,
+                    3
+                  ]
+                },
+                "south": {
+                  "uv": [
+                    21,
+                    10
+                  ],
+                  "uv_size": [
+                    -4,
+                    3
+                  ]
+                },
+                "up": {
+                  "uv": [
+                    12,
+                    5
+                  ],
+                  "uv_size": [
+                    -4,
+                    5
+                  ]
+                },
+                "down": {
+                  "uv": [
+                    16,
+                    10
+                  ],
+                  "uv_size": [
+                    -4,
+                    -5
+                  ]
+                }
+              },
+              "inflate": 0.25
+            }
+          ]
+        },
+        {
+          "name": "basis_child",
+          "pivot": [
+            -1.25,
+            14.25,
+            2
+          ],
+          "parent": "basis_parent",
+          "rotation": [
+            -10.8861981075,
+            -15.4698604685,
+            6.3025357464
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -2.25,
+                12.25,
+                1.5
+              ],
+              "size": [
+                2,
+                4,
+                1
+              ],
+              "uv": {
+                "west": {
+                  "uv": [
+                    25,
+                    10
+                  ],
+                  "uv_size": [
+                    -1,
+                    4
+                  ]
+                },
+                "east": {
+                  "uv": [
+                    28,
+                    10
+                  ],
+                  "uv_size": [
+                    -1,
+                    4
+                  ]
+                },
+                "north": {
+                  "uv": [
+                    27,
+                    10
+                  ],
+                  "uv_size": [
+                    -2,
+                    4
+                  ]
+                },
+                "south": {
+                  "uv": [
+                    30,
+                    10
+                  ],
+                  "uv_size": [
+                    -2,
+                    4
+                  ]
+                },
+                "up": {
+                  "uv": [
+                    27,
+                    9
+                  ],
+                  "uv_size": [
+                    -2,
+                    1
+                  ]
+                },
+                "down": {
+                  "uv": [
+                    29,
+                    10
+                  ],
+                  "uv_size": [
+                    -2,
+                    -1
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

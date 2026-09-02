@@ -16,6 +16,12 @@ from PIL import Image
 
 IMAGE_SIZE = 256
 BACKGROUND = (18, 20, 24, 255)
+# rendertype_entity_cutout.fsh: `if (color.a < 0.1) discard;` -> 0.1 * 255 on 8-bit alpha.
+CUTOUT_ALPHA_THRESHOLD = 25.5
+# Fragments of different quads within this depth of each other are a z-fight
+# (draw-order resolved in both renderers; ruling 2, 2026-09-02: not a parity target).
+CONTEST_DEPTH_EPSILON = 1.0e-6
+CONTESTED_MARKER = (40, 90, 255, 255)
 DEFAULT_VISUAL_SAMPLE_IDS = ("bind", "t0", "t_quarter", "t_half", "t_three_quarter")
 
 
@@ -79,6 +85,19 @@ def cube_map(sample: dict[str, Any]) -> dict[tuple[str, int], dict[str, Any]]:
     return result
 
 
+def assert_same_cube_set(model_id: str, sample_name: str,
+                         vanilla_cubes: dict[tuple[str, int], Any],
+                         geo_cubes: dict[tuple[str, int], Any]) -> None:
+    """Both probes must draw the same cubes: a hidden bone on one side only is a visibility bug."""
+    if vanilla_cubes.keys() != geo_cubes.keys():
+        missing = sorted(set(vanilla_cubes) - set(geo_cubes))
+        extra = sorted(set(geo_cubes) - set(vanilla_cubes))
+        raise AssertionError(
+            f"VISIBILITY SET MISMATCH {model_id}/{sample_name}: cubes only in compiled {missing}; "
+            f"only in GeckoLib {extra}"
+        )
+
+
 def vertex_position(vertex: dict[str, Any]) -> tuple[float, float, float]:
     return tuple(float(value) for value in vertex["position"])  # type: ignore[return-value]
 
@@ -130,6 +149,7 @@ def geometry_parity(model_id: str, compiled: dict[str, Any], geo_render: dict[st
     for sample_id in vanilla_samples:
         vanilla_cubes = cube_map(vanilla_samples[sample_id])
         geo_cubes = cube_map(geo_samples[sample_id])
+        assert_same_cube_set(model_id, sample_id, vanilla_cubes, geo_cubes)
         if vanilla_cubes.keys() != geo_cubes.keys():
             missing = sorted(vanilla_cubes.keys() - geo_cubes.keys())
             extra = sorted(geo_cubes.keys() - vanilla_cubes.keys())
@@ -179,6 +199,7 @@ def surface_mapping_parity(model_id: str, compiled: dict[str, Any],
     for sample_name, vanilla_sample in vanilla_samples.items():
         vanilla_cubes = cube_map(vanilla_sample)
         geo_cubes = cube_map(geo_samples[sample_name])
+        assert_same_cube_set(model_id, sample_name, vanilla_cubes, geo_cubes)
         for key, vanilla_cube in vanilla_cubes.items():
             # Ruling 2026-09-02 (Vortex): faces of EXACTLY zero area draw nothing,
             # and GeckoLib's baker collapses a flat cube's degenerate faces, so
@@ -279,7 +300,8 @@ def vector_delta(left: Iterable[float], right: Iterable[float]) -> float:
 
 def animation_parity(model_id: str, spec: dict[str, Any], compiled: dict[str, Any],
                      geo_render: dict[str, Any], contract: dict[str, Any],
-                     epsilon: float) -> dict[str, Any]:
+                     epsilon: float, position_epsilon: float = 1.0e-4,
+                     repository_root: Path | None = None) -> dict[str, Any]:
     """Compare independent compiled setupAnim output with the actual candidate hook."""
     vanilla_samples = sample_map(compiled)
     candidate_samples = sample_map(geo_render)
@@ -307,6 +329,12 @@ def animation_parity(model_id: str, spec: dict[str, Any], compiled: dict[str, An
     dense_channel_count = 0
     worst = "exact"
     dense_worst = "exact"
+    kind = contract["kind"]
+    max_position_delta = 0.0
+    position_worst = "exact"
+    position_channel_samples = 0
+    hidden_checks = 0
+    entity_states_checked: set[str] = set()
     for current_id, vanilla_sample in vanilla_samples.items():
         candidate_sample = candidate_samples[current_id]
         for field in ("capture_kind", "dense_transform_sample", "age_ticks", "limb_swing_amount"):
@@ -329,11 +357,31 @@ def animation_parity(model_id: str, spec: dict[str, Any], compiled: dict[str, An
                     f"ANIMATION MISMATCH {model_id}/{current_id}/{bone}: actual custom runtime "
                     f"delta {delta:.12g} > epsilon {epsilon:.12g}"
                 )
-            max_static_delta = max(
-                max_static_delta,
-                vector_delta(transform["position"], bind_transforms[bone]["position"]),
-                vector_delta(transform["scale"], bind_transforms[bone]["scale"]),
-            )
+            if kind in ("code_driven", "entity_state"):
+                # The production hook may move pivots (Robot4's cannon follow);
+                # compare against the probe's basis-converted bone positions.
+                position_delta = vector_delta(
+                    transform["position"], candidate_sample["java_positions"][bone]
+                )
+                if position_delta > max_position_delta:
+                    max_position_delta = position_delta
+                    position_worst = f"{current_id}:{bone}"
+                if position_delta > position_epsilon:
+                    raise AssertionError(
+                        f"POSITION MISMATCH {model_id}/{current_id}/{bone}: actual custom runtime "
+                        f"position delta {position_delta:.12g} > epsilon {position_epsilon:.12g}"
+                    )
+                position_channel_samples += 3
+                max_static_delta = max(
+                    max_static_delta,
+                    vector_delta(transform["scale"], bind_transforms[bone]["scale"]),
+                )
+            else:
+                max_static_delta = max(
+                    max_static_delta,
+                    vector_delta(transform["position"], bind_transforms[bone]["position"]),
+                    vector_delta(transform["scale"], bind_transforms[bone]["scale"]),
+                )
             channel_count += 3
             if vanilla_sample.get("dense_transform_sample"):
                 dense_channel_count += 3
@@ -342,6 +390,29 @@ def animation_parity(model_id: str, spec: dict[str, Any], compiled: dict[str, An
             f"ANIMATION MISMATCH {model_id}: candidate handles rotation only but compiled "
             f"position/scale delta is {max_static_delta:.12g}"
         )
+    if kind in ("code_driven", "entity_state"):
+        for current_id, vanilla_sample in vanilla_samples.items():
+            if current_id == "bind":
+                continue
+            candidate_sample = candidate_samples[current_id]
+            expected_hidden = sorted(vanilla_sample["hidden_bones"])
+            actual_hidden = sorted(candidate_sample["hidden_bones"])
+            if actual_hidden != expected_hidden:
+                raise AssertionError(
+                    f"VISIBILITY MISMATCH {model_id}/{current_id}: GeckoLib hid {actual_hidden}, "
+                    f"compiled hid {expected_hidden}"
+                )
+            hidden_checks += 1
+            if "entity_state" in vanilla_sample:
+                if candidate_sample.get("entity_state") != vanilla_sample["entity_state"]:
+                    raise AssertionError(f"{model_id}/{current_id} entity state drift between probes")
+                if candidate_sample.get("subject_after") != vanilla_sample["subject_after"]:
+                    raise AssertionError(
+                        f"STATE MISMATCH {model_id}/{current_id}: the hook left the subject as "
+                        f"{candidate_sample.get('subject_after')}, the compiled model as "
+                        f"{vanilla_sample['subject_after']}"
+                    )
+                entity_states_checked.add(vanilla_sample["entity_state"]["name"])
 
     contract_metrics: dict[str, Any] = {"kind": contract["kind"]}
     if contract["kind"] == "static":
@@ -510,8 +581,73 @@ def animation_parity(model_id: str, spec: dict[str, Any], compiled: dict[str, An
                 if "frequency_radians_per_age_tick" in channel
             }),
         })
+    elif contract["kind"] == "code_driven":
+        expected_source = "fresh BakedGeoModel + production OreSpawnGeoReplacement.pose on explicit PoseInputs"
+        if geo_render.get("candidate_animation_path") != "production_replacement_hook":
+            raise AssertionError(f"{model_id} did not exercise the production replacement hook")
+        if geo_render.get("accepted_pose_source") != expected_source:
+            raise AssertionError(f"{model_id} accepted pose source is not the production hook path")
+        if geo_render.get("fresh_baked_model_per_accepted_sample") is not True:
+            raise AssertionError(f"{model_id} did not use a fresh baked model for every accepted sample")
+        candidate_class = spec["candidate_class"]
+        if contract.get("candidate_class") != candidate_class or geo_render.get("candidate_class") != candidate_class:
+            raise AssertionError(f"{model_id} candidate class drift between manifest, contract and probe")
+        if len(vanilla_samples) < 2:
+            raise AssertionError(f"{model_id} code_driven proof needs at least one setupAnim sample")
+        contract_metrics.update({
+            "accepted_runtime_path": (
+                "production OreSpawnGeoReplacement.applyCustomAnimations through "
+                "OreSpawnGeoReplacementModel.setCustomAnimations"
+            ),
+            "candidate_class": candidate_class,
+            "inputs": {
+                "limb_swing": spec["limb_swing"],
+                "limb_swing_amounts": spec.get("limb_swing_amount_samples", [spec["limb_swing_amount"]]),
+                "net_head_yaw_degrees": spec.get("net_head_yaw", 0.0),
+                "head_pitch_degrees": spec.get("head_pitch", 0.0),
+            },
+        })
+    elif contract["kind"] == "entity_state":
+        expected_source = "fresh BakedGeoModel + production OreSpawnGeoReplacement.pose on explicit PoseInputs"
+        if geo_render.get("candidate_animation_path") != "production_replacement_hook":
+            raise AssertionError(f"{model_id} did not exercise the production replacement hook")
+        if geo_render.get("accepted_pose_source") != expected_source:
+            raise AssertionError(f"{model_id} accepted pose source is not the production hook path")
+        candidate_class = spec["candidate_class"]
+        if contract.get("candidate_class") != candidate_class or geo_render.get("candidate_class") != candidate_class:
+            raise AssertionError(f"{model_id} candidate class drift between manifest, contract and probe")
+        declared_states = [state["name"] for state in spec["entity_states"]]
+        if contract.get("entity_states") != declared_states:
+            raise AssertionError(f"{model_id} entity state declaration drift")
+        if sorted(entity_states_checked) != sorted(declared_states):
+            raise AssertionError(
+                f"{model_id} entity states checked {sorted(entity_states_checked)} != declared {declared_states}"
+            )
+        contract_metrics.update({
+            "accepted_runtime_path": (
+                "production OreSpawnGeoReplacement.applyCustomAnimations posed from declared entity "
+                "states through the entity's pose interface; compiled poseFrom on the same states"
+            ),
+            "candidate_class": candidate_class,
+            "entity_states": spec["entity_states"],
+            "inputs": {
+                "limb_swing": spec["limb_swing"],
+                "limb_swing_amounts": spec.get("limb_swing_amount_samples", [spec["limb_swing_amount"]]),
+                "net_head_yaw_degrees": spec.get("net_head_yaw", 0.0),
+                "head_pitch_degrees": spec.get("head_pitch", 0.0),
+            },
+        })
     else:
         raise AssertionError(f"unsupported animation contract kind {contract['kind']}")
+
+    if kind in ("code_driven", "entity_state"):
+        contract_metrics.update({
+            "max_position_delta_model_units": max_position_delta,
+            "position_epsilon_model_units": position_epsilon,
+            "position_worst_case": position_worst,
+            "position_channel_samples": position_channel_samples,
+            "hidden_bone_checks": hidden_checks,
+        })
 
     return {
         "status": "PASS",
@@ -538,6 +674,16 @@ def reference_animation_schema(model_id: str, spec: dict[str, Any],
     if animation.get("format_version") != "1.8.0" or not isinstance(animation.get("animations"), dict):
         raise AssertionError(f"{model_id} reference animation has invalid generic schema")
     clips = animation["animations"]
+    if spec["animation_kind"] in ("code_driven", "entity_state"):
+        if clips:
+            raise AssertionError(f"{model_id} code-driven animation reference unexpectedly has clips")
+        return {
+            "status": "SCHEMA_VALID_REFERENCE_ONLY",
+            "role": "NOT_APPLICABLE_CODE_DRIVEN_MODEL",
+            "clip_count": 0,
+            "constant_vector_count": 0,
+            "runtime_acceptance": False,
+        }
     if spec["animation_kind"] == "static":
         if clips:
             raise AssertionError(f"{model_id} static animation reference unexpectedly has clips")
@@ -768,9 +914,20 @@ def edge(a: tuple[float, float], b: tuple[float, float], p: tuple[float, float])
     return (p[0] - a[0]) * (b[1] - a[1]) - (p[1] - a[1]) * (b[0] - a[0])
 
 
-def render_capture(sample: dict[str, Any], texture: Image.Image, camera: Camera) -> Image.Image:
+def render_capture(sample: dict[str, Any], texture: Image.Image,
+                   camera: Camera) -> tuple[Image.Image, list[bool]]:
+    """Rasterise one capture; also returns the per-pixel z-fight mask.
+
+    A pixel is CONTESTED when two fragments from different quads land within
+    CONTEST_DEPTH_EPSILON of each other at the front with different texels.
+    Both real renderers resolve that by draw order, which ruling 2 (2026-09-02)
+    excludes from parity; the mask lets the comparison skip exactly those
+    pixels and report how many there were.
+    """
     pixels = [BACKGROUND] * (IMAGE_SIZE * IMAGE_SIZE)
     depth_buffer = [math.inf] * (IMAGE_SIZE * IMAGE_SIZE)
+    owner_quad = [-1] * (IMAGE_SIZE * IMAGE_SIZE)
+    contested = [False] * (IMAGE_SIZE * IMAGE_SIZE)
     texture = texture.convert("RGBA")
     texture_pixels = texture.load()
     texture_width, texture_height = texture.size
@@ -780,6 +937,7 @@ def render_capture(sample: dict[str, Any], texture: Image.Image, camera: Camera)
         raise AssertionError("captured renderer vertex count is not quad-aligned")
     for offset in range(0, len(vertices), 4):
         quad = vertices[offset:offset + 4]
+        quad_index = offset // 4
         for indices in ((0, 1, 2), (0, 2, 3)):
             triangle = [quad[index] for index in indices]
             projected = [camera.project(vertex_position(vertex)) for vertex in triangle]
@@ -803,26 +961,38 @@ def render_capture(sample: dict[str, Any], texture: Image.Image, camera: Camera)
                         continue
                     depth = w0 * projected[0][2] + w1 * projected[1][2] + w2 * projected[2][2]
                     pixel_index = pixel_y * IMAGE_SIZE + pixel_x
-                    if depth >= depth_buffer[pixel_index] - 1.0e-9:
+                    current_depth = depth_buffer[pixel_index]
+                    if depth > current_depth + CONTEST_DEPTH_EPSILON:
                         continue
                     u = w0 * uvs[0][0] + w1 * uvs[1][0] + w2 * uvs[2][0]
                     v = w0 * uvs[0][1] + w1 * uvs[1][1] + w2 * uvs[2][1]
                     texture_x = min(texture_width - 1, max(0, int(math.floor(u * texture_width))))
                     texture_y = min(texture_height - 1, max(0, int(math.floor(v * texture_height))))
                     source = texture_pixels[texture_x, texture_y]
-                    alpha = source[3] / 255.0
-                    background = pixels[pixel_index]
-                    pixels[pixel_index] = (
-                        round(source[0] * alpha + background[0] * (1.0 - alpha)),
-                        round(source[1] * alpha + background[1] * (1.0 - alpha)),
-                        round(source[2] * alpha + background[2] * (1.0 - alpha)),
-                        255,
-                    )
+                    # Both renderers draw entity models with RenderType.entityCutoutNoCull:
+                    # the cutout fragment shader discards alpha < 0.1 (no colour, no depth
+                    # write) and draws everything else opaque. Blending here made the
+                    # result depend on draw order (Slice 4b Island finding).
+                    if source[3] < CUTOUT_ALPHA_THRESHOLD:
+                        continue
+                    colour = (source[0], source[1], source[2], 255)
+                    if abs(depth - current_depth) <= CONTEST_DEPTH_EPSILON:
+                        # Same depth as the current front fragment: a z-fight unless it
+                        # is the same quad (shared diagonal) or the same texel.
+                        if owner_quad[pixel_index] != quad_index and pixels[pixel_index] != colour:
+                            contested[pixel_index] = True
+                        if depth >= current_depth - 1.0e-9:
+                            continue
+                    else:
+                        # Decisively nearer: whatever was contested behind it no longer shows.
+                        contested[pixel_index] = False
+                    pixels[pixel_index] = colour
                     depth_buffer[pixel_index] = depth
+                    owner_quad[pixel_index] = quad_index
 
     image = Image.new("RGBA", (IMAGE_SIZE, IMAGE_SIZE))
     image.putdata(pixels)
-    return image
+    return image, contested
 
 
 def save_png(image: Image.Image, path: Path) -> None:
@@ -830,23 +1000,33 @@ def save_png(image: Image.Image, path: Path) -> None:
     image.save(path, format="PNG", compress_level=9)
 
 
-def pixel_diff(vanilla: Image.Image, geo: Image.Image, channel_tolerance: int) -> tuple[float, float, Image.Image]:
+def pixel_diff(vanilla: Image.Image, geo: Image.Image, channel_tolerance: int,
+               excluded: list[bool] | None = None) -> tuple[float, float, Image.Image]:
+    """Changed fraction and MAE over the pixels not excluded; excluded pixels are painted CONTESTED_MARKER."""
     vanilla_pixels = list(vanilla.convert("RGB").get_flattened_data())
     geo_pixels = list(geo.convert("RGB").get_flattened_data())
+    if excluded is None:
+        excluded = [False] * len(vanilla_pixels)
     changed = 0
     absolute_sum = 0
+    compared = 0
     diff_pixels: list[tuple[int, int, int, int]] = []
-    for left, right in zip(vanilla_pixels, geo_pixels):
+    for left, right, skip in zip(vanilla_pixels, geo_pixels, excluded):
+        if skip:
+            diff_pixels.append(CONTESTED_MARKER)
+            continue
+        compared += 1
         delta = tuple(abs(left[index] - right[index]) for index in range(3))
         if max(delta) > channel_tolerance:
             changed += 1
         absolute_sum += sum(delta)
         diff_pixels.append((min(255, delta[0] * 8), min(255, delta[1] * 8),
                             min(255, delta[2] * 8), 255))
-    count = len(vanilla_pixels)
+    if compared == 0:
+        raise AssertionError("every pixel is contested; nothing left to compare")
     image = Image.new("RGBA", vanilla.size)
     image.putdata(diff_pixels)
-    return changed / count, absolute_sum / (count * 3), image
+    return changed / compared, absolute_sum / (compared * 3), image
 
 
 def foreground_fraction(image: Image.Image) -> float:
@@ -880,16 +1060,19 @@ def visual_parity(model_id: str, spec: dict[str, Any], compiled: dict[str, Any],
     rows: list[dict[str, Any]] = []
     max_changed = 0.0
     max_mae = 0.0
+    max_contested = 0.0
     min_foreground = 1.0
 
     for sample_id, (camera_name, camera) in (
         (sample_id, camera_entry) for sample_id in visual_sample_ids for camera_entry in cameras
     ):
         capture_id = sample_id if camera_name is None else f"{sample_id}.{camera_name}"
-        vanilla_image = render_capture(vanilla_samples[sample_id], texture, camera)
-        geo_image = render_capture(geo_samples[sample_id], texture, camera)
+        vanilla_image, vanilla_contested = render_capture(vanilla_samples[sample_id], texture, camera)
+        geo_image, geo_contested = render_capture(geo_samples[sample_id], texture, camera)
+        contested = [left or right for left, right in zip(vanilla_contested, geo_contested)]
+        contested_fraction = sum(contested) / (IMAGE_SIZE * IMAGE_SIZE)
         changed, mae, diff_image = pixel_diff(
-            vanilla_image, geo_image, int(thresholds["pixel_channel_tolerance"])
+            vanilla_image, geo_image, int(thresholds["pixel_channel_tolerance"]), contested
         )
         vanilla_foreground = foreground_fraction(vanilla_image)
         geo_foreground = foreground_fraction(geo_image)
@@ -923,6 +1106,7 @@ def visual_parity(model_id: str, spec: dict[str, Any], compiled: dict[str, Any],
                 "camera": camera_name,
                 "changed_fraction": changed,
                 "mean_absolute_error": mae,
+                "contested_fraction": contested_fraction,
                 "vanilla_foreground_fraction": vanilla_foreground,
                 "geo_foreground_fraction": geo_foreground,
                 "vanilla_capture": vanilla_path.as_posix(),
@@ -932,6 +1116,7 @@ def visual_parity(model_id: str, spec: dict[str, Any], compiled: dict[str, Any],
         )
         max_changed = max(max_changed, changed)
         max_mae = max(max_mae, mae)
+        max_contested = max(max_contested, contested_fraction)
         min_foreground = min(min_foreground, vanilla_foreground, geo_foreground)
 
     return {
@@ -944,6 +1129,13 @@ def visual_parity(model_id: str, spec: dict[str, Any], compiled: dict[str, Any],
         "minimum_foreground_fraction_threshold": thresholds["minimum_foreground_fraction"],
         "max_changed_fraction": max_changed,
         "max_mean_absolute_error": max_mae,
+        "z_fight_policy": (
+            "pixels where two different quads meet the front within "
+            f"{CONTEST_DEPTH_EPSILON:g} depth with different texels are draw-order z-fights, "
+            "excluded from the comparison and painted in the diff (ruling 2, 2026-09-02)"
+        ),
+        "max_contested_fraction": max_contested,
+        "cutout_alpha_threshold": CUTOUT_ALPHA_THRESHOLD / 255.0,
         "minimum_observed_foreground_fraction": min_foreground,
         "samples": rows,
     }
@@ -1005,6 +1197,34 @@ def markdown_report(report: dict[str, Any]) -> str:
                     "",
                 ]
             )
+        elif contract["kind"] == "code_driven":
+            lines.extend(
+                [
+                    f"- Accepted path: {contract['accepted_runtime_path']} "
+                    f"(`{contract['candidate_class']}`).",
+                    f"- Rotation maximum delta {model['animation']['max_rotation_delta_radians']:.12g} radians; "
+                    f"position maximum delta {contract['max_position_delta_model_units']:.12g} model units "
+                    f"over {contract['position_channel_samples']} position channels; inputs "
+                    f"{contract['inputs']}.",
+                    f"- Visual z-fight pixels excluded (ruling 2): maximum contested fraction "
+                    f"{model['visual']['max_contested_fraction']:.12g}.",
+                    "",
+                ]
+            )
+        elif contract["kind"] == "entity_state":
+            lines.extend(
+                [
+                    f"- Accepted path: {contract['accepted_runtime_path']} "
+                    f"(`{contract['candidate_class']}`).",
+                    f"- Entity states: {[state['name'] for state in contract['entity_states']]}; "
+                    f"rotation maximum delta {model['animation']['max_rotation_delta_radians']:.12g} radians; "
+                    f"position maximum delta {contract['max_position_delta_model_units']:.12g} model units; "
+                    f"hidden-bone checks {contract['hidden_bone_checks']}.",
+                    f"- Visual z-fight pixels excluded (ruling 2): maximum contested fraction "
+                    f"{model['visual']['max_contested_fraction']:.12g}.",
+                    "",
+                ]
+            )
         else:
             lines.extend(
                 [
@@ -1020,8 +1240,16 @@ def markdown_report(report: dict[str, Any]) -> str:
             f"- Coverage: {', '.join(fixture['fixture_coverage']['required_coverage'])}.",
             f"- Geometry maximum corner delta: {fixture['geometry']['max_corner_delta_blocks']:.12g} blocks; "
             f"surface UV maximum {fixture['surface_mapping']['max_uv_delta_normalized']:.12g}.",
-            "",
         ])
+        fixture_contract = fixture["animation"]["contract"]
+        if fixture_contract["kind"] == "code_driven":
+            lines.append(
+                f"- Runtime basis proof: `{fixture_contract['candidate_class']}` rotation maximum delta "
+                f"{fixture['animation']['max_rotation_delta_radians']:.12g} radians, position maximum delta "
+                f"{fixture_contract['max_position_delta_model_units']:.12g} model units, surface mapping "
+                f"exact over {fixture['surface_mapping']['vertex_samples']} posed vertex samples."
+            )
+        lines.append("")
     lines.extend(
         [
             "Reproduce with `gradlew.bat g1Parity`. Any mismatch exits nonzero before",
@@ -1169,7 +1397,9 @@ def main() -> int:
         )
         animation = animation_parity(
             model_id, spec, compiled, geo_render, animation_contract,
-            float(thresholds["animation_epsilon_radians"])
+            float(thresholds["animation_epsilon_radians"]),
+            position_epsilon=float(thresholds.get("position_epsilon_model_units", 1.0e-4)),
+            repository_root=repository_root,
         )
         print(
             f"G1 ANIMATION PASS: {model_id} max delta "
@@ -1208,7 +1438,8 @@ def main() -> int:
             )
             print(
                 f"G1 VISUAL PASS: {model_id} max changed {visual['max_changed_fraction']:.12g}, "
-                f"max MAE {visual['max_mean_absolute_error']:.12g}"
+                f"max MAE {visual['max_mean_absolute_error']:.12g}, "
+                f"max contested {visual['max_contested_fraction']:.12g}"
             )
             common_report["visual"] = visual
             model_reports.append(common_report)

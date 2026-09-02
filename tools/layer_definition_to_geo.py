@@ -303,7 +303,7 @@ def validate_reference_animation_schema(spec: dict[str, Any], compiled: dict[str
     animations = animation.get("animations")
     if not isinstance(animations, dict):
         raise ValueError("reference animation animations member must be an object")
-    if spec["animation_kind"] == "static":
+    if spec["animation_kind"] == "static" or spec["animation_kind"] in PRODUCTION_HOOK_KINDS:
         if animations:
             raise ValueError("static reference animation must contain no clips")
         return {
@@ -424,6 +424,27 @@ def dense_probe_separation(spec: dict[str, Any], compiled: dict[str, Any]) -> di
     }
 
 
+PRODUCTION_HOOK_KINDS = ("code_driven", "entity_state")
+ACCEPTED_ANIMATION_EVIDENCE = {
+    "static": "static bind pose; no controller",
+    "gait_scaled": "exact Mth.cos GeoModel.setCustomAnimations legacy-parity exception",
+    "code_driven": (
+        "production OreSpawnGeoReplacement hook through "
+        "OreSpawnGeoReplacementModel.setCustomAnimations (Amendment 1 Tier-3 code-driven)"
+    ),
+    "entity_state": (
+        "production OreSpawnGeoReplacement hook posed from declared entity states through the "
+        "entity's pose interface (Amendment 1 Tier-3 code-driven)"
+    ),
+}
+ARTIST_EDITABLE_STATUS = {
+    "static": "NOT_APPLICABLE",
+    "gait_scaled": "OUTSTANDING_G3",
+    "code_driven": "NOT_APPLICABLE_TIER3_CODE_DRIVEN",
+    "entity_state": "NOT_APPLICABLE_TIER3_CODE_DRIVEN",
+}
+
+
 def convert_animation(spec: dict[str, Any], compiled: dict[str, Any],
                       ticks_per_second: float) -> tuple[dict[str, Any], dict[str, Any]]:
     kind = spec["animation_kind"]
@@ -438,6 +459,33 @@ def convert_animation(spec: dict[str, Any], compiled: dict[str, Any],
             "source_setup_anim_expected_identity": True,
             "sample_ids": [sample["id"] for sample in compiled["samples"]],
         }
+        return animation, contract
+
+    if kind in PRODUCTION_HOOK_KINDS:
+        # Amendment 1 Tier-3: the pose is the production OreSpawnGeoReplacement
+        # hook (code_driven, driven headlessly by the probe) or, when the classic
+        # model reads its entity, the same hook posed from declared entity states
+        # through the entity's pose interface (entity_state). No clip is emitted
+        # or accepted.
+        if spec["channels"]:
+            raise ValueError(f"{kind} proof model declares channels; the pose is production code, not clips")
+        if spec.get("candidate_animation_path") != "production_replacement_hook":
+            raise ValueError(f"{kind} proof model must declare candidate_animation_path production_replacement_hook")
+        animation = {"format_version": "1.8.0", "animations": {}}
+        contract = {
+            "schema_version": 1,
+            "kind": kind,
+            "controller_required": False,
+            "candidate_animation_path": "production_replacement_hook",
+            "candidate_class": spec["candidate_class"],
+            "candidate_acceptance_path": (
+                "production OreSpawnGeoReplacementModel.setCustomAnimations "
+                "(Amendment 1 Tier-3 code-driven)"
+            ),
+            "sample_ids": [sample["id"] for sample in compiled["samples"]],
+        }
+        if kind == "entity_state":
+            contract["entity_states"] = [state["name"] for state in spec["entity_states"]]
         return animation, contract
 
     if kind != "gait_scaled":
@@ -534,13 +582,8 @@ def convert_model(manifest: dict[str, Any], spec: dict[str, Any],
         "exact_bone_names": geometry_summary["exact_bone_names"],
         "animation_contract": animation_contract,
         "reference_animation_schema": reference_schema,
-        "accepted_animation_evidence": (
-            "exact Mth.cos GeoModel.setCustomAnimations legacy-parity exception"
-            if spec["animation_kind"] != "static" else "static bind pose; no controller"
-        ),
-        "artist_editable_math_to_keyframes_status": (
-            "OUTSTANDING_G3" if spec["animation_kind"] != "static" else "NOT_APPLICABLE"
-        ),
+        "accepted_animation_evidence": ACCEPTED_ANIMATION_EVIDENCE[spec["animation_kind"]],
+        "artist_editable_math_to_keyframes_status": ARTIST_EDITABLE_STATUS[spec["animation_kind"]],
         "compiled_animation_bake_sample_count": len(compiled["animation_bake_samples"]),
         "reference_clip_keys_source": "compiled setupAnim output; no Python formula evaluation",
         "source_animation_channel_inventory": [

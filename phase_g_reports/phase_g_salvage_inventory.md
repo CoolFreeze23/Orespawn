@@ -169,11 +169,17 @@ Verdict: **discard.** Superseded by the UTF-8 repair in `d87f81b`.
    audit pass form is now 0 err / 0 adv / 4 ack.
 4. **Tier-3 rigs**, regenerated from the landed converter and wired through
    the G3 seam — **IN PROGRESS**: 4a landed Elevator, 4a-2 landed Vortex under
-   ruling 1 (zero-area faces ignored, front+back cameras); RockBase moved to 4b
-   under ruling 2 (per-rock-type real-entity leg);
-   the three head sidecars are excluded (they never render); 4b = the eight
-   animated flat rigs (code-driven, suite-visible animation leg); 4c =
-   PurplePower/Rotator (render-instance expansion).
+   ruling 1 (zero-area faces ignored, front+back cameras); 4b landed Island,
+   IslandToo, Robot1-5 and RockBase (code-driven through the production hook,
+   basis proven by `fixture_runtime_basis_yz`; the four entity-reading
+   models pose from declared entity states through new pose interfaces the
+   entities implement - no gametest leg, the dedicated gametest server strips
+   client model classes; visual leg now cutout-correct with z-fight pixels
+   excluded and reported under ruling 2);
+   Coin DEFERRED under BUG-040 (the classic port model is not the original
+   and is invisible) until the classic fix lands; the three head sidecars are
+   excluded (they never render); 4c = PurplePower/Rotator (render-instance
+   expansion).
 5. **Server-pose foundation + first MOD-025 profile** (King), atomic
    manual-part replacement per the Q4 ruling.
 6. **Live Q6** before the first production cutover of a Tier-1 boss.

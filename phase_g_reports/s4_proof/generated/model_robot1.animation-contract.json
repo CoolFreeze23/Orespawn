@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "kind": "code_driven",
+  "controller_required": false,
+  "candidate_animation_path": "production_replacement_hook",
+  "candidate_class": "danger.orespawn.entity.client.Robot1GeoReplacement",
+  "candidate_acceptance_path": "production OreSpawnGeoReplacementModel.setCustomAnimations (Amendment 1 Tier-3 code-driven)",
+  "sample_ids": [
+    "bind",
+    "a0_05000000074505806_t0",
+    "a0_05000000074505806_t_quarter",
+    "a0_05000000074505806_t_half",
+    "a0_05000000074505806_t_three_quarter",
+    "a0_05000000074505806_t_end",
+    "a0_5_t0",
+    "a0_5_t_quarter",
+    "a0_5_t_half",
+    "a0_5_t_three_quarter",
+    "a0_5_t_end"
+  ]
+}

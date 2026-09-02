@@ -1,0 +1,27 @@
+{
+  "schema_version": 1,
+  "kind": "entity_state",
+  "controller_required": false,
+  "candidate_animation_path": "production_replacement_hook",
+  "candidate_class": "danger.orespawn.entity.client.Robot4GeoReplacement",
+  "candidate_acceptance_path": "production OreSpawnGeoReplacementModel.setCustomAnimations (Amendment 1 Tier-3 code-driven)",
+  "sample_ids": [
+    "bind",
+    "s_idle_a0_t0",
+    "s_idle_a0_t_0_375000",
+    "s_idle_a0_t_end",
+    "s_idle_a0_5_t0",
+    "s_idle_a0_5_t_0_375000",
+    "s_idle_a0_5_t_end",
+    "s_attacking_a0_t0",
+    "s_attacking_a0_t_0_375000",
+    "s_attacking_a0_t_end",
+    "s_attacking_a0_5_t0",
+    "s_attacking_a0_5_t_0_375000",
+    "s_attacking_a0_5_t_end"
+  ],
+  "entity_states": [
+    "idle",
+    "attacking"
+  ]
+}

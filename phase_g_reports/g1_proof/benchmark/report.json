@@ -6,11 +6,11 @@
   "benchmark_kind": "SMOKE_ONLY / COMPONENT_PROXY_ONLY / PENDING_LIVE_PRECUTOVER",
   "fixed_seed": "N/A — no randomized world exists in the headless component proxy",
   "profile": "smoke",
-  "captured_at_utc": "2026-09-02T08:50:47.400696100Z",
+  "captured_at_utc": "2026-09-02T11:37:52.248040700Z",
   "manifest_sha256": "03a6642d1223fef1dd69e97030d71789bb41bf33069088976b4d064df9b731a2",
   "protocol_sha256": "19e3f79456089a654835ddf748f7fd424efde71f63f0714c38651176a6a07b4a",
   "provenance": {
-    "repository_base_revision": "31372de92df7cc148efddc387df302cf1ea14196",
+    "repository_base_revision": "8f74d0e78afff86bb677442e7589780bc7ac9bf4",
     "revision_semantics": "base revision plus exact working-tree source/input hashes below",
     "source_files_sha256": {
       "src/g1tool/java/danger/orespawn/g1/G1PerformanceBenchmark.java": "c4015dcd973f575c547fc1dc0753b5c304efda109ac27e056a63eefa8e3c66db",
@@ -53,7 +53,7 @@
         "class_sha256": "7a4180fb97c3532fd5df27b8d2b7cb2149b4501bf6741f0f0387286052150d91",
         "classpath_entry_name": "g1tool",
         "classpath_entry_kind": "directory",
-        "classpath_entry_sha256": "f5610ef532c8e634db7cc123be2e2e13fa7e1c517f1a7409798568c7deac923c"
+        "classpath_entry_sha256": "555f54d5c6a86a4e6d02240d02b7735d64fe8df098992473b4ecb2004fb3219f"
       },
       "candidate_animation_runtime": {
         "declared_version": "G1 candidate custom-animation runtime",
@@ -62,7 +62,7 @@
         "class_sha256": "2482c13664567a786ca18c4e71a6de2b2fd358d5420fef8fd8d20f011369402c",
         "classpath_entry_name": "g1tool",
         "classpath_entry_kind": "directory",
-        "classpath_entry_sha256": "f5610ef532c8e634db7cc123be2e2e13fa7e1c517f1a7409798568c7deac923c"
+        "classpath_entry_sha256": "555f54d5c6a86a4e6d02240d02b7735d64fe8df098992473b4ecb2004fb3219f"
       },
       "geckolib": {
         "declared_version": "GeckoLib 4.8.4",
@@ -145,22 +145,22 @@
           "starting_order": "classic/candidate",
           "alternation_unit": "timing batch",
           "classic": {
-            "sample_count": 907,
-            "median_frame_ms": 0.05413,
-            "p95_frame_ms": 0.0884,
-            "p99_frame_ms": 0.12356,
-            "one_percent_low_fps": 8093.234056328909
+            "sample_count": 900,
+            "median_frame_ms": 0.05531,
+            "p95_frame_ms": 0.0739,
+            "p99_frame_ms": 0.09763,
+            "one_percent_low_fps": 10242.753252074159
           },
           "candidate": {
-            "sample_count": 907,
-            "median_frame_ms": 0.15317,
-            "p95_frame_ms": 0.26483,
-            "p99_frame_ms": 0.33503,
-            "one_percent_low_fps": 2984.807330686804
+            "sample_count": 900,
+            "median_frame_ms": 0.15977,
+            "p95_frame_ms": 0.21769,
+            "p99_frame_ms": 0.29119,
+            "one_percent_low_fps": 3434.1838662041964
           },
-          "paired_wall_seconds": 2.0015035,
-          "client_cpu_percent_single_thread": 99.14421833386751,
-          "gc_collections": 13,
+          "paired_wall_seconds": 2.0010726,
+          "client_cpu_percent_single_thread": 97.6039050257347,
+          "gc_collections": 12,
           "gc_time_ms": 18
         },
         {
@@ -168,46 +168,46 @@
           "starting_order": "candidate/classic",
           "alternation_unit": "timing batch",
           "classic": {
-            "sample_count": 1009,
-            "median_frame_ms": 0.04913,
-            "p95_frame_ms": 0.06573,
-            "p99_frame_ms": 0.07871,
-            "one_percent_low_fps": 12704.865963664082
+            "sample_count": 893,
+            "median_frame_ms": 0.05606,
+            "p95_frame_ms": 0.07697,
+            "p99_frame_ms": 0.09965,
+            "one_percent_low_fps": 10035.122930255895
           },
           "candidate": {
-            "sample_count": 1009,
-            "median_frame_ms": 0.14164,
-            "p95_frame_ms": 0.18787,
-            "p99_frame_ms": 0.21273,
-            "one_percent_low_fps": 4700.79443425939
+            "sample_count": 893,
+            "median_frame_ms": 0.16112,
+            "p95_frame_ms": 0.21743,
+            "p99_frame_ms": 0.26467,
+            "one_percent_low_fps": 3778.2899459704536
           },
-          "paired_wall_seconds": 2.0007805,
-          "client_cpu_percent_single_thread": 99.96099022356525,
-          "gc_collections": 14,
-          "gc_time_ms": 9
+          "paired_wall_seconds": 2.0000939,
+          "client_cpu_percent_single_thread": 99.21409189838538,
+          "gc_collections": 12,
+          "gc_time_ms": 8
         }
       ],
       "classic": {
         "aggregation": "median of per-run metric",
-        "median_frame_ms": 0.051629999999999995,
-        "p95_frame_ms": 0.077065,
-        "p99_frame_ms": 0.101135,
-        "one_percent_low_fps": 9887.773767736195
+        "median_frame_ms": 0.055685,
+        "p95_frame_ms": 0.075435,
+        "p99_frame_ms": 0.09864,
+        "one_percent_low_fps": 10137.87510137875
       },
       "candidate": {
         "aggregation": "median of per-run metric",
-        "median_frame_ms": 0.147405,
-        "p95_frame_ms": 0.22635,
-        "p99_frame_ms": 0.27388,
-        "one_percent_low_fps": 3651.23411713159
+        "median_frame_ms": 0.160445,
+        "p95_frame_ms": 0.21756,
+        "p99_frame_ms": 0.27793,
+        "one_percent_low_fps": 3598.028280502285
       },
       "allocation": {
         "classic_bytes_per_frame": 93880.0,
         "candidate_bytes_per_frame": 346680.0,
         "supported": true
       },
-      "median_regression_percent": 185.50261475886117,
-      "p95_regression_ms": 0.149285,
+      "median_regression_percent": 188.12965789709978,
+      "p95_regression_ms": 0.142125,
       "budget_scene": false
     },
     {
@@ -227,22 +227,22 @@
           "starting_order": "classic/candidate",
           "alternation_unit": "timing batch",
           "classic": {
-            "sample_count": 525,
-            "median_frame_ms": 0.12613,
-            "p95_frame_ms": 0.17242,
-            "p99_frame_ms": 0.20169,
-            "one_percent_low_fps": 4958.104021022361
+            "sample_count": 485,
+            "median_frame_ms": 0.13988,
+            "p95_frame_ms": 0.19849,
+            "p99_frame_ms": 0.21866,
+            "one_percent_low_fps": 4573.31016189518
           },
           "candidate": {
-            "sample_count": 525,
-            "median_frame_ms": 0.24019,
-            "p95_frame_ms": 0.32515,
-            "p99_frame_ms": 0.35228,
-            "one_percent_low_fps": 2838.651073010106
+            "sample_count": 485,
+            "median_frame_ms": 0.25907,
+            "p95_frame_ms": 0.36269,
+            "p99_frame_ms": 0.44011,
+            "one_percent_low_fps": 2272.159232919043
           },
-          "paired_wall_seconds": 2.00348,
-          "client_cpu_percent_single_thread": 99.04640924790864,
-          "gc_collections": 9,
+          "paired_wall_seconds": 2.0036069,
+          "client_cpu_percent_single_thread": 99.04013606661067,
+          "gc_collections": 8,
           "gc_time_ms": 6
         },
         {
@@ -250,46 +250,46 @@
           "starting_order": "candidate/classic",
           "alternation_unit": "timing batch",
           "classic": {
-            "sample_count": 521,
-            "median_frame_ms": 0.13136,
-            "p95_frame_ms": 0.1742,
-            "p99_frame_ms": 0.19863,
-            "one_percent_low_fps": 5034.486230680159
+            "sample_count": 534,
+            "median_frame_ms": 0.1269,
+            "p95_frame_ms": 0.17804,
+            "p99_frame_ms": 0.20976,
+            "one_percent_low_fps": 4767.3531655225015
           },
           "candidate": {
-            "sample_count": 521,
-            "median_frame_ms": 0.24053,
-            "p95_frame_ms": 0.31996,
-            "p99_frame_ms": 0.36644,
-            "one_percent_low_fps": 2728.9597205545247
+            "sample_count": 534,
+            "median_frame_ms": 0.23536,
+            "p95_frame_ms": 0.32151,
+            "p99_frame_ms": 0.3515,
+            "one_percent_low_fps": 2844.9502133712663
           },
-          "paired_wall_seconds": 2.0027971,
-          "client_cpu_percent_single_thread": 99.860340321044,
+          "paired_wall_seconds": 2.0001368,
+          "client_cpu_percent_single_thread": 99.993160467824,
           "gc_collections": 9,
-          "gc_time_ms": 5
+          "gc_time_ms": 6
         }
       ],
       "classic": {
         "aggregation": "median of per-run metric",
-        "median_frame_ms": 0.128745,
-        "p95_frame_ms": 0.17331,
-        "p99_frame_ms": 0.20016,
-        "one_percent_low_fps": 4996.003197442046
+        "median_frame_ms": 0.13339,
+        "p95_frame_ms": 0.18826500000000002,
+        "p99_frame_ms": 0.21421,
+        "one_percent_low_fps": 4668.31613836889
       },
       "candidate": {
         "aggregation": "median of per-run metric",
-        "median_frame_ms": 0.24036,
-        "p95_frame_ms": 0.32255500000000004,
-        "p99_frame_ms": 0.35936,
-        "one_percent_low_fps": 2782.7248441674087
+        "median_frame_ms": 0.24721500000000002,
+        "p95_frame_ms": 0.3421,
+        "p99_frame_ms": 0.39580499999999996,
+        "one_percent_low_fps": 2526.496633443236
       },
       "allocation": {
         "classic_bytes_per_frame": 171480.0,
         "candidate_bytes_per_frame": 394680.0,
         "supported": true
       },
-      "median_regression_percent": 86.69462891762787,
-      "p95_regression_ms": 0.14924500000000004,
+      "median_regression_percent": 85.33248369442987,
+      "p95_regression_ms": 0.153835,
       "budget_scene": false
     },
     {
@@ -309,21 +309,21 @@
           "starting_order": "classic/candidate",
           "alternation_unit": "timing batch",
           "classic": {
-            "sample_count": 796,
-            "median_frame_ms": 0.08145,
-            "p95_frame_ms": 0.11124,
-            "p99_frame_ms": 0.12816,
-            "one_percent_low_fps": 7802.746566791511
+            "sample_count": 838,
+            "median_frame_ms": 0.07849,
+            "p95_frame_ms": 0.10414,
+            "p99_frame_ms": 0.11539,
+            "one_percent_low_fps": 8666.262241095415
           },
           "candidate": {
-            "sample_count": 796,
-            "median_frame_ms": 0.15644,
-            "p95_frame_ms": 0.21417,
-            "p99_frame_ms": 0.24924,
-            "one_percent_low_fps": 4012.1970791205267
+            "sample_count": 838,
+            "median_frame_ms": 0.14789,
+            "p95_frame_ms": 0.19607,
+            "p99_frame_ms": 0.22577,
+            "one_percent_low_fps": 4429.286441954201
           },
-          "paired_wall_seconds": 2.0028935,
-          "client_cpu_percent_single_thread": 99.85553400617657,
+          "paired_wall_seconds": 2.0014078,
+          "client_cpu_percent_single_thread": 99.92965951266903,
           "gc_collections": 11,
           "gc_time_ms": 7
         },
@@ -332,46 +332,46 @@
           "starting_order": "candidate/classic",
           "alternation_unit": "timing batch",
           "classic": {
-            "sample_count": 734,
-            "median_frame_ms": 0.0898,
-            "p95_frame_ms": 0.12114,
-            "p99_frame_ms": 0.13408,
-            "one_percent_low_fps": 7458.233890214797
+            "sample_count": 783,
+            "median_frame_ms": 0.08467,
+            "p95_frame_ms": 0.1121,
+            "p99_frame_ms": 0.12685,
+            "one_percent_low_fps": 7883.326763894364
           },
           "candidate": {
-            "sample_count": 734,
-            "median_frame_ms": 0.17192,
-            "p95_frame_ms": 0.22932,
-            "p99_frame_ms": 0.25262,
-            "one_percent_low_fps": 3958.5147652600745
+            "sample_count": 783,
+            "median_frame_ms": 0.15914,
+            "p95_frame_ms": 0.20809,
+            "p99_frame_ms": 0.24085,
+            "one_percent_low_fps": 4151.961801951422
           },
-          "paired_wall_seconds": 2.0013274,
-          "client_cpu_percent_single_thread": 99.93367402055256,
-          "gc_collections": 9,
-          "gc_time_ms": 5
+          "paired_wall_seconds": 2.0012245,
+          "client_cpu_percent_single_thread": 99.9388124620701,
+          "gc_collections": 10,
+          "gc_time_ms": 7
         }
       ],
       "classic": {
         "aggregation": "median of per-run metric",
-        "median_frame_ms": 0.085625,
-        "p95_frame_ms": 0.11619,
-        "p99_frame_ms": 0.13112000000000001,
-        "one_percent_low_fps": 7626.6015863331295
+        "median_frame_ms": 0.08158,
+        "p95_frame_ms": 0.10812,
+        "p99_frame_ms": 0.12112,
+        "one_percent_low_fps": 8256.274768824305
       },
       "candidate": {
         "aggregation": "median of per-run metric",
-        "median_frame_ms": 0.16418,
-        "p95_frame_ms": 0.221745,
-        "p99_frame_ms": 0.25093,
-        "one_percent_low_fps": 3985.1751484477745
+        "median_frame_ms": 0.153515,
+        "p95_frame_ms": 0.20207999999999998,
+        "p99_frame_ms": 0.23331000000000002,
+        "one_percent_low_fps": 4286.142900004286
       },
       "allocation": {
         "classic_bytes_per_frame": 132680.0,
         "candidate_bytes_per_frame": 305080.0,
         "supported": true
       },
-      "median_regression_percent": 91.74306569343062,
-      "p95_regression_ms": 0.105555,
+      "median_regression_percent": 88.17724932581517,
+      "p95_regression_ms": 0.09395999999999999,
       "budget_scene": true
     },
     {
@@ -391,21 +391,21 @@
           "starting_order": "classic/candidate",
           "alternation_unit": "timing batch",
           "classic": {
-            "sample_count": 559,
-            "median_frame_ms": 0.001091,
-            "p95_frame_ms": 0.00156,
-            "p99_frame_ms": 0.00174,
-            "one_percent_low_fps": 574712.643678161
+            "sample_count": 604,
+            "median_frame_ms": 0.001015,
+            "p95_frame_ms": 0.001322,
+            "p99_frame_ms": 0.001488,
+            "one_percent_low_fps": 672043.0107526882
           },
           "candidate": {
-            "sample_count": 559,
-            "median_frame_ms": 0.002288,
-            "p95_frame_ms": 0.003241,
-            "p99_frame_ms": 0.003559,
-            "one_percent_low_fps": 280977.8027535825
+            "sample_count": 604,
+            "median_frame_ms": 0.002125,
+            "p95_frame_ms": 0.002822,
+            "p99_frame_ms": 0.00312,
+            "one_percent_low_fps": 320512.8205128205
           },
-          "paired_wall_seconds": 2.0020858,
-          "client_cpu_percent_single_thread": 99.89581865072915,
+          "paired_wall_seconds": 2.0009771,
+          "client_cpu_percent_single_thread": 99.95116885645518,
           "gc_collections": 1,
           "gc_time_ms": 0
         },
@@ -414,46 +414,46 @@
           "starting_order": "candidate/classic",
           "alternation_unit": "timing batch",
           "classic": {
-            "sample_count": 569,
-            "median_frame_ms": 0.001076,
-            "p95_frame_ms": 0.001499,
-            "p99_frame_ms": 0.001692,
-            "one_percent_low_fps": 591016.548463357
+            "sample_count": 604,
+            "median_frame_ms": 0.001015,
+            "p95_frame_ms": 0.001355,
+            "p99_frame_ms": 0.00147,
+            "one_percent_low_fps": 680272.1088435374
           },
           "candidate": {
-            "sample_count": 569,
-            "median_frame_ms": 0.002249,
-            "p95_frame_ms": 0.003039,
-            "p99_frame_ms": 0.003502,
-            "one_percent_low_fps": 285551.11364934326
+            "sample_count": 604,
+            "median_frame_ms": 0.002129,
+            "p95_frame_ms": 0.002834,
+            "p99_frame_ms": 0.003029,
+            "one_percent_low_fps": 330141.9610432486
           },
-          "paired_wall_seconds": 2.0037513,
-          "client_cpu_percent_single_thread": 99.81278614766214,
+          "paired_wall_seconds": 2.0025244,
+          "client_cpu_percent_single_thread": 99.09367396472173,
           "gc_collections": 1,
           "gc_time_ms": 1
         }
       ],
       "classic": {
         "aggregation": "median of per-run metric",
-        "median_frame_ms": 0.0010834999999999998,
-        "p95_frame_ms": 0.0015295,
-        "p99_frame_ms": 0.001716,
-        "one_percent_low_fps": 582750.5827505827
+        "median_frame_ms": 0.001015,
+        "p95_frame_ms": 0.0013385,
+        "p99_frame_ms": 0.0014789999999999998,
+        "one_percent_low_fps": 676132.521974307
       },
       "candidate": {
         "aggregation": "median of per-run metric",
-        "median_frame_ms": 0.0022685,
-        "p95_frame_ms": 0.00314,
-        "p99_frame_ms": 0.0035305,
-        "one_percent_low_fps": 283245.99915026204
+        "median_frame_ms": 0.002127,
+        "p95_frame_ms": 0.002828,
+        "p99_frame_ms": 0.0030745,
+        "one_percent_low_fps": 325256.1392096276
       },
       "allocation": {
         "classic_bytes_per_frame": 280.0,
         "candidate_bytes_per_frame": 280.0,
         "supported": true
       },
-      "median_regression_percent": 109.36778957083528,
-      "p95_regression_ms": 0.0016105,
+      "median_regression_percent": 109.55665024630541,
+      "p95_regression_ms": 0.0014894999999999997,
       "budget_scene": false
     }
   ],
@@ -529,8 +529,8 @@
     "status": "Q6_PENDING_LIVE_PRECUTOVER",
     "scene": "mixed_100_visible",
     "comparison_to_q6_budget_prohibited": true,
-    "component_proxy_warning_median_regression_percent": 91.74306569343062,
-    "component_proxy_warning_p95_regression_ms": 0.105555,
+    "component_proxy_warning_median_regression_percent": 88.17724932581517,
+    "component_proxy_warning_p95_regression_ms": 0.09395999999999999,
     "provisional_limits_not_applied_to_component_proxy": {
       "max_median_frame_regression_percent": 10.0,
       "max_p95_frame_regression_ms": 2.0,
@@ -543,5 +543,5 @@
   "mhlib_packets_per_second": "not measured: no runtime entity/server in G1 proxy",
   "server_mspt_p95": "not measured: no runtime server in G1 proxy",
   "gpu_frame_time_ms": "not measured: no GPU submission in G1 proxy",
-  "vertex_checksum": "2674863983383527171"
+  "vertex_checksum": "5347460656736323263"
 }

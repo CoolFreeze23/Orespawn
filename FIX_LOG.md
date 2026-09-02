@@ -4222,3 +4222,151 @@ without the canSeeTarget probe; missing persistence gate on the dawn discard;
 pressure plate; voice pitch; particle drift sign; wander threshold/quirk).
 Proposed as one audit-fix slice in its own commit after the owner's word;
 a survival-vs-creative target-acquisition gametest goes with it.
+
+## PHASE G SLICE 4b — eight Tier-3 code-driven rigs behind the switch; production-hook harness; Coin deferred (2026-09-02)
+
+SCOPE. Island, IslandToo, Robot1, Robot2, Robot3, Robot4, Robot5 and RockBase
+land as GeckoLib candidates behind `-Dorespawn.dev.geckolibRenderers` (species
+ids island, island_too, robot_1..robot_5, rock_base). Their poses are the
+classic `setupAnim` formulas verbatim on the converted rigs (Amendment 1,
+Tier 3: code-driven; no clip emitted or accepted). Coin is DEFERRED under
+BUG-040 (its classic port model is not the original and renders nothing).
+The suite count is unchanged (193): see "NO GAMETEST LEG" below.
+
+PRODUCTION SEAM. `PoseInputs` (subject, ageInTicks, limbSwing,
+limbSwingAmount, netHeadYaw, headPitch) is the hook's input; the shared model
+adapts GeckoLib's state into it (`PoseInputs.fromState`: TICK = tickCount,
+head angles un-negated - the replaced renderer negates both into
+EntityModelData, bytecode-read). Reason: GeckoLib's `DataTickets` registers a
+data component in its initialiser and cannot load in the un-bootstrapped
+probe JVM, so a state-based hook could never be harness-driven. Base-class
+helpers write bones in ModelPart vocabulary and hold the basis in one place:
+`rotateX/Y/Z`, `moveTo`, `classicPosition`, `setVisible`, `pose()` (harness
+entry). Landed species are untouched in behaviour: Beaver's private helper
+was renamed `setInternalRotX` (the new protected `rotateX` collided; same
+body). Descriptor entity-type suppliers are lambdas (a bound method reference
+evaluated `ModEntities` eagerly and tripped the bootstrap check in the probe).
+`RockBaseRenderer.textureFor(int)` is the one per-type texture table; the
+candidate reads it through the descriptor's `texture(E)` hook.
+
+POSE INTERFACES (the four classic models that read their entity). New
+`danger.orespawn.entity.pose.{Robot2Pose, Robot3Pose, Robot4Pose,
+RockBasePose}` declare exactly the accessors those `setupAnim` bodies call
+(getRenderInfo/getAttacking/getRandom, getAttacking/setShielding,
+getRockType); the entities implement them with their existing methods (one
+`implements` clause each, no body changes). Each classic model's `setupAnim`
+now delegates to `poseFrom(<interface>, six floats)` whose body is the
+former `setupAnim` body character for character; the GeckoLib hooks read the
+same interface through `PoseInputs.subject(Class)`. This is what lets the
+harness pose BOTH sides from a declared state instead of a live entity.
+
+NO GAMETEST LEG - DISCLOSURE. The plan (and the scoping report) said the
+entity-bound species would get a suite-visible real-entity gametest. It
+cannot exist: the dedicated gametest server's `RuntimeDistCleaner` refuses
+every client class (`ModelPart`, `EntityModel`, the classic models
+themselves), so a test class that references them stops the server before
+any test runs ("Failed to start the minecraft server") - and Gradle still
+exits 0, which is exactly why the standing gate demands the literal `All N
+required tests passed`; the first 4b gate run tripped that check. The
+gametest was removed; the entity-bound proof moved into the headless probe
+via the pose interfaces above, which is stronger (deterministic, no live
+entity, seeded RNG) and suite-independent. Scoping claim retracted.
+
+BASIS (derived from GeckoLib 4.8.4 bytecode, then PROVEN by
+`fixture_runtime_basis_yz`): the converter writes pivot (-x, 24-y, z) and
+`BakedModelFactory` negates JSON pivot X and rotation X/Y, so the internal
+pivot is (x, 24-y, z) - classic space reflected in Y. Conjugating through
+that reflection: internal rotation = (-xRot, yRot, -zRot). `RenderUtil.
+translateMatrixToBone` translates (-posX, posY, posZ)/16, so a classic pivot
+move (dx, dy, dz) is posX=-dx, posY=-dy, posZ=dz, with a nested child's
+ModelPart x/y/z local to the parent's pivot. The fixture writes all six
+channels (X/Y/Z rotation, X/Y/Z position) on a rotated, inflated parent and
+a nested child from all five inputs; its surface-mapping leg (posed geometry
+through GeckoLib's real renderer) is exact and its animation leg is 0 rad /
+0 units. Y rotation is also proven on Island's head, Z on Robot1's keys.
+
+HARNESS UPGRADES (tools/, src/g1tool; G1AnimationRuntime and build.gradle
+untouched; the benchmark proof was rewritten because it pins the g1tool
+class directory hash - smoke run, unchanged semantics):
+- kind `code_driven`: the probe instantiates the manifest's `candidate_class`
+  (the SHIPPED replacement), binds the production
+  `OreSpawnGeoReplacementModel`'s processor to a fresh bake and calls
+  `pose(PoseInputs)`; manifest inputs `net_head_yaw`/`head_pitch` join
+  `limb_swing`/amplitude samples; the geo probe emits `java_positions` and
+  `hidden_bones`; the animation leg compares positions
+  (`position_epsilon_model_units` 1e-4) and hidden-bone sets as well as
+  rotations.
+- kind `entity_state`: manifest `entity_states` (attacking, ri1, seed,
+  rock_type) x the sample grid; each side gets a FRESH `ProbeSubject` built
+  from the same state (RenderInfo preset, `RandomSource.create(seed)`), the
+  compiled side is posed through `poseFrom`, the candidate through the hook;
+  besides bones, `subject_after` (ri1 latch result, Robot4 shielding write)
+  must match. Robot2: four ri1 presets at age 10 (latch closed), the idle
+  crossing at 17.96 (sin(t*20 deg) 359.2->360.7: ri1 reset), and the
+  attacking crossing with seed 12345 (identical re-roll). Robot3: presets,
+  then the cosine crossing at 4.6 for both attack states. Robot4: idle vs
+  attacking x amplitudes x ages 0/7.5/20, shielding asserted. RockBase: rock
+  types 0..13 (types 0/13 draw nothing: proven by the hidden-bone check).
+  Compiled-side cube capture filters hidden parts by path because
+  `ModelPart.visit` ignores `visible` while `ModelPart.render` honours it.
+- HARNESS FINDING, visual leg: the rasteriser alpha-BLENDED texels and wrote
+  depth for fully transparent ones, so results depended on draw order (Island
+  bind: 12.8% changed, every changed pixel at identical winning depth). Both
+  renderers draw entity models with `RenderType.entityCutoutNoCull`
+  (fragment shader discards alpha < 0.1, no depth write, no blending); the
+  leg now does the same (`CUTOUT_ALPHA_THRESHOLD`). Island then matched
+  exactly. Elevator/Vortex/Beaver had opaque UV windows, so G1/4a were not
+  affected.
+- RULING 2 APPLIED MECHANICALLY: pixels where two different quads reach the
+  front within 1e-6 depth with different texels are draw-order z-fights in
+  BOTH renderers (Robot5: all 368 changed pixels were coplanar contests,
+  winning depths equal to 3e-16). They are excluded from the changed/MAE
+  comparison, painted blue in the diff PNG, and reported as
+  `contested_fraction` per capture and `max_contested_fraction` per model;
+  no threshold changed. Bind captures of Robot2/3/4/5 and RockBase are not
+  visual samples (parts sit superimposed until posed; superimposed-at-bind is
+  not a player-visible state); the posed/state samples are. Overlapping
+  states remain the G2 root-order contract's business; the contested
+  fractions below measure what that contract owes.
+- Report writer covers the new kinds; `assert_same_cube_set` guards both
+  geometry legs.
+
+EVIDENCE (phase_g_reports/s4_proof, written by the green run):
+  model_elevator   static        geometry 0 blocks; surface 720 vertex-samples, 0 zero-area ignored; animation 0 rad; visual changed 0, MAE 0, contested 0
+  model_vortex     static        geometry 0 blocks; surface 48 vertex-samples, 24 zero-area ignored; animation 0 rad; visual changed 0.000137, MAE 0.00423, contested 0
+  model_island     code_driven   geometry 2.01e-07 blocks; surface 1008 vertex-samples, 0 zero-area ignored; animation 0 rad; pos max 0 units; hidden checks 6; visual changed 0, MAE 0, contested 0
+  model_islandtoo  code_driven   geometry 2.01e-07 blocks; surface 1008 vertex-samples, 0 zero-area ignored; animation 0 rad; pos max 0 units; hidden checks 6; visual changed 0, MAE 0, contested 0
+  model_robot1     code_driven   geometry 3e-07 blocks; surface 7128 vertex-samples, 0 zero-area ignored; animation 0 rad; pos max 0 units; hidden checks 10; visual changed 0, MAE 0, contested 0.000549
+  model_robot5     code_driven   geometry 2e-07 blocks; surface 1320 vertex-samples, 0 zero-area ignored; animation 0 rad; pos max 0 units; hidden checks 4; visual changed 0, MAE 0, contested 0.0116
+  model_robot2     entity_state  geometry 1e-06 blocks; surface 7560 vertex-samples, 0 zero-area ignored; animation 0 rad; pos max 0 units; states 5; hidden checks 20; visual changed 0, MAE 0, contested 0
+  model_robot3     entity_state  geometry 1e-06 blocks; surface 5928 vertex-samples, 0 zero-area ignored; animation 0 rad; pos max 0 units; states 3; hidden checks 12; visual changed 0, MAE 0, contested 0.0025
+  model_robot4     entity_state  geometry 3.7e-07 blocks; surface 17472 vertex-samples, 0 zero-area ignored; animation 0 rad; pos max 0 units; states 2; hidden checks 12; visual changed 0, MAE 0, contested 0.000412
+  model_rockbase   entity_state  geometry 2e-07 blocks; surface 2064 vertex-samples, 0 zero-area ignored; animation 0 rad; pos max 0 units; states 14; hidden checks 14; visual changed 0, MAE 0, contested 0
+  fixture_runtime_basis_yz fixture       geometry 2.77e-07 blocks; surface 336 posed vertex-samples exact; animation 0 rad; pos max 0 units over 42 channels
+
+DEFERRED / FINDINGS: Coin -> AUDIT BUG-040 (report only, owner's call): the
+port's `ModelCoin` is a 16x16x4 box at UV (0,0) on the 512x512 sheet whose
+window is fully transparent, spinning `age*0.1`; the 1.7.10 original is a
+256x256x1 mirrored quad at UV (0,0), pivot (0,-109,0), drawn at 0.125 scale
+(`RenderCoin(new ModelCoin(0.22f), 0.75f, 0.125f)`), yaw
+`cos(age*0.05*0.22)*PI`. The classic coin is invisible in the port; the
+candidate (parity-proven on geometry, surface and animation legs) was pulled
+rather than ship a faithful conversion of a wrong model.
+
+G1 PROOF regenerated with `--write-proof` because the shared tool's visual
+report gained fields: `evidence/report.json`, `evidence/README.md`, and ONE
+PNG - `visual/model_beaver/a1_t0.diff.png`, where a single contested pixel
+(1.5e-5 of the image) is now painted; vanilla/geo captures are byte-identical.
+`benchmark/report.json` + `README.md` rewritten (g1tool directory hash pin).
+
+OWNER LOOK: `-Dorespawn.dev.geckolibRenderers=island,island_too,robot_1,robot_2,robot_3,robot_4,robot_5,rock_base`
+(or `candidate` for all landed species). Not pushed.
+
+GATE (on master, sequential): compile clean (main, g1tool, gametest); `build`
+exit 0 - audit `RESULT: 0 error(s), 0 advisory(ies), 4 acknowledged -> exit 0`,
+`s4Parity` 10 models + basis fixture (checked-in s4 proof verified), `g1Parity`
+2 models (checked-in proof verified), benchmark evidence verified; jar carries the
+eight geo files, eight empty clips, eight replacement classes and PoseInputs, no
+tooling classes; `runGameTestServer` exit 0 - literal `All 193 required tests
+passed`. A first gate run of this slice had the (since removed) gametest class
+stop the server with Gradle still exiting 0; the literal check caught it.

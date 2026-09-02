@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "kind": "entity_state",
+  "controller_required": false,
+  "candidate_animation_path": "production_replacement_hook",
+  "candidate_class": "danger.orespawn.entity.client.RockBaseGeoReplacement",
+  "candidate_acceptance_path": "production OreSpawnGeoReplacementModel.setCustomAnimations (Amendment 1 Tier-3 code-driven)",
+  "sample_ids": [
+    "bind",
+    "s_type_0_t0",
+    "s_type_1_t0",
+    "s_type_2_t0",
+    "s_type_3_t0",
+    "s_type_4_t0",
+    "s_type_5_t0",
+    "s_type_6_t0",
+    "s_type_7_t0",
+    "s_type_8_t0",
+    "s_type_9_t0",
+    "s_type_10_t0",
+    "s_type_11_t0",
+    "s_type_12_t0",
+    "s_type_13_t0"
+  ],
+  "entity_states": [
+    "type_0",
+    "type_1",
+    "type_2",
+    "type_3",
+    "type_4",
+    "type_5",
+    "type_6",
+    "type_7",
+    "type_8",
+    "type_9",
+    "type_10",
+    "type_11",
+    "type_12",
+    "type_13"
+  ]
+}

@@ -38,7 +38,11 @@ public class RockBaseRenderer extends MobRenderer<RockBase, ModelRockBase> {
 
     @Override
     public ResourceLocation getTextureLocation(RockBase entity) {
-        int rt = entity.getRockType();
+        return textureFor(entity.getRockType());
+    }
+
+    /** The 1.7.10 per-type texture table, shared with the GeckoLib candidate so both renderers read one source. */
+    public static ResourceLocation textureFor(int rt) {
         return switch (rt) {
             case 3 -> TEXTURE_3;
             case 4 -> TEXTURE_4;

@@ -6,6 +6,7 @@
   "thresholds": {
     "geometry_epsilon_blocks": 1e-05,
     "animation_epsilon_radians": 2e-06,
+    "position_epsilon_model_units": 0.0001,
     "uv_epsilon_normalized": 1e-07,
     "normal_epsilon": 1e-06,
     "pixel_channel_tolerance": 2,
@@ -90,6 +91,9 @@
         "minimum_foreground_fraction_threshold": 0.001,
         "max_changed_fraction": 0.0,
         "max_mean_absolute_error": 0.0,
+        "z_fight_policy": "pixels where two different quads meet the front within 1e-06 depth with different texels are draw-order z-fights, excluded from the comparison and painted in the diff (ruling 2, 2026-09-02)",
+        "max_contested_fraction": 0.0,
+        "cutout_alpha_threshold": 0.1,
         "minimum_observed_foreground_fraction": 0.2774658203125,
         "samples": [
           {
@@ -97,6 +101,7 @@
             "camera": null,
             "changed_fraction": 0.0,
             "mean_absolute_error": 0.0,
+            "contested_fraction": 0.0,
             "vanilla_foreground_fraction": 0.2774658203125,
             "geo_foreground_fraction": 0.2774658203125,
             "vanilla_capture": "visual/model_elevator/bind.vanilla.png",
@@ -108,6 +113,7 @@
             "camera": null,
             "changed_fraction": 0.0,
             "mean_absolute_error": 0.0,
+            "contested_fraction": 0.0,
             "vanilla_foreground_fraction": 0.2774658203125,
             "geo_foreground_fraction": 0.2774658203125,
             "vanilla_capture": "visual/model_elevator/t0.vanilla.png",
@@ -119,6 +125,7 @@
             "camera": null,
             "changed_fraction": 0.0,
             "mean_absolute_error": 0.0,
+            "contested_fraction": 0.0,
             "vanilla_foreground_fraction": 0.2774658203125,
             "geo_foreground_fraction": 0.2774658203125,
             "vanilla_capture": "visual/model_elevator/t_quarter.vanilla.png",
@@ -130,6 +137,7 @@
             "camera": null,
             "changed_fraction": 0.0,
             "mean_absolute_error": 0.0,
+            "contested_fraction": 0.0,
             "vanilla_foreground_fraction": 0.2774658203125,
             "geo_foreground_fraction": 0.2774658203125,
             "vanilla_capture": "visual/model_elevator/t_half.vanilla.png",
@@ -141,6 +149,7 @@
             "camera": null,
             "changed_fraction": 0.0,
             "mean_absolute_error": 0.0,
+            "contested_fraction": 0.0,
             "vanilla_foreground_fraction": 0.2774658203125,
             "geo_foreground_fraction": 0.2774658203125,
             "vanilla_capture": "visual/model_elevator/t_three_quarter.vanilla.png",
@@ -234,6 +243,9 @@
         "minimum_foreground_fraction_threshold": 0.001,
         "max_changed_fraction": 0.0001373291015625,
         "max_mean_absolute_error": 0.0042266845703125,
+        "z_fight_policy": "pixels where two different quads meet the front within 1e-06 depth with different texels are draw-order z-fights, excluded from the comparison and painted in the diff (ruling 2, 2026-09-02)",
+        "max_contested_fraction": 0.0,
+        "cutout_alpha_threshold": 0.1,
         "minimum_observed_foreground_fraction": 0.0540618896484375,
         "samples": [
           {
@@ -241,6 +253,7 @@
             "camera": "front",
             "changed_fraction": 0.0001373291015625,
             "mean_absolute_error": 0.0042266845703125,
+            "contested_fraction": 0.0,
             "vanilla_foreground_fraction": 0.0540618896484375,
             "geo_foreground_fraction": 0.0540771484375,
             "vanilla_capture": "visual/model_vortex/bind.front.vanilla.png",
@@ -252,6 +265,7 @@
             "camera": "back",
             "changed_fraction": 0.0001373291015625,
             "mean_absolute_error": 0.0042266845703125,
+            "contested_fraction": 0.0,
             "vanilla_foreground_fraction": 0.0540618896484375,
             "geo_foreground_fraction": 0.0540771484375,
             "vanilla_capture": "visual/model_vortex/bind.back.vanilla.png",
@@ -263,6 +277,7 @@
             "camera": "front",
             "changed_fraction": 0.0001373291015625,
             "mean_absolute_error": 0.0042266845703125,
+            "contested_fraction": 0.0,
             "vanilla_foreground_fraction": 0.0540618896484375,
             "geo_foreground_fraction": 0.0540771484375,
             "vanilla_capture": "visual/model_vortex/t0.front.vanilla.png",
@@ -274,6 +289,7 @@
             "camera": "back",
             "changed_fraction": 0.0001373291015625,
             "mean_absolute_error": 0.0042266845703125,
+            "contested_fraction": 0.0,
             "vanilla_foreground_fraction": 0.0540618896484375,
             "geo_foreground_fraction": 0.0540771484375,
             "vanilla_capture": "visual/model_vortex/t0.back.vanilla.png",
@@ -285,6 +301,7 @@
             "camera": "front",
             "changed_fraction": 0.0001373291015625,
             "mean_absolute_error": 0.0042266845703125,
+            "contested_fraction": 0.0,
             "vanilla_foreground_fraction": 0.0540618896484375,
             "geo_foreground_fraction": 0.0540771484375,
             "vanilla_capture": "visual/model_vortex/t_quarter.front.vanilla.png",
@@ -296,6 +313,7 @@
             "camera": "back",
             "changed_fraction": 0.0001373291015625,
             "mean_absolute_error": 0.0042266845703125,
+            "contested_fraction": 0.0,
             "vanilla_foreground_fraction": 0.0540618896484375,
             "geo_foreground_fraction": 0.0540771484375,
             "vanilla_capture": "visual/model_vortex/t_quarter.back.vanilla.png",
@@ -307,6 +325,7 @@
             "camera": "front",
             "changed_fraction": 0.0001373291015625,
             "mean_absolute_error": 0.0042266845703125,
+            "contested_fraction": 0.0,
             "vanilla_foreground_fraction": 0.0540618896484375,
             "geo_foreground_fraction": 0.0540771484375,
             "vanilla_capture": "visual/model_vortex/t_half.front.vanilla.png",
@@ -318,6 +337,7 @@
             "camera": "back",
             "changed_fraction": 0.0001373291015625,
             "mean_absolute_error": 0.0042266845703125,
+            "contested_fraction": 0.0,
             "vanilla_foreground_fraction": 0.0540618896484375,
             "geo_foreground_fraction": 0.0540771484375,
             "vanilla_capture": "visual/model_vortex/t_half.back.vanilla.png",
@@ -329,6 +349,7 @@
             "camera": "front",
             "changed_fraction": 0.0001373291015625,
             "mean_absolute_error": 0.0042266845703125,
+            "contested_fraction": 0.0,
             "vanilla_foreground_fraction": 0.0540618896484375,
             "geo_foreground_fraction": 0.0540771484375,
             "vanilla_capture": "visual/model_vortex/t_three_quarter.front.vanilla.png",
@@ -340,6 +361,7 @@
             "camera": "back",
             "changed_fraction": 0.0001373291015625,
             "mean_absolute_error": 0.0042266845703125,
+            "contested_fraction": 0.0,
             "vanilla_foreground_fraction": 0.0540618896484375,
             "geo_foreground_fraction": 0.0540771484375,
             "vanilla_capture": "visual/model_vortex/t_three_quarter.back.vanilla.png",
@@ -348,13 +370,1419 @@
           }
         ]
       }
+    },
+    {
+      "model_id": "model_island",
+      "tier": 3,
+      "proof_scope": "production_proof_model",
+      "source_class": "danger.orespawn.entity.client.ModelIsland",
+      "source_class_sha256": "0199449ecd72805ee2923283cf22697c4e8709871f5fbff66ff55dcc99ee867f",
+      "compiled_dump_sha256": "d6b4eeb0cfbcf182b77f61fff6dd9ed34b161cd57f746cc98f68af23a29081b4",
+      "bone_count": 6,
+      "cube_count": 6,
+      "geometry_sha256": "5a2f0670ff66d013dabda46a192d5dbca19d491a8b56117c790c481c11ebaeac",
+      "animation_sha256": "7882082857fdb11e02f158ebc3a6d3f970e2ac60d54813f0e903ee97b2293749",
+      "animation_contract_sha256": "abc28ea5cb736c5d6e0d3ac3e18b56ac473e7446a85c55ce96d072f2ad56ce1a",
+      "geometry": {
+        "status": "PASS",
+        "epsilon_blocks": 1e-05,
+        "max_corner_delta_blocks": 2.0124611809041328e-07,
+        "worst_case": "a0_t0:head#0",
+        "sample_count": 7,
+        "cube_sample_count": 42
+      },
+      "surface_mapping": {
+        "status": "PASS",
+        "position_epsilon_blocks": 1e-05,
+        "normal_epsilon": 1e-06,
+        "uv_epsilon_normalized": 1e-07,
+        "max_position_delta_blocks": 2.0124611809041328e-07,
+        "max_normal_delta": 1.0446950654879719e-07,
+        "max_uv_delta_normalized": 0.0,
+        "vertex_samples": 1008,
+        "ignored_zero_area_faces": 0,
+        "worst_case": "a0_t0:head#0",
+        "evidence": "position/normal/UV tuples from baked ModelPart.Cube.compile versus pinned GeckoLib BakedModelFactory rendered through GeoRenderer; faces of exactly zero area are excluded (ruling 2026-09-02)"
+      },
+      "animation": {
+        "status": "PASS",
+        "epsilon_radians": 2e-06,
+        "accepted_pose_comparison": "compiled setupAnim versus actual fresh-baked GeckoLib candidate",
+        "reference_animation_used_for_acceptance": false,
+        "sample_count": 7,
+        "max_rotation_delta_radians": 0.0,
+        "max_dense_rotation_delta_radians": 0.0,
+        "max_unexpected_position_or_scale_delta": 0.0,
+        "worst_case": "exact",
+        "dense_worst_case": "exact",
+        "rotation_channel_samples": 126,
+        "dense_rotation_channel_samples": 0,
+        "contract": {
+          "kind": "code_driven",
+          "accepted_runtime_path": "production OreSpawnGeoReplacement.applyCustomAnimations through OreSpawnGeoReplacementModel.setCustomAnimations",
+          "candidate_class": "danger.orespawn.entity.client.IslandGeoReplacement",
+          "inputs": {
+            "limb_swing": 3.7,
+            "limb_swing_amounts": [
+              0.0,
+              0.5,
+              1.0
+            ],
+            "net_head_yaw_degrees": 25.0,
+            "head_pitch_degrees": -12.0
+          },
+          "max_position_delta_model_units": 0.0,
+          "position_epsilon_model_units": 0.0001,
+          "position_worst_case": "exact",
+          "position_channel_samples": 126,
+          "hidden_bone_checks": 6
+        }
+      },
+      "reference_animation": {
+        "status": "SCHEMA_VALID_REFERENCE_ONLY",
+        "role": "NOT_APPLICABLE_CODE_DRIVEN_MODEL",
+        "clip_count": 0,
+        "constant_vector_count": 0,
+        "runtime_acceptance": false
+      },
+      "visual": {
+        "status": "PASS",
+        "image_size": [
+          256,
+          256
+        ],
+        "camera": {
+          "yaw_degrees": 34.0,
+          "pitch_degrees": -28.0
+        },
+        "channel_tolerance": 2,
+        "changed_fraction_threshold": 0.001,
+        "mean_absolute_error_threshold": 0.25,
+        "minimum_foreground_fraction_threshold": 0.001,
+        "max_changed_fraction": 0.0,
+        "max_mean_absolute_error": 0.0,
+        "z_fight_policy": "pixels where two different quads meet the front within 1e-06 depth with different texels are draw-order z-fights, excluded from the comparison and painted in the diff (ruling 2, 2026-09-02)",
+        "max_contested_fraction": 0.0,
+        "cutout_alpha_threshold": 0.1,
+        "minimum_observed_foreground_fraction": 0.3219757080078125,
+        "samples": [
+          {
+            "sample": "bind",
+            "camera": null,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "contested_fraction": 0.0,
+            "vanilla_foreground_fraction": 0.37164306640625,
+            "geo_foreground_fraction": 0.37164306640625,
+            "vanilla_capture": "visual/model_island/bind.vanilla.png",
+            "geo_capture": "visual/model_island/bind.geo.png",
+            "diff_capture": "visual/model_island/bind.diff.png"
+          },
+          {
+            "sample": "a0_t0",
+            "camera": null,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "contested_fraction": 0.0,
+            "vanilla_foreground_fraction": 0.37164306640625,
+            "geo_foreground_fraction": 0.37164306640625,
+            "vanilla_capture": "visual/model_island/a0_t0.vanilla.png",
+            "geo_capture": "visual/model_island/a0_t0.geo.png",
+            "diff_capture": "visual/model_island/a0_t0.diff.png"
+          },
+          {
+            "sample": "a0_5_t_half",
+            "camera": null,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "contested_fraction": 0.0,
+            "vanilla_foreground_fraction": 0.3512115478515625,
+            "geo_foreground_fraction": 0.3512115478515625,
+            "vanilla_capture": "visual/model_island/a0_5_t_half.vanilla.png",
+            "geo_capture": "visual/model_island/a0_5_t_half.geo.png",
+            "diff_capture": "visual/model_island/a0_5_t_half.diff.png"
+          },
+          {
+            "sample": "a1_t0",
+            "camera": null,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "contested_fraction": 0.0,
+            "vanilla_foreground_fraction": 0.3219757080078125,
+            "geo_foreground_fraction": 0.3219757080078125,
+            "vanilla_capture": "visual/model_island/a1_t0.vanilla.png",
+            "geo_capture": "visual/model_island/a1_t0.geo.png",
+            "diff_capture": "visual/model_island/a1_t0.diff.png"
+          }
+        ]
+      }
+    },
+    {
+      "model_id": "model_islandtoo",
+      "tier": 3,
+      "proof_scope": "production_proof_model",
+      "source_class": "danger.orespawn.entity.client.ModelIslandToo",
+      "source_class_sha256": "d7d46723564260a976e5850010650355815b58199bd12e0aa8ef0a903f5e8ae9",
+      "compiled_dump_sha256": "d905ea267b9f051998222fda867b706f3314bd7744c4aa30dc770c861097612e",
+      "bone_count": 6,
+      "cube_count": 6,
+      "geometry_sha256": "3ac2e841c009bd67d82d3d71bbe8c1bf19a983dc7513d6c67613632dd0d6ebea",
+      "animation_sha256": "7882082857fdb11e02f158ebc3a6d3f970e2ac60d54813f0e903ee97b2293749",
+      "animation_contract_sha256": "7b2fdcec470a03062e2727847e6e12792fdde36669e9a0156b1c56b60ecdfbe1",
+      "geometry": {
+        "status": "PASS",
+        "epsilon_blocks": 1e-05,
+        "max_corner_delta_blocks": 2.0124611809041328e-07,
+        "worst_case": "a0_t0:head#0",
+        "sample_count": 7,
+        "cube_sample_count": 42
+      },
+      "surface_mapping": {
+        "status": "PASS",
+        "position_epsilon_blocks": 1e-05,
+        "normal_epsilon": 1e-06,
+        "uv_epsilon_normalized": 1e-07,
+        "max_position_delta_blocks": 2.0124611809041328e-07,
+        "max_normal_delta": 1.0446950654879719e-07,
+        "max_uv_delta_normalized": 0.0,
+        "vertex_samples": 1008,
+        "ignored_zero_area_faces": 0,
+        "worst_case": "a0_t0:head#0",
+        "evidence": "position/normal/UV tuples from baked ModelPart.Cube.compile versus pinned GeckoLib BakedModelFactory rendered through GeoRenderer; faces of exactly zero area are excluded (ruling 2026-09-02)"
+      },
+      "animation": {
+        "status": "PASS",
+        "epsilon_radians": 2e-06,
+        "accepted_pose_comparison": "compiled setupAnim versus actual fresh-baked GeckoLib candidate",
+        "reference_animation_used_for_acceptance": false,
+        "sample_count": 7,
+        "max_rotation_delta_radians": 0.0,
+        "max_dense_rotation_delta_radians": 0.0,
+        "max_unexpected_position_or_scale_delta": 0.0,
+        "worst_case": "exact",
+        "dense_worst_case": "exact",
+        "rotation_channel_samples": 126,
+        "dense_rotation_channel_samples": 0,
+        "contract": {
+          "kind": "code_driven",
+          "accepted_runtime_path": "production OreSpawnGeoReplacement.applyCustomAnimations through OreSpawnGeoReplacementModel.setCustomAnimations",
+          "candidate_class": "danger.orespawn.entity.client.IslandTooGeoReplacement",
+          "inputs": {
+            "limb_swing": 3.7,
+            "limb_swing_amounts": [
+              0.0,
+              0.5,
+              1.0
+            ],
+            "net_head_yaw_degrees": 25.0,
+            "head_pitch_degrees": -12.0
+          },
+          "max_position_delta_model_units": 0.0,
+          "position_epsilon_model_units": 0.0001,
+          "position_worst_case": "exact",
+          "position_channel_samples": 126,
+          "hidden_bone_checks": 6
+        }
+      },
+      "reference_animation": {
+        "status": "SCHEMA_VALID_REFERENCE_ONLY",
+        "role": "NOT_APPLICABLE_CODE_DRIVEN_MODEL",
+        "clip_count": 0,
+        "constant_vector_count": 0,
+        "runtime_acceptance": false
+      },
+      "visual": {
+        "status": "PASS",
+        "image_size": [
+          256,
+          256
+        ],
+        "camera": {
+          "yaw_degrees": 34.0,
+          "pitch_degrees": -28.0
+        },
+        "channel_tolerance": 2,
+        "changed_fraction_threshold": 0.001,
+        "mean_absolute_error_threshold": 0.25,
+        "minimum_foreground_fraction_threshold": 0.001,
+        "max_changed_fraction": 0.0,
+        "max_mean_absolute_error": 0.0,
+        "z_fight_policy": "pixels where two different quads meet the front within 1e-06 depth with different texels are draw-order z-fights, excluded from the comparison and painted in the diff (ruling 2, 2026-09-02)",
+        "max_contested_fraction": 0.0,
+        "cutout_alpha_threshold": 0.1,
+        "minimum_observed_foreground_fraction": 0.3219757080078125,
+        "samples": [
+          {
+            "sample": "bind",
+            "camera": null,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "contested_fraction": 0.0,
+            "vanilla_foreground_fraction": 0.37164306640625,
+            "geo_foreground_fraction": 0.37164306640625,
+            "vanilla_capture": "visual/model_islandtoo/bind.vanilla.png",
+            "geo_capture": "visual/model_islandtoo/bind.geo.png",
+            "diff_capture": "visual/model_islandtoo/bind.diff.png"
+          },
+          {
+            "sample": "a0_t0",
+            "camera": null,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "contested_fraction": 0.0,
+            "vanilla_foreground_fraction": 0.37164306640625,
+            "geo_foreground_fraction": 0.37164306640625,
+            "vanilla_capture": "visual/model_islandtoo/a0_t0.vanilla.png",
+            "geo_capture": "visual/model_islandtoo/a0_t0.geo.png",
+            "diff_capture": "visual/model_islandtoo/a0_t0.diff.png"
+          },
+          {
+            "sample": "a0_5_t_half",
+            "camera": null,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "contested_fraction": 0.0,
+            "vanilla_foreground_fraction": 0.3512115478515625,
+            "geo_foreground_fraction": 0.3512115478515625,
+            "vanilla_capture": "visual/model_islandtoo/a0_5_t_half.vanilla.png",
+            "geo_capture": "visual/model_islandtoo/a0_5_t_half.geo.png",
+            "diff_capture": "visual/model_islandtoo/a0_5_t_half.diff.png"
+          },
+          {
+            "sample": "a1_t0",
+            "camera": null,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "contested_fraction": 0.0,
+            "vanilla_foreground_fraction": 0.3219757080078125,
+            "geo_foreground_fraction": 0.3219757080078125,
+            "vanilla_capture": "visual/model_islandtoo/a1_t0.vanilla.png",
+            "geo_capture": "visual/model_islandtoo/a1_t0.geo.png",
+            "diff_capture": "visual/model_islandtoo/a1_t0.diff.png"
+          }
+        ]
+      }
+    },
+    {
+      "model_id": "model_robot1",
+      "tier": 3,
+      "proof_scope": "production_proof_model",
+      "source_class": "danger.orespawn.entity.client.ModelRobot1",
+      "source_class_sha256": "b677875ab1da3666390ae5e83e6c8fb92633c531f8a719624f81b585db8611c6",
+      "compiled_dump_sha256": "ad8be41b7aa15a7bc8876454b053774604aefe504e9e023bbf8416ce21096e7c",
+      "bone_count": 27,
+      "cube_count": 27,
+      "geometry_sha256": "7d74a0523c5373e7ce27181785a65343496482fc9b40620bc4dc47ef1aad637a",
+      "animation_sha256": "7882082857fdb11e02f158ebc3a6d3f970e2ac60d54813f0e903ee97b2293749",
+      "animation_contract_sha256": "de7f98824b41967b991f2cdf3fe4c58f69dcb414b8d6c6cc9edb875ad3218a8c",
+      "geometry": {
+        "status": "PASS",
+        "epsilon_blocks": 1e-05,
+        "max_corner_delta_blocks": 3.0002666543467846e-07,
+        "worst_case": "a0_05000000074505806_t_half:key4#0",
+        "sample_count": 11,
+        "cube_sample_count": 297
+      },
+      "surface_mapping": {
+        "status": "PASS",
+        "position_epsilon_blocks": 1e-05,
+        "normal_epsilon": 1e-06,
+        "uv_epsilon_normalized": 1e-07,
+        "max_position_delta_blocks": 3.0002666543467846e-07,
+        "max_normal_delta": 0.0,
+        "max_uv_delta_normalized": 0.0,
+        "vertex_samples": 7128,
+        "ignored_zero_area_faces": 0,
+        "worst_case": "a0_05000000074505806_t_half:key4#0",
+        "evidence": "position/normal/UV tuples from baked ModelPart.Cube.compile versus pinned GeckoLib BakedModelFactory rendered through GeoRenderer; faces of exactly zero area are excluded (ruling 2026-09-02)"
+      },
+      "animation": {
+        "status": "PASS",
+        "epsilon_radians": 2e-06,
+        "accepted_pose_comparison": "compiled setupAnim versus actual fresh-baked GeckoLib candidate",
+        "reference_animation_used_for_acceptance": false,
+        "sample_count": 11,
+        "max_rotation_delta_radians": 0.0,
+        "max_dense_rotation_delta_radians": 0.0,
+        "max_unexpected_position_or_scale_delta": 0.0,
+        "worst_case": "exact",
+        "dense_worst_case": "exact",
+        "rotation_channel_samples": 891,
+        "dense_rotation_channel_samples": 0,
+        "contract": {
+          "kind": "code_driven",
+          "accepted_runtime_path": "production OreSpawnGeoReplacement.applyCustomAnimations through OreSpawnGeoReplacementModel.setCustomAnimations",
+          "candidate_class": "danger.orespawn.entity.client.Robot1GeoReplacement",
+          "inputs": {
+            "limb_swing": 6.1,
+            "limb_swing_amounts": [
+              0.05,
+              0.5
+            ],
+            "net_head_yaw_degrees": 0.0,
+            "head_pitch_degrees": 0.0
+          },
+          "max_position_delta_model_units": 0.0,
+          "position_epsilon_model_units": 0.0001,
+          "position_worst_case": "exact",
+          "position_channel_samples": 891,
+          "hidden_bone_checks": 10
+        }
+      },
+      "reference_animation": {
+        "status": "SCHEMA_VALID_REFERENCE_ONLY",
+        "role": "NOT_APPLICABLE_CODE_DRIVEN_MODEL",
+        "clip_count": 0,
+        "constant_vector_count": 0,
+        "runtime_acceptance": false
+      },
+      "visual": {
+        "status": "PASS",
+        "image_size": [
+          256,
+          256
+        ],
+        "camera": {
+          "yaw_degrees": 34.0,
+          "pitch_degrees": -28.0
+        },
+        "channel_tolerance": 2,
+        "changed_fraction_threshold": 0.001,
+        "mean_absolute_error_threshold": 0.25,
+        "minimum_foreground_fraction_threshold": 0.001,
+        "max_changed_fraction": 0.0,
+        "max_mean_absolute_error": 0.0,
+        "z_fight_policy": "pixels where two different quads meet the front within 1e-06 depth with different texels are draw-order z-fights, excluded from the comparison and painted in the diff (ruling 2, 2026-09-02)",
+        "max_contested_fraction": 0.00054931640625,
+        "cutout_alpha_threshold": 0.1,
+        "minimum_observed_foreground_fraction": 0.3537139892578125,
+        "samples": [
+          {
+            "sample": "bind",
+            "camera": null,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "contested_fraction": 0.0,
+            "vanilla_foreground_fraction": 0.3710784912109375,
+            "geo_foreground_fraction": 0.3710784912109375,
+            "vanilla_capture": "visual/model_robot1/bind.vanilla.png",
+            "geo_capture": "visual/model_robot1/bind.geo.png",
+            "diff_capture": "visual/model_robot1/bind.diff.png"
+          },
+          {
+            "sample": "a0_05000000074505806_t0",
+            "camera": null,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "contested_fraction": 0.0,
+            "vanilla_foreground_fraction": 0.3710784912109375,
+            "geo_foreground_fraction": 0.3710784912109375,
+            "vanilla_capture": "visual/model_robot1/a0_05000000074505806_t0.vanilla.png",
+            "geo_capture": "visual/model_robot1/a0_05000000074505806_t0.geo.png",
+            "diff_capture": "visual/model_robot1/a0_05000000074505806_t0.diff.png"
+          },
+          {
+            "sample": "a0_5_t0",
+            "camera": null,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "contested_fraction": 0.00054931640625,
+            "vanilla_foreground_fraction": 0.3537139892578125,
+            "geo_foreground_fraction": 0.3537139892578125,
+            "vanilla_capture": "visual/model_robot1/a0_5_t0.vanilla.png",
+            "geo_capture": "visual/model_robot1/a0_5_t0.geo.png",
+            "diff_capture": "visual/model_robot1/a0_5_t0.diff.png"
+          },
+          {
+            "sample": "a0_5_t_half",
+            "camera": null,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "contested_fraction": 0.00054931640625,
+            "vanilla_foreground_fraction": 0.3540802001953125,
+            "geo_foreground_fraction": 0.3540802001953125,
+            "vanilla_capture": "visual/model_robot1/a0_5_t_half.vanilla.png",
+            "geo_capture": "visual/model_robot1/a0_5_t_half.geo.png",
+            "diff_capture": "visual/model_robot1/a0_5_t_half.diff.png"
+          },
+          {
+            "sample": "a0_5_t_three_quarter",
+            "camera": null,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "contested_fraction": 0.00054931640625,
+            "vanilla_foreground_fraction": 0.35430908203125,
+            "geo_foreground_fraction": 0.35430908203125,
+            "vanilla_capture": "visual/model_robot1/a0_5_t_three_quarter.vanilla.png",
+            "geo_capture": "visual/model_robot1/a0_5_t_three_quarter.geo.png",
+            "diff_capture": "visual/model_robot1/a0_5_t_three_quarter.diff.png"
+          }
+        ]
+      }
+    },
+    {
+      "model_id": "model_robot5",
+      "tier": 3,
+      "proof_scope": "production_proof_model",
+      "source_class": "danger.orespawn.entity.client.ModelRobot5",
+      "source_class_sha256": "360b2f7a8c6f677222e63aa1d728c0f310ff1c8b0d2e1a24f0caed81d71a4406",
+      "compiled_dump_sha256": "d3de8ce6247237b88a1dd45ca86df86033c44853341a8b7ee5962887f0c4c2eb",
+      "bone_count": 11,
+      "cube_count": 11,
+      "geometry_sha256": "6695c54427a11209975713ab283eea4e7907cfb95a4f3a07001f0e916b94c7c5",
+      "animation_sha256": "7882082857fdb11e02f158ebc3a6d3f970e2ac60d54813f0e903ee97b2293749",
+      "animation_contract_sha256": "a0675311a78a04e4ec9a3e98bbf83fb3c91c5bd63c8040d7597a28e70fa57dc4",
+      "geometry": {
+        "status": "PASS",
+        "epsilon_blocks": 1e-05,
+        "max_corner_delta_blocks": 2.0000000011677344e-07,
+        "worst_case": "a1_t0:lwheel1#0",
+        "sample_count": 5,
+        "cube_sample_count": 55
+      },
+      "surface_mapping": {
+        "status": "PASS",
+        "position_epsilon_blocks": 1e-05,
+        "normal_epsilon": 1e-06,
+        "uv_epsilon_normalized": 1e-07,
+        "max_position_delta_blocks": 2.0000000011677344e-07,
+        "max_normal_delta": 0.0,
+        "max_uv_delta_normalized": 0.0,
+        "vertex_samples": 1320,
+        "ignored_zero_area_faces": 0,
+        "worst_case": "a1_t0:lwheel1#0",
+        "evidence": "position/normal/UV tuples from baked ModelPart.Cube.compile versus pinned GeckoLib BakedModelFactory rendered through GeoRenderer; faces of exactly zero area are excluded (ruling 2026-09-02)"
+      },
+      "animation": {
+        "status": "PASS",
+        "epsilon_radians": 2e-06,
+        "accepted_pose_comparison": "compiled setupAnim versus actual fresh-baked GeckoLib candidate",
+        "reference_animation_used_for_acceptance": false,
+        "sample_count": 5,
+        "max_rotation_delta_radians": 0.0,
+        "max_dense_rotation_delta_radians": 0.0,
+        "max_unexpected_position_or_scale_delta": 0.0,
+        "worst_case": "exact",
+        "dense_worst_case": "exact",
+        "rotation_channel_samples": 165,
+        "dense_rotation_channel_samples": 0,
+        "contract": {
+          "kind": "code_driven",
+          "accepted_runtime_path": "production OreSpawnGeoReplacement.applyCustomAnimations through OreSpawnGeoReplacementModel.setCustomAnimations",
+          "candidate_class": "danger.orespawn.entity.client.Robot5GeoReplacement",
+          "inputs": {
+            "limb_swing": 37.3,
+            "limb_swing_amounts": [
+              0.05,
+              1.0
+            ],
+            "net_head_yaw_degrees": 40.0,
+            "head_pitch_degrees": 0.0
+          },
+          "max_position_delta_model_units": 0.0,
+          "position_epsilon_model_units": 0.0001,
+          "position_worst_case": "exact",
+          "position_channel_samples": 165,
+          "hidden_bone_checks": 4
+        }
+      },
+      "reference_animation": {
+        "status": "SCHEMA_VALID_REFERENCE_ONLY",
+        "role": "NOT_APPLICABLE_CODE_DRIVEN_MODEL",
+        "clip_count": 0,
+        "constant_vector_count": 0,
+        "runtime_acceptance": false
+      },
+      "visual": {
+        "status": "PASS",
+        "image_size": [
+          256,
+          256
+        ],
+        "camera": {
+          "yaw_degrees": 34.0,
+          "pitch_degrees": -28.0
+        },
+        "channel_tolerance": 2,
+        "changed_fraction_threshold": 0.001,
+        "mean_absolute_error_threshold": 0.25,
+        "minimum_foreground_fraction_threshold": 0.001,
+        "max_changed_fraction": 0.0,
+        "max_mean_absolute_error": 0.0,
+        "z_fight_policy": "pixels where two different quads meet the front within 1e-06 depth with different texels are draw-order z-fights, excluded from the comparison and painted in the diff (ruling 2, 2026-09-02)",
+        "max_contested_fraction": 0.0116119384765625,
+        "cutout_alpha_threshold": 0.1,
+        "minimum_observed_foreground_fraction": 0.136260986328125,
+        "samples": [
+          {
+            "sample": "a0_05000000074505806_t0",
+            "camera": null,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "contested_fraction": 0.0116119384765625,
+            "vanilla_foreground_fraction": 0.136260986328125,
+            "geo_foreground_fraction": 0.136260986328125,
+            "vanilla_capture": "visual/model_robot5/a0_05000000074505806_t0.vanilla.png",
+            "geo_capture": "visual/model_robot5/a0_05000000074505806_t0.geo.png",
+            "diff_capture": "visual/model_robot5/a0_05000000074505806_t0.diff.png"
+          },
+          {
+            "sample": "a1_t0",
+            "camera": null,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "contested_fraction": 0.0115814208984375,
+            "vanilla_foreground_fraction": 0.136260986328125,
+            "geo_foreground_fraction": 0.136260986328125,
+            "vanilla_capture": "visual/model_robot5/a1_t0.vanilla.png",
+            "geo_capture": "visual/model_robot5/a1_t0.geo.png",
+            "diff_capture": "visual/model_robot5/a1_t0.diff.png"
+          }
+        ]
+      }
+    },
+    {
+      "model_id": "model_robot2",
+      "tier": 3,
+      "proof_scope": "production_proof_model",
+      "source_class": "danger.orespawn.entity.client.ModelRobot2",
+      "source_class_sha256": "bf9067e8b01d91a3544fa3c9ae4c4c9f05e80da39a37cf17974e44ee4dacb8bd",
+      "compiled_dump_sha256": "5b613c9831f2305610423e4d03611cb4c486cff99b91799884f29b3bba4022c9",
+      "bone_count": 15,
+      "cube_count": 15,
+      "geometry_sha256": "469c5bc59381b7cabd75a141ec5e8c614868756774ef6ee954659d694fa6c37b",
+      "animation_sha256": "7882082857fdb11e02f158ebc3a6d3f970e2ac60d54813f0e903ee97b2293749",
+      "animation_contract_sha256": "f769701225b70d2364c02cc5a3cdd2bd8da8c4cc7a0201a7010ce6cad5829de5",
+      "geometry": {
+        "status": "PASS",
+        "epsilon_blocks": 1e-05,
+        "max_corner_delta_blocks": 1.0049875622569831e-06,
+        "worst_case": "s_idle_ri1_a0_t_half:rarm2#0",
+        "sample_count": 21,
+        "cube_sample_count": 315
+      },
+      "surface_mapping": {
+        "status": "PASS",
+        "position_epsilon_blocks": 1e-05,
+        "normal_epsilon": 1e-06,
+        "uv_epsilon_normalized": 1e-07,
+        "max_position_delta_blocks": 1.0049875622569831e-06,
+        "max_normal_delta": 0.0,
+        "max_uv_delta_normalized": 0.0,
+        "vertex_samples": 7560,
+        "ignored_zero_area_faces": 0,
+        "worst_case": "s_idle_ri1_a0_t_half:rarm2#0",
+        "evidence": "position/normal/UV tuples from baked ModelPart.Cube.compile versus pinned GeckoLib BakedModelFactory rendered through GeoRenderer; faces of exactly zero area are excluded (ruling 2026-09-02)"
+      },
+      "animation": {
+        "status": "PASS",
+        "epsilon_radians": 2e-06,
+        "accepted_pose_comparison": "compiled setupAnim versus actual fresh-baked GeckoLib candidate",
+        "reference_animation_used_for_acceptance": false,
+        "sample_count": 21,
+        "max_rotation_delta_radians": 0.0,
+        "max_dense_rotation_delta_radians": 0.0,
+        "max_unexpected_position_or_scale_delta": 0.0,
+        "worst_case": "exact",
+        "dense_worst_case": "exact",
+        "rotation_channel_samples": 945,
+        "dense_rotation_channel_samples": 0,
+        "contract": {
+          "kind": "entity_state",
+          "accepted_runtime_path": "production OreSpawnGeoReplacement.applyCustomAnimations posed from declared entity states through the entity's pose interface; compiled poseFrom on the same states",
+          "candidate_class": "danger.orespawn.entity.client.Robot2GeoReplacement",
+          "entity_states": [
+            {
+              "name": "idle_ri0",
+              "attacking": 0,
+              "ri1": 0
+            },
+            {
+              "name": "idle_ri1",
+              "attacking": 0,
+              "ri1": 1
+            },
+            {
+              "name": "idle_ri2",
+              "attacking": 0,
+              "ri1": 2
+            },
+            {
+              "name": "idle_ri3",
+              "attacking": 0,
+              "ri1": 3
+            },
+            {
+              "name": "attacking_seeded",
+              "attacking": 1,
+              "ri1": 0,
+              "seed": 12345
+            }
+          ],
+          "inputs": {
+            "limb_swing": 0.0,
+            "limb_swing_amounts": [
+              0.0,
+              0.5
+            ],
+            "net_head_yaw_degrees": 30.0,
+            "head_pitch_degrees": 0.0
+          },
+          "max_position_delta_model_units": 0.0,
+          "position_epsilon_model_units": 0.0001,
+          "position_worst_case": "exact",
+          "position_channel_samples": 945,
+          "hidden_bone_checks": 20
+        }
+      },
+      "reference_animation": {
+        "status": "SCHEMA_VALID_REFERENCE_ONLY",
+        "role": "NOT_APPLICABLE_CODE_DRIVEN_MODEL",
+        "clip_count": 0,
+        "constant_vector_count": 0,
+        "runtime_acceptance": false
+      },
+      "visual": {
+        "status": "PASS",
+        "image_size": [
+          256,
+          256
+        ],
+        "camera": {
+          "yaw_degrees": 34.0,
+          "pitch_degrees": -28.0
+        },
+        "channel_tolerance": 2,
+        "changed_fraction_threshold": 0.001,
+        "mean_absolute_error_threshold": 0.25,
+        "minimum_foreground_fraction_threshold": 0.001,
+        "max_changed_fraction": 0.0,
+        "max_mean_absolute_error": 0.0,
+        "z_fight_policy": "pixels where two different quads meet the front within 1e-06 depth with different texels are draw-order z-fights, excluded from the comparison and painted in the diff (ruling 2, 2026-09-02)",
+        "max_contested_fraction": 0.0,
+        "cutout_alpha_threshold": 0.1,
+        "minimum_observed_foreground_fraction": 0.20562744140625,
+        "samples": [
+          {
+            "sample": "s_idle_ri0_a0_t_half",
+            "camera": null,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "contested_fraction": 0.0,
+            "vanilla_foreground_fraction": 0.20562744140625,
+            "geo_foreground_fraction": 0.20562744140625,
+            "vanilla_capture": "visual/model_robot2/s_idle_ri0_a0_t_half.vanilla.png",
+            "geo_capture": "visual/model_robot2/s_idle_ri0_a0_t_half.geo.png",
+            "diff_capture": "visual/model_robot2/s_idle_ri0_a0_t_half.diff.png"
+          },
+          {
+            "sample": "s_idle_ri3_a0_5_t_half",
+            "camera": null,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "contested_fraction": 0.0,
+            "vanilla_foreground_fraction": 0.2192230224609375,
+            "geo_foreground_fraction": 0.2192230224609375,
+            "vanilla_capture": "visual/model_robot2/s_idle_ri3_a0_5_t_half.vanilla.png",
+            "geo_capture": "visual/model_robot2/s_idle_ri3_a0_5_t_half.geo.png",
+            "diff_capture": "visual/model_robot2/s_idle_ri3_a0_5_t_half.diff.png"
+          },
+          {
+            "sample": "s_attacking_seeded_a0_5_t_0_898000",
+            "camera": null,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "contested_fraction": 0.0,
+            "vanilla_foreground_fraction": 0.2061920166015625,
+            "geo_foreground_fraction": 0.2061920166015625,
+            "vanilla_capture": "visual/model_robot2/s_attacking_seeded_a0_5_t_0_898000.vanilla.png",
+            "geo_capture": "visual/model_robot2/s_attacking_seeded_a0_5_t_0_898000.geo.png",
+            "diff_capture": "visual/model_robot2/s_attacking_seeded_a0_5_t_0_898000.diff.png"
+          }
+        ]
+      }
+    },
+    {
+      "model_id": "model_robot3",
+      "tier": 3,
+      "proof_scope": "production_proof_model",
+      "source_class": "danger.orespawn.entity.client.ModelRobot3",
+      "source_class_sha256": "37dd86df894fa12d321c9d6935288b032a7db635a3fcf37424d16c61b023a4db",
+      "compiled_dump_sha256": "d803277f98ed97456344267971902d43e5a2da26f62c5c4a99cd58436379631c",
+      "bone_count": 19,
+      "cube_count": 19,
+      "geometry_sha256": "fc851f8cb4a7dbfe3836682ea60580c17d30f38e38b02b27c0944cb6effd9173",
+      "animation_sha256": "7882082857fdb11e02f158ebc3a6d3f970e2ac60d54813f0e903ee97b2293749",
+      "animation_contract_sha256": "d7728ed487a00316df93ec20413b31f828b0c6e23b96ea69b831b76a11822d20",
+      "geometry": {
+        "status": "PASS",
+        "epsilon_blocks": 1e-05,
+        "max_corner_delta_blocks": 1.004987562245936e-06,
+        "worst_case": "bind:rarm3#0",
+        "sample_count": 13,
+        "cube_sample_count": 247
+      },
+      "surface_mapping": {
+        "status": "PASS",
+        "position_epsilon_blocks": 1e-05,
+        "normal_epsilon": 1e-06,
+        "uv_epsilon_normalized": 1e-07,
+        "max_position_delta_blocks": 1.004987562245936e-06,
+        "max_normal_delta": 1.4317821056903206e-07,
+        "max_uv_delta_normalized": 0.0,
+        "vertex_samples": 5928,
+        "ignored_zero_area_faces": 0,
+        "worst_case": "bind:rarm3#0",
+        "evidence": "position/normal/UV tuples from baked ModelPart.Cube.compile versus pinned GeckoLib BakedModelFactory rendered through GeoRenderer; faces of exactly zero area are excluded (ruling 2026-09-02)"
+      },
+      "animation": {
+        "status": "PASS",
+        "epsilon_radians": 2e-06,
+        "accepted_pose_comparison": "compiled setupAnim versus actual fresh-baked GeckoLib candidate",
+        "reference_animation_used_for_acceptance": false,
+        "sample_count": 13,
+        "max_rotation_delta_radians": 0.0,
+        "max_dense_rotation_delta_radians": 0.0,
+        "max_unexpected_position_or_scale_delta": 0.0,
+        "worst_case": "exact",
+        "dense_worst_case": "exact",
+        "rotation_channel_samples": 741,
+        "dense_rotation_channel_samples": 0,
+        "contract": {
+          "kind": "entity_state",
+          "accepted_runtime_path": "production OreSpawnGeoReplacement.applyCustomAnimations posed from declared entity states through the entity's pose interface; compiled poseFrom on the same states",
+          "candidate_class": "danger.orespawn.entity.client.Robot3GeoReplacement",
+          "entity_states": [
+            {
+              "name": "idle_ri0",
+              "attacking": 0,
+              "ri1": 0
+            },
+            {
+              "name": "idle_ri1",
+              "attacking": 0,
+              "ri1": 1
+            },
+            {
+              "name": "attacking_ri0",
+              "attacking": 1,
+              "ri1": 0
+            }
+          ],
+          "inputs": {
+            "limb_swing": 0.0,
+            "limb_swing_amounts": [
+              0.0,
+              0.5
+            ],
+            "net_head_yaw_degrees": 50.0,
+            "head_pitch_degrees": 0.0
+          },
+          "max_position_delta_model_units": 0.0,
+          "position_epsilon_model_units": 0.0001,
+          "position_worst_case": "exact",
+          "position_channel_samples": 741,
+          "hidden_bone_checks": 12
+        }
+      },
+      "reference_animation": {
+        "status": "SCHEMA_VALID_REFERENCE_ONLY",
+        "role": "NOT_APPLICABLE_CODE_DRIVEN_MODEL",
+        "clip_count": 0,
+        "constant_vector_count": 0,
+        "runtime_acceptance": false
+      },
+      "visual": {
+        "status": "PASS",
+        "image_size": [
+          256,
+          256
+        ],
+        "camera": {
+          "yaw_degrees": 34.0,
+          "pitch_degrees": -28.0
+        },
+        "channel_tolerance": 2,
+        "changed_fraction_threshold": 0.001,
+        "mean_absolute_error_threshold": 0.25,
+        "minimum_foreground_fraction_threshold": 0.001,
+        "max_changed_fraction": 0.0,
+        "max_mean_absolute_error": 0.0,
+        "z_fight_policy": "pixels where two different quads meet the front within 1e-06 depth with different texels are draw-order z-fights, excluded from the comparison and painted in the diff (ruling 2, 2026-09-02)",
+        "max_contested_fraction": 0.00250244140625,
+        "cutout_alpha_threshold": 0.1,
+        "minimum_observed_foreground_fraction": 0.3054656982421875,
+        "samples": [
+          {
+            "sample": "s_idle_ri1_a0_5_t_0_100000",
+            "camera": null,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "contested_fraction": 0.0021820068359375,
+            "vanilla_foreground_fraction": 0.305938720703125,
+            "geo_foreground_fraction": 0.305938720703125,
+            "vanilla_capture": "visual/model_robot3/s_idle_ri1_a0_5_t_0_100000.vanilla.png",
+            "geo_capture": "visual/model_robot3/s_idle_ri1_a0_5_t_0_100000.geo.png",
+            "diff_capture": "visual/model_robot3/s_idle_ri1_a0_5_t_0_100000.diff.png"
+          },
+          {
+            "sample": "s_attacking_ri0_a0_5_t_0_230000",
+            "camera": null,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "contested_fraction": 0.00250244140625,
+            "vanilla_foreground_fraction": 0.3054656982421875,
+            "geo_foreground_fraction": 0.3054656982421875,
+            "vanilla_capture": "visual/model_robot3/s_attacking_ri0_a0_5_t_0_230000.vanilla.png",
+            "geo_capture": "visual/model_robot3/s_attacking_ri0_a0_5_t_0_230000.geo.png",
+            "diff_capture": "visual/model_robot3/s_attacking_ri0_a0_5_t_0_230000.diff.png"
+          }
+        ]
+      }
+    },
+    {
+      "model_id": "model_robot4",
+      "tier": 3,
+      "proof_scope": "production_proof_model",
+      "source_class": "danger.orespawn.entity.client.ModelRobot4",
+      "source_class_sha256": "7ce6ee4036efc4ec237adc41bfeec19a8ceaf6c84c0ec55af5962165db059204",
+      "compiled_dump_sha256": "ca382490c8df490bec9eb1ef8ec109981f0eab25f038fc05cdc6f5ee286cae89",
+      "bone_count": 56,
+      "cube_count": 56,
+      "geometry_sha256": "4cbc8dcc603ac3a3e92ce8cda69ab9503563f989ec92ea555303e7734a9158e2",
+      "animation_sha256": "7882082857fdb11e02f158ebc3a6d3f970e2ac60d54813f0e903ee97b2293749",
+      "animation_contract_sha256": "afcc19f45946f009bb2f9dcc1724aeccd84a03eea71fc5e8b0181df9d31b333f",
+      "geometry": {
+        "status": "PASS",
+        "epsilon_blocks": 1e-05,
+        "max_corner_delta_blocks": 3.704713214411673e-07,
+        "worst_case": "bind:sheildend#0",
+        "sample_count": 13,
+        "cube_sample_count": 728
+      },
+      "surface_mapping": {
+        "status": "PASS",
+        "position_epsilon_blocks": 1e-05,
+        "normal_epsilon": 1e-06,
+        "uv_epsilon_normalized": 1e-07,
+        "max_position_delta_blocks": 3.704713214411673e-07,
+        "max_normal_delta": 1.063014580922823e-07,
+        "max_uv_delta_normalized": 0.0,
+        "vertex_samples": 17472,
+        "ignored_zero_area_faces": 0,
+        "worst_case": "bind:sheildend#0",
+        "evidence": "position/normal/UV tuples from baked ModelPart.Cube.compile versus pinned GeckoLib BakedModelFactory rendered through GeoRenderer; faces of exactly zero area are excluded (ruling 2026-09-02)"
+      },
+      "animation": {
+        "status": "PASS",
+        "epsilon_radians": 2e-06,
+        "accepted_pose_comparison": "compiled setupAnim versus actual fresh-baked GeckoLib candidate",
+        "reference_animation_used_for_acceptance": false,
+        "sample_count": 13,
+        "max_rotation_delta_radians": 0.0,
+        "max_dense_rotation_delta_radians": 0.0,
+        "max_unexpected_position_or_scale_delta": 0.0,
+        "worst_case": "exact",
+        "dense_worst_case": "exact",
+        "rotation_channel_samples": 2184,
+        "dense_rotation_channel_samples": 0,
+        "contract": {
+          "kind": "entity_state",
+          "accepted_runtime_path": "production OreSpawnGeoReplacement.applyCustomAnimations posed from declared entity states through the entity's pose interface; compiled poseFrom on the same states",
+          "candidate_class": "danger.orespawn.entity.client.Robot4GeoReplacement",
+          "entity_states": [
+            {
+              "name": "idle",
+              "attacking": 0
+            },
+            {
+              "name": "attacking",
+              "attacking": 1
+            }
+          ],
+          "inputs": {
+            "limb_swing": 0.0,
+            "limb_swing_amounts": [
+              0.0,
+              0.5
+            ],
+            "net_head_yaw_degrees": 45.0,
+            "head_pitch_degrees": 0.0
+          },
+          "max_position_delta_model_units": 0.0,
+          "position_epsilon_model_units": 0.0001,
+          "position_worst_case": "exact",
+          "position_channel_samples": 2184,
+          "hidden_bone_checks": 12
+        }
+      },
+      "reference_animation": {
+        "status": "SCHEMA_VALID_REFERENCE_ONLY",
+        "role": "NOT_APPLICABLE_CODE_DRIVEN_MODEL",
+        "clip_count": 0,
+        "constant_vector_count": 0,
+        "runtime_acceptance": false
+      },
+      "visual": {
+        "status": "PASS",
+        "image_size": [
+          256,
+          256
+        ],
+        "camera": {
+          "yaw_degrees": 34.0,
+          "pitch_degrees": -28.0
+        },
+        "channel_tolerance": 2,
+        "changed_fraction_threshold": 0.001,
+        "mean_absolute_error_threshold": 0.25,
+        "minimum_foreground_fraction_threshold": 0.001,
+        "max_changed_fraction": 0.0,
+        "max_mean_absolute_error": 0.0,
+        "z_fight_policy": "pixels where two different quads meet the front within 1e-06 depth with different texels are draw-order z-fights, excluded from the comparison and painted in the diff (ruling 2, 2026-09-02)",
+        "max_contested_fraction": 0.0004119873046875,
+        "cutout_alpha_threshold": 0.1,
+        "minimum_observed_foreground_fraction": 0.3076934814453125,
+        "samples": [
+          {
+            "sample": "s_idle_a0_t0",
+            "camera": null,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "contested_fraction": 0.0004119873046875,
+            "vanilla_foreground_fraction": 0.325531005859375,
+            "geo_foreground_fraction": 0.325531005859375,
+            "vanilla_capture": "visual/model_robot4/s_idle_a0_t0.vanilla.png",
+            "geo_capture": "visual/model_robot4/s_idle_a0_t0.geo.png",
+            "diff_capture": "visual/model_robot4/s_idle_a0_t0.diff.png"
+          },
+          {
+            "sample": "s_attacking_a0_5_t_0_375000",
+            "camera": null,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "contested_fraction": 0.0,
+            "vanilla_foreground_fraction": 0.31317138671875,
+            "geo_foreground_fraction": 0.31317138671875,
+            "vanilla_capture": "visual/model_robot4/s_attacking_a0_5_t_0_375000.vanilla.png",
+            "geo_capture": "visual/model_robot4/s_attacking_a0_5_t_0_375000.geo.png",
+            "diff_capture": "visual/model_robot4/s_attacking_a0_5_t_0_375000.diff.png"
+          },
+          {
+            "sample": "s_attacking_a0_5_t_end",
+            "camera": null,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "contested_fraction": 0.0,
+            "vanilla_foreground_fraction": 0.3076934814453125,
+            "geo_foreground_fraction": 0.3076934814453125,
+            "vanilla_capture": "visual/model_robot4/s_attacking_a0_5_t_end.vanilla.png",
+            "geo_capture": "visual/model_robot4/s_attacking_a0_5_t_end.geo.png",
+            "diff_capture": "visual/model_robot4/s_attacking_a0_5_t_end.diff.png"
+          }
+        ]
+      }
+    },
+    {
+      "model_id": "model_rockbase",
+      "tier": 3,
+      "proof_scope": "production_proof_model",
+      "source_class": "danger.orespawn.entity.client.ModelRockBase",
+      "source_class_sha256": "75d61465a35df80d741ace4b63135cf66be3f8a2e28ef0406b6759231eafd60a",
+      "compiled_dump_sha256": "4b7fad6e7cb0659aa49367a03b5d52585ae7c12b0cc3e197739667633901a025",
+      "bone_count": 22,
+      "cube_count": 22,
+      "geometry_sha256": "b9a0f28d0cc1d70a9a917d841d6979a5db8a2028f6b44cd0b000c59af24743db",
+      "animation_sha256": "7882082857fdb11e02f158ebc3a6d3f970e2ac60d54813f0e903ee97b2293749",
+      "animation_contract_sha256": "9307be969978931d7b930b4fe6cff7737b14e01d694bc3006de0329578663e05",
+      "geometry": {
+        "status": "PASS",
+        "epsilon_blocks": 1e-05,
+        "max_corner_delta_blocks": 2.0000000011677344e-07,
+        "worst_case": "bind:CrystalShape4a#0",
+        "sample_count": 15,
+        "cube_sample_count": 86
+      },
+      "surface_mapping": {
+        "status": "PASS",
+        "position_epsilon_blocks": 1e-05,
+        "normal_epsilon": 1e-06,
+        "uv_epsilon_normalized": 1e-07,
+        "max_position_delta_blocks": 2.0000000011677344e-07,
+        "max_normal_delta": 0.0,
+        "max_uv_delta_normalized": 0.0,
+        "vertex_samples": 2064,
+        "ignored_zero_area_faces": 0,
+        "worst_case": "bind:CrystalShape4a#0",
+        "evidence": "position/normal/UV tuples from baked ModelPart.Cube.compile versus pinned GeckoLib BakedModelFactory rendered through GeoRenderer; faces of exactly zero area are excluded (ruling 2026-09-02)"
+      },
+      "animation": {
+        "status": "PASS",
+        "epsilon_radians": 2e-06,
+        "accepted_pose_comparison": "compiled setupAnim versus actual fresh-baked GeckoLib candidate",
+        "reference_animation_used_for_acceptance": false,
+        "sample_count": 15,
+        "max_rotation_delta_radians": 0.0,
+        "max_dense_rotation_delta_radians": 0.0,
+        "max_unexpected_position_or_scale_delta": 0.0,
+        "worst_case": "exact",
+        "dense_worst_case": "exact",
+        "rotation_channel_samples": 990,
+        "dense_rotation_channel_samples": 0,
+        "contract": {
+          "kind": "entity_state",
+          "accepted_runtime_path": "production OreSpawnGeoReplacement.applyCustomAnimations posed from declared entity states through the entity's pose interface; compiled poseFrom on the same states",
+          "candidate_class": "danger.orespawn.entity.client.RockBaseGeoReplacement",
+          "entity_states": [
+            {
+              "name": "type_0",
+              "rock_type": 0
+            },
+            {
+              "name": "type_1",
+              "rock_type": 1
+            },
+            {
+              "name": "type_2",
+              "rock_type": 2
+            },
+            {
+              "name": "type_3",
+              "rock_type": 3
+            },
+            {
+              "name": "type_4",
+              "rock_type": 4
+            },
+            {
+              "name": "type_5",
+              "rock_type": 5
+            },
+            {
+              "name": "type_6",
+              "rock_type": 6
+            },
+            {
+              "name": "type_7",
+              "rock_type": 7
+            },
+            {
+              "name": "type_8",
+              "rock_type": 8
+            },
+            {
+              "name": "type_9",
+              "rock_type": 9
+            },
+            {
+              "name": "type_10",
+              "rock_type": 10
+            },
+            {
+              "name": "type_11",
+              "rock_type": 11
+            },
+            {
+              "name": "type_12",
+              "rock_type": 12
+            },
+            {
+              "name": "type_13",
+              "rock_type": 13
+            }
+          ],
+          "inputs": {
+            "limb_swing": 0.0,
+            "limb_swing_amounts": [
+              0.0
+            ],
+            "net_head_yaw_degrees": 0.0,
+            "head_pitch_degrees": 0.0
+          },
+          "max_position_delta_model_units": 0.0,
+          "position_epsilon_model_units": 0.0001,
+          "position_worst_case": "exact",
+          "position_channel_samples": 990,
+          "hidden_bone_checks": 14
+        }
+      },
+      "reference_animation": {
+        "status": "SCHEMA_VALID_REFERENCE_ONLY",
+        "role": "NOT_APPLICABLE_CODE_DRIVEN_MODEL",
+        "clip_count": 0,
+        "constant_vector_count": 0,
+        "runtime_acceptance": false
+      },
+      "visual": {
+        "status": "PASS",
+        "image_size": [
+          256,
+          256
+        ],
+        "camera": {
+          "yaw_degrees": 34.0,
+          "pitch_degrees": -28.0
+        },
+        "channel_tolerance": 2,
+        "changed_fraction_threshold": 0.001,
+        "mean_absolute_error_threshold": 0.25,
+        "minimum_foreground_fraction_threshold": 0.001,
+        "max_changed_fraction": 0.0,
+        "max_mean_absolute_error": 0.0,
+        "z_fight_policy": "pixels where two different quads meet the front within 1e-06 depth with different texels are draw-order z-fights, excluded from the comparison and painted in the diff (ruling 2, 2026-09-02)",
+        "max_contested_fraction": 0.0,
+        "cutout_alpha_threshold": 0.1,
+        "minimum_observed_foreground_fraction": 0.064239501953125,
+        "samples": [
+          {
+            "sample": "s_type_1_t0",
+            "camera": null,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "contested_fraction": 0.0,
+            "vanilla_foreground_fraction": 0.064239501953125,
+            "geo_foreground_fraction": 0.064239501953125,
+            "vanilla_capture": "visual/model_rockbase/s_type_1_t0.vanilla.png",
+            "geo_capture": "visual/model_rockbase/s_type_1_t0.geo.png",
+            "diff_capture": "visual/model_rockbase/s_type_1_t0.diff.png"
+          },
+          {
+            "sample": "s_type_2_t0",
+            "camera": null,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "contested_fraction": 0.0,
+            "vanilla_foreground_fraction": 0.1435546875,
+            "geo_foreground_fraction": 0.1435546875,
+            "vanilla_capture": "visual/model_rockbase/s_type_2_t0.vanilla.png",
+            "geo_capture": "visual/model_rockbase/s_type_2_t0.geo.png",
+            "diff_capture": "visual/model_rockbase/s_type_2_t0.diff.png"
+          },
+          {
+            "sample": "s_type_3_t0",
+            "camera": null,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "contested_fraction": 0.0,
+            "vanilla_foreground_fraction": 0.1435546875,
+            "geo_foreground_fraction": 0.1435546875,
+            "vanilla_capture": "visual/model_rockbase/s_type_3_t0.vanilla.png",
+            "geo_capture": "visual/model_rockbase/s_type_3_t0.geo.png",
+            "diff_capture": "visual/model_rockbase/s_type_3_t0.diff.png"
+          },
+          {
+            "sample": "s_type_4_t0",
+            "camera": null,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "contested_fraction": 0.0,
+            "vanilla_foreground_fraction": 0.1435546875,
+            "geo_foreground_fraction": 0.1435546875,
+            "vanilla_capture": "visual/model_rockbase/s_type_4_t0.vanilla.png",
+            "geo_capture": "visual/model_rockbase/s_type_4_t0.geo.png",
+            "diff_capture": "visual/model_rockbase/s_type_4_t0.diff.png"
+          },
+          {
+            "sample": "s_type_5_t0",
+            "camera": null,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "contested_fraction": 0.0,
+            "vanilla_foreground_fraction": 0.1435546875,
+            "geo_foreground_fraction": 0.1435546875,
+            "vanilla_capture": "visual/model_rockbase/s_type_5_t0.vanilla.png",
+            "geo_capture": "visual/model_rockbase/s_type_5_t0.geo.png",
+            "diff_capture": "visual/model_rockbase/s_type_5_t0.diff.png"
+          },
+          {
+            "sample": "s_type_6_t0",
+            "camera": null,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "contested_fraction": 0.0,
+            "vanilla_foreground_fraction": 0.1435546875,
+            "geo_foreground_fraction": 0.1435546875,
+            "vanilla_capture": "visual/model_rockbase/s_type_6_t0.vanilla.png",
+            "geo_capture": "visual/model_rockbase/s_type_6_t0.geo.png",
+            "diff_capture": "visual/model_rockbase/s_type_6_t0.diff.png"
+          },
+          {
+            "sample": "s_type_7_t0",
+            "camera": null,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "contested_fraction": 0.0,
+            "vanilla_foreground_fraction": 0.1542205810546875,
+            "geo_foreground_fraction": 0.1542205810546875,
+            "vanilla_capture": "visual/model_rockbase/s_type_7_t0.vanilla.png",
+            "geo_capture": "visual/model_rockbase/s_type_7_t0.geo.png",
+            "diff_capture": "visual/model_rockbase/s_type_7_t0.diff.png"
+          },
+          {
+            "sample": "s_type_8_t0",
+            "camera": null,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "contested_fraction": 0.0,
+            "vanilla_foreground_fraction": 0.1435546875,
+            "geo_foreground_fraction": 0.1435546875,
+            "vanilla_capture": "visual/model_rockbase/s_type_8_t0.vanilla.png",
+            "geo_capture": "visual/model_rockbase/s_type_8_t0.geo.png",
+            "diff_capture": "visual/model_rockbase/s_type_8_t0.diff.png"
+          },
+          {
+            "sample": "s_type_9_t0",
+            "camera": null,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "contested_fraction": 0.0,
+            "vanilla_foreground_fraction": 0.17401123046875,
+            "geo_foreground_fraction": 0.17401123046875,
+            "vanilla_capture": "visual/model_rockbase/s_type_9_t0.vanilla.png",
+            "geo_capture": "visual/model_rockbase/s_type_9_t0.geo.png",
+            "diff_capture": "visual/model_rockbase/s_type_9_t0.diff.png"
+          },
+          {
+            "sample": "s_type_10_t0",
+            "camera": null,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "contested_fraction": 0.0,
+            "vanilla_foreground_fraction": 0.17401123046875,
+            "geo_foreground_fraction": 0.17401123046875,
+            "vanilla_capture": "visual/model_rockbase/s_type_10_t0.vanilla.png",
+            "geo_capture": "visual/model_rockbase/s_type_10_t0.geo.png",
+            "diff_capture": "visual/model_rockbase/s_type_10_t0.diff.png"
+          },
+          {
+            "sample": "s_type_11_t0",
+            "camera": null,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "contested_fraction": 0.0,
+            "vanilla_foreground_fraction": 0.17401123046875,
+            "geo_foreground_fraction": 0.17401123046875,
+            "vanilla_capture": "visual/model_rockbase/s_type_11_t0.vanilla.png",
+            "geo_capture": "visual/model_rockbase/s_type_11_t0.geo.png",
+            "diff_capture": "visual/model_rockbase/s_type_11_t0.diff.png"
+          },
+          {
+            "sample": "s_type_12_t0",
+            "camera": null,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "contested_fraction": 0.0,
+            "vanilla_foreground_fraction": 0.17401123046875,
+            "geo_foreground_fraction": 0.17401123046875,
+            "vanilla_capture": "visual/model_rockbase/s_type_12_t0.vanilla.png",
+            "geo_capture": "visual/model_rockbase/s_type_12_t0.geo.png",
+            "diff_capture": "visual/model_rockbase/s_type_12_t0.diff.png"
+          }
+        ]
+      }
     }
   ],
-  "fixtures": [],
+  "fixtures": [
+    {
+      "model_id": "fixture_runtime_basis_yz",
+      "tier": 0,
+      "proof_scope": "non_production_converter_fixture",
+      "source_class": "danger.orespawn.g1.G1RuntimeBasisFixtureModel",
+      "source_class_sha256": "0cdcac7fb9c6ed3cf22e6040e48ce44e858364b29dda7de2a014593e2232d96d",
+      "compiled_dump_sha256": "182a4953fc282001b769e4337d84e22f54e9aae6fdd90f4e7079e83e2b66f3f8",
+      "bone_count": 2,
+      "cube_count": 2,
+      "geometry_sha256": "17c805b3792c918cecc225c989e0af528ae46a18cf5fbc833df51481c48872af",
+      "animation_sha256": "7882082857fdb11e02f158ebc3a6d3f970e2ac60d54813f0e903ee97b2293749",
+      "animation_contract_sha256": "6be5c79d3c03c3a8d65de9f18f8d1a48f33aa6ac7e5b318d2e0f69d72ad50659",
+      "geometry": {
+        "status": "PASS",
+        "epsilon_blocks": 1e-05,
+        "max_corner_delta_blocks": 2.7676705008476174e-07,
+        "worst_case": "t_end:basis_child#0",
+        "sample_count": 7,
+        "cube_sample_count": 14
+      },
+      "surface_mapping": {
+        "status": "PASS",
+        "position_epsilon_blocks": 1e-05,
+        "normal_epsilon": 1e-06,
+        "uv_epsilon_normalized": 1e-07,
+        "max_position_delta_blocks": 2.7676705008476174e-07,
+        "max_normal_delta": 2.886173938163454e-07,
+        "max_uv_delta_normalized": 0.0,
+        "vertex_samples": 336,
+        "ignored_zero_area_faces": 0,
+        "worst_case": "t_quarter:basis_child#0",
+        "evidence": "position/normal/UV tuples from baked ModelPart.Cube.compile versus pinned GeckoLib BakedModelFactory rendered through GeoRenderer; faces of exactly zero area are excluded (ruling 2026-09-02)"
+      },
+      "animation": {
+        "status": "PASS",
+        "epsilon_radians": 2e-06,
+        "accepted_pose_comparison": "compiled setupAnim versus actual fresh-baked GeckoLib candidate",
+        "reference_animation_used_for_acceptance": false,
+        "sample_count": 7,
+        "max_rotation_delta_radians": 0.0,
+        "max_dense_rotation_delta_radians": 0.0,
+        "max_unexpected_position_or_scale_delta": 0.0,
+        "worst_case": "exact",
+        "dense_worst_case": "exact",
+        "rotation_channel_samples": 42,
+        "dense_rotation_channel_samples": 0,
+        "contract": {
+          "kind": "code_driven",
+          "accepted_runtime_path": "production OreSpawnGeoReplacement.applyCustomAnimations through OreSpawnGeoReplacementModel.setCustomAnimations",
+          "candidate_class": "danger.orespawn.g1.G1RuntimeBasisFixtureReplacement",
+          "inputs": {
+            "limb_swing": 2.0,
+            "limb_swing_amounts": [
+              0.5
+            ],
+            "net_head_yaw_degrees": 30.0,
+            "head_pitch_degrees": -20.0
+          },
+          "max_position_delta_model_units": 0.0,
+          "position_epsilon_model_units": 0.0001,
+          "position_worst_case": "exact",
+          "position_channel_samples": 42,
+          "hidden_bone_checks": 6
+        }
+      },
+      "reference_animation": {
+        "status": "SCHEMA_VALID_REFERENCE_ONLY",
+        "role": "NOT_APPLICABLE_CODE_DRIVEN_MODEL",
+        "clip_count": 0,
+        "constant_vector_count": 0,
+        "runtime_acceptance": false
+      },
+      "fixture_coverage": {
+        "status": "PASS",
+        "proof_scope": "non_production_converter_fixture",
+        "required_coverage": [
+          "nested_parent_bone",
+          "non_mirrored_uv",
+          "nonzero_bind_rotation",
+          "uniform_inflate"
+        ],
+        "compiled_tree_observed": {
+          "nested_parent_bone": true,
+          "non_mirrored_uv": true,
+          "nonzero_bind_rotation": true,
+          "uniform_inflate": true
+        },
+        "generated_geo_observed": {
+          "nested_parent_bone": true,
+          "non_mirrored_uv": true,
+          "nonzero_bind_rotation": true,
+          "uniform_inflate": true
+        }
+      }
+    }
+  ],
   "deterministic_text_outputs": {
     "status": "PASS",
     "line_ending": "LF",
-    "file_count": 12,
+    "file_count": 66,
     "files": [
       "model_elevator.compiled.json",
       "model_elevator.geo-render.json",
@@ -367,9 +1795,63 @@
       "model_vortex.geo.json",
       "model_vortex.animation.json",
       "model_vortex.animation-contract.json",
-      "model_vortex.conversion.json"
+      "model_vortex.conversion.json",
+      "model_island.compiled.json",
+      "model_island.geo-render.json",
+      "model_island.geo.json",
+      "model_island.animation.json",
+      "model_island.animation-contract.json",
+      "model_island.conversion.json",
+      "model_islandtoo.compiled.json",
+      "model_islandtoo.geo-render.json",
+      "model_islandtoo.geo.json",
+      "model_islandtoo.animation.json",
+      "model_islandtoo.animation-contract.json",
+      "model_islandtoo.conversion.json",
+      "model_robot1.compiled.json",
+      "model_robot1.geo-render.json",
+      "model_robot1.geo.json",
+      "model_robot1.animation.json",
+      "model_robot1.animation-contract.json",
+      "model_robot1.conversion.json",
+      "model_robot5.compiled.json",
+      "model_robot5.geo-render.json",
+      "model_robot5.geo.json",
+      "model_robot5.animation.json",
+      "model_robot5.animation-contract.json",
+      "model_robot5.conversion.json",
+      "model_robot2.compiled.json",
+      "model_robot2.geo-render.json",
+      "model_robot2.geo.json",
+      "model_robot2.animation.json",
+      "model_robot2.animation-contract.json",
+      "model_robot2.conversion.json",
+      "model_robot3.compiled.json",
+      "model_robot3.geo-render.json",
+      "model_robot3.geo.json",
+      "model_robot3.animation.json",
+      "model_robot3.animation-contract.json",
+      "model_robot3.conversion.json",
+      "model_robot4.compiled.json",
+      "model_robot4.geo-render.json",
+      "model_robot4.geo.json",
+      "model_robot4.animation.json",
+      "model_robot4.animation-contract.json",
+      "model_robot4.conversion.json",
+      "model_rockbase.compiled.json",
+      "model_rockbase.geo-render.json",
+      "model_rockbase.geo.json",
+      "model_rockbase.animation.json",
+      "model_rockbase.animation-contract.json",
+      "model_rockbase.conversion.json",
+      "fixture_runtime_basis_yz.compiled.json",
+      "fixture_runtime_basis_yz.geo-render.json",
+      "fixture_runtime_basis_yz.geo.json",
+      "fixture_runtime_basis_yz.animation.json",
+      "fixture_runtime_basis_yz.animation-contract.json",
+      "fixture_runtime_basis_yz.conversion.json"
     ]
   },
-  "visual_artifact_count": 45,
+  "visual_artifact_count": 150,
   "visual_artifact_policy": "output cleared first; exact report-referenced PNG set only"
 }
