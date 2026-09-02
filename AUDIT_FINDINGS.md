@@ -5920,6 +5920,89 @@ keeps BUG-036. Commit 4ea395c's message retains the old number.)*
   exact name git does not track; mutation-tested by re-uppercasing one
   tracked entry (audit → ERROR) and restoring it.)
 
+### BUG-039 — Hoverboard rider appears seated in the owner's pack; original and port both declare standing (REPORT, 2026-09-02)
+
+- **Impact:** LOW-visual, HIGH-confusion — the owner saw a seated rider on
+  the hoverboard (`orespawn:elevator`) during the Phase G in-game look and
+  asked for standing.
+- **Original contract:** the rider STANDS. `reference_1_7_10_source/.../Elevator.java:121-123`
+  is a hand-written `shouldRiderSit() { return false; }` — a Forge 1.7.10 API
+  method the author overrode on purpose; the mount offset (`:161-163`,
+  `:517-521`) puts a 1.7.10 player's feet exactly on the deck, consistent
+  with standing. `RenderElevator.java:27-46` never touches the rider.
+- **Port state:** ALREADY FAITHFUL IN CODE. `Elevator.java:154-158` returns
+  `false` (present since the initial commit); `positionRider` (`:189-193`)
+  places players at deck height (TF-029). The 1.21.1 hook is live: NeoForge's
+  `IEntityExtension.shouldRiderSit()` is read by `LivingEntityRenderer`
+  (`:56-57`) and is the only source of `HumanoidModel.riding`.
+- **Most likely cause of the observation:** a player-animation mod in the
+  owner's CrazyCraft 5.0 pack overriding the rider pose regardless of the
+  vehicle's flag — the pack carries NotEnoughAnimations 1.9.3, Player Animator
+  2.0.4, Serious Player Animations 1.2.0, Better Combat 2.4.0 and SittingPlus
+  1.0.1. The DH & Iris instance carries none of them and is the clean test bed.
+  Discriminator in-game: a seated render also clamps the torso to the board's
+  facing; a standing render lets the torso turn freely while the board lags.
+- **Classification:** PARITY BUG class by the owner's rubric (original stood),
+  but the port code already matches; no port change is indicated until the
+  cause is reproduced without the pose mods. If it reproduces there, reopen
+  as a port bug; if not, record as third-party interaction (like the Hats
+  Renewed finding in Slice 2).
+- **Resolution:** OPEN — report only, per owner ("report before fixing,
+  separate commits"). Next step: owner rides the board in the DH & Iris
+  instance with the current jar.
+
+### ENT-S-089 — Vortex: eight residual divergences from orig Vortex.java; "flies around doing nothing" is faithful idle + unmet trigger (REPORT, 2026-09-02)
+
+- **Impact:** MEDIUM — the owner reports the Vortex flies around doing
+  nothing. Side-by-side of `reference_1_7_10_source/.../Vortex.java` (404
+  lines) and `EntityVortex.java` (331 lines): the AI shape is the same (no
+  goals; wander + drag-pull + melee in the server tick; targeting via
+  `findSomethingToAttack`), and the observation is explained WITHOUT a port
+  bug: the target predicate rejects CREATIVE players (orig `:302-306`, port
+  `:320`), requires a `LivingEntity` inside the 16/10/16 inflated box with
+  line of sight, and excludes eleven species — a creative observer in an
+  empty area is never a target, so no smoke burst, no pull, no hit, exactly
+  as in 1.7.10 (the pull is also delivered through `hasImpulse`, invisible
+  until a hit lands; ruled faithful in BUG-019). Discriminator: stand near it
+  in SURVIVAL within ~10 blocks in the open.
+- **Real divergences found (none previously recorded; none alone produces
+  "does nothing", 1-3 blunt the fight once a target exists):**
+  1. Hitbox `setSize(2.0f, 4.0f)` (orig `:50`) vs `.sized(1.0f, 1.5f)`
+     (`ModEntities.java:281`) — shrinks the scan box and drops the LoS eye from
+     ~3.4 to ~1.28 blocks, so the port fails line-of-sight over terrain the
+     original cleared. Precedent for restoring: Cephadrome (AUDIT `:796`).
+  2. Missing empty `collideWithEntity` override (orig `:98-99`): with
+     `isPushable()` true and no `doPush`, `pushEntities()` shoves the victim
+     out of the vortex at the range where the drag pull is strongest.
+  3. Missing `canSeeTarget` clip probe on the wander candidate (orig
+     `:146-148`, `:178-180`; port `:203` accepts on `isAir()` alone); the
+     invented `stuckCount > 30` retarget (`:172-179`, `:191`) looks like a
+     workaround for the symptom this creates.
+  4. Missing `persistenceRequired` early return before the daytime discard
+     (orig `:131-133`; port `:131`) — a name-tagged Vortex can vanish at dawn.
+     Sibling `EntityRotator.java:115` has it.
+  5. Missing `doesEntityNotTriggerPressurePlate -> true` (orig `:221-223`).
+  6. Missing fixed voice pitch 1.0 (orig `:78-80`); vanilla randomizes +/-0.2.
+  7. Smoke-particle drift sign inverted: port `:121,123` uses `dir + pi/2`
+     where the original evaluates `dir - pi/2` (its `dir -= pi` happens inside
+     the first cos at `:124`). Cosmetic.
+  8. Wander retarget threshold `< 2.1` (orig `:165`) vs `< 4.0` (port
+     `:191`), and the original's write-before-validate quirk (`:176`) dropped
+     (port assigns only on success, `:204`). Cadence only.
+- **Already-ruled, not divergences:** 5-tick target cache (OPT-004, ruled
+  apply); 1-in-200 heal unguarded (BUG-031 faithful); pull via `hasImpulse`
+  (BUG-019 faithful); skywardLaunch removed (ENT-S-069).
+- **Tests:** `EntityLogicTestsB#i050_vortex_no_launch_drag_pull` proves the
+  pull vector on one step; nothing exercises `findSomethingToAttack`, the
+  wander loop, or LoS acquisition — exactly where 1-3 live.
+- **Resolution:** OPEN — report only, per owner. Proposed as one audit-fix
+  slice (separate commit): restore hitbox 2.0x4.0 (with the ModEntities dims
+  + any profile main-size pin), empty `doPush`, `canSeeTarget` on wander
+  candidates (drop `stuckCount`), the persistence gate, the pressure-plate
+  and pitch overrides, the particle sign, the 2.1 threshold and the
+  write-before-validate quirk; plus a gametest for target acquisition with a
+  survival player vs a creative player.
+
 ### TEST-003 — Config-flipping gametests in the concurrent default batch
 
 - **Impact:** MEDIUM (suite reliability) — boss005/boss012 flip a global

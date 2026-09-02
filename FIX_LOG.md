@@ -4200,3 +4200,25 @@ error(s), 0 advisory(ies), 4 acknowledged -> exit 0`, `s4Parity` 2 models
 benchmark evidence verified; jar carries `geo/entity/vortex.geo.json` +
 `VortexGeoReplacement`; `runGameTestServer` exit 0 - literal `All 193 required
 tests passed`. Not pushed.
+
+## OWNER FINDINGS 3 + 4 — reports, no fixes (2026-09-02)
+
+(3) HOVERBOARD RIDER POSTURE -> AUDIT BUG-039. The 1.7.10 original STOOD
+(hand-written `shouldRiderSit() { return false; }`, orig Elevator.java:121-123)
+and the port already returns false (Elevator.java:154-158) with the standing
+seat math (TF-029); the NeoForge hook is live. The seated rider the owner saw
+is most plausibly one of the pack's player-animation mods (NotEnoughAnimations,
+Player Animator, Serious Player Animations, SittingPlus) re-posing the rider.
+Classification by the owner's rubric: parity-bug class, but the port code is
+already faithful - no change until reproduced in the DH & Iris instance
+(29 mods, none of those). No MOD entry proposed.
+
+(4) VORTEX "FLIES AROUND DOING NOTHING" -> AUDIT ENT-S-089. Faithful idle +
+unmet trigger: the target predicate rejects creative players and needs a
+living, line-of-sight target inside 16/10/16 - identical to 1.7.10. Eight
+real divergences were found underneath (hitbox 2x4 -> 1x1.5 lowering the LoS
+eye; missing empty doPush so the vortex shoves victims away; wander picks
+without the canSeeTarget probe; missing persistence gate on the dawn discard;
+pressure plate; voice pitch; particle drift sign; wander threshold/quirk).
+Proposed as one audit-fix slice in its own commit after the owner's word;
+a survival-vs-creative target-acquisition gametest goes with it.
