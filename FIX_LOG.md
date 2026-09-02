@@ -3778,3 +3778,38 @@ asset audit literal `RESULT: 0 error(s), 0 advisory(ies), 3 acknowledged -> exit
 `geo/entity/beaver.geo.json`, `animations/entity/beaver.animation.json` and the
 new classes; `runGameTestServer` exit 0 - literal `All 193 required tests
 passed` (`193 GAME TESTS COMPLETE`, +1 = phaseg001). Not pushed.
+
+## PHASE G SLICE 2 — owner in-game review + third-party compat finding (2026-09-02)
+
+REVIEW: the owner ran the Slice 2 build in the CrazyCraft 5.0 instance (201
+mods, GeckoLib 4.9.2) with `-Dorespawn.dev.beaverRenderer=candidate`. Startup
+clean (switch warning logged, no OreSpawn/GeckoLib/MHLib errors), Beaver
+summoned and reviewed: "looks like it works". One issue reported: hats from
+Hats Renewed 21.1.1 no longer sit on the beaver's head.
+
+ROOT CAUSE (bytecode of `me.guivnf.mods.hats.client.compat.GeckoLibCompat`):
+`isGeckoLibEntity` resolves the entity's renderer and tests it with
+`Class.isInstance` against the CONCRETE class
+`software.bernie.geckolib.renderer.GeoEntityRenderer`; its reflective head
+lookup (`getGeoModel` -> `getBone(String)` over HEAD_NAMES = head/Head/skull/
+Skull/neck/Neck/head_pivot/HEAD) is also bound to that class. The seam's
+renderer extends `GeoReplacedEntityRenderer` - the sibling GeckoLib renderer
+that is the whole point of Slice 2 (no entity-class edits) - so the check
+fails and `MixinEntityRenderDispatcher.hats$fallbackRender` places the hat
+from `getEyeHeight`/`getBbHeight`, wrong for a low forward-headed rig. The
+converted geo DOES carry a bone named `head`; had the check tested the
+`GeoRenderer` interface (implemented by both renderers, and the declaring
+type of `getGeoModel`), the hat would have been positioned correctly. The
+Queen (a `GeoEntityRenderer`) passes the class check but her rig has no bone
+in HEAD_NAMES (`LHead`, `NeckL1`, ...), so hats already fell back on her.
+
+DISPOSITION: not fixable in this repo without either giving up the
+replaced-entity design or mixing into another mod's classes; reported
+upstream to Hats Renewed with the one-line fix. Recorded as a CUTOVER INPUT
+for ruling Q1: any third-party mod that hooks vanilla `EntityModel` parts or
+checks `GeoEntityRenderer` by class loses a species the day it moves to this
+seam. Inventory §5 updated.
+
+GATE (docs-only, on master, sequential): `build` exit 0 - `RESULT: 0 error(s), 0
+advisory(ies), 3 acknowledged -> exit 0`; `runGameTestServer` exit 0 - literal
+`All 193 required tests passed`. Not pushed.

@@ -176,6 +176,13 @@ Verdict: **discard.** Superseded by the UTF-8 repair in `d87f81b`.
   visually-invisible tolerance (~1e-3 rad) so Tier-2 clips become real
   artist-editable keyframes, or keep Tier-2 motion code-driven and shrink the
   Fiverr scope to new clips only. This decision gates slices 2 and 4.
+- **Third-party model hooks are a cutover cost.** Owner review of the Slice 2
+  Beaver (2026-09-02) found Hats Renewed misplacing hats: it detects GeckoLib
+  mobs by `GeoEntityRenderer` class, not the `GeoRenderer` interface, so
+  replaced-entity renderers fall back to an eye-height guess (FIX_LOG
+  "owner in-game review"). Reported upstream. Expect the same from any mod
+  that reaches into vanilla `EntityModel` parts; weigh per species before
+  replacing a classic renderer under ruling Q1.
 - **Whether the ten G0 rulings stand as adopted by "okay continue".** The
   consequential ones: outright renderer replacement (no classic-visual config
   toggle); server-fed Tier-1 hitboxes; King/Godzilla head sidecars retained;
