@@ -7,6 +7,7 @@ from pathlib import Path
 
 ROOT = Path(r"C:\Homework\Projects\Orespawn")
 OUT = Path(__file__).parent.parent / "build" / "reference_survey"
+OUT.mkdir(parents=True, exist_ok=True)
 proxy = (ROOT / "reference_1_7_10_source/sources/danger/orespawn/ClientProxyOreSpawn.java").read_text(encoding="utf-8", errors="replace")
 CLIENT = ROOT / "src/main/java/danger/orespawn/entity/client"
 
@@ -37,22 +38,43 @@ for entity, render_cls, model_cls, ctor_args, par2, par3 in regs:
         row["status"] = "NO_PORT_RENDERER"
         rows.append(row); continue
     t = port.read_text(encoding="utf-8", errors="replace")
-    m = re.search(r"super\(context,\s*new \w+\([^;]*?\),\s*" + NUM + r"[fF]?\s*\)", t, flags=re.S)
-    if not m:
-        m2 = re.search(r"super\(context,[^;]*?,\s*([A-Z_]+|[-+]?\d*\.?\d+[fF]?)\s*\)", t, flags=re.S)
-        port_shadow_text = m2.group(1) if m2 else None
-        try:
-            port_shadow = float(port_shadow_text.rstrip("fF")) if port_shadow_text else None
-        except ValueError:
-            const = re.search(r"float " + re.escape(port_shadow_text) + r"\s*=\s*([^;]+);", t)
-            port_shadow = None
-            if const:
-                try:
-                    port_shadow = float(eval(const.group(1).replace("F", "").replace("f", "")))
-                except Exception:
-                    port_shadow = None
-    else:
-        port_shadow = float(m.group(1))
+    # super(context, <model expr with nested parens>, <shadow>): split the argument list with balanced
+    # parentheses and take the LAST top-level argument as the shadow.
+    port_shadow = None
+    port_shadow_text = None
+    k = t.find("super(context,")
+    if k >= 0:
+        depth = 0
+        args = []
+        current = []
+        j = k + len("super(")
+        while j < len(t):
+            ch = t[j]
+            if ch == "(":
+                depth += 1
+            elif ch == ")":
+                if depth == 0:
+                    args.append("".join(current).strip())
+                    break
+                depth -= 1
+            elif ch == "," and depth == 0:
+                args.append("".join(current).strip())
+                current = []
+                j += 1
+                continue
+            current.append(ch)
+            j += 1
+        if len(args) >= 3:
+            port_shadow_text = args[-1]
+            try:
+                port_shadow = float(port_shadow_text.rstrip("fF"))
+            except ValueError:
+                const = re.search(r"float " + re.escape(port_shadow_text) + r"\s*=\s*([^;]+);", t)
+                if const:
+                    try:
+                        port_shadow = float(eval(const.group(1).replace("F", "").replace("f", "")))
+                    except Exception:
+                        port_shadow = None
     scales = re.findall(r"poseStack\.scale\(\s*([^,]+),", t)
     scale_consts = {}
     for c in re.findall(r"float (\w+)\s*=\s*([-+]?\d*\.?\d+)[fF]?\s*;", t):

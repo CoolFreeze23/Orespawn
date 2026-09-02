@@ -277,8 +277,9 @@ public class ModEntities {
 
     public static final DeferredHolder<EntityType<?>, EntityType<EntityVortex>> ENTITY_VORTEX =
             ENTITY_TYPES.register("vortex", () -> EntityType.Builder.of(EntityVortex::new, MobCategory.MONSTER)
+                    // orig Vortex.java:50 — setSize(2.0f, 4.0f) (ENT-S-089 item 1; was an uncited 1.0x1.5 default)
                     // orig Vortex.java:52 — field_70178_ae = true (fire-immune)
-                    .sized(1.0f, 1.5f).fireImmune().clientTrackingRange(10).build("vortex"));
+                    .sized(2.0f, 4.0f).fireImmune().clientTrackingRange(10).build("vortex"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<EntityWormSmall>> ENTITY_WORM_SMALL =
             ENTITY_TYPES.register("worm_small", () -> EntityType.Builder.of(EntityWormSmall::new, MobCategory.MONSTER)

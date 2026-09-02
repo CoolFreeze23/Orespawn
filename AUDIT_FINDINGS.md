@@ -5995,13 +5995,27 @@ keeps BUG-036. Commit 4ea395c's message retains the old number.)*
 - **Tests:** `EntityLogicTestsB#i050_vortex_no_launch_drag_pull` proves the
   pull vector on one step; nothing exercises `findSomethingToAttack`, the
   wander loop, or LoS acquisition — exactly where 1-3 live.
-- **Resolution:** OPEN — report only, per owner. Proposed as one audit-fix
-  slice (separate commit): restore hitbox 2.0x4.0 (with the ModEntities dims
-  + any profile main-size pin), empty `doPush`, `canSeeTarget` on wander
-  candidates (drop `stuckCount`), the persistence gate, the pressure-plate
-  and pitch overrides, the particle sign, the 2.1 threshold and the
-  write-before-validate quirk; plus a gametest for target acquisition with a
-  survival player vs a creative player.
+- **Resolution:** FIXED (2026-09-02, owner's go, own commit). All eight
+  restored in the classic entity with orig citations: `.sized(2.0f, 4.0f)`
+  (`ModEntities`), empty `doPush`, the eye-line `canSeeTarget` clip probe
+  (`ClipContext.Block.OUTLINE`, no fluids) on every wander candidate with the
+  invented `lastX/Y/Z`/`stuckCount` removed, `!isPersistenceRequired()` on
+  the daytime discard, `isIgnoringBlockTriggers -> true`, `getVoicePitch ->
+  1.0f`, the particle tangent from the decremented `dir` (`dir - PI/2`), the
+  `< 2.1` retarget threshold and the write-before-validate quirk (each
+  candidate assigned before validation, 50 failures leave the last one).
+  Tests (`VortexParityTests`): dims pin, two overlapping Vortexes never move
+  each other, persistence-required survives a forced daytime discard roll
+  while a non-persistent control is discarded, a Vortex on a stone pressure
+  plate leaves it unpowered while a zombie powers its own, voice pitch
+  exactly 1.0 over eight calls. Items 3, 7 and 8 have no deterministic
+  server observable and are pinned by review of the cited lines. Test
+  lessons recorded: `spawnWithNoFreeWill` strips goals but not
+  `customServerAiStep` (`setNoAi(true)` is explicit), and `GameTestHelper.spawn`
+  marks every mob persistence-required (the discard control is added by
+  hand). The survival-vs-creative acquisition test proposed earlier is
+  deferred: the OPT-004 cache and the 16/10/16 scan are unchanged by this
+  fix.
 - **SPLIT PRESENTED (2026-09-02, per owner: "any divergence without a
   recorded MOD entry is a parity bug"):** all EIGHT are PARITY BUGS WITH NO
   RECORD. Method: eight independent classifiers, each refuted by two

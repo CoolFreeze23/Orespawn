@@ -4528,3 +4528,19 @@ GATE (on master, sequential): `build` exit 0 - audit 0/0/4, `s4ReferenceGeometry
 (model_coin, categorised leg; s4 proof rewritten for the new fields), `s4Parity` 11
 models, `g1Parity` 2 models, benchmark verified; `runGameTestServer` exit 0 - literal
 `All 193 required tests passed`. Not pushed.
+
+## ENT-S-089 FIX — Vortex restored to orig Vortex.java on all eight divergences (2026-09-02)
+
+Owner's go on the presented split (all eight parity bugs, no MOD record).
+Changes: ModEntities `.sized(2.0f, 4.0f)` (orig :50); EntityVortex: empty
+`doPush` (orig :98-99), `isIgnoringBlockTriggers` (orig :221-223),
+`getVoicePitch` 1.0 (orig :78-80), particle tangent `dir - PI/2` (orig
+:122-124), `!isPersistenceRequired()` ahead of the daytime discard (orig
+:131-133), wander loop restored (orig :165-182: 1-in-300 or `< 2.1`;
+candidate written before validation; air AND eye-line `canSeeTarget`, orig
+:146-148) with the port's invented stuck counter removed. Five gametests
+pin what the server can observe (see AUDIT ENT-S-089). Suite grows by 5.
+
+GATE (on master, sequential): compile clean; `build` exit 0 - audit 0/0/4, `s4Parity` 11
+models, `g1Parity` 2 models, benchmark verified; `runGameTestServer` exit 0 - literal
+`All 198 required tests passed` (193 + 5 Vortex pins). Not pushed.

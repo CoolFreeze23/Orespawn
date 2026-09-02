@@ -38,10 +38,6 @@ public class EntityVortex extends Monster {
     private static final int WINDED_COOLDOWN_TICKS = 20;
 
     private BlockPos currentFlightTarget = null;
-    private int lastX = 0;
-    private int lastY = 0;
-    private int lastZ = 0;
-    private int stuckCount = 0;
     private int windedCooldownTicks = 0;
     /**
      * orig Vortex.java:46 {@code was_spawnered} — set when the spawn-rule check
@@ -101,6 +97,23 @@ public class EntityVortex extends Monster {
         return true;
     }
 
+    /** orig Vortex.java:98-99 — empty collideWithEntity: the Vortex never shoves what it is pulling (ENT-S-089 item 2). */
+    @Override
+    protected void doPush(Entity entity) {
+    }
+
+    /** orig Vortex.java:221-223 — doesEntityNotTriggerPressurePlate -> true (ENT-S-089 item 5, ENT-S-090). */
+    @Override
+    public boolean isIgnoringBlockTriggers() {
+        return true;
+    }
+
+    /** orig Vortex.java:78-80 — fixed voice pitch; vanilla would jitter +/-0.2 (ENT-S-089 item 6). */
+    @Override
+    public float getVoicePitch() {
+        return 1.0f;
+    }
+
     @Override
     public void tick() {
         super.tick();
@@ -118,9 +131,11 @@ public class EntityVortex extends Monster {
                 double dz = Math.sin(dir - Math.PI) * smokeHeightOffset / 2.0;
                 this.level().addParticle(ParticleTypes.SMOKE,
                         this.getX() + dx, this.getY() + 0.75 + smokeHeightOffset, this.getZ() + dz,
-                        Math.cos(dir + Math.PI / 2.0) * this.random.nextFloat() / 4.0,
+                        // orig Vortex.java:122-124 — the offset uses dir - PI and the velocity the
+                        // further += PI/2 on that same value: dir - PI/2 in the drawn angle (ENT-S-089 item 7)
+                        Math.cos(dir - Math.PI / 2.0) * this.random.nextFloat() / 4.0,
                         this.random.nextFloat() / 2.0,
-                        Math.sin(dir + Math.PI / 2.0) * this.random.nextFloat() / 4.0);
+                        Math.sin(dir - Math.PI / 2.0) * this.random.nextFloat() / 4.0);
             }
         }
 
@@ -128,8 +143,10 @@ public class EntityVortex extends Monster {
             this.heal(1.0f);
         }
 
-        if (!this.level().isClientSide && !this.busyFighting && this.wasSpawnered == 0) {
-            // orig Vortex.java:132-143 — daytime discard skipped while fighting or when spawnered
+        if (!this.level().isClientSide && !this.isPersistenceRequired() && !this.busyFighting
+                && this.wasSpawnered == 0) {
+            // orig Vortex.java:131-143 — daytime discard skipped when persistence is required
+            // (name tag etc., ENT-S-089 item 4), while fighting, or when spawnered
             long dayTimeInCycle = this.level().getDayTime() % DAY_LENGTH_TICKS;
             if (dayTimeInCycle < DAYTIME_DESPAWN_BEFORE && this.random.nextInt(500) == 1) {
                 this.discard();
@@ -169,15 +186,6 @@ public class EntityVortex extends Monster {
         if (this.isRemoved()) return;
         super.customServerAiStep();
 
-        if (this.lastX == (int) this.getX() && this.lastY == (int) this.getY() && this.lastZ == (int) this.getZ()) {
-            ++this.stuckCount;
-        } else {
-            this.stuckCount = 0;
-            this.lastX = (int) this.getX();
-            this.lastY = (int) this.getY();
-            this.lastZ = (int) this.getZ();
-        }
-
         if (this.currentFlightTarget == null) {
             this.currentFlightTarget = this.blockPosition();
         }
@@ -186,24 +194,31 @@ public class EntityVortex extends Monster {
             --this.windedCooldownTicks;
         }
 
+        // orig Vortex.java:165-182 — retarget on the 1-in-300 roll or within sqrt(2.1) blocks of the
+        // integer target (ENT-S-089 item 8: was 4.0 plus an invented stuck counter); each candidate is
+        // WRITTEN before it is validated, so 50 failures leave the last candidate as the target (orig
+        // quirk); a candidate must be air AND visible from the eye line (orig :146-148, item 3).
         double distSq = this.currentFlightTarget.distSqr(this.blockPosition());
 
-        if (this.stuckCount > 30 || this.random.nextInt(300) == 0 || distSq < 4.0) {
-            this.stuckCount = 0;
+        if (this.random.nextInt(300) == 0 || distSq < 2.1) {
             int keepTrying = 50;
-            while (keepTrying > 0) {
-                int xdir = (this.random.nextInt(14) + 10) * (this.random.nextInt(2) == 0 ? -1 : 1);
-                int zdir = (this.random.nextInt(14) + 10) * (this.random.nextInt(2) == 0 ? -1 : 1);
-
-                BlockPos newTarget = new BlockPos(
+            boolean blocked = true;
+            while (blocked && keepTrying != 0) {
+                int zdir = this.random.nextInt(14) + 10;
+                int xdir = this.random.nextInt(14) + 10;
+                if (this.random.nextInt(2) == 0) {
+                    zdir = -zdir;
+                }
+                if (this.random.nextInt(2) == 0) {
+                    xdir = -xdir;
+                }
+                this.currentFlightTarget = new BlockPos(
                         (int) this.getX() + xdir,
                         (int) this.getY() + this.random.nextInt(6) - 3,
                         (int) this.getZ() + zdir);
-
-                if (this.level().getBlockState(newTarget).isAir()) {
-                    this.currentFlightTarget = newTarget;
-                    break;
-                }
+                blocked = !this.level().getBlockState(this.currentFlightTarget).isAir()
+                        || !canSeeTarget(this.currentFlightTarget.getX(), this.currentFlightTarget.getY(),
+                                this.currentFlightTarget.getZ());
                 --keepTrying;
             }
         }
@@ -242,6 +257,18 @@ public class EntityVortex extends Monster {
         float targetYaw = (float) (Math.atan2(newMz, newMx) * 180.0 / Math.PI) - 90.0f;
         float yawDiff = Mth.wrapDegrees(targetYaw - this.getYRot());
         this.setYRot(this.getYRot() + yawDiff / 4.0f);
+    }
+
+    /**
+     * orig Vortex.java:146-148 — {@code canSeeTarget}: no block between the eye line (y + 0.75) and the
+     * block corner; the 1.7.10 ray trace used selection boxes and ignored liquids.
+     */
+    private boolean canSeeTarget(double x, double y, double z) {
+        Vec3 eye = new Vec3(this.getX(), this.getY() + 0.75, this.getZ());
+        return this.level().clip(new net.minecraft.world.level.ClipContext(eye, new Vec3(x, y, z),
+                net.minecraft.world.level.ClipContext.Block.OUTLINE,
+                net.minecraft.world.level.ClipContext.Fluid.NONE, this)).getType()
+                == net.minecraft.world.phys.HitResult.Type.MISS;
     }
 
     @Override
