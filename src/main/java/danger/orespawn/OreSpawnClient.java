@@ -1,6 +1,7 @@
 package danger.orespawn;
 
 import danger.orespawn.client.OreSpawnItemRenderer;
+import danger.orespawn.client.PhaseGDevRenderers;
 import danger.orespawn.entity.client.*;
 import danger.orespawn.gui.CrystalFurnaceScreen;
 import danger.orespawn.gui.CrystalWorkbenchScreen;
@@ -96,7 +97,7 @@ public class OreSpawnClient {
 
             // Creature (passive)
             event.registerEntityRenderer(ModEntities.BARYONYX.get(), BaryonyxRenderer::new);
-            event.registerEntityRenderer(ModEntities.BEAVER.get(), BeaverRenderer::new);
+            event.registerEntityRenderer(ModEntities.BEAVER.get(), PhaseGDevRenderers.beaverRenderer());
             event.registerEntityRenderer(ModEntities.CASSOWARY.get(), CassowaryRenderer::new);
             event.registerEntityRenderer(ModEntities.CHIPMUNK.get(), ChipmunkRenderer::new);
             event.registerEntityRenderer(ModEntities.COCKATEIL.get(), CockateilRenderer::new);

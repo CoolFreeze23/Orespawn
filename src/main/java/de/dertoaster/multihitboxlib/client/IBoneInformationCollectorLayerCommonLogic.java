@@ -12,9 +12,36 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface IBoneInformationCollectorLayerCommonLogic<T extends Object> {
+
+	/**
+	 * Model-bone collection only does anything for a profile that names at
+	 * least one bone and either syncs bones to the server or trusts the client
+	 * to place its own parts. Solver-fed profiles (sync-with-model=false,
+	 * trust-client=false, empty list) must be a strict no-op.
+	 */
+	public static boolean shouldCollectModelBones(
+			boolean syncToModel, boolean trustClient, List<String> synchedBones) {
+		return (syncToModel || trustClient) && synchedBones != null && !synchedBones.isEmpty();
+	}
+
+	public static boolean shouldCollectModelBones(HitboxProfile profile) {
+		return profile != null
+				&& shouldCollectModelBones(profile.syncToModel(), profile.trustClient(), profile.synchedBones());
+	}
+
+	public static boolean shouldCollectModelBones(Entity entity) {
+		if (entity == null || !entity.isMultipartEntity()
+				|| !(entity instanceof IMultipartEntity<?> multipartEntity)) {
+			return false;
+		}
+
+		Optional<HitboxProfile> profile = multipartEntity.getHitboxProfile();
+		return profile.isPresent() && shouldCollectModelBones(profile.get());
+	}
 	
 	public int getCurrentTick();
 	public void setCurrentTick(int tick);
@@ -35,6 +62,13 @@ public interface IBoneInformationCollectorLayerCommonLogic<T extends Object> {
 		// Only collect once per tick!
 		if (entity != null && entity.isMultipartEntity() && entity instanceof IMultipartEntity<?> ime && ime.getHitboxProfile().isPresent()) {
 			HitboxProfile hitboxProfile = ime.getHitboxProfile().get();
+			// Replaced renderers still receive the vendored collector layer, but a
+			// profile that neither syncs nor trusts client bones has nothing to
+			// collect and must pay no bone/world-transform cost.
+			if (!shouldCollectModelBones(hitboxProfile)) {
+				return;
+			}
+
 			final Vec3 worldPos = this.getBoneWorldPosition(bone);
 			this.calcScales(bone);
 			this.calcRotations(bone);
