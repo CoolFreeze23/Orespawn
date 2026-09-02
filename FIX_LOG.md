@@ -3410,41 +3410,41 @@ animation-keyed bone exist in the geo (110 bones). Dispositions:
 Client-visual items ((2), (4)) are not suite-assertable; (3), (5), (6)
 are server logic. Gate: full build green (see commit).
 
-## WGEN Chaos round 2 � density inversion + BlendedNoise unit conversion (2026-08-21)
+## WGEN Chaos round 2 — density inversion + BlendedNoise unit conversion (2026-08-21)
 
 Owner field reports, two rounds: "giant flatworld of stone", then after
-the first fix "still doesn't look right � more verticalness, hills and
+the first fix "still doesn't look right — more verticalness, hills and
 mountains". Three source-verified faithfulness bugs, each alone enough
 to flatten the dimension:
 
 1. INVERTED THRESHOLD. orig ChunkProviderOreSpawn6.func_147419_a
    renders the density field as stone-by-default with AIR where
-   d15 > 0 � the photographic negative of the Nether (whose math it
+   d15 > 0 — the photographic negative of the Nether (whose math it
    copies verbatim). The port used the standard positive=solid
    convention. Fix: final_density wrapped in mul(-1).
 2. CELL-vs-BLOCK SAMPLING. Legacy noise coords are per 4x8x4 CELL;
    modern BlendedNoise samples per BLOCK (compute(): blockX() *
-   684.412 * xz_scale � verified in the decompiled 1.21.1 source).
-   Correct conversion is xz_scale 0.25 / y_scale 0.375 � exactly what
+   684.412 * xz_scale — verified in the decompiled 1.21.1 source).
+   Correct conversion is xz_scale 0.25 / y_scale 0.375 — exactly what
    vanilla's own legacy-Nether port uses (nether/base_3d_noise.json).
    The port had 1.0/3.0: 4x too fine horizontally, 8x vertically.
 3. /128 NORMALIZATION. BlendedNoise.compute() returns
    clampedLerp(min/512, max/512, sel) / 128.0 (same decompiled source,
    last line). The port's spline/blends are in legacy raw units, so the
-   noise arrived ~128x too weak and the �2 cosine band dictated the
+   noise arrived ~128x too weak and the ±2 cosine band dictated the
    shape: deterministic flat plates at band heights. Fix: mul(128) on
    the noise term, keeping the whole router in legacy units.
 
 Also this round: no sea (orig places no fluid; water branch at
 replaceBiomeBlocks:161 is dead code; default_fluid air / sea_level 0),
 grass+dirt default surface at ALL heights with the Y60-65 band the only
-patchy zone (orig :137-160 � the first fix had this backwards), and the
+patchy zone (orig :137-160 — the first fix had this backwards), and the
 teleporter landing hunt ported (orig OreSpawnTeleporter.justPutMe:88-129
 random-walk; findSafeY -> findSafeSpot, void columns no longer
 blind-drop at Y64).
 
 Verification: tools/chaos_slice.py re-implements the legacy octave
-stack and renders orig math vs shipped-bug vs fixed JSON side by side �
+stack and renders orig math vs shipped-bug vs fixed JSON side by side —
 fixed is numerically identical to orig (max |A-C| = 0.0) and shows the
 rolling grass highlands/mountains from the field report; the shipped
 bug reproduces the reported flat plates. Gates: build+assetAudit exit 0,
@@ -3573,3 +3573,64 @@ error(s), 0 advisory(ies), 3 acknowledged -> exit 0`; immutable parity and
 benchmark proof verification passed; `jarJar` completed; `runGameTestServer`
 exit 0 with literal `All 192 required tests passed`. G1 closes here. Q6 remains
 `PENDING_LIVE_PRECUTOVER`; no production cutover, push, or G2 work occurred.
+
+## PHASE G LANDING — G0 + G1 fast-forwarded to master; G1 provenance defect fixed (2026-09-02)
+
+WHAT: fast-forwarded `master` from `5733200` to `fcf0f48` — `aa5b863` (G0
+inventory generator + design doc) and `fcf0f48` (G1 converter + parity
+harness), both produced by the AO orchestrator run of 2026-08-31 on
+`ao/phase-g-integration`. The landing gate was re-run on `master` itself.
+
+DEFECT FOUND ON LANDING (disclosed per the c4a7390 standard): `fcf0f48` as
+committed could not pass its own build gate on a fresh checkout. Its G1 entry
+above records a green `build`, and the worktree log confirms the suite line
+(`All 192 required tests passed`, orespawn-4 worktree, 2026-08-31 20:32 JST) —
+but that gate ran against mixed-CRLF working bytes of `build.gradle` (SHA-256
+`fcd276…`, 243 CR bytes) and the commit then normalized the file to LF (blob
+`6f1276…`) through the new `.gitattributes` rule. `tools/g1_benchmark_gate.py:166`
+hashes the LIVE `build.gradle` against the value recorded in the checked-in
+report, and `check` (hence `build`) depends on `g1BenchmarkVerify`, so every
+fresh checkout of `fcf0f48` is red. Reproduced on `master` before fixing:
+`AssertionError: benchmark source provenance drift: build.gradle`, exit 1.
+The orchestrator had hit the same false red (worker orespawn-10, an
+uncommitted 1,708-line "evidence policy" migration in its worktree); that
+approach is NOT adopted here.
+
+FIX (minimal, tool-driven): regenerated the SMOKE_ONLY component benchmark on
+`master` with `gradlew g1Benchmark` and rewrote the checked-in proof set with
+the gate's own writer mode (`g1_benchmark_gate.py --write-proof`):
+`g1_proof/benchmark/report.json` + `README.md` changed; `protocol.json` is
+byte-identical. Nothing else under `g1_proof` changed, and
+`g1_proof/evidence/report.json` carries no reference to the benchmark, so
+`g1Parity` is untouched. The report's `build.gradle` hash is now the committed
+blob (`6f1276…`) and its base revision is `fcf0f48`. The numbers quoted in the
+G1 entry above (mixed-100 median-ratio delta 87.24 %, p95 delta 0.097065 ms)
+are superseded by 107.29 % / 0.111945 ms — same-machine component-proxy timing
+noise under the unchanged `SMOKE_ONLY / COMPONENT_PROXY_ONLY /
+PENDING_LIVE_PRECUTOVER` labels; no Q6 claim is made or changed. The original
+report remains in history at `fcf0f48`. `g1BenchmarkVerify` on `master`: exit 0,
+literal `G1 BENCHMARK EVIDENCE VERIFIED … checked-in proof verified`.
+
+NOT LANDED: everything else from the orchestrator run stays uncommitted in its
+`~/.ao` worktrees — G2 Tier-3 rigs + texture map (orespawn-4), G3 Beaver
+GeoReplaced candidate (orespawn-7), G4 audit extension (orespawn-5) and
+server-pose foundation (orespawn-8), Q6 live runbook (orespawn-6), case-alias
+micro-slice (orespawn-9), G1 evidence policy (orespawn-10). Salvage material
+pending owner triage; see the Phase G progress review of 2026-09-02.
+
+INCIDENTAL: the Chaos round-2 entry above (2026-08-21) had been written with
+raw cp1252 bytes (0x97 em dash x7, 0xB1 plus-minus x1), making FIX_LOG.md
+invalid UTF-8; an editor pass during this landing turned those 8 characters
+into U+FFFD. Restored as the intended proper UTF-8 characters, verified
+byte-for-byte against HEAD; FIX_LOG.md is now valid UTF-8 throughout.
+Follow-up candidate: a UTF-8 validity check on tracked docs in
+`tools/asset_audit.py`.
+
+GATE (on master, HEAD fcf0f48 + this fix, sequential, no overlap): `build`
+exit 0 — asset audit literal `RESULT: 0 error(s), 0 advisory(ies), 3
+acknowledged -> exit 0`, `G1 PARITY PASS: 2 models; checked-in proof
+verified`, `G1 BENCHMARK EVIDENCE VERIFIED … checked-in proof verified`,
+jarJar built, `BUILD SUCCESSFUL in 47s`; `runGameTestServer` exit 0 —
+literal `All 192 required tests passed` (N verified as 192; `192 GAME TESTS
+COMPLETE`), `BUILD SUCCESSFUL in 1m 22s`. Not pushed; publish is the
+owner's call.
