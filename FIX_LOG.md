@@ -4655,3 +4655,16 @@ GATE (on master, sequential): compile clean; `build` exit 0 - audit 0/0/4, `refe
 the classic model changed; evidence captures identical), benchmark verified (proof
 rewritten for the generated-file pins); `runGameTestServer` exit 0 - literal `All 199 required tests passed`.
 Not pushed.
+
+## ENT-S-091 SLICE C — SeaViper regenerated and re-transcribed (2026-09-02)
+
+Rig from the parsed 1.7.10 constructor (with the +32 z shifts the port had
+dropped); animation transcribed from the original's render body; two
+refuters, no defects; the offset-versus-rotation semantics proven from the
+1.7.10 ModelRenderer bytecode (offsets translate unscaled before the scaled
+rotation-point translate). The old port had written offsetZ into zRot. Pin
+cleared; exact match required by the standing gate. ENT-S-091 is complete:
+ten models, seven regenerated, two equivalent re-expressions made
+leg-exact, one restored from a re-authoring.
+
+GATE (ents091c): build green (asset audit 0/0/4 acknowledged; g1Parity 2, s4Parity 11; referenceGeometry 101/101 PASS, reference_seaviper 34 parts exact, no pins drifted; benchmark verified); runGameTestServer: All 199 required tests passed.

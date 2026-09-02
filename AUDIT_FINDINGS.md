@@ -6208,8 +6208,17 @@ keeps BUG-036. Commit 4ea395c's message retains the old number.)*
     scale; the port had re-authored a three-part 320x160 rig at scale 1 with
     shadow 2.0. Restored, declared sheet kept over the same image (the Coin
     precedent), renderer SCALE 0.33 / SHADOW 0.33.
-  - SeaViper: rig regeneration and animation transcription pending the draft's
-    review (slice C).
+  - SeaViper: FIXED (slice C). Rig regenerated from the parsed constructor
+    including the original's trailing +32 z shifts on all 34 parts (the port
+    had dropped them, sitting two blocks forward of the hitbox); animation
+    transcribed line for line from the original's render body and refuted by
+    two independent readers with no defects. Defect found in the old port on
+    the way: `field_82907_q` is `ModelRenderer.offsetZ` (proven from the
+    1.7.10 bytecode: `glTranslatef(o, p, q)` before the rotation-point
+    translate, unscaled), a pre-rotation translation in block units; the port
+    had written it into `zRot`. It is folded into `z` as
+    `initialPose.z + offsetZ * 16`, exact since both are parent-frame
+    translations before the rotation. Reference pin cleared; exact required.
 
 ### ENT-S-094 — Elevator inherits living-renderer behaviour the 1.7.10 non-living Render never had (REPORT, 2026-09-02)
 

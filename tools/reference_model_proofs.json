@@ -1468,12 +1468,7 @@
         "pitch_degrees": -28.0
       },
       "channels": [],
-      "pinned_divergences": {
-        "MIRROR": 34,
-        "PIVOT": 34,
-        "ROTATION": 13
-      },
-      "pin_note": "parity bugs per the owner's ruling of 2026-09-02 (BUG-041 mirror, ENT-S-091 geometry); pinned so the count can only shrink; cleared when the fix lands"
+      "fixed": "ENT-S-091 slice C (2026-09-02): rig regenerated from the parsed 1.7.10 source; exact match required"
     },
     {
       "id": "reference_skate",
