@@ -4450,3 +4450,43 @@ GATE (on master, sequential): `build` exit 0 - audit 0/0/4, `s4Parity` 10 models
 (pins printed on every visual pass line; Robot5 flagged IN-GAME ACCEPTANCE REQUIRED),
 `g1Parity` 2 models, benchmark evidence verified (proof rewritten for the manifest
 pin fields); `runGameTestServer` exit 0 - literal `All 193 required tests passed`.
+
+## BUG-040 FIX — classic Coin restored to the 1.7.10 model; reference-geometry leg (2026-09-02)
+
+WHAT CHANGED (own commit, owner's go): `ModelCoin` and `CoinRenderer` are the
+1.7.10 originals (see AUDIT BUG-040 resolution for the exact geometry, the
+mirror-ordering correction, the 0.125 scale and 0.09375 shadow, and the
+cosine yaw). `CoinGeoReplacement` returns behind the dev switch (species id
+`coin`) with the descriptor's `applyScale` carrying the 0.125.
+
+THE INDEPENDENT LEG. `tools/reference_geometry_leg.py` parses a decompiled
+1.7.10 `ModelBase` constructor (textureWidth/Height, `new ModelRenderer(this,
+u, v)`, addBox with/without inflate, setRotationPoint and `+=` adjustments,
+setTextureSize, mirror with its construction-time semantics, showModel,
+rotateAngle assignments and the `setRotation` helper, addChild) into a
+geometry list and compares it with the compiled port dump the probe already
+writes (parts matched by exact box signature, then pivots, nesting and
+initial rotations checked; per-part texture size checked against the sheet).
+Anything outside that idiom is reported UNPARSEABLE rather than guessed. It
+runs as `s4ReferenceGeometry` for every manifest model declaring
+`reference_source`, and the parity tool refuses to pass such a model
+without a PASS from it (`--reference-dir`); the leg's JSON is part of the
+checked-in proof. Coin: PASS, 1 part. Parser coverage: all 109 reference
+`Model*.java` files parse (the four holdouts needed `+=` rotation points and
+a scalar read of a part field).
+
+DISCLOSURE: `tools/reference_geometry_leg.py` entered the tree in the
+previous commit (412e2d0, the pins commit) unwired and unexercised, because
+`git add -A` swept it in; it is exercised by this commit's gate.
+
+EVIDENCE: model_coin geometry 0 blocks;
+surface 168 vertex-samples exact; animation
+0 rad (7 samples across the
+571.2-tick period); reference leg PASS; visual changed
+0, MAE 0, excluded 0 (pin 0).
+Benchmark proof rewritten (build.gradle hash pin; smoke numbers only).
+
+GATE (on master, sequential): compile clean; `build` exit 0 - audit 0/0/4,
+`s4ReferenceGeometry` PASS (model_coin), `s4Parity` 11 models + fixture (checked-in
+proof verified, reference leg folded in), `g1Parity` 2 models, benchmark evidence
+verified; `runGameTestServer` exit 0 - literal `All 193 required tests passed`.

@@ -376,6 +376,170 @@
       }
     },
     {
+      "model_id": "model_coin",
+      "tier": 3,
+      "proof_scope": "production_proof_model",
+      "source_class": "danger.orespawn.entity.client.ModelCoin",
+      "source_class_sha256": "2de79f388718e1c82d994e23f62882dc4b0029bf8ea9811ede1df8dc452ded20",
+      "compiled_dump_sha256": "d4e5d274f94d69630be5c0215da6b9029a891aaf347eb63e97dfe898c5a1fd37",
+      "bone_count": 1,
+      "cube_count": 1,
+      "geometry_sha256": "ee02ccb5c68bb659b43a91513c0c48c7ef011660ff2f93a58c499bd3c1e1a047",
+      "animation_sha256": "7882082857fdb11e02f158ebc3a6d3f970e2ac60d54813f0e903ee97b2293749",
+      "animation_contract_sha256": "0a339eff2ce951231de3143475583bc5184c20f07e5812245947e890da6dedb3",
+      "geometry": {
+        "status": "PASS",
+        "epsilon_blocks": 1e-05,
+        "max_corner_delta_blocks": 0.0,
+        "worst_case": "exact",
+        "sample_count": 7,
+        "cube_sample_count": 7
+      },
+      "surface_mapping": {
+        "status": "PASS",
+        "position_epsilon_blocks": 1e-05,
+        "normal_epsilon": 1e-06,
+        "uv_epsilon_normalized": 1e-07,
+        "max_position_delta_blocks": 0.0,
+        "max_normal_delta": 0.0,
+        "max_uv_delta_normalized": 0.0,
+        "vertex_samples": 168,
+        "ignored_zero_area_faces": 0,
+        "worst_case": "exact",
+        "evidence": "position/normal/UV tuples from baked ModelPart.Cube.compile versus pinned GeckoLib BakedModelFactory rendered through GeoRenderer; faces of exactly zero area are excluded (ruling 2026-09-02)"
+      },
+      "animation": {
+        "status": "PASS",
+        "epsilon_radians": 2e-06,
+        "accepted_pose_comparison": "compiled setupAnim versus actual fresh-baked GeckoLib candidate",
+        "reference_animation_used_for_acceptance": false,
+        "sample_count": 7,
+        "max_rotation_delta_radians": 0.0,
+        "max_dense_rotation_delta_radians": 0.0,
+        "max_unexpected_position_or_scale_delta": 0.0,
+        "worst_case": "exact",
+        "dense_worst_case": "exact",
+        "rotation_channel_samples": 21,
+        "dense_rotation_channel_samples": 0,
+        "contract": {
+          "kind": "code_driven",
+          "accepted_runtime_path": "production OreSpawnGeoReplacement.applyCustomAnimations through OreSpawnGeoReplacementModel.setCustomAnimations",
+          "candidate_class": "danger.orespawn.entity.client.CoinGeoReplacement",
+          "inputs": {
+            "limb_swing": 0.0,
+            "limb_swing_amounts": [
+              0.0
+            ],
+            "net_head_yaw_degrees": 0.0,
+            "head_pitch_degrees": 0.0
+          },
+          "max_position_delta_model_units": 0.0,
+          "position_epsilon_model_units": 0.0001,
+          "position_worst_case": "exact",
+          "position_channel_samples": 21,
+          "hidden_bone_checks": 6
+        }
+      },
+      "reference_animation": {
+        "status": "SCHEMA_VALID_REFERENCE_ONLY",
+        "role": "NOT_APPLICABLE_CODE_DRIVEN_MODEL",
+        "clip_count": 0,
+        "constant_vector_count": 0,
+        "runtime_acceptance": false
+      },
+      "reference_geometry": {
+        "status": "PASS",
+        "reference_source": "reference_1_7_10_source/sources/danger/orespawn/ModelCoin.java",
+        "matched_parts": 1,
+        "ground_truth": "1.7.10 decompiled ModelBase constructor, parsed; never the port"
+      },
+      "visual": {
+        "status": "PASS",
+        "image_size": [
+          256,
+          256
+        ],
+        "camera": {
+          "yaw_degrees": 34.0,
+          "pitch_degrees": -28.0
+        },
+        "channel_tolerance": 2,
+        "changed_fraction_threshold": 0.001,
+        "mean_absolute_error_threshold": 0.25,
+        "minimum_foreground_fraction_threshold": 0.001,
+        "max_changed_fraction": 0.0,
+        "max_mean_absolute_error": 0.0,
+        "z_fight_policy": "pixels where two different quads meet the front within 1e-06 depth with different texels are draw-order z-fights, excluded from the comparison and painted in the diff (ruling 2, 2026-09-02)",
+        "max_contested_fraction": 0.0,
+        "contested_fraction_pin": 0.0,
+        "requires_in_game_acceptance": false,
+        "cutout_alpha_threshold": 0.1,
+        "minimum_observed_foreground_fraction": 1.0,
+        "samples": [
+          {
+            "sample": "bind",
+            "camera": null,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "contested_fraction": 0.0,
+            "vanilla_foreground_fraction": 0.3579864501953125,
+            "geo_foreground_fraction": 0.3579864501953125,
+            "vanilla_capture": "visual/model_coin/bind.vanilla.png",
+            "geo_capture": "visual/model_coin/bind.geo.png",
+            "diff_capture": "visual/model_coin/bind.diff.png"
+          },
+          {
+            "sample": "t0",
+            "camera": null,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "contested_fraction": 0.0,
+            "vanilla_foreground_fraction": 0.3579559326171875,
+            "geo_foreground_fraction": 0.3579559326171875,
+            "vanilla_capture": "visual/model_coin/t0.vanilla.png",
+            "geo_capture": "visual/model_coin/t0.geo.png",
+            "diff_capture": "visual/model_coin/t0.diff.png"
+          },
+          {
+            "sample": "t_quarter",
+            "camera": null,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "contested_fraction": 0.0,
+            "vanilla_foreground_fraction": 0.3579864501953125,
+            "geo_foreground_fraction": 0.3579864501953125,
+            "vanilla_capture": "visual/model_coin/t_quarter.vanilla.png",
+            "geo_capture": "visual/model_coin/t_quarter.geo.png",
+            "diff_capture": "visual/model_coin/t_quarter.diff.png"
+          },
+          {
+            "sample": "t_half",
+            "camera": null,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "contested_fraction": 0.0,
+            "vanilla_foreground_fraction": 0.3579559326171875,
+            "geo_foreground_fraction": 0.3579559326171875,
+            "vanilla_capture": "visual/model_coin/t_half.vanilla.png",
+            "geo_capture": "visual/model_coin/t_half.geo.png",
+            "diff_capture": "visual/model_coin/t_half.diff.png"
+          },
+          {
+            "sample": "t_three_quarter",
+            "camera": null,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "contested_fraction": 0.0,
+            "vanilla_foreground_fraction": 0.3579864501953125,
+            "geo_foreground_fraction": 0.3579864501953125,
+            "vanilla_capture": "visual/model_coin/t_three_quarter.vanilla.png",
+            "geo_capture": "visual/model_coin/t_three_quarter.geo.png",
+            "diff_capture": "visual/model_coin/t_three_quarter.diff.png"
+          }
+        ]
+      }
+    },
+    {
       "model_id": "model_island",
       "tier": 3,
       "proof_scope": "production_proof_model",
@@ -1802,7 +1966,7 @@
   "deterministic_text_outputs": {
     "status": "PASS",
     "line_ending": "LF",
-    "file_count": 66,
+    "file_count": 73,
     "files": [
       "model_elevator.compiled.json",
       "model_elevator.geo-render.json",
@@ -1816,6 +1980,13 @@
       "model_vortex.animation.json",
       "model_vortex.animation-contract.json",
       "model_vortex.conversion.json",
+      "model_coin.compiled.json",
+      "model_coin.geo-render.json",
+      "model_coin.geo.json",
+      "model_coin.animation.json",
+      "model_coin.animation-contract.json",
+      "model_coin.conversion.json",
+      "model_coin.reference-geometry.json",
       "model_island.compiled.json",
       "model_island.geo-render.json",
       "model_island.geo.json",
@@ -1872,6 +2043,6 @@
       "fixture_runtime_basis_yz.conversion.json"
     ]
   },
-  "visual_artifact_count": 150,
+  "visual_artifact_count": 165,
   "visual_artifact_policy": "output cleared first; exact report-referenced PNG set only"
 }

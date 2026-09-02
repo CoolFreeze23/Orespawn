@@ -1,0 +1,98 @@
+{
+  "format_version": "1.12.0",
+  "minecraft:geometry": [
+    {
+      "description": {
+        "identifier": "geometry.orespawn.g1.model_coin",
+        "texture_width": 512,
+        "texture_height": 512
+      },
+      "bones": [
+        {
+          "name": "coin",
+          "pivot": [
+            0,
+            133,
+            0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -128,
+                5,
+                0
+              ],
+              "size": [
+                256,
+                256,
+                1
+              ],
+              "uv": {
+                "west": {
+                  "uv": [
+                    1,
+                    1
+                  ],
+                  "uv_size": [
+                    -1,
+                    256
+                  ]
+                },
+                "east": {
+                  "uv": [
+                    258,
+                    1
+                  ],
+                  "uv_size": [
+                    -1,
+                    256
+                  ]
+                },
+                "north": {
+                  "uv": [
+                    257,
+                    1
+                  ],
+                  "uv_size": [
+                    -256,
+                    256
+                  ]
+                },
+                "south": {
+                  "uv": [
+                    514,
+                    1
+                  ],
+                  "uv_size": [
+                    -256,
+                    256
+                  ]
+                },
+                "up": {
+                  "uv": [
+                    257,
+                    0
+                  ],
+                  "uv_size": [
+                    -256,
+                    1
+                  ]
+                },
+                "down": {
+                  "uv": [
+                    513,
+                    1
+                  ],
+                  "uv_size": [
+                    -256,
+                    -1
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

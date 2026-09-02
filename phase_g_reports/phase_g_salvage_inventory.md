@@ -184,6 +184,13 @@ Verdict: **discard.** Superseded by the UTF-8 repair in `d87f81b`.
    manual-part replacement per the Q4 ruling.
 6. **Live Q6** before the first production cutover of a Tier-1 boss.
 
+### 4.0 Coin (BUG-040) landed (2026-09-02)
+
+Classic Coin restored to the 1.7.10 quad and proven by the new
+reference-geometry leg (parsed 1.7.10 source vs compiled port dump, wired as
+`s4ReferenceGeometry`); `CoinGeoReplacement` back behind the switch. Slice 4b
+is complete: nine Tier-3 rigs behind the switch.
+
 ### 4.1 Visual-leg ratification conditions (2026-09-02)
 
 Cutout rasterisation and z-fight exclusion are ratified. Standing: semantics

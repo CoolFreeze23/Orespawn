@@ -2,6 +2,7 @@ package danger.orespawn.client;
 
 import danger.orespawn.OreSpawnMod;
 import danger.orespawn.entity.Beaver;
+import danger.orespawn.entity.Coin;
 import danger.orespawn.entity.Elevator;
 import danger.orespawn.entity.EntityVortex;
 import danger.orespawn.entity.Island;
@@ -14,6 +15,8 @@ import danger.orespawn.entity.Robot5;
 import danger.orespawn.entity.RockBase;
 import danger.orespawn.entity.client.BeaverGeoReplacedRenderer;
 import danger.orespawn.entity.client.BeaverRenderer;
+import danger.orespawn.entity.client.CoinGeoReplacement;
+import danger.orespawn.entity.client.CoinRenderer;
 import danger.orespawn.entity.client.ElevatorGeoReplacement;
 import danger.orespawn.entity.client.ElevatorRenderer;
 import danger.orespawn.entity.client.IslandGeoReplacement;
@@ -52,6 +55,10 @@ public final class PhaseGDevRenderers {
 
     public static EntityRendererProvider<EntityVortex> vortexRenderer() {
         return select("vortex", VortexRenderer::new, VortexGeoReplacement.Renderer::new);
+    }
+
+    public static EntityRendererProvider<Coin> coinRenderer() {
+        return select("coin", CoinRenderer::new, CoinGeoReplacement.Renderer::new);
     }
 
     public static EntityRendererProvider<Island> islandRenderer() {

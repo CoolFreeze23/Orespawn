@@ -35,6 +35,18 @@ The independent gates are:
 
 - Static identity maximum rotation motion: 0 radians; no controller emitted.
 
+## model_coin (Tier 3)
+
+- Exact bones: 1; cubes: 1.
+- Geometry maximum corner delta: 0 blocks (epsilon 1e-05).
+- Surface maximum UV delta: 0; normal delta: 0.
+- Animation maximum rotation delta: 0 radians (epsilon 2e-06).
+- Visual maximum changed fraction: 0; maximum mean absolute error: 0.
+
+- Accepted path: production OreSpawnGeoReplacement.applyCustomAnimations through OreSpawnGeoReplacementModel.setCustomAnimations (`danger.orespawn.entity.client.CoinGeoReplacement`).
+- Rotation maximum delta 0 radians; position maximum delta 0 model units over 21 position channels; inputs {'limb_swing': 0.0, 'limb_swing_amounts': [0.0], 'net_head_yaw_degrees': 0.0, 'head_pitch_degrees': 0.0}.
+- Visual z-fight pixels excluded (ruling 2): maximum contested fraction 0.
+
 ## model_island (Tier 3)
 
 - Exact bones: 6; cubes: 6.

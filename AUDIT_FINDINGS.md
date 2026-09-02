@@ -6021,12 +6021,29 @@ keeps BUG-036. Commit 4ea395c's message retains the old number.)*
   `cos(ageInTicks * 0.05 * wingspeed) * PI` with wingspeed 0.22 (an
   oscillation, not a spin); rendered at scale 0.125 with shadow 0.75 through
   `RenderCoin`. The 256x256 faces map the sheet's opaque 512x267 region.
-- **Resolution:** OPEN — report only, per the owner's rule for out-of-slice
-  findings. Proposed fix (own commit): rebuild `ModelCoin` as the original
-  quad (256x256x1, mirror, pivot y -109), restore the cosine yaw and the
-  0.125 render scale in `CoinRenderer`, then convert it (it returns to
-  Slice 4b-2 as a code-driven candidate; the pulled `CoinGeoReplacement` is
-  in git history at the Slice 4b working tree).
+- **Correction to the contract above:** the original sets `mirror = true`
+  AFTER `addBox`; 1.7.10's `ModelBox` reads the flag in its constructor, so
+  the quad is NOT mirrored. The parser encodes exactly that ordering rule.
+- **Resolution:** FIXED (2026-09-02, own commit, owner's go). `ModelCoin` is
+  the original quad (`addBox(-128, -128, 0, 256, 256, 1)` at `texOffs(0, 0)`,
+  pivot `(0, -109, 0)`, sheet 512x512, not mirrored) with the original yaw
+  `Mth.cos(ageInTicks * 0.05F * 0.22F) * PI`; `CoinRenderer` scales by 0.125
+  in `scale()` (the 1.7.10 `preRenderCallback` slot) with shadow
+  `0.75 * 0.125`. INDEPENDENT LEG: `tools/reference_geometry_leg.py` parses
+  the decompiled 1.7.10 `ModelCoin.java` (never the port) and compares it
+  with the compiled port dump; result PASS, 1 part
+  matched (reference box origin [-128.0, -128.0, 0.0], size [256, 256, 1],
+  uv [0, 0], mirror False, rotation point
+  [0.0, -109.0, 0.0]). Wired as `s4ReferenceGeometry` before `s4Parity`,
+  folded into the proof (`phase_g_reports/s4_proof/reference/`). The GeckoLib
+  candidate `CoinGeoReplacement` (descriptor scale/shadow hooks, code-driven
+  yaw) is back behind the switch, proven: geometry 0
+  blocks, surface 168 vertex-samples exact,
+  animation 0 rad over a full 571.2-tick
+  oscillation, visual changed 0 (foreground now
+  present on both sides), excluded pin 0.
+- **Population question (owner):** answered in FIX_LOG "REFERENCE-GEOMETRY
+  SURVEY" once the whole-population run completes.
 
 ### TEST-003 — Config-flipping gametests in the concurrent default batch
 

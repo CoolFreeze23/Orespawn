@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "kind": "code_driven",
+  "controller_required": false,
+  "candidate_animation_path": "production_replacement_hook",
+  "candidate_class": "danger.orespawn.entity.client.CoinGeoReplacement",
+  "candidate_acceptance_path": "production OreSpawnGeoReplacementModel.setCustomAnimations (Amendment 1 Tier-3 code-driven)",
+  "sample_ids": [
+    "bind",
+    "t0",
+    "t_quarter",
+    "t_0_375000",
+    "t_half",
+    "t_three_quarter",
+    "t_end"
+  ]
+}
