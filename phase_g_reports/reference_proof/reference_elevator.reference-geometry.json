@@ -1,0 +1,292 @@
+{
+  "schema_version": 1,
+  "model_id": "reference_elevator",
+  "reference_source": "reference_1_7_10_source/sources/danger/orespawn/ModelElevator.java",
+  "reference": {
+    "status": "PARSED",
+    "class": "ModelElevator",
+    "texture_width": 64,
+    "texture_height": 64,
+    "parts": [
+      {
+        "name": "Shape2",
+        "tex_u": 0,
+        "tex_v": 18,
+        "boxes": [
+          {
+            "origin": [
+              -3.0,
+              0.0,
+              -9.0
+            ],
+            "size": [
+              6,
+              1,
+              1
+            ],
+            "uv": [
+              0,
+              18
+            ],
+            "mirror": false,
+            "texture_size": [
+              64,
+              64
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          64
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Shape3",
+        "tex_u": 0,
+        "tex_v": 21,
+        "boxes": [
+          {
+            "origin": [
+              -1.0,
+              0.0,
+              -10.0
+            ],
+            "size": [
+              2,
+              1,
+              1
+            ],
+            "uv": [
+              0,
+              21
+            ],
+            "mirror": false,
+            "texture_size": [
+              64,
+              64
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          64
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Shape4",
+        "tex_u": 17,
+        "tex_v": 18,
+        "boxes": [
+          {
+            "origin": [
+              -3.0,
+              0.0,
+              8.0
+            ],
+            "size": [
+              6,
+              1,
+              1
+            ],
+            "uv": [
+              17,
+              18
+            ],
+            "mirror": false,
+            "texture_size": [
+              64,
+              64
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          64
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Shape5",
+        "tex_u": 17,
+        "tex_v": 21,
+        "boxes": [
+          {
+            "origin": [
+              -1.0,
+              0.0,
+              9.0
+            ],
+            "size": [
+              2,
+              1,
+              1
+            ],
+            "uv": [
+              17,
+              21
+            ],
+            "mirror": false,
+            "texture_size": [
+              64,
+              64
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          64
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Shape1",
+        "tex_u": 0,
+        "tex_v": 0,
+        "boxes": [
+          {
+            "origin": [
+              -4.0,
+              0.0,
+              -8.0
+            ],
+            "size": [
+              8,
+              1,
+              16
+            ],
+            "uv": [
+              0,
+              0
+            ],
+            "mirror": false,
+            "texture_size": [
+              64,
+              64
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          64
+        ],
+        "children": [],
+        "parent": null
+      }
+    ]
+  },
+  "ground_truth": "1.7.10 decompiled ModelBase constructor, parsed; never the port",
+  "comparison": {
+    "status": "DIVERGES",
+    "reference_parts_with_boxes": 5,
+    "port_parts_with_boxes": 5,
+    "matched_parts": 5,
+    "categories": {
+      "PIVOT": 5,
+      "MIRROR": 5
+    },
+    "differences": [
+      "Shape2 -> shape2: rotation point [0.0, 0.0, 0.0] != port pivot [0.0, 24.0, 0.0]",
+      "Shape3 -> shape3: rotation point [0.0, 0.0, 0.0] != port pivot [0.0, 24.0, 0.0]",
+      "Shape4 -> shape4: rotation point [0.0, 0.0, 0.0] != port pivot [0.0, 24.0, 0.0]",
+      "Shape5 -> shape5: rotation point [0.0, 0.0, 0.0] != port pivot [0.0, 24.0, 0.0]",
+      "Shape1 -> shape1: rotation point [0.0, 0.0, 0.0] != port pivot [0.0, 24.0, 0.0]",
+      "Shape2 -> shape2: reference box mirror=False (flag at addBox time), port True",
+      "Shape3 -> shape3: reference box mirror=False (flag at addBox time), port True",
+      "Shape4 -> shape4: reference box mirror=False (flag at addBox time), port True",
+      "Shape5 -> shape5: reference box mirror=False (flag at addBox time), port True",
+      "Shape1 -> shape1: reference box mirror=False (flag at addBox time), port True"
+    ],
+    "by_category": {
+      "PIVOT": [
+        "Shape2 -> shape2: rotation point [0.0, 0.0, 0.0] != port pivot [0.0, 24.0, 0.0]",
+        "Shape3 -> shape3: rotation point [0.0, 0.0, 0.0] != port pivot [0.0, 24.0, 0.0]",
+        "Shape4 -> shape4: rotation point [0.0, 0.0, 0.0] != port pivot [0.0, 24.0, 0.0]",
+        "Shape5 -> shape5: rotation point [0.0, 0.0, 0.0] != port pivot [0.0, 24.0, 0.0]",
+        "Shape1 -> shape1: rotation point [0.0, 0.0, 0.0] != port pivot [0.0, 24.0, 0.0]"
+      ],
+      "MIRROR": [
+        "Shape2 -> shape2: reference box mirror=False (flag at addBox time), port True",
+        "Shape3 -> shape3: reference box mirror=False (flag at addBox time), port True",
+        "Shape4 -> shape4: reference box mirror=False (flag at addBox time), port True",
+        "Shape5 -> shape5: reference box mirror=False (flag at addBox time), port True",
+        "Shape1 -> shape1: reference box mirror=False (flag at addBox time), port True"
+      ]
+    }
+  },
+  "status": "PASS_WITH_PINNED_DIVERGENCES",
+  "pinned_divergences": {
+    "MIRROR": 5,
+    "PIVOT": 5
+  }
+}

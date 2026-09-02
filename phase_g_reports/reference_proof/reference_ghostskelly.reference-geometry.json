@@ -1,0 +1,523 @@
+{
+  "schema_version": 1,
+  "model_id": "reference_ghostskelly",
+  "reference_source": "reference_1_7_10_source/sources/danger/orespawn/ModelGhostSkelly.java",
+  "reference": {
+    "status": "PARSED",
+    "class": "ModelGhostSkelly",
+    "texture_width": 128,
+    "texture_height": 64,
+    "parts": [
+      {
+        "name": "body",
+        "tex_u": 0,
+        "tex_v": 0,
+        "boxes": [
+          {
+            "origin": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "size": [
+              1,
+              21,
+              1
+            ],
+            "uv": [
+              0,
+              0
+            ],
+            "mirror": false,
+            "texture_size": [
+              128,
+              64
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          -1.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          128,
+          64
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "shirt",
+        "tex_u": 42,
+        "tex_v": 43,
+        "boxes": [
+          {
+            "origin": [
+              -2.0,
+              0.0,
+              -2.0
+            ],
+            "size": [
+              5,
+              12,
+              5
+            ],
+            "uv": [
+              42,
+              43
+            ],
+            "mirror": false,
+            "texture_size": [
+              128,
+              64
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          128,
+          64
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "head",
+        "tex_u": 40,
+        "tex_v": 29,
+        "boxes": [
+          {
+            "origin": [
+              -3.0,
+              0.0,
+              -3.0
+            ],
+            "size": [
+              7,
+              5,
+              7
+            ],
+            "uv": [
+              40,
+              29
+            ],
+            "mirror": false,
+            "texture_size": [
+              128,
+              64
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          -6.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          128,
+          64
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "stem",
+        "tex_u": 49,
+        "tex_v": 23,
+        "boxes": [
+          {
+            "origin": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "size": [
+              1,
+              2,
+              1
+            ],
+            "uv": [
+              49,
+              23
+            ],
+            "mirror": false,
+            "texture_size": [
+              128,
+              64
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          -8.0,
+          0.0
+        ],
+        "rotation": [
+          0.1745329,
+          0.0,
+          0.1745329
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          128,
+          64
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "rarm",
+        "tex_u": 26,
+        "tex_v": 0,
+        "boxes": [
+          {
+            "origin": [
+              -14.0,
+              0.0,
+              0.0
+            ],
+            "size": [
+              15,
+              1,
+              1
+            ],
+            "uv": [
+              26,
+              0
+            ],
+            "mirror": false,
+            "texture_size": [
+              128,
+              64
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          128,
+          64
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "larm",
+        "tex_u": 63,
+        "tex_v": 0,
+        "boxes": [
+          {
+            "origin": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "size": [
+              15,
+              1,
+              1
+            ],
+            "uv": [
+              63,
+              0
+            ],
+            "mirror": false,
+            "texture_size": [
+              128,
+              64
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          128,
+          64
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "rsleeve",
+        "tex_u": 31,
+        "tex_v": 7,
+        "boxes": [
+          {
+            "origin": [
+              -11.0,
+              0.0,
+              -1.0
+            ],
+            "size": [
+              9,
+              8,
+              3
+            ],
+            "uv": [
+              31,
+              7
+            ],
+            "mirror": false,
+            "texture_size": [
+              128,
+              64
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          128,
+          64
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "lsleeve",
+        "tex_u": 71,
+        "tex_v": 7,
+        "boxes": [
+          {
+            "origin": [
+              3.0,
+              0.0,
+              -1.0
+            ],
+            "size": [
+              9,
+              8,
+              3
+            ],
+            "uv": [
+              71,
+              7
+            ],
+            "mirror": false,
+            "texture_size": [
+              128,
+              64
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          128,
+          64
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "lchains",
+        "tex_u": 98,
+        "tex_v": 0,
+        "boxes": [
+          {
+            "origin": [
+              11.0,
+              -1.0,
+              0.0
+            ],
+            "size": [
+              3,
+              16,
+              1
+            ],
+            "uv": [
+              98,
+              0
+            ],
+            "mirror": false,
+            "texture_size": [
+              128,
+              64
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          128,
+          64
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "rchains",
+        "tex_u": 12,
+        "tex_v": 0,
+        "boxes": [
+          {
+            "origin": [
+              -13.0,
+              -1.0,
+              0.0
+            ],
+            "size": [
+              3,
+              10,
+              1
+            ],
+            "uv": [
+              12,
+              0
+            ],
+            "mirror": false,
+            "texture_size": [
+              128,
+              64
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          128,
+          64
+        ],
+        "children": [],
+        "parent": null
+      }
+    ]
+  },
+  "ground_truth": "1.7.10 decompiled ModelBase constructor, parsed; never the port",
+  "comparison": {
+    "status": "DIVERGES_TEXTURE_MAPPING",
+    "reference_parts_with_boxes": 10,
+    "port_parts_with_boxes": 10,
+    "matched_parts": 10,
+    "categories": {
+      "MIRROR": 10
+    },
+    "differences": [
+      "body -> body: reference box mirror=False (flag at addBox time), port True",
+      "shirt -> shirt: reference box mirror=False (flag at addBox time), port True",
+      "head -> head: reference box mirror=False (flag at addBox time), port True",
+      "stem -> stem: reference box mirror=False (flag at addBox time), port True",
+      "rarm -> rarm: reference box mirror=False (flag at addBox time), port True",
+      "larm -> larm: reference box mirror=False (flag at addBox time), port True",
+      "rsleeve -> rsleeve: reference box mirror=False (flag at addBox time), port True",
+      "lsleeve -> lsleeve: reference box mirror=False (flag at addBox time), port True",
+      "lchains -> lchains: reference box mirror=False (flag at addBox time), port True",
+      "rchains -> rchains: reference box mirror=False (flag at addBox time), port True"
+    ],
+    "by_category": {
+      "MIRROR": [
+        "body -> body: reference box mirror=False (flag at addBox time), port True",
+        "shirt -> shirt: reference box mirror=False (flag at addBox time), port True",
+        "head -> head: reference box mirror=False (flag at addBox time), port True",
+        "stem -> stem: reference box mirror=False (flag at addBox time), port True",
+        "rarm -> rarm: reference box mirror=False (flag at addBox time), port True",
+        "larm -> larm: reference box mirror=False (flag at addBox time), port True",
+        "rsleeve -> rsleeve: reference box mirror=False (flag at addBox time), port True",
+        "lsleeve -> lsleeve: reference box mirror=False (flag at addBox time), port True",
+        "lchains -> lchains: reference box mirror=False (flag at addBox time), port True",
+        "rchains -> rchains: reference box mirror=False (flag at addBox time), port True"
+      ]
+    }
+  },
+  "status": "PASS_WITH_PINNED_DIVERGENCES",
+  "pinned_divergences": {
+    "MIRROR": 10
+  }
+}

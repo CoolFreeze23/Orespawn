@@ -184,6 +184,13 @@ Verdict: **discard.** Superseded by the UTF-8 repair in `d87f81b`.
    manual-part replacement per the Q4 ruling.
 6. **Live Q6** before the first production cutover of a Tier-1 boss.
 
+### 3.9 Parity remediation before 4c (owner sequencing, 2026-09-02)
+
+Standing reference-geometry gate over 87 models with pinned divergences;
+BUG-041 stage 1 (EnderReaper A/B) landed, port-wide drop pending the owner's
+look; ENT-S-089 fixed; ENT-S-090 fixed; ENT-S-091 (ten rebuilt/moved
+models) next, then all s4 proofs regenerate, then 4c.
+
 ### 4.0 Coin (BUG-040) landed (2026-09-02)
 
 Classic Coin restored to the 1.7.10 quad and proven by the new

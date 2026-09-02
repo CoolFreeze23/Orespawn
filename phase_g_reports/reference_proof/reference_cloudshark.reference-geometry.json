@@ -1,0 +1,425 @@
+{
+  "schema_version": 1,
+  "model_id": "reference_cloudshark",
+  "reference_source": "reference_1_7_10_source/sources/danger/orespawn/ModelCloudShark.java",
+  "reference": {
+    "status": "PARSED",
+    "class": "ModelCloudShark",
+    "texture_width": 64,
+    "texture_height": 64,
+    "parts": [
+      {
+        "name": "body",
+        "tex_u": 0,
+        "tex_v": 0,
+        "boxes": [
+          {
+            "origin": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "size": [
+              6,
+              8,
+              15
+            ],
+            "uv": [
+              0,
+              0
+            ],
+            "mirror": false,
+            "texture_size": [
+              64,
+              64
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          -4.0,
+          11.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          64
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "head",
+        "tex_u": 0,
+        "tex_v": 51,
+        "boxes": [
+          {
+            "origin": [
+              -2.5,
+              0.0,
+              -8.0
+            ],
+            "size": [
+              5,
+              5,
+              8
+            ],
+            "uv": [
+              0,
+              51
+            ],
+            "mirror": false,
+            "texture_size": [
+              64,
+              64
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          -1.0,
+          11.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          64
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "jaw",
+        "tex_u": 42,
+        "tex_v": 0,
+        "boxes": [
+          {
+            "origin": [
+              -2.5,
+              0.0,
+              -6.0
+            ],
+            "size": [
+              5,
+              2,
+              6
+            ],
+            "uv": [
+              42,
+              0
+            ],
+            "mirror": false,
+            "texture_size": [
+              64,
+              64
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          -1.0,
+          15.0,
+          0.0
+        ],
+        "rotation": [
+          0.5056291,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          64
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "topfin",
+        "tex_u": 0,
+        "tex_v": 0,
+        "boxes": [
+          {
+            "origin": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "size": [
+              1,
+              3,
+              6
+            ],
+            "uv": [
+              0,
+              0
+            ],
+            "mirror": false,
+            "texture_size": [
+              64,
+              64
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          -1.5,
+          11.0,
+          5.0
+        ],
+        "rotation": [
+          0.935765,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          64
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "bbody",
+        "tex_u": 0,
+        "tex_v": 9,
+        "boxes": [
+          {
+            "origin": [
+              -2.0,
+              0.0,
+              0.0
+            ],
+            "size": [
+              4,
+              8,
+              6
+            ],
+            "uv": [
+              0,
+              9
+            ],
+            "mirror": false,
+            "texture_size": [
+              64,
+              64
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          -1.0,
+          11.0,
+          15.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          64
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "fins",
+        "tex_u": 0,
+        "tex_v": 24,
+        "boxes": [
+          {
+            "origin": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "size": [
+              0,
+              10,
+              10
+            ],
+            "uv": [
+              0,
+              24
+            ],
+            "mirror": false,
+            "texture_size": [
+              64,
+              64
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          -1.0,
+          16.0,
+          16.0
+        ],
+        "rotation": [
+          0.9220296,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          64
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "leftfin",
+        "tex_u": 0,
+        "tex_v": 0,
+        "boxes": [
+          {
+            "origin": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "size": [
+              0,
+              3,
+              7
+            ],
+            "uv": [
+              0,
+              0
+            ],
+            "mirror": false,
+            "texture_size": [
+              64,
+              64
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          2.0,
+          16.0,
+          6.0
+        ],
+        "rotation": [
+          -0.6108652,
+          1.134464,
+          -0.6108652
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          64
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "rightfin",
+        "tex_u": 0,
+        "tex_v": 0,
+        "boxes": [
+          {
+            "origin": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "size": [
+              0,
+              3,
+              7
+            ],
+            "uv": [
+              0,
+              0
+            ],
+            "mirror": false,
+            "texture_size": [
+              64,
+              64
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          -4.0,
+          16.0,
+          6.0
+        ],
+        "rotation": [
+          -0.6283185,
+          -1.134464,
+          0.6108652
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          64
+        ],
+        "children": [],
+        "parent": null
+      }
+    ]
+  },
+  "ground_truth": "1.7.10 decompiled ModelBase constructor, parsed; never the port",
+  "comparison": {
+    "status": "DIVERGES_TEXTURE_MAPPING",
+    "reference_parts_with_boxes": 8,
+    "port_parts_with_boxes": 8,
+    "matched_parts": 8,
+    "categories": {
+      "MIRROR": 8
+    },
+    "differences": [
+      "body -> body: reference box mirror=False (flag at addBox time), port True",
+      "head -> head: reference box mirror=False (flag at addBox time), port True",
+      "jaw -> jaw: reference box mirror=False (flag at addBox time), port True",
+      "topfin -> topfin: reference box mirror=False (flag at addBox time), port True",
+      "bbody -> bbody: reference box mirror=False (flag at addBox time), port True",
+      "fins -> fins: reference box mirror=False (flag at addBox time), port True",
+      "leftfin -> leftfin: reference box mirror=False (flag at addBox time), port True",
+      "rightfin -> rightfin: reference box mirror=False (flag at addBox time), port True"
+    ],
+    "by_category": {
+      "MIRROR": [
+        "body -> body: reference box mirror=False (flag at addBox time), port True",
+        "head -> head: reference box mirror=False (flag at addBox time), port True",
+        "jaw -> jaw: reference box mirror=False (flag at addBox time), port True",
+        "topfin -> topfin: reference box mirror=False (flag at addBox time), port True",
+        "bbody -> bbody: reference box mirror=False (flag at addBox time), port True",
+        "fins -> fins: reference box mirror=False (flag at addBox time), port True",
+        "leftfin -> leftfin: reference box mirror=False (flag at addBox time), port True",
+        "rightfin -> rightfin: reference box mirror=False (flag at addBox time), port True"
+      ]
+    }
+  },
+  "status": "PASS_WITH_PINNED_DIVERGENCES",
+  "pinned_divergences": {
+    "MIRROR": 8
+  }
+}

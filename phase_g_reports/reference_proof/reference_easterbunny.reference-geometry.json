@@ -1,0 +1,670 @@
+{
+  "schema_version": 1,
+  "model_id": "reference_easterbunny",
+  "reference_source": "reference_1_7_10_source/sources/danger/orespawn/ModelEasterBunny.java",
+  "reference": {
+    "status": "PARSED",
+    "class": "ModelEasterBunny",
+    "texture_width": 64,
+    "texture_height": 128,
+    "parts": [
+      {
+        "name": "body",
+        "tex_u": 0,
+        "tex_v": 44,
+        "boxes": [
+          {
+            "origin": [
+              -3.0,
+              0.0,
+              -3.0
+            ],
+            "size": [
+              6,
+              6,
+              7
+            ],
+            "uv": [
+              0,
+              44
+            ],
+            "mirror": false,
+            "texture_size": [
+              64,
+              128
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          17.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          32
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "tail",
+        "tex_u": 0,
+        "tex_v": 58,
+        "boxes": [
+          {
+            "origin": [
+              -2.0,
+              0.0,
+              -2.0
+            ],
+            "size": [
+              4,
+              4,
+              4
+            ],
+            "uv": [
+              0,
+              58
+            ],
+            "mirror": false,
+            "texture_size": [
+              64,
+              128
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          19.0,
+          6.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          32
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "lfoot",
+        "tex_u": 0,
+        "tex_v": 30,
+        "boxes": [
+          {
+            "origin": [
+              -1.0,
+              2.0,
+              -5.0
+            ],
+            "size": [
+              3,
+              1,
+              7
+            ],
+            "uv": [
+              0,
+              30
+            ],
+            "mirror": false,
+            "texture_size": [
+              64,
+              128
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          3.0,
+          21.0,
+          1.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          32
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "lleg",
+        "tex_u": 0,
+        "tex_v": 20,
+        "boxes": [
+          {
+            "origin": [
+              0.0,
+              -2.0,
+              -2.0
+            ],
+            "size": [
+              1,
+              4,
+              5
+            ],
+            "uv": [
+              0,
+              20
+            ],
+            "mirror": false,
+            "texture_size": [
+              64,
+              128
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          3.0,
+          21.0,
+          1.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          32
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "upperbody",
+        "tex_u": 42,
+        "tex_v": 27,
+        "boxes": [
+          {
+            "origin": [
+              -2.0,
+              0.0,
+              -2.0
+            ],
+            "size": [
+              4,
+              1,
+              5
+            ],
+            "uv": [
+              42,
+              27
+            ],
+            "mirror": false,
+            "texture_size": [
+              64,
+              128
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          16.0,
+          -1.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          32
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "head",
+        "tex_u": 40,
+        "tex_v": 17,
+        "boxes": [
+          {
+            "origin": [
+              -2.5,
+              0.0,
+              -2.0
+            ],
+            "size": [
+              5,
+              4,
+              5
+            ],
+            "uv": [
+              40,
+              17
+            ],
+            "mirror": false,
+            "texture_size": [
+              64,
+              128
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          12.0,
+          -2.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          32
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "nose",
+        "tex_u": 44,
+        "tex_v": 9,
+        "boxes": [
+          {
+            "origin": [
+              -1.0,
+              -1.0,
+              0.0
+            ],
+            "size": [
+              2,
+              2,
+              1
+            ],
+            "uv": [
+              44,
+              9
+            ],
+            "mirror": false,
+            "texture_size": [
+              64,
+              128
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          15.0,
+          -5.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          32
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "lear",
+        "tex_u": 54,
+        "tex_v": 0,
+        "boxes": [
+          {
+            "origin": [
+              0.0,
+              -10.0,
+              -1.0
+            ],
+            "size": [
+              1,
+              10,
+              3
+            ],
+            "uv": [
+              54,
+              0
+            ],
+            "mirror": false,
+            "texture_size": [
+              64,
+              128
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          2.0,
+          13.0,
+          -1.0
+        ],
+        "rotation": [
+          -0.2268928,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          32
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "lpaw",
+        "tex_u": 6,
+        "tex_v": 7,
+        "boxes": [
+          {
+            "origin": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "size": [
+              1,
+              3,
+              1
+            ],
+            "uv": [
+              6,
+              7
+            ],
+            "mirror": false,
+            "texture_size": [
+              64,
+              128
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.5,
+          19.0,
+          -4.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          32
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "rleg",
+        "tex_u": 21,
+        "tex_v": 20,
+        "boxes": [
+          {
+            "origin": [
+              0.0,
+              -2.0,
+              -2.0
+            ],
+            "size": [
+              1,
+              4,
+              5
+            ],
+            "uv": [
+              21,
+              20
+            ],
+            "mirror": false,
+            "texture_size": [
+              64,
+              128
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          -4.0,
+          21.0,
+          1.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          32
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "rfoot",
+        "tex_u": 21,
+        "tex_v": 30,
+        "boxes": [
+          {
+            "origin": [
+              -1.0,
+              2.0,
+              -5.0
+            ],
+            "size": [
+              3,
+              1,
+              7
+            ],
+            "uv": [
+              21,
+              30
+            ],
+            "mirror": false,
+            "texture_size": [
+              64,
+              128
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          -4.0,
+          21.0,
+          1.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          32
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "rear",
+        "tex_u": 32,
+        "tex_v": 0,
+        "boxes": [
+          {
+            "origin": [
+              0.0,
+              -10.0,
+              -1.0
+            ],
+            "size": [
+              1,
+              10,
+              3
+            ],
+            "uv": [
+              32,
+              0
+            ],
+            "mirror": false,
+            "texture_size": [
+              64,
+              128
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          -3.0,
+          13.0,
+          -1.0
+        ],
+        "rotation": [
+          -0.418879,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          32
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "rpaw",
+        "tex_u": 0,
+        "tex_v": 7,
+        "boxes": [
+          {
+            "origin": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "size": [
+              1,
+              3,
+              1
+            ],
+            "uv": [
+              0,
+              7
+            ],
+            "mirror": false,
+            "texture_size": [
+              64,
+              128
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          -1.5,
+          19.0,
+          -4.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          32
+        ],
+        "children": [],
+        "parent": null
+      }
+    ]
+  },
+  "ground_truth": "1.7.10 decompiled ModelBase constructor, parsed; never the port",
+  "comparison": {
+    "status": "DIVERGES_TEXTURE_MAPPING",
+    "reference_parts_with_boxes": 13,
+    "port_parts_with_boxes": 13,
+    "matched_parts": 13,
+    "categories": {
+      "MIRROR": 13
+    },
+    "differences": [
+      "body -> body: reference box mirror=False (flag at addBox time), port True",
+      "tail -> tail: reference box mirror=False (flag at addBox time), port True",
+      "lfoot -> lfoot: reference box mirror=False (flag at addBox time), port True",
+      "lleg -> lleg: reference box mirror=False (flag at addBox time), port True",
+      "upperbody -> upperbody: reference box mirror=False (flag at addBox time), port True",
+      "head -> head: reference box mirror=False (flag at addBox time), port True",
+      "nose -> nose: reference box mirror=False (flag at addBox time), port True",
+      "lear -> lear: reference box mirror=False (flag at addBox time), port True",
+      "lpaw -> lpaw: reference box mirror=False (flag at addBox time), port True",
+      "rleg -> rleg: reference box mirror=False (flag at addBox time), port True",
+      "rfoot -> rfoot: reference box mirror=False (flag at addBox time), port True",
+      "rear -> rear: reference box mirror=False (flag at addBox time), port True",
+      "rpaw -> rpaw: reference box mirror=False (flag at addBox time), port True"
+    ],
+    "by_category": {
+      "MIRROR": [
+        "body -> body: reference box mirror=False (flag at addBox time), port True",
+        "tail -> tail: reference box mirror=False (flag at addBox time), port True",
+        "lfoot -> lfoot: reference box mirror=False (flag at addBox time), port True",
+        "lleg -> lleg: reference box mirror=False (flag at addBox time), port True",
+        "upperbody -> upperbody: reference box mirror=False (flag at addBox time), port True",
+        "head -> head: reference box mirror=False (flag at addBox time), port True",
+        "nose -> nose: reference box mirror=False (flag at addBox time), port True",
+        "lear -> lear: reference box mirror=False (flag at addBox time), port True",
+        "lpaw -> lpaw: reference box mirror=False (flag at addBox time), port True",
+        "rleg -> rleg: reference box mirror=False (flag at addBox time), port True",
+        "rfoot -> rfoot: reference box mirror=False (flag at addBox time), port True",
+        "rear -> rear: reference box mirror=False (flag at addBox time), port True",
+        "rpaw -> rpaw: reference box mirror=False (flag at addBox time), port True"
+      ]
+    }
+  },
+  "status": "PASS_WITH_PINNED_DIVERGENCES",
+  "pinned_divergences": {
+    "MIRROR": 13
+  }
+}

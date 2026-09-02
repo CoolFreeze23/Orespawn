@@ -1,0 +1,1654 @@
+{
+  "schema_version": 1,
+  "model_id": "reference_caterkiller",
+  "reference_source": "reference_1_7_10_source/sources/danger/orespawn/ModelCaterKiller.java",
+  "reference": {
+    "status": "PARSED",
+    "class": "ModelCaterKiller",
+    "texture_width": 256,
+    "texture_height": 512,
+    "parts": [
+      {
+        "name": "Head",
+        "tex_u": 0,
+        "tex_v": 50,
+        "boxes": [
+          {
+            "origin": [
+              -8.0,
+              -8.0,
+              -8.0
+            ],
+            "size": [
+              16,
+              16,
+              8
+            ],
+            "uv": [
+              0,
+              50
+            ],
+            "mirror": false,
+            "texture_size": [
+              256,
+              512
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          -8.0,
+          -12.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          32
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "falsehead",
+        "tex_u": 0,
+        "tex_v": 100,
+        "boxes": [
+          {
+            "origin": [
+              -10.0,
+              -27.0,
+              -11.0
+            ],
+            "size": [
+              20,
+              20,
+              10
+            ],
+            "uv": [
+              0,
+              100
+            ],
+            "mirror": false,
+            "texture_size": [
+              256,
+              512
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          -8.0,
+          -12.0
+        ],
+        "rotation": [
+          -0.1570796,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          32
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "seg1",
+        "tex_u": 0,
+        "tex_v": 200,
+        "boxes": [
+          {
+            "origin": [
+              -14.0,
+              -31.0,
+              0.0
+            ],
+            "size": [
+              28,
+              32,
+              14
+            ],
+            "uv": [
+              0,
+              200
+            ],
+            "mirror": false,
+            "texture_size": [
+              256,
+              512
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          -8.0,
+          -12.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          32
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "ltusk1",
+        "tex_u": 0,
+        "tex_v": 140,
+        "boxes": [
+          {
+            "origin": [
+              -1.0,
+              -1.0,
+              -1.0
+            ],
+            "size": [
+              33,
+              3,
+              3
+            ],
+            "uv": [
+              0,
+              140
+            ],
+            "mirror": false,
+            "texture_size": [
+              256,
+              512
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          9.0,
+          -25.0,
+          -19.0
+        ],
+        "rotation": [
+          0.0,
+          0.5585054,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          32
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "ltusk2",
+        "tex_u": 0,
+        "tex_v": 160,
+        "boxes": [
+          {
+            "origin": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "size": [
+              20,
+              1,
+              1
+            ],
+            "uv": [
+              0,
+              160
+            ],
+            "mirror": false,
+            "texture_size": [
+              256,
+              512
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          36.0,
+          -25.0,
+          -36.0
+        ],
+        "rotation": [
+          0.0,
+          0.8028515,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          32
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "rtusk1",
+        "tex_u": 0,
+        "tex_v": 150,
+        "boxes": [
+          {
+            "origin": [
+              -33.0,
+              0.0,
+              0.0
+            ],
+            "size": [
+              33,
+              3,
+              3
+            ],
+            "uv": [
+              0,
+              150
+            ],
+            "mirror": false,
+            "texture_size": [
+              256,
+              512
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          -8.0,
+          -25.0,
+          -17.0
+        ],
+        "rotation": [
+          0.0,
+          -0.5585054,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          32
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "rtusk2",
+        "tex_u": 0,
+        "tex_v": 170,
+        "boxes": [
+          {
+            "origin": [
+              -20.0,
+              0.0,
+              0.0
+            ],
+            "size": [
+              20,
+              1,
+              1
+            ],
+            "uv": [
+              0,
+              170
+            ],
+            "mirror": false,
+            "texture_size": [
+              256,
+              512
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          -36.0,
+          -24.0,
+          -34.0
+        ],
+        "rotation": [
+          0.0,
+          -0.8028515,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          32
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "ljaw",
+        "tex_u": 100,
+        "tex_v": 50,
+        "boxes": [
+          {
+            "origin": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "size": [
+              1,
+              7,
+              4
+            ],
+            "uv": [
+              100,
+              50
+            ],
+            "mirror": false,
+            "texture_size": [
+              256,
+              512
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          4.0,
+          -1.0,
+          -18.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.1396263
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          32
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "rjaw",
+        "tex_u": 125,
+        "tex_v": 50,
+        "boxes": [
+          {
+            "origin": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "size": [
+              1,
+              7,
+              4
+            ],
+            "uv": [
+              125,
+              50
+            ],
+            "mirror": false,
+            "texture_size": [
+              256,
+              512
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          -5.0,
+          -1.0,
+          -18.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          -0.1396263
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          32
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "seg1lspike",
+        "tex_u": 0,
+        "tex_v": 260,
+        "boxes": [
+          {
+            "origin": [
+              -1.0,
+              -1.0,
+              -1.0
+            ],
+            "size": [
+              33,
+              2,
+              2
+            ],
+            "uv": [
+              0,
+              260
+            ],
+            "mirror": false,
+            "texture_size": [
+              256,
+              512
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          14.0,
+          -32.0,
+          -6.0
+        ],
+        "rotation": [
+          0.0,
+          0.3316126,
+          -0.122173
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          32
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "seg1rspike",
+        "tex_u": 0,
+        "tex_v": 270,
+        "boxes": [
+          {
+            "origin": [
+              -33.0,
+              -1.0,
+              -1.0
+            ],
+            "size": [
+              33,
+              2,
+              2
+            ],
+            "uv": [
+              0,
+              270
+            ],
+            "mirror": false,
+            "texture_size": [
+              256,
+              512
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          -13.0,
+          -32.0,
+          -6.0
+        ],
+        "rotation": [
+          0.0,
+          -0.3316126,
+          0.122173
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          32
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "seg1ltopspike",
+        "tex_u": 125,
+        "tex_v": 260,
+        "boxes": [
+          {
+            "origin": [
+              -2.0,
+              -8.0,
+              -2.0
+            ],
+            "size": [
+              4,
+              9,
+              4
+            ],
+            "uv": [
+              125,
+              260
+            ],
+            "mirror": false,
+            "texture_size": [
+              256,
+              512
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          8.0,
+          -39.0,
+          -6.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.1396263
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          32
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "seg1rtopspike",
+        "tex_u": 150,
+        "tex_v": 260,
+        "boxes": [
+          {
+            "origin": [
+              -2.0,
+              -8.0,
+              -2.0
+            ],
+            "size": [
+              4,
+              9,
+              4
+            ],
+            "uv": [
+              150,
+              260
+            ],
+            "mirror": false,
+            "texture_size": [
+              256,
+              512
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          -10.0,
+          -39.0,
+          -6.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          -0.1396263
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          32
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "seg1lleg",
+        "tex_u": 125,
+        "tex_v": 200,
+        "boxes": [
+          {
+            "origin": [
+              -1.0,
+              0.0,
+              -1.0
+            ],
+            "size": [
+              2,
+              16,
+              2
+            ],
+            "uv": [
+              125,
+              200
+            ],
+            "mirror": false,
+            "texture_size": [
+              256,
+              512
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          8.0,
+          -8.0,
+          -5.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.1570796
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          32
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "seg1rleg",
+        "tex_u": 150,
+        "tex_v": 200,
+        "boxes": [
+          {
+            "origin": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "size": [
+              2,
+              16,
+              2
+            ],
+            "uv": [
+              150,
+              200
+            ],
+            "mirror": false,
+            "texture_size": [
+              256,
+              512
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          -9.0,
+          -8.0,
+          -5.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          -0.1570796
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          32
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "seg2",
+        "tex_u": 0,
+        "tex_v": 300,
+        "boxes": [
+          {
+            "origin": [
+              -20.0,
+              -17.0,
+              -9.0
+            ],
+            "size": [
+              40,
+              34,
+              18
+            ],
+            "uv": [
+              0,
+              300
+            ],
+            "mirror": false,
+            "texture_size": [
+              256,
+              512
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          -2.0,
+          32.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          32
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "seg2lfoot",
+        "tex_u": 125,
+        "tex_v": 300,
+        "boxes": [
+          {
+            "origin": [
+              -5.0,
+              0.0,
+              -5.0
+            ],
+            "size": [
+              10,
+              10,
+              10
+            ],
+            "uv": [
+              125,
+              300
+            ],
+            "mirror": false,
+            "texture_size": [
+              256,
+              512
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          13.0,
+          14.0,
+          32.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          32
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "seg2rfoot",
+        "tex_u": 175,
+        "tex_v": 300,
+        "boxes": [
+          {
+            "origin": [
+              -5.0,
+              0.0,
+              -5.0
+            ],
+            "size": [
+              10,
+              10,
+              10
+            ],
+            "uv": [
+              175,
+              300
+            ],
+            "mirror": false,
+            "texture_size": [
+              256,
+              512
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          -13.0,
+          14.0,
+          32.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          32
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "seg2ltopspike",
+        "tex_u": 100,
+        "tex_v": 360,
+        "boxes": [
+          {
+            "origin": [
+              -2.0,
+              -9.0,
+              -2.0
+            ],
+            "size": [
+              4,
+              9,
+              4
+            ],
+            "uv": [
+              100,
+              360
+            ],
+            "mirror": false,
+            "texture_size": [
+              256,
+              512
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          14.0,
+          -18.0,
+          32.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.1396263
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          32
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "seg2rtopspike",
+        "tex_u": 125,
+        "tex_v": 360,
+        "boxes": [
+          {
+            "origin": [
+              -2.0,
+              -9.0,
+              -2.0
+            ],
+            "size": [
+              4,
+              9,
+              4
+            ],
+            "uv": [
+              125,
+              360
+            ],
+            "mirror": false,
+            "texture_size": [
+              256,
+              512
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          -14.0,
+          -18.0,
+          32.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          -0.1396263
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          32
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "seg2lspike",
+        "tex_u": 0,
+        "tex_v": 360,
+        "boxes": [
+          {
+            "origin": [
+              0.0,
+              -1.0,
+              -1.0
+            ],
+            "size": [
+              20,
+              2,
+              2
+            ],
+            "uv": [
+              0,
+              360
+            ],
+            "mirror": false,
+            "texture_size": [
+              256,
+              512
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          18.0,
+          -9.0,
+          32.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          -0.0698132
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          32
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "seg2rspike",
+        "tex_u": 0,
+        "tex_v": 370,
+        "boxes": [
+          {
+            "origin": [
+              -20.0,
+              -1.0,
+              -1.0
+            ],
+            "size": [
+              20,
+              2,
+              2
+            ],
+            "uv": [
+              0,
+              370
+            ],
+            "mirror": false,
+            "texture_size": [
+              256,
+              512
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          -18.0,
+          -9.0,
+          32.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0698132
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          32
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "seg3",
+        "tex_u": 0,
+        "tex_v": 400,
+        "boxes": [
+          {
+            "origin": [
+              -15.0,
+              -14.0,
+              -7.0
+            ],
+            "size": [
+              30,
+              28,
+              14
+            ],
+            "uv": [
+              0,
+              400
+            ],
+            "mirror": false,
+            "texture_size": [
+              256,
+              512
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          3.0,
+          48.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          32
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "seg3lfoot",
+        "tex_u": 100,
+        "tex_v": 400,
+        "boxes": [
+          {
+            "origin": [
+              -4.0,
+              0.0,
+              -6.0
+            ],
+            "size": [
+              8,
+              8,
+              12
+            ],
+            "uv": [
+              100,
+              400
+            ],
+            "mirror": false,
+            "texture_size": [
+              256,
+              512
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          10.0,
+          16.0,
+          48.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          32
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "seg3rfoot",
+        "tex_u": 150,
+        "tex_v": 400,
+        "boxes": [
+          {
+            "origin": [
+              -4.0,
+              0.0,
+              -6.0
+            ],
+            "size": [
+              8,
+              8,
+              12
+            ],
+            "uv": [
+              150,
+              400
+            ],
+            "mirror": false,
+            "texture_size": [
+              256,
+              512
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          -10.0,
+          16.0,
+          48.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          32
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "seg3lspike",
+        "tex_u": 0,
+        "tex_v": 450,
+        "boxes": [
+          {
+            "origin": [
+              0.0,
+              -1.0,
+              -1.0
+            ],
+            "size": [
+              14,
+              2,
+              2
+            ],
+            "uv": [
+              0,
+              450
+            ],
+            "mirror": false,
+            "texture_size": [
+              256,
+              512
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          14.0,
+          -4.0,
+          48.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          -0.0698132
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          32
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "seg3rspike",
+        "tex_u": 0,
+        "tex_v": 460,
+        "boxes": [
+          {
+            "origin": [
+              -14.0,
+              -1.0,
+              -1.0
+            ],
+            "size": [
+              14,
+              2,
+              2
+            ],
+            "uv": [
+              0,
+              460
+            ],
+            "mirror": false,
+            "texture_size": [
+              256,
+              512
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          -14.0,
+          -4.0,
+          48.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0698132
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          32
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "seg3ltopspike",
+        "tex_u": 100,
+        "tex_v": 450,
+        "boxes": [
+          {
+            "origin": [
+              -2.0,
+              -13.0,
+              -2.0
+            ],
+            "size": [
+              3,
+              13,
+              3
+            ],
+            "uv": [
+              100,
+              450
+            ],
+            "mirror": false,
+            "texture_size": [
+              256,
+              512
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          10.0,
+          -10.0,
+          48.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.1396263
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          32
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "seg3rtopspike",
+        "tex_u": 120,
+        "tex_v": 450,
+        "boxes": [
+          {
+            "origin": [
+              -2.0,
+              -13.0,
+              -2.0
+            ],
+            "size": [
+              3,
+              13,
+              3
+            ],
+            "uv": [
+              120,
+              450
+            ],
+            "mirror": false,
+            "texture_size": [
+              256,
+              512
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          -10.0,
+          -10.0,
+          48.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          -0.1396263
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          32
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "seg3lbackspike",
+        "tex_u": 50,
+        "tex_v": 450,
+        "boxes": [
+          {
+            "origin": [
+              -2.0,
+              -20.0,
+              -2.0
+            ],
+            "size": [
+              4,
+              20,
+              4
+            ],
+            "uv": [
+              50,
+              450
+            ],
+            "mirror": false,
+            "texture_size": [
+              256,
+              512
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          13.0,
+          -8.0,
+          54.0
+        ],
+        "rotation": [
+          -0.9773844,
+          0.2792527,
+          0.1396263
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          32
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "seg3rbackspike",
+        "tex_u": 75,
+        "tex_v": 450,
+        "boxes": [
+          {
+            "origin": [
+              -2.0,
+              -20.0,
+              -2.0
+            ],
+            "size": [
+              4,
+              20,
+              4
+            ],
+            "uv": [
+              75,
+              450
+            ],
+            "mirror": false,
+            "texture_size": [
+              256,
+              512
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          -13.0,
+          -8.0,
+          54.0
+        ],
+        "rotation": [
+          -0.9773844,
+          -0.3490659,
+          0.1396263
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          32
+        ],
+        "children": [],
+        "parent": null
+      }
+    ]
+  },
+  "ground_truth": "1.7.10 decompiled ModelBase constructor, parsed; never the port",
+  "comparison": {
+    "status": "DIVERGES",
+    "reference_parts_with_boxes": 31,
+    "port_parts_with_boxes": 80,
+    "matched_parts": 31,
+    "categories": {
+      "EXTRA_IN_PORT": 49,
+      "MIRROR": 31
+    },
+    "differences": [
+      "seg1_1 [((-14.0, -31.0, 0.0), (28.0, 32.0, 14.0), (0.0, 200.0), 0.0)]",
+      "seg1_2 [((-14.0, -31.0, 0.0), (28.0, 32.0, 14.0), (0.0, 200.0), 0.0)]",
+      "seg1lleg_1 [((-1.0, 0.0, -1.0), (2.0, 16.0, 2.0), (125.0, 200.0), 0.0)]",
+      "seg1lleg_2 [((-1.0, 0.0, -1.0), (2.0, 16.0, 2.0), (125.0, 200.0), 0.0)]",
+      "seg1lspike_1 [((-1.0, -1.0, -1.0), (33.0, 2.0, 2.0), (0.0, 260.0), 0.0)]",
+      "seg1lspike_2 [((-1.0, -1.0, -1.0), (33.0, 2.0, 2.0), (0.0, 260.0), 0.0)]",
+      "seg1ltopspike_1 [((-2.0, -8.0, -2.0), (4.0, 9.0, 4.0), (125.0, 260.0), 0.0)]",
+      "seg1ltopspike_2 [((-2.0, -8.0, -2.0), (4.0, 9.0, 4.0), (125.0, 260.0), 0.0)]",
+      "seg1rleg_1 [((0.0, 0.0, 0.0), (2.0, 16.0, 2.0), (150.0, 200.0), 0.0)]",
+      "seg1rleg_2 [((0.0, 0.0, 0.0), (2.0, 16.0, 2.0), (150.0, 200.0), 0.0)]",
+      "seg1rspike_1 [((-33.0, -1.0, -1.0), (33.0, 2.0, 2.0), (0.0, 270.0), 0.0)]",
+      "seg1rspike_2 [((-33.0, -1.0, -1.0), (33.0, 2.0, 2.0), (0.0, 270.0), 0.0)]",
+      "seg1rtopspike_1 [((-2.0, -8.0, -2.0), (4.0, 9.0, 4.0), (150.0, 260.0), 0.0)]",
+      "seg1rtopspike_2 [((-2.0, -8.0, -2.0), (4.0, 9.0, 4.0), (150.0, 260.0), 0.0)]",
+      "seg2_1 [((-20.0, -17.0, -9.0), (40.0, 34.0, 18.0), (0.0, 300.0), 0.0)]",
+      "seg2_2 [((-20.0, -17.0, -9.0), (40.0, 34.0, 18.0), (0.0, 300.0), 0.0)]",
+      "seg2_3 [((-20.0, -17.0, -9.0), (40.0, 34.0, 18.0), (0.0, 300.0), 0.0)]",
+      "seg2_4 [((-20.0, -17.0, -9.0), (40.0, 34.0, 18.0), (0.0, 300.0), 0.0)]",
+      "seg2_5 [((-20.0, -17.0, -9.0), (40.0, 34.0, 18.0), (0.0, 300.0), 0.0)]",
+      "seg2lfoot_1 [((-5.0, 0.0, -5.0), (10.0, 10.0, 10.0), (125.0, 300.0), 0.0)]",
+      "seg2lfoot_2 [((-5.0, 0.0, -5.0), (10.0, 10.0, 10.0), (125.0, 300.0), 0.0)]",
+      "seg2lfoot_3 [((-5.0, 0.0, -5.0), (10.0, 10.0, 10.0), (125.0, 300.0), 0.0)]",
+      "seg2lfoot_4 [((-5.0, 0.0, -5.0), (10.0, 10.0, 10.0), (125.0, 300.0), 0.0)]",
+      "seg2lfoot_5 [((-5.0, 0.0, -5.0), (10.0, 10.0, 10.0), (125.0, 300.0), 0.0)]",
+      "seg2lspike_1 [((0.0, -1.0, -1.0), (20.0, 2.0, 2.0), (0.0, 360.0), 0.0)]",
+      "seg2lspike_2 [((0.0, -1.0, -1.0), (20.0, 2.0, 2.0), (0.0, 360.0), 0.0)]",
+      "seg2lspike_3 [((0.0, -1.0, -1.0), (20.0, 2.0, 2.0), (0.0, 360.0), 0.0)]",
+      "seg2lspike_4 [((0.0, -1.0, -1.0), (20.0, 2.0, 2.0), (0.0, 360.0), 0.0)]",
+      "seg2lspike_5 [((0.0, -1.0, -1.0), (20.0, 2.0, 2.0), (0.0, 360.0), 0.0)]",
+      "seg2ltopspike_1 [((-2.0, -9.0, -2.0), (4.0, 9.0, 4.0), (100.0, 360.0), 0.0)]",
+      "seg2ltopspike_2 [((-2.0, -9.0, -2.0), (4.0, 9.0, 4.0), (100.0, 360.0), 0.0)]",
+      "seg2ltopspike_3 [((-2.0, -9.0, -2.0), (4.0, 9.0, 4.0), (100.0, 360.0), 0.0)]",
+      "seg2ltopspike_4 [((-2.0, -9.0, -2.0), (4.0, 9.0, 4.0), (100.0, 360.0), 0.0)]",
+      "seg2ltopspike_5 [((-2.0, -9.0, -2.0), (4.0, 9.0, 4.0), (100.0, 360.0), 0.0)]",
+      "seg2rfoot_1 [((-5.0, 0.0, -5.0), (10.0, 10.0, 10.0), (175.0, 300.0), 0.0)]",
+      "seg2rfoot_2 [((-5.0, 0.0, -5.0), (10.0, 10.0, 10.0), (175.0, 300.0), 0.0)]",
+      "seg2rfoot_3 [((-5.0, 0.0, -5.0), (10.0, 10.0, 10.0), (175.0, 300.0), 0.0)]",
+      "seg2rfoot_4 [((-5.0, 0.0, -5.0), (10.0, 10.0, 10.0), (175.0, 300.0), 0.0)]",
+      "seg2rfoot_5 [((-5.0, 0.0, -5.0), (10.0, 10.0, 10.0), (175.0, 300.0), 0.0)]",
+      "seg2rspike_1 [((-20.0, -1.0, -1.0), (20.0, 2.0, 2.0), (0.0, 370.0), 0.0)]",
+      "seg2rspike_2 [((-20.0, -1.0, -1.0), (20.0, 2.0, 2.0), (0.0, 370.0), 0.0)]",
+      "seg2rspike_3 [((-20.0, -1.0, -1.0), (20.0, 2.0, 2.0), (0.0, 370.0), 0.0)]",
+      "seg2rspike_4 [((-20.0, -1.0, -1.0), (20.0, 2.0, 2.0), (0.0, 370.0), 0.0)]",
+      "seg2rspike_5 [((-20.0, -1.0, -1.0), (20.0, 2.0, 2.0), (0.0, 370.0), 0.0)]",
+      "seg2rtopspike_1 [((-2.0, -9.0, -2.0), (4.0, 9.0, 4.0), (125.0, 360.0), 0.0)]",
+      "seg2rtopspike_2 [((-2.0, -9.0, -2.0), (4.0, 9.0, 4.0), (125.0, 360.0), 0.0)]",
+      "seg2rtopspike_3 [((-2.0, -9.0, -2.0), (4.0, 9.0, 4.0), (125.0, 360.0), 0.0)]",
+      "seg2rtopspike_4 [((-2.0, -9.0, -2.0), (4.0, 9.0, 4.0), (125.0, 360.0), 0.0)]",
+      "seg2rtopspike_5 [((-2.0, -9.0, -2.0), (4.0, 9.0, 4.0), (125.0, 360.0), 0.0)]",
+      "Head -> Head: reference box mirror=False (flag at addBox time), port True",
+      "falsehead -> falsehead: reference box mirror=False (flag at addBox time), port True",
+      "seg1 -> seg1_0: reference box mirror=False (flag at addBox time), port True",
+      "ltusk1 -> ltusk1: reference box mirror=False (flag at addBox time), port True",
+      "ltusk2 -> ltusk2: reference box mirror=False (flag at addBox time), port True",
+      "rtusk1 -> rtusk1: reference box mirror=False (flag at addBox time), port True",
+      "rtusk2 -> rtusk2: reference box mirror=False (flag at addBox time), port True",
+      "ljaw -> ljaw: reference box mirror=False (flag at addBox time), port True",
+      "rjaw -> rjaw: reference box mirror=False (flag at addBox time), port True",
+      "seg1lspike -> seg1lspike_0: reference box mirror=False (flag at addBox time), port True",
+      "seg1rspike -> seg1rspike_0: reference box mirror=False (flag at addBox time), port True",
+      "seg1ltopspike -> seg1ltopspike_0: reference box mirror=False (flag at addBox time), port True",
+      "seg1rtopspike -> seg1rtopspike_0: reference box mirror=False (flag at addBox time), port True",
+      "seg1lleg -> seg1lleg_0: reference box mirror=False (flag at addBox time), port True",
+      "seg1rleg -> seg1rleg_0: reference box mirror=False (flag at addBox time), port True",
+      "seg2 -> seg2_0: reference box mirror=False (flag at addBox time), port True",
+      "seg2lfoot -> seg2lfoot_0: reference box mirror=False (flag at addBox time), port True",
+      "seg2rfoot -> seg2rfoot_0: reference box mirror=False (flag at addBox time), port True",
+      "seg2ltopspike -> seg2ltopspike_0: reference box mirror=False (flag at addBox time), port True",
+      "seg2rtopspike -> seg2rtopspike_0: reference box mirror=False (flag at addBox time), port True",
+      "seg2lspike -> seg2lspike_0: reference box mirror=False (flag at addBox time), port True",
+      "seg2rspike -> seg2rspike_0: reference box mirror=False (flag at addBox time), port True",
+      "seg3 -> seg3: reference box mirror=False (flag at addBox time), port True",
+      "seg3lfoot -> seg3lfoot: reference box mirror=False (flag at addBox time), port True",
+      "seg3rfoot -> seg3rfoot: reference box mirror=False (flag at addBox time), port True",
+      "seg3lspike -> seg3lspike: reference box mirror=False (flag at addBox time), port True",
+      "seg3rspike -> seg3rspike: reference box mirror=False (flag at addBox time), port True",
+      "seg3ltopspike -> seg3ltopspike: reference box mirror=False (flag at addBox time), port True",
+      "seg3rtopspike -> seg3rtopspike: reference box mirror=False (flag at addBox time), port True",
+      "seg3lbackspike -> seg3lbackspike: reference box mirror=False (flag at addBox time), port True",
+      "seg3rbackspike -> seg3rbackspike: reference box mirror=False (flag at addBox time), port True"
+    ],
+    "by_category": {
+      "EXTRA_IN_PORT": [
+        "seg1_1 [((-14.0, -31.0, 0.0), (28.0, 32.0, 14.0), (0.0, 200.0), 0.0)]",
+        "seg1_2 [((-14.0, -31.0, 0.0), (28.0, 32.0, 14.0), (0.0, 200.0), 0.0)]",
+        "seg1lleg_1 [((-1.0, 0.0, -1.0), (2.0, 16.0, 2.0), (125.0, 200.0), 0.0)]",
+        "seg1lleg_2 [((-1.0, 0.0, -1.0), (2.0, 16.0, 2.0), (125.0, 200.0), 0.0)]",
+        "seg1lspike_1 [((-1.0, -1.0, -1.0), (33.0, 2.0, 2.0), (0.0, 260.0), 0.0)]",
+        "seg1lspike_2 [((-1.0, -1.0, -1.0), (33.0, 2.0, 2.0), (0.0, 260.0), 0.0)]",
+        "seg1ltopspike_1 [((-2.0, -8.0, -2.0), (4.0, 9.0, 4.0), (125.0, 260.0), 0.0)]",
+        "seg1ltopspike_2 [((-2.0, -8.0, -2.0), (4.0, 9.0, 4.0), (125.0, 260.0), 0.0)]",
+        "seg1rleg_1 [((0.0, 0.0, 0.0), (2.0, 16.0, 2.0), (150.0, 200.0), 0.0)]",
+        "seg1rleg_2 [((0.0, 0.0, 0.0), (2.0, 16.0, 2.0), (150.0, 200.0), 0.0)]",
+        "seg1rspike_1 [((-33.0, -1.0, -1.0), (33.0, 2.0, 2.0), (0.0, 270.0), 0.0)]",
+        "seg1rspike_2 [((-33.0, -1.0, -1.0), (33.0, 2.0, 2.0), (0.0, 270.0), 0.0)]",
+        "seg1rtopspike_1 [((-2.0, -8.0, -2.0), (4.0, 9.0, 4.0), (150.0, 260.0), 0.0)]",
+        "seg1rtopspike_2 [((-2.0, -8.0, -2.0), (4.0, 9.0, 4.0), (150.0, 260.0), 0.0)]",
+        "seg2_1 [((-20.0, -17.0, -9.0), (40.0, 34.0, 18.0), (0.0, 300.0), 0.0)]",
+        "seg2_2 [((-20.0, -17.0, -9.0), (40.0, 34.0, 18.0), (0.0, 300.0), 0.0)]",
+        "seg2_3 [((-20.0, -17.0, -9.0), (40.0, 34.0, 18.0), (0.0, 300.0), 0.0)]",
+        "seg2_4 [((-20.0, -17.0, -9.0), (40.0, 34.0, 18.0), (0.0, 300.0), 0.0)]",
+        "seg2_5 [((-20.0, -17.0, -9.0), (40.0, 34.0, 18.0), (0.0, 300.0), 0.0)]",
+        "seg2lfoot_1 [((-5.0, 0.0, -5.0), (10.0, 10.0, 10.0), (125.0, 300.0), 0.0)]",
+        "seg2lfoot_2 [((-5.0, 0.0, -5.0), (10.0, 10.0, 10.0), (125.0, 300.0), 0.0)]",
+        "seg2lfoot_3 [((-5.0, 0.0, -5.0), (10.0, 10.0, 10.0), (125.0, 300.0), 0.0)]",
+        "seg2lfoot_4 [((-5.0, 0.0, -5.0), (10.0, 10.0, 10.0), (125.0, 300.0), 0.0)]",
+        "seg2lfoot_5 [((-5.0, 0.0, -5.0), (10.0, 10.0, 10.0), (125.0, 300.0), 0.0)]",
+        "seg2lspike_1 [((0.0, -1.0, -1.0), (20.0, 2.0, 2.0), (0.0, 360.0), 0.0)]",
+        "seg2lspike_2 [((0.0, -1.0, -1.0), (20.0, 2.0, 2.0), (0.0, 360.0), 0.0)]",
+        "seg2lspike_3 [((0.0, -1.0, -1.0), (20.0, 2.0, 2.0), (0.0, 360.0), 0.0)]",
+        "seg2lspike_4 [((0.0, -1.0, -1.0), (20.0, 2.0, 2.0), (0.0, 360.0), 0.0)]",
+        "seg2lspike_5 [((0.0, -1.0, -1.0), (20.0, 2.0, 2.0), (0.0, 360.0), 0.0)]",
+        "seg2ltopspike_1 [((-2.0, -9.0, -2.0), (4.0, 9.0, 4.0), (100.0, 360.0), 0.0)]",
+        "seg2ltopspike_2 [((-2.0, -9.0, -2.0), (4.0, 9.0, 4.0), (100.0, 360.0), 0.0)]",
+        "seg2ltopspike_3 [((-2.0, -9.0, -2.0), (4.0, 9.0, 4.0), (100.0, 360.0), 0.0)]",
+        "seg2ltopspike_4 [((-2.0, -9.0, -2.0), (4.0, 9.0, 4.0), (100.0, 360.0), 0.0)]",
+        "seg2ltopspike_5 [((-2.0, -9.0, -2.0), (4.0, 9.0, 4.0), (100.0, 360.0), 0.0)]",
+        "seg2rfoot_1 [((-5.0, 0.0, -5.0), (10.0, 10.0, 10.0), (175.0, 300.0), 0.0)]",
+        "seg2rfoot_2 [((-5.0, 0.0, -5.0), (10.0, 10.0, 10.0), (175.0, 300.0), 0.0)]",
+        "seg2rfoot_3 [((-5.0, 0.0, -5.0), (10.0, 10.0, 10.0), (175.0, 300.0), 0.0)]",
+        "seg2rfoot_4 [((-5.0, 0.0, -5.0), (10.0, 10.0, 10.0), (175.0, 300.0), 0.0)]",
+        "seg2rfoot_5 [((-5.0, 0.0, -5.0), (10.0, 10.0, 10.0), (175.0, 300.0), 0.0)]",
+        "seg2rspike_1 [((-20.0, -1.0, -1.0), (20.0, 2.0, 2.0), (0.0, 370.0), 0.0)]",
+        "seg2rspike_2 [((-20.0, -1.0, -1.0), (20.0, 2.0, 2.0), (0.0, 370.0), 0.0)]",
+        "seg2rspike_3 [((-20.0, -1.0, -1.0), (20.0, 2.0, 2.0), (0.0, 370.0), 0.0)]",
+        "seg2rspike_4 [((-20.0, -1.0, -1.0), (20.0, 2.0, 2.0), (0.0, 370.0), 0.0)]",
+        "seg2rspike_5 [((-20.0, -1.0, -1.0), (20.0, 2.0, 2.0), (0.0, 370.0), 0.0)]",
+        "seg2rtopspike_1 [((-2.0, -9.0, -2.0), (4.0, 9.0, 4.0), (125.0, 360.0), 0.0)]",
+        "seg2rtopspike_2 [((-2.0, -9.0, -2.0), (4.0, 9.0, 4.0), (125.0, 360.0), 0.0)]",
+        "seg2rtopspike_3 [((-2.0, -9.0, -2.0), (4.0, 9.0, 4.0), (125.0, 360.0), 0.0)]",
+        "seg2rtopspike_4 [((-2.0, -9.0, -2.0), (4.0, 9.0, 4.0), (125.0, 360.0), 0.0)]",
+        "seg2rtopspike_5 [((-2.0, -9.0, -2.0), (4.0, 9.0, 4.0), (125.0, 360.0), 0.0)]"
+      ],
+      "MIRROR": [
+        "Head -> Head: reference box mirror=False (flag at addBox time), port True",
+        "falsehead -> falsehead: reference box mirror=False (flag at addBox time), port True",
+        "seg1 -> seg1_0: reference box mirror=False (flag at addBox time), port True",
+        "ltusk1 -> ltusk1: reference box mirror=False (flag at addBox time), port True",
+        "ltusk2 -> ltusk2: reference box mirror=False (flag at addBox time), port True",
+        "rtusk1 -> rtusk1: reference box mirror=False (flag at addBox time), port True",
+        "rtusk2 -> rtusk2: reference box mirror=False (flag at addBox time), port True",
+        "ljaw -> ljaw: reference box mirror=False (flag at addBox time), port True",
+        "rjaw -> rjaw: reference box mirror=False (flag at addBox time), port True",
+        "seg1lspike -> seg1lspike_0: reference box mirror=False (flag at addBox time), port True",
+        "seg1rspike -> seg1rspike_0: reference box mirror=False (flag at addBox time), port True",
+        "seg1ltopspike -> seg1ltopspike_0: reference box mirror=False (flag at addBox time), port True",
+        "seg1rtopspike -> seg1rtopspike_0: reference box mirror=False (flag at addBox time), port True",
+        "seg1lleg -> seg1lleg_0: reference box mirror=False (flag at addBox time), port True",
+        "seg1rleg -> seg1rleg_0: reference box mirror=False (flag at addBox time), port True",
+        "seg2 -> seg2_0: reference box mirror=False (flag at addBox time), port True",
+        "seg2lfoot -> seg2lfoot_0: reference box mirror=False (flag at addBox time), port True",
+        "seg2rfoot -> seg2rfoot_0: reference box mirror=False (flag at addBox time), port True",
+        "seg2ltopspike -> seg2ltopspike_0: reference box mirror=False (flag at addBox time), port True",
+        "seg2rtopspike -> seg2rtopspike_0: reference box mirror=False (flag at addBox time), port True",
+        "seg2lspike -> seg2lspike_0: reference box mirror=False (flag at addBox time), port True",
+        "seg2rspike -> seg2rspike_0: reference box mirror=False (flag at addBox time), port True",
+        "seg3 -> seg3: reference box mirror=False (flag at addBox time), port True",
+        "seg3lfoot -> seg3lfoot: reference box mirror=False (flag at addBox time), port True",
+        "seg3rfoot -> seg3rfoot: reference box mirror=False (flag at addBox time), port True",
+        "seg3lspike -> seg3lspike: reference box mirror=False (flag at addBox time), port True",
+        "seg3rspike -> seg3rspike: reference box mirror=False (flag at addBox time), port True",
+        "seg3ltopspike -> seg3ltopspike: reference box mirror=False (flag at addBox time), port True",
+        "seg3rtopspike -> seg3rtopspike: reference box mirror=False (flag at addBox time), port True",
+        "seg3lbackspike -> seg3lbackspike: reference box mirror=False (flag at addBox time), port True",
+        "seg3rbackspike -> seg3rbackspike: reference box mirror=False (flag at addBox time), port True"
+      ]
+    }
+  },
+  "status": "PASS_WITH_PINNED_DIVERGENCES",
+  "pinned_divergences": {
+    "EXTRA_IN_PORT": 49,
+    "MIRROR": 31
+  }
+}

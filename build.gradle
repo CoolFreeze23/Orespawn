@@ -302,6 +302,35 @@ tasks.register('s4Parity', Exec) {
 }
 tasks.named('check') { dependsOn tasks.named('s4Parity') }
 
+// Standing reference-geometry gate (owner ruling 2026-09-02, BUG-041 / ENT-S-091): every port
+// entity model with a 1.7.10 source is compiled, dumped and compared against the parsed original;
+// models still carrying ruled parity bugs pin their exact divergence counts until the fix lands.
+def referenceManifest = file('tools/reference_model_proofs.json')
+def referenceBuildDir = layout.buildDirectory.dir('reference')
+
+tasks.register('referenceDumpCompiledModels', JavaExec) {
+    group = 'verification'
+    description = 'Dump every port entity model that pairs with a 1.7.10 model.'
+    dependsOn tasks.named('g1toolClasses')
+    classpath = sourceSets.g1tool.runtimeClasspath
+    mainClass = 'danger.orespawn.g1.G1ModelProbe'
+    args 'vanilla', referenceManifest.absolutePath,
+            referenceBuildDir.get().dir('vanilla').asFile.absolutePath
+}
+
+tasks.register('referenceGeometry', Exec) {
+    group = 'verification'
+    description = 'Compare every dumped port model with its parsed 1.7.10 source; verify the checked-in proof.'
+    dependsOn tasks.named('referenceDumpCompiledModels')
+    workingDir = projectDir
+    commandLine 'python', 'tools/reference_geometry_leg.py',
+            '--manifest', referenceManifest.absolutePath,
+            '--dump-dir', referenceBuildDir.get().dir('vanilla').asFile.absolutePath,
+            '--output-dir', referenceBuildDir.get().dir('reports').asFile.absolutePath,
+            '--proof-dir', file('phase_g_reports/reference_proof').absolutePath
+}
+tasks.named('check') { dependsOn tasks.named('referenceGeometry') }
+
 // BUG-032 (beta.3): the DISTRIBUTED jar must be the jarJar output (nested
 // databuddy under META-INF/jarjar). Swap classifiers so the unclassified
 // `orespawn-<version>.jar` — the file everyone downloads — is the combined

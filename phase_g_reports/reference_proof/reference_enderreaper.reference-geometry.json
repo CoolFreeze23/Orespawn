@@ -1,0 +1,3126 @@
+{
+  "schema_version": 1,
+  "model_id": "reference_enderreaper",
+  "reference_source": "reference_1_7_10_source/sources/danger/orespawn/ModelEnderReaper.java",
+  "reference": {
+    "status": "PARSED",
+    "class": "ModelEnderReaper",
+    "texture_width": 512,
+    "texture_height": 512,
+    "parts": [
+      {
+        "name": "rwing1",
+        "tex_u": 20,
+        "tex_v": 430,
+        "boxes": [
+          {
+            "origin": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "size": [
+              0,
+              50,
+              17
+            ],
+            "uv": [
+              20,
+              430
+            ],
+            "mirror": false,
+            "texture_size": [
+              512,
+              512
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          -4.0,
+          -6.9,
+          8.5
+        ],
+        "rotation": [
+          1.745,
+          -0.785,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          512,
+          512
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "lwing1",
+        "tex_u": 20,
+        "tex_v": 350,
+        "boxes": [
+          {
+            "origin": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "size": [
+              0,
+              50,
+              17
+            ],
+            "uv": [
+              20,
+              350
+            ],
+            "mirror": false,
+            "texture_size": [
+              512,
+              512
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          4.0,
+          -6.9,
+          8.5
+        ],
+        "rotation": [
+          1.745,
+          0.785,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          512,
+          512
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Shape3",
+        "tex_u": 20,
+        "tex_v": 320,
+        "boxes": [
+          {
+            "origin": [
+              -4.0,
+              0.0,
+              -2.0
+            ],
+            "size": [
+              2,
+              12,
+              1
+            ],
+            "uv": [
+              20,
+              320
+            ],
+            "mirror": false,
+            "texture_size": [
+              512,
+              512
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          3.0,
+          -14.0,
+          10.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          512,
+          512
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Shape4",
+        "tex_u": 40,
+        "tex_v": 320,
+        "boxes": [
+          {
+            "origin": [
+              -4.0,
+              0.0,
+              -2.0
+            ],
+            "size": [
+              2,
+              6,
+              1
+            ],
+            "uv": [
+              40,
+              320
+            ],
+            "mirror": false,
+            "texture_size": [
+              512,
+              512
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          3.0,
+          -2.0,
+          10.0
+        ],
+        "rotation": [
+          -0.247,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          512,
+          512
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Shape5",
+        "tex_u": 20,
+        "tex_v": 310,
+        "boxes": [
+          {
+            "origin": [
+              -4.0,
+              0.0,
+              -2.0
+            ],
+            "size": [
+              1,
+              3,
+              1
+            ],
+            "uv": [
+              20,
+              310
+            ],
+            "mirror": false,
+            "texture_size": [
+              512,
+              512
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          3.5,
+          4.0,
+          8.0
+        ],
+        "rotation": [
+          -0.768,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          512,
+          512
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Shape6",
+        "tex_u": 20,
+        "tex_v": 292,
+        "boxes": [
+          {
+            "origin": [
+              -4.0,
+              0.0,
+              -2.0
+            ],
+            "size": [
+              2,
+              6,
+              2
+            ],
+            "uv": [
+              20,
+              292
+            ],
+            "mirror": false,
+            "texture_size": [
+              512,
+              512
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          3.0,
+          -12.0,
+          7.5
+        ],
+        "rotation": [
+          -2.356,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          512,
+          512
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Shape7",
+        "tex_u": 20,
+        "tex_v": 280,
+        "boxes": [
+          {
+            "origin": [
+              -4.0,
+              0.0,
+              -2.0
+            ],
+            "size": [
+              4,
+              1,
+              1
+            ],
+            "uv": [
+              20,
+              280
+            ],
+            "mirror": false,
+            "texture_size": [
+              512,
+              512
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          5.0,
+          -14.0,
+          10.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          512,
+          512
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Shape8",
+        "tex_u": 20,
+        "tex_v": 269,
+        "boxes": [
+          {
+            "origin": [
+              -4.0,
+              0.0,
+              -2.0
+            ],
+            "size": [
+              4,
+              1,
+              1
+            ],
+            "uv": [
+              20,
+              269
+            ],
+            "mirror": false,
+            "texture_size": [
+              512,
+              512
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          -1.0,
+          -14.0,
+          10.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          512,
+          512
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Shape9",
+        "tex_u": 20,
+        "tex_v": 257,
+        "boxes": [
+          {
+            "origin": [
+              -4.0,
+              0.0,
+              -2.0
+            ],
+            "size": [
+              4,
+              1,
+              1
+            ],
+            "uv": [
+              20,
+              257
+            ],
+            "mirror": false,
+            "texture_size": [
+              512,
+              512
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          -1.0,
+          -12.0,
+          10.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          512,
+          512
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Shape10",
+        "tex_u": 20,
+        "tex_v": 246,
+        "boxes": [
+          {
+            "origin": [
+              -4.0,
+              0.0,
+              -2.0
+            ],
+            "size": [
+              4,
+              1,
+              1
+            ],
+            "uv": [
+              20,
+              246
+            ],
+            "mirror": false,
+            "texture_size": [
+              512,
+              512
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          -1.0,
+          -10.0,
+          10.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          512,
+          512
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Shape11",
+        "tex_u": 20,
+        "tex_v": 237,
+        "boxes": [
+          {
+            "origin": [
+              -4.0,
+              0.0,
+              -2.0
+            ],
+            "size": [
+              4,
+              1,
+              1
+            ],
+            "uv": [
+              20,
+              237
+            ],
+            "mirror": false,
+            "texture_size": [
+              512,
+              512
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          -1.0,
+          -8.0,
+          10.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          512,
+          512
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Shape12",
+        "tex_u": 20,
+        "tex_v": 228,
+        "boxes": [
+          {
+            "origin": [
+              -4.0,
+              0.0,
+              -2.0
+            ],
+            "size": [
+              2,
+              1,
+              1
+            ],
+            "uv": [
+              20,
+              228
+            ],
+            "mirror": false,
+            "texture_size": [
+              512,
+              512
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          1.0,
+          -6.0,
+          10.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          512,
+          512
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Shape13",
+        "tex_u": 20,
+        "tex_v": 219,
+        "boxes": [
+          {
+            "origin": [
+              -4.0,
+              0.0,
+              -2.0
+            ],
+            "size": [
+              3,
+              1,
+              1
+            ],
+            "uv": [
+              20,
+              219
+            ],
+            "mirror": false,
+            "texture_size": [
+              512,
+              512
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          1.0,
+          -4.0,
+          10.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          512,
+          512
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Shape14",
+        "tex_u": 20,
+        "tex_v": 209,
+        "boxes": [
+          {
+            "origin": [
+              -4.0,
+              0.0,
+              -2.0
+            ],
+            "size": [
+              1,
+              1,
+              1
+            ],
+            "uv": [
+              20,
+              209
+            ],
+            "mirror": false,
+            "texture_size": [
+              512,
+              512
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          3.5,
+          -14.0,
+          11.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          512,
+          512
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Shape15",
+        "tex_u": 20,
+        "tex_v": 201,
+        "boxes": [
+          {
+            "origin": [
+              -4.0,
+              0.0,
+              -2.0
+            ],
+            "size": [
+              1,
+              1,
+              1
+            ],
+            "uv": [
+              20,
+              201
+            ],
+            "mirror": false,
+            "texture_size": [
+              512,
+              512
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          3.5,
+          -12.0,
+          11.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          512,
+          512
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Shape16",
+        "tex_u": 20,
+        "tex_v": 194,
+        "boxes": [
+          {
+            "origin": [
+              -4.0,
+              0.0,
+              -2.0
+            ],
+            "size": [
+              1,
+              1,
+              1
+            ],
+            "uv": [
+              20,
+              194
+            ],
+            "mirror": false,
+            "texture_size": [
+              512,
+              512
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          3.5,
+          -10.0,
+          11.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          512,
+          512
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Shape17",
+        "tex_u": 20,
+        "tex_v": 185,
+        "boxes": [
+          {
+            "origin": [
+              -4.0,
+              0.0,
+              -2.0
+            ],
+            "size": [
+              1,
+              1,
+              1
+            ],
+            "uv": [
+              20,
+              185
+            ],
+            "mirror": false,
+            "texture_size": [
+              512,
+              512
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          3.5,
+          -8.0,
+          11.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          512,
+          512
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Shape18",
+        "tex_u": 20,
+        "tex_v": 175,
+        "boxes": [
+          {
+            "origin": [
+              -4.0,
+              0.0,
+              -2.0
+            ],
+            "size": [
+              1,
+              1,
+              1
+            ],
+            "uv": [
+              20,
+              175
+            ],
+            "mirror": false,
+            "texture_size": [
+              512,
+              512
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          3.5,
+          -6.0,
+          11.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          512,
+          512
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Shape19",
+        "tex_u": 20,
+        "tex_v": 165,
+        "boxes": [
+          {
+            "origin": [
+              -4.0,
+              0.0,
+              -2.0
+            ],
+            "size": [
+              1,
+              1,
+              1
+            ],
+            "uv": [
+              20,
+              165
+            ],
+            "mirror": false,
+            "texture_size": [
+              512,
+              512
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          3.5,
+          -4.0,
+          11.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          512,
+          512
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Shape20",
+        "tex_u": 20,
+        "tex_v": 155,
+        "boxes": [
+          {
+            "origin": [
+              -4.0,
+              0.0,
+              -2.0
+            ],
+            "size": [
+              4,
+              1,
+              1
+            ],
+            "uv": [
+              20,
+              155
+            ],
+            "mirror": false,
+            "texture_size": [
+              512,
+              512
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          5.0,
+          -12.0,
+          10.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          512,
+          512
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Shape21",
+        "tex_u": 20,
+        "tex_v": 146,
+        "boxes": [
+          {
+            "origin": [
+              -4.0,
+              0.0,
+              -2.0
+            ],
+            "size": [
+              4,
+              1,
+              1
+            ],
+            "uv": [
+              20,
+              146
+            ],
+            "mirror": false,
+            "texture_size": [
+              512,
+              512
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          5.0,
+          -10.0,
+          10.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          512,
+          512
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Shape22",
+        "tex_u": 20,
+        "tex_v": 139,
+        "boxes": [
+          {
+            "origin": [
+              -4.0,
+              0.0,
+              -2.0
+            ],
+            "size": [
+              4,
+              1,
+              1
+            ],
+            "uv": [
+              20,
+              139
+            ],
+            "mirror": false,
+            "texture_size": [
+              512,
+              512
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          5.0,
+          -8.0,
+          10.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          512,
+          512
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Shape23",
+        "tex_u": 20,
+        "tex_v": 132,
+        "boxes": [
+          {
+            "origin": [
+              -4.0,
+              0.0,
+              -2.0
+            ],
+            "size": [
+              3,
+              1,
+              1
+            ],
+            "uv": [
+              20,
+              132
+            ],
+            "mirror": false,
+            "texture_size": [
+              512,
+              512
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          5.0,
+          -6.0,
+          10.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          512,
+          512
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Shape24",
+        "tex_u": 20,
+        "tex_v": 124,
+        "boxes": [
+          {
+            "origin": [
+              -4.0,
+              0.0,
+              -2.0
+            ],
+            "size": [
+              2,
+              1,
+              1
+            ],
+            "uv": [
+              20,
+              124
+            ],
+            "mirror": false,
+            "texture_size": [
+              512,
+              512
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          5.0,
+          -4.0,
+          10.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          512,
+          512
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Shape25",
+        "tex_u": 20,
+        "tex_v": 114,
+        "boxes": [
+          {
+            "origin": [
+              -4.0,
+              0.0,
+              -2.0
+            ],
+            "size": [
+              1,
+              1,
+              3
+            ],
+            "uv": [
+              20,
+              114
+            ],
+            "mirror": false,
+            "texture_size": [
+              512,
+              512
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          6.0,
+          -4.0,
+          8.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          512,
+          512
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Shape26",
+        "tex_u": 20,
+        "tex_v": 106,
+        "boxes": [
+          {
+            "origin": [
+              -4.0,
+              0.0,
+              -2.0
+            ],
+            "size": [
+              2,
+              1,
+              1
+            ],
+            "uv": [
+              20,
+              106
+            ],
+            "mirror": false,
+            "texture_size": [
+              512,
+              512
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          5.0,
+          -4.0,
+          8.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          512,
+          512
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Shape27",
+        "tex_u": 20,
+        "tex_v": 94,
+        "boxes": [
+          {
+            "origin": [
+              -4.0,
+              0.0,
+              -2.0
+            ],
+            "size": [
+              1,
+              1,
+              5
+            ],
+            "uv": [
+              20,
+              94
+            ],
+            "mirror": false,
+            "texture_size": [
+              512,
+              512
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          7.0,
+          -6.0,
+          6.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          512,
+          512
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Shape28",
+        "tex_u": 20,
+        "tex_v": 83,
+        "boxes": [
+          {
+            "origin": [
+              -4.0,
+              0.0,
+              -2.0
+            ],
+            "size": [
+              1,
+              1,
+              5
+            ],
+            "uv": [
+              20,
+              83
+            ],
+            "mirror": false,
+            "texture_size": [
+              512,
+              512
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          8.0,
+          -8.0,
+          5.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          512,
+          512
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Shape29",
+        "tex_u": 20,
+        "tex_v": 70,
+        "boxes": [
+          {
+            "origin": [
+              -4.0,
+              0.0,
+              -2.0
+            ],
+            "size": [
+              1,
+              1,
+              6
+            ],
+            "uv": [
+              20,
+              70
+            ],
+            "mirror": false,
+            "texture_size": [
+              512,
+              512
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          8.0,
+          -10.0,
+          4.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          512,
+          512
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Shape30",
+        "tex_u": 20,
+        "tex_v": 59,
+        "boxes": [
+          {
+            "origin": [
+              -4.0,
+              0.0,
+              -2.0
+            ],
+            "size": [
+              1,
+              1,
+              6
+            ],
+            "uv": [
+              20,
+              59
+            ],
+            "mirror": false,
+            "texture_size": [
+              512,
+              512
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          8.0,
+          -12.0,
+          4.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          512,
+          512
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Shape31",
+        "tex_u": 20,
+        "tex_v": 47,
+        "boxes": [
+          {
+            "origin": [
+              -4.0,
+              0.0,
+              -2.0
+            ],
+            "size": [
+              1,
+              1,
+              6
+            ],
+            "uv": [
+              20,
+              47
+            ],
+            "mirror": false,
+            "texture_size": [
+              512,
+              512
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          8.0,
+          -14.0,
+          4.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          512,
+          512
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Shape32",
+        "tex_u": 20,
+        "tex_v": 37,
+        "boxes": [
+          {
+            "origin": [
+              -4.0,
+              0.0,
+              -2.0
+            ],
+            "size": [
+              2,
+              1,
+              1
+            ],
+            "uv": [
+              20,
+              37
+            ],
+            "mirror": false,
+            "texture_size": [
+              512,
+              512
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          6.0,
+          -6.0,
+          6.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          512,
+          512
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Shape33",
+        "tex_u": 20,
+        "tex_v": 29,
+        "boxes": [
+          {
+            "origin": [
+              -4.0,
+              0.0,
+              -2.0
+            ],
+            "size": [
+              4,
+              1,
+              1
+            ],
+            "uv": [
+              20,
+              29
+            ],
+            "mirror": false,
+            "texture_size": [
+              512,
+              512
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          5.0,
+          -8.0,
+          5.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          512,
+          512
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Shape34",
+        "tex_u": 40,
+        "tex_v": 312,
+        "boxes": [
+          {
+            "origin": [
+              -4.0,
+              0.0,
+              -2.0
+            ],
+            "size": [
+              4,
+              1,
+              1
+            ],
+            "uv": [
+              40,
+              312
+            ],
+            "mirror": false,
+            "texture_size": [
+              512,
+              512
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          5.0,
+          -10.0,
+          4.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          512,
+          512
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Shape35",
+        "tex_u": 40,
+        "tex_v": 301,
+        "boxes": [
+          {
+            "origin": [
+              -4.0,
+              0.0,
+              -2.0
+            ],
+            "size": [
+              4,
+              1,
+              1
+            ],
+            "uv": [
+              40,
+              301
+            ],
+            "mirror": false,
+            "texture_size": [
+              512,
+              512
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          5.0,
+          -12.0,
+          4.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          512,
+          512
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Shape36",
+        "tex_u": 40,
+        "tex_v": 291,
+        "boxes": [
+          {
+            "origin": [
+              -4.0,
+              0.0,
+              -2.0
+            ],
+            "size": [
+              4,
+              1,
+              1
+            ],
+            "uv": [
+              40,
+              291
+            ],
+            "mirror": false,
+            "texture_size": [
+              512,
+              512
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          5.0,
+          -14.0,
+          4.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          512,
+          512
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Shape37",
+        "tex_u": 40,
+        "tex_v": 278,
+        "boxes": [
+          {
+            "origin": [
+              -4.0,
+              0.0,
+              -2.0
+            ],
+            "size": [
+              1,
+              1,
+              3
+            ],
+            "uv": [
+              40,
+              278
+            ],
+            "mirror": false,
+            "texture_size": [
+              512,
+              512
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          1.0,
+          -4.0,
+          8.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          512,
+          512
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Shape38",
+        "tex_u": 40,
+        "tex_v": 265,
+        "boxes": [
+          {
+            "origin": [
+              -4.0,
+              0.0,
+              -2.0
+            ],
+            "size": [
+              1,
+              1,
+              5
+            ],
+            "uv": [
+              40,
+              265
+            ],
+            "mirror": false,
+            "texture_size": [
+              512,
+              512
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          -6.0,
+          6.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          512,
+          512
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Shape39",
+        "tex_u": 40,
+        "tex_v": 251,
+        "boxes": [
+          {
+            "origin": [
+              -4.0,
+              0.0,
+              -2.0
+            ],
+            "size": [
+              1,
+              1,
+              6
+            ],
+            "uv": [
+              40,
+              251
+            ],
+            "mirror": false,
+            "texture_size": [
+              512,
+              512
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          -1.0,
+          -8.0,
+          5.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          512,
+          512
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Shape40",
+        "tex_u": 40,
+        "tex_v": 235,
+        "boxes": [
+          {
+            "origin": [
+              -4.0,
+              0.0,
+              -2.0
+            ],
+            "size": [
+              1,
+              1,
+              6
+            ],
+            "uv": [
+              40,
+              235
+            ],
+            "mirror": false,
+            "texture_size": [
+              512,
+              512
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          -1.0,
+          -10.0,
+          4.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          512,
+          512
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Shape41",
+        "tex_u": 40,
+        "tex_v": 222,
+        "boxes": [
+          {
+            "origin": [
+              -4.0,
+              0.0,
+              -2.0
+            ],
+            "size": [
+              1,
+              1,
+              6
+            ],
+            "uv": [
+              40,
+              222
+            ],
+            "mirror": false,
+            "texture_size": [
+              512,
+              512
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          -1.0,
+          -12.0,
+          4.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          512,
+          512
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Shape42",
+        "tex_u": 40,
+        "tex_v": 209,
+        "boxes": [
+          {
+            "origin": [
+              -4.0,
+              0.0,
+              -2.0
+            ],
+            "size": [
+              1,
+              1,
+              6
+            ],
+            "uv": [
+              40,
+              209
+            ],
+            "mirror": false,
+            "texture_size": [
+              512,
+              512
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          -1.0,
+          -14.0,
+          4.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          512,
+          512
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Shape43",
+        "tex_u": 40,
+        "tex_v": 200,
+        "boxes": [
+          {
+            "origin": [
+              -4.0,
+              0.0,
+              -2.0
+            ],
+            "size": [
+              2,
+              1,
+              1
+            ],
+            "uv": [
+              40,
+              200
+            ],
+            "mirror": false,
+            "texture_size": [
+              512,
+              512
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          1.0,
+          -4.0,
+          8.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          512,
+          512
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Shape44",
+        "tex_u": 40,
+        "tex_v": 189,
+        "boxes": [
+          {
+            "origin": [
+              -4.0,
+              0.0,
+              -2.0
+            ],
+            "size": [
+              2,
+              1,
+              1
+            ],
+            "uv": [
+              40,
+              189
+            ],
+            "mirror": false,
+            "texture_size": [
+              512,
+              512
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          -6.0,
+          6.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          512,
+          512
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Shape45",
+        "tex_u": 40,
+        "tex_v": 180,
+        "boxes": [
+          {
+            "origin": [
+              -4.0,
+              0.0,
+              -2.0
+            ],
+            "size": [
+              4,
+              1,
+              1
+            ],
+            "uv": [
+              40,
+              180
+            ],
+            "mirror": false,
+            "texture_size": [
+              512,
+              512
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          -1.0,
+          -8.0,
+          5.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          512,
+          512
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Shape46",
+        "tex_u": 40,
+        "tex_v": 170,
+        "boxes": [
+          {
+            "origin": [
+              -4.0,
+              0.0,
+              -2.0
+            ],
+            "size": [
+              4,
+              1,
+              1
+            ],
+            "uv": [
+              40,
+              170
+            ],
+            "mirror": false,
+            "texture_size": [
+              512,
+              512
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          -1.0,
+          -10.0,
+          4.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          512,
+          512
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Shape47",
+        "tex_u": 40,
+        "tex_v": 161,
+        "boxes": [
+          {
+            "origin": [
+              -4.0,
+              0.0,
+              -2.0
+            ],
+            "size": [
+              4,
+              1,
+              1
+            ],
+            "uv": [
+              40,
+              161
+            ],
+            "mirror": false,
+            "texture_size": [
+              512,
+              512
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          -1.0,
+          -12.0,
+          4.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          512,
+          512
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Shape48",
+        "tex_u": 40,
+        "tex_v": 151,
+        "boxes": [
+          {
+            "origin": [
+              -4.0,
+              0.0,
+              -2.0
+            ],
+            "size": [
+              4,
+              1,
+              1
+            ],
+            "uv": [
+              40,
+              151
+            ],
+            "mirror": false,
+            "texture_size": [
+              512,
+              512
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          -1.0,
+          -14.0,
+          4.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          512,
+          512
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Shape49",
+        "tex_u": 40,
+        "tex_v": 140,
+        "boxes": [
+          {
+            "origin": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "size": [
+              3,
+              2,
+              3
+            ],
+            "uv": [
+              40,
+              140
+            ],
+            "mirror": false,
+            "texture_size": [
+              512,
+              512
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          -7.5,
+          -15.5,
+          3.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.524
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          512,
+          512
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "rarm2",
+        "tex_u": 40,
+        "tex_v": 122,
+        "boxes": [
+          {
+            "origin": [
+              -4.0,
+              0.0,
+              -2.0
+            ],
+            "size": [
+              1,
+              12,
+              1
+            ],
+            "uv": [
+              40,
+              122
+            ],
+            "mirror": false,
+            "texture_size": [
+              512,
+              512
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          -5.0,
+          -11.5,
+          8.0
+        ],
+        "rotation": [
+          0.0,
+          -0.5,
+          0.524
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          512,
+          512
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "rarm3",
+        "tex_u": 49,
+        "tex_v": 122,
+        "boxes": [
+          {
+            "origin": [
+              -4.0,
+              0.0,
+              -2.0
+            ],
+            "size": [
+              1,
+              12,
+              1
+            ],
+            "uv": [
+              49,
+              122
+            ],
+            "mirror": false,
+            "texture_size": [
+              512,
+              512
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          -4.0,
+          -11.5,
+          6.0
+        ],
+        "rotation": [
+          0.0,
+          -0.5,
+          0.524
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          512,
+          512
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "relbow",
+        "tex_u": 40,
+        "tex_v": 111,
+        "boxes": [
+          {
+            "origin": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "size": [
+              2,
+              2,
+              3
+            ],
+            "uv": [
+              40,
+              111
+            ],
+            "mirror": false,
+            "texture_size": [
+              512,
+              512
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          -11.0,
+          -3.5,
+          3.0
+        ],
+        "rotation": [
+          0.0,
+          -0.5,
+          0.524
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          512,
+          512
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "rarm1",
+        "tex_u": 40,
+        "tex_v": 91,
+        "boxes": [
+          {
+            "origin": [
+              -2.0,
+              -1.0,
+              -1.0
+            ],
+            "size": [
+              1,
+              11,
+              2
+            ],
+            "uv": [
+              40,
+              91
+            ],
+            "mirror": false,
+            "texture_size": [
+              512,
+              512
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          -10.5,
+          -2.0,
+          2.5
+        ],
+        "rotation": [
+          -0.76,
+          0.0,
+          0.3
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          512,
+          512
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Shape54",
+        "tex_u": 40,
+        "tex_v": 78,
+        "boxes": [
+          {
+            "origin": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "size": [
+              3,
+              2,
+              3
+            ],
+            "uv": [
+              40,
+              78
+            ],
+            "mirror": false,
+            "texture_size": [
+              512,
+              512
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          5.0,
+          -14.0,
+          3.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          -0.524
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          512,
+          512
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "larm3",
+        "tex_u": 40,
+        "tex_v": 58,
+        "boxes": [
+          {
+            "origin": [
+              -4.0,
+              0.0,
+              -2.0
+            ],
+            "size": [
+              1,
+              12,
+              1
+            ],
+            "uv": [
+              40,
+              58
+            ],
+            "mirror": false,
+            "texture_size": [
+              512,
+              512
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          9.5,
+          -15.0,
+          3.0
+        ],
+        "rotation": [
+          0.0,
+          0.5,
+          -0.524
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          512,
+          512
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "larm2",
+        "tex_u": 40,
+        "tex_v": 35,
+        "boxes": [
+          {
+            "origin": [
+              -4.0,
+              0.0,
+              -2.0
+            ],
+            "size": [
+              1,
+              12,
+              1
+            ],
+            "uv": [
+              40,
+              35
+            ],
+            "mirror": false,
+            "texture_size": [
+              512,
+              512
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          10.5,
+          -15.0,
+          5.0
+        ],
+        "rotation": [
+          0.0,
+          0.5,
+          -0.524
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          512,
+          512
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "lelbow",
+        "tex_u": 55,
+        "tex_v": 38,
+        "boxes": [
+          {
+            "origin": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "size": [
+              2,
+              2,
+              4
+            ],
+            "uv": [
+              55,
+              38
+            ],
+            "mirror": false,
+            "texture_size": [
+              512,
+              512
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          10.0,
+          -3.0,
+          3.0
+        ],
+        "rotation": [
+          0.0,
+          0.5,
+          -0.524
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          512,
+          512
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "larm1",
+        "tex_u": 56,
+        "tex_v": 53,
+        "boxes": [
+          {
+            "origin": [
+              0.0,
+              0.0,
+              -1.0
+            ],
+            "size": [
+              1,
+              9,
+              2
+            ],
+            "uv": [
+              56,
+              53
+            ],
+            "mirror": false,
+            "texture_size": [
+              512,
+              512
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          12.0,
+          -3.0,
+          2.5
+        ],
+        "rotation": [
+          0.0,
+          -0.6,
+          -0.3
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          512,
+          512
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "scythe1",
+        "tex_u": 57,
+        "tex_v": 70,
+        "boxes": [
+          {
+            "origin": [
+              0.0,
+              -39.0,
+              1.0
+            ],
+            "size": [
+              1,
+              39,
+              1
+            ],
+            "uv": [
+              57,
+              70
+            ],
+            "mirror": false,
+            "texture_size": [
+              512,
+              512
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          -17.0,
+          6.0,
+          -2.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          512,
+          512
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "scythe2",
+        "tex_u": 58,
+        "tex_v": 118,
+        "boxes": [
+          {
+            "origin": [
+              0.0,
+              -39.0,
+              1.0
+            ],
+            "size": [
+              16,
+              6,
+              0
+            ],
+            "uv": [
+              58,
+              118
+            ],
+            "mirror": false,
+            "texture_size": [
+              512,
+              512
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          -17.0,
+          6.0,
+          -2.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          512,
+          512
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "scythe3",
+        "tex_u": 61,
+        "tex_v": 133,
+        "boxes": [
+          {
+            "origin": [
+              9.0,
+              -34.0,
+              1.0
+            ],
+            "size": [
+              7,
+              5,
+              0
+            ],
+            "uv": [
+              61,
+              133
+            ],
+            "mirror": false,
+            "texture_size": [
+              512,
+              512
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          -17.0,
+          6.0,
+          -2.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          512,
+          512
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "head",
+        "tex_u": 58,
+        "tex_v": 145,
+        "boxes": [
+          {
+            "origin": [
+              -3.0,
+              -6.0,
+              -3.0
+            ],
+            "size": [
+              6,
+              6,
+              5
+            ],
+            "uv": [
+              58,
+              145
+            ],
+            "mirror": false,
+            "texture_size": [
+              512,
+              512
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          -16.0,
+          4.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          512,
+          512
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "lwing3",
+        "tex_u": 71,
+        "tex_v": 58,
+        "boxes": [
+          {
+            "origin": [
+              -0.5,
+              0.0,
+              0.0
+            ],
+            "size": [
+              1,
+              19,
+              3
+            ],
+            "uv": [
+              71,
+              58
+            ],
+            "mirror": false,
+            "texture_size": [
+              512,
+              512
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          4.0,
+          -11.7,
+          8.5
+        ],
+        "rotation": [
+          2.356,
+          0.785,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          512,
+          512
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "lwing2",
+        "tex_u": 58,
+        "tex_v": 168,
+        "boxes": [
+          {
+            "origin": [
+              -0.5,
+              11.0,
+              -2.0
+            ],
+            "size": [
+              1,
+              19,
+              3
+            ],
+            "uv": [
+              58,
+              168
+            ],
+            "mirror": false,
+            "texture_size": [
+              512,
+              512
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          4.0,
+          -23.9,
+          8.5
+        ],
+        "rotation": [
+          1.745,
+          0.785,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          512,
+          512
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "rwing3",
+        "tex_u": 71,
+        "tex_v": 88,
+        "boxes": [
+          {
+            "origin": [
+              -0.5,
+              0.0,
+              0.0
+            ],
+            "size": [
+              1,
+              19,
+              3
+            ],
+            "uv": [
+              71,
+              88
+            ],
+            "mirror": false,
+            "texture_size": [
+              512,
+              512
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          -4.0,
+          -11.7,
+          8.5
+        ],
+        "rotation": [
+          2.356,
+          -0.785,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          512,
+          512
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "rwing2",
+        "tex_u": 73,
+        "tex_v": 168,
+        "boxes": [
+          {
+            "origin": [
+              -0.5,
+              12.0,
+              -2.0
+            ],
+            "size": [
+              1,
+              19,
+              3
+            ],
+            "uv": [
+              73,
+              168
+            ],
+            "mirror": false,
+            "texture_size": [
+              512,
+              512
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          -4.0,
+          -23.9,
+          8.5
+        ],
+        "rotation": [
+          1.745,
+          -0.785,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          512,
+          512
+        ],
+        "children": [],
+        "parent": null
+      }
+    ]
+  },
+  "ground_truth": "1.7.10 decompiled ModelBase constructor, parsed; never the port",
+  "comparison": {
+    "status": "PASS",
+    "reference_parts_with_boxes": 66,
+    "port_parts_with_boxes": 66,
+    "matched_parts": 66,
+    "categories": {},
+    "differences": [],
+    "by_category": {}
+  },
+  "status": "PASS"
+}

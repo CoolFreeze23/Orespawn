@@ -1,0 +1,474 @@
+{
+  "schema_version": 1,
+  "model_id": "reference_attacksquid",
+  "reference_source": "reference_1_7_10_source/sources/danger/orespawn/ModelAttackSquid.java",
+  "reference": {
+    "status": "PARSED",
+    "class": "ModelAttackSquid",
+    "texture_width": 64,
+    "texture_height": 32,
+    "parts": [
+      {
+        "name": "tent1",
+        "tex_u": 0,
+        "tex_v": 18,
+        "boxes": [
+          {
+            "origin": [
+              -1.0,
+              0.0,
+              -1.0
+            ],
+            "size": [
+              2,
+              9,
+              2
+            ],
+            "uv": [
+              0,
+              18
+            ],
+            "mirror": false,
+            "texture_size": [
+              64,
+              32
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          5.0,
+          15.0,
+          -1.0
+        ],
+        "rotation": [
+          -0.9250245,
+          -1.745329,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          32
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "tent2",
+        "tex_u": 0,
+        "tex_v": 18,
+        "boxes": [
+          {
+            "origin": [
+              -8.0,
+              -1.0,
+              -1.0
+            ],
+            "size": [
+              8,
+              2,
+              2
+            ],
+            "uv": [
+              0,
+              18
+            ],
+            "mirror": false,
+            "texture_size": [
+              64,
+              32
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          -2.0,
+          15.0,
+          -3.0
+        ],
+        "rotation": [
+          -0.1745329,
+          -0.6632251,
+          -0.2443461
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          32
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "tent3",
+        "tex_u": 0,
+        "tex_v": 18,
+        "boxes": [
+          {
+            "origin": [
+              -1.0,
+              0.0,
+              -1.0
+            ],
+            "size": [
+              2,
+              10,
+              2
+            ],
+            "uv": [
+              0,
+              18
+            ],
+            "mirror": false,
+            "texture_size": [
+              64,
+              32
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          1.0,
+          15.0,
+          -4.0
+        ],
+        "rotation": [
+          -1.134464,
+          0.3316126,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          32
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "tent4",
+        "tex_u": 0,
+        "tex_v": 18,
+        "boxes": [
+          {
+            "origin": [
+              -1.0,
+              0.0,
+              -1.0
+            ],
+            "size": [
+              2,
+              10,
+              2
+            ],
+            "uv": [
+              0,
+              18
+            ],
+            "mirror": false,
+            "texture_size": [
+              64,
+              32
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          -3.0,
+          15.0,
+          -1.0
+        ],
+        "rotation": [
+          0.5585054,
+          -1.692969,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          32
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "tent5",
+        "tex_u": 0,
+        "tex_v": 18,
+        "boxes": [
+          {
+            "origin": [
+              -1.0,
+              0.0,
+              -1.0
+            ],
+            "size": [
+              2,
+              10,
+              2
+            ],
+            "uv": [
+              0,
+              18
+            ],
+            "mirror": false,
+            "texture_size": [
+              64,
+              32
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          1.0,
+          15.0,
+          3.0
+        ],
+        "rotation": [
+          0.5410521,
+          0.2268928,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          32
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "tent6",
+        "tex_u": 0,
+        "tex_v": 18,
+        "boxes": [
+          {
+            "origin": [
+              -1.0,
+              -1.0,
+              0.0
+            ],
+            "size": [
+              2,
+              2,
+              8
+            ],
+            "uv": [
+              0,
+              18
+            ],
+            "mirror": false,
+            "texture_size": [
+              64,
+              32
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          -2.0,
+          15.0,
+          2.0
+        ],
+        "rotation": [
+          -0.418879,
+          -0.6806784,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          32
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "tent7",
+        "tex_u": 0,
+        "tex_v": 18,
+        "boxes": [
+          {
+            "origin": [
+              0.0,
+              -1.0,
+              -1.0
+            ],
+            "size": [
+              8,
+              2,
+              2
+            ],
+            "uv": [
+              0,
+              18
+            ],
+            "mirror": false,
+            "texture_size": [
+              64,
+              32
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          3.0,
+          15.0,
+          1.0
+        ],
+        "rotation": [
+          -0.1919862,
+          -0.6632251,
+          0.418879
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          32
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "body",
+        "tex_u": 0,
+        "tex_v": 0,
+        "boxes": [
+          {
+            "origin": [
+              -4.0,
+              -10.0,
+              -4.0
+            ],
+            "size": [
+              8,
+              10,
+              8
+            ],
+            "uv": [
+              0,
+              0
+            ],
+            "mirror": false,
+            "texture_size": [
+              64,
+              32
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          1.0,
+          16.0,
+          -1.0
+        ],
+        "rotation": [
+          -0.1919862,
+          -0.6806784,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          32
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "tent8",
+        "tex_u": 0,
+        "tex_v": 18,
+        "boxes": [
+          {
+            "origin": [
+              -1.0,
+              -1.0,
+              -8.0
+            ],
+            "size": [
+              2,
+              2,
+              8
+            ],
+            "uv": [
+              0,
+              18
+            ],
+            "mirror": false,
+            "texture_size": [
+              64,
+              32
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          3.0,
+          15.0,
+          -4.0
+        ],
+        "rotation": [
+          0.1919862,
+          -0.6806784,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          32
+        ],
+        "children": [],
+        "parent": null
+      }
+    ]
+  },
+  "ground_truth": "1.7.10 decompiled ModelBase constructor, parsed; never the port",
+  "comparison": {
+    "status": "DIVERGES_TEXTURE_MAPPING",
+    "reference_parts_with_boxes": 9,
+    "port_parts_with_boxes": 9,
+    "matched_parts": 9,
+    "categories": {
+      "MIRROR": 9
+    },
+    "differences": [
+      "tent1 -> tent1: reference box mirror=False (flag at addBox time), port True",
+      "tent2 -> tent2: reference box mirror=False (flag at addBox time), port True",
+      "tent3 -> tent3: reference box mirror=False (flag at addBox time), port True",
+      "tent4 -> tent4: reference box mirror=False (flag at addBox time), port True",
+      "tent5 -> tent5: reference box mirror=False (flag at addBox time), port True",
+      "tent6 -> tent6: reference box mirror=False (flag at addBox time), port True",
+      "tent7 -> tent7: reference box mirror=False (flag at addBox time), port True",
+      "body -> body: reference box mirror=False (flag at addBox time), port True",
+      "tent8 -> tent8: reference box mirror=False (flag at addBox time), port True"
+    ],
+    "by_category": {
+      "MIRROR": [
+        "tent1 -> tent1: reference box mirror=False (flag at addBox time), port True",
+        "tent2 -> tent2: reference box mirror=False (flag at addBox time), port True",
+        "tent3 -> tent3: reference box mirror=False (flag at addBox time), port True",
+        "tent4 -> tent4: reference box mirror=False (flag at addBox time), port True",
+        "tent5 -> tent5: reference box mirror=False (flag at addBox time), port True",
+        "tent6 -> tent6: reference box mirror=False (flag at addBox time), port True",
+        "tent7 -> tent7: reference box mirror=False (flag at addBox time), port True",
+        "body -> body: reference box mirror=False (flag at addBox time), port True",
+        "tent8 -> tent8: reference box mirror=False (flag at addBox time), port True"
+      ]
+    }
+  },
+  "status": "PASS_WITH_PINNED_DIVERGENCES",
+  "pinned_divergences": {
+    "MIRROR": 9
+  }
+}

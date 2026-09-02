@@ -6130,10 +6130,28 @@ keeps BUG-036. Commit 4ea395c's message retains the old number.)*
   translated `mirror = true` into `CubeListBuilder.mirror()` before `addBox`,
   where it is effective. 82 of 87 surveyed models; 78 differ in
   nothing else; Kyuubi and Coin are exact.
-- **Law-11 caveat:** the ordering rule is from the 1.7.10 `ModelRenderer` /
-  `ModelBox` sources; no 1.7.10 client jar is on this machine to read the
-  bytecode. Downloading Mojang's `1.7.10/client.jar` (official, ~5 MB) would
-  close it and needs the owner's go.
+- **Law 11 CLOSED (2026-09-02, owner's go):** no 1.7.10 jar exists under
+  Prism; Mojang's official client was fetched through the version manifest
+  (`https://piston-meta.mojang.com/mc/game/version_manifest_v2.json` -> `1.7.10.json`
+  -> `https://launcher.mojang.com/v1/objects/e80d9b3bf5085002218d4be59e668bac718abbc6/client.jar`), SHA-1 `e80d9b3bf5085002218d4be59e668bac718abbc6` verified over
+  5256245 bytes. Bytecode (obfuscated names): `ModelBox` is `bis`
+  (constructor `(bix, int, int, float, float, float, int, int, int, float)`);
+  `ModelRenderer` is `bix`; `ModelBase` is `bhr`. `bix.<init>(bhr, String)`
+  copies the ModelBase's `t`/`u` (textureWidth/Height) into `bix.a`/`b` at
+  construction; `bix.a(FFFIII)` (addBox) does
+  `new bis(this, this.r, this.s, x, y, z, w, h, d, 0.0f)` passing only the
+  texture offsets; `bis.<init>` itself reads `bix.i` (the mirror boolean) and
+  `bix.a`/`bix.b` (the texture size) and bakes the vertices from them;
+  `bix.b(II)` (setTextureSize) only stores `a`/`b`. Therefore `mirror = true`
+  and `setTextureSize` executed after `addBox` never reach an existing box.
+  The Techne export order the 3,542 reference stores follow is exactly that.
+- **A/B model for the owner (before the mass change lands):** EnderReaper,
+  the most asymmetric texture among the mirror-only models (mean texel
+  difference against its own horizontal mirror 0.297 over 2,243 face texel
+  pairs; next Fairy 0.180, Bee 0.137). Its port `ModelEnderReaper` carries
+  66 `.mirror()` calls; the single-model drop lands in its own commit with
+  the reference leg as proof; the owner compares the release jar (mirrored)
+  against the new build in-game.
 - **Resolution:** OPEN — report only. Proposed: one commit dropping
   `.mirror()` on every cube whose reference box was unmirrored (mechanical,
   from the survey JSON), the Phase G proofs regenerated (every proven species
@@ -6167,12 +6185,25 @@ keeps BUG-036. Commit 4ea395c's message retains the old number.)*
   Robot3 0.5 -> 1.0, Hydrolisc 0.65 -> 1.0, Fairy 0.35 -> 1.0, Irukandji
   0.25 -> 1.0, Peacock 1.0 -> 0.5). Coin's 0.125 was the first of these
   fixed (BUG-040).
-- **Resolution:** OPEN — report only. Per the owner's rule each is a parity
-  bug unless a MOD record covers it (none found for renderer scale). Proposed:
-  one mechanical commit restoring `par3` scale hooks and `par2 * par3`
-  shadows from the sweep table, with a gametest pinning each renderer's
-  shadow radius and scale constant; the Phase G proofs are unaffected (the
-  harness compares models, not renderer transforms) except Coin, already done.
+- **METHOD VERIFIED (2026-09-02, owner's condition):** 49 renderers read
+  against every scale path (renderer hooks, `Attributes.SCALE` repo-wide,
+  EntityType, `getScale`/baby, model-level sizes, MHLib, config, mixins),
+  each refuted once or twice; 61 of 63 refutations failed. World scale
+  DIVERGES in 44 of 49 (largest: Brutalfly 9 -> 1, Kraken 1 -> 3,
+  SeaMonster 1 -> 3, Robot3 0.5 -> 1, Tshirt 0.33 -> 1, Irukandji 0.25 -> 1,
+  Fairy 0.35 -> 1, TheKing 2.1 -> 1, Hammerhead 2.5 -> 2, Godzilla 2 -> 3);
+  matches via another path in 4 (Camarasaurus, EasterBunny, Mothra,
+  Peacock) and outright in 1 (Basilisk). Shadow DIVERGES in 48 of 49.
+  The sweep's shadow column held on every verified row; its scale column
+  produced 5 false positives, so scale flags on the unread 47 shadow-only
+  rows are not counted. Per-renderer findings with the exact fix and pin:
+  `phase_g_reports/renderer_findings.md` (+ `.json`).
+- **Resolution:** OPEN — findings presented. Each is a parity bug by the
+  owner's rule (no MOD record covers renderer scale). Proposed fix slice: the
+  49 verified renderers get `SCALE`/`SHADOW` constants with citations, a
+  `scale()` override where `par3 != 1`, and one gametest pinning every
+  constant; the 47 shadow-only and 10 unresolved rows are read in the same
+  slice. Phase G proofs are unaffected (models, not renderer transforms).
 
 ### ENT-S-093 — Motion: per-entity selector/filter state collapsed into model-instance fields in 14 ports; sampled formula divergences (REPORT, 2026-09-02)
 
@@ -6186,11 +6217,39 @@ keeps BUG-036. Commit 4ea395c's message retains the old number.)*
   Ostrich, Scorpion). Other sampled divergences: RubberDucky head/beak
   damping, Gazelle predicate, Cephadrome yaw source (body -> head), Mosquito
   and PurplePower rebuilt.
-- **Resolution:** OPEN — report only. Not mechanically provable (1.7.10
-  classes cannot run here). Proposed: restore per-entity `RenderInfo` in the
-  14 (the Slice 4b pose-interface pattern gives each a headless entity-state
-  leg for free), then a formula-by-formula read of the remaining animated
-  models, Tier by Tier as they enter Phase G.
+- **SPLIT PRESENTED (2026-09-02, per owner: "classify per model whether the
+  original kept the same shared state; faithful cases stay"):** all FOURTEEN
+  are PARITY BUGS — in every 1.7.10 original the latch/filter state lived in
+  a per-entity `RenderInfo` (`renderdata` field, `getRenderInfo()` /
+  `setRenderInfo()`), read and written by the model's render; none kept it
+  on the ModelBase instance. Fourteen classifiers, 28 refutations: 26 failed,
+  2 corrected evidence only (one notes the port's re-zeroed filter is dead
+  code rather than shared state; still a parity bug). No faithful case.
+  Additional divergences found while reading, per model:
+  - Alien: PARITY_BUG_PER_ENTITY_LOST; reference state PER_ENTITY_RENDERINFO. Other divergences: Motion formulas themselves are a faithful 1:1 transcription — I found no amplitude/frequency/phase divergence. Verified matching pairs: leg swing `cos(ageInTicks*4*wingspeed)*PI*0.5*limbSwingAmount` (port ModelAlien.java:361 == ref ModelAlien.java:415); idle fan pose xRot=-1.85/zRot=0 (port :365-394 == ref :419-448); attacking fan phase ladder `cos(ageInTicks*1.22*wingspeed - N*0.5235988)*PI*0.1` for N=0..7 plus the 
+  - CaveFisher: PARITY_BUG_PER_ENTITY_LOST; reference state PER_ENTITY_RENDERINFO. Other divergences: TWO further divergences, one of them severe:  (1) SEVERE — doLeftClaw/doRightClaw rotate the WRONG AXIS, on the WRONG PART SET, with the WRONG offsets and no abs(). Port C:\Homework\Projects\Orespawn\src\main\java\danger\orespawn\entity\client\ModelCaveFisher.java:540-550:   doLeftClaw: `LeftClawBase.yRot = -0.3f + angle; LeftClawTop.yRot = -0.3f + angle * 1.5f; LeftClawLow.yRot = -0.3f - angle;`   doRightClaw: `Righ
+  - Cephadrome: PARITY_BUG_PER_ENTITY_LOST; reference state PER_ENTITY_RENDERINFO. Other divergences: One further divergence, in the same head-tracking block — the YAW SOURCE was swapped from body yaw to head yaw.  - Reference ModelCephadrome.java:470 — `f3 = (e.field_70126_B - e.field_70177_z) * 10.0f;`   `field_70126_B` = `prevRotationYaw`, `field_70177_z` = `rotationYaw` → this is the BODY yaw delta over the last tick. - Port ModelCephadrome.java:383 — `headYaw = (entity.yHeadRotO - entity.yHeadRot) * 10.0f;`   `y
+  - Dragon: PARITY_BUG_PER_ENTITY_LOST; reference state PER_ENTITY_RENDERINFO. Other divergences: Two further setupAnim-vs-render formula divergences, both in C:\Homework\Projects\Orespawn\src\main\java\danger\orespawn\entity\client\ModelDragon.java:  (1) Head-yaw source term. Port :568 `headYaw = (entity.yHeadRotO - entity.yBodyRot) * 8.0F;` vs reference ModelDragon.java:539 `f3 = (e.field_70126_B - e.field_70177_z) * 8.0f;`. In 1.7.10 field_70126_B is Entity.prevRotationYaw and field_70177_z is Entity.rotationY
+  - DungeonBeast: PARITY_BUG_PER_ENTITY_LOST; reference state PER_ENTITY_RENDERINFO. Other divergences: 1) MISSING 90-DEGREE YAW IN renderToBuffer (likely visible orientation bug). Reference ModelDungeonBeast.java:574 applies `GL11.glRotatef(90.0f, 0.0f, 1.0f, 0.0f)` immediately before rendering the part list (:575-634). The port's renderToBuffer (C:\Homework\Projects\Orespawn\src\main\java\danger\orespawn\entity\client\ModelDungeonBeast.java:511-572) applies no PoseStack rotation at all, and the geometry was NOT rebak
+  - EmperorScorpion: PARITY_BUG_PER_ENTITY_LOST; reference state PER_ENTITY_RENDERINFO. Other divergences: 1) RNG source divergence (minor, same site): reference draws from the WORLD random — ModelEmperorScorpion.java:619-623 `e.field_70170_p.field_73012_v.nextInt(...)` — while the port draws from the ENTITY random, EmperorScorpionModel.java:619-623 `entity.getRandom().nextInt(...)`. Same ranges (20/25 idle, 4/3 attacking), so distribution is unchanged; only the stream differs. 2) Everything else is 1:1. wingspeed is fait
+  - GhostSkelly: PARITY_BUG_PER_ENTITY_LOST; reference state PER_ENTITY_RENDERINFO. Other divergences: 1) RNG source change (cosmetic, matches project convention). Original ModelGhostSkelly.java:113 rolls off the WORLD RNG: `e.field_70170_p.field_73012_v.nextInt(3)`. Port GhostSkellyModel.java:113 rolls off the ENTITY RNG: `entity.getRandom().nextInt(3)`. Same 1-in-3 distribution, different stream. The port makes the identical substitution in the faithful Kraken port (ModelKraken.java:621-626), so this reads as an acc
+  - Leon: PARITY_BUG_PER_ENTITY_LOST; reference state PER_ENTITY_RENDERINFO. Other divergences: Yaw-source divergence at the same site: orig ModelLeon.java:1014 computes `f3 = (e.field_70126_B - e.field_70177_z) * 8.0f` — field_70126_B is prevRenderYawOffset (yBodyRotO) and field_70177_z is rotationYaw (yRot / getYRot()). The port at LeonModel.java:1006 writes `netHeadYaw = (entity.yBodyRotO - entity.yBodyRot) * 8.0f`, substituting renderYawOffset (yBodyRot) for rotationYaw. yBodyRotO - yBodyRot is a body-rotat
+  - LurkingTerror: PARITY_BUG_PER_ENTITY_LOST; reference state PER_ENTITY_RENDERINFO. Other divergences: Two, both in C:\Homework\Projects\Orespawn\src\main\java\danger\orespawn\entity\client\LurkingTerrorModel.java. (1) RNG source swap: the original drew from the world RNG `e.field_70170_p.field_73012_v.nextInt(...)` (ModelLurkingTerror.java:448, 451, 454, 457, 460, 463, 471), the port draws from the entity RNG `entity.getRandom().nextInt(...)` (LurkingTerrorModel.java:450, 453, 456, 459, 462, 465, 473). This is a deli
+  - Nastysaurus: PARITY_BUG_PER_ENTITY_LOST; reference state PER_ENTITY_RENDERINFO. Other divergences: No other motion-formula divergence found; every other expression is a faithful 1:1 port. Verified line by line: head yaw chain (orig :453-473 vs port :402-422), attacking-branch jaw `Mth.cos(ageInTicks*0.85f*wingspeed)*PI*0.16f + 0.5f` (orig :475-476 vs port :425-426), idle-branch sin variant (orig :487-488 vs port :438-439), the `pi4 / 4.0f` fallback (orig :490 vs port :441), left-leg/claw block incl. the `-0.523f/-
+  - Ostrich: PARITY_BUG_PER_ENTITY_LOST; reference state PER_ENTITY_RENDERINFO. Other divergences: Four further setupAnim-vs-original divergences, in rough severity order:  1. Hat gating lost entirely (visible bug). Original ModelOstrich.java:420-425 rendered Hat1 only when `o instanceof EntityCannonFodder && o.get_is_activated() != 0`, and Hat2 only when `o.get_is_activated() > 1`; `is_activated` defaults to 0 (EntityCannonFodder.java:36, accessor EntityCannonFodder.java:228-230), so a normal ostrich showed no ha
+  - PitchBlack: PARITY_BUG_PER_ENTITY_LOST; reference state PER_ENTITY_RENDERINFO. Other divergences: No formula divergence. I normalized the reference render body (ModelPitchBlack.java:742-1037, obf field/method names mapped to Mojmap: field_78795_f→xRot, field_78796_g→yRot, field_78808_h→zRot, field_78800_c→x, field_78797_d→y, field_78798_e→z, func_76134_b→Mth.cos, func_76126_a→Mth.sin, f1→limbSwingAmount, f2→ageInTicks, f3→netHeadYaw) and diffed it against the port setupAnim body (ModelPitchBlack.java:642-937) wit
+  - Scorpion: PARITY_BUG_PER_ENTITY_LOST; reference state PER_ENTITY_RENDERINFO. Other divergences: Three divergences beyond the shared-state issue.  (1) CONFIRMED — missing 0.75 model scale. Reference ClientProxyOreSpawn.java:433 registers `new RenderScorpion(new ModelScorpion(0.62f), 0.35f, 0.75f)`; RenderScorpion.java:22-25 stores par3 (0.75f) as `this.scale`, and RenderScorpion.java:39-45 applies it every frame via `GL11.glScalef(this.scale, this.scale, this.scale)` in the func_77041_b/preRenderScale hook. The 
+  - ThePrinceTeen: PARITY_BUG_PER_ENTITY_LOST; reference state PER_ENTITY_RENDERINFO. Other divergences: 1) Yaw source changed from BODY yaw to HEAD yaw in the activity==1 (flight) branch. Reference ModelThePrinceTeen.java:669 uses `f3 = (c.field_70126_B - c.field_70177_z) * 10.0f;` — field_70126_B is Entity.prevRotationYaw and field_70177_z is Entity.rotationYaw, i.e. the BODY yaw delta. Port ModelThePrinceTeen.java:682 uses `yaw = (entity.yHeadRotO - entity.yHeadRot) * 10.0f;` — yHeadRotO/yHeadRot are the 1.7.10 field
+- **Resolution:** OPEN — split presented; awaiting the owner's go. Proposed
+  fix: restore per-entity `RenderInfo` on the 14 entities (the Kraken /
+  Robot2 / Robot3 pattern) and route the models through it; the Slice 4b
+  pose-interface pattern gives each an entity-state harness leg. The
+  additional divergences (CaveFisher claw axes, DungeonBeast 90-degree yaw,
+  Ostrich hat gating, Scorpion 0.75 scale, the yaw-source swaps in
+  Cephadrome / Leon / ThePrinceTeen / Dragon, RubberDucky damping) are
+  parity bugs by the same rule and go in the same fix slice, each with a
+  citation; the world-RNG versus entity-RNG source is a project convention
+  (Kraken precedent) and is left as is.
 
 ### TEST-003 — Config-flipping gametests in the concurrent default batch
 

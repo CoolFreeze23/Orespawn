@@ -4556,3 +4556,60 @@ Suite grows by 1.
 
 GATE (on master, sequential): compile clean; `build` exit 0 - audit 0/0/4, parity and
 benchmark verified; `runGameTestServer` exit 0 - literal `All 199 required tests passed`. Not pushed.
+
+## REFERENCE-GEOMETRY GATE + BUG-041 STAGE 1 (EnderReaper A/B) (2026-09-02)
+
+STANDING GATE. `tools/reference_model_proofs.json` lists every port entity
+model that pairs with a 1.7.10 model (87); `referenceDumpCompiledModels`
+(probe, vanilla mode) and `referenceGeometry` (the leg, `--proof-dir
+phase_g_reports/reference_proof`) run under `check` ahead of the suite.
+Models still carrying ruled parity bugs PIN their exact divergence counts
+(`pinned_divergences`, e.g. `MIRROR: 55`): the leg passes only when the
+observed categories equal the pin, so a new divergence or a partial fix
+without a pin update is red; a pin is cleared in the same commit as its
+fix. 84 models are pinned (BUG-041 mirror, ENT-S-091 geometry); exact today:
+kyuubi, coin, enderreaper. The leg's reports are checked in and drift-verified like
+the Phase G proofs.
+
+BUG-041 STAGE 1. EnderReaper's 66 `.mirror()` calls are dropped (ModelEnderReaper);
+its pin is cleared and the leg reports an exact match against the parsed
+1.7.10 source. This is the owner's A/B model: most asymmetric texture among
+the mirror-only models (mean texel difference against its own horizontal
+mirror 0.297). To compare: the release jar in the instance root renders the
+old mirrored faces; this build renders them as 1.7.10 did. The port-wide
+drop (81 more models) waits for the owner's word after the look.
+
+Law 11 for the ordering claim is closed from Mojang's 1.7.10 client jar
+(see AUDIT BUG-041). build.gradle changed (two tasks): benchmark proof
+rewritten.
+
+## BUG-041 LAW 11 CLOSED; ENT-S-093 SPLIT PRESENTED (2026-09-02)
+
+The 1.7.10 ordering claim behind the mirror finding is now verified from
+Mojang's official 1.7.10 client jar (version manifest -> SHA-1
+e80d9b3bf5085002218d4be59e668bac718abbc6 over 5256245 bytes; no copy existed under Prism):
+`ModelRenderer` copies the ModelBase texture size in its constructor,
+`addBox` hands the box only the texture offsets, and the `ModelBox`
+constructor reads the mirror flag and the texture size itself; a flag or
+size set afterwards never reaches an existing box. The A/B model for the
+owner is EnderReaper (most asymmetric texture, 0.297). ENT-S-093: all 14
+shared-state ports are parity bugs (every original kept a per-entity
+RenderInfo); eight carry further formula divergences, listed in the audit
+entry. Presented; no fix applied yet.
+
+## ENT-S-092 METHOD VERIFIED; PER-RENDERER FINDINGS (2026-09-02)
+
+Owner's condition met before the count is trusted: 49 renderers verified
+against every scale path by reading (two adversarial passes, 61/63
+refutations failed; one label corrected, Mosquito is DIVERGES). World scale
+diverges in 44; shadow in 48. The mechanical sweep's shadow
+verdict held on every verified row, its scale heuristic did not (5 false
+positives: baby branches, a shared renderer, a compensating hook), so the
+scale column is a screen only. The sweep parser was fixed twice on the way
+(generic constructors; balanced-parenthesis argument parsing for shared
+renderers such as Mothra's). Findings: phase_g_reports/renderer_findings.md.
+
+GATE (on master, sequential): `build` exit 0 - audit 0/0/4, `referenceGeometry` (87
+checked-in reports verified; EnderReaper exact, 84 pinned, Coin and Kyuubi exact),
+`s4Parity` 11 models, `g1Parity` 2 models, benchmark evidence verified (build.gradle
+pin); `runGameTestServer` exit 0 - literal `All 199 required tests passed`. Not pushed.

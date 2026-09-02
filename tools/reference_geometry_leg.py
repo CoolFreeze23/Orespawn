@@ -356,6 +356,9 @@ def main() -> int:
                         help="report every model, never fail; for models without a dump only parse the reference")
     parser.add_argument("--repository-root", type=Path, default=None,
                         help="defaults to the manifest's grandparent (tools/<manifest> layout)")
+    parser.add_argument("--proof-dir", type=Path, default=None,
+                        help="checked-in copy of every report; verified byte-for-byte unless --write-proof")
+    parser.add_argument("--write-proof", action="store_true")
     args = parser.parse_args()
     manifest = json.loads(args.manifest.read_text(encoding="utf-8"))
     repository_root = (args.repository_root or args.manifest.resolve().parent.parent).resolve()
@@ -384,18 +387,57 @@ def main() -> int:
             compiled = json.loads(dump.read_text(encoding="utf-8"))
             report["comparison"] = compare(reference, compiled)
             report["status"] = report["comparison"]["status"]
+            # Pinned divergences: the owner-ruled parity bugs a model still carries. The leg passes only
+            # when the observed category counts equal the pin exactly; a new category or a larger count
+            # is a regression, a smaller one means a fix landed and the pin must be cleared with it.
+            pinned = spec.get("pinned_divergences")
+            observed = report["comparison"]["categories"]
+            if pinned is not None:
+                report["pinned_divergences"] = pinned
+                if observed == pinned:
+                    report["status"] = "PASS_WITH_PINNED_DIVERGENCES"
+                else:
+                    report["status"] = "PIN_DRIFT"
+                    report["pin_drift"] = {"pinned": pinned, "observed": observed}
         (args.output_dir / f"{model_id}.reference-geometry.json").write_text(
             json.dumps(report, indent=2) + "\n", encoding="utf-8", newline="\n")
         summary.append((model_id, report["status"]))
         if report["status"] == "PASS":
             comparison = report["comparison"]
             print(f"REFERENCE GEOMETRY PASS: {model_id} {comparison['matched_parts']} parts matched the 1.7.10 source")
+        elif report["status"] == "PASS_WITH_PINNED_DIVERGENCES":
+            print(f"REFERENCE GEOMETRY PASS (pinned divergences {report['pinned_divergences']}): {model_id}")
+        elif report["status"] == "PIN_DRIFT":
+            print(f"REFERENCE GEOMETRY PIN DRIFT: {model_id}: {report['pin_drift']}")
+            if not args.survey:
+                failures += 1
         else:
             comparison = report.get("comparison", {})
             detail = comparison.get("categories") or {"reason": reference.get("reason", "")}
             print(f"REFERENCE GEOMETRY {report['status']}: {model_id}: {detail}")
             if not args.survey:
                 failures += 1
+    if args.proof_dir is not None and not args.survey:
+        proof_files = {f"{model_id}.reference-geometry.json" for model_id, _status in summary}
+        if args.write_proof:
+            if args.proof_dir.exists():
+                for stale in args.proof_dir.glob("*.reference-geometry.json"):
+                    stale.unlink()
+            args.proof_dir.mkdir(parents=True, exist_ok=True)
+            for name in proof_files:
+                (args.proof_dir / name).write_bytes((args.output_dir / name).read_bytes())
+            print(f"REFERENCE GEOMETRY PROOF: {len(proof_files)} reports written to {args.proof_dir}")
+        else:
+            for name in sorted(proof_files):
+                target = args.proof_dir / name
+                if not target.is_file():
+                    raise AssertionError(f"checked-in reference proof missing: {name}; run the green leg with --write-proof")
+                if target.read_bytes() != (args.output_dir / name).read_bytes():
+                    raise AssertionError(f"checked-in reference proof drift: {name}")
+            extras = sorted(p.name for p in args.proof_dir.glob("*.reference-geometry.json") if p.name not in proof_files)
+            if extras:
+                raise AssertionError(f"checked-in reference proof has stale files: {extras}")
+            print(f"REFERENCE GEOMETRY PROOF: {len(proof_files)} checked-in reports verified")
     if args.survey:
         counts: dict[str, int] = {}
         for _model_id, status in summary:
