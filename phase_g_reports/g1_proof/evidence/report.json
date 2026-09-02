@@ -92,8 +92,10 @@
         "max_mean_absolute_error": 0.0,
         "z_fight_policy": "pixels where two different quads meet the front within 1e-06 depth with different texels are draw-order z-fights, excluded from the comparison and painted in the diff (ruling 2, 2026-09-02)",
         "max_contested_fraction": 0.0,
+        "contested_fraction_pin": 0.0,
+        "requires_in_game_acceptance": false,
         "cutout_alpha_threshold": 0.1,
-        "minimum_observed_foreground_fraction": 0.2774658203125,
+        "minimum_observed_foreground_fraction": 1.0,
         "samples": [
           {
             "sample": "bind",
@@ -279,8 +281,10 @@
         "max_mean_absolute_error": 0.0,
         "z_fight_policy": "pixels where two different quads meet the front within 1e-06 depth with different texels are draw-order z-fights, excluded from the comparison and painted in the diff (ruling 2, 2026-09-02)",
         "max_contested_fraction": 1.52587890625e-05,
+        "contested_fraction_pin": 1.52587890625e-05,
+        "requires_in_game_acceptance": false,
         "cutout_alpha_threshold": 0.1,
-        "minimum_observed_foreground_fraction": 0.3699493408203125,
+        "minimum_observed_foreground_fraction": 1.0,
         "samples": [
           {
             "sample": "bind",

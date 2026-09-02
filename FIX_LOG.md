@@ -4370,3 +4370,83 @@ eight geo files, eight empty clips, eight replacement classes and PoseInputs, no
 tooling classes; `runGameTestServer` exit 0 - literal `All 193 required tests
 passed`. A first gate run of this slice had the (since removed) gametest class
 stop the server with Gradle still exiting 0; the literal check caught it.
+
+## PHASE G RULING — VISUAL LEG RATIFIED WITH CONDITIONS (2026-09-02)
+
+The owner ratified the two Slice 4b harness-semantics changes (cutout
+rasterisation; z-fight exclusion under ruling 2) and set conditions that are
+now standing rules (recorded in the saved memory as well):
+
+1. A harness-semantics change that flips a result is presented with
+   before/after numbers and a justification BEFORE the gate that depends on it,
+   exactly like a tolerance. (Slice 4b reported after its gate; that was the
+   breach this rule closes.)
+2. The semantics are verified against the actual runtime (law 11), not memory.
+3. Before/after is reported for every species, not only the motivating one.
+4. Each species' excluded-pixel fraction is pinned in its manifest so it
+   cannot grow silently; raising a pin is an owner ruling.
+5. Any species above 0.5% excluded needs a specific in-game acceptance from
+   the owner. Robot5 (1.16%) is the first.
+
+LAW 11 VERIFICATION of the cutout semantics (all from the pinned jars, not
+memory):
+- Vanilla path: `LivingEntityRenderer.getRenderType` (bytecode): translucent
+  -> `RenderType.itemEntityTranslucentCull`; visible -> `EntityModel.renderType(texture)`;
+  glowing -> outline. `Model.renderType` applies the function given to the
+  constructor; `EntityModel()`'s no-arg constructor binds
+  `RenderType::entityCutoutNoCull` (BootstrapMethods #65, REF_invokeStatic).
+  Every classic OreSpawn model in the manifests uses that implicit
+  constructor (no `super(RenderType...)` call), and none of the nine
+  renderers overrides `getRenderType` (only Fairy/Ghost/GhostSkelly do).
+- GeckoLib path: `GeoReplacedEntityRenderer.getRenderType` (bytecode):
+  translucent -> `itemEntityTranslucentCull`; else `GeoRenderer.getRenderType`
+  -> `GeoModel.getRenderType` -> `RenderType.entityCutoutNoCull`; glowing ->
+  outline. Same branch structure; the visual leg's case is the visible,
+  non-translucent, non-glowing one on both sides.
+- `RenderType.ENTITY_CUTOUT_NO_CULL` (lambda$static$3, bytecode): shader
+  `RENDERTYPE_ENTITY_CUTOUT_NO_CULL_SHADER`, `NO_TRANSPARENCY`, `NO_CULL`,
+  `LIGHTMAP`, `OVERLAY`; builder defaults (`CompositeStateBuilder.<init>`):
+  `LEQUAL_DEPTH_TEST`, `COLOR_DEPTH_WRITE`. So: no blending, depth written for
+  every fragment the shader keeps, both faces drawn.
+- Fragment shader `assets/minecraft/shaders/core/rendertype_entity_cutout_no_cull.fsh`
+  (client-extra jar): `if (color.a < 0.1) discard;` before any colour math.
+  The harness discards 8-bit alpha < 25.5 (= 0.1 * 255, exact, `<`), writes
+  colour and depth for kept fragments, never blends. That is the render type.
+
+BEFORE / AFTER, every species (the pre-4b rasteriser at 8f74d0e run on the
+CURRENT captures and manifests, versus the ratified leg; "excluded" is the
+z-fight fraction now pinned):
+  proof model              BEFORE changed     MAE  pass   AFTER changed     MAE  excluded(pinned)  worst-before
+  s4    model_elevator          0.000000  0.0000  True        0.000000  0.0000          0.000000  -
+  s4    model_vortex            0.000137  0.0042  True        0.000137  0.0042          0.000000  bind.front
+  s4    model_island            0.132339 17.1546 False        0.000000  0.0000          0.000000  a0_5_t_half
+  s4    model_islandtoo         0.132339 10.7301 False        0.000000  0.0000          0.000000  a0_5_t_half
+  s4    model_robot1            0.000549  0.0822  True        0.000000  0.0000          0.000549  a0_5_t0
+  s4    model_robot5            0.005615  0.5896 False        0.000000  0.0000          0.011612  a0_05000000074505806_t0
+  s4    model_robot2            0.000000  0.0000  True        0.000000  0.0000          0.000000  -
+  s4    model_robot3            0.000000  0.0000  True        0.000000  0.0000          0.002502  -
+  s4    model_robot4            0.000000  0.0000  True        0.000000  0.0000          0.000412  -
+  s4    model_rockbase          0.038315  1.0096 False        0.000000  0.0000          0.000000  s_type_9_t0
+  g1    model_elevator          0.000000  0.0000  True        0.000000  0.0000          0.000000  -
+  g1    model_beaver            0.000015  0.0034  True        0.000000  0.0000          0.000015  a1_t0
+Flipped by the change: model_island, model_islandtoo, model_rockbase and
+model_robot5 (all red under the blending rasteriser, all exact now).
+Unchanged verdicts with excluded pixels only: robot1, robot3, robot4, beaver.
+Vortex's 0.000137 is its accepted boundary residual on both legs.
+
+PINS: `max_contested_fraction_pin` per model in both manifests at the observed
+values (fractions of 65536 pixels): elevator 0, vortex 0, island 0,
+islandtoo 0, robot1 36/65536, robot5 761/65536, robot2 0, robot3 164/65536,
+robot4 27/65536, rockbase 0, beaver 1/65536. The parity tool fails on growth
+(`CONTESTED PIN EXCEEDED`), refuses a model without a pin, reports the pin
+and `requires_in_game_acceptance` (> 0.5%), and prints both on its pass line.
+Robot5 is marked `in_game_acceptance: PENDING_OWNER` in the manifest.
+
+G1: the manifest gained pins (elevator 0, beaver 1/65536) and the report
+gained two fields per model; the G1 proof and the benchmark proof (manifest
+hash pin) were rewritten; captures are byte-identical.
+
+GATE (on master, sequential): `build` exit 0 - audit 0/0/4, `s4Parity` 10 models
+(pins printed on every visual pass line; Robot5 flagged IN-GAME ACCEPTANCE REQUIRED),
+`g1Parity` 2 models, benchmark evidence verified (proof rewritten for the manifest
+pin fields); `runGameTestServer` exit 0 - literal `All 193 required tests passed`.

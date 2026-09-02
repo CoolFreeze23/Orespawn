@@ -184,6 +184,15 @@ Verdict: **discard.** Superseded by the UTF-8 repair in `d87f81b`.
    manual-part replacement per the Q4 ruling.
 6. **Live Q6** before the first production cutover of a Tier-1 boss.
 
+### 4.1 Visual-leg ratification conditions (2026-09-02)
+
+Cutout rasterisation and z-fight exclusion are ratified. Standing: semantics
+changes that flip a result are presented before/after before their gate;
+excluded fractions are pinned per species (`max_contested_fraction_pin`);
+above 0.5% needs the owner's in-game acceptance — **Robot5 PENDING** (1.16%,
+coplanar wheel faces). Before/after for every species is in FIX_LOG
+"VISUAL LEG RATIFIED WITH CONDITIONS".
+
 ## 5. Decisions the owner still has to make
 
 - **Animation policy — RULED 2026-09-02, AMENDED same day** (FIX_LOG "PHASE G

@@ -21,6 +21,9 @@ CUTOUT_ALPHA_THRESHOLD = 25.5
 # Fragments of different quads within this depth of each other are a z-fight
 # (draw-order resolved in both renderers; ruling 2, 2026-09-02: not a parity target).
 CONTEST_DEPTH_EPSILON = 1.0e-6
+# Owner ruling 2026-09-02: a species whose pinned excluded fraction exceeds this needs a
+# specific in-game acceptance from the owner (Robot5 is the first).
+IN_GAME_ACCEPTANCE_CONTESTED_FRACTION = 0.005
 CONTESTED_MARKER = (40, 90, 255, 255)
 DEFAULT_VISUAL_SAMPLE_IDS = ("bind", "t0", "t_quarter", "t_half", "t_three_quarter")
 
@@ -1117,6 +1120,16 @@ def visual_parity(model_id: str, spec: dict[str, Any], compiled: dict[str, Any],
         max_changed = max(max_changed, changed)
         max_mae = max(max_mae, mae)
         max_contested = max(max_contested, contested_fraction)
+    # Owner condition (2026-09-02): the excluded fraction is PINNED per species in the
+    # manifest; growth fails the leg until the pin is raised explicitly, like a tolerance.
+    if "max_contested_fraction_pin" not in spec:
+        raise AssertionError(f"{model_id} manifest declares no max_contested_fraction_pin")
+    contested_pin = float(spec["max_contested_fraction_pin"])
+    if max_contested > contested_pin:
+        raise AssertionError(
+            f"CONTESTED PIN EXCEEDED {model_id}: excluded z-fight fraction {max_contested:.12g} > "
+            f"pinned {contested_pin:.12g}; raising the pin is an owner ruling"
+        )
         min_foreground = min(min_foreground, vanilla_foreground, geo_foreground)
 
     return {
@@ -1135,6 +1148,8 @@ def visual_parity(model_id: str, spec: dict[str, Any], compiled: dict[str, Any],
             "excluded from the comparison and painted in the diff (ruling 2, 2026-09-02)"
         ),
         "max_contested_fraction": max_contested,
+        "contested_fraction_pin": contested_pin,
+        "requires_in_game_acceptance": contested_pin > IN_GAME_ACCEPTANCE_CONTESTED_FRACTION,
         "cutout_alpha_threshold": CUTOUT_ALPHA_THRESHOLD / 255.0,
         "minimum_observed_foreground_fraction": min_foreground,
         "samples": rows,
@@ -1439,7 +1454,9 @@ def main() -> int:
             print(
                 f"G1 VISUAL PASS: {model_id} max changed {visual['max_changed_fraction']:.12g}, "
                 f"max MAE {visual['max_mean_absolute_error']:.12g}, "
-                f"max contested {visual['max_contested_fraction']:.12g}"
+                f"max contested {visual['max_contested_fraction']:.12g} "
+                f"(pin {visual['contested_fraction_pin']:.12g}"
+                f"{', IN-GAME ACCEPTANCE REQUIRED' if visual['requires_in_game_acceptance'] else ''})"
             )
             common_report["visual"] = visual
             model_reports.append(common_report)

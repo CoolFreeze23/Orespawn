@@ -39,7 +39,8 @@
         "yaw_degrees": 34.0,
         "pitch_degrees": -28.0
       },
-      "channels": []
+      "channels": [],
+      "max_contested_fraction_pin": 0.0
     },
     {
       "id": "model_vortex",
@@ -69,7 +70,8 @@
           "pitch_degrees": 0.0
         }
       ],
-      "channels": []
+      "channels": [],
+      "max_contested_fraction_pin": 0.0
     },
     {
       "id": "model_island",
@@ -103,7 +105,8 @@
         "yaw_degrees": 34.0,
         "pitch_degrees": -28.0
       },
-      "channels": []
+      "channels": [],
+      "max_contested_fraction_pin": 0.0
     },
     {
       "id": "model_islandtoo",
@@ -137,7 +140,8 @@
         "yaw_degrees": 34.0,
         "pitch_degrees": -28.0
       },
-      "channels": []
+      "channels": [],
+      "max_contested_fraction_pin": 0.0
     },
     {
       "id": "model_robot1",
@@ -174,7 +178,8 @@
         "yaw_degrees": 34.0,
         "pitch_degrees": -28.0
       },
-      "channels": []
+      "channels": [],
+      "max_contested_fraction_pin": 0.00054931640625
     },
     {
       "id": "model_robot5",
@@ -206,7 +211,9 @@
         "pitch_degrees": -28.0
       },
       "channels": [],
-      "visual_note": "bind excluded: lwheel2/rwheel2 sit superimposed on lwheel1/rwheel1 until the pose adds their 0.785 rad offset (ruling 2, 2026-09-02: superimposed-at-bind is not a player-visible state); the posed samples show the wheels"
+      "visual_note": "bind excluded: lwheel2/rwheel2 sit superimposed on lwheel1/rwheel1 until the pose adds their 0.785 rad offset (ruling 2, 2026-09-02: superimposed-at-bind is not a player-visible state); the posed samples show the wheels",
+      "max_contested_fraction_pin": 0.0116119384765625,
+      "in_game_acceptance": "PENDING_OWNER: excluded fraction above 0.5% (ruling 2026-09-02)"
     },
     {
       "id": "model_robot2",
@@ -267,7 +274,8 @@
         "pitch_degrees": -28.0
       },
       "channels": [],
-      "visual_note": "bind excluded: the classic model overlaps arm segments until posed; the posed samples are the player-visible states"
+      "visual_note": "bind excluded: the classic model overlaps arm segments until posed; the posed samples are the player-visible states",
+      "max_contested_fraction_pin": 0.0
     },
     {
       "id": "model_robot3",
@@ -315,7 +323,8 @@
         "yaw_degrees": 34.0,
         "pitch_degrees": -28.0
       },
-      "channels": []
+      "channels": [],
+      "max_contested_fraction_pin": 0.00250244140625
     },
     {
       "id": "model_robot4",
@@ -358,7 +367,8 @@
         "yaw_degrees": 34.0,
         "pitch_degrees": -28.0
       },
-      "channels": []
+      "channels": [],
+      "max_contested_fraction_pin": 0.0004119873046875
     },
     {
       "id": "model_rockbase",
@@ -453,7 +463,8 @@
         "pitch_degrees": -28.0
       },
       "channels": [],
-      "visual_note": "types 0 and 13 draw nothing (classic early return) and are proven by the hidden-bone check, not the visual leg; bind (all 22 parts superimposed) is excluded under ruling 2"
+      "visual_note": "types 0 and 13 draw nothing (classic early return) and are proven by the hidden-bone check, not the visual leg; bind (all 22 parts superimposed) is excluded under ruling 2",
+      "max_contested_fraction_pin": 0.0
     }
   ],
   "fixtures": [
