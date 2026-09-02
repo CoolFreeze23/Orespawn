@@ -51,6 +51,12 @@ public final class ElevatorGeoReplacement extends OreSpawnGeoReplacement<Elevato
                 poseStack.mulPose(Axis.XP.rotationDegrees(
                         Mth.sin(hitTime) * hitTime * damage / 10.0f * (float) entity.getForwardDirection()));
             }
+            // ENT-S-091: the converter maps a classic pivot y to geo y 24 - y, so the original's pivot 0 puts
+            // the deck at geo y 24 (1.5 blocks up) while the classic path draws it at the feet with the living
+            // lift cancelled; translate the same 1.5 down in this yaw+wobble frame. GeckoLib's own lift,
+            // translate(0, 0.01, 0) issued right after applyRotations (actuallyRender bytecode 727 vs 396), is
+            // cancelled too: orig RenderElevator has none. Not in applyScale, so a hit wobble leaves no residual.
+            poseStack.translate(0.0F, -1.5F - 0.01F, 0.0F);
         }
     };
 

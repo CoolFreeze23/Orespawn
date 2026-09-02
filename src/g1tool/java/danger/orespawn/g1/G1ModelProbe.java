@@ -138,7 +138,17 @@ public final class G1ModelProbe {
         if (texture == null) {
             throw new IllegalStateException("Unable to decode texture " + texturePath);
         }
-        if (texture.getWidth() != textureWidth || texture.getHeight() != textureHeight) {
+        boolean declaredSheetOverImage = false;
+        if (spec.has("declared_sheet_over_image")) {
+            // The original declared a larger sheet than the image it binds (1.7.10 Tshirt: 512x256 over
+            // 320x160, a deliberate UV window); the manifest names the image size it expects.
+            JsonArray declared = spec.getAsJsonArray("declared_sheet_over_image");
+            if (texture.getWidth() != declared.get(0).getAsInt() || texture.getHeight() != declared.get(1).getAsInt()) {
+                throw new IllegalStateException(id + " declared_sheet_over_image " + declared + " != PNG "
+                        + texture.getWidth() + "x" + texture.getHeight());
+            }
+            declaredSheetOverImage = true;
+        } else if (texture.getWidth() != textureWidth || texture.getHeight() != textureHeight) {
             throw new IllegalStateException(id + " LayerDefinition texture size " + textureWidth + "x" + textureHeight
                     + " != PNG " + texture.getWidth() + "x" + texture.getHeight());
         }
@@ -156,6 +166,11 @@ public final class G1ModelProbe {
         out.addProperty("texture_sha256", sha256(Files.readAllBytes(texturePath)));
         out.addProperty("texture_width", textureWidth);
         out.addProperty("texture_height", textureHeight);
+        if (declaredSheetOverImage) {
+            out.addProperty("image_width", texture.getWidth());
+            out.addProperty("image_height", texture.getHeight());
+            out.addProperty("declared_sheet_over_image", true);
+        }
 
         Map<String, String> namesToPaths = new TreeMap<>();
         JsonObject definition = dumpDefinitionPart(definitionRoot, null, "", new float[]{0, 0, 0}, namesToPaths);
