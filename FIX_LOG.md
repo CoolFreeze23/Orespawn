@@ -3634,3 +3634,37 @@ jarJar built, `BUILD SUCCESSFUL in 47s`; `runGameTestServer` exit 0 —
 literal `All 192 required tests passed` (N verified as 192; `192 GAME TESTS
 COMPLETE`), `BUILD SUCCESSFUL in 1m 22s`. Not pushed; publish is the
 owner's call.
+
+## PHASE G SALVAGE — worktree quarantine + inventory + texture-case finding (2026-09-02)
+
+WHAT: the eight AO worktrees left dirty by the 2026-08-31 orchestrator run were
+snapshot-committed verbatim onto their own `ao/*` branches (bc3a931 G2
+foundation, e66b145 G4 audit, 7dc7a95 Q6 live, 0d238ba G3 runtime, 98d6df4
+server pose, 2636d20 case fix, d7acf3f G1 evidence policy, 394a7b6 integration)
+- NOT gated, NOT reviewed, NOT merged; `master` contains none of it. Triage of
+every lane, verdicts, and a six-slice re-landing order are recorded in
+`phase_g_reports/phase_g_salvage_inventory.md` (this commit).
+
+FINDING (live bug, not fixed here - presented for ruling): git's index tracks
+147 entity textures under UPPERCASE names (`Kyuubi.png`, `GammaMetroid.png`,
+`Fireflytexture.png`, ...) while this checkout has all 428 lowercase on disk;
+`core.ignorecase=true` hides the difference. Every Java reference is lowercase
+(57 of the 147 are hit by a literal path, more by dynamically built names) and
+the shipped beta jars contain 428 lowercase entries ONLY because they were
+built from this working tree. A fresh clone on any OS writes the index names,
+Gradle copies them into the jar, and the case-sensitive jar filesystem then
+fails those texture lookups in-game. Verified 2026-09-02: `git ls-files` vs
+`ls`, jar listing (0 uppercase entries), Java literal scan (0 uppercase
+literals), provenance file (0 uppercase port paths). Recommended fix is
+Slice 1 of the inventory: 147 index-only `git mv` renames (disk and jar
+byte-identical to today) plus an asset-audit check that texture literals
+resolve against index names. The orchestrator's build-time alias generator
+(worker orespawn-9) is not adopted.
+
+INCIDENTAL: `phase_g_reports/` now also carries this inventory; the asset audit
+does not read `phase_g_reports/`, so this commit is docs-only in effect.
+
+GATE (on master, sequential): `build` exit 0 - asset audit literal `RESULT: 0
+error(s), 0 advisory(ies), 3 acknowledged -> exit 0`, `G1 PARITY PASS: 2
+models`, benchmark evidence verified; `runGameTestServer` exit 0 - literal
+`All 192 required tests passed` (`192 GAME TESTS COMPLETE`). Not pushed.
