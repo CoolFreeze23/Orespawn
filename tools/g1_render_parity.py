@@ -174,12 +174,20 @@ def surface_mapping_parity(model_id: str, compiled: dict[str, Any],
     vertex_count = 0
     worst = "exact"
 
+    ignored_zero_area_faces = 0
+
     for sample_name, vanilla_sample in vanilla_samples.items():
         vanilla_cubes = cube_map(vanilla_sample)
         geo_cubes = cube_map(geo_samples[sample_name])
         for key, vanilla_cube in vanilla_cubes.items():
-            remaining = list(geo_cubes[key]["vertices"])
-            for vanilla_vertex in vanilla_cube["vertices"]:
+            # Ruling 2026-09-02 (Vortex): faces of EXACTLY zero area draw nothing,
+            # and GeckoLib's baker collapses a flat cube's degenerate faces, so
+            # they are excluded from vertex pairing on both sides and counted.
+            vanilla_vertices, ignored_vanilla = drop_zero_area_faces(vanilla_cube["vertices"])
+            geo_vertices, _ignored_geo = drop_zero_area_faces(geo_cubes[key]["vertices"])
+            ignored_zero_area_faces += ignored_vanilla
+            remaining = list(geo_vertices)
+            for vanilla_vertex in vanilla_vertices:
                 position = vertex_position(vanilla_vertex)
                 normal = vertex_normal(vanilla_vertex)
                 candidates: list[tuple[float, float, float, int]] = []
@@ -227,12 +235,42 @@ def surface_mapping_parity(model_id: str, compiled: dict[str, Any],
         "max_normal_delta": max_normal_delta,
         "max_uv_delta_normalized": max_uv_delta,
         "vertex_samples": vertex_count,
+        "ignored_zero_area_faces": ignored_zero_area_faces,
         "worst_case": worst,
         "evidence": (
             "position/normal/UV tuples from baked ModelPart.Cube.compile versus "
-            "pinned GeckoLib BakedModelFactory rendered through GeoRenderer"
+            "pinned GeckoLib BakedModelFactory rendered through GeoRenderer; "
+            "faces of exactly zero area are excluded (ruling 2026-09-02)"
         ),
     }
+
+
+def face_area(quad: list[dict[str, Any]]) -> float:
+    """Exact-arithmetic-free but exact-zero-safe: sum of the two triangle cross products."""
+    a, b, c, d = (vertex_position(vertex) for vertex in quad)
+
+    def cross_norm2(o, p, q):
+        ux, uy, uz = p[0] - o[0], p[1] - o[1], p[2] - o[2]
+        vx, vy, vz = q[0] - o[0], q[1] - o[1], q[2] - o[2]
+        cx, cy, cz = uy * vz - uz * vy, uz * vx - ux * vz, ux * vy - uy * vx
+        return cx * cx + cy * cy + cz * cz
+
+    return cross_norm2(a, b, c) + cross_norm2(a, c, d)
+
+
+def drop_zero_area_faces(vertices: list[dict[str, Any]]) -> tuple[list[dict[str, Any]], int]:
+    """Remove quads whose area is exactly zero; returns (kept vertices, dropped face count)."""
+    if len(vertices) % 4:
+        raise AssertionError("captured cube vertex count is not quad-aligned")
+    kept: list[dict[str, Any]] = []
+    dropped = 0
+    for offset in range(0, len(vertices), 4):
+        quad = vertices[offset:offset + 4]
+        if face_area(quad) == 0.0:
+            dropped += 1
+            continue
+        kept.extend(quad)
+    return kept, dropped
 
 
 def vector_delta(left: Iterable[float], right: Iterable[float]) -> float:
@@ -824,19 +862,30 @@ def visual_parity(model_id: str, spec: dict[str, Any], compiled: dict[str, Any],
     visual_sample_ids = tuple(spec.get("visual_sample_ids", DEFAULT_VISUAL_SAMPLE_IDS))
     if not set(visual_sample_ids).issubset(vanilla_samples):
         raise AssertionError(f"{model_id} visual sample IDs are absent from compiled capture")
-    camera_spec = spec["camera"]
-    camera = Camera(
-        all_vertices(vanilla_samples, visual_sample_ids),
-        float(camera_spec["yaw_degrees"]),
-        float(camera_spec["pitch_degrees"]),
-    )
+    # A single `camera` or a `cameras` list of {name, yaw_degrees, pitch_degrees};
+    # every camera must pass (ruling 2026-09-02: Vortex is proven front and back).
+    if "cameras" in spec:
+        camera_specs = [dict(entry) for entry in spec["cameras"]]
+        if len({entry["name"] for entry in camera_specs}) != len(camera_specs):
+            raise AssertionError(f"{model_id} cameras must have unique names")
+    else:
+        camera_specs = [dict(spec["camera"], name=None)]
+    vertices_for_fit = all_vertices(vanilla_samples, visual_sample_ids)
+    cameras = [
+        (entry.get("name"), Camera(vertices_for_fit, float(entry["yaw_degrees"]), float(entry["pitch_degrees"])))
+        for entry in camera_specs
+    ]
+    camera_spec = spec.get("cameras", spec.get("camera"))
     texture = Image.open(repository_root / spec["texture"])
     rows: list[dict[str, Any]] = []
     max_changed = 0.0
     max_mae = 0.0
     min_foreground = 1.0
 
-    for sample_id in visual_sample_ids:
+    for sample_id, (camera_name, camera) in (
+        (sample_id, camera_entry) for sample_id in visual_sample_ids for camera_entry in cameras
+    ):
+        capture_id = sample_id if camera_name is None else f"{sample_id}.{camera_name}"
         vanilla_image = render_capture(vanilla_samples[sample_id], texture, camera)
         geo_image = render_capture(geo_samples[sample_id], texture, camera)
         changed, mae, diff_image = pixel_diff(
@@ -847,30 +896,31 @@ def visual_parity(model_id: str, spec: dict[str, Any], compiled: dict[str, Any],
         required_foreground = float(thresholds["minimum_foreground_fraction"])
         if min(vanilla_foreground, geo_foreground) < required_foreground:
             raise AssertionError(
-                f"VISIBILITY MISMATCH {model_id}/{sample_id}: foreground fraction "
+                f"VISIBILITY MISMATCH {model_id}/{capture_id}: foreground fraction "
                 f"{min(vanilla_foreground, geo_foreground):.9g} < {required_foreground}"
             )
         if changed > float(thresholds["pixel_changed_fraction"]):
             raise AssertionError(
-                f"VISUAL MISMATCH {model_id}/{sample_id}: changed fraction {changed:.9g} > "
+                f"VISUAL MISMATCH {model_id}/{capture_id}: changed fraction {changed:.9g} > "
                 f"{thresholds['pixel_changed_fraction']}"
             )
         if mae > float(thresholds["pixel_mean_absolute_error"]):
             raise AssertionError(
-                f"VISUAL MISMATCH {model_id}/{sample_id}: MAE {mae:.9g} > "
+                f"VISUAL MISMATCH {model_id}/{capture_id}: MAE {mae:.9g} > "
                 f"{thresholds['pixel_mean_absolute_error']}"
             )
 
         relative_base = Path("visual") / model_id
-        vanilla_path = relative_base / f"{sample_id}.vanilla.png"
-        geo_path = relative_base / f"{sample_id}.geo.png"
-        diff_path = relative_base / f"{sample_id}.diff.png"
+        vanilla_path = relative_base / f"{capture_id}.vanilla.png"
+        geo_path = relative_base / f"{capture_id}.geo.png"
+        diff_path = relative_base / f"{capture_id}.diff.png"
         save_png(vanilla_image, output_dir / vanilla_path)
         save_png(geo_image, output_dir / geo_path)
         save_png(diff_image, output_dir / diff_path)
         rows.append(
             {
                 "sample": sample_id,
+                "camera": camera_name,
                 "changed_fraction": changed,
                 "mean_absolute_error": mae,
                 "vanilla_foreground_fraction": vanilla_foreground,
@@ -1113,6 +1163,7 @@ def main() -> int:
         )
         print(
             f"G1 SURFACE PASS: {model_id} {surface_mapping['vertex_samples']} vertex-samples, "
+            f"{surface_mapping['ignored_zero_area_faces']} zero-area faces ignored, "
             f"max UV {surface_mapping['max_uv_delta_normalized']:.12g}, "
             f"max normal {surface_mapping['max_normal_delta']:.12g}"
         )

@@ -1,13 +1,16 @@
 package danger.orespawn.client;
 
+import java.util.Locale;
+
 /**
  * Developer switch for the Phase G renderer A/B. Pure policy with no
- * Minecraft imports so the suite can pin it: classic is the default, and only
- * the exact token {@value #CANDIDATE} selects the GeckoLib candidates. One
- * property covers every converted species; the original Beaver-named property
- * is still honored so existing launch configs keep working. Not a player
- * config — it exists so the owner can review converted species in-game before
- * any of them replaces its classic renderer.
+ * Minecraft imports so the suite can pin it. Classic is the default. The
+ * property value is either the exact token {@value #CANDIDATE}, which
+ * selects every GeckoLib candidate, or a comma-separated list of species ids
+ * (registry names, e.g. {@code beaver,elevator}) for bisecting during in-game
+ * looks. The original Beaver-named property is honored as an alias with the
+ * same grammar. Not a player config: it exists so the owner can review
+ * converted species in-game before any of them replaces its classic renderer.
  */
 public final class DevRendererSwitch {
     public static final String PROPERTY = "orespawn.dev.geckolibRenderers";
@@ -19,29 +22,38 @@ public final class DevRendererSwitch {
     private DevRendererSwitch() {
     }
 
-    public static Variant resolve(String requested) {
-        return CANDIDATE.equals(requested) ? Variant.CANDIDATE : Variant.CLASSIC;
+    /** One property value against one species id: the all-species token, or the species listed. */
+    public static Variant resolve(String requested, String species) {
+        if (requested == null || species == null) {
+            return Variant.CLASSIC;
+        }
+        if (CANDIDATE.equals(requested)) {
+            return Variant.CANDIDATE;
+        }
+        String wanted = species.toLowerCase(Locale.ROOT);
+        for (String token : requested.split(",")) {
+            if (token.trim().toLowerCase(Locale.ROOT).equals(wanted)) {
+                return Variant.CANDIDATE;
+            }
+        }
+        return Variant.CLASSIC;
     }
 
-    public static Variant resolve(String general, String beaverAlias) {
-        return resolve(general) == Variant.CANDIDATE ? Variant.CANDIDATE : resolve(beaverAlias);
+    /** Both properties; either one selecting the species wins. */
+    public static Variant resolve(String general, String beaverAlias, String species) {
+        return resolve(general, species) == Variant.CANDIDATE ? Variant.CANDIDATE : resolve(beaverAlias, species);
     }
 
-    public static Variant geckolib() {
-        return resolve(property(PROPERTY), property(BEAVER_PROPERTY));
+    public static Variant geckolib(String species) {
+        return resolve(property(PROPERTY), property(BEAVER_PROPERTY), species);
     }
 
-    /** The property that selected the candidate, for diagnostics; null when classic. */
-    public static String candidateSource() {
-        if (resolve(property(PROPERTY)) == Variant.CANDIDATE) {
+    /** The property that selected this species' candidate, for diagnostics; null when classic. */
+    public static String candidateSource(String species) {
+        if (resolve(property(PROPERTY), species) == Variant.CANDIDATE) {
             return PROPERTY;
         }
-        return resolve(property(BEAVER_PROPERTY)) == Variant.CANDIDATE ? BEAVER_PROPERTY : null;
-    }
-
-    /** Kept for the Beaver review build; identical to {@link #geckolib()}. */
-    public static Variant beaver() {
-        return geckolib();
+        return resolve(property(BEAVER_PROPERTY), species) == Variant.CANDIDATE ? BEAVER_PROPERTY : null;
     }
 
     private static String property(String name) {

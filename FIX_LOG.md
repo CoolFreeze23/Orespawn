@@ -4121,3 +4121,82 @@ proof verified`, `g1Parity` 2 models, regenerated benchmark evidence verified;
 built jar carries `geo/entity/elevator.geo.json` and the Elevator candidate
 classes; `runGameTestServer` exit 0 - literal `All 193 required tests passed`.
 Not pushed.
+
+## PHASE G RULINGS on the Slice 4a harness findings + Q1 acceptances (2026-09-02)
+
+OWNER (verbatim): "1. Vortex: accepted. The surface leg ignores faces of
+exactly zero area (not 'small') and reports the ignored count per rig in its
+output. The visual leg remains the backstop and must pass for Vortex from
+front and back. 2. RockBase: option (a). The visual leg compares per-state
+visibility for all twelve rock types; superimposed-at-bind is not a
+player-visible state and z-fight order is not a parity target. Move RockBase
+to 4b with the real-entity leg. Any in-game state that draws overlapping parts
+waits for the G2 root-order contract." Also: "Extend the switch so the
+property also accepts a species list (e.g. `=beaver,elevator`) for bisecting
+during in-game looks." "Q1 acceptances: Elevator and Vortex candidate
+renderers accepted - both match classic in-game. Beaver look still pending
+from me; 4b can continue behind the switch meanwhile." Two findings from the
+in-game look, outside Phase G, report before fixing, separate commits: (3)
+hoverboard rider sits, owner wants standing - check the 1.7.10 reference and
+classify parity bug vs 2.0 improvement; (4) Vortex "flies around doing
+nothing" - read-only behavior report, original vs port, faithful idle / unmet
+trigger / port bug. Then: push, then 4b.
+
+RECORDED: (1) harness rule change - `g1_render_parity.py` surface-mapping leg
+skips faces whose area is exactly 0 and reports `ignored_zero_area_faces` per
+rig; Vortex is proven with TWO visual cameras (front and back). (2) RockBase
+leaves the Python bind-pose visual leg; its parity is per rock type via the
+Slice 4b real-entity leg; states that draw overlapping parts are gated on the
+G2 root/face-order contract. Switch: species list accepted.
+
+CORRECTION to the Q1 record: Vortex had NO candidate renderer in the build the
+owner ran (it was withdrawn from 4a when its harness leg went red), so the
+"Vortex candidate accepted" look was of the classic renderer. Elevator's
+acceptance stands. Vortex's acceptance is re-requested once its candidate
+lands under ruling (1). Master pushed to origin before 4b.
+
+## PHASE G SLICE 4a-2 — rulings applied: Vortex lands; species-list switch (2026-09-02)
+
+HARNESS (ruling 1): `tools/g1_render_parity.py` surface-mapping leg now drops
+quads whose area is EXACTLY 0.0 (sum of the two triangle cross-product norms,
+compared to 0.0, never a tolerance) from both the vanilla and the GeckoLib
+vertex lists before pairing, and reports `ignored_zero_area_faces` per rig in
+the evidence report and the pass line. The visual leg accepts a `cameras`
+list (name/yaw/pitch) and every camera must pass; captures are named
+`<sample>.<camera>.*.png`. Vortex is proven with `front` (yaw 0) and `back`
+(yaw 180).
+
+VORTEX (proof, `phase_g_reports/s4_proof`): geometry 6 cube-samples, max
+delta 0; surface 48 vertex-samples, 24 zero-area faces ignored, UV 0, normal
+0; animation 0 rad; visual max changed 0.000137, max MAE 0.0042, both
+cameras. Elevator unchanged (0/0/0). Shipped `geo/entity/vortex.geo.json` is
+the proof copy (check 8 GECKO_GEO_PROOF_DRIFT pins it). `VortexGeoReplacement`
+- static billboard, fixed texture, shadow 1.5 - registered behind the switch.
+Owner's Vortex acceptance is RE-REQUESTED: the previous look was the classic
+renderer (see the correction above).
+
+SWITCH: property grammar is now `candidate` (all species) or a
+comma-separated species list of registry names (`beaver,elevator`), trimmed
+and case-insensitive; both `orespawn.dev.geckolibRenderers` and the alias
+`orespawn.dev.beaverRenderer` accept it; the warn line names the property
+that selected the species. `phaseg001` pins twelve cases.
+
+ROCK_BASE (ruling 2): moved to Slice 4b; its parity is per rock type via the
+real-entity leg; states that draw overlapping parts wait for the G2
+root/face-order contract.
+
+G1 PROOF: the parity tool's report gained `ignored_zero_area_faces` and a per-row
+`camera` field, so the immutable G1 evidence no longer byte-matched its
+regeneration (`g1Parity` red: `checked-in G1 proof drift: evidence/report.json`).
+Regenerated with `g1_render_parity.py --write-proof`: only
+`g1_proof/evidence/report.json` changed (16+/3-: the new fields at 0 / null and
+the surface leg's evidence text); geometry, PNGs and README byte-identical;
+verify mode green. The benchmark proof is unaffected (the parity tool is not in
+its pinned set).
+
+GATE (on master, sequential): compile clean; `build` exit 0 - audit `RESULT: 0
+error(s), 0 advisory(ies), 4 acknowledged -> exit 0`, `s4Parity` 2 models
+(Vortex: 24 zero-area faces ignored, front+back visual), `g1Parity` 2 models,
+benchmark evidence verified; jar carries `geo/entity/vortex.geo.json` +
+`VortexGeoReplacement`; `runGameTestServer` exit 0 - literal `All 193 required
+tests passed`. Not pushed.

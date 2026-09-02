@@ -25,5 +25,15 @@ The independent gates are:
 
 - Static identity maximum rotation motion: 0 radians; no controller emitted.
 
+## model_vortex (Tier 3)
+
+- Exact bones: 1; cubes: 1.
+- Geometry maximum corner delta: 0 blocks (epsilon 1e-05).
+- Surface maximum UV delta: 0; normal delta: 0.
+- Animation maximum rotation delta: 0 radians (epsilon 2e-06).
+- Visual maximum changed fraction: 0.000137329101562; maximum mean absolute error: 0.00422668457031.
+
+- Static identity maximum rotation motion: 0 radians; no controller emitted.
+
 Reproduce with `gradlew.bat g1Parity`. Any mismatch exits nonzero before
 proof evidence can be updated.

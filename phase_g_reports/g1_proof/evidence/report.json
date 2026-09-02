@@ -43,8 +43,9 @@
         "max_normal_delta": 0.0,
         "max_uv_delta_normalized": 0.0,
         "vertex_samples": 720,
+        "ignored_zero_area_faces": 0,
         "worst_case": "exact",
-        "evidence": "position/normal/UV tuples from baked ModelPart.Cube.compile versus pinned GeckoLib BakedModelFactory rendered through GeoRenderer"
+        "evidence": "position/normal/UV tuples from baked ModelPart.Cube.compile versus pinned GeckoLib BakedModelFactory rendered through GeoRenderer; faces of exactly zero area are excluded (ruling 2026-09-02)"
       },
       "animation": {
         "status": "PASS",
@@ -93,6 +94,7 @@
         "samples": [
           {
             "sample": "bind",
+            "camera": null,
             "changed_fraction": 0.0,
             "mean_absolute_error": 0.0,
             "vanilla_foreground_fraction": 0.2774658203125,
@@ -103,6 +105,7 @@
           },
           {
             "sample": "t0",
+            "camera": null,
             "changed_fraction": 0.0,
             "mean_absolute_error": 0.0,
             "vanilla_foreground_fraction": 0.2774658203125,
@@ -113,6 +116,7 @@
           },
           {
             "sample": "t_quarter",
+            "camera": null,
             "changed_fraction": 0.0,
             "mean_absolute_error": 0.0,
             "vanilla_foreground_fraction": 0.2774658203125,
@@ -123,6 +127,7 @@
           },
           {
             "sample": "t_half",
+            "camera": null,
             "changed_fraction": 0.0,
             "mean_absolute_error": 0.0,
             "vanilla_foreground_fraction": 0.2774658203125,
@@ -133,6 +138,7 @@
           },
           {
             "sample": "t_three_quarter",
+            "camera": null,
             "changed_fraction": 0.0,
             "mean_absolute_error": 0.0,
             "vanilla_foreground_fraction": 0.2774658203125,
@@ -173,8 +179,9 @@
         "max_normal_delta": 0.0,
         "max_uv_delta_normalized": 0.0,
         "vertex_samples": 4536,
+        "ignored_zero_area_faces": 0,
         "worst_case": "a0_5_t0:lff#0",
-        "evidence": "position/normal/UV tuples from baked ModelPart.Cube.compile versus pinned GeckoLib BakedModelFactory rendered through GeoRenderer"
+        "evidence": "position/normal/UV tuples from baked ModelPart.Cube.compile versus pinned GeckoLib BakedModelFactory rendered through GeoRenderer; faces of exactly zero area are excluded (ruling 2026-09-02)"
       },
       "animation": {
         "status": "PASS",
@@ -266,6 +273,7 @@
         "samples": [
           {
             "sample": "bind",
+            "camera": null,
             "changed_fraction": 0.0,
             "mean_absolute_error": 0.0,
             "vanilla_foreground_fraction": 0.38946533203125,
@@ -276,6 +284,7 @@
           },
           {
             "sample": "a1_t0",
+            "camera": null,
             "changed_fraction": 1.52587890625e-05,
             "mean_absolute_error": 0.0033518473307291665,
             "vanilla_foreground_fraction": 0.3699493408203125,
@@ -286,6 +295,7 @@
           },
           {
             "sample": "a1_t_quarter",
+            "camera": null,
             "changed_fraction": 0.0,
             "mean_absolute_error": 0.0,
             "vanilla_foreground_fraction": 0.38946533203125,
@@ -296,6 +306,7 @@
           },
           {
             "sample": "a1_t_half",
+            "camera": null,
             "changed_fraction": 0.0,
             "mean_absolute_error": 0.0,
             "vanilla_foreground_fraction": 0.389190673828125,
@@ -306,6 +317,7 @@
           },
           {
             "sample": "a1_t_three_quarter",
+            "camera": null,
             "changed_fraction": 0.0,
             "mean_absolute_error": 0.0,
             "vanilla_foreground_fraction": 0.38946533203125,
@@ -348,8 +360,9 @@
         "max_normal_delta": 1.5132745947958766e-07,
         "max_uv_delta_normalized": 0.0,
         "vertex_samples": 48,
+        "ignored_zero_area_faces": 0,
         "worst_case": "bind:fixture_child#0",
-        "evidence": "position/normal/UV tuples from baked ModelPart.Cube.compile versus pinned GeckoLib BakedModelFactory rendered through GeoRenderer"
+        "evidence": "position/normal/UV tuples from baked ModelPart.Cube.compile versus pinned GeckoLib BakedModelFactory rendered through GeoRenderer; faces of exactly zero area are excluded (ruling 2026-09-02)"
       },
       "animation": {
         "status": "PASS",

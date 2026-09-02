@@ -90,7 +90,7 @@ public class OreSpawnClient {
             event.registerEntityRenderer(ModEntities.ENTITY_TERRIBLE_TERROR.get(), TerribleTerrorRenderer::new);
             event.registerEntityRenderer(ModEntities.ENTITY_TRIFFID.get(), TriffidRenderer::new);
             event.registerEntityRenderer(ModEntities.ENTITY_TROOPER_BUG.get(), TrooperBugRenderer::new);
-            event.registerEntityRenderer(ModEntities.ENTITY_VORTEX.get(), VortexRenderer::new);
+            event.registerEntityRenderer(ModEntities.ENTITY_VORTEX.get(), PhaseGDevRenderers.vortexRenderer());
             event.registerEntityRenderer(ModEntities.ENTITY_WORM_SMALL.get(), WormSmallRenderer::new);
             event.registerEntityRenderer(ModEntities.ENTITY_WORM_MEDIUM.get(), WormMediumRenderer::new);
             event.registerEntityRenderer(ModEntities.ENTITY_WORM_LARGE.get(), WormLargeRenderer::new);

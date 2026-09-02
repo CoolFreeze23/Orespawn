@@ -43,8 +43,9 @@
         "max_normal_delta": 0.0,
         "max_uv_delta_normalized": 0.0,
         "vertex_samples": 720,
+        "ignored_zero_area_faces": 0,
         "worst_case": "exact",
-        "evidence": "position/normal/UV tuples from baked ModelPart.Cube.compile versus pinned GeckoLib BakedModelFactory rendered through GeoRenderer"
+        "evidence": "position/normal/UV tuples from baked ModelPart.Cube.compile versus pinned GeckoLib BakedModelFactory rendered through GeoRenderer; faces of exactly zero area are excluded (ruling 2026-09-02)"
       },
       "animation": {
         "status": "PASS",
@@ -93,6 +94,7 @@
         "samples": [
           {
             "sample": "bind",
+            "camera": null,
             "changed_fraction": 0.0,
             "mean_absolute_error": 0.0,
             "vanilla_foreground_fraction": 0.2774658203125,
@@ -103,6 +105,7 @@
           },
           {
             "sample": "t0",
+            "camera": null,
             "changed_fraction": 0.0,
             "mean_absolute_error": 0.0,
             "vanilla_foreground_fraction": 0.2774658203125,
@@ -113,6 +116,7 @@
           },
           {
             "sample": "t_quarter",
+            "camera": null,
             "changed_fraction": 0.0,
             "mean_absolute_error": 0.0,
             "vanilla_foreground_fraction": 0.2774658203125,
@@ -123,6 +127,7 @@
           },
           {
             "sample": "t_half",
+            "camera": null,
             "changed_fraction": 0.0,
             "mean_absolute_error": 0.0,
             "vanilla_foreground_fraction": 0.2774658203125,
@@ -133,6 +138,7 @@
           },
           {
             "sample": "t_three_quarter",
+            "camera": null,
             "changed_fraction": 0.0,
             "mean_absolute_error": 0.0,
             "vanilla_foreground_fraction": 0.2774658203125,
@@ -143,22 +149,227 @@
           }
         ]
       }
+    },
+    {
+      "model_id": "model_vortex",
+      "tier": 3,
+      "proof_scope": "production_proof_model",
+      "source_class": "danger.orespawn.entity.client.VortexModel",
+      "source_class_sha256": "3af9aa95b4d7912f55bd841c4c7812fefa9096407966c10676faa8ad40563b84",
+      "compiled_dump_sha256": "436f18fb55e4f37deee3c0171dca0394b58a8b4f369dbaf9e9278d4c25d978e9",
+      "bone_count": 1,
+      "cube_count": 1,
+      "geometry_sha256": "81b72a4252858bedf4ff283f3461cf389f1f82ad44a00296f51180c9145d1c64",
+      "animation_sha256": "7882082857fdb11e02f158ebc3a6d3f970e2ac60d54813f0e903ee97b2293749",
+      "animation_contract_sha256": "ef25a2b4eb7640daad7b902fc72c12e0e99737cd0882ac83ea702e72c92a7acd",
+      "geometry": {
+        "status": "PASS",
+        "epsilon_blocks": 1e-05,
+        "max_corner_delta_blocks": 0.0,
+        "worst_case": "exact",
+        "sample_count": 6,
+        "cube_sample_count": 6
+      },
+      "surface_mapping": {
+        "status": "PASS",
+        "position_epsilon_blocks": 1e-05,
+        "normal_epsilon": 1e-06,
+        "uv_epsilon_normalized": 1e-07,
+        "max_position_delta_blocks": 0.0,
+        "max_normal_delta": 0.0,
+        "max_uv_delta_normalized": 0.0,
+        "vertex_samples": 48,
+        "ignored_zero_area_faces": 24,
+        "worst_case": "exact",
+        "evidence": "position/normal/UV tuples from baked ModelPart.Cube.compile versus pinned GeckoLib BakedModelFactory rendered through GeoRenderer; faces of exactly zero area are excluded (ruling 2026-09-02)"
+      },
+      "animation": {
+        "status": "PASS",
+        "epsilon_radians": 2e-06,
+        "accepted_pose_comparison": "compiled setupAnim versus actual fresh-baked GeckoLib candidate",
+        "reference_animation_used_for_acceptance": false,
+        "sample_count": 6,
+        "max_rotation_delta_radians": 0.0,
+        "max_dense_rotation_delta_radians": 0.0,
+        "max_unexpected_position_or_scale_delta": 0.0,
+        "worst_case": "exact",
+        "dense_worst_case": "exact",
+        "rotation_channel_samples": 18,
+        "dense_rotation_channel_samples": 0,
+        "contract": {
+          "kind": "static",
+          "controller_required": false,
+          "accepted_runtime_path": "static bind pose; no controller",
+          "max_identity_rotation_motion": 0.0
+        }
+      },
+      "reference_animation": {
+        "status": "SCHEMA_VALID_REFERENCE_ONLY",
+        "role": "NOT_APPLICABLE_STATIC_MODEL",
+        "clip_count": 0,
+        "constant_vector_count": 0,
+        "runtime_acceptance": false
+      },
+      "visual": {
+        "status": "PASS",
+        "image_size": [
+          256,
+          256
+        ],
+        "camera": [
+          {
+            "name": "front",
+            "yaw_degrees": 0.0,
+            "pitch_degrees": 0.0
+          },
+          {
+            "name": "back",
+            "yaw_degrees": 180.0,
+            "pitch_degrees": 0.0
+          }
+        ],
+        "channel_tolerance": 2,
+        "changed_fraction_threshold": 0.001,
+        "mean_absolute_error_threshold": 0.25,
+        "minimum_foreground_fraction_threshold": 0.001,
+        "max_changed_fraction": 0.0001373291015625,
+        "max_mean_absolute_error": 0.0042266845703125,
+        "minimum_observed_foreground_fraction": 0.0540618896484375,
+        "samples": [
+          {
+            "sample": "bind",
+            "camera": "front",
+            "changed_fraction": 0.0001373291015625,
+            "mean_absolute_error": 0.0042266845703125,
+            "vanilla_foreground_fraction": 0.0540618896484375,
+            "geo_foreground_fraction": 0.0540771484375,
+            "vanilla_capture": "visual/model_vortex/bind.front.vanilla.png",
+            "geo_capture": "visual/model_vortex/bind.front.geo.png",
+            "diff_capture": "visual/model_vortex/bind.front.diff.png"
+          },
+          {
+            "sample": "bind",
+            "camera": "back",
+            "changed_fraction": 0.0001373291015625,
+            "mean_absolute_error": 0.0042266845703125,
+            "vanilla_foreground_fraction": 0.0540618896484375,
+            "geo_foreground_fraction": 0.0540771484375,
+            "vanilla_capture": "visual/model_vortex/bind.back.vanilla.png",
+            "geo_capture": "visual/model_vortex/bind.back.geo.png",
+            "diff_capture": "visual/model_vortex/bind.back.diff.png"
+          },
+          {
+            "sample": "t0",
+            "camera": "front",
+            "changed_fraction": 0.0001373291015625,
+            "mean_absolute_error": 0.0042266845703125,
+            "vanilla_foreground_fraction": 0.0540618896484375,
+            "geo_foreground_fraction": 0.0540771484375,
+            "vanilla_capture": "visual/model_vortex/t0.front.vanilla.png",
+            "geo_capture": "visual/model_vortex/t0.front.geo.png",
+            "diff_capture": "visual/model_vortex/t0.front.diff.png"
+          },
+          {
+            "sample": "t0",
+            "camera": "back",
+            "changed_fraction": 0.0001373291015625,
+            "mean_absolute_error": 0.0042266845703125,
+            "vanilla_foreground_fraction": 0.0540618896484375,
+            "geo_foreground_fraction": 0.0540771484375,
+            "vanilla_capture": "visual/model_vortex/t0.back.vanilla.png",
+            "geo_capture": "visual/model_vortex/t0.back.geo.png",
+            "diff_capture": "visual/model_vortex/t0.back.diff.png"
+          },
+          {
+            "sample": "t_quarter",
+            "camera": "front",
+            "changed_fraction": 0.0001373291015625,
+            "mean_absolute_error": 0.0042266845703125,
+            "vanilla_foreground_fraction": 0.0540618896484375,
+            "geo_foreground_fraction": 0.0540771484375,
+            "vanilla_capture": "visual/model_vortex/t_quarter.front.vanilla.png",
+            "geo_capture": "visual/model_vortex/t_quarter.front.geo.png",
+            "diff_capture": "visual/model_vortex/t_quarter.front.diff.png"
+          },
+          {
+            "sample": "t_quarter",
+            "camera": "back",
+            "changed_fraction": 0.0001373291015625,
+            "mean_absolute_error": 0.0042266845703125,
+            "vanilla_foreground_fraction": 0.0540618896484375,
+            "geo_foreground_fraction": 0.0540771484375,
+            "vanilla_capture": "visual/model_vortex/t_quarter.back.vanilla.png",
+            "geo_capture": "visual/model_vortex/t_quarter.back.geo.png",
+            "diff_capture": "visual/model_vortex/t_quarter.back.diff.png"
+          },
+          {
+            "sample": "t_half",
+            "camera": "front",
+            "changed_fraction": 0.0001373291015625,
+            "mean_absolute_error": 0.0042266845703125,
+            "vanilla_foreground_fraction": 0.0540618896484375,
+            "geo_foreground_fraction": 0.0540771484375,
+            "vanilla_capture": "visual/model_vortex/t_half.front.vanilla.png",
+            "geo_capture": "visual/model_vortex/t_half.front.geo.png",
+            "diff_capture": "visual/model_vortex/t_half.front.diff.png"
+          },
+          {
+            "sample": "t_half",
+            "camera": "back",
+            "changed_fraction": 0.0001373291015625,
+            "mean_absolute_error": 0.0042266845703125,
+            "vanilla_foreground_fraction": 0.0540618896484375,
+            "geo_foreground_fraction": 0.0540771484375,
+            "vanilla_capture": "visual/model_vortex/t_half.back.vanilla.png",
+            "geo_capture": "visual/model_vortex/t_half.back.geo.png",
+            "diff_capture": "visual/model_vortex/t_half.back.diff.png"
+          },
+          {
+            "sample": "t_three_quarter",
+            "camera": "front",
+            "changed_fraction": 0.0001373291015625,
+            "mean_absolute_error": 0.0042266845703125,
+            "vanilla_foreground_fraction": 0.0540618896484375,
+            "geo_foreground_fraction": 0.0540771484375,
+            "vanilla_capture": "visual/model_vortex/t_three_quarter.front.vanilla.png",
+            "geo_capture": "visual/model_vortex/t_three_quarter.front.geo.png",
+            "diff_capture": "visual/model_vortex/t_three_quarter.front.diff.png"
+          },
+          {
+            "sample": "t_three_quarter",
+            "camera": "back",
+            "changed_fraction": 0.0001373291015625,
+            "mean_absolute_error": 0.0042266845703125,
+            "vanilla_foreground_fraction": 0.0540618896484375,
+            "geo_foreground_fraction": 0.0540771484375,
+            "vanilla_capture": "visual/model_vortex/t_three_quarter.back.vanilla.png",
+            "geo_capture": "visual/model_vortex/t_three_quarter.back.geo.png",
+            "diff_capture": "visual/model_vortex/t_three_quarter.back.diff.png"
+          }
+        ]
+      }
     }
   ],
   "fixtures": [],
   "deterministic_text_outputs": {
     "status": "PASS",
     "line_ending": "LF",
-    "file_count": 6,
+    "file_count": 12,
     "files": [
       "model_elevator.compiled.json",
       "model_elevator.geo-render.json",
       "model_elevator.geo.json",
       "model_elevator.animation.json",
       "model_elevator.animation-contract.json",
-      "model_elevator.conversion.json"
+      "model_elevator.conversion.json",
+      "model_vortex.compiled.json",
+      "model_vortex.geo-render.json",
+      "model_vortex.geo.json",
+      "model_vortex.animation.json",
+      "model_vortex.animation-contract.json",
+      "model_vortex.conversion.json"
     ]
   },
-  "visual_artifact_count": 15,
+  "visual_artifact_count": 45,
   "visual_artifact_policy": "output cleared first; exact report-referenced PNG set only"
 }
