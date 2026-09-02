@@ -281,4 +281,10 @@ public class EntityRotator extends Monster {
     protected float getSoundVolume() {
         return 0.75f;
     }
+
+    /** orig Rotator.java:238 — func_145773_az -> true: never presses plates or tripwires (ENT-S-090). */
+    @Override
+    public boolean isIgnoringBlockTriggers() {
+        return true;
+    }
 }

@@ -207,4 +207,10 @@ public class Ghost extends AmbientCreature {
         }
         return !OriginalSpawnGates.isDaytime(level);
     }
+
+    /** orig Ghost.java:141 — func_145773_az -> true: never presses plates or tripwires (ENT-S-090). */
+    @Override
+    public boolean isIgnoringBlockTriggers() {
+        return true;
+    }
 }

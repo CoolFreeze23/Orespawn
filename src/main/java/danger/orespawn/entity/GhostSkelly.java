@@ -196,4 +196,10 @@ public class GhostSkelly extends AmbientCreature {
         }
         return !OriginalSpawnGates.isDaytime(level);
     }
+
+    /** orig GhostSkelly.java:169 — func_145773_az -> true: never presses plates or tripwires (ENT-S-090). */
+    @Override
+    public boolean isIgnoringBlockTriggers() {
+        return true;
+    }
 }

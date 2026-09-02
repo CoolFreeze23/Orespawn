@@ -434,4 +434,10 @@ public class Mothra extends EntityButterfly implements OreSpawnPartEntity.Multip
         if (this.getY() < 70.0) return false;
         return level.canSeeSky(this.blockPosition());
     }
+
+    /** orig Mothra.java:270 — func_145773_az -> true: never presses plates or tripwires (ENT-S-090). */
+    @Override
+    public boolean isIgnoringBlockTriggers() {
+        return true;
+    }
 }

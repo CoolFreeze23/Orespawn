@@ -110,4 +110,10 @@ public class Firefly extends AmbientCreature {
         if (danger.orespawn.ModDimensionKeys.isIn(level, danger.orespawn.ModDimensionKeys.ISLANDS)) return true;
         return this.getY() >= 50.0;
     }
+
+    /** orig Firefly.java:157 — func_145773_az -> true: never presses plates or tripwires (ENT-S-090). */
+    @Override
+    public boolean isIgnoringBlockTriggers() {
+        return true;
+    }
 }

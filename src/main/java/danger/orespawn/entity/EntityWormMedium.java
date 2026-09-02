@@ -277,4 +277,10 @@ public class EntityWormMedium extends Monster {
                                    net.minecraft.world.entity.MobSpawnType spawnType) {
         return !OriginalSpawnGates.isDaytime(level);
     }
+
+    /** orig WormMedium.java:236 — func_145773_az -> true: never presses plates or tripwires (ENT-S-090). */
+    @Override
+    public boolean isIgnoringBlockTriggers() {
+        return true;
+    }
 }
