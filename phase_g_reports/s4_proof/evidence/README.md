@@ -49,27 +49,27 @@ The independent gates are:
 
 ## model_island (Tier 3)
 
-- Exact bones: 6; cubes: 6.
-- Geometry maximum corner delta: 2.0124611809e-07 blocks (epsilon 1e-05).
-- Surface maximum UV delta: 0; normal delta: 1.04469506549e-07.
+- Exact bones: 3; cubes: 3.
+- Geometry maximum corner delta: 2.03224014331e-07 blocks (epsilon 1e-05).
+- Surface maximum UV delta: 0; normal delta: 2.02237484167e-07.
 - Animation maximum rotation delta: 0 radians (epsilon 2e-06).
 - Visual maximum changed fraction: 0; maximum mean absolute error: 0.
 
 - Accepted path: production OreSpawnGeoReplacement.applyCustomAnimations through OreSpawnGeoReplacementModel.setCustomAnimations (`danger.orespawn.entity.client.IslandGeoReplacement`).
-- Rotation maximum delta 0 radians; position maximum delta 0 model units over 126 position channels; inputs {'limb_swing': 3.7, 'limb_swing_amounts': [0.0, 0.5, 1.0], 'net_head_yaw_degrees': 25.0, 'head_pitch_degrees': -12.0}.
-- Visual z-fight pixels excluded (ruling 2): maximum contested fraction 0.
+- Rotation maximum delta 0 radians; position maximum delta 0 model units over 72 position channels; inputs {'limb_swing': 0.0, 'limb_swing_amounts': [0.0], 'net_head_yaw_degrees': 0.0, 'head_pitch_degrees': 0.0}.
+- Visual z-fight pixels excluded (ruling 2): maximum contested fraction 0.464233398438.
 
 ## model_islandtoo (Tier 3)
 
-- Exact bones: 6; cubes: 6.
-- Geometry maximum corner delta: 2.0124611809e-07 blocks (epsilon 1e-05).
-- Surface maximum UV delta: 0; normal delta: 1.04469506549e-07.
+- Exact bones: 3; cubes: 3.
+- Geometry maximum corner delta: 2.03224014331e-07 blocks (epsilon 1e-05).
+- Surface maximum UV delta: 0; normal delta: 2.02237484167e-07.
 - Animation maximum rotation delta: 0 radians (epsilon 2e-06).
 - Visual maximum changed fraction: 0; maximum mean absolute error: 0.
 
 - Accepted path: production OreSpawnGeoReplacement.applyCustomAnimations through OreSpawnGeoReplacementModel.setCustomAnimations (`danger.orespawn.entity.client.IslandTooGeoReplacement`).
-- Rotation maximum delta 0 radians; position maximum delta 0 model units over 126 position channels; inputs {'limb_swing': 3.7, 'limb_swing_amounts': [0.0, 0.5, 1.0], 'net_head_yaw_degrees': 25.0, 'head_pitch_degrees': -12.0}.
-- Visual z-fight pixels excluded (ruling 2): maximum contested fraction 0.
+- Rotation maximum delta 0 radians; position maximum delta 0 model units over 72 position channels; inputs {'limb_swing': 0.0, 'limb_swing_amounts': [0.0], 'net_head_yaw_degrees': 0.0, 'head_pitch_degrees': 0.0}.
+- Visual z-fight pixels excluded (ruling 2): maximum contested fraction 0.464233398438.
 
 ## model_robot1 (Tier 3)
 

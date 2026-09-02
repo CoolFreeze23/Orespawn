@@ -111,32 +111,35 @@
       "animation_kind": "code_driven",
       "candidate_animation_path": "production_replacement_hook",
       "candidate_class": "danger.orespawn.entity.client.IslandGeoReplacement",
-      "loop_period_age_ticks": 20.0,
+      "loop_period_age_ticks": 125.66,
       "sample_fractions": [
         0.0,
-        0.5
-      ],
-      "limb_swing": 3.7,
-      "limb_swing_amount": 0.0,
-      "limb_swing_amount_samples": [
-        0.0,
+        0.125,
+        0.25,
+        0.375,
         0.5,
+        0.75,
         1.0
       ],
-      "net_head_yaw": 25.0,
-      "head_pitch": -12.0,
+      "limb_swing": 0.0,
+      "limb_swing_amount": 0.0,
+      "net_head_yaw": 0.0,
+      "head_pitch": 0.0,
       "visual_sample_ids": [
         "bind",
-        "a0_t0",
-        "a0_5_t_half",
-        "a1_t0"
+        "t0",
+        "t_quarter",
+        "t_half",
+        "t_three_quarter"
       ],
       "camera": {
         "yaw_degrees": 34.0,
         "pitch_degrees": -28.0
       },
       "channels": [],
-      "max_contested_fraction_pin": 0.0
+      "max_contested_fraction_pin": 0.464233398438,
+      "rig_note": "ENT-S-091 (2026-09-02): rig regenerated from orig ModelIsland.java (three tumbling cubes); the previous body/head/legs rig was not the original",
+      "in_game_acceptance": "PENDING_OWNER: the 1.7.10 Island is three interpenetrating cubes, so 46.4% of every capture is coplanar z-fight excluded under ruling 2; above 0.5% (ruling 2026-09-02)"
     },
     {
       "id": "model_islandtoo",
@@ -146,32 +149,35 @@
       "animation_kind": "code_driven",
       "candidate_animation_path": "production_replacement_hook",
       "candidate_class": "danger.orespawn.entity.client.IslandTooGeoReplacement",
-      "loop_period_age_ticks": 20.0,
+      "loop_period_age_ticks": 125.66,
       "sample_fractions": [
         0.0,
-        0.5
-      ],
-      "limb_swing": 3.7,
-      "limb_swing_amount": 0.0,
-      "limb_swing_amount_samples": [
-        0.0,
+        0.125,
+        0.25,
+        0.375,
         0.5,
+        0.75,
         1.0
       ],
-      "net_head_yaw": 25.0,
-      "head_pitch": -12.0,
+      "limb_swing": 0.0,
+      "limb_swing_amount": 0.0,
+      "net_head_yaw": 0.0,
+      "head_pitch": 0.0,
       "visual_sample_ids": [
         "bind",
-        "a0_t0",
-        "a0_5_t_half",
-        "a1_t0"
+        "t0",
+        "t_quarter",
+        "t_half",
+        "t_three_quarter"
       ],
       "camera": {
         "yaw_degrees": 34.0,
         "pitch_degrees": -28.0
       },
       "channels": [],
-      "max_contested_fraction_pin": 0.0
+      "max_contested_fraction_pin": 0.464233398438,
+      "rig_note": "ENT-S-091 (2026-09-02): rig regenerated from orig ModelIsland.java (three tumbling cubes); the previous body/head/legs rig was not the original",
+      "in_game_acceptance": "PENDING_OWNER: the 1.7.10 Island is three interpenetrating cubes, so 46.4% of every capture is coplanar z-fight excluded under ruling 2; above 0.5% (ruling 2026-09-02)"
     },
     {
       "id": "model_robot1",

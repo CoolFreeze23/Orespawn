@@ -544,32 +544,32 @@
       "tier": 3,
       "proof_scope": "production_proof_model",
       "source_class": "danger.orespawn.entity.client.ModelIsland",
-      "source_class_sha256": "0199449ecd72805ee2923283cf22697c4e8709871f5fbff66ff55dcc99ee867f",
-      "compiled_dump_sha256": "d6b4eeb0cfbcf182b77f61fff6dd9ed34b161cd57f746cc98f68af23a29081b4",
-      "bone_count": 6,
-      "cube_count": 6,
-      "geometry_sha256": "5a2f0670ff66d013dabda46a192d5dbca19d491a8b56117c790c481c11ebaeac",
+      "source_class_sha256": "3e211bbcfe8a09884a2d35416e76abcc98841a38e138631b022e2c593f2a60d4",
+      "compiled_dump_sha256": "7446146652d65b5202b733c54890e10eeced77e3852cd61684b065255da4a649",
+      "bone_count": 3,
+      "cube_count": 3,
+      "geometry_sha256": "171dfdfc05e86655590658c6a0854a142e4b060bece25dcda490ff8d5fb4a543",
       "animation_sha256": "7882082857fdb11e02f158ebc3a6d3f970e2ac60d54813f0e903ee97b2293749",
-      "animation_contract_sha256": "abc28ea5cb736c5d6e0d3ac3e18b56ac473e7446a85c55ce96d072f2ad56ce1a",
+      "animation_contract_sha256": "018a74c201e5d090489dabfa913f0bd6d05b89d3b474084ec692b75ccfab9fa1",
       "geometry": {
         "status": "PASS",
         "epsilon_blocks": 1e-05,
-        "max_corner_delta_blocks": 2.0124611809041328e-07,
-        "worst_case": "a0_t0:head#0",
-        "sample_count": 7,
-        "cube_sample_count": 42
+        "max_corner_delta_blocks": 2.0322401433130862e-07,
+        "worst_case": "t_end:Shape2#0",
+        "sample_count": 8,
+        "cube_sample_count": 24
       },
       "surface_mapping": {
         "status": "PASS",
         "position_epsilon_blocks": 1e-05,
         "normal_epsilon": 1e-06,
         "uv_epsilon_normalized": 1e-07,
-        "max_position_delta_blocks": 2.0124611809041328e-07,
-        "max_normal_delta": 1.0446950654879719e-07,
+        "max_position_delta_blocks": 2.0322401433130862e-07,
+        "max_normal_delta": 2.0223748416697057e-07,
         "max_uv_delta_normalized": 0.0,
-        "vertex_samples": 1008,
+        "vertex_samples": 576,
         "ignored_zero_area_faces": 0,
-        "worst_case": "a0_t0:head#0",
+        "worst_case": "t_end:Shape2#0",
         "evidence": "position/normal/UV tuples from baked ModelPart.Cube.compile versus pinned GeckoLib BakedModelFactory rendered through GeoRenderer; faces of exactly zero area are excluded (ruling 2026-09-02)"
       },
       "animation": {
@@ -577,33 +577,31 @@
         "epsilon_radians": 2e-06,
         "accepted_pose_comparison": "compiled setupAnim versus actual fresh-baked GeckoLib candidate",
         "reference_animation_used_for_acceptance": false,
-        "sample_count": 7,
+        "sample_count": 8,
         "max_rotation_delta_radians": 0.0,
         "max_dense_rotation_delta_radians": 0.0,
         "max_unexpected_position_or_scale_delta": 0.0,
         "worst_case": "exact",
         "dense_worst_case": "exact",
-        "rotation_channel_samples": 126,
+        "rotation_channel_samples": 72,
         "dense_rotation_channel_samples": 0,
         "contract": {
           "kind": "code_driven",
           "accepted_runtime_path": "production OreSpawnGeoReplacement.applyCustomAnimations through OreSpawnGeoReplacementModel.setCustomAnimations",
           "candidate_class": "danger.orespawn.entity.client.IslandGeoReplacement",
           "inputs": {
-            "limb_swing": 3.7,
+            "limb_swing": 0.0,
             "limb_swing_amounts": [
-              0.0,
-              0.5,
-              1.0
+              0.0
             ],
-            "net_head_yaw_degrees": 25.0,
-            "head_pitch_degrees": -12.0
+            "net_head_yaw_degrees": 0.0,
+            "head_pitch_degrees": 0.0
           },
           "max_position_delta_model_units": 0.0,
           "position_epsilon_model_units": 0.0001,
           "position_worst_case": "exact",
-          "position_channel_samples": 126,
-          "hidden_bone_checks": 6
+          "position_channel_samples": 72,
+          "hidden_bone_checks": 7
         }
       },
       "reference_animation": {
@@ -630,9 +628,9 @@
         "max_changed_fraction": 0.0,
         "max_mean_absolute_error": 0.0,
         "z_fight_policy": "pixels where two different quads meet the front within 1e-06 depth with different texels are draw-order z-fights, excluded from the comparison and painted in the diff (ruling 2, 2026-09-02)",
-        "max_contested_fraction": 0.0,
-        "contested_fraction_pin": 0.0,
-        "requires_in_game_acceptance": false,
+        "max_contested_fraction": 0.4642333984375,
+        "contested_fraction_pin": 0.464233398438,
+        "requires_in_game_acceptance": true,
         "cutout_alpha_threshold": 0.1,
         "minimum_observed_foreground_fraction": 1.0,
         "samples": [
@@ -641,48 +639,60 @@
             "camera": null,
             "changed_fraction": 0.0,
             "mean_absolute_error": 0.0,
-            "contested_fraction": 0.0,
-            "vanilla_foreground_fraction": 0.37164306640625,
-            "geo_foreground_fraction": 0.37164306640625,
+            "contested_fraction": 0.2253570556640625,
+            "vanilla_foreground_fraction": 0.49066162109375,
+            "geo_foreground_fraction": 0.49066162109375,
             "vanilla_capture": "visual/model_island/bind.vanilla.png",
             "geo_capture": "visual/model_island/bind.geo.png",
             "diff_capture": "visual/model_island/bind.diff.png"
           },
           {
-            "sample": "a0_t0",
+            "sample": "t0",
             "camera": null,
             "changed_fraction": 0.0,
             "mean_absolute_error": 0.0,
-            "contested_fraction": 0.0,
-            "vanilla_foreground_fraction": 0.37164306640625,
-            "geo_foreground_fraction": 0.37164306640625,
-            "vanilla_capture": "visual/model_island/a0_t0.vanilla.png",
-            "geo_capture": "visual/model_island/a0_t0.geo.png",
-            "diff_capture": "visual/model_island/a0_t0.diff.png"
+            "contested_fraction": 0.4642333984375,
+            "vanilla_foreground_fraction": 0.4642333984375,
+            "geo_foreground_fraction": 0.4642333984375,
+            "vanilla_capture": "visual/model_island/t0.vanilla.png",
+            "geo_capture": "visual/model_island/t0.geo.png",
+            "diff_capture": "visual/model_island/t0.diff.png"
           },
           {
-            "sample": "a0_5_t_half",
+            "sample": "t_quarter",
             "camera": null,
             "changed_fraction": 0.0,
             "mean_absolute_error": 0.0,
             "contested_fraction": 0.0,
-            "vanilla_foreground_fraction": 0.3512115478515625,
-            "geo_foreground_fraction": 0.3512115478515625,
-            "vanilla_capture": "visual/model_island/a0_5_t_half.vanilla.png",
-            "geo_capture": "visual/model_island/a0_5_t_half.geo.png",
-            "diff_capture": "visual/model_island/a0_5_t_half.diff.png"
+            "vanilla_foreground_fraction": 0.48333740234375,
+            "geo_foreground_fraction": 0.48333740234375,
+            "vanilla_capture": "visual/model_island/t_quarter.vanilla.png",
+            "geo_capture": "visual/model_island/t_quarter.geo.png",
+            "diff_capture": "visual/model_island/t_quarter.diff.png"
           },
           {
-            "sample": "a1_t0",
+            "sample": "t_half",
             "camera": null,
             "changed_fraction": 0.0,
             "mean_absolute_error": 0.0,
             "contested_fraction": 0.0,
-            "vanilla_foreground_fraction": 0.3219757080078125,
-            "geo_foreground_fraction": 0.3219757080078125,
-            "vanilla_capture": "visual/model_island/a1_t0.vanilla.png",
-            "geo_capture": "visual/model_island/a1_t0.geo.png",
-            "diff_capture": "visual/model_island/a1_t0.diff.png"
+            "vanilla_foreground_fraction": 0.512451171875,
+            "geo_foreground_fraction": 0.512451171875,
+            "vanilla_capture": "visual/model_island/t_half.vanilla.png",
+            "geo_capture": "visual/model_island/t_half.geo.png",
+            "diff_capture": "visual/model_island/t_half.diff.png"
+          },
+          {
+            "sample": "t_three_quarter",
+            "camera": null,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "contested_fraction": 0.0,
+            "vanilla_foreground_fraction": 0.486480712890625,
+            "geo_foreground_fraction": 0.486480712890625,
+            "vanilla_capture": "visual/model_island/t_three_quarter.vanilla.png",
+            "geo_capture": "visual/model_island/t_three_quarter.geo.png",
+            "diff_capture": "visual/model_island/t_three_quarter.diff.png"
           }
         ]
       }
@@ -692,32 +702,32 @@
       "tier": 3,
       "proof_scope": "production_proof_model",
       "source_class": "danger.orespawn.entity.client.ModelIslandToo",
-      "source_class_sha256": "d7d46723564260a976e5850010650355815b58199bd12e0aa8ef0a903f5e8ae9",
-      "compiled_dump_sha256": "d905ea267b9f051998222fda867b706f3314bd7744c4aa30dc770c861097612e",
-      "bone_count": 6,
-      "cube_count": 6,
-      "geometry_sha256": "3ac2e841c009bd67d82d3d71bbe8c1bf19a983dc7513d6c67613632dd0d6ebea",
+      "source_class_sha256": "eb16e5dcf67d59b128ef43bd1da5f1672e40ce455a515dea34794e705b7cd1d8",
+      "compiled_dump_sha256": "2ac75a8247b4cfc51b094cf0ce73c07ccf0d47239e5404aa05c087d47b605bb7",
+      "bone_count": 3,
+      "cube_count": 3,
+      "geometry_sha256": "4150ddc031856509adca2554cb917a029a8a4cce0f7e5a5af9e987b1a8a5790c",
       "animation_sha256": "7882082857fdb11e02f158ebc3a6d3f970e2ac60d54813f0e903ee97b2293749",
-      "animation_contract_sha256": "7b2fdcec470a03062e2727847e6e12792fdde36669e9a0156b1c56b60ecdfbe1",
+      "animation_contract_sha256": "75e7335768a612b5d05b3ffd8343d351e3ed187580fd39609cbc82da3023a447",
       "geometry": {
         "status": "PASS",
         "epsilon_blocks": 1e-05,
-        "max_corner_delta_blocks": 2.0124611809041328e-07,
-        "worst_case": "a0_t0:head#0",
-        "sample_count": 7,
-        "cube_sample_count": 42
+        "max_corner_delta_blocks": 2.0322401433130862e-07,
+        "worst_case": "t_end:Shape2#0",
+        "sample_count": 8,
+        "cube_sample_count": 24
       },
       "surface_mapping": {
         "status": "PASS",
         "position_epsilon_blocks": 1e-05,
         "normal_epsilon": 1e-06,
         "uv_epsilon_normalized": 1e-07,
-        "max_position_delta_blocks": 2.0124611809041328e-07,
-        "max_normal_delta": 1.0446950654879719e-07,
+        "max_position_delta_blocks": 2.0322401433130862e-07,
+        "max_normal_delta": 2.0223748416697057e-07,
         "max_uv_delta_normalized": 0.0,
-        "vertex_samples": 1008,
+        "vertex_samples": 576,
         "ignored_zero_area_faces": 0,
-        "worst_case": "a0_t0:head#0",
+        "worst_case": "t_end:Shape2#0",
         "evidence": "position/normal/UV tuples from baked ModelPart.Cube.compile versus pinned GeckoLib BakedModelFactory rendered through GeoRenderer; faces of exactly zero area are excluded (ruling 2026-09-02)"
       },
       "animation": {
@@ -725,33 +735,31 @@
         "epsilon_radians": 2e-06,
         "accepted_pose_comparison": "compiled setupAnim versus actual fresh-baked GeckoLib candidate",
         "reference_animation_used_for_acceptance": false,
-        "sample_count": 7,
+        "sample_count": 8,
         "max_rotation_delta_radians": 0.0,
         "max_dense_rotation_delta_radians": 0.0,
         "max_unexpected_position_or_scale_delta": 0.0,
         "worst_case": "exact",
         "dense_worst_case": "exact",
-        "rotation_channel_samples": 126,
+        "rotation_channel_samples": 72,
         "dense_rotation_channel_samples": 0,
         "contract": {
           "kind": "code_driven",
           "accepted_runtime_path": "production OreSpawnGeoReplacement.applyCustomAnimations through OreSpawnGeoReplacementModel.setCustomAnimations",
           "candidate_class": "danger.orespawn.entity.client.IslandTooGeoReplacement",
           "inputs": {
-            "limb_swing": 3.7,
+            "limb_swing": 0.0,
             "limb_swing_amounts": [
-              0.0,
-              0.5,
-              1.0
+              0.0
             ],
-            "net_head_yaw_degrees": 25.0,
-            "head_pitch_degrees": -12.0
+            "net_head_yaw_degrees": 0.0,
+            "head_pitch_degrees": 0.0
           },
           "max_position_delta_model_units": 0.0,
           "position_epsilon_model_units": 0.0001,
           "position_worst_case": "exact",
-          "position_channel_samples": 126,
-          "hidden_bone_checks": 6
+          "position_channel_samples": 72,
+          "hidden_bone_checks": 7
         }
       },
       "reference_animation": {
@@ -778,9 +786,9 @@
         "max_changed_fraction": 0.0,
         "max_mean_absolute_error": 0.0,
         "z_fight_policy": "pixels where two different quads meet the front within 1e-06 depth with different texels are draw-order z-fights, excluded from the comparison and painted in the diff (ruling 2, 2026-09-02)",
-        "max_contested_fraction": 0.0,
-        "contested_fraction_pin": 0.0,
-        "requires_in_game_acceptance": false,
+        "max_contested_fraction": 0.4642333984375,
+        "contested_fraction_pin": 0.464233398438,
+        "requires_in_game_acceptance": true,
         "cutout_alpha_threshold": 0.1,
         "minimum_observed_foreground_fraction": 1.0,
         "samples": [
@@ -789,48 +797,60 @@
             "camera": null,
             "changed_fraction": 0.0,
             "mean_absolute_error": 0.0,
-            "contested_fraction": 0.0,
-            "vanilla_foreground_fraction": 0.37164306640625,
-            "geo_foreground_fraction": 0.37164306640625,
+            "contested_fraction": 0.2253570556640625,
+            "vanilla_foreground_fraction": 0.49066162109375,
+            "geo_foreground_fraction": 0.49066162109375,
             "vanilla_capture": "visual/model_islandtoo/bind.vanilla.png",
             "geo_capture": "visual/model_islandtoo/bind.geo.png",
             "diff_capture": "visual/model_islandtoo/bind.diff.png"
           },
           {
-            "sample": "a0_t0",
+            "sample": "t0",
             "camera": null,
             "changed_fraction": 0.0,
             "mean_absolute_error": 0.0,
-            "contested_fraction": 0.0,
-            "vanilla_foreground_fraction": 0.37164306640625,
-            "geo_foreground_fraction": 0.37164306640625,
-            "vanilla_capture": "visual/model_islandtoo/a0_t0.vanilla.png",
-            "geo_capture": "visual/model_islandtoo/a0_t0.geo.png",
-            "diff_capture": "visual/model_islandtoo/a0_t0.diff.png"
+            "contested_fraction": 0.4642333984375,
+            "vanilla_foreground_fraction": 0.4642333984375,
+            "geo_foreground_fraction": 0.4642333984375,
+            "vanilla_capture": "visual/model_islandtoo/t0.vanilla.png",
+            "geo_capture": "visual/model_islandtoo/t0.geo.png",
+            "diff_capture": "visual/model_islandtoo/t0.diff.png"
           },
           {
-            "sample": "a0_5_t_half",
+            "sample": "t_quarter",
             "camera": null,
             "changed_fraction": 0.0,
             "mean_absolute_error": 0.0,
             "contested_fraction": 0.0,
-            "vanilla_foreground_fraction": 0.3512115478515625,
-            "geo_foreground_fraction": 0.3512115478515625,
-            "vanilla_capture": "visual/model_islandtoo/a0_5_t_half.vanilla.png",
-            "geo_capture": "visual/model_islandtoo/a0_5_t_half.geo.png",
-            "diff_capture": "visual/model_islandtoo/a0_5_t_half.diff.png"
+            "vanilla_foreground_fraction": 0.48333740234375,
+            "geo_foreground_fraction": 0.48333740234375,
+            "vanilla_capture": "visual/model_islandtoo/t_quarter.vanilla.png",
+            "geo_capture": "visual/model_islandtoo/t_quarter.geo.png",
+            "diff_capture": "visual/model_islandtoo/t_quarter.diff.png"
           },
           {
-            "sample": "a1_t0",
+            "sample": "t_half",
             "camera": null,
             "changed_fraction": 0.0,
             "mean_absolute_error": 0.0,
             "contested_fraction": 0.0,
-            "vanilla_foreground_fraction": 0.3219757080078125,
-            "geo_foreground_fraction": 0.3219757080078125,
-            "vanilla_capture": "visual/model_islandtoo/a1_t0.vanilla.png",
-            "geo_capture": "visual/model_islandtoo/a1_t0.geo.png",
-            "diff_capture": "visual/model_islandtoo/a1_t0.diff.png"
+            "vanilla_foreground_fraction": 0.512451171875,
+            "geo_foreground_fraction": 0.512451171875,
+            "vanilla_capture": "visual/model_islandtoo/t_half.vanilla.png",
+            "geo_capture": "visual/model_islandtoo/t_half.geo.png",
+            "diff_capture": "visual/model_islandtoo/t_half.diff.png"
+          },
+          {
+            "sample": "t_three_quarter",
+            "camera": null,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "contested_fraction": 0.0,
+            "vanilla_foreground_fraction": 0.486480712890625,
+            "geo_foreground_fraction": 0.486480712890625,
+            "vanilla_capture": "visual/model_islandtoo/t_three_quarter.vanilla.png",
+            "geo_capture": "visual/model_islandtoo/t_three_quarter.geo.png",
+            "diff_capture": "visual/model_islandtoo/t_three_quarter.diff.png"
           }
         ]
       }
@@ -2043,6 +2063,6 @@
       "fixture_runtime_basis_yz.conversion.json"
     ]
   },
-  "visual_artifact_count": 165,
+  "visual_artifact_count": 171,
   "visual_artifact_policy": "output cleared first; exact report-referenced PNG set only"
 }

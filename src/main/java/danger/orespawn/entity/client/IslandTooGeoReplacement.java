@@ -8,10 +8,10 @@ import net.minecraft.resources.ResourceLocation;
 import software.bernie.geckolib.animation.AnimatableManager;
 import software.bernie.geckolib.animation.AnimationProcessor;
 
-/** GeckoLib IslandToo: {@link ModelIslandToo#setupAnim} verbatim on the converted rig (Tier 3, code-driven per Amendment 1). */
+/** GeckoLib IslandToo: {@link ModelIslandToo#setupAnim} verbatim on the converted 1.7.10 rig (ENT-S-091 re-proof). */
 public final class IslandTooGeoReplacement extends OreSpawnGeoReplacement<IslandToo> {
     private static final GeoReplacementDescriptor<IslandToo> DESCRIPTOR = new GeoReplacementDescriptor<>(
-            () -> ModEntities.ISLAND_TOO.get(),  // lambda: a bound method ref would initialise ModEntities eagerly
+            () -> ModEntities.ISLAND_TOO.get(),
             IslandToo.class,
             ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "geo/entity/islandtoo.geo.json"),
             ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "animations/entity/islandtoo.animation.json"),
@@ -30,8 +30,7 @@ public final class IslandTooGeoReplacement extends OreSpawnGeoReplacement<Island
 
     @Override
     protected void applyCustomAnimations(AnimationProcessor<?> processor, PoseInputs inputs) {
-        IslandGeoReplacement.poseIslandRig(processor, inputs.limbSwing(), inputs.limbSwingAmount(),
-                inputs.netHeadYaw(), inputs.headPitch());
+        IslandGeoReplacement.poseIslandRig(processor, inputs.ageInTicks());
     }
 
     public static final class Renderer extends OreSpawnGeoReplacedEntityRenderer<IslandToo, IslandTooGeoReplacement> {

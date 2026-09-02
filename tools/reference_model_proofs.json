@@ -3,6 +3,27 @@
   "purpose": "Standing reference-geometry gate: each port model's compiled LayerDefinition against its parsed 1.7.10 source. A model passes when the leg reports exactly its pinned divergences (none once fixed).",
   "models": [
     {
+      "id": "reference_ant",
+      "tier": 0,
+      "class": "danger.orespawn.entity.client.AntModel",
+      "texture": "src/main/resources/assets/orespawn/textures/entity/ant.png",
+      "reference_source": "reference_1_7_10_source/sources/danger/orespawn/ModelAnt.java",
+      "animation_kind": "static",
+      "loop_period_age_ticks": 20.0,
+      "sample_fractions": [],
+      "limb_swing": 0.0,
+      "limb_swing_amount": 0.0,
+      "camera": {
+        "yaw_degrees": 34.0,
+        "pitch_degrees": -28.0
+      },
+      "channels": [],
+      "pinned_divergences": {
+        "MIRROR": 20
+      },
+      "pin_note": "parity bugs per the owner's ruling of 2026-09-02 (BUG-041 mirror, ENT-S-091 geometry); pinned so the count can only shrink; cleared when the fix lands"
+    },
+    {
       "id": "reference_bee",
       "tier": 0,
       "class": "danger.orespawn.entity.client.BeeModel",
@@ -63,6 +84,44 @@
       "pinned_divergences": {
         "EXTRA_IN_PORT": 49,
         "MIRROR": 31
+      },
+      "pin_note": "parity bugs per the owner's ruling of 2026-09-02 (BUG-041 mirror, ENT-S-091 geometry); pinned so the count can only shrink; cleared when the fix lands"
+    },
+    {
+      "id": "reference_cliffracer",
+      "tier": 0,
+      "class": "danger.orespawn.entity.client.CliffRacerModel",
+      "texture": "src/main/resources/assets/orespawn/textures/entity/cliffracer.png",
+      "reference_source": "reference_1_7_10_source/sources/danger/orespawn/ModelCliffRacer.java",
+      "animation_kind": "static",
+      "loop_period_age_ticks": 20.0,
+      "sample_fractions": [],
+      "limb_swing": 0.0,
+      "limb_swing_amount": 0.0,
+      "camera": {
+        "yaw_degrees": 34.0,
+        "pitch_degrees": -28.0
+      },
+      "channels": []
+    },
+    {
+      "id": "reference_cricket",
+      "tier": 0,
+      "class": "danger.orespawn.entity.client.CricketModel",
+      "texture": "src/main/resources/assets/orespawn/textures/entity/cricket.png",
+      "reference_source": "reference_1_7_10_source/sources/danger/orespawn/ModelCricket.java",
+      "animation_kind": "static",
+      "loop_period_age_ticks": 20.0,
+      "sample_fractions": [],
+      "limb_swing": 0.0,
+      "limb_swing_amount": 0.0,
+      "camera": {
+        "yaw_degrees": 34.0,
+        "pitch_degrees": -28.0
+      },
+      "channels": [],
+      "pinned_divergences": {
+        "MIRROR": 11
       },
       "pin_note": "parity bugs per the owner's ruling of 2026-09-02 (BUG-041 mirror, ENT-S-091 geometry); pinned so the count can only shrink; cleared when the fix lands"
     },
@@ -151,6 +210,45 @@
       "pin_note": "parity bugs per the owner's ruling of 2026-09-02 (BUG-041 mirror, ENT-S-091 geometry); pinned so the count can only shrink; cleared when the fix lands"
     },
     {
+      "id": "reference_gammametroid",
+      "tier": 0,
+      "class": "danger.orespawn.entity.client.GammaMetroidModel",
+      "texture": "src/main/resources/assets/orespawn/textures/entity/gammametroid.png",
+      "reference_source": "reference_1_7_10_source/sources/danger/orespawn/ModelGammaMetroid.java",
+      "animation_kind": "static",
+      "loop_period_age_ticks": 20.0,
+      "sample_fractions": [],
+      "limb_swing": 0.0,
+      "limb_swing_amount": 0.0,
+      "camera": {
+        "yaw_degrees": 34.0,
+        "pitch_degrees": -28.0
+      },
+      "channels": [],
+      "pinned_divergences": {
+        "MIRROR": 21
+      },
+      "pin_note": "parity bugs per the owner's ruling of 2026-09-02 (BUG-041 mirror, ENT-S-091 geometry); pinned so the count can only shrink; cleared when the fix lands"
+    },
+    {
+      "id": "reference_ghost",
+      "tier": 0,
+      "class": "danger.orespawn.entity.client.GhostModel",
+      "texture": "src/main/resources/assets/orespawn/textures/entity/ghost.png",
+      "reference_source": "reference_1_7_10_source/sources/danger/orespawn/ModelGhost.java",
+      "animation_kind": "static",
+      "loop_period_age_ticks": 20.0,
+      "sample_fractions": [],
+      "limb_swing": 0.0,
+      "limb_swing_amount": 0.0,
+      "camera": {
+        "yaw_degrees": 34.0,
+        "pitch_degrees": -28.0
+      },
+      "channels": [],
+      "fixed": "ENT-S-091 (2026-09-02): rig regenerated from the parsed 1.7.10 source; exact match required"
+    },
+    {
       "id": "reference_ghostskelly",
       "tier": 0,
       "class": "danger.orespawn.entity.client.GhostSkellyModel",
@@ -228,7 +326,29 @@
         "yaw_degrees": 34.0,
         "pitch_degrees": -28.0
       },
-      "channels": []
+      "channels": [],
+      "fixed": "exact as ported"
+    },
+    {
+      "id": "reference_leafmonster",
+      "tier": 0,
+      "class": "danger.orespawn.entity.client.LeafMonsterModel",
+      "texture": "src/main/resources/assets/orespawn/textures/entity/leafmonster.png",
+      "reference_source": "reference_1_7_10_source/sources/danger/orespawn/ModelLeafMonster.java",
+      "animation_kind": "static",
+      "loop_period_age_ticks": 20.0,
+      "sample_fractions": [],
+      "limb_swing": 0.0,
+      "limb_swing_amount": 0.0,
+      "camera": {
+        "yaw_degrees": 34.0,
+        "pitch_degrees": -28.0
+      },
+      "channels": [],
+      "pinned_divergences": {
+        "MIRROR": 5
+      },
+      "pin_note": "parity bugs per the owner's ruling of 2026-09-02 (BUG-041 mirror, ENT-S-091 geometry); pinned so the count can only shrink; cleared when the fix lands"
     },
     {
       "id": "reference_leon",
@@ -644,7 +764,8 @@
         "yaw_degrees": 34.0,
         "pitch_degrees": -28.0
       },
-      "channels": []
+      "channels": [],
+      "fixed": "BUG-040 (2026-09-02): classic Coin restored; exact"
     },
     {
       "id": "reference_crab",
@@ -1017,11 +1138,7 @@
         "pitch_degrees": -28.0
       },
       "channels": [],
-      "pinned_divergences": {
-        "EXTRA_IN_PORT": 6,
-        "MISSING_IN_PORT": 3
-      },
-      "pin_note": "parity bugs per the owner's ruling of 2026-09-02 (BUG-041 mirror, ENT-S-091 geometry); pinned so the count can only shrink; cleared when the fix lands"
+      "fixed": "ENT-S-091 (2026-09-02): rig regenerated from the parsed 1.7.10 source; exact match required"
     },
     {
       "id": "reference_islandtoo",
@@ -1039,11 +1156,7 @@
         "pitch_degrees": -28.0
       },
       "channels": [],
-      "pinned_divergences": {
-        "EXTRA_IN_PORT": 6,
-        "MISSING_IN_PORT": 3
-      },
-      "pin_note": "parity bugs per the owner's ruling of 2026-09-02 (BUG-041 mirror, ENT-S-091 geometry); pinned so the count can only shrink; cleared when the fix lands"
+      "fixed": "ENT-S-091 (2026-09-02): rig regenerated from the parsed 1.7.10 source; exact match required"
     },
     {
       "id": "reference_kraken",
@@ -1357,11 +1470,7 @@
         "pitch_degrees": -28.0
       },
       "channels": [],
-      "pinned_divergences": {
-        "EXTRA_IN_PORT": 4,
-        "MISSING_IN_PORT": 3
-      },
-      "pin_note": "parity bugs per the owner's ruling of 2026-09-02 (BUG-041 mirror, ENT-S-091 geometry); pinned so the count can only shrink; cleared when the fix lands"
+      "fixed": "ENT-S-091 (2026-09-02): rig regenerated from the parsed 1.7.10 source; exact match required"
     },
     {
       "id": "reference_spiderrobot",
@@ -1595,6 +1704,24 @@
       "pin_note": "parity bugs per the owner's ruling of 2026-09-02 (BUG-041 mirror, ENT-S-091 geometry); pinned so the count can only shrink; cleared when the fix lands"
     },
     {
+      "id": "reference_mosquito",
+      "tier": 0,
+      "class": "danger.orespawn.entity.client.MosquitoModel",
+      "texture": "src/main/resources/assets/orespawn/textures/entity/mosquito.png",
+      "reference_source": "reference_1_7_10_source/sources/danger/orespawn/ModelMosquito.java",
+      "animation_kind": "static",
+      "loop_period_age_ticks": 20.0,
+      "sample_fractions": [],
+      "limb_swing": 0.0,
+      "limb_swing_amount": 0.0,
+      "camera": {
+        "yaw_degrees": 34.0,
+        "pitch_degrees": -28.0
+      },
+      "channels": [],
+      "fixed": "ENT-S-091 (2026-09-02): rig regenerated from the parsed 1.7.10 source; exact match required"
+    },
+    {
       "id": "reference_ostrich",
       "tier": 0,
       "class": "danger.orespawn.entity.client.OstrichModel",
@@ -1612,6 +1739,69 @@
       "channels": [],
       "pinned_divergences": {
         "MIRROR": 38
+      },
+      "pin_note": "parity bugs per the owner's ruling of 2026-09-02 (BUG-041 mirror, ENT-S-091 geometry); pinned so the count can only shrink; cleared when the fix lands"
+    },
+    {
+      "id": "reference_rat",
+      "tier": 0,
+      "class": "danger.orespawn.entity.client.RatModel",
+      "texture": "src/main/resources/assets/orespawn/textures/entity/rat.png",
+      "reference_source": "reference_1_7_10_source/sources/danger/orespawn/ModelRat.java",
+      "animation_kind": "static",
+      "loop_period_age_ticks": 20.0,
+      "sample_fractions": [],
+      "limb_swing": 0.0,
+      "limb_swing_amount": 0.0,
+      "camera": {
+        "yaw_degrees": 34.0,
+        "pitch_degrees": -28.0
+      },
+      "channels": [],
+      "pinned_divergences": {
+        "MIRROR": 12
+      },
+      "pin_note": "parity bugs per the owner's ruling of 2026-09-02 (BUG-041 mirror, ENT-S-091 geometry); pinned so the count can only shrink; cleared when the fix lands"
+    },
+    {
+      "id": "reference_rotator",
+      "tier": 0,
+      "class": "danger.orespawn.entity.client.RotatorModel",
+      "texture": "src/main/resources/assets/orespawn/textures/entity/rotator.png",
+      "reference_source": "reference_1_7_10_source/sources/danger/orespawn/ModelRotator.java",
+      "animation_kind": "static",
+      "loop_period_age_ticks": 20.0,
+      "sample_fractions": [],
+      "limb_swing": 0.0,
+      "limb_swing_amount": 0.0,
+      "camera": {
+        "yaw_degrees": 34.0,
+        "pitch_degrees": -28.0
+      },
+      "channels": [],
+      "pinned_divergences": {
+        "MIRROR": 3
+      },
+      "pin_note": "parity bugs per the owner's ruling of 2026-09-02 (BUG-041 mirror, ENT-S-091 geometry); pinned so the count can only shrink; cleared when the fix lands"
+    },
+    {
+      "id": "reference_rubberducky",
+      "tier": 0,
+      "class": "danger.orespawn.entity.client.RubberDuckyModel",
+      "texture": "src/main/resources/assets/orespawn/textures/entity/rubberducky.png",
+      "reference_source": "reference_1_7_10_source/sources/danger/orespawn/ModelRubberDucky.java",
+      "animation_kind": "static",
+      "loop_period_age_ticks": 20.0,
+      "sample_fractions": [],
+      "limb_swing": 0.0,
+      "limb_swing_amount": 0.0,
+      "camera": {
+        "yaw_degrees": 34.0,
+        "pitch_degrees": -28.0
+      },
+      "channels": [],
+      "pinned_divergences": {
+        "MIRROR": 8
       },
       "pin_note": "parity bugs per the owner's ruling of 2026-09-02 (BUG-041 mirror, ENT-S-091 geometry); pinned so the count can only shrink; cleared when the fix lands"
     },
@@ -1694,11 +1884,7 @@
         "pitch_degrees": -28.0
       },
       "channels": [],
-      "pinned_divergences": {
-        "MIRROR": 50,
-        "PIVOT": 50
-      },
-      "pin_note": "parity bugs per the owner's ruling of 2026-09-02 (BUG-041 mirror, ENT-S-091 geometry); pinned so the count can only shrink; cleared when the fix lands"
+      "fixed": "ENT-S-091 (2026-09-02): rig regenerated from the parsed 1.7.10 source; exact match required"
     },
     {
       "id": "reference_stinky",
@@ -1718,6 +1904,27 @@
       "channels": [],
       "pinned_divergences": {
         "MIRROR": 20
+      },
+      "pin_note": "parity bugs per the owner's ruling of 2026-09-02 (BUG-041 mirror, ENT-S-091 geometry); pinned so the count can only shrink; cleared when the fix lands"
+    },
+    {
+      "id": "reference_terribleterror",
+      "tier": 0,
+      "class": "danger.orespawn.entity.client.TerribleTerrorModel",
+      "texture": "src/main/resources/assets/orespawn/textures/entity/terribleterror.png",
+      "reference_source": "reference_1_7_10_source/sources/danger/orespawn/ModelTerribleTerror.java",
+      "animation_kind": "static",
+      "loop_period_age_ticks": 20.0,
+      "sample_fractions": [],
+      "limb_swing": 0.0,
+      "limb_swing_amount": 0.0,
+      "camera": {
+        "yaw_degrees": 34.0,
+        "pitch_degrees": -28.0
+      },
+      "channels": [],
+      "pinned_divergences": {
+        "MIRROR": 21
       },
       "pin_note": "parity bugs per the owner's ruling of 2026-09-02 (BUG-041 mirror, ENT-S-091 geometry); pinned so the count can only shrink; cleared when the fix lands"
     },
@@ -1764,6 +1971,29 @@
       "pin_note": "parity bugs per the owner's ruling of 2026-09-02 (BUG-041 mirror, ENT-S-091 geometry); pinned so the count can only shrink; cleared when the fix lands"
     },
     {
+      "id": "reference_tshirt",
+      "tier": 0,
+      "class": "danger.orespawn.entity.client.TshirtModel",
+      "texture": "src/main/resources/assets/orespawn/textures/entity/tshirt.png",
+      "reference_source": "reference_1_7_10_source/sources/danger/orespawn/ModelTshirt.java",
+      "animation_kind": "static",
+      "loop_period_age_ticks": 20.0,
+      "sample_fractions": [],
+      "limb_swing": 0.0,
+      "limb_swing_amount": 0.0,
+      "camera": {
+        "yaw_degrees": 34.0,
+        "pitch_degrees": -28.0
+      },
+      "channels": [],
+      "pinned_divergences": {
+        "EXTRA_IN_PORT": 3,
+        "MISSING_IN_PORT": 2,
+        "TEXTURE_SHEET": 1
+      },
+      "pin_note": "parity bugs per the owner's ruling of 2026-09-02 (BUG-041 mirror, ENT-S-091 geometry); pinned so the count can only shrink; cleared when the fix lands"
+    },
+    {
       "id": "reference_velocityraptor",
       "tier": 0,
       "class": "danger.orespawn.entity.client.VelocityRaptorModel",
@@ -1781,6 +2011,27 @@
       "channels": [],
       "pinned_divergences": {
         "MIRROR": 34
+      },
+      "pin_note": "parity bugs per the owner's ruling of 2026-09-02 (BUG-041 mirror, ENT-S-091 geometry); pinned so the count can only shrink; cleared when the fix lands"
+    },
+    {
+      "id": "reference_vortex",
+      "tier": 0,
+      "class": "danger.orespawn.entity.client.VortexModel",
+      "texture": "src/main/resources/assets/orespawn/textures/entity/vortex.png",
+      "reference_source": "reference_1_7_10_source/sources/danger/orespawn/ModelVortex.java",
+      "animation_kind": "static",
+      "loop_period_age_ticks": 20.0,
+      "sample_fractions": [],
+      "limb_swing": 0.0,
+      "limb_swing_amount": 0.0,
+      "camera": {
+        "yaw_degrees": 34.0,
+        "pitch_degrees": -28.0
+      },
+      "channels": [],
+      "pinned_divergences": {
+        "MIRROR": 1
       },
       "pin_note": "parity bugs per the owner's ruling of 2026-09-02 (BUG-041 mirror, ENT-S-091 geometry); pinned so the count can only shrink; cleared when the fix lands"
     },
@@ -1823,6 +2074,27 @@
       "channels": [],
       "pinned_divergences": {
         "MIRROR": 8
+      },
+      "pin_note": "parity bugs per the owner's ruling of 2026-09-02 (BUG-041 mirror, ENT-S-091 geometry); pinned so the count can only shrink; cleared when the fix lands"
+    },
+    {
+      "id": "reference_wormsmall",
+      "tier": 0,
+      "class": "danger.orespawn.entity.client.WormSmallModel",
+      "texture": "src/main/resources/assets/orespawn/textures/entity/wormsmall.png",
+      "reference_source": "reference_1_7_10_source/sources/danger/orespawn/ModelWormSmall.java",
+      "animation_kind": "static",
+      "loop_period_age_ticks": 20.0,
+      "sample_fractions": [],
+      "limb_swing": 0.0,
+      "limb_swing_amount": 0.0,
+      "camera": {
+        "yaw_degrees": 34.0,
+        "pitch_degrees": -28.0
+      },
+      "channels": [],
+      "pinned_divergences": {
+        "MIRROR": 3
       },
       "pin_note": "parity bugs per the owner's ruling of 2026-09-02 (BUG-041 mirror, ENT-S-091 geometry); pinned so the count can only shrink; cleared when the fix lands"
     }

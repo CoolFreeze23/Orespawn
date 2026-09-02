@@ -5,22 +5,19 @@
   "proof_scope": "production_proof_model",
   "ground_truth": "executed compiled LayerDefinition and baked ModelPart",
   "source_class": "danger.orespawn.entity.client.ModelIslandToo",
-  "source_class_sha256": "d7d46723564260a976e5850010650355815b58199bd12e0aa8ef0a903f5e8ae9",
-  "compiled_dump_sha256": "d905ea267b9f051998222fda867b706f3314bd7744c4aa30dc770c861097612e",
-  "geometry_sha256": "3ac2e841c009bd67d82d3d71bbe8c1bf19a983dc7513d6c67613632dd0d6ebea",
+  "source_class_sha256": "eb16e5dcf67d59b128ef43bd1da5f1672e40ce455a515dea34794e705b7cd1d8",
+  "compiled_dump_sha256": "2ac75a8247b4cfc51b094cf0ce73c07ccf0d47239e5404aa05c087d47b605bb7",
+  "geometry_sha256": "4150ddc031856509adca2554cb917a029a8a4cce0f7e5a5af9e987b1a8a5790c",
   "animation_sha256": "7882082857fdb11e02f158ebc3a6d3f970e2ac60d54813f0e903ee97b2293749",
-  "animation_contract_sha256": "7b2fdcec470a03062e2727847e6e12792fdde36669e9a0156b1c56b60ecdfbe1",
-  "bone_count": 6,
-  "cube_count": 6,
+  "animation_contract_sha256": "75e7335768a612b5d05b3ffd8343d351e3ed187580fd39609cbc82da3023a447",
+  "bone_count": 3,
+  "cube_count": 3,
   "mirrored_cube_count": 0,
   "mirrored_uv_strategy": "source flag retained as modelpart_mirror; semantics baked into explicit faces; incompatible GeckoLib native mirror disabled",
   "exact_bone_names": [
-    "body",
-    "head",
-    "leg1",
-    "leg2",
-    "leg3",
-    "leg4"
+    "Shape1",
+    "Shape2",
+    "Shape3"
   ],
   "animation_contract": {
     "schema_version": 1,
@@ -31,12 +28,13 @@
     "candidate_acceptance_path": "production OreSpawnGeoReplacementModel.setCustomAnimations (Amendment 1 Tier-3 code-driven)",
     "sample_ids": [
       "bind",
-      "a0_t0",
-      "a0_t_half",
-      "a0_5_t0",
-      "a0_5_t_half",
-      "a1_t0",
-      "a1_t_half"
+      "t0",
+      "t_0_125000",
+      "t_quarter",
+      "t_0_375000",
+      "t_half",
+      "t_three_quarter",
+      "t_end"
     ]
   },
   "reference_animation_schema": {

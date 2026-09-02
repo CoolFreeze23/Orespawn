@@ -6166,13 +6166,27 @@ keeps BUG-036. Commit 4ea395c's message retains the old number.)*
   pivots and rotation axes), Skate (different rig), StinkBug (all 50 pivots,
   the reference's `+= 6.0f` adjustments). Details and readings in
   `phase_g_reports/reference_geometry_survey.md`.
-- **Resolution:** OPEN — report only. Each needs a read against its 1.7.10
-  renderer (this leg does not see renderer transforms) and an owner ruling:
-  parity fix, or a MOD record if the rebuild was intentional. Island/IslandToo
-  and Elevator are Phase G species already behind the switch; their GeckoLib
-  candidates faithfully reproduce the PORT model, which is not the original.
-  The reader sweep adds Ghost, Mosquito and Tshirt (box counts differ) for
-  the same read.
+- **Owner ruling (2026-09-02):** parity bugs; fix in classic with the
+  reference leg as proof; Elevator's Q1 acceptance void; Island and Elevator
+  re-prove and re-accept after.
+- **Slice A, FIXED:** Island, IslandToo, Skate, Mosquito, Ghost and StinkBug
+  rigs regenerated from the parsed 1.7.10 constructors
+  (`tools/reference_to_layer_definition.py`), animations transcribed from
+  the originals' render bodies (Island: nine cosines on three tumbling
+  cubes, wingspeed 1.0; Skate: tail-tip flap; Mosquito: wing flap at 3.0;
+  Ghost: four arm cosines), renderer scale and shadow set to the verified
+  ENT-S-092 values (Skate 0.75/0.075, Mosquito 0.5/0.15, Ghost 0.65/0,
+  StinkBug 0.85/0.2975), reference pins cleared so the leg requires an exact
+  match; the Island and IslandToo GeckoLib candidates re-proven on the
+  regenerated rigs (s4 proofs rewritten; both need the owner's re-acceptance).
+- **Slice B, pending reads:** Elevator (the port pivot y 24 cancels the
+  1.501 lift RenderLiving applies and the original's custom RenderElevator
+  never did; whether placement is identical and how to make the leg exact
+  without changing what renders is under read), CaterKiller (the port
+  unrolls the original's three-iteration render loop into 49 extra parts;
+  per-copy pivots under read), Tshirt (the original normalises a 2-part rig
+  by 512x256 over a 320x160 image; under read), SeaViper (34-part rig
+  regenerated; animation transcription drafted, pending review).
 
 ### ENT-S-092 — Renderer shadow radius and world scale diverge from the 1.7.10 registrations across the population (REPORT, 2026-09-02)
 

@@ -7,11 +7,12 @@
   "candidate_acceptance_path": "production OreSpawnGeoReplacementModel.setCustomAnimations (Amendment 1 Tier-3 code-driven)",
   "sample_ids": [
     "bind",
-    "a0_t0",
-    "a0_t_half",
-    "a0_5_t0",
-    "a0_5_t_half",
-    "a1_t0",
-    "a1_t_half"
+    "t0",
+    "t_0_125000",
+    "t_quarter",
+    "t_0_375000",
+    "t_half",
+    "t_three_quarter",
+    "t_end"
   ]
 }

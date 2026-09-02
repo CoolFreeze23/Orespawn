@@ -4613,3 +4613,25 @@ GATE (on master, sequential): `build` exit 0 - audit 0/0/4, `referenceGeometry` 
 checked-in reports verified; EnderReaper exact, 84 pinned, Coin and Kyuubi exact),
 `s4Parity` 11 models, `g1Parity` 2 models, benchmark evidence verified (build.gradle
 pin); `runGameTestServer` exit 0 - literal `All 199 required tests passed`. Not pushed.
+
+## ENT-S-091 SLICE A — six rigs regenerated from the 1.7.10 source (2026-09-02)
+
+Owner's ruling: parity bugs, fixed in classic with the reference leg as
+proof. Island, IslandToo, Skate, Mosquito, Ghost: the port's hand-authored
+rigs replaced by the originals' geometry (generated from the parsed
+constructors) and the originals' animation (transcribed from their render
+bodies); StinkBug: geometry regenerated (the port had dropped the trailing
+`+= 6.0f` pivot adjustments), animation unchanged. Renderer scale/shadow from
+the verified ENT-S-092 findings for these species. Reference pins cleared:
+the standing gate now requires an exact match for all six (plus Coin,
+Kyuubi, EnderReaper). Island/IslandToo GeckoLib candidates re-proven on the
+new rigs (age-driven samples over the 125.66-tick slowest period); their
+earlier acceptance is void per the owner; re-acceptance requested. Slice B
+(Elevator, CaterKiller, Tshirt reads; SeaViper) follows.
+
+GATE (on master, sequential): compile clean; `build` exit 0 - audit 0/0/4, `referenceGeometry`
+101 checked-in reports verified (exact: coin, kyuubi, enderreaper, island, islandtoo, skate,
+mosquito, ghost, stinkbug), `s4Parity` 11 models (Island/IslandToo re-proven; visual excluded
+fraction pinned at the observed 0.4642 - three interpenetrating cubes - IN-GAME ACCEPTANCE
+REQUIRED), `g1Parity`, benchmark verified; `runGameTestServer` exit 0 - literal `All 199 required tests passed`.
+Not pushed.

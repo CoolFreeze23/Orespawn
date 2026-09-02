@@ -1,0 +1,147 @@
+{
+  "schema_version": 1,
+  "model_id": "reference_tshirt",
+  "reference_source": "reference_1_7_10_source/sources/danger/orespawn/ModelTshirt.java",
+  "reference": {
+    "status": "PARSED",
+    "class": "ModelTshirt",
+    "texture_width": 512,
+    "texture_height": 256,
+    "parts": [
+      {
+        "name": "Shape1",
+        "tex_u": 0,
+        "tex_v": 0,
+        "boxes": [
+          {
+            "origin": [
+              -128.0,
+              -64.0,
+              0.0
+            ],
+            "size": [
+              256,
+              64,
+              1
+            ],
+            "uv": [
+              0,
+              0
+            ],
+            "mirror": false,
+            "texture_size": [
+              512,
+              256
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          -128.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          512,
+          256
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Shape2",
+        "tex_u": 0,
+        "tex_v": 64,
+        "boxes": [
+          {
+            "origin": [
+              -64.0,
+              0.0,
+              0.0
+            ],
+            "size": [
+              128,
+              128,
+              1
+            ],
+            "uv": [
+              0,
+              64
+            ],
+            "mirror": false,
+            "texture_size": [
+              512,
+              256
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          -128.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          512,
+          256
+        ],
+        "children": [],
+        "parent": null
+      }
+    ]
+  },
+  "ground_truth": "1.7.10 decompiled ModelBase constructor, parsed; never the port",
+  "comparison": {
+    "status": "DIVERGES",
+    "reference_parts_with_boxes": 2,
+    "port_parts_with_boxes": 3,
+    "matched_parts": 0,
+    "categories": {
+      "TEXTURE_SHEET": 1,
+      "MISSING_IN_PORT": 2,
+      "EXTRA_IN_PORT": 3
+    },
+    "differences": [
+      "port sheet (320, 160) != reference (512, 256)",
+      "Shape1 [((-128.0, -64.0, 0.0), (256.0, 64.0, 1.0), (0.0, 0.0), 0.0)]",
+      "Shape2 [((-64.0, 0.0, 0.0), (128.0, 128.0, 1.0), (0.0, 64.0), 0.0)]",
+      "body [((-8.0, -16.0, -4.0), (16.0, 24.0, 8.0), (0.0, 0.0), 0.0)]",
+      "larm [((0.0, -2.0, -3.0), (6.0, 16.0, 6.0), (0.0, 33.0), 0.0)]",
+      "rarm [((-6.0, -2.0, -3.0), (6.0, 16.0, 6.0), (25.0, 33.0), 0.0)]"
+    ],
+    "by_category": {
+      "TEXTURE_SHEET": [
+        "port sheet (320, 160) != reference (512, 256)"
+      ],
+      "MISSING_IN_PORT": [
+        "Shape1 [((-128.0, -64.0, 0.0), (256.0, 64.0, 1.0), (0.0, 0.0), 0.0)]",
+        "Shape2 [((-64.0, 0.0, 0.0), (128.0, 128.0, 1.0), (0.0, 64.0), 0.0)]"
+      ],
+      "EXTRA_IN_PORT": [
+        "body [((-8.0, -16.0, -4.0), (16.0, 24.0, 8.0), (0.0, 0.0), 0.0)]",
+        "larm [((0.0, -2.0, -3.0), (6.0, 16.0, 6.0), (0.0, 33.0), 0.0)]",
+        "rarm [((-6.0, -2.0, -3.0), (6.0, 16.0, 6.0), (25.0, 33.0), 0.0)]"
+      ]
+    }
+  },
+  "status": "PASS_WITH_PINNED_DIVERGENCES",
+  "pinned_divergences": {
+    "EXTRA_IN_PORT": 3,
+    "MISSING_IN_PORT": 2,
+    "TEXTURE_SHEET": 1
+  }
+}
