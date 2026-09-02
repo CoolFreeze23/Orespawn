@@ -158,7 +158,7 @@ public class OreSpawnClient {
 
             // Misc (mob)
             event.registerEntityRenderer(ModEntities.ANT_ROBOT.get(), AntRobotRenderer::new);
-            event.registerEntityRenderer(ModEntities.ELEVATOR.get(), ElevatorRenderer::new);
+            event.registerEntityRenderer(ModEntities.ELEVATOR.get(), PhaseGDevRenderers.elevatorRenderer());
             event.registerEntityRenderer(ModEntities.KING_HEAD.get(), KingHeadRenderer::new);
             event.registerEntityRenderer(ModEntities.QUEEN_HEAD.get(), QueenHeadRenderer::new);
             event.registerEntityRenderer(ModEntities.GODZILLA_HEAD.get(), GodzillaHeadRenderer::new);

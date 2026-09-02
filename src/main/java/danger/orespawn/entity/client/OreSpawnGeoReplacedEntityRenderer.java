@@ -75,11 +75,18 @@ public abstract class OreSpawnGeoReplacedEntityRenderer<E extends Entity, A exte
                                                               MultiBufferSource bufferSource, H leashHolder) {
     }
 
-    /** {@code MobRenderer} scales the shadow by the entity's age scale (0.5 for babies). */
+    @Override
+    protected void applyRotations(A animatable, PoseStack poseStack, float ageInTicks, float rotationYaw,
+                                  float partialTick, float nativeScale) {
+        super.applyRotations(animatable, poseStack, ageInTicks, rotationYaw, partialTick, nativeScale);
+        this.descriptor.applyRotations(currentEntity(), poseStack, ageInTicks, partialTick);
+    }
+
+    /** {@code MobRenderer}: shadow radius times the entity's scale attribute and its age scale (0.5 for babies). */
     @Override
     protected float getShadowRadius(E entity) {
         float radius = this.descriptor.shadowRadius();
-        return entity instanceof LivingEntity living ? radius * living.getAgeScale() : radius;
+        return entity instanceof LivingEntity living ? radius * living.getScale() * living.getAgeScale() : radius;
     }
 
     /** GeckoLib sets the current entity before {@code defaultRender} and clears it only after post-render cleanup. */

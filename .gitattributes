@@ -10,3 +10,8 @@
 /phase_g_reports/g1_proof/**/*.json text eol=lf
 /phase_g_reports/g1_proof/**/*.md text eol=lf
 /phase_g_reports/g1_proof/**/*.png binary
+# Phase G Slice 4 proof tree is byte-compared by s4Parity, like the G1 tree.
+/tools/s4_model_proofs.json text eol=lf
+/phase_g_reports/s4_proof/**/*.json text eol=lf
+/phase_g_reports/s4_proof/**/*.md text eol=lf
+/phase_g_reports/s4_proof/**/*.png binary

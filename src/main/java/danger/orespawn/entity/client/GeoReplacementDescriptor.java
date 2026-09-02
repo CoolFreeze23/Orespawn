@@ -77,4 +77,8 @@ public abstract class GeoReplacementDescriptor<E extends Entity> {
     /** Applied before GeckoLib's own scaling, i.e. where the classic renderer scaled its pose stack. */
     public void applyScale(E entity, PoseStack poseStack, float partialTick) {
     }
+
+    /** Applied after GeckoLib's yaw/death rotations, i.e. where a classic {@code setupRotations} override added its own. */
+    public void applyRotations(E entity, PoseStack poseStack, float ageInTicks, float partialTick) {
+    }
 }

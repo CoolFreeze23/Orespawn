@@ -1,0 +1,45 @@
+{
+  "schema_version": 1,
+  "geckolib_version": "4.8.4",
+  "runtime_versions": {
+    "minecraft": "1.21.1",
+    "neoforge": "21.1.223",
+    "geckolib": "4.8.4"
+  },
+  "ticks_per_second": 20.0,
+  "thresholds": {
+    "geometry_epsilon_blocks": 1e-05,
+    "animation_epsilon_radians": 2e-06,
+    "uv_epsilon_normalized": 1e-07,
+    "normal_epsilon": 1e-06,
+    "pixel_channel_tolerance": 2,
+    "pixel_changed_fraction": 0.001,
+    "pixel_mean_absolute_error": 0.25,
+    "minimum_foreground_fraction": 0.001
+  },
+  "models": [
+    {
+      "id": "model_elevator",
+      "tier": 3,
+      "class": "danger.orespawn.entity.client.ModelElevator",
+      "texture": "src/main/resources/assets/orespawn/textures/entity/elevator1.png",
+      "animation_kind": "static",
+      "loop_period_age_ticks": 20.0,
+      "sample_fractions": [
+        0.0,
+        0.25,
+        0.5,
+        0.75,
+        1.0
+      ],
+      "limb_swing": 0.0,
+      "limb_swing_amount": 0.0,
+      "camera": {
+        "yaw_degrees": 34.0,
+        "pitch_degrees": -28.0
+      },
+      "channels": []
+    }
+  ],
+  "fixtures": []
+}
