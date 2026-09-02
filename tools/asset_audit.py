@@ -21,6 +21,11 @@ Checks
                       crystal-furnace-missing-progress-arrow class, ADVISORY).
   6. SOUNDS           every sounds.json entry references .ogg files that exist;
                       registered SoundEvents missing from sounds.json (ADVISORY).
+  7. INDEX CASE       every resource file is tracked by git under a lowercase,
+                      ResourceLocation-valid path, and every Java asset literal
+                      matches its git-tracked name exactly. Reads the git INDEX,
+                      not the disk: a case-insensitive checkout hides uppercase
+                      tracked names that break every other clone (BUG-038).
 
 Findings whose (category, name) pair is listed in ACKNOWLEDGED below are
 reported under a separate ACKNOWLEDGED section and never affect the exit code
@@ -616,6 +621,50 @@ def check_sound_events(sound_keys):
 
 
 # --------------------------------------------------------------------------
+# Check 7: resource paths as git tracks them (index names, not disk names)
+# --------------------------------------------------------------------------
+# BUG-038: on a case-insensitive checkout the working tree can be lowercase
+# while git still tracks the file under an uppercase name. Every other clone
+# writes the tracked name into the jar, and the case-sensitive jar filesystem
+# then misses the (lowercase-only) ResourceLocation lookup. No disk-based
+# check can see that, so this one asks git for the index.
+
+RESOURCE_PATH_OK = re.compile(r"^[a-z0-9/._-]+$")
+
+
+def check_index_case(java_texts):
+    import subprocess
+    try:
+        out = subprocess.run(["git", "ls-files", "-z", "--", "src/main/resources"],
+                             cwd=ROOT, capture_output=True, check=True).stdout
+    except (OSError, subprocess.CalledProcessError) as e:
+        adv("INDEX_CASE_UNCHECKED", "git",
+            "could not list the git index (%s); resource-path case not verified" % e)
+        return
+    tracked = {p for p in out.decode("utf-8", "replace").split("\0") if p}
+    for p in sorted(tracked):
+        inner = p[len("src/main/resources/"):]
+        if not (inner.startswith("assets/") or inner.startswith("data/")):
+            continue
+        if not RESOURCE_PATH_OK.match(inner):
+            err("RESOURCE_PATH_CASE", Path(p).name,
+                "tracked in git as %s - ResourceLocation paths are lowercase-only, "
+                "so this file is unreachable from any clone whose filesystem keeps "
+                "the tracked name" % inner, ROOT / p)
+    lit = re.compile(r'fromNamespaceAndPath\(\s*(?:OreSpawnMod\.MOD_ID|"orespawn")\s*,\s*'
+                     r'"((?:textures|geo|animations|sounds)/[^"]+)"\s*\)')
+    for path, text in java_texts:
+        for m in lit.finditer(text):
+            asset = m.group(1)
+            if "src/main/resources/assets/orespawn/" + asset not in tracked \
+                    and (ASSETS / asset).is_file():
+                err("TEXTURE_REF_CASE", Path(path).stem,
+                    "Java references orespawn:%s, which exists on disk but git does "
+                    "not track that exact name (case mismatch or untracked file)"
+                    % asset, path)
+
+
+# --------------------------------------------------------------------------
 # Reporting
 # --------------------------------------------------------------------------
 
@@ -650,6 +699,7 @@ def main():
     check_additional_models(java_texts)
     sound_keys = check_sounds()
     check_sound_events(sound_keys)
+    check_index_case(java_texts)
 
     # ---- report ----
     acknowledged = [f for f in findings
