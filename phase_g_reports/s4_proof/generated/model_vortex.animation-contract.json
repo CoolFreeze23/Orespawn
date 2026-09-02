@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "kind": "static",
+  "controller_required": false,
+  "source_setup_anim_expected_identity": true,
+  "sample_ids": [
+    "bind",
+    "t0",
+    "t_quarter",
+    "t_half",
+    "t_three_quarter",
+    "t_end"
+  ]
+}

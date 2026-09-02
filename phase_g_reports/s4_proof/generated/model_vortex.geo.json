@@ -1,0 +1,99 @@
+{
+  "format_version": "1.12.0",
+  "minecraft:geometry": [
+    {
+      "description": {
+        "identifier": "geometry.orespawn.g1.model_vortex",
+        "texture_width": 256,
+        "texture_height": 128
+      },
+      "bones": [
+        {
+          "name": "Shape1",
+          "pivot": [
+            0,
+            2,
+            0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -64,
+                2,
+                0
+              ],
+              "size": [
+                128,
+                64,
+                0
+              ],
+              "uv": {
+                "west": {
+                  "uv": [
+                    128,
+                    0
+                  ],
+                  "uv_size": [
+                    0,
+                    64
+                  ]
+                },
+                "east": {
+                  "uv": [
+                    0,
+                    0
+                  ],
+                  "uv_size": [
+                    0,
+                    64
+                  ]
+                },
+                "north": {
+                  "uv": [
+                    0,
+                    0
+                  ],
+                  "uv_size": [
+                    128,
+                    64
+                  ]
+                },
+                "south": {
+                  "uv": [
+                    128,
+                    0
+                  ],
+                  "uv_size": [
+                    128,
+                    64
+                  ]
+                },
+                "up": {
+                  "uv": [
+                    0,
+                    0
+                  ],
+                  "uv_size": [
+                    128,
+                    0
+                  ]
+                },
+                "down": {
+                  "uv": [
+                    128,
+                    0
+                  ],
+                  "uv_size": [
+                    128,
+                    0
+                  ]
+                }
+              },
+              "modelpart_mirror": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
