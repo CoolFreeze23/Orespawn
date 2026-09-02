@@ -4635,3 +4635,23 @@ mosquito, ghost, stinkbug), `s4Parity` 11 models (Island/IslandToo re-proven; vi
 fraction pinned at the observed 0.4642 - three interpenetrating cubes - IN-GAME ACCEPTANCE
 REQUIRED), `g1Parity`, benchmark verified; `runGameTestServer` exit 0 - literal `All 199 required tests passed`.
 Not pushed.
+
+## ENT-S-091 SLICE B — Elevator and CaterKiller equivalent re-expressions made leg-exact; Tshirt restored (2026-09-02)
+
+Elevator's +24 px pivot bake cancelled the MobRenderer lift the original's
+plain Render never applied: equivalent, now expressed the original's way
+(pivots 0, lift cancelled in the renderer, GeckoLib candidate translated
+1.5 + 0.01 down after applyRotations). CaterKiller's 49 extra parts are the
+unrolled render loops; the leg now checks declared multiplicities per copy
+(`unrolled_parts`, new UNROLL_ARITY category) and the motion read is pinned
+in the manifest. Tshirt genuinely diverged and is restored (two quads,
+declared 512x256 sheet, scale 0.33). Reference pins: elevator and tshirt
+cleared (exact required); caterkiller mirror-only. Elevator's s4 proof
+rewritten; re-acceptance requested with Island/IslandToo. SeaViper next.
+
+GATE (on master, sequential): compile clean; `build` exit 0 - audit 0/0/4, `referenceGeometry`
+101 verified (tshirt exact; elevator and caterkiller mirror-only pins), `s4Parity` 11 models
+(Elevator re-proven), `g1Parity` 2 models (G1 proof regenerated for Elevator's geometry -
+the classic model changed; evidence captures identical), benchmark verified (proof
+rewritten for the generated-file pins); `runGameTestServer` exit 0 - literal `All 199 required tests passed`.
+Not pushed.

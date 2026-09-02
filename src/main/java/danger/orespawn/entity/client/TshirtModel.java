@@ -6,42 +6,59 @@ import danger.orespawn.entity.EntityTshirt;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
-import net.minecraft.client.model.geom.builders.*;
+import net.minecraft.client.model.geom.builders.CubeListBuilder;
+import net.minecraft.client.model.geom.builders.LayerDefinition;
+import net.minecraft.client.model.geom.builders.MeshDefinition;
+import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.minecraft.util.Mth;
 
+/**
+ * The 1.7.10 Tshirt (orig ModelTshirt.java, ENT-S-091): two flat quads, a
+ * 256x64 banner and a 128x128 body, both pivoting at (0, -128, 0) and turning
+ * together on the slow Coin cosine. The original declares a 512x256 sheet and
+ * binds a 320x160 image, so its UVs sample a 0.625 window of the image; that
+ * declared size is kept on purpose, exactly as ModelCoin keeps its 512x512
+ * (BUG-040). The port's three-part 320x160 rig was a re-authoring. Trailing
+ * {@code mirror = true} in the original is inert (BUG-041). Proven by the
+ * reference-geometry leg.
+ */
 public class TshirtModel<T extends EntityTshirt> extends EntityModel<T> {
-    /** Animation frequency constant; orig ModelTshirt.java:13,18 (wingspeed), value from orig ClientProxyOreSpawn.java:418. */
-    private final float wingspeed = 0.22f;
-    private final ModelPart body;
-    private final ModelPart larm;
-    private final ModelPart rarm;
+    /** orig ClientProxyOreSpawn.java:418: new ModelTshirt(0.22f). */
+    public static final float WINGSPEED = 0.22F;
+
+    private final ModelPart shape1;
+    private final ModelPart shape2;
 
     public TshirtModel(ModelPart root) {
-        this.body = root.getChild("body");
-        this.larm = root.getChild("larm");
-        this.rarm = root.getChild("rarm");
+        this.shape1 = root.getChild("Shape1");
+        this.shape2 = root.getChild("Shape2");
     }
 
     public static LayerDefinition createBodyLayer() {
         MeshDefinition mesh = new MeshDefinition();
         PartDefinition root = mesh.getRoot();
-        root.addOrReplaceChild("body", CubeListBuilder.create().texOffs(0, 0).addBox(-8.0F, -16.0F, -4.0F, 16, 24, 8), PartPose.offset(0.0F, 12.0F, 0.0F));
-        root.addOrReplaceChild("larm", CubeListBuilder.create().texOffs(0, 33).addBox(0.0F, -2.0F, -3.0F, 6, 16, 6), PartPose.offset(8.0F, -2.0F, 0.0F));
-        root.addOrReplaceChild("rarm", CubeListBuilder.create().texOffs(25, 33).addBox(-6.0F, -2.0F, -3.0F, 6, 16, 6), PartPose.offset(-8.0F, -2.0F, 0.0F));
-        return LayerDefinition.create(mesh, 320, 160);
+        root.addOrReplaceChild("Shape1",
+                CubeListBuilder.create()
+                .texOffs(0, 0).addBox(-128.0F, -64.0F, 0.0F, 256.0F, 64.0F, 1.0F),
+                PartPose.offset(0.0F, -128.0F, 0.0F));
+        root.addOrReplaceChild("Shape2",
+                CubeListBuilder.create()
+                .texOffs(0, 64).addBox(-64.0F, 0.0F, 0.0F, 128.0F, 128.0F, 1.0F),
+                PartPose.offset(0.0F, -128.0F, 0.0F));
+        return LayerDefinition.create(mesh, 512, 256);
     }
 
     @Override
     public void setupAnim(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
-        float newangle = 0.0f;
-        this.larm.yRot = newangle = Mth.cos((float)(ageInTicks * 0.05f * this.wingspeed)) * (float)Math.PI;
-        this.rarm.yRot = newangle;
+        // orig ModelTshirt.render: Shape1.rotateAngleY = Shape2.rotateAngleY = cos(f2 * 0.05f * wingspeed) * PI
+        float yaw = Mth.cos(ageInTicks * 0.05F * WINGSPEED) * (float) Math.PI;
+        this.shape1.yRot = yaw;
+        this.shape2.yRot = yaw;
     }
 
     @Override
-    public void renderToBuffer(PoseStack ps, VertexConsumer vc, int light, int overlay, int color) {
-        body.render(ps, vc, light, overlay, color);
-        larm.render(ps, vc, light, overlay, color);
-        rarm.render(ps, vc, light, overlay, color);
+    public void renderToBuffer(PoseStack poseStack, VertexConsumer buffer, int packedLight, int packedOverlay, int color) {
+        this.shape1.render(poseStack, buffer, packedLight, packedOverlay, color);
+        this.shape2.render(poseStack, buffer, packedLight, packedOverlay, color);
     }
 }

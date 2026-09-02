@@ -44,6 +44,14 @@ public class ElevatorRenderer extends MobRenderer<Elevator, ModelElevator> {
     }
 
     @Override
+    protected void scale(Elevator entity, PoseStack poseStack, float partialTick) {
+        // LivingEntityRenderer.render: scale(-1,-1,1); this.scale(...); translate(0,-1.501,0).
+        // orig RenderElevator.java:43-44 flips and renders with NO lift, so cancel vanilla's in the
+        // already-flipped frame: local +1.501 == world -1.501 (ENT-S-091, exact cancellation).
+        poseStack.translate(0.0F, 1.501F, 0.0F);
+    }
+
+    @Override
     protected void setupRotations(Elevator entity, PoseStack poseStack, float ageInTicks,
                                   float rotationYaw, float partialTicks, float scale) {
         super.setupRotations(entity, poseStack, ageInTicks, rotationYaw, partialTicks, scale);

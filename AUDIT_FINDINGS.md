@@ -6179,14 +6179,52 @@ keeps BUG-036. Commit 4ea395c's message retains the old number.)*
   StinkBug 0.85/0.2975), reference pins cleared so the leg requires an exact
   match; the Island and IslandToo GeckoLib candidates re-proven on the
   regenerated rigs (s4 proofs rewritten; both need the owner's re-acceptance).
-- **Slice B, pending reads:** Elevator (the port pivot y 24 cancels the
-  1.501 lift RenderLiving applies and the original's custom RenderElevator
-  never did; whether placement is identical and how to make the leg exact
-  without changing what renders is under read), CaterKiller (the port
-  unrolls the original's three-iteration render loop into 49 extra parts;
-  per-copy pivots under read), Tshirt (the original normalises a 2-part rig
-  by 512x256 over a 320x160 image; under read), SeaViper (34-part rig
-  regenerated; animation transcription drafted, pending review).
+- **Slice B, FIXED / RESOLVED (reads refuted once each, upheld):**
+  - Elevator: EQUIVALENT RE-EXPRESSION, not a divergence. The 1.7.10
+    RenderElevator is a plain Render (translate, yaw, hit wobble, a scale
+    immediately undone, the (-1,-1,1) flip, no 24 px lift); the port's +24 px
+    pivot bake (TF-029) cancelled the MobRenderer lift exactly. Made
+    leg-exact without changing what renders: pivots restored to the
+    original's 0, the vanilla lift cancelled in `ElevatorRenderer.scale()`
+    (+1.501 in the flipped frame: exact cancellation), and the GeckoLib
+    candidate translated 1.5 + 0.01 down after `applyRotations` (the
+    converter puts a classic pivot 0 at geo y 24; GeckoLib's own 0.01 lift is
+    issued right after applyRotations, bytecode 727 versus 396). The read's
+    claim that the geo file would not change was wrong and is corrected
+    here; the s4 proof is rewritten and Elevator re-proven. Re-acceptance
+    requested (the owner voided the Q1 acceptance).
+  - CaterKiller: EQUIVALENT RE-EXPRESSION. The original poses and draws the
+    seven seg1 parts three times and the seven seg2 parts six times; the port
+    materialises one ModelPart per draw (2x7 + 5x7 = 49 extra). The leg now
+    takes `unrolled_parts` (multiplicity per reference part) and checks every
+    copy for the reference's boxes and constructor placement and the exact
+    arity (`UNROLL_ARITY` otherwise); the per-copy pivots and the seg2 phase
+    accumulator, which the leg cannot see, are pinned by the read as
+    `motion_read` in the manifest until CaterKiller enters Phase G. Its pin
+    is now BUG-041's mirror only.
+  - Tshirt: DIVERGES, FIXED. 1.7.10 drew a spinning two-quad advert (256x64
+    banner and 128x128 body pivoting at (0, -128, 0)) with a DECLARED 512x256
+    sheet over the 320x160 image, i.e. a 0.625 UV window, and a 0.33 render
+    scale; the port had re-authored a three-part 320x160 rig at scale 1 with
+    shadow 2.0. Restored, declared sheet kept over the same image (the Coin
+    precedent), renderer SCALE 0.33 / SHADOW 0.33.
+  - SeaViper: rig regeneration and animation transcription pending the draft's
+    review (slice C).
+
+### ENT-S-094 — Elevator inherits living-renderer behaviour the 1.7.10 non-living Render never had (REPORT, 2026-09-02)
+
+- **Found by the ENT-S-091 Elevator read:** the 1.7.10 Elevator entity extends
+  EntityLiving but was drawn by a plain `Render` (`RenderElevator.java:19`),
+  so it had no death Z-flip, no shaking/sleeping/upside-down branches and no
+  hurt red overlay. Both port paths (`ElevatorRenderer` on MobRenderer;
+  the GeckoLib candidate on GeoReplacedEntityRenderer) inherit all of them
+  (`LivingEntityRenderer.setupRotations` and `getOverlayCoords`;
+  `GeoReplacedEntityRenderer.applyRotations` death flip).
+- **Resolution:** OPEN — report only. Parity bug by the owner's rule unless a
+  MOD record covers it (none does). Proposed: override `setupRotations` to
+  skip the death flip and `getOverlayCoords`/hurt tint on the classic
+  renderer, and the matching hooks on the candidate; pin with a gametest on
+  the renderer constants where the server can see them.
 
 ### ENT-S-092 — Renderer shadow radius and world scale diverge from the 1.7.10 registrations across the population (REPORT, 2026-09-02)
 

@@ -27,40 +27,35 @@ public class ModelElevator extends EntityModel<Elevator> {
         MeshDefinition meshdefinition = new MeshDefinition();
         PartDefinition partdefinition = meshdefinition.getRoot();
 
-        // TF-029: every shape is baked 24 px (1.5 blocks) down. The original
-        // ModelElevator (orig ModelElevator.java:22-51) put all five boxes at
-        // model y 0..1 with rotation point (0,0,0), but rendered them through a
-        // boat-style Render (orig RenderElevator.java:27-45) that translated
-        // straight to the entity position with NO -1.5 living-model offset, so
-        // the deck top sat at the board's posY. The modern MobRenderer/
-        // EntityModel pipeline anchors the model root 1.501 blocks above the
-        // entity origin (Y-down), so the verbatim coordinates rendered the deck
-        // ~1.5 blocks too high; the +24 px offset re-anchors the deck top at
-        // ~posY, reproducing the original boat-style anchor.
+        // ENT-S-091 (2026-09-02): rotation points are the original's (0, 0, 0) (orig
+        // ModelElevator.java:24-48). The 1.7.10 RenderElevator was a plain Render with no
+        // 24 px living lift; the port's MobRenderer lift is cancelled in ElevatorRenderer.scale()
+        // (was TF-029's +24 px pivot bake, an equivalent re-expression the reference leg could
+        // not see through). What renders is unchanged.
         partdefinition.addOrReplaceChild("shape1",
                 CubeListBuilder.create().texOffs(0, 0).mirror()
                         .addBox(-4.0F, 0.0F, -8.0F, 8, 1, 16),
-                PartPose.offset(0.0F, 24.0F, 0.0F));
+                PartPose.offset(0.0F, 0.0F, 0.0F));
 
         partdefinition.addOrReplaceChild("shape2",
                 CubeListBuilder.create().texOffs(0, 18).mirror()
                         .addBox(-3.0F, 0.0F, -9.0F, 6, 1, 1),
-                PartPose.offset(0.0F, 24.0F, 0.0F));
+                PartPose.offset(0.0F, 0.0F, 0.0F));
 
         partdefinition.addOrReplaceChild("shape3",
                 CubeListBuilder.create().texOffs(0, 21).mirror()
                         .addBox(-1.0F, 0.0F, -10.0F, 2, 1, 1),
-                PartPose.offset(0.0F, 24.0F, 0.0F));
+                PartPose.offset(0.0F, 0.0F, 0.0F));
 
         partdefinition.addOrReplaceChild("shape4",
                 CubeListBuilder.create().texOffs(17, 18).mirror()
                         .addBox(-3.0F, 0.0F, 8.0F, 6, 1, 1),
-                PartPose.offset(0.0F, 24.0F, 0.0F));
+                PartPose.offset(0.0F, 0.0F, 0.0F));
 
         partdefinition.addOrReplaceChild("shape5",
                 CubeListBuilder.create().texOffs(17, 21).mirror()
                         .addBox(-1.0F, 0.0F, 9.0F, 2, 1, 1),
-                PartPose.offset(0.0F, 24.0F, 0.0F));
+                PartPose.offset(0.0F, 0.0F, 0.0F));
 
         return LayerDefinition.create(meshdefinition, 64, 64);
     }

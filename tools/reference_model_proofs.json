@@ -82,10 +82,31 @@
       },
       "channels": [],
       "pinned_divergences": {
-        "EXTRA_IN_PORT": 49,
         "MIRROR": 31
       },
-      "pin_note": "parity bugs per the owner's ruling of 2026-09-02 (BUG-041 mirror, ENT-S-091 geometry); pinned so the count can only shrink; cleared when the fix lands"
+      "pin_note": "parity bug per the owner's ruling of 2026-09-02 (BUG-041 mirror only); the unroll is declared and checked",
+      "unrolled_parts": {
+        "seg1": 3,
+        "seg1lspike": 3,
+        "seg1rspike": 3,
+        "seg1ltopspike": 3,
+        "seg1rtopspike": 3,
+        "seg1lleg": 3,
+        "seg1rleg": 3,
+        "seg2": 6,
+        "seg2lfoot": 6,
+        "seg2rfoot": 6,
+        "seg2ltopspike": 6,
+        "seg2rtopspike": 6,
+        "seg2lspike": 6,
+        "seg2rspike": 6
+      },
+      "motion_read": {
+        "reviewed": "2026-09-02",
+        "reference": "ModelCaterKiller.java render: pose-and-draw loops, seg1 parts x3 and seg2 parts x6",
+        "port": "CaterKillerModel.java setupAnim + renderToBuffer (unrolled copies)",
+        "verdict": "equivalent re-expression per the ENT-S-091 read (refuted once, upheld): per-copy y = base + headoff/(i+1) + 8*i and z = base + 14*i for i=0..2; seg2 phase accumulator as (PI/4)*i for i=0..5; seg3 follows seg2rspike[5]; draw order preserved. The per-copy pivots the leg cannot see are pinned by this read; a harness pin follows when CaterKiller enters Phase G (its classic model reads the entity)."
+      }
     },
     {
       "id": "reference_cliffracer",
@@ -909,11 +930,11 @@
         "pitch_degrees": -28.0
       },
       "channels": [],
+      "fixed": "ENT-S-091 (2026-09-02): pivots restored to the original's 0 with the living lift cancelled in the renderer",
       "pinned_divergences": {
-        "MIRROR": 5,
-        "PIVOT": 5
+        "MIRROR": 5
       },
-      "pin_note": "parity bugs per the owner's ruling of 2026-09-02 (BUG-041 mirror, ENT-S-091 geometry); pinned so the count can only shrink; cleared when the fix lands"
+      "pin_note": "BUG-041 mirror only (port-wide drop pending the owner's A/B); geometry exact since ENT-S-091 slice B"
     },
     {
       "id": "reference_enderknight",
@@ -1986,12 +2007,12 @@
         "pitch_degrees": -28.0
       },
       "channels": [],
-      "pinned_divergences": {
-        "EXTRA_IN_PORT": 3,
-        "MISSING_IN_PORT": 2,
-        "TEXTURE_SHEET": 1
-      },
-      "pin_note": "parity bugs per the owner's ruling of 2026-09-02 (BUG-041 mirror, ENT-S-091 geometry); pinned so the count can only shrink; cleared when the fix lands"
+      "fixed": "ENT-S-091 (2026-09-02): the two 1.7.10 quads restored on the declared 512x256 sheet; exact match required",
+      "declared_sheet_over_image": [
+        320,
+        160
+      ],
+      "sheet_note": "the 1.7.10 model declares 512x256 and binds a 320x160 image on purpose (a 0.625 UV window); the probe's size check is waived for this declared pair"
     },
     {
       "id": "reference_velocityraptor",

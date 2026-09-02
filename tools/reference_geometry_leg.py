@@ -269,18 +269,20 @@ def part_shape(boxes: list[dict[str, Any]]) -> tuple:
     return tuple(sorted(shape_key(box) for box in boxes))
 
 
-GEOMETRY_MOVING = ("TEXTURE_SHEET", "MISSING_IN_PORT", "EXTRA_IN_PORT", "PIVOT", "ROTATION", "NESTING", "HIDDEN")
+GEOMETRY_MOVING = ("TEXTURE_SHEET", "MISSING_IN_PORT", "EXTRA_IN_PORT", "PIVOT", "ROTATION", "NESTING", "HIDDEN", "UNROLL_ARITY")
 
 
-def compare(reference: dict[str, Any], compiled: dict[str, Any], epsilon: float = 1.0e-4) -> dict[str, Any]:
+def compare(reference: dict[str, Any], compiled: dict[str, Any], epsilon: float = 1.0e-4,
+            unrolled_parts: dict[str, int] | None = None) -> dict[str, Any]:
     """Categorised differences. MIRROR and UV_NORMALIZATION are texture-mapping divergences on a
     placement that matches; PIVOT/ROTATION/NESTING move geometry; MISSING/EXTRA are unmatched parts."""
     port_parts = flatten_port(compiled)
     ref_parts = [part for part in reference["parts"] if part["boxes"]]
     categories: dict[str, list[str]] = {
         "TEXTURE_SHEET": [], "MISSING_IN_PORT": [], "EXTRA_IN_PORT": [], "PIVOT": [], "ROTATION": [],
-        "NESTING": [], "MIRROR": [], "UV_NORMALIZATION": [], "HIDDEN": [],
+        "NESTING": [], "MIRROR": [], "UV_NORMALIZATION": [], "HIDDEN": [], "UNROLL_ARITY": [],
     }
+    unrolled_parts = unrolled_parts or {}
     sheet = (compiled["texture_width"], compiled["texture_height"])
     if sheet != (reference["texture_width"], reference["texture_height"]):
         categories["TEXTURE_SHEET"].append(
@@ -296,6 +298,42 @@ def compare(reference: dict[str, Any], compiled: dict[str, Any], epsilon: float 
 
     for part in ref_parts:
         shape = part_shape(part["boxes"])
+        if part["name"] in unrolled_parts:
+            # A pose-and-draw loop in the original: the port materialises one ModelPart per draw,
+            # named <ref>_<i>. Every copy must carry the reference's boxes and constructor placement.
+            wanted = int(unrolled_parts[part["name"]])
+            copies = []
+            for i in range(wanted):
+                copy_name = f"{part['name']}_{i}"
+                index = next((k for k, c in unmatched_port.items() if c["name"] == copy_name), None)
+                if index is None:
+                    categories["UNROLL_ARITY"].append(f"{part['name']}: port copy {copy_name} is missing")
+                    continue
+                candidate = unmatched_port.pop(index)
+                if part_shape(candidate["boxes"]) != shape:
+                    categories["UNROLL_ARITY"].append(f"{part['name']}: copy {copy_name} has different boxes")
+                elif not same_placement(part, candidate):
+                    categories["UNROLL_ARITY"].append(
+                        f"{part['name']}: copy {copy_name} pivot {candidate['pivot']} / rotation {candidate['rotation']} "
+                        f"!= constructor {part['rotation_point']} / {part['rotation']}")
+                copies.append(candidate)
+            strays = [c["name"] for c in unmatched_port.values() if c["name"].startswith(part["name"] + "_")
+                      and c["name"][len(part["name"]) + 1:].isdigit()]
+            if strays:
+                categories["UNROLL_ARITY"].append(f"{part['name']}: extra copies {strays} beyond the declared {wanted}")
+            if copies:
+                matched += 1
+                first = copies[0]
+                for ref_box, port_box in zip(sorted(part["boxes"], key=shape_key), sorted(first["boxes"], key=shape_key)):
+                    if ref_box["mirror"] != port_box["mirror"]:
+                        categories["MIRROR"].append(
+                            f"{part['name']} -> {first['name']} (x{len(copies)}): reference box mirror={ref_box['mirror']} "
+                            f"(flag at addBox time), port {port_box['mirror']}")
+                    if tuple(ref_box["texture_size"]) != sheet:
+                        categories["UV_NORMALIZATION"].append(
+                            f"{part['name']} -> {first['name']}: reference box normalised by {ref_box['texture_size']}, "
+                            f"port by the sheet {list(sheet)}")
+            continue
         # Twins with identical boxes (four legs) must pair by placement, not by first shape hit.
         hit = next((index for index, candidate in unmatched_port.items()
                     if part_shape(candidate["boxes"]) == shape and same_placement(part, candidate)), None)
@@ -385,7 +423,11 @@ def main() -> int:
             report["status"] = "NO_PORT_DUMP"
         else:
             compiled = json.loads(dump.read_text(encoding="utf-8"))
-            report["comparison"] = compare(reference, compiled)
+            report["comparison"] = compare(reference, compiled, unrolled_parts=spec.get("unrolled_parts"))
+            if spec.get("unrolled_parts"):
+                report["unrolled_parts"] = spec["unrolled_parts"]
+                if spec.get("motion_read"):
+                    report["motion_read"] = spec["motion_read"]
             report["status"] = report["comparison"]["status"]
             # Pinned divergences: the owner-ruled parity bugs a model still carries. The leg passes only
             # when the observed category counts equal the pin exactly; a new category or a larger count
