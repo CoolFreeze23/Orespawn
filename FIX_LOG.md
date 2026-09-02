@@ -3905,3 +3905,71 @@ GATE (on master, sequential): `build` exit 0 - audit literal `RESULT: 0 error(s)
 advisory(ies), 4 acknowledged -> exit 0` (check 8 active inside `build`), `G1
 PARITY PASS: 2 models`, benchmark evidence verified; `runGameTestServer` exit 0 -
 literal `All 193 required tests passed`. Not pushed.
+
+## PHASE G RULING — AMENDMENT 1 (2026-09-02) — supersedes "PHASE G RULING — animation tolerance / motion policy"
+
+CONTEXT: the superseded ruling was written before the owner had the brief,
+on the vanilla `limbSwing` premise that this log's answer (2) refuted
+(OreSpawn's models are time-driven: `ageInTicks` phase, `limbSwingAmount`
+amplitude; only four use walked distance). Per the owner, the commits carrying
+the superseded ruling are NOT rewritten; this amendment supersedes it. The
+standing tolerance rule ("a test tolerance is a ruling - never loosen one to
+pass a suite without flagging it") is unchanged.
+
+OWNER RULING (verbatim points):
+1. Slice 4 stands: Tier-3 rigs code-driven. The four limbSwing-distance
+   models (CannonFodder, Island, IslandToo, Robot1) are code-driven under any
+   policy.
+2. For every artist-facing tier, keyframes are the shipping path, per
+   deliverables 3 and 4. Code-driven stays as the harness reference leg only.
+3. Gait scaling: the mechanism the salvaged controller already uses - clip
+   authored at full amplitude, controller scales the gait bones' animated
+   delta by limbSwingAmount. It comes back into the gate for Tier-1/2 slices.
+4. Animation-leg tolerance: 2.5e-3 rad ratified, stated alongside keyframe
+   density and lerp mode. Try catmullrom (verify against 4.8.4 bytecode)
+   before adding keyframes.
+5. Per-part frequencies: one clip per frequency group on parallel
+   controllers, each at its natural period; no single-period clips over
+   multi-frequency rigs. Add a wrap sample (T-eps vs 0+eps) to the animation
+   leg.
+6. Tier 1: Q3 fixes where part positions come from, not what the client
+   renders. In the Tier-1 hitbox design, state per boss which bones carry
+   parts and how artist re-animation of those bones is handled - SPEC-locked
+   bones or a server-side evaluator.
+7. The standing tolerance rule is unchanged.
+
+VERIFIED FOR THE RECORD (2026-09-02):
+- (4) `catmullrom`: pinned GeckoLib 4.8.4 declares `EasingType.CATMULLROM`
+  and `EasingType.catmullRom(double)` (javap of the pinned jar), so
+  Catmull-Rom keyframe interpolation is available; the JSON `lerp_mode`
+  spelling is checked at first use.
+- (5) The salvaged controller ALREADY does per-frequency clips: Beaver
+  registered three `PhaseLockedKeyframeController`s - Gait (3.7 rad/tick over
+  rff/lrf/lff/rrf), Teeth (2.7), Tail (0.5) - each with its own clip
+  (`gait`/`teeth`/`tail`), i.e. one clip per frequency group on parallel
+  controllers. Each clip is authored as a NORMALIZED 1.0 s period
+  (`NORMALIZED_CLIP_TICKS = 20`; 73 keys per bone at 1/72 s) and the
+  controller time-warps it to the natural period (2*pi/f: 1.70, 2.33 and 12.57
+  ticks for Beaver). The literal natural periods are too short to hand-edit,
+  so the normalized-length convention is kept: the artist edits the SHAPE,
+  the controller supplies the TEMPO, and each SPEC states the tempo. A
+  Blockbench preview therefore shows the shape at a 1 s period, not the
+  in-game rate.
+- (5) Wrap sample: the salvaged gate asserted `loop_boundary_modulo` (poses at
+  20n-0.001 / 20n / 20n+0.001 equal their in-period counterparts). The LANDED
+  G1 animation leg samples fractions 0/.25/.5/.75/1.0 plus dense off-grid
+  probes but has no explicit T-eps vs 0+eps pair; that pair is a binding
+  requirement of the keyframe animation leg when it returns (Tier-1/2 slices).
+
+EFFECT ON THE PLAN: Slice 4 (Tier-3, code-driven through the Slice 2 seam)
+proceeds unchanged. The G3 lane's `PhaseLockedKeyframeController` is
+re-scheduled: it returns with the first Tier-2 slice, reviewed and re-gated
+at 2.5e-3 rad with density + lerp mode stated, per-frequency controllers,
+limbSwingAmount delta scaling, and the wrap sample. The Tier-1 hitbox design
+(inventory slice 5) must state per boss which bones carry parts and whether
+those bones are SPEC-locked or served by the server-side evaluator.
+
+GATE (docs-only, on master, sequential): `build` exit 0 - `RESULT: 0 error(s), 0
+advisory(ies), 4 acknowledged -> exit 0`; `runGameTestServer` exit 0 - literal
+`All 193 required tests passed`. Not pushed (owner holds push until this
+amendment is committed; it now is).
