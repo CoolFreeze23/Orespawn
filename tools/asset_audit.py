@@ -26,6 +26,12 @@ Checks
                       matches its git-tracked name exactly. Reads the git INDEX,
                       not the disk: a case-insensitive checkout hides uppercase
                       tracked names that break every other clone (BUG-038).
+  8. GECKOLIB/MHLIB   every geo/animation JSON parses with bones/clips; every
+                      RawAnimation clip literal in Java exists; every
+                      trigger-fired clip can finish (BUG-035); every hitbox
+                      profile's main size equals the registered EntityType dims,
+                      its bones exist in the entity's geo, and no profile ships
+                      under data/minecraft (BUG-036).
 
 Findings whose (category, name) pair is listed in ACKNOWLEDGED below are
 reported under a separate ACKNOWLEDGED section and never affect the exit code
@@ -78,6 +84,10 @@ ACKNOWLEDGED = {
     # "rainbow" — both are plain cube spawn-block block-items, not tools.
     ("TOOL_NO_TRANSFORMS", "hammerhead_spawn_block"),
     ("TOOL_NO_TRANSFORMS", "rainbow_ant_block"),
+    # BUG-035: the Queen's trigger-fired death clip holds its last frame on
+    # purpose - the corpse pose depends on it and the entity despawns, so a
+    # controller that never finishes is the intended behavior for this one clip.
+    ("GECKO_TRIGGER_NEVER_FINISHES", "death"),
 }
 
 findings = []      # list of dicts: level, category, name, detail, path
@@ -665,6 +675,135 @@ def check_index_case(java_texts):
 
 
 # --------------------------------------------------------------------------
+# Check 8: GeckoLib rigs, clips, triggers and MultiHitboxLib profiles
+# --------------------------------------------------------------------------
+# BUG-035: a trigger-fired clip whose JSON loop mode can never finish owns its
+# controller forever. BUG-036: a profile under data/minecraft gives vanilla
+# mobs multipart hitboxes. Profile main-size law (FIX_LOG, ENT-S-088): a
+# profile's main box must equal the registered EntityType dims exactly, or
+# MHLib silently replaces the entity's dimensions.
+
+DATA = ROOT / "src" / "main" / "resources" / "data"
+
+
+def _geo_bones(path):
+    data, jerr = load_json(path)
+    geoms = data.get("minecraft:geometry") if isinstance(data, dict) else None
+    if jerr or not isinstance(geoms, list) or not geoms or not isinstance(geoms[0], dict):
+        err("GECKO_GEO_INVALID", path.stem,
+            "JSON parse error: " + (jerr or "no minecraft:geometry entry"), path)
+        return None
+    bones = [b.get("name") for b in geoms[0].get("bones", []) if isinstance(b, dict)]
+    if not bones:
+        err("GECKO_GEO_INVALID", path.stem, "geometry declares no bones", path)
+        return None
+    dupes = sorted({b for b in bones if bones.count(b) > 1})
+    if dupes:
+        err("GECKO_GEO_INVALID", path.stem, "duplicate bone names: " + ", ".join(dupes), path)
+    return set(bones)
+
+
+def _entity_dims():
+    """{registry_name: (width, height)} from the .sized(w, h) call of each registration."""
+    text = read(JAVA / "ModEntities.java")
+    dims = {}
+    for m in re.finditer(r'ENTITY_TYPES\.register\(\s*"([^"]+)"', text):
+        statement = text[m.end():text.find(";", m.end())]
+        sized = re.search(r'\.sized\(\s*([0-9.]+)[fF]?\s*,\s*([0-9.]+)[fF]?\s*\)', statement)
+        if sized:
+            dims[m.group(1)] = (float(sized.group(1)), float(sized.group(2)))
+    return dims
+
+
+def check_geckolib(java_texts):
+    geo_dir, anim_dir = ASSETS / "geo", ASSETS / "animations"
+    geo_bones = {}
+    for path in (sorted(geo_dir.rglob("*.geo.json")) if geo_dir.is_dir() else []):
+        bones = _geo_bones(path)
+        if bones is not None:
+            geo_bones[path.name[:-len(".geo.json")]] = bones
+
+    clips = {}  # clip name -> [(file, loop declaration)]; loop is False / True / "hold_on_last_frame"
+    for path in (sorted(anim_dir.rglob("*.animation.json")) if anim_dir.is_dir() else []):
+        data, jerr = load_json(path)
+        anims = data.get("animations") if isinstance(data, dict) else None
+        if jerr or not isinstance(anims, dict):
+            err("GECKO_ANIM_INVALID", path.stem,
+                "JSON parse error: " + (jerr or "no animations object"), path)
+            continue
+        for clip, spec in anims.items():
+            loop = spec.get("loop", False) if isinstance(spec, dict) else False
+            clips.setdefault(clip, []).append((path, loop))
+
+    # Java side: every clip literal exists; a trigger-fired chain must be able to finish.
+    step = re.compile(r'\.then(Play|Loop|PlayAndHold)\(\s*"([^"]+)"\s*\)')
+    trigger = re.compile(r'triggerableAnim\(\s*"([^"]+)"\s*,\s*RawAnimation\.begin\(\)'
+                         r'((?:\.then\w+\([^)]*\))+)')
+    for path, text in java_texts:
+        if "RawAnimation" not in text:
+            continue
+        for m in step.finditer(text):
+            if m.group(2) not in clips:
+                err("GECKO_CLIP_MISSING", Path(path).stem,
+                    'RawAnimation references clip "%s", defined in no animation file' % m.group(2), path)
+        for m in trigger.finditer(text):
+            steps = list(step.finditer(m.group(2)))
+            if not steps:
+                continue
+            mode, clip = steps[-1].group(1), steps[-1].group(2)
+            if clip not in clips:
+                continue  # reported above
+            # thenPlay = LoopType.DEFAULT = whatever the JSON declares
+            never_finishes = mode in ("Loop", "PlayAndHold") or \
+                any(loop is not False for _, loop in clips[clip])
+            if never_finishes:
+                err("GECKO_TRIGGER_NEVER_FINISHES", clip,
+                    'triggerableAnim("%s") ends in then%s("%s") and that clip never finishes '
+                    "(loop/hold), so the trigger would own its controller forever (BUG-035)"
+                    % (m.group(1), mode, clip), path)
+
+    # MultiHitboxLib profiles
+    dims = _entity_dims()
+    profiles_dir = DATA / MOD_ID / "multihitboxlib" / "hitbox_profiles"
+    for path in (sorted(profiles_dir.glob("*.json")) if profiles_dir.is_dir() else []):
+        name = path.stem
+        data, jerr = load_json(path)
+        if jerr or not isinstance(data, dict):
+            err("PROFILE_INVALID", name, "JSON parse error: " + (jerr or "not an object"), path)
+            continue
+        size = (data.get("main-hitbox") or {}).get("size")
+        if name not in dims:
+            adv("PROFILE_ENTITY_UNKNOWN", name,
+                'no ENTITY_TYPES.register("%s") with .sized(...) found for this profile' % name, path)
+        elif isinstance(size, list) and len(size) == 2 and \
+                any(abs(float(a) - b) > 1e-6 for a, b in zip(size, dims[name])):
+            err("PROFILE_MAIN_SIZE_MISMATCH", name,
+                "main-hitbox.size %s != registered EntityType dims %s - MHLib would silently "
+                "replace the entity's dimensions" % (size, list(dims[name])), path)
+        referenced = list(data.get("synched-bones") or []) + \
+            [p.get("name") for p in (data.get("parts") or []) if isinstance(p, dict)]
+        bones = geo_bones.get(name)
+        if bones is None:
+            if data.get("sync-with-model") is True:
+                err("PROFILE_SYNC_WITHOUT_GEO", name,
+                    "sync-with-model is true but there is no geo/entity/%s.geo.json to sync from"
+                    % name, path)
+        else:
+            for bone in referenced:
+                if bone not in bones:
+                    err("PROFILE_BONE_MISSING", name,
+                        'profile references bone "%s", absent from geo/entity/%s.geo.json'
+                        % (bone, name), path)
+
+    vanilla_dir = DATA / "minecraft" / "multihitboxlib" / "hitbox_profiles"
+    if vanilla_dir.is_dir():
+        for path in sorted(vanilla_dir.glob("*.json")):
+            err("PROFILE_VANILLA_NAMESPACE", path.stem,
+                "hitbox profile shipped for a vanilla entity - gives vanilla mobs multipart "
+                "hitboxes (BUG-036)", path)
+
+
+# --------------------------------------------------------------------------
 # Reporting
 # --------------------------------------------------------------------------
 
@@ -700,6 +839,7 @@ def main():
     sound_keys = check_sounds()
     check_sound_events(sound_keys)
     check_index_case(java_texts)
+    check_geckolib(java_texts)
 
     # ---- report ----
     acknowledged = [f for f in findings

@@ -161,7 +161,9 @@ Verdict: **discard.** Superseded by the UTF-8 repair in `d87f81b`.
    "PHASE G SLICE 2"). Beaver uses the G1-approved code-driven pose, so the
    tolerance ruling (§5) was not needed for this slice; it still gates any
    artist-editable clip. Try it: `-Dorespawn.dev.beaverRenderer=candidate`.
-3. **Small GeckoLib asset-audit checks** (rewrite of orespawn-5's intent).
+3. **Small GeckoLib asset-audit checks** (rewrite of orespawn-5's intent) —
+   **LANDED 2026-09-02** as audit check 8 (FIX_LOG "PHASE G SLICE 3"); standing
+   audit pass form is now 0 err / 0 adv / 4 ack.
 4. **Tier-3 rigs**, regenerated from the landed converter and wired through
    the G3 seam — the first real in-game GeckoLib species besides the Queen.
 5. **Server-pose foundation + first MOD-025 profile** (King), atomic
@@ -170,12 +172,14 @@ Verdict: **discard.** Superseded by the UTF-8 repair in `d87f81b`.
 
 ## 5. Decisions the owner still has to make
 
-- **Animation tolerance.** Baked keyframes cannot match `Mth.cos`'s lookup-table
-  cosine within the 2e-6 rad threshold the run inherited (Catmull-Rom at 593
-  probes: gait 7.2e-5, teeth 5.9e-5, tail 1.3e-5). Either accept a
-  visually-invisible tolerance (~1e-3 rad) so Tier-2 clips become real
-  artist-editable keyframes, or keep Tier-2 motion code-driven and shrink the
-  Fiverr scope to new clips only. This decision gates slices 2 and 4.
+- **Animation tolerance — RULED 2026-09-02** (FIX_LOG "PHASE G RULING"): Slice 4
+  defaults to code-driven motion (the G1-proven path); keyframes are opt-in per
+  species for deliberate re-animation, accepted visually under Q1 with no
+  numeric tolerance; the 0.0021 rad controller is out of the gate. Standing
+  rule: a test tolerance is a ruling — never loosen one to pass a suite without
+  flagging it. Facts recorded with the ruling: only four models are
+  distance-driven (`limbSwing`), the rest are time-driven; no Tier-3 species
+  needs server-side bones; GeckoLib 4.8.4 has no `limb_swing` Molang query.
 - **Third-party model hooks are a cutover cost.** Owner review of the Slice 2
   Beaver (2026-09-02) found Hats Renewed misplacing hats: it detects GeckoLib
   mobs by `GeoEntityRenderer` class, not the `GeoRenderer` interface, so

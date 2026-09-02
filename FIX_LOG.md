@@ -3813,3 +3813,95 @@ seam. Inventory §5 updated.
 GATE (docs-only, on master, sequential): `build` exit 0 - `RESULT: 0 error(s), 0
 advisory(ies), 3 acknowledged -> exit 0`; `runGameTestServer` exit 0 - literal
 `All 193 required tests passed`. Not pushed.
+
+## PHASE G RULING — animation tolerance / motion policy (2026-09-02)
+
+OWNER RULING (verbatim): "Tolerance ruling: Slice 4 defaults to code-driven
+motion (the G1-proven path). Keyframes are opt-in per species for deliberate
+re-animation, accepted visually under Q1 - no numeric tolerance applies there.
+Drop the 0.0021 controller from the gate; keep it only as a scaffold generator
+for artist hand-off if useful. Standing rule: a test tolerance is a ruling -
+never loosen one to pass a suite without flagging it. Before Slice 4: (1) list
+which Tier-3 species will ever need bone positions server-side, since those
+are code-driven regardless; (2) for the record, was the keyframe controller
+driven by limbSwing/limbSwingAmount or by animation time? (3) is
+Molang-expression output viable for exact motion-in-data, and are limb-swing
+queries available to replaced entities? Continue with Slice 3 meanwhile."
+The offered alternative (keyframes at 2e-3 rad for every species) was NOT
+selected. STANDING LAW ADDED: a test tolerance is an owner ruling; loosening
+one to pass a suite is presented as a proposed ruling, never adopted silently.
+
+ANSWERS (from code, 2026-09-02):
+(1) None of the 16 Tier-3 species needs a server-side bone position. Coin,
+Elevator, Island/IslandToo, PurplePower, Robot1-5, RockBase, Rotator, Vortex
+have no part/bone references; the three head sidecars (KingHead, GodzillaHead,
+QueenHead) only mention `OreSpawnPartEntity` in deprecation javadoc - their
+boxes are placed by the boss, not by a rig. Tier-1 bosses are code-driven
+regardless (server pose evaluator, ruling Q3).
+(2) The salvaged `PhaseLockedKeyframeController` was driven by ANIMATION AGE
+(`(float) tickCount + partialTick`, times a per-clip angular frequency) with
+gait amplitude multiplied by `limbSwingAmount`, never by `limbSwing`. That is
+faithful to OreSpawn's own models, which are NOT vanilla-style: 40 models phase
+their trig on `ageInTicks` and 106 scale by `limbSwingAmount`; only FOUR use the
+walked distance `limbSwing` (CannonFodderModel, ModelIsland, ModelIslandToo,
+ModelRobot1). Foot slide is original 1.7.10 behavior, and an artist's
+time-based Blockbench preview matches the in-game phase model for all but
+those four, which stay code-driven under any policy.
+(3) Molang: viable in principle but not turnkey. GeckoLib 4.8.4's `math.cos`
+evaluates through vanilla `Mth.cos` (the same 65536-entry table the classic
+models use), so a cosine expression could reproduce classic motion to float
+rounding. But the query set has NO `limb_swing`/`limb_swing_amount`; the
+nearest is `query.ground_speed`, computed from `getDeltaMovement` (velocity,
+not `walkAnimation.speed`), so amplitude parity would need OreSpawn to register
+its own actor variable via `MolangQueries.setActorVariable`, and whether the
+actor exposes the underlying entity for REPLACED animatables is unverified.
+Per-frame cost (expression-tree evaluation per keyframe per bone) is unmeasured.
+Not pursued under the code-driven default; recorded as the route if
+motion-as-data ever becomes a product goal.
+
+EFFECT: `PhaseLockedKeyframeController` and its 0.0021 rad gate stay in the
+salvage lane (orespawn-7 @ 0d238ba); Slice 4 wires Tier-3 rigs through the
+Slice 2 seam with code-driven poses; salvage inventory §5 updated.
+
+## PHASE G SLICE 3 — asset audit check 8: GeckoLib rigs, clips, triggers, MHLib profiles (2026-09-02)
+
+WHAT: `tools/asset_audit.py` check 8 (`check_geckolib`, ~110 lines) - the
+rewrite-small of salvage lane orespawn-5 (whose +4,434-line version is not
+adopted). Rules, each an ERROR: `GECKO_GEO_INVALID` (geo JSON unparsable, no
+`minecraft:geometry`, no bones, duplicate bone names); `GECKO_ANIM_INVALID`
+(animation JSON unparsable / no `animations` object); `GECKO_CLIP_MISSING`
+(a `RawAnimation` clip literal in Java defined in no animation file);
+`GECKO_TRIGGER_NEVER_FINISHES` (a `triggerableAnim` chain ending in
+`thenLoop`/`thenPlayAndHold`, or in `thenPlay` of a clip whose JSON loop mode
+is not `false` - the BUG-035 class, made a build failure); `PROFILE_MAIN_SIZE_MISMATCH`
+(profile `main-hitbox.size` vs the registration's `.sized(w, h)` - the
+profile main-size law); `PROFILE_BONE_MISSING` (`synched-bones` / `parts[].name`
+absent from `geo/entity/<name>.geo.json`); `PROFILE_SYNC_WITHOUT_GEO`;
+`PROFILE_VANILLA_NAMESPACE` (any profile under `data/minecraft/` - BUG-036);
+`PROFILE_INVALID`; plus ADVISORY `PROFILE_ENTITY_UNKNOWN`. The Queen's
+`death` clip is trigger-fired and holds its last frame on purpose, so
+`("GECKO_TRIGGER_NEVER_FINISHES", "death")` joins ACKNOWLEDGED with its
+justification; the standing audit pass form is therefore now
+`0 error(s), 0 advisory(ies), 4 acknowledged` (was 3).
+
+VERIFICATION: clean tree -> `RESULT: 0 error(s), 0 advisory(ies), 4
+acknowledged -> exit 0`. Mutation tests, each restored from git afterwards:
+Queen `bite` loop -> true => GECKO_TRIGGER_NEVER_FINISHES(bite), exit 1;
+the_queen.json `Body1` -> `Body9` => PROFILE_BONE_MISSING, exit 1;
+spider_robot.json main size 3.25 -> 3.5 => PROFILE_MAIN_SIZE_MISMATCH
+("[3.5, 2.25] != [3.25, 2.25]"), exit 1; `data/minecraft/.../creeper.json`
+added => PROFILE_VANILLA_NAMESPACE, exit 1; TheQueen.java `thenPlay("bite")`
+-> `"bitee"` => GECKO_CLIP_MISSING, exit 1. Final clean run identical to the
+first.
+
+LIMITS: clip lookup is mod-wide (a clip name is checked against every
+animation file, since the Java class holding `triggerableAnim` is not the one
+naming the animation file); the trigger rule is conservative - any definition
+of that clip name with a non-finishing loop fires it. Fine while clip names
+stay unique per mod; revisit if two species share a clip name with different
+loop modes.
+
+GATE (on master, sequential): `build` exit 0 - audit literal `RESULT: 0 error(s), 0
+advisory(ies), 4 acknowledged -> exit 0` (check 8 active inside `build`), `G1
+PARITY PASS: 2 models`, benchmark evidence verified; `runGameTestServer` exit 0 -
+literal `All 193 required tests passed`. Not pushed.
