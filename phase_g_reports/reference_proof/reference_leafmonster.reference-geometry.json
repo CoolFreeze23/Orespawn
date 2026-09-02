@@ -1,0 +1,278 @@
+{
+  "schema_version": 1,
+  "model_id": "reference_leafmonster",
+  "reference_source": "reference_1_7_10_source/sources/danger/orespawn/ModelLeafMonster.java",
+  "reference": {
+    "status": "PARSED",
+    "class": "ModelLeafMonster",
+    "texture_width": 128,
+    "texture_height": 128,
+    "parts": [
+      {
+        "name": "body",
+        "tex_u": 32,
+        "tex_v": 32,
+        "boxes": [
+          {
+            "origin": [
+              -8.0,
+              -8.0,
+              -8.0
+            ],
+            "size": [
+              16,
+              16,
+              16
+            ],
+            "uv": [
+              32,
+              32
+            ],
+            "mirror": false,
+            "texture_size": [
+              128,
+              128
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          32
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "larm",
+        "tex_u": 64,
+        "tex_v": 0,
+        "boxes": [
+          {
+            "origin": [
+              0.0,
+              -16.0,
+              -8.0
+            ],
+            "size": [
+              16,
+              16,
+              16
+            ],
+            "uv": [
+              64,
+              0
+            ],
+            "mirror": false,
+            "texture_size": [
+              128,
+              128
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          8.0,
+          -8.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          32
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "rarm",
+        "tex_u": 0,
+        "tex_v": 0,
+        "boxes": [
+          {
+            "origin": [
+              -16.0,
+              -16.0,
+              -8.0
+            ],
+            "size": [
+              16,
+              16,
+              16
+            ],
+            "uv": [
+              0,
+              0
+            ],
+            "mirror": false,
+            "texture_size": [
+              128,
+              128
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          -8.0,
+          -8.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          32
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "lleg",
+        "tex_u": 64,
+        "tex_v": 64,
+        "boxes": [
+          {
+            "origin": [
+              0.0,
+              0.0,
+              -8.0
+            ],
+            "size": [
+              16,
+              16,
+              16
+            ],
+            "uv": [
+              64,
+              64
+            ],
+            "mirror": false,
+            "texture_size": [
+              128,
+              128
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          8.0,
+          8.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          32
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "rleg",
+        "tex_u": 0,
+        "tex_v": 64,
+        "boxes": [
+          {
+            "origin": [
+              -16.0,
+              0.0,
+              -8.0
+            ],
+            "size": [
+              16,
+              16,
+              16
+            ],
+            "uv": [
+              0,
+              64
+            ],
+            "mirror": false,
+            "texture_size": [
+              128,
+              128
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          -8.0,
+          8.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          32
+        ],
+        "children": [],
+        "parent": null
+      }
+    ]
+  },
+  "ground_truth": "1.7.10 decompiled ModelBase constructor, parsed; never the port",
+  "comparison": {
+    "status": "DIVERGES_TEXTURE_MAPPING",
+    "reference_parts_with_boxes": 5,
+    "port_parts_with_boxes": 5,
+    "matched_parts": 5,
+    "categories": {
+      "MIRROR": 5
+    },
+    "differences": [
+      "body -> body: reference box mirror=False (flag at addBox time), port True",
+      "larm -> larm: reference box mirror=False (flag at addBox time), port True",
+      "rarm -> rarm: reference box mirror=False (flag at addBox time), port True",
+      "lleg -> lleg: reference box mirror=False (flag at addBox time), port True",
+      "rleg -> rleg: reference box mirror=False (flag at addBox time), port True"
+    ],
+    "by_category": {
+      "MIRROR": [
+        "body -> body: reference box mirror=False (flag at addBox time), port True",
+        "larm -> larm: reference box mirror=False (flag at addBox time), port True",
+        "rarm -> rarm: reference box mirror=False (flag at addBox time), port True",
+        "lleg -> lleg: reference box mirror=False (flag at addBox time), port True",
+        "rleg -> rleg: reference box mirror=False (flag at addBox time), port True"
+      ]
+    }
+  },
+  "status": "PASS_WITH_PINNED_DIVERGENCES",
+  "pinned_divergences": {
+    "MIRROR": 5
+  }
+}

@@ -15,12 +15,23 @@ public class StinkBugRenderer extends MobRenderer<EntityStinkBug, StinkBugModel>
     public static final ModelLayerLocation MODEL_LAYER =
             new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "stinkbug"), "main");
 
+    /** orig ClientProxyOreSpawn.java:453 new RenderStinkBug(new ModelStinkBug(0.75f), 0.35f, 0.85f): RenderLiving shadow = par2 * par3 (ENT-S-092). */
+    public static final float SHADOW = 0.2975F;
+    /** orig preRenderCallback scale = par3 (ENT-S-092). */
+    public static final float SCALE = 0.85F;
+
     public StinkBugRenderer(EntityRendererProvider.Context context) {
-        super(context, new StinkBugModel(context.bakeLayer(MODEL_LAYER)), 0.2f);
+        super(context, new StinkBugModel(context.bakeLayer(MODEL_LAYER)), SHADOW);
     }
 
     @Override
     public ResourceLocation getTextureLocation(EntityStinkBug entity) {
         return TEXTURE;
+    }
+
+    @Override
+    protected void scale(EntityStinkBug entity, PoseStack poseStack, float partialTick) {
+        // orig preRenderScale: GL11.glScalef(scale, scale, scale), the LivingEntityRenderer.scale slot
+        poseStack.scale(SCALE, SCALE, SCALE);
     }
 }

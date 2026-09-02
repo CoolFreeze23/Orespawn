@@ -1,0 +1,82 @@
+{
+  "schema_version": 1,
+  "model_id": "reference_vortex",
+  "reference_source": "reference_1_7_10_source/sources/danger/orespawn/ModelVortex.java",
+  "reference": {
+    "status": "PARSED",
+    "class": "ModelVortex",
+    "texture_width": 256,
+    "texture_height": 128,
+    "parts": [
+      {
+        "name": "Shape1",
+        "tex_u": 0,
+        "tex_v": 0,
+        "boxes": [
+          {
+            "origin": [
+              -64.0,
+              -64.0,
+              0.0
+            ],
+            "size": [
+              128,
+              64,
+              0
+            ],
+            "uv": [
+              0,
+              0
+            ],
+            "mirror": false,
+            "texture_size": [
+              256,
+              128
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          22.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          256,
+          128
+        ],
+        "children": [],
+        "parent": null
+      }
+    ]
+  },
+  "ground_truth": "1.7.10 decompiled ModelBase constructor, parsed; never the port",
+  "comparison": {
+    "status": "DIVERGES_TEXTURE_MAPPING",
+    "reference_parts_with_boxes": 1,
+    "port_parts_with_boxes": 1,
+    "matched_parts": 1,
+    "categories": {
+      "MIRROR": 1
+    },
+    "differences": [
+      "Shape1 -> Shape1: reference box mirror=False (flag at addBox time), port True"
+    ],
+    "by_category": {
+      "MIRROR": [
+        "Shape1 -> Shape1: reference box mirror=False (flag at addBox time), port True"
+      ]
+    }
+  },
+  "status": "PASS_WITH_PINNED_DIVERGENCES",
+  "pinned_divergences": {
+    "MIRROR": 1
+  }
+}

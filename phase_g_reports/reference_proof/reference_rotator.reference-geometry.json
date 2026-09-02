@@ -1,0 +1,180 @@
+{
+  "schema_version": 1,
+  "model_id": "reference_rotator",
+  "reference_source": "reference_1_7_10_source/sources/danger/orespawn/ModelRotator.java",
+  "reference": {
+    "status": "PARSED",
+    "class": "ModelRotator",
+    "texture_width": 64,
+    "texture_height": 32,
+    "parts": [
+      {
+        "name": "Shape1",
+        "tex_u": 0,
+        "tex_v": 12,
+        "boxes": [
+          {
+            "origin": [
+              -2.0,
+              3.9,
+              0.0
+            ],
+            "size": [
+              4,
+              1,
+              1
+            ],
+            "uv": [
+              0,
+              12
+            ],
+            "mirror": false,
+            "texture_size": [
+              64,
+              32
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          32
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Shape2",
+        "tex_u": 0,
+        "tex_v": 7,
+        "boxes": [
+          {
+            "origin": [
+              -4.0,
+              7.6,
+              0.0
+            ],
+            "size": [
+              8,
+              2,
+              2
+            ],
+            "uv": [
+              0,
+              7
+            ],
+            "mirror": false,
+            "texture_size": [
+              64,
+              32
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          0.0,
+          -0.5
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          32
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Shape3",
+        "tex_u": 0,
+        "tex_v": 0,
+        "boxes": [
+          {
+            "origin": [
+              -7.0,
+              13.7,
+              0.0
+            ],
+            "size": [
+              14,
+              3,
+              3
+            ],
+            "uv": [
+              0,
+              0
+            ],
+            "mirror": false,
+            "texture_size": [
+              64,
+              32
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          0.0,
+          -1.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          32
+        ],
+        "children": [],
+        "parent": null
+      }
+    ]
+  },
+  "ground_truth": "1.7.10 decompiled ModelBase constructor, parsed; never the port",
+  "comparison": {
+    "status": "DIVERGES_TEXTURE_MAPPING",
+    "reference_parts_with_boxes": 3,
+    "port_parts_with_boxes": 3,
+    "matched_parts": 3,
+    "categories": {
+      "MIRROR": 3
+    },
+    "differences": [
+      "Shape1 -> shape1: reference box mirror=False (flag at addBox time), port True",
+      "Shape2 -> shape2: reference box mirror=False (flag at addBox time), port True",
+      "Shape3 -> shape3: reference box mirror=False (flag at addBox time), port True"
+    ],
+    "by_category": {
+      "MIRROR": [
+        "Shape1 -> shape1: reference box mirror=False (flag at addBox time), port True",
+        "Shape2 -> shape2: reference box mirror=False (flag at addBox time), port True",
+        "Shape3 -> shape3: reference box mirror=False (flag at addBox time), port True"
+      ]
+    }
+  },
+  "status": "PASS_WITH_PINNED_DIVERGENCES",
+  "pinned_divergences": {
+    "MIRROR": 3
+  }
+}

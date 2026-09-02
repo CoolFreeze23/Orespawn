@@ -1,0 +1,1013 @@
+{
+  "schema_version": 1,
+  "model_id": "reference_ant",
+  "reference_source": "reference_1_7_10_source/sources/danger/orespawn/ModelAnt.java",
+  "reference": {
+    "status": "PARSED",
+    "class": "ModelAnt",
+    "texture_width": 64,
+    "texture_height": 32,
+    "parts": [
+      {
+        "name": "thorax",
+        "tex_u": 22,
+        "tex_v": 0,
+        "boxes": [
+          {
+            "origin": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "size": [
+              3,
+              3,
+              3
+            ],
+            "uv": [
+              22,
+              0
+            ],
+            "mirror": false,
+            "texture_size": [
+              64,
+              32
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          17.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          32
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "thorax1",
+        "tex_u": 18,
+        "tex_v": 0,
+        "boxes": [
+          {
+            "origin": [
+              1.0,
+              1.0,
+              -1.0
+            ],
+            "size": [
+              1,
+              1,
+              1
+            ],
+            "uv": [
+              18,
+              0
+            ],
+            "mirror": false,
+            "texture_size": [
+              64,
+              32
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          17.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          32
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "thorax3",
+        "tex_u": 34,
+        "tex_v": 0,
+        "boxes": [
+          {
+            "origin": [
+              1.0,
+              1.0,
+              3.0
+            ],
+            "size": [
+              1,
+              1,
+              1
+            ],
+            "uv": [
+              34,
+              0
+            ],
+            "mirror": false,
+            "texture_size": [
+              64,
+              32
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          17.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          32
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "abdomen",
+        "tex_u": 38,
+        "tex_v": 0,
+        "boxes": [
+          {
+            "origin": [
+              0.0,
+              0.0,
+              4.0
+            ],
+            "size": [
+              3,
+              3,
+              5
+            ],
+            "uv": [
+              38,
+              0
+            ],
+            "mirror": false,
+            "texture_size": [
+              64,
+              32
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          17.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          32
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "abdomen1",
+        "tex_u": 54,
+        "tex_v": 0,
+        "boxes": [
+          {
+            "origin": [
+              1.0,
+              1.0,
+              9.0
+            ],
+            "size": [
+              1,
+              1,
+              1
+            ],
+            "uv": [
+              54,
+              0
+            ],
+            "mirror": false,
+            "texture_size": [
+              64,
+              32
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          17.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          32
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "head",
+        "tex_u": 6,
+        "tex_v": 0,
+        "boxes": [
+          {
+            "origin": [
+              0.0,
+              -1.0,
+              -4.0
+            ],
+            "size": [
+              3,
+              3,
+              3
+            ],
+            "uv": [
+              6,
+              0
+            ],
+            "mirror": false,
+            "texture_size": [
+              64,
+              32
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          17.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          32
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "jawsr",
+        "tex_u": 0,
+        "tex_v": 9,
+        "boxes": [
+          {
+            "origin": [
+              -1.0,
+              0.0,
+              -6.0
+            ],
+            "size": [
+              1,
+              1,
+              3
+            ],
+            "uv": [
+              0,
+              9
+            ],
+            "mirror": false,
+            "texture_size": [
+              64,
+              32
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          17.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          32
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "jawsl",
+        "tex_u": 0,
+        "tex_v": 14,
+        "boxes": [
+          {
+            "origin": [
+              3.0,
+              0.0,
+              -6.0
+            ],
+            "size": [
+              1,
+              1,
+              3
+            ],
+            "uv": [
+              0,
+              14
+            ],
+            "mirror": false,
+            "texture_size": [
+              64,
+              32
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          17.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          32
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "llegtop1",
+        "tex_u": 15,
+        "tex_v": 10,
+        "boxes": [
+          {
+            "origin": [
+              3.0,
+              1.0,
+              1.0
+            ],
+            "size": [
+              3,
+              1,
+              1
+            ],
+            "uv": [
+              15,
+              10
+            ],
+            "mirror": false,
+            "texture_size": [
+              64,
+              32
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          17.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.3839724
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          32
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "llegbot1",
+        "tex_u": 15,
+        "tex_v": 19,
+        "boxes": [
+          {
+            "origin": [
+              5.0,
+              -3.0,
+              1.0
+            ],
+            "size": [
+              3,
+              1,
+              1
+            ],
+            "uv": [
+              15,
+              19
+            ],
+            "mirror": false,
+            "texture_size": [
+              64,
+              32
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          17.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          1.064651
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          32
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "llegtop2",
+        "tex_u": 15,
+        "tex_v": 13,
+        "boxes": [
+          {
+            "origin": [
+              3.0,
+              1.0,
+              2.0
+            ],
+            "size": [
+              3,
+              1,
+              1
+            ],
+            "uv": [
+              15,
+              13
+            ],
+            "mirror": false,
+            "texture_size": [
+              64,
+              32
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          17.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          -0.2094395,
+          0.3839724
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          32
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "llegbot2",
+        "tex_u": 15,
+        "tex_v": 22,
+        "boxes": [
+          {
+            "origin": [
+              5.0,
+              -3.0,
+              2.0
+            ],
+            "size": [
+              3,
+              1,
+              1
+            ],
+            "uv": [
+              15,
+              22
+            ],
+            "mirror": false,
+            "texture_size": [
+              64,
+              32
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          17.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          -0.2268928,
+          1.064651
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          32
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "llegtop3",
+        "tex_u": 15,
+        "tex_v": 16,
+        "boxes": [
+          {
+            "origin": [
+              3.0,
+              1.0,
+              0.0
+            ],
+            "size": [
+              3,
+              1,
+              1
+            ],
+            "uv": [
+              15,
+              16
+            ],
+            "mirror": false,
+            "texture_size": [
+              64,
+              32
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          17.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.3490659,
+          0.3839724
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          32
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "llegbot3",
+        "tex_u": 15,
+        "tex_v": 25,
+        "boxes": [
+          {
+            "origin": [
+              5.0,
+              -3.0,
+              0.0
+            ],
+            "size": [
+              3,
+              1,
+              1
+            ],
+            "uv": [
+              15,
+              25
+            ],
+            "mirror": false,
+            "texture_size": [
+              64,
+              32
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          17.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.3490659,
+          1.064651
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          32
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "rlegtop1",
+        "tex_u": 25,
+        "tex_v": 10,
+        "boxes": [
+          {
+            "origin": [
+              -4.0,
+              2.0,
+              1.0
+            ],
+            "size": [
+              3,
+              1,
+              1
+            ],
+            "uv": [
+              25,
+              10
+            ],
+            "mirror": false,
+            "texture_size": [
+              64,
+              32
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          17.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          -0.4712389
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          32
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "rlegbot1",
+        "tex_u": 25,
+        "tex_v": 19,
+        "boxes": [
+          {
+            "origin": [
+              -7.0,
+              0.0,
+              1.0
+            ],
+            "size": [
+              3,
+              1,
+              1
+            ],
+            "uv": [
+              25,
+              19
+            ],
+            "mirror": false,
+            "texture_size": [
+              64,
+              32
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          17.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          -0.9773844
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          32
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "rlegtop2",
+        "tex_u": 25,
+        "tex_v": 13,
+        "boxes": [
+          {
+            "origin": [
+              -4.0,
+              2.0,
+              0.0
+            ],
+            "size": [
+              3,
+              1,
+              1
+            ],
+            "uv": [
+              25,
+              13
+            ],
+            "mirror": false,
+            "texture_size": [
+              64,
+              32
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          17.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          -0.5934119,
+          -0.4712389
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          32
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "rlegbot2",
+        "tex_u": 25,
+        "tex_v": 22,
+        "boxes": [
+          {
+            "origin": [
+              -7.0,
+              0.0,
+              0.0
+            ],
+            "size": [
+              3,
+              1,
+              1
+            ],
+            "uv": [
+              25,
+              22
+            ],
+            "mirror": false,
+            "texture_size": [
+              64,
+              32
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          17.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          -0.5934119,
+          -0.9773844
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          32
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "rlegtop3",
+        "tex_u": 25,
+        "tex_v": 16,
+        "boxes": [
+          {
+            "origin": [
+              -4.0,
+              2.0,
+              2.0
+            ],
+            "size": [
+              3,
+              1,
+              1
+            ],
+            "uv": [
+              25,
+              16
+            ],
+            "mirror": false,
+            "texture_size": [
+              64,
+              32
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          17.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.418879,
+          -0.4712389
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          32
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "rlegbot3",
+        "tex_u": 25,
+        "tex_v": 25,
+        "boxes": [
+          {
+            "origin": [
+              -7.0,
+              0.0,
+              2.0
+            ],
+            "size": [
+              3,
+              1,
+              1
+            ],
+            "uv": [
+              25,
+              25
+            ],
+            "mirror": false,
+            "texture_size": [
+              64,
+              32
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          17.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.418879,
+          -0.9773844
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          32
+        ],
+        "children": [],
+        "parent": null
+      }
+    ]
+  },
+  "ground_truth": "1.7.10 decompiled ModelBase constructor, parsed; never the port",
+  "comparison": {
+    "status": "DIVERGES_TEXTURE_MAPPING",
+    "reference_parts_with_boxes": 20,
+    "port_parts_with_boxes": 20,
+    "matched_parts": 20,
+    "categories": {
+      "MIRROR": 20
+    },
+    "differences": [
+      "thorax -> thorax: reference box mirror=False (flag at addBox time), port True",
+      "thorax1 -> thorax1: reference box mirror=False (flag at addBox time), port True",
+      "thorax3 -> thorax3: reference box mirror=False (flag at addBox time), port True",
+      "abdomen -> abdomen: reference box mirror=False (flag at addBox time), port True",
+      "abdomen1 -> abdomen1: reference box mirror=False (flag at addBox time), port True",
+      "head -> head: reference box mirror=False (flag at addBox time), port True",
+      "jawsr -> jawsr: reference box mirror=False (flag at addBox time), port True",
+      "jawsl -> jawsl: reference box mirror=False (flag at addBox time), port True",
+      "llegtop1 -> llegtop1: reference box mirror=False (flag at addBox time), port True",
+      "llegbot1 -> llegbot1: reference box mirror=False (flag at addBox time), port True",
+      "llegtop2 -> llegtop2: reference box mirror=False (flag at addBox time), port True",
+      "llegbot2 -> llegbot2: reference box mirror=False (flag at addBox time), port True",
+      "llegtop3 -> llegtop3: reference box mirror=False (flag at addBox time), port True",
+      "llegbot3 -> llegbot3: reference box mirror=False (flag at addBox time), port True",
+      "rlegtop1 -> rlegtop1: reference box mirror=False (flag at addBox time), port True",
+      "rlegbot1 -> rlegbot1: reference box mirror=False (flag at addBox time), port True",
+      "rlegtop2 -> rlegtop2: reference box mirror=False (flag at addBox time), port True",
+      "rlegbot2 -> rlegbot2: reference box mirror=False (flag at addBox time), port True",
+      "rlegtop3 -> rlegtop3: reference box mirror=False (flag at addBox time), port True",
+      "rlegbot3 -> rlegbot3: reference box mirror=False (flag at addBox time), port True"
+    ],
+    "by_category": {
+      "MIRROR": [
+        "thorax -> thorax: reference box mirror=False (flag at addBox time), port True",
+        "thorax1 -> thorax1: reference box mirror=False (flag at addBox time), port True",
+        "thorax3 -> thorax3: reference box mirror=False (flag at addBox time), port True",
+        "abdomen -> abdomen: reference box mirror=False (flag at addBox time), port True",
+        "abdomen1 -> abdomen1: reference box mirror=False (flag at addBox time), port True",
+        "head -> head: reference box mirror=False (flag at addBox time), port True",
+        "jawsr -> jawsr: reference box mirror=False (flag at addBox time), port True",
+        "jawsl -> jawsl: reference box mirror=False (flag at addBox time), port True",
+        "llegtop1 -> llegtop1: reference box mirror=False (flag at addBox time), port True",
+        "llegbot1 -> llegbot1: reference box mirror=False (flag at addBox time), port True",
+        "llegtop2 -> llegtop2: reference box mirror=False (flag at addBox time), port True",
+        "llegbot2 -> llegbot2: reference box mirror=False (flag at addBox time), port True",
+        "llegtop3 -> llegtop3: reference box mirror=False (flag at addBox time), port True",
+        "llegbot3 -> llegbot3: reference box mirror=False (flag at addBox time), port True",
+        "rlegtop1 -> rlegtop1: reference box mirror=False (flag at addBox time), port True",
+        "rlegbot1 -> rlegbot1: reference box mirror=False (flag at addBox time), port True",
+        "rlegtop2 -> rlegtop2: reference box mirror=False (flag at addBox time), port True",
+        "rlegbot2 -> rlegbot2: reference box mirror=False (flag at addBox time), port True",
+        "rlegtop3 -> rlegtop3: reference box mirror=False (flag at addBox time), port True",
+        "rlegbot3 -> rlegbot3: reference box mirror=False (flag at addBox time), port True"
+      ]
+    }
+  },
+  "status": "PASS_WITH_PINNED_DIVERGENCES",
+  "pinned_divergences": {
+    "MIRROR": 20
+  }
+}
