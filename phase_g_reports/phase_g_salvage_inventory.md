@@ -185,6 +185,12 @@ Verdict: **discard.** Superseded by the UTF-8 repair in `d87f81b`.
   frequency group on parallel controllers; wrap sample (T−ε vs 0+ε) required.
   Standing rule unchanged: a test tolerance is a ruling — never loosen one to
   pass a suite without flagging it.
+  Addenda: the controller's time-warp ratio derives from the clip's declared
+  length (artist length edits never change in-game tempo; SPEC states the
+  tempo); keyframe density is the fewest catmullrom keys holding 2.5e-3 rad —
+  73/bone was a conversion artifact. Q1 for Slice 4: all species land behind
+  the Beaver dev switch; the owner flips them to default per species after an
+  in-game look.
 - **Third-party model hooks are a cutover cost.** Owner review of the Slice 2
   Beaver (2026-09-02) found Hats Renewed misplacing hats: it detects GeckoLib
   mobs by `GeoEntityRenderer` class, not the `GeoRenderer` interface, so

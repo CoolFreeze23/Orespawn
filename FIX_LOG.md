@@ -3973,3 +3973,29 @@ GATE (docs-only, on master, sequential): `build` exit 0 - `RESULT: 0 error(s), 0
 advisory(ies), 4 acknowledged -> exit 0`; `runGameTestServer` exit 0 - literal
 `All 193 required tests passed`. Not pushed (owner holds push until this
 amendment is committed; it now is).
+
+## PHASE G RULING — AMENDMENT 1, ADDENDA + Q1 for Slice 4 (2026-09-02)
+
+OWNER (verbatim): "1. The time-warp in PhaseLockedKeyframeController derives
+its ratio from the clip's declared length, not a hardcoded 1.0 s, so artist
+length edits don't change in-game tempo. SPEC still states the tempo. 2. When
+the controller returns, target the fewest catmullrom keys that hold 2.5e-3
+rad; 73 per bone is a conversion artifact, not a spec. Q1: Slice 4 species
+land behind the same dev property as Beaver. I'll do the in-game look on
+Beaver plus a sample of the 16 and rule on flipping them to default
+afterward."
+
+RECORDED: (1) binding on the controller's return - `NORMALIZED_CLIP_TICKS`
+becomes the loaded clip's `animation_length` (in ticks), so the time-warp
+ratio is period / declared length and an artist stretching a clip changes
+nothing in-game; the SPEC states the tempo. (2) keyframe density is an
+output of the harness, not an input: convert with catmullrom and the fewest
+keys that hold 2.5e-3 rad, recorded alongside the tolerance. (Q1) every
+Slice 4 species registers its GeckoLib candidate behind the Beaver dev
+switch; classic stays the default until the owner's in-game look and a
+per-species flip ruling. Master pushed to origin at bc6c735 before Slice 4
+began.
+
+GATE (docs-only, on master, sequential): `build` exit 0 - `RESULT: 0 error(s), 0
+advisory(ies), 4 acknowledged -> exit 0`; `runGameTestServer` exit 0 - literal
+`All 193 required tests passed`. Not pushed (push resumes on the owner's word).
