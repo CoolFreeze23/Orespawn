@@ -1276,7 +1276,7 @@ def markdown_report(report: dict[str, Any]) -> str:
 
 
 def proof_file_map(manifest: dict[str, Any], report: dict[str, Any], generated_dir: Path,
-                   evidence_dir: Path) -> dict[Path, Path]:
+                   evidence_dir: Path, reference_dir: Path | None = None) -> dict[Path, Path]:
     files: dict[Path, Path] = {}
     for spec in [*manifest["models"], *manifest.get("fixtures", [])]:
         model_id = spec["id"]
@@ -1285,6 +1285,11 @@ def proof_file_map(manifest: dict[str, Any], report: dict[str, Any], generated_d
             "conversion.json",
         ):
             files[Path("generated") / f"{model_id}.{suffix}"] = generated_dir / f"{model_id}.{suffix}"
+    for spec in manifest["models"]:
+        if "reference_source" in spec and reference_dir is not None:
+            files[Path("reference") / f"{spec['id']}.reference-geometry.json"] = (
+                reference_dir / f"{spec['id']}.reference-geometry.json"
+            )
     files[Path("evidence") / "report.json"] = evidence_dir / "report.json"
     files[Path("evidence") / "README.md"] = evidence_dir / "README.md"
     for model in report["models"]:
@@ -1296,7 +1301,7 @@ def proof_file_map(manifest: dict[str, Any], report: dict[str, Any], generated_d
 
 
 def synchronize_or_verify_proof(proof_dir: Path, files: dict[Path, Path], write_proof: bool) -> None:
-    scoped_roots = (proof_dir / "generated", proof_dir / "evidence")
+    scoped_roots = (proof_dir / "generated", proof_dir / "evidence", proof_dir / "reference")
     if write_proof:
         for scoped_root in scoped_roots:
             if scoped_root.exists():
@@ -1337,6 +1342,8 @@ def main() -> int:
     parser.add_argument("--geo-dir", type=Path, required=True)
     parser.add_argument("--output-dir", type=Path, required=True)
     parser.add_argument("--proof-dir", type=Path, required=True)
+    parser.add_argument("--reference-dir", type=Path, default=None,
+                        help="reference_geometry_leg.py output; required for manifests declaring reference_source")
     parser.add_argument("--write-proof", action="store_true")
     parser.add_argument("--validate-only", action="store_true")
     args = parser.parse_args()
@@ -1441,6 +1448,29 @@ def main() -> int:
             "animation": animation,
             "reference_animation": reference_schema,
         }
+        if "reference_source" in spec:
+            if args.reference_dir is None:
+                raise AssertionError(f"{model_id} declares reference_source but no --reference-dir was given")
+            reference_path = args.reference_dir / f"{model_id}.reference-geometry.json"
+            if not reference_path.is_file():
+                raise AssertionError(f"{model_id} reference-geometry leg output is missing: {reference_path}")
+            reference_leg = load_json(reference_path)
+            if reference_leg.get("status") != "PASS":
+                raise AssertionError(
+                    f"REFERENCE GEOMETRY {reference_leg.get('status')} {model_id}: "
+                    f"{reference_leg.get('comparison', {}).get('differences') or reference_leg.get('reference', {}).get('reason')}"
+                )
+            lf_paths.append(reference_path)
+            common_report["reference_geometry"] = {
+                "status": "PASS",
+                "reference_source": spec["reference_source"],
+                "matched_parts": reference_leg["comparison"]["matched_parts"],
+                "ground_truth": reference_leg["ground_truth"],
+            }
+            print(
+                f"G1 REFERENCE PASS: {model_id} {reference_leg['comparison']['matched_parts']} parts "
+                f"match the parsed 1.7.10 source"
+            )
         if spec.get("proof_scope") == "non_production_converter_fixture":
             common_report["fixture_coverage"] = fixture_coverage(
                 spec, compiled, generated_geometry
@@ -1497,7 +1527,7 @@ def main() -> int:
         return 0
     synchronize_or_verify_proof(
         args.proof_dir,
-        proof_file_map(manifest, report, args.generated_dir, args.output_dir),
+        proof_file_map(manifest, report, args.generated_dir, args.output_dir, args.reference_dir),
         args.write_proof,
     )
     action = "updated" if args.write_proof else "verified"

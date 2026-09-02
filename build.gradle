@@ -263,6 +263,17 @@ tasks.register('s4ConvertModels', Exec) {
             '--output-dir', s4BuildDir.get().dir('generated').asFile.absolutePath
 }
 
+tasks.register('s4ReferenceGeometry', Exec) {
+    group = 'verification'
+    description = 'Independent leg: compiled port models against their parsed 1.7.10 reference sources.'
+    dependsOn tasks.named('s4DumpCompiledModels')
+    workingDir = projectDir
+    commandLine 'python', 'tools/reference_geometry_leg.py',
+            '--manifest', s4Manifest.absolutePath,
+            '--dump-dir', s4BuildDir.get().dir('vanilla').asFile.absolutePath,
+            '--output-dir', s4BuildDir.get().dir('reference').asFile.absolutePath
+}
+
 tasks.register('s4ProbeGeoRenderer', JavaExec) {
     group = 'verification'
     description = 'Bake and capture Slice 4 geometry through GeckoLib GeoRenderer.'
@@ -278,6 +289,7 @@ tasks.register('s4Parity', Exec) {
     group = 'verification'
     description = 'Run the geometry, animation and visual parity gates over the Slice 4 models.'
     dependsOn tasks.named('s4ProbeGeoRenderer')
+    dependsOn tasks.named('s4ReferenceGeometry')
     workingDir = projectDir
     commandLine 'python', 'tools/g1_render_parity.py',
             '--manifest', s4Manifest.absolutePath,
@@ -285,6 +297,7 @@ tasks.register('s4Parity', Exec) {
             '--generated-dir', s4BuildDir.get().dir('generated').asFile.absolutePath,
             '--geo-dir', s4BuildDir.get().dir('geo').asFile.absolutePath,
             '--output-dir', s4BuildDir.get().dir('evidence').asFile.absolutePath,
+            '--reference-dir', s4BuildDir.get().dir('reference').asFile.absolutePath,
             '--proof-dir', file('phase_g_reports/s4_proof').absolutePath
 }
 tasks.named('check') { dependsOn tasks.named('s4Parity') }

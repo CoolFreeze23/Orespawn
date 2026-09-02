@@ -74,6 +74,36 @@
       "max_contested_fraction_pin": 0.0
     },
     {
+      "id": "model_coin",
+      "tier": 3,
+      "class": "danger.orespawn.entity.client.ModelCoin",
+      "texture": "src/main/resources/assets/orespawn/textures/entity/coin.png",
+      "reference_source": "reference_1_7_10_source/sources/danger/orespawn/ModelCoin.java",
+      "animation_kind": "code_driven",
+      "candidate_animation_path": "production_replacement_hook",
+      "candidate_class": "danger.orespawn.entity.client.CoinGeoReplacement",
+      "loop_period_age_ticks": 571.2,
+      "sample_fractions": [
+        0.0,
+        0.25,
+        0.375,
+        0.5,
+        0.75,
+        1.0
+      ],
+      "limb_swing": 0.0,
+      "limb_swing_amount": 0.0,
+      "net_head_yaw": 0.0,
+      "head_pitch": 0.0,
+      "camera": {
+        "yaw_degrees": 34.0,
+        "pitch_degrees": -28.0
+      },
+      "channels": [],
+      "max_contested_fraction_pin": 0.0,
+      "period_note": "cos(age * 0.05 * 0.22) has period 2*pi/0.011 = 571.2 ticks; the samples cover a full oscillation"
+    },
+    {
       "id": "model_island",
       "tier": 3,
       "class": "danger.orespawn.entity.client.ModelIsland",

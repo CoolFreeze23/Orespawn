@@ -101,7 +101,7 @@ public class OreSpawnClient {
             event.registerEntityRenderer(ModEntities.CASSOWARY.get(), CassowaryRenderer::new);
             event.registerEntityRenderer(ModEntities.CHIPMUNK.get(), ChipmunkRenderer::new);
             event.registerEntityRenderer(ModEntities.COCKATEIL.get(), CockateilRenderer::new);
-            event.registerEntityRenderer(ModEntities.COIN.get(), CoinRenderer::new);
+            event.registerEntityRenderer(ModEntities.COIN.get(), PhaseGDevRenderers.coinRenderer());
             event.registerEntityRenderer(ModEntities.EASTER_BUNNY.get(), EasterBunnyRenderer::new);
             event.registerEntityRenderer(ModEntities.FLOUNDER.get(), FlounderRenderer::new);
             event.registerEntityRenderer(ModEntities.GOLD_FISH.get(), GoldFishRenderer::new);
