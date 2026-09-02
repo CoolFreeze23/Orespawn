@@ -5,6 +5,15 @@ import net.minecraft.util.Tuple;
 
 public interface IMHLibExtendedRenderLayer {
 
+	/**
+	 * Whether this layer needs its recursive collection lifecycle for the
+	 * entity currently being rendered. Non-collector layers retain the legacy
+	 * always-active behavior.
+	 */
+	default boolean isBoneCollectionActive() {
+		return true;
+	}
+
 	void pushToStack(Vector3d scaling, Vector3d rotation);
 	
 	Tuple<Vector3d, Vector3d> popStack();
@@ -24,16 +33,28 @@ public interface IMHLibExtendedRenderLayer {
 	}
 	
 	default void onPostRender() {
+		if (!this.isBoneCollectionActive()) {
+			return;
+		}
+
 		this.resetStack();
 		this.resetCurrentValues();
 	}
 	
 	default void onPreRender() {
+		if (!this.isBoneCollectionActive()) {
+			return;
+		}
+
 		this.resetStack();
 		this.applyCurrentValues(DEFAULT_SCALING, DEFAULT_ROTATION);
 	}
 	
 	default void onRenderRecursivelyStart() {
+		if (!this.isBoneCollectionActive()) {
+			return;
+		}
+
 		// Object needs to be cloned! Otherwise we will always modify the same thing
 		final Vector3d currentRot = new Vector3d(this.getCurrentRotation());
 		final Vector3d currentScale = new Vector3d(this.getCurrentScaling());
@@ -44,6 +65,10 @@ public interface IMHLibExtendedRenderLayer {
 	}
 	
 	default void onRenderRecursivelyEnd() {
+		if (!this.isBoneCollectionActive()) {
+			return;
+		}
+
 		Tuple<Vector3d, Vector3d> tuple = this.popStack();
 		this.applyCurrentValues(tuple.getA(), tuple.getB());
 	}

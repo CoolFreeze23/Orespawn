@@ -3701,3 +3701,80 @@ clean; `build` exit 0 (same audit line, `G1 PARITY PASS: 2 models`, benchmark
 evidence verified); built jar: 428 entity textures, 0 uppercase entries under
 assets/; `runGameTestServer` exit 0 - literal `All 192 required tests passed`
 (`192 GAME TESTS COMPLETE`). Not pushed.
+
+## PHASE G SLICE 2 — GeckoLib replacement seam + Beaver developer candidate (2026-09-02)
+
+WHAT: re-landed the core of salvage lane orespawn-7 (G3) as ordinary code,
+~330 LOC across eight classes: `GeoReplacementDescriptor` (registry identity +
+resource triple + texture/scale hooks), `OreSpawnGeoReplacement` (one
+`GeoReplacedEntity` singleton per registry entry; GeckoLib keys its state by
+entity id, so the ENTITY CLASS IS NEVER TOUCHED), `OreSpawnGeoReplacementModel`
+(the one shared GeoModel; `setCustomAnimations` delegates to the animatable),
+`OreSpawnGeoReplacedEntityRenderer` (shared base), `BeaverGeoReplacement` +
+`BeaverGeoReplacedRenderer`, `DevRendererSwitch` (pure policy) and
+`PhaseGDevRenderers`. `OreSpawnClient` registers Beaver through the switch;
+classic `BeaverRenderer` stays the default and its layer definition stays
+registered. Assets: `geo/entity/beaver.geo.json` (the landed G1 converter's
+output, byte-identical to `g1_proof/generated/model_beaver.geo.json`) and an
+empty `animations/entity/beaver.animation.json`. Vendored MHLib: bone
+collection is now a strict no-op for a replaced renderer whose entity has no
+profile, or whose profile names no bones or neither syncs nor trusts the client
+(the G3 hunks, predicate widened after review). Gametest `phaseg001` pins the
+switch contract (suite 193).
+
+HOW TO SEE IT: run the client with `-Dorespawn.dev.beaverRenderer=candidate`
+(runClient JVM args, or a Prism instance's custom JVM arguments): Beaver draws
+through GeckoLib on the converted rig and a warning line is logged. Without the
+property nothing about the game changes.
+
+DESIGN: Beaver's pose is `ModelBeaver.setupAnim` evaluated in
+`GeoModel.setCustomAnimations` on the geo bones - the G1-approved code-driven
+path, harness-proven within float rounding - NOT the G3 snapshot's 272-line
+`PhaseLockedKeyframeController` with 72-segment cosine clips. That controller
+subclasses `AnimationController` and writes its protected internals, and it
+quietly adopted a 0.0021 rad keyframe tolerance the owner never ruled on. The
+code path needs no tolerance, so the artist-editable-keyframe question stays
+genuinely open (salvage inventory §5).
+
+REVIEW: three read-only reviewers (API vs pinned 4.8.4 bytecode; parity vs
+classic Beaver; regression/safety), all PASS, no blockers; every substantive
+finding fixed before the gate: (1) `limbSwingAmount` is read from GeckoLib's
+`AnimationState` - its replaced renderer computes it bit-exactly as vanilla,
+including the seated-rider zeroing my re-derivation had dropped; (2) baby
+shadow: `MobRenderer` scales by `getAgeScale()`, the base renderer now overrides
+`getShadowRadius`; (3) the scale hook is guarded on `isReRender`; (4) GeckoLib
+4.8.4 defect: `GeoReplacedEntityRenderer.postRender` AND `renderFinal` both call
+`EntityRenderer.render`, so a replaced entity's name tag drew twice (once under
+the model transform) and, with GeckoLib's own `renderLeash`, the leash up to
+three times - the base renderer overrides `postRender` and `renderLeash` as
+no-ops, leaving vanilla's single draw from `renderFinal`; (5) MHLib predicate
+widened to `syncToModel || trustClient` so a datapack profile with sync=false /
+trust=true keeps positioning parts client-side (no shipped profile is affected:
+Queen true/true/10 bones, robots false/false/[]); (6) the rotation-basis comment
+was replaced - one reviewer derived [-x,-y,+z] from the converter's pivot
+mapping while the converter's own notes say [-x,+y,-z]; only X is proven by the
+harness, and the comment now says exactly that.
+
+OPEN ITEMS (recorded, not fixed): face order - vanilla emits
+down/up/west/north/east/south, GeckoLib west/east/north/south/up/down;
+irrelevant for opaque rigs, must be addressed before any translucent or
+self-overlapping rig replaces its classic renderer. `SingletonAnimatableInstanceCache`
+never evicts: every entity id ever drawn keeps an `AnimatableManager` (nine
+bone snapshots for Beaver) for the session - a cost multiplier to weigh before
+the pattern reaches 100+ species. GeckoLib translates the model +0.01 blocks
+(sub-pixel vs classic). A replaced renderer WITH a bone-synced profile would hit
+MHLib's `currentTick=-1` lifecycle gap (`onPostRenderReplacedEntity` never
+advances it); Tier-1 profiles are server-fed by ruling Q3, so unaffected.
+Spectator/invisible alpha tint (0x27) is not reproduced by GeckoLib's replaced
+renderer.
+
+NOT DONE: no in-game capture - client rendering is outside the suite's reach by
+construction. The owner's review through the switch is the acceptance step
+before Beaver's classic renderer is replaced (ruling Q1).
+
+GATE (on master, sequential): compile of main + gametest clean; `build` exit 0 -
+asset audit literal `RESULT: 0 error(s), 0 advisory(ies), 3 acknowledged -> exit
+0`, `G1 PARITY PASS: 2 models`, benchmark evidence verified; built jar contains
+`geo/entity/beaver.geo.json`, `animations/entity/beaver.animation.json` and the
+new classes; `runGameTestServer` exit 0 - literal `All 193 required tests
+passed` (`193 GAME TESTS COMPLETE`, +1 = phaseg001). Not pushed.

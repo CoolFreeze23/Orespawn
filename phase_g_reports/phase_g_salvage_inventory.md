@@ -156,10 +156,11 @@ Verdict: **discard.** Superseded by the UTF-8 repair in `d87f81b`.
    2026-09-02** (FIX_LOG BUG-038: 155 index-only renames, audit check 7). Fixes a live
    fresh-clone bug; no visual change on this machine; unblocks everything
    else because every later slice references texture paths.
-2. **G3 core seam** (orespawn-7 core, ~600 LOC incl. MHLib no-op), dev-only
-   selector, Beaver as the proof species — after the owner's
-   animation-tolerance ruling (§5), because that ruling decides whether
-   Beaver ships keyframes or a code-driven controller.
+2. **G3 core seam** (orespawn-7 core, ~330 LOC incl. MHLib no-op), dev-only
+   selector, Beaver as the proof species — **LANDED 2026-09-02** (FIX_LOG
+   "PHASE G SLICE 2"). Beaver uses the G1-approved code-driven pose, so the
+   tolerance ruling (§5) was not needed for this slice; it still gates any
+   artist-editable clip. Try it: `-Dorespawn.dev.beaverRenderer=candidate`.
 3. **Small GeckoLib asset-audit checks** (rewrite of orespawn-5's intent).
 4. **Tier-3 rigs**, regenerated from the landed converter and wired through
    the G3 seam — the first real in-game GeckoLib species besides the Queen.

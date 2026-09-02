@@ -31,6 +31,17 @@ public class GeckolibBoneInformationCollectorLayer<T extends GeoAnimatable> exte
 	}
 	
 	private int currentTick = -1;
+
+	@Override
+	public boolean isBoneCollectionActive() {
+		if (this.renderer instanceof GeoReplacedEntityRenderer<?, ?> grer) {
+			return IBoneInformationCollectorLayerCommonLogic.shouldCollectModelBones(
+					grer.getCurrentEntity());
+		}
+
+		// Preserve the existing GeoEntity path, including The Queen.
+		return true;
+	}
 	
 	@Override
 	public void renderForBone(PoseStack poseStack, T animatable, GeoBone bone, RenderType renderType, MultiBufferSource bufferSource, VertexConsumer buffer, float partialTick, int packedLight, int packedOverlay) {
