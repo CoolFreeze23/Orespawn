@@ -292,4 +292,10 @@ public class Fairy extends AmbientCreature {
         if ("null".equals(this.myowner) || this.myowner.isEmpty()) this.myowner = null;
         this.setFairyType(tag.getInt("FairyType"));
     }
+
+    /** orig Fairy.java:330 — func_145773_az -> true: never presses plates or tripwires (ENT-S-090). */
+    @Override
+    public boolean isIgnoringBlockTriggers() {
+        return true;
+    }
 }

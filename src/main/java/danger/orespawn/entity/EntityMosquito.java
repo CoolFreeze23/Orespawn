@@ -95,4 +95,10 @@ public class EntityMosquito extends AmbientCreature {
     public boolean checkSpawnRules(LevelAccessor level, MobSpawnType spawnType) {
         return true;
     }
+
+    /** orig EntityMosquito.java:141 — func_145773_az -> true: never presses plates or tripwires (ENT-S-090). */
+    @Override
+    public boolean isIgnoringBlockTriggers() {
+        return true;
+    }
 }

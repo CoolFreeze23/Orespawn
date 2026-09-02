@@ -313,4 +313,10 @@ public class EntityWormLarge extends Monster {
                 s -> !s.isAir())) return false;
         return OriginalSpawnGates.airBox(this, level, -6, 6, 2, 8, -6, 6);
     }
+
+    /** orig WormLarge.java:259 — func_145773_az -> true: never presses plates or tripwires (ENT-S-090). */
+    @Override
+    public boolean isIgnoringBlockTriggers() {
+        return true;
+    }
 }

@@ -368,4 +368,10 @@ public class EntityBrutalfly extends Monster {
         if (!OriginalSpawnGates.airBox(this, level, -3, 2, 1, 9, -4, 3)) return false;
         return !OriginalSpawnGates.anyOtherNearby(this, level, EntityBrutalfly.class, 64.0, 32.0, 64.0);
     }
+
+    /** orig Brutalfly.java:265 — func_145773_az -> true: never presses plates or tripwires (ENT-S-090). */
+    @Override
+    public boolean isIgnoringBlockTriggers() {
+        return true;
+    }
 }

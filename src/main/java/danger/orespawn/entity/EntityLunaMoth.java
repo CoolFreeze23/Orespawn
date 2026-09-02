@@ -66,4 +66,10 @@ public class EntityLunaMoth extends EntityButterfly {
         if (danger.orespawn.ModDimensionKeys.isIn(level, danger.orespawn.ModDimensionKeys.ISLANDS)) return true;
         return this.getY() >= MIN_SPAWN_Y;
     }
+
+    /** orig EntityLunaMoth.java:164 — func_145773_az -> true: never presses plates or tripwires (ENT-S-090). */
+    @Override
+    public boolean isIgnoringBlockTriggers() {
+        return true;
+    }
 }

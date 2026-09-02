@@ -4544,3 +4544,15 @@ pin what the server can observe (see AUDIT ENT-S-089). Suite grows by 5.
 GATE (on master, sequential): compile clean; `build` exit 0 - audit 0/0/4, `s4Parity` 11
 models, `g1Parity` 2 models, benchmark verified; `runGameTestServer` exit 0 - literal
 `All 198 required tests passed` (193 + 5 Vortex pins). Not pushed.
+
+## ENT-S-090 FIX — pressure-plate override restored on fifteen entities (2026-09-02)
+
+Owner's go. The mechanical sweep (reference `func_145773_az` returning true
+versus port `isIgnoringBlockTriggers`) found 15, not ~35: twenty of the
+original overrides return false, which is the default. Fourteen entities
+patched here (Vortex in ENT-S-089), each citing its reference line; one
+parameterised gametest over the fifteen registry ids with a zombie control.
+Suite grows by 1.
+
+GATE (on master, sequential): compile clean; `build` exit 0 - audit 0/0/4, parity and
+benchmark verified; `runGameTestServer` exit 0 - literal `All 199 required tests passed`. Not pushed.

@@ -6061,12 +6061,19 @@ keeps BUG-036. Commit 4ea395c's message retains the old number.)*
   TheQueen, WormLarge, ...), so they never press plates or trip wires. The
   port's `isIgnoringBlockTriggers` is only overridden where the audit already
   touched it. Surfaced by the ENT-S-089 refuters while checking item 5.
-- **Resolution:** OPEN — report only. Proposed: a scripted sweep of
-  `reference_1_7_10_source` for `func_145773_az` versus port overrides of
-  `isIgnoringBlockTriggers`, one commit restoring the missing overrides with
-  citations, and one parameterised gametest over the affected registry ids.
-  Per the owner's rule these are parity bugs unless a MOD record says
-  otherwise; none does.
+- **Sweep (2026-09-02):** the reference overrides `func_145773_az` in 35
+  classes, 15 returning true (the rest return false, the default); the port
+  had ZERO `isIgnoringBlockTriggers` overrides. The fifteen: Brutalfly,
+  Butterfly, LunaMoth, Mosquito, Fairy, Firefly, Ghost, GhostSkelly, Mothra,
+  PurplePower, Rotator, Vortex, WormLarge, WormMedium, WormSmall.
+- **Resolution:** FIXED (2026-09-02, owner's go, own commit; Vortex landed
+  with ENT-S-089). Each port entity gets `isIgnoringBlockTriggers -> true`
+  with its reference line cited. Gametest `PressurePlateParityTests`
+  (`empty_large`): every one of the fifteen is spawned in a stone pressure
+  plate's block, the plate's own `entityInside` is invoked with it, and the
+  plate must stay unpowered; a zombie on an identical plate is the control.
+  Invoking `entityInside` directly is what makes fliers and noAi mobs count:
+  a noAi mob never travels, so it never lands.
 
 ### BUG-040 — Coin renders nothing: the port's ModelCoin is not the 1.7.10 model (REPORT, 2026-09-02)
 

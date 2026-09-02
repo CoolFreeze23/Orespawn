@@ -205,4 +205,10 @@ public class EntityButterfly extends AmbientCreature {
         super.readAdditionalSaveData(tag);
         this.setButterflyType(tag.getInt("ButterflyType"));
     }
+
+    /** orig EntityButterfly.java:256 — func_145773_az -> true: never presses plates or tripwires (ENT-S-090). */
+    @Override
+    public boolean isIgnoringBlockTriggers() {
+        return true;
+    }
 }

@@ -218,4 +218,10 @@ public class PurplePower extends Mob {
                                    net.minecraft.world.entity.MobSpawnType spawnType) {
         return true;
     }
+
+    /** orig PurplePower.java:205 — func_145773_az -> true: never presses plates or tripwires (ENT-S-090). */
+    @Override
+    public boolean isIgnoringBlockTriggers() {
+        return true;
+    }
 }
