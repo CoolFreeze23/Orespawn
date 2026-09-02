@@ -152,7 +152,8 @@ Verdict: **discard.** Superseded by the UTF-8 repair in `d87f81b`.
 
 ## 4. Proposed re-landing order (each a small, ordinary gated commit)
 
-1. **Texture index-name normalization + audit guard** (§2). Fixes a live
+1. **Texture index-name normalization + audit guard** (§2) — **LANDED
+   2026-09-02** (FIX_LOG BUG-038: 155 index-only renames, audit check 7). Fixes a live
    fresh-clone bug; no visual change on this machine; unblocks everything
    else because every later slice references texture paths.
 2. **G3 core seam** (orespawn-7 core, ~600 LOC incl. MHLib no-op), dev-only

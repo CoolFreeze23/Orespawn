@@ -3668,3 +3668,36 @@ GATE (on master, sequential): `build` exit 0 - asset audit literal `RESULT: 0
 error(s), 0 advisory(ies), 3 acknowledged -> exit 0`, `G1 PARITY PASS: 2
 models`, benchmark evidence verified; `runGameTestServer` exit 0 - literal
 `All 192 required tests passed` (`192 GAME TESTS COMPLETE`). Not pushed.
+
+## BUG-038 — resource files tracked under uppercase names; index-only rename + audit check 7 (2026-09-02)
+
+WHAT: Slice 1 of the Phase G salvage plan. 155 `git mv` case-only renames
+(147 `textures/entity`, 3 `textures/items`, 1 `textures/blocks`, 4 `sounds`)
+so the git index matches the lowercase names that the disk, every Java
+reference, `sounds.json`, the provenance file and the shipped jars already
+use. Content untouched (staged blobs identical to HEAD), disk untouched, no
+lowercase collisions, no uppercase directories outside META-INF. Added asset
+audit check 7 (`check_index_case`): reads `git ls-files` and errors on any
+tracked `assets/`/`data/` path that is not ResourceLocation-valid lowercase
+(`RESOURCE_PATH_CASE`) and on any Java asset literal that exists on disk but
+is not tracked under that exact name (`TEXTURE_REF_CASE`); if git is
+unavailable it emits one ADVISORY rather than passing silently.
+
+WHY: a fresh clone anywhere would have shipped the uppercase names and lost
+those textures and sounds in-game; the release jars were correct only
+because they were built from this particular checkout. Full analysis in
+AUDIT_FINDINGS BUG-038. The orchestrator's build-time alias generator
+(salvage lane orespawn-9) is not adopted - the index rename is the whole fix.
+
+VERIFICATION: audit on the renamed tree prints the standing pass form (0 err /
+0 adv / 3 ack). Mutation test: `git mv -f kyuubi.png Kyuubi.png` -> audit
+reports `RESOURCE_PATH_CASE` and `TEXTURE_REF_CASE` errors, exit 1; restored
+-> clean again (results recorded in the GATE line below).
+
+GATE (on master, sequential): audit on the renamed tree `RESULT: 0 error(s), 0
+advisory(ies), 3 acknowledged -> exit 0`; mutation `Kyuubi.png` -> `RESULT: 2
+error(s) ... exit 1` (RESOURCE_PATH_CASE + TEXTURE_REF_CASE), restored ->
+clean; `build` exit 0 (same audit line, `G1 PARITY PASS: 2 models`, benchmark
+evidence verified); built jar: 428 entity textures, 0 uppercase entries under
+assets/; `runGameTestServer` exit 0 - literal `All 192 required tests passed`
+(`192 GAME TESTS COMPLETE`). Not pushed.

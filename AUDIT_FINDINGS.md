@@ -5885,6 +5885,41 @@ keeps BUG-036. Commit 4ea395c's message retains the old number.)*
   at world spawn on a new world ARE original behavior, chunk-gen
   pre-population of roster-backed creatures is faithful and untouched.)
 
+### BUG-038 — 155 resource files tracked in git under uppercase names (fresh-clone texture/sound loss)
+
+- **Impact:** HIGH, latent (every clone except the release machine) — git's
+  index tracked 147 entity textures, 3 item textures, 1 block texture and 4
+  sounds under uppercase names (`Kyuubi.png`, `GammaMetroid.png`, `Bird1.png`,
+  `RayGun.png`, `oreMOTHRA.png`, `MothraWings1.ogg`, …) while the release
+  checkout (Windows, `core.ignorecase=true`) had every file lowercase on
+  disk. `ResourceLocation` paths are lowercase-only, so every Java reference
+  (57 literal, more dynamically built) and every `sounds.json` entry is
+  lowercase; the published jars carry 428 lowercase entity textures only
+  because Gradle copied this checkout's disk names. A fresh clone — Linux,
+  macOS, CI, or another Windows machine — writes the tracked uppercase
+  names, the jar inherits them, and the case-sensitive jar filesystem misses
+  the lookups: textureless mobs, silent Mothra wings.
+- **Original contract:** n/a (port build hygiene). The 1.7.10 jar stored
+  CamelCase names and 1.7.10's ResourceLocation tolerated them; 1.21.1's
+  does not, so lowercase is the only possible intended name.
+- **Provenance:** files were copied from the 1.7.10 reference with their
+  CamelCase names and `git add`ed before being lowercased on disk; with
+  `core.ignorecase=true` the case-only rename never registered. Surfaced by
+  the 2026-08-31 orchestrator run (worker orespawn-9 counted 68 mismatched
+  references and proposed a build-time alias generator — not adopted) and
+  verified independently 2026-09-02: `git ls-files` vs `ls`, jar listing
+  (0 uppercase entries), Java literal scan (0 uppercase literals),
+  `provenance_byte_identical_assets.txt` (already lists every port path
+  lowercase). The asset audit could not see it: every earlier check reads
+  the disk.
+- **Resolution:** FIXED (2026-09-02 — 155 index-only `git mv` renames;
+  disk and jar byte-identical to shipped beta.4; no collisions, no
+  uppercase directories. Guard: `tools/asset_audit.py` check 7
+  (`RESOURCE_PATH_CASE` / `TEXTURE_REF_CASE`) reads the git INDEX and errors
+  on any non-lowercase tracked resource path or any Java asset literal whose
+  exact name git does not track; mutation-tested by re-uppercasing one
+  tracked entry (audit → ERROR) and restoring it.)
+
 ### TEST-003 — Config-flipping gametests in the concurrent default batch
 
 - **Impact:** MEDIUM (suite reliability) — boss005/boss012 flip a global
