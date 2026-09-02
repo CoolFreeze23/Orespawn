@@ -235,6 +235,60 @@ tasks.named('check') {
     dependsOn tasks.named('g1BenchmarkVerify')
 }
 
+// Phase G Slice 4: the same probe/converter/parity tools over a second
+// manifest and proof directory, so Tier-3 rigs are proven without touching
+// the immutable G1 evidence. Separate build dir: both tools prune their
+// output dir to the current manifest's ids.
+def s4Manifest = file('tools/s4_model_proofs.json')
+def s4BuildDir = layout.buildDirectory.dir('s4')
+
+tasks.register('s4DumpCompiledModels', JavaExec) {
+    group = 'verification'
+    description = 'Dump compiled/baked LayerDefinition trees for the Slice 4 models.'
+    dependsOn tasks.named('g1toolClasses')
+    classpath = sourceSets.g1tool.runtimeClasspath
+    mainClass = 'danger.orespawn.g1.G1ModelProbe'
+    args 'vanilla', s4Manifest.absolutePath,
+            s4BuildDir.get().dir('vanilla').asFile.absolutePath
+}
+
+tasks.register('s4ConvertModels', Exec) {
+    group = 'verification'
+    description = 'Convert compiled Slice 4 dumps to Bedrock geo.'
+    dependsOn tasks.named('s4DumpCompiledModels')
+    workingDir = projectDir
+    commandLine 'python', 'tools/layer_definition_to_geo.py',
+            '--manifest', s4Manifest.absolutePath,
+            '--dump-dir', s4BuildDir.get().dir('vanilla').asFile.absolutePath,
+            '--output-dir', s4BuildDir.get().dir('generated').asFile.absolutePath
+}
+
+tasks.register('s4ProbeGeoRenderer', JavaExec) {
+    group = 'verification'
+    description = 'Bake and capture Slice 4 geometry through GeckoLib GeoRenderer.'
+    dependsOn tasks.named('s4ConvertModels')
+    classpath = sourceSets.g1tool.runtimeClasspath
+    mainClass = 'danger.orespawn.g1.G1ModelProbe'
+    args 'geo', s4Manifest.absolutePath,
+            s4BuildDir.get().dir('generated').asFile.absolutePath,
+            s4BuildDir.get().dir('geo').asFile.absolutePath
+}
+
+tasks.register('s4Parity', Exec) {
+    group = 'verification'
+    description = 'Run the geometry, animation and visual parity gates over the Slice 4 models.'
+    dependsOn tasks.named('s4ProbeGeoRenderer')
+    workingDir = projectDir
+    commandLine 'python', 'tools/g1_render_parity.py',
+            '--manifest', s4Manifest.absolutePath,
+            '--vanilla-dir', s4BuildDir.get().dir('vanilla').asFile.absolutePath,
+            '--generated-dir', s4BuildDir.get().dir('generated').asFile.absolutePath,
+            '--geo-dir', s4BuildDir.get().dir('geo').asFile.absolutePath,
+            '--output-dir', s4BuildDir.get().dir('evidence').asFile.absolutePath,
+            '--proof-dir', file('phase_g_reports/s4_proof').absolutePath
+}
+tasks.named('check') { dependsOn tasks.named('s4Parity') }
+
 // BUG-032 (beta.3): the DISTRIBUTED jar must be the jarJar output (nested
 // databuddy under META-INF/jarjar). Swap classifiers so the unclassified
 // `orespawn-<version>.jar` — the file everyone downloads — is the combined

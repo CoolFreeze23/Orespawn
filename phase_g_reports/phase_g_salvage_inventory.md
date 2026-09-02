@@ -168,7 +168,11 @@ Verdict: **discard.** Superseded by the UTF-8 repair in `d87f81b`.
    **LANDED 2026-09-02** as audit check 8 (FIX_LOG "PHASE G SLICE 3"); standing
    audit pass form is now 0 err / 0 adv / 4 ack.
 4. **Tier-3 rigs**, regenerated from the landed converter and wired through
-   the G3 seam — the first real in-game GeckoLib species besides the Queen.
+   the G3 seam — **IN PROGRESS**: 4a landed Elevator (FIX_LOG "PHASE G SLICE
+   4a"); Vortex and RockBase are held on harness findings awaiting rulings;
+   the three head sidecars are excluded (they never render); 4b = the eight
+   animated flat rigs (code-driven, suite-visible animation leg); 4c =
+   PurplePower/Rotator (render-instance expansion).
 5. **Server-pose foundation + first MOD-025 profile** (King), atomic
    manual-part replacement per the Q4 ruling.
 6. **Live Q6** before the first production cutover of a Tier-1 boss.

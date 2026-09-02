@@ -723,6 +723,16 @@ def check_geckolib(java_texts):
         if bones is not None:
             geo_bones[path.name[:-len(".geo.json")]] = bones
 
+    # A shipped rig must be byte-identical to the harness-proven copy it came
+    # from; nothing else ties the asset GeckoLib loads to the parity evidence.
+    for path in (sorted(geo_dir.rglob("*.geo.json")) if geo_dir.is_dir() else []):
+        proofs = sorted((ROOT / "phase_g_reports").glob(
+            "*_proof/generated/model_" + path.name[:-len(".geo.json")] + ".geo.json"))
+        for proof in proofs:
+            if proof.read_bytes() != path.read_bytes():
+                err("GECKO_GEO_PROOF_DRIFT", path.stem,
+                    "shipped rig differs from its harness-proven copy %s" % rel(proof), path)
+
     clips = {}  # clip name -> [(file, loop declaration)]; loop is False / True / "hold_on_last_frame"
     for path in (sorted(anim_dir.rglob("*.animation.json")) if anim_dir.is_dir() else []):
         data, jerr = load_json(path)

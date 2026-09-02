@@ -3999,3 +3999,125 @@ began.
 GATE (docs-only, on master, sequential): `build` exit 0 - `RESULT: 0 error(s), 0
 advisory(ies), 4 acknowledged -> exit 0`; `runGameTestServer` exit 0 - literal
 `All 193 required tests passed`. Not pushed (push resumes on the owner's word).
+
+## PHASE G SLICE 4a — Tier-3 through the seam: Elevator lands; two harness findings; s4 pipeline (2026-09-02)
+
+SCOPE DECISIONS (from the five-reader Tier-3 survey, recorded here rather than
+re-derived later):
+- The three head sidecars (king_head, queen_head, godzilla_head) are EXCLUDED
+  from Phase G conversion: their renderers return `shouldRender() == false`
+  with empty `render`, their models emit zero vertices, and that is faithful
+  to the 1.7.10 empty `Render*` stubs (BOSS-003/008/014). A GeckoLib renderer
+  for an entity that never renders is dead code. Tier-3 count is 13.
+- PurplePower and Rotator draw each part 6x / 8x under per-draw pose-stack
+  transforms (18 and 24 draws); the landed converter emits one bone per part,
+  so they need a render-instance expansion (the G2 lane's helper-group idea)
+  plus a clone-aware geometry leg. Deferred to Slice 4c.
+- The eight animated flat rigs (Coin, Island, IslandToo, Robot1-5) need
+  code-driven poses on Y and Z axes, Robot4 needs per-frame POSITION writes
+  (12 cannon parts, hand-rolled FK), Robot2/3 latch on per-entity RenderInfo
+  and the entity RNG, Robot4 writes a synced flag from the render thread
+  (ENT-K-070, kept bug-for-bug). Slice 4b, with a suite-visible animation leg
+  on real entities (gametest: classic setupAnim vs production
+  applyCustomAnimations on the baked geo) because the headless probe passes a
+  null entity and these models dereference it.
+- Vanilla-style `limbSwing` (distance) drives five models, not four: Robot5's
+  wheels (`limbSwing * 0.15 % 2pi`) were missed by the cos()-only grep that
+  produced the earlier count. All five stay code-driven under Amendment 1.
+
+HARNESS FINDINGS (harness-first law: stopped, not tuned; rulings proposed):
+- VORTEX (zero-thickness 128x64x0 billboard): the surface-mapping leg fails at
+  bind - "no GeoRenderer vertex matches position (-4.0, -2.625, 0.0) and normal
+  (0.0, -1.0, 0.0)". Vanilla emits all six faces (24 vertices, six distinct
+  normals); GeckoLib 4.8.4's baker emits 24 vertices with normals {+X x8, -Z x4,
+  +Z x4, +Y x8} - it collapses the flat cube's degenerate faces. Those faces have
+  zero area and draw nothing, so the mismatch is on invisible geometry; the
+  visible +-Z quad matches. PROPOSED RULING: the surface-mapping leg ignores
+  zero-area faces (a harness rule change - owner's call, per the standing rule).
+  Vortex stays classic until ruled.
+- ROCK_BASE (22 flat parts, 10 with bind rotations on X, Y and Z): the geometry
+  and surface legs PASS for all 22 parts - this is the first mechanical proof of
+  the converter's bind-rotation signs on Y and Z (max corner delta within
+  1e-5 blocks, UV/normal delta 0). The visual leg fails at bind: changed
+  fraction 0.0320 > 0.001. At bind every part is visible, so all twelve rock
+  types are drawn superimposed and coincident faces z-fight; vanilla resolves
+  them in field-declaration order, GeckoLib in its own root order (the G2
+  finding: GeometryTree keeps roots in a Map). In-game only one type's 2-10
+  parts are visible, but the crystal groups (3a-d, 4a-d) are rotated copies
+  about one origin and overlap too. PROPOSED RULING: either (a) extend the
+  probe to capture per-rock-type visibility so the visual leg compares what a
+  player sees, or (b) treat root-order-sensitive rigs as needing the G2
+  root/face-order contract before conversion. RockBase stays classic until
+  ruled; its unproven geo is not shipped.
+
+LANDED: Elevator (hoverboard) through the Slice 2 seam. `ElevatorGeoReplacement`
+- static rig (the G1 Tier-3 proof, geo byte-identical to
+`g1_proof/generated/model_elevator.geo.json`), paint-colour texture 1..10 (out
+of range -> 1, exactly the classic mapping), and the boat-style hit wobble
+from `ElevatorRenderer.setupRotations` ported through a new descriptor hook
+`applyRotations`, applied after GeckoLib's own rotations (the 6-arg
+`GeoReplacedEntityRenderer.applyRotations` that `actuallyRender` calls; the
+5-arg form delegates to it). Registered behind the dev switch; classic
+`ElevatorRenderer` and its layer definition remain.
+
+DEV SWITCH (Q1): one property for every candidate,
+`-Dorespawn.dev.geckolibRenderers=candidate`; the original
+`-Dorespawn.dev.beaverRenderer=candidate` is honored as an alias, so the
+owner's existing Prism JVM argument now enables Beaver AND Elevator. Gametest
+`phaseg001` pins the two-property contract.
+
+PIPELINE: build.gradle gains the `s4*` task block - the same probe, converter
+and parity tools over `tools/s4_model_proofs.json` and
+`phase_g_reports/s4_proof` (separate `build/s4`; `check` depends on
+`s4Parity`). Because the G1 benchmark report pins build.gradle's hash, the
+SMOKE_ONLY benchmark was regenerated with `gradlew g1Benchmark` and the gate's
+`--write-proof` (labels unchanged, no Q6 claim; timing numbers moved within
+noise). s4 proof: Elevator - surface 720 vertex-samples, UV 0, normal 0;
+animation 0 rad; visual 0 changed pixels, MAE 0.
+
+INCIDENTAL: `tools/g1_model_proofs.json` still names the Elevator texture as
+`Elevator1.png`; since BUG-038 the tracked file is `elevator1.png`. It resolves
+on this case-insensitive checkout only. Left untouched here because that
+manifest's hash is pinned by the G1 benchmark proof; the s4 manifest uses the
+lowercase name. Follow-up: fix and regenerate the G1 proof in one commit.
+
+REVIEW (two read-only reviewers; parity PASS, regression FAIL(1) -> fixed):
+- BLOCKER fixed: `.gitattributes` pinned LF only for the G1 proof tree, so
+  a fresh checkout under `core.autocrlf=true` would have materialized the new
+  `s4_proof` JSON/MD as CRLF and `s4Parity`'s byte-compare would go red - the
+  landing-day false red all over again. `tools/s4_model_proofs.json` and
+  `phase_g_reports/s4_proof/**` (json/md `eol=lf`, png `binary`) are now
+  pinned; `git ls-files --eol` shows `i/lf w/lf attr/text eol=lf` for them.
+- MINOR fixed: `getShadowRadius` now multiplies by `LivingEntity.getScale()`
+  as well as the age scale, matching `MobRenderer` (a `generic.scale`
+  modifier would otherwise leave the candidate's shadow unscaled).
+- MINOR fixed: the switch warning names the property that actually selected
+  the candidate (`DevRendererSwitch.candidateSource()`), so a launch config
+  carrying only the old Beaver property is told the truth.
+- NEW GUARD from a reviewer's gap: audit check 8 `GECKO_GEO_PROOF_DRIFT` -
+  a shipped `geo/entity/<name>.geo.json` must be byte-identical to every
+  `phase_g_reports/*_proof/generated/model_<name>.geo.json`; until now nothing
+  tied the asset GeckoLib loads to the parity evidence. Mutation-tested (one
+  appended byte -> ERROR, exit 1; restored -> clean).
+- Verified from bytecode: `actuallyRender` invokes the 6-arg
+  `applyRotations`, and the hook lands in the same frame as
+  `ElevatorRenderer.setupRotations`'s trailing `mulPose` - after the entity
+  scale, before the model basis change; `ageInTicks` and `partialTick` are the
+  same quantities as vanilla's. `GeoRenderer.reRender` DOES call
+  `actuallyRender(isReRender=true)`, so on a re-render pass GeckoLib re-applies
+  its own yaw/death rotations and, with them, this hook - a library trait
+  inherited, not introduced; no layer triggers re-render on these renderers.
+- Noted, not changed: the s4 manifest re-proves Elevator (already in the G1
+  proof) - kept as the s4 pipeline's live smoke and the home for RockBase /
+  Vortex once ruled; the +0.009-block vertical offset of every GeckoLib
+  candidate (GeckoLib's `translate(0, 0.01, 0)` vs vanilla's -1.501 datum)
+  remains the recorded Slice 2 open item; proof PNG bytes depend on the
+  installed Pillow version (same exposure as G1).
+
+GATE (on master, sequential, final tree): compile clean; `build` exit 0 - audit
+literal `RESULT: 0 error(s), 0 advisory(ies), 4 acknowledged -> exit 0` (check 8
+incl. GECKO_GEO_PROOF_DRIFT), `s4Parity` `G1 PARITY PASS: 1 models; checked-in
+proof verified`, `g1Parity` 2 models, regenerated benchmark evidence verified;
+built jar carries `geo/entity/elevator.geo.json` and the Elevator candidate
+classes; `runGameTestServer` exit 0 - literal `All 193 required tests passed`.
+Not pushed.

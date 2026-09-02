@@ -20,6 +20,10 @@ public class PhaseGDevSwitchTests {
         helper.assertTrue(DevRendererSwitch.resolve("true") == Variant.CLASSIC, "'true' is not the candidate token");
         helper.assertTrue(DevRendererSwitch.resolve("Candidate") == Variant.CLASSIC, "token is case-exact");
         helper.assertTrue(DevRendererSwitch.resolve("candidate") == Variant.CANDIDATE, "exact token selects the candidate");
+        helper.assertTrue(DevRendererSwitch.resolve(null, null) == Variant.CLASSIC, "neither property: classic");
+        helper.assertTrue(DevRendererSwitch.resolve("candidate", null) == Variant.CANDIDATE, "general property selects the candidates");
+        helper.assertTrue(DevRendererSwitch.resolve(null, "candidate") == Variant.CANDIDATE, "the original Beaver property still works");
+        helper.assertTrue(DevRendererSwitch.resolve("true", "Candidate") == Variant.CLASSIC, "both tokens are exact");
         helper.succeed();
     }
 }
