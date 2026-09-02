@@ -1,5 +1,6 @@
 package danger.orespawn.entity.client;
 
+import danger.orespawn.entity.pose.RockBasePose;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import danger.orespawn.entity.RockBase;
@@ -175,8 +176,14 @@ public class ModelRockBase extends EntityModel<RockBase> {
         return LayerDefinition.create(meshdefinition, 64, 64);
     }
 
-    @Override
+        @Override
     public void setupAnim(RockBase entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
+        // The body lives in poseFrom so the parity harness can drive it from a declared
+        // state without a live entity (Slice 4b); the entity satisfies the interface.
+        poseFrom(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
+    }
+
+    public void poseFrom(RockBasePose entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
         this.rockType = entity.getRockType();
 
         setAllVisible(false);

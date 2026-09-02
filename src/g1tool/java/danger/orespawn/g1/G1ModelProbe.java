@@ -173,23 +173,60 @@ public final class G1ModelProbe {
         resetBakedTree(bakedRoot);
         samples.add(captureVanillaSample(
                 new SampleRequest("bind", 0.0F, 0.0F, true, false),
-                model, bakedRoot, namesToPaths));
+                model, bakedRoot, namesToPaths, Set.of()));
 
         float limbSwing = spec.get("limb_swing").getAsFloat();
-        for (SampleRequest request : sampleRequests(spec)) {
-            resetBakedTree(bakedRoot);
-            setupAnim.invoke(model, null, limbSwing, request.limbSwingAmount(),
-                    request.ageTicks(), 0.0F, 0.0F);
-            samples.add(captureVanillaSample(request, model, bakedRoot, namesToPaths));
+        float netHeadYaw = optionalFloat(spec, "net_head_yaw");
+        float headPitch = optionalFloat(spec, "head_pitch");
+        String animationKind = spec.get("animation_kind").getAsString();
+        boolean productionHook = CODE_DRIVEN_KIND.equals(animationKind)
+                || ENTITY_STATE_KIND.equals(animationKind);
+        List<SampleRequest> requests = sampleRequests(spec);
+        if (ENTITY_STATE_KIND.equals(animationKind)) {
+            // The classic model reads its entity: pose it from a declared state through
+            // its entity-free poseFrom entry, exactly as the candidate side is posed.
+            Method poseFrom = findPoseFrom(modelClass);
+            if (requests.isEmpty()) {
+                throw new IllegalStateException(id + ": entity_state models need setupAnim samples");
+            }
+            for (JsonObject state : entityStates(spec)) {
+                for (SampleRequest request : requests) {
+                    ProbeSubject subject = new ProbeSubject(state);
+                    resetBakedTree(bakedRoot);
+                    showAllParts(bakedRoot);
+                    poseFrom.invoke(model, subject, limbSwing, request.limbSwingAmount(),
+                            request.ageTicks(), netHeadYaw, headPitch);
+                    Set<String> hidden = hiddenParts(bakedRoot, namesToPaths);
+                    JsonObject sample = captureVanillaSample(stateRequest(state, request), model, bakedRoot,
+                            namesToPaths, hidden);
+                    sample.add("entity_state", state.deepCopy());
+                    sample.add("subject_after", subject.after());
+                    sample.add("hidden_bones", names(hidden));
+                    samples.add(sample);
+                }
+            }
+            showAllParts(bakedRoot);
+        } else {
+            for (SampleRequest request : requests) {
+                resetBakedTree(bakedRoot);
+                setupAnim.invoke(model, null, limbSwing, request.limbSwingAmount(),
+                        request.ageTicks(), netHeadYaw, headPitch);
+                Set<String> hidden = productionHook ? hiddenParts(bakedRoot, namesToPaths) : Set.of();
+                JsonObject sample = captureVanillaSample(request, model, bakedRoot, namesToPaths, hidden);
+                if (productionHook) {
+                    sample.add("hidden_bones", names(hidden));
+                }
+                samples.add(sample);
+            }
         }
         out.add("samples", samples);
 
         JsonArray animationBakeSamples = new JsonArray();
-        if (!"static".equals(spec.get("animation_kind").getAsString())) {
+        if (GAIT_SCALED_KIND.equals(animationKind)) {
             for (BakeRequest request : animationBakeRequests(spec)) {
                 resetBakedTree(bakedRoot);
                 setupAnim.invoke(model, null, limbSwing, 1.0F,
-                        request.ageTicks(), 0.0F, 0.0F);
+                        request.ageTicks(), netHeadYaw, headPitch);
                 JsonObject sample = new JsonObject();
                 sample.addProperty("id", request.id());
                 sample.addProperty("fraction", request.fraction());
@@ -199,6 +236,113 @@ public final class G1ModelProbe {
             }
         }
         out.add("animation_bake_samples", animationBakeSamples);
+        return out;
+    }
+
+    private static final String GAIT_SCALED_KIND = "gait_scaled";
+    private static final String CODE_DRIVEN_KIND = "code_driven";
+    private static final String ENTITY_STATE_KIND = "entity_state";
+
+    private static float optionalFloat(JsonObject spec, String field) {
+        return spec.has(field) ? spec.get(field).getAsFloat() : 0.0F;
+    }
+
+    /** Declared entity states (attacking, ri1, seed, rock_type) for models whose classic pose reads the entity. */
+    private static List<JsonObject> entityStates(JsonObject spec) {
+        List<JsonObject> states = new ArrayList<>();
+        boolean entityState = ENTITY_STATE_KIND.equals(spec.get("animation_kind").getAsString());
+        if (!spec.has("entity_states")) {
+            if (entityState) {
+                throw new IllegalStateException(spec.get("id").getAsString() + ": entity_state models declare entity_states");
+            }
+            return states;
+        }
+        if (!entityState) {
+            throw new IllegalStateException(spec.get("id").getAsString()
+                    + ": entity_states are only declared for " + ENTITY_STATE_KIND + " models");
+        }
+        for (JsonElement element : spec.getAsJsonArray("entity_states")) {
+            states.add(element.getAsJsonObject());
+        }
+        if (states.isEmpty()) {
+            throw new IllegalStateException(spec.get("id").getAsString() + ": entity_states is empty");
+        }
+        if (states.stream().map(state -> state.get("name").getAsString()).distinct().count() != states.size()) {
+            throw new IllegalStateException(spec.get("id").getAsString() + ": duplicate entity state names");
+        }
+        return states;
+    }
+
+    private static SampleRequest stateRequest(JsonObject state, SampleRequest request) {
+        return new SampleRequest("s_" + state.get("name").getAsString() + "_" + request.id(),
+                request.ageTicks(), request.limbSwingAmount(), request.fullCapture(),
+                request.denseTransformSample());
+    }
+
+    /** The compiled model's entity-free pose entry: {@code poseFrom(<pose interface>, 6 floats)}. */
+    private static Method findPoseFrom(Class<?> modelClass) {
+        return Arrays.stream(modelClass.getDeclaredMethods())
+                .filter(method -> method.getName().equals("poseFrom"))
+                .filter(method -> method.getParameterCount() == 6)
+                .filter(method -> method.getParameterTypes()[0].isInterface()
+                        && method.getParameterTypes()[0].isInstance(new ProbeSubject(new JsonObject())))
+                .findFirst()
+                .map(method -> {
+                    method.setAccessible(true);
+                    return method;
+                })
+                .orElseThrow(() -> new IllegalStateException("No poseFrom(<pose interface>, ...) on "
+                        + modelClass.getName() + "; entity_state models must expose one"));
+    }
+
+    private static Set<String> hiddenParts(ModelPart root, Map<String, String> namesToPaths) throws Exception {
+        Map<String, ModelPart> byName = new TreeMap<>();
+        collectBakedParts(root, "", byName, namesToPaths);
+        Set<String> hidden = new java.util.TreeSet<>();
+        byName.forEach((name, part) -> {
+            if (!part.visible) {
+                hidden.add(name);
+            }
+        });
+        return hidden;
+    }
+
+    private static void showAllParts(ModelPart root) {
+        root.getAllParts().forEach(part -> part.visible = true);
+    }
+
+    private static boolean hiddenByPath(String path, Set<String> hiddenBones) {
+        if (hiddenBones.isEmpty()) {
+            return false;
+        }
+        for (String segment : path.split("/")) {
+            if (!segment.isEmpty() && hiddenBones.contains(segment)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Bone positions in classic ModelPart terms (x/y/z in the parent's frame):
+     * the internal pivot is (x, 24 - y, z) of the absolute ModelPart pivot and
+     * GeckoLib translates by (-posX, posY, posZ), see OreSpawnGeoReplacement.
+     */
+    private static JsonObject javaPositions(Map<String, GeoBone> bones) {
+        JsonObject positions = new JsonObject();
+        bones.forEach((name, bone) -> {
+            GeoBone parent = bone.getParent();
+            float bindX = parent == null ? bone.getPivotX() : bone.getPivotX() - parent.getPivotX();
+            float bindY = parent == null ? 24.0F - bone.getPivotY() : parent.getPivotY() - bone.getPivotY();
+            float bindZ = parent == null ? bone.getPivotZ() : bone.getPivotZ() - parent.getPivotZ();
+            positions.add(name, floats(bindX - bone.getPosX(), bindY - bone.getPosY(), bindZ + bone.getPosZ()));
+        });
+        return positions;
+    }
+
+    private static JsonArray names(Set<String> names) {
+        JsonArray out = new JsonArray();
+        names.forEach(out::add);
         return out;
     }
 
@@ -216,7 +360,8 @@ public final class G1ModelProbe {
     }
 
     private static JsonObject captureVanillaSample(SampleRequest request, Object model, ModelPart root,
-                                                    Map<String, String> namesToPaths) throws Exception {
+                                                    Map<String, String> namesToPaths,
+                                                    Set<String> hiddenBones) throws Exception {
         JsonObject sample = new JsonObject();
         sample.addProperty("id", request.id());
         sample.addProperty("capture_kind", request.fullCapture() ? "full" : "transform_only");
@@ -236,6 +381,10 @@ public final class G1ModelProbe {
         CapturingVertexConsumer consumer = new CapturingVertexConsumer();
         root.visit(new PoseStack(), (pose, path, index, cube) -> {
             String boneName = boneNameForPath(path, namesToPaths);
+            if (hiddenByPath(path, hiddenBones)) {
+                // ModelPart.visit ignores `visible`; ModelPart.render does not.
+                return;
+            }
             consumer.begin(boneName, path, index);
             cube.compile(pose, consumer, 0, 0, -1);
             consumer.end();
@@ -424,18 +573,26 @@ public final class G1ModelProbe {
         Model rawModel = KeyFramesAdapter.GEO_GSON.fromJson(Files.readString(geoPath), Model.class);
         G1AnimationRuntime.Evaluator evaluator = G1AnimationRuntime.evaluator(rawModel);
         G1AnimationRuntime.EvaluatedModel bind = evaluator.bindPose();
+        String modelId = spec.get("id").getAsString();
         String animationKind = spec.get("animation_kind").getAsString();
+        boolean productionHook = CODE_DRIVEN_KIND.equals(animationKind)
+                || ENTITY_STATE_KIND.equals(animationKind);
         String candidatePath = spec.has("candidate_animation_path")
                 ? spec.get("candidate_animation_path").getAsString()
                 : "static_bind_pose";
         String emittedClipRole = spec.has("emitted_clip_role")
                 ? spec.get("emitted_clip_role").getAsString()
-                : "NOT_APPLICABLE_STATIC_MODEL";
-        if (!"static".equals(animationKind)
+                : productionHook ? "NOT_APPLICABLE_CODE_DRIVEN_MODEL" : "NOT_APPLICABLE_STATIC_MODEL";
+        if (GAIT_SCALED_KIND.equals(animationKind)
                 && !"REFERENCE_ONLY_NOT_RUNTIME_ACCEPTANCE".equals(emittedClipRole)) {
             throw new IllegalStateException("Animated G1 reference output must be explicitly excluded "
                     + "from runtime acceptance: " + emittedClipRole);
         }
+        if (productionHook && !S4CandidateRuntime.CANDIDATE_PATH.equals(candidatePath)) {
+            throw new IllegalStateException(modelId + " must declare candidate_animation_path "
+                    + S4CandidateRuntime.CANDIDATE_PATH);
+        }
+        String candidateClass = productionHook ? spec.get("candidate_class").getAsString() : null;
         if (!Files.isRegularFile(animationPath)) {
             throw new IllegalStateException("Missing generated animation artifact " + animationPath);
         }
@@ -444,9 +601,12 @@ public final class G1ModelProbe {
         out.addProperty("schema_version", 1);
         out.addProperty("probe", "static".equals(animationKind)
                 ? "GeckoLib BakedModelFactory + fresh static BakedGeoModel + GeoRenderer"
-                : "GeckoLib BakedModelFactory + fresh BakedGeoModel + "
-                        + "GeoModel.setCustomAnimations + GeoRenderer");
-        out.addProperty("model_id", spec.get("id").getAsString());
+                : productionHook
+                        ? "GeckoLib BakedModelFactory + fresh BakedGeoModel + "
+                                + "production OreSpawnGeoReplacement.pose + GeoRenderer"
+                        : "GeckoLib BakedModelFactory + fresh BakedGeoModel + "
+                                + "GeoModel.setCustomAnimations + GeoRenderer");
+        out.addProperty("model_id", modelId);
         out.addProperty("geckolib_version", manifest.get("geckolib_version").getAsString());
         out.addProperty("geometry_sha256", sha256(Files.readAllBytes(geoPath)));
         out.addProperty("animation_sha256", sha256(Files.readAllBytes(animationPath)));
@@ -454,33 +614,66 @@ public final class G1ModelProbe {
         out.addProperty("candidate_animation_path", candidatePath);
         out.addProperty("accepted_pose_source", "static".equals(animationKind)
                 ? "fresh BakedGeoModel static bind pose; no controller"
-                : "fresh BakedGeoModel + GeoModel.setCustomAnimations");
+                : productionHook
+                        ? S4CandidateRuntime.POSE_SOURCE
+                        : "fresh BakedGeoModel + GeoModel.setCustomAnimations");
         out.addProperty("fresh_baked_model_per_accepted_sample", true);
         out.addProperty("emitted_clip_role", emittedClipRole);
         out.addProperty("reference_animation_loaded_by_acceptance_runtime", false);
         out.addProperty("reference_animation_used_for_accepted_pose", false);
         out.addProperty("reference_animation_access_guard", "static".equals(animationKind)
                 ? "NOT_APPLICABLE_STATIC_MODEL"
-                : "GeoModel.getAnimationResource throws REFERENCE_ONLY_NOT_RUNTIME_ACCEPTANCE");
+                : productionHook
+                        ? "production model registers no controllers; the probe never requests the animation resource"
+                        : "GeoModel.getAnimationResource throws REFERENCE_ONLY_NOT_RUNTIME_ACCEPTANCE");
+        if (productionHook) {
+            out.addProperty("candidate_class", candidateClass);
+        }
         JsonArray boneNames = new JsonArray();
         bind.bones().keySet().forEach(boneNames::add);
         out.add("bone_names", boneNames);
 
         JsonArray samples = new JsonArray();
         SampleRequest bindRequest = new SampleRequest("bind", 0.0F, 0.0F, true, false);
-        samples.add(captureGeoSample(bindRequest, bind));
+        samples.add(captureGeoSample(bindRequest, bind, productionHook));
 
-        for (SampleRequest request : sampleRequests(spec)) {
-            G1AnimationRuntime.EvaluatedModel candidate;
-            if ("static".equals(animationKind)) {
-                candidate = evaluator.bindPose();
-            } else if ("geckolib_custom_animation_code".equals(candidatePath)) {
-                candidate = evaluator.evaluateBeaverCodeDriven(
-                        request.ageTicks(), request.limbSwingAmount());
-            } else {
-                throw new IllegalStateException("Unsupported G1 candidate animation path " + candidatePath);
+        float limbSwing = spec.get("limb_swing").getAsFloat();
+        float netHeadYaw = optionalFloat(spec, "net_head_yaw");
+        float headPitch = optionalFloat(spec, "head_pitch");
+        List<SampleRequest> requests = sampleRequests(spec);
+        List<JsonObject> states = entityStates(spec);
+        if (ENTITY_STATE_KIND.equals(animationKind)) {
+            for (JsonObject state : states) {
+                for (SampleRequest request : requests) {
+                    ProbeSubject subject = new ProbeSubject(state);
+                    G1AnimationRuntime.EvaluatedModel candidate = S4CandidateRuntime.evaluateProductionHook(
+                            rawModel, candidateClass,
+                            new S4CandidateRuntime.Inputs(request.ageTicks(), limbSwing,
+                                    request.limbSwingAmount(), netHeadYaw, headPitch),
+                            subject);
+                    JsonObject sample = captureGeoSample(stateRequest(state, request), candidate, true);
+                    sample.add("entity_state", state.deepCopy());
+                    sample.add("subject_after", subject.after());
+                    samples.add(sample);
+                }
             }
-            samples.add(captureGeoSample(request, candidate));
+        } else {
+            for (SampleRequest request : requests) {
+                G1AnimationRuntime.EvaluatedModel candidate;
+                if ("static".equals(animationKind)) {
+                    candidate = evaluator.bindPose();
+                } else if ("geckolib_custom_animation_code".equals(candidatePath)) {
+                    candidate = evaluator.evaluateBeaverCodeDriven(
+                            request.ageTicks(), request.limbSwingAmount());
+                } else if (productionHook) {
+                    candidate = S4CandidateRuntime.evaluateProductionHook(rawModel, candidateClass,
+                            new S4CandidateRuntime.Inputs(request.ageTicks(), limbSwing,
+                                    request.limbSwingAmount(), netHeadYaw, headPitch), null);
+                } else {
+                    throw new IllegalStateException("Unsupported G1 candidate animation path " + candidatePath);
+                }
+                samples.add(captureGeoSample(request, candidate, productionHook));
+            }
         }
         out.add("samples", samples);
         return out;
@@ -495,6 +688,11 @@ public final class G1ModelProbe {
 
     private static JsonObject captureGeoSample(
             SampleRequest request, G1AnimationRuntime.EvaluatedModel evaluated) {
+        return captureGeoSample(request, evaluated, false);
+    }
+
+    private static JsonObject captureGeoSample(
+            SampleRequest request, G1AnimationRuntime.EvaluatedModel evaluated, boolean productionHook) {
         JsonObject sample = new JsonObject();
         sample.addProperty("id", request.id());
         sample.addProperty("capture_kind", request.fullCapture() ? "full" : "transform_only");
@@ -502,6 +700,16 @@ public final class G1ModelProbe {
         sample.addProperty("age_ticks", request.ageTicks());
         sample.addProperty("limb_swing_amount", request.limbSwingAmount());
         sample.add("java_rotations", javaRotations(evaluated.internalRotations()));
+        if (productionHook) {
+            sample.add("java_positions", javaPositions(evaluated.bones()));
+            Set<String> hidden = new java.util.TreeSet<>();
+            evaluated.bones().forEach((name, bone) -> {
+                if (bone.isHidden()) {
+                    hidden.add(name);
+                }
+            });
+            sample.add("hidden_bones", names(hidden));
+        }
         if (!request.fullCapture()) {
             return sample;
         }

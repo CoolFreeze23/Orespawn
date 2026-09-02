@@ -31,7 +31,7 @@ The independent gates are:
 - Geometry maximum corner delta: 2.00000000117e-07 blocks (epsilon 1e-05).
 - Surface maximum UV delta: 0; normal delta: 0.
 - Animation maximum rotation delta: 0 radians (epsilon 2e-06).
-- Visual maximum changed fraction: 1.52587890625e-05; maximum mean absolute error: 0.00335184733073.
+- Visual maximum changed fraction: 0; maximum mean absolute error: 0.
 
 - Accepted path: exact Mth.cos GeoModel.setCustomAnimations legacy-parity exception.
 - Dense actual-candidate maximum delta: 0 radians over 2380 samples; minimum authored-key/probe separation 0.000733999999994 age ticks, coincidences 0.

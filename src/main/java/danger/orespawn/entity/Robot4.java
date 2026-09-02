@@ -1,5 +1,6 @@
 package danger.orespawn.entity;
 
+import danger.orespawn.entity.pose.Robot4Pose;
 import danger.orespawn.MobStats;
 import danger.orespawn.OreSpawnConfig;
 import danger.orespawn.entity.ai.GenericTargetSorter;
@@ -51,7 +52,7 @@ import danger.orespawn.entity.ai.TargetSelection;
  * server-side shield gate permanently cold, ENT-K-070). Registry ID
  * kept as "robot_4" for save compat.
  */
-public class Robot4 extends Monster {
+public class Robot4 extends Monster implements Robot4Pose {
     // OPT-011: cached SoundEvents — identical createVariableRangeEvent ids,
     // allocated once per class instead of on every sound query.
     private static final SoundEvent SND_ROBOT_LIVING = SoundEvent.createVariableRangeEvent(

@@ -1,5 +1,6 @@
 package danger.orespawn.entity;
 
+import danger.orespawn.entity.pose.Robot3Pose;
 import danger.orespawn.MobStats;
 import danger.orespawn.entity.ai.GenericTargetSorter;
 
@@ -40,7 +41,7 @@ import danger.orespawn.entity.ai.TargetSelection;
  * never goes below ~0.5x speed so the gunner doesn't crowd melee
  * RoboWarriors. Registry ID kept as "robot_3" for save compat.
  */
-public class Robot3 extends Monster {
+public class Robot3 extends Monster implements Robot3Pose {
     // OPT-011: cached SoundEvents — identical createVariableRangeEvent ids,
     // allocated once per class instead of on every sound query.
     private static final SoundEvent SND_ROBOT_LIVING = SoundEvent.createVariableRangeEvent(

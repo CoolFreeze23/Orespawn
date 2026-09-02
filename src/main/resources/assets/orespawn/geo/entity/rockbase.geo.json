@@ -1,0 +1,1934 @@
+{
+  "format_version": "1.12.0",
+  "minecraft:geometry": [
+    {
+      "description": {
+        "identifier": "geometry.orespawn.g1.model_rockbase",
+        "texture_width": 64,
+        "texture_height": 64
+      },
+      "bones": [
+        {
+          "name": "CrystalShape1",
+          "pivot": [
+            0,
+            1,
+            0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -1,
+                0,
+                -1
+              ],
+              "size": [
+                2,
+                5,
+                2
+              ],
+              "uv": {
+                "west": {
+                  "uv": [
+                    4,
+                    2
+                  ],
+                  "uv_size": [
+                    2,
+                    5
+                  ]
+                },
+                "east": {
+                  "uv": [
+                    0,
+                    2
+                  ],
+                  "uv_size": [
+                    2,
+                    5
+                  ]
+                },
+                "north": {
+                  "uv": [
+                    2,
+                    2
+                  ],
+                  "uv_size": [
+                    2,
+                    5
+                  ]
+                },
+                "south": {
+                  "uv": [
+                    6,
+                    2
+                  ],
+                  "uv_size": [
+                    2,
+                    5
+                  ]
+                },
+                "up": {
+                  "uv": [
+                    2,
+                    0
+                  ],
+                  "uv_size": [
+                    2,
+                    2
+                  ]
+                },
+                "down": {
+                  "uv": [
+                    4,
+                    2
+                  ],
+                  "uv_size": [
+                    2,
+                    -2
+                  ]
+                }
+              },
+              "modelpart_mirror": true
+            }
+          ]
+        },
+        {
+          "name": "CrystalShape2",
+          "pivot": [
+            0,
+            1,
+            0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -0.5,
+                5,
+                -0.5
+              ],
+              "size": [
+                1,
+                3,
+                1
+              ],
+              "uv": {
+                "west": {
+                  "uv": [
+                    12,
+                    1
+                  ],
+                  "uv_size": [
+                    1,
+                    3
+                  ]
+                },
+                "east": {
+                  "uv": [
+                    10,
+                    1
+                  ],
+                  "uv_size": [
+                    1,
+                    3
+                  ]
+                },
+                "north": {
+                  "uv": [
+                    11,
+                    1
+                  ],
+                  "uv_size": [
+                    1,
+                    3
+                  ]
+                },
+                "south": {
+                  "uv": [
+                    13,
+                    1
+                  ],
+                  "uv_size": [
+                    1,
+                    3
+                  ]
+                },
+                "up": {
+                  "uv": [
+                    11,
+                    0
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "down": {
+                  "uv": [
+                    12,
+                    1
+                  ],
+                  "uv_size": [
+                    1,
+                    -1
+                  ]
+                }
+              },
+              "modelpart_mirror": true
+            }
+          ]
+        },
+        {
+          "name": "CrystalShape3a",
+          "pivot": [
+            0,
+            1,
+            0
+          ],
+          "rotation": [
+            31.0000018267,
+            0,
+            0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                0,
+                1,
+                -1
+              ],
+              "size": [
+                1,
+                5,
+                1
+              ],
+              "uv": {
+                "west": {
+                  "uv": [
+                    2,
+                    9
+                  ],
+                  "uv_size": [
+                    1,
+                    5
+                  ]
+                },
+                "east": {
+                  "uv": [
+                    0,
+                    9
+                  ],
+                  "uv_size": [
+                    1,
+                    5
+                  ]
+                },
+                "north": {
+                  "uv": [
+                    1,
+                    9
+                  ],
+                  "uv_size": [
+                    1,
+                    5
+                  ]
+                },
+                "south": {
+                  "uv": [
+                    3,
+                    9
+                  ],
+                  "uv_size": [
+                    1,
+                    5
+                  ]
+                },
+                "up": {
+                  "uv": [
+                    1,
+                    8
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "down": {
+                  "uv": [
+                    2,
+                    9
+                  ],
+                  "uv_size": [
+                    1,
+                    -1
+                  ]
+                }
+              },
+              "modelpart_mirror": true
+            }
+          ]
+        },
+        {
+          "name": "CrystalShape3b",
+          "pivot": [
+            0,
+            1,
+            0
+          ],
+          "rotation": [
+            -31.0000018267,
+            0,
+            0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -1,
+                1,
+                0
+              ],
+              "size": [
+                1,
+                5,
+                1
+              ],
+              "uv": {
+                "west": {
+                  "uv": [
+                    2,
+                    9
+                  ],
+                  "uv_size": [
+                    1,
+                    5
+                  ]
+                },
+                "east": {
+                  "uv": [
+                    0,
+                    9
+                  ],
+                  "uv_size": [
+                    1,
+                    5
+                  ]
+                },
+                "north": {
+                  "uv": [
+                    1,
+                    9
+                  ],
+                  "uv_size": [
+                    1,
+                    5
+                  ]
+                },
+                "south": {
+                  "uv": [
+                    3,
+                    9
+                  ],
+                  "uv_size": [
+                    1,
+                    5
+                  ]
+                },
+                "up": {
+                  "uv": [
+                    1,
+                    8
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "down": {
+                  "uv": [
+                    2,
+                    9
+                  ],
+                  "uv_size": [
+                    1,
+                    -1
+                  ]
+                }
+              },
+              "modelpart_mirror": true
+            }
+          ]
+        },
+        {
+          "name": "CrystalShape3c",
+          "pivot": [
+            0,
+            1,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            -31.0000018267
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -1,
+                1,
+                -1
+              ],
+              "size": [
+                1,
+                5,
+                1
+              ],
+              "uv": {
+                "west": {
+                  "uv": [
+                    2,
+                    9
+                  ],
+                  "uv_size": [
+                    1,
+                    5
+                  ]
+                },
+                "east": {
+                  "uv": [
+                    0,
+                    9
+                  ],
+                  "uv_size": [
+                    1,
+                    5
+                  ]
+                },
+                "north": {
+                  "uv": [
+                    1,
+                    9
+                  ],
+                  "uv_size": [
+                    1,
+                    5
+                  ]
+                },
+                "south": {
+                  "uv": [
+                    3,
+                    9
+                  ],
+                  "uv_size": [
+                    1,
+                    5
+                  ]
+                },
+                "up": {
+                  "uv": [
+                    1,
+                    8
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "down": {
+                  "uv": [
+                    2,
+                    9
+                  ],
+                  "uv_size": [
+                    1,
+                    -1
+                  ]
+                }
+              },
+              "modelpart_mirror": true
+            }
+          ]
+        },
+        {
+          "name": "CrystalShape3d",
+          "pivot": [
+            0,
+            1,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            31.0000018267
+          ],
+          "cubes": [
+            {
+              "origin": [
+                0,
+                1,
+                0
+              ],
+              "size": [
+                1,
+                5,
+                1
+              ],
+              "uv": {
+                "west": {
+                  "uv": [
+                    2,
+                    9
+                  ],
+                  "uv_size": [
+                    1,
+                    5
+                  ]
+                },
+                "east": {
+                  "uv": [
+                    0,
+                    9
+                  ],
+                  "uv_size": [
+                    1,
+                    5
+                  ]
+                },
+                "north": {
+                  "uv": [
+                    1,
+                    9
+                  ],
+                  "uv_size": [
+                    1,
+                    5
+                  ]
+                },
+                "south": {
+                  "uv": [
+                    3,
+                    9
+                  ],
+                  "uv_size": [
+                    1,
+                    5
+                  ]
+                },
+                "up": {
+                  "uv": [
+                    1,
+                    8
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "down": {
+                  "uv": [
+                    2,
+                    9
+                  ],
+                  "uv_size": [
+                    1,
+                    -1
+                  ]
+                }
+              },
+              "modelpart_mirror": true
+            }
+          ]
+        },
+        {
+          "name": "CrystalShape4a",
+          "pivot": [
+            0,
+            1,
+            0
+          ],
+          "rotation": [
+            75.0000034953,
+            0,
+            0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -1,
+                1,
+                -1
+              ],
+              "size": [
+                1,
+                3,
+                1
+              ],
+              "uv": {
+                "west": {
+                  "uv": [
+                    2,
+                    17
+                  ],
+                  "uv_size": [
+                    1,
+                    3
+                  ]
+                },
+                "east": {
+                  "uv": [
+                    0,
+                    17
+                  ],
+                  "uv_size": [
+                    1,
+                    3
+                  ]
+                },
+                "north": {
+                  "uv": [
+                    1,
+                    17
+                  ],
+                  "uv_size": [
+                    1,
+                    3
+                  ]
+                },
+                "south": {
+                  "uv": [
+                    3,
+                    17
+                  ],
+                  "uv_size": [
+                    1,
+                    3
+                  ]
+                },
+                "up": {
+                  "uv": [
+                    1,
+                    16
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "down": {
+                  "uv": [
+                    2,
+                    17
+                  ],
+                  "uv_size": [
+                    1,
+                    -1
+                  ]
+                }
+              },
+              "modelpart_mirror": true
+            }
+          ]
+        },
+        {
+          "name": "CrystalShape4b",
+          "pivot": [
+            0,
+            1,
+            0
+          ],
+          "rotation": [
+            -75.0000034953,
+            0,
+            0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                0,
+                1,
+                0
+              ],
+              "size": [
+                1,
+                3,
+                1
+              ],
+              "uv": {
+                "west": {
+                  "uv": [
+                    2,
+                    17
+                  ],
+                  "uv_size": [
+                    1,
+                    3
+                  ]
+                },
+                "east": {
+                  "uv": [
+                    0,
+                    17
+                  ],
+                  "uv_size": [
+                    1,
+                    3
+                  ]
+                },
+                "north": {
+                  "uv": [
+                    1,
+                    17
+                  ],
+                  "uv_size": [
+                    1,
+                    3
+                  ]
+                },
+                "south": {
+                  "uv": [
+                    3,
+                    17
+                  ],
+                  "uv_size": [
+                    1,
+                    3
+                  ]
+                },
+                "up": {
+                  "uv": [
+                    1,
+                    16
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "down": {
+                  "uv": [
+                    2,
+                    17
+                  ],
+                  "uv_size": [
+                    1,
+                    -1
+                  ]
+                }
+              },
+              "modelpart_mirror": true
+            }
+          ]
+        },
+        {
+          "name": "CrystalShape4c",
+          "pivot": [
+            0,
+            1,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            -75.0000034953
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -1,
+                1,
+                0
+              ],
+              "size": [
+                1,
+                3,
+                1
+              ],
+              "uv": {
+                "west": {
+                  "uv": [
+                    2,
+                    17
+                  ],
+                  "uv_size": [
+                    1,
+                    3
+                  ]
+                },
+                "east": {
+                  "uv": [
+                    0,
+                    17
+                  ],
+                  "uv_size": [
+                    1,
+                    3
+                  ]
+                },
+                "north": {
+                  "uv": [
+                    1,
+                    17
+                  ],
+                  "uv_size": [
+                    1,
+                    3
+                  ]
+                },
+                "south": {
+                  "uv": [
+                    3,
+                    17
+                  ],
+                  "uv_size": [
+                    1,
+                    3
+                  ]
+                },
+                "up": {
+                  "uv": [
+                    1,
+                    16
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "down": {
+                  "uv": [
+                    2,
+                    17
+                  ],
+                  "uv_size": [
+                    1,
+                    -1
+                  ]
+                }
+              },
+              "modelpart_mirror": true
+            }
+          ]
+        },
+        {
+          "name": "CrystalShape4d",
+          "pivot": [
+            0,
+            1,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            75.0000034953
+          ],
+          "cubes": [
+            {
+              "origin": [
+                0,
+                1,
+                -1
+              ],
+              "size": [
+                1,
+                3,
+                1
+              ],
+              "uv": {
+                "west": {
+                  "uv": [
+                    2,
+                    17
+                  ],
+                  "uv_size": [
+                    1,
+                    3
+                  ]
+                },
+                "east": {
+                  "uv": [
+                    0,
+                    17
+                  ],
+                  "uv_size": [
+                    1,
+                    3
+                  ]
+                },
+                "north": {
+                  "uv": [
+                    1,
+                    17
+                  ],
+                  "uv_size": [
+                    1,
+                    3
+                  ]
+                },
+                "south": {
+                  "uv": [
+                    3,
+                    17
+                  ],
+                  "uv_size": [
+                    1,
+                    3
+                  ]
+                },
+                "up": {
+                  "uv": [
+                    1,
+                    16
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "down": {
+                  "uv": [
+                    2,
+                    17
+                  ],
+                  "uv_size": [
+                    1,
+                    -1
+                  ]
+                }
+              },
+              "modelpart_mirror": true
+            }
+          ]
+        },
+        {
+          "name": "RockShape1",
+          "pivot": [
+            0,
+            1,
+            0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -3,
+                0,
+                -1
+              ],
+              "size": [
+                6,
+                1,
+                2
+              ],
+              "uv": {
+                "west": {
+                  "uv": [
+                    8,
+                    2
+                  ],
+                  "uv_size": [
+                    2,
+                    1
+                  ]
+                },
+                "east": {
+                  "uv": [
+                    0,
+                    2
+                  ],
+                  "uv_size": [
+                    2,
+                    1
+                  ]
+                },
+                "north": {
+                  "uv": [
+                    2,
+                    2
+                  ],
+                  "uv_size": [
+                    6,
+                    1
+                  ]
+                },
+                "south": {
+                  "uv": [
+                    10,
+                    2
+                  ],
+                  "uv_size": [
+                    6,
+                    1
+                  ]
+                },
+                "up": {
+                  "uv": [
+                    2,
+                    0
+                  ],
+                  "uv_size": [
+                    6,
+                    2
+                  ]
+                },
+                "down": {
+                  "uv": [
+                    8,
+                    2
+                  ],
+                  "uv_size": [
+                    6,
+                    -2
+                  ]
+                }
+              },
+              "modelpart_mirror": true
+            }
+          ]
+        },
+        {
+          "name": "RockShape2",
+          "pivot": [
+            0,
+            1,
+            0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                0,
+                0,
+                1
+              ],
+              "size": [
+                3,
+                1,
+                1
+              ],
+              "uv": {
+                "west": {
+                  "uv": [
+                    4,
+                    5
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "east": {
+                  "uv": [
+                    0,
+                    5
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "north": {
+                  "uv": [
+                    1,
+                    5
+                  ],
+                  "uv_size": [
+                    3,
+                    1
+                  ]
+                },
+                "south": {
+                  "uv": [
+                    5,
+                    5
+                  ],
+                  "uv_size": [
+                    3,
+                    1
+                  ]
+                },
+                "up": {
+                  "uv": [
+                    1,
+                    4
+                  ],
+                  "uv_size": [
+                    3,
+                    1
+                  ]
+                },
+                "down": {
+                  "uv": [
+                    4,
+                    5
+                  ],
+                  "uv_size": [
+                    3,
+                    -1
+                  ]
+                }
+              },
+              "modelpart_mirror": true
+            }
+          ]
+        },
+        {
+          "name": "RockShape3",
+          "pivot": [
+            0,
+            1,
+            0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -2,
+                0,
+                -2
+              ],
+              "size": [
+                2,
+                1,
+                1
+              ],
+              "uv": {
+                "west": {
+                  "uv": [
+                    3,
+                    8
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "east": {
+                  "uv": [
+                    0,
+                    8
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "north": {
+                  "uv": [
+                    1,
+                    8
+                  ],
+                  "uv_size": [
+                    2,
+                    1
+                  ]
+                },
+                "south": {
+                  "uv": [
+                    4,
+                    8
+                  ],
+                  "uv_size": [
+                    2,
+                    1
+                  ]
+                },
+                "up": {
+                  "uv": [
+                    1,
+                    7
+                  ],
+                  "uv_size": [
+                    2,
+                    1
+                  ]
+                },
+                "down": {
+                  "uv": [
+                    3,
+                    8
+                  ],
+                  "uv_size": [
+                    2,
+                    -1
+                  ]
+                }
+              },
+              "modelpart_mirror": true
+            }
+          ]
+        },
+        {
+          "name": "RockSmallShape1",
+          "pivot": [
+            0,
+            1,
+            0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -2,
+                0,
+                -1
+              ],
+              "size": [
+                2,
+                1,
+                1
+              ],
+              "uv": {
+                "west": {
+                  "uv": [
+                    3,
+                    8
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "east": {
+                  "uv": [
+                    0,
+                    8
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "north": {
+                  "uv": [
+                    1,
+                    8
+                  ],
+                  "uv_size": [
+                    2,
+                    1
+                  ]
+                },
+                "south": {
+                  "uv": [
+                    4,
+                    8
+                  ],
+                  "uv_size": [
+                    2,
+                    1
+                  ]
+                },
+                "up": {
+                  "uv": [
+                    1,
+                    7
+                  ],
+                  "uv_size": [
+                    2,
+                    1
+                  ]
+                },
+                "down": {
+                  "uv": [
+                    3,
+                    8
+                  ],
+                  "uv_size": [
+                    2,
+                    -1
+                  ]
+                }
+              },
+              "modelpart_mirror": true
+            }
+          ]
+        },
+        {
+          "name": "RockSmallShape2",
+          "pivot": [
+            0,
+            1,
+            0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -1,
+                0,
+                0
+              ],
+              "size": [
+                3,
+                1,
+                1
+              ],
+              "uv": {
+                "west": {
+                  "uv": [
+                    4,
+                    5
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "east": {
+                  "uv": [
+                    0,
+                    5
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "north": {
+                  "uv": [
+                    1,
+                    5
+                  ],
+                  "uv_size": [
+                    3,
+                    1
+                  ]
+                },
+                "south": {
+                  "uv": [
+                    5,
+                    5
+                  ],
+                  "uv_size": [
+                    3,
+                    1
+                  ]
+                },
+                "up": {
+                  "uv": [
+                    1,
+                    4
+                  ],
+                  "uv_size": [
+                    3,
+                    1
+                  ]
+                },
+                "down": {
+                  "uv": [
+                    4,
+                    5
+                  ],
+                  "uv_size": [
+                    3,
+                    -1
+                  ]
+                }
+              },
+              "modelpart_mirror": true
+            }
+          ]
+        },
+        {
+          "name": "RockSpikeyShape1",
+          "pivot": [
+            0,
+            1,
+            0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -3,
+                0,
+                -1
+              ],
+              "size": [
+                6,
+                1,
+                2
+              ],
+              "uv": {
+                "west": {
+                  "uv": [
+                    8,
+                    2
+                  ],
+                  "uv_size": [
+                    2,
+                    1
+                  ]
+                },
+                "east": {
+                  "uv": [
+                    0,
+                    2
+                  ],
+                  "uv_size": [
+                    2,
+                    1
+                  ]
+                },
+                "north": {
+                  "uv": [
+                    2,
+                    2
+                  ],
+                  "uv_size": [
+                    6,
+                    1
+                  ]
+                },
+                "south": {
+                  "uv": [
+                    10,
+                    2
+                  ],
+                  "uv_size": [
+                    6,
+                    1
+                  ]
+                },
+                "up": {
+                  "uv": [
+                    2,
+                    0
+                  ],
+                  "uv_size": [
+                    6,
+                    2
+                  ]
+                },
+                "down": {
+                  "uv": [
+                    8,
+                    2
+                  ],
+                  "uv_size": [
+                    6,
+                    -2
+                  ]
+                }
+              },
+              "modelpart_mirror": true
+            }
+          ]
+        },
+        {
+          "name": "RockSpikeyShape2",
+          "pivot": [
+            0,
+            1,
+            0
+          ],
+          "rotation": [
+            0,
+            -89.999981276,
+            0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                1,
+                0,
+                -1
+              ],
+              "size": [
+                3,
+                1,
+                1
+              ],
+              "uv": {
+                "west": {
+                  "uv": [
+                    4,
+                    5
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "east": {
+                  "uv": [
+                    0,
+                    5
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "north": {
+                  "uv": [
+                    1,
+                    5
+                  ],
+                  "uv_size": [
+                    3,
+                    1
+                  ]
+                },
+                "south": {
+                  "uv": [
+                    5,
+                    5
+                  ],
+                  "uv_size": [
+                    3,
+                    1
+                  ]
+                },
+                "up": {
+                  "uv": [
+                    1,
+                    4
+                  ],
+                  "uv_size": [
+                    3,
+                    1
+                  ]
+                },
+                "down": {
+                  "uv": [
+                    4,
+                    5
+                  ],
+                  "uv_size": [
+                    3,
+                    -1
+                  ]
+                }
+              },
+              "modelpart_mirror": true
+            }
+          ]
+        },
+        {
+          "name": "RockSpikeyShape3",
+          "pivot": [
+            0,
+            1,
+            0
+          ],
+          "rotation": [
+            0,
+            -89.999981276,
+            0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -3,
+                0,
+                1
+              ],
+              "size": [
+                2,
+                1,
+                1
+              ],
+              "uv": {
+                "west": {
+                  "uv": [
+                    3,
+                    8
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "east": {
+                  "uv": [
+                    0,
+                    8
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "north": {
+                  "uv": [
+                    1,
+                    8
+                  ],
+                  "uv_size": [
+                    2,
+                    1
+                  ]
+                },
+                "south": {
+                  "uv": [
+                    4,
+                    8
+                  ],
+                  "uv_size": [
+                    2,
+                    1
+                  ]
+                },
+                "up": {
+                  "uv": [
+                    1,
+                    7
+                  ],
+                  "uv_size": [
+                    2,
+                    1
+                  ]
+                },
+                "down": {
+                  "uv": [
+                    3,
+                    8
+                  ],
+                  "uv_size": [
+                    2,
+                    -1
+                  ]
+                }
+              },
+              "modelpart_mirror": true
+            }
+          ]
+        },
+        {
+          "name": "RockTNTShape1",
+          "pivot": [
+            0,
+            1,
+            0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -3,
+                0,
+                -1
+              ],
+              "size": [
+                6,
+                1,
+                2
+              ],
+              "uv": {
+                "west": {
+                  "uv": [
+                    8,
+                    2
+                  ],
+                  "uv_size": [
+                    2,
+                    1
+                  ]
+                },
+                "east": {
+                  "uv": [
+                    0,
+                    2
+                  ],
+                  "uv_size": [
+                    2,
+                    1
+                  ]
+                },
+                "north": {
+                  "uv": [
+                    2,
+                    2
+                  ],
+                  "uv_size": [
+                    6,
+                    1
+                  ]
+                },
+                "south": {
+                  "uv": [
+                    10,
+                    2
+                  ],
+                  "uv_size": [
+                    6,
+                    1
+                  ]
+                },
+                "up": {
+                  "uv": [
+                    2,
+                    0
+                  ],
+                  "uv_size": [
+                    6,
+                    2
+                  ]
+                },
+                "down": {
+                  "uv": [
+                    8,
+                    2
+                  ],
+                  "uv_size": [
+                    6,
+                    -2
+                  ]
+                }
+              },
+              "modelpart_mirror": true
+            }
+          ]
+        },
+        {
+          "name": "RockTNTShape2",
+          "pivot": [
+            0,
+            1,
+            0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                0,
+                0,
+                1
+              ],
+              "size": [
+                3,
+                1,
+                1
+              ],
+              "uv": {
+                "west": {
+                  "uv": [
+                    4,
+                    5
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "east": {
+                  "uv": [
+                    0,
+                    5
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "north": {
+                  "uv": [
+                    1,
+                    5
+                  ],
+                  "uv_size": [
+                    3,
+                    1
+                  ]
+                },
+                "south": {
+                  "uv": [
+                    5,
+                    5
+                  ],
+                  "uv_size": [
+                    3,
+                    1
+                  ]
+                },
+                "up": {
+                  "uv": [
+                    1,
+                    4
+                  ],
+                  "uv_size": [
+                    3,
+                    1
+                  ]
+                },
+                "down": {
+                  "uv": [
+                    4,
+                    5
+                  ],
+                  "uv_size": [
+                    3,
+                    -1
+                  ]
+                }
+              },
+              "modelpart_mirror": true
+            }
+          ]
+        },
+        {
+          "name": "RockTNTShape3",
+          "pivot": [
+            0,
+            1,
+            0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -2,
+                0,
+                -2
+              ],
+              "size": [
+                2,
+                1,
+                1
+              ],
+              "uv": {
+                "west": {
+                  "uv": [
+                    3,
+                    8
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "east": {
+                  "uv": [
+                    0,
+                    8
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "north": {
+                  "uv": [
+                    1,
+                    8
+                  ],
+                  "uv_size": [
+                    2,
+                    1
+                  ]
+                },
+                "south": {
+                  "uv": [
+                    4,
+                    8
+                  ],
+                  "uv_size": [
+                    2,
+                    1
+                  ]
+                },
+                "up": {
+                  "uv": [
+                    1,
+                    7
+                  ],
+                  "uv_size": [
+                    2,
+                    1
+                  ]
+                },
+                "down": {
+                  "uv": [
+                    3,
+                    8
+                  ],
+                  "uv_size": [
+                    2,
+                    -1
+                  ]
+                }
+              },
+              "modelpart_mirror": true
+            }
+          ]
+        },
+        {
+          "name": "RockTNTShape4",
+          "pivot": [
+            0,
+            2,
+            0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                1,
+                1,
+                -2
+              ],
+              "size": [
+                3,
+                1,
+                3
+              ],
+              "uv": {
+                "west": {
+                  "uv": [
+                    6,
+                    13
+                  ],
+                  "uv_size": [
+                    3,
+                    1
+                  ]
+                },
+                "east": {
+                  "uv": [
+                    0,
+                    13
+                  ],
+                  "uv_size": [
+                    3,
+                    1
+                  ]
+                },
+                "north": {
+                  "uv": [
+                    3,
+                    13
+                  ],
+                  "uv_size": [
+                    3,
+                    1
+                  ]
+                },
+                "south": {
+                  "uv": [
+                    9,
+                    13
+                  ],
+                  "uv_size": [
+                    3,
+                    1
+                  ]
+                },
+                "up": {
+                  "uv": [
+                    3,
+                    10
+                  ],
+                  "uv_size": [
+                    3,
+                    3
+                  ]
+                },
+                "down": {
+                  "uv": [
+                    6,
+                    13
+                  ],
+                  "uv_size": [
+                    3,
+                    -3
+                  ]
+                }
+              },
+              "modelpart_mirror": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,5 +1,6 @@
 package danger.orespawn.entity;
 
+import danger.orespawn.entity.pose.Robot2Pose;
 import danger.orespawn.MobStats;
 import danger.orespawn.OreSpawnConfig;
 import danger.orespawn.entity.ai.GenericTargetSorter;
@@ -49,7 +50,7 @@ import danger.orespawn.entity.ai.TargetSelection;
  * restored here to keep each robot's original identity. Registry ID
  * kept as "robot_2" for save compat.
  */
-public class Robot2 extends Monster {
+public class Robot2 extends Monster implements Robot2Pose {
     // OPT-011: cached SoundEvents — identical createVariableRangeEvent ids,
     // allocated once per class instead of on every sound query.
     private static final SoundEvent SND_ROBOT_LIVING = SoundEvent.createVariableRangeEvent(
