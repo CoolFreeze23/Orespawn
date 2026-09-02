@@ -1,0 +1,988 @@
+{
+ "status_counts": {
+  "DIVERGES_TEXTURE_MAPPING": 78,
+  "DIVERGES": 7,
+  "PASS": 2
+ },
+ "category_models": {
+  "MIRROR": [
+   "alien",
+   "alosaurus",
+   "antrobot",
+   "attacksquid",
+   "bandp",
+   "baryonyx",
+   "basilisk",
+   "beaver",
+   "bee",
+   "brutalfly",
+   "camarasaurus",
+   "cassowary",
+   "caterkiller",
+   "cavefisher",
+   "cephadrome",
+   "chipmunk",
+   "cloudshark",
+   "cockateil",
+   "crab",
+   "creepinghorror",
+   "cryolophosaurus",
+   "dragon",
+   "dragonfly",
+   "dungeonbeast",
+   "easterbunny",
+   "elevator",
+   "emperorscorpion",
+   "enderknight",
+   "enderreaper",
+   "fairy",
+   "firefly",
+   "flounder",
+   "frog",
+   "gazelle",
+   "ghostskelly",
+   "giantrobot",
+   "godzilla",
+   "goldfish",
+   "hammerhead",
+   "herculesbeetle",
+   "hydrolisc",
+   "irukandji",
+   "kraken",
+   "leon",
+   "lizard",
+   "lurkingterror",
+   "mantis",
+   "molenoid",
+   "nastysaurus",
+   "ostrich",
+   "peacock",
+   "pitchblack",
+   "pointysaurus",
+   "purplepower",
+   "robot1",
+   "robot2",
+   "robot3",
+   "robot4",
+   "robot5",
+   "rockbase",
+   "scorpion",
+   "seamonster",
+   "seaviper",
+   "spiderrobot",
+   "spitbug",
+   "spyro",
+   "stinkbug",
+   "stinky",
+   "theking",
+   "theprince",
+   "theprinceadult",
+   "theprincess",
+   "theprinceteen",
+   "trex",
+   "triffid",
+   "trooperbug",
+   "urchin",
+   "velocityraptor",
+   "waterdragon",
+   "whale",
+   "wormlarge",
+   "wormmedium"
+  ],
+  "EXTRA_IN_PORT": [
+   "caterkiller",
+   "island",
+   "islandtoo",
+   "skate"
+  ],
+  "PIVOT": [
+   "elevator",
+   "seaviper",
+   "stinkbug"
+  ],
+  "MISSING_IN_PORT": [
+   "island",
+   "islandtoo",
+   "skate"
+  ],
+  "ROTATION": [
+   "seaviper"
+  ]
+ },
+ "rows": [
+  {
+   "model": "alien",
+   "status": "DIVERGES_TEXTURE_MAPPING",
+   "matched": 55,
+   "reference_parts": 55,
+   "port_parts": 55,
+   "categories": {
+    "MIRROR": 55
+   }
+  },
+  {
+   "model": "alosaurus",
+   "status": "DIVERGES_TEXTURE_MAPPING",
+   "matched": 21,
+   "reference_parts": 21,
+   "port_parts": 21,
+   "categories": {
+    "MIRROR": 21
+   }
+  },
+  {
+   "model": "antrobot",
+   "status": "DIVERGES_TEXTURE_MAPPING",
+   "matched": 27,
+   "reference_parts": 27,
+   "port_parts": 27,
+   "categories": {
+    "MIRROR": 27
+   }
+  },
+  {
+   "model": "attacksquid",
+   "status": "DIVERGES_TEXTURE_MAPPING",
+   "matched": 9,
+   "reference_parts": 9,
+   "port_parts": 9,
+   "categories": {
+    "MIRROR": 9
+   }
+  },
+  {
+   "model": "bandp",
+   "status": "DIVERGES_TEXTURE_MAPPING",
+   "matched": 7,
+   "reference_parts": 7,
+   "port_parts": 7,
+   "categories": {
+    "MIRROR": 7
+   }
+  },
+  {
+   "model": "baryonyx",
+   "status": "DIVERGES_TEXTURE_MAPPING",
+   "matched": 52,
+   "reference_parts": 52,
+   "port_parts": 52,
+   "categories": {
+    "MIRROR": 52
+   }
+  },
+  {
+   "model": "basilisk",
+   "status": "DIVERGES_TEXTURE_MAPPING",
+   "matched": 21,
+   "reference_parts": 21,
+   "port_parts": 21,
+   "categories": {
+    "MIRROR": 21
+   }
+  },
+  {
+   "model": "beaver",
+   "status": "DIVERGES_TEXTURE_MAPPING",
+   "matched": 9,
+   "reference_parts": 9,
+   "port_parts": 9,
+   "categories": {
+    "MIRROR": 9
+   }
+  },
+  {
+   "model": "bee",
+   "status": "DIVERGES_TEXTURE_MAPPING",
+   "matched": 23,
+   "reference_parts": 23,
+   "port_parts": 23,
+   "categories": {
+    "MIRROR": 23
+   }
+  },
+  {
+   "model": "brutalfly",
+   "status": "DIVERGES_TEXTURE_MAPPING",
+   "matched": 14,
+   "reference_parts": 14,
+   "port_parts": 14,
+   "categories": {
+    "MIRROR": 14
+   }
+  },
+  {
+   "model": "camarasaurus",
+   "status": "DIVERGES_TEXTURE_MAPPING",
+   "matched": 21,
+   "reference_parts": 21,
+   "port_parts": 21,
+   "categories": {
+    "MIRROR": 21
+   }
+  },
+  {
+   "model": "cassowary",
+   "status": "DIVERGES_TEXTURE_MAPPING",
+   "matched": 12,
+   "reference_parts": 12,
+   "port_parts": 12,
+   "categories": {
+    "MIRROR": 12
+   }
+  },
+  {
+   "model": "caterkiller",
+   "status": "DIVERGES",
+   "matched": 31,
+   "reference_parts": 31,
+   "port_parts": 80,
+   "categories": {
+    "EXTRA_IN_PORT": 49,
+    "MIRROR": 31
+   }
+  },
+  {
+   "model": "cavefisher",
+   "status": "DIVERGES_TEXTURE_MAPPING",
+   "matched": 75,
+   "reference_parts": 75,
+   "port_parts": 75,
+   "categories": {
+    "MIRROR": 75
+   }
+  },
+  {
+   "model": "cephadrome",
+   "status": "DIVERGES_TEXTURE_MAPPING",
+   "matched": 50,
+   "reference_parts": 50,
+   "port_parts": 50,
+   "categories": {
+    "MIRROR": 50
+   }
+  },
+  {
+   "model": "chipmunk",
+   "status": "DIVERGES_TEXTURE_MAPPING",
+   "matched": 18,
+   "reference_parts": 18,
+   "port_parts": 18,
+   "categories": {
+    "MIRROR": 18
+   }
+  },
+  {
+   "model": "cloudshark",
+   "status": "DIVERGES_TEXTURE_MAPPING",
+   "matched": 8,
+   "reference_parts": 8,
+   "port_parts": 8,
+   "categories": {
+    "MIRROR": 8
+   }
+  },
+  {
+   "model": "cockateil",
+   "status": "DIVERGES_TEXTURE_MAPPING",
+   "matched": 16,
+   "reference_parts": 16,
+   "port_parts": 16,
+   "categories": {
+    "MIRROR": 16
+   }
+  },
+  {
+   "model": "coin",
+   "status": "PASS",
+   "matched": 1,
+   "reference_parts": 1,
+   "port_parts": 1,
+   "categories": {}
+  },
+  {
+   "model": "crab",
+   "status": "DIVERGES_TEXTURE_MAPPING",
+   "matched": 25,
+   "reference_parts": 25,
+   "port_parts": 25,
+   "categories": {
+    "MIRROR": 25
+   }
+  },
+  {
+   "model": "creepinghorror",
+   "status": "DIVERGES_TEXTURE_MAPPING",
+   "matched": 26,
+   "reference_parts": 26,
+   "port_parts": 26,
+   "categories": {
+    "MIRROR": 26
+   }
+  },
+  {
+   "model": "cryolophosaurus",
+   "status": "DIVERGES_TEXTURE_MAPPING",
+   "matched": 20,
+   "reference_parts": 20,
+   "port_parts": 20,
+   "categories": {
+    "MIRROR": 20
+   }
+  },
+  {
+   "model": "dragon",
+   "status": "DIVERGES_TEXTURE_MAPPING",
+   "matched": 55,
+   "reference_parts": 55,
+   "port_parts": 55,
+   "categories": {
+    "MIRROR": 55
+   }
+  },
+  {
+   "model": "dragonfly",
+   "status": "DIVERGES_TEXTURE_MAPPING",
+   "matched": 26,
+   "reference_parts": 26,
+   "port_parts": 26,
+   "categories": {
+    "MIRROR": 26
+   }
+  },
+  {
+   "model": "dungeonbeast",
+   "status": "DIVERGES_TEXTURE_MAPPING",
+   "matched": 64,
+   "reference_parts": 64,
+   "port_parts": 64,
+   "categories": {
+    "MIRROR": 64
+   }
+  },
+  {
+   "model": "easterbunny",
+   "status": "DIVERGES_TEXTURE_MAPPING",
+   "matched": 13,
+   "reference_parts": 13,
+   "port_parts": 13,
+   "categories": {
+    "MIRROR": 13
+   }
+  },
+  {
+   "model": "elevator",
+   "status": "DIVERGES",
+   "matched": 5,
+   "reference_parts": 5,
+   "port_parts": 5,
+   "categories": {
+    "PIVOT": 5,
+    "MIRROR": 5
+   }
+  },
+  {
+   "model": "emperorscorpion",
+   "status": "DIVERGES_TEXTURE_MAPPING",
+   "matched": 78,
+   "reference_parts": 78,
+   "port_parts": 78,
+   "categories": {
+    "MIRROR": 78
+   }
+  },
+  {
+   "model": "enderknight",
+   "status": "DIVERGES_TEXTURE_MAPPING",
+   "matched": 40,
+   "reference_parts": 40,
+   "port_parts": 40,
+   "categories": {
+    "MIRROR": 40
+   }
+  },
+  {
+   "model": "enderreaper",
+   "status": "DIVERGES_TEXTURE_MAPPING",
+   "matched": 66,
+   "reference_parts": 66,
+   "port_parts": 66,
+   "categories": {
+    "MIRROR": 66
+   }
+  },
+  {
+   "model": "fairy",
+   "status": "DIVERGES_TEXTURE_MAPPING",
+   "matched": 15,
+   "reference_parts": 15,
+   "port_parts": 15,
+   "categories": {
+    "MIRROR": 15
+   }
+  },
+  {
+   "model": "firefly",
+   "status": "DIVERGES_TEXTURE_MAPPING",
+   "matched": 12,
+   "reference_parts": 12,
+   "port_parts": 12,
+   "categories": {
+    "MIRROR": 12
+   }
+  },
+  {
+   "model": "flounder",
+   "status": "DIVERGES_TEXTURE_MAPPING",
+   "matched": 6,
+   "reference_parts": 6,
+   "port_parts": 6,
+   "categories": {
+    "MIRROR": 6
+   }
+  },
+  {
+   "model": "frog",
+   "status": "DIVERGES_TEXTURE_MAPPING",
+   "matched": 10,
+   "reference_parts": 10,
+   "port_parts": 10,
+   "categories": {
+    "MIRROR": 10
+   }
+  },
+  {
+   "model": "gazelle",
+   "status": "DIVERGES_TEXTURE_MAPPING",
+   "matched": 34,
+   "reference_parts": 34,
+   "port_parts": 34,
+   "categories": {
+    "MIRROR": 33
+   }
+  },
+  {
+   "model": "ghostskelly",
+   "status": "DIVERGES_TEXTURE_MAPPING",
+   "matched": 10,
+   "reference_parts": 10,
+   "port_parts": 10,
+   "categories": {
+    "MIRROR": 10
+   }
+  },
+  {
+   "model": "giantrobot",
+   "status": "DIVERGES_TEXTURE_MAPPING",
+   "matched": 18,
+   "reference_parts": 18,
+   "port_parts": 18,
+   "categories": {
+    "MIRROR": 18
+   }
+  },
+  {
+   "model": "godzilla",
+   "status": "DIVERGES_TEXTURE_MAPPING",
+   "matched": 71,
+   "reference_parts": 71,
+   "port_parts": 71,
+   "categories": {
+    "MIRROR": 71
+   }
+  },
+  {
+   "model": "goldfish",
+   "status": "DIVERGES_TEXTURE_MAPPING",
+   "matched": 16,
+   "reference_parts": 16,
+   "port_parts": 16,
+   "categories": {
+    "MIRROR": 16
+   }
+  },
+  {
+   "model": "hammerhead",
+   "status": "DIVERGES_TEXTURE_MAPPING",
+   "matched": 37,
+   "reference_parts": 37,
+   "port_parts": 37,
+   "categories": {
+    "MIRROR": 37
+   }
+  },
+  {
+   "model": "herculesbeetle",
+   "status": "DIVERGES_TEXTURE_MAPPING",
+   "matched": 37,
+   "reference_parts": 37,
+   "port_parts": 37,
+   "categories": {
+    "MIRROR": 37
+   }
+  },
+  {
+   "model": "hydrolisc",
+   "status": "DIVERGES_TEXTURE_MAPPING",
+   "matched": 40,
+   "reference_parts": 40,
+   "port_parts": 40,
+   "categories": {
+    "MIRROR": 40
+   }
+  },
+  {
+   "model": "irukandji",
+   "status": "DIVERGES_TEXTURE_MAPPING",
+   "matched": 9,
+   "reference_parts": 9,
+   "port_parts": 9,
+   "categories": {
+    "MIRROR": 9
+   }
+  },
+  {
+   "model": "island",
+   "status": "DIVERGES",
+   "matched": 0,
+   "reference_parts": 3,
+   "port_parts": 6,
+   "categories": {
+    "MISSING_IN_PORT": 3,
+    "EXTRA_IN_PORT": 6
+   }
+  },
+  {
+   "model": "islandtoo",
+   "status": "DIVERGES",
+   "matched": 0,
+   "reference_parts": 3,
+   "port_parts": 6,
+   "categories": {
+    "MISSING_IN_PORT": 3,
+    "EXTRA_IN_PORT": 6
+   }
+  },
+  {
+   "model": "kraken",
+   "status": "DIVERGES_TEXTURE_MAPPING",
+   "matched": 111,
+   "reference_parts": 111,
+   "port_parts": 111,
+   "categories": {
+    "MIRROR": 111
+   }
+  },
+  {
+   "model": "kyuubi",
+   "status": "PASS",
+   "matched": 42,
+   "reference_parts": 42,
+   "port_parts": 42,
+   "categories": {}
+  },
+  {
+   "model": "leon",
+   "status": "DIVERGES_TEXTURE_MAPPING",
+   "matched": 98,
+   "reference_parts": 98,
+   "port_parts": 98,
+   "categories": {
+    "MIRROR": 98
+   }
+  },
+  {
+   "model": "lizard",
+   "status": "DIVERGES_TEXTURE_MAPPING",
+   "matched": 71,
+   "reference_parts": 71,
+   "port_parts": 71,
+   "categories": {
+    "MIRROR": 71
+   }
+  },
+  {
+   "model": "lurkingterror",
+   "status": "DIVERGES_TEXTURE_MAPPING",
+   "matched": 59,
+   "reference_parts": 59,
+   "port_parts": 59,
+   "categories": {
+    "MIRROR": 59
+   }
+  },
+  {
+   "model": "mantis",
+   "status": "DIVERGES_TEXTURE_MAPPING",
+   "matched": 36,
+   "reference_parts": 36,
+   "port_parts": 36,
+   "categories": {
+    "MIRROR": 36
+   }
+  },
+  {
+   "model": "molenoid",
+   "status": "DIVERGES_TEXTURE_MAPPING",
+   "matched": 37,
+   "reference_parts": 37,
+   "port_parts": 37,
+   "categories": {
+    "MIRROR": 37
+   }
+  },
+  {
+   "model": "nastysaurus",
+   "status": "DIVERGES_TEXTURE_MAPPING",
+   "matched": 59,
+   "reference_parts": 59,
+   "port_parts": 59,
+   "categories": {
+    "MIRROR": 59
+   }
+  },
+  {
+   "model": "ostrich",
+   "status": "DIVERGES_TEXTURE_MAPPING",
+   "matched": 38,
+   "reference_parts": 38,
+   "port_parts": 38,
+   "categories": {
+    "MIRROR": 38
+   }
+  },
+  {
+   "model": "peacock",
+   "status": "DIVERGES_TEXTURE_MAPPING",
+   "matched": 16,
+   "reference_parts": 16,
+   "port_parts": 16,
+   "categories": {
+    "MIRROR": 16
+   }
+  },
+  {
+   "model": "pitchblack",
+   "status": "DIVERGES_TEXTURE_MAPPING",
+   "matched": 101,
+   "reference_parts": 101,
+   "port_parts": 101,
+   "categories": {
+    "MIRROR": 101
+   }
+  },
+  {
+   "model": "pointysaurus",
+   "status": "DIVERGES_TEXTURE_MAPPING",
+   "matched": 30,
+   "reference_parts": 30,
+   "port_parts": 30,
+   "categories": {
+    "MIRROR": 30
+   }
+  },
+  {
+   "model": "purplepower",
+   "status": "DIVERGES_TEXTURE_MAPPING",
+   "matched": 3,
+   "reference_parts": 3,
+   "port_parts": 3,
+   "categories": {
+    "MIRROR": 3
+   }
+  },
+  {
+   "model": "robot1",
+   "status": "DIVERGES_TEXTURE_MAPPING",
+   "matched": 27,
+   "reference_parts": 27,
+   "port_parts": 27,
+   "categories": {
+    "MIRROR": 27
+   }
+  },
+  {
+   "model": "robot2",
+   "status": "DIVERGES_TEXTURE_MAPPING",
+   "matched": 15,
+   "reference_parts": 15,
+   "port_parts": 15,
+   "categories": {
+    "MIRROR": 15
+   }
+  },
+  {
+   "model": "robot3",
+   "status": "DIVERGES_TEXTURE_MAPPING",
+   "matched": 19,
+   "reference_parts": 19,
+   "port_parts": 19,
+   "categories": {
+    "MIRROR": 19
+   }
+  },
+  {
+   "model": "robot4",
+   "status": "DIVERGES_TEXTURE_MAPPING",
+   "matched": 56,
+   "reference_parts": 56,
+   "port_parts": 56,
+   "categories": {
+    "MIRROR": 55
+   }
+  },
+  {
+   "model": "robot5",
+   "status": "DIVERGES_TEXTURE_MAPPING",
+   "matched": 11,
+   "reference_parts": 11,
+   "port_parts": 11,
+   "categories": {
+    "MIRROR": 11
+   }
+  },
+  {
+   "model": "rockbase",
+   "status": "DIVERGES_TEXTURE_MAPPING",
+   "matched": 22,
+   "reference_parts": 22,
+   "port_parts": 22,
+   "categories": {
+    "MIRROR": 22
+   }
+  },
+  {
+   "model": "scorpion",
+   "status": "DIVERGES_TEXTURE_MAPPING",
+   "matched": 22,
+   "reference_parts": 22,
+   "port_parts": 22,
+   "categories": {
+    "MIRROR": 22
+   }
+  },
+  {
+   "model": "seamonster",
+   "status": "DIVERGES_TEXTURE_MAPPING",
+   "matched": 23,
+   "reference_parts": 23,
+   "port_parts": 23,
+   "categories": {
+    "MIRROR": 23
+   }
+  },
+  {
+   "model": "seaviper",
+   "status": "DIVERGES",
+   "matched": 34,
+   "reference_parts": 34,
+   "port_parts": 34,
+   "categories": {
+    "PIVOT": 34,
+    "ROTATION": 13,
+    "MIRROR": 34
+   }
+  },
+  {
+   "model": "skate",
+   "status": "DIVERGES",
+   "matched": 0,
+   "reference_parts": 3,
+   "port_parts": 4,
+   "categories": {
+    "MISSING_IN_PORT": 3,
+    "EXTRA_IN_PORT": 4
+   }
+  },
+  {
+   "model": "spiderrobot",
+   "status": "DIVERGES_TEXTURE_MAPPING",
+   "matched": 39,
+   "reference_parts": 39,
+   "port_parts": 39,
+   "categories": {
+    "MIRROR": 39
+   }
+  },
+  {
+   "model": "spitbug",
+   "status": "DIVERGES_TEXTURE_MAPPING",
+   "matched": 93,
+   "reference_parts": 93,
+   "port_parts": 93,
+   "categories": {
+    "MIRROR": 93
+   }
+  },
+  {
+   "model": "spyro",
+   "status": "DIVERGES_TEXTURE_MAPPING",
+   "matched": 37,
+   "reference_parts": 37,
+   "port_parts": 37,
+   "categories": {
+    "MIRROR": 37
+   }
+  },
+  {
+   "model": "stinkbug",
+   "status": "DIVERGES",
+   "matched": 50,
+   "reference_parts": 50,
+   "port_parts": 50,
+   "categories": {
+    "PIVOT": 50,
+    "MIRROR": 50
+   }
+  },
+  {
+   "model": "stinky",
+   "status": "DIVERGES_TEXTURE_MAPPING",
+   "matched": 20,
+   "reference_parts": 20,
+   "port_parts": 20,
+   "categories": {
+    "MIRROR": 20
+   }
+  },
+  {
+   "model": "theking",
+   "status": "DIVERGES_TEXTURE_MAPPING",
+   "matched": 119,
+   "reference_parts": 119,
+   "port_parts": 119,
+   "categories": {
+    "MIRROR": 119
+   }
+  },
+  {
+   "model": "theprince",
+   "status": "DIVERGES_TEXTURE_MAPPING",
+   "matched": 35,
+   "reference_parts": 35,
+   "port_parts": 35,
+   "categories": {
+    "MIRROR": 35
+   }
+  },
+  {
+   "model": "theprinceadult",
+   "status": "DIVERGES_TEXTURE_MAPPING",
+   "matched": 119,
+   "reference_parts": 119,
+   "port_parts": 119,
+   "categories": {
+    "MIRROR": 119
+   }
+  },
+  {
+   "model": "theprincess",
+   "status": "DIVERGES_TEXTURE_MAPPING",
+   "matched": 37,
+   "reference_parts": 37,
+   "port_parts": 37,
+   "categories": {
+    "MIRROR": 37
+   }
+  },
+  {
+   "model": "theprinceteen",
+   "status": "DIVERGES_TEXTURE_MAPPING",
+   "matched": 71,
+   "reference_parts": 71,
+   "port_parts": 71,
+   "categories": {
+    "MIRROR": 71
+   }
+  },
+  {
+   "model": "trex",
+   "status": "DIVERGES_TEXTURE_MAPPING",
+   "matched": 27,
+   "reference_parts": 27,
+   "port_parts": 27,
+   "categories": {
+    "MIRROR": 27
+   }
+  },
+  {
+   "model": "triffid",
+   "status": "DIVERGES_TEXTURE_MAPPING",
+   "matched": 178,
+   "reference_parts": 178,
+   "port_parts": 178,
+   "categories": {
+    "MIRROR": 178
+   }
+  },
+  {
+   "model": "trooperbug",
+   "status": "DIVERGES_TEXTURE_MAPPING",
+   "matched": 134,
+   "reference_parts": 134,
+   "port_parts": 134,
+   "categories": {
+    "MIRROR": 134
+   }
+  },
+  {
+   "model": "urchin",
+   "status": "DIVERGES_TEXTURE_MAPPING",
+   "matched": 17,
+   "reference_parts": 17,
+   "port_parts": 17,
+   "categories": {
+    "MIRROR": 17
+   }
+  },
+  {
+   "model": "velocityraptor",
+   "status": "DIVERGES_TEXTURE_MAPPING",
+   "matched": 34,
+   "reference_parts": 34,
+   "port_parts": 34,
+   "categories": {
+    "MIRROR": 34
+   }
+  },
+  {
+   "model": "waterdragon",
+   "status": "DIVERGES_TEXTURE_MAPPING",
+   "matched": 24,
+   "reference_parts": 24,
+   "port_parts": 24,
+   "categories": {
+    "MIRROR": 24
+   }
+  },
+  {
+   "model": "whale",
+   "status": "DIVERGES_TEXTURE_MAPPING",
+   "matched": 14,
+   "reference_parts": 14,
+   "port_parts": 14,
+   "categories": {
+    "MIRROR": 14
+   }
+  },
+  {
+   "model": "wormlarge",
+   "status": "DIVERGES_TEXTURE_MAPPING",
+   "matched": 23,
+   "reference_parts": 23,
+   "port_parts": 23,
+   "categories": {
+    "MIRROR": 23
+   }
+  },
+  {
+   "model": "wormmedium",
+   "status": "DIVERGES_TEXTURE_MAPPING",
+   "matched": 8,
+   "reference_parts": 8,
+   "port_parts": 8,
+   "categories": {
+    "MIRROR": 8
+   }
+  }
+ ]
+}

@@ -21,6 +21,10 @@ uv, mirror, deformation; texture size).
   func_78792_a(child)             addChild
   field_78806_j = false           showModel (hidden part)
   field_78800_c/_78797_d/_78798_e rotationPointX/Y/Z, also via `+=` adjustments
+  ORDER MATTERS: ModelRenderer copies textureWidth/Height from the ModelBase when it is
+  constructed, and ModelBox captures the part's mirror flag and texture size when the box
+  is added; the Techne export order (addBox, setRotationPoint, setTextureSize, mirror)
+  therefore leaves setTextureSize and mirror INERT for the boxes already added.
 
 Anything else (loops, computed arguments, conditionals around boxes) makes a
 file UNPARSEABLE and is reported as such rather than guessed.
@@ -110,17 +114,16 @@ def parse_reference(source_path: Path) -> dict[str, Any]:
         if (m := RE_TEX_H.fullmatch(statement)):
             texture_height = int(m.group(1))
             continue
-        if (m := RE_NEW_PART.fullmatch(statement)):
+        if (m := RE_NEW_PART.fullmatch(statement)) or (m := RE_NEW_PART_NAMED.fullmatch(statement)):
             name = m.group(1)
-            parts[name] = {"name": name, "tex_u": int(m.group(2)), "tex_v": int(m.group(3)), "boxes": [],
+            named = m.re is RE_NEW_PART_NAMED
+            # 1.7.10 ModelRenderer(ModelBase): copies the ModelBase's textureWidth/Height AT CONSTRUCTION
+            # (64x32 if the model has not set them yet); later ModelBase assignments do not reach it.
+            parts[name] = {"name": name, "tex_u": 0 if named else int(m.group(2)),
+                           "tex_v": 0 if named else int(m.group(3)), "boxes": [],
                            "rotation_point": [0.0, 0.0, 0.0], "rotation": [0.0, 0.0, 0.0], "mirror": False,
-                           "show": True, "texture_size": None, "children": [], "parent": None}
-            order.append(name)
-            continue
-        if (m := RE_NEW_PART_NAMED.fullmatch(statement)):
-            name = m.group(1)
-            parts[name] = {"name": name, "tex_u": 0, "tex_v": 0, "boxes": [], "rotation_point": [0.0, 0.0, 0.0],
-                           "rotation": [0.0, 0.0, 0.0], "mirror": False, "show": True, "texture_size": None,
+                           "show": True,
+                           "texture_size": [texture_width or 64, texture_height or 32],
                            "children": [], "parent": None}
             order.append(name)
             continue
@@ -142,6 +145,7 @@ def parse_reference(source_path: Path) -> dict[str, Any]:
                 "size": [int(m.group(5)), int(m.group(6)), int(m.group(7))],
                 "uv": [part["tex_u"], part["tex_v"]],
                 "mirror": part["mirror"],      # ModelBox reads the flag at construction
+                "texture_size": list(part["texture_size"]),  # and the part's texture size at construction
                 "delta": delta,
             })
             continue
@@ -255,67 +259,91 @@ def flatten_port(compiled: dict[str, Any]) -> list[dict[str, Any]]:
     return result
 
 
-def box_key(box: dict[str, Any]) -> tuple:
+def shape_key(box: dict[str, Any]) -> tuple:
+    """Placement, size, texture offset and inflate: what identifies a box before flags are compared."""
     return (tuple(round(float(v), 4) for v in box["origin"]), tuple(round(float(v), 4) for v in box["size"]),
-            tuple(round(float(v), 4) for v in box["uv"]), bool(box["mirror"]), round(float(box["delta"]), 4))
+            tuple(round(float(v), 4) for v in box["uv"]), round(float(box["delta"]), 4))
 
 
-def part_signature(boxes: list[dict[str, Any]]) -> tuple:
-    return tuple(sorted(box_key(box) for box in boxes))
+def part_shape(boxes: list[dict[str, Any]]) -> tuple:
+    return tuple(sorted(shape_key(box) for box in boxes))
+
+
+GEOMETRY_MOVING = ("TEXTURE_SHEET", "MISSING_IN_PORT", "EXTRA_IN_PORT", "PIVOT", "ROTATION", "NESTING", "HIDDEN")
 
 
 def compare(reference: dict[str, Any], compiled: dict[str, Any], epsilon: float = 1.0e-4) -> dict[str, Any]:
+    """Categorised differences. MIRROR and UV_NORMALIZATION are texture-mapping divergences on a
+    placement that matches; PIVOT/ROTATION/NESTING move geometry; MISSING/EXTRA are unmatched parts."""
     port_parts = flatten_port(compiled)
-    ref_parts = [part for part in reference["parts"] if part["boxes"]]  # boxless parts are pure pivots
-    differences: list[str] = []
+    ref_parts = [part for part in reference["parts"] if part["boxes"]]
+    categories: dict[str, list[str]] = {
+        "TEXTURE_SHEET": [], "MISSING_IN_PORT": [], "EXTRA_IN_PORT": [], "PIVOT": [], "ROTATION": [],
+        "NESTING": [], "MIRROR": [], "UV_NORMALIZATION": [], "HIDDEN": [],
+    }
+    sheet = (compiled["texture_width"], compiled["texture_height"])
+    if sheet != (reference["texture_width"], reference["texture_height"]):
+        categories["TEXTURE_SHEET"].append(
+            f"port sheet {sheet} != reference {(reference['texture_width'], reference['texture_height'])}")
 
-    tex = (compiled["texture_width"], compiled["texture_height"])
-    if tex != (reference["texture_width"], reference["texture_height"]):
-        differences.append(f"texture size port {tex} != reference "
-                           f"{(reference['texture_width'], reference['texture_height'])}")
-    for part in ref_parts:
-        if part["texture_size"] and tuple(part["texture_size"]) != (reference["texture_width"], reference["texture_height"]):
-            differences.append(f"{part['name']}: per-part texture size {part['texture_size']} differs from the sheet")
-
-    # Match reference parts to port parts by exact box signature (names differ between the sources).
     unmatched_port = {index: part for index, part in enumerate(port_parts) if part["boxes"]}
     matched = 0
+
+    def same_placement(part: dict[str, Any], candidate: dict[str, Any]) -> bool:
+        pivot = part["rotation_point"]
+        return (all(abs(pivot[i] - candidate["pivot"][i]) <= epsilon for i in range(3))
+                and all(abs(part["rotation"][i] - candidate["rotation"][i]) <= epsilon for i in range(3)))
+
     for part in ref_parts:
-        signature = part_signature(part["boxes"])
-        hit = None
-        for index, candidate in unmatched_port.items():
-            if part_signature(candidate["boxes"]) == signature:
-                hit = index
-                break
+        shape = part_shape(part["boxes"])
+        # Twins with identical boxes (four legs) must pair by placement, not by first shape hit.
+        hit = next((index for index, candidate in unmatched_port.items()
+                    if part_shape(candidate["boxes"]) == shape and same_placement(part, candidate)), None)
         if hit is None:
-            box = part["boxes"][0]
-            differences.append(f"reference part {part['name']} has no port part with boxes "
-                               f"{[box_key(b) for b in part['boxes']]}")
+            hit = next((index for index, candidate in unmatched_port.items()
+                        if part_shape(candidate["boxes"]) == shape), None)
+        if hit is None:
+            categories["MISSING_IN_PORT"].append(
+                f"{part['name']} {[shape_key(b) for b in part['boxes']]}")
             continue
         candidate = unmatched_port.pop(hit)
         matched += 1
+        label = f"{part['name']} -> {candidate['name']}"
         pivot = part["rotation_point"]
-        if part["parent"] is None and candidate["parent"] is None:
-            if any(abs(pivot[i] - candidate["pivot"][i]) > epsilon for i in range(3)):
-                differences.append(f"{part['name']} -> {candidate['name']}: rotation point {pivot} != port pivot {candidate['pivot']}")
-        elif (part["parent"] is None) != (candidate["parent"] is None):
-            differences.append(f"{part['name']} -> {candidate['name']}: nesting differs (reference parent {part['parent']}, port parent {candidate['parent']})")
-        else:
-            if any(abs(pivot[i] - candidate["pivot"][i]) > epsilon for i in range(3)):
-                differences.append(f"{part['name']} -> {candidate['name']}: child rotation point {pivot} != port local pivot {candidate['pivot']}")
+        if (part["parent"] is None) != (candidate["parent"] is None):
+            categories["NESTING"].append(f"{label}: reference parent {part['parent']}, port parent {candidate['parent']}")
+        elif any(abs(pivot[i] - candidate["pivot"][i]) > epsilon for i in range(3)):
+            categories["PIVOT"].append(f"{label}: rotation point {pivot} != port pivot {candidate['pivot']}")
         if any(abs(part["rotation"][i] - candidate["rotation"][i]) > epsilon for i in range(3)):
-            differences.append(f"{part['name']} -> {candidate['name']}: initial rotation {part['rotation']} != port {candidate['rotation']}")
+            categories["ROTATION"].append(f"{label}: {part['rotation']} != port {candidate['rotation']}")
+        for ref_box, port_box in zip(sorted(part["boxes"], key=shape_key), sorted(candidate["boxes"], key=shape_key)):
+            if ref_box["mirror"] != port_box["mirror"]:
+                categories["MIRROR"].append(
+                    f"{label}: reference box mirror={ref_box['mirror']} (flag at addBox time), port {port_box['mirror']}")
+            if tuple(ref_box["texture_size"]) != sheet:
+                categories["UV_NORMALIZATION"].append(
+                    f"{label}: reference box normalised by {ref_box['texture_size']}, port by the sheet {list(sheet)}")
         if not part["show"]:
-            differences.append(f"{part['name']}: hidden (showModel=false) in the reference; the port dump has no visibility field")
+            categories["HIDDEN"].append(f"{part['name']}: showModel=false in the reference; the port dump has no visibility")
     for candidate in unmatched_port.values():
-        differences.append(f"port part {candidate['name']} has no reference part with boxes "
-                           f"{[box_key(b) for b in candidate['boxes']]}")
+        categories["EXTRA_IN_PORT"].append(f"{candidate['name']} {[shape_key(b) for b in candidate['boxes']]}")
+
+    present = {name: entries for name, entries in categories.items() if entries}
+    if not present:
+        status = "PASS"
+    elif any(name in GEOMETRY_MOVING for name in present):
+        status = "DIVERGES"
+    else:
+        status = "DIVERGES_TEXTURE_MAPPING"
+    differences = [entry for name in categories for entry in categories[name]]
     return {
-        "status": "PASS" if not differences else "DIVERGES",
+        "status": status,
         "reference_parts_with_boxes": len(ref_parts),
         "port_parts_with_boxes": sum(1 for part in port_parts if part["boxes"]),
         "matched_parts": matched,
+        "categories": {name: len(entries) for name, entries in present.items()},
         "differences": differences,
+        "by_category": present,
     }
 
 
@@ -326,9 +354,11 @@ def main() -> int:
     parser.add_argument("--output-dir", type=Path, required=True)
     parser.add_argument("--survey", action="store_true",
                         help="report every model, never fail; for models without a dump only parse the reference")
+    parser.add_argument("--repository-root", type=Path, default=None,
+                        help="defaults to the manifest's grandparent (tools/<manifest> layout)")
     args = parser.parse_args()
     manifest = json.loads(args.manifest.read_text(encoding="utf-8"))
-    repository_root = args.manifest.resolve().parent.parent
+    repository_root = (args.repository_root or args.manifest.resolve().parent.parent).resolve()
     args.output_dir.mkdir(parents=True, exist_ok=True)
     failures = 0
     summary = []
@@ -361,8 +391,9 @@ def main() -> int:
             comparison = report["comparison"]
             print(f"REFERENCE GEOMETRY PASS: {model_id} {comparison['matched_parts']} parts matched the 1.7.10 source")
         else:
-            detail = report.get("comparison", {}).get("differences") or [reference.get("reason", "")]
-            print(f"REFERENCE GEOMETRY {report['status']}: {model_id}: {detail[:3]}")
+            comparison = report.get("comparison", {})
+            detail = comparison.get("categories") or {"reason": reference.get("reason", "")}
+            print(f"REFERENCE GEOMETRY {report['status']}: {model_id}: {detail}")
             if not args.survey:
                 failures += 1
     if args.survey:
@@ -370,6 +401,8 @@ def main() -> int:
         for _model_id, status in summary:
             counts[status] = counts.get(status, 0) + 1
         print(f"REFERENCE GEOMETRY SURVEY: {counts}")
+        (args.output_dir / "survey_summary.json").write_text(
+            json.dumps({"models": summary, "counts": counts}, indent=2) + "\n", encoding="utf-8", newline="\n")
         return 0
     return 1 if failures else 0
 

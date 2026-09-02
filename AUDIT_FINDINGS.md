@@ -6002,6 +6002,57 @@ keeps BUG-036. Commit 4ea395c's message retains the old number.)*
   and pitch overrides, the particle sign, the 2.1 threshold and the
   write-before-validate quirk; plus a gametest for target acquisition with a
   survival player vs a creative player.
+- **SPLIT PRESENTED (2026-09-02, per owner: "any divergence without a
+  recorded MOD entry is a parity bug"):** all EIGHT are PARITY BUGS WITH NO
+  RECORD. Method: eight independent classifiers, each refuted by two
+  independent readers (one sweeping every MOD-/BUG-/ENT-/OPT-/TF- record, one
+  re-reading the port and reference lines); 16/16 refutations failed on the
+  label (one corrected evidence only: the report-only FIX_LOG entry of this
+  finding exists but is not a MOD or intent record). Facts established:
+  - MOD records live in `MODERNIZATION_NOTES.md` (MOD-001..MOD-028); the
+    only Vortex-scoped ones are MOD-024 sub-items for the smooth pull
+    (BUG-019), the client-heal gate (BUG-031) and scan caching (OPT-004).
+    None covers dimensions, pushing, wander line-of-sight, persistence,
+    pressure plates, voice pitch, particle direction or the wander threshold.
+  - `EntityVortex.java` is densely annotated wherever a divergence was
+    deliberate (OPT-004/-011/-021 markers, `orig Vortex.java:NNN` citations at
+    :46-54, :111, :132, :148, :224, :311); none of the eight sites carries any
+    comment. `ModEntities.java:280` cites orig `:52` (fire immunity) two lines
+    below the uncited `.sized(1.0f, 1.5f)`, the same shared boilerplate literal
+    as robot_5 (`:139`) and baryonyx (`:302`): a copy-paste default, not a
+    choice. Precedents fixed without a MOD record: ENT-S-088 (SpiderRobot
+    dims), ENT-A-083 (Cephadrome dims), ENT-A-002, BOSS-026.
+  - No MHLib hitbox profile exists for the Vortex (only ant_robot,
+    spider_robot, the_queen), so the Size-hook law needs no second edit site.
+  - Refuter finding beyond this entity: the dropped
+    `doesEntityNotTriggerPressurePlate` (item 5, orig `func_145773_az`) recurs
+    in roughly 35 other ported 1.7.10 classes (Rotator, Mothra, TheKing,
+    TheQueen, WormLarge, ...). Logged as ENT-S-090 for a systemic sweep.
+  - Proposed fix commit (awaiting the owner's go): restore `.sized(2.0f, 4.0f)`
+    with the orig `:50` citation; empty `doPush`; the y+0.75 eye-line
+    `canSeeTarget` probe on wander candidates with the invented
+    `stuckCount`/`lastX/Y/Z` removed; `!isPersistenceRequired()` on the dawn
+    discard (as `EntityRotator.java:115`); `isIgnoringBlockTriggers -> true`;
+    `getVoicePitch -> 1.0f`; the particle tangent from the already-decremented
+    `dir` (cos/sin(dir - pi/2)); the `< 2.1` threshold with the
+    write-before-validate quirk. Tests: a dims pin (width 2.0 / height 4.0 on
+    ENTITY_VORTEX, modelled on the ENT-S-088 spider pin), a no-push impulse
+    test, a persistence-survives-dawn test, a pressure-plate test, a
+    deterministic-pitch test, and a tangential-sign test for the particles.
+
+### ENT-S-090 — `doesEntityNotTriggerPressurePlate` (orig `func_145773_az -> true`) dropped across ~35 ported entities (REPORT, 2026-09-02)
+
+- **Impact:** LOW each, WIDE — the original overrides `func_145773_az()` to
+  `true` on about thirty-five entities (Vortex, Rotator, Mothra, TheKing,
+  TheQueen, WormLarge, ...), so they never press plates or trip wires. The
+  port's `isIgnoringBlockTriggers` is only overridden where the audit already
+  touched it. Surfaced by the ENT-S-089 refuters while checking item 5.
+- **Resolution:** OPEN — report only. Proposed: a scripted sweep of
+  `reference_1_7_10_source` for `func_145773_az` versus port overrides of
+  `isIgnoringBlockTriggers`, one commit restoring the missing overrides with
+  citations, and one parameterised gametest over the affected registry ids.
+  Per the owner's rule these are parity bugs unless a MOD record says
+  otherwise; none does.
 
 ### BUG-040 — Coin renders nothing: the port's ModelCoin is not the 1.7.10 model (REPORT, 2026-09-02)
 
@@ -6044,6 +6095,81 @@ keeps BUG-036. Commit 4ea395c's message retains the old number.)*
   present on both sides), excluded pin 0.
 - **Population question (owner):** answered in FIX_LOG "REFERENCE-GEOMETRY
   SURVEY" once the whole-population run completes.
+
+### BUG-041 — 82 port models mirror their cubes; the 1.7.10 originals set `mirror` after `addBox`, where it is inert (REPORT, 2026-09-02)
+
+- **Impact:** MEDIUM-visual, PORT-WIDE — every affected face samples its
+  texture flipped horizontally relative to 1.7.10. Invisible on symmetric
+  texels, visible wherever a texture is asymmetric (eyes, markings, text).
+- **Evidence:** `phase_g_reports/reference_geometry_survey.md`. The 1.7.10
+  Techne export order is `new ModelRenderer(this, u, v); addBox(...);
+  setRotationPoint(...); setTextureSize(w, h); mirror = true; setRotation(...)`.
+  `ModelBox` captures the part's mirror flag (and texture size) in its
+  constructor, so both trailing assignments never reach the box. The port
+  translated `mirror = true` into `CubeListBuilder.mirror()` before `addBox`,
+  where it is effective. 82 of 87 surveyed models; 78 differ in
+  nothing else; Kyuubi and Coin are exact.
+- **Law-11 caveat:** the ordering rule is from the 1.7.10 `ModelRenderer` /
+  `ModelBox` sources; no 1.7.10 client jar is on this machine to read the
+  bytecode. Downloading Mojang's `1.7.10/client.jar` (official, ~5 MB) would
+  close it and needs the owner's go.
+- **Resolution:** OPEN — report only. Proposed: one commit dropping
+  `.mirror()` on every cube whose reference box was unmirrored (mechanical,
+  from the survey JSON), the Phase G proofs regenerated (every proven species
+  changes), and `reference_source` declared for all 78 so the leg pins them.
+  Alternatively an owner MOD ruling that the port keeps the flipped mapping,
+  recorded per model in the manifest. Owner's call.
+
+### ENT-S-091 — Seven port models diverge from their 1.7.10 geometry beyond the mirror flag (REPORT, 2026-09-02)
+
+- **Models:** CaterKiller (49 extra parts), Elevator (all pivots y 0 -> 24),
+  Island and IslandToo (port model is a different rig), SeaViper (rebuilt:
+  pivots and rotation axes), Skate (different rig), StinkBug (all 50 pivots,
+  the reference's `+= 6.0f` adjustments). Details and readings in
+  `phase_g_reports/reference_geometry_survey.md`.
+- **Resolution:** OPEN — report only. Each needs a read against its 1.7.10
+  renderer (this leg does not see renderer transforms) and an owner ruling:
+  parity fix, or a MOD record if the rebuild was intentional. Island/IslandToo
+  and Elevator are Phase G species already behind the switch; their GeckoLib
+  candidates faithfully reproduce the PORT model, which is not the original.
+  The reader sweep adds Ghost, Mosquito and Tshirt (box counts differ) for
+  the same read.
+
+### ENT-S-092 — Renderer shadow radius and world scale diverge from the 1.7.10 registrations across the population (REPORT, 2026-09-02)
+
+- **Evidence:** `phase_g_reports/renderer_sweep.json` (`tools/reference_renderer_sweep.py`).
+  1.7.10 `RenderX(model, par2, par3)` passes `par2 * par3` as the shadow
+  radius and scales by `par3`; the port renderers mostly pass `par2` alone
+  (or a retuned literal) and omit the `par3` scale. Shadow differs in
+  85 of 97 resolvable pairs (cosmetic); world scale differs in about
+  41-48 (visible: e.g. Brutalfly 9.0 -> 1.0, Kraken 1.0 -> 3.0,
+  Robot3 0.5 -> 1.0, Hydrolisc 0.65 -> 1.0, Fairy 0.35 -> 1.0, Irukandji
+  0.25 -> 1.0, Peacock 1.0 -> 0.5). Coin's 0.125 was the first of these
+  fixed (BUG-040).
+- **Resolution:** OPEN — report only. Per the owner's rule each is a parity
+  bug unless a MOD record covers it (none found for renderer scale). Proposed:
+  one mechanical commit restoring `par3` scale hooks and `par2 * par3`
+  shadows from the sweep table, with a gametest pinning each renderer's
+  shadow radius and scale constant; the Phase G proofs are unaffected (the
+  harness compares models, not renderer transforms) except Coin, already done.
+
+### ENT-S-093 — Motion: per-entity selector/filter state collapsed into model-instance fields in 14 ports; sampled formula divergences (REPORT, 2026-09-02)
+
+- **Evidence:** the reader survey (24 sampled pairs; details in
+  `phase_g_reports/reference_geometry_survey.md`). Alien and Cephadrome are
+  the confirmed cases: 1.7.10 keeps the reroll/latch state per entity
+  (`RenderInfo`) and the port keeps it in the model instance, so every mob of
+  that species on screen shares one latch and one filter. Twelve more ports
+  have the same shape (EmperorScorpion, GhostSkelly, Leon, LurkingTerror,
+  CaveFisher, Dragon, DungeonBeast, Nastysaurus, PitchBlack, ThePrinceTeen,
+  Ostrich, Scorpion). Other sampled divergences: RubberDucky head/beak
+  damping, Gazelle predicate, Cephadrome yaw source (body -> head), Mosquito
+  and PurplePower rebuilt.
+- **Resolution:** OPEN — report only. Not mechanically provable (1.7.10
+  classes cannot run here). Proposed: restore per-entity `RenderInfo` in the
+  14 (the Slice 4b pose-interface pattern gives each a headless entity-state
+  leg for free), then a formula-by-formula read of the remaining animated
+  models, Tier by Tier as they enter Phase G.
 
 ### TEST-003 — Config-flipping gametests in the concurrent default batch
 

@@ -4490,3 +4490,41 @@ GATE (on master, sequential): compile clean; `build` exit 0 - audit 0/0/4,
 `s4ReferenceGeometry` PASS (model_coin), `s4Parity` 11 models + fixture (checked-in
 proof verified, reference leg folded in), `g1Parity` 2 models, benchmark evidence
 verified; `runGameTestServer` exit 0 - literal `All 193 required tests passed`.
+
+## REFERENCE-GEOMETRY SURVEY — the owner's population question (2026-09-02)
+
+"How many other models could have port geometry or motion diverging from
+1.7.10, and is a reference-geometry leg feasible with the converter?"
+Answered mechanically, not by extrapolation: the leg ran over all 87 port
+models that pair with a 1.7.10 model (generated survey manifest; one probe
+JVM per model; parser covers all 109 reference files). GEOMETRY: exact 2
+(Coin, Kyuubi); mirror-flag divergence 82 (78 with nothing else) -> AUDIT
+BUG-041, a port-wide texture-flip the owner must rule on; geometry-moving 7
+(CaterKiller, Elevator, Island, IslandToo, SeaViper, Skate, StinkBug) ->
+AUDIT ENT-S-091. MOTION: not mechanically comparable (1.7.10 classes cannot
+run here); sampled reads only. FEASIBILITY: the leg is wired
+(`s4ReferenceGeometry` + `--reference-dir`); declaring `reference_source`
+pins any model. Report: `phase_g_reports/reference_geometry_survey.md`
+(+ `.json`). Tool changes this commit: categorised comparison, construction-
+time flag semantics, twin-aware matching, `--repository-root`, survey mode.
+
+Housekeeping: `tools/__survey_manifest.json`, a temporary file the survey
+wrote into tools/ while the Coin commit's `git add -A` ran, was committed
+in e06414a by mistake and is removed here.
+
+## ENT-S-089 SPLIT PRESENTED — eight Vortex divergences, all parity bugs (2026-09-02)
+
+Per the owner's rule, each of the eight was classified (parity bug without a
+record / intentional with a MOD record / intentional without one yet) and
+adversarially refuted twice. All eight: PARITY BUG, NO RECORD; no refutation
+survived on the label. MOD records are in MODERNIZATION_NOTES.md (MOD-001..
+028) and none touches these sites; the port file annotates every deliberate
+choice and annotates none of these. Full evidence and the proposed fix +
+tests are in AUDIT ENT-S-089. New: ENT-S-090, the pressure-plate override
+dropped across ~35 entities (systemic sweep proposed). No fix applied:
+awaiting the owner's go.
+
+GATE (on master, sequential): `build` exit 0 - audit 0/0/4, `s4ReferenceGeometry` PASS
+(model_coin, categorised leg; s4 proof rewritten for the new fields), `s4Parity` 11
+models, `g1Parity` 2 models, benchmark verified; `runGameTestServer` exit 0 - literal
+`All 193 required tests passed`. Not pushed.

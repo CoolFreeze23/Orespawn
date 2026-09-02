@@ -1,0 +1,1404 @@
+{
+ "rows": [
+  {
+   "entity": "EntityButterfly",
+   "reference": "new RenderButterfly(new ModelButterfly(1.0f), 0.3f, 1.0f)",
+   "reference_shadow": 0.3,
+   "reference_scale": 1.0,
+   "port_file": "ButterflyRenderer.java",
+   "port_shadow": 1.0,
+   "port_scales": [],
+   "shadow_match": false,
+   "scale_match": true,
+   "status": "SHADOW"
+  },
+  {
+   "entity": "Firefly",
+   "reference": "new RenderFirefly(new ModelFirefly(2.5f), 0.2f, 0.75f)",
+   "reference_shadow": 0.15000000000000002,
+   "reference_scale": 0.75,
+   "port_file": "FireflyRenderer.java",
+   "port_shadow": 0.1,
+   "port_scales": [],
+   "shadow_match": false,
+   "scale_match": false,
+   "status": "SHADOW+SCALE"
+  },
+  {
+   "entity": "EntityLunaMoth",
+   "reference": "new RenderButterfly(new ModelButterfly(0.75f), 0.4f, 1.5f)",
+   "reference_shadow": 0.6000000000000001,
+   "reference_scale": 1.5,
+   "port_file": "LunaMothRenderer.java",
+   "port_shadow": 0.75,
+   "port_scales": [
+    1.5
+   ],
+   "shadow_match": false,
+   "scale_match": true,
+   "status": "SHADOW"
+  },
+  {
+   "entity": "EntityMosquito",
+   "reference": "new RenderMosquito(new ModelMosquito(), 0.3f, 0.5f)",
+   "reference_shadow": 0.15,
+   "reference_scale": 0.5,
+   "port_file": "MosquitoRenderer.java",
+   "port_shadow": 0.05,
+   "port_scales": [],
+   "shadow_match": false,
+   "scale_match": false,
+   "status": "SHADOW+SCALE"
+  },
+  {
+   "entity": "Ghost",
+   "reference": "new RenderGhost(new ModelGhost(), 0.0f, 0.65f)",
+   "reference_shadow": 0.0,
+   "reference_scale": 0.65,
+   "port_file": "GhostRenderer.java",
+   "port_shadow": 0.3,
+   "port_scales": [],
+   "shadow_match": false,
+   "scale_match": false,
+   "status": "SHADOW+SCALE"
+  },
+  {
+   "entity": "GhostSkelly",
+   "reference": "new RenderGhostSkelly(new ModelGhostSkelly(), 0.0f, 1.05f)",
+   "reference_shadow": 0.0,
+   "reference_scale": 1.05,
+   "port_file": "GhostSkellyRenderer.java",
+   "port_shadow": 0.5,
+   "port_scales": [],
+   "shadow_match": false,
+   "scale_match": false,
+   "status": "SHADOW+SCALE"
+  },
+  {
+   "entity": "Mothra",
+   "reference": "new RenderButterfly(new ModelButterfly(0.2f), 0.75f, 10.0f)",
+   "reference_shadow": 7.5,
+   "reference_scale": 10.0,
+   "port_file": "MothraRenderer.java",
+   "port_shadow": 0.2,
+   "port_scales": [
+    10.0
+   ],
+   "shadow_match": false,
+   "scale_match": true,
+   "status": "SHADOW"
+  },
+  {
+   "entity": "EntityAnt",
+   "reference": "new RenderAnt(new ModelAnt(), 0.1f, 0.25f)",
+   "reference_shadow": 0.025,
+   "reference_scale": 0.25,
+   "port_file": "AntRenderer.java",
+   "port_shadow": null,
+   "port_scales": [
+    0.25
+   ],
+   "shadow_match": false,
+   "scale_match": true,
+   "status": "SHADOW"
+  },
+  {
+   "entity": "EntityRedAnt",
+   "reference": "new RenderAnt(new ModelAnt(), 0.15f, 0.35f)",
+   "reference_shadow": 0.0525,
+   "reference_scale": 0.35,
+   "port_file": "RedAntRenderer.java",
+   "port_shadow": null,
+   "port_scales": [
+    0.35
+   ],
+   "shadow_match": false,
+   "scale_match": true,
+   "status": "SHADOW"
+  },
+  {
+   "entity": "EntityRainbowAnt",
+   "reference": "new RenderAnt(new ModelAnt(), 0.1f, 0.25f)",
+   "reference_shadow": 0.025,
+   "reference_scale": 0.25,
+   "port_file": "RainbowAntRenderer.java",
+   "port_shadow": null,
+   "port_scales": [
+    0.25
+   ],
+   "shadow_match": false,
+   "scale_match": true,
+   "status": "SHADOW"
+  },
+  {
+   "entity": "EntityUnstableAnt",
+   "reference": "new RenderAnt(new ModelAnt(), 0.1f, 0.25f)",
+   "reference_shadow": 0.025,
+   "reference_scale": 0.25,
+   "port_file": "UnstableAntRenderer.java",
+   "port_shadow": null,
+   "port_scales": [
+    0.25
+   ],
+   "shadow_match": false,
+   "scale_match": true,
+   "status": "SHADOW"
+  },
+  {
+   "entity": "Alosaurus",
+   "reference": "new RenderAlosaurus(new ModelAlosaurus(0.22f), 1.0f, 1.0f)",
+   "reference_shadow": 1.0,
+   "reference_scale": 1.0,
+   "port_file": "AlosaurusRenderer.java",
+   "port_shadow": 1.0,
+   "port_scales": [
+    1.0
+   ],
+   "shadow_match": true,
+   "scale_match": true,
+   "status": "MATCH"
+  },
+  {
+   "entity": "TRex",
+   "reference": "new RenderTRex(new ModelTRex(0.2f), 1.0f, 1.2f)",
+   "reference_shadow": 1.2,
+   "reference_scale": 1.2,
+   "port_file": "TRexRenderer.java",
+   "port_shadow": 1.0,
+   "port_scales": [
+    1.2
+   ],
+   "shadow_match": false,
+   "scale_match": true,
+   "status": "SHADOW"
+  },
+  {
+   "entity": "Tshirt",
+   "reference": "new RenderTshirt(new ModelTshirt(0.22f), 1.0f, 0.33f)",
+   "reference_shadow": 0.33,
+   "reference_scale": 0.33,
+   "port_file": "TshirtRenderer.java",
+   "port_shadow": 2.0,
+   "port_scales": [],
+   "shadow_match": false,
+   "scale_match": false,
+   "status": "SHADOW+SCALE"
+  },
+  {
+   "entity": "Cryolophosaurus",
+   "reference": "new RenderCryolophosaurus(new ModelCryolophosaurus(0.75f), 0.75f, 0.5f)",
+   "reference_shadow": 0.375,
+   "reference_scale": 0.5,
+   "port_file": "CryolophosaurusRenderer.java",
+   "port_shadow": null,
+   "port_scales": [
+    0.5
+   ],
+   "shadow_match": false,
+   "scale_match": true,
+   "status": "SHADOW"
+  },
+  {
+   "entity": "Basilisk",
+   "reference": "new RenderBasilisk(new ModelBasilisk(0.3f), 0.5f, 1.25f)",
+   "reference_shadow": 0.625,
+   "reference_scale": 1.25,
+   "port_file": "BasiliskRenderer.java",
+   "port_shadow": 1.5,
+   "port_scales": [
+    "scale"
+   ],
+   "shadow_match": false,
+   "scale_match": false,
+   "status": "SHADOW+SCALE"
+  },
+  {
+   "entity": "Camarasaurus",
+   "reference": "new RenderCamarasaurus(new ModelCamarasaurus(0.65f), 0.65f, 0.65f)",
+   "reference_shadow": 0.42250000000000004,
+   "reference_scale": 0.65,
+   "port_file": "CamarasaurusRenderer.java",
+   "port_shadow": null,
+   "port_scales": [
+    "scale"
+   ],
+   "shadow_match": false,
+   "scale_match": false,
+   "status": "SHADOW+SCALE"
+  },
+  {
+   "entity": "Hydrolisc",
+   "reference": "new RenderHydrolisc(new ModelHydrolisc(0.65f), 0.65f, 0.65f)",
+   "reference_shadow": 0.42250000000000004,
+   "reference_scale": 0.65,
+   "port_file": "HydroliscRenderer.java",
+   "port_shadow": 0.25,
+   "port_scales": [],
+   "shadow_match": false,
+   "scale_match": false,
+   "status": "SHADOW+SCALE"
+  },
+  {
+   "entity": "VelocityRaptor",
+   "reference": "new RenderVelocityRaptor(new ModelVelocityRaptor(1.25f), 0.55f, 0.75f)",
+   "reference_shadow": 0.41250000000000003,
+   "reference_scale": 0.75,
+   "port_file": "VelocityRaptorRenderer.java",
+   "port_shadow": 0.5,
+   "port_scales": [],
+   "shadow_match": false,
+   "scale_match": false,
+   "status": "SHADOW+SCALE"
+  },
+  {
+   "entity": "Dragonfly",
+   "reference": "new RenderDragonfly(new ModelDragonfly(2.0f), 0.3f, 1.5f)",
+   "reference_shadow": 0.44999999999999996,
+   "reference_scale": 1.5,
+   "port_file": "DragonflyRenderer.java",
+   "port_shadow": 0.5,
+   "port_scales": [],
+   "shadow_match": false,
+   "scale_match": false,
+   "status": "SHADOW+SCALE"
+  },
+  {
+   "entity": "Bee",
+   "reference": "new RenderBee(new ModelBee(2.0f), 0.9f, 1.1f)",
+   "reference_shadow": 0.9900000000000001,
+   "reference_scale": 1.1,
+   "port_file": "BeeRenderer.java",
+   "port_shadow": 0.5,
+   "port_scales": [],
+   "shadow_match": false,
+   "scale_match": false,
+   "status": "SHADOW+SCALE"
+  },
+  {
+   "entity": "EmperorScorpion",
+   "reference": "new RenderEmperorScorpion(new ModelEmperorScorpion(0.22f), 0.95f, 1.5f)",
+   "reference_shadow": 1.4249999999999998,
+   "reference_scale": 1.5,
+   "port_file": "EmperorScorpionRenderer.java",
+   "port_shadow": 1.2,
+   "port_scales": [],
+   "shadow_match": false,
+   "scale_match": false,
+   "status": "SHADOW+SCALE"
+  },
+  {
+   "entity": "Spyro",
+   "reference": "new RenderSpyro(new ModelSpyro(0.65f), 0.65f, 0.75f)",
+   "reference_shadow": 0.48750000000000004,
+   "reference_scale": 0.75,
+   "port_file": "SpyroRenderer.java",
+   "port_shadow": 0.5,
+   "port_scales": [],
+   "shadow_match": false,
+   "scale_match": false,
+   "status": "SHADOW+SCALE"
+  },
+  {
+   "entity": "Baryonyx",
+   "reference": "new RenderBaryonyx(new ModelBaryonyx(0.25f), 1.0f, 1.0f)",
+   "reference_shadow": 1.0,
+   "reference_scale": 1.0,
+   "port_file": "BaryonyxRenderer.java",
+   "port_shadow": 1.0,
+   "port_scales": [
+    "scale"
+   ],
+   "shadow_match": true,
+   "scale_match": true,
+   "status": "MATCH"
+  },
+  {
+   "entity": "GammaMetroid",
+   "reference": "new RenderGammaMetroid(new ModelGammaMetroid(0.45f), 0.75f, 0.9f)",
+   "reference_shadow": 0.675,
+   "reference_scale": 0.9,
+   "port_file": "GammaMetroidRenderer.java",
+   "port_shadow": 1.0,
+   "port_scales": [],
+   "shadow_match": false,
+   "scale_match": false,
+   "status": "SHADOW+SCALE"
+  },
+  {
+   "entity": "Cockateil",
+   "reference": "new RenderCockateil(new ModelCockateil(1.0f), 0.3f, 0.75f)",
+   "reference_shadow": 0.22499999999999998,
+   "reference_scale": 0.75,
+   "port_file": "CockateilRenderer.java",
+   "port_shadow": 0.3,
+   "port_scales": [],
+   "shadow_match": false,
+   "scale_match": false,
+   "status": "SHADOW+SCALE"
+  },
+  {
+   "entity": "RubyBird",
+   "reference": "new RenderCockateil(new ModelCockateil(1.0f), 0.3f, 0.75f)",
+   "reference_shadow": 0.22499999999999998,
+   "reference_scale": 0.75,
+   "status": "NO_PORT_RENDERER"
+  },
+  {
+   "entity": "Kyuubi",
+   "reference": "new RenderKyuubi(new ModelKyuubi(0.5f), 0.1f, 1.0f)",
+   "reference_shadow": 0.1,
+   "reference_scale": 1.0,
+   "port_file": "KyuubiRenderer.java",
+   "port_shadow": 0.5,
+   "port_scales": [],
+   "shadow_match": false,
+   "scale_match": true,
+   "status": "SHADOW"
+  },
+  {
+   "entity": "Scorpion",
+   "reference": "new RenderScorpion(new ModelScorpion(0.62f), 0.35f, 0.75f)",
+   "reference_shadow": 0.26249999999999996,
+   "reference_scale": 0.75,
+   "port_file": "ScorpionRenderer.java",
+   "port_shadow": 0.3,
+   "port_scales": [],
+   "shadow_match": false,
+   "scale_match": false,
+   "status": "SHADOW+SCALE"
+  },
+  {
+   "entity": "CaveFisher",
+   "reference": "new RenderCaveFisher(new ModelCaveFisher(0.62f), 0.35f, 0.75f)",
+   "reference_shadow": 0.26249999999999996,
+   "reference_scale": 0.75,
+   "port_file": "CaveFisherRenderer.java",
+   "port_shadow": 0.5,
+   "port_scales": [],
+   "shadow_match": false,
+   "scale_match": false,
+   "status": "SHADOW+SCALE"
+  },
+  {
+   "entity": "Alien",
+   "reference": "new RenderAlien(new ModelAlien(0.22f), 0.35f, 1.1f)",
+   "reference_shadow": 0.385,
+   "reference_scale": 1.1,
+   "port_file": "AlienRenderer.java",
+   "port_shadow": 0.7,
+   "port_scales": [
+    1.0
+   ],
+   "shadow_match": false,
+   "scale_match": false,
+   "status": "SHADOW+SCALE"
+  },
+  {
+   "entity": "WaterDragon",
+   "reference": "new RenderWaterDragon(new ModelWaterDragon(0.5f), 0.85f, 1.1f)",
+   "reference_shadow": 0.935,
+   "reference_scale": 1.1,
+   "port_file": "WaterDragonRenderer.java",
+   "port_shadow": 0.85,
+   "port_scales": [
+    1.1
+   ],
+   "shadow_match": false,
+   "scale_match": true,
+   "status": "SHADOW"
+  },
+  {
+   "entity": "AttackSquid",
+   "reference": "new RenderAttackSquid(new ModelAttackSquid(1.0f), 0.25f, 0.9f)",
+   "reference_shadow": 0.225,
+   "reference_scale": 0.9,
+   "port_file": "AttackSquidRenderer.java",
+   "port_shadow": 0.5,
+   "port_scales": [],
+   "shadow_match": false,
+   "scale_match": false,
+   "status": "SHADOW+SCALE"
+  },
+  {
+   "entity": "Robot1",
+   "reference": "new RenderRobot1(new ModelRobot1(2.0f), 0.3f, 1.0f)",
+   "reference_shadow": 0.3,
+   "reference_scale": 1.0,
+   "port_file": "Robot1Renderer.java",
+   "port_shadow": 0.5,
+   "port_scales": [],
+   "shadow_match": false,
+   "scale_match": true,
+   "status": "SHADOW"
+  },
+  {
+   "entity": "Robot2",
+   "reference": "new RenderRobot2(new ModelRobot2(1.0f), 1.0f, 1.0f)",
+   "reference_shadow": 1.0,
+   "reference_scale": 1.0,
+   "port_file": "Robot2Renderer.java",
+   "port_shadow": 1.5,
+   "port_scales": [],
+   "shadow_match": false,
+   "scale_match": true,
+   "status": "SHADOW"
+  },
+  {
+   "entity": "Robot3",
+   "reference": "new RenderRobot3(new ModelRobot3(1.0f), 1.0f, 0.5f)",
+   "reference_shadow": 0.5,
+   "reference_scale": 0.5,
+   "port_file": "Robot3Renderer.java",
+   "port_shadow": 2.0,
+   "port_scales": [],
+   "shadow_match": false,
+   "scale_match": false,
+   "status": "SHADOW+SCALE"
+  },
+  {
+   "entity": "Robot4",
+   "reference": "new RenderRobot4(new ModelRobot4(1.0f), 1.0f, 1.0f)",
+   "reference_shadow": 1.0,
+   "reference_scale": 1.0,
+   "port_file": "Robot4Renderer.java",
+   "port_shadow": 1.5,
+   "port_scales": [],
+   "shadow_match": false,
+   "scale_match": true,
+   "status": "SHADOW"
+  },
+  {
+   "entity": "Robot5",
+   "reference": "new RenderRobot5(new ModelRobot5(1.0f), 0.5f, 1.0f)",
+   "reference_shadow": 0.5,
+   "reference_scale": 1.0,
+   "port_file": "Robot5Renderer.java",
+   "port_shadow": 0.5,
+   "port_scales": [],
+   "shadow_match": true,
+   "scale_match": true,
+   "status": "MATCH"
+  },
+  {
+   "entity": "Kraken",
+   "reference": "new RenderKraken(new ModelKraken(1.0f), 1.0f, 1.0f)",
+   "reference_shadow": 1.0,
+   "reference_scale": 1.0,
+   "port_file": "KrakenRenderer.java",
+   "port_shadow": 3.0,
+   "port_scales": [
+    3.0
+   ],
+   "shadow_match": false,
+   "scale_match": false,
+   "status": "SHADOW+SCALE"
+  },
+  {
+   "entity": "Lizard",
+   "reference": "new RenderLizard(new ModelLizard(0.65f), 0.75f, 1.0f)",
+   "reference_shadow": 0.75,
+   "reference_scale": 1.0,
+   "port_file": "LizardRenderer.java",
+   "port_shadow": 0.5,
+   "port_scales": [],
+   "shadow_match": false,
+   "scale_match": true,
+   "status": "SHADOW"
+  },
+  {
+   "entity": "Cephadrome",
+   "reference": "new RenderCephadrome(new ModelCephadrome(0.55f), 1.25f, 1.0f)",
+   "reference_shadow": 1.25,
+   "reference_scale": 1.0,
+   "port_file": "CephadromeRenderer.java",
+   "port_shadow": 1.25,
+   "port_scales": [
+    1.0
+   ],
+   "shadow_match": true,
+   "scale_match": true,
+   "status": "MATCH"
+  },
+  {
+   "entity": "Dragon",
+   "reference": "new RenderDragon(new ModelDragon(0.65f), 1.25f, 1.0f)",
+   "reference_shadow": 1.25,
+   "reference_scale": 1.0,
+   "port_file": "DragonRenderer.java",
+   "port_shadow": 1.5,
+   "port_scales": [
+    1.0
+   ],
+   "shadow_match": false,
+   "scale_match": true,
+   "status": "SHADOW"
+  },
+  {
+   "entity": "Chipmunk",
+   "reference": "new RenderChipmunk(new ModelChipmunk(1.0f), 0.15f, 0.9f)",
+   "reference_shadow": 0.135,
+   "reference_scale": 0.9,
+   "port_file": "ChipmunkRenderer.java",
+   "port_shadow": 0.3,
+   "port_scales": [
+    "SCALE / 2.0f",
+    1.0
+   ],
+   "shadow_match": false,
+   "scale_match": false,
+   "status": "SHADOW+SCALE"
+  },
+  {
+   "entity": "Gazelle",
+   "reference": "new RenderGazelle(new ModelGazelle(0.65f), 0.45f, 1.0f)",
+   "reference_shadow": 0.45,
+   "reference_scale": 1.0,
+   "port_file": "GazelleRenderer.java",
+   "port_shadow": 0.5,
+   "port_scales": [
+    "scale"
+   ],
+   "shadow_match": false,
+   "scale_match": true,
+   "status": "SHADOW"
+  },
+  {
+   "entity": "Ostrich",
+   "reference": "new RenderOstrich(new ModelOstrich(0.65f), 0.55f, 1.0f)",
+   "reference_shadow": 0.55,
+   "reference_scale": 1.0,
+   "port_file": "OstrichRenderer.java",
+   "port_shadow": 0.5,
+   "port_scales": [],
+   "shadow_match": false,
+   "scale_match": true,
+   "status": "SHADOW"
+  },
+  {
+   "entity": "TrooperBug",
+   "reference": "new RenderTrooperBug(new ModelTrooperBug(0.22f), 0.95f, 1.1f)",
+   "reference_shadow": 1.045,
+   "reference_scale": 1.1,
+   "port_file": "TrooperBugRenderer.java",
+   "port_shadow": 1.0,
+   "port_scales": [],
+   "shadow_match": false,
+   "scale_match": false,
+   "status": "SHADOW+SCALE"
+  },
+  {
+   "entity": "SpitBug",
+   "reference": "new RenderSpitBug(new ModelSpitBug(0.55f), 0.55f, 0.75f)",
+   "reference_shadow": 0.41250000000000003,
+   "reference_scale": 0.75,
+   "port_file": "SpitBugRenderer.java",
+   "port_shadow": 0.6,
+   "port_scales": [],
+   "shadow_match": false,
+   "scale_match": false,
+   "status": "SHADOW+SCALE"
+  },
+  {
+   "entity": "StinkBug",
+   "reference": "new RenderStinkBug(new ModelStinkBug(0.75f), 0.35f, 0.85f)",
+   "reference_shadow": 0.2975,
+   "reference_scale": 0.85,
+   "port_file": "StinkBugRenderer.java",
+   "port_shadow": 0.2,
+   "port_scales": [],
+   "shadow_match": false,
+   "scale_match": false,
+   "status": "SHADOW+SCALE"
+  },
+  {
+   "entity": "Island",
+   "reference": "new RenderIsland(new ModelIsland(1.0f), 0.25f, 1.0f)",
+   "reference_shadow": 0.25,
+   "reference_scale": 1.0,
+   "port_file": "IslandRenderer.java",
+   "port_shadow": 0.25,
+   "port_scales": [
+    1.0
+   ],
+   "shadow_match": true,
+   "scale_match": true,
+   "status": "MATCH"
+  },
+  {
+   "entity": "IslandToo",
+   "reference": "new RenderIslandToo(new ModelIsland(1.0f), 0.25f, 1.0f)",
+   "reference_shadow": 0.25,
+   "reference_scale": 1.0,
+   "port_file": "IslandTooRenderer.java",
+   "port_shadow": 0.25,
+   "port_scales": [
+    1.0
+   ],
+   "shadow_match": true,
+   "scale_match": true,
+   "status": "MATCH"
+  },
+  {
+   "entity": "CreepingHorror",
+   "reference": "new RenderCreepingHorror(new ModelCreepingHorror(), 0.45f, 0.75f)",
+   "reference_shadow": 0.3375,
+   "reference_scale": 0.75,
+   "port_file": "CreepingHorrorRenderer.java",
+   "port_shadow": 0.3,
+   "port_scales": [],
+   "shadow_match": false,
+   "scale_match": false,
+   "status": "SHADOW+SCALE"
+  },
+  {
+   "entity": "TerribleTerror",
+   "reference": "new RenderTerribleTerror(new ModelTerribleTerror(), 0.45f, 0.75f)",
+   "reference_shadow": 0.3375,
+   "reference_scale": 0.75,
+   "port_file": "TerribleTerrorRenderer.java",
+   "port_shadow": 0.5,
+   "port_scales": [],
+   "shadow_match": false,
+   "scale_match": false,
+   "status": "SHADOW+SCALE"
+  },
+  {
+   "entity": "CliffRacer",
+   "reference": "new RenderCliffRacer(new ModelCliffRacer(1.0f), 0.3f, 1.0f)",
+   "reference_shadow": 0.3,
+   "reference_scale": 1.0,
+   "port_file": "CliffRacerRenderer.java",
+   "port_shadow": 0.5,
+   "port_scales": [],
+   "shadow_match": false,
+   "scale_match": true,
+   "status": "SHADOW"
+  },
+  {
+   "entity": "Triffid",
+   "reference": "new RenderTriffid(new ModelTriffid(1.0f), 0.3f, 1.0f)",
+   "reference_shadow": 0.3,
+   "reference_scale": 1.0,
+   "port_file": "TriffidRenderer.java",
+   "port_shadow": 1.0,
+   "port_scales": [],
+   "shadow_match": false,
+   "scale_match": true,
+   "status": "SHADOW"
+  },
+  {
+   "entity": "PitchBlack",
+   "reference": "new RenderPitchBlack(new ModelPitchBlack(0.65f), 1.25f, 1.0f)",
+   "reference_shadow": 1.25,
+   "reference_scale": 1.0,
+   "port_file": "PitchBlackRenderer.java",
+   "port_shadow": 2.0,
+   "port_scales": [
+    "scale"
+   ],
+   "shadow_match": false,
+   "scale_match": true,
+   "status": "SHADOW"
+  },
+  {
+   "entity": "LurkingTerror",
+   "reference": "new RenderLurkingTerror(new ModelLurkingTerror(), 0.45f, 0.85f)",
+   "reference_shadow": 0.3825,
+   "reference_scale": 0.85,
+   "port_file": "LurkingTerrorRenderer.java",
+   "port_shadow": 1.0,
+   "port_scales": [],
+   "shadow_match": false,
+   "scale_match": false,
+   "status": "SHADOW+SCALE"
+  },
+  {
+   "entity": "Godzilla",
+   "reference": "new RenderGodzilla(new ModelGodzilla(0.2f), 1.0f, 2.0f)",
+   "reference_shadow": 2.0,
+   "reference_scale": 2.0,
+   "port_file": "GodzillaRenderer.java",
+   "port_shadow": 5.0,
+   "port_scales": [
+    "effectiveScale"
+   ],
+   "shadow_match": false,
+   "scale_match": false,
+   "status": "SHADOW+SCALE"
+  },
+  {
+   "entity": "WormSmall",
+   "reference": "new RenderWormSmall(new ModelWormSmall(), 0.1f, 1.0f)",
+   "reference_shadow": 0.1,
+   "reference_scale": 1.0,
+   "port_file": "WormSmallRenderer.java",
+   "port_shadow": 0.25,
+   "port_scales": [],
+   "shadow_match": false,
+   "scale_match": true,
+   "status": "SHADOW"
+  },
+  {
+   "entity": "WormMedium",
+   "reference": "new RenderWormMedium(new ModelWormMedium(), 0.25f, 1.0f)",
+   "reference_shadow": 0.25,
+   "reference_scale": 1.0,
+   "port_file": "WormMediumRenderer.java",
+   "port_shadow": 0.5,
+   "port_scales": [],
+   "shadow_match": false,
+   "scale_match": true,
+   "status": "SHADOW"
+  },
+  {
+   "entity": "WormLarge",
+   "reference": "new RenderWormLarge(new ModelWormLarge(), 0.9f, 1.0f)",
+   "reference_shadow": 0.9,
+   "reference_scale": 1.0,
+   "port_file": "WormLargeRenderer.java",
+   "port_shadow": 1.0,
+   "port_scales": [],
+   "shadow_match": false,
+   "scale_match": true,
+   "status": "SHADOW"
+  },
+  {
+   "entity": "Cassowary",
+   "reference": "new RenderCassowary(new ModelCassowary(0.55f), 0.5f, 1.0f)",
+   "reference_shadow": 0.5,
+   "reference_scale": 1.0,
+   "port_file": "CassowaryRenderer.java",
+   "port_shadow": 0.5,
+   "port_scales": [
+    "scale"
+   ],
+   "shadow_match": true,
+   "scale_match": true,
+   "status": "MATCH"
+  },
+  {
+   "entity": "GoldFish",
+   "reference": "new RenderGoldFish(new ModelGoldFish(0.7f), 0.2f, 1.0f)",
+   "reference_shadow": 0.2,
+   "reference_scale": 1.0,
+   "port_file": "GoldFishRenderer.java",
+   "port_shadow": 0.3,
+   "port_scales": [],
+   "shadow_match": false,
+   "scale_match": true,
+   "status": "SHADOW"
+  },
+  {
+   "entity": "CloudShark",
+   "reference": "new RenderCloudShark(new ModelCloudShark(1.0f), 0.5f, 1.0f)",
+   "reference_shadow": 0.5,
+   "reference_scale": 1.0,
+   "port_file": "CloudSharkRenderer.java",
+   "port_shadow": 0.5,
+   "port_scales": [],
+   "shadow_match": true,
+   "scale_match": true,
+   "status": "MATCH"
+  },
+  {
+   "entity": "LeafMonster",
+   "reference": "new RenderLeafMonster(new ModelLeafMonster(), 0.65f, 1.0f)",
+   "reference_shadow": 0.65,
+   "reference_scale": 1.0,
+   "port_file": "LeafMonsterRenderer.java",
+   "port_shadow": 0.5,
+   "port_scales": [],
+   "shadow_match": false,
+   "scale_match": true,
+   "status": "SHADOW"
+  },
+  {
+   "entity": "EnderKnight",
+   "reference": "new RenderEnderKnight(new ModelEnderKnight(0.21f), 0.3f, 1.0f)",
+   "reference_shadow": 0.3,
+   "reference_scale": 1.0,
+   "port_file": "EnderKnightRenderer.java",
+   "port_shadow": 0.5,
+   "port_scales": [],
+   "shadow_match": false,
+   "scale_match": true,
+   "status": "SHADOW"
+  },
+  {
+   "entity": "EnderReaper",
+   "reference": "new RenderEnderReaper(new ModelEnderReaper(0.23f), 0.2f, 1.0f)",
+   "reference_shadow": 0.2,
+   "reference_scale": 1.0,
+   "port_file": "EnderReaperRenderer.java",
+   "port_shadow": 0.5,
+   "port_scales": [],
+   "shadow_match": false,
+   "scale_match": true,
+   "status": "SHADOW"
+  },
+  {
+   "entity": "Beaver",
+   "reference": "new RenderBeaver(new ModelBeaver(0.5f), 0.15f, 0.75f)",
+   "reference_shadow": 0.11249999999999999,
+   "reference_scale": 0.75,
+   "port_file": "BeaverRenderer.java",
+   "port_shadow": 0.5,
+   "port_scales": [
+    "SCALE / 2.0f",
+    1.0
+   ],
+   "shadow_match": false,
+   "scale_match": false,
+   "status": "SHADOW+SCALE"
+  },
+  {
+   "entity": "Termite",
+   "reference": "new RenderAnt(new ModelAnt(), 0.15f, 0.35f)",
+   "reference_shadow": 0.0525,
+   "reference_scale": 0.35,
+   "port_file": "TermiteRenderer.java",
+   "port_shadow": null,
+   "port_scales": [
+    0.35
+   ],
+   "shadow_match": false,
+   "scale_match": true,
+   "status": "SHADOW"
+  },
+  {
+   "entity": "Fairy",
+   "reference": "new RenderFairy(new ModelFairy(1.5f), 0.1f, 0.35f)",
+   "reference_shadow": 0.034999999999999996,
+   "reference_scale": 0.35,
+   "port_file": "FairyRenderer.java",
+   "port_shadow": 0.15,
+   "port_scales": [],
+   "shadow_match": false,
+   "scale_match": false,
+   "status": "SHADOW+SCALE"
+  },
+  {
+   "entity": "Peacock",
+   "reference": "new RenderPeacock(new ModelPeacock(0.75f), 0.25f, 1.0f)",
+   "reference_shadow": 0.25,
+   "reference_scale": 1.0,
+   "port_file": "PeacockRenderer.java",
+   "port_shadow": 0.4,
+   "port_scales": [
+    0.5
+   ],
+   "shadow_match": false,
+   "scale_match": false,
+   "status": "SHADOW+SCALE"
+  },
+  {
+   "entity": "Rotator",
+   "reference": "new RenderRotator(new ModelRotator(0.25f), 0.1f, 1.0f)",
+   "reference_shadow": 0.1,
+   "reference_scale": 1.0,
+   "port_file": "RotatorRenderer.java",
+   "port_shadow": 0.5,
+   "port_scales": [],
+   "shadow_match": false,
+   "scale_match": true,
+   "status": "SHADOW"
+  },
+  {
+   "entity": "Vortex",
+   "reference": "new RenderVortex(new ModelVortex(0.25f), 0.1f, 1.0f)",
+   "reference_shadow": 0.1,
+   "reference_scale": 1.0,
+   "port_file": "VortexRenderer.java",
+   "port_shadow": 1.5,
+   "port_scales": [],
+   "shadow_match": false,
+   "scale_match": true,
+   "status": "SHADOW"
+  },
+  {
+   "entity": "DungeonBeast",
+   "reference": "new RenderDungeonBeast(new ModelDungeonBeast(0.62f), 0.25f, 1.0f)",
+   "reference_shadow": 0.25,
+   "reference_scale": 1.0,
+   "port_file": "DungeonBeastRenderer.java",
+   "port_shadow": 0.5,
+   "port_scales": [],
+   "shadow_match": false,
+   "scale_match": true,
+   "status": "SHADOW"
+  },
+  {
+   "entity": "Rat",
+   "reference": "new RenderRat(new ModelRat(1.0f), 0.1f, 0.75f)",
+   "reference_shadow": 0.07500000000000001,
+   "reference_scale": 0.75,
+   "port_file": "RatRenderer.java",
+   "port_shadow": 0.25,
+   "port_scales": [],
+   "shadow_match": false,
+   "scale_match": false,
+   "status": "SHADOW+SCALE"
+  },
+  {
+   "entity": "Flounder",
+   "reference": "new RenderFlounder(new ModelFlounder(), 0.1f, 1.0f)",
+   "reference_shadow": 0.1,
+   "reference_scale": 1.0,
+   "port_file": "FlounderRenderer.java",
+   "port_shadow": 0.3,
+   "port_scales": [],
+   "shadow_match": false,
+   "scale_match": true,
+   "status": "SHADOW"
+  },
+  {
+   "entity": "Whale",
+   "reference": "new RenderWhale(new ModelWhale(), 0.1f, 1.0f)",
+   "reference_shadow": 0.1,
+   "reference_scale": 1.0,
+   "port_file": "WhaleRenderer.java",
+   "port_shadow": 1.5,
+   "port_scales": [
+    "SCALE / 2.0f",
+    1.0
+   ],
+   "shadow_match": false,
+   "scale_match": true,
+   "status": "SHADOW"
+  },
+  {
+   "entity": "Irukandji",
+   "reference": "new RenderIrukandji(new ModelIrukandji(1.0f), 0.1f, 0.25f)",
+   "reference_shadow": 0.025,
+   "reference_scale": 0.25,
+   "port_file": "IrukandjiRenderer.java",
+   "port_shadow": 0.2,
+   "port_scales": [],
+   "shadow_match": false,
+   "scale_match": false,
+   "status": "SHADOW+SCALE"
+  },
+  {
+   "entity": "Skate",
+   "reference": "new RenderSkate(new ModelSkate(1.0f), 0.1f, 0.75f)",
+   "reference_shadow": 0.07500000000000001,
+   "reference_scale": 0.75,
+   "port_file": "SkateRenderer.java",
+   "port_shadow": 0.4,
+   "port_scales": [],
+   "shadow_match": false,
+   "scale_match": false,
+   "status": "SHADOW+SCALE"
+  },
+  {
+   "entity": "Urchin",
+   "reference": "new RenderUrchin(new ModelUrchin(1.0f), 0.35f, 1.25f)",
+   "reference_shadow": 0.4375,
+   "reference_scale": 1.25,
+   "port_file": "UrchinRenderer.java",
+   "port_shadow": 0.3,
+   "port_scales": [],
+   "shadow_match": false,
+   "scale_match": false,
+   "status": "SHADOW+SCALE"
+  },
+  {
+   "entity": "Mantis",
+   "reference": "new RenderMantis(new ModelMantis(2.0f), 0.9f, 1.1f)",
+   "reference_shadow": 0.9900000000000001,
+   "reference_scale": 1.1,
+   "port_file": "MantisRenderer.java",
+   "port_shadow": 0.8,
+   "port_scales": [],
+   "shadow_match": false,
+   "scale_match": false,
+   "status": "SHADOW+SCALE"
+  },
+  {
+   "entity": "HerculesBeetle",
+   "reference": "new RenderHerculesBeetle(new ModelHerculesBeetle(1.0f), 0.99f, 1.1f)",
+   "reference_shadow": 1.089,
+   "reference_scale": 1.1,
+   "port_file": "HerculesBeetleRenderer.java",
+   "port_shadow": 1.0,
+   "port_scales": [],
+   "shadow_match": false,
+   "scale_match": false,
+   "status": "SHADOW+SCALE"
+  },
+  {
+   "entity": "Stinky",
+   "reference": "new RenderStinky(new ModelStinky(0.65f), 0.75f, 1.0f)",
+   "reference_shadow": 0.75,
+   "reference_scale": 1.0,
+   "port_file": "StinkyRenderer.java",
+   "port_shadow": 0.5,
+   "port_scales": [],
+   "shadow_match": false,
+   "scale_match": true,
+   "status": "SHADOW"
+  },
+  {
+   "entity": "Coin",
+   "reference": "new RenderCoin(new ModelCoin(0.22f), 0.75f, 0.125f)",
+   "reference_shadow": 0.09375,
+   "reference_scale": 0.125,
+   "port_file": "CoinRenderer.java",
+   "port_shadow": 0.09375,
+   "port_scales": [
+    0.125
+   ],
+   "shadow_match": true,
+   "scale_match": true,
+   "status": "MATCH"
+  },
+  {
+   "entity": "TheKing",
+   "reference": "new RenderTheKing(new ModelTheKing(0.65f), 1.9f, 2.1f)",
+   "reference_shadow": 3.9899999999999998,
+   "reference_scale": 2.1,
+   "port_file": "TheKingRenderer.java",
+   "port_shadow": 5.0,
+   "port_scales": [
+    "effectiveScale",
+    -1.0
+   ],
+   "shadow_match": false,
+   "scale_match": false,
+   "status": "SHADOW+SCALE"
+  },
+  {
+   "entity": "TheQueen",
+   "reference": "new RenderTheQueen(new ModelTheQueen(0.65f), 1.9f, 2.0f)",
+   "reference_shadow": 3.8,
+   "reference_scale": 2.0,
+   "status": "NO_PORT_RENDERER"
+  },
+  {
+   "entity": "ThePrince",
+   "reference": "new RenderThePrince(new ModelThePrince(0.65f), 0.75f, 0.75f)",
+   "reference_shadow": 0.5625,
+   "reference_scale": 0.75,
+   "port_file": "ThePrinceRenderer.java",
+   "port_shadow": null,
+   "port_scales": [
+    0.75
+   ],
+   "shadow_match": false,
+   "scale_match": true,
+   "status": "SHADOW"
+  },
+  {
+   "entity": "Molenoid",
+   "reference": "new RenderMolenoid(new ModelMolenoid(0.5f), 1.0f, 1.0f)",
+   "reference_shadow": 1.0,
+   "reference_scale": 1.0,
+   "port_file": "MolenoidRenderer.java",
+   "port_shadow": 2.0,
+   "port_scales": [],
+   "shadow_match": false,
+   "scale_match": true,
+   "status": "SHADOW"
+  },
+  {
+   "entity": "SeaMonster",
+   "reference": "new RenderSeaMonster(new ModelSeaMonster(0.5f), 1.0f, 1.0f)",
+   "reference_shadow": 1.0,
+   "reference_scale": 1.0,
+   "port_file": "SeaMonsterRenderer.java",
+   "port_shadow": 1.5,
+   "port_scales": [
+    3.0
+   ],
+   "shadow_match": false,
+   "scale_match": false,
+   "status": "SHADOW+SCALE"
+  },
+  {
+   "entity": "SeaViper",
+   "reference": "new RenderSeaViper(new ModelSeaViper(0.5f), 1.0f, 1.0f)",
+   "reference_shadow": 1.0,
+   "reference_scale": 1.0,
+   "port_file": "SeaViperRenderer.java",
+   "port_shadow": 0.4,
+   "port_scales": [],
+   "shadow_match": false,
+   "scale_match": true,
+   "status": "SHADOW"
+  },
+  {
+   "entity": "EasterBunny",
+   "reference": "new RenderEasterBunny(new ModelEasterBunny(0.55f), 0.5f, 1.0f)",
+   "reference_shadow": 0.5,
+   "reference_scale": 1.0,
+   "port_file": "EasterBunnyRenderer.java",
+   "port_shadow": 0.3,
+   "port_scales": [
+    0.5
+   ],
+   "shadow_match": false,
+   "scale_match": false,
+   "status": "SHADOW+SCALE"
+  },
+  {
+   "entity": "CaterKiller",
+   "reference": "new RenderCaterKiller(new ModelCaterKiller(0.22f), 1.0f, 1.25f)",
+   "reference_shadow": 1.25,
+   "reference_scale": 1.25,
+   "port_file": "CaterKillerRenderer.java",
+   "port_shadow": 1.2,
+   "port_scales": [],
+   "shadow_match": false,
+   "scale_match": false,
+   "status": "SHADOW+SCALE"
+  },
+  {
+   "entity": "Leon",
+   "reference": "new RenderLeon(new ModelLeon(0.22f), 1.0f, 1.75f)",
+   "reference_shadow": 1.75,
+   "reference_scale": 1.75,
+   "port_file": "LeonRenderer.java",
+   "port_shadow": 1.75,
+   "port_scales": [
+    1.75
+   ],
+   "shadow_match": true,
+   "scale_match": true,
+   "status": "MATCH"
+  },
+  {
+   "entity": "Hammerhead",
+   "reference": "new RenderHammerhead(new ModelHammerhead(0.33f), 1.0f, 2.5f)",
+   "reference_shadow": 2.5,
+   "reference_scale": 2.5,
+   "port_file": "HammerheadRenderer.java",
+   "port_shadow": 1.0,
+   "port_scales": [
+    2.0
+   ],
+   "shadow_match": false,
+   "scale_match": false,
+   "status": "SHADOW+SCALE"
+  },
+  {
+   "entity": "RubberDucky",
+   "reference": "new RenderRubberDucky(new ModelRubberDucky(1.0f), 0.15f, 0.75f)",
+   "reference_shadow": 0.11249999999999999,
+   "reference_scale": 0.75,
+   "port_file": "RubberDuckyRenderer.java",
+   "port_shadow": 0.25,
+   "port_scales": [],
+   "shadow_match": false,
+   "scale_match": false,
+   "status": "SHADOW+SCALE"
+  },
+  {
+   "entity": "ThePrinceTeen",
+   "reference": "new RenderThePrinceTeen(new ModelThePrinceTeen(0.65f), 1.0f, 1.25f)",
+   "reference_shadow": 1.25,
+   "reference_scale": 1.25,
+   "port_file": "ThePrinceTeenRenderer.java",
+   "port_shadow": 0.9,
+   "port_scales": [
+    0.85
+   ],
+   "shadow_match": false,
+   "scale_match": false,
+   "status": "SHADOW+SCALE"
+  },
+  {
+   "entity": "BandP",
+   "reference": "new RenderBandP(new ModelBandP(0.4f), 1.0f, 1.0f)",
+   "reference_shadow": 1.0,
+   "reference_scale": 1.0,
+   "port_file": "BandPRenderer.java",
+   "port_shadow": 0.5,
+   "port_scales": [],
+   "shadow_match": false,
+   "scale_match": true,
+   "status": "SHADOW"
+  },
+  {
+   "entity": "RockBase",
+   "reference": "new RenderRockBase(new ModelRockBase(1.0f), 0.0f, 1.0f)",
+   "reference_shadow": 0.0,
+   "reference_scale": 1.0,
+   "port_file": "RockBaseRenderer.java",
+   "port_shadow": 0.3,
+   "port_scales": [],
+   "shadow_match": false,
+   "scale_match": true,
+   "status": "SHADOW"
+  },
+  {
+   "entity": "PurplePower",
+   "reference": "new RenderPurplePower(new ModelPurplePower(1.0f), 0.3f, 2.75f)",
+   "reference_shadow": 0.825,
+   "reference_scale": 2.75,
+   "port_file": "PurplePowerRenderer.java",
+   "port_shadow": 0.5,
+   "port_scales": [
+    "scale"
+   ],
+   "shadow_match": false,
+   "scale_match": false,
+   "status": "SHADOW+SCALE"
+  },
+  {
+   "entity": "Brutalfly",
+   "reference": "new RenderBrutalfly(new ModelBrutalfly(0.2f), 0.75f, 9.0f)",
+   "reference_shadow": 6.75,
+   "reference_scale": 9.0,
+   "port_file": "BrutalflyRenderer.java",
+   "port_shadow": 1.5,
+   "port_scales": [],
+   "shadow_match": false,
+   "scale_match": false,
+   "status": "SHADOW+SCALE"
+  },
+  {
+   "entity": "Nastysaurus",
+   "reference": "new RenderNastysaurus(new ModelNastysaurus(0.65f), 1.0f, 1.5f)",
+   "reference_shadow": 1.5,
+   "reference_scale": 1.5,
+   "port_file": "NastysaurusRenderer.java",
+   "port_shadow": null,
+   "port_scales": [
+    1.5
+   ],
+   "shadow_match": false,
+   "scale_match": true,
+   "status": "SHADOW"
+  },
+  {
+   "entity": "Pointysaurus",
+   "reference": "new RenderPointysaurus(new ModelPointysaurus(1.0f), 1.0f, 1.0f)",
+   "reference_shadow": 1.0,
+   "reference_scale": 1.0,
+   "port_file": "PointysaurusRenderer.java",
+   "port_shadow": 1.0,
+   "port_scales": [
+    1.0
+   ],
+   "shadow_match": true,
+   "scale_match": true,
+   "status": "MATCH"
+  },
+  {
+   "entity": "Cricket",
+   "reference": "new RenderCricket(new ModelCricket(2.5f), 0.15f, 0.5f)",
+   "reference_shadow": 0.075,
+   "reference_scale": 0.5,
+   "port_file": "CricketRenderer.java",
+   "port_shadow": 0.1,
+   "port_scales": [],
+   "shadow_match": false,
+   "scale_match": false,
+   "status": "SHADOW+SCALE"
+  },
+  {
+   "entity": "ThePrincess",
+   "reference": "new RenderThePrincess(new ModelThePrincess(0.65f), 0.7f, 0.7f)",
+   "reference_shadow": 0.48999999999999994,
+   "reference_scale": 0.7,
+   "port_file": "ThePrincessRenderer.java",
+   "port_shadow": null,
+   "port_scales": [
+    0.7
+   ],
+   "shadow_match": false,
+   "scale_match": true,
+   "status": "SHADOW"
+  },
+  {
+   "entity": "Frog",
+   "reference": "new RenderFrog(new ModelFrog(1.0f), 0.35f, 1.0f)",
+   "reference_shadow": 0.35,
+   "reference_scale": 1.0,
+   "port_file": "FrogRenderer.java",
+   "port_shadow": 0.3,
+   "port_scales": [
+    "scale"
+   ],
+   "shadow_match": false,
+   "scale_match": true,
+   "status": "SHADOW"
+  },
+  {
+   "entity": "ThePrinceAdult",
+   "reference": "new RenderThePrinceAdult(new ModelThePrinceAdult(0.65f), 1.2f, 1.0f)",
+   "reference_shadow": 1.2,
+   "reference_scale": 1.0,
+   "port_file": "ThePrinceAdultRenderer.java",
+   "port_shadow": 1.2,
+   "port_scales": [
+    1.0
+   ],
+   "shadow_match": true,
+   "scale_match": true,
+   "status": "MATCH"
+  },
+  {
+   "entity": "SpiderRobot",
+   "reference": "new RenderSpiderRobot(new ModelSpiderRobot(1.0f), 0.99f, 1.0f)",
+   "reference_shadow": 0.99,
+   "reference_scale": 1.0,
+   "port_file": "SpiderRobotRenderer.java",
+   "port_shadow": 3.0,
+   "port_scales": [
+    1.0
+   ],
+   "shadow_match": false,
+   "scale_match": true,
+   "status": "SHADOW"
+  },
+  {
+   "entity": "GiantRobot",
+   "reference": "new RenderGiantRobot(new ModelGiantRobot(0.25f), 0.99f, 1.0f)",
+   "reference_shadow": 0.99,
+   "reference_scale": 1.0,
+   "port_file": "GiantRobotRenderer.java",
+   "port_shadow": 4.0,
+   "port_scales": [
+    1.0
+   ],
+   "shadow_match": false,
+   "scale_match": true,
+   "status": "SHADOW"
+  },
+  {
+   "entity": "AntRobot",
+   "reference": "new RenderAntRobot(new ModelAntRobot(1.0f), 0.99f, 1.0f)",
+   "reference_shadow": 0.99,
+   "reference_scale": 1.0,
+   "port_file": "AntRobotRenderer.java",
+   "port_shadow": 2.0,
+   "port_scales": [
+    1.0
+   ],
+   "shadow_match": false,
+   "scale_match": true,
+   "status": "SHADOW"
+  },
+  {
+   "entity": "Crab",
+   "reference": "new RenderCrab(new ModelCrab(1.0f), 0.99f, 1.0f)",
+   "reference_shadow": 0.99,
+   "reference_scale": 1.0,
+   "port_file": "CrabRenderer.java",
+   "port_shadow": 0.8,
+   "port_scales": [
+    "scale"
+   ],
+   "shadow_match": false,
+   "scale_match": true,
+   "status": "SHADOW"
+  }
+ ],
+ "counts": {
+  "SHADOW": 47,
+  "SHADOW+SCALE": 48,
+  "MATCH": 12,
+  "NO_PORT_RENDERER": 2
+ }
+}

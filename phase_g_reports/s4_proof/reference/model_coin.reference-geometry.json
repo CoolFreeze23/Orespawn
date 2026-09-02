@@ -29,6 +29,10 @@
               0
             ],
             "mirror": false,
+            "texture_size": [
+              512,
+              512
+            ],
             "delta": 0.0
           }
         ],
@@ -59,7 +63,9 @@
     "reference_parts_with_boxes": 1,
     "port_parts_with_boxes": 1,
     "matched_parts": 1,
-    "differences": []
+    "categories": {},
+    "differences": [],
+    "by_category": {}
   },
   "status": "PASS"
 }
