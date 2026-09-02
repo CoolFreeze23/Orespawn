@@ -1,0 +1,1356 @@
+{
+  "schema_version": 1,
+  "model_id": "reference_antrobot",
+  "reference_source": "reference_1_7_10_source/sources/danger/orespawn/ModelAntRobot.java",
+  "reference": {
+    "status": "PARSED",
+    "class": "ModelAntRobot",
+    "texture_width": 128,
+    "texture_height": 256,
+    "parts": [
+      {
+        "name": "Leg1",
+        "tex_u": 19,
+        "tex_v": 40,
+        "boxes": [
+          {
+            "origin": [
+              -1.5,
+              -1.5,
+              0.0
+            ],
+            "size": [
+              3,
+              3,
+              50
+            ],
+            "uv": [
+              19,
+              40
+            ],
+            "mirror": false,
+            "texture_size": [
+              128,
+              256
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "rotation": [
+          0.7853982,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          32
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Leg2",
+        "tex_u": 19,
+        "tex_v": 41,
+        "boxes": [
+          {
+            "origin": [
+              -1.0,
+              -1.0,
+              0.0
+            ],
+            "size": [
+              2,
+              2,
+              50
+            ],
+            "uv": [
+              19,
+              41
+            ],
+            "mirror": false,
+            "texture_size": [
+              128,
+              256
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          -35.0,
+          35.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          32
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Leg3",
+        "tex_u": 20,
+        "tex_v": 42,
+        "boxes": [
+          {
+            "origin": [
+              -0.5,
+              -0.5,
+              0.0
+            ],
+            "size": [
+              1,
+              1,
+              50
+            ],
+            "uv": [
+              20,
+              42
+            ],
+            "mirror": false,
+            "texture_size": [
+              128,
+              256
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          -35.0,
+          85.0
+        ],
+        "rotation": [
+          -0.7853982,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          32
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Foot1",
+        "tex_u": 28,
+        "tex_v": 0,
+        "boxes": [
+          {
+            "origin": [
+              -2.5,
+              -0.5,
+              50.0
+            ],
+            "size": [
+              5,
+              1,
+              2
+            ],
+            "uv": [
+              28,
+              0
+            ],
+            "mirror": false,
+            "texture_size": [
+              128,
+              256
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          -35.0,
+          85.0
+        ],
+        "rotation": [
+          -0.7853982,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          32
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Foot2",
+        "tex_u": 30,
+        "tex_v": 4,
+        "boxes": [
+          {
+            "origin": [
+              1.5,
+              -0.5,
+              52.0
+            ],
+            "size": [
+              1,
+              1,
+              3
+            ],
+            "uv": [
+              30,
+              4
+            ],
+            "mirror": false,
+            "texture_size": [
+              128,
+              256
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          -35.0,
+          85.0
+        ],
+        "rotation": [
+          -0.7853982,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          32
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Foot3",
+        "tex_u": 44,
+        "tex_v": 0,
+        "boxes": [
+          {
+            "origin": [
+              -0.5,
+              -0.5,
+              52.0
+            ],
+            "size": [
+              1,
+              1,
+              5
+            ],
+            "uv": [
+              44,
+              0
+            ],
+            "mirror": false,
+            "texture_size": [
+              128,
+              256
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          -35.0,
+          85.0
+        ],
+        "rotation": [
+          -0.7853982,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          32
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Foot4",
+        "tex_u": 30,
+        "tex_v": 9,
+        "boxes": [
+          {
+            "origin": [
+              -2.5,
+              -0.5,
+              52.0
+            ],
+            "size": [
+              1,
+              1,
+              3
+            ],
+            "uv": [
+              30,
+              9
+            ],
+            "mirror": false,
+            "texture_size": [
+              128,
+              256
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          -35.0,
+          85.0
+        ],
+        "rotation": [
+          -0.7853982,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          32
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Foot5",
+        "tex_u": 40,
+        "tex_v": 8,
+        "boxes": [
+          {
+            "origin": [
+              -0.5,
+              -2.5,
+              50.0
+            ],
+            "size": [
+              1,
+              5,
+              2
+            ],
+            "uv": [
+              40,
+              8
+            ],
+            "mirror": false,
+            "texture_size": [
+              128,
+              256
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          -35.0,
+          85.0
+        ],
+        "rotation": [
+          -0.7853982,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          32
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Foot6",
+        "tex_u": 48,
+        "tex_v": 9,
+        "boxes": [
+          {
+            "origin": [
+              -0.5,
+              -2.5,
+              52.0
+            ],
+            "size": [
+              1,
+              1,
+              2
+            ],
+            "uv": [
+              48,
+              9
+            ],
+            "mirror": false,
+            "texture_size": [
+              128,
+              256
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          -35.0,
+          85.0
+        ],
+        "rotation": [
+          -0.7853982,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          32
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Foot7",
+        "tex_u": 48,
+        "tex_v": 14,
+        "boxes": [
+          {
+            "origin": [
+              -0.5,
+              1.5,
+              52.0
+            ],
+            "size": [
+              1,
+              1,
+              2
+            ],
+            "uv": [
+              48,
+              14
+            ],
+            "mirror": false,
+            "texture_size": [
+              128,
+              256
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          -35.0,
+          85.0
+        ],
+        "rotation": [
+          -0.7853982,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          32
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Body",
+        "tex_u": 0,
+        "tex_v": 151,
+        "boxes": [
+          {
+            "origin": [
+              -11.0,
+              0.0,
+              -16.0
+            ],
+            "size": [
+              22,
+              14,
+              32
+            ],
+            "uv": [
+              0,
+              151
+            ],
+            "mirror": false,
+            "texture_size": [
+              128,
+              256
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          32
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Abdomen",
+        "tex_u": 0,
+        "tex_v": 199,
+        "boxes": [
+          {
+            "origin": [
+              -15.0,
+              -10.0,
+              16.0
+            ],
+            "size": [
+              30,
+              22,
+              34
+            ],
+            "uv": [
+              0,
+              199
+            ],
+            "mirror": false,
+            "texture_size": [
+              128,
+              256
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          32
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Head",
+        "tex_u": 0,
+        "tex_v": 120,
+        "boxes": [
+          {
+            "origin": [
+              -7.0,
+              4.0,
+              -34.0
+            ],
+            "size": [
+              14,
+              11,
+              18
+            ],
+            "uv": [
+              0,
+              120
+            ],
+            "mirror": false,
+            "texture_size": [
+              128,
+              256
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          32
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Jet1",
+        "tex_u": 78,
+        "tex_v": 0,
+        "boxes": [
+          {
+            "origin": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "size": [
+              6,
+              6,
+              18
+            ],
+            "uv": [
+              78,
+              0
+            ],
+            "mirror": false,
+            "texture_size": [
+              128,
+              256
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          8.0,
+          -12.0,
+          35.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          32
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Jet2",
+        "tex_u": 78,
+        "tex_v": 0,
+        "boxes": [
+          {
+            "origin": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "size": [
+              6,
+              6,
+              18
+            ],
+            "uv": [
+              78,
+              0
+            ],
+            "mirror": false,
+            "texture_size": [
+              128,
+              256
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          -14.0,
+          -12.0,
+          35.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          32
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Hip1",
+        "tex_u": 0,
+        "tex_v": 96,
+        "boxes": [
+          {
+            "origin": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "size": [
+              6,
+              6,
+              6
+            ],
+            "uv": [
+              0,
+              96
+            ],
+            "mirror": false,
+            "texture_size": [
+              128,
+              256
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          11.0,
+          9.0,
+          -3.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          128,
+          256
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Hip2",
+        "tex_u": 0,
+        "tex_v": 96,
+        "boxes": [
+          {
+            "origin": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "size": [
+              6,
+              6,
+              6
+            ],
+            "uv": [
+              0,
+              96
+            ],
+            "mirror": false,
+            "texture_size": [
+              128,
+              256
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          -17.0,
+          9.0,
+          -3.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          128,
+          256
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "LJaw1",
+        "tex_u": 0,
+        "tex_v": 33,
+        "boxes": [
+          {
+            "origin": [
+              -2.0,
+              0.0,
+              -2.0
+            ],
+            "size": [
+              17,
+              1,
+              4
+            ],
+            "uv": [
+              0,
+              33
+            ],
+            "mirror": false,
+            "texture_size": [
+              128,
+              256
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          5.0,
+          13.0,
+          -33.0
+        ],
+        "rotation": [
+          0.0,
+          0.8901179,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          128,
+          256
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "RJaw1",
+        "tex_u": 0,
+        "tex_v": 33,
+        "boxes": [
+          {
+            "origin": [
+              -2.0,
+              0.0,
+              -2.0
+            ],
+            "size": [
+              17,
+              1,
+              4
+            ],
+            "uv": [
+              0,
+              33
+            ],
+            "mirror": false,
+            "texture_size": [
+              128,
+              256
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          -5.0,
+          13.0,
+          -33.0
+        ],
+        "rotation": [
+          0.0,
+          2.216568,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          128,
+          256
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "LJaw2",
+        "tex_u": 0,
+        "tex_v": 27,
+        "boxes": [
+          {
+            "origin": [
+              12.0,
+              0.0,
+              5.0
+            ],
+            "size": [
+              17,
+              1,
+              3
+            ],
+            "uv": [
+              0,
+              27
+            ],
+            "mirror": false,
+            "texture_size": [
+              128,
+              256
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          5.0,
+          13.0,
+          -33.0
+        ],
+        "rotation": [
+          0.0,
+          1.37881,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          128,
+          256
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "RJaw2",
+        "tex_u": 0,
+        "tex_v": 27,
+        "boxes": [
+          {
+            "origin": [
+              12.0,
+              0.0,
+              -8.0
+            ],
+            "size": [
+              17,
+              1,
+              3
+            ],
+            "uv": [
+              0,
+              27
+            ],
+            "mirror": false,
+            "texture_size": [
+              128,
+              256
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          -5.0,
+          13.0,
+          -33.0
+        ],
+        "rotation": [
+          0.0,
+          1.745329,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          128,
+          256
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "LAntenna",
+        "tex_u": 70,
+        "tex_v": 0,
+        "boxes": [
+          {
+            "origin": [
+              -0.5,
+              -12.0,
+              -0.5
+            ],
+            "size": [
+              1,
+              12,
+              1
+            ],
+            "uv": [
+              70,
+              0
+            ],
+            "mirror": false,
+            "texture_size": [
+              128,
+              256
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          4.0,
+          -32.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.5410521
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          128,
+          256
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "RAntenna",
+        "tex_u": 70,
+        "tex_v": 0,
+        "boxes": [
+          {
+            "origin": [
+              -0.5,
+              -12.0,
+              -0.5
+            ],
+            "size": [
+              1,
+              12,
+              1
+            ],
+            "uv": [
+              70,
+              0
+            ],
+            "mirror": false,
+            "texture_size": [
+              128,
+              256
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          4.0,
+          -32.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          -0.5410521
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          128,
+          256
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Hip3",
+        "tex_u": 0,
+        "tex_v": 96,
+        "boxes": [
+          {
+            "origin": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "size": [
+              6,
+              6,
+              6
+            ],
+            "uv": [
+              0,
+              96
+            ],
+            "mirror": false,
+            "texture_size": [
+              128,
+              256
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          -17.0,
+          9.0,
+          10.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          128,
+          256
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Hip4",
+        "tex_u": 0,
+        "tex_v": 96,
+        "boxes": [
+          {
+            "origin": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "size": [
+              6,
+              6,
+              6
+            ],
+            "uv": [
+              0,
+              96
+            ],
+            "mirror": false,
+            "texture_size": [
+              128,
+              256
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          11.0,
+          9.0,
+          10.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          128,
+          256
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Hip5",
+        "tex_u": 0,
+        "tex_v": 96,
+        "boxes": [
+          {
+            "origin": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "size": [
+              6,
+              6,
+              6
+            ],
+            "uv": [
+              0,
+              96
+            ],
+            "mirror": false,
+            "texture_size": [
+              128,
+              256
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          11.0,
+          9.0,
+          -16.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          128,
+          256
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Hip6",
+        "tex_u": 0,
+        "tex_v": 96,
+        "boxes": [
+          {
+            "origin": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "size": [
+              6,
+              6,
+              6
+            ],
+            "uv": [
+              0,
+              96
+            ],
+            "mirror": false,
+            "texture_size": [
+              128,
+              256
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          -17.0,
+          9.0,
+          -16.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          128,
+          256
+        ],
+        "children": [],
+        "parent": null
+      }
+    ]
+  },
+  "ground_truth": "1.7.10 decompiled ModelBase constructor, parsed; never the port",
+  "comparison": {
+    "status": "DIVERGES_TEXTURE_MAPPING",
+    "reference_parts_with_boxes": 27,
+    "port_parts_with_boxes": 27,
+    "matched_parts": 27,
+    "categories": {
+      "MIRROR": 27
+    },
+    "differences": [
+      "Leg1 -> Leg1: reference box mirror=False (flag at addBox time), port True",
+      "Leg2 -> Leg2: reference box mirror=False (flag at addBox time), port True",
+      "Leg3 -> Leg3: reference box mirror=False (flag at addBox time), port True",
+      "Foot1 -> Foot1: reference box mirror=False (flag at addBox time), port True",
+      "Foot2 -> Foot2: reference box mirror=False (flag at addBox time), port True",
+      "Foot3 -> Foot3: reference box mirror=False (flag at addBox time), port True",
+      "Foot4 -> Foot4: reference box mirror=False (flag at addBox time), port True",
+      "Foot5 -> Foot5: reference box mirror=False (flag at addBox time), port True",
+      "Foot6 -> Foot6: reference box mirror=False (flag at addBox time), port True",
+      "Foot7 -> Foot7: reference box mirror=False (flag at addBox time), port True",
+      "Body -> Body: reference box mirror=False (flag at addBox time), port True",
+      "Abdomen -> Abdomen: reference box mirror=False (flag at addBox time), port True",
+      "Head -> Head: reference box mirror=False (flag at addBox time), port True",
+      "Jet1 -> Jet1: reference box mirror=False (flag at addBox time), port True",
+      "Jet2 -> Jet2: reference box mirror=False (flag at addBox time), port True",
+      "Hip1 -> Hip1: reference box mirror=False (flag at addBox time), port True",
+      "Hip2 -> Hip2: reference box mirror=False (flag at addBox time), port True",
+      "LJaw1 -> LJaw1: reference box mirror=False (flag at addBox time), port True",
+      "RJaw1 -> RJaw1: reference box mirror=False (flag at addBox time), port True",
+      "LJaw2 -> LJaw2: reference box mirror=False (flag at addBox time), port True",
+      "RJaw2 -> RJaw2: reference box mirror=False (flag at addBox time), port True",
+      "LAntenna -> LAntenna: reference box mirror=False (flag at addBox time), port True",
+      "RAntenna -> RAntenna: reference box mirror=False (flag at addBox time), port True",
+      "Hip3 -> Hip3: reference box mirror=False (flag at addBox time), port True",
+      "Hip4 -> Hip4: reference box mirror=False (flag at addBox time), port True",
+      "Hip5 -> Hip5: reference box mirror=False (flag at addBox time), port True",
+      "Hip6 -> Hip6: reference box mirror=False (flag at addBox time), port True"
+    ],
+    "by_category": {
+      "MIRROR": [
+        "Leg1 -> Leg1: reference box mirror=False (flag at addBox time), port True",
+        "Leg2 -> Leg2: reference box mirror=False (flag at addBox time), port True",
+        "Leg3 -> Leg3: reference box mirror=False (flag at addBox time), port True",
+        "Foot1 -> Foot1: reference box mirror=False (flag at addBox time), port True",
+        "Foot2 -> Foot2: reference box mirror=False (flag at addBox time), port True",
+        "Foot3 -> Foot3: reference box mirror=False (flag at addBox time), port True",
+        "Foot4 -> Foot4: reference box mirror=False (flag at addBox time), port True",
+        "Foot5 -> Foot5: reference box mirror=False (flag at addBox time), port True",
+        "Foot6 -> Foot6: reference box mirror=False (flag at addBox time), port True",
+        "Foot7 -> Foot7: reference box mirror=False (flag at addBox time), port True",
+        "Body -> Body: reference box mirror=False (flag at addBox time), port True",
+        "Abdomen -> Abdomen: reference box mirror=False (flag at addBox time), port True",
+        "Head -> Head: reference box mirror=False (flag at addBox time), port True",
+        "Jet1 -> Jet1: reference box mirror=False (flag at addBox time), port True",
+        "Jet2 -> Jet2: reference box mirror=False (flag at addBox time), port True",
+        "Hip1 -> Hip1: reference box mirror=False (flag at addBox time), port True",
+        "Hip2 -> Hip2: reference box mirror=False (flag at addBox time), port True",
+        "LJaw1 -> LJaw1: reference box mirror=False (flag at addBox time), port True",
+        "RJaw1 -> RJaw1: reference box mirror=False (flag at addBox time), port True",
+        "LJaw2 -> LJaw2: reference box mirror=False (flag at addBox time), port True",
+        "RJaw2 -> RJaw2: reference box mirror=False (flag at addBox time), port True",
+        "LAntenna -> LAntenna: reference box mirror=False (flag at addBox time), port True",
+        "RAntenna -> RAntenna: reference box mirror=False (flag at addBox time), port True",
+        "Hip3 -> Hip3: reference box mirror=False (flag at addBox time), port True",
+        "Hip4 -> Hip4: reference box mirror=False (flag at addBox time), port True",
+        "Hip5 -> Hip5: reference box mirror=False (flag at addBox time), port True",
+        "Hip6 -> Hip6: reference box mirror=False (flag at addBox time), port True"
+      ]
+    }
+  },
+  "status": "PASS_WITH_PINNED_DIVERGENCES",
+  "pinned_divergences": {
+    "MIRROR": 27
+  }
+}

@@ -1,0 +1,768 @@
+{
+  "schema_version": 1,
+  "model_id": "reference_robot2",
+  "reference_source": "reference_1_7_10_source/sources/danger/orespawn/ModelRobot2.java",
+  "reference": {
+    "status": "PARSED",
+    "class": "ModelRobot2",
+    "texture_width": 256,
+    "texture_height": 512,
+    "parts": [
+      {
+        "name": "rleg1",
+        "tex_u": 10,
+        "tex_v": 250,
+        "boxes": [
+          {
+            "origin": [
+              -14.0,
+              24.0,
+              -7.0
+            ],
+            "size": [
+              16,
+              24,
+              16
+            ],
+            "uv": [
+              10,
+              250
+            ],
+            "mirror": false,
+            "texture_size": [
+              256,
+              512
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          -10.0,
+          -24.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          256,
+          512
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "rleg2",
+        "tex_u": 10,
+        "tex_v": 150,
+        "boxes": [
+          {
+            "origin": [
+              -12.0,
+              0.0,
+              -6.0
+            ],
+            "size": [
+              12,
+              24,
+              12
+            ],
+            "uv": [
+              10,
+              150
+            ],
+            "mirror": false,
+            "texture_size": [
+              256,
+              512
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          -10.0,
+          -24.0,
+          1.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          256,
+          512
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Shape3",
+        "tex_u": 10,
+        "tex_v": 50,
+        "boxes": [
+          {
+            "origin": [
+              -4.0,
+              0.0,
+              -2.0
+            ],
+            "size": [
+              26,
+              8,
+              12
+            ],
+            "uv": [
+              10,
+              50
+            ],
+            "mirror": false,
+            "texture_size": [
+              256,
+              512
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          -9.0,
+          -32.0,
+          -3.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          256,
+          512
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "lleg2",
+        "tex_u": 10,
+        "tex_v": 200,
+        "boxes": [
+          {
+            "origin": [
+              0.0,
+              0.0,
+              -6.0
+            ],
+            "size": [
+              12,
+              24,
+              12
+            ],
+            "uv": [
+              10,
+              200
+            ],
+            "mirror": false,
+            "texture_size": [
+              256,
+              512
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          10.0,
+          -24.0,
+          1.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          256,
+          512
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "lleg1",
+        "tex_u": 10,
+        "tex_v": 300,
+        "boxes": [
+          {
+            "origin": [
+              -2.0,
+              24.0,
+              -7.0
+            ],
+            "size": [
+              16,
+              24,
+              16
+            ],
+            "uv": [
+              10,
+              300
+            ],
+            "mirror": false,
+            "texture_size": [
+              256,
+              512
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          10.0,
+          -24.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          256,
+          512
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Shape6",
+        "tex_u": 10,
+        "tex_v": 100,
+        "boxes": [
+          {
+            "origin": [
+              -4.0,
+              -8.0,
+              -3.0
+            ],
+            "size": [
+              8,
+              8,
+              8
+            ],
+            "uv": [
+              10,
+              100
+            ],
+            "mirror": false,
+            "texture_size": [
+              256,
+              512
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          -32.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          256,
+          512
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Shape7",
+        "tex_u": 10,
+        "tex_v": 350,
+        "boxes": [
+          {
+            "origin": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "size": [
+              26,
+              8,
+              12
+            ],
+            "uv": [
+              10,
+              350
+            ],
+            "mirror": false,
+            "texture_size": [
+              256,
+              512
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          -13.0,
+          -48.0,
+          -5.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          256,
+          512
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Shape8",
+        "tex_u": 16,
+        "tex_v": 400,
+        "boxes": [
+          {
+            "origin": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "size": [
+              44,
+              18,
+              14
+            ],
+            "uv": [
+              16,
+              400
+            ],
+            "mirror": false,
+            "texture_size": [
+              256,
+              512
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          -22.0,
+          -66.0,
+          -6.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          256,
+          512
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "rarm3",
+        "tex_u": 100,
+        "tex_v": 100,
+        "boxes": [
+          {
+            "origin": [
+              -16.0,
+              -16.0,
+              -7.0
+            ],
+            "size": [
+              16,
+              24,
+              17
+            ],
+            "uv": [
+              100,
+              100
+            ],
+            "mirror": false,
+            "texture_size": [
+              256,
+              512
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          -22.0,
+          -58.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          256,
+          512
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "rarm2",
+        "tex_u": 100,
+        "tex_v": 200,
+        "boxes": [
+          {
+            "origin": [
+              -14.0,
+              8.0,
+              -5.0
+            ],
+            "size": [
+              12,
+              24,
+              12
+            ],
+            "uv": [
+              100,
+              200
+            ],
+            "mirror": false,
+            "texture_size": [
+              256,
+              512
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          -22.0,
+          -58.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          256,
+          512
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "rarm1",
+        "tex_u": 100,
+        "tex_v": 300,
+        "boxes": [
+          {
+            "origin": [
+              -14.0,
+              32.0,
+              -5.0
+            ],
+            "size": [
+              12,
+              24,
+              12
+            ],
+            "uv": [
+              100,
+              300
+            ],
+            "mirror": false,
+            "texture_size": [
+              256,
+              512
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          -22.0,
+          -58.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          256,
+          512
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "larm3",
+        "tex_u": 100,
+        "tex_v": 50,
+        "boxes": [
+          {
+            "origin": [
+              0.0,
+              -16.0,
+              -7.0
+            ],
+            "size": [
+              16,
+              24,
+              17
+            ],
+            "uv": [
+              100,
+              50
+            ],
+            "mirror": false,
+            "texture_size": [
+              256,
+              512
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          22.0,
+          -58.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          256,
+          512
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "larm2",
+        "tex_u": 100,
+        "tex_v": 150,
+        "boxes": [
+          {
+            "origin": [
+              2.0,
+              8.0,
+              -5.0
+            ],
+            "size": [
+              12,
+              24,
+              12
+            ],
+            "uv": [
+              100,
+              150
+            ],
+            "mirror": false,
+            "texture_size": [
+              256,
+              512
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          21.0,
+          -58.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          256,
+          512
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "larm1",
+        "tex_u": 100,
+        "tex_v": 250,
+        "boxes": [
+          {
+            "origin": [
+              2.0,
+              32.0,
+              -5.0
+            ],
+            "size": [
+              12,
+              24,
+              12
+            ],
+            "uv": [
+              100,
+              250
+            ],
+            "mirror": false,
+            "texture_size": [
+              256,
+              512
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          21.0,
+          -58.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          256,
+          512
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "head",
+        "tex_u": 50,
+        "tex_v": 10,
+        "boxes": [
+          {
+            "origin": [
+              -7.0,
+              -12.0,
+              -5.0
+            ],
+            "size": [
+              15,
+              12,
+              10
+            ],
+            "uv": [
+              50,
+              10
+            ],
+            "mirror": false,
+            "texture_size": [
+              256,
+              512
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          -66.0,
+          1.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          256,
+          512
+        ],
+        "children": [],
+        "parent": null
+      }
+    ]
+  },
+  "ground_truth": "1.7.10 decompiled ModelBase constructor, parsed; never the port",
+  "comparison": {
+    "status": "DIVERGES_TEXTURE_MAPPING",
+    "reference_parts_with_boxes": 15,
+    "port_parts_with_boxes": 15,
+    "matched_parts": 15,
+    "categories": {
+      "MIRROR": 15
+    },
+    "differences": [
+      "rleg1 -> rleg1: reference box mirror=False (flag at addBox time), port True",
+      "rleg2 -> rleg2: reference box mirror=False (flag at addBox time), port True",
+      "Shape3 -> Shape3: reference box mirror=False (flag at addBox time), port True",
+      "lleg2 -> lleg2: reference box mirror=False (flag at addBox time), port True",
+      "lleg1 -> lleg1: reference box mirror=False (flag at addBox time), port True",
+      "Shape6 -> Shape6: reference box mirror=False (flag at addBox time), port True",
+      "Shape7 -> Shape7: reference box mirror=False (flag at addBox time), port True",
+      "Shape8 -> Shape8: reference box mirror=False (flag at addBox time), port True",
+      "rarm3 -> rarm3: reference box mirror=False (flag at addBox time), port True",
+      "rarm2 -> rarm2: reference box mirror=False (flag at addBox time), port True",
+      "rarm1 -> rarm1: reference box mirror=False (flag at addBox time), port True",
+      "larm3 -> larm3: reference box mirror=False (flag at addBox time), port True",
+      "larm2 -> larm2: reference box mirror=False (flag at addBox time), port True",
+      "larm1 -> larm1: reference box mirror=False (flag at addBox time), port True",
+      "head -> head: reference box mirror=False (flag at addBox time), port True"
+    ],
+    "by_category": {
+      "MIRROR": [
+        "rleg1 -> rleg1: reference box mirror=False (flag at addBox time), port True",
+        "rleg2 -> rleg2: reference box mirror=False (flag at addBox time), port True",
+        "Shape3 -> Shape3: reference box mirror=False (flag at addBox time), port True",
+        "lleg2 -> lleg2: reference box mirror=False (flag at addBox time), port True",
+        "lleg1 -> lleg1: reference box mirror=False (flag at addBox time), port True",
+        "Shape6 -> Shape6: reference box mirror=False (flag at addBox time), port True",
+        "Shape7 -> Shape7: reference box mirror=False (flag at addBox time), port True",
+        "Shape8 -> Shape8: reference box mirror=False (flag at addBox time), port True",
+        "rarm3 -> rarm3: reference box mirror=False (flag at addBox time), port True",
+        "rarm2 -> rarm2: reference box mirror=False (flag at addBox time), port True",
+        "rarm1 -> rarm1: reference box mirror=False (flag at addBox time), port True",
+        "larm3 -> larm3: reference box mirror=False (flag at addBox time), port True",
+        "larm2 -> larm2: reference box mirror=False (flag at addBox time), port True",
+        "larm1 -> larm1: reference box mirror=False (flag at addBox time), port True",
+        "head -> head: reference box mirror=False (flag at addBox time), port True"
+      ]
+    }
+  },
+  "status": "PASS_WITH_PINNED_DIVERGENCES",
+  "pinned_divergences": {
+    "MIRROR": 15
+  }
+}

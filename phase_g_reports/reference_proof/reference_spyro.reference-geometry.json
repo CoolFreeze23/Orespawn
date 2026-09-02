@@ -1,0 +1,1846 @@
+{
+  "schema_version": 1,
+  "model_id": "reference_spyro",
+  "reference_source": "reference_1_7_10_source/sources/danger/orespawn/ModelSpyro.java",
+  "reference": {
+    "status": "PARSED",
+    "class": "ModelSpyro",
+    "texture_width": 64,
+    "texture_height": 64,
+    "parts": [
+      {
+        "name": "RightFrontPaw",
+        "tex_u": 12,
+        "tex_v": 31,
+        "boxes": [
+          {
+            "origin": [
+              0.0,
+              5.0,
+              -4.0
+            ],
+            "size": [
+              2,
+              1,
+              4
+            ],
+            "uv": [
+              12,
+              31
+            ],
+            "mirror": false,
+            "texture_size": [
+              64,
+              64
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          3.0,
+          18.0,
+          -2.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          64
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "WingLeft",
+        "tex_u": 2,
+        "tex_v": 51,
+        "boxes": [
+          {
+            "origin": [
+              -10.0,
+              -1.0,
+              -2.0
+            ],
+            "size": [
+              10,
+              0,
+              4
+            ],
+            "uv": [
+              2,
+              51
+            ],
+            "mirror": false,
+            "texture_size": [
+              64,
+              64
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          -1.0,
+          16.0,
+          0.0
+        ],
+        "rotation": [
+          0.1745329,
+          0.0,
+          -0.1745329
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          64
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "LegRightFrontTop",
+        "tex_u": 20,
+        "tex_v": 19,
+        "boxes": [
+          {
+            "origin": [
+              0.0,
+              0.0,
+              -2.0
+            ],
+            "size": [
+              2,
+              3,
+              3
+            ],
+            "uv": [
+              20,
+              19
+            ],
+            "mirror": false,
+            "texture_size": [
+              64,
+              64
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          3.0,
+          18.0,
+          -2.0
+        ],
+        "rotation": [
+          -0.0872665,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          64
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "LegRightFrontBottom",
+        "tex_u": 0,
+        "tex_v": 25,
+        "boxes": [
+          {
+            "origin": [
+              0.0,
+              2.0,
+              -1.5
+            ],
+            "size": [
+              2,
+              4,
+              2
+            ],
+            "uv": [
+              0,
+              25
+            ],
+            "mirror": false,
+            "texture_size": [
+              64,
+              64
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          3.0,
+          18.0,
+          -2.0
+        ],
+        "rotation": [
+          -0.1745329,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          64
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "LegRightBackTop",
+        "tex_u": 30,
+        "tex_v": 19,
+        "boxes": [
+          {
+            "origin": [
+              0.0,
+              0.0,
+              -2.0
+            ],
+            "size": [
+              2,
+              3,
+              3
+            ],
+            "uv": [
+              30,
+              19
+            ],
+            "mirror": false,
+            "texture_size": [
+              64,
+              64
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          3.0,
+          18.0,
+          3.0
+        ],
+        "rotation": [
+          0.1396263,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          64
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "LegRightBackBottom",
+        "tex_u": 16,
+        "tex_v": 25,
+        "boxes": [
+          {
+            "origin": [
+              0.0,
+              2.0,
+              -1.0
+            ],
+            "size": [
+              2,
+              4,
+              2
+            ],
+            "uv": [
+              16,
+              25
+            ],
+            "mirror": false,
+            "texture_size": [
+              64,
+              64
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          3.0,
+          18.0,
+          3.0
+        ],
+        "rotation": [
+          -0.1745329,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          64
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "RightBackPaw",
+        "tex_u": 36,
+        "tex_v": 31,
+        "boxes": [
+          {
+            "origin": [
+              0.0,
+              5.0,
+              -3.0
+            ],
+            "size": [
+              2,
+              1,
+              4
+            ],
+            "uv": [
+              36,
+              31
+            ],
+            "mirror": false,
+            "texture_size": [
+              64,
+              64
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          3.0,
+          18.0,
+          3.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          64
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "LegLeftFrontTop",
+        "tex_u": 0,
+        "tex_v": 19,
+        "boxes": [
+          {
+            "origin": [
+              -2.0,
+              0.0,
+              -1.0
+            ],
+            "size": [
+              2,
+              3,
+              3
+            ],
+            "uv": [
+              0,
+              19
+            ],
+            "mirror": false,
+            "texture_size": [
+              64,
+              64
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          -2.0,
+          18.0,
+          -3.0
+        ],
+        "rotation": [
+          -0.0872665,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          64
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "SnoutRight",
+        "tex_u": 48,
+        "tex_v": 2,
+        "boxes": [
+          {
+            "origin": [
+              1.0,
+              -3.0,
+              -5.0
+            ],
+            "size": [
+              1,
+              1,
+              1
+            ],
+            "uv": [
+              48,
+              2
+            ],
+            "mirror": false,
+            "texture_size": [
+              64,
+              64
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          1.0,
+          16.0,
+          -3.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          64
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "LeftFrontPaw",
+        "tex_u": 0,
+        "tex_v": 31,
+        "boxes": [
+          {
+            "origin": [
+              -2.0,
+              5.0,
+              -3.0
+            ],
+            "size": [
+              2,
+              1,
+              4
+            ],
+            "uv": [
+              0,
+              31
+            ],
+            "mirror": false,
+            "texture_size": [
+              64,
+              64
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          -2.0,
+          18.0,
+          -3.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          64
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "LegLeftBackTop",
+        "tex_u": 10,
+        "tex_v": 19,
+        "boxes": [
+          {
+            "origin": [
+              -2.0,
+              0.0,
+              -2.0
+            ],
+            "size": [
+              2,
+              3,
+              3
+            ],
+            "uv": [
+              10,
+              19
+            ],
+            "mirror": false,
+            "texture_size": [
+              64,
+              64
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          -2.0,
+          18.0,
+          3.0
+        ],
+        "rotation": [
+          0.1396263,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          64
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "LegLeftBackBottom",
+        "tex_u": 24,
+        "tex_v": 25,
+        "boxes": [
+          {
+            "origin": [
+              -2.0,
+              2.0,
+              -1.0
+            ],
+            "size": [
+              2,
+              4,
+              2
+            ],
+            "uv": [
+              24,
+              25
+            ],
+            "mirror": false,
+            "texture_size": [
+              64,
+              64
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          -2.0,
+          18.0,
+          3.0
+        ],
+        "rotation": [
+          -0.1745329,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          64
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "LeftBackPaw",
+        "tex_u": 24,
+        "tex_v": 31,
+        "boxes": [
+          {
+            "origin": [
+              -2.0,
+              5.0,
+              -3.0
+            ],
+            "size": [
+              2,
+              1,
+              4
+            ],
+            "uv": [
+              24,
+              31
+            ],
+            "mirror": false,
+            "texture_size": [
+              64,
+              64
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          -2.0,
+          18.0,
+          3.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          64
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "LegLeftFrontBottom",
+        "tex_u": 8,
+        "tex_v": 25,
+        "boxes": [
+          {
+            "origin": [
+              -2.0,
+              2.0,
+              -0.5
+            ],
+            "size": [
+              2,
+              4,
+              2
+            ],
+            "uv": [
+              8,
+              25
+            ],
+            "mirror": false,
+            "texture_size": [
+              64,
+              64
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          -2.0,
+          18.0,
+          -3.0
+        ],
+        "rotation": [
+          -0.1745329,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          64
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "TailPieceSmall",
+        "tex_u": 28,
+        "tex_v": 36,
+        "boxes": [
+          {
+            "origin": [
+              0.0,
+              -0.5,
+              4.0
+            ],
+            "size": [
+              1,
+              1,
+              1
+            ],
+            "uv": [
+              28,
+              36
+            ],
+            "mirror": false,
+            "texture_size": [
+              64,
+              64
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          16.0,
+          7.0
+        ],
+        "rotation": [
+          0.1745329,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          64
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "JawPiece",
+        "tex_u": 52,
+        "tex_v": 0,
+        "boxes": [
+          {
+            "origin": [
+              -2.0,
+              -1.0,
+              -4.0
+            ],
+            "size": [
+              3,
+              1,
+              3
+            ],
+            "uv": [
+              52,
+              0
+            ],
+            "mirror": false,
+            "texture_size": [
+              64,
+              64
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          1.0,
+          16.0,
+          -3.0
+        ],
+        "rotation": [
+          0.1745329,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          64
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "HeadPieceBottom",
+        "tex_u": 30,
+        "tex_v": 7,
+        "boxes": [
+          {
+            "origin": [
+              -3.0,
+              -2.0,
+              -5.0
+            ],
+            "size": [
+              5,
+              2,
+              6
+            ],
+            "uv": [
+              30,
+              7
+            ],
+            "mirror": false,
+            "texture_size": [
+              64,
+              64
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          1.0,
+          16.0,
+          -3.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          64
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "HeadPieceTop",
+        "tex_u": 30,
+        "tex_v": 0,
+        "boxes": [
+          {
+            "origin": [
+              -3.0,
+              -5.0,
+              -3.0
+            ],
+            "size": [
+              5,
+              3,
+              4
+            ],
+            "uv": [
+              30,
+              0
+            ],
+            "mirror": false,
+            "texture_size": [
+              64,
+              64
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          1.0,
+          16.0,
+          -3.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          64
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "HornRightBottom",
+        "tex_u": 8,
+        "tex_v": 14,
+        "boxes": [
+          {
+            "origin": [
+              0.0,
+              -6.0,
+              -3.5
+            ],
+            "size": [
+              2,
+              3,
+              2
+            ],
+            "uv": [
+              8,
+              14
+            ],
+            "mirror": false,
+            "texture_size": [
+              64,
+              64
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          1.0,
+          16.0,
+          -3.0
+        ],
+        "rotation": [
+          -0.7853982,
+          0.7853982,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          64
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "HornLeftBottom",
+        "tex_u": 0,
+        "tex_v": 14,
+        "boxes": [
+          {
+            "origin": [
+              -2.75,
+              -6.5,
+              -3.0
+            ],
+            "size": [
+              2,
+              3,
+              2
+            ],
+            "uv": [
+              0,
+              14
+            ],
+            "mirror": false,
+            "texture_size": [
+              64,
+              64
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          1.0,
+          16.0,
+          -3.0
+        ],
+        "rotation": [
+          -0.7853982,
+          -0.7853982,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          64
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "HornRightTop",
+        "tex_u": 20,
+        "tex_v": 14,
+        "boxes": [
+          {
+            "origin": [
+              0.5,
+              -9.0,
+              -3.0
+            ],
+            "size": [
+              1,
+              3,
+              1
+            ],
+            "uv": [
+              20,
+              14
+            ],
+            "mirror": false,
+            "texture_size": [
+              64,
+              64
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          1.0,
+          16.0,
+          -3.0
+        ],
+        "rotation": [
+          -0.7853982,
+          0.7853982,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          64
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "HornLeftTop",
+        "tex_u": 16,
+        "tex_v": 14,
+        "boxes": [
+          {
+            "origin": [
+              -2.2,
+              -9.5,
+              -2.5
+            ],
+            "size": [
+              1,
+              3,
+              1
+            ],
+            "uv": [
+              16,
+              14
+            ],
+            "mirror": false,
+            "texture_size": [
+              64,
+              64
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          1.0,
+          16.0,
+          -3.0
+        ],
+        "rotation": [
+          -0.7853982,
+          -0.7853982,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          64
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Torso",
+        "tex_u": 0,
+        "tex_v": 0,
+        "boxes": [
+          {
+            "origin": [
+              -2.0,
+              -2.0,
+              -5.0
+            ],
+            "size": [
+              5,
+              4,
+              10
+            ],
+            "uv": [
+              0,
+              0
+            ],
+            "mirror": false,
+            "texture_size": [
+              64,
+              64
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          19.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          64
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "SnoutLeft",
+        "tex_u": 48,
+        "tex_v": 0,
+        "boxes": [
+          {
+            "origin": [
+              -3.0,
+              -3.0,
+              -5.0
+            ],
+            "size": [
+              1,
+              1,
+              1
+            ],
+            "uv": [
+              48,
+              0
+            ],
+            "mirror": false,
+            "texture_size": [
+              64,
+              64
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          1.0,
+          16.0,
+          -3.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          64
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "WingPieceLeft",
+        "tex_u": 4,
+        "tex_v": 42,
+        "boxes": [
+          {
+            "origin": [
+              -1.0,
+              -2.0,
+              -1.0
+            ],
+            "size": [
+              1,
+              2,
+              1
+            ],
+            "uv": [
+              4,
+              42
+            ],
+            "mirror": false,
+            "texture_size": [
+              64,
+              64
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          17.2,
+          0.0
+        ],
+        "rotation": [
+          0.1745329,
+          0.0,
+          -0.1745329
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          64
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "WingRight",
+        "tex_u": 2,
+        "tex_v": 45,
+        "boxes": [
+          {
+            "origin": [
+              0.0,
+              -1.0,
+              -2.0
+            ],
+            "size": [
+              10,
+              0,
+              4
+            ],
+            "uv": [
+              2,
+              45
+            ],
+            "mirror": false,
+            "texture_size": [
+              64,
+              64
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          2.0,
+          16.0,
+          0.0
+        ],
+        "rotation": [
+          0.1745329,
+          0.0,
+          0.1745329
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          64
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "WingPieceRight",
+        "tex_u": 0,
+        "tex_v": 42,
+        "boxes": [
+          {
+            "origin": [
+              -1.0,
+              -2.0,
+              0.0
+            ],
+            "size": [
+              1,
+              2,
+              1
+            ],
+            "uv": [
+              0,
+              42
+            ],
+            "mirror": false,
+            "texture_size": [
+              64,
+              64
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          2.0,
+          17.5,
+          -1.0
+        ],
+        "rotation": [
+          0.1745329,
+          0.0,
+          0.1745329
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          64
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Neck",
+        "tex_u": 52,
+        "tex_v": 7,
+        "boxes": [
+          {
+            "origin": [
+              -1.0,
+              -2.0,
+              -1.0
+            ],
+            "size": [
+              3,
+              3,
+              3
+            ],
+            "uv": [
+              52,
+              7
+            ],
+            "mirror": false,
+            "texture_size": [
+              64,
+              64
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          17.0,
+          -4.0
+        ],
+        "rotation": [
+          0.4537856,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          64
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "TailBack",
+        "tex_u": 0,
+        "tex_v": 36,
+        "boxes": [
+          {
+            "origin": [
+              -1.0,
+              -1.0,
+              -1.0
+            ],
+            "size": [
+              2,
+              2,
+              4
+            ],
+            "uv": [
+              0,
+              36
+            ],
+            "mirror": false,
+            "texture_size": [
+              64,
+              64
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.5,
+          17.5,
+          5.0
+        ],
+        "rotation": [
+          0.4537856,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          64
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "TailFront",
+        "tex_u": 12,
+        "tex_v": 36,
+        "boxes": [
+          {
+            "origin": [
+              0.0,
+              0.0,
+              -1.0
+            ],
+            "size": [
+              1,
+              1,
+              4
+            ],
+            "uv": [
+              12,
+              36
+            ],
+            "mirror": false,
+            "texture_size": [
+              64,
+              64
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          16.0,
+          7.0
+        ],
+        "rotation": [
+          0.2617994,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          64
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "ScaleBackHead",
+        "tex_u": 38,
+        "tex_v": 36,
+        "boxes": [
+          {
+            "origin": [
+              -1.0,
+              -3.0,
+              2.0
+            ],
+            "size": [
+              1,
+              2,
+              1
+            ],
+            "uv": [
+              38,
+              36
+            ],
+            "mirror": false,
+            "texture_size": [
+              64,
+              64
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          1.0,
+          16.0,
+          -4.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          64
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "TailPieceLarge",
+        "tex_u": 22,
+        "tex_v": 36,
+        "boxes": [
+          {
+            "origin": [
+              0.0,
+              -1.0,
+              2.0
+            ],
+            "size": [
+              1,
+              2,
+              2
+            ],
+            "uv": [
+              22,
+              36
+            ],
+            "mirror": false,
+            "texture_size": [
+              64,
+              64
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          16.0,
+          7.0
+        ],
+        "rotation": [
+          0.1745329,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          64
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "ScaleTailPiece",
+        "tex_u": 48,
+        "tex_v": 36,
+        "boxes": [
+          {
+            "origin": [
+              -0.5,
+              -2.0,
+              0.2
+            ],
+            "size": [
+              1,
+              1,
+              2
+            ],
+            "uv": [
+              48,
+              36
+            ],
+            "mirror": false,
+            "texture_size": [
+              64,
+              64
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.5,
+          17.5,
+          5.0
+        ],
+        "rotation": [
+          0.4537856,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          64
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "ScaleHead",
+        "tex_u": 42,
+        "tex_v": 36,
+        "boxes": [
+          {
+            "origin": [
+              -1.0,
+              -6.0,
+              0.0
+            ],
+            "size": [
+              1,
+              2,
+              2
+            ],
+            "uv": [
+              42,
+              36
+            ],
+            "mirror": false,
+            "texture_size": [
+              64,
+              64
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          1.0,
+          16.0,
+          -3.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          64
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "ScaleTop1",
+        "tex_u": 48,
+        "tex_v": 36,
+        "boxes": [
+          {
+            "origin": [
+              -1.0,
+              -6.0,
+              -4.0
+            ],
+            "size": [
+              1,
+              1,
+              2
+            ],
+            "uv": [
+              48,
+              36
+            ],
+            "mirror": false,
+            "texture_size": [
+              64,
+              64
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          1.0,
+          16.0,
+          -2.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          64
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "ScaleBackPiece1",
+        "tex_u": 48,
+        "tex_v": 36,
+        "boxes": [
+          {
+            "origin": [
+              0.0,
+              -1.0,
+              -1.0
+            ],
+            "size": [
+              1,
+              1,
+              2
+            ],
+            "uv": [
+              48,
+              36
+            ],
+            "mirror": false,
+            "texture_size": [
+              64,
+              64
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          17.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          64
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "ScaleBackPiece2",
+        "tex_u": 48,
+        "tex_v": 36,
+        "boxes": [
+          {
+            "origin": [
+              0.0,
+              -1.0,
+              -1.0
+            ],
+            "size": [
+              1,
+              1,
+              2
+            ],
+            "uv": [
+              48,
+              36
+            ],
+            "mirror": false,
+            "texture_size": [
+              64,
+              64
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          17.0,
+          3.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          64
+        ],
+        "children": [],
+        "parent": null
+      }
+    ]
+  },
+  "ground_truth": "1.7.10 decompiled ModelBase constructor, parsed; never the port",
+  "comparison": {
+    "status": "DIVERGES_TEXTURE_MAPPING",
+    "reference_parts_with_boxes": 37,
+    "port_parts_with_boxes": 37,
+    "matched_parts": 37,
+    "categories": {
+      "MIRROR": 37
+    },
+    "differences": [
+      "RightFrontPaw -> RightFrontPaw: reference box mirror=False (flag at addBox time), port True",
+      "WingLeft -> WingLeft: reference box mirror=False (flag at addBox time), port True",
+      "LegRightFrontTop -> LegRightFrontTop: reference box mirror=False (flag at addBox time), port True",
+      "LegRightFrontBottom -> LegRightFrontBottom: reference box mirror=False (flag at addBox time), port True",
+      "LegRightBackTop -> LegRightBackTop: reference box mirror=False (flag at addBox time), port True",
+      "LegRightBackBottom -> LegRightBackBottom: reference box mirror=False (flag at addBox time), port True",
+      "RightBackPaw -> RightBackPaw: reference box mirror=False (flag at addBox time), port True",
+      "LegLeftFrontTop -> LegLeftFrontTop: reference box mirror=False (flag at addBox time), port True",
+      "SnoutRight -> SnoutRight: reference box mirror=False (flag at addBox time), port True",
+      "LeftFrontPaw -> LeftFrontPaw: reference box mirror=False (flag at addBox time), port True",
+      "LegLeftBackTop -> LegLeftBackTop: reference box mirror=False (flag at addBox time), port True",
+      "LegLeftBackBottom -> LegLeftBackBottom: reference box mirror=False (flag at addBox time), port True",
+      "LeftBackPaw -> LeftBackPaw: reference box mirror=False (flag at addBox time), port True",
+      "LegLeftFrontBottom -> LegLeftFrontBottom: reference box mirror=False (flag at addBox time), port True",
+      "TailPieceSmall -> TailPieceSmall: reference box mirror=False (flag at addBox time), port True",
+      "JawPiece -> JawPiece: reference box mirror=False (flag at addBox time), port True",
+      "HeadPieceBottom -> HeadPieceBottom: reference box mirror=False (flag at addBox time), port True",
+      "HeadPieceTop -> HeadPieceTop: reference box mirror=False (flag at addBox time), port True",
+      "HornRightBottom -> HornRightBottom: reference box mirror=False (flag at addBox time), port True",
+      "HornLeftBottom -> HornLeftBottom: reference box mirror=False (flag at addBox time), port True",
+      "HornRightTop -> HornRightTop: reference box mirror=False (flag at addBox time), port True",
+      "HornLeftTop -> HornLeftTop: reference box mirror=False (flag at addBox time), port True",
+      "Torso -> Torso: reference box mirror=False (flag at addBox time), port True",
+      "SnoutLeft -> SnoutLeft: reference box mirror=False (flag at addBox time), port True",
+      "WingPieceLeft -> WingPieceLeft: reference box mirror=False (flag at addBox time), port True",
+      "WingRight -> WingRight: reference box mirror=False (flag at addBox time), port True",
+      "WingPieceRight -> WingPieceRight: reference box mirror=False (flag at addBox time), port True",
+      "Neck -> Neck: reference box mirror=False (flag at addBox time), port True",
+      "TailBack -> TailBack: reference box mirror=False (flag at addBox time), port True",
+      "TailFront -> TailFront: reference box mirror=False (flag at addBox time), port True",
+      "ScaleBackHead -> ScaleBackHead: reference box mirror=False (flag at addBox time), port True",
+      "TailPieceLarge -> TailPieceLarge: reference box mirror=False (flag at addBox time), port True",
+      "ScaleTailPiece -> ScaleTailPiece: reference box mirror=False (flag at addBox time), port True",
+      "ScaleHead -> ScaleHead: reference box mirror=False (flag at addBox time), port True",
+      "ScaleTop1 -> ScaleTop1: reference box mirror=False (flag at addBox time), port True",
+      "ScaleBackPiece1 -> ScaleBackPiece1: reference box mirror=False (flag at addBox time), port True",
+      "ScaleBackPiece2 -> ScaleBackPiece2: reference box mirror=False (flag at addBox time), port True"
+    ],
+    "by_category": {
+      "MIRROR": [
+        "RightFrontPaw -> RightFrontPaw: reference box mirror=False (flag at addBox time), port True",
+        "WingLeft -> WingLeft: reference box mirror=False (flag at addBox time), port True",
+        "LegRightFrontTop -> LegRightFrontTop: reference box mirror=False (flag at addBox time), port True",
+        "LegRightFrontBottom -> LegRightFrontBottom: reference box mirror=False (flag at addBox time), port True",
+        "LegRightBackTop -> LegRightBackTop: reference box mirror=False (flag at addBox time), port True",
+        "LegRightBackBottom -> LegRightBackBottom: reference box mirror=False (flag at addBox time), port True",
+        "RightBackPaw -> RightBackPaw: reference box mirror=False (flag at addBox time), port True",
+        "LegLeftFrontTop -> LegLeftFrontTop: reference box mirror=False (flag at addBox time), port True",
+        "SnoutRight -> SnoutRight: reference box mirror=False (flag at addBox time), port True",
+        "LeftFrontPaw -> LeftFrontPaw: reference box mirror=False (flag at addBox time), port True",
+        "LegLeftBackTop -> LegLeftBackTop: reference box mirror=False (flag at addBox time), port True",
+        "LegLeftBackBottom -> LegLeftBackBottom: reference box mirror=False (flag at addBox time), port True",
+        "LeftBackPaw -> LeftBackPaw: reference box mirror=False (flag at addBox time), port True",
+        "LegLeftFrontBottom -> LegLeftFrontBottom: reference box mirror=False (flag at addBox time), port True",
+        "TailPieceSmall -> TailPieceSmall: reference box mirror=False (flag at addBox time), port True",
+        "JawPiece -> JawPiece: reference box mirror=False (flag at addBox time), port True",
+        "HeadPieceBottom -> HeadPieceBottom: reference box mirror=False (flag at addBox time), port True",
+        "HeadPieceTop -> HeadPieceTop: reference box mirror=False (flag at addBox time), port True",
+        "HornRightBottom -> HornRightBottom: reference box mirror=False (flag at addBox time), port True",
+        "HornLeftBottom -> HornLeftBottom: reference box mirror=False (flag at addBox time), port True",
+        "HornRightTop -> HornRightTop: reference box mirror=False (flag at addBox time), port True",
+        "HornLeftTop -> HornLeftTop: reference box mirror=False (flag at addBox time), port True",
+        "Torso -> Torso: reference box mirror=False (flag at addBox time), port True",
+        "SnoutLeft -> SnoutLeft: reference box mirror=False (flag at addBox time), port True",
+        "WingPieceLeft -> WingPieceLeft: reference box mirror=False (flag at addBox time), port True",
+        "WingRight -> WingRight: reference box mirror=False (flag at addBox time), port True",
+        "WingPieceRight -> WingPieceRight: reference box mirror=False (flag at addBox time), port True",
+        "Neck -> Neck: reference box mirror=False (flag at addBox time), port True",
+        "TailBack -> TailBack: reference box mirror=False (flag at addBox time), port True",
+        "TailFront -> TailFront: reference box mirror=False (flag at addBox time), port True",
+        "ScaleBackHead -> ScaleBackHead: reference box mirror=False (flag at addBox time), port True",
+        "TailPieceLarge -> TailPieceLarge: reference box mirror=False (flag at addBox time), port True",
+        "ScaleTailPiece -> ScaleTailPiece: reference box mirror=False (flag at addBox time), port True",
+        "ScaleHead -> ScaleHead: reference box mirror=False (flag at addBox time), port True",
+        "ScaleTop1 -> ScaleTop1: reference box mirror=False (flag at addBox time), port True",
+        "ScaleBackPiece1 -> ScaleBackPiece1: reference box mirror=False (flag at addBox time), port True",
+        "ScaleBackPiece2 -> ScaleBackPiece2: reference box mirror=False (flag at addBox time), port True"
+      ]
+    }
+  },
+  "status": "PASS_WITH_PINNED_DIVERGENCES",
+  "pinned_divergences": {
+    "MIRROR": 37
+  }
+}

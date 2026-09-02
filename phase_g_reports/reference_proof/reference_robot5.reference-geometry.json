@@ -1,0 +1,572 @@
+{
+  "schema_version": 1,
+  "model_id": "reference_robot5",
+  "reference_source": "reference_1_7_10_source/sources/danger/orespawn/ModelRobot5.java",
+  "reference": {
+    "status": "PARSED",
+    "class": "ModelRobot5",
+    "texture_width": 128,
+    "texture_height": 128,
+    "parts": [
+      {
+        "name": "lwheel1",
+        "tex_u": 0,
+        "tex_v": 23,
+        "boxes": [
+          {
+            "origin": [
+              0.0,
+              -4.0,
+              -4.0
+            ],
+            "size": [
+              2,
+              8,
+              8
+            ],
+            "uv": [
+              0,
+              23
+            ],
+            "mirror": false,
+            "texture_size": [
+              128,
+              128
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          6.0,
+          19.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          128,
+          128
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "lwheel2",
+        "tex_u": 0,
+        "tex_v": 43,
+        "boxes": [
+          {
+            "origin": [
+              0.0,
+              -4.0,
+              -4.0
+            ],
+            "size": [
+              2,
+              8,
+              8
+            ],
+            "uv": [
+              0,
+              43
+            ],
+            "mirror": false,
+            "texture_size": [
+              128,
+              128
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          6.0,
+          19.0,
+          0.0
+        ],
+        "rotation": [
+          0.7853982,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          128,
+          128
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "rwheel1",
+        "tex_u": 0,
+        "tex_v": 23,
+        "boxes": [
+          {
+            "origin": [
+              0.0,
+              -4.0,
+              -4.0
+            ],
+            "size": [
+              2,
+              8,
+              8
+            ],
+            "uv": [
+              0,
+              23
+            ],
+            "mirror": false,
+            "texture_size": [
+              128,
+              128
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          -8.0,
+          19.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          128,
+          128
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "rwheel2",
+        "tex_u": 0,
+        "tex_v": 43,
+        "boxes": [
+          {
+            "origin": [
+              0.0,
+              -4.0,
+              -4.0
+            ],
+            "size": [
+              2,
+              8,
+              8
+            ],
+            "uv": [
+              0,
+              43
+            ],
+            "mirror": false,
+            "texture_size": [
+              128,
+              128
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          -8.0,
+          19.0,
+          0.0
+        ],
+        "rotation": [
+          0.7853982,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          128,
+          128
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "axle",
+        "tex_u": 42,
+        "tex_v": 0,
+        "boxes": [
+          {
+            "origin": [
+              -6.0,
+              -0.5,
+              -0.5
+            ],
+            "size": [
+              12,
+              1,
+              1
+            ],
+            "uv": [
+              42,
+              0
+            ],
+            "mirror": false,
+            "texture_size": [
+              128,
+              128
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          19.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          128,
+          128
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "drivebox",
+        "tex_u": 47,
+        "tex_v": 4,
+        "boxes": [
+          {
+            "origin": [
+              -2.0,
+              -1.5,
+              -1.5
+            ],
+            "size": [
+              4,
+              3,
+              3
+            ],
+            "uv": [
+              47,
+              4
+            ],
+            "mirror": false,
+            "texture_size": [
+              128,
+              128
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          19.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          128,
+          128
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "stand",
+        "tex_u": 35,
+        "tex_v": 0,
+        "boxes": [
+          {
+            "origin": [
+              -0.5,
+              0.0,
+              -0.5
+            ],
+            "size": [
+              1,
+              18,
+              1
+            ],
+            "uv": [
+              35,
+              0
+            ],
+            "mirror": false,
+            "texture_size": [
+              128,
+              128
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          128,
+          128
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "swivel",
+        "tex_u": 22,
+        "tex_v": 0,
+        "boxes": [
+          {
+            "origin": [
+              -1.0,
+              0.0,
+              -1.0
+            ],
+            "size": [
+              2,
+              1,
+              2
+            ],
+            "uv": [
+              22,
+              0
+            ],
+            "mirror": false,
+            "texture_size": [
+              128,
+              128
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          128,
+          128
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "barrel1",
+        "tex_u": 24,
+        "tex_v": 25,
+        "boxes": [
+          {
+            "origin": [
+              -1.0,
+              -2.0,
+              -10.0
+            ],
+            "size": [
+              2,
+              2,
+              13
+            ],
+            "uv": [
+              24,
+              25
+            ],
+            "mirror": false,
+            "texture_size": [
+              128,
+              128
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          128,
+          128
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "barrel2",
+        "tex_u": 27,
+        "tex_v": 43,
+        "boxes": [
+          {
+            "origin": [
+              -0.5,
+              -1.5,
+              -19.0
+            ],
+            "size": [
+              1,
+              1,
+              9
+            ],
+            "uv": [
+              27,
+              43
+            ],
+            "mirror": false,
+            "texture_size": [
+              128,
+              128
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          128,
+          128
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "ammobox",
+        "tex_u": 0,
+        "tex_v": 0,
+        "boxes": [
+          {
+            "origin": [
+              -2.0,
+              -2.0,
+              3.0
+            ],
+            "size": [
+              4,
+              3,
+              5
+            ],
+            "uv": [
+              0,
+              0
+            ],
+            "mirror": false,
+            "texture_size": [
+              128,
+              128
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          128,
+          128
+        ],
+        "children": [],
+        "parent": null
+      }
+    ]
+  },
+  "ground_truth": "1.7.10 decompiled ModelBase constructor, parsed; never the port",
+  "comparison": {
+    "status": "DIVERGES_TEXTURE_MAPPING",
+    "reference_parts_with_boxes": 11,
+    "port_parts_with_boxes": 11,
+    "matched_parts": 11,
+    "categories": {
+      "MIRROR": 11
+    },
+    "differences": [
+      "lwheel1 -> lwheel1: reference box mirror=False (flag at addBox time), port True",
+      "lwheel2 -> lwheel2: reference box mirror=False (flag at addBox time), port True",
+      "rwheel1 -> rwheel1: reference box mirror=False (flag at addBox time), port True",
+      "rwheel2 -> rwheel2: reference box mirror=False (flag at addBox time), port True",
+      "axle -> axle: reference box mirror=False (flag at addBox time), port True",
+      "drivebox -> drivebox: reference box mirror=False (flag at addBox time), port True",
+      "stand -> stand: reference box mirror=False (flag at addBox time), port True",
+      "swivel -> swivel: reference box mirror=False (flag at addBox time), port True",
+      "barrel1 -> barrel1: reference box mirror=False (flag at addBox time), port True",
+      "barrel2 -> barrel2: reference box mirror=False (flag at addBox time), port True",
+      "ammobox -> ammobox: reference box mirror=False (flag at addBox time), port True"
+    ],
+    "by_category": {
+      "MIRROR": [
+        "lwheel1 -> lwheel1: reference box mirror=False (flag at addBox time), port True",
+        "lwheel2 -> lwheel2: reference box mirror=False (flag at addBox time), port True",
+        "rwheel1 -> rwheel1: reference box mirror=False (flag at addBox time), port True",
+        "rwheel2 -> rwheel2: reference box mirror=False (flag at addBox time), port True",
+        "axle -> axle: reference box mirror=False (flag at addBox time), port True",
+        "drivebox -> drivebox: reference box mirror=False (flag at addBox time), port True",
+        "stand -> stand: reference box mirror=False (flag at addBox time), port True",
+        "swivel -> swivel: reference box mirror=False (flag at addBox time), port True",
+        "barrel1 -> barrel1: reference box mirror=False (flag at addBox time), port True",
+        "barrel2 -> barrel2: reference box mirror=False (flag at addBox time), port True",
+        "ammobox -> ammobox: reference box mirror=False (flag at addBox time), port True"
+      ]
+    }
+  },
+  "status": "PASS_WITH_PINNED_DIVERGENCES",
+  "pinned_divergences": {
+    "MIRROR": 11
+  }
+}

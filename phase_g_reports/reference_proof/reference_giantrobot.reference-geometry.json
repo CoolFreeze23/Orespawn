@@ -1,0 +1,915 @@
+{
+  "schema_version": 1,
+  "model_id": "reference_giantrobot",
+  "reference_source": "reference_1_7_10_source/sources/danger/orespawn/ModelGiantRobot.java",
+  "reference": {
+    "status": "PARSED",
+    "class": "ModelGiantRobot",
+    "texture_width": 256,
+    "texture_height": 512,
+    "parts": [
+      {
+        "name": "Hip",
+        "tex_u": 0,
+        "tex_v": 0,
+        "boxes": [
+          {
+            "origin": [
+              -4.0,
+              -4.0,
+              -15.0
+            ],
+            "size": [
+              8,
+              8,
+              30
+            ],
+            "uv": [
+              0,
+              0
+            ],
+            "mirror": false,
+            "texture_size": [
+              256,
+              512
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          -60.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          32
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Thigh",
+        "tex_u": 0,
+        "tex_v": 115,
+        "boxes": [
+          {
+            "origin": [
+              -3.0,
+              -3.0,
+              -3.0
+            ],
+            "size": [
+              6,
+              43,
+              6
+            ],
+            "uv": [
+              0,
+              115
+            ],
+            "mirror": false,
+            "texture_size": [
+              256,
+              512
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          -58.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          32
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Shin",
+        "tex_u": 0,
+        "tex_v": 167,
+        "boxes": [
+          {
+            "origin": [
+              -3.0,
+              -3.0,
+              -3.0
+            ],
+            "size": [
+              6,
+              43,
+              6
+            ],
+            "uv": [
+              0,
+              167
+            ],
+            "mirror": false,
+            "texture_size": [
+              256,
+              512
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          -18.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          32
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Foot1",
+        "tex_u": 0,
+        "tex_v": 282,
+        "boxes": [
+          {
+            "origin": [
+              -7.0,
+              38.0,
+              -11.0
+            ],
+            "size": [
+              14,
+              4,
+              17
+            ],
+            "uv": [
+              0,
+              282
+            ],
+            "mirror": false,
+            "texture_size": [
+              256,
+              512
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          -18.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          32
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Foot2",
+        "tex_u": 0,
+        "tex_v": 246,
+        "boxes": [
+          {
+            "origin": [
+              -6.0,
+              19.0,
+              -8.0
+            ],
+            "size": [
+              12,
+              19,
+              13
+            ],
+            "uv": [
+              0,
+              246
+            ],
+            "mirror": false,
+            "texture_size": [
+              256,
+              512
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          -18.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          32
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Foot3",
+        "tex_u": 0,
+        "tex_v": 219,
+        "boxes": [
+          {
+            "origin": [
+              -5.0,
+              5.0,
+              -5.0
+            ],
+            "size": [
+              10,
+              14,
+              9
+            ],
+            "uv": [
+              0,
+              219
+            ],
+            "mirror": false,
+            "texture_size": [
+              256,
+              512
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          -18.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          32
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Thigh2",
+        "tex_u": 0,
+        "tex_v": 43,
+        "boxes": [
+          {
+            "origin": [
+              -7.0,
+              -8.0,
+              -7.0
+            ],
+            "size": [
+              14,
+              24,
+              14
+            ],
+            "uv": [
+              0,
+              43
+            ],
+            "mirror": false,
+            "texture_size": [
+              256,
+              512
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          -58.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          32
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Thigh3",
+        "tex_u": 0,
+        "tex_v": 84,
+        "boxes": [
+          {
+            "origin": [
+              -5.0,
+              16.0,
+              -5.0
+            ],
+            "size": [
+              10,
+              17,
+              10
+            ],
+            "uv": [
+              0,
+              84
+            ],
+            "mirror": false,
+            "texture_size": [
+              256,
+              512
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          -58.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          32
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Back1",
+        "tex_u": 125,
+        "tex_v": 138,
+        "boxes": [
+          {
+            "origin": [
+              -4.0,
+              -20.0,
+              -4.0
+            ],
+            "size": [
+              8,
+              24,
+              8
+            ],
+            "uv": [
+              125,
+              138
+            ],
+            "mirror": false,
+            "texture_size": [
+              256,
+              512
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          -60.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          32
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Back2",
+        "tex_u": 125,
+        "tex_v": 95,
+        "boxes": [
+          {
+            "origin": [
+              -13.0,
+              -42.0,
+              -10.0
+            ],
+            "size": [
+              26,
+              24,
+              16
+            ],
+            "uv": [
+              125,
+              95
+            ],
+            "mirror": false,
+            "texture_size": [
+              256,
+              512
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          -60.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          32
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Back3",
+        "tex_u": 125,
+        "tex_v": 43,
+        "boxes": [
+          {
+            "origin": [
+              -17.0,
+              -68.0,
+              -13.0
+            ],
+            "size": [
+              34,
+              26,
+              20
+            ],
+            "uv": [
+              125,
+              43
+            ],
+            "mirror": false,
+            "texture_size": [
+              256,
+              512
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          -60.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          32
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Shoulders",
+        "tex_u": 60,
+        "tex_v": 200,
+        "boxes": [
+          {
+            "origin": [
+              -22.0,
+              -64.0,
+              -4.0
+            ],
+            "size": [
+              44,
+              8,
+              8
+            ],
+            "uv": [
+              60,
+              200
+            ],
+            "mirror": false,
+            "texture_size": [
+              256,
+              512
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          -60.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          32
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Neck",
+        "tex_u": 125,
+        "tex_v": 29,
+        "boxes": [
+          {
+            "origin": [
+              -4.0,
+              -70.0,
+              -4.0
+            ],
+            "size": [
+              8,
+              2,
+              8
+            ],
+            "uv": [
+              125,
+              29
+            ],
+            "mirror": false,
+            "texture_size": [
+              256,
+              512
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          -60.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          32
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Head",
+        "tex_u": 127,
+        "tex_v": 0,
+        "boxes": [
+          {
+            "origin": [
+              -7.0,
+              -82.0,
+              -7.0
+            ],
+            "size": [
+              14,
+              12,
+              14
+            ],
+            "uv": [
+              127,
+              0
+            ],
+            "mirror": false,
+            "texture_size": [
+              256,
+              512
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          -60.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          32
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Arm1",
+        "tex_u": 77,
+        "tex_v": 250,
+        "boxes": [
+          {
+            "origin": [
+              -6.0,
+              -6.0,
+              -6.0
+            ],
+            "size": [
+              12,
+              21,
+              12
+            ],
+            "uv": [
+              77,
+              250
+            ],
+            "mirror": false,
+            "texture_size": [
+              256,
+              512
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          28.0,
+          -120.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          32
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Arm2",
+        "tex_u": 73,
+        "tex_v": 300,
+        "boxes": [
+          {
+            "origin": [
+              -4.0,
+              15.0,
+              -4.0
+            ],
+            "size": [
+              8,
+              24,
+              8
+            ],
+            "uv": [
+              73,
+              300
+            ],
+            "mirror": false,
+            "texture_size": [
+              256,
+              512
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          28.0,
+          -120.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          32
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Arm3",
+        "tex_u": 61,
+        "tex_v": 350,
+        "boxes": [
+          {
+            "origin": [
+              -3.0,
+              -3.0,
+              -3.0
+            ],
+            "size": [
+              6,
+              33,
+              6
+            ],
+            "uv": [
+              61,
+              350
+            ],
+            "mirror": false,
+            "texture_size": [
+              256,
+              512
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          28.0,
+          -81.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          32
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Knuckles",
+        "tex_u": 56,
+        "tex_v": 400,
+        "boxes": [
+          {
+            "origin": [
+              -7.0,
+              30.0,
+              -5.0
+            ],
+            "size": [
+              14,
+              12,
+              10
+            ],
+            "uv": [
+              56,
+              400
+            ],
+            "mirror": false,
+            "texture_size": [
+              256,
+              512
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          28.0,
+          -81.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          256,
+          512
+        ],
+        "children": [],
+        "parent": null
+      }
+    ]
+  },
+  "ground_truth": "1.7.10 decompiled ModelBase constructor, parsed; never the port",
+  "comparison": {
+    "status": "DIVERGES_TEXTURE_MAPPING",
+    "reference_parts_with_boxes": 18,
+    "port_parts_with_boxes": 18,
+    "matched_parts": 18,
+    "categories": {
+      "MIRROR": 18
+    },
+    "differences": [
+      "Hip -> hip: reference box mirror=False (flag at addBox time), port True",
+      "Thigh -> thigh: reference box mirror=False (flag at addBox time), port True",
+      "Shin -> shin: reference box mirror=False (flag at addBox time), port True",
+      "Foot1 -> foot1: reference box mirror=False (flag at addBox time), port True",
+      "Foot2 -> foot2: reference box mirror=False (flag at addBox time), port True",
+      "Foot3 -> foot3: reference box mirror=False (flag at addBox time), port True",
+      "Thigh2 -> thigh2: reference box mirror=False (flag at addBox time), port True",
+      "Thigh3 -> thigh3: reference box mirror=False (flag at addBox time), port True",
+      "Back1 -> back1: reference box mirror=False (flag at addBox time), port True",
+      "Back2 -> back2: reference box mirror=False (flag at addBox time), port True",
+      "Back3 -> back3: reference box mirror=False (flag at addBox time), port True",
+      "Shoulders -> shoulders: reference box mirror=False (flag at addBox time), port True",
+      "Neck -> neck: reference box mirror=False (flag at addBox time), port True",
+      "Head -> head: reference box mirror=False (flag at addBox time), port True",
+      "Arm1 -> arm1: reference box mirror=False (flag at addBox time), port True",
+      "Arm2 -> arm2: reference box mirror=False (flag at addBox time), port True",
+      "Arm3 -> arm3: reference box mirror=False (flag at addBox time), port True",
+      "Knuckles -> knuckles: reference box mirror=False (flag at addBox time), port True"
+    ],
+    "by_category": {
+      "MIRROR": [
+        "Hip -> hip: reference box mirror=False (flag at addBox time), port True",
+        "Thigh -> thigh: reference box mirror=False (flag at addBox time), port True",
+        "Shin -> shin: reference box mirror=False (flag at addBox time), port True",
+        "Foot1 -> foot1: reference box mirror=False (flag at addBox time), port True",
+        "Foot2 -> foot2: reference box mirror=False (flag at addBox time), port True",
+        "Foot3 -> foot3: reference box mirror=False (flag at addBox time), port True",
+        "Thigh2 -> thigh2: reference box mirror=False (flag at addBox time), port True",
+        "Thigh3 -> thigh3: reference box mirror=False (flag at addBox time), port True",
+        "Back1 -> back1: reference box mirror=False (flag at addBox time), port True",
+        "Back2 -> back2: reference box mirror=False (flag at addBox time), port True",
+        "Back3 -> back3: reference box mirror=False (flag at addBox time), port True",
+        "Shoulders -> shoulders: reference box mirror=False (flag at addBox time), port True",
+        "Neck -> neck: reference box mirror=False (flag at addBox time), port True",
+        "Head -> head: reference box mirror=False (flag at addBox time), port True",
+        "Arm1 -> arm1: reference box mirror=False (flag at addBox time), port True",
+        "Arm2 -> arm2: reference box mirror=False (flag at addBox time), port True",
+        "Arm3 -> arm3: reference box mirror=False (flag at addBox time), port True",
+        "Knuckles -> knuckles: reference box mirror=False (flag at addBox time), port True"
+      ]
+    }
+  },
+  "status": "PASS_WITH_PINNED_DIVERGENCES",
+  "pinned_divergences": {
+    "MIRROR": 18
+  }
+}

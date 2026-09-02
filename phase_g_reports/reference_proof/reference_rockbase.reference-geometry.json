@@ -1,0 +1,1111 @@
+{
+  "schema_version": 1,
+  "model_id": "reference_rockbase",
+  "reference_source": "reference_1_7_10_source/sources/danger/orespawn/ModelRockBase.java",
+  "reference": {
+    "status": "PARSED",
+    "class": "ModelRockBase",
+    "texture_width": 64,
+    "texture_height": 64,
+    "parts": [
+      {
+        "name": "RockShape1",
+        "tex_u": 0,
+        "tex_v": 0,
+        "boxes": [
+          {
+            "origin": [
+              -3.0,
+              0.0,
+              -1.0
+            ],
+            "size": [
+              6,
+              1,
+              2
+            ],
+            "uv": [
+              0,
+              0
+            ],
+            "mirror": false,
+            "texture_size": [
+              64,
+              64
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          23.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          32
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "RockShape2",
+        "tex_u": 0,
+        "tex_v": 4,
+        "boxes": [
+          {
+            "origin": [
+              -3.0,
+              0.0,
+              1.0
+            ],
+            "size": [
+              3,
+              1,
+              1
+            ],
+            "uv": [
+              0,
+              4
+            ],
+            "mirror": false,
+            "texture_size": [
+              64,
+              64
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          23.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          64
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "RockShape3",
+        "tex_u": 0,
+        "tex_v": 7,
+        "boxes": [
+          {
+            "origin": [
+              0.0,
+              0.0,
+              -2.0
+            ],
+            "size": [
+              2,
+              1,
+              1
+            ],
+            "uv": [
+              0,
+              7
+            ],
+            "mirror": false,
+            "texture_size": [
+              64,
+              64
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          23.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          64
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "RockSmallShape2",
+        "tex_u": 0,
+        "tex_v": 4,
+        "boxes": [
+          {
+            "origin": [
+              -2.0,
+              0.0,
+              0.0
+            ],
+            "size": [
+              3,
+              1,
+              1
+            ],
+            "uv": [
+              0,
+              4
+            ],
+            "mirror": false,
+            "texture_size": [
+              64,
+              64
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          23.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          64
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "RockSmallShape1",
+        "tex_u": 0,
+        "tex_v": 7,
+        "boxes": [
+          {
+            "origin": [
+              0.0,
+              0.0,
+              -1.0
+            ],
+            "size": [
+              2,
+              1,
+              1
+            ],
+            "uv": [
+              0,
+              7
+            ],
+            "mirror": false,
+            "texture_size": [
+              64,
+              64
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          23.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          64
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "RockTNTShape1",
+        "tex_u": 0,
+        "tex_v": 0,
+        "boxes": [
+          {
+            "origin": [
+              -3.0,
+              0.0,
+              -1.0
+            ],
+            "size": [
+              6,
+              1,
+              2
+            ],
+            "uv": [
+              0,
+              0
+            ],
+            "mirror": false,
+            "texture_size": [
+              64,
+              64
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          23.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          64
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "RockTNTShape2",
+        "tex_u": 0,
+        "tex_v": 4,
+        "boxes": [
+          {
+            "origin": [
+              -3.0,
+              0.0,
+              1.0
+            ],
+            "size": [
+              3,
+              1,
+              1
+            ],
+            "uv": [
+              0,
+              4
+            ],
+            "mirror": false,
+            "texture_size": [
+              64,
+              64
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          23.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          64
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "RockTNTShape3",
+        "tex_u": 0,
+        "tex_v": 7,
+        "boxes": [
+          {
+            "origin": [
+              0.0,
+              0.0,
+              -2.0
+            ],
+            "size": [
+              2,
+              1,
+              1
+            ],
+            "uv": [
+              0,
+              7
+            ],
+            "mirror": false,
+            "texture_size": [
+              64,
+              64
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          23.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          64
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "RockTNTShape4",
+        "tex_u": 0,
+        "tex_v": 10,
+        "boxes": [
+          {
+            "origin": [
+              -4.0,
+              0.0,
+              -2.0
+            ],
+            "size": [
+              3,
+              1,
+              3
+            ],
+            "uv": [
+              0,
+              10
+            ],
+            "mirror": false,
+            "texture_size": [
+              64,
+              64
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          22.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          64
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "RockSpikeyShape1",
+        "tex_u": 0,
+        "tex_v": 0,
+        "boxes": [
+          {
+            "origin": [
+              -3.0,
+              0.0,
+              -1.0
+            ],
+            "size": [
+              6,
+              1,
+              2
+            ],
+            "uv": [
+              0,
+              0
+            ],
+            "mirror": false,
+            "texture_size": [
+              64,
+              64
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          23.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          64
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "RockSpikeyShape2",
+        "tex_u": 0,
+        "tex_v": 4,
+        "boxes": [
+          {
+            "origin": [
+              -4.0,
+              0.0,
+              -1.0
+            ],
+            "size": [
+              3,
+              1,
+              1
+            ],
+            "uv": [
+              0,
+              4
+            ],
+            "mirror": false,
+            "texture_size": [
+              64,
+              64
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          23.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          1.570796,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          64
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "RockSpikeyShape3",
+        "tex_u": 0,
+        "tex_v": 7,
+        "boxes": [
+          {
+            "origin": [
+              1.0,
+              0.0,
+              1.0
+            ],
+            "size": [
+              2,
+              1,
+              1
+            ],
+            "uv": [
+              0,
+              7
+            ],
+            "mirror": false,
+            "texture_size": [
+              64,
+              64
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          23.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          1.570796,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          64
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "CrystalShape1",
+        "tex_u": 0,
+        "tex_v": 0,
+        "boxes": [
+          {
+            "origin": [
+              -1.0,
+              -4.0,
+              -1.0
+            ],
+            "size": [
+              2,
+              5,
+              2
+            ],
+            "uv": [
+              0,
+              0
+            ],
+            "mirror": false,
+            "texture_size": [
+              64,
+              64
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          23.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          64
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "CrystalShape2",
+        "tex_u": 10,
+        "tex_v": 0,
+        "boxes": [
+          {
+            "origin": [
+              -0.5,
+              -7.0,
+              -0.5
+            ],
+            "size": [
+              1,
+              3,
+              1
+            ],
+            "uv": [
+              10,
+              0
+            ],
+            "mirror": false,
+            "texture_size": [
+              64,
+              64
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          23.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          64
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "CrystalShape3a",
+        "tex_u": 0,
+        "tex_v": 8,
+        "boxes": [
+          {
+            "origin": [
+              -1.0,
+              -5.0,
+              -1.0
+            ],
+            "size": [
+              1,
+              5,
+              1
+            ],
+            "uv": [
+              0,
+              8
+            ],
+            "mirror": false,
+            "texture_size": [
+              64,
+              64
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          23.0,
+          0.0
+        ],
+        "rotation": [
+          0.5410521,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          64
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "CrystalShape3b",
+        "tex_u": 0,
+        "tex_v": 8,
+        "boxes": [
+          {
+            "origin": [
+              0.0,
+              -5.0,
+              0.0
+            ],
+            "size": [
+              1,
+              5,
+              1
+            ],
+            "uv": [
+              0,
+              8
+            ],
+            "mirror": false,
+            "texture_size": [
+              64,
+              64
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          23.0,
+          0.0
+        ],
+        "rotation": [
+          -0.5410521,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          64
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "CrystalShape3c",
+        "tex_u": 0,
+        "tex_v": 8,
+        "boxes": [
+          {
+            "origin": [
+              0.0,
+              -5.0,
+              -1.0
+            ],
+            "size": [
+              1,
+              5,
+              1
+            ],
+            "uv": [
+              0,
+              8
+            ],
+            "mirror": false,
+            "texture_size": [
+              64,
+              64
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          23.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.5410521
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          64
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "CrystalShape3d",
+        "tex_u": 0,
+        "tex_v": 8,
+        "boxes": [
+          {
+            "origin": [
+              -1.0,
+              -5.0,
+              0.0
+            ],
+            "size": [
+              1,
+              5,
+              1
+            ],
+            "uv": [
+              0,
+              8
+            ],
+            "mirror": false,
+            "texture_size": [
+              64,
+              64
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          23.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          -0.5410521
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          64
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "CrystalShape4a",
+        "tex_u": 0,
+        "tex_v": 16,
+        "boxes": [
+          {
+            "origin": [
+              0.0,
+              -3.0,
+              -1.0
+            ],
+            "size": [
+              1,
+              3,
+              1
+            ],
+            "uv": [
+              0,
+              16
+            ],
+            "mirror": false,
+            "texture_size": [
+              64,
+              64
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          23.0,
+          0.0
+        ],
+        "rotation": [
+          1.308997,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          64
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "CrystalShape4b",
+        "tex_u": 0,
+        "tex_v": 16,
+        "boxes": [
+          {
+            "origin": [
+              -1.0,
+              -3.0,
+              0.0
+            ],
+            "size": [
+              1,
+              3,
+              1
+            ],
+            "uv": [
+              0,
+              16
+            ],
+            "mirror": false,
+            "texture_size": [
+              64,
+              64
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          23.0,
+          0.0
+        ],
+        "rotation": [
+          -1.308997,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          64
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "CrystalShape4c",
+        "tex_u": 0,
+        "tex_v": 16,
+        "boxes": [
+          {
+            "origin": [
+              0.0,
+              -3.0,
+              0.0
+            ],
+            "size": [
+              1,
+              3,
+              1
+            ],
+            "uv": [
+              0,
+              16
+            ],
+            "mirror": false,
+            "texture_size": [
+              64,
+              64
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          23.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          1.308997
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          64
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "CrystalShape4d",
+        "tex_u": 0,
+        "tex_v": 16,
+        "boxes": [
+          {
+            "origin": [
+              -1.0,
+              -3.0,
+              -1.0
+            ],
+            "size": [
+              1,
+              3,
+              1
+            ],
+            "uv": [
+              0,
+              16
+            ],
+            "mirror": false,
+            "texture_size": [
+              64,
+              64
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          23.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          -1.308997
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          64
+        ],
+        "children": [],
+        "parent": null
+      }
+    ]
+  },
+  "ground_truth": "1.7.10 decompiled ModelBase constructor, parsed; never the port",
+  "comparison": {
+    "status": "DIVERGES_TEXTURE_MAPPING",
+    "reference_parts_with_boxes": 22,
+    "port_parts_with_boxes": 22,
+    "matched_parts": 22,
+    "categories": {
+      "MIRROR": 22
+    },
+    "differences": [
+      "RockShape1 -> RockShape1: reference box mirror=False (flag at addBox time), port True",
+      "RockShape2 -> RockShape2: reference box mirror=False (flag at addBox time), port True",
+      "RockShape3 -> RockShape3: reference box mirror=False (flag at addBox time), port True",
+      "RockSmallShape2 -> RockSmallShape2: reference box mirror=False (flag at addBox time), port True",
+      "RockSmallShape1 -> RockSmallShape1: reference box mirror=False (flag at addBox time), port True",
+      "RockTNTShape1 -> RockSpikeyShape1: reference box mirror=False (flag at addBox time), port True",
+      "RockTNTShape2 -> RockTNTShape2: reference box mirror=False (flag at addBox time), port True",
+      "RockTNTShape3 -> RockTNTShape3: reference box mirror=False (flag at addBox time), port True",
+      "RockTNTShape4 -> RockTNTShape4: reference box mirror=False (flag at addBox time), port True",
+      "RockSpikeyShape1 -> RockTNTShape1: reference box mirror=False (flag at addBox time), port True",
+      "RockSpikeyShape2 -> RockSpikeyShape2: reference box mirror=False (flag at addBox time), port True",
+      "RockSpikeyShape3 -> RockSpikeyShape3: reference box mirror=False (flag at addBox time), port True",
+      "CrystalShape1 -> CrystalShape1: reference box mirror=False (flag at addBox time), port True",
+      "CrystalShape2 -> CrystalShape2: reference box mirror=False (flag at addBox time), port True",
+      "CrystalShape3a -> CrystalShape3a: reference box mirror=False (flag at addBox time), port True",
+      "CrystalShape3b -> CrystalShape3b: reference box mirror=False (flag at addBox time), port True",
+      "CrystalShape3c -> CrystalShape3c: reference box mirror=False (flag at addBox time), port True",
+      "CrystalShape3d -> CrystalShape3d: reference box mirror=False (flag at addBox time), port True",
+      "CrystalShape4a -> CrystalShape4a: reference box mirror=False (flag at addBox time), port True",
+      "CrystalShape4b -> CrystalShape4b: reference box mirror=False (flag at addBox time), port True",
+      "CrystalShape4c -> CrystalShape4c: reference box mirror=False (flag at addBox time), port True",
+      "CrystalShape4d -> CrystalShape4d: reference box mirror=False (flag at addBox time), port True"
+    ],
+    "by_category": {
+      "MIRROR": [
+        "RockShape1 -> RockShape1: reference box mirror=False (flag at addBox time), port True",
+        "RockShape2 -> RockShape2: reference box mirror=False (flag at addBox time), port True",
+        "RockShape3 -> RockShape3: reference box mirror=False (flag at addBox time), port True",
+        "RockSmallShape2 -> RockSmallShape2: reference box mirror=False (flag at addBox time), port True",
+        "RockSmallShape1 -> RockSmallShape1: reference box mirror=False (flag at addBox time), port True",
+        "RockTNTShape1 -> RockSpikeyShape1: reference box mirror=False (flag at addBox time), port True",
+        "RockTNTShape2 -> RockTNTShape2: reference box mirror=False (flag at addBox time), port True",
+        "RockTNTShape3 -> RockTNTShape3: reference box mirror=False (flag at addBox time), port True",
+        "RockTNTShape4 -> RockTNTShape4: reference box mirror=False (flag at addBox time), port True",
+        "RockSpikeyShape1 -> RockTNTShape1: reference box mirror=False (flag at addBox time), port True",
+        "RockSpikeyShape2 -> RockSpikeyShape2: reference box mirror=False (flag at addBox time), port True",
+        "RockSpikeyShape3 -> RockSpikeyShape3: reference box mirror=False (flag at addBox time), port True",
+        "CrystalShape1 -> CrystalShape1: reference box mirror=False (flag at addBox time), port True",
+        "CrystalShape2 -> CrystalShape2: reference box mirror=False (flag at addBox time), port True",
+        "CrystalShape3a -> CrystalShape3a: reference box mirror=False (flag at addBox time), port True",
+        "CrystalShape3b -> CrystalShape3b: reference box mirror=False (flag at addBox time), port True",
+        "CrystalShape3c -> CrystalShape3c: reference box mirror=False (flag at addBox time), port True",
+        "CrystalShape3d -> CrystalShape3d: reference box mirror=False (flag at addBox time), port True",
+        "CrystalShape4a -> CrystalShape4a: reference box mirror=False (flag at addBox time), port True",
+        "CrystalShape4b -> CrystalShape4b: reference box mirror=False (flag at addBox time), port True",
+        "CrystalShape4c -> CrystalShape4c: reference box mirror=False (flag at addBox time), port True",
+        "CrystalShape4d -> CrystalShape4d: reference box mirror=False (flag at addBox time), port True"
+      ]
+    }
+  },
+  "status": "PASS_WITH_PINNED_DIVERGENCES",
+  "pinned_divergences": {
+    "MIRROR": 22
+  }
+}

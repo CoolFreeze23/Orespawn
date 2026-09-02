@@ -1,0 +1,196 @@
+{
+  "schema_version": 1,
+  "model_id": "reference_islandtoo",
+  "reference_source": "reference_1_7_10_source/sources/danger/orespawn/ModelIsland.java",
+  "reference": {
+    "status": "PARSED",
+    "class": "ModelIsland",
+    "texture_width": 64,
+    "texture_height": 32,
+    "parts": [
+      {
+        "name": "Shape1",
+        "tex_u": 0,
+        "tex_v": 0,
+        "boxes": [
+          {
+            "origin": [
+              -4.0,
+              -4.0,
+              -4.0
+            ],
+            "size": [
+              8,
+              8,
+              8
+            ],
+            "uv": [
+              0,
+              0
+            ],
+            "mirror": false,
+            "texture_size": [
+              64,
+              32
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          16.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          32
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Shape2",
+        "tex_u": 32,
+        "tex_v": 0,
+        "boxes": [
+          {
+            "origin": [
+              -4.0,
+              -4.0,
+              -4.0
+            ],
+            "size": [
+              8,
+              8,
+              8
+            ],
+            "uv": [
+              32,
+              0
+            ],
+            "mirror": false,
+            "texture_size": [
+              64,
+              32
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          16.0,
+          0.0
+        ],
+        "rotation": [
+          0.7853982,
+          0.7853982,
+          0.7853982
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          32
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Shape3",
+        "tex_u": 32,
+        "tex_v": 16,
+        "boxes": [
+          {
+            "origin": [
+              -4.0,
+              -4.0,
+              -4.0
+            ],
+            "size": [
+              8,
+              8,
+              8
+            ],
+            "uv": [
+              32,
+              16
+            ],
+            "mirror": false,
+            "texture_size": [
+              64,
+              32
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          16.0,
+          0.0
+        ],
+        "rotation": [
+          0.7853982,
+          0.7853982,
+          0.7853982
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          32
+        ],
+        "children": [],
+        "parent": null
+      }
+    ]
+  },
+  "ground_truth": "1.7.10 decompiled ModelBase constructor, parsed; never the port",
+  "comparison": {
+    "status": "DIVERGES",
+    "reference_parts_with_boxes": 3,
+    "port_parts_with_boxes": 6,
+    "matched_parts": 0,
+    "categories": {
+      "MISSING_IN_PORT": 3,
+      "EXTRA_IN_PORT": 6
+    },
+    "differences": [
+      "Shape1 [((-4.0, -4.0, -4.0), (8.0, 8.0, 8.0), (0.0, 0.0), 0.0)]",
+      "Shape2 [((-4.0, -4.0, -4.0), (8.0, 8.0, 8.0), (32.0, 0.0), 0.0)]",
+      "Shape3 [((-4.0, -4.0, -4.0), (8.0, 8.0, 8.0), (32.0, 16.0), 0.0)]",
+      "body [((-12.0, -8.0, -12.0), (24.0, 8.0, 24.0), (0.0, 0.0), 0.0)]",
+      "head [((-4.0, -4.0, -6.0), (8.0, 8.0, 6.0), (0.0, 32.0), 0.0)]",
+      "leg1 [((-3.0, 0.0, -3.0), (6.0, 12.0, 6.0), (72.0, 0.0), 0.0)]",
+      "leg2 [((-3.0, 0.0, -3.0), (6.0, 12.0, 6.0), (72.0, 0.0), 0.0)]",
+      "leg3 [((-3.0, 0.0, -3.0), (6.0, 12.0, 6.0), (72.0, 0.0), 0.0)]",
+      "leg4 [((-3.0, 0.0, -3.0), (6.0, 12.0, 6.0), (72.0, 0.0), 0.0)]"
+    ],
+    "by_category": {
+      "MISSING_IN_PORT": [
+        "Shape1 [((-4.0, -4.0, -4.0), (8.0, 8.0, 8.0), (0.0, 0.0), 0.0)]",
+        "Shape2 [((-4.0, -4.0, -4.0), (8.0, 8.0, 8.0), (32.0, 0.0), 0.0)]",
+        "Shape3 [((-4.0, -4.0, -4.0), (8.0, 8.0, 8.0), (32.0, 16.0), 0.0)]"
+      ],
+      "EXTRA_IN_PORT": [
+        "body [((-12.0, -8.0, -12.0), (24.0, 8.0, 24.0), (0.0, 0.0), 0.0)]",
+        "head [((-4.0, -4.0, -6.0), (8.0, 8.0, 6.0), (0.0, 32.0), 0.0)]",
+        "leg1 [((-3.0, 0.0, -3.0), (6.0, 12.0, 6.0), (72.0, 0.0), 0.0)]",
+        "leg2 [((-3.0, 0.0, -3.0), (6.0, 12.0, 6.0), (72.0, 0.0), 0.0)]",
+        "leg3 [((-3.0, 0.0, -3.0), (6.0, 12.0, 6.0), (72.0, 0.0), 0.0)]",
+        "leg4 [((-3.0, 0.0, -3.0), (6.0, 12.0, 6.0), (72.0, 0.0), 0.0)]"
+      ]
+    }
+  },
+  "status": "PASS_WITH_PINNED_DIVERGENCES",
+  "pinned_divergences": {
+    "EXTRA_IN_PORT": 6,
+    "MISSING_IN_PORT": 3
+  }
+}
