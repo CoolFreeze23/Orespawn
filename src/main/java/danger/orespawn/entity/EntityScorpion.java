@@ -44,6 +44,15 @@ public class EntityScorpion extends Monster {
     private static final EntityDataAccessor<Integer> DATA_ATTACKING =
             SynchedEntityData.defineId(EntityScorpion.class, EntityDataSerializers.INT);
 
+    /**
+     * Per-entity render scratch (orig Scorpion.java:45 {@code renderdata = new RenderInfo()},
+     * re-newed in the ctor at :56, zeroed in entityInit at :75-85, accessor at :101-103).
+     * Mutated client-side by {@code ScorpionModel} for the claw/tail selector latch
+     * (orig ModelScorpion.java:198-226); never datawatcher-synced. ENT-S-093.
+     */
+    private final danger.orespawn.entity.client.RenderInfo renderInfo =
+            new danger.orespawn.entity.client.RenderInfo();
+
     public EntityScorpion(EntityType<? extends EntityScorpion> type, Level level) {
         super(type, level);
         this.xpReward = 10;
@@ -92,6 +101,11 @@ public class EntityScorpion extends Monster {
 
     public void setAttacking(int value) {
         this.entityData.set(DATA_ATTACKING, value);
+    }
+
+    /** Mirrors orig Scorpion.java:101-103 {@code getRenderInfo()}. ENT-S-093. */
+    public danger.orespawn.entity.client.RenderInfo getRenderInfo() {
+        return this.renderInfo;
     }
 
     @Nullable

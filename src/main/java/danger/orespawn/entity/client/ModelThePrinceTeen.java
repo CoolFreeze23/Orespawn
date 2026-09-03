@@ -527,7 +527,6 @@ public class ModelThePrinceTeen extends EntityModel<ThePrinceTeen> {
     public void setupAnim(ThePrinceTeen entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
         float d3;
         float h3;
-        float rf1 = 0.0f;
         float newangle;
         float newangle2;
         float rnewangle;
@@ -537,6 +536,10 @@ public class ModelThePrinceTeen extends EntityModel<ThePrinceTeen> {
         float tailamp = 0.08f;
         float pi4 = 0.7853982f;
         int current_activity = entity.getActivity();
+        // Per-entity scratch as in the original (orig ThePrinceTeen.java:80,
+        // orig ModelThePrinceTeen.java:525/538): each teen keeps its own flight
+        // head-yaw latch instead of a per-frame local. ENT-S-093.
+        RenderInfo r = entity.getRenderInfo();
 
         newangle = (double)limbSwingAmount > 0.1 && current_activity == 0
             ? Mth.cos(ageInTicks * 1.3f * this.wingspeed) * (float)Math.PI * 0.2f * limbSwingAmount
@@ -679,16 +682,19 @@ public class ModelThePrinceTeen extends EntityModel<ThePrinceTeen> {
 
         float yaw = netHeadYaw;
         if (entity.getActivity() == 1) {
-            yaw = (entity.yHeadRotO - entity.yHeadRot) * 10.0f;
+            // ENT-S-093: body-yaw delta as the original (orig ModelThePrinceTeen.java:669
+            // field_70126_B - field_70177_z = yRotO - getYRot()), not the head pair;
+            // latch/clamp orig :671-678 on the entity's own RenderInfo.
+            yaw = (entity.yRotO - entity.getYRot()) * 10.0f;
             yaw = -yaw;
-            rf1 += (yaw - rf1) / 50.0f;
-            if (rf1 > 50.0f) {
-                rf1 = 50.0f;
+            r.rf1 += (yaw - r.rf1) / 50.0f;
+            if (r.rf1 > 50.0f) {
+                r.rf1 = 50.0f;
             }
-            if (rf1 < -50.0f) {
-                rf1 = -50.0f;
+            if (r.rf1 < -50.0f) {
+                r.rf1 = -50.0f;
             }
-            yaw = rf1;
+            yaw = r.rf1;
         }
 
         float h2 = h3 = yaw * 2.0f / 3.0f;

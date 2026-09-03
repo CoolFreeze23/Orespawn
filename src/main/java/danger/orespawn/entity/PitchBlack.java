@@ -1,6 +1,7 @@
 package danger.orespawn.entity;
 
 import danger.orespawn.MobStats;
+import danger.orespawn.entity.pose.PitchBlackPose;
 
 import java.util.Comparator;
 import java.util.List;
@@ -74,7 +75,7 @@ import danger.orespawn.entity.ai.TargetSelection;
  * orig DataWatcher format at PitchBlack.java:183-187) and the older
  * {@code Fscale} NBT field are still read so older saves migrate cleanly.</p>
  */
-public class PitchBlack extends Monster {
+public class PitchBlack extends Monster implements PitchBlackPose {
     // OPT-011: cached SoundEvents — identical createVariableRangeEvent ids,
     // allocated once per class instead of on every sound query.
     private static final SoundEvent SND_MOTHRAWINGS = SoundEvent.createVariableRangeEvent(
@@ -137,6 +138,15 @@ public class PitchBlack extends Monster {
      * stomping a saved-NBT health value during load.
      */
     private boolean attributesSeeded = false;
+    /**
+     * Per-entity render scratch (orig PitchBlack.java:55 {@code renderdata = new RenderInfo()},
+     * zeroed in orig :88-98, accessor orig :193-195). Mutated client-side by
+     * {@code ModelPitchBlack} for the idle jaw-chomp latch (orig ModelPitchBlack.java:818-825:
+     * rf1 = last wing phase, ri1 = 1-in-20 chomp roll); never datawatcher-synced.
+     * ENT-S-093: restored from a shared field on the model singleton.
+     */
+    private final danger.orespawn.entity.client.RenderInfo renderInfo =
+            new danger.orespawn.entity.client.RenderInfo();
 
     public PitchBlack(EntityType<? extends PitchBlack> type, Level level) {
         super(type, level);
@@ -181,6 +191,11 @@ public class PitchBlack extends Monster {
     public void setAttacking(int v) { this.entityData.set(DATA_ATTACKING, v); }
     public int getActivity() { return this.entityData.get(DATA_ACTIVITY); }
     public void setActivity(int v) { this.entityData.set(DATA_ACTIVITY, v); }
+
+    /** Mirrors orig PitchBlack.java:193-195 {@code getRenderInfo()} (ENT-S-093). */
+    public danger.orespawn.entity.client.RenderInfo getRenderInfo() {
+        return this.renderInfo;
+    }
 
     /** @return the current size tier, clamped to {@code [MIN_SIZE_TIER, MAX_SIZE_TIER]}. */
     public int getSizeTier() {

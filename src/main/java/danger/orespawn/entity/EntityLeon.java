@@ -118,6 +118,16 @@ public class EntityLeon extends TamableAnimal
     @Nullable
     private BlockPos currentFlightTarget = null;
 
+    /**
+     * Per-entity render scratch (orig Leon.java:64 {@code renderdata = new RenderInfo()},
+     * re-created orig Leon.java:98, zeroed per spawn orig Leon.java:155-165, accessor
+     * orig Leon.java:176-178). Mutated client-side by {@code LeonModel} for the
+     * ridden-flight head/sail yaw filter (orig ModelLeon.java:1013-1024, field rf1 only);
+     * never datawatcher-synced and never saved to NBT, exactly as the original. ENT-S-093.
+     */
+    private final danger.orespawn.entity.client.RenderInfo renderInfo =
+            new danger.orespawn.entity.client.RenderInfo();
+
     public EntityLeon(EntityType<? extends EntityLeon> type, Level level) {
         super(type, level);
         // OPT-009: constant speed - assert the attribute base once here instead
@@ -193,6 +203,11 @@ public class EntityLeon extends TamableAnimal
     public void setBeingRidden(int value) {
         if (this.level() != null && this.level().isClientSide) return;
         this.entityData.set(DATA_BEING_RIDDEN, value);
+    }
+
+    /** Mirrors orig Leon.java:176-178 {@code getRenderInfo()}. ENT-S-093. */
+    public danger.orespawn.entity.client.RenderInfo getRenderInfo() {
+        return this.renderInfo;
     }
 
     @Override

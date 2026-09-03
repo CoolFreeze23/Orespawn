@@ -3,6 +3,7 @@ package danger.orespawn.entity.client;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import danger.orespawn.entity.PitchBlack;
+import danger.orespawn.entity.pose.PitchBlackPose;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
@@ -12,8 +13,6 @@ import net.minecraft.util.Mth;
 public class ModelPitchBlack extends EntityModel<PitchBlack> {
     /** Animation frequency constant; orig ModelPitchBlack.java:15,119 (wingspeed), value from orig ClientProxyOreSpawn.java:460. */
     private final float wingspeed = 0.65f;
-    private int ri1, ri2;
-    private float rf1;
     private final ModelPart lclaw1;
     private final ModelPart body;
     private final ModelPart leftleg1;
@@ -633,12 +632,22 @@ public class ModelPitchBlack extends EntityModel<PitchBlack> {
 
     @Override
     public void setupAnim(PitchBlack entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
+        // The body lives in poseFrom so the parity harness can drive it from a declared
+        // state without a live entity (Slice 4b); the entity satisfies the interface.
+        poseFrom(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
+    }
+
+    public void poseFrom(PitchBlackPose entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
         float newangle = 0.0f;
         float lspeed = 0.0f;
         float tailspeed = 0.76f;
         float tailamp = 0.25f;
         float pi4 = 0.7853982f;
         float pscale = entity.getPitchBlackScale();
+        // Per-entity scratch as in the original (orig PitchBlack.java:55, orig
+        // ModelPitchBlack.java:741,818-825): each Nightmare keeps its own jaw-chomp
+        // latch instead of sharing one field on the model singleton (ENT-S-093).
+        RenderInfo r = entity.getRenderInfo();
         newangle = entity.getActivity() != 0 ? Mth.cos((float)(ageInTicks * 0.45f * this.wingspeed / pscale)) * (float)Math.PI * 0.24f : -pi4 + Mth.cos((float)(ageInTicks * 0.05f * this.wingspeed / pscale)) * (float)Math.PI * 0.02f;
         this.wing1.zRot = newangle;
         this.mem1.zRot = newangle;
@@ -714,15 +723,17 @@ public class ModelPitchBlack extends EntityModel<PitchBlack> {
         newangle = Mth.cos((float)(ageInTicks * 0.85f * this.wingspeed)) * (float)Math.PI * 0.16f;
         newangle += 0.5f;
         } else {
+        // orig ModelPitchBlack.java:817-830 (ENT-S-093): latch on the entity's own
+        // RenderInfo; RNG stays entity.getRandom() per the Kraken convention (orig :820 reads world RNG).
         newangle = ageInTicks * 0.7f * this.wingspeed % ((float)Math.PI * 2);
-        if ((newangle = Math.abs(newangle)) < rf1) {
-        ri1 = 0;
+        if ((newangle = Math.abs(newangle)) < r.rf1) {
+        r.ri1 = 0;
         if (entity.getRandom().nextInt(20) == 1) {
-        ri1 |= 1;
+        r.ri1 |= 1;
         }
         }
-        rf1 = newangle;
-        if (ri1 != 0) {
+        r.rf1 = newangle;
+        if (r.ri1 != 0) {
         newangle = Mth.sin((float)(ageInTicks * 0.85f * this.wingspeed)) * (float)Math.PI * 0.16f;
         newangle += 0.5f;
         } else {

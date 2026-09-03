@@ -46,6 +46,15 @@ public class EntityEmperorScorpion extends Monster {
     private int hurtTimer = 0;
     private int healTimer = 0;
 
+    /**
+     * Per-entity render scratch (orig EmperorScorpion.java:53 {@code renderdata = new RenderInfo()},
+     * re-created :65, zeroed :77-87, accessor :110-112). Mutated client-side by
+     * {@code EmperorScorpionModel} for the claw/tail selector latch
+     * (orig ModelEmperorScorpion.java:613-641); never datawatcher-synced. ENT-S-093.
+     */
+    private final danger.orespawn.entity.client.RenderInfo renderInfo =
+            new danger.orespawn.entity.client.RenderInfo();
+
     public EntityEmperorScorpion(EntityType<? extends EntityEmperorScorpion> type, Level level) {
         super(type, level);
         this.xpReward = 200;
@@ -89,6 +98,11 @@ public class EntityEmperorScorpion extends Monster {
 
     public void setAttacking(int value) {
         this.entityData.set(DATA_ATTACKING, value);
+    }
+
+    /** Mirrors orig EmperorScorpion.java:110-112 {@code getRenderInfo()}. ENT-S-093. */
+    public danger.orespawn.entity.client.RenderInfo getRenderInfo() {
+        return this.renderInfo;
     }
 
     @Nullable

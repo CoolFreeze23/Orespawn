@@ -12,7 +12,6 @@ import net.minecraft.util.Mth;
 public class EmperorScorpionModel extends EntityModel<EntityEmperorScorpion> {
     /** Animation frequency constant; orig ModelEmperorScorpion.java:15,96 (wingspeed), value from orig ClientProxyOreSpawn.java:426. */
     private final float wingspeed = 0.22f;
-    private int ri1, ri2;
     private final ModelPart Head;
     private final ModelPart Seg1;
     private final ModelPart Seg2;
@@ -611,29 +610,33 @@ public class EmperorScorpionModel extends EntityModel<EntityEmperorScorpion> {
         newangle = entity.getAttacking() == 0 ? Mth.cos((float)(ageInTicks * 0.5f * this.wingspeed)) * (float)Math.PI * 0.05f : Mth.cos((float)(ageInTicks * 2.5f * this.wingspeed)) * (float)Math.PI * 0.15f;
         this.LeftManPart2.zRot = newangle;
         this.RightManPart2.zRot = -newangle;
+        // Per-entity scratch as in the original (orig EmperorScorpion.java:53,
+        // orig ModelEmperorScorpion.java:613-641): each scorpion keeps its own
+        // claw/tail selector latch instead of sharing one field on the model. ENT-S-093.
+        RenderInfo r = entity.getRenderInfo();
         newangle = Mth.cos((float)(ageInTicks * 3.0f * this.wingspeed)) * (float)Math.PI * 0.15f;
         nextangle = Mth.cos((float)((ageInTicks + 0.1f) * 3.0f * this.wingspeed)) * (float)Math.PI * 0.15f;
         if (nextangle > 0.0f && newangle < 0.0f) {
-        ri1 = 0;
+        r.ri1 = 0;
         if (entity.getAttacking() == 0) {
-        ri1 = entity.getRandom().nextInt(20);
-        ri2 = entity.getRandom().nextInt(25);
+        r.ri1 = entity.getRandom().nextInt(20);
+        r.ri2 = entity.getRandom().nextInt(25);
         } else {
-        ri1 = entity.getRandom().nextInt(4);
-        ri2 = entity.getRandom().nextInt(3);
+        r.ri1 = entity.getRandom().nextInt(4);
+        r.ri2 = entity.getRandom().nextInt(3);
         }
         }
-        if (ri1 == 1 || ri1 == 3) {
+        if (r.ri1 == 1 || r.ri1 == 3) {
         this.doLeftClaw(newangle);
         } else {
         this.doLeftClaw(0.0f);
         }
-        if (ri1 == 2 || ri1 == 3) {
+        if (r.ri1 == 2 || r.ri1 == 3) {
         this.doRightClaw(newangle);
         } else {
         this.doRightClaw(0.0f);
         }
-        if (ri2 == 1) {
+        if (r.ri2 == 1) {
         this.doTail(newangle);
         } else {
         this.doTail(0.0f);

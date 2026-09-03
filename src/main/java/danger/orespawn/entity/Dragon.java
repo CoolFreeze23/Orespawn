@@ -111,6 +111,18 @@ public class Dragon extends TamableAnimal implements danger.orespawn.network.Rid
     @Nullable
     private BlockPos currentFlightTarget = null;
 
+    /**
+     * Per-entity render scratch (orig Dragon.java:80 {@code renderdata = new RenderInfo()},
+     * re-created orig :121, zeroed per spawn in entityInit orig :178-188, accessor orig :199-201).
+     * Mutated client-side by {@code ModelDragon} for the ridden-flight head-yaw latch rf1
+     * (orig ModelDragon.java:541-548); never datawatcher-synced. {@code final} + fresh instance
+     * per entity satisfies orig :178-188 (every field starts at 0); orig :576 setRenderInfo(r)
+     * copied the instance onto itself (orig :203-212) so no setter is ported, as in Kraken.
+     * ENT-S-093.
+     */
+    private final danger.orespawn.entity.client.RenderInfo renderInfo =
+            new danger.orespawn.entity.client.RenderInfo();
+
     public Dragon(EntityType<? extends Dragon> type, Level level) {
         super(type, level);
         // OPT-009: constant speed - assert the attribute base once here instead
@@ -157,6 +169,11 @@ public class Dragon extends TamableAnimal implements danger.orespawn.network.Rid
 
     public int mygetMaxHealth() {
         return 200;
+    }
+
+    /** Mirrors orig Dragon.java:199-201 {@code getRenderInfo()} (ENT-S-093). */
+    public danger.orespawn.entity.client.RenderInfo getRenderInfo() {
+        return this.renderInfo;
     }
 
     @Override

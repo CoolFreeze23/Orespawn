@@ -12,7 +12,6 @@ import net.minecraft.util.Mth;
 public class ScorpionModel extends EntityModel<EntityScorpion> {
     /** Animation frequency constant; orig ModelScorpion.java:15,40 (wingspeed), value from orig ClientProxyOreSpawn.java:433. */
     private final float wingspeed = 0.62f;
-    private int ri1, ri2;
     private final ModelPart body;
     private final ModelPart tail1;
     private final ModelPart tail2;
@@ -196,33 +195,37 @@ public class ScorpionModel extends EntityModel<EntityScorpion> {
         newangle = Mth.cos((float)(ageInTicks * 2.0f * this.wingspeed - 3.0f * pi4)) * (float)Math.PI * 0.12f * limbSwingAmount;
         this.lleg4.yRot = newangle - 0.49f;
         this.rleg4.yRot = -newangle - 2.65f;
+        // orig ModelScorpion.java:198 — per-entity scratch (orig Scorpion.java:45); each scorpion
+        // keeps its own claw/tail selector latch instead of sharing one field on the model. ENT-S-093.
+        RenderInfo r = entity.getRenderInfo();
         newangle = Mth.cos((float)(ageInTicks * 3.0f * this.wingspeed)) * (float)Math.PI * 0.15f;
         nextangle = Mth.cos((float)((ageInTicks + 0.1f) * 3.0f * this.wingspeed)) * (float)Math.PI * 0.15f;
         if (nextangle > 0.0f && newangle < 0.0f) {
-        ri1 = 0;
-        if (entity.getAttacking() == 0) {
-        ri1 = entity.getRandom().nextInt(20);
-        ri2 = entity.getRandom().nextInt(25);
+            r.ri1 = 0;
+            if (entity.getAttacking() == 0) {
+                r.ri1 = entity.getRandom().nextInt(20);
+                r.ri2 = entity.getRandom().nextInt(25);
+            } else {
+                r.ri1 = entity.getRandom().nextInt(4);
+                r.ri2 = entity.getRandom().nextInt(3);
+            }
+        }
+        if (r.ri1 == 1 || r.ri1 == 3) {
+            this.doLeftClaw(newangle);
         } else {
-        ri1 = entity.getRandom().nextInt(4);
-        ri2 = entity.getRandom().nextInt(3);
+            this.doLeftClaw(0.0f);
         }
-        }
-        if (ri1 == 1 || ri1 == 3) {
-        this.doLeftClaw(newangle);
+        if (r.ri1 == 2 || r.ri1 == 3) {
+            this.doRightClaw(newangle);
         } else {
-        this.doLeftClaw(0.0f);
+            this.doRightClaw(0.0f);
         }
-        if (ri1 == 2 || ri1 == 3) {
-        this.doRightClaw(newangle);
+        if (r.ri2 == 1) {
+            this.doTail(newangle);
         } else {
-        this.doRightClaw(0.0f);
+            this.doTail(0.0f);
         }
-        if (ri2 == 1) {
-        this.doTail(newangle);
-        } else {
-        this.doTail(0.0f);
-        }
+        // orig ModelScorpion.java:226 setRenderInfo(r) is a self-copy of the same object — no-op
     }
 
     @Override

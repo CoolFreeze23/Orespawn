@@ -4,6 +4,7 @@ import danger.orespawn.MobStats;
 
 import danger.orespawn.OreSpawnMod;
 import danger.orespawn.entity.ai.BugMeleeAttackGoal;
+import danger.orespawn.entity.pose.CaveFisherPose;
 import javax.annotation.Nullable;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -26,7 +27,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 
-public class CaveFisher extends Monster {
+public class CaveFisher extends Monster implements CaveFisherPose {
     // OPT-011: cached SoundEvents — identical createVariableRangeEvent ids,
     // allocated once per class instead of on every sound query.
     private static final SoundEvent SND_CRYO_HURT = SoundEvent.createVariableRangeEvent(
@@ -46,6 +47,15 @@ public class CaveFisher extends Monster {
      * the spawn-location logic enforces the low-Y restriction.
      */
     private static final double MAX_NATURAL_SPAWN_Y = 50.0;
+
+    /**
+     * Per-entity render scratch (orig CaveFisher.java:39 {@code renderdata = new RenderInfo()},
+     * re-created :50, zeroed in entityInit :68-78; accessor orig :94-96). Mutated
+     * client-side by {@code ModelCaveFisher} for the claw-snap latch
+     * (orig ModelCaveFisher.java:593-613); never datawatcher-synced. ENT-S-093.
+     */
+    private final danger.orespawn.entity.client.RenderInfo renderInfo =
+            new danger.orespawn.entity.client.RenderInfo();
 
     public CaveFisher(EntityType<? extends CaveFisher> type, Level level) {
         super(type, level);
@@ -94,6 +104,12 @@ public class CaveFisher extends Monster {
 
     public void setAttacking(int value) {
         this.entityData.set(DATA_ATTACKING, value);
+    }
+
+    /** Mirrors orig CaveFisher.java:94-96 {@code getRenderInfo()}. ENT-S-093. */
+    @Override
+    public danger.orespawn.entity.client.RenderInfo getRenderInfo() {
+        return this.renderInfo;
     }
 
     @Override

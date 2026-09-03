@@ -10,8 +10,6 @@ import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.util.Mth;
 
 public class GhostSkellyModel extends EntityModel<GhostSkelly> {
-    private int ri1, ri2;
-    private float rf2;
     private final ModelPart body;
     private final ModelPart shirt;
     private final ModelPart head;
@@ -97,6 +95,10 @@ public class GhostSkellyModel extends EntityModel<GhostSkelly> {
     public void setupAnim(GhostSkelly entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
         float newangle = 0.0f;
         float newrf1 = 0.0f;
+        // Per-entity scratch as in the original (orig GhostSkelly.java:22,
+        // orig ModelGhostSkelly.java:99-122): each GhostSkelly keeps its own
+        // head-swivel latch instead of sharing one field on the model singleton. ENT-S-093.
+        RenderInfo r = entity.getRenderInfo();
         this.lsleeve.zRot = this.lchains.zRot = Mth.cos((float)(ageInTicks * 0.2f)) * (float)Math.PI * 0.05f;
         this.larm.zRot = this.lchains.zRot;
         this.rsleeve.zRot = this.rchains.zRot = Mth.cos((float)(ageInTicks * 0.22f)) * (float)Math.PI * 0.05f;
@@ -108,14 +110,14 @@ public class GhostSkellyModel extends EntityModel<GhostSkelly> {
         newangle = Mth.cos((float)(ageInTicks * 0.05f)) * (float)Math.PI * 2.0f;
         newrf1 = ageInTicks * 0.05f % ((float)Math.PI * 2);
         newrf1 = Math.abs(newrf1);
-        if (newrf1 < rf2) {
-        ri2 = 0;
+        if (newrf1 < r.rf2) {
+        r.ri2 = 0;
         if (entity.getRandom().nextInt(3) == 1) {
-        ri2 |= 1;
+        r.ri2 |= 1;
         }
         }
-        rf2 = newrf1;
-        if ((ri2 & 1) == 0) {
+        r.rf2 = newrf1;
+        if ((r.ri2 & 1) == 0) {
         newangle = 0.0f;
         }
         this.head.yRot = newangle;

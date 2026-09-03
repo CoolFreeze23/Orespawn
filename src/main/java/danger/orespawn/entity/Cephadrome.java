@@ -93,6 +93,15 @@ public class Cephadrome extends PathfinderMob
     private int shouldattack = 0;
     private int hitByPlayer = 0;
     private int badmood = 0;
+    /**
+     * Per-entity render scratch (orig Cephadrome.java:62 {@code renderdata = new RenderInfo()},
+     * re-newed in the ctor at orig :85, zeroed in entityInit at orig :139-149; accessor
+     * orig :156-158). Mutated client-side by {@code ModelCephadrome} for the ridden-flight
+     * neck-yaw latch rf1 (orig ModelCephadrome.java:469-479); never datawatcher-synced.
+     * ENT-S-093.
+     */
+    private final danger.orespawn.entity.client.RenderInfo renderInfo =
+            new danger.orespawn.entity.client.RenderInfo();
 
     private static final float MELEE_DAMAGE = 70.0f;
     private static final double KNOCKBACK_HORIZONTAL = 2.5;
@@ -107,6 +116,11 @@ public class Cephadrome extends PathfinderMob
         this.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(this.moveSpeed);
         this.xpReward = 200;
         this.targetSorter = Comparator.comparingDouble(this::distanceToSqr);
+    }
+
+    /** Mirrors orig Cephadrome.java:156-158 {@code getRenderInfo()} (ENT-S-093). */
+    public danger.orespawn.entity.client.RenderInfo getRenderInfo() {
+        return this.renderInfo;
     }
 
     @Override

@@ -38,6 +38,17 @@ public class Nastysaurus extends Monster {
 
     private final float moveSpeed = 0.35f;
 
+    /**
+     * Per-entity render scratch (orig Nastysaurus.java:43 {@code renderdata = new RenderInfo()},
+     * accessor orig Nastysaurus.java:84-86). Mutated client-side by {@code ModelNastysaurus}
+     * for the idle jaw-twitch latch (orig ModelNastysaurus.java:479-486: rf1 = last idle
+     * phase, ri1 = 1-in-20 reroll); never datawatcher-synced. The original zeroed all eight
+     * fields in entityInit (orig :71-82); a fresh instance's defaults are already zero.
+     * ENT-S-093.
+     */
+    private final danger.orespawn.entity.client.RenderInfo renderInfo =
+            new danger.orespawn.entity.client.RenderInfo();
+
     public Nastysaurus(EntityType<? extends Nastysaurus> type, Level level) {
         super(type, level);
         // OPT-009: constant speed - assert the attribute base once here instead
@@ -128,6 +139,11 @@ public class Nastysaurus extends Monster {
 
     public int getAttacking() {
         return this.entityData.get(DATA_ATTACKING);
+    }
+
+    /** Mirrors orig Nastysaurus.java:84-86 {@code getRenderInfo()}. ENT-S-093. */
+    public danger.orespawn.entity.client.RenderInfo getRenderInfo() {
+        return this.renderInfo;
     }
 
     public void setAttacking(int value) {

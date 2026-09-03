@@ -12,7 +12,6 @@ import net.minecraft.util.Mth;
 public class LeonModel extends EntityModel<EntityLeon> {
     /** Animation frequency constant; orig ModelLeon.java:15,116 (wingspeed), value from orig ClientProxyOreSpawn.java:500. */
     private final float wingspeed = 0.22f;
-    private float rf1;
     private final ModelPart chest;
     private final ModelPart neck_1;
     private final ModelPart neck_2;
@@ -1003,16 +1002,22 @@ public class LeonModel extends EntityModel<EntityLeon> {
         if (entity.getBeingRidden() == 0) {
         newangle = (float)Math.toRadians(netHeadYaw) * 0.5f;
         } else {
-        netHeadYaw = (entity.yBodyRotO - entity.yBodyRot) * 8.0f;
+        // ENT-S-093: per-entity scratch as in the original (orig Leon.java:64,
+        // orig ModelLeon.java:1013-1024) instead of one rf1 shared on the model;
+        // yaw source is prevRotationYaw/rotationYaw (orig ModelLeon.java:1014).
+        RenderInfo r = entity.getRenderInfo();
+        netHeadYaw = (entity.yRotO - entity.getYRot()) * 8.0f;
         netHeadYaw = -netHeadYaw;
-        rf1 += (netHeadYaw - rf1) / 60.0f;
-        if (rf1 > 50.0f) {
-        rf1 = 50.0f;
+        r.rf1 += (netHeadYaw - r.rf1) / 60.0f;
+        if (r.rf1 > 50.0f) {
+        r.rf1 = 50.0f;
         }
-        if (rf1 < -50.0f) {
-        rf1 = -50.0f;
+        if (r.rf1 < -50.0f) {
+        r.rf1 = -50.0f;
         }
-        netHeadYaw = rf1;
+        netHeadYaw = r.rf1;
+        // orig ModelLeon.java:1024 e.setRenderInfo(r) has no counterpart: it copied
+        // the same instance back onto itself (orig Leon.java:180-189), a no-op.
         newangle = (float)Math.toRadians(netHeadYaw) * 0.5f;
         }
         this.fupper_sail2_.yRot = this.fupper_sail3.yRot = newangle;

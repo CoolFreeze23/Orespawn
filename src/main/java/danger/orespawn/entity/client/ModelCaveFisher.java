@@ -3,6 +3,7 @@ package danger.orespawn.entity.client;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import danger.orespawn.entity.CaveFisher;
+import danger.orespawn.entity.pose.CaveFisherPose;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
@@ -12,7 +13,6 @@ import net.minecraft.util.Mth;
 public class ModelCaveFisher extends EntityModel<CaveFisher> {
     /** Animation frequency constant; orig ModelCaveFisher.java:15,93 (wingspeed), value from orig ClientProxyOreSpawn.java:434. */
     private final float wingspeed = 0.62f;
-    private int ri1, ri2;
     private final ModelPart Nose;
     private final ModelPart EyeLeft;
     private final ModelPart HeadMid;
@@ -476,6 +476,12 @@ public class ModelCaveFisher extends EntityModel<CaveFisher> {
 
     @Override
     public void setupAnim(CaveFisher entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
+        // ENT-S-093: the body lives in poseFrom so the parity harness can drive it from a
+        // declared state without a live entity (as ModelRobot2); the entity satisfies the interface.
+        poseFrom(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
+    }
+
+    public void poseFrom(CaveFisherPose entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
         float newangle = 0.0f;
         float upangle = 0.0f;
         float nextangle = 0.0f;
@@ -516,19 +522,21 @@ public class ModelCaveFisher extends EntityModel<CaveFisher> {
         this.RBLeg4.yRot = -newangle;
         this.RBLeg5.yRot = -newangle;
         this.RBLeg6.yRot = -newangle;
+        // orig ModelCaveFisher.java:593 — per-entity scratch; ri1 is the claw-snap latch (ENT-S-093).
+        RenderInfo r = entity.getRenderInfo();
         newangle = Mth.cos((float)(ageInTicks * 3.0f * this.wingspeed)) * (float)Math.PI * 0.15f;
         nextangle = Mth.cos((float)((ageInTicks + 0.1f) * 3.0f * this.wingspeed)) * (float)Math.PI * 0.15f;
         if (nextangle > 0.0f && newangle < 0.0f) {
-        ri1 = 0;
+        r.ri1 = 0;
         if (entity.getAttacking() == 0) {
-        ri1 = entity.getRandom().nextInt(20);
-        ri2 = entity.getRandom().nextInt(25);
+        r.ri1 = entity.getRandom().nextInt(20);
+        r.ri2 = entity.getRandom().nextInt(25);
         } else {
-        ri1 = entity.getRandom().nextInt(4);
-        ri2 = entity.getRandom().nextInt(3);
+        r.ri1 = entity.getRandom().nextInt(4);
+        r.ri2 = entity.getRandom().nextInt(3);
         }
         }
-        if (ri1 == 1 || ri1 == 3) {
+        if (r.ri1 == 1 || r.ri1 == 3) {
         this.doLeftClaw(newangle);
         this.doRightClaw(newangle);
         } else {
@@ -537,16 +545,28 @@ public class ModelCaveFisher extends EntityModel<CaveFisher> {
         }
     }
 
+    /** orig ModelCaveFisher.java:701-710 — rectified pitch lift on the five left arm segments and the claw; Top/Low carry the absolute rest pitches -0.54f / +0.35f. */
     private void doLeftClaw(float angle) {
-        this.LeftClawBase.yRot = -0.3f + angle;
-        this.LeftClawTop.yRot = -0.3f + angle * 1.5f;
-        this.LeftClawLow.yRot = -0.3f - angle;
+        this.LeftArmSeg1.xRot = Math.abs(angle);
+        this.LeftArmSeg2.xRot = Math.abs(angle);
+        this.LeftArmSeg3.xRot = Math.abs(angle);
+        this.LeftArmSeg4.xRot = Math.abs(angle);
+        this.LeftArmSeg5.xRot = Math.abs(angle);
+        this.LeftClawBase.xRot = Math.abs(angle);
+        this.LeftClawTop.xRot = Math.abs(angle) - 0.54f;
+        this.LeftClawLow.xRot = Math.abs(angle) + 0.35f;
     }
 
+    /** orig ModelCaveFisher.java:712-721 — mirror of doLeftClaw over the right arm. */
     private void doRightClaw(float angle) {
-        this.RightClawBase.yRot = 0.3f - angle;
-        this.RightClawTop.yRot = 0.3f - angle * 1.5f;
-        this.RightClawLow.yRot = 0.3f + angle;
+        this.RightArmSeg1.xRot = Math.abs(angle);
+        this.RightArmSeg2.xRot = Math.abs(angle);
+        this.RightArmSeg3.xRot = Math.abs(angle);
+        this.RightArmSeg4.xRot = Math.abs(angle);
+        this.RightArmSeg5.xRot = Math.abs(angle);
+        this.RightClawBase.xRot = Math.abs(angle);
+        this.RightClawTop.xRot = Math.abs(angle) - 0.54f;
+        this.RightClawLow.xRot = Math.abs(angle) + 0.35f;
     }
 
     @Override

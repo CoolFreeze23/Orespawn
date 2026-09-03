@@ -120,6 +120,15 @@ public class ThePrinceTeen extends TamableAnimal
     private int wingSound = 0;
     /** orig ThePrinceTeen.java:64 — flight steering target (transient). */
     private BlockPos.MutableBlockPos currentFlightTarget = null;
+    /**
+     * Per-entity render scratch (orig ThePrinceTeen.java:80 {@code renderdata = new RenderInfo()},
+     * re-created orig :122, zeroed in entityInit orig :216-226, accessor orig :237-239).
+     * Mutated client-side by {@code ModelThePrinceTeen} for the flight head-yaw low-pass
+     * latch (orig ModelThePrinceTeen.java:671-678, field rf1 only); never datawatcher-synced.
+     * ENT-S-093.
+     */
+    private final danger.orespawn.entity.client.RenderInfo renderInfo =
+            new danger.orespawn.entity.client.RenderInfo();
 
     public ThePrinceTeen(EntityType<? extends ThePrinceTeen> type, Level level) {
         super(type, level);
@@ -178,6 +187,11 @@ public class ThePrinceTeen extends TamableAnimal
     public int getHead1Ext() { return this.entityData.get(DATA_HEAD1); }
     public int getHead2Ext() { return this.entityData.get(DATA_HEAD2); }
     public int getHead3Ext() { return this.entityData.get(DATA_HEAD3); }
+
+    /** Mirrors orig ThePrinceTeen.java:237-239 {@code getRenderInfo()}. ENT-S-093. */
+    public danger.orespawn.entity.client.RenderInfo getRenderInfo() {
+        return this.renderInfo;
+    }
 
     @Override
     public void tick() {
