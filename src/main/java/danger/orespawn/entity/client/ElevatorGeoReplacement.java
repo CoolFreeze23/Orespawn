@@ -31,7 +31,7 @@ public final class ElevatorGeoReplacement extends OreSpawnGeoReplacement<Elevato
             ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "geo/entity/elevator.geo.json"),
             ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "animations/entity/elevator.animation.json"),
             TEXTURES[1],
-            0.25F) {
+            0.25F) { // orig RenderElevator.java:23 — shadow 0.25 (same as the classic ctor).
         @Override
         public ResourceLocation texture(Elevator entity) {
             int color = entity.getColor();
@@ -62,6 +62,20 @@ public final class ElevatorGeoReplacement extends OreSpawnGeoReplacement<Elevato
 
     public ElevatorGeoReplacement() {
         super(DESCRIPTOR);
+    }
+
+    /**
+     * ENT-S-094: orig RenderElevator.java:19 extends the plain {@code Render}, so
+     * the seam skips GeckoLib's death flip, shaking/sleeping/upside-down rotations,
+     * hurt red overlay and name tag for this species — the same set the classic
+     * {@code ElevatorRenderer} drops, and draws at the lerped ENTITY yaw the 1.7.10
+     * RenderManager passed (not the living body yaw), as the classic path does.
+     * Hit wobble, colour texture and the slice-B lift cancellation in the descriptor
+     * are untouched.
+     */
+    @Override
+    public boolean nonLivingRender() {
+        return true;
     }
 
     @Override
