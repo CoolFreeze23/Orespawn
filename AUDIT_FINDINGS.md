@@ -6300,7 +6300,21 @@ keeps BUG-036. Commit 4ea395c's message retains the old number.)*
   matched; RockBase's shadow is the original's 0), refuted per chunk; the pin
   manifest holds 114 pins, 13 not-applicable and the five bosses pending. Crab
   and PitchBlack pin their shadow and declare a DYNAMIC scale axis (both sides
-  scale by an entity getter). Recheck list: `phase_g_reports/ents092_recheck_list.md`; changelog
+  scale by an entity getter). BATCH 1b LANDED (2026-09-03) for the four bosses
+  whose hit surfaces do not follow the render scale (each boss read refuted
+  once): Kraken 3 -> 1 (plain 4x15 AABB, grab is coordinate math), SeaMonster
+  3 -> 1 (plain 5x5 AABB), TheKing 1 -> 2.1 (OreSpawnPartEntity parts are
+  positioned by code offsets, not by the rendered bones), Godzilla 3 -> 2 (same;
+  MOD-025 covers hitboxes, not render scale); the PlayNicely quarter-scale
+  branches of TheKing/Godzilla transcribed. HELD: TheQueen 1 -> 2 (coupling
+  PARTIAL): her MHLib bone-tracked parts follow the drawn geometry only when the
+  scale is applied after GeckoLib's capture, so restoring the 1.7.10 size also
+  relocates and resizes every head/tail/wing/leg hit surface onto the drawn
+  body; the read's edit reorders the pose scale after the capture and keeps the
+  hand-authored profile envelopes. Presented for the owner; the pin manifest
+  keeps TheQueen PENDING. Kraken's 1.7.10 PlayNicely mode (1/3 scale paired
+  with a 1.33x5 hitbox) does not exist in the port at all: filed as ENT-S-096.
+  Recheck list: `phase_g_reports/ents092_recheck_list.md`; changelog
   note: `phase_g_reports/ents092_changelog_note.md`. Hitbox dimension
   divergences found on the way are filed as ENT-S-095.
 
@@ -6371,6 +6385,16 @@ keeps BUG-036. Commit 4ea395c's message retains the old number.)*
   as deliberate in the port source and needs its MOD record or a fix). Presented
   for the owner's split before any fix; a fix slice would follow the ENT-S-089
   dims-pin pattern.
+
+### ENT-S-096 — Kraken has no PlayNicely mode (REPORT, 2026-09-03)
+
+- **Evidence:** orig Kraken.java:70-76 sizes the boss 4x15 normally and 1.333x5
+  while `OreSpawnMain.PlayNicely != 0`, and RenderKraken.java:39-45 draws it at
+  scale/3 in that mode; the port Kraken has no PlayNicely accessor (grep), a fixed
+  4x15 EntityType and no scale branch (found by the ENT-S-092 boss read, refuted
+  once). TheKing and Godzilla carry their PlayNicely branches (BOSS-017).
+- **Resolution:** OPEN — report only. A divergence without a MOD record; the fix
+  would port the paired hitbox swap and the renderer branch together.
 ### TEST-003 — Config-flipping gametests in the concurrent default batch
 
 - **Impact:** MEDIUM (suite reliability) — boss005/boss012 flip a global

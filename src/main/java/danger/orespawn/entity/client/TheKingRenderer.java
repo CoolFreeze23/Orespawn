@@ -33,6 +33,12 @@ import net.minecraft.resources.ResourceLocation;
  * <p>{@link #shouldRender} always returns {@code true} because the King has a huge
  * bounding box that often straddles the view frustum in ways vanilla culling
  * incorrectly rejects (it would cause visible pop-out of body parts).
+ *
+ * <p>orig RenderTheKing.java + ClientProxyOreSpawn.java:492:
+ * {@code new RenderTheKing(new ModelTheKing(0.65f), 1.9f, 2.1f)} - RenderLiving shadow = par2 * par3
+ * (RenderTheKing.java:23) and preRenderScale scales by par3 = 2.1, or par3 / 4 while PlayNicely
+ * (RenderTheKing.java:24,39-45 via func_77041_b :47-48). The ModelTheKing(0.65f) argument is only
+ * wingspeed, not a size (ENT-S-092).
  */
 public class TheKingRenderer extends MobRenderer<TheKing, ModelTheKing> {
 
@@ -42,7 +48,10 @@ public class TheKingRenderer extends MobRenderer<TheKing, ModelTheKing> {
     public static final ModelLayerLocation MODEL_LAYER =
             new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "theking"), "main");
 
-    private static final float SCALE = 1.0F;
+    /** orig RenderTheKing.scale = 2.1f (third constructor argument, ClientProxyOreSpawn.java:492). */
+    public static final float SCALE = 2.1F;
+    /** orig RenderLiving shadow = 1.9f * 2.1f (RenderTheKing.java:23). */
+    public static final float SHADOW = 1.9F * 2.1F;
 
     // Original 1.7.10 GL state: glColor4f(0.75, 0.75, 0.75, 0.55).
     // Packed as ARGB int for Blaze3D's {@code color} parameter (A, R, G, B):
@@ -50,13 +59,16 @@ public class TheKingRenderer extends MobRenderer<TheKing, ModelTheKing> {
     private static final int WING_MEMBRANE_COLOR = (140 << 24) | (191 << 16) | (191 << 8) | 191;
 
     public TheKingRenderer(EntityRendererProvider.Context context) {
-        super(context, new ModelTheKing(context.bakeLayer(MODEL_LAYER)), 5.0F);
+        super(context, new ModelTheKing(context.bakeLayer(MODEL_LAYER)), SHADOW);
     }
 
     @Override
     protected void scale(TheKing entity, PoseStack poseStack, float partialTick) {
-        // BOSS-017: orig RenderTheKing.java:39-45 — a PlayNicely King renders
-        // at scale/4, tracking the live synced flag.
+        // BOSS-017 / ENT-S-092: orig RenderTheKing.preRenderScale (RenderTheKing.java:39-45): a PlayNicely
+        // King (getPlayNicely() != 0) gets GL11.glScalef(scale / 4.0f, ...), otherwise
+        // GL11.glScalef(scale, scale, scale) - same pipeline position as LivingEntityRenderer.scale
+        // (after the (-1,-1,1) flip, before the -1.501 lift). setupEntityTransform re-enters this hook
+        // for the wing-membrane pass inside its own push/pop, so the two passes do not compound.
         float effectiveScale = entity.getPlayNicely() != 0 ? SCALE / 4.0F : SCALE;
         poseStack.scale(effectiveScale, effectiveScale, effectiveScale);
     }

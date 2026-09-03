@@ -4724,3 +4724,17 @@ Crab and PitchBlack: shadow pinned, scale axis DYNAMIC (entity getter on both
 sides). Further hitbox-dimension notes folded into ENT-S-095.
 
 GATE (ents092-batch2): build green; referenceRenderers PASS 115 / PENDING 5 at this batch (119 / 1 after batch 1b); runGameTestServer: All 214 required tests passed (gate b2, then the final gate of the day on the full tree).
+
+## ENT-S-092 BATCH 1b — four bosses restored to the 1.7.10 render scale; The Queen held (2026-09-03)
+
+Five boss reads, each refuted once, on how hit surfaces couple to the render
+scale. Kraken (3 -> 1), SeaMonster (3 -> 1), TheKing (1 -> 2.1) and Godzilla
+(3 -> 2) have no coupling (plain AABBs or code-offset part entities), so the
+ruling applies directly: constants, shadows and the PlayNicely quarter-scale
+branches restored in the house style, one refuter upheld; pin manifest 119
+pins. TheQueen is PARTIAL: her MHLib parts follow the drawn bones when the
+scale sits after GeckoLib's capture, so the 1.7.10 size relocates the hit
+surfaces onto the drawn body; presented for the owner, PENDING in the
+manifest. Kraken's missing PlayNicely mode filed as ENT-S-096.
+
+GATE (ents092-batch1b): build green; referenceRenderers PASS 119 / PENDING 1 (TheQueen); runGameTestServer: All 214 required tests passed (gate b1b and the final gate after the pin-leg edits).
