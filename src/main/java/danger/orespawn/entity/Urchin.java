@@ -3,8 +3,12 @@ package danger.orespawn.entity;
 import danger.orespawn.MobStats;
 
 import danger.orespawn.ModItems;
+import danger.orespawn.OreSpawnConfig;
 import danger.orespawn.OreSpawnMod;
+import danger.orespawn.entity.ai.GenericTargetSorter;
+import danger.orespawn.entity.ai.TargetSelection;
 import danger.orespawn.util.MyUtils;
+import java.util.List;
 import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
@@ -51,6 +55,23 @@ public class Urchin extends Monster {
      * Not persisted in the original either.
      */
     private int wasSpawnered = 0;
+
+    /**
+     * orig Urchin.java:43 {@code TargetSorter}, :55 {@code new GenericTargetSorter(this)} —
+     * the shared weighted-distance order (creepers halved, big silhouettes first) the scan
+     * sorts its candidates by (:277). ENT-S-108.
+     */
+    private final GenericTargetSorter targetSorter = new GenericTargetSorter(this);
+
+    /**
+     * The last pick {@link #selectTarget} handed to the target slot. 1.7.10 stored the scan's
+     * pick nowhere — it was acted on for that tick and re-derived on the next (orig
+     * Urchin.java:195-208) — so the port re-runs the scan whenever the slot still holds its
+     * own pick, and leaves a target set by any other path alone (see {@link #setTarget}).
+     * ENT-S-108.
+     */
+    @Nullable
+    private LivingEntity scanPick;
 
     public Urchin(EntityType<? extends Urchin> type, Level level) {
         super(type, level);
@@ -139,36 +160,109 @@ public class Urchin extends Monster {
         return this.wasSpawnered == 0;
     }
 
+    /**
+     * orig Urchin.java:190-210 {@code updateAITasks}: nothing while dead (:191-193), super
+     * (:194), then on the 1-in-8 tick (:195) the scan (:196, {@link #selectTarget}) and the
+     * melee on its pick (:197-208: reach distSq &lt; 8, setAttacking, the swing dice, the
+     * chase at 1.2). ENT-S-108: the port's players-only {@code getNearestPlayer(16)} scan is
+     * gone; the 16/3/16 EntityLivingBase box scan of :272-288 stands in its place, through
+     * the target slot this melee block reads.
+     */
     @Override
     protected void customServerAiStep() {
-        if (this.isRemoved()) return;
-        super.customServerAiStep();
+        if (this.isRemoved()) return;            // orig Urchin.java:191-193
+        super.customServerAiStep();              // orig :194
 
-        if (this.random.nextInt(8) == 0) {
+        if (this.random.nextInt(8) == 0) {       // orig :195
+            this.selectTarget();                 // orig :196 findSomethingToAttack
             LivingEntity target = this.getTarget();
-            if (target == null) {
-                Player nearest = this.level().getNearestPlayer(this, 16.0);
-                // orig Urchin.java:230-232 — the shared ignore screen, ahead of the
-                // creative check (:263-267); the port's scan is players-only, so the
-                // screen is carried in the same order but cannot bite here (ENT-S-106).
-                if (nearest != null && !MyUtils.isIgnoreable(nearest) && !nearest.getAbilities().instabuild) {
-                    target = nearest;
-                    this.setTarget(target);
-                }
-            }
-            if (target != null && target.isAlive()) {
-                if (this.distanceToSqr(target) < 8.0) {
-                    this.setAttacking(1);
-                    if (this.random.nextInt(7) == 0) {
-                        this.doHurtTarget(target);
+            if (target != null && target.isAlive()) {          // orig :197
+                if (this.distanceToSqr(target) < 8.0) {        // orig :198
+                    this.setAttacking(1);                      // orig :199
+                    if (this.random.nextInt(7) == 0) {         // orig :200
+                        this.doHurtTarget(target);             // orig :201
                     }
                 } else {
-                    this.getNavigation().moveTo(target, 1.2);
+                    this.getNavigation().moveTo(target, 1.2);  // orig :204
                 }
             } else {
-                this.setAttacking(0);
+                this.setAttacking(0);                          // orig :207
             }
         }
+    }
+
+    /**
+     * orig Urchin.java:196: on the cadence tick the prey is whatever
+     * {@link #findSomethingToAttack} returns right now — the original kept no target of its
+     * own, so a candidate that had left the 16/3/16 box or line of sight was simply not found
+     * next time (:206-208, setAttacking(0)). The port acts through its target slot, so the
+     * scan's own pick is re-derived on every cadence tick (replaced, or cleared when the scan
+     * comes back empty), while a target set by any other path — {@code HurtByTargetGoal}
+     * (orig :61 {@code EntityAIHurtByTarget}, whose attack target this AI never read) — is
+     * left to that path. A dead target is dropped first, the slot's own guard. ENT-S-108.
+     */
+    private void selectTarget() {
+        LivingEntity current = this.getTarget();
+        if (current != null && !current.isAlive()) {
+            this.setTarget(null);
+            current = null;
+        }
+        if (current != null && current != this.scanPick) return;   // set elsewhere: not the scan's to replace
+        LivingEntity pick = this.findSomethingToAttack();
+        if (pick != current) super.setTarget(pick);                // super: the scan's own set keeps its ownership
+        // Re-read the slot rather than trusting `pick`: a LivingChangeTargetEvent handler may
+        // have substituted or cancelled the set, and a stale scanPick would stall the scan
+        // (ENT-S-108 refuter hardening, 2026-09-04).
+        this.scanPick = this.getTarget();
+    }
+
+    /** A target set by any other path ends the scan's ownership of the slot; see {@link #selectTarget}. ENT-S-108. */
+    @Override
+    public void setTarget(@Nullable LivingEntity target) {
+        super.setTarget(target);
+        this.scanPick = null;
+    }
+
+    /**
+     * orig Urchin.java:272-288 {@code findSomethingToAttack}: nothing under PlayNicely
+     * (:273-275); every {@code EntityLivingBase} whose box meets the hunter's box grown by
+     * 16/3/16 (:276, {@code getEntitiesWithinAABB} — players included, itself included);
+     * sorted by the {@link GenericTargetSorter} (:277); the first the filter accepts wins
+     * (:278-286), else null (:287). {@link TargetSelection#firstMatch} is that sort-and-loop,
+     * stable ties included (OPT-021). ENT-S-108.
+     */
+    @Nullable
+    private LivingEntity findSomethingToAttack() {
+        if (OreSpawnConfig.PLAY_NICELY.get()) return null;                        // orig :273-275
+        List<LivingEntity> candidates = this.level().getEntitiesOfClass(LivingEntity.class,
+                this.getBoundingBox().inflate(16.0, 3.0, 16.0));                  // orig :276
+        return TargetSelection.firstMatch(candidates, this.targetSorter, this::isSuitableTarget); // orig :277-287
+    }
+
+    /**
+     * orig Urchin.java:220-270 {@code isSuitableTarget}, in the original's order: null / self /
+     * dead (:221-229), the shared ignore screen (:230-232, ENT-S-106), line of sight
+     * (:233-235), then the species chain — Vortex (:236-238), Rotator (:239-241), Peacock
+     * (:242-244), CrystalCow (:245-247), Irukandji (:248-250), Skate (:251-253), Whale
+     * (:254-256), Flounder (:257-259), Urchin (:260-262) — and the player branch, creative
+     * refused (:263-268, {@code isCreativeMode} = {@code Abilities.instabuild}); everything
+     * else that lives is prey (:269). ENT-S-108.
+     */
+    private boolean isSuitableTarget(LivingEntity target) {
+        if (target == null || target == this || !target.isAlive()) return false;    // orig :221-229
+        if (MyUtils.isIgnoreable(target)) return false;                             // orig :230-232
+        if (!this.getSensing().hasLineOfSight(target)) return false;                // orig :233-235
+        if (target instanceof EntityVortex) return false;                           // orig :236-238 Vortex
+        if (target instanceof EntityRotator) return false;                          // orig :239-241 Rotator
+        if (target instanceof Peacock) return false;                                // orig :242-244
+        if (target instanceof CrystalCow) return false;                             // orig :245-247
+        if (target instanceof Irukandji) return false;                              // orig :248-250
+        if (target instanceof Skate) return false;                                  // orig :251-253
+        if (target instanceof Whale) return false;                                  // orig :254-256
+        if (target instanceof Flounder) return false;                               // orig :257-259
+        if (target instanceof Urchin) return false;                                 // orig :260-262
+        if (target instanceof Player player && player.getAbilities().instabuild) return false; // orig :263-268
+        return true;                                                                // orig :269
     }
 
     @Nullable

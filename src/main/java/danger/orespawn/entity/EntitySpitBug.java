@@ -2,9 +2,13 @@ package danger.orespawn.entity;
 
 import danger.orespawn.MobStats;
 
+import danger.orespawn.OreSpawnConfig;
 import danger.orespawn.OreSpawnMod;
+import danger.orespawn.entity.ai.GenericTargetSorter;
 import danger.orespawn.entity.ai.SpitBugAcidAttackGoal;
+import danger.orespawn.entity.ai.TargetSelection;
 import danger.orespawn.util.MyUtils;
+import java.util.List;
 import javax.annotation.Nullable;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -22,7 +26,8 @@ import net.minecraft.world.entity.ai.goal.FloatGoal;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
-import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
+import net.minecraft.world.entity.monster.Creeper;
+import net.minecraft.world.entity.monster.EnderMan;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
@@ -49,6 +54,23 @@ public class EntitySpitBug extends Monster {
 
     private int hurtTimer = 0;
 
+    /**
+     * orig SpitBug.java:47 {@code TargetSorter}, :61 {@code new GenericTargetSorter(this)} —
+     * the shared weighted-distance order (creepers halved, big silhouettes first) the scan
+     * sorts its candidates by (:375). ENT-S-108.
+     */
+    private final GenericTargetSorter targetSorter = new GenericTargetSorter(this);
+
+    /**
+     * The last pick {@link #selectTarget} handed to the target slot. 1.7.10 stored the scan's
+     * pick nowhere — only the hurt-set attack target persisted (orig SpitBug.java:268, :249);
+     * the pick was acted on for that tick and re-derived on the next (:273-275) — so the port
+     * re-runs the scan whenever the slot still holds its own pick, and leaves a target set by
+     * any other path alone (see {@link #setTarget}). ENT-S-108.
+     */
+    @Nullable
+    private LivingEntity scanPick;
+
     public EntitySpitBug(EntityType<? extends EntitySpitBug> type, Level level) {
         super(type, level);
         this.xpReward = 50;
@@ -66,10 +88,10 @@ public class EntitySpitBug extends Monster {
         this.goalSelector.addGoal(3, new LookAtPlayerGoal(this, Player.class, 10.0f));
         this.goalSelector.addGoal(4, new RandomLookAroundGoal(this));
         this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
-        // orig SpitBug.java:334-336 — the shared ignore screen, ahead of line of
-        // sight (:337), as the target goal's predicate (ENT-S-106).
-        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true,
-                target -> !MyUtils.isIgnoreable(target)));
+        // orig SpitBug.java:68 registers no target-search task: prey is found by the
+        // 1-in-5 EntityLivingBase box scan of :267-275 / :370-386, restored in
+        // customServerAiStep / findSomethingToAttack (ENT-S-108). The port's
+        // players-only NearestAttackableTargetGoal is gone.
     }
 
     public static AttributeSupplier.Builder createAttributes() {
@@ -173,14 +195,97 @@ public class EntitySpitBug extends Monster {
         return ret;
     }
 
+    /**
+     * orig SpitBug.java:258-299 {@code updateAITasks}: nothing while dead (:260-262), super
+     * (:263), the hurt timer (:264-266), then on the 1-in-5 tick (:267) the target selection
+     * (:268-275, {@link #selectTarget}); the rest of that block (:276-294: look, the
+     * nextInt(15)==1 leap, reach distSq &lt; 9, the nextInt(6)==0 || nextInt(7)==1 swing with
+     * its clatter, the chase at 0.5 with the acid stream) is {@code SpitBugAcidAttackGoal},
+     * fed through the target slot; the 1-in-150 regen (:296-298) follows. ENT-S-108.
+     */
     @Override
     protected void customServerAiStep() {
-        if (this.isRemoved()) return;
-        super.customServerAiStep();
-        if (this.hurtTimer > 0) --this.hurtTimer;
-        if (this.random.nextInt(150) == 1 && this.getHealth() < this.getMaxHealth()) {
-            this.heal(1.0f);
+        if (this.isRemoved()) return;                 // orig SpitBug.java:260-262
+        super.customServerAiStep();                   // orig :263
+        if (this.hurtTimer > 0) --this.hurtTimer;     // orig :264-266
+        if (this.random.nextInt(5) == 0) {            // orig :267
+            this.selectTarget();                      // orig :268-275
         }
+        if (this.random.nextInt(150) == 1 && this.getHealth() < this.getMaxHealth()) { // orig :296
+            this.heal(1.0f);                          // orig :297
+        }
+    }
+
+    /**
+     * orig SpitBug.java:268-275: the attack target set by being hurt (:249, a mob attacker;
+     * port {@link #hurt} and {@code HurtByTargetGoal}, orig :68) is read first (:268) and
+     * dropped once dead (:269-272); only without one does the scan run (:273-275), and its
+     * pick was acted on for that tick alone — a candidate that had left the 12/7/12 box or
+     * line of sight was simply not found next time (:292-294, setAttacking(0)). The port's
+     * single target slot feeds the melee goal, so the scan's own pick is re-derived on every
+     * cadence tick (replaced, or cleared when the scan comes back empty), while a target set
+     * by any other path is kept, as the original kept its attack target. ENT-S-108.
+     */
+    private void selectTarget() {
+        LivingEntity current = this.getTarget();                   // orig :268 getAttackTarget
+        if (current != null && !current.isAlive()) {               // orig :269-272
+            this.setTarget(null);
+            current = null;
+        }
+        if (current != null && current != this.scanPick) return;   // orig :273: the attack target stands
+        LivingEntity pick = this.findSomethingToAttack();           // orig :274
+        if (pick != current) super.setTarget(pick);                // super: the scan's own set keeps its ownership
+        // Re-read the slot rather than trusting `pick`: a LivingChangeTargetEvent handler may
+        // have substituted or cancelled the set, and a stale scanPick would stall the scan
+        // (ENT-S-108 refuter hardening, 2026-09-04).
+        this.scanPick = this.getTarget();
+    }
+
+    /** A target set by any other path ends the scan's ownership of the slot; see {@link #selectTarget}. ENT-S-108. */
+    @Override
+    public void setTarget(@Nullable LivingEntity target) {
+        super.setTarget(target);
+        this.scanPick = null;
+    }
+
+    /**
+     * orig SpitBug.java:370-386 {@code findSomethingToAttack}: nothing under PlayNicely
+     * (:371-373); every {@code EntityLivingBase} whose box meets the hunter's box grown by
+     * 12/7/12 (:374, {@code getEntitiesWithinAABB} — players included, itself included);
+     * sorted by the {@link GenericTargetSorter} (:375); the first the filter accepts wins
+     * (:376-384), else null (:385). {@link TargetSelection#firstMatch} is that sort-and-loop,
+     * stable ties included (OPT-021). ENT-S-108.
+     */
+    @Nullable
+    private LivingEntity findSomethingToAttack() {
+        if (OreSpawnConfig.PLAY_NICELY.get()) return null;                        // orig :371-373
+        List<LivingEntity> candidates = this.level().getEntitiesOfClass(LivingEntity.class,
+                this.getBoundingBox().inflate(12.0, 7.0, 12.0));                  // orig :374
+        return TargetSelection.firstMatch(candidates, this.targetSorter, this::isSuitableTarget); // orig :375-385
+    }
+
+    /**
+     * orig SpitBug.java:324-368 {@code isSuitableTarget}, in the original's order: null / self
+     * / dead (:325-333), the shared ignore screen (:334-336, ENT-S-106), line of sight
+     * (:337-339), then the species chain — EnderReaper (:340-342), EnderKnight (:343-345),
+     * EntityEnderman (:346-348), Hydrolisc (:349-351), EntityCreeper (:352-354), SpitBug
+     * (:355-357), TrooperBug (:358-360) — and the player branch, creative refused (:361-366,
+     * {@code isCreativeMode} = {@code Abilities.instabuild}); everything else that lives is
+     * prey (:367). ENT-S-108.
+     */
+    private boolean isSuitableTarget(LivingEntity target) {
+        if (target == null || target == this || !target.isAlive()) return false;    // orig :325-333
+        if (MyUtils.isIgnoreable(target)) return false;                             // orig :334-336
+        if (!this.getSensing().hasLineOfSight(target)) return false;                // orig :337-339
+        if (target instanceof EnderReaper) return false;                            // orig :340-342
+        if (target instanceof EnderKnight) return false;                            // orig :343-345
+        if (target instanceof EnderMan) return false;                               // orig :346-348 EntityEnderman
+        if (target instanceof EntityHydrolisc) return false;                        // orig :349-351 Hydrolisc
+        if (target instanceof Creeper) return false;                                // orig :352-354
+        if (target instanceof EntitySpitBug) return false;                          // orig :355-357
+        if (target instanceof EntityTrooperBug) return false;                       // orig :358-360
+        if (target instanceof Player player && player.getAbilities().instabuild) return false; // orig :361-366
+        return true;                                                                // orig :367
     }
 
     /** orig SpitBug.java:396-430 — "Spit Bug" spawner bypass; daytime only on a 2-in-20 dice; darkness; clear-air box. */

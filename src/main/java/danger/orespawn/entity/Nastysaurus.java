@@ -2,6 +2,8 @@ package danger.orespawn.entity;
 
 import danger.orespawn.MobStats;
 
+import java.util.List;
+import javax.annotation.Nullable;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -17,12 +19,14 @@ import net.minecraft.world.entity.ai.goal.FloatGoal;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
-import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import danger.orespawn.OreSpawnConfig;
 import danger.orespawn.OreSpawnMod;
 import danger.orespawn.entity.ai.DinosaurMeleeAttackGoal;
+import danger.orespawn.entity.ai.GenericTargetSorter;
+import danger.orespawn.entity.ai.TargetSelection;
 import danger.orespawn.util.MyUtils;
 
 public class Nastysaurus extends Monster {
@@ -50,6 +54,24 @@ public class Nastysaurus extends Monster {
     private final danger.orespawn.entity.client.RenderInfo renderInfo =
             new danger.orespawn.entity.client.RenderInfo();
 
+    /**
+     * orig Nastysaurus.java:41 {@code TargetSorter}, :52 {@code new GenericTargetSorter(this)}
+     * — the shared weighted-distance order (creepers halved, big silhouettes first) the scan
+     * sorts its candidates by (:283). ENT-S-108.
+     */
+    private final GenericTargetSorter targetSorter = new GenericTargetSorter(this);
+
+    /**
+     * The last pick {@link #selectTarget} handed to the target slot. 1.7.10 stored the scan's
+     * pick nowhere — only the revenge target {@code rt} persisted (orig Nastysaurus.java:44,
+     * set at :201 by any living attacker); the pick was acted on for that tick and re-derived
+     * on the next (:227-229) — so the port re-runs the scan whenever the slot still holds its
+     * own pick, and leaves a target set by any other path alone (see {@link #setTarget}).
+     * ENT-S-108.
+     */
+    @Nullable
+    private LivingEntity scanPick;
+
     public Nastysaurus(EntityType<? extends Nastysaurus> type, Level level) {
         super(type, level);
         // OPT-009: constant speed - assert the attribute base once here instead
@@ -67,10 +89,99 @@ public class Nastysaurus extends Monster {
         this.goalSelector.addGoal(3, new LookAtPlayerGoal(this, Player.class, 8.0f));
         this.goalSelector.addGoal(4, new RandomLookAroundGoal(this));
         this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
-        // orig Nastysaurus.java:256-258 — the shared ignore screen, ahead of the
-        // species chain and line of sight (:268), as the target goal's predicate (ENT-S-106).
-        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true,
-                target -> !MyUtils.isIgnoreable(target)));
+        // orig Nastysaurus.java:58 registers no target-search task: prey is found by the
+        // 1-in-5 EntityLivingBase box scan of :212-229 / :278-294, restored in
+        // customServerAiStep / findSomethingToAttack (ENT-S-108). The port's
+        // players-only NearestAttackableTargetGoal is gone.
+    }
+
+    /**
+     * orig Nastysaurus.java:207-244 {@code updateAITasks}: nothing while dead (:208-210),
+     * super (:211), then on the 1-in-5 tick (:212) the target selection (:213-229,
+     * {@link #selectTarget}); the rest of that block (:230-242: look, reach (4.5 + w/2)^2,
+     * the nextInt(4)==0 || nextInt(5)==1 swing, the chase at 1.25, setAttacking) is
+     * {@code DinosaurMeleeAttackGoal.Presets.nastysaurus()}, fed through the target slot.
+     * ENT-S-108.
+     */
+    @Override
+    protected void customServerAiStep() {
+        if (this.isRemoved()) return;            // orig Nastysaurus.java:208-210
+        super.customServerAiStep();              // orig :211
+        if (this.random.nextInt(5) == 0) {       // orig :212
+            this.selectTarget();                 // orig :213-229
+        }
+    }
+
+    /**
+     * orig Nastysaurus.java:213-229: the revenge target {@code rt} (set at :201 by any living
+     * attacker; port {@code HurtByTargetGoal}, orig :58) is read first (:214), blanked for
+     * the tick under PlayNicely (:215-217), dropped once dead or on a 1-in-250 roll
+     * (:219-222) and skipped for the tick while out of sight (:223-225); only without one
+     * does the scan run (:227-229), and its pick was acted on for that tick alone — a
+     * candidate that had left the 32/8/32 box or line of sight was simply not found next
+     * time (:240-242, setAttacking(0)). The port's single target slot feeds the melee goal,
+     * so the scan's own pick is re-derived on every cadence tick (replaced, or cleared when
+     * the scan comes back empty), a dead target is dropped (:219), and a target set by any
+     * other path is kept, as the original kept {@code rt}. The 1-in-250 drop is the melee
+     * goal's {@code forgetTargetRoll}; the PlayNicely blanking and the out-of-sight skip of
+     * the revenge target have no place in a single slot and are the revenge path's own
+     * concern (the scan itself is PlayNicely-gated, :279-281). ENT-S-108.
+     */
+    private void selectTarget() {
+        LivingEntity current = this.getTarget();                   // orig :214
+        if (current != null && !current.isAlive()) {               // orig :219 isDead
+            this.setTarget(null);                                  // orig :220-221
+            current = null;
+        }
+        if (current != null && current != this.scanPick) return;   // orig :227: the revenge target stands
+        LivingEntity pick = this.findSomethingToAttack();           // orig :228
+        if (pick != current) super.setTarget(pick);                // super: the scan's own set keeps its ownership
+        // Re-read the slot rather than trusting `pick`: a LivingChangeTargetEvent handler may
+        // have substituted or cancelled the set, and a stale scanPick would stall the scan
+        // (ENT-S-108 refuter hardening, 2026-09-04).
+        this.scanPick = this.getTarget();
+    }
+
+    /** A target set by any other path ends the scan's ownership of the slot; see {@link #selectTarget}. ENT-S-108. */
+    @Override
+    public void setTarget(@Nullable LivingEntity target) {
+        super.setTarget(target);
+        this.scanPick = null;
+    }
+
+    /**
+     * orig Nastysaurus.java:278-294 {@code findSomethingToAttack}: nothing under PlayNicely
+     * (:279-281); every {@code EntityLivingBase} whose box meets the hunter's box grown by
+     * 32/8/32 (:282, {@code getEntitiesWithinAABB} — players included, itself included);
+     * sorted by the {@link GenericTargetSorter} (:283); the first the filter accepts wins
+     * (:284-292), else null (:293). {@link TargetSelection#firstMatch} is that sort-and-loop,
+     * stable ties included (OPT-021). ENT-S-108.
+     */
+    @Nullable
+    private LivingEntity findSomethingToAttack() {
+        if (OreSpawnConfig.PLAY_NICELY.get()) return null;                        // orig :279-281
+        List<LivingEntity> candidates = this.level().getEntitiesOfClass(LivingEntity.class,
+                this.getBoundingBox().inflate(32.0, 8.0, 32.0));                  // orig :282
+        return TargetSelection.firstMatch(candidates, this.targetSorter, this::isSuitableTarget); // orig :283-293
+    }
+
+    /**
+     * orig Nastysaurus.java:246-276 {@code isSuitableTarget}, in the original's order: null /
+     * self / dead (:247-255), the shared ignore screen (:256-258, ENT-S-106), the species
+     * chain — Nastysaurus (:259-261), Cryolophosaurus (:262-264), VelocityRaptor (:265-267) —
+     * then line of sight (:268-270), and the player branch, which answers
+     * {@code !isCreativeMode} (:271-274, {@code Abilities.instabuild}); everything else that
+     * lives is prey (:275). ENT-S-108.
+     */
+    private boolean isSuitableTarget(LivingEntity target) {
+        if (target == null || target == this || !target.isAlive()) return false;    // orig :247-255
+        if (MyUtils.isIgnoreable(target)) return false;                             // orig :256-258
+        if (target instanceof Nastysaurus) return false;                            // orig :259-261
+        if (target instanceof Cryolophosaurus) return false;                        // orig :262-264
+        if (target instanceof VelocityRaptor) return false;                         // orig :265-267
+        if (!this.getSensing().hasLineOfSight(target)) return false;                // orig :268-270
+        if (target instanceof Player player) return !player.getAbilities().instabuild; // orig :271-274
+        return true;                                                                // orig :275
     }
 
     public static AttributeSupplier.Builder createAttributes() {

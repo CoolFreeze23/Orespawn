@@ -2,9 +2,13 @@ package danger.orespawn.entity;
 
 import danger.orespawn.MobStats;
 import danger.orespawn.ModEntities;
+import danger.orespawn.OreSpawnConfig;
 import danger.orespawn.OreSpawnMod;
+import danger.orespawn.entity.ai.GenericTargetSorter;
+import danger.orespawn.entity.ai.TargetSelection;
 import danger.orespawn.entity.ai.TrooperBugLeapAttackGoal;
 import danger.orespawn.util.MyUtils;
+import java.util.List;
 import javax.annotation.Nullable;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -23,7 +27,8 @@ import net.minecraft.world.entity.ai.goal.FloatGoal;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
-import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
+import net.minecraft.world.entity.monster.Creeper;
+import net.minecraft.world.entity.monster.EnderMan;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
@@ -51,6 +56,23 @@ public class EntityTrooperBug extends Monster {
 
     private int hurtTimer = 0;
 
+    /**
+     * orig TrooperBug.java:50 {@code TargetSorter}, :63 {@code new GenericTargetSorter(this)}
+     * — the shared weighted-distance order (creepers halved, big silhouettes first) the scan
+     * sorts its candidates by (:515). ENT-S-108.
+     */
+    private final GenericTargetSorter targetSorter = new GenericTargetSorter(this);
+
+    /**
+     * The last pick {@link #selectTarget} handed to the target slot. 1.7.10 stored the scan's
+     * pick nowhere — only the hurt-set attack target persisted (orig TrooperBug.java:414,
+     * :395); the pick was acted on for that tick and re-derived on the next (:419-421) — so
+     * the port re-runs the scan whenever the slot still holds its own pick, and leaves a
+     * target set by any other path alone (see {@link #setTarget}). ENT-S-108.
+     */
+    @Nullable
+    private LivingEntity scanPick;
+
     public EntityTrooperBug(EntityType<? extends EntityTrooperBug> type, Level level) {
         super(type, level);
         this.xpReward = 150;
@@ -68,10 +90,10 @@ public class EntityTrooperBug extends Monster {
         this.goalSelector.addGoal(3, new LookAtPlayerGoal(this, Player.class, 10.0f));
         this.goalSelector.addGoal(4, new RandomLookAroundGoal(this));
         this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
-        // orig TrooperBug.java:474-476 — the shared ignore screen, ahead of line of
-        // sight (:477), as the target goal's predicate (ENT-S-106).
-        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true,
-                target -> !MyUtils.isIgnoreable(target)));
+        // orig TrooperBug.java:70 registers no target-search task: prey is found by the
+        // 1-in-5 EntityLivingBase box scan of :413-421 / :510-526, restored in
+        // customServerAiStep / findSomethingToAttack (ENT-S-108). The port's
+        // players-only NearestAttackableTargetGoal is gone.
     }
 
     public static AttributeSupplier.Builder createAttributes() {
@@ -187,21 +209,29 @@ public class EntityTrooperBug extends Monster {
         return ret;
     }
 
+    /**
+     * orig TrooperBug.java:404-451 {@code updateAITasks}: nothing while dead (:406-408),
+     * super (:409), the hurt timer (:410-412), then the 1-in-5 block (:413): the target
+     * selection (:414-421, {@link #selectTarget}), the look/leap/attack half (:422-440,
+     * {@code TrooperBugLeapAttackGoal}, fed through the target slot) and the Spit Bug summon
+     * (:441-443); the 1-in-150 regen (:448-450) follows. ENT-S-108.
+     */
     @Override
     protected void customServerAiStep() {
-        if (this.isRemoved()) return;
-        super.customServerAiStep();
-        if (this.hurtTimer > 0) --this.hurtTimer;
+        if (this.isRemoved()) return;                 // orig TrooperBug.java:406-408
+        super.customServerAiStep();                   // orig :409
+        if (this.hurtTimer > 0) --this.hurtTimer;     // orig :410-412
         // orig TrooperBug.java:413,441-443 — inside the 1-in-5 AI-tick block,
         // while a live target exists, a further 1-in-30 roll summons ONE Spit
         // Bug at the bug<->target midpoint (+- 0-4 block x/z scatter, +1.01 y).
         // spawnCreature (orig :453-462) gives it a random yaw and plays its
         // ambient sound. The look/leap/attack halves of that original block
-        // live in TrooperBugLeapAttackGoal; only the summon cadence
-        // (~1/150 per server tick while engaged) is reproduced here.
-        if (this.random.nextInt(5) == 0) {
+        // live in TrooperBugLeapAttackGoal; the target selection (:414-421) and
+        // the summon cadence (~1/150 per server tick while engaged) run here.
+        if (this.random.nextInt(5) == 0) {            // orig :413
+            this.selectTarget();                      // orig :414-421
             LivingEntity target = this.getTarget();
-            if (target != null && target.isAlive() && this.random.nextInt(30) == 1) {
+            if (target != null && target.isAlive() && this.random.nextInt(30) == 1) { // orig :441
                 EntitySpitBug minion = ModEntities.ENTITY_SPIT_BUG.get().create(this.level());
                 if (minion != null) {
                     minion.moveTo(
@@ -214,9 +244,82 @@ public class EntityTrooperBug extends Monster {
                 }
             }
         }
-        if (this.random.nextInt(150) == 1 && this.getHealth() < this.getMaxHealth()) {
-            this.heal(1.0f);
+        if (this.random.nextInt(150) == 1 && this.getHealth() < this.getMaxHealth()) { // orig :448
+            this.heal(1.0f);                          // orig :449
         }
+    }
+
+    /**
+     * orig TrooperBug.java:414-421: the attack target set by being hurt (:395, a mob
+     * attacker; port {@link #hurt} and {@code HurtByTargetGoal}, orig :70) is read first
+     * (:414) and dropped once dead (:415-418); only without one does the scan run
+     * (:419-421), and its pick was acted on for that tick alone — a candidate that had left
+     * the 12/7/12 box or line of sight was simply not found next time (:444-446,
+     * setAttacking(0)). The port's single target slot feeds the melee goal, so the scan's
+     * own pick is re-derived on every cadence tick (replaced, or cleared when the scan comes
+     * back empty), while a target set by any other path is kept, as the original kept its
+     * attack target. ENT-S-108.
+     */
+    private void selectTarget() {
+        LivingEntity current = this.getTarget();                   // orig :414 getAttackTarget
+        if (current != null && !current.isAlive()) {               // orig :415-418
+            this.setTarget(null);
+            current = null;
+        }
+        if (current != null && current != this.scanPick) return;   // orig :419: the attack target stands
+        LivingEntity pick = this.findSomethingToAttack();           // orig :420
+        if (pick != current) super.setTarget(pick);                // super: the scan's own set keeps its ownership
+        // Re-read the slot rather than trusting `pick`: a LivingChangeTargetEvent handler may
+        // have substituted or cancelled the set, and a stale scanPick would stall the scan
+        // (ENT-S-108 refuter hardening, 2026-09-04).
+        this.scanPick = this.getTarget();
+    }
+
+    /** A target set by any other path ends the scan's ownership of the slot; see {@link #selectTarget}. ENT-S-108. */
+    @Override
+    public void setTarget(@Nullable LivingEntity target) {
+        super.setTarget(target);
+        this.scanPick = null;
+    }
+
+    /**
+     * orig TrooperBug.java:510-526 {@code findSomethingToAttack}: nothing under PlayNicely
+     * (:511-513); every {@code EntityLivingBase} whose box meets the hunter's box grown by
+     * 12/7/12 (:514, {@code getEntitiesWithinAABB} — players included, itself included);
+     * sorted by the {@link GenericTargetSorter} (:515); the first the filter accepts wins
+     * (:516-524), else null (:525). {@link TargetSelection#firstMatch} is that sort-and-loop,
+     * stable ties included (OPT-021). ENT-S-108.
+     */
+    @Nullable
+    private LivingEntity findSomethingToAttack() {
+        if (OreSpawnConfig.PLAY_NICELY.get()) return null;                        // orig :511-513
+        List<LivingEntity> candidates = this.level().getEntitiesOfClass(LivingEntity.class,
+                this.getBoundingBox().inflate(12.0, 7.0, 12.0));                  // orig :514
+        return TargetSelection.firstMatch(candidates, this.targetSorter, this::isSuitableTarget); // orig :515-525
+    }
+
+    /**
+     * orig TrooperBug.java:464-508 {@code isSuitableTarget}, in the original's order: null /
+     * self / dead (:465-473), the shared ignore screen (:474-476, ENT-S-106), line of sight
+     * (:477-479), then the species chain — Hydrolisc (:480-482), EnderReaper (:483-485),
+     * EnderKnight (:486-488), EntityEnderman (:489-491), EntityCreeper (:492-494), TrooperBug
+     * (:495-497), SpitBug (:498-500) — and the player branch, creative refused (:501-506,
+     * {@code isCreativeMode} = {@code Abilities.instabuild}); everything else that lives is
+     * prey (:507). ENT-S-108.
+     */
+    private boolean isSuitableTarget(LivingEntity target) {
+        if (target == null || target == this || !target.isAlive()) return false;    // orig :465-473
+        if (MyUtils.isIgnoreable(target)) return false;                             // orig :474-476
+        if (!this.getSensing().hasLineOfSight(target)) return false;                // orig :477-479
+        if (target instanceof EntityHydrolisc) return false;                        // orig :480-482 Hydrolisc
+        if (target instanceof EnderReaper) return false;                            // orig :483-485
+        if (target instanceof EnderKnight) return false;                            // orig :486-488
+        if (target instanceof EnderMan) return false;                               // orig :489-491 EntityEnderman
+        if (target instanceof Creeper) return false;                                // orig :492-494
+        if (target instanceof EntityTrooperBug) return false;                       // orig :495-497
+        if (target instanceof EntitySpitBug) return false;                          // orig :498-500
+        if (target instanceof Player player && player.getAbilities().instabuild) return false; // orig :501-506
+        return true;                                                                // orig :507
     }
 
     // Death drops are fully data-driven via loot_table/entities/trooper_bug.json

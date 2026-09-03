@@ -3,12 +3,9 @@ package danger.orespawn.gametest;
 import danger.orespawn.ModEntities;
 import danger.orespawn.OreSpawnMod;
 import danger.orespawn.util.MyUtils;
-import java.io.IOException;
-import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -39,12 +36,17 @@ import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
  * {@link GameTestGenerator} over the 38-row table in {@link #sites()}, in orig
  * file order, each row citing its orig line.
  *
- * <p>Three shapes, by where the port keeps the hunter's filter:</p>
+ * <p>Two shapes, by where the port keeps the hunter's filter:</p>
  * <ul>
- *   <li><b>PRIVATE_FILTER</b> (28 sites: the eleven the port already kept and
- *       seventeen restored) — a private
- *       {@code isSuitableTarget(LivingEntity)} (the AntRobot's stomp site:
- *       {@code feetIsSuitableTarget}), reached by reflection as
+ *   <li><b>PRIVATE_FILTER</b> (37 sites: the eleven the port already kept,
+ *       seventeen restored by ENT-S-106, and the nine ENT-S-108 hunters —
+ *       CaveFisher, DungeonBeast, EmperorScorpion, HerculesBeetle, Nastysaurus,
+ *       SpitBug, TRex, TrooperBug, Urchin — whose vanilla target goals and the
+ *       Urchin's players-only nearest scan gave way to the original's
+ *       {@code EntityLivingBase} box scan over a private filter, so the screen
+ *       now bites in play; TargetScanParityTests covers the scans themselves) —
+ *       a private {@code isSuitableTarget(LivingEntity)} (the AntRobot's stomp
+ *       site: {@code feetIsSuitableTarget}), reached by reflection as
  *       IgnoreListParityTests and KrakenTargetingParityTests do. The hunter and
  *       a list species stand frozen with clear line of sight; the filter must
  *       reject the species, and a control on the same spot — a vanilla pig, or
@@ -53,25 +55,17 @@ import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
  *       Each species is chosen so that nothing but the ignore step rejects it
  *       (the row notes say where a hunter's own species rule would too, as in
  *       1.7.10).</li>
- *   <li><b>TARGET_GOAL_PREDICATE</b> (9 sites) — the port replaced the
- *       original's scan with a vanilla {@code NearestAttackableTargetGoal};
- *       the screen is restored as that goal's predicate, which runs inside the
- *       goal's {@link TargetingConditions} ahead of the sight check. The test
- *       reads every such goal off the hunter's target selector (the hunter is
- *       spawned with its goals and no AI, since {@code spawnWithNoFreeWill}
- *       strips selectors) and asks its conditions directly: the species is
- *       refused, the pig on the same spot is accepted. Eight of the nine
- *       hunters' goals scan {@code Player.class} only, so in play the screen
- *       cannot bite until the scan is widened; the ninth, the CaveFisher, also
- *       has an {@code Animal.class} goal that would otherwise take the four
- *       Animal list members.</li>
- *   <li><b>CLASS_REFERENCE</b> (1 site, the Urchin) — the port's Urchin has no
- *       living-entity filter at all: it takes the nearest player
- *       ({@code getNearestPlayer}) behind the creative check. The screen is
- *       restored in that order, but no run-time probe can observe it (a player
- *       is never on the list), so the test asserts its presence by the nearest
- *       observable effect: the compiled class's reference to
- *       {@code MyUtils.isIgnoreable}.</li>
+ *   <li><b>TARGET_GOAL_PREDICATE</b> (1 site, the Pointysaurus) — the port
+ *       replaced the original's scan with a vanilla
+ *       {@code NearestAttackableTargetGoal}; the screen is restored as that
+ *       goal's predicate, which runs inside the goal's
+ *       {@link TargetingConditions} ahead of the sight check. The test reads
+ *       every such goal off the hunter's target selector (the hunter is spawned
+ *       with its goals and no AI, since {@code spawnWithNoFreeWill} strips
+ *       selectors) and asks its conditions directly: the species is refused,
+ *       the pig on the same spot is accepted. The goal scans {@code Player.class}
+ *       only, as the original's own selection did (orig Pointysaurus.java:242-246),
+ *       so the screen's own effect stays unobservable in play, in either tree.</li>
  * </ul>
  *
  * <p>Synchronous, no global state touched. Own batch (TEST-003). Geometry:
@@ -130,7 +124,7 @@ public class IgnoreScreenParityTests {
         mob.yHeadRot = -90.0f;
     };
 
-    private enum Shape { PRIVATE_FILTER, TARGET_GOAL_PREDICATE, CLASS_REFERENCE }
+    private enum Shape { PRIVATE_FILTER, TARGET_GOAL_PREDICATE }
 
     /** One orig call site. */
     private static final class Site {
@@ -237,17 +231,18 @@ public class IgnoreScreenParityTests {
                         + " (orig :433-441), so every list member fails that rule too — the step's own effect is"
                         + " unobservable in this hunter, in either tree")
                 .control(ZOMBIE, ZOMBIE_WHY));
-        sites.add(goalPredicate(6, "cavefisher_203", "CaveFisher.java:203-205",
+        sites.add(privateFilter(6, "cavefisher_203", "CaveFisher.java:203-205", "isSuitableTarget",
                 ModEntities.CAVE_FISHER, ModEntities.ENTITY_CRICKET, "a cricket (orig MyUtils.java:136, an Animal)",
-                "restored as the predicate of both target goals (port CaveFisher.java:78 Player.class, :82 Animal.class);"
-                        + " the Animal goal would otherwise take the four Animal list members"));
-        sites.add(goalPredicate(7, "dungeonbeast_210", "DungeonBeast.java:210-212",
+                "restored (port CaveFisher.isSuitableTarget, the filter of the ENT-S-108 box scan), ahead of line of"
+                        + " sight (orig :206); a cricket is no EntityMob, so orig :218 would not refuse it either"));
+        sites.add(privateFilter(7, "dungeonbeast_210", "DungeonBeast.java:210-212", "isSuitableTarget",
                 ModEntities.DUNGEON_BEAST, ModEntities.COCKATEIL, "a Cockateil (orig MyUtils.java:139)",
-                "restored as the target goal's predicate (port DungeonBeast.java:66); the goal scans Player.class only"));
-        sites.add(goalPredicate(8, "emperorscorpion_473", "EmperorScorpion.java:473-475",
+                "restored (port DungeonBeast.isSuitableTarget, the filter of the ENT-S-108 box scan), ahead of line of"
+                        + " sight (orig :213)"));
+        sites.add(privateFilter(8, "emperorscorpion_473", "EmperorScorpion.java:473-475", "isSuitableTarget",
                 ModEntities.ENTITY_EMPEROR_SCORPION, ModEntities.ENTITY_DRAGONFLY, "a dragonfly (orig MyUtils.java:130)",
-                "restored as the target goal's predicate (port EntityEmperorScorpion.java:76); orig checks sight first"
-                        + " (:470), both are side-effect-free; the goal scans Player.class only"));
+                "restored (port EntityEmperorScorpion.isSuitableTarget, the filter of the ENT-S-108 box scan), after"
+                        + " the line-of-sight check as in orig (:470)"));
         sites.add(privateFilter(9, "gammametroid_266", "GammaMetroid.java:266-268", "isSuitableTarget",
                 ModEntities.ENTITY_GAMMA_METROID, ModEntities.FIREFLY, "a Firefly (orig MyUtils.java:133)",
                 "restored (port EntityGammaMetroid.isSuitableTarget), ahead of line of sight (orig :269); untamed, so"
@@ -259,9 +254,10 @@ public class IgnoreScreenParityTests {
                 ModEntities.GODZILLA, ModEntities.ENTITY_TERMITE, "a Termite (orig MyUtils.java:142)",
                 "restored (port Godzilla.isSuitableTarget), ahead of line of sight (orig :445); 25 tall, so empty_tall")
                 .tall());
-        sites.add(goalPredicate(12, "herculesbeetle_395", "HerculesBeetle.java:395-397",
+        sites.add(privateFilter(12, "herculesbeetle_395", "HerculesBeetle.java:395-397", "isSuitableTarget",
                 ModEntities.ENTITY_HERCULES_BEETLE, ModEntities.ENTITY_BUTTERFLY, "a butterfly (orig MyUtils.java:124)",
-                "restored as the target goal's predicate (port EntityHerculesBeetle.java:57); the goal scans Player.class only"));
+                "restored (port EntityHerculesBeetle.isSuitableTarget, the filter of the ENT-S-108 box scan), ahead of"
+                        + " line of sight (orig :398)"));
         sites.add(privateFilter(13, "kraken_1070", "Kraken.java:1070-1072", "isSuitableTarget",
                 ModEntities.KRAKEN, ModEntities.FIREFLY, "a Firefly (orig MyUtils.java:133)",
                 "already present (port Kraken.java:662, ENT-S-100 KT-B1); prey grounded for orig :1083-1085")
@@ -272,15 +268,19 @@ public class IgnoreScreenParityTests {
         sites.add(privateFilter(15, "leon_403", "Leon.java:403-405", "isSuitableTarget",
                 ModEntities.ENTITY_LEON, ModEntities.ENTITY_MOSQUITO, "a mosquito (orig MyUtils.java:127)",
                 "restored (port EntityLeon.isSuitableTarget), ahead of line of sight (orig :406); untamed, so the"
-                        + " orig :422-427 tail is the port's `!isTame() → true`")
-                .peacefulGated());
+                        + " orig :422-427 tail grants only attackable non-mobs (ENT-S-110): a pig is refused there,"
+                        + " hence the Zombie control (orig :412 EntityMob). The mosquito is refused by that tail as"
+                        + " well, so this row cannot isolate the ignore step -- unobservable in either tree, like"
+                        + " the Brutalfly, King and Queen rows")
+                .control(ZOMBIE, ZOMBIE_WHY).peacefulGated());
         sites.add(privateFilter(16, "mothra_437", "Mothra.java:437-439", "isSuitableTarget",
                 ModEntities.MOTHRA, ModEntities.GHOST_SKELLY, "a GhostSkelly (orig MyUtils.java:148)",
                 "already present (port Mothra.java:266); Mothra's own chain (orig :443-475) names no list member")
                 .peacefulGated());
-        sites.add(goalPredicate(17, "nastysaurus_256", "Nastysaurus.java:256-258",
+        sites.add(privateFilter(17, "nastysaurus_256", "Nastysaurus.java:256-258", "isSuitableTarget",
                 ModEntities.NASTYSAURUS, ModEntities.ENTITY_TERMITE, "a Termite (orig MyUtils.java:142)",
-                "restored as the target goal's predicate (port Nastysaurus.java:69); the goal scans Player.class only"));
+                "restored (port Nastysaurus.isSuitableTarget, the filter of the ENT-S-108 box scan), ahead of the"
+                        + " species chain and line of sight (orig :268)"));
         sites.add(privateFilter(18, "pitchblack_498", "PitchBlack.java:498-500", "isSuitableTarget",
                 ModEntities.PITCH_BLACK, ModEntities.GHOST_SKELLY, "a GhostSkelly (orig MyUtils.java:148)",
                 "restored (port PitchBlack.isSuitableTarget)"));
@@ -325,12 +325,14 @@ public class IgnoreScreenParityTests {
                 "already present (port SpiderRobot.java:593); prey 5 blocks off, inside the point-blank bypass of the"
                         + " bearing cone (orig :1027-1029)")
                 .at(HUNTER_POS, POINT_BLANK_PREY_POS));
-        sites.add(goalPredicate(31, "spitbug_334", "SpitBug.java:334-336",
+        sites.add(privateFilter(31, "spitbug_334", "SpitBug.java:334-336", "isSuitableTarget",
                 ModEntities.ENTITY_SPIT_BUG, ModEntities.GHOST, "a Ghost (orig MyUtils.java:145)",
-                "restored as the target goal's predicate (port EntitySpitBug.java:68); the goal scans Player.class only"));
-        sites.add(goalPredicate(32, "trex_226", "TRex.java:226-228",
+                "restored (port EntitySpitBug.isSuitableTarget, the filter of the ENT-S-108 box scan), ahead of line"
+                        + " of sight (orig :337)"));
+        sites.add(privateFilter(32, "trex_226", "TRex.java:226-228", "isSuitableTarget",
                 ModEntities.TREX, ModEntities.GHOST_SKELLY, "a GhostSkelly (orig MyUtils.java:148)",
-                "restored as the target goal's predicate (port TRex.java:55); the goal scans Player.class only"));
+                "restored (port TRex.isSuitableTarget, the filter of the ENT-S-108 box scan), ahead of line of sight"
+                        + " (orig :229)"));
         sites.add(privateFilter(33, "theking_947", "TheKing.java:947-949", "isSuitableTarget",
                 ModEntities.THE_KING, ModEntities.ELEVATOR, "an Elevator (orig MyUtils.java:151)",
                 "already present (port TheKing.java:1169); the King takes players, horses, EntityMobs, the dragon and"
@@ -346,13 +348,14 @@ public class IgnoreScreenParityTests {
         sites.add(privateFilter(35, "triffid_285", "Triffid.java:285-287", "isSuitableTarget",
                 ModEntities.ENTITY_TRIFFID, ModEntities.GHOST, "a Ghost (orig MyUtils.java:145)",
                 "restored (port EntityTriffid.isSuitableTarget), ahead of line of sight (orig :288)"));
-        sites.add(goalPredicate(36, "trooperbug_474", "TrooperBug.java:474-476",
+        sites.add(privateFilter(36, "trooperbug_474", "TrooperBug.java:474-476", "isSuitableTarget",
                 ModEntities.ENTITY_TROOPER_BUG, ModEntities.ENTITY_MOSQUITO, "a mosquito (orig MyUtils.java:127)",
-                "restored as the target goal's predicate (port EntityTrooperBug.java:70); the goal scans Player.class only"));
-        sites.add(new Site(37, "urchin_230", "Urchin.java:230-232", Shape.CLASS_REFERENCE, null,
+                "restored (port EntityTrooperBug.isSuitableTarget, the filter of the ENT-S-108 box scan), ahead of"
+                        + " line of sight (orig :477)"));
+        sites.add(privateFilter(37, "urchin_230", "Urchin.java:230-232", "isSuitableTarget",
                 ModEntities.URCHIN, ModEntities.ENTITY_BUTTERFLY, "a butterfly (orig MyUtils.java:124)",
-                "restored ahead of the creative check in the port's players-only scan (port Urchin.customServerAiStep);"
-                        + " no run-time probe can reach it, presence asserted from the compiled class"));
+                "restored (port Urchin.isSuitableTarget, the filter of the ENT-S-108 box scan that replaced the"
+                        + " players-only getNearestPlayer scan), ahead of line of sight (orig :233)"));
         sites.add(privateFilter(38, "vortex_296", "Vortex.java:296-298", "isSuitableTarget",
                 ModEntities.ENTITY_VORTEX, ModEntities.FIREFLY, "a Firefly (orig MyUtils.java:133)",
                 "already present (port EntityVortex.java:345); the Vortex's own exclusions (orig :303-338) name no list member"));
@@ -383,7 +386,6 @@ public class IgnoreScreenParityTests {
         switch (site.shape) {
             case PRIVATE_FILTER -> assertPrivateFilterScreens(helper, site);
             case TARGET_GOAL_PREDICATE -> assertGoalPredicateScreens(helper, site);
-            case CLASS_REFERENCE -> assertClassReferencesScreen(helper, site);
         }
         helper.succeed();
     }
@@ -463,37 +465,6 @@ public class IgnoreScreenParityTests {
             }
         } finally {
             if (control != null) control.discard();
-            if (species != null) species.discard();
-            if (hunter != null) hunter.discard();
-        }
-    }
-
-    /**
-     * The Urchin: no living-entity filter in the port (a players-only nearest scan), so
-     * the restored screen has no run-time probe. Its presence is asserted from the
-     * compiled class — the constant pool of a class that calls
-     * {@code MyUtils.isIgnoreable} names both the method and its owner.
-     */
-    private static void assertClassReferencesScreen(GameTestHelper helper, Site site) {
-        Mob hunter = null;
-        Mob species = null;
-        try {
-            hunter = spawnFrozen(helper, site.hunter.get(), site.hunterPos);
-            species = spawnFrozen(helper, site.species.get(), site.preyPos);
-            helper.assertTrue(MyUtils.isIgnoreable(species), "precondition: " + site.speciesWhy
-                    + " must be on the shared list (orig MyUtils.java:117-152) (ENT-S-106 test setup)");
-            Class<?> hunterClass = hunter.getClass();
-            byte[] bytes = classBytes(hunterClass);
-            helper.assertTrue(bytes != null && bytes.length > 0, "precondition: the class bytes of "
-                    + hunterClass.getName() + " must be readable through its class loader (ENT-S-106 test setup)");
-            String pool = new String(bytes, StandardCharsets.ISO_8859_1);
-            helper.assertTrue(pool.contains("isIgnoreable") && pool.contains("danger/orespawn/util/MyUtils"),
-                    hunterClass.getSimpleName() + " (orig " + site.orig + "): the port keeps no living-entity filter"
-                            + " here — a players-only nearest scan, and " + site.speciesWhy + " can never be the nearest"
-                            + " player — so the restored screen is asserted by the nearest observable effect: the"
-                            + " compiled class must reference MyUtils.isIgnoreable, and it does not — " + site.note
-                            + " (ENT-S-106)");
-        } finally {
             if (species != null) species.discard();
             if (hunter != null) hunter.discard();
         }
@@ -579,21 +550,6 @@ public class IgnoreScreenParityTests {
             field.setInt(mob, value);
         } catch (ReflectiveOperationException exception) {
             throw new IllegalStateException("cannot write " + owner + "." + name, exception);
-        }
-    }
-
-    /** The class file as served by the class's own loader; {@code .class} resources are never encapsulated. */
-    private static byte[] classBytes(Class<?> type) {
-        try {
-            try (InputStream in = type.getResourceAsStream(type.getSimpleName() + ".class")) {
-                if (in != null) return in.readAllBytes();
-            }
-            String path = type.getName().replace('.', '/') + ".class";
-            try (InputStream in = type.getClassLoader().getResourceAsStream(path)) {
-                return in == null ? null : in.readAllBytes();
-            }
-        } catch (IOException exception) {
-            throw new IllegalStateException("cannot read the class bytes of " + type.getName(), exception);
         }
     }
 }

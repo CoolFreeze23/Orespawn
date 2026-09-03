@@ -3,8 +3,11 @@ package danger.orespawn.entity;
 import danger.orespawn.MobStats;
 
 import danger.orespawn.ModEntities;
+import danger.orespawn.OreSpawnConfig;
 import danger.orespawn.OreSpawnMod;
 import danger.orespawn.entity.ai.EmperorScorpionPoisonGoal;
+import danger.orespawn.entity.ai.GenericTargetSorter;
+import danger.orespawn.entity.ai.TargetSelection;
 import danger.orespawn.util.MyUtils;
 import java.util.List;
 import javax.annotation.Nullable;
@@ -27,7 +30,8 @@ import net.minecraft.world.entity.ai.goal.FloatGoal;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
-import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
+import net.minecraft.world.entity.monster.Creeper;
+import net.minecraft.world.entity.monster.EnderMan;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
@@ -56,6 +60,23 @@ public class EntityEmperorScorpion extends Monster {
     private final danger.orespawn.entity.client.RenderInfo renderInfo =
             new danger.orespawn.entity.client.RenderInfo();
 
+    /**
+     * orig EmperorScorpion.java:52 {@code TargetSorter}, :64 {@code new GenericTargetSorter(this)}
+     * — the shared weighted-distance order (creepers halved, big silhouettes first) the scan
+     * sorts its candidates by (:508). ENT-S-108.
+     */
+    private final GenericTargetSorter targetSorter = new GenericTargetSorter(this);
+
+    /**
+     * The last pick {@link #selectTarget} handed to the target slot. 1.7.10 stored the scan's
+     * pick nowhere — only the hurt-set attack target persisted (orig EmperorScorpion.java:409,
+     * :391); the pick was acted on for that tick and re-derived on the next (:417-419) — so
+     * the port re-runs the scan whenever the slot still holds its own pick, and leaves a
+     * target set by any other path alone (see {@link #setTarget}). ENT-S-108.
+     */
+    @Nullable
+    private LivingEntity scanPick;
+
     public EntityEmperorScorpion(EntityType<? extends EntityEmperorScorpion> type, Level level) {
         super(type, level);
         this.xpReward = 200;
@@ -74,11 +95,10 @@ public class EntityEmperorScorpion extends Monster {
         this.goalSelector.addGoal(3, new LookAtPlayerGoal(this, Player.class, 8.0f));
         this.goalSelector.addGoal(4, new RandomLookAroundGoal(this));
         this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
-        // orig EmperorScorpion.java:473-475 — the shared ignore screen (there it follows
-        // the line-of-sight check, :470; both are side-effect-free, so the goal's
-        // predicate-before-sight order yields the same answer) (ENT-S-106).
-        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true,
-                target -> !MyUtils.isIgnoreable(target)));
+        // orig EmperorScorpion.java:71 registers no target-search task: prey is found by
+        // the 1-in-4 EntityLivingBase box scan of :408-419 / :503-519, restored in
+        // customServerAiStep / findSomethingToAttack (ENT-S-108). The port's
+        // players-only NearestAttackableTargetGoal is gone.
     }
 
     public static AttributeSupplier.Builder createAttributes() {
@@ -178,15 +198,20 @@ public class EntityEmperorScorpion extends Monster {
             if (this.random.nextInt(100) == 1) this.heal(2.0f);
         }
 
-        // Baby-scorpion summon — orig EmperorScorpion.java:408,437-438: inside a
-        // nextInt(4)==0 AI gate, while a combat target exists, a nextInt(20)==1
-        // roll spawns one Scorpion at the midpoint between Emperor and target
-        // (±nextInt(5) horizontal jitter, y midpoint +1.01). No population cap,
-        // no cooldown, no ground check in the original.
-        if (this.random.nextInt(4) == 0) {
+        // orig EmperorScorpion.java:408-443 — the nextInt(4)==0 AI gate: the target
+        // selection (:409-419, selectTarget — ENT-S-108), then the melee half (:420-436:
+        // look, reach (6 + w/2)^2, the nextInt(4)==0 || nextInt(6)==1 swing with its
+        // sounds, the chase at 1.2, setAttacking) which is EmperorScorpionPoisonGoal,
+        // fed through the target slot, and the baby-scorpion summon (:437-438): while a
+        // combat target exists, a nextInt(20)==1 roll spawns one Scorpion at the
+        // midpoint between Emperor and target (±nextInt(5) horizontal jitter, y
+        // midpoint +1.01). No population cap, no cooldown, no ground check in the
+        // original.
+        if (this.random.nextInt(4) == 0) {                                   // orig :408
+            this.selectTarget();                                             // orig :409-419
             LivingEntity target = this.getTarget();
-            if (target != null && target.isAlive() && this.random.nextInt(20) == 1) {
-                spawnBabyScorpionToward(target);
+            if (target != null && target.isAlive() && this.random.nextInt(20) == 1) { // orig :437
+                spawnBabyScorpionToward(target);                             // orig :438
             }
         }
     }
@@ -205,6 +230,79 @@ public class EntityEmperorScorpion extends Monster {
         minion.finalizeSpawn(server, server.getCurrentDifficultyAt(minion.blockPosition()),
                 MobSpawnType.MOB_SUMMONED, null);
         server.addFreshEntity(minion);
+    }
+
+    /**
+     * orig EmperorScorpion.java:409-419: the attack target set by being hurt (:391, a mob
+     * attacker; port {@link #hurt} and {@code HurtByTargetGoal}, orig :71) is read first
+     * (:409), dropped once dead (:410-413) or on a 1-in-100 roll (:414-416 — the melee
+     * goal's {@code forgetTargetRoll}); only without one does the scan run (:417-419), and
+     * its pick was acted on for that tick alone — a candidate that had left the 24/6/24 box
+     * or line of sight was simply not found next time (:440-442, setAttacking(0)). The
+     * port's single target slot feeds the melee goal, so the scan's own pick is re-derived
+     * on every cadence tick (replaced, or cleared when the scan comes back empty), while a
+     * target set by any other path is kept, as the original kept its attack target.
+     * ENT-S-108.
+     */
+    private void selectTarget() {
+        LivingEntity current = this.getTarget();                   // orig :409 getAttackTarget
+        if (current != null && !current.isAlive()) {               // orig :410-413
+            this.setTarget(null);
+            current = null;
+        }
+        if (current != null && current != this.scanPick) return;   // orig :417: the attack target stands
+        LivingEntity pick = this.findSomethingToAttack();           // orig :418
+        if (pick != current) super.setTarget(pick);                // super: the scan's own set keeps its ownership
+        // Re-read the slot rather than trusting `pick`: a LivingChangeTargetEvent handler may
+        // have substituted or cancelled the set, and a stale scanPick would stall the scan
+        // (ENT-S-108 refuter hardening, 2026-09-04).
+        this.scanPick = this.getTarget();
+    }
+
+    /** A target set by any other path ends the scan's ownership of the slot; see {@link #selectTarget}. ENT-S-108. */
+    @Override
+    public void setTarget(@Nullable LivingEntity target) {
+        super.setTarget(target);
+        this.scanPick = null;
+    }
+
+    /**
+     * orig EmperorScorpion.java:503-519 {@code findSomethingToAttack}: nothing under
+     * PlayNicely (:504-506); every {@code EntityLivingBase} whose box meets the hunter's box
+     * grown by 24/6/24 (:507, {@code getEntitiesWithinAABB} — players included, itself
+     * included); sorted by the {@link GenericTargetSorter} (:508); the first the filter
+     * accepts wins (:509-517), else null (:518). {@link TargetSelection#firstMatch} is that
+     * sort-and-loop, stable ties included (OPT-021). ENT-S-108.
+     */
+    @Nullable
+    private LivingEntity findSomethingToAttack() {
+        if (OreSpawnConfig.PLAY_NICELY.get()) return null;                        // orig :504-506
+        List<LivingEntity> candidates = this.level().getEntitiesOfClass(LivingEntity.class,
+                this.getBoundingBox().inflate(24.0, 6.0, 24.0));                  // orig :507
+        return TargetSelection.firstMatch(candidates, this.targetSorter, this::isSuitableTarget); // orig :508-518
+    }
+
+    /**
+     * orig EmperorScorpion.java:460-501 {@code isSuitableTarget}, in the original's order:
+     * null / self / dead (:461-469), line of sight (:470-472), the shared ignore screen
+     * (:473-475, ENT-S-106 — here after the sight check), then the species chain —
+     * EntityEnderman (:476-478), EnderKnight (:479-481), EnderReaper (:482-484),
+     * EntityCreeper (:485-487), Scorpion (:488-490), EmperorScorpion (:491-493) — and the
+     * player branch, creative refused (:494-499, {@code isCreativeMode} =
+     * {@code Abilities.instabuild}); everything else that lives is prey (:500). ENT-S-108.
+     */
+    private boolean isSuitableTarget(LivingEntity target) {
+        if (target == null || target == this || !target.isAlive()) return false;    // orig :461-469
+        if (!this.getSensing().hasLineOfSight(target)) return false;                // orig :470-472
+        if (MyUtils.isIgnoreable(target)) return false;                             // orig :473-475
+        if (target instanceof EnderMan) return false;                               // orig :476-478 EntityEnderman
+        if (target instanceof EnderKnight) return false;                            // orig :479-481
+        if (target instanceof EnderReaper) return false;                            // orig :482-484
+        if (target instanceof Creeper) return false;                                // orig :485-487
+        if (target instanceof EntityScorpion) return false;                         // orig :488-490 Scorpion
+        if (target instanceof EntityEmperorScorpion) return false;                  // orig :491-493
+        if (target instanceof Player player && player.getAbilities().instabuild) return false; // orig :494-499
+        return true;                                                                // orig :500
     }
 
     // Death drops are fully data-driven via loot_table/entities/emperor_scorpion.json
