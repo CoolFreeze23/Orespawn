@@ -1,5 +1,6 @@
 package danger.orespawn.entity.client;
 
+import com.mojang.blaze3d.vertex.PoseStack;
 import danger.orespawn.ModEntities;
 import danger.orespawn.OreSpawnMod;
 import danger.orespawn.entity.Robot3;
@@ -13,7 +14,9 @@ import software.bernie.geckolib.animation.AnimationProcessor;
 /**
  * GeckoLib Robot3: {@link ModelRobot3#setupAnim} verbatim on the converted rig
  * (Tier 3, code-driven per Amendment 1), including the per-entity
- * {@link RenderInfo} cosine zero-crossing latch.
+ * {@link RenderInfo} cosine zero-crossing latch, with {@link Robot3Renderer}'s
+ * 0.5 render scale and its 1.0 x 0.5 shadow (ENT-S-092, from
+ * ClientProxyOreSpawn.java:441 / RenderRobot3.java:23-24,39-45).
  */
 public final class Robot3GeoReplacement extends OreSpawnGeoReplacement<Robot3> {
     private static final GeoReplacementDescriptor<Robot3> DESCRIPTOR = new GeoReplacementDescriptor<>(
@@ -22,7 +25,11 @@ public final class Robot3GeoReplacement extends OreSpawnGeoReplacement<Robot3> {
             ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "geo/entity/robot3.geo.json"),
             ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "animations/entity/robot3.animation.json"),
             ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "textures/entity/robot3.png"),
-            2.0F) {
+            Robot3Renderer.SHADOW) {
+        @Override
+        public void applyScale(Robot3 entity, PoseStack poseStack, float partialTick) {
+            poseStack.scale(Robot3Renderer.SCALE, Robot3Renderer.SCALE, Robot3Renderer.SCALE);
+        }
     };
 
     public Robot3GeoReplacement() {

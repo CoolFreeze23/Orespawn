@@ -19,6 +19,10 @@ import software.bernie.geckolib.cache.object.GeoBone;
  * classic renderer to within float rounding (FIX_LOG "PHASE G1"). No keyframe
  * clip is involved, so no approximation tolerance applies. Motion only
  * becomes artist-editable once the owner rules on a keyframe tolerance.</p>
+ *
+ * <p>Scale and shadow follow {@link BeaverRenderer}: 0.75 render scale
+ * (0.75 / 2 for a baby) and a 0.15 x 0.75 shadow (ENT-S-092, from
+ * ClientProxyOreSpawn.java:475 / RenderBeaver.java:23-24,39-49).</p>
  */
 public final class BeaverGeoReplacement extends OreSpawnGeoReplacement<Beaver> {
     private static final GeoReplacementDescriptor<Beaver> DESCRIPTOR = new GeoReplacementDescriptor<>(
@@ -27,12 +31,15 @@ public final class BeaverGeoReplacement extends OreSpawnGeoReplacement<Beaver> {
             ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "geo/entity/beaver.geo.json"),
             ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "animations/entity/beaver.animation.json"),
             ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "textures/entity/beaver.png"),
-            0.5F) {
+            BeaverRenderer.SHADOW) {
         @Override
         public void applyScale(Beaver entity, PoseStack poseStack, float partialTick) {
+            // orig RenderBeaver.preRenderScale: if (isChild) glScalef(scale / 2.0f) else glScalef(scale)
             if (entity.isBaby()) {
-                poseStack.scale(0.5F, 0.5F, 0.5F);
+                poseStack.scale(BeaverRenderer.SCALE / 2.0F, BeaverRenderer.SCALE / 2.0F, BeaverRenderer.SCALE / 2.0F);
+                return;
             }
+            poseStack.scale(BeaverRenderer.SCALE, BeaverRenderer.SCALE, BeaverRenderer.SCALE);
         }
     };
 

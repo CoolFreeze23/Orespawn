@@ -6180,7 +6180,8 @@ keeps BUG-036. Commit 4ea395c's message retains the old number.)*
   match; the Island and IslandToo GeckoLib candidates re-proven on the
   regenerated rigs (s4 proofs rewritten; both need the owner's re-acceptance).
 - **Slice B, FIXED / RESOLVED (reads refuted once each, upheld):**
-  - Elevator: EQUIVALENT RE-EXPRESSION, not a divergence. The 1.7.10
+  - Elevator: EQUIVALENT RE-EXPRESSION, not a divergence (the living-only
+    behaviours both paths inherited are ENT-S-094, fixed 2026-09-03). The 1.7.10
     RenderElevator is a plain Render (translate, yaw, hit wobble, a scale
     immediately undone, the (-1,-1,1) flip, no 24 px lift); the port's +24 px
     pivot bake (TF-029) cancelled the MobRenderer lift exactly. Made
@@ -6229,11 +6230,28 @@ keeps BUG-036. Commit 4ea395c's message retains the old number.)*
   the GeckoLib candidate on GeoReplacedEntityRenderer) inherit all of them
   (`LivingEntityRenderer.setupRotations` and `getOverlayCoords`;
   `GeoReplacedEntityRenderer.applyRotations` death flip).
-- **Resolution:** OPEN — report only. Parity bug by the owner's rule unless a
-  MOD record covers it (none does). Proposed: override `setupRotations` to
-  skip the death flip and `getOverlayCoords`/hurt tint on the classic
-  renderer, and the matching hooks on the candidate; pin with a gametest on
-  the renderer constants where the server can see them.
+- **Resolution:** FIXED (2026-09-03, owner: "parity bug, fix in classic; the seam's
+  base gets a per-species non-living mode so the candidate matches"). Classic
+  `ElevatorRenderer`: `setupRotations` no longer calls the living version (no
+  shaking jitter, no sleeping branch, no death Z-flip, no upside-down check),
+  applying only `180 - yaw` plus the original hit wobble; the yaw is the ENTITY
+  yaw lerped as the 1.7.10 RenderManager passed it, not the body yaw; the hurt
+  red overlay is removed by rendering the model with `OverlayTexture.NO_OVERLAY`
+  (`getOverlayCoords` is static and cannot be overridden); no name tag (the plain
+  1.7.10 Render drew none). The leash line stays on BOTH paths: EntityRenderer's
+  renderLeash is private and reachable only from render(), so it cannot be
+  dropped short of copying LivingEntityRenderer.render (disclosed; options in
+  FIX_LOG). GeckoLib seam: the descriptor
+  interface gains `nonLivingRender()` (default false); the seam base consults it in
+  `applyRotations` (yaw only, same entity-yaw lerp), `getPackedOverlay`
+  (NO_OVERLAY) and `shouldShowName`; `ElevatorGeoReplacement` returns true. Every
+  other species is unchanged. Bytecode-proven override points (LivingEntityRenderer
+  1.21.1, GeoReplacedEntityRenderer 4.8.4) and both refuters upheld; residuals
+  disclosed: invisibility still gates the render type on both paths (no hook short
+  of copying render()), shadow radius keeps the engine's scale/age multipliers
+  (0.25 at defaults, same as 1.7.10's render-size modifier). No gametest can see
+  a renderer; the s4 visual leg re-proves both paths agree.
+  Follow-up (refuted once, upheld): both paths draw at Mth.lerp(partialTicks, yRotO, getYRot()), the exact 1.7.10 RenderManager formula (bytecode: prev + (cur - prev) * partial, no wrap; the port's LivingEntity.tick keeps yRot - yRotO within 180 so rotLerp could not differ), instead of the lerped body yaw.
 
 ### ENT-S-092 — Renderer shadow radius and world scale diverge from the 1.7.10 registrations across the population (REPORT, 2026-09-02)
 
@@ -6259,12 +6277,27 @@ keeps BUG-036. Commit 4ea395c's message retains the old number.)*
   produced 5 false positives, so scale flags on the unread 47 shadow-only
   rows are not counted. Per-renderer findings with the exact fix and pin:
   `phase_g_reports/renderer_findings.md` (+ `.json`).
-- **Resolution:** OPEN — findings presented. Each is a parity bug by the
-  owner's rule (no MOD record covers renderer scale). Proposed fix slice: the
-  49 verified renderers get `SCALE`/`SHADOW` constants with citations, a
-  `scale()` override where `par3 != 1`, and one gametest pinning every
-  constant; the 47 shadow-only and 10 unresolved rows are read in the same
-  slice. Phase G proofs are unaffected (models, not renderer transforms).
+- **Resolution:** IN PROGRESS, BATCH 1a LANDED (2026-09-03, owner: "go, in
+  batches; MOD-recorded renderers keep their values, the rest restore 1.7.10; pin
+  renderer scale and shadow in the reference gate"). Truth table: all 133
+  registrations read against the 1.7.10 RenderX constructor and
+  preRenderCallback and every port scale path, refuted per chunk (84 diverge:
+  44 in world scale, 84 in shadow; no MOD record covers any renderer).
+  Batch 1a: 38 renderer files restored in the CoinRenderer house style
+  (SCALE/SHADOW constants with the registration citation, shadow passed to
+  super, scale applied in the `scale()` hook, the original's baby branches
+  transcribed; Robot3 and Beaver GeckoLib descriptors matched): Brutalfly, Irukandji, Fairy, Cricket, Hydrolisc, Robot3, Beaver, Dragonfly, EmperorScorpion, ThePrinceTeen, Firefly, VelocityRaptor, Spyro, Cockateil, Scorpion, CaveFisher, SpitBug, CreepingHorror, TerribleTerror, Rat, RubberDucky, Urchin, CaterKiller, Hammerhead, LurkingTerror, GammaMetroid, AttackSquid, Chipmunk, Bee, Alien, TrooperBug, Mantis, HerculesBeetle, GhostSkelly, WaterDragon, Lizard, Flounder, PurplePower.
+  Pin: `tools/reference_renderer_pins.py` + `tools/reference_renderer_pins.json`
+  (re-parses the 1.7.10 registrations and constructors, checks the port constants
+  and their use, statuses PASS/DIVERGES/PENDING/MOD/NOT_APPLICABLE/MANIFEST_DRIFT),
+  wired as `referenceRenderers` under `check`. HELD for the owner (batch 1b):
+  Kraken 3 -> 1, SeaMonster 3 -> 1, TheKing 1 -> 2.1, TheQueen 2 -> 1 (MHLib
+  bone-tracked hit surfaces follow the rendered scale), Godzilla 3 -> 2 (MOD-025
+  bone-synced hitboxes); their hit surfaces change with the render scale, so the
+  consequences are presented before landing. NEXT: batch 2, the 40 shadow-only
+  renderers. Recheck list: `phase_g_reports/ents092_recheck_list.md`; changelog
+  note: `phase_g_reports/ents092_changelog_note.md`. Hitbox dimension
+  divergences found on the way are filed as ENT-S-095.
 
 ### ENT-S-093 — Motion: per-entity selector/filter state collapsed into model-instance fields in 14 ports; sampled formula divergences (REPORT, 2026-09-02)
 
@@ -6301,17 +6334,38 @@ keeps BUG-036. Commit 4ea395c's message retains the old number.)*
   - PitchBlack: PARITY_BUG_PER_ENTITY_LOST; reference state PER_ENTITY_RENDERINFO. Other divergences: No formula divergence. I normalized the reference render body (ModelPitchBlack.java:742-1037, obf field/method names mapped to Mojmap: field_78795_f→xRot, field_78796_g→yRot, field_78808_h→zRot, field_78800_c→x, field_78797_d→y, field_78798_e→z, func_76134_b→Mth.cos, func_76126_a→Mth.sin, f1→limbSwingAmount, f2→ageInTicks, f3→netHeadYaw) and diffed it against the port setupAnim body (ModelPitchBlack.java:642-937) wit
   - Scorpion: PARITY_BUG_PER_ENTITY_LOST; reference state PER_ENTITY_RENDERINFO. Other divergences: Three divergences beyond the shared-state issue.  (1) CONFIRMED — missing 0.75 model scale. Reference ClientProxyOreSpawn.java:433 registers `new RenderScorpion(new ModelScorpion(0.62f), 0.35f, 0.75f)`; RenderScorpion.java:22-25 stores par3 (0.75f) as `this.scale`, and RenderScorpion.java:39-45 applies it every frame via `GL11.glScalef(this.scale, this.scale, this.scale)` in the func_77041_b/preRenderScale hook. The 
   - ThePrinceTeen: PARITY_BUG_PER_ENTITY_LOST; reference state PER_ENTITY_RENDERINFO. Other divergences: 1) Yaw source changed from BODY yaw to HEAD yaw in the activity==1 (flight) branch. Reference ModelThePrinceTeen.java:669 uses `f3 = (c.field_70126_B - c.field_70177_z) * 10.0f;` — field_70126_B is Entity.prevRotationYaw and field_70177_z is Entity.rotationYaw, i.e. the BODY yaw delta. Port ModelThePrinceTeen.java:682 uses `yaw = (entity.yHeadRotO - entity.yHeadRot) * 10.0f;` — yHeadRotO/yHeadRot are the 1.7.10 field
-- **Resolution:** OPEN — split presented; awaiting the owner's go. Proposed
-  fix: restore per-entity `RenderInfo` on the 14 entities (the Kraken /
-  Robot2 / Robot3 pattern) and route the models through it; the Slice 4b
-  pose-interface pattern gives each an entity-state harness leg. The
-  additional divergences (CaveFisher claw axes, DungeonBeast 90-degree yaw,
-  Ostrich hat gating, Scorpion 0.75 scale, the yaw-source swaps in
-  Cephadrome / Leon / ThePrinceTeen / Dragon, RubberDucky damping) are
-  parity bugs by the same rule and go in the same fix slice, each with a
-  citation; the world-RNG versus entity-RNG source is a project convention
-  (Kraken precedent) and is left as is.
+- **Resolution:** FIXED (2026-09-03, owner: "go; per-entity state restored as the
+  originals had it; the formula divergences use the SeaViper standard"). All 14
+  species carry a per-entity `RenderInfo` again (Kraken pattern: `renderInfo`
+  field + `getRenderInfo()` with the orig citations; models read and write it at
+  the original's sites; the shared model-instance fields are gone). Formula
+  divergences transcribed line for line, each draft upheld by two independent
+  refuters before install: CaveFisher (1), Cephadrome (1), Dragon (2), DungeonBeast (1), Leon (1), Ostrich (3), ThePrinceTeen (1). Pose interfaces added for
+  CaveFisher, Ostrich and PitchBlack (Slice 4b shape) so a future candidate or
+  entity_state leg can drive them; `ProbeSubject` is not yet wired to them (no
+  consumer exists). Gametest `RenderInfoParityTests` pins, per species plus a
+  Kraken control, distinct non-null holders per entity, all-zero on spawn and
+  independence across ticks. World-RNG versus entity-RNG stays (convention).
+  Out of scope, noted by the drafts: GhostSkelly's constant 0.25-alpha tint
+  (orig ModelGhostSkelly.java:123-127) versus the port's pass-through colour.
 
+
+### ENT-S-095 — Entity hitbox dimensions diverge from the 1.7.10 `setSize` across the population (REPORT, 2026-09-03)
+
+- **Evidence:** found in passing by the ENT-S-092 renderer reads (every scale path
+  per entity, refuted per chunk). 1.7.10 renderer scale never touched the hitbox,
+  so these are independent of the renderer fix. 51 entities with a numeric
+  pair plus the batch-1a fixers' additional citations are tabulated in
+  `phase_g_reports/hitbox_dims_findings.md` (+ `.json`); ~35 more notes mention a
+  difference without a pair and need a read before they count. Largest: SeaMonster
+  1.25x2.5 -> 5x5, Tshirt 4x4 -> 0.6x1.8, Urchin 1.35x2.1 -> 0.5x0.5, TrooperBug
+  3x3.5 -> 1.2x1.5, Mantis 2.5x3.25 -> 0.8x1.8, HerculesBeetle 3.25x2.75 -> 1.2x1,
+  EmperorScorpion 3.5x3 -> 1.5x1.5, the four ants 0.1x0.1 -> 0.4x0.4.
+- **Resolution:** OPEN — report only. No MOD record covers hitbox dimensions; by the
+  standing rule each is a parity bug unless one is written (Mothra's 6x3 is noted
+  as deliberate in the port source and needs its MOD record or a fix). Presented
+  for the owner's split before any fix; a fix slice would follow the ENT-S-089
+  dims-pin pattern.
 ### TEST-003 — Config-flipping gametests in the concurrent default batch
 
 - **Impact:** MEDIUM (suite reliability) — boss005/boss012 flip a global
@@ -6328,3 +6382,10 @@ keeps BUG-036. Commit 4ea395c's message retains the old number.)*
   other unbatched .set() sites for window-shaped mutations — proposed as
   a follow-up ruling; the synchronous set-assert-restore-in-one-tick
   pattern (SpawnGateTests' documented contract) is believed safe.)
+- **2026-09-03 detonation:** adding the 15 RenderInfoParityTests to the default
+  batch reshuffled its 50-test buckets and two neighbours failed with the code
+  otherwise identical: `bug003_rat_ai_ticks_and_despawns` (the summoned rat
+  vanished: the despawn roll) and `dsb_item020_towers_maze_rookery` (a
+  spawner-count outcome). Both passed again once the new tests got their own
+  batch (`renderInfoParity`). Both are order-sensitive and belong on the
+  TEST-003 follow-up list; new test classes should declare their own batch.

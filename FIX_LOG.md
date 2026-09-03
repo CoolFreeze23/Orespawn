@@ -4668,3 +4668,45 @@ ten models, seven regenerated, two equivalent re-expressions made
 leg-exact, one restored from a re-authoring.
 
 GATE (ents091c): build green (asset audit 0/0/4 acknowledged; g1Parity 2, s4Parity 11; referenceGeometry 101/101 PASS, reference_seaviper 34 parts exact, no pins drifted; benchmark verified); runGameTestServer: All 199 required tests passed.
+
+## ENT-S-094 FIX — Elevator drawn as the 1.7.10 plain Render on both paths (2026-09-03)
+
+Classic ElevatorRenderer skips every living-only rotation (shake, sleep, death
+flip, upside-down), draws at the entity yaw the 1.7.10 RenderManager passed,
+renders with NO_OVERLAY (no hurt tint), shows no name tag. The leash line
+cannot be dropped on the classic path (EntityRenderer.renderLeash is private,
+reached only from render()) and is left on both paths symmetrically; owner
+options: Elevator.canBeLeashed() false (a gameplay change: the 1.7.10 board WAS
+leashable, it just drew no line), or copy render(). The
+GeckoLib seam gains a per-species non-living mode (`nonLivingRender()` on the
+descriptor, consulted in applyRotations / getPackedOverlay / shouldShowName);
+Elevator's descriptor opts in, every other species is unchanged. Override
+points proven from the 1.21.1 and GeckoLib 4.8.4 bytecode; two refuters
+upheld. Residuals disclosed in AUDIT_FINDINGS (invisibility render type; shadow
+keeps the engine's scale/age multipliers).
+Follow-up (refuted once, upheld): both paths draw at Mth.lerp(partialTicks, yRotO, getYRot()), the exact 1.7.10 RenderManager formula (bytecode: prev + (cur - prev) * partial, no wrap; the port's LivingEntity.tick keeps yRot - yRotO within 180 so rotLerp could not differ), instead of the lerped body yaw.
+
+## ENT-S-092 BATCH 1a — 1.7.10 renderer scale and shadow restored on 38 renderers; pin leg added (2026-09-03)
+
+Truth table over all 133 registrations (1.7.10 RenderX constructor +
+preRenderCallback versus every port scale path), refuted per chunk. 38 renderer
+files restored in the CoinRenderer house style with the original's baby
+branches transcribed; Robot3 and Beaver candidates matched; one refuter per
+chunk, all upheld. `tools/reference_renderer_pins.py` pins every renderer's
+scale and shadow in the reference gate (`referenceRenderers` under `check`);
+the 40 shadow-only renderers and the five bosses stay PENDING in the manifest
+until their batches land. Recheck list and changelog note under
+phase_g_reports/. Hitbox dimension divergences found on the way: ENT-S-095.
+
+## ENT-S-093 FIX — per-entity RenderInfo restored on 14 species; formula divergences transcribed (2026-09-03)
+
+Every species keeps its selector/filter state on the entity again (Kraken
+pattern); the formula divergences in CaveFisher, Cephadrome, Dragon,
+DungeonBeast, Leon, Ostrich, ThePrinceTeen and the others listed in the split
+are transcribed line for line from the original render bodies, each draft
+upheld by two independent refuters before install (the SeaViper standard),
+then each install refuted once. Pose interfaces for CaveFisher, Ostrich,
+PitchBlack. Gametest RenderInfoParityTests (15 tests) pins the per-entity
+holders server-side.
+
+GATE (remediation-0903): build green (asset audit 0/0/4 acknowledged; g1Parity 2, s4Parity 11 with the Elevator conversion proofs rewritten; referenceGeometry 101/101; referenceRenderers PASS 75 / PENDING 45 / NOT_APPLICABLE 13 / DIVERGES 0; benchmark proof rewritten for build.gradle + Elevator inputs); runGameTestServer: All 214 required tests passed (RenderInfoParityTests in its own batch; with the 15 new tests in the default batch, bug003_rat_ai_ticks_and_despawns and dsb_item020_towers_maze_rookery failed on the reshuffled buckets and passed again unchanged once the batch was isolated: TEST-003).

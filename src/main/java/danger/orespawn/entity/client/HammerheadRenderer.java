@@ -3,12 +3,17 @@ package danger.orespawn.entity.client;
 import com.mojang.blaze3d.vertex.PoseStack;
 import danger.orespawn.OreSpawnMod;
 import danger.orespawn.entity.Hammerhead;
-import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.resources.ResourceLocation;
 
+/**
+ * orig RenderHammerhead.java + ClientProxyOreSpawn.java:501:
+ * {@code new RenderHammerhead(new ModelHammerhead(0.33f), 1.0f, 2.5f)} - RenderHammerhead.java:23
+ * passes {@code par2 * par3} to RenderLiving as the shadow and :24 keeps {@code scale = par3};
+ * preRenderScale :39-41 scales by scale unconditionally (ENT-S-092).
+ */
 public class HammerheadRenderer extends MobRenderer<Hammerhead, ModelHammerhead> {
 
     private static final ResourceLocation TEXTURE =
@@ -16,20 +21,22 @@ public class HammerheadRenderer extends MobRenderer<Hammerhead, ModelHammerhead>
 
     public static final ModelLayerLocation MODEL_LAYER =
             new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "hammerhead"), "main");
-
-    private static final float SCALE = 2.0f;
+    /** orig RenderHammerhead.scale = 2.5f (third constructor argument). */
+    public static final float SCALE = 2.5F;
+    /** orig RenderLiving shadow = 1.0f * 2.5f. */
+    public static final float SHADOW = 1.0F * 2.5F;
 
     public HammerheadRenderer(EntityRendererProvider.Context context) {
-        super(context, new ModelHammerhead(context.bakeLayer(MODEL_LAYER)), 1.0f);
+        super(context, new ModelHammerhead(context.bakeLayer(MODEL_LAYER)), SHADOW);
     }
 
     @Override
-    public void render(Hammerhead entity, float entityYaw, float partialTicks,
-                       PoseStack poseStack, MultiBufferSource buffer, int packedLight) {
-        poseStack.pushPose();
+    protected void scale(Hammerhead entity, PoseStack poseStack, float partialTick) {
+        // orig RenderHammerhead.preRenderScale (:39-41, the preRenderCallback slot):
+        // GL11.glScalef(scale, scale, scale) - same pipeline position as LivingEntityRenderer.scale
+        // (after the (-1,-1,1) flip, before the -1.501 lift). The port's former render() wrapper
+        // (poseStack.scale(2.0) around super.render) was a port invention; 1.7.10 only scaled here.
         poseStack.scale(SCALE, SCALE, SCALE);
-        super.render(entity, entityYaw, partialTicks, poseStack, buffer, packedLight);
-        poseStack.popPose();
     }
 
     @Override

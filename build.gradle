@@ -330,6 +330,21 @@ tasks.register('referenceGeometry', Exec) {
             '--proof-dir', file('phase_g_reports/reference_proof').absolutePath
 }
 tasks.named('check') { dependsOn tasks.named('referenceGeometry') }
+// ENT-S-092 (2026-09-03): every 1.7.10 renderer registration's shadow radius and world scale are pinned
+// against the port renderer constants (and the GeckoLib candidate descriptors) by
+// tools/reference_renderer_pins.py; PENDING entries are the batches not yet landed.
+tasks.register('referenceRenderers', Exec) {
+    group = 'verification'
+    description = 'Pins renderer scale and shadow against the 1.7.10 registrations (ENT-S-092).'
+    workingDir = projectDir
+    commandLine 'python', 'tools/reference_renderer_pins.py',
+            '--manifest', file('tools/reference_renderer_pins.json').absolutePath,
+            '--reference-dir', file('reference_1_7_10_source/sources/danger/orespawn').absolutePath,
+            '--repository-root', projectDir.absolutePath,
+            '--json', file('build/reference/renderer_pins.json').absolutePath
+}
+tasks.named('check') { dependsOn tasks.named('referenceRenderers') }
+
 
 // BUG-032 (beta.3): the DISTRIBUTED jar must be the jarJar output (nested
 // databuddy under META-INF/jarjar). Swap classifiers so the unclassified

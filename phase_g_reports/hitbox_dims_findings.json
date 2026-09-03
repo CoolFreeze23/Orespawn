@@ -1,0 +1,614 @@
+[
+ {
+  "entity": "Baryonyx",
+  "ref": [
+   1.5,
+   2.8
+  ],
+  "port": [
+   1.0,
+   1.5
+  ],
+  "note": "Renderer scale does not touch the hitbox in either version. Port baby hitbox is halved by vanilla getDefaultDimensions().scale(getAgeScale()) (LivingE"
+ },
+ {
+  "entity": "CliffRacer",
+  "ref": [
+   0.75,
+   0.5
+  ],
+  "port": [
+   0.8,
+   0.8
+  ],
+  "note": "No scale path touches the hitbox. Note only: port .sized(0.8f,0.8f) (ModEntities.java:379-381) differs from 1.7.10 func_70105_a(0.75f, 0.5f) (CliffRac"
+ },
+ {
+  "entity": "Cockateil",
+  "ref": [
+   0.5,
+   0.5
+  ],
+  "port": [
+   0.4,
+   0.4
+  ],
+  "note": "1.7.10 renderer scale never touched the hitbox. Ref hitbox Cockateil.java:42 func_70105_a(0.5f,0.5f) vs port ModEntities.java:321 .sized(0.4f,0.4f) \u2014 "
+ },
+ {
+  "entity": "Coin",
+  "ref": [
+   1.5,
+   1.5
+  ],
+  "port": [
+   0.4,
+   0.4
+  ],
+  "note": "Renderer scale does not touch the hitbox in either version. Hitbox itself differs from 1.7.10: ModEntities.java:329 .sized(0.4,0.4) vs orig Coin.java:"
+ },
+ {
+  "entity": "Cricket",
+  "ref": [
+   0.1,
+   0.1
+  ],
+  "port": [
+   0.4,
+   0.4
+  ],
+  "note": "Port renders the cricket 2x too large (1.0 vs 0.5) and shadow 0.1 vs 0.075. Hitbox also differs from reference: orig Cricket.java:24 func_70105_a(0.1f"
+ },
+ {
+  "entity": "Dragon",
+  "ref": [
+   1.5,
+   1.25
+  ],
+  "port": [
+   1.5,
+   2.0
+  ],
+  "note": "Renderer scale 1.0 both sides; no hitbox coupling for adults. For the (rare, natural-group) port baby Dragon, vanilla halves the hitbox via getAgeScal"
+ },
+ {
+  "entity": "Dragonfly",
+  "ref": [
+   1.5,
+   0.5
+  ],
+  "port": [
+   0.4,
+   0.4
+  ],
+  "note": "Renderer scale never touches the hitbox. Separate parity gap: reference Dragonfly.java:40 func_70105_a(1.5f, 0.5f) vs port ModEntities.java:389 .sized"
+ },
+ {
+  "entity": "DungeonBeast",
+  "ref": [
+   1.15,
+   1.1
+  ],
+  "port": [
+   1.5,
+   1.5
+  ],
+  "note": "Renderer scale 1.0 in both; nothing scales the hitbox. Unrelated hitbox divergence noted in passing: port .sized(1.5f,1.5f) (ModEntities.java:83) vs 1"
+ },
+ {
+  "entity": "EmperorScorpion",
+  "ref": [
+   3.5,
+   3.0
+  ],
+  "port": [
+   1.5,
+   1.5
+  ],
+  "note": "1.7.10 renderer glScalef never touched the hitbox. Ref hitbox EmperorScorpion.java:59 func_70105_a(3.5f, 3.0f) vs port ModEntities.java:223 .sized(1.5"
+ },
+ {
+  "entity": "EnderKnight",
+  "ref": [
+   0.6,
+   2.9
+  ],
+  "port": [
+   0.6,
+   1.8
+  ],
+  "note": "Renderer path only; hitbox unscaled (SCALE=1.0). Separate: port .sized(0.6f,1.8f) (ModEntities.java:87) vs 1.7.10 func_70105_a(0.6f,2.9f) (EnderKnight"
+ },
+ {
+  "entity": "EnderReaper",
+  "ref": [
+   0.7,
+   2.9
+  ],
+  "port": [
+   0.6,
+   2.5
+  ],
+  "note": "Renderer scale 1.0 in both; no port path touches the hitbox. Unrelated hitbox divergence noted in passing: port .sized(0.6f,2.5f) (ModEntities.java:91"
+ },
+ {
+  "entity": "EntityAnt",
+  "ref": [
+   0.1,
+   0.1
+  ],
+  "port": [
+   0.4,
+   0.4
+  ],
+  "note": "1.7.10 hitbox EntityAnt.java:39 func_70105_a(0.1f, 0.1f); port ModEntities.java:377 .sized(0.4f, 0.4f) \u2014 port hitbox is 4x larger on each axis than th"
+ },
+ {
+  "entity": "EntityLunaMoth",
+  "ref": [
+   0.5,
+   0.5
+  ],
+  "port": [
+   0.4,
+   0.4
+  ],
+  "note": "Shadow: port 0.15 vs reference 0.6 (4x too small). Hitbox differs independently: orig EntityLunaMoth.java:27 func_70105_a(0.5f,0.5f) vs port ModEntiti"
+ },
+ {
+  "entity": "EntityMosquito",
+  "ref": [
+   0.2,
+   0.2
+  ],
+  "port": [
+   0.3,
+   0.3
+  ],
+  "note": "Renderer scale is visual-only on both sides. Hitbox differs independently of the renderer: orig EntityMosquito.java:23 func_70105_a(0.2f,0.2f) vs port"
+ },
+ {
+  "entity": "EntityRainbowAnt",
+  "ref": [
+   0.1,
+   0.1
+  ],
+  "port": [
+   0.4,
+   0.4
+  ],
+  "note": "1.7.10 hitbox EntityRainbowAnt.java:25 func_70105_a(0.1f, 0.1f); port ModEntities.java:397 .sized(0.4f, 0.4f) \u2014 port hitbox 4x the original per axis; "
+ },
+ {
+  "entity": "EntityRedAnt",
+  "ref": [
+   0.2,
+   0.2
+  ],
+  "port": [
+   0.4,
+   0.4
+  ],
+  "note": "1.7.10 hitbox EntityRedAnt.java:33 func_70105_a(0.2f, 0.2f); port ModEntities.java:393 .sized(0.4f, 0.4f) \u2014 port hitbox 2x the original on each axis; "
+ },
+ {
+  "entity": "EntityUnstableAnt",
+  "ref": [
+   0.1,
+   0.1
+  ],
+  "port": [
+   0.4,
+   0.4
+  ],
+  "note": "1.7.10 hitbox EntityUnstableAnt.java:25 func_70105_a(0.1f, 0.1f); port ModEntities.java:416 .sized(0.4f, 0.4f) \u2014 port hitbox 4x the original per axis;"
+ },
+ {
+  "entity": "Firefly",
+  "ref": [
+   0.4,
+   0.8
+  ],
+  "port": [
+   0.2,
+   0.2
+  ],
+  "note": "Scale: port renders the firefly at 1.0 vs reference 0.75 (1.333x too large), no path compensates. Shadow: port 0.1 vs reference 0.15. Hitbox also diff"
+ },
+ {
+  "entity": "Flounder",
+  "ref": [
+   0.55,
+   0.25
+  ],
+  "port": [
+   0.5,
+   0.3
+  ],
+  "note": "Adult scale is 1.0 in both (identity) so adults match visually; the divergence is the missing baby branch: 1.7.10 drew a child Flounder at 0.5x (Rende"
+ },
+ {
+  "entity": "GiantRobot",
+  "ref": [
+   3.0,
+   9.75
+  ],
+  "port": [
+   4.0,
+   10.0
+  ],
+  "note": "Renderer scale 1.0 in both, hitbox untouched by it. Separate observation: port .sized(4.0,10.0) vs orig setSize(3.0,9.75) is a hitbox-only delta outsi"
+ },
+ {
+  "entity": "GoldFish",
+  "ref": [
+   0.75,
+   0.5
+  ],
+  "port": [
+   0.3,
+   0.3
+  ],
+  "note": "Renderer path only; hitbox unscaled (SCALE=1.0). Separate: port .sized(0.3f,0.3f) (ModEntities.java:349) vs 1.7.10 func_70105_a(0.75f,0.5f) (GoldFish."
+ },
+ {
+  "entity": "HerculesBeetle",
+  "ref": [
+   3.25,
+   2.75
+  ],
+  "port": [
+   1.2,
+   1.0
+  ],
+  "note": "No port scale path touches the hitbox. Port draws the beetle at 1.0x where 1.7.10 drew 1.1x, with a 1.0 shadow vs 1.089. .sized(1.2,1.0) (ModEntities."
+ },
+ {
+  "entity": "Irukandji",
+  "ref": [
+   0.25,
+   0.25
+  ],
+  "port": [
+   0.4,
+   0.4
+  ],
+  "note": "No port scale path touches the hitbox. Port draws the jellyfish at 1.0x where 1.7.10 drew 0.25x (4x too large) with a 0.2 shadow vs 0.025. .sized(0.4,"
+ },
+ {
+  "entity": "Kyuubi",
+  "ref": [
+   0.5,
+   1.25
+  ],
+  "port": [
+   1.0,
+   1.2
+  ],
+  "note": "Scale is identity in both, so no hitbox interaction. Ref hitbox Kyuubi.java:44 func_70105_a(0.5f, 1.25f) vs port ModEntities.java:232 .sized(1.0f, 1.2"
+ },
+ {
+  "entity": "LeafMonster",
+  "ref": [
+   1.0,
+   2.5
+  ],
+  "port": [
+   0.8,
+   1.5
+  ],
+  "note": "Renderer path only; hitbox unscaled (SCALE=1.0). Separate: port .sized(0.8f,1.5f) (ModEntities.java:236) vs 1.7.10 func_70105_a(1.0f,2.5f) (LeafMonste"
+ },
+ {
+  "entity": "Lizard",
+  "ref": [
+   1.5,
+   1.25
+  ],
+  "port": [
+   0.6,
+   0.6
+  ],
+  "note": "Adult render scale matches (1.0); the divergence is the missing baby half-scale, so port baby lizards draw at full size inside a hitbox vanilla alread"
+ },
+ {
+  "entity": "LurkingTerror",
+  "ref": [
+   1.75,
+   1.25
+  ],
+  "port": [
+   1.0,
+   1.0
+  ],
+  "note": "No scale path touches the hitbox; the 1.7.10 0.85 render shrink never did either. Note only: port .sized(1.0f,1.0f) (ModEntities.java:238-240) vs 1.7."
+ },
+ {
+  "entity": "Mantis",
+  "ref": [
+   2.5,
+   3.25
+  ],
+  "port": [
+   0.8,
+   1.8
+  ],
+  "note": "No port scale path touches the hitbox. Port draws the mantis at 1.0x where 1.7.10 drew 1.1x, with a 0.8 shadow vs 0.99. .sized(0.8,1.8) (ModEntities.j"
+ },
+ {
+  "entity": "Molenoid",
+  "ref": [
+   3.9,
+   2.6
+  ],
+  "port": [
+   1.2,
+   2.0
+  ],
+  "note": "Renderer scale touches no hitbox in either version. Hitbox itself differs from 1.7.10: ModEntities.java:248 .sized(1.2,2.0) vs orig Molenoid.java:43 f"
+ },
+ {
+  "entity": "Mothra",
+  "ref": [
+   5.0,
+   2.0
+  ],
+  "port": [
+   6.0,
+   3.0
+  ],
+  "note": "1.7.10 hitbox Mothra.java:65 func_70105_a(5.0f, 2.0f) (overriding EntityButterfly.java:54's 0.4x0.4); port ModEntities.java:586 .sized(6.0f, 3.0f), de"
+ },
+ {
+  "entity": "PurplePower",
+  "ref": [
+   0.75,
+   0.75
+  ],
+  "port": [
+   0.5,
+   0.5
+  ],
+  "note": "Port renderer scale is applied in render() via poseStack only \u2014 does not touch the hitbox. Type-0 PurplePower matches the 1.7.10 truth (1.0) but types"
+ },
+ {
+  "entity": "Rat",
+  "ref": [
+   0.25,
+   0.5
+  ],
+  "port": [
+   0.4,
+   0.4
+  ],
+  "note": "No port scale path touches the hitbox; port .sized(0.4,0.4) (ModEntities.java:252) vs 1.7.10 setSize(0.25,0.5) (Rat.java:52 func_70105_a) is an indepe"
+ },
+ {
+  "entity": "Robot1",
+  "ref": [
+   0.5,
+   0.5
+  ],
+  "port": [
+   1.0,
+   2.0
+  ],
+  "note": "Scale 1.0 on both sides; the port's .sized(1.0,2.0) vs the original setSize(0.5,0.5) is a hitbox-only change (ModEntities.java:123 has no orig citatio"
+ },
+ {
+  "entity": "Robot4",
+  "ref": [
+   2.5,
+   4.0
+  ],
+  "port": [
+   1.5,
+   2.5
+  ],
+  "note": "Renderer scale is 1.0 on both sides so no hitbox coupling arises. Observation outside this row's scope: reference Robot4.java:49 setSize(2.5f, 4.0f) v"
+ },
+ {
+  "entity": "Robot5",
+  "ref": [
+   1.0,
+   2.25
+  ],
+  "port": [
+   1.0,
+   1.5
+  ],
+  "note": "Renderer scale 1.0 both sides; no hitbox coupling. Observation: reference Robot5.java:45 setSize(1.0f, 2.25f) vs port .sized(1.0f, 1.5f) at ModEntitie"
+ },
+ {
+  "entity": "Rotator",
+  "ref": [
+   1.0,
+   2.0
+  ],
+  "port": [
+   0.6,
+   0.6
+  ],
+  "note": "Renderer scale 1.0 in both; nothing scales the hitbox. Unrelated hitbox divergence noted in passing: port .sized(0.6f,0.6f) (ModEntities.java:256) vs "
+ },
+ {
+  "entity": "RubyBird",
+  "ref": [
+   0.5,
+   0.5
+  ],
+  "port": [
+   0.4,
+   0.4
+  ],
+  "note": "Same as Cockateil: renderer scale never touched the hitbox. Ref RubyBird inherits Cockateil.java:42 func_70105_a(0.5f,0.5f) (RubyBird.java has no own "
+ },
+ {
+  "entity": "Scorpion",
+  "ref": [
+   0.85,
+   0.55
+  ],
+  "port": [
+   0.6,
+   0.4
+  ],
+  "note": "1.7.10 renderer scale never touched the hitbox. Ref hitbox Scorpion.java:50 func_70105_a(0.85f, 0.55f) vs port ModEntities.java:260 .sized(0.6f, 0.4f)"
+ },
+ {
+  "entity": "SeaMonster",
+  "ref": [
+   1.25,
+   2.5
+  ],
+  "port": [
+   5.0,
+   5.0
+  ],
+  "note": "Renderer scale does not touch the hitbox. The port also enlarged the hitbox independently: ModEntities.java:143 .sized(5.0,5.0) vs orig SeaMonster.jav"
+ },
+ {
+  "entity": "Skate",
+  "ref": [
+   0.75,
+   0.25
+  ],
+  "port": [
+   0.8,
+   0.4
+  ],
+  "note": "Renderer-only scale; hitbox untouched (.sized(0.8,0.4) at ModEntities.java:151 vs 1.7.10 setSize(0.75,0.25) at Skate.java:43 is an independent hitbox "
+ },
+ {
+  "entity": "SpitBug",
+  "ref": [
+   2.0,
+   2.0
+  ],
+  "port": [
+   0.8,
+   0.8
+  ],
+  "note": "No port scale path touches the hitbox. Hitbox differs from ref: ref SpitBug.java:56 func_70105_a(2.0f, 2.0f) vs port ModEntities.java:264 .sized(0.8f,"
+ },
+ {
+  "entity": "StinkBug",
+  "ref": [
+   0.55,
+   0.55
+  ],
+  "port": [
+   0.4,
+   0.4
+  ],
+  "note": "Adult scale 0.85 matches via the renderer only; hitbox untouched by any scale path. Hitbox differs from ref: ref StinkBug.java:43 func_70105_a(0.55f, "
+ },
+ {
+  "entity": "Termite",
+  "ref": [
+   0.2,
+   0.2
+  ],
+  "port": [
+   0.3,
+   0.3
+  ],
+  "note": "Scale applied in the renderer only, so the hitbox is untouched, as in 1.7.10. Unrelated hitbox divergence noted in passing: port .sized(0.3f,0.3f) (Mo"
+ },
+ {
+  "entity": "TerribleTerror",
+  "ref": [
+   1.0,
+   0.75
+  ],
+  "port": [
+   0.5,
+   0.5
+  ],
+  "note": "No port scale path touches the hitbox. Hitbox differs from ref: ref TerribleTerror.java:51 func_70105_a(1.0f, 0.75f) vs port ModEntities.java:268 .siz"
+ },
+ {
+  "entity": "Triffid",
+  "ref": [
+   2.0,
+   4.0
+  ],
+  "port": [
+   1.0,
+   2.0
+  ],
+  "note": "No scale path touches the hitbox. Note only: port .sized(1.0f,2.0f) (ModEntities.java:270-272) vs 1.7.10 func_70105_a(2.0f, 4.0f) (Triffid.java:49) \u2014 "
+ },
+ {
+  "entity": "TrooperBug",
+  "ref": [
+   3.0,
+   3.5
+  ],
+  "port": [
+   1.2,
+   1.5
+  ],
+  "note": "No port scale path scales the hitbox (no Attributes.SCALE, no getDimensions override). Hitbox itself differs from ref: ref TrooperBug.java:58 func_701"
+ },
+ {
+  "entity": "Tshirt",
+  "ref": [
+   4.0,
+   4.0
+  ],
+  "port": [
+   0.6,
+   1.8
+  ],
+  "note": "Renderer scale does not touch the hitbox in either version. Separate parity gap: reference Tshirt.java:21 func_70105_a(4.0f, 4.0f) vs port ModEntities"
+ },
+ {
+  "entity": "Urchin",
+  "ref": [
+   1.35,
+   2.1
+  ],
+  "port": [
+   0.5,
+   0.5
+  ],
+  "note": "No port scale path touches the hitbox. Port draws the urchin at 1.0x where 1.7.10 drew 1.25x, with a 0.3 shadow vs 0.4375. .sized(0.5,0.5) (ModEntitie"
+ },
+ {
+  "entity": "WormLarge",
+  "ref": [
+   1.55,
+   2.5
+  ],
+  "port": [
+   1.5,
+   1.5
+  ],
+  "note": "Renderer path only; hitbox unscaled (SCALE=1.0). Separate: port .sized(1.5f,1.5f) (ModEntities.java:297) vs 1.7.10 func_70105_a(1.55f,2.5f) (WormLarge"
+ },
+ {
+  "entity": "WormMedium",
+  "ref": [
+   0.5,
+   2.0
+  ],
+  "port": [
+   1.0,
+   1.0
+  ],
+  "note": "Renderer path only; hitbox unscaled (SCALE=1.0). Separate: port .sized(1.0f,1.0f) (ModEntities.java:290) vs 1.7.10 func_70105_a(0.5f,2.0f) (WormMedium"
+ },
+ {
+  "entity": "WormSmall",
+  "ref": [
+   0.25,
+   1.0
+  ],
+  "port": [
+   0.5,
+   0.5
+  ],
+  "note": "Port scale 1.0 comes from the renderer default; nothing scales the hitbox (Attributes.SCALE=1.0). Separate hitbox fact: port .sized(0.5f,0.5f) (ModEnt"
+ }
+]

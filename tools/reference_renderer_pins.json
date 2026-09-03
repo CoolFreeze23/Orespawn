@@ -1,0 +1,2827 @@
+{
+  "schema_version": 1,
+  "ruling": "Owner ruling 2026-09-03: pin renderer scale and shadow in the reference gate. MOD-recorded renderers keep their values; the rest restore 1.7.10.",
+  "ground_truth": "1.7.10 ClientProxyOreSpawn.java registrations + each RenderX.java constructor/preRenderCallback (ENT-S-092 truth table); never the port",
+  "reference_proxy": "reference_1_7_10_source/sources/danger/orespawn/ClientProxyOreSpawn.java",
+  "status_semantics": {
+    "pin": "port renderer must carry expected_shadow (super(context, model, SHADOW) or an equal literal when no SHADOW exists; the constructor value counts only when nothing rewrites it: any getShadowRadius( override or call, or any shadowRadius = write outside the constructor, in the renderer or an in-tree parent, makes the shadow UNPARSED and the pin DIVERGES) and expected_scale (exactly one unconditional uniform poseStack.scale via scale() or the render wrapper, or none when 1.0); constant-must-be-used on both axes: an existing SHADOW must be what the constructor passes and an existing SCALE must be what the scale site applies (an unused SCALE is tolerated only when SCALE and the expectation are both 1.0); two unconditional scale sites compound and fail; a named port_candidate is part of the pin: the file must exist and parse (missing, renamed or unparseable -> DIVERGES, exactly like a missing port renderer; never downgraded to a NOTE) and its descriptor shadow/scale must match too ; expected_scale \"dynamic\" (with scale_dynamic_note) means both sides scale by an entity getter: the shadow axis is pinned as usual and the scale axis is reported DYNAMIC (not a constant to pin)",
+    "pending": "known divergence awaiting its fix batch (note); the leg reports PENDING with the current port values and exits 0",
+    "mod": "MOD-recorded renderer: mod = {record, shadow, scale} are the values the port must keep, and a named port_candidate must exist and keep them too (none exist today)",
+    "not_applicable": "no comparable port knob (reason)"
+  },
+  "entries": [
+    {
+      "entity": "Girlfriend",
+      "ref_line": 386,
+      "ref_render_class": "RenderGirlfriend",
+      "ref_registration": "(Render)new RenderGirlfriend(new ModelBiped(), 0.5f)",
+      "expected_shadow": 0.5,
+      "expected_scale": 1,
+      "ref_derivation": "shadow: ClientProxyOreSpawn.java:386 `new RenderGirlfriend(new ModelBiped(), 0.5f)`; RenderGirlfriend.java:20-23 `public RenderGirlfriend(ModelBiped par1ModelBase, float par2) { super(par1ModelBase, par2); this.model = (ModelBiped)this.field_77045_g ... | scale: RenderGirlfriend.java:29-36 overrides func_77041_b (preRenderCallback): `if (OreSpawnMain.valentines_day != 0 && p_77041_1_ != null && p_77041_1_ instanceof Girlfriend) { Girlfriend gf = ...; if (gf.feelingBetter == 0) GL11.glScalef(5.0f, 5.0f, 5.0f) ...",
+      "port_renderer": "src/main/java/danger/orespawn/entity/client/GirlfriendRenderer.java",
+      "port_candidate": "none",
+      "truth_verdicts": {
+        "shadow": "MATCH",
+        "scale": "MATCH"
+      },
+      "truth_verified": true,
+      "status": "pin",
+      "mod": null
+    },
+    {
+      "entity": "Boyfriend",
+      "ref_line": 387,
+      "ref_render_class": "RenderBoyfriend",
+      "ref_registration": "(Render)new RenderBoyfriend(new ModelBiped(), 0.55f)",
+      "expected_shadow": 0.55,
+      "expected_scale": 1,
+      "ref_derivation": "shadow: ClientProxyOreSpawn.java:387 `new RenderBoyfriend(new ModelBiped(), 0.55f)`; RenderBoyfriend.java:17-20 `public RenderBoyfriend(ModelBiped par1ModelBase, float par2) { super(par1ModelBase, par2); this.model = ... ... | scale: RenderBoyfriend.java is 38 lines: constructor :17-20, renderBoyfriend :22-24 (forwards to super.func_76986_a), two func_76986_a overloads :26-32, func_110775_a :34-37. ...",
+      "port_renderer": "src/main/java/danger/orespawn/entity/client/BoyfriendRenderer.java",
+      "port_candidate": "none",
+      "truth_verdicts": {
+        "shadow": "DIVERGES",
+        "scale": "MATCH"
+      },
+      "truth_verified": true,
+      "status": "pin",
+      "note": "ENT-S-092 batch 2 (2026-09-03): shadow restored to the 1.7.10 value; pinned",
+      "truth_port_values": {
+        "shadow": 0.5,
+        "scale": 1
+      },
+      "mod": null
+    },
+    {
+      "entity": "RedCow",
+      "ref_line": 388,
+      "ref_render_class": "RenderEnchantedCow",
+      "ref_registration": "(Render)new RenderEnchantedCow(new ModelCow(), 0.7f)",
+      "expected_shadow": 0.7,
+      "expected_scale": 1,
+      "ref_derivation": "shadow: ClientProxyOreSpawn.java:388 `new RenderEnchantedCow(new ModelCow(), 0.7f)`; RenderEnchantedCow.java:26-29 `public RenderEnchantedCow(ModelCow par1ModelBase, float par2) { super((ModelBase)par1ModelBase, par2); this.model = ... ... | scale: RenderEnchantedCow.java has no func_77041_b/preRenderCallback and no glScalef (members: ctor :26-29, renderEnchantedCow :31-33, func_76986_a x2 :35-41, func_77032_a :43-50, func_110775_a :52-63; the only GL11 call is glColor3f at :46) -> 1.0. ...",
+      "port_renderer": "src/main/java/danger/orespawn/entity/client/RedCowRenderer.java",
+      "port_candidate": "none",
+      "truth_verdicts": {
+        "shadow": "MATCH",
+        "scale": "MATCH"
+      },
+      "truth_verified": true,
+      "status": "pin",
+      "mod": null
+    },
+    {
+      "entity": "GoldCow",
+      "ref_line": 389,
+      "ref_render_class": "RenderEnchantedCow",
+      "ref_registration": "(Render)new RenderEnchantedCow(new ModelCow(), 0.7f)",
+      "expected_shadow": 0.7,
+      "expected_scale": 1,
+      "ref_derivation": "shadow: ClientProxyOreSpawn.java:389 `new RenderEnchantedCow(new ModelCow(), 0.7f)`; RenderEnchantedCow.java:26-29 `super((ModelBase)par1ModelBase, par2)` -> RenderLiving(model, 0.7f) -> shadowSize 0.7 | scale: No preRenderCallback/glScalef in RenderEnchantedCow.java (see RedCow row) -> 1.0",
+      "port_renderer": "src/main/java/danger/orespawn/entity/client/GoldCowRenderer.java",
+      "port_candidate": "none",
+      "truth_verdicts": {
+        "shadow": "MATCH",
+        "scale": "MATCH"
+      },
+      "truth_verified": true,
+      "status": "pin",
+      "mod": null
+    },
+    {
+      "entity": "EnchantedCow",
+      "ref_line": 390,
+      "ref_render_class": "RenderEnchantedCow",
+      "ref_registration": "(Render)new RenderEnchantedCow(new ModelCow(), 0.7f)",
+      "expected_shadow": 0.7,
+      "expected_scale": 1,
+      "ref_derivation": "shadow: ClientProxyOreSpawn.java:390 `new RenderEnchantedCow(new ModelCow(), 0.7f)`; RenderEnchantedCow.java:26-29 `super((ModelBase)par1ModelBase, par2)` -> RenderLiving(model, 0.7f) -> shadowSize 0.7 | scale: No preRenderCallback/glScalef in RenderEnchantedCow.java -> 1.0",
+      "port_renderer": "src/main/java/danger/orespawn/entity/client/EnchantedAppleCowRenderer.java",
+      "port_candidate": "none",
+      "truth_verdicts": {
+        "shadow": "MATCH",
+        "scale": "MATCH"
+      },
+      "truth_verified": true,
+      "status": "pin",
+      "mod": null
+    },
+    {
+      "entity": "CrystalCow",
+      "ref_line": 391,
+      "ref_render_class": "RenderEnchantedCow",
+      "ref_registration": "(Render)new RenderEnchantedCow(new ModelCow(), 0.7f)",
+      "expected_shadow": 0.7,
+      "expected_scale": 1,
+      "ref_derivation": "shadow: ClientProxyOreSpawn.java:391 `new RenderEnchantedCow(new ModelCow(), 0.7f)`; RenderEnchantedCow.java:26-29 `super((ModelBase)par1ModelBase, par2)` -> RenderLiving(model, 0.7f) -> shadowSize 0.7 | scale: No preRenderCallback/glScalef in RenderEnchantedCow.java -> 1.0",
+      "port_renderer": "src/main/java/danger/orespawn/entity/client/CrystalCowRenderer.java",
+      "port_candidate": "none",
+      "truth_verdicts": {
+        "shadow": "MATCH",
+        "scale": "MATCH"
+      },
+      "truth_verified": true,
+      "status": "pin",
+      "mod": null
+    },
+    {
+      "entity": "Shoes",
+      "ref_line": 392,
+      "ref_render_class": "RenderShoe",
+      "ref_registration": "(Render)new RenderShoe()",
+      "expected_shadow": 0,
+      "expected_scale": 0.5,
+      "ref_derivation": "shadow: ClientProxyOreSpawn.java:392 `new RenderShoe()`; RenderShoe.java (19 lines, only func_76986_a :12-18) declares no constructor and RenderSpinner.java (55 lines: fields :17-18, func_76986_a :20-30, func_77026_a :32-50 ... | scale: RenderSpinner.java:25 `GL11.glScalef(0.5f, 0.5f, 0.5f)` applied to a 1.0 x 1.0 quad (func_77026_a :37-39 var7=1.0, var8=0.5, var9=0.25; vertices :45-48 span x -0.5..0.5, y -0.25..0.75) -> a 0.5-block billboard. ...",
+      "port_renderer": "vanilla:ThrownItemRenderer",
+      "port_candidate": "none",
+      "truth_verdicts": {
+        "shadow": "MATCH",
+        "scale": "MATCH_VIA_OTHER_PATH"
+      },
+      "truth_verified": true,
+      "status": "not_applicable",
+      "reason": "ThrownItemRenderer (vanilla) renders the item sprite; shadow 0 by EntityRenderer default, scale via the item model's GROUND transform (MATCH_VIA_OTHER_PATH)",
+      "mod": null
+    },
+    {
+      "entity": "SunspotUrchin",
+      "ref_line": 393,
+      "ref_render_class": "RenderItemUrchin",
+      "ref_registration": "(Render)new RenderItemUrchin()",
+      "expected_shadow": 0,
+      "expected_scale": 0.5,
+      "ref_derivation": "shadow: ClientProxyOreSpawn.java:393 `new RenderItemUrchin()`; neither RenderItemUrchin.java (54 lines, only func_76986_a :19-53) nor RenderSpinner.java declares a constructor -> Render default shadowSize = 0. | scale: RenderSpinner.java:25 `GL11.glScalef(0.5f, 0.5f, 0.5f)` on the 1.0 x 1.0 quad (func_77026_a :37-48) -> 0.5-block billboard; RenderItemUrchin adds no scale (it only selects the icon index then calls super at :52).",
+      "port_renderer": "vanilla:ThrownItemRenderer",
+      "port_candidate": "none",
+      "truth_verdicts": {
+        "shadow": "MATCH",
+        "scale": "MATCH_VIA_OTHER_PATH"
+      },
+      "truth_verified": true,
+      "status": "not_applicable",
+      "reason": "ThrownItemRenderer (vanilla) renders the item sprite; shadow 0 by EntityRenderer default, scale via the item model's GROUND transform (MATCH_VIA_OTHER_PATH)",
+      "mod": null
+    },
+    {
+      "entity": "WaterBall",
+      "ref_line": 394,
+      "ref_render_class": "RenderItemUrchin",
+      "ref_registration": "(Render)new RenderItemUrchin()",
+      "expected_shadow": 0,
+      "expected_scale": 0.5,
+      "ref_derivation": "shadow: Registration is `new RenderItemUrchin()` with no args (ClientProxyOreSpawn.java:394). RenderItemUrchin.java:17-54 declares no constructor and never touches shadowSize ... | scale: RenderSpinner.java:25 `GL11.glScalef(0.5f, 0.5f, 0.5f)` inside doRender (func_76986_a :20-30), applied to a unit quad drawn by func_77026_a: var7=1.0 (:37), var8=0.5 (:38), var9=0.25 (:39), vertices :45-48 span x -0.5..0.5 ...",
+      "port_renderer": "vanilla:ThrownItemRenderer",
+      "port_candidate": "none",
+      "truth_verdicts": {
+        "shadow": "MATCH",
+        "scale": "MATCH_VIA_OTHER_PATH"
+      },
+      "truth_verified": true,
+      "status": "not_applicable",
+      "reason": "ThrownItemRenderer (vanilla) renders the item sprite; shadow 0 by EntityRenderer default, scale via the item model's GROUND transform (MATCH_VIA_OTHER_PATH)",
+      "mod": null
+    },
+    {
+      "entity": "InkSack",
+      "ref_line": 395,
+      "ref_render_class": "RenderItemUrchin",
+      "ref_registration": "(Render)new RenderItemUrchin()",
+      "expected_shadow": 0,
+      "expected_scale": 0.5,
+      "ref_derivation": "shadow: `new RenderItemUrchin()` no-arg (ClientProxyOreSpawn.java:395); RenderItemUrchin.java:17-54 and RenderSpinner.java:15-55 define no constructor and never set shadowSize => Render default 0. Re-verified. | scale: RenderSpinner.java:25 glScalef(0.5f,0.5f,0.5f) on the unit quad (:37-39,:45-48) => 0.5-block billboard, x -0.25..0.25, y -0.125..0.375. Re-verified.",
+      "port_renderer": "vanilla:ThrownItemRenderer",
+      "port_candidate": "none",
+      "truth_verdicts": {
+        "shadow": "MATCH",
+        "scale": "MATCH_VIA_OTHER_PATH"
+      },
+      "truth_verified": true,
+      "status": "not_applicable",
+      "reason": "ThrownItemRenderer (vanilla) renders the item sprite; shadow 0 by EntityRenderer default, scale via the item model's GROUND transform (MATCH_VIA_OTHER_PATH)",
+      "mod": null
+    },
+    {
+      "entity": "LaserBall",
+      "ref_line": 396,
+      "ref_render_class": "RenderItemUrchin",
+      "ref_registration": "(Render)new RenderItemUrchin()",
+      "expected_shadow": 0,
+      "expected_scale": 0.5,
+      "ref_derivation": "shadow: `new RenderItemUrchin()` no-arg (ClientProxyOreSpawn.java:396); no constructor in RenderItemUrchin.java:17-54 or RenderSpinner.java:15-55, shadowSize never set => 0. Re-verified. | scale: RenderSpinner.java:25 glScalef(0.5f,0.5f,0.5f) on the unit quad (:37-39,:45-48) => 0.5-block billboard. Re-verified.",
+      "port_renderer": "vanilla:ThrownItemRenderer",
+      "port_candidate": "none",
+      "truth_verdicts": {
+        "shadow": "MATCH",
+        "scale": "MATCH_VIA_OTHER_PATH"
+      },
+      "truth_verified": true,
+      "status": "not_applicable",
+      "reason": "ThrownItemRenderer (vanilla) renders the item sprite; shadow 0 by EntityRenderer default, scale via the item model's GROUND transform (MATCH_VIA_OTHER_PATH)",
+      "mod": null
+    },
+    {
+      "entity": "IceBall",
+      "ref_line": 397,
+      "ref_render_class": "RenderItemUrchin",
+      "ref_registration": "(Render)new RenderItemUrchin()",
+      "expected_shadow": 0,
+      "expected_scale": 0.5,
+      "ref_derivation": "shadow: `new RenderItemUrchin()` no-arg (ClientProxyOreSpawn.java:397); no constructor / no shadowSize in RenderItemUrchin.java:17-54 or RenderSpinner.java:15-55 => 0. Re-verified. | scale: RenderSpinner.java:25 glScalef(0.5f,0.5f,0.5f) on the unit quad (:37-39,:45-48). Re-verified.",
+      "port_renderer": "vanilla:ThrownItemRenderer",
+      "port_candidate": "none",
+      "truth_verdicts": {
+        "shadow": "MATCH",
+        "scale": "MATCH_VIA_OTHER_PATH"
+      },
+      "truth_verified": true,
+      "status": "not_applicable",
+      "reason": "ThrownItemRenderer (vanilla) renders the item sprite; shadow 0 by EntityRenderer default, scale via the item model's GROUND transform (MATCH_VIA_OTHER_PATH)",
+      "mod": null
+    },
+    {
+      "entity": "Acid",
+      "ref_line": 398,
+      "ref_render_class": "RenderItemUrchin",
+      "ref_registration": "(Render)new RenderItemUrchin()",
+      "expected_shadow": 0,
+      "expected_scale": 0.5,
+      "ref_derivation": "shadow: `new RenderItemUrchin()` no-arg (ClientProxyOreSpawn.java:398); no constructor / no shadowSize in RenderItemUrchin.java:17-54 or RenderSpinner.java:15-55 => 0. Re-verified. | scale: RenderSpinner.java:25 glScalef(0.5f,0.5f,0.5f) on the unit quad (:37-39,:45-48). Re-verified.",
+      "port_renderer": "vanilla:ThrownItemRenderer",
+      "port_candidate": "none",
+      "truth_verdicts": {
+        "shadow": "MATCH",
+        "scale": "MATCH_VIA_OTHER_PATH"
+      },
+      "truth_verified": true,
+      "status": "not_applicable",
+      "reason": "ThrownItemRenderer (vanilla) renders the item sprite; shadow 0 by EntityRenderer default, scale via the item model's GROUND transform (MATCH_VIA_OTHER_PATH)",
+      "mod": null
+    },
+    {
+      "entity": "DeadIrukandji",
+      "ref_line": 399,
+      "ref_render_class": "RenderItemUrchin",
+      "ref_registration": "(Render)new RenderItemUrchin()",
+      "expected_shadow": 0,
+      "expected_scale": 0.5,
+      "ref_derivation": "shadow: `new RenderItemUrchin()` no-arg (ClientProxyOreSpawn.java:399); no constructor / no shadowSize in RenderItemUrchin.java:17-54 or RenderSpinner.java:15-55 => 0. Re-verified. | scale: RenderSpinner.java:25 glScalef(0.5f,0.5f,0.5f) on the unit quad (:37-39,:45-48). Re-verified.",
+      "port_renderer": "vanilla:ThrownItemRenderer",
+      "port_candidate": "none",
+      "truth_verdicts": {
+        "shadow": "MATCH",
+        "scale": "MATCH_VIA_OTHER_PATH"
+      },
+      "truth_verified": true,
+      "status": "not_applicable",
+      "reason": "ThrownItemRenderer (vanilla) renders the item sprite; shadow 0 by EntityRenderer default, scale via the item model's GROUND transform (MATCH_VIA_OTHER_PATH)",
+      "mod": null
+    },
+    {
+      "entity": "BerthaHit",
+      "ref_line": 400,
+      "ref_render_class": "RenderItemUrchin",
+      "ref_registration": "(Render)new RenderItemUrchin()",
+      "expected_shadow": 0,
+      "expected_scale": null,
+      "ref_derivation": "shadow: `new RenderItemUrchin()` no-arg (ClientProxyOreSpawn.java:400); no constructor / no shadowSize in RenderItemUrchin.java:17-54 or RenderSpinner.java:15-55 => 0. ... | scale: RenderItemUrchin.java:21-23 `if (par1Entity instanceof BerthaHit) return;` before super.func_76986_a (:52), so RenderSpinner.java:25 glScalef(0.5) is never reached and nothing is drawn. No scale applies. Re-verified.",
+      "port_renderer": "src/main/java/danger/orespawn/entity/client/NoopProjectileRenderer.java",
+      "port_candidate": "none",
+      "truth_verdicts": {
+        "shadow": "MATCH",
+        "scale": "NOT_APPLICABLE"
+      },
+      "truth_verified": true,
+      "status": "not_applicable",
+      "reason": "1.7.10 RenderItemUrchin early-returns for BerthaHit (nothing drawn); port NoopProjectileRenderer draws nothing (NOT_APPLICABLE)",
+      "mod": null
+    },
+    {
+      "entity": "EntityCage",
+      "ref_line": 401,
+      "ref_render_class": "RenderCage",
+      "ref_registration": "(Render)new RenderCage()",
+      "expected_shadow": 0,
+      "expected_scale": 0.5,
+      "ref_derivation": "shadow: `new RenderCage()` no-arg (ClientProxyOreSpawn.java:401); RenderCage.java:10-20 declares no constructor (only the func_76986_a override :12-19) and RenderSpinner.java:15-55 has no constructor/shadowSize assignment => Render default 0. Re-verified. | scale: RenderCage.java:18 calls super.func_76986_a => RenderSpinner.java:25 glScalef(0.5f,0.5f,0.5f) on the unit quad (:37-39,:45-48) => 0.5-block billboard, x -0.25..0.25, y -0.125..0.375. Re-verified.",
+      "port_renderer": "vanilla:ThrownItemRenderer",
+      "port_candidate": "none",
+      "truth_verdicts": {
+        "shadow": "MATCH",
+        "scale": "MATCH_VIA_OTHER_PATH"
+      },
+      "truth_verified": true,
+      "status": "not_applicable",
+      "reason": "ThrownItemRenderer (vanilla) renders the item sprite; shadow 0 by EntityRenderer default, scale via the item model's GROUND transform (MATCH_VIA_OTHER_PATH)",
+      "mod": null
+    },
+    {
+      "entity": "UltimateFishHook",
+      "ref_line": 402,
+      "ref_render_class": "RenderFish",
+      "ref_registration": "(Render)new RenderFish()",
+      "expected_shadow": 0,
+      "expected_scale": 0.5,
+      "ref_derivation": "shadow: `new RenderFish()` \u2014 vanilla 1.7.10 RenderFish declares no constructor and never assigns shadowSize, so by the proven engine fact (plain Render subclass => shadowSize 0 unless its constructor sets it) shadowSize = 0.0f. ... | scale: Vanilla 1.7.10 RenderFish.doRender: glTranslatef(x,y,z); glEnable(RESCALE_NORMAL); glScalef(0.5F,0.5F,0.5F); then the billboarded 1x1 bobber quad (vanilla-source knowledge; no on-disk copy). Uniform 0.5.",
+      "port_renderer": "vanilla:FishingHookRenderer",
+      "port_candidate": "none",
+      "truth_verdicts": {
+        "shadow": "MATCH",
+        "scale": "MATCH"
+      },
+      "truth_verified": true,
+      "status": "not_applicable",
+      "reason": "vanilla FishingHookRenderer: shadow is EntityRenderer's 0 default and the 0.5 bobber scale is vanilla's own; no OreSpawn knob to pin",
+      "mod": null
+    },
+    {
+      "entity": "UltimateArrow",
+      "ref_line": 403,
+      "ref_render_class": "RenderArrow",
+      "ref_registration": "(Render)new RenderArrow()",
+      "expected_shadow": 0,
+      "expected_scale": 0.05625,
+      "ref_derivation": "shadow: `new RenderArrow()` \u2014 vanilla 1.7.10 RenderArrow declares no constructor and never assigns shadowSize => shadowSize 0.0f by the proven plain-Render engine fact. Vanilla-source-from-knowledge, not verifiable from files on this machine. | scale: Vanilla 1.7.10 RenderArrow.doRender: translate, rotate (yaw-90) about Y / pitch about Z, arrowShake wobble, glRotatef(45,1,0,0), glScalef(0.05625F,0.05625F,0.05625F), glTranslatef(-4,0,0), then the 16-unit arrow quads (vanilla-source knowledge). ...",
+      "port_renderer": "src/main/java/danger/orespawn/entity/client/OreSpawnArrowRenderer.java",
+      "port_candidate": "none",
+      "truth_verdicts": {
+        "shadow": "MATCH",
+        "scale": "MATCH"
+      },
+      "truth_verified": true,
+      "status": "not_applicable",
+      "reason": "OreSpawnArrowRenderer is a non-living sprite renderer over vanilla ArrowRenderer: shadow is EntityRenderer's 0 default and the 0.05625 scale is vanilla's own; no SCALE/SHADOW knob to pin",
+      "mod": null
+    },
+    {
+      "entity": "EntityThrownRock",
+      "ref_line": 404,
+      "ref_render_class": "RenderThrownRock",
+      "ref_registration": "(Render)new RenderThrownRock()",
+      "expected_shadow": 0,
+      "expected_scale": 0.5,
+      "ref_derivation": "shadow: `new RenderThrownRock()` \u2014 RenderThrownRock.java declares no constructor (lines 18-29 are only the twelve texture constants; methods start at :31) and never assigns shadowSize => 0.0f by the proven plain-Render engine fact. | scale: RenderThrownRock.func_76986_a (doRender): glTranslatef(x,y,z) (RenderThrownRock.java:34), glEnable(RESCALE_NORMAL) (:35), GL11.glScalef(0.5f,0.5f,0.5f) (:36), then func_77026_a draws a 1.0x1.0 quad (var7=1.0f, var8=0.5f, var9=0.25f ...",
+      "port_renderer": "vanilla:ThrownItemRenderer",
+      "port_candidate": "none",
+      "truth_verdicts": {
+        "shadow": "MATCH",
+        "scale": "MATCH_VIA_OTHER_PATH"
+      },
+      "truth_verified": true,
+      "status": "not_applicable",
+      "reason": "ThrownItemRenderer (vanilla) renders the item sprite; shadow 0 by EntityRenderer default, scale via the item model's GROUND transform (MATCH_VIA_OTHER_PATH)",
+      "mod": null
+    },
+    {
+      "entity": "EntityButterfly",
+      "ref_line": 405,
+      "ref_render_class": "RenderButterfly",
+      "ref_registration": "(Render)new RenderButterfly(new ModelButterfly(1.0f), 0.3f, 1.0f)",
+      "expected_shadow": 0.3,
+      "expected_scale": 1,
+      "ref_derivation": "shadow: RenderButterfly(ModelButterfly par1, float par2, float par3) { super((ModelBase)par1, par2 * par3); this.scale = par3; } (RenderButterfly.java:24-27). ... | scale: this.scale = par3 = 1.0f (RenderButterfly.java:26); preRenderCallback func_77041_b -> preRenderScale -> GL11.glScalef(scale,scale,scale) (RenderButterfly.java:41-47) => 1.0.",
+      "port_renderer": "src/main/java/danger/orespawn/entity/client/ButterflyRenderer.java",
+      "port_candidate": "none",
+      "truth_verdicts": {
+        "shadow": "DIVERGES",
+        "scale": "MATCH"
+      },
+      "truth_verified": true,
+      "status": "pin",
+      "note": "ENT-S-092 batch 2 (2026-09-03): shadow restored to the 1.7.10 value; pinned",
+      "truth_port_values": {
+        "shadow": 0.15,
+        "scale": 1
+      },
+      "mod": null
+    },
+    {
+      "entity": "Firefly",
+      "ref_line": 406,
+      "ref_render_class": "RenderFirefly",
+      "ref_registration": "(Render)new RenderFirefly(new ModelFirefly(2.5f), 0.2f, 0.75f)",
+      "expected_shadow": 0.15,
+      "expected_scale": 0.75,
+      "ref_derivation": "shadow: RenderFirefly(ModelFirefly par1, float par2, float par3) { super((ModelBase)par1, par2 * par3); this.scale = par3; } (RenderFirefly.java:21-24). ... | scale: this.scale = par3 = 0.75f (RenderFirefly.java:23); func_77041_b -> preRenderScale -> GL11.glScalef(0.75,0.75,0.75) (RenderFirefly.java:38-44).",
+      "port_renderer": "src/main/java/danger/orespawn/entity/client/FireflyRenderer.java",
+      "port_candidate": "none",
+      "truth_verdicts": {
+        "shadow": "DIVERGES",
+        "scale": "DIVERGES"
+      },
+      "truth_verified": true,
+      "status": "pin",
+      "note": "ENT-S-092 batch 1a (2026-09-03): restored to the 1.7.10 values; pinned",
+      "truth_port_values": {
+        "shadow": 0.1,
+        "scale": 1
+      },
+      "mod": null
+    },
+    {
+      "entity": "EntityLunaMoth",
+      "ref_line": 407,
+      "ref_render_class": "RenderButterfly",
+      "ref_registration": "(Render)new RenderButterfly(new ModelButterfly(0.75f), 0.4f, 1.5f)",
+      "expected_shadow": 0.6,
+      "expected_scale": 1.5,
+      "ref_derivation": "shadow: super((ModelBase)par1ModelBase, par2 * par3) (RenderButterfly.java:25). Registration `new RenderButterfly(new ModelButterfly(0.75f), 0.4f, 1.5f)` (ClientProxyOreSpawn.java:407) => super(model, 0.4f * 1.5f) => shadowSize 0.6 (float 0.6000000238). ... | scale: this.scale = par3 = 1.5f (RenderButterfly.java:26); func_77041_b -> preRenderScale -> GL11.glScalef(1.5,1.5,1.5) (RenderButterfly.java:41-47).",
+      "port_renderer": "src/main/java/danger/orespawn/entity/client/LunaMothRenderer.java",
+      "port_candidate": "none",
+      "truth_verdicts": {
+        "shadow": "DIVERGES",
+        "scale": "MATCH"
+      },
+      "truth_verified": true,
+      "status": "pin",
+      "note": "ENT-S-092 batch 2 (2026-09-03): shadow restored to the 1.7.10 value; pinned",
+      "truth_port_values": {
+        "shadow": 0.15,
+        "scale": 1.5
+      },
+      "mod": null
+    },
+    {
+      "entity": "EntityMosquito",
+      "ref_line": 408,
+      "ref_render_class": "RenderMosquito",
+      "ref_registration": "(Render)new RenderMosquito(new ModelMosquito(), 0.3f, 0.5f)",
+      "expected_shadow": 0.15,
+      "expected_scale": 0.5,
+      "ref_derivation": "shadow: RenderMosquito(ModelMosquito par1, float par2, float par3) { super((ModelBase)par1, par2 * par3); this.scale = par3; } (RenderMosquito.java:22-25). ... | scale: this.scale = par3 = 0.5f (RenderMosquito.java:24); func_77041_b -> preRenderScale -> GL11.glScalef(0.5,0.5,0.5) (RenderMosquito.java:39-45).",
+      "port_renderer": "src/main/java/danger/orespawn/entity/client/MosquitoRenderer.java",
+      "port_candidate": "none",
+      "truth_verdicts": {
+        "shadow": "MATCH",
+        "scale": "MATCH"
+      },
+      "truth_verified": true,
+      "status": "pin",
+      "mod": null
+    },
+    {
+      "entity": "Ghost",
+      "ref_line": 409,
+      "ref_render_class": "RenderGhost",
+      "ref_registration": "(Render)new RenderGhost(new ModelGhost(), 0.0f, 0.65f)",
+      "expected_shadow": 0,
+      "expected_scale": 0.65,
+      "ref_derivation": "shadow: RenderGhost(ModelGhost par1, float par2, float par3) { super((ModelBase)par1, par2 * par3); this.scale = par3; } (RenderGhost.java:22-25). ... | scale: this.scale = par3 = 0.65f (RenderGhost.java:24); func_77041_b -> preRenderScale -> GL11.glScalef(0.65,0.65,0.65) (RenderGhost.java:39-45).",
+      "port_renderer": "src/main/java/danger/orespawn/entity/client/GhostRenderer.java",
+      "port_candidate": "none",
+      "truth_verdicts": {
+        "shadow": "MATCH",
+        "scale": "MATCH"
+      },
+      "truth_verified": true,
+      "status": "pin",
+      "mod": null
+    },
+    {
+      "entity": "GhostSkelly",
+      "ref_line": 410,
+      "ref_render_class": "RenderGhostSkelly",
+      "ref_registration": "(Render)new RenderGhostSkelly(new ModelGhostSkelly(), 0.0f, 1.05f)",
+      "expected_shadow": 0,
+      "expected_scale": 1.05,
+      "ref_derivation": "shadow: RenderGhostSkelly.java:22-23 `super((ModelBase)par1ModelBase, par2 * par3)` with ClientProxyOreSpawn.java:410 args (0.0f, 1.05f) -> shadowSize = 0.0f * 1.05f = 0.0 (re-read; confirmed) | scale: RenderGhostSkelly.java:24 `this.scale = par3` = 1.05f; RenderGhostSkelly.java:39-41 preRenderScale -> GL11.glScalef(1.05,1.05,1.05), invoked via func_77041_b (preRenderCallback) at :43-45 (re-read; confirmed)",
+      "port_renderer": "src/main/java/danger/orespawn/entity/client/GhostSkellyRenderer.java",
+      "port_candidate": "none",
+      "truth_verdicts": {
+        "shadow": "DIVERGES",
+        "scale": "DIVERGES"
+      },
+      "truth_verified": true,
+      "status": "pin",
+      "note": "ENT-S-092 batch 1a (2026-09-03): restored to the 1.7.10 values; pinned",
+      "truth_port_values": {
+        "shadow": 0.5,
+        "scale": 1
+      },
+      "mod": null
+    },
+    {
+      "entity": "Mothra",
+      "ref_line": 411,
+      "ref_render_class": "RenderButterfly",
+      "ref_registration": "(Render)new RenderButterfly(new ModelButterfly(0.2f), 0.75f, 10.0f)",
+      "expected_shadow": 7.5,
+      "expected_scale": 10,
+      "ref_derivation": "shadow: RenderButterfly.java:24-25 `super((ModelBase)par1ModelBase, par2 * par3)` with ClientProxyOreSpawn.java:411 args (0.75f, 10.0f) -> shadowSize = 0.75f * 10.0f = 7.5 (re-read; confirmed) | scale: RenderButterfly.java:26 `this.scale = par3` = 10.0f; RenderButterfly.java:41-43 preRenderScale -> GL11.glScalef(10,10,10) via func_77041_b at :45-47. ...",
+      "port_renderer": "src/main/java/danger/orespawn/entity/client/MothraRenderer.java",
+      "port_candidate": "none",
+      "truth_verdicts": {
+        "shadow": "DIVERGES",
+        "scale": "MATCH"
+      },
+      "truth_verified": true,
+      "status": "pin",
+      "note": "ENT-S-092 batch 2 (2026-09-03): shadow restored to the 1.7.10 value; pinned",
+      "truth_port_values": {
+        "shadow": 1.5,
+        "scale": 10
+      },
+      "mod": null
+    },
+    {
+      "entity": "EntityAnt",
+      "ref_line": 412,
+      "ref_render_class": "RenderAnt",
+      "ref_registration": "(Render)new RenderAnt(new ModelAnt(), 0.1f, 0.25f)",
+      "expected_shadow": 0.025,
+      "expected_scale": 0.25,
+      "ref_derivation": "shadow: RenderAnt.java:21-22 `super((ModelBase)par1ModelBase, par2 * par3)` with ClientProxyOreSpawn.java:412 args (0.1f, 0.25f) -> shadowSize = 0.1f * 0.25f = 0.025 (re-read; confirmed) | scale: RenderAnt.java:23 `this.scale = par3` = 0.25f (field default at :19 is also 0.25f); RenderAnt.java:38-40 preRenderScale -> GL11.glScalef(0.25,0.25,0.25) via func_77041_b at :42-44 (re-read; confirmed)",
+      "port_renderer": "src/main/java/danger/orespawn/entity/client/AntRenderer.java",
+      "port_candidate": "none",
+      "truth_verdicts": {
+        "shadow": "MATCH",
+        "scale": "MATCH"
+      },
+      "truth_verified": true,
+      "status": "pin",
+      "mod": null
+    },
+    {
+      "entity": "EntityRedAnt",
+      "ref_line": 413,
+      "ref_render_class": "RenderAnt",
+      "ref_registration": "(Render)new RenderAnt(new ModelAnt(), 0.15f, 0.35f)",
+      "expected_shadow": 0.0525,
+      "expected_scale": 0.35,
+      "ref_derivation": "shadow: RenderAnt.java:21-22 `super((ModelBase)par1ModelBase, par2 * par3)` with ClientProxyOreSpawn.java:413 args (0.15f, 0.35f) -> shadowSize = 0.15f * 0.35f = 0.0525 (re-read; confirmed) | scale: RenderAnt.java:23 `this.scale = par3` = 0.35f; RenderAnt.java:38-40 preRenderScale -> GL11.glScalef(0.35,0.35,0.35) via func_77041_b at :42-44 (re-read; confirmed)",
+      "port_renderer": "src/main/java/danger/orespawn/entity/client/RedAntRenderer.java",
+      "port_candidate": "none",
+      "truth_verdicts": {
+        "shadow": "MATCH",
+        "scale": "MATCH"
+      },
+      "truth_verified": true,
+      "status": "pin",
+      "mod": null
+    },
+    {
+      "entity": "EntityRainbowAnt",
+      "ref_line": 414,
+      "ref_render_class": "RenderAnt",
+      "ref_registration": "(Render)new RenderAnt(new ModelAnt(), 0.1f, 0.25f)",
+      "expected_shadow": 0.025,
+      "expected_scale": 0.25,
+      "ref_derivation": "shadow: RenderAnt.java:21-22 `super((ModelBase)par1ModelBase, par2 * par3)` with ClientProxyOreSpawn.java:414 args (0.1f, 0.25f) -> shadowSize = 0.1f * 0.25f = 0.025 (re-read; confirmed) | scale: RenderAnt.java:23 `this.scale = par3` = 0.25f; RenderAnt.java:38-40 preRenderScale -> GL11.glScalef(0.25,0.25,0.25) via func_77041_b at :42-44 (re-read; confirmed)",
+      "port_renderer": "src/main/java/danger/orespawn/entity/client/RainbowAntRenderer.java",
+      "port_candidate": "none",
+      "truth_verdicts": {
+        "shadow": "MATCH",
+        "scale": "MATCH"
+      },
+      "truth_verified": true,
+      "status": "pin",
+      "mod": null
+    },
+    {
+      "entity": "EntityUnstableAnt",
+      "ref_line": 415,
+      "ref_render_class": "RenderAnt",
+      "ref_registration": "(Render)new RenderAnt(new ModelAnt(), 0.1f, 0.25f)",
+      "expected_shadow": 0.025,
+      "expected_scale": 0.25,
+      "ref_derivation": "shadow: RenderAnt.java:21-22 `super((ModelBase)par1ModelBase, par2 * par3)` with ClientProxyOreSpawn.java:415 args (0.1f, 0.25f) -> shadowSize = 0.1f * 0.25f = 0.025 (re-read; confirmed) | scale: RenderAnt.java:23 `this.scale = par3` = 0.25f; RenderAnt.java:38-40 preRenderScale -> GL11.glScalef(0.25,0.25,0.25) via func_77041_b at :42-44 (re-read; confirmed)",
+      "port_renderer": "src/main/java/danger/orespawn/entity/client/UnstableAntRenderer.java",
+      "port_candidate": "none",
+      "truth_verdicts": {
+        "shadow": "MATCH",
+        "scale": "MATCH"
+      },
+      "truth_verified": true,
+      "status": "pin",
+      "mod": null
+    },
+    {
+      "entity": "Alosaurus",
+      "ref_line": 416,
+      "ref_render_class": "RenderAlosaurus",
+      "ref_registration": "(Render)new RenderAlosaurus(new ModelAlosaurus(0.22f), 1.0f, 1.0f)",
+      "expected_shadow": 1,
+      "expected_scale": 1,
+      "ref_derivation": "shadow: RenderAlosaurus.java:22-23 `super((ModelBase)par1ModelBase, par2 * par3)` with ClientProxyOreSpawn.java:416 args (1.0f, 1.0f) -> shadowSize = 1.0f * 1.0f = 1.0 (re-read; confirmed) | scale: RenderAlosaurus.java:24 `this.scale = par3` = 1.0f; RenderAlosaurus.java:39-41 preRenderScale -> GL11.glScalef(1,1,1) (identity) via func_77041_b at :43-45. ...",
+      "port_renderer": "src/main/java/danger/orespawn/entity/client/AlosaurusRenderer.java",
+      "port_candidate": "none",
+      "truth_verdicts": {
+        "shadow": "MATCH",
+        "scale": "MATCH"
+      },
+      "truth_verified": true,
+      "status": "pin",
+      "mod": null
+    },
+    {
+      "entity": "TRex",
+      "ref_line": 417,
+      "ref_render_class": "RenderTRex",
+      "ref_registration": "(Render)new RenderTRex(new ModelTRex(0.2f), 1.0f, 1.2f)",
+      "expected_shadow": 1.2,
+      "expected_scale": 1.2,
+      "ref_derivation": "shadow: RenderTRex.java:22-23 `super((ModelBase)par1ModelBase, par2 * par3)` with ClientProxyOreSpawn.java:417 args (1.0f, 1.2f) -> shadowSize = 1.0f * 1.2f = 1.2 (re-read; confirmed) | scale: RenderTRex.java:24 `this.scale = par3` = 1.2f; RenderTRex.java:39-41 preRenderScale -> GL11.glScalef(1.2,1.2,1.2) via func_77041_b at :43-45 (after the (-1,-1,1) flip, before the -24/16 lift, so the lift is scaled too). ...",
+      "port_renderer": "src/main/java/danger/orespawn/entity/client/TRexRenderer.java",
+      "port_candidate": "none",
+      "truth_verdicts": {
+        "shadow": "DIVERGES",
+        "scale": "MATCH"
+      },
+      "truth_verified": true,
+      "status": "pin",
+      "note": "ENT-S-092 batch 2 (2026-09-03): shadow restored to the 1.7.10 value; pinned",
+      "truth_port_values": {
+        "shadow": 1,
+        "scale": 1.2
+      },
+      "mod": null
+    },
+    {
+      "entity": "Tshirt",
+      "ref_line": 418,
+      "ref_render_class": "RenderTshirt",
+      "ref_registration": "(Render)new RenderTshirt(new ModelTshirt(0.22f), 1.0f, 0.33f)",
+      "expected_shadow": 0.33,
+      "expected_scale": 0.33,
+      "ref_derivation": "shadow: RenderTshirt.java:22-23 `super((ModelBase)par1ModelBase, par2 * par3)` with ClientProxyOreSpawn.java:418 args (new ModelTshirt(0.22f), 1.0f, 0.33f) => shadowSize = 1.0f * 0.33f = 0.33 (re-read, confirmed) | scale: RenderTshirt.java:24 `this.scale = par3` (0.33f); :39-41 preRenderScale -> GL11.glScalef(scale,scale,scale) via func_77041_b (:43-45); no isChild branch. ModelTshirt(0.22f) is `wingspeed` (ModelTshirt.java:13,17-18,39), an animation frequency, not a size. ...",
+      "port_renderer": "src/main/java/danger/orespawn/entity/client/TshirtRenderer.java",
+      "port_candidate": "none",
+      "truth_verdicts": {
+        "shadow": "MATCH",
+        "scale": "MATCH"
+      },
+      "truth_verified": true,
+      "status": "pin",
+      "mod": null
+    },
+    {
+      "entity": "Cryolophosaurus",
+      "ref_line": 419,
+      "ref_render_class": "RenderCryolophosaurus",
+      "ref_registration": "(Render)new RenderCryolophosaurus(new ModelCryolophosaurus(0.75f), 0.75f, 0.5f)",
+      "expected_shadow": 0.375,
+      "expected_scale": 0.5,
+      "ref_derivation": "shadow: RenderCryolophosaurus.java:22-23 `super((ModelBase)par1ModelBase, par2 * par3)` with ClientProxyOreSpawn.java:419 args (new ModelCryolophosaurus(0.75f), 0.75f, 0.5f) => 0.75f * 0.5f = 0.375 (confirmed) | scale: RenderCryolophosaurus.java:24 `this.scale = par3` (0.5f); :39-41 preRenderScale -> glScalef(0.5) via func_77041_b (:43-45); no isChild branch. ModelCryolophosaurus(0.75f) is wingspeed (ModelCryolophosaurus.java:13,35-38,165), not a size. Confirmed.",
+      "port_renderer": "src/main/java/danger/orespawn/entity/client/CryolophosaurusRenderer.java",
+      "port_candidate": "none",
+      "truth_verdicts": {
+        "shadow": "MATCH",
+        "scale": "MATCH"
+      },
+      "truth_verified": true,
+      "status": "pin",
+      "mod": null
+    },
+    {
+      "entity": "Basilisk",
+      "ref_line": 420,
+      "ref_render_class": "RenderBasilisk",
+      "ref_registration": "(Render)new RenderBasilisk(new ModelBasilisk(0.3f), 0.5f, 1.25f)",
+      "expected_shadow": 0.625,
+      "expected_scale": 1.25,
+      "ref_derivation": "shadow: RenderBasilisk.java:22-23 `super((ModelBase)par1ModelBase, par2 * par3)` with ClientProxyOreSpawn.java:420 args (new ModelBasilisk(0.3f), 0.5f, 1.25f) => 0.5f * 1.25f = 0.625 (confirmed) | scale: RenderBasilisk.java:24 `this.scale = par3` (1.25f); :39-41 preRenderScale -> glScalef(1.25) via func_77041_b (:43-45); NO isChild branch in the reference (confirmed). ModelBasilisk(0.3f) is wingspeed (ModelBasilisk.java:14,37-38,174-176), not a size.",
+      "port_renderer": "src/main/java/danger/orespawn/entity/client/BasiliskRenderer.java",
+      "port_candidate": "none",
+      "truth_verdicts": {
+        "shadow": "DIVERGES",
+        "scale": "MATCH"
+      },
+      "truth_verified": true,
+      "status": "pin",
+      "note": "ENT-S-092 batch 2 (2026-09-03): shadow restored to the 1.7.10 value; pinned",
+      "truth_port_values": {
+        "shadow": 1.5,
+        "scale": 1.25
+      },
+      "mod": null
+    },
+    {
+      "entity": "Camarasaurus",
+      "ref_line": 421,
+      "ref_render_class": "RenderCamarasaurus",
+      "ref_registration": "(Render)new RenderCamarasaurus(new ModelCamarasaurus(0.65f), 0.65f, 0.65f)",
+      "expected_shadow": 0.4225,
+      "expected_scale": 0.65,
+      "ref_derivation": "shadow: RenderCamarasaurus.java:22-23 `super((ModelBase)par1ModelBase, par2 * par3)` with ClientProxyOreSpawn.java:421 args (new ModelCamarasaurus(0.65f), 0.65f, 0.65f) => 0.65f * 0.65f = 0.4225 (confirmed) | scale: RenderCamarasaurus.java:24 `this.scale = par3` (0.65f); :39-45 preRenderScale: if par1Entity.func_70631_g_() (isChild) glScalef(scale/2 = 0.325) else glScalef(0.65); via func_77041_b (:47-49). ...",
+      "port_renderer": "src/main/java/danger/orespawn/entity/client/CamarasaurusRenderer.java",
+      "port_candidate": "none",
+      "truth_verdicts": {
+        "shadow": "MATCH",
+        "scale": "MATCH"
+      },
+      "truth_verified": true,
+      "status": "pin",
+      "mod": null
+    },
+    {
+      "entity": "Hydrolisc",
+      "ref_line": 422,
+      "ref_render_class": "RenderHydrolisc",
+      "ref_registration": "(Render)new RenderHydrolisc(new ModelHydrolisc(0.65f), 0.65f, 0.65f)",
+      "expected_shadow": 0.4225,
+      "expected_scale": 0.65,
+      "ref_derivation": "shadow: RenderHydrolisc.java:22-23 `super((ModelBase)par1ModelBase, par2 * par3)` with ClientProxyOreSpawn.java:422 args (new ModelHydrolisc(0.65f), 0.65f, 0.65f) => 0.65f * 0.65f = 0.4225 (confirmed) | scale: RenderHydrolisc.java:24 `this.scale = par3` (0.65f); :39-45 preRenderScale: func_70631_g_() (isChild) -> glScalef(0.325) else glScalef(0.65); via func_77041_b (:47-49). ModelHydrolisc(0.65f) is wingspeed (ModelHydrolisc.java:14,56-57), not a size. Confirmed.",
+      "port_renderer": "src/main/java/danger/orespawn/entity/client/HydroliscRenderer.java",
+      "port_candidate": "none",
+      "truth_verdicts": {
+        "shadow": "DIVERGES",
+        "scale": "DIVERGES"
+      },
+      "truth_verified": true,
+      "status": "pin",
+      "note": "ENT-S-092 batch 1a (2026-09-03): restored to the 1.7.10 values; pinned",
+      "truth_port_values": {
+        "shadow": 0.25,
+        "scale": 1
+      },
+      "mod": null
+    },
+    {
+      "entity": "VelocityRaptor",
+      "ref_line": 423,
+      "ref_render_class": "RenderVelocityRaptor",
+      "ref_registration": "(Render)new RenderVelocityRaptor(new ModelVelocityRaptor(1.25f), 0.55f, 0.75f)",
+      "expected_shadow": 0.4125,
+      "expected_scale": 0.75,
+      "ref_derivation": "shadow: RenderVelocityRaptor.java:25-26 `super((ModelBase)par1ModelBase, par2 * par3)` with ClientProxyOreSpawn.java:423 args (new ModelVelocityRaptor(1.25f), 0.55f, 0.75f) => 0.55f * 0.75f = 0.4125 (confirmed) | scale: RenderVelocityRaptor.java:27 `this.scale = par3` (0.75f); :42-48 preRenderScale: func_70631_g_() (isChild) -> glScalef(0.375) else glScalef(0.75); via func_77041_b (:50-52). ...",
+      "port_renderer": "src/main/java/danger/orespawn/entity/client/VelocityRaptorRenderer.java",
+      "port_candidate": "none",
+      "truth_verdicts": {
+        "shadow": "DIVERGES",
+        "scale": "DIVERGES"
+      },
+      "truth_verified": true,
+      "status": "pin",
+      "note": "ENT-S-092 batch 1a (2026-09-03): restored to the 1.7.10 values; pinned",
+      "truth_port_values": {
+        "shadow": 0.5,
+        "scale": 1
+      },
+      "mod": null
+    },
+    {
+      "entity": "Dragonfly",
+      "ref_line": 424,
+      "ref_render_class": "RenderDragonfly",
+      "ref_registration": "(Render)new RenderDragonfly(new ModelDragonfly(2.0f), 0.3f, 1.5f)",
+      "expected_shadow": 0.45,
+      "expected_scale": 1.5,
+      "ref_derivation": "shadow: RenderDragonfly.java:22-23 `super((ModelBase)par1ModelBase, par2 * par3)` with ClientProxyOreSpawn.java:424 args (new ModelDragonfly(2.0f), 0.3f, 1.5f) => 0.3f * 1.5f = 0.45 (confirmed) | scale: RenderDragonfly.java:24 `this.scale = par3` (1.5f); :39-41 preRenderScale -> glScalef(1.5) via func_77041_b (:43-45); no isChild branch. ModelDragonfly(2.0f) is wingspeed (ModelDragonfly.java:13,41-42), not a size. Confirmed.",
+      "port_renderer": "src/main/java/danger/orespawn/entity/client/DragonflyRenderer.java",
+      "port_candidate": "none",
+      "truth_verdicts": {
+        "shadow": "DIVERGES",
+        "scale": "DIVERGES"
+      },
+      "truth_verified": true,
+      "status": "pin",
+      "note": "ENT-S-092 batch 1a (2026-09-03): restored to the 1.7.10 values; pinned",
+      "truth_port_values": {
+        "shadow": 0.5,
+        "scale": 1
+      },
+      "mod": null
+    },
+    {
+      "entity": "Bee",
+      "ref_line": 425,
+      "ref_render_class": "RenderBee",
+      "ref_registration": "(Render)new RenderBee(new ModelBee(2.0f), 0.9f, 1.1f)",
+      "expected_shadow": 0.99,
+      "expected_scale": 1.1,
+      "ref_derivation": "shadow: RenderBee.java:22-23 `super((ModelBase)par1ModelBase, par2 * par3)` with ClientProxyOreSpawn.java:425 args (new ModelBee(2.0f), 0.9f, 1.1f) => 0.9f * 1.1f = 0.99 (confirmed) | scale: RenderBee.java:24 `this.scale = par3` (1.1f); :39-41 preRenderScale -> glScalef(1.1) via func_77041_b (:43-45); no isChild branch. ModelBee(2.0f) is wingspeed (ModelBee.java:14,39-40), not a size. Confirmed.",
+      "port_renderer": "src/main/java/danger/orespawn/entity/client/BeeRenderer.java",
+      "port_candidate": "none",
+      "truth_verdicts": {
+        "shadow": "DIVERGES",
+        "scale": "DIVERGES"
+      },
+      "truth_verified": true,
+      "status": "pin",
+      "note": "ENT-S-092 batch 1a (2026-09-03): restored to the 1.7.10 values; pinned",
+      "truth_port_values": {
+        "shadow": 0.5,
+        "scale": 1
+      },
+      "mod": null
+    },
+    {
+      "entity": "EmperorScorpion",
+      "ref_line": 426,
+      "ref_render_class": "RenderEmperorScorpion",
+      "ref_registration": "(Render)new RenderEmperorScorpion(new ModelEmperorScorpion(0.22f), 0.95f, 1.5f)",
+      "expected_shadow": 1.425,
+      "expected_scale": 1.5,
+      "ref_derivation": "shadow: RenderEmperorScorpion.java:22-23 `super((ModelBase)par1ModelBase, par2 * par3)` with ClientProxyOreSpawn.java:426 `new RenderEmperorScorpion(new ModelEmperorScorpion(0.22f), 0.95f, 1.5f)` -> par2=0.95f, par3=1.5f ... | scale: RenderEmperorScorpion.java:24 `this.scale = par3` (=1.5f); :39-41 preRenderScale -> GL11.glScalef(scale,scale,scale) = 1.5 uniform, invoked from func_77041_b (preRenderCallback) :43-45. No isChild branch (re-read, confirmed).",
+      "port_renderer": "src/main/java/danger/orespawn/entity/client/EmperorScorpionRenderer.java",
+      "port_candidate": "none",
+      "truth_verdicts": {
+        "shadow": "DIVERGES",
+        "scale": "DIVERGES"
+      },
+      "truth_verified": true,
+      "status": "pin",
+      "note": "ENT-S-092 batch 1a (2026-09-03): restored to the 1.7.10 values; pinned",
+      "truth_port_values": {
+        "shadow": 1.2,
+        "scale": 1
+      },
+      "mod": null
+    },
+    {
+      "entity": "Spyro",
+      "ref_line": 427,
+      "ref_render_class": "RenderSpyro",
+      "ref_registration": "(Render)new RenderSpyro(new ModelSpyro(0.65f), 0.65f, 0.75f)",
+      "expected_shadow": 0.4875,
+      "expected_scale": 0.75,
+      "ref_derivation": "shadow: RenderSpyro.java:22-23 `super((ModelBase)par1ModelBase, par2 * par3)` with ClientProxyOreSpawn.java:427 `new RenderSpyro(new ModelSpyro(0.65f), 0.65f, 0.75f)` -> 0.65*0.75 = 0.4875 (re-read, confirmed) | scale: RenderSpyro.java:24 `this.scale = par3` (=0.75f); :39-41 preRenderScale glScalef(0.75,0.75,0.75) via func_77041_b :43-45. No isChild branch in the renderer. ...",
+      "port_renderer": "src/main/java/danger/orespawn/entity/client/SpyroRenderer.java",
+      "port_candidate": "none",
+      "truth_verdicts": {
+        "shadow": "DIVERGES",
+        "scale": "DIVERGES"
+      },
+      "truth_verified": true,
+      "status": "pin",
+      "note": "ENT-S-092 batch 1a (2026-09-03): restored to the 1.7.10 values; pinned",
+      "truth_port_values": {
+        "shadow": 0.5,
+        "scale": 1
+      },
+      "mod": null
+    },
+    {
+      "entity": "Baryonyx",
+      "ref_line": 428,
+      "ref_render_class": "RenderBaryonyx",
+      "ref_registration": "(Render)new RenderBaryonyx(new ModelBaryonyx(0.25f), 1.0f, 1.0f)",
+      "expected_shadow": 1,
+      "expected_scale": 1,
+      "ref_derivation": "shadow: RenderBaryonyx.java:22-23 `super((ModelBase)par1ModelBase, par2 * par3)` with ClientProxyOreSpawn.java:428 `new RenderBaryonyx(new ModelBaryonyx(0.25f), 1.0f, 1.0f)` -> 1.0*1.0 = 1.0 (re-read, confirmed) | scale: RenderBaryonyx.java:24 `this.scale = par3` (=1.0f); :39-45 preRenderScale: `if (par1Entity != null && par1Entity.func_70631_g_()) glScalef(scale/2.0f ...)` = 0.5 for children, else glScalef(1.0). Adult 1.0, baby 0.5. ...",
+      "port_renderer": "src/main/java/danger/orespawn/entity/client/BaryonyxRenderer.java",
+      "port_candidate": "none",
+      "truth_verdicts": {
+        "shadow": "MATCH",
+        "scale": "MATCH"
+      },
+      "truth_verified": true,
+      "status": "pin",
+      "mod": null
+    },
+    {
+      "entity": "GammaMetroid",
+      "ref_line": 429,
+      "ref_render_class": "RenderGammaMetroid",
+      "ref_registration": "(Render)new RenderGammaMetroid(new ModelGammaMetroid(0.45f), 0.75f, 0.9f)",
+      "expected_shadow": 0.675,
+      "expected_scale": 0.9,
+      "ref_derivation": "shadow: RenderGammaMetroid.java:22-23 `super((ModelBase)par1ModelBase, par2 * par3)` with ClientProxyOreSpawn.java:429 `new RenderGammaMetroid(new ModelGammaMetroid(0.45f), 0.75f, 0.9f)` -> 0.75*0.9 = 0.675 (re-read, confirmed) | scale: RenderGammaMetroid.java:24 `this.scale = par3` (=0.9f); :39-45 preRenderScale: isChild -> glScalef(scale/2.0f) = 0.45, else glScalef(0.9). Adult 0.9, baby 0.45. Babies exist: GammaMetroid.func_90011_a -> spawnBabyAnimal (GammaMetroid.java:462-466).",
+      "port_renderer": "src/main/java/danger/orespawn/entity/client/GammaMetroidRenderer.java",
+      "port_candidate": "none",
+      "truth_verdicts": {
+        "shadow": "DIVERGES",
+        "scale": "DIVERGES"
+      },
+      "truth_verified": true,
+      "status": "pin",
+      "note": "ENT-S-092 batch 1a (2026-09-03): restored to the 1.7.10 values; pinned",
+      "truth_port_values": {
+        "shadow": 1,
+        "scale": 1
+      },
+      "mod": null
+    },
+    {
+      "entity": "Cockateil",
+      "ref_line": 430,
+      "ref_render_class": "RenderCockateil",
+      "ref_registration": "(Render)new RenderCockateil(new ModelCockateil(1.0f), 0.3f, 0.75f)",
+      "expected_shadow": 0.225,
+      "expected_scale": 0.75,
+      "ref_derivation": "shadow: RenderCockateil.java:21-22 `super((ModelBase)par1ModelBase, par2 * par3)` with ClientProxyOreSpawn.java:430 `new RenderCockateil(new ModelCockateil(1.0f), 0.3f, 0.75f)` -> 0.3*0.75 = 0.225 (re-read, confirmed) | scale: RenderCockateil.java:23 `this.scale = par3` (=0.75f); :38-40 preRenderScale glScalef(0.75,0.75,0.75) via func_77041_b :42-44. No isChild branch. Cockateil.func_90011_a returns null (Cockateil.java:253-255), so no babies.",
+      "port_renderer": "src/main/java/danger/orespawn/entity/client/CockateilRenderer.java",
+      "port_candidate": "none",
+      "truth_verdicts": {
+        "shadow": "DIVERGES",
+        "scale": "DIVERGES"
+      },
+      "truth_verified": true,
+      "status": "pin",
+      "note": "ENT-S-092 batch 1a (2026-09-03): restored to the 1.7.10 values; pinned",
+      "truth_port_values": {
+        "shadow": 0.3,
+        "scale": 1
+      },
+      "mod": null
+    },
+    {
+      "entity": "RubyBird",
+      "ref_line": 431,
+      "ref_render_class": "RenderCockateil",
+      "ref_registration": "(Render)new RenderCockateil(new ModelCockateil(1.0f), 0.3f, 0.75f)",
+      "expected_shadow": 0.225,
+      "expected_scale": 0.75,
+      "ref_derivation": "shadow: RenderCockateil.java:21-22 `super((ModelBase)par1ModelBase, par2 * par3)` with ClientProxyOreSpawn.java:431 par2=0.3f, par3=0.75f -> 0.225 (re-read, confirmed) | scale: RenderCockateil.java:23 `this.scale = par3` (=0.75f); :38-40 preRenderScale glScalef(0.75). RubyBird extends Cockateil (RubyBird.java:9-10) and overrides only func_70088_a (birdtype=5), the ambient sound ...",
+      "port_renderer": "src/main/java/danger/orespawn/entity/client/CockateilRenderer.java",
+      "port_candidate": "none",
+      "truth_verdicts": {
+        "shadow": "DIVERGES",
+        "scale": "DIVERGES"
+      },
+      "truth_verified": true,
+      "status": "pin",
+      "note": "ENT-S-092 batch 1a (2026-09-03): restored to the 1.7.10 values; pinned",
+      "truth_port_values": {
+        "shadow": 0.3,
+        "scale": 1
+      },
+      "mod": null
+    },
+    {
+      "entity": "Kyuubi",
+      "ref_line": 432,
+      "ref_render_class": "RenderKyuubi",
+      "ref_registration": "(Render)new RenderKyuubi(new ModelKyuubi(0.5f), 0.1f, 1.0f)",
+      "expected_shadow": 0.1,
+      "expected_scale": 1,
+      "ref_derivation": "shadow: RenderKyuubi.java:22-23 `super((ModelBase)par1ModelBase, par2 * par3)` with ClientProxyOreSpawn.java:432 `new RenderKyuubi(new ModelKyuubi(0.5f), 0.1f, 1.0f)` -> 0.1*1.0 = 0.1 (re-read, confirmed) | scale: RenderKyuubi.java:24 `this.scale = par3` (=1.0f); :39-41 preRenderScale glScalef(1.0,1.0,1.0) \u2014 identity; via func_77041_b :43-45. No isChild branch.",
+      "port_renderer": "src/main/java/danger/orespawn/entity/client/KyuubiRenderer.java",
+      "port_candidate": "none",
+      "truth_verdicts": {
+        "shadow": "DIVERGES",
+        "scale": "MATCH"
+      },
+      "truth_verified": true,
+      "status": "pin",
+      "note": "ENT-S-092 batch 2 (2026-09-03): shadow restored to the 1.7.10 value; pinned",
+      "truth_port_values": {
+        "shadow": 0.5,
+        "scale": 1
+      },
+      "mod": null
+    },
+    {
+      "entity": "Scorpion",
+      "ref_line": 433,
+      "ref_render_class": "RenderScorpion",
+      "ref_registration": "(Render)new RenderScorpion(new ModelScorpion(0.62f), 0.35f, 0.75f)",
+      "expected_shadow": 0.2625,
+      "expected_scale": 0.75,
+      "ref_derivation": "shadow: RenderScorpion.java:22-23 `super((ModelBase)par1ModelBase, par2 * par3)` with ClientProxyOreSpawn.java:433 `new RenderScorpion(new ModelScorpion(0.62f), 0.35f, 0.75f)` -> 0.35*0.75 = 0.2625 (re-read, confirmed) | scale: RenderScorpion.java:24 `this.scale = par3` (=0.75f); :39-41 preRenderScale glScalef(0.75,0.75,0.75) via func_77041_b :43-45. No isChild branch.",
+      "port_renderer": "src/main/java/danger/orespawn/entity/client/ScorpionRenderer.java",
+      "port_candidate": "none",
+      "truth_verdicts": {
+        "shadow": "DIVERGES",
+        "scale": "DIVERGES"
+      },
+      "truth_verified": true,
+      "status": "pin",
+      "note": "ENT-S-092 batch 1a (2026-09-03): restored to the 1.7.10 values; pinned",
+      "truth_port_values": {
+        "shadow": 0.3,
+        "scale": 1
+      },
+      "mod": null
+    },
+    {
+      "entity": "CaveFisher",
+      "ref_line": 434,
+      "ref_render_class": "RenderCaveFisher",
+      "ref_registration": "(Render)new RenderCaveFisher(new ModelCaveFisher(0.62f), 0.35f, 0.75f)",
+      "expected_shadow": 0.2625,
+      "expected_scale": 0.75,
+      "ref_derivation": "shadow: RenderCaveFisher.java:22-25 `super((ModelBase)par1ModelBase, par2 * par3)` with ClientProxyOreSpawn.java:434 args par2=0.35f, par3=0.75f -> shadowSize = 0.35f*0.75f = 0.2625f (float32 0.26249998807907104). | scale: RenderCaveFisher.java:24 `this.scale = par3` (par3=0.75f from ClientProxyOreSpawn.java:434); RenderCaveFisher.java:39-45 preRenderScale/func_77041_b -> `GL11.glScalef(0.75,0.75,0.75)` unconditionally. ...",
+      "port_renderer": "src/main/java/danger/orespawn/entity/client/CaveFisherRenderer.java",
+      "port_candidate": "none",
+      "truth_verdicts": {
+        "shadow": "DIVERGES",
+        "scale": "DIVERGES"
+      },
+      "truth_verified": false,
+      "status": "pin",
+      "note": "ENT-S-092 batch 1a (2026-09-03): restored to the 1.7.10 values; pinned",
+      "truth_port_values": {
+        "shadow": 0.5,
+        "scale": 1
+      },
+      "mod": null
+    },
+    {
+      "entity": "Alien",
+      "ref_line": 435,
+      "ref_render_class": "RenderAlien",
+      "ref_registration": "(Render)new RenderAlien(new ModelAlien(0.22f), 0.35f, 1.1f)",
+      "expected_shadow": 0.385,
+      "expected_scale": 1.1,
+      "ref_derivation": "shadow: RenderAlien.java:22-25 `super((ModelBase)par1ModelBase, par2 * par3)` with ClientProxyOreSpawn.java:435 args par2=0.35f, par3=1.1f -> shadowSize = 0.35f*1.1f = 0.385f (float32 0.38499999046325684). | scale: RenderAlien.java:24 `this.scale = par3` (par3=1.1f); RenderAlien.java:39-45 preRenderScale -> `GL11.glScalef(1.1,1.1,1.1)` unconditionally. ModelAlien(0.22f) is `this.wingspeed` only (ModelAlien.java:72-73).",
+      "port_renderer": "src/main/java/danger/orespawn/entity/client/AlienRenderer.java",
+      "port_candidate": "none",
+      "truth_verdicts": {
+        "shadow": "DIVERGES",
+        "scale": "DIVERGES"
+      },
+      "truth_verified": false,
+      "status": "pin",
+      "note": "ENT-S-092 batch 1a (2026-09-03): restored to the 1.7.10 values; pinned",
+      "truth_port_values": {
+        "shadow": 0.7,
+        "scale": 1
+      },
+      "mod": null
+    },
+    {
+      "entity": "WaterDragon",
+      "ref_line": 436,
+      "ref_render_class": "RenderWaterDragon",
+      "ref_registration": "(Render)new RenderWaterDragon(new ModelWaterDragon(0.5f), 0.85f, 1.1f)",
+      "expected_shadow": 0.935,
+      "expected_scale": 1.1,
+      "ref_derivation": "shadow: RenderWaterDragon.java:22-25 `super((ModelBase)par1ModelBase, par2 * par3)` with ClientProxyOreSpawn.java:436 args par2=0.85f, par3=1.1f -> shadowSize = 0.85f*1.1f = 0.935f (float32 0.9350000619888306). | scale: RenderWaterDragon.java:24 `this.scale = par3` (1.1f); RenderWaterDragon.java:39-45 preRenderScale: if `par1Entity.func_70631_g_()` (isChild) -> `glScalef(scale/2)` = 0.55; else `glScalef(1.1)`. ...",
+      "port_renderer": "src/main/java/danger/orespawn/entity/client/WaterDragonRenderer.java",
+      "port_candidate": "none",
+      "truth_verdicts": {
+        "shadow": "DIVERGES",
+        "scale": "DIVERGES"
+      },
+      "truth_verified": false,
+      "status": "pin",
+      "note": "ENT-S-092 batch 1a (2026-09-03): restored to the 1.7.10 values; pinned",
+      "truth_port_values": {
+        "shadow": 0.85,
+        "scale": 1.1
+      },
+      "mod": null
+    },
+    {
+      "entity": "AttackSquid",
+      "ref_line": 437,
+      "ref_render_class": "RenderAttackSquid",
+      "ref_registration": "(Render)new RenderAttackSquid(new ModelAttackSquid(1.0f), 0.25f, 0.9f)",
+      "expected_shadow": 0.225,
+      "expected_scale": 0.9,
+      "ref_derivation": "shadow: RenderAttackSquid.java:22-25 `super((ModelBase)par1ModelBase, par2 * par3)` with ClientProxyOreSpawn.java:437 args par2=0.25f, par3=0.9f -> shadowSize = 0.25f*0.9f = 0.225f (float32 0.22499999403953552). | scale: RenderAttackSquid.java:24 `this.scale = par3` (0.9f); RenderAttackSquid.java:39-45 preRenderScale -> `GL11.glScalef(0.9,0.9,0.9)` unconditionally. ModelAttackSquid(1.0f) is `this.wingspeed` only (ModelAttackSquid.java:25-26).",
+      "port_renderer": "src/main/java/danger/orespawn/entity/client/AttackSquidRenderer.java",
+      "port_candidate": "none",
+      "truth_verdicts": {
+        "shadow": "DIVERGES",
+        "scale": "DIVERGES"
+      },
+      "truth_verified": false,
+      "status": "pin",
+      "note": "ENT-S-092 batch 1a (2026-09-03): restored to the 1.7.10 values; pinned",
+      "truth_port_values": {
+        "shadow": 0.5,
+        "scale": 1
+      },
+      "mod": null
+    },
+    {
+      "entity": "Elevator",
+      "ref_line": 438,
+      "ref_render_class": "RenderElevator",
+      "ref_registration": "(Render)new RenderElevator()",
+      "expected_shadow": 0.25,
+      "expected_scale": 1,
+      "ref_derivation": "shadow: RenderElevator.java:22-25 constructor sets `this.field_76989_e = 0.25f` (Render.shadowSize) directly; registration `new RenderElevator()` takes no args. | scale: RenderElevator.java:39-41 `f4 = 0.75f; glScalef(f4,f4,f4); glScalef(1/f4,1/f4,1/f4)` -> net identity; then :43 `glScalef(-1,-1,1)` flip and :44 model render at 0.0625 with NO -24/16 lift. Effective world scale 1.0.",
+      "port_renderer": "src/main/java/danger/orespawn/entity/client/ElevatorRenderer.java",
+      "port_candidate": "src/main/java/danger/orespawn/entity/client/ElevatorGeoReplacement.java",
+      "truth_verdicts": {
+        "shadow": "MATCH",
+        "scale": "MATCH"
+      },
+      "truth_verified": false,
+      "status": "pin",
+      "mod": null
+    },
+    {
+      "entity": "Robot1",
+      "ref_line": 439,
+      "ref_render_class": "RenderRobot1",
+      "ref_registration": "(Render)new RenderRobot1(new ModelRobot1(2.0f), 0.3f, 1.0f)",
+      "expected_shadow": 0.3,
+      "expected_scale": 1,
+      "ref_derivation": "shadow: RenderRobot1.java:22-25 `super((ModelBase)par1ModelBase, par2 * par3)` with ClientProxyOreSpawn.java:439 args par2=0.3f, par3=1.0f -> shadowSize = 0.3f*1.0f = 0.3f. | scale: RenderRobot1.java:24 `this.scale = par3` (1.0f); RenderRobot1.java:39-45 preRenderScale -> `GL11.glScalef(1.0,1.0,1.0)` (identity). ModelRobot1(2.0f) is `this.wingspeed` only (ModelRobot1.java:43-44), an animation-rate multiplier.",
+      "port_renderer": "src/main/java/danger/orespawn/entity/client/Robot1Renderer.java",
+      "port_candidate": "src/main/java/danger/orespawn/entity/client/Robot1GeoReplacement.java",
+      "truth_verdicts": {
+        "shadow": "DIVERGES",
+        "scale": "MATCH"
+      },
+      "truth_verified": false,
+      "status": "pin",
+      "note": "ENT-S-092 batch 2 (2026-09-03): shadow restored to the 1.7.10 value; pinned",
+      "truth_port_values": {
+        "shadow": 0.5,
+        "scale": 1
+      },
+      "mod": null
+    },
+    {
+      "entity": "Robot2",
+      "ref_line": 440,
+      "ref_render_class": "RenderRobot2",
+      "ref_registration": "(Render)new RenderRobot2(new ModelRobot2(1.0f), 1.0f, 1.0f)",
+      "expected_shadow": 1,
+      "expected_scale": 1,
+      "ref_derivation": "shadow: RenderRobot2.java:22-25 `super((ModelBase)par1ModelBase, par2 * par3)` with ClientProxyOreSpawn.java:440 args par2=1.0f, par3=1.0f -> shadowSize = 1.0f. | scale: RenderRobot2.java:24 `this.scale = par3` (1.0f); RenderRobot2.java:39-45 preRenderScale -> `GL11.glScalef(1.0,1.0,1.0)` (identity). ModelRobot2(1.0f) is `this.wingspeed` only (ModelRobot2.java:32-33).",
+      "port_renderer": "src/main/java/danger/orespawn/entity/client/Robot2Renderer.java",
+      "port_candidate": "src/main/java/danger/orespawn/entity/client/Robot2GeoReplacement.java",
+      "truth_verdicts": {
+        "shadow": "DIVERGES",
+        "scale": "MATCH"
+      },
+      "truth_verified": false,
+      "status": "pin",
+      "note": "ENT-S-092 batch 2 (2026-09-03): shadow restored to the 1.7.10 value; pinned",
+      "truth_port_values": {
+        "shadow": 1.5,
+        "scale": 1
+      },
+      "mod": null
+    },
+    {
+      "entity": "Robot3",
+      "ref_line": 441,
+      "ref_render_class": "RenderRobot3",
+      "ref_registration": "(Render)new RenderRobot3(new ModelRobot3(1.0f), 1.0f, 0.5f)",
+      "expected_shadow": 0.5,
+      "expected_scale": 0.5,
+      "ref_derivation": "shadow: RenderRobot3.java:22-25 `super((ModelBase)par1ModelBase, par2 * par3)` with ClientProxyOreSpawn.java:441 args par2=1.0f, par3=0.5f -> shadowSize = 1.0f*0.5f = 0.5f. | scale: RenderRobot3.java:24 `this.scale = par3` (0.5f); RenderRobot3.java:39-45 preRenderScale -> `GL11.glScalef(0.5,0.5,0.5)` unconditionally. ModelRobot3(1.0f) is `this.wingspeed` only (ModelRobot3.java:36-37).",
+      "port_renderer": "src/main/java/danger/orespawn/entity/client/Robot3Renderer.java",
+      "port_candidate": "src/main/java/danger/orespawn/entity/client/Robot3GeoReplacement.java",
+      "truth_verdicts": {
+        "shadow": "DIVERGES",
+        "scale": "DIVERGES"
+      },
+      "truth_verified": false,
+      "status": "pin",
+      "note": "ENT-S-092 batch 1a (2026-09-03): restored to the 1.7.10 values; pinned",
+      "truth_port_values": {
+        "shadow": 2,
+        "scale": 1
+      },
+      "mod": null
+    },
+    {
+      "entity": "Robot4",
+      "ref_line": 442,
+      "ref_render_class": "RenderRobot4",
+      "ref_registration": "(Render)new RenderRobot4(new ModelRobot4(1.0f), 1.0f, 1.0f)",
+      "expected_shadow": 1,
+      "expected_scale": 1,
+      "ref_derivation": "shadow: ClientProxyOreSpawn.java:442 `new RenderRobot4(new ModelRobot4(1.0f), 1.0f, 1.0f)` -> par2=1.0f, par3=1.0f; RenderRobot4.java:22-23 `super((ModelBase)par1ModelBase, par2 * par3)` = 1.0f*1.0f = 1.0 (RenderLiving stores it as Render.shadowSize) | scale: RenderRobot4.java:24 `this.scale = par3` = 1.0f; RenderRobot4.java:39-41 preRenderScale `GL11.glScalef(scale, scale, scale)` unconditional = 1.0, dispatched from func_77041_b at :43-45. ...",
+      "port_renderer": "src/main/java/danger/orespawn/entity/client/Robot4Renderer.java",
+      "port_candidate": "src/main/java/danger/orespawn/entity/client/Robot4GeoReplacement.java",
+      "truth_verdicts": {
+        "shadow": "DIVERGES",
+        "scale": "MATCH"
+      },
+      "truth_verified": true,
+      "status": "pin",
+      "note": "ENT-S-092 batch 2 (2026-09-03): shadow restored to the 1.7.10 value; pinned",
+      "truth_port_values": {
+        "shadow": 1.5,
+        "scale": 1
+      },
+      "mod": null
+    },
+    {
+      "entity": "Robot5",
+      "ref_line": 443,
+      "ref_render_class": "RenderRobot5",
+      "ref_registration": "(Render)new RenderRobot5(new ModelRobot5(1.0f), 0.5f, 1.0f)",
+      "expected_shadow": 0.5,
+      "expected_scale": 1,
+      "ref_derivation": "shadow: ClientProxyOreSpawn.java:443 `new RenderRobot5(new ModelRobot5(1.0f), 0.5f, 1.0f)` -> par2=0.5f, par3=1.0f; RenderRobot5.java:22-23 `super((ModelBase)par1ModelBase, par2 * par3)` = 0.5f*1.0f = 0.5 | scale: RenderRobot5.java:24 `this.scale = par3` = 1.0f; RenderRobot5.java:39-41 preRenderScale `glScalef(scale,scale,scale)` unconditional = 1.0 (dispatched from :43-45). ...",
+      "port_renderer": "src/main/java/danger/orespawn/entity/client/Robot5Renderer.java",
+      "port_candidate": "src/main/java/danger/orespawn/entity/client/Robot5GeoReplacement.java",
+      "truth_verdicts": {
+        "shadow": "MATCH",
+        "scale": "MATCH"
+      },
+      "truth_verified": true,
+      "status": "pin",
+      "mod": null
+    },
+    {
+      "entity": "Kraken",
+      "ref_line": 444,
+      "ref_render_class": "RenderKraken",
+      "ref_registration": "(Render)new RenderKraken(new ModelKraken(1.0f), 1.0f, 1.0f)",
+      "expected_shadow": 1,
+      "expected_scale": 1,
+      "ref_derivation": "shadow: ClientProxyOreSpawn.java:444 `new RenderKraken(new ModelKraken(1.0f), 1.0f, 1.0f)` -> par2=1.0f, par3=1.0f; RenderKraken.java:22-23 `super((ModelBase)par1ModelBase, par2 * par3)` = 1.0f*1.0f = 1.0 (a constructor constant ... | scale: RenderKraken.java:24 `this.scale = par3` = 1.0f; preRenderScale RenderKraken.java:39-45: if `par1Entity.getPlayNicely() != 0` -> glScalef(scale/3.0f) = 0.3333; else glScalef(scale) = 1.0. ...",
+      "port_renderer": "src/main/java/danger/orespawn/entity/client/KrakenRenderer.java",
+      "port_candidate": "none",
+      "truth_verdicts": {
+        "shadow": "DIVERGES",
+        "scale": "DIVERGES"
+      },
+      "truth_verified": true,
+      "status": "pin",
+      "note": "ENT-S-092 batch 1b (2026-09-03): restored to the 1.7.10 values (hit surfaces do not follow the render scale, boss read refuted); pinned",
+      "mod": null
+    },
+    {
+      "entity": "Lizard",
+      "ref_line": 445,
+      "ref_render_class": "RenderLizard",
+      "ref_registration": "(Render)new RenderLizard(new ModelLizard(0.65f), 0.75f, 1.0f)",
+      "expected_shadow": 0.75,
+      "expected_scale": 1,
+      "ref_derivation": "shadow: ClientProxyOreSpawn.java:445 `new RenderLizard(new ModelLizard(0.65f), 0.75f, 1.0f)` -> par2=0.75f, par3=1.0f; RenderLizard.java:25-26 `super((ModelBase)par1ModelBase, par2 * par3)` = 0.75f*1.0f = 0.75 (constructor constant, so also 0.75 for children) | scale: RenderLizard.java:27 `this.scale = par3` = 1.0f; preRenderScale RenderLizard.java:42-48: child (`func_70631_g_()`) -> glScalef(scale/2.0f) = 0.5; adult -> glScalef(scale) = 1.0. ...",
+      "port_renderer": "src/main/java/danger/orespawn/entity/client/LizardRenderer.java",
+      "port_candidate": "none",
+      "truth_verdicts": {
+        "shadow": "DIVERGES",
+        "scale": "DIVERGES"
+      },
+      "truth_verified": true,
+      "status": "pin",
+      "note": "ENT-S-092 batch 1a (2026-09-03): restored to the 1.7.10 values; pinned",
+      "truth_port_values": {
+        "shadow": 0.5,
+        "scale": 1
+      },
+      "mod": null
+    },
+    {
+      "entity": "Cephadrome",
+      "ref_line": 446,
+      "ref_render_class": "RenderCephadrome",
+      "ref_registration": "(Render)new RenderCephadrome(new ModelCephadrome(0.55f), 1.25f, 1.0f)",
+      "expected_shadow": 1.25,
+      "expected_scale": 1,
+      "ref_derivation": "shadow: ClientProxyOreSpawn.java:446 `new RenderCephadrome(new ModelCephadrome(0.55f), 1.25f, 1.0f)` -> par2=1.25f, par3=1.0f; RenderCephadrome.java:22-23 `super((ModelBase)par1ModelBase, par2 * par3)` = 1.25f*1.0f = 1.25 | scale: RenderCephadrome.java:24 `this.scale = par3` = 1.0f; preRenderScale RenderCephadrome.java:39-41 glScalef(scale) unconditional = 1.0. ModelCephadrome(0.55f): ModelCephadrome.java:67-68 ctor float is wingspeed only; tex 512x256 at :69-70.",
+      "port_renderer": "src/main/java/danger/orespawn/entity/client/CephadromeRenderer.java",
+      "port_candidate": "none",
+      "truth_verdicts": {
+        "shadow": "MATCH",
+        "scale": "MATCH"
+      },
+      "truth_verified": true,
+      "status": "pin",
+      "mod": null
+    },
+    {
+      "entity": "Dragon",
+      "ref_line": 447,
+      "ref_render_class": "RenderDragon",
+      "ref_registration": "(Render)new RenderDragon(new ModelDragon(0.65f), 1.25f, 1.0f)",
+      "expected_shadow": 1.25,
+      "expected_scale": 1,
+      "ref_derivation": "shadow: ClientProxyOreSpawn.java:447 `new RenderDragon(new ModelDragon(0.65f), 1.25f, 1.0f)` -> par2=1.25f, par3=1.0f; RenderDragon.java:23-24 `super((ModelBase)par1ModelBase, par2 * par3)` = 1.25f*1.0f = 1.25 | scale: RenderDragon.java:25 `this.scale = par3` = 1.0f; preRenderScale RenderDragon.java:40-42 glScalef(scale) unconditional = 1.0 (no child branch, so 1.0 whether or not the entity is a child). ...",
+      "port_renderer": "src/main/java/danger/orespawn/entity/client/DragonRenderer.java",
+      "port_candidate": "none",
+      "truth_verdicts": {
+        "shadow": "DIVERGES",
+        "scale": "MATCH"
+      },
+      "truth_verified": true,
+      "status": "pin",
+      "note": "ENT-S-092 batch 2 (2026-09-03): shadow restored to the 1.7.10 value; pinned",
+      "truth_port_values": {
+        "shadow": 1.5,
+        "scale": 1
+      },
+      "mod": null
+    },
+    {
+      "entity": "Chipmunk",
+      "ref_line": 448,
+      "ref_render_class": "RenderChipmunk",
+      "ref_registration": "(Render)new RenderChipmunk(new ModelChipmunk(1.0f), 0.15f, 0.9f)",
+      "expected_shadow": 0.135,
+      "expected_scale": 0.9,
+      "ref_derivation": "shadow: ClientProxyOreSpawn.java:448 `new RenderChipmunk(new ModelChipmunk(1.0f), 0.15f, 0.9f)` -> par2=0.15f, par3=0.9f; RenderChipmunk.java:25-26 `super((ModelBase)par1ModelBase, par2 * par3)` = 0.15f*0.9f = 0.135 (float 0.13500001 ... | scale: RenderChipmunk.java:27 `this.scale = par3` = 0.9f; preRenderScale RenderChipmunk.java:42-48: child (`func_70631_g_()`) -> glScalef(scale/2.0f) = 0.45; adult -> glScalef(scale) = 0.9. ...",
+      "port_renderer": "src/main/java/danger/orespawn/entity/client/ChipmunkRenderer.java",
+      "port_candidate": "none",
+      "truth_verdicts": {
+        "shadow": "DIVERGES",
+        "scale": "DIVERGES"
+      },
+      "truth_verified": true,
+      "status": "pin",
+      "note": "ENT-S-092 batch 1a (2026-09-03): restored to the 1.7.10 values; pinned",
+      "truth_port_values": {
+        "shadow": 0.3,
+        "scale": 1
+      },
+      "mod": null
+    },
+    {
+      "entity": "Gazelle",
+      "ref_line": 449,
+      "ref_render_class": "RenderGazelle",
+      "ref_registration": "(Render)new RenderGazelle(new ModelGazelle(0.65f), 0.45f, 1.0f)",
+      "expected_shadow": 0.45,
+      "expected_scale": 1,
+      "ref_derivation": "shadow: ClientProxyOreSpawn.java:449 `new RenderGazelle(new ModelGazelle(0.65f), 0.45f, 1.0f)` -> par2=0.45f, par3=1.0f; RenderGazelle.java:22-23 `super((ModelBase)par1ModelBase, par2 * par3)` = 0.45f*1.0f = 0.45 (constructor constant, so also for children) | scale: RenderGazelle.java:24 `this.scale = par3` = 1.0f; preRenderScale RenderGazelle.java:39-45: child (`func_70631_g_()`) -> glScalef(scale/2.0f) = 0.5; adult -> glScalef(scale) = 1.0. ...",
+      "port_renderer": "src/main/java/danger/orespawn/entity/client/GazelleRenderer.java",
+      "port_candidate": "none",
+      "truth_verdicts": {
+        "shadow": "DIVERGES",
+        "scale": "MATCH"
+      },
+      "truth_verified": true,
+      "status": "pin",
+      "note": "ENT-S-092 batch 2 (2026-09-03): shadow restored to the 1.7.10 value; pinned",
+      "truth_port_values": {
+        "shadow": 0.5,
+        "scale": 1
+      },
+      "mod": null
+    },
+    {
+      "entity": "Ostrich",
+      "ref_line": 450,
+      "ref_render_class": "RenderOstrich",
+      "ref_registration": "(Render)new RenderOstrich(new ModelOstrich(0.65f), 0.55f, 1.0f)",
+      "expected_shadow": 0.55,
+      "expected_scale": 1,
+      "ref_derivation": "shadow: RenderOstrich.java:25-26 `super((ModelBase)par1ModelBase, par2 * par3)` with ClientProxyOreSpawn.java:450 args (0.55f, 1.0f) -> shadowSize = 0.55f * 1.0f = 0.55 (re-read, confirmed) | scale: RenderOstrich.java:27 `this.scale = par3` = 1.0f; func_77041_b (RenderOstrich.java:50-52) -> preRenderScale (RenderOstrich.java:42-48): adult `GL11.glScalef(scale, scale, scale)` = 1.0 ...",
+      "port_renderer": "src/main/java/danger/orespawn/entity/client/OstrichRenderer.java",
+      "port_candidate": "none",
+      "truth_verdicts": {
+        "shadow": "DIVERGES",
+        "scale": "MATCH"
+      },
+      "truth_verified": true,
+      "status": "pin",
+      "note": "ENT-S-092 batch 2 (2026-09-03): shadow restored to the 1.7.10 value; pinned",
+      "truth_port_values": {
+        "shadow": 0.5,
+        "scale": 1
+      },
+      "mod": null
+    },
+    {
+      "entity": "TrooperBug",
+      "ref_line": 451,
+      "ref_render_class": "RenderTrooperBug",
+      "ref_registration": "(Render)new RenderTrooperBug(new ModelTrooperBug(0.22f), 0.95f, 1.1f)",
+      "expected_shadow": 1.045,
+      "expected_scale": 1.1,
+      "ref_derivation": "shadow: RenderTrooperBug.java:22-23 `super((ModelBase)par1ModelBase, par2 * par3)` with ClientProxyOreSpawn.java:451 args (0.95f, 1.1f) -> 0.95f * 1.1f = 1.045 (float ~1.0449999) (re-read, confirmed) | scale: RenderTrooperBug.java:24 `this.scale = par3` = 1.1f; func_77041_b (:43-45) -> preRenderScale (:39-41) `GL11.glScalef(scale, scale, scale)` unconditionally = 1.1 (no baby branch; TrooperBug extends EntityMob, TrooperBug.java:49)",
+      "port_renderer": "src/main/java/danger/orespawn/entity/client/TrooperBugRenderer.java",
+      "port_candidate": "none",
+      "truth_verdicts": {
+        "shadow": "DIVERGES",
+        "scale": "DIVERGES"
+      },
+      "truth_verified": true,
+      "status": "pin",
+      "note": "ENT-S-092 batch 1a (2026-09-03): restored to the 1.7.10 values; pinned",
+      "truth_port_values": {
+        "shadow": 1,
+        "scale": 1
+      },
+      "mod": null
+    },
+    {
+      "entity": "SpitBug",
+      "ref_line": 452,
+      "ref_render_class": "RenderSpitBug",
+      "ref_registration": "(Render)new RenderSpitBug(new ModelSpitBug(0.55f), 0.55f, 0.75f)",
+      "expected_shadow": 0.4125,
+      "expected_scale": 0.75,
+      "ref_derivation": "shadow: RenderSpitBug.java:22-23 `super((ModelBase)par1ModelBase, par2 * par3)` with ClientProxyOreSpawn.java:452 args (0.55f, 0.75f) -> 0.55f * 0.75f = 0.4125 (re-read, confirmed) | scale: RenderSpitBug.java:24 `this.scale = par3` = 0.75f; func_77041_b (:43-45) -> preRenderScale (:39-41) `GL11.glScalef(scale, scale, scale)` unconditionally = 0.75 (no baby branch; SpitBug extends EntityMob, SpitBug.java:46)",
+      "port_renderer": "src/main/java/danger/orespawn/entity/client/SpitBugRenderer.java",
+      "port_candidate": "none",
+      "truth_verdicts": {
+        "shadow": "DIVERGES",
+        "scale": "DIVERGES"
+      },
+      "truth_verified": true,
+      "status": "pin",
+      "note": "ENT-S-092 batch 1a (2026-09-03): restored to the 1.7.10 values; pinned",
+      "truth_port_values": {
+        "shadow": 0.6,
+        "scale": 1
+      },
+      "mod": null
+    },
+    {
+      "entity": "StinkBug",
+      "ref_line": 453,
+      "ref_render_class": "RenderStinkBug",
+      "ref_registration": "(Render)new RenderStinkBug(new ModelStinkBug(0.75f), 0.35f, 0.85f)",
+      "expected_shadow": 0.2975,
+      "expected_scale": 0.85,
+      "ref_derivation": "shadow: RenderStinkBug.java:22-23 `super((ModelBase)par1ModelBase, par2 * par3)` with ClientProxyOreSpawn.java:453 args (0.35f, 0.85f) -> 0.35f * 0.85f = 0.2975 (float ~0.29750001) (re-read, confirmed) | scale: RenderStinkBug.java:24 `this.scale = par3` = 0.85f; func_77041_b (:47-49) -> preRenderScale (:39-45): adult `GL11.glScalef(scale, scale, scale)` = 0.85 ...",
+      "port_renderer": "src/main/java/danger/orespawn/entity/client/StinkBugRenderer.java",
+      "port_candidate": "none",
+      "truth_verdicts": {
+        "shadow": "MATCH",
+        "scale": "MATCH"
+      },
+      "truth_verified": true,
+      "status": "pin",
+      "mod": null
+    },
+    {
+      "entity": "Island",
+      "ref_line": 454,
+      "ref_render_class": "RenderIsland",
+      "ref_registration": "(Render)new RenderIsland(new ModelIsland(1.0f), 0.25f, 1.0f)",
+      "expected_shadow": 0.25,
+      "expected_scale": 1,
+      "ref_derivation": "shadow: RenderIsland.java:22-23 `super((ModelBase)par1ModelBase, par2 * par3)` with ClientProxyOreSpawn.java:454 args (0.25f, 1.0f) -> 0.25f * 1.0f = 0.25 (re-read, confirmed) | scale: RenderIsland.java:24 `this.scale = par3` = 1.0f; func_77041_b (:43-45) -> preRenderScale (:39-41) `GL11.glScalef(scale, scale, scale)` unconditionally = 1.0 (no baby branch even though Island extends EntityAnimal, Island.java:27, with func_90011_a at :133)",
+      "port_renderer": "src/main/java/danger/orespawn/entity/client/IslandRenderer.java",
+      "port_candidate": "src/main/java/danger/orespawn/entity/client/IslandGeoReplacement.java",
+      "truth_verdicts": {
+        "shadow": "MATCH",
+        "scale": "MATCH"
+      },
+      "truth_verified": true,
+      "status": "pin",
+      "mod": null
+    },
+    {
+      "entity": "IslandToo",
+      "ref_line": 455,
+      "ref_render_class": "RenderIslandToo",
+      "ref_registration": "(Render)new RenderIslandToo(new ModelIsland(1.0f), 0.25f, 1.0f)",
+      "expected_shadow": 0.25,
+      "expected_scale": 1,
+      "ref_derivation": "shadow: RenderIslandToo.java:22-23 `super((ModelBase)par1ModelBase, par2 * par3)` with ClientProxyOreSpawn.java:455 args (0.25f, 1.0f) -> 0.25f * 1.0f = 0.25 (re-read, confirmed) | scale: RenderIslandToo.java:24 `this.scale = par3` = 1.0f; func_77041_b (:43-45) -> preRenderScale (:39-41) `GL11.glScalef(scale, scale, scale)` unconditionally = 1.0 (no baby branch; IslandToo extends EntityAnimal IslandToo.java:18 with func_90011_a :130)",
+      "port_renderer": "src/main/java/danger/orespawn/entity/client/IslandTooRenderer.java",
+      "port_candidate": "src/main/java/danger/orespawn/entity/client/IslandTooGeoReplacement.java",
+      "truth_verdicts": {
+        "shadow": "MATCH",
+        "scale": "MATCH"
+      },
+      "truth_verified": true,
+      "status": "pin",
+      "mod": null
+    },
+    {
+      "entity": "CreepingHorror",
+      "ref_line": 456,
+      "ref_render_class": "RenderCreepingHorror",
+      "ref_registration": "(Render)new RenderCreepingHorror(new ModelCreepingHorror(), 0.45f, 0.75f)",
+      "expected_shadow": 0.3375,
+      "expected_scale": 0.75,
+      "ref_derivation": "shadow: RenderCreepingHorror.java:22-23 `super((ModelBase)par1ModelBase, par2 * par3)` with ClientProxyOreSpawn.java:456 args (0.45f, 0.75f) -> 0.45f * 0.75f = 0.3375 (float ~0.33749999) (re-read, confirmed) | scale: RenderCreepingHorror.java:24 `this.scale = par3` = 0.75f; func_77041_b (:43-45) -> preRenderScale (:39-41) `GL11.glScalef(scale, scale, scale)` unconditionally = 0.75 (no baby branch; CreepingHorror extends EntityMob, CreepingHorror.java:41)",
+      "port_renderer": "src/main/java/danger/orespawn/entity/client/CreepingHorrorRenderer.java",
+      "port_candidate": "none",
+      "truth_verdicts": {
+        "shadow": "DIVERGES",
+        "scale": "DIVERGES"
+      },
+      "truth_verified": true,
+      "status": "pin",
+      "note": "ENT-S-092 batch 1a (2026-09-03): restored to the 1.7.10 values; pinned",
+      "truth_port_values": {
+        "shadow": 0.3,
+        "scale": 1
+      },
+      "mod": null
+    },
+    {
+      "entity": "TerribleTerror",
+      "ref_line": 457,
+      "ref_render_class": "RenderTerribleTerror",
+      "ref_registration": "(Render)new RenderTerribleTerror(new ModelTerribleTerror(), 0.45f, 0.75f)",
+      "expected_shadow": 0.3375,
+      "expected_scale": 0.75,
+      "ref_derivation": "shadow: RenderTerribleTerror.java:22-23 `super((ModelBase)par1ModelBase, par2 * par3)` with ClientProxyOreSpawn.java:457 args (0.45f, 0.75f) -> 0.45f * 0.75f = 0.3375 (re-read, confirmed) | scale: RenderTerribleTerror.java:24 `this.scale = par3` = 0.75f; func_77041_b (:43-45) -> preRenderScale (:39-41) `GL11.glScalef(scale, scale, scale)` unconditionally = 0.75 (no baby branch; TerribleTerror extends EntityMob, TerribleTerror.java:45)",
+      "port_renderer": "src/main/java/danger/orespawn/entity/client/TerribleTerrorRenderer.java",
+      "port_candidate": "none",
+      "truth_verdicts": {
+        "shadow": "DIVERGES",
+        "scale": "DIVERGES"
+      },
+      "truth_verified": true,
+      "status": "pin",
+      "note": "ENT-S-092 batch 1a (2026-09-03): restored to the 1.7.10 values; pinned",
+      "truth_port_values": {
+        "shadow": 0.5,
+        "scale": 1
+      },
+      "mod": null
+    },
+    {
+      "entity": "CliffRacer",
+      "ref_line": 458,
+      "ref_render_class": "RenderCliffRacer",
+      "ref_registration": "(Render)new RenderCliffRacer(new ModelCliffRacer(1.0f), 0.3f, 1.0f)",
+      "expected_shadow": 0.3,
+      "expected_scale": 1,
+      "ref_derivation": "shadow: RenderCliffRacer.java:22-23 `super((ModelBase)par1ModelBase, par2 * par3)` with ClientProxyOreSpawn.java:458 args (new ModelCliffRacer(1.0f), 0.3f, 1.0f) -> shadowSize = 0.3f * 1.0f = 0.3 (re-read and confirmed). | scale: RenderCliffRacer.java:24 `this.scale = par3` = 1.0f; :39-41 preRenderScale `GL11.glScalef(this.scale, this.scale, this.scale)` dispatched from func_77041_b :43-45 -> 1.0. ...",
+      "port_renderer": "src/main/java/danger/orespawn/entity/client/CliffRacerRenderer.java",
+      "port_candidate": "none",
+      "truth_verdicts": {
+        "shadow": "DIVERGES",
+        "scale": "MATCH"
+      },
+      "truth_verified": true,
+      "status": "pin",
+      "note": "ENT-S-092 batch 2 (2026-09-03): shadow restored to the 1.7.10 value; pinned",
+      "truth_port_values": {
+        "shadow": 0.5,
+        "scale": 1
+      },
+      "mod": null
+    },
+    {
+      "entity": "Triffid",
+      "ref_line": 459,
+      "ref_render_class": "RenderTriffid",
+      "ref_registration": "(Render)new RenderTriffid(new ModelTriffid(1.0f), 0.3f, 1.0f)",
+      "expected_shadow": 0.3,
+      "expected_scale": 1,
+      "ref_derivation": "shadow: RenderTriffid.java:22-23 `super((ModelBase)par1ModelBase, par2 * par3)` with ClientProxyOreSpawn.java:459 args (new ModelTriffid(1.0f), 0.3f, 1.0f) -> 0.3f * 1.0f = 0.3 (confirmed). | scale: RenderTriffid.java:24 `this.scale = par3` = 1.0f; :39-41 `GL11.glScalef(this.scale, this.scale, this.scale)` via func_77041_b :43-45 -> 1.0. Model ctor arg 1.0f is `wingspeed` (ModelTriffid.java:195-196, used at :1275/:1343 for animation only).",
+      "port_renderer": "src/main/java/danger/orespawn/entity/client/TriffidRenderer.java",
+      "port_candidate": "none",
+      "truth_verdicts": {
+        "shadow": "DIVERGES",
+        "scale": "MATCH"
+      },
+      "truth_verified": true,
+      "status": "pin",
+      "note": "ENT-S-092 batch 2 (2026-09-03): shadow restored to the 1.7.10 value; pinned",
+      "truth_port_values": {
+        "shadow": 1,
+        "scale": 1
+      },
+      "mod": null
+    },
+    {
+      "entity": "PitchBlack",
+      "ref_line": 460,
+      "ref_render_class": "RenderPitchBlack",
+      "ref_registration": "(Render)new RenderPitchBlack(new ModelPitchBlack(0.65f), 1.25f, 1.0f)",
+      "expected_shadow": 1.25,
+      "expected_scale": "dynamic",
+      "ref_derivation": "shadow: RenderPitchBlack.java:22-23 `super((ModelBase)par1ModelBase, par2 * par3)` with ClientProxyOreSpawn.java:460 args (new ModelPitchBlack(0.65f), 1.25f, 1.0f) ... | scale: Per-entity, not a constant: RenderPitchBlack.java:39-42 `float pscale = par1Entity.getPitchBlackScale(); GL11.glScalef(pscale, pscale, pscale)` (ctor's this.scale=par3=1.0 at :24 is stored but never read). ...",
+      "port_renderer": "src/main/java/danger/orespawn/entity/client/PitchBlackRenderer.java",
+      "port_candidate": "none",
+      "truth_verdicts": {
+        "shadow": "DIVERGES",
+        "scale": "MATCH"
+      },
+      "truth_verified": true,
+      "status": "pin",
+      "note": "ENT-S-092 batch 2 (2026-09-03): shadow restored to the 1.7.10 value; pinned",
+      "truth_port_values": {
+        "shadow": 2,
+        "scale": null
+      },
+      "mod": null,
+      "scale_dynamic_note": "scale is the entity-driven size getter on both sides (orig RenderPitchBlack.preRenderCallback reads the entity; port PitchBlackRenderer applies the entity SIZE_SCALE); pinned by the transcription, not by a constant"
+    },
+    {
+      "entity": "LurkingTerror",
+      "ref_line": 461,
+      "ref_render_class": "RenderLurkingTerror",
+      "ref_registration": "(Render)new RenderLurkingTerror(new ModelLurkingTerror(), 0.45f, 0.85f)",
+      "expected_shadow": 0.3825,
+      "expected_scale": 0.85,
+      "ref_derivation": "shadow: RenderLurkingTerror.java:22-23 `super((ModelBase)par1ModelBase, par2 * par3)` with ClientProxyOreSpawn.java:461 args (new ModelLurkingTerror(), 0.45f, 0.85f) -> 0.45f * 0.85f = 0.3825 (confirmed). | scale: RenderLurkingTerror.java:24 `this.scale = par3` = 0.85f; :39-41 `GL11.glScalef(this.scale, this.scale, this.scale)` via func_77041_b :43-45 -> 0.85 every frame, unconditionally. ...",
+      "port_renderer": "src/main/java/danger/orespawn/entity/client/LurkingTerrorRenderer.java",
+      "port_candidate": "none",
+      "truth_verdicts": {
+        "shadow": "DIVERGES",
+        "scale": "DIVERGES"
+      },
+      "truth_verified": true,
+      "status": "pin",
+      "note": "ENT-S-092 batch 1a (2026-09-03): restored to the 1.7.10 values; pinned",
+      "truth_port_values": {
+        "shadow": 1,
+        "scale": 1
+      },
+      "mod": null
+    },
+    {
+      "entity": "Godzilla",
+      "ref_line": 462,
+      "ref_render_class": "RenderGodzilla",
+      "ref_registration": "(Render)new RenderGodzilla(new ModelGodzilla(0.2f), 1.0f, 2.0f)",
+      "expected_shadow": 2,
+      "expected_scale": 2,
+      "ref_derivation": "shadow: RenderGodzilla.java:22-23 `super((ModelBase)par1ModelBase, par2 * par3)` with ClientProxyOreSpawn.java:462 args (new ModelGodzilla(0.2f), 1.0f, 2.0f) -> 1.0f * 2.0f = 2.0 (confirmed); fixed, not affected by the PlayNicely branch in preRenderScale. | scale: RenderGodzilla.java:24 `this.scale = par3` = 2.0f; :39-45 preRenderScale: `if (par1Entity != null && par1Entity.getPlayNicely() != 0) { glScalef(scale/4.0f, scale/4.0f, scale/4.0f); return ...",
+      "port_renderer": "src/main/java/danger/orespawn/entity/client/GodzillaRenderer.java",
+      "port_candidate": "none",
+      "truth_verdicts": {
+        "shadow": "DIVERGES",
+        "scale": "DIVERGES"
+      },
+      "truth_verified": true,
+      "status": "pin",
+      "note": "ENT-S-092 batch 1b (2026-09-03): restored to the 1.7.10 values (hit surfaces do not follow the render scale, boss read refuted); pinned",
+      "mod": null
+    },
+    {
+      "entity": "GodzillaHead",
+      "ref_line": 463,
+      "ref_render_class": "RenderGodzillaHead",
+      "ref_registration": "(Render)new RenderGodzillaHead(null, 0.0f, 0.0f)",
+      "expected_shadow": 0,
+      "expected_scale": 1,
+      "ref_derivation": "shadow: RenderGodzillaHead.java:17-19 `super((ModelBase)par1ModelBase, par2 * par3)` with ClientProxyOreSpawn.java:463 args (null, 0.0f, 0.0f) -> 0.0f * 0.0f = 0.0; RenderLiving receives a null model. ... | scale: Nothing is multiplied: preRenderScale (:30-31) and func_77041_b (:33-34) are empty, both func_76986_a doRender overloads (:24-28) are empty, and func_110775_a returns null (:36-38), so no geometry is ever drawn (1.0 per the 'nothing' convention).",
+      "port_renderer": "src/main/java/danger/orespawn/entity/client/GodzillaHeadRenderer.java",
+      "port_candidate": "none",
+      "truth_verdicts": {
+        "shadow": "MATCH",
+        "scale": "MATCH"
+      },
+      "truth_verified": true,
+      "status": "pin",
+      "mod": null
+    },
+    {
+      "entity": "KingHead",
+      "ref_line": 464,
+      "ref_render_class": "RenderKingHead",
+      "ref_registration": "(Render)new RenderKingHead(null, 0.0f, 0.0f)",
+      "expected_shadow": 0,
+      "expected_scale": 1,
+      "ref_derivation": "shadow: RenderKingHead.java:17-19 `super((ModelBase)par1ModelBase, par2 * par3)` with ClientProxyOreSpawn.java:464 args (null, 0.0f, 0.0f) -> 0.0f * 0.0f = 0.0 (confirmed). | scale: Nothing is multiplied: preRenderScale (:30-31) and func_77041_b (:33-34) are empty; both func_76986_a doRender overloads (:24-28) are empty; func_110775_a returns null (:36-38); nothing is drawn (1.0 per convention).",
+      "port_renderer": "src/main/java/danger/orespawn/entity/client/KingHeadRenderer.java",
+      "port_candidate": "none",
+      "truth_verdicts": {
+        "shadow": "MATCH",
+        "scale": "MATCH"
+      },
+      "truth_verified": true,
+      "status": "pin",
+      "mod": null
+    },
+    {
+      "entity": "QueenHead",
+      "ref_line": 465,
+      "ref_render_class": "RenderQueenHead",
+      "ref_registration": "(Render)new RenderQueenHead(null, 0.0f, 0.0f)",
+      "expected_shadow": 0,
+      "expected_scale": 1,
+      "ref_derivation": "shadow: RenderQueenHead.java:17-19 `super((ModelBase)par1ModelBase, par2 * par3)` with ClientProxyOreSpawn.java:465 args (null, 0.0f, 0.0f) -> 0.0f * 0.0f = 0.0 (confirmed). | scale: Nothing is multiplied: preRenderScale (:30-31) and func_77041_b (:33-34) are empty; both func_76986_a doRender overloads (:24-28) are empty; func_110775_a returns null (:36-38); nothing is drawn (1.0 per convention).",
+      "port_renderer": "src/main/java/danger/orespawn/entity/client/QueenHeadRenderer.java",
+      "port_candidate": "none",
+      "truth_verdicts": {
+        "shadow": "MATCH",
+        "scale": "MATCH"
+      },
+      "truth_verified": true,
+      "status": "pin",
+      "mod": null
+    },
+    {
+      "entity": "WormSmall",
+      "ref_line": 466,
+      "ref_render_class": "RenderWormSmall",
+      "ref_registration": "(Render)new RenderWormSmall(new ModelWormSmall(), 0.1f, 1.0f)",
+      "expected_shadow": 0.1,
+      "expected_scale": 1,
+      "ref_derivation": "shadow: RenderWormSmall.java:22-23 `super((ModelBase)par1ModelBase, par2 * par3)` with registration args (ClientProxyOreSpawn.java:466 `new RenderWormSmall(new ModelWormSmall(), 0.1f, 1.0f)`) par2=0.1f, par3=1.0f -> RenderLiving shadowSize = 0.1f*1.0f = 0.1 | scale: RenderWormSmall.java:19 field default 1.0f, :24 `this.scale = par3` = 1.0f; preRenderScale (:39-41) `GL11.glScalef(scale, scale, scale)` reached via func_77041_b (:43-45) -> uniform 1.0. WormSmall extends EntityMob (WormSmall.java:21), no child branch.",
+      "port_renderer": "src/main/java/danger/orespawn/entity/client/WormSmallRenderer.java",
+      "port_candidate": "none",
+      "truth_verdicts": {
+        "shadow": "DIVERGES",
+        "scale": "MATCH"
+      },
+      "truth_verified": true,
+      "status": "pin",
+      "note": "ENT-S-092 batch 2 (2026-09-03): shadow restored to the 1.7.10 value; pinned",
+      "truth_port_values": {
+        "shadow": 0.25,
+        "scale": 1
+      },
+      "mod": null
+    },
+    {
+      "entity": "WormMedium",
+      "ref_line": 467,
+      "ref_render_class": "RenderWormMedium",
+      "ref_registration": "(Render)new RenderWormMedium(new ModelWormMedium(), 0.25f, 1.0f)",
+      "expected_shadow": 0.25,
+      "expected_scale": 1,
+      "ref_derivation": "shadow: RenderWormMedium.java:22-23 `super((ModelBase)par1ModelBase, par2 * par3)` with ClientProxyOreSpawn.java:467 `new RenderWormMedium(new ModelWormMedium(), 0.25f, 1.0f)` par2=0.25f, par3=1.0f -> shadowSize = 0.25 | scale: RenderWormMedium.java:19 default 1.0f, :24 `this.scale = par3` = 1.0f; preRenderScale (:39-41) glScalef(1.0,1.0,1.0) via func_77041_b (:43-45). WormMedium extends EntityMob (WormMedium.java:23), no child branch.",
+      "port_renderer": "src/main/java/danger/orespawn/entity/client/WormMediumRenderer.java",
+      "port_candidate": "none",
+      "truth_verdicts": {
+        "shadow": "DIVERGES",
+        "scale": "MATCH"
+      },
+      "truth_verified": true,
+      "status": "pin",
+      "note": "ENT-S-092 batch 2 (2026-09-03): shadow restored to the 1.7.10 value; pinned",
+      "truth_port_values": {
+        "shadow": 0.5,
+        "scale": 1
+      },
+      "mod": null
+    },
+    {
+      "entity": "WormLarge",
+      "ref_line": 468,
+      "ref_render_class": "RenderWormLarge",
+      "ref_registration": "(Render)new RenderWormLarge(new ModelWormLarge(), 0.9f, 1.0f)",
+      "expected_shadow": 0.9,
+      "expected_scale": 1,
+      "ref_derivation": "shadow: RenderWormLarge.java:22-23 `super((ModelBase)par1ModelBase, par2 * par3)` with ClientProxyOreSpawn.java:468 `new RenderWormLarge(new ModelWormLarge(), 0.9f, 1.0f)` par2=0.9f, par3=1.0f -> shadowSize = 0.9 | scale: RenderWormLarge.java:19 default 1.0f, :24 `this.scale = par3` = 1.0f; preRenderScale (:39-41) glScalef(1.0,1.0,1.0) via func_77041_b (:43-45). WormLarge extends EntityMob (WormLarge.java:37), no child branch.",
+      "port_renderer": "src/main/java/danger/orespawn/entity/client/WormLargeRenderer.java",
+      "port_candidate": "none",
+      "truth_verdicts": {
+        "shadow": "DIVERGES",
+        "scale": "MATCH"
+      },
+      "truth_verified": true,
+      "status": "pin",
+      "note": "ENT-S-092 batch 2 (2026-09-03): shadow restored to the 1.7.10 value; pinned",
+      "truth_port_values": {
+        "shadow": 1,
+        "scale": 1
+      },
+      "mod": null
+    },
+    {
+      "entity": "Cassowary",
+      "ref_line": 469,
+      "ref_render_class": "RenderCassowary",
+      "ref_registration": "(Render)new RenderCassowary(new ModelCassowary(0.55f), 0.5f, 1.0f)",
+      "expected_shadow": 0.5,
+      "expected_scale": 1,
+      "ref_derivation": "shadow: RenderCassowary.java:22-23 `super((ModelBase)par1ModelBase, par2 * par3)` with ClientProxyOreSpawn.java:469 `new RenderCassowary(new ModelCassowary(0.55f), 0.5f, 1.0f)` par2=0.5f, par3=1.0f -> shadowSize = 0.5. ... | scale: RenderCassowary.java:19 default 1.0f, :24 `this.scale = par3` = 1.0f; preRenderScale (:39-45): if par1Entity.func_70631_g_() (isChild) glScalef(scale/2.0f x3) = 0.5, else glScalef(scale x3) = 1.0. Adult 1.0; child 0.5. ...",
+      "port_renderer": "src/main/java/danger/orespawn/entity/client/CassowaryRenderer.java",
+      "port_candidate": "none",
+      "truth_verdicts": {
+        "shadow": "MATCH",
+        "scale": "MATCH"
+      },
+      "truth_verified": true,
+      "status": "pin",
+      "mod": null
+    },
+    {
+      "entity": "GoldFish",
+      "ref_line": 470,
+      "ref_render_class": "RenderGoldFish",
+      "ref_registration": "(Render)new RenderGoldFish(new ModelGoldFish(0.7f), 0.2f, 1.0f)",
+      "expected_shadow": 0.2,
+      "expected_scale": 1,
+      "ref_derivation": "shadow: RenderGoldFish.java:22-23 `super((ModelBase)par1ModelBase, par2 * par3)` with ClientProxyOreSpawn.java:470 `new RenderGoldFish(new ModelGoldFish(0.7f), 0.2f, 1.0f)` par2=0.2f, par3=1.0f -> shadowSize = 0.2. ... | scale: RenderGoldFish.java:19 default 1.0f, :24 `this.scale = par3` = 1.0f; preRenderScale (:39-41) glScalef(1.0,1.0,1.0) via func_77041_b (:43-45) ...",
+      "port_renderer": "src/main/java/danger/orespawn/entity/client/GoldFishRenderer.java",
+      "port_candidate": "none",
+      "truth_verdicts": {
+        "shadow": "DIVERGES",
+        "scale": "MATCH"
+      },
+      "truth_verified": true,
+      "status": "pin",
+      "note": "ENT-S-092 batch 2 (2026-09-03): shadow restored to the 1.7.10 value; pinned",
+      "truth_port_values": {
+        "shadow": 0.3,
+        "scale": 1
+      },
+      "mod": null
+    },
+    {
+      "entity": "CloudShark",
+      "ref_line": 471,
+      "ref_render_class": "RenderCloudShark",
+      "ref_registration": "(Render)new RenderCloudShark(new ModelCloudShark(1.0f), 0.5f, 1.0f)",
+      "expected_shadow": 0.5,
+      "expected_scale": 1,
+      "ref_derivation": "shadow: RenderCloudShark.java:22-23 `super((ModelBase)par1ModelBase, par2 * par3)` with ClientProxyOreSpawn.java:471 `new RenderCloudShark(new ModelCloudShark(1.0f), 0.5f, 1.0f)` par2=0.5f, par3=1.0f -> shadowSize = 0.5. ... | scale: RenderCloudShark.java:19 default 1.0f, :24 `this.scale = par3` = 1.0f; preRenderScale (:39-41) glScalef(1.0,1.0,1.0) via func_77041_b (:43-45). CloudShark extends EntityMob (CloudShark.java:35), no child branch.",
+      "port_renderer": "src/main/java/danger/orespawn/entity/client/CloudSharkRenderer.java",
+      "port_candidate": "none",
+      "truth_verdicts": {
+        "shadow": "MATCH",
+        "scale": "MATCH"
+      },
+      "truth_verified": true,
+      "status": "pin",
+      "mod": null
+    },
+    {
+      "entity": "LeafMonster",
+      "ref_line": 472,
+      "ref_render_class": "RenderLeafMonster",
+      "ref_registration": "(Render)new RenderLeafMonster(new ModelLeafMonster(), 0.65f, 1.0f)",
+      "expected_shadow": 0.65,
+      "expected_scale": 1,
+      "ref_derivation": "shadow: RenderLeafMonster.java:22-23 `super((ModelBase)par1ModelBase, par2 * par3)` with ClientProxyOreSpawn.java:472 `new RenderLeafMonster(new ModelLeafMonster(), 0.65f, 1.0f)` par2=0.65f, par3=1.0f -> shadowSize = 0.65 | scale: RenderLeafMonster.java:19 default 1.0f, :24 `this.scale = par3` = 1.0f; preRenderScale (:39-41) glScalef(1.0,1.0,1.0) via func_77041_b (:43-45). LeafMonster extends EntityMob (LeafMonster.java:35), no child branch.",
+      "port_renderer": "src/main/java/danger/orespawn/entity/client/LeafMonsterRenderer.java",
+      "port_candidate": "none",
+      "truth_verdicts": {
+        "shadow": "DIVERGES",
+        "scale": "MATCH"
+      },
+      "truth_verified": true,
+      "status": "pin",
+      "note": "ENT-S-092 batch 2 (2026-09-03): shadow restored to the 1.7.10 value; pinned",
+      "truth_port_values": {
+        "shadow": 0.5,
+        "scale": 1
+      },
+      "mod": null
+    },
+    {
+      "entity": "EnderKnight",
+      "ref_line": 473,
+      "ref_render_class": "RenderEnderKnight",
+      "ref_registration": "(Render)new RenderEnderKnight(new ModelEnderKnight(0.21f), 0.3f, 1.0f)",
+      "expected_shadow": 0.3,
+      "expected_scale": 1,
+      "ref_derivation": "shadow: RenderEnderKnight.java:22-23 `super((ModelBase)par1ModelBase, par2 * par3)` with ClientProxyOreSpawn.java:473 `new RenderEnderKnight(new ModelEnderKnight(0.21f), 0.3f, 1.0f)` par2=0.3f, par3=1.0f -> shadowSize = 0.3. ... | scale: RenderEnderKnight.java:19 default 1.0f, :24 `this.scale = par3` = 1.0f; preRenderScale (:39-41) glScalef(1.0,1.0,1.0) via func_77041_b (:43-45). EnderKnight extends EntityMob (EnderKnight.java:28), no child branch.",
+      "port_renderer": "src/main/java/danger/orespawn/entity/client/EnderKnightRenderer.java",
+      "port_candidate": "none",
+      "truth_verdicts": {
+        "shadow": "DIVERGES",
+        "scale": "MATCH"
+      },
+      "truth_verified": true,
+      "status": "pin",
+      "note": "ENT-S-092 batch 2 (2026-09-03): shadow restored to the 1.7.10 value; pinned",
+      "truth_port_values": {
+        "shadow": 0.5,
+        "scale": 1
+      },
+      "mod": null
+    },
+    {
+      "entity": "EnderReaper",
+      "ref_line": 474,
+      "ref_render_class": "RenderEnderReaper",
+      "ref_registration": "(Render)new RenderEnderReaper(new ModelEnderReaper(0.23f), 0.2f, 1.0f)",
+      "expected_shadow": 0.2,
+      "expected_scale": 1,
+      "ref_derivation": "shadow: RenderEnderReaper.java:22-23 `super((ModelBase)par1ModelBase, par2 * par3)`; ClientProxyOreSpawn.java:474 passes par2=0.2f, par3=1.0f -> RenderLiving shadowSize = 0.2f*1.0f = 0.2 (float32 0.20000000298). Re-read and confirmed. | scale: RenderEnderReaper.java:24 `this.scale = par3` = 1.0f; preRenderScale (RenderEnderReaper.java:39-41, bound via func_77041_b :43-45) glScalef(1.0,1.0,1.0). ...",
+      "port_renderer": "src/main/java/danger/orespawn/entity/client/EnderReaperRenderer.java",
+      "port_candidate": "none",
+      "truth_verdicts": {
+        "shadow": "DIVERGES",
+        "scale": "MATCH"
+      },
+      "truth_verified": true,
+      "status": "pin",
+      "note": "ENT-S-092 batch 2 (2026-09-03): shadow restored to the 1.7.10 value; pinned",
+      "truth_port_values": {
+        "shadow": 0.5,
+        "scale": 1
+      },
+      "mod": null
+    },
+    {
+      "entity": "Beaver",
+      "ref_line": 475,
+      "ref_render_class": "RenderBeaver",
+      "ref_registration": "(Render)new RenderBeaver(new ModelBeaver(0.5f), 0.15f, 0.75f)",
+      "expected_shadow": 0.1125,
+      "expected_scale": 0.75,
+      "ref_derivation": "shadow: RenderBeaver.java:22-23 `super((ModelBase)par1ModelBase, par2 * par3)`; ClientProxyOreSpawn.java:475 passes par2=0.15f, par3=0.75f -> shadowSize = 0.15f*0.75f = 0.1125 (float32 0.11250000447). ... | scale: RenderBeaver.java:24 `this.scale = par3` = 0.75f; preRenderScale (RenderBeaver.java:39-45): if par1Entity.func_70631_g_() (isChild) glScalef(scale/2 = 0.375) else glScalef(0.75); bound via func_77041_b :47-49. ...",
+      "port_renderer": "src/main/java/danger/orespawn/entity/client/BeaverRenderer.java",
+      "port_candidate": "src/main/java/danger/orespawn/entity/client/BeaverGeoReplacement.java",
+      "truth_verdicts": {
+        "shadow": "DIVERGES",
+        "scale": "DIVERGES"
+      },
+      "truth_verified": true,
+      "status": "pin",
+      "note": "ENT-S-092 batch 1a (2026-09-03): restored to the 1.7.10 values; pinned",
+      "truth_port_values": {
+        "shadow": 0.5,
+        "scale": 1
+      },
+      "mod": null
+    },
+    {
+      "entity": "Termite",
+      "ref_line": 476,
+      "ref_render_class": "RenderAnt",
+      "ref_registration": "(Render)new RenderAnt(new ModelAnt(), 0.15f, 0.35f)",
+      "expected_shadow": 0.0525,
+      "expected_scale": 0.35,
+      "ref_derivation": "shadow: RenderAnt.java:21-22 `super((ModelBase)par1ModelBase, par2 * par3)`; ClientProxyOreSpawn.java:476 passes par2=0.15f, par3=0.35f -> shadowSize = 0.15f*0.35f = 0.0525 (float32 0.05250000209). Re-read and confirmed. | scale: RenderAnt.java:23 `this.scale = par3` = 0.35f (overriding the field default 0.25f at :19); preRenderScale (RenderAnt.java:38-40, bound via func_77041_b :42-44) glScalef(0.35,0.35,0.35) with no child branch. ...",
+      "port_renderer": "src/main/java/danger/orespawn/entity/client/TermiteRenderer.java",
+      "port_candidate": "none",
+      "truth_verdicts": {
+        "shadow": "MATCH",
+        "scale": "MATCH"
+      },
+      "truth_verified": true,
+      "status": "pin",
+      "mod": null
+    },
+    {
+      "entity": "Fairy",
+      "ref_line": 477,
+      "ref_render_class": "RenderFairy",
+      "ref_registration": "(Render)new RenderFairy(new ModelFairy(1.5f), 0.1f, 0.35f)",
+      "expected_shadow": 0.035,
+      "expected_scale": 0.35,
+      "ref_derivation": "shadow: RenderFairy.java:21-22 `super((ModelBase)par1ModelBase, par2 * par3)`; ClientProxyOreSpawn.java:477 passes par2=0.1f, par3=0.35f -> shadowSize = 0.1f*0.35f = 0.035 (float32 0.03500000015). Re-read and confirmed. | scale: RenderFairy.java:23 `this.scale = par3` = 0.35f; preRenderScale (RenderFairy.java:38-40, bound via func_77041_b :42-44) glScalef(0.35,0.35,0.35). ModelFairy ctor arg 1.5f is not a scale (reference ModelFairy: 15 func_78789_a boxes, 0 glScale/glTranslate). ...",
+      "port_renderer": "src/main/java/danger/orespawn/entity/client/FairyRenderer.java",
+      "port_candidate": "none",
+      "truth_verdicts": {
+        "shadow": "DIVERGES",
+        "scale": "DIVERGES"
+      },
+      "truth_verified": true,
+      "status": "pin",
+      "note": "ENT-S-092 batch 1a (2026-09-03): restored to the 1.7.10 values; pinned",
+      "truth_port_values": {
+        "shadow": 0.15,
+        "scale": 1
+      },
+      "mod": null
+    },
+    {
+      "entity": "Peacock",
+      "ref_line": 478,
+      "ref_render_class": "RenderPeacock",
+      "ref_registration": "(Render)new RenderPeacock(new ModelPeacock(0.75f), 0.25f, 1.0f)",
+      "expected_shadow": 0.25,
+      "expected_scale": 1,
+      "ref_derivation": "shadow: RenderPeacock.java:22-23 `super((ModelBase)par1ModelBase, par2 * par3)`; ClientProxyOreSpawn.java:478 passes par2=0.25f, par3=1.0f -> shadowSize = 0.25f*1.0f = 0.25 (exact). ... | scale: RenderPeacock.java:24 `this.scale = par3` = 1.0f; preRenderScale (RenderPeacock.java:39-45): if func_70631_g_() (isChild) glScalef(scale/2 = 0.5) else glScalef(1.0); bound via func_77041_b :47-49. ...",
+      "port_renderer": "src/main/java/danger/orespawn/entity/client/PeacockRenderer.java",
+      "port_candidate": "none",
+      "truth_verdicts": {
+        "shadow": "DIVERGES",
+        "scale": "MATCH"
+      },
+      "truth_verified": true,
+      "status": "pin",
+      "note": "ENT-S-092 batch 2 (2026-09-03): shadow restored to the 1.7.10 value; pinned",
+      "truth_port_values": {
+        "shadow": 0.4,
+        "scale": 1
+      },
+      "mod": null
+    },
+    {
+      "entity": "Rotator",
+      "ref_line": 479,
+      "ref_render_class": "RenderRotator",
+      "ref_registration": "(Render)new RenderRotator(new ModelRotator(0.25f), 0.1f, 1.0f)",
+      "expected_shadow": 0.1,
+      "expected_scale": 1,
+      "ref_derivation": "shadow: RenderRotator.java:22-23 `super((ModelBase)par1ModelBase, par2 * par3)`; ClientProxyOreSpawn.java:479 passes par2=0.1f, par3=1.0f -> shadowSize = 0.1f*1.0f = 0.1 (float32 0.10000000149). Re-read and confirmed. | scale: RenderRotator.java:24 `this.scale = par3` = 1.0f; preRenderScale (RenderRotator.java:39-41, bound via func_77041_b :43-45) glScalef(1.0,1.0,1.0). ModelRotator ctor arg 0.25f is not a scale (reference ModelRotator: 3 func_78789_a boxes, 0 glScale/glTranslate). ...",
+      "port_renderer": "src/main/java/danger/orespawn/entity/client/RotatorRenderer.java",
+      "port_candidate": "none",
+      "truth_verdicts": {
+        "shadow": "DIVERGES",
+        "scale": "MATCH"
+      },
+      "truth_verified": true,
+      "status": "pin",
+      "note": "ENT-S-092 batch 2 (2026-09-03): shadow restored to the 1.7.10 value; pinned",
+      "truth_port_values": {
+        "shadow": 0.5,
+        "scale": 1
+      },
+      "mod": null
+    },
+    {
+      "entity": "Vortex",
+      "ref_line": 480,
+      "ref_render_class": "RenderVortex",
+      "ref_registration": "(Render)new RenderVortex(new ModelVortex(0.25f), 0.1f, 1.0f)",
+      "expected_shadow": 0.1,
+      "expected_scale": 1,
+      "ref_derivation": "shadow: RenderVortex.java:22-23 `super((ModelBase)par1ModelBase, par2 * par3)`; ClientProxyOreSpawn.java:480 passes par2=0.1f, par3=1.0f -> shadowSize = 0.1f*1.0f = 0.1 (float32 0.10000000149). Re-read and confirmed. | scale: RenderVortex.java:24 `this.scale = par3` = 1.0f; preRenderScale (RenderVortex.java:39-41, bound via func_77041_b :43-45) glScalef(1.0,1.0,1.0). ...",
+      "port_renderer": "src/main/java/danger/orespawn/entity/client/VortexRenderer.java",
+      "port_candidate": "src/main/java/danger/orespawn/entity/client/VortexGeoReplacement.java",
+      "truth_verdicts": {
+        "shadow": "DIVERGES",
+        "scale": "MATCH"
+      },
+      "truth_verified": true,
+      "status": "pin",
+      "note": "ENT-S-092 batch 2 (2026-09-03): shadow restored to the 1.7.10 value; pinned",
+      "truth_port_values": {
+        "shadow": 1.5,
+        "scale": 1
+      },
+      "mod": null
+    },
+    {
+      "entity": "DungeonBeast",
+      "ref_line": 481,
+      "ref_render_class": "RenderDungeonBeast",
+      "ref_registration": "(Render)new RenderDungeonBeast(new ModelDungeonBeast(0.62f), 0.25f, 1.0f)",
+      "expected_shadow": 0.25,
+      "expected_scale": 1,
+      "ref_derivation": "shadow: RenderDungeonBeast.java:22-23 `super((ModelBase)par1ModelBase, par2 * par3)`; ClientProxyOreSpawn.java:481 passes par2=0.25f, par3=1.0f -> shadowSize = 0.25f*1.0f = 0.25 (exact). Re-read and confirmed. | scale: RenderDungeonBeast.java:24 `this.scale = par3` = 1.0f; preRenderScale (RenderDungeonBeast.java:39-41, bound via func_77041_b :43-45) glScalef(1.0,1.0,1.0). ...",
+      "port_renderer": "src/main/java/danger/orespawn/entity/client/DungeonBeastRenderer.java",
+      "port_candidate": "none",
+      "truth_verdicts": {
+        "shadow": "DIVERGES",
+        "scale": "MATCH"
+      },
+      "truth_verified": true,
+      "status": "pin",
+      "note": "ENT-S-092 batch 2 (2026-09-03): shadow restored to the 1.7.10 value; pinned",
+      "truth_port_values": {
+        "shadow": 0.5,
+        "scale": 1
+      },
+      "mod": null
+    },
+    {
+      "entity": "Rat",
+      "ref_line": 482,
+      "ref_render_class": "RenderRat",
+      "ref_registration": "(Render)new RenderRat(new ModelRat(1.0f), 0.1f, 0.75f)",
+      "expected_shadow": 0.075,
+      "expected_scale": 0.75,
+      "ref_derivation": "shadow: RenderRat.java:22-23 `public RenderRat(ModelRat par1ModelBase, float par2, float par3) { super((ModelBase)par1ModelBase, par2 * par3) ... | scale: RenderRat.java:24 `this.scale = par3` = 0.75f; RenderRat.java:39-41 preRenderScale `GL11.glScalef(this.scale, this.scale, this.scale)` invoked from func_77041_b (preRenderCallback slot) at :43-45. Uniform 0.75 every frame; no isChild branch. ...",
+      "port_renderer": "src/main/java/danger/orespawn/entity/client/RatRenderer.java",
+      "port_candidate": "none",
+      "truth_verdicts": {
+        "shadow": "DIVERGES",
+        "scale": "DIVERGES"
+      },
+      "truth_verified": true,
+      "status": "pin",
+      "note": "ENT-S-092 batch 1a (2026-09-03): restored to the 1.7.10 values; pinned",
+      "truth_port_values": {
+        "shadow": 0.25,
+        "scale": 1
+      },
+      "mod": null
+    },
+    {
+      "entity": "Flounder",
+      "ref_line": 483,
+      "ref_render_class": "RenderFlounder",
+      "ref_registration": "(Render)new RenderFlounder(new ModelFlounder(), 0.1f, 1.0f)",
+      "expected_shadow": 0.1,
+      "expected_scale": 1,
+      "ref_derivation": "shadow: RenderFlounder.java:22-23 `super((ModelBase)par1ModelBase, par2 * par3)` with ClientProxyOreSpawn.java:483 args (0.1f, 1.0f): shadowSize = 0.1f * 1.0f = 0.1f (float32 0.100000001). Verified. | scale: RenderFlounder.java:24 `this.scale = par3` = 1.0f; RenderFlounder.java:39-45 preRenderScale: `if (par1Entity != null && par1Entity.func_70631_g_())` (isChild) glScalef(scale/2) = 0.5 and return; else glScalef(scale) = 1.0; called from func_77041_b :47-49. ...",
+      "port_renderer": "src/main/java/danger/orespawn/entity/client/FlounderRenderer.java",
+      "port_candidate": "none",
+      "truth_verdicts": {
+        "shadow": "DIVERGES",
+        "scale": "DIVERGES"
+      },
+      "truth_verified": true,
+      "status": "pin",
+      "note": "ENT-S-092 batch 1a (2026-09-03): restored to the 1.7.10 values; pinned",
+      "truth_port_values": {
+        "shadow": 0.3,
+        "scale": 1
+      },
+      "mod": null
+    },
+    {
+      "entity": "Whale",
+      "ref_line": 484,
+      "ref_render_class": "RenderWhale",
+      "ref_registration": "(Render)new RenderWhale(new ModelWhale(), 0.1f, 1.0f)",
+      "expected_shadow": 0.1,
+      "expected_scale": 1,
+      "ref_derivation": "shadow: RenderWhale.java:22-23 `super((ModelBase)par1ModelBase, par2 * par3)` with ClientProxyOreSpawn.java:484 args (0.1f, 1.0f): shadowSize = 0.1f * 1.0f = 0.1f (float32 0.100000001). Verified. | scale: RenderWhale.java:24 `this.scale = par3` = 1.0f; RenderWhale.java:39-45 preRenderScale: isChild (func_70631_g_) -> glScalef(scale/2) = 0.5, else glScalef(scale) = 1.0; via func_77041_b :47-49. ...",
+      "port_renderer": "src/main/java/danger/orespawn/entity/client/WhaleRenderer.java",
+      "port_candidate": "none",
+      "truth_verdicts": {
+        "shadow": "DIVERGES",
+        "scale": "MATCH"
+      },
+      "truth_verified": true,
+      "status": "pin",
+      "note": "ENT-S-092 batch 2 (2026-09-03): shadow restored to the 1.7.10 value; pinned",
+      "truth_port_values": {
+        "shadow": 1.5,
+        "scale": 1
+      },
+      "mod": null
+    },
+    {
+      "entity": "Irukandji",
+      "ref_line": 485,
+      "ref_render_class": "RenderIrukandji",
+      "ref_registration": "(Render)new RenderIrukandji(new ModelIrukandji(1.0f), 0.1f, 0.25f)",
+      "expected_shadow": 0.025,
+      "expected_scale": 0.25,
+      "ref_derivation": "shadow: RenderIrukandji.java:22-23 `super((ModelBase)par1ModelBase, par2 * par3)` with ClientProxyOreSpawn.java:485 args (0.1f, 0.25f): shadowSize = 0.1f * 0.25f = 0.025f (float32 0.0250000004). Verified. | scale: RenderIrukandji.java:24 `this.scale = par3` = 0.25f; RenderIrukandji.java:39-41 preRenderScale `GL11.glScalef(this.scale, this.scale, this.scale)` via func_77041_b :43-45. Uniform 0.25, no baby branch. ...",
+      "port_renderer": "src/main/java/danger/orespawn/entity/client/IrukandjiRenderer.java",
+      "port_candidate": "none",
+      "truth_verdicts": {
+        "shadow": "DIVERGES",
+        "scale": "DIVERGES"
+      },
+      "truth_verified": true,
+      "status": "pin",
+      "note": "ENT-S-092 batch 1a (2026-09-03): restored to the 1.7.10 values; pinned",
+      "truth_port_values": {
+        "shadow": 0.2,
+        "scale": 1
+      },
+      "mod": null
+    },
+    {
+      "entity": "Skate",
+      "ref_line": 486,
+      "ref_render_class": "RenderSkate",
+      "ref_registration": "(Render)new RenderSkate(new ModelSkate(1.0f), 0.1f, 0.75f)",
+      "expected_shadow": 0.075,
+      "expected_scale": 0.75,
+      "ref_derivation": "shadow: RenderSkate.java:22-23 `super((ModelBase)par1ModelBase, par2 * par3)` with ClientProxyOreSpawn.java:486 args (0.1f, 0.75f): shadowSize = 0.1f * 0.75f = 0.075f (float32 0.07500000298, identical to the literal 0.075F). Verified. | scale: RenderSkate.java:24 `this.scale = par3` = 0.75f; RenderSkate.java:39-41 preRenderScale `GL11.glScalef(this.scale, this.scale, this.scale)` via func_77041_b :43-45. Uniform 0.75, no baby branch. ...",
+      "port_renderer": "src/main/java/danger/orespawn/entity/client/SkateRenderer.java",
+      "port_candidate": "none",
+      "truth_verdicts": {
+        "shadow": "MATCH",
+        "scale": "MATCH"
+      },
+      "truth_verified": true,
+      "status": "pin",
+      "mod": null
+    },
+    {
+      "entity": "Urchin",
+      "ref_line": 487,
+      "ref_render_class": "RenderUrchin",
+      "ref_registration": "(Render)new RenderUrchin(new ModelUrchin(1.0f), 0.35f, 1.25f)",
+      "expected_shadow": 0.4375,
+      "expected_scale": 1.25,
+      "ref_derivation": "shadow: RenderUrchin.java:22-23 `super((ModelBase)par1ModelBase, par2 * par3)` with ClientProxyOreSpawn.java:487 args (0.35f, 1.25f): shadowSize = 0.35f * 1.25f = 0.4375f (exact in float32). Verified. | scale: RenderUrchin.java:24 `this.scale = par3` = 1.25f; RenderUrchin.java:39-41 preRenderScale `GL11.glScalef(this.scale, this.scale, this.scale)` via func_77041_b :43-45. Uniform 1.25, no baby branch. ...",
+      "port_renderer": "src/main/java/danger/orespawn/entity/client/UrchinRenderer.java",
+      "port_candidate": "none",
+      "truth_verdicts": {
+        "shadow": "DIVERGES",
+        "scale": "DIVERGES"
+      },
+      "truth_verified": true,
+      "status": "pin",
+      "note": "ENT-S-092 batch 1a (2026-09-03): restored to the 1.7.10 values; pinned",
+      "truth_port_values": {
+        "shadow": 0.3,
+        "scale": 1
+      },
+      "mod": null
+    },
+    {
+      "entity": "Mantis",
+      "ref_line": 488,
+      "ref_render_class": "RenderMantis",
+      "ref_registration": "(Render)new RenderMantis(new ModelMantis(2.0f), 0.9f, 1.1f)",
+      "expected_shadow": 0.99,
+      "expected_scale": 1.1,
+      "ref_derivation": "shadow: RenderMantis.java:22-23 `super((ModelBase)par1ModelBase, par2 * par3)` with ClientProxyOreSpawn.java:488 args (0.9f, 1.1f): shadowSize = 0.9f * 1.1f; float32 product = 0.99000001, identical to the literal 0.99f. Verified. | scale: RenderMantis.java:24 `this.scale = par3` = 1.1f; RenderMantis.java:39-41 preRenderScale `GL11.glScalef(this.scale, this.scale, this.scale)` via func_77041_b :43-45. Uniform 1.1, no baby branch. ...",
+      "port_renderer": "src/main/java/danger/orespawn/entity/client/MantisRenderer.java",
+      "port_candidate": "none",
+      "truth_verdicts": {
+        "shadow": "DIVERGES",
+        "scale": "DIVERGES"
+      },
+      "truth_verified": true,
+      "status": "pin",
+      "note": "ENT-S-092 batch 1a (2026-09-03): restored to the 1.7.10 values; pinned",
+      "truth_port_values": {
+        "shadow": 0.8,
+        "scale": 1
+      },
+      "mod": null
+    },
+    {
+      "entity": "HerculesBeetle",
+      "ref_line": 489,
+      "ref_render_class": "RenderHerculesBeetle",
+      "ref_registration": "(Render)new RenderHerculesBeetle(new ModelHerculesBeetle(1.0f), 0.99f, 1.1f)",
+      "expected_shadow": 1.089,
+      "expected_scale": 1.1,
+      "ref_derivation": "shadow: RenderHerculesBeetle.java:22-23 `super((ModelBase)par1ModelBase, par2 * par3)` with ClientProxyOreSpawn.java:489 args (0.99f, 1.1f): shadowSize = 0.99f * 1.1f = 1.089f (float32 1.08899999, identical to the literal 1.089f). Verified. | scale: RenderHerculesBeetle.java:24 `this.scale = par3` = 1.1f; RenderHerculesBeetle.java:39-41 preRenderScale `GL11.glScalef(this.scale, this.scale, this.scale)` via func_77041_b :43-45. Uniform 1.1, no baby branch. ...",
+      "port_renderer": "src/main/java/danger/orespawn/entity/client/HerculesBeetleRenderer.java",
+      "port_candidate": "none",
+      "truth_verdicts": {
+        "shadow": "DIVERGES",
+        "scale": "DIVERGES"
+      },
+      "truth_verified": true,
+      "status": "pin",
+      "note": "ENT-S-092 batch 1a (2026-09-03): restored to the 1.7.10 values; pinned",
+      "truth_port_values": {
+        "shadow": 1,
+        "scale": 1
+      },
+      "mod": null
+    },
+    {
+      "entity": "Stinky",
+      "ref_line": 490,
+      "ref_render_class": "RenderStinky",
+      "ref_registration": "(Render)new RenderStinky(new ModelStinky(0.65f), 0.75f, 1.0f)",
+      "expected_shadow": 0.75,
+      "expected_scale": 1,
+      "ref_derivation": "shadow: RenderStinky.java:41 `super((ModelBase)par1ModelBase, par2 * par3)` with ClientProxyOreSpawn.java:490 args (0.75f, 1.0f) => 0.75f * 1.0f = 0.75 (RenderLiving stores it as Render.shadowSize) | scale: RenderStinky.java:42 `this.scale = par3` = 1.0f; RenderStinky.java:57-58 preRenderScale `GL11.glScalef(scale, scale, scale)` invoked from func_77041_b :61-62 => 1.0 (identity)",
+      "port_renderer": "src/main/java/danger/orespawn/entity/client/StinkyRenderer.java",
+      "port_candidate": "none",
+      "truth_verdicts": {
+        "shadow": "DIVERGES",
+        "scale": "MATCH"
+      },
+      "truth_verified": true,
+      "status": "pin",
+      "note": "ENT-S-092 batch 2 (2026-09-03): shadow restored to the 1.7.10 value; pinned",
+      "truth_port_values": {
+        "shadow": 0.5,
+        "scale": 1
+      },
+      "mod": null
+    },
+    {
+      "entity": "Coin",
+      "ref_line": 491,
+      "ref_render_class": "RenderCoin",
+      "ref_registration": "(Render)new RenderCoin(new ModelCoin(0.22f), 0.75f, 0.125f)",
+      "expected_shadow": 0.09375,
+      "expected_scale": 0.125,
+      "ref_derivation": "shadow: RenderCoin.java:23 `super((ModelBase)par1ModelBase, par2 * par3)` with ClientProxyOreSpawn.java:491 args (0.75f, 0.125f) => 0.75f * 0.125f = 0.09375 (exact in float) | scale: RenderCoin.java:24 `this.scale = par3` = 0.125f; RenderCoin.java:39-40 preRenderScale `GL11.glScalef(scale, scale, scale)` invoked from func_77041_b :43-44 => 0.125",
+      "port_renderer": "src/main/java/danger/orespawn/entity/client/CoinRenderer.java",
+      "port_candidate": "src/main/java/danger/orespawn/entity/client/CoinGeoReplacement.java",
+      "truth_verdicts": {
+        "shadow": "MATCH",
+        "scale": "MATCH"
+      },
+      "truth_verified": true,
+      "status": "pin",
+      "mod": null
+    },
+    {
+      "entity": "TheKing",
+      "ref_line": 492,
+      "ref_render_class": "RenderTheKing",
+      "ref_registration": "(Render)new RenderTheKing(new ModelTheKing(0.65f), 1.9f, 2.1f)",
+      "expected_shadow": 3.99,
+      "expected_scale": 2.1,
+      "ref_derivation": "shadow: RenderTheKing.java:23 `super((ModelBase)par1ModelBase, par2 * par3)` with ClientProxyOreSpawn.java:492 args (1.9f, 2.1f) => 1.9f * 2.1f = 3.99 (float product 3.9899998, i.e. 3.99 to display precision) | scale: RenderTheKing.java:24 `this.scale = par3` = 2.1f; RenderTheKing.java:39-45 preRenderScale: if par1Entity.getPlayNicely() != 0 => glScalef(scale/4) = 0.525, else glScalef(scale) = 2.1; invoked from func_77041_b :47-48",
+      "port_renderer": "src/main/java/danger/orespawn/entity/client/TheKingRenderer.java",
+      "port_candidate": "none",
+      "truth_verdicts": {
+        "shadow": "DIVERGES",
+        "scale": "DIVERGES"
+      },
+      "truth_verified": true,
+      "status": "pin",
+      "note": "ENT-S-092 batch 1b (2026-09-03): restored to the 1.7.10 values (hit surfaces do not follow the render scale, boss read refuted); pinned",
+      "mod": null
+    },
+    {
+      "entity": "TheQueen",
+      "ref_line": 493,
+      "ref_render_class": "RenderTheQueen",
+      "ref_registration": "(Render)new RenderTheQueen(new ModelTheQueen(0.65f), 1.9f, 2.0f)",
+      "expected_shadow": 3.8,
+      "expected_scale": 2,
+      "ref_derivation": "shadow: RenderTheQueen.java:24 `super((ModelBase)par1ModelBase, par2 * par3)` with ClientProxyOreSpawn.java:493 args (1.9f, 2.0f) => 1.9f * 2.0f = 3.8 | scale: RenderTheQueen.java:25 `this.scale = par3` = 2.0f; RenderTheQueen.java:40-46 preRenderScale: if par1Entity.getPlayNicely() != 0 => glScalef(scale/4) = 0.5, else glScalef(scale) = 2.0; invoked from func_77041_b :48-49",
+      "port_renderer": "src/main/java/danger/orespawn/entity/client/QueenRenderer.java",
+      "port_candidate": "none",
+      "truth_verdicts": {
+        "shadow": "DIVERGES",
+        "scale": "DIVERGES"
+      },
+      "truth_verified": true,
+      "status": "pending",
+      "note": "ENT-S-092 batch 1b HELD for the owner: MHLib bone-tracked parts relocate onto the drawn geometry when the 1.7.10 scale is restored after GeckoLib's capture (boss read refuted); consequences presented 2026-09-03",
+      "truth_port_values": {
+        "shadow": 3,
+        "scale": 1
+      },
+      "mod": null
+    },
+    {
+      "entity": "ThePrince",
+      "ref_line": 494,
+      "ref_render_class": "RenderThePrince",
+      "ref_registration": "(Render)new RenderThePrince(new ModelThePrince(0.65f), 0.75f, 0.75f)",
+      "expected_shadow": 0.5625,
+      "expected_scale": 0.75,
+      "ref_derivation": "shadow: RenderThePrince.java:23 `super((ModelBase)par1ModelBase, par2 * par3)` with ClientProxyOreSpawn.java:494 args (0.75f, 0.75f) => 0.75f * 0.75f = 0.5625 (exact in float) | scale: RenderThePrince.java:24 `this.scale = par3` = 0.75f; RenderThePrince.java:39-40 preRenderScale `GL11.glScalef(scale, scale, scale)` invoked from func_77041_b :43-44 => 0.75",
+      "port_renderer": "src/main/java/danger/orespawn/entity/client/ThePrinceRenderer.java",
+      "port_candidate": "none",
+      "truth_verdicts": {
+        "shadow": "MATCH",
+        "scale": "MATCH"
+      },
+      "truth_verified": true,
+      "status": "pin",
+      "mod": null
+    },
+    {
+      "entity": "Molenoid",
+      "ref_line": 495,
+      "ref_render_class": "RenderMolenoid",
+      "ref_registration": "(Render)new RenderMolenoid(new ModelMolenoid(0.5f), 1.0f, 1.0f)",
+      "expected_shadow": 1,
+      "expected_scale": 1,
+      "ref_derivation": "shadow: RenderMolenoid.java:23 `super((ModelBase)par1ModelBase, par2 * par3)` with ClientProxyOreSpawn.java:495 args (1.0f, 1.0f) => 1.0f * 1.0f = 1.0 | scale: RenderMolenoid.java:24 `this.scale = par3` = 1.0f; RenderMolenoid.java:39-40 preRenderScale `GL11.glScalef(scale, scale, scale)` invoked from func_77041_b :43-44 => 1.0 (identity)",
+      "port_renderer": "src/main/java/danger/orespawn/entity/client/MolenoidRenderer.java",
+      "port_candidate": "none",
+      "truth_verdicts": {
+        "shadow": "DIVERGES",
+        "scale": "MATCH"
+      },
+      "truth_verified": true,
+      "status": "pin",
+      "note": "ENT-S-092 batch 2 (2026-09-03): shadow restored to the 1.7.10 value; pinned",
+      "truth_port_values": {
+        "shadow": 2,
+        "scale": 1
+      },
+      "mod": null
+    },
+    {
+      "entity": "SeaMonster",
+      "ref_line": 496,
+      "ref_render_class": "RenderSeaMonster",
+      "ref_registration": "(Render)new RenderSeaMonster(new ModelSeaMonster(0.5f), 1.0f, 1.0f)",
+      "expected_shadow": 1,
+      "expected_scale": 1,
+      "ref_derivation": "shadow: RenderSeaMonster.java:23 `super((ModelBase)par1ModelBase, par2 * par3)` with ClientProxyOreSpawn.java:496 args (1.0f, 1.0f) => 1.0f * 1.0f = 1.0 | scale: RenderSeaMonster.java:24 `this.scale = par3` = 1.0f; RenderSeaMonster.java:39-40 preRenderScale `GL11.glScalef(scale, scale, scale)` invoked from func_77041_b :43-44 => 1.0 (identity)",
+      "port_renderer": "src/main/java/danger/orespawn/entity/client/SeaMonsterRenderer.java",
+      "port_candidate": "none",
+      "truth_verdicts": {
+        "shadow": "DIVERGES",
+        "scale": "DIVERGES"
+      },
+      "truth_verified": true,
+      "status": "pin",
+      "note": "ENT-S-092 batch 1b (2026-09-03): restored to the 1.7.10 values (hit surfaces do not follow the render scale, boss read refuted); pinned",
+      "mod": null
+    },
+    {
+      "entity": "SeaViper",
+      "ref_line": 497,
+      "ref_render_class": "RenderSeaViper",
+      "ref_registration": "(Render)new RenderSeaViper(new ModelSeaViper(0.5f), 1.0f, 1.0f)",
+      "expected_shadow": 1,
+      "expected_scale": 1,
+      "ref_derivation": "shadow: RenderSeaViper.java:23 `super((ModelBase)par1ModelBase, par2 * par3)` with ClientProxyOreSpawn.java:497 args (1.0f, 1.0f) => 1.0f * 1.0f = 1.0 | scale: RenderSeaViper.java:24 `this.scale = par3` = 1.0f; RenderSeaViper.java:39-40 preRenderScale `GL11.glScalef(scale, scale, scale)` invoked from func_77041_b :43-44 => 1.0 (identity)",
+      "port_renderer": "src/main/java/danger/orespawn/entity/client/SeaViperRenderer.java",
+      "port_candidate": "none",
+      "truth_verdicts": {
+        "shadow": "DIVERGES",
+        "scale": "MATCH"
+      },
+      "truth_verified": true,
+      "status": "pin",
+      "note": "ENT-S-092 batch 2 (2026-09-03): shadow restored to the 1.7.10 value; pinned",
+      "truth_port_values": {
+        "shadow": 0.4,
+        "scale": 1
+      },
+      "mod": null
+    },
+    {
+      "entity": "EasterBunny",
+      "ref_line": 498,
+      "ref_render_class": "RenderEasterBunny",
+      "ref_registration": "(Render)new RenderEasterBunny(new ModelEasterBunny(0.55f), 0.5f, 1.0f)",
+      "expected_shadow": 0.5,
+      "expected_scale": 1,
+      "ref_derivation": "shadow: RenderEasterBunny.java:22-25 `super((ModelBase)par1ModelBase, par2 * par3)` with ClientProxyOreSpawn.java:498 args (0.5f, 1.0f) -> Render.shadowSize = 0.5f * 1.0f = 0.5 (adult). ... | scale: RenderEasterBunny.java:24 `this.scale = par3` = 1.0f; preRenderScale RenderEasterBunny.java:39-45: adult `GL11.glScalef(1.0,1.0,1.0)` (identity); child (func_70631_g_) branch :40-42 `glScalef(scale/2)` = 0.5. ...",
+      "port_renderer": "src/main/java/danger/orespawn/entity/client/EasterBunnyRenderer.java",
+      "port_candidate": "none",
+      "truth_verdicts": {
+        "shadow": "DIVERGES",
+        "scale": "MATCH"
+      },
+      "truth_verified": true,
+      "status": "pin",
+      "note": "ENT-S-092 batch 2 (2026-09-03): shadow restored to the 1.7.10 value; pinned",
+      "truth_port_values": {
+        "shadow": 0.3,
+        "scale": 1
+      },
+      "mod": null
+    },
+    {
+      "entity": "CaterKiller",
+      "ref_line": 499,
+      "ref_render_class": "RenderCaterKiller",
+      "ref_registration": "(Render)new RenderCaterKiller(new ModelCaterKiller(0.22f), 1.0f, 1.25f)",
+      "expected_shadow": 1.25,
+      "expected_scale": 1.25,
+      "ref_derivation": "shadow: RenderCaterKiller.java:22-25 `super((ModelBase)par1ModelBase, par2 * par3)` with ClientProxyOreSpawn.java:499 args (1.0f, 1.25f) -> Render.shadowSize = 1.0f * 1.25f = 1.25. ... | scale: RenderCaterKiller.java:24 `this.scale = par3` = 1.25f; preRenderScale :39-45: `if (getPlayNicely() != 0) glScalef(scale/2)` = 0.625 else `glScalef(1.25,1.25,1.25)`. Called via func_77041_b :47-49 (preRenderCallback slot).",
+      "port_renderer": "src/main/java/danger/orespawn/entity/client/CaterKillerRenderer.java",
+      "port_candidate": "none",
+      "truth_verdicts": {
+        "shadow": "DIVERGES",
+        "scale": "DIVERGES"
+      },
+      "truth_verified": true,
+      "status": "pin",
+      "note": "ENT-S-092 batch 1a (2026-09-03): restored to the 1.7.10 values; pinned",
+      "truth_port_values": {
+        "shadow": 1.2,
+        "scale": 1
+      },
+      "mod": null
+    },
+    {
+      "entity": "Leon",
+      "ref_line": 500,
+      "ref_render_class": "RenderLeon",
+      "ref_registration": "(Render)new RenderLeon(new ModelLeon(0.22f), 1.0f, 1.75f)",
+      "expected_shadow": 1.75,
+      "expected_scale": 1.75,
+      "ref_derivation": "shadow: RenderLeon.java:22-25 `super((ModelBase)par1ModelBase, par2 * par3)` with ClientProxyOreSpawn.java:500 args (1.0f, 1.75f) -> Render.shadowSize = 1.0f * 1.75f = 1.75. ... | scale: RenderLeon.java:24 `this.scale = par3` = 1.75f; preRenderScale :39-41 `GL11.glScalef(1.75,1.75,1.75)` unconditionally (no child branch); via func_77041_b :43-45.",
+      "port_renderer": "src/main/java/danger/orespawn/entity/client/LeonRenderer.java",
+      "port_candidate": "none",
+      "truth_verdicts": {
+        "shadow": "MATCH",
+        "scale": "MATCH"
+      },
+      "truth_verified": true,
+      "status": "pin",
+      "mod": null
+    },
+    {
+      "entity": "Hammerhead",
+      "ref_line": 501,
+      "ref_render_class": "RenderHammerhead",
+      "ref_registration": "(Render)new RenderHammerhead(new ModelHammerhead(0.33f), 1.0f, 2.5f)",
+      "expected_shadow": 2.5,
+      "expected_scale": 2.5,
+      "ref_derivation": "shadow: RenderHammerhead.java:22-25 `super((ModelBase)par1ModelBase, par2 * par3)` with ClientProxyOreSpawn.java:501 args (1.0f, 2.5f) -> Render.shadowSize = 1.0f * 2.5f = 2.5. ... | scale: RenderHammerhead.java:24 `this.scale = par3` = 2.5f; preRenderScale :39-41 `GL11.glScalef(2.5,2.5,2.5)` unconditionally; via func_77041_b :43-45.",
+      "port_renderer": "src/main/java/danger/orespawn/entity/client/HammerheadRenderer.java",
+      "port_candidate": "none",
+      "truth_verdicts": {
+        "shadow": "DIVERGES",
+        "scale": "DIVERGES"
+      },
+      "truth_verified": true,
+      "status": "pin",
+      "note": "ENT-S-092 batch 1a (2026-09-03): restored to the 1.7.10 values; pinned",
+      "truth_port_values": {
+        "shadow": 1,
+        "scale": 2
+      },
+      "mod": null
+    },
+    {
+      "entity": "RubberDucky",
+      "ref_line": 502,
+      "ref_render_class": "RenderRubberDucky",
+      "ref_registration": "(Render)new RenderRubberDucky(new ModelRubberDucky(1.0f), 0.15f, 0.75f)",
+      "expected_shadow": 0.1125,
+      "expected_scale": 0.75,
+      "ref_derivation": "shadow: RenderRubberDucky.java:23-26 `super((ModelBase)par1ModelBase, par2 * par3)` with ClientProxyOreSpawn.java:502 args (0.15f, 0.75f) -> Render.shadowSize = 0.15f * 0.75f = 0.1125 (float 0.11249999...). ... | scale: RenderRubberDucky.java:25 `this.scale = par3` = 0.75f; preRenderScale :40-46: child (func_70631_g_) `glScalef(scale/2)` = 0.375, else `glScalef(0.75,0.75,0.75)`; via func_77041_b :48-50.",
+      "port_renderer": "src/main/java/danger/orespawn/entity/client/RubberDuckyRenderer.java",
+      "port_candidate": "none",
+      "truth_verdicts": {
+        "shadow": "DIVERGES",
+        "scale": "DIVERGES"
+      },
+      "truth_verified": true,
+      "status": "pin",
+      "note": "ENT-S-092 batch 1a (2026-09-03): restored to the 1.7.10 values; pinned",
+      "truth_port_values": {
+        "shadow": 0.25,
+        "scale": 1
+      },
+      "mod": null
+    },
+    {
+      "entity": "ThePrinceTeen",
+      "ref_line": 503,
+      "ref_render_class": "RenderThePrinceTeen",
+      "ref_registration": "(Render)new RenderThePrinceTeen(new ModelThePrinceTeen(0.65f), 1.0f, 1.25f)",
+      "expected_shadow": 1.25,
+      "expected_scale": 1.25,
+      "ref_derivation": "shadow: RenderThePrinceTeen.java:22-25 `super((ModelBase)par1ModelBase, par2 * par3)` with ClientProxyOreSpawn.java:503 args (1.0f, 1.25f) -> Render.shadowSize = 1.0f * 1.25f = 1.25. ... | scale: RenderThePrinceTeen.java:24 `this.scale = par3` = 1.25f; preRenderScale :39-41 `GL11.glScalef(1.25,1.25,1.25)` unconditionally; via func_77041_b :43-45.",
+      "port_renderer": "src/main/java/danger/orespawn/entity/client/ThePrinceTeenRenderer.java",
+      "port_candidate": "none",
+      "truth_verdicts": {
+        "shadow": "DIVERGES",
+        "scale": "DIVERGES"
+      },
+      "truth_verified": true,
+      "status": "pin",
+      "note": "ENT-S-092 batch 1a (2026-09-03): restored to the 1.7.10 values; pinned",
+      "truth_port_values": {
+        "shadow": 0.9,
+        "scale": 0.85
+      },
+      "mod": null
+    },
+    {
+      "entity": "BandP",
+      "ref_line": 504,
+      "ref_render_class": "RenderBandP",
+      "ref_registration": "(Render)new RenderBandP(new ModelBandP(0.4f), 1.0f, 1.0f)",
+      "expected_shadow": 1,
+      "expected_scale": 1,
+      "ref_derivation": "shadow: RenderBandP.java:22-25 `super((ModelBase)par1ModelBase, par2 * par3)` with ClientProxyOreSpawn.java:504 args (1.0f, 1.0f) -> Render.shadowSize = 1.0f * 1.0f = 1.0. ... | scale: RenderBandP.java:24 `this.scale = par3` = 1.0f; preRenderScale :39-41 `GL11.glScalef(1.0,1.0,1.0)` (identity); via func_77041_b :43-45.",
+      "port_renderer": "src/main/java/danger/orespawn/entity/client/BandPRenderer.java",
+      "port_candidate": "none",
+      "truth_verdicts": {
+        "shadow": "DIVERGES",
+        "scale": "MATCH"
+      },
+      "truth_verified": true,
+      "status": "pin",
+      "note": "ENT-S-092 batch 2 (2026-09-03): shadow restored to the 1.7.10 value; pinned",
+      "truth_port_values": {
+        "shadow": 0.5,
+        "scale": 1
+      },
+      "mod": null
+    },
+    {
+      "entity": "RockBase",
+      "ref_line": 505,
+      "ref_render_class": "RenderRockBase",
+      "ref_registration": "(Render)new RenderRockBase(new ModelRockBase(1.0f), 0.0f, 1.0f)",
+      "expected_shadow": 0,
+      "expected_scale": 1,
+      "ref_derivation": "shadow: RenderRockBase.java:33-36 `super((ModelBase)par1ModelBase, par2 * par3)` with ClientProxyOreSpawn.java:505 args (0.0f, 1.0f) -> Render.shadowSize = 0.0f * 1.0f = 0.0 ... | scale: RenderRockBase.java:35 `this.scale = par3` = 1.0f; preRenderScale :50-52 `GL11.glScalef(1.0,1.0,1.0)` (identity); via func_77041_b :54-56.",
+      "port_renderer": "src/main/java/danger/orespawn/entity/client/RockBaseRenderer.java",
+      "port_candidate": "src/main/java/danger/orespawn/entity/client/RockBaseGeoReplacement.java",
+      "truth_verdicts": {
+        "shadow": "DIVERGES",
+        "scale": "MATCH"
+      },
+      "truth_verified": true,
+      "status": "pin",
+      "note": "ENT-S-092 batch 2 (2026-09-03): shadow restored to the 1.7.10 value; pinned",
+      "truth_port_values": {
+        "shadow": 0.3,
+        "scale": 1
+      },
+      "mod": null
+    },
+    {
+      "entity": "PurplePower",
+      "ref_line": 506,
+      "ref_render_class": "RenderPurplePower",
+      "ref_registration": "(Render)new RenderPurplePower(new ModelPurplePower(1.0f), 0.3f, 2.75f)",
+      "expected_shadow": 0.825,
+      "expected_scale": 1,
+      "ref_derivation": "shadow: RenderPurplePower.java:25-26 `super((ModelBase)par1ModelBase, par2 * par3)` with registration args (0.3f, 2.75f) at ClientProxyOreSpawn.java:506 => 0.3 * 2.75 = 0.825 (float 0.82500005). Re-read and confirmed. | scale: RenderPurplePower.java:27 stores this.scale = 2.75 and :38-44 defines `preRenderScale(PurplePower,float)` (glScalef 2.75, or 0.55 when getPurpleType()!=0) ...",
+      "port_renderer": "src/main/java/danger/orespawn/entity/client/PurplePowerRenderer.java",
+      "port_candidate": "none",
+      "truth_verdicts": {
+        "shadow": "DIVERGES",
+        "scale": "DIVERGES"
+      },
+      "truth_verified": true,
+      "status": "pin",
+      "note": "ENT-S-092 batch 1a (2026-09-03): restored to the 1.7.10 values; pinned",
+      "truth_port_values": {
+        "shadow": 0.5,
+        "scale": 1
+      },
+      "mod": null
+    },
+    {
+      "entity": "Brutalfly",
+      "ref_line": 507,
+      "ref_render_class": "RenderBrutalfly",
+      "ref_registration": "(Render)new RenderBrutalfly(new ModelBrutalfly(0.2f), 0.75f, 9.0f)",
+      "expected_shadow": 6.75,
+      "expected_scale": 9,
+      "ref_derivation": "shadow: RenderBrutalfly.java:23-24 `super((ModelBase)par1ModelBase, par2 * par3)` with registration args (0.75f, 9.0f) at ClientProxyOreSpawn.java:507 => 0.75 * 9.0 = 6.75. Re-read and confirmed. | scale: RenderBrutalfly.java:25 this.scale = par3 = 9.0; :44-46 func_77041_b override -> preRenderScale :40-42 `GL11.glScalef(this.scale x3)` => 9.0; ModelBrutalfly(0.2f) ctor arg is only wingspeed (ModelBrutalfly.java:29-32), not a scale. Confirmed.",
+      "port_renderer": "src/main/java/danger/orespawn/entity/client/BrutalflyRenderer.java",
+      "port_candidate": "none",
+      "truth_verdicts": {
+        "shadow": "DIVERGES",
+        "scale": "DIVERGES"
+      },
+      "truth_verified": true,
+      "status": "pin",
+      "note": "ENT-S-092 batch 1a (2026-09-03): restored to the 1.7.10 values; pinned",
+      "truth_port_values": {
+        "shadow": 1.5,
+        "scale": 1
+      },
+      "mod": null
+    },
+    {
+      "entity": "Nastysaurus",
+      "ref_line": 508,
+      "ref_render_class": "RenderNastysaurus",
+      "ref_registration": "(Render)new RenderNastysaurus(new ModelNastysaurus(0.65f), 1.0f, 1.5f)",
+      "expected_shadow": 1.5,
+      "expected_scale": 1.5,
+      "ref_derivation": "shadow: RenderNastysaurus.java:22-23 `super((ModelBase)par1ModelBase, par2 * par3)` with registration args (1.0f, 1.5f) at ClientProxyOreSpawn.java:508 => 1.0 * 1.5 = 1.5. Confirmed. | scale: RenderNastysaurus.java:24 this.scale = par3 = 1.5; :43-45 func_77041_b -> preRenderScale :39-41 glScalef(this.scale x3) => 1.5; ModelNastysaurus(0.65f) arg is wingspeed only (ModelNastysaurus.java:76-77). Confirmed.",
+      "port_renderer": "src/main/java/danger/orespawn/entity/client/NastysaurusRenderer.java",
+      "port_candidate": "none",
+      "truth_verdicts": {
+        "shadow": "MATCH",
+        "scale": "MATCH"
+      },
+      "truth_verified": true,
+      "status": "pin",
+      "mod": null
+    },
+    {
+      "entity": "Pointysaurus",
+      "ref_line": 509,
+      "ref_render_class": "RenderPointysaurus",
+      "ref_registration": "(Render)new RenderPointysaurus(new ModelPointysaurus(1.0f), 1.0f, 1.0f)",
+      "expected_shadow": 1,
+      "expected_scale": 1,
+      "ref_derivation": "shadow: RenderPointysaurus.java:22-23 `super((ModelBase)par1ModelBase, par2 * par3)` with registration args (1.0f, 1.0f) at ClientProxyOreSpawn.java:509 => 1.0 * 1.0 = 1.0. Confirmed. | scale: RenderPointysaurus.java:24 this.scale = par3 = 1.0; :43-45 func_77041_b -> preRenderScale :39-41 glScalef(1,1,1); ModelPointysaurus(1.0f) arg is wingspeed (ModelPointysaurus.java:46-47). Confirmed.",
+      "port_renderer": "src/main/java/danger/orespawn/entity/client/PointysaurusRenderer.java",
+      "port_candidate": "none",
+      "truth_verdicts": {
+        "shadow": "MATCH",
+        "scale": "MATCH"
+      },
+      "truth_verified": true,
+      "status": "pin",
+      "mod": null
+    },
+    {
+      "entity": "Cricket",
+      "ref_line": 510,
+      "ref_render_class": "RenderCricket",
+      "ref_registration": "(Render)new RenderCricket(new ModelCricket(2.5f), 0.15f, 0.5f)",
+      "expected_shadow": 0.075,
+      "expected_scale": 0.5,
+      "ref_derivation": "shadow: RenderCricket.java:22-23 `super((ModelBase)par1ModelBase, par2 * par3)` with registration args (0.15f, 0.5f) at ClientProxyOreSpawn.java:510 => 0.15 * 0.5 = 0.075. Confirmed. | scale: RenderCricket.java:24 this.scale = par3 = 0.5; :43-45 func_77041_b -> preRenderScale :39-41 glScalef(this.scale x3) => 0.5; ModelCricket(2.5f) arg is wingspeed only (ModelCricket.java:27-28). No isChild/field_78091_s use in ModelCricket. Confirmed.",
+      "port_renderer": "src/main/java/danger/orespawn/entity/client/CricketRenderer.java",
+      "port_candidate": "none",
+      "truth_verdicts": {
+        "shadow": "DIVERGES",
+        "scale": "DIVERGES"
+      },
+      "truth_verified": true,
+      "status": "pin",
+      "note": "ENT-S-092 batch 1a (2026-09-03): restored to the 1.7.10 values; pinned",
+      "truth_port_values": {
+        "shadow": 0.1,
+        "scale": 1
+      },
+      "mod": null
+    },
+    {
+      "entity": "ThePrincess",
+      "ref_line": 511,
+      "ref_render_class": "RenderThePrincess",
+      "ref_registration": "(Render)new RenderThePrincess(new ModelThePrincess(0.65f), 0.7f, 0.7f)",
+      "expected_shadow": 0.49,
+      "expected_scale": 0.7,
+      "ref_derivation": "shadow: RenderThePrincess.java:23-24 `super((ModelBase)par1ModelBase, par2 * par3)` with registration args (0.7f, 0.7f) at ClientProxyOreSpawn.java:511 => 0.7 * 0.7 = 0.49 (float 0.48999998). Confirmed. | scale: RenderThePrincess.java:25 this.scale = par3 = 0.7; :44-46 func_77041_b -> preRenderScale :40-42 glScalef(this.scale x3) => 0.7; ModelThePrincess(0.65f) arg is wingspeed only (ModelThePrincess.java:55-56); no isChild use in ModelThePrincess. Confirmed.",
+      "port_renderer": "src/main/java/danger/orespawn/entity/client/ThePrincessRenderer.java",
+      "port_candidate": "none",
+      "truth_verdicts": {
+        "shadow": "MATCH",
+        "scale": "MATCH"
+      },
+      "truth_verified": true,
+      "status": "pin",
+      "mod": null
+    },
+    {
+      "entity": "Frog",
+      "ref_line": 512,
+      "ref_render_class": "RenderFrog",
+      "ref_registration": "(Render)new RenderFrog(new ModelFrog(1.0f), 0.35f, 1.0f)",
+      "expected_shadow": 0.35,
+      "expected_scale": 1,
+      "ref_derivation": "shadow: RenderFrog.java:22-23 `super((ModelBase)par1ModelBase, par2 * par3)` with registration args (0.35f, 1.0f) at ClientProxyOreSpawn.java:512 => 0.35 * 1.0 = 0.35. Confirmed. | scale: RenderFrog.java:24 this.scale = par3 = 1.0; :43-45 func_77041_b -> preRenderScale :39-41 glScalef(1,1,1). No child/baby branch anywhere in RenderFrog or ModelFrog (grep for func_70631_g_/isChild/field_78091_s/glScalef finds only RenderFrog.java:40) ...",
+      "port_renderer": "src/main/java/danger/orespawn/entity/client/FrogRenderer.java",
+      "port_candidate": "none",
+      "truth_verdicts": {
+        "shadow": "DIVERGES",
+        "scale": "MATCH"
+      },
+      "truth_verified": true,
+      "status": "pin",
+      "note": "ENT-S-092 batch 2 (2026-09-03): shadow restored to the 1.7.10 value; pinned",
+      "truth_port_values": {
+        "shadow": 0.3,
+        "scale": 1
+      },
+      "mod": null
+    },
+    {
+      "entity": "ThePrinceAdult",
+      "ref_line": 513,
+      "ref_render_class": "RenderThePrinceAdult",
+      "ref_registration": "(Render)new RenderThePrinceAdult(new ModelThePrinceAdult(0.65f), 1.2f, 1.0f)",
+      "expected_shadow": 1.2,
+      "expected_scale": 1,
+      "ref_derivation": "shadow: RenderThePrinceAdult.java:22-23 `super((ModelBase)par1ModelBase, par2 * par3)` with registration args (1.2f, 1.0f) at ClientProxyOreSpawn.java:513 => 1.2 * 1.0 = 1.2. Confirmed. | scale: RenderThePrinceAdult.java:24 this.scale = par3 = 1.0; :43-45 func_77041_b -> preRenderScale :39-41 glScalef(1,1,1); ModelThePrinceAdult(0.65f) arg is wingspeed only (ModelThePrinceAdult.java:136-137); no isChild use in ModelThePrinceAdult. Confirmed.",
+      "port_renderer": "src/main/java/danger/orespawn/entity/client/ThePrinceAdultRenderer.java",
+      "port_candidate": "none",
+      "truth_verdicts": {
+        "shadow": "MATCH",
+        "scale": "MATCH"
+      },
+      "truth_verified": true,
+      "status": "pin",
+      "mod": null
+    },
+    {
+      "entity": "SpiderRobot",
+      "ref_line": 514,
+      "ref_render_class": "RenderSpiderRobot",
+      "ref_registration": "(Render)new RenderSpiderRobot(new ModelSpiderRobot(1.0f), 0.99f, 1.0f)",
+      "expected_shadow": 0.99,
+      "expected_scale": 1,
+      "ref_derivation": "shadow: RenderSpiderRobot.java:22-23: `super((ModelBase)par1ModelBase, par2 * par3)` with registration args (ModelSpiderRobot(1.0f), 0.99f, 1.0f) => shadowSize = 0.99f * 1.0f = 0.99. ... | scale: RenderSpiderRobot.java:24 `this.scale = par3` = 1.0f; preRenderScale (:45-47) does glScalef(scale,scale,scale) = 1.0 via func_77041_b (:49-51). ...",
+      "port_renderer": "src/main/java/danger/orespawn/entity/client/SpiderRobotRenderer.java",
+      "port_candidate": "none",
+      "truth_verdicts": {
+        "shadow": "DIVERGES",
+        "scale": "MATCH"
+      },
+      "truth_verified": false,
+      "status": "pin",
+      "note": "ENT-S-092 batch 2 (2026-09-03): shadow restored to the 1.7.10 value; pinned",
+      "truth_port_values": {
+        "shadow": 3,
+        "scale": 1
+      },
+      "mod": null
+    },
+    {
+      "entity": "SpiderDriver",
+      "ref_line": 515,
+      "ref_render_class": "RenderSpiderDriver",
+      "ref_registration": "(Render)new RenderSpiderDriver(new ModelSpider(), 0.5f)",
+      "expected_shadow": 1,
+      "expected_scale": 1,
+      "ref_derivation": "shadow: RenderSpiderDriver.java:18-19: `public RenderSpiderDriver(ModelSpider modelSpider, float par2) { }` \u2014 an EMPTY body: the registration's `new ModelSpider()` and 0.5f are discarded, and the implicit super() runs vanilla 1.7.10 RenderSpider() ... | scale: Vanilla 1.7.10 RenderSpider defines no preRenderCallback scale (only RenderCaveSpider scales 0.7), and RenderSpiderDriver adds none \u2014 its doRender (RenderSpiderDriver.java:22,25-31) delegates straight to super.doRender. Scale 1.0.",
+      "port_renderer": "src/main/java/danger/orespawn/entity/client/SpiderDriverRenderer.java",
+      "port_candidate": "none",
+      "truth_verdicts": {
+        "shadow": "DIVERGES",
+        "scale": "MATCH"
+      },
+      "truth_verified": false,
+      "status": "pin",
+      "note": "ENT-S-092 batch 2 (2026-09-03): shadow restored to the 1.7.10 value; pinned",
+      "truth_port_values": {
+        "shadow": 0.8,
+        "scale": 1
+      },
+      "mod": null
+    },
+    {
+      "entity": "GiantRobot",
+      "ref_line": 516,
+      "ref_render_class": "RenderGiantRobot",
+      "ref_registration": "(Render)new RenderGiantRobot(new ModelGiantRobot(0.25f), 0.99f, 1.0f)",
+      "expected_shadow": 0.99,
+      "expected_scale": 1,
+      "ref_derivation": "shadow: RenderGiantRobot.java:22-23: `super((ModelBase)par1ModelBase, par2 * par3)` with (ModelGiantRobot(0.25f), 0.99f, 1.0f) => 0.99f * 1.0f = 0.99. GiantRobot.java does not override getRenderSizeModifier. | scale: RenderGiantRobot.java:24 `this.scale = par3` = 1.0f; func_77041_b (:43-45) -> preRenderScale (:39-41) glScalef(1.0,1.0,1.0). doRender delegates to super (:28), so the hook IS reached. ...",
+      "port_renderer": "src/main/java/danger/orespawn/entity/client/GiantRobotRenderer.java",
+      "port_candidate": "none",
+      "truth_verdicts": {
+        "shadow": "DIVERGES",
+        "scale": "MATCH"
+      },
+      "truth_verified": false,
+      "status": "pin",
+      "note": "ENT-S-092 batch 2 (2026-09-03): shadow restored to the 1.7.10 value; pinned",
+      "truth_port_values": {
+        "shadow": 4,
+        "scale": 1
+      },
+      "mod": null
+    },
+    {
+      "entity": "AntRobot",
+      "ref_line": 517,
+      "ref_render_class": "RenderAntRobot",
+      "ref_registration": "(Render)new RenderAntRobot(new ModelAntRobot(1.0f), 0.99f, 1.0f)",
+      "expected_shadow": 0.99,
+      "expected_scale": 1,
+      "ref_derivation": "shadow: RenderAntRobot.java:22-23: `super((ModelBase)par1ModelBase, par2 * par3)` with (ModelAntRobot(1.0f), 0.99f, 1.0f) => 0.99f * 1.0f = 0.99. Shadow still drawn by RenderManager after the overridden doRender; AntRobot.java does not override getRenderSizeModifier. | scale: RenderAntRobot.java:24 `this.scale = par3` = 1.0f; preRenderScale (:45-47) glScalef(1,1,1) via func_77041_b (:49-51) \u2014 but never reached: func_76986_a (:37-43) routes to renderAntRobot (:27-35), which does not call super.doRender ...",
+      "port_renderer": "src/main/java/danger/orespawn/entity/client/AntRobotRenderer.java",
+      "port_candidate": "none",
+      "truth_verdicts": {
+        "shadow": "DIVERGES",
+        "scale": "MATCH"
+      },
+      "truth_verified": false,
+      "status": "pin",
+      "note": "ENT-S-092 batch 2 (2026-09-03): shadow restored to the 1.7.10 value; pinned",
+      "truth_port_values": {
+        "shadow": 2,
+        "scale": 1
+      },
+      "mod": null
+    },
+    {
+      "entity": "Crab",
+      "ref_line": 518,
+      "ref_render_class": "RenderCrab",
+      "ref_registration": "(Render)new RenderCrab(new ModelCrab(1.0f), 0.99f, 1.0f)",
+      "expected_shadow": 0.99,
+      "expected_scale": "dynamic",
+      "ref_derivation": "shadow: RenderCrab.java:22-23: `super((ModelBase)par1ModelBase, par2 * par3)` with (ModelCrab(1.0f), 0.99f, 1.0f) => 0.99f * 1.0f = 0.99, a constant \u2014 it is NOT multiplied by the crab's per-entity scale (Crab.java does not override getRenderSizeModifier ... | scale: Dynamic per entity: RenderCrab.java:39-42 preRenderScale ignores the stored `this.scale` (=1.0f, :24) and does `float pscale = par1Entity.getCrabScale() ...",
+      "port_renderer": "src/main/java/danger/orespawn/entity/client/CrabRenderer.java",
+      "port_candidate": "none",
+      "truth_verdicts": {
+        "shadow": "DIVERGES",
+        "scale": "MATCH"
+      },
+      "truth_verified": false,
+      "status": "pin",
+      "note": "ENT-S-092 batch 2 (2026-09-03): shadow restored to the 1.7.10 value; pinned",
+      "truth_port_values": {
+        "shadow": 0.8,
+        "scale": null
+      },
+      "mod": null,
+      "scale_dynamic_note": "scale is the entity-driven getCrabScale() on both sides (orig RenderCrab.preRenderCallback reads the entity; port CrabRenderer.scale() reads getCrabScale()); pinned by the transcription, not by a constant"
+    }
+  ]
+}

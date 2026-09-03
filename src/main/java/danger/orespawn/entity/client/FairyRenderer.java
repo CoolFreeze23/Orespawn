@@ -1,5 +1,6 @@
 package danger.orespawn.entity.client;
 
+import com.mojang.blaze3d.vertex.PoseStack;
 import danger.orespawn.OreSpawnMod;
 import danger.orespawn.entity.Fairy;
 import net.minecraft.client.renderer.RenderType;
@@ -8,6 +9,12 @@ import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.resources.ResourceLocation;
 
+/**
+ * orig RenderFairy.java + ClientProxyOreSpawn.java:477:
+ * {@code new RenderFairy(new ModelFairy(1.5f), 0.1f, 0.35f)} - RenderLiving shadow = par2 * par3
+ * (RenderFairy.java:22) and preRenderScale scales by par3 = 0.35 (RenderFairy.java:23,38-44).
+ * The ModelFairy(1.5f) argument is not a size (ENT-S-092).
+ */
 public class FairyRenderer extends MobRenderer<Fairy, FairyModel> {
     private static final ResourceLocation[] TEXTURES = {
             ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "textures/entity/fairytexture.png"),
@@ -22,9 +29,20 @@ public class FairyRenderer extends MobRenderer<Fairy, FairyModel> {
     };
     public static final ModelLayerLocation MODEL_LAYER =
             new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "fairy"), "main");
+    /** orig RenderFairy.scale = 0.35f (third constructor argument, ClientProxyOreSpawn.java:477). */
+    public static final float SCALE = 0.35F;
+    /** orig RenderLiving shadow = 0.1f * 0.35f (RenderFairy.java:22). */
+    public static final float SHADOW = 0.1F * 0.35F;
 
     public FairyRenderer(EntityRendererProvider.Context context) {
-        super(context, new FairyModel(context.bakeLayer(MODEL_LAYER)), 0.15f);
+        super(context, new FairyModel(context.bakeLayer(MODEL_LAYER)), SHADOW);
+    }
+
+    @Override
+    protected void scale(Fairy entity, PoseStack poseStack, float partialTick) {
+        // orig RenderFairy.preRenderScale: GL11.glScalef(scale, scale, scale) - same pipeline
+        // position as LivingEntityRenderer.scale (after the (-1,-1,1) flip, before the -1.501 lift).
+        poseStack.scale(SCALE, SCALE, SCALE);
     }
 
     @Override
