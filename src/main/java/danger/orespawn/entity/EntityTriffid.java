@@ -26,6 +26,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import danger.orespawn.entity.ai.TargetSelection;
+import danger.orespawn.util.MyUtils;
 
 public class EntityTriffid extends Monster {
     // OPT-011: cached SoundEvents — identical createVariableRangeEvent ids,
@@ -246,6 +247,7 @@ public class EntityTriffid extends Monster {
 
     private boolean isSuitableTarget(LivingEntity target) {
         if (target == null || target == this || !target.isAlive()) return false;
+        if (MyUtils.isIgnoreable(target)) return false; // orig Triffid.java:285-287 — the shared ignore screen, ahead of line of sight (:288) (ENT-S-106)
         if (target instanceof EntityTriffid) return false;
         if (!this.getSensing().hasLineOfSight(target)) return false;
         if (target instanceof Player p) return !p.getAbilities().invulnerable;

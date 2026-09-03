@@ -46,6 +46,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import danger.orespawn.ModEntities;
 import danger.orespawn.OreSpawnMod;
 import danger.orespawn.entity.ai.TargetSelection;
+import danger.orespawn.util.MyUtils;
 
 public class EntityGammaMetroid extends TamableAnimal {
     // OPT-011: cached SoundEvents — identical createVariableRangeEvent ids,
@@ -206,6 +207,7 @@ public class EntityGammaMetroid extends TamableAnimal {
 
     private boolean isSuitableTarget(LivingEntity target) {
         if (target == null || target == this || !target.isAlive()) return false;
+        if (MyUtils.isIgnoreable(target)) return false; // orig GammaMetroid.java:266-268 — the shared ignore screen, ahead of line of sight (:269) (ENT-S-106)
         if (!this.getSensing().hasLineOfSight(target)) return false;
         if (target instanceof EntityGammaMetroid) return false;
         if (target instanceof Monster) return false;

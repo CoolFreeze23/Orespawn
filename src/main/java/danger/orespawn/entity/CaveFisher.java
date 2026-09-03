@@ -5,6 +5,7 @@ import danger.orespawn.MobStats;
 import danger.orespawn.OreSpawnMod;
 import danger.orespawn.entity.ai.BugMeleeAttackGoal;
 import danger.orespawn.entity.pose.CaveFisherPose;
+import danger.orespawn.util.MyUtils;
 import javax.annotation.Nullable;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -75,11 +76,15 @@ public class CaveFisher extends Monster implements CaveFisherPose {
         this.goalSelector.addGoal(3, new LookAtPlayerGoal(this, Player.class, 8.0f));
         this.goalSelector.addGoal(4, new RandomLookAroundGoal(this));
         this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
-        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
+        // orig CaveFisher.java:203-205 — the shared ignore screen, ahead of line of
+        // sight (:206), carried by both target goals as their predicate (ENT-S-106).
+        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true,
+                target -> !MyUtils.isIgnoreable(target)));
         // orig CaveFisher.java:193-228 — also preys on passive mobs (anything
         // that isn't an EntityMob/CaveFisher/EnderReaper/EnderKnight). Animal
         // targeting covers the non-monster living set in modern terms.
-        this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, Animal.class, true));
+        this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, Animal.class, true,
+                target -> !MyUtils.isIgnoreable(target)));
     }
 
     public static AttributeSupplier.Builder createAttributes() {

@@ -48,6 +48,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import danger.orespawn.OreSpawnMod;
 import danger.orespawn.entity.ai.TargetSelection;
+import danger.orespawn.util.MyUtils;
 
 /**
  * The consolidated Leon/Leonopteryx (TF-030). 1.7.10 has a single class
@@ -733,14 +734,23 @@ public class EntityLeon extends TamableAnimal
         return TargetSelection.firstMatch(entities, Comparator.comparingDouble(this::distanceToSqr), this::isSuitableTarget);
     }
 
+    /**
+     * orig Leon.java:387-428. ENT-S-106: the shared {@code MyUtils.isIgnoreable}
+     * screen (:403-405) sits after the null / self / dead checks (:394-402) and
+     * ahead of line of sight (:406-408). ENT-S-107: the player branch's
+     * {@code capabilities.isCreativeMode} (:417) is {@code Abilities.instabuild}
+     * — the port's own Kraken / TheKing idiom — not {@code invulnerable}; the two
+     * differ for a survival player made invulnerable by other means.
+     */
     private boolean isSuitableTarget(LivingEntity target) {
         if (this.level().getDifficulty() == Difficulty.PEACEFUL) return false;
         if (target == null || target == this || !target.isAlive()) return false;
+        if (MyUtils.isIgnoreable(target)) return false; // orig Leon.java:403-405 — the shared ignore screen (ENT-S-106)
         if (!this.getSensing().hasLineOfSight(target)) return false;
         if (target instanceof EntityLeon) return false;
         if (target instanceof Monster) return true;
         if (target instanceof Player player) {
-            if (player.getAbilities().invulnerable) return false;
+            if (player.getAbilities().instabuild) return false; // orig Leon.java:417 isCreativeMode (ENT-S-107)
             return !this.isTame();
         }
         if (!this.isTame()) return true;

@@ -24,6 +24,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import danger.orespawn.entity.ai.TargetSelection;
+import danger.orespawn.util.MyUtils;
 
 public class PurplePower extends Mob {
     private static final EntityDataAccessor<Integer> DATA_PURPLE_TYPE =
@@ -192,6 +193,7 @@ public class PurplePower extends Mob {
 
     private boolean isSuitableTarget(LivingEntity target) {
         if (target == null || target == this || !target.isAlive()) return false;
+        if (MyUtils.isIgnoreable(target)) return false; // orig PurplePower.java:248-250 — the shared ignore screen (ENT-S-106)
         if (target instanceof Player p && p.getAbilities().instabuild) return false;
         int type = this.getPurpleType();
         if (target instanceof Player) {

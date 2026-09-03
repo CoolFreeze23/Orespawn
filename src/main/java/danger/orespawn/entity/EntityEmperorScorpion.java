@@ -5,6 +5,7 @@ import danger.orespawn.MobStats;
 import danger.orespawn.ModEntities;
 import danger.orespawn.OreSpawnMod;
 import danger.orespawn.entity.ai.EmperorScorpionPoisonGoal;
+import danger.orespawn.util.MyUtils;
 import java.util.List;
 import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
@@ -73,7 +74,11 @@ public class EntityEmperorScorpion extends Monster {
         this.goalSelector.addGoal(3, new LookAtPlayerGoal(this, Player.class, 8.0f));
         this.goalSelector.addGoal(4, new RandomLookAroundGoal(this));
         this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
-        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
+        // orig EmperorScorpion.java:473-475 — the shared ignore screen (there it follows
+        // the line-of-sight check, :470; both are side-effect-free, so the goal's
+        // predicate-before-sight order yields the same answer) (ENT-S-106).
+        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true,
+                target -> !MyUtils.isIgnoreable(target)));
     }
 
     public static AttributeSupplier.Builder createAttributes() {

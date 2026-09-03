@@ -34,6 +34,7 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraft.resources.ResourceLocation;
 import danger.orespawn.OreSpawnMod;
 import danger.orespawn.entity.ai.TargetSelection;
+import danger.orespawn.util.MyUtils;
 
 /**
  * Robot4 — the Robo-Warrior (orig Robot4.java:428 spawner tag).
@@ -283,6 +284,7 @@ public class Robot4 extends Monster implements Robot4Pose {
 
     private boolean isSuitableTarget(LivingEntity target) {
         if (target == null || target == this || !target.isAlive()) return false;
+        if (MyUtils.isIgnoreable(target)) return false; // orig Robot4.java:367-369 — the shared ignore screen (ENT-S-106)
         if (target instanceof Monster) return false;
         if (target instanceof Player p && p.getAbilities().instabuild) return false;
         return true;

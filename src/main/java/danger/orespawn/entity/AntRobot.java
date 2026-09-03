@@ -38,6 +38,7 @@ import danger.orespawn.entity.ai.GenericTargetSorter;
 import danger.orespawn.entity.client.RenderSpiderRobotInfo;
 import danger.orespawn.entity.gait.AntRigProfile;
 import danger.orespawn.entity.gait.ModernSpiderGait;
+import danger.orespawn.util.MyUtils;
 import de.dertoaster.multihitboxlib.api.ICustomHitboxProfileSupplier;
 import de.dertoaster.multihitboxlib.api.IMultipartEntity;
 import de.dertoaster.multihitboxlib.entity.hitbox.HitboxProfile;
@@ -677,6 +678,7 @@ public class AntRobot extends Mob implements ICustomHitboxProfileSupplier, IMode
         if (target == null || target == this || !target.isAlive()) return false;
         if (target instanceof AntRobot) return false;
         if (target == this.getFirstPassenger()) return false;
+        if (MyUtils.isIgnoreable(target)) return false; // orig AntRobot.java:971-973 — the shared ignore screen (ENT-S-106)
         double dist = this.distanceTo(target);
         if (dist > 9.0f || dist < 6.0f) return false;
         if (target instanceof Player player && player.getAbilities().instabuild) return false;
@@ -696,6 +698,7 @@ public class AntRobot extends Mob implements ICustomHitboxProfileSupplier, IMode
         if (target == null || target == this || !target.isAlive()) return false;
         if (target instanceof AntRobot) return false;
         if (target == this.getFirstPassenger()) return false;
+        if (MyUtils.isIgnoreable(target)) return false; // orig AntRobot.java:1044-1046 — the shared ignore screen (ENT-S-106)
         if (target instanceof Player player && player.getAbilities().instabuild) return false;
         return true;
     }

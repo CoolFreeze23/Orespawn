@@ -33,6 +33,7 @@ import net.minecraft.world.phys.AABB;
 import danger.orespawn.OreSpawnConfig;
 import danger.orespawn.OreSpawnMod;
 import danger.orespawn.entity.ai.TargetSelection;
+import danger.orespawn.util.MyUtils;
 
 public class EntityRat extends Monster {
     // OPT-011: cached SoundEvents — identical createVariableRangeEvent ids,
@@ -190,6 +191,7 @@ public class EntityRat extends Monster {
     // (myowner != null); wild rats attack players and pets regardless of the configs.
     private boolean isSuitableTarget(LivingEntity target) {
         if (target == null || target == this || !target.isAlive()) return false;
+        if (MyUtils.isIgnoreable(target)) return false; // orig Rat.java:195-197 — the shared ignore screen, ahead of line of sight (:198) (ENT-S-106)
         if (!this.getSensing().hasLineOfSight(target)) return false;
         if (target instanceof EntityRat) return false;
 
