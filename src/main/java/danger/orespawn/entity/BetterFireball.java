@@ -1,5 +1,6 @@
 package danger.orespawn.entity;
 
+import danger.orespawn.ModEntities;
 import danger.orespawn.util.MyUtils;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.world.entity.player.Player;
@@ -40,8 +41,36 @@ public class BetterFireball extends LargeFireball {
         super(type, level);
     }
 
+    /**
+     * orig BetterFireball.java:54-68 — the shooter constructor (every shooter builds
+     * shots as {@code new BetterFireball(level, this, accel)}). ENT-S-098, owner
+     * ruling 2026-09-03: it used to chain to {@code LargeFireball(level, shooter,
+     * movement, 1)}, which is {@code super(EntityType.FIREBALL, ...)} (1.21.1
+     * LargeFireball.java:23-26), so a shot was typed {@code minecraft:fireball}: the
+     * better_fireball registration (its .sized, noSummon, the renderer binding)
+     * governed only EntityType#create instances, clients rebuilt shots as plain
+     * LargeFireballs, and NBT saved them under the vanilla id. LargeFireball has no
+     * type-taking shooter constructor, so this goes through the (EntityType, Level)
+     * chain with the mod's own type and replays, in the same order, exactly what the
+     * vanilla chain assigned (AbstractHurtingProjectile.java:37-50 -> Fireball.java:27-29
+     * -> LargeFireball.java:23-26): moveTo the shooter's feet at the fresh 0/0
+     * rotation, reapplyPosition, the normalised-times-{@code accelerationPower}
+     * (0.1) delta movement with hasImpulse (vanilla's private
+     * assignDirectionalMovement), setOwner, then setRot from the shooter. Vanilla's
+     * private explosionPower keeps its field initialiser 1, the literal the old
+     * chain passed, so the LargeFireball-side explosion is unchanged; the port's
+     * own power/damage/small flags are untouched. The 1.7.10 kinematics (:58-67:
+     * shooter position + rotation, motion zeroed, accel = dir/|dir| * 0.1) are the
+     * same values.
+     */
     public BetterFireball(Level level, LivingEntity shooter, Vec3 movement) {
-        super(level, shooter, movement, 1);
+        this(ModEntities.BETTER_FIREBALL.get(), level);
+        this.moveTo(shooter.getX(), shooter.getY(), shooter.getZ(), this.getYRot(), this.getXRot());
+        this.reapplyPosition();
+        this.setDeltaMovement(movement.normalize().scale(this.accelerationPower));
+        this.hasImpulse = true;
+        this.setOwner(shooter);
+        this.setRot(shooter.getYRot(), shooter.getXRot());
     }
 
     public void setNotMe() { this.notme = true; }
