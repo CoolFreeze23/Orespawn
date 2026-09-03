@@ -197,8 +197,13 @@ mounting, or hover behavior.
   1.0/1.7.10 spider (visual-only legs, body-only hitbox, unsteerable), and
   `modern.enabled = false` is the one-line switch to the exact 1.7.10 experience for
   every 2.0 feature at once (robots, riding camera, Mothra's wider hitbox, the optional
-  wiki mobs). The master defaults to true and defers to the per-feature keys; it only
+  wiki mobs, fireball fire respecting `mobGriefing`). The master defaults to true and defers to the per-feature keys; it only
   forces classic when set false.
+- **Boss fireballs respect `mobGriefing`** for the fire they place (MOD-031, new in 2.0, on by
+  default through `[modern] fireRespectsMobGriefing`): while the rule is off there is no fire
+  beside the block a fireball hits and no blast fire, the way ghast and blaze shots behave; damage,
+  the ignite of whatever it hits and the explosion itself are unchanged. Set the key to `false`, or
+  `modern.enabled = false`, for the 1.7.10 fire-always behaviour.
 - While a player is actively steering a modern spider, two vanilla
   rider-physics rules kick in that unridden (or NPC-ridden) spiders do
   not get: step height rises from 0.6 to a full block, and mid-air
