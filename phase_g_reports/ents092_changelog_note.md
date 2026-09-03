@@ -52,3 +52,41 @@ A fired BetterFireball is now the mod's own entity again (it used to be typed as
 in flight and in saves), and the modern config gains its first switch: with `[modern] enabled`
 on, Mothra keeps the port's wider 6x3 root box; classic stays at the original 5x2.
 
+`modern.enabled` is now the master override for every 2.0 feature. Off (the default) forces
+`spiderMovement`, `mountCamera`, `phase14ContentEnable` and `mothraWideRootHitbox` to their
+classic/off values whatever they are set to; on defers to each key, which keeps its name and
+place. On a default config this means robot spiders and ants now run the classic 1.7.10 gait
+and the riding camera is off until `modern.enabled = true` (previously `spiderMovement = MODERN`,
+the key's default, was enough on its own). New modern features register under `[modern]`.
+
+One blast per fireball: a boss's big fireball used to explode twice on impact (the vanilla fireball's
+blast, then OreSpawn's own), and the small fireballs Dragons and the royal family spit exploded although
+they never did in 1.7.10; every shot now explodes exactly once, at its own power, and small shots not at
+all. OreSpawn's thrown projectiles (laser, acid and ice balls, water balls, thunderbolts, urchins, ink
+sacks, shoes, rocks) now break decorated pots, chorus flowers and dripstone the way vanilla snowballs do
+under `projectilesCanBreakBlocks`. The Ultimate and Skate bows' arrows stay outside vanilla's `#arrows`
+tag, so vanilla's Power and Punch math and the "Take Aim" advancement do not apply to them, as in 1.7.10,
+where the bows never applied Power.
+
+The Queen's hit surfaces no longer freeze in the rest pose after a lag spike or when two Queens are drawn.
+MHLib's once-per-tick bone collection was gated by a single stamp per renderer that wedged for good on a
+frame during which the entity ticked twice and starved every Queen but one; the stamp now lives on each
+entity and collects whenever the entity has ticked since its last pass (BUG-044, design after MoreHitboxes,
+MIT, see the README's third-party notices). The GeckoLib render hook also no longer fires twice per bone
+(OPT-028: it hooked a synthetic bridge as well as the real method), halving that per-bone cost for every
+GeckoLib mob. `-Dmhlib.counters=true` logs the collection counters every 100 client ticks.
+
+Kraken targeting and the shared "leave it alone" list now match 1.7.10. The Kraken's prey check honours
+the original exclusions again: it never grabs squids, Attack Squids, other Krakens, Spyro, chickens,
+chipmunks, stink bugs or Mothra; it spares any Dragon, Cephadrome, Leonopteryx or Prince that someone is
+riding; it skips everything on the shared spare list; and it no longer snatches flying survival players
+(a survival player on the ground is still prey, creative players are never targeted). As in the original,
+the nearest player decides the player grab, so a creative player standing closer than a survival one
+shields them. A victim that dies in the Kraken's grip is carried through its death animation before the
+tentacles let go, as in 1.7.10. The Kraken's health-keyed behaviour (turning on the player who hits it,
+fleeing upward when badly hurt, calling reinforcements, despawning when far away) now keys off its real
+1000 max health instead of a stale 3000. The shared spare list used by the Alosaurus, Basilisk,
+Brutalfly, Rotator, Scorpion, Vortex, Mothra, Spider Robot, King and Queen is back to the original
+twelve: rock bases, ants of every colour and termites, butterflies (luna moths and Mothra included),
+mosquitoes, dragonflies, fireflies, crickets, cockatiels, ghosts, ghost skellies and elevators are left
+alone; cave fishers, fairies and coins are once more fair game.

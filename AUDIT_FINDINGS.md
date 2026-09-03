@@ -5743,8 +5743,29 @@ Entries: **79 total** — ANIM 20 (DIVERGENT 8 · PARTIAL 10 · MISSING 2) · BU
   twice per bone per frame for every entity drawn by a `GeoEntityRenderer` — the Queen's 110 bones and every
   converted mob alike. Balanced push/pop, so correct; only doubled. Found by the MoreHitboxes comparison and its
   refuter (phase_g_reports/morehitboxes_evaluation.md, Section 2).
-- **Resolution:** OPEN — fix = full-descriptor selectors in the three geckolib mixins (comparison harvest 6, six
-  lines); verify with the `recursive_start` counter (220 → 110 per Queen frame) or `-Dmixin.debug.export`.
+- **Resolution:** FIXED (2026-09-04, owner: "the descriptor-exact selectors with the 220→110 counter as
+  proof"). The three geckolib mixins now name one method each (`remap = false` kept; NeoForge runs Mojang
+  names at runtime, so the literal descriptor is the runtime one; every descriptor pinned with `javap -s`
+  over the 4.8.4 jar): `MixinGeoEntityRenderer` →
+  `renderRecursively(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/world/entity/Entity;Lsoftware/bernie/geckolib/cache/object/GeoBone;Lnet/minecraft/client/renderer/RenderType;Lnet/minecraft/client/renderer/MultiBufferSource;Lcom/mojang/blaze3d/vertex/VertexConsumer;ZFIII)V`
+  (the typed method; the synthetic bridge with `GeoAnimatable` is no longer hooked);
+  `MixinGeoReplacedEntityRenderer` and `MixinGeoRenderer` → the same with
+  `Lsoftware/bernie/geckolib/animatable/GeoAnimatable;` in place of `Entity` (each has exactly one
+  `renderRecursively`, T erased to `GeoAnimatable`, no bridge). Proof instrument: `util/MHLibCounters`
+  (LongAdders, compiled in, `ENABLED = Boolean.getBoolean("mhlib.counters")` read once into a `static
+  final`; every call site guarded, so the disabled path folds away): `client.frames`,
+  `client.collecting_passes`, `client.recursive_start` / `recursive_end`
+  (`IMHLibExtendedRenderLayer.onRenderRecursivelyStart/End` entries), `client.bones_visited`
+  (`onRenderBone` entry), `client.world_pos_reads` (+3 per `getBoneWorldPosition`), `client.folds`,
+  `client.bone_infos_built`, `client.apply_information`; dumped and reset every 100 client ticks by
+  `MHLibClient.onClientTick` (`ClientTickEvent.Post`, registered only when enabled) as one INFO line
+  `MHLib counters (per 100 ticks): client_tick=N client.frames=... ...`. How the proof reads: with one
+  Queen in view and no other GeckoLib entity drawn, `client.recursive_start / client.frames` = 110
+  (= `client.bones_visited / client.frames`, one HEAD hook per bone); with the bridge hooked it reads 220
+  (`recursive_start` = 2 × `bones_visited`). The ratio `recursive_start : bones_visited` is the
+  self-contained test in a single run (1:1 fixed, 2:1 the old state); the literal 220 comes from a
+  throwaway build with the three selectors reverted to the bare name, staged beside the fixed jar. Refuted twice (MHLib semantics and GeckoLib bytecode; tests, probe, compile and attribution), upheld.
+  Owner look: PENDING (look sheet section G).
 ### BUG-032 — Published jar missing the databuddy runtime dependency
 
 - **Impact:** CRITICAL (field) — beta.2 crashes at mod construction on any
@@ -6244,9 +6265,38 @@ keeps BUG-036. Commit 4ea395c's message retains the old number.)*
   orchestrator. Consequence per the refuter's read, not yet pinned: a wedged master's builder ships an empty map
   (a size change is a send, `IMultipartEntity.java:544-546`) and `processBoneInformation` (`:138`) clears the
   server map, so the server hurtboxes fall back to rest pose for the session.
-- **Resolution:** OPEN — report only. Fix = harvest 1 of the comparison: a per-entity render-tick stamp
-  (MoreHitboxes' `renderTick < tickCount`, `GeckoLibMobMixin.java:20-23`, MIT-attributed) with gametests that pin
-  the hitch case and the two-Queen case, two refuters (MHLib change), the owner's look (behaviour change).
+- **Resolution:** FIXED (2026-09-04, owner: "per-entity stamp with gametests for the hitch and two-Queen
+  cases, two refuters"). The once-per-game-tick gate is now a PER-ENTITY render-tick stamp
+  (`IMHLibFieldAccessor._mhlibAccess_get/setRenderTickStamp`, `@Unique int mhlibRenderTickStamp = -1` in
+  `MixinLivingEntity`) with the rule `stamp < tickCount` (`util/RenderTickGate.shouldCollect`), advanced to
+  the collected tick (`RenderTickGate.advance`); design after MoreHitboxes' `GeckoLibMobMixin` (MIT,
+  attributed: license text shipped as `META-INF/LICENSE-MoreHitboxes.txt` and beside the vendored
+  sources, header on `RenderTickGate` and above the gate code, README "Third-party notices"). Why `<`
+  and not `==`: the stamp records the last tick that WAS collected and the render loop does not observe
+  every tick value — a two-tick frame takes `tickCount` N → N+2 while an equality-advanced stamp sits at
+  N+1 forever; `<` collects whenever the entity has ticked since the last collecting pass, never twice in
+  one tick, no special case for −1. The decision is made ONCE per render pass, not per bone:
+  `IBoneInformationCollectorLayerCommonLogic.onPreRender(Entity)` → `beginRenderPass(stamp, tickCount)`
+  stores `collectingPass` on the layer, `onRenderBone` reads it where it compared ticks,
+  `onPostRender(Entity)` → `endRenderPass` writes the advanced stamp back to the ENTITY. The layer's
+  `currentTick` / `getCurrentTick` / `setCurrentTick` are gone. Both renderer paths key on the actual
+  entity: `GeckolibEntityRenderEventHandler` runs the pre hook from `GeoRenderEvent.Entity.Pre` and
+  `ReplacedEntity.Pre` (`event.getReplacedEntity()`) and the post hook from both Post events — the
+  replaced path never advanced a stamp before, so `setScales/setRotations` became null-safe for a pass
+  whose collection is inactive. Tests: `RenderTickGateTests` (own batch `renderTickGate`):
+  `bug044_hitch_stamp_behind_by_two_still_collects` (stamp 10 / tick 12 collects and advances to 12, the
+  same tick again does not, tick 13 does, −1 collects, and the equality rule's 11-vs-12 wedge is shown
+  recovering), `bug044_two_queens_have_independent_stamps` (two spawned Queens start at −1 and each write
+  leaves the other untouched), `bug044_two_queens_gate_decides_per_entity` (A at tick 10 and B at tick 20
+  each collect once per own tick, neither twice; A ticking to 11 collects for A only). The layer itself
+  (client-only, unreachable from a server gametest) is driven headlessly by
+  `QueenPartPlacementProbe.runRenderTickGate` (section 4b, part of `check` via `queenPartPlacementProbe`,
+  exit 1 on regression): the hitch case (pass at tick 10, tickCount jumped by 2, the pass collects, the
+  same tick again does not) and two fake entities alternating through ONE layer (both collect on every
+  one of three ticks with their own stamps). Counters for the owner's look (`-Dmhlib.counters=true`, see
+  OPT-028): `client.collecting_passes` ≈ 100 per 100 ticks per Queen in view, steady across hitches; two
+  Queens ≈ 200, `client.bone_infos_built` ≈ 2000 on the master. Refuted twice (MHLib semantics and GeckoLib bytecode; tests, probe, compile and attribution), upheld. Owner look: PENDING
+  (look sheet section G).
 ### ENT-S-091 — Seven port models diverge from their 1.7.10 geometry beyond the mirror flag (REPORT, 2026-09-02)
 
 - **Models:** CaterKiller (49 extra parts), Elevator (all pivots y 0 -> 24),
@@ -6661,6 +6711,22 @@ keeps BUG-036. Commit 4ea395c's message retains the old number.)*
   whose only effect is breaking decorated pots, chorus flowers and dripstone under
   projectilesCanBreakBlocks -- blocks absent from 1.7.10, so no parity obligation; a
   MOD-level choice either way.
+- **TAG RULINGS (2026-09-04):** (1) arrows — owner: "join #minecraft:arrows only if the 1.7.10
+  bow code applied Power and Punch to them; record the advancement consequence either way".
+  Checked: orig `UltimateBow.java:52-57` and `SkateBow.java:53-58` read Punch
+  (`Enchantment.field_77344_u` → `setKnockbackStrength`) and Flame (`field_77343_v` →
+  `setFire(100)`) only; Power (`field_77345_t`) is read at no fire site (the bow's own :30/:39
+  write Power 5 onto the stack, Boyfriend/Girlfriend fire with Punch/Flame only), vanilla's
+  `setDamage(getDamage() + k * 0.5 + 0.5)` block is absent, and both arrows' `setDamage` is an
+  empty override (UltimateArrow :275-276, IrukandjiArrow :269-270). Condition not met → NO tag;
+  the port's self-applied Power 5 / Flame 3 / Punch 2 / Infinity 1 stay. With the tag, vanilla's
+  Power effect would have added +2.5 before the ×3 speed multiply (38 instead of 1.7.10's 30 at
+  the default UltimateBowDamage). Advancement consequence: `adventure/shoot_arrow` triggers on a
+  `direct_entity` in `#minecraft:arrows`, so the ultimate and irukandji arrows do NOT grant it
+  (they would have with the tag). Pin: `tags_ultimate_and_irukandji_arrows_stay_outside_
+  minecraft_arrows`. (2) throwables — joined `#minecraft:impact_projectiles` as vanilla-
+  consistent behaviour with no parity obligation, recorded as MOD-030; pin
+  `tags_throwables_join_impact_projectiles_bertha_hit_and_cage_stay_out`.
 
 ### ENT-S-099 — Do the ant_robot and spider_robot MHLib parts suffer BUG-042's untracked-bone gap? (REPORT, 2026-09-03)
 
@@ -6705,7 +6771,33 @@ keeps BUG-036. Commit 4ea395c's message retains the old number.)*
 - **Pins proposed:** `KrakenTargetingParityTests` in its own batch (synchronous reflection-
   driven tests over searchForPrey / isSuitableTarget / the hurt retarget with forced rolls
   and creative + survival mock players); KT-D in a tick-driven batch of its own.
-- **Resolution:** OPEN — split presented; awaiting the owner's go per item.
+- **Resolution:** FIXED (2026-09-04) — owner: "fix the five; the recorded convention stands".
+  - KT-A: `findNearestValidPlayer` is now `findNearestPlayer` — the nearest player of ANY game
+    mode (orig :963) — and `searchForPrey` nulls a creative nearest at the call site (orig
+    :965/:970-972, the WormSmall idiom), so a creative player standing nearer than a survival
+    one shadows that player; the :974 fallback runs only when the player target ended up null.
+  - KT-B1: `isSuitableTarget` restored in orig order (:1060-1128): null/self/dead,
+    `MyUtils.isIgnoreable` (:1070), line of sight, the player branch, ground-or-water (:1083),
+    then EntitySquid (:1086), AttackSquid (:1089), Kraken (:1092), Spyro (:1095), ridden Dragon /
+    Cephadrome / Leon / PrinceTeen / PrinceAdult (:1098-1117, `riddenByEntity == null` →
+    `!isVehicle()`), Chicken (:1118), Chipmunk (:1121), StinkBug (:1124), Mothra (:1127); inherits
+    the ENT-S-101 list.
+  - KT-B2: orig :1081 `isFlying` maps to `Abilities.flying` (the port's Dragon and Leon sites), no
+    longer `invulnerable`.
+  - KT-D: FAITHFUL — `handleCaughtEntity` holds while `!caught.isRemoved()` (orig :984 `!isDead`):
+    a victim killed in the grip is carried through its death animation and released on removal.
+  - KT-E: `mygetMaxHealth()` returns `(int) MobStats.KRAKEN.maxHealth()` (1000, orig :115-117
+    `Kraken_stats.health`; Basilisk precedent), so the :884 despawn (max/2), :952 flee (max/4),
+    :954 reinforcement (max/8) and :1154 hurt-retarget (max/4) thresholds divide the attribute base.
+  - KT-C: untouched, stays recorded (the ENT-S-093 convention).
+  - Pins: `KrakenTargetingParityTests` (own batch `krakenTargetingParity`, 21 tests: KT-A ×2,
+    KT-B1 ×14 including the five mounts ridden and unridden, KT-B2 ×1, KT-E ×4 at healths that
+    separate the 1000 base from 3000) and `KrakenHoldReleaseTests` (own batch `krakenHoldRelease`,
+    one tick-driven test: a pig killed in the grip is held at +8 ticks and released after removal).
+    The reinforcement site (:954) is not pinned (needs absolute y > 130 and spawns ten Krakens).
+    Refuted twice (fidelity to the 1.7.10 source; test validity and compile), upheld.
+  - Observed on the way, filed as ENT-S-105: orig's nearest-player scan keeps the LAST of two
+    equidistant players (`<=`), the port's scan the first (`<`).
 
 ### ENT-S-101 — Shared `MyUtils.isIgnoreable` membership differs from 1.7.10 and feeds ten hunters (REPORT, 2026-09-03)
 
@@ -6717,9 +6809,24 @@ keeps BUG-036. Commit 4ea395c's message retains the old number.)*
   justifies the port list, and it already gates targeting in Alosaurus, Basilisk,
   Brutalfly, Rotator, Scorpion, Vortex, Mothra, SpiderRobot, TheKing and TheQueen; the
   KT-B1 fix would inherit whichever list stands.
-- **Resolution:** OPEN — report only; a parity bug by the standing rule unless a MOD record
-  is written for the four additions. Fix shape: restore the 1.7.10 membership with one
-  gametest per member asserting `isIgnoreable` on a spawned instance, in its own batch.
+- **Resolution:** FIXED (2026-09-04) — owner: "fix in classic, test the shared list plus one
+  representative hunter per divergence, changelog entry". `MyUtils.isIgnoreable` restored to orig
+  MyUtils.java:117-152 in the original's order: RockBase (:118), EntityAnt (:121), EntityButterfly
+  (:124), EntityMosquito (:127), Dragonfly (:130), Firefly (:133), Cricket (:136), Cockateil (:139),
+  Termite (:142), Ghost (:145), GhostSkelly (:148), Elevator (:151); the six missing added, the four
+  port additions removed. **Finding correction:** the LunaMoth removal is a no-op — `LunaMoth
+  extends Butterfly` in both trees (orig EntityLunaMoth.java:16-17, port :24), so it stays ignoreable
+  through the butterfly entry exactly as in 1.7.10; Mothra likewise (a butterfly in both trees).
+  The effective flips are six species newly spared and three newly hunted. Ten hunter sites
+  inherit the list (Alosaurus, Basilisk, Brutalfly, Rotator, Scorpion, Vortex, Mothra, SpiderRobot,
+  TheKing, TheQueen), plus the Kraken since ENT-S-100 KT-B1. Pins: `IgnoreListParityTests` (own
+  batch `ignoreListParity`, 26 tests: the twelve members true on a spawned instance;
+  CaveFisher / Fairy / Coin false and LunaMoth true; ten hunter representatives —
+  Scorpion/ant, Basilisk/dragonfly, Vortex/cricket, Mothra/cockateil, Alosaurus/termite,
+  Rotator/elevator rejected with a pig control accepted on the same spot; Brutalfly/cave fisher,
+  Rotator/fairy, Vortex/coin accepted with a Ghost control still rejected; Basilisk/luna moth
+  still rejected). SpiderRobot, TheKing and TheQueen were not used as representatives (bearing /
+  home-distance preconditions sit ahead of their ignore step). Refuted twice (fidelity to the 1.7.10 source; test validity and compile), upheld.
 
 ### ENT-S-102 — BetterFireball explodes twice on impact (REPORT, 2026-09-03)
 
@@ -6730,9 +6837,82 @@ keeps BUG-036. Commit 4ea395c's message retains the old number.)*
   when not small. `LargeFireball.readAdditionalSaveData` also reads the shared
   `ExplosionPower` key into the vanilla field, so a reloaded big shot's vanilla-side
   explosion becomes 2 or 4. Identical before and after the ENT-S-098 fix.
-- **Resolution:** OPEN — report only; a parity bug by the standing rule (one explosion in
-  1.7.10). Fix shape: skip the vanilla explosion (override onHit without the super call,
-  or zero the vanilla power) and pin the explosion count per impact.
+- **Resolution:** FIXED (2026-09-04, owner: "ENT-S-102: fix with a test"). `BetterFireball.onHit`
+  no longer chains to `LargeFireball.onHit` (bytecode: `Projectile.onHit` + `Level.explode(this,
+  power 1, MOB)` + `discard()`; `Fireball` and `AbstractHurtingProjectile` add no onHit of their
+  own). It replays `Projectile.onHit`'s dispatch itself — ENTITY: deflect a
+  `#minecraft:redirectable_projectile` target, `onHitEntity`, `PROJECTILE_LAND` at the hit with
+  `Context.of(this, null)`; BLOCK: `onHitBlock`, `PROJECTILE_LAND` at the block with its state —
+  then, server-side, the port's `explode(null, x, y, z, 1 / 2 / 4, mobGriefing, MOB)` when not
+  small and `discard()`: one explosion per impact, none when small (orig :265-268). The shared
+  `ExplosionPower` NBT key still feeds vanilla's private field on load, which nothing reads any
+  more; no NBT semantics changed. Skipping the vanilla blast also skips vanilla's
+  `EntityMobGriefingEvent` post for the owner; the null-source path reads the gamerule directly, as
+  orig's null source did. Pins in `ProjectileTypeParityTests` (batch
+  `projectileTypeParity`): `s102_big_shot_explodes_exactly_once_at_the_port_power_on_impact`
+  (a big shot into an obsidian wall; a temporary `ExplosionEvent.Start` listener filtered to the
+  structure bounds counts exactly one explosion of radius 2 with a null direct source; the shot is
+  removed) and `s102_small_shot_never_explodes_and_is_discarded_on_impact`. Refuted once.
+
+### ENT-S-103 — UltimateArrow never receives Punch knockback (REPORT, 2026-09-04)
+
+- **Evidence:** found by the ENT-S-102 lane. 1.7.10 `UltimateBow.java:52-54` gave the arrow
+  `setKnockbackStrength(punchLevel)` and orig `UltimateArrow.java:189-191` pushed the victim
+  0.6 × strength along the flat flight line with +0.1 lift. In 1.21.1 knockback comes from
+  `AbstractArrow.doKnockback` → `EnchantmentHelper.modifyKnockback` → Punch, which requires the
+  direct attacker to be in `#minecraft:arrows`; the ultimate arrow is not (TAG RULINGS above), so
+  the bow's self-applied Punch 2 never lands. `IrukandjiArrow` self-implements the push
+  (port :90-98, reading the weapon's Punch level); `UltimateArrow` does not.
+- **Resolution:** OPEN — report only; a parity bug by the standing rule. Fix shape: a
+  `doKnockback` override on `UltimateArrow` of the IrukandjiArrow shape (0.6 × level along the
+  flat flight line, +0.1 lift), with a gametest in the `projectileTypeParity` batch.
+
+### ENT-S-104 — BetterFireball no longer places fire beside a block hit (REPORT, 2026-09-04)
+
+- **Evidence:** found by the ENT-S-102 lane. orig `BetterFireball.java:232-264` switches on the
+  hit side and sets `Blocks.fire` on the air side of the block that was hit before exploding; the
+  port's `BetterFireball` has no `onHitBlock` override, so a block impact places no fire.
+  Predates the ENT-S-102 fix; no AUDIT, FIX or MOD entry covers it. Same area, found by the
+  ENT-S-102 refuter: orig :266's explosion call carried two flags — fire = true always, block
+  destruction = mobGriefing (1.7.10 `Explosion.a/b`, bytecode) — while the port feeds mobGriefing into
+  1.21.1's single `fire` slot, so an OreSpawn fireball places no explosion fire while mobGriefing is
+  off (pre-existing; HEAD :169-170 identical).
+- **Resolution:** OPEN — report only; a parity bug by the standing rule (classic). Fix shape: an
+  `onHitBlock` override placing fire on the hit face's air side, and the explosion's fire flag set
+  true with destruction gated by mobGriefing (1.21.1 `Level.explode`'s 13-argument form takes both),
+  pinned in the `projectileTypeParity` batch.
+
+### ENT-S-105 — Kraken nearest-player scan keeps the first equidistant player, 1.7.10 kept the last (REPORT, 2026-09-04)
+
+- **Evidence:** found by the ENT-S-100 lane. orig `World.func_72857_a` (the nearest-player scan
+  the Kraken's :963 call used) updates its candidate on `d1 <= d0`, so of two players at the same
+  distance the LAST scanned wins; the port's `Kraken.findNearestPlayer` updates on `<`, so the
+  first wins. Same-distance ties only; no MOD record.
+- **Resolution:** OPEN — report only; a parity bug by the standing rule, trivially fixed (`<=`) and
+  pinned with two equidistant players in the `krakenTargetingParity` batch.
+
+### ENT-S-106 — The shared ignore screen is missing from most hunters: 1.7.10 had 38 `isIgnoreable` callers in 37 species, the port has 11 (REPORT, 2026-09-04)
+
+- **Evidence:** found by the ENT-S-100/101 fidelity refuter. Grep of the 1.7.10 sources: 38 call sites
+  of `MyUtils.isIgnoreable` across 37 hunters; the port calls it from 11 (Alosaurus, Basilisk, Brutalfly,
+  Rotator, Scorpion, Vortex, Mothra, SpiderRobot, TheKing, TheQueen, Kraken). Example: orig
+  `Leon.java:403` screens its target with the list, the port's `EntityLeon.java:736-748` does not, so
+  a Leonopteryx will hunt ants, butterflies, ghosts or an elevator that 1.7.10 left alone. No MOD
+  record covers the omissions.
+- **Resolution:** OPEN — report only; a parity bug per hunter by the standing rule. Fix shape: a
+  per-hunter batch (present the 26-hunter list with orig line numbers first), each site restored in orig
+  position with one representative-species test per hunter in the `ignoreListParity` batch.
+
+### ENT-S-107 — EntityLeon and Cephadrome map 1.7.10 "creative" to `invulnerable` instead of `instabuild` (REPORT, 2026-09-04)
+
+- **Evidence:** found by the ENT-S-100/101 fidelity refuter. orig `Leon.java:417` and
+  `Cephadrome.java:557` test `capabilities.isCreativeMode` (`field_75098_d`); the port's
+  `EntityLeon.java:743` and `Cephadrome.java:396` test `getAbilities().invulnerable`. The two flags
+  differ for a player made invulnerable by other means or a creative player whose abilities were
+  edited; the 1.21.1 analogue of `isCreativeMode` is `instabuild` (the port's own Kraken KT-A site and
+  the ENT-S-097 tests use `GameType`/creative directly).
+- **Resolution:** OPEN — report only; a parity bug by the standing rule. Fix: two one-line mappings
+  plus a creative/invulnerable discriminating test each, in a batch of their own.
 ### TEST-003 — Config-flipping gametests in the concurrent default batch
 
 - **Impact:** MEDIUM (suite reliability) — boss005/boss012 flip a global

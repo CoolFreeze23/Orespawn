@@ -61,6 +61,21 @@ that slice, not a task for now.
     comparison; set up 2026-09-03 (see FIX_LOG for the instance record).
 11. **Process hygiene:** background processes launched by subagents carry a timeout and are reaped
     when the agent reports; every session ends with a stray-process check before the report.
+12. **Hitbox-library harvest sequencing (owner, later the same day):** BUG-044 (per-entity render-tick
+    stamp, gametests for the hitch and two-Queen cases, two refuters) and OPT-028 (descriptor-exact
+    `renderRecursively` selectors, the 220 → 110 `recursive_start` counter as proof) go before the
+    owner's look session. The remaining harvests from the comparison — `Player.attack` part-to-parent
+    unwrapping, conservative cull bounds, `defaultRequire = 1` — form ONE harvest slice scheduled before
+    Slice 5. The comparison's other proposals (piercing ignore-list correctness, the fixed-layout binary
+    bone payload, the attack-box data shape) stay unscheduled until ruled on.
+13. **Config master (owner, same batch):** `modern.enabled` is a master override only — off forces every
+    modern feature off, on defers to the existing per-feature keys, which keep their names and sections;
+    new modern features register under `[modern]`.
+14. **Scanner (owner, same batch):** a write inside a non-evaluable branch is not provable; the renderer
+    pin scanner reports it as PENDING for presentation and never assumes a branch.
+15. **MHLib licensing (owner, same batch):** the exact LGPL version of upstream's LICENSE text and the
+    toml field's wording are recorded side by side; the author is contacted via Modrinth or CurseForge
+    for clarification; the LICENSE text governs until the owner says otherwise.
 
 ## D. Rulings executed the same day (for cross-reference)
 

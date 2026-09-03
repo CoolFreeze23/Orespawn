@@ -166,3 +166,25 @@ Use it as the "compare against" for every row above that asks for the 1.7.10 loo
 in its creative tab), same camera. There is no 1.7.10 PlayNicely config toggle in-game: it is `PlayNicely` in
 `minecraft\config\OreSpawn.cfg`, written on first run.
 
+
+## Section G — dev instance, current build, `-Dmhlib.counters=true`: OPT-028 counter proof and the BUG-044 look (new, 2026-09-03)
+
+Staging: after the BUG-044/OPT-028 gate the dev instance carries two jars — the post-fix build as the active
+`orespawn-1.21.1-2.0.0-beta.4.jar` and the pre-fix build renamed `orespawn-1.21.1-2.0.0-beta.4.pre-044.jar.disabled`
+in the same mods folder (rename the extensions to swap; never both enabled). Add the JVM argument
+`-Dmhlib.counters=true` under Instance Settings → Java → JVM arguments. With it on, the client log prints one line
+every 100 client ticks: `MHLib counters (per 100 ticks): ...` with `client.recursive_start`, `client.recursive_end`,
+`client.bones_visited`, `client.collecting_passes`, `client.world_pos_reads`, `client.folds`, `client.frames` and the
+rest. The proof number is `recursive_start ÷ frames` over a window with exactly one Queen in view and no other
+multipart mob (robot spider or ant) or GeckoLib mob on screen: `client.frames` counts every multipart
+entity's render pass and the bone counters count every GeckoLib entity's bones.
+
+| Step | Expect | Result |
+|---|---|---|
+| Post-fix jar: spawn one Queen, stand still with her in view for two log windows | `recursive_start ÷ frames` ≈ 110 (her 110 bones once each), `recursive_end` equal | |
+| Pre-fix jar (`.pre-044`), same spot, same window | ≈ 220 (every bone pushed twice through the bridge hook) | |
+| Post-fix jar: `collecting_passes` per window versus client ticks in the window | ≈ 1 per tick with one Queen (the once-per-tick gate); ≈ 2 per tick with two Queens | |
+| Two-Queen case, post-fix: two Queens in view, F3+B, 5 s | both Queens' part boxes follow their animation every tick | |
+| Two-Queen case, pre-fix jar | one Queen's part boxes stick at rest offsets (BUG-044 starvation) | |
+| Hitch case, post-fix: one Queen in view, stall the client for more than two ticks (F3+T resource reload, or alt-tab to a heavy window for a second), come back | her part boxes keep following | |
+| Hitch case, pre-fix jar | after the stall the part boxes stay at rest offsets for the rest of the session (BUG-044 wedge); server-side reach against her parts fails where the animation has moved them | |

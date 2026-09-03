@@ -52,7 +52,7 @@ automated regression suite guards the result.
 | **The arsenal** | Big Bertha to Ultimate gear, the gemstone armory, Royal Guardian glide. *(screenshot)* |
 | **Companions** | Girlfriends, Boyfriends, tameable everything, rideable robots and dragons. *(screenshot)* |
 | **A living world** | 47 structures, wild crops, anthills, troll blocks, boosted ores. *(screenshot)* |
-| **Modern robots** *(new in 2.0)* | Procedural spider & ant: legs that really plant and climb, per-leg hitboxes, a steerable spider saddle with a smart camera — or `spiderMovement = "CLASSIC"` for the exact 1.7.10 robots. *(screenshot)* |
+| **Modern robots** *(new in 2.0, opt-in)* | Procedural spider & ant: legs that really plant and climb, per-leg hitboxes, a steerable spider saddle with a smart camera — switched on with `modern.enabled = true` (the master for every 2.0 feature; `spiderMovement` stays `MODERN` by default beneath it). The default config gives the exact 1.7.10 robots. *(screenshot)* |
 
 ## Beta status — read this
 
@@ -96,6 +96,41 @@ changed or removed, it will be — immediately.
 
 `mods.toml` license field: **All Rights Reserved** (the original's rights,
 not ours).
+
+### Third-party notices
+
+The port bundles or derives from these third-party works; their notices
+travel with it as listed here.
+
+- **MoreHitboxes** by DarkPred — MIT License. Portions are ported into
+  the vendored MultiHitboxLib: the per-entity render-tick gate
+  (`de.dertoaster.multihitboxlib.util.RenderTickGate` and the collector's
+  pass gate in `IBoneInformationCollectorLayerCommonLogic`), design after
+  `GeckoLibMobMixin` at commit 88899b3 of
+  https://github.com/DarkPred/MoreHitboxes. License text:
+  `src/main/resources/META-INF/LICENSE-MoreHitboxes.txt` (ships inside the
+  jar) and `src/main/java/de/dertoaster/multihitboxlib/LICENSE-MoreHitboxes.txt`.
+- **MultiHitboxLib** by DerToaster — vendored into
+  `src/main/java/de/dertoaster/multihitboxlib/` with local modifications
+  (recorded in AUDIT_FINDINGS.md and FIX_LOG.md; upstream credits: DerToaster,
+  Meme Man, 19__). The upstream LICENSE text governs the vendored portion:
+  the GNU Lesser General Public License, version 3 (29 June 2007), shipped
+  verbatim as `src/main/resources/META-INF/LICENSE-MultiHitboxLib.txt`
+  (inside the jar) and
+  `src/main/java/de/dertoaster/multihitboxlib/LICENSE-MultiHitboxLib.txt`.
+  Upstream's build metadata declared `All Rights Reserved` and its README
+  added terms of use; the upstream repository and mod pages have since been
+  deleted, the author has been asked which license he considers governing,
+  and the LICENSE text governs until he or the owner says otherwise.
+- **Databuddy** by Commoble — MIT License, as stated by its upstream
+  repository https://github.com/Commoble/databuddy ("Copyright (c) 2020 Joseph
+  Bettendorff aka Commoble"; the nested jar and its POM carry no license text
+  of their own, so this line is sourced from upstream). Shipped jar-in-jar as
+  `META-INF/jarjar/databuddy-1.21-6.0.0.0.jar` (BUG-032); the nested jar
+  and its Maven POM carry no license file of their own.
+- **GeckoLib** by Gecko and contributors — MIT License ("Copyright (c)
+  2024 GeckoThePecko", the `LICENSE_GeckoLib 4` file inside the GeckoLib jar
+  itself). A runtime dependency, not shipped in this jar.
 
 ## How this was made
 

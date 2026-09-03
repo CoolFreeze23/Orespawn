@@ -432,6 +432,9 @@ impact estimate, related finding IDs.
 
 ## MOD-021 — Phase 14 wiki-only mobs: optional content behind `phase14ContentEnable` (ruling applied 2026-08-11)
 - **Category:** VANILLA-INTEGRATION / provenance
+- **Master-override amendment (2026-09-04):** `phase14ContentEnable` is effective only
+  together with `modern.enabled = true` (MOD-029's master-override ruling); the key keeps
+  its name and place.
 - **Ruling (2026-08-11):** VampireButterfly, AppleCow, and GoldenAppleCow are
   wiki-documented ("Added Mobs" page) but have **no class in the 586-file
   1.7.10 source dump** — they cannot ship enabled in a source-verified parity
@@ -616,10 +619,11 @@ _pin) so alignment drift is caught regardless.
   5x2." Ruled the same day: "Artist animations are a 2.0 feature behind the modern
   config; classic stays code-driven parity" — so the switch is the modern config, not
   a per-feature key of its own.
-- **Switch (implemented 2026-09-03):** no master modern switch existed before — the
-  earlier 2.0 opt-ins (`spiderMovement`, `mountCamera`, `phase14ContentEnable`, the
-  MOD-024 candidates, which are unimplemented proposals, not keys) stay as they are: the three
-  existing per-feature keys live under `[tweaks]`, untouched and independent of the master.
+- **Switch (implemented 2026-09-03; semantics amended by the master-override ruling of
+  2026-09-04, see the bullet after the sub-keys):** no master modern switch existed before.
+  The earlier 2.0 opt-ins (`spiderMovement`, `mountCamera`, `phase14ContentEnable`; the
+  MOD-024 candidates are unimplemented proposals, not keys) keep their names and their
+  `[tweaks]` section, but are effective only while the master is on.
   `OreSpawnConfig` (COMMON spec) gains a `[modern]` section:
   - `modern.enabled` (`MODERN_ENABLED`, default **false**): the master. Classic 1.7.10
     parity is the default experience; every modern-mode feature hangs off it, each
@@ -628,6 +632,27 @@ _pin) so alignment drift is caught regardless.
   - `modern.mothraWideRootHitbox` (`MODERN_MOTHRA_WIDE_ROOT_HITBOX`, default **true**):
     the MOD-029 sub-key. `OreSpawnConfig.mothraWideRootHitbox()` is the single
     `master && sub-key` evaluation.
+- **Master-override ruling (owner, 2026-09-04):** "modern.enabled: master override only.
+  Off forces all modern features off; on defers to existing per-feature keys, which keep
+  their names. New features register under [modern]." Supersedes the earlier "untouched
+  and independent of the master" shape. Implemented as one effective-value helper per
+  modern feature in `OreSpawnConfig`, each the single read for its feature (a key is never
+  consulted without the master): `spiderMovement()` (`SpiderMovement.CLASSIC` while the
+  master is off, else `tweaks.spiderMovement`; routed through both robots' construction
+  snapshots, still one read, so the S4 ctor-tear rule and BOSS-017 hold), `mountCamera()`
+  (`MountCameraState.targetDistance`; a client-side read of the client's own COMMON file, so on a
+  multiplayer client the master must be set locally as well), `phase14ContentEnable()` (the three `ModCreativeTabs`
+  spawn-egg gates and the `ModSpawnControl` natural-spawn suppliers), `mothraWideRootHitbox()`
+  unchanged. No key renamed, moved or re-defaulted; the `[modern] enabled` comment states the
+  semantics and every per-feature key says "Effective only when [modern] enabled is true".
+  Consequence on a DEFAULT config (master false): `tweaks.spiderMovement` (default MODERN)
+  and `tweaks.mountCamera` (default true) are effectively CLASSIC / off until
+  `modern.enabled = true`; `phase14ContentEnable = true` also needs the master now. Pins:
+  `ModernMasterOverrideTests` (own batch `modernMasterOverride`): the off/on truth table for
+  all four helpers plus the routed construction read (master off + key MODERN constructs
+  classic robots with zero parts; master on constructs modern); every existing modern-mode
+  gait test raises the master together with the key and restores both (AntGaitTests,
+  HitboxPartTests, PartInteractTests, RideTests, S6LegFixTests, SpiderGaitTests).
 - **Mothra wiring:** `Mothra#modernWideRoot` snapshots that value in the constructor and
   calls `refreshDimensions()` (the BOSS-017 King/Kraken PlayNicely-snapshot pattern,
   orig TheKing.java:85-89); `Mothra#getDefaultDimensions` returns
@@ -650,3 +675,28 @@ _pin) so alignment drift is caught regardless.
   6 x 3 in both; sub-key off while modern on -> 5 x 2; live flips of either key never
   resize a constructed Mothra.
 - **Related:** ENT-S-095 (batch 2), BOSS-017, MOD-024, Phase G ruling 2026-09-03.
+
+## MOD-030 — OreSpawn throwables join `#minecraft:impact_projectiles` (VANILLA-INTEGRATION; ruling applied 2026-09-04)
+
+- **Origin:** ENT-S-098's TAG MEMBERSHIP paragraph: the ThrowableProjectile family sat outside
+  `minecraft:impact_projectiles`. Owner ruling 2026-09-04: "Throwables join impact_projectiles
+  as vanilla-consistent behavior with no parity obligation; record as a MOD note."
+- **What the tag does:** exactly one thing. `Projectile.mayBreak(Level)` is `type in
+  #impact_projectiles && gamerule projectilesCanBreakBlocks` (1.21.1 bytecode), consulted by
+  `DecoratedPotBlock`, `ChorusFlowerBlock` and `PointedDripstoneBlock` in `onProjectileHit`.
+  Vanilla lists `#arrows`, firework rockets, snowballs, both fireballs, eggs, tridents, the dragon
+  fireball, wither skulls and both wind charges.
+- **Change:** `data/minecraft/tags/entity_type/impact_projectiles.json` (`replace: false`) adds
+  `orespawn:laser_ball`, `acid`, `ice_ball`, `dead_irukandji` (LaserBall and its three
+  subclasses), `water_ball`, `thunder_bolt`, `sunspot_urchin`, `ink_sack`, `shoes`, `thrown_rock`
+  next to the existing `better_fireball`. NOT `bertha_hit` (the invisible swing proxy, never a
+  flying object) and NOT `cage` (the capture bobber, whose landing is the capture). The arrows
+  are untouched (they enter vanilla's list only via `#arrows`, ruled separately: no).
+- **Effect:** a thrown laser / acid / ice ball, dead irukandji, water ball, thunderbolt, urchin,
+  ink sack, shoe or rock that lands on a decorated pot, chorus flower or pointed dripstone breaks
+  it when `projectilesCanBreakBlocks` is on, as a snowball or egg would. No damage, sound,
+  particle or impact code changes. Those three blocks do not exist in 1.7.10, so there is no
+  parity obligation; applies in both modes — vanilla consistency, not a 2.0 feature, so no config
+  key and not under the `[modern]` master.
+- **Pin:** `ProjectileTypeParityTests#tags_throwables_join_impact_projectiles_bertha_hit_and_cage_stay_out`
+  (batch `projectileTypeParity`; snowball / fishing bobber as the vanilla controls).

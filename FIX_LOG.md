@@ -4846,3 +4846,53 @@ GATE (rulings2): 2026-09-03 21:53-21:57: g1BenchmarkVerify green without regener
 ## RULINGS 2026-09-03 (second batch, addendum) — MoreHitboxes per-feature comparison against the vendored MHLib
 
 MoreHitboxes per-feature comparison against the vendored MHLib (owner clarification of item 11: not a migration decision; MHLib stays; identify what MoreHitboxes does better and port those pieces into the vendored MHLib under MIT with attribution, the most performant design per feature; both libraries side by side only if the bytecode shows their mixin targets do not collide). Report at phase_g_reports/morehitboxes_evaluation.md; the first, keep-or-switch report is kept as morehitboxes_evaluation_v1_superseded.md because the new one cites it. Collision verdict: exactly one shared mixin target (GeoEntityRenderer.renderRecursively), both non-cancelling at distinct instructions, so Mixin would load both, but the ruling's bar is not met and side by side stays off the table. Harvest list, ranked: per-entity once-per-tick bone collection with MHLib-native trims (also fixes BUG-044), Player.attack part-to-parent unwrapping, conservative cull bounds (an OPT-013 re-ruling), piercing ignore-list correctness, a fixed-layout binary bone payload, descriptor-exact renderRecursively selectors (OPT-028), the attack-box data shape resolved server-side against MHLib's synced parts, defaultRequire 1 for the mixin config. Not worth porting, with reasons: MoreHitboxes' server-side placement, its trust model (none), its profile sync, the hit-result parent rewrite, its Level.getEntities mixins, anchors, fixPosOnRefresh. Item 13 fold specified: counters to add on the MHLib side (bones visited, recursive start/end, world-position reads, folds, bone infos built, collector nanoseconds and allocated bytes, C2S/S2C packets and bytes, server alignment and placement time) with six isolation scenes and a proposed, not adopted, regression threshold. Two findings filed from the comparison: BUG-044 (the per-renderer collection stamp wedges on a two-tick frame and starves all but one entity per renderer) and OPT-028 (bare-name selectors hook GeckoLib's bridge: double push/pop per bone for every GeckoLib entity). Attribution mechanics proposed (LICENSE-MoreHitboxes.txt in META-INF and beside the vendored sources, per-file headers on ported code, a third-party notices section; the MHLib licensing flag restated). Verification: refuted once on the session model after four launches died on server-side API errors (owner: rerun those, redo anything that ran on another model); the refuter's blocking defect (the orchestrator's interim 'no server-visible behaviour change' correction for harvest 1) and its minors are applied in the installed text. No code changed.
+
+## RULINGS 2026-09-04 — BUG-044/OPT-028, ENT-S-100/101/102, projectile tags, modern master, scanner, MHLib licensing
+
+BUG-044 fixed: the once-per-tick bone-collection gate is a per-entity render-tick stamp (stamp < tickCount, util/RenderTickGate, design after MoreHitboxes' GeckoLibMobMixin, MIT text shipped and attributed), decided once per render pass and keyed on the actual entity on both renderer paths; RenderTickGateTests (own batch) pin the hitch and two-Queen cases on spawned Queens, and the placement probe's new section 4b drives the real layer through both cases (exit 1 on regression). OPT-028 fixed: the three geckolib mixins name one method each by full descriptor (GeoEntityRenderer's typed Entity form; the erased GeoAnimatable form for the replaced renderer and the interface, which have no bridge), so the per-bone push/pop runs once; util/MHLibCounters (-Dmhlib.counters=true, one INFO line per 100 client ticks) is the proof instrument: recursive_start divided by frames reads 110 with one Queen in view (220 on the bare-name build); a throwaway bare-name build is staged beside the fixed jar as the literal before. Refuted twice (MHLib semantics against the 4.8.4 bytecode; tests, probe, compile and attribution), upheld; the accessor glue in onPreRender/onPostRender is covered by inspection only (coverage gap noted).
+ENT-S-100 fixed (five items: the nearest player of any mode with the creative null at the call site; the orig-order isSuitableTarget chain with the shared ignore list and the ten exclusions, ridden mounts via isVehicle; flying, not invulnerable; hold until removal; MobStats max health) and ENT-S-101 fixed (isIgnoreable restored to the 1.7.10 twelve; LunaMoth stays ignoreable through Butterfly in both trees, so six species newly spared and three newly hunted); 48 pins in three own batches; refuted twice (fidelity against the 1.7.10 sources and the verified 1.7.10 jar's bytecode; test validity and compile), upheld. Filed on the way: ENT-S-105 (nearest-player tie-break), ENT-S-106 (the ignore screen missing from most hunters: orig 38 callers, port 11), ENT-S-107 (Leon and Cephadrome map creative to invulnerable).
+ENT-S-102 fixed (one explosion per impact at the port's power, none when small; `BetterFireball.onHit`
+replays `Projectile.onHit`'s dispatch and never reaches `LargeFireball.onHit`), two pins. Projectile
+tags: the 1.7.10 bows applied Punch and Flame but never Power (orig UltimateBow.java:52-57,
+SkateBow.java:53-58), so by the owner's condition the ultimate and irukandji arrows stay OUT of
+`#minecraft:arrows` (pinned) and do not grant the shoot_arrow advancement; the throwable family
+joined `#minecraft:impact_projectiles` as MOD-030 (pinned). Two findings filed on the way:
+ENT-S-103 (UltimateArrow never receives Punch knockback) and ENT-S-104 (BetterFireball no longer
+places fire beside a block hit).
+Modern master (owner: "master override only"): `OreSpawnConfig` gains one effective-value helper per
+modern feature (`spiderMovement()`, `mountCamera()`, `phase14ContentEnable()`, beside
+`mothraWideRootHitbox()`), every read site routed, keys unchanged in name, section and default;
+`ModernMasterOverrideTests` (own batch) pins the truth table and the routed robot construction;
+the six modern-gait test classes now raise the master with the key. CONSEQUENCE ON A DEFAULT CONFIG
+(master false): `tweaks.spiderMovement` (default MODERN) and `tweaks.mountCamera` (default true)
+are effectively CLASSIC / off until `modern.enabled = true`; `phase14ContentEnable = true` also
+needs the master. MOD-029 amended, MOD-021 annotated, KNOWN_ISSUES and the changelog note updated.
+Scanner (owner: "a write inside a non-evaluable branch is not provable; report it as pending for
+presentation, never assume a branch"): such writes now yield status PENDING with a `not provable`
+detail (a default-path non-evaluable write stays DIVERGES); lab: W38 PASS → PENDING as expected, and
+W50 PASS → PENDING because a string literal containing `; if (` had fooled the statement look-back
+into a false PASS (string-literal lexing is a separate pre-existing blind spot, presented for its own
+ruling); repo leg identical before and after (PASS 120 / PENDING 0 / NOT_APPLICABLE 13, no entry
+changed), so nothing needed presenting before the gate. Record in
+phase_g_reports/renderer_pin_scanner_lab_2026-09-03.md.
+MHLib licensing (lane F): upstream MultiHitboxLib's LICENSE.md is the unmodified FSF GNU Lesser General
+Public License, Version 3, 29 June 2007 (git blob 0a041280bd00a9d068f503b8ee7ce35214bd24a1, 165 lines),
+byte-identical on master at the MC1.20.1-1.8.1 commit 166a4fd, on the final master commit 5480d37 and
+on the 1.21-NeoForge head c555dc0 the vendored copy derives from (read through the Binaris00 fork
+network; the SHAs match the currentOid values in Wayback captures of the live repo); GitHub's own
+detection showed "LGPL-3.0 license" through the last capture on 2026-05-10 and the README blob returned
+404 by 2026-06-30. Side by side: gradle.properties line 10 `mod_license=All Rights Reserved` on every
+branch, expanded by build.gradle into mods.toml / neoforge.mods.toml line 3 `license="${mod_license}"`,
+so every released jar declared All Rights Reserved; README "Terms of use": "The license needs to be met
+(GNU license)." plus no jar-in-jar/shadowing, no forks or ports, no re-uploads, mandatory credits and
+commercial use by e-mail permission; Modrinth project zxK3GsTY declared LGPL-3.0-or-later (captures
+2023-12-01 to 2024-06-13) then AGPL-3.0-or-later linking the README (2025-05-23 to 2025-12-28) and is
+now deleted; CurseForge project 899090 declared "Custom License" whose text opens "The GPL license is
+to be applied here." (capture 2024-10-14) and is removed too. Standing rule: the LICENSE text (LGPL-3.0)
+governs until the owner says otherwise. Contact: neither Modrinth nor CurseForge offers messaging and
+the project is gone from both; the author's own designated channels are e-mail
+(dertoaster@cq-repoured.net, the README's permission channel) and the MHLib Discord server; a draft
+e-mail is staged in the owner's mailbox, unsent, awaiting the owner's word on the channel.
+Refuters this batch, all on the session model: lane A two (upheld), lane B two (upheld), lane C one (upheld; minors applied: the explosion fire-flag mapping recorded under ENT-S-104, a shooter-alive assertion added), lane D one (upheld; the client-side config clause added), lane E one (upheld; two follow-up fixes applied and re-run: failures outrank PENDING, ternary arms on a branch are never assumed; repo leg unchanged).
+
+GATE (rulings3): 2026-09-04 01:57-02:00: g1BenchmarkVerify drifted (main classes changed) and the benchmark was regenerated (proof updated: SMOKE_ONLY / COMPONENT_PROXY_ONLY / PENDING_LIVE_PRECUTOVER); build green (asset audit 0 errors / 0 advisories / 4 acknowledged; G1 PARITY PASS 2 + 11 models, checked-in proofs verified; referenceGeometry; referenceRenderers PASS 120 / NOT_APPLICABLE 13; queenPartPlacementProbe including the new section 4b); runGameTestServer: All 369 required tests passed (303 + renderTickGate 3 + ignoreListParity 26 + krakenTargetingParity 21 + krakenHoldRelease 1 + modernMasterOverride 11 + projectileTypeParity 4) in 1m23s; logs rulings3.build.log / rulings3.suite.log.
