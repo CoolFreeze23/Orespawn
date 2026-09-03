@@ -83,12 +83,12 @@ SPECIAL_SCALE_NOTES = {
     "CrabRenderer": ("dynamic: x entity.getCrabScale()", "getCrabScale"),
     "EasterBunnyRenderer": ("x1 adult / x0.5 baby", "entity.isBaby"),
     "GirlfriendRenderer": ("x5 valentine variant / x1 otherwise", "5.0f"),
-    "GodzillaRenderer": ("x3 hostile / x0.75 PlayNicely (divide by 4)", "3.0F / 4.0F"),
+    "GodzillaRenderer": ("x2 hostile / x0.5 PlayNicely (divide by 4)", "SCALE / 4.0F"),
     "PeacockRenderer": ("x1 adult / x0.5 baby", "entity.isBaby"),
     "PitchBlackRenderer": ("dynamic: x entity.getPitchBlackScale()", "getPitchBlackScale"),
-    "PurplePowerRenderer": ("x1 type 0 / x0.55 other types", "getPurpleType"),
-    "QueenRenderer": ("x1 hostile / x0.25 PlayNicely (divide by 4)", "0.25f"),
-    "TheKingRenderer": ("x1 hostile / x0.25 PlayNicely (divide by 4)", "SCALE / 4.0F"),
+    "PurplePowerRenderer": ("x1 all types (ENT-S-092: the port's type-based 0.55 was an invention; texture still keyed on the type)", "getPurpleType"),
+    "QueenRenderer": ("x2 hostile / x0.5 PlayNicely (divide by 4), applied in scaleModelForRender", "SCALE / 4.0F"),
+    "TheKingRenderer": ("x2.1 hostile / x0.525 PlayNicely (divide by 4)", "SCALE / 4.0F"),
 }
 
 FK_MODELS = {"EmperorScorpionModel", "ModelAlien"}

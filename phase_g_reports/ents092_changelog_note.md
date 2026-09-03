@@ -43,3 +43,8 @@ The Kraken also regained its PlayNicely mode (1.33x5 box and a third-size draw w
 setting is on), and its PlayNicely behaviour gates (no storms, lightning, grabs or hunts while
 the setting is on). Godzilla is 9.9 wide again (was 10), Mothra's box is back to 5x2 (was 6x3),
 the apple cows match the cow line at 0.9x1.3, and a small fireball is small again (0.3125).
+
+The Queen is back to her original size (twice what the port drew), her shadow matches, her PlayNicely
+box is 5.5x6 as in 1.7.10, and her hit parts now actually follow her bones: a port bug had left them
+at her feet whenever another player's client was the one streaming her pose.
+

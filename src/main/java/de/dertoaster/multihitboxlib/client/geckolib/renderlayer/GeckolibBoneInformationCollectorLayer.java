@@ -11,8 +11,10 @@ import it.unimi.dsi.fastutil.Stack;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.util.Mth;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
 import software.bernie.geckolib.animatable.GeoAnimatable;
 import software.bernie.geckolib.cache.object.GeoBone;
@@ -31,6 +33,18 @@ public class GeckolibBoneInformationCollectorLayer<T extends GeoAnimatable> exte
 	}
 	
 	private int currentTick = -1;
+
+	/**
+	 * ENT-S-092 (2026-09-03): the body yaw the frame being collected was rendered with, as the
+	 * y-rotation that takes a yaw-0 profile pivot into the rendered frame (see
+	 * {@link #bodyYawRotationTerm(Entity, float)}). Set per bone by {@link #renderForBone} and folded
+	 * into every rotation vector this layer ships ({@link #getRotationVector()}), so the server's and
+	 * the trusting client's {@code MHLibPartEntity.applyInformation} rotate the pivot in the SAME
+	 * frame the bone world position was produced in. Without it a pivot authored at yaw 0 stayed
+	 * unturned while the bone position turned with the body (33.7 blocks off for the Queen's wing
+	 * at yaw 90).
+	 */
+	private double bodyYawRotationTerm = 0.0D;
 
 	@Override
 	public boolean isBoneCollectionActive() {
@@ -53,7 +67,92 @@ public class GeckolibBoneInformationCollectorLayer<T extends GeoAnimatable> exte
         } else {
             entity = (Entity)animatable;
         }
+		this.bodyYawRotationTerm = bodyYawRotationTerm(entity, partialTick);
 		this.onRenderBone(poseStack, entity, bone, renderType, bufferSource, buffer, partialTick, packedLight, packedOverlay);
+	}
+
+	/**
+	 * The yaw {@code GeoEntityRenderer.actuallyRender} rendered this frame with (4.8.4 bytecode offsets
+	 * 59-67: {@code Mth.rotLerp(partialTick, yBodyRotO, yBodyRot)} for a LivingEntity, 0 otherwise), as
+	 * the y-rotation the pivot needs. {@code applyRotations} (offsets 44-59) turns the model by
+	 * {@code Axis.YP.rotationDegrees(180 - yaw)}; the bone world positions carry that turn and the
+	 * profile pivots are authored in the yaw-0 frame (turned by 180), so relative to them the frame is
+	 * turned by YP(-yaw). {@code Vec3.yRot(a)} is exactly {@code Axis.YP.rotation(a)} (x' = x cos a +
+	 * z sin a, z' = z cos a - x sin a), hence the term is {@code -toRadians(yaw)}. The riding clamp and
+	 * the isShaking jitter of applyRotations are not reproduced (no bone-synced entity rides or
+	 * freezes).
+	 */
+	public static double bodyYawRotationTerm(Entity entity, float partialTick) {
+		if (!(entity instanceof LivingEntity living)) {
+			return 0.0D;
+		}
+		return bodyYawRotationTerm(Mth.rotLerp(partialTick, living.yBodyRotO, living.yBodyRot));
+	}
+
+	public static double bodyYawRotationTerm(float lerpedBodyYawDegrees) {
+		return -Math.toRadians(lerpedBodyYawDegrees);
+	}
+
+	/**
+	 * Folds the body-yaw term into a summed bone rotation so that the fixed chain
+	 * {@code pivot.xRot(x).yRot(y).zRot(z)} in {@code MHLibPartEntity.applyInformation} (:424-427) equals
+	 * the exact {@code (pivot.xRot(rx).yRot(ry).zRot(rz)).yRot(yawTerm)}: the composed matrix
+	 * {@code Ry(yaw) * Rz(rz) * Ry(ry) * Rx(rx)} is re-decomposed into the same Z*Y*X Euler order (Vec3
+	 * conventions: xRot(a) = [[1,0,0],[0,c,s],[0,-s,c]], yRot(a) = [[c,0,s],[0,1,0],[-s,0,c]],
+	 * zRot(a) = [[c,s,0],[-s,c,0],[0,0,1]]; a vector chain v.xRot(a).yRot(b).zRot(c) is Rz(c)*Ry(b)*Rx(a)*v).
+	 * Adding the term to y alone would only be exact for rz == 0: a z-rotating chain (a wing flap) would
+	 * then be applied about the world z axis instead of the body's. A zero term returns the input
+	 * unchanged, so the yaw-0 behaviour is untouched.
+	 */
+	public static Vec3 foldBodyYaw(double rx, double ry, double rz, double yawTerm) {
+		if (yawTerm == 0.0D) {
+			return new Vec3(rx, ry, rz);
+		}
+		final double[][] m = mul(rotY(yawTerm), mul(rotZ(rz), mul(rotY(ry), rotX(rx))));
+		// M = Rz(c) * Ry(b) * Rx(a): row 2 = [-sin b, -cos b sin a, cos b cos a], column 0 = [cos c cos b, -sin c cos b, -sin b]
+		final double sinB = -m[2][0];
+		final double cosB = Math.sqrt(m[2][1] * m[2][1] + m[2][2] * m[2][2]);
+		final double b = Math.atan2(sinB, cosB);
+		final double a;
+		final double c;
+		if (cosB > 1.0E-9D) {
+			a = Math.atan2(-m[2][1], m[2][2]);
+			c = Math.atan2(-m[1][0], m[0][0]);
+		} else {
+			// gimbal lock (b = +-90 degrees): only a -+ c is determined; with c = 0, column 1 gives
+			// M[0][1] = -sin b sin a and M[1][1] = cos a
+			c = 0.0D;
+			a = Math.atan2(-sinB * m[0][1], m[1][1]);
+		}
+		return new Vec3(a, b, c);
+	}
+
+	private static double[][] rotX(double angle) {
+		final double c = Math.cos(angle);
+		final double s = Math.sin(angle);
+		return new double[][] { { 1, 0, 0 }, { 0, c, s }, { 0, -s, c } };
+	}
+
+	private static double[][] rotY(double angle) {
+		final double c = Math.cos(angle);
+		final double s = Math.sin(angle);
+		return new double[][] { { c, 0, s }, { 0, 1, 0 }, { -s, 0, c } };
+	}
+
+	private static double[][] rotZ(double angle) {
+		final double c = Math.cos(angle);
+		final double s = Math.sin(angle);
+		return new double[][] { { c, s, 0 }, { -s, c, 0 }, { 0, 0, 1 } };
+	}
+
+	private static double[][] mul(double[][] p, double[][] q) {
+		final double[][] out = new double[3][3];
+		for (int i = 0; i < 3; i++) {
+			for (int j = 0; j < 3; j++) {
+				out[i][j] = p[i][0] * q[0][j] + p[i][1] * q[1][j] + p[i][2] * q[2][j];
+			}
+		}
+		return out;
 	}
 
 	@Override
@@ -124,7 +223,8 @@ public class GeckolibBoneInformationCollectorLayer<T extends GeoAnimatable> exte
 	@Override
 	public Vec3 getRotationVector() {
 		Vector3d rot = this.getCurrentRotation();
-		return new Vec3(rot.x, rot.y, rot.z);
+		// ENT-S-092: ship the summed bone rotation with the body yaw folded in (see bodyYawRotationTerm).
+		return foldBodyYaw(rot.x, rot.y, rot.z, this.bodyYawRotationTerm);
 	}
 
 	@Override

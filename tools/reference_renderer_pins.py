@@ -30,7 +30,18 @@ argument or a `shadowRadius = <shadow>;` / `this.shadowRadius = <shadow>;` / `su
 <shadow>;` body write (SHADOW or a literal equal to the expectation) — and its
 `<poseStack>.scale(SCALE, SCALE, SCALE)` in the `scale(...)` override
 (or the render()-wrapper form, which is the same uniform scale about the entity origin), where <poseStack>
-is whatever the scanned method names its PoseStack parameter (`poseStack`, `stack`, `ps`...). An
+is whatever the scanned method names its PoseStack parameter (`poseStack`, `stack`, `ps`...) — or, the
+GeckoLib form (ENT-S-092, TheQueen), the factor a `scaleModelForRender(float widthScale, float heightScale,
+PoseStack ...)` override hands on: `super.scaleModelForRender(widthScale * <factor>, heightScale * <factor>,
+...)` reaches GeckoLib's default `poseStack.scale(w, h, w)` after its entityRenderTranslations capture, so
+that super call is one scale site (method scaleModelForRender) whose value is <factor>. The factor is read
+from the first two arguments as `<param> * <factor>` / `<factor> * <param>` under the override's own
+parameter names; width and height must carry the same factor expression, else the site is UNPARSED; a
+ternary local (`float f = cond ? SCALE / 4.0F : SCALE;`) resolves to its default branch exactly as in
+scale(); a pass-through `super.scaleModelForRender(widthScale, heightScale, ...)` applies nothing, and an
+override that never reaches super applies nothing from that slot (only its own `<poseStack>.scale(` sites
+count, which are read like any other method's); a scaleModelForRender factor plus a scale()/render() site
+compound like any two sites. An
 expected scale of exactly 1.0 accepts an explicit 1.0 or no override. Constant-must-be-used, on both
 axes: when SHADOW exists the constructor must pass it, and when SCALE exists the unconditional scale
 site(s) must apply it (a literal, or a ternary local whose default branch is not SCALE, fails even at
@@ -89,6 +100,13 @@ RE_SHADOW_ASSIGN = re.compile(r"(?:\b(?:this|super)\.|(?<![\w.]))shadowRadius\s*
 # the name of the PoseStack parameter of a scanned method: its `.scale(` is the scale site, whatever
 # the parameter is called (`poseStack`, `stack`, `ps`, fully-qualified `com...PoseStack stack`)
 RE_POSE_STACK_PARAM = re.compile(r"\bPoseStack\s+(" + IDENT + r")\b")
+# GeckoLib's post-capture scale slot: a `scaleModelForRender(...)` override that multiplies the width/height
+# factors it hands to `super.scaleModelForRender(` applies that factor as `poseStack.scale(w, h, w)`
+RE_SUPER_SCALE_MODEL = re.compile(r"\bsuper\.scaleModelForRender\s*\(")
+RE_FLOAT_PARAM = re.compile(r"\bfloat\s+(" + IDENT + r")\b")
+# the port methods scanned for scale sites: `<poseStack>.scale(` in any of them, plus the super factor of
+# a scaleModelForRender override
+SCALE_METHODS = ("scale", "render", "preRender", "applyScale", "scaleModelForRender")
 # a getShadowRadius(...) override (or any call to it) replaces the constructor's shadow at render time
 RE_GET_SHADOW = re.compile(r"\bgetShadowRadius\s*\(")
 RE_REF_SHADOW_FIELD = re.compile(r"this\.field_76989_e\s*=\s*([^;]+);")
@@ -284,18 +302,7 @@ def scale_from_calls(body: str, env: dict[str, float], call: str = "GL11.glScale
         call_re = re.compile(r"\b(?:" + "|".join(re.escape(r) for r in receivers) + r")\.scale\s*\(")
     else:
         call_re = re.compile(re.escape(call) + r"\s*\(")
-    locals_env = dict(env)
-    ternary_locals: dict[str, str] = {}
-    for m in RE_LOCAL.finditer(body):
-        expr = m.group(2).strip()
-        if "?" in expr and ":" in expr:
-            # `cond ? a : b`: the default (else) branch is the unconditional value; the other is conditional
-            expr = expr.rsplit(":", 1)[1].strip()
-            ternary_locals[m.group(1)] = expr
-        try:
-            locals_env[m.group(1)] = evaluate(expr, locals_env)
-        except Unevaluable:
-            pass
+    locals_env, ternary_locals = scan_locals(body, env)
     while True:
         cm = call_re.search(body, index)
         if cm is None:
@@ -317,6 +324,119 @@ def scale_from_calls(body: str, env: dict[str, float], call: str = "GL11.glScale
     return {"sites": sites}
 
 
+def scan_locals(body: str, env: dict[str, float]) -> tuple[dict[str, float], dict[str, str]]:
+    """The `float x = <expr>;` locals of a body evaluated on top of env, and, for a ternary initialiser
+    `cond ? a : b`, the default (else) branch text per local: that branch is the unconditional value, the
+    other is conditional."""
+    locals_env = dict(env)
+    ternary_locals: dict[str, str] = {}
+    for m in RE_LOCAL.finditer(body):
+        expr = m.group(2).strip()
+        if "?" in expr and ":" in expr:
+            expr = expr.rsplit(":", 1)[1].strip()
+            ternary_locals[m.group(1)] = expr
+        try:
+            locals_env[m.group(1)] = evaluate(expr, locals_env)
+        except Unevaluable:
+            pass
+    return locals_env, ternary_locals
+
+
+def strip_outer_parens(text: str) -> str:
+    """`(x)` -> `x` for every pair of parentheses that encloses the whole expression; `(a) * (b)` is kept."""
+    text = text.strip()
+    while text.startswith("(") and text.endswith(")"):
+        depth = 0
+        for i, ch in enumerate(text):
+            if ch == "(":
+                depth += 1
+            elif ch == ")":
+                depth -= 1
+                if depth == 0 and i < len(text) - 1:
+                    return text  # the leading '(' closes before the end: not an enclosing pair
+        text = text[1:-1].strip()
+    return text
+
+
+def scale_factor_of(expr: str, param: str) -> str | None:
+    """The <factor> in `<param> * <factor>` or `<factor> * <param>` (enclosing parentheses stripped); None
+    when the expression is not such a product. A bare `<param>` (pass-through) is the caller's case."""
+    text = strip_outer_parens(expr)
+    m = re.fullmatch(re.escape(param) + r"\s*\*\s*(.+)", text, re.S)
+    if m is None:
+        m = re.fullmatch(r"(.+?)\s*\*\s*" + re.escape(param), text, re.S)
+    return strip_outer_parens(m.group(1)) if m else None
+
+
+def scale_from_model_for_render(method: dict[str, Any], env: dict[str, float]) -> list[dict[str, Any]]:
+    """The scale site(s) a GeckoLib `scaleModelForRender(float widthScale, float heightScale, PoseStack ...)`
+    override applies through `super.scaleModelForRender(<w-expr>, <h-expr>, ...)`: GeckoLib's default then
+    runs `poseStack.scale(w, h, w)` (after its entityRenderTranslations capture), so the factor multiplying
+    both parameters is one uniform scale site, recorded in the same shape as a `<poseStack>.scale(` site.
+
+    Width and height must carry the same factor expression (whitespace aside); a differing pair, or an
+    argument that is not `<param> * <factor>` / `<factor> * <param>`, is a non-uniform site carrying its
+    reason (resolve_default_scale reports it UNPARSED). A pass-through `super.scaleModelForRender(widthScale,
+    heightScale, ...)` applies nothing and yields no site; so does an override that never reaches super.
+    A ternary local factor resolves to its default branch through scan_locals, exactly as for scale()."""
+    body = method["body"]
+    params = [m.group(1) for m in RE_FLOAT_PARAM.finditer(method["params"])]
+    locals_env, ternary_locals = scan_locals(body, env)
+    sites: list[dict[str, Any]] = []
+    index = 0
+    while True:
+        cm = RE_SUPER_SCALE_MODEL.search(body, index)
+        if cm is None:
+            break
+        k = cm.start()
+        args, index = balanced_args(body, cm.end() - 1)
+        block = enclosing_block(body, k)
+        call = "super.scaleModelForRender(" + ", ".join(a.strip() for a in args[:2]) + ", ...)"
+
+        def unparsed(reason: str, shown: list[str]) -> dict[str, Any]:
+            return {"args": shown, "values": [None] * 3, "block": block, "uniform": False, "flip": False,
+                    "ternary_default": None, "call": "super.scaleModelForRender", "reason": reason}
+
+        if len(params) < 2:
+            sites.append(unparsed(f"scaleModelForRender override without two leading float parameters "
+                                  f"(widthScale, heightScale) is not GeckoLib's signature: {call}", [call]))
+            continue
+        if len(args) < 2:
+            sites.append(unparsed(f"scaleModelForRender: {call} has fewer than two arguments", [call]))
+            continue
+        wname, hname = params[0], params[1]
+        wexpr, hexpr = args[0].strip(), args[1].strip()
+        if strip_outer_parens(wexpr) == wname and strip_outer_parens(hexpr) == hname:
+            continue  # pass-through: GeckoLib's own (withScale) factors only, nothing applied here
+        wfactor = scale_factor_of(wexpr, wname)
+        hfactor = scale_factor_of(hexpr, hname)
+        if wfactor is None or hfactor is None:
+            sites.append(unparsed(f"scaleModelForRender: cannot read the factor multiplying {wname} / {hname} "
+                                  f"in {call} (expected `{wname} * <factor>, {hname} * <factor>`)", [wexpr, hexpr]))
+            continue
+        if re.sub(r"\s+", "", wfactor) != re.sub(r"\s+", "", hfactor):
+            values: list[float | None] = []
+            for factor in (wfactor, hfactor, wfactor):
+                try:
+                    values.append(evaluate(factor, locals_env))
+                except Unevaluable:
+                    values.append(None)
+            sites.append({"args": [wfactor, hfactor, wfactor], "values": values, "block": block, "uniform": False,
+                          "flip": False, "ternary_default": None, "call": "super.scaleModelForRender",
+                          "factor_exprs": [wexpr, hexpr],
+                          "reason": f"scaleModelForRender: {wname} factor {wfactor} and {hname} factor {hfactor} "
+                                    f"differ in {call} (one uniform factor is required)"})
+            continue
+        try:
+            value: float | None = evaluate(wfactor, locals_env)
+        except Unevaluable:
+            value = None
+        sites.append({"args": [wfactor] * 3, "values": [value] * 3, "block": block, "uniform": value is not None,
+                      "flip": False, "ternary_default": ternary_locals.get(wfactor),
+                      "call": "super.scaleModelForRender", "factor_exprs": [wexpr, hexpr]})
+    return sites
+
+
 def resolve_default_scale(sites: list[dict[str, Any]]) -> tuple[str, float | None, str]:
     """(status, value, note): the single unconditional uniform scale, 1.0 when only conditional scales exist.
 
@@ -333,8 +453,11 @@ def resolve_default_scale(sites: list[dict[str, Any]]) -> tuple[str, float | Non
             return "PARSED", 1.0, f"only conditional scale(s) {[s['args'][0] for s in conditional]}; default 1.0"
         return "PARSED", 1.0, "no scale call"
     if any(not s["uniform"] for s in unconditional):
-        bad = [s["args"] for s in unconditional if not s["uniform"]]
-        return "UNPARSED", None, f"scale argument not evaluable/uniform: {bad}"
+        bad = [s for s in unconditional if not s["uniform"]]
+        if all(s.get("reason") for s in bad):
+            # a scaleModelForRender site that could not be read carries its own reason
+            return "UNPARSED", None, "; ".join(s["reason"] for s in bad)
+        return "UNPARSED", None, f"scale argument not evaluable/uniform: {[s['args'] for s in bad]}"
     if len(unconditional) > 1:
         product = 1.0
         for s in unconditional:
@@ -345,6 +468,9 @@ def resolve_default_scale(sites: list[dict[str, Any]]) -> tuple[str, float | Non
     how = "unconditional " + first["args"][0]
     if first.get("ternary_default"):
         how += f" (ternary default branch {first['ternary_default']})"
+    if first.get("method") == "scaleModelForRender":
+        # the GeckoLib post-capture slot is named so the PASS line says where the factor is applied
+        how += ", scaleModelForRender"
     return "PARSED", float(first["values"][0]), how
 
 
@@ -639,13 +765,17 @@ def parse_port_renderer(path: Path) -> dict[str, Any]:
     shadow["uses_constant"] = (shadow.get("expr") or "").strip() == "SHADOW"
     report["shadow"] = shadow
 
-    # scale sites in scale()/render()/preRender()/applyScale()
+    # scale sites: `<poseStack>.scale(` in scale()/render()/preRender()/applyScale()/scaleModelForRender(), plus
+    # the factor a scaleModelForRender override hands to super (GeckoLib's post-capture scale slot)
     sites = []
     for m in ms:
-        if m["name"] not in ("scale", "render", "preRender", "applyScale"):
+        if m["name"] not in SCALE_METHODS:
             continue
         # the scale site is `<PoseStack parameter>.scale(`, whatever the method names that parameter
-        for s in scale_from_calls(m["body"], env, receivers=pose_stack_receivers(m))["sites"]:
+        found = scale_from_calls(m["body"], env, receivers=pose_stack_receivers(m))["sites"]
+        if m["name"] == "scaleModelForRender":
+            found.extend(scale_from_model_for_render(m, env))
+        for s in found:
             s["method"] = m["name"]
             arg = s["args"][0].strip()
             if arg == "SCALE":
@@ -751,13 +881,13 @@ def check_pin(entry: dict[str, Any], port: dict[str, Any], candidate: dict[str, 
     else:
         if not same(scale["value"], expected_scale):
             problems.append(f"scale expected {fmt(expected_scale)}, found {fmt(scale['value'])} ({scale['note']})")
-        elif scale["site"] not in ("scale", "render"):
-            problems.append(f"scale applied in {scale['site']}(), expected the scale() override (or render wrapper)")
+        elif scale["site"] not in ("scale", "render", "scaleModelForRender"):
+            problems.append(f"scale applied in {scale['site']}(), expected the scale() override (or render wrapper, or the GeckoLib scaleModelForRender override)")
     # the constant-must-be-used rule, mirrored from SHADOW: when SCALE exists it must be what is applied
     if scale["status"] == "PARSED" and "SCALE" in port["constants"]:
         if not default_sites:
             if not (same(expected_scale, 1.0) and same(port["constants"]["SCALE"], 1.0)):
-                problems.append("SCALE constant exists but no unconditional poseStack.scale applies it")
+                problems.append("SCALE constant exists but no unconditional scale site (poseStack.scale, or a scaleModelForRender factor) applies it")
         else:
             bypassed = [s for s in default_sites if not s.get("uses_constant")]
             if bypassed:

@@ -332,7 +332,7 @@ tasks.register('referenceGeometry', Exec) {
 tasks.named('check') { dependsOn tasks.named('referenceGeometry') }
 // ENT-S-092 (2026-09-03): every 1.7.10 renderer registration's shadow radius and world scale are pinned
 // against the port renderer constants (and the GeckoLib candidate descriptors) by
-// tools/reference_renderer_pins.py; PENDING entries are the batches not yet landed.
+// tools/reference_renderer_pins.py; a PENDING entry is a batch not yet landed (none since 2026-09-03).
 tasks.register('referenceRenderers', Exec) {
     group = 'verification'
     description = 'Pins renderer scale and shadow against the 1.7.10 registrations (ENT-S-092).'
@@ -344,6 +344,21 @@ tasks.register('referenceRenderers', Exec) {
             '--json', file('build/reference/renderer_pins.json').absolutePath
 }
 tasks.named('check') { dependsOn tasks.named('referenceRenderers') }
+// ENT-S-092 (2026-09-03): The Queen's MHLib parts must land on the drawn body. The probe re-executes the
+// GeckoLib 4.8.4 bone matrix chain for her synched bones at 1.0 / 2.0 / 0.5 and checks linearity and the
+// profile boxes against the drawn segments (exit 1 on failure).
+tasks.register('queenPartPlacementProbe', JavaExec) {
+    group = 'verification'
+    description = 'Checks that the Queen hitbox-profile parts land on the drawn body at the restored render scale (ENT-S-092).'
+    dependsOn tasks.named('g1toolClasses')
+    classpath = sourceSets.g1tool.runtimeClasspath
+    mainClass = 'danger.orespawn.g1.QueenPartPlacementProbe'
+    args file('src/main/resources/assets/orespawn/geo/entity/the_queen.geo.json').absolutePath,
+            file('src/main/resources/data/orespawn/multihitboxlib/hitbox_profiles/the_queen.json').absolutePath,
+            layout.buildDirectory.dir('g1').get().file('queen_part_placement.json').asFile.absolutePath
+}
+tasks.named('check') { dependsOn tasks.named('queenPartPlacementProbe') }
+
 
 
 // BUG-032 (beta.3): the DISTRIBUTED jar must be the jarJar output (nested

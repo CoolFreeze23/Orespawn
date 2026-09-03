@@ -13,7 +13,8 @@
 		"Bone names match danger.orespawn.entity.client.ModelTheQueen.geo.json",
 		"verbatim (legacy 1.7.10 'L'-prefixed naming retained from the original",
 		"model). The three heads are LHead / LHead4 / LHead12 -- distinct deep",
-		"chains, not duplicates of one bone.",
+		"chains, not duplicates of one bone. In the geo LHead is the +x head,",
+		"LHead4 the -x head and LHead12 the centre head (pivots x = 28 / -28 / 2).",
 		"",
 		"Damage modifiers per directive:",
 		"  heads = 1.0  (precision aiming reward),",
@@ -23,7 +24,49 @@
 		"main-hitbox.canReceiveDamage = false forces ALL incoming damage to",
 		"route through a part (so the parent's giant 22x24 AABB -- orig",
 		"TheQueen.java:79 envelope, BOSS-007 -- cannot be trivially",
-		"face-tanked from below)."
+		"face-tanked from below).",
+		"",
+		"ENT-S-092 (2026-09-03, owner ruling): the renderer draws the Queen at the",
+		"1.7.10 scale 2.0 again (0.5 while PlayNicely), applied AFTER GeckoLib's",
+		"entityRenderTranslations capture, so every synced bone position MHLib",
+		"receives is the drawn one. Part sizes and pivots below are fitted per",
+		"part to the drawn geometry at 2.0 (rest pose), from GeckoLib 4.8.4's own",
+		"bake and matrix chain (src/g1tool QueenPartPlacementProbe), NOT a blanket",
+		"2x. Frame: the MHLib world frame at yaw 0, blocks, entity at the origin:",
+		"world +x = geo +x (GeckoLib's bake negates x, applyRotations' 180-degree",
+		"turn negates it back) and world +z = geo -z (heads at +z, tail at -z);",
+		"the collector ships the body yaw with every bone rotation, so the",
+		"pivots follow the bones at any yaw (MHLibPartEntity.applyInformation).",
+		"  size = [max(x extent, z extent), y extent] of the drawn segment (the",
+		"         bone's subtree minus the subtrees of its synced descendants,",
+		"         so the three tail parts split the tail instead of nesting);",
+		"         the aabb type has a square footprint, so the larger horizontal",
+		"         extent is the width. Rounded to 0.01 block.",
+		"  pivot = (bone world position - segment box bottom-centre) taken back",
+		"         through MHLib's own pivot rotation (MHLibPartEntity.applyInformation",
+		"         :424-434 rotates the pivot by the collector's summed bone rotation",
+		"         before subtracting it), so the box sits ON the drawn segment at",
+		"         rest instead of extending upward from the bone (old pivots were",
+		"         all [0,0,0]). Where the bone sits centred in its segment this",
+		"         reduces to pivot y = h/2 (Body1).",
+		"  position = the bone's world position at 2.0, the fallback offset",
+		"         alignSynchedSubParts uses before the first bone packet.",
+		"  PlayNicely: TheQueen.mhlibGetEntitySizeScale = 0.25 scales sizes,",
+		"         pivots and fallbacks (main box 5.5x6), matching the 0.5 draw.",
+		"Per part (old -> new; factor = new size / old size):",
+		"  Body1    size [8,8] -> [10, 7.75] (x1.25, x0.97); pivot [0,0,0] -> [0, 3.75, 0.75]; position [0,5,0] -> [0, 14.15, -0.13]",
+		"  LHead    size [4,3] -> [12.64, 8.35] (x3.16, x2.78); pivot -> [-1.46, 4.5, -4.2]; position [3.5,7,10] -> [5.05, 16.3, 24.29]",
+		"  LHead4   size [4,3] -> [12.64, 8.35] (x3.16, x2.78); pivot -> [1.46, 4.5, -4.2]; position [0,7,10.5] -> [-5.05, 16.3, 24.29]",
+		"  LHead12  size [4,3] -> [12.67, 8.35] (x3.17, x2.78); pivot -> [1.51, 4.49, -4.21]; position [-3.5,7,10] -> [-0.01, 16.29, 24.35]",
+		"  Lwing1   size [16,3] -> [44.94, 10.63] (x2.81, x3.54); pivot -> [-22.18, 5.13, 8.78]; position [0,6,-2] -> [5, 18.15, 6.25]",
+		"  Tail1    size [4,4] -> [16.63, 7.29] (x4.16, x1.82); pivot -> [0, 6.25, 8.31]; position [0,5,-6] -> [0, 17.27, -3.63]",
+		"  Tail4    size [3,3] -> [13.75, 3.75] (x4.58, x1.25); pivot -> [0, 1.88, 6.88]; position [0,5,-10] -> [0, 13.9, -19.5]",
+		"  Tail7    size [2,2] -> [23.63, 2.31] (x11.82, x1.16); pivot -> [0.13, 0.75, 10.94]; position [0,5,-14] -> [0, 13.9, -33.5]",
+		"  leftLeg  size [3,8] -> [12.83, 18.24] (x4.28, x2.28); pivot -> [-0.26, 14.23, -0.23]; position [4,0,0] -> [6.24, 13.49, -0.43]",
+		"  rightLeg size [3,8] -> [12.83, 18.24] (x4.28, x2.28); pivot -> [0.26, 14.23, -0.23]; position [-4,0,0] -> [-6.24, 13.49, -0.43]",
+		"The square footprint over-covers the long axis of the elongated segments",
+		"(heads 12.6 long x 3.8 wide, wing 44.9 span x 20.7 chord, tail segments,",
+		"legs 12.8 fore-aft x 4.8 wide); an orientable box type would fit tighter."
 	],
 	"synched-assets": {
 		"models": [],
@@ -59,9 +102,9 @@
 			"damage-modifier": 0.5,
 			"box": {
 				"type": "multihitboxlib:aabb",
-				"size": [8, 8],
-				"position": [0, 5, 0],
-				"pivot": [0, 0, 0]
+				"size": [10, 7.75],
+				"position": [0, 14.15, -0.13],
+				"pivot": [0, 3.75, 0.75]
 			}
 		},
 		{
@@ -71,9 +114,9 @@
 			"damage-modifier": 1.0,
 			"box": {
 				"type": "multihitboxlib:aabb",
-				"size": [4, 3],
-				"position": [3.5, 7, 10],
-				"pivot": [0, 0, 0]
+				"size": [12.64, 8.35],
+				"position": [5.05, 16.3, 24.29],
+				"pivot": [-1.46, 4.5, -4.2]
 			}
 		},
 		{
@@ -83,9 +126,9 @@
 			"damage-modifier": 1.0,
 			"box": {
 				"type": "multihitboxlib:aabb",
-				"size": [4, 3],
-				"position": [0, 7, 10.5],
-				"pivot": [0, 0, 0]
+				"size": [12.64, 8.35],
+				"position": [-5.05, 16.3, 24.29],
+				"pivot": [1.46, 4.5, -4.2]
 			}
 		},
 		{
@@ -95,9 +138,9 @@
 			"damage-modifier": 1.0,
 			"box": {
 				"type": "multihitboxlib:aabb",
-				"size": [4, 3],
-				"position": [-3.5, 7, 10],
-				"pivot": [0, 0, 0]
+				"size": [12.67, 8.35],
+				"position": [-0.01, 16.29, 24.35],
+				"pivot": [1.51, 4.49, -4.21]
 			}
 		},
 		{
@@ -107,9 +150,9 @@
 			"damage-modifier": 0.25,
 			"box": {
 				"type": "multihitboxlib:aabb",
-				"size": [16, 3],
-				"position": [0, 6, -2],
-				"pivot": [0, 0, 0]
+				"size": [44.94, 10.63],
+				"position": [5, 18.15, 6.25],
+				"pivot": [-22.18, 5.13, 8.78]
 			}
 		},
 		{
@@ -119,9 +162,9 @@
 			"damage-modifier": 0.25,
 			"box": {
 				"type": "multihitboxlib:aabb",
-				"size": [4, 4],
-				"position": [0, 5, -6],
-				"pivot": [0, 0, 0]
+				"size": [16.63, 7.29],
+				"position": [0, 17.27, -3.63],
+				"pivot": [0, 6.25, 8.31]
 			}
 		},
 		{
@@ -131,9 +174,9 @@
 			"damage-modifier": 0.25,
 			"box": {
 				"type": "multihitboxlib:aabb",
-				"size": [3, 3],
-				"position": [0, 5, -10],
-				"pivot": [0, 0, 0]
+				"size": [13.75, 3.75],
+				"position": [0, 13.9, -19.5],
+				"pivot": [0, 1.88, 6.88]
 			}
 		},
 		{
@@ -143,9 +186,9 @@
 			"damage-modifier": 0.25,
 			"box": {
 				"type": "multihitboxlib:aabb",
-				"size": [2, 2],
-				"position": [0, 5, -14],
-				"pivot": [0, 0, 0]
+				"size": [23.63, 2.31],
+				"position": [0, 13.9, -33.5],
+				"pivot": [0.13, 0.75, 10.94]
 			}
 		},
 		{
@@ -155,9 +198,9 @@
 			"damage-modifier": 0.5,
 			"box": {
 				"type": "multihitboxlib:aabb",
-				"size": [3, 8],
-				"position": [4, 0, 0],
-				"pivot": [0, 0, 0]
+				"size": [12.83, 18.24],
+				"position": [6.24, 13.49, -0.43],
+				"pivot": [-0.26, 14.23, -0.23]
 			}
 		},
 		{
@@ -167,9 +210,9 @@
 			"damage-modifier": 0.5,
 			"box": {
 				"type": "multihitboxlib:aabb",
-				"size": [3, 8],
-				"position": [-4, 0, 0],
-				"pivot": [0, 0, 0]
+				"size": [12.83, 18.24],
+				"position": [-6.24, 13.49, -0.43],
+				"pivot": [0.26, 14.23, -0.23]
 			}
 		}
 	]

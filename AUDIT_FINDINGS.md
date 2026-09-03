@@ -6159,6 +6159,51 @@ keeps BUG-036. Commit 4ea395c's message retains the old number.)*
   Alternatively an owner MOD ruling that the port keeps the flipped mapping,
   recorded per model in the manifest. Owner's call.
 
+
+### BUG-042 — GeckoLib bone matrix tracking was never enabled: MHLib received the world origin for every synced Queen bone (FIXED, 2026-09-03)
+
+- **Found by:** the ENT-S-092 Queen restore's part-placement probe. `GeoBone.trackingMatrices`
+  defaults to false (4.8.4 `GeoBone.<init>` sets it), `renderRecursively` skips the
+  local/model/world matrix block unless it is true, and nothing in the GeckoLib jar
+  or the vendored MHLib ever calls `setTrackingMatrices(true)` (jar-wide constant-pool
+  grep and `src/main/java` grep). So MHLib's bone collector read `getWorldPosition()`
+  = (0, 0, 0) for all ten synced bones, and `alignSynchedSubParts` (trust-client)
+  placed every part at the entity origin whenever the master client streamed; the
+  fallback offsets applied only before the first packet. The FIX_LOG checklist line
+  "Queen parts glued to bones" was never true at any render scale.
+- **Fix:** `QueenRenderer.preRender` enables tracking once per baked model on the
+  profile's synched bones before `super.preRender`. The probe reproduces the (0,0,0)
+  state without it and the exact-linearity placement with it. Live confirmation is
+  the owner's F3+B look. Other GeckoLib species with MHLib profiles (ant_robot,
+  spider_robot) use their own collectors; whether they suffer the same gap is a
+  follow-up read (ENT-S-099).
+
+### BUG-043 — Vendored MHLib aliased its static default rotation as the collector's running accumulator (FIXED, 2026-09-03)
+
+- **Found by:** the Queen refuter, driving the real `GeckolibBoneInformationCollectorLayer`
+  lifecycle over the baked rig. `IMHLibExtendedRenderLayer.onPreRender` seeded the layer
+  with the shared `static final Vector3d` DEFAULT_SCALING / DEFAULT_ROTATION instances,
+  `calcRotations` mutates the current vector in place, and the recursive start/end hooks
+  push and pop COPIES, so the first bone chain of every frame was added to the static
+  itself and never reset: the shipped rotation drifted about 4 degrees per rendered
+  frame (root -> Lwing11 -> Lwing12). Inert while every profile pivot was [0,0,0]
+  (the rotation only fed an AABB part's own xRot/yRot); load-bearing once the Queen's
+  pivots became non-zero, when every part box would have orbited its bone within a
+  second.
+- **Fix:** `onPreRender` seeds copies (`new Vector3d(DEFAULT_...)`). The placement probe's
+  lifecycle check pins it: seed identity, statics unchanged after every frame, trunk bones
+  shipping (0,0,0) at rest; FAIL on the old classes, PASS on the new.
+- **Companion fix in the same commit (the yaw half of the refuter's finding):** bone world
+  positions carry the entity body yaw (GeoEntityRenderer.applyRotations, YP(180 - yaw)) but
+  the pivot was rotated only by the summed bone rotation, so a non-zero pivot left the body
+  on every heading but south. The collector now folds the body yaw the renderer used
+  (-rotLerp(yBodyRotO, yBodyRot)) into the shipped rotation as the exact re-decomposition of
+  Ry(-yaw)*Rz*Ry*Rx into the Z*Y*X triple `applyInformation` applies, so server and
+  trust-client rotate the pivot in the frame the bone position was produced in; the probe
+  pins placement at body yaw 0, 45, 90 and 180 (old collector FAIL at 90/180). The robots
+  are unaffected: zero pivots, sync-with-model false, vanilla MobRenderers. Left for the
+  ledger: the pre-stream fallback offsets rotate by +yaw (opposite sense) and the shipped
+  rotation remains MHLib's Euler sum under animation.
 ### ENT-S-091 — Seven port models diverge from their 1.7.10 geometry beyond the mirror flag (REPORT, 2026-09-02)
 
 - **Models:** CaterKiller (49 extra parts), Elevator (all pivots y 0 -> 24),
@@ -6315,8 +6360,39 @@ keeps BUG-036. Commit 4ea395c's message retains the old number.)*
   scale is applied after GeckoLib's capture, so restoring the 1.7.10 size also
   relocates and resizes every head/tail/wing/leg hit surface onto the drawn
   body; the read's edit reorders the pose scale after the capture and keeps the
-  hand-authored profile envelopes. Presented for the owner; the pin manifest
-  keeps TheQueen PENDING. Kraken's 1.7.10 PlayNicely mode (1/3 scale paired
+  hand-authored profile envelopes. THE QUEEN LANDED (2026-09-03, owner: second
+  branch, since the extent comparison in `ents092_queen_extent.md` showed the
+  port rig at 1.0 is one half of 1.7.10 at 2.0): SCALE 2.0 / SHADOW 1.9 x 2.0 =
+  3.8 (orig RenderTheQueen.java:23-26, ClientProxyOreSpawn.java:493); the scale is
+  applied by overriding GeckoLib's `scaleModelForRender`, which runs AFTER
+  `GeoEntityRenderer.preRender` captures `entityRenderTranslations` (bytecode:
+  capture at 0-15, scaleModelForRender at 38; `renderRecursively` builds bone
+  world matrices as invert(capture) x pose, so a pre-capture scale cancels out of
+  every bone and a post-capture one reaches them). Composite PlayNicely render
+  scale: port SCALE / 4 = 0.5 against 1.7.10 glScalef(scale / 4) = 2.0 / 4 = 0.5,
+  they agree. Profile: main-hitbox.size stays [22, 24] under the main-size law;
+  each part's size, pivot and fallback position was derived from the drawn
+  segment at 2.0 (bone subtree minus synced descendants; sizes to 0.01 block,
+  pivots placing the box ON the segment, not a blanket 2x): Body1 [8,8] ->
+  [10,7.75]; heads [4,3] -> [12.64,8.35]; Lwing1 [16,3] -> [44.94,10.63]; Tail1
+  [4,4] -> [16.63,7.29]; Tail4 [3,3] -> [13.75,3.75]; Tail7 [2,2] -> [23.63,2.31];
+  legs [3,8] -> [12.83,18.24]. PART PLACEMENT VERIFIED: `QueenPartPlacementProbe`
+  (src/g1tool, `queenPartPlacementProbe` under `check`) bakes the geo with
+  GeckoLib's own factory and re-executes the 4.8.4 matrix chain with GeckoLib's
+  own RenderUtil/GeoBone code (only the three renderer method bodies are
+  re-executed statement for statement, offsets cited): every synced bone's
+  world position scales by exactly 2.00000 at 2.0 and 0.50000 at 0.5 (linearity,
+  error <= 1e-4), the old pre-capture order reproduces the half-size ghost, and
+  every retuned box contains 99.8-100% of its drawn segment in both modes (before
+  the retune: 0.8-38.5%, nine of ten centres outside). The in-game F3+B check is
+  on the owner's look sheet. BUG-035 scan called out: renderer and entity edited,
+  `tools/asset_audit.py` check 8 run: RESULT 0 errors (only the acknowledged
+  `death` hold), the animation json and the two controllers untouched, loop
+  modes unchanged. Pin manifest: TheQueen pinned (the leg now reads a scaleModelForRender site). Found on the way and
+  fixed in the same commit: BUG-042 (below). Known MHLib limitation disclosed:
+  the client streams unscaled part sizes, so a PlayNicely Queen's client boxes are
+  full size at the half-scale positions while the server's are quarter size.
+  Kraken's 1.7.10 PlayNicely mode (1/3 scale paired
   with a 1.33x5 hitbox) does not exist in the port at all: filed as ENT-S-096.
   Recheck list: `phase_g_reports/ents092_recheck_list.md`; changelog
   note: `phase_g_reports/ents092_changelog_note.md`. Hitbox dimension
@@ -6437,8 +6513,17 @@ keeps BUG-036. Commit 4ea395c's message retains the old number.)*
   BetterFireball.java:84) through the non-living `Entity#getDimensions` hook plus
   refreshDimensions, pinned. cannon_fodder stands port-only at 0.6x0.6: 1.7.10
   never registered EntityCannonFodder, so no parity target exists; documented
-  and pinned so it cannot drift. Refuted once. Batch 3 (TheQueen) lands with
-  the ENT-S-092 Queen restore.
+  and pinned so it cannot drift. Refuted once.
+- **BATCH 3 LANDED (2026-09-03) with the Queen restore:** the dead PlayNicely box
+  is back. MHLib's EntityEvent.Size handler applies the profile main size
+  unconditionally, so TheQueen implements `IMHLibSizeCallback` returning 0.25
+  while `playNicelyShrunk` (constructor snapshot, orig TheQueen.java:78-82) and a
+  LOW-priority Size listener scales the applied main size by it: 22 x 24 x 0.25 =
+  5.5 x 6, float-exact, the original's literal; the profile main size stays
+  [22, 24] (law) and hostile mode returns the registered 22 x 24. The same
+  callback quarters the parts, pivots and fallbacks, matching the 0.5 draw.
+  `QueenPlayNicelyDimsTests`: both-modes dims pins including the MHLib main
+  hitbox, and an own-batch parts-quarter / live-flip pin.
 
 ### ENT-S-096 — Kraken has no PlayNicely mode (REPORT, 2026-09-03)
 
@@ -6501,6 +6586,13 @@ keeps BUG-036. Commit 4ea395c's message retains the old number.)*
 - **Resolution:** OPEN — report only. Fix would be a constructor that passes the
   mod's own EntityType (as the (EntityType, Level) constructor does) plus a pin
   that a shot fireball's type is `orespawn:better_fireball`.
+
+### ENT-S-099 — Do the ant_robot and spider_robot MHLib parts suffer BUG-042's untracked-bone gap? (REPORT, 2026-09-03)
+
+- **Evidence:** BUG-042 showed GeckoLib never enables bone matrix tracking on its own.
+  The robots' profiles sync bones too; their collector path and any tracking
+  enablement in their renderers have not been read.
+- **Resolution:** OPEN — report only; a read with the same probe method before any fix.
 ### TEST-003 — Config-flipping gametests in the concurrent default batch
 
 - **Impact:** MEDIUM (suite reliability) — boss005/boss012 flip a global

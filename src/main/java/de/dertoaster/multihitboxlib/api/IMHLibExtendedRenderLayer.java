@@ -47,7 +47,15 @@ public interface IMHLibExtendedRenderLayer {
 		}
 
 		this.resetStack();
-		this.applyCurrentValues(DEFAULT_SCALING, DEFAULT_ROTATION);
+		// BUG-043 (2026-09-03): the layer's calcScales/calcRotations mutate the CURRENT vectors in
+		// place (GeckolibBoneInformationCollectorLayer.calcRotations: rot.x += bone.getRotX() ...),
+		// and onRenderRecursivelyStart pushes copies while the first pop only replaces the current
+		// reference, so seeding with the shared static instances corrupted DEFAULT_ROTATION /
+		// DEFAULT_SCALING by the first-descendant chain's rotation every frame (+4 degrees of y per
+		// frame on the Queen rig from root -> Lwing11 -> Lwing12) and every shipped bone rotation
+		// inherited the drift. onPostRender's setRotations(0,0,0) hit a popped copy, never the
+		// static. Seed with fresh copies so the statics stay (1,1,1) / (0,0,0).
+		this.applyCurrentValues(new Vector3d(DEFAULT_SCALING), new Vector3d(DEFAULT_ROTATION));
 	}
 	
 	default void onRenderRecursivelyStart() {

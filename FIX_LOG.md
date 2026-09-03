@@ -4788,3 +4788,20 @@ each gate under both flag states with the weather snapshotted and restored.
 Refuted once. Two pre-existing Kraken targeting divergences noted for the ledger.
 
 GATE (ents097): build green; runGameTestServer: All 295 required tests passed (gate day3c; the four gate tests in batches krakenGateWeather/Lightning/Prey/Target, weather read through the ServerLevelData flags, prey test in empty_tall below the barrier ceiling).
+
+## ENT-S-092 THE QUEEN + ENT-S-095 BATCH 3 + BUG-042 — render scale 2.0 restored, parts on the drawn body, PlayNicely box back (2026-09-03)
+
+The extent comparison proved the port rig is the 1.7.10 model drawn at half
+size, so the second branch of the ruling applied: SCALE 2.0 / SHADOW 3.8 applied
+in GeckoLib's scaleModelForRender, after the entityRenderTranslations capture, so
+the bone world matrices carry it; composite PlayNicely scale 0.5 = 1.7.10's
+2.0 / 4. Profile part sizes, pivots and fallbacks derived per part from the drawn
+segments at 2.0; main size 22x24 unchanged. Part placement verified headlessly
+with GeckoLib's own matrix code (exact linearity, boxes contain their segments in
+both modes); the same probe exposed BUG-042: bone matrix tracking had never been
+enabled, so MHLib had been receiving the world origin for every synced bone; fixed
+in the renderer. PlayNicely box 5.5x6 restored through the MHLib size callback
+with a LOW-priority size listener; both-modes pins. BUG-035 scan: asset audit
+check 8 green, animation json and controllers untouched. Refuted once.
+
+GATE (queen): build green (referenceRenderers PASS 120 / PENDING 0; queenPartPlacementProbe: linearity PASS, placement PASS at body yaw 0/45/90/180 in both modes, collector lifecycle PASS; asset audit 0 errors; benchmark proof rewritten for build.gradle + the g1tool classpath); runGameTestServer: All 295 required tests passed (gate day3c on the full tree).
