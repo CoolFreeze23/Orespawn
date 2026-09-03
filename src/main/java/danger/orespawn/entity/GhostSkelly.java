@@ -41,6 +41,21 @@ public class GhostSkelly extends AmbientCreature {
     private BlockPos currentFlightTarget = null;
     private int attackCooldown = 0;
 
+    /**
+     * Per-entity render scratch (orig GhostSkelly.java:22 {@code renderdata = new RenderInfo()},
+     * accessors orig GhostSkelly.java:55-68). Mutated client-side by
+     * {@code GhostSkellyModel} for the head-swivel latch (orig ModelGhostSkelly.java:99-122:
+     * {@code rf2} remembers the previous cycle phase, {@code ri2} bit 0 is the 1-in-3
+     * "swivel this cycle" roll). Never datawatcher-synced. ENT-S-093.
+     */
+    private final danger.orespawn.entity.client.RenderInfo renderInfo =
+            new danger.orespawn.entity.client.RenderInfo();
+
+    /** Mirrors orig GhostSkelly.java:55-57 {@code getRenderInfo()}. ENT-S-093. */
+    public danger.orespawn.entity.client.RenderInfo getRenderInfo() {
+        return this.renderInfo;
+    }
+
     public GhostSkelly(EntityType<? extends GhostSkelly> type, Level level) {
         super(type, level);
         this.xpReward = 10;

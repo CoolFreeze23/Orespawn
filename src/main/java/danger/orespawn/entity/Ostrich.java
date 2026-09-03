@@ -37,7 +37,8 @@ import danger.orespawn.ModEntities;
 import danger.orespawn.OreSpawnMod;
 
 public class Ostrich extends TamableAnimal
-        implements danger.orespawn.network.RiderInputPayload.RideableFlyer {
+        implements danger.orespawn.network.RiderInputPayload.RideableFlyer,
+        danger.orespawn.entity.pose.OstrichPose {
     // OPT-011: cached SoundEvents — identical createVariableRangeEvent ids,
     // allocated once per class instead of on every sound query.
     private static final SoundEvent SND_CRYO_HURT = SoundEvent.createVariableRangeEvent(
@@ -70,6 +71,50 @@ public class Ostrich extends TamableAnimal
             new danger.orespawn.entity.ai.RiderFlightController(RIDER_RUN_CONFIG);
     /** Held state of the rider's jump key (client-set for prediction, server-set via payload). */
     private boolean riderFlyUp = false;
+
+    /**
+     * ENT-S-093: per-entity render scratch, as the original had it (orig
+     * Ostrich.java:45 {@code renderdata = new RenderInfo()}, re-created in the
+     * ctor orig :67; entityInit orig :89-103 zeroes all eight fields, which a fresh
+     * {@code new RenderInfo()} per construction already is). Mutated client-side by
+     * {@code OstrichModel}: {@code rf1} is the ridden head-yaw smoothing latch
+     * (orig ModelOstrich.java:338-345), {@code ri1} the wing-flap 1-in-3 selector
+     * (orig ModelOstrich.java:370-375). Never datawatcher-synced. No setRenderInfo:
+     * orig Ostrich.java:109-118 is only ever handed its own instance
+     * (orig ModelOstrich.java:334/383), a self-copy, omitted as in Kraken.
+     */
+    private final danger.orespawn.entity.client.RenderInfo renderInfo =
+            new danger.orespawn.entity.client.RenderInfo();
+
+    /** Mirrors orig Ostrich.java:105-107 {@code getRenderInfo()}. */
+    @Override
+    public danger.orespawn.entity.client.RenderInfo getRenderInfo() {
+        return this.renderInfo;
+    }
+
+    // ENT-S-093 OstrichPose accessors: Entity's xOld/zOld/yRotO are public fields,
+    // so the pose interface needs them as methods (orig ModelOstrich.java:299,:336).
+    @Override
+    public double xOld() { return this.xOld; }
+
+    @Override
+    public double zOld() { return this.zOld; }
+
+    @Override
+    public float yRotO() { return this.yRotO; }
+
+    /**
+     * ENT-S-093 interim bridge: orig EntityCannonFodder.java:36,228-230
+     * {@code get_is_activated()} via orig Ostrich.java:42-43 (extends
+     * EntityCannonFodder). Constant 0 (the original's default) until Ostrich is
+     * re-parented to the port EntityCannonFodder, whose :70 accessor then satisfies
+     * OstrichPose by inheritance. Nothing in the port can activate an Ostrich
+     * today: the clone at EntityCannonFodder.java:166-171 skips setStuff for
+     * non-fodder newborns. Consumed by the hat gate (orig ModelOstrich.java:420-425)
+     * and the sitting predicate (orig ModelOstrich.java:349).
+     */
+    @Override
+    public int getIsActivated() { return 0; }
 
     public Ostrich(EntityType<? extends Ostrich> type, Level level) {
         super(type, level);

@@ -12,7 +12,6 @@ import net.minecraft.util.Mth;
 public class ModelAlien extends EntityModel<Alien> {
     /** Animation frequency constant; orig ModelAlien.java:15,73 (wingspeed), value from orig ClientProxyOreSpawn.java:435. */
     private final float wingspeed = 0.22f;
-    private int ri1, ri2, ri3;
     private final ModelPart torso;
     private final ModelPart stomach;
     private final ModelPart rThigh;
@@ -455,26 +454,30 @@ public class ModelAlien extends EntityModel<Alien> {
         this.jaw2.yRot = this.jaw1.yRot;
         this.jaw2.z = this.jaw1.z;
         this.jaw2.x = this.jaw1.x;
+        // Per-entity scratch as in the original (orig Alien.java:42, orig
+        // ModelAlien.java:512-552): each Alien keeps its own tail/jaw/claw latch
+        // instead of sharing one field on the model singleton (ENT-S-093).
+        RenderInfo r = entity.getRenderInfo();
         newangle = Mth.cos((float)(ageInTicks * 3.5f * this.wingspeed)) * (float)Math.PI * 0.5f;
         nextangle = Mth.cos((float)((ageInTicks + 0.2f) * 3.5f * this.wingspeed)) * (float)Math.PI * 0.5f;
         if (nextangle > 0.0f && newangle < 0.0f) {
         if (entity.getAttacking() == 0) {
-        ri1 = entity.getRandom().nextInt(15);
-        ri2 = entity.getRandom().nextInt(15);
-        ri3 = entity.getRandom().nextInt(15);
+        r.ri1 = entity.getRandom().nextInt(15);
+        r.ri2 = entity.getRandom().nextInt(15);
+        r.ri3 = entity.getRandom().nextInt(15);
         } else {
-        ri1 = entity.getRandom().nextInt(4);
-        ri2 = entity.getRandom().nextInt(2);
-        ri3 = 1;
+        r.ri1 = entity.getRandom().nextInt(4);
+        r.ri2 = entity.getRandom().nextInt(2);
+        r.ri3 = 1;
         }
         }
-        if (ri2 == 1) {
+        if (r.ri2 == 1) {
         this.doTail(newangle);
         } else {
         newangle = Mth.cos((float)(ageInTicks * this.wingspeed)) * (float)Math.PI * 0.05f;
         this.doTail(newangle);
         }
-        if (ri3 == 1) {
+        if (r.ri3 == 1) {
         newangle = Mth.cos((float)(ageInTicks * 3.5f * this.wingspeed)) * (float)Math.PI * 0.35f;
         this.doJaw(newangle);
         } else {
@@ -482,13 +485,13 @@ public class ModelAlien extends EntityModel<Alien> {
         this.doJaw(newangle);
         }
         newangle = Mth.cos((float)(ageInTicks * this.wingspeed * 3.5f)) * (float)Math.PI * 0.2f;
-        if (ri1 == 1 || ri1 == 3) {
+        if (r.ri1 == 1 || r.ri1 == 3) {
         this.doLeftClaw(newangle);
         } else {
         newangle = Mth.cos((float)(ageInTicks * this.wingspeed)) * (float)Math.PI * 0.03f;
         this.doLeftClaw(newangle);
         }
-        if (ri1 == 2 || ri1 == 3) {
+        if (r.ri1 == 2 || r.ri1 == 3) {
         this.doRightClaw(-newangle);
         } else {
         newangle = Mth.cos((float)(ageInTicks * this.wingspeed)) * (float)Math.PI * 0.03f;

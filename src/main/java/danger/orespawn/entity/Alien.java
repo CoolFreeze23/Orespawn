@@ -55,6 +55,17 @@ public class Alien extends Monster {
     private static final double PLAYER_KNOCKBACK_VERTICAL_MULTIPLIER = 2.0;
     private static final double JUMP_BOOST = 0.25; // orig Alien.java:102 — motionY += 0.25 after super.jump()
 
+    /**
+     * Per-entity render scratch (orig Alien.java:42 {@code renderdata = new RenderInfo()},
+     * re-newed in the ctor orig Alien.java:60, zeroed in entityInit orig Alien.java:76-90,
+     * accessor orig Alien.java:105-107). Mutated client-side by {@code ModelAlien} for the
+     * tail/jaw/claw re-roll latch (orig ModelAlien.java:512-552: ri1, ri2, ri3); never
+     * datawatcher-synced. A fresh instance is already all-zero, so the entityInit reset is
+     * satisfied by construction (same as Kraken.java:64-71).
+     */
+    private final danger.orespawn.entity.client.RenderInfo renderInfo =
+            new danger.orespawn.entity.client.RenderInfo();
+
     public Alien(EntityType<? extends Alien> type, Level level) {
         super(type, level);
         // OPT-009: constant speed - assert the attribute base once here instead
@@ -116,6 +127,11 @@ public class Alien extends Monster {
 
     public final int getAttacking() {
         return this.entityData.get(DATA_ATTACKING);
+    }
+
+    /** Mirrors orig Alien.java:105-107 {@code getRenderInfo()}. */
+    public danger.orespawn.entity.client.RenderInfo getRenderInfo() {
+        return this.renderInfo;
     }
 
     public final void setAttacking(int value) {

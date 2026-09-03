@@ -2,6 +2,7 @@ package danger.orespawn.entity.client;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.math.Axis;
 import danger.orespawn.entity.DungeonBeast;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelPart;
@@ -12,7 +13,6 @@ import net.minecraft.util.Mth;
 public class ModelDungeonBeast extends EntityModel<DungeonBeast> {
     /** Animation frequency constant; orig ModelDungeonBeast.java:16,83 (wingspeed), value from orig ClientProxyOreSpawn.java:481. */
     private final float wingspeed = 0.62f;
-    private int ri1, ri2;
     private final ModelPart tail7;
     private final ModelPart head3;
     private final ModelPart neck;
@@ -479,18 +479,22 @@ public class ModelDungeonBeast extends EntityModel<DungeonBeast> {
         this.tail7.yRot = newangle * 1.75f;
         this.tail7.x = this.tail6.x - (float)Math.cos(this.tail6.yRot) * 3.0f;
         this.tail7.z = this.tail6.z - (float)Math.sin(this.tail6.yRot) * 3.0f;
+        // Per-entity scratch as in the original (orig DungeonBeast.java:43, orig
+        // ModelDungeonBeast.java:546-573): each DungeonBeast keeps its own jaw latch
+        // instead of sharing one field on the model singleton. ENT-S-093.
+        RenderInfo r = entity.getRenderInfo();
         newangle = Mth.cos((float)(ageInTicks * 2.0f * this.wingspeed)) * (float)Math.PI * 0.15f;
         nextangle = Mth.cos((float)((ageInTicks + 0.1f) * 2.0f * this.wingspeed)) * (float)Math.PI * 0.15f;
         if (nextangle > 0.0f && newangle < 0.0f) {
         if (entity.getAttacking() == 0) {
-        ri1 = entity.getRandom().nextInt(15);
-        ri2 = entity.getRandom().nextInt(15);
+        r.ri1 = entity.getRandom().nextInt(15);
+        r.ri2 = entity.getRandom().nextInt(15);
         } else {
-        ri1 = 0;
-        ri2 = 0;
+        r.ri1 = 0;
+        r.ri2 = 0;
         }
         }
-        if (ri1 == 0) {
+        if (r.ri1 == 0) {
         this.ljaw1.yRot = -0.349f + newangle;
         this.ljaw2.yRot = 0.349f + newangle;
         this.ljaw3.yRot = 0.523f + newangle;
@@ -509,6 +513,11 @@ public class ModelDungeonBeast extends EntityModel<DungeonBeast> {
 
     @Override
     public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, int color) {
+        poseStack.pushPose();
+        // orig ModelDungeonBeast.java:574 — GL11.glRotatef(90.0f, 0.0f, 1.0f, 0.0f) applied
+        // immediately before the part list (:575-634); same carry-over as the Kraken's
+        // XP 90 (orig ModelKraken.java:1137 -> ModelKraken.java:717-718). ENT-S-093.
+        poseStack.mulPose(Axis.YP.rotationDegrees(90.0F));
         this.tail7.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
         this.head3.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
         this.neck.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
@@ -569,5 +578,6 @@ public class ModelDungeonBeast extends EntityModel<DungeonBeast> {
         this.lfoot2.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
         this.lheel.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
         this.rtoe2.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        poseStack.popPose();
     }
 }

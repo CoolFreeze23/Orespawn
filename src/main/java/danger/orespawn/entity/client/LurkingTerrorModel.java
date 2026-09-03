@@ -12,8 +12,6 @@ import net.minecraft.util.Mth;
 public class LurkingTerrorModel extends EntityModel<EntityLurkingTerror> {
     /** Animation frequency constant; orig ModelLurkingTerror.java:15 (default; orig ctor takes no wingspeed arg) (wingspeed), value from orig ClientProxyOreSpawn.java:461. */
     private final float wingspeed = 1.0f;
-    private int ri1, ri2;
-    private float rf1, rf2;
     private final ModelPart body;
     private final ModelPart leg1;
     private final ModelPart leg1part2;
@@ -438,82 +436,88 @@ public class LurkingTerrorModel extends EntityModel<EntityLurkingTerror> {
         return LayerDefinition.create(meshdefinition, 256, 64);
     }
 
+    /**
+     * ENT-S-093: leg-selector (ri1/rf1) and mouth (ri2/rf2) latches restored to per-entity
+     * {@code RenderInfo} as the original kept them (orig ModelLurkingTerror.java:435-562).
+     */
     @Override
     public void setupAnim(EntityLurkingTerror entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
         float newangle = 0.0f;
         float legspeed = 0.7f;
         float mouthspeed = 0.9f;
+        // Per-entity scratch as in the original (orig LurkingTerror.java:49, orig ModelLurkingTerror.java:443)
+        RenderInfo r = entity.getRenderInfo();
         newangle = ageInTicks * legspeed * this.wingspeed % ((float)Math.PI * 2);
         newangle = Math.abs(newangle);
-        if (newangle < rf1) {
-        ri1 = 0;
+        if (newangle < r.rf1) {
+        r.ri1 = 0;
         if (entity.getRandom().nextInt(3) == 1) {
-        ri1 |= 1;
+        r.ri1 |= 1;
         }
         if (entity.getRandom().nextInt(3) == 1) {
-        ri1 |= 2;
+        r.ri1 |= 2;
         }
         if (entity.getRandom().nextInt(4) == 1) {
-        ri1 |= 4;
+        r.ri1 |= 4;
         }
         if (entity.getRandom().nextInt(4) == 1) {
-        ri1 |= 8;
+        r.ri1 |= 8;
         }
         if (entity.getRandom().nextInt(6) == 1) {
-        ri1 |= 0x10;
+        r.ri1 |= 0x10;
         }
         if (entity.getRandom().nextInt(6) == 1) {
-        ri1 |= 0x20;
+        r.ri1 |= 0x20;
         }
         }
-        rf1 = newangle;
+        r.rf1 = newangle;
         newangle = ageInTicks * mouthspeed * this.wingspeed % ((float)Math.PI * 2);
-        if ((newangle = Math.abs(newangle)) < rf2) {
-        ri2 = 0;
+        if ((newangle = Math.abs(newangle)) < r.rf2) {
+        r.ri2 = 0;
         if (entity.getRandom().nextInt(20) == 1) {
-        ri2 |= 1;
+        r.ri2 |= 1;
         }
         if (entity.getAttacking() != 0) {
-        ri2 = 1;
+        r.ri2 = 1;
         }
         }
-        rf2 = newangle;
+        r.rf2 = newangle;
         newangle = 0.0f;
-        if ((ri1 & 1) != 0) {
+        if ((r.ri1 & 1) != 0) {
         newangle = Mth.sin((float)(ageInTicks * legspeed * this.wingspeed)) * (float)Math.PI * 0.25f;
         }
         this.leg2.zRot = this.leg2part2.zRot = 0.191f + newangle;
         this.leg2part3.zRot = 0.675f + newangle;
         newangle = 0.0f;
-        if ((ri1 & 2) != 0) {
+        if ((r.ri1 & 2) != 0) {
         newangle = Mth.sin((float)(ageInTicks * legspeed * this.wingspeed)) * (float)Math.PI * 0.25f;
         }
         this.leg1.zRot = this.leg1part2.zRot = -0.191f + newangle;
         this.leg1part3.zRot = -0.675f + newangle;
         newangle = 0.0f;
-        if ((ri1 & 4) != 0) {
+        if ((r.ri1 & 4) != 0) {
         newangle = Mth.sin((float)(ageInTicks * legspeed * this.wingspeed)) * (float)Math.PI * 0.15f;
         }
         this.leg4.zRot = this.leg4part2.zRot = 0.191f + newangle;
         this.leg4part3.zRot = 0.675f + newangle;
         newangle = 0.0f;
-        if ((ri1 & 8) != 0) {
+        if ((r.ri1 & 8) != 0) {
         newangle = Mth.sin((float)(ageInTicks * legspeed * this.wingspeed)) * (float)Math.PI * 0.15f;
         }
         this.leg3.zRot = this.leg3part2.zRot = -0.191f + newangle;
         this.leg3part3.zRot = -0.675f + newangle;
         newangle = 0.0f;
-        if ((ri1 & 0x10) != 0) {
+        if ((r.ri1 & 0x10) != 0) {
         newangle = Mth.sin((float)(ageInTicks * legspeed * this.wingspeed)) * (float)Math.PI * 0.1f;
         }
         this.leg6.zRot = this.leg6part2.zRot = -0.34f + newangle;
         newangle = 0.0f;
-        if ((ri1 & 0x20) != 0) {
+        if ((r.ri1 & 0x20) != 0) {
         newangle = Mth.sin((float)(ageInTicks * legspeed * this.wingspeed)) * (float)Math.PI * 0.1f;
         }
         this.leg5.zRot = this.leg5part2.zRot = 0.34f + newangle;
         newangle = 0.0f;
-        if ((ri2 & 1) != 0) {
+        if ((r.ri2 & 1) != 0) {
         newangle = Mth.sin((float)(ageInTicks * mouthspeed * this.wingspeed)) * (float)Math.PI * 0.35f;
         newangle = Math.abs(newangle);
         }

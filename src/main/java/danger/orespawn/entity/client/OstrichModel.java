@@ -3,6 +3,7 @@ package danger.orespawn.entity.client;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import danger.orespawn.entity.Ostrich;
+import danger.orespawn.entity.pose.OstrichPose;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
@@ -12,8 +13,6 @@ import net.minecraft.util.Mth;
 public class OstrichModel extends EntityModel<Ostrich> {
     /** Animation frequency constant; orig ModelOstrich.java:16,57 (wingspeed), value from orig ClientProxyOreSpawn.java:450. */
     private final float wingspeed = 0.65f;
-    private int ri1, ri2;
-    private float rf1;
     private final ModelPart Body1;
     private final ModelPart body2;
     private final ModelPart LLeg1;
@@ -293,11 +292,18 @@ public class OstrichModel extends EntityModel<Ostrich> {
 
     @Override
     public void setupAnim(Ostrich entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
+        // ENT-S-093: the body lives in poseFrom so the parity harness can drive it
+        // from a declared state without a live entity (ModelRobot2 pattern); the
+        // entity satisfies the interface.
+        poseFrom(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
+    }
+
+    public void poseFrom(OstrichPose entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
         float hf = 0.0f;
         float newangle = 0.0f;
         float nextangle = 0.0f;
         float lspeed = 0.0f;
-        lspeed = (float)((entity.xOld - entity.getX()) * (entity.xOld - entity.getX()) + (entity.zOld - entity.getZ()) * (entity.zOld - entity.getZ()));
+        lspeed = (float)((entity.xOld() - entity.getX()) * (entity.xOld() - entity.getX()) + (entity.zOld() - entity.getZ()) * (entity.zOld() - entity.getZ()));
         lspeed = (float)Math.sqrt(lspeed);
         newangle = Mth.cos((float)(ageInTicks * 1.25f * this.wingspeed)) * (float)Math.PI * lspeed * 0.4f;
         if ((double)newangle > 0.5) {
@@ -332,21 +338,30 @@ public class OstrichModel extends EntityModel<Ostrich> {
         this.Tail3.xRot = this.Tail1.xRot;
         this.Tail3.yRot = -0.334f + Mth.cos((float)(ageInTicks * 0.061f)) * (float)Math.PI * 0.08f;
         this.Tail2.yRot = 0.334f - Mth.cos((float)(ageInTicks * 0.072f)) * (float)Math.PI * 0.08f;
-        if (!entity.getPassengers().isEmpty()) {
-        netHeadYaw = (entity.yBodyRotO - entity.yBodyRot) * 20.0f;
+        // ENT-S-093: per-entity scratch as the original had it (orig ModelOstrich.java:334
+        // `r = o.getRenderInfo()`, orig Ostrich.java:45,105-107); the orig :383
+        // setRenderInfo(r) is a self-copy and is omitted (Kraken pattern).
+        RenderInfo r = entity.getRenderInfo();
+        // orig ModelOstrich.java:335-337 - ridden: the entity's own per-tick yaw delta
+        // (field_70126_B = prevRotationYaw = yRotO, field_70177_z = rotationYaw = getYRot),
+        // not the body-yaw delta (ENT-S-093 split item 2).
+        if (entity.isVehicle()) {
+        netHeadYaw = (entity.yRotO() - entity.getYRot()) * 20.0f;
         netHeadYaw = -netHeadYaw;
-        rf1 += (netHeadYaw - rf1) / 60.0f;
-        if (rf1 > 50.0f) {
-        rf1 = 50.0f;
+        r.rf1 += (netHeadYaw - r.rf1) / 60.0f;
+        if (r.rf1 > 50.0f) {
+        r.rf1 = 50.0f;
         }
-        if (rf1 < -50.0f) {
-        rf1 = -50.0f;
+        if (r.rf1 < -50.0f) {
+        r.rf1 = -50.0f;
         }
-        netHeadYaw = rf1;
+        netHeadYaw = r.rf1;
         } else {
         netHeadYaw /= 2.0f;
         }
-        if (entity.isInSittingPose()) {
+        // orig ModelOstrich.java:349 - head inverts only for a sitting, non-activated
+        // ostrich (func_70906_o() && get_is_activated() == 0); ENT-S-093 split item 3.
+        if (entity.isInSittingPose() && entity.getIsActivated() == 0) {
         netHeadYaw = 0.0f;
         this.head.xRot = this.Head1.xRot = 3.1415f;
         this.mouth1.xRot = this.Head1.xRot;
@@ -367,12 +382,14 @@ public class OstrichModel extends EntityModel<Ostrich> {
         newangle = Mth.cos((float)(ageInTicks * 1.0f * this.wingspeed)) * (float)Math.PI * 0.15f;
         nextangle = Mth.cos((float)((ageInTicks + 0.3f) * 1.0f * this.wingspeed)) * (float)Math.PI * 0.15f;
         if (nextangle > 0.0f && newangle < 0.0f) {
-        ri1 = 0;
+        // orig ModelOstrich.java:370-373 - per-entity ri1 (ENT-S-093); entity RNG per
+        // project convention (Kraken precedent; orig :371 used the world RNG).
+        r.ri1 = 0;
         if (entity.getRandom().nextInt(3) == 1) {
-        ri1 = 1;
+        r.ri1 = 1;
         }
         }
-        if (ri1 == 0) {
+        if (r.ri1 == 0) {
         newangle = 0.0f;
         }
         newangle = Math.abs(newangle);
@@ -380,6 +397,13 @@ public class OstrichModel extends EntityModel<Ostrich> {
         this.Lwing.yRot = newangle / 2.0f;
         this.Rwing.zRot = newangle;
         this.Rwing.yRot = -newangle / 2.0f;
+        // orig ModelOstrich.java:420-425 — Hat1 only when activated, Hat2 only when
+        // activated > 1 (the instanceof is a tautology: orig Ostrich.java:42-43).
+        // 1.21 has no per-part render call with the entity in scope, so the gate is
+        // the part's visible flag (ModelChipmunk.java:180-181 precedent); renderToBuffer
+        // :423-424 is unchanged and ModelPart.render skips hidden parts.
+        this.Hat1.visible = entity.getIsActivated() != 0;
+        this.Hat2.visible = entity.getIsActivated() > 1;
     }
 
     @Override

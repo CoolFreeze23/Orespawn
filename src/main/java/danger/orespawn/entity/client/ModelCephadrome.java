@@ -278,12 +278,15 @@ public class ModelCephadrome extends EntityModel<Cephadrome> {
 
     @Override
     public void setupAnim(Cephadrome entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
-        float rf1 = 0.0f;
         float newangle = 0.0f;
         float lspeed = 0.0f;
         float pi4 = 0.7853982f;
         float tailspeed = 0.76f;
         float tailamp = 0.1f;
+        // ENT-S-093: per-entity scratch as in the original (orig Cephadrome.java:62,
+        // orig ModelCephadrome.java:375,383) - the rf1 neck-yaw latch lives on the
+        // entity, not on a per-frame local re-zeroed every call.
+        RenderInfo r = entity.getRenderInfo();
 
         if ((double)limbSwingAmount > 0.001) {
             lspeed = (float)((entity.xOld - entity.getX()) * (entity.xOld - entity.getX()) + (entity.zOld - entity.getZ()) * (entity.zOld - entity.getZ()));
@@ -379,20 +382,26 @@ public class ModelCephadrome extends EntityModel<Cephadrome> {
         this.tailmembrane3.yRot = this.tailfin1.yRot;
 
         float headYaw = netHeadYaw;
+        // orig ModelCephadrome.java:469-482 - ridden flight latches the BODY yaw
+        // delta (orig :470 field_70126_B - field_70177_z = yRotO - getYRot()) into
+        // the entity's rf1 with a +/-50 clamp (ENT-S-093).
         if (entity.getActivity() == 1) {
-            headYaw = (entity.yHeadRotO - entity.yHeadRot) * 10.0f;
+            headYaw = (entity.yRotO - entity.getYRot()) * 10.0f;
             headYaw = -headYaw;
-            rf1 += (headYaw - rf1) / 50.0f;
-            if (rf1 > 50.0f) {
-                rf1 = 50.0f;
+            r.rf1 += (headYaw - r.rf1) / 50.0f;
+            if (r.rf1 > 50.0f) {
+                r.rf1 = 50.0f;
             }
-            if (rf1 < -50.0f) {
-                rf1 = -50.0f;
+            if (r.rf1 < -50.0f) {
+                r.rf1 = -50.0f;
             }
-            headYaw = rf1;
+            headYaw = r.rf1;
         } else {
             headYaw /= 2.0f;
         }
+        // orig ModelCephadrome.java:504 e.setRenderInfo(r) omitted: r is the entity's
+        // own instance, so the field-by-field self-copy (orig Cephadrome.java:160-169)
+        // was a no-op (ENT-S-093, same treatment as ModelKraken).
 
         this.neck3.yRot = (float)Math.toRadians(headYaw) * 0.125f;
         this.neck2.z = this.neck3.z - (float)Math.cos(this.neck3.yRot) * 14.0f;

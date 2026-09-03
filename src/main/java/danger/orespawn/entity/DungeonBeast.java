@@ -35,6 +35,17 @@ public class DungeonBeast extends Monster {
 
     private static final float MOVE_SPEED = 0.29f;
 
+    /**
+     * Per-entity render scratch (orig DungeonBeast.java:43 {@code renderdata = new RenderInfo()},
+     * re-newed orig :54, zeroed in entityInit orig :69-83, accessor orig :98-100). Mutated
+     * client-side by {@code ModelDungeonBeast} for the jaw-flap latch
+     * (orig ModelDungeonBeast.java:546-573); never datawatcher-synced. The original's
+     * setRenderInfo (orig :102-111) copied the instance onto itself and is omitted, as in Kraken.
+     * ENT-S-093.
+     */
+    private final danger.orespawn.entity.client.RenderInfo renderInfo =
+            new danger.orespawn.entity.client.RenderInfo();
+
     public DungeonBeast(EntityType<? extends DungeonBeast> type, Level level) {
         super(type, level);
         // OPT-009: constant speed - assert the attribute base once here instead
@@ -77,6 +88,11 @@ public class DungeonBeast extends Monster {
 
     public final void setAttacking(int value) {
         this.entityData.set(DATA_ATTACKING, value);
+    }
+
+    /** Mirrors orig DungeonBeast.java:98-100 {@code getRenderInfo()}. ENT-S-093. */
+    public danger.orespawn.entity.client.RenderInfo getRenderInfo() {
+        return this.renderInfo;
     }
 
     @Override

@@ -415,8 +415,6 @@ public class ModelDragon extends EntityModel<Dragon> {
         float tailspeed = 0.76F;
         float tailamp = 0.45F;
 
-        float rf1 = 0.0f;
-
         if (limbSwingAmount > 0.001F) {
             lspeed = (float) ((entity.xOld - entity.getX()) * (entity.xOld - entity.getX())
                     + (entity.zOld - entity.getZ()) * (entity.zOld - entity.getZ()));
@@ -516,7 +514,9 @@ public class ModelDragon extends EntityModel<Dragon> {
             tailspeed = 0.22F;
             tailamp = 0.22F;
         }
-        if (entity.isPassenger()) {
+        // orig ModelDragon.java:500 e.func_70906_o() = EntityTameable.isSitting() (synced
+        // tame-flags bit); the client-side 1.21.1 equivalent is isInSittingPose(). ENT-S-093.
+        if (entity.isInSittingPose()) {
             tailspeed = 0.0F;
             tailamp = 0.0F;
         }
@@ -562,17 +562,24 @@ public class ModelDragon extends EntityModel<Dragon> {
         this.tail5.x = this.tail6.x - 0.5F + (float) Math.sin(this.tail6.yRot) * 6.0F;
         this.tail5.yRot = Mth.cos(ageInTicks * tailspeed * ANIM_SPEED) * (float) Math.PI * tailamp * 0.75F;
 
-        // Head/neck tracking
+        // Head/neck tracking — orig ModelDragon.java:538-551; latch lives on the entity
+        // (orig Dragon.java:80, ModelDragon.java:417/:541-548) so each dragon keeps its own.
+        // ENT-S-093.
+        RenderInfo r = entity.getRenderInfo();
         float headYaw = netHeadYaw;
         if (entity.getActivity() == 1) {
-            headYaw = (entity.yHeadRotO - entity.yBodyRot) * 8.0F;
-            headYaw = -headYaw;
-            rf1 += (headYaw - rf1) / 60.0F;
-            if (rf1 > 50.0F) rf1 = 50.0F;
-            if (rf1 < -50.0F) rf1 = -50.0F;
-            headYaw = rf1;
+            headYaw = (entity.yRotO - entity.getYRot()) * 8.0F;   // orig :539 (field_70126_B - field_70177_z)
+            headYaw = -headYaw;                                    // orig :540
+            r.rf1 += (headYaw - r.rf1) / 60.0F;                    // orig :541
+            if (r.rf1 > 50.0F) {                                   // orig :542-544
+                r.rf1 = 50.0F;
+            }
+            if (r.rf1 < -50.0F) {                                  // orig :545-547
+                r.rf1 = -50.0F;
+            }
+            headYaw = r.rf1;                                       // orig :548
         } else {
-            headYaw /= 2.0F;
+            headYaw /= 2.0F;                                       // orig :550
         }
 
         this.spike2.yRot = (float) Math.toRadians(headYaw) * 0.25F;

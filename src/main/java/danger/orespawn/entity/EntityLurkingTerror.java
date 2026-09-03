@@ -46,6 +46,18 @@ public class EntityLurkingTerror extends Monster {
     private int lastZ = 0;
     private int stuckCount = 0;
 
+    /**
+     * Per-entity render scratch (orig LurkingTerror.java:49 {@code renderdata = new RenderInfo()},
+     * zeroed in entityInit orig LurkingTerror.java:71-81, accessor orig LurkingTerror.java:99-101).
+     * Mutated client-side by {@code LurkingTerrorModel} for the leg-selector latch (ri1/rf1) and
+     * the mouth latch (ri2/rf2) (orig ModelLurkingTerror.java:443-478); never datawatcher-synced.
+     * The original's setRenderInfo (orig LurkingTerror.java:103-112) copied the instance onto itself
+     * (ModelLurkingTerror.java:562 passed back the object from getRenderInfo), so it is omitted as in Kraken.
+     * ENT-S-093.
+     */
+    private final danger.orespawn.entity.client.RenderInfo renderInfo =
+            new danger.orespawn.entity.client.RenderInfo();
+
     public EntityLurkingTerror(EntityType<? extends EntityLurkingTerror> type, Level level) {
         super(type, level);
         this.xpReward = 20;
@@ -72,6 +84,11 @@ public class EntityLurkingTerror extends Monster {
 
     public void setAttacking(int value) {
         this.entityData.set(DATA_ATTACKING, value);
+    }
+
+    /** Mirrors orig LurkingTerror.java:99-101 {@code getRenderInfo()}. ENT-S-093. */
+    public danger.orespawn.entity.client.RenderInfo getRenderInfo() {
+        return this.renderInfo;
     }
 
     @Override
