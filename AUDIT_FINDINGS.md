@@ -5732,6 +5732,19 @@ Entries: **79 total** — ANIM 20 (DIVERGENT 8 · PARTIAL 10 · MISSING 2) · BU
 
 ## Field reports — beta.2 public play (2026-08-11)
 
+
+### OPT-028 — MHLib's bare-name `renderRecursively` selectors also hook GeckoLib's synthetic bridge: the per-bone push/pop runs twice for every GeckoLib entity (REPORT, 2026-09-03)
+
+- **Evidence:** `mixin/geckolib/MixinGeoEntityRenderer.java:47,52` (likewise `MixinGeoReplacedEntityRenderer.java:47,52`
+  and `MixinGeoRenderer.java:27,32`) inject HEAD and TAIL by bare method name. GeckoLib 4.8.4's `GeoEntityRenderer`
+  has the typed method (javap:611) and a synthetic bridge (:1438-1453) that calls it, and every bone enters through
+  the bridge (GeoRenderer's erased `invokeinterface`, GR javap:272/487). Both are hooked, so
+  `onRenderRecursivelyStart/End` (2 `Vector3d` + 1 `Tuple` per push, `IMHLibExtendedRenderLayer.java:61-73`) run
+  twice per bone per frame for every entity drawn by a `GeoEntityRenderer` — the Queen's 110 bones and every
+  converted mob alike. Balanced push/pop, so correct; only doubled. Found by the MoreHitboxes comparison and its
+  refuter (phase_g_reports/morehitboxes_evaluation.md, Section 2).
+- **Resolution:** OPEN — fix = full-descriptor selectors in the three geckolib mixins (comparison harvest 6, six
+  lines); verify with the `recursive_start` counter (220 → 110 per Queen frame) or `-Dmixin.debug.export`.
 ### BUG-032 — Published jar missing the databuddy runtime dependency
 
 - **Impact:** CRITICAL (field) — beta.2 crashes at mod construction on any
@@ -6218,6 +6231,22 @@ keeps BUG-036. Commit 4ea395c's message retains the old number.)*
   are unaffected: zero pivots, sync-with-model false, vanilla MobRenderers. Left for the
   ledger: the pre-stream fallback offsets rotate by +yaw (opposite sense) and the shipped
   rotation remains MHLib's Euler sum under animation.
+
+### BUG-044 — MHLib's once-per-tick bone-collection stamp is per renderer, not per entity: it wedges on a two-tick frame and starves all but one entity per renderer (REPORT, 2026-09-03)
+
+- **Evidence:** `GeckolibBoneInformationCollectorLayer.java:35` (`private int currentTick = -1`, one layer per
+  renderer instance); the collect gate `IBoneInformationCollectorLayerCommonLogic.java:78`
+  (`getCurrentTick() == entity.tickCount || getCurrentTick() < 0`) and the advance `:102-103` (only on equality, to
+  `tickCount + 1`). A client frame during which the entity ticked twice leaves the stamp one behind for good: the
+  gate and the advance both fail and `tickCount` only grows. Two Queens drawn by the same renderer: the stamp
+  follows whichever entity last matched and the other never collects. Found by the MoreHitboxes comparison's
+  refuter (phase_g_reports/morehitboxes_evaluation.md, 3.6); the stamp field and the gate re-read by the
+  orchestrator. Consequence per the refuter's read, not yet pinned: a wedged master's builder ships an empty map
+  (a size change is a send, `IMultipartEntity.java:544-546`) and `processBoneInformation` (`:138`) clears the
+  server map, so the server hurtboxes fall back to rest pose for the session.
+- **Resolution:** OPEN — report only. Fix = harvest 1 of the comparison: a per-entity render-tick stamp
+  (MoreHitboxes' `renderTick < tickCount`, `GeckoLibMobMixin.java:20-23`, MIT-attributed) with gametests that pin
+  the hitch case and the two-Queen case, two refuters (MHLib change), the owner's look (behaviour change).
 ### ENT-S-091 — Seven port models diverge from their 1.7.10 geometry beyond the mirror flag (REPORT, 2026-09-02)
 
 - **Models:** CaterKiller (49 extra parts), Elevator (all pivots y 0 -> 24),
