@@ -7,6 +7,7 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 
 import de.dertoaster.multihitboxlib.api.IMHLibExtendedRenderLayer;
 import de.dertoaster.multihitboxlib.client.IBoneInformationCollectorLayerCommonLogic;
+import de.dertoaster.multihitboxlib.util.MHLibCounters;
 import it.unimi.dsi.fastutil.Stack;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -32,7 +33,14 @@ public class GeckolibBoneInformationCollectorLayer<T extends GeoAnimatable> exte
 		super(entityRendererIn);
 	}
 	
-	private int currentTick = -1;
+	/**
+	 * BUG-044 (2026-09-04): whether the pass in flight collects, decided once per rendered entity by
+	 * {@link IBoneInformationCollectorLayerCommonLogic#beginRenderPass} from the ENTITY's render-tick
+	 * stamp and read per bone by {@code onRenderBone}. One flag per layer suffices because a renderer
+	 * draws one entity at a time (Pre event, its bones, Post event); the stamp itself lives on the
+	 * entity, which is what keeps two entities sharing this renderer from starving each other.
+	 */
+	private boolean collectingPass = false;
 
 	/**
 	 * ENT-S-092 (2026-09-03): the body yaw the frame being collected was rendered with, as the
@@ -105,6 +113,9 @@ public class GeckolibBoneInformationCollectorLayer<T extends GeoAnimatable> exte
 	 * unchanged, so the yaw-0 behaviour is untouched.
 	 */
 	public static Vec3 foldBodyYaw(double rx, double ry, double rz, double yawTerm) {
+		if (MHLibCounters.ENABLED) {
+			MHLibCounters.CLIENT_FOLDS.increment();
+		}
 		if (yawTerm == 0.0D) {
 			return new Vec3(rx, ry, rz);
 		}
@@ -156,13 +167,13 @@ public class GeckolibBoneInformationCollectorLayer<T extends GeoAnimatable> exte
 	}
 
 	@Override
-	public int getCurrentTick() {
-		return this.currentTick;
+	public boolean isCollectingPass() {
+		return this.collectingPass;
 	}
 
 	@Override
-	public void setCurrentTick(int tick) {
-		this.currentTick = tick;
+	public void setCollectingPass(boolean collecting) {
+		this.collectingPass = collecting;
 	}
 
 	@Override
@@ -183,6 +194,9 @@ public class GeckolibBoneInformationCollectorLayer<T extends GeoAnimatable> exte
 
 	@Override
 	public Vec3 getBoneWorldPosition(GeoBone bone) {
+		if (MHLibCounters.ENABLED) {
+			MHLibCounters.CLIENT_WORLD_POS_READS.add(3); // three GeoBone.getWorldPosition() calls below
+		}
         final Vec3 worldPos = new Vec3(bone.getWorldPosition().x, bone.getWorldPosition().y, bone.getWorldPosition().z);
 		return worldPos;
 	}
@@ -201,6 +215,11 @@ public class GeckolibBoneInformationCollectorLayer<T extends GeoAnimatable> exte
 	@Override
 	public void setScales(int x, int y, int z) {
 		Vector3d scale = this.getCurrentScaling();
+		if (scale == null) {
+			// BUG-044: the replaced-renderer path now runs the post hook too; a pass whose collection was
+			// inactive (IMHLibExtendedRenderLayer.onPreRender early-out) has no seeded vectors to reset.
+			return;
+		}
 		scale.x *= x;
 		scale.y *= y;
 		scale.z *= z;
@@ -230,6 +249,9 @@ public class GeckolibBoneInformationCollectorLayer<T extends GeoAnimatable> exte
 	@Override
 	public void setRotations(int x, int y, int z) {
 		Vector3d rot = this.getCurrentRotation();
+		if (rot == null) {
+			return; // see setScales
+		}
 		rot.x = x;
 		rot.y = y;
 		rot.z = z;

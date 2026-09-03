@@ -1,6 +1,8 @@
 package de.dertoaster.multihitboxlib.api;
 
 import org.joml.Vector3d;
+
+import de.dertoaster.multihitboxlib.util.MHLibCounters;
 import net.minecraft.util.Tuple;
 
 public interface IMHLibExtendedRenderLayer {
@@ -59,6 +61,9 @@ public interface IMHLibExtendedRenderLayer {
 	}
 	
 	default void onRenderRecursivelyStart() {
+		if (MHLibCounters.ENABLED) {
+			MHLibCounters.CLIENT_RECURSIVE_START.increment(); // OPT-028 proof: 220 per Queen frame with the bridge hooked, 110 without
+		}
 		if (!this.isBoneCollectionActive()) {
 			return;
 		}
@@ -73,6 +78,9 @@ public interface IMHLibExtendedRenderLayer {
 	}
 	
 	default void onRenderRecursivelyEnd() {
+		if (MHLibCounters.ENABLED) {
+			MHLibCounters.CLIENT_RECURSIVE_END.increment();
+		}
 		if (!this.isBoneCollectionActive()) {
 			return;
 		}

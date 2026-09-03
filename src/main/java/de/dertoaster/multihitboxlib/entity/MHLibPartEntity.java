@@ -9,6 +9,7 @@ import de.dertoaster.multihitboxlib.entity.hitbox.SubPartConfig;
 import de.dertoaster.multihitboxlib.network.server.SPacketUpdateMultipart;
 import de.dertoaster.multihitboxlib.util.BoneInformation;
 import de.dertoaster.multihitboxlib.util.LazyLoadField;
+import de.dertoaster.multihitboxlib.util.MHLibCounters;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.util.Mth;
@@ -421,6 +422,9 @@ public class MHLibPartEntity<T extends Entity> extends PartEntity<T> {
 	}
 
 	public void applyInformation(Vec3 worldPos, Vec3 scale, Vec3 rotation, boolean hidden) {
+		if (MHLibCounters.ENABLED && this.level().isClientSide()) {
+			MHLibCounters.CLIENT_APPLY_INFORMATION.increment();
+		}
 		Vec3 pivot = this.getPivot();
 		if (pivot != Vec3.ZERO) {
 			pivot = pivot.xRot((float) (rotation.x())).yRot((float) (rotation.y())).zRot((float) (rotation.z()));
