@@ -15,11 +15,12 @@ import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
  * MOD-029 (ACCEPTED 2026-09-03: "modern-mode default; classic keeps 5x2"):
  * Mothra's root hitbox under the modern config. orig Mothra.java:65
  * {@code setSize(5.0f, 2.0f)} is the classic box (ENT-S-095 batch 2, pinned
- * under the default config by
+ * with the master forced off by
  * {@code HitboxDimsParityTests#s095_mothra_dims_both_modes}); the port's
  * original {@code .sized(6.0f, 3.0f)} is now the modern-mode box, reached only
- * while BOTH {@code [modern].enabled} (master, default false) and
- * {@code [modern].mothraWideRootHitbox} (sub-key, default true) are on, and
+ * while BOTH {@code [modern].enabled} (master, default true; it was
+ * introduced with default false the day before) and {@code
+ * [modern].mothraWideRootHitbox} (sub-key, default true) are on, and
  * snapshotted in the constructor the way the King's and Kraken's PlayNicely
  * boxes are (BOSS-017, orig TheKing.java:85-89; port
  * {@code Mothra#getDefaultDimensions}). Mothra has no PlayNicely size branch
