@@ -132,9 +132,11 @@ don't report them as bugs. Configurable modern behavior for each is on the
 The Vampire Butterfly, Apple Cow, and Golden Apple Cow appear on the classic
 OreSpawn wiki but never existed in the 1.7.10 mod's code, so a source-faithful
 build can't ship them enabled. They're still in the mod — set
-`phase14ContentEnable = true` together with `modern.enabled = true` in the config
-to get their spawns and creative spawn eggs back (since 2026-09-04 `modern.enabled`
-is the master override for every 2.0 feature). (The Enchanted Golden Apple Cow IS original content and is
+`phase14ContentEnable = true` in the config to get their spawns and creative
+spawn eggs back. That one line is enough unless you have set `modern.enabled =
+false`, the master switch that forces every 2.0 feature (this content included)
+to its classic/off value; it defaults to true and defers to the per-feature
+keys. (The Enchanted Golden Apple Cow IS original content and is
 always on.) *(MOD-021)*
 
 ---
@@ -181,9 +183,9 @@ and re-step eagerness are a first-pass tune — if its six-legged walk
 reads mincing or twitchy to you, say so. Neither affects damage,
 mounting, or hover behavior.
 
-- **Modern robot spiders** (the `spiderMovement` config, default MODERN, effective
-  only with `modern.enabled = true`, which defaults to false — so a default config now
-  runs the classic robots):
+- **Modern robot spiders** (the `spiderMovement` config, default MODERN — what a
+  default config runs, together with the riding camera, because the `modern.enabled`
+  master defaults to true and defers to the per-feature keys):
   legs are now real hittable surfaces dealing body-identical damage, the
   crosshair health bar works on legs (and now also on The King's giant
   body parts), and a mounted player can steer. Two things that are
@@ -191,10 +193,12 @@ mounting, or hover behavior.
   tracks the server's swing — at high ping, lead it or hit the body,
   which pays the same; and legs dipping in lava or fire never hurt the
   spider — only its body touching a hazard does, exactly as in 1.0.
-- **Classic is the default** since the master-override ruling: a default config already
-  gives the exact 1.0/1.7.10 spider (visual-only legs, body-only hitbox, unsteerable);
-  `modern.enabled = true` (with `spiderMovement = "MODERN"`, the key's default) is the
-  opt-in to the modern robots.
+- **Classic is one config line away**: `spiderMovement = "CLASSIC"` gives the exact
+  1.0/1.7.10 spider (visual-only legs, body-only hitbox, unsteerable), and
+  `modern.enabled = false` is the one-line switch to the exact 1.7.10 experience for
+  every 2.0 feature at once (robots, riding camera, Mothra's wider hitbox, the optional
+  wiki mobs). The master defaults to true and defers to the per-feature keys; it only
+  forces classic when set false.
 - While a player is actively steering a modern spider, two vanilla
   rider-physics rules kick in that unridden (or NPC-ridden) spiders do
   not get: step height rises from 0.6 to a full block, and mid-air

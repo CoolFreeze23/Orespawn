@@ -52,7 +52,7 @@ automated regression suite guards the result.
 | **The arsenal** | Big Bertha to Ultimate gear, the gemstone armory, Royal Guardian glide. *(screenshot)* |
 | **Companions** | Girlfriends, Boyfriends, tameable everything, rideable robots and dragons. *(screenshot)* |
 | **A living world** | 47 structures, wild crops, anthills, troll blocks, boosted ores. *(screenshot)* |
-| **Modern robots** *(new in 2.0, opt-in)* | Procedural spider & ant: legs that really plant and climb, per-leg hitboxes, a steerable spider saddle with a smart camera — switched on with `modern.enabled = true` (the master for every 2.0 feature; `spiderMovement` stays `MODERN` by default beneath it). The default config gives the exact 1.7.10 robots. *(screenshot)* |
+| **Modern robots** *(new in 2.0, on by default)* | Procedural spider & ant: legs that really plant and climb, per-leg hitboxes, a steerable spider saddle with a smart riding camera — what a default config runs (`spiderMovement` defaults to `MODERN`; the `modern.enabled` master defaults to true and defers to the per-feature keys). `modern.enabled = false` is the one-line switch to the exact 1.7.10 experience for every 2.0 feature at once; `spiderMovement = "CLASSIC"` switches just the robots. *(screenshot)* |
 
 ## Beta status — read this
 
@@ -149,8 +149,9 @@ suite.
 - **TheyCallMeDanger** and the original OreSpawn authors — the mod itself,
   2013-2015. All rights theirs.
 - The NeoForge port team — the 1.21.1 rebuild, audit, and test suite.
-- MultiHitboxLib (bundled, `de.dertoaster.multihitboxlib`) — bone-synced
-  multi-part hitbox support for The Queen.
+- **DerToaster** — MultiHitboxLib (bundled as `de.dertoaster.multihitboxlib`,
+  LGPL-3.0; see the third-party notices) — bone-synced multi-part hitbox
+  support for The Queen.
 - The 1.7.10-era OreSpawn community and wiki — the documentation that made
   verification possible.
 

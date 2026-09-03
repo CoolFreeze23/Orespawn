@@ -35,6 +35,14 @@ import java.util.function.BooleanSupplier;
  * at MODERN come out CLASSIC (no gait controller, false synced flag, zero
  * MHLib parts), and MODERN once the master is on.</p>
  *
+ * <p>Default ruling of the same day: "modern.enabled defaults to true in code
+ * -- the master defers to per-feature keys by default and only forces classic
+ * when set false" (the master was introduced 2026-09-03 with default false).
+ * {@code master_defaults_true_and_default_config_reads_modern} pins the code
+ * default and the default experience: every value at its default reads
+ * {@code spiderMovement()} MODERN and {@code mountCamera()} true -- the
+ * modern robots with the riding camera.</p>
+ *
  * <p>Batch (TEST-003): the flags are GLOBAL. Every test here is synchronous
  * within one tick -- set, assert (spawn, assert, discard), restore in a
  * {@code finally} (the MothraModernDimsTests / KrakenPlayNicelyTests idiom)
@@ -243,6 +251,36 @@ public class ModernMasterOverrideTests {
         } finally {
             prior.restore();
             discard(spiderOff, antOff, spiderOn, antOn);
+        }
+        helper.succeed();
+    }
+
+    // ---- the code default (owner ruling 2026-09-04) ----
+
+    /**
+     * The master defaults to TRUE and defers to the keys, so a default config
+     * is the modern robots with the riding camera: {@code MODERN_ENABLED}'s
+     * spec default is true, and with the master and both keys at their
+     * defaults {@code spiderMovement()} reads the key's default (MODERN) and
+     * {@code mountCamera()} reads true. Set, assert, restore like the rows above.
+     */
+    @GameTest(template = "empty", batch = "modernMasterOverride")
+    public void master_defaults_true_and_default_config_reads_modern(GameTestHelper helper) {
+        final Flags prior = Flags.read();
+        try {
+            helper.assertTrue(OreSpawnConfig.MODERN_ENABLED.getDefault(),
+                    "modern.enabled must default to true in code (owner ruling 2026-09-04)");
+            OreSpawnConfig.MODERN_ENABLED.set(true);
+            OreSpawnConfig.SPIDER_MOVEMENT.set(OreSpawnConfig.SPIDER_MOVEMENT.getDefault());
+            OreSpawnConfig.MOUNT_CAMERA.set(OreSpawnConfig.MOUNT_CAMERA.getDefault());
+            SpiderMovement effective = OreSpawnConfig.spiderMovement();
+            helper.assertTrue(effective == OreSpawnConfig.SPIDER_MOVEMENT.getDefault()
+                            && effective == SpiderMovement.MODERN,
+                    "a default config must read spiderMovement() = MODERN (the key's default), got " + effective);
+            helper.assertTrue(OreSpawnConfig.mountCamera(),
+                    "a default config must read mountCamera() = true (the key's default)");
+        } finally {
+            prior.restore();
         }
         helper.succeed();
     }

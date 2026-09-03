@@ -619,8 +619,18 @@ public class HitboxDimsParityTests {
      */
     @GameTest(template = "empty_large", batch = "hitboxDimsParity")
     public void s095_mothra_dims_both_modes(GameTestHelper helper) {
-        pinBothModes(helper, ModEntities.MOTHRA.get(), 5.0f, 2.0f, "mothra",
-                "orig Mothra.java:65 setSize(5.0f, 2.0f), no PlayNicely size branch in orig :63-70; owner ruling 2026-09-03 restored the port's 6x3");
+        // Classic pin: since the 2026-09-04 ruling the [modern] master defaults to
+        // true and Mothra's wide 6x3 root box (MOD-029) is the default experience,
+        // so the classic 5x2 is reached only with the master off. Snapshot, force
+        // classic, restore (MothraModernDimsTests pins the modern box).
+        final boolean priorMaster = OreSpawnConfig.MODERN_ENABLED.get();
+        try {
+            OreSpawnConfig.MODERN_ENABLED.set(false);
+            pinBothModes(helper, ModEntities.MOTHRA.get(), 5.0f, 2.0f, "mothra",
+                    "orig Mothra.java:65 setSize(5.0f, 2.0f), no PlayNicely size branch in orig :63-70; owner ruling 2026-09-03 restored the port's 6x3 as the modern-mode box (MOD-029), classic keeps 5x2");
+        } finally {
+            OreSpawnConfig.MODERN_ENABLED.set(priorMaster);
+        }
     }
 
     /**

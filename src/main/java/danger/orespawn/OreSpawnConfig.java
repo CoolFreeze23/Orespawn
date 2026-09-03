@@ -173,19 +173,27 @@ public class OreSpawnConfig {
     // 2.0 modern mode (owner rulings 2026-09-03; master-override ruling
     // 2026-09-04, verbatim: "modern.enabled: master override only. Off forces
     // all modern features off; on defers to existing per-feature keys, which
-    // keep their names. New features register under [modern]."). Classic
-    // 1.7.10 parity is the default experience; [modern].enabled is the ONE
-    // master switch. The earlier per-feature 2.0 keys (spiderMovement,
-    // mountCamera, phase14ContentEnable) keep their names and their [tweaks]
-    // section but are effective only while the master is on -- every read
-    // goes through the effective-value helpers at the bottom of this class
-    // (spiderMovement(), mountCamera(), phase14ContentEnable(),
-    // mothraWideRootHitbox()), never through the keys directly. The MOD-024
-    // items are unimplemented proposals, not keys.
+    // keep their names. New features register under [modern]."; default
+    // ruling of the same day, verbatim: "modern.enabled defaults to true in
+    // code — the master defers to per-feature keys by default and only forces
+    // classic when set false."). [modern].enabled is the ONE master switch:
+    // master override; defaults to true and defers to the per-feature keys;
+    // set false to force every modern feature to its classic/off value; new
+    // modern features register under [modern]. The earlier per-feature 2.0
+    // keys (spiderMovement, mountCamera, phase14ContentEnable) keep their
+    // names and their [tweaks] section and are effective only while the
+    // master is on -- every read goes through the effective-value helpers at
+    // the bottom of this class (spiderMovement(), mountCamera(),
+    // phase14ContentEnable(), mothraWideRootHitbox()), never through the keys
+    // directly. The MOD-024 items are unimplemented proposals, not keys.
     /**
-     * Master modern-mode switch, default false (classic parity). Master
-     * override: off forces every modern feature off; on defers to the
-     * per-feature keys; new modern features register under {@code [modern]}.
+     * Master modern-mode switch -- master override; defaults to true and
+     * defers to the per-feature keys; set false to force every modern feature
+     * to its classic/off value; new modern features register under [modern].
+     * (Introduced 2026-09-03 with default false; flipped to true by the
+     * owner's ruling of 2026-09-04.) A default config therefore runs each
+     * modern feature at its own key's default -- the modern robots with the
+     * riding camera.
      * Effective values: {@link #spiderMovement()}, {@link #mountCamera()},
      * {@link #phase14ContentEnable()}, {@link #mothraWideRootHitbox()} -- a
      * feature's key is never consulted without this master. Phase G artist
@@ -346,8 +354,9 @@ public class OreSpawnConfig {
         PLAY_NICELY = BUILDER.define("playNicely", false);
         // 2.0 spider overhaul (design ruling 2026-08-11): key default MODERN.
         // Master-override ruling 2026-09-04: both keys below are effective
-        // only while [modern] enabled is true (default false), so a default
-        // config runs CLASSIC until the master is switched on. Server-
+        // only while [modern] enabled is true -- its default, so a default
+        // config runs each key's own default (MODERN, camera on); the master
+        // forces CLASSIC / camera off when set false. Server-
         // authoritative: the server's EFFECTIVE value at entity construction
         // wins and is synced.
         MOUNT_CAMERA = BUILDER.comment(
@@ -355,7 +364,7 @@ public class OreSpawnConfig {
                         "camera back and up, smoothed, with terrain collision, so the mount does not " +
                         "fill the screen. Client-visual only; no effect unridden, in CLASSIC mode, " +
                         "or when disabled — the vanilla camera is untouched then. " +
-                        "Effective only when [modern] enabled is true."
+                        "Effective only when [modern] enabled is true (its default)."
         ).define("mountCamera", true);
         SPIDER_MOVEMENT = BUILDER.comment(
                 "Robot leg movement (Giant Robot Spider AND Robot Ant). MODERN = procedural IK gait " +
@@ -366,7 +375,7 @@ public class OreSpawnConfig {
                         "CLASSIC = the exact 1.7.10 behavior, preserved bit-identically (visual-only legs, " +
                         "body-only hitbox, unsteerable spider saddle). " +
                         "Takes effect for newly spawned/loaded robots; the server's setting wins in multiplayer. " +
-                        "Effective only when [modern] enabled is true (the master forces CLASSIC while off)."
+                        "Effective only when [modern] enabled is true (its default); the master forces CLASSIC when set false."
         ).defineEnum("spiderMovement", SpiderMovement.MODERN);
         MINERS_DREAM_EXPENSIVE = BUILDER.define("minersDreamExpensive", false);
         DISABLE_OVERWORLD_DUNGEONS = BUILDER.define("disableOverworldDungeons", false);
@@ -386,7 +395,7 @@ public class OreSpawnConfig {
                 "Enables the optional wiki-documented mobs that never existed in the 1.7.10 source: " +
                         "Vampire Butterfly, Apple Cow, Golden Apple Cow. Off = no natural spawns, " +
                         "no creative spawn eggs. Existing placed/saved mobs are unaffected. " +
-                        "Effective only when [modern] enabled is true."
+                        "Effective only when [modern] enabled is true (its default)."
         ).define("phase14ContentEnable", false);
         BUILDER.pop();
 
@@ -400,18 +409,22 @@ public class OreSpawnConfig {
         // behind the modern config; classic stays code-driven parity". Ruling
         // 2026-09-04: "modern.enabled: master override only. Off forces all
         // modern features off; on defers to existing per-feature keys, which
-        // keep their names. New features register under [modern]."
+        // keep their names. New features register under [modern]." Default
+        // ruling 2026-09-04: "modern.enabled defaults to true in code — the
+        // master defers to per-feature keys by default and only forces
+        // classic when set false." (introduced 2026-09-03 with default false).
         BUILDER.push("modern");
         MODERN_ENABLED = BUILDER.comment(
-                "Master switch for OreSpawn 2.0 modern mode -- master override: off forces every modern " +
-                        "feature off; on defers to the per-feature keys; new modern features register under " +
-                        "[modern]. false (default) = classic 1.7.10 parity everywhere, whatever the per-feature " +
-                        "keys say; true = each modern feature follows its own key (tweaks.spiderMovement, " +
-                        "tweaks.mountCamera, tweaks.phase14ContentEnable, modern.mothraWideRootHitbox). " +
-                        "Phase G artist animations will hang off this same switch (classic stays code-driven " +
-                        "parity). Snapshotted features (the robot gait mode, hitbox sub-keys) pick up a flip on " +
-                        "newly spawned/loaded entities, not live ones."
-        ).define("enabled", false);
+                "Master switch for OreSpawn 2.0 modern mode -- master override; defaults to true and defers " +
+                        "to the per-feature keys; set false to force every modern feature to its classic/off " +
+                        "value; new modern features register under [modern]. true (default) = each modern " +
+                        "feature follows its own key (tweaks.spiderMovement, tweaks.mountCamera, " +
+                        "tweaks.phase14ContentEnable, modern.mothraWideRootHitbox); false = classic 1.7.10 " +
+                        "parity everywhere, whatever the per-feature keys say. Phase G artist animations will " +
+                        "hang off this same switch (classic stays code-driven parity). Snapshotted features " +
+                        "(the robot gait mode, hitbox sub-keys) pick up a flip on newly spawned/loaded " +
+                        "entities, not live ones."
+        ).define("enabled", true);
         MODERN_MOTHRA_WIDE_ROOT_HITBOX = BUILDER.comment(
                 "MOD-029: Mothra's root hitbox is 6 x 3 (the port's original size) instead of the 1.7.10 " +
                         "5 x 2 (orig Mothra.java:65). Only takes effect while modern.enabled is true; classic " +
