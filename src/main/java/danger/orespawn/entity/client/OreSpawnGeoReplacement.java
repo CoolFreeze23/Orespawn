@@ -56,6 +56,21 @@ public abstract class OreSpawnGeoReplacement<E extends Entity> implements GeoRep
     }
 
     /**
+     * ENT-S-094: per-species non-living render mode. {@code true} for a species
+     * whose 1.7.10 renderer extended the plain {@code Render} even though the
+     * entity was living (the Elevator: orig RenderElevator.java:19), so it never
+     * had RendererLivingEntity's death flip, shaking/sleeping/upside-down
+     * rotations, hurt red pass or name label. {@link OreSpawnGeoReplacedEntityRenderer}
+     * reads it to skip the matching GeoReplacedEntityRenderer branches (the
+     * living-only parts of applyRotations, getPackedOverlay, shouldShowName) so
+     * the candidate matches the classic renderer. Default {@code false}: every
+     * other species keeps GeckoLib's living behaviour.
+     */
+    public boolean nonLivingRender() {
+        return false;
+    }
+
+    /**
      * Code-driven pose hook, called by the shared model from
      * {@code GeoModel.setCustomAnimations} after keyframe controllers have
      * run. The default adapts the renderer's state into {@link PoseInputs}

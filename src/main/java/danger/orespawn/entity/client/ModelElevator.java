@@ -6,6 +6,7 @@ import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
+import net.minecraft.client.renderer.texture.OverlayTexture;
 import danger.orespawn.entity.Elevator;
 
 public class ModelElevator extends EntityModel<Elevator> {
@@ -64,12 +65,24 @@ public class ModelElevator extends EntityModel<Elevator> {
     public void setupAnim(Elevator entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
     }
 
+    /**
+     * ENT-S-094: the incoming {@code packedOverlay} is ignored. LivingEntityRenderer
+     * .render computes it with the {@code public static} getOverlayCoords
+     * (invokestatic at bytecode 593; body reads hurtTime/deathTime and packs
+     * OverlayTexture.v(hurt) = 3 into the red overlay), which no renderer hook
+     * can replace. Orig RenderElevator.java:42-44 draws through the plain Render,
+     * which had no hurt/death red pass (that pass lives in RendererLivingEntity
+     * .doRender only). With u = 0, pack(0, 10) == NO_OVERLAY exactly, so this is
+     * a zero-difference change when the board is not hurt and removes only the
+     * red tint when hurtTime/deathTime > 0.
+     */
     @Override
     public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, int color) {
-        shape1.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
-        shape2.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
-        shape3.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
-        shape4.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
-        shape5.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        int overlay = OverlayTexture.NO_OVERLAY;
+        shape1.render(poseStack, vertexConsumer, packedLight, overlay, color);
+        shape2.render(poseStack, vertexConsumer, packedLight, overlay, color);
+        shape3.render(poseStack, vertexConsumer, packedLight, overlay, color);
+        shape4.render(poseStack, vertexConsumer, packedLight, overlay, color);
+        shape5.render(poseStack, vertexConsumer, packedLight, overlay, color);
     }
 }
