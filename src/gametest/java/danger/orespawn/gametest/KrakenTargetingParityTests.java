@@ -8,6 +8,7 @@ import danger.orespawn.util.MyUtils;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
@@ -71,6 +72,12 @@ import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
  * hand for the ground-or-water rule (orig :1083-1085). Mock players are the
  * ENT-S-097 kind; the game-test server defaults them to CREATIVE, so the
  * mode is always set explicitly.</p>
+ *
+ * <p>ENT-S-105 rides on the KT-A fixture: the tie rule of the :963 scan (orig
+ * {@code World.func_72857_a}, 1.7.10 {@code ahb.class} bytecode {@code dcmpl; ifle}
+ * — the candidate is replaced on {@code d1 <= d0}, so the LAST of two equidistant
+ * players wins), pinned with two survival players at mirror positions and the
+ * scan's own order read back rather than assumed.</p>
  */
 @GameTestHolder(OreSpawnMod.MOD_ID)
 @PrefixGameTestTemplate(false)
@@ -85,6 +92,8 @@ public class KrakenTargetingParityTests {
     /** Players: the nearer one 5 blocks away, the farther one 10, both inside the 25/40/25 box (orig :963). */
     private static final Vec3 NEAR_PLAYER_POS = new Vec3(29.5, 1.0, 24.5);
     private static final Vec3 FAR_PLAYER_POS = new Vec3(34.5, 1.0, 24.5);
+    /** ENT-S-105: NEAR_PLAYER_POS mirrored across the Kraken's x (24.5) — 5 blocks west, same y and z, so the two squared distances are bit-identical (25.0). */
+    private static final Vec3 MIRROR_PLAYER_POS = new Vec3(19.5, 1.0, 24.5);
     /** A flight target no search would ever produce, to see whether a search wrote one. */
     private static final BlockPos SENTINEL_TARGET = new BlockPos(-100000, -100000, -100000);
     /** orig Kraken.java:952/:1154 divide by 4, :884 by 2, :954 by 8: the healths below straddle the 1000 base's quarter (250) and half (500) but not 3000's (750 / 1500). */
@@ -169,6 +178,103 @@ public class KrakenTargetingParityTests {
         } finally {
             removePlayer(helper, nearest);
             removePlayer(helper, farther);
+            if (kraken != null) kraken.discard();
+        }
+        helper.succeed();
+    }
+
+    // ------------------------------------------------------------------
+    // ENT-S-105 — ties in the player search, orig World.func_72857_a (the :963 scan)
+    // ------------------------------------------------------------------
+
+    /**
+     * ENT-S-105, orig {@code World.func_72857_a} — the scan behind Kraken.java:963
+     * (1.7.10 {@code ahb.a(Class, AxisAlignedBB, Entity)}): the candidate is
+     * replaced on {@code d1 <= d0} (bytecode {@code dcmpl; ifle}, the update body
+     * runs when {@code d1 <= d0}), so of two players at the same distance the LAST
+     * one scanned wins; the port's old {@code <} kept the first. Two survival
+     * players 5 blocks west and 5 blocks east of the Kraken, same y and z, so the
+     * squared distances are bit-identical (asserted). Which of the two the scan
+     * meets last is the entity section storage's business, not spawn order's, so
+     * the order is read back with the scan's own call ({@link #scanOrder}) and the
+     * winner must be the later of the two in that list.
+     */
+    @GameTest(template = "empty_large", batch = "krakenTargetingParity")
+    public void s105_equidistant_players_last_scanned_wins(GameTestHelper helper) {
+        Kraken kraken = null;
+        ServerPlayer west = null;
+        ServerPlayer east = null;
+        try {
+            kraken = spawnFrozen(helper, KRAKEN_POS);
+            west = playerAt(helper, GameType.SURVIVAL, helper.absoluteVec(MIRROR_PLAYER_POS));
+            east = playerAt(helper, GameType.SURVIVAL, helper.absoluteVec(NEAR_PLAYER_POS));
+            helper.assertTrue(!west.getAbilities().instabuild && !east.getAbilities().instabuild,
+                    "precondition: both players must be survival (ENT-S-105 test setup)");
+            double westSq = kraken.distanceToSqr(west);
+            double eastSq = kraken.distanceToSqr(east);
+            helper.assertTrue(westSq == eastSq,
+                    "precondition: mirror positions must give bit-identical squared distances: west " + westSq
+                            + ", east " + eastSq + " (ENT-S-105 test geometry)");
+            List<Player> order = scanOrder(helper, kraken);
+            int westAt = order.indexOf(west);
+            int eastAt = order.indexOf(east);
+            helper.assertTrue(order.size() == 2 && westAt >= 0 && eastAt >= 0,
+                    "precondition: the scan's list must hold exactly the two players, got "
+                            + describe(order, kraken) + " (ENT-S-105 test setup)");
+            ServerPlayer last = westAt > eastAt ? west : east;
+            Player found = findNearestPlayer(kraken);
+            helper.assertTrue(found == last,
+                    "of two equidistant players the LAST one scanned must win (orig World.func_72857_a replaces its"
+                            + " candidate on d1 <= d0, bytecode dcmpl; ifle — the port's old `<` kept the first):"
+                            + " scan order " + describe(order, kraken) + ", expected " + describe(last, kraken)
+                            + ", got " + describe(found, kraken) + " (ENT-S-105)");
+        } finally {
+            removePlayer(helper, west);
+            removePlayer(helper, east);
+            if (kraken != null) kraken.discard();
+        }
+        helper.succeed();
+    }
+
+    /**
+     * ENT-S-105 control: with the distances unequal the nearer player wins whichever
+     * end of the scan it sits at — 5 blocks against 10, then the two swapped in
+     * place so the other entity is the nearer one. The scan order is read back the
+     * same way and reported, not assumed.
+     */
+    @GameTest(template = "empty_large", batch = "krakenTargetingParity")
+    public void s105_control_unequal_distances_nearest_wins(GameTestHelper helper) {
+        Kraken kraken = null;
+        ServerPlayer first = null;
+        ServerPlayer second = null;
+        try {
+            kraken = spawnFrozen(helper, KRAKEN_POS);
+            first = playerAt(helper, GameType.SURVIVAL, helper.absoluteVec(NEAR_PLAYER_POS));
+            second = playerAt(helper, GameType.SURVIVAL, helper.absoluteVec(FAR_PLAYER_POS));
+            helper.assertTrue(!first.getAbilities().instabuild && !second.getAbilities().instabuild,
+                    "precondition: both players must be survival (ENT-S-105 test setup)");
+            helper.assertTrue(kraken.distanceToSqr(first) < kraken.distanceToSqr(second),
+                    "precondition: the first player must be the nearer one (ENT-S-105 test geometry)");
+            Player found = findNearestPlayer(kraken);
+            helper.assertTrue(found == first,
+                    "control: with unequal distances the NEARER player wins (orig World.func_72857_a): scan order "
+                            + describe(scanOrder(helper, kraken), kraken) + ", got " + describe(found, kraken)
+                            + " (ENT-S-105)");
+
+            Vec3 near = helper.absoluteVec(NEAR_PLAYER_POS);
+            Vec3 far = helper.absoluteVec(FAR_PLAYER_POS);
+            first.teleportTo(helper.getLevel(), far.x, far.y, far.z, 0.0f, 0.0f);
+            second.teleportTo(helper.getLevel(), near.x, near.y, near.z, 0.0f, 0.0f);
+            helper.assertTrue(kraken.distanceToSqr(second) < kraken.distanceToSqr(first),
+                    "precondition: after the swap the second player must be the nearer one (ENT-S-105 test geometry)");
+            found = findNearestPlayer(kraken);
+            helper.assertTrue(found == second,
+                    "control: after the swap the other, now nearer, player wins (orig World.func_72857_a): scan order "
+                            + describe(scanOrder(helper, kraken), kraken) + ", got " + describe(found, kraken)
+                            + " (ENT-S-105)");
+        } finally {
+            removePlayer(helper, first);
+            removePlayer(helper, second);
             if (kraken != null) kraken.discard();
         }
         helper.succeed();
@@ -665,6 +771,27 @@ public class KrakenTargetingParityTests {
     /** orig Kraken.java:963 {@code func_72857_a(EntityPlayer.class, ...)}: the port's {@code findNearestPlayer()}. */
     private static Player findNearestPlayer(Kraken kraken) {
         return (Player) invoke(kraken, "findNearestPlayer", new Class<?>[0]);
+    }
+
+    /**
+     * The scan's own list in the scan's own order: the very call
+     * {@code findNearestPlayer()} makes — {@code Level.getEntitiesOfClass(Player.class, box)}
+     * on the orig :963 box, 25/40/25 around the Kraken — so a tie test reads the
+     * order the entity section storage hands out instead of assuming spawn order.
+     * Nothing moves between this call and the scan's, so the two lists agree.
+     */
+    private static List<Player> scanOrder(GameTestHelper helper, Kraken kraken) {
+        return helper.getLevel().getEntitiesOfClass(Player.class, kraken.getBoundingBox().inflate(25.0, 40.0, 25.0));
+    }
+
+    /** A player by its x offset from the Kraken and squared distance — mock players all share one name. */
+    private static String describe(Player player, Kraken kraken) {
+        if (player == null) return "null";
+        return "player[dx=" + (player.getX() - kraken.getX()) + " distSq=" + kraken.distanceToSqr(player) + "]";
+    }
+
+    private static String describe(List<Player> players, Kraken kraken) {
+        return players.stream().map(player -> describe(player, kraken)).toList().toString();
     }
 
     /** orig Kraken.java:962-981, the port's {@code searchForPrey()}. */
