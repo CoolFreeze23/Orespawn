@@ -80,31 +80,38 @@ public class ModEntities {
 
     public static final DeferredHolder<EntityType<?>, EntityType<DungeonBeast>> DUNGEON_BEAST =
             ENTITY_TYPES.register("dungeon_beast", () -> EntityType.Builder.of(DungeonBeast::new, MobCategory.MONSTER)
-                    .sized(1.5f, 1.5f).clientTrackingRange(10).build("dungeon_beast"));
+                    // 1.7.10 func_70105_a: DungeonBeast = 1.15 x 1.1 (orig DungeonBeast.java:48), ENT-S-095; was an uncited 1.5 x 1.5
+                    .sized(1.15f, 1.1f).clientTrackingRange(10).build("dungeon_beast"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<EnderKnight>> ENDER_KNIGHT =
             ENTITY_TYPES.register("ender_knight", () -> EntityType.Builder.of(EnderKnight::new, MobCategory.MONSTER)
-                    .sized(0.6f, 1.8f).clientTrackingRange(10).build("ender_knight"));
+                    // 1.7.10 func_70105_a: EnderKnight = 0.6 x 2.9 (orig EnderKnight.java:37), ENT-S-095; was an uncited 0.6 x 1.8
+                    .sized(0.6f, 2.9f).clientTrackingRange(10).build("ender_knight"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<EnderReaper>> ENDER_REAPER =
             ENTITY_TYPES.register("ender_reaper", () -> EntityType.Builder.of(EnderReaper::new, MobCategory.MONSTER)
-                    .sized(0.6f, 2.5f).clientTrackingRange(10).build("ender_reaper"));
+                    // 1.7.10 func_70105_a: EnderReaper = 0.7 x 2.9 (orig EnderReaper.java:37), ENT-S-095; was an uncited 0.6 x 2.5
+                    .sized(0.7f, 2.9f).clientTrackingRange(10).build("ender_reaper"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<GiantRobot>> GIANT_ROBOT =
             ENTITY_TYPES.register("giant_robot", () -> EntityType.Builder.of(GiantRobot::new, MobCategory.MONSTER)
-                    .sized(4.0f, 10.0f).clientTrackingRange(16).build("giant_robot"));
+                    // 1.7.10 func_70105_a: GiantRobot = 3.0 x 9.75 (orig GiantRobot.java:46), ENT-S-095; was an uncited 4.0 x 10.0
+                    .sized(3.0f, 9.75f).clientTrackingRange(16).build("giant_robot"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<Jeffery>> JEFFERY =
             ENTITY_TYPES.register("jeffery", () -> EntityType.Builder.of(Jeffery::new, MobCategory.MONSTER)
-                    .sized(4.0f, 10.0f).clientTrackingRange(16).build("jeffery"));
+                    // 1.7.10 func_70105_a: GiantRobot = 3.0 x 9.75 (orig GiantRobot.java:46; Jeffery is a named-skin alias of GiantRobot), ENT-S-095; was an uncited 4.0 x 10.0
+                    .sized(3.0f, 9.75f).clientTrackingRange(16).build("jeffery"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<Hammerhead>> HAMMERHEAD =
             ENTITY_TYPES.register("hammerhead", () -> EntityType.Builder.of(Hammerhead::new, MobCategory.MONSTER)
-                    .sized(2.8f, 1.8f).clientTrackingRange(10).build("hammerhead"));
+                    // 1.7.10 func_70105_a: Hammerhead = 3.0 x 5.0 (orig Hammerhead.java:44), ENT-S-095; was an uncited 2.8 x 1.8
+                    .sized(3.0f, 5.0f).clientTrackingRange(10).build("hammerhead"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<Irukandji>> IRUKANDJI =
             ENTITY_TYPES.register("irukandji", () -> EntityType.Builder.of(Irukandji::new, MobCategory.MONSTER)
-                    .sized(0.4f, 0.4f).clientTrackingRange(10).build("irukandji"));
+                    // 1.7.10 func_70105_a: Irukandji = 0.25 x 0.25 (orig Irukandji.java:42), ENT-S-095; was an uncited 0.4 x 0.4
+                    .sized(0.25f, 0.25f).clientTrackingRange(10).build("irukandji"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<Nastysaurus>> NASTYSAURUS =
             ENTITY_TYPES.register("nastysaurus", () -> EntityType.Builder.of(Nastysaurus::new, MobCategory.MONSTER)
@@ -120,27 +127,33 @@ public class ModEntities {
 
     public static final DeferredHolder<EntityType<?>, EntityType<Robot1>> ROBOT_1 =
             ENTITY_TYPES.register("robot_1", () -> EntityType.Builder.of(Robot1::new, MobCategory.MONSTER)
-                    .sized(1.0f, 2.0f).clientTrackingRange(10).build("robot_1"));
+                    // 1.7.10 func_70105_a: Robot1 = 0.5 x 0.5 (orig Robot1.java:39), ENT-S-095; was an uncited 1.0 x 2.0
+                    .sized(0.5f, 0.5f).clientTrackingRange(10).build("robot_1"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<Robot2>> ROBOT_2 =
             ENTITY_TYPES.register("robot_2", () -> EntityType.Builder.of(Robot2::new, MobCategory.MONSTER)
-                    .sized(1.5f, 2.5f).clientTrackingRange(10).build("robot_2"));
+                    // 1.7.10 func_70105_a: Robot2 = 3.0 x 6.2 (orig Robot2.java:45), ENT-S-095; was an uncited 1.5 x 2.5
+                    .sized(3.0f, 6.2f).clientTrackingRange(10).build("robot_2"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<Robot3>> ROBOT_3 =
             ENTITY_TYPES.register("robot_3", () -> EntityType.Builder.of(Robot3::new, MobCategory.MONSTER)
-                    .sized(2.0f, 3.0f).clientTrackingRange(10).build("robot_3"));
+                    // 1.7.10 func_70105_a: Robot3 = 2.5 x 5.0 (orig Robot3.java:46), ENT-S-095; was an uncited 2.0 x 3.0
+                    .sized(2.5f, 5.0f).clientTrackingRange(10).build("robot_3"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<Robot4>> ROBOT_4 =
             ENTITY_TYPES.register("robot_4", () -> EntityType.Builder.of(Robot4::new, MobCategory.MONSTER)
-                    .sized(1.5f, 2.5f).clientTrackingRange(10).build("robot_4"));
+                    // 1.7.10 func_70105_a: Robot4 = 2.5 x 4.0 (orig Robot4.java:49), ENT-S-095; was an uncited 1.5 x 2.5
+                    .sized(2.5f, 4.0f).clientTrackingRange(10).build("robot_4"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<Robot5>> ROBOT_5 =
             ENTITY_TYPES.register("robot_5", () -> EntityType.Builder.of(Robot5::new, MobCategory.MONSTER)
-                    .sized(1.0f, 1.5f).clientTrackingRange(10).build("robot_5"));
+                    // 1.7.10 func_70105_a: Robot5 = 1.0 x 2.25 (orig Robot5.java:45), ENT-S-095; was an uncited 1.0 x 1.5
+                    .sized(1.0f, 2.25f).clientTrackingRange(10).build("robot_5"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<SeaMonster>> SEA_MONSTER =
             ENTITY_TYPES.register("sea_monster", () -> EntityType.Builder.of(SeaMonster::new, MobCategory.MONSTER)
-                    .sized(5.0f, 5.0f).clientTrackingRange(10).build("sea_monster"));
+                    // 1.7.10 func_70105_a: SeaMonster = 1.25 x 2.5 (orig SeaMonster.java:50), ENT-S-095; was an uncited 5.0 x 5.0
+                    .sized(1.25f, 2.5f).clientTrackingRange(10).build("sea_monster"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<SeaViper>> SEA_VIPER =
             ENTITY_TYPES.register("sea_viper", () -> EntityType.Builder.of(SeaViper::new, MobCategory.MONSTER)
@@ -148,7 +161,8 @@ public class ModEntities {
 
     public static final DeferredHolder<EntityType<?>, EntityType<Skate>> SKATE =
             ENTITY_TYPES.register("skate", () -> EntityType.Builder.of(Skate::new, MobCategory.MONSTER)
-                    .sized(0.8f, 0.4f).clientTrackingRange(10).build("skate"));
+                    // 1.7.10 func_70105_a: Skate = 0.75 x 0.25 (orig Skate.java:43), ENT-S-095; was an uncited 0.8 x 0.4
+                    .sized(0.75f, 0.25f).clientTrackingRange(10).build("skate"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<TRex>> TREX =
             ENTITY_TYPES.register("trex", () -> EntityType.Builder.of(TRex::new, MobCategory.MONSTER)
@@ -157,7 +171,8 @@ public class ModEntities {
     public static final DeferredHolder<EntityType<?>, EntityType<Urchin>> URCHIN =
             ENTITY_TYPES.register("urchin", () -> EntityType.Builder.of(Urchin::new, MobCategory.MONSTER)
                     // orig Urchin.java:54 — field_70178_ae = true (fire-immune)
-                    .sized(0.5f, 0.5f).fireImmune().clientTrackingRange(10).build("urchin"));
+                    // 1.7.10 func_70105_a: Urchin = 1.35 x 2.1 (orig Urchin.java:50), ENT-S-095; was an uncited 0.5 x 0.5
+                    .sized(1.35f, 2.1f).fireImmune().clientTrackingRange(10).build("urchin"));
 
     // "Mobzilla" is the public-facing boss name (see Godzilla#bossEvent which
     // sets Component.literal("Mobzilla")). The class retains the 1.7.10
@@ -220,60 +235,74 @@ public class ModEntities {
 
     public static final DeferredHolder<EntityType<?>, EntityType<EntityEmperorScorpion>> ENTITY_EMPEROR_SCORPION =
             ENTITY_TYPES.register("emperor_scorpion", () -> EntityType.Builder.of(EntityEmperorScorpion::new, MobCategory.MONSTER)
-                    .sized(1.5f, 1.5f).clientTrackingRange(10).build("emperor_scorpion"));
+                    // 1.7.10 func_70105_a: EmperorScorpion = 3.5 x 3.0 (orig EmperorScorpion.java:59), ENT-S-095; was an uncited 1.5 x 1.5
+                    .sized(3.5f, 3.0f).clientTrackingRange(10).build("emperor_scorpion"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<EntityHerculesBeetle>> ENTITY_HERCULES_BEETLE =
             ENTITY_TYPES.register("hercules_beetle", () -> EntityType.Builder.of(EntityHerculesBeetle::new, MobCategory.MONSTER)
-                    .sized(1.2f, 1.0f).clientTrackingRange(10).build("hercules_beetle"));
+                    // 1.7.10 func_70105_a: HerculesBeetle = 3.25 x 2.75 (orig HerculesBeetle.java:46), ENT-S-095; was an uncited 1.2 x 1.0
+                    .sized(3.25f, 2.75f).clientTrackingRange(10).build("hercules_beetle"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<EntityKyuubi>> ENTITY_KYUUBI =
                 // orig Kyuubi.java:47-48 — fireResistance 1000 + isImmuneToFire
                 ENTITY_TYPES.register("kyuubi", () -> EntityType.Builder.of(EntityKyuubi::new, MobCategory.MONSTER)
-                        .sized(1.0f, 1.2f).fireImmune().clientTrackingRange(10).build("kyuubi"));
+                        // 1.7.10 func_70105_a: Kyuubi = 0.5 x 1.25 (orig Kyuubi.java:44), ENT-S-095; was an uncited 1.0 x 1.2
+                        .sized(0.5f, 1.25f).fireImmune().clientTrackingRange(10).build("kyuubi"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<EntityLeafMonster>> ENTITY_LEAF_MONSTER =
             ENTITY_TYPES.register("leaf_monster", () -> EntityType.Builder.of(EntityLeafMonster::new, MobCategory.MONSTER)
-                    .sized(0.8f, 1.5f).clientTrackingRange(10).build("leaf_monster"));
+                    // 1.7.10 func_70105_a: LeafMonster = 1.0 x 2.5 (orig LeafMonster.java:41), ENT-S-095; was an uncited 0.8 x 1.5
+                    .sized(1.0f, 2.5f).clientTrackingRange(10).build("leaf_monster"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<EntityLurkingTerror>> ENTITY_LURKING_TERROR =
             ENTITY_TYPES.register("lurking_terror", () -> EntityType.Builder.of(EntityLurkingTerror::new, MobCategory.MONSTER)
-                    .sized(1.0f, 1.0f).clientTrackingRange(10).build("lurking_terror"));
+                    // 1.7.10 func_70105_a: LurkingTerror = 1.75 x 1.25 (orig LurkingTerror.java:53), ENT-S-095; was an uncited 1.0 x 1.0
+                    .sized(1.75f, 1.25f).clientTrackingRange(10).build("lurking_terror"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<EntityMantis>> ENTITY_MANTIS =
             ENTITY_TYPES.register("mantis", () -> EntityType.Builder.of(EntityMantis::new, MobCategory.MONSTER)
-                    .sized(0.8f, 1.8f).clientTrackingRange(10).build("mantis"));
+                    // 1.7.10 func_70105_a: Mantis = 2.5 x 3.25 (orig Mantis.java:57), ENT-S-095; was an uncited 0.8 x 1.8
+                    .sized(2.5f, 3.25f).clientTrackingRange(10).build("mantis"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<EntityMolenoid>> ENTITY_MOLENOID =
             ENTITY_TYPES.register("molenoid", () -> EntityType.Builder.of(EntityMolenoid::new, MobCategory.MONSTER)
-                    .sized(1.2f, 2.0f).clientTrackingRange(10).build("molenoid"));
+                    // 1.7.10 func_70105_a: Molenoid = 3.9 x 2.6 (orig Molenoid.java:43), ENT-S-095; was an uncited 1.2 x 2.0
+                    .sized(3.9f, 2.6f).clientTrackingRange(10).build("molenoid"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<EntityRat>> ENTITY_RAT =
             ENTITY_TYPES.register("rat", () -> EntityType.Builder.of(EntityRat::new, MobCategory.MONSTER)
-                    .sized(0.4f, 0.4f).clientTrackingRange(8).build("rat"));
+                    // 1.7.10 func_70105_a: Rat = 0.25 x 0.5 (orig Rat.java:52), ENT-S-095; was an uncited 0.4 x 0.4
+                    .sized(0.25f, 0.5f).clientTrackingRange(8).build("rat"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<EntityRotator>> ENTITY_ROTATOR =
             ENTITY_TYPES.register("rotator", () -> EntityType.Builder.of(EntityRotator::new, MobCategory.MONSTER)
-                    .sized(0.6f, 0.6f).clientTrackingRange(10).build("rotator"));
+                    // 1.7.10 func_70105_a: Rotator = 1.0 x 2.0 (orig Rotator.java:56), ENT-S-095; was an uncited 0.6 x 0.6
+                    .sized(1.0f, 2.0f).clientTrackingRange(10).build("rotator"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<EntityScorpion>> ENTITY_SCORPION =
             ENTITY_TYPES.register("scorpion", () -> EntityType.Builder.of(EntityScorpion::new, MobCategory.MONSTER)
-                    .sized(0.6f, 0.4f).clientTrackingRange(10).build("scorpion"));
+                    // 1.7.10 func_70105_a: Scorpion = 0.85 x 0.55 (orig Scorpion.java:50), ENT-S-095; was an uncited 0.6 x 0.4
+                    .sized(0.85f, 0.55f).clientTrackingRange(10).build("scorpion"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<EntitySpitBug>> ENTITY_SPIT_BUG =
             ENTITY_TYPES.register("spit_bug", () -> EntityType.Builder.of(EntitySpitBug::new, MobCategory.MONSTER)
-                    .sized(0.8f, 0.8f).clientTrackingRange(10).build("spit_bug"));
+                    // 1.7.10 func_70105_a: SpitBug = 2.0 x 2.0 (orig SpitBug.java:56), ENT-S-095; was an uncited 0.8 x 0.8
+                    .sized(2.0f, 2.0f).clientTrackingRange(10).build("spit_bug"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<EntityTerribleTerror>> ENTITY_TERRIBLE_TERROR =
             ENTITY_TYPES.register("terrible_terror", () -> EntityType.Builder.of(EntityTerribleTerror::new, MobCategory.MONSTER)
-                    .sized(0.5f, 0.5f).clientTrackingRange(10).build("terrible_terror"));
+                    // 1.7.10 func_70105_a: TerribleTerror = 1.0 x 0.75 (orig TerribleTerror.java:51), ENT-S-095; was an uncited 0.5 x 0.5
+                    .sized(1.0f, 0.75f).clientTrackingRange(10).build("terrible_terror"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<EntityTriffid>> ENTITY_TRIFFID =
             ENTITY_TYPES.register("triffid", () -> EntityType.Builder.of(EntityTriffid::new, MobCategory.MONSTER)
-                    .sized(1.0f, 2.0f).clientTrackingRange(10).build("triffid"));
+                    // 1.7.10 func_70105_a: Triffid = 2.0 x 4.0 (orig Triffid.java:49), ENT-S-095; was an uncited 1.0 x 2.0
+                    .sized(2.0f, 4.0f).clientTrackingRange(10).build("triffid"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<EntityTrooperBug>> ENTITY_TROOPER_BUG =
             ENTITY_TYPES.register("trooper_bug", () -> EntityType.Builder.of(EntityTrooperBug::new, MobCategory.MONSTER)
-                    .sized(1.2f, 1.5f).clientTrackingRange(10).build("trooper_bug"));
+                    // 1.7.10 func_70105_a: TrooperBug = 3.0 x 3.5 (orig TrooperBug.java:58), ENT-S-095; was an uncited 1.2 x 1.5
+                    .sized(3.0f, 3.5f).clientTrackingRange(10).build("trooper_bug"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<EntityVortex>> ENTITY_VORTEX =
             ENTITY_TYPES.register("vortex", () -> EntityType.Builder.of(EntityVortex::new, MobCategory.MONSTER)
@@ -283,24 +312,28 @@ public class ModEntities {
 
     public static final DeferredHolder<EntityType<?>, EntityType<EntityWormSmall>> ENTITY_WORM_SMALL =
             ENTITY_TYPES.register("worm_small", () -> EntityType.Builder.of(EntityWormSmall::new, MobCategory.MONSTER)
-                    .sized(0.5f, 0.5f).clientTrackingRange(10).build("worm_small"));
+                    // 1.7.10 func_70105_a: WormSmall = 0.25 x 1.0 (orig WormSmall.java:27), ENT-S-095; was an uncited 0.5 x 0.5
+                    .sized(0.25f, 1.0f).clientTrackingRange(10).build("worm_small"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<EntityWormMedium>> ENTITY_WORM_MEDIUM =
             ENTITY_TYPES.register("worm_medium", () -> EntityType.Builder.of(EntityWormMedium::new, MobCategory.MONSTER)
-                    .sized(1.0f, 1.0f).clientTrackingRange(10).build("worm_medium"));
+                    // 1.7.10 func_70105_a: WormMedium = 0.5 x 2.0 (orig WormMedium.java:29), ENT-S-095; was an uncited 1.0 x 1.0
+                    .sized(0.5f, 2.0f).clientTrackingRange(10).build("worm_medium"));
 
     // Phase D1 (ENT-S-087) — CREATURE to match the original's creature-list
     // spawns (orig OreSpawnMain.java:4631-4633, plains/savanna/plateau); the
     // class stays a Monster so despawn behavior matches the 1.7.10 EntityMob.
     public static final DeferredHolder<EntityType<?>, EntityType<EntityWormLarge>> ENTITY_WORM_LARGE =
             ENTITY_TYPES.register("worm_large", () -> EntityType.Builder.of(EntityWormLarge::new, MobCategory.CREATURE)
-                    .sized(1.5f, 1.5f).clientTrackingRange(10).build("worm_large"));
+                    // 1.7.10 func_70105_a: WormLarge = 1.55 x 2.5 (orig WormLarge.java:42), ENT-S-095; was an uncited 1.5 x 1.5
+                    .sized(1.55f, 2.5f).clientTrackingRange(10).build("worm_large"));
 
     // ==================== CREATURE (Passive) ====================
 
     public static final DeferredHolder<EntityType<?>, EntityType<Baryonyx>> BARYONYX =
             ENTITY_TYPES.register("baryonyx", () -> EntityType.Builder.of(Baryonyx::new, MobCategory.CREATURE)
-                    .sized(1.0f, 1.5f).clientTrackingRange(10).build("baryonyx"));
+                    // 1.7.10 func_70105_a: Baryonyx = 1.5 x 2.8 (orig Baryonyx.java:40), ENT-S-095; was an uncited 1.0 x 1.5
+                    .sized(1.5f, 2.8f).clientTrackingRange(10).build("baryonyx"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<Beaver>> BEAVER =
             ENTITY_TYPES.register("beaver", () -> EntityType.Builder.of(Beaver::new, MobCategory.CREATURE)
@@ -318,7 +351,8 @@ public class ModEntities {
 
     public static final DeferredHolder<EntityType<?>, EntityType<Cockateil>> COCKATEIL =
             ENTITY_TYPES.register("cockateil", () -> EntityType.Builder.of(Cockateil::new, MobCategory.CREATURE)
-                    .sized(0.4f, 0.4f).clientTrackingRange(8).build("cockateil"));
+                    // 1.7.10 func_70105_a: Cockateil = 0.5 x 0.5 (orig Cockateil.java:42), ENT-S-095; was an uncited 0.4 x 0.4
+                    .sized(0.5f, 0.5f).clientTrackingRange(8).build("cockateil"));
 
     // Phase D1 (ENT-A-099) — AMBIENT to match the original's ambient w2 1-1
     // overworld spawns (orig OreSpawnMain.java:4942-4947); was MISC, which made
@@ -326,15 +360,18 @@ public class ModEntities {
     // exactly as the original setVillageCreatures did.
     public static final DeferredHolder<EntityType<?>, EntityType<Coin>> COIN =
             ENTITY_TYPES.register("coin", () -> EntityType.Builder.of(Coin::new, MobCategory.AMBIENT)
-                    .sized(0.4f, 0.4f).clientTrackingRange(8).build("coin"));
+                    // 1.7.10 func_70105_a: Coin = 1.5 x 1.5 (orig Coin.java:27), ENT-S-095; was an uncited 0.4 x 0.4
+                    .sized(1.5f, 1.5f).clientTrackingRange(8).build("coin"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<EasterBunny>> EASTER_BUNNY =
             ENTITY_TYPES.register("easter_bunny", () -> EntityType.Builder.of(EasterBunny::new, MobCategory.CREATURE)
-                    .sized(0.4f, 0.6f).clientTrackingRange(8).build("easter_bunny"));
+                    // 1.7.10 func_70105_a: EasterBunny = 0.5 x 0.75 (orig EasterBunny.java:35), ENT-S-095; was an uncited 0.4 x 0.6
+                    .sized(0.5f, 0.75f).clientTrackingRange(8).build("easter_bunny"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<Flounder>> FLOUNDER =
             ENTITY_TYPES.register("flounder", () -> EntityType.Builder.of(Flounder::new, MobCategory.WATER_CREATURE)
-                    .sized(0.5f, 0.3f).clientTrackingRange(8).build("flounder"));
+                    // 1.7.10 func_70105_a: Flounder = 0.55 x 0.25 (orig Flounder.java:39), ENT-S-095; was an uncited 0.5 x 0.3
+                    .sized(0.55f, 0.25f).clientTrackingRange(8).build("flounder"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<Frog>> FROG =
             ENTITY_TYPES.register("frog", () -> EntityType.Builder.of(Frog::new, MobCategory.CREATURE)
@@ -346,7 +383,8 @@ public class ModEntities {
 
     public static final DeferredHolder<EntityType<?>, EntityType<GoldFish>> GOLD_FISH =
             ENTITY_TYPES.register("gold_fish", () -> EntityType.Builder.of(GoldFish::new, MobCategory.CREATURE)
-                    .sized(0.3f, 0.3f).clientTrackingRange(8).build("gold_fish"));
+                    // 1.7.10 func_70105_a: GoldFish = 0.75 x 0.5 (orig GoldFish.java:25), ENT-S-095; was an uncited 0.3 x 0.3
+                    .sized(0.75f, 0.5f).clientTrackingRange(8).build("gold_fish"));
 
     // Island entities are 1.7.10-style: the entity itself is a tiny 0.5x0.5
     // marker that places sand/gravel/sandstone (Island) or grass/stone
@@ -374,46 +412,56 @@ public class ModEntities {
 
     public static final DeferredHolder<EntityType<?>, EntityType<EntityAnt>> ENTITY_ANT =
             ENTITY_TYPES.register("ant", () -> EntityType.Builder.of(EntityAnt::new, MobCategory.CREATURE)
-                    .sized(0.4f, 0.4f).clientTrackingRange(8).build("ant"));
+                    // 1.7.10 func_70105_a: EntityAnt = 0.1 x 0.1 (orig EntityAnt.java:39), ENT-S-095; was an uncited 0.4 x 0.4
+                    .sized(0.1f, 0.1f).clientTrackingRange(8).build("ant"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<EntityCliffRacer>> ENTITY_CLIFF_RACER =
             ENTITY_TYPES.register("cliff_racer", () -> EntityType.Builder.of(EntityCliffRacer::new, MobCategory.CREATURE)
-                    .sized(0.8f, 0.8f).clientTrackingRange(10).build("cliff_racer"));
+                    // 1.7.10 func_70105_a: CliffRacer = 0.75 x 0.5 (orig CliffRacer.java:26), ENT-S-095; was an uncited 0.8 x 0.8
+                    .sized(0.75f, 0.5f).clientTrackingRange(10).build("cliff_racer"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<EntityCricket>> ENTITY_CRICKET =
             ENTITY_TYPES.register("cricket", () -> EntityType.Builder.of(EntityCricket::new, MobCategory.CREATURE)
-                    .sized(0.4f, 0.4f).clientTrackingRange(8).build("cricket"));
+                    // 1.7.10 func_70105_a: Cricket = 0.1 x 0.1 (orig Cricket.java:24), ENT-S-095; was an uncited 0.4 x 0.4
+                    .sized(0.1f, 0.1f).clientTrackingRange(8).build("cricket"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<EntityDragonfly>> ENTITY_DRAGONFLY =
             ENTITY_TYPES.register("dragonfly", () -> EntityType.Builder.of(EntityDragonfly::new, MobCategory.CREATURE)
-                    .sized(0.4f, 0.4f).clientTrackingRange(8).build("dragonfly"));
+                    // 1.7.10 func_70105_a: Dragonfly = 1.5 x 0.5 (orig Dragonfly.java:40), ENT-S-095; was an uncited 0.4 x 0.4
+                    .sized(1.5f, 0.5f).clientTrackingRange(8).build("dragonfly"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<EntityRedAnt>> ENTITY_RED_ANT =
             ENTITY_TYPES.register("red_ant", () -> EntityType.Builder.of(EntityRedAnt::new, MobCategory.CREATURE)
-                    .sized(0.4f, 0.4f).clientTrackingRange(8).build("red_ant"));
+                    // 1.7.10 func_70105_a: EntityRedAnt = 0.2 x 0.2 (orig EntityRedAnt.java:33), ENT-S-095; was an uncited 0.4 x 0.4
+                    .sized(0.2f, 0.2f).clientTrackingRange(8).build("red_ant"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<EntityRainbowAnt>> ENTITY_RAINBOW_ANT =
             ENTITY_TYPES.register("rainbow_ant", () -> EntityType.Builder.of(EntityRainbowAnt::new, MobCategory.CREATURE)
-                    .sized(0.4f, 0.4f).clientTrackingRange(8).build("rainbow_ant"));
+                    // 1.7.10 func_70105_a: EntityRainbowAnt = 0.1 x 0.1 (orig EntityRainbowAnt.java:25), ENT-S-095; was an uncited 0.4 x 0.4
+                    .sized(0.1f, 0.1f).clientTrackingRange(8).build("rainbow_ant"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<EntityStinkBug>> ENTITY_STINK_BUG =
             ENTITY_TYPES.register("stink_bug", () -> EntityType.Builder.of(EntityStinkBug::new, MobCategory.CREATURE)
-                    .sized(0.4f, 0.4f).clientTrackingRange(8).build("stink_bug"));
+                    // 1.7.10 func_70105_a: StinkBug = 0.55 x 0.55 (orig StinkBug.java:43), ENT-S-095; was an uncited 0.4 x 0.4
+                    .sized(0.55f, 0.55f).clientTrackingRange(8).build("stink_bug"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<EntityTermite>> ENTITY_TERMITE =
             ENTITY_TYPES.register("termite", () -> EntityType.Builder.of(EntityTermite::new, MobCategory.CREATURE)
-                    .sized(0.3f, 0.3f).clientTrackingRange(8).build("termite"));
+                    // 1.7.10 func_70105_a: Termite = 0.2 x 0.2 (orig Termite.java:46), ENT-S-095; was an uncited 0.3 x 0.3
+                    .sized(0.2f, 0.2f).clientTrackingRange(8).build("termite"));
 
     // T-Shirt is a novelty gag entity (cosmetic prop) — not a naturally
     // spawning mob. Registered under MISC to exclude it from CREATURE spawn
     // passes; it is still summonable via /summon and spawn-eggs.
     public static final DeferredHolder<EntityType<?>, EntityType<EntityTshirt>> ENTITY_TSHIRT =
             ENTITY_TYPES.register("tshirt", () -> EntityType.Builder.of(EntityTshirt::new, MobCategory.MISC)
-                    .sized(0.6f, 1.8f).clientTrackingRange(10).build("tshirt"));
+                    // 1.7.10 func_70105_a: Tshirt = 4.0 x 4.0 (orig Tshirt.java:21), ENT-S-095; was an uncited 0.6 x 1.8
+                    .sized(4.0f, 4.0f).clientTrackingRange(10).build("tshirt"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<EntityUnstableAnt>> ENTITY_UNSTABLE_ANT =
             ENTITY_TYPES.register("unstable_ant", () -> EntityType.Builder.of(EntityUnstableAnt::new, MobCategory.CREATURE)
-                    .sized(0.4f, 0.4f).clientTrackingRange(8).build("unstable_ant"));
+                    // 1.7.10 func_70105_a: EntityUnstableAnt = 0.1 x 0.1 (orig EntityUnstableAnt.java:25), ENT-S-095; was an uncited 0.4 x 0.4
+                    .sized(0.1f, 0.1f).clientTrackingRange(8).build("unstable_ant"));
 
     // ==================== CREATURE (Tameable) ====================
 
@@ -431,7 +479,8 @@ public class ModEntities {
 
     public static final DeferredHolder<EntityType<?>, EntityType<Dragon>> DRAGON =
             ENTITY_TYPES.register("dragon", () -> EntityType.Builder.of(Dragon::new, MobCategory.CREATURE)
-                    .sized(1.5f, 2.0f).clientTrackingRange(10).build("dragon"));
+                    // 1.7.10 func_70105_a: Dragon = 1.5 x 1.25 (orig Dragon.java:102), ENT-S-095; was an uncited 1.5 x 2.0
+                    .sized(1.5f, 1.25f).clientTrackingRange(10).build("dragon"));
 
     // Baby Dragon — Wiki/1.7.10 lists Baby Dragon as a separate entity type
     // from the adult Dragon (with reduced HP and pre-fledged fire breath).
@@ -487,7 +536,8 @@ public class ModEntities {
 
     public static final DeferredHolder<EntityType<?>, EntityType<Lizard>> LIZARD =
             ENTITY_TYPES.register("lizard", () -> EntityType.Builder.of(Lizard::new, MobCategory.CREATURE)
-                    .sized(0.6f, 0.6f).clientTrackingRange(10).build("lizard"));
+                    // 1.7.10 func_70105_a: Lizard = 1.5 x 1.25 (orig Lizard.java:57), ENT-S-095; was an uncited 0.6 x 0.6
+                    .sized(1.5f, 1.25f).clientTrackingRange(10).build("lizard"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<Ostrich>> OSTRICH =
             ENTITY_TYPES.register("ostrich", () -> EntityType.Builder.of(Ostrich::new, MobCategory.CREATURE)
@@ -497,7 +547,8 @@ public class ModEntities {
     // waterCreature spawns (orig OreSpawnMain.java:4873-4874, river/deep ocean).
     public static final DeferredHolder<EntityType<?>, EntityType<EntityRubberDucky>> ENTITY_RUBBER_DUCKY =
             ENTITY_TYPES.register("rubber_ducky", () -> EntityType.Builder.of(EntityRubberDucky::new, MobCategory.WATER_CREATURE)
-                    .sized(0.4f, 0.4f).clientTrackingRange(8).build("rubber_ducky"));
+                    // 1.7.10 func_70105_a: RubberDucky = 0.33 x 0.5 (orig RubberDucky.java:63), ENT-S-095; was an uncited 0.4 x 0.4
+                    .sized(0.33f, 0.5f).clientTrackingRange(8).build("rubber_ducky"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<EntitySpyro>> ENTITY_SPYRO =
             ENTITY_TYPES.register("spyro", () -> EntityType.Builder.of(EntitySpyro::new, MobCategory.CREATURE)
@@ -541,11 +592,13 @@ public class ModEntities {
 
     public static final DeferredHolder<EntityType<?>, EntityType<EntityLunaMoth>> ENTITY_LUNA_MOTH =
             ENTITY_TYPES.register("luna_moth", () -> EntityType.Builder.of(EntityLunaMoth::new, MobCategory.AMBIENT)
-                    .sized(0.4f, 0.4f).clientTrackingRange(8).build("luna_moth"));
+                    // 1.7.10 func_70105_a: EntityLunaMoth = 0.5 x 0.5 (orig EntityLunaMoth.java:27), ENT-S-095; was an uncited 0.4 x 0.4
+                    .sized(0.5f, 0.5f).clientTrackingRange(8).build("luna_moth"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<EntityMosquito>> ENTITY_MOSQUITO =
             ENTITY_TYPES.register("mosquito", () -> EntityType.Builder.of(EntityMosquito::new, MobCategory.AMBIENT)
-                    .sized(0.3f, 0.3f).clientTrackingRange(8).build("mosquito"));
+                    // 1.7.10 func_70105_a: EntityMosquito = 0.2 x 0.2 (orig EntityMosquito.java:23), ENT-S-095; was an uncited 0.3 x 0.3
+                    .sized(0.2f, 0.2f).clientTrackingRange(8).build("mosquito"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<Fairy>> FAIRY =
             ENTITY_TYPES.register("fairy", () -> EntityType.Builder.of(Fairy::new, MobCategory.AMBIENT)
@@ -553,7 +606,8 @@ public class ModEntities {
 
     public static final DeferredHolder<EntityType<?>, EntityType<Firefly>> FIREFLY =
             ENTITY_TYPES.register("firefly", () -> EntityType.Builder.of(Firefly::new, MobCategory.AMBIENT)
-                    .sized(0.2f, 0.2f).clientTrackingRange(8).build("firefly"));
+                    // 1.7.10 func_70105_a: Firefly = 0.4 x 0.8 (orig Firefly.java:29), ENT-S-095; was an uncited 0.2 x 0.2
+                    .sized(0.4f, 0.8f).clientTrackingRange(8).build("firefly"));
 
     // Ghost / GhostSkelly were AMBIENT originally, but in 1.7.10 source they
     // are combat mobs that attack players (see reference_1_7_10_source
@@ -638,11 +692,13 @@ public class ModEntities {
 
     public static final DeferredHolder<EntityType<?>, EntityType<PurplePower>> PURPLE_POWER =
             ENTITY_TYPES.register("purple_power", () -> EntityType.Builder.of(PurplePower::new, MobCategory.MISC)
-                    .sized(0.5f, 0.5f).clientTrackingRange(10).build("purple_power"));
+                    // 1.7.10 func_70105_a: PurplePower = 0.75 x 0.75 (orig PurplePower.java:40), ENT-S-095; was an uncited 0.5 x 0.5
+                    .sized(0.75f, 0.75f).clientTrackingRange(10).build("purple_power"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<RockBase>> ROCK_BASE =
             ENTITY_TYPES.register("rock_base", () -> EntityType.Builder.of(RockBase::new, MobCategory.MISC)
-                    .sized(0.5f, 0.5f).clientTrackingRange(10).build("rock_base"));
+                    // 1.7.10 func_70105_a: RockBase = 0.25 x 0.15 (orig RockBase.java:26), ENT-S-095; was an uncited 0.5 x 0.5
+                    .sized(0.25f, 0.15f).clientTrackingRange(10).build("rock_base"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<SpiderRobot>> SPIDER_ROBOT =
             ENTITY_TYPES.register("spider_robot", () -> EntityType.Builder.of(SpiderRobot::new, MobCategory.MISC)
@@ -661,15 +717,18 @@ public class ModEntities {
 
     public static final DeferredHolder<EntityType<?>, EntityType<RedCow>> RED_COW =
             ENTITY_TYPES.register("red_cow", () -> EntityType.Builder.of(RedCow::new, MobCategory.MISC)
-                    .sized(0.9f, 1.4f).clientTrackingRange(10).build("red_cow"));
+                    // 1.7.10 func_70105_a: RedCow = 0.9 x 1.3, inherited from vanilla EntityCow (orig RedCow.java:11-12 extends EntityCow, no setSize), ENT-S-095; was the modern cow 0.9 x 1.4
+                    .sized(0.9f, 1.3f).clientTrackingRange(10).build("red_cow"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<CrystalCow>> CRYSTAL_COW =
             ENTITY_TYPES.register("crystal_cow", () -> EntityType.Builder.of(CrystalCow::new, MobCategory.CREATURE)
-                    .sized(0.9f, 1.4f).clientTrackingRange(10).build("crystal_cow"));
+                    // 1.7.10 func_70105_a: CrystalCow = 0.9 x 1.3, inherited from vanilla EntityCow (orig CrystalCow.java:13-14 extends RedCow, no setSize), ENT-S-095; was the modern cow 0.9 x 1.4
+                    .sized(0.9f, 1.3f).clientTrackingRange(10).build("crystal_cow"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<GoldCow>> GOLD_COW =
             ENTITY_TYPES.register("gold_cow", () -> EntityType.Builder.of(GoldCow::new, MobCategory.CREATURE)
-                    .sized(0.9f, 1.4f).clientTrackingRange(10).build("gold_cow"));
+                    // 1.7.10 func_70105_a: GoldCow = 0.9 x 1.3, inherited from vanilla EntityCow (orig GoldCow.java:12-13 extends RedCow, no setSize), ENT-S-095; was the modern cow 0.9 x 1.4
+                    .sized(0.9f, 1.3f).clientTrackingRange(10).build("gold_cow"));
 
     // Phase 14 follow-up — the previously separate `enchanted_cow`
     // entity was deleted and folded into ENCHANTED_APPLE_COW (below)
@@ -701,11 +760,13 @@ public class ModEntities {
     // entity level so the registry stays uniform with siblings.
     public static final DeferredHolder<EntityType<?>, EntityType<EnchantedAppleCow>> ENCHANTED_APPLE_COW =
             ENTITY_TYPES.register("enchanted_apple_cow", () -> EntityType.Builder.of(EnchantedAppleCow::new, MobCategory.CREATURE)
-                    .sized(0.9f, 1.4f).clientTrackingRange(10).build("enchanted_apple_cow"));
+                    // 1.7.10 func_70105_a: EnchantedCow = 0.9 x 1.3, inherited from vanilla EntityCow (orig EnchantedCow.java:15-16 extends RedCow, no setSize), ENT-S-095; was the modern cow 0.9 x 1.4
+                    .sized(0.9f, 1.3f).clientTrackingRange(10).build("enchanted_apple_cow"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<RubyBird>> RUBY_BIRD =
             ENTITY_TYPES.register("ruby_bird", () -> EntityType.Builder.of(RubyBird::new, MobCategory.CREATURE)
-                    .sized(0.4f, 0.4f).clientTrackingRange(8).build("ruby_bird"));
+                    // 1.7.10 func_70105_a: RubyBird = 0.5 x 0.5, inherited from Cockateil (orig Cockateil.java:42; RubyBird.java sets no size), ENT-S-095; was an uncited 0.4 x 0.4
+                    .sized(0.5f, 0.5f).clientTrackingRange(8).build("ruby_bird"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<SpiderDriver>> SPIDER_DRIVER =
             ENTITY_TYPES.register("spider_driver", () -> EntityType.Builder.of(SpiderDriver::new, MobCategory.MISC)
@@ -715,11 +776,13 @@ public class ModEntities {
 
     public static final DeferredHolder<EntityType<?>, EntityType<BetterFireball>> BETTER_FIREBALL =
             ENTITY_TYPES.register("better_fireball", () -> EntityType.Builder.<BetterFireball>of(BetterFireball::new, MobCategory.MISC)
-                    .sized(0.25f, 0.25f).clientTrackingRange(4).updateInterval(10).noSummon().build("better_fireball"));
+                    // 1.7.10 func_70105_a: BetterFireball = 1.0 x 1.0 in both ctors (orig BetterFireball.java:48/:57; setSmall() :84 shrinks it to 0.3125 x 0.3125), projectile, ENT-S-095; was an uncited 0.25 x 0.25
+                    .sized(1.0f, 1.0f).clientTrackingRange(4).updateInterval(10).noSummon().build("better_fireball"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<BerthaHit>> BERTHA_HIT =
             ENTITY_TYPES.register("bertha_hit", () -> EntityType.Builder.<BerthaHit>of(BerthaHit::new, MobCategory.MISC)
-                    .sized(0.25f, 0.25f).clientTrackingRange(4).updateInterval(10).noSummon().build("bertha_hit"));
+                    // 1.7.10 func_70105_a: BerthaHit = 0.33 x 0.33 in the shooter ctor (orig BerthaHit.java:33; the World-only ctor :27 keeps the EntityThrowable 0.25), projectile, ENT-S-095; was an uncited 0.25 x 0.25
+                    .sized(0.33f, 0.33f).clientTrackingRange(4).updateInterval(10).noSummon().build("bertha_hit"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<EntityCage>> ENTITY_CAGE =
             ENTITY_TYPES.register("cage", () -> EntityType.Builder.<EntityCage>of(EntityCage::new, MobCategory.MISC)
