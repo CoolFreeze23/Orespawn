@@ -3,6 +3,7 @@ package danger.orespawn.entity;
 import danger.orespawn.MobStats;
 import danger.orespawn.ModSounds;
 import danger.orespawn.entity.ai.GenericTargetSorter;
+import danger.orespawn.util.MyUtils;
 
 import java.util.Comparator;
 import java.util.List;
@@ -23,6 +24,7 @@ import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
+import net.minecraft.world.entity.animal.Chicken;
 import net.minecraft.world.entity.animal.Squid;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
@@ -142,8 +144,18 @@ public class Kraken extends Monster {
         return false;
     }
 
+    /**
+     * orig Kraken.java:115-117 — reads {@code Kraken_stats.health} (1000, orig
+     * OreSpawnMain.java:6515), the same table entry the attributes use. The
+     * hurt-retarget (orig :1154, max/4), flee (:952, max/4), reinforcement
+     * (:954, max/8) and far-away-despawn (:884, max/2) thresholds all divide
+     * this value. ENT-S-100 KT-E: was hardcoded 3000 while the attribute was
+     * MobStats' 1000, so every threshold ran against the wrong base (any
+     * non-persistent Kraken above y 150 was far-away-despawnable at once);
+     * the Basilisk precedent ({@code (int) MobStats.X.maxHealth()}).
+     */
     public int mygetMaxHealth() {
-        return 3000;
+        return (int) MobStats.KRAKEN.maxHealth();
     }
 
     public int getKrakenHealth() {
@@ -345,16 +357,33 @@ public class Kraken extends Monster {
         }
     }
 
+    /**
+     * orig Kraken.java:962-981. The player grab takes the NEAREST player of
+     * any game mode (:963 {@code func_72857_a}) and only then nulls a
+     * creative one (:965/:970-972) — the WormSmall idiom (orig
+     * WormSmall.java:179-182) — so a creative player standing nearer than a
+     * survival one shadows that survival player from this branch; the
+     * {@code findSomethingToAttack} fallback (:974-981, 1-in-2) runs only
+     * when the player target ended up null. ENT-S-100 KT-A: the port had
+     * skipped creative players inside the scan and hunted the survival one
+     * directly.
+     */
     private void searchForPrey() {
-        Player playerTarget = findNearestValidPlayer();
-        if (playerTarget != null && this.getSensing().hasLineOfSight(playerTarget)) {
-            this.currentFlightTarget = new BlockPos(
-                    (int) playerTarget.getX(),
-                    (int) playerTarget.getY() + 15,
-                    (int) playerTarget.getZ());
-            this.attackWithSomething(playerTarget);
+        Player target = findNearestPlayer();
+        if (target != null) {
+            if (!target.getAbilities().instabuild) {                    // orig :965
+                if (this.getSensing().hasLineOfSight(target)) {        // orig :966
+                    this.currentFlightTarget = new BlockPos(
+                            (int) target.getX(),
+                            (int) target.getY() + 15,
+                            (int) target.getZ());                      // orig :967
+                    this.attackWithSomething(target);                  // orig :968
+                }
+            } else {
+                target = null;                                         // orig :970-972
+            }
         }
-        if (playerTarget == null && this.getRandom().nextInt(2) == 0) {
+        if (target == null && this.getRandom().nextInt(2) == 0) {      // orig :974
             LivingEntity entityTarget = findSomethingToAttack();
             if (entityTarget != null) {
                 this.currentFlightTarget = new BlockPos(
@@ -369,7 +398,13 @@ public class Kraken extends Monster {
     private void handleCaughtEntity() {
         if (this.caught == null) return;
 
-        if (!this.caught.isRemoved() && this.caught.isAlive()) {
+        // orig Kraken.java:984 `if (!this.caught.isDead)` — the hold lasts until
+        // the victim is REMOVED from the world, not until its health reaches
+        // zero: a victim killed in the grip is dragged through its death
+        // animation and let go (the :1006-1012 else branch) once vanilla
+        // removes it. ENT-S-100 KT-D, ruled faithful (the port had released at
+        // isAlive() == false).
+        if (!this.caught.isRemoved()) {
             this.currentFlightTarget = new BlockPos(
                     (int) this.getX(), 200, (int) this.getZ());
             if (this.getY() > 190.0) {
@@ -478,13 +513,19 @@ public class Kraken extends Monster {
         }
     }
 
-    private Player findNearestValidPlayer() {
+    /**
+     * orig Kraken.java:963 {@code World.findNearestEntityWithinAABB(EntityPlayer.class,
+     * boundingBox.expand(25, 40, 25), this)}: the nearest player of ANY game
+     * mode. The creative check is the caller's (orig :965/:970-972,
+     * {@link #searchForPrey}), so this scan must not skip anyone — ENT-S-100
+     * KT-A.
+     */
+    private Player findNearestPlayer() {
         AABB searchBox = this.getBoundingBox().inflate(25.0, 40.0, 25.0);
         List<Player> players = this.level().getEntitiesOfClass(Player.class, searchBox);
         Player nearest = null;
         double minDist = Double.MAX_VALUE;
         for (Player player : players) {
-            if (player.getAbilities().instabuild) continue;
             double distSq = this.distanceToSqr(player);
             if (distSq < minDist) {
                 minDist = distSq;
@@ -599,16 +640,45 @@ public class Kraken extends Monster {
     // 5-14 rolls of the d53 Ultimate/Diamond/Iron/Gold/Experience/Amethyst
     // gear table).
 
+    /**
+     * orig Kraken.java:1060-1128, in the original's order: null / self / dead
+     * (:1061-1069), the shared {@code MyUtils.isIgnoreable} screen (:1070-1072,
+     * the ENT-S-101 list), line of sight (:1073-1075), the player branch
+     * (:1076-1082: creative → false, then {@code !isFlying}), the
+     * ground-or-water rule (:1083-1085), then the species chain — EntitySquid
+     * (:1086), AttackSquid (:1089), Kraken (:1092), Spyro (:1095), Dragon /
+     * Cephadrome / Leon / ThePrinceTeen / ThePrinceAdult prey only while
+     * unridden (:1098-1117, {@code riddenByEntity == null} → {@code !isVehicle()}),
+     * EntityChicken (:1118), Chipmunk (:1121), StinkBug (:1124), Mothra
+     * (:1127). The Rotator-shape instanceof chain. ENT-S-100 KT-B1 (the port
+     * had kept only Kraken and Squid, so it grabbed mounts with their riders
+     * and spared species) and KT-B2 (orig :1081 {@code capabilities.isFlying}
+     * is {@code Abilities.flying}, the port's own Dragon and Leon mapping —
+     * not {@code invulnerable}). Mothra is a butterfly in both trees, so the
+     * shared list spares it before :1127 does; the check is kept as written.
+     */
     private boolean isSuitableTarget(LivingEntity target) {
-        if (target == null || target == this || !target.isAlive()) return false;
-        if (!this.getSensing().hasLineOfSight(target)) return false;
-        if (target instanceof Kraken) return false;
-        if (target instanceof Squid) return false;
-        if (target instanceof Player player) {
-            return !player.getAbilities().instabuild && !player.getAbilities().invulnerable;
+        if (target == null || target == this || !target.isAlive()) return false; // orig :1061-1069
+        if (MyUtils.isIgnoreable(target)) return false;                          // orig :1070-1072
+        if (!this.getSensing().hasLineOfSight(target)) return false;             // orig :1073-1075
+        if (target instanceof Player player) {                                   // orig :1076-1082
+            if (player.getAbilities().instabuild) return false;                  // orig :1078-1080 creative
+            return !player.getAbilities().flying;                                // orig :1081 isFlying (KT-B2)
         }
-        if (!target.onGround() && !target.isInWater()) return false;
-        return true;
+        if (!target.onGround() && !target.isInWater()) return false;             // orig :1083-1085
+        if (target instanceof Squid) return false;                               // orig :1086-1088 EntitySquid
+        if (target instanceof AttackSquid) return false;                         // orig :1089-1091
+        if (target instanceof Kraken) return false;                              // orig :1092-1094
+        if (target instanceof EntitySpyro) return false;                         // orig :1095-1097 Spyro
+        if (target instanceof Dragon c) return !c.isVehicle();                   // orig :1098-1101 riddenByEntity == null
+        if (target instanceof Cephadrome c) return !c.isVehicle();               // orig :1102-1105
+        if (target instanceof EntityLeon c) return !c.isVehicle();               // orig :1106-1109 Leon
+        if (target instanceof ThePrinceTeen c) return !c.isVehicle();            // orig :1110-1113
+        if (target instanceof ThePrinceAdult c) return !c.isVehicle();           // orig :1114-1117
+        if (target instanceof Chicken) return false;                             // orig :1118-1120 EntityChicken
+        if (target instanceof Chipmunk) return false;                            // orig :1121-1123
+        if (target instanceof EntityStinkBug) return false;                      // orig :1124-1126 StinkBug
+        return !(target instanceof Mothra);                                      // orig :1127
     }
 
     private LivingEntity findSomethingToAttack() {
