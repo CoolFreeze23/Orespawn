@@ -30,6 +30,7 @@ import net.minecraft.resources.ResourceLocation;
 import danger.orespawn.OreSpawnMod;
 import danger.orespawn.entity.ai.GenericTargetSorter;
 import danger.orespawn.entity.ai.TargetSelection;
+import danger.orespawn.util.MyUtils;
 
 public class GiantRobot extends Monster {
     // OPT-011: cached SoundEvents — identical createVariableRangeEvent ids,
@@ -230,6 +231,7 @@ public class GiantRobot extends Monster {
 
     private boolean isSuitableTarget(LivingEntity target) {
         if (target == null || target == this || !target.isAlive()) return false;
+        if (MyUtils.isIgnoreable(target)) return false; // orig GiantRobot.java:324-326 — the shared ignore screen (ENT-S-106)
         if (target instanceof Monster) return false;
         if (target instanceof Player player && player.getAbilities().instabuild) return false;
         return true;

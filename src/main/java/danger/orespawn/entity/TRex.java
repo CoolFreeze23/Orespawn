@@ -23,6 +23,7 @@ import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import danger.orespawn.entity.ai.DinosaurMeleeAttackGoal;
+import danger.orespawn.util.MyUtils;
 
 public class TRex extends Monster {
     private static final EntityDataAccessor<Integer> DATA_ATTACKING =
@@ -52,7 +53,10 @@ public class TRex extends Monster {
         this.goalSelector.addGoal(3, new LookAtPlayerGoal(this, Player.class, 8.0f));
         this.goalSelector.addGoal(4, new RandomLookAroundGoal(this));
         this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
-        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
+        // orig TRex.java:226-228 — the shared ignore screen, ahead of line of
+        // sight (:229), as the target goal's predicate (ENT-S-106).
+        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true,
+                target -> !MyUtils.isIgnoreable(target)));
     }
 
     public static AttributeSupplier.Builder createAttributes() {

@@ -26,6 +26,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import danger.orespawn.OreSpawnMod;
 import danger.orespawn.entity.ai.TargetSelection;
+import danger.orespawn.util.MyUtils;
 
 public class SpiderDriver extends Spider {
 
@@ -155,6 +156,7 @@ public class SpiderDriver extends Spider {
     private boolean isSuitableTarget(LivingEntity target) {
         if (this.level().getDifficulty() == Difficulty.PEACEFUL) return false;
         if (target == null || target == this || !target.isAlive()) return false;
+        if (MyUtils.isIgnoreable(target)) return false; // orig SpiderDriver.java:134-136 — the shared ignore screen (ENT-S-106)
         if (target instanceof SpiderRobot || target instanceof SpiderDriver) return false;
         if (target instanceof Spider || target instanceof CaveSpider) return false;
         if (target instanceof Player p) return !p.getAbilities().instabuild;

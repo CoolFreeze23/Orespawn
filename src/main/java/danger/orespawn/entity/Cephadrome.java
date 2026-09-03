@@ -380,6 +380,13 @@ public class Cephadrome extends PathfinderMob
         }
     }
 
+    /**
+     * ENT-S-107: the player branch's {@code capabilities.isCreativeMode} (orig
+     * Cephadrome.java:557) is {@code Abilities.instabuild} — the port's own
+     * Kraken / TheKing idiom — not {@code invulnerable}; the two differ for a
+     * survival player made invulnerable by other means. The hit-by-player /
+     * bad-mood / should-attack gates that follow are orig :560-568.
+     */
     private boolean isSuitableTarget(LivingEntity target) {
         if (target == null || target == this || !target.isAlive()) return false;
         if (!this.getSensing().hasLineOfSight(target)) return false;
@@ -393,7 +400,7 @@ public class Cephadrome extends PathfinderMob
         if (target instanceof WaterDragon waterDragon) return !waterDragon.isTame();
         if (target instanceof EnderDragon) return true;
         if (target instanceof Player player) {
-            if (player.getAbilities().invulnerable) return false;
+            if (player.getAbilities().instabuild) return false; // orig Cephadrome.java:557 isCreativeMode (ENT-S-107)
             return this.hitByPlayer != 0 || this.badmood != 0 || this.shouldattack > 0;
         }
         return false;

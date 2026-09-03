@@ -24,6 +24,7 @@ import net.minecraft.world.level.Level;
 import danger.orespawn.OreSpawnMod;
 import danger.orespawn.entity.ai.DinosaurMeleeAttackGoal;
 import danger.orespawn.entity.ai.PointysaurusStareGoal;
+import danger.orespawn.util.MyUtils;
 
 public class Pointysaurus extends Monster {
     // OPT-011: cached SoundEvents — identical createVariableRangeEvent ids,
@@ -66,7 +67,10 @@ public class Pointysaurus extends Monster {
         // This preserves the 1.7.10 isSuitableTarget filter (rejects all
         // Monster instances) which would otherwise make it pacifist without
         // an explicit Player-only target goal.
-        this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, Player.class, true));
+        // orig Pointysaurus.java:227-229 — the shared ignore screen, ahead of the
+        // species chain and line of sight (:239), as the target goal's predicate (ENT-S-106).
+        this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, Player.class, true,
+                target -> !MyUtils.isIgnoreable(target)));
     }
 
     public static AttributeSupplier.Builder createAttributes() {

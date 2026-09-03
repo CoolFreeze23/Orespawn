@@ -4,6 +4,7 @@ import danger.orespawn.MobStats;
 
 import danger.orespawn.ModItems;
 import danger.orespawn.OreSpawnMod;
+import danger.orespawn.util.MyUtils;
 import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
@@ -147,7 +148,10 @@ public class Urchin extends Monster {
             LivingEntity target = this.getTarget();
             if (target == null) {
                 Player nearest = this.level().getNearestPlayer(this, 16.0);
-                if (nearest != null && !nearest.getAbilities().instabuild) {
+                // orig Urchin.java:230-232 — the shared ignore screen, ahead of the
+                // creative check (:263-267); the port's scan is players-only, so the
+                // screen is carried in the same order but cannot bite here (ENT-S-106).
+                if (nearest != null && !MyUtils.isIgnoreable(nearest) && !nearest.getAbilities().instabuild) {
                     target = nearest;
                     this.setTarget(target);
                 }

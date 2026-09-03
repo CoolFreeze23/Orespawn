@@ -4,6 +4,7 @@ import danger.orespawn.MobStats;
 import danger.orespawn.ModEntities;
 import danger.orespawn.OreSpawnMod;
 import danger.orespawn.entity.ai.TrooperBugLeapAttackGoal;
+import danger.orespawn.util.MyUtils;
 import javax.annotation.Nullable;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -67,7 +68,10 @@ public class EntityTrooperBug extends Monster {
         this.goalSelector.addGoal(3, new LookAtPlayerGoal(this, Player.class, 10.0f));
         this.goalSelector.addGoal(4, new RandomLookAroundGoal(this));
         this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
-        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
+        // orig TrooperBug.java:474-476 — the shared ignore screen, ahead of line of
+        // sight (:477), as the target goal's predicate (ENT-S-106).
+        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true,
+                target -> !MyUtils.isIgnoreable(target)));
     }
 
     public static AttributeSupplier.Builder createAttributes() {

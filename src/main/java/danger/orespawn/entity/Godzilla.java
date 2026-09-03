@@ -581,6 +581,7 @@ public class Godzilla extends Monster implements OreSpawnPartEntity.MultipartBos
 
     private boolean isSuitableTarget(LivingEntity target) {
         if (target == null || target == this || !target.isAlive()) return false;
+        if (MyUtils.isIgnoreable(target)) return false; // orig Godzilla.java:442-444 — the shared ignore screen, ahead of line of sight (:445) (ENT-S-106)
         if (!this.getSensing().hasLineOfSight(target)) return false;
         if (target instanceof Godzilla) return false;
         if (target instanceof GodzillaHead) return false;

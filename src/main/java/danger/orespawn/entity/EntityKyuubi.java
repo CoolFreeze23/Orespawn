@@ -30,6 +30,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import danger.orespawn.OreSpawnMod;
 import danger.orespawn.entity.ai.TargetSelection;
+import danger.orespawn.util.MyUtils;
 
 public class EntityKyuubi extends Monster {
     // OPT-011: cached SoundEvents — identical createVariableRangeEvent ids,
@@ -137,6 +138,7 @@ public class EntityKyuubi extends Monster {
 
     private boolean isSuitableTarget(LivingEntity target) {
         if (target == null || target == this || !target.isAlive()) return false;
+        if (MyUtils.isIgnoreable(target)) return false; // orig Kyuubi.java:183-185 — the shared ignore screen, ahead of line of sight (:186) (ENT-S-106)
         if (!this.getSensing().hasLineOfSight(target)) return false;
         if (target instanceof Monster) return false;
         if (target instanceof Player player) {
