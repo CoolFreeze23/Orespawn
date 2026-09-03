@@ -6863,9 +6863,27 @@ keeps BUG-036. Commit 4ea395c's message retains the old number.)*
   direct attacker to be in `#minecraft:arrows`; the ultimate arrow is not (TAG RULINGS above), so
   the bow's self-applied Punch 2 never lands. `IrukandjiArrow` self-implements the push
   (port :90-98, reading the weapon's Punch level); `UltimateArrow` does not.
-- **Resolution:** OPEN — report only; a parity bug by the standing rule. Fix shape: a
-  `doKnockback` override on `UltimateArrow` of the IrukandjiArrow shape (0.6 × level along the
-  flat flight line, +0.1 lift), with a gametest in the `projectileTypeParity` batch.
+- **Resolution:** FIXED (2026-09-04, owner: "ENT-S-103 through 107: all parity bugs, fix in classic").
+  `UltimateArrow.doKnockback(LivingEntity, DamageSource)` override of the IrukandjiArrow shape
+  (IrukandjiArrow.java:90-98 push, :120-127 weapon read): the Punch level is read off the firing weapon's
+  enchantment (`getWeaponItem()`, the copy `AbstractArrow` keeps of the bow stack; orig UltimateBow.java:52-54
+  seeded `knockbackStrength` from that same enchantment), and the push is
+  `deltaMovement.multiply(1, 0, 1).normalize().scale(0.6 * level)` with the 0.1 lift through `Entity.push` —
+  orig UltimateArrow.java:189-191's `addVelocity(motionX * strength * 0.6 / sqrt(motionX² + motionZ²), 0.1,
+  motionZ * strength * 0.6 / sqrt(...))`, quoted in the javadoc. Raw as orig's addVelocity (no
+  knockback-resistance factor); `super.doKnockback` is not called (it contributes 0 under the
+  #minecraft:arrows ruling and would double the push if that ruling changed). Gate: vanilla calls
+  doKnockback only after a successful hurt on a LivingEntity (orig :182), and the override additionally
+  requires a `Mob`, orig :183's `instanceof EntityLiving` (the 1.7.10 AI-mob base), so a player takes the
+  vanilla 0.4 hurt knockback and no Punch push, as in 1.7.10. Pin:
+  `ProjectileTypeParityTests#s103_ultimate_arrow_punch_pushes_the_target_along_the_flight_line_by_the_1_7_10_amount`
+  (batch `projectileTypeParity`): two lanes, the bow's own bake (Power 5 / Flame 3 / Punch 2 / Infinity 1)
+  against the same bake with Punch stripped to 0, arrows launched flat +z at the bow's 3.0 with zero
+  inaccuracy into frozen NoAI cows; the velocity read on the hit tick differs between the lanes by exactly
+  (0, +0.1, +1.2) within 1e-9, the control's horizontal velocity is the vanilla 0.4 hurt knockback alone, and
+  the absolutes 0.4 / 1.6 hold within 1e-6 (tolerances justified on the test). Refuted once, upheld. The same
+  residual in `IrukandjiArrow` (it pushes any LivingEntity where orig :181 gated on EntityLiving) is filed as
+  ENT-S-111.
 
 ### ENT-S-104 — BetterFireball no longer places fire beside a block hit (REPORT, 2026-09-04)
 
@@ -6877,10 +6895,36 @@ keeps BUG-036. Commit 4ea395c's message retains the old number.)*
   destruction = mobGriefing (1.7.10 `Explosion.a/b`, bytecode) — while the port feeds mobGriefing into
   1.21.1's single `fire` slot, so an OreSpawn fireball places no explosion fire while mobGriefing is
   off (pre-existing; HEAD :169-170 identical).
-- **Resolution:** OPEN — report only; a parity bug by the standing rule (classic). Fix shape: an
-  `onHitBlock` override placing fire on the hit face's air side, and the explosion's fire flag set
-  true with destruction gated by mobGriefing (1.21.1 `Level.explode`'s 13-argument form takes both),
-  pinned in the `projectileTypeParity` batch.
+- **Resolution:** FIXED (2026-09-04, owner: "104 restores 1.7.10 fire behavior and files a MOD proposal for
+  a config-gated 'fire respects mobGriefing' option"; MOD-031 filed as PROPOSED). (a) New
+  `BetterFireball.onHitBlock(BlockHitResult)`: `super.onHitBlock`, then, server side, `firePos =
+  hitPos.relative(hitFace)` — orig :236-260's switch on `field_72310_e` 0..5 = down / up / north / south /
+  west / east, the same six offsets — and `if (level.isEmptyBlock(firePos))` (orig :261 `func_147437_c` =
+  isAirBlock) `setBlockAndUpdate(firePos, BaseFireBlock.getState(level, firePos))` (orig :262
+  `func_147449_b(i, j, k, Blocks.fire)` = setBlock with flags 3; `BaseFireBlock.getState` is how 1.21.1's own
+  fireballs pick plain versus soul fire — 1.7.10 had one fire block). Orig's conditions kept where vanilla's
+  differ: NO mobGriefing / EntityMobGriefingEvent gate (1.21.1 `SmallFireball.onHitBlock` has one for Mob
+  owners) and NO `BaseFireBlock.canBePlacedAt` survival check (orig set fire on any air cell; unsurvivable fire
+  removes itself on its own tick in both versions); fire is placed for small shots too, as orig's block branch
+  sits outside the `!small` gate that covers only the explosion (:265-267); order fire → explosion → discard
+  as orig :262 → :266 → :268. (b) The explosion is now `explode(null, x, y, z, power, true,
+  ExplosionInteraction.MOB)`: fire = true unconditionally (orig :266's first flag), block destruction from
+  MOB, which for this null source IS the mobGriefing gamerule — 1.21.1 `Level.explode` 13-argument form
+  (javap, NeoForm jar): MOB case = `EventHooks.canEntityGrief(this, source) ?
+  getDestroyType(RULE_MOB_EXPLOSION_DROP_DECAY) : BlockInteraction.KEEP`; NeoForge 21.1.223
+  `EventHooks.canEntityGrief(Level, Entity)` for a null entity = `RULE_MOBGRIEFING` (no event post). So the
+  pre-fix `canGrief` local, which had gone into the fire slot, was redundant for destruction and wrong for
+  fire. Pins in `ProjectileTypeParityTests` (batch `projectileTypeParity`), all into the ENT-S-102 obsidian
+  wall over a dirt "hearth" under the fire cell (fire needs a sturdy face below to survive its own tick; the
+  dirt also witnesses the block interaction): `s104_small_shot_leaves_fire_on_the_air_side_of_the_hit_face`
+  (no explosion, fire at the face cell, wall and hearth intact);
+  `s104_big_shot_with_mob_griefing_on_explodes_once_with_fire_as_before` (rule asserted true: exactly one
+  explosion, radius 2, null source, fire flag true via reflection on `Explosion.fire` — no getter exists —
+  DESTROY interaction, the hearth destroyed, wall intact);
+  `s104_big_shot_with_mob_griefing_off_still_carries_fire_and_leaves_the_wall_intact` (rule flipped false
+  after a 60-tick delay so the batch-mates' 40-tick windows have closed, restored in the check's finally;
+  exactly one explosion, fire flag true, interaction KEEP, wall, hearth and face fire intact). The two
+  `s102_` tests still hold. Refuted once, upheld.
 
 ### ENT-S-105 — Kraken nearest-player scan keeps the first equidistant player, 1.7.10 kept the last (REPORT, 2026-09-04)
 
@@ -6888,8 +6932,18 @@ keeps BUG-036. Commit 4ea395c's message retains the old number.)*
   the Kraken's :963 call used) updates its candidate on `d1 <= d0`, so of two players at the same
   distance the LAST scanned wins; the port's `Kraken.findNearestPlayer` updates on `<`, so the
   first wins. Same-distance ties only; no MOD record.
-- **Resolution:** OPEN — report only; a parity bug by the standing rule, trivially fixed (`<=`) and
-  pinned with two equidistant players in the `krakenTargetingParity` batch.
+- **Resolution:** FIXED (2026-09-04, owner: "ENT-S-103 through 107: all parity bugs, fix in classic").
+  `Kraken.findNearestPlayer` now replaces its candidate on `distSq <= minDist` (was `<`), matching orig
+  `World.func_72857_a` — verified 1.7.10 jar, `ahb.a(Class, AxisAlignedBB, Entity)`, javap
+  `mc1710/ahb.javap.txt:7504-7546`: `dcmpl; ifle` jumps into the update body when `d1 <= d0`, so of two
+  equidistant players the LAST scanned wins; the javadoc and an inline comment cite the bytecode. Pins in
+  `KrakenTargetingParityTests` (batch `krakenTargetingParity`): `s105_equidistant_players_last_scanned_wins`
+  (two survival mock players 5 blocks west and east of the frozen Kraken, bit-identical squared distances
+  asserted; the scan order is read back with the scan's own `getEntitiesOfClass(Player.class,
+  box.inflate(25, 40, 25))` call and the expected winner is the later of the two in that list, so the test
+  follows the section storage's order instead of assuming spawn order) and
+  `s105_control_unequal_distances_nearest_wins` (5 against 10 blocks, then the pair swapped in place).
+  Refuted once, upheld.
 
 ### ENT-S-106 — The shared ignore screen is missing from most hunters: 1.7.10 had 38 `isIgnoreable` callers in 37 species, the port has 11 (REPORT, 2026-09-04)
 
@@ -6899,9 +6953,36 @@ keeps BUG-036. Commit 4ea395c's message retains the old number.)*
   `Leon.java:403` screens its target with the list, the port's `EntityLeon.java:736-748` does not, so
   a Leonopteryx will hunt ants, butterflies, ghosts or an elevator that 1.7.10 left alone. No MOD
   record covers the omissions.
-- **Resolution:** OPEN — report only; a parity bug per hunter by the standing rule. Fix shape: a
-  per-hunter batch (present the 26-hunter list with orig line numbers first), each site restored in orig
-  position with one representative-species test per hunter in the `ignoreListParity` batch.
+- **Resolution:** FIXED (2026-09-04) — owner: "ENT-S-103 through 107: all parity bugs, fix in classic. 106
+  gets a parameterized test over all 38 original callers and a changelog entry." All 38 orig call sites
+  mapped (table in the session's lane J records): 11 already present (Alosaurus :184, Basilisk :257,
+  EntityBrutalfly :355, Kraken :665, Mothra :266, EntityRotator :230, EntityScorpion :197, SpiderRobot
+  :593, TheKing :1169, TheQueen :1377, EntityVortex :345) and 27 restored in the orig position of the
+  check order — 17 in private `isSuitableTarget` filters (AntRobot's two sites, the stomp filter
+  `feetIsSuitableTarget` :681 and `isSuitableTarget` :701; EntityGammaMetroid :210, GiantRobot :234,
+  Godzilla :584, EntityKyuubi :141, EntityLeon :748, PitchBlack :522, PurplePower :196, EntityRat :194,
+  Robot1 :151, Robot2 :272, Robot3 :182, Robot4 :287, Robot5 :171, SpiderDriver :159, EntityTriffid
+  :250), 9 as the predicate of the vanilla `NearestAttackableTargetGoal` the port uses in place of the
+  orig scan (CaveFisher :81/:86, both its Player.class and Animal.class goals; DungeonBeast :69,
+  EntityEmperorScorpion :80, EntityHerculesBeetle :60, Nastysaurus :72, Pointysaurus :72, EntitySpitBug
+  :71, TRex :58, EntityTrooperBug :73 — the predicate runs inside `TargetingConditions` ahead of the
+  sight check, the orig order everywhere but the EmperorScorpion, whose orig checks sight first; both
+  side-effect-free, same answer), and 1 inline in the Urchin's players-only nearest scan (:154, ahead of
+  the creative check as orig :230/:263). No species missing from the port, no site unmappable.
+  **Scope note:** eight of the nine goal-shaped hunters scan `Player.class` only and the Urchin scans
+  players only — the port's own narrowing of the orig living-entity scans, filed separately as
+  ENT-S-108 — so their restored screen sits in the check order but cannot bite until those scans are
+  widened; the CaveFisher's Animal.class goal is the one goal site where it bites today. In Brutalfly,
+  TheKing and TheQueen the step is redundant with the hunter's own EntityMob / attackable-non-mob rule,
+  in both trees. Pins: `IgnoreScreenParityTests` (own batch `ignoreScreenParity`; a `@GameTestGenerator`
+  producing 38 TestFunctions, one per orig call site in orig file order: 28 through the private filter
+  by reflection — species rejected, a pig, or a Zombie for the three Monster-only hunters, accepted on
+  the same spot; 9 through every `NearestAttackableTargetGoal`'s `TargetingConditions` on the hunter's
+  target selector; 1, the Urchin, documenting the unreachable check and asserting its presence from the
+  compiled class). Disclosed by the test-lens refuter: the Brutalfly, TheKing and TheQueen rows cannot
+  fail if their (already present) ignore line were deleted, because those hunters' own rules reject every
+  list member in both trees; the Urchin row pins presence, not position. Changelog entry added (the
+  changelog note for the next beta). Refuted twice (orig fidelity; tests and compile), upheld.
 
 ### ENT-S-107 — EntityLeon and Cephadrome map 1.7.10 "creative" to `invulnerable` instead of `instabuild` (REPORT, 2026-09-04)
 
@@ -6911,8 +6992,79 @@ keeps BUG-036. Commit 4ea395c's message retains the old number.)*
   differ for a player made invulnerable by other means or a creative player whose abilities were
   edited; the 1.21.1 analogue of `isCreativeMode` is `instabuild` (the port's own Kraken KT-A site and
   the ENT-S-097 tests use `GameType`/creative directly).
-- **Resolution:** OPEN — report only; a parity bug by the standing rule. Fix: two one-line mappings
-  plus a creative/invulnerable discriminating test each, in a batch of their own.
+- **Resolution:** FIXED (2026-09-04) — same ruling. `EntityLeon.isSuitableTarget` (:753) and
+  `Cephadrome.isSuitableTarget` (:403) now test `Abilities.instabuild` for orig `capabilities.isCreativeMode`
+  (Leon.java:417, Cephadrome.java:557) — the port's Kraken KT-A / TheKing / TheQueen / SpiderRobot idiom —
+  not `invulnerable`; javadoc on both methods cites. Pins: `CreativeMappingParityTests` (own batch
+  `creativeMappingParity`, 6 tests): per hunter a creative mock player rejected, a SURVIVAL mock player
+  with `Abilities.invulnerable` set by hand still prey (the discriminating case the old mapping failed),
+  and a plain survival player prey; the Leon untamed (orig :420), the Cephadrome in bad mood (orig
+  :563-565). Refuted once, upheld. The same `getAbilities().invulnerable` idiom in nine other hunters is
+  filed as ENT-S-109.
+
+### ENT-S-108 — Eight hunters (and the Cave Fisher in part) scan players only where 1.7.10 scanned every living entity (REPORT, 2026-09-04)
+
+- **Evidence:** found by the ENT-S-106 lane, lists verified by its fidelity refuter against the orig
+  sources. 1.7.10 scanned `EntityLivingBase.class` and accepted anything not on the hunter's exclusion
+  list: CaveFisher.java:234 (10 x 3 x 10), DungeonBeast.java:253 (16 x 3 x 16), EmperorScorpion.java:507
+  (24 x 6 x 24), HerculesBeetle.java:420 (16 x 6 x 16), Nastysaurus.java:282 (32 x 8 x 32),
+  SpitBug.java:374 (12 x 7 x 12), TRex.java:254 (20 x 6 x 20), TrooperBug.java:514 (12 x 7 x 12),
+  Urchin.java:276 (16 x 3 x 16). The port's DungeonBeast, EntityEmperorScorpion, EntityHerculesBeetle,
+  Nastysaurus, EntitySpitBug, TRex and EntityTrooperBug run a `NearestAttackableTargetGoal` on
+  `Player.class` only; the Urchin uses `getNearestPlayer`; the CaveFisher has Player and Animal goals
+  (missing water animals, ambient creatures, villagers, golems and OreSpawn's Mob/PathfinderMob species
+  that orig's any-non-EntityMob rule took). Pointysaurus is players-only in orig too (:246) — not a
+  divergence. Consequence: the ignore screen restored by ENT-S-106 sits in order at these sites but
+  cannot bite until the scans are widened; no MOD record covers the narrowing.
+- **Resolution:** OPEN — report only; a parity bug per hunter by the standing rule. Fix shape: widen
+  each goal to `LivingEntity.class` (or restore the orig box scan) with the orig exclusion chain, one
+  representative-species test per hunter in the `ignoreScreenParity` batch's style.
+
+### ENT-S-109 — Nine more hunters map 1.7.10 "creative" to `invulnerable` (REPORT, 2026-09-04)
+
+- **Evidence:** the ENT-S-107 siblings, verified by the ENT-S-106 fidelity refuter (all orig sites test
+  `capabilities.isCreativeMode`, `field_75098_d`): Cryolophosaurus.java:206 ↔ port :120;
+  Brutalfly.java:217 (fireball strafe) ↔ EntityBrutalfly :205 and :438 (filter) ↔ :358;
+  GammaMetroid.java:283 ↔ EntityGammaMetroid :216; Kyuubi.java:197 ↔ EntityKyuubi :145;
+  LeafMonster.java:202 ↔ EntityLeafMonster :162; LurkingTerror.java:343 ↔ EntityLurkingTerror :248;
+  Rat.java:227 ↔ EntityRat :199; TerribleTerror.java:288 ↔ EntityTerribleTerror :163;
+  Triffid.java:314 ↔ EntityTriffid :253. (`PointysaurusStareGoal` uses `isCreative()` — correct.)
+- **Resolution:** OPEN — report only; parity bugs by the standing rule. Fix: `instabuild` at the ten
+  sites with the ENT-S-107 discriminating tests (creative rejected, invulnerable-survival still prey) in
+  the `creativeMappingParity` batch.
+
+### ENT-S-110 — Untamed EntityLeon hunts any non-Monster living thing and lacks the PlayNicely gate (REPORT, 2026-09-04)
+
+- **Evidence:** observed by the ENT-S-106 lane and confirmed by its refuter: orig Leon.java:422-426
+  accepts, untamed, only `isAttackableNonMob` targets, and :391 gates the hunt on PlayNicely; the port's
+  `EntityLeon.isSuitableTarget` (:756) accepts any non-Monster living entity and has no PlayNicely gate.
+- **Resolution:** OPEN — report only; a parity bug by the standing rule. Fix shape: restore the
+  `isAttackableNonMob` rule and the PlayNicely gate at orig positions, with a both-modes test.
+
+### ENT-S-111 — IrukandjiArrow pushes any LivingEntity where 1.7.10 gated the push on EntityLiving (REPORT, 2026-09-04)
+
+- **Evidence:** observed by the ENT-S-103 lane: the port's `IrukandjiArrow.java:86` push applies to any
+  LivingEntity; orig IrukandjiArrow.java:181 gated it on `instanceof EntityLiving` (the 1.7.10 AI-mob base,
+  1.21.1 `Mob`), so a player was never pushed. The ENT-S-103 fix on `UltimateArrow` carries the gate.
+- **Resolution:** OPEN — report only; a parity bug by the standing rule (one-line gate plus a player
+  versus mob test in the `projectileTypeParity` batch).
+
+### ENT-S-112 — PitchBlack lacks the 1.7.10 ally exclusions (REPORT, 2026-09-04)
+
+- **Evidence:** observed by the ENT-S-106 fidelity refuter: orig PitchBlack.java:507-530 excludes
+  EnderReaper, LeafMonster, TerribleTerror, LurkingTerror, CreepingHorror, Island, IslandToo and Triffid
+  from its targets; none of those names appear in the port's `PitchBlack.java` (:520-526 filter).
+- **Resolution:** OPEN — report only; a parity bug by the standing rule. Fix shape: the orig exclusion
+  chain in orig order with one test per excluded species in a batch of its own.
+
+### ENT-S-113 — Cephadrome's target filter lacks the 1.7.10 PEACEFUL guard and the `shouldattack` reset (REPORT, 2026-09-04)
+
+- **Evidence:** observed by the ENT-S-107 refuter: orig Cephadrome.java:516-518 returns false in PEACEFUL
+  before any other check, and :567 resets `shouldattack = 0` inside the player branch; the port's
+  `Cephadrome.isSuitableTarget` (:390-406) has neither. Pre-existing; no MOD record.
+- **Resolution:** OPEN — report only; a parity bug by the standing rule. Fix shape: the two orig lines at
+  orig positions with a difficulty test and a `shouldattack` state test in the `creativeMappingParity`
+  batch's style.
 ### TEST-003 — Config-flipping gametests in the concurrent default batch
 
 - **Impact:** MEDIUM (suite reliability) — boss005/boss012 flip a global

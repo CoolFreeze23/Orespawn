@@ -433,8 +433,10 @@ impact estimate, related finding IDs.
 ## MOD-021 — Phase 14 wiki-only mobs: optional content behind `phase14ContentEnable` (ruling applied 2026-08-11)
 - **Category:** VANILLA-INTEGRATION / provenance
 - **Master-override amendment (2026-09-04):** `phase14ContentEnable` is effective only
-  together with `modern.enabled = true` (MOD-029's master-override ruling); the key keeps
-  its name and place.
+  while `modern.enabled` is true (MOD-029's master-override ruling); the key keeps its
+  name and place. The master defaults to true and defers to this key, so
+  `phase14ContentEnable = true` alone is enough again unless the master was set false,
+  which forces this content off together with every other 2.0 feature.
 - **Ruling (2026-08-11):** VampireButterfly, AppleCow, and GoldenAppleCow are
   wiki-documented ("Added Mobs" page) but have **no class in the 586-file
   1.7.10 source dump** — they cannot ship enabled in a source-verified parity
@@ -621,14 +623,15 @@ _pin) so alignment drift is caught regardless.
   a per-feature key of its own.
 - **Switch (implemented 2026-09-03; semantics amended by the master-override ruling of
   2026-09-04, see the bullet after the sub-keys):** no master modern switch existed before.
-  The earlier 2.0 opt-ins (`spiderMovement`, `mountCamera`, `phase14ContentEnable`; the
+  The earlier 2.0 per-feature keys (`spiderMovement`, `mountCamera`, `phase14ContentEnable`; the
   MOD-024 candidates are unimplemented proposals, not keys) keep their names and their
   `[tweaks]` section, but are effective only while the master is on.
   `OreSpawnConfig` (COMMON spec) gains a `[modern]` section:
-  - `modern.enabled` (`MODERN_ENABLED`, default **false**): the master. Classic 1.7.10
-    parity is the default experience; every modern-mode feature hangs off it, each
-    behind its own sub-key that is inert while the master is off. Phase G artist
-    animations will hang off this same master.
+  - `modern.enabled` (`MODERN_ENABLED`, default **true**): the master. It defers to the
+    per-feature keys, so a default config runs every modern-mode feature at its own
+    key's default; `modern.enabled = false` forces each of them to its classic/off
+    value at once, whatever its key says. Phase G artist animations will hang off this
+    same master.
   - `modern.mothraWideRootHitbox` (`MODERN_MOTHRA_WIDE_ROOT_HITBOX`, default **true**):
     the MOD-029 sub-key. `OreSpawnConfig.mothraWideRootHitbox()` is the single
     `master && sub-key` evaluation.
@@ -643,16 +646,23 @@ _pin) so alignment drift is caught regardless.
   (`MountCameraState.targetDistance`; a client-side read of the client's own COMMON file, so on a
   multiplayer client the master must be set locally as well), `phase14ContentEnable()` (the three `ModCreativeTabs`
   spawn-egg gates and the `ModSpawnControl` natural-spawn suppliers), `mothraWideRootHitbox()`
-  unchanged. No key renamed, moved or re-defaulted; the `[modern] enabled` comment states the
-  semantics and every per-feature key says "Effective only when [modern] enabled is true".
-  Consequence on a DEFAULT config (master false): `tweaks.spiderMovement` (default MODERN)
-  and `tweaks.mountCamera` (default true) are effectively CLASSIC / off until
-  `modern.enabled = true`; `phase14ContentEnable = true` also needs the master now. Pins:
+  unchanged. No per-feature key renamed, moved or re-defaulted; the `[modern] enabled` comment
+  states the semantics and every per-feature key says "Effective only when [modern] enabled is
+  true". **Default (owner ruling, later the same day):** "modern.enabled defaults to true in
+  code — the master defers to per-feature keys by default and only forces classic when set
+  false." The master was introduced 2026-09-03 with default false and flipped to true by that
+  ruling. A default config therefore runs the modern robots (`tweaks.spiderMovement` default
+  MODERN) with the riding camera (`tweaks.mountCamera` default true); `modern.enabled = false`
+  is the one-line switch to the exact 1.7.10 experience for every 2.0 feature at once,
+  `spiderMovement = "CLASSIC"` still works per feature, and `phase14ContentEnable = true` alone
+  is enough again unless the master was set false. Pins:
   `ModernMasterOverrideTests` (own batch `modernMasterOverride`): the off/on truth table for
-  all four helpers plus the routed construction read (master off + key MODERN constructs
-  classic robots with zero parts; master on constructs modern); every existing modern-mode
-  gait test raises the master together with the key and restores both (AntGaitTests,
-  HitboxPartTests, PartInteractTests, RideTests, S6LegFixTests, SpiderGaitTests).
+  all four helpers, the routed construction read (master off + key MODERN constructs
+  classic robots with zero parts; master on constructs modern) and the code default
+  (`MODERN_ENABLED.getDefault()` true; every value at its default reads MODERN with the
+  camera on); every existing modern-mode gait test raises the master together with the key
+  and restores both (AntGaitTests, HitboxPartTests, PartInteractTests, RideTests,
+  S6LegFixTests, SpiderGaitTests).
 - **Mothra wiring:** `Mothra#modernWideRoot` snapshots that value in the constructor and
   calls `refreshDimensions()` (the BOSS-017 King/Kraken PlayNicely-snapshot pattern,
   orig TheKing.java:85-89); `Mothra#getDefaultDimensions` returns
@@ -668,12 +678,12 @@ _pin) so alignment drift is caught regardless.
   read the live bounding box, so in modern mode each sweep is 0.5 wider per side and
   1.0 taller than 1.7.10 — exactly the old port behaviour, now behind the switch;
   classic mode keeps the 1.7.10 sweeps.
-- **Pins:** `HitboxDimsParityTests#s095_mothra_dims_both_modes` (classic 5 x 2 under the
-  default config, both PlayNicely states) is unchanged. New `MothraModernDimsTests`
-  (own batch `mothraModernDims`, the KrakenPlayNicelyTests flip-and-restore idiom, a
-  fresh entity per state): modern off -> 5 x 2 in both PlayNicely states; modern on ->
-  6 x 3 in both; sub-key off while modern on -> 5 x 2; live flips of either key never
-  resize a constructed Mothra.
+- **Pins:** `HitboxDimsParityTests#s095_mothra_dims_both_modes` (classic 5 x 2, both
+  PlayNicely states) forces the master off around its pin and restores it, because on
+  real defaults (master true since the ruling of 2026-09-04, sub-key true) a fresh Mothra is
+  the modern 6 x 3; `MothraModernDimsTests` (own batch `mothraModernDims`) pins the modern box
+  and the master/sub-key truth table with explicit flags; `ModernMasterOverrideTests` pins
+  the master's default and deferral.
 - **Related:** ENT-S-095 (batch 2), BOSS-017, MOD-024, Phase G ruling 2026-09-03.
 
 ## MOD-030 — OreSpawn throwables join `#minecraft:impact_projectiles` (VANILLA-INTEGRATION; ruling applied 2026-09-04)
@@ -700,3 +710,33 @@ _pin) so alignment drift is caught regardless.
   key and not under the `[modern]` master.
 - **Pin:** `ProjectileTypeParityTests#tags_throwables_join_impact_projectiles_bertha_hit_and_cage_stay_out`
   (batch `projectileTypeParity`; snowball / fishing bobber as the vanilla controls).
+
+## MOD-031 — Fireball fire respects mobGriefing (PROPOSED 2026-09-04, config-gated, NOT implemented)
+
+- **Origin:** ENT-S-104's ruling: "104 restores 1.7.10 fire behavior and files a MOD proposal for a
+  config-gated 'fire respects mobGriefing' option."
+- **Classic (implemented, the default):** orig BetterFireball.java:261-263 sets fire on the air side of a struck
+  block for every shot, and :266 explodes with fire = true unconditionally; only block destruction follows
+  `mobGriefing`. A server with mobGriefing off still gets fire from the bosses' fireballs — 1.7.10's exact
+  behaviour, and what the port does now (`BetterFireball.onHitBlock` / `onHit`).
+- **Proposal:** a `[modern]` key `fireRespectsMobGriefing` (`OreSpawnConfig.MODERN_FIRE_RESPECTS_MOB_GRIEFING`,
+  `BooleanValue`, default **false** = 1.7.10 behaviour), read only through an effective-value helper
+  `OreSpawnConfig.fireRespectsMobGriefing()` = `MODERN_ENABLED && key` (master-override ruling 2026-09-04: new
+  features register under [modern]; the master off forces classic). When effective, `BetterFireball.onHitBlock`
+  places the face fire only if `EventHooks.canEntityGrief(level, getOwner())` (vanilla `SmallFireball.onHitBlock`'s
+  gate: the gamerule, through EntityMobGriefingEvent for a Mob owner) and `onHit` passes
+  `fire = canEntityGrief(level, getOwner())` to `Level.explode` (vanilla `LargeFireball.onHit`'s flag), keeping
+  the null source and the MOB interaction. Read at impact, not snapshotted (a fireball lives 600 ticks at most;
+  no BOSS-017 concern). Comment text for the key: "MOD-031: OreSpawn fireballs place no fire beside the block
+  they hit and their blast scatters no fire while the mobGriefing gamerule is off (as vanilla ghast and blaze
+  shots behave). Only takes effect while modern.enabled is true; classic mode always lights fires as 1.7.10
+  did (orig BetterFireball.java:261-266)."
+- **Effect when on:** with mobGriefing off, OreSpawn fireballs neither light the block they hit nor scatter fire
+  from their blast; damage, the 5-second ignite of a hit entity (orig :227/:230 — vanilla fireballs ignite
+  targets regardless of the rule too) and the explosion itself are unchanged. With mobGriefing on, identical to
+  classic.
+- **Not covered:** explosion block destruction (already the gamerule's in both modes, through MOB).
+- **Pin when implemented:** flip-and-restore tests next to the s104 pins (an own batch if the rule flip must not
+  overlap their windows): key on + rule off → no face fire, explosion fire flag false, KEEP; key on + rule on →
+  the classic result; key off (or master off) + rule off → the classic result (the s104 mobGriefing-off pin).
+- **Status:** PROPOSED; nothing in code reads a key by this name; the classic path is orig.

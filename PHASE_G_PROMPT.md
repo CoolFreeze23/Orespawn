@@ -585,8 +585,9 @@ root-order slice with the GeckoLib per-entity cache eviction, then Slice 4c). Th
   (descriptor-exact selectors, counter proof 220 → 110) land before the owner's look session; the
   remaining harvests (part-to-parent unwrapping, conservative cull bounds, defaultRequire = 1) form
   one harvest slice scheduled before Slice 5; the comparison's other proposals wait for a ruling.
-- `modern.enabled` is a master override only: off forces every modern feature off, on defers to the
-  per-feature keys (names unchanged); new modern features register under `[modern]`.
+- `modern.enabled` is a master override only, default true: it defers to the per-feature keys (names
+  unchanged) and forces every modern feature to classic only when set false; new modern features
+  register under `[modern]`.
 - Before any Tier-2 slice: the spawn-100 benchmark, classic versus candidate, with a proposed
   regression threshold; its baseline also measures MHLib's bone capture per frame and sync per tick
   and on the wire. Proof rule: geometry-only changes take one refuter; motion transcriptions,

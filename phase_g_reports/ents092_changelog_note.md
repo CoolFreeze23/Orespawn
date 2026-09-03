@@ -52,12 +52,13 @@ A fired BetterFireball is now the mod's own entity again (it used to be typed as
 in flight and in saves), and the modern config gains its first switch: with `[modern] enabled`
 on, Mothra keeps the port's wider 6x3 root box; classic stays at the original 5x2.
 
-`modern.enabled` is now the master override for every 2.0 feature. Off (the default) forces
-`spiderMovement`, `mountCamera`, `phase14ContentEnable` and `mothraWideRootHitbox` to their
-classic/off values whatever they are set to; on defers to each key, which keeps its name and
-place. On a default config this means robot spiders and ants now run the classic 1.7.10 gait
-and the riding camera is off until `modern.enabled = true` (previously `spiderMovement = MODERN`,
-the key's default, was enough on its own). New modern features register under `[modern]`.
+`modern.enabled` is the new master switch for every 2.0 feature. It defaults to true and
+defers to the per-feature keys, so a default config keeps the modern robot spiders and ants
+(`spiderMovement = "MODERN"`, the key's default) with the riding camera, as before. Set
+`modern.enabled = false` for the classic everything: `spiderMovement`, `mountCamera`,
+`phase14ContentEnable` and `mothraWideRootHitbox` drop to their 1.7.10 / off values at once,
+whatever they are set to (`spiderMovement = "CLASSIC"` still switches the robots alone). New
+modern features register under `[modern]`.
 
 One blast per fireball: a boss's big fireball used to explode twice on impact (the vanilla fireball's
 blast, then OreSpawn's own), and the small fireballs Dragons and the royal family spit exploded although
@@ -90,3 +91,26 @@ Brutalfly, Rotator, Scorpion, Vortex, Mothra, Spider Robot, King and Queen is ba
 twelve: rock bases, ants of every colour and termites, butterflies (luna moths and Mothra included),
 mosquitoes, dragonflies, fireflies, crickets, cockatiels, ghosts, ghost skellies and elevators are left
 alone; cave fishers, fairies and coins are once more fair game.
+
+The Ultimate Bow's Punch lands again, and the bosses' fireballs light fires. An ultimate arrow now shoves the
+mob it hits along its flight line by the 1.7.10 amount (0.6 blocks per tick per Punch level, so 1.2 for the
+bow's own Punch II, with the small hop); 1.21.1 keys Punch on a tag the arrow is deliberately outside of, so
+the bow's self-applied Punch never landed. A fireball from Mothra, Godzilla, the King, the Queen, a Dragon or
+the royal family sets fire to the air beside the block it strikes again, and its blast always scatters fire,
+with block destruction alone following `mobGriefing`, as the original did; the port had wired `mobGriefing`
+to the fire instead. A config-gated "fire respects mobGriefing" option is proposed as MOD-031 but not built;
+classic stays 1.7.10.
+
+Hunters leave the small fry alone again. In 1.7.10 every OreSpawn hunter ran its prey through one shared
+ignore list (rock bases, ants and termites, butterflies with the Luna Moth and Mothra included, mosquitoes,
+dragonflies, fireflies, crickets, cockatiels, ghosts, ghost skellies and the Elevator) before it weighed
+anything else. Only eleven hunters kept that screen in the port; the other twenty-six (Mobzilla, the
+Nightmare, the Leonopteryx, the Kyuubi, the Giant Robot and the five robots, the Ant Robot, the Rat, the
+Triffid, the Purple Power, the Gamma Metroid, the Spider Driver, the Cave Fisher, the Dungeon Beast, the
+Emperor Scorpion, the Hercules Beetle, the Nastysaurus, the Pointysaurus, the Spit Bug, the T. Rex, the
+Trooper Bug and the Crystal Urchin) would chase a butterfly or an ant, or wander off after a passing ghost.
+All 38 of the original's call sites are back in their original place in each hunter's check order.
+Separately, the Leonopteryx and the Cephadrome now recognise a creative-mode player the way the original
+did (creative mode itself, not "cannot be hurt"), so a survival player who is invulnerable for some other
+reason is hunted like anyone else, exactly as in 1.7.10. The Kraken's tie between two equally distant players
+now falls the 1.7.10 way (the last one scanned).

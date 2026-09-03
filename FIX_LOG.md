@@ -4896,3 +4896,67 @@ e-mail is staged in the owner's mailbox, unsent, awaiting the owner's word on th
 Refuters this batch, all on the session model: lane A two (upheld), lane B two (upheld), lane C one (upheld; minors applied: the explosion fire-flag mapping recorded under ENT-S-104, a shooter-alive assertion added), lane D one (upheld; the client-side config clause added), lane E one (upheld; two follow-up fixes applied and re-run: failures outrank PENDING, ternary arms on a branch are never assumed; repo leg unchanged).
 
 GATE (rulings3): 2026-09-04 01:57-02:00: g1BenchmarkVerify drifted (main classes changed) and the benchmark was regenerated (proof updated: SMOKE_ONLY / COMPONENT_PROXY_ONLY / PENDING_LIVE_PRECUTOVER); build green (asset audit 0 errors / 0 advisories / 4 acknowledged; G1 PARITY PASS 2 + 11 models, checked-in proofs verified; referenceGeometry; referenceRenderers PASS 120 / NOT_APPLICABLE 13; queenPartPlacementProbe including the new section 4b); runGameTestServer: All 369 required tests passed (303 + renderTickGate 3 + ignoreListParity 26 + krakenTargetingParity 21 + krakenHoldRelease 1 + modernMasterOverride 11 + projectileTypeParity 4) in 1m23s; logs rulings3.build.log / rulings3.suite.log.
+
+## RULINGS 2026-09-04 (second batch) — modern.enabled default true, ENT-S-103..107 fixed, MOD-031 proposed, MHLib licensing closed
+
+Config default ruling (owner, 2026-09-04): `modern.enabled` defaults to true — "the master defers to
+per-feature keys by default and only forces classic when set false." `OreSpawnConfig` `[modern] enabled` is
+now `define("enabled", true)` (introduced 2026-09-03 with default false, flipped by this ruling); the spec
+comment, javadoc and the three per-feature pointers carry the new semantics; no other key, name, section or
+default changed and the four effective-value helpers are untouched. Pin:
+`ModernMasterOverrideTests#master_defaults_true_and_default_config_reads_modern` (batch
+`modernMasterOverride`): `getDefault()` is true, and with the master true and the keys at their spec
+defaults `spiderMovement()` reads MODERN and `mountCamera()` reads true — the default experience is the
+modern robots with the riding camera again. Docs rewritten (MODERNIZATION_NOTES MOD-029 and MOD-021,
+KNOWN_ISSUES, README's "Modern robots" row, the changelog note): the master defaults to true and defers to
+the keys; `modern.enabled = false` is the one-line switch to the exact 1.7.10 experience for every 2.0
+feature at once; `spiderMovement = "CLASSIC"` still works per feature; `phase14ContentEnable = true` alone
+is enough again unless the master was set false; the previous "consequence on a default config" text (the
+batch entry above) is superseded. Harness consequence: `HitboxDimsParityTests#s095_mothra_dims_both_modes`
+pins the classic 5x2 and now forces the master off around the pin (restored in finally), because on real
+defaults a fresh Mothra is the modern 6x3 (MothraModernDimsTests pins that box); the untracked generated
+gametest run config `runs/gameTestServer/config/orespawn-common.toml`, whose only non-default value was the
+stale `[modern] enabled = false`, was deleted so NeoForge regenerates it on real defaults (backup in the
+session scratchpad). Credits (LGPL ruling): `gradle.properties` `mod_credits`, the value behind
+`credits="${mod_credits}"` in neoforge.mods.toml, now ends "Bundles MultiHitboxLib by DerToaster
+(LGPL-3.0)."; README's Credits names DerToaster for MultiHitboxLib; the vendored `[[mods]]` entry is
+untouched.
+
+ENT-S-103 fixed: `UltimateArrow.doKnockback` reads the bow's Punch level off the weapon copy and pushes 0.6 ×
+level along the flat flight line with the 0.1 lift (orig UltimateArrow.java:189-191, the IrukandjiArrow shape),
+Mob-gated as orig :183; vanilla's Punch never reached the arrow because it is ruled outside #minecraft:arrows.
+ENT-S-104 fixed: `BetterFireball.onHitBlock` places orig :232-264's fire on the air side of the hit face (air
+check only, no mobGriefing gate, small shots included), and the impact explosion passes fire = true with MOB
+resolving destruction through the gamerule — for the null source exactly `canEntityGrief(level, null)` =
+RULE_MOBGRIEFING in NeoForge 21.1.223's bytecode — where the port had fed the gamerule into the fire slot. Four
+pins in `projectileTypeParity`: the s103 two-lane velocity differential (0, +0.1, +1.2); s104 small-shot face
+fire; big shot with the rule on (one fire-flagged explosion, DESTROY, the dirt hearth gone); big shot with the
+rule off (one fire-flagged explosion, KEEP, wall, hearth and face fire intact; the flip waits out the
+batch-mates' windows and is restored in a finally). MOD-031 filed: a config-gated "fire respects mobGriefing"
+modern option, PROPOSED, not implemented. One refuter per finding, upheld.
+ENT-S-105 fixed: `Kraken.findNearestPlayer` updates on `<=` per orig `World.func_72857_a` (1.7.10 `ahb`
+bytecode `dcmpl; ifle`, update body on `d1 <= d0`): the last of two equidistant players wins; pinned with two
+mirror-placed survival players whose scan order is read back with the scan's own call, plus an unequal-distance
+control. Refuted once, upheld.
+ENT-S-106 fixed: the shared ignore screen restored at the orig position in every hunter that had lost it — all
+38 orig call sites mapped, 11 already present, 27 restored (17 in private filters, 9 as the predicate of the
+vanilla NearestAttackableTargetGoal the port uses, 1 inline in the Urchin's players-only scan), none
+unmappable; `IgnoreScreenParityTests` (own batch, a `@GameTestGenerator` producing 38 TestFunctions, one per
+orig site) and a changelog entry. Scope note filed as ENT-S-108: eight goal-shaped hunters and the Urchin scan
+players only in the port where 1.7.10 scanned living entities, so their restored screen cannot bite until
+those scans are widened. Refuted twice (orig fidelity; tests and compile), upheld.
+ENT-S-107 fixed: `EntityLeon` and `Cephadrome` test `instabuild` for orig's `isCreativeMode`, not
+`invulnerable`; `CreativeMappingParityTests` (own batch, six tests: creative rejected, invulnerable-survival
+still prey, survival control, per hunter). Refuted once, upheld. Siblings filed as ENT-S-109 (nine more hunters
+with the `invulnerable` idiom).
+
+MHLib licensing — item CLOSED (owner, 2026-09-04): "I'm not sending the e-mail; discard the draft. Keep the
+LGPL text with the vendored sources and add DerToaster to the mod's credits." The draft e-mail staged in the
+owner's mailbox was moved to the trash unsent; no contact was made on any channel. The LGPL-3.0 text ships
+verbatim as `META-INF/LICENSE-MultiHitboxLib.txt` (inside the jar) and beside the vendored sources; DerToaster
+is named in the mod's credits and README; the upstream field wordings stay recorded side by side (batch entry
+above). Standing rule unchanged: the LICENSE text governs.
+
+Refuters this batch, all on the session model: lane G one (upheld; a stale MOD-029 sentence fixed), lane H two, one per finding (upheld; the lane's note that Boyfriend/Girlfriend fire with Punch 0 was corrected: both trees seed Punch from the held bow), lane I one (upheld), lane J three, two on ENT-S-106 (orig fidelity; tests and compile) and one on ENT-S-107 (upheld; the Brutalfly/King/Queen rows disclosed as non-discriminating by construction).
+
+GATE (rulings4): 2026-09-04 03:10-03:12: g1BenchmarkVerify green (no drift); build green (asset audit 0 errors / 0 advisories / 4 acknowledged; G1 PARITY PASS 2 + 11 models, checked-in proofs verified; referenceGeometry; referenceRenderers PASS 120 / NOT_APPLICABLE 13; queenPartPlacementProbe); runGameTestServer on the regenerated default run config (modern.enabled = true): All 420 required tests passed (369 + ignoreScreenParity 38 + creativeMappingParity 6 + krakenTargetingParity 2 + projectileTypeParity 4 + modernMasterOverride 1) in 1m22s; logs rulings4.build.log / rulings4.suite.log.

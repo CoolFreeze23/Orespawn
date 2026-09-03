@@ -70,12 +70,19 @@ that slice, not a task for now.
     bone payload, the attack-box data shape) stay unscheduled until ruled on.
 13. **Config master (owner, same batch):** `modern.enabled` is a master override only — off forces every
     modern feature off, on defers to the existing per-feature keys, which keep their names and sections;
-    new modern features register under `[modern]`.
+    new modern features register under `[modern]`. **Default true** (owner, 2026-09-04, second batch):
+    by default the master defers to the keys and only forces classic when set false.
 14. **Scanner (owner, same batch):** a write inside a non-evaluable branch is not provable; the renderer
     pin scanner reports it as PENDING for presentation and never assumes a branch.
-15. **MHLib licensing (owner, same batch):** the exact LGPL version of upstream's LICENSE text and the
-    toml field's wording are recorded side by side; the author is contacted via Modrinth or CurseForge
-    for clarification; the LICENSE text governs until the owner says otherwise.
+15. **MHLib licensing (owner, same batch; closed 2026-09-04):** the exact LGPL version of upstream's
+    LICENSE text (LGPL-3.0, no "or later") and the toml field's wording (All Rights Reserved) are recorded
+    side by side; the LICENSE text governs and ships verbatim with the vendored sources and inside the
+    jar; DerToaster is named in the mod's credits. Contact was not pursued: Modrinth and CurseForge offer
+    no path (both project pages deleted), and the owner declined the e-mail route and discarded the draft.
+16. **ENT-S-103 to ENT-S-107 (owner, 2026-09-04, second batch):** all parity bugs, fixed in classic; 106
+    gets a parameterized test over all 38 original `isIgnoreable` callers and a changelog entry; 104
+    restores the 1.7.10 fire behaviour and files a MOD proposal for a config-gated "fire respects
+    mobGriefing" option; two refuters on 106, one on each of the rest.
 
 ## D. Rulings executed the same day (for cross-reference)
 
