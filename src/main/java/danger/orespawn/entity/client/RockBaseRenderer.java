@@ -7,6 +7,12 @@ import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.resources.ResourceLocation;
 
+/**
+ * orig RenderRockBase.java + ClientProxyOreSpawn.java:505:
+ * {@code new RenderRockBase(new ModelRockBase(1.0f), 0.0f, 1.0f)}: RenderLiving shadow = par2 * par3
+ * (RenderRockBase.java:34) = 0.0, so 1.7.10 drew no shadow at all; this.scale = par3 (:35) and
+ * preRenderScale (:50-51, wired through func_77041_b at :54-55) scales by 1.0 = identity (ENT-S-092).
+ */
 public class RockBaseRenderer extends MobRenderer<RockBase, ModelRockBase> {
     private static final ResourceLocation TEXTURE_1 =
             ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "textures/entity/rocktexture.png");
@@ -32,8 +38,13 @@ public class RockBaseRenderer extends MobRenderer<RockBase, ModelRockBase> {
     public static final ModelLayerLocation MODEL_LAYER =
             new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "rockbase"), "main");
 
+    /** orig RenderRockBase.scale = 1.0f (third constructor argument, ClientProxyOreSpawn.java:505). */
+    public static final float SCALE = 1.0F;
+    /** orig RenderLiving shadow = 0.0f * 1.0f (RenderRockBase.java:34): no shadow drawn. */
+    public static final float SHADOW = 0.0F * 1.0F;
+
     public RockBaseRenderer(EntityRendererProvider.Context context) {
-        super(context, new ModelRockBase(context.bakeLayer(MODEL_LAYER)), 0.3f);
+        super(context, new ModelRockBase(context.bakeLayer(MODEL_LAYER)), SHADOW);
     }
 
     @Override

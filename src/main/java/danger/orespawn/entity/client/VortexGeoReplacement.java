@@ -6,7 +6,10 @@ import danger.orespawn.entity.EntityVortex;
 import net.minecraft.resources.ResourceLocation;
 import software.bernie.geckolib.animation.AnimatableManager;
 
-/** GeckoLib Vortex: one static zero-thickness billboard quad; nothing animates (classic {@code VortexModel.setupAnim} is empty). */
+/**
+ * GeckoLib Vortex: one static zero-thickness billboard quad; nothing animates (classic {@code VortexModel.setupAnim} is empty).
+ * Shadow is {@link VortexRenderer#SHADOW} (0.1 x 1.0, ENT-S-092, from ClientProxyOreSpawn.java:480 / RenderVortex.java:23).
+ */
 public final class VortexGeoReplacement extends OreSpawnGeoReplacement<EntityVortex> {
     private static final GeoReplacementDescriptor<EntityVortex> DESCRIPTOR = new GeoReplacementDescriptor<>(
             ModEntities.ENTITY_VORTEX::get,
@@ -14,7 +17,7 @@ public final class VortexGeoReplacement extends OreSpawnGeoReplacement<EntityVor
             ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "geo/entity/vortex.geo.json"),
             ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "animations/entity/vortex.animation.json"),
             ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "textures/entity/vortex.png"),
-            1.5F) {
+            VortexRenderer.SHADOW) {
     };
 
     public VortexGeoReplacement() {

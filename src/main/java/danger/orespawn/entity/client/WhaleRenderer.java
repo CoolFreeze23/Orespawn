@@ -9,6 +9,12 @@ import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.resources.ResourceLocation;
 
+/**
+ * orig RenderWhale.java + ClientProxyOreSpawn.java:484:
+ * {@code new RenderWhale(new ModelWhale(), 0.1f, 1.0f)}: RenderLiving shadow = par2 * par3
+ * (RenderWhale.java:23), this.scale = par3 (:24), and preRenderScale (:39-45, wired through
+ * func_77041_b at :47-49) draws children at scale / 2 (ENT-S-092).
+ */
 public class WhaleRenderer extends MobRenderer<Whale, ModelWhale> {
 
     private static final ResourceLocation TEXTURE =
@@ -17,10 +23,13 @@ public class WhaleRenderer extends MobRenderer<Whale, ModelWhale> {
     public static final ModelLayerLocation MODEL_LAYER =
             new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "whale"), "main");
 
+    /** orig RenderWhale.scale = 1.0f (third constructor argument, ClientProxyOreSpawn.java:484). */
     private static final float SCALE = 1.0f;
+    /** orig RenderLiving shadow = 0.1f * 1.0f (RenderWhale.java:23). */
+    public static final float SHADOW = 0.1F * 1.0F;
 
     public WhaleRenderer(EntityRendererProvider.Context context) {
-        super(context, new ModelWhale(context.bakeLayer(MODEL_LAYER)), 1.5f);
+        super(context, new ModelWhale(context.bakeLayer(MODEL_LAYER)), SHADOW);
     }
 
     @Override

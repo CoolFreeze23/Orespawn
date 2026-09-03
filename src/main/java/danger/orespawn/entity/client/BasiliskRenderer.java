@@ -9,6 +9,13 @@ import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.resources.ResourceLocation;
 
+/**
+ * orig RenderBasilisk.java + ClientProxyOreSpawn.java:420:
+ * {@code new RenderBasilisk(new ModelBasilisk(0.3f), 0.5f, 1.25f)}:
+ * RenderLiving shadow = par2 * par3 (RenderBasilisk.java:23), this.scale = par3
+ * (:24), preRenderScale glScalef(scale) (:39-41, via func_77041_b :43-45) (ENT-S-092).
+ * The ModelBasilisk(0.3f) argument is wingspeed only, not a size.
+ */
 public class BasiliskRenderer extends MobRenderer<Basilisk, ModelBasilisk> {
 
     private static final ResourceLocation TEXTURE =
@@ -20,9 +27,11 @@ public class BasiliskRenderer extends MobRenderer<Basilisk, ModelBasilisk> {
     // 1.7.10 ClientProxyOreSpawn: new RenderBasilisk(new ModelBasilisk(0.3f), 0.5f, 1.25f)
     // where the last float is the renderer's world-space scale multiplier.
     private static final float SCALE = 1.25f;
+    /** orig RenderLiving shadow = 0.5f * 1.25f (RenderBasilisk.java:23). */
+    public static final float SHADOW = 0.5F * 1.25F;
 
     public BasiliskRenderer(EntityRendererProvider.Context context) {
-        super(context, new ModelBasilisk(context.bakeLayer(MODEL_LAYER)), 1.5f);
+        super(context, new ModelBasilisk(context.bakeLayer(MODEL_LAYER)), SHADOW);
     }
 
     @Override

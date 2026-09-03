@@ -12,14 +12,26 @@ import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 
+/**
+ * orig RenderSpiderRobot.java + ClientProxyOreSpawn.java:514:
+ * {@code new RenderSpiderRobot(new ModelSpiderRobot(1.0f), 0.99f, 1.0f)}: RenderLiving shadow = par2 * par3
+ * (RenderSpiderRobot.java:22) and this.scale = par3 = 1.0 (:23). The 1.7.10 doRender (:37-43) routes to
+ * renderSpiderRobot (:27-35), which never calls super.doRender, so preRenderScale (:45-47) is bypassed;
+ * the effective world scale is 1.0 either way. The ModelSpiderRobot(1.0f) argument is wingspeed only,
+ * not a size (ENT-S-092).
+ */
 public class SpiderRobotRenderer extends MobRenderer<SpiderRobot, ModelSpiderRobot> {
     private static final ResourceLocation TEXTURE =
             ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "textures/entity/spiderrobot.png");
     public static final ModelLayerLocation MODEL_LAYER =
             new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "spiderrobot"), "main");
+    /** orig RenderSpiderRobot.scale = 1.0f (third constructor argument, ClientProxyOreSpawn.java:514). */
+    public static final float SCALE = 1.0F;
+    /** orig RenderLiving shadow = 0.99f * 1.0f (RenderSpiderRobot.java:22). */
+    public static final float SHADOW = 0.99F * 1.0F;
 
     public SpiderRobotRenderer(EntityRendererProvider.Context context) {
-        super(context, new ModelSpiderRobot(context.bakeLayer(MODEL_LAYER)), 3.0f);
+        super(context, new ModelSpiderRobot(context.bakeLayer(MODEL_LAYER)), SHADOW);
     }
 
     @Override
@@ -51,7 +63,7 @@ public class SpiderRobotRenderer extends MobRenderer<SpiderRobot, ModelSpiderRob
                 poseStack.translate(0.0f, -ModernSpiderGait.VANILLA_RENDER_Y_OFFSET, 0.0f);
             }
         }
-        poseStack.scale(1.0f, 1.0f, 1.0f);
+        poseStack.scale(SCALE, SCALE, SCALE);
         super.render(entity, entityYaw, partialTicks, poseStack, buffer, packedLight);
         poseStack.popPose();
     }
