@@ -153,6 +153,32 @@ public class OreSpawnConfig {
     public static final ModConfigSpec.IntValue ULTIMATE_SWORD_MAGIC;
     public static final ModConfigSpec.IntValue ULTIMATE_BOW_DAMAGE;
 
+    // 2.0 modern mode (owner rulings 2026-09-03). Classic 1.7.10 parity is the
+    // default experience; [modern].enabled is the ONE master switch that
+    // modern-mode features hang off, each behind its own sub-key that only
+    // takes effect while the master is on. The earlier per-feature 2.0
+    // keys (spiderMovement, mountCamera, phase14ContentEnable) predate the master and
+    // stay independent of it; the MOD-024 items are unimplemented proposals, not keys.
+    /**
+     * Master modern-mode switch, default false (classic parity). Every
+     * {@code [modern]} sub-key is inert while this is off. On it today:
+     * MOD-029 ({@link #MODERN_MOTHRA_WIDE_ROOT_HITBOX}); Phase G artist
+     * animations will hang off this same master ("artist animations are a
+     * 2.0 feature behind the modern config; classic stays code-driven
+     * parity", ruling 2026-09-03). Hitbox sub-keys are snapshotted at entity
+     * construction (BOSS-017 pattern), so a flip reaches newly constructed/
+     * loaded entities, not live ones.
+     */
+    public static final ModConfigSpec.BooleanValue MODERN_ENABLED;
+    /**
+     * MOD-029 (ACCEPTED 2026-09-03: "modern-mode default; classic keeps 5x2"):
+     * Mothra's root hitbox is the port's original 6 x 3 instead of the 1.7.10
+     * 5.0 x 2.0 (orig Mothra.java:65). Takes effect only while
+     * {@link #MODERN_ENABLED} is on -- read through
+     * {@link #mothraWideRootHitbox()}, never directly.
+     */
+    public static final ModConfigSpec.BooleanValue MODERN_MOTHRA_WIDE_ROOT_HITBOX;
+
     static {
         BUILDER.push("mobs");
         ALL_MOBS_DISABLE = BUILDER.comment("Disable all OreSpawn mobs from spawning").define("allMobsDisable", false);
@@ -337,6 +363,37 @@ public class OreSpawnConfig {
         ULTIMATE_BOW_DAMAGE = BUILDER.defineInRange("ultimateBowDamage", 10, 2, 20);
         BUILDER.pop();
 
+        // Owner rulings 2026-09-03: "MOD-029: accepted as the modern-mode
+        // default; classic keeps 5x2" and "Artist animations are a 2.0 feature
+        // behind the modern config; classic stays code-driven parity". No
+        // master modern switch existed before this section; it is the switch now.
+        BUILDER.push("modern");
+        MODERN_ENABLED = BUILDER.comment(
+                "Master switch for OreSpawn 2.0 modern mode. false (default) = classic 1.7.10 parity " +
+                        "everywhere; true = the modern-mode features below apply, each behind its own sub-key. " +
+                        "Phase G artist animations will hang off this same switch (classic stays code-driven " +
+                        "parity). Hitbox sub-keys are snapshotted when an entity is constructed, so a flip " +
+                        "affects newly spawned/loaded entities, not live ones."
+        ).define("enabled", false);
+        MODERN_MOTHRA_WIDE_ROOT_HITBOX = BUILDER.comment(
+                "MOD-029: Mothra's root hitbox is 6 x 3 (the port's original size) instead of the 1.7.10 " +
+                        "5 x 2 (orig Mothra.java:65). Only takes effect while modern.enabled is true; classic " +
+                        "mode always uses 5 x 2. Her wing/head/body parts are placed from her position and " +
+                        "are unaffected; only the root box and the target/spawn sweeps that inflate it change."
+        ).define("mothraWideRootHitbox", true);
+        BUILDER.pop();
+
         SPEC = BUILDER.build();
+    }
+
+    /**
+     * MOD-029: the single {@code master && sub-key} evaluation for Mothra's
+     * root box -- true only while {@link #MODERN_ENABLED} AND
+     * {@link #MODERN_MOTHRA_WIDE_ROOT_HITBOX} are both on. Callers snapshot
+     * the result at construction ({@code Mothra} constructor, BOSS-017
+     * pattern); it is never re-read on a live entity.
+     */
+    public static boolean mothraWideRootHitbox() {
+        return MODERN_ENABLED.get() && MODERN_MOTHRA_WIDE_ROOT_HITBOX.get();
     }
 }

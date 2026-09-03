@@ -19,10 +19,12 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.monster.Monster;
@@ -59,6 +61,18 @@ public class Mothra extends EntityButterfly implements OreSpawnPartEntity.Multip
     private final OreSpawnPartEntity<Mothra> headPart;
     private final PartEntity<?>[] allParts;
 
+    /**
+     * MOD-029 (ACCEPTED 2026-09-03: "modern-mode default; classic keeps 5x2")
+     * -- constructor-time snapshot of {@code [modern].enabled &&
+     * [modern].mothraWideRootHitbox} ({@link OreSpawnConfig#mothraWideRootHitbox()}),
+     * the King's BOSS-017 PlayNicely pattern (orig TheKing.java:85-89, port
+     * {@code TheKing#getDefaultDimensions}): true = the port's original 6 x 3
+     * root box; false = the 1.7.10 5.0 x 2.0 (orig Mothra.java:65) the
+     * EntityType is registered with (ENT-S-095 batch 2). Never re-read: a
+     * config flip reaches newly constructed/loaded Mothras, not live ones.
+     */
+    private final boolean modernWideRoot;
+
     private final ServerBossEvent bossEvent = new ServerBossEvent(
             Component.literal("Mothra"), BossEvent.BossBarColor.YELLOW, BossEvent.BossBarOverlay.PROGRESS);
 
@@ -69,6 +83,15 @@ public class Mothra extends EntityButterfly implements OreSpawnPartEntity.Multip
         // GenericTargetSorter (creepers and large mobs outrank closer small
         // ones), not by plain distance.
         this.targetSorter = new GenericTargetSorter(this);
+
+        // MOD-029: snapshot the modern master && sub-key, then refresh so the
+        // box is right from the first tick (BOSS-017: TheKing/Kraken ctor
+        // snapshot + refreshDimensions). The EntityType registration stays the
+        // classic 5.0 x 2.0 (orig Mothra.java:65, ENT-S-095 batch 2);
+        // getDefaultDimensions swaps in the port's 6 x 3 only for a
+        // modern-mode Mothra.
+        this.modernWideRoot = OreSpawnConfig.mothraWideRootHitbox();
+        this.refreshDimensions();
 
         this.bodyPart  = new OreSpawnPartEntity<>(this, "body",  4.0f, 3.0f);
         this.wingLeft  = new OreSpawnPartEntity<>(this, "wingL", 5.0f, 1.5f);
@@ -129,6 +152,32 @@ public class Mothra extends EntityButterfly implements OreSpawnPartEntity.Multip
     @Override
     public boolean isPickable() {
         return false;
+    }
+
+    /**
+     * MOD-029: the port's original 6 x 3 root box while modern mode was on at
+     * construction ({@link #modernWideRoot}), else the registered classic
+     * 5.0 x 2.0 (orig Mothra.java:65, ENT-S-095 batch 2) via {@code super}.
+     * {@code EntityDimensions.scalable(6, 3)} is exactly what the pre-batch-2
+     * {@code .sized(6.0f, 3.0f)} registration produced (eye height 0.85 * 3),
+     * so a modern-mode Mothra's entity dimensions equal the old port's; the EntityType keeps the
+     * classic 5 x 2 registration, so type-level reads (natural-spawn placement volume) stay 5 x 2.
+     *
+     * <p>Nothing else moves with the root box: the four
+     * {@link OreSpawnPartEntity} parts (body 4x3, wingL/wingR 5x1.5, head 2x2)
+     * carry their own sizes and are placed from the root POSITION in
+     * {@link #positionPart}, never from this box; and the two root-box sweeps,
+     * {@link #findSomethingToAttack} (inflate 15/20/15, orig :489) and
+     * {@link #checkSpawnRules} (inflate 64/32/64, orig :329), read the live
+     * bounding box, so in modern mode each sweep is 0.5 wider per side and
+     * 1.0 taller than 1.7.10 -- exactly the old port behaviour, now behind
+     * the switch; classic mode keeps the 1.7.10 sweeps.</p>
+     */
+    @Override
+    public EntityDimensions getDefaultDimensions(Pose pose) {
+        return this.modernWideRoot
+                ? EntityDimensions.scalable(6.0f, 3.0f)
+                : super.getDefaultDimensions(pose);
     }
 
     @Override

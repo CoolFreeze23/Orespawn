@@ -597,7 +597,7 @@ joint position each tick, so the feed generalizes directly; costs
 S6a suite pins live boxes to the solver chord (s6_part_anchor_chord
 _pin) so alignment drift is caught regardless.
 
-## MOD-029 — Mothra enlarged root hitbox as a config-gated modern option (PROPOSAL, 2026-09-03)
+## MOD-029 — Mothra enlarged root hitbox as the modern-mode default (ACCEPTED 2026-09-03: "modern-mode default; classic keeps 5x2")
 
 - **Origin:** ENT-S-095 batch 2 restored Mothra's 1.7.10 root box 5.0 x 2.0 (orig
   Mothra.java:65). The port had registered 6 x 3 with this comment:
@@ -612,6 +612,41 @@ _pin) so alignment drift is caught regardless.
   the sweeps that inflate the root box (findSomethingToAttack, checkSpawnRules) now
   match 1.7.10 exactly. If the wider root is still wanted for feel, it is a modern
   option, not parity.
-- **Proposal:** a config key (e.g. `mothraWideRootHitbox`, default false) that
-  switches Mothra's dimensions to 6 x 3; when on, the both-modes dims pin expects
-  6 x 3. Not implemented; classic mode ships 5 x 2. Owner decision pending.
+- **Ruling (2026-09-03):** "MOD-029: accepted as the modern-mode default; classic keeps
+  5x2." Ruled the same day: "Artist animations are a 2.0 feature behind the modern
+  config; classic stays code-driven parity" — so the switch is the modern config, not
+  a per-feature key of its own.
+- **Switch (implemented 2026-09-03):** no master modern switch existed before — the
+  earlier 2.0 opt-ins (`spiderMovement`, `mountCamera`, `phase14ContentEnable`, the
+  MOD-024 candidates, which are unimplemented proposals, not keys) stay as they are: the three
+  existing per-feature keys live under `[tweaks]`, untouched and independent of the master.
+  `OreSpawnConfig` (COMMON spec) gains a `[modern]` section:
+  - `modern.enabled` (`MODERN_ENABLED`, default **false**): the master. Classic 1.7.10
+    parity is the default experience; every modern-mode feature hangs off it, each
+    behind its own sub-key that is inert while the master is off. Phase G artist
+    animations will hang off this same master.
+  - `modern.mothraWideRootHitbox` (`MODERN_MOTHRA_WIDE_ROOT_HITBOX`, default **true**):
+    the MOD-029 sub-key. `OreSpawnConfig.mothraWideRootHitbox()` is the single
+    `master && sub-key` evaluation.
+- **Mothra wiring:** `Mothra#modernWideRoot` snapshots that value in the constructor and
+  calls `refreshDimensions()` (the BOSS-017 King/Kraken PlayNicely-snapshot pattern,
+  orig TheKing.java:85-89); `Mothra#getDefaultDimensions` returns
+  `EntityDimensions.scalable(6, 3)` — exactly what the pre-batch-2 `.sized(6.0f, 3.0f)`
+  registration produced — when the snapshot is true, else `super` (the registered
+  classic 5.0 x 2.0). The `ModEntities` registration stays 5 x 2. A config flip reaches
+  newly constructed/loaded Mothras only; live ones keep their box. The spec is COMMON,
+  so, like the King/Kraken snapshot, each side reads its own file at construction.
+- **What the wider root changes:** nothing in the four `OreSpawnPartEntity` parts (body
+  4x3, wings 5x1.5, head 2x2 — own sizes, placed from the root POSITION in
+  `positionPart`), and no code in the two root-box sweeps: `findSomethingToAttack`
+  (inflate 15/20/15, orig :489) and `checkSpawnRules` (inflate 64/32/64, orig :329)
+  read the live bounding box, so in modern mode each sweep is 0.5 wider per side and
+  1.0 taller than 1.7.10 — exactly the old port behaviour, now behind the switch;
+  classic mode keeps the 1.7.10 sweeps.
+- **Pins:** `HitboxDimsParityTests#s095_mothra_dims_both_modes` (classic 5 x 2 under the
+  default config, both PlayNicely states) is unchanged. New `MothraModernDimsTests`
+  (own batch `mothraModernDims`, the KrakenPlayNicelyTests flip-and-restore idiom, a
+  fresh entity per state): modern off -> 5 x 2 in both PlayNicely states; modern on ->
+  6 x 3 in both; sub-key off while modern on -> 5 x 2; live flips of either key never
+  resize a constructed Mothra.
+- **Related:** ENT-S-095 (batch 2), BOSS-017, MOD-024, Phase G ruling 2026-09-03.
