@@ -4778,3 +4778,13 @@ cow line to 0.9x1.3; BetterFireball.setSmall shrinks the box again;
 cannon_fodder is documented as port-only and pinned. Seven new gametests.
 
 GATE (ents095-b2): build green (referenceRenderers PASS 120 / PENDING 0; queenPartPlacementProbe OVERALL PASS); runGameTestServer: All 295 required tests passed (gate day3c on the full tree: 281 prior + 7 batch-2 + 3 Queen + 4 Kraken-gate tests).
+
+## ENT-S-097 FIX — Kraken's four PlayNicely behaviour gates restored (2026-09-03)
+
+Weather summoning, the lightning roll, the prey search and the target search are
+gated on the live PlayNicely config exactly where and how the original gated them
+on its static, roll-before-flag order kept. Four gametests in four batches pin
+each gate under both flag states with the weather snapshotted and restored.
+Refuted once. Two pre-existing Kraken targeting divergences noted for the ledger.
+
+GATE (ents097): build green; runGameTestServer: All 295 required tests passed (gate day3c; the four gate tests in batches krakenGateWeather/Lightning/Prey/Target, weather read through the ServerLevelData flags, prey test in empty_tall below the barrier ceiling).

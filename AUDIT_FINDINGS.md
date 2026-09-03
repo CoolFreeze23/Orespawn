@@ -6468,9 +6468,24 @@ keeps BUG-036. Commit 4ea395c's message retains the old number.)*
   `findSomethingToAttack` returns null (:1131-1133). The port's weather block,
   lightning roll, `searchForPrey()` call and `findSomethingToAttack()` carry no
   gate. No MOD record covers them.
-- **Resolution:** OPEN — report only; parity bugs by the standing rule, presented
-  before fixing. Each gate is one condition with an orig citation; pins would be
-  a batched, config-flipping gametest per gate (TEST-003 batch discipline).
+- **Resolution:** FIXED (2026-09-03, owner: "go on all four gates, each with its own
+  batched gametest under PlayNicely on and off"). All four transcribed without
+  ambiguity, reading the LIVE config at each site as the 1.7.10 static and the
+  King's BOSS-017 gates do (not the constructor snapshot, not the synched
+  datum): the weather block is wrapped whole so the countdown freezes while
+  nice (orig :171-186); the lightning roll is consumed before the flag vetoes
+  it (orig :915); the prey call site gates grab and fallback together since
+  `searchForPrey()` is the whole orig :961-982 branch; `findSomethingToAttack`
+  returns null first (orig :1131-1133). `KrakenPlayNicelyGateTests`: four tests
+  in four batches (weather timer frozen then resumed; forced-roll lightning
+  vetoed then fired; forced-roll prey search skipped then caught; target search
+  null then found), each restoring the flag and the weather on every path.
+  Refuted once. Two pre-existing Kraken divergences seen on the way and left
+  for the ledger: the port's nearest-player choice skips creative players where
+  1.7.10 took the nearest of any mode and nulled a creative one, and
+  `isSuitableTarget` keeps fewer exclusions than orig :1060-1128. The gametest
+  server runs with doWeatherCycle=false, so any future long-lived Kraken test
+  must restore the weather (TEST-003 checklist).
 
 ### ENT-S-098 — Shot BetterFireballs carry the vanilla fireball EntityType (REPORT, 2026-09-03)
 

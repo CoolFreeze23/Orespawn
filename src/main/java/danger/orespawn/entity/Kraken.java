@@ -182,7 +182,14 @@ public class Kraken extends Monster {
             this.setDeltaMovement(motion.x, dampedY, motion.z);
         }
 
-        if (this.weatherSet > 0) {
+        // ENT-S-097: orig Kraken.java:171 `weather_set > 0 && OreSpawnMain.PlayNicely == 0`
+        // — the whole timer block, decrement included, is skipped while
+        // PlayNicely is set, so the countdown freezes where it stands and
+        // resumes (rather than firing or re-arming) when the flag clears.
+        // Live per-site config read, TheKing's BOSS-017 convention: the
+        // original read the static at each site; the synced datum
+        // (DATA_PLAY_NICELY) is the renderer's copy, never a gate input.
+        if (this.weatherSet > 0 && !danger.orespawn.OreSpawnConfig.PLAY_NICELY.get()) {
             --this.weatherSet;
             if (this.weatherSet == 0 && this.level() instanceof ServerLevel serverLevel) {
                 // BUG-018: orig Kraken.java:171-185 refreshes rain+thunder TIME
@@ -227,7 +234,11 @@ public class Kraken extends Monster {
         // hitbox itself stays the constructor snapshot (getDefaultDimensions).
         this.entityData.set(DATA_PLAY_NICELY, danger.orespawn.OreSpawnConfig.PLAY_NICELY.get() ? 1 : 0);
 
-        if (this.getRandom().nextInt(400) == 1 && this.level() instanceof ServerLevel serverLevel) {
+        // ENT-S-097: orig Kraken.java:915 `nextInt(400) == 1 && OreSpawnMain.PlayNicely == 0`
+        // — the roll is consumed first, then the live flag vetoes the bolt.
+        if (this.getRandom().nextInt(400) == 1
+                && !danger.orespawn.OreSpawnConfig.PLAY_NICELY.get()
+                && this.level() instanceof ServerLevel serverLevel) {
             LightningBolt bolt = EntityType.LIGHTNING_BOLT.create(serverLevel);
             if (bolt != null) {
                 bolt.moveTo(this.getX(), this.getY() - 16.0, this.getZ());
@@ -247,7 +258,13 @@ public class Kraken extends Monster {
 
         if (this.newtarget != 0 || this.getRandom().nextInt(250) == 1 || distSqToTarget < 9.1) {
             pickNewFlightTarget();
-        } else if (this.caught == null && this.getRandom().nextInt(8) == 1) {
+        } else if (this.caught == null && this.getRandom().nextInt(8) == 1
+                && !danger.orespawn.OreSpawnConfig.PLAY_NICELY.get()) {
+            // ENT-S-097: orig Kraken.java:961 `caught == null && nextInt(8) == 1
+            // && OreSpawnMain.PlayNicely == 0` — the player grab (:962-973) and
+            // the :974-981 findSomethingToAttack fallback both live inside
+            // this gated branch (port searchForPrey), so one condition at the
+            // call site covers both, exactly as the original's did.
             searchForPrey();
         }
 
@@ -595,6 +612,13 @@ public class Kraken extends Monster {
     }
 
     private LivingEntity findSomethingToAttack() {
+        // ENT-S-097: orig Kraken.java:1131-1133 `if (OreSpawnMain.PlayNicely != 0)
+        // return null;` ahead of the search — the gate TheKing (orig :985-988)
+        // and Godzilla (orig :524-527) carry too, minus their head_found side
+        // effect (the Kraken has no head sidecar). Live per-call read (BOSS-017).
+        if (danger.orespawn.OreSpawnConfig.PLAY_NICELY.get()) {
+            return null;
+        }
         AABB searchBox = this.getBoundingBox().inflate(20.0, 40.0, 20.0);
         List<LivingEntity> entities = this.level().getEntitiesOfClass(
                 LivingEntity.class, searchBox);
