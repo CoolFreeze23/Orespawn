@@ -41,6 +41,16 @@ import danger.orespawn.entity.ai.TargetSelection;
 public class Kraken extends Monster {
     private static final EntityDataAccessor<Integer> DATA_ATTACKING =
             SynchedEntityData.defineId(Kraken.class, EntityDataSerializers.INT);
+    /**
+     * ENT-S-096: orig Kraken.java:97/:914 — DataWatcher slot 21 mirrors the
+     * live PlayNicely flag every AI step so the client renderer can apply
+     * the /3 visual shrink dynamically (orig RenderKraken.java:39-45); the
+     * BOSS-017 King/Godzilla pattern.
+     */
+    private static final EntityDataAccessor<Integer> DATA_PLAY_NICELY =
+            SynchedEntityData.defineId(Kraken.class, EntityDataSerializers.INT);
+    /** ENT-S-096: constructor-time PlayNicely snapshot (orig Kraken.java:70-76). */
+    private boolean playNicelyShrunk = false;
 
     private final ServerBossEvent bossEvent = new ServerBossEvent(
             Component.literal("Kraken"), BossEvent.BossBarColor.BLUE, BossEvent.BossBarOverlay.PROGRESS);
@@ -77,6 +87,13 @@ public class Kraken extends Monster {
         // GenericTargetSorter (creepers and large targets outrank nearer
         // small ones), not plain distance (TF-035).
         this.targetSorter = new GenericTargetSorter(this);
+        // ENT-S-096: orig Kraken.java:70-76 — constructor-time PlayNicely
+        // snapshot picks 1.3333334x5 instead of 4x15; the hitbox never
+        // resizes afterwards even if the config flips (the King's BOSS-017
+        // pattern, orig TheKing.java:85-89). The render shrink tracks the
+        // live flag through DATA_PLAY_NICELY instead.
+        this.playNicelyShrunk = danger.orespawn.OreSpawnConfig.PLAY_NICELY.get();
+        this.refreshDimensions();
     }
 
     @Override
@@ -101,6 +118,11 @@ public class Kraken extends Monster {
     protected void defineSynchedData(SynchedEntityData.Builder builder) {
         super.defineSynchedData(builder);
         builder.define(DATA_ATTACKING, 0);
+        // ENT-S-096: orig Kraken.java:97 seeds slot 21 with the live flag; the
+        // port defines 0 like TheKing/Godzilla (BOSS-017) and the first AI
+        // step syncs it (orig :914), so a true value is always non-default
+        // and ships to the client on spawn and on change.
+        builder.define(DATA_PLAY_NICELY, 0);
     }
 
     @Override
@@ -126,6 +148,23 @@ public class Kraken extends Monster {
 
     public int getKrakenHealth() {
         return (int) this.getHealth();
+    }
+
+    /** ENT-S-096: orig Kraken.java:111-113 — client-side accessor for the /3 render shrink (watcher 21). */
+    public final int getPlayNicely() {
+        return this.entityData.get(DATA_PLAY_NICELY);
+    }
+
+    /**
+     * ENT-S-096: orig Kraken.java:70-76 — 4x15 normally (orig :73, the
+     * ModEntities registration), 1.3333334x5 (orig :75, the exact float the
+     * original used) when PlayNicely was set at construction time.
+     */
+    @Override
+    public net.minecraft.world.entity.EntityDimensions getDefaultDimensions(net.minecraft.world.entity.Pose pose) {
+        return this.playNicelyShrunk
+                ? net.minecraft.world.entity.EntityDimensions.fixed(1.3333334f, 5.0f)
+                : net.minecraft.world.entity.EntityDimensions.fixed(4.0f, 15.0f);
     }
 
     @Override
@@ -182,6 +221,11 @@ public class Kraken extends Monster {
 
         if (this.hurtTimer > 0) --this.hurtTimer;
         if (this.longEnough > 0) --this.longEnough;
+
+        // ENT-S-096: orig Kraken.java:914 — per-AI-step client sync of the
+        // live flag (watcher slot 21) for the renderer's /3 branch; the
+        // hitbox itself stays the constructor snapshot (getDefaultDimensions).
+        this.entityData.set(DATA_PLAY_NICELY, danger.orespawn.OreSpawnConfig.PLAY_NICELY.get() ? 1 : 0);
 
         if (this.getRandom().nextInt(400) == 1 && this.level() instanceof ServerLevel serverLevel) {
             LightningBolt bolt = EntityType.LIGHTNING_BOLT.create(serverLevel);
