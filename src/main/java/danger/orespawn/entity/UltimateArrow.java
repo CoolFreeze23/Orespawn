@@ -99,7 +99,7 @@ public class UltimateArrow extends AbstractArrow {
      * direct attacker to be in {@code #minecraft:arrows} (data/minecraft/enchantment/punch.json),
      * which this arrow is ruled OUT of (tag ruling 2026-09-04, pinned by
      * ProjectileTypeParityTests), so the bow's self-applied Punch 2 (item/UltimateBow.java:31)
-     * never landed. This override is the IrukandjiArrow shape (IrukandjiArrow.java:90-98 push,
+     * never landed. This override is the IrukandjiArrow shape (IrukandjiArrow.java:91-99 push,
      * :120-127 weapon read): the level comes off the firing weapon's Punch enchantment
      * ({@link #getWeaponItem}, the copy AbstractArrow keeps of the bow stack), the push is
      * 0.6 x level along the flat flight line with the 0.1 lift, raw as orig's addVelocity was
@@ -126,7 +126,7 @@ public class UltimateArrow extends AbstractArrow {
 
     /**
      * Punch level read from the firing weapon (orig UltimateBow.java:52-54 seeded
-     * knockbackStrength from the bow's Punch); the IrukandjiArrow.java:120-127 read.
+     * knockbackStrength from the bow's Punch); the IrukandjiArrow.java:121-128 read.
      */
     private int punchLevel() {
         ItemStack weapon = this.getWeaponItem();
