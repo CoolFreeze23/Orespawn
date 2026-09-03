@@ -1,6 +1,7 @@
 package danger.orespawn.gametest;
 
 import danger.orespawn.ModEntities;
+import danger.orespawn.OreSpawnConfig;
 import danger.orespawn.OreSpawnMod;
 import danger.orespawn.entity.EntityRat;
 import danger.orespawn.entity.Godzilla;
@@ -105,9 +106,27 @@ public class CrashReproTests {
         level.addFreshEntity(plainRat);
         level.addFreshEntity(legacyRat);
 
+        // TEST-003 follow-up (2026-09-04): unowned rats are MONSTER-category and
+        // Mob.checkDespawn discards them on the first tick in which the nearest
+        // player is beyond 128 blocks -- and mock players from CONCURRENT
+        // bucket-mates log in at the world origin, millions of blocks away, so
+        // this test's outcome used to depend on which tests shared its bucket.
+        // A creative keeper player inside the pen (rats ignore creative players,
+        // orig Rat.java:227) keeps the nearest-player distance under 32 blocks for
+        // the whole AI window; it is removed before the despawn half below.
+        ServerPlayer keeper = helper.makeMockServerPlayerInLevel();
+        keeper.setGameMode(GameType.CREATIVE);
+        keeper.setPos(center.x + 3.0, center.y, center.z - 3.0);
+
         helper.runAfterDelay(220, () -> {
+            level.getServer().getPlayerList().remove(keeper);
             helper.assertTrue(plainRat.isAlive() && !plainRat.isRemoved(),
-                    "plain summoned rat vanished during AI ticking (BUG-003)");
+                    "plain summoned rat vanished during AI ticking (BUG-003): removal=" + plainRat.getRemovalReason()
+                            + " health=" + plainRat.getHealth() + " difficulty=" + level.getDifficulty()
+                            + " players=" + level.players().size() + " nearestPlayerDistSq="
+                            + (level.getNearestPlayer(center.x, center.y, center.z, -1.0, false) == null ? "none"
+                                    : String.valueOf(level.getNearestPlayer(center.x, center.y, center.z, -1.0, false).distanceToSqr(center)))
+                            + " playNicely=" + OreSpawnConfig.PLAY_NICELY.get());
             helper.assertTrue(legacyRat.isAlive() && !legacyRat.isRemoved(),
                     "legacy empty-owner rat vanished during AI ticking (BUG-003)");
 

@@ -356,7 +356,7 @@ public class StructureTestsC {
      * dimensions on the GameTestServer; see the stub in the method body).
      * Far-build K=801.
      */
-    @GameTest(template = "empty")
+    @GameTest(template = "empty", timeoutTicks = 400)
     public void spider_hangout_village_i164(GameTestHelper helper) {
         ServerLevel level = helper.getLevel();
         BlockPos p = farPos(helper, 801);
@@ -379,14 +379,23 @@ public class StructureTestsC {
                                           // ticks, before the delayed build
             }
         }
-        helper.runAfterDelay(5, () -> {
-            try {
-                spiderHangoutBuildAndAsserts(helper, level, p);
-            } finally {
-                chunkSource.removeRegionTicket(TicketType.FORCED, ticketPos, 2, ticketPos);
-            }
-            helper.succeed();
-        });
+        // TF-023 follow-up (2026-09-04): the fixed 5-tick wait assumed the queued
+        // promotion always drained in time; under a fuller suite it did not, the
+        // spawn landed in a section that was not yet tracked, and the pad query
+        // read 0. Wait until the spawn cell's chunk is ENTITY_TICKING (the FORCED
+        // ticket's centre level), then build; the test's own timeout bounds it.
+        BlockPos spawnCell = p.offset(10, 1, 10);
+        helper.startSequence()
+                .thenWaitUntil(() -> helper.assertTrue(level.isPositionEntityTicking(spawnCell),
+                        "i164: pad centre chunk not entity-ticking yet"))
+                .thenExecute(() -> {
+                    try {
+                        spiderHangoutBuildAndAsserts(helper, level, p);
+                    } finally {
+                        chunkSource.removeRegionTicket(TicketType.FORCED, ticketPos, 2, ticketPos);
+                    }
+                })
+                .thenSucceed();
     }
 
     /** Build + asserts of {@link #spider_hangout_village_i164} (body unchanged
@@ -460,7 +469,12 @@ public class StructureTestsC {
         List<SpiderRobot> robots = level.getEntitiesOfClass(SpiderRobot.class,
                 new AABB(p.getX() - 2, p.getY() - 2, p.getZ() - 2,
                         p.getX() + 22, p.getY() + 22, p.getZ() + 22), e -> true);
-        helper.assertValueEqual(robots.size(), 1, "i164: Robot Spider count on the pad");
+        helper.assertValueEqual(robots.size(), 1, "i164: Robot Spider count on the pad (difficulty=" + level.getDifficulty()
+                + " players=" + level.players().size() + " wideCount="
+                + level.getEntitiesOfClass(SpiderRobot.class, new AABB(p.getX() - 200, p.getY() - 64, p.getZ() - 200,
+                        p.getX() + 220, p.getY() + 128, p.getZ() + 220), e -> true).size()
+                + " allSpiders=" + level.getEntities(ModEntities.SPIDER_ROBOT.get(), e -> true).size()
+                + " entityTicking=" + level.isPositionEntityTicking(p.offset(10, 1, 10)) + ")");
         SpiderRobot robot = robots.get(0);
         helper.assertTrue(robot.isPersistenceRequired(),
                 "i164: Robot Spider must be persistence-flagged (spec S5 — spawnPersistent, post-BUG-007)");
@@ -502,7 +516,7 @@ public class StructureTestsC {
      * structure-side contract asserted here is that the robot spawns
      * factory-fresh unowned. Far-build K=802.
      */
-    @GameTest(template = "empty")
+    @GameTest(template = "empty", timeoutTicks = 400)
     public void red_ant_hangout_village_i165(GameTestHelper helper) {
         ServerLevel level = helper.getLevel();
         BlockPos p = farPos(helper, 802);
@@ -538,14 +552,23 @@ public class StructureTestsC {
                                           // ticks, before the delayed build
             }
         }
-        helper.runAfterDelay(5, () -> {
-            try {
-                redAntHangoutBuildAndAsserts(helper, level, p);
-            } finally {
-                chunkSource.removeRegionTicket(TicketType.FORCED, ticketPos, 2, ticketPos);
-            }
-            helper.succeed();
-        });
+        // TF-023 follow-up (2026-09-04): the fixed 5-tick wait assumed the queued
+        // promotion always drained in time; under a fuller suite it did not, the
+        // spawn landed in a section that was not yet tracked, and the pad query
+        // read 0. Wait until the spawn cell's chunk is ENTITY_TICKING (the FORCED
+        // ticket's centre level), then build; the test's own timeout bounds it.
+        BlockPos spawnCell = p.offset(10, 1, 10);
+        helper.startSequence()
+                .thenWaitUntil(() -> helper.assertTrue(level.isPositionEntityTicking(spawnCell),
+                        "i165: pad centre chunk not entity-ticking yet"))
+                .thenExecute(() -> {
+                    try {
+                        redAntHangoutBuildAndAsserts(helper, level, p);
+                    } finally {
+                        chunkSource.removeRegionTicket(TicketType.FORCED, ticketPos, 2, ticketPos);
+                    }
+                })
+                .thenSucceed();
     }
 
     /** Build + asserts of {@link #red_ant_hangout_village_i165} (body unchanged
