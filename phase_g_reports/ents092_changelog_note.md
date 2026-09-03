@@ -114,3 +114,28 @@ Separately, the Leonopteryx and the Cephadrome now recognise a creative-mode pla
 did (creative mode itself, not "cannot be hurt"), so a survival player who is invulnerable for some other
 reason is hunted like anyone else, exactly as in 1.7.10. The Kraken's tie between two equally distant players
 now falls the 1.7.10 way (the last one scanned).
+
+Nine hunters hunt as they did in 1.7.10 again: the Cave Fisher, Dungeon Beast, Emperor Scorpion, Hercules Beetle,
+Nastysaurus, Spit Bug, T. Rex, Trooper Bug and Crystal Urchin consider every living thing inside the original's
+search box (10x3x10 to 32x8x32 around the hunter), ranked by the original sorter and screened by the original chain
+(the shared ignore list, line of sight, allied species, creative players) on the original tick cadence, instead of
+players only. Villagers, golems, water and ambient creatures and OreSpawn's own non-monster species are prey again,
+and prey that leaves the box or line of sight is dropped as it was.
+
+Classic parity, targeting: nine more hunters (Cryolophosaurus, Brutalfly for both its filter and its fireball
+strafe, Gamma Metroid, Kyuubi, Leaf Monster, Lurking Terror, Rat, Terrible Terror, Triffid) now read the 1.7.10
+creative check as creative mode rather than invulnerability: a survival player made invulnerable by other means is
+prey again and a creative player never is. The Cephadrome ignores everything on Peaceful, and an unfed shark's
+warning stalk after a refused ride lasts one scan, as in 1.7.10. A wild Leonopteryx hunts like 1.7.10 again: it
+no longer attacks every living thing in reach but takes monsters, non-creative players and the original's short
+list of attackable non-mobs (villagers, the royal family, Cephadromes, Water Dragons, Dragons, Spyros, Gamma
+Metroids, Girlfriends and Boyfriends, Stinkies), so farm animals are safe, and the Play Nicely setting switches its
+hunting off entirely. Irukandji arrows no longer punch players: the Skate Bow's Punch knockback lands on mobs only.
+The Nightmare leaves the Danger Dimension's own creatures alone again: Ender Reapers, Leaf Monsters, Terrible and
+Lurking Terrors, Creeping Horrors, Islands and Triffids are off its prey list.
+
+Boss fireballs respect `mobGriefing` (new in 2.0, on by default). With the gamerule off, an OreSpawn fireball no
+longer lights the block it hits or scatters fire from its blast, the way ghast and blaze shots behave; damage, the
+ignite of whatever it hits, and the explosion itself are unchanged, and with the rule on nothing changes.
+`fireRespectsMobGriefing = false` under `[modern]` (or `modern.enabled = false`) restores the 1.7.10 fire-always
+behaviour (MOD-031).

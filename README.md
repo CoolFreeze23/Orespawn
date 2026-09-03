@@ -53,6 +53,7 @@ automated regression suite guards the result.
 | **Companions** | Girlfriends, Boyfriends, tameable everything, rideable robots and dragons. *(screenshot)* |
 | **A living world** | 47 structures, wild crops, anthills, troll blocks, boosted ores. *(screenshot)* |
 | **Modern robots** *(new in 2.0, on by default)* | Procedural spider & ant: legs that really plant and climb, per-leg hitboxes, a steerable spider saddle with a smart riding camera — what a default config runs (`spiderMovement` defaults to `MODERN`; the `modern.enabled` master defaults to true and defers to the per-feature keys). `modern.enabled = false` is the one-line switch to the exact 1.7.10 experience for every 2.0 feature at once; `spiderMovement = "CLASSIC"` switches just the robots. *(screenshot)* |
+| **Fireballs respect `mobGriefing`** *(new in 2.0, on by default)* | OreSpawn fireballs place no fire beside the block they hit and scatter no blast fire while the gamerule is off, as ghast and blaze shots behave (`[modern] fireRespectsMobGriefing`; `false`, or `modern.enabled = false`, keeps the 1.7.10 fire-always behaviour). *(MOD-031)* |
 
 ## Beta status — read this
 

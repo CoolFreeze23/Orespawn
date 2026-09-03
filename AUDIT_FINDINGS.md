@@ -7016,9 +7016,41 @@ keeps BUG-036. Commit 4ea395c's message retains the old number.)*
   that orig's any-non-EntityMob rule took). Pointysaurus is players-only in orig too (:246) — not a
   divergence. Consequence: the ignore screen restored by ENT-S-106 sits in order at these sites but
   cannot bite until the scans are widened; no MOD record covers the narrowing.
-- **Resolution:** OPEN — report only; a parity bug per hunter by the standing rule. Fix shape: widen
-  each goal to `LivingEntity.class` (or restore the orig box scan) with the orig exclusion chain, one
-  representative-species test per hunter in the `ignoreScreenParity` batch's style.
+- **Resolution:** FIXED (2026-09-04) — owner ruling "ENT-S-108 through 113: all parity, fix in classic". Each of the
+  nine hunters carries the 1.7.10 scan again: a private `findSomethingToAttack()` (PlayNicely gate;
+  `getEntitiesOfClass(LivingEntity.class, getBoundingBox().inflate(x, y, z))` with the orig box — CaveFisher 10/3/10,
+  DungeonBeast 16/3/16, EmperorScorpion 24/6/24, HerculesBeetle 16/6/16, Nastysaurus 32/8/32, SpitBug 12/7/12, TRex
+  20/6/20, TrooperBug 12/7/12, Urchin 16/3/16; `TargetSelection.firstMatch` over a `GenericTargetSorter`, i.e. the
+  orig `Collections.sort` + first-accepted loop, stable ties included) over a private `isSuitableTarget(LivingEntity)`
+  transcribing the orig chain in orig order (null/self/dead, the ENT-S-106 screen at its orig position,
+  `getSensing().hasLineOfSight`, the species chain, creative = `instabuild`), called from `customServerAiStep` on the
+  orig gate (CaveFisher/DungeonBeast/Urchin `nextInt(8)==0`, EmperorScorpion/HerculesBeetle `nextInt(4)==0`,
+  Nastysaurus/SpitBug/TrooperBug `nextInt(5)==0`, TRex `nextInt(5)==1`), every step cited to orig file:line. The
+  vanilla `NearestAttackableTargetGoal` registrations (the CaveFisher's Player + Animal pair, seven Player-only
+  goals) and the Urchin's `getNearestPlayer(16)` are removed; no goal could be kept — every orig site ranks by
+  GenericTargetSorter, which the vanilla goal's plain-nearest pick, `inflate(range, 4, range)` box and `forCombat`
+  conditions do not reproduce. Target slot: 1.7.10 acted on the scan's pick for that tick only (the hurt-set target,
+  where one existed, was the sticky one), so the port re-derives its own pick every cadence tick — replaced, or
+  cleared when the scan is empty, so prey leaving the box or sight stops the chase as in orig — and leaves any target
+  set by another path (HurtByTargetGoal, the `hurt()` overrides, the melee goals' forget roll) alone; ownership is a
+  `scanPick` field cleared in a `setTarget` override (the Alosaurus precedent made safe against
+  `TargetGoal.canContinueToUse`'s per-tick re-assert). Tests: `TargetScanParityTests` (own batch `targetScanParity`,
+  45 generated: per hunter a non-player living thing in the box is the pick and no NearestAttackableTargetGoal
+  remains / the ENT-S-106 list species is refused / a creative mock player is refused and the same player in survival
+  is prey / the box is pinned on +x, +y, +z from both sides / one species of the hunter's own chain is refused, each
+  with a pig control on the same spot); IgnoreScreenParityTests rows 6, 7, 8, 12, 17, 31, 32, 36 and 37 now reach the
+  private filter (38 rows, batch unchanged; the CLASS_REFERENCE shape is gone). Refuted twice (orig fidelity of the
+  nine transcriptions; tests and compile), upheld. The fidelity refuter's hardening is applied: after the scan sets
+  its pick, `scanPick` is re-read from `getTarget()`, so a `LivingChangeTargetEvent` handler that substitutes the
+  target cannot stall the scan. Pre-existing DIVERGENCES stated here and passed to the targeting survey ledger
+  (outside this finding's scope): (D1) Nastysaurus and TRex — orig scanned and hit visible prey while the revenge
+  target was out of sight (:223-225 / :193-195) or under PlayNicely (:215-217 / :185-187); the port's single slot
+  keeps the HurtByTargetGoal target (300-tick unseen memory) and suppresses the scan, and PlayNicely never blanks
+  revenge; (D2) CaveFisher, DungeonBeast and Urchin — orig registered EntityAIHurtByTarget but never consumed its
+  attack target (the scan was the sole prey source), while the port chases the attacker through HurtByTargetGoal
+  and its melee goal. Residuals also passed to the ledger: TRex's 1-in-200 revenge drop absent from
+  `Presets.trex()`; the Urchin's inner swing die; the EmperorScorpion/Nastysaurus forget roll evaluated per tick
+  rather than inside the gate; armor stands (LivingEntity) pass every chain, with no 1.7.10 counterpart.
 
 ### ENT-S-109 — Nine more hunters map 1.7.10 "creative" to `invulnerable` (REPORT, 2026-09-04)
 
@@ -7029,42 +7061,109 @@ keeps BUG-036. Commit 4ea395c's message retains the old number.)*
   LeafMonster.java:202 ↔ EntityLeafMonster :162; LurkingTerror.java:343 ↔ EntityLurkingTerror :248;
   Rat.java:227 ↔ EntityRat :199; TerribleTerror.java:288 ↔ EntityTerribleTerror :163;
   Triffid.java:314 ↔ EntityTriffid :253. (`PointysaurusStareGoal` uses `isCreative()` — correct.)
-- **Resolution:** OPEN — report only; parity bugs by the standing rule. Fix: `instabuild` at the ten
-  sites with the ENT-S-107 discriminating tests (creative rejected, invulnerable-survival still prey) in
-  the `creativeMappingParity` batch.
+- **Resolution:** FIXED (2026-09-04) — owner ruling "ENT-S-108 through 113: all parity, fix in
+  classic. Generated tests per site where the pattern allows". `Abilities.instabuild` for orig
+  `capabilities.isCreativeMode` at the ten sites (the ENT-S-107 mapping: 1.21.1
+  `GameType.updatePlayerAbilities` sets `instabuild` for CREATIVE only, `invulnerable` for CREATIVE
+  and SPECTATOR, and either can be toggled by hand): Cryolophosaurus :125, EntityBrutalfly :207
+  (strafe) and :366 (filter), EntityGammaMetroid :221, EntityKyuubi :150, EntityLeafMonster :167,
+  EntityLurkingTerror :250, EntityRat :203, EntityTerribleTerror :169, EntityTriffid :260; javadoc
+  cite on every filter, comment cite at the strafe; nothing else in those methods. Pins:
+  `CreativeMappingParityTests` (batch `creativeMappingParity`) gains `@GameTestGenerator
+  s109CreativeMappingSites` (30 TestFunctions): per filter site the ENT-S-107 triple through the
+  private filter by reflection — creative mock player rejected, SURVIVAL mock player with
+  `Abilities.invulnerable` set by hand still prey (the discriminating case the old mapping failed),
+  plain survival prey; the Brutalfly strafe is driven directly — `customServerAiStep` invoked once by
+  reflection under a forced `Entity.random` (the VortexParityTests.ForcedRoll seam: nextInt(200)→1
+  skips reselection, nextInt(6)→0 enters the strafe, nextInt(shoot)→1 fires nothing) with the flight
+  target parked 10 above and the strafe mark `player.blockPosition().above(4)` read back through
+  `currentFlightTarget`: the creative player leaves the parked target, both survival players set the
+  mark. Every site exercised synchronously. Refuted once, upheld. Observations for the targeting
+  survey ledger, not acted on: GammaMetroid lacks orig :254's PEACEFUL guard and orig :241's hunt-roll
+  gate; the Brutalfly keeps a creative `target` non-null (orig :224-226 nulls it so the mob hunt can
+  run) and scans a 30-block sphere where orig :215 used a 30 x 20 x 30 box; Kyuubi's explicit
+  PigZombie exclusion is covered by `Monster` in 1.21.1.
 
 ### ENT-S-110 — Untamed EntityLeon hunts any non-Monster living thing and lacks the PlayNicely gate (REPORT, 2026-09-04)
 
 - **Evidence:** observed by the ENT-S-106 lane and confirmed by its refuter: orig Leon.java:422-426
   accepts, untamed, only `isAttackableNonMob` targets, and :391 gates the hunt on PlayNicely; the port's
   `EntityLeon.isSuitableTarget` (:756) accepts any non-Monster living entity and has no PlayNicely gate.
-- **Resolution:** OPEN — report only; a parity bug by the standing rule. Fix shape: restore the
-  `isAttackableNonMob` rule and the PlayNicely gate at orig positions, with a both-modes test.
+- **Resolution:** FIXED (2026-09-04) — owner: "ENT-S-108 through 113: all parity, fix in classic. Generated
+  tests per site where the pattern allows; two refuters on 108, one on the rest." `EntityLeon.isSuitableTarget`
+  (:753) gains the PlayNicely gate at the orig position (:755, `OreSpawnConfig.PLAY_NICELY.get() -> false`, orig
+  :391-393, after Peaceful and ahead of the null check, read live) and its untamed tail (:765) grants only
+  `isAttackableNonMob` targets (orig :422-426), else false (orig :427). The membership is a private
+  `EntityLeon.isAttackableNonMob` (:783-797) reproducing orig MyUtils.java:77-115 in orig order (EntityMob →
+  Monster, Mothra, Leon → EntityLeon, Dragon, Spyro → EntitySpyro, the royalty via `MyUtils.isRoyalty`,
+  GammaMetroid → EntityGammaMetroid, Cephadrome, WaterDragon, Girlfriend, Boyfriend, EntityVillager → Villager,
+  Stinky → EntityStinky), inline because the port's `MyUtils.isAttackableNonMob` (:54-63) carries a different
+  set (EnderDragon / Kraken / Godzilla / GodzillaHead / Basilisk / Cephadrome / TheKing / TheQueen, read by Crab
+  :366, EntityMantis :279, EntityMolenoid :289, TheKing :1187, TheQueen :1386 — passed to the targeting survey
+  ledger). The ENT-S-106 ignore line and the ENT-S-107 instabuild line keep their positions. Pins:
+  `LeonTargetingTests` (own batch `leonTargeting`, 6 tests): an untamed Leon accepts a vanilla Villager (orig
+  :422-425, MyUtils :111) and rejects a vanilla pig (orig :427 — the case the old tail failed); a tamed Leon
+  rejects the Villager (orig :422); PlayNicely raised refuses a Zombie that the :412 rule grants with it down
+  (orig :391, live; flag restored in a finally); the ENT-S-107 creative-rejected and survival-prey cases still
+  hold. Harness consequence: `IgnoreScreenParityTests` row 15 (leon_403) now uses a Zombie control, because
+  orig :427 rejects a pig for an untamed Leon. Refuted once, upheld. Ledger observations: `EntityLeon.registerGoals`
+  adds its `NearestAttackableTargetGoal<Monster>` unconditionally where orig :92-94 added the target task only
+  with PlayNicely off.
 
 ### ENT-S-111 — IrukandjiArrow pushes any LivingEntity where 1.7.10 gated the push on EntityLiving (REPORT, 2026-09-04)
 
 - **Evidence:** observed by the ENT-S-103 lane: the port's `IrukandjiArrow.java:86` push applies to any
   LivingEntity; orig IrukandjiArrow.java:181 gated it on `instanceof EntityLiving` (the 1.7.10 AI-mob base,
   1.21.1 `Mob`), so a player was never pushed. The ENT-S-103 fix on `UltimateArrow` carries the gate.
-- **Resolution:** OPEN — report only; a parity bug by the standing rule (one-line gate plus a player
-  versus mob test in the `projectileTypeParity` batch).
+- **Resolution:** FIXED (2026-09-04) — same ruling. `IrukandjiArrow.onHitEntity` gates its whole hit block on
+  `hit instanceof Mob` — orig :181's `instanceof EntityLiving` (the 1.7.10 AI-mob base; EntityPlayer was an
+  EntityLivingBase only), which wrapped the arrow count, the Punch push and the ding together — so a player
+  takes the vanilla 0.4 hurt knockback and neither a push nor a stuck-arrow count, as in 1.7.10 (the lane
+  first gated the push alone; the refuter's faithful one-liner was applied after refutation). Pin:
+  `ProjectileTypeParityTests.s111_irukandji_arrow_punch_pushes_a_mob_but_never_a_player` (batch
+  `projectileTypeParity`): two lanes on the s103 geometry with Punch-2 skate bows, a frozen cow and a survival
+  mock player (spawn invulnerability cleared by reflection; `ultimateSwordPvp` raised for the window and restored
+  on every path, since the guard no-sells players while off), velocities read the tick each arrow is discarded:
+  the cow at 0.4 + 1.2 along +z with the 0.1 lift, the player at the 0.4 alone, lane difference (0, 0.1, 1.2),
+  s103 tolerances. Refuted once, upheld. Line drift: the ENT-S-103 cites "IrukandjiArrow.java:90-98 push,
+  :120-127 weapon read" are now :91-99 / :121-128 after the `Mob` import.
 
 ### ENT-S-112 — PitchBlack lacks the 1.7.10 ally exclusions (REPORT, 2026-09-04)
 
 - **Evidence:** observed by the ENT-S-106 fidelity refuter: orig PitchBlack.java:507-530 excludes
   EnderReaper, LeafMonster, TerribleTerror, LurkingTerror, CreepingHorror, Island, IslandToo and Triffid
   from its targets; none of those names appear in the port's `PitchBlack.java` (:520-526 filter).
-- **Resolution:** OPEN — report only; a parity bug by the standing rule. Fix shape: the orig exclusion
-  chain in orig order with one test per excluded species in a batch of its own.
+- **Resolution:** FIXED (2026-09-04) — same ruling. `PitchBlack.isSuitableTarget` (:527) carries the eight
+  exclusions in orig order at the orig position — after the self-kind refusal (orig :504-506) and ahead of the
+  creative-player check (orig :531-536): EnderReaper (:531, orig :507), EntityLeafMonster (:532, orig :510),
+  EntityTerribleTerror (:533, orig :513), EntityLurkingTerror (:534, orig :516), CreepingHorror (:535, orig :519),
+  Island (:536, orig :522), IslandToo (:537, orig :525), EntityTriffid (:538, orig :528); the ENT-S-106 ignore line
+  stays. Pins: `PitchBlackAllyTests` (own batch `pitchBlackAllies`, a `@GameTestGenerator` producing 8
+  TestFunctions, one per excluded species in orig order): the species frozen 8 blocks in front of a frozen
+  Nightmare with line of sight, off the ignore list, refused; a vanilla pig and a vanilla Zombie on the same spot
+  accepted. Refuted once, upheld. Passed to the targeting survey ledger: the port filter has no line-of-sight step
+  where orig :501-503 had `getEntitySenses().canSee`.
 
 ### ENT-S-113 — Cephadrome's target filter lacks the 1.7.10 PEACEFUL guard and the `shouldattack` reset (REPORT, 2026-09-04)
 
 - **Evidence:** observed by the ENT-S-107 refuter: orig Cephadrome.java:516-518 returns false in PEACEFUL
   before any other check, and :567 resets `shouldattack = 0` inside the player branch; the port's
   `Cephadrome.isSuitableTarget` (:390-406) has neither. Pre-existing; no MOD record.
-- **Resolution:** OPEN — report only; a parity bug by the standing rule. Fix shape: the two orig lines at
-  orig positions with a difficulty test and a `shouldattack` state test in the `creativeMappingParity`
-  batch's style.
+- **Resolution:** FIXED (2026-09-04) — same ruling. `Cephadrome.isSuitableTarget` (:397-421) opens
+  with orig :516-518 `level().getDifficulty() == PEACEFUL → false` ahead of every other check (:398),
+  and the player branch is orig :557-570 line for line: creative → false (:557, ENT-S-107),
+  hit-by-player → true (:560-562), bad mood → true (:563-565), `shouldattack > 0` → zeroed and true
+  (:566-569, port :414-417), else false (:570) — the stalk flag armed by a refused mount (orig :899,
+  port mobInteract :450) is spent on the one answer it grants, so an unfed shark stalks the would-be
+  rider for a single scan as in 1.7.10 (the port stalked until fed). Javadoc cites both. Pins: new
+  `CephadromeGateTests` (own batch `cephadromeGates`, 6 tests): PEACEFUL rejects the survival player
+  a bad-mood shark takes on NORMAL and the vanilla Zombie NORMAL takes (the guard precedes the :534
+  EntityMob answer) — difficulty flipped with `MinecraftServer.setDifficulty(PEACEFUL, true)` inside
+  the test, asserted through `level.getDifficulty()`, restored in a finally, NORMAL asserted as the
+  precondition; `shouldattack` 1 → the player branch answers true and reads back 0, the next answer
+  is false; a Zombie, a bad-mood answer and a creative rejection each leave it at 1. Not covered,
+  passed to the targeting survey ledger: orig :488's `!= PEACEFUL` gate on the hunt roll itself (port
+  `customServerAiStep` :360), which on Peaceful also spares a revenge target. Refuted once, upheld.
 ### TEST-003 — Config-flipping gametests in the concurrent default batch
 
 - **Impact:** MEDIUM (suite reliability) — boss005/boss012 flip a global

@@ -4960,3 +4960,80 @@ above). Standing rule unchanged: the LICENSE text governs.
 Refuters this batch, all on the session model: lane G one (upheld; a stale MOD-029 sentence fixed), lane H two, one per finding (upheld; the lane's note that Boyfriend/Girlfriend fire with Punch 0 was corrected: both trees seed Punch from the held bow), lane I one (upheld), lane J three, two on ENT-S-106 (orig fidelity; tests and compile) and one on ENT-S-107 (upheld; the Brutalfly/King/Queen rows disclosed as non-discriminating by construction).
 
 GATE (rulings4): 2026-09-04 03:10-03:12: g1BenchmarkVerify green (no drift); build green (asset audit 0 errors / 0 advisories / 4 acknowledged; G1 PARITY PASS 2 + 11 models, checked-in proofs verified; referenceGeometry; referenceRenderers PASS 120 / NOT_APPLICABLE 13; queenPartPlacementProbe); runGameTestServer on the regenerated default run config (modern.enabled = true): All 420 required tests passed (369 + ignoreScreenParity 38 + creativeMappingParity 6 + krakenTargetingParity 2 + projectileTypeParity 4 + modernMasterOverride 1) in 1m22s; logs rulings4.build.log / rulings4.suite.log.
+
+## RULINGS 2026-09-04 (third batch) — ENT-S-108..113 fixed, MOD-031 accepted (default on), targeting survey ledger
+
+ENT-S-108 fixed: nine hunters (Cave Fisher, Dungeon Beast, Emperor Scorpion, Hercules Beetle, Nastysaurus, Spit Bug,
+T. Rex, Trooper Bug, Crystal Urchin) carry the 1.7.10 scan again — a private `findSomethingToAttack()` (PlayNicely
+gate, `getEntitiesOfClass(LivingEntity.class, box)` with the orig box, `TargetSelection.firstMatch` over a
+`GenericTargetSorter` = the orig sort plus first-accepted loop) over a private `isSuitableTarget` transcribing the
+orig chain in orig order (the ENT-S-106 screen at its orig position, line of sight, the species chain, creative =
+instabuild), called from `customServerAiStep` on the orig random gate; the vanilla Player-only goals (the Cave
+Fisher's Player + Animal pair) and the Urchin's `getNearestPlayer(16)` are removed, since no vanilla goal reproduces
+the orig sorter, box or chain. The scan's own pick is re-derived every cadence tick (cleared when the scan is
+empty, so prey leaving the box or sight stops the chase as in orig) and a target set by another path (hurt, revenge
+goal, forget roll) is left alone, tracked by a `scanPick` field cleared in a `setTarget` override.
+`TargetScanParityTests` (own batch, 45 generated: living prey selected with no vanilla goal left, ignore-list species
+refused, creative refused and the same player in survival prey, the box pinned on +x/+y/+z from both sides, one
+species of the hunter's own chain refused, each with a pig control); the nine ENT-S-106 ignore-screen rows for these
+hunters now probe the restored filters directly (38 rows, batch unchanged). Refuted twice (orig fidelity of the nine
+transcriptions; tests and compile), upheld; the fidelity refuter's slot hardening applied. Two pre-existing
+divergences stated and passed to the targeting survey ledger: Nastysaurus/TRex keep a revenge target the orig
+blanked while out of sight or under PlayNicely, and CaveFisher/DungeonBeast/Urchin chase an attacker the orig never
+read; residuals likewise (TRex's 1-in-200 revenge drop, the Urchin's inner swing die, forget rolls evaluated per
+tick, armor stands passing the chains).
+ENT-S-109 fixed: `Abilities.instabuild` for orig `capabilities.isCreativeMode` at the ten sites in nine classes
+(Cryolophosaurus; Brutalfly's strafe and filter; GammaMetroid; Kyuubi; LeafMonster; LurkingTerror; Rat;
+TerribleTerror; Triffid), nothing else in those methods; `CreativeMappingParityTests` gains a generator producing
+30 pins (per filter site: creative rejected, invulnerable-survival still prey, survival control; the Brutalfly
+strafe driven once under a forced random and read back through its flight target). No `invulnerable`-idiom
+creative check remains anywhere in the port. Refuted once, upheld.
+ENT-S-110 fixed: `EntityLeon.isSuitableTarget` carries orig's PlayNicely gate (:391) at the orig position and the
+untamed tail grants only orig `MyUtils.isAttackableNonMob` targets (:422-427), the membership reproduced inline in
+EntityLeon because the port's `MyUtils.isAttackableNonMob` is a different set (ledger item); `LeonTargetingTests`
+(own batch, six tests: villager accepted, pig rejected, tamed rejects, PlayNicely refuses a Zombie, creative and
+survival still hold). Consequence: `IgnoreScreenParityTests` row 15's pig control became a Zombie. Refuted once,
+upheld.
+ENT-S-111 fixed: the IrukandjiArrow hit block is gated on `Mob` (orig :181 EntityLiving), which wraps the arrow
+count, the Punch push and the ding as orig did; one two-lane pin in `projectileTypeParity` (cow pushed 0.4 + 1.2
+with the 0.1 lift, survival mock player at the vanilla 0.4 alone, `ultimateSwordPvp` raised for the window).
+Refuted once, upheld; the refuter's faithful widening applied after refutation.
+ENT-S-112 fixed: the eight orig ally exclusions restored in `PitchBlack.isSuitableTarget` in orig order at the orig
+position; `PitchBlackAllyTests` (own batch, a generator producing one test per excluded species: species refused,
+pig and Zombie controls accepted). Ledger item: the port filter still lacks orig :501's line-of-sight step.
+Refuted once, upheld.
+ENT-S-113 fixed: `Cephadrome.isSuitableTarget` opens with orig :516-518's PEACEFUL guard and its player branch is
+orig :557-570 line for line, `shouldattack` spent on the one answer it grants (orig :567), so an unfed shark stalks
+a refused rider for a single scan as in 1.7.10; `CephadromeGateTests` (own batch, six tests: PEACEFUL rejects the
+player and the Zombie NORMAL takes, the reset pinned, untouched by a Zombie, behind bad mood and under the creative
+rejection). Ledger item: orig :488's PEACEFUL gate on the hunt roll itself. Refuted once, upheld.
+MOD-031 implemented (owner: "accepted as a modern option, default on; classic stays 1.7.10"): `[modern]
+fireRespectsMobGriefing` (`MODERN_FIRE_RESPECTS_MOB_GRIEFING`, default true — the proposal's false overridden by the
+ruling), read only through `OreSpawnConfig.fireRespectsMobGriefing()` = master && key; two gated sites in
+`BetterFireball`, read at impact: `onHitBlock` places the face fire only if `EventHooks.canEntityGrief(level,
+getOwner())` (for every owner — the gate vanilla `LargeFireball.onHit` applies; `SmallFireball.onHitBlock` gates
+Mob owners only), and `onHit` passes that same answer as the explosion's fire flag, null source and MOB
+interaction unchanged; master or key off = the ENT-S-104 classic calls exactly (`canEntityGrief` never invoked).
+Pin: `FireballModernFireTests` (own batch `fireballModernFire`, one test running three sequential flights: option on
++ rule off → no face fire, fire flag false, KEEP; option on + rule on → the classic result; master off + rule off →
+classic fire). Harness consequence: the classic rule-off pin `s104_big_shot_with_mob_griefing_off_...` forces the key
+off around its window and restores it with the rule. MOD-031's notes entry is ACCEPTED; KNOWN_ISSUES and README
+carry the sentence. Refuted once, upheld.
+HARNESS (TEST-003 / TF-023 follow-ups, found by this batch's gate): two default-batch tests went red once the
+new batches ran ahead of the default batch. (1) `bug003_rat_ai_ticks_and_despawns`: unowned rats are
+MONSTER-category and `Mob.checkDespawn` discards them on any tick in which the nearest player is beyond 128
+blocks; mock players from concurrent bucket-mates log in at the world origin, millions of blocks away, so the
+outcome depended on which tests shared the bucket (the TEST-003 order sensitivity, now explained). Fix: a
+creative keeper player inside the pen for the AI window (rats ignore creative players, orig Rat.java:227),
+removed before the despawn half. (2) `spider_hangout_village_i164` (and the identical `red_ant_hangout_village_i165`):
+the far build waited a fixed 5 ticks after the FORCED region ticket for the queued chunk promotion to drain;
+under the fuller suite it did not, the persistent Robot Spider was spawned into a section not yet tracked,
+and the pad query read 0 (diagnostic run: no player, no spider anywhere, `isPositionEntityTicking` false).
+Fix: a `startSequence().thenWaitUntil(isPositionEntityTicking(spawnCell))` before the build, timeout 400.
+Both tests stay in the default batch (isolating them for the diagnostic run flipped a third order-sensitive
+test, `i127_tower_centre_rooms_spawn_jumpy_bug`, exactly as TEST-003 predicts). Diagnostics stay in the
+failure messages (removal reason, health, difficulty, player count, nearest-player distance, PlayNicely).
+
+Refuters this batch, all on the session model: lane K two on ENT-S-108 (orig fidelity of the nine scan transcriptions; tests and compile; upheld, the slot hardening and the Leon-row Zombie control applied after), lane L one each on ENT-S-109 and ENT-S-113 (upheld), lane M one each on ENT-S-110, ENT-S-111 and ENT-S-112 (upheld; the Irukandji gate widened to orig's whole block after refutation, as its refuter proposed), lane N one on MOD-031 (upheld; the gate wording corrected), and one spot-check on the targeting survey ledger (one status corrected: EnderReaper's release rule is a divergence; counts propagated).
+
+GATE (rulings5): 2026-09-04 07:54-07:56, the fourth run of this batch (the first three were red on two default-batch tests, bug003_rat_ai_ticks_and_despawns and spider_hangout_village_i164, diagnosed and fixed in the harness, see HARNESS above): g1BenchmarkVerify green (no drift); build green (asset audit 0 errors / 0 advisories / 4 acknowledged; G1 PARITY PASS 2 + 11 models, checked-in proofs verified; referenceGeometry; referenceRenderers PASS 120 / NOT_APPLICABLE 13; queenPartPlacementProbe); runGameTestServer: All 517 required tests passed (420 + targetScanParity 45 + creativeMappingParity 30 generated + cephadromeGates 6 + leonTargeting 6 + projectileTypeParity 1 + pitchBlackAllies 8 + fireballModernFire 1) in 1m23s; logs rulings5c.build.log / rulings5c.suite.log.

@@ -83,6 +83,14 @@ that slice, not a task for now.
     gets a parameterized test over all 38 original `isIgnoreable` callers and a changelog entry; 104
     restores the 1.7.10 fire behaviour and files a MOD proposal for a config-gated "fire respects
     mobGriefing" option; two refuters on 106, one on each of the rest.
+17. **ENT-S-108 to ENT-S-113 (owner, 2026-09-04, third batch):** all parity, fixed in classic; generated
+    tests per site where the pattern allows; two refuters on 108, one on each of the rest. **MOD-031**
+    accepted as a modern option, default ON; classic stays 1.7.10.
+18. **Targeting survey (owner, same batch):** a read-only lane compares every hunter's target selection —
+    scan set, filters, gates (PlayNicely, creative, PEACEFUL, allies, ignore screen), tie-breaks — 1.7.10
+    against the port in one ledger under `phase_g_reports`, presenting the split (parity bug / recorded /
+    fixed). **From here the owner rules on batches, not singles:** divergences are grouped into proposed
+    batches in the ledger and ruled on as batches.
 
 ## D. Rulings executed the same day (for cross-reference)
 

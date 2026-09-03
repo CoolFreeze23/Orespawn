@@ -711,32 +711,56 @@ _pin) so alignment drift is caught regardless.
 - **Pin:** `ProjectileTypeParityTests#tags_throwables_join_impact_projectiles_bertha_hit_and_cage_stay_out`
   (batch `projectileTypeParity`; snowball / fishing bobber as the vanilla controls).
 
-## MOD-031 — Fireball fire respects mobGriefing (PROPOSED 2026-09-04, config-gated, NOT implemented)
+## MOD-031 — Fireball fire respects mobGriefing (ACCEPTED 2026-09-04, implemented, default ON; classic stays 1.7.10)
 
 - **Origin:** ENT-S-104's ruling: "104 restores 1.7.10 fire behavior and files a MOD proposal for a
   config-gated 'fire respects mobGriefing' option."
-- **Classic (implemented, the default):** orig BetterFireball.java:261-263 sets fire on the air side of a struck
-  block for every shot, and :266 explodes with fire = true unconditionally; only block destruction follows
-  `mobGriefing`. A server with mobGriefing off still gets fire from the bosses' fireballs — 1.7.10's exact
-  behaviour, and what the port does now (`BetterFireball.onHitBlock` / `onHit`).
-- **Proposal:** a `[modern]` key `fireRespectsMobGriefing` (`OreSpawnConfig.MODERN_FIRE_RESPECTS_MOB_GRIEFING`,
-  `BooleanValue`, default **false** = 1.7.10 behaviour), read only through an effective-value helper
-  `OreSpawnConfig.fireRespectsMobGriefing()` = `MODERN_ENABLED && key` (master-override ruling 2026-09-04: new
-  features register under [modern]; the master off forces classic). When effective, `BetterFireball.onHitBlock`
-  places the face fire only if `EventHooks.canEntityGrief(level, getOwner())` (vanilla `SmallFireball.onHitBlock`'s
-  gate: the gamerule, through EntityMobGriefingEvent for a Mob owner) and `onHit` passes
-  `fire = canEntityGrief(level, getOwner())` to `Level.explode` (vanilla `LargeFireball.onHit`'s flag), keeping
-  the null source and the MOB interaction. Read at impact, not snapshotted (a fireball lives 600 ticks at most;
-  no BOSS-017 concern). Comment text for the key: "MOD-031: OreSpawn fireballs place no fire beside the block
-  they hit and their blast scatters no fire while the mobGriefing gamerule is off (as vanilla ghast and blaze
-  shots behave). Only takes effect while modern.enabled is true; classic mode always lights fires as 1.7.10
-  did (orig BetterFireball.java:261-266)."
-- **Effect when on:** with mobGriefing off, OreSpawn fireballs neither light the block they hit nor scatter fire
-  from their blast; damage, the 5-second ignite of a hit entity (orig :227/:230 — vanilla fireballs ignite
-  targets regardless of the rule too) and the explosion itself are unchanged. With mobGriefing on, identical to
-  classic.
+- **Ruling (owner, 2026-09-04):** "MOD-031: accepted as a modern option, default on; classic stays 1.7.10."
+  The proposal had said default false; the ruling overrides it. With the master's default true (the
+  master-override and default rulings of the same day) a default config runs the option.
+- **Classic (implemented; the behaviour while the master or the key is off):** orig BetterFireball.java:261-263
+  sets fire on the air side of a struck block for every shot, and :266 explodes with fire = true unconditionally;
+  only block destruction follows `mobGriefing`. A server with mobGriefing off still gets fire from the bosses'
+  fireballs — 1.7.10's exact behaviour, and what the port does with `modern.enabled = false` or
+  `fireRespectsMobGriefing = false` (`BetterFireball.onHitBlock` / `onHit`, the ENT-S-104 paths: the same calls
+  on that branch, no `canEntityGrief` call, no EntityMobGriefingEvent posted).
+- **Switch (implemented 2026-09-04):** the `[modern]` key `fireRespectsMobGriefing`
+  (`OreSpawnConfig.MODERN_FIRE_RESPECTS_MOB_GRIEFING`, `BooleanValue`, default **true** per the ruling), read
+  only through the effective-value helper `OreSpawnConfig.fireRespectsMobGriefing()` = `MODERN_ENABLED && key`,
+  next to `mothraWideRootHitbox()` (master-override ruling 2026-09-04: new features register under [modern]; the
+  master off forces classic). Two gated sites, each reading the helper at impact (not snapshotted: a fireball
+  lives 600 ticks at most; no BOSS-017 concern): `BetterFireball.onHitBlock` places the face fire only if
+  `EventHooks.canEntityGrief(level, getOwner())` for every owner (the gate vanilla `LargeFireball.onHit` applies;
+  `SmallFireball.onHitBlock` gates only Mob owners — the port is the stricter of the two): the gamerule,
+  through EntityMobGriefingEvent for a non-null owner), and `BetterFireball.onHit` passes
+  `fire = EventHooks.canEntityGrief(level, getOwner())` to `Level.explode` (vanilla `LargeFireball.onHit`'s
+  flag), keeping the null source and the MOB interaction. Key comment: "MOD-031: OreSpawn fireballs place no
+  fire beside the block they hit and their blast scatters no fire while the mobGriefing gamerule is off (as
+  vanilla ghast and blaze shots behave). Only takes effect while modern.enabled is true; classic mode always
+  lights fires as 1.7.10 did (orig BetterFireball.java:261-266). On by default (owner ruling 2026-09-04); set
+  false to keep the 1.7.10 fire behaviour in modern mode too. Read at impact, so a change applies to the next
+  shot that lands." The `[modern] enabled` comment and javadoc list the key and the helper with the other four.
+- **Effect when effective (a default config):** with mobGriefing off, OreSpawn fireballs neither light the
+  block they hit nor scatter fire from their blast; damage, the 5-second ignite of a hit entity (orig :227/:230
+  — vanilla fireballs ignite targets regardless of the rule too) and the explosion itself are unchanged. With
+  mobGriefing on, identical to classic.
 - **Not covered:** explosion block destruction (already the gamerule's in both modes, through MOB).
-- **Pin when implemented:** flip-and-restore tests next to the s104 pins (an own batch if the rule flip must not
-  overlap their windows): key on + rule off → no face fire, explosion fire flag false, KEEP; key on + rule on →
-  the classic result; key off (or master off) + rule off → the classic result (the s104 mobGriefing-off pin).
-- **Status:** PROPOSED; nothing in code reads a key by this name; the classic path is orig.
+- **Pin:** `FireballModernFireTests#mod031_fire_respects_mob_griefing_three_scenarios_in_sequence` (own batch
+  `fireballModernFire`, timeoutTicks 400). The rule and the config are global and batch-mates run concurrently,
+  so ONE test runs the three scenarios back to back — each a big shot (setBig, setNotMe) into the ENT-S-102
+  obsidian wall over the ENT-S-104 dirt hearth, read 40 ticks after launch, the arena rebuilt between flights —
+  and restores the master, the key and the rule in a finally that runs on every path: (a) master on + key on +
+  mobGriefing off → no face fire (the cell is read at the blast's `ExplosionEvent.Start`, after onHitBlock and
+  before any blast could touch it, and again after the window), explosion fire flag false (reflection on
+  `Explosion.fire`, as the s104 pins), KEEP, wall and hearth intact; (b) master on + key on + mobGriefing on →
+  face fire present at the blast's start, fire flag true, a DESTROY kind, the hearth gone and the face cell blown
+  clear — the classic result of `s104_big_shot_with_mob_griefing_on_...`; (c) master off + key on + mobGriefing
+  off → face fire present at the start and still standing after, fire flag true, KEEP, wall and hearth intact —
+  classic stays 1.7.10 whatever the key says (the s104 mobGriefing-off result). Each scenario asserts its rule
+  and config preconditions at launch and at the check, and the test pins the key's code default (true).
+- **Harness consequence:** on a default config the option is effective, so
+  `ProjectileTypeParityTests#s104_big_shot_with_mob_griefing_off_still_carries_fire_and_leaves_the_wall_intact`,
+  which pins the classic rule-off result (face fire and fire flag with the rule off), has to force the key (or the
+  master) off around its window and restore it — the `HitboxDimsParityTests#s095_mothra_dims_both_modes`
+  idiom for MOD-029; the small-shot and rule-on s104 pins read the same in both modes.
+- **Status:** IMPLEMENTED 2026-09-04 (the key, the helper, both gated sites, the pin); the classic branch is orig.

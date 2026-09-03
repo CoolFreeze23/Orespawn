@@ -587,7 +587,10 @@ root-order slice with the GeckoLib per-entity cache eviction, then Slice 4c). Th
   one harvest slice scheduled before Slice 5; the comparison's other proposals wait for a ruling.
 - `modern.enabled` is a master override only, default true: it defers to the per-feature keys (names
   unchanged) and forces every modern feature to classic only when set false; new modern features
-  register under `[modern]`.
+  register under `[modern]` (MOD-031 `fireRespectsMobGriefing`, accepted default on, is the first).
+- Targeting parity: the survey ledger `phase_g_reports/targeting_survey_2026-09-04.md` compares every
+  hunter's target selection with 1.7.10; divergences are ruled on in BATCHES from the ledger's split,
+  never one by one.
 - Before any Tier-2 slice: the spawn-100 benchmark, classic versus candidate, with a proposed
   regression threshold; its baseline also measures MHLib's bone capture per frame and sync per tick
   and on the wire. Proof rule: geometry-only changes take one refuter; motion transcriptions,
