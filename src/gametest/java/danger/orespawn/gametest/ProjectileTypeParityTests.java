@@ -1,9 +1,13 @@
 package danger.orespawn.gametest;
 
 import danger.orespawn.ModEntities;
+import danger.orespawn.ModItems;
 import danger.orespawn.OreSpawnMod;
 import danger.orespawn.entity.BetterFireball;
+import danger.orespawn.entity.UltimateArrow;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.nbt.CompoundTag;
@@ -12,10 +16,17 @@ import net.minecraft.tags.EntityTypeTags;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.animal.Cow;
+import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.entity.projectile.AbstractHurtingProjectile;
 import net.minecraft.world.entity.projectile.LargeFireball;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Explosion;
+import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
@@ -24,8 +35,10 @@ import net.neoforged.neoforge.event.level.ExplosionEvent;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Consumer;
 
 /**
@@ -76,6 +89,18 @@ import java.util.function.Consumer;
  * listener: a big shot yields exactly one, at the port's power with the orig :266 null
  * source; a small shot yields none; both are discarded (orig :268).</p>
  *
+ * <p>ENT-S-103 and ENT-S-104, owner ruling 2026-09-04 ("ENT-S-103 through 107: all parity
+ * bugs, fix in classic"; 104 "restores 1.7.10 fire behavior and files a MOD proposal for a
+ * config-gated 'fire respects mobGriefing' option", MOD-031). The {@code s103_} test fires two
+ * ultimate arrows, the bow's own Punch 2 bake against the same bake with Punch stripped, into
+ * frozen cows and reads the 1.7.10 push off their velocity. The three {@code s104_} tests fire
+ * into the same obsidian wall as ENT-S-102, now over a dirt hearth: a small shot leaves fire on
+ * the air side of the hit face (orig :232-264, with no explosion to disturb it); a big shot with
+ * mobGriefing on (asserted; the default) explodes once, fire-flagged, destroying the hearth; a
+ * big shot with mobGriefing off (flipped for its own window only, after the batch-mates'
+ * windows have closed, restored in a finally) explodes once, fire-flagged, with KEEP block
+ * interaction, wall and hearth intact and the face fire still standing.</p>
+ *
  * <p>Projectile-tag rulings (owner, 2026-09-04), pinned by the two {@code tags_} tests: the
  * ultimate and irukandji arrows stay outside {@code #minecraft:arrows} because the 1.7.10
  * bows never applied Power to them (the check is quoted on the test), and the
@@ -84,9 +109,11 @@ import java.util.function.Consumer;
  *
  * <p>No config is flipped, but the class still declares its own batch (TEST-003: new test
  * classes never join the default batch, whose 50-test buckets reshuffle); every ENT-S-098 and
- * tag test is synchronous in one tick, the two ENT-S-102 impact tests wait a fixed 40-tick
- * window ({@code runAfterDelay}), and all discard what they spawned in a finally. Template
- * {@code empty_large} (48x16x48) with the shooter at (24, 8, 24), as HitboxDimsParityTests.</p>
+ * tag test is synchronous in one tick, the ENT-S-102 and ENT-S-104 impact tests wait a fixed
+ * 40-tick window ({@code runAfterDelay}; the mobGriefing-off test first waits 60 ticks for its
+ * batch-mates' windows to close, timeoutTicks 200), the ENT-S-103 arrow test a 10-tick one, and
+ * all discard what they spawned in a finally. Template {@code empty_large} (48x16x48) with the
+ * shooter at (24, 8, 24), as HitboxDimsParityTests.</p>
  */
 @GameTestHolder(OreSpawnMod.MOD_ID)
 @PrefixGameTestTemplate(false)
@@ -108,14 +135,19 @@ public class ProjectileTypeParityTests {
     private static final int DEFAULT_POWER = 1;
     private static final int REALLY_BIG_POWER = 4;
 
+    /** A frozen vanilla cow at a template position: no goals (spawnWithNoFreeWill), NoAI, persistent, the fixed rotation. */
+    private static Cow spawnFrozenCow(GameTestHelper helper, BlockPos pos) {
+        Cow cow = helper.spawnWithNoFreeWill(EntityType.COW, pos);
+        cow.setNoAi(true);
+        cow.setPersistenceRequired();
+        cow.setYRot(SHOOTER_Y_ROT);
+        cow.setXRot(SHOOTER_X_ROT);
+        return cow;
+    }
+
     /** A frozen vanilla cow: the shooter constructor reads only LivingEntity position and rotation. */
     private static LivingEntity spawnShooter(GameTestHelper helper) {
-        Cow shooter = helper.spawnWithNoFreeWill(EntityType.COW, POS);
-        shooter.setNoAi(true);
-        shooter.setPersistenceRequired();
-        shooter.setYRot(SHOOTER_Y_ROT);
-        shooter.setXRot(SHOOTER_X_ROT);
-        return shooter;
+        return spawnFrozenCow(helper, POS);
     }
 
     /** The tail every shooter site runs after the constructor and the flags: a muzzle setPos, then addFreshEntity. */
@@ -522,6 +554,427 @@ public class ProjectileTypeParityTests {
             helper.assertValueEqual(explosions.seen().size(), 0,
                     "explosions started inside the structure by the impact of a small shot (orig :265-267: none when small; "
                             + "before the fix LargeFireball.onHit's power-1 blast still fired) (ENT-S-102)");
+        });
+    }
+
+    // ---------------------------------------------------------------------------------------
+    // ENT-S-104 (owner ruling 2026-09-04: parity bug, fix in classic) -- fire beside a block hit,
+    // explosion fire independent of mobGriefing.
+    // ---------------------------------------------------------------------------------------
+
+    /**
+     * The cell orig BetterFireball.java:232-264 sets fire in: the air side of the hit face. The
+     * shot flies +z at feet y = 9.0 through the x = 24 column, so the clip (from the entity
+     * position, ProjectileUtil.getHitResultOnMoveVector) traverses the y = 9 row and strikes the
+     * wall block (24, 9, WALL_Z) on its north face; relative(NORTH) is (24, 9, WALL_Z - 1).
+     */
+    private static final BlockPos FIRE_CELL = new BlockPos(POS.getX(), POS.getY() + 1, WALL_Z - 1);
+    /**
+     * A dirt block under the fire cell. Fire survives only over a sturdy face or beside a
+     * flammable neighbour (FireBlock.canSurvive; its scheduled tick, 30-39 ticks after placement,
+     * removes it otherwise -- inside the 40-tick window), and the wall is obsidian over template
+     * air, so the hearth is what keeps the pin independent of doFireTick (GameTestServer turns
+     * it off; a client-side /test run leaves it on: over a sturdy base with no flammable
+     * neighbour fire is removed only once its age passes 3, four ticks at 30+ apart). Dirt, not
+     * obsidian, so it doubles as the block-interaction witness: the blast sits directly above it
+     * (the shot stops about 0.4 short of the face at feet y = 9.0, the hearth's top face), so a
+     * DESTROY blast removes it and a KEEP blast leaves it.
+     */
+    private static final BlockPos HEARTH = FIRE_CELL.below();
+    /**
+     * Ticks the mobGriefing-off test waits before it flips the rule and launches: the batch-mates
+     * (both s102 tests, the other two s104 tests) read their impacts IMPACT_WINDOW_TICKS after a
+     * common start, so by then their windows have closed and the rule they saw was the default.
+     */
+    private static final int MOB_GRIEFING_OFF_DELAY_TICKS = IMPACT_WINDOW_TICKS + 20;
+
+    private static void buildWallAndHearth(GameTestHelper helper) {
+        buildWall(helper);
+        helper.setBlock(HEARTH, Blocks.DIRT);
+    }
+
+    private static void assertWallIntact(GameTestHelper helper, String why) {
+        for (int x = POS.getX() - 2; x <= POS.getX() + 2; x++) {
+            for (int y = POS.getY() - 1; y <= POS.getY() + 3; y++) {
+                BlockPos pos = new BlockPos(x, y, WALL_Z);
+                helper.assertTrue(helper.getBlockState(pos).is(Blocks.OBSIDIAN),
+                        "wall block " + pos + " is " + helper.getBlockState(pos) + why);
+            }
+        }
+    }
+
+    /**
+     * 1.21.1 Explosion keeps its fire flag in {@code private final boolean fire} with no getter
+     * (bytecode: radius(), center(), getBlockInteraction(), interactsWithBlocks(), getToBlow()
+     * ... are the public surface); finalizeExplosion reads it to seed random fire (1-in-3 per
+     * affected air cell over a solid-render block), which cannot be observed deterministically,
+     * so the flag itself is read -- as KrakenHoldReleaseTests reads Entity.random.
+     */
+    private static boolean explosionFire(Explosion explosion) {
+        try {
+            Field fire = Explosion.class.getDeclaredField("fire");
+            fire.setAccessible(true);
+            return fire.getBoolean(explosion);
+        } catch (ReflectiveOperationException e) {
+            throw new IllegalStateException(
+                    "Explosion.fire is not reachable by reflection (1.21.1: private final boolean fire; official names at runtime) (ENT-S-104)", e);
+        }
+    }
+
+    /**
+     * orig BetterFireball.java:232-264: a block hit sets fire on the air side of the hit face, for
+     * every shot (the small gate at :265 covers only the explosion) and under no mobGriefing
+     * condition. A small shot pins the placement in isolation: no explosion (orig :265-267,
+     * ENT-S-102) can blow the fire away or seed random fire of its own, and the rule's value
+     * during the window is immaterial, orig having no such gate. Before the fix the port had no
+     * onHitBlock override and placed nothing.
+     */
+    @GameTest(template = "empty_large", batch = "projectileTypeParity")
+    public void s104_small_shot_leaves_fire_on_the_air_side_of_the_hit_face(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        buildWallAndHearth(helper);
+        helper.assertTrue(level.isEmptyBlock(helper.absolutePos(FIRE_CELL)),
+                "precondition: the fire cell " + FIRE_CELL + " must start as air");
+        LivingEntity shooter = spawnShooter(helper);
+        BetterFireball shot = new BetterFireball(level, shooter, WALL_AIM);
+        shot.setNotMe();
+        shot.setSmall();
+        fireAtWallThenCheck(helper, shooter, shot, explosions -> {
+            helper.assertFalse(shooter.isRemoved(), "the shooter must outlive the window, else the discard check below is vacuous");
+            helper.assertTrue(shot.isRemoved(),
+                    "the small shot must have struck the wall and been discarded (orig BetterFireball.java:268) inside "
+                            + IMPACT_WINDOW_TICKS + " ticks (ENT-S-104)");
+            helper.assertValueEqual(explosions.seen().size(), 0,
+                    "explosions from a small shot (none, orig :265-267; ENT-S-102)");
+            helper.assertBlock(FIRE_CELL, block -> block == Blocks.FIRE,
+                    "no fire on the air side of the hit face " + FIRE_CELL + " (orig BetterFireball.java:236-263: the neighbour on the hit side, "
+                            + "if air, becomes Blocks.fire; port BetterFireball.onHitBlock) (ENT-S-104)");
+            helper.assertBlock(HEARTH, block -> block == Blocks.DIRT,
+                    "the dirt hearth under the fire cell must be untouched by a small shot (ENT-S-104)");
+            assertWallIntact(helper, " -- the obsidian wall must be untouched by a small shot (ENT-S-104)");
+        });
+    }
+
+    /**
+     * orig BetterFireball.java:266 exploded with fire = true ALWAYS and block destruction =
+     * mobGriefing (1.7.10 Explosion isFlaming / isSmoking); the port fed mobGriefing into 1.21.1's
+     * single fire slot. With the rule on (asserted at launch and at the check; the default, which
+     * the batch-mate that turns it off does not touch until this window has closed) a big shot
+     * behaves as before ENT-S-104: exactly one explosion, the port's radius 2 with the null
+     * source, the shot discarded -- and now flagged fire = true, with the block interaction the
+     * rule grants (1.21.1 Level.explode maps MOB through EventHooks.canEntityGrief, the gamerule
+     * for a null source: DESTROY / DESTROY_WITH_DECAY, never KEEP). The dirt hearth directly under
+     * the blast is the destruction witness; the fire orig :262 placed on the face a moment
+     * earlier goes with it, as 1.7.10's doExplosionB (isSmoking) removed it too, and no fire
+     * returns to that cell because the block below it is gone.
+     */
+    @GameTest(template = "empty_large", batch = "projectileTypeParity")
+    public void s104_big_shot_with_mob_griefing_on_explodes_once_with_fire_as_before(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        GameRules.BooleanValue mobGriefing = level.getGameRules().getRule(GameRules.RULE_MOBGRIEFING);
+        helper.assertTrue(mobGriefing.get(),
+                "test assumes mobGriefing=true (vanilla default) at launch; the batch-mate that turns it off waits "
+                        + MOB_GRIEFING_OFF_DELAY_TICKS + " ticks first (ENT-S-104)");
+        buildWallAndHearth(helper);
+        LivingEntity shooter = spawnShooter(helper);
+        BetterFireball shot = new BetterFireball(level, shooter, WALL_AIM);
+        shot.setNotMe();
+        shot.setBig();
+        fireAtWallThenCheck(helper, shooter, shot, explosions -> {
+            helper.assertTrue(mobGriefing.get(),
+                    "test assumes mobGriefing=true through its window; another test flipped it (ENT-S-104)");
+            helper.assertTrue(shot.isRemoved(),
+                    "the big shot must have struck the wall and been discarded (orig BetterFireball.java:268) inside "
+                            + IMPACT_WINDOW_TICKS + " ticks (ENT-S-104)");
+            helper.assertValueEqual(explosions.seen().size(), 1,
+                    "explosions from one big shot with mobGriefing on (orig :265-267: one) (ENT-S-104)");
+            Explosion only = explosions.seen().get(0);
+            helper.assertTrue(Math.abs(only.radius() - BIG_POWER) < DIM_EPS,
+                    "the explosion must be the port's, at setBig's power " + BIG_POWER + "; got radius " + only.radius() + " (ENT-S-104)");
+            helper.assertTrue(only.getDirectSourceEntity() == null,
+                    "the explosion must carry orig :266's null source; got " + only.getDirectSourceEntity() + " (ENT-S-104)");
+            helper.assertTrue(explosionFire(only),
+                    "the explosion must carry fire = true (orig :266 passed it unconditionally) (ENT-S-104)");
+            helper.assertTrue(only.interactsWithBlocks() && only.getBlockInteraction() != Explosion.BlockInteraction.KEEP,
+                    "with mobGriefing on the block interaction must be a DESTROY kind (Level.explode: MOB -> canEntityGrief(level, null) "
+                            + "= the gamerule -> getDestroyType), got " + only.getBlockInteraction() + " (ENT-S-104)");
+            helper.assertBlock(HEARTH, block -> block == Blocks.AIR,
+                    "the dirt hearth directly under a power-2 DESTROY blast must be gone (the mobGriefing witness) (ENT-S-104)");
+            helper.assertBlock(FIRE_CELL, block -> block == Blocks.AIR,
+                    "the face fire placed before the blast (orig :262 then :266) is blown away by a DESTROY blast, and the cell "
+                            + "cannot be re-lit with the hearth gone (ENT-S-104)");
+            assertWallIntact(helper, " -- obsidian (resistance 1200) must stand under the power-2 blast (ENT-S-104)");
+        });
+    }
+
+    /**
+     * The mobGriefing-off half of orig BetterFireball.java:266 (fire = true ALWAYS, destruction =
+     * mobGriefing): before the fix the port passed the rule as 1.21.1's fire flag, so with the
+     * rule off an OreSpawn fireball set no explosion fire at all. The rule is turned off for this
+     * test's window only -- after MOB_GRIEFING_OFF_DELAY_TICKS, once the batch-mates' windows
+     * have closed, and restored in the check's finally (the KrakenPlayNicelyTests flip-and-restore
+     * idiom; the shooter is spawned up front and waits, aloft and NoAI). Then: exactly one
+     * explosion, flagged fire = true, block interaction KEEP (Level.explode: MOB ->
+     * canEntityGrief(level, null) = the gamerule -> KEEP), the obsidian wall and the dirt hearth
+     * untouched, and the fire orig :232-264 placed on the air side of the hit face still standing
+     * (a KEEP blast removes no block). The explosion's own fire is seeded at random (1-in-3 per
+     * affected air cell over a solid block, Explosion.finalizeExplosion) and is not asserted; the
+     * flag is.
+     */
+    @GameTest(template = "empty_large", timeoutTicks = 200, batch = "projectileTypeParity")
+    public void s104_big_shot_with_mob_griefing_off_still_carries_fire_and_leaves_the_wall_intact(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        buildWallAndHearth(helper);
+        helper.assertTrue(level.isEmptyBlock(helper.absolutePos(FIRE_CELL)),
+                "precondition: the fire cell " + FIRE_CELL + " must start as air");
+        LivingEntity shooter = spawnShooter(helper);
+        shooter.setNoGravity(true);
+        GameRules.BooleanValue mobGriefing = level.getGameRules().getRule(GameRules.RULE_MOBGRIEFING);
+        helper.runAfterDelay(MOB_GRIEFING_OFF_DELAY_TICKS, () -> {
+            boolean previous = mobGriefing.get();
+            mobGriefing.set(false, level.getServer());
+            try {
+                BetterFireball shot = new BetterFireball(level, shooter, WALL_AIM);
+                shot.setNotMe();
+                shot.setBig();
+                fireAtWallThenCheck(helper, shooter, shot, explosions -> {
+                    try {
+                        helper.assertFalse(mobGriefing.get(),
+                                "precondition: mobGriefing must still be off at the check; another test flipped it (ENT-S-104)");
+                        helper.assertTrue(shot.isRemoved(),
+                                "the big shot must have struck the wall and been discarded (orig BetterFireball.java:268) inside "
+                                        + IMPACT_WINDOW_TICKS + " ticks (ENT-S-104)");
+                        helper.assertValueEqual(explosions.seen().size(), 1,
+                                "explosions from one big shot with mobGriefing off (orig :265-267: still one) (ENT-S-104)");
+                        Explosion only = explosions.seen().get(0);
+                        helper.assertTrue(Math.abs(only.radius() - BIG_POWER) < DIM_EPS,
+                                "the explosion must be the port's, at setBig's power " + BIG_POWER + "; got radius " + only.radius() + " (ENT-S-104)");
+                        helper.assertTrue(only.getDirectSourceEntity() == null,
+                                "the explosion must carry orig :266's null source; got " + only.getDirectSourceEntity() + " (ENT-S-104)");
+                        helper.assertTrue(explosionFire(only),
+                                "the explosion must carry fire = true with mobGriefing off (orig :266 passed true unconditionally; "
+                                        + "the port used to pass the gamerule) (ENT-S-104)");
+                        helper.assertTrue(only.getBlockInteraction() == Explosion.BlockInteraction.KEEP && !only.interactsWithBlocks(),
+                                "with mobGriefing off the block interaction must be KEEP (Level.explode: MOB -> canEntityGrief(level, null) "
+                                        + "= the gamerule), got " + only.getBlockInteraction() + " (ENT-S-104)");
+                        assertWallIntact(helper, " -- the obsidian wall must be intact (ENT-S-104)");
+                        helper.assertBlock(HEARTH, block -> block == Blocks.DIRT,
+                                "the dirt hearth under the fire cell must survive a KEEP blast (ENT-S-104)");
+                        helper.assertBlock(FIRE_CELL, block -> block == Blocks.FIRE,
+                                "fire must remain on the air side of the hit face " + FIRE_CELL
+                                        + " (orig BetterFireball.java:261-263; a KEEP blast removes no block) (ENT-S-104)");
+                    } finally {
+                        mobGriefing.set(previous, level.getServer());
+                    }
+                });
+            } catch (RuntimeException e) {
+                mobGriefing.set(previous, level.getServer());
+                shooter.discard();
+                throw e;
+            }
+        });
+    }
+
+    // ---------------------------------------------------------------------------------------
+    // ENT-S-103 (owner ruling 2026-09-04: parity bug, fix in classic) -- UltimateArrow Punch.
+    // ---------------------------------------------------------------------------------------
+
+    /** orig UltimateBow.java:30-33 / item/UltimateBow.java:31: the bow bakes Punch 2 onto itself. */
+    private static final int BOW_PUNCH = 2;
+    /** orig UltimateArrow.java:190: 0.6 per Punch level along the flat flight line, and the 0.1 lift. */
+    private static final double PUNCH_PER_LEVEL = 0.6;
+    private static final double PUNCH_LIFT = 0.1;
+    /** orig UltimateBow.java:48 / item/UltimateBow.java:48: the fixed launch velocity. */
+    private static final float BOW_VELOCITY = 3.0f;
+    /**
+     * LivingEntity.hurt -> knockback(0.4F, ...) (1.21.1 LivingEntity.java:1225): the vanilla hurt
+     * knockback every successful arrow hit applies, Punch or not; for a Projectile source its
+     * direction is the projectile's own flat delta movement
+     * (Projectile.calculateHorizontalHurtKnockbackDirection, :304-308), i.e. the flight line.
+     * Float-widened, as the code passes it.
+     */
+    private static final double VANILLA_HURT_KNOCKBACK = 0.4F;
+    /** Two lanes 8 blocks apart on x; per lane the shooter stands at z 22 and the target at z 27, 5 blocks on. */
+    private static final int CONTROL_LANE_X = 20;
+    private static final int PUNCH_LANE_X = 28;
+    private static final int LANE_SHOOTER_Z = 22;
+    private static final int LANE_TARGET_Z = 27;
+    /** Enough health to take the ceil(3.0 x 10) = 30 hit and stay a live, readable target. */
+    private static final double TARGET_HEALTH = 10000.0;
+    /**
+     * Both hits land on the arrows' second tick: the first clip runs z 22.5 -> 25.5, short of the
+     * target's inflated box (27.05 - 0.3 = 26.75), the second 25.5 -> 28.47 crosses it. 10 is ample
+     * and the discard on hit is what the snapshot keys on.
+     */
+    private static final int ARROW_WINDOW_TICKS = 10;
+    /** On the lane difference: the inputs are exact, so only ulps separate expected from computed. */
+    private static final double PUSH_DIFF_EPS = 1e-9;
+    /** On the absolute values, which add the float 0.4F's widening. */
+    private static final double PUSH_ABS_EPS = 1e-6;
+
+    private static void setMaxHealth(LivingEntity entity, double hp) {
+        Objects.requireNonNull(entity.getAttribute(Attributes.MAX_HEALTH)).setBaseValue(hp);
+        entity.setHealth((float) hp);
+    }
+
+    /**
+     * Builds the arrow exactly as item/UltimateBow.java:46 does ({@code new UltimateArrow(level,
+     * shooter, bow)}: the bow stack the arrow keeps a copy of) and launches it flat along +z at the
+     * bow's 3.0 with zero inaccuracy, from the shooter's exact x/z at the target's mid-height (the
+     * constructor's start is the shooter's eye height minus 0.1; the target's box is what the flat
+     * line must cross). Crit off: a random damage bonus only (orig :174-176).
+     */
+    private static UltimateArrow shootArrow(GameTestHelper helper, LivingEntity shooter, ItemStack bow, LivingEntity target) {
+        UltimateArrow arrow = new UltimateArrow(helper.getLevel(), shooter, bow);
+        arrow.setPos(shooter.getX(), target.getY() + target.getBbHeight() / 2.0, shooter.getZ());
+        arrow.shoot(0.0, 0.0, 1.0, BOW_VELOCITY, 0.0f);
+        arrow.setCritArrow(false);
+        arrow.pickup = AbstractArrow.Pickup.CREATIVE_ONLY;
+        helper.assertTrue(helper.getLevel().addFreshEntity(arrow), "ServerLevel#addFreshEntity refused the ultimate arrow (ENT-S-103)");
+        return arrow;
+    }
+
+    /**
+     * orig UltimateBow.java:52-54 seeded the arrow with the bow's Punch level and orig
+     * UltimateArrow.java:189-191 spent it: addVelocity(0.6 x level along the flat flight line,
+     * +0.1 lift) after a successful hurt on an EntityLiving target. Vanilla 1.21.1 keys Punch on
+     * #minecraft:arrows (data/minecraft/enchantment/punch.json), which the ultimate arrow is
+     * ruled out of (tags_ultimate_and_irukandji_arrows_stay_outside_minecraft_arrows), so before
+     * the fix the bow's own Punch 2 never landed; UltimateArrow.doKnockback now applies it the
+     * IrukandjiArrow way.
+     *
+     * <p>Two lanes, one arrow each, built as item/UltimateBow.java:46 builds them: the punch
+     * lane's bow is the bow's own bake (item/UltimateBow.java:26-33 through inventoryTick: Power 5
+     * / Flame 3 / Punch 2 / Infinity 1, the levels EntityLogicTestsA pins), the control lane's is
+     * that same bake with Punch stripped to 0, so the lanes differ in nothing but Punch. The
+     * arrows fly with {@code shoot(0, 0, 1, 3.0, 0)} -- the bow's fixed 3.0 (orig :48) with
+     * inaccuracy 0 instead of releaseUsing's 1.0, whose triangle jitter would randomise the flat
+     * direction; releaseUsing itself is pinned by EntityLogicTestsA#ultimate_bow_instant_power5_crit_damage.
+     * The targets are frozen cows (NoAI, 10000 max health, spawned before the arrows): a NoAI
+     * mob runs no travel physics (LivingEntity.travel :2161-2162 is gated on
+     * isControlledByLocalInstance = isEffectiveAi, false for NoAI), so the push never moves it
+     * and its delta movement only decays 0.98 per own tick (aiStep :2673-2674) -- the 1.7.10
+     * addVelocity is observable as velocity, exactly what orig :190 wrote. The snapshot is taken
+     * by an onEachTick task on the first tick each arrow reports removed (the discard at the end
+     * of AbstractArrow.onHitEntity): test tasks run after the level tick
+     * (MinecraftServer.tickChildren: ServerLevel.tick, then GameTestTicker.tick), and within the
+     * level tick the target ticks before the arrow (EntityTickList is an
+     * Int2ObjectLinkedOpenHashMap, insertion order; the targets are added first), so the value
+     * read is the undecayed post-hit velocity: the vanilla 0.4 hurt knockback along the flight
+     * line for both lanes, plus 0.6 x 2 along it and the 0.1 lift for the punch lane (a NoAI cow
+     * never runs move(), so onGround stays false and the hurt knockback leaves y alone).
+     *
+     * <p>Assertions: sign -- both targets carry +z (the flight line) velocity; magnitude -- the
+     * lane difference is (0, +0.1, +1.2) within 1e-9, the control's horizontal velocity is the
+     * vanilla 0.4 alone with no Punch share (under even a level-1 push of 0.6), and the absolute
+     * values 0.4 and 1.6 hold within 1e-6. Tolerances: every input is exact (a unit +z aim with
+     * zero inaccuracy, 0.6 x 2, the float 0.4), so expected and computed differ by a handful of
+     * ulps (~1e-15); 1e-9 on the difference and 1e-6 on the absolutes (which add the 0.4F
+     * widening) are a million times that and still four orders under the smallest semantic
+     * deviation the pin guards -- a knockback-resistance factor, 0.5 for 0.6, level 1 for 2, or
+     * a one-tick 0.98 decay (0.024 short), which is also what a wrong tick-order assumption would
+     * show. The ARROW_HIT_PLAYER ding and the pvp no-sell are not exercised.
+     */
+    @GameTest(template = "empty_large", batch = "projectileTypeParity")
+    public void s103_ultimate_arrow_punch_pushes_the_target_along_the_flight_line_by_the_1_7_10_amount(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        Holder<Enchantment> punch = level.registryAccess().registryOrThrow(Registries.ENCHANTMENT)
+                .getHolderOrThrow(Enchantments.PUNCH);
+        List<Entity> spawned = new ArrayList<>();
+        UltimateArrow controlArrow;
+        UltimateArrow punchArrow;
+        Cow controlTarget;
+        Cow punchTarget;
+        try {
+            Cow controlShooter = spawnFrozenCow(helper, new BlockPos(CONTROL_LANE_X, POS.getY(), LANE_SHOOTER_Z));
+            spawned.add(controlShooter);
+            Cow punchShooter = spawnFrozenCow(helper, new BlockPos(PUNCH_LANE_X, POS.getY(), LANE_SHOOTER_Z));
+            spawned.add(punchShooter);
+            controlTarget = spawnFrozenCow(helper, new BlockPos(CONTROL_LANE_X, POS.getY(), LANE_TARGET_Z));
+            spawned.add(controlTarget);
+            punchTarget = spawnFrozenCow(helper, new BlockPos(PUNCH_LANE_X, POS.getY(), LANE_TARGET_Z));
+            spawned.add(punchTarget);
+            setMaxHealth(controlTarget, TARGET_HEALTH);
+            setMaxHealth(punchTarget, TARGET_HEALTH);
+            helper.assertTrue(controlTarget.getDeltaMovement().equals(Vec3.ZERO) && punchTarget.getDeltaMovement().equals(Vec3.ZERO),
+                    "precondition: both targets start at rest");
+            helper.assertTrue(controlShooter.getX() == controlTarget.getX() && punchShooter.getX() == punchTarget.getX(),
+                    "precondition: each lane's shooter and target share the exact x, so the flat flight line is +z");
+
+            // The bow's own bake (item/UltimateBow.java:26-33) and the same bake with Punch stripped.
+            ItemStack punchBow = new ItemStack(ModItems.ULTIMATE_BOW.get());
+            punchBow.getItem().inventoryTick(punchBow, level, punchShooter, 0, true);
+            ItemStack controlBow = punchBow.copy();
+            EnchantmentHelper.updateEnchantments(controlBow, mutable -> mutable.set(punch, 0));
+            helper.assertValueEqual(EnchantmentHelper.getItemEnchantmentLevel(punch, punchBow), BOW_PUNCH,
+                    "precondition: the bow's self-baked Punch level (item/UltimateBow.java:31)");
+            helper.assertValueEqual(EnchantmentHelper.getItemEnchantmentLevel(punch, controlBow), 0,
+                    "precondition: the control bow's Punch level after stripping");
+
+            controlArrow = shootArrow(helper, controlShooter, controlBow, controlTarget);
+            spawned.add(controlArrow);
+            punchArrow = shootArrow(helper, punchShooter, punchBow, punchTarget);
+            spawned.add(punchArrow);
+            helper.assertTrue(punchArrow.getWeaponItem() != null
+                            && EnchantmentHelper.getItemEnchantmentLevel(punch, punchArrow.getWeaponItem()) == BOW_PUNCH,
+                    "precondition: the punch arrow's weapon copy (AbstractArrow.getWeaponItem) must carry Punch " + BOW_PUNCH + " (ENT-S-103)");
+            helper.assertTrue(controlArrow.getWeaponItem() != null
+                            && EnchantmentHelper.getItemEnchantmentLevel(punch, controlArrow.getWeaponItem()) == 0,
+                    "precondition: the control arrow's weapon copy must carry no Punch (ENT-S-103)");
+            helper.assertTrue(controlArrow.getDeltaMovement().equals(new Vec3(0.0, 0.0, BOW_VELOCITY))
+                            && punchArrow.getDeltaMovement().equals(new Vec3(0.0, 0.0, BOW_VELOCITY)),
+                    "precondition: zero-inaccuracy shoot(0, 0, 1, 3.0) must give exactly (0, 0, 3.0), got "
+                            + controlArrow.getDeltaMovement() + " / " + punchArrow.getDeltaMovement());
+        } catch (RuntimeException e) {
+            spawned.forEach(Entity::discard);
+            throw e;
+        }
+
+        Vec3[] controlPush = new Vec3[1];
+        Vec3[] punchPush = new Vec3[1];
+        helper.onEachTick(() -> {
+            if (controlPush[0] == null && controlArrow.isRemoved()) {
+                controlPush[0] = controlTarget.getDeltaMovement();
+            }
+            if (punchPush[0] == null && punchArrow.isRemoved()) {
+                punchPush[0] = punchTarget.getDeltaMovement();
+            }
+        });
+        helper.runAfterDelay(ARROW_WINDOW_TICKS, () -> {
+            try {
+                helper.assertTrue(controlPush[0] != null && punchPush[0] != null,
+                        "both arrows must have hit and been discarded inside " + ARROW_WINDOW_TICKS + " ticks (control removed: "
+                                + controlArrow.isRemoved() + ", punch removed: " + punchArrow.isRemoved() + ") (ENT-S-103)");
+                helper.assertFalse(controlTarget.isRemoved() || punchTarget.isRemoved(),
+                        "the targets must survive the hit (10000 max health) so their velocity is readable (ENT-S-103)");
+                Vec3 control = controlPush[0];
+                Vec3 pushed = punchPush[0];
+                Vec3 diff = pushed.subtract(control);
+                double expectedPush = BOW_PUNCH * PUNCH_PER_LEVEL;
+
+                helper.assertTrue(pushed.z > 0.0 && control.z > 0.0,
+                        "both targets must be moving along the flight line (+z): control " + control + ", punch " + pushed + " (ENT-S-103)");
+                helper.assertTrue(Math.abs(diff.z - expectedPush) < PUSH_DIFF_EPS,
+                        "Punch " + BOW_PUNCH + " must add exactly 0.6 x " + BOW_PUNCH + " = " + expectedPush
+                                + " along the flat flight line (orig UltimateArrow.java:190), got " + diff.z
+                                + " (control " + control + ", punch " + pushed + ") (ENT-S-103)");
+                helper.assertTrue(Math.abs(diff.x) < PUSH_DIFF_EPS,
+                        "the push is along the flight line only: no x share, got " + diff.x + " (ENT-S-103)");
+                helper.assertTrue(Math.abs(diff.y - PUNCH_LIFT) < PUSH_DIFF_EPS,
+                        "the push carries orig :190's fixed 0.1 lift, got " + diff.y + " (ENT-S-103)");
+                helper.assertTrue(Math.abs(control.z - VANILLA_HURT_KNOCKBACK) < PUSH_ABS_EPS && Math.abs(control.x) < PUSH_ABS_EPS,
+                        "a Punch-0 arrow must not push: the control's horizontal velocity must be the vanilla hurt knockback "
+                                + VANILLA_HURT_KNOCKBACK + " alone (LivingEntity.hurt :1225), got " + control + " (ENT-S-103)");
+                helper.assertTrue(control.horizontalDistance() < PUNCH_PER_LEVEL,
+                        "a Punch-0 arrow must not push: the control's horizontal speed " + control.horizontalDistance()
+                                + " is not under even a level-1 push of " + PUNCH_PER_LEVEL + " (ENT-S-103)");
+                helper.assertTrue(Math.abs(pushed.z - (VANILLA_HURT_KNOCKBACK + expectedPush)) < PUSH_ABS_EPS,
+                        "the punch target's velocity must be the raw post-hit 0.4 + " + expectedPush + " along +z, got " + pushed.z
+                                + " (a one-tick 0.98 decay would mean the target ticked after the arrow, breaking the snapshot) (ENT-S-103)");
+            } finally {
+                spawned.forEach(Entity::discard);
+            }
+            helper.succeed();
         });
     }
 

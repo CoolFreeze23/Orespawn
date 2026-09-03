@@ -16,8 +16,8 @@ import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.projectile.LargeFireball;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.entity.projectile.ProjectileDeflection;
-import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.BaseFireBlock;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
@@ -167,6 +167,37 @@ public class BetterFireball extends LargeFireball {
     }
 
     /**
+     * orig BetterFireball.java:232-264, the block half of func_70227_a (ENT-S-104, owner
+     * ruling 2026-09-04: a parity bug, fixed in classic; MOD-031 proposes a config-gated
+     * "fire respects mobGriefing" modern option). A block hit switches on the hit side
+     * ({@code field_72310_e} 0..5 = down, up, north, south, west, east, :236-260) to the
+     * neighbour on that side and, if that cell is air ({@code func_147437_c} = isAirBlock,
+     * :261), sets {@code Blocks.fire} there ({@code func_147449_b} = setBlock with flags 3,
+     * :262) — before the explosion (:265-267) and the setDead (:268), and for small shots
+     * too (the small gate covers only the explosion). Port: the hit face's relative
+     * position, {@code Level.isEmptyBlock} (= isAir) and {@code setBlockAndUpdate}
+     * (flags 3), with the fire state from {@code BaseFireBlock.getState} as 1.21.1's own
+     * fireballs use it (soul fire over soul soil / soul sand, plain fire elsewhere; 1.7.10
+     * had the one fire block). Orig's conditions are kept where vanilla's differ: no
+     * mobGriefing / EntityMobGriefingEvent gate (1.21.1 {@code SmallFireball.onHitBlock}
+     * has one for Mob owners) and no {@code BaseFireBlock.canBePlacedAt} survival check
+     * (orig placed fire on any air cell; fire that cannot survive there removes itself on
+     * its own tick in both versions). super first: {@code Projectile.onHitBlock} is the
+     * block-side {@code onProjectileHit} callback (target blocks, bells, decorated pots),
+     * vanilla plumbing 1.7.10 had no equivalent of, which the ENT-S-102 replay in
+     * {@link #onHit} already ran before the fix.
+     */
+    @Override
+    protected void onHitBlock(BlockHitResult result) {
+        super.onHitBlock(result);
+        if (this.level().isClientSide) return;
+        BlockPos firePos = result.getBlockPos().relative(result.getDirection());
+        if (this.level().isEmptyBlock(firePos)) {
+            this.level().setBlockAndUpdate(firePos, BaseFireBlock.getState(this.level(), firePos));
+        }
+    }
+
+    /**
      * orig BetterFireball.java:205-270 (func_70227_a): one impact, one explosion, and
      * only when not small (:265-267 {@code if (!this.small) explode(power)}, then
      * setDead :268). ENT-S-102, owner ruling 2026-09-04 ("fix with a test"): this
@@ -179,19 +210,26 @@ public class BetterFireball extends LargeFireball {
      * skipped by replaying Projectile.onHit's dispatch here instead of chaining to
      * it: an entity hit deflects a redirectable projectile it struck, runs
      * {@link #onHitEntity} and posts PROJECTILE_LAND at the hit location; a block
-     * hit runs {@link #onHitBlock} and posts PROJECTILE_LAND at the block. Then,
-     * server-side, the port's own explosion when not small and the discard; the
-     * null source is orig :266 ({@code func_72885_a(null, x, y, z, power, true,
-     * mobGriefing)}), whose two flags were fire = true always and block
-     * destruction = mobGriefing; the port feeds mobGriefing into 1.21.1's single
-     * fire slot, so no fire is placed while mobGriefing is off (pre-existing,
-     * filed under ENT-S-104 together with the missing fire beside a block hit).
-     * Skipping the vanilla blast also skips vanilla's EntityMobGriefingEvent post
-     * for the owner; the null-source path reads the gamerule directly. Vanilla's
-     * private explosionPower still loads from the shared {@code ExplosionPower}
-     * key ({@code LargeFireball.readAdditionalSaveData}; orig :277-281 wrote the
-     * same key), but nothing reads it any more: the only blast is this one, at the
-     * port's {@code explosionPower}.
+     * hit runs {@link #onHitBlock} (which places orig :232-264's fire, ENT-S-104) and
+     * posts PROJECTILE_LAND at the block. Then, server-side, the port's own explosion
+     * when not small and the discard; the null source is orig :266
+     * ({@code func_72885_a(null, x, y, z, power, true, mobGriefing)}), whose two flags
+     * were fire = true always and block destruction = mobGriefing (1.7.10
+     * {@code Explosion.isFlaming} / {@code isSmoking}). ENT-S-104 (owner ruling
+     * 2026-09-04, classic): the port used to feed mobGriefing into 1.21.1's single
+     * {@code fire} slot, so an OreSpawn fireball placed no explosion fire while the rule
+     * was off; it now passes fire = true and lets {@code ExplosionInteraction.MOB}
+     * resolve the destruction flag, which for a null source IS the mobGriefing gamerule:
+     * 1.21.1 {@code Level.explode} (the 13-argument form, bytecode) maps MOB to
+     * {@code EventHooks.canEntityGrief(level, source) ? getDestroyType(RULE_MOB_EXPLOSION_DROP_DECAY)
+     * : BlockInteraction.KEEP}, and NeoForge 21.1.223's {@code canEntityGrief(level, null)}
+     * returns {@code level.getGameRules().getBoolean(RULE_MOBGRIEFING)} without posting an
+     * EntityMobGriefingEvent, so, as before, the null-source path reads the gamerule
+     * directly and the vanilla blast's event post for the owner is skipped with the
+     * blast. Vanilla's private explosionPower still loads from the shared
+     * {@code ExplosionPower} key ({@code LargeFireball.readAdditionalSaveData}; orig
+     * :277-281 wrote the same key), but nothing reads it any more: the only blast is
+     * this one, at the port's {@code explosionPower}.
      */
     @Override
     protected void onHit(HitResult result) {
@@ -212,9 +250,10 @@ public class BetterFireball extends LargeFireball {
         }
         if (!this.level().isClientSide) {
             if (!this.small) {
-                boolean canGrief = this.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING);
+                // orig :266 — fire = true always; block destruction = mobGriefing, which MOB
+                // resolves through the gamerule for this null source (ENT-S-104)
                 this.level().explode(null, this.getX(), this.getY(), this.getZ(),
-                        (float) this.explosionPower, canGrief, Level.ExplosionInteraction.MOB);
+                        (float) this.explosionPower, true, Level.ExplosionInteraction.MOB);
             }
             this.discard();
         }
