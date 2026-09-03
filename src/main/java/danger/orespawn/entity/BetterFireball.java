@@ -1,6 +1,7 @@
 package danger.orespawn.entity;
 
 import danger.orespawn.ModEntities;
+import danger.orespawn.OreSpawnConfig;
 import danger.orespawn.util.MyUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
@@ -23,6 +24,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
+import net.neoforged.neoforge.event.EventHooks;
 
 public class BetterFireball extends LargeFireball {
     private static final int MAX_LIFETIME_TICKS = 600;
@@ -168,8 +170,9 @@ public class BetterFireball extends LargeFireball {
 
     /**
      * orig BetterFireball.java:232-264, the block half of func_70227_a (ENT-S-104, owner
-     * ruling 2026-09-04: a parity bug, fixed in classic; MOD-031 proposes a config-gated
-     * "fire respects mobGriefing" modern option). A block hit switches on the hit side
+     * ruling 2026-09-04: a parity bug, fixed in classic; MOD-031, owner ruling 2026-09-04
+     * "accepted as a modern option, default on; classic stays 1.7.10", gates the fire on
+     * mobGriefing while effective, below). A block hit switches on the hit side
      * ({@code field_72310_e} 0..5 = down, up, north, south, west, east, :236-260) to the
      * neighbour on that side and, if that cell is air ({@code func_147437_c} = isAirBlock,
      * :261), sets {@code Blocks.fire} there ({@code func_147449_b} = setBlock with flags 3,
@@ -178,11 +181,20 @@ public class BetterFireball extends LargeFireball {
      * position, {@code Level.isEmptyBlock} (= isAir) and {@code setBlockAndUpdate}
      * (flags 3), with the fire state from {@code BaseFireBlock.getState} as 1.21.1's own
      * fireballs use it (soul fire over soul soil / soul sand, plain fire elsewhere; 1.7.10
-     * had the one fire block). Orig's conditions are kept where vanilla's differ: no
-     * mobGriefing / EntityMobGriefingEvent gate (1.21.1 {@code SmallFireball.onHitBlock}
-     * has one for Mob owners) and no {@code BaseFireBlock.canBePlacedAt} survival check
-     * (orig placed fire on any air cell; fire that cannot survive there removes itself on
-     * its own tick in both versions). super first: {@code Projectile.onHitBlock} is the
+     * had the one fire block). In classic, orig's conditions are kept where vanilla's
+     * differ: no mobGriefing / EntityMobGriefingEvent gate (1.21.1
+     * {@code SmallFireball.onHitBlock} has one for Mob owners) and no
+     * {@code BaseFireBlock.canBePlacedAt} survival check (orig placed fire on any air cell;
+     * fire that cannot survive there removes itself on its own tick in both versions).
+     * MOD-031 (owner ruling 2026-09-04: "accepted as a modern option, default on; classic
+     * stays 1.7.10"): while {@code OreSpawnConfig.fireRespectsMobGriefing()} is effective
+     * (master AND key, read here at impact, never snapshotted) the fire is placed only if
+     * {@code EventHooks.canEntityGrief(level, getOwner())} -- vanilla
+     * the gate vanilla's fireballs use ({@code LargeFireball.onHit} for every owner;
+     * {@code SmallFireball.onHitBlock} only for Mob owners): the mobGriefing gamerule, through
+     * EntityMobGriefingEvent for a non-null owner; the survival check stays out in both
+     * modes. Master or key off: exactly the classic placement (fire always, no event
+     * posted). super first: {@code Projectile.onHitBlock} is the
      * block-side {@code onProjectileHit} callback (target blocks, bells, decorated pots),
      * vanilla plumbing 1.7.10 had no equivalent of, which the ENT-S-102 replay in
      * {@link #onHit} already ran before the fix.
@@ -191,6 +203,14 @@ public class BetterFireball extends LargeFireball {
     protected void onHitBlock(BlockHitResult result) {
         super.onHitBlock(result);
         if (this.level().isClientSide) return;
+        // MOD-031 (owner ruling 2026-09-04: "accepted as a modern option, default on; classic
+        // stays 1.7.10"): the effective option, read at impact, gates orig :261-263's fire on
+        // canEntityGrief(level, owner) for every owner, as vanilla LargeFireball.onHit does
+        // (SmallFireball.onHitBlock gates Mob owners only); classic keeps it
+        // unconditional and posts no EntityMobGriefingEvent.
+        if (OreSpawnConfig.fireRespectsMobGriefing() && !EventHooks.canEntityGrief(this.level(), this.getOwner())) {
+            return;
+        }
         BlockPos firePos = result.getBlockPos().relative(result.getDirection());
         if (this.level().isEmptyBlock(firePos)) {
             this.level().setBlockAndUpdate(firePos, BaseFireBlock.getState(this.level(), firePos));
@@ -226,7 +246,15 @@ public class BetterFireball extends LargeFireball {
      * returns {@code level.getGameRules().getBoolean(RULE_MOBGRIEFING)} without posting an
      * EntityMobGriefingEvent, so, as before, the null-source path reads the gamerule
      * directly and the vanilla blast's event post for the owner is skipped with the
-     * blast. Vanilla's private explosionPower still loads from the shared
+     * blast. MOD-031 (owner ruling 2026-09-04: "accepted as a modern option, default on;
+     * classic stays 1.7.10"): while {@code OreSpawnConfig.fireRespectsMobGriefing()} is
+     * effective (master AND key, read here at impact, never snapshotted) the fire flag is
+     * {@code EventHooks.canEntityGrief(level, getOwner())} instead of true -- vanilla
+     * {@code LargeFireball.onHit}'s flag (the gamerule, through EntityMobGriefingEvent for
+     * a non-null owner); the null source and the MOB interaction are unchanged, so block
+     * destruction stays the gamerule's in both modes. Master or key off: fire = true and no
+     * event posted, exactly the classic call. Vanilla's private explosionPower still loads
+     * from the shared
      * {@code ExplosionPower} key ({@code LargeFireball.readAdditionalSaveData}; orig
      * :277-281 wrote the same key), but nothing reads it any more: the only blast is
      * this one, at the port's {@code explosionPower}.
@@ -251,9 +279,15 @@ public class BetterFireball extends LargeFireball {
         if (!this.level().isClientSide) {
             if (!this.small) {
                 // orig :266 — fire = true always; block destruction = mobGriefing, which MOB
-                // resolves through the gamerule for this null source (ENT-S-104)
+                // resolves through the gamerule for this null source (ENT-S-104). MOD-031
+                // (owner ruling 2026-09-04: "accepted as a modern option, default on; classic
+                // stays 1.7.10"): while the option is effective the fire flag is vanilla
+                // LargeFireball.onHit's canEntityGrief(level, owner), read here at impact;
+                // classic keeps true.
+                boolean fire = !OreSpawnConfig.fireRespectsMobGriefing()
+                        || EventHooks.canEntityGrief(this.level(), this.getOwner());
                 this.level().explode(null, this.getX(), this.getY(), this.getZ(),
-                        (float) this.explosionPower, true, Level.ExplosionInteraction.MOB);
+                        (float) this.explosionPower, fire, Level.ExplosionInteraction.MOB);
             }
             this.discard();
         }

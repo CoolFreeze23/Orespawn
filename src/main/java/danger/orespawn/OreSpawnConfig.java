@@ -184,8 +184,9 @@ public class OreSpawnConfig {
     // names and their [tweaks] section and are effective only while the
     // master is on -- every read goes through the effective-value helpers at
     // the bottom of this class (spiderMovement(), mountCamera(),
-    // phase14ContentEnable(), mothraWideRootHitbox()), never through the keys
-    // directly. The MOD-024 items are unimplemented proposals, not keys.
+    // phase14ContentEnable(), mothraWideRootHitbox(),
+    // fireRespectsMobGriefing()), never through the keys directly. The
+    // MOD-024 items are unimplemented proposals, not keys.
     /**
      * Master modern-mode switch -- master override; defaults to true and
      * defers to the per-feature keys; set false to force every modern feature
@@ -195,8 +196,9 @@ public class OreSpawnConfig {
      * modern feature at its own key's default -- the modern robots with the
      * riding camera.
      * Effective values: {@link #spiderMovement()}, {@link #mountCamera()},
-     * {@link #phase14ContentEnable()}, {@link #mothraWideRootHitbox()} -- a
-     * feature's key is never consulted without this master. Phase G artist
+     * {@link #phase14ContentEnable()}, {@link #mothraWideRootHitbox()},
+     * {@link #fireRespectsMobGriefing()} -- a feature's key is never
+     * consulted without this master. Phase G artist
      * animations will hang off this same master ("artist animations are a
      * 2.0 feature behind the modern config; classic stays code-driven
      * parity", ruling 2026-09-03). Construction-snapshotted features (the
@@ -212,6 +214,19 @@ public class OreSpawnConfig {
      * {@link #mothraWideRootHitbox()}, never directly.
      */
     public static final ModConfigSpec.BooleanValue MODERN_MOTHRA_WIDE_ROOT_HITBOX;
+    /**
+     * MOD-031 (ACCEPTED 2026-09-04, verbatim: "MOD-031: accepted as a modern
+     * option, default on; classic stays 1.7.10."): OreSpawn fireballs respect
+     * the mobGriefing gamerule for the fire they place -- the face fire beside
+     * a struck block and the impact blast's fire flag -- as vanilla ghast and
+     * blaze shots do; 1.7.10 lit both unconditionally (orig
+     * BetterFireball.java:261-266). Takes effect only while
+     * {@link #MODERN_ENABLED} is on -- read through
+     * {@link #fireRespectsMobGriefing()}, never directly, and read at impact,
+     * not snapshotted (a fireball lives 600 ticks at most; no BOSS-017
+     * concern).
+     */
+    public static final ModConfigSpec.BooleanValue MODERN_FIRE_RESPECTS_MOB_GRIEFING;
 
     static {
         BUILDER.push("mobs");
@@ -419,7 +434,8 @@ public class OreSpawnConfig {
                         "to the per-feature keys; set false to force every modern feature to its classic/off " +
                         "value; new modern features register under [modern]. true (default) = each modern " +
                         "feature follows its own key (tweaks.spiderMovement, tweaks.mountCamera, " +
-                        "tweaks.phase14ContentEnable, modern.mothraWideRootHitbox); false = classic 1.7.10 " +
+                        "tweaks.phase14ContentEnable, modern.mothraWideRootHitbox, " +
+                        "modern.fireRespectsMobGriefing); false = classic 1.7.10 " +
                         "parity everywhere, whatever the per-feature keys say. Phase G artist animations will " +
                         "hang off this same switch (classic stays code-driven parity). Snapshotted features " +
                         "(the robot gait mode, hitbox sub-keys) pick up a flip on newly spawned/loaded " +
@@ -431,6 +447,17 @@ public class OreSpawnConfig {
                         "mode always uses 5 x 2. Her wing/head/body parts are placed from her position and " +
                         "are unaffected; only the root box and the target/spawn sweeps that inflate it change."
         ).define("mothraWideRootHitbox", true);
+        // MOD-031, owner ruling 2026-09-04, verbatim: "MOD-031: accepted as a
+        // modern option, default on; classic stays 1.7.10." (the proposal text
+        // had said default false; the ruling overrides it).
+        MODERN_FIRE_RESPECTS_MOB_GRIEFING = BUILDER.comment(
+                "MOD-031: OreSpawn fireballs place no fire beside the block they hit and their blast scatters " +
+                        "no fire while the mobGriefing gamerule is off (as vanilla ghast and blaze shots behave). " +
+                        "Only takes effect while modern.enabled is true; classic mode always lights fires as 1.7.10 " +
+                        "did (orig BetterFireball.java:261-266). On by default (owner ruling 2026-09-04); set false " +
+                        "to keep the 1.7.10 fire behaviour in modern mode too. Read at impact, so a change applies " +
+                        "to the next shot that lands."
+        ).define("fireRespectsMobGriefing", true);
         BUILDER.pop();
 
         SPEC = BUILDER.build();
@@ -445,6 +472,19 @@ public class OreSpawnConfig {
      */
     public static boolean mothraWideRootHitbox() {
         return MODERN_ENABLED.get() && MODERN_MOTHRA_WIDE_ROOT_HITBOX.get();
+    }
+
+    /**
+     * MOD-031 (ACCEPTED 2026-09-04: "accepted as a modern option, default on;
+     * classic stays 1.7.10"): the single {@code master && key} evaluation for
+     * the fireball fire gate -- true only while {@link #MODERN_ENABLED} AND
+     * {@link #MODERN_FIRE_RESPECTS_MOB_GRIEFING} are both on. Read by
+     * {@code BetterFireball} at impact ({@code onHitBlock}'s face fire and
+     * {@code onHit}'s explosion fire flag), never snapshotted; false is the
+     * exact 1.7.10 behaviour (fire always).
+     */
+    public static boolean fireRespectsMobGriefing() {
+        return MODERN_ENABLED.get() && MODERN_FIRE_RESPECTS_MOB_GRIEFING.get();
     }
 
     /**
