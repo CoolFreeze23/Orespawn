@@ -14,7 +14,8 @@ import software.bernie.geckolib.animation.AnimationProcessor;
  * GeckoLib Robot4: {@link ModelRobot4#setupAnim} verbatim on the converted rig
  * (Tier 3, code-driven per Amendment 1), including the cannon assembly's pivot
  * follow (position writes) and the client-local {@code setShielding} side effect
- * kept bug-for-bug (ENT-K-070).
+ * kept bug-for-bug (ENT-K-070), with {@link Robot4Renderer}'s 1.0 x 1.0 shadow
+ * (ENT-S-092, from ClientProxyOreSpawn.java:442 / RenderRobot4.java:23-24).
  */
 public final class Robot4GeoReplacement extends OreSpawnGeoReplacement<Robot4> {
     private static final GeoReplacementDescriptor<Robot4> DESCRIPTOR = new GeoReplacementDescriptor<>(
@@ -23,7 +24,7 @@ public final class Robot4GeoReplacement extends OreSpawnGeoReplacement<Robot4> {
             ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "geo/entity/robot4.geo.json"),
             ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "animations/entity/robot4.animation.json"),
             ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "textures/entity/robot4.png"),
-            1.5F) {
+            Robot4Renderer.SHADOW) {
     };
 
     private static final String[] CANNON_PARTS = {

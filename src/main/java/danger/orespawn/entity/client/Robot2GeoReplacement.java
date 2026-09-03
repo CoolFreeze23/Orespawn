@@ -13,7 +13,9 @@ import software.bernie.geckolib.animation.AnimationProcessor;
 /**
  * GeckoLib Robot2: {@link ModelRobot2#setupAnim} verbatim on the converted rig
  * (Tier 3, code-driven per Amendment 1), including the per-entity
- * {@link RenderInfo} zero-crossing latch and its RNG re-roll.
+ * {@link RenderInfo} zero-crossing latch and its RNG re-roll, with
+ * {@link Robot2Renderer}'s 1.0 x 1.0 shadow (ENT-S-092, from
+ * ClientProxyOreSpawn.java:440 / RenderRobot2.java:23-24).
  */
 public final class Robot2GeoReplacement extends OreSpawnGeoReplacement<Robot2> {
     private static final GeoReplacementDescriptor<Robot2> DESCRIPTOR = new GeoReplacementDescriptor<>(
@@ -22,7 +24,7 @@ public final class Robot2GeoReplacement extends OreSpawnGeoReplacement<Robot2> {
             ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "geo/entity/robot2.geo.json"),
             ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "animations/entity/robot2.animation.json"),
             ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "textures/entity/robot2.png"),
-            1.5F) {
+            Robot2Renderer.SHADOW) {
     };
 
     public Robot2GeoReplacement() {

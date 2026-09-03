@@ -4710,3 +4710,17 @@ PitchBlack. Gametest RenderInfoParityTests (15 tests) pins the per-entity
 holders server-side.
 
 GATE (remediation-0903): build green (asset audit 0/0/4 acknowledged; g1Parity 2, s4Parity 11 with the Elevator conversion proofs rewritten; referenceGeometry 101/101; referenceRenderers PASS 75 / PENDING 45 / NOT_APPLICABLE 13 / DIVERGES 0; benchmark proof rewritten for build.gradle + Elevator inputs); runGameTestServer: All 214 required tests passed (RenderInfoParityTests in its own batch; with the 15 new tests in the default batch, bug003_rat_ai_ticks_and_despawns and dsb_item020_towers_maze_rookery failed on the reshuffled buckets and passed again unchanged once the batch was isolated: TEST-003).
+
+## ENT-S-092 BATCH 2 — 1.7.10 shadow radius restored on the 40 shadow-only renderers (2026-09-03)
+
+Shadow constants written as the original's `par2 * par3` products (or the plain
+literal where the original passed one argument; RockBase 0), passed to super;
+world scale untouched where it already matched (LunaMoth and Mothra now apply
+their existing 1.5 / 10.0 through a SCALE constant, value-identical, so the pin
+leg can see the constant). Robot1, Robot2, Robot4, Vortex and RockBase GeckoLib
+descriptors matched. One refuter per chunk, all eight upheld. Pin manifest: 114
+pins, 13 not applicable, five bosses pending (batch 1b, consequences presented).
+Crab and PitchBlack: shadow pinned, scale axis DYNAMIC (entity getter on both
+sides). Further hitbox-dimension notes folded into ENT-S-095.
+
+GATE (ents092-batch2): build green; referenceRenderers PASS 115 / PENDING 5 at this batch (119 / 1 after batch 1b); runGameTestServer: All 214 required tests passed (gate b2, then the final gate of the day on the full tree).

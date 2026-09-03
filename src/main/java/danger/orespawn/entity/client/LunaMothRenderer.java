@@ -8,21 +8,31 @@ import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.resources.ResourceLocation;
 
+/**
+ * orig RenderButterfly.java + ClientProxyOreSpawn.java:407:
+ * {@code new RenderButterfly(new ModelButterfly(0.75f), 0.4f, 1.5f)} - RenderLiving shadow = par2 * par3
+ * (RenderButterfly.java:25) and preRenderScale scales by par3 = 1.5 (RenderButterfly.java:26,41-47).
+ * The ModelButterfly(0.75f) argument is only wingspeed, not a size (ENT-S-092).
+ */
 public class LunaMothRenderer extends MobRenderer<EntityLunaMoth, ButterflyModel<EntityLunaMoth>> {
     private static final ResourceLocation TEXTURE =
             ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "textures/entity/lunamoth.png");
     public static final ModelLayerLocation MODEL_LAYER =
             new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "luna_moth"), "main");
+    /** orig RenderButterfly.scale = 1.5f (third constructor argument, ClientProxyOreSpawn.java:407). */
+    public static final float SCALE = 1.5F;
+    /** orig RenderLiving shadow = 0.4f * 1.5f (RenderButterfly.java:25). */
+    public static final float SHADOW = 0.4F * 1.5F;
 
     public LunaMothRenderer(EntityRendererProvider.Context context) {
         // wingspeed 0.75f — orig ClientProxyOreSpawn.java:407 (new ModelButterfly(0.75f))
-        super(context, new ButterflyModel<>(context.bakeLayer(MODEL_LAYER), 0.75f), 0.15f);
+        super(context, new ButterflyModel<>(context.bakeLayer(MODEL_LAYER), 0.75f), SHADOW);
     }
 
     @Override
     protected void scale(EntityLunaMoth entity, PoseStack poseStack, float partialTick) {
         // 1.5f — orig ClientProxyOreSpawn.java:407 third arg, applied via orig RenderButterfly.java:26,42 (glScalef)
-        poseStack.scale(1.5f, 1.5f, 1.5f);
+        poseStack.scale(SCALE, SCALE, SCALE);
     }
 
     @Override

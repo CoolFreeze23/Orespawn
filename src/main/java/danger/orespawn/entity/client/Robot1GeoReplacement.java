@@ -9,7 +9,11 @@ import net.minecraft.util.Mth;
 import software.bernie.geckolib.animation.AnimatableManager;
 import software.bernie.geckolib.animation.AnimationProcessor;
 
-/** GeckoLib Robot1: {@link ModelRobot1#setupAnim} verbatim on the converted rig (Tier 3, code-driven per Amendment 1). */
+/**
+ * GeckoLib Robot1: {@link ModelRobot1#setupAnim} verbatim on the converted rig
+ * (Tier 3, code-driven per Amendment 1), with {@link Robot1Renderer}'s 0.3 x 1.0
+ * shadow (ENT-S-092, from ClientProxyOreSpawn.java:439 / RenderRobot1.java:23-24).
+ */
 public final class Robot1GeoReplacement extends OreSpawnGeoReplacement<Robot1> {
     private static final GeoReplacementDescriptor<Robot1> DESCRIPTOR = new GeoReplacementDescriptor<>(
             () -> ModEntities.ROBOT_1.get(),  // lambda: a bound method ref would initialise ModEntities eagerly
@@ -17,7 +21,7 @@ public final class Robot1GeoReplacement extends OreSpawnGeoReplacement<Robot1> {
             ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "geo/entity/robot1.geo.json"),
             ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "animations/entity/robot1.animation.json"),
             ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "textures/entity/robot1.png"),
-            0.5F) {
+            Robot1Renderer.SHADOW) {
     };
 
     public Robot1GeoReplacement() {

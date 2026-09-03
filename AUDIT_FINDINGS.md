@@ -6295,7 +6295,12 @@ keeps BUG-036. Commit 4ea395c's message retains the old number.)*
   bone-tracked hit surfaces follow the rendered scale), Godzilla 3 -> 2 (MOD-025
   bone-synced hitboxes); their hit surfaces change with the render scale, so the
   consequences are presented before landing. NEXT: batch 2, the 40 shadow-only
-  renderers. Recheck list: `phase_g_reports/ents092_recheck_list.md`; changelog
+  renderers. BATCH 2 LANDED (2026-09-03): the 40 shadow-only renderers carry
+  `SHADOW` as the 1.7.10 product (Robot1/2/4, Vortex and RockBase descriptors
+  matched; RockBase's shadow is the original's 0), refuted per chunk; the pin
+  manifest holds 114 pins, 13 not-applicable and the five bosses pending. Crab
+  and PitchBlack pin their shadow and declare a DYNAMIC scale axis (both sides
+  scale by an entity getter). Recheck list: `phase_g_reports/ents092_recheck_list.md`; changelog
   note: `phase_g_reports/ents092_changelog_note.md`. Hitbox dimension
   divergences found on the way are filed as ENT-S-095.
 

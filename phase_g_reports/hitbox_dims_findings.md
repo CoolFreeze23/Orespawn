@@ -91,3 +91,35 @@ AttackSquid, Robot2, Robot3, Ostrich, Island, IslandToo, CreepingHorror, Godzill
 SeaViper, EasterBunny, CaterKiller, Hammerhead, BandP, RockBase, Brutalfly, Frog, SpiderDriver.
 
 Source: scratch truth table of 133 registrations (`ents092_truth.json`, verified by independent refuters per chunk).
+
+Additional rows cited by the batch-2 fixers (2026-09-03):
+
+- EntityLunaMoth: hitbox differs independently of shadow - orig EntityLunaMoth.java:27 func_70105_a(0.5f, 0.5f) vs port ModEntities.java:544 .sized(0.4f, 0.4f) (port reuses the butterfly box). Not touched (hitbox out of scope, ModEntities.java off-limits).
+- Mothra: orig Mothra.java:65 func_70105_a(5.0f, 2.0f) vs port ModEntities.java:586 .sized(6.0f, 3.0f), deliberately enlarged per the comment at ModEntities.java:581-583 for the wing PartEntities. Renderer scale 10.0 does not touch the hitbox on either side. Not touched.
+- Out-of-scope observations from the truth rows, not acted on: port ModelTRex.java:13 ANIM_SPEED = 1.0F replaces the 1.7.10 wingspeed 0.2f (ClientProxyOreSpawn.java:417) - a 5x leg-swing frequency difference; LunaMoth (moth_type 0) and Mothra lack the 1.7.10 creeper-armor scrolling glow pass (RenderButterfly.java:49-87) - presentation, not scale/shadow.
+- Basilisk: no hitbox gap - port ModEntities.java:51 .sized(1.6f, 3.5f) equals reference Basilisk.java:49 setSize(1.6f, 3.5f).
+- Kyuubi: reference Kyuubi.java:44 setSize(0.5f, 1.25f) vs port ModEntities.java:232 .sized(1.0f, 1.2f) - hitbox-only divergence, out of this batch's scope. Separate non-scale note from the truth row: reference ModelKyuubi.java:432 rotates the whole model 180 degrees about Y inside its push/pop; the port KyuubiModel/KyuubiRenderer does not replicate that facing flip.
+- Robot1: reference Robot1.java:39 setSize(0.5f, 0.5f) vs port ModEntities.java:123 .sized(1.0f, 2.0f) - hitbox-only divergence (ModEntities line carries no orig citation), out of scope.
+- Robot2: reference Robot2.java:45 setSize(3.0f, 6.2f) vs port ModEntities.java:127 .sized(1.5f, 2.5f) - hitbox-only divergence, out of scope.
+- Robot4: reference Robot4.java:49 setSize(2.5f, 4.0f) vs port ModEntities.java:135 .sized(1.5f, 2.5f) - hitbox-only divergence, out of scope.
+- All five edited files (and the three Geo descriptors) were pure CRLF before and after the edit; no ModEntities, entity, seam-base, or descriptor-interface files were touched.
+- Dragon: reference Dragon.java:102 setSize(1.5f, 1.25f) vs port ModEntities.java:432-434 .sized(1.5f, 2.0f) - height differs (1.25 vs 2.0). Also: a port baby Dragon (reachable via AgeableMob.finalizeSpawn on the island biome's maxCount-2 creature spawner, or /summon with Age) gets a vanilla-halved hitbox and a MobRenderer-halved shadow (0.625) while the mesh draws at 1.0; 1.7.10 had no child branch for Dragon (constant 1.25 shadow, 1.0 scale).
+- CliffRacer: port ModEntities.java:379-381 .sized(0.8f, 0.8f) vs 1.7.10 CliffRacer.java:26 func_70105_a(0.75f, 0.5f) - hitbox-size difference, no render-scale path involved.
+- Triffid: port ModEntities.java:270-272 .sized(1.0f, 2.0f) vs 1.7.10 Triffid.java:49 func_70105_a(2.0f, 4.0f) - hitbox is half size in both dimensions. Separate non-hitbox observation from the truth table: reference ModelTriffid.render wraps all parts in GL11.glRotatef(-90, 0, 1, 0) (ModelTriffid.java:1401-1405), which the port TriffidModel does not reproduce (orientation, not scale/shadow; out of scope here).
+- WormSmall: port ModEntities.java:286 .sized(0.5f, 0.5f) vs 1.7.10 WormSmall.java:27 func_70105_a(0.25f, 1.0f) - out of batch scope, not changed.
+- WormMedium: port ModEntities.java:290 .sized(1.0f, 1.0f) vs 1.7.10 WormMedium.java:29 func_70105_a(0.5f, 2.0f) - out of batch scope, not changed.
+- WormLarge: port ModEntities.java:297 .sized(1.5f, 1.5f) vs 1.7.10 WormLarge.java:42 func_70105_a(1.55f, 2.5f) - out of batch scope, not changed.
+- GoldFish: port ModEntities.java:349 .sized(0.3f, 0.3f) vs 1.7.10 GoldFish.java:25 func_70105_a(0.75f, 0.5f) - out of batch scope, not changed. (A baby, if one ever existed, would get a halved hitbox via vanilla getAgeScale with no render-scale change; getBreedOffspring returns null on both sides.)
+- LeafMonster: port .sized(0.8f, 1.5f) (ModEntities.java:236) vs 1.7.10 func_70105_a(1.0f, 2.5f) (reference LeafMonster.java:41) - not touched, out of batch scope.
+- EnderKnight: port .sized(0.6f, 1.8f) (ModEntities.java:87) vs 1.7.10 func_70105_a(0.6f, 2.9f) (reference EnderKnight.java:37) - not touched, out of batch scope.
+- EnderReaper: port .sized(0.6f, 2.5f) (ModEntities.java:91) vs 1.7.10 func_70105_a(0.7f, 2.9f) (reference EnderReaper.java:37) - not touched, out of batch scope.
+- Rotator: port .sized(0.6f, 0.6f) (ModEntities.java:256) vs 1.7.10 func_70105_a(1.0f, 2.0f) (reference Rotator.java:56) - not touched, out of batch scope.
+- DungeonBeast: port ModEntities.java:83 .sized(1.5f, 1.5f) vs 1.7.10 DungeonBeast.java:48 func_70105_a(1.15f, 1.1f) — hitbox diverges (not touched; outside this batch).
+- Molenoid: port ModEntities.java:248 .sized(1.2f, 2.0f) vs 1.7.10 Molenoid.java:43 func_70105_a(3.9f, 2.6f) — hitbox diverges (not touched; outside this batch).
+- EasterBunny: port hitbox 0.4x0.6 (ModEntities.java:333) differs from ref 0.5x0.75 (orig EasterBunny.java:35 setSize) - a .sized change, not a visual-scale path; out of batch scope.
+- RockBase: port hitbox 0.5x0.5 (ModEntities.java:645) differs from ref 0.25x0.15 (orig RockBase.java:26) - a .sized change with no visual-scale effect; out of batch scope.
+- Frog: port FrogRenderer render() halves the visual for isBaby() on top of vanilla's age-scaled hitbox (LivingEntity getDefaultDimensions x getAgeScale 0.5), whereas 1.7.10 halved only the hitbox and drew babies full-size; port-only visual divergence but practically unreachable since Frog.getBreedOffspring returns null in both versions. Left untouched per the 'leave scale code alone' instruction.
+- GiantRobot: port EntityType .sized(4.0f, 10.0f) (ModEntities.java:95) vs orig setSize(3.0f, 9.75f) (reference GiantRobot.java:46) - hitbox-only delta, not touched by this batch.
+- SpiderRobot / AntRobot (vertical placement, not hitbox or shadow): the 1.7.10 renderers bypassed the RendererLivingEntity pipeline entirely (no -24/16 = 1.5-block lift, RenderSpiderRobot.java:27-35 / RenderAntRobot.java:27-35), while the port runs MobRenderer's full pipeline with the -1.501 lift (ModernSpiderGait.VANILLA_RENDER_Y_OFFSET) and unchanged part pivots - a geometry-leg question flagged in the truth table, out of scope here.
+- Crab: hitbox scales with getCrabScale in both eras via the entity (orig per-tick setSize Crab.java:133 / port getDefaultDimensions Crab.java:127-133) - faithfully ported entity-side behaviour, no renderer-side hitbox effect.
+- Crab (pin-manifest, not hitbox): promoting the Crab entry to status=pin under the current pin semantics reports DIVERGES on the scale axis only (dynamic getCrabScale on both sides, expected_scale null); shadow axis passes. Needs a manifest ruling for the dynamic-scale axis before promotion.

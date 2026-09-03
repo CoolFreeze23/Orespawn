@@ -13,7 +13,8 @@ import software.bernie.geckolib.animation.AnimationProcessor;
  * GeckoLib RockBase: {@link ModelRockBase#setupAnim} verbatim on the converted
  * rig (Tier 3 per ruling 2 of 2026-09-02). The pose is pure visibility: one
  * of five part sets is shown for the entity's rock type, and the texture is
- * the classic renderer's per-type table.
+ * the classic renderer's per-type table. Shadow is {@link RockBaseRenderer#SHADOW}
+ * (0.0 x 1.0 = none, ENT-S-092, from ClientProxyOreSpawn.java:505 / RenderRockBase.java:34).
  */
 public final class RockBaseGeoReplacement extends OreSpawnGeoReplacement<RockBase> {
     public static final String[] ALL_PARTS = {
@@ -31,7 +32,7 @@ public final class RockBaseGeoReplacement extends OreSpawnGeoReplacement<RockBas
             ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "geo/entity/rockbase.geo.json"),
             ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "animations/entity/rockbase.animation.json"),
             ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "textures/entity/rocktexture.png"),
-            0.3F) {
+            RockBaseRenderer.SHADOW) {
         @Override
         public ResourceLocation texture(RockBase entity) {
             return RockBaseRenderer.textureFor(entity.getRockType());

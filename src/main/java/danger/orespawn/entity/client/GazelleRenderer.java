@@ -9,6 +9,13 @@ import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.resources.ResourceLocation;
 
+/**
+ * orig RenderGazelle.java + ClientProxyOreSpawn.java:449:
+ * {@code new RenderGazelle(new ModelGazelle(0.65f), 0.45f, 1.0f)}: RenderLiving shadow = par2 * par3
+ * (RenderGazelle.java:23), this.scale = par3 (:24), and preRenderScale (:39-45, via func_77041_b)
+ * draws children at scale / 2 (ENT-S-092). The ModelGazelle(0.65f) argument is wingspeed only,
+ * not a size.
+ */
 public class GazelleRenderer extends MobRenderer<Gazelle, ModelGazelle> {
 
     private static final ResourceLocation TEXTURE =
@@ -17,10 +24,13 @@ public class GazelleRenderer extends MobRenderer<Gazelle, ModelGazelle> {
     public static final ModelLayerLocation MODEL_LAYER =
             new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "gazelle"), "main");
 
+    /** orig RenderGazelle.scale = 1.0f (third constructor argument, ClientProxyOreSpawn.java:449). */
     private static final float SCALE = 1.0f;
+    /** orig RenderLiving shadow = 0.45f * 1.0f (RenderGazelle.java:23). */
+    public static final float SHADOW = 0.45F * 1.0F;
 
     public GazelleRenderer(EntityRendererProvider.Context context) {
-        super(context, new ModelGazelle(context.bakeLayer(MODEL_LAYER)), 0.5f);
+        super(context, new ModelGazelle(context.bakeLayer(MODEL_LAYER)), SHADOW);
     }
 
     @Override
