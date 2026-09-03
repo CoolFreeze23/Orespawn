@@ -596,3 +596,22 @@ joint position each tick, so the feed generalizes directly; costs
 8-16 more part entities per spider and a profile/registrar rev. The
 S6a suite pins live boxes to the solver chord (s6_part_anchor_chord
 _pin) so alignment drift is caught regardless.
+
+## MOD-029 — Mothra enlarged root hitbox as a config-gated modern option (PROPOSAL, 2026-09-03)
+
+- **Origin:** ENT-S-095 batch 2 restored Mothra's 1.7.10 root box 5.0 x 2.0 (orig
+  Mothra.java:65). The port had registered 6 x 3 with this comment:
+  ```
+    // 1.7.10 func_70105_a: Mothra = 5.0 x 2.0. We bump to 6 x 3 so the
+    // wing PartEntities (which extend +/-6 sideways) read correctly against
+    // the root hitbox during cross-biome target sweeps.
+  ```
+- **Reason on record:** the wider root box was meant to keep the wing part entities
+  "reading correctly" against the root during target sweeps. The code does not bear
+  it out today: the parts are placed from the root position and size themselves, and
+  the sweeps that inflate the root box (findSomethingToAttack, checkSpawnRules) now
+  match 1.7.10 exactly. If the wider root is still wanted for feel, it is a modern
+  option, not parity.
+- **Proposal:** a config key (e.g. `mothraWideRootHitbox`, default false) that
+  switches Mothra's dimensions to 6 x 3; when on, the both-modes dims pin expects
+  6 x 3. Not implemented; classic mode ships 5 x 2. Owner decision pending.

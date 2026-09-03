@@ -6414,6 +6414,31 @@ keeps BUG-036. Commit 4ea395c's message retains the old number.)*
   the server box stayed 0.1x0.1 until an age change or reload while the
   class literal 0.2x0.2 was the client and persisted box. Batch 1 pins the
   class literal 0.2x0.2; say if the construction-time 0.1x0.1 is wanted.
+- **BATCH 2 + RULINGS LANDED (2026-09-03):** Godzilla restores 9.9x25 (orig
+  Godzilla.java:72; the PlayNicely quarter 2.475x6.25, orig :74, kept; both modes
+  pinned in `BossDimsPlayNicelyTests`). Mothra restores 5x2 (orig Mothra.java:65).
+  The port's source comment, verbatim:
+  ```
+    // 1.7.10 func_70105_a: Mothra = 5.0 x 2.0. We bump to 6 x 3 so the
+    // wing PartEntities (which extend +/-6 sideways) read correctly against
+    // the root hitbox during cross-biome target sweeps.
+  ```
+  It states a reason, so MOD-029 is filed as a proposal for a config-gated modern
+  6x3 with that reason; the reason has no code behind it (the four part entities
+  are placed from the root position and size themselves; only the hunt sweep
+  and the natural-spawn gate inflate the root box, and both now match 1.7.10).
+  Rulings recorded: red ant and termite pin 0.2x0.2; the 0.1x0.1 was a 1.7.10
+  EntityAgeable constructor-ordering transient (the final setSize deferred the
+  second constructor call until an age change) deliberately not reproduced.
+  Apple cow and golden apple cow align to 0.9x1.3: their only recorded reason
+  for 1.4 was "mirror the existing OreSpawn cow line" (MOD-021 says nothing
+  about size), and that line is the vanilla 1.7.10 EntityCow 0.9x1.3.
+  BetterFireball.setSmall() shrinks the box to 0.3125 again (orig
+  BetterFireball.java:84) through the non-living `Entity#getDimensions` hook plus
+  refreshDimensions, pinned. cannon_fodder stands port-only at 0.6x0.6: 1.7.10
+  never registered EntityCannonFodder, so no parity target exists; documented
+  and pinned so it cannot drift. Refuted once. Batch 3 (TheQueen) lands with
+  the ENT-S-092 Queen restore.
 
 ### ENT-S-096 — Kraken has no PlayNicely mode (REPORT, 2026-09-03)
 
@@ -6446,6 +6471,21 @@ keeps BUG-036. Commit 4ea395c's message retains the old number.)*
 - **Resolution:** OPEN — report only; parity bugs by the standing rule, presented
   before fixing. Each gate is one condition with an orig citation; pins would be
   a batched, config-flipping gametest per gate (TEST-003 batch discipline).
+
+### ENT-S-098 — Shot BetterFireballs carry the vanilla fireball EntityType (REPORT, 2026-09-03)
+
+- **Evidence:** found by the ENT-S-095 batch-2 refuter. Every shooter builds shots with
+  `new BetterFireball(level, shooter, accel)` (17 sites: Mothra, Godzilla, TheKing,
+  Dragon, ThePrince, ThePrincess, ...), whose constructor chains to
+  `LargeFireball(level, shooter, movement, 1)` = `super(EntityType.FIREBALL, ...)`, so a
+  shot BetterFireball is typed `minecraft:fireball`: the port's `better_fireball`
+  registration (its `.sized`, `noSummon`, its renderer binding) governs only
+  `EntityType#create` instances, clients construct shots as vanilla LargeFireballs,
+  and NBT saves them as `minecraft:fireball`. The 0.3125 shrink still applies to
+  shots (class-level override), but the renderer and registration do not.
+- **Resolution:** OPEN — report only. Fix would be a constructor that passes the
+  mod's own EntityType (as the (EntityType, Level) constructor does) plus a pin
+  that a shot fireball's type is `orespawn:better_fireball`.
 ### TEST-003 — Config-flipping gametests in the concurrent default batch
 
 - **Impact:** MEDIUM (suite reliability) — boss005/boss012 flip a global

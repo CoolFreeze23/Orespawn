@@ -186,7 +186,11 @@ public class ModEntities {
     // 1.7.10 func_70105_a: Godzilla = 9.9 × 25.0 (real) / 2.475 × 6.25 (egg form).
     public static final DeferredHolder<EntityType<?>, EntityType<Godzilla>> GODZILLA =
             ENTITY_TYPES.register("godzilla", () -> EntityType.Builder.of(Godzilla::new, MobCategory.MONSTER)
-                    .sized(10.0f, 25.0f).clientTrackingRange(16).build("godzilla"));
+                    // 1.7.10 func_70105_a: Godzilla = 9.9 x 25.0 (orig Godzilla.java:72), ENT-S-095; was an uncited 10.0 x 25.0
+                    // registered against the 9.9 comment above (owner ruling 2026-09-03). The PlayNicely branch
+                    // (orig Godzilla.java:74, 2.475 x 6.25 = the 1.7.10 quarter) lives in Godzilla#getDefaultDimensions,
+                    // which returns this same 9.9 x 25.0 when the flag was off at construction.
+                    .sized(9.9f, 25.0f).clientTrackingRange(16).build("godzilla"));
 
     // 1.7.10 func_70105_a: Kraken = 4.0 × 15.0 (real) / 1.33 × 5.0 (egg form).
     // The previous 12 × 10 made the squid wider than tall, which clipped its
@@ -433,6 +437,7 @@ public class ModEntities {
     public static final DeferredHolder<EntityType<?>, EntityType<EntityRedAnt>> ENTITY_RED_ANT =
             ENTITY_TYPES.register("red_ant", () -> EntityType.Builder.of(EntityRedAnt::new, MobCategory.CREATURE)
                     // 1.7.10 func_70105_a: EntityRedAnt = 0.2 x 0.2 (orig EntityRedAnt.java:33), ENT-S-095; was an uncited 0.4 x 0.4
+                    // 1.7.10 EntityAgeable.setSize deferred the second constructor call, so the server box was 0.1 until an age change or an NBT reload: a constructor-ordering transient deliberately not reproduced (owner ruling 2026-09-03)
                     .sized(0.2f, 0.2f).clientTrackingRange(8).build("red_ant"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<EntityRainbowAnt>> ENTITY_RAINBOW_ANT =
@@ -448,6 +453,7 @@ public class ModEntities {
     public static final DeferredHolder<EntityType<?>, EntityType<EntityTermite>> ENTITY_TERMITE =
             ENTITY_TYPES.register("termite", () -> EntityType.Builder.of(EntityTermite::new, MobCategory.CREATURE)
                     // 1.7.10 func_70105_a: Termite = 0.2 x 0.2 (orig Termite.java:46), ENT-S-095; was an uncited 0.3 x 0.3
+                    // 1.7.10 EntityAgeable.setSize deferred the second constructor call, so the server box was 0.1 until an age change or an NBT reload: a constructor-ordering transient deliberately not reproduced (owner ruling 2026-09-03)
                     .sized(0.2f, 0.2f).clientTrackingRange(8).build("termite"));
 
     // T-Shirt is a novelty gag entity (cosmetic prop) — not a naturally
@@ -490,8 +496,14 @@ public class ModEntities {
             ENTITY_TYPES.register("baby_dragon", () -> EntityType.Builder.of(BabyDragon::new, MobCategory.CREATURE)
                     .sized(1.0f, 1.4f).clientTrackingRange(10).build("baby_dragon"));
 
+    // Port-only registration: 1.7.10 never registered EntityCannonFodder (orig OreSpawnMain.java has no
+    // registerModEntity for it) -- it is only the base class of Chipmunk/Lizard/Ostrich/VelocityRaptor
+    // (orig EntityCannonFodder.java:32-33 extends EntityTameable, no setSize of its own), so no 1.7.10
+    // hitbox parity target exists. The port dims 0.6 x 0.6 stand as port-only (owner ruling 2026-09-03,
+    // ENT-S-095) and are pinned in HitboxDimsParityTests so they cannot drift silently.
     public static final DeferredHolder<EntityType<?>, EntityType<EntityCannonFodder>> ENTITY_CANNON_FODDER =
             ENTITY_TYPES.register("cannon_fodder", () -> EntityType.Builder.of(EntityCannonFodder::new, MobCategory.CREATURE)
+                    // port-only 0.6 x 0.6, no 1.7.10 parity target (see above), ENT-S-095 owner ruling 2026-09-03
                     .sized(0.6f, 0.6f).clientTrackingRange(10).build("cannon_fodder"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<EntityGammaMetroid>> ENTITY_GAMMA_METROID =
@@ -632,12 +644,18 @@ public class ModEntities {
             ENTITY_TYPES.register("ghost_skelly", () -> EntityType.Builder.of(GhostSkelly::new, MobCategory.MONSTER)
                     .sized(1.5f, 2.0f).clientTrackingRange(10).build("ghost_skelly"));
 
-    // 1.7.10 func_70105_a: Mothra = 5.0 × 2.0. We bump to 6 × 3 so the
-    // wing PartEntities (which extend ±6 sideways) read correctly against
-    // the root hitbox during cross-biome target sweeps.
+    // 1.7.10 func_70105_a: Mothra = 5.0 × 2.0 (orig Mothra.java:65). The port shipped 6 × 3 under the
+    // source comment "We bump to 6 × 3 so the wing PartEntities (which extend ±6 sideways) read
+    // correctly against the root hitbox during cross-biome target sweeps" -- a source comment, not a
+    // MOD record. The wing parts are placed from the root's POSITION (Mothra#positionPart, ±6 on x),
+    // never from its box, and the target sweeps inflate the ROOT box (Mothra#findSomethingToAttack
+    // 15/20/15 = orig :489, #checkSpawnRules 64/32/64 = orig :329), so 6 × 3 only widened every sweep
+    // by 0.5 per side and raised it by 1.0 over 1.7.10. Restored to 5 × 2 by owner ruling 2026-09-03
+    // (ENT-S-095 batch 2); a config-gated modern 6 × 3 is a separate MOD proposal -- no gate here.
     public static final DeferredHolder<EntityType<?>, EntityType<Mothra>> MOTHRA =
             ENTITY_TYPES.register("mothra", () -> EntityType.Builder.of(Mothra::new, MobCategory.MONSTER)
-                    .sized(6.0f, 3.0f).clientTrackingRange(16).build("mothra"));
+                    // 1.7.10 func_70105_a: Mothra = 5.0 x 2.0 (orig Mothra.java:65), ENT-S-095; was an uncited 6.0 x 3.0
+                    .sized(5.0f, 2.0f).clientTrackingRange(16).build("mothra"));
 
     // Phase 14 — wiki-canon hostile butterfly variant for the Chaos
     // (a.k.a. "Danger") Dimension. Registered as MONSTER (not AMBIENT
@@ -747,11 +765,17 @@ public class ModEntities {
     // they slot into pack-hunt AI ranges identically to RedCow.
     public static final DeferredHolder<EntityType<?>, EntityType<AppleCow>> APPLE_COW =
             ENTITY_TYPES.register("apple_cow", () -> EntityType.Builder.of(AppleCow::new, MobCategory.CREATURE)
-                    .sized(0.9f, 1.4f).clientTrackingRange(10).build("apple_cow"));
+                    // No 1.7.10 class (MOD-021); the only recorded size reason is "mirrors the cow line" (above), and that
+                    // line is the vanilla 1.7.10 EntityCow 0.9 x 1.3 (RedCow -- which 1.7.10 registered as "Apple Cow",
+                    // orig OreSpawnMain.java:3587), so this follows it: 0.9 x 1.4 -> 0.9 x 1.3, owner ruling 2026-09-03 (ENT-S-095)
+                    .sized(0.9f, 1.3f).clientTrackingRange(10).build("apple_cow"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<GoldenAppleCow>> GOLDEN_APPLE_COW =
             ENTITY_TYPES.register("golden_apple_cow", () -> EntityType.Builder.of(GoldenAppleCow::new, MobCategory.CREATURE)
-                    .sized(0.9f, 1.4f).clientTrackingRange(10).build("golden_apple_cow"));
+                    // No 1.7.10 class (MOD-021); same "mirrors the cow line" reason as apple_cow, so it follows GoldCow (which
+                    // 1.7.10 registered as "Golden Apple Cow", orig OreSpawnMain.java:3595) to the vanilla EntityCow 0.9 x 1.3:
+                    // 0.9 x 1.4 -> 0.9 x 1.3, owner ruling 2026-09-03 (ENT-S-095)
+                    .sized(0.9f, 1.3f).clientTrackingRange(10).build("golden_apple_cow"));
 
     // Endgame-tier wiki-canon variant capping the apple → golden apple →
     // enchanted golden apple ladder. Same hitbox/tracking range as the
@@ -776,7 +800,7 @@ public class ModEntities {
 
     public static final DeferredHolder<EntityType<?>, EntityType<BetterFireball>> BETTER_FIREBALL =
             ENTITY_TYPES.register("better_fireball", () -> EntityType.Builder.<BetterFireball>of(BetterFireball::new, MobCategory.MISC)
-                    // 1.7.10 func_70105_a: BetterFireball = 1.0 x 1.0 in both ctors (orig BetterFireball.java:48/:57; setSmall() :84 shrinks it to 0.3125 x 0.3125), projectile, ENT-S-095; was an uncited 0.25 x 0.25
+                    // 1.7.10 func_70105_a: BetterFireball = 1.0 x 1.0 in both ctors (orig BetterFireball.java:48/:57; setSmall() :84 shrinks it to 0.3125 x 0.3125, ported in BetterFireball#getDimensions, owner ruling 2026-09-03), projectile, ENT-S-095; was an uncited 0.25 x 0.25
                     .sized(1.0f, 1.0f).clientTrackingRange(4).updateInterval(10).noSummon().build("better_fireball"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<BerthaHit>> BERTHA_HIT =

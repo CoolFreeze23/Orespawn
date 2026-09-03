@@ -244,15 +244,18 @@ public class Godzilla extends Monster implements OreSpawnPartEntity.MultipartBos
     }
 
     /**
-     * BOSS-017: orig Godzilla.java:71-75 — 9.9x25 normally (port registers
-     * 10x25, documented at ModEntities), 2.475x6.25 when PlayNicely was set
-     * at construction time.
+     * BOSS-017: orig Godzilla.java:71-75 — 9.9x25 normally (orig :72
+     * {@code func_70105_a(9.9f, 25.0f)}), 2.475x6.25 (orig :74, the 1.7.10
+     * quarter) when PlayNicely was set at construction time. ENT-S-095 owner
+     * ruling 2026-09-03: the port's 10x25 (registered and returned here against
+     * ModEntities' own 9.9 comment) is restored to 9.9x25; the ModEntities
+     * registration carries the same value.
      */
     @Override
     public net.minecraft.world.entity.EntityDimensions getDefaultDimensions(net.minecraft.world.entity.Pose pose) {
         return this.playNicelyShrunk
-                ? net.minecraft.world.entity.EntityDimensions.fixed(2.475f, 6.25f)
-                : net.minecraft.world.entity.EntityDimensions.fixed(10.0f, 25.0f);
+                ? net.minecraft.world.entity.EntityDimensions.fixed(2.475f, 6.25f) // orig Godzilla.java:74
+                : net.minecraft.world.entity.EntityDimensions.fixed(9.9f, 25.0f);  // orig Godzilla.java:72
     }
 
     @Override

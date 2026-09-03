@@ -40,5 +40,6 @@ Molenoid 3.9x2.6, Emperor Scorpion 3.5x3, Hercules Beetle 3.25x2.75, Robot 2 3x6
 2.5x3.25, Trooper Bug 3x3.5, Urchin 1.35x2.1, Triffid 2x4, Coin 1.5x1.5; the Sea Monster's
 box shrinks from 5x5 to 1.25x2.5, and the ants, cricket, irukandji and rat are small again.
 The Kraken also regained its PlayNicely mode (1.33x5 box and a third-size draw while the
-setting is on). Godzilla, Mothra and The Queen follow in later batches.
-
+setting is on), and its PlayNicely behaviour gates (no storms, lightning, grabs or hunts while
+the setting is on). Godzilla is 9.9 wide again (was 10), Mothra's box is back to 5x2 (was 6x3),
+the apple cows match the cow line at 0.9x1.3, and a small fireball is small again (0.3125).

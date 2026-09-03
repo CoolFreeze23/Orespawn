@@ -4766,3 +4766,15 @@ their own batch. Refuted once. Batches 2 (Godzilla, Mothra) and 3 (TheQueen,
 MHLib lockstep) pending; the Queen's extent comparison is reported separately.
 
 GATE (ents095-b1): build green (referenceRenderers PASS 119 / PENDING 1; g1Parity 2, s4Parity 11; referenceGeometry 101/101); runGameTestServer: All 281 required tests passed (218 prior + 63 HitboxDimsParityTests in batch hitboxDimsParity; gates s095b1 and s095b1b).
+
+## ENT-S-095 BATCH 2 + RULINGS — Godzilla 9.9, Mothra 5x2, cows, fireball, transients (2026-09-03)
+
+Godzilla's registration and classic branch return to 9.9x25 with the PlayNicely
+quarter kept and both modes pinned. Mothra returns to 5x2 in classic mode; the
+port comment that enlarged it is quoted in AUDIT_FINDINGS and its reason filed
+as MOD-029 (config-gated modern option, proposal only). Red ant and termite
+keep 0.2 with the EntityAgeable transient recorded; the apple cows follow the
+cow line to 0.9x1.3; BetterFireball.setSmall shrinks the box again;
+cannon_fodder is documented as port-only and pinned. Seven new gametests.
+
+GATE (ents095-b2): build green (referenceRenderers PASS 120 / PENDING 0; queenPartPlacementProbe OVERALL PASS); runGameTestServer: All 295 required tests passed (gate day3c on the full tree: 281 prior + 7 batch-2 + 3 Queen + 4 Kraken-gate tests).

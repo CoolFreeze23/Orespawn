@@ -3,6 +3,7 @@ package danger.orespawn.gametest;
 import danger.orespawn.ModEntities;
 import danger.orespawn.OreSpawnConfig;
 import danger.orespawn.OreSpawnMod;
+import danger.orespawn.entity.BetterFireball;
 import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
@@ -10,6 +11,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
@@ -600,5 +602,85 @@ public class HitboxDimsParityTests {
     public void s095_enchanted_apple_cow_dims_both_modes(GameTestHelper helper) {
         pinBothModes(helper, ModEntities.ENCHANTED_APPLE_COW.get(), 0.9f, 1.3f, "enchanted_apple_cow",
                 "vanilla 1.7.10 EntityCow ctor setSize(0.9f, 1.3f) -- EnchantedCow sets no size of its own; baseline proven from the Mojang 1.7.10 jar");
+    }
+
+    // ================================================================
+    // Owner rulings 2026-09-03 (ENT-S-095 follow-up): Mothra restored to 1.7.10 in classic mode (batch 2,
+    // no PlayNicely size branch so both modes agree); the two MOD-021 cows aligned to the cow line;
+    // cannon_fodder pinned as port-only; BetterFireball#setSmall shrink restored. Godzilla (the other
+    // batch-2 row, a ctor-snapshot PlayNicely branch) is pinned in BossDimsPlayNicelyTests, own batch.
+    // ================================================================
+
+    /**
+     * orig Mothra.java:65 setSize(5.0f, 2.0f) -- the port's 6x3 came from a source comment, not a
+     * MOD record (ents095_split batch 2). Mothra has no PlayNicely size branch (orig :63-70), so both
+     * modes read 5x2; her wing parts are placed from the root POSITION (Mothra#positionPart), not
+     * from this box, and only the root-box target sweeps change with it.
+     */
+    @GameTest(template = "empty_large", batch = "hitboxDimsParity")
+    public void s095_mothra_dims_both_modes(GameTestHelper helper) {
+        pinBothModes(helper, ModEntities.MOTHRA.get(), 5.0f, 2.0f, "mothra",
+                "orig Mothra.java:65 setSize(5.0f, 2.0f), no PlayNicely size branch in orig :63-70; owner ruling 2026-09-03 restored the port's 6x3");
+    }
+
+    /**
+     * apple_cow has no 1.7.10 class (MOD-021); its only recorded size reason is "mirrors the cow
+     * line" (ModEntities), and that line is the vanilla 1.7.10 EntityCow 0.9x1.3 -- RedCow, which
+     * 1.7.10 registered under the display name "Apple Cow" (orig OreSpawnMain.java:3587). Owner
+     * ruling 2026-09-03: aligned 0.9x1.4 -> 0.9x1.3.
+     */
+    @GameTest(template = "empty_large", batch = "hitboxDimsParity")
+    public void s095_apple_cow_dims_both_modes(GameTestHelper helper) {
+        pinBothModes(helper, ModEntities.APPLE_COW.get(), 0.9f, 1.3f, "apple_cow",
+                "no 1.7.10 class (MOD-021), aligned to the cow line = vanilla 1.7.10 EntityCow ctor setSize(0.9f, 1.3f), the RedCow that 1.7.10 registered as \"Apple Cow\" (orig OreSpawnMain.java:3587); owner ruling 2026-09-03");
+    }
+
+    /** golden_apple_cow: as apple_cow; 1.7.10 GoldCow was registered as "Golden Apple Cow" (orig OreSpawnMain.java:3595). */
+    @GameTest(template = "empty_large", batch = "hitboxDimsParity")
+    public void s095_golden_apple_cow_dims_both_modes(GameTestHelper helper) {
+        pinBothModes(helper, ModEntities.GOLDEN_APPLE_COW.get(), 0.9f, 1.3f, "golden_apple_cow",
+                "no 1.7.10 class (MOD-021), aligned to the cow line = vanilla 1.7.10 EntityCow ctor setSize(0.9f, 1.3f), the GoldCow that 1.7.10 registered as \"Golden Apple Cow\" (orig OreSpawnMain.java:3595); owner ruling 2026-09-03");
+    }
+
+    /**
+     * cannon_fodder is port-only: 1.7.10 never registered EntityCannonFodder (orig OreSpawnMain.java
+     * has no registerModEntity for it; orig EntityCannonFodder.java:32-33 extends EntityTameable with
+     * no setSize, the base class of Chipmunk/Lizard/Ostrich/VelocityRaptor), so there is no parity
+     * target. Owner ruling 2026-09-03: the port's 0.6x0.6 stands and is pinned here so it cannot
+     * drift silently. The expected value is NOT a 1.7.10 value.
+     */
+    @GameTest(template = "empty_large", batch = "hitboxDimsParity")
+    public void s095_cannon_fodder_port_only_dims_both_modes(GameTestHelper helper) {
+        pinBothModes(helper, ModEntities.ENTITY_CANNON_FODDER.get(), 0.6f, 0.6f, "cannon_fodder",
+                "port-only 0.6x0.6 with no 1.7.10 parity target: orig EntityCannonFodder.java:32-33 extends EntityTameable with no setSize and orig OreSpawnMain.java never registered it; owner ruling 2026-09-03");
+    }
+
+    /**
+     * orig BetterFireball.java:82-85 setSmall() -- besides the damage flag it called
+     * setSize(0.3125f, 0.3125f) (:84), shrinking the constructors' 1.0x1.0 (:48/:57). The port's
+     * setSmall only flipped the flag; owner ruling 2026-09-03 restores the shrink through
+     * BetterFireball#getDimensions + refreshDimensions(). No config flip, so no own batch: the
+     * fireball goes in through EntityType#create + addFreshEntity (the registered type's path; the
+     * shooters build shots through LargeFireball's constructor, which types them as the vanilla
+     * fireball, filed as ENT-S-098), and is
+     * asserted 1x1 before and 0.3125x0.3125 after, as getBbWidth/Height and as the live AABB.
+     */
+    @GameTest(template = "empty_large", batch = "hitboxDimsParity")
+    public void s095_better_fireball_set_small_shrinks_to_0_3125(GameTestHelper helper) {
+        BetterFireball fireball = ModEntities.BETTER_FIREBALL.get().create(helper.getLevel());
+        helper.assertTrue(fireball != null, "orespawn:better_fireball could not be created via EntityType#create (ENT-S-095)");
+        try {
+            Vec3 at = helper.absoluteVec(Vec3.atBottomCenterOf(POS));
+            fireball.setPos(at.x, at.y, at.z);
+            helper.getLevel().addFreshEntity(fireball);
+            assertDims(helper, fireball, 1.0f, 1.0f, "better_fireball",
+                    "orig BetterFireball.java:48/:57 setSize(1.0f, 1.0f) in both ctors", "before setSmall()");
+            fireball.setSmall();
+            assertDims(helper, fireball, 0.3125f, 0.3125f, "better_fireball",
+                    "orig BetterFireball.java:84 setSmall() setSize(0.3125f, 0.3125f)", "after setSmall()");
+        } finally {
+            fireball.discard();
+        }
+        helper.succeed();
     }
 }
