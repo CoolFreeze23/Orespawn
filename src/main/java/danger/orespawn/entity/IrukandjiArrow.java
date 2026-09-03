@@ -10,6 +10,7 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractArrow;
@@ -54,8 +55,8 @@ public class IrukandjiArrow extends AbstractArrow {
      * {@code ultimate_sword_pvp}=off guard no-sells players / Girlfriend /
      * Boyfriend / tamed pets with just the bow-hit sound (:158-170); crit
      * adds 0..51 (:172-173); a burning arrow ignites the victim 5s (:176-177);
-     * on a successful hurt the victim's arrow count increments, Punch
-     * knockback pushes 0.6/blk like vanilla (:181-188), an arrow-hit-player
+     * on a successful hurt the victim's arrow count increments, Punch knockback
+     * pushes a Mob (orig :181 EntityLiving, never a player; ENT-S-111) 0.6/blk (:187-188), an arrow-hit-player
      * ding reaches the shooter (:190-192), and the arrow despawns with the
      * bow-hit sound; a no-sold hurt deflects the arrow backwards (:195-199).
      */
@@ -83,12 +84,14 @@ public class IrukandjiArrow extends AbstractArrow {
         }
 
         if (hit.hurt(source, damage)) {
-            if (hit instanceof LivingEntity living) {
+            // orig :181 `instanceof EntityLiving` (1.21.1 Mob) wrapped the arrow count, the push AND the ding
+            // together, so a player got none of them (ENT-S-111; the ding was unreachable in 1.7.10 too).
+            if (hit instanceof Mob living) {
                 if (!this.level().isClientSide) {
                     living.setArrowCount(living.getArrowCount() + 1);
                 }
                 int punch = this.punchLevel();
-                if (punch > 0) {
+                if (punch > 0) { // inside the orig :181 gate: a player is never pushed (ENT-S-111)
                     Vec3 flat = this.getDeltaMovement().multiply(1.0, 0.0, 1.0);
                     if (flat.lengthSqr() > 0.0) {
                         // orig :187-188 — 0.6 * punch along the flight line, +0.1 lift

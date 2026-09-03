@@ -38,6 +38,7 @@ import net.minecraft.world.entity.ai.goal.target.OwnerHurtTargetGoal;
 import net.minecraft.world.entity.boss.EnderDragonPart;
 import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
 import net.minecraft.world.entity.monster.Monster;
+import net.minecraft.world.entity.npc.Villager;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -46,6 +47,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
+import danger.orespawn.OreSpawnConfig;
 import danger.orespawn.OreSpawnMod;
 import danger.orespawn.entity.ai.TargetSelection;
 import danger.orespawn.util.MyUtils;
@@ -741,9 +743,16 @@ public class EntityLeon extends TamableAnimal
      * {@code capabilities.isCreativeMode} (:417) is {@code Abilities.instabuild}
      * — the port's own Kraken / TheKing idiom — not {@code invulnerable}; the two
      * differ for a survival player made invulnerable by other means.
+     * ENT-S-110: the PlayNicely gate (:391-393, {@code OreSpawnMain.PlayNicely != 0}
+     * → false, read live as {@code OreSpawnConfig.PLAY_NICELY}) sits after Peaceful
+     * (:388-390) and ahead of the null check (:394), and the untamed tail (:422-426)
+     * grants only {@code MyUtils.isAttackableNonMob} targets ({@link #isAttackableNonMob},
+     * the orig membership), everything else falling through to :427's false — the
+     * port used to grant any living thing to an untamed Leon.
      */
     private boolean isSuitableTarget(LivingEntity target) {
         if (this.level().getDifficulty() == Difficulty.PEACEFUL) return false;
+        if (OreSpawnConfig.PLAY_NICELY.get()) return false; // orig Leon.java:391-393 PlayNicely != 0 (ENT-S-110)
         if (target == null || target == this || !target.isAlive()) return false;
         if (MyUtils.isIgnoreable(target)) return false; // orig Leon.java:403-405 — the shared ignore screen (ENT-S-106)
         if (!this.getSensing().hasLineOfSight(target)) return false;
@@ -753,8 +762,38 @@ public class EntityLeon extends TamableAnimal
             if (player.getAbilities().instabuild) return false; // orig Leon.java:417 isCreativeMode (ENT-S-107)
             return !this.isTame();
         }
-        if (!this.isTame()) return true;
-        return false;
+        if (!this.isTame() && isAttackableNonMob(target)) return true; // orig Leon.java:422-426 — the untamed tail, attackable non-mobs only (ENT-S-110)
+        return false; // orig Leon.java:427
+    }
+
+    /**
+     * orig MyUtils.java:77-115 {@code isAttackableNonMob}, the membership the untamed
+     * Leon's tail (orig Leon.java:422-426) grants, reproduced here in the orig order
+     * (ENT-S-110). The port's {@code MyUtils.isAttackableNonMob} carries a different set
+     * (EnderDragon / Kraken / Godzilla / GodzillaHead / Basilisk / Cephadrome / TheKing /
+     * TheQueen), so it is not used here. Mapping: EntityMob → {@link Monster} (:78;
+     * unreachable from the Leon, whose :412 has already granted every Monster), Mothra (:81;
+     * unreachable too — an EntityButterfly in both trees, screened by :403), Leon →
+     * EntityLeon (:84; unreachable, :409 refuses every Leon), Dragon (:87), Spyro →
+     * EntitySpyro (:90), the royalty set (:93, {@code MyUtils.isRoyalty} — the same nine
+     * members as orig MyUtils.java:46-75), GammaMetroid → EntityGammaMetroid (:96),
+     * Cephadrome (:99), WaterDragon (:102), Girlfriend (:105), Boyfriend (:108),
+     * EntityVillager → {@link Villager} (:111), Stinky → EntityStinky (:114).
+     */
+    private static boolean isAttackableNonMob(LivingEntity target) {
+        return target instanceof Monster                // orig MyUtils.java:78 EntityMob
+                || target instanceof Mothra             // orig MyUtils.java:81
+                || target instanceof EntityLeon         // orig MyUtils.java:84 Leon
+                || target instanceof Dragon             // orig MyUtils.java:87
+                || target instanceof EntitySpyro        // orig MyUtils.java:90 Spyro
+                || MyUtils.isRoyalty(target)            // orig MyUtils.java:93 isRoyalty (:46-75)
+                || target instanceof EntityGammaMetroid // orig MyUtils.java:96 GammaMetroid
+                || target instanceof Cephadrome         // orig MyUtils.java:99
+                || target instanceof WaterDragon        // orig MyUtils.java:102
+                || target instanceof Girlfriend         // orig MyUtils.java:105
+                || target instanceof Boyfriend          // orig MyUtils.java:108
+                || target instanceof Villager           // orig MyUtils.java:111 EntityVillager
+                || target instanceof EntityStinky;      // orig MyUtils.java:114 Stinky
     }
 
     // ==================== Interaction ====================

@@ -517,12 +517,27 @@ public class PitchBlack extends Monster implements PitchBlackPose {
         return TargetSelection.firstMatch(entities, this.targetSorter, this::isSuitableTarget);
     }
 
+    /**
+     * orig PitchBlack.java:485-538. ENT-S-112: the eight ally exclusions (:507-530) sit
+     * after the self-kind refusal (:504-506) and ahead of the creative-player check
+     * (:531-536), in the orig order; the port had none of them, so a Nightmare hunted
+     * the Ender Reapers, Leaf Monsters, Terrors, Creeping Horrors, Islands and Triffids
+     * that 1.7.10 left alone.
+     */
     private boolean isSuitableTarget(LivingEntity target) {
         if (target == null || target == this || !target.isAlive()) return false;
         if (MyUtils.isIgnoreable(target)) return false; // orig PitchBlack.java:498-500 — the shared ignore screen (ENT-S-106)
-        if (target instanceof PitchBlack) return false;
-        if (target instanceof Player p && p.getAbilities().instabuild) return false;
-        return true;
+        if (target instanceof PitchBlack) return false; // orig PitchBlack.java:504-506
+        if (target instanceof EnderReaper) return false; // orig PitchBlack.java:507-509 (ENT-S-112)
+        if (target instanceof EntityLeafMonster) return false; // orig PitchBlack.java:510-512 LeafMonster (ENT-S-112)
+        if (target instanceof EntityTerribleTerror) return false; // orig PitchBlack.java:513-515 TerribleTerror (ENT-S-112)
+        if (target instanceof EntityLurkingTerror) return false; // orig PitchBlack.java:516-518 LurkingTerror (ENT-S-112)
+        if (target instanceof CreepingHorror) return false; // orig PitchBlack.java:519-521 (ENT-S-112)
+        if (target instanceof Island) return false; // orig PitchBlack.java:522-524 (ENT-S-112)
+        if (target instanceof IslandToo) return false; // orig PitchBlack.java:525-527 (ENT-S-112)
+        if (target instanceof EntityTriffid) return false; // orig PitchBlack.java:528-530 Triffid (ENT-S-112)
+        if (target instanceof Player p && p.getAbilities().instabuild) return false; // orig PitchBlack.java:531-536 isCreativeMode
+        return true; // orig PitchBlack.java:537
     }
 
     @Override

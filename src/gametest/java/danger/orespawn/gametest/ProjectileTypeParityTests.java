@@ -2,8 +2,10 @@ package danger.orespawn.gametest;
 
 import danger.orespawn.ModEntities;
 import danger.orespawn.ModItems;
+import danger.orespawn.OreSpawnConfig;
 import danger.orespawn.OreSpawnMod;
 import danger.orespawn.entity.BetterFireball;
+import danger.orespawn.entity.IrukandjiArrow;
 import danger.orespawn.entity.UltimateArrow;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
@@ -12,10 +14,13 @@ import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.EntityTypeTags;
+import net.minecraft.world.Difficulty;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.animal.Cow;
 import net.minecraft.world.entity.projectile.AbstractArrow;
@@ -27,6 +32,7 @@ import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.GameRules;
+import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
@@ -101,19 +107,31 @@ import java.util.function.Consumer;
  * windows have closed, restored in a finally) explodes once, fire-flagged, with KEEP block
  * interaction, wall and hearth intact and the face fire still standing.</p>
  *
+ * <p>ENT-S-111, owner ruling 2026-09-04 ("ENT-S-108 through 113: all parity, fix in classic"). orig
+ * IrukandjiArrow.java:181 gated the Punch push on {@code instanceof EntityLiving} (the 1.7.10 AI-mob
+ * base, 1.21.1 {@code Mob}), so a player -- an EntityLivingBase only -- was never pushed; the port
+ * pushed any LivingEntity. The {@code s111_} test fires two irukandji arrows from Punch-2 skate bows
+ * on the s103 geometry, one into a frozen cow and one into a survival mock player, with
+ * {@code ultimateSwordPvp} raised for its window so the arrow hurts the player at all
+ * (IrukandjiArrow.onHitEntity no-sells players while it is off), and reads the pushes off their
+ * velocities: the cow carries the 1.7.10 push over the vanilla 0.4 hurt knockback, the player the
+ * 0.4 alone.</p>
+ *
  * <p>Projectile-tag rulings (owner, 2026-09-04), pinned by the two {@code tags_} tests: the
  * ultimate and irukandji arrows stay outside {@code #minecraft:arrows} because the 1.7.10
  * bows never applied Power to them (the check is quoted on the test), and the
  * ThrowableProjectile family joins {@code #minecraft:impact_projectiles} as vanilla-consistent
  * behaviour with no parity obligation (MOD-030), BerthaHit and EntityCage excepted.</p>
  *
- * <p>No config is flipped, but the class still declares its own batch (TEST-003: new test
- * classes never join the default batch, whose 50-test buckets reshuffle); every ENT-S-098 and
+ * <p>The one config the class flips is {@code ultimateSwordPvp}, raised by the ENT-S-111 test for
+ * its own window and restored on every path; no batch-mate reads it (the only other arrow test
+ * shoots cows, which the pvp guard never touches). The class declares its own batch (TEST-003: new
+ * test classes never join the default batch, whose 50-test buckets reshuffle); every ENT-S-098 and
  * tag test is synchronous in one tick, the ENT-S-102 and ENT-S-104 impact tests wait a fixed
  * 40-tick window ({@code runAfterDelay}; the mobGriefing-off test first waits 60 ticks for its
- * batch-mates' windows to close, timeoutTicks 200), the ENT-S-103 arrow test a 10-tick one, and
- * all discard what they spawned in a finally. Template {@code empty_large} (48x16x48) with the
- * shooter at (24, 8, 24), as HitboxDimsParityTests.</p>
+ * batch-mates' windows to close, timeoutTicks 200), the ENT-S-103 and ENT-S-111 arrow tests a
+ * 10-tick one, and all discard what they spawned in a finally. Template {@code empty_large}
+ * (48x16x48) with the shooter at (24, 8, 24), as HitboxDimsParityTests.</p>
  */
 @GameTestHolder(OreSpawnMod.MOD_ID)
 @PrefixGameTestTemplate(false)
@@ -719,7 +737,9 @@ public class ProjectileTypeParityTests {
      * untouched, and the fire orig :232-264 placed on the air side of the hit face still standing
      * (a KEEP blast removes no block). The explosion's own fire is seeded at random (1-in-3 per
      * affected air cell over a solid block, Explosion.finalizeExplosion) and is not asserted; the
-     * flag is.
+     * flag is. Since MOD-031 (accepted 2026-09-04, default on) makes fireballs respect the rule,
+     * the modern key is forced off for the window as well, so this stays the CLASSIC pin
+     * (FireballModernFireTests pins the modern option).
      */
     @GameTest(template = "empty_large", timeoutTicks = 200, batch = "projectileTypeParity")
     public void s104_big_shot_with_mob_griefing_off_still_carries_fire_and_leaves_the_wall_intact(GameTestHelper helper) {
@@ -733,6 +753,11 @@ public class ProjectileTypeParityTests {
         helper.runAfterDelay(MOB_GRIEFING_OFF_DELAY_TICKS, () -> {
             boolean previous = mobGriefing.get();
             mobGriefing.set(false, level.getServer());
+            // MOD-031 (accepted 2026-09-04, default on) makes fireballs respect mobGriefing on a default
+            // config; this pin is the CLASSIC fire-always behaviour, so the key is forced off around the
+            // window and restored with the rule (FireballModernFireTests pins the modern option).
+            final boolean priorKey = OreSpawnConfig.MODERN_FIRE_RESPECTS_MOB_GRIEFING.get();
+            OreSpawnConfig.MODERN_FIRE_RESPECTS_MOB_GRIEFING.set(false);
             try {
                 BetterFireball shot = new BetterFireball(level, shooter, WALL_AIM);
                 shot.setNotMe();
@@ -765,10 +790,12 @@ public class ProjectileTypeParityTests {
                                         + " (orig BetterFireball.java:261-263; a KEEP blast removes no block) (ENT-S-104)");
                     } finally {
                         mobGriefing.set(previous, level.getServer());
+                        OreSpawnConfig.MODERN_FIRE_RESPECTS_MOB_GRIEFING.set(priorKey);
                     }
                 });
             } catch (RuntimeException e) {
                 mobGriefing.set(previous, level.getServer());
+                OreSpawnConfig.MODERN_FIRE_RESPECTS_MOB_GRIEFING.set(priorKey);
                 shooter.discard();
                 throw e;
             }
@@ -973,6 +1000,230 @@ public class ProjectileTypeParityTests {
                                 + " (a one-tick 0.98 decay would mean the target ticked after the arrow, breaking the snapshot) (ENT-S-103)");
             } finally {
                 spawned.forEach(Entity::discard);
+            }
+            helper.succeed();
+        });
+    }
+
+    // ---------------------------------------------------------------------------------------
+    // ENT-S-111 (owner ruling 2026-09-04: parity, fix in classic) -- the IrukandjiArrow Punch push
+    // reaches an EntityLiving (1.21.1 Mob) victim only, never a player.
+    // ---------------------------------------------------------------------------------------
+
+    /** The Punch level written onto the skate bow (orig SkateBow.java:53-55 seeds the arrow's knockbackStrength from the bow's Punch). */
+    private static final int SKATE_BOW_PUNCH = 2;
+    /** The cow lane on the s103 control lane's x, the player lane on its punch lane's x; shooter and target z as there. */
+    private static final int COW_LANE_X = CONTROL_LANE_X;
+    private static final int PLAYER_LANE_X = PUNCH_LANE_X;
+
+    /**
+     * A survival mock player standing on a lane target spot: game mode set explicitly (the
+     * game-test server defaults mock players to CREATIVE, GameTestServer.java:85 -- the
+     * CreativeMappingParityTests idiom), 10000 max health so the flat 100 (orig :157) leaves it a
+     * live, readable target, teleported to the block's bottom centre so it shares the shooter's
+     * exact x, and its spawn invulnerability cleared ({@link #clearSpawnInvulnerability}).
+     * Deprecated mock-player factory tolerated the way CreativeMappingParityTests does.
+     */
+    @SuppressWarnings({"removal", "deprecation"})
+    private static ServerPlayer survivalPlayerAt(GameTestHelper helper, BlockPos pos) {
+        ServerPlayer player = helper.makeMockServerPlayerInLevel();
+        player.setGameMode(GameType.SURVIVAL);
+        setMaxHealth(player, TARGET_HEALTH);
+        Vec3 at = helper.absoluteVec(Vec3.atBottomCenterOf(pos));
+        player.teleportTo(helper.getLevel(), at.x, at.y, at.z, 0.0f, 0.0f);
+        clearSpawnInvulnerability(player);
+        return player;
+    }
+
+    /**
+     * A fresh ServerPlayer refuses every hurt that does not bypass invulnerability for its first
+     * 60 ticks (ServerPlayer.hurt reads {@code spawnInvulnerableTime}, initialised to 60 and
+     * counted down in ServerPlayer.tick); it is written to 0 by name, the way the ENT-S-104 tests
+     * read Explosion.fire, so the arrow can hurt the player on its second tick.
+     */
+    private static void clearSpawnInvulnerability(ServerPlayer player) {
+        try {
+            Field field = ServerPlayer.class.getDeclaredField("spawnInvulnerableTime");
+            field.setAccessible(true);
+            field.setInt(player, 0);
+        } catch (ReflectiveOperationException e) {
+            throw new IllegalStateException(
+                    "ServerPlayer.spawnInvulnerableTime is not reachable by reflection (1.21.1: private int; official names at runtime) (ENT-S-111)", e);
+        }
+    }
+
+    private static void removePlayer(GameTestHelper helper, ServerPlayer player) {
+        if (player != null) {
+            helper.getLevel().getServer().getPlayerList().remove(player);
+        }
+    }
+
+    /**
+     * Builds the arrow as item/SkateBow.java:49 does ({@code new IrukandjiArrow(level, shooter,
+     * bow)}: the bow stack the arrow keeps a copy of) and launches it flat along +z at 3.0 with zero
+     * inaccuracy, from the shooter's exact x/z at the target's mid-height -- the s103 launch. The
+     * skate bow's own pull-scaled speed (1.5 x pull, orig SkateBow.java:49) is not what is under
+     * test: the push normalises the flat flight line (orig :187-188), so it is speed-independent.
+     * Crit off (orig :172-173, a random damage bonus only).
+     */
+    private static IrukandjiArrow shootIrukandjiArrow(GameTestHelper helper, LivingEntity shooter, ItemStack bow, LivingEntity target) {
+        IrukandjiArrow arrow = new IrukandjiArrow(helper.getLevel(), shooter, bow);
+        arrow.setPos(shooter.getX(), target.getY() + target.getBbHeight() / 2.0, shooter.getZ());
+        arrow.shoot(0.0, 0.0, 1.0, BOW_VELOCITY, 0.0f);
+        arrow.setCritArrow(false);
+        arrow.pickup = AbstractArrow.Pickup.CREATIVE_ONLY;
+        helper.assertTrue(helper.getLevel().addFreshEntity(arrow), "ServerLevel#addFreshEntity refused the irukandji arrow (ENT-S-111)");
+        return arrow;
+    }
+
+    /**
+     * orig IrukandjiArrow.java:180-193: after a successful hurt, the arrow count, the Punch push of
+     * :187-188 (0.6 x level along the flat flight line, +0.1 lift) and the ding all sit inside
+     * {@code if (var4.field_72308_g instanceof EntityLiving)} (:181), the 1.7.10 AI-mob base that
+     * EntityPlayer (an EntityLivingBase) never was -- so a player took the vanilla hurt knockback
+     * and no push. The port's push applied to any LivingEntity; it now carries the Mob gate of
+     * UltimateArrow.doKnockback (ENT-S-103).
+     *
+     * <p>Two lanes on the s103 geometry, one arrow each from a skate bow with Punch
+     * {@value #SKATE_BOW_PUNCH} written onto it (orig SkateBow.java:53-55 seeds the arrow from the
+     * bow's Punch, which the port's arrow reads off its weapon copy): the cow lane's target is a
+     * frozen cow (a Mob), the player lane's a survival mock player, both at 10000 health, both hit
+     * on the arrows' second tick and snapshotted by an onEachTick task the tick their arrow is
+     * discarded, exactly as the s103 test does (the cow's velocity would decay 0.98 per own tick;
+     * the mock player's movement tick -- Player.tick through ServerPlayer.doTick, driven by a
+     * packet listener the mock has none of -- never runs, so its velocity is the post-hit value for
+     * as long as it stands). {@code ultimateSwordPvp} is raised for the window: with it off
+     * IrukandjiArrow.onHitEntity no-sells a player before the hurt (orig :158-165) and the pin
+     * would be vacuous. It is restored in the check's finally and on the setup's failure path; no
+     * batch-mate reads it (the s103 arrows hit cows, which the guard never touches).</p>
+     *
+     * <p>Assertions: the player was hurt (health below 10000 at the hit) -- the precondition that
+     * makes the rest meaningful; the player's velocity is the vanilla 0.4 hurt knockback along the
+     * flight line alone (LivingEntity.hurt :1225, direction from the projectile's flat delta
+     * movement), no Punch share on any axis (y stays 0: the mock player is not flagged on the
+     * ground, asserted, and off the ground the hurt knockback leaves y alone), under even a
+     * level-1 push; the cow's velocity is 0.4 + 0.6 x {@value #SKATE_BOW_PUNCH} along the line with
+     * the 0.1 lift; and the lane difference is exactly (0, 0.1, 1.2). Tolerances are the s103 ones
+     * for the s103 reasons: exact inputs, 1e-9 on the difference, 1e-6 on the absolutes (which add
+     * the float 0.4F's widening).</p>
+     */
+    @GameTest(template = "empty_large", batch = "projectileTypeParity")
+    public void s111_irukandji_arrow_punch_pushes_a_mob_but_never_a_player(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        helper.assertTrue(level.getDifficulty() != Difficulty.PEACEFUL,
+                "precondition: on Peaceful Player.hurt zeroes an arrow's difficulty-scaled damage and refuses the hit;"
+                        + " the game-test level runs at NORMAL (ENT-S-111 test setup)");
+        Holder<Enchantment> punch = level.registryAccess().registryOrThrow(Registries.ENCHANTMENT)
+                .getHolderOrThrow(Enchantments.PUNCH);
+        final boolean priorPvp = OreSpawnConfig.ULTIMATE_SWORD_PVP.get();
+        List<Entity> spawned = new ArrayList<>();
+        ServerPlayer playerTarget = null;
+        Cow cowTarget;
+        IrukandjiArrow cowArrow;
+        IrukandjiArrow playerArrow;
+        try {
+            Cow cowShooter = spawnFrozenCow(helper, new BlockPos(COW_LANE_X, POS.getY(), LANE_SHOOTER_Z));
+            spawned.add(cowShooter);
+            Cow playerShooter = spawnFrozenCow(helper, new BlockPos(PLAYER_LANE_X, POS.getY(), LANE_SHOOTER_Z));
+            spawned.add(playerShooter);
+            cowTarget = spawnFrozenCow(helper, new BlockPos(COW_LANE_X, POS.getY(), LANE_TARGET_Z));
+            spawned.add(cowTarget);
+            setMaxHealth(cowTarget, TARGET_HEALTH);
+            playerTarget = survivalPlayerAt(helper, new BlockPos(PLAYER_LANE_X, POS.getY(), LANE_TARGET_Z));
+            LivingEntity playerAsLiving = playerTarget;
+            helper.assertTrue(cowTarget instanceof Mob && !(playerAsLiving instanceof Mob),
+                    "precondition: the cow is a Mob (orig :181's EntityLiving) and the player is not (an EntityLivingBase only"
+                            + " in 1.7.10) (ENT-S-111 test setup)");
+            helper.assertTrue(!playerTarget.getAbilities().instabuild && !playerTarget.getAbilities().invulnerable,
+                    "precondition: the mock player must be survival (instabuild and invulnerable clear), else Player.hurt"
+                            + " refuses the hit (ENT-S-111 test setup)");
+            helper.assertFalse(playerTarget.onGround(),
+                    "precondition: nothing has moved the mock player, so it is not flagged on the ground and the hurt"
+                            + " knockback leaves its y velocity alone (ENT-S-111 test setup)");
+            helper.assertTrue(cowTarget.getDeltaMovement().equals(Vec3.ZERO) && playerTarget.getDeltaMovement().equals(Vec3.ZERO),
+                    "precondition: both targets start at rest");
+            helper.assertTrue(cowShooter.getX() == cowTarget.getX() && playerShooter.getX() == playerTarget.getX(),
+                    "precondition: each lane's shooter and target share the exact x, so the flat flight line is +z");
+
+            ItemStack bow = new ItemStack(ModItems.SKATE_BOW.get());
+            EnchantmentHelper.updateEnchantments(bow, mutable -> mutable.set(punch, SKATE_BOW_PUNCH));
+            helper.assertValueEqual(EnchantmentHelper.getItemEnchantmentLevel(punch, bow), SKATE_BOW_PUNCH,
+                    "precondition: the skate bow's Punch level after writing it (ENT-S-111 test setup)");
+
+            OreSpawnConfig.ULTIMATE_SWORD_PVP.set(true);
+            cowArrow = shootIrukandjiArrow(helper, cowShooter, bow, cowTarget);
+            spawned.add(cowArrow);
+            playerArrow = shootIrukandjiArrow(helper, playerShooter, bow, playerTarget);
+            spawned.add(playerArrow);
+            helper.assertTrue(cowArrow.getWeaponItem() != null
+                            && EnchantmentHelper.getItemEnchantmentLevel(punch, cowArrow.getWeaponItem()) == SKATE_BOW_PUNCH
+                            && playerArrow.getWeaponItem() != null
+                            && EnchantmentHelper.getItemEnchantmentLevel(punch, playerArrow.getWeaponItem()) == SKATE_BOW_PUNCH,
+                    "precondition: both arrows' weapon copies (AbstractArrow.getWeaponItem) must carry Punch " + SKATE_BOW_PUNCH + " (ENT-S-111)");
+            helper.assertTrue(cowArrow.getDeltaMovement().equals(new Vec3(0.0, 0.0, BOW_VELOCITY))
+                            && playerArrow.getDeltaMovement().equals(new Vec3(0.0, 0.0, BOW_VELOCITY)),
+                    "precondition: zero-inaccuracy shoot(0, 0, 1, 3.0) must give exactly (0, 0, 3.0), got "
+                            + cowArrow.getDeltaMovement() + " / " + playerArrow.getDeltaMovement());
+        } catch (RuntimeException e) {
+            OreSpawnConfig.ULTIMATE_SWORD_PVP.set(priorPvp);
+            spawned.forEach(Entity::discard);
+            removePlayer(helper, playerTarget);
+            throw e;
+        }
+        final ServerPlayer player = playerTarget;
+
+        Vec3[] cowPush = new Vec3[1];
+        Vec3[] playerPush = new Vec3[1];
+        float[] playerHealthAtHit = new float[1];
+        helper.onEachTick(() -> {
+            if (cowPush[0] == null && cowArrow.isRemoved()) {
+                cowPush[0] = cowTarget.getDeltaMovement();
+            }
+            if (playerPush[0] == null && playerArrow.isRemoved()) {
+                playerPush[0] = player.getDeltaMovement();
+                playerHealthAtHit[0] = player.getHealth();
+            }
+        });
+        helper.runAfterDelay(ARROW_WINDOW_TICKS, () -> {
+            try {
+                helper.assertTrue(cowPush[0] != null && playerPush[0] != null,
+                        "both arrows must have hit and been discarded inside " + ARROW_WINDOW_TICKS + " ticks (cow arrow removed: "
+                                + cowArrow.isRemoved() + ", player arrow removed: " + playerArrow.isRemoved() + ") (ENT-S-111)");
+                helper.assertFalse(cowTarget.isRemoved() || player.isRemoved(),
+                        "the targets must survive the hit (10000 max health) so their velocity is readable (ENT-S-111)");
+                helper.assertTrue(playerHealthAtHit[0] < (float) TARGET_HEALTH,
+                        "the survival player must have been hurt by the arrow with ultimateSwordPvp on -- orig :180 gates everything"
+                                + " on a successful hurt, and with the flag off onHitEntity no-sells players (orig :158-165) -- health at"
+                                + " the hit " + playerHealthAtHit[0] + " of " + TARGET_HEALTH + " (ENT-S-111)");
+                Vec3 pushed = cowPush[0];
+                Vec3 unpushed = playerPush[0];
+                double expectedPush = SKATE_BOW_PUNCH * PUNCH_PER_LEVEL;
+
+                helper.assertTrue(unpushed.z > 0.0 && pushed.z > 0.0,
+                        "both targets must be moving along the flight line (+z): player " + unpushed + ", cow " + pushed + " (ENT-S-111)");
+                helper.assertTrue(Math.abs(unpushed.z - VANILLA_HURT_KNOCKBACK) < PUSH_ABS_EPS && Math.abs(unpushed.x) < PUSH_ABS_EPS,
+                        "a player is never pushed (orig IrukandjiArrow.java:181 EntityLiving gate): the player's horizontal velocity"
+                                + " must be the vanilla hurt knockback " + VANILLA_HURT_KNOCKBACK + " alone (LivingEntity.hurt :1225), got "
+                                + unpushed + " (ENT-S-111)");
+                helper.assertTrue(Math.abs(unpushed.y) < PUSH_ABS_EPS,
+                        "a player is never pushed: no 0.1 lift (orig :188) on the player, got y " + unpushed.y + " (ENT-S-111)");
+                helper.assertTrue(unpushed.horizontalDistance() < PUNCH_PER_LEVEL,
+                        "a player is never pushed: the player's horizontal speed " + unpushed.horizontalDistance()
+                                + " is not under even a level-1 push of " + PUNCH_PER_LEVEL + " (ENT-S-111)");
+                helper.assertTrue(Math.abs(pushed.z - (VANILLA_HURT_KNOCKBACK + expectedPush)) < PUSH_ABS_EPS && Math.abs(pushed.x) < PUSH_ABS_EPS,
+                        "a Mob is pushed (orig :181-188): the cow's velocity must be the raw post-hit 0.4 + " + expectedPush
+                                + " along +z, got " + pushed + " (ENT-S-111)");
+                helper.assertTrue(Math.abs(pushed.y - PUNCH_LIFT) < PUSH_ABS_EPS,
+                        "the cow's push carries orig :188's fixed 0.1 lift, got y " + pushed.y + " (ENT-S-111)");
+                Vec3 diff = pushed.subtract(unpushed);
+                helper.assertTrue(Math.abs(diff.x) < PUSH_DIFF_EPS && Math.abs(diff.y - PUNCH_LIFT) < PUSH_DIFF_EPS
+                                && Math.abs(diff.z - expectedPush) < PUSH_DIFF_EPS,
+                        "the lanes must differ by exactly the 1.7.10 push (0, " + PUNCH_LIFT + ", " + expectedPush + "), got " + diff
+                                + " (ENT-S-111)");
+            } finally {
+                OreSpawnConfig.ULTIMATE_SWORD_PVP.set(priorPvp);
+                spawned.forEach(Entity::discard);
+                removePlayer(helper, player);
             }
             helper.succeed();
         });
