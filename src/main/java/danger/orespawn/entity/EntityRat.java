@@ -187,8 +187,12 @@ public class EntityRat extends Monster {
         }
     }
 
-    // orig Rat.java:185-249 — RatPlayerFriendly/RatPetFriendly only gate OWNED rats
-    // (myowner != null); wild rats attack players and pets regardless of the configs.
+    /**
+     * orig Rat.java:185-249 — RatPlayerFriendly/RatPetFriendly only gate OWNED rats
+     * (myowner != null); wild rats attack players and pets regardless of the configs.
+     * ENT-S-109: the player branch's {@code capabilities.isCreativeMode} (orig :225-229)
+     * is {@code Abilities.instabuild} — the ENT-S-107 mapping — not {@code invulnerable}.
+     */
     private boolean isSuitableTarget(LivingEntity target) {
         if (target == null || target == this || !target.isAlive()) return false;
         if (MyUtils.isIgnoreable(target)) return false; // orig Rat.java:195-197 — the shared ignore screen, ahead of line of sight (:198) (ENT-S-106)
@@ -196,7 +200,7 @@ public class EntityRat extends Monster {
         if (target instanceof EntityRat) return false;
 
         if (target instanceof Player player) {
-            if (player.getAbilities().invulnerable) return false;
+            if (player.getAbilities().instabuild) return false; // orig Rat.java:227-229 isCreativeMode (ENT-S-109)
             if (this.ownerUuid != null) {
                 if (this.ownerUuid.equals(player.getUUID())) return false; // orig Rat.java:230-233
                 if (OreSpawnConfig.RAT_PLAYER_FRIENDLY.get()) return false; // orig Rat.java:234-236

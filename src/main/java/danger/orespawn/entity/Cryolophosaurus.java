@@ -105,7 +105,12 @@ public class Cryolophosaurus extends Monster {
         }
     }
 
-    /** orig Cryolophosaurus.java:158-211 — prey exclusion list. */
+    /**
+     * orig Cryolophosaurus.java:158-211 — prey exclusion list. ENT-S-109: the player
+     * branch's {@code capabilities.isCreativeMode} (orig :204-208) is
+     * {@code Abilities.instabuild} — the ENT-S-107 mapping — not {@code invulnerable};
+     * the two differ for a survival player made invulnerable by other means.
+     */
     private boolean isSuitableTarget(LivingEntity candidate) {
         if (candidate == null || candidate == this || !candidate.isAlive()) return false;
         if (!this.getSensing().hasLineOfSight(candidate)) return false;
@@ -117,7 +122,7 @@ public class Cryolophosaurus extends Monster {
                 || candidate instanceof EntityMosquito || candidate instanceof RockBase) {
             return false;
         }
-        if (candidate instanceof Player player && player.getAbilities().invulnerable) return false;
+        if (candidate instanceof Player player && player.getAbilities().instabuild) return false; // orig Cryolophosaurus.java:206 isCreativeMode (ENT-S-109)
         return true;
     }
 

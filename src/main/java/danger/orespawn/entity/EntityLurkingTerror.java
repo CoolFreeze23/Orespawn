@@ -222,7 +222,9 @@ public class EntityLurkingTerror extends Monster {
      * its own kind, a fixed list of OreSpawn species (mostly the other custom-AI
      * flyers/plants it would dogfight forever), and creative players. The original
      * checks Triffid twice (:317 and :338, a copy-paste slip) — behavior-identical,
-     * reproduced as one check.
+     * reproduced as one check. ENT-S-109: the player branch's
+     * {@code capabilities.isCreativeMode} (orig :341-346) is {@code Abilities.instabuild}
+     * — the ENT-S-107 mapping — not {@code invulnerable}.
      */
     private boolean isSuitableTarget(LivingEntity target) {
         if (target == null || target == this || !target.isAlive()) return false;
@@ -245,7 +247,7 @@ public class EntityLurkingTerror extends Monster {
         if (target instanceof IslandToo) return false;               // orig :329
         if (target instanceof EntityButterfly) return false;         // orig :332
         if (target instanceof Firefly) return false;                 // orig :335
-        if (target instanceof Player p) return !p.getAbilities().invulnerable; // orig :341-346
+        if (target instanceof Player p) return !p.getAbilities().instabuild; // orig :341-346 isCreativeMode (ENT-S-109)
         return true;
     }
 
