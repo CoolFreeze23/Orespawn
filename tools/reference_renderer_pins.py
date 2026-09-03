@@ -64,6 +64,27 @@ to the candidate file. A named
 port_candidate is part of the pin: when the file is missing (renamed, deleted) or cannot be parsed the pin
 DIVERGES, exactly as a missing port renderer does; the candidate axis is never dropped to a NOTE.
 
+LOCALS (both sides, every scale site): a float local is read by the value it holds on the default path at the
+site, never by its declaration alone. `float x = <expr>;` binds x (a ternary initialiser binds its else branch and
+makes x conditional, as above). Every later write to x before the site (`x = <expr>;`, or a compound `x *= 2.0F;`
+etc.) is then read by the path it sits on, the same default-branch rule resolve_default_scale applies to scale
+sites: a write directly in the method body, or in the final `else` of an if/else chain, is on the default path and
+replaces the value (the last such write wins, and ITS expression, not the declaration's, is what must be SCALE);
+a write under an `if` / `else if` (braced or brace-less, at any nesting) is off the default path: the value
+stays, x is conditional with the pre-branch expression as its default (`float x = SCALE; if (baby) x = SCALE /
+2.0F; scale(x, x, x)` passes as SCALE, marked if-reassignment default branch SCALE, exactly as the ternary form),
+and the branch expression is not evaluated (a ternary's taken branch is not either); a ternary written into x
+resolves to its else branch; a write inside any other block (switch, loop, lambda, bare block) or a default-path
+write whose expression cannot be evaluated leaves x unbound with a reason, so every site reading x is UNPARSED
+(the pin DIVERGES with the write quoted). Writes at or after the site never reach it. Declarations and writes
+are read per site, so `float x = SCALE; x = 2.0F; scale(x, x, x)` is a scale of 2 (found 2, not SCALE), while
+`scale(x, x, x); x = 2.0F;` is still SCALE.
+A site argument written as `(float) x` or `(x)` resolves to the local x (a cast or parenthesis is a no-op),
+so it satisfies constant-must-be-used exactly as a bare x does. Brace-less nesting is read only one
+statement deep: a brace-less prefix that stacks two ifs (a dangling else) or carries a loop keyword
+leaves the written local unbound (UNPARSED) rather than guessing the default path; `x %= e;`, `x++;`
+and `x--;` writes are recorded as unreadable and unbind the local the same way.
+
 Statuses: PASS, DIVERGES, PENDING (known divergence awaiting its batch; the current port values are
 printed), MOD, NOT_APPLICABLE, MANIFEST_DRIFT. Exit 1 on any DIVERGES or MANIFEST_DRIFT. A manifest entry
 missing a required key is MANIFEST_DRIFT for that entry (never a crash: the report is still written).
@@ -91,6 +112,22 @@ RE_METHOD = re.compile(
     r"(?:[\w.<>\[\],?]+\s+)?(" + IDENT + r")\s*\(([^)]*)\)\s*(?:throws\s+[\w., ]+)?\s*\{", re.S)
 RE_CONSTANT = re.compile(r"static\s+final\s+float\s+(" + IDENT + r")\s*=\s*([^;]+);")
 RE_LOCAL = re.compile(r"\bfloat\s+(" + IDENT + r")\s*=\s*([^;]+);")
+# a type keyword right before `x = ...` makes it a declaration (RE_LOCAL's), not a write to an existing local
+RE_DECLARATION_PREFIX = re.compile(r"\b(?:float|double|int|long|final)\s*$")
+# a statement prefix (the text since the last `{`, `}` or `;`) that is a brace-less if / else if / else
+RE_PREFIX_ELSE_IF = re.compile(r"\belse\s+if\s*\(")
+RE_PREFIX_ELSE = re.compile(r"\belse\s*$")
+RE_PREFIX_IF = re.compile(r"\bif\s*\(")
+
+
+def local_write_re(name: str) -> re.Pattern:
+    """A write to the local `name` after its declaration: `name = <expr>;` or a compound `name op= <expr>;`
+    (op one of + - * /). `==` `<=` `>=` `!=` are comparisons, `o.name =` is another object's field, and the
+    declaration itself is excluded by RE_DECLARATION_PREFIX at the match."""
+    return re.compile(r"(?<![\w.])" + re.escape(name) + r"\s*(?:([-+*/])=|=(?!=))\s*([^;]+);")
+
+
+
 # a plain-assignment pin site of the shadow field: `this.shadowRadius = <expr>;`, `super.shadowRadius =
 # <expr>;` or a bare `shadowRadius = <expr>;` (Java reads all three as the same inherited field write;
 # `x.shadowRadius` is another object's and is not a pin site)
@@ -222,6 +259,109 @@ def stack_top_is_if(stack: list[str]) -> bool:
     return bool(stack) and bool(re.search(r"\bif\s*\(", stack[-1]))
 
 
+def header_kind(header: str) -> str:
+    """'if', 'else if', 'else' or 'other' for a block header (the text before its '{') or for the brace-less
+    statement prefix a write sits behind (`else x = ...;`, `if (...) x = ...;`, `for (...) x = ...;`)."""
+    # a brace-less prefix or header that stacks two ifs (a dangling else cannot be assigned to one of them
+    # by text) or carries a loop keyword is not read: conservative 'other'
+    if len(re.findall(r"\bif\s*\(", header)) >= 2 or re.search(r"\b(?:for|while|do)\b", header):
+        return "other"
+    if RE_PREFIX_ELSE_IF.search(header):
+        return "else if"
+    if RE_PREFIX_ELSE.search(header):
+        return "else"
+    if RE_PREFIX_IF.search(header):
+        return "if"
+    return "other"
+
+
+def block_path(body: str, position: int) -> list[str]:
+    """Every block enclosing position, outermost first, each read by header_kind, with a non-empty brace-less
+    statement prefix (`else`, `if (...)`, `for (...)`, `case 1:`...) as the innermost entry; empty when the
+    statement sits directly in the method body. Unlike enclosing_block (which names the innermost block only)
+    this keeps the whole nesting, so an `else` under an outer `if` is still read as conditional."""
+    stack: list[str] = []
+    last_boundary = 0
+    prev_boundary = 0  # the boundary before last_boundary: the previous statement's start
+    for i, ch in enumerate(body[:position]):
+        if ch == "{":
+            stack.append(body[last_boundary:i].strip())
+            prev_boundary, last_boundary = last_boundary, i + 1
+        elif ch == "}":
+            if stack:
+                stack.pop()
+            prev_boundary, last_boundary = last_boundary, i + 1
+        elif ch == ";":
+            prev_boundary, last_boundary = last_boundary, i + 1
+    path = [header_kind(header) for header in stack]
+    prefix = body[last_boundary:position].strip()
+    if prefix:
+        kind = header_kind(prefix)
+        if kind == "else":
+            # a brace-less `else` binds to the nearest preceding brace-less `if`; when the previous statement
+            # stacked two ifs (`if (a) if (b) x = ...;`) the text cannot say which, so the else is unreadable
+            previous = body[prev_boundary:last_boundary]
+            if len(re.findall(r"\bif\s*\(", previous)) >= 2 or re.search(r"\b(?:for|while|do)\b", previous):
+                kind = "other"
+        path.append(kind)
+    return path
+
+
+def write_kind(path: list[str]) -> str:
+    """How a write to a local reaches the default path, from its block_path: 'method' (directly in the body),
+    'else' (only final-else blocks enclose it: the default path of an if/else chain, as resolve_default_scale
+    reads an else scale site), 'if' (an if / else if encloses it at some level: off the default path), or
+    'other' (a switch, loop, lambda, bare block or an unrecognised statement prefix encloses it: unreadable)."""
+    if any(kind == "other" for kind in path):
+        return "other"
+    if any(kind in ("if", "else if") for kind in path):
+        return "if"
+    return "else" if path else "method"
+
+
+def compound(op: str, current: float, rhs: float) -> float:
+    """`x op= rhs` on a bound float local."""
+    if op == "+":
+        return current + rhs
+    if op == "-":
+        return current - rhs
+    if op == "*":
+        return current * rhs
+    if op == "/":
+        if rhs == 0:
+            raise Unevaluable("division by zero")
+        return current / rhs
+    raise Unevaluable(f"compound operator {op}")
+
+
+def local_name_of(expr: str) -> str | None:
+    """The local an argument reads directly (`x`, `(x)`, `(float)x`); None for any other expression."""
+    text = strip_outer_parens(re.sub(r"\(\s*(?:float|double|int)\s*\)", "", expr))
+    return text if re.fullmatch(IDENT, text) else None
+
+
+def local_site_fields(locals_info: dict[str, dict[str, Any]], args: list[str]) -> dict[str, Any]:
+    """The per-site fields describing the local the first argument reads (all None when it reads none):
+    `local` (its scan_locals record), `ternary_default` (a ternary initialiser's else branch, as before),
+    `conditional_default` / `conditional_form` (the default branch and form of a conditional local of any form),
+    and `reason` when any argument reads a local a write left unbound (the site is then UNPARSED)."""
+    first = locals_info.get(local_name_of(args[0])) if args else None
+    fields: dict[str, Any] = {
+        "local": first,
+        "ternary_default": first["default"] if first and first["form"] == "ternary" else None,
+        "conditional_default": first["default"] if first else None,
+        "conditional_form": first["form"] if first else None,
+    }
+    reasons: list[str] = []
+    for arg in args:
+        record = locals_info.get(local_name_of(arg))
+        if record and record["reason"] and record["reason"] not in reasons:
+            reasons.append(record["reason"])
+    if reasons:
+        fields["reason"] = "; ".join(reasons)
+    return fields
+
+
 class Unevaluable(Exception):
     pass
 
@@ -302,7 +442,6 @@ def scale_from_calls(body: str, env: dict[str, float], call: str = "GL11.glScale
         call_re = re.compile(r"\b(?:" + "|".join(re.escape(r) for r in receivers) + r")\.scale\s*\(")
     else:
         call_re = re.compile(re.escape(call) + r"\s*\(")
-    locals_env, ternary_locals = scan_locals(body, env)
     while True:
         cm = call_re.search(body, index)
         if cm is None:
@@ -310,6 +449,8 @@ def scale_from_calls(body: str, env: dict[str, float], call: str = "GL11.glScale
         k = cm.start()
         args, index = balanced_args(body, cm.end() - 1)
         block = enclosing_block(body, k)
+        # the locals as they stand at this site: a write after it never reaches it
+        locals_env, locals_info = scan_locals(body, env, until=k)
         values: list[float | None] = []
         for arg in args:
             try:
@@ -318,28 +459,102 @@ def scale_from_calls(body: str, env: dict[str, float], call: str = "GL11.glScale
                 values.append(None)
         uniform = len(values) == 3 and None not in values and abs(values[0] - values[1]) <= TOLERANCE and abs(values[0] - values[2]) <= TOLERANCE
         flip = len(values) == 3 and None not in values and values[0] < 0 and values[1] < 0 and values[2] > 0
-        ternary = ternary_locals.get(args[0].strip()) if args else None
-        sites.append({"args": args, "values": values, "block": block, "uniform": uniform, "flip": flip,
-                      "ternary_default": ternary})
+        site = {"args": args, "values": values, "block": block, "uniform": uniform, "flip": flip}
+        site.update(local_site_fields(locals_info, args))
+        sites.append(site)
     return {"sites": sites}
 
 
-def scan_locals(body: str, env: dict[str, float]) -> tuple[dict[str, float], dict[str, str]]:
-    """The `float x = <expr>;` locals of a body evaluated on top of env, and, for a ternary initialiser
-    `cond ? a : b`, the default (else) branch text per local: that branch is the unconditional value, the
-    other is conditional."""
+def scan_locals(body: str, env: dict[str, float], until: int | None = None) -> tuple[dict[str, float], dict[str, dict[str, Any]]]:
+    """The float locals of a body as they stand at position `until` (a scale site; the whole body when None),
+    evaluated on top of env, plus one record per local saying how its value was reached.
+
+    A `float x = <expr>;` declaration binds x (a ternary initialiser `cond ? a : b` binds its default, the else
+    branch b, and marks x conditional). Every later write to x before `until` (`x = <expr>;`, or a compound
+    `x *= <expr>;` etc.) is read by the path it sits on, the default-branch rule resolve_default_scale applies to
+    scale sites: a write directly in the method body, or in the final `else` of an if/else chain, is on the default
+    path and replaces the value (the last such write wins); a write under an `if` / `else if` (braced or not, at
+    any nesting) is off the default path: the value stays, x becomes conditional with the pre-branch expression as
+    its default, and the branch expression is not evaluated (as a ternary's taken branch is not); a write inside
+    any other block (switch, loop, lambda, bare block) or a default-path write whose expression cannot be
+    evaluated leaves x unbound with a reason, so a site reading x is UNPARSED. Declarations and writes at or
+    after `until` never reach the site.
+
+    Record keys: expr (the expression x holds on the default path), form (None, 'ternary', 'if-reassignment',
+    'if/else-reassignment' or 'ternary-reassignment'), default (the conditional default expression; None when
+    x is unconditional), reason (None, or why x is unbound), writes (the write statements read, in order)."""
     locals_env = dict(env)
-    ternary_locals: dict[str, str] = {}
+    info: dict[str, dict[str, Any]] = {}
+    events: list[tuple[int, str, str, str, str | None]] = []
     for m in RE_LOCAL.finditer(body):
-        expr = m.group(2).strip()
-        if "?" in expr and ":" in expr:
-            expr = expr.rsplit(":", 1)[1].strip()
-            ternary_locals[m.group(1)] = expr
+        if until is None or m.start() < until:
+            events.append((m.start(), "declare", m.group(1), m.group(2).strip(), None))
+    for name in sorted({e[2] for e in events}):
+        # write forms the scan does not evaluate (`x %= e;`, `x++;`, `++x;`, `x--;`, `--x;`): recorded as
+        # unreadable writes so the local is left unbound with a reason instead of passing silently
+        for m in re.finditer(r"(?<![\w.])" + re.escape(name) + r"\s*(?:%=[^;]*|\+\+|--)\s*;|(?:\+\+|--)\s*" + re.escape(name) + r"\s*;", body):
+            if not RE_DECLARATION_PREFIX.search(body[:m.start()]) and (until is None or m.start() < until):
+                events.append((m.start(), "write", name, m.group(0).strip(), "?"))
+        for m in local_write_re(name).finditer(body):
+            if RE_DECLARATION_PREFIX.search(body[:m.start()]):
+                continue  # the declaration itself (or a redeclaration), read above
+            if until is None or m.start() < until:
+                events.append((m.start(), "write", name, m.group(2).strip(), m.group(1)))
+    events.sort(key=lambda e: e[0])
+    for position, kind, name, expr, op in events:
+        if kind == "declare":
+            record: dict[str, Any] = {"expr": expr, "form": None, "default": None, "reason": None, "writes": []}
+            if "?" in expr and ":" in expr:
+                expr = expr.rsplit(":", 1)[1].strip()
+                record.update({"expr": expr, "form": "ternary", "default": expr})
+            try:
+                locals_env[name] = evaluate(expr, locals_env)
+            except Unevaluable:
+                locals_env.pop(name, None)
+            info[name] = record
+            continue
+        record = info.get(name)
+        if record is None or record["reason"] is not None:
+            continue  # a field/parameter write before any declaration, or a local already left unbound
+        stmt = re.sub(r"\s+", " ", body[position:body.find(";", position)].strip())  # `s = 2.0F`, quoted in notes
+        record["writes"].append(stmt)
+        if op == "?":
+            record["reason"] = f"local {name} is written in a form the scan does not read (`{expr}`)"
+            locals_env.pop(name, None)
+            continue
+        how = write_kind(block_path(body, position))
+        if how == "other":
+            record["reason"] = f"local {name} is written inside a block that is neither if nor else (`{stmt}`)"
+            locals_env.pop(name, None)
+            continue
+        if how == "if":
+            # off the default path: the value stays and the local is conditional with its pre-branch default
+            record["form"] = "if-reassignment"
+            record["default"] = record["expr"]
+            continue
+        # the default path: directly in the method body, or the final else of an if/else chain
+        ternary = "?" in expr and ":" in expr
+        branch = expr.rsplit(":", 1)[1].strip() if ternary else expr
         try:
-            locals_env[m.group(1)] = evaluate(expr, locals_env)
-        except Unevaluable:
-            pass
-    return locals_env, ternary_locals
+            value = evaluate(branch, locals_env)
+            if op is not None:
+                if name not in locals_env:
+                    raise Unevaluable(f"{name} has no value to compound")
+                value = compound(op, locals_env[name], value)
+        except Unevaluable as exc:
+            record["reason"] = (f"local {name} is written on the default path with an expression that cannot be "
+                                f"evaluated (`{stmt}`: {exc})")
+            locals_env.pop(name, None)
+            continue
+        locals_env[name] = value
+        record["expr"] = f"({record['expr']}) {op} ({branch})" if op is not None else branch
+        if how == "else":
+            record["form"], record["default"] = "if/else-reassignment", record["expr"]
+        elif ternary:
+            record["form"], record["default"] = "ternary-reassignment", record["expr"]
+        else:
+            record["form"], record["default"] = None, None
+    return locals_env, info
 
 
 def strip_outer_parens(text: str) -> str:
@@ -381,7 +596,6 @@ def scale_from_model_for_render(method: dict[str, Any], env: dict[str, float]) -
     A ternary local factor resolves to its default branch through scan_locals, exactly as for scale()."""
     body = method["body"]
     params = [m.group(1) for m in RE_FLOAT_PARAM.finditer(method["params"])]
-    locals_env, ternary_locals = scan_locals(body, env)
     sites: list[dict[str, Any]] = []
     index = 0
     while True:
@@ -391,11 +605,14 @@ def scale_from_model_for_render(method: dict[str, Any], env: dict[str, float]) -
         k = cm.start()
         args, index = balanced_args(body, cm.end() - 1)
         block = enclosing_block(body, k)
+        # the locals as they stand at this super call: a write after it never reaches it
+        locals_env, locals_info = scan_locals(body, env, until=k)
         call = "super.scaleModelForRender(" + ", ".join(a.strip() for a in args[:2]) + ", ...)"
 
         def unparsed(reason: str, shown: list[str]) -> dict[str, Any]:
             return {"args": shown, "values": [None] * 3, "block": block, "uniform": False, "flip": False,
-                    "ternary_default": None, "call": "super.scaleModelForRender", "reason": reason}
+                    "local": None, "ternary_default": None, "conditional_default": None, "conditional_form": None,
+                    "call": "super.scaleModelForRender", "reason": reason}
 
         if len(params) < 2:
             sites.append(unparsed(f"scaleModelForRender override without two leading float parameters "
@@ -422,18 +639,25 @@ def scale_from_model_for_render(method: dict[str, Any], env: dict[str, float]) -
                 except Unevaluable:
                     values.append(None)
             sites.append({"args": [wfactor, hfactor, wfactor], "values": values, "block": block, "uniform": False,
-                          "flip": False, "ternary_default": None, "call": "super.scaleModelForRender",
+                          "flip": False, "local": None, "ternary_default": None, "conditional_default": None,
+                          "conditional_form": None, "call": "super.scaleModelForRender",
                           "factor_exprs": [wexpr, hexpr],
                           "reason": f"scaleModelForRender: {wname} factor {wfactor} and {hname} factor {hfactor} "
                                     f"differ in {call} (one uniform factor is required)"})
+            continue
+        fields = local_site_fields(locals_info, [wfactor])
+        if fields.get("reason"):
+            # the factor reads a local that a write left unbound: the site is UNPARSED with that write quoted
+            sites.append(unparsed(f"scaleModelForRender: {fields['reason']}", [wexpr, hexpr]))
             continue
         try:
             value: float | None = evaluate(wfactor, locals_env)
         except Unevaluable:
             value = None
-        sites.append({"args": [wfactor] * 3, "values": [value] * 3, "block": block, "uniform": value is not None,
-                      "flip": False, "ternary_default": ternary_locals.get(wfactor),
-                      "call": "super.scaleModelForRender", "factor_exprs": [wexpr, hexpr]})
+        site = {"args": [wfactor] * 3, "values": [value] * 3, "block": block, "uniform": value is not None,
+                "flip": False, "call": "super.scaleModelForRender", "factor_exprs": [wexpr, hexpr]}
+        site.update(fields)
+        sites.append(site)
     return sites
 
 
@@ -466,8 +690,16 @@ def resolve_default_scale(sites: list[dict[str, Any]]) -> tuple[str, float | Non
         return "COMPOUND", product, f"{len(unconditional)} unconditional scales compound to {fmt(product)}: {'; '.join(where)}"
     first = unconditional[0]
     how = "unconditional " + first["args"][0]
-    if first.get("ternary_default"):
-        how += f" (ternary default branch {first['ternary_default']})"
+    local = first.get("local") or {}
+    if first.get("conditional_default"):
+        # a conditional local: a ternary initialiser (as before) or an if / if-else / ternary write after the
+        # declaration; the default branch is what renders, and the writes are quoted so the note shows the path
+        how += f" ({first.get('conditional_form') or 'ternary'} default branch {first['conditional_default']}"
+        if local.get("writes"):
+            how += f"; writes: {'; '.join(local['writes'])}"
+        how += ")"
+    elif local.get("writes"):
+        how += f" (reassigned: {'; '.join(local['writes'])})"
     if first.get("method") == "scaleModelForRender":
         # the GeckoLib post-capture slot is named so the PASS line says where the factor is applied
         how += ", scaleModelForRender"
@@ -778,11 +1010,17 @@ def parse_port_renderer(path: Path) -> dict[str, Any]:
         for s in found:
             s["method"] = m["name"]
             arg = s["args"][0].strip()
+            local = s.get("local")
             if arg == "SCALE":
                 s["uses_constant"] = True
-            elif s.get("ternary_default") is not None:
-                # `float x = cond ? a : b;` -> the default (else) branch must itself be SCALE
-                s["uses_constant"] = s["ternary_default"].strip() == "SCALE"
+            elif s.get("conditional_default") is not None:
+                # a conditional local (`float x = cond ? a : b;`, or `float x = ...; if (cond) x = ...;`): the
+                # default branch must itself be SCALE
+                s["uses_constant"] = s["conditional_default"].strip() == "SCALE"
+            elif local is not None:
+                # a plain or reassigned local: the expression it holds at the site (the last default-path
+                # write's, not the declaration's, when it was written) must be SCALE
+                s["uses_constant"] = (local.get("expr") or "").strip() == "SCALE"
             else:
                 s["uses_constant"] = bool(re.search(r"\bfloat\s+" + re.escape(arg) + r"\s*=\s*SCALE\s*;", m["body"]))
             sites.append(s)
@@ -891,10 +1129,19 @@ def check_pin(entry: dict[str, Any], port: dict[str, Any], candidate: dict[str, 
         else:
             bypassed = [s for s in default_sites if not s.get("uses_constant")]
             if bypassed:
-                problems.append("SCALE constant exists but " + "; ".join(f"{s['method']}() scales by {s['args'][0].strip()}" for s in bypassed))
+                problems.append("SCALE constant exists but " + "; ".join(bypass_word(s) for s in bypassed))
     if "SCALE" in port["constants"] and port["constants"]["SCALE"] is not None and expected_scale is not None and not same(port["constants"]["SCALE"], expected_scale):
         problems.append(f"SCALE = {port['constant_exprs']['SCALE']} = {fmt(port['constants']['SCALE'])} != expected {fmt(expected_scale)}")
     return problems + check_candidate(entry, port, candidate, shadow_only=False)
+
+
+def bypass_word(site: dict[str, Any]) -> str:
+    """`scale() scales by x`, naming what a written local x holds on the default path and the writes read."""
+    text = f"{site['method']}() scales by {site['args'][0].strip()}"
+    local = site.get("local") or {}
+    if local.get("writes"):
+        text += f" (holds {local.get('expr')} on the default path; writes: {'; '.join(local['writes'])})"
+    return text
 
 
 def check_candidate(entry: dict[str, Any], port: dict[str, Any], candidate: dict[str, Any] | None, shadow_only: bool) -> list[str]:
