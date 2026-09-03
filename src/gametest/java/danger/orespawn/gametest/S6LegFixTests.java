@@ -71,13 +71,17 @@ public class S6LegFixTests {
      */
     @GameTest(template = "empty_large", timeoutTicks = 400, batch = "spiderGaitIsolation")
     public void s6b_spider_spin_flick_no_crossing(GameTestHelper helper) {
+        boolean priorMaster = OreSpawnConfig.MODERN_ENABLED.get();
         OreSpawnConfig.SpiderMovement prior = OreSpawnConfig.SPIDER_MOVEMENT.get();
         final SpiderRobot spider;
         try {
+            // Master-override ruling 2026-09-04: MODERN needs the master on.
+            OreSpawnConfig.MODERN_ENABLED.set(true);
             OreSpawnConfig.SPIDER_MOVEMENT.set(OreSpawnConfig.SpiderMovement.MODERN);
             spider = helper.spawn(ModEntities.SPIDER_ROBOT.get(), new BlockPos(24, 2, 24));
         } finally {
             OreSpawnConfig.SPIDER_MOVEMENT.set(prior);
+            OreSpawnConfig.MODERN_ENABLED.set(priorMaster);
         }
         spider.setYRot(0.0f);
         final ModernSpiderGait gait = spider.getModernGait();
@@ -144,13 +148,17 @@ public class S6LegFixTests {
      */
     @GameTest(template = "empty_large", timeoutTicks = 400, batch = "spiderGaitIsolation")
     public void s6b_ant_spin_flick_no_crossing(GameTestHelper helper) {
+        boolean priorMaster = OreSpawnConfig.MODERN_ENABLED.get();
         OreSpawnConfig.SpiderMovement prior = OreSpawnConfig.SPIDER_MOVEMENT.get();
         final AntRobot ant;
         try {
+            // Master-override ruling 2026-09-04: MODERN needs the master on.
+            OreSpawnConfig.MODERN_ENABLED.set(true);
             OreSpawnConfig.SPIDER_MOVEMENT.set(OreSpawnConfig.SpiderMovement.MODERN);
             ant = helper.spawnWithNoFreeWill(ModEntities.ANT_ROBOT.get(), new BlockPos(24, 2, 24));
         } finally {
             OreSpawnConfig.SPIDER_MOVEMENT.set(prior);
+            OreSpawnConfig.MODERN_ENABLED.set(priorMaster);
         }
         ant.setOwned(); // inert customServerAiStep (S5b review hardening)
         ant.setYRot(0.0f);
@@ -209,13 +217,17 @@ public class S6LegFixTests {
                 }
             }
         }
+        boolean priorMaster = OreSpawnConfig.MODERN_ENABLED.get();
         OreSpawnConfig.SpiderMovement prior = OreSpawnConfig.SPIDER_MOVEMENT.get();
         final SpiderRobot spider;
         try {
+            // Master-override ruling 2026-09-04: MODERN needs the master on.
+            OreSpawnConfig.MODERN_ENABLED.set(true);
             OreSpawnConfig.SPIDER_MOVEMENT.set(OreSpawnConfig.SpiderMovement.MODERN);
             spider = helper.spawn(ModEntities.SPIDER_ROBOT.get(), new BlockPos(28, 19, 24));
         } finally {
             OreSpawnConfig.SPIDER_MOVEMENT.set(prior);
+            OreSpawnConfig.MODERN_ENABLED.set(priorMaster);
         }
         spider.setYRot(0.0f);
         final ModernSpiderGait gait = spider.getModernGait();

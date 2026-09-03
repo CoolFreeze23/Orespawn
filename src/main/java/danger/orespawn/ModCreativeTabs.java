@@ -537,8 +537,11 @@ public class ModCreativeTabs {
                         output.accept(ModItems.ANT_SPAWN_EGG.get());
                         output.accept(ModItems.ANT_ROBOT_SPAWN_EGG.get());
                         // Phase E ruling (2026-08-11): wiki-only mobs' eggs are
-                        // creative-visible only with phase14ContentEnable on.
-                        if (OreSpawnConfig.PHASE14_CONTENT_ENABLE.get()) {
+                        // creative-visible only with phase14ContentEnable on --
+                        // the EFFECTIVE value, [modern] enabled AND the key
+                        // (master-override ruling 2026-09-04), read through
+                        // OreSpawnConfig.phase14ContentEnable() here and below.
+                        if (OreSpawnConfig.phase14ContentEnable()) {
                             output.accept(ModItems.APPLE_COW_SPAWN_EGG.get());
                         }
                         output.accept(ModItems.ATTACK_SQUID_SPAWN_EGG.get());
@@ -584,7 +587,7 @@ public class ModCreativeTabs {
                         output.accept(ModItems.GIRLFRIEND_SPAWN_EGG.get());
                         output.accept(ModItems.GODZILLA_SPAWN_EGG.get());
                         output.accept(ModItems.GOLD_FISH_SPAWN_EGG.get());
-                        if (OreSpawnConfig.PHASE14_CONTENT_ENABLE.get()) {
+                        if (OreSpawnConfig.phase14ContentEnable()) {
                             output.accept(ModItems.GOLDEN_APPLE_COW_SPAWN_EGG.get());
                         }
                         output.accept(ModItems.HAMMERHEAD_SPAWN_EGG.get());
@@ -642,7 +645,7 @@ public class ModCreativeTabs {
                         output.accept(ModItems.TROOPER_BUG_SPAWN_EGG.get());
                         output.accept(ModItems.UNSTABLE_ANT_SPAWN_EGG.get());
                         output.accept(ModItems.URCHIN_SPAWN_EGG.get());
-                        if (OreSpawnConfig.PHASE14_CONTENT_ENABLE.get()) {
+                        if (OreSpawnConfig.phase14ContentEnable()) {
                             output.accept(ModItems.VAMPIRE_BUTTERFLY_SPAWN_EGG.get());
                         }
                         output.accept(ModItems.VELOCITY_RAPTOR_SPAWN_EGG.get());

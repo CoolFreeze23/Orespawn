@@ -13,12 +13,20 @@ public class OreSpawnConfig {
      * construction ON THE SERVER (BOSS-017 pattern) and synced to clients on
      * the entity — flipping the value affects newly constructed/loaded
      * spiders, not live ones, and the client's own copy of this file is
-     * never consulted for the mode.
+     * never consulted for the mode. The EFFECTIVE mode is
+     * {@link OreSpawnConfig#spiderMovement()} (master-override ruling
+     * 2026-09-04): CLASSIC whenever {@code [modern] enabled} is off, this
+     * key's value while it is on.
      */
     public enum SpiderMovement { CLASSIC, MODERN }
 
     // Mob toggles
     public static final ModConfigSpec.BooleanValue ALL_MOBS_DISABLE;
+    /**
+     * Phase E wiki-only content (port-only feature: no 1.7.10 source class).
+     * Effective only when [modern] enabled is true -- read through
+     * {@link #phase14ContentEnable()}, never directly.
+     */
     public static final ModConfigSpec.BooleanValue PHASE14_CONTENT_ENABLE;
     public static final ModConfigSpec.BooleanValue MOSQUITO_ENABLE;
     public static final ModConfigSpec.BooleanValue ROCK_ENABLE;
@@ -139,8 +147,17 @@ public class OreSpawnConfig {
     public static final ModConfigSpec.BooleanValue ROYAL_GLIDE_ENABLE;
     public static final ModConfigSpec.BooleanValue DRAGONFLY_HORSE_FRIENDLY;
     public static final ModConfigSpec.BooleanValue PLAY_NICELY;
+    /**
+     * 2.0 spider overhaul key ({@code [tweaks] spiderMovement}). Effective
+     * only when [modern] enabled is true -- read through
+     * {@link #spiderMovement()}, never directly.
+     */
     public static final ModConfigSpec.EnumValue<SpiderMovement> SPIDER_MOVEMENT;
-    /** S7b: the modern-mount riding camera (client-visual only). */
+    /**
+     * S7b: the modern-mount riding camera (client-visual only). Effective
+     * only when [modern] enabled is true -- read through
+     * {@link #mountCamera()}, never directly.
+     */
     public static final ModConfigSpec.BooleanValue MOUNT_CAMERA;
     public static final ModConfigSpec.BooleanValue MINERS_DREAM_EXPENSIVE;
     public static final ModConfigSpec.BooleanValue DISABLE_OVERWORLD_DUNGEONS;
@@ -153,21 +170,30 @@ public class OreSpawnConfig {
     public static final ModConfigSpec.IntValue ULTIMATE_SWORD_MAGIC;
     public static final ModConfigSpec.IntValue ULTIMATE_BOW_DAMAGE;
 
-    // 2.0 modern mode (owner rulings 2026-09-03). Classic 1.7.10 parity is the
-    // default experience; [modern].enabled is the ONE master switch that
-    // modern-mode features hang off, each behind its own sub-key that only
-    // takes effect while the master is on. The earlier per-feature 2.0
-    // keys (spiderMovement, mountCamera, phase14ContentEnable) predate the master and
-    // stay independent of it; the MOD-024 items are unimplemented proposals, not keys.
+    // 2.0 modern mode (owner rulings 2026-09-03; master-override ruling
+    // 2026-09-04, verbatim: "modern.enabled: master override only. Off forces
+    // all modern features off; on defers to existing per-feature keys, which
+    // keep their names. New features register under [modern]."). Classic
+    // 1.7.10 parity is the default experience; [modern].enabled is the ONE
+    // master switch. The earlier per-feature 2.0 keys (spiderMovement,
+    // mountCamera, phase14ContentEnable) keep their names and their [tweaks]
+    // section but are effective only while the master is on -- every read
+    // goes through the effective-value helpers at the bottom of this class
+    // (spiderMovement(), mountCamera(), phase14ContentEnable(),
+    // mothraWideRootHitbox()), never through the keys directly. The MOD-024
+    // items are unimplemented proposals, not keys.
     /**
-     * Master modern-mode switch, default false (classic parity). Every
-     * {@code [modern]} sub-key is inert while this is off. On it today:
-     * MOD-029 ({@link #MODERN_MOTHRA_WIDE_ROOT_HITBOX}); Phase G artist
+     * Master modern-mode switch, default false (classic parity). Master
+     * override: off forces every modern feature off; on defers to the
+     * per-feature keys; new modern features register under {@code [modern]}.
+     * Effective values: {@link #spiderMovement()}, {@link #mountCamera()},
+     * {@link #phase14ContentEnable()}, {@link #mothraWideRootHitbox()} -- a
+     * feature's key is never consulted without this master. Phase G artist
      * animations will hang off this same master ("artist animations are a
      * 2.0 feature behind the modern config; classic stays code-driven
-     * parity", ruling 2026-09-03). Hitbox sub-keys are snapshotted at entity
-     * construction (BOSS-017 pattern), so a flip reaches newly constructed/
-     * loaded entities, not live ones.
+     * parity", ruling 2026-09-03). Construction-snapshotted features (the
+     * robot gait mode, the hitbox sub-keys; BOSS-017 pattern) see a flip on
+     * newly constructed/loaded entities only, not live ones.
      */
     public static final ModConfigSpec.BooleanValue MODERN_ENABLED;
     /**
@@ -318,14 +344,18 @@ public class OreSpawnConfig {
         ROYAL_GLIDE_ENABLE = BUILDER.define("royalGlideEnable", true);
         DRAGONFLY_HORSE_FRIENDLY = BUILDER.define("dragonflyHorseFriendly", false);
         PLAY_NICELY = BUILDER.define("playNicely", false);
-        // 2.0 spider overhaul (design ruling 2026-08-11): default MODERN; one
-        // config line back to full 1.7.10 parity. Server-authoritative: the
-        // server's value at entity construction wins and is synced.
+        // 2.0 spider overhaul (design ruling 2026-08-11): key default MODERN.
+        // Master-override ruling 2026-09-04: both keys below are effective
+        // only while [modern] enabled is true (default false), so a default
+        // config runs CLASSIC until the master is switched on. Server-
+        // authoritative: the server's EFFECTIVE value at entity construction
+        // wins and is synced.
         MOUNT_CAMERA = BUILDER.comment(
                 "Riding camera for the modern robot mounts (spider/ant): pulls the third-person " +
                         "camera back and up, smoothed, with terrain collision, so the mount does not " +
                         "fill the screen. Client-visual only; no effect unridden, in CLASSIC mode, " +
-                        "or when disabled — the vanilla camera is untouched then."
+                        "or when disabled — the vanilla camera is untouched then. " +
+                        "Effective only when [modern] enabled is true."
         ).define("mountCamera", true);
         SPIDER_MOVEMENT = BUILDER.comment(
                 "Robot leg movement (Giant Robot Spider AND Robot Ant). MODERN = procedural IK gait " +
@@ -335,7 +365,8 @@ public class OreSpawnConfig {
                         "in flight and re-plant on landing). " +
                         "CLASSIC = the exact 1.7.10 behavior, preserved bit-identically (visual-only legs, " +
                         "body-only hitbox, unsteerable spider saddle). " +
-                        "Takes effect for newly spawned/loaded robots; the server's setting wins in multiplayer."
+                        "Takes effect for newly spawned/loaded robots; the server's setting wins in multiplayer. " +
+                        "Effective only when [modern] enabled is true (the master forces CLASSIC while off)."
         ).defineEnum("spiderMovement", SpiderMovement.MODERN);
         MINERS_DREAM_EXPENSIVE = BUILDER.define("minersDreamExpensive", false);
         DISABLE_OVERWORLD_DUNGEONS = BUILDER.define("disableOverworldDungeons", false);
@@ -354,7 +385,8 @@ public class OreSpawnConfig {
         PHASE14_CONTENT_ENABLE = BUILDER.comment(
                 "Enables the optional wiki-documented mobs that never existed in the 1.7.10 source: " +
                         "Vampire Butterfly, Apple Cow, Golden Apple Cow. Off = no natural spawns, " +
-                        "no creative spawn eggs. Existing placed/saved mobs are unaffected."
+                        "no creative spawn eggs. Existing placed/saved mobs are unaffected. " +
+                        "Effective only when [modern] enabled is true."
         ).define("phase14ContentEnable", false);
         BUILDER.pop();
 
@@ -365,15 +397,20 @@ public class OreSpawnConfig {
 
         // Owner rulings 2026-09-03: "MOD-029: accepted as the modern-mode
         // default; classic keeps 5x2" and "Artist animations are a 2.0 feature
-        // behind the modern config; classic stays code-driven parity". No
-        // master modern switch existed before this section; it is the switch now.
+        // behind the modern config; classic stays code-driven parity". Ruling
+        // 2026-09-04: "modern.enabled: master override only. Off forces all
+        // modern features off; on defers to existing per-feature keys, which
+        // keep their names. New features register under [modern]."
         BUILDER.push("modern");
         MODERN_ENABLED = BUILDER.comment(
-                "Master switch for OreSpawn 2.0 modern mode. false (default) = classic 1.7.10 parity " +
-                        "everywhere; true = the modern-mode features below apply, each behind its own sub-key. " +
+                "Master switch for OreSpawn 2.0 modern mode -- master override: off forces every modern " +
+                        "feature off; on defers to the per-feature keys; new modern features register under " +
+                        "[modern]. false (default) = classic 1.7.10 parity everywhere, whatever the per-feature " +
+                        "keys say; true = each modern feature follows its own key (tweaks.spiderMovement, " +
+                        "tweaks.mountCamera, tweaks.phase14ContentEnable, modern.mothraWideRootHitbox). " +
                         "Phase G artist animations will hang off this same switch (classic stays code-driven " +
-                        "parity). Hitbox sub-keys are snapshotted when an entity is constructed, so a flip " +
-                        "affects newly spawned/loaded entities, not live ones."
+                        "parity). Snapshotted features (the robot gait mode, hitbox sub-keys) pick up a flip on " +
+                        "newly spawned/loaded entities, not live ones."
         ).define("enabled", false);
         MODERN_MOTHRA_WIDE_ROOT_HITBOX = BUILDER.comment(
                 "MOD-029: Mothra's root hitbox is 6 x 3 (the port's original size) instead of the 1.7.10 " +
@@ -395,5 +432,32 @@ public class OreSpawnConfig {
      */
     public static boolean mothraWideRootHitbox() {
         return MODERN_ENABLED.get() && MODERN_MOTHRA_WIDE_ROOT_HITBOX.get();
+    }
+
+    /**
+     * Effective robot gait mode (master-override ruling 2026-09-04): CLASSIC
+     * whenever {@link #MODERN_ENABLED} is off, else {@link #SPIDER_MOVEMENT}.
+     * The single read behind the SpiderRobot/AntRobot construction snapshot
+     * (their one ctor-tail read consumes this exactly once -- BOSS-017
+     * pattern, the S4 ctor-tear rule); never re-read on a live entity.
+     */
+    public static SpiderMovement spiderMovement() {
+        return MODERN_ENABLED.get() ? SPIDER_MOVEMENT.get() : SpiderMovement.CLASSIC;
+    }
+
+    /**
+     * Effective modern-mount riding camera: {@code master && key}.
+     * Client-visual only; read per frame by {@code MountCameraState}.
+     */
+    public static boolean mountCamera() {
+        return MODERN_ENABLED.get() && MOUNT_CAMERA.get();
+    }
+
+    /**
+     * Effective Phase E wiki-only content gate: {@code master && key}. Read
+     * live by the creative tabs and by the natural-spawn control.
+     */
+    public static boolean phase14ContentEnable() {
+        return MODERN_ENABLED.get() && PHASE14_CONTENT_ENABLE.get();
     }
 }

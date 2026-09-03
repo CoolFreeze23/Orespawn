@@ -37,7 +37,10 @@ import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
  * {@code spiderGaitIsolation} (the BOSS-017 idiom): the flag is global and
  * snapshotted at entity construction, so it is restored immediately after
  * the constructions under test — but isolation keeps even that window away
- * from concurrently scheduled default-batch tests.</p>
+ * from concurrently scheduled default-batch tests. Since the master-override
+ * ruling (2026-09-04) the key is inert while {@code [modern] enabled} is
+ * off, so every MODERN spawn raises the master with the key and restores
+ * both together.</p>
  */
 @GameTestHolder(OreSpawnMod.MOD_ID)
 @PrefixGameTestTemplate(false)
@@ -330,14 +333,17 @@ public class SpiderGaitTests {
      */
     @GameTest(template = "empty_large", timeoutTicks = 400, batch = "spiderGaitIsolation")
     public void s2_gait_invariants_flat_walk(GameTestHelper helper) {
+        boolean priorMaster = OreSpawnConfig.MODERN_ENABLED.get();
         OreSpawnConfig.SpiderMovement prior = OreSpawnConfig.SPIDER_MOVEMENT.get();
         final SpiderRobot spider;
         try {
+            OreSpawnConfig.MODERN_ENABLED.set(true);
             OreSpawnConfig.SPIDER_MOVEMENT.set(OreSpawnConfig.SpiderMovement.MODERN);
             spider = helper.spawn(ModEntities.SPIDER_ROBOT.get(), new BlockPos(24, 3, 24));
         } finally {
             // Construction snapshot taken — restore immediately.
             OreSpawnConfig.SPIDER_MOVEMENT.set(prior);
+            OreSpawnConfig.MODERN_ENABLED.set(priorMaster);
         }
         ModernSpiderGait gait = spider.getModernGait();
         helper.assertTrue(gait != null, "spider constructed under MODERN must carry the gait controller");
@@ -452,8 +458,11 @@ public class SpiderGaitTests {
      */
     @GameTest(template = "empty", batch = "spiderGaitIsolation")
     public void s2_movement_mode_construction_snapshot(GameTestHelper helper) {
+        boolean priorMaster = OreSpawnConfig.MODERN_ENABLED.get();
         OreSpawnConfig.SpiderMovement prior = OreSpawnConfig.SPIDER_MOVEMENT.get();
         try {
+            // Classic with the master off (master-override ruling 2026-09-04).
+            OreSpawnConfig.MODERN_ENABLED.set(false);
             OreSpawnConfig.SPIDER_MOVEMENT.set(OreSpawnConfig.SpiderMovement.CLASSIC);
             SpiderRobot classic = helper.spawnWithNoFreeWill(ModEntities.SPIDER_ROBOT.get(), new BlockPos(2, 2, 2));
             helper.assertTrue(classic.getModernGait() == null,
@@ -476,6 +485,8 @@ public class SpiderGaitTests {
                         "pairedwith mirror drift at leg " + leg);
             }
 
+            // The effective flip: master on AND key MODERN.
+            OreSpawnConfig.MODERN_ENABLED.set(true);
             OreSpawnConfig.SPIDER_MOVEMENT.set(OreSpawnConfig.SpiderMovement.MODERN);
             helper.assertTrue(classic.getModernGait() == null && !classic.isModernMovement(),
                     "config flip must not retrofit a live classic spider (construction snapshot)");
@@ -486,6 +497,7 @@ public class SpiderGaitTests {
             modern.discard();
         } finally {
             OreSpawnConfig.SPIDER_MOVEMENT.set(prior);
+            OreSpawnConfig.MODERN_ENABLED.set(priorMaster);
         }
         helper.succeed();
     }
@@ -494,14 +506,20 @@ public class SpiderGaitTests {
     // S3 terrain invariants — cliff recovery (inv 4), stairs, trample
     // =====================================================================
 
-    /** Spawns a modern-mode spider with the config immediately restored. */
+    /**
+     * Spawns a modern-mode spider with the config immediately restored --
+     * master raised with the key (master-override ruling 2026-09-04).
+     */
     private static SpiderRobot spawnModern(GameTestHelper helper, BlockPos pos) {
+        boolean priorMaster = OreSpawnConfig.MODERN_ENABLED.get();
         OreSpawnConfig.SpiderMovement prior = OreSpawnConfig.SPIDER_MOVEMENT.get();
         try {
+            OreSpawnConfig.MODERN_ENABLED.set(true);
             OreSpawnConfig.SPIDER_MOVEMENT.set(OreSpawnConfig.SpiderMovement.MODERN);
             return helper.spawn(ModEntities.SPIDER_ROBOT.get(), pos);
         } finally {
             OreSpawnConfig.SPIDER_MOVEMENT.set(prior);
+            OreSpawnConfig.MODERN_ENABLED.set(priorMaster);
         }
     }
 

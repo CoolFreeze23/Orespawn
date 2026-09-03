@@ -74,8 +74,10 @@ public class SpiderRobot extends Mob implements ICustomHitboxProfileSupplier, IM
 
     /**
      * 2.0 spider overhaul (S2): the modern gait controller, or {@code null}
-     * in classic mode. SERVER: fixed at construction from the spiderMovement
-     * config (BOSS-017 snapshot pattern — a config flip affects newly
+     * in classic mode. SERVER: fixed at construction from the EFFECTIVE
+     * spiderMovement, {@link OreSpawnConfig#spiderMovement()} — the
+     * [modern] enabled master forces CLASSIC while off (ruling 2026-09-04)
+     * — (BOSS-017 snapshot pattern — a config flip affects newly
      * constructed spiders only). CLIENT: created lazily off the server's
      * {@link #DATA_MODERN_GAIT synced flag}; the client's own config is
      * never consulted. Classic-mode spiders on either side never construct
@@ -120,7 +122,7 @@ public class SpiderRobot extends Mob implements ICustomHitboxProfileSupplier, IM
         if (!level.isClientSide()) {
             boolean modern = this.ctorTailModernDecision != null
                     ? this.ctorTailModernDecision
-                    : OreSpawnConfig.SPIDER_MOVEMENT.get() == OreSpawnConfig.SpiderMovement.MODERN;
+                    : OreSpawnConfig.spiderMovement() == OreSpawnConfig.SpiderMovement.MODERN;
             this.entityData.set(DATA_MODERN_GAIT, modern);
             if (modern) {
                 this.modernGait = new ModernSpiderGait(danger.orespawn.entity.gait.SpiderRigProfile.RIG);
@@ -169,7 +171,7 @@ public class SpiderRobot extends Mob implements ICustomHitboxProfileSupplier, IM
             // Single authoritative ctor-tail read (see ctorTailModernDecision).
             if (this.ctorTailModernDecision == null) {
                 this.ctorTailModernDecision =
-                        OreSpawnConfig.SPIDER_MOVEMENT.get() == OreSpawnConfig.SpiderMovement.MODERN;
+                        OreSpawnConfig.spiderMovement() == OreSpawnConfig.SpiderMovement.MODERN;
             }
             modern = this.ctorTailModernDecision;
         }

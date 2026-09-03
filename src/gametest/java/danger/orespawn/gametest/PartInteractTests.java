@@ -29,14 +29,24 @@ import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 @PrefixGameTestTemplate(false)
 public class PartInteractTests {
 
+    /**
+     * Spawns a spider under {@code mode}. Master-override ruling 2026-09-04:
+     * the spiderMovement key is inert while {@code [modern] enabled} is off,
+     * so the master is raised for MODERN (and lowered for CLASSIC) alongside
+     * the key; both are restored together once the construction snapshot
+     * is taken.
+     */
     private static SpiderRobot spawnMode(GameTestHelper helper, BlockPos pos,
                                          OreSpawnConfig.SpiderMovement mode) {
+        boolean priorMaster = OreSpawnConfig.MODERN_ENABLED.get();
         OreSpawnConfig.SpiderMovement prior = OreSpawnConfig.SPIDER_MOVEMENT.get();
         try {
+            OreSpawnConfig.MODERN_ENABLED.set(mode == OreSpawnConfig.SpiderMovement.MODERN);
             OreSpawnConfig.SPIDER_MOVEMENT.set(mode);
             return helper.spawn(ModEntities.SPIDER_ROBOT.get(), pos);
         } finally {
             OreSpawnConfig.SPIDER_MOVEMENT.set(prior);
+            OreSpawnConfig.MODERN_ENABLED.set(priorMaster);
         }
     }
 

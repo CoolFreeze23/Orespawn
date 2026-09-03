@@ -43,13 +43,22 @@ import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 @PrefixGameTestTemplate(false)
 public class HitboxPartTests {
 
+    /**
+     * Spawns a MODERN spider. Master-override ruling 2026-09-04: the
+     * spiderMovement key is inert while {@code [modern] enabled} is off, so
+     * the master is raised with the key and both are restored together once
+     * the construction snapshot is taken.
+     */
     private static SpiderRobot spawnModern(GameTestHelper helper, BlockPos pos) {
+        boolean priorMaster = OreSpawnConfig.MODERN_ENABLED.get();
         OreSpawnConfig.SpiderMovement prior = OreSpawnConfig.SPIDER_MOVEMENT.get();
         try {
+            OreSpawnConfig.MODERN_ENABLED.set(true);
             OreSpawnConfig.SPIDER_MOVEMENT.set(OreSpawnConfig.SpiderMovement.MODERN);
             return helper.spawn(ModEntities.SPIDER_ROBOT.get(), pos);
         } finally {
             OreSpawnConfig.SPIDER_MOVEMENT.set(prior);
+            OreSpawnConfig.MODERN_ENABLED.set(priorMaster);
         }
     }
 
@@ -74,8 +83,12 @@ public class HitboxPartTests {
      */
     @GameTest(template = "empty", batch = "spiderGaitIsolation")
     public void s4_part_counts_and_classic_zero(GameTestHelper helper) {
+        boolean priorMaster = OreSpawnConfig.MODERN_ENABLED.get();
         OreSpawnConfig.SpiderMovement prior = OreSpawnConfig.SPIDER_MOVEMENT.get();
         try {
+            // Classic with the master off; modern below with the master on
+            // (master-override ruling 2026-09-04).
+            OreSpawnConfig.MODERN_ENABLED.set(false);
             OreSpawnConfig.SPIDER_MOVEMENT.set(OreSpawnConfig.SpiderMovement.CLASSIC);
             SpiderRobot classic = helper.spawnWithNoFreeWill(ModEntities.SPIDER_ROBOT.get(), new BlockPos(2, 2, 2));
             helper.assertTrue(classic.getParts() == null || classic.getParts().length == 0,
@@ -86,6 +99,7 @@ public class HitboxPartTests {
                     "classic spider dims drifted from orig SpiderRobot.java:58 (ENT-S-088): "
                             + classic.getBbWidth() + "x" + classic.getBbHeight());
 
+            OreSpawnConfig.MODERN_ENABLED.set(true);
             OreSpawnConfig.SPIDER_MOVEMENT.set(OreSpawnConfig.SpiderMovement.MODERN);
             SpiderRobot modern = helper.spawnWithNoFreeWill(ModEntities.SPIDER_ROBOT.get(), new BlockPos(2, 2, 6));
             helper.assertTrue(modern.getParts() != null && modern.getParts().length == 8,
@@ -124,6 +138,7 @@ public class HitboxPartTests {
             modern.discard();
         } finally {
             OreSpawnConfig.SPIDER_MOVEMENT.set(prior);
+            OreSpawnConfig.MODERN_ENABLED.set(priorMaster);
         }
         helper.succeed();
     }
@@ -262,8 +277,10 @@ public class HitboxPartTests {
      */
     @GameTest(template = "empty", batch = "spiderGaitIsolation")
     public void s4_part_damage_routes_one_to_one(GameTestHelper helper) {
+        boolean priorMaster = OreSpawnConfig.MODERN_ENABLED.get();
         OreSpawnConfig.SpiderMovement prior = OreSpawnConfig.SPIDER_MOVEMENT.get();
         try {
+            OreSpawnConfig.MODERN_ENABLED.set(true);
             OreSpawnConfig.SPIDER_MOVEMENT.set(OreSpawnConfig.SpiderMovement.MODERN);
             SpiderRobot viaPart = helper.spawnWithNoFreeWill(ModEntities.SPIDER_ROBOT.get(), new BlockPos(2, 2, 2));
             SpiderRobot viaBody = helper.spawnWithNoFreeWill(ModEntities.SPIDER_ROBOT.get(), new BlockPos(2, 2, 8));
@@ -284,6 +301,7 @@ public class HitboxPartTests {
             viaBody.discard();
         } finally {
             OreSpawnConfig.SPIDER_MOVEMENT.set(prior);
+            OreSpawnConfig.MODERN_ENABLED.set(priorMaster);
         }
         helper.succeed();
     }
@@ -401,9 +419,11 @@ public class HitboxPartTests {
     @GameTest(template = "empty_large", timeoutTicks = 400, batch = "spiderGaitIsolation")
     public void s4_part_parent_sweep_for_hud_unwrap(GameTestHelper helper) {
         boolean priorNice = OreSpawnConfig.PLAY_NICELY.get();
+        boolean priorMaster = OreSpawnConfig.MODERN_ENABLED.get();
         OreSpawnConfig.SpiderMovement priorMove = OreSpawnConfig.SPIDER_MOVEMENT.get();
         try {
             OreSpawnConfig.PLAY_NICELY.set(false);
+            OreSpawnConfig.MODERN_ENABLED.set(true);
             OreSpawnConfig.SPIDER_MOVEMENT.set(OreSpawnConfig.SpiderMovement.MODERN);
             TheKing king = helper.spawnWithNoFreeWill(ModEntities.THE_KING.get(), new BlockPos(10, 3, 10));
             Godzilla godzilla = helper.spawnWithNoFreeWill(ModEntities.GODZILLA.get(), new BlockPos(36, 3, 36));
@@ -422,6 +442,7 @@ public class HitboxPartTests {
         } finally {
             OreSpawnConfig.PLAY_NICELY.set(priorNice);
             OreSpawnConfig.SPIDER_MOVEMENT.set(priorMove);
+            OreSpawnConfig.MODERN_ENABLED.set(priorMaster);
         }
         helper.succeed();
     }

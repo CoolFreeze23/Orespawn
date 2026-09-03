@@ -60,6 +60,9 @@ public class AntRobot extends Mob implements ICustomHitboxProfileSupplier, IMode
      * the ANT, synced so clients build the replay controller and parts off
      * the server's decision, never their own config — the exact
      * DATA_MODERN_GAIT pattern from SpiderRobot (S2/S4 review lineage).
+     * The snapshot reads the EFFECTIVE mode,
+     * {@link OreSpawnConfig#spiderMovement()} ([modern] enabled master
+     * override, ruling 2026-09-04): CLASSIC while the master is off.
      */
     private static final EntityDataAccessor<Boolean> DATA_MODERN_GAIT =
             SynchedEntityData.defineId(AntRobot.class, EntityDataSerializers.BOOLEAN);
@@ -108,7 +111,7 @@ public class AntRobot extends Mob implements ICustomHitboxProfileSupplier, IMode
         if (!level.isClientSide()) {
             boolean modern = this.ctorTailModernDecision != null
                     ? this.ctorTailModernDecision
-                    : OreSpawnConfig.SPIDER_MOVEMENT.get() == OreSpawnConfig.SpiderMovement.MODERN;
+                    : OreSpawnConfig.spiderMovement() == OreSpawnConfig.SpiderMovement.MODERN;
             this.entityData.set(DATA_MODERN_GAIT, modern);
             if (modern) {
                 this.modernGait = new ModernSpiderGait(AntRigProfile.RIG);
@@ -134,7 +137,7 @@ public class AntRobot extends Mob implements ICustomHitboxProfileSupplier, IMode
         } else {
             if (this.ctorTailModernDecision == null) {
                 this.ctorTailModernDecision =
-                        OreSpawnConfig.SPIDER_MOVEMENT.get() == OreSpawnConfig.SpiderMovement.MODERN;
+                        OreSpawnConfig.spiderMovement() == OreSpawnConfig.SpiderMovement.MODERN;
             }
             modern = this.ctorTailModernDecision;
         }

@@ -30,14 +30,24 @@ import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 @PrefixGameTestTemplate(false)
 public class RideTests {
 
+    /**
+     * Spawns a spider under {@code mode}. Master-override ruling 2026-09-04:
+     * the spiderMovement key is inert while {@code [modern] enabled} is off,
+     * so the master is raised for MODERN (and lowered for CLASSIC) alongside
+     * the key; both are restored together once the construction snapshot
+     * is taken.
+     */
     private static SpiderRobot spawnMode(GameTestHelper helper, BlockPos pos,
                                          OreSpawnConfig.SpiderMovement mode) {
+        boolean priorMaster = OreSpawnConfig.MODERN_ENABLED.get();
         OreSpawnConfig.SpiderMovement prior = OreSpawnConfig.SPIDER_MOVEMENT.get();
         try {
+            OreSpawnConfig.MODERN_ENABLED.set(mode == OreSpawnConfig.SpiderMovement.MODERN);
             OreSpawnConfig.SPIDER_MOVEMENT.set(mode);
             return helper.spawn(ModEntities.SPIDER_ROBOT.get(), pos);
         } finally {
             OreSpawnConfig.SPIDER_MOVEMENT.set(prior);
+            OreSpawnConfig.MODERN_ENABLED.set(priorMaster);
         }
     }
 
@@ -205,14 +215,20 @@ public class RideTests {
         final danger.orespawn.entity.AntRobot antModern;
         final Mob[] riders = new Mob[4];
         {
+            boolean priorMaster = OreSpawnConfig.MODERN_ENABLED.get();
             OreSpawnConfig.SpiderMovement prior = OreSpawnConfig.SPIDER_MOVEMENT.get();
             try {
+                // Classic with the master off, modern with it on (master-
+                // override ruling 2026-09-04); both restored together.
+                OreSpawnConfig.MODERN_ENABLED.set(false);
                 OreSpawnConfig.SPIDER_MOVEMENT.set(OreSpawnConfig.SpiderMovement.CLASSIC);
                 antClassic = helper.spawn(ModEntities.ANT_ROBOT.get(), new BlockPos(10, 2, 10));
+                OreSpawnConfig.MODERN_ENABLED.set(true);
                 OreSpawnConfig.SPIDER_MOVEMENT.set(OreSpawnConfig.SpiderMovement.MODERN);
                 antModern = helper.spawn(ModEntities.ANT_ROBOT.get(), new BlockPos(30, 2, 30));
             } finally {
                 OreSpawnConfig.SPIDER_MOVEMENT.set(prior);
+                OreSpawnConfig.MODERN_ENABLED.set(priorMaster);
             }
         }
         try {

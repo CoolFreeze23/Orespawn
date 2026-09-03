@@ -35,9 +35,14 @@ public final class MountCameraState {
     private MountCameraState() {
     }
 
-    /** The mount's target camera distance, or 0 when the vanilla camera must run. */
+    /**
+     * The mount's target camera distance, or 0 when the vanilla camera must
+     * run. Gate: the EFFECTIVE mountCamera, {@link OreSpawnConfig#mountCamera()}
+     * ([modern] enabled AND tweaks.mountCamera — master-override ruling
+     * 2026-09-04; the key alone is inert while the master is off).
+     */
     public static double targetDistance(Entity vehicle) {
-        if (!OreSpawnConfig.MOUNT_CAMERA.get()) {
+        if (!OreSpawnConfig.mountCamera()) {
             return 0.0;
         }
         if (vehicle instanceof IModernLeggedRobot robot && robot.isModernMovement()) {

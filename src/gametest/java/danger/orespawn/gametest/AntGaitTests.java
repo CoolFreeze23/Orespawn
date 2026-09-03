@@ -39,14 +39,24 @@ public class AntGaitTests {
     private static final double EPS_JOINT = 1.0E-4;
     private static final double EPS_TARGET = 0.011;
 
+    /**
+     * Spawns an ant under {@code mode}. Master-override ruling 2026-09-04:
+     * the spiderMovement key is inert while {@code [modern] enabled} is off,
+     * so the master is raised for MODERN (and lowered for CLASSIC) alongside
+     * the key; both are restored together once the construction snapshot
+     * is taken.
+     */
     private static AntRobot spawnMode(GameTestHelper helper, BlockPos pos,
                                       OreSpawnConfig.SpiderMovement mode) {
+        boolean priorMaster = OreSpawnConfig.MODERN_ENABLED.get();
         OreSpawnConfig.SpiderMovement prior = OreSpawnConfig.SPIDER_MOVEMENT.get();
         try {
+            OreSpawnConfig.MODERN_ENABLED.set(mode == OreSpawnConfig.SpiderMovement.MODERN);
             OreSpawnConfig.SPIDER_MOVEMENT.set(mode);
             return helper.spawn(ModEntities.ANT_ROBOT.get(), pos);
         } finally {
             OreSpawnConfig.SPIDER_MOVEMENT.set(prior);
+            OreSpawnConfig.MODERN_ENABLED.set(priorMaster);
         }
     }
 
@@ -604,14 +614,18 @@ public class AntGaitTests {
      * would inject chase impulses into the walk/hover tests (review).
      */
     private static AntRobot spawnModeNoFreeWill(GameTestHelper helper, BlockPos pos) {
+        boolean priorMaster = OreSpawnConfig.MODERN_ENABLED.get();
         OreSpawnConfig.SpiderMovement prior = OreSpawnConfig.SPIDER_MOVEMENT.get();
         try {
+            // Master-override ruling 2026-09-04: MODERN needs the master on.
+            OreSpawnConfig.MODERN_ENABLED.set(true);
             OreSpawnConfig.SPIDER_MOVEMENT.set(OreSpawnConfig.SpiderMovement.MODERN);
             AntRobot ant = helper.spawnWithNoFreeWill(ModEntities.ANT_ROBOT.get(), pos);
             ant.setOwned();
             return ant;
         } finally {
             OreSpawnConfig.SPIDER_MOVEMENT.set(prior);
+            OreSpawnConfig.MODERN_ENABLED.set(priorMaster);
         }
     }
 }
