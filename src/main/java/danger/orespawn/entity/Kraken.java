@@ -518,7 +518,10 @@ public class Kraken extends Monster {
      * boundingBox.expand(25, 40, 25), this)}: the nearest player of ANY game
      * mode. The creative check is the caller's (orig :965/:970-972,
      * {@link #searchForPrey}), so this scan must not skip anyone — ENT-S-100
-     * KT-A.
+     * KT-A. Ties go to the LAST player scanned: orig {@code World.func_72857_a}
+     * (1.7.10 {@code ahb.a(Class, AxisAlignedBB, Entity)}) replaces its candidate
+     * on {@code d1 <= d0} — bytecode {@code dcmpl; ifle}, the update body runs
+     * when {@code d1 <= d0} — hence the {@code <=} below, ENT-S-105.
      */
     private Player findNearestPlayer() {
         AABB searchBox = this.getBoundingBox().inflate(25.0, 40.0, 25.0);
@@ -527,7 +530,7 @@ public class Kraken extends Monster {
         double minDist = Double.MAX_VALUE;
         for (Player player : players) {
             double distSq = this.distanceToSqr(player);
-            if (distSq < minDist) {
+            if (distSq <= minDist) {                                   // orig d1 <= d0 (dcmpl; ifle) — ENT-S-105
                 minDist = distSq;
                 nearest = player;
             }
