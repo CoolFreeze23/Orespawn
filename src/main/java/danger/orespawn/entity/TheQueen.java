@@ -39,11 +39,17 @@ import net.minecraft.server.level.ServerBossEvent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.BossEvent;
 import net.minecraft.network.chat.Component;
+import net.neoforged.bus.api.EventPriority;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.event.entity.EntityEvent;
 import danger.orespawn.ModEntities;
 import danger.orespawn.ModSounds;
 import danger.orespawn.OreSpawnConfig;
+import danger.orespawn.OreSpawnMod;
 import danger.orespawn.util.MyUtils;
 import danger.orespawn.entity.ai.TargetSelection;
+import de.dertoaster.multihitboxlib.api.IMHLibSizeCallback;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.AnimatableManager;
@@ -96,6 +102,18 @@ import software.bernie.geckolib.util.GeckoLibUtil;
  *       absorbed by a part is forwarded to {@code TheQueen.hurt}
  *       multiplied by the part's {@code damage-modifier}: 1.0Ã— heads,
  *       0.5Ã— body/legs, 0.25Ã— wings/tail.</li>
+ *   <li>ENT-S-092 / ENT-S-095 batch 3: the entity implements
+ *       {@code IMHLibSizeCallback} ({@link #mhlibGetEntitySizeScale}):
+ *       1.0 hostile, 0.25 while {@code playNicelyShrunk}. MHLib applies it
+ *       to every part's size, pivot and fallback offset;
+ *       {@link PlayNicelySizeHook} applies the same factor to the main box
+ *       after MHLib's {@code EntityEvent.Size} replacement, so the 1.7.10
+ *       PlayNicely box 5.5x6 (= 22/4 x 24/4) exists again while the
+ *       profile main size stays [22, 24] (main-size law). Part POSITIONS
+ *       come from the drawn bones: {@code QueenRenderer} applies the 1.7.10
+ *       render scale (2.0, or 0.5 while PlayNicely) after GeckoLib's
+ *       entity-translation capture and enables matrix tracking on the
+ *       synched bones, so the boxes sit on the drawn body at either scale.</li>
  * </ul>
  *
  * <p>Net result: every damage hitbox is pixel-perfect for the current
@@ -108,7 +126,7 @@ import software.bernie.geckolib.util.GeckoLibUtil;
  * separately-targetable nuisance during mad-mood swarms. It is
  * functionally independent of the MHLib part system.</p>
  */
-public class TheQueen extends Monster implements GeoEntity {
+public class TheQueen extends Monster implements GeoEntity, IMHLibSizeCallback<TheQueen> {
 
     private static final EntityDataAccessor<Integer> DATA_ATTACKING =
             SynchedEntityData.defineId(TheQueen.class, EntityDataSerializers.INT);
@@ -171,6 +189,13 @@ public class TheQueen extends Monster implements GeoEntity {
     private final Comparator<Entity> targetSorter;
     /** BOSS-017: constructor-time PlayNicely snapshot (orig TheQueen.java:78-82). */
     private boolean playNicelyShrunk = false;
+    /**
+     * ENT-S-095 batch 3: the MHLib entity scale while {@link #playNicelyShrunk}.
+     * orig TheQueen.java:78-82 sizes 22x24 hostile and 5.5x6 PlayNicely, i.e.
+     * exactly one quarter on both axes (22/4 = 5.5, 24/4 = 6), the same /4 the
+     * renderer applies (orig RenderTheQueen.java:40-46 scale / 4).
+     */
+    private static final double PLAY_NICELY_ENTITY_SCALE = 0.25D;
     private BlockPos currentFlightTarget = null;
     private LivingEntity revengeTarget = null;
     private double attackDamage = ATTACK_DAMAGE_VALUE;
@@ -418,13 +443,66 @@ public class TheQueen extends Monster implements GeoEntity {
 
     @Override
     public EntityDimensions getDefaultDimensions(Pose pose) {
-        // BOSS-017: orig TheQueen.java:78-82 — 5.5x6 when PlayNicely was set
-        // at construction; full size keeps the BOSS-007-era 16x12 parent box
-        // (the MHLib bone parts are the hit surface either way — they track
-        // the /4-scaled model, so the nice Queen's surfaces shrink with it).
+        // BOSS-017 / ENT-S-095 batch 3: orig TheQueen.java:78-82 setSize(22, 24)
+        // with PlayNicely == 0, setSize(5.5, 6) otherwise, decided once at
+        // construction. Hostile = the registered type dims (ModEntities .sized
+        // 22x24, equal to the profile main size [22, 24] under the main-size
+        // law). MHLib's EntityEvent.Size hook then re-applies the profile main
+        // size and PlayNicelySizeHook shrinks it by mhlibGetEntitySizeScale, so
+        // both paths agree: 22x24 hostile, 5.5x6 while playNicelyShrunk. The
+        // MHLib bone parts' POSITIONS follow the drawn (post-capture) render
+        // scale; their SIZES are the profile values times the same entity
+        // scale, never the pose scale (ENT-S-092).
         return this.playNicelyShrunk
                 ? EntityDimensions.fixed(5.5f, 6.0f)
-                : EntityDimensions.fixed(16.0f, 12.0f);
+                : super.getDefaultDimensions(pose);
+    }
+
+    /**
+     * ENT-S-092 / ENT-S-095 batch 3: MHLib's per-entity size scale
+     * ({@code IMultipartEntity.mhlibGetEntitySizeInternally}, vendored
+     * IMultipartEntity.java:382-393, resolves an {@code IMHLibSizeCallback}
+     * first). alignSynchedSubParts scales every synced part's BoneInformation
+     * scale vector (:375, part dimensions = profile size x scale,
+     * MHLibPartEntity.java:333-341) and the fallback offsets (:364) by it, and
+     * MHLibPartEntity.applyInformation scales the part pivot (:428-430). The
+     * constructor-time snapshot is used, not the live synced flag, so the parts
+     * stay coherent with the main box (orig TheQueen.java:78-82 sized only in
+     * the constructor; the renderer's /4 follows the live flag, orig
+     * RenderTheQueen.java:40-46, exactly as in 1.7.10).
+     */
+    @Override
+    public double mhlibGetEntitySizeScale(TheQueen entity) {
+        return entity.playNicelyShrunk ? PLAY_NICELY_ENTITY_SCALE : 1.0D;
+    }
+
+    /**
+     * ENT-S-095 batch 3: the dead PlayNicely box. MHLib's
+     * {@code EntityEventHandler.onEntitySizeEvent} (vendored :28-40, NORMAL
+     * priority) replaces every IMultipartEntity's dimensions with the profile
+     * main size ([22, 24]) on every {@code EntityEvent.Size} - fired from
+     * {@code Entity.<init>} and {@code Entity.refreshDimensions()} - and knows
+     * no per-entity scale, which left a PlayNicely Queen 22x24 in both modes.
+     * This LOW-priority listener runs after it and applies the same
+     * {@link #mhlibGetEntitySizeScale} MHLib applies to the parts: 22x24 x 0.25
+     * = 5.5x6 exactly (orig TheQueen.java:80-82), with the profile intact.
+     * {@code EntityDimensions.scale} is a no-op on a {@code fixed} box, so the
+     * entity's own 5.5x6 answer (no profile resolved) is left alone too.
+     */
+    @EventBusSubscriber(modid = OreSpawnMod.MOD_ID)
+    public static final class PlayNicelySizeHook {
+        private PlayNicelySizeHook() {
+        }
+
+        @SubscribeEvent(priority = EventPriority.LOW)
+        public static void onEntitySize(EntityEvent.Size event) {
+            if (event.getEntity() instanceof TheQueen queen) {
+                double scale = queen.mhlibGetEntitySizeScale(queen);
+                if (scale != 1.0D) {
+                    event.setNewSize(event.getNewSize().scale((float) scale));
+                }
+            }
+        }
     }
 
     @Override

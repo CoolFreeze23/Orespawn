@@ -2273,12 +2273,8 @@
         "scale": "DIVERGES"
       },
       "truth_verified": true,
-      "status": "pending",
-      "note": "ENT-S-092 batch 1b HELD for the owner: MHLib bone-tracked parts relocate onto the drawn geometry when the 1.7.10 scale is restored after GeckoLib's capture (boss read refuted); consequences presented 2026-09-03",
-      "truth_port_values": {
-        "shadow": 3,
-        "scale": 1
-      },
+      "status": "pin",
+      "note": "ENT-S-092 (2026-09-03): restored to 2.0 / 3.8 with the scale applied in scaleModelForRender after GeckoLib's capture; pinned",
       "mod": null
     },
     {
