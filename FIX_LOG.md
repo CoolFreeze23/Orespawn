@@ -4738,3 +4738,18 @@ surfaces onto the drawn body; presented for the owner, PENDING in the
 manifest. Kraken's missing PlayNicely mode filed as ENT-S-096.
 
 GATE (ents092-batch1b): build green; referenceRenderers PASS 119 / PENDING 1 (TheQueen); runGameTestServer: All 214 required tests passed (gate b1b and the final gate after the pin-leg edits).
+
+## ENT-S-096 FIX — Kraken PlayNicely mode restored (2026-09-03)
+
+Hitbox 4x15 / 1.3333334x5 chosen at construction from the PlayNicely config,
+never resized afterwards (the original's constructor-only setSize and the
+King/Godzilla pattern); the render scale drops to a third while nice through
+the synched datum the original kept in watcher 21. Four gametests in their own
+batches pin both hitboxes, the no-resize snapshot and the datum. Refuted once.
+The four behavioural PlayNicely gates (weather, lightning, prey search, target
+search) are filed as ENT-S-097 for the owner's go. ENT-S-094's residuals were
+accepted by the owner and the board shows no name tag by ruling; recorded.
+The stray src/danger copy of the 1.7.10 sources was deleted in its own commit
+after a reference check (only historical Phase D specs mention it).
+
+GATE (ents096): build green (referenceRenderers PASS 119 / PENDING 1); runGameTestServer: All 218 required tests passed on the 096 tree (gate s096), then All 281 on the tree with ENT-S-095 batch 1 (gate s095b1, which carries the guarded datum test).

@@ -12,8 +12,9 @@ import net.minecraft.resources.ResourceLocation;
 /**
  * orig RenderKraken.java + ClientProxyOreSpawn.java:444:
  * {@code new RenderKraken(new ModelKraken(1.0f), 1.0f, 1.0f)} - RenderLiving shadow = par2 * par3
- * (RenderKraken.java:23) and preRenderScale scales by par3 = 1.0 (RenderKraken.java:24,39-45). The
- * ModelKraken(1.0f) argument is only wingspeed, not a size (ENT-S-092).
+ * (RenderKraken.java:23) and preRenderScale scales by par3 = 1.0, or par3 / 3 while PlayNicely
+ * (RenderKraken.java:24,39-45 via func_77041_b :47-49). The ModelKraken(1.0f) argument is only
+ * wingspeed, not a size (ENT-S-092).
  */
 public class KrakenRenderer extends MobRenderer<Kraken, ModelKraken> {
 
@@ -34,12 +35,14 @@ public class KrakenRenderer extends MobRenderer<Kraken, ModelKraken> {
 
     @Override
     protected void scale(Kraken entity, PoseStack poseStack, float partialTick) {
-        // orig RenderKraken.preRenderScale (RenderKraken.java:39-45): GL11.glScalef(scale, scale, scale) - same
-        // pipeline position as LivingEntityRenderer.scale (after the (-1,-1,1) flip, before the -1.501 lift).
-        // The 1.7.10 PlayNicely branch (scale / 3 while getPlayNicely() != 0, :40-43) is deliberately not
-        // reproduced: the port Kraken carries no PlayNicely flag and does not port the paired 1.333x5 setSize
-        // swap (orig Kraken.java:74-75); the default mode restored here is the 4x15 one (ENT-S-092).
-        poseStack.scale(SCALE, SCALE, SCALE);
+        // ENT-S-096 / ENT-S-092: orig RenderKraken.preRenderScale (RenderKraken.java:39-45): a PlayNicely
+        // Kraken (getPlayNicely() != 0) gets GL11.glScalef(scale / 3.0f, ...), otherwise
+        // GL11.glScalef(scale, scale, scale) - same pipeline position as LivingEntityRenderer.scale
+        // (after the (-1,-1,1) flip, before the -1.501 lift). getPlayNicely() is the synced watcher copy
+        // of the flag (orig Kraken.java:97/:111/:914), paired with the 1.3333334x5 constructor-time hitbox
+        // snapshot in Kraken#getDefaultDimensions (orig Kraken.java:70-76) - the BOSS-017 King pattern.
+        float effectiveScale = entity.getPlayNicely() != 0 ? SCALE / 3.0F : SCALE;
+        poseStack.scale(effectiveScale, effectiveScale, effectiveScale);
     }
 
     // OPT-013: evaluated for replacement with a finite inflated cull box and

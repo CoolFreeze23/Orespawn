@@ -6251,6 +6251,10 @@ keeps BUG-036. Commit 4ea395c's message retains the old number.)*
   of copying render()), shadow radius keeps the engine's scale/age multipliers
   (0.25 at defaults, same as 1.7.10's render-size modifier). No gametest can see
   a renderer; the s4 visual leg re-proves both paths agree.
+- **OWNER ACCEPTANCE (2026-09-03):** "residuals accepted and recorded. No name tag
+  on the board." The leash line on both paths, the invisibility render-type
+  gate and the engine's shadow multipliers stay as disclosed; `shouldShowName`
+  returns false on both paths by ruling. CLOSED.
   Follow-up (refuted once, upheld): both paths draw at Mth.lerp(partialTicks, yRotO, getYRot()), the exact 1.7.10 RenderManager formula (bytecode: prev + (cur - prev) * partial, no wrap; the port's LivingEntity.tick keeps yRot - yRotO within 180 so rotLerp could not differ), instead of the lerped body yaw.
 
 ### ENT-S-092 — Renderer shadow radius and world scale diverge from the 1.7.10 registrations across the population (REPORT, 2026-09-02)
@@ -6393,8 +6397,30 @@ keeps BUG-036. Commit 4ea395c's message retains the old number.)*
   scale/3 in that mode; the port Kraken has no PlayNicely accessor (grep), a fixed
   4x15 EntityType and no scale branch (found by the ENT-S-092 boss read, refuted
   once). TheKing and Godzilla carry their PlayNicely branches (BOSS-017).
-- **Resolution:** OPEN — report only. A divergence without a MOD record; the fix
-  would port the paired hitbox swap and the renderer branch together.
+- **Resolution:** FIXED (2026-09-03, owner: "go, with a gametest on the PlayNicely
+  hitbox"). Kraken follows the BOSS-017 King/Godzilla pattern exactly: a
+  constructor-time snapshot of `OreSpawnConfig.PLAY_NICELY` selects
+  `getDefaultDimensions` 1.3333334x5 (orig Kraken.java:75, the original's float)
+  or 4x15 (orig :73) and, like the original's constructor-only setSize, never
+  resizes afterwards; a synched datum re-set every AI step from the live flag
+  (orig :97, :914) drives `KrakenRenderer.scale()` at SCALE / 3 while nice (orig
+  RenderKraken.java:39-45). Four gametests in their own batches
+  (`KrakenPlayNicelyTests`: 4x15 off, 1.3333334x5 on, no resize on a live flip,
+  datum tracks the flag). Refuted once. The renderer pin leg reads the ternary's
+  default branch as SCALE 1.0. The 1.7.10 Kraken also gated four behaviours on
+  PlayNicely; those are ENT-S-097.
+
+### ENT-S-097 — Kraken's four behavioural PlayNicely gates are missing (REPORT, 2026-09-03)
+
+- **Evidence:** found while porting ENT-S-096. In 1.7.10, while `PlayNicely != 0`,
+  the Kraken skips the thunderstorm-summoning timer (orig Kraken.java:171), the
+  random lightning bolt (:915), the prey search and grab (:961, :975-980) and
+  `findSomethingToAttack` returns null (:1131-1133). The port's weather block,
+  lightning roll, `searchForPrey()` call and `findSomethingToAttack()` carry no
+  gate. No MOD record covers them.
+- **Resolution:** OPEN — report only; parity bugs by the standing rule, presented
+  before fixing. Each gate is one condition with an orig citation; pins would be
+  a batched, config-flipping gametest per gate (TEST-003 batch discipline).
 ### TEST-003 — Config-flipping gametests in the concurrent default batch
 
 - **Impact:** MEDIUM (suite reliability) — boss005/boss012 flip a global
