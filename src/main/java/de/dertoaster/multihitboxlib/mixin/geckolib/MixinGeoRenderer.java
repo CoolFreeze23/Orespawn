@@ -24,12 +24,14 @@ public interface MixinGeoRenderer {
 		}
 	}
 
-	@Inject(method = "renderRecursively", at = @At("HEAD"), remap = false)
+	// OPT-028 (2026-09-04): descriptor-exact selector for the interface default GeoRenderer<T extends
+	// GeoAnimatable>.renderRecursively (T erases to GeoAnimatable; javap -s over the 4.8.4 jar shows one method).
+	@Inject(method = "renderRecursively(Lcom/mojang/blaze3d/vertex/PoseStack;Lsoftware/bernie/geckolib/animatable/GeoAnimatable;Lsoftware/bernie/geckolib/cache/object/GeoBone;Lnet/minecraft/client/renderer/RenderType;Lnet/minecraft/client/renderer/MultiBufferSource;Lcom/mojang/blaze3d/vertex/VertexConsumer;ZFIII)V", at = @At("HEAD"), remap = false)
 	default void mixinRenderRecursivelyStart(CallbackInfo ci) {
 		this._mhlib_callLayers(IMHLibExtendedRenderLayer::onRenderRecursivelyStart);
 	}
 
-	@Inject(method = "renderRecursively", at = @At("TAIL"), remap = false)
+	@Inject(method = "renderRecursively(Lcom/mojang/blaze3d/vertex/PoseStack;Lsoftware/bernie/geckolib/animatable/GeoAnimatable;Lsoftware/bernie/geckolib/cache/object/GeoBone;Lnet/minecraft/client/renderer/RenderType;Lnet/minecraft/client/renderer/MultiBufferSource;Lcom/mojang/blaze3d/vertex/VertexConsumer;ZFIII)V", at = @At("TAIL"), remap = false)
 	default void mixinRenderRecursivelyEnd(CallbackInfo ci) {
 		this._mhlib_callLayers(IMHLibExtendedRenderLayer::onRenderRecursivelyEnd);
 	}

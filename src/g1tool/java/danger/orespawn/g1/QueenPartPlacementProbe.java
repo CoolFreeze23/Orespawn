@@ -10,6 +10,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import de.dertoaster.multihitboxlib.api.IMHLibExtendedRenderLayer;
 import de.dertoaster.multihitboxlib.client.geckolib.renderlayer.GeckolibBoneInformationCollectorLayer;
+import de.dertoaster.multihitboxlib.util.RenderTickGate;
 import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -104,6 +105,11 @@ import software.bernie.geckolib.util.RenderUtil;
  * bones (chains with zero rest rotation) is (0,0,0) every frame and that the shared statics
  * {@code IMHLibExtendedRenderLayer.DEFAULT_ROTATION / DEFAULT_SCALING} are unchanged after every
  * frame (BUG-043).</p>
+ *
+ * <p>BUG-044 (2026-09-04): the same layer's per-entity render-tick gate ({@code beginRenderPass} /
+ * {@code isCollectingPass} / {@code endRenderPass}, what its {@code onPreRender(Entity)} /
+ * {@code onPostRender(Entity)} hooks do with the entity's own stamp) is driven with fake entities
+ * for the hitch case and the two-entities-one-layer case; see {@link #runRenderTickGate}.</p>
  *
  * <p>Nothing here needs a Minecraft bootstrap: {@link PoseStack}, {@link Axis}, {@link Vec3},
  * the JOML types, the GeckoLib bake, {@link RenderUtil} and the vendored layer are plain classes.
@@ -394,6 +400,12 @@ public final class QueenPartPlacementProbe {
         report.addProperty("lifecycle_pass", lifecycle.pass);
         allPass &= lifecycle.pass;
 
+        // ---- 4b. the per-entity render-tick gate through the real layer (BUG-044) --------------
+        RenderTickGateResult renderTickGate = runRenderTickGate(model, profile.syncedBones, out);
+        report.add("render_tick_gate", renderTickGate.json);
+        report.addProperty("render_tick_gate_pass", renderTickGate.pass);
+        allPass &= renderTickGate.pass;
+
         // ---- 5. derivation of the profile values from the 2.0 rest pose --------------------
         out.append("== profile values derived from the drawn segments at render scale 2.0 (rest pose, yaw 0, entityScale 1)\n");
         out.append("   size = [max(x extent, z extent), y extent] of the segment; box bottom-centre = (segment x/z centre, segment y min);\n");
@@ -669,6 +681,130 @@ public final class QueenPartPlacementProbe {
             walkLayer(layer, child, synced, shipped);
         }
         layer.onRenderRecursivelyEnd();                                         // @TAIL renderRecursively
+    }
+
+    // ------------------------------------------------------------------ the per-entity render-tick gate (BUG-044)
+
+    /**
+     * BUG-044 (2026-09-04): drives the real layer's pass gate -- {@code beginRenderPass} /
+     * {@code isCollectingPass} / {@code endRenderPass}, the calls
+     * {@code IBoneInformationCollectorLayerCommonLogic.onPreRender(Entity)} / {@code onPostRender(Entity)}
+     * make around a rendered entity's bones with the entity's own render-tick stamp
+     * ({@code IMHLibFieldAccessor._mhlibAccess_get/setRenderTickStamp}) -- with fake entities: a tick
+     * count and a stamp, which is all the gate reads. Two checks, each failing the probe: the hitch
+     * (the fake entity's tickCount jumps by 2 between two passes: the second pass must collect, a
+     * further frame in the same tick must not) and two entities alternating through ONE layer (both
+     * must collect on every tick, each carrying its own stamp). The bones are walked on every pass as
+     * in {@link #runLifecycle}, so the decision is observed where {@code onRenderBone} reads it.
+     */
+    private static RenderTickGateResult runRenderTickGate(BakedGeoModel model, List<String> synced, StringBuilder out) {
+        out.append("== per-entity render-tick gate through the real GeckolibBoneInformationCollectorLayer (BUG-044 check)\n");
+        GeckolibBoneInformationCollectorLayer<GeoAnimatable> layer =
+                new GeckolibBoneInformationCollectorLayer<>(new HeadlessGeoRenderer());
+        JsonObject json = new JsonObject();
+
+        // (1) the hitch: a pass at tick 10, then the entity ticks twice before the next frame
+        FakeStampedEntity hitch = new FakeStampedEntity(10);
+        boolean firstPass = renderPass(layer, model, synced, hitch);
+        int stampAfterFirst = hitch.stamp;
+        hitch.tickCount += 2;
+        boolean afterJump = renderPass(layer, model, synced, hitch);
+        int stampAfterJump = hitch.stamp;
+        boolean sameTickAgain = renderPass(layer, model, synced, hitch);
+        boolean hitchPass = firstPass && stampAfterFirst == 10 && afterJump && stampAfterJump == 12
+                && !sameTickAgain && hitch.stamp == 12;
+        out.append(String.format(Locale.ROOT,
+                "hitch: pass at tick 10 collects=%b (stamp %d); tickCount -> 12; pass collects=%b (stamp %d); same tick again collects=%b (stamp %d) -> %s%n",
+                firstPass, stampAfterFirst, afterJump, stampAfterJump, sameTickAgain, hitch.stamp, hitchPass ? "ok" : "WEDGED"));
+        JsonObject hitchJson = new JsonObject();
+        hitchJson.addProperty("first_pass_collects", firstPass);
+        hitchJson.addProperty("stamp_after_first_pass", stampAfterFirst);
+        hitchJson.addProperty("pass_after_two_tick_jump_collects", afterJump);
+        hitchJson.addProperty("stamp_after_jump_pass", stampAfterJump);
+        hitchJson.addProperty("same_tick_second_frame_collects", sameTickAgain);
+        hitchJson.addProperty("stamp_after_same_tick_frame", hitch.stamp);
+        hitchJson.addProperty("pass", hitchPass);
+        json.add("hitch", hitchJson);
+
+        // (2) two entities through the same layer, alternating, three ticks each, two frames per tick
+        FakeStampedEntity a = new FakeStampedEntity(0);
+        FakeStampedEntity b = new FakeStampedEntity(100);
+        boolean twoPass = true;
+        JsonArray ticks = new JsonArray();
+        for (int tick = 1; tick <= 3; tick++) {
+            a.tickCount++;
+            b.tickCount++;
+            boolean collectsA = renderPass(layer, model, synced, a);
+            boolean collectsB = renderPass(layer, model, synced, b);
+            boolean secondA = renderPass(layer, model, synced, a);
+            boolean secondB = renderPass(layer, model, synced, b);
+            boolean ok = collectsA && collectsB && !secondA && !secondB && a.stamp == a.tickCount && b.stamp == b.tickCount;
+            twoPass &= ok;
+            out.append(String.format(Locale.ROOT,
+                    "two entities, tick %d: A (tick %d) collects=%b then %b, stamp %d; B (tick %d) collects=%b then %b, stamp %d -> %s%n",
+                    tick, a.tickCount, collectsA, secondA, a.stamp, b.tickCount, collectsB, secondB, b.stamp, ok ? "ok" : "STARVED"));
+            JsonObject row = new JsonObject();
+            row.addProperty("tick", tick);
+            row.addProperty("a_tick_count", a.tickCount);
+            row.addProperty("a_collects", collectsA);
+            row.addProperty("a_second_frame_collects", secondA);
+            row.addProperty("a_stamp", a.stamp);
+            row.addProperty("b_tick_count", b.tickCount);
+            row.addProperty("b_collects", collectsB);
+            row.addProperty("b_second_frame_collects", secondB);
+            row.addProperty("b_stamp", b.stamp);
+            row.addProperty("pass", ok);
+            ticks.add(row);
+        }
+        JsonObject twoJson = new JsonObject();
+        twoJson.add("ticks", ticks);
+        twoJson.addProperty("pass", twoPass);
+        json.add("two_entities", twoJson);
+
+        boolean pass = hitchPass && twoPass;
+        json.addProperty("pass", pass);
+        out.append("RENDER-TICK GATE (hitch: a two-tick jump still collects and a tick collects once; two entities through one layer: both collect every tick with their own stamps): ")
+                .append(pass ? "PASS" : "FAIL").append("\n\n");
+        return new RenderTickGateResult(pass, json);
+    }
+
+    /**
+     * One rendered frame of {@code fake} through the layer in GeckolibEntityRenderEventHandler's order:
+     * beginRenderPass (onPreRender(Entity)), the layer's onPreRender, the bone walk, the post hook's
+     * setScales/setRotations and endRenderPass (onPostRender(Entity)), the layer's onPostRender. Returns
+     * whether the pass collected, i.e. what onRenderBone gated tryAddBoneInformation on for every bone of
+     * the walk; a decision that did not hold through the walk or past the end is a probe error.
+     */
+    private static boolean renderPass(GeckolibBoneInformationCollectorLayer<GeoAnimatable> layer, BakedGeoModel model,
+                                      List<String> synced, FakeStampedEntity fake) {
+        boolean decided = layer.beginRenderPass(fake.stamp, fake.tickCount);
+        layer.onPreRender();
+        Map<String, Vec3> shipped = new LinkedHashMap<>();
+        for (GeoBone top : model.topLevelBones()) {
+            walkLayer(layer, top, synced, shipped);
+        }
+        if (layer.isCollectingPass() != decided) {
+            throw new IllegalStateException("collecting-pass flag changed during the bone walk: decided " + decided
+                    + ", after the walk " + layer.isCollectingPass());
+        }
+        layer.setScales(1, 1, 1);
+        layer.setRotations(0, 0, 0);
+        fake.stamp = layer.endRenderPass(fake.stamp, fake.tickCount);
+        layer.onPostRender();
+        if (layer.isCollectingPass()) {
+            throw new IllegalStateException("collecting-pass flag still set after endRenderPass");
+        }
+        return decided;
+    }
+
+    /** A rendered entity as the gate sees it: its tickCount and its own render-tick stamp (IMHLibFieldAccessor). */
+    private static final class FakeStampedEntity {
+        int tickCount;
+        int stamp = RenderTickGate.UNSTAMPED;
+
+        FakeStampedEntity(int tickCount) {
+            this.tickCount = tickCount;
+        }
     }
 
     /** A GeoRenderer with no Minecraft behind it; GeoRenderLayer only stores it and isBoneCollectionActive only instanceof-checks it. */
@@ -950,6 +1086,9 @@ public final class QueenPartPlacementProbe {
     }
 
     private record LifecycleResult(boolean pass, JsonObject json) {
+    }
+
+    private record RenderTickGateResult(boolean pass, JsonObject json) {
     }
 
     private record Box(double[] min, double[] max) {

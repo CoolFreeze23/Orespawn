@@ -8,6 +8,7 @@ import de.dertoaster.multihitboxlib.network.client.CPacketBoneInformation;
 import de.dertoaster.multihitboxlib.network.server.SPacketSetMaster;
 import de.dertoaster.multihitboxlib.util.BoneInformation;
 import de.dertoaster.multihitboxlib.util.ClientOnlyMethods;
+import de.dertoaster.multihitboxlib.util.MHLibCounters;
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
@@ -693,6 +694,9 @@ public interface IMultipartEntity<T extends Entity> {
 			builder = builder.addInfo(boneName).hidden(hidden).position(position).scaling(scaling).rotation(rotation).done();
 		} catch(IllegalStateException ise) {
 			return false;
+		}
+		if (MHLibCounters.ENABLED) {
+			MHLibCounters.CLIENT_BONE_INFOS_BUILT.increment();
 		}
 
 		// Now, if we have the freedom ... directly apply the information...

@@ -115,4 +115,27 @@ public interface IMHLibFieldAccessor<T extends LivingEntity> {
         throw new NotImplementedException();
     }
 
+    // ──────────────────────────────────────────────────────────────────
+    // BUG-044 (ruled 2026-09-04): per-entity render-tick stamp backing
+    // field for the client bone-collection gate (util.RenderTickGate;
+    // decided once per render pass in
+    // IBoneInformationCollectorLayerCommonLogic.onPreRender(Entity) and
+    // advanced in onPostRender(Entity)). The stamp is the last tickCount
+    // a collecting render pass ran for THIS entity, RenderTickGate.
+    // UNSTAMPED (-1) until the first one; a pass collects while
+    // stamp < tickCount. It replaces the former per-renderer-layer
+    // `currentTick`, which wedged on a two-tick frame and starved all
+    // but one entity per renderer. Client-side state; the server never
+    // reads it.
+    // ──────────────────────────────────────────────────────────────────
+
+    /** Last {@code tickCount} a collecting render pass ran for this entity, or {@code RenderTickGate.UNSTAMPED}. */
+    public default int _mhlibAccess_getRenderTickStamp() {
+        throw new NotImplementedException();
+    }
+
+    public default void _mhlibAccess_setRenderTickStamp(int value) {
+        throw new NotImplementedException();
+    }
+
 }

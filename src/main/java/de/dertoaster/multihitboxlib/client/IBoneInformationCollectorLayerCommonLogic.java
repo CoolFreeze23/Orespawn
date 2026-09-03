@@ -3,9 +3,12 @@ package de.dertoaster.multihitboxlib.client;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 
+import de.dertoaster.multihitboxlib.api.IMHLibFieldAccessor;
 import de.dertoaster.multihitboxlib.api.IMultipartEntity;
 import de.dertoaster.multihitboxlib.entity.MHLibPartEntity;
 import de.dertoaster.multihitboxlib.entity.hitbox.HitboxProfile;
+import de.dertoaster.multihitboxlib.util.MHLibCounters;
+import de.dertoaster.multihitboxlib.util.RenderTickGate;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.world.entity.Entity;
@@ -43,8 +46,48 @@ public interface IBoneInformationCollectorLayerCommonLogic<T extends Object> {
 		return profile.isPresent() && shouldCollectModelBones(profile.get());
 	}
 	
-	public int getCurrentTick();
-	public void setCurrentTick(int tick);
+	// ──────────────────────────────────────────────────────────────────
+	// BUG-044 (ruled 2026-09-04): the once-per-game-tick collection gate
+	// is a PER-ENTITY render-tick stamp (IMHLibFieldAccessor
+	// _mhlibAccess_get/setRenderTickStamp, RenderTickGate.UNSTAMPED until
+	// the first collecting pass), decided ONCE per render pass in
+	// onPreRender(Entity) and advanced in onPostRender(Entity); onRenderBone
+	// only reads the decision. The former per-LAYER `currentTick` (one
+	// layer per renderer instance, advanced to tickCount + 1 only on
+	// equality) wedged for good on a frame during which the entity ticked
+	// twice, and with two entities sharing a renderer followed whichever
+	// entity last matched and starved the other. Gate rule:
+	// util.RenderTickGate (stamp < tickCount).
+	// ──────────────────────────────────────────────────────────────────
+	// Portions derived from MoreHitboxes by DarkPred (https://github.com/DarkPred/MoreHitboxes, commit 88899b3), MIT License — see LICENSE-MoreHitboxes.txt
+
+	/** Whether the render pass in flight collects bone information for the entity being drawn (set by {@link #beginRenderPass}). */
+	public boolean isCollectingPass();
+	public void setCollectingPass(boolean collecting);
+
+	/**
+	 * Decides the pass from the entity's render-tick stamp and tick count and keeps the decision on
+	 * the layer for every {@link #onRenderBone} of this pass. Pure in its inputs, so the headless
+	 * {@code QueenPartPlacementProbe} drives it with fake entities.
+	 */
+	public default boolean beginRenderPass(int renderTickStamp, int tickCount) {
+		final boolean collecting = RenderTickGate.shouldCollect(renderTickStamp, tickCount);
+		this.setCollectingPass(collecting);
+		if (MHLibCounters.ENABLED && collecting) {
+			MHLibCounters.CLIENT_COLLECTING_PASSES.increment();
+		}
+		return collecting;
+	}
+
+	/**
+	 * Ends the pass and returns the stamp the entity carries afterwards: advanced to the tick that
+	 * collected when the pass collected, unchanged otherwise.
+	 */
+	public default int endRenderPass(int renderTickStamp, int tickCount) {
+		final boolean collected = this.isCollectingPass();
+		this.setCollectingPass(false);
+		return collected ? RenderTickGate.advance(tickCount) : renderTickStamp;
+	}
 	
 	public void calcScales(T bone);
 	public void calcRotations(T bone);
@@ -59,7 +102,10 @@ public interface IBoneInformationCollectorLayerCommonLogic<T extends Object> {
 	public void setRotations(int x, int y, int z);
 	
 	public default void onRenderBone(PoseStack poseStack, Entity entity, T bone, RenderType renderType, MultiBufferSource bufferSource, VertexConsumer buffer, float partialTick, int packedLight, int packedOverlay) {
-		// Only collect once per tick!
+		if (MHLibCounters.ENABLED) {
+			MHLibCounters.CLIENT_BONES_VISITED.increment();
+		}
+		// Only collect once per tick! (BUG-044: decided per pass from the entity's stamp, see onPreRender(Entity))
 		if (entity != null && entity.isMultipartEntity() && entity instanceof IMultipartEntity<?> ime && ime.getHitboxProfile().isPresent()) {
 			HitboxProfile hitboxProfile = ime.getHitboxProfile().get();
 			// Replaced renderers still receive the vendored collector layer, but a
@@ -75,7 +121,7 @@ public interface IBoneInformationCollectorLayerCommonLogic<T extends Object> {
 
 			if (hitboxProfile.synchedBones().contains(this.getBoneName(bone))) {
 				if (hitboxProfile.syncToModel()) {
-					if (this.getCurrentTick() == entity.tickCount || this.getCurrentTick() < 0) {
+					if (this.isCollectingPass()) {
 						ime.tryAddBoneInformation(this.getBoneName(bone), this.isBoneHidden(bone), worldPos, this.getScaleVector(), this.getRotationVector());
 						//System.out.println("RenderRecursively: " + worldPos.toString());
 						//ime.getPartByName(bone.getName()).get().setPos(worldPos);
@@ -94,13 +140,35 @@ public interface IBoneInformationCollectorLayerCommonLogic<T extends Object> {
 		}
 	}
 	
+	/**
+	 * Once per rendered entity BEFORE its bones, from the Pre events of both the GeoEntity and the
+	 * replaced-entity path (GeckolibEntityRenderEventHandler), keyed on the actual entity.
+	 */
+	public default void onPreRender(Entity animatable) {
+		if (animatable instanceof LivingEntity le && le.isMultipartEntity() && animatable instanceof IMHLibFieldAccessor<?> access) {
+			if (MHLibCounters.ENABLED) {
+				MHLibCounters.CLIENT_FRAMES.increment();
+			}
+			this.beginRenderPass(access._mhlibAccess_getRenderTickStamp(), le.tickCount);
+		} else {
+			this.setCollectingPass(false);
+		}
+	}
+
+	/**
+	 * Once per rendered entity AFTER its bones (both paths): stores the advanced stamp on the entity
+	 * when this pass collected, then resets the running scale and rotation.
+	 */
 	public default void onPostRender(Entity animatable) {
 		if (!(animatable instanceof LivingEntity le)) {
+			this.setCollectingPass(false);
 			return;
 		}
 
-		if (this.getCurrentTick() == le.tickCount || this.getCurrentTick() < 0) {
-			this.setCurrentTick(le.tickCount +1);
+		if (le.isMultipartEntity() && animatable instanceof IMHLibFieldAccessor<?> access) {
+			access._mhlibAccess_setRenderTickStamp(this.endRenderPass(access._mhlibAccess_getRenderTickStamp(), le.tickCount));
+		} else {
+			this.setCollectingPass(false);
 		}
 
 		this.setScales(1, 1, 1);

@@ -25,6 +25,7 @@ import de.dertoaster.multihitboxlib.entity.MHLibPartEntity;
 import de.dertoaster.multihitboxlib.entity.hitbox.HitboxProfile;
 import de.dertoaster.multihitboxlib.network.client.CPacketBoneInformation;
 import de.dertoaster.multihitboxlib.util.BoneInformation;
+import de.dertoaster.multihitboxlib.util.RenderTickGate;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -97,6 +98,16 @@ public abstract class MixinLivingEntity extends Entity implements IMultipartEnti
 	private Map<String, BoneInformation> mhlibLastSentBoneInformation;
 	@Unique
 	private int mhlibTicksSinceLastBoneInfoSend;
+
+	// ──────────────────────────────────────────────────────────────────
+	// BUG-044 (ruled 2026-09-04): per-entity render-tick stamp (see
+	// IMHLibFieldAccessor). Initialised to RenderTickGate.UNSTAMPED (-1);
+	// the initializer is merged into the LivingEntity constructor, which
+	// is safe here because nothing reads the stamp before the first client
+	// render pass (unlike the OPT-001/OPT-003 fields above).
+	// ──────────────────────────────────────────────────────────────────
+	@Unique
+	private int mhlibRenderTickStamp = RenderTickGate.UNSTAMPED;
 
 	public MixinLivingEntity(EntityType<?> pEntityType, Level pLevel) {
 		super(pEntityType, pLevel);
@@ -309,6 +320,17 @@ public abstract class MixinLivingEntity extends Entity implements IMultipartEnti
 	@Override
 	public void _mhlibAccess_setTicksSinceLastBoneInfoSend(int value) {
 		this.mhlibTicksSinceLastBoneInfoSend = value;
+	}
+
+	// BUG-044: per-entity render-tick stamp accessors (see the field comment above).
+	@Override
+	public int _mhlibAccess_getRenderTickStamp() {
+		return this.mhlibRenderTickStamp;
+	}
+
+	@Override
+	public void _mhlibAccess_setRenderTickStamp(int value) {
+		this.mhlibRenderTickStamp = value;
 	}
 
 }

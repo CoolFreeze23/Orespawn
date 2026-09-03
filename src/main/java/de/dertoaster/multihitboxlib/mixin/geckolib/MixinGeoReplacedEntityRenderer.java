@@ -44,12 +44,15 @@ public abstract class MixinGeoReplacedEntityRenderer<E extends Entity, T extends
 		}
 	}
 
-	@Inject(method = "renderRecursively", at = @At("HEAD"), remap = false)
+	// OPT-028 (2026-09-04): descriptor-exact selector. GeoReplacedEntityRenderer<E, T extends GeoAnimatable> has
+	// ONE renderRecursively, whose T erases to GeoAnimatable, and no bridge (javap -s over the 4.8.4 jar); the
+	// full erased descriptor pins the exact signature the layer lifecycle depends on. remap = false as before.
+	@Inject(method = "renderRecursively(Lcom/mojang/blaze3d/vertex/PoseStack;Lsoftware/bernie/geckolib/animatable/GeoAnimatable;Lsoftware/bernie/geckolib/cache/object/GeoBone;Lnet/minecraft/client/renderer/RenderType;Lnet/minecraft/client/renderer/MultiBufferSource;Lcom/mojang/blaze3d/vertex/VertexConsumer;ZFIII)V", at = @At("HEAD"), remap = false)
 	private void mixinRenderRecursivelyStart(CallbackInfo ci) {
 		this._mhlib_callLayers(IMHLibExtendedRenderLayer::onRenderRecursivelyStart);
 	}
 
-	@Inject(method = "renderRecursively", at = @At("TAIL"), remap = false)
+	@Inject(method = "renderRecursively(Lcom/mojang/blaze3d/vertex/PoseStack;Lsoftware/bernie/geckolib/animatable/GeoAnimatable;Lsoftware/bernie/geckolib/cache/object/GeoBone;Lnet/minecraft/client/renderer/RenderType;Lnet/minecraft/client/renderer/MultiBufferSource;Lcom/mojang/blaze3d/vertex/VertexConsumer;ZFIII)V", at = @At("TAIL"), remap = false)
 	private void mixinRenderRecursivelyEnd(CallbackInfo ci) {
 		this._mhlib_callLayers(IMHLibExtendedRenderLayer::onRenderRecursivelyEnd);
 	}
