@@ -348,8 +348,10 @@ public class EntityBrutalfly extends Monster {
         // fliers the Brutalfly never hunts.
         if (target instanceof Mothra) return false;
         if (target instanceof EntityVortex) return false;
-        // orig Brutalfly.java:427-429 — shared ignore list (ghosts, fairies,
-        // butterflies, cave fishers, coins, ...).
+        // orig Brutalfly.java:427-429 — shared ignore list (rock bases, ants and
+        // termites, butterflies, mosquitoes, dragonflies, fireflies, crickets,
+        // cockatiels, ghosts, ghost skellies, elevators; ENT-S-101 restored the
+        // 1.7.10 membership, so fairies, cave fishers and coins are prey again).
         if (MyUtils.isIgnoreable(target)) return false;
         if (!this.getSensing().hasLineOfSight(target)) return false;
         if (target instanceof Monster) return true;

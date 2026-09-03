@@ -468,8 +468,9 @@ public class KrakenPlayNicelyGateTests {
     /**
      * A survival ServerPlayer that lives in the level: the game-test server
      * defaults to CREATIVE (GameTestServer.java:85) and the Kraken skips
-     * instabuild players (orig Kraken.java:965/:1069, port
-     * findNearestValidPlayer / isSuitableTarget). Health is raised so nothing
+     * instabuild players (orig Kraken.java:965/:1069, port searchForPrey's
+     * creative null after findNearestPlayer / isSuitableTarget; ENT-S-100
+     * KT-A). Health is raised so nothing
      * incidental can kill the victim and clear {@code caught}. Deprecated
      * mock-player factory tolerated the way EntityLogicTestsA does.
      */
