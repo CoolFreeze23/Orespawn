@@ -31,3 +31,14 @@ VelocityRaptor, WaterDragon) are transcribed from the original renderers. Shadow
 `shadow x scale` products for all species (40 shadow-only corrections land in the next batch). The boss group
 (Kraken, Sea Monster, The King, The Queen, Godzilla) is handled separately because their hit surfaces follow
 the rendered bones. Hitboxes are unchanged in this build (see ENT-S-095).
+
+## Hitboxes restored to the original (ENT-S-095, batch 1)
+
+Sixty-three mobs get back the exact hitbox the 1.7.10 mod gave them, so hits, spawn fit and
+collision match the original again. The visible ones: the Tshirt board is 4x4 (was 0.6x1.8),
+Molenoid 3.9x2.6, Emperor Scorpion 3.5x3, Hercules Beetle 3.25x2.75, Robot 2 3x6.2, Mantis
+2.5x3.25, Trooper Bug 3x3.5, Urchin 1.35x2.1, Triffid 2x4, Coin 1.5x1.5; the Sea Monster's
+box shrinks from 5x5 to 1.25x2.5, and the ants, cricket, irukandji and rat are small again.
+The Kraken also regained its PlayNicely mode (1.33x5 box and a third-size draw while the
+setting is on). Godzilla, Mothra and The Queen follow in later batches.
+

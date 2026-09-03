@@ -4753,3 +4753,16 @@ The stray src/danger copy of the 1.7.10 sources was deleted in its own commit
 after a reference check (only historical Phase D specs mention it).
 
 GATE (ents096): build green (referenceRenderers PASS 119 / PENDING 1); runGameTestServer: All 218 required tests passed on the 096 tree (gate s096), then All 281 on the tree with ENT-S-095 batch 1 (gate s095b1, which carries the guarded datum test).
+
+## ENT-S-095 BATCH 1 — 63 hitbox registrations restored to the 1.7.10 setSize (2026-09-03)
+
+Population sweep over all 145 registrations (port .sized / getDefaultDimensions
+versus every 1.7.10 func_70105_a call, PlayNicely and dynamic branches tracked):
+67 divergent, none MOD-recorded. Batch 1 restores the 63 plain registrations to
+the original literals with a citation per line (largest: Tshirt 4x4, Molenoid
+3.9x2.6, EmperorScorpion 3.5x3, HerculesBeetle 3.25x2.75, Robot2 3x6.2, Mantis
+2.5x3.25; SeaMonster shrinks 5x5 -> 1.25x2.5). Both-modes dims-pin gametests in
+their own batch. Refuted once. Batches 2 (Godzilla, Mothra) and 3 (TheQueen,
+MHLib lockstep) pending; the Queen's extent comparison is reported separately.
+
+GATE (ents095-b1): build green (referenceRenderers PASS 119 / PENDING 1; g1Parity 2, s4Parity 11; referenceGeometry 101/101); runGameTestServer: All 281 required tests passed (218 prior + 63 HitboxDimsParityTests in batch hitboxDimsParity; gates s095b1 and s095b1b).

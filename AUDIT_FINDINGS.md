@@ -6384,11 +6384,36 @@ keeps BUG-036. Commit 4ea395c's message retains the old number.)*
   1.25x2.5 -> 5x5, Tshirt 4x4 -> 0.6x1.8, Urchin 1.35x2.1 -> 0.5x0.5, TrooperBug
   3x3.5 -> 1.2x1.5, Mantis 2.5x3.25 -> 0.8x1.8, HerculesBeetle 3.25x2.75 -> 1.2x1,
   EmperorScorpion 3.5x3 -> 1.5x1.5, the four ants 0.1x0.1 -> 0.4x0.4.
-- **Resolution:** OPEN — report only. No MOD record covers hitbox dimensions; by the
-  standing rule each is a parity bug unless one is written (Mothra's 6x3 is noted
-  as deliberate in the port source and needs its MOD record or a fix). Presented
-  for the owner's split before any fix; a fix slice would follow the ENT-S-089
-  dims-pin pattern.
+- **SPLIT PRESENTED + BATCH 1 LANDED (2026-09-03, owner: "MOD-recorded dims stay,
+  the rest are parity bugs. Fix in batches; MHLib main size in lockstep; every
+  change gets a both-modes dims-pin test"):** the full population sweep
+  (`phase_g_reports/ents095_split.md` + `.json`, 145 registrations, 22 rows
+  hand-verified) finds 67 divergent, NONE MOD-recorded, 66 parity bugs plus
+  cannon_fodder, which 1.7.10 never registered (owner ruling). Batch 1 (the 63
+  plain registrations: no MHLib profile, no PlayNicely size branch, no part
+  entities) is restored to the 1.7.10 `setSize` literals in `ModEntities`
+  with an orig citation per line (jeffery follows GiantRobot, RubyBird follows
+  Cockateil; the four cows follow the vanilla 1.7.10 EntityCow constructor,
+  confirmed 0.9 x 1.3 from the Mojang jar), refuted once, and pinned by
+  `HitboxDimsParityTests` (63 tests, own batch: each entity spawned
+  with PlayNicely off and on, width, height and live AABB asserted to 1e-4).
+  Batch 2 pending: Godzilla 9.9 -> 10.0 (port registers 10.0 against its own
+  9.9 comment) and Mothra 5x2 -> 6x3 (a source comment, not a MOD record: fix
+  or write the record). Batch 3 pending: TheQueen, whose Java dims (16x12 /
+  5.5x6) are overridden by MHLib's EntityEvent.Size hook to the profile main
+  size 22x24 in BOTH modes, so the 1.7.10 PlayNicely 5.5x6 is dead; fix under
+  the main-size law with a runtime both-modes pin. Left for rulings: the
+  port-only apple_cow / golden_apple_cow (MOD-021) at 0.9x1.4 versus the cow
+  line's 0.9x1.3; BetterFireball.setSmall() no longer shrinks the box to
+  0.3125 (orig BetterFireball.java:84); crab / pitch_black / girlfriend are
+  dynamic and match at steady state (PitchBlack's 10x14 construction box
+  before finalizeSpawn is a spawn-fit divergence worth a separate look).
+  RULING WANTED: red_ant and termite extend EntityAnt, whose constructor
+  already called setSize(0.1, 0.1); 1.7.10 EntityAgeable.setSize is final and
+  defers a second constructor call (proven from the Mojang jar, class rx), so
+  the server box stayed 0.1x0.1 until an age change or reload while the
+  class literal 0.2x0.2 was the client and persisted box. Batch 1 pins the
+  class literal 0.2x0.2; say if the construction-time 0.1x0.1 is wanted.
 
 ### ENT-S-096 — Kraken has no PlayNicely mode (REPORT, 2026-09-03)
 
