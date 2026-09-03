@@ -73,10 +73,23 @@ replaces the value (the last such write wins, and ITS expression, not the declar
 a write under an `if` / `else if` (braced or brace-less, at any nesting) is off the default path: the value
 stays, x is conditional with the pre-branch expression as its default (`float x = SCALE; if (baby) x = SCALE /
 2.0F; scale(x, x, x)` passes as SCALE, marked if-reassignment default branch SCALE, exactly as the ternary form),
-and the branch expression is not evaluated (a ternary's taken branch is not either); a ternary written into x
-resolves to its else branch; a write inside any other block (switch, loop, lambda, bare block) or a default-path
-write whose expression cannot be evaluated leaves x unbound with a reason, so every site reading x is UNPARSED
-(the pin DIVERGES with the write quoted). Writes at or after the site never reach it. Declarations and writes
+and the branch value is not used (a ternary's taken branch is not either); a ternary written into x resolves to
+its else branch; a write inside any other block (switch, loop, lambda, bare block) or a default-path write (directly
+in the method body) whose expression cannot be evaluated leaves x unbound with a reason, so every site reading x is
+UNPARSED (the pin DIVERGES with the write quoted). Ruling 6 (2026-09-03), "a write inside a non-evaluable branch is
+not provable; report it as pending for presentation, never assume a branch": a write on ANY branch (under an `if` /
+`else if`, or in the final `else`) whose expression the scan cannot evaluate, of a local that was readable up to that
+write, leaves x not provable — no branch is assumed and no value is read: every site reading x is NOT_PROVABLE and
+the entry is PENDING with the detail `not provable: local x is written inside a branch with an expression the scan
+cannot evaluate (`<write>`) — pending presentation` (listed per entry, counted in the summary line, carried in the
+JSON report; it does not fail the leg and it is never a PASS). An evaluable branch write keeps the rules above.
+A ternary in a branch write must read on both arms (its taken arm is a branch too), else it is pending; the else-arm
+convention stays for a ternary at the declaration and in a default-path write. Pending applies only when that write
+is the site's ONLY obstacle: a provable failure outranks it — a second unconditional scale (COMPOUND, the unknown
+value printed as `not provable`), an argument the scan cannot evaluate for another reason, read values that differ, a
+local unbound for a reason (a loop / switch / lambda write, an unread form, a default-path write that cannot be
+evaluated) — and the pin DIVERGES as before, the pending write quoted after the failure.
+Writes at or after the site never reach it. Declarations and writes
 are read per site, so `float x = SCALE; x = 2.0F; scale(x, x, x)` is a scale of 2 (found 2, not SCALE), while
 `scale(x, x, x); x = 2.0F;` is still SCALE.
 A site argument written as `(float) x` or `(x)` resolves to the local x (a cast or parenthesis is a no-op),
@@ -85,8 +98,10 @@ statement deep: a brace-less prefix that stacks two ifs (a dangling else) or car
 leaves the written local unbound (UNPARSED) rather than guessing the default path; `x %= e;`, `x++;`
 and `x--;` writes are recorded as unreadable and unbind the local the same way.
 
-Statuses: PASS, DIVERGES, PENDING (known divergence awaiting its batch; the current port values are
-printed), MOD, NOT_APPLICABLE, MANIFEST_DRIFT. Exit 1 on any DIVERGES or MANIFEST_DRIFT. A manifest entry
+Statuses: PASS, DIVERGES, PENDING (a manifest-declared known divergence awaiting its batch, or — ruling 6 — a pin
+or mod entry whose scale-site local is written inside a branch with an expression the scan cannot evaluate; the
+current port values are printed either way), MOD, NOT_APPLICABLE, MANIFEST_DRIFT. Exit 1 on any DIVERGES or
+MANIFEST_DRIFT. A manifest entry
 missing a required key is MANIFEST_DRIFT for that entry (never a crash: the report is still written).
 expected_scale may be the string "dynamic" (with scale_dynamic_note) when both sides scale by an entity getter:
 the shadow axis is pinned as usual, the scale axis is not a constant to pin, and a reference that parses to a
@@ -344,7 +359,8 @@ def local_site_fields(locals_info: dict[str, dict[str, Any]], args: list[str]) -
     """The per-site fields describing the local the first argument reads (all None when it reads none):
     `local` (its scan_locals record), `ternary_default` (a ternary initialiser's else branch, as before),
     `conditional_default` / `conditional_form` (the default branch and form of a conditional local of any form),
-    and `reason` when any argument reads a local a write left unbound (the site is then UNPARSED)."""
+    `reason` when any argument reads a local a write left unbound (the site is then UNPARSED), and `pending` when any
+    argument reads a local a branch write left not provable (ruling 6: the site is then NOT_PROVABLE)."""
     first = locals_info.get(local_name_of(args[0])) if args else None
     fields: dict[str, Any] = {
         "local": first,
@@ -353,12 +369,17 @@ def local_site_fields(locals_info: dict[str, dict[str, Any]], args: list[str]) -
         "conditional_form": first["form"] if first else None,
     }
     reasons: list[str] = []
+    pendings: list[str] = []
     for arg in args:
         record = locals_info.get(local_name_of(arg))
         if record and record["reason"] and record["reason"] not in reasons:
             reasons.append(record["reason"])
+        if record and record.get("pending") and record["pending"] not in pendings:
+            pendings.append(record["pending"])
     if reasons:
         fields["reason"] = "; ".join(reasons)
+    if pendings:
+        fields["pending"] = "; ".join(pendings)
     return fields
 
 
@@ -461,6 +482,15 @@ def scale_from_calls(body: str, env: dict[str, float], call: str = "GL11.glScale
         flip = len(values) == 3 and None not in values and values[0] < 0 and values[1] < 0 and values[2] > 0
         site = {"args": args, "values": values, "block": block, "uniform": uniform, "flip": flip}
         site.update(local_site_fields(locals_info, args))
+        if site.get("pending"):
+            # ruling 6 precedence: the pending write is the site's only obstacle when nothing else is provably wrong —
+            # every other argument reads, the read values agree, three arguments, no local unbound for a reason;
+            # otherwise the site stays UNPARSED as before and that failure outranks the pending
+            known = [v for v in values if v is not None]
+            hard_args = [a for a, v in zip(args, values)
+                         if v is None and not (locals_info.get(local_name_of(a)) or {}).get("pending")]
+            site["pending_only"] = (not site.get("reason") and not hard_args and len(args) == 3
+                                    and all(abs(v - known[0]) <= TOLERANCE for v in known))
         sites.append(site)
     return {"sites": sites}
 
@@ -475,14 +505,20 @@ def scan_locals(body: str, env: dict[str, float], until: int | None = None) -> t
     scale sites: a write directly in the method body, or in the final `else` of an if/else chain, is on the default
     path and replaces the value (the last such write wins); a write under an `if` / `else if` (braced or not, at
     any nesting) is off the default path: the value stays, x becomes conditional with the pre-branch expression as
-    its default, and the branch expression is not evaluated (as a ternary's taken branch is not); a write inside
-    any other block (switch, loop, lambda, bare block) or a default-path write whose expression cannot be
-    evaluated leaves x unbound with a reason, so a site reading x is UNPARSED. Declarations and writes at or
-    after `until` never reach the site.
+    its default, and the branch value is not used (as a ternary's taken branch is not); a write inside any other
+    block (switch, loop, lambda, bare block) or a default-path write (directly in the method body) whose expression
+    cannot be evaluated leaves x unbound with a reason, so a site reading x is UNPARSED. Ruling 6 (2026-09-03): a
+    write on any branch (under an if / else if, or in the final else) whose expression the scan cannot evaluate, of
+    a local that was readable up to that write, is not provable — no branch is assumed: x is left unbound with
+    `pending` set to the presentation detail, so a site reading x is NOT_PROVABLE (the entry is PENDING, never a
+    PASS and never a failure). A ternary written on a branch must read on both arms (no arm is assumed), else it is
+    pending; a ternary at the declaration or in a default-path write keeps its else-arm reading. Declarations and
+    writes at or after `until` never reach the site.
 
     Record keys: expr (the expression x holds on the default path), form (None, 'ternary', 'if-reassignment',
     'if/else-reassignment' or 'ternary-reassignment'), default (the conditional default expression; None when
-    x is unconditional), reason (None, or why x is unbound), writes (the write statements read, in order)."""
+    x is unconditional), reason (None, or why x is unbound), pending (None, or the not-provable detail of the
+    branch write that left x unbound), writes (the write statements read, in order)."""
     locals_env = dict(env)
     info: dict[str, dict[str, Any]] = {}
     events: list[tuple[int, str, str, str, str | None]] = []
@@ -503,7 +539,7 @@ def scan_locals(body: str, env: dict[str, float], until: int | None = None) -> t
     events.sort(key=lambda e: e[0])
     for position, kind, name, expr, op in events:
         if kind == "declare":
-            record: dict[str, Any] = {"expr": expr, "form": None, "default": None, "reason": None, "writes": []}
+            record: dict[str, Any] = {"expr": expr, "form": None, "default": None, "reason": None, "pending": None, "writes": []}
             if "?" in expr and ":" in expr:
                 expr = expr.rsplit(":", 1)[1].strip()
                 record.update({"expr": expr, "form": "ternary", "default": expr})
@@ -514,8 +550,8 @@ def scan_locals(body: str, env: dict[str, float], until: int | None = None) -> t
             info[name] = record
             continue
         record = info.get(name)
-        if record is None or record["reason"] is not None:
-            continue  # a field/parameter write before any declaration, or a local already left unbound
+        if record is None or record["reason"] is not None or record["pending"] is not None:
+            continue  # a field/parameter write before any declaration, or a local already left unbound / not provable
         stmt = re.sub(r"\s+", " ", body[position:body.find(";", position)].strip())  # `s = 2.0F`, quoted in notes
         record["writes"].append(stmt)
         if op == "?":
@@ -527,25 +563,48 @@ def scan_locals(body: str, env: dict[str, float], until: int | None = None) -> t
             record["reason"] = f"local {name} is written inside a block that is neither if nor else (`{stmt}`)"
             locals_env.pop(name, None)
             continue
+        # every path reads the written expression (a ternary by its else branch): the default path binds it, a branch
+        # only has to prove it readable — a branch write the scan cannot evaluate is not provable (ruling 6)
+        ternary = "?" in expr and ":" in expr
+        branch = expr.rsplit(":", 1)[1].strip() if ternary else expr
+        bound = name in locals_env
+        try:
+            if ternary and how != "method":
+                # ruling 6, ternary arms included: on a branch write (under an if / else if, or in the final else) no
+                # arm is assumed, so the taken arm must read as well as the else arm read below; the else-arm reading
+                # itself stays for a ternary at the declaration and in a method-body write (the earlier ruling)
+                evaluate(expr.split("?", 1)[1].rsplit(":", 1)[0], locals_env)
+            value = evaluate(branch, locals_env)
+            if op is not None and (how != "if" or bound):
+                # a compound write folds into the bound value; an unbound base is unreadable on the default path,
+                # while under an if the base is not read at all (the value stays, as for any if-write)
+                if not bound:
+                    raise Unevaluable(f"{name} has no value to compound")
+                value = compound(op, locals_env[name], value)
+        except Unevaluable as exc:
+            if how != "method" and bound:
+                # ruling 6 (2026-09-03): "a write inside a non-evaluable branch is not provable; report it as pending
+                # for presentation, never assume a branch" — under an if / else if and in the final else alike, the
+                # local is left unbound and the site reading it is NOT_PROVABLE (the entry PENDING), the write quoted
+                record["pending"] = (f"not provable: local {name} is written inside a branch with an expression the "
+                                     f"scan cannot evaluate (`{stmt}`) — pending presentation")
+            elif how == "if":
+                # an if-write of a local nothing bound (an unreadable declaration): there is no value to keep or to
+                # prove; it stays an if-reassignment and the site is UNPARSED through the declaration, as before
+                record["form"] = "if-reassignment"
+                record["default"] = record["expr"]
+                continue
+            else:
+                record["reason"] = (f"local {name} is written on the default path with an expression that cannot be "
+                                    f"evaluated (`{stmt}`: {exc})")
+            locals_env.pop(name, None)
+            continue
         if how == "if":
             # off the default path: the value stays and the local is conditional with its pre-branch default
             record["form"] = "if-reassignment"
             record["default"] = record["expr"]
             continue
         # the default path: directly in the method body, or the final else of an if/else chain
-        ternary = "?" in expr and ":" in expr
-        branch = expr.rsplit(":", 1)[1].strip() if ternary else expr
-        try:
-            value = evaluate(branch, locals_env)
-            if op is not None:
-                if name not in locals_env:
-                    raise Unevaluable(f"{name} has no value to compound")
-                value = compound(op, locals_env[name], value)
-        except Unevaluable as exc:
-            record["reason"] = (f"local {name} is written on the default path with an expression that cannot be "
-                                f"evaluated (`{stmt}`: {exc})")
-            locals_env.pop(name, None)
-            continue
         locals_env[name] = value
         record["expr"] = f"({record['expr']}) {op} ({branch})" if op is not None else branch
         if how == "else":
@@ -650,6 +709,14 @@ def scale_from_model_for_render(method: dict[str, Any], env: dict[str, float]) -
             # the factor reads a local that a write left unbound: the site is UNPARSED with that write quoted
             sites.append(unparsed(f"scaleModelForRender: {fields['reason']}", [wexpr, hexpr]))
             continue
+        if fields.get("pending"):
+            # the factor reads a local a branch write left not provable (ruling 6): the site is NOT_PROVABLE and the
+            # entry PENDING with that write quoted, never resolved by assuming a branch
+            sites.append({"args": [wfactor] * 3, "values": [None] * 3, "block": block, "uniform": False, "flip": False,
+                          "local": fields["local"], "ternary_default": None, "conditional_default": None,
+                          "conditional_form": None, "call": "super.scaleModelForRender", "factor_exprs": [wexpr, hexpr],
+                          "pending": f"{fields['pending']} (scaleModelForRender factor)", "pending_only": True})
+            continue
         try:
             value: float | None = evaluate(wfactor, locals_env)
         except Unevaluable:
@@ -667,6 +734,10 @@ def resolve_default_scale(sites: list[dict[str, Any]]) -> tuple[str, float | Non
     Two or more unconditional sites are COMPOUND: matrix scales multiply, so equal values from distinct
     sites are NOT one application (scale() plus a render() wrapper both scaling by SCALE renders at
     SCALE squared). The product is returned as the value so the caller can print what actually renders.
+    NOT_PROVABLE (value None, note the presentation detail): the single unconditional site reads a local a branch
+    write left not provable (ruling 6) and nothing else stands in the way (pending_only, read at the site). A provable
+    failure always outranks a pending: any other unreadable site wins as UNPARSED, and two or more unconditional sites
+    win as COMPOUND (value None when a site's value is not provable); the pending write is then quoted after it.
     """
     unconditional = [s for s in sites if s["block"] in ("method", "else", "other") and not s["flip"]]
     if any(s["block"] == "other" for s in unconditional):
@@ -676,17 +747,33 @@ def resolve_default_scale(sites: list[dict[str, Any]]) -> tuple[str, float | Non
         if conditional:
             return "PARSED", 1.0, f"only conditional scale(s) {[s['args'][0] for s in conditional]}; default 1.0"
         return "PARSED", 1.0, "no scale call"
+    pendings = "; ".join(dict.fromkeys(s["pending"] for s in unconditional if s.get("pending")))
     if any(not s["uniform"] for s in unconditional):
         bad = [s for s in unconditional if not s["uniform"]]
-        if all(s.get("reason") for s in bad):
-            # a scaleModelForRender site that could not be read carries its own reason
-            return "UNPARSED", None, "; ".join(s["reason"] for s in bad)
-        return "UNPARSED", None, f"scale argument not evaluable/uniform: {[s['args'] for s in bad]}"
+        # ruling 6 precedence: a site is pending-only when the branch write is its only obstacle; any other unreadable
+        # site is a failure, reported exactly as before with the pending write quoted after it
+        hard = [s for s in bad if not s.get("pending_only")]
+        if hard:
+            if all(s.get("reason") for s in hard):
+                # a scaleModelForRender site that could not be read carries its own reason
+                note = "; ".join(s["reason"] for s in hard)
+            else:
+                note = f"scale argument not evaluable/uniform: {[s['args'] for s in hard]}"
+            return "UNPARSED", None, note + (f"; {pendings}" if pendings else "")
+        if len(unconditional) == 1:
+            return "NOT_PROVABLE", None, pendings
     if len(unconditional) > 1:
+        # two or more unconditional scales are a failure whatever a pending local holds (ruling 6 precedence): the
+        # product is printed when every value is read, otherwise it is not provable and the pending write is quoted
+        where = [(f"{s['method']}(): " if s.get("method") else "")
+                 + (f"{s['args'][0]} = {fmt(float(s['values'][0]))}" if s["values"][0] is not None else f"{s['args'][0]} = not provable")
+                 for s in unconditional]
+        if any(s["values"][0] is None for s in unconditional):
+            return "COMPOUND", None, (f"{len(unconditional)} unconditional scales compound to a product that is not provable: "
+                                      f"{'; '.join(where)}; {pendings}")
         product = 1.0
         for s in unconditional:
             product *= float(s["values"][0])
-        where = [(f"{s['method']}(): " if s.get("method") else "") + f"{s['args'][0]} = {fmt(float(s['values'][0]))}" for s in unconditional]
         return "COMPOUND", product, f"{len(unconditional)} unconditional scales compound to {fmt(product)}: {'; '.join(where)}"
     first = unconditional[0]
     how = "unconditional " + first["args"][0]
@@ -1108,7 +1195,12 @@ def check_pin(entry: dict[str, Any], port: dict[str, Any], candidate: dict[str, 
             problems.append("expected a per-entity scale but the port applies a fixed SCALE constant unconditionally")
         return problems + check_candidate(entry, port, candidate, shadow_only=True)
     if scale["status"] == "COMPOUND":
-        problems.append(f"scale applied more than once, rendering at {fmt(scale['value'])} ({scale['note']}); a pin needs exactly one unconditional uniform scale")
+        rendered = f"rendering at {fmt(scale['value'])}" if scale["value"] is not None else "rendering at a product that is not provable"
+        problems.append(f"scale applied more than once, {rendered} ({scale['note']}); a pin needs exactly one unconditional uniform scale")
+    elif scale["status"] == "NOT_PROVABLE" and expected_scale is not None:
+        # ruling 6: the default-path value rests on a branch write the scan cannot evaluate; neither a failure nor a
+        # pass — main reports the entry PENDING with the site's detail (not_provable_details)
+        pass
     elif scale["status"] != "PARSED":
         problems.append(f"port scale unparseable: {scale['note']}")
     elif expected_scale is None:
@@ -1161,13 +1253,27 @@ def check_candidate(entry: dict[str, Any], port: dict[str, Any], candidate: dict
     if shadow_only:
         return problems
     cc = candidate["scale"]
-    if cc["status"] != "PARSED":
+    if cc["status"] == "NOT_PROVABLE" and expected_scale is not None:
+        pass  # ruling 6: reported PENDING by main (not_provable_details), exactly as for the port scale
+    elif cc["status"] != "PARSED":
         problems.append(f"candidate scale unparseable: {cc['note']}")
     elif expected_scale is not None and not same(cc["value"], expected_scale):
         problems.append(f"candidate scale expected {fmt(expected_scale)}, found {fmt(cc['value'])} ({cc['note']})")
     elif expected_scale is not None and not same(expected_scale, 1.0) and not any(s.get("uses_constant") for s in candidate["scale_sites"]):
         problems.append(f"candidate applyScale does not scale by {port['file'][:-5]}.SCALE")
     return problems
+
+
+def not_provable_details(port: dict[str, Any] | None, candidate: dict[str, Any] | None) -> list[str]:
+    """Ruling 6 (2026-09-03): the presentation detail of every scale axis (port renderer, then candidate) whose
+    default-path value rests on a branch write the scan cannot evaluate. Non-empty makes the entry PENDING unless
+    something else fails it: never a PASS by assuming a branch, never a failure for what is not proven."""
+    details: list[str] = []
+    if port is not None and port["scale"].get("status") == "NOT_PROVABLE":
+        details.append(port["scale"]["note"])
+    if candidate is not None and candidate["scale"].get("status") == "NOT_PROVABLE":
+        details.append(f"{candidate['scale']['note']} (candidate {candidate['file']})")
+    return details
 
 
 def port_summary(port: dict[str, Any] | None, candidate: dict[str, Any] | None) -> str:
@@ -1192,7 +1298,9 @@ def scale_word(scale: dict[str, Any]) -> str:
     if scale["status"] == "PARSED":
         return fmt(scale["value"])
     if scale["status"] == "COMPOUND":
-        return f"COMPOUND {fmt(scale['value'])}"
+        return f"COMPOUND {fmt(scale['value'])}" if scale["value"] is not None else "COMPOUND (product not provable)"
+    if scale["status"] == "NOT_PROVABLE":
+        return "NOT_PROVABLE"
     return "UNPARSED"
 
 
@@ -1347,17 +1455,29 @@ def main() -> int:
             else:
                 if not same(port["shadow"].get("value"), mod.get("shadow")):
                     problems.append(f"shadow recorded {fmt(mod.get('shadow'))}, found {fmt(port['shadow'].get('value'))}")
-                if not same(port["scale"].get("value"), mod.get("scale")):
+                # a NOT_PROVABLE scale (ruling 6) is neither the recorded value nor a divergence: PENDING below
+                if port["scale"].get("status") != "NOT_PROVABLE" and not same(port["scale"].get("value"), mod.get("scale")):
                     problems.append(f"scale recorded {fmt(mod.get('scale'))}, found {fmt(port['scale'].get('value'))}")
             if candidate_problem:
                 problems.append(candidate_problem)
             elif candidate is not None:
                 if not same(candidate["shadow"].get("value"), mod.get("shadow")):
                     problems.append(f"candidate shadow recorded {fmt(mod.get('shadow'))}, found {fmt(candidate['shadow'].get('value'))}")
-                if not same(candidate["scale"].get("value"), mod.get("scale")):
+                if candidate["scale"].get("status") != "NOT_PROVABLE" and not same(candidate["scale"].get("value"), mod.get("scale")):
                     problems.append(f"candidate scale recorded {fmt(mod.get('scale'))}, found {fmt(candidate['scale'].get('value'))}")
-            status = "DIVERGES" if problems else "MOD"
-            detail = f"{mod.get('record')}: " + ("; ".join(problems) if problems else f"keeps shadow {fmt(mod.get('shadow'))} scale {fmt(mod.get('scale'))}")
+            pending = not_provable_details(port, candidate)
+            if problems:
+                status = "DIVERGES"
+                detail = f"{mod.get('record')}: " + "; ".join(problems)
+            elif pending:
+                # ruling 6: a scale-site local written inside a branch the scan cannot evaluate is not provable;
+                # presented as PENDING, never resolved by assuming a branch
+                status = "PENDING"
+                detail = ("; ".join(pending) + f" | {mod.get('record')}: recorded shadow {fmt(mod.get('shadow'))} scale "
+                          f"{fmt(mod.get('scale'))}; {port_summary(port, candidate)}")
+            else:
+                status = "MOD"
+                detail = f"{mod.get('record')}: keeps shadow {fmt(mod.get('shadow'))} scale {fmt(mod.get('scale'))}"
         elif entry["status"] == "pin":
             if port is None:
                 status = "DIVERGES"
@@ -1368,9 +1488,15 @@ def main() -> int:
                 problems = check_pin(entry, port, candidate)
                 if candidate_problem:
                     problems.append(candidate_problem)
+                pending = not_provable_details(port, candidate)
                 if problems:
                     status = "DIVERGES"
                     detail = "; ".join(problems) + f" | {port_summary(port, candidate)}"
+                elif pending:
+                    # ruling 6: a scale-site local written inside a branch the scan cannot evaluate is not provable;
+                    # presented as PENDING (listed per entry, counted, in the JSON), never a PASS by assuming a branch
+                    status = "PENDING"
+                    detail = "; ".join(pending) + f" | {port_summary(port, candidate)}"
                 else:
                     status = "PASS"
                     detail = port_summary(port, candidate)
