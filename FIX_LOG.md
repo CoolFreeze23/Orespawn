@@ -4805,3 +4805,40 @@ with a LOW-priority size listener; both-modes pins. BUG-035 scan: asset audit
 check 8 green, animation json and controllers untouched. Refuted once.
 
 GATE (queen): build green (referenceRenderers PASS 120 / PENDING 0; queenPartPlacementProbe: linearity PASS, placement PASS at body yaw 0/45/90/180 in both modes, collector lifecycle PASS; asset audit 0 errors; benchmark proof rewritten for build.gradle + the g1tool classpath); runGameTestServer: All 295 required tests passed (gate day3c on the full tree).
+
+## AMENDMENT — BUG-042 downgraded (2026-09-03)
+
+Law-11 re-read of GeckoLib 4.8.4: GeoBone's matrix getters arm tracking on their
+first call (getWorldSpaceMatrix offsets 0-2), so the untracked-bone gap behind
+BUG-042 lasted one render frame per bake, not the whole stream; the explicit
+enablement in QueenRenderer.preRender stays as the fix for that first frame. The
+record, not the commit, is amended. ENT-S-099 closes: the robots have no synced
+bones and vanilla renderers.
+
+## RULINGS 2026-09-03 (second batch) — ENT-S-098 fixed, MOD-029 accepted, scanner tightened, findings filed
+
+ENT-S-098: a fired BetterFireball now carries `orespawn:better_fireball` through a
+constructor that replays the vanilla kinematics; save/load round trip pinned; the
+projectile sweep found one sibling (UltimateFishHook cast as a vanilla bobber,
+filed) and a double explosion on impact (ENT-S-102, filed). MOD-029 accepted as
+the modern-mode default: the config gains its first master switch, `[modern]
+enabled` (default false) with `mothraWideRootHitbox` beneath it, Mothra snapshots
+it at construction (6x3 modern, 5x2 classic), four tests in their own batch; the
+existing per-feature 2.0 keys stay independent pending the owner's word. The
+renderer pin scanner now tracks reassignments of float locals (last unconditional
+write wins; an if-branch write keeps the pre-branch default; loops, switches and
+lambdas unbind with a reason; `%=`, `++` and `--` forms and nested braceless ifs
+unbind as forms the scan does not read): 73 lab cases under two refuter rounds, six
+of which flipped from PASS to DIVERGES where the blind spot was (the unreadable-
+write forms, the dangling else, a braceless while); no repo pin changed (PASS 120
+before and after), so nothing needed presenting before the gate. Documented
+limitation: a braceless `for` wrapping a braced if reads as a plain if-write because
+the header's semicolons hide the loop from the look-back (the default-branch value is
+still what the declaration holds). One interpretation (a non-evaluable write on a
+non-default branch is treated like a ternary's taken branch) presented for ruling.
+Kraken targeting filed as ENT-S-100 with its split (five parity bugs, one recorded
+convention) and the shared ignore list as ENT-S-101.
+BUG-043 upstream: the vendored copy carries upstream's final collector code and BUG-043's static-accumulator aliasing is present in that final state; the upstream repository DerToaster98/MultiHitBoxLib was deleted between 2026-05-10 and 2026-09-03, its last release was MC1.20.1-1.8.1 (2024-10-03), and we are 0 releases / 0 commits behind, i.e. effectively the maintainer, so the fix could not be taken from upstream. Licensing flag for the owner: upstream's LICENSE file is LGPL-3.0 while its gradle declares mod_license=All Rights Reserved and its README forbids jar-in-jar, forks and ports.
+1.7.10 reference instance: Prism instance 'OreSpawn 1.7.10 Reference' created (Minecraft 1.7.10, Forge 10.13.4.1614, LWJGL 2.9.4-nightly-20150209; the Java 8 legacy runtime installs on first launch) with the owner-supplied orespawn-1.7.10-20.3.jar (sha1 d43dbe9a400dc8df06418da3e04d36422b2176d7) under minecraft/mods; nothing launched; owner look sheet section F carries the first-launch checklist.
+
+GATE (rulings2): 2026-09-03 21:53-21:57: g1BenchmarkVerify green without regeneration (no provenance drift); build green (asset audit 0 errors / 0 advisories / 4 acknowledged; G1 PARITY PASS 2 + 11 models, checked-in proofs verified; referenceGeometry; referenceRenderers PASS 120 / NOT_APPLICABLE 13; queenPartPlacementProbe); runGameTestServer: All 303 required tests passed (295 + 4 ProjectileTypeParity + 4 MothraModernDims) in 2m45s; logs rulings2.build.log / rulings2.suite.log.

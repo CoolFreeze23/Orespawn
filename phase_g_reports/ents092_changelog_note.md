@@ -45,6 +45,10 @@ the setting is on). Godzilla is 9.9 wide again (was 10), Mothra's box is back to
 the apple cows match the cow line at 0.9x1.3, and a small fireball is small again (0.3125).
 
 The Queen is back to her original size (twice what the port drew), her shadow matches, her PlayNicely
-box is 5.5x6 as in 1.7.10, and her hit parts now actually follow her bones: a port bug had left them
-at her feet whenever another player's client was the one streaming her pose.
+box is 5.5x6 as in 1.7.10, and her hit parts follow her bones from the first frame instead of
+snapping to her feet for a frame after every model reload.
+
+A fired BetterFireball is now the mod's own entity again (it used to be typed as a vanilla fireball
+in flight and in saves), and the modern config gains its first switch: with `[modern] enabled`
+on, Mothra keeps the port's wider 6x3 root box; classic stays at the original 5x2.
 

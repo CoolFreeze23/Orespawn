@@ -6177,6 +6177,20 @@ keeps BUG-036. Commit 4ea395c's message retains the old number.)*
   the owner's F3+B look. Other GeckoLib species with MHLib profiles (ant_robot,
   spider_robot) use their own collectors; whether they suffer the same gap is a
   follow-up read (ENT-S-099).
+- **AMENDMENT (2026-09-03, law 11):** the premise "nothing ever calls
+  `setTrackingMatrices(true)`" was wrong as a permanent state. In 4.8.4,
+  `GeoBone.getWorldSpaceMatrix()` (and the local/model getters) call
+  `setTrackingMatrices(true)` at bytecode offsets 0-2 before returning, and
+  `getWorldPosition()` goes through that getter, so the collector's own first read
+  armed tracking: the gap was ONE render frame per (re)bake, during which the read
+  returned the origin, not a standing origin for every stream. The probe's
+  "untracked" check read once and therefore saw zeros; the refuter's confirmation
+  rested on the same single read. The renderer's explicit enablement stays correct
+  and useful: it removes the first-frame origin read after every bake. The live
+  symptom is downgraded to a one-frame snap of the parts to the entity origin after
+  each bake. Found by the MoreHitboxes evaluation's bytecode read; ENT-S-099 is
+  answered on the way: the robots have no synced bones and vanilla renderers, so
+  the question does not apply to them.
 
 ### BUG-043 — Vendored MHLib aliased its static default rotation as the collector's running accumulator (FIXED, 2026-09-03)
 
@@ -6583,16 +6597,113 @@ keeps BUG-036. Commit 4ea395c's message retains the old number.)*
   `EntityType#create` instances, clients construct shots as vanilla LargeFireballs,
   and NBT saves them as `minecraft:fireball`. The 0.3125 shrink still applies to
   shots (class-level override), but the renderer and registration do not.
-- **Resolution:** OPEN — report only. Fix would be a constructor that passes the
-  mod's own EntityType (as the (EntityType, Level) constructor does) plus a pin
-  that a shot fireball's type is `orespawn:better_fireball`.
+- **Resolution:** FIXED (2026-09-03, owner: "fix the shot fireball's type, with a
+  gametest that a fired BetterFireball keeps its type across a save/load round
+  trip"). The shooter constructor now chains to `this(ModEntities.BETTER_FIREBALL,
+  level)` and replays what the vanilla chain assigned (moveTo, reapplyPosition,
+  normalised delta movement x accelerationPower, hasImpulse, setOwner, setRot),
+  leaving the vanilla explosion power at the 1 the old chain passed; the renderer
+  binding and registration match vanilla's fireball values, so nothing else moves.
+  `ProjectileTypeParityTests` (own batch): type and kinematics against a vanilla
+  LargeFireball control; save, tag id `orespawn:better_fireball`, reload, owner
+  resolution, re-add; the small shot keeps its type and reloads at the registered
+  1x1 (the small flag was never persisted in 1.7.10 either). Refuted once.
+- **SWEEP (owner: "sweep every projectile subclass"):** every other projectile and
+  non-living class passes its own type (the ThrowableProjectile family, LaserBall
+  and its subclasses, both arrows, EntityLavaLovingItem); vanilla SmallFireball uses
+  are by design. ONE SIBLING: `UltimateFishHook(Player, Level, luck, lureSpeed)`
+  chains to `FishingHook` = `minecraft:fishing_bobber`, so a cast hook loses the
+  registration's `fireImmune` (it burns in lava while its 1.7.10 self was immune),
+  the client builds a vanilla FishingHook so the TF-028 lava-bobbing tick never runs
+  client-side, and it is never saved (vanilla noSave). Filed here, not fixed: fix is
+  the same constructor shape plus a pin.
+- **TAG MEMBERSHIP (from the refuter's read of the 34 vanilla entity_type tags):** the
+  shot fireball needed two overlays (`redirectable_projectile`, `impact_projectiles`) to
+  keep vanilla's fireball behaviour; no other port projectile has a redirectable
+  analogue, the fish hook and the lava-loving item sit in no vanilla tag. Two
+  candidates for a ruling, not fixed: (1) `UltimateArrow` / `IrukandjiArrow` are not
+  in `#minecraft:arrows`, which vanilla keys Power (+0.5/level), Punch (+1/level),
+  the shoot_arrow advancement and impact_projectiles on; today the port's UltimateBow
+  self-applies Power 5 / Flame 3 / Punch 2 and UltimateArrow sets its own base
+  damage, so a bow's own enchantments do nothing to these arrows -- whether the
+  1.7.10 formula already subsumes that is the owner's call. (2) the
+  ThrowableProjectile family (LaserBall and subclasses, WaterBall, ThunderBolt,
+  SunspotUrchin, InkSack, Shoes, EntityThrownRock) is outside impact_projectiles,
+  whose only effect is breaking decorated pots, chorus flowers and dripstone under
+  projectilesCanBreakBlocks -- blocks absent from 1.7.10, so no parity obligation; a
+  MOD-level choice either way.
 
 ### ENT-S-099 — Do the ant_robot and spider_robot MHLib parts suffer BUG-042's untracked-bone gap? (REPORT, 2026-09-03)
 
 - **Evidence:** BUG-042 showed GeckoLib never enables bone matrix tracking on its own.
   The robots' profiles sync bones too; their collector path and any tracking
   enablement in their renderers have not been read.
-- **Resolution:** OPEN — report only; a read with the same probe method before any fix.
+- **Resolution:** CLOSED (2026-09-03): ant_robot and spider_robot declare no synched bones,
+  sync-with-model false, and are drawn by vanilla MobRenderers, so the collector never runs
+  for them; and per the BUG-042 amendment the gap was a one-frame read in any case.
+
+### ENT-S-100 — Kraken targeting path: five divergences from 1.7.10, split presented (REPORT, 2026-09-03)
+
+- **Evidence:** the ENT-S-097 lane's two notes, read end to end against orig Kraken.java
+  :961-982, :983-1014, :1047-1058, :1060-1128, :1130-1146, :1151-1167, :872-896 (owner:
+  "file as a finding with the parity split"). Matches: the 1-in-8 gate and PlayNicely
+  gates, both search boxes, line of sight, the grab geometry, the sorter order, hold
+  motion and lift, the y>190 / 1-in-50 / 1-in-250 / hurt-roll releases.
+- **PARITY BUGS (5):**
+  - KT-A player search: 1.7.10 takes the NEAREST player of any mode and nulls it if
+    creative (orig :963-972), so a creative player shadows a farther survival one; the
+    port's `findNearestValidPlayer` skips creative players inside the scan and hunts the
+    survival player directly. Fix: move the creative check to the call site (the
+    EntityWormSmall idiom, ~6 lines).
+  - KT-B1 `isSuitableTarget` dropped `MyUtils.isIgnoreable` and ten exclusions (AttackSquid,
+    Spyro, ridden Dragon / Cephadrome / Leon / PrinceTeen / PrinceAdult, Chicken, Chipmunk,
+    StinkBug, Mothra; orig :1070-1127), so the port grabs mounts with their riders and
+    spared species, and large spared species outrank nearer legitimate prey in the
+    sorter. Fix: the Rotator-shape instanceof chain in orig order; every class exists in
+    the port; ridden test `!isVehicle()`.
+  - KT-B2 the player branch maps `isFlying` (orig :1081) to `invulnerable`; the port's own
+    Dragon and Leon sites map it to `flying`. One line.
+  - KT-D a dying victim is released at health 0 (`isAlive()`) where 1.7.10 held it until
+    removal (orig :984 `!isDead`); unrecorded. Two shapes for the owner: faithful (drag the
+    corpse and a dead player's camera through the death screen) or keep and record as a
+    MOD entry under the grab-safety rationale; recommended: record.
+  - KT-E `mygetMaxHealth()` is hardcoded 3000 while attributes use MobStats 1000, so the
+    hurt-retarget, flee, reinforcement and far-away-despawn thresholds run against the
+    wrong base (any non-persistent Kraken above y 150 despawns on distance immediately).
+    Fix: return MobStats.KRAKEN.maxHealth() (Basilisk precedent).
+- **RECORDED (1):** KT-C world-rand versus entity-rand on the roll sites: same bounds and
+  odds, stream only; the ENT-S-093 convention, and what makes the ForcedRoll pins work.
+- **Pins proposed:** `KrakenTargetingParityTests` in its own batch (synchronous reflection-
+  driven tests over searchForPrey / isSuitableTarget / the hurt retarget with forced rolls
+  and creative + survival mock players); KT-D in a tick-driven batch of its own.
+- **Resolution:** OPEN — split presented; awaiting the owner's go per item.
+
+### ENT-S-101 — Shared `MyUtils.isIgnoreable` membership differs from 1.7.10 and feeds ten hunters (REPORT, 2026-09-03)
+
+- **Evidence:** orig MyUtils.java:117-152 lists RockBase, EntityAnt, EntityButterfly,
+  EntityMosquito, Dragonfly, Firefly, Cricket, Cockateil, Termite, Ghost, GhostSkelly,
+  Elevator. The port's `danger.orespawn.util.MyUtils.isIgnoreable` (:21-32) is missing
+  EntityAnt, Dragonfly, Cricket, Cockateil, Termite and Elevator (all six classes exist in
+  the port) and adds CaveFisher, Fairy, LunaMoth and Coin. No AUDIT, FIX or MOD entry
+  justifies the port list, and it already gates targeting in Alosaurus, Basilisk,
+  Brutalfly, Rotator, Scorpion, Vortex, Mothra, SpiderRobot, TheKing and TheQueen; the
+  KT-B1 fix would inherit whichever list stands.
+- **Resolution:** OPEN — report only; a parity bug by the standing rule unless a MOD record
+  is written for the four additions. Fix shape: restore the 1.7.10 membership with one
+  gametest per member asserting `isIgnoreable` on a spawned instance, in its own batch.
+
+### ENT-S-102 — BetterFireball explodes twice on impact (REPORT, 2026-09-03)
+
+- **Evidence:** found by the ENT-S-098 lane. `BetterFireball.onHit` calls `super.onHit` =
+  1.21.1 `LargeFireball.onHit`, which explodes with vanilla's private power (1) and discards,
+  then the port explodes again with its own 1 / 2 / 4 when not small; a small shot still
+  gets the vanilla power-1 explosion although orig BetterFireball.java:265-267 exploded only
+  when not small. `LargeFireball.readAdditionalSaveData` also reads the shared
+  `ExplosionPower` key into the vanilla field, so a reloaded big shot's vanilla-side
+  explosion becomes 2 or 4. Identical before and after the ENT-S-098 fix.
+- **Resolution:** OPEN — report only; a parity bug by the standing rule (one explosion in
+  1.7.10). Fix shape: skip the vanilla explosion (override onHit without the super call,
+  or zero the vanilla power) and pin the explosion count per impact.
 ### TEST-003 — Config-flipping gametests in the concurrent default batch
 
 - **Impact:** MEDIUM (suite reliability) — boss005/boss012 flip a global

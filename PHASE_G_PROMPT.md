@@ -559,6 +559,34 @@ drop it in, gate, run in-game. Then hand the owner the package summary.
 
 ---
 
+## 6b. Scope addendum (owner rulings, 2026-09-03)
+
+Recorded in full in `phase_g_reports/phase_g_scope_addendum_2026-09-03.md`; executed at the slices
+named there, sequencing unchanged (owner look session, mirror drop, proof regeneration, the G2
+root-order slice with the GeckoLib per-entity cache eviction, then Slice 4c). The headline rulings:
+
+- Artist animations are a 2.0 feature behind the modern config; classic stays code-driven parity.
+  Same renderer, two motion sources per species. No parity proof applies to artist clips; the
+  owner's in-game look accepts them.
+- A standard animation contract (idle / walk / swim / fly by locomotion, attack, hurt, death,
+  aggro_idle / calm_idle on the attacking state, optional random idle_alt_N, controller-side speed
+  scaling; mob extras named per SPEC) is designed with the first Tier-2 slice and presented for
+  ruling before it is wired.
+- Handoff package additions: a .bbmodel per mob, an animator's character-sheet paragraph per mob, a
+  bone glossary with readable labels beside the locked legacy names, a generated trigger inventory
+  per mob from its AI goals and state flags. Pilot handoff (Beaver + one boss) as the G5 round-trip
+  test as soon as the contract and package format exist.
+- Slice 5 design questions, beside the server-side-evaluator question: a plausibility bound on
+  client-reported bone positions for any trust-client path; the MoreHitboxes per-feature comparison
+  (not a migration: MHLib stays; pieces MoreHitboxes does better are ported into the vendored MHLib
+  under MIT with attribution, the most performant design per feature; both libraries side by side
+  only if the bytecode shows their mixin targets do not collide).
+- Before any Tier-2 slice: the spawn-100 benchmark, classic versus candidate, with a proposed
+  regression threshold; its baseline also measures MHLib's bone capture per frame and sync per tick
+  and on the wire. Proof rule: geometry-only changes take one refuter; motion transcriptions,
+  MHLib and renderer changes keep two. A Forge 1.7.10 Prism instance with the original jar is the
+  visual ground truth.
+
 ## 7. Standing traps checklist (things that have actually bitten this project)
 
 - Uppercase in resource filenames → `ResourceLocation` crash. Lowercase all geo/

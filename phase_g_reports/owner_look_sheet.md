@@ -142,3 +142,27 @@ is copied **verbatim** into FIX_LOG.md as an `OWNER (verbatim):` entry and into 
 BUG-041 (go = the port-wide drop lands; no-go = per-model MOD ruling), ENT-S-092 recheck rows and The Queen batch 1b, ENT-S-091/094 Elevator
 re-acceptance, the Beaver Q1 acceptance, Robot5's `in_game_acceptance` in `tools/s4_model_proofs.json`, and BUG-039 (closed external with
 the compatibility note, or reopened). Nothing is paraphrased; a FAIL row is triaged after the session, not fixed mid-session.
+
+---
+
+## Section F — 1.7.10 ground-truth instance: `OreSpawn 1.7.10 Reference` (new, 2026-09-03)
+
+Built from Prism's own meta, nothing launched yet: Minecraft 1.7.10 + Forge 10.13.4.1614 + LWJGL 2.9.4-nightly, with
+`orespawn-1.7.10-20.3.jar` (sha1 d43dbe9a…76d7; entry-for-entry identical to the repo's reference jar, which only lacks eight
+directory entries) in `minecraft\mods\`. No Java 8 exists on this PC, so the instance is pre-set to Prism's managed
+`java\jre-legacy` and Prism downloads it on first launch (auto-download and auto-switch are on globally).
+
+| Step | What happens | Pass looks like | Result |
+|---|---|---|---|
+| Open Prism; the instance appears ungrouped (restart Prism if it does not) | directory watcher | listed with the default icon | |
+| Edit → Version: Minecraft 1.7.10, Forge 10.13.4.1614, LWJGL 2 2.9.4; Mods: orespawn-1.7.10-20.3.jar enabled. Do NOT click Change Version / Update | meta fetch | three components, one mod | |
+| Launch (your account or Play Offline) | Prism downloads jre-legacy (Java 8u51, ~65 MB), the 1.7.10 client (sha1 e80d9b3b…bbc6), libraries, Forge universal + scala/akka, the asset index and ~112 MB of assets: ~200-250 MB, a few minutes, no prompts | console shows `Compatible Java found at: …/jre-legacy/bin/javaw.exe` | |
+| Main menu | FML loading bar, then `Forge 10.13.4.1614 / 4 mods loaded, 4 mods active` | OreSpawn 1.7.10.20.3 listed | |
+| If it stops with "not compatible with Java version 21/17" | auto-switch did not run | Instance Settings → Java → Download Java → Mojang jre-legacy (Java 8), relaunch; never tick "skip compatibility checks" | |
+| If it stops with "javaw.exe couldn't be found" | the managed download was skipped (offline, or global auto-download off) | re-enable the global Java toggles or use the instance's Download Java, relaunch | |
+
+Use it as the "compare against" for every row above that asks for the 1.7.10 look: same spawn commands
+(`/summon` in 1.7.10 is `/summon orespawn.<Name>` … check the F3 entity name; OreSpawn 1.7.10 also ships spawn eggs
+in its creative tab), same camera. There is no 1.7.10 PlayNicely config toggle in-game: it is `PlayNicely` in
+`minecraft\config\OreSpawn.cfg`, written on first run.
+
