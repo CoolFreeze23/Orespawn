@@ -205,6 +205,11 @@ public class EntityGammaMetroid extends TamableAnimal {
         return TargetSelection.firstMatch(entities, Comparator.comparingDouble(this::distanceToSqr), this::isSuitableTarget);
     }
 
+    /**
+     * orig GammaMetroid.java:253-288 — the untamed Metroid's prey filter. ENT-S-109: the
+     * player branch's {@code capabilities.isCreativeMode} (orig :281-286) is
+     * {@code Abilities.instabuild} — the ENT-S-107 mapping — not {@code invulnerable}.
+     */
     private boolean isSuitableTarget(LivingEntity target) {
         if (target == null || target == this || !target.isAlive()) return false;
         if (MyUtils.isIgnoreable(target)) return false; // orig GammaMetroid.java:266-268 — the shared ignore screen, ahead of line of sight (:269) (ENT-S-106)
@@ -213,7 +218,7 @@ public class EntityGammaMetroid extends TamableAnimal {
         if (target instanceof Monster) return false;
         if (this.isTame()) return false;
         if (target instanceof Player player) {
-            return !player.getAbilities().invulnerable;
+            return !player.getAbilities().instabuild; // orig GammaMetroid.java:281-286 isCreativeMode (ENT-S-109)
         }
         return true;
     }

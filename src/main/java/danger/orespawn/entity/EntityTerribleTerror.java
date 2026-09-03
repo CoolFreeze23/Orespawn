@@ -147,6 +147,12 @@ public class EntityTerribleTerror extends Monster {
         this.setYRot(this.getYRot() + yawDelta / 4.0f);
     }
 
+    /**
+     * orig TerribleTerror.java:216-293 — anything alive and visible except its own kind,
+     * the listed OreSpawn species and creative players. ENT-S-109: the player branch's
+     * {@code capabilities.isCreativeMode} (orig :286-291) is {@code Abilities.instabuild}
+     * — the ENT-S-107 mapping — not {@code invulnerable}.
+     */
     private boolean isSuitableTarget(LivingEntity target) {
         if (target == null || target == this || !target.isAlive()) return false;
         if (!this.getSensing().hasLineOfSight(target)) return false;
@@ -160,7 +166,7 @@ public class EntityTerribleTerror extends Monster {
         if (target instanceof Island) return false;
         if (target instanceof IslandToo) return false;
         if (target instanceof Player player) {
-            return !player.getAbilities().invulnerable;
+            return !player.getAbilities().instabuild; // orig TerribleTerror.java:286-291 isCreativeMode (ENT-S-109)
         }
         return true;
     }

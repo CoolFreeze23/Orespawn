@@ -200,9 +200,11 @@ public class EntityBrutalfly extends Monster {
 
         if (this.random.nextInt(6) == 0) {
             // orig Brutalfly.java:213-227 — players are only ever strafed with
-            // fireballs (no melee path against players).
+            // fireballs (no melee path against players). ENT-S-109: the strafe's
+            // creative test (orig :217 capabilities.isCreativeMode) is
+            // Abilities.instabuild — the ENT-S-107 mapping — not invulnerable.
             Player target = this.level().getNearestPlayer(this, 30.0);
-            if (target != null && !target.getAbilities().invulnerable && this.getSensing().hasLineOfSight(target)) {
+            if (target != null && !target.getAbilities().instabuild && this.getSensing().hasLineOfSight(target)) { // orig :217 (ENT-S-109)
                 this.currentFlightTarget = target.blockPosition().above(4);
                 if (this.random.nextInt(shoot) == 0) {
                     this.attackWithSomething(target);
@@ -341,6 +343,12 @@ public class EntityBrutalfly extends Monster {
         return TargetSelection.firstMatch(entities, new GenericTargetSorter(this), this::isSuitableTarget);
     }
 
+    /**
+     * orig Brutalfly.java:408-441 — the mob-hunt filter: monsters yes, players unless
+     * creative, nothing else. ENT-S-109: the player branch's
+     * {@code capabilities.isCreativeMode} (orig :436-439) is {@code Abilities.instabuild}
+     * — the ENT-S-107 mapping — not {@code invulnerable}.
+     */
     private boolean isSuitableTarget(LivingEntity target) {
         if (target == null || target == this || !target.isAlive()) return false;
         if (target instanceof EntityBrutalfly) return false;
@@ -355,7 +363,7 @@ public class EntityBrutalfly extends Monster {
         if (MyUtils.isIgnoreable(target)) return false;
         if (!this.getSensing().hasLineOfSight(target)) return false;
         if (target instanceof Monster) return true;
-        if (target instanceof Player p) return !p.getAbilities().invulnerable;
+        if (target instanceof Player p) return !p.getAbilities().instabuild; // orig Brutalfly.java:436-439 isCreativeMode (ENT-S-109)
         return false;
     }
 

@@ -245,12 +245,19 @@ public class EntityTriffid extends Monster {
         return TargetSelection.firstMatch(entities, Comparator.comparingDouble(this::distanceToSqr), this::isSuitableTarget);
     }
 
+    /**
+     * orig Triffid.java:275-319 — anything alive and visible except creepers, the listed
+     * OreSpawn species and creative players (the port folds the orig's creeper and
+     * species exclusions into {@code !(target instanceof Monster)}). ENT-S-109: the
+     * player branch's {@code capabilities.isCreativeMode} (orig :312-317) is
+     * {@code Abilities.instabuild} — the ENT-S-107 mapping — not {@code invulnerable}.
+     */
     private boolean isSuitableTarget(LivingEntity target) {
         if (target == null || target == this || !target.isAlive()) return false;
         if (MyUtils.isIgnoreable(target)) return false; // orig Triffid.java:285-287 — the shared ignore screen, ahead of line of sight (:288) (ENT-S-106)
         if (target instanceof EntityTriffid) return false;
         if (!this.getSensing().hasLineOfSight(target)) return false;
-        if (target instanceof Player p) return !p.getAbilities().invulnerable;
+        if (target instanceof Player p) return !p.getAbilities().instabuild; // orig Triffid.java:312-317 isCreativeMode (ENT-S-109)
         return !(target instanceof Monster);
     }
 

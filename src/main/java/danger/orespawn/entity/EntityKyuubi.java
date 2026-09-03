@@ -136,13 +136,18 @@ public class EntityKyuubi extends Monster {
         return TargetSelection.firstMatch(entities, Comparator.comparingDouble(this::distanceToSqr), this::isSuitableTarget);
     }
 
+    /**
+     * orig Kyuubi.java:173-202 — anything alive and visible that is not a monster.
+     * ENT-S-109: the player branch's {@code capabilities.isCreativeMode} (orig :195-200)
+     * is {@code Abilities.instabuild} — the ENT-S-107 mapping — not {@code invulnerable}.
+     */
     private boolean isSuitableTarget(LivingEntity target) {
         if (target == null || target == this || !target.isAlive()) return false;
         if (MyUtils.isIgnoreable(target)) return false; // orig Kyuubi.java:183-185 — the shared ignore screen, ahead of line of sight (:186) (ENT-S-106)
         if (!this.getSensing().hasLineOfSight(target)) return false;
         if (target instanceof Monster) return false;
         if (target instanceof Player player) {
-            return !player.getAbilities().invulnerable;
+            return !player.getAbilities().instabuild; // orig Kyuubi.java:195-200 isCreativeMode (ENT-S-109)
         }
         return true;
     }

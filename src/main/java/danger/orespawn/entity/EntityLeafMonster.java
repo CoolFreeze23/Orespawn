@@ -151,7 +151,12 @@ public class EntityLeafMonster extends Monster {
         return TargetSelection.firstMatch(entities, new GenericTargetSorter(this), this::isSuitableTarget);
     }
 
-    // orig LeafMonster.java:178-207 — explicit prey list: Ant, Butterfly, LunaMoth, non-creative players
+    /**
+     * orig LeafMonster.java:178-207 — explicit prey list: Ant, Butterfly, LunaMoth,
+     * non-creative players. ENT-S-109: the player branch's
+     * {@code !capabilities.isCreativeMode → true} (orig :200-205) is
+     * {@code Abilities.instabuild} — the ENT-S-107 mapping — not {@code invulnerable}.
+     */
     private boolean isSuitableTarget(LivingEntity target) {
         if (target == null || target == this || !target.isAlive()) return false;
         if (!this.getSensing().hasLineOfSight(target)) return false;
@@ -159,7 +164,7 @@ public class EntityLeafMonster extends Monster {
         if (target instanceof EntityButterfly) return true;
         if (target instanceof EntityLunaMoth) return true;
         if (target instanceof Player player) {
-            return !player.getAbilities().invulnerable;
+            return !player.getAbilities().instabuild; // orig LeafMonster.java:202-204 !isCreativeMode → true (ENT-S-109)
         }
         return false;
     }

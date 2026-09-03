@@ -10,6 +10,7 @@ import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.world.Difficulty;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
@@ -385,9 +386,16 @@ public class Cephadrome extends PathfinderMob
      * Cephadrome.java:557) is {@code Abilities.instabuild} — the port's own
      * Kraken / TheKing idiom — not {@code invulnerable}; the two differ for a
      * survival player made invulnerable by other means. The hit-by-player /
-     * bad-mood / should-attack gates that follow are orig :560-568.
+     * bad-mood / should-attack gates that follow are orig :560-570.
+     *
+     * <p>ENT-S-113: orig :516-518 answers false on PEACEFUL before any other
+     * check, and orig :566-569 spends {@code shouldattack} — the stalk flag the
+     * refused mount arms (orig :899, {@link #mobInteract}) — on the one answer
+     * it grants, so an unfed shark stalks the would-be rider for a single scan;
+     * both restored at the orig positions.</p>
      */
     private boolean isSuitableTarget(LivingEntity target) {
+        if (this.level().getDifficulty() == Difficulty.PEACEFUL) return false; // orig Cephadrome.java:516-518 (ENT-S-113)
         if (target == null || target == this || !target.isAlive()) return false;
         if (!this.getSensing().hasLineOfSight(target)) return false;
         if (target instanceof Cephadrome) return false;
@@ -401,7 +409,13 @@ public class Cephadrome extends PathfinderMob
         if (target instanceof EnderDragon) return true;
         if (target instanceof Player player) {
             if (player.getAbilities().instabuild) return false; // orig Cephadrome.java:557 isCreativeMode (ENT-S-107)
-            return this.hitByPlayer != 0 || this.badmood != 0 || this.shouldattack > 0;
+            if (this.hitByPlayer != 0) return true;              // orig Cephadrome.java:560-562
+            if (this.badmood != 0) return true;                  // orig Cephadrome.java:563-565
+            if (this.shouldattack > 0) {                         // orig Cephadrome.java:566-569 — spent on this answer (ENT-S-113)
+                this.shouldattack = 0;
+                return true;
+            }
+            return false;                                        // orig Cephadrome.java:570
         }
         return false;
     }
