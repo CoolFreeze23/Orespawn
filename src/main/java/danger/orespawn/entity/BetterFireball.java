@@ -2,9 +2,11 @@ package danger.orespawn.entity;
 
 import danger.orespawn.ModEntities;
 import danger.orespawn.util.MyUtils;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.tags.EntityTypeTags;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityDimensions;
@@ -12,8 +14,12 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.projectile.LargeFireball;
+import net.minecraft.world.entity.projectile.Projectile;
+import net.minecraft.world.entity.projectile.ProjectileDeflection;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.gameevent.GameEvent;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
@@ -160,9 +166,50 @@ public class BetterFireball extends LargeFireball {
         target.igniteForSeconds(FIRE_SECONDS_ON_HIT);
     }
 
+    /**
+     * orig BetterFireball.java:205-270 (func_70227_a): one impact, one explosion, and
+     * only when not small (:265-267 {@code if (!this.small) explode(power)}, then
+     * setDead :268). ENT-S-102, owner ruling 2026-09-04 ("fix with a test"): this
+     * used to chain to {@code super.onHit} = 1.21.1 {@code LargeFireball.onHit},
+     * which explodes at vanilla's private explosionPower (1, sourced by the fireball
+     * itself) and discards BEFORE the port's own blast ran, so a big shot exploded
+     * twice per impact (1, then 1 / 2 / 4) and a small shot, which 1.7.10 never
+     * exploded, still got the vanilla power-1 blast. LargeFireball.onHit is only
+     * {@code Projectile.onHit} plus that blast and the discard, so the blast is
+     * skipped by replaying Projectile.onHit's dispatch here instead of chaining to
+     * it: an entity hit deflects a redirectable projectile it struck, runs
+     * {@link #onHitEntity} and posts PROJECTILE_LAND at the hit location; a block
+     * hit runs {@link #onHitBlock} and posts PROJECTILE_LAND at the block. Then,
+     * server-side, the port's own explosion when not small and the discard; the
+     * null source is orig :266 ({@code func_72885_a(null, x, y, z, power, true,
+     * mobGriefing)}), whose two flags were fire = true always and block
+     * destruction = mobGriefing; the port feeds mobGriefing into 1.21.1's single
+     * fire slot, so no fire is placed while mobGriefing is off (pre-existing,
+     * filed under ENT-S-104 together with the missing fire beside a block hit).
+     * Skipping the vanilla blast also skips vanilla's EntityMobGriefingEvent post
+     * for the owner; the null-source path reads the gamerule directly. Vanilla's
+     * private explosionPower still loads from the shared {@code ExplosionPower}
+     * key ({@code LargeFireball.readAdditionalSaveData}; orig :277-281 wrote the
+     * same key), but nothing reads it any more: the only blast is this one, at the
+     * port's {@code explosionPower}.
+     */
     @Override
     protected void onHit(HitResult result) {
-        super.onHit(result);
+        HitResult.Type type = result.getType();
+        if (type == HitResult.Type.ENTITY) {
+            EntityHitResult entityHit = (EntityHitResult) result;
+            Entity target = entityHit.getEntity();
+            if (target.getType().is(EntityTypeTags.REDIRECTABLE_PROJECTILE) && target instanceof Projectile projectile) {
+                projectile.deflect(ProjectileDeflection.AIM_DEFLECT, this.getOwner(), this.getOwner(), true);
+            }
+            this.onHitEntity(entityHit);
+            this.level().gameEvent(GameEvent.PROJECTILE_LAND, result.getLocation(), GameEvent.Context.of(this, null));
+        } else if (type == HitResult.Type.BLOCK) {
+            BlockHitResult blockHit = (BlockHitResult) result;
+            this.onHitBlock(blockHit);
+            BlockPos pos = blockHit.getBlockPos();
+            this.level().gameEvent(GameEvent.PROJECTILE_LAND, pos, GameEvent.Context.of(this, this.level().getBlockState(pos)));
+        }
         if (!this.level().isClientSide) {
             if (!this.small) {
                 boolean canGrief = this.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING);

@@ -15,10 +15,18 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.animal.Cow;
 import net.minecraft.world.entity.projectile.AbstractHurtingProjectile;
 import net.minecraft.world.entity.projectile.LargeFireball;
+import net.minecraft.world.level.Explosion;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.event.level.ExplosionEvent;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Consumer;
 
 /**
  * ENT-S-098, owner ruling 2026-09-03: "fix the shot fireball's type, with a gametest
@@ -58,10 +66,27 @@ import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
  *   fireball to 1x1, so only the type and the power are pinned as surviving.</li>
  * </ul>
  *
+ * <p>ENT-S-102, owner ruling 2026-09-04 ("fix with a test"): {@code BetterFireball.onHit}
+ * used to chain to {@code LargeFireball.onHit}, which explodes at vanilla's private power 1
+ * (sourced by the fireball itself) and discards, and then exploded again at the port's own
+ * 1 / 2 / 4 when not small, so a big shot detonated twice per impact and a small shot, which
+ * orig BetterFireball.java:265-267 never exploded, still got the vanilla blast. The two
+ * {@code s102_} impact tests fire a shooter-built shot into an obsidian wall and count the
+ * explosions started inside the structure through a temporary {@code ExplosionEvent.Start}
+ * listener: a big shot yields exactly one, at the port's power with the orig :266 null
+ * source; a small shot yields none; both are discarded (orig :268).</p>
+ *
+ * <p>Projectile-tag rulings (owner, 2026-09-04), pinned by the two {@code tags_} tests: the
+ * ultimate and irukandji arrows stay outside {@code #minecraft:arrows} because the 1.7.10
+ * bows never applied Power to them (the check is quoted on the test), and the
+ * ThrowableProjectile family joins {@code #minecraft:impact_projectiles} as vanilla-consistent
+ * behaviour with no parity obligation (MOD-030), BerthaHit and EntityCage excepted.</p>
+ *
  * <p>No config is flipped, but the class still declares its own batch (TEST-003: new test
- * classes never join the default batch, whose 50-test buckets reshuffle); every test is synchronous in
- * one tick and discards what it spawned in a finally. Template {@code empty_large}
- * (48x16x48) with the shooter at (24, 8, 24), as HitboxDimsParityTests.</p>
+ * classes never join the default batch, whose 50-test buckets reshuffle); every ENT-S-098 and
+ * tag test is synchronous in one tick, the two ENT-S-102 impact tests wait a fixed 40-tick
+ * window ({@code runAfterDelay}), and all discard what they spawned in a finally. Template
+ * {@code empty_large} (48x16x48) with the shooter at (24, 8, 24), as HitboxDimsParityTests.</p>
  */
 @GameTestHolder(OreSpawnMod.MOD_ID)
 @PrefixGameTestTemplate(false)
@@ -327,5 +352,244 @@ public class ProjectileTypeParityTests {
             shot.discard();
             shooter.discard();
         }
+    }
+
+    // ---------------------------------------------------------------------------------------
+    // ENT-S-102 (owner ruling 2026-09-04: "fix with a test") -- one explosion per impact.
+    // ---------------------------------------------------------------------------------------
+
+    /** orig BetterFireball.java:74-76 setBig = 2, the power the impact test fires at. */
+    private static final int BIG_POWER = 2;
+    /**
+     * The impact tests aim straight +z: AbstractHurtingProjectile has no gravity, launch() puts
+     * the muzzle 2 blocks in front (+z) of the shooter at the block centre (24.5, 9.0, 26.5), and
+     * the wall stands at WALL_Z, 3.5 blocks ahead of the muzzle.
+     */
+    private static final Vec3 WALL_AIM = new Vec3(0.0, 0.0, 1.0);
+    private static final int WALL_Z = 30;
+    /**
+     * Ticks to wait before reading the impact. From the constructor's 0.1 blocks/tick the vanilla
+     * acceleration (AbstractHurtingProjectile.tick: clip along v, move by v, then
+     * v' = (v + 0.1 * v/|v|) * 0.95) travels 0.1, 0.19, 0.28, 0.36, 0.43, 0.51, 0.58, 0.64, 0.71
+     * on successive ticks -- 3.08 cumulative after eight, so the ninth tick's clip crosses the
+     * face at 3.5 and the blast sits about 0.4 short of it. 40 ticks is more than four times that
+     * and well under the default 100-tick timeout; the discard at MAX_LIFETIME_TICKS (600) is far
+     * outside the window, so a removed shot with a live owner can only mean an impact.
+     */
+    private static final int IMPACT_WINDOW_TICKS = 40;
+    private static final double IMPACT_RADIUS_FROM_WALL_FACE = 2.0;
+
+    /**
+     * Counts the explosions started inside this test's structure while registered: one
+     * {@code ExplosionEvent.Start} per {@code Level.explode} call (ServerLevel posts it before
+     * the blast runs), filtered to this level and the structure bounds because same-batch tests
+     * run concurrently in their own structures. Registered through the Class overload so the bus
+     * needs no generic-type resolution; {@code unregister(listener)} drops exactly this consumer.
+     */
+    private static final class ExplosionCounter {
+        private final ServerLevel level;
+        private final AABB bounds;
+        private final List<Explosion> seen = new ArrayList<>();
+        private final Consumer<ExplosionEvent.Start> listener = this::onStart;
+        private boolean registered;
+
+        ExplosionCounter(GameTestHelper helper) {
+            this.level = helper.getLevel();
+            this.bounds = helper.getBounds();
+            NeoForge.EVENT_BUS.addListener(ExplosionEvent.Start.class, this.listener);
+            this.registered = true;
+        }
+
+        private void onStart(ExplosionEvent.Start event) {
+            if (event.getLevel() == this.level && this.bounds.contains(event.getExplosion().center())) {
+                this.seen.add(event.getExplosion());
+            }
+        }
+
+        List<Explosion> seen() {
+            return this.seen;
+        }
+
+        void close() {
+            if (this.registered) {
+                this.registered = false;
+                NeoForge.EVENT_BUS.unregister(this.listener);
+            }
+        }
+    }
+
+    /**
+     * An obsidian wall across the shot's line: relative x 22..26, y 7..11 at z = WALL_Z. Obsidian
+     * (blast resistance 1200) stands under the power-2 blast, so the wall is exactly one impact
+     * and no block breaks or drops muddy the count.
+     */
+    private static void buildWall(GameTestHelper helper) {
+        for (int x = POS.getX() - 2; x <= POS.getX() + 2; x++) {
+            for (int y = POS.getY() - 1; y <= POS.getY() + 3; y++) {
+                helper.setBlock(new BlockPos(x, y, WALL_Z), Blocks.OBSIDIAN);
+            }
+        }
+    }
+
+    /**
+     * Registers the counter, fires the shot as a shooter does (launch), and schedules the impact
+     * checks IMPACT_WINDOW_TICKS later; the counter is unregistered and the entities discarded
+     * in the check's finally, on the pass and the fail path alike (and right away if launch
+     * itself fails). The counter goes in before launch: the shot's first tick comes after this
+     * synchronous call returns, so no explosion can slip past it. The shooter is kept aloft
+     * (no gravity) because, unlike the one-tick tests above, the window lets it fall; the
+     * shot's owner must also stay alive, since AbstractHurtingProjectile.tick discards a shot
+     * whose owner is removed.
+     */
+    private static void fireAtWallThenCheck(GameTestHelper helper, LivingEntity shooter, BetterFireball shot,
+                                            Consumer<ExplosionCounter> impactChecks) {
+        shooter.setNoGravity(true);
+        ExplosionCounter explosions = new ExplosionCounter(helper);
+        try {
+            launch(helper, shooter, shot);
+        } catch (RuntimeException e) {
+            explosions.close();
+            shot.discard();
+            shooter.discard();
+            throw e;
+        }
+        helper.runAfterDelay(IMPACT_WINDOW_TICKS, () -> {
+            try {
+                impactChecks.accept(explosions);
+            } finally {
+                explosions.close();
+                shot.discard();
+                shooter.discard();
+            }
+            helper.succeed();
+        });
+    }
+
+    /**
+     * The owner-ruled pin, big half: a big shot (setBig, power 2, orig :74-76; setNotMe as the
+     * boss sites do) fired into the wall starts exactly ONE explosion inside the structure, and
+     * it is the port's -- radius 2 with the orig :266 null source -- not LargeFireball.onHit's
+     * vanilla blast (radius 1, sourced by the fireball itself), and the shot is discarded
+     * (orig :268). Before the fix this counted two.
+     */
+    @GameTest(template = "empty_large", batch = "projectileTypeParity")
+    public void s102_big_shot_explodes_exactly_once_at_the_port_power_on_impact(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        buildWall(helper);
+        LivingEntity shooter = spawnShooter(helper);
+        BetterFireball shot = new BetterFireball(level, shooter, WALL_AIM);
+        shot.setNotMe();
+        shot.setBig();
+        Vec3 wallFace = helper.absoluteVec(new Vec3(POS.getX() + 0.5, POS.getY() + 1.0, WALL_Z));
+        fireAtWallThenCheck(helper, shooter, shot, explosions -> {
+            helper.assertTrue(shot.isRemoved(),
+                    "a big shot must be discarded after its wall impact (orig BetterFireball.java:268); still alive "
+                            + IMPACT_WINDOW_TICKS + " ticks after launch (ENT-S-102)");
+            helper.assertValueEqual(explosions.seen().size(), 1,
+                    "explosions started inside the structure by one impact of a big shot (orig :265-267: one, at field_92012_e) (ENT-S-102)");
+            Explosion only = explosions.seen().get(0);
+            helper.assertTrue(Math.abs(only.radius() - BIG_POWER) < DIM_EPS,
+                    "the one explosion must be the port's, at setBig's power " + BIG_POWER + " (orig :74-76); got radius "
+                            + only.radius() + " (1 would be LargeFireball.onHit's vanilla blast) (ENT-S-102)");
+            helper.assertTrue(only.getDirectSourceEntity() == null,
+                    "the one explosion must carry orig :266's null source (LargeFireball.onHit's blast is sourced by the fireball itself); got "
+                            + only.getDirectSourceEntity() + " (ENT-S-102)");
+            helper.assertTrue(only.center().distanceTo(wallFace) < IMPACT_RADIUS_FROM_WALL_FACE,
+                    "the explosion must sit at the shot's impact position by the wall face " + wallFace + ", got "
+                            + only.center() + " (ENT-S-102)");
+        });
+    }
+
+    /**
+     * The owner-ruled pin, small half: a small shot (setSmall, the Dragon / Prince / Princess /
+     * Godzilla / King / Queen path) fired into the wall starts NO explosion -- orig :265-267
+     * explodes only when not small; before the fix the vanilla power-1 blast still went off --
+     * and is discarded on impact all the same (orig :268).
+     */
+    @GameTest(template = "empty_large", batch = "projectileTypeParity")
+    public void s102_small_shot_never_explodes_and_is_discarded_on_impact(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        buildWall(helper);
+        LivingEntity shooter = spawnShooter(helper);
+        BetterFireball shot = new BetterFireball(level, shooter, WALL_AIM);
+        shot.setNotMe();
+        shot.setSmall();
+        fireAtWallThenCheck(helper, shooter, shot, explosions -> {
+            helper.assertFalse(shooter.isRemoved(), "the shooter must outlive the 40-tick window, else the discard check below is vacuous");
+            helper.assertTrue(shot.isRemoved(),
+                    "a small shot must be discarded after its wall impact (orig BetterFireball.java:268); still alive "
+                            + IMPACT_WINDOW_TICKS + " ticks after launch (ENT-S-102)");
+            helper.assertValueEqual(explosions.seen().size(), 0,
+                    "explosions started inside the structure by the impact of a small shot (orig :265-267: none when small; "
+                            + "before the fix LargeFireball.onHit's power-1 blast still fired) (ENT-S-102)");
+        });
+    }
+
+    // ---------------------------------------------------------------------------------------
+    // Projectile-tag rulings (owner, 2026-09-04).
+    // ---------------------------------------------------------------------------------------
+
+    /**
+     * Ruling: "arrows join #minecraft:arrows only if the 1.7.10 bow code applied Power and Punch
+     * to them -- check and rule from that". The check, orig UltimateBow.java:46-64 and
+     * SkateBow.java:36-68: both bows read Punch (field_77344_u) into {@code func_70240_a} =
+     * setKnockbackStrength (UltimateBow :52-54, SkateBow :53-55) and Flame (field_77343_v) into
+     * {@code func_70015_d(100)} = setFire (:55-57 / :56-58), and NEITHER reads Power
+     * (field_77345_t): vanilla ItemBow's {@code setDamage(getDamage() + power * 0.5 + 0.5)} block
+     * is absent, and the arrows' own {@code func_70239_b} (setDamage) is an empty override besides
+     * (UltimateArrow.java:275-276, IrukandjiArrow.java:269-270) -- their damage is
+     * {@code ceil(speed * UltimateBowDamage)} (UltimateArrow :157) and a flat 100
+     * (IrukandjiArrow :157). Power was never applied, so the arrows stay OUT of
+     * {@code #minecraft:arrows}, on which 1.21.1 keys Power's +0.5/level damage and Punch's
+     * knockback (data/minecraft/enchantment/power.json and punch.json: {@code direct_attacker}
+     * in #minecraft:arrows) and the adventure/shoot_arrow advancement ({@code direct_entity} in
+     * #minecraft:arrows): the arrows keep their own damage, the port's UltimateBow keeps its
+     * self-applied Power 5 / Flame 3 / Punch 2 / Infinity 1 (Flame's ignite fires unconditionally
+     * on projectile_spawned, the 1.7.10 setFire(100)), and an ultimate or irukandji arrow never
+     * grants shoot_arrow. The vanilla arrow is the control that the tag itself is loaded.
+     */
+    @GameTest(template = "empty_large", batch = "projectileTypeParity")
+    public void tags_ultimate_and_irukandji_arrows_stay_outside_minecraft_arrows(GameTestHelper helper) {
+        helper.assertTrue(EntityType.ARROW.is(EntityTypeTags.ARROWS),
+                "control: minecraft:arrow must carry #minecraft:arrows (the vanilla tag is loaded)");
+        helper.assertFalse(ModEntities.ULTIMATE_ARROW.get().is(EntityTypeTags.ARROWS),
+                "orespawn:ultimate_arrow must NOT carry #minecraft:arrows: orig UltimateBow.java:46-64 applied Punch (:52-54) and Flame (:55-57) but never Power (owner ruling 2026-09-04)");
+        helper.assertFalse(ModEntities.IRUKANDJI_ARROW.get().is(EntityTypeTags.ARROWS),
+                "orespawn:irukandji_arrow must NOT carry #minecraft:arrows: orig SkateBow.java:36-68 applied Punch (:53-55) and Flame (:56-58) but never Power (owner ruling 2026-09-04)");
+        helper.succeed();
+    }
+
+    /**
+     * Ruling: "Throwables join impact_projectiles as vanilla-consistent behavior with no parity
+     * obligation; record as a MOD note" (MOD-030). {@code minecraft:impact_projectiles} feeds only
+     * {@code Projectile.mayBreak} (type in the tag AND the projectilesCanBreakBlocks gamerule),
+     * which DecoratedPotBlock, ChorusFlowerBlock and PointedDripstoneBlock consult in
+     * onProjectileHit -- blocks 1.7.10 did not have. The overlay
+     * data/minecraft/tags/entity_type/impact_projectiles.json now lists the ThrowableProjectile
+     * family that flies and lands like a snowball or egg: LaserBall and its Acid / IceBall /
+     * DeadIrukandji subclasses, WaterBall, ThunderBolt, SunspotUrchin, InkSack, Shoes and
+     * EntityThrownRock. BerthaHit (the invisible swing proxy) and EntityCage (the capture bobber)
+     * stay out. The snowball and the fishing bobber are the vanilla controls.
+     */
+    @GameTest(template = "empty_large", batch = "projectileTypeParity")
+    public void tags_throwables_join_impact_projectiles_bertha_hit_and_cage_stay_out(GameTestHelper helper) {
+        helper.assertTrue(EntityType.SNOWBALL.is(EntityTypeTags.IMPACT_PROJECTILES),
+                "control: minecraft:snowball must carry #minecraft:impact_projectiles (the vanilla tag is loaded)");
+        helper.assertFalse(EntityType.FISHING_BOBBER.is(EntityTypeTags.IMPACT_PROJECTILES),
+                "control: minecraft:fishing_bobber must not carry #minecraft:impact_projectiles");
+        List<EntityType<?>> throwables = List.of(
+                ModEntities.LASER_BALL.get(), ModEntities.ACID.get(), ModEntities.ICE_BALL.get(),
+                ModEntities.DEAD_IRUKANDJI.get(), ModEntities.WATER_BALL.get(), ModEntities.THUNDER_BOLT.get(),
+                ModEntities.SUNSPOT_URCHIN.get(), ModEntities.INK_SACK.get(), ModEntities.SHOES.get(),
+                ModEntities.ENTITY_THROWN_ROCK.get());
+        for (EntityType<?> type : throwables) {
+            helper.assertTrue(type.is(EntityTypeTags.IMPACT_PROJECTILES),
+                    EntityType.getKey(type) + " must carry #minecraft:impact_projectiles (MOD-030 overlay, owner ruling 2026-09-04)");
+        }
+        helper.assertFalse(ModEntities.BERTHA_HIT.get().is(EntityTypeTags.IMPACT_PROJECTILES),
+                "orespawn:bertha_hit (the invisible swing proxy) must stay outside #minecraft:impact_projectiles (MOD-030)");
+        helper.assertFalse(ModEntities.ENTITY_CAGE.get().is(EntityTypeTags.IMPACT_PROJECTILES),
+                "orespawn:cage (the capture bobber) must stay outside #minecraft:impact_projectiles (MOD-030)");
+        helper.succeed();
     }
 }

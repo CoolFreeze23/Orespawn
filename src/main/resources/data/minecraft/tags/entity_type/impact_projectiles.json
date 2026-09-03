@@ -1,6 +1,16 @@
 {
   "replace": false,
   "values": [
-    "orespawn:better_fireball"
+    "orespawn:better_fireball",
+    "orespawn:laser_ball",
+    "orespawn:acid",
+    "orespawn:ice_ball",
+    "orespawn:dead_irukandji",
+    "orespawn:water_ball",
+    "orespawn:thunder_bolt",
+    "orespawn:sunspot_urchin",
+    "orespawn:ink_sack",
+    "orespawn:shoes",
+    "orespawn:thrown_rock"
   ]
 }
