@@ -3,12 +3,19 @@ package danger.orespawn.entity.client;
 import com.mojang.blaze3d.vertex.PoseStack;
 import danger.orespawn.OreSpawnMod;
 import danger.orespawn.entity.WaterDragon;
-import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.resources.ResourceLocation;
 
+/**
+ * orig RenderWaterDragon.java + ClientProxyOreSpawn.java:436:
+ * {@code new RenderWaterDragon(new ModelWaterDragon(0.5f), 0.85f, 1.1f)}:
+ * RenderLiving shadow = par2 * par3 (RenderWaterDragon.java:23), this.scale = par3
+ * (:24), and preRenderScale (:39-45, wired through func_77041_b at :47-49) draws
+ * children at scale / 2 (ENT-S-092). The ModelWaterDragon(0.5f) argument is
+ * wingspeed only, not a scale.
+ */
 public class WaterDragonRenderer extends MobRenderer<WaterDragon, ModelWaterDragon> {
 
     private static final ResourceLocation TEXTURE =
@@ -17,24 +24,24 @@ public class WaterDragonRenderer extends MobRenderer<WaterDragon, ModelWaterDrag
     public static final ModelLayerLocation MODEL_LAYER =
             new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "waterdragon"), "main");
 
-    // 1.7.10 ClientProxyOreSpawn: new RenderWaterDragon(new ModelWaterDragon(0.5f), 0.85f, 1.1f)
-    // Third float is the renderer's world-space scale. The earlier 2.5f here
-    // inflated the dragon far beyond the 1.7.10 silhouette and caused the
-    // visual model to swallow half the hitbox — the value belongs at 1.1f.
-    private static final float SCALE = 1.1f;
+    /** orig RenderWaterDragon.scale = 1.1f (third constructor argument). */
+    public static final float SCALE = 1.1F;
+    /** orig RenderLiving shadow = 0.85f * 1.1f. */
+    public static final float SHADOW = 0.85F * 1.1F;
 
     public WaterDragonRenderer(EntityRendererProvider.Context context) {
-        // Second arg mirrors 1.7.10's shadow radius (0.85f).
-        super(context, new ModelWaterDragon(context.bakeLayer(MODEL_LAYER)), 0.85f);
+        super(context, new ModelWaterDragon(context.bakeLayer(MODEL_LAYER)), SHADOW);
     }
 
     @Override
-    public void render(WaterDragon entity, float entityYaw, float partialTicks,
-                       PoseStack poseStack, MultiBufferSource buffer, int packedLight) {
-        poseStack.pushPose();
-        poseStack.scale(SCALE, SCALE, SCALE);
-        super.render(entity, entityYaw, partialTicks, poseStack, buffer, packedLight);
-        poseStack.popPose();
+    protected void scale(WaterDragon entity, PoseStack poseStack, float partialTick) {
+        // orig RenderWaterDragon.preRenderScale (RenderWaterDragon.java:39-45):
+        //   if (par1Entity != null && par1Entity.isChild()) { GL11.glScalef(scale / 2.0f, ...); return; }
+        //   GL11.glScalef(scale, scale, scale);
+        // Same pipeline position as LivingEntityRenderer.scale (after the (-1,-1,1) flip,
+        // before the -1.501 lift). The entity is never null here.
+        float s = entity.isBaby() ? SCALE / 2.0F : SCALE;
+        poseStack.scale(s, s, s);
     }
 
     @Override
