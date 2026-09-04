@@ -7825,7 +7825,7 @@ keeps BUG-036. Commit 4ea395c's message retains the old number.)*
   selection ray too — consistent with "OreSpawn's mobs read the convention"); the reverse-direction fence band
   and the target-in-a-selection-box blindness disclosed above.
 
-### ENT-S-122 — Sight-cache clear gating: 1.7.10 cleared `EntitySenses` only through `super.updateAITasks()`, which five hunters skip in some states, so their `canSee` verdicts froze there while the port's `Sensing` clears every tick (RULED 2026-09-04: reproduced for two hunters, deliberately not reproduced for three; the reproduction rides with the T5/T6 wave)
+### ENT-S-122 — Sight-cache clear gating: 1.7.10 cleared `EntitySenses` only through `super.updateAITasks()`, which five hunters skip in some states, so their `canSee` verdicts froze there while the port's `Sensing` clears every tick (RULED 2026-09-04: reproduced for two hunters, deliberately not reproduced for three; FIXED 2026-09-04 with T5)
 
 - **Evidence:** 1.7.10 cleared the `EntitySenses` cache in exactly one place, `EntityLiving.updateAITasks` (javap `sw`
   :1122-1148, the only `clearSensingCache` caller), reached from `onLivingUpdate` only on the new-AI branch (javap `sv`
