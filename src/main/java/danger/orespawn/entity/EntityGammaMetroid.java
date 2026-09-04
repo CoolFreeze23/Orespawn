@@ -12,6 +12,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.Difficulty;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
@@ -109,7 +110,9 @@ public class EntityGammaMetroid extends TamableAnimal {
         if (this.isRemoved()) return;
         super.customServerAiStep();
 
-        if (this.random.nextInt(5) == 0) {
+        // orig GammaMetroid.java:241 — `difficulty != PEACEFUL` leads, then the 1-in-5 roll, then the
+        // scan (ENT-S-114).
+        if (this.level().getDifficulty() != Difficulty.PEACEFUL && this.random.nextInt(5) == 0) {
             LivingEntity target = findSomethingToAttack();
             if (target != null) {
                 this.lookAt(target, 10.0f, 10.0f);
@@ -209,8 +212,10 @@ public class EntityGammaMetroid extends TamableAnimal {
      * orig GammaMetroid.java:253-288 — the untamed Metroid's prey filter. ENT-S-109: the
      * player branch's {@code capabilities.isCreativeMode} (orig :281-286) is
      * {@code Abilities.instabuild} — the ENT-S-107 mapping — not {@code invulnerable}.
+     * ENT-S-114: orig :254-256 answers false on PEACEFUL ahead of every other check.
      */
     private boolean isSuitableTarget(LivingEntity target) {
+        if (this.level().getDifficulty() == Difficulty.PEACEFUL) return false; // orig GammaMetroid.java:254-256 (ENT-S-114)
         if (target == null || target == this || !target.isAlive()) return false;
         if (MyUtils.isIgnoreable(target)) return false; // orig GammaMetroid.java:266-268 — the shared ignore screen, ahead of line of sight (:269) (ENT-S-106)
         if (!this.getSensing().hasLineOfSight(target)) return false;
