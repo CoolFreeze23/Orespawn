@@ -7744,7 +7744,7 @@ keeps BUG-036. Commit 4ea395c's message retains the old number.)*
   the reach comparisons left as they are. Not part of the targeting waves' rows; the T3a code is transcribed under
   the current convention and is not changed by this entry.
 
-### ENT-S-121 — Line-of-sight ray mode: the port's eye-to-eye `hasLineOfSight` clips collision shapes where 1.7.10's `canEntityBeSeen` tested selection bounds, and five ports of the feet-level helper clip COLLIDER against the recorded OUTLINE mapping (REPORT, 2026-09-04; raised by the ENT-S-118 refuter)
+### ENT-S-121 — Line-of-sight ray mode: the port's eye-to-eye `hasLineOfSight` clips collision shapes where 1.7.10's `canEntityBeSeen` tested selection bounds, and five ports of the feet-level helper clip COLLIDER against the recorded OUTLINE mapping (raised by the ENT-S-118 refuter; FIXED 2026-09-04)
 
 - **Evidence:** 1.7.10 `EntityLivingBase.canEntityBeSeen` called the two-argument `World.rayTraceBlocks`, which forwards
   `(stopOnLiquid = false, ignoreBlockWithoutBoundingBox = false, returnLastUncollidableBlock = false)` (javap
@@ -7758,11 +7758,72 @@ keeps BUG-036. Commit 4ea395c's message retains the old number.)*
   has five earlier ports that clip `COLLIDER`: ThePrinceAdult.java:652-655, ThePrinceTeen.java:658-661,
   Kraken.java:557-558, EntityBrutalfly.java:125-126, Cockateil.java:130-132 — unrecorded divergences under the recorded
   mapping (a flight target behind tall grass is accepted in the port, refused in 1.7.10). No MOD record covers either.
-- **Resolution:** REPORT — for the owner's ruling: (a) the eye-to-eye convention — keep vanilla's `COLLIDER`
-  `hasLineOfSight` as a recorded engine mapping (a MOD note) or route every `canSee` site through a port helper that
-  clips `OUTLINE` / `Fluid.NONE` (one helper, a sweep lane, one pin table); (b) the five feet-helper ports — fix in
-  classic to `OUTLINE` / `Fluid.NONE` with a short-grass pin each (the ENT-S-118 shape), unless (a) rules the other way
-  for both. Not part of the targeting waves' rows.
+- **Resolution:** FIXED (2026-09-04, owner: "ENT-S-120 and 121: adopt the 1.7.10 convention port-wide, not per site").
+  (a) The eye-to-eye convention is one HEAD injection, not 73 site edits: new `danger.orespawn.mixin.LivingEntitySightMixin`
+  (`@Mixin(LivingEntity.class)`, `@Inject(method = "hasLineOfSight(Lnet/minecraft/world/entity/Entity;)Z", at = HEAD,
+  cancellable)`) answers `OreSpawnSight.canSee(self, target)` whenever the receiver's registry namespace is `orespawn`
+  (`getType().builtInRegistryHolder().key().location().getNamespace()` — no per-class marker) and falls through for every
+  other receiver; new `danger.orespawn.util.OreSpawnSight` (:40-42 the gate, :48-57 the clip) is NeoForm
+  LivingEntity.java:3033-3043 with `ClipContext.Block.OUTLINE` for `COLLIDER` — the same-level check, the eye-to-eye `Vec3`s,
+  the 128-block cap and `Fluid.NONE` kept — 1.7.10's `canEntityBeSeen` (`rayTraceBlocks(eyes, eyes)` = `func_147447_a(…,
+  false, false, false)`: selection bounds, no liquid stop, javap `ahb` :2053-2063). Every `getSensing().hasLineOfSight` /
+  `hasLineOfSight` site of the port's hunters (73, every restored ENT-S-108 / ENT-S-118 step included) and every vanilla goal
+  on an OreSpawn mob reach the method through the same virtual call (`Sensing.hasLineOfSight` → `mob.hasLineOfSight`; the
+  port declares no override; vanilla's only override, Ravager's, delegates to super), so no call site, `Sensing`'s per-tick
+  cache (ENT-S-122's memo plan) or vanilla mob changes. Wiring: one line in the existing `orespawn.mixins.json`
+  (`"mixins": ["LivingEntitySightMixin"]`, the common list beside the two client mixins; package `danger.orespawn.mixin`,
+  `defaultRequire 1`, no refmap — NeoForge 1.21.1 runs Mojang names), already registered by `neoforge.mods.toml`'s
+  `[[mixins]]`; no build.gradle or mods.toml change. (b) The five feet-helper ports clip `OUTLINE` (all five were already
+  `Fluid.NONE`): ThePrinceAdult.canSeeSpot :663, ThePrinceTeen.canSeeSpot :669, Kraken.canSeeTarget :558,
+  EntityBrutalfly.canSeeTarget :126, Cockateil.canSeeTarget :132 (the entry's line numbers were stale by up to nine lines;
+  re-located by content), each with a trailing comment naming the ENT-S-089 mapping. Pins: new `LineOfSightConventionTests`
+  (own batch `lineOfSightConvention`, TEST-003; a `@GameTestGenerator` over 11 rows, `lineofsightconventiontests.s121_NN_<tag>`)
+  on the SightStepParityTests floor — the hunter frozen at rel (20, 1, ·), the prey 8 blocks east; the eye-line rows put a
+  dirt block at (24, 1, 24) carrying the occluder at (24, 2, 24) and spawn hunter and prey on the z of the occluder's actual
+  selection box (offset plants shift it by up to 0.25 in x / z and 0.2 down, seeded per absolute column), so a Fairy's 1.68 →
+  Zombie's 2.74 eye line crosses the box (2.13..2.33 across the column) for every offset — asserted before every verdict: the
+  OUTLINE clip stops on the occluder, the COLLIDER clip misses, the block's collision shape is empty and its selection shape
+  not. Rows 01-03: `Fairy.hasLineOfSight(Zombie)` false behind short grass / a torch / a poppy, true razed, and (01) true
+  through a water source a `SOURCE_ONLY` clip is shown to stop on (`Fluid.NONE` — the leg ENT-S-118 left unpinned); 04: the
+  Fairy half false, then a vanilla Zombie's `hasLineOfSight(Pig)` through the same grass true with its line asserted on the
+  box (the scope: the receiver's namespace); 05: `Fairy.findSomethingToAttack` (orig Fairy.java:232-234 through the port's
+  `Sensing`) null behind the grass, the Zombie with it razed (PLAY_NICELY false and restored, the cache ticked between
+  drives); 06: `getSensing().hasLineOfSight` false behind the grass, the memo standing across a raze and a re-raise until
+  `tick()` (the cache untouched); 07-11: the five feet helpers by reflection with the ENT-S-118 short-grass parapet at
+  (27, 1, 24) — false with it, true razed, the ray's OUTLINE hit on the parapet and COLLIDER miss asserted. Every row fails
+  with the convention reverted (the mixin removed: 01-06; a helper back on COLLIDER: 07-11); spawns discarded and occluders
+  razed in a finally; synchronous; no documenting-only test. javac rc 0 (helper, mixin, five entity files, the test class; no
+  gradle in this lane); the gametest run is the gate's. Disclosed for the owner: under OUTLINE a hunter whose own eye sits
+  inside a selection box (a small hunter in tall grass, an underwater hunter in seagrass or kelp) is blind, as 1.7.10's ray
+  was (`VoxelShape.clip` answers an inside hit), and modern collision-less blocks with selection boxes (kelp, seagrass,
+  cobweb, vines, glow lichen) now occlude OreSpawn hunters — the convention's consequence, no MOD record. The convention's reach was checked by census: 1.7.10 made exactly two direct `canEntityBeSeen` calls in the mod
+  (EnderKnight.java:92, EnderReaper.java:92), both on the PLAYER as receiver, which a receiver-gated mixin cannot
+  reach — the Ender Reaper's stare (port EnderReaper.java:82) is routed through `OreSpawnSight.canSee(player, this)`
+  by hand (refuter B, B1), and the Ender Knight's stare is absent at HEAD (a ledger row, not this entry's); the other
+  80 sight calls were `getEntitySenses().canSee` on the hunter and are covered through `Sensing`. Disclosed for the
+  owner, both directions: OreSpawn hunters now see OVER fences, fence gates, walls, soul sand and cactus in the band
+  where the collision shape is taller than the selection box (1.7.10's fence selection box was one block high — the
+  one case where the convention makes the port's hunters see more than vanilla); a target whose eyes sit inside a
+  selection box (two-block grass or fern, sugar cane, kelp or seagrass underwater, a cobweb) is invisible to every
+  OreSpawn hunter and to every vanilla goal on it, including `MeleeAttackGoal`'s modern strike gate on the four
+  hunters that use it (they cannot strike an adjacent target standing in tall grass — a signature 1.7.10 lacked);
+  and every `noCollission` block with a shape now occludes: crops, saplings, mushrooms, dead bushes, ferns, sugar
+  cane, roots and sprouts, cave vines, fire, portals, signs, banners, rails, pressure plates, redstone dust,
+  tripwire, buttons, levers, one-layer snow, powder snow, frogspawn and petals, besides the kelp, seagrass, cobweb,
+  vines, glow lichen and hanging roots first listed; leaves, glass, panes, bars, carpets, ladders, doors, slabs
+  and stairs are the same in both modes. `LookAtPlayerGoal`'s head-tracking now clips the same ray (cosmetic).
+  Two mappings outside this entry noted for the ledger: the Ender Knight's dropped stare ray and `Chainsaw.java`'s
+  `player.hasLineOfSight` standing in for orig UltimateSword's air-only `MyCanSee` walk (no MOD record). Refuted twice: A (the mixin's descriptor, wiring, gate and the OUTLINE / Fluid.NONE mapping against the 1.7.10
+  bytecode) and B (the eleven rows, the five helpers, the interactions with goals, caches and the landed pins) both
+  upheld the work and both found the same single defect, fixed — the Ender Reaper's stare asks the PLAYER's line of
+  sight (orig EnderReaper.java:92 `player.canEntityBeSeen(this)`), a receiver the namespace gate cannot reach, now
+  `OreSpawnSight.canSee(player, this)` — plus records notes applied: 1.7.10 skipped fire where OUTLINE hits its
+  one-sixteenth slabs and tested a moving piston's block where OUTLINE is empty (residuals of the mapping, recorded,
+  not fixed); the fractional shape deltas of torches, grass, flowers, lily pads and end portals are the engine's
+  shapes; 1.7.10's only range bound was a 200-step cap that answered seen where vanilla's kept 128-block cap
+  answers unseen; a vanilla receiver's ray toward an OreSpawn mob stays vanilla's by the gate (1.7.10's was the
+  selection ray too — consistent with "OreSpawn's mobs read the convention"); the reverse-direction fence band
+  and the target-in-a-selection-box blindness disclosed above.
 
 ### ENT-S-122 — Sight-cache clear gating: 1.7.10 cleared `EntitySenses` only through `super.updateAITasks()`, which five hunters skip in some states, so their `canSee` verdicts froze there while the port's `Sensing` clears every tick (RULED 2026-09-04: reproduced for two hunters, deliberately not reproduced for three; the reproduction rides with the T5/T6 wave)
 

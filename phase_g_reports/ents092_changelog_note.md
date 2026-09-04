@@ -177,3 +177,5 @@ it eats one), stops eating while told to sit, picks fights while idling as it di
 baby dragon — no longer flies toward a spot it cannot see.
 
 Four new `[modern]` switches, on by default (MOD-032..035): tamed companions avenge and defend their owner (`petsDefendOwner`), Mobzilla spares its fellow bosses and the royal family (`godzillaSparesBossPeers`), the Pointysaurus locks on to whoever stares at it (`pointysaurusStareAggro`) and the Cryolophosaurus chases whoever hurt it (`cryolophosaurusRevengeChase`) — each `false`, or `modern.enabled = false`, is the 1.7.10 behaviour; the Mantis loses two target goals that never did anything; and the Valentine's Day Girlfriend keeps leaving Peaceful and creative players alone in both modes (MOD-036, a deliberate exception).
+
+OreSpawn mobs no longer see through grass, flowers, torches and other collision-less blocks — 1.7.10's line of sight stopped on any block with a selection box, the port had inherited vanilla's collision-only ray, and now every OreSpawn hunter (and the Prince's, Kraken's, Brutalfly's and Cockateil's flight rays) reads the 1.7.10 ray while vanilla mobs keep their own.

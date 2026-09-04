@@ -5219,3 +5219,36 @@ docs commit, two cite / wording nits and the Godzilla :594 mojibake.
 REFUTERS: T9: one refuter (17 files touched, label M) — code and pins upheld; the pin count and the non-compiling-range provenance note fixed in the records; MOD-033's residual on four species outside the ledger presented for a ruling.
 
 GATE: gate t9a green: build legs (asset audit 0 errors, G1 PARITY 2 + 11 models, referenceGeometry, referenceRenderers, queenPartPlacementProbe) and runGameTestServer 'All 720 required tests passed' (705 + 15 PortOnlyTargetingTests). The MOD-033 gates of Leon, both Princes, Spyro and Stinky had been swept into the phase-1 commits f2f47ae / fbc66be by mistake before their gate; this run is their gate.
+
+## ENT-S-121 (2026-09-04) — the 1.7.10 line-of-sight convention adopted port-wide
+
+ENT-S-121 (2026-09-04, owner: "ENT-S-120 and 121: adopt the 1.7.10 convention port-wide, not per site"): the port's hunters
+read 1.7.10's line-of-sight ray. 1.7.10's `canEntityBeSeen` was `rayTraceBlocks(eyes, eyes)` — every collidable block on its
+selection bounds, liquids never stopping the ray (`ClipContext.Block.OUTLINE` / `Fluid.NONE`) — where vanilla's
+`LivingEntity.hasLineOfSight` clips collision shapes, so a target behind short grass, a flower or a torch was seen by the
+port and hidden in 1.7.10. One convention, one injection: new `LivingEntitySightMixin` (registered in the existing
+`orespawn.mixins.json`, common list) cancels `hasLineOfSight` at HEAD for receivers registered under `orespawn` with
+`OreSpawnSight.canSee` — vanilla's method with OUTLINE for COLLIDER, the same-level check, the eye-to-eye points and the
+128-block cap kept. All 73 `getSensing().hasLineOfSight` / `hasLineOfSight` sites of the hunters and the vanilla goals on
+OreSpawn mobs reach it through the same virtual call; no call site, `Sensing`'s per-tick cache (ENT-S-122) or vanilla mob
+changes. The five feet-helper ports that clipped COLLIDER against the ENT-S-089 mapping (ThePrinceAdult / ThePrinceTeen
+`canSeeSpot`, Kraken / EntityBrutalfly / Cockateil `canSeeTarget`) now clip OUTLINE (all five already `Fluid.NONE`). New
+`LineOfSightConventionTests` (own batch `lineOfSightConvention`, 11 rows): the Fairy hidden from a Zombie behind short grass,
+a torch and a poppy (each asserted collision-less, selection-bounded and on the eye line) and seen with them razed and
+through water; a vanilla Zombie's ray through the same grass unchanged; `Fairy.findSomethingToAttack` refusing the Zombie
+behind the grass through `Sensing`; the `Sensing` memo standing until `tick()`; the five feet helpers refused by a
+short-grass parapet by reflection. javac rc 0; the gradle gate is the orchestrator's. Refuted twice: A (the mixin's descriptor, wiring, gate and the OUTLINE / Fluid.NONE mapping against the 1.7.10
+bytecode) and B (the eleven rows, the five helpers, the interactions with goals, caches and the landed pins) both
+upheld the work and both found the same single defect, fixed — the Ender Reaper's stare asks the PLAYER's line of
+sight (orig EnderReaper.java:92 `player.canEntityBeSeen(this)`), a receiver the namespace gate cannot reach, now
+`OreSpawnSight.canSee(player, this)` — plus records notes applied: 1.7.10 skipped fire where OUTLINE hits its
+one-sixteenth slabs and tested a moving piston's block where OUTLINE is empty (residuals of the mapping, recorded,
+not fixed); the fractional shape deltas of torches, grass, flowers, lily pads and end portals are the engine's
+shapes; 1.7.10's only range bound was a 200-step cap that answered seen where vanilla's kept 128-block cap
+answers unseen; a vanilla receiver's ray toward an OreSpawn mob stays vanilla's by the gate (1.7.10's was the
+selection ray too — consistent with "OreSpawn's mobs read the convention"); the reverse-direction fence band
+and the target-in-a-selection-box blindness disclosed above.
+
+REFUTERS: ENT-S-121: two refuters (a mixin into vanilla) — both upheld the mixin, the five helpers and the eleven rows; both found the Ender Reaper's player-receiver site, fixed by hand; A's mapping residuals (fire, moving piston, the 200-step cap wording) recorded.
+
+GATE: gate c121a green: build legs (asset audit 0 errors, G1 PARITY 2 + 11 models, referenceGeometry, referenceRenderers, queenPartPlacementProbe) and runGameTestServer 'All 731 required tests passed' (720 + 11 LineOfSightConventionTests = 731).
