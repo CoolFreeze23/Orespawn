@@ -134,6 +134,7 @@ public class Lizard extends TamableAnimal {
         if (this.level().getDifficulty() == Difficulty.PEACEFUL) return false;
         if (target == null || target == this || !target.isAlive()) return false;
         if (!this.getSensing().hasLineOfSight(target)) return false; // orig Lizard.java:313-315 — canSee, after the dead check and ahead of the prey ladder (:316-327) (ENT-S-118)
+        if (target instanceof AttackSquid) return true; // orig Lizard.java:316-318 — AttackSquid heads the prey ladder (ENT-S-128)
         if (target instanceof Spider) return true;
         if (target instanceof CaveSpider) return true;
         if (target instanceof Chicken) return true;

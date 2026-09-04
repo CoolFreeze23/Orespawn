@@ -2,7 +2,8 @@ package danger.orespawn.util;
 
 import danger.orespawn.entity.*;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
+import net.minecraft.world.entity.monster.Monster;
+import net.minecraft.world.entity.npc.Villager;
 
 public class MyUtils {
 
@@ -51,15 +52,40 @@ public class MyUtils {
                 || entity instanceof Elevator;       // orig :151
     }
 
+    /**
+     * orig MyUtils.java:77-115 — the shared "attackable non-mob" grant list the general hunters fall
+     * through to after their own chains (Crab :417, Mantis :391, Molenoid :274, TheKing :981, TheQueen
+     * :929, WaterDragon :679; Hammerhead, SeaMonster, SeaViper and CaterKiller when their scans return —
+     * ledger T3a / T3b), in the original's order: EntityMob (:78), Mothra (:81), Leon (:84), Dragon (:87),
+     * Spyro (:90), the royalty (:93 — {@link #isRoyalty}, orig :46-75: ThePrince, ThePrinceTeen,
+     * ThePrinceAdult, ThePrincess, TheKing, KingHead, TheQueen, QueenHead, PurplePower), GammaMetroid
+     * (:96), Cephadrome (:99), WaterDragon (:102), Girlfriend (:105), Boyfriend (:108), EntityVillager
+     * (:111), Stinky (:114). The port classes: EntityMob → {@link Monster}, Leon → EntityLeon, Spyro →
+     * EntitySpyro, GammaMetroid → EntityGammaMetroid, EntityVillager → {@link Villager}, Stinky →
+     * EntityStinky; Mothra is an EntityButterfly here (an IMob EntityButterfly in 1.7.10, orig
+     * Mothra.java:52) and {@code instanceof Mothra} names her either way.
+     *
+     * <p>ENT-S-128: the port list had granted EnderDragon, Kraken, Godzilla, GodzillaHead, Basilisk,
+     * Cephadrome, TheKing and TheQueen. The Kraken, Godzilla, Basilisk, King and Queen were EntityMob in
+     * 1.7.10 and are Monsters here — still granted, through the {@code Monster} term; the GodzillaHead (an
+     * EntityLiving outside orig's list) and the EnderDragon (no orig counterpart in this helper) were
+     * port-only grants, removed; the eleven dropped members are restored. ENT-S-110's inline copy in
+     * EntityLeon carries the same membership.</p>
+     */
     public static boolean isAttackableNonMob(Entity entity) {
-        return entity instanceof EnderDragon
-                || entity instanceof Kraken
-                || entity instanceof Godzilla
-                || entity instanceof GodzillaHead
-                || entity instanceof Basilisk
-                || entity instanceof Cephadrome
-                || entity instanceof TheKing
-                || entity instanceof TheQueen;
+        return entity instanceof Monster                 // orig :78 EntityMob
+                || entity instanceof Mothra              // orig :81
+                || entity instanceof EntityLeon          // orig :84 Leon
+                || entity instanceof Dragon              // orig :87
+                || entity instanceof EntitySpyro         // orig :90 Spyro
+                || isRoyalty(entity)                     // orig :93
+                || entity instanceof EntityGammaMetroid  // orig :96 GammaMetroid
+                || entity instanceof Cephadrome          // orig :99
+                || entity instanceof WaterDragon         // orig :102
+                || entity instanceof Girlfriend          // orig :105
+                || entity instanceof Boyfriend           // orig :108
+                || entity instanceof Villager            // orig :111 EntityVillager
+                || entity instanceof EntityStinky;       // orig :114 Stinky
     }
 
     public static boolean isAlly(Entity entity) {

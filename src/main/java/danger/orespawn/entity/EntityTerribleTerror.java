@@ -149,27 +149,43 @@ public class EntityTerribleTerror extends Monster {
     }
 
     /**
-     * orig TerribleTerror.java:216-293 — anything alive and visible except its own kind,
-     * the listed OreSpawn species and creative players. ENT-S-109: the player branch's
-     * {@code capabilities.isCreativeMode} (orig :286-291) is {@code Abilities.instabuild}
-     * — the ENT-S-107 mapping — not {@code invulnerable}.
+     * orig TerribleTerror.java:216-293 — anything alive and visible except the spared kinds and creative
+     * players. The species chain (:229-285) in the original's order: RockBase (:229), TerribleTerror
+     * (:232), EnderReaper (:235), Mothra (:238), LurkingTerror (:241), CloudShark (:244), Rotator (:247),
+     * Bee (:250), Mantis (:253), LeafMonster (:256), CreepingHorror (:259), Triffid (:262), PitchBlack
+     * (:265), Dragon (:268), Island (:271), IslandToo (:274), EntityButterfly (:277), Firefly (:280), and a
+     * second Triffid step (:283, unreachable behind :262 — not repeated). ENT-S-128: the port list had
+     * dropped Mothra, LurkingTerror, Bee, Mantis, LeafMonster, Triffid, Dragon, EntityButterfly and
+     * Firefly — nine kinds hunted that 1.7.10 spared — restored here (the port Mothra is an
+     * EntityButterfly, refused by :238 and :277 alike). ENT-S-109: the player branch's
+     * {@code capabilities.isCreativeMode} (orig :286-291) is {@code Abilities.instabuild} — the ENT-S-107
+     * mapping — not {@code invulnerable}.
      */
     private boolean isSuitableTarget(LivingEntity target) {
         if (target == null || target == this || !target.isAlive()) return false;
         if (!this.getSensing().hasLineOfSight(target)) return false;
-        if (target instanceof EntityTerribleTerror) return false;
-        if (target instanceof RockBase) return false;
-        if (target instanceof EnderReaper) return false;
-        if (target instanceof CloudShark) return false;
-        if (target instanceof EntityRotator) return false;
-        if (target instanceof PitchBlack) return false;
-        if (target instanceof CreepingHorror) return false;
-        if (target instanceof Island) return false;
-        if (target instanceof IslandToo) return false;
+        if (target instanceof RockBase) return false;               // orig TerribleTerror.java:229-231
+        if (target instanceof EntityTerribleTerror) return false;   // orig :232-234 TerribleTerror
+        if (target instanceof EnderReaper) return false;            // orig :235-237
+        if (target instanceof Mothra) return false;                 // orig :238-240 (ENT-S-128)
+        if (target instanceof EntityLurkingTerror) return false;    // orig :241-243 LurkingTerror (ENT-S-128)
+        if (target instanceof CloudShark) return false;             // orig :244-246
+        if (target instanceof EntityRotator) return false;          // orig :247-249 Rotator
+        if (target instanceof EntityBee) return false;              // orig :250-252 Bee (ENT-S-128)
+        if (target instanceof EntityMantis) return false;           // orig :253-255 Mantis (ENT-S-128)
+        if (target instanceof EntityLeafMonster) return false;      // orig :256-258 LeafMonster (ENT-S-128)
+        if (target instanceof CreepingHorror) return false;         // orig :259-261
+        if (target instanceof EntityTriffid) return false;          // orig :262-264 Triffid (ENT-S-128; :283 repeats it)
+        if (target instanceof PitchBlack) return false;             // orig :265-267
+        if (target instanceof Dragon) return false;                 // orig :268-270 (ENT-S-128)
+        if (target instanceof Island) return false;                 // orig :271-273
+        if (target instanceof IslandToo) return false;              // orig :274-276
+        if (target instanceof EntityButterfly) return false;        // orig :277-279 (ENT-S-128)
+        if (target instanceof Firefly) return false;                // orig :280-282 (ENT-S-128)
         if (target instanceof Player player) {
             return !player.getAbilities().instabuild; // orig TerribleTerror.java:286-291 isCreativeMode (ENT-S-109)
         }
-        return true;
+        return true;                                                // orig :292
     }
 
     private LivingEntity findSomethingToAttack() {

@@ -36,8 +36,12 @@ import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.OwnerHurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.OwnerHurtTargetGoal;
 import net.minecraft.world.entity.ai.navigation.GroundPathNavigation;
+import net.minecraft.world.entity.monster.Creeper;
+import net.minecraft.world.entity.monster.EnderMan;
 import net.minecraft.world.entity.monster.Enemy;
+import net.minecraft.world.entity.monster.Ghast;
 import net.minecraft.world.entity.monster.RangedAttackMob;
+import net.minecraft.world.entity.monster.ZombifiedPiglin;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.food.FoodProperties;
@@ -212,7 +216,10 @@ public class Girlfriend extends TamableAnimal implements RangedAttackMob {
         // always and reads the flag live in its canUse, as the Jealousy goals below do — it never starts while
         // PlayNicely is on (ENT-S-115).
         // orig Girlfriend.java:167 IMob.mobSelector → Mob.class + instanceof Enemy; 10 / false are the 3-arg constructor's own randomInterval / mustReach (ENT-S-124, IMob convention)
-        this.targetSelector.addGoal(5, new NearestAttackableTargetGoal<>(this, Mob.class, 10, true, false, e -> e instanceof Enemy) {
+        // — and orig's Mothra by name: an IMob in 1.7.10 (orig Mothra.java:52), an EntityButterfly with no Enemy here; the task's own
+        // rules (orig MyEntityAITarget.java:88-128) follow in isMonsterPrey (ENT-S-128)
+        this.targetSelector.addGoal(5, new NearestAttackableTargetGoal<>(this, Mob.class, 10, true, false,
+                e -> (e instanceof Enemy || e instanceof Mothra) && this.isMonsterPrey(e)) {
             @Override
             public boolean canUse() {
                 if (OreSpawnConfig.PLAY_NICELY.get()) return false; // orig Girlfriend.java:166-168 (ENT-S-115)
@@ -227,6 +234,29 @@ public class Girlfriend extends TamableAnimal implements RangedAttackMob {
         // Boyfriend.java:120-127).
         this.targetSelector.addGoal(4, new danger.orespawn.entity.ai.JealousyTargetGoal<>(this, Girlfriend.class, 6.0, 5));
         this.targetSelector.addGoal(5, new danger.orespawn.entity.ai.JealousyTargetGoal<>(this, Girlfriend.class, 3.0, 15));
+    }
+
+    /**
+     * orig MyEntityAITarget.java:78-129 {@code isSuitableTarget}, the filter of the monster task registered at orig
+     * Girlfriend.java:167 (MyEntityAINearestAttackableTarget.java:56 lists {@code EntityLiving.class} through
+     * {@code IMob.mobSelector} — the goal's Mob + Enemy selector, ENT-S-124, with orig's IMob Mothra named beside it —
+     * then asks this per candidate), in the original's order: a tamed task owner takes no tamed pet (:88-91; its
+     * owner, :92-94, is refused by vanilla {@code TamableAnimal.canAttack} inside the goal's {@code TargetingConditions});
+     * a player only on Valentine's (:96-98 — no {@code Mob} candidate is a player, and the Valentine rule is MOD-036's
+     * {@code ValentineTargetGoal}); EntityPigZombie refused (:99-101); EntityEnderman refused (:102-104); Mothra taken
+     * granted by orig ahead of its sight step (:105-107 before :108 — here the goal's own line of sight, mustSee, still follows this predicate, so only a Mothra in sight is taken; deferred, ENT-S-128); EntityCreeper
+     * (:111-113) and EntityGhast (:114-116) taken ahead of the nearbyOnly path check (:117-127 — the goal's
+     * {@code mustReach}, false at this site); everything else taken (:128). The Ghast is still refused by the engine's
+     * {@code Mob.canAttackType} through the goal's conditions (the ENT-S-124 disclosure, ENT-S-127). ENT-S-128.
+     */
+    private boolean isMonsterPrey(LivingEntity candidate) {
+        if (this.isTame() && candidate instanceof TamableAnimal pet && pet.isTame()) return false; // orig MyEntityAITarget.java:88-91 (ENT-S-128)
+        if (candidate instanceof ZombifiedPiglin) return false; // orig MyEntityAITarget.java:99-101 EntityPigZombie (ENT-S-128)
+        if (candidate instanceof EnderMan) return false;        // orig MyEntityAITarget.java:102-104 EntityEnderman (ENT-S-128)
+        if (candidate instanceof Mothra) return true;           // orig MyEntityAITarget.java:105-107 — granted ahead of orig's sight step :108; the goal's own line of sight (mustSee, ENT-S-124) still follows this predicate, so only a Mothra in sight is taken (deferred, ENT-S-128)
+        if (candidate instanceof Creeper) return true;          // orig MyEntityAITarget.java:111-113 EntityCreeper (ENT-S-128)
+        if (candidate instanceof Ghast) return true;            // orig MyEntityAITarget.java:114-116 EntityGhast — the engine's Mob.canAttackType still refuses it (ENT-S-127) (ENT-S-128)
+        return true;                                            // orig MyEntityAITarget.java:128
     }
 
     /**

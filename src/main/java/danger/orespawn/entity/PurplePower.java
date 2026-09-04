@@ -17,6 +17,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
@@ -211,7 +212,8 @@ public class PurplePower extends Mob {
         if (target instanceof Player) {
             return type <= 0 || type == 10;
         }
-        return true;
+        if (type != 0 && type != 10 && target instanceof TamableAnimal pet && pet.isTame()) return false; // orig PurplePower.java:261-263 — every type but 0 / 10 spares a tamed pet (ENT-S-128)
+        return !MyUtils.isRoyalty(target); // orig PurplePower.java:264 — the royal family is never prey (ENT-S-128)
     }
 
     @Override
