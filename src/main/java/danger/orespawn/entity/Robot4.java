@@ -86,7 +86,28 @@ public class Robot4 extends Monster implements Robot4Pose {
         this.goalSelector.addGoal(1, new WaterAvoidingRandomStrollGoal(this, 1.0));
         this.goalSelector.addGoal(3, new LookAtPlayerGoal(this, Player.class, 8.0f));
         this.goalSelector.addGoal(4, new RandomLookAroundGoal(this));
-        this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
+        // orig Robot4.java:61 — EntityAIHurtByTarget(this, false): the revenge task the pass's 1-in-50 (:282-284) ended by nulling the
+        // attack target; vanilla's TargetGoal would re-assert its own memory into the emptied slot (ENT-S-131, the Robot2 shape of ENT-S-129)
+        this.revengeGoal = new RevengeGoal();
+        this.targetSelector.addGoal(1, this.revengeGoal);
+    }
+
+    /** orig Robot4.java:61 {@code EntityAIHurtByTarget(this, false)} — the revenge task the pass's 1-in-50 (:282-284) ended by nulling the attack target. ENT-S-131. */
+    private RevengeGoal revengeGoal;
+
+    /**
+     * 1.7.10's {@code EntityAIHurtByTarget} ended when the attack target was nulled ({@code EntityAITarget.continueExecuting});
+     * vanilla's {@code TargetGoal} re-asserts its own memory into an emptied slot, so the pass's release also drops that
+     * memory ({@link #release}). The hold itself stays vanilla's. ENT-S-131 (the Robot2 shape of ENT-S-129).
+     */
+    private final class RevengeGoal extends HurtByTargetGoal {
+        RevengeGoal() {
+            super(Robot4.this);
+        }
+
+        void release() {
+            this.targetMob = null;
+        }
     }
 
     public static AttributeSupplier.Builder createAttributes() {
@@ -172,7 +193,7 @@ public class Robot4 extends Monster implements Robot4Pose {
         // orig :280 — think-tick gated on reload done + a 1-in-8 roll.
         if (this.reloadTicker == 0 && this.getRandom().nextInt(8) == 1) {
             LivingEntity target = this.getTarget();
-            if (this.getRandom().nextInt(50) == 1) this.setTarget(null);
+            if (this.getRandom().nextInt(50) == 1) { this.setTarget(null); this.revengeGoal.release(); } // orig :282-284 — the task ended on the nulled target; vanilla's TargetGoal would re-assert its memory (ENT-S-131)
             if (target != null && !target.isAlive()) { this.setTarget(null); target = null; }
             if (target == null) target = findSomethingToAttack();
             if (target != null) {

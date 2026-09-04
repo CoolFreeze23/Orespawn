@@ -136,7 +136,28 @@ public class WaterDragon extends TamableAnimal {
         this.goalSelector.addGoal(6, new MyEntityAIWanderALot(this, 16, 1.0));
         this.goalSelector.addGoal(7, new LookAtPlayerGoal(this, Player.class, 8.0f));
         this.goalSelector.addGoal(8, new RandomLookAroundGoal(this));
-        this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
+        // orig WaterDragon.java:76 — EntityAIHurtByTarget(this, false): the revenge task the AI tick's 1-in-200 (:594-596) ended by
+        // nulling the attack target; vanilla's TargetGoal would re-assert its own memory into the emptied slot (ENT-S-131)
+        this.revengeGoal = new RevengeGoal();
+        this.targetSelector.addGoal(1, this.revengeGoal);
+    }
+
+    /** orig WaterDragon.java:76 {@code EntityAIHurtByTarget(this, false)} — the revenge task the AI tick's 1-in-200 (:594-596) ended by nulling the attack target. ENT-S-131. */
+    private RevengeGoal revengeGoal;
+
+    /**
+     * 1.7.10's {@code EntityAIHurtByTarget} ended when the attack target was nulled ({@code EntityAITarget.continueExecuting});
+     * vanilla's {@code TargetGoal} re-asserts its own memory into an emptied slot, so the tick's release also drops that
+     * memory ({@link #release}). The hold itself stays vanilla's. ENT-S-131 (the Robot2 shape of ENT-S-129).
+     */
+    private final class RevengeGoal extends HurtByTargetGoal {
+        RevengeGoal() {
+            super(WaterDragon.this);
+        }
+
+        void release() {
+            this.targetMob = null;
+        }
     }
 
     public static AttributeSupplier.Builder createAttributes() {
@@ -338,8 +359,15 @@ public class WaterDragon extends TamableAnimal {
             }
         }
 
-        // orig WaterDragon.java:594-596 — the 1-in-200 release of the stored target is the melee goal's
-        // forgetTargetRoll (DinosaurMeleeAttackGoal.Presets.waterDragon, rolled while engaged; ledger: MATCH).
+        // orig WaterDragon.java:594-596 — the 1-in-200 release of the attack target, rolled here every AI tick (`== 0`) ahead of
+        // the hunt pass, whatever the slot holds (orig read nothing before the roll); final through the revenge goal's release —
+        // 1.7.10's revenge task (:76) ended on the nulled target where vanilla's TargetGoal re-asserts its memory. It was the
+        // melee goal's forgetTargetRoll (Presets.waterDragon 200, rolled only while engaged and undone by that re-assert on a
+        // revenge occupant — ENT-S-131; the preset's forget is 0 now).
+        if (this.random.nextInt(200) == 0) {
+            this.setTarget(null);
+            this.revengeGoal.release();
+        }
         if (this.level().getDifficulty() != Difficulty.PEACEFUL && this.random.nextInt(5) == 1) { // orig :597 — the difficulty first, so the roll is not spent on Peaceful (ENT-S-114's term-order convention)
             this.selectTarget();                                                                  // orig :598-612 (ENT-S-117)
         }
@@ -429,7 +457,7 @@ public class WaterDragon extends TamableAnimal {
 
     /**
      * A change of occupant by any other path — {@link #hurt} (orig :490), the revenge goal's start or stop, the
-     * melee goal's 1-in-200 release — ends the hunt's ownership of the slot; {@link #selectTarget} marks its own
+     * AI tick's 1-in-200 release (orig :594-596, ENT-S-131) — ends the hunt's ownership of the slot; {@link #selectTarget} marks its own
      * set right after. A re-assert of the occupant already there keeps it: {@code TargetGoal.canContinueToUse}
      * re-sets the mob's CURRENT target on every pass while {@code HurtByTargetGoal} runs, and that re-assert would
      * otherwise turn the hunt's own pick — placed on the pass that dropped a dead revenge target — into a sticky

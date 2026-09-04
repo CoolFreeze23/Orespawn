@@ -58,6 +58,14 @@ import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
  * Dragon's pinned 16, the Leon's 40, the Princes' 64 / 32, the Boyfriend's / Girlfriend's default 16), line of sight
  * asserted. The flag restored in a finally on every path; every spawn discarded there; no mock players. Own batch
  * (TEST-003).</p>
+ *
+ * <p>ENT-S-127 (the {@code s127_NN_<species>_creeper} rows, T5b): 1.7.10's {@code EntityAITarget.isSuitableTarget} asked
+ * {@code EntityLiving.canAttackClass} — {@code cls != EntityCreeper.class && cls != EntityGhast.class}, the only body in the
+ * 1.7.10 jar — of every candidate ahead of the task's selector, so the four vanilla tasks (Dragon, Leon, both Princes) never
+ * took a Creeper; the port's four goals read {@code OrigTargets.vanillaTaskPrey} (Enemy less the Creeper) and these rows ask
+ * each of them {@code canUse()} with a Creeper 8 blocks off — refused — beside the Zombie row above that takes (the control).
+ * The Boyfriend / Girlfriend goals carry no such row: orig {@code MyEntityAITarget.isSuitableTarget} never called
+ * {@code canAttackClass} and granted the Creeper explicitly (MyEntityAITarget.java:111).</p>
  */
 @GameTestHolder(OreSpawnMod.MOD_ID)
 @PrefixGameTestTemplate(false)
@@ -69,6 +77,7 @@ public class IMobConventionTests {
     private static final String EMPTY_LARGE = OreSpawnMod.MOD_ID + ":empty_large";
     private static final int TIMEOUT_TICKS = 100;
     private static final String FINDING = "ENT-S-124";
+    private static final String FINDING_CREEPER = "ENT-S-127";
 
     /** The hunter on the template floor. */
     private static final BlockPos HUNTER_POS = new BlockPos(20, 1, 24);
@@ -94,7 +103,10 @@ public class IMobConventionTests {
         ZOMBIE("zombie", () -> EntityType.ZOMBIE, true,
                 "a Zombie 8 blocks off — an EntityMob, IMob in 1.7.10, a Monster and an Enemy here"),
         PIG("pig", () -> EntityType.PIG, false,
-                "a pig 8 blocks off — never IMob, no Enemy");
+                "a pig 8 blocks off — never IMob, no Enemy"),
+        CREEPER("creeper", () -> EntityType.CREEPER, true,
+                "a Creeper 8 blocks off — an EntityMob and IMob in 1.7.10, refused by EntityLiving.canAttackClass for every vanilla"
+                        + " target task; a Monster and an Enemy here, refused by OrigTargets.vanillaTaskPrey (ENT-S-127)");
 
         final String tag;
         final Supplier<EntityType<? extends Mob>> type;
@@ -112,9 +124,9 @@ public class IMobConventionTests {
     /** What a row drives: the prey taken, refused, taken then refused under PlayNicely, or the Leon's tame rule. */
     private enum Kind { TAKEN, REFUSED, PLAY_NICELY, LEON_TAME_RULE }
 
-    private record Row(int index, Hunter hunter, Prey prey, Kind kind, String tag) {
+    private record Row(String series, String finding, int index, Hunter hunter, Prey prey, Kind kind, String tag) {
         String testName() {
-            return TEST_PREFIX + String.format("s124_%02d_%s_%s", this.index, this.hunter.species(), this.tag);
+            return TEST_PREFIX + String.format("%s_%02d_%s_%s", this.series, this.index, this.hunter.species(), this.tag);
         }
 
         String where() {
@@ -148,18 +160,27 @@ public class IMobConventionTests {
         List<Row> rows = new ArrayList<>();
         int n = 0;
         for (Hunter hunter : hunters()) {
-            rows.add(new Row(++n, hunter, Prey.SLIME, Kind.TAKEN, Prey.SLIME.tag));
-            rows.add(new Row(++n, hunter, Prey.ZOMBIE, Kind.TAKEN, Prey.ZOMBIE.tag));
-            rows.add(new Row(++n, hunter, Prey.PIG, Kind.REFUSED, Prey.PIG.tag));
-            rows.add(new Row(++n, hunter, Prey.SLIME, Kind.PLAY_NICELY, "slime_playnicely"));
+            rows.add(new Row("s124", FINDING, ++n, hunter, Prey.SLIME, Kind.TAKEN, Prey.SLIME.tag));
+            rows.add(new Row("s124", FINDING, ++n, hunter, Prey.ZOMBIE, Kind.TAKEN, Prey.ZOMBIE.tag));
+            rows.add(new Row("s124", FINDING, ++n, hunter, Prey.PIG, Kind.REFUSED, Prey.PIG.tag));
+            rows.add(new Row("s124", FINDING, ++n, hunter, Prey.SLIME, Kind.PLAY_NICELY, "slime_playnicely"));
             if (hunter.species().equals("leon")) {
-                rows.add(new Row(++n, hunter, Prey.SLIME, Kind.LEON_TAME_RULE, "slime_tame_rule"));
+                rows.add(new Row("s124", FINDING, ++n, hunter, Prey.SLIME, Kind.LEON_TAME_RULE, "slime_tame_rule"));
             }
+        }
+        // ENT-S-127 — the Creeper 1.7.10's EntityLiving.canAttackClass refused for every vanilla target task, refused by
+        // OrigTargets.vanillaTaskPrey at the four sites that map one (orig Dragon.java:116, Leon.java:93,
+        // ThePrinceAdult.java:113, ThePrinceTeen.java:117), each beside its Zombie control above; not the Boyfriend /
+        // Girlfriend, whose orig MyEntityAITarget.isSuitableTarget granted the Creeper explicitly (:111)
+        int m = 0;
+        for (Hunter hunter : hunters()) {
+            if (hunter.species().equals("boyfriend") || hunter.species().equals("girlfriend")) continue;
+            rows.add(new Row("s127", FINDING_CREEPER, ++m, hunter, Prey.CREEPER, Kind.REFUSED, Prey.CREEPER.tag));
         }
         return rows;
     }
 
-    /** One test per row: 25 TestFunctions in the {@code imobConvention} batch. */
+    /** One test per row: 29 TestFunctions in the {@code imobConvention} batch (25 of ENT-S-124, 4 of ENT-S-127). */
     @GameTestGenerator
     public Collection<TestFunction> imobConventionRows() {
         List<TestFunction> functions = new ArrayList<>();
@@ -235,14 +256,14 @@ public class IMobConventionTests {
         boolean can = goal.canUse();
         Object pick = readField(goal, NearestAttackableTargetGoal.class, "target");
         helper.assertTrue(can && pick == prey, row.where() + when + ": " + row.prey().description
-                + " must be taken — orig's IMob.mobSelector took it, so the port's Enemy selector must (" + FINDING + "); canUse="
+                + " must be taken — orig's IMob.mobSelector took it, so the port's Enemy selector must (" + row.finding() + "); canUse="
                 + can + ", pick " + describe((Entity) pick));
     }
 
     private static void assertRefused(GameTestHelper helper, Row row, NearestAttackableTargetGoal<?> goal, Mob prey, String when) {
         boolean can = goal.canUse();
         Object pick = readField(goal, NearestAttackableTargetGoal.class, "target");
-        helper.assertTrue(!can, row.where() + when + ": " + row.prey().description + " must be refused (" + FINDING
+        helper.assertTrue(!can, row.where() + when + ": " + row.prey().description + " must be refused (" + row.finding()
                 + "); canUse=" + can + ", pick " + describe((Entity) pick));
     }
 
