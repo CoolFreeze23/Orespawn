@@ -1,6 +1,7 @@
 package danger.orespawn.entity;
 
 import danger.orespawn.MobStats;
+import danger.orespawn.util.OreSpawnSight;
 import danger.orespawn.OreSpawnConfig;
 
 import net.minecraft.core.particles.ParticleTypes;
@@ -79,7 +80,7 @@ public class EnderReaper extends Monster {
                 this.getZ() - player.getZ()); // orig :89 — bb minY + height/2 vs player eye
         double dist = toReaper.length(); // orig :90
         double dot = look.dot(toReaper.normalize()); // orig :91
-        return dot > 1.0 - 0.025 / dist && player.hasLineOfSight(this); // orig :92
+        return dot > 1.0 - 0.025 / dist && OreSpawnSight.canSee(player, this); // orig :92 — player.canEntityBeSeen(this): the PLAYER's ray under the 1.7.10 convention, routed by hand because the receiver-gated mixin cannot reach a player receiver (ENT-S-121, refuter B)
     }
 
     public static AttributeSupplier.Builder createAttributes() {
