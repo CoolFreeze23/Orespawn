@@ -541,7 +541,14 @@ public class StructureTestsC {
         // spawn lands in TRACKED (queryable) sections. All asserts keep
         // their original same-tick-after-build semantics.
         ServerChunkCache chunkSource = level.getChunkSource();
-        ChunkPos ticketPos = new ChunkPos(p.offset(8, 0, 8));
+        // Ticket centred on the chunk of the cell the wait below checks (p+10,+10): a FORCED
+        // ticket of radius 2 is ENTITY_TICKING (level 31) only at its own chunk, the ring is
+        // BLOCK_TICKING (32). Centred at p+8 the checked chunk sat one chunk further along x
+        // whenever p.x mod 16 was 6 or 7, so the wait could pass only by a neighbour's tickets
+        // (both red layouts of 2026-09-04 had exactly that alignment; i164 already centres on
+        // its checked cell). Owner-approved harness fix, 2026-09-04; the checked cell, the
+        // asserts and the timeout are unchanged.
+        ChunkPos ticketPos = new ChunkPos(p.offset(10, 0, 10));
         chunkSource.addRegionTicket(TicketType.FORCED, ticketPos, 2, ticketPos);
         ChunkPos minC = new ChunkPos(p);
         ChunkPos maxC = new ChunkPos(p.offset(15, 0, 15));
