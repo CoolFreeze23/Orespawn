@@ -108,6 +108,18 @@ that slice, not a task for now.
     touched — over twenty files gets two refuters regardless of the ledger's S/M/L label**; the wave-1 T1
     commit message (53 pins where the records say 56) stands, no amend; wave 2 starts with T3a and T2, the
     T9 split presented alongside (`phase_g_reports/targeting_t9_split_2026-09-04.md`).
+21. **After wave 2's first half (owner, 2026-09-04, sixth batch):** (1) **IMob convention: `Mob` + `Enemy`,
+    port-wide, wherever 1.7.10 tested IMob** — the Dragon's channel updated accordingly; (2) **target ownership:
+    one convention for all hunters, chosen in T5 by which variant matches 1.7.10 in the measured cases**, the
+    evidence presented with T5; (3) **T9 applied:** documented reason → MOD record behind modern, undocumented →
+    removed from classic; the Girlfriend's safety gates stay in both modes as a recorded, deliberate parity
+    exception; Phase 4E's six count as documented only if that phase's notes state intent; any removal that
+    breaks a mob or makes it unsafe is flagged, not applied; (4) **harness slice: the ranked fixes that are pure
+    isolation are applied** — flag restoration in a finally, batch separation, spacing — no widened waits, no
+    retries, a before/after per fix in the record; (5) ENT-S-119 and ENT-S-123 join the T5/T6 wave; **ENT-S-120
+    and ENT-S-121: the 1.7.10 convention adopted port-wide, not per site**; **ENT-S-122: reproduced if it has a
+    player-visible signature, otherwise recorded as deliberately not reproduced with the rationale**; (6) next:
+    T5 and T6.
 
 ## D. Rulings executed the same day (for cross-reference)
 

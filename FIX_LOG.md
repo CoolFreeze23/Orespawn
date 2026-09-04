@@ -5084,7 +5084,7 @@ first (orig Stinky.java:583).
 `EntityGammaMetroid.customServerAiStep` (:130-136): the Gamma Metroid's stone-eat gains the same term between the
 1-in-20 / 1-in-100 roll pair and the sitting test (orig GammaMetroid.java:435). Classic transcription, polarity
 `PlayNicely == 0` ↔ `!PLAY_NICELY.get()`, nothing else changed; both files already imported OreSpawnConfig. New
-`PlayNicelyGriefingGateTests` (own batch `playNicelyGriefingGates`): `s116_stinky_583_flower_eat` and
+`PlayNicelyGriefingGateTests` (own batch `playNicelyGriefingGates`): `s116_stinky_583_coal_ore_eat (renamed with ENT-S-119)` and
 `s116_gammametroid_435_stone_eat` — the block eaten and the +1 heal with the flag off, neither with it on, the
 flag (and the Metroid test's `mobGriefing`) restored in a finally. javac rc 0; the gradle gate is the
 orchestrator's.
@@ -5134,3 +5134,71 @@ observations filed as ENT-S-121..123).
 T3a: two refuters (files touched under twenty, label L) — A (transcription fidelity) upheld with one records correction (orig Mothra implements IMob, so the Dragon's Monster channel no longer holds her) and five notes (GodzillaHead a port-only grant, the Luna Moth observation's home, the Water Dragon's act cadence, the butterfly goal's inherited canUse gate, the eye-level posY convention filed as ENT-S-120); B (slot semantics, goal mappings, tests) found one blocking defect, fixed (the Water Dragon's ownership mark cleared on a hit the hurt timer swallowed, making a player pick sticky; the clear now requires the store, a swallowed-hit pin added) and seven gaps recorded. T2: one refuter, upheld — no code defect, two record corrections, three observations filed (ENT-S-121..123).
 
 GATE (wave2): gate wave2b green: build legs (asset audit 0 errors, G1 PARITY 2 + 11 models, referenceGeometry, referenceRenderers, queenPartPlacementProbe) and runGameTestServer 'All N required tests passed' (585 + 2 PlayNicelyGriefingGateTests + 51 ProactiveHuntParityTests + 23 SightStepParityTests = 661). Earlier run wave2a: red only on the ENT-S-116 Stinky pin's precondition (the framework's relativePos mirrors both axes under Rotation.NONE; the test now derives the relative position from absolutePos(ZERO)); the i165 harness fix rode along green.
+
+## CONVENTIONS AND HARNESS (2026-09-04) — the IMob convention, the Stinky's idle routine and flight ray, the default-batch isolation fixes
+
+TEST-004 (2026-09-04, owner: "apply the ranked fixes that are pure isolation — flag restoration in finally, batch
+separation, spacing. No widened waits, no retries. Before/after per fix in the record") — the harness slice's
+isolation fixes, gametest sources only: `leaf_monster_prey_allowlist_play_nicely` moved to its own batch
+(`playNicelyWindow`, the boss017 precedent) and its `PLAY_NICELY` prior restored on every exit path (it held the global
+flag true for a 150-tick window in `defaultBatch:0` with no restore on failure — the hypothesised cause of i050's zero
+pull); the tempt players of `boyfriend_tempt_panic_door` and `leon_ducky_tame_untame_tempt` removed from the player list
+exactly once on every exit (a timeout left a creative mock in the list for the rest of the run); `big_bertha`'s
+`BIG_BERTHA_PVP` prior restored on every exit and `checkVeinRatio`'s `LESS_ORE` restored in a finally (the caller
+already had one; the helper was the unsafe unit). The exit hook is a `GameTestListener` on the test's own
+`GameTestInfo`, which the framework fires on succeed, fail, throw and timeout (1.21.1 has no `addCleanup`). i050's
+messages now print the flag and the game time (diagnostic only; the flag is not pinned inside i050). Order-model
+consequence recorded: removing a default-batch method shifts the later tests by one — `chipmunk_apple_tame_dead_bush_release`
+crosses 50→49 and `i138_inca_pyramid_content` 100→99 — and the new batch iterates before the default batch, so the grid
+cells after the old slot are unchanged. F1 (the i127 assertion rework) and F5 (a `buildNow` RandomSource seam, main
+code) are not pure isolation and stay presented. Refuted once, upheld: the exit hook fires exactly once on every terminal path (GameTestInfo.tick notifies its
+listeners in the finishing tick; `testInfo` is public final), no wait, retry or assertion changed, the order model
+re-run identically; seven non-blocking notes, three applied (the hook registered right after the mock player
+joins, the hand-off flag set before the removal, a javadoc sentence on listener order), the rest recorded: a
+throwing restore would abort the ticker loop (kept loud on purpose), the tempt player stays a CREATIVE list
+member for its own tempt phase by design, F5 stays open.
+
+IMob convention → ENT-S-124 (IMob mapped to Monster at six sites, S, ruled 2026-09-04): 1.7.10's `IMob` was an
+interface (every EntityMob plus Slime / MagmaCube / Ghast / EnderDragon and orig's Mothra) and the six target tasks
+that filtered on `IMob.mobSelector` over `EntityLiving.class` lists — the Dragon's channel (a) (ENT-S-117), Leon, the
+two Princes, the Boyfriend and the Girlfriend — had been ported as `NearestAttackableTargetGoal<Monster>`, dropping
+every hostile that is no Monster subclass; each is now `NearestAttackableTargetGoal<>(this, Mob.class, <interval as
+before>, <mustSee as before>, <mustReach as before>, e -> e instanceof Enemy [&& the site's own predicate])`, the
+ENT-S-115 live `canUse` gates and the Dragon's `getFollowDistance() → 16` untouched (the four 3-arg sites spelled out
+as the constructor's own `10, mustSee, false`). The remaining orig IMob tests are identities (the Boyfriend's /
+Girlfriend's Creeper-class tasks, ENT-A-054; `MyEntityAIAvoidEntity` on EntityMob lists) and stand. Disclosed: the Ghast
+is refused by vanilla `Mob.canAttackType` (not special-cased); orig's Mothra is still no prey of the six (the port
+Mothra has no `Enemy`, the ENT-S-117 disclosure stands); the Boyfriend / Girlfriend helper residuals and the T3c box /
+cadence widening stay with the ledger. `IMobConventionTests` (own batch, 25 generated); the five PlayNicelyGate rows
+and the five ProactiveHunt Dragon rows read `Mob.class`, the Dragon shape row asserts the Enemy selector. javac green;
+the gametest run is the gate's. Not yet refuted. Refuted once, upheld: all six hunks the ruled form with HEAD's interval / mustSee / mustReach, the sweep exhaustive
+(18 IMob tokens in orig: 8 imports, Mothra's identity, 3 identity uses, the 6 sites), the tests discriminating;
+three records amendments applied (the Creeper clause of 1.7.10's `canAttackClass`, filed as ENT-S-127; the
+1.21.1 Enemy hierarchy wording; the Boyfriend / Girlfriend untamed-or-sitting gate of orig
+MyEntityAINearestAttackableTarget.java:44-52 absent on the port goal — a T3c residual, noted on the ledger row)
+and four nits recorded.
+
+ENT-S-119 / ENT-S-123 (2026-09-04, the T5/T6 wave; owner: "ENT-S-119 and 123 join the T5/T6 wave"): the flying Stinky's
+1.7.10 idle tick restored in `EntityStinky.java` — the coal-ore hunt of orig Stinky.java:435-496 / :584-604 transcribed as
+`scanIt` / `isCoalOre` / `eatCoalOre` (six-face shells 1, 2, 3, 4, 6, 8 around `((int) x, (int) y + 1, (int) z)`, the
+nearest by squared distance from that origin, navigated to at 1.25, eaten under distSq 12 with the heal of 1.0 and
+`PLAYER_BURP` at 0.5 / `nextFloat * 0.2 + 1.5`), replacing the port's `eatFlowers`; the ENT-S-116 gate line moved inside the
+not-sitting block after `doMovement()` (orig :511 → :582-583); `doMovement` now runs for every activity — the 1-in-300
+retarget roll guarded by activity 2 (orig :552), the 1-in-7 idle attack pass (orig :568-581) reached in activity 1, the
+activity-1 return placed after it (orig :582-607); the fields `closest`, `tx`, `ty`, `tz` (orig :54-57). And the
+flight-target ray of orig Stinky.java:640 / Spyro.java:647 — `&& canSeeTarget(newTarget.getX(), getY(), getZ())` on the
+`isAir()` acceptance in `EntityStinky.doMovement` and `EntitySpyro.doMovement`. Pinned by the new `StinkyIdleParityTests`
+(own batch `stinkyIdleParity`, 19 generated rows: the shell faces and the shell sequence, nearest-wins, the eat radius,
+the heal, the burp through the PlayLevelSoundEvent seam, a flower ignored, nothing while sitting, the idle pass firing /
+under PEACEFUL / missed with the bound order, the flight ray behind a one-block wall for both flyers) and by
+`PlayNicelyGriefingGateTests`' Stinky row re-pointed at a coal ore (`s116_stinky_583_coal_ore_eat`). javac rc 0. Refuted once, upheld: `scanIt` a probe-for-probe transcription, the shell sequence 1, 2, 3, 4, 6, 8 traced, the
+eat block, the gate's position and term order, the idle pass and the roll ledger exact in every state, the two flight
+rays exact; one pin added from its test gap (the eat radius measured from the scan origin: coal at origin + (3, 1, 1),
+distSq 11 from the origin and 14 from the Stinky's block — 19 pins); noted for the owner: `isCoalOre` accepts
+`COAL_ORE` only under the port's one-block mapping, so a deep-cave Stinky never finds deepslate coal where 1.7.10's
+single ore was everywhere (a `BlockTags.COAL_ORES` ruling); the flight-target rows 17/18 discriminate through the
+port's write-after-test order, filed as ENT-S-126 with the boxed-in retarget cost; helper cites corrected.
+
+REFUTERS: TEST-004: one refuter, upheld (the exit hook fires once on every terminal path; three ordering notes applied). ENT-S-124: one refuter, upheld (three records amendments; the Creeper clause of 1.7.10's canAttackClass filed as ENT-S-127). ENT-S-119 / 123: one refuter, upheld (one pin added for the eat radius base; deepslate coal noted for a mapping ruling; the flight-target retarget order filed as ENT-S-126).
+
+GATE: gate phase1a green: build legs (asset audit 0 errors, G1 PARITY 2 + 11 models, referenceGeometry, referenceRenderers, queenPartPlacementProbe) and runGameTestServer 'All 705 required tests passed' (661 + 25 IMobConventionTests + 19 StinkyIdleParityTests; leaf_monster now in its own batch).

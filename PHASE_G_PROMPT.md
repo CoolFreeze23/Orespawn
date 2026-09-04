@@ -597,6 +597,11 @@ root-order slice with the GeckoLib per-entity cache eviction, then Slice 4c). Th
   S/M/L label (owner, after wave 1). Flaky default-batch tests are never fixed by retries or widened
   waits: a harness slice finds root causes and isolates tests (mock-player placement, cross-test
   leakage, TEST-003 order sensitivity), findings presented before changes.
+- Engine conventions (owner, after wave 2's first half): wherever 1.7.10 tested IMob the port tests `Mob` +
+  `Enemy`, port-wide; engine-convention divergences (1.7.10's eye-level player posY, its selection-bounds
+  line-of-sight ray) are adopted port-wide through one helper, never per site; an engine quirk without a
+  player-visible signature is recorded as deliberately not reproduced, with rationale. Harness slice: only pure
+  isolation fixes (finally restoration, batch separation, spacing) are applied without a further ruling.
 - Before any Tier-2 slice: the spawn-100 benchmark, classic versus candidate, with a proposed
   regression threshold; its baseline also measures MHLib's bone capture per frame and sync per tick
   and on the wire. Proof rule: geometry-only changes take one refuter; motion transcriptions,

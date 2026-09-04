@@ -7407,7 +7407,7 @@ keeps BUG-036. Commit 4ea395c's message retains the old number.)*
   port's `customServerAiStep` driven once by reflection under pinned `Entity.random` (the VortexParityTests
   ForcedRoll seam) and required to show the griefing effect itself, the effect undone, the flag set true, the
   same drive required to show nothing of it, the prior value restored in a finally, the hunter frozen (no goals,
-  noAi, persistent) and discarded there: `s116_stinky_583_flower_eat` (activity 1 through the setter; rolls
+  noAi, persistent) and discarded there: `s116_stinky_583_coal_ore_eat (renamed from s116_stinky_583_flower_eat when ENT-S-119 replaced the routine)` (activity 1 through the setter; rolls
   200→0, 100→0, 50→0; a dandelion one block east at the feet level, distSq 1 of the Stinky's block — eaten to air
   and the Stinky healed 90→91 with the flag off, standing and 90 with it on) and `s116_gammametroid_435_stone_eat`
   (rolls 5→1, 20→0 with the health 10 below max, 100→1; `mobGriefing` set on for the test and restored; a stone
@@ -7648,7 +7648,7 @@ keeps BUG-036. Commit 4ea395c's message retains the old number.)*
   through `clipPoint`'s strict `<`, so the `getY() == floorY` precondition must stay exact; the `Fluid.NONE` leg has
   no pin.
 
-### ENT-S-119 — The Stinky's idle block-eat is not the 1.7.10 routine: the port eats flowers on a one-sided slab where orig hunted coal ore over six-face shells, without the burp, while sitting, and without the idle attack pass (REPORT, 2026-09-04; found by the ENT-S-116 refuter)
+### ENT-S-119 — The Stinky's idle block-eat is not the 1.7.10 routine: the port eats flowers on a one-sided slab where orig hunted coal ore over six-face shells, without the burp, while sitting, and without the idle attack pass (found by the ENT-S-116 refuter; FIXED 2026-09-04)
 
 - **Evidence:** the ENT-S-116 refuter, checking the flower-eat gate, read the routine behind it. Orig Stinky.java:582-607
   (inside `do_movement`, reached only through :511 `if (!isSitting()) do_movement()` at :534): on the 1-in-50 roll
@@ -7673,13 +7673,54 @@ keeps BUG-036. Commit 4ea395c's message retains the old number.)*
   it, never burps for it, keeps eating while told to sit, and does not pick fights while idling as 1.7.10's did.
   ENT-S-116's gate is transcribed correctly on top of this routine (its pin follows the port's routine and fails
   loudly when the routine changes). No MOD record covers any of it.
-- **Resolution:** REPORT — for the owner's ruling: a parity bug in classic by the standing rule (fix = transcribe
-  `scan_it` and the eat block — coal ore, the six-face shells 1/2/3/4/6/8 nearest by distSq from the scan origin, the
-  eat radius from that origin, the burp — move the call inside the not-sitting block, and restore the 1-in-7 idle
-  attack pass in `doMovement` ahead of the activity-1 branch, orig roll order; pins in the ENT-S-116 shape: coal ore
-  eaten and the burp played with the flag off, a flower ignored, nothing while sitting, the idle attack pass under a
-  pinned 1-in-7), or a MOD record if the flower-eat was an intended rewrite (none is documented). Not part of the
-  targeting waves.
+- **Resolution:** FIXED (2026-09-04, owner: "ENT-S-119 and 123 join the T5/T6 wave" — a parity bug in classic). The
+  1.7.10 routine transcribed into `EntityStinky.java`: the fields `closest`, `tx`, `ty`, `tz` (orig Stinky.java:54-57 →
+  :81-85); `scanIt` (orig :435-496 → :329-394, with `isCoalOre` :396-398 — `is(Blocks.COAL_ORE)`, the BeehiveFeature.java:38-39
+  mapping of `field_150365_q`) probing the six faces of the (dx, dy, dz) shell in orig's order (+x :443, −x :451, +y :461,
+  −y :469, +z :479, −z :487), each hit nearer than `closest` by squared distance from the scan origin taking it;
+  `eatCoalOre` (orig :584-604 → :295-327) — `closest` reset to 99999, the shells i = 1, 2, 3, 4, 6, 8 around
+  `((int) x, (int) y + 1, (int) z)` (the `if (i < 4) continue; ++i` skip of :594-595 kept verbatim, `j = min(i, 2)`), the
+  first shell that finds anything breaking, `getNavigation().moveTo(tx, ty, tz, 1.25)` (:598), and under `closest < 12`
+  (:599, from the ORIGIN) the block set to air with flag 2 (:600), `heal(1.0f)` (:601) and `PLAYER_BURP` at 0.5 / pitch
+  `nextFloat * 0.2 + 1.5` (:602, the EntityGammaMetroid.scanForStone idiom) — `eatFlowers` (HEAD :290-308) removed. The
+  ENT-S-116 gate line (activity → roll → flag) now sits inside the `!isOrderedToSit()` block after `doMovement()`
+  (:286-291 — orig :511 reaches :582-583 only through `!isSitting()`), read after the pass so a flip to activity 2 skips
+  the eat roll as orig :582 does. `doMovement` runs for every activity: the 1-in-300 retarget roll guarded by
+  `activity == 2` (orig :552 → :411-412), the existing 1-in-7 idle attack pass (orig :568-581 → :422-442: the roll, then
+  `!= PEACEFUL`, then `findSomethingToAttack`; activity 2, the flight target on the prey, the bite inside (3 + w/2)²) now
+  reached ahead of the activity-1 return (:444-445), which replaces HEAD's early return at :314. Roll ledger per idle
+  tick after: activity 1 — 200, 100, 100 (+20), 7, 50; activity 2 — 200, 100, 100 (+20), 300, 7, then the pick rolls —
+  orig's order and bounds, of the entity random (ENT-S-093). Pinned by `StinkyIdleParityTests` (own batch
+  `stinkyIdleParity`, TEST-003), a generator over 19 rows in the ENT-S-116 shape — the Stinky frozen at rel (20,1,24)
+  of the 48x16x48 empty_large, 10 below max health, `closest` pre-set to a sentinel, its navigation swapped by
+  reflection for a recording `GroundPathNavigation` (a never-grounded frozen mob refuses every real path), the port's
+  `customServerAiStep` driven once by reflection under `ForcedRoll` pins beneath a `RollLog` that records the bound
+  order, a `PlayLevelSoundEvent.AtPosition` listener on `NeoForge.EVENT_BUS` (the StructureTestsC seam; javap:
+  `ServerLevel.playSeededSound` fires `EventHooks.onPlaySoundAtPosition` ahead of the broadcast) hearing the burp,
+  `PLAY_NICELY` false for the drive and restored, blocks razed and spawns discarded in the finally: rows 01-05 coal ore on
+  shell 1's +x and −y faces, shell 2's +z and +y faces, shell 3's −x face — found (closest 1 / 1 / 4 / 4 / 9), walked to
+  at 1.25, eaten to air, healed 90→91, one burp at 0.5 / 1.5..1.7, the bounds [200, 100, 100, 7, 50]; 06 shell 4 (+x,
+  distSq 16) found and walked to but standing, no heal, no burp; 07 / 09 a block on shell 5 / shell 7 only — never
+  scanned (closest 99999, no walk); 08 / 10 shell 6 (−z, 36) and shell 8 (+x, 64) found and walked to, standing; 11 two
+  coal ores on shell 2's +x face, the farther (distSq 9) scanned first and the nearer (4) taken and eaten, the farther
+  standing; 12 a dandelion at the old port's site ignored (closest 99999, standing, no heal, no burp); 13 a sitting
+  Stinky with coal ore in reach — the eat never runs (the sentinel untouched, the block standing, the bounds [200, 100]);
+  14 the 1-in-7 pinned to fire with a frozen Zombie 3 east (a Monster — orig :668's EntityMob; a pig is never taken):
+  activity 2 (field and synched), the flight target on the Zombie's block one up, the Zombie bitten, the bounds [200,
+  100, 100, 7] (no eat roll after the flip); 15 the same under PEACEFUL (`MinecraftServer.setDifficulty`, restored):
+  the roll spent, no scan — activity 1, target and Zombie untouched, the bounds [200, 100, 100, 7, 50]; 16 the roll
+  missed: the same quiet outcome. Every row fails with its port line reverted (the old `eatFlowers` eats none of the
+  coal and eats the dandelion; the early return drops the 7 from the bound order; the call outside the sitting block
+  eats while sitting). `PlayNicelyGriefingGateTests`' Stinky row follows the routine — `s116_stinky_583_coal_ore_eat`
+  (`StinkyCoalOreProbe`: a COAL_ORE one east of the scan origin, rolls 200→0, 100→0, 7→0, 50→0, eaten and healed with
+  the flag off, standing with it on); the Metroid row untouched. javac rc 0 on the four files (no gradle in this lane).
+  Refuted once, upheld: `scanIt` a probe-for-probe transcription, the shell sequence 1, 2, 3, 4, 6, 8 traced, the
+  eat block, the gate's position and term order, the idle pass and the roll ledger exact in every state, the two flight
+  rays exact; one pin added from its test gap (the eat radius measured from the scan origin: coal at origin + (3, 1, 1),
+  distSq 11 from the origin and 14 from the Stinky's block — 19 pins); noted for the owner: `isCoalOre` accepts
+  `COAL_ORE` only under the port's one-block mapping, so a deep-cave Stinky never finds deepslate coal where 1.7.10's
+  single ore was everywhere (a `BlockTags.COAL_ORES` ruling); the flight-target rows 17/18 discriminate through the
+  port's write-after-test order, filed as ENT-S-126 with the boxed-in retarget cost; helper cites corrected.
 
 ### ENT-S-120 — Engine convention without a ruling: a 1.7.10 player's `posY` was its eye level (yOffset 1.62), so every orig distance or height comparison against a player measured from the eyes where the port's `getY()` / `distanceToSqr` measures from the feet (REPORT, 2026-09-04; raised by the ENT-S-117 refuter A)
 
@@ -7723,7 +7764,7 @@ keeps BUG-036. Commit 4ea395c's message retains the old number.)*
   classic to `OUTLINE` / `Fluid.NONE` with a short-grass pin each (the ENT-S-118 shape), unless (a) rules the other way
   for both. Not part of the targeting waves' rows.
 
-### ENT-S-122 — Sight-cache clear gating: 1.7.10 cleared `EntitySenses` only through `super.updateAITasks()`, which five hunters skip in some states, so their `canSee` verdicts froze there while the port's `Sensing` clears every tick (REPORT, 2026-09-04; raised by the ENT-S-118 refuter)
+### ENT-S-122 — Sight-cache clear gating: 1.7.10 cleared `EntitySenses` only through `super.updateAITasks()`, which five hunters skip in some states, so their `canSee` verdicts froze there while the port's `Sensing` clears every tick (RULED 2026-09-04: reproduced for two hunters, deliberately not reproduced for three; the reproduction rides with the T5/T6 wave)
 
 - **Evidence:** 1.7.10 cleared the `EntitySenses` cache in exactly one place, `EntityLiving.updateAITasks` (javap `sw`
   :1122-1148, the only `clearSensingCache` caller), reached from `onLivingUpdate` only on the new-AI branch (javap `sv`
@@ -7739,12 +7780,32 @@ keeps BUG-036. Commit 4ea395c's message retains the old number.)*
   other thirteen hunters called `super` unconditionally after their dead check and match. What a player saw in 1.7.10:
   a ridden Ant Robot or an active Nightmare that once saw (or failed to see) a target kept that verdict until the
   state ended; the port sees afresh every tick. No MOD record.
-- **Resolution:** REPORT — for the owner's ruling: transcribe the frozen cache (a per-hunter sight memo cleared where
-  orig cleared it, with pins) as a parity bug in classic, or record the per-tick re-evaluation as an accepted engine
-  mapping (a MOD note). The ENT-S-118 sight steps are transcribed at the orig positions either way; only the cache
-  lifetime differs. Not part of the targeting waves' rows.
+- **Resolution:** RULED (2026-09-04, owner: "reproduce if it has a player-visible signature, otherwise record as
+  deliberately not reproduced with rationale"). A read-only analysis lane traced every consumer of the frozen verdict per
+  hunter and state against the 1.7.10 `EntitySenses` (javap `vw`: two lists keyed by entity id, cleared only by
+  `EntityLiving.updateAITasks`) and the port's `Sensing` (two `IntSet`s ticked every server tick from the final
+  `Mob.serverAiStep`). **Reproduced (two hunters):** the ridden Ant Robot — its stomp (1-in-50, the whole 10/8/10 box)
+  and hunt (1-in-9, the 12-cube) froze every nearby id for the whole ride, so 1.7.10's mount bit and stomped through
+  walls once it had seen a target and ignored everything first met from cover — and the active Nightmare — its 1-in-8
+  chase scan froze verdicts for a phase that was most of its 1.7.10 life (the only exit a 1-in-1250 null scan), so it
+  tracked a hidden player's live position and clawed through roofs within 5.8-9.3 blocks. Design: a per-hunter pair of
+  `IntSet`s wrapping `getSensing().hasLineOfSight` at the ENT-S-118 sites only (AntRobot :691 / :713, PitchBlack :531),
+  cleared at the port's `super.customServerAiStep()` line (AntRobot :224 — unridden every step, ridden never, as orig
+  :98-104; PitchBlack :422 — the activity-0 branch, as orig :330-332), vanilla goals keeping `Sensing`; pins in both
+  directions (seen kept through a wall, unseen kept after exposure) plus the state boundary, and a between-drive memo
+  clear for ENT-S-118 rows 1, 2 and 7. Dependency: the Nightmare's only way back to activity 0 (orig PitchBlack.java
+  :259-280 — the 1-in-250 heal, the spontaneous activation and the null-scan deactivation) is absent at HEAD (the
+  ledger's PitchBlack scan-set row, no entry yet), so the Nightmare memo lands with that branch or a memo'd Nightmare
+  would freeze until chunk reload. Both reproductions ride with the T5/T6 wave lanes that own AntRobot and PitchBlack.
+  **Deliberately not reproduced (three pets):** the Stinky, ThePrince and ThePrincess in activity 2 — their only
+  frozen-state consumer is the 1-in-7 scan whose acceptance also requires the fresh, uncached feet-level ray
+  (Stinky :699, ThePrince :776, ThePrincess :857), so a frozen "seen" cannot target through a wall, and a frozen
+  "unseen" can only suppress an opportunistic bite or ranged shot for a phase whose mean length is about five seconds
+  (the 1-in-100 × 19-in-20 decay), indistinguishable in play from the scan roll and the reach and heading gates; the
+  port's per-tick re-evaluation stands there as an accepted engine mapping (MOD note). The analysis memo is in the
+  session scratchpad, not committed.
 
-### ENT-S-123 — Spyro's and Stinky's flight-target pick dropped 1.7.10's second `canSeeTarget` call: an air candidate the feet-level ray refused is accepted in the port (REPORT, 2026-09-04; raised by the ENT-S-118 refuter)
+### ENT-S-123 — Spyro's and Stinky's flight-target pick dropped 1.7.10's second `canSeeTarget` call: an air candidate the feet-level ray refused is accepted in the port (raised by the ENT-S-118 refuter; FIXED 2026-09-04)
 
 - **Evidence:** orig Spyro.java:647 and Stinky.java:640 reject a flight-target candidate that is air but fails
   `canSeeTarget(candidate)` — the same eye-plus-0.75 → candidate block ray the target scan ran (orig :436-438 /
@@ -7753,10 +7814,138 @@ keeps BUG-036. Commit 4ea395c's message retains the old number.)*
   and steer into it. ThePrince and ThePrincess had only the scan-loop caller. The shape is ENT-S-089's item 3 (the
   Vortex's dropped `canSeeTarget` on its flight target). The private `canSeeTarget(x, y, z)` helpers ENT-S-118 added
   to both classes are the transcription target. No MOD record.
-- **Resolution:** REPORT — for the owner's ruling as a parity bug in classic: add `&& canSeeTarget(cx, cy, cz)` at the
-  orig position of the flight-target acceptance in both files, with one pin each (an air candidate behind a one-block
-  wall refused, accepted with the wall gone; the ENT-S-118 feet-ray shape). A flight / wander row, outside the
-  targeting ledger.
+- **Resolution:** FIXED (2026-09-04, owner: "ENT-S-119 and 123 join the T5/T6 wave" — a parity bug in classic). The
+  second `canSeeTarget` call restored at the orig position of the flight-target acceptance in both files: orig
+  Stinky.java:640 / Spyro.java:647 `if (bid == air && !canSeeTarget((double) x, (double) y, (double) z)) bid = stone` →
+  port EntityStinky.doMovement :466-468 / EntitySpyro.doMovement :439-441 `if (getBlockState(newTarget).isAir() &&
+  canSeeTarget(newTarget.getX(), newTarget.getY(), newTarget.getZ()))` — accept iff air and the ENT-S-118 feet ray (eye
+  + 0.75 → the candidate's block corner, the int coordinates widened as orig widened them; OUTLINE / Fluid.NONE) reaches
+  it; a refused candidate leaves `found` false and the loop trying, as orig's `bid = stone` did. Pinned by
+  `StinkyIdleParityTests` rows 17 (`s123_17_stinky_640_flight_ray_wall`) and 18 (`s123_18_spyro_647_flight_ray_wall`):
+  the flyer frozen in activity 2, untamed, `currentFlightTarget` set to its own block (so the 2.1 test forces a pick),
+  the private `doMovement` driven by reflection with the pick pinned to the one candidate `((int) x + 6, (int) y + 1,
+  (int) z + 6)` for all 50 tries (nextInt(5) → 0, nextInt(2) → 1 twice, the Stinky's nextInt(6) → 3 / the Spyro's
+  nextInt(9) → 5; the 300 → 0, the 7 / 6 attack pass quiet); a stone at the flyer's block + (3, 0, 3) on the ray from
+  (x + 0.5, y + 0.75, z + 0.5) to the candidate's corner, `canSeeTarget` asserted false with it and true without it (the
+  control): with the wall the flight target must stay where it was, with the wall razed it must be the candidate. Both
+  rows fail with the port line reverted (the walled drive accepts). javac rc 0. Refuted once, upheld: `scanIt` a probe-for-probe transcription, the shell sequence 1, 2, 3, 4, 6, 8 traced, the
+  eat block, the gate's position and term order, the idle pass and the roll ledger exact in every state, the two flight
+  rays exact; one pin added from its test gap (the eat radius measured from the scan origin: coal at origin + (3, 1, 1),
+  distSq 11 from the origin and 14 from the Stinky's block — 19 pins); noted for the owner: `isCoalOre` accepts
+  `COAL_ORE` only under the port's one-block mapping, so a deep-cave Stinky never finds deepslate coal where 1.7.10's
+  single ore was everywhere (a `BlockTags.COAL_ORES` ruling); the flight-target rows 17/18 discriminate through the
+  port's write-after-test order, filed as ENT-S-126 with the boxed-in retarget cost; helper cites corrected.
+
+### ENT-S-124 — IMob mapped to Monster at 6 sites; the ruled convention Mob + Enemy applied port-wide (FIXED 2026-09-04)
+
+- **Evidence:** 1.7.10's `IMob` is an interface — `EntityMob` implements it, and so do `EntitySlime` (hence
+  `EntityMagmaCube`), `EntityGhast`, `EntityDragon` and OreSpawn's own Mothra (orig Mothra.java:52) — and
+  `IMob.mobSelector` (`field_82192_a`) is the `instanceof IMob` entity selector. Six OreSpawn target tasks filtered
+  on it, each on an `EntityLiving.class` list: Dragon.java:116 `EntityAINearestAttackableTarget(this,
+  EntityLiving.class, 0, true, false, IMob.mobSelector)` (registered when `PlayNicely == 0`, :115-117),
+  Leon.java:93, ThePrinceAdult.java:113, ThePrinceTeen.java:117 (the same task, each behind the same gate), and
+  Boyfriend.java:141 / Girlfriend.java:167 `MyEntityAINearestAttackableTarget(this, EntityLiving.class, 15.0f, 0,
+  true, true, IMob.mobSelector)`, whose helper applies the selector as `selectEntitiesWithinAABB(targetClass, box,
+  selector)` (MyEntityAINearestAttackableTarget.java:56). The port had mapped `IMob` to vanilla `Monster` at all
+  six — `NearestAttackableTargetGoal<>(this, Monster.class, …)` at Dragon.java:155 (ENT-S-117's channel (a)),
+  EntityLeon.java:164, ThePrinceAdult.java:149, ThePrinceTeen.java:160, Boyfriend.java:148, Girlfriend.java:213 —
+  which drops every hostile that is no `Monster` subclass: Slime, MagmaCube, EnderDragon (all `IMob` in 1.7.10),
+  the Ghast (refused in the port by `Mob.canAttackType` regardless) and orig's Mothra (an `AmbientCreature` in the
+  port). What a player saw: a Leonopteryx, a Prince, a Boyfriend, a Girlfriend or a Dragon standing beside a slime,
+  a magma cube or the Ender Dragon and ignoring it, where 1.7.10 went for it as for any monster. The remaining IMob
+  tests in orig are identities and stand unchanged: the Boyfriend's / Girlfriend's `EntityCreeper.class` tasks
+  (:138 / :164 — no port counterpart, ENT-A-054) and `MyEntityAIAvoidEntity.java:55` on the `EntityMob.class`
+  lists of Chipmunk / Ostrich / VelocityRaptor (port `AvoidEntityGoal<Monster>`). Survey: T3c "IMob → Monster"
+  (Leon, `phase_g_reports/targeting_survey_2026-09-04.md` :1529, :569), the Princes' §2 rows (:1008, :1036), the
+  MyEntityAINearestAttackableTarget block (:1163), the Dragon's ENT-S-117 disclosure (:298, :1784). Refuter B of
+  ENT-S-117 had recorded the literal alternative `Mob.class + instanceof Enemy` for the owner's ruling. No MOD record.
+- **Resolution:** FIXED (2026-09-04 — owner: "Convention: `Mob` + `Enemy`, port-wide, wherever 1.7.10 tested IMob.
+  Update the Dragon's channel accordingly"). Six port sites in six files, the goal re-typed `Mob` with the
+  `instanceof Enemy` selector composed ahead of the site's own predicate, priorities / intervals / sight flags /
+  the ENT-S-115 live `canUse` gate unchanged, one site comment each citing the orig line:
+
+  | # | species | orig site (1.7.10) | port site AFTER | note |
+  |---|---|---|---|---|
+  | 1 | Dragon | Dragon.java:116 | Dragon.registerGoals :157 `NearestAttackableTargetGoal<>(this, Mob.class, 0, true, false, e -> e instanceof Enemy)` | randomInterval 0 (targetChance 0), `getFollowDistance() → 16` and the live gate as ENT-S-117 left them; the ENT-S-117 comment block's "Monster is the port's IMob" sentence rewritten (:152) — the Dragon's channel (a) updated per the ruling |
+  | 2 | Leon | Leon.java:93 | EntityLeon.registerGoals :166 `(this, Mob.class, 10, true, false, e -> e instanceof Enemy && (!this.isTame() \|\| this.getTarget() == null))` | the port-only tame rule (T9) and'ed behind the Enemy test |
+  | 3 | ThePrinceAdult | ThePrinceAdult.java:113 | ThePrinceAdult.registerGoals :151 `(this, Mob.class, 10, true, false, e -> e instanceof Enemy)` | 10 / false are the 3-arg constructor's own randomInterval / mustReach (`(Mob, Class, Z)` → `this(mob, type, 10, mustSee, false, null)`, bytecode) — nothing else moved |
+  | 4 | ThePrinceTeen | ThePrinceTeen.java:117 | ThePrinceTeen.registerGoals :162, same | same |
+  | 5 | Boyfriend | Boyfriend.java:141 | Boyfriend.registerGoals :150, same | `monster.Monster` (now unused) → `monster.Enemy`, `entity.Mob` imported |
+  | 6 | Girlfriend | Girlfriend.java:167 | Girlfriend.registerGoals :215, same | same imports |
+
+  The vanilla `Enemy` marker is the 1.21.1 reading of 1.7.10's interface: every `Monster` implements it, and so do
+  Slime, MagmaCube, Ghast, EnderDragon, Shulker, Phantom and the Hoglin family. The Ghast is still refused — by vanilla's `Mob.canAttackType` (Mob.java:253-255) — as 1.7.10 refused it through
+  `EntityLiving.canAttackClass` = `cls != EntityCreeper.class && cls != EntityGhast.class` (client jar sha1
+  e80d9b3b…, `sw.a(Class)`, settled by the refuter; no OreSpawn class overrides it); the same line refused the
+  Creeper at the four vanilla-task sites (Dragon, Leon, both Princes), which the port's four goals take — pre-existing
+  under HEAD's `Monster` form, outside this ruling, filed as ENT-S-127; at the Boyfriend / Girlfriend sites orig's
+  `MyEntityAITarget` granted Creeper and Ghast explicitly, so the Ghast refusal stays the disclosed divergence there.
+  1.21.1's Shulker (an AbstractGolem), Phantom (a FlyingMob) and Hoglin (an Animal) are Enemy without being Monsters —
+  dropped before, taken now, no 1.7.10 counterpart; Zoglin is a Monster and was taken already; orig
+  MyEntityAINearestAttackableTarget.java:44-52's untamed-or-sitting gate on the Boyfriend / Girlfriend goal stays
+  absent on the port goal (a T3c residual noted on the ledger row). Disclosed, unchanged: orig's Mothra (`implements IMob`) is still no
+  prey of the six goals (the port Mothra is an `AmbientCreature` with no `Enemy`) — the ENT-S-117 disclosure
+  stands, `|| e instanceof Mothra` would restore her; the Boyfriend's / Girlfriend's helper residuals
+  (MyEntityAITarget.java:96-116 — PigZombie / Enderman refused, Ghast / Mothra granted; the per-goal 15 / 20 boxes;
+  the dropped Creeper task) and the T3c box / cadence widening (Leon 16 → 40, the Princes 16 → 64 / 32, every tick →
+  1-in-10) are not this ruling's and stay open where the ledger lists them. Pins: new `IMobConventionTests` (own
+  batch `imobConvention`, TEST-003; a `@GameTestGenerator` over a 25-row table in orig file order,
+  `imobconventiontests.s124_NN_<species>_<prey>`): per site the goal read off the target selector by
+  `targetType == Mob.class` (no `Monster`-typed goal may remain) and asked `canUse()` under the ForcedRoll seam
+  with a Slime 8 blocks off taken and read back as the goal's pick (an Enemy that is no Monster — the row the old
+  form fails), a Zombie taken, a pig refused, the Slime refused with PlayNicely flipped on (the ENT-S-115 gate
+  composes; flag restored in a finally), and for the Leon its tame rule composing (tamed and holding a target the
+  Slime is refused, the slot emptied she is taken); `PlayNicelyGateParityTests`' five GoalProbe rows (Boyfriend,
+  Girlfriend, Leon, ThePrinceAdult, ThePrinceTeen) now read `Mob.class`; `ProactiveHuntParityTests`' Dragon rows
+  read `Mob.class`, and the shape row (`s3a_20_dragon_116_goal_registered_priority_range`) asserts the new shape —
+  `Mob` type, no `Monster` goal left, the `TargetingConditions` selector present and answering true for a Slime,
+  false for a pig — with its priority / revenge-order / interval / follow-range assertions kept. Synchronous; flags
+  restored in a finally; spawns discarded; no mock players; no documenting-only test. Compiled (javac, §7); the
+  gametest run is the gate's. Refuted once, upheld: all six hunks the ruled form with HEAD's interval / mustSee / mustReach, the sweep exhaustive
+  (18 IMob tokens in orig: 8 imports, Mothra's identity, 3 identity uses, the 6 sites), the tests discriminating;
+  three records amendments applied (the Creeper clause of 1.7.10's `canAttackClass`, filed as ENT-S-127; the
+  1.21.1 Enemy hierarchy wording; the Boyfriend / Girlfriend untamed-or-sitting gate of orig
+  MyEntityAINearestAttackableTarget.java:44-52 absent on the port goal — a T3c residual, noted on the ledger row)
+  and four nits recorded.
+
+### ENT-S-126 — The flyers' flight-target retarget writes the candidate after the air-and-ray test where 1.7.10 wrote it before: a boxed-in Stinky or Spyro keeps its reached target and re-runs the fifty-try pick, now fifty block rays, every tick (REPORT, 2026-09-04; raised by the ENT-S-119 refuter)
+
+- **Evidence:** orig Stinky.java:638-641 and Spyro.java:645-648 assign the candidate to the flight target BEFORE the
+  air-and-`canSeeTarget` test, so after fifty refused tries the flyer steers at the fiftieth refused candidate for up
+  to about 300 ticks (the :552 retarget clock) and pays the fifty rays once per retarget. The port
+  (EntityStinky.java:466-468, EntitySpyro.java:439-441, the pick loop around them) assigns only on acceptance and
+  keeps the prior, already reached target, so `closerToCenterThan(2.1)` (EntityStinky :447; Spyro :411-446 while
+  `getActivity() != 3`) is true again next tick and the fifty-try pick — since ENT-S-123 fifty `level().clip` rays —
+  re-runs EVERY tick for a boxed-in flyer (a caged pet, a flyer in a small room). Orig :548-551's null-initialised
+  `do_new = true` belongs to the same shape. Pre-existing and unchanged by ENT-S-123 (its rows 17/18 discriminate
+  through this order; if the order is transcribed they need a ray-refusal count or alternating candidates). No MOD
+  record.
+- **Resolution:** REPORT — for the owner's ruling as a parity bug in classic: transcribe orig's write-before-test
+  order (the candidate stored, then refused candidates simply not steered toward again until the next retarget) in
+  both flyers, with a pin for the boxed-in case (fifty refusals → one steer at the last candidate, no rays until the
+  retarget clock) and the ENT-S-119 rows 17/18 re-based on a ray-refusal count. A flight / wander row, outside the
+  targeting ledger; the per-tick ray cost makes it worth scheduling with the T5/T6 wave.
+
+### ENT-S-127 — Engine convention without a ruling: 1.7.10's vanilla target tasks refused Creepers and Ghasts through `EntityLiving.canAttackClass`, the port's vanilla `NearestAttackableTargetGoal`s refuse Ghasts only (REPORT, 2026-09-04; raised by the ENT-S-124 refuter)
+
+- **Evidence:** 1.7.10 `EntityAITarget.isSuitableTarget` called `EntityLiving.canAttackClass(cls)`, whose only
+  body is `cls != EntityCreeper.class && cls != EntityGhast.class` (client jar sha1 e80d9b3b…, `sw.a(Class)`;
+  no OreSpawn class overrides it), so every vanilla `EntityAINearestAttackableTarget` an OreSpawn tameable
+  registered — Dragon.java:116, Leon.java:93, ThePrinceAdult.java:113, ThePrinceTeen.java:117 — never took a
+  Creeper or a Ghast. The port's goals at those four sites (Dragon.java:157, EntityLeon.java:166,
+  ThePrinceAdult.java:151, ThePrinceTeen.java:162 after ENT-S-124) take Creepers: vanilla 1.21.1 refuses only the
+  Ghast (`Mob.canAttackType`, Mob.java:253-255). Pre-existing under HEAD's `Monster` form. The species' custom
+  scans took Creepers in both trees (orig Dragon.java:561, Leon.java:412, ThePrinceAdult.java:495 accept any
+  EntityMob), so only the vanilla channel's cadence and box differ for a Creeper. The Boyfriend / Girlfriend goals
+  are not affected: orig's `MyEntityAITarget.isSuitableTarget` (MyEntityAITarget.java:78-129) never called
+  `canAttackClass` and granted Creeper (:111) and Ghast (:114) explicitly — there the port's Ghast refusal is the
+  disclosed divergence of ENT-S-124. No MOD record.
+- **Resolution:** REPORT — for the owner's ruling as an engine convention (port-wide, one helper): every vanilla
+  target goal that maps a 1.7.10 vanilla task carries `e -> e instanceof Enemy && !(e instanceof Creeper)` (vanilla's
+  IronGolem idiom; the Ghast is already refused by the engine), with one Creeper-refused pin per site — or the
+  Creeper refusal is recorded as deliberately not reproduced (a MOD note) if the owner prefers the 1.21.1 engine's
+  choice. Not part of the targeting waves' rows.
+
 ### TEST-003 — Config-flipping gametests in the concurrent default batch
 
 - **Impact:** MEDIUM (suite reliability) — boss005/boss012 flip a global
@@ -7791,3 +7980,51 @@ keeps BUG-036. Commit 4ea395c's message retains the old number.)*
   unrestored LESS_ORE), the failure-path player leaks (boyfriend_tempt_panic_door, leon_ducky) and the
   TrooperBug's own Spit Bug summon behind i127's acid; the i165 chunk-wait geometry (ticket centre at +8 vs
   the checked cell at +10) is the one fix applied, owner-approved.
+
+### TEST-004 — Default-batch isolation fixes from the harness slice (FIXED 2026-09-04)
+
+- **Impact:** MEDIUM (suite reliability) — the harness slice (`phase_g_reports/harness_slice_2026-09-04.md`,
+  presented 2026-09-04 and ruled "apply the ranked fixes that are pure isolation — flag restoration in finally, batch
+  separation, spacing; no widened waits, no retries") found four default-batch tests unsafe beside others as written:
+  `leaf_monster_prey_allowlist_play_nicely` held the GLOBAL `PLAY_NICELY` true across a 150-tick window in
+  `defaultBatch:0` (the only multi-tick PlayNicely window in the default batch; unrestored on its phase-3 failure path)
+  — the hypothesised cause of i050's wave1e "was 0.0" (its `vortex.ai()` exits null on `PLAY_NICELY.get()`, and in the
+  585 layout i050's wilderness-bordered cell started late enough to land inside the window); `boyfriend_tempt_panic_door`
+  and `leon_ducky_tame_untame_tempt` left a CREATIVE mock `ServerPlayer` in `level.players()` for the rest of the run when
+  they timed out before their tempt hand-off (a despawn anchor for every non-persistent mob in later tests — the bug003
+  / i127-minion hazard); `big_bertha_shockwave_damage_and_pvp` restored `BIG_BERTHA_PVP` only in its tick-44 callback,
+  leaving it true after an assertion throw at ticks 25/28/36/44; and `ConfigGateTests.checkVeinRatio` returned with
+  `LESS_ORE` true (contained today only by its caller's `finally`). 1.21.1's framework offers no finally for a scheduled
+  callback or a timed-out test (`GameTestHelper` has no `addCleanup`).
+- **Evidence:** harness_slice_2026-09-04.md §1 (flip-site sweep: the one multi-tick default-batch PlayNicely writer at
+  EntityLogicTestsA.java:1486/:1506; wave1e timeline 09:44:31-09:44:53 with i050 among the 5 late starters of
+  `defaultBatch:0`; the excluded exits), §3(a) (the seven default-batch mock-player sites; boyfriend :784/:829-832 and
+  leon :1622/:1627-1630 remove only on the hand-off or on success), §3(b) (big_bertha :339-406 toggles restored only at
+  tick 44; item064 :159-165), §3(c)/AUDIT TEST-003 amendment (the HashSet<Method> order model). Framework: NF
+  GameTestInfo.java:95-113 (listeners notified in the finishing tick, `testFailed` for throw and timeout, `testPassed`
+  for succeed), :131-137 (callback throw → `fail`), GameTestHelper.java:65 (`public final GameTestInfo testInfo`),
+  GameTestBatchFactory.java:18 (batch HashMap). Record of the lane: `scratchpad/waves/HARNESS_records.md` (this file).
+- **Resolution:** FIXED (2026-09-04, harness slice lane; pure isolation only — no assertion, tolerance or wait changed).
+  (1) `leaf_monster_prey_allowlist_play_nicely` → its own batch `playNicelyWindow` (the boss017 / `playNicelyIsolation`
+  precedent, one test per batch) and `PLAY_NICELY` restored to its captured prior on every exit path;
+  (2) boyfriend / leon tempt players removed from `players()` exactly once on every exit path (hand-off, success, throw,
+  timeout), the dead success-only removal lines dropped; (3) `BIG_BERTHA_PVP` restored to its prior on every exit path
+  (the tick-44 restore kept); (4) `checkVeinRatio` restores `LESS_ORE` in a `finally` (the caller's finally kept as the
+  second layer); (5) i050's three drag-pull messages carry `playNicely=` and `gameTime=` (the bug003 idiom; the flag is
+  NOT pinned inside i050). Mechanism for (1)-(3): a new `EntityLogicTestsA.onTestExit` registers a `GameTestListener` on
+  `helper.testInfo` and runs the restore once from `testPassed` / `testFailed` — the framework's finally for every
+  terminal path, executed in the finishing tick before any bucket-mate ticks. Order-model consequence (recomputed): the
+  remaining 145 default-batch tests keep their relative order; `chipmunk_apple_tame_dead_bush_release` crosses 50 → 49
+  into bucket 0 (synchronous survival player in a finally — safe) and `i138_inca_pyramid_content` crosses 100 → 99 into
+  bucket 1 (`buildNow` RNG draws behind wide statistical bands — its draws change, not its verdict); the new batch
+  iterates before `defaultBatch` (bin 33 < 37 of 64), so every default grid cell after leaf_monster's old slot is
+  unchanged (i050 keeps the wave1e cell, now without the window) and only the first two default tests move one cell.
+  javac rc 0 on the three files (no gradle in this lane); the gametest run is the gate's. Remaining from the slice's
+  ranking, for other lanes: F1 (i127's structural pin / owner-scoped acid negative / minion cull / cow kept alive) and
+  F5 (the `buildNow(level, origin, type, RandomSource)` seam for the layout-count assertions incl. dsb_item020).
+  Refuted once, upheld: the exit hook fires exactly once on every terminal path (GameTestInfo.tick notifies its
+  listeners in the finishing tick; `testInfo` is public final), no wait, retry or assertion changed, the order model
+  re-run identically; seven non-blocking notes, three applied (the hook registered right after the mock player
+  joins, the hand-off flag set before the removal, a javadoc sentence on listener order), the rest recorded: a
+  throwing restore would abort the ticker loop (kept loud on purpose), the tempt player stays a CREATIVE list
+  member for its own tempt phase by design, F5 stays open.

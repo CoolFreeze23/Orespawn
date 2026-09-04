@@ -168,3 +168,10 @@ Purple Power, Nightmare, Skate, Irukandji, Spider Driver and Ant Robot again loo
 choosing a target, exactly where 1.7.10 checked it, and Spyro, Stinky, the Prince and the Princess again run
 1.7.10's second, feet-level ray before biting — so a target on a ledge above or below them, or behind a
 parapet their eyes see over, is left alone as it was.
+
+Conventions and the Stinky's idle routine. Hunters take every hostile again. The Leonopteryx, both Princes,
+the Boyfriend, the Girlfriend and the Dragon go after anything the original counted as a monster — slimes,
+magma cubes and the Ender Dragon included — where the port's target goals had only taken creatures of
+vanilla's `Monster` class. The flying Stinky again tunnels toward the nearest coal ore around it (burping when
+it eats one), stops eating while told to sit, picks fights while idling as it did in 1.7.10, and — like the
+baby dragon — no longer flies toward a spot it cannot see.
