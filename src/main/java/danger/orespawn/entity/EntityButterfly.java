@@ -1,6 +1,7 @@
 package danger.orespawn.entity;
 
 import danger.orespawn.entity.ai.AmbientFlightGoal;
+import danger.orespawn.entity.ai.ButterflyIslandsHuntGoal;
 import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
@@ -14,9 +15,11 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.Difficulty;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobSpawnType;
@@ -63,7 +66,11 @@ public class EntityButterfly extends AmbientCreature {
      */
     @Override
     protected void registerGoals() {
-        this.goalSelector.addGoal(8, new AmbientFlightGoal(this, AmbientFlightGoal.Params.butterfly()));
+        // orig EntityButterfly.java:145-181 — the butterfly preset of AmbientFlightGoal plus the Islands-dimension
+        // vampire hunt 1.7.10 ran in the else-branch of its retarget test (:161-169): ButterflyIslandsHuntGoal is
+        // that goal with the hunt in the same place. Subclasses inherit this registration as they inherited orig's
+        // updateAITasks through super (Mothra.java:169); the Luna Moth registers its own flight goal. ENT-S-117.
+        this.goalSelector.addGoal(8, new ButterflyIslandsHuntGoal(this));
     }
 
     private void setRandomButterflyType() {
@@ -138,6 +145,22 @@ public class EntityButterfly extends AmbientCreature {
         );
         serverPlayer.changeDimension(transition);
         return InteractionResult.SUCCESS;
+    }
+
+    /**
+     * orig EntityButterfly.java:183-192 {@code attackEntityAsMob} — the Islands vampire bite: nothing on a 1-in-2
+     * roll (:184-186; orig rolled the global OreSpawnRand, the port the entity's — the ENT-S-093 stream
+     * convention), nothing on Peaceful (:187-189), else 1.0 of mob damage from this butterfly (:190-191).
+     * Reached from {@link ButterflyIslandsHuntGoal} inside distSq 6 of the prey (orig :166-168). Inherited by the
+     * subclasses in both trees (orig Mothra and EntityLunaMoth override neither this nor the hunt they inherit
+     * through {@code super.updateAITasks()}, Mothra.java:169 / EntityLunaMoth.java:122); the port's Mothra and
+     * Luna Moth call {@code doHurtTarget} nowhere, so only the hunt reaches it. ENT-S-117.
+     */
+    @Override
+    public boolean doHurtTarget(Entity target) {
+        if (this.random.nextInt(2) != 0) return false;                                       // orig :184-186
+        if (this.level().getDifficulty() == Difficulty.PEACEFUL) return false;                // orig :187-189
+        return target.hurt(this.damageSources().mobAttack(this), 1.0f);                       // orig :190-191
     }
 
     @Override
