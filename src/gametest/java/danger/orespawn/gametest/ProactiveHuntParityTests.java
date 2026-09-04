@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTestGenerator;
 import net.minecraft.gametest.framework.GameTestHelper;
@@ -37,6 +38,8 @@ import net.minecraft.world.entity.ai.goal.WrappedGoal;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.TargetGoal;
+import net.minecraft.world.entity.ai.targeting.TargetingConditions;
+import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.block.Blocks;
@@ -57,7 +60,8 @@ import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
  * the ENT-S-108 ownership mark (orig WaterDragon.java:597-612, :650-706); the Dragon's continuous vanilla IMob
  * channel — {@code EntityAINearestAttackableTarget(EntityLiving.class, 0, true, false, IMob.mobSelector)} at
  * target priority 1 when {@code PlayNicely == 0}, the revenge task at 2 (orig Dragon.java:115-118) — as a live-
- * gated {@code NearestAttackableTargetGoal<Monster>} holding orig's follow range 16; and the butterfly's
+ * gated {@code NearestAttackableTargetGoal<Mob>} with an {@code instanceof Enemy} selector (the IMob convention,
+ * ENT-S-124; it was {@code <Monster>} until then) holding orig's follow range 16; and the butterfly's
  * Islands-dimension vampire hunt in the else-branch of its flight retarget (orig EntityButterfly.java:161-169,
  * :183-230) as {@link ButterflyIslandsHuntGoal}.
  *
@@ -461,42 +465,67 @@ public class ProactiveHuntParityTests {
     // ------------------------------------------------------------------
 
     /**
-     * orig Dragon.java:116, :118: the target selector holds a NearestAttackableTargetGoal&lt;Monster&gt; at priority 1
-     * and the HurtByTargetGoal at 2; the goal rolls nothing (orig targetChance 0 → randomInterval 0) and keeps
-     * orig's follow range 16 for its box, range and hold, while the port's FOLLOW_RANGE attribute is 40.
+     * orig Dragon.java:116, :118: the target selector holds a NearestAttackableTargetGoal&lt;Mob&gt; with an
+     * {@code instanceof Enemy} selector — the IMob convention (ENT-S-124: orig's IMob was an interface, every EntityMob
+     * plus Slime / MagmaCube / Ghast / EnderDragon and orig's Mothra; the {@code <Monster>} form dropped the non-Monster
+     * Enemies) — at priority 1 and the HurtByTargetGoal at 2; no Monster-typed goal remains; the goal rolls nothing
+     * (orig targetChance 0 → randomInterval 0) and keeps orig's follow range 16 for its box, range and hold, while
+     * the port's FOLLOW_RANGE attribute is 40. The selector is asked directly: a Slime (an Enemy that is no Monster —
+     * the row the Monster form failed) passes, a pig does not.
      */
     private static void dragonGoalRegistered(GameTestHelper helper) {
         Mob dragon = null;
+        Mob slime = null;
+        Mob pig = null;
         try {
             dragon = spawnWithGoals(helper, ModEntities.DRAGON.get(), HUNTER_POS);
-            WrappedGoal monsterGoal = null;
+            WrappedGoal imobGoal = null;
             WrappedGoal hurtBy = null;
             for (WrappedGoal wrapped : dragon.targetSelector.getAvailableGoals()) {
-                if (wrapped.getGoal() instanceof NearestAttackableTargetGoal<?> nearest
-                        && readField(nearest, NearestAttackableTargetGoal.class, "targetType") == Monster.class) {
-                    helper.assertTrue(monsterGoal == null, "exactly one NearestAttackableTargetGoal<Monster> on the Dragon (" + FINDING + ")");
-                    monsterGoal = wrapped;
+                if (wrapped.getGoal() instanceof NearestAttackableTargetGoal<?> nearest) {
+                    Object targetType = readField(nearest, NearestAttackableTargetGoal.class, "targetType");
+                    helper.assertTrue(targetType != Monster.class, "no NearestAttackableTargetGoal<Monster> may remain on the Dragon —"
+                            + " Monster stood in for IMob until the IMob convention (ENT-S-124) (" + FINDING + ")");
+                    if (targetType == Mob.class) {
+                        helper.assertTrue(imobGoal == null, "exactly one NearestAttackableTargetGoal<Mob> on the Dragon (" + FINDING + ")");
+                        imobGoal = wrapped;
+                    }
                 } else if (wrapped.getGoal() instanceof HurtByTargetGoal) {
                     hurtBy = wrapped;
                 }
             }
-            helper.assertTrue(monsterGoal != null, "Dragon.registerGoals (orig Dragon.java:116): the target selector must carry a"
-                    + " NearestAttackableTargetGoal<Monster> — the port's shape of EntityAINearestAttackableTarget(EntityLiving.class,"
-                    + " IMob.mobSelector) (" + FINDING + ")");
-            helper.assertTrue(monsterGoal.getPriority() == 1, "orig Dragon.java:116 registers the IMob task at target priority 1 ("
-                    + FINDING + "); got " + monsterGoal.getPriority());
+            helper.assertTrue(imobGoal != null, "Dragon.registerGoals (orig Dragon.java:116): the target selector must carry a"
+                    + " NearestAttackableTargetGoal<Mob> — the port's shape of EntityAINearestAttackableTarget(EntityLiving.class,"
+                    + " IMob.mobSelector) under the IMob convention (ENT-S-124) (" + FINDING + ")");
+            helper.assertTrue(imobGoal.getPriority() == 1, "orig Dragon.java:116 registers the IMob task at target priority 1 ("
+                    + FINDING + "); got " + imobGoal.getPriority());
             helper.assertTrue(hurtBy != null && hurtBy.getPriority() == 2, "orig Dragon.java:118 registers EntityAIHurtByTarget at"
                     + " target priority 2, behind the IMob task (" + FINDING + "); got " + (hurtBy == null ? "none" : String.valueOf(hurtBy.getPriority())));
-            int interval = (Integer) readField(monsterGoal.getGoal(), NearestAttackableTargetGoal.class, "randomInterval");
+            int interval = (Integer) readField(imobGoal.getGoal(), NearestAttackableTargetGoal.class, "randomInterval");
             helper.assertTrue(interval == 0, "orig Dragon.java:116 passes targetChance 0 — no roll; the port's randomInterval must"
                     + " be 0 (reducedTickDelay(0)), not the 4-arg constructor's 10 → 5 (" + FINDING + "); got " + interval);
-            double range = (Double) invoke(monsterGoal.getGoal(), TargetGoal.class, "getFollowDistance");
+            double range = (Double) invoke(imobGoal.getGoal(), TargetGoal.class, "getFollowDistance");
             helper.assertTrue(dragon.getAttributeValue(Attributes.FOLLOW_RANGE) == 40.0,
                     "precondition: the port Dragon's FOLLOW_RANGE attribute is 40 (Dragon.createAttributes) (" + FINDING + " test setup)");
             helper.assertTrue(range == DRAGON_GOAL_RANGE, "orig EntityAITarget.getTargetDistance() = the follow-range attribute,"
                     + " EntityLiving's base 16 (Dragon.java:135-141 sets none): the goal's getFollowDistance must answer 16, not the"
                     + " port attribute's 40 (" + FINDING + "); got " + range);
+            Object conditions = readField(imobGoal.getGoal(), NearestAttackableTargetGoal.class, "targetConditions");
+            @SuppressWarnings("unchecked")
+            Predicate<LivingEntity> selector = (Predicate<LivingEntity>) readField(conditions, TargetingConditions.class, "selector");
+            helper.assertTrue(selector != null, "the Mob-typed goal must carry a selector — the port's IMob.mobSelector (ENT-S-124)"
+                    + " (" + FINDING + ")");
+            slime = spawnPrey(helper, EntityType.SLIME, PREY_POS);
+            pig = spawnPrey(helper, EntityType.PIG, NEAR_PREY_POS);
+            helper.assertTrue(slime instanceof Enemy && !(slime instanceof Monster),
+                    "precondition: a vanilla Slime is an Enemy and no Monster (" + FINDING + " test setup)");
+            helper.assertTrue(selector.test(slime), "the selector is the Enemy test: a Slime — IMob in 1.7.10 (EntitySlime implements"
+                    + " IMob), an Enemy and no Monster here — must pass (ENT-S-124) (" + FINDING + ")");
+            helper.assertTrue(!selector.test(pig), "the selector is the Enemy test: a pig — never IMob, no Enemy — must not pass"
+                    + " (ENT-S-124) (" + FINDING + ")");
         } finally {
+            discardQuietly(pig);
+            discardQuietly(slime);
             discardQuietly(dragon);
         }
     }
@@ -509,10 +538,10 @@ public class ProactiveHuntParityTests {
         try {
             dragon = spawnWithGoals(helper, ModEntities.DRAGON.get(), HUNTER_POS);
             assertPlayNicelyOff(helper);
-            Goal goal = dragonMonsterGoal(dragon);
+            Goal goal = dragonImobGoal(dragon);
             zombie = spawnPrey(helper, EntityType.ZOMBIE, PREY_POS);
             assertSeen(helper, dragon, zombie, "a Zombie 8 blocks off");
-            helper.assertTrue(goal.canUse(), "Dragon's NearestAttackableTargetGoal<Monster> (orig Dragon.java:116): a Zombie 8"
+            helper.assertTrue(goal.canUse(), "Dragon's NearestAttackableTargetGoal<Mob> + Enemy (orig Dragon.java:116): a Zombie 8"
                     + " blocks off, in sight, inside the 16/4/16 box, must be taken (" + FINDING + ")");
             goal.start();
             helper.assertTrue(dragon.getTarget() == zombie, "orig Dragon.java:116-118 — channel (a) stores the IMob it finds as the"
@@ -524,7 +553,7 @@ public class ProactiveHuntParityTests {
             pig = spawnPrey(helper, EntityType.PIG, PREY_POS);
             assertSeen(helper, dragon, pig, "a vanilla pig 8 blocks off");
             helper.assertTrue(!goal.canUse(), "orig Dragon.java:116 — IMob.mobSelector: a pig is not prey of this channel (the port's"
-                    + " Monster class) (" + FINDING + ")");
+                    + " Enemy selector, ENT-S-124) (" + FINDING + ")");
         } finally {
             discardQuietly(pig);
             discardQuietly(zombie);
@@ -539,13 +568,13 @@ public class ProactiveHuntParityTests {
         final boolean prior = OreSpawnConfig.PLAY_NICELY.get();
         try {
             dragon = spawnWithGoals(helper, ModEntities.DRAGON.get(), HUNTER_POS);
-            Goal goal = dragonMonsterGoal(dragon);
+            Goal goal = dragonImobGoal(dragon);
             zombie = spawnPrey(helper, EntityType.ZOMBIE, PREY_POS);
             assertSeen(helper, dragon, zombie, "a Zombie 8 blocks off");
             OreSpawnConfig.PLAY_NICELY.set(false);
-            helper.assertTrue(goal.canUse(), "control: with playNicely off the Dragon's Monster goal takes a Zombie 8 blocks off (" + FINDING + ")");
+            helper.assertTrue(goal.canUse(), "control: with playNicely off the Dragon's IMob goal takes a Zombie 8 blocks off (" + FINDING + ")");
             OreSpawnConfig.PLAY_NICELY.set(true);
-            helper.assertTrue(!goal.canUse(), "Dragon's Monster goal with playNicely on: orig Dragon.java:115 registered the IMob task"
+            helper.assertTrue(!goal.canUse(), "Dragon's IMob goal with playNicely on: orig Dragon.java:115 registered the IMob task"
                     + " only when PlayNicely == 0, read live here, so canUse must be false (" + FINDING + ")");
         } finally {
             OreSpawnConfig.PLAY_NICELY.set(prior);
@@ -565,7 +594,7 @@ public class ProactiveHuntParityTests {
         try {
             dragon = spawnWithGoals(helper, ModEntities.DRAGON.get(), HUNTER_POS);
             assertPlayNicelyOff(helper);
-            Goal goal = dragonMonsterGoal(dragon);
+            Goal goal = dragonImobGoal(dragon);
             double x = dragon.getX();
             double y = dragon.getY();
             double z = dragon.getZ();
@@ -593,7 +622,7 @@ public class ProactiveHuntParityTests {
                                     + FINDING + " test geometry)");
                 }
                 boolean taken = goal.canUse();
-                helper.assertTrue(taken == inside, "Dragon's Monster goal (orig Dragon.java:116, EntityAINearestAttackableTarget's"
+                helper.assertTrue(taken == inside, "Dragon's IMob goal (orig Dragon.java:116, EntityAINearestAttackableTarget's"
                         + " box expand(16, 4, 16)): " + where + " must " + (inside ? "" : "not ") + "be taken (" + FINDING + ")");
                 zombie.discard();
                 zombie = null;
@@ -611,12 +640,12 @@ public class ProactiveHuntParityTests {
         try {
             dragon = spawnWithGoals(helper, ModEntities.DRAGON.get(), HUNTER_POS);
             assertPlayNicelyOff(helper);
-            Goal goal = dragonMonsterGoal(dragon);
+            Goal goal = dragonImobGoal(dragon);
             column(helper, true);
             zombie = spawnPrey(helper, EntityType.ZOMBIE, PREY_POS);
             helper.assertTrue(!dragon.hasLineOfSight(zombie), "precondition: the stone column hides the Zombie from the Dragon ("
                     + FINDING + " test geometry)");
-            helper.assertTrue(!goal.canUse(), "Dragon's Monster goal (orig Dragon.java:116, checkSight true): a Zombie behind the"
+            helper.assertTrue(!goal.canUse(), "Dragon's IMob goal (orig Dragon.java:116, checkSight true): a Zombie behind the"
                     + " column must not be taken (" + FINDING + ")");
             column(helper, false);
             resetSight(dragon);
@@ -1680,16 +1709,16 @@ public class ProactiveHuntParityTests {
         return (Boolean) invoke(owner, declaring, "isSuitableTarget", new Class<?>[] {LivingEntity.class}, candidate);
     }
 
-    /** The Dragon's NearestAttackableTargetGoal&lt;Monster&gt; off its target selector. */
-    private static Goal dragonMonsterGoal(Mob dragon) {
+    /** The Dragon's NearestAttackableTargetGoal&lt;Mob&gt; (+ Enemy selector, the IMob convention ENT-S-124) off its target selector. */
+    private static Goal dragonImobGoal(Mob dragon) {
         for (WrappedGoal wrapped : dragon.targetSelector.getAvailableGoals()) {
             if (wrapped.getGoal() instanceof NearestAttackableTargetGoal<?> nearest
-                    && readField(nearest, NearestAttackableTargetGoal.class, "targetType") == Monster.class) {
+                    && readField(nearest, NearestAttackableTargetGoal.class, "targetType") == Mob.class) {
                 return wrapped.getGoal();
             }
         }
-        throw new IllegalStateException("precondition: the Dragon must carry a NearestAttackableTargetGoal<Monster> on its target"
-                + " selector — the port's shape of orig Dragon.java:116 (" + FINDING + " test setup)");
+        throw new IllegalStateException("precondition: the Dragon must carry a NearestAttackableTargetGoal<Mob> on its target"
+                + " selector — the port's shape of orig Dragon.java:116 under the IMob convention (ENT-S-124) (" + FINDING + " test setup)");
     }
 
     /** The butterfly's ButterflyIslandsHuntGoal off its goal selector. */

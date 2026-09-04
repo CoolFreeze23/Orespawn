@@ -37,6 +37,7 @@ import net.minecraft.world.entity.ai.goal.target.OwnerHurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.OwnerHurtTargetGoal;
 import net.minecraft.world.entity.boss.EnderDragonPart;
 import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
+import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.npc.Villager;
 import net.minecraft.world.entity.player.Player;
@@ -154,14 +155,23 @@ public class EntityLeon extends TamableAnimal
         this.goalSelector.addGoal(3, new WaterAvoidingRandomStrollGoal(this, 0.75));
         this.goalSelector.addGoal(4, new LookAtPlayerGoal(this, Player.class, 9.0f));
         this.goalSelector.addGoal(5, new RandomLookAroundGoal(this));
-        this.targetSelector.addGoal(1, new OwnerHurtByTargetGoal(this));
-        this.targetSelector.addGoal(2, new OwnerHurtTargetGoal(this));
-        this.targetSelector.addGoal(3, new HurtByTargetGoal(this));
+        // MOD-033 (T9 A2, petsDefendOwner): the owner-defence pair is modern only, a construction snapshot
+        // (the helper read once here; goals register in the Mob ctor, the BOSS-017 shape — a config change
+        // applies to newly spawned Leons); orig Leon.java:92-95 registered no owner goals. Live here:
+        // flyWithRider reads the target slot first, so a tamed modern Leon avenges and defends its owner.
+        // (The tame predicate on the goal below belongs to the same record but is not gated in this batch:
+        // its line is under the ENT-S-124 refutation — gate it under this key once that closes.)
+        if (OreSpawnConfig.petsDefendOwner()) {
+            this.targetSelector.addGoal(1, new OwnerHurtByTargetGoal(this));
+            this.targetSelector.addGoal(2, new OwnerHurtTargetGoal(this));
+        }
+        this.targetSelector.addGoal(3, new HurtByTargetGoal(this)); // orig Leon.java:95 — both modes
         // orig Leon.java:92-94 — the EntityAINearestAttackableTarget task (EntityLiving.class, IMob selector) is
         // registered only when PlayNicely == 0 at construction; the port registers the goal always and reads the
         // flag live in its canUse, so it never starts while PlayNicely is on (ENT-S-115; the :391 filter gate is
         // ENT-S-110's, at isSuitableTarget).
-        this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, Monster.class, 10, true, false, e -> !this.isTame() || this.getTarget() == null) {
+        // orig Leon.java:93 IMob.mobSelector → Mob.class + instanceof Enemy, and'ed ahead of the port's tame rule (ENT-S-124, IMob convention)
+        this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, Mob.class, 10, true, false, e -> e instanceof Enemy && (!this.isTame() || this.getTarget() == null)) {
             @Override
             public boolean canUse() {
                 if (OreSpawnConfig.PLAY_NICELY.get()) return false; // orig Leon.java:92-94 (ENT-S-115)

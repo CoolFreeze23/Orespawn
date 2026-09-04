@@ -34,6 +34,7 @@ import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.OwnerHurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.OwnerHurtTargetGoal;
+import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -150,14 +151,22 @@ public class ThePrinceTeen extends TamableAnimal
         this.goalSelector.addGoal(3, new MyEntityAIWander(this, 0.75f));
         this.goalSelector.addGoal(4, new LookAtPlayerGoal(this, Mob.class, 12.0f));
         this.goalSelector.addGoal(5, new RandomLookAroundGoal(this));
-        this.targetSelector.addGoal(1, new OwnerHurtByTargetGoal(this));
-        this.targetSelector.addGoal(2, new OwnerHurtTargetGoal(this));
-        this.targetSelector.addGoal(3, new HurtByTargetGoal(this));
+        // MOD-033 (T9 A2, petsDefendOwner): the owner-defence pair is modern only, a construction snapshot
+        // (the helper read once here; goals register in the Mob ctor, the BOSS-017 shape — a config change
+        // applies to newly spawned teens); orig ThePrinceTeen.java:116-119 registered the IMob task and EntityAIHurtByTarget
+        // only. Live here: the combat roll reads the target slot first, so a tamed modern teen avenges
+        // and defends its owner.
+        if (OreSpawnConfig.petsDefendOwner()) {
+            this.targetSelector.addGoal(1, new OwnerHurtByTargetGoal(this));
+            this.targetSelector.addGoal(2, new OwnerHurtTargetGoal(this));
+        }
+        this.targetSelector.addGoal(3, new HurtByTargetGoal(this)); // orig ThePrinceTeen.java:119 — both modes
         // orig ThePrinceTeen.java:116-118 — the EntityAINearestAttackableTarget task (EntityLiving.class, IMob
         // selector) is registered only when PlayNicely == 0 at construction; the port registers the goal always and
         // reads the flag live in its canUse, so it never starts while PlayNicely is on (ENT-S-115; the custom scan's
         // own gate, orig :540-542, is at findSomethingToAttack).
-        this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, Monster.class, true) {
+        // orig ThePrinceTeen.java:117 IMob.mobSelector → Mob.class + instanceof Enemy; 10 / false are the 3-arg constructor's own randomInterval / mustReach (ENT-S-124, IMob convention)
+        this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, Mob.class, 10, true, false, e -> e instanceof Enemy) {
             @Override
             public boolean canUse() {
                 if (OreSpawnConfig.PLAY_NICELY.get()) return false; // orig ThePrinceTeen.java:116-118 (ENT-S-115)
