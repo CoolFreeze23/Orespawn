@@ -45,6 +45,9 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
+import net.minecraft.gametest.framework.GameTestInfo;
+import net.minecraft.gametest.framework.GameTestListener;
+import net.minecraft.gametest.framework.GameTestRunner;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
@@ -100,6 +103,10 @@ import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
  *   <li>Difficulty flips (EASY windows) happen atomically inside a single
  *       scheduled runnable: game-test runnables never interleave with entity
  *       ticking, so the flip can never leak into another test's ticks.</li>
+ *   <li>Multi-tick GLOBAL windows (a config flag held across ticks, a mock
+ *       player kept in {@code level.players()}) register their restore with
+ *       {@code onTestExit}, which runs on success, assertion failure and the
+ *       framework timeout alike (harness slice, 2026-09-04).</li>
  * </ul>
  */
 @GameTestHolder(OreSpawnMod.MOD_ID)
@@ -137,6 +144,48 @@ public class EntityLogicTestsA {
         p.setNoGravity(true);
         h.assertTrue(h.getLevel().addFreshEntity(p), "mock player must be addable to the level");
         return p;
+    }
+
+    /**
+     * Runs {@code onExit} exactly once when the test finishes on ANY path:
+     * {@code succeed()}, an assertion throw in a tick callback, {@code helper.fail}
+     * or the framework timeout. 1.21.1's GameTestHelper has no finally for a
+     * scheduled callback or for a timed-out test, but GameTestInfo.tick notifies
+     * its listeners as soon as the test is done (NF GameTestInfo.java:104-113),
+     * inside the same server tick and before the next test in the batch ticks —
+     * so global state restored here is never observed leaked by a bucket-mate.
+     * Used for the multi-tick global windows (config flags, in-level mock
+     * players) found by the harness slice (2026-09-04). It runs after the
+     * framework's own listeners, i.e. after a following batch has already been
+     * prepared — a future {@code @BeforeBatch} must not read state restored here
+     * (TEST-004 refuter, 2026-09-04).
+     */
+    private static void onTestExit(GameTestHelper h, Runnable onExit) {
+        final boolean[] ran = {false};
+        h.testInfo.addListener(new GameTestListener() {
+            @Override
+            public void testStructureLoaded(GameTestInfo testInfo) { }
+
+            @Override
+            public void testPassed(GameTestInfo test, GameTestRunner runner) {
+                exit();
+            }
+
+            @Override
+            public void testFailed(GameTestInfo test, GameTestRunner runner) {
+                exit();
+            }
+
+            @Override
+            public void testAddedForRerun(GameTestInfo oldTest, GameTestInfo newTest, GameTestRunner runner) { }
+
+            private void exit() {
+                if (!ran[0]) {
+                    ran[0] = true;
+                    onExit.run();
+                }
+            }
+        });
     }
 
     /** Stone pad at relative y=1 (and y=0 when {@code doubleLayer}) covering [x1..x2]x[z1..z2]. */
@@ -305,6 +354,11 @@ public class EntityLogicTestsA {
 
         final boolean[] done = {false};
         final boolean pvpOld = OreSpawnConfig.BIG_BERTHA_PVP.get();
+        // The PVP flag is GLOBAL and toggled across ticks 22-44 below; an assertion
+        // throw in any of those callbacks used to leave it at the failing tick's
+        // value for the rest of the run. Restore the prior value on every exit
+        // path — success, throw, timeout (harness slice, 2026-09-04).
+        onTestExit(helper, () -> OreSpawnConfig.BIG_BERTHA_PVP.set(pvpOld));
 
         // -- per-item one-shot damage values (hitType 0/2/3 = Bertha/Royal/Hammy) --
         final int[][] typeAndDamage = { {0, 496}, {2, 746}, {3, 82} };
@@ -763,6 +817,17 @@ public class EntityLogicTestsA {
 
         final Boyfriend bf = helper.spawn(ModEntities.BOYFRIEND.get(), new BlockPos(16, 2, 16));
         final ServerPlayer sp = helper.makeMockServerPlayerInLevel();
+        final boolean[] removedSp = {false};
+        // sp is a CREATIVE member of level.players() — the despawn anchor of every
+        // non-persistent mob in the run (TEST-003, bug003). It used to stay in the
+        // list whenever this test timed out before the tempt->panic hand-off
+        // below; now it leaves on every exit path (harness slice, 2026-09-04).
+        onTestExit(helper, () -> {
+            if (!removedSp[0]) {
+                removedSp[0] = true;
+                helper.getLevel().getServer().getPlayerList().remove(sp);
+            }
+        });
         final Vec3 spPos = helper.absoluteVec(new Vec3(23.0, 2.0, 16.0)); // 7 blocks from the boyfriend, tempt range 10
         sp.teleportTo(helper.getLevel(), spPos.x, spPos.y, spPos.z, 0.0f, 0.0f);
         sp.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.COOKED_BEEF));
@@ -774,15 +839,14 @@ public class EntityLogicTestsA {
         final int[] trialTick = {0};
         final double[] trialMoved = {0.0};
         final Vec3[] lastPos = new Vec3[1];
-        final boolean[] removedSp = {false};
 
         helper.onEachTick(() -> {
             switch (state[0]) {
                 case 0 -> { // tempt: the boyfriend must approach and linger near the beef holder
                     if (bf.distanceTo(sp) < 4.0) dwell[0]++;
                     if (dwell[0] >= 60) {
-                        helper.getLevel().getServer().getPlayerList().remove(sp);
                         removedSp[0] = true;
+                        helper.getLevel().getServer().getPlayerList().remove(sp);
                         state[0] = 1;
                         trialTick[0] = -40; // settle time before the first panic trial
                     }
@@ -826,10 +890,8 @@ public class EntityLogicTestsA {
                 default -> { }
             }
         });
-        helper.succeedWhen(() -> {
-            helper.assertTrue(state[0] == 3, "tempt->panic->door phases must all complete (state=" + state[0] + ")");
-            if (!removedSp[0]) helper.getLevel().getServer().getPlayerList().remove(sp);
-        });
+        helper.succeedWhen(() -> helper.assertTrue(state[0] == 3,
+                "tempt->panic->door phases must all complete (state=" + state[0] + ")"));
     }
 
     // =====================================================================
@@ -1438,8 +1500,16 @@ public class EntityLogicTestsA {
      * Port: entity/EntityLeafMonster.java:134-156. Cow and pig sit inside the scan
      * box the whole time and must never be touched (deterministic negative); each
      * allow-listed prey in turn must be bitten.
+     *
+     * <p>Isolated in its own batch (harness slice, 2026-09-04): phase 3 holds the
+     * GLOBAL playNicely flag true for 150 ticks, which pacifies every
+     * PlayNicely-gated hunter, and a default-batch bucket-mate whose body ran
+     * inside that window (the Vortex drag-pull test i050, wave1e layout) failed
+     * spuriously — the boss017 / {@code playNicelyIsolation} shape
+     * (ConfigGateTests). The flag is also restored on every exit path
+     * ({@code onTestExit}), not only at the end of the window.</p>
      */
-    @GameTest(template = "empty_large", timeoutTicks = 1900)
+    @GameTest(template = "empty_large", timeoutTicks = 1900, batch = "playNicelyWindow")
     public void leaf_monster_prey_allowlist_play_nicely(GameTestHelper helper) {
         final Vec3 monsterPos = helper.absoluteVec(new Vec3(24.0, 8.0, 24.0));
         final EntityLeafMonster monster = helper.spawn(ModEntities.ENTITY_LEAF_MONSTER.get(), new BlockPos(24, 8, 24));
@@ -1456,6 +1526,10 @@ public class EntityLogicTestsA {
         setMaxHealth(pig, 1000.0);
 
         final boolean playNicelyOld = OreSpawnConfig.PLAY_NICELY.get();
+        // Phase 3 flips the GLOBAL flag across ticks; restore the prior value on
+        // every exit path (an assertion throw inside the window, the timeout), not
+        // only at the window's end below (harness slice, 2026-09-04).
+        onTestExit(helper, () -> OreSpawnConfig.PLAY_NICELY.set(playNicelyOld));
         final int[] phase = {0};      // 0..2 = prey phases, 3 = playNicely, 4 = done
         final int[] phaseTick = {0};
         helper.onEachTick(() -> {
@@ -1609,6 +1683,16 @@ public class EntityLogicTestsA {
         ring(helper, 18, 18, 34, 34);
         final EntityRubberDucky temptDucky = helper.spawn(ModEntities.ENTITY_RUBBER_DUCKY.get(), new BlockPos(21, 2, 26));
         final ServerPlayer sp = helper.makeMockServerPlayerInLevel();
+        final boolean[] removedSp = {false};
+        // Like boyfriend_tempt_panic_door's: this CREATIVE tempt player used to
+        // stay in level.players() whenever the test timed out before the 60-tick
+        // dwell; now it leaves on every exit path (harness slice, 2026-09-04).
+        onTestExit(helper, () -> {
+            if (!removedSp[0]) {
+                removedSp[0] = true;
+                helper.getLevel().getServer().getPlayerList().remove(sp);
+            }
+        });
         Vec3 spPos = helper.absoluteVec(new Vec3(28.0, 2.0, 26.0)); // 7 blocks away, tempt range 10
         sp.teleportTo(helper.getLevel(), spPos.x, spPos.y, spPos.z, 0.0f, 0.0f);
         sp.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.COD));
@@ -1619,15 +1703,14 @@ public class EntityLogicTestsA {
             if (done[0]) return;
             if (temptDucky.distanceTo(sp) < 4.0) dwell[0]++;
             if (dwell[0] >= 60) {
+                removedSp[0] = true;
                 helper.getLevel().getServer().getPlayerList().remove(sp);
                 temptDucky.discard();
                 done[0] = true;
             }
         });
-        helper.succeedWhen(() -> {
-            helper.assertTrue(done[0], "ducky must approach and linger near the cod holder (TemptGoal, orig RubberDucky.java:242)");
-            if (!done[0]) helper.getLevel().getServer().getPlayerList().remove(sp);
-        });
+        helper.succeedWhen(() -> helper.assertTrue(done[0],
+                "ducky must approach and linger near the cod holder (TemptGoal, orig RubberDucky.java:242)"));
     }
 
     // =====================================================================
