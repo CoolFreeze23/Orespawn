@@ -203,11 +203,11 @@ public class EntityBrutalfly extends Monster {
             // fireballs (no melee path against players). ENT-S-109: the strafe's
             // creative test (orig :217 capabilities.isCreativeMode) is
             // Abilities.instabuild — the ENT-S-107 mapping — not invulnerable.
-            Player target = this.level().getNearestPlayer(this, 30.0);
+            Player target = this.findNearestPlayerInStrafeBox(); // orig :215 — the nearest player in the 30/20/30 box (ENT-S-135); HEAD's getNearestPlayer(this, 30.0) was a sphere
             if (target != null) { // orig :216
                 if (!target.getAbilities().instabuild) { // orig :217 (ENT-S-109)
                     if (this.getSensing().hasLineOfSight(target)) { // orig :218 — an unseen survival nearest keeps `target` set and shadows the mob hunt, as orig
-                        this.currentFlightTarget = target.blockPosition().above(4); // orig :219
+                        this.currentFlightTarget = new BlockPos((int) target.getX(), (int) target.getY() + 4, (int) target.getZ()); // orig :219 — (int) casts, truncation toward zero (BUG-027 faithful; HEAD's blockPosition().above(4) floored a cell short on a negative axis — ENT-S-135 gate rows s135_02 / s135_03)
                         if (this.random.nextInt(shoot) == 0) { // orig :220
                             this.attackWithSomething(target); // orig :221
                         }
@@ -222,7 +222,7 @@ public class EntityBrutalfly extends Monster {
             if (target == null && this.random.nextInt(3) == 0) {
                 LivingEntity mobTarget = findSomethingToAttack();
                 if (mobTarget != null) {
-                    this.currentFlightTarget = mobTarget.blockPosition().above(5);
+                    this.currentFlightTarget = new BlockPos((int) mobTarget.getX(), (int) mobTarget.getY() + 5, (int) mobTarget.getZ()); // orig :232 — (int) casts (BUG-027), the :219 mark's shape
                     if (this.distanceToSqr(mobTarget) > 25.0) {
                         if (this.random.nextInt(shoot) == 0) {
                             this.attackWithSomething(mobTarget);
@@ -302,7 +302,7 @@ public class EntityBrutalfly extends Monster {
         if (attacker instanceof EntityBrutalfly) return false;
         boolean ret = super.hurt(source, amount);
         if (attacker != null && this.currentFlightTarget != null) {
-            this.currentFlightTarget = attacker.blockPosition().above(2);
+            this.currentFlightTarget = new BlockPos((int) attacker.getX(), (int) attacker.getY() + 2, (int) attacker.getZ()); // orig :277 — (int) casts (BUG-027), the :219 mark's shape
         }
         return ret;
     }
@@ -333,6 +333,30 @@ public class EntityBrutalfly extends Monster {
                 }
             }
         }
+    }
+
+    /**
+     * orig Brutalfly.java:215 {@code World.findNearestEntityWithinAABB(EntityPlayer.class, boundingBox.expand(30, 20, 30), this)}:
+     * the nearest player of ANY mode whose box meets the strafe box — a BOX, where HEAD's {@code getNearestPlayer(this, 30.0)}
+     * was a sphere of 30 from the position (a box corner reaches ~42 blocks; the sphere added ±30 straight up and down for the
+     * box's ±20). The creative test is the caller's (:217). Ties go to the LAST player scanned: {@code func_72857_a} replaces its
+     * candidate on {@code d1 <= d0} (bytecode-verified under ENT-S-105; the Kraken's {@code findNearestPlayer} idiom). Spectators
+     * are skipped by {@code getEntitiesOfClass}'s {@code NO_SPECTATORS} filter, as HEAD's sphere skipped them (no 1.7.10 state).
+     * ENT-S-135 (the targeting ledger's Brutalfly scan-set row).
+     */
+    @Nullable
+    private Player findNearestPlayerInStrafeBox() {
+        List<Player> players = this.level().getEntitiesOfClass(Player.class, this.getBoundingBox().inflate(30.0, 20.0, 30.0)); // orig :215
+        Player nearest = null;
+        double minDist = Double.MAX_VALUE;
+        for (Player player : players) {
+            double distSq = this.distanceToSqr(player);
+            if (distSq <= minDist) {                                   // orig d1 <= d0 (dcmpl; ifle) — ENT-S-105
+                minDist = distSq;
+                nearest = player;
+            }
+        }
+        return nearest;
     }
 
     @Nullable

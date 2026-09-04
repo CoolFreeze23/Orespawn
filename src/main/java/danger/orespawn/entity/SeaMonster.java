@@ -5,6 +5,10 @@ import danger.orespawn.MobStats;
 import danger.orespawn.ModItems;
 import danger.orespawn.OreSpawnMod;
 import danger.orespawn.OreSpawnConfig;
+import danger.orespawn.entity.ai.GenericTargetSorter;
+import danger.orespawn.entity.ai.TargetSelection;
+import danger.orespawn.util.MyUtils;
+import java.util.List;
 import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -59,6 +63,13 @@ public class SeaMonster extends Monster {
      * (a dimension change constructs a fresh entity), so this cannot go stale.
      */
     private final net.minecraft.world.entity.ai.attributes.AttributeInstance movementSpeedAttribute;
+
+    /**
+     * orig SeaMonster.java:39 {@code TargetSorter}, :55 {@code new GenericTargetSorter(this)} — the shared weighted-distance
+     * order (creepers halved, big silhouettes first) the scan sorts its candidates by (:518; the ledger's T4 row, closed by the
+     * sorter here). ENT-S-135.
+     */
+    private final GenericTargetSorter targetSorter = new GenericTargetSorter(this);
 
     /**
      * The last pick the pass handed to the target slot. 1.7.10 stored the scan's pick nowhere — the pass acted on it
@@ -213,10 +224,7 @@ public class SeaMonster extends Monster {
                 target = null;
             }
             if (target == null && !playNicely) {
-                Player nearest = this.level().getNearestPlayer(this, 16.0);
-                if (nearest != null && !nearest.getAbilities().instabuild) {
-                    target = nearest;
-                }
+                target = this.findSomethingToAttack();                       // orig :517-518, :527-532 — the 16/4/16 box, sorted, the first the filter accepts (ENT-S-135); HEAD's getNearestPlayer(this, 16.0) was a players-only sphere
                 // the scan's answer handed to the slot under the ownership mark — re-derived next pass, cleared when not
                 // found again (ENT-S-129, the ENT-S-108 slot rule)
                 if (target != this.getTarget()) this.setTarget(target);
@@ -242,6 +250,39 @@ public class SeaMonster extends Monster {
             this.playSound(SoundEvents.GENERIC_SPLASH, 1.5f, this.random.nextFloat() * 0.2f + 0.9f);
             this.heal(1.0f);
         }
+    }
+
+    /**
+     * orig SeaMonster.java:513-533 {@code findSomethingToAttack}: nothing under PlayNicely (:514-516); every
+     * {@code EntityLivingBase} whose box meets the monster's box grown by 16/4/16 (:517, {@code getEntitiesWithinAABB} —
+     * every living thing, where HEAD's {@code getNearestPlayer(this, 16.0)} scanned players only, and a BOX where that was a
+     * sphere of 16 from the position); sorted by the {@link GenericTargetSorter} (:518); the first the filter accepts wins
+     * (:527-532), else null (:533). {@link TargetSelection#firstMatch} is that sort-and-loop, stable ties included (OPT-021).
+     * Orig's stored-target read between the sort and the loop (:522-526) is the pass's, ahead of this call (ENT-S-129).
+     * ENT-S-135.
+     */
+    @Nullable
+    private LivingEntity findSomethingToAttack() {
+        if (OreSpawnConfig.PLAY_NICELY.get()) return null;                        // orig :514-516
+        List<LivingEntity> candidates = this.level().getEntitiesOfClass(LivingEntity.class,
+                this.getBoundingBox().inflate(16.0, 4.0, 16.0));                  // orig :517
+        return TargetSelection.firstMatch(candidates, this.targetSorter, this::isSuitableTarget); // orig :518, :527-532
+    }
+
+    /**
+     * orig SeaMonster.java:487-511 {@code isSuitableTarget}, in the original's order: null / self / dead (:488-496), line of
+     * sight (:497-499), then the player branch — creative refused (:500-503, {@code isCreativeMode} =
+     * {@code Abilities.instabuild}) — a Sea Monster refused (:504-506), any {@code EntityMob} taken (:507-509, the port's
+     * {@code Monster}), and the shared attackable-non-mob grant list last (:510, {@link MyUtils#isAttackableNonMob}, orig's
+     * membership since ENT-S-128). ENT-S-135.
+     */
+    private boolean isSuitableTarget(LivingEntity target) {
+        if (target == null || target == this || !target.isAlive()) return false;    // orig :488-496
+        if (!this.getSensing().hasLineOfSight(target)) return false;                // orig :497-499 — canSee, the eye-to-eye block ray
+        if (target instanceof Player player) return !player.getAbilities().instabuild; // orig :500-503
+        if (target instanceof SeaMonster) return false;                             // orig :504-506
+        if (target instanceof Monster) return true;                                 // orig :507-509 (EntityMob)
+        return MyUtils.isAttackableNonMob(target);                                  // orig :510
     }
 
     private boolean scanForWater(int x, int y, int z, int dx, int dy, int dz) {

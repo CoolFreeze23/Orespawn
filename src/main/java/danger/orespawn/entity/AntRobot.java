@@ -248,7 +248,7 @@ public class AntRobot extends Mob implements ICustomHitboxProfileSupplier, IMode
                 this.setTarget(null);
                 currentTarget = null;
             }
-            if (currentTarget == null) currentTarget = findSomethingToAttack();
+            if (currentTarget == null) currentTarget = findSomethingToAttack(2.0f); // orig AntRobot.java:117 — distmul 2.0 unridden: the 24/12/24 hunt box (ENT-S-135)
             if (currentTarget != null) {
                 this.lookAt(currentTarget, 10.0f, 10.0f);
                 if (this.distanceToSqr(currentTarget) > 16.0) {
@@ -312,7 +312,7 @@ public class AntRobot extends Mob implements ICustomHitboxProfileSupplier, IMode
         // leads the condition (:620) (ENT-S-114).
         if (this.level().getDifficulty() != Difficulty.PEACEFUL && !this.level().isClientSide()
                 && this.getFirstPassenger() != null && this.getRandom().nextInt(9) == 0) {
-            LivingEntity riderTarget = findSomethingToAttack();
+            LivingEntity riderTarget = findSomethingToAttack(1.0f); // orig AntRobot.java:622 — distmul 1.0 ridden: the 12/12/12 hunt box (ENT-S-135)
             if (riderTarget != null) {
                 double meleeRange = (6.0f + riderTarget.getBbWidth() / 2.0f);
                 if (this.distanceToSqr(riderTarget) < meleeRange * meleeRange) {
@@ -724,9 +724,16 @@ public class AntRobot extends Mob implements ICustomHitboxProfileSupplier, IMode
         return true;
     }
 
-    private LivingEntity findSomethingToAttack() {
+    /**
+     * orig AntRobot.java:1011-1026 {@code findSomethingToAttack(distmul, dircheck)}: the hunt box is
+     * {@code (12 * distmul) x 12 x (12 * distmul)} (:1015) — distmul 2.0 from the unridden pass (:117, :133: 24/12/24) and 1.0
+     * from the ridden one (:622: 12/12/12); HEAD inflated 12/12/12 for both, a quarter of the unridden area. Unsorted, the
+     * first suitable in encounter order (:1019-1024). The dircheck argument (the heading branch of :1050-1065) is the ledger's
+     * T2 / T8 cross-reference and stays absent. ENT-S-135.
+     */
+    private LivingEntity findSomethingToAttack(float distmul) {
         if (OreSpawnConfig.PLAY_NICELY.get()) return null; // orig AntRobot.java:1012-1014 — PlayNicely != 0 returns null ahead of the hunt scan (ENT-S-115)
-        AABB searchBox = this.getBoundingBox().inflate(12.0, 12.0, 12.0);
+        AABB searchBox = this.getBoundingBox().inflate(12.0 * distmul, 12.0, 12.0 * distmul); // orig :1015
         List<LivingEntity> entities = this.level().getEntitiesOfClass(LivingEntity.class, searchBox);
         for (LivingEntity candidate : entities) {
             if (isSuitableTarget(candidate)) return candidate;

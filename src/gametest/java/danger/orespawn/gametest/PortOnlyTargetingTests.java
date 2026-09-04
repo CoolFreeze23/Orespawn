@@ -339,15 +339,16 @@ public class PortOnlyTargetingTests {
             new Companion("VelocityRaptor", ModEntities.VELOCITY_RAPTOR, "orig VelocityRaptor.java:53-62 (tasks only, no targetTasks)",
                     List.of(),
                     List.of("1:OwnerHurtByTargetGoal", "2:OwnerHurtTargetGoal", "3:HurtByTargetGoal")),
-            new Companion("Boyfriend", ModEntities.BOYFRIEND, "orig Boyfriend.java:138-147 (the IMob hunt when PlayNicely == 0 and"
-                    + " the two Jealousy tasks; the Creeper hunt has no port counterpart, ENT-A-054; no owner task, no EntityAIHurtByTarget)",
-                    List.of("3:NearestAttackableTargetGoal<Mob>", "4:JealousyTargetGoal<Boyfriend>", "5:JealousyTargetGoal<Boyfriend>"),
+            new Companion("Boyfriend", ModEntities.BOYFRIEND, "orig Boyfriend.java:138-147 (the Creeper and IMob hunts when PlayNicely == 0"
+                    + " — MyEntityAINearestAttackableTargetGoal since ENT-S-135 — and the two Jealousy tasks; no owner task, no EntityAIHurtByTarget)",
+                    List.of("2:MyEntityAINearestAttackableTargetGoal<Creeper>", "3:MyEntityAINearestAttackableTargetGoal<Mob>",
+                            "4:JealousyTargetGoal<Boyfriend>", "5:JealousyTargetGoal<Boyfriend>"),
                     List.of("1:OwnerHurtByTargetGoal", "2:OwnerHurtTargetGoal")),
-            new Companion("Girlfriend", ModEntities.GIRLFRIEND, "orig Girlfriend.java:161-174 (the two MyValentineTarget tasks, the IMob"
-                    + " hunt when PlayNicely == 0 and the two Jealousy tasks; the Creeper hunt has no port counterpart, ENT-A-054; no owner"
-                    + " task, no EntityAIHurtByTarget)",
-                    List.of("1:ValentineTargetGoal<Player>", "2:ValentineTargetGoal<Boyfriend>", "5:NearestAttackableTargetGoal<Mob>",
-                            "4:JealousyTargetGoal<Girlfriend>", "5:JealousyTargetGoal<Girlfriend>"),
+            new Companion("Girlfriend", ModEntities.GIRLFRIEND, "orig Girlfriend.java:161-174 (the two MyValentineTarget tasks, the Creeper"
+                    + " and IMob hunts when PlayNicely == 0 — MyEntityAINearestAttackableTargetGoal since ENT-S-135 — and the two Jealousy"
+                    + " tasks; no owner task, no EntityAIHurtByTarget)",
+                    List.of("1:ValentineTargetGoal<Player>", "2:ValentineTargetGoal<Boyfriend>", "2:MyEntityAINearestAttackableTargetGoal<Creeper>",
+                            "5:MyEntityAINearestAttackableTargetGoal<Mob>", "4:JealousyTargetGoal<Girlfriend>", "5:JealousyTargetGoal<Girlfriend>"),
                     List.of("3:OwnerHurtByTargetGoal", "4:OwnerHurtTargetGoal")));
 
     /** Modern on: each companion's selector is its 1.7.10 goals plus the owner pair (plus HurtByTargetGoal on the Hydrolisc and the Raptor). */

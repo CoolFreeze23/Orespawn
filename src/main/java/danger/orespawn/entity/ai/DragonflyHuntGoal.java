@@ -9,7 +9,6 @@ import danger.orespawn.entity.EntityButterfly;
 import danger.orespawn.entity.EntityDragonfly;
 import danger.orespawn.entity.EntityMosquito;
 import danger.orespawn.entity.Firefly;
-import net.minecraft.core.BlockPos;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.animal.horse.AbstractHorse;
@@ -18,8 +17,10 @@ import net.minecraft.world.entity.animal.horse.AbstractHorse;
  * Dragonfly flight + hunt behaviour.
  *
  * <p>Extends {@link AmbientFlightGoal} with the 1.7.10 prey-hunting branch
- * from {@code Dragonfly.customServerAiStep()}: ~1 in 12 retarget rolls
- * the dragonfly scans its 10x6x10 AABB for the closest living entity in
+ * from {@code Dragonfly.customServerAiStep()}: on every tick the flight
+ * retarget did NOT fire, a 1-in-12 roll (orig Dragonfly.java:142, the retarget's
+ * else branch — {@link #onRetargetSkipped}) has
+ * the dragonfly scan its 10x6x10 AABB for the closest living entity in
  * sight that is on the orig prey whitelist — ants, butterflies, cockateils,
  * mosquitoes, fireflies and, unless {@link OreSpawnConfig#DRAGONFLY_HORSE_FRIENDLY}
  * is on, horses (orig Dragonfly.java:213-228, {@link #isPrey}; ENT-S-128 —
@@ -28,11 +29,11 @@ import net.minecraft.world.entity.animal.horse.AbstractHorse;
  * the prey is never retained). Nothing else is
  * prey, players and other dragonflies included, as in 1.7.10.
  *
- * <p>Main-thread budget: the {@code getEntitiesOfClass} scan is gated
- * behind the AmbientFlightGoal retarget cadence ({@link Params#dragonfly})
- * AND a 1-in-12 roll on top, so on average a dragonfly does one
- * neighbour scan roughly every 3600 ticks (~3 minutes). Well within
- * the per-tick budget even with hundreds of flyers.
+ * <p>Main-thread budget: the {@code getEntitiesOfClass} scan runs on the
+ * 1-in-12 roll of every non-retarget tick — one neighbour scan roughly every
+ * 12 ticks per dragonfly, as in 1.7.10 (orig :142). HEAD had nested the roll
+ * INSIDE the retarget (one scan roughly every 3600 ticks, the inverted cadence
+ * the targeting ledger's Dragonfly scan-set row named; ENT-S-135).
  *
  * <p>Peaceful: orig Dragonfly.java:142 gates the whole hunt branch — the scan, the flight retarget
  * onto the prey and the bite at :147-148 — on {@code difficulty != PEACEFUL}, and :198 answers
@@ -58,8 +59,8 @@ public class DragonflyHuntGoal extends AmbientFlightGoal {
     public void tick() {
         super.tick();
         // orig Dragonfly.java:145-148 — the pass's pick is acted on for THIS tick alone: the flight target moved onto it
-        // (:145, pickRetarget) and one bite if it stands within distSq 6 (:146-148); it was never stored, and the next
-        // pass re-derives it. The pick passes through the slot for this tick only (pickRetarget's hand-off, read back
+        // (:145, onRetargetSkipped) and one bite if it stands within distSq 6 (:146-148); it was never stored, and the next
+        // pass re-derives it. The pick passes through the slot for this tick only (onRetargetSkipped's hand-off, read back
         // here) and is dropped once acted on — HEAD kept it and bit every tick (ENT-S-129).
         LivingEntity target = this.dragonfly.getTarget();
         if (target == null) return;
@@ -72,18 +73,24 @@ public class DragonflyHuntGoal extends AmbientFlightGoal {
         this.dragonfly.setTarget(null); // orig :146-148 — one bite per pass, nothing retained (ENT-S-129)
     }
 
+    /**
+     * orig Dragonfly.java:142-149 — the hunt is the ELSE branch of the :124 flight retarget ({@code else if
+     * (rand.nextInt(12) == 0 && difficulty != PEACEFUL)}): rolled on every tick the 1-in-300 / near retarget did NOT fire,
+     * so a dragonfly hunts about every 12 ticks. HEAD had put this inside {@code pickRetarget}, i.e. INSIDE the retarget —
+     * the roll was only reached when the retarget fired (≈ every 3600 ticks) and the wander pick was skipped for the prey's
+     * position on the same tick; the flight retarget itself (:124-141) is now super's alone. ENT-S-135 (the targeting
+     * ledger's Dragonfly scan-set row). The roll first, then the difficulty (ENT-S-114).
+     */
     @Override
-    protected BlockPos pickRetarget() {
-        // orig Dragonfly.java:142 — the 1-in-12 roll, then `difficulty != PEACEFUL` (ENT-S-114).
+    protected void onRetargetSkipped() {
         if (this.mob.getRandom().nextInt(HUNT_ROLL_CHANCE) == 0
-                && this.mob.level().getDifficulty() != Difficulty.PEACEFUL) {
+                && this.mob.level().getDifficulty() != Difficulty.PEACEFUL) {   // orig :142
             LivingEntity prey = findPrey();                                   // orig :144
             if (prey != null) {
                 this.dragonfly.setTarget(prey);                                // the pass's hand-off for this tick's bite (tick reads it back and drops it) — never retained (ENT-S-129)
-                return prey.blockPosition().above();                          // orig :145
+                this.flightTarget = prey.blockPosition().above();             // orig :145 — the flight target moved onto the prey; the steering below follows it this tick
             }
         }
-        return super.pickRetarget();
     }
 
     private LivingEntity findPrey() {

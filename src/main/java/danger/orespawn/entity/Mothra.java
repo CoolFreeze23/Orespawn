@@ -280,6 +280,30 @@ public class Mothra extends EntityButterfly implements OreSpawnPartEntity.Multip
         return true;
     }
 
+    /**
+     * orig Mothra.java:224 {@code World.findNearestEntityWithinAABB(EntityPlayer.class, boundingBox.expand(25, 20, 25), this)}:
+     * the stage-1 player search is a BOX around the root box, where HEAD's {@code getNearestPlayer(this, 25.0)} was a sphere of 25
+     * from the position (taller, narrower on the diagonals: a box corner reaches ~35 blocks; the sphere added ±25 straight up and
+     * down for the box's ±20 above the root box). Any mode — the creative test is the caller's (:226). Ties go to the LAST player
+     * scanned: {@code func_72857_a} replaces on {@code d1 <= d0} (bytecode-verified under ENT-S-105; the Kraken's idiom). Spectators
+     * are skipped by {@code getEntitiesOfClass}'s {@code NO_SPECTATORS}, as HEAD's sphere skipped them (no 1.7.10 state). The root
+     * box the search inflates is MOD-029's in modern mode (6 x 3) and orig's 5 x 2 in classic, as for stage 2. ENT-S-135.
+     */
+    @Nullable
+    private Player findNearestPlayerInStrafeBox() {
+        List<Player> players = this.level().getEntitiesOfClass(Player.class, this.getBoundingBox().inflate(25.0, 20.0, 25.0)); // orig :224
+        Player nearest = null;
+        double minDist = Double.MAX_VALUE;
+        for (Player player : players) {
+            double distSq = this.distanceToSqr(player);
+            if (distSq <= minDist) {                                   // orig d1 <= d0 (dcmpl; ifle) — ENT-S-105
+                minDist = distSq;
+                nearest = player;
+            }
+        }
+        return nearest;
+    }
+
     private LivingEntity findSomethingToAttack() {
         // orig Mothra.java:486-488 — PlayNicely servers get no mob-vs-mob hunts
         if (OreSpawnConfig.PLAY_NICELY.get()) return null;
@@ -389,7 +413,7 @@ public class Mothra extends EntityButterfly implements OreSpawnPartEntity.Multip
             this.stuckCount = 0;
         } else if (this.random.nextInt(10) == 0 && this.level().getDifficulty() != Difficulty.PEACEFUL
                 && !OreSpawnConfig.MOTHRA_PEACEFUL.get()) {
-            Player target = this.level().getNearestPlayer(this, 25.0);
+            Player target = this.findNearestPlayerInStrafeBox(); // orig Mothra.java:224 — the nearest player in the 25/20/25 box (ENT-S-135); HEAD's getNearestPlayer(this, 25.0) was a sphere
             if (target != null) { // orig Mothra.java:225
                 if (!target.getAbilities().instabuild) { // orig :226 capabilities.isCreativeMode (ENT-S-107: Abilities.instabuild)
                     if (this.getSensing().hasLineOfSight(target)) { // orig :227 — the stage-1 sight step (the T2 shape); an unseen survival nearest keeps `target` set and shadows the mob hunt, as orig (ENT-S-132)

@@ -295,7 +295,7 @@ public class CreativeMappingParityTests {
      * the fire roll nextInt(shoot) (port :207) answers 1: the strafe block is entered exactly once
      * and no fireball is ever spawned. The flight target is parked 10 blocks above the Brutalfly
      * first (distSq 100, past the port :150 "&lt; 9" reselection) so nothing but the strafe can
-     * move it; the strafe's mark — {@code player.blockPosition().above(4)} — is read back through
+     * move it; the strafe's mark — orig :219's {@code ((int) x, (int) y + 4, (int) z)} — is read back through
      * the private currentFlightTarget. The creative case must leave the parked target in place
      * (orig :224-226 nulls the creative target), the two survival cases must set the mark.
      */
@@ -318,7 +318,7 @@ public class CreativeMappingParityTests {
                             + " (ENT-S-109 test setup)");
             invokeCustomServerAiStep(brutalfly);
             BlockPos after = (BlockPos) readObject(brutalfly, "currentFlightTarget");
-            BlockPos mark = player.blockPosition().above(4);
+            BlockPos mark = new BlockPos((int) player.getX(), (int) player.getY() + 4, (int) player.getZ()); // orig Brutalfly.java:219's (int) casts (BUG-027); blockPosition() floors a cell short on a negative axis
             helper.assertTrue(after != null, "EntityBrutalfly.customServerAiStep left currentFlightTarget null (ENT-S-109)");
             if (playerCase.prey) {
                 helper.assertTrue(mark.equals(after), "EntityBrutalfly strafe (" + playerCase + " player): " + strafeWhy(playerCase)
