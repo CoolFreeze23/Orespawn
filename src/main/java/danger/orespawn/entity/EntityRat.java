@@ -151,7 +151,7 @@ public class EntityRat extends Monster {
         super.customServerAiStep();
 
         if (this.random.nextInt(200) == 1) {
-            this.setTarget(null);
+            this.setLastHurtByMob(null); // orig Rat.java:156-158 — setRevengeTarget(null): the revenge MEMORY forgotten (the port's lastHurtByMob), not the attack target (ENT-S-129)
         }
 
         if (this.random.nextInt(5) == 1) {

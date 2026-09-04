@@ -31,9 +31,9 @@ public class DinosaurMeleeAttackGoal extends BugMeleeAttackGoal {
         private Presets() {}
 
         public static Params alosaurus()        { return new Params(1.25, 4.0, 5, 4, 5,   0, 12.0, 5.0); }
-        public static Params trex()             { return new Params(1.25, 4.0, 5, 4, 5,   0, 20.0, 6.0); }
-        public static Params nastysaurus()      { return new Params(1.25, 4.5, 5, 4, 5, 250, 32.0, 8.0); }
-        public static Params pointysaurus()     { return new Params(1.25, 4.0, 6, 5, 6, 250, 12.0, 5.0); }
+        public static Params trex()             { return new Params(1.25, 4.0, 5, 4, 5,   0, 20.0, 6.0, true); } // ENT-S-129: stands down under PlayNicely (orig TRex.java:185-187); the 1-in-200 of :189 is the pass's (TRex.selectTarget)
+        public static Params nastysaurus()      { return new Params(1.25, 4.5, 5, 4, 5,   0, 32.0, 8.0, true); } // ENT-S-129: the 1-in-250 of orig Nastysaurus.java:219 is rolled inside the 1-in-5 pass on rt alone (Nastysaurus.selectTarget), not here every tick on any target; stands down under PlayNicely (:215-217)
+        public static Params pointysaurus()     { return new Params(1.25, 4.0, 6, 5, 6,   0, 12.0, 5.0, true); } // ENT-S-129: the 1-in-250 of orig Pointysaurus.java:189 is rolled inside the 1-in-6 pass on rt alone (Pointysaurus.customServerAiStep); stands down under PlayNicely (:185-187)
         public static Params cryolophosaurus()  { return new Params(1.25, Math.sqrt(5.0), 5, 12, 14, 200, 9.0, 2.0); }
         public static Params basilisk()         { return new Params(1.25, 6.0, 5, 3, 4,   0, 24.0, 7.0); }
         // TF-026 (2026-08-11): innerAttackRoll was transcribed 0, crashing
@@ -41,6 +41,6 @@ public class DinosaurMeleeAttackGoal extends BugMeleeAttackGoal {
         // entity spawnable — orig WaterDragon.java:597/603 is cadence
         // nextInt(5)==1, then nextInt(4)==0 || nextInt(5)==1.
         public static Params waterDragon()      { return new Params(1.0,  4.0, 5, 4, 5, 200, 14.0, 5.0); }
-        public static Params seaViper()         { return new Params(1.5,  4.5, 5, 2, 4,   0, 18.0, 4.0); }
+        public static Params seaViper()         { return new Params(1.5,  4.5, 5, 2, 4,   0, 18.0, 4.0, true); } // ENT-S-129: stands down under PlayNicely (orig SeaViper.java:531-543 — the stored-target read sat inside the gated scan)
     }
 }

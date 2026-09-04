@@ -269,7 +269,7 @@ public class EntityCannonFodder extends TamableAnimal {
     protected void customServerAiStep() {
         if (this.isRemoved()) return;
         super.customServerAiStep();
-        if (this.random.nextInt(200) == 1) this.setTarget(null);
+        if (this.random.nextInt(200) == 1) this.setLastHurtByMob(null); // orig EntityCannonFodder.java:346-348 — func_70604_c(null) = setRevengeTarget(null): the revenge MEMORY forgotten (the port's lastHurtByMob), not the attack target (ENT-S-129)
         if (this.getIsActivated() != 2) return;
 
         // orig EntityCannonFodder.java:352-358 — species table: base sfreq 7 / dm 4.0f,

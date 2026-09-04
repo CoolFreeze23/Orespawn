@@ -13,6 +13,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -46,7 +47,15 @@ public class EnderReaper extends Monster {
         this.goalSelector.addGoal(2, new WaterAvoidingRandomStrollGoal(this, 1.0));
         this.goalSelector.addGoal(3, new LookAtPlayerGoal(this, Player.class, 8.0f));
         this.goalSelector.addGoal(4, new RandomLookAroundGoal(this));
-        this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
+        // orig EnderReaper.java — no AI tasks: EntityMob.attackEntityFrom set the legacy loop's entityToAttack (V10), held
+        // until dead, creative or the daylight roll (:111-115) — no range, no sight memory, gone once nulled; the port's
+        // revenge goal holds by that rule (holdsLegacyTarget) (ENT-S-129)
+        this.targetSelector.addGoal(1, new HurtByTargetGoal(this) {
+            @Override
+            public boolean canContinueToUse() {
+                return EnderReaper.this.holdsLegacyTarget(); // ENT-S-129
+            }
+        });
         // orig EnderReaper.java:67 — unprovoked player targeting runs through the
         // pumpkin-stare test (shouldAttackPlayer), never proximity alone.
         // orig EnderReaper.java:62-64 — findPlayerToAttack (func_70782_k) answers null under PlayNicely (PlayNicely
@@ -59,7 +68,23 @@ public class EnderReaper extends Monster {
                 if (OreSpawnConfig.PLAY_NICELY.get()) return false; // orig EnderReaper.java:62-64 (ENT-S-115)
                 return super.canUse();
             }
+
+            @Override
+            public boolean canContinueToUse() {
+                return EnderReaper.this.holdsLegacyTarget(); // orig EnderReaper.java:111-115 with V10 — held until dead, creative or the daylight roll: no FOLLOW_RANGE (81) release, no 60-tick unseen memory (ENT-S-129)
+            }
         });
+    }
+
+    /**
+     * orig EnderReaper.java — the legacy (non-AI) loop's hold of {@code entityToAttack} ({@code EntityCreature
+     * .updateEntityActionState}, the ledger's V10): kept while alive and not creative, at any range and through any
+     * sight loss, until the daylight roll (:111-115) nulls it; nulled, it is gone (no re-assert). Both port target
+     * goals hold by this rule; vanilla's {@code canAttack} is the creative / spectator screen. ENT-S-129.
+     */
+    private boolean holdsLegacyTarget() {
+        LivingEntity held = this.getTarget();
+        return held != null && held.isAlive() && this.canAttack(held);
     }
 
     // orig EnderReaper.java:83-93 — pumpkin-stare gate. A pumpkin on the head

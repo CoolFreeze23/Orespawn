@@ -298,6 +298,7 @@ public class SightStepParityTests {
         void arrange(GameTestHelper helper, boolean walled) {
             setWall(helper, walled);
             this.hunter.getSensing().tick();
+            clearSightMemo(this.hunter); // ENT-S-122: rows 1, 2 and 7 — the Ant Robot's and the Nightmare's own sight memo, cleared between the drives as the vanilla cache is
             boolean sees = this.hunter.hasLineOfSight(preyEntity());
             helper.assertTrue(sees == !walled, "precondition: the " + this.hunter.getClass().getSimpleName() + " (eye "
                     + String.format("%.2f", this.hunter.getEyeHeight()) + " above its feet) must " + (walled ? "not see the "
@@ -505,6 +506,26 @@ public class SightStepParityTests {
     private static void discardQuietly(Entity entity) {
         if (entity != null && !entity.isRemoved()) {
             entity.discard();
+        }
+    }
+
+    /**
+     * ENT-S-122: the Ant Robot (rows 1, 2) and the Nightmare (row 7) hold their filters' sight verdicts in a memo of
+     * their own that only their state boundary clears (AntRobot.customServerAiStep unridden, PitchBlack's activity-0
+     * branch), which a frozen hunter never reaches; between the two drives the memo is cleared by reflection, as the
+     * vanilla cache is by {@code getSensing().tick()}. Hunters without the memo are untouched.
+     */
+    private static void clearSightMemo(Mob hunter) {
+        for (String name : new String[] {"sightMemoSeen", "sightMemoUnseen"}) {
+            try {
+                Field field = hunter.getClass().getDeclaredField(name);
+                field.setAccessible(true);
+                ((it.unimi.dsi.fastutil.ints.IntOpenHashSet) field.get(hunter)).clear();
+            } catch (NoSuchFieldException absent) {
+                return;
+            } catch (ReflectiveOperationException exception) {
+                throw new IllegalStateException("cannot clear " + hunter.getClass().getSimpleName() + "." + name, exception);
+            }
         }
     }
 

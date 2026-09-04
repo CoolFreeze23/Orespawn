@@ -17,6 +17,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.SpawnGroupData;
@@ -62,6 +63,8 @@ public class Crab extends Monster {
     private static final double PLAYER_VERTICAL_KNOCKBACK_MULTIPLIER = 2.0;
     /** Scale whose stats were last pushed into the live attributes; -1 = never. */
     private float lastAppliedStatScale = -1.0f;
+    /** orig Crab.java:64 — the revenge task; the pass's 1-in-100 release ends it (see {@link RevengeGoal}); assigned in registerGoals (the Mob constructor). ENT-S-129. */
+    private RevengeGoal revengeGoal;
     /**
      * OPT-009: the crab's speed genuinely varies (water/land × growth scale), so
      * the per-tick write stays, but the AttributeInstance is resolved once here
@@ -88,7 +91,8 @@ public class Crab extends Monster {
         this.goalSelector.addGoal(1, new RandomStrollGoal(this, 1.0));
         this.goalSelector.addGoal(2, new LookAtPlayerGoal(this, Player.class, 10.0f));
         this.goalSelector.addGoal(3, new RandomLookAroundGoal(this));
-        this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
+        this.revengeGoal = new RevengeGoal();
+        this.targetSelector.addGoal(1, this.revengeGoal); // orig Crab.java:64 — EntityAIHurtByTarget(this, false), released by the pass's 1-in-100 (ENT-S-129)
     }
 
     public static AttributeSupplier.Builder createAttributes() {
@@ -229,16 +233,36 @@ public class Crab extends Monster {
         if (source.getMsgId().equals("cactus")) return false;
         Entity attacker = source.getEntity();
         if (attacker instanceof Crab) return false;
+        boolean hurtApplied = false;
         if (this.hurtTimer <= 0) {
             this.hurtTimer = 8;
-            boolean hurtApplied = super.hurt(source, amount);
-            if (attacker instanceof LivingEntity livingAttacker) {
-                this.setTarget(livingAttacker);
-                this.getNavigation().moveTo(livingAttacker, 1.2);
-            }
-            return hurtApplied;
+            hurtApplied = super.hurt(source, amount);
         }
-        return false;
+        // orig Crab.java:232-238 — an EntityLiving attacker (the port's Mob) becomes the stored target, hurt timer or no
+        // hurt timer; a player who hits the crab is stored by the revenge goal alone, under its screen (ENT-S-129)
+        if (attacker instanceof Mob mob) {
+            this.setTarget(mob);
+            this.getNavigation().moveTo(mob, 1.2);
+        }
+        return hurtApplied;
+    }
+
+    /**
+     * orig Crab.java:64 {@code EntityAIHurtByTarget(this, false)} — the revenge task whose attack target the pass read
+     * ahead of the scan (:345) and released on its roll (:342-344); 1.7.10's task ended when its attack target
+     * was nulled ({@code EntityAITarget.continueExecuting}), where vanilla's {@code TargetGoal} re-asserts its own memory
+     * into an emptied slot — so the pass's release also drops that memory ({@link #release}). The hold itself stays
+     * vanilla's. ENT-S-129.
+     */
+    private final class RevengeGoal extends HurtByTargetGoal {
+        RevengeGoal() {
+            super(Crab.this);
+        }
+
+        /** orig :342-344 {@code setAttackTarget(null)} ended the task: the goal's memory goes with the slot. */
+        void release() {
+            this.targetMob = null;
+        }
     }
 
     @Override
@@ -266,7 +290,11 @@ public class Crab extends Monster {
         }
 
         if (this.getRandom().nextInt(5) == 1) {
-            LivingEntity currentTarget = this.getTarget();
+            if (this.getRandom().nextInt(100) == 1) {                // orig Crab.java:342-344 — the 1-in-100 `setAttackTarget(null)` inside the 1-in-5 pass, ahead of the read (:345) (ENT-S-129)
+                this.setTarget(null);
+                this.revengeGoal.release();                          // 1.7.10's task ended on a nulled attack target; vanilla's TargetGoal would re-assert its memory (ENT-S-129)
+            }
+            LivingEntity currentTarget = this.getTarget();           // orig :345
             if (currentTarget != null && !currentTarget.isAlive()) {
                 this.setTarget(null);
                 currentTarget = null;

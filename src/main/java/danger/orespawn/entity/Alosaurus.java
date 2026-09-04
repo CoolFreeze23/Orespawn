@@ -20,7 +20,6 @@ import net.minecraft.world.entity.ai.goal.FloatGoal;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.MoveThroughVillageGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
-import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
@@ -86,7 +85,10 @@ public class Alosaurus extends Monster {
         this.goalSelector.addGoal(3, new MyEntityAIWanderALot(this, 16, 1.0)); // orig :51
         this.goalSelector.addGoal(4, new LookAtPlayerGoal(this, Player.class, 8.0f)); // orig :52
         this.goalSelector.addGoal(5, new RandomLookAroundGoal(this)); // orig :53
-        this.targetSelector.addGoal(1, new HurtByTargetGoal(this)); // orig :54
+        // orig Alosaurus.java:54 — EntityAIHurtByTarget(this, false), whose attack target nothing in orig read: the pass
+        // (:164-179) acted on the scan's pick alone and getAttackTarget() was never consulted, so the revenge task was
+        // inert. The port's slot is read by the melee goal every tick, so a registered revenge goal would chase the
+        // attacker — re-asserting it after every empty scan — where 1.7.10 never retaliated: not registered (ENT-S-129).
     }
 
     public static AttributeSupplier.Builder createAttributes() {

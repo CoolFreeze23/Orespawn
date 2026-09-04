@@ -148,7 +148,7 @@ public class CreepingHorror extends Monster {
         super.customServerAiStep();
 
         if (this.getRandom().nextInt(200) == 1) {
-            this.setTarget(null);
+            this.setLastHurtByMob(null); // orig CreepingHorror.java:136-138 — func_70604_c(null) = setRevengeTarget(null): the revenge MEMORY forgotten (the port's lastHurtByMob), not the attack target (ENT-S-129)
         }
         if (this.getRandom().nextInt(5) == 1) {
             LivingEntity currentTarget = findSomethingToAttack();

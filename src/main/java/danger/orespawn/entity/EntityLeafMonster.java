@@ -120,7 +120,7 @@ public class EntityLeafMonster extends Monster {
         if (this.isRemoved()) return;
 
         if (this.random.nextInt(100) == 1) {
-            this.setTarget(null);
+            this.setLastHurtByMob(null); // orig LeafMonster.java:160-162 — setRevengeTarget(null): the revenge MEMORY forgotten (the port's lastHurtByMob), not the attack target (ENT-S-129)
         }
 
         if (this.random.nextInt(4) == 1) {
