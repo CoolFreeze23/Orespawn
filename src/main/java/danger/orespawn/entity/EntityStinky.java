@@ -1,6 +1,5 @@
 package danger.orespawn.entity;
 
-import java.util.Comparator;
 import java.util.List;
 
 import javax.annotation.Nullable;
@@ -52,6 +51,7 @@ import net.minecraft.world.phys.Vec3;
 import danger.orespawn.ModItems;
 import danger.orespawn.OreSpawnMod;
 import danger.orespawn.OreSpawnConfig;
+import danger.orespawn.entity.ai.GenericTargetSorter;
 import danger.orespawn.entity.ai.TargetSelection;
 
 public class EntityStinky extends TamableAnimal {
@@ -569,7 +569,7 @@ public class EntityStinky extends TamableAnimal {
         // OPT-021: nearest-first pick without the full list sort; TargetSelection
         // preserves the removed sort's order and stable-tie semantics exactly.
         // orig Stinky.java:699 — the loop takes the first candidate that passes isSuitableTarget AND the feet ray canSeeTarget(posX, posY, posZ) (ENT-S-118)
-        return TargetSelection.firstMatch(targets, Comparator.comparingDouble(this::distanceToSqr),
+        return TargetSelection.firstMatch(targets, new GenericTargetSorter(this), // orig Stinky.java:692 Collections.sort(var5, this.TargetSorter) — GenericTargetSorter (:48 / :76) (ENT-S-139)
                 candidate -> this.isSuitableTarget(candidate) && this.canSeeTarget(candidate.getX(), candidate.getY(), candidate.getZ()));
     }
 

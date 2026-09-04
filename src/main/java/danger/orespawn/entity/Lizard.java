@@ -44,6 +44,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import danger.orespawn.ModEntities;
 import danger.orespawn.OreSpawnMod;
 import danger.orespawn.OreSpawnConfig;
+import danger.orespawn.entity.ai.GenericTargetSorter;
 import danger.orespawn.entity.ai.TargetSelection;
 
 public class Lizard extends TamableAnimal {
@@ -70,7 +71,7 @@ public class Lizard extends TamableAnimal {
     public Lizard(EntityType<? extends Lizard> type, Level level) {
         super(type, level);
         this.xpReward = 15;
-        this.targetSorter = Comparator.comparingDouble(this::distanceToSqr);
+        this.targetSorter = new GenericTargetSorter(this); // orig Lizard.java:62 — GenericTargetSorter (:45), the sort at :340 (ENT-S-139)
     }
 
     @Override

@@ -2,7 +2,6 @@ package danger.orespawn.entity;
 
 import danger.orespawn.MobStats;
 
-import java.util.Comparator;
 import java.util.List;
 
 import javax.annotation.Nullable;
@@ -32,6 +31,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import danger.orespawn.OreSpawnConfig;
 import danger.orespawn.OreSpawnMod;
+import danger.orespawn.entity.ai.GenericTargetSorter;
 import danger.orespawn.entity.ai.TargetSelection;
 import danger.orespawn.util.MyUtils;
 
@@ -229,7 +229,7 @@ public class EntityRat extends Monster {
         List<LivingEntity> targets = this.level().getEntitiesOfClass(LivingEntity.class, searchBox);
         // OPT-021: nearest-first pick without the full list sort; TargetSelection
         // preserves the removed sort's order and stable-tie semantics exactly.
-        return TargetSelection.firstMatch(targets, Comparator.comparingDouble(this::distanceToSqr), this::isSuitableTarget);
+        return TargetSelection.firstMatch(targets, new GenericTargetSorter(this), this::isSuitableTarget); // orig Rat.java:256 Collections.sort(var5, this.TargetSorter) — GenericTargetSorter (:46 / :63) (ENT-S-139)
     }
 
     @Nullable

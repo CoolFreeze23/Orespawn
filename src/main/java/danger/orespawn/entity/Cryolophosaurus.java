@@ -2,7 +2,6 @@ package danger.orespawn.entity;
 
 import danger.orespawn.MobStats;
 
-import java.util.Comparator;
 import java.util.List;
 
 import javax.annotation.Nullable;
@@ -25,6 +24,7 @@ import net.minecraft.world.level.Level;
 import danger.orespawn.OreSpawnConfig;
 import danger.orespawn.OreSpawnMod;
 import danger.orespawn.entity.ai.DinosaurMeleeAttackGoal;
+import danger.orespawn.entity.ai.GenericTargetSorter;
 import danger.orespawn.entity.ai.TargetSelection;
 
 public class Cryolophosaurus extends Monster {
@@ -135,7 +135,7 @@ public class Cryolophosaurus extends Monster {
         return true;
     }
 
-    /** orig Cryolophosaurus.java:213-234 — 9×2×9 scan, nearest first, PlayNicely-gated. */
+    /** orig Cryolophosaurus.java:213-234 — 9×2×9 scan in GenericTargetSorter order (:58, the sort at :218), the first suitable, PlayNicely-gated. */
     @Nullable
     private LivingEntity findSomethingToAttack() {
         if (OreSpawnConfig.PLAY_NICELY.get()) return null;
@@ -143,7 +143,7 @@ public class Cryolophosaurus extends Monster {
                 LivingEntity.class, this.getBoundingBox().inflate(9.0, 2.0, 9.0));
         // OPT-021: nearest-first pick without the full list sort; TargetSelection
         // preserves the removed sort's order and stable-tie semantics exactly.
-        return TargetSelection.firstMatch(candidates, Comparator.comparingDouble(this::distanceToSqr), this::isSuitableTarget);
+        return TargetSelection.firstMatch(candidates, new GenericTargetSorter(this), this::isSuitableTarget); // orig Cryolophosaurus.java:218 Collections.sort(var5, this.TargetSorter) — GenericTargetSorter (:58), the first suitable :222-226 (ENT-S-139)
     }
 
     @Override

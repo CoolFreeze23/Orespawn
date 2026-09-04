@@ -26,6 +26,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import danger.orespawn.OreSpawnConfig;
+import danger.orespawn.entity.ai.GenericTargetSorter;
 import danger.orespawn.entity.ai.TargetSelection;
 import danger.orespawn.util.MyUtils;
 
@@ -41,7 +42,7 @@ public class PurplePower extends Mob {
         super(type, level);
         this.xpReward = 35;
         this.noPhysics = true;
-        this.targetSorter = Comparator.comparingDouble(this::distanceToSqr);
+        this.targetSorter = new GenericTargetSorter(this); // orig PurplePower.java:44 — GenericTargetSorter (:35), the sort at :272 (ENT-S-139)
     }
 
     @Override

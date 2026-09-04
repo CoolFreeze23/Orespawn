@@ -26,6 +26,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import danger.orespawn.OreSpawnMod;
 import danger.orespawn.OreSpawnConfig;
+import danger.orespawn.entity.ai.GenericTargetSorter;
 import danger.orespawn.entity.ai.TargetSelection;
 import danger.orespawn.util.MyUtils;
 
@@ -50,7 +51,7 @@ public class SpiderDriver extends Spider {
 
     public SpiderDriver(EntityType<? extends SpiderDriver> type, Level level) {
         super(type, level);
-        this.targetSorter = Comparator.comparingDouble(this::distanceToSqr);
+        this.targetSorter = new GenericTargetSorter(this); // orig SpiderDriver.java:33 — GenericTargetSorter, the sorts at :108 (the mount pick) and :164 (the combat scan) (ENT-S-139)
     }
 
     /**

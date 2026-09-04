@@ -4,7 +4,6 @@ import danger.orespawn.ModEntities;
 import danger.orespawn.ModItems;
 import danger.orespawn.OreSpawnMod;
 import danger.orespawn.OreSpawnConfig;
-import java.util.Comparator;
 import java.util.List;
 import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
@@ -261,7 +260,7 @@ public class Frog extends Animal {
         // OPT-021: nearest-first pick without the full list sort; TargetSelection
         // preserves the removed sort's order and stable-tie semantics exactly.
         return danger.orespawn.entity.ai.TargetSelection.firstMatch(entities,
-                Comparator.comparingDouble(this::distanceToSqr), this::isInsectTarget);
+                new danger.orespawn.entity.ai.GenericTargetSorter(this), this::isInsectTarget); // orig Frog.java:312 Collections.sort(var5, this.TargetSorter) — GenericTargetSorter (:55) (ENT-S-139)
     }
 
     private boolean isInsectTarget(LivingEntity entity) {

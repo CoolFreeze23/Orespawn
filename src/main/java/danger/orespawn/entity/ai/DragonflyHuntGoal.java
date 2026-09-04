@@ -1,6 +1,5 @@
 package danger.orespawn.entity.ai;
 
-import java.util.Comparator;
 import java.util.List;
 import danger.orespawn.OreSpawnConfig;
 import danger.orespawn.entity.Cockateil;
@@ -20,7 +19,7 @@ import net.minecraft.world.entity.animal.horse.AbstractHorse;
  * from {@code Dragonfly.customServerAiStep()}: on every tick the flight
  * retarget did NOT fire, a 1-in-12 roll (orig Dragonfly.java:142, the retarget's
  * else branch — {@link #onRetargetSkipped}) has
- * the dragonfly scan its 10x6x10 AABB for the closest living entity in
+ * the dragonfly scan its 10x6x10 AABB for the first living entity, in GenericTargetSorter order (orig :45 / :236; ENT-S-139), in
  * sight that is on the orig prey whitelist — ants, butterflies, cockateils,
  * mosquitoes, fireflies and, unless {@link OreSpawnConfig#DRAGONFLY_HORSE_FRIENDLY}
  * is on, horses (orig Dragonfly.java:213-228, {@link #isPrey}; ENT-S-128 —
@@ -101,7 +100,7 @@ public class DragonflyHuntGoal extends AmbientFlightGoal {
         // preserves the removed sort's order and stable-tie semantics exactly,
         // and the predicate keeps the original filter chain's order/short-circuit.
         return TargetSelection.firstMatch(candidates,
-                Comparator.comparingDouble(this.mob::distanceToSqr),
+                new GenericTargetSorter(this.mob), // orig Dragonfly.java:236 Collections.sort(var5, this.TargetSorter) — GenericTargetSorter (:45) (ENT-S-139)
                 candidate -> this.mob.level().getDifficulty() != Difficulty.PEACEFUL // orig Dragonfly.java:198-200 — PEACEFUL → false ahead of every other check (ENT-S-114)
                         && candidate != this.mob && candidate.isAlive()
                         && this.dragonfly.getSensing().hasLineOfSight(candidate) // orig Dragonfly.java:210-212 — canSee, ahead of the whitelist; HEAD's step, at the orig position again (ENT-S-128)
