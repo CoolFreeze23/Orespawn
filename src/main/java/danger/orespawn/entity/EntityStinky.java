@@ -78,6 +78,11 @@ public class EntityStinky extends TamableAnimal {
     private int ownerFlying = 0;
     private final float moveSpeed = 0.3f;
     private int skinColor = -1;
+    // orig Stinky.java:54-57 — the idle block-eat's nearest coal ore: its squared distance from the scan origin (99999 = none) and its position (ENT-S-119)
+    private int closest = 99999;
+    private int tx = 0;
+    private int ty = 0;
+    private int tz = 0;
 
     public EntityStinky(EntityType<? extends EntityStinky> type, Level level) {
         super(type, level);
@@ -100,10 +105,17 @@ public class EntityStinky extends TamableAnimal {
         this.goalSelector.addGoal(7, new WaterAvoidingRandomStrollGoal(this, 0.75));
         this.goalSelector.addGoal(8, new RandomLookAroundGoal(this));
 
-        this.targetSelector.addGoal(1, new OwnerHurtByTargetGoal(this));
-        this.targetSelector.addGoal(2, new OwnerHurtTargetGoal(this));
-        this.targetSelector.addGoal(3, new HurtByTargetGoal(this));
-        this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, Monster.class, 10, true, false, e -> this.isTame()));
+        // MOD-033 (T9 A2, petsDefendOwner): the four target goals are modern only, a construction snapshot
+        // (the helper read once here; goals register in the Mob ctor, the BOSS-017 shape — a config change
+        // applies to newly spawned Stinkies); orig Stinky.java:67-77 registered no target tasks at all.
+        // Registered but unconsumed at HEAD: nothing here reads the target slot (doMovement bites its own findSomethingToAttack pick; the 1-in-200 setTarget(null) only clears it),
+        // so these goals wait for a consumer.
+        if (OreSpawnConfig.petsDefendOwner()) {
+            this.targetSelector.addGoal(1, new OwnerHurtByTargetGoal(this));
+            this.targetSelector.addGoal(2, new OwnerHurtTargetGoal(this));
+            this.targetSelector.addGoal(3, new HurtByTargetGoal(this));
+            this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, Monster.class, 10, true, false, e -> this.isTame()));
+        }
     }
 
     public static AttributeSupplier.Builder createAttributes() {
@@ -279,46 +291,132 @@ public class EntityStinky extends TamableAnimal {
             }
 
             doMovement();
-        }
 
-        // orig Stinky.java:583 — the flower-eat is off under PlayNicely; the roll is spent ahead of the flag, orig's term order (ENT-S-116)
-        if (this.activity == 1 && this.random.nextInt(50) == 0 && !OreSpawnConfig.PLAY_NICELY.get()) {
-            eatFlowers();
+            // orig Stinky.java:582-583 — do_movement's activity-1 branch, reached only through :511's !isSitting(): the coal-ore eat is off under PlayNicely; the roll is spent ahead of the flag, orig's term order (ENT-S-116, ENT-S-119)
+            if (this.activity == 1 && this.random.nextInt(50) == 0 && !OreSpawnConfig.PLAY_NICELY.get()) {
+                eatCoalOre();
+            }
         }
     }
 
-    private void eatFlowers() {
-        for (int i = 1; i < 9; i++) {
-            int j = Math.min(i, 2);
-            for (int di = -j; di <= j; di++) {
-                for (int dj = -j; dj <= j; dj++) {
-                    BlockPos pos = BlockPos.containing(this.getX() + i, this.getY() + 1 + di, this.getZ() + dj);
-                    if (this.level().getBlockState(pos).is(Blocks.DANDELION) ||
-                            this.level().getBlockState(pos).is(Blocks.POPPY)) {
-                        this.getNavigation().moveTo(pos.getX(), pos.getY(), pos.getZ(), 1.25);
-                        if (this.blockPosition().distSqr(pos) < 12) {
-                            this.level().setBlock(pos, Blocks.AIR.defaultBlockState(), 2);
-                            this.heal(1.0f);
-                        }
-                        return;
-                    }
+    /**
+     * orig Stinky.java:584-604 — the idle block-eat behind the :583 gate: {@code closest} reset to 99999 and the pick
+     * cleared (:584-587); the six-face shells i = 1, 2, 3, 4, 6, 8 around the truncated origin
+     * {@code ((int) posX, (int) posY + 1, (int) posZ)} — the loop :588-596: {@code j = min(i, 2)},
+     * {@code scan_it(x, y + 1, z, i, j, i)}, the first shell that finds anything breaks, and past i = 4 the trailing
+     * {@code ++i} skips 5 and 7; the nearest coal ore navigated to at 1.25 (:598) and, when its squared distance from
+     * that origin is under 12 (:599), set to air with flag 2 (:600), the Stinky healed 1.0 (:601) and "random.burp"
+     * played at 0.5 / pitch {@code nextFloat * 0.2 + 1.5} (:602 — PLAYER_BURP, the EntityGammaMetroid.scanForStone
+     * idiom; the port rolls the entity random, ENT-S-093). The {@code (int)} casts are orig's truncation. (ENT-S-119)
+     */
+    private void eatCoalOre() {
+        this.closest = 99999;
+        this.tz = 0;
+        this.ty = 0;
+        this.tx = 0;
+        for (int i = 1; i < 9; ++i) {
+            int j = i;
+            if (j > 2) {
+                j = 2;
+            }
+            if (scanIt((int) this.getX(), (int) this.getY() + 1, (int) this.getZ(), i, j, i)) break;
+            if (i < 4) continue;
+            ++i;
+        }
+        if (this.closest < 99999) {
+            this.getNavigation().moveTo(this.tx, this.ty, this.tz, 1.25);
+            if (this.closest < 12) {
+                this.level().setBlock(new BlockPos(this.tx, this.ty, this.tz), Blocks.AIR.defaultBlockState(), 2);
+                this.heal(1.0f);
+                this.playSound(SoundEvents.PLAYER_BURP, 0.5f, this.random.nextFloat() * 0.2f + 1.5f);
+            }
+        }
+    }
+
+    /**
+     * orig Stinky.java:435-496 ({@code scan_it}): the six faces of the (dx, dy, dz) shell around (x, y, z) — the ±x faces
+     * over y ± dy, z ± dz (:441-458), the ±y faces over x ± dx, z ± dz (:459-476), the ±z faces over x ± dx, y ± dy
+     * (:477-494), the + face probed before the − face at each step; a coal ore ({@code Blocks.field_150365_q}) nearer
+     * than {@code closest} by squared distance from (x, y, z) takes {@code closest} and {@code tx/ty/tz}; true when any
+     * probe took it (ENT-S-119).
+     */
+    private boolean scanIt(int x, int y, int z, int dx, int dy, int dz) {
+        int d;
+        int found = 0;
+        for (int i = -dy; i <= dy; ++i) {
+            for (int j = -dz; j <= dz; ++j) {
+                if (isCoalOre(x + dx, y + i, z + j) && (d = dx * dx + j * j + i * i) < this.closest) {
+                    this.closest = d;
+                    this.tx = x + dx;
+                    this.ty = y + i;
+                    this.tz = z + j;
+                    ++found;
+                }
+                if (isCoalOre(x - dx, y + i, z + j) && (d = dx * dx + j * j + i * i) < this.closest) {
+                    this.closest = d;
+                    this.tx = x - dx;
+                    this.ty = y + i;
+                    this.tz = z + j;
+                    ++found;
                 }
             }
         }
+        for (int i = -dx; i <= dx; ++i) {
+            for (int j = -dz; j <= dz; ++j) {
+                if (isCoalOre(x + i, y + dy, z + j) && (d = dy * dy + j * j + i * i) < this.closest) {
+                    this.closest = d;
+                    this.tx = x + i;
+                    this.ty = y + dy;
+                    this.tz = z + j;
+                    ++found;
+                }
+                if (isCoalOre(x + i, y - dy, z + j) && (d = dy * dy + j * j + i * i) < this.closest) {
+                    this.closest = d;
+                    this.tx = x + i;
+                    this.ty = y - dy;
+                    this.tz = z + j;
+                    ++found;
+                }
+            }
+        }
+        for (int i = -dx; i <= dx; ++i) {
+            for (int j = -dy; j <= dy; ++j) {
+                if (isCoalOre(x + i, y + j, z + dz) && (d = dz * dz + j * j + i * i) < this.closest) {
+                    this.closest = d;
+                    this.tx = x + i;
+                    this.ty = y + j;
+                    this.tz = z + dz;
+                    ++found;
+                }
+                if (isCoalOre(x + i, y + j, z - dz) && (d = dz * dz + j * j + i * i) < this.closest) {
+                    this.closest = d;
+                    this.tx = x + i;
+                    this.ty = y + j;
+                    this.tz = z - dz;
+                    ++found;
+                }
+            }
+        }
+        return found != 0;
+    }
+
+    /** orig Stinky.java:443-444 etc. — {@code getBlock(x, y, z) == Blocks.field_150365_q}: coal ore, the mapping BeehiveFeature.java:38-39 records (ENT-S-119). */
+    private boolean isCoalOre(int x, int y, int z) {
+        return this.level().getBlockState(new BlockPos(x, y, z)).is(Blocks.COAL_ORE);
     }
 
     private void doMovement() {
         if (this.currentFlightTarget == null) {
             this.currentFlightTarget = this.blockPosition();
         }
-        if (this.activity != 2) return;
 
         boolean doNew = false;
         boolean hasOwner = false;
         double ox = 0, oy = 0, oz = 0;
         LivingEntity owner = null;
 
-        if (this.random.nextInt(300) == 0) doNew = true;
+        // orig Stinky.java:552 — the 1-in-300 retarget roll is activity 2's alone; do_movement itself runs for every activity (ENT-S-119)
+        if (this.activity == 2 && this.random.nextInt(300) == 0) doNew = true;
 
         if (this.isTame() && this.getOwner() != null) {
             owner = this.getOwner();
@@ -328,6 +426,7 @@ public class EntityStinky extends TamableAnimal {
             if (this.ownerFlying != 0 && this.distanceToSqr(owner) > 36.0) doNew = true;
         }
 
+        // orig Stinky.java:568-581 — the 1-in-7 idle attack pass, every activity, ahead of the activity-1 branch: the roll, then the difficulty, then the scan (ENT-S-119)
         if (this.random.nextInt(7) == 1 && this.level().getDifficulty() != Difficulty.PEACEFUL) {
             LivingEntity target = findSomethingToAttack();
             if (target != null) {
@@ -349,6 +448,9 @@ public class EntityStinky extends TamableAnimal {
             }
         }
 
+        // orig Stinky.java:582-607 — activity 1 stops here (its block-eat is customServerAiStep's call after this method); the flight below is activity 2's (ENT-S-119)
+        if (this.activity != 2) return;
+
         if (this.currentFlightTarget.closerToCenterThan(this.position(), 2.1)) {
             doNew = true;
         }
@@ -368,7 +470,9 @@ public class EntityStinky extends TamableAnimal {
                 BlockPos newTarget = BlockPos.containing(gox + xdir,
                         goy + this.random.nextInt(6 + this.ownerFlying * 2) - 2,
                         goz + zdir);
-                if (this.level().getBlockState(newTarget).isAir()) {
+                // orig Stinky.java:640 — an air candidate the feet ray (posY + 0.75 → the candidate's block corner) cannot reach is refused as stone (ENT-S-123)
+                if (this.level().getBlockState(newTarget).isAir()
+                        && canSeeTarget(newTarget.getX(), newTarget.getY(), newTarget.getZ())) {
                     this.currentFlightTarget = newTarget;
                     found = true;
                 }

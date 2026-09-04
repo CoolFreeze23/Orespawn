@@ -99,10 +99,17 @@ public class EntitySpyro extends TamableAnimal {
         this.goalSelector.addGoal(7, new WaterAvoidingRandomStrollGoal(this, 0.75));
         this.goalSelector.addGoal(8, new RandomLookAroundGoal(this));
 
-        this.targetSelector.addGoal(1, new OwnerHurtByTargetGoal(this));
-        this.targetSelector.addGoal(2, new OwnerHurtTargetGoal(this));
-        this.targetSelector.addGoal(3, new HurtByTargetGoal(this));
-        this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, Monster.class, 10, true, false, e -> this.isTame()));
+        // MOD-033 (T9 A2, petsDefendOwner): the four target goals are modern only, a construction snapshot
+        // (the helper read once here; goals register in the Mob ctor, the BOSS-017 shape — a config change
+        // applies to newly spawned Spyros); orig Spyro.java:73-81 registered no target tasks at all.
+        // Registered but unconsumed at HEAD: nothing here reads the target slot (doMovement bites its own findSomethingToAttack pick; the 1-in-200 setTarget(null) only clears it),
+        // so these goals wait for a consumer.
+        if (OreSpawnConfig.petsDefendOwner()) {
+            this.targetSelector.addGoal(1, new OwnerHurtByTargetGoal(this));
+            this.targetSelector.addGoal(2, new OwnerHurtTargetGoal(this));
+            this.targetSelector.addGoal(3, new HurtByTargetGoal(this));
+            this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, Monster.class, 10, true, false, e -> this.isTame()));
+        }
     }
 
     public static AttributeSupplier.Builder createAttributes() {
@@ -436,7 +443,9 @@ public class EntitySpyro extends TamableAnimal {
                 BlockPos newTarget = BlockPos.containing(gox + xdir,
                         goy + this.random.nextInt(9 + this.ownerFlying * 2) - 4,
                         goz + zdir);
-                if (this.level().getBlockState(newTarget).isAir()) {
+                // orig Spyro.java:647 — an air candidate the feet ray (posY + 0.75 → the candidate's block corner) cannot reach is refused as stone (ENT-S-123)
+                if (this.level().getBlockState(newTarget).isAir()
+                        && canSeeTarget(newTarget.getX(), newTarget.getY(), newTarget.getZ())) {
                     this.currentFlightTarget = newTarget;
                     found = true;
                 }
