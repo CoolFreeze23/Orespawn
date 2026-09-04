@@ -175,3 +175,5 @@ magma cubes and the Ender Dragon included — where the port's target goals had 
 vanilla's `Monster` class. The flying Stinky again tunnels toward the nearest coal ore around it (burping when
 it eats one), stops eating while told to sit, picks fights while idling as it did in 1.7.10, and — like the
 baby dragon — no longer flies toward a spot it cannot see.
+
+Four new `[modern]` switches, on by default (MOD-032..035): tamed companions avenge and defend their owner (`petsDefendOwner`), Mobzilla spares its fellow bosses and the royal family (`godzillaSparesBossPeers`), the Pointysaurus locks on to whoever stares at it (`pointysaurusStareAggro`) and the Cryolophosaurus chases whoever hurt it (`cryolophosaurusRevengeChase`) — each `false`, or `modern.enabled = false`, is the 1.7.10 behaviour; the Mantis loses two target goals that never did anything; and the Valentine's Day Girlfriend keeps leaving Peaceful and creative players alone in both modes (MOD-036, a deliberate exception).

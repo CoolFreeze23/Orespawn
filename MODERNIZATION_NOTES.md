@@ -764,3 +764,178 @@ _pin) so alignment drift is caught regardless.
   master) off around its window and restore it — the `HitboxDimsParityTests#s095_mothra_dims_both_modes`
   idiom for MOD-029; the small-shot and rule-on s104 pins read the same in both modes.
 - **Status:** IMPLEMENTED 2026-09-04 (the key, the helper, both gated sites, the pin); the classic branch is orig.
+
+## MOD-032 — Godzilla spares its boss peers (ACCEPTED 2026-09-04 under the T9 ruling, implemented, default ON; classic stays 1.7.10)
+
+- **Origin:** targeting ledger batch T9, row 8 (`phase_g_reports/targeting_survey_2026-09-04.md` §2 Godzilla
+  "allies / species exclusions", §T9; the split `phase_g_reports/targeting_t9_split_2026-09-04.md` §1 row 8, §2 A1).
+  Port `Godzilla.isSuitableTarget` refused, after the orig eight names, `target instanceof Mothra` and
+  `MyUtils.isBigBoss(target) || MyUtils.isRoyalty(target)` under the comment "Don't pick fights with peers — Mothra,
+  the royal couple, and other OreSpawn bosses are tracked separately so Mobzilla doesn't grief boss arenas and so
+  co-existing bosses don't cancel each other out." Commit a87c0649 (Phase 4F): "Added Mothra, MyUtils.isBigBoss(),
+  and MyUtils.isRoyalty() to the isSuitableTarget ignore list so co-existing bosses don't grief each other and
+  Mobzilla doesn't tear up royal arenas." A documented reason; no AUDIT / FIX / MOD entry until this one.
+- **Ruling (owner, 2026-09-04):** "T9: documented reason → MOD record behind modern; undocumented → removed from
+  classic." Default ON, the MOD-029 / MOD-031 precedent.
+- **Classic (implemented; the behaviour while the master or the key is off):** orig Godzilla.java:448-471 — the
+  eight refusals (Godzilla, GodzillaHead, Creeper, Zombie, Spider, Skeleton, Ghost, GhostSkelly), then the creative
+  test; the Nightmare, the Kraken and the nine royals (TheKing, TheQueen, KingHead, QueenHead, ThePrince,
+  ThePrinceAdult, ThePrincess, ThePrinceTeen, PurplePower) are prey inside the 64×40×64 scan, as in 1.7.10.
+  Mothra was never Mobzilla's prey in either tree: she extends EntityButterfly and the shared ignore screen
+  (orig :442-444; port ENT-S-106) refuses EntityButterfly ahead of the species chain — the port's Mothra line is
+  redundant in both modes and stays under the key with its comment (the split's §5 correction: the survey's
+  "Mothra … were prey in 1.7.10" does not hold for Mothra).
+- **Switch (implemented 2026-09-04):** the `[modern]` key `godzillaSparesBossPeers`
+  (`OreSpawnConfig.MODERN_GODZILLA_SPARES_BOSS_PEERS`, `BooleanValue`, default **true**), read only through the
+  effective-value helper `OreSpawnConfig.godzillaSparesBossPeers()` = `MODERN_ENABLED && key`, beside
+  `mothraWideRootHitbox()` / `fireRespectsMobGriefing()`. One gated site, read live at every filter call (a filter:
+  the MOD-031 impact-read shape; a change applies to the next pick, no BOSS-017 concern): `Godzilla.isSuitableTarget`
+  wraps the two lines in `if (OreSpawnConfig.godzillaSparesBossPeers())`. The master's comment and javadoc list the
+  key and the helper.
+- **Effect when effective (a default config):** Mobzilla does not target the Nightmare, the Kraken, the King and
+  Queen (and their heads), the Prince family or the Purple Power; with the key off (or the master off) it hunts them
+  as 1.7.10 did.
+- **Not covered:** the damage-side "large unknown" rules (`Godzilla.doHurtTarget` / `hurt`: a big attacker that is
+  neither a big boss nor a royal is halved / takes a tenth) are not targeting rows and are untouched in both modes;
+  the creative refusal and the villager priority of the scan are unchanged.
+- **Safety:** none — no player, owner or Peaceful term; the creative gate is separate.
+- **Pin:** `PortOnlyTargetingTests#mod032_godzilla_spares_boss_peers_modern_on`,
+  `#mod032_godzilla_takes_boss_peers_key_off`, `#mod032_godzilla_takes_boss_peers_master_off` (own batch
+  `portOnlyTargeting`, `empty_tall`; the IgnoreScreenParityTests row-11 rig: `isSuitableTarget` by reflection on a
+  frozen Godzilla against a frozen PitchBlack and a frozen TheKing, a pig control both ways; the classic rows ask the
+  same Godzilla before and after the live flip).
+- **Status:** IMPLEMENTED 2026-09-04 (the key, the helper, the gated site, the pins); the classic branch is orig.
+
+## MOD-033 — Companions defend their owner: the Phase 4E owner / tame target goals (ACCEPTED 2026-09-04 under the T9 ruling, implemented, default ON; classic stays 1.7.10)
+
+- **Origin:** targeting ledger batch T9, rows 7, 9, 12–15 (GammaMetroid, Leon, Spyro, Stinky, ThePrince, ThePrincess)
+  plus the ThePrinceAdult / ThePrinceTeen owner pair the survey parked in T3c (split §1, §2 A2, §3 B1/B3–B6, §4.4).
+  Commit 27b66a39 (2026-04-17, "Phase 4E: Companions & Tameables — defense AI, riding, dim-aware spawns") registered
+  `OwnerHurtByTargetGoal` + `OwnerHurtTargetGoal` + `HurtByTargetGoal` "so they retaliate alongside their owner" and
+  a tame-gated `NearestAttackableTargetGoal<Monster>` "so they autonomously hunt hostiles once tamed" on these pets.
+  **FLAG for the owner:** the commit message is Phase 4E's ONLY note — no code comment, nothing in AUDIT_FINDINGS,
+  FIX_LOG, MODERNIZATION_NOTES, KNOWN_ISSUES or CHANGELOG names the owner defence. Under the ruling "Phase 4E's six
+  are documented only if that phase's notes state intent", the message's stated intent ("defense AI … retaliate
+  alongside their owner") is taken as the documentation; the alternative reading (a commit message is not a phase
+  note) would send the six to classic removal with no record — the classic side is the same either way.
+- **Ruling (owner, 2026-09-04):** the six become ONE record over all of them (the split's §4.4 alternative), the five
+  inert ones noted as registered-but-unconsumed so a future consumer lights them up under the same key.
+- **What is live and what is inert at HEAD:** Leon (`flyWithRider` reads the target slot first and bites it on its
+  1-in-7 roll), ThePrinceAdult and ThePrinceTeen (their 1-in-6 / 1-in-7 combat roll reads the slot first) consume
+  the slot — a tamed modern pet of these three avenges its owner's attacker and joins its owner's fights. The
+  Gamma Metroid, Spyro, Stinky, the Prince and the Princess never read the slot (their combat bites their own
+  `findSomethingToAttack` pick; Spyro's / Stinky's 1-in-200 `setTarget(null)` only clears it) — the goals are
+  registered but unconsumed, no visible effect today.
+- **Classic (implemented; the behaviour while the master or the key is off):** none of the port goals register —
+  Leon keeps `HurtByTargetGoal` and the PlayNicely-gated IMob hunt (orig Leon.java:92-95); the Gamma Metroid keeps
+  `HurtByTargetGoal` (orig GammaMetroid.java:67, at its port priority 3 — the only goal on the selector, so the number
+  is immaterial); Spyro, Stinky, the Prince and the Princess register no target goals (orig Spyro.java:73-81,
+  Stinky.java:67-77, ThePrince.java:86-92, ThePrincess.java:86-92 — tasks only); the Prince Adult and Teen keep
+  `HurtByTargetGoal` and the IMob hunt (orig ThePrinceAdult.java:112-115, ThePrinceTeen.java:116-119). A tamed 1.7.10
+  pet fought only what its own scan or its revenge memory picked.
+- **Residual, not gated in this batch (FLAG):** Leon's tame predicate on its hunt goal
+  (`e -> e instanceof Enemy && (!this.isTame() || this.getTarget() == null)`, EntityLeon.registerGoals) belongs to
+  this record (a tamed Leon's hunt does not overwrite a held target; orig had no such term) but its line is the
+  ENT-S-124 hunk under refutation, so it stays as it is in both modes; gate it under this key once the refutation
+  closes. Effect: monsters only.
+- **Switch (implemented 2026-09-04):** the `[modern]` key `petsDefendOwner` (`OreSpawnConfig.MODERN_PETS_DEFEND_OWNER`,
+  `BooleanValue`, default **true**), read only through `OreSpawnConfig.petsDefendOwner()` = `MODERN_ENABLED && key`.
+  Eight gated sites, each reading the helper ONCE in `registerGoals` (the Mob constructor: a construction snapshot,
+  BOSS-017 pattern, the S4 single-read rule — a config change applies to newly spawned or loaded pets, not live ones):
+  EntityLeon (the owner pair), EntityGammaMetroid (the owner pair and the tame hunt around the kept `HurtByTargetGoal`),
+  EntitySpyro / EntityStinky / ThePrince / ThePrincess (all four goals), ThePrinceAdult / ThePrinceTeen (the owner
+  pair). The master's comment and javadoc list the key and the helper.
+- **Safety:** the owner goals never target the owner (`TamableAnimal.canAttack` / `wantsToAttack`); classic lowers a
+  tamed pet's aggression to 1.7.10's — a pet that no longer defends its owner in classic is the 1.7.10 behaviour.
+  Nothing becomes unsafe in either mode.
+- **Pin:** `PortOnlyTargetingTests#mod033_pets_defend_owner_modern_on`, `#mod033_pets_defend_owner_key_off`,
+  `#mod033_pets_defend_owner_master_off` — each spawns the eight pets with their goals AFTER the flip and reads the
+  target selector: modern → the owner pair present on all eight (plus `HurtByTargetGoal` and the tame
+  `NearestAttackableTargetGoal<Monster>` on the Phase 4E five); classic → no owner goal anywhere, `HurtByTargetGoal`
+  and the IMob hunt still on Leon / Adult / Teen, `HurtByTargetGoal` alone on the Metroid, nothing on Spyro, Stinky,
+  the Prince and the Princess.
+- **Residual (outside the targeting ledger, presented for a ruling 2026-09-04):** the same owner goals stay ungated on
+  four species the ledger has no block for — `EntityHydrolisc.java:76-78` and `VelocityRaptor.java:71-73` (Phase 4E,
+  commit 27b66a39; inert, no slot reader) and `Boyfriend.java:143-144` / `Girlfriend.java:207-208` (live: their melee
+  reads the slot at :293 / :332; orig Boyfriend.java:138-147 and Girlfriend.java:161-174 register no owner task). Until
+  ruled, a tamed Boyfriend or Girlfriend still defends its owner in classic; the key does not reach those four sites.
+- **Status:** IMPLEMENTED 2026-09-04 (the key, the helper, the eight gated sites, the pins); the classic branch is orig.
+
+## MOD-034 — Pointysaurus eye-contact aggression (ACCEPTED 2026-09-04 under the T9 ruling, implemented, default ON; classic stays 1.7.10)
+
+- **Origin:** targeting ledger batch T9, row 11 (split §1 row 11, §2 A3, §4.2). `PointysaurusStareGoal` @2 on the
+  target selector: the nearest player within 32 blocks whose view vector points at the mob's eyes (dot > 0.97), with
+  line of sight, not creative or spectator, becomes the target after a 5-tick delay; the `DinosaurMeleeAttackGoal`
+  then chases and bites. Documented three times: the goal's javadoc ("The 1.7.10 Pointysaurus had no such mechanic …
+  a modern enhancement layered on top … the Phase 10 brief"), the registration comment ("Phase 10 — Enderman-style
+  eye-contact aggression …") and commit 21b8d0e8 ("Phase 10 - The Gadgets, Gems, & Genetics"). The split flagged that
+  Phase 10's other inventions were removed under the no-procedural-fabrication ruling (MOD-009, MOD-013, MOD-020,
+  PN-009); the owner ruled a record.
+- **Classic (implemented):** the goal is not registered — orig Pointysaurus.java:50-55 registers no such task; the
+  Pointysaurus attacks only from its 12×5×12 proximity scan (the port's `NearestAttackableTargetGoal<Player>` @3, the
+  T3c geometry row) and from being hit (`HurtByTargetGoal` @1). The class `ai/PointysaurusStareGoal` stays; the
+  ENT-S-115 PlayNicely `canUse` override on the registration stays as it is inside the gate.
+- **Switch (implemented 2026-09-04):** the `[modern]` key `pointysaurusStareAggro`
+  (`OreSpawnConfig.MODERN_POINTYSAURUS_STARE_AGGRO`, default **true**), read only through
+  `OreSpawnConfig.pointysaurusStareAggro()` = `MODERN_ENABLED && key`, ONCE in `Pointysaurus.registerGoals`
+  (construction snapshot, BOSS-017 pattern — a change applies to newly spawned or loaded Pointysaurs).
+- **Safety:** none in either direction — the goal refuses creative / spectator players and, through `forCombat`,
+  players in Peaceful; classic only lowers aggression against survival players.
+- **Pin:** `PortOnlyTargetingTests#mod034_pointysaurus_stare_goal_modern_on`, `#mod034_pointysaurus_stare_goal_key_off`,
+  `#mod034_pointysaurus_stare_goal_master_off` — a Pointysaurus spawned with its goals after the flip: the stare goal
+  on the target selector in modern, absent in classic, `HurtByTargetGoal` and the player hunt present both ways.
+- **Status:** IMPLEMENTED 2026-09-04.
+
+## MOD-035 — Cryolophosaurus revenge chase (ACCEPTED 2026-09-04 under the T9 ruling, implemented, default ON; classic stays 1.7.10)
+
+- **Origin:** targeting ledger batch T9, row 1 (split §1 row 1, §2 A4, §4.1). `DinosaurMeleeAttackGoal` @2 on the goal
+  selector with `Presets.cryolophosaurus()` chases and bites whatever fills the target slot; only `HurtByTargetGoal`
+  @1 ever fills it (the ported 1-in-5 hunt over the 9×2×9 box bites its own pick without `setTarget`), so the goal is
+  a chase of the revenge target only. Documented by commit f5cb0ba5 (Phase 4C: "All dinosaurs now use modern
+  MeleeAttackGoal-style combat via Goal selectors plus HurtByTargetGoal / NearestAttackableTargetGoal for target
+  acquisition … Cryolophosaurus keeps its high forgetTargetRoll / low attack probability to preserve its timid 1.7.10
+  personality.") and the ENT-A-009 acceptance of the mapping (AUDIT_FINDINGS.md, the Alosaurus record). The split
+  flagged the documentation as generic / another species'; the owner ruled a record.
+- **Classic (implemented):** the goal is not registered — orig Cryolophosaurus.java:51-57 has no attack task; the
+  revenge target `EntityAIHurtByTarget` stores is never chased (only the 1-in-200 forgiveness reads it). The ported
+  hunt (`customServerAiStep`, ENT-A-112) is untouched in both modes; the no-op `legacySetAttacking` callback stays.
+- **Switch (implemented 2026-09-04):** the `[modern]` key `cryolophosaurusRevengeChase`
+  (`OreSpawnConfig.MODERN_CRYOLOPHOSAURUS_REVENGE_CHASE`, default **true**), read only through
+  `OreSpawnConfig.cryolophosaurusRevengeChase()` = `MODERN_ENABLED && key`, ONCE in `Cryolophosaurus.registerGoals`
+  (construction snapshot, BOSS-017 pattern — a change applies to newly spawned or loaded Cryolophosaurs).
+- **Safety:** none — the goal inherits only the revenge target; a creative attacker is dropped by
+  `TargetGoal.canContinueToUse` → `canAttack` → `canBeSeenAsEnemy`; a Monster despawns in Peaceful. Classic lowers
+  aggression (an attacker outside the 9×2×9 hunt box is remembered, not chased).
+- **Pin:** `PortOnlyTargetingTests#mod035_cryolophosaurus_revenge_chase_modern_on`,
+  `#mod035_cryolophosaurus_revenge_chase_key_off`, `#mod035_cryolophosaurus_revenge_chase_master_off` — a
+  Cryolophosaurus spawned with its goals after the flip: the `DinosaurMeleeAttackGoal` on the goal selector in modern,
+  absent in classic, `HurtByTargetGoal` present both ways.
+- **Status:** IMPLEMENTED 2026-09-04.
+
+## MOD-036 — The Girlfriend's Valentine rampage respects Peaceful and creative players: a deliberate parity exception, kept in BOTH modes, no key (owner safety ruling 2026-09-04)
+
+- **Origin:** targeting ledger batch T7's deferred row (MyValentineTarget / Girlfriend; split §1 row 16, §2 A5, §4.5).
+  The port's `ValentineTargetGoal` (Girlfriend.registerGoals, @1 for Player and @2 for Boyfriend) is a
+  `NearestAttackableTargetGoal`, so its `TargetingConditions.forCombat()` refuse a player in Peaceful
+  (`LivingEntity.canAttack`) and an invulnerable — creative or spectator — player (`Player.canBeSeenAsEnemy`), and
+  `TargetGoal.canContinueToUse` drops a held player when the difficulty flips mid-rampage. 1.7.10's
+  `MyValentineTarget` / `MyEntityAITarget.isSuitableTarget` (:96-98) took any player while `valentines_day != 0`,
+  with no difficulty and no creative term: on Feb 14 the angry Girlfriend — an EntityTameable that persists in
+  Peaceful — hunted players in Peaceful and creative players.
+- **Documentation:** none found (the goal's javadoc cites only the owner rule; FIX_LOG, AUDIT_FINDINGS and commit
+  d65b9b11 say nothing about Peaceful or creative) — by the letter of the T9 ruling a removal from classic.
+- **Ruling (owner, 2026-09-04):** "Exception: the Girlfriend safety gates stay in both modes, recorded as a deliberate
+  parity exception." Kept in both modes on the owner's safety ruling; the 1.7.10 rampage hunted Peaceful and creative
+  players. No key: `modern.enabled = false` does NOT restore the 1.7.10 hunt. The engine zeroes her melee damage in
+  Peaceful, but the chase, the aggression and the UltimateArrow path are not covered by that, and nothing covers
+  creative players.
+- **Code:** unchanged — the inherited `forCombat` conditions on `ValentineTargetGoal`; the goal's own selector (the
+  owner / tamed-pet rule) is orig MyEntityAITarget.java:88-95 and not part of this record.
+- **Pin:** `PortOnlyTargetingTests#mod036_girlfriend_valentine_gates_hold_in_classic` and
+  `#mod036_girlfriend_valentine_gates_hold_in_modern` — under the `SeasonalDates` Feb-14 clock seam, a Girlfriend
+  spawned with her goals (valentine-angry asserted), the `ValentineTargetGoal<Player>` read off her target selector
+  and its `TargetingConditions` asked directly (the CephadromeGateTests shape): a creative mock player refused, a
+  survival mock player accepted on NORMAL, the same survival player refused after the difficulty is flipped to
+  PEACEFUL inside the test — with the master off (classic) and on (modern); difficulty, master and clock restored in
+  a finally, players removed, spawns discarded.
+- **Status:** RECORDED 2026-09-04 (a parity exception; nothing to implement, pinned in both modes).

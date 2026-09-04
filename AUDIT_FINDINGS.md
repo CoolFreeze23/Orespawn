@@ -7946,6 +7946,82 @@ keeps BUG-036. Commit 4ea395c's message retains the old number.)*
   Creeper refusal is recorded as deliberately not reproduced (a MOD note) if the owner prefers the 1.21.1 engine's
   choice. Not part of the targeting waves' rows.
 
+### ENT-S-125 — Batch T9 applied: the port-only targeting additions split into modern records and classic removals (FIXED 2026-09-04)
+
+- **Evidence:** targeting ledger batch T9 (`phase_g_reports/targeting_survey_2026-09-04.md` §T9: 15 rows, 15 blocks)
+  plus the T7 row deferred to it (the Girlfriend's `MyValentineTarget`) — the port's targeting additions with no
+  1.7.10 counterpart and no MOD record, analysed row by row in `phase_g_reports/targeting_t9_split_2026-09-04.md`.
+  Sixteen rows in five shapes: (i) owner / tame target goals on eight tameables from commit 27b66a39 (Phase 4E —
+  GammaMetroid, Leon, Spyro, Stinky, ThePrince, ThePrincess, plus the ThePrinceAdult / ThePrinceTeen pair the survey
+  parked in T3c): live on Leon, the Teen and the Adult, whose combat reads the target slot first (`flyWithRider`,
+  the 1-in-6 / 1-in-7 combat roll), inert on the five others (nothing reads the slot); (ii) Godzilla's peer refusals
+  (`instanceof Mothra`, `MyUtils.isBigBoss ‖ isRoyalty`; a code comment and commit a87c0649); (iii) the Pointysaurus
+  stare goal (javadoc, registration comment, commit 21b8d0e8); (iv) the Cryolophosaurus `DinosaurMeleeAttackGoal`
+  chasing the revenge target only `HurtByTargetGoal` fills (commit f5cb0ba5, ENT-A-009); (v) the Mantis's two inert
+  target goals under a comment naming a "boss pathfinding HUD" that does not exist, and five "PEACEFUL gate" rows on
+  Monsters (DungeonBeast, EmperorScorpion, EnderKnight, EnderReaper, HerculesBeetle) that are the engine's own
+  `LivingEntity.canAttack`, not port code; and the Girlfriend's inherited `forCombat` gates (a Peaceful or creative
+  player refused on Feb 14 where 1.7.10's `MyEntityAITarget.isSuitableTarget` :96-98 took any player; undocumented).
+  What a player saw: all of it ran in both modes — a `modern.enabled = false` server still had pets avenging their
+  owner, Mobzilla sparing the Nightmare, the Kraken and the royals, the Pointysaurus locking on to starers and the
+  Cryolophosaurus chasing its attacker, none of which 1.7.10 did. The survey's "Mothra … were prey in 1.7.10"
+  (Godzilla row) does not hold for Mothra: she extends EntityButterfly and the ignore screen refuses EntityButterfly
+  ahead of the species chain in both trees (the split's §5).
+- **Resolution:** FIXED (2026-09-04; owner's ruling verbatim: "T9: documented reason → MOD record behind modern;
+  undocumented → removed from classic. Exception: the Girlfriend safety gates stay in both modes, recorded as a
+  deliberate parity exception. Phase 4E's six are documented only if that phase's notes state intent. Flag any
+  removal that breaks a mob or makes it unsafe; otherwise apply."). Four `[modern]` keys, default ON (the MOD-029 /
+  MOD-031 precedent), each read only through a `master && key` helper in `OreSpawnConfig` beside
+  `mothraWideRootHitbox()` / `fireRespectsMobGriefing()` and listed in the master's comment and javadoc:
+  **MOD-032** `godzillaSparesBossPeers` — `Godzilla.isSuitableTarget` wraps the two lines in the helper, read live at
+  every filter call (MOD-031's shape); classic is orig Godzilla.java:448-471, the eight refusals and nothing more;
+  the Mothra line stays under the key and is redundant in both modes. **MOD-033** `petsDefendOwner` — ONE record over
+  the eight pets (the split's §4.4 alternative): Phase 4E's only note is its commit message, whose stated intent
+  ("defense AI … so they retaliate alongside their owner") is taken as the documentation — FLAGGED for the owner;
+  each `registerGoals` reads the helper ONCE (a construction snapshot, BOSS-017: a change applies to newly spawned or
+  loaded pets); classic registers orig's target tasks only — Leon / Adult / Teen keep `HurtByTargetGoal` and the IMob
+  hunt (orig Leon.java:92-95, ThePrinceAdult.java:112-115, ThePrinceTeen.java:116-119), the Metroid keeps
+  `HurtByTargetGoal` (orig GammaMetroid.java:67), Spyro / Stinky / the Prince / the Princess register nothing (orig
+  :73-81, :67-77, :86-92, :86-92); in modern the five inert ones are registered-but-unconsumed, waiting for a consumer
+  under the same key. **MOD-034** `pointysaurusStareAggro` and **MOD-035** `cryolophosaurusRevengeChase` — the stare
+  goal and the melee goal registered only when the helper reads true at construction (orig Pointysaurus.java:50-55 /
+  Cryolophosaurus.java:51-57 registered neither); the classes stay, the ENT-S-115 `canUse` override and the no-op
+  `legacySetAttacking` callback stay. Removed from BOTH modes: the Mantis's `HurtByTargetGoal` and
+  `NearestAttackableTargetGoal<Player>` with their comment and imports (`EntityMantis.registerGoals` now empty, as orig
+  Mantis.java) — a record for a non-feature is not a documented reason (split §4.3); a judgment call, FLAGGED. No code
+  for the five engine rows: re-rated in the ledger from PORT-ONLY to MATCH (engine, P6) ("re-rated 2026-09-04, T9",
+  §2 and §T9) — never add a `canAttack` override. Kept in both modes with no key: the Girlfriend's Valentine gates,
+  **MOD-036** — "kept in both modes on the owner's safety ruling; the 1.7.10 rampage hunted Peaceful and creative
+  players". Not gated in this batch: Leon's tame predicate on its hunt goal (EntityLeon.java:174, the ENT-S-124 hunk
+  under refutation) — inside MOD-033's scope, to be gated under the same key once the refutation closes (FLAGGED;
+  effect monsters-only). Safety: no removal or classic gating breaks a mob or makes one unsafe — a tamed pet that no
+  longer defends its owner in classic is the 1.7.10 behaviour and the owner goals never targeted the owner; Godzilla's
+  classic prey set is 1.7.10's; the Pointysaurus / Cryolophosaurus gatings only lower aggression against survival
+  players / attackers; the Mantis removal changes nothing observable. Records: MOD-032..036 in MODERNIZATION_NOTES.md;
+  README and KNOWN_ISSUES list the keys as MOD-029 / MOD-031 did. Pins: `PortOnlyTargetingTests` (own batch
+  `portOnlyTargeting`, 15 tests): 3 × MOD-032 on the IgnoreScreenParityTests row-11 rig (`empty_tall`,
+  `isSuitableTarget` by reflection, a frozen PitchBlack and a frozen TheKing refused with the master on and the key at
+  its default, taken by the same Godzilla after the key or the master is flipped — a live read — a pig control both
+  ways); 3 × MOD-033 (the eight pets spawned with their goals AFTER each flip: the owner pair, `HurtByTargetGoal` and
+  a `NearestAttackableTargetGoal` on every pet in modern; in classic no owner goal anywhere, HurtBy + the hunt on
+  Leon / Adult / Teen, HurtBy alone on the Metroid, nothing on the four); 3 × MOD-034 (the stare goal present /
+  absent, HurtBy and the player hunt both ways); 3 × MOD-035 (the `DinosaurMeleeAttackGoal` present / absent, HurtBy
+  both ways); the Mantis presence pin (both selectors empty with the master on and off); 2 × MOD-036 (under the
+  `SeasonalDates` Feb-14 clock seam, the `ValentineTargetGoal<Player>`'s `TargetingConditions` refuse a creative mock
+  player, take a survival one on NORMAL and refuse the same one after the difficulty is flipped to PEACEFUL inside the
+  test — with the master off and on). Everything synchronous; flags, difficulty and clock restored in a finally,
+  spawns discarded, players removed. javac rc 0 over the 14 compilation units; the gradle gate is the orchestrator's.
+  Refuted once: the code and the 15 pins upheld (every classic branch verified exact against orig's task tables
+  and Godzilla's orig filter; every row fails with its line reverted); two non-code defects fixed — the pin count
+  (16 → 15) and the provenance note: the phase-1 records commit swept the MOD-033 gates of Leon, both Princes,
+  Spyro and Stinky into f2f47ae / fbc66be before `OreSpawnConfig.petsDefendOwner()` existed in HEAD, so f2f47ae,
+  fbc66be and 0b00b56 do not compile on their own until this batch's commit (no amend; the T9 commit follows
+  directly); eight gaps recorded: two for the owner (MOD-033's only documentation is commit 27b66a39's message;
+  the Mantis removed on "documented but false", the split's B), the same owner goals ungated on four species
+  outside the ledger (Hydrolisc and VelocityRaptor inert, Boyfriend and Girlfriend live — a MOD-033 residual
+  presented for a ruling), the ledger's §3 counts stale by five, the ENT-S-124 ledger lines riding in the same
+  docs commit, two cite / wording nits and the Godzilla :594 mojibake.
+
 ### TEST-003 — Config-flipping gametests in the concurrent default batch
 
 - **Impact:** MEDIUM (suite reliability) — boss005/boss012 flip a global

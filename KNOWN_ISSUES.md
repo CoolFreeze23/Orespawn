@@ -197,13 +197,29 @@ mounting, or hover behavior.
   1.0/1.7.10 spider (visual-only legs, body-only hitbox, unsteerable), and
   `modern.enabled = false` is the one-line switch to the exact 1.7.10 experience for
   every 2.0 feature at once (robots, riding camera, Mothra's wider hitbox, the optional
-  wiki mobs, fireball fire respecting `mobGriefing`). The master defaults to true and defers to the per-feature keys; it only
+  wiki mobs, fireball fire respecting `mobGriefing`, companions defending their owner, Mobzilla
+  sparing its boss peers, the Pointysaurus stare, the Cryolophosaurus revenge chase). The master defaults to true and defers to the per-feature keys; it only
   forces classic when set false.
 - **Boss fireballs respect `mobGriefing`** for the fire they place (MOD-031, new in 2.0, on by
   default through `[modern] fireRespectsMobGriefing`): while the rule is off there is no fire
   beside the block a fireball hits and no blast fire, the way ghast and blaze shots behave; damage,
   the ignite of whatever it hits and the explosion itself are unchanged. Set the key to `false`, or
   `modern.enabled = false`, for the 1.7.10 fire-always behaviour.
+- **Smarter targeting, four keys** (MOD-032..035, new in 2.0, on by default under `[modern]`):
+  `petsDefendOwner` — a tamed Leon, Prince Teen or Prince Adult avenges whoever hurts its owner and
+  joins its owner's fights (the Gamma Metroid, Spyro, Stinky, the Prince and the Princess carry the
+  same goals but their own combat does not read them yet; the Boyfriend's and Girlfriend's own owner goals, and the
+  inert ones on the Hydrolisc and Velocity Raptor, are not under the key yet — outside the targeting ledger, presented
+  for a ruling); `godzillaSparesBossPeers` — Mobzilla will
+  not target the Nightmare, the Kraken, the King and Queen, the Prince line or the Purple Power;
+  `pointysaurusStareAggro` — a survival player who looks straight at a Pointysaurus within 32 blocks
+  is attacked; `cryolophosaurusRevengeChase` — a Cryolophosaurus chases whoever hurt it. Each key
+  `false`, or `modern.enabled = false`, is the 1.7.10 behaviour (pets fight only what their own scan
+  picks, Mobzilla hunts everything but its eight 1.7.10 exclusions, the Pointysaurus only reacts to
+  proximity and hits, the Cryolophosaurus remembers its attacker but never chases). The three goal
+  keys apply to newly spawned or loaded mobs, not live ones. Kept in BOTH modes on a safety ruling
+  (MOD-036): on Valentine's Day the giant angry Girlfriend leaves Peaceful and creative players alone,
+  where 1.7.10 hunted them.
 - While a player is actively steering a modern spider, two vanilla
   rider-physics rules kick in that unridden (or NPC-ridden) spiders do
   not get: step height rises from 0.6 to a full block, and mid-air
