@@ -5064,6 +5064,142 @@ Entries: **79 total** — ANIM 20 (DIVERGENT 8 · PARTIAL 10 · MISSING 2) · BU
 
 
 
+### ITEM-070 — Chainsaw sweep sight: the port's `player.hasLineOfSight(target)` (vanilla collision ray, eye to eye) stands in for orig UltimateSword's air-only `MyCanSee` sample walk (feet + 1.4 to the target's mid-body); the two rays answer differently on the felling-site cases and no MOD record covers it (REPORT, 2026-09-05; raised by the ENT-S-121 refuter 2026-09-04)
+
+- **Status:** DIVERGENT — REPORT for the owner's ruling (read-only lane; nothing applied)
+- **Scope correction (what the ray gates):** the SWEEP, not felling. Orig `MyCanSee(e, player)` (UltimateSword.java:198-247)
+  has one caller, `isSuitableTarget` :195, reached from `findSomethingToHit` :163-174 (every `EntityLivingBase` in the
+  player's box expanded 5, each suitable one hit for `chainsaw_stats.damage` = 56, :172) via `onLeftClickEntity` :148-151;
+  the block-crush loop `func_150894_a` :351-371 (MOD-016's 11x16x11 box) tests no sight in either tree. The port mirrors the
+  call shape — Chainsaw.java:110-116 → :119-126 → :134-138 — and :137 `return player.hasLineOfSight(target);` is the file's
+  only sight call (no other `hasLineOfSight` / `clip` / `ClipContext` in Chainsaw.java or item/UltimateSword.java). The
+  player-visible signature is therefore "a mob inside the 5-block box takes the 56-damage sweep, or does not" — never "a tree
+  is felled, or not". The rows below are the felling-site cases (trunk, canopy, undergrowth, pond, snow, fences around the
+  tree being cut) read against that signature.
+- **Original — the ray as asked (UltimateSword.java:198-247):** start S = (`player.posX`, `player.posY + 1.4`, `player.posZ`)
+  :200-203; end T = (`e.posX`, `e.posY + e.height/2`, `e.posZ`) :204-206 — the target's MID-BODY, not its eyes; step
+  d = (T − S)/10 in floats :204-206; if any |component| > 1 the vector is divided by it and `nblks = (int)(nblks·|c|)`
+  (:207-236, cumulative over x, y, z, each component clamped to ±1) — inside the sweep box (:164 `expand(5,5,5)`: a target
+  centre at most ≈5.3 + its half-width away per axis) no component reaches 1 for a target narrower than ≈9.4 blocks, so the
+  walk is exactly 10 samples at S + k·d, k = 1..10, the tenth ON T; each sample reads `world.getBlock((int)x, (int)y, (int)z)`
+  :240 — `(int)` truncates toward zero (at x < 0 or z < 0 the sampled column is the neighbour toward the origin — the cast
+  BUG-027 / MOD-024 ruled faithful on TheQueen's identical walk) — and passes only `Blocks.air` BY IDENTITY (:241-243
+  `if (bid == Blocks.field_150350_a) continue; return false;`): every other block — collision-less plants, crops, saplings,
+  torches, snow layers, carpets, cobwebs, fire, signs, water, lava — stops it; a block the segment enters BETWEEN two samples
+  (a corner graze; samples ≈0.4-0.55 blocks apart at 4-5.5 blocks) is never examined. True → `attackEntityFrom(
+  causePlayerDamage(player), 56)` :172. Sides: `onLeftClickEntity` ran on both, but `EntityLivingBase.attackEntityFrom`
+  returns false on the client, so only the SERVER's answer has a signature — and on the server `EntityPlayerMP.posY` is the
+  FEET (its constructor zeroes `yOffset`; `NetHandlerPlayServer.setPlayerLocation` sends `y + 1.62` to the client), so S sits
+  1.4 above the feet, 0.22 below the eyes. The ENT-S-120 census §0 ("a player's posY was its eye level" — recalled, not
+  verified, by its own caveat) reads S as feet + 3.02, 1.2 ABOVE the head; rows whose answer depends on the reading carry ‡.
+- **Port — the ray as asked (Chainsaw.java:137 → NeoForm LivingEntity.java:3033-3043):** the receiver is the Player, so
+  `LivingEntitySightMixin` :24-30 falls through (`OreSpawnSight.isOreSpawn(self)` :44-46 gates on the receiver's registry
+  namespace; the ENT-S-121 OUTLINE convention never reaches this call — by design). Same-level check; S = (`getX()`,
+  `getEyeY()`, `getZ()`) — feet + 1.62 standing, 1.27 crouching, 0.4 swimming / gliding (Player.java:136-147); T = the
+  target's EYE (`getEyeY()` = `eyeHeight(...)` or 0.85·height, EntityDimensions.java:12); > 128 blocks → false (moot);
+  `level().clip(new ClipContext(S, T, Block.COLLIDER, Fluid.NONE, this))` — BlockGetter.java:69-86 over `traverseBlocks`
+  :118-172, an exact DDA that visits EVERY voxel the segment enters; per voxel the block's COLLISION shape for the player's
+  context (ClipContext.java:52 → `getCollisionShape`; BlockBehaviour.java:365-367 `hasCollision ? shape : empty`) is clipped
+  exactly (VoxelShape.java:160-174; a start inside a non-empty shape counts as a hit), fluids never (ClipContext.java:70
+  `NONE` → :47-49 `Shapes.empty()`; LiquidBlock's collision shape is empty for a player, LiquidBlock.java:81-84 needs
+  `canStandOnFluid`, false for every LivingEntity :2210-2212, no Player override). True ⇔ `HitResult.Type.MISS` → `target.hurt(
+  playerAttack(player), 56)` :124; `LivingEntity.hurt` returns false on the client (:1145-1146), so the server's answer is
+  the signature here too.
+- **Row geometry (legend):** flat ground, the player's feet at y = 0 (port eye 1.62; orig origin 1.4 — ‡ 3.02 under the census
+  reading), the target 4 blocks away on the same ground. "tall" = a Zombie-class target (1.95 high: mid-body 0.975, eye 1.74 —
+  EntityType.java:770-771); "low" = a Pig-class target (0.9 high: mid-body 0.45, eye 0.765 — :534, EntityDimensions.java:12;
+  wolf, spider, cat, chicken and every baby alike). "ground cell" = the block cell the target's feet stand in, on the
+  segment's column; "head cell" = the one above. Orig samples (t = k/10): tall target y 1.36 → 0.975 (head cell for
+  k = 1..9, the ground cell only at k = 10 = the target's own column); low target 1.31 → 0.45 (ground cell from k = 5, two
+  blocks out; ‡ from k = 8 under the census origin). Port line: tall 1.62 → 1.74 (head cell throughout); low 1.62 → 0.77
+  (ground cell only over the last ≈1.1 blocks).
+- **Evidence — the two rays' answers on the felling-site cases:**
+
+| # | Case (occluder on the segment) | 1.7.10 `MyCanSee` (air-only 10-sample walk, feet+1.4 → mid-body) | Port `hasLineOfSight` (COLLIDER DDA, eye → eye) | Same? | Player-visible (the 56-damage sweep) |
+|---|---|---|---|---|---|
+| 1 | Clear line (air only) | TRUE | TRUE | same | none |
+| 2 | Leaves between, head cell (the canopy of the tree being cut) | FALSE — a sample lands in the cell, leaves ≠ air | FALSE — leaves keep a full collision cube (`leaves()` Blocks.java:7715-7719 sets no `noCollission`) | same | none |
+| 2b | Leaves grazed at a corner between two samples (the segment clips ≤ ≈0.4 block of the cell) | TRUE — no sample lands in it | FALSE — the DDA enters every voxel the segment does | DIFF | a mob past a canopy corner is swept in 1.7.10, spared in the port (marginal) |
+| 3 | Another log between (the trunk, full cube) | FALSE | FALSE | same | none; a corner graze as 2b |
+| 4a | Collision-less block in the HEAD cell: a wall torch (TORCH `noCollission` Blocks.java:1334), the top half of 2-block grass / fern (TALL_GRASS :3718), sugar cane (:2239), a cobweb (:770), vines, fire (:1356), a sign | FALSE — non-air | TRUE — empty collision shape, the ray passes | DIFF | any target behind it: 1.7.10 spares the mob, the port sweeps it |
+| 4b | Short grass / flower / sapling / torch on the ground beside the target (SHORT_GRASS :782, DANDELION :1041, OAK_SAPLING :229), ground cell — tall target | TRUE — the samples stay in the head cell until the target's own column | TRUE — the eye line stays in the head cell | same | none |
+| 4c | same, low target | FALSE — samples k ≥ 5 land in the ground cell (‡ k ≥ 8: the plant must sit within the last ≈2 blocks) | TRUE — no collision on the line (it dips into the ground cell only over the last ≈1 block, and the shape is empty anyway) | DIFF | a pig / wolf / cat / chicken behind grass or flowers is spared in 1.7.10, swept in the port — the pasture case |
+| 5 | One-layer snow (collision empty: SnowLayerBlock.java:29-30, 72-74) or a carpet (1/16 collision: CarpetBlock.java:16, 28-30) in the ground cell — tall target | TRUE | TRUE | same | none |
+| 5b | same, low target | FALSE — non-air in a sampled cell | TRUE — the line at ≥ 0.85 clears an empty / one-sixteenth shape | DIFF | low mobs on snowfields and carpeted floors: spared in 1.7.10, swept in the port |
+| 6 | Water (or lava) between — the tree in a pond: a fluid cell the segment crosses (a low target; the wading / swimming target of 9b; the swimming player of 10) | FALSE — water ≠ air in any sampled fluid cell | TRUE — `Fluid.NONE` (ClipContext.java:70) and LiquidBlock's collision is empty for a player (LiquidBlock.java:81-84) | DIFF | a wading or swimming mob is never swept in 1.7.10; the port sweeps it |
+| 7 | Glass (TransparentBlock, full collision, Blocks.java:686-692), head or ground cell; a pane filling the column | FALSE | FALSE — the full cube / the pane's collision is on the line | same | none |
+| 8a | Fence (collision 1.5: FenceBlock.java:38 → 24/16 via CrossCollisionBlock.java:100-102) or bottom slab in the ground cell — tall target | TRUE — head-cell samples | TRUE — the line (≥ 1.62) clears 1.5 and 0.5 | same | none |
+| 8b | Fence, ground cell, low target | FALSE — the fence's cell is sampled | FALSE — the line at ≈0.85-0.94 hits the 1.5 collision | same | none |
+| 8c | Bottom slab, ground cell, low target | FALSE — the slab's cell is sampled | TRUE — the line at ≈0.85-0.94 clears the 0.5 collision | DIFF | a low mob behind a slab step or path is spared in 1.7.10, swept in the port |
+| 8d | Fence band: the line crosses y 1.0-1.5 over a fence (a downhill or short target beyond it) | TRUE — the sample sits in the air cell above the fence block | FALSE — the 1.5 collision band | DIFF | 1.7.10 sweeps over the fence, the port does not (ENT-S-121's fence band, opposite direction) |
+| 9 | The target's own cell at the end — the 10th sample IS the mid-body point: the target on open ground | TRUE — air | TRUE — the eye is inside the target's own box, never inside a collision shape | same | none |
+| 9b | The target standing IN a non-air, collision-less or fluid block: short grass / flowers / crops (WHEAT :1428) / a sapling / sugar cane / a cobweb / fire / a lily-pad cell; water (a cow in a 1-deep pond, mid 0.7; a zombie wading, mid 0.975; anything swimming); one-layer snow or a carpet under a low mob — every mob whose mid-body is below 1.0, i.e. up to 2.0 high (Zombie 0.975 is IN the grass cell; Enderman 1.45 is above it) | FALSE — the last sample reads the plant / snow / water | TRUE — fluids ignored, the shape empty, the eye outside every collision shape | DIFF | the widest signature: in 1.7.10 the sweep never hit mobs standing in grass, flowers, crops, cobwebs, snow layers, carpets (low mobs) or water — pasture, farm, snowfield and pond; the port sweeps them all |
+| 10 | The player's own head cell — the first sample (t = 0.1) sits in the player's column at y ≈ 1.36 (‡ ≈2.8, the cell ABOVE the head): the player standing in 2-block grass / fern, a cobweb, vines, sugar cane, fire, or swimming (feet + 1.4 inside the water column) | FALSE for every target — the sweep is dead | TRUE — the eye cell has no collision (the player stands in it) | DIFF | 1.7.10's sweep hits nothing while the player stands in tall ferns / grass, a web, or swims; the port's works. ‡ Under the census origin the first samples sit in the cell above the head: the 1.7.10 sweep would then be dead under every canopy, low ceiling and 2-high tunnel — a consequence for the owner to weigh against that reading |
+| 11 | A distance beyond the walk's step count | n/a inside the sweep — each axis of (T − S)/10 stays ≤ 1 for any target narrower than ≈9.4 blocks, so exactly 10 samples ending ON T; a wider boss box (King / Godzilla / Kraken class) triggers the rescale and floor(10·c) unit steps can stop up to one block short of T, sparing the target's own cell | the ray always reaches the eye; the 128-block cap is moot | same on a clear line | none |
+| 12 | A log diagonally adjacent (the trunk's corner between the player and the mob) | TRUE when no sample lands in the clipped corner (as 2b) | FALSE — the DDA enters the cell, the full cube is hit | DIFF | 1.7.10 sweeps around trunk corners the port does not |
+| 13 | Negative quadrant (x < 0 or z < 0): the `(int)` cast reads the column one block toward the origin (:240) | the NEIGHBOUR column's answer: a block on the segment is skipped when its +x / +z neighbour is air, an occluder one column toward the origin blocks | exact everywhere | DIFF (negative quadrants only) | corner and edge cases flip from their positive-quadrant answers — BUG-027's "sees through / fails to see past corners"; a transcription keeps it per that ruling |
+
+- **Player-visible differences (the list):** the port sweeps what 1.7.10 spared — 9b (a mob standing in grass, flowers,
+  crops, a cobweb, snow, a carpet [low mobs] or water), 4a (a wall torch / 2-block plant / sugar cane / cobweb / vines / fire
+  between, any target), 4c (a low mob behind ground plants), 5b (a low mob behind one-layer snow or carpet), 6 (a wading or
+  swimming mob), 8c (a low mob behind a bottom slab), 10 (the player in 2-block plants, a web, or swimming: 1.7.10's sweep
+  dead, the port's live). The port spares what 1.7.10 swept — 2b / 12 (trunk and canopy corner grazes), 8d (the 1.0-1.5
+  fence band). Quadrant-dependent — 13. Same in both — 1, 2, 3, 4b, 5, 7, 8a, 8b, 9, 11.
+- **Records:** ITEM-037 (FIXED 2026-06-12) closed the sweep's existence, radius and damage and is silent on the ray; MOD-016
+  covers the felling box only (no sight test exists there); ENT-S-121 disclosed this mapping "for the ledger" and its mixin's
+  receiver gate keeps a Player receiver on vanilla COLLIDER by design — routing :137 through `OreSpawnSight.canSee` would NOT
+  be a transcription either: that is the `canEntityBeSeen` OUTLINE mapping, which the chainsaw never used (water's outline is
+  empty, LiquidBlock.java:137-139; the endpoints are eye-to-eye; the traversal exact — closer than COLLIDER on rows 4 / 5,
+  wrong on 6 / 9b / 10 / 2b / 12 / 13); `phase_g_reports/targeting_survey_2026-09-04.md:1107` rated the filter row MATCH with
+  "the ray geometry differs … but inside a 5-block box it answers the same except at block edges" — the table shows a CLASS
+  difference (non-air vs collision, fluids, both endpoints, sampled vs exact), not edges; the row needs re-rating;
+  `phase_g_reports/ents120_census_2026-09-04.md:402, :454` rated :137 AC on the y origin alone, on the client reading.
+  MODERNIZATION_NOTES.md carries no record for the sweep's ray. Parity law: the walk is MOD code (a hand-rolled sampler),
+  not an engine frame, and its signature is player-visible — so in classic it is a parity bug until a MOD record says
+  otherwise; nothing gates :137, so both modes carry it today.
+- **Impact:** gameplay-visible in ordinary chainsaw use — the sweep is the item's combat identity (every left-click on a mob,
+  r = 5, 56 damage, no cooldown beyond the swing): in fields, farms, snowfields and ponds the port's sweep lands on mobs
+  1.7.10's never touched, and around trunk corners and fence bands it lands on fewer. Severity MEDIUM (a signature weapon's
+  combat reach; no crash, no loss). Both modes.
+- **Fix — two shapes, stated neutrally:**
+  - **A — classic parity, a transcription helper** (`Chainsaw.myCanSee(Player, LivingEntity)`, or a shared
+    `OreSpawnSight.airWalk(origin, e, nblks)` the King / Queen / Molenoid family could later share): orig :198-247 step for step
+    in floats — origin `player.getY() + 1.4` (the server feet; `getEyeY() + 1.4` if the owner takes the census reading — the ‡
+    rows flip with it), end `e.getY() + e.getBbHeight() / 2`, the cumulative rescale with `(int)` counts, the per-sample
+    `(int)` cast kept (BUG-027 VERIFIED-CORRECT / MOD-024: the truncation is the original; note TheQueen.java:1359 keeps it
+    while TheKing.java:1284 floors via `MutableBlockPos.set(double)` (BlockPos.java:579-581) and EntityMolenoid.java:349 via
+    `BlockPos.containing` — a transcription inconsistency outside this entry, for the ledger), `state.isAir()` for
+    `== Blocks.air` (the TheQueen shape :1360; 1.21.1's cave_air / void_air fold in, no 1.7.10 counterpart), and a documented
+    choice for y < 0 (worlds reach −64; the cast truncates there too — the census caveat iii). Pins: one
+    `ChainsawSweepSightTests` batch — a tall mob in short grass (9b), a wall torch between (4a), a pig behind grass (4c) and
+    behind a bottom slab (8c), a cow in a pond (6 / 9b), the player in 2-block fern (10), a trunk-corner graze (12), one
+    negative-quadrant row (13) — each FALSE with the walk and TRUE reverted, the sweep's damage asserted through
+    `findSomethingToHit`. Cost: ≈45 lines + a test class; no engine hook, no config; keeps 1.7.10's quirks (corner gaps,
+    the negative-column shift) as the parity law asks.
+  - **B — keep the vanilla ray under a MOD record** (`MOD-0xx — Chainsaw sweep sight on the vanilla collision ray`,
+    VANILLA-INTEGRATION) recording rows 4a / 4c / 5b / 6 / 8c / 9b / 10 as accepted broadenings and 2b / 8d / 12 / 13 as
+    accepted losses. Sub-shapes: **B1** unconditional (both modes) — cost: the record and a KNOWN_ISSUES line; classic is then
+    knowingly off 1.7.10 on a signature weapon, which the parity law allows only by the owner's explicit ruling that the
+    signature is not worth reproducing (the census's "AC" reading); **B2** a `[modern]` key (default ON, the MOD-029 /
+    MOD-031 / MOD-032 shape, read live per swing) with A behind classic — cost: A's transcription and pins plus the key and
+    a two-mode pin.
+- **Could not verify (for the owner):** (a) the 1.7.10 engine facts the ‡ rows and the "server answer only" statement rest
+  on — `EntityPlayerMP`'s constructor zeroing `yOffset` (server posY = feet) against the client's 1.62, `EntityLivingBase.
+  attackEntityFrom` returning false on the client, `World.getBlock` answering air outside y 0..255 — are recalled: no 1.7.10
+  vanilla source or jar is inside the repo (the client jar earlier lanes `javap`-ed for `ahb` / `sv` / `sw` was not located or
+  opened by this lane); the ENT-S-120 census §0 stands on the same footing and does not mention the server-side `yOffset`.
+  (b) NeoForge's placement of the `Item.onLeftClickEntity` hook in `Player.attack` (a NeoForge patch, absent from the NeoForm
+  vanilla decompile) — the port's javadoc :104-108 documents the intent; the server-only landing of `hurt` is verified.
+  (c) Every vanilla 1.21.1 line cited was read from the NeoForm decompile under `build/neoform/neoFormJoined1.21.1-20240808.
+  144430/steps/transformSource/transformed/` — untracked, gitignored build output inside the repo directory, not checked-in
+  source.
+- **Premise (a) closed (2026-09-05, law 11):** `phase_g_reports/ents120_premise_2026-09-05.md` — in Mojang's 1.7.10 client
+  jar `EntityPlayerMP.<init>` stores 0 into `yOffset` (Entity field `L`), so the server player's `posY` IS the feet: the
+  orig origin is feet + 1.4 as the rows state, the ‡ alternative (feet + 3.02, the census reading) falls away, and the
+  "server answer only" statement stands on `EntityLivingBase.attackEntityFrom`'s client short-circuit (still recalled).
+- **Resolution:** REPORT — for the owner's ruling between A and B (B1 / B2), with the posY reading (feet + 1.4 vs feet + 3.02)
+  named in the ruling; nothing applied; targeting_survey :1107 and census :402 / :454 to be re-rated with it.
+
 ### ANIM-001 — Systemic: `wingspeed` → `limbSwingAmount` frequency mistranslation (39 model files)
 
 - **Status:** DIVERGENT
