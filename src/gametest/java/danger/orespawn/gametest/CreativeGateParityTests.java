@@ -68,10 +68,11 @@ import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
  * Per site the three player states of that ruling: a creative player refused (orig's own test), a SURVIVAL player with
  * {@code Abilities.invulnerable} flipped on by hand still taken (the discriminating row — vanilla's {@code forCombat}
  * conditions and {@code canAttack} refuse it; every row of this kind fails with its port line reverted), and a plain
- * survival player taken (the control). Eight rows reach the ENT-S-108 private filters by reflection (present at HEAD,
- * pinned here — CreativeMappingParityTests' shape); three ask the vanilla {@code NearestAttackableTargetGoal<Player>}
- * rebuilt non-combat with orig's creative selector (CaterKiller, SeaViper, Pointysaurus) through {@code canUse()}
- * (PlayNicelyGateParityTests' GoalProbe shape, the 1-in-5 acquisition roll pinned); the Ender pair's goal rows add the
+ * survival player taken (the control). Ten sites reach a private filter by reflection (the eight ENT-S-108 filters,
+ * present at HEAD and pinned here — CreativeMappingParityTests' shape — and, since ENT-S-135 replaced their T8 goals
+ * with orig's scans, the CaterKiller's and SeaViper's {@code isSuitableTarget}); one asks the vanilla
+ * {@code NearestAttackableTargetGoal<Player>} rebuilt non-combat with orig's creative selector (Pointysaurus) through
+ * {@code canUse()} (PlayNicelyGateParityTests' GoalProbe shape, the acquisition roll pinned — bound 3 since ENT-S-136's interval 6, bound 5 chained); the Ender pair's goal rows add the
  * shadowing (a creative starer nearer than a survival starer leaves nothing picked; alone, the survival starer is
  * taken), the hold ({@code holdsLegacyTarget} through both target goals' {@code canContinueToUse}), the Knight's
  * stare gate (pumpkin refused, look-away refused, a stare through a stone wall refused by the :92 player-side ray with
@@ -161,7 +162,12 @@ public class CreativeGateParityTests {
     private record EnderSite(String key, Supplier<? extends EntityType<? extends Mob>> hunter, String origFile, String port, String revenge) {
     }
 
-    /** The eight ENT-S-108 filters in the ledger's T8 order — every orig site tests {@code capabilities.isCreativeMode}. */
+    /**
+     * The eight ENT-S-108 filters in the ledger's T8 order — every orig site tests {@code capabilities.isCreativeMode} —
+     * plus the Cater Killer's and Sea Viper's, whose T8 vanilla goals gave way to their orig scans under ENT-S-135: the same
+     * creative term (orig :548 / :519), now a private {@code isSuitableTarget} at its orig ladder position, so their rows
+     * moved from the goal shape to this one (the row names changed with the shape; the count did not).
+     */
     private static List<FilterSite> filterSites() {
         List<FilterSite> sites = new ArrayList<>();
         sites.add(new FilterSite("cave_fisher", ModEntities.CAVE_FISHER, "CaveFisher.java:221-226", "CaveFisher.java:191"));
@@ -172,14 +178,14 @@ public class CreativeGateParityTests {
         sites.add(new FilterSite("spit_bug", ModEntities.ENTITY_SPIT_BUG, "SpitBug.java:361-366", "EntitySpitBug.java:301"));
         sites.add(new FilterSite("trex", ModEntities.TREX, "TRex.java:241-246", "TRex.java:245"));
         sites.add(new FilterSite("trooper_bug", ModEntities.ENTITY_TROOPER_BUG, "TrooperBug.java:501-506", "EntityTrooperBug.java:335"));
+        sites.add(new FilterSite("cater_killer", ModEntities.ENTITY_CATER_KILLER, "CaterKiller.java:546-549", "EntityCaterKiller.java:407 (ENT-S-135)"));
+        sites.add(new FilterSite("sea_viper", ModEntities.SEA_VIPER, "SeaViper.java:517-520", "SeaViper.java:353 (ENT-S-135)"));
         return sites;
     }
 
-    /** The three vanilla-goal sites whose conditions ENT-S-132 rebuilt non-combat with orig's creative selector. */
+    /** The vanilla-goal site whose conditions ENT-S-132 rebuilt non-combat with orig's creative selector (the Cater Killer's and Sea Viper's goals are gone, ENT-S-135). */
     private static List<GoalSite> goalSites() {
         List<GoalSite> sites = new ArrayList<>();
-        sites.add(new GoalSite("cater_killer", ModEntities.ENTITY_CATER_KILLER, "CaterKiller.java:546-549", "EntityCaterKiller.java:118"));
-        sites.add(new GoalSite("sea_viper", ModEntities.SEA_VIPER, "SeaViper.java:517-520", "SeaViper.java:114"));
         sites.add(new GoalSite("pointysaurus", ModEntities.POINTYSAURUS, "Pointysaurus.java:242-245", "Pointysaurus.java:107"));
         return sites;
     }
@@ -201,9 +207,9 @@ public class CreativeGateParityTests {
 
     /**
      * One TestFunction per row, named {@code creativegateparitytests.s132_NN_<site>_<case>} in the order below:
-     * 24 filter rows (8 x 3), 9 goal rows (3 x 3), the Ender pair's 3 + 2 + 2 each (14), the Knight's 4 stare rows,
-     * the Brutalfly's 2 and Mothra's 3, then the Ender pair's 2 revenge-pick rows each (4, T8 refuter D1) — 60 rows in
-     * the {@code creativeGateParity} batch.
+     * 30 filter rows (10 x 3 — the Cater Killer's and Sea Viper's since ENT-S-135), 3 goal rows (the Pointysaurus), the
+     * Ender pair's 3 + 2 + 2 each (14), the Knight's 4 stare rows, the Brutalfly's 2 and Mothra's 3, then the Ender
+     * pair's 2 revenge-pick rows each (4, T8 refuter D1) — 60 rows in the {@code creativeGateParity} batch.
      */
     @GameTestGenerator
     public Collection<TestFunction> s132CreativeGateRows() {
@@ -293,7 +299,7 @@ public class CreativeGateParityTests {
         ServerPlayer player = null;
         try {
             hunter = spawnWithGoals(helper, site.hunter().get(), HUNTER_POS);
-            replaceRandom(hunter, rolls(GOAL_ROLL_BOUND, 0));
+            replaceRandom(hunter, rolls(GOAL_ROLL_BOUND, 0, 3, 0)); // bound 3: the Pointysaurus goal's interval 6 (reducedTickDelay 3, ENT-S-136); bound 5 (the 3-arg constructor's) chained
             NearestAttackableTargetGoal<?> goal = playerGoal(helper, hunter);
             player = playerFor(helper, playerCase, PLAYER_POS);
             assertSees(helper, hunter, player, "the player 8 blocks east");
@@ -670,8 +676,8 @@ public class CreativeGateParityTests {
             replaceRandom(brutalfly, script);
             invokeAiStep(EntityBrutalfly.class, brutalfly);
             BlockPos after = (BlockPos) readObject(brutalfly, "currentFlightTarget");
-            BlockPos playerMark = player.blockPosition().above(4);
-            BlockPos zombieMark = zombie.blockPosition().above(5);
+            BlockPos playerMark = new BlockPos((int) player.getX(), (int) player.getY() + 4, (int) player.getZ()); // orig :219's (int) casts (BUG-027) — the Mothra row's idiom; blockPosition() floors a cell short on a negative axis
+            BlockPos zombieMark = new BlockPos((int) zombie.getX(), (int) zombie.getY() + 5, (int) zombie.getZ()); // orig :232
             if (creative) {
                 helper.assertTrue(zombieMark.equals(after), "EntityBrutalfly strafe (creative nearest): orig Brutalfly.java:224-226 nulls a"
                         + " creative nearest and the 1-in-3 mob hunt (:228-232) takes the zombie — expected the zombie's mark " + zombieMark

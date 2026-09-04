@@ -14,6 +14,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntitySelector;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -76,12 +77,28 @@ public class EnderKnight extends Monster {
         // tick nulled a creative EntityPlayerMP target, so a creative starer shadowed a farther survival one: the
         // conditions are rebuilt non-combat (vanilla's forCombat refused abilities.invulnerable — creative, spectator
         // or hand-toggled — inside canAttack, ahead of the pick) with the stare test as the selector and no creative
-        // term, and the drop sits after the pick in canUse, orig isCreative -> Abilities.instabuild (ENT-S-107); the
-        // goal's class, box and cadence are T3b's (ENT-S-132).
-        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true) {
+        // term, and the drop sits after the pick in canUse, orig isCreative -> Abilities.instabuild (ENT-S-107).
+        // orig EnderKnight.java:61-81 with td.bq — findPlayerToAttack ran on EVERY target-less tick of the legacy loop: no
+        // acquisition roll (HEAD's 3-arg form drew 1-in-5 per goal pass; interval 0 here), the goal pass itself being the engine's
+        // every-other-tick harness; its scan set is the ONE nearest player of any mode within 64 (:65, a plain sphere from the
+        // position), then :67's stare test on that player alone — findTarget below (ENT-S-135).
+        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, 0, true, false, null) {
             {
-                this.targetConditions = TargetingConditions.forNonCombat().range(this.getFollowDistance())
-                        .selector(e -> e instanceof Player p && EnderKnight.this.shouldAttackPlayer(p)); // orig EnderKnight.java:67 (ENT-S-132)
+                this.targetConditions = TargetingConditions.forNonCombat()
+                        .selector(e -> e instanceof Player p && EnderKnight.this.shouldAttackPlayer(p)); // orig EnderKnight.java:67 (ENT-S-132); no range term — the 64 is the nearest search's own bound (:65), unscaled by visibility (ENT-S-135)
+            }
+
+            @Override
+            protected void findTarget() {
+                // orig EnderKnight.java:65 — World.getClosestPlayerToEntity(this, 64.0): the single nearest player of ANY mode within 64
+                // of the knight's position (plain distSq, strict <, first wins ties; no alive / creative screen — mc1710 ahb.a(sa,D)),
+                // THEN :67's shouldAttackPlayer on that one player: a nearer non-staring player shadows a farther starer
+                // (nearest-then-filter), where vanilla's findTarget took the nearest player the conditions ADMIT (filter-then-nearest).
+                // The conditions keep the stare selector, the alive / non-spectator screen and the mob-side sight ray (ENT-S-132);
+                // spectators are skipped by the search too — the port's convention for a state 1.7.10 lacked (ENT-S-132, iv). ENT-S-135.
+                Player nearest = this.mob.level().getNearestPlayer(this.mob.getX(), this.mob.getY(), this.mob.getZ(),
+                        this.getFollowDistance(), EntitySelector.NO_SPECTATORS);
+                this.target = nearest != null && this.targetConditions.test(this.mob, nearest) ? nearest : null;
             }
 
             @Override

@@ -48,7 +48,7 @@ import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
  *       stored revenge target included (port customServerAiStep; the :516 filter head is ENT-S-113's,
  *       pinned by CephadromeGateTests and not repeated here);</li>
  *   <li>Dragonfly.java:142 around the hunt branch — the scan, the retarget and the :147-148 bite — and
- *       :198 at the head of the filter (port DragonflyHuntGoal.pickRetarget / tick / findPrey);</li>
+ *       :198 at the head of the filter (port DragonflyHuntGoal.onRetargetSkipped / tick / findPrey);</li>
  *   <li>GammaMetroid.java:241 leading the 1-in-5 hunt and :254 at the head of the filter (port
  *       EntityGammaMetroid.customServerAiStep / isSuitableTarget);</li>
  *   <li>PurplePower.java:173 on the hunt call site, :180-182 {@code setDead} on every AI tick on
@@ -65,7 +65,7 @@ import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
  * it; the difficulty is restored in a finally on every path. Filter sites go through the private filter
  * by reflection (the CreativeMappingParityTests idiom). The AI-step sites invoke the hunter's
  * {@code customServerAiStep} — the ridden Ant Robot its public {@code tick}, the Dragonfly its hunt
- * goal's {@code pickRetarget} / {@code tick} / {@code findPrey} — once under a forced
+ * goal's {@code onRetargetSkipped} / {@code tick} / {@code findPrey} — once under a forced
  * {@code Entity.random} (the VortexParityTests.ForcedRoll seam, as the ENT-S-109 Brutalfly strafe test
  * drives it) with every roll on the path pinned, and read an observable back: the synched attacking
  * flag, damage on a 1000-HP prey (its hurt cooldown cleared between drives), the stored target, the
@@ -152,7 +152,7 @@ public class PeacefulGateParityTests {
         sites.add(new Site(4, "cephadrome_488_hunt_roll", "Cephadrome.java:488", "Cephadrome.customServerAiStep",
                 "the 1-in-7 hunt block pursuing a stored revenge target — attacking set",
                 CephadromeHuntRoll::new));
-        sites.add(new Site(5, "dragonfly_142_hunt_roll", "Dragonfly.java:142", "DragonflyHuntGoal.pickRetarget",
+        sites.add(new Site(5, "dragonfly_142_hunt_roll", "Dragonfly.java:142", "DragonflyHuntGoal.onRetargetSkipped",
                 "the 1-in-12 hunt roll — a butterfly 8 blocks off scanned and stored as the target",
                 DragonflyHuntRoll::new));
         sites.add(new Site(6, "dragonfly_147_bite", "Dragonfly.java:147-148 (inside the :142 branch)", "DragonflyHuntGoal.tick",
@@ -434,9 +434,9 @@ public class PeacefulGateParityTests {
     }
 
     /**
-     * orig Dragonfly.java:142-150 (port pickRetarget): the 1-in-12 roll pinned to fire; on NORMAL the
-     * butterfly 8 blocks off is scanned (:144) and, in the port's shape, stored as the target; on Peaceful
-     * the branch is skipped and the retarget falls through to the wander pick.
+     * orig Dragonfly.java:142-150 (port onRetargetSkipped — the flight retarget's else branch, ENT-S-135): the 1-in-12
+     * roll pinned to fire; on NORMAL the butterfly 8 blocks off is scanned (:144) and, in the port's shape, handed to the
+     * target slot; on Peaceful the branch is skipped and nothing is set.
      */
     private static final class DragonflyHuntRoll extends DragonflyProbe {
         @Override
@@ -449,7 +449,7 @@ public class PeacefulGateParityTests {
 
         @Override
         public boolean drive(GameTestHelper helper) {
-            invoke(this.goal, DragonflyHuntGoal.class, "pickRetarget");
+            invoke(this.goal, DragonflyHuntGoal.class, "onRetargetSkipped");
             this.trace = "target " + describe(this.dragonfly.getTarget());
             return this.dragonfly.getTarget() == this.prey;
         }

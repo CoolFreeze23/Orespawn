@@ -5,6 +5,7 @@ import danger.orespawn.OreSpawnConfig;
 import danger.orespawn.OreSpawnMod;
 import danger.orespawn.entity.Crab;
 import danger.orespawn.entity.EnderKnight;
+import danger.orespawn.entity.EntityCaterKiller;
 import danger.orespawn.entity.EntityDragonfly;
 import danger.orespawn.entity.EntityEmperorScorpion;
 import danger.orespawn.entity.EntityLeon;
@@ -674,10 +675,15 @@ public class TargetReleaseParityTests {
         helper.succeed();
     }
 
-    /** Cater Killer: the 1-in-200 inside the 1-in-4 pass (`== 0`), after the read, final; not the goal's every tick. */
+    /**
+     * Cater Killer: the 1-in-200 inside the 1-in-4 pass (`== 0`), after the read, final; not the goal's every tick. Then orig
+     * :471's `if (e == null)` on the pass-local e: the clearing pass runs no scan — a Zombie attacker held by the revenge goal is
+     * cleared and NOT re-picked until the next pass (ENT-S-135, T3b refuter B).
+     */
     private static void caterKillerForget(GameTestHelper helper) {
         Mob cater = null;
         Mob pig = null;
+        Mob zombie = null;
         try {
             cater = spawnWithGoals(helper, ModEntities.ENTITY_CATER_KILLER.get(), HUNTER_POS);
             cater.tickCount = TICKS_ALIVE;
@@ -704,7 +710,32 @@ public class TargetReleaseParityTests {
             helper.assertTrue(cater.getTarget() == null && !goal.canContinueToUse() && cater.getTarget() == null,
                     "orig CaterKiller.java:468-470 — `nextInt(200) == 0` inside the 1-in-4 pass clears the stored attack target, finally"
                             + " (" + FINDING + "); slot " + describe(cater.getTarget()));
+            // orig :471 `if (e == null)` tests the pass-local e, which the 1-in-200 does not null (:468-470 clears the slot alone): the
+            // clearing pass runs no scan even with prey the scan takes standing by (ENT-S-135, T3b refuter B) — a Zombie attacker held
+            // by the revenge goal, the same clear, and the Zombie 8 blocks east is NOT re-picked until the next pass
+            cater.setYRot(0.0f); // the scan's MyCanSee walk starts 2.5 blocks ahead along the yaw: pinned south (the ScanSetParityTests geometry)
+            zombie = spawnPrey(helper, EntityType.ZOMBIE, PREY_POS);
+            assertSees(helper, cater, zombie, "a Zombie 8 blocks east");
+            cater.invulnerableTime = 0; // the pig's hit left the damage cooldown up: a second 1.0 hit would be swallowed before the attacker is recorded
+            cater.tickCount = TICKS_ALIVE + 1; // a new hurt timestamp, or HurtByTargetGoal.canUse still reads the pig's
+            cater.hurt(cater.damageSources().mobAttack(zombie), 1.0f);
+            helper.assertTrue(cater.getTarget() == zombie && scanPick(cater, EntityCaterKiller.class) == null,
+                    "precondition: the Zombie attacker is stored by hurt (orig CaterKiller.java:96-98), not a scan pick (" + FINDING + " test setup)");
+            helper.assertTrue(goal.canUse(), "precondition: the revenge goal takes the Zombie (" + FINDING + " test setup)");
+            goal.start();
+            replaceRandom(cater, rolls(4, 0, 200, 0, 8, 1, 30, 1));
+            invokeCustomServerAiStep(cater);
+            helper.assertTrue(cater.getTarget() == null && scanPick(cater, EntityCaterKiller.class) == null && !goal.canContinueToUse(),
+                    "orig CaterKiller.java:463-473 — the pass read the Zombie into e (:463), the 1-in-200 cleared the SLOT (:469) and `if (e == null)` (:471) found e"
+                            + " standing: no scan this pass — the Zombie the scan would take is not re-picked, the slot and the mark stay empty (T3b's draft re-read the"
+                            + " slot and scanned) (" + FINDING + "); slot " + describe(cater.getTarget()) + ", scanPick " + describe(scanPick(cater, EntityCaterKiller.class)));
+            replaceRandom(cater, rolls(4, 0, 200, 1, 8, 1, 30, 1));
+            invokeCustomServerAiStep(cater);
+            helper.assertTrue(cater.getTarget() == zombie && scanPick(cater, EntityCaterKiller.class) == zombie,
+                    "orig CaterKiller.java:471-473 — the NEXT pass reads an empty slot into e and scans: the Zombie is re-picked under the ownership mark (" + FINDING
+                            + "); slot " + describe(cater.getTarget()) + ", scanPick " + describe(scanPick(cater, EntityCaterKiller.class)));
         } finally {
+            discardQuietly(zombie);
             discardQuietly(pig);
             discardQuietly(cater);
         }
@@ -1236,6 +1267,7 @@ public class TargetReleaseParityTests {
         Mob zombie = null;
         try {
             mob = spawnWithGoals(helper, type, HUNTER_POS);
+            mob.setOnGround(true); // a frozen mob never lands; the goal's nearbyOnly reach cache (ENT-S-135, TargetGoal.canReach) paths through GroundPathNavigation.canUpdatePath, which needs the ground (refuter B1's precedent)
             helper.assertTrue(mob.getAttributeValue(Attributes.FOLLOW_RANGE) == 16.0, "precondition: the FOLLOW_RANGE attribute is vanilla's 16 (" + FINDING + " test setup)");
             NearestAttackableTargetGoal<?> goal = null;
             for (WrappedGoal wrapped : mob.targetSelector.getAvailableGoals()) {
@@ -1295,13 +1327,15 @@ public class TargetReleaseParityTests {
             helper.assertTrue(fly.distanceToSqr(butterfly) < 6.0, "precondition: the butterfly stands inside the bite reach distSq < 6 (orig :146) (" + FINDING + " test geometry)");
             assertSees(helper, fly, butterfly, "a butterfly 2 blocks east");
             float health = butterfly.getHealth();
-            replaceRandom(fly, rolls(300, 0, 12, 0));
+            goal.setFlightTarget(fly.blockPosition().above(10)); // parked past the near-retarget distance: the hunt is the retarget's ELSE branch (orig :142, ENT-S-135), so the pass needs a quiet retarget
+            replaceRandom(fly, rolls(300, 1, 12, 0));
             goal.tick();
-            helper.assertTrue(butterfly.getHealth() < health, "control: the hunt pass (1-in-300 retarget, 1-in-12 hunt, both pinned) bites the butterfly ("
+            helper.assertTrue(butterfly.getHealth() < health, "control: the hunt pass (the 1-in-300 retarget pinned quiet, the 1-in-12 hunt pinned to fire — orig :142's else branch, ENT-S-135) bites the butterfly ("
                     + FINDING + "); health " + butterfly.getHealth());
             helper.assertTrue(fly.getTarget() == null, "orig Dragonfly.java:144-148 — the prey is never stored: nothing is retained after the pass ("
                     + FINDING + "); slot " + describe(fly.getTarget()));
             float bitten = butterfly.getHealth();
+            goal.setFlightTarget(fly.blockPosition().above(10));
             replaceRandom(fly, rolls(300, 1, 12, 1));
             goal.tick();
             goal.tick();

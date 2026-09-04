@@ -4,6 +4,10 @@ import danger.orespawn.MobStats;
 
 import danger.orespawn.OreSpawnMod;
 import danger.orespawn.OreSpawnConfig;
+import danger.orespawn.entity.ai.GenericTargetSorter;
+import danger.orespawn.entity.ai.TargetSelection;
+import danger.orespawn.util.MyUtils;
+import java.util.List;
 import javax.annotation.Nullable;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -44,6 +48,13 @@ public class Hammerhead extends Monster {
     // BossStatus hooks — the port's ServerBossEvent was an invention (ENT-D-055).
 
     private LivingEntity revengeTarget = null;
+
+    /**
+     * orig Hammerhead.java:38 {@code TargetSorter}, :48 {@code new GenericTargetSorter(this)} — the shared weighted-distance
+     * order (creepers halved, big silhouettes first) the scan sorts its candidates by (:256; the ledger's T4 row, closed by the
+     * sorter here). ENT-S-135.
+     */
+    private final GenericTargetSorter targetSorter = new GenericTargetSorter(this);
 
     public Hammerhead(EntityType<? extends Hammerhead> type, Level level) {
         super(type, level);
@@ -131,11 +142,8 @@ public class Hammerhead extends Monster {
             if (currentTarget == null && !playNicely) { // port-only read of the slot (HurtByTargetGoal's channel): under the flag orig's pass consulted nothing (:194-209) and set attacking 0 (:219-221), so the read is gated with the pass; the slot itself is untouched (ENT-S-115, refuter B2)
                 currentTarget = this.getTarget();
             }
-            if (currentTarget == null && !playNicely) { // orig Hammerhead.java:252-254 — the scan answers null under PlayNicely (ENT-S-115)
-                Player nearest = this.level().getNearestPlayer(this, 18.0);
-                if (nearest != null && !nearest.getAbilities().instabuild) {
-                    currentTarget = nearest;
-                }
+            if (currentTarget == null) {                                            // orig Hammerhead.java:207-209
+                currentTarget = this.findSomethingToAttack();                       // orig :208 — the 18/9/18 living box, sorted, the first the filter accepts; null under PlayNicely inside (:252-254, ENT-S-115); HEAD's getNearestPlayer(this, 18.0) was a players-only sphere (ENT-S-135)
             }
             if (currentTarget != null && currentTarget.isAlive()) {
                 this.lookAt(currentTarget, 10.0f, 10.0f);
@@ -153,6 +161,38 @@ public class Hammerhead extends Monster {
                 this.setAttacking(0);
             }
         }
+    }
+
+    /**
+     * orig Hammerhead.java:251-268 {@code findSomethingToAttack}: nothing under PlayNicely (:252-254); every
+     * {@code EntityLivingBase} whose box meets the shark's box grown by 18/9/18 (:255, {@code getEntitiesWithinAABB} —
+     * every living thing, where HEAD's {@code getNearestPlayer(this, 18.0)} scanned players only, and a BOX where that was a
+     * sphere of 18 from the position); sorted by the {@link GenericTargetSorter} (:256); the first the filter accepts wins
+     * (:257-266), else null (:267). {@link TargetSelection#firstMatch} is that sort-and-loop, stable ties included (OPT-021).
+     * The pick is the pass's for that tick alone, never stored (:207-218), as at HEAD. ENT-S-135.
+     */
+    @Nullable
+    private LivingEntity findSomethingToAttack() {
+        if (OreSpawnConfig.PLAY_NICELY.get()) return null;                        // orig :252-254
+        List<LivingEntity> candidates = this.level().getEntitiesOfClass(LivingEntity.class,
+                this.getBoundingBox().inflate(18.0, 9.0, 18.0));                  // orig :255
+        return TargetSelection.firstMatch(candidates, this.targetSorter, this::isSuitableTarget); // orig :256-266
+    }
+
+    /**
+     * orig Hammerhead.java:225-249 {@code isSuitableTarget}, in the original's order: null / self / dead (:226-234), line of
+     * sight (:235-237), a Hammerhead refused (:238-240), then the player branch — creative refused (:241-244,
+     * {@code isCreativeMode} = {@code Abilities.instabuild}) — any {@code EntityMob} taken (:245-247, the port's
+     * {@code Monster}), and the shared attackable-non-mob grant list last (:248, {@link MyUtils#isAttackableNonMob}, orig's
+     * membership since ENT-S-128). ENT-S-135.
+     */
+    private boolean isSuitableTarget(LivingEntity target) {
+        if (target == null || target == this || !target.isAlive()) return false;    // orig :226-234
+        if (!this.getSensing().hasLineOfSight(target)) return false;                // orig :235-237 — canSee, the eye-to-eye block ray
+        if (target instanceof Hammerhead) return false;                             // orig :238-240
+        if (target instanceof Player player) return !player.getAbilities().instabuild; // orig :241-244
+        if (target instanceof Monster) return true;                                 // orig :245-247 (EntityMob)
+        return MyUtils.isAttackableNonMob(target);                                  // orig :248
     }
 
     // Death drops are fully data-driven via loot_table/entities/hammerhead.json

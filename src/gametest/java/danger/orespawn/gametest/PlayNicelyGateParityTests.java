@@ -73,8 +73,9 @@ import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
  *       construction; the port registers its {@code NearestAttackableTargetGoal} always and reads the flag
  *       live in {@code canUse}, so the goal never starts while PlayNicely is on (Leon, ThePrinceAdult,
  *       ThePrinceTeen, Boyfriend, Girlfriend) — the same predicate carries the scan gate of the hunters whose
- *       port targeting is a vanilla goal with no scan method (CaterKiller, EnderKnight, EnderReaper, SeaViper,
- *       Pointysaurus with its stare goal);</li>
+ *       port targeting is a vanilla goal with no scan method (EnderKnight, EnderReaper, Pointysaurus with its stare
+ *       goal; the CaterKiller's and SeaViper's goals gave way to their orig scans under ENT-S-135, so their rows are
+ *       scan-shaped since);</li>
  *   <li>Godzilla's semantics — orig :357-359 nulls the pass's LOCAL {@code e}; the port used to
  *       {@code setTarget(null)} (BOSS-017), dropping the stored target every pass.</li>
  * </ul>
@@ -88,7 +89,7 @@ import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
  * reflection (the IgnoreScreenParityTests idiom); goal sites read every {@code NearestAttackableTargetGoal}
  * of the wanted target type (and the Pointysaurus's stare goal) off the target selector — the hunter spawned
  * with its goals and no AI — and call {@code canUse()} directly under a forced {@code Entity.random}
- * (the VortexParityTests.ForcedRoll seam) that pins the goal's 1-in-5 acquisition roll; the AI-step sites
+ * (the VortexParityTests.ForcedRoll seam) that pins the goal's acquisition roll (bound 5; bound 3 as well, the Pointysaurus goal's interval 6 — ENT-S-136); the AI-step sites
  * (Hammerhead, Irukandji, Skate, Sea Monster, Godzilla) invoke {@code customServerAiStep} once with every
  * roll on the path pinned. Synchronous — nothing ticks between the flip and the restore; the flag is
  * global, so the batch is this class alone (TEST-003).</p>
@@ -189,17 +190,18 @@ public class PlayNicelyGateParityTests {
         sites.add(site(1, "antrobot_940_stomp", "AntRobot.java:940-942", "AntRobot.feetFindSomethingToHit",
                 "the stomp hitting a pig 8 blocks off, inside the 6..9 ring",
                 () -> new StompProbe(ModEntities.ANT_ROBOT)));
-        sites.add(site(2, "antrobot_1012_hunt", "AntRobot.java:1012-1014", "AntRobot.findSomethingToAttack",
+        sites.add(site(2, "antrobot_1012_hunt", "AntRobot.java:1012-1014", "AntRobot.findSomethingToAttack(distmul)",
                 "the hunt scan returning a pig 8 blocks off",
-                () -> new ScanProbe(ModEntities.ANT_ROBOT, PIG, PREY_POS, "findSomethingToAttack", null, null)));
+                AntRobotHuntProbe::new));
         // Boyfriend — orig :140-142 (the IMob task registered only with PlayNicely == 0)
         sites.add(site(3, "boyfriend_140_monster_goal", "Boyfriend.java:140-142", "Boyfriend's NearestAttackableTargetGoal<Mob> + Enemy (ENT-S-124)",
                 "the goal's canUse taking a Zombie 8 blocks off",
                 () -> new GoalProbe(ModEntities.BOYFRIEND, Mob.class, PreyKind.ZOMBIE, false)));
         // CaterKiller — orig :560-562
-        sites.add(site(4, "caterkiller_560_player_goal", "CaterKiller.java:560-562", "EntityCaterKiller's NearestAttackableTargetGoal<Player>",
-                "the goal's canUse taking a survival player 8 blocks off",
-                () -> new GoalProbe(ModEntities.ENTITY_CATER_KILLER, Player.class, PreyKind.PLAYER, false)));
+        // (the goal-shaped row of ENT-S-115 became scan-shaped when ENT-S-135 replaced the CaterKiller's vanilla goal with orig's scan)
+        sites.add(site(4, "caterkiller_560_scan", "CaterKiller.java:560-562", "EntityCaterKiller.findSomethingToAttack (ENT-S-135)",
+                "the scan returning a Zombie 8 blocks off",
+                () -> new ScanProbe(ModEntities.ENTITY_CATER_KILLER, ZOMBIE, PREY_POS, "findSomethingToAttack", null, null)));
         // CaveFisher — orig :231-233 (gate landed with ENT-S-108; pinned)
         sites.add(site(5, "cavefisher_231_scan", "CaveFisher.java:231-233", "CaveFisher.findSomethingToAttack (ENT-S-108 gate)",
                 "the scan returning a pig 8 blocks off",
@@ -343,9 +345,10 @@ public class PlayNicelyGateParityTests {
                 () -> new InlinePickProbe(ModEntities.SEA_MONSTER, false, NEAR_PREY_POS, NEAR_PLAYER_POS,
                         new int[] {25, 1, 5, 1, 4, 1}, m -> ((SeaMonster) m).getAttacking(), (m, v) -> ((SeaMonster) m).setAttacking(v))));
         // SeaViper — orig :531-533
-        sites.add(site(40, "seaviper_531_player_goal", "SeaViper.java:531-533", "SeaViper's NearestAttackableTargetGoal<Player>",
-                "the goal's canUse taking a survival player 8 blocks off",
-                () -> new GoalProbe(ModEntities.SEA_VIPER, Player.class, PreyKind.PLAYER, false)));
+        // (the goal-shaped row of ENT-S-115 became scan-shaped when ENT-S-135 replaced the SeaViper's vanilla goal with orig's scan)
+        sites.add(site(40, "seaviper_531_scan", "SeaViper.java:531-533", "SeaViper.findSomethingToAttack (ENT-S-135)",
+                "the scan returning a Zombie 8 blocks off",
+                () -> new ScanProbe(ModEntities.SEA_VIPER, ZOMBIE, PREY_POS, "findSomethingToAttack", null, null)));
         // Skate — orig :283-285 (the stored-target read and the scan sit behind it)
         sites.add(site(41, "skate_283_stored_target", "Skate.java:283-285 (the :291-294 stored-target read behind it)",
                 "Skate.customServerAiStep (the pick)",
@@ -561,6 +564,35 @@ public class PlayNicelyGateParityTests {
         }
     }
 
+    /**
+     * orig AntRobot.java:1012-1014 (port {@code findSomethingToAttack(float distmul)} — the unridden call's distmul 2.0 of orig
+     * :117, the 24/12/24 box, ENT-S-135): the hunt scan returns a pig 8 blocks off with the flag down and null with it up.
+     */
+    private static final class AntRobotHuntProbe extends HunterProbe {
+        @Override
+        public void setUp(GameTestHelper helper) {
+            this.hunter = spawnFrozen(helper, ModEntities.ANT_ROBOT.get(), HUNTER_POS);
+            this.prey = spawnPrey(helper, EntityType.PIG, PREY_POS);
+            assertSees(helper, this.hunter, this.prey);
+        }
+
+        @Override
+        public boolean drive(GameTestHelper helper, boolean playNicely) {
+            Object found;
+            try {
+                Method method = this.hunter.getClass().getDeclaredMethod("findSomethingToAttack", float.class);
+                method.setAccessible(true);
+                found = method.invoke(this.hunter, 2.0f);
+            } catch (InvocationTargetException exception) {
+                throw new IllegalStateException("AntRobot.findSomethingToAttack threw", exception.getCause());
+            } catch (ReflectiveOperationException exception) {
+                throw new IllegalStateException("cannot invoke AntRobot.findSomethingToAttack(float)", exception);
+            }
+            this.trace = "findSomethingToAttack(2.0f) -> " + describe((Entity) found);
+            return found == this.prey;
+        }
+    }
+
     /** orig Dragonfly.java:232-234 (port DragonflyHuntGoal.findPrey, reached through the dragonfly's private huntGoal — the PeacefulGateParityTests idiom). */
     private static final class DragonflyScanProbe extends HunterProbe {
         private DragonflyHuntGoal goal;
@@ -594,7 +626,7 @@ public class PlayNicelyGateParityTests {
     /**
      * The hunter spawned with its goals and no AI; every {@link NearestAttackableTargetGoal} whose target
      * type is the wanted one (and the Pointysaurus's stare goal where asked) is read off the target
-     * selector and asked {@code canUse()} directly, its 1-in-5 acquisition roll pinned to fire. The prey
+     * selector and asked {@code canUse()} directly, its acquisition roll pinned to fire (bound 5, the 3-arg constructor's; bound 3, the Pointysaurus goal's interval 6 — ENT-S-136). The prey
      * is a Zombie for the Mob + Enemy goals (ENT-S-124), a survival mock player for the Player goals — staring at the
      * hunter's eyes (the stare goal's dot &gt; 0.97) or its mid-height (the Ender Reaper's look-vector test)
      * where the goal's own predicate demands it.
@@ -616,7 +648,8 @@ public class PlayNicelyGateParityTests {
         @Override
         public void setUp(GameTestHelper helper) {
             this.hunter = spawnWithGoals(helper, this.hunterType.get(), HUNTER_POS);
-            replaceRandom(this.hunter, rolls(GOAL_ROLL_BOUND, 0));
+            this.hunter.setOnGround(true); // a frozen mob never lands (LivingEntity.travel is gated on isEffectiveAi); the companions' nearbyOnly reach cache (ENT-S-135, TargetGoal.canReach) paths through GroundPathNavigation.canUpdatePath, which needs the ground (the T5 refuter B1 precedent)
+            replaceRandom(this.hunter, rolls(GOAL_ROLL_BOUND, 0, 3, 0)); // bound 5 (the 3-arg constructor's reducedTickDelay(10)) and bound 3 (the Pointysaurus goal's interval 6, ENT-S-136) both answer 0: the acquisition roll fires whichever the goal draws
             if (this.preyKind == PreyKind.ZOMBIE) {
                 this.prey = spawnPrey(helper, EntityType.ZOMBIE, PREY_POS);
             } else {

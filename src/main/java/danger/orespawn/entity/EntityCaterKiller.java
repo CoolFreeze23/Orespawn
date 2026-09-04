@@ -5,6 +5,10 @@ import danger.orespawn.MobStats;
 import danger.orespawn.ModEntities;
 import danger.orespawn.OreSpawnMod;
 import danger.orespawn.entity.ai.BugMeleeAttackGoal;
+import danger.orespawn.entity.ai.GenericTargetSorter;
+import danger.orespawn.entity.ai.TargetSelection;
+import danger.orespawn.util.MyUtils;
+import java.util.List;
 import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -29,8 +33,6 @@ import net.minecraft.world.entity.ai.goal.FloatGoal;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
-import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
-import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.GameRules;
@@ -78,6 +80,26 @@ public class EntityCaterKiller extends Monster {
     /** orig CaterKiller.java:68 — the revenge task; the pass's 1-in-200 release ends it (see {@link RevengeGoal}); assigned in registerGoals (the Mob constructor). ENT-S-129. */
     private RevengeGoal revengeGoal;
 
+    /**
+     * orig CaterKiller.java:43 {@code TargetSorter}, :62 {@code new GenericTargetSorter(this)} — the shared weighted-distance
+     * order (creepers halved, big silhouettes first) the scan sorts its candidates by (:564; the ledger's T4 row, closed by the
+     * sorter here). ENT-S-135.
+     */
+    private final GenericTargetSorter targetSorter = new GenericTargetSorter(this);
+
+    /**
+     * The last pick the pass handed to the target slot. 1.7.10 stored the scan's pick nowhere — the pass acted on it for
+     * that tick and re-derived it on the next (orig CaterKiller.java:471-473); only the stored attack target persisted
+     * ({@link #hurt}'s :96-98 store and the :68 revenge task), read ahead of the scan (:463). The port stores the pick so the
+     * melee goal can consume it and the next pass can tell its own occupant from a stored one: under this mark it is
+     * re-derived every pass (replaced, or cleared when not found again), never sticky; a target set by any other path is
+     * left alone (the ENT-S-108 slot rule; see {@link #setTarget}). The vanilla {@code NearestAttackableTargetGoal<Player>}
+     * that held the pick until vanilla's release (the ledger's "vanilla hold" of ENT-S-129 / ENT-S-132) is gone with the
+     * scan's return. ENT-S-135.
+     */
+    @Nullable
+    private LivingEntity scanPick;
+
 
     public EntityCaterKiller(EntityType<? extends EntityCaterKiller> type, Level level) {
         super(type, level);
@@ -102,28 +124,14 @@ public class EntityCaterKiller extends Monster {
         this.goalSelector.addGoal(4, new RandomLookAroundGoal(this));
         this.revengeGoal = new RevengeGoal();
         this.targetSelector.addGoal(1, this.revengeGoal); // orig CaterKiller.java:68 — EntityAIHurtByTarget(this, false), released by the pass's 1-in-200 (ENT-S-129)
-        // orig CaterKiller.java:560-562 — findSomethingToAttack answers null under PlayNicely (PlayNicely != 0). The
-        // port's hunt is this goal, so the flag is read live in its canUse: the goal never starts while PlayNicely
-        // is on, and starts again the moment it is off (ENT-S-115).
-        // orig CaterKiller.java:546-549 — the player branch's one test is `!capabilities.isCreativeMode` (ENT-S-107:
-        // Abilities.instabuild). The vanilla goal's forCombat conditions read creative as Player.canBeSeenAsEnemy =
-        // !abilities.invulnerable (creative, spectator or hand-toggled) inside canAttack, so the conditions are rebuilt
-        // non-combat with orig's creative test as the selector — the same follow range, invisibility, alive /
-        // non-spectator and sight screens; forCombat's other terms have no orig line here (the Peaceful player
-        // refusal: the engine despawns this Monster on Peaceful; canAttackType; isAlliedTo). The goal's class, box
-        // and cadence are T3b's; the vanilla hold (TargetGoal.canContinueToUse -> canAttack) is untouched (ENT-S-132).
-        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true) {
-            {
-                this.targetConditions = TargetingConditions.forNonCombat().range(this.getFollowDistance())
-                        .selector(e -> !(e instanceof Player p && p.getAbilities().instabuild)); // orig CaterKiller.java:548 !isCreativeMode (ENT-S-132)
-            }
-
-            @Override
-            public boolean canUse() {
-                if (OreSpawnConfig.PLAY_NICELY.get()) return false; // orig CaterKiller.java:560-562 (ENT-S-115)
-                return super.canUse();
-            }
-        });
+        // orig CaterKiller.java:68 registers no target-search task: prey is found by the 1-in-4 EntityLivingBase box scan of
+        // :462-500 / :559-574, restored in customServerAiStep / findSomethingToAttack (ENT-S-135) — every living thing in the
+        // 20/8/20 box through orig's ladder (:533-557: the MyCanSee block walk, creative = Abilities.instabuild at :548
+        // (ENT-S-107 / ENT-S-132), CaterKiller, EntityMob, isAttackableNonMob), sorted by the GenericTargetSorter, at orig's
+        // cadence. The port's players-only NearestAttackableTargetGoal<Player> (a FOLLOW_RANGE 40 sphere, ≈ 1-in-10; its
+        // conditions rebuilt by ENT-S-132, its live PlayNicely canUse by ENT-S-115 — both now inside the scan at their orig
+        // positions, :548 and :560-562) is gone; its vanilla hold with it — the scan's pick is re-derived every pass under
+        // the ownership mark (ENT-S-129).
     }
 
     public static AttributeSupplier.Builder createAttributes() {
@@ -193,10 +201,31 @@ public class EntityCaterKiller extends Monster {
     public boolean hurt(DamageSource source, float amount) {
         Entity attacker = source.getEntity();
         boolean ret = super.hurt(source, amount);
+        // orig CaterKiller.java:96-98 — an EntityLiving attacker becomes the stored target, read ahead of the scan (:463); the
+        // revenge task stores any other living attacker: the scan's mark on a pick that turned on the Cater Killer ends
+        // exactly when this hit stores it — the Mob store below, or super.hurt's lastHurtByMob record of this tick; a hit
+        // that stores nothing keeps the pick transient (ENT-S-129, the ownership convention; ENT-S-135)
+        if (attacker != null && attacker == this.scanPick && (attacker instanceof Mob
+                || (this.getLastHurtByMob() == attacker && this.getLastHurtByMobTimestamp() == this.tickCount))) this.scanPick = null;
         if (attacker instanceof Mob mob) {
             this.setTarget(mob);
         }
         return ret;
+    }
+
+    /**
+     * A change of occupant by any other path — the revenge goal's start or stop, a hurt store, the melee goal's stop, an
+     * event handler — ends the scan's ownership of the slot; a re-assert of the occupant already there keeps it:
+     * {@code TargetGoal.canContinueToUse} re-sets the mob's CURRENT target on every cleanup pass while the revenge goal
+     * runs, and an every-set clear turned the scan's own pick into a sticky one (ENT-S-117 refuter B's window). The
+     * port-wide convention ruled in ENT-S-129 (the Water Dragon's ENT-S-117 form); the hurt hand-off is in {@link #hurt}.
+     * ENT-S-135.
+     */
+    @Override
+    public void setTarget(@Nullable LivingEntity target) {
+        LivingEntity before = this.getTarget();
+        super.setTarget(target);
+        if (this.getTarget() != before) this.scanPick = null; // ENT-S-129: the mark ends on a change of occupant only
     }
 
     /**
@@ -289,19 +318,28 @@ public class EntityCaterKiller extends Monster {
             this.inWeb = false;
         }
 
-        // orig CaterKiller.java:462-470 — the 1-in-4 pass's target half: the stored attack target read (:463), dropped
-        // dead (:464-467), then the 1-in-200 `setAttackTarget(null)` (:468-470) — rolled inside the pass, after the
-        // read, so the cleared target is still engaged this pass; the scan of :471-473 is the port's
-        // NearestAttackableTargetGoal<Player> (T3b) and the rest of the block the melee goal, so only this half lives
-        // here. The melee goal's every-tick 1-in-200 (Params.caterKiller) is gone with it (ENT-S-129).
+        // orig CaterKiller.java:462-500 — the 1-in-4 pass: the stored attack target read (:463), dropped dead (:464-467, the
+        // slot and the pass-local `e`), then the 1-in-200 `setAttackTarget(null)` (:468-470) — rolled inside the pass, after
+        // the read, on the slot alone: `e` stands, so the cleared target is still engaged this pass (ENT-S-129) and the scan
+        // of :471-473 (`if (e == null)`) waits for the next pass (ENT-S-135); the rest of the block (:474-499: look, reach
+        // (5 + w/2)^2, the nextInt(3)==0 || nextInt(4)==1 swing, the chase at 1.25, the cobweb, setAttacking) is
+        // Params.caterKiller's melee goal, fed through the target slot. The melee goal's every-tick 1-in-200 is gone (ENT-S-129).
         if (this.random.nextInt(4) == 0) {                                   // orig :462
             LivingEntity stored = this.getTarget();                          // orig :463
             if (stored != null && !stored.isAlive()) {                       // orig :464-467
-                this.setTarget(null);
+                this.setTarget(null); stored = null;                         // orig :465-466 — the slot and the pass-local e; the dead drop alone empties e
             }
             if (this.random.nextInt(200) == 0 && this.getTarget() != null && this.getTarget() == this.revengeGoal.held()) { // orig :468-470 — the roll spent every pass, the clear only on the revenge goal's own target (a goal-held player pick is not a stored attacker; refuter A)
                 this.setTarget(null);
                 this.revengeGoal.release();                                  // 1.7.10's task ended on a nulled attack target; vanilla's TargetGoal would re-assert its memory (ENT-S-129)
+            }
+            LivingEntity current = stored;                                   // orig :471 — `if (e == null)` tests the pass-local e, not a re-read of the slot: a stored attacker (the :96-98 store, the :68 revenge task) stands and the scan does not run — the one the 1-in-200 just cleared included (a re-read scanned in the clearing pass; T3b refuter B, D1); the scan's own pick was never stored (:471-473), so it is re-derived every pass under the mark (ENT-S-108 / ENT-S-129)
+            if (current == null || current == this.scanPick) {
+                LivingEntity pick = this.findSomethingToAttack();            // orig :472 — the 20/8/20 box, sorted, the first the filter accepts (ENT-S-135)
+                if (pick != current) super.setTarget(pick);                  // super: the scan's own set keeps its ownership; replaced, or cleared when the scan came back empty (orig :497-499 stood down)
+                // Re-read the slot rather than trusting `pick`: a LivingChangeTargetEvent handler may have substituted or
+                // cancelled the set, and a stale scanPick would stall the scan (ENT-S-108 refuter hardening, 2026-09-04).
+                this.scanPick = this.getTarget();
             }
         }
 
@@ -338,6 +376,95 @@ public class EntityCaterKiller extends Monster {
                 }
             }
         }
+    }
+
+    /**
+     * orig CaterKiller.java:559-574 {@code findSomethingToAttack}: nothing under PlayNicely (:560-562); every
+     * {@code EntityLivingBase} whose box meets the Cater Killer's box grown by 20/8/20 (:563, {@code getEntitiesWithinAABB} —
+     * every living thing, where HEAD's goal scanned players only, and a BOX where that was a FOLLOW_RANGE 40 sphere); sorted
+     * by the {@link GenericTargetSorter} (:564); the first the filter accepts wins (:565-572), else null (:573).
+     * {@link TargetSelection#firstMatch} is that sort-and-loop, stable ties included (OPT-021). ENT-S-135.
+     */
+    @Nullable
+    private LivingEntity findSomethingToAttack() {
+        if (OreSpawnConfig.PLAY_NICELY.get()) return null;                        // orig :560-562
+        List<LivingEntity> candidates = this.level().getEntitiesOfClass(LivingEntity.class,
+                this.getBoundingBox().inflate(20.0, 8.0, 20.0));                  // orig :563
+        return TargetSelection.firstMatch(candidates, this.targetSorter, this::isSuitableTarget); // orig :564-572
+    }
+
+    /**
+     * orig CaterKiller.java:533-557 {@code isSuitableTarget}, in the original's order: null / self / dead (:534-542), the
+     * Cater Killer's own sight test {@link #myCanSee} (:543-545 — not vanilla's eye ray), then the player branch — creative
+     * refused (:546-549, {@code isCreativeMode} = {@code Abilities.instabuild}, the ENT-S-107 mapping ENT-S-132 carried on
+     * the goal) — a Cater Killer refused AFTER the player branch (:550-552), any {@code EntityMob} taken (:553-555, the port's
+     * {@code Monster}), and the shared attackable-non-mob grant list last (:556, {@link MyUtils#isAttackableNonMob}, orig's
+     * membership since ENT-S-128). ENT-S-135.
+     */
+    private boolean isSuitableTarget(LivingEntity target) {
+        if (target == null || target == this || !target.isAlive()) return false;    // orig :534-542
+        if (!this.myCanSee(target)) return false;                                   // orig :543-545 — MyCanSee, the hand-rolled block walk
+        if (target instanceof Player player) return !player.getAbilities().instabuild; // orig :546-549
+        if (target instanceof EntityCaterKiller) return false;                      // orig :550-552 — after the player branch
+        if (target instanceof Monster) return true;                                 // orig :553-555 (EntityMob)
+        return MyUtils.isAttackableNonMob(target);                                  // orig :556
+    }
+
+    /**
+     * orig CaterKiller.java:626-676 {@code MyCanSee} — the Cater Killer's own sight test, a hand-rolled block march (the
+     * King's / Queen's / Molenoid's class of walk, ITEM-070's): from a point 2.5 blocks ahead of the body along the entity
+     * yaw (:627, :629-630) at y + 3 (:632) toward the target's mid-height (:634-636), ten steps normalised so no axis advances
+     * more than one block per step (:637-669), each sample cast with {@code (int)} — truncation toward zero, the original's
+     * own (BUG-027, VERIFIED-CORRECT faithful; MOD-024 lists the floor as a modern opt-in) — and passed only through air,
+     * cobweb, tallgrass and leaves (:672: {@code Blocks.air}, {@code web} → COBWEB, {@code tallgrass} → SHORT_GRASS + FERN
+     * per the Molenoid / Camarasaurus precedent, and {@code Blocks.leaves} — 1.7.10's block of the oak / spruce / birch /
+     * jungle variants; its sibling {@code leaves2} (acacia, dark oak) is not on the list, so those and the modern leaf types
+     * occlude the walk, as in 1.7.10 — a literal transcription, disclosed). Vanilla's eye-to-eye ray (the ENT-S-121
+     * convention) never stood here: HEAD's goal read {@code Sensing}. ENT-S-135.
+     */
+    private boolean myCanSee(LivingEntity e) {
+        double xzoff = 2.5;                                                  // orig :627
+        int nblks = 10;                                                      // orig :628
+        double cx = this.getX() - xzoff * Math.sin(Math.toRadians(this.getYRot())); // orig :629
+        double cz = this.getZ() + xzoff * Math.cos(Math.toRadians(this.getYRot())); // orig :630
+        float startx = (float) cx;                                           // orig :631
+        float starty = (float) (this.getY() + 3.0);                          // orig :632
+        float startz = (float) cz;                                           // orig :633
+        float dx = (float) ((e.getX() - (double) startx) / 10.0);            // orig :634
+        float dy = (float) ((e.getY() + (double) (e.getBbHeight() / 2.0f) - (double) starty) / 10.0); // orig :635
+        float dz = (float) ((e.getZ() - (double) startz) / 10.0);            // orig :636
+        if ((double) Math.abs(dx) > 1.0) {                                   // orig :637-647
+            dy /= Math.abs(dx);
+            dz /= Math.abs(dx);
+            nblks = (int) ((float) nblks * Math.abs(dx));
+            if (dx > 1.0f) dx = 1.0f;
+            if (dx < -1.0f) dx = -1.0f;
+        }
+        if ((double) Math.abs(dy) > 1.0) {                                   // orig :648-658
+            dx /= Math.abs(dy);
+            dz /= Math.abs(dy);
+            nblks = (int) ((float) nblks * Math.abs(dy));
+            if (dy > 1.0f) dy = 1.0f;
+            if (dy < -1.0f) dy = -1.0f;
+        }
+        if ((double) Math.abs(dz) > 1.0) {                                   // orig :659-669
+            dy /= Math.abs(dz);
+            dx /= Math.abs(dz);
+            nblks = (int) ((float) nblks * Math.abs(dz));
+            if (dz > 1.0f) dz = 1.0f;
+            if (dz < -1.0f) dz = -1.0f;
+        }
+        for (int i = 0; i < nblks; ++i) {                                    // orig :670-674
+            startx += dx;
+            starty += dy;
+            startz += dz;
+            BlockState state = this.level().getBlockState(new BlockPos((int) startx, (int) starty, (int) startz)); // orig :671 — pre-increment, then the (int) cast (BUG-027)
+            if (state.isAir() || state.is(Blocks.COBWEB) || state.is(Blocks.SHORT_GRASS) || state.is(Blocks.FERN)
+                    || state.is(Blocks.OAK_LEAVES) || state.is(Blocks.SPRUCE_LEAVES) || state.is(Blocks.BIRCH_LEAVES)
+                    || state.is(Blocks.JUNGLE_LEAVES)) continue;                                                     // orig :672 — air, web, tallgrass, leaves
+            return false;                                                    // orig :673
+        }
+        return true;                                                         // orig :675
     }
 
     /**

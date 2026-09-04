@@ -4,7 +4,11 @@ import danger.orespawn.MobStats;
 
 import danger.orespawn.OreSpawnMod;
 import danger.orespawn.OreSpawnConfig;
+import danger.orespawn.entity.ai.GenericTargetSorter;
 import danger.orespawn.entity.ai.SeaViperBiteGoal;
+import danger.orespawn.entity.ai.TargetSelection;
+import danger.orespawn.util.MyUtils;
+import java.util.List;
 import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -30,10 +34,8 @@ import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.RandomSwimmingGoal;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
-import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.ai.navigation.WaterBoundPathNavigation;
-import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
@@ -69,6 +71,26 @@ public class SeaViper extends Monster {
      */
     private final net.minecraft.world.entity.ai.attributes.AttributeInstance movementSpeedAttribute;
 
+    /**
+     * orig SeaViper.java:42 {@code TargetSorter}, :59 {@code new GenericTargetSorter(this)} — the shared weighted-distance
+     * order (creepers halved, big silhouettes first) the scan sorts its candidates by (:535; the ledger's T4 row, closed by the
+     * sorter here). ENT-S-135.
+     */
+    private final GenericTargetSorter targetSorter = new GenericTargetSorter(this);
+
+    /**
+     * The last pick the pass handed to the target slot. 1.7.10 stored the scan's pick nowhere — the pass acted on it
+     * for that tick and re-derived it on the next (orig SeaViper.java:544-550); only a target stored by {@link #hurt} or the revenge
+     * task persisted, answered ahead of the scan while alive (:539-543). The port stores the pick so the bite goal can
+     * consume it and the next pass can tell its own occupant from a stored one: under this mark it is re-derived every
+     * pass (replaced, or cleared when not found again), never sticky; a target set by any other path is left alone
+     * (the ENT-S-108 slot rule; see {@link #setTarget}). The vanilla {@code NearestAttackableTargetGoal<Player>} that
+     * held the pick until vanilla's release (the ledger's "vanilla hold" of ENT-S-129 / ENT-S-132) is gone with the scan's
+     * return. ENT-S-135.
+     */
+    @Nullable
+    private LivingEntity scanPick;
+
     public SeaViper(EntityType<? extends SeaViper> type, Level level) {
         super(type, level);
         this.movementSpeedAttribute = this.getAttribute(Attributes.MOVEMENT_SPEED);
@@ -83,8 +105,11 @@ public class SeaViper extends Monster {
     // AI: FloatGoal pushes the viper up if it ends up in deep air; the
     // SeaViperBiteGoal carries the 1.7.10 swing dice + hunger-on-hit
     // effect; RandomSwimmingGoal gives idle amphibious wander inside water
-    // bodies. Target acquisition relies on HurtByTargetGoal +
-    // NearestAttackableTargetGoal to replace the legacy 18×4×18 scan.
+    // bodies. Target acquisition is orig's 1-in-5 18/4/18 EntityLivingBase box
+    // scan (:482, :534), restored in customServerAiStep / findSomethingToAttack
+    // (ENT-S-135) and fed to the bite goal through the target slot; HurtByTargetGoal
+    // is orig :66's revenge task. The port's players-only
+    // NearestAttackableTargetGoal is gone.
     @Override
     protected void registerGoals() {
         this.goalSelector.addGoal(0, new FloatGoal(this));
@@ -97,29 +122,15 @@ public class SeaViper extends Monster {
         this.goalSelector.addGoal(4, new LookAtPlayerGoal(this, Player.class, 10.0f));
         this.goalSelector.addGoal(5, new LookAtPlayerGoal(this, Mob.class, 8.0f));
         this.goalSelector.addGoal(6, new RandomLookAroundGoal(this));
-        this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
-        // orig SeaViper.java:531-533 — findSomethingToAttack answers null under PlayNicely (PlayNicely != 0). The
-        // port's scan is this goal, so the flag is read live in its canUse: the goal never starts while PlayNicely
-        // is on (ENT-S-115).
-        // orig SeaViper.java:517-520 — the player branch's one test is `!capabilities.isCreativeMode` (ENT-S-107:
-        // Abilities.instabuild). The vanilla goal's forCombat conditions read creative as Player.canBeSeenAsEnemy =
-        // !abilities.invulnerable (creative, spectator or hand-toggled) inside canAttack, so the conditions are rebuilt
-        // non-combat with orig's creative test as the selector — the same follow range, invisibility, alive /
-        // non-spectator and sight screens; forCombat's other terms have no orig line here (the Peaceful player
-        // refusal: the engine despawns this Monster on Peaceful; canAttackType; isAlliedTo). The goal's class, box
-        // and cadence are T3b's; the vanilla hold (TargetGoal.canContinueToUse -> canAttack) is untouched (ENT-S-132).
-        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true) {
-            {
-                this.targetConditions = TargetingConditions.forNonCombat().range(this.getFollowDistance())
-                        .selector(e -> !(e instanceof Player p && p.getAbilities().instabuild)); // orig SeaViper.java:519 !isCreativeMode (ENT-S-132)
-            }
-
-            @Override
-            public boolean canUse() {
-                if (OreSpawnConfig.PLAY_NICELY.get()) return false; // orig SeaViper.java:531-533 (ENT-S-115)
-                return super.canUse();
-            }
-        });
+        this.targetSelector.addGoal(1, new HurtByTargetGoal(this)); // orig SeaViper.java:66 — EntityAIHurtByTarget(this, false)
+        // orig SeaViper.java:66 registers no target-search task: prey is found by the 1-in-5 EntityLivingBase box scan of
+        // :482-495 / :530-551, restored in customServerAiStep / findSomethingToAttack (ENT-S-135) — every living thing in the
+        // 18/4/18 box through orig's ladder (:504-528: sight, creative = Abilities.instabuild at :519 (ENT-S-107 / ENT-S-132),
+        // SeaViper, EntityMob, isAttackableNonMob), sorted by the GenericTargetSorter, at orig's cadence and polarity. The
+        // port's players-only NearestAttackableTargetGoal<Player> (a FOLLOW_RANGE 32 sphere, ≈ 1-in-10; its conditions
+        // rebuilt by ENT-S-132, its live PlayNicely canUse by ENT-S-115 — both now inside the scan at their orig positions,
+        // :519 and :531-533) is gone; its vanilla hold with it — the scan's pick is re-derived every pass under the
+        // ownership mark (ENT-S-129).
     }
 
     public static AttributeSupplier.Builder createAttributes() {
@@ -225,11 +236,32 @@ public class SeaViper extends Monster {
             ret = super.hurt(source, amount);
             this.hurtCooldown = 5;
         }
+        // orig SeaViper.java:374-381 — an EntityLiving attacker becomes the stored target, read ahead of the scan (:539-543); the
+        // revenge task stores any other living attacker: the scan's mark on a pick that turned on the viper ends exactly when
+        // this hit stores it — the Mob store below, or super.hurt's lastHurtByMob record of this tick; a hit the hurt timer
+        // swallowed stores nothing through super.hurt and keeps the mark (ENT-S-129, the ownership convention; ENT-S-135)
+        if (attacker != null && attacker == this.scanPick && (attacker instanceof Mob
+                || (this.getLastHurtByMob() == attacker && this.getLastHurtByMobTimestamp() == this.tickCount))) this.scanPick = null;
         if (attacker instanceof Mob mob) {
             this.setTarget(mob);
             this.getNavigation().moveTo(mob, 1.2);
         }
         return ret;
+    }
+
+    /**
+     * A change of occupant by any other path — the revenge goal's start or stop, a hurt store, the bite goal's stop, an
+     * event handler — ends the scan's ownership of the slot; a re-assert of the occupant already there keeps it:
+     * {@code TargetGoal.canContinueToUse} re-sets the mob's CURRENT target on every cleanup pass while the revenge goal
+     * runs, and an every-set clear turned the scan's own pick into a sticky one (ENT-S-117 refuter B's window). The
+     * port-wide convention ruled in ENT-S-129 (the Water Dragon's ENT-S-117 form); the hurt hand-off is in {@link #hurt}.
+     * ENT-S-135.
+     */
+    @Override
+    public void setTarget(@Nullable LivingEntity target) {
+        LivingEntity before = this.getTarget();
+        super.setTarget(target);
+        if (this.getTarget() != before) this.scanPick = null; // ENT-S-129: the mark ends on a change of occupant only
     }
 
     // Keep the legacy dry-out + water-seek behaviour outside the new goal:
@@ -263,10 +295,65 @@ public class SeaViper extends Monster {
             }
         }
 
+        // orig SeaViper.java:482-495 — the 1-in-5 pass (`nextInt(5) == 1`): the scan's slot half; the rest of the block (look,
+        // reach (4.5 + w/2)^2, the nextInt(2)==0 || nextInt(4)==1 swing, the chase at 1.5, setAttacking) is
+        // Presets.seaViper's bite goal, fed through the target slot (ENT-S-135).
+        if (this.random.nextInt(5) == 1) {                                   // orig :482
+            // orig SeaViper.java:531-533 — findSomethingToAttack answers null under PlayNicely ahead of its stored-target read
+            // (:539-543) and its scan (:544-550); the pass's slot half is gated as a whole, the SeaMonster's shape (ENT-S-115)
+            boolean playNicely = OreSpawnConfig.PLAY_NICELY.get();
+            LivingEntity target = playNicely ? null : this.getTarget();      // orig :539 — the stored target, read inside the gated method
+            if (target != null && target == this.scanPick) {
+                target = null;                                               // orig :544-550 — the scan's pick was never stored: its occupant is re-derived by this pass (ENT-S-129)
+            } else if (target != null && !target.isAlive()) {
+                this.setTarget(null);                                        // orig :540-543 — a live stored target is answered ahead of the scan; a dead one is cleared (ENT-S-129)
+                target = null;
+            }
+            if (target == null && !playNicely) {
+                target = this.findSomethingToAttack();                       // orig :534-535, :544-550 — the 18/4/18 box, sorted, the first the filter accepts (ENT-S-135)
+                // the scan's answer handed to the slot under the ownership mark — re-derived next pass, cleared when not
+                // found again (ENT-S-129, the ENT-S-108 slot rule)
+                if (target != this.getTarget()) this.setTarget(target);
+                this.scanPick = this.getTarget();
+            }
+        }
+
         if (this.random.nextInt(100) == 1 && this.isInWater() && this.getHealth() < this.getMaxHealth()) {
             this.playSound(SoundEvents.GENERIC_SPLASH, 1.5f, this.random.nextFloat() * 0.2f + 0.9f);
             this.heal(1.0f);
         }
+    }
+
+    /**
+     * orig SeaViper.java:530-551 {@code findSomethingToAttack}: nothing under PlayNicely (:531-533); every
+     * {@code EntityLivingBase} whose box meets the viper's box grown by 18/4/18 (:534, {@code getEntitiesWithinAABB} — every
+     * living thing, where HEAD's goal scanned players only, and a BOX where that was a FOLLOW_RANGE 32 sphere); sorted by
+     * the {@link GenericTargetSorter} (:535); the first the filter accepts wins (:544-550), else null (:551).
+     * {@link TargetSelection#firstMatch} is that sort-and-loop, stable ties included (OPT-021). Orig's stored-target read
+     * between the sort and the loop (:539-543) is the pass's, ahead of this call (ENT-S-129). ENT-S-135.
+     */
+    @Nullable
+    private LivingEntity findSomethingToAttack() {
+        if (OreSpawnConfig.PLAY_NICELY.get()) return null;                        // orig :531-533
+        List<LivingEntity> candidates = this.level().getEntitiesOfClass(LivingEntity.class,
+                this.getBoundingBox().inflate(18.0, 4.0, 18.0));                  // orig :534
+        return TargetSelection.firstMatch(candidates, this.targetSorter, this::isSuitableTarget); // orig :535, :544-550
+    }
+
+    /**
+     * orig SeaViper.java:504-528 {@code isSuitableTarget}, in the original's order: null / self / dead (:505-513), line of
+     * sight (:514-516), then the player branch — creative refused (:517-520, {@code isCreativeMode} =
+     * {@code Abilities.instabuild}, the ENT-S-107 mapping ENT-S-132 carried on the goal) — a Sea Viper refused (:521-523),
+     * any {@code EntityMob} taken (:524-526, the port's {@code Monster}), and the shared attackable-non-mob grant list
+     * last (:527, {@link MyUtils#isAttackableNonMob}, orig's membership since ENT-S-128). ENT-S-135.
+     */
+    private boolean isSuitableTarget(LivingEntity target) {
+        if (target == null || target == this || !target.isAlive()) return false;    // orig :505-513
+        if (!this.getSensing().hasLineOfSight(target)) return false;                // orig :514-516 — canSee, the eye-to-eye block ray
+        if (target instanceof Player player) return !player.getAbilities().instabuild; // orig :517-520
+        if (target instanceof SeaViper) return false;                               // orig :521-523
+        if (target instanceof Monster) return true;                                 // orig :524-526 (EntityMob)
+        return MyUtils.isAttackableNonMob(target);                                  // orig :527
     }
 
     private boolean scanForWater(int x, int y, int z, int dx, int dy, int dz) {

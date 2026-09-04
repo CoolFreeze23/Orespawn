@@ -32,7 +32,6 @@ import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.RangedAttackGoal;
 import net.minecraft.world.entity.ai.goal.TemptGoal;
 import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
-import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.OwnerHurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.OwnerHurtTargetGoal;
 import net.minecraft.world.entity.ai.navigation.GroundPathNavigation;
@@ -53,7 +52,9 @@ import net.minecraft.world.level.Level;
 import danger.orespawn.ModItems;
 import danger.orespawn.OreSpawnConfig;
 import danger.orespawn.OreSpawnMod;
+import danger.orespawn.entity.ai.MyEntityAINearestAttackableTargetGoal;
 import danger.orespawn.util.SeasonalDates;
+import java.util.function.Predicate;
 
 public class Girlfriend extends TamableAnimal implements RangedAttackMob {
     // OPT-011: cached SoundEvents — identical createVariableRangeEvent ids,
@@ -205,7 +206,7 @@ public class Girlfriend extends TamableAnimal implements RangedAttackMob {
 
         // orig Girlfriend.java:161-162 — MyValentineTarget(Player) prio 1 and
         // MyValentineTarget(Boyfriend) prio 2; active only while valentine-angry
-        // (MyValentineTarget.java:47-56), fixed 16-block radius
+        // (MyValentineTarget.java:47-56), a fixed 16/4/16 box (:60; ENT-S-135)
         this.targetSelector.addGoal(1, new ValentineTargetGoal<>(this, Player.class));
         this.targetSelector.addGoal(2, new ValentineTargetGoal<>(this, Boyfriend.class));
         // MOD-033 (petsDefendOwner; the extension of 2026-09-05): the owner-defence pair is modern only, a construction
@@ -220,25 +221,34 @@ public class Girlfriend extends TamableAnimal implements RangedAttackMob {
             this.targetSelector.addGoal(3, new OwnerHurtByTargetGoal(this));
             this.targetSelector.addGoal(4, new OwnerHurtTargetGoal(this));
         }
+        // orig Girlfriend.java:164 / :167 IMob.mobSelector → Mob.class + instanceof Enemy (ENT-S-124, IMob convention) — and orig's
+        // Mothra by name: an IMob in 1.7.10 (orig Mothra.java:52), an EntityButterfly with no Enemy here; the task's own rules
+        // (orig MyEntityAITarget.java:88-128) follow in isMonsterPrey (ENT-S-128). Both hunts below are the port of orig's
+        // MyEntityAINearestAttackableTarget (MyEntityAINearestAttackableTargetGoal): the per-task box alone (:56 — no vanilla
+        // range sphere), every pass (chance 0), sight and nearbyOnly (true, true) — ENT-S-135.
+        Predicate<LivingEntity> imobPrey = e -> (e instanceof Enemy || e instanceof Mothra) && this.isMonsterPrey(e);
+        // orig Girlfriend.java:163-165 — MyEntityAINearestAttackableTarget(this, EntityCreeper.class, 20.0f, 0, true, true,
+        // IMob.mobSelector) at priority 2, registered only when PlayNicely == 0 at construction: the Creeper hunt, a 20/4/20 box,
+        // ahead of the IMob hunt; it had no port counterpart (ENT-A-054) — restored, the flag read live in canUse as the IMob
+        // goal's is (ENT-S-115). ENT-S-135.
+        this.targetSelector.addGoal(2, new MyEntityAINearestAttackableTargetGoal<>(this, Creeper.class, 20.0, true, true, imobPrey) {
+            @Override
+            public boolean canUse() {
+                if (OreSpawnConfig.PLAY_NICELY.get()) return false; // orig Girlfriend.java:163-165 (ENT-S-115)
+                return super.canUse();
+            }
+        });
         // orig Girlfriend.java:166-168 — the MyEntityAINearestAttackableTarget(EntityLiving.class, 15.0f, IMob selector)
-        // task is registered only when PlayNicely == 0 at construction (the :163-165 EntityCreeper task has no port
-        // counterpart; the :161-162 MyValentineTarget tasks above are ungated in orig); the port registers this goal
-        // always and reads the flag live in its canUse, as the Jealousy goals below do — it never starts while
-        // PlayNicely is on (ENT-S-115).
-        // orig Girlfriend.java:167 IMob.mobSelector → Mob.class + instanceof Enemy; 10 / false are the 3-arg constructor's own randomInterval / mustReach (ENT-S-124, IMob convention)
-        // — and orig's Mothra by name: an IMob in 1.7.10 (orig Mothra.java:52), an EntityButterfly with no Enemy here; the task's own
-        // rules (orig MyEntityAITarget.java:88-128) follow in isMonsterPrey (ENT-S-128)
-        this.targetSelector.addGoal(5, new NearestAttackableTargetGoal<>(this, Mob.class, 10, true, false,
-                e -> (e instanceof Enemy || e instanceof Mothra) && this.isMonsterPrey(e)) {
+        // task is registered only when PlayNicely == 0 at construction (the :161-162 MyValentineTarget tasks above are
+        // ungated in orig); the port registers this goal always and reads the flag live in its canUse, as the Jealousy
+        // goals below do — it never starts while PlayNicely is on (ENT-S-115). Its port priority (5, orig 3) is ENT-S-130's.
+        // targetDistance 15.0f (:167) — MyEntityAINearestAttackableTarget.java:36/:56 the box (15/4/15) and
+        // MyEntityAITarget.java:52 the hold beyond 15², where vanilla reads the FOLLOW_RANGE attribute (16) (ENT-S-129).
+        this.targetSelector.addGoal(5, new MyEntityAINearestAttackableTargetGoal<>(this, Mob.class, 15.0, true, true, imobPrey) {
             @Override
             public boolean canUse() {
                 if (OreSpawnConfig.PLAY_NICELY.get()) return false; // orig Girlfriend.java:166-168 (ENT-S-115)
                 return super.canUse();
-            }
-
-            @Override
-            protected double getFollowDistance() {
-                return 15.0; // orig Girlfriend.java:167 targetDistance 15.0f — MyEntityAINearestAttackableTarget.java:36/:56 the box (15/4/15) and MyEntityAITarget.java:52 the hold beyond 15², where vanilla reads the FOLLOW_RANGE attribute (16); the Dragon's ENT-S-117 idiom; closes the T3c box row for this goal (ENT-S-129)
             }
         });
         // orig Girlfriend.java:169-174 — Jealousy(Girlfriend.class, 6.0f, 5, true)
@@ -261,7 +271,8 @@ public class Girlfriend extends TamableAnimal implements RangedAttackMob {
      * {@code ValentineTargetGoal}); EntityPigZombie refused (:99-101); EntityEnderman refused (:102-104); Mothra taken
      * granted by orig ahead of its sight step (:105-107 before :108 — here the goal's own line of sight, mustSee, still follows this predicate, so only a Mothra in sight is taken; deferred, ENT-S-128); EntityCreeper
      * (:111-113) and EntityGhast (:114-116) taken ahead of the nearbyOnly path check (:117-127 — the goal's
-     * {@code mustReach}, false at this site); everything else taken (:128). The Ghast is still refused by the engine's
+     * {@code mustReach}, true at this site since ENT-S-135; the class's {@code canAttack} grants the two ahead of it, as
+     * orig did); everything else taken (:128). The Ghast is still refused by the engine's
      * {@code Mob.canAttackType} through the goal's conditions (the ENT-S-124 disclosure, ENT-S-127). ENT-S-128.
      */
     private boolean isMonsterPrey(LivingEntity candidate) {
@@ -277,26 +288,32 @@ public class Girlfriend extends TamableAnimal implements RangedAttackMob {
     /**
      * Port of orig MyValentineTarget.java:47-70 — a nearest-attackable-target
      * goal that only runs on Feb 14 while the Girlfriend has not been cured
-     * (feelingBetter == 0). targetChance 0 = no dice roll; 16-block radius
-     * (orig ctor par3, MyValentineTarget.java:26,39); owner excluded per the
-     * 1.7.10 EntityAITarget tameable-owner check.
+     * (feelingBetter == 0). targetChance 0 = no dice roll; the 16/4/16 box of
+     * orig :60 (targetDistance 16, orig ctor par3, MyValentineTarget.java:26,39 —
+     * the {@link MyEntityAINearestAttackableTargetGoal} scan: a box alone, where
+     * HEAD's vanilla goal took all the level's players inside a 16-sphere scaled
+     * by visibility, ENT-S-135); owner excluded per the 1.7.10 EntityAITarget
+     * tameable-owner check; MOD-036's creative / Peaceful refusals ride on the
+     * class's {@code forCombat} conditions as at HEAD. The Player task's
+     * conditions carry no line of sight and its candidates skip the reach
+     * test: orig MyEntityAITarget.java:96 answered a player ahead of the
+     * sight step :108 and the nearbyOnly block :117 (the class's ctor and
+     * {@code canAttack}, ENT-S-135 — the T3b refuters); the Boyfriend task
+     * keeps both, as a Boyfriend reached :108 / :117 in orig.
      */
-    private static class ValentineTargetGoal<T extends LivingEntity> extends NearestAttackableTargetGoal<T> {
+    private static class ValentineTargetGoal<T extends LivingEntity> extends MyEntityAINearestAttackableTargetGoal<T> {
         private final Girlfriend girlfriend;
 
         ValentineTargetGoal(Girlfriend girlfriend, Class<T> targetType) {
             // orig MyEntityAITarget.java:88-94 — a tamed task owner never
-            // targets her owner or other tamed pets
-            super(girlfriend, targetType, 0, true, true,
+            // targets her owner or other tamed pets; sight and nearbyOnly
+            // (true, true — orig Girlfriend.java:161-162) reach only the
+            // Boyfriend task's candidates (the class drops both for players)
+            super(girlfriend, targetType, 16.0, true, true,
                     candidate -> candidate != girlfriend.getOwner()
                             && !(girlfriend.isTame()
                                     && candidate instanceof TamableAnimal pet && pet.isTame()));
             this.girlfriend = girlfriend;
-        }
-
-        @Override
-        protected double getFollowDistance() {
-            return 16.0;
         }
 
         @Override

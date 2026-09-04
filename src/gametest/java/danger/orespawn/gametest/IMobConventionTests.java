@@ -207,6 +207,7 @@ public class IMobConventionTests {
             helper.assertTrue(!OreSpawnConfig.PLAY_NICELY.get(),
                     "precondition: PLAY_NICELY.set(false) must read back false (" + FINDING + " test setup)");
             hunter = spawnWithGoals(helper, row.hunter().type().get(), HUNTER_POS);
+            hunter.setOnGround(true); // a frozen mob never lands; the companions' nearbyOnly reach cache (ENT-S-135, TargetGoal.canReach) paths through GroundPathNavigation.canUpdatePath, which needs the ground (the T5 refuter B1 precedent)
             replaceRandom(hunter, rolls(GOAL_ROLL_BOUND, 0));
             NearestAttackableTargetGoal<?> goal = imobGoal(helper, hunter, row.hunter());
             prey = spawnPrey(helper, row.prey().type.get(), PREY_POS);

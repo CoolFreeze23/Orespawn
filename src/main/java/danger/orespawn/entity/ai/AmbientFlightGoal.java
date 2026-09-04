@@ -46,9 +46,9 @@ import net.minecraft.world.phys.Vec3;
 public class AmbientFlightGoal extends Goal {
 
     /**
-     * Tunable steering + retarget parameters for an {@link AmbientFlightGoal}.
-     * Values are a 1:1 match to the 1.7.10 per-mob magic numbers so flight
-     * feels identical to the legacy mod.
+     * Tunable steering + retarget parameters for an {@link AmbientFlightGoal}: the 1.7.10 per-mob magic numbers. The Dragonfly's
+     * nearTargetDistSq is orig Dragonfly.java:124's {@code < 2.1f} on the INTEGER cell distSq ({@link #tick} compares the same quantity:
+     * cells 0, 1, 2 retarget, 3 hunts; 4.5 at HEAD retargeted at 3 and 4 too — ENT-S-135, the T3b refuters); the other presets stand as at HEAD.
      */
     public record Params(
             int xzRange, int yRange, int yBias,
@@ -70,7 +70,7 @@ public class AmbientFlightGoal extends Goal {
             return new Params(7, 6, 2, 0.5, 0.7, 0.1, 0.5f, 1.0f, 100, 4.0, 25);
         }
         public static Params dragonfly() {
-            return new Params(10, 5, 2, 0.5, 0.7, 0.3, 1.0f, 4.0f, 300, 4.5, 50);
+            return new Params(10, 5, 2, 0.5, 0.7, 0.3, 1.0f, 4.0f, 300, 2.1, 50); // orig Dragonfly.java:124 — nextInt(300) == 0 || cell distSq < 2.1f (ENT-S-135)
         }
     }
 
@@ -111,6 +111,8 @@ public class AmbientFlightGoal extends Goal {
         if (needNewTarget) {
             BlockPos chosen = pickRetarget();
             if (chosen != null) this.flightTarget = chosen;
+        } else {
+            onRetargetSkipped(); // orig Dragonfly.java:142 — the hunt is the retarget's ELSE branch; a no-op for every other flyer (ENT-S-135)
         }
 
         // Steering lerp — identical math to 1.7.10 but clamped into doubles.
@@ -129,6 +131,15 @@ public class AmbientFlightGoal extends Goal {
         float yawDiff = Mth.wrapDegrees(targetYaw - this.mob.getYRot());
         this.mob.zza = this.params.forwardSpeed();
         this.mob.setYRot(this.mob.getYRot() + yawDiff / this.params.yawDivisor());
+    }
+
+    /**
+     * The tick's else branch: every tick on which the retarget did NOT fire (the {@link Params#retargetChance} roll
+     * missed and the flight target is not near). orig Dragonfly.java:124-150 hangs its hunt (:142-149) on exactly that
+     * branch, so {@link DragonflyHuntGoal} puts its hunt here; the other flyers' orig loops had no else branch, and the
+     * default does nothing (ENT-S-135). Runs before the steering, as orig's branch did.
+     */
+    protected void onRetargetSkipped() {
     }
 
     /**

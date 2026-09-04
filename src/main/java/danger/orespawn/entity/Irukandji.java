@@ -4,6 +4,9 @@ import danger.orespawn.MobStats;
 import danger.orespawn.ModItems;
 import danger.orespawn.OreSpawnMod;
 import danger.orespawn.OreSpawnConfig;
+import danger.orespawn.entity.ai.GenericTargetSorter;
+import danger.orespawn.entity.ai.TargetSelection;
+import java.util.List;
 import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -48,6 +51,14 @@ public class Irukandji extends Monster {
     private int targetX = 0;
     private int targetY = 0;
     private int targetZ = 0;
+
+    /**
+     * orig Irukandji.java:32 {@code TargetSorter}, :47 {@code new GenericTargetSorter(this)} — the shared weighted-distance
+     * order (creepers halved, big silhouettes first) the scan sorts its candidates by (:295). For standing players it reduces
+     * to nearest (a uniform 1.08 silhouette); a sneaking player's 0.9 is undivided and ranks differently (the ledger's T4 row,
+     * closed by the sorter here). ENT-S-135.
+     */
+    private final GenericTargetSorter targetSorter = new GenericTargetSorter(this);
 
     /**
      * The last pick the pass handed to the target slot. 1.7.10 stored the scan's pick nowhere — the pass acted on it
@@ -173,11 +184,7 @@ public class Irukandji extends Monster {
                 target = null;
             }
             if (target == null && !playNicely) {
-                Player nearest = this.level().getNearestPlayer(this, 6.0);
-                // orig Irukandji.java:280-282 — canSee, the eye-to-eye block ray, ahead of the creative check (:283-286) (ENT-S-118)
-                if (nearest != null && this.getSensing().hasLineOfSight(nearest) && !nearest.getAbilities().instabuild) {
-                    target = nearest;
-                }
+                target = this.findSomethingToAttack();                       // orig :294-295, :304-309 — the 6/4/6 box, sorted, the first the filter accepts (ENT-S-135); HEAD's getNearestPlayer(this, 6.0) was a sphere
                 // the scan's answer handed to the slot under the ownership mark — re-derived next pass, cleared when not
                 // found again (ENT-S-129, the ENT-S-108 slot rule)
                 if (target != this.getTarget()) this.setTarget(target);
@@ -196,6 +203,35 @@ public class Irukandji extends Monster {
                 this.setAttacking(0);
             }
         }
+    }
+
+    /**
+     * orig Irukandji.java:290-310 {@code findSomethingToAttack}: nothing under PlayNicely (:291-293); every
+     * {@code EntityLivingBase} whose box meets the jelly's box grown by 6/4/6 (:294, {@code getEntitiesWithinAABB} — a BOX,
+     * where HEAD's {@code getNearestPlayer(this, 6.0)} was a sphere of 6 from the position: a player at a box corner, ~8 blocks
+     * off, is prey; one 5 blocks straight up is not); sorted by the {@link GenericTargetSorter} (:295); the first the filter
+     * accepts wins (:304-309), else null (:310). {@link TargetSelection#firstMatch} is that sort-and-loop, stable ties included
+     * (OPT-021). Orig's stored-target read between the sort and the loop (:299-303) is the pass's, ahead of this call
+     * (ENT-S-129). ENT-S-135.
+     */
+    @Nullable
+    private LivingEntity findSomethingToAttack() {
+        if (OreSpawnConfig.PLAY_NICELY.get()) return null;                        // orig :291-293
+        List<LivingEntity> candidates = this.level().getEntitiesOfClass(LivingEntity.class,
+                this.getBoundingBox().inflate(6.0, 4.0, 6.0));                    // orig :294
+        return TargetSelection.firstMatch(candidates, this.targetSorter, this::isSuitableTarget); // orig :295, :304-309
+    }
+
+    /**
+     * orig Irukandji.java:270-288 {@code isSuitableTarget}, in the original's order: null / self / dead (:271-279), line of
+     * sight (:280-282, ENT-S-118), then the player branch — creative refused (:283-286, {@code isCreativeMode} =
+     * {@code Abilities.instabuild}); nothing else is prey (:287). ENT-S-135.
+     */
+    private boolean isSuitableTarget(LivingEntity target) {
+        if (target == null || target == this || !target.isAlive()) return false;    // orig :271-279
+        if (!this.getSensing().hasLineOfSight(target)) return false;                // orig :280-282 — canSee, the eye-to-eye block ray, ahead of the creative check (ENT-S-118)
+        if (target instanceof Player player) return !player.getAbilities().instabuild; // orig :283-286
+        return false;                                                               // orig :287
     }
 
     private boolean scanForWater(int x, int y, int z, int dx, int dy, int dz) {

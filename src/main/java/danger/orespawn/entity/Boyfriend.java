@@ -32,7 +32,6 @@ import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.RangedAttackGoal;
 import net.minecraft.world.entity.ai.goal.TemptGoal;
 import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
-import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.OwnerHurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.OwnerHurtTargetGoal;
 import net.minecraft.world.entity.ai.navigation.GroundPathNavigation;
@@ -53,7 +52,9 @@ import net.minecraft.world.level.Level;
 import danger.orespawn.ModItems;
 import danger.orespawn.OreSpawnConfig;
 import danger.orespawn.OreSpawnMod;
+import danger.orespawn.entity.ai.MyEntityAINearestAttackableTargetGoal;
 import danger.orespawn.item.ItemOreSpawnArmor;
+import java.util.function.Predicate;
 
 public class Boyfriend extends TamableAnimal implements RangedAttackMob {
     // OPT-011: cached SoundEvents — identical createVariableRangeEvent ids,
@@ -155,24 +156,33 @@ public class Boyfriend extends TamableAnimal implements RangedAttackMob {
             this.targetSelector.addGoal(1, new OwnerHurtByTargetGoal(this));
             this.targetSelector.addGoal(2, new OwnerHurtTargetGoal(this));
         }
+        // orig Boyfriend.java:138 / :141 IMob.mobSelector → Mob.class + instanceof Enemy (ENT-S-124, IMob convention) — and orig's
+        // Mothra by name: an IMob in 1.7.10 (orig Mothra.java:52), an EntityButterfly with no Enemy here; the task's own rules
+        // (orig MyEntityAITarget.java:88-128) follow in isMonsterPrey (ENT-S-128). Both hunts below are the port of orig's
+        // MyEntityAINearestAttackableTarget (MyEntityAINearestAttackableTargetGoal): the per-task box alone (:56 — no vanilla
+        // range sphere), every pass (chance 0), sight and nearbyOnly (true, true) — ENT-S-135.
+        Predicate<LivingEntity> imobPrey = e -> (e instanceof Enemy || e instanceof Mothra) && this.isMonsterPrey(e);
+        // orig Boyfriend.java:137-139 — MyEntityAINearestAttackableTarget(this, EntityCreeper.class, 20.0f, 0, true, true,
+        // IMob.mobSelector) at priority 2, registered only when PlayNicely == 0 at construction: the Creeper hunt, a 20/4/20 box,
+        // ahead of the IMob hunt; it had no port counterpart (ENT-A-054) — restored, the flag read live in canUse as the IMob
+        // goal's is (ENT-S-115). ENT-S-135.
+        this.targetSelector.addGoal(2, new MyEntityAINearestAttackableTargetGoal<>(this, Creeper.class, 20.0, true, true, imobPrey) {
+            @Override
+            public boolean canUse() {
+                if (OreSpawnConfig.PLAY_NICELY.get()) return false; // orig Boyfriend.java:137-139 (ENT-S-115)
+                return super.canUse();
+            }
+        });
         // orig Boyfriend.java:140-142 — the MyEntityAINearestAttackableTarget(EntityLiving.class, 15.0f, IMob selector)
-        // task is registered only when PlayNicely == 0 at construction (the :137-139 EntityCreeper task has no port
-        // counterpart); the port registers this goal always and reads the flag live in its canUse, as the Jealousy
-        // goals below do — it never starts while PlayNicely is on (ENT-S-115).
-        // orig Boyfriend.java:141 IMob.mobSelector → Mob.class + instanceof Enemy; 10 / false are the 3-arg constructor's own randomInterval / mustReach (ENT-S-124, IMob convention)
-        // — and orig's Mothra by name: an IMob in 1.7.10 (orig Mothra.java:52), an EntityButterfly with no Enemy here; the task's own
-        // rules (orig MyEntityAITarget.java:88-128) follow in isMonsterPrey (ENT-S-128)
-        this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, Mob.class, 10, true, false,
-                e -> (e instanceof Enemy || e instanceof Mothra) && this.isMonsterPrey(e)) {
+        // task is registered only when PlayNicely == 0 at construction; the port registers this goal always and reads the
+        // flag live in its canUse, as the Jealousy goals below do — it never starts while PlayNicely is on (ENT-S-115).
+        // targetDistance 15.0f (:141) — MyEntityAINearestAttackableTarget.java:36/:56 the box (15/4/15) and
+        // MyEntityAITarget.java:52 the hold beyond 15², where vanilla reads the FOLLOW_RANGE attribute (16) (ENT-S-129).
+        this.targetSelector.addGoal(3, new MyEntityAINearestAttackableTargetGoal<>(this, Mob.class, 15.0, true, true, imobPrey) {
             @Override
             public boolean canUse() {
                 if (OreSpawnConfig.PLAY_NICELY.get()) return false; // orig Boyfriend.java:140-142 (ENT-S-115)
                 return super.canUse();
-            }
-
-            @Override
-            protected double getFollowDistance() {
-                return 15.0; // orig Boyfriend.java:141 targetDistance 15.0f — MyEntityAINearestAttackableTarget.java:36/:56 the box (15/4/15) and MyEntityAITarget.java:52 the hold beyond 15², where vanilla reads the FOLLOW_RANGE attribute (16); the Dragon's ENT-S-117 idiom; closes the T3c box row for this goal (ENT-S-129)
             }
         });
         // orig :146-147 — Jealousy(Boyfriend.class, 6.0f, 5, true) @4 and
@@ -192,7 +202,8 @@ public class Boyfriend extends TamableAnimal implements RangedAttackMob {
      * {@code ValentineTargetGoal}); EntityPigZombie refused (:99-101); EntityEnderman refused (:102-104); Mothra taken
      * granted by orig ahead of its sight step (:105-107 before :108 — here the goal's own line of sight, mustSee, still follows this predicate, so only a Mothra in sight is taken; deferred, ENT-S-128); EntityCreeper
      * (:111-113) and EntityGhast (:114-116) taken ahead of the nearbyOnly path check (:117-127 — the goal's
-     * {@code mustReach}, false at this site); everything else taken (:128). The Ghast is still refused by the engine's
+     * {@code mustReach}, true at this site since ENT-S-135; the class's {@code canAttack} grants the two ahead of it, as
+     * orig did); everything else taken (:128). The Ghast is still refused by the engine's
      * {@code Mob.canAttackType} through the goal's conditions (the ENT-S-124 disclosure, ENT-S-127). ENT-S-128.
      */
     private boolean isMonsterPrey(LivingEntity candidate) {
