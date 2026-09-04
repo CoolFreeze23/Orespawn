@@ -7164,6 +7164,238 @@ keeps BUG-036. Commit 4ea395c's message retains the old number.)*
   is false; a Zombie, a bad-mood answer and a creative rejection each leave it at 1. Not covered,
   passed to the targeting survey ledger: orig :488's `!= PEACEFUL` gate on the hunt roll itself (port
   `customServerAiStep` :360), which on Peaceful also spares a revenge target. Refuted once, upheld.
+
+### ENT-S-114 — Five hunters the engine never despawns on Peaceful lacked their 1.7.10 PEACEFUL gates: AntRobot, the Cephadrome's hunt roll, Dragonfly, GammaMetroid, PurplePower (targeting ledger batch T7, wave 1; FIXED 2026-09-04)
+
+- **Evidence:** targeting ledger batch T7 (`phase_g_reports/targeting_survey_2026-09-04.md`, §T7). Each of
+  these five is a class vanilla does not remove on Peaceful — an EntityLiving / Mob (AntRobot, PurplePower),
+  an EntityCreature / PathfinderMob (Cephadrome), an EntityAnimal / Animal (Dragonfly), an EntityTameable /
+  TamableAnimal (GammaMetroid) — so 1.7.10 gated their hunts by hand and the port dropped the gates: orig
+  AntRobot.java:105 (`owned == 0 && difficulty != PEACEFUL` around the whole unridden block), :617 and :620
+  (`!= PEACEFUL` leading the ridden stomp and the ridden hunt) against port AntRobot.java:225 (`owned == 0`
+  only), :290, :293 (ungated); orig Cephadrome.java:488 (`nextInt(7)==1 && != PEACEFUL` around the hunt
+  block, a stored revenge target included) against port :361 (no term; ENT-S-113 restored the :516 filter
+  head only); orig Dragonfly.java:142 (caller) and :198 (filter) against none in `DragonflyHuntGoal` /
+  `AmbientFlightGoal`; orig GammaMetroid.java:241 (caller) and :254 (filter) against port
+  EntityGammaMetroid.java:112 and :208-219; orig PurplePower.java:173 (call site), :180-182 (`setDead` on
+  every AI tick on Peaceful) and :236 (filter) against port :121 (no term) and a class extending `Mob`, so
+  no Peaceful removal at all. What a player saw: on Peaceful the Ant Robot stomped and bit, the Cephadrome
+  attacked whoever had hurt it, the Dragonfly and a wild Gamma Metroid hunted, and the Purple Power hunted
+  instead of vanishing. No MOD record.
+- **Resolution:** FIXED (2026-09-04, wave 1 — owner: "Targeting ledger, ruled by wave. Wave 1 now: T7 then
+  T1 — safety first."). Eleven port sites, each transcribed at the orig position with the orig polarity and
+  the orig term order (the roll before the difficulty at Cephadrome :488, Dragonfly :142 and PurplePower
+  :173 — the roll is spent on Peaceful; the difficulty before the roll at AntRobot :617/:620 and
+  GammaMetroid :241 — it is not):
+
+  | # | species | orig site | port site | change |
+  |---|---|---|---|---|
+  | 1 | AntRobot | :105 | `customServerAiStep` :226-228 | `owned == 0` → `owned == 0 && getDifficulty() != PEACEFUL` around the whole unridden block |
+  | 2 | AntRobot | :617 | `tick` :292-295 | `!= PEACEFUL` leads the ridden stomp (difficulty, client, rider, roll) |
+  | 3 | AntRobot | :620 | `tick` :298-301 | `!= PEACEFUL` leads the ridden hunt and melee |
+  | 4 | Cephadrome | :488 | `customServerAiStep` :361-364 | `nextInt(7)==1 && != PEACEFUL` around the hunt block; a stored revenge target is spared on Peaceful |
+  | 5 | Dragonfly | :142 | `DragonflyHuntGoal.pickRetarget` :67-70 | roll-then-gate on the hunt branch |
+  | 5b | Dragonfly | :147-148 | `DragonflyHuntGoal.tick` :58-63 | the bite carries the branch's gate (the port stores prey orig never stored; redundant once T5 makes the pick transient) |
+  | 6 | Dragonfly | :198 | `DragonflyHuntGoal.findPrey` :88 | predicate head |
+  | 7 | GammaMetroid | :241 | `customServerAiStep` :113-115 | difficulty-then-roll |
+  | 8 | GammaMetroid | :254 | `isSuitableTarget` :218 | filter head |
+  | 9 | PurplePower | :173 | `customServerAiStep` :122-123 | roll-then-gate on the else-if |
+  | 10 | PurplePower | :180-182 | `customServerAiStep` :134-139 | `discard()` every AI tick on Peaceful after the flight block; the steering still runs after it, as orig |
+  | 11 | PurplePower | :236 | `isSuitableTarget` :203 | filter head |
+
+  The Cephadrome's :516 filter head remains ENT-S-113's; MyValentineTarget / Girlfriend (a port-only
+  gate) goes with the T9 split. Pins: new `PeacefulGateParityTests` (own batch `peacefulGateParity`; a
+  `@GameTestGenerator` over a 12-row site table in orig file order, one TestFunction per port site,
+  `peacefulgateparitytests.s114_NN_<site>`), the CephadromeGateTests shape: NORMAL asserted as the
+  precondition, the site driven once on NORMAL and required to show its effect (control), the effect
+  undone, `MinecraftServer.setDifficulty(PEACEFUL, true)` inside the test and asserted through
+  `level.getDifficulty()`, the same hunter and prey driven once more and required to show nothing of it,
+  the difficulty restored in a finally on every path; synchronous. Filter sites call the private filter
+  by reflection with a pig 8 blocks off (accepted on NORMAL, refused on PEACEFUL); call-site and hunt-roll
+  sites invoke the AI step once by reflection under a forced `Entity.random` with every roll on the path
+  pinned (AntRobot's ridden rows hand-tick the entity with a mounted mock rider; PurplePower's discard row
+  reads alive after the step on NORMAL and removed on PEACEFUL). Refuted once, upheld; two test gaps
+  disclosed by the refuter, non-blocking: the Dragonfly, GammaMetroid and PurplePower call-site rows cannot
+  isolate the call-site gate from the filter head (with only the caller's gate removed the filter still
+  refuses), and no row pins the roll-versus-difficulty term order (a counting RandomSource would). Caveat
+  carried from ENT-S-093's convention: orig rolled the world random at AntRobot, Cephadrome and
+  GammaMetroid, the port rolls the entity random (stream only, same bounds).
+
+### ENT-S-115 — Forty-three hunters and the Boyfriend / Girlfriend monster goal lacked their 1.7.10 PlayNicely gates; Godzilla's dropped the stored target instead of skipping it (targeting ledger batch T1, wave 1; FIXED 2026-09-04)
+
+- **Evidence:** targeting ledger batch T1 (`phase_g_reports/targeting_survey_2026-09-04.md`, §T1: 44 rows, 44
+  blocks; §2 blocks cited per row). 1.7.10 gated every hunter's own target selection on `OreSpawnMain.PlayNicely`:
+  `if (PlayNicely != 0) return null;` at the head of `findSomethingToAttack` (29 hunters — AntRobot :940/:1012,
+  Cephadrome :576, Dragon :577, Dragonfly :232, Fairy :239, Frog :308, GammaMetroid :291, GiantRobot :343,
+  Hammerhead :252, Irukandji :291, Kyuubi :205, Lizard :336, PitchBlack :541, PurplePower :268, Rat :252, Robot1
+  :205, Robot3 :322, Robot5 :296, SeaMonster :514, Skate :283, SpiderDriver :104/:160, Spyro :698, Stinky :688,
+  TerribleTerror :296, Triffid :322 — and the nine ENT-S-108 scans: CaveFisher :231, DungeonBeast :250,
+  EmperorScorpion :504, HerculesBeetle :417, Nastysaurus :279, SpitBug :371, TRex :251, TrooperBug :511, Urchin
+  :273; CaterKiller :560, EnderKnight :62, EnderReaper :62, SeaViper :531 and Pointysaurus :250 where the port's
+  targeting is a vanilla goal with no scan method); `e = rt; if (PlayNicely != 0) e = null;` blanking the pass's
+  copy of the revenge target (Hammerhead :194, Nastysaurus :215, Pointysaurus :186, TRex :185); the target task
+  registered only `if (PlayNicely == 0)` at construction (Leon :92, ThePrinceAdult :112, ThePrinceTeen :116,
+  Boyfriend :140, Girlfriend :166); and Godzilla :357-359 nulling the pass's local `e`, which BOSS-017 had mapped
+  to `setTarget(null)` (port :732-734) — a stored target dropped every pass instead of skipped. At the survey's
+  snapshot none of the 43 hunters' scans, none of the five goal registrations and none of the four revenge
+  blankings read the flag (the ENT-S-108 lane restored the nine scans with their gate after the snapshot). What a
+  player saw: on a "play nicely" server 1.7.10's hunters stopped hunting on their own (they still retaliated,
+  except the four `rt` hunters, which stood down for the pass); the port's kept hunting — Cephadromes, the five
+  robots, the sea monsters, the Leonopteryx's and the Princes' monster goals, the Boyfriend / Girlfriend and every
+  player-hunting bug picked fights — and Godzilla additionally dropped a target it was already chasing on every
+  pass. No MOD record.
+- **Resolution:** FIXED (2026-09-04, wave 1 — owner: "Targeting ledger, ruled by wave. Wave 1 now: T7 then T1 —
+  safety first."). 41 port sites in 38 files, each transcribed at the orig position, the flag read live as
+  `OreSpawnConfig.PLAY_NICELY.get()` (every existing port site's idiom; orig's static int is a config value here):
+
+  | # | species | orig site (1.7.10) | port site | kind | note |
+  |---|---|---|---|---|---|
+  | 1 | AntRobot | AntRobot.java:940-942 (`feetFindSomethingToHit`: `return`) | AntRobot.feetFindSomethingToHit :667 | a | a void scan — `return`, not `return null`; covers the unridden 1-in-20 (:230) and ridden 1-in-50 (:296) stomps |
+  | 2 | AntRobot | :1012-1014 (`findSomethingToAttack(distmul, dircheck)`) | AntRobot.findSomethingToAttack :698 | a | covers the unridden pick (:238) and the ridden 1-in-9 hunt (:302) |
+  | 3 | Boyfriend | Boyfriend.java:140-142 — `MyEntityAINearestAttackableTarget(EntityLiving.class, 15.0f, IMob)` registered only when `PlayNicely == 0` | Boyfriend.registerGoals :148-154 (canUse gate :151) on the `NearestAttackableTargetGoal<Monster>` | c | the :137-139 EntityCreeper task has no port counterpart (ledger scan-set row); the Jealousy goals already read the flag live (`JealousyTargetGoal:41`) |
+  | 4 | CaterKiller | CaterKiller.java:560-562 | EntityCaterKiller.registerGoals :103-109 (canUse :106) on the `NearestAttackableTargetGoal<Player>` | e | no scan method in the port (players-only vanilla goal, T3b keeps the rebuild); the stored-target read of orig :463 sits outside the gated method and is untouched |
+  | 5 | CaveFisher | CaveFisher.java:231-233 | CaveFisher.findSomethingToAttack :196 | a | **present at HEAD** — ENT-S-108 (commit 2c98492, after the survey's 6af0a1c snapshot) restored the scan with its gate; no edit; pinned here |
+  | 6 | Cephadrome | Cephadrome.java:576-578 | Cephadrome.findSomethingToAttack :427 | a | flag read fully qualified like :176 |
+  | 7 | Dragon | Dragon.java:577-579 | Dragon.findSomethingToAttack :936 | a | reached from the ground (:372), ridden (:559) and flight (:649) callers; the :115 registration half is the absent IMob channel — T3a |
+  | 8 | Dragonfly | Dragonfly.java:232-234 | DragonflyHuntGoal.findPrey :84 (+ class javadoc :37-38) | a | the port's scan lives in the goal; CRLF kept |
+  | 9 | DungeonBeast | DungeonBeast.java:250-252 | DungeonBeast.findSomethingToAttack :183 | a | present at HEAD (ENT-S-108); pinned |
+  | 10 | EmperorScorpion | EmperorScorpion.java:504-506 | EntityEmperorScorpion.findSomethingToAttack :279 | a | present at HEAD (ENT-S-108); pinned |
+  | 11 | EnderKnight | EnderKnight.java:62-64 (`func_70782_k`, the legacy findPlayerToAttack) | EnderKnight.registerGoals :51-57 (canUse :54) on the `NearestAttackableTargetGoal<Player>` | e | orig's revenge (`EntityMob.attackEntityFrom` → entityToAttack) was never gated; the port's `HurtByTargetGoal` stays ungated; CRLF kept |
+  | 12 | EnderReaper | EnderReaper.java:62-64 | EnderReaper.registerGoals :54-61 (canUse :58) on the stare-predicated `NearestAttackableTargetGoal<Player>` | e | as EnderKnight; CRLF kept |
+  | 13 | Fairy | Fairy.java:239-241 | Fairy.findSomethingToAttack :153 | a | |
+  | 14 | Frog | Frog.java:308-310 | Frog.findInsectTarget :258 | a | the port's renamed scan |
+  | 15 | GammaMetroid | GammaMetroid.java:291-293 | EntityGammaMetroid.findSomethingToAttack :203 | a | ahead of the child check (orig :294-296 ↔ port :204), the orig order |
+  | 16 | GiantRobot | GiantRobot.java:343-345 | GiantRobot.findSomethingToAttack :225 | a | |
+  | 17 | Girlfriend | Girlfriend.java:166-168 | Girlfriend.registerGoals :213-219 (canUse :216) on the `NearestAttackableTargetGoal<Monster>` | c | the :163-165 Creeper task has no counterpart; the :161-162 MyValentineTarget tasks are ungated in orig and stay so |
+  | 18 | Godzilla | Godzilla.java:356-359 — `e = getAttackTarget(); if (PlayNicely != 0) e = null;` | Godzilla.customServerAiStep :730-736 (`currentTarget = null` :735) | d | the pass's LOCAL is nulled; the stored target (HurtByTargetGoal / hurt()) is skipped for the pass and kept. BOSS-017 had mapped this to `setTarget(null)` (dropped every pass); the :524-527 scan gate (port :608-611, `headFound = 1`) already matched |
+  | 19 | Hammerhead | Hammerhead.java:194-196 — `e = rt; if (PlayNicely != 0) e = null;` | Hammerhead.customServerAiStep :121 (the flag read once at :120) | b | `revengeTarget` (orig `rt`) itself kept; the dead / 1-in-250 drop of :198-201 is skipped for the pass, as orig; the port-only fallback read of the slot (:128-130, HurtByTargetGoal's channel, no orig line) is gated with the pass — under the flag orig's pass consulted nothing (:194-209) and set attacking 0 (:219-221) — refuter B2 |
+  | 20 | Hammerhead | :252-254 | Hammerhead.customServerAiStep :130 — the inline `getNearestPlayer(18)` scan | a | the port has no scan method; its inline scan block is gated |
+  | 21 | HerculesBeetle | HerculesBeetle.java:417-419 | EntityHerculesBeetle.findSomethingToAttack :234 | a | present at HEAD (ENT-S-108); pinned |
+  | 22 | Irukandji | Irukandji.java:291-293 — ahead of the stored-target read (:299-302) and the scan (:304-309) inside the same method | Irukandji.customServerAiStep :135-139 — the inline pick (stored read + `getNearestPlayer(6)`) gated as a whole | a | under the flag neither the stored target nor the scan is consulted and nothing is cleared, as orig |
+  | 23 | Kyuubi | Kyuubi.java:205-207 | EntityKyuubi.findSomethingToAttack :133 | a | |
+  | 24 | Leon | Leon.java:92-94 — `EntityAINearestAttackableTarget(EntityLiving.class, IMob)` registered only when `PlayNicely == 0` | EntityLeon.registerGoals :164-170 (canUse :167) on the `NearestAttackableTargetGoal<Monster>` | c | the :391 filter gate is ENT-S-110's (:765); orig's own scan-head gate :431-433 has no port line — ENT-S-110 put the gate in the filter the scan calls, outcome-equivalent (the scan is a side-effect-free box query) |
+  | 25 | Lizard | Lizard.java:336-338 | Lizard.findSomethingToAttack :143 | a | ahead of the revenge-first block (orig :344-350 ↔ port :144-147), the orig order |
+  | 26 | Nastysaurus | Nastysaurus.java:215-217 — `e = rt; if (PlayNicely != 0) e = null;` | Nastysaurus.selectTarget :136 (+ the bookkeeping guard :146-149, javadoc :128-133) | b | the pass's copy of a foreign occupant (`current != scanPick`) is nulled: the dead-drop (:219-221) is skipped, the (gated) scan runs, the slot is kept as orig kept `rt`; the scan's own pick — never orig's `rt` — is not blanked, runs on to the gated scan and is cleared as at HEAD (orig :240-242 stood down) — refuter B1 |
+  | 27 | Nastysaurus | :279-281 | Nastysaurus.findSomethingToAttack :169 | a | present at HEAD (ENT-S-108); pinned |
+  | 28 | PitchBlack | PitchBlack.java:541-543 | PitchBlack.findSomethingToAttack :510 | a | |
+  | 29 | Pointysaurus | Pointysaurus.java:250-252 | Pointysaurus.registerGoals :69-75 (stare goal, canUse :72) and :82-89 (`NearestAttackableTargetGoal<Player>`, canUse :86) | e | both proactive goals — the port-only stare goal (T9) is the port's other proactive pick and is gated with the same predicate |
+  | 30 | Pointysaurus | :186-188 — `e = rt; if (PlayNicely != 0) e = null;` | — | b | **DEFERRED** — see §6 |
+  | 31 | PurplePower | PurplePower.java:268-270 | PurplePower.findSomethingToAttack :196 | a | |
+  | 32 | Rat | Rat.java:252-254 | EntityRat.findSomethingToAttack :217 | a | |
+  | 33 | Robot1 | Robot1.java:205-207 | Robot1.findSomethingToAttack :143 | a | |
+  | 34 | Robot3 | Robot3.java:322-324 | Robot3.findSomethingToAttack :174 | a | |
+  | 35 | Robot5 | Robot5.java:296-298 | Robot5.findSomethingToAttack :163 | a | |
+  | 36 | SeaMonster | SeaMonster.java:514-516 — ahead of the stored read (:522-525) and the scan (:527-532) | SeaMonster.customServerAiStep :173-177 — the inline pick gated as a whole | a | as Irukandji |
+  | 37 | SeaViper | SeaViper.java:531-533 | SeaViper.registerGoals :100-106 (canUse :103) on the `NearestAttackableTargetGoal<Player>` | e | orig's stored-target read (:539-543) sat inside the gated method; the port's `SeaViperBiteGoal` consumes the slot regardless — see the disclosure |
+  | 38 | Skate | Skate.java:283-285 — ahead of the stored read (:291-294) and the scan (:296-301) | Skate.customServerAiStep :123-127 — the inline pick gated as a whole | a | as Irukandji |
+  | 39 | SpiderDriver | SpiderDriver.java:104-106 (`findSpiderRobot`) | SpiderDriver.findSpiderRobot :150 | a | the mount scan; CRLF kept |
+  | 40 | SpiderDriver | :160-162 | SpiderDriver.findSomethingToAttack :169 | a | the mounted combat scan |
+  | 41 | SpitBug | SpitBug.java:371-373 | EntitySpitBug.findSomethingToAttack :261 | a | present at HEAD (ENT-S-108); pinned |
+  | 42 | Spyro | Spyro.java:698-700 | EntitySpyro.findSomethingToAttack :485 | a | |
+  | 43 | Stinky | Stinky.java:688-690 | EntityStinky.findSomethingToAttack :451 | a | |
+  | 44 | TerribleTerror | TerribleTerror.java:296-298 | EntityTerribleTerror.findSomethingToAttack :176 | a | |
+  | 45 | ThePrinceAdult | ThePrinceAdult.java:112-114 — the IMob task registered only when `PlayNicely == 0` | ThePrinceAdult.registerGoals :149-155 (canUse :152) on the `NearestAttackableTargetGoal<Monster>` | c | the custom scan's own gate (orig :520-522) already at port :865 |
+  | 46 | ThePrinceTeen | ThePrinceTeen.java:116-118 | ThePrinceTeen.registerGoals :160-166 (canUse :163) | c | custom gate (orig :540-542) already at port :889 |
+  | 47 | TRex | TRex.java:185-187 — `e = rt; if (PlayNicely != 0) e = null;` | TRex.selectTarget :118 (+ guard :128-131, javadoc :110-116) | b | as Nastysaurus (orig :210-212) |
+  | 48 | TRex | :251-253 | TRex.findSomethingToAttack :151 | a | present at HEAD (ENT-S-108); pinned |
+  | 49 | Triffid | Triffid.java:322-324 | EntityTriffid.findSomethingToAttack :242 | a | |
+  | 50 | TrooperBug | TrooperBug.java:511-513 | EntityTrooperBug.findSomethingToAttack :295 | a | present at HEAD (ENT-S-108); pinned |
+  | 51 | Urchin | Urchin.java:273-275 | Urchin.findSomethingToAttack :236 | a | present at HEAD (ENT-S-108); pinned |
+
+  Shapes: (a) 29 head-of-scan gates, `return null` (the Ant Robot's void stomp `return`)
+  ahead of the box query — for the Irukandji, Skate and Sea Monster, whose orig scan method also held the stored-
+  target read (:299-302 / :291-294 / :522-525) behind the gate, the port's inline pick (stored read +
+  `getNearestPlayer`) is gated as a whole, so under the flag the pass reads no target, scans nothing and clears
+  nothing; the Hammerhead's inline `getNearestPlayer(18)` block likewise; (b) the four revenge blankings — the
+  pass's copy nulled, the field kept: Hammerhead :121 (`revengeTarget` is orig `rt`; the port-only fallback read of
+  the slot two lines later is gated with the pass, refuter B2 — orig's pass consulted nothing under the flag),
+  Nastysaurus :136 and TRex :118 in `selectTarget`, where only a foreign occupant is blanked (`current != scanPick`:
+  orig's `rt` was never the scan's pick, refuter B1) — the blanked pass skips the dead-drop, runs the (gated) scan
+  and, by a guard on the ENT-S-108 ownership re-read (`if (pick != null || current != null) this.scanPick = ...`,
+  behaviour-neutral outside the blanked pass), claims nothing it did not set, so the revenge target survives the
+  flag as orig's `rt` did, while the scan's own pick runs on to the gated scan and is cleared as at HEAD (orig
+  stood down, :240-242 / :210-212); Pointysaurus :186-188 deferred (below); (c) the five construction-time registrations as a live `canUse`
+  predicate on the always-registered `NearestAttackableTargetGoal` (an anonymous subclass: `if
+  (PLAY_NICELY.get()) return false; return super.canUse();`) — the port registers goals in `registerGoals` before
+  the config can change, so conditional registration would freeze the flag at spawn; the goal never starts while
+  PlayNicely is on and starts again the moment it is off (Leon :167, ThePrinceAdult :152, ThePrinceTeen :163,
+  Boyfriend :151, Girlfriend :216; the Jealousy goals already did this, `JealousyTargetGoal:41`); (e) the same
+  predicate carries the scan gate of the five hunters whose port targeting is a vanilla goal with no scan method
+  (EntityCaterKiller :106, EnderKnight :54, EnderReaper :58, SeaViper :103, Pointysaurus :72 on its port-only stare
+  goal and :86 on its player goal); (d) Godzilla :730-736 reads the stored target into the pass's local first and
+  nulls the local under the flag — the stored target is skipped for the pass and kept, `findSomethingToAttack`
+  still fakes `headFound = 1` (BOSS-017, orig :524-527) so no head spawns. Javadoc / comment cite of the orig line
+  at every site; nothing else in those methods. Disclosed: (i) the Nastysaurus / TRex re-read guard is the one
+  port line per file without a one-to-one orig line (its need and neutrality are in the site table); (ii) the
+  single slot — orig's `rt` was consumed only through the pass, the port's slot is consumed every tick by the
+  melee goal, so a stored revenge target is still fought under the flag (Nastysaurus, TRex; the SeaViper's bite
+  goal likewise; the Hammerhead's pass is the slot's only consumer and now consults nothing under the flag) — the
+  ledger's release-rule rows (T5), not a blanking of the slot, which the Godzilla row shows is not the
+  transcription; (ii-b) the live `canUse` read gates a goal's start only — a goal already running when the flag
+  flips keeps its target until its own stop conditions (`TargetGoal.canContinueToUse`, the stare goal's :78-83);
+  orig read the flag at load, so either semantics is a port convention, and no row exercises a mid-goal flip;
+  (ii-c) the three port-only tamed `NearestAttackableTargetGoal<Monster>` goals (EntityGammaMetroid :87,
+  EntitySpyro :105, EntityStinky :106) stay ungated: inert today (no `getTarget()` reader in the three files;
+  ledger T9 rows), they go with the T9 split; (iii) the
+  Boyfriend :137-139 / Girlfriend :163-165 EntityCreeper tasks have no port goal (the helper block's scan-set row);
+  the Girlfriend's MyValentineTarget tasks are ungated in orig and stay so; the Dragon's :115 IMob channel is
+  absent (T3a). Pins: new `PlayNicelyGateParityTests` (own batch `playNicelyGateParity`, TEST-003; a
+  `@GameTestGenerator` over a 56-row site table in orig file order, `playnicelygateparitytests.s115_NN_<site>`),
+  the LeonTargetingTests s110 shape: `PLAY_NICELY` set false, the site driven once and required to show its
+  effect (control), the effect undone, the flag set true, the same hunter and prey driven once more and required
+  to show nothing of it, the flag restored in a finally on every path; synchronous, the flag global, the batch
+  this class alone. Scan sites call the private scan by reflection (a pig, a Zombie for the Monster-only hunters,
+  a butterfly for the Dragonfly and Frog, a Chicken for the Lizard, an unridden Spider Robot for the Spider
+  Driver's mount scan; 8 blocks off, sight asserted; the Lizard's 1-in-100 revenge clear pinned quiet) — the
+  prey returned with the flag off, null with it on; the Ant Robot's stomp hits a 1000-HP pig in the 6..9 ring
+  with the flag off and not with it on. Goal sites spawn the hunter with its goals and no AI, read every
+  `NearestAttackableTargetGoal` of the wanted target type (and the Pointysaurus's stare goal) off the target
+  selector and call `canUse()` directly under a forced `Entity.random` (the VortexParityTests.ForcedRoll seam)
+  pinning the goal's 1-in-5 acquisition roll — a Zombie 8 blocks off for the Monster goals, a survival mock player
+  for the Player goals, looking at the reaper's mid-height / the Pointysaurus's eyes where the goal's own predicate
+  wants it — true with the flag off, false with it on; the Pointysaurus row's player is a plain `ServerPlayer`
+  placed on the player list as the framework places its mock, because `makeMockServerPlayerInLevel` overrides
+  `isCreative()` to true whatever the mode and the stare goal refuses creative players outright (the first gate
+  run was red on that row's control; harness only, the gates unchanged). The AI-step sites invoke `customServerAiStep` once with
+  every roll on the path pinned: Hammerhead :194 with a pig written as `revengeTarget` 5 blocks off — attacking 1
+  off, 0 on and `revengeTarget` still the pig; Hammerhead :252 with a survival player 5 blocks off — attacking 1 /
+  0; Irukandji, Skate, Sea Monster twice each — a stored pig inside melee reach engaged (attacking 1) with the flag
+  off, left stored and unengaged with it on, and a survival player inside reach found, stored and engaged with
+  the flag off, neither found nor stored with it on; Godzilla (empty_tall) with a stored pig 8 blocks off, the
+  1-in-200 release, lightning, jump and bite rolls pinned quiet — attacking 1 off, 0 on and the stored target
+  kept (BOSS-017's mapping cleared it); Nastysaurus and TRex `selectTarget` with a removed pig stored — dropped
+  from the slot with the flag off (orig :219-221 / :189-191), still stored with it on and `scanPick` still null
+  (the blanked pass claims nothing) — and once more with a visible pig: the scan's own pick taken with the flag
+  off (slot and `scanPick` = the pig), cleared by the next pass with it on (refuter B1's row, nothing reset between
+  the drives); Hammerhead once more with the pig stored through `setTarget` and no revenge target — attacking 1
+  off, 0 on and the slot still the pig (refuter B2's row). The nine ENT-S-108 gates are pinned by the same scan shape. Every site
+  exercised synchronously; no documenting-only test. Compiled (javac, see §5); the gametest run is the gate's.
+  Refuted once: two blocking defects fixed as the refuter proposed — B1, an unconditional blanking of the
+  Nastysaurus / TRex pass copy made a scan-owned pick stick under the flag (`null != null` never clearing it, a
+  regression against HEAD's ENT-S-108 clear), now only a foreign occupant is blanked; B2, the Hammerhead's port-only
+  fallback read of the slot re-admitted the blanked grudge, now gated with the pass — three pins added; eight gaps
+  recorded (the live-read start-only semantics, the three inert T9 goals, Leon's scan-head line, three stale
+  cross-references, the changelog's wording, the T5 rows naming the PlayNicely residual, two griefing gates outside
+  targeting filed as ENT-S-116).
+
+### ENT-S-116 — Two 1.7.10 PlayNicely griefing gates outside target selection are missing: the flying Stinky's flower-eat and the Gamma Metroid's stone-eat run on a play-nicely server (REPORT, 2026-09-04; filed from the ENT-S-115 refuter's per-read sweep)
+
+- **Evidence:** the ENT-S-115 refuter swept every `OreSpawnMain.PlayNicely` read in the 44 T1 species (78 hits in the
+  38 batch files, 7 in the ENT-S-108 seven) and matched each to a port site or a disclosed record except two, both
+  griefing gates rather than target selection and therefore outside the targeting ledger: orig Stinky.java:583 —
+  `if (nextInt(50) == 0 && PlayNicely == 0)` heads the flying Stinky's flower-eat (the nearest flower found in an 8-ring,
+  navigated to, broken, the Stinky healed and the burp played) — against port EntityStinky.java:284-285
+  `if (this.activity == 1 && this.random.nextInt(50) == 0) eatFlowers();`, no flag; orig GammaMetroid.java:435 —
+  `(nextInt(20) == 0 && health < max || nextInt(100) == 0) && PlayNicely == 0 && !isSitting()` heads the stone-eat
+  (stone found, navigated to, eaten, the Metroid healed) — against port EntityGammaMetroid.java:130-133, gated on
+  `!this.isOrderedToSit()` only. Both are world-modifying behaviours 1.7.10 switched off on a play-nicely server; the
+  port keeps eating flowers and stone there. Every other non-targeting read is matched (CaterKiller :54/:81/:437 size and
+  watcher ↔ EntityCaterKiller :86 and the renderer :41, :502 ↔ :267; Cephadrome :661 ↔ :176; Godzilla's eight ↔ the
+  BOSS-017 sites; Boyfriend :243 ↔ :292, Girlfriend :276 ↔ :331). No MOD record covers either.
+- **Resolution:** REPORT — for the owner's ruling (a parity bug in classic; the fix would be the two one-line gates at
+  the orig positions, the flag read live as `OreSpawnConfig.PLAY_NICELY.get()`, with one generated pin each in the
+  ENT-S-115 shape: flag off → the flower / stone is eaten, flag on → untouched, the flag restored in a finally). Not
+  part of the targeting waves; the owner may fold it into a later batch or rule it a standalone fix.
 ### TEST-003 — Config-flipping gametests in the concurrent default batch
 
 - **Impact:** MEDIUM (suite reliability) — boss005/boss012 flip a global

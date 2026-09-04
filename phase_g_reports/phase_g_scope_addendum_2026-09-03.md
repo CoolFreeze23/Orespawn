@@ -91,6 +91,15 @@ that slice, not a task for now.
     against the port in one ledger under `phase_g_reports`, presenting the split (parity bug / recorded /
     fixed). **From here the owner rules on batches, not singles:** divergences are grouped into proposed
     batches in the ledger and ruled on as batches.
+19. **Targeting ledger, ruled by wave (owner, 2026-09-04, fourth batch):** wave 1 now — T7 (PEACEFUL
+    gates) then T1 (PlayNicely gates), "safety first"; wave 2 next — T3a, T2, T5, T6; wave 3 trails — T8,
+    T3b, T3c, T4, T10. Generated pins wherever the pattern allows; one refuter on S/M batches, two on L; one
+    changelog paragraph per wave. **T9:** port-only additions with a documented reason become MOD records
+    behind the modern config; the rest are removed from classic; the split is presented with wave 2.
+    **Targeting lanes never block the Phase G chain:** the look session, mirror drop, proof regeneration,
+    the G2 root-order slice with cache eviction and 4c keep gate priority; targeting batches gate when there
+    is room. Harness fixes of the same day acknowledged: the keeper-player and chunk-ticking waits are the
+    right shape.
 
 ## D. Rulings executed the same day (for cross-reference)
 

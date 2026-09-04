@@ -110,9 +110,9 @@ Orig-file alphabetical order (case-insensitive); the three AI helper blocks last
 |---|---|---|---|---|
 | scan set | two unsorted scans: stomp `feetFindSomethingToHit` box 10x8x10 (AntRobot.java:943), every suitable entity hit (:947-952), rolled `nextInt(20)==0` unridden (:106-108) and `nextInt(50)==0` ridden (:617-619); hunt `findSomethingToAttack(distmul,dircheck)` box (12·distmul)x12x(12·distmul) (:1015) — unridden distmul 2.0 → 24x12x24 (:117,:133), ridden distmul 1.0 → 12x12x12 (:622) | stomp inflate(10,8,10) (AntRobot.java:659-660), all hit (:661-673), rolls :226-227 / :290-291; hunt always inflate(12,12,12) (:689) | DIVERGES | scan-set narrowing: the unridden hunt box 24x12x24 → 12x12x12; stomp and ridden hunt match |
 | filter order | hunt `isSuitableTarget` :1028-1071: null → self → !alive → AntRobot (:1038) → the rider (:1041) → `isIgnoreable` (:1044) → sight (:1047) → [dircheck=true only: distSq < 36 → true, else heading offset > 0.75 rad → false (:1050-1065)] → Player `!isCreativeMode` (:1066-1069) → true; stomp :955-992: … → rider (:968) → ignore (:971) → sight (:974) → 6 ≤ dist ≤ 9 (:977-986) → creative (:987-990) → true | hunt :697-704: null/self/!alive → AntRobot → first passenger → ignore (:701) → creative (:702) → true — no sight, no dircheck; stomp :677-686: … → ignore (:681) → distance (:682-683) → creative (:684) — no sight | DIVERGES | filter order: sight dropped from both filters; the dircheck branch (orig call sites :133 and :622) dropped |
-| PlayNicely gate | :940-942 (stomp) and :1012-1014 (hunt) return before the scan | none in either scan (:658-695) | DIVERGES | missing gate, two sites |
+| PlayNicely gate | :940-942 (stomp) and :1012-1014 (hunt) return before the scan | none in either scan (:658-695) | FIXED (ENT-S-115, wave 1) — was DIVERGES | missing gate, two sites |
 | creative gate | :989 / :1068 | :684 / :702 instabuild | MATCH | P5 |
-| PEACEFUL gate | `owned == 0 && difficulty != PEACEFUL` gates the whole unridden block (:105); ridden stomp and ridden melee each require `!= PEACEFUL` (:617, :620); EntityLiving base — no engine despawn | `owned == 0` only (:225); ridden rolls ungated (:290, :293); Mob base — no engine despawn (grep: no PEACEFUL / getDifficulty in the file) | DIVERGES | missing gate, three sites |
+| PEACEFUL gate | `owned == 0 && difficulty != PEACEFUL` gates the whole unridden block (:105); ridden stomp and ridden melee each require `!= PEACEFUL` (:617, :620); EntityLiving base — no engine despawn | `owned == 0` only (:225); ridden rolls ungated (:290, :293); Mob base — no engine despawn (grep: no PEACEFUL / getDifficulty in the file) | FIXED (ENT-S-114, wave 1) — was DIVERGES | missing gate, three sites |
 | allies / species exclusions | AntRobot (:965, :1038), the rider (:968, :1041) | AntRobot (:679, :699), first passenger (:680, :700) | MATCH | |
 | ignore screen | :971 / :1044, after the rider check, before sight | :681 / :701, after the passenger check | FIXED (ENT-S-106) | |
 | tie-break / selection rule | no sort: first suitable in `getEntitiesWithinAABB` order (:1019-1024); stomp hits every suitable entity | first in `getEntitiesOfClass` order (:691-693); stomp hits all | MATCH | GenericTargetSorter constructed but unused in both (orig :43,:54; port :84,:106) |
@@ -194,7 +194,7 @@ Orig-file alphabetical order (case-insensitive); the three AI helper blocks last
 |---|---|---|---|---|
 | scan set | `EntityLivingBase` box 20x8x20 (CaterKiller.java:563); `nextInt(4)==0` (:462), and only when no live stored target (:463-473) | vanilla `NearestAttackableTargetGoal<>(this, Player.class, true)` (EntityCaterKiller.java:100): all level players within FOLLOW_RANGE 40 (:110) × visibility, no box, ≈1 attempt per 10 ticks, only while no target is held (P4); plus HurtByTargetGoal (:99); `Params.caterKiller()` records 20/8 search dims (BugMeleeAttackGoal.java:63) the goal never reads (:116-157) | DIVERGES | scan-set narrowing: players only — EntityMob and `isAttackableNonMob` prey (:553-556) are never hunted; box 20x8x20 → sphere r 40; cadence 1-in-4 → ≈1-in-10; not on ENT-S-108's list |
 | filter order | :533-557: null → self → !alive → `MyCanSee` (:543; a custom 10-step block ray from 2.5 blocks ahead of the body at y+3 to the target's mid-height, air/web/tall-grass/leaves transparent, :626-676) → Player `!isCreativeMode` (:546-549) → CaterKiller false (:550) → EntityMob true (:553) → `isAttackableNonMob` (:556) | the `TargetingConditions` chain (P4): self → alive/spectator → `canAttack` (PEACEFUL-player, invulnerable) → `canAttackType` → `isAlliedTo` → range × visibility → vanilla eye-to-eye `hasLineOfSight`; no species branch | DIVERGES | filter order: the custom LoS replaced by the vanilla eye ray; the non-player branches absent |
-| PlayNicely gate | :560-562 gates the hunt | no gate on either target goal (PLAY_NICELY only at :86 size and :258 tree-eat) | DIVERGES | missing gate |
+| PlayNicely gate | :560-562 gates the hunt | no gate on either target goal (PLAY_NICELY only at :86 size and :258 tree-eat) | FIXED (ENT-S-115, wave 1) — was DIVERGES | missing gate |
 | creative gate | :548 `isCreativeMode` | vanilla `Abilities.invulnerable` + spectator via `Player.canBeSeenAsEnemy` (P5) | DIVERGES | the ENT-S-109 mapping class, reached through the vanilla goal; not on ENT-S-109's list |
 | PEACEFUL gate | none | none (vanilla `canAttack` additionally refuses players in PEACEFUL — moot) | MATCH (engine, P6) | |
 | allies / species exclusions | CaterKiller refused (:550), after the player branch | no species branch (players-only goal) | DIVERGES | exclusion list — absent with the non-player branch |
@@ -208,7 +208,7 @@ Orig-file alphabetical order (case-insensitive); the three AI helper blocks last
 |---|---|---|---|---|
 | scan set | `EntityLivingBase` box 10x3x10 (CaveFisher.java:234); `nextInt(8)==0` (:168) | two vanilla goals (CaveFisher.java:81-82, :86-87): `Player.class` — all level players within FOLLOW_RANGE 16 (:97) × visibility, no box; `Animal.class` — `getEntitiesOfClass(Animal, bbox.inflate(16,4,16))`; each ≈1 attempt per 10 ticks, only while no target is held (P4) | FIX IN FLIGHT (ENT-S-108) | the class narrowing is ENT-S-108's subject; residual to watch after it: box 10x3x10 vs 16x4x16 / sphere 16, cadence 1-in-8 vs ≈1-in-10 |
 | filter order | :193-228: null → self → !alive → `isIgnoreable` (:203) → sight (:206) → CaveFisher (:209) → EnderReaper (:212) → EnderKnight (:215) → EntityMob false (:218) → Player creative false (:221-226) → true | `TargetingConditions` with selector `!isIgnoreable` (:82, :87) ahead of sight (P4); no species branch (moot under the Player / Animal classes) | FIX IN FLIGHT (ENT-S-108) | its fix shape names "the orig exclusion chain" |
-| PlayNicely gate | :231-233 | none (no PLAY_NICELY in the file) | DIVERGES | missing gate; outside ENT-S-108's text |
+| PlayNicely gate | :231-233 | none (no PLAY_NICELY in the file) | FIXED (ENT-S-108; pinned by ENT-S-115, wave 1) — the gate landed with the restored scan (CaveFisher.java:196) — was DIVERGES | missing gate; outside ENT-S-108's text |
 | creative gate | :223 `isCreativeMode` | vanilla `invulnerable` + spectator (P5) | DIVERGES | the ENT-S-109 mapping class via the vanilla goal; not on its list |
 | PEACEFUL gate | none | none | MATCH (engine, P6) | |
 | allies / species exclusions | CaveFisher, EnderReaper, EnderKnight, every EntityMob | none (moot for the Player / Animal goals) | FIX IN FLIGHT (ENT-S-108) | |
@@ -222,9 +222,9 @@ Orig-file alphabetical order (case-insensitive); the three AI helper blocks last
 |---|---|---|---|---|
 | scan set | `EntityLivingBase` box 16x20x16 (Cephadrome.java:579); `nextInt(7)==1 && difficulty != PEACEFUL` (:488), only when no live stored target (:489-496) | `LivingEntity` inflate(16,20,16) (Cephadrome.java:410-411); `nextInt(7)==1` (:360), only when no live target (:361-368) | MATCH | box and cadence; the PEACEFUL half of :488 is in the PEACEFUL row |
 | filter order | :515-573: PEACEFUL false (:516) → null → self → !alive → sight (:528) → Cephadrome false (:531) → EntityMob true (:534) → Mothra true (:537) → Leon untamed (:540-543) → GammaMetroid untamed (:544-547) → WaterDragon untamed (:548-551) → EntityDragon true (:552) → Player: creative false (:557) / `hit_by_player` true (:560) / `badmood` true (:563) / `shouldattack > 0` → reset to 0 and true (:566-569) / false (:570) → false (:572) | :390-407: null/self/!alive (:391) → sight (:392) → Cephadrome (:393) → Monster (:394) → Mothra (:397) → EntityLeon / EntityGammaMetroid / WaterDragon `!isTame()` (:398-400) → EnderDragon (:401) → Player: instabuild false (:403) / `hitByPlayer or badmood or shouldattack > 0` without the reset (:404) → false (:406) | FIX IN FLIGHT (ENT-S-113) | the PEACEFUL head and the `shouldattack` reset are ENT-S-113's two lines; the rest matches |
-| PlayNicely gate | :576-578 gates the scan | `findSomethingToAttack` :409-415 has no gate (PLAY_NICELY only feeds `wasfed`, :175-177) | DIVERGES | missing gate |
+| PlayNicely gate | :576-578 gates the scan | `findSomethingToAttack` :409-415 has no gate (PLAY_NICELY only feeds `wasfed`, :175-177) | FIXED (ENT-S-115, wave 1) — was DIVERGES | missing gate |
 | creative gate | :557 | :403 instabuild | FIXED (ENT-S-107) | |
-| PEACEFUL gate | :488 (scan cadence) and :516 (filter head); EntityCreature — no engine despawn | neither (no PEACEFUL / getDifficulty in the file); PathfinderMob — no engine despawn | FIX IN FLIGHT (ENT-S-113) / DIVERGES | ENT-S-113 restores :516 only; the :488 cadence guard is outside its text (counted once as DIVERGES) |
+| PEACEFUL gate | :488 (scan cadence) and :516 (filter head); EntityCreature — no engine despawn | neither (no PEACEFUL / getDifficulty in the file); PathfinderMob — no engine despawn | FIXED (ENT-S-114, wave 1) — was FIX IN FLIGHT (ENT-S-113) / DIVERGES | ENT-S-113 restores :516 only; the :488 cadence guard is outside its text (counted once as DIVERGES) |
 | allies / species exclusions | Cephadrome refused; whitelist EntityMob, Mothra, untamed Leon / GammaMetroid / WaterDragon, EntityDragon, gated players | same (:393-404) | MATCH | |
 | ignore screen | none | none | N/A | |
 | tie-break / selection rule | GenericTargetSorter (:61,:84,:580) + first suitable | `Comparator.comparingDouble(this::distanceToSqr)` (:118) — plain distance, no creeper / silhouette weighting | DIVERGES | tie-break / sorter: the TF-035 swap never reached this file (ENT-A-082's Phase C fix predates it) |
@@ -297,7 +297,7 @@ Orig-file alphabetical order (case-insensitive); the three AI helper blocks last
 |---|---|---|---|---|
 | scan set | (a) vanilla `EntityAINearestAttackableTarget(this, EntityLiving.class, 0, true, false, IMob.mobSelector)` @target-1, registered only when `PlayNicely == 0` (:115-117): every tick, follow-range box, sight, IMob only; (b) `findSomethingToAttack`: `EntityLivingBase` bb `expand(20,20,20)` (:580) from three world-rand callers — ground `func_70619_bc` 1-in-10 when !sitting, activity 0, no rider, !PEACEFUL (:430); ridden `fly_with_rider` 1-in-7 (`freq` :488, :498) !PEACEFUL; flight 1-in-9 when !toofar, unstick 0, flyaway 0, !PEACEFUL (:734) | (a) absent — `targetSelector` holds `HurtByTargetGoal` only (:145); (b) `LivingEntity` bb `inflate(20,20,20)` (:935-936) from `customServerAiStep` 1-in-10 (:369-372), `handleRiderCombat` 1-in-7 (:547, :559), flight 1-in-9 (:646-649), all PEACEFUL-gated, entity-rand | DIVERGES | scan-set narrowing: the continuous vanilla IMob channel (a) is missing; (b) matches |
 | filter order | :527-574 PEACEFUL → null → self → dead → sight (:540) → LurkingTerror, EnderReaper, TerribleTerror, LeafMonster, CreepingHorror, Triffid (:543-560) → EntityMob true (:561) → Mothra true (:564) → Kraken true (:567) → player false (:570) → false | :917-932 null/self/dead (:918) → sight (:919) → PEACEFUL (:920) → Dragon false (:922) → `MyUtils.isAlly` (:923; util :65-72) → Monster (:925) → Mothra (:926) → Kraken (:927) → Player false (:929) → false | MATCH | PEACEFUL moved after sight (side-effect-free); the extra Dragon/Spyro names are inert (neither was EntityMob-accepted in orig) |
-| PlayNicely gate | :577 in `findSomethingToAttack`; :115 also gates the vanilla goal's registration | none in `findSomethingToAttack` (:934-940) | DIVERGES | missing gate |
+| PlayNicely gate | :577 in `findSomethingToAttack`; :115 also gates the vanilla goal's registration | none in `findSomethingToAttack` (:934-940) | FIXED (ENT-S-115, wave 1) — the scan gate; the :115 registration half rides with T3a's IMob channel — was DIVERGES | missing gate |
 | creative gate | none — players are never prey (:570) | none (:929) | N/A | — |
 | PEACEFUL gate | :528 filter + :430 / :498 / :734 callers | :920 filter + :370 / :546 / :647 callers | MATCH | — |
 | allies / species exclusions | LurkingTerror, EnderReaper, TerribleTerror, LeafMonster, CreepingHorror, Triffid (:543-560) | Dragon (:922) + `isAlly`: LurkingTerror, EnderReaper, TerribleTerror, LeafMonster, CreepingHorror, Triffid, Spyro (util :65-72) | MATCH | extra names inert |
@@ -311,9 +311,9 @@ Orig-file alphabetical order (case-insensitive); the three AI helper blocks last
 |---|---|---|---|---|
 | scan set | `EntityLivingBase` bb `expand(10,6,10)` (:235), in `func_70619_bc`'s else-branch: entity-rand 1-in-12 on every tick where the 1-in-300 / near flight retarget did NOT fire, and !PEACEFUL (:124, :142) | `LivingEntity` bb `inflate(10,6,10)` (DragonflyHuntGoal :70-71) from `pickRetarget` (:58-67), which runs only when the flight retarget fires (`AmbientFlightGoal` :109-113: 1-in-300 or distSq < 4.5, `Params.dragonfly` :73) and then a 1-in-12 roll (:59) | DIVERGES | cadence inverted: the hunt sits inside the retarget instead of outside it (its own javadoc: "roughly every 3600 ticks" :27-28 vs ≈ every 12 in orig) |
 | filter order | :197-229 PEACEFUL → null → self → dead → sight (:210) → EntityAnt, EntityButterfly, Cockateil, EntityMosquito, Firefly true (:213-227) → EntityHorse && `DragonflyHorseFriendly == 0` (:228) → false | :77-83 self → dead → !EntityDragonfly → !Player → !(horseFriendly && AbstractHorse) → `bbWidth <= 0.6` → sight | DIVERGES | whitelist replaced by a width rule; sight last |
-| PlayNicely gate | :232 | none (DragonflyHuntGoal :69-84; `AmbientFlightGoal.canUse` :88-90 gates passenger/water only) | DIVERGES | — |
+| PlayNicely gate | :232 | none (DragonflyHuntGoal :69-84; `AmbientFlightGoal.canUse` :88-90 gates passenger/water only) | FIXED (ENT-S-115, wave 1) — was DIVERGES | — |
 | creative gate | N/A (players never in the whitelist :213-228) | N/A (players excluded :79) | N/A | — |
-| PEACEFUL gate | :142 caller + :198 filter | none | DIVERGES | an Animal does not despawn in peaceful — the port hunts there |
+| PEACEFUL gate | :142 caller + :198 filter | none | FIXED (ENT-S-114, wave 1) — was DIVERGES | an Animal does not despawn in peaceful — the port hunts there |
 | allies / species exclusions | prey whitelist: EntityAnt, EntityButterfly, Cockateil, EntityMosquito, Firefly, EntityHorse (config) | prey = any living thing ≤ 0.6 wide except dragonflies and players; horses (1.4 wide) never prey even with the toggle off (:80-82) | DIVERGES | extra prey: chickens, bats, rabbits, cats, silverfish, endermites, baby animals, Cricket/Chipmunk-sized OreSpawn mobs; missing prey: horses |
 | ignore screen | none | none | MATCH | — |
 | tie-break / selection rule | sorter (:45, :236), first suitable | plain nearest via `firstMatch` (:75-76) | DIVERGES | — |
@@ -325,7 +325,7 @@ Orig-file alphabetical order (case-insensitive); the three AI helper blocks last
 |---|---|---|---|---|
 | scan set | `EntityLivingBase` bb `expand(16,3,16)` (:253) in `func_70619_bc` on world-rand 1-in-8 (:172) | vanilla `NearestAttackableTargetGoal<>(this, Player.class, true, pred)` (:69-70): `Player.class` only, every player within FOLLOW_RANGE 24 (:79) × visibility from the eye, ≈ 1-in-10 cadence (shared refs) | FIX IN FLIGHT (ENT-S-108) | class narrowing filed; box 16×3×16 → radius-24 sphere and the cadence also differ |
 | filter order | :200-247 null → self → dead → `isIgnoreable` (:210) → sight (:213) → Rat, DungeonBeast, Rotator, Peacock, Irukandji, Skate, Whale, Flounder (:216-239) → player creative (:240-244) | vanilla chain: self → spectator/dead → `!isIgnoreable` (:70) → `canAttack` (PEACEFUL-for-players, `!invulnerable`) → not Ghast → not allied → range → sight last (`TargetingConditions.test`) | DIVERGES | exclusions absent (moot while players-only; ENT-S-108's fix shape carries "the orig exclusion chain"); sight moved last (side-effect-free) |
-| PlayNicely gate | :250 | none (:59-71) | DIVERGES | — |
+| PlayNicely gate | :250 | none (:59-71) | FIXED (ENT-S-108; pinned by ENT-S-115, wave 1) — gate at DungeonBeast.java:183 — was DIVERGES | — |
 | creative gate | :242 `isCreativeMode` | vanilla `abilities.invulnerable` (`Player.canBeSeenAsEnemy` :903-905 via `TargetingConditions` :73) | DIVERGES | the ENT-S-109 class at a vanilla-goal site; not on that record's list |
 | PEACEFUL gate | none (EntityMob) | vanilla: a Player is refused in PEACEFUL (`LivingEntity.canAttack` :864-866) | PORT-ONLY | inert — Monster despawns in peaceful |
 | allies / species exclusions | Rat, DungeonBeast, Rotator, Peacock, Irukandji, Skate, Whale, Flounder (:216-239) | none (:69-70) | FIX IN FLIGHT (ENT-S-108) | — |
@@ -339,7 +339,7 @@ Orig-file alphabetical order (case-insensitive); the three AI helper blocks last
 |---|---|---|---|---|
 | scan set | `EntityLivingBase` bb `expand(24,6,24)` (:507) in `func_70619_bc` on world-rand 1-in-4 (:408), only when no live stored target (:417-419) | vanilla `NearestAttackableTargetGoal<>(this, Player.class, true, pred)` (:80-81): players within FOLLOW_RANGE 40 (:91), ≈ 1-in-10 | FIX IN FLIGHT (ENT-S-108) | box 24×6×24 → radius 40 |
 | filter order | :460-501 null → self → dead → sight (:470) → `isIgnoreable` (:473) → EntityEnderman, EnderKnight, EnderReaper, EntityCreeper, Scorpion, EmperorScorpion (:476-493) → player creative (:494-498) | vanilla chain with `!isIgnoreable` predicate (:81) → creative/PEACEFUL → range → sight | DIVERGES | exclusions absent; ignore-before-sight vs orig sight-before-ignore (side-effect-free, noted in ENT-S-106) |
-| PlayNicely gate | :504 | none (:65-82, :171-192) | DIVERGES | — |
+| PlayNicely gate | :504 | none (:65-82, :171-192) | FIXED (ENT-S-108; pinned by ENT-S-115, wave 1) — gate at EntityEmperorScorpion.java:279 — was DIVERGES | — |
 | creative gate | :496 | vanilla `invulnerable` | DIVERGES | ENT-S-109 class, unlisted site |
 | PEACEFUL gate | none | vanilla player refusal | PORT-ONLY | inert |
 | allies / species exclusions | EntityEnderman, EnderKnight, EnderReaper, EntityCreeper, Scorpion, EmperorScorpion (:476-493) | none | FIX IN FLIGHT (ENT-S-108) | — |
@@ -353,7 +353,7 @@ Orig-file alphabetical order (case-insensitive); the three AI helper blocks last
 |---|---|---|---|---|
 | scan set | legacy non-AI EntityMob (no `isAIEnabled` override, no task lists :35-39): `func_70782_k` (:61-81) runs every tick the legacy loop holds no target (`td.bq`, shared refs): nearest player of ANY mode within 64 by `World.getClosestPlayerToEntity` (:65; `ahb.a(sa,D)` → `a(DDDD)`: no creative or alive check, strict `<`) | vanilla `NearestAttackableTargetGoal<>(this, Player.class, true)` (:47): every player within FOLLOW_RANGE 64 (:57), ≈ 1-in-10 cadence, mob sight | DIVERGES | scan-set: one nearest-of-any-mode candidate per tick vs nearest eligible player ≈ every 10 ticks |
 | filter order | PlayNicely (:62) → nearest player (:65) → `shouldAttackPlayer` (:83-93): no pumpkin helmet (:84-87), player's look vector within `1 − 0.025/d` of the knight's mid-height (:88-91), player `canEntityBeSeen(knight)` (:92) → screaming on + return; else stareTimer reset, screaming off (:77-78) | vanilla chain only: self → spectator/dead → (no selector) → `canAttack` (PEACEFUL / creative) → range 64 → mob sight | DIVERGES | the enderman stare gate and the pumpkin exclusion are absent — any visible player is hunted |
-| PlayNicely gate | :62 | none (:40-48) | DIVERGES | — |
+| PlayNicely gate | :62 | none (:40-48) | FIXED (ENT-S-115, wave 1) — was DIVERGES | — |
 | creative gate | none in the pick; the legacy loop drops a creative `EntityPlayerMP` target the same tick (`td.bq` :155-182), so a creative starer is picked (screaming toggles :74) then dropped, shadowing a farther survival player | creative skipped inside the scan (`invulnerable`, shared refs) | DIVERGES | shadowing lost (the Kraken KT-A pattern) and `invulnerable` for `isCreative` |
 | PEACEFUL gate | none | vanilla player refusal | PORT-ONLY | inert |
 | allies / species exclusions | none | none | MATCH | — |
@@ -367,7 +367,7 @@ Orig-file alphabetical order (case-insensitive); the three AI helper blocks last
 |---|---|---|---|---|
 | scan set | legacy non-AI as EnderKnight: `func_70782_k` (:61-81) every target-less tick, nearest player of any mode within 81 (:65) | vanilla `NearestAttackableTargetGoal<>(this, Player.class, 10, true, false, pred)` (:50-51): players within FOLLOW_RANGE 81 (:82), ≈ 1-in-10 cadence | DIVERGES | geometry matches (81); cadence and candidate set differ |
 | filter order | PlayNicely (:62) → nearest (:65) → `shouldAttackPlayer` (:83-93: pumpkin, look vector, player-side `canEntityBeSeen`) | vanilla chain with predicate `shouldAttackPlayer` (:60-73: carved pumpkin :61-63, look vector :65-71, `player.hasLineOfSight(this)` :72) → `canAttack` (PEACEFUL / creative) → range 81 → mob-side sight (`mustSee`) | MATCH | stare/pumpkin chain present; the added mob-side ray is the same eye-to-eye trace |
-| PlayNicely gate | :62 | none (:41-52) | DIVERGES | — |
+| PlayNicely gate | :62 | none (:41-52) | FIXED (ENT-S-115, wave 1) — was DIVERGES | — |
 | creative gate | none in the pick; legacy loop drops a creative target the same tick (`td.bq` :155-182) — a creative starer shadows a farther survival starer | creative skipped inside the scan (`invulnerable`) | DIVERGES | shadowing lost; `invulnerable` for `isCreative` |
 | PEACEFUL gate | none | vanilla player refusal | PORT-ONLY | inert |
 | allies / species exclusions | none | none | MATCH | — |
@@ -409,7 +409,7 @@ Orig-file alphabetical order (case-insensitive); the three AI helper blocks last
 |---|---|---|---|---|
 | scan set | `EntityLivingBase` bb `expand(8,8,8)` (:242) in `func_70619_bc`'s else-if: world-rand 1-in-12 && !PEACEFUL when the 1-in-200 / near flight retarget did not fire (:270, :288) | `LivingEntity` `inflate(8,8,8)` (:152-153, `FLIGHT_SEARCH_RANGE` :68) in `customServerAiStep`'s else-if: 1-in-12 && !PEACEFUL (:169, :182) | MATCH | — |
 | filter order | :219-236 PEACEFUL → null → self → dead → sight (:232) → EntityMob (:235) | :145-149 PEACEFUL → null/self/dead → Monster | DIVERGES | the sight step is missing |
-| PlayNicely gate | :239 | none (:151-157) | DIVERGES | — |
+| PlayNicely gate | :239 | none (:151-157) | FIXED (ENT-S-115, wave 1) — was DIVERGES | — |
 | creative gate | N/A (:235 EntityMob only) | N/A (:148) | N/A | — |
 | PEACEFUL gate | :220 filter + :288 caller | :146 + :182 | MATCH | — |
 | allies / species exclusions | prey = EntityMob only (:235) | Monster only (:148) | MATCH | — |
@@ -423,7 +423,7 @@ Orig-file alphabetical order (case-insensitive); the three AI helper blocks last
 |---|---|---|---|---|
 | scan set | `EntityLivingBase` bb `expand(8,3,8)` (:311) in `func_70619_bc`: entity-rand 1-in-12 && !PEACEFUL (:261) | `inflate(8,3,8)` (:257-258) in `customServerAiStep`: 1-in-12 && !PEACEFUL (:243-244) | MATCH | — |
 | filter order | :273-305 PEACEFUL → null → self → dead → sight (:286) → EntityAnt, EntityButterfly, Cricket, EntityMosquito, Firefly, WormSmall true (:289-304) | :265-275 self → dead → sight → EntityAnt, EntityButterfly, EntityCricket, EntityMosquito, Firefly, EntityWormSmall | MATCH | in-filter PEACEFUL absent but the caller gate (:244) covers it; null step absent (the list never holds null) |
-| PlayNicely gate | :308 | none (:256-263) | DIVERGES | — |
+| PlayNicely gate | :308 | none (:256-263) | FIXED (ENT-S-115, wave 1) — was DIVERGES | — |
 | creative gate | N/A | N/A | N/A | — |
 | PEACEFUL gate | :261 + :274 | :244 | MATCH | — |
 | allies / species exclusions | prey whitelist of six (:289-304) | the same six (:269-274) | MATCH | — |
@@ -437,9 +437,9 @@ Orig-file alphabetical order (case-insensitive); the three AI helper blocks last
 |---|---|---|---|---|
 | scan set | `EntityLivingBase` bb `expand(10,3,10)` (:297) in `func_70619_bc`: !PEACEFUL && world-rand 1-in-5 (:241); child → null (:294) | `inflate(10,3,10)` (:201-202) in `customServerAiStep`: entity-rand 1-in-5 (:112); baby / tame → null (:199-200) | MATCH | the missing caller-side PEACEFUL gate is counted in the PEACEFUL row |
 | filter order | :253-288 PEACEFUL → null → self → dead → `isIgnoreable` (:266) → sight (:269) → GammaMetroid (:272) → EntityMob (:275) → tamed self → false (:278) → player creative (:281-285) | :208-219 null/self/dead → `isIgnoreable` (:210) → sight (:211) → EntityGammaMetroid (:212) → Monster (:213) → tame (:214) → player creative (:215-217) | MATCH | minus the PEACEFUL step (PEACEFUL row) |
-| PlayNicely gate | :291 | none (:198-206) | DIVERGES | — |
+| PlayNicely gate | :291 | none (:198-206) | FIXED (ENT-S-115, wave 1) — was DIVERGES | — |
 | creative gate | :283 | :216 `invulnerable` | FIX IN FLIGHT (ENT-S-109) | — |
-| PEACEFUL gate | :241 caller + :254 filter | none | DIVERGES | a TamableAnimal persists in peaceful — an untamed metroid hunts there |
+| PEACEFUL gate | :241 caller + :254 filter | none | FIXED (ENT-S-114, wave 1) — was DIVERGES | a TamableAnimal persists in peaceful — an untamed metroid hunts there |
 | allies / species exclusions | own kind (:272), EntityMob (:275) | own kind (:212), Monster (:213) | MATCH | — |
 | ignore screen | :266, ahead of sight | :210 | FIXED (ENT-S-106) | — |
 | tie-break / selection rule | sorter (:59, :298) | plain nearest (:205) | DIVERGES | — |
@@ -451,7 +451,7 @@ Orig-file alphabetical order (case-insensitive); the three AI helper blocks last
 |---|---|---|---|---|
 | scan set | `EntityLivingBase` bb `expand(16,12,16)` (:346) in `func_70619_bc` on world-rand 1-in-5 (:241), only when no live stored target (:250-252) | `inflate(16,12,16)` (:224-225) in `customServerAiStep` on entity-rand 1-in-5 (:135), only when no stored target (:142) | MATCH | — |
 | filter order | :314-340 null → self → dead → `isIgnoreable` (:324) → sight (:327) → EntityMob (:330) → player creative (:333-337) | :232-238 null/self/dead → `isIgnoreable` (:234) → Monster (:235) → player `instabuild` (:236) | DIVERGES | the sight step is missing |
-| PlayNicely gate | :343 | none (:223-230) | DIVERGES | — |
+| PlayNicely gate | :343 | none (:223-230) | FIXED (ENT-S-115, wave 1) — was DIVERGES | — |
 | creative gate | :335 | :236 `instabuild` | MATCH | — |
 | PEACEFUL gate | none | none | MATCH | — |
 | allies / species exclusions | EntityMob (:330) | Monster (:235) | MATCH | — |
@@ -465,7 +465,7 @@ Orig-file alphabetical order (case-insensitive); the three AI helper blocks last
 |---|---|---|---|---|
 | scan set | `EntityLivingBase` bb `expand(64,40,64)` (:534) in `func_70619_bc` on world-rand `nextInt(5 − large_unknown_detected) == 1` (:355), only when the stored target is null or dropped (:369-370) | `inflate(64,40,64)` (:612-613) on entity-rand `nextInt(max(1, 5 − largeUnknownDetected)) == 1` (:729), only when no stored target (:745-746) | MATCH | — |
 | filter order | villager pass first — `isVillagerTarget` (:481-495: null → self → dead → sight → EntityVillager); a sighted villager anywhere in sorter order replaces an earlier pick (:547-550); otherwise `isSuitableTarget` (:432-479): null → self → dead → `isIgnoreable` (:442) → sight (:445) → Godzilla, GodzillaHead, EntityCreeper, EntityZombie, EntitySpider, EntitySkeleton, Ghost, GhostSkelly (:448-471) → player creative (:472-476) | villager pass (:620-624: Villager && alive && sight) with the same precedence (:618-628); `isSuitableTarget` (:582-603): null/self/dead → `isIgnoreable` (:584) → sight (:585) → the same eight (:586-593) → Mothra (:597) → `isBigBoss` / `isRoyalty` (:598) → player `instabuild` (:599-601) | MATCH | order matches; the extra names are counted in the allies row |
-| PlayNicely gate | :524-527 scan gate (also fakes `head_found = 1`); :357-359 nulls the LOCAL `e` each pass — the stored target is untouched | :608-611 same scan gate; :732-734 `setTarget(null)` each pass — clears the STORED target | DIVERGES | BOSS-017 mapped the local null to a stored clear; visible only with PlayNicely on (the HurtBy target is dropped instead of merely skipped) |
+| PlayNicely gate | :524-527 scan gate (also fakes `head_found = 1`); :357-359 nulls the LOCAL `e` each pass — the stored target is untouched | :608-611 same scan gate; :732-734 `setTarget(null)` each pass — clears the STORED target | FIXED (ENT-S-115, wave 1) — the pass's local is nulled, the stored target kept; BOSS-017's stored clear is gone — was DIVERGES | BOSS-017 mapped the local null to a stored clear; visible only with PlayNicely on (the HurtBy target is dropped instead of merely skipped) |
 | creative gate | :474 | :600 `instabuild` | MATCH | — |
 | PEACEFUL gate | none | none | MATCH | — |
 | allies / species exclusions | Godzilla, GodzillaHead, EntityCreeper, EntityZombie, EntitySpider, EntitySkeleton, Ghost, GhostSkelly (:448-471) | the same eight (:586-593) + Mothra (:597) + `isBigBoss` (Godzilla, GodzillaHead, PitchBlack, Kraken; util :75-79) + `isRoyalty` (TheKing, TheQueen, KingHead, QueenHead, ThePrince, ThePrinceAdult, ThePrincess, ThePrinceTeen, PurplePower; util :9-19) (:598) | PORT-ONLY | unrecorded ("Don't pick fights with peers" :594-596; no AUDIT / FIX / MOD entry) — Mothra, PitchBlack, the Kraken and the royals were prey in 1.7.10 |
@@ -479,7 +479,7 @@ Orig-file alphabetical order (case-insensitive); the three AI helper blocks last
 |---|---|---|---|---|
 | scan set | `EntityLivingBase` bb `expand(18,9,18)` (:255) in `func_70619_bc` on world-rand 1-in-3 (:191), only when the revenge target `rt` is unusable (:193-208) | `level().getNearestPlayer(this, 18.0)` (:129): players only, sphere 18 from the shark's position, spectators excluded (`EntityGetter` :96-104); only when neither `revengeTarget` nor `getTarget()` is set (:118-133); entity-rand 1-in-3 (:117) | DIVERGES | scan-set narrowing (living box → player sphere) — the ENT-S-108 class, but Hammerhead is not on that record |
 | filter order | :225-249 null → self → dead → sight (:235) → Hammerhead false (:238) → player: `!creative` (:241-244) → EntityMob true (:245) → `MyUtils.isAttackableNonMob` (:248; orig list, shared refs) | none — `!instabuild` only (:130) | DIVERGES | sight, own-kind and the mob / non-mob prey rules absent |
-| PlayNicely gate | :194-196 (nulls `rt` for the pass) and :252 (scan) | none (:112-150) | DIVERGES | — |
+| PlayNicely gate | :194-196 (nulls `rt` for the pass) and :252 (scan) | none (:112-150) | FIXED (ENT-S-115, wave 1) — both sites (:194 rt blank, :252 scan); the port-only getTarget() fallback gated with the pass (refuter B2) — was DIVERGES | — |
 | creative gate | :243 | :130 `instabuild` | MATCH | — |
 | PEACEFUL gate | none | none | MATCH | — |
 | allies / species exclusions | prey = EntityMob + the orig `isAttackableNonMob` list + non-creative players; Hammerhead spared (:238) | players only | DIVERGES | the port's shared `isAttackableNonMob` (util :54-63) is a different list (EnderDragon, Kraken, Godzilla, GodzillaHead, Basilisk, Cephadrome, TheKing, TheQueen) — unused here today but what a restore would inherit (ENT-S-110's Leon fix shape names the same helper) |
@@ -493,7 +493,7 @@ Orig-file alphabetical order (case-insensitive); the three AI helper blocks last
 |---|---|---|---|---|
 | scan set | `EntityLivingBase` bb `expand(16,6,16)` (:420) in `func_70619_bc` on world-rand 1-in-4 (:350), only when no live stored target (:351-358) | vanilla `NearestAttackableTargetGoal<>(this, Player.class, true, pred)` (:60-61): players within FOLLOW_RANGE 24 (:71), ≈ 1-in-10 | FIX IN FLIGHT (ENT-S-108) | box 16×6×16 → radius 24 |
 | filter order | :385-414 null → self → dead → `isIgnoreable` (:395) → sight (:398) → EntityCreeper (:401) → HerculesBeetle (:404) → player creative (:407-411) | vanilla chain with `!isIgnoreable` predicate (:61) → creative / PEACEFUL → range → sight | DIVERGES | exclusions absent |
-| PlayNicely gate | :417 | none (:50-62, :150-157) | DIVERGES | — |
+| PlayNicely gate | :417 | none (:50-62, :150-157) | FIXED (ENT-S-108; pinned by ENT-S-115, wave 1) — gate at EntityHerculesBeetle.java:234 — was DIVERGES | — |
 | creative gate | :409 | vanilla `invulnerable` | DIVERGES | ENT-S-109 class, unlisted site |
 | PEACEFUL gate | none | vanilla player refusal | PORT-ONLY | inert |
 | allies / species exclusions | EntityCreeper, HerculesBeetle (:401-406) | none | FIX IN FLIGHT (ENT-S-108) | — |
@@ -507,7 +507,7 @@ Orig-file alphabetical order (case-insensitive); the three AI helper blocks last
 |---|---|---|---|---|
 | scan set | `EntityLivingBase` bb `expand(6,4,6)` (:294) in `func_70619_bc` on world-rand 1-in-8 (:253); a live stored target pre-empts the scan (:299-302) | `getNearestPlayer(this, 6.0)` (:136): players only, sphere 6, spectators excluded; only when `getTarget()` is null (:134-135); entity-rand 1-in-8 (:133) | DIVERGES | orig's filter accepted only players (:283-287), so the class is equal; the geometry differs (box ±6 / ±4 → sphere 6) |
 | filter order | :270-288 null → self → dead → sight (:280) → player: `!creative` (:283-286) → false | `!instabuild` (:137) | DIVERGES | the sight step is missing |
-| PlayNicely gate | :291 | none (:105-155) | DIVERGES | — |
+| PlayNicely gate | :291 | none (:105-155) | FIXED (ENT-S-115, wave 1) — the inline pick gated as a whole — was DIVERGES | — |
 | creative gate | :285 | :137 `instabuild` | MATCH | — |
 | PEACEFUL gate | none | none | MATCH | — |
 | allies / species exclusions | players only (:283-287) | players only | MATCH | — |
@@ -540,7 +540,7 @@ Orig-file alphabetical order (case-insensitive); the three AI helper blocks last
 |---|---|---|---|---|
 | scan set | `EntityLivingBase` bb `expand(12,4,12)` (:208) in `func_70619_bc` on world-rand 1-in-10 (:161) | `inflate(12,4,12)` (:132-133) in `customServerAiStep` on entity-rand 1-in-10 (:110) | MATCH | — |
 | filter order | :173-202 null → self → dead → `isIgnoreable` (:183) → sight (:186) → EntityMob (:189) → EntityPigZombie (:192) → player creative (:195-199) | :139-148 null/self/dead → `isIgnoreable` (:141) → sight (:142) → Monster (:143) → player creative (:144-146) | MATCH | the PigZombie step is absent but ZombifiedPiglin is a Monster |
-| PlayNicely gate | :205 | none (:131-137) | DIVERGES | — |
+| PlayNicely gate | :205 | none (:131-137) | FIXED (ENT-S-115, wave 1) — was DIVERGES | — |
 | creative gate | :197 | :145 `invulnerable` | FIX IN FLIGHT (ENT-S-109) | — |
 | PEACEFUL gate | none | none | MATCH | — |
 | allies / species exclusions | EntityMob, EntityPigZombie (:189-194) | Monster (:143) | MATCH | — |
@@ -568,7 +568,7 @@ Orig-file alphabetical order (case-insensitive); the three AI helper blocks last
 |---|---|---|---|---|
 | scan set | custom: `EntityLivingBase, bbox.expand(20,20,20)` Leon.java:434; callers `fly_with_rider` :364 (1-in-7 :357, ridden, attackTarget first), `fly_without_rider` :600 (1-in-8 :599, `!toofar && unstick==0 && flyaway==0`), `always_do` :914 (1-in-10, activity==0, not sitting, no rider). Vanilla goal :92-93 `EntityAINearestAttackableTarget(this, EntityLiving.class, chance 0, sight, nearbyOnly=false, IMob.mobSelector)` registered only when `PlayNicely == 0` at construction: box follow-range(16 default; :112-118 sets no follow range) x4 x16, every tick, IMob EntityLivings only | custom: `LivingEntity, inflate(20,20,20)` EntityLeon.java:730-731; callers `flyWithRider` :497 (1-in-7 :489), `flyWithoutRider` :631 (1-in-8 :628-630), `alwaysDo` :527 (1-in-10 :523-526). Vanilla goal :158 `NearestAttackableTargetGoal<>(this, Monster.class, 10, true, false, e -> !isTame() \|\| getTarget()==null)`: VAN-NAT box `inflate(40, 4, 40)` (FOLLOW_RANGE 40 :170), 1-in-10 (reduced to 5 on the 2-tick cadence), always registered | custom MATCH; vanilla goal DIVERGES | goal path: box 16→40 (scan-set widening), chance 0 (every tick) → 1-in-10, class IMob→Monster, PORT-ONLY predicate `!isTame() \|\| getTarget()==null` |
 | filter order | :387-428 PEACEFUL (:388), PlayNicely (:391), null (:394), self (:397), dead (:400), ignore (:403), sight (:406), Leon→false (:409), EntityMob→true (:412), Player: creative→false else `return !tamed` (:415-421), untamed && `isAttackableNonMob`→true (:422-426), false (:427) | :745-758 PEACEFUL (:746), null/self/dead (:747), ignore (:748), sight (:749), EntityLeon→false (:750), Monster→true (:751), Player: instabuild→false else `return !isTame()` (:752-755), `if (!isTame()) return true` (:756), false | FIX IN FLIGHT (ENT-S-110) | PlayNicely step (:391) absent; untamed rule "any living" instead of the `isAttackableNonMob` list; once restored, note the port list itself differs (header) |
-| PlayNicely gate | :391-393 (filter) and :431-433 (scan) → nothing; goal registration gated at construction :92 | none in the custom path (:728-735, :745-758); none on the vanilla goal (:158) | FIX IN FLIGHT (ENT-S-110); goal-registration gate DIVERGES | ENT-S-110 names the :391 gate; the :92 construction-time gate on the IMob goal is a separate missing gate |
+| PlayNicely gate | :391-393 (filter) and :431-433 (scan) → nothing; goal registration gated at construction :92 | none in the custom path (:728-735, :745-758); none on the vanilla goal (:158) | FIXED (ENT-S-110 filter / ENT-S-115 goal, wave 1) — the goal-registration half as a live canUse; orig's scan-head gate :431-433 has no port line, the ENT-S-110 filter gate (:765) the scan calls is outcome-equivalent — was FIX IN FLIGHT (ENT-S-110); goal-registration gate DIVERGES | ENT-S-110 names the :391 gate; the :92 construction-time gate on the IMob goal is a separate missing gate |
 | creative gate | :417 `field_75098_d` (isCreativeMode) | :753 `abilities.instabuild` | FIXED (ENT-S-107) | vanilla goal: orig `EntityAITarget` used `capabilities.disableDamage`, port VAN-TC `invulnerable` — moot on both (players are never `EntityLiving`/`Monster` candidates) |
 | PEACEFUL gate | :388 (filter), :357 (ridden), :599 (unridden), :914 (always_do) | :746, :488, :629, :525 | MATCH | |
 | allies / species exclusions | self (:409); grants: EntityMob (:412), untamed: `MyUtils.isAttackableNonMob` list (Mothra, Dragon, Spyro, royalty, GammaMetroid, Cephadrome, WaterDragon, Girlfriend, Boyfriend, Villager, Stinky) | self (:750); grants: Monster (:751), untamed: any LivingEntity (:756) | FIX IN FLIGHT (ENT-S-110) | see header for the port `isAttackableNonMob` membership drift |
@@ -582,7 +582,7 @@ Orig-file alphabetical order (case-insensitive); the three AI helper blocks last
 |---|---|---|---|---|
 | scan set | `EntityLivingBase, bbox.expand(12,4,12)` Lizard.java:339; `updateAITasks` :270 gated `difficulty != PEACEFUL && nextInt(10)==1` | `LivingEntity, inflate(12,4,12)` Lizard.java:147-148; `customServerAiStep` :211 same gate | MATCH | |
 | filter order | :300-332 PEACEFUL (:301), null (:304), self (:307), dead (:310), sight (:313), AttackSquid→true (:316), EntitySpider→true (:319), EntityCaveSpider→true (:322), EntityChicken→true (:325), `Lizard && nextInt(10)==1 && follow_time<=0` → `buddy = it` side effect (:328-330), false (:331) | :132-139 PEACEFUL (:133), null/self/dead (:134), Spider (:135), CaveSpider (:136), Chicken (:137), false | DIVERGES | sight step (:313) missing; AttackSquid grant (:316) missing; buddy side effect (:328-330) missing |
-| PlayNicely gate | :336-338 → null | none (:141-152) | DIVERGES | missing gate |
+| PlayNicely gate | :336-338 → null | none (:141-152) | FIXED (ENT-S-115, wave 1) — was DIVERGES | missing gate |
 | creative gate | none (players never granted) | none | N/A | |
 | PEACEFUL gate | :301 (filter) + :270 (tick) | :133 + :211 | MATCH | |
 | allies / species exclusions | prey grants only: AttackSquid, Spider, CaveSpider, Chicken | Spider, CaveSpider, Chicken | DIVERGES | AttackSquid (port class exists) dropped from the prey list |
@@ -652,7 +652,7 @@ Orig-file alphabetical order (case-insensitive); the three AI helper blocks last
 |---|---|---|---|---|
 | scan set | `EntityLivingBase, bbox.expand(32,8,32)` Nastysaurus.java:282; `updateAITasks` :212 `nextInt(5)==0`, after the retaliation target (:214-226) | `NearestAttackableTargetGoal<>(this, Player.class, true, !isIgnoreable)` Nastysaurus.java:72-73: VAN-NAT `Player.class` → all players in the level within FOLLOW_RANGE 40 (:84) × visibility, no box, 1-in-10; consumed by `DinosaurMeleeAttackGoal` :64-65 (preset `DinosaurMeleeAttackGoal.java:35`, `BugMeleeAttackGoal.java:82-96` reads `mob.getTarget()`; the preset's 32/8 "search" fields are never used) | FIX IN FLIGHT (ENT-S-108) | players-only narrowing; box 32x8x32 → sphere 40 |
 | filter order | :246-276 null, self, dead, ignore (:256), Nastysaurus (:259), Cryolophosaurus (:262), VelocityRaptor (:265), sight (:268), Player→`!creative` (:271-274), true | VAN-TC: self, spectator/alive, `!isIgnoreable` (:73), `canAttack` (PEACEFUL-player rule, `!invulnerable`), `canAttackType`, allied, range, sight | FIX IN FLIGHT (ENT-S-108) | species steps moot while players-only; ignore sits ahead of sight in both |
-| PlayNicely gate | :215-217 (retaliation target dropped) and :279-281 (scan) | none (:72-73, `BugMeleeAttackGoal` has no gate) | DIVERGES | missing gate |
+| PlayNicely gate | :215-217 (retaliation target dropped) and :279-281 (scan) | none (:72-73, `BugMeleeAttackGoal` has no gate) | FIXED (ENT-S-115 :215 / ENT-S-108 :279, wave 1) — the pass-local blanking of a foreign occupant (the scan's own pick is cleared as at HEAD, refuter B1); the slot's goal-side consumption stays with T5 — was DIVERGES | missing gate |
 | creative gate | :273 `field_75098_d` | VAN-TC `Player.canBeSeenAsEnemy` → `abilities.invulnerable` ((v) `Player.java:966-968`) | DIVERGES | same class as ENT-S-109 (invulnerable vs instabuild) but through the vanilla predicate, not a listed site |
 | PEACEFUL gate | none (EntityMob) | none (Monster); VAN-TC additionally refuses players in PEACEFUL | N/A | |
 | allies / species exclusions | Nastysaurus, Cryolophosaurus, VelocityRaptor | none | FIX IN FLIGHT (ENT-S-108) | moot while players-only |
@@ -680,7 +680,7 @@ Orig-file alphabetical order (case-insensitive); the three AI helper blocks last
 |---|---|---|---|---|
 | scan set | `EntityLivingBase, bbox.expand(16+6t, 10+4t, 16+6t)` (t = scale 0.5..4) PitchBlack.java:544-546; callers: `onUpdate` :281-288 (activity==0, 1-in-10 → activity 1), `onUpdate` :259-275 (server, 1-in-250 heal branch: 1-in-5 & solid ground within 10 → scan, null → activity 0), `updateAITasks` :361-363 (activity==1, else-branch 1-in-8; re-pick :343 `nextInt(150)==0 \|\| distSq<2.1`) | same formula PitchBlack.java:509-513 (t from tier: 0.5,1,2,3,4); callers `customServerAiStep` :421-431 (activity==0, 1-in-10 → activity 1 + nav stop), :448-449 (1-in-8 else-branch; re-pick :437-438) | DIVERGES | scan set: the :259-275 heal-branch call site (the only path that RESETS activity to 0 when nothing is found) is absent from the port (tick :392-403 has no heal branch) |
 | filter order | :485-538 null, self, `instanceof EntityLivingBase` (:492, always true), dead, ignore (:498), sight (:501), PitchBlack (:504), EnderReaper (:507), LeafMonster (:510), TerribleTerror (:513), LurkingTerror (:516), CreepingHorror (:519), Island (:522), IslandToo (:525), Triffid (:528), Player creative→false (:531-536), true | :520-526 null/self/dead, ignore (:522), PitchBlack (:523), Player instabuild→false (:524), true | DIVERGES | sight step (:501) missing (not covered by ENT-S-112, which names the allies) |
-| PlayNicely gate | :541-543 → null | none (:509-518) | DIVERGES | missing gate |
+| PlayNicely gate | :541-543 → null | none (:509-518) | FIXED (ENT-S-115, wave 1) — was DIVERGES | missing gate |
 | creative gate | :533 `field_75098_d` | :524 `instabuild` | MATCH | |
 | PEACEFUL gate | none (EntityMob) | none (Monster) | N/A | |
 | allies / species exclusions | self + EnderReaper, LeafMonster, TerribleTerror, LurkingTerror, CreepingHorror, Island, IslandToo, Triffid | self only | FIX IN FLIGHT (ENT-S-112) | |
@@ -694,7 +694,7 @@ Orig-file alphabetical order (case-insensitive); the three AI helper blocks last
 |---|---|---|---|---|
 | scan set | `EntityLivingBase, bbox.expand(12,5,12)` Pointysaurus.java:253; `updateAITasks` :183 `nextInt(6)==0`, retaliation target first (:185-197) | `NearestAttackableTargetGoal<>(this, Player.class, true, !isIgnoreable)` Pointysaurus.java:72-73: all players in the level within FOLLOW_RANGE 24 (:84) × visibility, 1-in-10; PORT-ONLY `PointysaurusStareGoal` :65 (`ai/PointysaurusStareGoal.java:32,37-39,63`: nearest player within 32 looking at the mob, creative/spectator excluded :48, sight :58, locks the target after 5 ticks :90-95); consumed by `DinosaurMeleeAttackGoal` :54-55 | DIVERGES + PORT-ONLY | players-only is orig behaviour (:242-246; ENT-S-108 excludes Pointysaurus) but the box 12x5x12 became a sphere of 24 (scan-set widening); the stare goal is a port invention with no MOD record (AUDIT_FINDINGS.md:7031 mentions it only for its creative token) |
 | filter order | :217-247 null, self, dead, ignore (:227), Pointysaurus (:230), EntityMob (:233), VelocityRaptor (:236), sight (:239), Player→`!creative` (:242-245), false (:246) | VAN-TC with `!isIgnoreable` (:73) ahead of sight; species steps absent (moot: players only in both) | MATCH (effective) | ignore before sight in both |
-| PlayNicely gate | :186-188 (retaliation dropped) and :250-252 (scan) | none | DIVERGES | missing gate |
+| PlayNicely gate | :186-188 (retaliation dropped) and :250-252 (scan) | none | FIXED (ENT-S-115, wave 1) — scan half (:250, both proactive goals); :186-188 DEFERRED to T5 (no pass-local in the port; the retaliation pass is the shared melee goal) — was DIVERGES | missing gate |
 | creative gate | :244 `field_75098_d` | VAN-TC `invulnerable` for the NearestAttackable goal; stare goal `isCreative()` (= instabuild) :48 | DIVERGES (goal path) | |
 | PEACEFUL gate | none (EntityMob) | none (Monster); VAN-TC refuses players in PEACEFUL | N/A | |
 | allies / species exclusions | self, EntityMob, VelocityRaptor (moot: only players pass) | none | MATCH (effective) | |
@@ -708,9 +708,9 @@ Orig-file alphabetical order (case-insensitive); the three AI helper blocks last
 |---|---|---|---|---|
 | scan set | `EntityLivingBase, bbox.expand(32,24,32)` PurplePower.java:271; `updateAITasks` :173 else-branch `nextInt(7)==2 && difficulty != PEACEFUL` (re-pick :155) | `LivingEntity, inflate(32,24,32)` PurplePower.java:187-188; :121 `nextInt(7)==2` (no PEACEFUL term; re-pick :112) | MATCH (box) | PEACEFUL term of the call site counted in the PEACEFUL row |
 | filter order | :234-265 PEACEFUL (:236), null, self, dead, ignore (:248), sight (:251), Player: creative→false, `return type<=0 \|\| type==10` (:254-260), `type not 0/10 && tamed EntityTameable → false` (:261-263), `return !isRoyalty` (:264) | :194-203 null/self/dead, ignore (:196), Player instabuild→false (:197), Player → `type<=0 \|\| type==10` (:199-201), true | DIVERGES | filter order: PEACEFUL (:236), sight (:251), tamed-pet exclusion (:261-263) and royalty exclusion (:264) all missing |
-| PlayNicely gate | :268-270 → null | none (:186-192) | DIVERGES | missing gate |
+| PlayNicely gate | :268-270 → null | none (:186-192) | FIXED (ENT-S-115, wave 1) — was DIVERGES | missing gate |
 | creative gate | :256 `field_75098_d` | :197 `instabuild` | MATCH | |
-| PEACEFUL gate | :173 (call site), :180-182 (`setDead` in PEACEFUL), :236 (filter) | none; PurplePower extends `Mob` (:29), not `Monster`, so no peaceful despawn either | DIVERGES | missing gate: the port hunts in PEACEFUL (its `setHealth(h/4-1)` at :151 bypasses difficulty scaling) |
+| PEACEFUL gate | :173 (call site), :180-182 (`setDead` in PEACEFUL), :236 (filter) | none; PurplePower extends `Mob` (:29), not `Monster`, so no peaceful despawn either | FIXED (ENT-S-114, wave 1) — was DIVERGES | missing gate: the port hunts in PEACEFUL (its `setHealth(h/4-1)` at :151 bypasses difficulty scaling) |
 | allies / species exclusions | tamed pets for types other than 0/10 (:261-263); royalty via `MyUtils.isRoyalty` (:264): ThePrince, ThePrinceTeen, ThePrinceAdult, ThePrincess, TheKing, KingHead, TheQueen, QueenHead, PurplePower | none (port `MyUtils.isRoyalty` exists at `util/MyUtils.java:9-19` but is not called) | DIVERGES | exclusion list missing |
 | ignore screen | :248 after dead, before sight | :196 | FIXED (ENT-S-106) | |
 | tie-break / selection rule | :272 `GenericTargetSorter` (:35 field, :44 ctor) | :41 `Comparator.comparingDouble(this::distanceToSqr)`, :191 `firstMatch` | DIVERGES | tie-break: plain distance (TF-035 migration not done) |
@@ -722,7 +722,7 @@ Orig-file alphabetical order (case-insensitive); the three AI helper blocks last
 |---|---|---|---|---|
 | scan set | `EntityLivingBase, bbox.expand(9,2,9)` Rat.java:255; `updateAITasks` :159 `nextInt(5)==1` | `LivingEntity, inflate(9,2,9)` EntityRat.java:213-214; :157 `nextInt(5)==1` | MATCH | |
 | filter order | :185-249 null, self, dead, ignore (:195), sight (:198), Irukandji (:201), Skate (:204), Whale (:207), Flounder (:210), Rat (:213), Ghost (:216), GhostSkelly (:219), DungeonBeast (:222), Player: creative→false; owned rat: owner→false, RatPlayerFriendly→false (:225-238); owned rat vs EntityTameable: RatPetFriendly && tamed→false, same owner→false (:239-247), true | :192-210 null/self/dead, ignore (:194), sight (:195), EntityRat (:196), Player: invulnerable→false, owned: owner / RAT_PLAYER_FRIENDLY (:198-204), owned vs TamableAnimal: RAT_PET_FRIENDLY && tame / same owner (:205-208), true | DIVERGES | filter order: Irukandji, Skate, Whale, Flounder, DungeonBeast steps missing (Ghost/GhostSkelly are covered by the ignore screen in both trees); creative token in flight |
-| PlayNicely gate | :252-254 → null | none (:212-218) | DIVERGES | missing gate |
+| PlayNicely gate | :252-254 → null | none (:212-218) | FIXED (ENT-S-115, wave 1) — was DIVERGES | missing gate |
 | creative gate | :227 `field_75098_d` | :199 `invulnerable` | FIX IN FLIGHT (ENT-S-109) | listed site Rat.java:227 ↔ :199 |
 | PEACEFUL gate | none (EntityMob) | none (Monster) | N/A | |
 | allies / species exclusions | Irukandji, Skate, Whale, Flounder, Rat, Ghost, GhostSkelly, DungeonBeast; owner / same-owner pets when owned | Rat; owner / same-owner pets when owned | DIVERGES | missing Irukandji, Skate, Whale, Flounder, DungeonBeast |
@@ -736,7 +736,7 @@ Orig-file alphabetical order (case-insensitive); the three AI helper blocks last
 |---|---|---|---|---|
 | scan set | `EntityLivingBase, bbox.expand(8,3,8)` Robot1.java:208; `onLivingUpdate` :116 `nextInt(8)==0` (both sides; explosion server-only :117) | `LivingEntity, inflate(8,3,8)` Robot1.java:142-143; `aiStep` :103 `nextInt(8)==0` (both sides; explosion server-only :108) | MATCH | |
 | filter order | :176-202 null, self, dead, ignore (:186), sight (:189), EntityMob→false (:192), Player creative→false (:195-200), true | :149-155 null/self/dead, ignore (:151), Monster→false (:152), Player instabuild→false (:153), true | DIVERGES | sight step (:189) missing |
-| PlayNicely gate | :205-207 → null | none (:141-147) | DIVERGES | missing gate |
+| PlayNicely gate | :205-207 → null | none (:141-147) | FIXED (ENT-S-115, wave 1) — was DIVERGES | missing gate |
 | creative gate | :197 `field_75098_d` | :153 `instabuild` | MATCH | |
 | PEACEFUL gate | none (EntityMob) | none (Monster) | N/A | |
 | allies / species exclusions | EntityMob | Monster | MATCH | |
@@ -764,7 +764,7 @@ Orig-file alphabetical order (case-insensitive); the three AI helper blocks last
 |---|---|---|---|---|
 | scan set | `EntityLivingBase, bbox.expand(16,3,16)` Robot3.java:325; `updateAITasks` :240 when `reload_ticker==0` (every 35 ticks, :252), attackTarget first (:242-251) | `LivingEntity, inflate(16,3,16)` Robot3.java:173-174; :124-129 same | MATCH | |
 | filter order | :293-319 null, self, dead, ignore (:303), sight (:306), EntityMob→false (:309), Player creative→false (:312-317), true | :180-186 null/self/dead, ignore (:182), Monster (:183), Player instabuild (:184), true | DIVERGES | sight step (:306) missing from selection (the port gates the SHOT on sight :135 instead; orig gates the shot on a 0.5-rad head-facing cone :255-263) |
-| PlayNicely gate | :322-324 → null | none (:172-178) | DIVERGES | missing gate |
+| PlayNicely gate | :322-324 → null | none (:172-178) | FIXED (ENT-S-115, wave 1) — was DIVERGES | missing gate |
 | creative gate | :314 `field_75098_d` | :184 `instabuild` | MATCH | |
 | PEACEFUL gate | none (EntityMob) | none (Monster) | N/A | |
 | allies / species exclusions | EntityMob | Monster | MATCH | |
@@ -792,7 +792,7 @@ Orig-file alphabetical order (case-insensitive); the three AI helper blocks last
 |---|---|---|---|---|
 | scan set | `EntityLivingBase, bbox.expand(30,6,30)` Robot5.java:299; `updateAITasks` :212 when `reload_ticker==0` (every 20 ticks, :224), attackTarget first (:214-223) | `LivingEntity, inflate(30,6,30)` Robot5.java:162-163; :111-116 same | MATCH | |
 | filter order | :267-293 null, self, dead, ignore (:277), sight (:280), EntityMob→false (:283), Player creative→false (:286-291), true | :169-175 null/self/dead, ignore (:171), Monster (:172), Player instabuild (:173), true | DIVERGES | sight step (:280) missing from selection (port gates the shot on sight :125; orig on a 0.5-rad cone :228-235) |
-| PlayNicely gate | :296-298 → null | none (:161-167) | DIVERGES | missing gate |
+| PlayNicely gate | :296-298 → null | none (:161-167) | FIXED (ENT-S-115, wave 1) — was DIVERGES | missing gate |
 | creative gate | :288 `field_75098_d` | :173 `instabuild` | MATCH | |
 | PEACEFUL gate | none (EntityMob) | none (Monster) | N/A | |
 | allies / species exclusions | EntityMob | Monster | MATCH | |
@@ -848,7 +848,7 @@ Orig-file alphabetical order (case-insensitive); the three AI helper blocks last
 |---|---|---|---|---|
 | scan set | `EntityLivingBase.class`, bb.expand(16,4,16) (:517), `updateAITasks` :431 behind `nextInt(5)==1` (:465); :513-534 | no box scan: `level().getNearestPlayer(this, 16.0)` (:174) only when `getTarget()==null` (:172-173), `customServerAiStep` :144 behind `nextInt(5)==1` (:171); sphere r16 over all players, spectators excluded (P5) | DIVERGES | scan-set narrowing: players only, sphere vs 16x4x16 box; not in ENT-S-108's list |
 | filter order | :487-511: null/self/dead → sight(:497) → player → !creative(:500-503) → SeaMonster false(:504) → EntityMob true(:507) → `isAttackableNonMob`(:510) | :175 `nearest != null && !instabuild` only | DIVERGES | missing gate: sight (:497); EntityMob / attackable-non-mob prey absent (P9) |
-| PlayNicely gate | :514-516 → null | none in SeaMonster.java | DIVERGES | missing gate |
+| PlayNicely gate | :514-516 → null | none in SeaMonster.java | FIXED (ENT-S-115, wave 1) — the inline pick gated as a whole — was DIVERGES | missing gate |
 | creative gate | `isCreativeMode` :502 | `instabuild` :175 | MATCH | P6 |
 | PEACEFUL gate | none (EntityMob :37-38) | none (`Monster` :35) | N/A | P3 |
 | allies / species exclusions | SeaMonster (:504); hurt: a SeaMonster attacker never retargets (:358-359) | scan never yields a SeaMonster (players only); hurt: SeaMonster attacker → false (:136) | MATCH | hurt path only |
@@ -862,7 +862,7 @@ Orig-file alphabetical order (case-insensitive); the three AI helper blocks last
 |---|---|---|---|---|
 | scan set | `EntityLivingBase.class`, bb.expand(18,4,18) (:534), `updateAITasks` :448 behind `nextInt(5)==1` (:482); :530-551 | `NearestAttackableTargetGoal<>(this, Player.class, true)` (:96): all players in the level within FOLLOW_RANGE 32 (:106) sphere, 1-in-5 per alternate-tick pass (P1); `HurtByTargetGoal` (:95); comment :84-85 says it "replace[s] the legacy 18×4×18 scan" | DIVERGES | scan-set narrowing: players only; 32-sphere vs 18x4x18 box; cadence; not in ENT-S-108's list |
 | filter order | :504-528: null/self/dead → sight(:514) → player → !creative(:517-520) → SeaViper false(:521) → EntityMob true(:524) → `isAttackableNonMob`(:527) | vanilla `TargetingConditions.forCombat` chain (P1): self → spectator/dead → canAttack → allied → range → sight | DIVERGES | filter order: vanilla chain replaces the orig ladder; EntityMob / attackable-non-mob prey absent (P9) |
-| PlayNicely gate | :531-533 → null | none | DIVERGES | missing gate |
+| PlayNicely gate | :531-533 → null | none | FIXED (ENT-S-115, wave 1) — as the player goal's live canUse; the bite goal's slot consumption stays with T5 — was DIVERGES | missing gate |
 | creative gate | `isCreativeMode` :519 | vanilla `canBeSeenAsEnemy` → `abilities.invulnerable` (P1) | DIVERGES | missing gate (creative mapping); not in ENT-S-109's list |
 | PEACEFUL gate | none (EntityMob :40-41) | none (`Monster` :43); vanilla rejects players in PEACEFUL | N/A | P3 |
 | allies / species exclusions | SeaViper (:521); hurt: SeaViper attacker → false (:375-377) | goal is Player.class; hurt: SeaViper attacker → false (:196) | MATCH | hurt path only |
@@ -876,7 +876,7 @@ Orig-file alphabetical order (case-insensitive); the three AI helper blocks last
 |---|---|---|---|---|
 | scan set | `EntityLivingBase.class`, bb.expand(10,4,10) (:286), `updateAITasks` :214 behind `nextInt(8)==1` (:245); :282-303 | `getNearestPlayer(this, 10.0)` (:124) when `getTarget()==null` (:122-123), `customServerAiStep` :96 behind `nextInt(8)==1` (:121) | DIVERGES | scan-set geometry: sphere r10 (all players) vs 10x4x10 box; orig's filter also admits only players (:275-279), so the class narrowing is not observable |
 | filter order | :262-280: null/self/dead → sight(:272) → player → !creative(:275-278) → false(:279) | :125 `!instabuild` only | DIVERGES | missing gate: sight (:272) |
-| PlayNicely gate | :283-285 → null | none | DIVERGES | missing gate |
+| PlayNicely gate | :283-285 → null | none | FIXED (ENT-S-115, wave 1) — the inline pick gated as a whole — was DIVERGES | missing gate |
 | creative gate | `isCreativeMode` :277 | `instabuild` :125 | MATCH | P6 |
 | PEACEFUL gate | none (EntityMob :31-32) | none (`Monster` :33) | N/A | P3 |
 | allies / species exclusions | none (players only); hurt: Skate attacker → false (:135-137) | none; hurt: Skate attacker → false (:87) | MATCH | |
@@ -890,7 +890,7 @@ Orig-file alphabetical order (case-insensitive); the three AI helper blocks last
 |---|---|---|---|---|
 | scan set | two scans from `updateAITasks` :60-84: (a) mount: `SpiderRobot.class`, bb.expand(25,15,25) (:107) behind `!PEACEFUL && nextInt(5)==0 && ridingEntity==null` (:66), first rider-less robot (:115); (b) mounted combat: `EntityLivingBase.class`, bb.expand(35,15,35) (:163) behind `!PEACEFUL && nextInt(4)==0 && ridingEntity!=null` (:74) | (a) `SpiderRobot.class`, inflate(25,15,25) (:149-150) behind :102, `!robot.isVehicle()` (:153); (b) `LivingEntity.class`, inflate(35,15,35) (:167-168) behind :121 | MATCH | boxes, classes, gates and cadence match |
 | filter order | :121-157: PEACEFUL(:122) → null/self/dead(:125-133) → ignore(:134) → SpiderRobot(:137) → SpiderDriver(:140) → EntitySpider(:143) → EntityCaveSpider(:146) → sight(:149) → player → !creative(:152-155) → `!(distSq < 36)`(:156) | :156-164: PEACEFUL(:157) → null/self/dead(:158) → ignore(:159) → SpiderRobot/SpiderDriver(:160) → Spider/CaveSpider(:161) → player → !instabuild(:162) → `!(distSq < 36)`(:163) | DIVERGES | missing gate: the sight check (:149-151) is absent |
-| PlayNicely gate | :104-106 (mount scan) and :160-162 (combat scan) → null | none in either scan (:148-154, :166-171) | DIVERGES | missing gate (both scans) |
+| PlayNicely gate | :104-106 (mount scan) and :160-162 (combat scan) → null | none in either scan (:148-154, :166-171) | FIXED (ENT-S-115, wave 1) — was DIVERGES | missing gate (both scans) |
 | creative gate | `isCreativeMode` :154 | `instabuild` :162 | MATCH | P6 |
 | PEACEFUL gate | cadence :66/:74 + filter :122 | cadence :102/:121 + filter :157 | MATCH | |
 | allies / species exclusions | SpiderRobot, SpiderDriver, EntitySpider, EntityCaveSpider (:137-148) | same four (:160-161) | MATCH | |
@@ -918,7 +918,7 @@ Orig-file alphabetical order (case-insensitive); the three AI helper blocks last
 |---|---|---|---|---|
 | scan set | `EntityLivingBase.class`, bb.expand(12,7,12) (:374), `updateAITasks` :258 behind `nextInt(5)==0` (:267), current target kept if alive (:268-272) else scan (:273-275); :370-386 | `NearestAttackableTargetGoal<>(this, Player.class, true, !isIgnoreable)` (:71-72), FOLLOW_RANGE 32 (:82), P1 cadence; `HurtByTargetGoal` (:68) | FIX IN FLIGHT (ENT-S-108) | players-only; the 32-sphere/cadence difference rides with the same rebuild |
 | filter order | :324-368: null/self/dead → ignore(:334) → sight(:337) → EnderReaper(:340) → EnderKnight(:343) → Enderman(:346) → Hydrolisc(:349) → Creeper(:352) → SpitBug(:355) → TrooperBug(:358) → player creative false(:361-366) → true(:367) | predicate `!isIgnoreable` then the vanilla chain (P1) | FIX IN FLIGHT (ENT-S-108) | fix shape restores the orig exclusion chain |
-| PlayNicely gate | :371-373 → null | none | DIVERGES | missing gate; not named in ENT-S-108 |
+| PlayNicely gate | :371-373 → null | none | FIXED (ENT-S-108; pinned by ENT-S-115, wave 1) — gate at EntitySpitBug.java:261 — was DIVERGES | missing gate; not named in ENT-S-108 |
 | creative gate | `isCreativeMode` :363 | vanilla `invulnerable` (P1) | DIVERGES | missing gate (creative mapping); not in ENT-S-109's list |
 | PEACEFUL gate | none (EntityMob :45-46) | none (`Monster` :31) | N/A | P3 |
 | allies / species exclusions | EnderReaper, EnderKnight, Enderman, Hydrolisc, Creeper, SpitBug, TrooperBug (:340-360) | none (moot for Player.class) | FIX IN FLIGHT (ENT-S-108) | |
@@ -932,7 +932,7 @@ Orig-file alphabetical order (case-insensitive); the three AI helper blocks last
 |---|---|---|---|---|
 | scan set | `EntityLivingBase.class`, bb.expand(12,6,12) (:701), from `do_movement` (called every server tick from `onUpdate` :473) behind `nextInt(6)==1 && !PEACEFUL` (:588); `do_movement` exits when sitting (:566) or `activity == 1` (:569-571) → hunts only while flying; ctor :73-81 registers NO target tasks | `LivingEntity.class`, inflate(12,6,12) (:484), from `doMovement` (called from `tick()` :199) behind `nextInt(6)==1 && !PEACEFUL` (:380); exits when sitting (:362) or `activity == 1` (:363) | MATCH | the port's added goals are in the release row |
 | filter order | :672-695: PEACEFUL(:673) → null/self/dead → sight(:685) → Spyro false(:688) → Mothra true(:691) → `instanceof EntityMob`(:694); plus a second test in the scan loop: `canSeeTarget(x,y,z)` eye(y+0.75)→feet block ray (:709, :436-438) | :475-481: PEACEFUL → null/self/dead → sight → EntitySpyro false → `instanceof Monster`; no second ray (:483-490) | DIVERGES | prey set: Mothra (a Butterfly, not a Monster in the port) no longer prey; the feet-ray gate is missing |
-| PlayNicely gate | :698-700 → null | none in EntitySpyro.java | DIVERGES | missing gate (BOSS-017 covered bosses + Princess only) |
+| PlayNicely gate | :698-700 → null | none in EntitySpyro.java | FIXED (ENT-S-115, wave 1) — was DIVERGES | missing gate (BOSS-017 covered bosses + Princess only) |
 | creative gate | none (no player prey) | none | N/A | |
 | PEACEFUL gate | :588 + :673 | :380 + :476 | MATCH | |
 | allies / species exclusions | Spyro (:688) | EntitySpyro (:479) | MATCH | |
@@ -951,7 +951,7 @@ Orig-file alphabetical order (case-insensitive); the three AI helper blocks last
 |---|---|---|---|---|
 | scan set | `EntityLivingBase.class`, bb.expand(12,6,12) (:691), from `do_movement` (:534, called from `updateAITasks` whenever not sitting :511) behind `nextInt(7)==1 && !PEACEFUL` (:568) — the combat roll runs BEFORE the `activity == 1` return (:582-607), so a grounded Stinky hunts too; ctor :67-77 registers NO target tasks | `LivingEntity.class`, inflate(12,6,12) (:450), from `doMovement` (:280) behind `nextInt(7)==1 && !PEACEFUL` (:329) — but `doMovement` returns first when `activity != 2` (:312), so the port hunts only while flying | DIVERGES | scan-set narrowing (state gate): grounded Stinky never scans in the port |
 | filter order | :665-685: PEACEFUL(:666) → null/self/dead → sight(:678) → Mothra true(:681) → `instanceof EntityMob`(:684); plus `canSeeTarget` feet ray in the loop (:699, :317-319) | :442-447: PEACEFUL → null/self/dead → sight → `instanceof Monster`; no feet ray (:449-455) | DIVERGES | prey set: Mothra dropped; feet-ray gate missing |
-| PlayNicely gate | :688-690 → null | none | DIVERGES | missing gate |
+| PlayNicely gate | :688-690 → null | none | FIXED (ENT-S-115, wave 1) — was DIVERGES | missing gate |
 | creative gate | none | none | N/A | |
 | PEACEFUL gate | :568 + :666 | :329 + :443 | MATCH | |
 | allies / species exclusions | none (no self-kind check; a Stinky is not EntityMob) | none | MATCH | |
@@ -965,7 +965,7 @@ Orig-file alphabetical order (case-insensitive); the three AI helper blocks last
 |---|---|---|---|---|
 | scan set | `EntityLivingBase.class`, bb.expand(12,8,12) (:299), `updateAITasks` :119: the hunt is the `else if nextInt(9)==0` branch (:148-157) of the flight-retarget test (:130); :295-311; ctor :49-57 registers NO target tasks | `LivingEntity.class`, inflate(12,8,12) (:169), `customServerAiStep` :100: `else if nextInt(9)==0` (:126-134) of the same test (:108); `registerGoals` :47-48 empty | MATCH | |
 | filter order | :216-293: null/self/dead → sight(:226) → RockBase(:229) → TerribleTerror(:232) → EnderReaper(:235) → Mothra(:238) → LurkingTerror(:241) → CloudShark(:244) → Rotator(:247) → Bee(:250) → Mantis(:253) → LeafMonster(:256) → CreepingHorror(:259) → Triffid(:262) → PitchBlack(:265) → Dragon(:268) → Island(:271) → IslandToo(:274) → EntityButterfly(:277) → Firefly(:280) → Triffid again(:283) → player creative false(:286-291) → true(:292) | :150-166: null/self/dead → sight → EntityTerribleTerror → RockBase → EnderReaper → CloudShark → EntityRotator → PitchBlack → CreepingHorror → Island → IslandToo → player → !invulnerable → true | MATCH | order of the retained side-effect-free steps is immaterial; the missing entries are counted in the allies row |
-| PlayNicely gate | :296-298 → null | none (:168-174) | DIVERGES | missing gate |
+| PlayNicely gate | :296-298 → null | none (:168-174) | FIXED (ENT-S-115, wave 1) — was DIVERGES | missing gate |
 | creative gate | `isCreativeMode` :288 | `invulnerable` :163 | FIX IN FLIGHT (ENT-S-109) | |
 | PEACEFUL gate | none (EntityMob :44-45) | none (`Monster` :29) | N/A | P3 |
 | allies / species exclusions | 19 spared kinds (:229-285) | 10 kinds (:153-161): Mothra, LurkingTerror, Bee, Mantis, LeafMonster, Triffid, Dragon, EntityButterfly, Firefly are MISSING | DIVERGES | exclusion list (9 species hunted that 1.7.10 spared); no record (ENT-S-112 is PitchBlack's own list) |
@@ -1007,7 +1007,7 @@ Orig-file alphabetical order (case-insensitive); the three AI helper blocks last
 |---|---|---|---|---|
 | scan set | custom: `EntityLivingBase.class`, bb.expand(32,20,32) (:523), reached from (a) ground spotting `!sitting ∧ activity==0 ∧ no rider ∧ !PEACEFUL ∧ nextInt(10)==1` (:392-399), (b) `fly_with_rider` `nextInt(5)==1 ∧ !PEACEFUL` (:454), (c) `do_movement` `!toofar ∧ flyaway==0 ∧ !PEACEFUL ∧ nextInt(6)==1` (:708) after `getAttackTarget()` (:709-716). Vanilla task: `EntityAINearestAttackableTarget(EntityLiving.class, 0, sight, false, IMob selector)` registered only when PlayNicely==0 (:112-114): bb.expand(followRange 16, 4, 16), IMob only, every 3rd tick; `EntityAIHurtByTarget(false)` (:115) | custom: inflate(32,20,32) (:856); (a) :580-589, (b) :466-485, (c) :705-714. Vanilla: `NearestAttackableTargetGoal<>(this, Monster.class, true)` (:145), unconditional, FOLLOW_RANGE 64 (:155) → bb.inflate(64,4,64), P1 cadence; `HurtByTargetGoal` (:144); plus `OwnerHurtByTargetGoal`/`OwnerHurtTargetGoal` (:142-143) with no orig counterpart | DIVERGES | scan-set: the vanilla goal's box is 64x4x64 vs 16x4x16 and its release range 64 vs 16 (P1); custom scans match; the owner goals are PORT-ONLY |
 | filter order | custom :476-517: PEACEFUL(:477) → null/self/dead → sight(:489) → royalty(:492) → EntityMob true(:495) → Mothra(:498) → Kraken(:501) → Leon !tamed(:504-507) → WaterDragon !tamed(:508-511) → GammaMetroid !tamed(:512-515) → false(:516). Vanilla task: IMob selector + `isSuitableTarget(…, false)` (alive, same-owner/owner excluded, sight) | custom :838-851 identical; vanilla: Monster.class + P1 chain (`isAlliedTo` excludes the owner) | MATCH | |
-| PlayNicely gate | custom :520-522 → null; vanilla task not registered under PlayNicely (:112) | custom :855; vanilla goal :145 registered regardless | DIVERGES | missing gate (goal half) |
+| PlayNicely gate | custom :520-522 → null; vanilla task not registered under PlayNicely (:112) | custom :855; vanilla goal :145 registered regardless | FIXED (ENT-S-115, wave 1) — was DIVERGES | missing gate (goal half) |
 | creative gate | none (no player prey; a tamed adult never retaliates against players :378-380) | none; :280-282 | N/A | |
 | PEACEFUL gate | :392, :454, :708 + :477 | :581, :468, :705 + :839 | MATCH | |
 | allies / species exclusions | royalty; tamed Leon / WaterDragon / GammaMetroid spared (:504-515) | :842-849 | MATCH | |
@@ -1035,7 +1035,7 @@ Orig-file alphabetical order (case-insensitive); the three AI helper blocks last
 |---|---|---|---|---|
 | scan set | custom: `EntityLivingBase.class`, bb.expand(25,20,25) (:543), from (a) ground spotting (:398-405), (b) `fly_with_rider` `nextInt(5)==1` (:474), (c) `do_movement` `nextInt(7)==1` (:728) after `getAttackTarget()` (:729-736). Vanilla: `EntityAINearestAttackableTarget(EntityLiving.class, 0, sight, false, IMob)` only when PlayNicely==0 (:116-118), box 16x4x16, every 3rd tick; `EntityAIHurtByTarget(false)` (:119) | custom inflate(25,20,25) (:880); (a) :585-594, (b) :468-482, (c) :710-719. Vanilla `NearestAttackableTargetGoal<>(this, Monster.class, true)` (:156) unconditional, FOLLOW_RANGE 32 (:166) → 32x4x32; `HurtByTargetGoal` (:155); owner goals (:153-154) PORT-ONLY | DIVERGES | scan-set: goal box/release 32 vs 16 |
 | filter order | :496-537 same ladder as the Adult (royalty, EntityMob, Mothra, Kraken, untamed Leon/WaterDragon/GammaMetroid) | :862-875 identical | MATCH | |
-| PlayNicely gate | :540-542; task gated at construction (:116) | :879; goal :156 ungated | DIVERGES | missing gate (goal half) |
+| PlayNicely gate | :540-542; task gated at construction (:116) | :879; goal :156 ungated | FIXED (ENT-S-115, wave 1) — was DIVERGES | missing gate (goal half) |
 | creative gate | none | none | N/A | |
 | PEACEFUL gate | :398, :474, :728 + :497 | :586, :469, :710 + :863 | MATCH | |
 | allies / species exclusions | as Adult (:512-535) | :866-873 | MATCH | |
@@ -1063,7 +1063,7 @@ Orig-file alphabetical order (case-insensitive); the three AI helper blocks last
 |---|---|---|---|---|
 | scan set | `EntityLivingBase.class`, bb.expand(20,6,20) (:254), `updateAITasks` :177 behind `nextInt(5)==1` (:182); the revenge field `rt` is preferred (:184) and the scan runs only when it is null (:197-199); :250-266 | `NearestAttackableTargetGoal<>(this, Player.class, true, !isIgnoreable)` (:58-59), FOLLOW_RANGE 40 (:70), P1 cadence; `HurtByTargetGoal` (:55) | FIX IN FLIGHT (ENT-S-108) | players-only; 40-sphere vs 20x6x20 rides with the rebuild |
 | filter order | :216-248: null/self/dead → ignore(:226) → sight(:229) → TRex(:232) → Cryolophosaurus(:235) → VelocityRaptor(:238) → player creative false(:241-246) → true(:247) | predicate + vanilla chain (P1) | FIX IN FLIGHT (ENT-S-108) | |
-| PlayNicely gate | :185-187 nulls `rt`; :251-253 nulls the scan | none | DIVERGES | missing gate (both sites) |
+| PlayNicely gate | :185-187 nulls `rt`; :251-253 nulls the scan | none | FIXED (ENT-S-115 :185 / ENT-S-108 :251, wave 1) — as Nastysaurus — was DIVERGES | missing gate (both sites) |
 | creative gate | `isCreativeMode` :243 | vanilla `invulnerable` (P1/P2) | DIVERGES | missing gate (creative mapping); not in ENT-S-109's list |
 | PEACEFUL gate | none (EntityMob :38-39) | none (`Monster` :28) | N/A | P3 |
 | allies / species exclusions | TRex, Cryolophosaurus, VelocityRaptor (:232-240) | none (moot for Player.class) | FIX IN FLIGHT (ENT-S-108) | |
@@ -1077,7 +1077,7 @@ Orig-file alphabetical order (case-insensitive); the three AI helper blocks last
 |---|---|---|---|---|
 | scan set | `EntityLivingBase.class`, bb.expand(10,8,10) (:325), from (a) `onUpdate` every tick while `hurt_timer <= 0`, facing only (:119-124), (b) `updateAITasks` behind `nextInt(10)==1 ∧ hurt_timer <= 0` (:255), attack; :321-337 | (a) `tick()` server side (:136-144), (b) `customServerAiStep` :216; inflate(10,8,10) (:242); :240-246 | MATCH | |
 | filter order | :275-319: null/self/dead → ignore(:285) → sight(:288) → Creeper false(:291) → EnderReaper(:294) → Triffid(:297) → TerribleTerror(:300) → LurkingTerror(:303) → PitchBlack(:306) → Dragon(:309) → player creative false(:312-317) → true(:318) | :248-255: null/self/dead → ignore(:250) → EntityTriffid(:251) → sight(:252) → player → !invulnerable(:253) → `!(target instanceof Monster)`(:254) | MATCH | the Triffid/sight swap is between side-effect-free steps; the prey-set change is in the allies row |
-| PlayNicely gate | :322-324 → null | none (:240-246) | DIVERGES | missing gate |
+| PlayNicely gate | :322-324 → null | none (:240-246) | FIXED (ENT-S-115, wave 1) — was DIVERGES | missing gate |
 | creative gate | `isCreativeMode` :314 | `invulnerable` :253 | FIX IN FLIGHT (ENT-S-109) | |
 | PEACEFUL gate | none (EntityMob :40-41) | none (`Monster` :31) | N/A | P3 |
 | allies / species exclusions | Creeper, EnderReaper, Triffid, TerribleTerror, LurkingTerror, PitchBlack, Dragon (:291-311); every other EntityMob (zombies, skeletons, OreSpawn Monsters) is prey | EntityTriffid + a blanket `!Monster` (:254): all Monsters spared, the Dragon (a tameable, not a Monster) no longer spared | DIVERGES | exclusion list: blanket Monster exclusion vs the named seven; Dragon hunted |
@@ -1091,7 +1091,7 @@ Orig-file alphabetical order (case-insensitive); the three AI helper blocks last
 |---|---|---|---|---|
 | scan set | `EntityLivingBase.class`, bb.expand(12,7,12) (:514), `updateAITasks` :404 behind `nextInt(5)==0` (:413), current target kept if alive (:414-418) else scan (:419-421); :510-526 | `NearestAttackableTargetGoal<>(this, Player.class, true, !isIgnoreable)` (:73-74), FOLLOW_RANGE 32 (:84), P1; `HurtByTargetGoal` (:70) | FIX IN FLIGHT (ENT-S-108) | |
 | filter order | :464-508: null/self/dead → ignore(:474) → sight(:477) → Hydrolisc(:480) → EnderReaper(:483) → EnderKnight(:486) → Enderman(:489) → Creeper(:492) → TrooperBug(:495) → SpitBug(:498) → player creative false(:501-506) → true(:507) | predicate + vanilla chain (P1) | FIX IN FLIGHT (ENT-S-108) | |
-| PlayNicely gate | :511-513 → null | none | DIVERGES | missing gate |
+| PlayNicely gate | :511-513 → null | none | FIXED (ENT-S-108; pinned by ENT-S-115, wave 1) — gate at EntityTrooperBug.java:295 — was DIVERGES | missing gate |
 | creative gate | `isCreativeMode` :503 | vanilla `invulnerable` (P1) | DIVERGES | missing gate (creative mapping); not in ENT-S-109's list |
 | PEACEFUL gate | none (EntityMob :48-49) | none (`Monster` :32) | N/A | P3 |
 | allies / species exclusions | Hydrolisc, EnderReaper, EnderKnight, Enderman, Creeper, TrooperBug, SpitBug (:480-500) | none (moot for Player.class) | FIX IN FLIGHT (ENT-S-108) | |
@@ -1119,7 +1119,7 @@ Orig-file alphabetical order (case-insensitive); the three AI helper blocks last
 |---|---|---|---|---|
 | scan set | `EntityLivingBase.class`, bb.expand(16,3,16) (:276), `updateAITasks` :190 behind `nextInt(8)==0` (:195); :272-288 | `getNearestPlayer(this, 16.0)` (:150) when `getTarget()==null` (:148-149), `customServerAiStep` :143 behind `nextInt(8)==0` (:147) | FIX IN FLIGHT (ENT-S-108) | listed in ENT-S-108 |
 | filter order | :220-270: null/self/dead → ignore(:230) → sight(:233) → Vortex(:236) → Rotator(:239) → Peacock(:242) → CrystalCow(:245) → Irukandji(:248) → Skate(:251) → Whale(:254) → Flounder(:257) → Urchin(:260) → player creative false(:263-268) → true(:269) | :154 `!isIgnoreable && !instabuild`; no sight | FIX IN FLIGHT (ENT-S-108) | the sight gate (:233) is part of the chain the rebuild restores |
-| PlayNicely gate | :273-275 → null | none | DIVERGES | missing gate |
+| PlayNicely gate | :273-275 → null | none | FIXED (ENT-S-108; pinned by ENT-S-115, wave 1) — gate at Urchin.java:236 — was DIVERGES | missing gate |
 | creative gate | `isCreativeMode` :265 | `instabuild` :154 | MATCH | P6 |
 | PEACEFUL gate | none (EntityMob :41-42) | none (`Monster` :33) | N/A | P3 |
 | allies / species exclusions | Vortex, Rotator, Peacock, CrystalCow, Irukandji, Skate, Whale, Flounder, Urchin (:236-262) | none (moot for players) | FIX IN FLIGHT (ENT-S-108) | |
@@ -1162,7 +1162,7 @@ Users in orig: Boyfriend.java:138 (EntityCreeper.class, 20.0f, chance 0, sight, 
 |---|---|---|---|---|
 | scan set | `selectEntitiesWithinAABB(targetClass, bbox.expand(targetDistance, 4.0, targetDistance), selector)` MyEntityAINearestAttackableTarget.java:56 — `targetDistance` is the per-goal ctor value (:36), not follow range; gates :44-52 (tameable must be tamed; Girlfriend not sitting) and :53 `chance > 0 && nextInt(100) > chance` (percent, 0 = every tick) | VAN-NAT `Monster.class`: box `inflate(FOLLOW_RANGE, 4, FOLLOW_RANGE)` (Boyfriend/Girlfriend set no FOLLOW_RANGE → `Mob.createMobAttributes` default 16), 1-in-10 roll; the dedicated 20-block Creeper goal has no counterpart; JealousyTargetGoal keeps the per-goal distance via `getFollowDistance()` override (`ai/JealousyTargetGoal.java:34-37`) and adds the tame / sitting / owner gates dynamically (:39-45) | DIVERGES | scan set: per-goal 20 (creepers) / 15 (IMob) → 16 for both; every tick → 1-in-10; Creeper priority goal dropped |
 | filter order | sorted list, first passing `isSuitableTarget(e,false)` = MyEntityAITarget.java:78-129: null/self/dead; tamed owner: tamed target → false, owner → false (:88-95); **Player → `valentines_day != 0`** (:96-98); EntityPigZombie → false (:99); EntityEnderman → false (:102); **Mothra → true before sight** (:105); sight (:108); EntityCreeper → true (:111); EntityGhast → true (:114); nearbyOnly path check (:117-127); true | VAN-TC (self, spectator/alive, `canAttack`: PEACEFUL-player rule + `!invulnerable`, `canAttackType` no Ghast, allied/owner via `TamableAnimal.canAttack` + `isAlliedTo`, range × visibility, sight) with no selector on the Monster goal; JealousyTargetGoal selector = rival not tamed (`ai/JealousyTargetGoal.java:28-29`) | DIVERGES | filter order: PigZombie/Enderman exclusions gone (both are Monsters → now prey); Mothra grant gone (port Mothra is an EntityButterfly, not a Monster); Ghast grant reversed (`canAttackType`); nearbyOnly reachability dropped (`mustReach=false`); the valentine player rule moved to `ValentineTargetGoal` (below) |
-| PlayNicely gate | construction-time `PlayNicely == 0` on every registration (Boyfriend.java:137-147, Girlfriend.java:163-173) | none on the Monster goal (Boyfriend.java:144, Girlfriend.java:208); dynamic `PLAY_NICELY.get()` inside JealousyTargetGoal only (`ai/JealousyTargetGoal.java:41`) | DIVERGES | missing gate on the Monster goal |
+| PlayNicely gate | construction-time `PlayNicely == 0` on every registration (Boyfriend.java:137-147, Girlfriend.java:163-173) | none on the Monster goal (Boyfriend.java:144, Girlfriend.java:208); dynamic `PLAY_NICELY.get()` inside JealousyTargetGoal only (`ai/JealousyTargetGoal.java:41`) | FIXED (ENT-S-115, wave 1) — the Monster goal's live canUse; the Creeper tasks have no port goal (scan-set row) — was DIVERGES | missing gate on the Monster goal |
 | creative gate | none in the class (creative players would be prey on Valentine's day; players otherwise refused by :96-98) | VAN-TC `invulnerable` — moot for `Monster.class` | N/A | |
 | PEACEFUL gate | none (IMob prey despawn) | VAN-TC refuses players only; Monsters despawn | N/A | |
 | allies / species exclusions | tamed target, owner (:88-95); PigZombie, Enderman (:99-104) | owner (`TamableAnimal.canAttack`), owner's team (`isAlliedTo`) | DIVERGES (folded into filter order) | |
@@ -1603,14 +1603,14 @@ And the one folded row: MyEntityAINearestAttackableTarget "allies / species excl
 | Irukandji | target set / release | Irukandji.java:299-309 — stored target preferred while alive, cleared when dead (:303); pick never stored | Irukandji.java:134-152 — the pick IS stored (`setTarget` :139); a dead stored target is never cleared (:142 → :151-152 `setAttacking(0)`) | a dead scan target sticks — re-scanning stops until the jelly is next hurt |
 | Kyuubi | target set / release | Kyuubi.java:157-159 — `func_70604_c(null)` 1-in-200 | EntityKyuubi.java:106-108 — `setTarget(null)` | clears the attack target where orig cleared the revenge target |
 | LeafMonster | target set / release | LeafMonster.java:160-162 — `setRevengeTarget(null)` 1-in-100 | EntityLeafMonster.java:122-124 — `setTarget(null)` | orig forgets who hurt it, the port drops the current target; inert in both (no consumer) |
-| Nastysaurus | target set / release | Nastysaurus.java:219-225 — `rt` dropped dead / 1-in-250, KEPT through sight loss, re-evaluated every hunt tick | BugMeleeAttackGoal.java:123-129 (1-in-250 per tick); TargetGoal (beyond 40 / unseen 60); `HurtByTargetGoal` :69 (300) | the port drops the hunt target after 60 unseen ticks and the revenge target after 300; orig had no memory window |
+| Nastysaurus | target set / release | Nastysaurus.java:219-225 — `rt` dropped dead / 1-in-250, KEPT through sight loss, re-evaluated every hunt tick | BugMeleeAttackGoal.java:123-129 (1-in-250 per tick); TargetGoal (beyond 40 / unseen 60); `HurtByTargetGoal` :69 (300) | the port drops the hunt target after 60 unseen ticks and the revenge target after 300; orig had no memory window PlayNicely residual carried from ENT-S-115 (wave 1): under the flag the goal keeps consuming a stored revenge target every tick, which orig's pass-local blanking stood down — the transcription target is the melee goal's tick (per-preset stand-down), ruled here. |
 | Peacock | target set / release | Peacock.java:65 — vanilla `EntityAINearestAttackableTarget(Termite.class, chance 6, sight)`, an attackTarget no goal consumed | Peacock.java:57-65 — no target goals | the port drops the orig Termite target goal (inert in orig — nothing read the attackTarget) |
-| Pointysaurus | target set / release | Pointysaurus.java:189-197 — `rt` dropped dead / 1-in-250 / not visible this tick | entity/ai/DinosaurMeleeAttackGoal.java:36 (forget 1-in-250 per tick); TargetGoal (beyond 24 / unseen 60); `HurtByTargetGoal` :59 (300); `PointysaurusStareGoal` :78-83 | release rule (as Nastysaurus) |
+| Pointysaurus | target set / release | Pointysaurus.java:189-197 — `rt` dropped dead / 1-in-250 / not visible this tick | entity/ai/DinosaurMeleeAttackGoal.java:36 (forget 1-in-250 per tick); TargetGoal (beyond 24 / unseen 60); `HurtByTargetGoal` :59 (300); `PointysaurusStareGoal` :78-83 | release rule (as Nastysaurus) PlayNicely residual carried from ENT-S-115 (wave 1): under the flag the goal keeps consuming a stored revenge target every tick, which orig's pass-local blanking stood down — the transcription target is the melee goal's tick (per-preset stand-down), ruled here. |
 | Rat | target set / release | Rat.java:156-158 — `setRevengeTarget(null)` 1-in-200 | EntityRat.java:153-155 — `setTarget(null)` | as LeafMonster; inert in both |
 | Robot2 | target set / release | Robot2.java:57 — `EntityAIHurtByTarget(this, false)`: no call for help, own kind not ignored; :338-351 | Robot2.java:98 — `HurtByTargetGoal(this, Robot2.class).setAlertOthers()` | port-only same-kind alert (every Robot2 within FOLLOW_RANGE × 10 with no target) and same-kind damage exemption |
 | Scorpion | target set / release | Scorpion.java:189-191 — each 1-in-6 pass rescans; an empty scan → `setAttacking(0)` | EntityScorpion.java:144 — `setTarget(prey)`, an empty scan does not clear it; BugMeleeAttackGoal forget 0 (:60), `canContinueToUse` :90-96 | a target that leaves the 8/3/8 box or line of sight is chased until dead |
 | SeaMonster | target set / release | SeaMonster.java:522-526 — `getAttackTarget()` kept while alive, else nulled; the scan result never stored | SeaMonster.java:177-180 — the nearest player stored with `setTarget`, kept while alive | the port persists the found player until death; orig re-validated every pass |
-| SeaViper | target set / release | SeaViper.java:539-543 | SeaViper.java:96 (goal) + entity/ai/SeaViperBiteGoal.java:16-31 (forget 0, DinosaurMeleeAttackGoal.java:44) | goal-set target pursued until dead |
+| SeaViper | target set / release | SeaViper.java:539-543 | SeaViper.java:96 (goal) + entity/ai/SeaViperBiteGoal.java:16-31 (forget 0, DinosaurMeleeAttackGoal.java:44) | goal-set target pursued until dead PlayNicely residual carried from ENT-S-115 (wave 1): under the flag the goal keeps consuming a stored revenge target every tick, which orig's pass-local blanking stood down — the transcription target is the melee goal's tick (per-preset stand-down), ruled here. |
 | Skate | target set / release | Skate.java:291-295 | Skate.java:127-130 — `setTarget`, kept while alive | release rule |
 | SpitBug | target set / release | SpitBug.java:268-272 | entity/ai/SpitBugAcidAttackGoal.java:33-94 (forget 0, :71) | pursued until dead |
 | TRex | target set / release | TRex.java:189-195 — `rt` released dead / 1-in-200 / out of sight / PlayNicely | entity/ai/DinosaurMeleeAttackGoal.java:34 (Presets.trex forget 0); `HurtByTargetGoal` :55 | no 1-in-200 forgiveness, no LoS re-check |
@@ -1765,3 +1765,13 @@ ENT-S-111 (IrukandjiArrow push) has no ledger row; its residual (count + ding) i
 ### 4.13 Numbers
 
 No ENT-S numbers are assigned here. The owner rules on the batches T1–T10 (T3 in three parts); numbers follow the rulings, one record per batch or per batch member as the owner decides, with the refuter counts above.
+
+
+## Wave log
+
+Row statuses above are updated per wave; the §3 summary tables keep the ledger's
+initial (2026-09-04, pre-wave) counts as the baseline for the batch rulings.
+
+- Wave 1, batch T7 → ENT-S-114: 5 row(s) marked FIXED; skipped: MyValentineTarget (Girlfriend). The Cephadrome row's DIVERGES half (:488) closed by ENT-S-114; its FIX IN FLIGHT half is ENT-S-113's :516 head, landed the same day. MyValentineTarget's port-only gate goes with the T9 split.
+
+- Wave 1, batch T1 → ENT-S-115: 44 row(s) marked FIXED. Pointysaurus :186-188 (the rt-blanking half) deferred to T5: no pass-local in the port, the retaliation pass is the shared melee goal. Seven rows were already gated at HEAD by ENT-S-108 and are pinned, not re-edited. Refuted once, two blocking defects fixed (Nastysaurus / TRex scan-pick blanking, Hammerhead fallback read).

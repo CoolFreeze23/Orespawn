@@ -5037,3 +5037,40 @@ failure messages (removal reason, health, difficulty, player count, nearest-play
 Refuters this batch, all on the session model: lane K two on ENT-S-108 (orig fidelity of the nine scan transcriptions; tests and compile; upheld, the slot hardening and the Leon-row Zombie control applied after), lane L one each on ENT-S-109 and ENT-S-113 (upheld), lane M one each on ENT-S-110, ENT-S-111 and ENT-S-112 (upheld; the Irukandji gate widened to orig's whole block after refutation, as its refuter proposed), lane N one on MOD-031 (upheld; the gate wording corrected), and one spot-check on the targeting survey ledger (one status corrected: EnderReaper's release rule is a divergence; counts propagated).
 
 GATE (rulings5): 2026-09-04 07:54-07:56, the fourth run of this batch (the first three were red on two default-batch tests, bug003_rat_ai_ticks_and_despawns and spider_hangout_village_i164, diagnosed and fixed in the harness, see HARNESS above): g1BenchmarkVerify green (no drift); build green (asset audit 0 errors / 0 advisories / 4 acknowledged; G1 PARITY PASS 2 + 11 models, checked-in proofs verified; referenceGeometry; referenceRenderers PASS 120 / NOT_APPLICABLE 13; queenPartPlacementProbe); runGameTestServer: All 517 required tests passed (420 + targetScanParity 45 + creativeMappingParity 30 generated + cephadromeGates 6 + leonTargeting 6 + projectileTypeParity 1 + pitchBlackAllies 8 + fireballModernFire 1) in 1m23s; logs rulings5c.build.log / rulings5c.suite.log.
+
+## TARGETING WAVE 1 (2026-09-04) — ledger batches fixed in classic
+
+T7 → ENT-S-114 (PEACEFUL gates, S, one refuter): eleven port sites transcribed at the orig positions with
+the orig polarity and term order — AntRobot's unridden block and its ridden stomp and hunt (orig :105, :617,
+:620), the Cephadrome's hunt roll (:488, a stored revenge target spared on Peaceful), the Dragonfly's hunt
+roll and filter (:142, :198; the held-prey bite carries the branch's gate until T5 makes the pick
+transient), GammaMetroid's caller and filter (:241, :254), PurplePower's call site, its every-AI-tick
+Peaceful discard and its filter (:173, :180-182, :236). `PeacefulGateParityTests` (own batch, 12 generated:
+each site driven once on NORMAL and required to act, then on PEACEFUL flipped inside the test and required
+to stand down, the difficulty restored in a finally). The Girlfriend's Valentine gate (port-only) goes with
+the T9 split. Refuted once, upheld.
+
+T1 → ENT-S-115 (PlayNicely gates, M, one refuter): 41 port sites in 38 files transcribed at the orig positions,
+the flag read live as `OreSpawnConfig.PLAY_NICELY.get()` (the ENT-S-110 / BOSS-017 idiom) — 29 head-of-scan
+gates (the Irukandji's, Skate's and Sea Monster's inline picks gated as a whole, as orig's scan method held the
+stored-target read behind the gate; the Hammerhead's inline scan likewise), the Hammerhead / Nastysaurus / TRex
+revenge blankings on the pass's copy of a foreign occupant with the stored slot kept (a guard on the ENT-S-108
+ownership re-read so a blanked pass claims nothing; the scan's own pick runs on to the gated scan and is cleared as
+at HEAD; the Hammerhead's port-only fallback read of the slot gated with the pass), the five construction-time registrations (Leon, the
+Princes, Boyfriend, Girlfriend) and the five goal-only hunters (CaterKiller, EnderKnight, EnderReaper, SeaViper,
+Pointysaurus) as a live `canUse` predicate on the always-registered vanilla goal, and Godzilla's pass-local nulled
+where BOSS-017 had cleared the stored target. Nine ENT-S-108 scans were already gated at HEAD and are pinned, not
+edited; Pointysaurus :186-188 (no pass-local in the port; the retaliation pass is the shared melee goal) is carried
+to T5 with the single-slot residual (a stored revenge target is still fought under the flag by the Nastysaurus and
+TRex melee goal and the SeaViper's bite goal). `PlayNicelyGateParityTests` (own batch, 56
+generated: flag off → the site acts, flag on → nothing of it, the flag restored in a finally; the Pointysaurus row
+drives a plain `ServerPlayer`, the framework's mock answering `isCreative()` true in every mode — the first gate
+run was red on that control, harness only). Refuted once — two blocking defects fixed as proposed (B1 the
+Nastysaurus / TRex blanking made a scan-owned pick stick under the flag; B2 the Hammerhead's fallback re-admitted the
+blanked grudge), three pins added, eight gaps recorded, ENT-S-116 filed from the sweep. Gate: red once on the
+Pointysaurus control (harness), red once on the TEST-003 pair i127 / i165 with the same code green on the rerun
+(timing; 2 red runs in 33 on record), green with the fixes.
+
+T7: one refuter, upheld (two non-blocking test gaps recorded). T1: one refuter, refuted — B1 (Nastysaurus / TRex: the unconditional blanking of the pass copy made a scan-owned pick stick under the flag; now only a foreign occupant is blanked) and B2 (Hammerhead: the port-only fallback read of the slot re-admitted the blanked grudge; now gated with the pass) fixed as proposed with three added pins; eight non-blocking gaps recorded, ENT-S-116 filed from the sweep.
+
+GATE (wave1): gate wave1f green: build legs (asset audit 0 errors, G1 PARITY 2 + 11 models, referenceGeometry, referenceRenderers, queenPartPlacementProbe) and runGameTestServer 'All 585 required tests passed' (517 + 12 PeacefulGateParityTests + 56 PlayNicelyGateParityTests). Earlier runs: wave1 red on the Pointysaurus control (the framework mock's isCreative() override, harness fixed); wave1b, wave1d, wave1e red only on default-batch TEST-003 tests (i127 acid, i165 chunk wait, i050 vortex drag) with every wave pin green — the i165 flake is the FORCED ticket centred at pad +8 while the checked cell is +10 (a chunk boundary between them in both failing layouts); wave1c green on the pre-refuter code.

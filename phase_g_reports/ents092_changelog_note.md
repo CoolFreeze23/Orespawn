@@ -139,3 +139,15 @@ longer lights the block it hits or scatters fire from its blast, the way ghast a
 ignite of whatever it hits, and the explosion itself are unchanged, and with the rule on nothing changes.
 `fireRespectsMobGriefing = false` under `[modern]` (or `modern.enabled = false`) restores the 1.7.10 fire-always
 behaviour (MOD-031).
+
+Targeting parity, wave 1 (safety first). On Peaceful the Ant Robot (on foot and ridden), the Cephadrome, the
+Dragonfly, wild Gamma Metroids and the Purple Power now stand down exactly as in 1.7.10: the Ant Robot's
+stomps and bites, the Cephadrome's hunt (even against whoever hurt it), the Dragonfly's and the Metroid's prey
+scans and bites are switched off, and a Purple Power vanishes on its first tick in Peaceful; none of these
+despawns on its own, so the port had kept hunting there. With Play Nicely on, OreSpawn's hunters now stop
+picking new fights exactly as in 1.7.10 — the Cephadrome, the dragons and their princes, the Leonopteryx, the
+five robots, the sea monsters, the Boyfriend and Girlfriend and every bug and beast that used to keep hunting
+on a "play nicely" server — reading the flag live, so flipping it takes effect at once; the Hammerhead lets a
+grudge rest for the pass as it did, the Nastysaurus and T. Rex drop a prey they had picked themselves (a
+grudge they hold is still fought, as before), and Mobzilla no longer forgets the target it was chasing every
+time the flag is on.
