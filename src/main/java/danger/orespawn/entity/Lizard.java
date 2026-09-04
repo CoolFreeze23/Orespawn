@@ -139,6 +139,9 @@ public class Lizard extends TamableAnimal {
         if (target instanceof Spider) return true;
         if (target instanceof CaveSpider) return true;
         if (target instanceof Chicken) return true;
+        if (target instanceof Lizard && this.random.nextInt(10) == 1 && this.followTime <= 0) { // orig Lizard.java:328-330 — a Lizard candidate is never prey, but on a 1-in-10 (drawn for Lizard candidates alone, after the instanceof) while no follow runs (follow_time <= 0) the filter adopts it as the buddy — a side effect of the filter itself, at orig's position ahead of the final false (ENT-S-141)
+            this.buddy = target;
+        }
         return false;
     }
 

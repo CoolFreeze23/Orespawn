@@ -69,7 +69,8 @@ public class EntityButterfly extends AmbientCreature {
         // orig EntityButterfly.java:145-181 — the butterfly preset of AmbientFlightGoal plus the Islands-dimension
         // vampire hunt 1.7.10 ran in the else-branch of its retarget test (:161-169): ButterflyIslandsHuntGoal is
         // that goal with the hunt in the same place. Subclasses inherit this registration as they inherited orig's
-        // updateAITasks through super (Mothra.java:169); the Luna Moth registers its own flight goal. ENT-S-117.
+        // updateAITasks through super (Mothra.java:169); the Luna Moth registers its own flight goal, a subclass of this one
+        // since ENT-S-141 (orig EntityLunaMoth.java:122's super.updateAITasks()). ENT-S-117.
         this.goalSelector.addGoal(8, new ButterflyIslandsHuntGoal(this));
     }
 

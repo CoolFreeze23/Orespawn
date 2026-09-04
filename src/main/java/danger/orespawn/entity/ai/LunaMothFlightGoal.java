@@ -1,14 +1,17 @@
 package danger.orespawn.entity.ai;
 
+import danger.orespawn.entity.EntityLunaMoth;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.entity.Mob;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 
 /**
  * Luna Moth flight behaviour.
  *
- * <p>Extends {@link AmbientFlightGoal} with the iconic 1.7.10 "moths are
+ * <p>Extends {@link ButterflyIslandsHuntGoal} — the butterfly flight with the Islands vampire hunt in the retarget's
+ * else branch, which orig EntityLunaMoth.java:117-122 inherited through {@code super.updateAITasks()} (the moth hunted
+ * as a type-1 butterfly does, orig EntityButterfly.java:161-169, beside its own torch loop); the moth's own preset
+ * drives the flight and the torch-seeking retarget below stands (ENT-S-141) — with the iconic 1.7.10 "moths are
  * attracted to torches" behaviour. When the mob is under cover (sky not
  * visible) there is a 1-in-10 chance per retarget to expand a cube search
  * up to 15 blocks and path toward the nearest {@link Blocks#TORCH} or
@@ -21,15 +24,15 @@ import net.minecraft.world.level.block.state.BlockState;
  * any torch is found in the current shell (see 1.7.10 source
  * {@code EntityLunaMoth.java:scanForTorches}).
  */
-public class LunaMothFlightGoal extends AmbientFlightGoal {
+public class LunaMothFlightGoal extends ButterflyIslandsHuntGoal {
     private static final int TORCH_SCAN_RARE_CHANCE = 10;
     private static final int TORCH_SCAN_MIN_RADIUS = 2;
     private static final int TORCH_SCAN_MAX_RADIUS = 15;
     private static final int TORCH_SCAN_SKIP_AFTER = 6;
     private static final int NO_MATCH = Integer.MAX_VALUE;
 
-    public LunaMothFlightGoal(Mob mob) {
-        super(mob, Params.lunaMoth());
+    public LunaMothFlightGoal(EntityLunaMoth moth) {
+        super(moth, Params.lunaMoth()); // the butterfly hunt goal over the moth's preset (ENT-S-141)
     }
 
     @Override
