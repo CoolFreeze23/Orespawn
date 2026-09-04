@@ -1,6 +1,7 @@
 package danger.orespawn.entity;
 
 import danger.orespawn.MobStats;
+import danger.orespawn.util.OreSpawnSight;
 import danger.orespawn.OreSpawnConfig;
 
 import net.minecraft.core.particles.ParticleTypes;
@@ -15,6 +16,7 @@ import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
@@ -24,9 +26,13 @@ import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
+import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.phys.Vec3;
 
 public class EnderKnight extends Monster {
     private static final EntityDataAccessor<Boolean> DATA_SCREAMING =
@@ -50,18 +56,43 @@ public class EnderKnight extends Monster {
         // revenge goal holds by that rule (holdsLegacyTarget) (ENT-S-129)
         this.targetSelector.addGoal(1, new HurtByTargetGoal(this) {
             @Override
+            protected boolean canAttack(LivingEntity t, TargetingConditions c) {
+                // orig td.bq :155-182 — the revenge memory held any living attacker but a creative one (ENT-S-107: instabuild); vanilla's canAttack would also refuse abilities.invulnerable (ENT-S-132, T8 refuter D1)
+                return t != null && t.isAlive() && !t.isSpectator() && !(t instanceof Player p && p.getAbilities().instabuild);
+            }
+
+            @Override
             public boolean canContinueToUse() {
                 return EnderKnight.this.holdsLegacyTarget(); // ENT-S-129
             }
         });
+        // orig EnderKnight.java:67 — unprovoked player targeting runs through the pumpkin-stare test
+        // (shouldAttackPlayer, :83-93), never proximity alone: the Reaper's :67 twin, restored as this goal's
+        // selector (ENT-S-132; the ledger's filter-order row).
         // orig EnderKnight.java:62-64 — findPlayerToAttack (func_70782_k) answers null under PlayNicely (PlayNicely
         // != 0), ahead of the nearest-player pick; the port's pick is this goal, so the flag is read live in its
         // canUse: the goal never starts while PlayNicely is on (ENT-S-115).
+        // orig td.bq :155-182 (V10) — the legacy loop's pick took the nearest player of ANY mode (:65) and the same
+        // tick nulled a creative EntityPlayerMP target, so a creative starer shadowed a farther survival one: the
+        // conditions are rebuilt non-combat (vanilla's forCombat refused abilities.invulnerable — creative, spectator
+        // or hand-toggled — inside canAttack, ahead of the pick) with the stare test as the selector and no creative
+        // term, and the drop sits after the pick in canUse, orig isCreative -> Abilities.instabuild (ENT-S-107); the
+        // goal's class, box and cadence are T3b's (ENT-S-132).
         this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true) {
+            {
+                this.targetConditions = TargetingConditions.forNonCombat().range(this.getFollowDistance())
+                        .selector(e -> e instanceof Player p && EnderKnight.this.shouldAttackPlayer(p)); // orig EnderKnight.java:67 (ENT-S-132)
+            }
+
             @Override
             public boolean canUse() {
                 if (OreSpawnConfig.PLAY_NICELY.get()) return false; // orig EnderKnight.java:62-64 (ENT-S-115)
-                return super.canUse();
+                if (!super.canUse()) return false; // orig EnderKnight.java:65-67 — the nearest starer, of any mode, is the pick
+                if (this.target instanceof Player p && p.getAbilities().instabuild) { // orig td.bq :155-182 — a creative EntityPlayerMP target is nulled the same tick it was picked: nothing is hunted this pass, the farther survival starer stays shadowed (ENT-S-132)
+                    this.target = null;
+                    return false;
+                }
+                return true;
             }
 
             @Override
@@ -75,11 +106,37 @@ public class EnderKnight extends Monster {
      * orig EnderKnight.java — the legacy (non-AI) loop's hold of {@code entityToAttack} ({@code EntityCreature
      * .updateEntityActionState}, the ledger's V10): kept while alive and not creative, at any range and through any
      * sight loss, until the daylight roll (:111-115) nulls it; nulled, it is gone (no re-assert). Both port target
-     * goals hold by this rule; vanilla's {@code canAttack} is the creative / spectator screen. ENT-S-129.
+     * goals hold by this rule (ENT-S-129). The creative drop is td.bq :155-182's {@code isCreative} — orig's
+     * game-type read, {@code Abilities.instabuild} under the ENT-S-107 mapping — not vanilla's {@code canAttack}
+     * ({@code Player.canBeSeenAsEnemy} = {@code !abilities.invulnerable}: creative, spectator or hand-toggled, which
+     * dropped an invulnerable survival player 1.7.10 kept); a spectator, a state 1.7.10 had no counterpart for, stays
+     * refused as at HEAD (ENT-S-132).
      */
     private boolean holdsLegacyTarget() {
         LivingEntity held = this.getTarget();
-        return held != null && held.isAlive() && this.canAttack(held);
+        return held != null && held.isAlive() && !held.isSpectator() // orig td.bq :107-152 isEntityAlive; the spectator screen kept from HEAD's canAttack (no 1.7.10 state)
+                && !(held instanceof Player p && p.getAbilities().instabuild); // orig td.bq :155-182 — EntityPlayerMP && isCreative -> entityToAttack = null (ENT-S-132)
+    }
+
+    // orig EnderKnight.java:83-93 — pumpkin-stare gate, the Reaper's :83-93 twin (EnderReaper.shouldAttackPlayer).
+    // A pumpkin on the head (:84-87; the wearable 1.7.10 pumpkin block maps to the modern carved pumpkin) hides the
+    // player entirely; otherwise the knight attacks only when the player's look vector lines up with the knight's
+    // mid-height (d1 > 1.0 - 0.025/d0, :88-91) and the player has line of sight to it (:92). Same math as vanilla
+    // EnderMan.isLookingAtMe. Restored by ENT-S-132 (the ledger's filter-order row; the :92 ray is the player-receiver
+    // call the ENT-S-121 census recorded as dropped).
+    boolean shouldAttackPlayer(Player player) {
+        ItemStack helmet = player.getItemBySlot(EquipmentSlot.HEAD); // orig :84 armor slot 3
+        if (helmet.is(Blocks.CARVED_PUMPKIN.asItem())) {
+            return false; // orig :85-87
+        }
+        Vec3 look = player.getViewVector(1.0f).normalize(); // orig :88
+        Vec3 toKnight = new Vec3(
+                this.getX() - player.getX(),
+                this.getY() + this.getBbHeight() / 2.0f - player.getEyeY(),
+                this.getZ() - player.getZ()); // orig :89 — bb minY + height/2 vs player eye
+        double dist = toKnight.length(); // orig :90
+        double dot = look.dot(toKnight.normalize()); // orig :91
+        return dot > 1.0 - 0.025 / dist && OreSpawnSight.canSee(player, this); // orig :92 — player.canEntityBeSeen(this): the PLAYER's ray under the 1.7.10 convention, routed by hand because the receiver-gated mixin cannot reach a player receiver (ENT-S-121, refuter B; the Reaper's shape)
     }
 
     public static AttributeSupplier.Builder createAttributes() {

@@ -30,6 +30,7 @@ import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
+import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.GameRules;
@@ -104,7 +105,19 @@ public class EntityCaterKiller extends Monster {
         // orig CaterKiller.java:560-562 — findSomethingToAttack answers null under PlayNicely (PlayNicely != 0). The
         // port's hunt is this goal, so the flag is read live in its canUse: the goal never starts while PlayNicely
         // is on, and starts again the moment it is off (ENT-S-115).
+        // orig CaterKiller.java:546-549 — the player branch's one test is `!capabilities.isCreativeMode` (ENT-S-107:
+        // Abilities.instabuild). The vanilla goal's forCombat conditions read creative as Player.canBeSeenAsEnemy =
+        // !abilities.invulnerable (creative, spectator or hand-toggled) inside canAttack, so the conditions are rebuilt
+        // non-combat with orig's creative test as the selector — the same follow range, invisibility, alive /
+        // non-spectator and sight screens; forCombat's other terms have no orig line here (the Peaceful player
+        // refusal: the engine despawns this Monster on Peaceful; canAttackType; isAlliedTo). The goal's class, box
+        // and cadence are T3b's; the vanilla hold (TargetGoal.canContinueToUse -> canAttack) is untouched (ENT-S-132).
         this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true) {
+            {
+                this.targetConditions = TargetingConditions.forNonCombat().range(this.getFollowDistance())
+                        .selector(e -> !(e instanceof Player p && p.getAbilities().instabuild)); // orig CaterKiller.java:548 !isCreativeMode (ENT-S-132)
+            }
+
             @Override
             public boolean canUse() {
                 if (OreSpawnConfig.PLAY_NICELY.get()) return false; // orig CaterKiller.java:560-562 (ENT-S-115)
