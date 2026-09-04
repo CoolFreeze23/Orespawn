@@ -7,6 +7,7 @@ import danger.orespawn.ModEntities;
 import danger.orespawn.ModItems;
 import danger.orespawn.OreSpawnConfig;
 import danger.orespawn.OreSpawnMod;
+import danger.orespawn.entity.ai.SpitBugAcidAttackGoal;
 import danger.orespawn.world.DimensionStyle;
 import danger.orespawn.world.OreSpawnChunkGenerator;
 import danger.orespawn.world.structure.LegacyDungeonPiece;
@@ -32,7 +33,14 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.goal.RangedAttackGoal;
+import net.minecraft.world.entity.ai.goal.RangedBowAttackGoal;
+import net.minecraft.world.entity.ai.goal.RangedCrossbowAttackGoal;
+import net.minecraft.world.entity.ai.goal.WrappedGoal;
+import net.minecraft.world.entity.monster.RangedAttackMob;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.SpawnEggItem;
 import net.minecraft.world.item.context.UseOnContext;
@@ -68,6 +76,7 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
@@ -1071,14 +1080,22 @@ public class StructureTestsA {
      * with the wrong bug.</p>
      *
      * <p>Behaviour half, in-template: TrooperBug's jump seam is the public
-     * {@code jumpFromGround()} override (EntityTrooperBug.java:117-131) —
+     * {@code jumpFromGround()} override (EntityTrooperBug.java:147-162) —
      * +1.15 vertical impulse and +1.5 position raise
-     * (EntityTrooperBug.java:40-41) — asserted exactly. "No spit attack": the
+     * (EntityTrooperBug.java:54-55) — asserted exactly. "No spit attack": the
      * TrooperBug's goal table has no ranged goal at all (EntityTrooperBug.java:
-     * 51-62 — leap/wander/look only; the SpitBug's acid burst lives in
-     * SpitBugAcidAttackGoal, EntitySpitBug.java:51-55), asserted as a bounded
-     * 200-tick negative: with a live target set every tick, no orespawn:acid
-     * projectile may ever appear in the test bounds.</p>
+     * 82-97 — float/leap/wander/look only; the SpitBug's acid burst lives in
+     * SpitBugAcidAttackGoal, EntitySpitBug.java:86), pinned structurally (no
+     * SpitBugAcidAttackGoal / RangedAttackGoal / RangedBowAttackGoal /
+     * RangedCrossbowAttackGoal in the goal table, not a RangedAttackMob) and
+     * as a bounded 200-tick negative scoped to the trooper: with a live target
+     * set every tick, no orespawn:acid projectile OWNED BY THE TROOPER may
+     * ever appear in the test bounds. The trooper's own 1-in-5 x 1-in-30 Spit
+     * Bug summon (EntityTrooperBug.java:237-249, orig TrooperBug.java:441-443)
+     * is culled every tick before it can act, and the cow is kept alive at max
+     * health 1000 so the target never drops (F1, TEST-004, harness slice
+     * 2026-09-04 §2: the unscoped "no acid at all" negative failed 3/37 runs
+     * ≈ 8% on the minion's acid).</p>
      */
     @GameTest(template = "empty_large", timeoutTicks = 400)
     public void i127_tower_centre_rooms_spawn_jumpy_bug(GameTestHelper helper) {
@@ -1120,6 +1137,12 @@ public class StructureTestsA {
         }
         var bug = helper.spawn(ModEntities.ENTITY_TROOPER_BUG.get(), new BlockPos(23, 2, 23));
         var cow = helper.spawn(EntityType.COW, new BlockPos(27, 2, 23));
+        // F1 (TEST-004): the cow outlives the whole 200-tick window — at 10 HP
+        // the trooper's first landed swing (ATK 20) killed it, dropping the
+        // target and with it the cadence the window is meant to exercise.
+        // Max health 1000, the EntityLogicTestsA.setMaxHealth idiom (:118-121).
+        Objects.requireNonNull(cow.getAttribute(Attributes.MAX_HEALTH)).setBaseValue(1000.0);
+        cow.setHealth(1000.0f);
 
         // Jump mechanism: exact impulse/raise per EntityTrooperBug.java:40-41,117-131.
         double y0 = bug.getY();
@@ -1132,15 +1155,61 @@ public class StructureTestsA {
                 "jumpFromGround should raise the bug 1.5 blocks (EntityTrooperBug.java:41), got "
                         + (bug.getY() - y0));
 
-        // Negative: 200 ticks with a live target and never an acid projectile
-        // (TrooperBug registers no ranged goal, EntityTrooperBug.java:51-62).
+        // Structural pin (F1): the trooper's own goal table registers no ranged
+        // goal — EntityTrooperBug.java:82-97 is float / leap / wander / look
+        // only. Excluded by class: SpitBugAcidAttackGoal (the Spit Bug's acid
+        // burst, EntitySpitBug.java:86, fires Acid at
+        // SpitBugAcidAttackGoal.java:72-85) and vanilla's RangedAttackGoal,
+        // RangedBowAttackGoal and RangedCrossbowAttackGoal; the trooper is not
+        // a RangedAttackMob either (EntityTrooperBug.java:37 extends Monster).
+        helper.assertTrue(!(bug instanceof RangedAttackMob),
+                "TrooperBug must not be a RangedAttackMob (EntityTrooperBug.java:37)");
+        for (WrappedGoal wrapped : bug.goalSelector.getAvailableGoals()) {
+            var goal = wrapped.getGoal();
+            helper.assertTrue(!(goal instanceof SpitBugAcidAttackGoal)
+                            && !(goal instanceof RangedAttackGoal)
+                            && !(goal instanceof RangedBowAttackGoal)
+                            && !(goal instanceof RangedCrossbowAttackGoal),
+                    "TrooperBug registers no ranged goal (EntityTrooperBug.java:82-97), found "
+                            + goal.getClass().getName());
+        }
+
+        // Negative (F1, scoped to the trooper): 200 ticks with a live target and
+        // never an acid projectile OWNED BY THE TROOPER. The trooper itself
+        // summons a live Spit Bug on a 1-in-5 x 1-in-30 roll per tick while it
+        // holds a target (EntityTrooperBug.java:237-249, orig
+        // TrooperBug.java:441-443); that minion's SpitBugAcidAttackGoal fires
+        // Acid of its own, which the unscoped "no acid at all" negative took
+        // for the trooper's — 3/37 runs ≈ 8% (harness slice 2026-09-04 §2).
+        // Each tick the Spit Bugs in bounds are culled on the tick they appear,
+        // before they can acquire a target and start a burst (target scan on a
+        // 1-in-5 AI tick, burst start 1-in-7, then one Acid per 1-in-5 cadence tick (BugMeleeAttackGoal.java:159) —
+        // SpitBugAcidAttackGoal.java:55-63), and every Acid still in bounds
+        // must belong to someone other than the trooper. The summon is a
+        // 1/150-per-tick roll — P(none in 200 ticks) ≈ 26% — so the culled
+        // count is logged, not asserted.
+        int[] culled = {0};
         helper.onEachTick(() -> {
             if (bug.isAlive() && cow.isAlive()) {
                 bug.setTarget(cow);
             }
-            helper.assertEntityNotPresent(ModEntities.ACID.get());
+            List<? extends Mob> minions = helper.getEntities(ModEntities.ENTITY_SPIT_BUG.get());
+            minions.forEach(Mob::discard);
+            culled[0] += minions.size();
+            List<? extends Projectile> acids = helper.getEntities(ModEntities.ACID.get());
+            for (Projectile acid : acids) {
+                helper.assertTrue(acid.getOwner() != bug,
+                        "TrooperBug owns an acid projectile at tick " + helper.getTick()
+                                + " (no ranged goal, EntityTrooperBug.java:82-97); acid owners in bounds="
+                                + acids.stream().map(a -> String.valueOf(a.getOwner())).toList()
+                                + ", spitBugsInBounds=" + minions.size() + " (culled so far " + culled[0] + ")"
+                                + ", cowAlive=" + cow.isAlive() + ", cowHealth=" + cow.getHealth());
+            }
         });
-        helper.runAfterDelay(200, helper::succeed);
+        helper.runAfterDelay(200, () -> {
+            OreSpawnMod.LOGGER.info("[i127 F1] Spit Bug minions culled over the 200-tick window: {}", culled[0]);
+            helper.succeed();
+        });
     }
 
     // =====================================================================
