@@ -8095,7 +8095,7 @@ keeps BUG-036. Commit 4ea395c's message retains the old number.)*
   | # | species | orig site (1.7.10) | port site AFTER | note |
   |---|---|---|---|---|
   | 1 | Dragon | Dragon.java:116 | Dragon.registerGoals :157 `NearestAttackableTargetGoal<>(this, Mob.class, 0, true, false, e -> e instanceof Enemy)` | randomInterval 0 (targetChance 0), `getFollowDistance() → 16` and the live gate as ENT-S-117 left them; the ENT-S-117 comment block's "Monster is the port's IMob" sentence rewritten (:152) — the Dragon's channel (a) updated per the ruling |
-  | 2 | Leon | Leon.java:93 | EntityLeon.registerGoals :166 `(this, Mob.class, 10, true, false, e -> e instanceof Enemy && (!this.isTame() \|\| this.getTarget() == null))` | the port-only tame rule (T9) and'ed behind the Enemy test |
+  | 2 | Leon | Leon.java:93 | EntityLeon.registerGoals :166 (now :179-182; the tame term modern-only since the MOD-033 extension of 2026-09-05) `(this, Mob.class, 10, true, false, e -> e instanceof Enemy && (!this.isTame() \|\| this.getTarget() == null))` | the port-only tame rule (T9) and'ed behind the Enemy test |
   | 3 | ThePrinceAdult | ThePrinceAdult.java:113 | ThePrinceAdult.registerGoals :151 `(this, Mob.class, 10, true, false, e -> e instanceof Enemy)` | 10 / false are the 3-arg constructor's own randomInterval / mustReach (`(Mob, Class, Z)` → `this(mob, type, 10, mustSee, false, null)`, bytecode) — nothing else moved |
   | 4 | ThePrinceTeen | ThePrinceTeen.java:117 | ThePrinceTeen.registerGoals :162, same | same |
   | 5 | Boyfriend | Boyfriend.java:141 | Boyfriend.registerGoals :150, same | `monster.Monster` (now unused) → `monster.Enemy`, `entity.Mob` imported |
@@ -8222,7 +8222,7 @@ keeps BUG-036. Commit 4ea395c's message retains the old number.)*
   **MOD-036** — "kept in both modes on the owner's safety ruling; the 1.7.10 rampage hunted Peaceful and creative
   players". Not gated in this batch: Leon's tame predicate on its hunt goal (EntityLeon.java:174, the ENT-S-124 hunk
   under refutation) — inside MOD-033's scope, to be gated under the same key once the refutation closes (FLAGGED;
-  effect monsters-only). Safety: no removal or classic gating breaks a mob or makes one unsafe — a tamed pet that no
+  effect monsters-only) — gated 2026-09-05 by the MOD-033 extension (EntityLeon.java:165-182). Safety: no removal or classic gating breaks a mob or makes one unsafe — a tamed pet that no
   longer defends its owner in classic is the 1.7.10 behaviour and the owner goals never targeted the owner; Godzilla's
   classic prey set is 1.7.10's; the Pointysaurus / Cryolophosaurus gatings only lower aggression against survival
   players / attackers; the Mantis removal changes nothing observable. Records: MOD-032..036 in MODERNIZATION_NOTES.md;
@@ -8438,6 +8438,26 @@ keeps BUG-036. Commit 4ea395c's message retains the old number.)*
   cleared the revenge memory (`setRevengeTarget(null)`), fixed to `setLastHurtByMob(null)` — the EntityCannonFodder shape;
   green on the rerun.
 
+### ENT-S-130 — Two companions' target-goal priorities inverted against 1.7.10: Leon's revenge goal pre-empts its hunt (orig hunt @1, HurtBy @2 → port HurtBy @3, hunt @4) and the Girlfriend's hunt trails her Jealousy goals (orig hunt @3 → port @5) (REPORT, 2026-09-05; raised by the MOD-033 extension refuter)
+
+- **Evidence:** both engines let a strictly lower-numbered target goal pre-empt a running higher-numbered one and block it
+  while it runs (1.7.10 `EntityAITasks.canUse`, mutex 1 on every `EntityAITarget`; 1.21.1 `GoalSelector.tick` →
+  `WrappedGoal.canBeReplacedBy` = interruptable && `other.priority < this.priority` on the shared TARGET flag; equal
+  priority never pre-empts in either). Leon: orig Leon.java:92-95 registers the IMob hunt @1 and `EntityAIHurtByTarget`
+  @2 — a monster in sight displaces the revenge target; the port (EntityLeon.java:165-182 after the MOD-033 extension)
+  registers HurtBy @3 and the hunt @4 — the attacker holds and blocks the hunt until dead, out of the 40-block follow
+  range or unseen 60 ticks; observable when the attacker is not the nearest monster or is no monster at all; the
+  inversion dates from commit 27b66a39 (the owner pair laid @1/@2, HurtBy / hunt pushed to 3/4). Girlfriend: orig
+  Girlfriend.java:161-174 has the hunt @3 ahead of the Jealousy tasks @4/@5 (a monster within reach beats an untamed
+  rival near the owner); the port (Girlfriend.java:218-224) has Jealousy @4 pre-empting the hunt @5 and the two @5
+  goals tied (first started holds) — commit d65b9b1 (Phase D4, 2026-07-02) inserted the Valentine goals @1/@2, moved
+  the owner pair to @3/@4 and the hunt from @3 to @5; with the pair modern-only since 2026-09-05, classic keeps the hole
+  and the inversion. Precedent: ENT-S-117 row 7 moved the Dragon's HurtBy from 1 to 2 under the same rule. No MOD record.
+- **Resolution:** REPORT — for the owner's ruling as parity bugs in classic: Leon's hunt ahead of its HurtBy at orig's
+  order (hunt @3, HurtBy @4 in classic; the modern pair's place the owner's choice); the Girlfriend's hunt @3 in both
+  modes, the modern pair repositioned at the owner's choice; the `mod033_companions_defend_owner_*` expected selectors
+  and the IMob pins updated with it. Rides with a targeting follow-up (T5b or wave 3).
+
 ### TEST-003 — Config-flipping gametests in the concurrent default batch
 
 - **Impact:** MEDIUM (suite reliability) — boss005/boss012 flip a global
@@ -8526,3 +8546,8 @@ keeps BUG-036. Commit 4ea395c's message retains the old number.)*
   joins, the hand-off flag set before the removal, a javadoc sentence on listener order), the rest recorded: a
   throwing restore would abort the ticker loop (kept loud on purpose), the tempt player stays a CREATIVE list
   member for its own tempt phase by design, F5 stays open.
+- **i127 (F1, applied 2026-09-05 under the 2026-09-04 ruling; refuted once, upheld):** the "no acid at all" negative was catching the
+  trooper's own summoned Spit Bug's acid (EntityTrooperBug.java:237-249 → SpitBugAcidAttackGoal; the mechanism proven from source, the
+  attribution of the three logged runs — 3/37 ≈ 8%, no layout dependence — inferred), reworked test-only into a structural no-ranged-goal
+  pin, an owner-scoped negative (`acid.getOwner() != bug` every tick), a per-tick minion cull (logged, not asserted) and a 1000-HP cow;
+  deterministic now — a failure means the trooper itself fired — with the window, timeout and batch unchanged (StructureTestsA.java:1100-1213).

@@ -1,9 +1,11 @@
 # MODERNIZATION_NOTES — "OreSpawn Modernized" 2.0 Design Backlog
 
-Planning output only — **nothing here is implemented**. Per `IMPLEMENTATION_PLAN.md`:
-the parity pass replicates original behavior faithfully (including original bugs where
-they are gameplay-defining); this file collects everything that deserves a curated
-redesign afterward.
+A design backlog that, since the 2026-09-04 rulings, also records what is live behind the
+`[modern]` config: an entry whose heading says ACCEPTED / implemented is shipped behind its
+key with the default the heading states; every other entry is planning output only. Per
+`IMPLEMENTATION_PLAN.md`: the parity pass replicates original behavior faithfully (including
+original bugs where they are gameplay-defining); this file collects everything that deserves
+a curated redesign afterward.
 
 Categories: **ORIGINAL-BUG** · **BALANCE** · **VANILLA-INTEGRATION** · **UX** · **TECH-DEBT**
 Each entry: original behavior (file:line), what's wrong/dated, concrete modern proposal,
@@ -806,7 +808,7 @@ _pin) so alignment drift is caught regardless.
   same Godzilla before and after the live flip).
 - **Status:** IMPLEMENTED 2026-09-04 (the key, the helper, the gated site, the pins); the classic branch is orig.
 
-## MOD-033 — Companions defend their owner: the Phase 4E owner / tame target goals (ACCEPTED 2026-09-04 under the T9 ruling, implemented, default ON; classic stays 1.7.10)
+## MOD-033 — Companions defend their owner: the port-only owner / tame target goals — Phase 4E's eight and the Boyfriend / Girlfriend pair (ACCEPTED 2026-09-04 under the T9 ruling, implemented, default ON; classic stays 1.7.10)
 
 - **Origin:** targeting ledger batch T9, rows 7, 9, 12–15 (GammaMetroid, Leon, Spyro, Stinky, ThePrince, ThePrincess)
   plus the ThePrinceAdult / ThePrinceTeen owner pair the survey parked in T3c (split §1, §2 A2, §3 B1/B3–B6, §4.4).
@@ -825,41 +827,74 @@ _pin) so alignment drift is caught regardless.
   the slot — a tamed modern pet of these three avenges its owner's attacker and joins its owner's fights. The
   Gamma Metroid, Spyro, Stinky, the Prince and the Princess never read the slot (their combat bites their own
   `findSomethingToAttack` pick; Spyro's / Stinky's 1-in-200 `setTarget(null)` only clears it) — the goals are
-  registered but unconsumed, no visible effect today.
+  registered but unconsumed, no visible effect today. The extension of 2026-09-05: the Boyfriend and the Girlfriend
+  consume the slot (their held-weapon melee in `customServerAiStep`, Boyfriend.java:337 / Girlfriend.java:376, and the
+  `RangedAttackGoal` @4 read it) — a tamed modern Boyfriend or Girlfriend avenges and defends its owner; the Hydrolisc
+  and the Velocity Raptor never read it (only their 1-in-200 `setTarget(null)`, EntityHydrolisc.java:114 /
+  VelocityRaptor.java:140, touches the slot) — registered but unconsumed, as the five above.
 - **Classic (implemented; the behaviour while the master or the key is off):** none of the port goals register —
   Leon keeps `HurtByTargetGoal` and the PlayNicely-gated IMob hunt (orig Leon.java:92-95); the Gamma Metroid keeps
   `HurtByTargetGoal` (orig GammaMetroid.java:67, at its port priority 3 — the only goal on the selector, so the number
   is immaterial); Spyro, Stinky, the Prince and the Princess register no target goals (orig Spyro.java:73-81,
   Stinky.java:67-77, ThePrince.java:86-92, ThePrincess.java:86-92 — tasks only); the Prince Adult and Teen keep
-  `HurtByTargetGoal` and the IMob hunt (orig ThePrinceAdult.java:112-115, ThePrinceTeen.java:116-119). A tamed 1.7.10
+  `HurtByTargetGoal` and the IMob hunt (orig ThePrinceAdult.java:112-115, ThePrinceTeen.java:116-119). The extension of
+  2026-09-05: the Hydrolisc and the Velocity Raptor register no target goals (orig Hydrolisc.java:51-60,
+  VelocityRaptor.java:53-62 — tasks only; the port's `HurtByTargetGoal` was Phase 4E's too, so it goes under the key
+  with the pair); the Boyfriend keeps the IMob hunt @3 and the two Jealousy goals @4 / @5 (orig Boyfriend.java:138-147;
+  the Creeper hunt has no port counterpart, ENT-A-054), the Girlfriend keeps the two Valentine goals @1 / @2, the IMob
+  hunt @5 and the two Jealousy goals @4 / @5 (orig Girlfriend.java:161-174) — every one at its port priority; and
+  Leon's hunt selector is the bare Enemy test, `e -> e instanceof Enemy` (orig Leon.java:93 — an `EntityLiving.class`
+  list through `IMob.mobSelector`, no further selector, no tame term; the ENT-S-124 form). A tamed 1.7.10
   pet fought only what its own scan or its revenge memory picked.
-- **Residual, not gated in this batch (FLAG):** Leon's tame predicate on its hunt goal
-  (`e -> e instanceof Enemy && (!this.isTame() || this.getTarget() == null)`, EntityLeon.registerGoals) belongs to
-  this record (a tamed Leon's hunt does not overwrite a held target; orig had no such term) but its line is the
-  ENT-S-124 hunk under refutation, so it stays as it is in both modes; gate it under this key once the refutation
-  closes. Effect: monsters only.
+- **Leon's tame rule (implemented 2026-09-05; the ENT-S-124 refutation closed 2026-09-04, its refuter upheld):** the
+  hunt's selector is built once in `registerGoals` from the same snapshot (`final boolean petsDefendOwner`, captured
+  by the lambda — never read live; EntityLeon.java:165-182): modern
+  `e -> e instanceof Enemy && (!this.isTame() || this.getTarget() == null)` (a tamed Leon's hunt does not overwrite a
+  target it holds), classic `e -> e instanceof Enemy` (orig Leon.java:93 had no such term). Effect: monsters only.
 - **Switch (implemented 2026-09-04):** the `[modern]` key `petsDefendOwner` (`OreSpawnConfig.MODERN_PETS_DEFEND_OWNER`,
   `BooleanValue`, default **true**), read only through `OreSpawnConfig.petsDefendOwner()` = `MODERN_ENABLED && key`.
-  Eight gated sites, each reading the helper ONCE in `registerGoals` (the Mob constructor: a construction snapshot,
-  BOSS-017 pattern, the S4 single-read rule — a config change applies to newly spawned or loaded pets, not live ones):
-  EntityLeon (the owner pair), EntityGammaMetroid (the owner pair and the tame hunt around the kept `HurtByTargetGoal`),
-  EntitySpyro / EntityStinky / ThePrince / ThePrincess (all four goals), ThePrinceAdult / ThePrinceTeen (the owner
-  pair). The master's comment and javadoc list the key and the helper.
+  Twelve gated sites (eight on 2026-09-04, four more on 2026-09-05), each reading the helper ONCE in `registerGoals`
+  (the Mob constructor: a construction snapshot, BOSS-017 pattern, the S4 single-read rule — a config change applies
+  to newly spawned or loaded pets, not live ones): EntityLeon (the owner pair and, since 2026-09-05, the hunt's
+  selector from the same snapshot), EntityGammaMetroid (the owner pair and the tame hunt around the kept
+  `HurtByTargetGoal`), EntitySpyro / EntityStinky / ThePrince / ThePrincess (all four goals), ThePrinceAdult /
+  ThePrinceTeen (the owner pair), EntityHydrolisc / VelocityRaptor (all three goals — the owner pair and
+  `HurtByTargetGoal`; EntityHydrolisc.java:82-86, VelocityRaptor.java:77-81), Boyfriend / Girlfriend (the owner pair;
+  Boyfriend.java:154-157, Girlfriend.java:218-221). Camarasaurus does not carry them: its `registerGoals` registers no
+  target goals (Camarasaurus.java:66-81, tasks only, as orig Camarasaurus.java:53-62) — nothing to gate. The master's
+  comment and javadoc, and the key's own comment, list the key, the helper and the species.
 - **Safety:** the owner goals never target the owner (`TamableAnimal.canAttack` / `wantsToAttack`); classic lowers a
   tamed pet's aggression to 1.7.10's — a pet that no longer defends its owner in classic is the 1.7.10 behaviour.
-  Nothing becomes unsafe in either mode.
+  Nothing becomes unsafe in either mode. The extension lowers a classic Boyfriend's / Girlfriend's aggression to
+  1.7.10's the same way (no owner defence; the hunt, Jealousy and Valentine goals are untouched) and changes nothing
+  observable on the Hydrolisc and the Velocity Raptor.
 - **Pin:** `PortOnlyTargetingTests#mod033_pets_defend_owner_modern_on`, `#mod033_pets_defend_owner_key_off`,
   `#mod033_pets_defend_owner_master_off` — each spawns the eight pets with their goals AFTER the flip and reads the
   target selector: modern → the owner pair present on all eight (plus `HurtByTargetGoal` and the tame
   `NearestAttackableTargetGoal<Monster>` on the Phase 4E five); classic → no owner goal anywhere, `HurtByTargetGoal`
   and the IMob hunt still on Leon / Adult / Teen, `HurtByTargetGoal` alone on the Metroid, nothing on Spyro, Stinky,
-  the Prince and the Princess.
-- **Residual (outside the targeting ledger, presented for a ruling 2026-09-04):** the same owner goals stay ungated on
-  four species the ledger has no block for — `EntityHydrolisc.java:76-78` and `VelocityRaptor.java:71-73` (Phase 4E,
-  commit 27b66a39; inert, no slot reader) and `Boyfriend.java:143-144` / `Girlfriend.java:207-208` (live: their melee
-  reads the slot at :293 / :332; orig Boyfriend.java:138-147 and Girlfriend.java:161-174 register no owner task). Until
-  ruled, a tamed Boyfriend or Girlfriend still defends its owner in classic; the key does not reach those four sites.
-- **Status:** IMPLEMENTED 2026-09-04 (the key, the helper, the eight gated sites, the pins); the classic branch is orig.
+  the Prince and the Princess. The extension (2026-09-05): `#mod033_companions_defend_owner_modern_on`, `_key_off`,
+  `_master_off` — the four companions spawned with their goals AFTER each flip, the whole target selector described
+  as `priority:Goal<targetType>` and compared sorted: modern → the 1.7.10 goals plus the owner pair (plus
+  `HurtByTargetGoal` on the Hydrolisc and the Raptor); classic → exactly the 1.7.10 goals (the Hydrolisc's and the
+  Raptor's selectors empty; the Boyfriend's `3:NearestAttackableTargetGoal<Mob>`, `4:` and `5:JealousyTargetGoal<Boyfriend>`;
+  the Girlfriend's `1:ValentineTargetGoal<Player>`, `2:ValentineTargetGoal<Boyfriend>`, `5:NearestAttackableTargetGoal<Mob>`,
+  `4:` and `5:JealousyTargetGoal<Girlfriend>`). `#mod033_leon_tame_hunt_rule_modern_on`, `_key_off`, `_master_off` —
+  a predicate pin per mode: a Leon spawned AFTER the flip at the IMobConventionTests spots, its `Entity.random` swapped
+  for the ForcedRoll seam (the hunt's 1-in-5 acquisition roll pinned to fire), PlayNicely off, tamed and holding a
+  frozen 1000-HP Zombie 8 blocks east as its target; the hunt goal's `canUse()` refuses her in modern (and takes her
+  once the slot is emptied — the control) and takes her in classic, the goal's pick read back. Six rows, 15 → 21 in
+  the batch. IMobConventionTests' `s124_17_leon_slime_tame_rule` row now asserts the modern default as a precondition
+  (its refusal is MOD-033's modern branch).
+- **Extension (ruled 2026-09-04, implemented 2026-09-05):** the same key reaches the four species the ledger has no
+  block for — `EntityHydrolisc.java:82-86` and `VelocityRaptor.java:77-81` (Phase 4E, commit 27b66a39; all three goals
+  under the key; inert, no slot reader) and `Boyfriend.java:154-157` / `Girlfriend.java:218-221` (the owner pair — commit 2b0c2cd, 2026-04-06, no stated
+  intent, gated on the ruling — under the key; live: their melee reads the slot at :337 / :376 and their `RangedAttackGoal` @4 reads it; orig
+  Boyfriend.java:138-147 and Girlfriend.java:161-174 register no owner task and no EntityAIHurtByTarget) — and Leon's
+  tame rule (above). A tamed Boyfriend or Girlfriend in classic now fights only what its hunt, Jealousy or Valentine
+  goals pick, the 1.7.10 behaviour. Camarasaurus was checked and carries none of the goals (see the Switch bullet).
+- **Status:** IMPLEMENTED 2026-09-04 (the key, the helper, the eight gated sites, the pins); EXTENDED 2026-09-05 (the
+  four companions outside the ledger, Leon's tame rule, six more pins); the classic branch is orig.
 
 ## MOD-034 — Pointysaurus eye-contact aggression (ACCEPTED 2026-09-04 under the T9 ruling, implemented, default ON; classic stays 1.7.10)
 

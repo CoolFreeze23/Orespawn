@@ -1,7 +1,8 @@
 # Known Issues — OreSpawn Port (BETA)
 
 **This release is a beta.** The game logic underneath has been through a
-192-test automated suite (all green, in both robot modes) plus hands-on
+945-test automated suite (all green, in both robot modes; the count grows
+with every remediation batch — the gate's last literal) plus hands-on
 play sessions, but a lot
 of the *visual and audio* polish has deliberately been left open for
 community feedback. You will find rough edges — and we want to hear about
@@ -206,11 +207,10 @@ mounting, or hover behavior.
   the ignite of whatever it hits and the explosion itself are unchanged. Set the key to `false`, or
   `modern.enabled = false`, for the 1.7.10 fire-always behaviour.
 - **Smarter targeting, four keys** (MOD-032..035, new in 2.0, on by default under `[modern]`):
-  `petsDefendOwner` — a tamed Leon, Prince Teen or Prince Adult avenges whoever hurts its owner and
-  joins its owner's fights (the Gamma Metroid, Spyro, Stinky, the Prince and the Princess carry the
-  same goals but their own combat does not read them yet; the Boyfriend's and Girlfriend's own owner goals, and the
-  inert ones on the Hydrolisc and Velocity Raptor, are not under the key yet — outside the targeting ledger, presented
-  for a ruling); `godzillaSparesBossPeers` — Mobzilla will
+  `petsDefendOwner` — a tamed Leon, Prince Teen, Prince Adult, Boyfriend or Girlfriend avenges whoever hurts its
+  owner and joins its owner's fights, and a tamed Leon that already has a target does not drop it for the nearest
+  monster (the Gamma Metroid, Spyro, Stinky, the Prince, the Princess, the Hydrolisc and the Velocity Raptor carry the
+  same goals but their own combat, where they have one, does not read them yet); `godzillaSparesBossPeers` — Mobzilla will
   not target the Nightmare, the Kraken, the King and Queen, the Prince line or the Purple Power;
   `pointysaurusStareAggro` — a survival player who looks straight at a Pointysaurus within 32 blocks
   is attacked; `cryolophosaurusRevengeChase` — a Cryolophosaurus chases whoever hurt it. Each key
