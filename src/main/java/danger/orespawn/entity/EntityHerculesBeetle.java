@@ -160,6 +160,12 @@ public class EntityHerculesBeetle extends Monster {
         boolean ret = super.hurt(source, amount);
         this.hurtTimer = 20;
         Entity attacker = source.getEntity();
+        // orig HerculesBeetle.java:333-336 — a living attacker becomes the stored target, read ahead of the scan (:351): the scan's
+        // mark on a pick that turned on it ends here, exactly when this hit stores it in the port — the Mob store below,
+        // or super.hurt's lastHurtByMob record of this tick (the revenge goal's start); a hit that stores nothing keeps
+        // the pick transient (ENT-S-129, the ownership convention)
+        if (attacker != null && attacker == this.scanPick && (attacker instanceof Mob
+                || (this.getLastHurtByMob() == attacker && this.getLastHurtByMobTimestamp() == this.tickCount))) this.scanPick = null;
         if (attacker instanceof Mob mob) {
             this.setTarget(mob);
             this.getNavigation().moveTo(mob, 1.2);
@@ -214,11 +220,19 @@ public class EntityHerculesBeetle extends Monster {
         this.scanPick = this.getTarget();
     }
 
-    /** A target set by any other path ends the scan's ownership of the slot; see {@link #selectTarget}. ENT-S-108. */
+    /**
+     * A change of occupant by any other path — the revenge goal's start or stop, a hurt store, the melee goal's
+     * forget roll, an event handler — ends the scan's ownership of the slot; a re-assert of the occupant already
+     * there keeps it: {@code TargetGoal.canContinueToUse} re-sets the mob's CURRENT target on every cleanup pass
+     * while the revenge goal runs, and an every-set clear turned the scan's own pick — placed on the pass that
+     * dropped a dead revenge target — into a sticky one (ENT-S-117 refuter B's window). The port-wide convention
+     * ruled in ENT-S-129 (the Water Dragon's ENT-S-117 form); the hurt hand-off is in {@link #hurt}. ENT-S-108.
+     */
     @Override
     public void setTarget(@Nullable LivingEntity target) {
+        LivingEntity before = this.getTarget();
         super.setTarget(target);
-        this.scanPick = null;
+        if (this.getTarget() != before) this.scanPick = null; // ENT-S-129: the mark ends on a change of occupant only
     }
 
     /**

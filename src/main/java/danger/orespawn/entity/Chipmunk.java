@@ -101,7 +101,7 @@ public class Chipmunk extends EntityCannonFodder {
         if (this.isRemoved()) return;
 
         if (this.random.nextInt(200) == 1) {
-            this.setTarget(null);
+            this.setLastHurtByMob(null); // orig Chipmunk.java:104-106 — func_70604_c(null) = setRevengeTarget(null): the revenge MEMORY forgotten (the port's lastHurtByMob), not the attack target; the EntityCannonFodder.java:346-348 shape (ENT-S-129)
         }
 
         if (this.random.nextInt(250) == 0) {

@@ -1,5 +1,6 @@
 package danger.orespawn.entity.ai;
 
+import danger.orespawn.OreSpawnConfig;
 import java.util.EnumSet;
 import java.util.function.IntConsumer;
 import net.minecraft.world.entity.LivingEntity;
@@ -45,7 +46,8 @@ public class BugMeleeAttackGoal extends Goal {
             int    innerAttackRoll,
             int    forgetTargetRoll,
             double targetSearchXZ,
-            double targetSearchY) {
+            double targetSearchY,
+            boolean standsDownUnderPlayNicely) {
         public Params {
             // TF-026 guard: every roll feeds nextInt(bound) unconditionally
             // (forgetTargetRoll of 0 means "never forget" and IS gated) —
@@ -57,10 +59,19 @@ public class BugMeleeAttackGoal extends Goal {
                                 + " outer=" + outerAttackRoll + " inner=" + innerAttackRoll);
             }
         }
+        /**
+         * The eight-field form: no PlayNicely stand-down — the presets whose orig pass read no stored target under the
+         * flag. ENT-S-129.
+         */
+        public Params(double navigateSpeed, double attackReachBonus, int cadence, int outerAttackRoll, int innerAttackRoll,
+                      int forgetTargetRoll, double targetSearchXZ, double targetSearchY) {
+            this(navigateSpeed, attackReachBonus, cadence, outerAttackRoll, innerAttackRoll, forgetTargetRoll, targetSearchXZ,
+                    targetSearchY, false);
+        }
         public static Params scorpion()        { return new Params(1.2, 3.0, 6, 5, 6,   0,  8.0, 3.0); }
-        public static Params emperorScorpion() { return new Params(1.2, 6.0, 4, 4, 6, 100, 24.0, 6.0); }
+        public static Params emperorScorpion() { return new Params(1.2, 6.0, 4, 4, 6,   0, 24.0, 6.0); } // ENT-S-129: the 1-in-100 of orig EmperorScorpion.java:414-416 is rolled inside the 1-in-4 pass on the stored attack target alone (EntityEmperorScorpion.selectTarget), not here every tick on any target
         public static Params herculesBeetle()  { return new Params(1.2, 5.0, 4, 3, 4,   0, 16.0, 6.0); }
-        public static Params caterKiller()     { return new Params(1.25, 5.0, 4, 3, 4, 200, 20.0, 8.0); }
+        public static Params caterKiller()     { return new Params(1.25, 5.0, 4, 3, 4,   0, 20.0, 8.0); } // ENT-S-129: the 1-in-200 of orig CaterKiller.java:468-470 is rolled inside the 1-in-4 pass (EntityCaterKiller.customServerAiStep), not here every tick
         public static Params caveFisher()      { return new Params(1.2, 2.83, 8, 7, 8,  0, 10.0, 3.0); }
         // BUG-034 (beta.3): shipped inner=0 — the exact slip class the TF-026
         // guard exists for — so construction threw and the DungeonBeast never
@@ -81,6 +92,7 @@ public class BugMeleeAttackGoal extends Goal {
 
     @Override
     public boolean canUse() {
+        if (this.standsDown()) return false; // ENT-S-129
         LivingEntity target = this.mob.getTarget();
         if (target == null || !target.isAlive()) return false;
         this.currentTarget = target;
@@ -89,10 +101,24 @@ public class BugMeleeAttackGoal extends Goal {
 
     @Override
     public boolean canContinueToUse() {
+        if (this.standsDown()) return false; // ENT-S-129
         LivingEntity target = this.mob.getTarget();
         if (target == null || !target.isAlive()) return false;
         this.currentTarget = target;
         return true;
+    }
+
+    /**
+     * orig Nastysaurus.java:215-217, TRex.java:185-187, Pointysaurus.java:185-187 ({@code e = rt; if (PlayNicely != 0)
+     * e = null;}) and SeaViper.java:531-543 (the stored-target read inside the gated scan method): under PlayNicely those
+     * passes acted on nothing and stood down (attacking 0), the stored target kept. The port's goal reads the slot every
+     * tick, so the presets of those four stand the goal down under the flag, read live: it does not start, and a running
+     * one stops — {@link #stop} sets attacking 0 and drops the navigation (orig let the current path run out) — the
+     * slot untouched, so the fight resumes when the flag is lowered. ENT-S-129 (the ledger's per-preset stand-down,
+     * ruled with T5).
+     */
+    private boolean standsDown() {
+        return this.params.standsDownUnderPlayNicely() && OreSpawnConfig.PLAY_NICELY.get();
     }
 
     @Override

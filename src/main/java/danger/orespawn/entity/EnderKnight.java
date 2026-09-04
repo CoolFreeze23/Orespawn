@@ -14,6 +14,7 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
@@ -44,7 +45,15 @@ public class EnderKnight extends Monster {
         this.goalSelector.addGoal(2, new WaterAvoidingRandomStrollGoal(this, 1.0));
         this.goalSelector.addGoal(3, new LookAtPlayerGoal(this, Player.class, 8.0f));
         this.goalSelector.addGoal(4, new RandomLookAroundGoal(this));
-        this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
+        // orig EnderKnight.java — no AI tasks: EntityMob.attackEntityFrom set the legacy loop's entityToAttack (V10), held
+        // until dead, creative or the daylight roll (:111-115) — no range, no sight memory, gone once nulled; the port's
+        // revenge goal holds by that rule (holdsLegacyTarget) (ENT-S-129)
+        this.targetSelector.addGoal(1, new HurtByTargetGoal(this) {
+            @Override
+            public boolean canContinueToUse() {
+                return EnderKnight.this.holdsLegacyTarget(); // ENT-S-129
+            }
+        });
         // orig EnderKnight.java:62-64 — findPlayerToAttack (func_70782_k) answers null under PlayNicely (PlayNicely
         // != 0), ahead of the nearest-player pick; the port's pick is this goal, so the flag is read live in its
         // canUse: the goal never starts while PlayNicely is on (ENT-S-115).
@@ -54,7 +63,23 @@ public class EnderKnight extends Monster {
                 if (OreSpawnConfig.PLAY_NICELY.get()) return false; // orig EnderKnight.java:62-64 (ENT-S-115)
                 return super.canUse();
             }
+
+            @Override
+            public boolean canContinueToUse() {
+                return EnderKnight.this.holdsLegacyTarget(); // orig EnderKnight.java:111-115 with V10 — held until dead, creative or the daylight roll: no FOLLOW_RANGE (64) release, no 60-tick unseen memory (ENT-S-129)
+            }
         });
+    }
+
+    /**
+     * orig EnderKnight.java — the legacy (non-AI) loop's hold of {@code entityToAttack} ({@code EntityCreature
+     * .updateEntityActionState}, the ledger's V10): kept while alive and not creative, at any range and through any
+     * sight loss, until the daylight roll (:111-115) nulls it; nulled, it is gone (no re-assert). Both port target
+     * goals hold by this rule; vanilla's {@code canAttack} is the creative / spectator screen. ENT-S-129.
+     */
+    private boolean holdsLegacyTarget() {
+        LivingEntity held = this.getTarget();
+        return held != null && held.isAlive() && this.canAttack(held);
     }
 
     public static AttributeSupplier.Builder createAttributes() {
@@ -95,6 +120,20 @@ public class EnderKnight extends Monster {
                         this.getZ() + (this.random.nextDouble() - 0.5) * this.getBbWidth(),
                         (this.random.nextDouble() - 0.5) * 2.0, -this.random.nextDouble(),
                         (this.random.nextDouble() - 0.5) * 2.0);
+            }
+        }
+
+        // orig EnderKnight.java:111-115 — daylight escape: server-side, in daytime, when brightness > 0.5 and the sky
+        // is visible overhead, a brightness-scaled dice (rand*30 < (f-0.4)*2) drops the target (entityToAttack = null),
+        // stops screaming and teleports away — the Reaper's :111-115 twin (ENT-S-129)
+        if (this.level().isDay() && !this.level().isClientSide) {
+            float brightness = this.getLightLevelDependentMagicValue(); // orig :111 func_70013_c(1.0f)
+            if (brightness > 0.5f
+                    && this.level().canSeeSky(this.blockPosition())
+                    && this.random.nextFloat() * 30.0f < (brightness - 0.4f) * 2.0f) {
+                this.setTarget(null);
+                this.setScreaming(false);
+                teleportRandomly();
             }
         }
 

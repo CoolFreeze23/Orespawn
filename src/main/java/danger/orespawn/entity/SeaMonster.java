@@ -60,6 +60,17 @@ public class SeaMonster extends Monster {
      */
     private final net.minecraft.world.entity.ai.attributes.AttributeInstance movementSpeedAttribute;
 
+    /**
+     * The last pick the pass handed to the target slot. 1.7.10 stored the scan's pick nowhere — the pass acted on it
+     * for that tick and re-derived it on the next (orig SeaMonster.java:527-532); only a target stored by {@link #hurt} or the revenge
+     * task persisted, answered ahead of the scan while alive (:522-525). The port stores the pick so the next pass
+     * can tell its own occupant from a stored one: under this mark it is re-derived every pass (replaced, or cleared
+     * when not found again), never sticky; a target set by any other path is left alone (the ENT-S-108 slot rule;
+     * see {@link #setTarget}). ENT-S-129.
+     */
+    @Nullable
+    private LivingEntity scanPick;
+
     public SeaMonster(EntityType<? extends SeaMonster> type, Level level) {
         super(type, level);
         this.xpReward = 150;
@@ -133,12 +144,33 @@ public class SeaMonster extends Monster {
             ret = super.hurt(source, amount);
             this.hurtCooldown = 8;
         }
+        // orig SeaMonster.java:357-364 — an EntityLiving attacker becomes the stored target, read ahead of the scan
+        // (:522-525); the revenge task stores any other living attacker: the scan's mark on a pick that turned on the
+        // monster ends exactly when this hit stores it — the Mob store below, or super.hurt's lastHurtByMob record of
+        // this tick; a hit the hurt timer swallowed stores nothing through super.hurt and keeps the mark (ENT-S-129)
+        if (attacker != null && attacker == this.scanPick && (attacker instanceof Mob
+                || (this.getLastHurtByMob() == attacker && this.getLastHurtByMobTimestamp() == this.tickCount))) this.scanPick = null;
         if (attacker instanceof Mob mob) {
             if (attacker instanceof SeaMonster) return false;
             this.setTarget(mob);
             this.getNavigation().moveTo(mob, 1.2);
         }
         return ret;
+    }
+
+    /**
+     * A change of occupant by any other path — the revenge goal's start or stop, a hurt store, the melee goal's
+     * forget roll, an event handler — ends the scan's ownership of the slot; a re-assert of the occupant already
+     * there keeps it: {@code TargetGoal.canContinueToUse} re-sets the mob's CURRENT target on every cleanup pass
+     * while the revenge goal runs, and an every-set clear turned the scan's own pick — placed on the pass that
+     * dropped a dead revenge target — into a sticky one (ENT-S-117 refuter B's window). The port-wide convention
+     * ruled in ENT-S-129 (the Water Dragon's ENT-S-117 form); the hurt hand-off is in {@link #hurt}. ENT-S-108.
+     */
+    @Override
+    public void setTarget(@Nullable LivingEntity target) {
+        LivingEntity before = this.getTarget();
+        super.setTarget(target);
+        if (this.getTarget() != before) this.scanPick = null; // ENT-S-129: the mark ends on a change of occupant only
     }
 
     @Override
@@ -173,13 +205,22 @@ public class SeaMonster extends Monster {
             // orig SeaMonster.java:514-516 — findSomethingToAttack answers null under PlayNicely ahead of its stored-target
             // read (:522-525) and its scan (:527-532); the port's pick is this inline block, gated as a whole (ENT-S-115).
             boolean playNicely = OreSpawnConfig.PLAY_NICELY.get();
-            LivingEntity target = playNicely ? null : this.getTarget();
+            LivingEntity target = playNicely ? null : this.getTarget();      // orig :522 — the stored target, read inside the gated method
+            if (target != null && target == this.scanPick) {
+                target = null;                                               // orig :527-532 — the scan's pick was never stored: its occupant is re-derived by this pass (ENT-S-129)
+            } else if (target != null && !target.isAlive()) {
+                this.setTarget(null);                                        // orig :523-526 — a live stored target is answered ahead of the scan; a dead one is cleared (ENT-S-129)
+                target = null;
+            }
             if (target == null && !playNicely) {
                 Player nearest = this.level().getNearestPlayer(this, 16.0);
                 if (nearest != null && !nearest.getAbilities().instabuild) {
                     target = nearest;
-                    this.setTarget(target);
                 }
+                // the scan's answer handed to the slot under the ownership mark — re-derived next pass, cleared when not
+                // found again (ENT-S-129, the ENT-S-108 slot rule)
+                if (target != this.getTarget()) this.setTarget(target);
+                this.scanPick = this.getTarget();
             }
             if (target != null && target.isAlive()) {
                 this.lookAt(target, 10.0f, 10.0f);

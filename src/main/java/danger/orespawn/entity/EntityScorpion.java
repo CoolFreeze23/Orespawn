@@ -24,7 +24,6 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
-import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.monster.Spider;
@@ -70,13 +69,12 @@ public class EntityScorpion extends Monster {
         this.goalSelector.addGoal(2, new MyEntityAIWanderALot(this, 14, 1.0));
         this.goalSelector.addGoal(3, new LookAtPlayerGoal(this, Player.class, 8.0f));
         this.goalSelector.addGoal(4, new RandomLookAroundGoal(this));
-        // orig Scorpion.java:62 — EntityAIHurtByTarget is the only registered target task;
-        // everything else the scorpion attacks comes from the findSomethingToAttack() scan
-        // in customServerAiStep (ENT-S-002). The port's extra
-        // NearestAttackableTargetGoal(Player) was removed: it acquired players out to
-        // follow-range 24 with plain-distance priority, where the orig only ever engages
-        // what the 8/3/8 sorted scan returns.
-        this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
+        // orig Scorpion.java:62 — EntityAIHurtByTarget(this, false) is the only registered target task, and its attack
+        // target was never read: the pass (:175-192) acted on the findSomethingToAttack() scan alone (ENT-S-002), so
+        // the revenge task was inert. The port's slot is read by the melee goal every tick, so a registered revenge
+        // goal would chase the attacker where 1.7.10 never retaliated: not registered (ENT-S-129). The port's extra
+        // NearestAttackableTargetGoal(Player) was removed earlier: it acquired players out to follow-range 24 with
+        // plain-distance priority, where the orig only ever engages what the 8/3/8 sorted scan returns.
     }
 
     public static AttributeSupplier.Builder createAttributes() {
@@ -140,8 +138,8 @@ public class EntityScorpion extends Monster {
         // VelocityRaptors — and, per the orig fallthrough (:252), any non-Monster
         // living — not just players.
         if (this.random.nextInt(6) == 0) {
-            LivingEntity prey = findSomethingToAttack();
-            if (prey != null) this.setTarget(prey);
+            LivingEntity prey = findSomethingToAttack();               // orig :176
+            if (prey != this.getTarget()) this.setTarget(prey);      // orig :177-191 — the pass acts on this pass's pick alone, never on a stored one: the slot is refreshed for the goal, replaced or cleared when nothing is found (:189-191 stood down) (ENT-S-129)
         }
     }
 

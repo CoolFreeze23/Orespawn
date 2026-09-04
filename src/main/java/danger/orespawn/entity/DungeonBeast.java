@@ -24,7 +24,6 @@ import net.minecraft.world.entity.ai.goal.FloatGoal;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
-import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
@@ -59,16 +58,6 @@ public class DungeonBeast extends Monster {
      */
     private final GenericTargetSorter targetSorter = new GenericTargetSorter(this);
 
-    /**
-     * The last pick {@link #selectTarget} handed to the target slot. 1.7.10 stored the scan's
-     * pick nowhere — it was acted on for that tick and re-derived on the next (orig
-     * DungeonBeast.java:172-185) — so the port re-runs the scan whenever the slot still holds
-     * its own pick, and leaves a target set by any other path alone (see {@link #setTarget}).
-     * ENT-S-108.
-     */
-    @Nullable
-    private LivingEntity scanPick;
-
     public DungeonBeast(EntityType<? extends DungeonBeast> type, Level level) {
         super(type, level);
         // OPT-009: constant speed - assert the attribute base once here instead
@@ -85,7 +74,10 @@ public class DungeonBeast extends Monster {
         this.goalSelector.addGoal(2, new WaterAvoidingRandomStrollGoal(this, 1.0));
         this.goalSelector.addGoal(3, new LookAtPlayerGoal(this, Player.class, 8.0f));
         this.goalSelector.addGoal(4, new RandomLookAroundGoal(this));
-        this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
+        // orig DungeonBeast.java:59 — EntityAIHurtByTarget(this, false), whose attack target nothing in orig read: the
+        // pass (:172-185) acted on the scan's pick alone, so the revenge task was inert. The port's slot is read by the
+        // melee goal every tick, so a registered revenge goal would chase the attacker where 1.7.10 never retaliated:
+        // not registered (ENT-S-129; ENT-S-108's D2).
         // orig DungeonBeast.java:59 registers no target-search task: prey is found by the
         // 1-in-8 EntityLivingBase box scan of :172-173 / :249-265, restored in
         // customServerAiStep / findSomethingToAttack (ENT-S-108). The port's
@@ -138,36 +130,17 @@ public class DungeonBeast extends Monster {
     }
 
     /**
-     * orig DungeonBeast.java:173: on the cadence tick the prey is whatever
-     * {@link #findSomethingToAttack} returns right now — the original kept no target of its
-     * own, so a candidate that had left the 16/3/16 box or line of sight was simply not found
-     * next time (:183-185, setAttacking(0)). The port's single target slot feeds the melee
-     * goal, so the scan's own pick is re-derived on every cadence tick (replaced, or cleared
-     * when the scan comes back empty), while a target set by any other path —
-     * {@code HurtByTargetGoal} (orig :59 {@code EntityAIHurtByTarget}, whose attack target
-     * this AI never read) — is left to that path. A dead target is dropped first, the slot's
-     * own guard. ENT-S-108.
+     * orig DungeonBeast.java:173: on the cadence tick the prey is whatever {@link #findSomethingToAttack} returns right now —
+     * the original kept no target of its own and read none (its :59 revenge task set an attack target nothing
+     * consumed), so a candidate that had left the 16/3/16 box or line of sight was simply not found next time
+     * (:183-185, setAttacking(0)). The port's single target slot feeds the melee goal, so every pass hands the scan's
+     * answer to the slot — replaced, or cleared when the scan comes back empty — and nothing else fills it: the
+     * ENT-S-108 ownership mark and the registered revenge goal are gone, because orig scanned every pass regardless
+     * of any stored target and never retaliated (ENT-S-129).
      */
     private void selectTarget() {
-        LivingEntity current = this.getTarget();
-        if (current != null && !current.isAlive()) {
-            this.setTarget(null);
-            current = null;
-        }
-        if (current != null && current != this.scanPick) return;   // set elsewhere: not the scan's to replace
-        LivingEntity pick = this.findSomethingToAttack();
-        if (pick != current) super.setTarget(pick);                // super: the scan's own set keeps its ownership
-        // Re-read the slot rather than trusting `pick`: a LivingChangeTargetEvent handler may
-        // have substituted or cancelled the set, and a stale scanPick would stall the scan
-        // (ENT-S-108 refuter hardening, 2026-09-04).
-        this.scanPick = this.getTarget();
-    }
-
-    /** A target set by any other path ends the scan's ownership of the slot; see {@link #selectTarget}. ENT-S-108. */
-    @Override
-    public void setTarget(@Nullable LivingEntity target) {
-        super.setTarget(target);
-        this.scanPick = null;
+        LivingEntity pick = this.findSomethingToAttack();           // orig :173
+        if (pick != this.getTarget()) this.setTarget(pick);        // the slot refreshed for the goal: this pass's answer, or empty (ENT-S-129)
     }
 
     /**

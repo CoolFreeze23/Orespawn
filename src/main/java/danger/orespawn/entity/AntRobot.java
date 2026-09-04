@@ -2,6 +2,7 @@ package danger.orespawn.entity;
 
 import danger.orespawn.MobStats;
 
+import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
 import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
@@ -87,6 +88,17 @@ public class AntRobot extends Mob implements ICustomHitboxProfileSupplier, IMode
     private int playing = 0;
     private int rideTicker = 0;
     private int owned = 0;
+
+    /**
+     * ENT-S-122 — the hunter's own sight memo, 1.7.10's {@code EntitySenses}: two lists keyed by entity id, cleared only
+     * by {@code EntityLiving.updateAITasks} ({@code clearSensingCache}), which the Ant Robot reached only unridden (orig AntRobot.java:98-104 returns before
+     * super while ridden; :884-886 isAIEnabled false while ridden — the state its stomp and hunt scans run in). The port's
+     * {@code Sensing} is ticked every server tick from the final {@code Mob.serverAiStep}, so the two ENT-S-118 sight
+     * steps of this class consult this memo instead (a miss asks {@code getSensing().hasLineOfSight} and records the
+     * answer); vanilla goals keep {@code Sensing}. Cleared by {@link #clearSightMemo} at AntRobot.customServerAiStep's super line — every unridden step, never while ridden.
+     */
+    private final IntOpenHashSet sightMemoSeen = new IntOpenHashSet();
+    private final IntOpenHashSet sightMemoUnseen = new IntOpenHashSet();
 
     /**
      * 2.0 S5b: the modern gait controller (ant rig), or {@code null} in
@@ -222,6 +234,7 @@ public class AntRobot extends Mob implements ICustomHitboxProfileSupplier, IMode
         if (this.isRemoved()) return;
         if (this.getFirstPassenger() != null) return;
         super.customServerAiStep();
+        this.clearSightMemo(); // orig AntRobot.java:98-104 — super.updateAITasks (EntityLiving's clearSensingCache) is reached only unridden: the sight memo is cleared every unridden step and never while ridden (ENT-S-122)
 
         // orig AntRobot.java:105 — `owned == 0 && difficulty != PEACEFUL` gates the whole unridden
         // block: the stomp roll, the target release, the hunt and the melee all sit inside (ENT-S-114).
@@ -229,8 +242,8 @@ public class AntRobot extends Mob implements ICustomHitboxProfileSupplier, IMode
             if (this.getRandom().nextInt(20) == 0) {
                 feetFindSomethingToHit();
             }
-            LivingEntity currentTarget = this.getTarget();
-            if (this.getRandom().nextInt(150) == 0) this.setTarget(null);
+            if (this.getRandom().nextInt(150) == 0) this.setTarget(null); // orig AntRobot.java:109-111 — the 1-in-150 clear BEFORE the read (:112): the cleared target is not engaged this pass (ENT-S-129)
+            LivingEntity currentTarget = this.getTarget();                // orig :112
             if (currentTarget != null && !currentTarget.isAlive()) {
                 this.setTarget(null);
                 currentTarget = null;
@@ -272,7 +285,7 @@ public class AntRobot extends Mob implements ICustomHitboxProfileSupplier, IMode
             return false;
         }
         Entity attacker = source.getEntity();
-        if (attacker instanceof LivingEntity livingAttacker) {
+        if (attacker instanceof Mob livingAttacker) { // orig AntRobot.java:579-583 — an EntityLiving attacker only (the port's Mob): a player who hits the ant is not stored (ENT-S-129)
             this.setTarget(livingAttacker);
             this.lookAt(attacker, 20.0f, 20.0f);
         }
@@ -663,6 +676,22 @@ public class AntRobot extends Mob implements ICustomHitboxProfileSupplier, IMode
         this.owned = tag.getInt("AntRobotOwned");
     }
 
+    /** ENT-S-122: the memo's verdict for the target — the first {@code getSensing().hasLineOfSight} answer per id, held until the memo is cleared. */
+    private boolean memoHasLineOfSight(LivingEntity target) {
+        int id = target.getId();
+        if (this.sightMemoSeen.contains(id)) return true;
+        if (this.sightMemoUnseen.contains(id)) return false;
+        boolean seen = this.getSensing().hasLineOfSight(target);
+        (seen ? this.sightMemoSeen : this.sightMemoUnseen).add(id);
+        return seen;
+    }
+
+    /** ENT-S-122: orig {@code EntityLiving.updateAITasks}'s {@code clearSensingCache}, at the port's super.customServerAiStep line. */
+    private void clearSightMemo() {
+        this.sightMemoSeen.clear();
+        this.sightMemoUnseen.clear();
+    }
+
     private void feetFindSomethingToHit() {
         if (OreSpawnConfig.PLAY_NICELY.get()) return; // orig AntRobot.java:940-942 — PlayNicely != 0 returns ahead of the stomp scan (ENT-S-115)
         AABB searchBox = this.getBoundingBox().inflate(10.0, 8.0, 10.0);
@@ -688,7 +717,7 @@ public class AntRobot extends Mob implements ICustomHitboxProfileSupplier, IMode
         if (target instanceof AntRobot) return false;
         if (target == this.getFirstPassenger()) return false;
         if (MyUtils.isIgnoreable(target)) return false; // orig AntRobot.java:971-973 — the shared ignore screen (ENT-S-106)
-        if (!this.getSensing().hasLineOfSight(target)) return false; // orig AntRobot.java:974-976 — canSee, after the ignore screen and ahead of the 6..9 ring (:977-986) (ENT-S-118)
+        if (!this.memoHasLineOfSight(target)) return false; // orig AntRobot.java:974-976 — canSee, after the ignore screen and ahead of the 6..9 ring (:977-986) (ENT-S-118); the verdict held by the sight memo, as 1.7.10's EntitySenses held it for the whole ride (ENT-S-122)
         double dist = this.distanceTo(target);
         if (dist > 9.0f || dist < 6.0f) return false;
         if (target instanceof Player player && player.getAbilities().instabuild) return false;
@@ -710,7 +739,7 @@ public class AntRobot extends Mob implements ICustomHitboxProfileSupplier, IMode
         if (target instanceof AntRobot) return false;
         if (target == this.getFirstPassenger()) return false;
         if (MyUtils.isIgnoreable(target)) return false; // orig AntRobot.java:1044-1046 — the shared ignore screen (ENT-S-106)
-        if (!this.getSensing().hasLineOfSight(target)) return false; // orig AntRobot.java:1047-1049 — canSee, after the ignore screen and ahead of the dircheck branch (:1050-1065, T8) and the creative check (:1066-1069) (ENT-S-118)
+        if (!this.memoHasLineOfSight(target)) return false; // orig AntRobot.java:1047-1049 — canSee, after the ignore screen and ahead of the dircheck branch (:1050-1065, T8) and the creative check (:1066-1069) (ENT-S-118); the verdict held by the sight memo, as 1.7.10's EntitySenses held it for the whole ride (ENT-S-122)
         if (target instanceof Player player && player.getAbilities().instabuild) return false;
         return true;
     }

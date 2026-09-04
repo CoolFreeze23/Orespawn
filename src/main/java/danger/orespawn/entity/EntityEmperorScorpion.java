@@ -77,6 +77,9 @@ public class EntityEmperorScorpion extends Monster {
     @Nullable
     private LivingEntity scanPick;
 
+    /** orig EmperorScorpion.java:71 — the revenge task; the pass's 1-in-100 release ends it (see {@link RevengeGoal}); assigned in registerGoals (the Mob constructor). ENT-S-129. */
+    private RevengeGoal revengeGoal;
+
     public EntityEmperorScorpion(EntityType<? extends EntityEmperorScorpion> type, Level level) {
         super(type, level);
         this.xpReward = 200;
@@ -94,7 +97,8 @@ public class EntityEmperorScorpion extends Monster {
         this.goalSelector.addGoal(2, new MyEntityAIWanderALot(this, 14, 1.0));
         this.goalSelector.addGoal(3, new LookAtPlayerGoal(this, Player.class, 8.0f));
         this.goalSelector.addGoal(4, new RandomLookAroundGoal(this));
-        this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
+        this.revengeGoal = new RevengeGoal();
+        this.targetSelector.addGoal(1, this.revengeGoal); // orig EmperorScorpion.java:71 — EntityAIHurtByTarget(this, false), released by the pass's 1-in-100 (ENT-S-129)
         // orig EmperorScorpion.java:71 registers no target-search task: prey is found by
         // the 1-in-4 EntityLivingBase box scan of :408-419 / :503-519, restored in
         // customServerAiStep / findSomethingToAttack (ENT-S-108). The port's
@@ -180,6 +184,12 @@ public class EntityEmperorScorpion extends Monster {
         boolean ret = super.hurt(source, amount);
         this.hurtTimer = 30;
         Entity attacker = source.getEntity();
+        // orig EmperorScorpion.java:389-393 — a living attacker becomes the stored target, read ahead of the scan (:409): the scan's
+        // mark on a pick that turned on it ends here, exactly when this hit stores it in the port — the Mob store below,
+        // or super.hurt's lastHurtByMob record of this tick (the revenge goal's start); a hit that stores nothing keeps
+        // the pick transient (ENT-S-129, the ownership convention)
+        if (attacker != null && attacker == this.scanPick && (attacker instanceof Mob
+                || (this.getLastHurtByMob() == attacker && this.getLastHurtByMobTimestamp() == this.tickCount))) this.scanPick = null;
         if (attacker instanceof Mob mob) {
             this.setTarget(mob);
             this.getNavigation().moveTo(mob, 1.2);
@@ -235,8 +245,8 @@ public class EntityEmperorScorpion extends Monster {
     /**
      * orig EmperorScorpion.java:409-419: the attack target set by being hurt (:391, a mob
      * attacker; port {@link #hurt} and {@code HurtByTargetGoal}, orig :71) is read first
-     * (:409), dropped once dead (:410-413) or on a 1-in-100 roll (:414-416 — the melee
-     * goal's {@code forgetTargetRoll}); only without one does the scan run (:417-419), and
+     * (:409), dropped once dead (:410-413) or on a 1-in-100 roll (:414-416 — rolled here, inside
+     * the pass, and final: {@code RevengeGoal.release}, ENT-S-129); only without one does the scan run (:417-419), and
      * its pick was acted on for that tick alone — a candidate that had left the 24/6/24 box
      * or line of sight was simply not found next time (:440-442, setAttacking(0)). The
      * port's single target slot feeds the melee goal, so the scan's own pick is re-derived
@@ -250,6 +260,11 @@ public class EntityEmperorScorpion extends Monster {
             this.setTarget(null);
             current = null;
         }
+        if (this.random.nextInt(100) == 0 && current != null && current != this.scanPick) { // orig :414-416 — `nextInt(100) == 0 → setAttackTarget(null)`: the roll spent every pass (RNG parity), after the read, so the cleared target is still this pass's `e`; it acts on the stored attack target alone — the scan's pick was never stored, so with the scan's own pick in the slot orig's field was empty and the clear a no-op (ENT-S-129)
+            this.setTarget(null);
+            this.revengeGoal.release();                            // 1.7.10's task ended on a nulled attack target; vanilla's TargetGoal would re-assert its memory (ENT-S-129)
+            return;                                                // the pass acts no further this pass, as orig's `e` stayed read (the goal stops on its next cleanup pass)
+        }
         if (current != null && current != this.scanPick) return;   // orig :417: the attack target stands
         LivingEntity pick = this.findSomethingToAttack();           // orig :418
         if (pick != current) super.setTarget(pick);                // super: the scan's own set keeps its ownership
@@ -259,11 +274,37 @@ public class EntityEmperorScorpion extends Monster {
         this.scanPick = this.getTarget();
     }
 
-    /** A target set by any other path ends the scan's ownership of the slot; see {@link #selectTarget}. ENT-S-108. */
+    /**
+     * A change of occupant by any other path — the revenge goal's start or stop, a hurt store, the melee goal's
+     * forget roll, an event handler — ends the scan's ownership of the slot; a re-assert of the occupant already
+     * there keeps it: {@code TargetGoal.canContinueToUse} re-sets the mob's CURRENT target on every cleanup pass
+     * while the revenge goal runs, and an every-set clear turned the scan's own pick — placed on the pass that
+     * dropped a dead revenge target — into a sticky one (ENT-S-117 refuter B's window). The port-wide convention
+     * ruled in ENT-S-129 (the Water Dragon's ENT-S-117 form); the hurt hand-off is in {@link #hurt}. ENT-S-108.
+     */
     @Override
     public void setTarget(@Nullable LivingEntity target) {
+        LivingEntity before = this.getTarget();
         super.setTarget(target);
-        this.scanPick = null;
+        if (this.getTarget() != before) this.scanPick = null; // ENT-S-129: the mark ends on a change of occupant only
+    }
+
+    /**
+     * orig EmperorScorpion.java:71 {@code EntityAIHurtByTarget(this, false)} — the revenge task whose attack target the pass read
+     * ahead of the scan (:409) and released on its roll (:414-416); 1.7.10's task ended when its attack target
+     * was nulled ({@code EntityAITarget.continueExecuting}), where vanilla's {@code TargetGoal} re-asserts its own memory
+     * into an emptied slot — so the pass's release also drops that memory ({@link #release}). The hold itself stays
+     * vanilla's. ENT-S-129.
+     */
+    private final class RevengeGoal extends HurtByTargetGoal {
+        RevengeGoal() {
+            super(EntityEmperorScorpion.this);
+        }
+
+        /** orig :414-416 {@code setAttackTarget(null)} ended the task: the goal's memory goes with the slot. */
+        void release() {
+            this.targetMob = null;
+        }
     }
 
     /**

@@ -44,6 +44,17 @@ public class Skate extends Monster {
     private int closestWaterDistance = 99999;
     private int targetX = 0, targetY = 0, targetZ = 0;
 
+    /**
+     * The last pick the pass handed to the target slot. 1.7.10 stored the scan's pick nowhere — the pass acted on it
+     * for that tick and re-derived it on the next (orig Skate.java:296-301); only a target stored by {@link #hurt} or the revenge
+     * task persisted, answered ahead of the scan while alive (:291-294). The port stores the pick so the next pass
+     * can tell its own occupant from a stored one: under this mark it is re-derived every pass (replaced, or cleared
+     * when not found again), never sticky; a target set by any other path is left alone (the ENT-S-108 slot rule;
+     * see {@link #setTarget}). ENT-S-129.
+     */
+    @Nullable
+    private LivingEntity scanPick;
+
     public Skate(EntityType<? extends Skate> type, Level level) {
         super(type, level);
         this.xpReward = 10;
@@ -87,10 +98,29 @@ public class Skate extends Monster {
         Entity attacker = source.getEntity();
         if (attacker instanceof Skate) return false;
         if (attacker instanceof Mob mob) {
+            if (mob == this.scanPick) this.scanPick = null; // orig Skate.java:138-145 — the attacker is the STORED target from here (read ahead of the scan, :291-294): the scan's mark on a pick that turned on the skate ends with the store (ENT-S-129)
             this.setTarget(mob);
             this.getNavigation().moveTo(mob, 1.2);
         }
-        return super.hurt(source, amount);
+        boolean ret = super.hurt(source, amount);
+        if (attacker != null && attacker == this.scanPick && this.getLastHurtByMob() == attacker
+                && this.getLastHurtByMobTimestamp() == this.tickCount) this.scanPick = null; // the revenge goal's store of any other living attacker — super.hurt's lastHurtByMob of this tick — ends it the same way; a hit that stores nothing keeps the pick transient (ENT-S-129)
+        return ret;
+    }
+
+    /**
+     * A change of occupant by any other path — the revenge goal's start or stop, a hurt store, the melee goal's
+     * forget roll, an event handler — ends the scan's ownership of the slot; a re-assert of the occupant already
+     * there keeps it: {@code TargetGoal.canContinueToUse} re-sets the mob's CURRENT target on every cleanup pass
+     * while the revenge goal runs, and an every-set clear turned the scan's own pick — placed on the pass that
+     * dropped a dead revenge target — into a sticky one (ENT-S-117 refuter B's window). The port-wide convention
+     * ruled in ENT-S-129 (the Water Dragon's ENT-S-117 form); the hurt hand-off is in {@link #hurt}. ENT-S-108.
+     */
+    @Override
+    public void setTarget(@Nullable LivingEntity target) {
+        LivingEntity before = this.getTarget();
+        super.setTarget(target);
+        if (this.getTarget() != before) this.scanPick = null; // ENT-S-129: the mark ends on a change of occupant only
     }
 
     @Override
@@ -123,14 +153,23 @@ public class Skate extends Monster {
             // orig Skate.java:283-285 — findSomethingToAttack answers null under PlayNicely ahead of its stored-target
             // read (:291-294) and its scan (:296-301); the port's pick is this inline block, gated as a whole (ENT-S-115).
             boolean playNicely = OreSpawnConfig.PLAY_NICELY.get();
-            LivingEntity target = playNicely ? null : this.getTarget();
+            LivingEntity target = playNicely ? null : this.getTarget();      // orig :291 — the stored target, read inside the gated method
+            if (target != null && target == this.scanPick) {
+                target = null;                                               // orig :296-301 — the scan's pick was never stored: its occupant is re-derived by this pass (ENT-S-129)
+            } else if (target != null && !target.isAlive()) {
+                this.setTarget(null);                                        // orig :292-295 — a live stored target is answered ahead of the scan; a dead one is cleared (ENT-S-129)
+                target = null;
+            }
             if (target == null && !playNicely) {
                 Player nearest = this.level().getNearestPlayer(this, 10.0);
                 // orig Skate.java:272-274 — canSee, the eye-to-eye block ray, ahead of the creative check (:275-278) (ENT-S-118)
                 if (nearest != null && this.getSensing().hasLineOfSight(nearest) && !nearest.getAbilities().instabuild) {
                     target = nearest;
-                    this.setTarget(target);
                 }
+                // the scan's answer handed to the slot under the ownership mark — re-derived next pass, cleared when not
+                // found again (ENT-S-129, the ENT-S-108 slot rule)
+                if (target != this.getTarget()) this.setTarget(target);
+                this.scanPick = this.getTarget();
             }
             if (target != null && target.isAlive()) {
                 if (this.distanceToSqr(target) < 4.0) {

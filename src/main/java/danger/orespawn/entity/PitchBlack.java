@@ -3,6 +3,7 @@ package danger.orespawn.entity;
 import danger.orespawn.MobStats;
 import danger.orespawn.entity.pose.PitchBlackPose;
 
+import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
 import java.util.Comparator;
 import java.util.List;
 import javax.annotation.Nullable;
@@ -148,6 +149,17 @@ public class PitchBlack extends Monster implements PitchBlackPose {
      */
     private final danger.orespawn.entity.client.RenderInfo renderInfo =
             new danger.orespawn.entity.client.RenderInfo();
+
+    /**
+     * ENT-S-122 — the hunter's own sight memo, 1.7.10's {@code EntitySenses}: two lists keyed by entity id, cleared only
+     * by {@code EntityLiving.updateAITasks} ({@code clearSensingCache}), which the Nightmare reached only in activity 0 (orig PitchBlack.java:330-332),
+     * while its scans run when it is not (:340-342 → :361-363, and the :259-280 branch). The port's
+     * {@code Sensing} is ticked every server tick from the final {@code Mob.serverAiStep}, so the two ENT-S-118 sight
+     * steps of this class consult this memo instead (a miss asks {@code getSensing().hasLineOfSight} and records the
+     * answer); vanilla goals keep {@code Sensing}. Cleared by {@link #clearSightMemo} at PitchBlack.customServerAiStep's activity-0 branch — never while active.
+     */
+    private final IntOpenHashSet sightMemoSeen = new IntOpenHashSet();
+    private final IntOpenHashSet sightMemoUnseen = new IntOpenHashSet();
 
     public PitchBlack(EntityType<? extends PitchBlack> type, Level level) {
         super(type, level);
@@ -400,6 +412,34 @@ public class PitchBlack extends Monster implements PitchBlackPose {
         }
         Vec3 motion = this.getDeltaMovement();
         this.setDeltaMovement(motion.x, motion.y * 0.6, motion.z);
+        // orig PitchBlack.java:259-280 — server-side, 1-in-250: heal 1 + scale (:260); then 1-in-5 (:261) probes for solid
+        // ground within 10 below (:262-269 — above y 10 the first non-air block of the column, else stone) and, finding
+        // it, scans (:271-272): an empty scan puts the Nightmare back to activity 0 (:273-275) — its only way back; the
+        // other four-in-five (:277-279) wake it (activity 1, the navigation dropped). The scan's sight verdicts are the
+        // memo's, frozen while active (ENT-S-122). ENT-S-129 (the ledger's PitchBlack scan-set row).
+        if (!this.level().isClientSide() && this.random.nextInt(250) == 1) {   // orig :259
+            this.heal(1.0f + this.getPitchBlackScale());                       // orig :260
+            if (this.random.nextInt(5) == 0) {                                 // orig :261
+                boolean solidBelow;                                            // orig :262 — bid = air
+                if (this.getY() > 10.0) {                                      // orig :263
+                    solidBelow = false;
+                    for (int i = 0; i < 10; ++i) {                             // orig :264-265 — the first non-air block of the ten below
+                        if (!this.level().getBlockState(new BlockPos((int) this.getX(), (int) this.getY() - i, (int) this.getZ())).isAir()) {
+                            solidBelow = true;
+                            break;
+                        }
+                    }
+                } else {
+                    solidBelow = true;                                         // orig :267 — bid = stone
+                }
+                if (solidBelow && findSomethingToAttack() == null) {           // orig :269-273
+                    this.setActivity(0);                                       // orig :274
+                }
+            } else {
+                this.setActivity(1);                                           // orig :278
+                this.getNavigation().stop();                                   // orig :279 — setPath(null, 0)
+            }
+        }
     }
 
     @Override
@@ -420,6 +460,7 @@ public class PitchBlack extends Monster implements PitchBlackPose {
         if (this.damageTicker > 0) --this.damageTicker;
         if (this.getActivity() == 0) {
             super.customServerAiStep();
+            this.clearSightMemo(); // orig PitchBlack.java:330-332 — super.updateAITasks (EntityLiving's clearSensingCache) only in activity 0: the sight memo is cleared here and never while active (ENT-S-122)
             if (this.getRandom().nextInt(10) == 1) {
                 LivingEntity spottedTarget = findSomethingToAttack();
                 if (spottedTarget != null) {
@@ -506,6 +547,22 @@ public class PitchBlack extends Monster implements PitchBlackPose {
         return false;
     }
 
+    /** ENT-S-122: the memo's verdict for the target — the first {@code getSensing().hasLineOfSight} answer per id, held until the memo is cleared. */
+    private boolean memoHasLineOfSight(LivingEntity target) {
+        int id = target.getId();
+        if (this.sightMemoSeen.contains(id)) return true;
+        if (this.sightMemoUnseen.contains(id)) return false;
+        boolean seen = this.getSensing().hasLineOfSight(target);
+        (seen ? this.sightMemoSeen : this.sightMemoUnseen).add(id);
+        return seen;
+    }
+
+    /** ENT-S-122: orig {@code EntityLiving.updateAITasks}'s {@code clearSensingCache}, at the port's super.customServerAiStep line. */
+    private void clearSightMemo() {
+        this.sightMemoSeen.clear();
+        this.sightMemoUnseen.clear();
+    }
+
     private LivingEntity findSomethingToAttack() {
         if (OreSpawnConfig.PLAY_NICELY.get()) return null; // orig PitchBlack.java:541-543 — PlayNicely != 0 returns null ahead of the scan (ENT-S-115)
         float scale = this.getPitchBlackScale();
@@ -528,7 +585,7 @@ public class PitchBlack extends Monster implements PitchBlackPose {
     private boolean isSuitableTarget(LivingEntity target) {
         if (target == null || target == this || !target.isAlive()) return false;
         if (MyUtils.isIgnoreable(target)) return false; // orig PitchBlack.java:498-500 — the shared ignore screen (ENT-S-106)
-        if (!this.getSensing().hasLineOfSight(target)) return false; // orig PitchBlack.java:501-503 — canSee, after the ignore screen and ahead of the self-kind refusal (:504-506) (ENT-S-118)
+        if (!this.memoHasLineOfSight(target)) return false; // orig PitchBlack.java:501-503 — canSee, after the ignore screen and ahead of the self-kind refusal (:504-506) (ENT-S-118); the verdict held by the sight memo, as 1.7.10's EntitySenses held it for the whole active phase (ENT-S-122)
         if (target instanceof PitchBlack) return false; // orig PitchBlack.java:504-506
         if (target instanceof EnderReaper) return false; // orig PitchBlack.java:507-509 (ENT-S-112)
         if (target instanceof EntityLeafMonster) return false; // orig PitchBlack.java:510-512 LeafMonster (ENT-S-112)

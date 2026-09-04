@@ -51,6 +51,8 @@ public class GiantRobot extends Monster {
 
     private final Comparator<Entity> targetSorter;
     private int reloadTicker = 0;
+    /** orig GiantRobot.java:58 — the revenge task; the pass's 1-in-100 release ends it (see {@link RevengeGoal}); assigned in registerGoals (the Mob constructor). ENT-S-129. */
+    private RevengeGoal revengeGoal;
     private final float moveSpeed = 0.55f;
 
     public GiantRobot(EntityType<? extends GiantRobot> type, Level level) {
@@ -83,7 +85,8 @@ public class GiantRobot extends Monster {
         this.goalSelector.addGoal(2, new MoveThroughVillageGoal(this, 0.9f, false, 4, () -> false));
         this.goalSelector.addGoal(3, new LookAtPlayerGoal(this, Player.class, 8.0f)); // orig GiantRobot.java:56
         this.goalSelector.addGoal(4, new RandomLookAroundGoal(this)); // orig GiantRobot.java:57
-        this.targetSelector.addGoal(1, new HurtByTargetGoal(this)); // orig GiantRobot.java:58
+        this.revengeGoal = new RevengeGoal();
+        this.targetSelector.addGoal(1, this.revengeGoal); // orig GiantRobot.java:58 — EntityAIHurtByTarget(this, false), released by the pass's 1-in-100 (ENT-S-129)
     }
 
     public static AttributeSupplier.Builder createAttributes() {
@@ -134,8 +137,11 @@ public class GiantRobot extends Monster {
         super.customServerAiStep();
         if (this.reloadTicker > 0) --this.reloadTicker;
         if (this.getRandom().nextInt(5) == 0) {
-            LivingEntity currentTarget = this.getTarget();
-            if (this.getRandom().nextInt(100) == 1) this.setTarget(null);
+            if (this.getRandom().nextInt(100) == 1) {                // orig GiantRobot.java:243-245 — the 1-in-100 clear BEFORE the read (:246): the cleared target is not engaged this pass (ENT-S-129)
+                this.setTarget(null);
+                this.revengeGoal.release();                          // 1.7.10's task ended on a nulled attack target; vanilla's TargetGoal would re-assert its memory (ENT-S-129)
+            }
+            LivingEntity currentTarget = this.getTarget();           // orig :246
             if (currentTarget != null && !currentTarget.isAlive()) {
                 this.setTarget(null);
                 currentTarget = null;
@@ -208,6 +214,24 @@ public class GiantRobot extends Monster {
                     this.getSoundSource(), 2.5f, 1.0f);
         }
         this.level().addFreshEntity(laserBall);
+    }
+
+    /**
+     * orig GiantRobot.java:58 {@code EntityAIHurtByTarget(this, false)} — the revenge task whose attack target the pass read
+     * ahead of the scan (:246) and released on its roll (:243-245); 1.7.10's task ended when its attack target
+     * was nulled ({@code EntityAITarget.continueExecuting}), where vanilla's {@code TargetGoal} re-asserts its own memory
+     * into an emptied slot — so the pass's release also drops that memory ({@link #release}). The hold itself stays
+     * vanilla's. ENT-S-129.
+     */
+    private final class RevengeGoal extends HurtByTargetGoal {
+        RevengeGoal() {
+            super(GiantRobot.this);
+        }
+
+        /** orig :243-245 {@code setAttackTarget(null)} ended the task: the goal's memory goes with the slot. */
+        void release() {
+            this.targetMob = null;
+        }
     }
 
     @Override

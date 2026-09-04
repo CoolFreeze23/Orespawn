@@ -87,6 +87,9 @@ public class SeaViper extends Monster {
     @Override
     protected void registerGoals() {
         this.goalSelector.addGoal(0, new FloatGoal(this));
+        // orig SeaViper.java:539-543 — the stored target was read inside the PlayNicely-gated scan method (:531-533): under
+        // the flag the pass acted on nothing (attacking 0), the stored target kept; the bite goal stands down under the
+        // flag through Presets.seaViper (ENT-S-129)
         this.goalSelector.addGoal(1, new SeaViperBiteGoal(this, this::setAttacking));
         this.goalSelector.addGoal(2, new RandomSwimmingGoal(this, 1.0, 40));
         this.goalSelector.addGoal(3, new MyEntityAIWanderALot(this, 16, 1.0));

@@ -95,7 +95,29 @@ public class Robot2 extends Monster implements Robot2Pose {
         this.goalSelector.addGoal(1, new WaterAvoidingRandomStrollGoal(this, 1.0));
         this.goalSelector.addGoal(3, new LookAtPlayerGoal(this, Player.class, 10.0f));
         this.goalSelector.addGoal(4, new RandomLookAroundGoal(this));
-        this.targetSelector.addGoal(1, new HurtByTargetGoal(this, Robot2.class).setAlertOthers());
+        // orig Robot2.java:57 — EntityAIHurtByTarget(this, false): no call for help and no same-kind exemption (a Robot2
+        // attacker is stored like any other, :338-351); the port-only setAlertOthers (every Robot2 within FOLLOW_RANGE x 10
+        // with no target retargeted) and the Robot2.class damage exemption are gone (ENT-S-129)
+        this.revengeGoal = new RevengeGoal();
+        this.targetSelector.addGoal(1, this.revengeGoal); // released by the pass's 1-in-50, as orig's task ended on a nulled attack target (ENT-S-129 refuter A)
+    }
+
+    /** orig Robot2.java:57 {@code EntityAIHurtByTarget(this, false)} — the revenge task the pass's 1-in-50 (:281-283) ended by nulling the attack target. ENT-S-129. */
+    private RevengeGoal revengeGoal;
+
+    /**
+     * 1.7.10's {@code EntityAIHurtByTarget} ended when the attack target was nulled ({@code EntityAITarget.continueExecuting});
+     * vanilla's {@code TargetGoal} re-asserts its own memory into an emptied slot, so the pass's release also drops that
+     * memory ({@link #release}). The hold itself stays vanilla's. ENT-S-129 (refuter A).
+     */
+    private final class RevengeGoal extends HurtByTargetGoal {
+        RevengeGoal() {
+            super(Robot2.this);
+        }
+
+        void release() {
+            this.targetMob = null;
+        }
     }
 
     public static AttributeSupplier.Builder createAttributes() {
@@ -190,7 +212,7 @@ public class Robot2 extends Monster implements Robot2Pose {
         // orig :279 — think-tick runs on a 1-in-6 roll, PlayNicely off only.
         if (this.getRandom().nextInt(6) == 1 && !OreSpawnConfig.PLAY_NICELY.get()) {
             LivingEntity target = this.getTarget();
-            if (this.getRandom().nextInt(50) == 1) this.setTarget(null);
+            if (this.getRandom().nextInt(50) == 1) { this.setTarget(null); this.revengeGoal.release(); } // orig :281-283 — the task ended on the nulled target; vanilla's TargetGoal would re-assert its memory (ENT-S-129 refuter A)
             if (target != null && !target.isAlive()) { this.setTarget(null); target = null; }
             if (target == null) target = findSomethingToAttack();
             if (target != null) {

@@ -11,6 +11,7 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
+import javax.annotation.Nullable;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
@@ -41,6 +42,9 @@ public class Pointysaurus extends Monster {
 
     private final float moveSpeed = 0.35f;
 
+    /** orig Pointysaurus.java:55 — the revenge task, holding {@code rt} by rt's rule (see {@link RevengeGoal}); assigned in registerGoals (the Mob constructor). ENT-S-129. */
+    private RevengeGoal revengeGoal;
+
     public Pointysaurus(EntityType<? extends Pointysaurus> type, Level level) {
         super(type, level);
         // OPT-009: constant speed - assert the attribute base once here instead
@@ -57,7 +61,8 @@ public class Pointysaurus extends Monster {
         this.goalSelector.addGoal(2, new MyEntityAIWanderALot(this, 16, 1.0));
         this.goalSelector.addGoal(3, new LookAtPlayerGoal(this, Player.class, 8.0f));
         this.goalSelector.addGoal(4, new RandomLookAroundGoal(this));
-        this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
+        this.revengeGoal = new RevengeGoal();
+        this.targetSelector.addGoal(1, this.revengeGoal); // orig Pointysaurus.java:55 — EntityAIHurtByTarget(this, false): the port's store of rt (:168-176), held by rt's rule (ENT-S-129)
         // Phase 10 — Enderman-style eye-contact aggression. Runs at priority 2
         // so it overrides the regular proximity targeting; if you stare at the
         // Pointysaurus it locks onto you. Wider-radius proximity aggro still
@@ -94,6 +99,70 @@ public class Pointysaurus extends Monster {
                 return super.canUse();
             }
         });
+    }
+
+    /**
+     * orig Pointysaurus.java:177-214 {@code updateAITasks}: nothing while dead (:178-180), super (:181), then on the
+     * 1-in-6 tick (:182) the rt half of the target selection (:183-195): rt read (:184), blanked under PlayNicely
+     * (:185-187 — the pass reads nothing; the melee goal's own stand-down under the flag is
+     * {@code DinosaurMeleeAttackGoal.Presets.pointysaurus}'s), dropped dead or on the 1-in-250 (:189-192), skipped
+     * for the pass out of sight (:193-195 — with the port's scan a vanilla goal (T3c) nothing runs in its place:
+     * recorded, not transcribed). The scan half (:197-199) is the port's NearestAttackableTargetGoal (T3c) and the
+     * melee half (:200-212) the melee goal, fed through the slot. ENT-S-129.
+     */
+    @Override
+    protected void customServerAiStep() {
+        if (this.isRemoved()) return;                              // orig :178-180
+        super.customServerAiStep();                                // orig :181
+        if (this.random.nextInt(6) == 0) {                         // orig :182
+            LivingEntity current = this.getTarget();               // orig :184 — e = rt: the slot's occupant while the revenge goal holds it
+            if (OreSpawnConfig.PLAY_NICELY.get()) current = null;  // orig :185-187 — the pass's copy blanked, rt kept (ENT-S-129; the ENT-S-115 deferral)
+            if (current != null && current == this.revengeGoal.held()) { // orig :188 — `if (e != null)`: rt, never a scan goal's pick
+                if (!current.isAlive() || this.random.nextInt(250) == 1) { // orig :189 — `e.isDead || nextInt(250) == 1`: the 1-in-250 rolled inside the 1-in-6 pass, on rt alone (ENT-S-129)
+                    this.setTarget(null);                          // orig :190-191 — e = null; rt = null
+                    this.revengeGoal.release();                    // rt's memory in the revenge goal goes with the slot, else vanilla's TargetGoal re-asserts it on the next cleanup pass (ENT-S-129)
+                }
+            }
+        }
+    }
+
+    /**
+     * orig Pointysaurus.java:42 {@code rt} — stored by :168-176 (any living attacker), consumed by the pass alone
+     * (:184-195) and held by rt's rule: until dead or the pass's roll (:189-191), through sight loss (:193-195
+     * skips the pass and keeps rt), at any range. The port's revenge store is vanilla's {@code lastHurtByMob} through
+     * this goal's start (orig :55's own {@code EntityAIHurtByTarget} set an attack target nothing read; 1.7.10's task
+     * ended when that target was nulled — {@code EntityAITarget.continueExecuting}), so its hold replaces
+     * {@code TargetGoal.canContinueToUse}'s: no FOLLOW_RANGE, no unseen-ticks memory; vanilla's re-set of the slot
+     * (a same-entity re-assert, which keeps the scan's mark) and its fallback to the goal's own memory when the
+     * slot is empty (rt restored after a pass that acted on the scan's pick while rt was out of sight) are kept,
+     * as is vanilla's {@code canAttack} screen; the pass's {@link #release} is final. ENT-S-129.
+     */
+    private final class RevengeGoal extends HurtByTargetGoal {
+        RevengeGoal() {
+            super(Pointysaurus.this);
+        }
+
+        @Override
+        public boolean canContinueToUse() {
+            LivingEntity held = Pointysaurus.this.getTarget();
+            if (held == null) held = this.targetMob;
+            if (held == null || !held.isAlive()) return false; // orig :189 — rt dropped dead
+            if (!Pointysaurus.this.canAttack(held)) return false; // vanilla's screen (a creative, spectator or Peaceful player), kept
+            if (Pointysaurus.this.getTeam() != null && held.getTeam() == Pointysaurus.this.getTeam()) return false; // vanilla's team screen, kept
+            Pointysaurus.this.setTarget(held);
+            return true;
+        }
+
+        /** The goal's own memory of rt, for the pass's rt reads. */
+        @Nullable
+        LivingEntity held() {
+            return this.targetMob;
+        }
+
+        /** orig :191 {@code rt = null}: the goal's memory goes with the slot, so nothing re-asserts it. */
+        void release() {
+            this.targetMob = null;
+        }
     }
 
     public static AttributeSupplier.Builder createAttributes() {

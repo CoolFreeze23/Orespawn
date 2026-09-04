@@ -225,6 +225,11 @@ public class Girlfriend extends TamableAnimal implements RangedAttackMob {
                 if (OreSpawnConfig.PLAY_NICELY.get()) return false; // orig Girlfriend.java:166-168 (ENT-S-115)
                 return super.canUse();
             }
+
+            @Override
+            protected double getFollowDistance() {
+                return 15.0; // orig Girlfriend.java:167 targetDistance 15.0f — MyEntityAINearestAttackableTarget.java:36/:56 the box (15/4/15) and MyEntityAITarget.java:52 the hold beyond 15², where vanilla reads the FOLLOW_RANGE attribute (16); the Dragon's ENT-S-117 idiom; closes the T3c box row for this goal (ENT-S-129)
+            }
         });
         // orig Girlfriend.java:169-174 — Jealousy(Girlfriend.class, 6.0f, 5, true)
         // @4 and (3.0f, 15, true) @5: she hunts UNTAMED rival girlfriends near

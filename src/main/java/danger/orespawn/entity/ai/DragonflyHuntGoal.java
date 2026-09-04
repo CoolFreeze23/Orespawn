@@ -24,7 +24,8 @@ import net.minecraft.world.entity.animal.horse.AbstractHorse;
  * mosquitoes, fireflies and, unless {@link OreSpawnConfig#DRAGONFLY_HORSE_FRIENDLY}
  * is on, horses (orig Dragonfly.java:213-228, {@link #isPrey}; ENT-S-128 —
  * the port's {@code bbWidth <= 0.6} rule is gone) — paths to it, and calls
- * {@code doHurtTarget} whenever it comes within 6 blocks. Nothing else is
+ * {@code doHurtTarget} once per hunt pass when it stands within 6 blocks (orig :146-148; ENT-S-129 —
+ * the prey is never retained). Nothing else is
  * prey, players and other dragonflies included, as in 1.7.10.
  *
  * <p>Main-thread budget: the {@code getEntitiesOfClass} scan is gated
@@ -56,17 +57,19 @@ public class DragonflyHuntGoal extends AmbientFlightGoal {
     @Override
     public void tick() {
         super.tick();
-        // Melee when in bite range of the current target, matching 1.7.10.
-        // We only hurt a genuine LivingEntity target, not the synthetic
-        // wander BlockPos targets from the base class.
-        LivingEntity target = (this.dragonfly.getTarget() != null)
-                ? this.dragonfly.getTarget() : null;
+        // orig Dragonfly.java:145-148 — the pass's pick is acted on for THIS tick alone: the flight target moved onto it
+        // (:145, pickRetarget) and one bite if it stands within distSq 6 (:146-148); it was never stored, and the next
+        // pass re-derives it. The pick passes through the slot for this tick only (pickRetarget's hand-off, read back
+        // here) and is dropped once acted on — HEAD kept it and bit every tick (ENT-S-129).
+        LivingEntity target = this.dragonfly.getTarget();
+        if (target == null) return;
         // orig Dragonfly.java:147-148 sits inside the :142 `!= PEACEFUL` branch: no bite on Peaceful,
         // whatever target the port still holds (ENT-S-114).
         if (this.mob.level().getDifficulty() != Difficulty.PEACEFUL
-                && target != null && this.dragonfly.distanceToSqr(target) < HUNT_HURT_DIST_SQ) {
+                && this.dragonfly.distanceToSqr(target) < HUNT_HURT_DIST_SQ) {
             this.dragonfly.doHurtTarget(target);
         }
+        this.dragonfly.setTarget(null); // orig :146-148 — one bite per pass, nothing retained (ENT-S-129)
     }
 
     @Override
@@ -74,10 +77,10 @@ public class DragonflyHuntGoal extends AmbientFlightGoal {
         // orig Dragonfly.java:142 — the 1-in-12 roll, then `difficulty != PEACEFUL` (ENT-S-114).
         if (this.mob.getRandom().nextInt(HUNT_ROLL_CHANCE) == 0
                 && this.mob.level().getDifficulty() != Difficulty.PEACEFUL) {
-            LivingEntity prey = findPrey();
+            LivingEntity prey = findPrey();                                   // orig :144
             if (prey != null) {
-                this.dragonfly.setTarget(prey);
-                return prey.blockPosition().above();
+                this.dragonfly.setTarget(prey);                                // the pass's hand-off for this tick's bite (tick reads it back and drops it) — never retained (ENT-S-129)
+                return prey.blockPosition().above();                          // orig :145
             }
         }
         return super.pickRetarget();

@@ -19,7 +19,6 @@ import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
-import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.monster.Monster;
@@ -57,7 +56,10 @@ public class Hammerhead extends Monster {
         this.goalSelector.addGoal(2, new MyEntityAIWanderALot(this, 16, 1.0));
         this.goalSelector.addGoal(3, new LookAtPlayerGoal(this, Mob.class, 8.0f));
         this.goalSelector.addGoal(4, new RandomLookAroundGoal(this));
-        this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
+        // orig Hammerhead.java:54 — EntityAIHurtByTarget(this, false), whose attack target nothing in orig read: the pass
+        // (:194-221) consumed rt (:182-184) alone. The port's pass reads the slot as a fallback (ENT-S-115, refuter B2),
+        // so a registered revenge goal would re-supply an attacker rt had forgotten (:198-201) until vanilla's own
+        // release: not registered — in play the slot stays empty and the fallback finds nothing (ENT-S-129).
     }
 
     public static AttributeSupplier.Builder createAttributes() {
@@ -124,6 +126,7 @@ public class Hammerhead extends Monster {
                     currentTarget = null;
                     this.revengeTarget = null;
                 }
+                if (currentTarget != null && !this.getSensing().hasLineOfSight(currentTarget)) currentTarget = null; // orig Hammerhead.java:203-205 — rt out of sight is skipped for the pass and kept (ENT-S-129)
             }
             if (currentTarget == null && !playNicely) { // port-only read of the slot (HurtByTargetGoal's channel): under the flag orig's pass consulted nothing (:194-209) and set attacking 0 (:219-221), so the read is gated with the pass; the slot itself is untouched (ENT-S-115, refuter B2)
                 currentTarget = this.getTarget();

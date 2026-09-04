@@ -74,6 +74,9 @@ public class EntityCaterKiller extends Monster {
      */
     private boolean inWeb = false;
 
+    /** orig CaterKiller.java:68 — the revenge task; the pass's 1-in-200 release ends it (see {@link RevengeGoal}); assigned in registerGoals (the Mob constructor). ENT-S-129. */
+    private RevengeGoal revengeGoal;
+
 
     public EntityCaterKiller(EntityType<? extends EntityCaterKiller> type, Level level) {
         super(type, level);
@@ -96,7 +99,8 @@ public class EntityCaterKiller extends Monster {
         this.goalSelector.addGoal(2, new MyEntityAIWanderALot(this, 16, 1.0));
         this.goalSelector.addGoal(3, new LookAtPlayerGoal(this, Player.class, 8.0f));
         this.goalSelector.addGoal(4, new RandomLookAroundGoal(this));
-        this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
+        this.revengeGoal = new RevengeGoal();
+        this.targetSelector.addGoal(1, this.revengeGoal); // orig CaterKiller.java:68 — EntityAIHurtByTarget(this, false), released by the pass's 1-in-200 (ENT-S-129)
         // orig CaterKiller.java:560-562 — findSomethingToAttack answers null under PlayNicely (PlayNicely != 0). The
         // port's hunt is this goal, so the flag is read live in its canUse: the goal never starts while PlayNicely
         // is on, and starts again the moment it is off (ENT-S-115).
@@ -182,6 +186,29 @@ public class EntityCaterKiller extends Monster {
         return ret;
     }
 
+    /**
+     * orig CaterKiller.java:68 {@code EntityAIHurtByTarget(this, false)} — the revenge task whose attack target the pass read
+     * ahead of the scan (:463) and released on its roll (:468-470); 1.7.10's task ended when its attack target
+     * was nulled ({@code EntityAITarget.continueExecuting}), where vanilla's {@code TargetGoal} re-asserts its own memory
+     * into an emptied slot — so the pass's release also drops that memory ({@link #release}). The hold itself stays
+     * vanilla's. ENT-S-129.
+     */
+    private final class RevengeGoal extends HurtByTargetGoal {
+        RevengeGoal() {
+            super(EntityCaterKiller.this);
+        }
+
+        /** orig :468-470 {@code setAttackTarget(null)} ended the task: the goal's memory goes with the slot. */
+        /** The goal's own memory: the pass's 1-in-200 may clear only what this goal stored, as orig :468-470 could only clear a stored attacker (ENT-S-129 refuter A). */
+        LivingEntity held() {
+            return this.targetMob;
+        }
+
+        void release() {
+            this.targetMob = null;
+        }
+    }
+
     @Override
     public void makeStuckInBlock(BlockState state, Vec3 motionMultiplier) {
         // orig CaterKiller.java:450 — only the cobweb raised field_70134_J
@@ -247,6 +274,22 @@ public class EntityCaterKiller extends Monster {
                 }
             }
             this.inWeb = false;
+        }
+
+        // orig CaterKiller.java:462-470 — the 1-in-4 pass's target half: the stored attack target read (:463), dropped
+        // dead (:464-467), then the 1-in-200 `setAttackTarget(null)` (:468-470) — rolled inside the pass, after the
+        // read, so the cleared target is still engaged this pass; the scan of :471-473 is the port's
+        // NearestAttackableTargetGoal<Player> (T3b) and the rest of the block the melee goal, so only this half lives
+        // here. The melee goal's every-tick 1-in-200 (Params.caterKiller) is gone with it (ENT-S-129).
+        if (this.random.nextInt(4) == 0) {                                   // orig :462
+            LivingEntity stored = this.getTarget();                          // orig :463
+            if (stored != null && !stored.isAlive()) {                       // orig :464-467
+                this.setTarget(null);
+            }
+            if (this.random.nextInt(200) == 0 && this.getTarget() != null && this.getTarget() == this.revengeGoal.held()) { // orig :468-470 — the roll spent every pass, the clear only on the revenge goal's own target (a goal-held player pick is not a stored attacker; refuter A)
+                this.setTarget(null);
+                this.revengeGoal.release();                                  // 1.7.10's task ended on a nulled attack target; vanilla's TargetGoal would re-assert its memory (ENT-S-129)
+            }
         }
 
         if (this.cobwebCooldown > 0) --this.cobwebCooldown;

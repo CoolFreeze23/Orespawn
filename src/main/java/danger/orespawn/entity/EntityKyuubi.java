@@ -102,11 +102,10 @@ public class EntityKyuubi extends Monster {
     @Override
     protected void customServerAiStep() {
         if (this.isRemoved()) return;
-        super.customServerAiStep();
-
         if (this.random.nextInt(200) == 1) {
-            this.setTarget(null);
+            this.setLastHurtByMob(null); // orig Kyuubi.java:157-159 — func_70604_c(null) = setRevengeTarget(null), rolled BEFORE super.updateAITasks (:160): the revenge MEMORY forgotten (the port's lastHurtByMob), not the attack target (ENT-S-129)
         }
+        super.customServerAiStep();
 
         if (this.random.nextInt(10) == 1) {
             LivingEntity target = findSomethingToAttack();

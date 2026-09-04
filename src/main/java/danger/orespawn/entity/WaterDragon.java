@@ -298,7 +298,7 @@ public class WaterDragon extends TamableAnimal {
         // living attacker only when super.hurt processed it, which is what lastHurtByMob records — ENT-S-117
         // refuter B, B1).
         if (attacker != null && attacker == this.scanPick
-                && (attacker instanceof Mob || this.getLastHurtByMob() == attacker)) this.scanPick = null;
+                && (attacker instanceof Mob || (this.getLastHurtByMob() == attacker && this.getLastHurtByMobTimestamp() == this.tickCount))) this.scanPick = null; // ENT-S-129: the lastHurtByMob half pinned to THIS hit by its timestamp — the port-wide convention
         if (attacker instanceof Mob mob) {
             this.setTarget(mob);
             this.getNavigation().moveTo(mob, 1.2);
