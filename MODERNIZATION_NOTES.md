@@ -893,6 +893,10 @@ _pin) so alignment drift is caught regardless.
   Boyfriend.java:138-147 and Girlfriend.java:161-174 register no owner task and no EntityAIHurtByTarget) — and Leon's
   tame rule (above). A tamed Boyfriend or Girlfriend in classic now fights only what its hunt, Jealousy or Valentine
   goals pick, the 1.7.10 behaviour. Camarasaurus was checked and carries none of the goals (see the Switch bullet).
+- **Disclosure (2026-09-05, the T5b refuter):** in modern, Leon's 1-in-200 forget (EntityLeon.java:568-571) ends its
+  revenge goal through `release()` but not a running `OwnerHurtByTargetGoal` / `OwnerHurtTargetGoal` (:167-168), whose
+  own memory re-asserts the owner's attacker next tick — a facet of this record (1.7.10 had no owner goals), not a
+  parity question; classic is unaffected.
 - **Status:** IMPLEMENTED 2026-09-04 (the key, the helper, the eight gated sites, the pins); EXTENDED 2026-09-05 (the
   four companions outside the ledger, Leon's tame rule, six more pins); the classic branch is orig.
 

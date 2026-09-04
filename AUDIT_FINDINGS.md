@@ -8136,7 +8136,7 @@ keeps BUG-036. Commit 4ea395c's message retains the old number.)*
   MyEntityAINearestAttackableTarget.java:44-52 absent on the port goal — a T3c residual, noted on the ledger row)
   and four nits recorded.
 
-### ENT-S-126 — The flyers' flight-target retarget writes the candidate after the air-and-ray test where 1.7.10 wrote it before: a boxed-in Stinky or Spyro keeps its reached target and re-runs the fifty-try pick, now fifty block rays, every tick (REPORT, 2026-09-04; raised by the ENT-S-119 refuter)
+### ENT-S-126 — The flyers' flight-target retarget writes the candidate after the air-and-ray test where 1.7.10 wrote it before: a boxed-in Stinky or Spyro keeps its reached target and re-runs the fifty-try pick, now fifty block rays, every tick (FIXED 2026-09-05; REPORT 2026-09-04, raised by the ENT-S-119 refuter)
 
 - **Evidence:** orig Stinky.java:638-641 and Spyro.java:645-648 assign the candidate to the flight target BEFORE the
   air-and-`canSeeTarget` test, so after fifty refused tries the flyer steers at the fiftieth refused candidate for up
@@ -8148,31 +8148,65 @@ keeps BUG-036. Commit 4ea395c's message retains the old number.)*
   `do_new = true` belongs to the same shape. Pre-existing and unchanged by ENT-S-123 (its rows 17/18 discriminate
   through this order; if the order is transcribed they need a ray-refusal count or alternating candidates). No MOD
   record.
-- **Resolution:** REPORT — for the owner's ruling as a parity bug in classic: transcribe orig's write-before-test
-  order (the candidate stored, then refused candidates simply not steered toward again until the next retarget) in
-  both flyers, with a pin for the boxed-in case (fifty refusals → one steer at the last candidate, no rays until the
-  retarget clock) and the ENT-S-119 rows 17/18 re-based on a ray-refusal count. A flight / wander row, outside the
-  targeting ledger; the per-tick ray cost makes it worth scheduling with the T5/T6 wave.
+- **Resolution:** FIXED (2026-09-05, batch T5b — owner's ruling 2026-09-04 night, item 9: a parity bug in classic). Orig's
+  order transcribed in both flyers: the candidate written to the flight target BEFORE the air-and-ray test — orig
+  Stinky.java:638 / Spyro.java:645 → EntityStinky.doMovement :483 / EntitySpyro.doMovement :450 (`this.currentFlightTarget =
+  newTarget` ahead of the :485-488 / :452-455 `isAir && canSeeTarget` test, which now only sets `found`, as orig's :639-641 /
+  :646-648 only re-armed the loop) — so after fifty refusals the flyer steers at the fiftieth refused candidate and, that
+  target being beyond 2.1 of it, runs no pick and casts no ray until the :552 / :572 retarget clock (or the owner-distance and
+  attack retargets), where HEAD re-ran the fifty tries, fifty `level().clip` rays, every tick; and orig :548-551 / :562-565's
+  `do_new = true` on the null-init (EntityStinky :414-419, EntitySpyro :366-371 — unreachable for the Spyro in both trees, its target
+  initialised by the AI step first (orig :450-451, port :163-164); reached for the Stinky on the first server tick in both trees
+  (orig do_movement :534 runs inside `super.func_70636_d()` :403 before :411's init, port doMovement :294 inside `super.tick()`
+  :173 before :191's init) and redundant there with the distance test orig :608 / port :461 on a target just set to the flyer's
+  own block; transcribed for the shape). Pins
+  (`StinkyIdleParityTests`, batch `stinkyIdleParity` 19 → 22): rows 17 / 18 (`s123_17_stinky_640_flight_ray_wall`,
+  `s123_18_spyro_647_flight_ray_wall`) re-based on the ray-refusal count — the pick's y roll (the Stinky's nextInt(6), the
+  Spyro's nextInt(9); one per try, rolled by nothing else in the drive) counted through a `RollLog`: fifty with the wall, the
+  flight target asserted ON the refused candidate (written before the test), one with the wall razed — so they still
+  discriminate their ENT-S-123 line (the ray term removed accepts the walled candidate on the first try) and now the write;
+  new rows `s126_20_stinky_638_boxed_in_last_candidate_no_repick` / `s126_21_spyro_645_boxed_in_last_candidate_no_repick`:
+  the walled drive (fifty tries, the target on the candidate), a second walled drive with the 1-in-300 quiet (zero tries — no
+  ray — the target kept; HEAD's assign-on-acceptance left the target within 2.1 and re-ran the fifty), a third with the clock
+  pinned to fire (the fifty again). No ray seam exists (`canSeeTarget` clips `level()` directly); each try on an air candidate is
+  exactly one ray, so the y-roll count is the ray count. Disclosed, not applied (outside the ruling's lines — a flight /
+  wander row, not the targeting ledger's): orig's pick rolled zdir before xdir in every branch (Stinky.java:622-630,
+  Spyro.java:629-637) where both ports roll xdir first (EntityStinky :472-473, EntitySpyro :431-439) — dice order only; and
+  EntityStinky's pick lacks orig Stinky.java:617-627's owner branches (an owner on the ground: `nextInt(4) + 6`; the owner
+  flying: `nextInt(8)`) that EntitySpyro carries at :430-439 — the port rolls the ownerless `nextInt(5) + 6` for a tame Stinky
+  too, a wider flight box around its owner. javac rc 0; the gametest run is the gate's.
 
-### ENT-S-127 — Engine convention without a ruling: 1.7.10's vanilla target tasks refused Creepers and Ghasts through `EntityLiving.canAttackClass`, the port's vanilla `NearestAttackableTargetGoal`s refuse Ghasts only (REPORT, 2026-09-04; raised by the ENT-S-124 refuter)
+### ENT-S-127 — Engine convention without a ruling: 1.7.10's vanilla target tasks refused Creepers and Ghasts through `EntityLiving.canAttackClass`, the port's vanilla `NearestAttackableTargetGoal`s refuse Ghasts only (FIXED 2026-09-05; REPORT 2026-09-04, raised by the ENT-S-124 refuter)
 
 - **Evidence:** 1.7.10 `EntityAITarget.isSuitableTarget` called `EntityLiving.canAttackClass(cls)`, whose only
   body is `cls != EntityCreeper.class && cls != EntityGhast.class` (client jar sha1 e80d9b3b…, `sw.a(Class)`;
   no OreSpawn class overrides it), so every vanilla `EntityAINearestAttackableTarget` an OreSpawn tameable
   registered — Dragon.java:116, Leon.java:93, ThePrinceAdult.java:113, ThePrinceTeen.java:117 — never took a
   Creeper or a Ghast. The port's goals at those four sites (Dragon.java:157, EntityLeon.java:166,
-  ThePrinceAdult.java:151, ThePrinceTeen.java:162 after ENT-S-124) take Creepers: vanilla 1.21.1 refuses only the
+  ThePrinceAdult.java:151, ThePrinceTeen.java:162 after ENT-S-124; :158 / :185 with the selector :182-184 / :159 / :170 after MOD-033 and T5b) take Creepers: vanilla 1.21.1 refuses only the
   Ghast (`Mob.canAttackType`, Mob.java:253-255). Pre-existing under HEAD's `Monster` form. The species' custom
   scans took Creepers in both trees (orig Dragon.java:561, Leon.java:412, ThePrinceAdult.java:495 accept any
   EntityMob), so only the vanilla channel's cadence and box differ for a Creeper. The Boyfriend / Girlfriend goals
   are not affected: orig's `MyEntityAITarget.isSuitableTarget` (MyEntityAITarget.java:78-129) never called
   `canAttackClass` and granted Creeper (:111) and Ghast (:114) explicitly — there the port's Ghast refusal is the
   disclosed divergence of ENT-S-124. No MOD record.
-- **Resolution:** REPORT — for the owner's ruling as an engine convention (port-wide, one helper): every vanilla
-  target goal that maps a 1.7.10 vanilla task carries `e -> e instanceof Enemy && !(e instanceof Creeper)` (vanilla's
-  IronGolem idiom; the Ghast is already refused by the engine), with one Creeper-refused pin per site — or the
-  Creeper refusal is recorded as deliberately not reproduced (a MOD note) if the owner prefers the 1.21.1 engine's
-  choice. Not part of the targeting waves' rows.
+- **Resolution:** FIXED (2026-09-05, batch T5b — owner's ruling 2026-09-04 night, item 10: an engine convention, port-wide,
+  one helper). New `danger.orespawn.util.OrigTargets` (util/OrigTargets.java, `vanillaTaskPrey(LivingEntity)` at :33-35 =
+  `e instanceof Enemy && !(e instanceof Creeper)`), its javadoc citing `EntityLiving.canAttackClass` — the client jar's
+  `sw.a(Class)`, `cls != EntityCreeper.class && cls != EntityGhast.class`, asked by `EntityAITarget.isSuitableTarget` of every
+  candidate ahead of the task's selector; the Ghast half already vanilla 1.21.1's `Mob.canAttackType` — read by the four goals
+  that map a 1.7.10 vanilla task: Dragon.java:158 (`OrigTargets::vanillaTaskPrey` for the `e instanceof Enemy` lambda),
+  ThePrinceAdult.java:159, ThePrinceTeen.java:170, and EntityLeon.java:182-184, where it composes with the MOD-033 key-gated
+  tame rule (modern: `vanillaTaskPrey(e) && (!isTame() || getTarget() == null)`; classic: the bare helper — orig :93's task
+  behind `canAttackClass`); the `Enemy` imports dropped where nothing else read them. The species' own scans (Creepers taken in
+  both trees, orig Dragon.java:561 / Leon.java:412 / ThePrinceAdult.java:495) and the Boyfriend / Girlfriend goals (orig
+  `MyEntityAITarget.isSuitableTarget` granted the Creeper at :111 and the Ghast at :114 — the Ghast refusal stays the disclosed
+  divergence of ENT-S-124) are untouched. Pins (`IMobConventionTests`, batch `imobConvention` 25 → 29 — the s124 rows keep their
+  names, the Row carrying its series and finding): `s127_01_dragon_creeper`, `s127_02_leon_creeper`,
+  `s127_03_theprinceadult_creeper`, `s127_04_theprinceteen_creeper` — the goal read off the target selector as the s124 rows
+  read it and asked `canUse()` under the ForcedRoll seam with a Creeper 8 blocks off (an Enemy and a Monster: the precondition
+  asserts it), refused, beside each site's Zombie row (taken — the control); the Leon's row runs untamed, so its tame rule admits
+  and the helper alone refuses. javac rc 0; the gametest run is the gate's.
 
 ### ENT-S-125 — Batch T9 applied: the port-only targeting additions split into modern records and classic removals (FIXED 2026-09-04)
 
@@ -8457,6 +8491,217 @@ keeps BUG-036. Commit 4ea395c's message retains the old number.)*
   order (hunt @3, HurtBy @4 in classic; the modern pair's place the owner's choice); the Girlfriend's hunt @3 in both
   modes, the modern pair repositioned at the owner's choice; the `mod033_companions_defend_owner_*` expected selectors
   and the IMob pins updated with it. Rides with a targeting follow-up (T5b or wave 3).
+
+### ENT-S-131 — Five more forgets undone by vanilla's `TargetGoal` re-assert: the three robots' 1-in-50, Leon's 1-in-200 and the Water Dragon's 1-in-200 nulled the attack target where 1.7.10's `EntityAIHurtByTarget` ended, and the port's plain revenge goal put it back (the ENT-S-129 refuter A's re-rated MATCH rows, targeting ledger batch T5b; FIXED 2026-09-05)
+
+- **Evidence:** the ENT-S-129 refuter A's first recorded note (AUDIT_FINDINGS.md, the ENT-S-129 resolution; the ledger's
+  wave log, "Observations (2026-09-04, ENT-S-129 refuter A) (1)"), re-rated DIVERGES by the owner (2026-09-04 night, items
+  8-10). 1.7.10 ended its revenge task on a nulled attack target — `EntityAITarget.continueExecuting` read
+  `taskOwner.getAttackTarget()` and returned false on null — so a pass's `setAttackTarget(null)` was final: Robot3.java:242-244
+  (`nextInt(50) == 1` inside the `reload_ticker == 0` pass of :240; the task :58 `EntityAIHurtByTarget(this, false)`),
+  Robot4.java:282-284 (inside `reload_ticker == 0 && nextInt(8) == 1`, :280; task :61), Robot5.java:214-216 (inside
+  `reload_ticker == 0`, :212; task :56), Leon.java:340-342 (`nextInt(200) == 1` in `updateAITasks`, every AI tick; the hunt
+  task :93 and the revenge task :95 both ended on it), WaterDragon.java:594-596 (`nextInt(200) == 0` every AI tick, ahead of the
+  :597 hunt pass, whatever the target was; task :76). The port at HEAD bde0caf nulled the slot at the same dice — Robot3.java:127,
+  Robot4.java:175, Robot5.java:114 (1-in-50 inside the passes), EntityLeon.java:545 (1-in-200) — and, for the Water Dragon, in
+  the melee goal's tick instead (`Presets.waterDragon` forget 200, ai/DinosaurMeleeAttackGoal.java:43, rolled in
+  ai/BugMeleeAttackGoal.java:149-155 only while the goal ran) — each beside a plain `HurtByTargetGoal` (Robot3 :89, Robot4 :89,
+  Robot5 :76, EntityLeon :170, WaterDragon :139) whose `TargetGoal.canContinueToUse`, run by the next serverAiStep's
+  goalCleanup while the goal is running, re-sets its own `targetMob` memory into the emptied slot: the forget lasted at most one
+  tick. What a player saw: a Robo-Gunner, Robo-Warrior or Robo-Sniper that rolled its 1-in-50 forgiveness of whoever hit it kept
+  shooting or swinging at it until it died, left FOLLOW_RANGE 16 or stayed unseen 300 ticks; a Leonopteryx or a Water Dragon on
+  its 1-in-200 the same at 40 / 32 blocks — the ENT-S-129 defect on five more species. Leon's hunt goal holds no memory of its
+  own (`NearestAttackableTargetGoal` never sets `targetMob`) and ends on the nulled slot as orig :93's task did; only the revenge
+  goal re-asserted. The ledger rated the five rows MATCH (Robot3 :773, Robot4 :787, Robot5 :801, WaterDragon :1156 "MATCH —
+  note"; Leon :577 RECORDED with the MOD-033 pair). No MOD record.
+- **Resolution:** FIXED (2026-09-05, batch T5b — the T5 shape of ENT-S-129, owner's ruling 2026-09-04 night, item 8). A
+  per-species private `RevengeGoal extends HurtByTargetGoal` with `release()` (`targetMob = null`), built in `registerGoals` and
+  kept in a field — Robot3.java:91-111, Robot4.java:91-111, Robot5.java:78-98, EntityLeon.java:170-171 and :194-212 (the hunt
+  goal, its key-gated predicate and the priorities untouched — ENT-S-130 stands), WaterDragon.java:141-161 — and the forget
+  calling `setTarget(null)` + `revengeGoal.release()` on the orig dice inside the orig pass: Robot3 :148, Robot4 :196, Robot5 :135
+  (1-in-50 `== 1` inside the pass, at HEAD's place after the read — T5's Robot2 position; see the disclosure below), EntityLeon :568-571 (1-in-200 `== 1`
+  every AI tick), WaterDragon :367-370 (1-in-200 `== 0` every AI tick ahead of the hunt pass, whatever the slot holds, moved out of
+  the melee goal's tick: `Presets.waterDragon` forget 200 → 0, ai/DinosaurMeleeAttackGoal.java:43 — one roll per tick as orig
+  :594 rolled it, target or none). Nothing else moves; no `held()` — no pass reads the goal's memory. Pins (`TargetReleaseParityTests`,
+  batch `targetReleaseParity` 53 → 58): `s131_01_robot3_242_forget_in_pass_final`, `s131_02_robot4_282_forget_in_pass_final`,
+  `s131_03_robot5_214_forget_in_pass_final`, `s131_04_leon_340_forget_final`,
+  `s131_05_waterdragon_594_forget_in_step_not_goal_tick` — the T5 rows' shape: the revenge goal started on a stored attacker (a
+  Zombie behind the wall for the robots — a Monster their own scans refuse, so only the goal can hold it, and no laser leaves the
+  pass: Robot3's and Robot5's shots want line of sight, Robot4's cannon reads a head yaw held at 0; a pig for the Water Dragon, no
+  prey of its hunt, that hunt pass pinned quiet; a Zombie in the open for Leon), the pass / AI tick driven by reflection with the
+  forget pinned quiet (the control: the slot kept and `canContinueToUse` re-asserting it) and then pinned to fire (the slot
+  empty and `canContinueToUse` false — the next tick's cleanup does not refill it; each row fails against a plain
+  `HurtByTargetGoal`), and for the Water Dragon the melee goal ticked with the old every-tick 200 pinned to fire keeping the slot
+  (Presets forget 0). Disclosed, not applied: orig Robot2.java:281-284, Robot3.java:242-245, Robot4.java:282-285 and
+  Robot5.java:214-217 roll the 1-in-50 clear BEFORE the pass reads the target (`e = getAttackTarget()` follows the clear) where
+  the port — T5's Robot2 included — reads first, so a forgotten target is engaged once more in the forgetting pass (a laser for
+  Robot3 / Robot5, a swing or a shot for Robot2 / Robot4) whenever the scan would not re-pick it (a Monster attacker, a creative
+  player) — the GiantRobot :243 / AntRobot :109 clear-before-read shape T5 fixed on those two; the ledger's robot rows rate the
+  pass MATCH and the ruling moved nothing else, so it is presented for wave 3. javac rc 0 over the 15 compilation units; the
+  gametest run is the gate's.
+
+### ENT-S-132 — Sixteen creative gates drifted from 1.7.10: three vanilla-goal hunters read `abilities.invulnerable` for `isCreativeMode`, the Brutalfly and Mothra let a creative nearest shadow their mob hunt, the Ender pair lost the legacy loop's same-tick creative drop and its shadowing, and the Ender Knight hunted without its pumpkin-stare gate (targeting ledger batch T8, wave 3; FIXED 2026-09-05)
+
+- **Evidence:** targeting ledger batch T8 (`phase_g_reports/targeting_survey_2026-09-04.md`, §T8: 17 rows, 16 blocks; row 17,
+  MyValentineTarget / Girlfriend, is RECORDED under MOD-036 and skipped here; §2 blocks cited per row), plus the ENT-S-121
+  census's "Ender Knight's dropped stare ray" (item 11 of the 2026-09-04 ruling, closed with this batch). 1.7.10 tested
+  `capabilities.isCreativeMode` (`field_71075_bZ.field_75098_d`) at every hunter's player branch, and its legacy (non-AI)
+  loop `EntityCreature.updateEntityActionState` (`td.bq` :155-182, the ledger's V10) nulled a creative `EntityPlayerMP`
+  target (`theItemInWorldManager.isCreative()`, the game type) the same tick the pick (`findPlayerToAttack`, :62-73 of the
+  dump) had stored it — so at the Ender pair a creative starer nearer than a survival one was picked and dropped every
+  tick and the farther survival starer never hunted (the Kraken KT-A pattern). The port's remaining vanilla
+  `NearestAttackableTargetGoal<Player>` sites read creative through `TargetingConditions.forCombat` → `canAttack` →
+  `Player.canBeSeenAsEnemy` = `!abilities.invulnerable` ((v) Player.java:966-968, TargetingConditions.java:73) — the
+  ENT-S-107 class: 1.21.1 `GameType.updatePlayerAbilities` sets `instabuild` for CREATIVE only, `invulnerable` for CREATIVE
+  and SPECTATOR, and either can be toggled by hand — and the Ender pair's hold (`holdsLegacyTarget`, ENT-S-129) read the
+  same `canAttack`; the Brutalfly's strafe and Mothra's stage 1 folded orig's creative test into one condition with no
+  else-branch, so a creative nearest never fell through to the mob hunt (and Mothra's stage-1 sight step was absent); the
+  Ender Knight's goal carried no selector at all. Per row, orig → port at the survey's snapshot (6af0a1c) and at HEAD
+  (bde0caf) before this fix:
+
+  | # | species | aspect | orig (1.7.10) | port before the fix |
+  |---|---|---|---|---|
+  | 1 | CaterKiller | creative gate | CaterKiller.java:546-549 — `return !p.capabilities.isCreativeMode` (:548), after alive (:540) and `MyCanSee` (:543) | EntityCaterKiller.java:107 — vanilla `NearestAttackableTargetGoal<>(this, Player.class, true)`, `forCombat` (T3b keeps the class and box) |
+  | 2 | CaveFisher | creative gate | CaveFisher.java:221-226 | CaveFisher.java:191 — `instabuild` at the orig position (ENT-S-108, commit 2c98492, after the snapshot's goals :81-87) — present at HEAD |
+  | 3 | DungeonBeast | creative gate | DungeonBeast.java:240-245 | DungeonBeast.java:183 — present at HEAD (ENT-S-108) |
+  | 4 | EmperorScorpion | creative gate | EmperorScorpion.java:494-499 | EntityEmperorScorpion.java:345 — present at HEAD (ENT-S-108) |
+  | 5 | HerculesBeetle | creative gate | HerculesBeetle.java:407-412 | EntityHerculesBeetle.java:267 — present at HEAD (ENT-S-108) |
+  | 6 | Nastysaurus | creative gate | Nastysaurus.java:271-274 (`return !isCreativeMode`, after sight :268) | Nastysaurus.java:262 — present at HEAD (ENT-S-108) |
+  | 7 | Pointysaurus | creative gate (goal path) | Pointysaurus.java:242-245 (`return !isCreativeMode`, after sight :239; every non-player false :246) | Pointysaurus.java:94 — vanilla goal, `forCombat`, the ENT-S-106 ignore predicate (T3c keeps the class and box); `PointysaurusStareGoal:48` `isCreative()` is MOD-034's port-only goal, not a parity site |
+  | 8 | SeaViper | creative gate | SeaViper.java:517-520 (:519), after alive (:511) and sight (:514) | SeaViper.java:103 — vanilla goal, `forCombat` (T3b) |
+  | 9 | SpitBug | creative gate | SpitBug.java:361-366 | EntitySpitBug.java:301 — present at HEAD (ENT-S-108) |
+  | 10 | TRex | creative gate | TRex.java:241-246 | TRex.java:245 — present at HEAD (ENT-S-108) |
+  | 11 | TrooperBug | creative gate | TrooperBug.java:501-506 | EntityTrooperBug.java:335 — present at HEAD (ENT-S-108) |
+  | 12 | Brutalfly | filter order (strafe) | Brutalfly.java:216-226 — nearest (:215) → `!isCreativeMode` (:217) → sight (:218) → mark / shoot (:219-221); ELSE `target = null` (:224-226) so the 1-in-3 mob hunt (:228) runs; an unseen survival nearest keeps `target` and shadows the hunt | EntityBrutalfly.java:207 — `target != null && !instabuild && sight` in one condition: a creative nearest stays non-null, `target == null` (:216) fails, the mob hunt never runs (ENT-S-109's observation) |
+  | 13 | Mothra | filter order (stage 1) | Mothra.java:225-236 — the same shape: `!isCreativeMode` (:226) → sight (:227) → mark / shoot (:228-231); ELSE `target = null` (:233-235) so the 1-in-3 mob hunt (:237) runs | Mothra.java:393 — `target != null && !instabuild`: no sight step (the T2 shape, cross-referenced to this row), no nulling |
+  | 14 | EnderKnight | creative gate | none in the pick (:61-81 — `getClosestPlayerToEntity(64)` takes any mode, :65); `td.bq` :155-182 drops a creative `EntityPlayerMP` target the same tick; a creative starer shadows a farther survival one | EnderKnight.java:60 — `forCombat` refuses `invulnerable` INSIDE the pick (the farther survival starer is taken: shadowing lost); :82 `holdsLegacyTarget` holds by `canAttack` (ENT-S-129 — its refuter A recorded "the Ender hold's creative screen") |
+  | 15 | EnderReaper | creative gate | the same (`td.bq` :155-182; :65 within 81) | EnderReaper.java:64 / :87 — the same two reads |
+  | 16 | EnderKnight | filter order | EnderKnight.java:83-93 `shouldAttackPlayer` on the nearest player (:67): no pumpkin helmet (:84-87), the look vector within `1 − 0.025/d` of the knight's mid-height (:88-91), the player-side `canEntityBeSeen(knight)` ray (:92) | EnderKnight.java:60 — the vanilla chain only, no selector: any visible player within 64 is hunted; the Reaper kept its twin (EnderReaper.java:96-109, the :92 ray routed through `OreSpawnSight.canSee(player, this)` since ENT-S-121); the ENT-S-121 census recorded the Knight's :92 ray as the port's one dropped player-receiver `canEntityBeSeen` call |
+
+  What a player saw: at the CaterKiller, Sea Viper and Pointysaurus (and, through the hold, the Ender pair) a survival
+  player made invulnerable by a command was safe and a creative player with invulnerability toggled off was hunted, where
+  1.7.10 asked "creative?"; the Brutalfly and Mothra stopped hunting mobs while a creative player stood nearby (1.7.10
+  nulled the creative nearest and went for the mobs); the Ender Knight and Reaper let a farther survival starer be hunted
+  past a nearer creative one (1.7.10's creative starer shadowed it); the Ender Knight attacked any visible player without
+  the pumpkin / stare gate; Mothra strafed a player it could not see. No MOD record covers any of it.
+- **Resolution:** FIXED (2026-09-05, wave 3 — ruled 2026-09-04: "wave 3 = T8, T3b, T3c, T4, T10", with item 11, the
+  Ender Knight's dropped stare ray, "fixed with wave 3's T8"). Seven port files, every site at the orig position with
+  the orig polarity and the ENT-S-107 mapping (`Abilities.instabuild` for orig `isCreativeMode` / the legacy loop's
+  `isCreative`; never `invulnerable` / `canBeSeenAsEnemy`), T3b / T3c / T4 left their boxes, cadences and sorters:
+  (a) rows 1, 7, 8 — the vanilla goal keeps its class, its 3-arg registration (interval 10, mustSee, no mustReach) and
+  its box; its `TargetingConditions` are rebuilt in an instance initializer of the existing ENT-S-115 anonymous subclass,
+  `TargetingConditions.forNonCombat().range(this.getFollowDistance()).selector(e -> !(e instanceof Player p &&
+  p.getAbilities().instabuild))` (EntityCaterKiller.java:117-118, SeaViper.java:113-114; Pointysaurus.java:105-107 with
+  the ENT-S-106 ignore screen composed ahead of it, `!MyUtils.isIgnoreable(e) && …`, its registration reduced to the
+  3-arg form so the predicate lives once) — the same follow range, invisibility percent, `canBeSeenByAnyone` (alive,
+  non-spectator) and `Sensing` sight screens as `forCombat`, minus `forCombat`'s three terms that have no orig line at
+  these sites: `canAttack` (the Peaceful player refusal — inert, the engine discards every one of these Monsters on
+  Peaceful ahead of its goals, the T9 "MATCH (engine, P6)" reading — and `canBeSeenAsEnemy`'s `invulnerable`),
+  `canAttackType` (never refuses a Player) and `isAlliedTo` (no team test in orig's filters); (b) row 12 — the strafe
+  transcribed as orig's nested shape (EntityBrutalfly.java:207-218): `if (target != null) { if (!instabuild) { if (sight)
+  { mark; roll → shoot } } else { target = null; } }`, the mob hunt's `target == null && nextInt(3) == 0` (:222) untouched;
+  (c) row 13 — Mothra's stage 1 the same (Mothra.java:393-401), with the :227 sight step
+  (`getSensing().hasLineOfSight(target)`, the ENT-S-121 ray) restored ahead of the mark; (d) rows 14, 15 — the Ender
+  pair's player goal keeps its class, interval and box and its ENT-S-115 gate; its conditions are rebuilt non-combat with
+  the stare test as the selector and NO creative term (EnderKnight.java:83-84, EnderReaper.java:80-81 — orig's pick
+  :65-67 had none), and the same-tick drop sits after the pick in `canUse` (EnderKnight.java:90-94, EnderReaper.java:87-91:
+  `if (!super.canUse()) return false; if (this.target instanceof Player p && p.getAbilities().instabuild) { this.target =
+  null; return false; }`) — a creative starer nearer than a survival one is picked and nulled, nothing is hunted that pass
+  and the survival starer stays shadowed, as `td.bq`; `holdsLegacyTarget` (EnderKnight.java:115-119, EnderReaper.java
+  :112-116) reads `held.isAlive() && !held.isSpectator() && !(held instanceof Player p && p.getAbilities().instabuild)`
+  for HEAD's `held.isAlive() && this.canAttack(held)` — `td.bq` :107-152's `isEntityAlive` and :155-182's `isCreative`;
+  the spectator screen (a state 1.7.10 had no counterpart for, refused by HEAD's `canAttack` and by every pick's
+  `canBeSeenByAnyone`) is kept as at HEAD, disclosed below; the Reaper's registration goes from the 6-arg form to the
+  3-arg one with the selector in the initializer (identical 10 / true / false — the 6-arg call's own values); the pair's
+  revenge pick now overrides `canAttack` the same way — the anonymous `HurtByTargetGoal`'s `canUse` reaches vanilla
+  `TargetGoal.canAttack(LivingEntity, TargetingConditions)` with the private `HURT_BY_TARGETING` (`forCombat`:
+  `LivingEntity.canAttack` → `Player.canBeSeenAsEnemy` = `!abilities.invulnerable`), so the override answers `t != null &&
+  t.isAlive() && !t.isSpectator() && !(t instanceof Player p && p.getAbilities().instabuild)` (EnderKnight.java:58-62,
+  EnderReaper.java:55-59 — orig `EntityMob.attackEntityFrom` stored any living attacker and `td.bq` :155-182 nulled only a
+  creative one; the T8 refuter's D1), pinned by `s132_57_ender_knight_revenge_creative_attacker_refused`,
+  `s132_58_ender_knight_revenge_invulnerable_survival_attacker_taken`, `s132_59_ender_reaper_revenge_creative_attacker_refused`
+  and `s132_60_ender_reaper_revenge_invulnerable_survival_attacker_taken`; (e) row
+  16 — `EnderKnight.shouldAttackPlayer(Player)` (EnderKnight.java:121-140) is the Reaper's twin (EnderReaper.java:96-109 at HEAD, :124-137 now) with the Knight's
+  cites: the carved pumpkin (orig :84-87), the mid-height cone `dot > 1.0 - 0.025 / dist` (:88-91) and the :92 player-side
+  ray through `OreSpawnSight.canSee(player, this)` exactly as EnderReaper.java:108 (ENT-S-121 refuter B's routing — a
+  player receiver the namespace-gated mixin cannot reach), wired as the goal's selector; orig's screaming / stare-sound
+  side effects of the pick (:68-74, :77-78) are the Knight's "other" row and stay absent on both. Rows 2-6, 9-11 (the
+  eight ENT-S-108 hunters): present at HEAD — `instabuild` at the orig position in each private `isSuitableTarget`
+  (ENT-S-108 landed after the survey's snapshot, whose port cites name the removed goals) — no edit, pinned here (the
+  ENT-S-115 "present at HEAD; pinned" shape). Comment / javadoc cites at every site; nothing else in those methods.
+  Pins: new `CreativeGateParityTests` (own batch `creativeGateParity`, TEST-003; a `@GameTestGenerator` over 60 rows,
+  `creativegateparitytests.s132_NN_<site>_<case>`): per site the ENT-S-107 triple — a creative mock player refused, a
+  SURVIVAL player with `Abilities.invulnerable` set by hand TAKEN (the discriminating row: vanilla's `forCombat` /
+  `canAttack` refuses it, so every such row fails with its port line reverted), a plain survival player taken — 24 rows
+  through the eight ENT-S-108 filters by reflection (CreativeMappingParityTests' shape; the hunter frozen, the player 8
+  blocks east, sight asserted), 9 through the three rebuilt goals' `canUse()` with the pick read back off the goal
+  (PlayNicelyGateParityTests' GoalProbe shape, the 1-in-5 acquisition roll pinned), 6 through the Ender pair's stare goal
+  with the player staring at the mid-height (the creative row also shows the pick's own conditions ADMIT the creative
+  starer and the goal's target reads null — picked and nulled the same tick); the shadowing (4): a creative starer 8
+  blocks off and a survival starer 12 blocks off, both admitted by the pick's conditions → `canUse` false and no pick;
+  the survival starer alone → taken; the hold (4): a creative stored target dropped and an invulnerable-survival one kept
+  through both target goals' `canContinueToUse`; the Knight's stare gate (4): pumpkin refused, look-away refused, a stare
+  through a stone wall refused (the cone asserted satisfied and `OreSpawnSight.canSee(player, knight)` asserted false, so
+  the :92 ray is the refusing term; razed in-row, taken), a clear stare taken — each refusal with `shouldAttackPlayer` by
+  reflection and the goal's `canUse` agreeing, and a within-row control (pumpkin removed / looking back / wall razed);
+  the Brutalfly (2) and Mothra (3) AI steps driven once by reflection under a scripted per-call random (the ENT-S-109
+  strafe shape; a script because the mob-hunt gate and the fire roll share the bound 3 on Normal): a creative nearest 8
+  blocks off with a zombie 12 blocks off → the flight target at the zombie's mark (the hunt ran, every scripted roll
+  drawn); a seen survival nearest → the player's mark with the mob-hunt gate's roll never drawn (`target` non-null skips
+  it); Mothra's unseen survival nearest behind the wall, the zombie 12 blocks west in clear sight → the parked target
+  untouched and the gate never drawn (the sight step, and no fall-through for an unseen non-creative target); the
+  revenge pick (4, the refuter's D1): the attacker primed through `setLastHurtByMob` with the hunter's `tickCount`
+  raised past the goal's initial timestamp (TargetReleaseParityTests' idiom), the anonymous `HurtByTargetGoal`'s
+  `canUse` driven off the target selector — a creative attacker refused with the slot empty, an invulnerable-survival
+  attacker taken and stored by `start()` (the row vanilla's `canAttack` fails).
+  Synchronous; PlayNicely, the difficulty and MothraPeaceful asserted as preconditions and never flipped; walls razed,
+  players removed and spawns discarded in a finally; creative players the framework's mock set to CREATIVE, survival
+  players plain `ServerPlayer`s on the player list (PlayNicelyGateParityTests' `survivalServerPlayerAt`, since the
+  mock's `isCreative()` is hardcoded true); no row pins a hit, so no spawn shield is cleared. `PlayNicelyGateParityTests`'
+  Ender Knight GoalProbe row (site 11) now stares at the knight's mid-height, as the Reaper's does, since the Knight's
+  goal carries the stare selector. javac rc 0 (seven entity files, the two test classes; no gradle in this lane); the
+  gametest run is the gate's.
+  Disclosed: (i) at the three rebuilt goals the vanilla HOLD (`TargetGoal.canContinueToUse` → `mob.canAttack` →
+  `canBeSeenAsEnemy`) still reads `invulnerable`: an invulnerable survival player is picked by orig's rule and released
+  by vanilla's the next tick — the T3b / T3c rebuild (a custom scan) or a T5 hold rule closes it; a stock survival or
+  creative player is unaffected; (ii) the rebuilt conditions drop `forCombat`'s alliance term, so a scoreboard team
+  shared with a player no longer spares that player at these three sites (orig had no team test) — and the vanilla hold's
+  own team check (`TargetGoal.canContinueToUse`) releases such a team-mate the pass after the pick, the same half-fixed shape
+  as (i); the Peaceful player
+  refusal they drop is inert on a Monster (engine despawn); (iii) the selector runs ahead of the conditions' sight step
+  where orig tested creative after sight (:239 → :242, :514 → :517, :543 → :546) — pure predicates, outcome-equivalent;
+  (iv) `holdsLegacyTarget` keeps HEAD's spectator refusal (no 1.7.10 state; a target that switches to spectator
+  mid-chase is dropped rather than chased until daybreak) — a one-line removal if the owner wants the literal hold;
+  (v) orig's `td.bq` read the game type (`isCreative()`, 1.21.1 `ServerPlayer.isCreative()`); the ENT-S-107 mapping
+  (`instabuild`) is applied as ruled — the two agree for every stock player and differ only for a hand-edited
+  `instabuild`; (vi) the Ender pair's scan-set row (nearest-of-any-mode-then-filter vs nearest-eligible) is T3b's: a
+  creative NON-staring nearest player still does not shadow in the port (the stare selector runs inside the nearest
+  search), only a creative starer does — the row's own description; (vii) the AntRobot dircheck cross-reference of §T8
+  rides in its T2 row, not here. Refuters: (the orchestrator's).
+
+### ENT-S-133 — The four robots roll their 1-in-50 forget after the pass reads the target where 1.7.10 rolled it before: a forgotten attacker is engaged once more in the forgetting pass (REPORT, 2026-09-05; raised by the T5b refuter)
+
+- **Evidence:** orig Robot2.java:281-284, Robot3.java:242-245, Robot4.java:282-285 and Robot5.java:214-217 roll the 1-in-50
+  `setAttackTarget(null)` BEFORE `e = getAttackTarget()`; the port — T5's Robot2.java:214-215 included — reads first and
+  clears after (Robot3.java:147-148, Robot4.java:195-196, Robot5.java:134-135), so the forgetting pass still engages the
+  attacker it is about to forget (a laser for Robot3 / Robot5, a swing or a shot for Robot2 / Robot4) whenever the scan
+  would not re-pick it (a Monster attacker, a creative player). Robot3 and Robot5 hold only the revenge target in the slot
+  (their scan picks are pass-local), so every forget engages once more and defers the scan 35 / 20 ticks. T5 restored the
+  clear-before-read shape on the GiantRobot (:243) and the AntRobot (:109); the ledger rates the four robots' passes MATCH.
+  No MOD record.
+- **Resolution:** REPORT — for the owner's ruling as parity bugs in classic (wave 3): the roll moved ahead of the read at
+  the four sites, four pins (the forgetting pass fires nothing), the four `target set / release` rows re-rated.
+
+### ENT-S-134 — The Stinky's flight pick lacks 1.7.10's owner branches: a tame Stinky rolls the ownerless flight box (REPORT, 2026-09-05; raised by the T5b refuter)
+
+- **Evidence:** orig Stinky.java:617-627 picks the flight box around an owner — the owner on the ground `nextInt(4) + 6`,
+  the owner flying `nextInt(8)` — and the ownerless `nextInt(5) + 6` only at :628-631; the port's `EntityStinky.doMovement`
+  :472-473 rolls `nextInt(5) + 6` for every Stinky, tame or wild, where `EntitySpyro` carries the owner branches at
+  :430-439 (orig Spyro.java:629-637). Player-visible: a tame Stinky flies a wider box around its owner than 1.7.10's. Dice
+  order only, no signature: both ports roll xdir before zdir where orig rolled zdir first (every branch draws the same
+  bound twice). No MOD record.
+- **Resolution:** REPORT — for the owner's ruling as a parity bug in classic (a flight / wander row outside the targeting
+  ledger): orig :617-631 transcribed into `EntityStinky.doMovement` with a tame-owner pin; the roll order noted, not changed.
 
 ### TEST-003 — Config-flipping gametests in the concurrent default batch
 

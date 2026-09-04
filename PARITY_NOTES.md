@@ -284,3 +284,20 @@ dropped before any attack step could act on it (no swing, sound or motion carrie
 measure from the mob's centre, the prey at 15.8, for this reason). Under the 2026-09-04 doctrine an engine-frame
 difference without a player-visible signature is recorded, not coded.
 - **Player-visible:** no.
+
+## PN-021 — The Stinky's coal-ore hunt reads the modern engine's two coal ores as 1.7.10's one (ENT-S-119's mapping; T5b, 2026-09-05; both modes)
+
+- **Original:** `Stinky.java:443-487` compared every probe of the six-face shell scan (the eat of :582-607, restored by
+ENT-S-119) against the one coal ore of 1.7.10, `Blocks.field_150365_q` — the block every coal vein placed at every depth.
+- **Port:** `EntityStinky.isCoalOre` (:404-412) tests the probe against `#minecraft:coal_ores` — `coal_ore` and
+`deepslate_coal_ore` — instead of `Blocks.COAL_ORE` alone. 1.21.1 split the ore into two blocks by the stone it sits in: the
+vanilla `ore_coal` features and the port's own `ore_boost_*.json` pairs (`stone_ore_replaceables → x_ore`,
+`deepslate_ore_replaceables → deepslate_x_ore`) place the deepslate variant below y 0 and wherever deepslate stands in for
+stone, so with the block alone a Stinky flying in the deep would starve of the ore 1.7.10 gave it everywhere.
+- **Why this mapping:** the tag is the engine's own name for "the coal ore, whichever stone" — the same mapping the ore
+generator uses to place it — and nothing else of the routine changes: the shells, the nearest-by-distSq pick, the walk, the
+eat under distSq 12, the heal and the burp are ENT-S-119's transcription. No config key: the mapping holds in both modes.
+- **Player-visible:** no — the Stinky eats deepslate coal ore where 1.7.10's single ore was everywhere; a Stinky in the
+deepslate layers behaves as one at the surface.
+- **Pin:** `StinkyIdleParityTests` row `pn021_22_stinky_443_deepslate_coal_ore_eat` — the row-1 probe with a deepslate coal ore
+at origin + (1, 0, 0): found at distSq 1, walked to at 1.25, eaten to air, the heal of 1 and the burp at 0.5 / 1.5..1.7.
