@@ -204,10 +204,16 @@ public class EntityBrutalfly extends Monster {
             // creative test (orig :217 capabilities.isCreativeMode) is
             // Abilities.instabuild — the ENT-S-107 mapping — not invulnerable.
             Player target = this.level().getNearestPlayer(this, 30.0);
-            if (target != null && !target.getAbilities().instabuild && this.getSensing().hasLineOfSight(target)) { // orig :217 (ENT-S-109)
-                this.currentFlightTarget = target.blockPosition().above(4);
-                if (this.random.nextInt(shoot) == 0) {
-                    this.attackWithSomething(target);
+            if (target != null) { // orig :216
+                if (!target.getAbilities().instabuild) { // orig :217 (ENT-S-109)
+                    if (this.getSensing().hasLineOfSight(target)) { // orig :218 — an unseen survival nearest keeps `target` set and shadows the mob hunt, as orig
+                        this.currentFlightTarget = target.blockPosition().above(4); // orig :219
+                        if (this.random.nextInt(shoot) == 0) { // orig :220
+                            this.attackWithSomething(target); // orig :221
+                        }
+                    }
+                } else {
+                    target = null; // orig :224-226 — a creative nearest is nulled so the 1-in-3 mob hunt (:228) can run (ENT-S-132)
                 }
             }
 

@@ -224,10 +224,10 @@ public class PlayNicelyGateParityTests {
         sites.add(site(10, "emperorscorpion_504_scan", "EmperorScorpion.java:504-506", "EntityEmperorScorpion.findSomethingToAttack (ENT-S-108 gate)",
                 "the scan returning a pig 8 blocks off",
                 () -> new ScanProbe(ModEntities.ENTITY_EMPEROR_SCORPION, PIG, PREY_POS, "findSomethingToAttack", null, null)));
-        // EnderKnight — orig :62-64
+        // EnderKnight — orig :62-64 (the stare test :83-93, restored by ENT-S-132, wants the player looking at the knight's mid-height)
         sites.add(site(11, "enderknight_62_player_goal", "EnderKnight.java:62-64", "EnderKnight's NearestAttackableTargetGoal<Player>",
-                "the goal's canUse taking a survival player 8 blocks off",
-                () -> new GoalProbe(ModEntities.ENDER_KNIGHT, Player.class, PreyKind.PLAYER, false)));
+                "the goal's canUse taking a survival player 8 blocks off who stares at it",
+                () -> new GoalProbe(ModEntities.ENDER_KNIGHT, Player.class, PreyKind.PLAYER_STARING_AT_MID, false)));
         // EnderReaper — orig :62-64 (the stare test :83-93 wants the player looking at the reaper's mid-height)
         sites.add(site(12, "enderreaper_62_player_goal", "EnderReaper.java:62-64", "EnderReaper's NearestAttackableTargetGoal<Player>",
                 "the goal's canUse taking a survival player 8 blocks off who stares at it",

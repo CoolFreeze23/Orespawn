@@ -390,9 +390,15 @@ public class Mothra extends EntityButterfly implements OreSpawnPartEntity.Multip
         } else if (this.random.nextInt(10) == 0 && this.level().getDifficulty() != Difficulty.PEACEFUL
                 && !OreSpawnConfig.MOTHRA_PEACEFUL.get()) {
             Player target = this.level().getNearestPlayer(this, 25.0);
-            if (target != null && !target.getAbilities().instabuild) {
-                this.currentFlightTarget = new BlockPos((int) target.getX(), (int) target.getY() + 4, (int) target.getZ());
-                if (this.random.nextInt(shoot) == 0) this.attackWithFireball(target); // orig Mothra.java:229
+            if (target != null) { // orig Mothra.java:225
+                if (!target.getAbilities().instabuild) { // orig :226 capabilities.isCreativeMode (ENT-S-107: Abilities.instabuild)
+                    if (this.getSensing().hasLineOfSight(target)) { // orig :227 — the stage-1 sight step (the T2 shape); an unseen survival nearest keeps `target` set and shadows the mob hunt, as orig (ENT-S-132)
+                        this.currentFlightTarget = new BlockPos((int) target.getX(), (int) target.getY() + 4, (int) target.getZ()); // orig :228
+                        if (this.random.nextInt(shoot) == 0) this.attackWithFireball(target); // orig Mothra.java:229
+                    }
+                } else {
+                    target = null; // orig :233-235 — a creative nearest is nulled so the 1-in-3 mob hunt (:237) can run (ENT-S-132)
+                }
             }
             if (target == null && this.random.nextInt(3) == 0) {
                 LivingEntity hostile = this.findSomethingToAttack();
