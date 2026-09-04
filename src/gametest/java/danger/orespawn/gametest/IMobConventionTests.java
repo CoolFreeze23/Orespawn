@@ -51,8 +51,9 @@ import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
  * (an Enemy that is no Monster — taken, the goal's pick read back; this row fails on the old Monster form), a Zombie
  * (taken), a pig (refused), and the Slime again under the flipped PlayNicely flag (refused — the ENT-S-115 gate
  * composes over the selector); the Leon's extra row proves its port-only tame rule ({@code !isTame() ||
- * getTarget() == null}) still composes: tamed and holding a target it refuses the Slime, with the slot emptied it
- * takes her. Geometry as PlayNicelyGateParityTests: the hunter spawned with its goals and no AI at rel (20,1,24) on
+ * getTarget() == null} — MOD-033's modern branch since 2026-09-05; the game-test config runs modern, and the classic
+ * form is pinned per mode in PortOnlyTargetingTests) still composes: tamed and holding a target it refuses the Slime,
+ * with the slot emptied it takes her. Geometry as PlayNicelyGateParityTests: the hunter spawned with its goals and no AI at rel (20,1,24) on
  * the floor of the 48x16x48 empty_large, the prey frozen 8 blocks east (inside every follow range of the six: the
  * Dragon's pinned 16, the Leon's 40, the Princes' 64 / 32, the Boyfriend's / Girlfriend's default 16), line of sight
  * asserted. The flag restored in a finally on every path; every spawn discarded there; no mock players. Own batch
@@ -207,13 +208,17 @@ public class IMobConventionTests {
                             + " over the Enemy selector, as orig registered the task only when PlayNicely == 0");
                 }
                 case LEON_TAME_RULE -> {
+                    helper.assertTrue(OreSpawnConfig.petsDefendOwner(), "precondition: the game-test config runs modern"
+                            + " (modern.enabled and petsDefendOwner at their defaults) — the tame rule is MOD-033's modern"
+                            + " branch since 2026-09-05, pinned per mode in PortOnlyTargetingTests (" + FINDING + " test setup)");
                     TamableAnimal leon = (TamableAnimal) hunter;
                     leon.setTame(true, false);
                     hunter.setTarget(prey);
                     helper.assertTrue(leon.isTame() && hunter.getTarget() == prey,
                             "precondition: the Leon reads tamed and holds a target (" + FINDING + " test setup)");
                     assertRefused(helper, row, goal, prey, " tamed and holding a target — the port's tame rule"
-                            + " (!isTame() || getTarget() == null, EntityLeon.registerGoals) must compose over the Enemy selector");
+                            + " (!isTame() || getTarget() == null, EntityLeon.registerGoals; MOD-033's modern branch) must compose"
+                            + " over the Enemy selector");
                     hunter.setTarget(null);
                     assertTaken(helper, row, goal, prey, " tamed with the slot emptied — the tame rule admits, the Enemy selector takes");
                 }

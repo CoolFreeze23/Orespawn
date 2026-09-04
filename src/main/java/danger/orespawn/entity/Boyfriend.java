@@ -144,8 +144,17 @@ public class Boyfriend extends TamableAnimal implements RangedAttackMob {
         // match (roofed-shelter at night/rain), see MoveIndoorsGoal.
         this.goalSelector.addGoal(11, new danger.orespawn.entity.ai.MoveIndoorsGoal(this));
 
-        this.targetSelector.addGoal(1, new OwnerHurtByTargetGoal(this));
-        this.targetSelector.addGoal(2, new OwnerHurtTargetGoal(this));
+        // MOD-033 (petsDefendOwner; the extension of 2026-09-05): the owner-defence pair is modern only, a construction
+        // snapshot (the helper read once here; goals register in the Mob ctor, the BOSS-017 shape — a config change
+        // applies to newly spawned Boyfriends); orig Boyfriend.java:138-147 registered no owner task and no
+        // EntityAIHurtByTarget — its targetTasks are the Creeper and IMob hunts and the two Jealousy tasks (the pair came
+        // with commit 2b0c2cd, 2026-04-06, no stated intent; gated on the owner's 2026-09-04 ruling). Live here: the held-weapon melee in customServerAiStep and the RangedAttackGoal
+        // @4 read the target slot, so a tamed modern Boyfriend avenges and defends its owner; classic fights only what
+        // the hunt or the Jealousy goals pick, as in 1.7.10.
+        if (OreSpawnConfig.petsDefendOwner()) {
+            this.targetSelector.addGoal(1, new OwnerHurtByTargetGoal(this));
+            this.targetSelector.addGoal(2, new OwnerHurtTargetGoal(this));
+        }
         // orig Boyfriend.java:140-142 — the MyEntityAINearestAttackableTarget(EntityLiving.class, 15.0f, IMob selector)
         // task is registered only when PlayNicely == 0 at construction (the :137-139 EntityCreeper task has no port
         // counterpart); the port registers this goal always and reads the flag live in its canUse, as the Jealousy

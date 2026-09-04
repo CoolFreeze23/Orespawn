@@ -11,6 +11,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 import net.minecraft.core.BlockPos;
@@ -18,12 +19,15 @@ import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.ai.goal.GoalSelector;
 import net.minecraft.world.entity.ai.goal.WrappedGoal;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
@@ -31,6 +35,7 @@ import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.OwnerHurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.OwnerHurtTargetGoal;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
+import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.phys.Vec3;
@@ -45,7 +50,11 @@ import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
  * MOD-033 {@code petsDefendOwner}, MOD-034 {@code pointysaurusStareAggro} and MOD-035
  * {@code cryolophosaurusRevengeChase} (goal registrations, construction snapshots) — one removal from
  * both modes (the Mantis's two inert target goals) and one deliberate parity exception kept in both modes
- * (MOD-036, the Girlfriend's Valentine safety gates).
+ * (MOD-036, the Girlfriend's Valentine safety gates). MOD-033's extension of 2026-09-05 adds the four companions
+ * outside the ledger (Hydrolisc, VelocityRaptor, Boyfriend, Girlfriend — the whole target selector described per
+ * mode as {@code priority:Goal<targetType>}) and Leon's tame rule (a predicate pin per mode: the hunt goal's
+ * {@code canUse()} under the IMobConventionTests forced-roll seam — a tamed Leon holding a target refuses the frozen
+ * Zombie 8 blocks east in modern and takes her in classic, the slot emptied as the modern control).
  *
  * <p>Per record: one row with the master on and the key at its default (the modern feature present),
  * one with the key set false and one with the master {@code modern.enabled} set false (the 1.7.10
@@ -62,7 +71,8 @@ import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
  * <p>Synchronous; every global flag, the difficulty and the clock are restored in a {@code finally};
  * spawns discarded, mock players removed. Own batch {@code portOnlyTargeting} (TEST-003). Geometry:
  * {@code empty_large} (48x16x48) for everything but Godzilla (25 tall, {@code empty_tall} 48x34x48, the
- * King 22 wide at 18 blocks so the two boxes never overlap).</p>
+ * King 22 wide at 18 blocks so the two boxes never overlap); the Leon rows use the IMobConventionTests spots (the
+ * hunter at (20,1,24), the Zombie at (28,1,24), inside its 40-block follow range).</p>
  */
 @GameTestHolder(OreSpawnMod.MOD_ID)
 @PrefixGameTestTemplate(false)
@@ -80,6 +90,11 @@ public class PortOnlyTargetingTests {
     private static final BlockPos GIRLFRIEND_POS = new BlockPos(20, 1, 24);
     private static final Vec3 PLAYER_POS = new Vec3(28.5, 1.0, 24.5);
     private static final LocalDate VALENTINES = LocalDate.of(2026, 2, 14);
+    /** The Leon rows: the IMobConventionTests spots — the hunter on the empty_large floor, the Zombie 8 blocks east (inside its 40-block follow range). */
+    private static final BlockPos LEON_POS = new BlockPos(20, 1, 24);
+    private static final BlockPos LEON_PREY_POS = new BlockPos(28, 1, 24);
+    /** The vanilla hunt's acquisition roll: {@code NearestAttackableTargetGoal} reduces its 10-tick interval to {@code nextInt(5) != 0 → skip} (IMobConventionTests.GOAL_ROLL_BOUND). */
+    private static final int GOAL_ROLL_BOUND = 5;
 
     /** Every global flag this class flips, read once per test and restored in every {@code finally} (keys first, master last). */
     private record Flags(boolean master, boolean godzilla, boolean pets, boolean stare, boolean chase) {
@@ -291,6 +306,166 @@ public class PortOnlyTargetingTests {
                 }
             }
         } finally {
+            prior.restore();
+        }
+        helper.succeed();
+    }
+
+    // ------------------------------------------------------------------
+    // MOD-033 — the four companions outside the ledger (construction snapshot; the extension of 2026-09-05)
+    // ------------------------------------------------------------------
+
+    /**
+     * One companion of the extension: its whole target selector, described as {@code priority:Goal<targetType>}
+     * (the anonymous IMob hunts report their vanilla superclass) and sorted, in each mode — the classic selector is
+     * exactly the port's counterparts of what 1.7.10 registered on its targetTasks, at their port priorities; the
+     * modern selector is that plus the port-only owner goals (Hydrolisc / VelocityRaptor: Phase 4E, commit 27b66a39;
+     * Boyfriend / Girlfriend: commit 2b0c2cd, no stated intent), gated on the 2026-09-04 ruling.
+     */
+    private record Companion(String name, Supplier<? extends EntityType<? extends Mob>> type, String orig,
+                             List<String> classic, List<String> modernOnly) {
+        List<String> expected(boolean modern) {
+            List<String> all = new ArrayList<>(this.classic);
+            if (modern) all.addAll(this.modernOnly);
+            all.sort(null);
+            return all;
+        }
+    }
+
+    private static final List<Companion> COMPANIONS = List.of(
+            new Companion("EntityHydrolisc", ModEntities.ENTITY_HYDROLISC, "orig Hydrolisc.java:51-60 (tasks only, no targetTasks)",
+                    List.of(),
+                    List.of("1:OwnerHurtByTargetGoal", "2:OwnerHurtTargetGoal", "3:HurtByTargetGoal")),
+            new Companion("VelocityRaptor", ModEntities.VELOCITY_RAPTOR, "orig VelocityRaptor.java:53-62 (tasks only, no targetTasks)",
+                    List.of(),
+                    List.of("1:OwnerHurtByTargetGoal", "2:OwnerHurtTargetGoal", "3:HurtByTargetGoal")),
+            new Companion("Boyfriend", ModEntities.BOYFRIEND, "orig Boyfriend.java:138-147 (the IMob hunt when PlayNicely == 0 and"
+                    + " the two Jealousy tasks; the Creeper hunt has no port counterpart, ENT-A-054; no owner task, no EntityAIHurtByTarget)",
+                    List.of("3:NearestAttackableTargetGoal<Mob>", "4:JealousyTargetGoal<Boyfriend>", "5:JealousyTargetGoal<Boyfriend>"),
+                    List.of("1:OwnerHurtByTargetGoal", "2:OwnerHurtTargetGoal")),
+            new Companion("Girlfriend", ModEntities.GIRLFRIEND, "orig Girlfriend.java:161-174 (the two MyValentineTarget tasks, the IMob"
+                    + " hunt when PlayNicely == 0 and the two Jealousy tasks; the Creeper hunt has no port counterpart, ENT-A-054; no owner"
+                    + " task, no EntityAIHurtByTarget)",
+                    List.of("1:ValentineTargetGoal<Player>", "2:ValentineTargetGoal<Boyfriend>", "5:NearestAttackableTargetGoal<Mob>",
+                            "4:JealousyTargetGoal<Girlfriend>", "5:JealousyTargetGoal<Girlfriend>"),
+                    List.of("3:OwnerHurtByTargetGoal", "4:OwnerHurtTargetGoal")));
+
+    /** Modern on: each companion's selector is its 1.7.10 goals plus the owner pair (plus HurtByTargetGoal on the Hydrolisc and the Raptor). */
+    @GameTest(template = "empty_large", batch = BATCH)
+    public void mod033_companions_defend_owner_modern_on(GameTestHelper helper) {
+        companionsRow(helper, State.MODERN_ON);
+    }
+
+    /** Key off: each companion's selector is exactly its 1.7.10 goals — the Hydrolisc's and the Raptor's empty. */
+    @GameTest(template = "empty_large", batch = BATCH)
+    public void mod033_companions_defend_owner_key_off(GameTestHelper helper) {
+        companionsRow(helper, State.KEY_OFF);
+    }
+
+    /** Master off with the key still on: classic. */
+    @GameTest(template = "empty_large", batch = BATCH)
+    public void mod033_companions_defend_owner_master_off(GameTestHelper helper) {
+        companionsRow(helper, State.MASTER_OFF);
+    }
+
+    private static void companionsRow(GameTestHelper helper, State state) {
+        final Flags prior = Flags.read();
+        final String key = "petsDefendOwner";
+        try {
+            state.apply(helper, key, OreSpawnConfig.MODERN_PETS_DEFEND_OWNER);
+            helper.assertTrue(OreSpawnConfig.petsDefendOwner() == state.modern(), "precondition: the helper reads "
+                    + state.modern() + " with " + state.label(key) + " (MOD-033)");
+            for (Companion companion : COMPANIONS) {
+                Mob mob = null;
+                try {
+                    mob = spawnWithGoals(helper, companion.type().get(), MOB_POS); // AFTER the flip: a construction snapshot
+                    List<String> actual = describeTargetSelector(mob);
+                    List<String> expected = companion.expected(state.modern());
+                    helper.assertTrue(actual.equals(expected), companion.name() + " spawned with " + state.label(key)
+                            + ": the target selector must be exactly " + expected + " — "
+                            + (state.modern() ? "the 1.7.10 goals plus the port-only owner goals (MOD-033; Phase 4E 27b66a39 or 2b0c2cd)"
+                                    : "the 1.7.10 goals alone, " + companion.orig() + " (MOD-033)")
+                            + "; got " + actual);
+                } finally {
+                    if (mob != null) mob.discard();
+                }
+            }
+        } finally {
+            prior.restore();
+        }
+        helper.succeed();
+    }
+
+    // ------------------------------------------------------------------
+    // MOD-033 — Leon's tame rule on its hunt (construction snapshot; a predicate pin per mode, the extension of 2026-09-05)
+    // ------------------------------------------------------------------
+
+    /** Modern on: a tamed Leon holding a target refuses the Zombie 8 blocks off; with the slot emptied it takes her (the control). */
+    @GameTest(template = "empty_large", batch = BATCH)
+    public void mod033_leon_tame_hunt_rule_modern_on(GameTestHelper helper) {
+        leonTameRuleRow(helper, State.MODERN_ON);
+    }
+
+    /** Key off: the same tamed Leon holding a target takes the Zombie — orig Leon.java:93's bare IMob test. */
+    @GameTest(template = "empty_large", batch = BATCH)
+    public void mod033_leon_tame_hunt_rule_key_off(GameTestHelper helper) {
+        leonTameRuleRow(helper, State.KEY_OFF);
+    }
+
+    /** Master off with the key still on: classic. */
+    @GameTest(template = "empty_large", batch = BATCH)
+    public void mod033_leon_tame_hunt_rule_master_off(GameTestHelper helper) {
+        leonTameRuleRow(helper, State.MASTER_OFF);
+    }
+
+    private static void leonTameRuleRow(GameTestHelper helper, State state) {
+        helper.assertTrue(helper.getLevel().getDifficulty() != Difficulty.PEACEFUL,
+                "precondition: the game-test level runs at NORMAL, not Peaceful — the vanilla conditions refuse everything on"
+                        + " Peaceful (MOD-033 test setup)");
+        final Flags prior = Flags.read();
+        final boolean priorPlayNicely = OreSpawnConfig.PLAY_NICELY.get();
+        final String key = "petsDefendOwner";
+        Mob leon = null;
+        Mob prey = null;
+        try {
+            OreSpawnConfig.PLAY_NICELY.set(false); // the hunt's ENT-S-115 live canUse gate, out of the way
+            helper.assertTrue(!OreSpawnConfig.PLAY_NICELY.get(), "precondition: PLAY_NICELY.set(false) must read back false (MOD-033 test setup)");
+            state.apply(helper, key, OreSpawnConfig.MODERN_PETS_DEFEND_OWNER);
+            helper.assertTrue(OreSpawnConfig.petsDefendOwner() == state.modern(), "precondition: the helper reads "
+                    + state.modern() + " with " + state.label(key) + " (MOD-033)");
+            leon = spawnWithGoals(helper, ModEntities.ENTITY_LEON.get(), LEON_POS); // AFTER the flip: a construction snapshot
+            replaceRandom(leon, rolls(GOAL_ROLL_BOUND, 0)); // the goal's 1-in-5 acquisition roll pinned to fire
+            NearestAttackableTargetGoal<?> hunt = huntGoal(helper, leon, "EntityLeon", state.label(key));
+            prey = spawnPrey(helper, EntityType.ZOMBIE, LEON_PREY_POS);
+            helper.assertTrue(prey instanceof Enemy, "precondition: a vanilla Zombie is an Enemy — an EntityMob, IMob in 1.7.10 (MOD-033 test setup)");
+            assertSees(helper, leon, prey);
+            TamableAnimal tamed = (TamableAnimal) leon;
+            tamed.setTame(true, false);
+            leon.setTarget(prey);
+            helper.assertTrue(tamed.isTame() && leon.getTarget() == prey,
+                    "precondition: the Leon reads tamed and holds a target (MOD-033 test setup)");
+            String where = "EntityLeon's hunt (the NearestAttackableTargetGoal<Mob> @4) spawned with " + state.label(key);
+            boolean can = hunt.canUse();
+            Object pick = readField(hunt, NearestAttackableTargetGoal.class, "target");
+            if (state.modern()) {
+                helper.assertTrue(!can, where + ": tamed and holding a target it must refuse the Zombie 8 blocks off — the"
+                        + " tame rule (!isTame() || getTarget() == null) is MOD-033's modern branch; canUse=" + can
+                        + ", pick " + describe(pick) + " (MOD-033)");
+                leon.setTarget(null);
+                can = hunt.canUse();
+                pick = readField(hunt, NearestAttackableTargetGoal.class, "target");
+                helper.assertTrue(can && pick == prey, "control: " + where + " with the slot emptied must take the same"
+                        + " Zombie — so the refusal came from the tame rule and not from geometry, sight or the Enemy"
+                        + " selector; canUse=" + can + ", pick " + describe(pick) + " (MOD-033)");
+            } else {
+                helper.assertTrue(can && pick == prey, where + ": tamed and holding a target it must still take the Zombie"
+                        + " 8 blocks off — classic is orig Leon.java:93's bare IMob test (an EntityLiving.class list through"
+                        + " IMob.mobSelector, no tame term), the ENT-S-124 form; canUse=" + can + ", pick " + describe(pick)
+                        + " (MOD-033)");
+            }
+        } finally {
+            discard(prey, leon);
+            OreSpawnConfig.PLAY_NICELY.set(priorPlayNicely);
             prior.restore();
         }
         helper.succeed();
@@ -588,5 +763,79 @@ public class PortOnlyTargetingTests {
         } catch (ReflectiveOperationException exception) {
             throw new IllegalStateException("cannot read " + declaring.getSimpleName() + "." + name, exception);
         }
+    }
+
+    // ------------------------------------------------------------------
+    // Helpers for the MOD-033 extension rows (the IMobConventionTests idioms)
+    // ------------------------------------------------------------------
+
+    /**
+     * Every goal on a target selector as {@code priority:Goal} — {@code priority:Goal<targetType>} for a
+     * NearestAttackableTargetGoal, an anonymous subclass reporting its nearest named superclass — sorted, so the
+     * whole selector is compared at once (positions and arguments, the S4 transcription rule).
+     */
+    private static List<String> describeTargetSelector(Mob mob) {
+        List<String> out = new ArrayList<>();
+        for (WrappedGoal wrapped : mob.targetSelector.getAvailableGoals()) {
+            Goal goal = wrapped.getGoal();
+            Class<?> type = goal.getClass();
+            while (type.isAnonymousClass()) type = type.getSuperclass();
+            String entry = wrapped.getPriority() + ":" + type.getSimpleName();
+            if (goal instanceof NearestAttackableTargetGoal<?>) {
+                entry += "<" + ((Class<?>) readField(goal, NearestAttackableTargetGoal.class, "targetType")).getSimpleName() + ">";
+            }
+            out.add(entry);
+        }
+        out.sort(null);
+        return out;
+    }
+
+    /** The one {@code NearestAttackableTargetGoal} typed {@code Mob} on a hunter's target selector — the ENT-S-124 IMob hunt. */
+    private static NearestAttackableTargetGoal<?> huntGoal(GameTestHelper helper, Mob hunter, String name, String mode) {
+        NearestAttackableTargetGoal<?> found = null;
+        int matches = 0;
+        for (WrappedGoal wrapped : hunter.targetSelector.getAvailableGoals()) {
+            if (wrapped.getGoal() instanceof NearestAttackableTargetGoal<?> goal
+                    && readField(goal, NearestAttackableTargetGoal.class, "targetType") == Mob.class) {
+                found = goal;
+                matches++;
+            }
+        }
+        helper.assertTrue(matches == 1 && found != null, "precondition: exactly one NearestAttackableTargetGoal<Mob> — the IMob"
+                + " hunt of orig Leon.java:93 (ENT-S-124), registered in both modes — must be on " + name + "'s target selector"
+                + " with " + mode + "; found " + matches + " (MOD-033 test setup)");
+        return found;
+    }
+
+    /** Frozen prey with 1000 HP, so nothing incidental kills it (the IMobConventionTests idiom). */
+    private static Mob spawnPrey(GameTestHelper helper, EntityType<? extends Mob> type, BlockPos pos) {
+        Mob prey = spawnFrozen(helper, type, pos);
+        prey.getAttribute(Attributes.MAX_HEALTH).setBaseValue(1000.0);
+        prey.setHealth(1000.0f);
+        return prey;
+    }
+
+    /** A seeded random with each (bound, answer) pair pinned — the VortexParityTests.ForcedRoll seam, chained as IMobConventionTests.rolls. */
+    private static RandomSource rolls(int... boundAnswerPairs) {
+        RandomSource source = RandomSource.create(1234L);
+        for (int i = 0; i < boundAnswerPairs.length; i += 2) {
+            source = new VortexParityTests.ForcedRoll(source, boundAnswerPairs[i], boundAnswerPairs[i + 1]);
+        }
+        return source;
+    }
+
+    /** Same seam as VortexParityTests.forceDiscardRoll: swap {@code Entity.random} for a forced source. */
+    private static void replaceRandom(Entity entity, RandomSource forced) {
+        try {
+            Field field = Entity.class.getDeclaredField("random");
+            field.setAccessible(true);
+            field.set(entity, forced);
+        } catch (ReflectiveOperationException exception) {
+            throw new IllegalStateException("cannot replace Entity.random", exception);
+        }
+    }
+
+    private static String describe(Object pick) {
+        return pick instanceof Entity entity ? entity.getClass().getSimpleName() + "#" + entity.getId() : String.valueOf(pick);
     }
 }

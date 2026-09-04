@@ -2,6 +2,7 @@ package danger.orespawn.entity;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.function.Predicate;
 import javax.annotation.Nullable;
 
 import net.minecraft.core.BlockPos;
@@ -155,13 +156,14 @@ public class EntityLeon extends TamableAnimal
         this.goalSelector.addGoal(3, new WaterAvoidingRandomStrollGoal(this, 0.75));
         this.goalSelector.addGoal(4, new LookAtPlayerGoal(this, Player.class, 9.0f));
         this.goalSelector.addGoal(5, new RandomLookAroundGoal(this));
-        // MOD-033 (T9 A2, petsDefendOwner): the owner-defence pair is modern only, a construction snapshot
-        // (the helper read once here; goals register in the Mob ctor, the BOSS-017 shape — a config change
-        // applies to newly spawned Leons); orig Leon.java:92-95 registered no owner goals. Live here:
-        // flyWithRider reads the target slot first, so a tamed modern Leon avenges and defends its owner.
-        // (The tame predicate on the goal below belongs to the same record but is not gated in this batch:
-        // its line is under the ENT-S-124 refutation — gate it under this key once that closes.)
-        if (OreSpawnConfig.petsDefendOwner()) {
+        // MOD-033 (T9 A2, petsDefendOwner; the tame rule joined 2026-09-05): the owner-defence pair and the tame rule
+        // on the hunt below are modern only, a construction snapshot (the helper read ONCE here into a final the hunt's
+        // selector captures — never read live; goals register in the Mob ctor, the BOSS-017 shape — a config change
+        // applies to newly spawned Leons); orig Leon.java:92-95 registered no owner goals and its hunt carried no tame
+        // term. Live here: flyWithRider reads the target slot first, so a tamed modern Leon avenges and defends its
+        // owner, and its hunt does not overwrite a target it already holds.
+        final boolean petsDefendOwner = OreSpawnConfig.petsDefendOwner();
+        if (petsDefendOwner) {
             this.targetSelector.addGoal(1, new OwnerHurtByTargetGoal(this));
             this.targetSelector.addGoal(2, new OwnerHurtTargetGoal(this));
         }
@@ -170,8 +172,14 @@ public class EntityLeon extends TamableAnimal
         // registered only when PlayNicely == 0 at construction; the port registers the goal always and reads the
         // flag live in its canUse, so it never starts while PlayNicely is on (ENT-S-115; the :391 filter gate is
         // ENT-S-110's, at isSuitableTarget).
-        // orig Leon.java:93 IMob.mobSelector → Mob.class + instanceof Enemy, and'ed ahead of the port's tame rule (ENT-S-124, IMob convention)
-        this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, Mob.class, 10, true, false, e -> e instanceof Enemy && (!this.isTame() || this.getTarget() == null)) {
+        // orig Leon.java:93 IMob.mobSelector → Mob.class + instanceof Enemy (ENT-S-124, IMob convention), and'ed ahead
+        // of the port's tame rule in modern only (a tamed Leon holding a target refuses every candidate — MOD-033, gated
+        // here since the ENT-S-124 refutation closed 2026-09-04); classic is the bare Enemy test, exactly what orig :93's
+        // task tested (an EntityLiving.class list through IMob.mobSelector, no further selector, no tame term).
+        final Predicate<LivingEntity> huntSelector = petsDefendOwner
+                ? e -> e instanceof Enemy && (!this.isTame() || this.getTarget() == null)
+                : e -> e instanceof Enemy;
+        this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, Mob.class, 10, true, false, huntSelector) {
             @Override
             public boolean canUse() {
                 if (OreSpawnConfig.PLAY_NICELY.get()) return false; // orig Leon.java:92-94 (ENT-S-115)

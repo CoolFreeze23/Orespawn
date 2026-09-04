@@ -208,8 +208,18 @@ public class Girlfriend extends TamableAnimal implements RangedAttackMob {
         // (MyValentineTarget.java:47-56), fixed 16-block radius
         this.targetSelector.addGoal(1, new ValentineTargetGoal<>(this, Player.class));
         this.targetSelector.addGoal(2, new ValentineTargetGoal<>(this, Boyfriend.class));
-        this.targetSelector.addGoal(3, new OwnerHurtByTargetGoal(this));
-        this.targetSelector.addGoal(4, new OwnerHurtTargetGoal(this));
+        // MOD-033 (petsDefendOwner; the extension of 2026-09-05): the owner-defence pair is modern only, a construction
+        // snapshot (the helper read once here; goals register in the Mob ctor, the BOSS-017 shape — a config change
+        // applies to newly spawned Girlfriends); orig Girlfriend.java:161-174 registered no owner task and no
+        // EntityAIHurtByTarget — its targetTasks are the two MyValentineTarget tasks, the Creeper and IMob hunts and the
+        // two Jealousy tasks (the pair came with commit 2b0c2cd, 2026-04-06, no stated intent; gated on the owner's
+        // 2026-09-04 ruling). Live here: the held-weapon melee in
+        // customServerAiStep and the RangedAttackGoal @4 read the target slot, so a tamed modern Girlfriend avenges and
+        // defends its owner; classic fights only what the Valentine, hunt or Jealousy goals pick, as in 1.7.10.
+        if (OreSpawnConfig.petsDefendOwner()) {
+            this.targetSelector.addGoal(3, new OwnerHurtByTargetGoal(this));
+            this.targetSelector.addGoal(4, new OwnerHurtTargetGoal(this));
+        }
         // orig Girlfriend.java:166-168 — the MyEntityAINearestAttackableTarget(EntityLiving.class, 15.0f, IMob selector)
         // task is registered only when PlayNicely == 0 at construction (the :163-165 EntityCreeper task has no port
         // counterpart; the :161-162 MyValentineTarget tasks above are ungated in orig); the port registers this goal

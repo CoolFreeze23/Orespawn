@@ -38,6 +38,7 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import danger.orespawn.ModEntities;
+import danger.orespawn.OreSpawnConfig;
 import danger.orespawn.OreSpawnMod;
 
 public class VelocityRaptor extends TamableAnimal {
@@ -68,9 +69,16 @@ public class VelocityRaptor extends TamableAnimal {
         this.goalSelector.addGoal(7, new WaterAvoidingRandomStrollGoal(this, 0.9));
         this.goalSelector.addGoal(8, new RandomLookAroundGoal(this));
 
-        this.targetSelector.addGoal(1, new OwnerHurtByTargetGoal(this));
-        this.targetSelector.addGoal(2, new OwnerHurtTargetGoal(this));
-        this.targetSelector.addGoal(3, new HurtByTargetGoal(this));
+        // MOD-033 (petsDefendOwner; the extension of 2026-09-05): all three target goals are modern only, a construction
+        // snapshot (the helper read once here; goals register in the Mob ctor, the BOSS-017 shape — a config change
+        // applies to newly spawned Velocity Raptors); orig VelocityRaptor.java:53-62 registered tasks only, no targetTasks
+        // at all (the goals are Phase 4E's, commit 27b66a39). Registered but unconsumed at HEAD: nothing here reads the
+        // target slot (the 1-in-200 setTarget(null) in customServerAiStep only clears it), so these goals wait for a consumer.
+        if (OreSpawnConfig.petsDefendOwner()) {
+            this.targetSelector.addGoal(1, new OwnerHurtByTargetGoal(this));
+            this.targetSelector.addGoal(2, new OwnerHurtTargetGoal(this));
+            this.targetSelector.addGoal(3, new HurtByTargetGoal(this));
+        }
     }
 
     /** orig VelocityRaptor.java:212 — {@code mygetMaxHealth() = tamed ? 20 : 10}. */
