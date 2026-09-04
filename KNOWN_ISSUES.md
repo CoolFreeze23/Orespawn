@@ -1,7 +1,7 @@
 # Known Issues — OreSpawn Port (BETA)
 
 **This release is a beta.** The game logic underneath has been through a
-1084-test automated suite (all green, in both robot modes; the count grows
+1173-test automated suite (all green, in both robot modes; the count grows
 with every remediation batch — the gate's last literal) plus hands-on
 play sessions, but a lot
 of the *visual and audio* polish has deliberately been left open for

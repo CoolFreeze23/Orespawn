@@ -9079,6 +9079,200 @@ keeps BUG-036. Commit 4ea395c's message retains the old number.)*
   row's hold rule; the T8 disclosure (the hold reads `invulnerable`) stands; (iii) ENT-S-130 (the Leon's hunt @4 behind its
   revenge @3 against orig's @1 / @2) stays a REPORT — priorities untouched here. Refuters: (the orchestrator's).
 
+### ENT-S-139 — Seventeen custom scans ranked their prey by plain distance where 1.7.10 sorted every custom scan with GenericTargetSorter (a creeper's distance² halved, a silhouette over 1 divides it), and the companions' own task sorted plain where its 1.7.10 sorter halved a creeper's; the fourteen sorter sites ENT-S-108 and ENT-S-135 had rebuilt and the Brutalfly / Mothra strafe ties pinned (targeting ledger batch T4, wave 3; FIXED 2026-09-05)
+
+- **Evidence:** targeting ledger batch T4 (`phase_g_reports/targeting_survey_2026-09-04.md`, §T4: 35 rows, 35 blocks; the §2
+  rows cited per row below), plus the Mothra stage-1 tie cell T3b had corrected to MATCH with "the tie itself pin pending (T4)"
+  (:646). 1.7.10's `GenericTargetSorter` (orig GenericTargetSorter.java:18-35, `compareDistanceSq`): the candidate's distance²
+  from the hunter (`func_70068_e`, :20), halved for an `EntityCreeper` (:21-23), divided by its silhouette
+  `field_70131_O * field_70130_N` — height times width — whenever that exceeds 1.0 (:24-26) — the first operand's terms
+  :20-26 — the same two terms on the second operand (:27-33), then `-1 / 1 / 0` (the three-way :34): a tie compares 0, so
+  `Collections.sort`'s stability kept the list's (`getEntitiesWithinAABB`) order, and every custom scan of the batch sorted its
+  list with it and took the first candidate `isSuitableTarget` accepted.
+  The companions' own task sorted with `MyEntityAINearestAttackableTargetSorter` (orig MyEntityAINearestAttackableTarget.java:38
+  the construction, :57 the sort; MyEntityAINearestAttackableTargetSorter.java:21-31: distance² halved for a creeper, NO
+  silhouette term, ties 0) and `MyValentineTarget` (orig :41 / :61) with `MyValentineTargetSorter` (:20-24, plain distance²).
+  The port's `entity/ai/GenericTargetSorter` (the comparator's terms verified under TF-035 (FIX_LOG.md:1901-1912) and the survey's
+  V2 (:47), re-verified by the T4 refuters; ENT-S-108 verified the firstMatch shape; its `Double.compare` for orig's three-way is
+  identical on every finite non-negative distance²) through `TargetSelection.firstMatch`, whose `(comparator, original index)`
+  heap reproduces the stable sort's tie order and hands the predicate the same candidates in the same order (OPT-021's contract),
+  is the ENT-S-108 shape every migrated site carries; at the seventeen TF-035 remainders the comparator was
+  `Comparator.comparingDouble(this::distanceToSqr)` — plain distance, no creeper or silhouette weighting — and at the companion
+  class plain distance from the owner. Per row, orig → port at HEAD (d7be873) before this fix → now:
+
+  | # | species | aspect | orig (1.7.10) | port before the fix (HEAD d7be873) | port now |
+  |---|---|---|---|---|---|
+  | 1 | Cephadrome | tie-break / selection rule | Cephadrome.java:61 the field, :84 `new GenericTargetSorter(this)`, :580 `Collections.sort(var5, this.TargetSorter)` | Cephadrome.java:119 `Comparator.comparingDouble(this::distanceToSqr)` (the field, used :432) | :120 `new GenericTargetSorter(this)` (used :433) |
+  | 2 | Cryolophosaurus | tie-break / selection rule | Cryolophosaurus.java:58, the sort at :218, the first suitable :222-226 | Cryolophosaurus.java:146 inline `comparingDouble` | :146 `new GenericTargetSorter(this)` |
+  | 3 | Dragonfly | tie-break / selection rule | Dragonfly.java:45, the sort at :236 | entity/ai/DragonflyHuntGoal.java:103-104 `Comparator.comparingDouble(this.mob::distanceToSqr)` | :103 `new GenericTargetSorter(this.mob)` |
+  | 4 | Fairy | tie-break / selection rule | Fairy.java:63, the sort at :243 | Fairy.java:91 (the field, used :159) | :92 (used :160) |
+  | 5 | Frog | tie-break / selection rule | Frog.java:55, the sort at :312 | Frog.java:263-264 inline | :263 `new danger.orespawn.entity.ai.GenericTargetSorter(this)` (the file's fully-qualified style) |
+  | 6 | GammaMetroid | tie-break / selection rule | GammaMetroid.java:59, the sort at :298 | EntityGammaMetroid.java:223 inline | :223 |
+  | 7 | Kyuubi | tie-break / selection rule | Kyuubi.java:56, the sort at :209 | EntityKyuubi.java:137 inline | :137 |
+  | 8 | Leon | tie-break / selection rule (custom scan) | Leon.java:63 / :97, the sort at :435 (the custom scan; the vanilla task's own 1.7.10 sorter was plain distance — the ledger's "goal MATCH") | EntityLeon.java:800 inline | :800; the vanilla goal's plain-nearest pick untouched |
+  | 9 | Lizard | tie-break / selection rule | Lizard.java:45 / :62, the sort at :340 | Lizard.java:73 (the field, used :155) | :74 (used :156) |
+  | 10 | PurplePower | tie-break / selection rule | PurplePower.java:35 / :44, the sort at :272 | PurplePower.java:44 (the field, used :202) | :45 (used :203) |
+  | 11 | Rat | tie-break / selection rule | Rat.java:46 / :63, the sort at :256 | EntityRat.java:232 inline | :232 |
+  | 12 | Robot1 | tie-break / selection rule | Robot1.java:33 / :44, the sort at :209 | Robot1.java:62 (the field, used :148) | :63 (used :149) |
+  | 13 | SpiderDriver | tie-break / selection rule | SpiderDriver.java:33 the field, the sorts at :108 (the mount pick over SpiderRobot.class, the first unridden) and :164 (the combat scan) | SpiderDriver.java:53 (the field, used :155 / :174) | :54 (used :156 the mount pick, :175 the combat scan) |
+  | 14 | Stinky | tie-break / selection rule | Stinky.java:48 / :76, the sort at :692 | EntityStinky.java:572 inline | :572 |
+  | 15 | TerribleTerror | tie-break / selection rule | TerribleTerror.java:47 / :56, the sort at :300 | EntityTerribleTerror.java:197 inline | :197 |
+  | 16 | ThePrinceTeen | tie-break / selection rule | ThePrinceTeen.java:79 / :121, the sort at :544 | ThePrinceTeen.java:143 (the field, used :916) | :144 (used :917) |
+  | 17 | Triffid | tie-break / selection rule | Triffid.java:42 / :54, the sort at :326 | EntityTriffid.java:248 inline | :248 |
+  | 18 | CaterKiller | tie-break / selection rule | CaterKiller.java:43 / :62, the sort at :564 | EntityCaterKiller.java:88 the `GenericTargetSorter` field, :393 `firstMatch` — ENT-S-135's loop (present at HEAD) | no edit — pinned |
+  | 19 | Hammerhead | tie-break / selection rule | Hammerhead.java:38 / :48, the sort at :256 | Hammerhead.java:57 / :179 (ENT-S-135) | no edit — pinned |
+  | 20 | Irukandji | tie-break / selection rule | Irukandji.java:32 / :47, the sort at :295 (players only: every player's 1.08 silhouette divides — 1.7.10's player was 0.6 × 1.8 in every pose but sleeping, so on players the sorter reduced to nearest) | Irukandji.java:61 / :222 (ENT-S-135) | no edit — pinned (two standing players 5.0 / 5.1 and 4 / 5.5, both controls; the port's pose-sized crouch box — 0.9, undivided — ranks a crouching player behind where 1.7.10 ranked it: port-only, ENT-S-140) |
+  | 21 | SeaMonster | tie-break / selection rule | SeaMonster.java:39 / :55, the sort at :518 | SeaMonster.java:72 / :269 (ENT-S-135) | no edit — pinned |
+  | 22 | SeaViper | tie-break / selection rule | SeaViper.java:42 / :59, the sort at :535 | SeaViper.java:79 / :340 (ENT-S-135) | no edit — pinned |
+  | 23 | CaveFisher | tie-break / selection rule | CaveFisher.java:38 / :49, the sort at :235 | CaveFisher.java:68 / :172 — ENT-S-108's loop (present at HEAD; the survey's snapshot cited the removed vanilla goals) | no edit — pinned |
+  | 24 | DungeonBeast | tie-break / selection rule | DungeonBeast.java:42 / :53, the sort at :254 | DungeonBeast.java:59 / :159 (ENT-S-108) | no edit — pinned |
+  | 25 | EmperorScorpion | tie-break / selection rule | EmperorScorpion.java:52 / :64, the sort at :508 | EntityEmperorScorpion.java:68 / :323 (ENT-S-108) | no edit — pinned |
+  | 26 | HerculesBeetle | tie-break / selection rule | HerculesBeetle.java:40 / :51, the sort at :421 | EntityHerculesBeetle.java:53 / :251 (ENT-S-108) | no edit — pinned |
+  | 27 | Nastysaurus | tie-break / selection rule | Nastysaurus.java:41 / :52, the sort at :283 | Nastysaurus.java:62 / :244 (ENT-S-108) | no edit — pinned |
+  | 28 | SpitBug | tie-break / selection rule | SpitBug.java:47 / :61, the sort at :375 | EntitySpitBug.java:62 / :278 (ENT-S-108) | no edit — pinned |
+  | 29 | TRex | tie-break / selection rule | TRex.java:40 / :50, the sort at :255 | TRex.java:43 / :227 (ENT-S-108) | no edit — pinned |
+  | 30 | TrooperBug | tie-break / selection rule | TrooperBug.java:50 / :63, the sort at :515 | EntityTrooperBug.java:64 / :312 (ENT-S-108) | no edit — pinned |
+  | 31 | Urchin | tie-break / selection rule | Urchin.java:43 / :55, the sort at :277 | Urchin.java:63 / :213 (ENT-S-108) | no edit — pinned |
+  | 32 | Brutalfly | tie-break / selection rule (strafe) | Brutalfly.java:215 `findNearestEntityWithinAABB` = `World.func_72857_a`, replaces on `<=`: the LAST equidistant player wins (bytecode-verified under ENT-S-105) | EntityBrutalfly.java:348-360 `findNearestPlayerInStrafeBox`, `distSq <= minDist` (ENT-S-135, present at HEAD) | no edit — pinned |
+  | 33 | EnderKnight | tie-break / selection rule | EnderKnight.java:65 the single nearest player, then `shouldAttackPlayer` :83-93 | EnderKnight.java:92-101 `findTarget` — nearest-then-filter (ENT-S-135; pinned s135_11) | no edit, no new pin |
+  | 34 | EnderReaper | tie-break / selection rule | EnderReaper.java:65 / :83-93 | EnderReaper.java:88-97 (ENT-S-135; pinned s135_14) | no edit, no new pin |
+  | 35 | MyEntityAINearestAttackableTarget (Boyfriend / Girlfriend) | tie-break / selection rule | MyEntityAINearestAttackableTarget.java:38 / :57 → MyEntityAINearestAttackableTargetSorter.java:21-31 (creeper halved, no silhouette term, stable); MyValentineTarget.java:41 / :61 → MyValentineTargetSorter.java:20-24 (plain) | entity/ai/MyEntityAINearestAttackableTargetGoal.java:110 `Comparator.<T>comparingDouble(this.mob::distanceToSqr)` for every task, the Valentine subclass included | new `entity/ai/MyEntityAINearestAttackableTargetSorter` held per task (:53 the field, :65 the construction) and read through `targetOrder()` (:110-112) by `findTarget` (:126); `Girlfriend.ValentineTargetGoal.targetOrder()` plain (Girlfriend.java:325-334) — its tie-break row (:1200) stays MATCH |
+  | — | Mothra | tie-break / selection rule (stage 1) | Mothra.java:224 the same `<=` replace | Mothra.java:293-305 `findNearestPlayerInStrafeBox` (ENT-S-135) — MATCH, "the tie itself pin pending (T4)" | no edit — pinned |
+
+  What a player saw: with several candidates in reach, 1.7.10 halved a creeper's distance² (as if √2 nearer: a creeper 7 off ranks
+  as 4.95) and let a big creature outrank a smaller one nearer by (its silhouette divides the distance²), so a creeper drew these
+  hunters first and a nearby large mob beat a small one closer in; the port took the plain nearest at the seventeen sites, and the
+  Boyfriend / Girlfriend never preferred a creeper. No MOD record covers any of it (OPT-016 / OPT-021 recorded the sort's removal
+  as order-preserving — which it is, for the comparator it is given).
+- **Resolution:** FIXED (2026-09-05, wave 3 — ruled 2026-09-04: "wave 3 = T8, T3b, T3c, T4, T10"). Twenty port files edited (one,
+  `entity/ai/GenericTargetSorter`, a javadoc sentence only), one production class and one test class added; sort order only — no
+  scan box, class, cadence, gate or ownership mark touched (T3b / T5 / T6 / T7 / T8's rows stand as they were).
+  (a) Rows 1-17 — `new GenericTargetSorter(this)` (`this.mob` at the goal) for the plain comparator at each site: on the field's
+  construction at the seven field sites (Cephadrome.java:120, Fairy.java:92, Lizard.java:74, PurplePower.java:45, Robot1.java:63,
+  SpiderDriver.java:54 — both its sorts read the one field, as orig's :33 field served :108 and :164 — ThePrinceTeen.java:144),
+  inline at the ten others (Cryolophosaurus.java:146, entity/ai/DragonflyHuntGoal.java:103, Frog.java:263,
+  EntityGammaMetroid.java:223, EntityKyuubi.java:137, EntityLeon.java:800, EntityRat.java:232, EntityStinky.java:572,
+  EntityTerribleTerror.java:197, EntityTriffid.java:248); `import danger.orespawn.entity.ai.GenericTargetSorter` added where the
+  simple name is used (the Frog keeps its fully-qualified style, the goal is in the package), the `java.util.Comparator` import
+  dropped at the ten inline sites where the swap left it unused (the seven field sites keep it for the field's type); the orig cite
+  on every swapped line; two method javadocs that said "nearest first" corrected (Cryolophosaurus.java:138, ThePrinceTeen.java:910)
+  and the Dragonfly goal's class javadoc (:22). Stability: `firstMatch`'s index tiebreak is `Collections.sort`'s stable tie order
+  at every site (OPT-021's contract, the ENT-S-108 shape) — first-encountered wins an exact tie in both trees.
+  (b) Rows 18-31 — present at HEAD: the `GenericTargetSorter` field through `findSomethingToAttack` at ENT-S-135's five loops and
+  ENT-S-108's nine, verified at HEAD, no edit, pinned here (the ENT-S-115 / ENT-S-132 "present at HEAD; pinned" shape). The
+  ledger's T4 §(ii) clause ("only if those rebuilds sort with GenericTargetSorter") holds at all fourteen.
+  (c) Row 32 and the Mothra cell — the `<=` replace verified at HEAD (ENT-S-135's finders), pinned.
+  (d) Rows 33-34 — ENT-S-135's `findTarget` (s135_11 / s135_14); nothing to add.
+  (e) Row 35 — new `entity/ai/MyEntityAINearestAttackableTargetSorter` (the port of orig's class: distance² halved for a
+  `Creeper`, no silhouette term, `Double.compare` as the port's GenericTargetSorter); `MyEntityAINearestAttackableTargetGoal`
+  holds one per task (:53, :65 — orig :23 / :38) and walks its scan in that order through a `protected Comparator<? super T>
+  targetOrder()` (:110-112) that `findTarget` (:126) reads; `Girlfriend.ValentineTargetGoal` overrides it with plain distance
+  (Girlfriend.java:325-334; `import java.util.Comparator` :57) — orig MyValentineTarget.java:61's `MyValentineTargetSorter`
+  (:20-24) — unobservable on its Player / Boyfriend scans (no creeper is either) and transcribed so the MyValentineTarget
+  tie-break row's mechanism stays orig's; the class javadoc (:43-46) says so.
+  Pins: new `TargetSorterParityTests` (own batch `targetSorterParity`, TEST-003; a `@GameTestGenerator` over 89 rows
+  `targetsorterparitytests.s139_NN_<species>_<row>` in the ledger's T4 order): per site (the 17 swapped, the 14 present at HEAD,
+  the two companions) up to three geometries through the site's own scan by reflection — the private `findSomethingToAttack`
+  (the Frog's `findInsectTarget`), the Dragonfly goal's `findPrey` off `EntityDragonfly.huntGoal`, the companions' IMob goal asked
+  `canUse()` with its pick read back — the hunter frozen (no AI, on the ground) at rel (20,1,24) of the empty_large floor, the
+  two candidates frozen on the same floor along −x (the nearer) and +x (the farther), line of sight and the feet-to-feet
+  distances asserted: `creeper_outranks_nearer` (20 rows, the sites admitting a creeper) — a non-creeper 6 off (a pig where
+  the site admits one: Cryolophosaurus, Purple Power, Rat, Spider Driver, Terrible Terror, Dungeon Beast, Nastysaurus, T. Rex,
+  Urchin; else a Zombie) against a creeper 7 off (the Spider Driver 6.5 / 7.5 for its under-6 refusal): the creeper the pick
+  (36, or 36 / 1.17 for the Zombie, against 49 / 2 / 1.02 = 24.0; the companions 36 against 24.5) where plain distance took the
+  nearer; `big_silhouette_outranks_nearer` (30 rows) — a sub-1 silhouette nearer than an over-1 one: a Silverfish (0.12) 6 off
+  against a Ravager (4.29) 9 off (81 / 4.29 = 18.9 against 36) at the monster-admitting sites, a Chicken (0.28) against an Iron
+  Golem (3.78) at the four monster-refusing ones (Gamma Metroid, Kyuubi, Cave Fisher 6 / 9; Robot1 5 / 7.5 inside its 8-box),
+  the Lizard's Chicken 4 against a Spider (1.26) 4.3 (18.49 / 1.26 = 14.7 against 16), the Frog's Cricket 3 against a Mothra
+  (10 — an EntityButterfly in both trees, which the insect list admits) 7 (49 / 10 = 4.9 against 9), the Dragonfly's Mosquito 4
+  against a Horse (2.23; `dragonflyHorseFriendly` off asserted, its default) 5.5 (30.25 / 2.23 = 13.5 against 16): the big one
+  the pick; `no_silhouette_term_nearer_small_wins` (2 rows, the companions) — the Silverfish 6 against the Ravager 9: the
+  SILVERFISH the pick — rows 83 / 86 agree with plain distance and separate the companion sorter from GenericTargetSorter only,
+  its contrary ranking (the Ravager first) asserted as the precondition; the companions' creeper rows 82 / 85 carry the
+  plain-distance discrimination;
+  `control_nearer_unweighted_wins` (32 rows) — two of one unweighted kind (pigs where admitted, else Zombies / Chickens /
+  Crickets / Mosquitoes) 5 and 8 off (7.5 inside the 8-boxes; the Frog's Crickets 3 / 6, the Dragonfly's Mosquitoes 4 / 7, the
+  Lizard's Chickens 4 / 7, the Spider Driver's pigs 6.5 / 8.5): the nearer; the Irukandji (2, both controls) — two standing
+  survival players 5.0 west / 5.1 east and 4 / 5.5: the nearer under both orders, a uniform 1.08 silhouette dividing both (1.7.10's
+  player was 0.6 × 1.8 in every pose but sleeping — sneaking set a flag and the client camera drop, `setSize` never ran for a
+  crouch — so orig's :24 divided a sneaking player's distance² by 1.08 as a standing one's and on players the sorter reduced to
+  nearest; the port's pose-sized crouch box, 0.6 × 1.5 = 0.9 undivided, flips a crouching-against-standing pair port-only —
+  ENT-S-140, REPORT — so the draft's crouching pin, which asserted that outcome as 1.7.10's, is a control now); the Spider
+  Driver's mount pick (1) — two unridden Spider Robots 8 / 12: the nearer (uniform 7.31 silhouettes, the sorter reduces to
+  nearest; the field serves orig's :108 sort as its :164); the strafe ties (2) — two survival players at distance² 25 either side
+  of the frozen Brutalfly / Mothra: the LAST of the
+  two in the strafe box list's order is `findNearestPlayerInStrafeBox`'s pick (the `<=` replace; a strict `<` keeps the first),
+  every other player of the level asserted farther. Every weighted row recomputes orig's weights from the live entities
+  (GenericTargetSorter.java:18-35 / MyEntityAINearestAttackableTargetSorter.java:21-31 transcribed in the test) and asserts,
+  before the pick, that plain distance and orig's order disagree (or agree, in a control) and — in the 20 creeper and 30
+  big-silhouette rows — that the site's own filter admits the nearer candidate, by reflection (`isSuitableTarget`, the Frog's
+  `isInsectTarget`, the Dragonfly goal's `isPrey` beside the asserted sight, the companions' `canAttack(nearer,
+  targetConditions)` — the ScanSetParityTests.filter idiom; T4 refuter B), so a row that stops discriminating, by its geometry
+  or by a ladder that refuses the nearer candidate, fails on its precondition instead of passing without discriminating.
+  Survival players are plain ServerPlayers (the framework mock's `isCreative()` is hardcoded true);
+  the companions are tamed (`setTame(true, false)`, the PreyListParityTests idiom — orig :44-49 refused an untamed owner,
+  ENT-S-137's residual, so the rows hold either way), on the ground with FOLLOW_RANGE 40 for the reach test's path (the
+  ScanSetParityTests idiom). No cadence roll is drawn — every scan is invoked directly (the Kraken / ScanSet shape) and the
+  companions' goal passes interval 0 — so the ForcedRoll seam is not needed; two outcome-neutral draws sit on driven paths:
+  Lizard.java:148's `nextInt(100)` clears an already-null `lastHurtByMob` (rows 21 / 22) and vanilla `TargetGoal.canReach`'s
+  `nextInt(5)` sets the reach-cache duration on the companions' non-granted candidates (rows 82-87; the granted Creeper never
+  reaches it); PlayNicely set false and restored in a finally on every path, players removed and every spawn discarded there;
+  the difficulty and `dragonflyHorseFriendly` asserted, never flipped; no hit pinned (no spawn shield to clear). javac rc 0 (the
+  20 edited sources, the two new classes; no gradle in this lane; the fix lane's re-run after the refutation rc 0 — the mixin
+  annotation-processor note and the pre-existing Frog.java deprecation note its only diagnostics); the gametest run is the gate's
+  (expected `All 1173 required tests passed`: 1084 + T4's 89).
+  Disclosed: (i) the Frog's only over-1 insect is Mothra (5 × 2; orig Frog.java's list admits EntityButterfly and orig
+  Mothra.java:50-52 extends it) — the discriminating row is exotic but 1.7.10's: a Frog prefers a Mothra 7 blocks off to an ant
+  3 blocks off; (ii) the Dragonfly's over-1 prey is the horse (the default config) — a Mothra would serve there too; (iii) the
+  Spider Driver's mount pick is unobservable (every Spider Robot weighs the same), so its row is a control; (iv) the Valentine
+  subclass's plain sorter is unobservable on its classes — transcribed, unpinned; (v) `GenericTargetSorter`'s TF-035 javadoc
+  remainder ("the remaining call sites migrate as their Phase E4 category batches verify each entity") is refreshed — "every custom
+  scan of the targeting ledger now carries it (the TF-035 remainders closed by ENT-S-139)" — a comment only, the verified class's
+  code untouched (T4 refuter B); (vi)
+  `Double.compare` against orig's `<` / `>` three-way: identical on every finite non-negative distance² (they differ on NaN and
+  −0.0 alone), the TF-035 / survey-V2 verification re-verified by the T4 refuters (ENT-S-108 verified the firstMatch shape),
+  mirrored by the new companion sorter; (vii) the Leon's vanilla goal keeps vanilla's
+  plain-nearest pick — orig's `EntityAINearestAttackableTarget.Sorter` was plain distance too (the ledger's "goal MATCH");
+  (viii) the companions' Creeper task (Creeper.class) sees the halving uniformly — its outcome is unchanged, no row; (ix) the
+  tests' silhouettes are the live `getBbHeight() * getBbWidth()` — the port's, pose-sized for a player where 1.7.10's player was
+  0.6 × 1.8 in every pose but sleeping: the draft's Irukandji crouching-against-standing pin asserted that port-only outcome as
+  1.7.10's (T4 refuter A, D1) and is a two-standing-players control now; the crouch flip is filed as ENT-S-140 (REPORT, for the
+  owner's ruling); (x) two outcome-neutral draws on driven paths (Lizard.java:148, TargetGoal.canReach) — named above. Refuters:
+  two (A sorter semantics against orig at every site; B nothing but the sort order changed and the pins discriminate) — A-D1 (the
+  crouching pin), A-D2 / A-D3 (the orig comparator's cite :18-35 and the TF-035 / V2 verification attribution), B-D1 (the
+  filter-admits-the-nearer precondition on the 50 weighted rows) applied 2026-09-05 by the fix lane.
+
+### ENT-S-140 — The port's GenericTargetSorter weighs a player's silhouette by the modern pose-sized hitbox where 1.7.10's player was 0.6 × 1.8 in every pose: a crouching, swimming or gliding player ranks behind where 1.7.10 ranked them at every sorter site (REPORT, 2026-09-05; raised by the T4 refuter A)
+
+- **Evidence:** orig GenericTargetSorter.java:24 — `height * width > 1` divides the operand's distance² (:24-26 on the first
+  operand; the second operand's terms :27-33 mirror :20-26). 1.7.10's `EntityPlayer` size was the constant 0.6 × 1.8 in every
+  pose but sleeping (0.2 × 0.2): sneaking set the flag and the client camera drop only — `setSize` never ran for a crouch — so a
+  sneaking player's silhouette was 1.08 and the sorter divided its distance² by 1.08 exactly as a standing one's (recalled,
+  verifiable against the 1.7.10 jar as ENT-S-120's check was). The port's `entity/ai/GenericTargetSorter.java:42-45` reads
+  `getBbHeight() * getBbWidth()` — the live pose dimensions: standing 0.6 × 1.8 = 1.08 (divided), crouching 0.6 × 1.5 = 0.9
+  (undivided), swimming / gliding 0.6 × 0.6 = 0.36 (undivided); the sleeping case (0.2 × 0.2 in both trees) is unchanged. The
+  Irukandji example (the T4 draft's s139_61 geometry, Irukandji.java:222): a crouching survival player 5.0 blocks west against a
+  standing one 5.1 east — 1.7.10 picks the crouching player (25 / 1.08 = 23.15 against 26.01 / 1.08 = 24.08), the port the
+  standing one (25, undivided, against 24.08). Every custom scan sorting with the class is affected wherever a player is a
+  candidate — the ENT-S-139 sites (the seventeen swapped and the fourteen present at HEAD) plus the ENT-S-108 / ENT-S-135 loops
+  — whenever a crouching, swimming or gliding player competes with another candidate; the companions'
+  `MyEntityAINearestAttackableTargetSorter` carries no silhouette term and is not affected. What a player saw: a sneaking (or
+  swimming, or gliding) player is ranked as if farther than 1.7.10 ranked them — a hunter with a standing player and a nearer
+  crouching one in reach takes the standing one where 1.7.10 took the nearer. The T4 draft's pin s139_61 (the
+  crouching-against-standing pair, `pick == standing`) asserted that port-only outcome as 1.7.10's (T4 refuter A, D1) and is a
+  two-standing-players control under ENT-S-139; the ledger's Irukandji cell (:515 — "a sneaking player's undivided 0.9 silhouette
+  ranks as orig's", and its note "sneaking players (0.9, undivided) rank differently") and the ENT-S-135 (c) record carry the same
+  reading.
+- **Resolution:** REPORT (2026-09-05) — for the owner's ruling. The parity-law fix is a pose-independent player silhouette in the
+  sorter: a `Player` operand weighed at its standing dimensions (`EntityType.PLAYER.getDimensions()` — 0.6 × 1.8 = 1.08, divided),
+  every other entity at its live `getBbHeight() * getBbWidth()` as now (nothing else resized by pose in 1.7.10); one case to rule
+  with it — a sleeping player, 0.2 × 0.2 in both trees today, would weigh 1.08 under a blanket standing box where 1.7.10 weighed
+  it 0.04 (undivided), unless `isSleeping()` keeps the live box. The edit touches `entity/ai/GenericTargetSorter`, the class
+  verified under TF-035 (FIX_LOG.md:1901-1912), the survey's V2 (:47) and this refutation, so it needs the SeaViper standard (two
+  refuters) — ruled before it moves. On the ruling: the sorter edit; an inverted Irukandji pin (the crouching-against-standing
+  pair, `pick == crouching`, 23.15 against 24.08) beside ENT-S-139's two controls; the ledger's Irukandji cell (:515, status and
+  note) and the ENT-S-135 (c) record corrected.
+
 ### TEST-003 — Config-flipping gametests in the concurrent default batch
 
 - **Impact:** MEDIUM (suite reliability) — boss005/boss012 flip a global
