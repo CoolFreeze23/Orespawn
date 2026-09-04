@@ -11,6 +11,7 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
+import java.util.List;
 import javax.annotation.Nullable;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -26,7 +27,9 @@ import net.minecraft.world.level.Level;
 import danger.orespawn.OreSpawnMod;
 import danger.orespawn.OreSpawnConfig;
 import danger.orespawn.entity.ai.DinosaurMeleeAttackGoal;
+import danger.orespawn.entity.ai.GenericTargetSorter;
 import danger.orespawn.entity.ai.PointysaurusStareGoal;
+import danger.orespawn.entity.ai.TargetSelection;
 import danger.orespawn.util.MyUtils;
 
 public class Pointysaurus extends Monster {
@@ -95,14 +98,34 @@ public class Pointysaurus extends Monster {
         // orig Pointysaurus.java:242-245 — the player branch answers `!capabilities.isCreativeMode` (ENT-S-107:
         // Abilities.instabuild). The vanilla goal's forCombat conditions read creative as Player.canBeSeenAsEnemy =
         // !abilities.invulnerable (creative, spectator or hand-toggled) inside canAttack, so the conditions are rebuilt
-        // non-combat with the ENT-S-106 screen and orig's creative test as the selector — the same follow range,
-        // invisibility, alive / non-spectator and sight screens; forCombat's other terms have no orig line here (the
+        // non-combat with the ENT-S-106 screen and orig's creative test as the selector — the same invisibility,
+        // alive / non-spectator and sight screens, no range term (orig's box, scanned in findTarget below, is the
+        // scan's only bound — ENT-S-136); forCombat's other terms have no orig line here (the
         // Peaceful player refusal: the engine despawns this Monster on Peaceful; canAttackType; isAlliedTo). The
-        // goal's class, box and cadence are T3c's; the vanilla hold (TargetGoal.canContinueToUse -> canAttack) is
+        // goal's class is orig's (players only, :246), its scan set ENT-S-136's (findTarget below: orig's box, :253),
+        // its hold's reach ENT-S-136's (getFollowDistance below), its cadence ENT-S-136's (the 6-arg constructor's interval 6:
+        // reducedTickDelay 3, orig :183's 1-in-6 per tick); the vanilla hold (TargetGoal.canContinueToUse -> canAttack) is
         // untouched (ENT-S-132).
-        this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, Player.class, true) {
+        // orig Pointysaurus.java:253 — findSomethingToAttack scanned boundingBox.expand(12, 5, 12) on the 1-in-6 pass (:183)
+        // with no distance test beyond the box, sorted the box by GenericTargetSorter (:254; the field :39, :49) and took the
+        // first isSuitableTarget accepts (:258-262), acting on the pick in the same pass (:201-213: faceEntity, the walk or
+        // the bite) and storing nothing. The port's goal read FOLLOW_RANGE 24 (createAttributes) as a sphere — an attribute
+        // that also sizes the navigator's path search (the melee goal's chase, MyEntityAIWanderALot) — so the goal scans
+        // orig's box itself (findTarget below: inflate(12, 5, 12), the sorter, the first candidate the conditions admit; the
+        // conditions carry no range term) and the attribute stays 24: a player whose box meets the 12x5x12 (up to 13.75 out
+        // along an axis for a 0.6-wide player, ~19.4 at a corner, inside the ±5 band) is taken as orig took it — turned to and
+        // walked at in the same pass, player-visible, which PN-020's ring (dropped before any attack step) does not cover —
+        // and one 12 straight up is not. The hold reads getFollowDistance's 12 (TargetGoal.canContinueToUse) where orig
+        // stored no scan pick and re-scanned the box each pass — the T5 row's hold rule, kept (ENT-S-136). The cadence is orig's
+        // 1-in-6 (:183, nextInt(6) == 0 every tick): the 6-arg constructor's interval 6 — reducedTickDelay(6) = 3, so nextInt(3) == 0
+        // on the goal's every-other-tick pass, 1-in-6 per tick, exact — where the 3-arg constructor's 10 rolled nextInt(5) on that
+        // pass, 1-in-10 (ENT-S-136, the Q2 follow-up after T3b: the bound-3 forcings in the three probe classes).
+        this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, Player.class, 6, true, false, null) { // interval 6 = orig Pointysaurus.java:183's nextInt(6) == 0 every tick: reducedTickDelay 3 on the every-other-tick pass (ENT-S-136)
+            /** orig Pointysaurus.java:39 / :49 — the scan's sorter (:254): creepers halved, silhouettes over 1 divide (a standing player's is 1.08). */
+            private final GenericTargetSorter targetSorter = new GenericTargetSorter(Pointysaurus.this);
+
             {
-                this.targetConditions = TargetingConditions.forNonCombat().range(this.getFollowDistance())
+                this.targetConditions = TargetingConditions.forNonCombat() // no range term: orig :253's box, scanned in findTarget, is the only bound (ENT-S-136)
                         .selector(e -> !MyUtils.isIgnoreable(e) // orig Pointysaurus.java:227-229 (ENT-S-106)
                                 && !(e instanceof Player p && p.getAbilities().instabuild)); // orig Pointysaurus.java:244 !isCreativeMode (ENT-S-132)
             }
@@ -111,6 +134,20 @@ public class Pointysaurus extends Monster {
             public boolean canUse() {
                 if (OreSpawnConfig.PLAY_NICELY.get()) return false; // orig Pointysaurus.java:250-252 (ENT-S-115)
                 return super.canUse();
+            }
+
+            /** orig Pointysaurus.java:253-262 — the box, sorted, the first suitable; vanilla's Player pick was every player in the level under a range sphere (ENT-S-136). */
+            @Override
+            protected void findTarget() {
+                List<Player> candidates = this.mob.level().getEntitiesOfClass(this.targetType,
+                        this.mob.getBoundingBox().inflate(12.0, 5.0, 12.0), e -> true);      // orig :253 — expand(12, 5, 12): every player whose box meets it
+                this.target = TargetSelection.firstMatch(candidates, this.targetSorter,
+                        candidate -> this.canAttack(candidate, this.targetConditions));     // orig :254-262 — sorted, the first isSuitableTarget accepts (here the conditions: ENT-S-106, ENT-S-132, alive, sight)
+            }
+
+            @Override
+            protected double getFollowDistance() {
+                return 12.0; // the hold's reach (TargetGoal.canContinueToUse): orig :253's 12, where orig held no scan pick and re-scanned the box each pass — the T5 row's hold rule, kept; FOLLOW_RANGE stays 24 for pathing (ENT-S-136)
             }
         });
     }

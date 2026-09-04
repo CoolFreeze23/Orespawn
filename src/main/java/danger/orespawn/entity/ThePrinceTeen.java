@@ -165,13 +165,25 @@ public class ThePrinceTeen extends TamableAnimal
         // selector) is registered only when PlayNicely == 0 at construction; the port registers the goal always and
         // reads the flag live in its canUse, so it never starts while PlayNicely is on (ENT-S-115; the custom scan's
         // own gate, orig :540-542, is at findSomethingToAttack).
-        // orig ThePrinceTeen.java:117 IMob.mobSelector → Mob.class + instanceof Enemy; 10 / false are the 3-arg constructor's own randomInterval / mustReach (ENT-S-124, IMob convention);
+        // orig ThePrinceTeen.java:117 IMob.mobSelector → Mob.class + instanceof Enemy; false is the 3-arg constructor's own mustReach (ENT-S-124, IMob convention); interval 0 is orig :117's targetChance 0 — no roll in either (ENT-S-117's mapping of the same argument at the Dragon; ENT-S-136);
         // the Creeper refused as 1.7.10's EntityLiving.canAttackClass refused it for every vanilla target task (OrigTargets.vanillaTaskPrey, ENT-S-127)
-        this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, Mob.class, 10, true, false, OrigTargets::vanillaTaskPrey) {
+        // orig ThePrinceTeen.java:117's scan geometry was the follow-range attribute's: EntityAINearestAttackableTarget.shouldExecute
+        // scanned boundingBox.expand(d, 4, d) with d = EntityAITarget.getTargetDistance() — EntityLiving's base 16,
+        // ThePrinceTeen.java:136-142 sets none — and EntityAITarget.continueExecuting released beyond the same d. The port's goal
+        // read FOLLOW_RANGE 32 (createAttributes), which also sizes the navigator's path search (getNavigation().moveTo in the
+        // combat step, FollowOwnerGoal, the wander), so the goal carries orig's 16 itself through getFollowDistance — vanilla's
+        // getTargetSearchArea inflates (d, 4, d), orig's shape, and the conditions' range and the hold read the same d — and the
+        // attribute stays 32 (ENT-S-136; the Dragon's ENT-S-117 idiom). The true / false stay ENT-S-124's; the interval is 0 — orig :117's targetChance 0 (vanilla's every-other-tick goal pass against EntityAITasks' every third is ENT-S-117's residual) (ENT-S-136).
+        this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, Mob.class, 0, true, false, OrigTargets::vanillaTaskPrey) { // interval 0 = orig ThePrinceTeen.java:117's targetChance 0 (ENT-S-136)
             @Override
             public boolean canUse() {
                 if (OreSpawnConfig.PLAY_NICELY.get()) return false; // orig ThePrinceTeen.java:116-118 (ENT-S-115)
                 return super.canUse();
+            }
+
+            @Override
+            protected double getFollowDistance() {
+                return 16.0; // orig EntityAITarget.getTargetDistance() = the follow-range attribute, EntityLiving's base 16 (ThePrinceTeen.java:136-142 sets none): the :117 task's box expand(16, 4, 16), its range and its hold; FOLLOW_RANGE stays 32 for pathing (ENT-S-136)
             }
         });
     }
