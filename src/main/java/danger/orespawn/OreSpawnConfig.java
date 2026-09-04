@@ -185,8 +185,10 @@ public class OreSpawnConfig {
     // master is on -- every read goes through the effective-value helpers at
     // the bottom of this class (spiderMovement(), mountCamera(),
     // phase14ContentEnable(), mothraWideRootHitbox(),
-    // fireRespectsMobGriefing()), never through the keys directly. The
-    // MOD-024 items are unimplemented proposals, not keys.
+    // fireRespectsMobGriefing(), godzillaSparesBossPeers(), petsDefendOwner(),
+    // pointysaurusStareAggro(), cryolophosaurusRevengeChase()), never through
+    // the keys directly. The MOD-024 items are unimplemented proposals, not
+    // keys.
     /**
      * Master modern-mode switch -- master override; defaults to true and
      * defers to the per-feature keys; set false to force every modern feature
@@ -197,12 +199,16 @@ public class OreSpawnConfig {
      * riding camera.
      * Effective values: {@link #spiderMovement()}, {@link #mountCamera()},
      * {@link #phase14ContentEnable()}, {@link #mothraWideRootHitbox()},
-     * {@link #fireRespectsMobGriefing()} -- a feature's key is never
+     * {@link #fireRespectsMobGriefing()}, {@link #godzillaSparesBossPeers()},
+     * {@link #petsDefendOwner()}, {@link #pointysaurusStareAggro()},
+     * {@link #cryolophosaurusRevengeChase()} -- a feature's key is never
      * consulted without this master. Phase G artist
      * animations will hang off this same master ("artist animations are a
      * 2.0 feature behind the modern config; classic stays code-driven
      * parity", ruling 2026-09-03). Construction-snapshotted features (the
-     * robot gait mode, the hitbox sub-keys; BOSS-017 pattern) see a flip on
+     * robot gait mode, the hitbox sub-keys, the T9 goal keys
+     * {@link #petsDefendOwner()}, {@link #pointysaurusStareAggro()} and
+     * {@link #cryolophosaurusRevengeChase()}; BOSS-017 pattern) see a flip on
      * newly constructed/loaded entities only, not live ones.
      */
     public static final ModConfigSpec.BooleanValue MODERN_ENABLED;
@@ -227,6 +233,67 @@ public class OreSpawnConfig {
      * concern).
      */
     public static final ModConfigSpec.BooleanValue MODERN_FIRE_RESPECTS_MOB_GRIEFING;
+    /**
+     * MOD-032 (targeting ledger batch T9, A1; owner ruling 2026-09-04: "documented
+     * reason -> MOD record behind modern"): Godzilla's target filter refuses its
+     * boss peers -- Mothra, the Nightmare and the Kraken ({@code MyUtils.isBigBoss})
+     * and the nine royals ({@code MyUtils.isRoyalty}) -- so co-existing bosses do
+     * not cancel each other out and boss arenas are not torn up (the port's own
+     * comment at the site; commit a87c0649). 1.7.10 refused only Godzilla,
+     * GodzillaHead, Creeper, Zombie, Spider, Skeleton, Ghost and GhostSkelly (orig
+     * Godzilla.java:448-471); Mothra was never prey in either tree (the shared
+     * ignore screen refuses EntityButterfly ahead of the chain). Takes effect only
+     * while {@link #MODERN_ENABLED} is on -- read through
+     * {@link #godzillaSparesBossPeers()}, never directly, live at every filter
+     * call (the MOD-031 read shape; no BOSS-017 concern).
+     */
+    public static final ModConfigSpec.BooleanValue MODERN_GODZILLA_SPARES_BOSS_PEERS;
+    /**
+     * MOD-033 (targeting ledger batch T9, A2 -- the Phase 4E six plus the Prince
+     * Teen / Adult; owner ruling 2026-09-04): tamed companions carry the vanilla
+     * owner-defence target goals -- {@code OwnerHurtByTargetGoal} /
+     * {@code OwnerHurtTargetGoal} on Leon, the Gamma Metroid, Spyro, Stinky, the
+     * Prince, the Princess, the Prince Teen and the Prince Adult, plus
+     * {@code HurtByTargetGoal} and the tame-gated
+     * {@code NearestAttackableTargetGoal<Monster>} where the port added those too
+     * (Spyro, Stinky, the Prince, the Princess; the Metroid's tame hunt).
+     * Documented only by the Phase 4E commit message (27b66a39, "defense AI").
+     * 1.7.10 registered no owner goals on any of them. Takes effect only while
+     * {@link #MODERN_ENABLED} is on -- read through {@link #petsDefendOwner()},
+     * never directly, ONCE at construction (goals register in the Mob constructor;
+     * BOSS-017 pattern): a flip applies to newly spawned or loaded pets. Live on
+     * Leon, the Prince Teen and the Prince Adult (their flight combat reads the
+     * target slot); registered but unconsumed on the other five (their combat
+     * reads only their own scan).
+     */
+    public static final ModConfigSpec.BooleanValue MODERN_PETS_DEFEND_OWNER;
+    /**
+     * MOD-034 (targeting ledger batch T9, A3; owner ruling 2026-09-04): the
+     * Pointysaurus's Enderman-style eye-contact aggression
+     * ({@code PointysaurusStareGoal}: the nearest survival player within 32 blocks
+     * looking straight at it becomes its target after five ticks; creative and
+     * spectator players ignored). Documented three times (the goal's javadoc, the
+     * registration comment, commit 21b8d0e8 -- "Phase 10"). 1.7.10 had no such
+     * rule (orig Pointysaurus.java:50-55: proximity scan and revenge only). Takes
+     * effect only while {@link #MODERN_ENABLED} is on -- read through
+     * {@link #pointysaurusStareAggro()}, never directly, ONCE at construction
+     * (BOSS-017 pattern): a flip applies to newly spawned or loaded Pointysaurs.
+     */
+    public static final ModConfigSpec.BooleanValue MODERN_POINTYSAURUS_STARE_AGGRO;
+    /**
+     * MOD-035 (targeting ledger batch T9, A4; owner ruling 2026-09-04): the
+     * Cryolophosaurus chases and bites its revenge target (the
+     * {@code DinosaurMeleeAttackGoal} acting on the slot only
+     * {@code HurtByTargetGoal} fills, with the timid cryolophosaurus dice).
+     * Documented by commit f5cb0ba5 (Phase 4C's goal-based mapping) and the
+     * ENT-A-009 acceptance. 1.7.10 stored the revenge target and never chased it
+     * (orig Cryolophosaurus.java:51-57: no attack task); its 1-in-5 hunt over the
+     * 9x2x9 box is kept in both modes. Takes effect only while
+     * {@link #MODERN_ENABLED} is on -- read through
+     * {@link #cryolophosaurusRevengeChase()}, never directly, ONCE at construction
+     * (BOSS-017 pattern): a flip applies to newly spawned or loaded Cryolophosaurs.
+     */
+    public static final ModConfigSpec.BooleanValue MODERN_CRYOLOPHOSAURUS_REVENGE_CHASE;
 
     static {
         BUILDER.push("mobs");
@@ -435,11 +502,14 @@ public class OreSpawnConfig {
                         "value; new modern features register under [modern]. true (default) = each modern " +
                         "feature follows its own key (tweaks.spiderMovement, tweaks.mountCamera, " +
                         "tweaks.phase14ContentEnable, modern.mothraWideRootHitbox, " +
-                        "modern.fireRespectsMobGriefing); false = classic 1.7.10 " +
+                        "modern.fireRespectsMobGriefing, modern.godzillaSparesBossPeers, " +
+                        "modern.petsDefendOwner, modern.pointysaurusStareAggro, " +
+                        "modern.cryolophosaurusRevengeChase); false = classic 1.7.10 " +
                         "parity everywhere, whatever the per-feature keys say. Phase G artist animations will " +
                         "hang off this same switch (classic stays code-driven parity). Snapshotted features " +
-                        "(the robot gait mode, hitbox sub-keys) pick up a flip on newly spawned/loaded " +
-                        "entities, not live ones."
+                        "(the robot gait mode, hitbox sub-keys, the goal keys petsDefendOwner / " +
+                        "pointysaurusStareAggro / cryolophosaurusRevengeChase) pick up a flip on newly " +
+                        "spawned/loaded entities, not live ones."
         ).define("enabled", true);
         MODERN_MOTHRA_WIDE_ROOT_HITBOX = BUILDER.comment(
                 "MOD-029: Mothra's root hitbox is 6 x 3 (the port's original size) instead of the 1.7.10 " +
@@ -458,6 +528,49 @@ public class OreSpawnConfig {
                         "to keep the 1.7.10 fire behaviour in modern mode too. Read at impact, so a change applies " +
                         "to the next shot that lands."
         ).define("fireRespectsMobGriefing", true);
+        // Targeting ledger batch T9 (owner ruling 2026-09-04, verbatim: "T9:
+        // documented reason -> MOD record behind modern; undocumented ->
+        // removed from classic."). Defaults ON, the MOD-029 / MOD-031
+        // precedent. MOD-032 is read live (a filter); MOD-033..035 gate goal
+        // registration and are construction snapshots (BOSS-017 shape).
+        MODERN_GODZILLA_SPARES_BOSS_PEERS = BUILDER.comment(
+                "MOD-032: Mobzilla does not pick fights with its peers -- Mothra, the Nightmare, the Kraken and the " +
+                        "royal family (the King, the Queen, their heads, the Prince line, the Purple Power) are refused " +
+                        "by its target filter so co-existing bosses do not cancel each other out and boss arenas are " +
+                        "not torn up. Only takes effect while modern.enabled is true; classic mode uses the 1.7.10 " +
+                        "filter (orig Godzilla.java:448-471: Godzilla, GodzillaHead, Creeper, Zombie, Spider, " +
+                        "Skeleton, Ghost and GhostSkelly refused, nothing more -- the Nightmare, the Kraken and the " +
+                        "royals are prey; Mothra is refused in both modes by the shared ignore screen, as in 1.7.10). " +
+                        "Read live at every filter call, so a change applies to the next target pick."
+        ).define("godzillaSparesBossPeers", true);
+        MODERN_PETS_DEFEND_OWNER = BUILDER.comment(
+                "MOD-033: tamed companions carry the vanilla owner-defence target goals (OwnerHurtByTargetGoal, " +
+                        "OwnerHurtTargetGoal -- and, where the port added them too, HurtByTargetGoal and a tame-gated " +
+                        "NearestAttackableTargetGoal<Monster>) on Leon, the Gamma Metroid, Spyro, Stinky, the Prince, " +
+                        "the Princess, the Prince Teen and the Prince Adult. Only takes effect while modern.enabled is " +
+                        "true; classic mode registers none of them (1.7.10 registered no owner goals on these pets -- " +
+                        "a tamed pet fought only what its own scan or its revenge memory picked). Live today on Leon, " +
+                        "the Prince Teen and the Prince Adult, whose flight combat reads the target slot; registered " +
+                        "but unconsumed on the Gamma Metroid, Spyro, Stinky, the Prince and the Princess (their combat " +
+                        "reads only their own scan). Goals register at construction, so a change applies to newly " +
+                        "spawned or loaded pets, not live ones."
+        ).define("petsDefendOwner", true);
+        MODERN_POINTYSAURUS_STARE_AGGRO = BUILDER.comment(
+                "MOD-034: the Pointysaurus locks on to any survival player within 32 blocks who looks straight at it " +
+                        "(the Enderman-style eye-contact goal; creative and spectator players are ignored, and the " +
+                        "PlayNicely flag still pacifies it). Only takes effect while modern.enabled is true; classic " +
+                        "mode registers no stare goal (orig Pointysaurus.java:50-55 -- aggression only from its " +
+                        "12x5x12 proximity scan and from being hit). Registered at construction, so a change applies " +
+                        "to newly spawned or loaded Pointysaurs, not live ones."
+        ).define("pointysaurusStareAggro", true);
+        MODERN_CRYOLOPHOSAURUS_REVENGE_CHASE = BUILDER.comment(
+                "MOD-035: a Cryolophosaurus chases and bites whoever hurt it (the revenge target its HurtByTargetGoal " +
+                        "stores), with its timid dice. Only takes effect while modern.enabled is true; classic mode " +
+                        "stores the revenge target and never chases it (orig Cryolophosaurus.java:51-57 registered no " +
+                        "attack task; its only aggression is the 1-in-5 hunt over the 9x2x9 box around it, kept in " +
+                        "both modes). Registered at construction, so a change applies to newly spawned or loaded " +
+                        "Cryolophosaurs, not live ones."
+        ).define("cryolophosaurusRevengeChase", true);
         BUILDER.pop();
 
         SPEC = BUILDER.build();
@@ -485,6 +598,55 @@ public class OreSpawnConfig {
      */
     public static boolean fireRespectsMobGriefing() {
         return MODERN_ENABLED.get() && MODERN_FIRE_RESPECTS_MOB_GRIEFING.get();
+    }
+
+    /**
+     * MOD-032 (T9 A1, 2026-09-04): the single {@code master && key} evaluation for
+     * Godzilla's boss-peer refusals -- true only while {@link #MODERN_ENABLED} AND
+     * {@link #MODERN_GODZILLA_SPARES_BOSS_PEERS} are both on. Read by
+     * {@code Godzilla.isSuitableTarget} live at every filter call (the MOD-031
+     * read shape; no BOSS-017 concern); false is the exact 1.7.10 filter (orig
+     * Godzilla.java:448-471).
+     */
+    public static boolean godzillaSparesBossPeers() {
+        return MODERN_ENABLED.get() && MODERN_GODZILLA_SPARES_BOSS_PEERS.get();
+    }
+
+    /**
+     * MOD-033 (T9 A2, 2026-09-04): the single {@code master && key} evaluation for
+     * the companions' owner-defence goals -- true only while {@link #MODERN_ENABLED}
+     * AND {@link #MODERN_PETS_DEFEND_OWNER} are both on. Read ONCE in each pet's
+     * {@code registerGoals} (the Mob constructor; BOSS-017 pattern, the S4
+     * ctor-tear rule) and never on a live entity; false registers none of the
+     * goals, the 1.7.10 shape (orig Leon.java:92-95, GammaMetroid.java:67,
+     * Spyro.java:73-81, Stinky.java:67-77, ThePrince.java:86-92,
+     * ThePrincess.java:86-92, ThePrinceTeen.java:116-119,
+     * ThePrinceAdult.java:112-115).
+     */
+    public static boolean petsDefendOwner() {
+        return MODERN_ENABLED.get() && MODERN_PETS_DEFEND_OWNER.get();
+    }
+
+    /**
+     * MOD-034 (T9 A3, 2026-09-04): the single {@code master && key} evaluation for
+     * the Pointysaurus stare goal -- true only while {@link #MODERN_ENABLED} AND
+     * {@link #MODERN_POINTYSAURUS_STARE_AGGRO} are both on. Read ONCE in
+     * {@code Pointysaurus.registerGoals} (BOSS-017 pattern); false leaves the goal
+     * unregistered (orig Pointysaurus.java:50-55).
+     */
+    public static boolean pointysaurusStareAggro() {
+        return MODERN_ENABLED.get() && MODERN_POINTYSAURUS_STARE_AGGRO.get();
+    }
+
+    /**
+     * MOD-035 (T9 A4, 2026-09-04): the single {@code master && key} evaluation for
+     * the Cryolophosaurus revenge chase -- true only while {@link #MODERN_ENABLED}
+     * AND {@link #MODERN_CRYOLOPHOSAURUS_REVENGE_CHASE} are both on. Read ONCE in
+     * {@code Cryolophosaurus.registerGoals} (BOSS-017 pattern); false leaves the
+     * melee goal unregistered (orig Cryolophosaurus.java:51-57).
+     */
+    public static boolean cryolophosaurusRevengeChase() {
+        return MODERN_ENABLED.get() && MODERN_CRYOLOPHOSAURUS_REVENGE_CHASE.get();
     }
 
     /**

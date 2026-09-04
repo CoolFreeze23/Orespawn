@@ -54,8 +54,17 @@ public class Cryolophosaurus extends Monster {
     protected void registerGoals() {
         this.goalSelector.addGoal(0, new FloatGoal(this));
         this.goalSelector.addGoal(1, new PanicGoal(this, 1.35));
-        this.goalSelector.addGoal(2, new DinosaurMeleeAttackGoal(this, this::legacySetAttacking,
-                DinosaurMeleeAttackGoal.Presets.cryolophosaurus()));
+        // MOD-035 (T9 A4): the revenge chase. This DinosaurMeleeAttackGoal chases and bites whatever
+        // fills the target slot, and only HurtByTargetGoal (below) ever fills it — the ported 1-in-5
+        // hunt in customServerAiStep bites its own pick without setTarget. Modern only, a construction
+        // snapshot (OreSpawnConfig.cryolophosaurusRevengeChase(), read once here; goals register in the
+        // Mob ctor, the BOSS-017 shape — a config change applies to newly spawned Cryolophosaurs): orig
+        // Cryolophosaurus.java:51-57 registered no attack task, so classic stores the revenge target
+        // and never chases it (only the 1-in-200 forgiveness reads it).
+        if (OreSpawnConfig.cryolophosaurusRevengeChase()) {
+            this.goalSelector.addGoal(2, new DinosaurMeleeAttackGoal(this, this::legacySetAttacking,
+                    DinosaurMeleeAttackGoal.Presets.cryolophosaurus()));
+        }
         this.goalSelector.addGoal(3, new MyEntityAIWanderALot(this, 10, 1.0));
         this.goalSelector.addGoal(4, new LookAtPlayerGoal(this, Player.class, 8.0f));
         this.goalSelector.addGoal(5, new RandomLookAroundGoal(this));

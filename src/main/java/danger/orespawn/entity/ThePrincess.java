@@ -109,10 +109,17 @@ public class ThePrincess extends TamableAnimal {
         this.goalSelector.addGoal(5, new MyEntityAIWander(this, 0.75f));
         this.goalSelector.addGoal(6, new RandomLookAroundGoal(this));
 
-        this.targetSelector.addGoal(1, new OwnerHurtByTargetGoal(this));
-        this.targetSelector.addGoal(2, new OwnerHurtTargetGoal(this));
-        this.targetSelector.addGoal(3, new HurtByTargetGoal(this));
-        this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, Monster.class, 10, true, false, e -> this.isTame()));
+        // MOD-033 (T9 A2, petsDefendOwner): the four target goals are modern only, a construction snapshot
+        // (the helper read once here; goals register in the Mob ctor, the BOSS-017 shape — a config change
+        // applies to newly spawned Princesses); orig ThePrincess.java:86-92 registered no target tasks at all.
+        // Registered but unconsumed at HEAD: nothing here reads the target slot (the hunt bites its own findSomethingToAttack pick; the 1-in-200 forgiveness clears lastHurtByMob),
+        // so these goals wait for a consumer.
+        if (OreSpawnConfig.petsDefendOwner()) {
+            this.targetSelector.addGoal(1, new OwnerHurtByTargetGoal(this));
+            this.targetSelector.addGoal(2, new OwnerHurtTargetGoal(this));
+            this.targetSelector.addGoal(3, new HurtByTargetGoal(this));
+            this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, Monster.class, 10, true, false, e -> this.isTame()));
+        }
     }
 
     public static AttributeSupplier.Builder createAttributes() {

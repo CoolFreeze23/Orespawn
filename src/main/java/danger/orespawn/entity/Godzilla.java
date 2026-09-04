@@ -591,11 +591,19 @@ public class Godzilla extends Monster implements OreSpawnPartEntity.MultipartBos
         if (target instanceof Skeleton) return false;
         if (target instanceof Ghost) return false;
         if (target instanceof GhostSkelly) return false;
-        // Don't pick fights with peers â€” Mothra, the royal couple, and other
+        // MOD-032 (T9 A1): don't pick fights with peers — Mothra, the royal couple, and other
         // OreSpawn bosses are tracked separately so Mobzilla doesn't grief
         // boss arenas and so co-existing bosses don't cancel each other out.
-        if (target instanceof Mothra) return false;
-        if (MyUtils.isBigBoss(target) || MyUtils.isRoyalty(target)) return false;
+        // Modern only, read live through OreSpawnConfig.godzillaSparesBossPeers() (the MOD-031
+        // impact-read shape; a change applies to the next pick); classic (master or key off) is orig
+        // Godzilla.java:448-471 — the eight refusals above and nothing more, so the Nightmare, the
+        // Kraken and the nine royals (MyUtils.isBigBoss / isRoyalty) are prey as in 1.7.10. The Mothra
+        // line is redundant in both modes: Mothra extends EntityButterfly and the ignore screen above
+        // (orig :442-444) refuses EntityButterfly ahead of this chain, as it did in 1.7.10.
+        if (OreSpawnConfig.godzillaSparesBossPeers()) {
+            if (target instanceof Mothra) return false;
+            if (MyUtils.isBigBoss(target) || MyUtils.isRoyalty(target)) return false;
+        }
         if (target instanceof Player player) {
             if (player.getAbilities().instabuild) return false;
         }
