@@ -9,6 +9,7 @@ import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.util.Mth;
+import net.minecraft.world.Difficulty;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -118,7 +119,8 @@ public class PurplePower extends Mob {
                     (int) this.getX() + xdir,
                     (int) this.getY() + this.getRandom().nextInt(20) - 10,
                     (int) this.getZ() + zdir);
-        } else if (this.getRandom().nextInt(7) == 2) {
+        } else if (this.getRandom().nextInt(7) == 2
+                && this.level().getDifficulty() != Difficulty.PEACEFUL) { // orig PurplePower.java:173 — the roll, then `!= PEACEFUL`, then the scan (ENT-S-114)
             LivingEntity victim = findSomethingToAttack();
             if (victim != null) {
                 this.currentFlightTarget = new BlockPos((int) victim.getX(), (int) (victim.getY() + victim.getBbHeight() / 2.0f), (int) victim.getZ());
@@ -128,6 +130,12 @@ public class PurplePower extends Mob {
                     this.discard();
                 }
             }
+        }
+        // orig PurplePower.java:180-182 — every AI tick, after the flight-target block and before the
+        // steering: PEACEFUL → setDead. The port discards at the same point; the steering below still
+        // runs on the discarded entity, as orig ran it on the dead one (ENT-S-114).
+        if (this.level().getDifficulty() == Difficulty.PEACEFUL) {
+            this.discard();
         }
         double toTargetX = this.currentFlightTarget.getX() + 0.5 - this.getX();
         double toTargetY = this.currentFlightTarget.getY() + 0.1 - this.getY();
@@ -192,6 +200,7 @@ public class PurplePower extends Mob {
     }
 
     private boolean isSuitableTarget(LivingEntity target) {
+        if (this.level().getDifficulty() == Difficulty.PEACEFUL) return false; // orig PurplePower.java:236-238 — PEACEFUL → false ahead of every other check (ENT-S-114)
         if (target == null || target == this || !target.isAlive()) return false;
         if (MyUtils.isIgnoreable(target)) return false; // orig PurplePower.java:248-250 — the shared ignore screen (ENT-S-106)
         if (target instanceof Player p && p.getAbilities().instabuild) return false;

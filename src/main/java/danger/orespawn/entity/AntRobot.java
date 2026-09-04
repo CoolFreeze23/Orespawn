@@ -11,6 +11,7 @@ import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.world.Difficulty;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
@@ -222,7 +223,9 @@ public class AntRobot extends Mob implements ICustomHitboxProfileSupplier, IMode
         if (this.getFirstPassenger() != null) return;
         super.customServerAiStep();
 
-        if (this.owned == 0) {
+        // orig AntRobot.java:105 — `owned == 0 && difficulty != PEACEFUL` gates the whole unridden
+        // block: the stomp roll, the target release, the hunt and the melee all sit inside (ENT-S-114).
+        if (this.owned == 0 && this.level().getDifficulty() != Difficulty.PEACEFUL) {
             if (this.getRandom().nextInt(20) == 0) {
                 feetFindSomethingToHit();
             }
@@ -286,11 +289,16 @@ public class AntRobot extends Mob implements ICustomHitboxProfileSupplier, IMode
         super.tick();
         this.clearFire();
 
-        // orig AntRobot.java:617-619 — while ridden, 1-in-50 stomp around the feet.
-        if (!this.level().isClientSide() && this.getFirstPassenger() != null && this.getRandom().nextInt(50) == 0) {
+        // orig AntRobot.java:617-619 — while ridden, 1-in-50 stomp around the feet; `difficulty
+        // != PEACEFUL` leads the condition (:617), ahead of the client and rider tests (ENT-S-114).
+        if (this.level().getDifficulty() != Difficulty.PEACEFUL && !this.level().isClientSide()
+                && this.getFirstPassenger() != null && this.getRandom().nextInt(50) == 0) {
             feetFindSomethingToHit();
         }
-        if (!this.level().isClientSide() && this.getFirstPassenger() != null && this.getRandom().nextInt(9) == 0) {
+        // orig AntRobot.java:620-631 — while ridden, 1-in-9 hunt and melee; `difficulty != PEACEFUL`
+        // leads the condition (:620) (ENT-S-114).
+        if (this.level().getDifficulty() != Difficulty.PEACEFUL && !this.level().isClientSide()
+                && this.getFirstPassenger() != null && this.getRandom().nextInt(9) == 0) {
             LivingEntity riderTarget = findSomethingToAttack();
             if (riderTarget != null) {
                 double meleeRange = (6.0f + riderTarget.getBbWidth() / 2.0f);

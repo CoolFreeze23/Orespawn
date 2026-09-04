@@ -358,7 +358,10 @@ public class Cephadrome extends PathfinderMob
 
         super.customServerAiStep();
 
-        if (this.random.nextInt(7) == 1) {
+        // orig Cephadrome.java:488 — the 1-in-7 roll, then `difficulty != PEACEFUL`: the whole hunt
+        // block is skipped on Peaceful, a stored revenge target included (ENT-S-114; the filter's own
+        // guard at orig :516 is ENT-S-113).
+        if (this.random.nextInt(7) == 1 && this.level().getDifficulty() != Difficulty.PEACEFUL) {
             LivingEntity target = this.getTarget();
             if (target != null && !target.isAlive()) {
                 this.setTarget(null);

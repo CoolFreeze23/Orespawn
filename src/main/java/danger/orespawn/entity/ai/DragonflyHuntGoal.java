@@ -5,6 +5,7 @@ import java.util.List;
 import danger.orespawn.OreSpawnConfig;
 import danger.orespawn.entity.EntityDragonfly;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.Difficulty;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.animal.horse.AbstractHorse;
 import net.minecraft.world.entity.player.Player;
@@ -27,6 +28,11 @@ import net.minecraft.world.entity.player.Player;
  * AND a 1-in-12 roll on top, so on average a dragonfly does one
  * neighbour scan roughly every 3600 ticks (~3 minutes). Well within
  * the per-tick budget even with hundreds of flyers.
+ *
+ * <p>Peaceful: orig Dragonfly.java:142 gates the whole hunt branch — the scan, the flight retarget
+ * onto the prey and the bite at :147-148 — on {@code difficulty != PEACEFUL}, and :198 answers
+ * false at the head of the filter; both are transcribed below. An Animal does not despawn on
+ * Peaceful, so without them the port hunted there (ENT-S-114).
  */
 public class DragonflyHuntGoal extends AmbientFlightGoal {
     private static final double HUNT_HURT_DIST_SQ = 6.0;
@@ -49,14 +55,19 @@ public class DragonflyHuntGoal extends AmbientFlightGoal {
         // wander BlockPos targets from the base class.
         LivingEntity target = (this.dragonfly.getTarget() != null)
                 ? this.dragonfly.getTarget() : null;
-        if (target != null && this.dragonfly.distanceToSqr(target) < HUNT_HURT_DIST_SQ) {
+        // orig Dragonfly.java:147-148 sits inside the :142 `!= PEACEFUL` branch: no bite on Peaceful,
+        // whatever target the port still holds (ENT-S-114).
+        if (this.mob.level().getDifficulty() != Difficulty.PEACEFUL
+                && target != null && this.dragonfly.distanceToSqr(target) < HUNT_HURT_DIST_SQ) {
             this.dragonfly.doHurtTarget(target);
         }
     }
 
     @Override
     protected BlockPos pickRetarget() {
-        if (this.mob.getRandom().nextInt(HUNT_ROLL_CHANCE) == 0) {
+        // orig Dragonfly.java:142 — the 1-in-12 roll, then `difficulty != PEACEFUL` (ENT-S-114).
+        if (this.mob.getRandom().nextInt(HUNT_ROLL_CHANCE) == 0
+                && this.mob.level().getDifficulty() != Difficulty.PEACEFUL) {
             LivingEntity prey = findPrey();
             if (prey != null) {
                 this.dragonfly.setTarget(prey);
@@ -74,7 +85,8 @@ public class DragonflyHuntGoal extends AmbientFlightGoal {
         // and the predicate keeps the original filter chain's order/short-circuit.
         return TargetSelection.firstMatch(candidates,
                 Comparator.comparingDouble(this.mob::distanceToSqr),
-                candidate -> candidate != this.mob && candidate.isAlive()
+                candidate -> this.mob.level().getDifficulty() != Difficulty.PEACEFUL // orig Dragonfly.java:198-200 — PEACEFUL → false ahead of every other check (ENT-S-114)
+                        && candidate != this.mob && candidate.isAlive()
                         && !(candidate instanceof EntityDragonfly)
                         && !(candidate instanceof Player)
                         && !(OreSpawnConfig.DRAGONFLY_HORSE_FRIENDLY.get()
