@@ -190,6 +190,10 @@ public class EntityRat extends Monster {
     /**
      * orig Rat.java:185-249 — RatPlayerFriendly/RatPetFriendly only gate OWNED rats
      * (myowner != null); wild rats attack players and pets regardless of the configs.
+     * The species chain (:201-224) sits after the sight step in the original's order:
+     * Irukandji, Skate, Whale, Flounder, Rat, Ghost, GhostSkelly, DungeonBeast refused
+     * (ENT-S-128 restored the five the port had dropped; the two ghosts are refused by
+     * the ignore screen in both trees).
      * ENT-S-109: the player branch's {@code capabilities.isCreativeMode} (orig :225-229)
      * is {@code Abilities.instabuild} — the ENT-S-107 mapping — not {@code invulnerable}.
      */
@@ -197,7 +201,13 @@ public class EntityRat extends Monster {
         if (target == null || target == this || !target.isAlive()) return false;
         if (MyUtils.isIgnoreable(target)) return false; // orig Rat.java:195-197 — the shared ignore screen, ahead of line of sight (:198) (ENT-S-106)
         if (!this.getSensing().hasLineOfSight(target)) return false;
-        if (target instanceof EntityRat) return false;
+        if (target instanceof Irukandji) return false;    // orig Rat.java:201-203 (ENT-S-128)
+        if (target instanceof Skate) return false;        // orig Rat.java:204-206 (ENT-S-128)
+        if (target instanceof Whale) return false;        // orig Rat.java:207-209 (ENT-S-128)
+        if (target instanceof Flounder) return false;     // orig Rat.java:210-212 (ENT-S-128)
+        if (target instanceof EntityRat) return false;    // orig Rat.java:213-215 Rat
+        // orig Rat.java:216-221 — Ghost and GhostSkelly: refused by the ignore screen above (:195-197, ENT-S-106) in both trees
+        if (target instanceof DungeonBeast) return false; // orig Rat.java:222-224 (ENT-S-128)
 
         if (target instanceof Player player) {
             if (player.getAbilities().instabuild) return false; // orig Rat.java:227-229 isCreativeMode (ENT-S-109)

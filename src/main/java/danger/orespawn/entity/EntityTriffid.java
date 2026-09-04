@@ -22,6 +22,7 @@ import net.minecraft.world.entity.ai.goal.FloatGoal;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
+import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
@@ -248,19 +249,31 @@ public class EntityTriffid extends Monster {
     }
 
     /**
-     * orig Triffid.java:275-319 — anything alive and visible except creepers, the listed
-     * OreSpawn species and creative players (the port folds the orig's creeper and
-     * species exclusions into {@code !(target instanceof Monster)}). ENT-S-109: the
-     * player branch's {@code capabilities.isCreativeMode} (orig :312-317) is
+     * orig Triffid.java:275-319 — anything alive and visible except the named kinds and creative players,
+     * in the original's order: the shared ignore screen (:285-287), line of sight (:288-290), then
+     * EntityCreeper (:291), EnderReaper (:294), Triffid (:297), TerribleTerror (:300), LurkingTerror
+     * (:303), PitchBlack (:306) and Dragon (:309) refused, the player branch (:312-317) and
+     * {@code return true} (:318) — every other living thing, zombies, skeletons and the rest of the
+     * OreSpawn monsters included, is prey. ENT-S-128: the port had folded the seven into a blanket
+     * {@code !(target instanceof Monster)}, sparing every monster and hunting the Dragon (a tameable);
+     * the named seven are restored at their orig positions (the self-kind step moves from ahead of the
+     * sight line to its :297 slot behind it — both side-effect-free) and the blanket is gone. ENT-S-109:
+     * the player branch's {@code capabilities.isCreativeMode} (orig :312-317) is
      * {@code Abilities.instabuild} — the ENT-S-107 mapping — not {@code invulnerable}.
      */
     private boolean isSuitableTarget(LivingEntity target) {
         if (target == null || target == this || !target.isAlive()) return false;
         if (MyUtils.isIgnoreable(target)) return false; // orig Triffid.java:285-287 — the shared ignore screen, ahead of line of sight (:288) (ENT-S-106)
-        if (target instanceof EntityTriffid) return false;
         if (!this.getSensing().hasLineOfSight(target)) return false;
+        if (target instanceof Creeper) return false;              // orig Triffid.java:291-293 EntityCreeper (ENT-S-128)
+        if (target instanceof EnderReaper) return false;          // orig :294-296 (ENT-S-128)
+        if (target instanceof EntityTriffid) return false;        // orig :297-299 Triffid — the self-kind step at its orig slot, behind the sight line
+        if (target instanceof EntityTerribleTerror) return false; // orig :300-302 TerribleTerror (ENT-S-128)
+        if (target instanceof EntityLurkingTerror) return false;  // orig :303-305 LurkingTerror (ENT-S-128)
+        if (target instanceof PitchBlack) return false;           // orig :306-308 (ENT-S-128)
+        if (target instanceof Dragon) return false;               // orig :309-311 (ENT-S-128)
         if (target instanceof Player p) return !p.getAbilities().instabuild; // orig Triffid.java:312-317 isCreativeMode (ENT-S-109)
-        return !(target instanceof Monster);
+        return true;                                              // orig :318 — the blanket !Monster is gone (ENT-S-128)
     }
 
     /** orig Triffid.java:355-357 — always allowed. */
