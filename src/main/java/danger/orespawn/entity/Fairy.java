@@ -32,6 +32,7 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import danger.orespawn.OreSpawnMod;
+import danger.orespawn.OreSpawnConfig;
 import danger.orespawn.entity.ai.TargetSelection;
 
 /**
@@ -149,6 +150,7 @@ public class Fairy extends AmbientCreature {
     }
 
     private LivingEntity findSomethingToAttack() {
+        if (OreSpawnConfig.PLAY_NICELY.get()) return null; // orig Fairy.java:239-241 — PlayNicely != 0 returns null ahead of the scan (ENT-S-115)
         List<LivingEntity> entities = this.level().getEntitiesOfClass(LivingEntity.class,
                 this.getBoundingBox().inflate(FLIGHT_SEARCH_RANGE, FLIGHT_SEARCH_RANGE, FLIGHT_SEARCH_RANGE));
         // OPT-021: nearest-first pick without the full list sort; TargetSelection

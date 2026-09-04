@@ -22,6 +22,7 @@ import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import danger.orespawn.OreSpawnMod;
+import danger.orespawn.OreSpawnConfig;
 import danger.orespawn.entity.ai.DinosaurMeleeAttackGoal;
 import danger.orespawn.entity.ai.PointysaurusStareGoal;
 import danger.orespawn.util.MyUtils;
@@ -62,7 +63,16 @@ public class Pointysaurus extends Monster {
         // Pointysaurus it locks onto you. Wider-radius proximity aggro still
         // exists at priority 3 as a fallback so it isn't completely passive
         // when you mind your business but get too close.
-        this.targetSelector.addGoal(2, new PointysaurusStareGoal(this));
+        // orig Pointysaurus.java:250-252 — findSomethingToAttack answers null under PlayNicely (PlayNicely != 0);
+        // the port's proactive pick is this pair of goals, so the flag is read live in their canUse: neither
+        // starts while PlayNicely is on (ENT-S-115).
+        this.targetSelector.addGoal(2, new PointysaurusStareGoal(this) {
+            @Override
+            public boolean canUse() {
+                if (OreSpawnConfig.PLAY_NICELY.get()) return false; // orig Pointysaurus.java:250-252 (ENT-S-115)
+                return super.canUse();
+            }
+        });
         // Pointysaurus only targets players — it will not attack other mobs.
         // This preserves the 1.7.10 isSuitableTarget filter (rejects all
         // Monster instances) which would otherwise make it pacifist without
@@ -70,7 +80,13 @@ public class Pointysaurus extends Monster {
         // orig Pointysaurus.java:227-229 — the shared ignore screen, ahead of the
         // species chain and line of sight (:239), as the target goal's predicate (ENT-S-106).
         this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, Player.class, true,
-                target -> !MyUtils.isIgnoreable(target)));
+                target -> !MyUtils.isIgnoreable(target)) {
+            @Override
+            public boolean canUse() {
+                if (OreSpawnConfig.PLAY_NICELY.get()) return false; // orig Pointysaurus.java:250-252 (ENT-S-115)
+                return super.canUse();
+            }
+        });
     }
 
     public static AttributeSupplier.Builder createAttributes() {

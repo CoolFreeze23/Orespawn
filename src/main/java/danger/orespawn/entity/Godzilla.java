@@ -727,12 +727,13 @@ public class Godzilla extends Monster implements OreSpawnPartEntity.MultipartBos
 
         // --- Target acquisition and combat ---
         if (this.getRandom().nextInt(Math.max(1, 5 - this.largeUnknownDetected)) == 1) {
-            // BOSS-017: orig Godzilla.java:356-359 — PlayNicely nulls the
-            // current target every combat pass.
+            LivingEntity currentTarget = this.getTarget(); // orig Godzilla.java:356 — e = getAttackTarget()
+            // orig Godzilla.java:357-359 — PlayNicely nulls the pass's LOCAL `e`: the stored attack target
+            // (HurtByTargetGoal / hurt()) is skipped for the pass and left as it is. BOSS-017 had mapped this
+            // to setTarget(null), which dropped the stored target on every pass (ENT-S-115).
             if (playNicely) {
-                this.setTarget(null);
+                currentTarget = null;
             }
-            LivingEntity currentTarget = this.getTarget();
             if (currentTarget != null) {
                 if (!currentTarget.isAlive()) {
                     this.setTarget(null);

@@ -3,6 +3,7 @@ package danger.orespawn.entity;
 import danger.orespawn.MobStats;
 import danger.orespawn.ModItems;
 import danger.orespawn.OreSpawnMod;
+import danger.orespawn.OreSpawnConfig;
 import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -131,8 +132,11 @@ public class Irukandji extends Monster {
         }
 
         if (this.random.nextInt(8) == 1) {
-            LivingEntity target = this.getTarget();
-            if (target == null) {
+            // orig Irukandji.java:291-293 — findSomethingToAttack answers null under PlayNicely ahead of its stored-target
+            // read (:299-302) and its scan (:304-309); the port's pick is this inline block, gated as a whole (ENT-S-115).
+            boolean playNicely = OreSpawnConfig.PLAY_NICELY.get();
+            LivingEntity target = playNicely ? null : this.getTarget();
+            if (target == null && !playNicely) {
                 Player nearest = this.level().getNearestPlayer(this, 6.0);
                 if (nearest != null && !nearest.getAbilities().instabuild) {
                     target = nearest;

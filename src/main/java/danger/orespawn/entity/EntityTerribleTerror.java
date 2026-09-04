@@ -24,6 +24,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import danger.orespawn.OreSpawnMod;
+import danger.orespawn.OreSpawnConfig;
 import danger.orespawn.entity.ai.TargetSelection;
 
 public class EntityTerribleTerror extends Monster {
@@ -172,6 +173,7 @@ public class EntityTerribleTerror extends Monster {
     }
 
     private LivingEntity findSomethingToAttack() {
+        if (OreSpawnConfig.PLAY_NICELY.get()) return null; // orig TerribleTerror.java:296-298 — PlayNicely != 0 returns null ahead of the scan (ENT-S-115)
         AABB searchBox = this.getBoundingBox().inflate(12.0, 8.0, 12.0);
         List<LivingEntity> targets = this.level().getEntitiesOfClass(LivingEntity.class, searchBox);
         // OPT-021: nearest-first pick without the full list sort; TargetSelection

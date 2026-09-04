@@ -32,6 +32,7 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import danger.orespawn.ModSounds;
 import danger.orespawn.ModEntities;
 import danger.orespawn.OreSpawnMod;
+import danger.orespawn.OreSpawnConfig;
 import danger.orespawn.util.MyUtils;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
 import net.minecraft.world.entity.ai.goal.FollowOwnerGoal;
@@ -932,6 +933,7 @@ public class Dragon extends TamableAnimal implements danger.orespawn.network.Rid
     }
 
     private LivingEntity findSomethingToAttack() {
+        if (OreSpawnConfig.PLAY_NICELY.get()) return null; // orig Dragon.java:577-579 — PlayNicely != 0 returns null ahead of the scan (ENT-S-115)
         AABB searchBox = this.getBoundingBox().inflate(20.0, 20.0, 20.0);
         List<LivingEntity> entities = this.level().getEntitiesOfClass(LivingEntity.class, searchBox);
         // OPT-021: nearest-first pick without the full list sort; TargetSelection

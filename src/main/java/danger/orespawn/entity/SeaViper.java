@@ -3,6 +3,7 @@ package danger.orespawn.entity;
 import danger.orespawn.MobStats;
 
 import danger.orespawn.OreSpawnMod;
+import danger.orespawn.OreSpawnConfig;
 import danger.orespawn.entity.ai.SeaViperBiteGoal;
 import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
@@ -93,7 +94,16 @@ public class SeaViper extends Monster {
         this.goalSelector.addGoal(5, new LookAtPlayerGoal(this, Mob.class, 8.0f));
         this.goalSelector.addGoal(6, new RandomLookAroundGoal(this));
         this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
-        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
+        // orig SeaViper.java:531-533 — findSomethingToAttack answers null under PlayNicely (PlayNicely != 0). The
+        // port's scan is this goal, so the flag is read live in its canUse: the goal never starts while PlayNicely
+        // is on (ENT-S-115).
+        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true) {
+            @Override
+            public boolean canUse() {
+                if (OreSpawnConfig.PLAY_NICELY.get()) return false; // orig SeaViper.java:531-533 (ENT-S-115)
+                return super.canUse();
+            }
+        });
     }
 
     public static AttributeSupplier.Builder createAttributes() {

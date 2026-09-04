@@ -97,7 +97,16 @@ public class EntityCaterKiller extends Monster {
         this.goalSelector.addGoal(3, new LookAtPlayerGoal(this, Player.class, 8.0f));
         this.goalSelector.addGoal(4, new RandomLookAroundGoal(this));
         this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
-        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
+        // orig CaterKiller.java:560-562 — findSomethingToAttack answers null under PlayNicely (PlayNicely != 0). The
+        // port's hunt is this goal, so the flag is read live in its canUse: the goal never starts while PlayNicely
+        // is on, and starts again the moment it is off (ENT-S-115).
+        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true) {
+            @Override
+            public boolean canUse() {
+                if (OreSpawnConfig.PLAY_NICELY.get()) return false; // orig CaterKiller.java:560-562 (ENT-S-115)
+                return super.canUse();
+            }
+        });
     }
 
     public static AttributeSupplier.Builder createAttributes() {

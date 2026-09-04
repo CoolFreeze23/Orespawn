@@ -424,6 +424,7 @@ public class Cephadrome extends PathfinderMob
     }
 
     private LivingEntity findSomethingToAttack() {
+        if (danger.orespawn.OreSpawnConfig.PLAY_NICELY.get()) return null; // orig Cephadrome.java:576-578 — PlayNicely != 0 returns null ahead of the scan (ENT-S-115)
         AABB searchBox = this.getBoundingBox().inflate(16.0, 20.0, 16.0);
         List<LivingEntity> targets = this.level().getEntitiesOfClass(LivingEntity.class, searchBox);
         // OPT-021: nearest-first pick without the full list sort; TargetSelection

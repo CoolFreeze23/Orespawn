@@ -3,6 +3,7 @@ package danger.orespawn.entity;
 import danger.orespawn.MobStats;
 
 import danger.orespawn.OreSpawnMod;
+import danger.orespawn.OreSpawnConfig;
 import java.util.Comparator;
 import java.util.List;
 import javax.annotation.Nullable;
@@ -238,6 +239,7 @@ public class EntityTriffid extends Monster {
 
     @Nullable
     private LivingEntity findSomethingToAttack() {
+        if (OreSpawnConfig.PLAY_NICELY.get()) return null; // orig Triffid.java:322-324 — PlayNicely != 0 returns null ahead of the scan (ENT-S-115)
         List<LivingEntity> entities = this.level().getEntitiesOfClass(LivingEntity.class,
                 this.getBoundingBox().inflate(10.0, 8.0, 10.0));
         // OPT-021: nearest-first pick without the full list sort; TargetSelection
