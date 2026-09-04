@@ -10,8 +10,10 @@ import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageTypes;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntitySelector;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -37,6 +39,10 @@ public class EnderReaper extends Monster {
     private static final EntityDataAccessor<Boolean> DATA_SCREAMING =
             SynchedEntityData.defineId(EnderReaper.class, EntityDataSerializers.BOOLEAN);
 
+    /** orig EnderReaper.java:31 {@code teleportDelay} — the ticks a target beyond distSq 256 has been held (:131), reset at :130 / :132 / :136; never saved, as orig. ENT-S-141. */
+    private int teleportDelay;
+    /** orig EnderReaper.java:32 {@code stareTimer} — the pick's stare-sound cadence (:68-73: the sound at 0, reset past 5; cleared at :77 when the nearest player does not stare); never saved, as orig. ENT-S-141. */
+    private int stareTimer;
 
     public EnderReaper(EntityType<? extends EnderReaper> type, Level level) {
         super(type, level);
@@ -75,9 +81,9 @@ public class EnderReaper extends Monster {
         // or hand-toggled — inside canAttack, ahead of the pick) with the stare test as the selector and no creative
         // term, and the drop sits after the pick in canUse, orig isCreative -> Abilities.instabuild (ENT-S-107).
         // orig EnderReaper.java:61-81 with td.bq — findPlayerToAttack ran on EVERY target-less tick of the legacy loop: no
-        // acquisition roll (HEAD's 3-arg form drew 1-in-5 per goal pass; interval 0 here, mustSee / no mustReach kept), the goal
-        // pass itself being the engine's every-other-tick harness; its scan set is the ONE nearest player of any mode within 81
-        // (:65, a plain sphere from the position), then :67's stare test on that player alone — findTarget below (ENT-S-135).
+        // acquisition roll (HEAD's 3-arg form drew 1-in-5 per goal pass; interval 0 here, mustSee / no mustReach kept), the engine's
+        // every-other-tick goal pass completed to every tick by customServerAiStep (ENT-S-141); its scan set is the ONE nearest player
+        // of any mode within 81 (:65, a plain sphere from the position), then :67's stare test on that player alone — findTarget below (ENT-S-135).
         this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, 0, true, false, null) {
             {
                 this.targetConditions = TargetingConditions.forNonCombat()
@@ -94,7 +100,27 @@ public class EnderReaper extends Monster {
                 // spectators are skipped by the search too — the port's convention for a state 1.7.10 lacked (ENT-S-132, iv). ENT-S-135.
                 Player nearest = this.mob.level().getNearestPlayer(this.mob.getX(), this.mob.getY(), this.mob.getZ(),
                         this.getFollowDistance(), EntitySelector.NO_SPECTATORS);
-                this.target = nearest != null && this.targetConditions.test(this.mob, nearest) ? nearest : null;
+                if (nearest != null) { // orig :66
+                    if (this.targetConditions.test(this.mob, nearest)) { // orig :67 — the stare test on that one player
+                        // orig EnderReaper.java:68-74 — the pick's own side effects, on every target-less tick of the legacy loop: the stare
+                        // sound at the player on the first tick of a held stare and every sixth after (:68-73 — stareTimer 0 → the sound,
+                        // past 5 → reset), then screaming on (:74) — set even for the creative starer canUse nulls the same tick, as
+                        // td.bq left it (ENT-S-141)
+                        if (EnderReaper.this.stareTimer == 0) {
+                            this.mob.level().playSound(null, nearest.getX(), nearest.getY(), nearest.getZ(),
+                                    SoundEvents.ENDERMAN_STARE, SoundSource.HOSTILE, 1.0f, 1.0f); // orig :69 — playSoundAtEntity(player, "mob.endermen.stare", 1.0f, 1.0f)
+                        }
+                        if (EnderReaper.this.stareTimer++ == 5) {
+                            EnderReaper.this.stareTimer = 0; // orig :71-73
+                        }
+                        EnderReaper.this.setScreaming(true); // orig :74
+                        this.target = nearest; // orig :75
+                        return;
+                    }
+                    EnderReaper.this.stareTimer = 0; // orig :77 — the nearest player is not staring: the cadence and the scream reset
+                    EnderReaper.this.setScreaming(false); // orig :78
+                }
+                this.target = null; // orig :80
             }
 
             @Override
@@ -113,6 +139,24 @@ public class EnderReaper extends Monster {
                 return EnderReaper.this.holdsLegacyTarget(); // orig EnderReaper.java:111-115 with V10 — held until dead, creative or the daylight roll: no FOLLOW_RANGE (81) release, no 60-tick unseen memory (ENT-S-129)
             }
         });
+    }
+
+    /**
+     * orig EnderReaper.java:61-81 with td.bq — the legacy loop ({@code EntityLivingBase.onLivingUpdate} → {@code
+     * updateEntityActionState} on a mob with no AI tasks) asked the pick, the creative drop and the hold on EVERY server tick;
+     * vanilla's {@code Mob.serverAiStep} evaluates the target goals on its every-other-tick pass alone ({@code (tickCount + id) % 2
+     * == 0}, or the first two ticks) and only ticks the running ones on the other tick, which left the pair's pick at half orig's
+     * cadence (ENT-S-135's disclosed residual). On the tick the engine skips, the same full target-selector pass runs from here —
+     * after the engine's pass slot and the navigation, as the engine's own pass sits ahead of {@code customServerAiStep} — so the
+     * goals (T8's / T3b's, untouched) are asked once every tick, as orig's loop was. ENT-S-141.
+     */
+    @Override
+    protected void customServerAiStep() {
+        super.customServerAiStep();
+        int i = this.tickCount + this.getId(); // Mob.serverAiStep's own parity test
+        if (i % 2 != 0 && this.tickCount > 1) {
+            this.targetSelector.tick();
+        }
     }
 
     /**
@@ -215,6 +259,30 @@ public class EnderReaper extends Monster {
             this.setScreaming(false);
             teleportRandomly();
         }
+
+        // orig EnderReaper.java:124-138 — the stare-driven teleports, read off the target the previous tick's pick / hold left
+        // (orig's onLivingUpdate ran ahead of super's legacy loop; this aiStep ahead of super's goal pass), server-side and alive
+        // (:124): a target that is a player staring (:126, shouldAttackPlayer) within distSq < 16 (:127) → teleportRandomly (:128),
+        // the far counter reset (:130); any other target beyond distSq 256 (:131) counts a tick and, past 30, teleports toward it
+        // (teleportToEntity), the counter reset on a landing (:132) — the counter holds while such a target is within 16 blocks;
+        // no target → screaming off, the counter reset (:134-137). Orig :120-123 between (isJumping = false, faceEntity) are the
+        // legacy loop's steering — the port's look and melee controls — not this row. ENT-S-141.
+        if (!this.level().isClientSide && this.isAlive()) {
+            LivingEntity target = this.getTarget();
+            if (target != null) {
+                if (target instanceof Player player && this.shouldAttackPlayer(player)) {
+                    if (target.distanceToSqr(this) < 16.0) {
+                        this.teleportRandomly();
+                    }
+                    this.teleportDelay = 0;
+                } else if (target.distanceToSqr(this) > 256.0 && this.teleportDelay++ >= 30 && this.teleportToEntity(target)) {
+                    this.teleportDelay = 0;
+                }
+            } else {
+                this.setScreaming(false);
+                this.teleportDelay = 0;
+            }
+        }
         super.aiStep();
     }
 
@@ -223,6 +291,25 @@ public class EnderReaper extends Monster {
         double y = this.getY() + (this.random.nextInt(64) - 32);
         double z = this.getZ() + (this.random.nextDouble() - 0.5) * 64.0;
         return this.randomTeleport(x, y, z, true);
+    }
+
+    /**
+     * orig EnderReaper.java:149-157 {@code teleportToEntity} — the 1.7.10 Enderman's teleport toward a far target: the unit vector
+     * from the target to the reaper's mid-height (:150-151 — {@code bb.minY + height / 2 - target.posY + target.eyeHeight}, the
+     * expression's own sign order kept; {@code posY} is the port's {@code getY()}), then the spot 16 blocks along it from the
+     * reaper (:152-155: x and z jittered by ±4, y by {@code nextInt(16) - 8}), landed through the same search as the random
+     * teleport (:156 {@code teleportTo}, the port's {@code randomTeleport}). Reached from {@link #aiStep}'s far branch (:131). ENT-S-141.
+     */
+    protected boolean teleportToEntity(Entity target) {
+        Vec3 vec = new Vec3(this.getX() - target.getX(),
+                this.getBoundingBox().minY + this.getBbHeight() / 2.0f - target.getY() + target.getEyeHeight(),
+                this.getZ() - target.getZ()); // orig :150
+        vec = vec.normalize(); // orig :151
+        double d0 = 16.0; // orig :152
+        double d1 = this.getX() + (this.random.nextDouble() - 0.5) * 8.0 - vec.x * d0; // orig :153
+        double d2 = this.getY() + (this.random.nextInt(16) - 8) - vec.y * d0; // orig :154
+        double d3 = this.getZ() + (this.random.nextDouble() - 0.5) * 8.0 - vec.z * d0; // orig :155
+        return this.randomTeleport(d1, d2, d3, true); // orig :156 teleportTo — the port's mapping, as teleportRandomly's
     }
 
     @Override

@@ -29,7 +29,8 @@ import net.minecraft.world.phys.Vec3;
  * its retarget test and its steering, and orig's hunt sits exactly there — the retarget and steering lines are the
  * base's :104-113 and :116-131 (orig :147-160, :171-180) unchanged. Registered by
  * {@code EntityButterfly.registerGoals} in the base flight goal's slot; the Mothra inherits that registration as it
- * inherited orig's {@code updateAITasks} (Mothra.java:169). The hunt runs inside the flight goal's {@code canUse}
+ * inherited orig's {@code updateAITasks} (Mothra.java:169); the Luna Moth's {@link LunaMothFlightGoal} extends this goal, as orig
+ * EntityLunaMoth.java:122's {@code super.updateAITasks()} ran the hunt beside the moth's own loop (ENT-S-141). The hunt runs inside the flight goal's {@code canUse}
  * ({@code !isPassenger() && !isInWater()}, AmbientFlightGoal :88-90) — a gate orig's {@code updateAITasks} did not
  * have, disclosed (ENT-S-117 refuter A, N4). ENT-S-117.</p>
  */
@@ -46,7 +47,16 @@ public class ButterflyIslandsHuntGoal extends AmbientFlightGoal {
     private final GenericTargetSorter targetSorter;
 
     public ButterflyIslandsHuntGoal(EntityButterfly butterfly) {
-        super(butterfly, Params.butterfly());
+        this(butterfly, Params.butterfly());
+    }
+
+    /**
+     * The hunt over a subclass's own flight preset — the Luna Moth's ({@link LunaMothFlightGoal}): orig EntityLunaMoth.java:122
+     * called {@code super.updateAITasks()}, so the moth hunted as a type-1 butterfly does (:161-169) beside its own torch-seeking
+     * loop; the port's moth goal extends this one and keeps its retarget override. ENT-S-141.
+     */
+    protected ButterflyIslandsHuntGoal(EntityButterfly butterfly, Params params) {
+        super(butterfly, params);
         this.butterfly = butterfly;
         this.targetSorter = new GenericTargetSorter(butterfly);
     }

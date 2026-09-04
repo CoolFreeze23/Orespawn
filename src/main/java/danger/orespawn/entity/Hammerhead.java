@@ -151,7 +151,7 @@ public class Hammerhead extends Monster {
                 double meleeRangeSq = (7.0 + currentTarget.getBbWidth() / 2.0) * (7.0 + currentTarget.getBbWidth() / 2.0);
                 if (distSq < meleeRangeSq) {
                     this.setAttacking(1);
-                    if (this.random.nextInt(3) == 1) {
+                    if (this.random.nextInt(3) == 1 || this.random.nextInt(4) == 1) { // orig Hammerhead.java:213 — nextInt(3) == 1 || nextInt(4) == 1: two dice, the second drawn only when the first misses (ENT-S-141)
                         this.doHurtTarget(currentTarget);
                     }
                 } else {

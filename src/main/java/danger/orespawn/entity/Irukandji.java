@@ -193,7 +193,7 @@ public class Irukandji extends Monster {
             if (target != null && target.isAlive()) {
                 if (this.distanceToSqr(target) < 3.0) {
                     this.setAttacking(1);
-                    if (this.random.nextInt(4) == 0) {
+                    if (this.random.nextInt(4) == 0 || this.random.nextInt(5) == 1) { // orig Irukandji.java:258 — nextInt(4) == 0 || nextInt(5) == 1: two dice, the second drawn only when the first misses (ENT-S-141)
                         this.doHurtTarget(target);
                     }
                 } else {

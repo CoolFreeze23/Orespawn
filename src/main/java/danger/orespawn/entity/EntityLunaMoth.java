@@ -44,10 +44,15 @@ public class EntityLunaMoth extends EntityButterfly {
      * specialisation. Same priority slot so only one flight goal runs;
      * this is the NeoForge 1.21.1 analogue of 1.7.10's subclass-
      * overridden {@code customServerAiStep}.
+     *
+     * <p>orig EntityLunaMoth.java:117-122 — {@code updateAITasks} called {@code super.updateAITasks()} first, so the
+     * moth ran the butterfly's Islands vampire hunt (orig EntityButterfly.java:161-169, a type-1 skin in the Islands)
+     * beside its own torch loop: {@link LunaMothFlightGoal} extends {@code ButterflyIslandsHuntGoal} (the T3a shape) and
+     * carries that hunt with its torch retarget. ENT-S-141.</p>
      */
     @Override
     protected void registerGoals() {
-        this.goalSelector.addGoal(8, new LunaMothFlightGoal(this));
+        this.goalSelector.addGoal(8, new LunaMothFlightGoal(this)); // the butterfly hunt goal over the moth's preset (ENT-S-141)
     }
 
     @Override
