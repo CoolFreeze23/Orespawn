@@ -5268,3 +5268,41 @@ counts) and four observations for the ledger.
 REFUTERS: T6: one refuter — upheld; three records corrections applied, four ledger observations.
 
 GATE: gate t6a green: build legs (asset audit 0 errors, G1 PARITY 2 + 11 models, referenceGeometry, referenceRenderers, queenPartPlacementProbe) and runGameTestServer 'All 892 required tests passed' (731 + the PreyListParityTests rows).
+
+## TARGETING WAVE 2, T5 (2026-09-04) — target set / release rules, the ownership convention, the ENT-S-122 sight memos
+
+T5 → ENT-S-129 (target set and release rules, L, two refuters): one ownership convention for every hunter — the
+change-only mark with the hurt hand-off, chosen on the six measured cases (a scan's pick leaving the box, a revenge
+target dying in the cleanup re-assert window, a same-entity re-assert, a swallowed hit, PlayNicely flipping on with
+the pick stored, a foreign revenge set) where the every-set clear turned a fresh pick sticky — applied to the ten
+mark carriers, the mark retired where orig read no stored target (CaveFisher, DungeonBeast, Urchin) and added where
+orig stored (Irukandji, Skate, SeaMonster); the forgets moved into the passes on orig's field at orig's cadence
+(the revenge field for CreepingHorror, CannonFodder, Kyuubi, LeafMonster, Rat; Crab's missing 1-in-100; Emperor's
+`== 0`; GiantRobot's and AntRobot's clear before the read), a per-species `RevengeGoal` whose `release()` ends the
+task on a nulled target as 1.7.10's did, six inert revenge tasks unregistered, the Ender pair's daylight roll and
+legacy hold, Robot2's port-only same-kind alert removed, the Boyfriend / Girlfriend hold distance, the Dragonfly's
+one bite per pass with nothing retained, Mob-only revenge stores for AntRobot and Crab, and the per-preset
+PlayNicely stand-down in the melee goal (the ENT-S-115 residual). ENT-S-122 reproduced: the sight memos of the
+ridden Ant Robot and the active Nightmare, the latter with orig's :259-280 activity-0 branch. `TargetReleaseParityTests`
+(own batch, 53 generated). Refuted twice: A (the ownership evidence, the release rules, the RevengeGoal shape) upheld with ten notes, five applied —
+the CaterKiller and Hammerhead registration cites; the displaced revenge target rolled, dead-checked and re-taken when
+visible while the scan's pick occupies the slot (Nastysaurus, TRex — orig rolled rt every pass); CaterKiller's 1-in-200
+guarded to the revenge goal's own target; Robot2's forget backed by a RevengeGoal release — and five recorded (the same
+re-assert defect on Robot3 / Robot4 / Robot5 / Leon / the Water Dragon's forget, ledger MATCH rows to re-rate; the
+latest-attacker facet; the Ender hold's creative screen; the companions' 20 as the absent Creeper task; cite nits); B
+(the memos, the Nightmare branch, the tests, the interactions) found the production code sound and three test
+defects, fixed — the frozen Nightmare set on the ground before its path, the (b)/(c) window row pinned to the
+running-only tick parity with the revenge goal asserted running, the Knight's daylight dice pinned before noon — plus
+the tier-1 Nightmare so its scan stays inside the cell and the probe-leg wording.
+Gate: the first run was red on seven of the 53 rows with every other test green — six were the rows' own harness
+assumptions (a frozen robot's head never turns so its bite bearing needed facing; the framework mock player's 60-tick
+spawn shield swallowed the pinned bites and the Irukandji's counter-damage; a hurt-timer overlap on the Robot2 row; the
+15-block hold rows measured from the mob's centre where the box inflation admits centres up to 15 + both half-widths,
+the Zombie moved to 15.8 with the geometry pinned from live half-widths) and one a transcription miss the row caught:
+`Chipmunk.customServerAiStep` still cleared the attack target on its own 1-in-200 where orig Chipmunk.java:104-106
+cleared the revenge memory (`setRevengeTarget(null)`), fixed to `setLastHurtByMob(null)` — the EntityCannonFodder shape;
+green on the rerun.
+
+REFUTERS: T5: two refuters (over twenty files) — A upheld (ten notes, five applied); B found three test defects, fixed, and the production code sound.
+
+GATE: gate t5b green: build legs (asset audit 0 errors, G1 PARITY 2 + 11 models, referenceGeometry, referenceRenderers, queenPartPlacementProbe) and runGameTestServer 'All 945 required tests passed' (892 + 53 TargetReleaseParityTests); the first run was red on seven rows (six harness assumptions in the rows, one Chipmunk transcription miss the row caught), green on the rerun.

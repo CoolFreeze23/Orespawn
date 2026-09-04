@@ -7841,30 +7841,46 @@ keeps BUG-036. Commit 4ea395c's message retains the old number.)*
   other thirteen hunters called `super` unconditionally after their dead check and match. What a player saw in 1.7.10:
   a ridden Ant Robot or an active Nightmare that once saw (or failed to see) a target kept that verdict until the
   state ended; the port sees afresh every tick. No MOD record.
-- **Resolution:** RULED (2026-09-04, owner: "reproduce if it has a player-visible signature, otherwise record as
-  deliberately not reproduced with rationale"). A read-only analysis lane traced every consumer of the frozen verdict per
-  hunter and state against the 1.7.10 `EntitySenses` (javap `vw`: two lists keyed by entity id, cleared only by
-  `EntityLiving.updateAITasks`) and the port's `Sensing` (two `IntSet`s ticked every server tick from the final
-  `Mob.serverAiStep`). **Reproduced (two hunters):** the ridden Ant Robot — its stomp (1-in-50, the whole 10/8/10 box)
-  and hunt (1-in-9, the 12-cube) froze every nearby id for the whole ride, so 1.7.10's mount bit and stomped through
-  walls once it had seen a target and ignored everything first met from cover — and the active Nightmare — its 1-in-8
-  chase scan froze verdicts for a phase that was most of its 1.7.10 life (the only exit a 1-in-1250 null scan), so it
-  tracked a hidden player's live position and clawed through roofs within 5.8-9.3 blocks. Design: a per-hunter pair of
-  `IntSet`s wrapping `getSensing().hasLineOfSight` at the ENT-S-118 sites only (AntRobot :691 / :713, PitchBlack :531),
-  cleared at the port's `super.customServerAiStep()` line (AntRobot :224 — unridden every step, ridden never, as orig
-  :98-104; PitchBlack :422 — the activity-0 branch, as orig :330-332), vanilla goals keeping `Sensing`; pins in both
-  directions (seen kept through a wall, unseen kept after exposure) plus the state boundary, and a between-drive memo
-  clear for ENT-S-118 rows 1, 2 and 7. Dependency: the Nightmare's only way back to activity 0 (orig PitchBlack.java
-  :259-280 — the 1-in-250 heal, the spontaneous activation and the null-scan deactivation) is absent at HEAD (the
-  ledger's PitchBlack scan-set row, no entry yet), so the Nightmare memo lands with that branch or a memo'd Nightmare
-  would freeze until chunk reload. Both reproductions ride with the T5/T6 wave lanes that own AntRobot and PitchBlack.
-  **Deliberately not reproduced (three pets):** the Stinky, ThePrince and ThePrincess in activity 2 — their only
-  frozen-state consumer is the 1-in-7 scan whose acceptance also requires the fresh, uncached feet-level ray
-  (Stinky :699, ThePrince :776, ThePrincess :857), so a frozen "seen" cannot target through a wall, and a frozen
-  "unseen" can only suppress an opportunistic bite or ranged shot for a phase whose mean length is about five seconds
-  (the 1-in-100 × 19-in-20 decay), indistinguishable in play from the scan roll and the reach and heading gates; the
-  port's per-tick re-evaluation stands there as an accepted engine mapping (MOD note). The analysis memo is in the
-  session scratchpad, not committed.
+- **Resolution:** FIXED for the two hunters, deliberately not reproduced for three (2026-09-04, owner: "reproduce if it has a
+  player-visible signature, otherwise record as deliberately not reproduced with rationale"; the reproduction rode with the
+  T5 wave lane, ENT-S-129). A read-only analysis lane traced every consumer of the frozen verdict per hunter and state
+  against the 1.7.10 `EntitySenses` (javap `vw`: two lists keyed by entity id, cleared only by `EntityLiving.updateAITasks`)
+  and the port's `Sensing` (two `IntSet`s ticked every server tick from the final `Mob.serverAiStep`). **Reproduced (two
+  hunters):** the ridden Ant Robot — its stomp (1-in-50, the whole 10/8/10 box) and hunt (1-in-9, the 12-cube) froze every
+  nearby id for the whole ride, so 1.7.10's mount bit and stomped through walls once it had seen a target and ignored
+  everything first met from cover — and the active Nightmare — its 1-in-8 chase scan froze verdicts for a phase that was most
+  of its 1.7.10 life (the only exit a 1-in-1250 null scan), so it tracked a hidden player's live position and clawed through
+  roofs within 5.8-9.3 blocks. Landed: a per-hunter pair of `IntOpenHashSet`s keyed by entity id (`sightMemoSeen` /
+  `sightMemoUnseen`, `memoHasLineOfSight` — a miss asks `getSensing().hasLineOfSight` and records the answer) wrapping the
+  ENT-S-118 sight lines only (AntRobot.feetIsSuitableTarget :720 and isSuitableTarget :742, PitchBlack.isSuitableTarget :588),
+  cleared by `clearSightMemo()` at the port's `super.customServerAiStep()` line — AntRobot :237 (every unridden step, never
+  while ridden, as orig :98-104 / :884-886) and PitchBlack :463 (the activity-0 branch, as orig :330-332); vanilla goals
+  keep `Sensing`. The Nightmare's memo landed WITH the missing orig PitchBlack.java:259-280 branch (PitchBlack.tick
+  :415-441 — the server-side 1-in-250 heal of 1 + scale, the 1-in-5 ground probe → scan → null → activity 0, its only way
+  back, and the four-in-five spontaneous activation with the navigation dropped; the ledger's PitchBlack scan-set row, in
+  ENT-S-129's table), so a memo'd Nightmare no longer freezes until chunk reload. Pins (in `TargetReleaseParityTests`, batch
+  `targetReleaseParity`, TEST-003): `s122_01`..`s122_04` — the Ant Robot's stomp and hunt filters keeping "seen" through a
+  wall raised afterwards and "unseen" after the wall is razed, both reversed by the memo clear; `s122_05` — a ridden step
+  (a passenger aboard) keeps the memo, the unridden step clears it; `s122_06`..`s122_08` — the same for the Nightmare's
+  filter and its activity-0 / active steps; `s122_09` — the heal amount and the null-scan deactivation (with a prey control
+  keeping it active, and no branch without the 1-in-250); `s122_10` — the spontaneous activation stopping the navigation;
+  and `SightStepParityTests` rows 1, 2 and 7 clear the memo between their two drives by reflection beside their
+  `getSensing().tick()`, as the vanilla cache is. **Deliberately not reproduced (three pets):** the Stinky, ThePrince and
+  ThePrincess in activity 2 — their only frozen-state consumer is the 1-in-7 scan whose acceptance also requires the fresh,
+  uncached feet-level ray (Stinky :699, ThePrince :776, ThePrincess :857), so a frozen "seen" cannot target through a wall,
+  and a frozen "unseen" can only suppress an opportunistic bite or ranged shot for a phase whose mean length is about five
+  seconds (the 1-in-100 × 19-in-20 decay), indistinguishable in play from the scan roll and the reach and heading gates; the
+  port's per-tick re-evaluation stands there as an accepted engine mapping (MOD note). The analysis memo is in the session
+  scratchpad, not committed. Refuted twice: A (the ownership evidence, the release rules, the RevengeGoal shape) upheld with ten notes, five applied —
+  the CaterKiller and Hammerhead registration cites; the displaced revenge target rolled, dead-checked and re-taken when
+  visible while the scan's pick occupies the slot (Nastysaurus, TRex — orig rolled rt every pass); CaterKiller's 1-in-200
+  guarded to the revenge goal's own target; Robot2's forget backed by a RevengeGoal release — and five recorded (the same
+  re-assert defect on Robot3 / Robot4 / Robot5 / Leon / the Water Dragon's forget, ledger MATCH rows to re-rate; the
+  latest-attacker facet; the Ender hold's creative screen; the companions' 20 as the absent Creeper task; cite nits); B
+  (the memos, the Nightmare branch, the tests, the interactions) found the production code sound and three test
+  defects, fixed — the frozen Nightmare set on the ground before its path, the (b)/(c) window row pinned to the
+  running-only tick parity with the revenge goal asserted running, the Knight's daylight dice pinned before noon — plus
+  the tier-1 Nightmare so its scan stays inside the cell and the probe-leg wording.
 
 ### ENT-S-123 — Spyro's and Stinky's flight-target pick dropped 1.7.10's second `canSeeTarget` call: an air candidate the feet-level ray refused is accepted in the port (raised by the ENT-S-118 refuter; FIXED 2026-09-04)
 
@@ -8175,6 +8191,102 @@ keeps BUG-036. Commit 4ea395c's message retains the old number.)*
   Dragonfly uses AbstractHorse; the port-only BabyDragon rides under every Dragon term; orig Lizard.java:328-330's
   buddy adoption inside the filter has no port counterpart; the frozen Ender Dragon and Godzilla Head spawns are
   new to the suite.
+
+### ENT-S-129 — Thirty-three hunters' target set / release rules drifted from 1.7.10: sticky scan picks, forgets rolled every tick on the wrong field, inert revenge tasks made live, the Ender pair's daylight and hold, and two ownership conventions for the scan's mark (targeting ledger batch T5, wave 2; FIXED 2026-09-04)
+
+- **Evidence:** targeting ledger batch T5 (`phase_g_reports/targeting_survey_2026-09-04.md`, §T5: 33 rows, 33 blocks; §2
+  blocks cited per row), plus the ledger's PitchBlack scan-set row and the two ENT-S-122 reproductions the owner attached.
+  1.7.10 acted on the scan's pick for the pass alone — re-derived every cadence pass, dropped when the scan came back empty
+  (Alosaurus :164-179, CaveFisher :168-181, DungeonBeast :172-185, Urchin :195-208, Scorpion :175-192, Nastysaurus :213-229,
+  TRex :183-199, Pointysaurus :183-199, HerculesBeetle :350-358, EmperorScorpion :408-419, SpitBug :267-275, TrooperBug
+  :413-421, Irukandji :296-309, Skate :288-301, SeaMonster :519-532, SeaViper :536-543, Dragonfly :142-148) — and released
+  what it stored under each species' own rule: dead / a 1-in-N inside the pass on the revenge field (Nastysaurus :219 250,
+  TRex :189 200, Pointysaurus :189 250, EmperorScorpion :414 100 `== 0`, CaterKiller :468 200 `== 0`, Crab :342 100 `== 1`,
+  GiantRobot :243 100 ahead of the read, AntRobot :109 150 ahead of the read), an out-of-sight skip that kept rt (Nastysaurus
+  :223, TRex :193, Hammerhead :203), a revenge MEMORY clear (`func_70604_c(null)`: CreepingHorror :136, EntityCannonFodder
+  :346, Kyuubi :157 ahead of super, LeafMonster :160, Rat :156), the Ender pair's daylight roll on a legacy hold with no range
+  and no sight memory (EnderKnight :111-115, EnderReaper :111-115, V10), an `EntityLiving`-only attacker store (AntRobot
+  :579-583, Crab :232-238), a revenge task that nothing consumed (Alosaurus :54, CaveFisher :55, DungeonBeast :59, Urchin
+  :61, Scorpion :62, Hammerhead :56), `EntityAIHurtByTarget(this, false)` without a call for help (Robot2 :57), the helper
+  goal's 15-block box and hold (MyEntityAINearestAttackableTarget :36/:56, MyEntityAITarget :52), and the Dragonfly's one
+  bite per pass on a prey it never stored (:144-148). The port at HEAD: the scan's pick held by the melee goal until dead or
+  vanilla's `TargetGoal` release (Irukandji, Skate, SeaMonster, Scorpion stored it outright; the ENT-S-108 nine and the
+  Water Dragon under two ownership conventions, the nine's every-set clear turning the fresh pick foreign in the cleanup
+  re-assert window measured by ENT-S-117 refuter B); the forgets rolled every tick by the melee goal on any occupant
+  (Presets nastysaurus / pointysaurus 250, emperorScorpion 100, caterKiller 200) and, where transcribed as `setTarget(null)`,
+  undone by vanilla's re-assert; five memory clears mapped onto the attack target; the Crab's forget missing; GiantRobot's and
+  AntRobot's clears after the read; the Ender Knight without its daylight drop, the pair released by FOLLOW_RANGE 64 / 81 and
+  60 / 300 unseen ticks; AntRobot and Crab storing player attackers; six inert revenge tasks live through the consumed slot;
+  Robot2 calling its kind and exempting it; the Boyfriend / Girlfriend goal at the attribute's 16; the Dragonfly retaining
+  its prey and biting every tick; the melee goal reading a stored revenge target under PlayNicely where the four rt / gated
+  passes stood down (the ENT-S-115 residual). And ENT-S-122: the Ant Robot's and the Nightmare's sight verdicts re-evaluated
+  every tick where 1.7.10 froze them for the ride / the active phase, the Nightmare's orig :259-280 branch (the 1-in-250 heal,
+  the null-scan deactivation — its only way back to activity 0 — and the spontaneous activation) absent. What a player saw is
+  the ledger's paragraph: hunters that chased to the death through walls and past the forgiveness 1.7.10 rolled, the Emperor
+  Scorpion forgetting four times faster, the Crab never, the Giant Robot and Ant Robot keeping a forgotten target one more
+  pass, the Ender Knight hunting at daybreak, the Reaper letting go at 81 blocks, the Hammerhead chasing through lost sight,
+  Robot2s calling each other, the Dragonfly never letting go, a ridden Ant Robot and an active Nightmare seeing afresh every
+  tick. No MOD record for any of it.
+- **Resolution:** FIXED (2026-09-04, wave 2 — owner: "Target ownership: one convention for all hunters, chosen in T5 by which
+  variant matches 1.7.10 in the measured cases"; "ENT-S-122: reproduce if it has a player-visible signature"). The ownership
+  convention: the six cases measured [the table of §0], the Water Dragon's change-only mark with the hurt hand-off the only
+  variant matching every case, applied to all ten mark carriers (the hand-off's `lastHurtByMob` half pinned to this hit's
+  timestamp, a hardening disclosed for the Water Dragon), the mark retired on CaveFisher, DungeonBeast and Urchin (orig read
+  no stored target there). Forty-seven port sites in 38 files [the site table of §1], each at the orig position with the orig
+  polarity, roll bound and field: the 1-in-N forgets moved out of the melee goal's tick into the passes (the presets' forget
+  0) and made final through a private `RevengeGoal extends HurtByTargetGoal` per species whose `release()` drops the goal's
+  memory — 1.7.10's task ended on a nulled attack target where vanilla re-asserts its own — with rt's hold (no range, no
+  sight memory) on the three rt hunters and the legacy loop's hold on both Ender goals; the out-of-sight skips; the
+  clear-before-read orders; the memory clears on `setLastHurtByMob(null)` (Kyuubi's ahead of super); the Mob-only stores;
+  the six inert revenge tasks unregistered (the port's slot is consumed, orig's field was not); Robot2's plain revenge goal;
+  the slot refreshed every pass on the scan-only hunters; the new marks on Irukandji, Skate and SeaMonster with their dead
+  stored targets cleared; the Ender Knight's daylight roll; the helper goal's `getFollowDistance() → 15`; the Dragonfly's one
+  bite per pass with nothing retained; the melee goal's per-preset PlayNicely stand-down (Nastysaurus, TRex, Pointysaurus,
+  SeaViper — the ledger's "ruled here" residual of ENT-S-115, the Pointysaurus :186-188 deferral closed with it); and, for
+  ENT-S-122, the per-hunter sight memo (two `IntOpenHashSet`s keyed by id wrapping the ENT-S-118 lines only, cleared at the
+  super line — unridden every step / the activity-0 branch) landing with the Nightmare's orig :259-280 branch. Recorded
+  without code: Cryolophosaurus (classic registers no melee goal under MOD-035, a single forgiveness; the modern goal's
+  forget is MOD-035's recorded tuning), Peacock (inert in both). Disclosed: [the disclosures of §1 — the RevengeGoal against
+  vanilla's re-assert, the unregistered tasks, the retired mark, the rt sight skip's slot residual, the Pointysaurus's
+  vanilla scan, the T3b/T3c vanilla scan goals' holds, the stand-down's navigation stop, the Emperor's this-pass engagement,
+  the Hammerhead's pinned fallback, the Ant Robot's structural melee re-pick, the Dragonfly's slot pass-through, the helper
+  goal's 15-sphere, the Crab's hurt order, the memo's id keys]. Pins: new `TargetReleaseParityTests` (own batch
+  `targetReleaseParity`, TEST-003; a `@GameTestGenerator` over 53 rows, `targetreleaseparitytests.s129_NN_<species>_<site>`
+  and `s122_NN_*`): the six ownership cases (the (b)/(c) re-assert window tick-driven, the KrakenHoldReleaseTests shape, the
+  hunter's AI running with its speed zeroed; the rest synchronous on frozen hunters, the goals driven by hand); per row the
+  release or hold against orig — the forget pinned to fire clears the orig field and ends the goal (its cleanup no longer
+  re-asserts), pinned quiet keeps it, the goal's tick with the old every-tick bound pinned keeps it; rt hidden → skipped and
+  kept, restored once the pick is gone; the clears before the read (no bite / no chase impulse this pass); the Mob-only
+  stores; no goal takes an attacker on the six; the scan every pass over a stored creative player; the picks re-derived out
+  of the sphere and the dead stored targets cleared; the Irukandji's empty-hand and armed hits; the Knight's daylight roll
+  (noon set, the sky darken settled, a float-forcing random); both Ender goals holding beyond a lowered FOLLOW_RANGE and
+  through 40 unseen passes, dropping a creative player and a nulled slot; Robot2's neighbour untouched and a Robot2 attacker
+  taken; the five memory clears (`lastHurtByMob` null, the slot kept); the helper goal at 14.5 / 15.5 blocks; the Dragonfly's
+  single bite and empty slot; the four presets standing down under the flag with the Emperor's control; the Water Dragon's
+  swallowed hit under an older record; the memo's seen-through-a-wall, unseen-after-exposure and state-boundary rows for
+  both hunters, the Nightmare's heal amount, null-scan deactivation and spontaneous activation — every row failing with its
+  port line reverted; flags, day time and the wall restored in a finally, spawns discarded, mock players removed;
+  `SightStepParityTests` rows 1, 2 and 7 gain the between-drive memo clear. Compiled (javac, §5); the gametest run is the
+  gate's. Refuted twice: A (the ownership evidence, the release rules, the RevengeGoal shape) upheld with ten notes, five applied —
+  the CaterKiller and Hammerhead registration cites; the displaced revenge target rolled, dead-checked and re-taken when
+  visible while the scan's pick occupies the slot (Nastysaurus, TRex — orig rolled rt every pass); CaterKiller's 1-in-200
+  guarded to the revenge goal's own target; Robot2's forget backed by a RevengeGoal release — and five recorded (the same
+  re-assert defect on Robot3 / Robot4 / Robot5 / Leon / the Water Dragon's forget, ledger MATCH rows to re-rate; the
+  latest-attacker facet; the Ender hold's creative screen; the companions' 20 as the absent Creeper task; cite nits); B
+  (the memos, the Nightmare branch, the tests, the interactions) found the production code sound and three test
+  defects, fixed — the frozen Nightmare set on the ground before its path, the (b)/(c) window row pinned to the
+  running-only tick parity with the revenge goal asserted running, the Knight's daylight dice pinned before noon — plus
+  the tier-1 Nightmare so its scan stays inside the cell and the probe-leg wording.
+
+The ENT-S-122 **Resolution** replacement paragraph is in `waves/res_122.txt`.
+  Gate: the first run was red on seven of the 53 rows with every other test green — six were the rows' own harness
+  assumptions (a frozen robot's head never turns so its bite bearing needed facing; the framework mock player's 60-tick
+  spawn shield swallowed the pinned bites and the Irukandji's counter-damage; a hurt-timer overlap on the Robot2 row; the
+  15-block hold rows measured from the mob's centre where the box inflation admits centres up to 15 + both half-widths,
+  the Zombie moved to 15.8 with the geometry pinned from live half-widths) and one a transcription miss the row caught:
+  `Chipmunk.customServerAiStep` still cleared the attack target on its own 1-in-200 where orig Chipmunk.java:104-106
+  cleared the revenge memory (`setRevengeTarget(null)`), fixed to `setLastHurtByMob(null)` — the EntityCannonFodder shape;
+  green on the rerun.
 
 ### TEST-003 — Config-flipping gametests in the concurrent default batch
 
