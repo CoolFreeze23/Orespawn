@@ -43,6 +43,7 @@ import net.minecraft.world.entity.ai.goal.TemptGoal;
 import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
+import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -148,11 +149,12 @@ public class Dragon extends TamableAnimal implements danger.orespawn.network.Rid
         // false, IMob.mobSelector) at target priority 1, registered only when PlayNicely == 0 at construction: polled
         // without a roll (targetChance 0), the follow-range box (16 / 4 / 16 — orig sets no follow range, so
         // EntityLiving's base 16), line of sight, IMob prey only. The port registers the goal always and reads the
-        // flag live in its canUse (the ENT-S-115 idiom); Monster is the port's IMob (the Leon / Prince / Boyfriend /
-        // Girlfriend precedent); randomInterval 0 is orig's targetChance 0 (no roll in either); the port's
-        // FOLLOW_RANGE attribute is 40, so the goal keeps orig's 16 through getFollowDistance (the JealousyTargetGoal
-        // idiom) for its box, its range and its hold. ENT-S-117.
-        this.targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, Monster.class, 0, true, false, null) {
+        // flag live in its canUse (the ENT-S-115 idiom); Mob + Enemy is the port's IMob (ENT-S-124, the line below);
+        // randomInterval 0 is orig's targetChance 0 (no roll in either); the port's FOLLOW_RANGE attribute is 40, so the
+        // goal keeps orig's 16 through getFollowDistance (the JealousyTargetGoal idiom) for its box, its range and its
+        // hold. ENT-S-117.
+        // orig Dragon.java:116 IMob.mobSelector → Mob.class + instanceof Enemy; a Ghast still falls to vanilla Mob.canAttackType, as to 1.7.10's EntityAITarget (ENT-S-124, IMob convention)
+        this.targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, Mob.class, 0, true, false, e -> e instanceof Enemy) {
             @Override
             public boolean canUse() {
                 if (OreSpawnConfig.PLAY_NICELY.get()) return false; // orig Dragon.java:115 (ENT-S-115 idiom; ENT-S-117)

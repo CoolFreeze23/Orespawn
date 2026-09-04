@@ -49,7 +49,6 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.ai.goal.WrappedGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
-import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.block.Rotation;
@@ -101,7 +100,8 @@ import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
  * east on the same floor at 8 blocks (inside every scan box, the Ant Robot's 6..9 stomp ring and every
  * goal's follow range), 5 blocks (the Hammerhead's 7 + w/2 reach), 3 blocks (the Sea Monster's 4 + w/2) or
  * 1 block (the Irukandji's distSq &lt; 3, the Skate's &lt; 4); line of sight asserted. Prey: a pig where the
- * hunter takes any living thing, a Zombie where it takes Monsters only, a butterfly for the insect eaters,
+ * hunter takes any living thing, a Zombie where it takes hostile mobs only (the Mob + Enemy goals, ENT-S-124), a
+ * butterfly for the insect eaters,
  * a Chicken for the Lizard, a Spider Robot for the Spider Driver's mount scan, a survival mock player where
  * orig took players only (looking at the hunter where the Ender Reaper's stare test and the Pointysaurus's
  * stare goal demand it; the Pointysaurus's row a plain ServerPlayer, as the framework's mock answers
@@ -193,9 +193,9 @@ public class PlayNicelyGateParityTests {
                 "the hunt scan returning a pig 8 blocks off",
                 () -> new ScanProbe(ModEntities.ANT_ROBOT, PIG, PREY_POS, "findSomethingToAttack", null, null)));
         // Boyfriend — orig :140-142 (the IMob task registered only with PlayNicely == 0)
-        sites.add(site(3, "boyfriend_140_monster_goal", "Boyfriend.java:140-142", "Boyfriend's NearestAttackableTargetGoal<Monster>",
+        sites.add(site(3, "boyfriend_140_monster_goal", "Boyfriend.java:140-142", "Boyfriend's NearestAttackableTargetGoal<Mob> + Enemy (ENT-S-124)",
                 "the goal's canUse taking a Zombie 8 blocks off",
-                () -> new GoalProbe(ModEntities.BOYFRIEND, Monster.class, PreyKind.ZOMBIE, false)));
+                () -> new GoalProbe(ModEntities.BOYFRIEND, Mob.class, PreyKind.ZOMBIE, false)));
         // CaterKiller — orig :560-562
         sites.add(site(4, "caterkiller_560_player_goal", "CaterKiller.java:560-562", "EntityCaterKiller's NearestAttackableTargetGoal<Player>",
                 "the goal's canUse taking a survival player 8 blocks off",
@@ -251,9 +251,9 @@ public class PlayNicelyGateParityTests {
                 "the scan returning a pig 8 blocks off",
                 () -> new ScanProbe(ModEntities.GIANT_ROBOT, PIG, PREY_POS, "findSomethingToAttack", null, null)));
         // Girlfriend — orig :166-168
-        sites.add(site(17, "girlfriend_166_monster_goal", "Girlfriend.java:166-168", "Girlfriend's NearestAttackableTargetGoal<Monster>",
+        sites.add(site(17, "girlfriend_166_monster_goal", "Girlfriend.java:166-168", "Girlfriend's NearestAttackableTargetGoal<Mob> + Enemy (ENT-S-124)",
                 "the goal's canUse taking a Zombie 8 blocks off",
-                () -> new GoalProbe(ModEntities.GIRLFRIEND, Monster.class, PreyKind.ZOMBIE, false)));
+                () -> new GoalProbe(ModEntities.GIRLFRIEND, Mob.class, PreyKind.ZOMBIE, false)));
         // Godzilla — orig :357-359 (the local nulled, the stored target kept)
         sites.add(new Site(18, "godzilla_357_stored_target_kept", "Godzilla.java:357-359", "Godzilla.customServerAiStep",
                 "the combat pass engaging a stored pig 8 blocks off — attacking set", EMPTY_TALL, GodzillaProbe::new));
@@ -287,9 +287,9 @@ public class PlayNicelyGateParityTests {
                 "the scan returning a pig 8 blocks off",
                 () -> new ScanProbe(ModEntities.ENTITY_KYUUBI, PIG, PREY_POS, "findSomethingToAttack", null, null)));
         // Leon — orig :92-94
-        sites.add(site(26, "leon_92_monster_goal", "Leon.java:92-94", "EntityLeon's NearestAttackableTargetGoal<Monster>",
+        sites.add(site(26, "leon_92_monster_goal", "Leon.java:92-94", "EntityLeon's NearestAttackableTargetGoal<Mob> + Enemy (ENT-S-124)",
                 "the goal's canUse taking a Zombie 8 blocks off",
-                () -> new GoalProbe(ModEntities.ENTITY_LEON, Monster.class, PreyKind.ZOMBIE, false)));
+                () -> new GoalProbe(ModEntities.ENTITY_LEON, Mob.class, PreyKind.ZOMBIE, false)));
         // Lizard — orig :336-338 (ahead of the revenge-first block, whose 1-in-100 roll is pinned quiet)
         sites.add(site(27, "lizard_336_scan", "Lizard.java:336-338", "Lizard.findSomethingToAttack",
                 "the scan returning a Chicken 8 blocks off",
@@ -381,12 +381,12 @@ public class PlayNicelyGateParityTests {
                 "the scan returning a pig 8 blocks off",
                 () -> new ScanProbe(ModEntities.ENTITY_TERRIBLE_TERROR, PIG, PREY_POS, "findSomethingToAttack", null, null)));
         // ThePrinceAdult / ThePrinceTeen — orig :112-114 / :116-118
-        sites.add(site(49, "theprinceadult_112_monster_goal", "ThePrinceAdult.java:112-114", "ThePrinceAdult's NearestAttackableTargetGoal<Monster>",
+        sites.add(site(49, "theprinceadult_112_monster_goal", "ThePrinceAdult.java:112-114", "ThePrinceAdult's NearestAttackableTargetGoal<Mob> + Enemy (ENT-S-124)",
                 "the goal's canUse taking a Zombie 8 blocks off",
-                () -> new GoalProbe(ModEntities.THE_PRINCE_ADULT, Monster.class, PreyKind.ZOMBIE, false)));
-        sites.add(site(50, "theprinceteen_116_monster_goal", "ThePrinceTeen.java:116-118", "ThePrinceTeen's NearestAttackableTargetGoal<Monster>",
+                () -> new GoalProbe(ModEntities.THE_PRINCE_ADULT, Mob.class, PreyKind.ZOMBIE, false)));
+        sites.add(site(50, "theprinceteen_116_monster_goal", "ThePrinceTeen.java:116-118", "ThePrinceTeen's NearestAttackableTargetGoal<Mob> + Enemy (ENT-S-124)",
                 "the goal's canUse taking a Zombie 8 blocks off",
-                () -> new GoalProbe(ModEntities.THE_PRINCE_TEEN, Monster.class, PreyKind.ZOMBIE, false)));
+                () -> new GoalProbe(ModEntities.THE_PRINCE_TEEN, Mob.class, PreyKind.ZOMBIE, false)));
         // TRex — orig :185-187 (rt blanked for the pass) and :251-253 (scan; ENT-S-108 gate, pinned)
         sites.add(site(51, "trex_185_revenge_local", "TRex.java:185-187", "TRex.selectTarget (the revenge pass)",
                 "the pass dropping a dead stored revenge target (orig :189-191)",
@@ -595,7 +595,7 @@ public class PlayNicelyGateParityTests {
      * The hunter spawned with its goals and no AI; every {@link NearestAttackableTargetGoal} whose target
      * type is the wanted one (and the Pointysaurus's stare goal where asked) is read off the target
      * selector and asked {@code canUse()} directly, its 1-in-5 acquisition roll pinned to fire. The prey
-     * is a Zombie for the Monster goals, a survival mock player for the Player goals — staring at the
+     * is a Zombie for the Mob + Enemy goals (ENT-S-124), a survival mock player for the Player goals — staring at the
      * hunter's eyes (the stare goal's dot &gt; 0.97) or its mid-height (the Ender Reaper's look-vector test)
      * where the goal's own predicate demands it.
      */
