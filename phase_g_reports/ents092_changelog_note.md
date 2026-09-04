@@ -151,3 +151,20 @@ on a "play nicely" server — reading the flag live, so flipping it takes effect
 grudge rest for the pass as it did, the Nastysaurus and T. Rex drop a prey they had picked themselves (a
 grudge they hold is still fought, as before), and Mobzilla no longer forgets the target it was chasing every
 time the flag is on.
+
+With Play Nicely on, the Stinky no longer eats blocks while idling (flowers in this port, coal ore in 1.7.10 —
+see ENT-S-119) and the Gamma Metroid no longer eats stone, as in 1.7.10 — the two griefing habits outside
+target selection the setting used to switch off — read live, so flipping the setting takes effect at once (the
+Metroid's stone-eat still also follows `mobGriefing`, as before).
+
+Targeting parity, wave 2. The Attack Squid and the Water Dragon hunt on their own again exactly as in 1.7.10 —
+the squid picking through its whitelist (players, zombies, villagers, spiders, lizards, the Girlfriend and
+Boyfriend), adopting another squid as a buddy and turning on everything once a Squid Zooka has fired it; the
+Water Dragon taking monsters, non-creative swimmers and the shared non-mob prey, sparing its own kind, nothing
+but monsters once tamed and nothing at all as a baby — the Dragon once more goes after any nearby monster
+continuously (and only with Play Nicely off), and the Islands' vampire butterfly bites players and horses
+again. OreSpawn's hunters no longer lock on through walls: the five robots, the Fairy, Giant Robot, Lizard,
+Purple Power, Nightmare, Skate, Irukandji, Spider Driver and Ant Robot again look for a clear eye line before
+choosing a target, exactly where 1.7.10 checked it, and Spyro, Stinky, the Prince and the Princess again run
+1.7.10's second, feet-level ray before biting — so a target on a ledge above or below them, or behind a
+parapet their eyes see over, is left alone as it was.

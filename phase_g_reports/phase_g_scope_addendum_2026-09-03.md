@@ -100,6 +100,14 @@ that slice, not a task for now.
     the G2 root-order slice with cache eviction and 4c keep gate priority; targeting batches gate when there
     is room. Harness fixes of the same day acknowledged: the keeper-player and chunk-ticking waits are the
     right shape.
+20. **After wave 1 (owner, 2026-09-04, fifth batch):** the i165 chunk-wait geometry fix (the FORCED ticket
+    centred on the checked cell) approved as presented; **a harness slice for i050 and i127, scoped to root
+    causes and test isolation** — mock-player placement, cross-test leakage, TEST-003 order sensitivity —
+    **with no retries or widened waits as fixes, findings presented before changes**; ENT-S-116 (the two
+    PlayNicely griefing gates) fixed in classic with one refuter; **refuter rule amended: counted by files
+    touched — over twenty files gets two refuters regardless of the ledger's S/M/L label**; the wave-1 T1
+    commit message (53 pins where the records say 56) stands, no amend; wave 2 starts with T3a and T2, the
+    T9 split presented alongside (`phase_g_reports/targeting_t9_split_2026-09-04.md`).
 
 ## D. Rulings executed the same day (for cross-reference)
 

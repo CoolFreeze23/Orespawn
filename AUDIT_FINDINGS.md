@@ -7378,13 +7378,14 @@ keeps BUG-036. Commit 4ea395c's message retains the old number.)*
   cross-references, the changelog's wording, the T5 rows naming the PlayNicely residual, two griefing gates outside
   targeting filed as ENT-S-116).
 
-### ENT-S-116 — Two 1.7.10 PlayNicely griefing gates outside target selection are missing: the flying Stinky's flower-eat and the Gamma Metroid's stone-eat run on a play-nicely server (REPORT, 2026-09-04; filed from the ENT-S-115 refuter's per-read sweep)
+### ENT-S-116 — Two 1.7.10 PlayNicely griefing gates outside target selection were missing: the flying Stinky's flower-eat and the Gamma Metroid's stone-eat ran on a play-nicely server (filed from the ENT-S-115 refuter's per-read sweep; FIXED 2026-09-04)
 
 - **Evidence:** the ENT-S-115 refuter swept every `OreSpawnMain.PlayNicely` read in the 44 T1 species (78 hits in the
   38 batch files, 7 in the ENT-S-108 seven) and matched each to a port site or a disclosed record except two, both
   griefing gates rather than target selection and therefore outside the targeting ledger: orig Stinky.java:583 —
-  `if (nextInt(50) == 0 && PlayNicely == 0)` heads the flying Stinky's flower-eat (the nearest flower found in an 8-ring,
-  navigated to, broken, the Stinky healed and the burp played) — against port EntityStinky.java:284-285
+  `if (nextInt(50) == 0 && PlayNicely == 0)` heads the flying Stinky's idle block-eat (sic: orig's `scan_it` hunts
+  `field_150365_q` = coal ore over six-face shells, the nearest broken, the Stinky healed and the burp played — the
+  port's `eatFlowers` eats flowers instead, a pre-existing divergence filed as ENT-S-119) — against port EntityStinky.java:284-285
   `if (this.activity == 1 && this.random.nextInt(50) == 0) eatFlowers();`, no flag; orig GammaMetroid.java:435 —
   `(nextInt(20) == 0 && health < max || nextInt(100) == 0) && PlayNicely == 0 && !isSitting()` heads the stone-eat
   (stone found, navigated to, eaten, the Metroid healed) — against port EntityGammaMetroid.java:130-133, gated on
@@ -7392,10 +7393,370 @@ keeps BUG-036. Commit 4ea395c's message retains the old number.)*
   port keeps eating flowers and stone there. Every other non-targeting read is matched (CaterKiller :54/:81/:437 size and
   watcher ↔ EntityCaterKiller :86 and the renderer :41, :502 ↔ :267; Cephadrome :661 ↔ :176; Godzilla's eight ↔ the
   BOSS-017 sites; Boyfriend :243 ↔ :292, Girlfriend :276 ↔ :331). No MOD record covers either.
-- **Resolution:** REPORT — for the owner's ruling (a parity bug in classic; the fix would be the two one-line gates at
-  the orig positions, the flag read live as `OreSpawnConfig.PLAY_NICELY.get()`, with one generated pin each in the
-  ENT-S-115 shape: flag off → the flower / stone is eaten, flag on → untouched, the flag restored in a finally). Not
-  part of the targeting waves; the owner may fold it into a later batch or rule it a standalone fix.
+- **Resolution:** FIXED (2026-09-04, owner: "ENT-S-116: go, one refuter"). Two one-line gates at the orig
+  positions, the flag read live as `OreSpawnConfig.PLAY_NICELY.get()` (the ENT-S-115 idiom; both files already
+  imported it): EntityStinky.java:284-287 — `if (this.activity == 1 && this.random.nextInt(50) == 0 &&
+  !OreSpawnConfig.PLAY_NICELY.get()) eatFlowers();`, the 1-in-50 roll spent ahead of the flag as orig
+  Stinky.java:583 spends it (the gate only — the port's `eatFlowers` is not orig's routine: orig Stinky.java:593 /
+  `scan_it` :435-496 hunts `field_150365_q` = coal ore over six-face shells 1, 2, 3, 4, 6, 8, nearest by distSq,
+  with the :602 burp; the port eats DANDELION / POPPY on a +x slab, first hit, no burp — pre-existing, filed as
+  ENT-S-119 with the sitting guard and the idle attack pass the refuter found beside it); EntityGammaMetroid.java:130-136 — `&& !OreSpawnConfig.PLAY_NICELY.get()` inserted
+  between the 1-in-20 / 1-in-100 roll pair and `!this.isOrderedToSit()`, orig GammaMetroid.java:435's order (the
+  port keeps rolling the entity random, ENT-S-093, same bounds). Pinned by `PlayNicelyGriefingGateTests` (its own
+  batch `playNicelyGriefingGates`, TEST-003), two plain tests in the ENT-S-115 shape — the flag set false, the
+  port's `customServerAiStep` driven once by reflection under pinned `Entity.random` (the VortexParityTests
+  ForcedRoll seam) and required to show the griefing effect itself, the effect undone, the flag set true, the
+  same drive required to show nothing of it, the prior value restored in a finally, the hunter frozen (no goals,
+  noAi, persistent) and discarded there: `s116_stinky_583_flower_eat` (activity 1 through the setter; rolls
+  200→0, 100→0, 50→0; a dandelion one block east at the feet level, distSq 1 of the Stinky's block — eaten to air
+  and the Stinky healed 90→91 with the flag off, standing and 90 with it on) and `s116_gammametroid_435_stone_eat`
+  (rolls 5→1, 20→0 with the health 10 below max, 100→1; `mobGriefing` set on for the test and restored; a stone
+  one block east of the port's scan origin `((int) x, (int) y + 1, (int) z)`, distSq 1 — eaten to air and the
+  Metroid healed 90→91 with the flag off, standing and 90 with it on). Both fail with the port line reverted (the
+  flag-on drive eats and heals). javac rc 0 on the three files (no gradle in this lane). Refuted once: the code and both tests upheld; one records defect fixed (orig's routine eats coal ore, not flowers — the port's flower-eat is a separate, pre-existing divergence filed as ENT-S-119) and five non-blocking notes recorded (the placed blocks are left standing inside the structure, the truncation note's z shift, the helper copies).
+
+
+### ENT-S-117 — Four hunters had lost their whole 1.7.10 proactive hunt: the Attack Squid and the Water Dragon only retaliated, the Dragon had no continuous IMob channel, the Islands vampire butterfly never hunted (targeting ledger batch T3a, wave 2; FIXED 2026-09-04)
+
+- **Evidence:** targeting ledger batch T3a (`phase_g_reports/targeting_survey_2026-09-04.md`, §T3a: 19 rows, 4 blocks;
+  §2 blocks cited per row). 1.7.10: the Attack Squid's `updateAITasks` ran a 1-in-10 pass (AttackSquid.java:502) over
+  `findSomethingToAttack` (:604-625 — PlayNicely gate, a 10/4/10 `EntityLivingBase` box, the GenericTargetSorter, the live
+  stored target answered first, a dead one cleared, the first candidate its `isSuitableTarget` (:551-602) accepted: non-creative
+  players, Girlfriend, Boyfriend, Zombie, Villager, Spider, CaveSpider, Lizard; Ghost / GhostSkelly refused; another squid
+  refused and adopted as `buddy` on 1-in-5; anything else only while `wasshot != 0`), bit inside distSq 9 on the 4/5 dice,
+  else navigated and fired the watercanon, and with nothing to attack swam after its buddy (:515-517); the Water Dragon's
+  `updateAITasks` ran `!PEACEFUL && nextInt(5)==1` (WaterDragon.java:597) over `findSomethingToAttack` (:682-706 — PlayNicely,
+  baby, a 14/4/14 box, the sorter, the sticky stored target, `isSuitableTarget` :650-680: Peaceful, sight, WaterDragon
+  refused, EntityMob taken, a tamed dragon takes nothing else, non-creative players, `isAttackableNonMob`) and bit / walked /
+  fired; the Dragon registered vanilla `EntityAINearestAttackableTarget(this, EntityLiving.class, 0, true, false,
+  IMob.mobSelector)` at target priority 1 when `PlayNicely == 0` (Dragon.java:115-117: no roll, the follow-range box 16/4/16,
+  sight, IMob only) ahead of the revenge task at 2 (:118); the butterfly's flight loop hunted in the else-branch of its
+  retarget test (EntityButterfly.java:161: `nextInt(10)==0 && dim == DimensionID4 && butterfly_type == 1 && != PEACEFUL`) over
+  an 8/5/8 box (:218) with a filter of non-creative players and horses (:194-215), steered onto the prey and bit inside
+  distSq 6 for 1.0 on a 1-in-2 roll (:165-168, :183-192). The port: AttackSquid.java:169-185 read `getTarget()` only (no
+  scan, no filter, no PlayNicely read in the file); WaterDragon.java:99-114 fed `WaterCanonAttackGoal` from `HurtByTargetGoal`
+  and `hurt` only (ENT-S-074 had restored the ranged branch alone); Dragon.java:145 held `HurtByTargetGoal` only; EntityButterfly
+  was an `AmbientCreature` with `AmbientFlightGoal` alone. What a player saw: squids and water dragons never hunted on their
+  own — a swimmer was safe until they hit one; a Squid Zooka-launched squid (only the Zooka sets `wasshot`; the survey's "Kraken-launched" was wrong in both trees) did not turn on everything; a Dragon went after
+  monsters only on its 1-in-10 / 1-in-7 / 1-in-9 custom rolls, never continuously; the Islands vampire butterfly never
+  bit anyone. No MOD record.
+- **Resolution:** FIXED (2026-09-04, wave 2 — owner: "Targeting ledger, ruled by wave … Wave 2 starts: T3a and T2").
+  Nineteen port sites in four files plus one new goal class, each transcribed at the orig position with the orig polarity,
+  term order and roll bounds, the flag reads in the port's idioms:
+
+  | # | species | orig site (1.7.10) | port site AFTER | kind | note |
+  |---|---|---|---|---|---|
+  | 1 | AttackSquid | AttackSquid.java:54, :70 — `TargetSorter = new GenericTargetSorter(this)` | AttackSquid.java:65 `targetSorter` | f | the shared weighted-distance order (creeper halved, silhouette), the tie-break row |
+  | 2 | AttackSquid | :55 — `buddy` | :73 `buddy` (`@Nullable LivingEntity`) | f | never persisted, as orig (WasShot only, :635-643; MOD-022) |
+  | 3 | AttackSquid | :502-518 — the pass: `nextInt(10) == 1` → `findSomethingToAttack` → distSq &lt; 9: attacking 1 + the 4/5 dice, else navigate 1.2 + watercanon; none → buddy-follow at 1.0, attacking 0 | AttackSquid.customServerAiStep :193-211 | p | the port read `getTarget()` only (:169-185 at HEAD); `== 1` polarity kept; the buddy-follow of :515-517 at :207-209 |
+  | 4 | AttackSquid | :604-625 — `findSomethingToAttack`: PlayNicely (:605-607) → box 10/4/10 (:608) → sort (:609) → live stored target returned (:613-616) → `setAttackTarget(null)` (:617) → first suitable (:618-623) → null | AttackSquid.findSomethingToAttack :227-236 | s | the pick is never stored (:622 / :503) — the port's Alien shape; the sort moved after the slot read (side-effect-free; OPT-021 `firstMatch`) |
+  | 5 | AttackSquid | :551-602 — `isSuitableTarget`: null/self/dead → sight (:561) → Player `!isCreativeMode` (:564-567) → Girlfriend (:568) → Boyfriend (:571) → EntityZombie (:574) → EntityVillager (:577) → EntitySpider (:580) → EntityCaveSpider (:583) → Ghost false (:586) → GhostSkelly false (:589) → Lizard (:592) → AttackSquid: `nextInt(5)==1` → buddy, false (:595-600) → `wasshot != 0` (:601) | AttackSquid.isSuitableTarget :248-266 | s | Zombie / Villager / Spider / CaveSpider are the 1.21.1 classes of the same names (CaveSpider a Spider subclass in both trees — the step never decides, transcribed anyway); `instabuild` for `isCreativeMode` (ENT-S-107); the buddy roll on the entity random (ENT-S-093 stream convention) |
+  | 6 | Dragon | Dragon.java:115-117 — `if (PlayNicely == 0) targetTasks.addTask(1, new EntityAINearestAttackableTarget(this, EntityLiving.class, 0, true, false, IMob.mobSelector))` | Dragon.registerGoals :148-166 — `NearestAttackableTargetGoal<>(this, Monster.class, 0, true, false, null)` at target priority 1, an anonymous subclass with the ENT-S-115 live `canUse` gate (:158) and `getFollowDistance() → 16.0` (:162-165) | g | randomInterval 0 = targetChance 0 (no roll in either, bytecode above); `mustSee` true / `mustReach` false = checkSight true / nearbyOnly false; the follow range 16 pinned against the port's FOLLOW_RANGE attribute 40 (the JealousyTargetGoal idiom); Monster = IMob per the Leon / Prince / Boyfriend / Girlfriend precedent (disclosure D4) |
+  | 7 | Dragon | :118 — `EntityAIHurtByTarget` at target priority 2 | Dragon.registerGoals :167 — `HurtByTargetGoal` moved from priority 1 to 2 | g | the orig order: the IMob task preempts the revenge task (1.7.10 `EntityAITasks.canUse` / 1.21.1 `WrappedGoal.canBeReplacedBy`, the same rule) |
+  | 8 | EntityButterfly | EntityButterfly.java:145-181 — `updateAITasks`: flight target init (:151-153); `if (nextInt(100)==0 \|\| near)` retarget (:154-160) **else if** `nextInt(10)==0 && dim == DimensionID4 && butterfly_type == 1 && != PEACEFUL` (:161) → `findSomethingToAttack`; prey → flight target := prey (:165), distSq &lt; 6 → `attackEntityAsMob` (:166-168); steering (:171-180) | EntityButterfly.registerGoals :68-73 registers `ButterflyIslandsHuntGoal` (new, `entity/ai`) in the flight goal's slot 8; its `tick` :52-85 is the base `AmbientFlightGoal.tick` flow with the hunt as the else-branch (:62-73), the steering the base's lines verbatim (:76-84) | g | the base goal has no hook between its retarget test and its steering, so the goal re-states the base's flow; term order of :161 kept (the roll first, then `ModDimensionKeys.ISLANDS`, `getButterflyType() == 1`, the difficulty); `(int)` casts of :165 kept; subclasses inherit the registration as they inherited orig's `updateAITasks` through `super` (disclosure D6) |
+  | 9 | EntityButterfly | :217-230 — `findSomethingToAttack`: box 8/5/8 (:218), sort (:219), first suitable, null; **no PlayNicely gate** | ButterflyIslandsHuntGoal.findSomethingToAttack :97-103 | s | no flag read, as orig (the ledger's row: none); the sorter built on the butterfly (:56 → goal :48) |
+  | 10 | EntityButterfly | :194-215 — `isSuitableTarget`: PEACEFUL false (:195) → null/self/dead → sight (:207) → Player `!isCreativeMode` (:210-213) → `instanceof EntityHorse` (:214) | ButterflyIslandsHuntGoal.isSuitableTarget :111-117 | s | `AbstractHorse` for `EntityHorse` (the DragonflyHuntGoal mapping; disclosure D7) |
+  | 11 | EntityButterfly | :183-192 — `attackEntityAsMob`: `OreSpawnRand.nextInt(2) != 0` → false; PEACEFUL → false; `attackEntityFrom(causeMobDamage(this), 1.0f)` | EntityButterfly.doHurtTarget :159-164 | b | the entity random for the global OreSpawnRand (ENT-S-093); the port's Mothra / Luna Moth call `doHurtTarget` nowhere (grep), so only the hunt reaches the override (disclosure D6) |
+  | 12 | WaterDragon | WaterDragon.java:50, :67 — `TargetSorter` | WaterDragon.java:86 `targetSorter` | f | |
+  | 13 | WaterDragon | — (the hunt's pick was never stored) | :98 `scanPick` | f | the ENT-S-108 ownership mark: the port's `WaterCanonAttackGoal` consumes the slot every tick, so the hunt's own pick lives there between passes under this mark and is re-derived every pass |
+  | 14 | WaterDragon | :597 — `if (difficulty != PEACEFUL && nextInt(5) == 1)`; :598 `e = findSomethingToAttack()` | WaterDragon.customServerAiStep :338-340 | p | after the water-seek block and the :594-596 release site, before the heal roll — the orig position; the difficulty before the roll (the roll is not spent on Peaceful — ENT-S-114's term-order convention); the :594-596 1-in-200 release is the melee preset's forgetTargetRoll (ledger: MATCH) and is only cited (:336-337) |
+  | 15 | WaterDragon | :597-612 — the pass: prey → face, bite inside (4 + w/2)² on the 4/5 dice, else walk 1.0 + watercanon; none → attacking 0 | WaterDragon.selectTarget :360-372 | h | the melee / watercanon half is `WaterCanonAttackGoal` (ENT-S-074, fed through the slot); the hand-off: a sticky occupant (pick == slot) stands unmarked, a fresh pick takes the slot and is marked (re-read from `getTarget()`, the ENT-S-108 refuter hardening), an empty answer clears the hunt's own pick (orig re-derived it every pass) and leaves a foreign occupant alone |
+  | 16 | WaterDragon | :682-706 — `findSomethingToAttack`: PlayNicely (:683-685) → `isChild` (:686-688) → box 14/4/14 (:689) → sort (:690) → live stored target returned (:694-697) → `setAttackTarget(null)` (:698) → first suitable (:699-704) → null | WaterDragon.findSomethingToAttack :388-398 | s | the sticky read applies to a foreign occupant only (`current != this.scanPick`, :395): the hunt's own pick, never stored in orig, is re-derived (the slot cleared at :396 as :698 cleared an empty one, refilled by `selectTarget` when found again) |
+  | 17 | WaterDragon | :650-680 — `isSuitableTarget`: PEACEFUL (:651) → null/self/dead → sight (:663) → WaterDragon false (:666) → EntityMob true (:669) → tamed false (:672-674) → Player `!isCreativeMode` (:675-678) → `MyUtils.isAttackableNonMob` (:679) | WaterDragon.isSuitableTarget :412-421 | s | the fallthrough is the port's `util/MyUtils.isAttackableNonMob` as it stands (T6 cross-reference; disclosure D3) |
+  | 18 | WaterDragon | :483-493 — an `EntityLiving` attacker stored (:490); :76 — the revenge task stores any other living attacker | WaterDragon.hurt :291-296 — `if (attacker == this.scanPick) this.scanPick = null;` ahead of the existing `setTarget(mob)` | h | the attacker is the stored, sticky target from the hurt on (:694-697); the mark on a pick that turned on the dragon ends there, so the revenge goal's same-entity set cannot keep it re-derived (disclosure D2) |
+  | 19 | WaterDragon | — | WaterDragon.setTarget :431-437 — the mark cleared on a **change of occupant** only | h | the ENT-S-108 hunters clear it on every set; `TargetGoal.canContinueToUse` re-sets the mob's current target on every pass while `HurtByTargetGoal` runs, which would turn the hunt's own pick — placed on the pass that dropped a dead revenge target — into a sticky one (disclosure D2; observation O1 for the nine) |
+
+  Shapes: (s) four scans as
+  private `findSomethingToAttack` / `isSuitableTarget` pairs in orig order with orig cites per step (AttackSquid :227-266,
+  WaterDragon :388-421, ButterflyIslandsHuntGoal :97-117) over `getEntitiesOfClass(LivingEntity.class, getBoundingBox()
+  .inflate(x, y, z))` and `TargetSelection.firstMatch` with a `GenericTargetSorter` (the ENT-S-108 idiom; `instabuild` for
+  `isCreativeMode`, ENT-S-107; `getSensing().hasLineOfSight` for `canSee`); (p) the passes in `customServerAiStep` at the
+  orig position — the squid's `nextInt(10) == 1` acting on the transient pick itself (melee / navigate + watercanon / buddy-
+  follow / attacking 0, :193-211 — the Alien shape: the pick is never stored, the sticky slot is the hurt / revenge channel),
+  the Water Dragon's `!= PEACEFUL && nextInt(5) == 1` (:338-340, the difficulty before the roll) handing its pick to the slot
+  for the existing `WaterCanonAttackGoal` through `selectTarget` (:360-372) under the ENT-S-108 ownership mark `scanPick`
+  (:98): a sticky stored target (hurt / revenge, :694-697) stands unmarked, a fresh pick is stored and marked (re-read from
+  `getTarget()`), an empty answer clears the hunt's own pick — orig re-derived it every pass — and leaves a foreign occupant
+  alone (under the PlayNicely / baby gates orig consulted nothing); the mark ends on a change of occupant (`setTarget`
+  :431-437) and on a hurt by the marked pick (`hurt` :296 — the attacker is orig's stored, sticky target, :490 / the revenge
+  task), not on `TargetGoal.canContinueToUse`'s same-entity re-assert, which under the ENT-S-108 every-set clear would have
+  turned a pick stored on the pass that dropped a dead revenge target into a sticky one (disclosed; the nine ENT-S-108
+  hunters carry that exposure — observation for T5; refuter B measured it: the target-selector cleanup runs on even
+  ticks before the pass, so when a revenge target dies by the hunter's own bite and the pass fires that tick or
+  the next non-cleanup tick, the every-set override turns the fresh pick foreign — a window of about 1-in-5 to
+  1-in-8 per tick over one or two ticks per revenge kill — and six presets never forget a target (TRex,
+  HerculesBeetle, SpitBug, TrooperBug, DungeonBeast, CaveFisher); two ownership conventions now coexist, the nine
+  every-set overrides and the Water Dragon's change-only one, for the owner to pick one); (g) the Dragon's channel as an always-registered
+  `NearestAttackableTargetGoal<>(this, Monster.class, 0, true, false, null)` at target priority 1 (:148-166) with the ENT-S-115
+  live `canUse` gate for the construction-time `PlayNicely == 0`, randomInterval 0 for targetChance 0 (no roll in either —
+  1.7.10 `EntityAINearestAttackableTarget.shouldExecute` bytecode: `chance > 0 && nextInt(chance) != 0`), and
+  `getFollowDistance() → 16.0` (the JealousyTargetGoal idiom) because orig's box, range and hold were the follow-range
+  attribute — `EntityAITarget.getTargetDistance`, EntityLiving's base 16, Dragon.java:135-141 setting none — where the port's
+  FOLLOW_RANGE attribute is 40; `HurtByTargetGoal` moved to target priority 2 (:167, orig :118), so the IMob channel preempts
+  the revenge channel as in 1.7.10; Monster for IMob per the Leon / Prince / Boyfriend / Girlfriend precedent (Slime,
+  MagmaCube, Ghast, EnderDragon of orig's IMob are not Monsters, and neither is OreSpawn's own Mothra — orig
+  Mothra.java:52 `implements IMob`, the port Mothra an `AmbientCreature` — so channel (a) no longer holds a Mothra
+  continuously; channel (b) still takes her on its rolls (:926); refuter A, B1; a `LivingEntity`-typed goal with
+  `e instanceof Monster || e instanceof Mothra` would restore it if the owner wants channel (a) to keep her); the butterfly's hunt as the new
+  `ButterflyIslandsHuntGoal extends AmbientFlightGoal` in the flight goal's slot 8 (EntityButterfly.registerGoals :68-73) —
+  its `tick` (:52-85) re-states the base flow because the base has no hook between its retarget test and its steering and
+  orig's hunt is that else-branch: retarget (base :104-113) **else if** `nextInt(10)==0 && level().dimension() ==
+  ModDimensionKeys.ISLANDS && getButterflyType() == 1 && != PEACEFUL` (orig :161, the roll first) → the scan → the flight
+  target onto the prey with orig's `(int)` casts (:165) → inside distSq 6 `doHurtTarget` (:166-168) → the base's steering
+  verbatim (:116-131); (b) `EntityButterfly.doHurtTarget` (:159-164) = orig :183-192 (`nextInt(2) != 0` → false, Peaceful →
+  false, 1.0 of `mobAttack(this)`), the global OreSpawnRand read as the entity random (ENT-S-093). Javadoc / comment cite of
+  the orig line at every site; nothing else in those methods. Caveats disclosed: the vanilla goal polls on the every-other-tick
+  goal pass where 1.7.10's `EntityAITasks` polled every third tick (`tickRate = 3`, bytecode), refuses beyond a 16-sphere ×
+  visibility inside the 16/4/16 box, picks nearest-from-eye with strict `<` where 1.7.10 sorted nearest-from-feet stable,
+  and applies `canAttackType` / `isAlliedTo` (1.7.10's `EntityAITarget` had the owner refusals too); the `isAttackableNonMob`
+  fallthrough of WaterDragon :679 is the port helper as it stands (orig's Mothra, Leon, Dragon, Spyro, royalty, GammaMetroid,
+  Girlfriend, Boyfriend, Villager, Stinky grants absent; EnderDragon and GodzillaHead port-only grants — orig's
+  GodzillaHead was an `EntityLiving` outside orig's list, the port's a `Mob` the helper names; refuter A, N1) — batch
+  T6's membership, inherited here;
+  `AbstractHorse` for EntityHorse (llama / camel ride along), `Villager` not `AbstractVillager`; the port's Mothra inherits
+  the hunt goal as it inherited orig's `updateAITasks` (Mothra.java:169), the Luna Moth's own flight goal does not (orig
+  EntityLunaMoth.java:122 inherited the Islands hunt; the port's `LunaMothFlightGoal` at registerGoals :49-50 drops
+  it — no ledger block exists for the Luna Moth, so it is logged as an observation for T10 in the ledger's wave log,
+  refuter A, N2); the butterfly hunt runs inside the flight goal's `canUse` (`!isPassenger() && !isInWater()`,
+  AmbientFlightGoal :88-90), a gate orig's `updateAITasks` did not have (refuter A, N4); the Water Dragon's act is now
+  an independent second 1-in-5 draw — orig :597 spent one `nextInt(5)==1` on scan and act, the port's hunt roll at :338
+  fills the slot and the melee goal's own `nextInt(5)` (BugMeleeAttackGoal :133, TF-026 / ENT-S-074, pre-existing) acts,
+  so the goal keeps acting on the hunt's own pick until the next pass fails to re-find it (about five ticks on average
+  where orig stood down at once) and the goal's 1-in-200 forget also drops the hunt's own pick (refuter A, N3); the Water Dragon's melee goal still consumes a stored revenge target under PlayNicely (the T5 residual, as
+  Nastysaurus / TRex). Pins: new `ProactiveHuntParityTests` (own batch `proactiveHuntParity`, TEST-003; a `@GameTestGenerator`
+  over a 50-row site table in orig file order, `proactivehuntparitytests.s3a_NN_<species>_<site>`): per species the box
+  pinned on +x / +y / +z from both sides, the sight step through a stone column raised and cleared (the Sensing cache reset),
+  the creative refusal against the same player in survival, the tie-break with a farther creeper / horse outranking a nearer
+  Zombie / player (plain-nearest would answer the nearer), the PlayNicely gate with the flag flipped and restored; the
+  squid's cadence (`nextInt(10) == 1` hunts, a 0 does not; the slot still empty), every ladder member (Girlfriend, Boyfriend,
+  Zombie, Villager, Spider, CaveSpider, Lizard taken; Ghost, GhostSkelly refused with a Zombie control), the buddy adoption
+  on `nextInt(5) == 1` and not on 0, the `wasshot` rule (a pig refused, then prey after `setWasShot`), the sticky stored
+  target ahead of a nearer Lizard and the dead-drop, the buddy-follow (navigation started toward the buddy, attacking 0);
+  the Dragon's goal at priority 1 with `HurtByTargetGoal` at 2, randomInterval 0, `getFollowDistance` 16 against the
+  attribute's 40, a Zombie taken and stored on start, a pig refused, the flag flipping `canUse`, a Zombie at 15 taken / at 18
+  refused / 4.5 above taken / 6 above refused, sight; the butterfly's goal in slot 8 with no plain flight goal left, horses
+  only (pig, Zombie refused), the filter and the bite on PEACEFUL (`MinecraftServer.setDifficulty(PEACEFUL, true)`, restored
+  in a finally), the bite's 1-in-2 roll and 1.0 damage, the :161 roll order and Islands-only firing through a counting random
+  in the overworld; the Water Dragon's cadence (`nextInt(5) == 1` stores and marks, a 0 does not), the difficulty before the
+  roll (no `nextInt(5)` spent on PEACEFUL), the filter on PEACEFUL, another Water Dragon refused, the tamed rule (Zombie
+  taken, player and Cephadrome refused, the player taken untamed), the helper fallthrough (Cephadrome taken, pig refused),
+  the baby gate with the filter itself accepting, the sticky stored target ahead of a nearer creeper and its dead-drop, the
+  hunt's own pick re-derived (dropped once out of the box, stored again inside), the gated pass keeping a foreign occupant
+  and clearing the hunt's own pick, the same-entity re-assert keeping the mark and a change ending it, a hurt by the marked
+  pick ending the mark and the next pass keeping it out of the box. Every test synchronous; every flip restored in a finally;
+  spawns discarded, mock players removed; no documenting-only test. Compiled (javac, §5); the gametest run is the gate's.
+  Refuted twice: A (transcription fidelity) upheld — one records correction (orig Mothra implements IMob) and five
+  notes applied; B (slot semantics, goal mappings, tests) found one blocking defect, fixed — `WaterDragon.hurt`
+  cleared the hunt's mark on a hit the 10-tick hurt timer swallowed, which stores nothing in 1.7.10 (:479-493), so
+  a player pick turned sticky; the clear now requires the store (`attacker instanceof Mob ||
+  getLastHurtByMob() == attacker`), with a swallowed-hit pin added (51 generated) — and seven gaps recorded (the
+  Luna Moth observation's home, Monster for IMob as an owner ruling with the literal alternative `Mob.class +
+  instanceof Enemy`, the ENT-S-108 re-assert window above, "Kraken-launched" corrected to the Squid Zooka in
+  both trees, the residual wording, the found-nothing clear in `selectTarget` reached only through the gates, the
+  Islands dimension term's negative-only pin).
+
+### ENT-S-118 — Fourteen hunters chose targets without the 1.7.10 line-of-sight step and four bit what the 1.7.10 feet ray refused (targeting ledger batch T2, wave 2; FIXED 2026-09-04)
+
+- **Evidence:** targeting ledger batch T2 (`phase_g_reports/targeting_survey_2026-09-04.md`, §T2: 18 rows, 18
+  blocks; §2 "filter order" rows cited per block). 1.7.10 put `getEntitySenses().canSee(e)` — `EntitySenses`, the
+  per-tick cache over `canEntityBeSeen`'s eye-to-eye block ray — in fifteen target filters at a fixed position:
+  after the ignore screen and ahead of the creative check in the Ant Robot's stomp (AntRobot.java:974) and hunt
+  (:1047, ahead of the dircheck branch) filters, GiantRobot :327, PurplePower :251 (ahead of the player branch),
+  Robot1 :189, Robot2 :366, Robot3 :306, Robot4 :370, Robot5 :280 (each ahead of the EntityMob refusal); after the
+  dead check and ahead of the prey test in Fairy :232 and Lizard :313; after the ignore screen and ahead of the
+  self-kind refusal in PitchBlack :501; after the four kind refusals and ahead of the player branch in SpiderDriver
+  :149; ahead of the players-only creative rule in Irukandji :280 and Skate :272. Four more hunters ran a second,
+  block-only ray in the scan loop after the whole filter passed — `canSeeTarget(e.posX, e.posY, e.posZ)`, from 0.75
+  above their own feet to the candidate's own position, `rayTraceBlocks(start, end, false) == null` (Spyro :709 with
+  :436-438, Stinky :699 with :317-319, ThePrince :776 with :416-418, ThePrincess :857 with :404-406). At the survey's
+  snapshot none of the fifteen port filters (nor the two inline picks) had the sight term — the five robots gated
+  their SHOT on sight (Robot3 :136, Robot5 :126) but not their choice — and none of the four scans had the feet ray.
+  What a player saw: hunters locked on through walls — the five robots chose what they could not see, the Fairy,
+  Giant Robot, Lizard, Purple Power, Nightmare, Skate, Irukandji and Spider Driver picked a hidden target over a
+  visible one, the Ant Robot stomped and hunted blind; Spyro, Stinky, the Prince and the Princess bit what a
+  feet-level ray refused (a target on a ledge above or below, or behind a parapet). No MOD record.
+- **Resolution:** FIXED (2026-09-04, wave 2 — owner: "Targeting ledger, ruled by wave … Wave 2 starts: T3a and T2").
+  19 port sites in 18 files, each transcribed at the orig position, polarity and term order:
+
+  | # | species | orig site (1.7.10) | port site AFTER | kind | position (orig ↔ port) / note |
+  |---|---|---|---|---|---|
+  | 1 | AntRobot | AntRobot.java:974-976 (`feetisSuitableTarget`, the stomp filter) | AntRobot.feetIsSuitableTarget :691 | s | after the ignore screen (:971 ↔ :690), ahead of the 6..9 ring (:977-986 ↔ :692-693) and the creative check |
+  | 2 | AntRobot | :1047-1049 (`isSuitableTarget(e, dircheck)`, the hunt filter) | AntRobot.isSuitableTarget :713 | s | after the ignore screen (:1044 ↔ :712), ahead of the creative check (:1066-1069 ↔ :714); the dircheck branch :1050-1065 that sat between them is T8's row and is not added |
+  | 3 | Fairy | Fairy.java:232-234 | Fairy.isSuitableTarget :149 | s | after the dead check (:229 ↔ :148), ahead of the EntityMob test (:235 ↔ :150) |
+  | 4 | GiantRobot | GiantRobot.java:327-329 | GiantRobot.isSuitableTarget :237 | s | after the ignore screen (:324 ↔ :236), ahead of the EntityMob refusal (:330 ↔ :238) |
+  | 5 | Irukandji | Irukandji.java:280-282 (ahead of the players-only creative rule :283-286) | Irukandji.customServerAiStep :141-142 — `nearest != null && this.getSensing().hasLineOfSight(nearest) && !instabuild` | p | the pick's `getNearestPlayer(6)` result is sighted ahead of the creative term, orig's order; the scan-set geometry (sphere vs box) is the ledger's scan-set row, untouched |
+  | 6 | Lizard | Lizard.java:313-315 | Lizard.isSuitableTarget :136 | s | after the dead check (:310 ↔ :135), ahead of the prey ladder (:316-327 ↔ :137-139); the AttackSquid grant (:316, T6) and the buddy side effect (:328-330, T10) are not added |
+  | 7 | PitchBlack | PitchBlack.java:501-503 | PitchBlack.isSuitableTarget :531 | s | after the ignore screen (:498 ↔ :530), ahead of the self-kind refusal (:504 ↔ :532) and the ENT-S-112 allies (:507-530 ↔ :533-540) |
+  | 8 | PurplePower | PurplePower.java:251-253 | PurplePower.isSuitableTarget :208 | s | after the ignore screen (:248 ↔ :207), ahead of the player branch (:254-260 ↔ :209-213); PEACEFUL (:236) is present at HEAD (ENT-S-114, T7); the tamed-pet / royalty steps (:261-264, T6) are not added |
+  | 9 | Robot1 | Robot1.java:189-191 | Robot1.isSuitableTarget :154 | s | after the ignore screen (:186 ↔ :153), ahead of the EntityMob refusal (:192 ↔ :155) |
+  | 10 | Robot2 | Robot2.java:366-368 | Robot2.isSuitableTarget :273 | s | after the ignore screen (:363 ↔ :272), ahead of the EntityMob refusal (:369 ↔ :274) |
+  | 11 | Robot3 | Robot3.java:306-308 | Robot3.isSuitableTarget :185 | s | after the ignore screen (:303 ↔ :184), ahead of the EntityMob refusal (:309 ↔ :186); the shot's sight gate :136 / orig cone :255-263 is T8's row, untouched |
+  | 12 | Robot4 | Robot4.java:370-372 | Robot4.isSuitableTarget :288 | s | after the ignore screen (:367 ↔ :287), ahead of the EntityMob refusal (:373 ↔ :289) |
+  | 13 | Robot5 | Robot5.java:280-282 | Robot5.isSuitableTarget :174 | s | after the ignore screen (:277 ↔ :173), ahead of the EntityMob refusal (:283 ↔ :175); the shot's sight gate :126 / orig cone :228-235 is T8's, untouched |
+  | 14 | Skate | Skate.java:272-274 (ahead of :275-278) | Skate.customServerAiStep :129-130 | p | as Irukandji, on the `getNearestPlayer(10)` result |
+  | 15 | SpiderDriver | SpiderDriver.java:149-151 | SpiderDriver.isSuitableTarget :164 | s | after the four kind refusals (:137-148 ↔ :162-163), ahead of the player branch (:152-155 ↔ :165) and the 6-block refusal (:156 ↔ :166); CRLF kept |
+  | 16 | Spyro | Spyro.java:709 (loop) with :436-438 (`canSeeTarget`) | EntitySpyro.findSomethingToAttack :490-493 (predicate) + canSeeTarget :505-510 (javadoc :495-504) | f | the eye-to-eye step (:685 ↔ :479) was already present; the feet ray is and'ed after the whole filter, as the loop's `||` order; Mothra-as-prey (:691) is T6's, not added |
+  | 17 | Stinky | Stinky.java:699 with :317-319 | EntityStinky.findSomethingToAttack :457-459 + canSeeTarget :471-476 (javadoc :461-470) | f | the scan's `Comparator.comparingDouble(this::distanceToSqr)` order untouched; Mothra (:681) is T6's |
+  | 18 | ThePrince | ThePrince.java:776 with :416-418 | ThePrince.findSomethingToAttack :584-586 + canSeeTarget :598-603 (javadoc :588-597) | f | the BOSS-024 ladder (:566-576) untouched |
+  | 19 | ThePrincess | ThePrincess.java:857 with :404-406 | ThePrincess.findSomethingToAttack :599-601 + canSeeTarget :613-618 (javadoc :603-612) | f | |
+
+  Shapes: (s) thirteen filters gain `if (!this.getSensing().hasLineOfSight(target)) return false;` — the port's
+  `canSee` idiom (55 sites at HEAD, 58 with T3a's; `Sensing` clears every tick in `Mob.serverAiStep`, where 1.7.10
+  cleared `EntitySenses` only through `super.updateAITasks()`, which AntRobot skipped while ridden (orig :884-886,
+  :101-103 — exactly where its stomp and hunt scans run), PitchBlack when its activity was not 0 (:330-332) and
+  Stinky / ThePrince / ThePrincess in activity 2 (:505-507 / :516-518 / :515-517), freezing their `canSee` verdicts
+  in those states — an unrecorded divergence of the port's per-tick cache, filed as ENT-S-122 for a ruling) — at
+  the orig position relative to the steps present: AntRobot :691 / :713, Fairy :149, GiantRobot :237, Lizard :136,
+  PitchBlack :531, PurplePower :208, Robot1 :154, Robot2 :273, Robot3 :185, Robot4 :288, Robot5 :174, SpiderDriver
+  :164; (p) the Irukandji :142 and Skate :130 inline picks sight the `getNearestPlayer` result ahead of the creative
+  term; (f) Spyro, Stinky, ThePrince and ThePrincess gain a private `canSeeTarget(x, y, z)` and'ed onto the scan
+  predicate after `isSuitableTarget` (the loop's `||` short-circuit order): a `level().clip` from `(getX, getY +
+  0.75, getZ)` to the candidate's position with `ClipContext.Block.OUTLINE`, `ClipContext.Fluid.NONE`, MISS = orig's
+  null — the CFR arguments read out: `func_72901_a(start, end, false)` is `func_147447_a(start, end, stopOnLiquid =
+  false, ignoreBlockWithoutBoundingBox = false, returnLastUncollidableBlock = false)`, so liquids never stop the ray
+  (Fluid.NONE), every collidable block is tested on its selection bounds by `Block.collisionRayTrace` (OUTLINE, the
+  mapping ENT-S-089 recorded for the Vortex's copy of the helper) and an unblocked ray answers null (MISS). Nothing
+  else in those methods: the Ant Robot's dircheck branch (:1050-1065) and the robots' shot cones stay T8's, the
+  Lizard's AttackSquid grant and buddy side effect T6's / T10's, the Purple Power's tamed-pet / royalty steps and
+  Mothra-as-prey T6's. Disclosed: (i) the eye-to-eye idiom clips COLLIDER where 1.7.10's `canEntityBeSeen` used the
+  same selection-bounds ray as the feet helper — port-wide, not this batch's, filed as ENT-S-121 together with
+  (ii); the second orig caller of the feet helper on the flight-target candidate (Spyro :647, Stinky :640) is
+  dropped in the port (EntitySpyro :439, EntityStinky :371 accept on `isAir()` alone) — a flight row, filed as
+  ENT-S-123; (ii) five earlier ports of the feet
+  helper (ThePrinceAdult :652, ThePrinceTeen :658, Kraken :557, EntityBrutalfly :125, Cockateil :130) use COLLIDER
+  without a recorded mapping, outside this batch's files; (iii) the Irukandji / Skate scan-set geometry (nearest
+  player first) is the ledger's scan-set row. Pins: new `SightStepParityTests` (own batch `sightStepParity`,
+  TEST-003; a `@GameTestGenerator` over a 23-row site table in orig file order,
+  `sightstepparitytests.s118_NN_<species>_<site>`), the PitchBlackAllyTests floor geometry: the hunter frozen at
+  (20, 1, 24), the prey 8 blocks east (a pig, a Zombie for the Monster-only hunters, a Chicken for the Lizard, a
+  survival mock player 5 blocks off for the two picks), sight asserted on the open floor. Eye-to-eye sites: a
+  one-block-thick stone wall raised midway (x = 24, z 23..25, y 1..14), asserted to break `hasLineOfSight`; the
+  private filter (`isSuitableTarget` / the Ant Robot's `feetIsSuitableTarget`, by reflection) or the pick
+  (`customServerAiStep`, rolls 10→1 8→1 4→1) refuses the prey behind it and accepts it with the wall razed, the
+  sight cache cleared between drives. Feet-ray sites: a one-block stone parapet on the floor row in front of the
+  Zombie's feet (27, 1, 24), which the eye line clears — `hasLineOfSight` and the full `isSuitableTarget` asserted
+  true in both phases, the control that the eye-to-eye line alone would accept — while the feet ray (1.75 → 1.0
+  over 8 blocks) crosses it at y 1.14..1.05: `findSomethingToAttack` answers null with the parapet, the Zombie
+  without it. A second row per feet-ray hunter pins the mapping with a short-grass parapet (asserted: empty
+  collision shape, non-empty selection shape): refused, as 1.7.10's selection-bounds ray refused it, accepted with
+  the grass gone. PlayNicely set false for the drive and restored in a finally (the scans answer null under it,
+  ENT-S-115); spawns discarded, players removed, occluders razed in the finally; every site exercised synchronously;
+  no documenting-only test. Compiled (javac, see §5); the gametest run is the gate's. Refuted once, upheld: no code defect in the 19 sites; two record corrections applied (the
+  sight-cache claim, the site count) and three observations filed for ruling (ENT-S-121 the ray mode port-wide with
+  the five COLLIDER feet-helper ports, ENT-S-122 the frozen sight cache states, ENT-S-123 the dropped flight-target
+  caller); harness sensitivities noted: the feet ray ends exactly on the floor block's top face and misses only
+  through `clipPoint`'s strict `<`, so the `getY() == floorY` precondition must stay exact; the `Fluid.NONE` leg has
+  no pin.
+
+### ENT-S-119 — The Stinky's idle block-eat is not the 1.7.10 routine: the port eats flowers on a one-sided slab where orig hunted coal ore over six-face shells, without the burp, while sitting, and without the idle attack pass (REPORT, 2026-09-04; found by the ENT-S-116 refuter)
+
+- **Evidence:** the ENT-S-116 refuter, checking the flower-eat gate, read the routine behind it. Orig Stinky.java:582-607
+  (inside `do_movement`, reached only through :511 `if (!isSitting()) do_movement()` at :534): on the 1-in-50 roll
+  under `PlayNicely == 0` the Stinky calls `scan_it((int) x, (int) y + 1, (int) z, i, j, i)` (:593) over the six faces
+  of shells i = 1, 2, 3, 4, 6, 8 (the `if (i < 4) continue; ++i` skip at :594-595), each probe comparing against
+  `Blocks.field_150365_q` (:444, :451, :462, :469, :480, :487) and keeping the nearest by squared distance from the
+  scan origin (`closest`); `field_150365_q` is COAL ORE (the port's own `world/feature/BeehiveFeature.java:38-39`
+  and :131-135 transcribe orig GenericDungeon.java:831-839's `field_150365_q` as `COAL_ORE`; orig IslandToo.java:216
+  uses it as the vein-type-1 ore beside `field_150366_p` = iron ore). It navigates to the pick (:598) and, when
+  `closest < 12` (:599, distance from the scan origin), sets it to air (:600), heals 1 (:601) and plays `random.burp`
+  at 0.5 / pitch `nextFloat * 0.2 + 1.5` (:602). Before the activity-1 branch, `do_movement` runs the 1-in-7 idle
+  attack pass for every activity (:568-581: `findSomethingToAttack`, flip to activity 2, attack). The 2026-06 audit
+  row `audit_sections/04_entities_S_Z.md:178` recorded "orig eats nothing … flower eating is new", which is wrong on
+  both counts; no finding covered it. Port `EntityStinky.java`: `eatFlowers()` (:290-308) scans only the +x slab
+  `x + i`, i = 1..8, half-width min(i, 2) in y and z, first hit of DANDELION / POPPY (:296-297), navigates, and eats
+  when `blockPosition().distSqr(pos) < 12` (:299, the entity's block as the base); no burp; the call at :284-287 sits
+  outside the `!isOrderedToSit()` block (:262-282), so a sat Stinky (activity forced to 1 on sit, :235-236; orig
+  :212-213 likewise) rolls the 1-in-50 and eats in the port but not in orig; and `doMovement()` returns at :314 for
+  `activity != 2`, so an idle Stinky never runs orig's 1-in-7 attack pass (roll ledger per idle tick, orig: 200, 100,
+  100 (+20), 7, 50 of the world random; port: 200, 100, 100 (+20), 50 of the entity random). What a player saw: a
+  flying Stinky pecks dandelions and poppies to its east instead of tunnelling toward the nearest coal ore around
+  it, never burps for it, keeps eating while told to sit, and does not pick fights while idling as 1.7.10's did.
+  ENT-S-116's gate is transcribed correctly on top of this routine (its pin follows the port's routine and fails
+  loudly when the routine changes). No MOD record covers any of it.
+- **Resolution:** REPORT — for the owner's ruling: a parity bug in classic by the standing rule (fix = transcribe
+  `scan_it` and the eat block — coal ore, the six-face shells 1/2/3/4/6/8 nearest by distSq from the scan origin, the
+  eat radius from that origin, the burp — move the call inside the not-sitting block, and restore the 1-in-7 idle
+  attack pass in `doMovement` ahead of the activity-1 branch, orig roll order; pins in the ENT-S-116 shape: coal ore
+  eaten and the burp played with the flag off, a flower ignored, nothing while sitting, the idle attack pass under a
+  pinned 1-in-7), or a MOD record if the flower-eat was an intended rewrite (none is documented). Not part of the
+  targeting waves.
+
+### ENT-S-120 — Engine convention without a ruling: a 1.7.10 player's `posY` was its eye level (yOffset 1.62), so every orig distance or height comparison against a player measured from the eyes where the port's `getY()` / `distanceToSqr` measures from the feet (REPORT, 2026-09-04; raised by the ENT-S-117 refuter A)
+
+- **Evidence:** in 1.7.10 `EntityPlayer.yOffset = 1.62` and `posY` of a player entity was the eye position (the
+  bounding box hung 1.62 below `posY`); every other entity's `posY` was its feet. Orig code that reads `e.posY` or
+  `getDistanceSqToEntity(e)` for a player prey therefore measured to the eyes; the port's `getY()`, `position()` and
+  `distanceToSqr(entity)` measure to the feet for every entity. Sites named by the refuter in the T3a batch: orig
+  EntityButterfly.java:165 (`(int)(e.posY + 1.0)` — the flight target about 2.6 blocks above a player's feet, 1.0
+  above a mob's) and :166 (`distSq < 6.0` to the eyes) against port ButterflyIslandsHuntGoal.java:68-69 (feet + 1.0,
+  distSq to the feet); orig AttackSquid.java:505 (`distSq < 9.0`) against port AttackSquid.java:196; orig
+  WaterDragon.java:601 against port WaterDragon (the melee goal's reach); and, by the same rule, every
+  `distanceToSqr(player)` / `getY()` reach or height test in the port's hunts, bites, canons and flight targets. The
+  difference is a fixed 1.62 in y for player prey only: a swimming or flying hunter that bit a player's head in
+  1.7.10 now aims 1.62 lower and reaches from a slightly different geometry; horizontal cases are unchanged. No
+  ruling in AUDIT_FINDINGS.md covers it (no `yOffset` / `1.62` / eye-height convention recorded); the ENT-S-093 /
+  ENT-S-095 hitbox and formula rulings did not touch it.
+- **Resolution:** REPORT — for the owner's ruling: (a) a port-wide mapping helper (`origPosY(entity)` = the feet for
+  mobs, feet + 1.62 for players; and `origDistSq(hunter, prey)` on it) applied at every orig `posY` / distance site
+  that can see a player, with a per-site pin table — a sweep lane first to list the sites; or (b) an accepted engine
+  mapping recorded once as a MOD note ("the port measures players from the feet"), with the two batch T3a sites and
+  the reach comparisons left as they are. Not part of the targeting waves' rows; the T3a code is transcribed under
+  the current convention and is not changed by this entry.
+
+### ENT-S-121 — Line-of-sight ray mode: the port's eye-to-eye `hasLineOfSight` clips collision shapes where 1.7.10's `canEntityBeSeen` tested selection bounds, and five ports of the feet-level helper clip COLLIDER against the recorded OUTLINE mapping (REPORT, 2026-09-04; raised by the ENT-S-118 refuter)
+
+- **Evidence:** 1.7.10 `EntityLivingBase.canEntityBeSeen` called the two-argument `World.rayTraceBlocks`, which forwards
+  `(stopOnLiquid = false, ignoreBlockWithoutBoundingBox = false, returnLastUncollidableBlock = false)` (javap
+  `ahb` :2053-2063): liquids never stop the ray and every collidable block is tested on its selection bounds — vanilla
+  1.21.1's `ClipContext.Block.OUTLINE`. The port's `LivingEntity.hasLineOfSight` (NeoForm LivingEntity.java:3033-3043)
+  clips `COLLIDER`: a target behind short grass, a flower, a torch or any collision-less block is seen in the port and
+  hidden in 1.7.10. That semantic sits under every `getSensing().hasLineOfSight` / `hasLineOfSight` site in the port
+  (55 at HEAD before wave 2, 73 after; every restored `canSee` step of ENT-S-108 / ENT-S-118 included) — one
+  port-wide convention, disclosed by the ENT-S-118 lane, never ruled. Separately, the feet-level helper the
+  ENT-S-118 lane transcribed with `OUTLINE` + `Fluid.NONE` (the mapping ENT-S-089 recorded for EntityVortex.java:266-272)
+  has five earlier ports that clip `COLLIDER`: ThePrinceAdult.java:652-655, ThePrinceTeen.java:658-661,
+  Kraken.java:557-558, EntityBrutalfly.java:125-126, Cockateil.java:130-132 — unrecorded divergences under the recorded
+  mapping (a flight target behind tall grass is accepted in the port, refused in 1.7.10). No MOD record covers either.
+- **Resolution:** REPORT — for the owner's ruling: (a) the eye-to-eye convention — keep vanilla's `COLLIDER`
+  `hasLineOfSight` as a recorded engine mapping (a MOD note) or route every `canSee` site through a port helper that
+  clips `OUTLINE` / `Fluid.NONE` (one helper, a sweep lane, one pin table); (b) the five feet-helper ports — fix in
+  classic to `OUTLINE` / `Fluid.NONE` with a short-grass pin each (the ENT-S-118 shape), unless (a) rules the other way
+  for both. Not part of the targeting waves' rows.
+
+### ENT-S-122 — Sight-cache clear gating: 1.7.10 cleared `EntitySenses` only through `super.updateAITasks()`, which five hunters skip in some states, so their `canSee` verdicts froze there while the port's `Sensing` clears every tick (REPORT, 2026-09-04; raised by the ENT-S-118 refuter)
+
+- **Evidence:** 1.7.10 cleared the `EntitySenses` cache in exactly one place, `EntityLiving.updateAITasks` (javap `sw`
+  :1122-1148, the only `clearSensingCache` caller), reached from `onLivingUpdate` only on the new-AI branch (javap `sv`
+  :4314-4326). All 18 hunters of batch T2 override `updateAITasks`; five reach `super` only past a gate: AntRobot
+  (orig :884-886 `isAIEnabled` false while ridden, :101-103 returns before `super` when ridden — exactly the state in
+  which its stomp and hunt scans run, :617-622 → :974 / :1047), PitchBlack (:330-332 calls `super` only when the
+  activity is 0, while the scan runs when it is not, :340-342 → :361-363), Stinky / ThePrince / ThePrincess (:505-507 /
+  :516-518 / :515-517 call `super` only outside activity 2, while their scans also run in activity 2, :568 / :620 /
+  :707). In those states the first `canSee` verdict per entity stuck for the whole ride or activity phase in 1.7.10;
+  the port's `Mob.serverAiStep` is final and ticks `Sensing` every tick (NeoForm Mob.java:773-777), so the port
+  re-evaluates sight each tick at port AntRobot.java:691 / :713 (ridden), PitchBlack.java:531 (activity ≠ 0) and the
+  pre-existing eye-to-eye steps EntityStinky.java:447, ThePrince.java:569, ThePrincess.java:582 (activity 2). The
+  other thirteen hunters called `super` unconditionally after their dead check and match. What a player saw in 1.7.10:
+  a ridden Ant Robot or an active Nightmare that once saw (or failed to see) a target kept that verdict until the
+  state ended; the port sees afresh every tick. No MOD record.
+- **Resolution:** REPORT — for the owner's ruling: transcribe the frozen cache (a per-hunter sight memo cleared where
+  orig cleared it, with pins) as a parity bug in classic, or record the per-tick re-evaluation as an accepted engine
+  mapping (a MOD note). The ENT-S-118 sight steps are transcribed at the orig positions either way; only the cache
+  lifetime differs. Not part of the targeting waves' rows.
+
+### ENT-S-123 — Spyro's and Stinky's flight-target pick dropped 1.7.10's second `canSeeTarget` call: an air candidate the feet-level ray refused is accepted in the port (REPORT, 2026-09-04; raised by the ENT-S-118 refuter)
+
+- **Evidence:** orig Spyro.java:647 and Stinky.java:640 reject a flight-target candidate that is air but fails
+  `canSeeTarget(candidate)` — the same eye-plus-0.75 → candidate block ray the target scan ran (orig :436-438 /
+  :317-319; ENT-S-118 restored the scan's call). Port EntitySpyro.java:439 and EntityStinky.java:371 accept the
+  candidate on `isAir()` alone, so the flyer may pick a flight target behind a wall or under a floor it cannot see
+  and steer into it. ThePrince and ThePrincess had only the scan-loop caller. The shape is ENT-S-089's item 3 (the
+  Vortex's dropped `canSeeTarget` on its flight target). The private `canSeeTarget(x, y, z)` helpers ENT-S-118 added
+  to both classes are the transcription target. No MOD record.
+- **Resolution:** REPORT — for the owner's ruling as a parity bug in classic: add `&& canSeeTarget(cx, cy, cz)` at the
+  orig position of the flight-target acceptance in both files, with one pin each (an air candidate behind a one-block
+  wall refused, accepted with the wall gone; the ENT-S-118 feet-ray shape). A flight / wander row, outside the
+  targeting ledger.
 ### TEST-003 — Config-flipping gametests in the concurrent default batch
 
 - **Impact:** MEDIUM (suite reliability) — boss005/boss012 flip a global
@@ -7419,3 +7780,14 @@ keeps BUG-036. Commit 4ea395c's message retains the old number.)*
   spawner-count outcome). Both passed again once the new tests got their own
   batch (`renderInfoParity`). Both are order-sensitive and belong on the
   TEST-003 follow-up list; new test classes should declare their own batch.
+- **Amendment (2026-09-04, harness slice):** the order model above is corrected by
+  `phase_g_reports/harness_slice_2026-09-04.md` (presented for ruling, nothing applied): the in-batch order is
+  NeoForge's `HashSet<Method>` iteration over ALL declared methods of the `@GameTestHolder` classes
+  (GameTestHooks.java:46, :78), so adding an own-batch test class does not reshuffle the default batch, while
+  adding, removing or renaming a default-batch method shifts every later test by one (the 49→50 and 99→100
+  positions cross a bucket boundary); separately, any change in an earlier batch's test count moves every
+  default-batch grid cell, which changes which tests border wilderness and start late (the i050 channel). The
+  report also names the multi-tick global windows (leaf_monster's PlayNicely, big_bertha's PVP, item064's
+  unrestored LESS_ORE), the failure-path player leaks (boyfriend_tempt_panic_door, leon_ducky) and the
+  TrooperBug's own Spit Bug summon behind i127's acid; the i165 chunk-wait geometry (ticket centre at +8 vs
+  the checked cell at +10) is the one fix applied, owner-approved.

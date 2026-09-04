@@ -593,6 +593,10 @@ root-order slice with the GeckoLib per-entity cache eviction, then Slice 4c). Th
   never one by one. Waves: 1 = T7 then T1; 2 = T3a, T2, T5, T6 (+ the T9 split); 3 = T8, T3b, T3c, T4,
   T10. One refuter on S/M batches, two on L; one changelog paragraph per wave. Targeting lanes never
   block the Phase G chain — the chain keeps gate priority; targeting batches gate when there is room.
+- Refuters are counted by files touched: over twenty files gets two refuters regardless of the ledger's
+  S/M/L label (owner, after wave 1). Flaky default-batch tests are never fixed by retries or widened
+  waits: a harness slice finds root causes and isolates tests (mock-player placement, cross-test
+  leakage, TEST-003 order sensitivity), findings presented before changes.
 - Before any Tier-2 slice: the spawn-100 benchmark, classic versus candidate, with a proposed
   regression threshold; its baseline also measures MHLib's bone capture per frame and sync per tick
   and on the wire. Proof rule: geometry-only changes take one refuter; motion transcriptions,

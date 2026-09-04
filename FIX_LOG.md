@@ -5074,3 +5074,63 @@ Pointysaurus control (harness), red once on the TEST-003 pair i127 / i165 with t
 T7: one refuter, upheld (two non-blocking test gaps recorded). T1: one refuter, refuted — B1 (Nastysaurus / TRex: the unconditional blanking of the pass copy made a scan-owned pick stick under the flag; now only a foreign occupant is blanked) and B2 (Hammerhead: the port-only fallback read of the slot re-admitted the blanked grudge; now gated with the pass) fixed as proposed with three added pins; eight non-blocking gaps recorded, ENT-S-116 filed from the sweep.
 
 GATE (wave1): gate wave1f green: build legs (asset audit 0 errors, G1 PARITY 2 + 11 models, referenceGeometry, referenceRenderers, queenPartPlacementProbe) and runGameTestServer 'All 585 required tests passed' (517 + 12 PeacefulGateParityTests + 56 PlayNicelyGateParityTests). Earlier runs: wave1 red on the Pointysaurus control (the framework mock's isCreative() override, harness fixed); wave1b, wave1d, wave1e red only on default-batch TEST-003 tests (i127 acid, i165 chunk wait, i050 vortex drag) with every wave pin green — the i165 flake is the FORCED ticket centred at pad +8 while the checked cell is +10 (a chunk boundary between them in both failing layouts); wave1c green on the pre-refuter code.
+
+## ENT-S-116 (2026-09-04) — PlayNicely griefing gates, fixed in classic
+
+ENT-S-116 (2026-09-04, owner "ENT-S-116: go, one refuter") — the two 1.7.10 PlayNicely griefing gates outside
+target selection restored. `EntityStinky.customServerAiStep` (:284-287): the flying Stinky's idle block-eat (the port's `eatFlowers`;
+orig eats coal ore — ENT-S-119) now runs only while `!OreSpawnConfig.PLAY_NICELY.get()`, the 1-in-50 roll spent
+first (orig Stinky.java:583).
+`EntityGammaMetroid.customServerAiStep` (:130-136): the Gamma Metroid's stone-eat gains the same term between the
+1-in-20 / 1-in-100 roll pair and the sitting test (orig GammaMetroid.java:435). Classic transcription, polarity
+`PlayNicely == 0` ↔ `!PLAY_NICELY.get()`, nothing else changed; both files already imported OreSpawnConfig. New
+`PlayNicelyGriefingGateTests` (own batch `playNicelyGriefingGates`): `s116_stinky_583_flower_eat` and
+`s116_gammametroid_435_stone_eat` — the block eaten and the +1 heal with the flag off, neither with it on, the
+flag (and the Metroid test's `mobGriefing`) restored in a finally. javac rc 0; the gradle gate is the
+orchestrator's.
+
+## TARGETING WAVE 2 (2026-09-04) — ledger batches fixed in classic
+
+T3a → ENT-S-117 (the whole proactive hunt missing, L, two refuters): the four hunts transcribed from orig —
+the Attack Squid's 1-in-10 pass acting on a transient pick (the Alien shape) over the 10x4x10 box with the orig
+whitelist ladder (non-creative players, Girlfriend, Boyfriend, Zombie, Villager, Spider, CaveSpider, Lizard; Ghost /
+GhostSkelly refused), the 1-in-5 buddy adoption and follow, the `wasshot` rule (a Kraken-launched squid takes every
+living entity), the PlayNicely and creative gates and the orig sorter; the Water Dragon's `!PEACEFUL && nextInt(5)==1`
+pass over the 14x4x14 box with the own-kind exclusion, the tamed → monsters-only rule, the baby-never-hunts rule, the
+port's shared `isAttackableNonMob` helper (its membership T6's), the PlayNicely gate and the ENT-S-108 `scanPick`
+hand-off into the single slot; the Dragon's continuous IMob channel as a `NearestAttackableTargetGoal<Monster>` at
+target priority 1 with the ENT-S-115 live `canUse` and `HurtByTargetGoal` at 2 as orig ordered them; the Islands
+vampire butterfly's hunt (`butterfly_type == 1`, the Islands dimension, the 1-in-10, !PEACEFUL, the 8x5x8 box and the
+1.0 bite) as `ButterflyIslandsHuntGoal`, the else-branch of the flight retarget. Disclosed: the Water Dragon's
+`setTarget` clears the scan's mark on a change of occupant only, with a hurt-by-marked-pick hand-off, because the
+vanilla goal's same-entity re-assert would otherwise make a fresh pick sticky (the ENT-S-108 nine carry that
+exposure — observation for T5); Monster stands in for IMob (Slime, MagmaCube, Ghast, EnderDragon uncovered — named
+for the owner); the vanilla goal's poll cadence and sphere-in-box geometry versus 1.7.10's `EntityAITasks`; the
+Islands positive path has no gametest pin (the GameTestServer has no datapack dimensions), the code paths pinned by
+direct scan / filter / bite calls, an overworld negative and a roll-order count. `ProactiveHuntParityTests` (own
+batch, 50 generated). Refuted twice: A upheld with records corrections (orig Mothra implements IMob; GodzillaHead a port-only grant;
+the act cadence and the inherited canUse gate disclosed; the eye-level convention filed as ENT-S-120); B found one
+blocking defect, fixed — the Water Dragon's mark cleared on a hit the hurt timer swallowed, making a player pick
+sticky; the clear now requires the store, with a swallowed-hit pin (51 generated) — and "Kraken-launched" corrected
+to the Squid Zooka in both trees.
+
+T2 → ENT-S-118 (line-of-sight and feet-ray steps, M, one refuter): 19 port sites in 18 files, each at the orig
+position in its filter chain — thirteen filters and the Irukandji / Skate inline picks gain the port's `canSee` idiom
+`if (!this.getSensing().hasLineOfSight(target)) return false;` (AntRobot's stomp and hunt filters, Fairy, GiantRobot,
+Lizard, PitchBlack, PurplePower, the five robots, SpiderDriver; orig `getEntitySenses().canSee(e)`), and Spyro,
+Stinky, ThePrince and ThePrincess regain the second, feet-level block ray of orig's `canSeeTarget` (from 0.75 above
+their own feet to the candidate's position, `level().clip` with `Block.OUTLINE` / `Fluid.NONE`, the mapping ENT-S-089
+recorded for the Vortex's copy: liquids never stop the ray, every collidable block is tested on its selection
+bounds), and'ed onto the scan predicate in orig's short-circuit order. Nothing else in those methods: the Ant Robot's
+dircheck branch and the robots' shot cones stay T8's, the Lizard's AttackSquid grant and buddy side effect T6's /
+T10's, the Purple Power's tamed-pet / royalty steps and Mothra-as-prey T6's. Disclosed: the eye-to-eye idiom clips
+COLLIDER where 1.7.10's `canEntityBeSeen` used the selection-bounds ray — a port-wide approximation, not this batch's
+— and five earlier COLLIDER ports of the feet helper outside these files (ThePrinceAdult, ThePrinceTeen, Kraken,
+Brutalfly, Cockateil). `SightStepParityTests` (own batch, 23 generated: a stone wall midway breaks the eye line and
+the filter refuses, razed and it accepts; a parapet the eyes clear but the feet ray crosses, `findSomethingToAttack`
+null with it and the prey without; a short-grass parapet pinning the selection-bounds mapping). Refuted once, upheld (no code defect; two record corrections, three
+observations filed as ENT-S-121..123).
+
+T3a: two refuters (files touched under twenty, label L) — A (transcription fidelity) upheld with one records correction (orig Mothra implements IMob, so the Dragon's Monster channel no longer holds her) and five notes (GodzillaHead a port-only grant, the Luna Moth observation's home, the Water Dragon's act cadence, the butterfly goal's inherited canUse gate, the eye-level posY convention filed as ENT-S-120); B (slot semantics, goal mappings, tests) found one blocking defect, fixed (the Water Dragon's ownership mark cleared on a hit the hurt timer swallowed, making a player pick sticky; the clear now requires the store, a swallowed-hit pin added) and seven gaps recorded. T2: one refuter, upheld — no code defect, two record corrections, three observations filed (ENT-S-121..123).
+
+GATE (wave2): gate wave2b green: build legs (asset audit 0 errors, G1 PARITY 2 + 11 models, referenceGeometry, referenceRenderers, queenPartPlacementProbe) and runGameTestServer 'All N required tests passed' (585 + 2 PlayNicelyGriefingGateTests + 51 ProactiveHuntParityTests + 23 SightStepParityTests = 661). Earlier run wave2a: red only on the ENT-S-116 Stinky pin's precondition (the framework's relativePos mirrors both axes under Rotation.NONE; the test now derives the relative position from absolutePos(ZERO)); the i165 harness fix rode along green.
