@@ -8083,6 +8083,99 @@ keeps BUG-036. Commit 4ea395c's message retains the old number.)*
   presented for a ruling), the ledger's §3 counts stale by five, the ENT-S-124 ledger lines riding in the same
   docs commit, two cite / wording nits and the Godzilla :594 mojibake.
 
+### ENT-S-128 — Fifteen prey lists drifted from 1.7.10: the shared `isAttackableNonMob` membership, the Dragonfly's whitelist, the Lizard's, Purple Power's, Rat's, Terrible Terror's and Triffid's species steps, and the Boyfriend / Girlfriend monster task's own rules (targeting ledger batch T6, wave 2; FIXED 2026-09-04)
+
+- **Evidence:** targeting ledger batch T6 (`phase_g_reports/targeting_survey_2026-09-04.md`, §T6: 18 rows, 15
+  blocks, + 1 observation; §2 "allies / species exclusions" and "filter order" rows cited per block). 1.7.10 decided
+  prey by name, in fixed chains. (i) The shared `MyUtils.isAttackableNonMob` (orig MyUtils.java:77-115) — the
+  fallthrough of the Crab (:417), Mantis (:391), Molenoid (:274), TheKing (:981), TheQueen (:929) and WaterDragon
+  (:679) filters — granted EntityMob, Mothra, Leon, Dragon, Spyro, the royalty (`isRoyalty`, :46-75), GammaMetroid,
+  Cephadrome, WaterDragon, Girlfriend, Boyfriend, EntityVillager and Stinky; the port's (`util/MyUtils.java:54-63`)
+  granted EnderDragon, Kraken, Godzilla, GodzillaHead, Basilisk, Cephadrome, TheKing and TheQueen — the Kraken,
+  Godzilla, Basilisk, King and Queen were EntityMob in both trees (covered by orig's first term), the GodzillaHead an
+  EntityLiving outside orig's list and the EnderDragon no member at all, and eleven members had been dropped. (ii)
+  The Dragonfly's whitelist (orig Dragonfly.java:213-228: EntityAnt, EntityButterfly, Cockateil, EntityMosquito,
+  Firefly, EntityHorse unless `DragonflyHorseFriendly`) had become a `bbWidth <= 0.6` rule
+  (`entity/ai/DragonflyHuntGoal.java:92-99`) — chickens, bats, rabbits, cats, silverfish, endermites, baby animals and
+  the Cricket / Chipmunk-sized OreSpawn mobs hunted, horses (1.4 wide) never; the Lizard's AttackSquid grant (orig
+  Lizard.java:316) was gone (Lizard.java:137-139); the Purple Power's tamed-pet step (orig PurplePower.java:261-263,
+  every orb type but 0 / 10) and royalty step (:264) were gone (PurplePower.java:214 `return true`); the Rat's
+  Irukandji, Skate, Whale, Flounder and DungeonBeast steps (orig Rat.java:201-224) were gone (EntityRat.java:200, the
+  Rat step only); the Terrible Terror spared nine kinds at HEAD where orig TerribleTerror.java:229-285 spared nineteen — Mothra,
+  LurkingTerror, Bee, Mantis, LeafMonster, Triffid, Dragon, EntityButterfly, Firefly hunted
+  (EntityTerribleTerror.java:160-168); the Triffid's named seven (orig Triffid.java:291-311: EntityCreeper,
+  EnderReaper, Triffid, TerribleTerror, LurkingTerror, PitchBlack, Dragon; every other living thing prey, :318) had
+  become a blanket `!(target instanceof Monster)` (EntityTriffid.java:263) — every monster spared, the Dragon (a
+  tameable) hunted. (iii) The Boyfriend / Girlfriend monster task's filter (orig MyEntityAITarget.java:78-129 behind
+  the `IMob.mobSelector` list of MyEntityAINearestAttackableTarget.java:56: EntityPigZombie :99 and EntityEnderman
+  :102 refused, Mothra :105 taken ahead of sight, EntityCreeper :111 and EntityGhast :114 taken) had no port
+  counterpart — the vanilla `NearestAttackableTargetGoal` carried the ENT-S-124 `Enemy` test alone (Boyfriend.java:150,
+  Girlfriend.java:215): zombified piglins and endermen prey, the Mothra (an IMob in 1.7.10, orig Mothra.java:52; an
+  `AmbientCreature` in the port) never. (iv) The DungeonBeast, EmperorScorpion and HerculesBeetle chains (orig
+  :216-239 / :476-493 / :401-406) were absent at the survey's snapshot and restored by ENT-S-108 after it. What a
+  player saw: the Mantis, Molenoid, Crab, King and Queen ignored Leonopteryxes, Dragons, Spyros, Gamma Metroids, Water
+  Dragons, Girlfriends and Boyfriends, villagers, Stinkies and (the Mantis, Molenoid, Crab) the royals, while a Godzilla
+  Head or the Ender Dragon drew them; the Dragonfly ate chickens, rabbits, cats and baby animals and never a horse;
+  the Lizard ignored Attack Squids; the Purple Power attacked tamed pets and the royal family; the Rat attacked
+  Irukandjis, Skates, Whales, Flounders and Dungeon Beasts; the Terrible Terror hunted nine of its Danger-Dimension
+  kin; the Triffid spared every monster and hunted the Dragon; the Boyfriend and Girlfriend attacked zombified piglins
+  and endermen and ignored Mothra. No MOD record (MOD-036 is the Girlfriend's Valentine rule only).
+- **Resolution:** FIXED (2026-09-04, wave 2 — owner: "Targeting ledger, ruled by wave … Generated pins wherever the
+  pattern allows … Next: T5 and T6"). 9 files edited, 6 callers inherit, 3 sites pinned as present at HEAD:
+  [the site table of §1]. Shapes: (h) the helper's membership rewritten as orig's thirteen terms in orig order —
+  `Monster` for EntityMob (Kraken, Godzilla, Basilisk, King and Queen ride through it as they did through orig's :78),
+  `EntityLeon` / `EntitySpyro` / `EntityGammaMetroid` / `EntityStinky` / `Villager` for the renamed classes, the
+  port's `isRoyalty` for orig's — the GodzillaHead and EnderDragon grants gone; the six HEAD callers unchanged, each
+  call site confirmed at its orig position; (s) species steps transcribed at the orig position, polarity and order
+  into the private filters: the Dragonfly's `isPrey` whitelist (`AbstractHorse` for EntityHorse, the port's mapping;
+  `DRAGONFLY_HORSE_FRIENDLY` read live) replacing the width rule, with HEAD's sight term ahead of it as orig :210
+  precedes :213; the Lizard's AttackSquid at the ladder's head; the Purple Power's tamed-pet (`TamableAnimal.isTame`)
+  and `!isRoyalty` steps after the player branch; the Rat's five steps around its Rat step (the two ghost steps are the
+  ignore screen's in both trees); the Terrible Terror's chain rewritten in orig order with the nine restored (the
+  :283 duplicate not repeated); the Triffid's seven behind the sight line for the blanket, the self-kind step at its
+  :297 slot; (g) the companion goals' predicate — the ENT-S-124 `Enemy` test first (orig's :56 pre-filter) with orig's
+  IMob Mothra named beside it (the ENT-S-124 record's own form), then `isMonsterPrey`: tamed target (:88-91), PigZombie
+  (:99), Enderman (:102), Mothra (:105), Creeper (:111), Ghast (:114), true (:128) — the construction, the ENT-S-115
+  `canUse` and MOD-036's Valentine goals untouched; (p) the three ENT-S-108 chains pinned, not edited. One-line orig
+  cite and `(ENT-S-128)` at every added step; nothing else in those methods. Disclosed: the owner rule (:92-94) is
+  vanilla's `TamableAnimal.canAttack` inside the goal's `TargetingConditions` (javap) and is not transcribed; the
+  Ghast is still refused by the engine's `Mob.canAttackType` (the ENT-S-124 disclosure, ENT-S-127) — the :114 step is
+  transcribed, no row; the tamed-target rule is inert behind the pre-filter (no port `TamableAnimal` is an `Enemy`,
+  no orig EntityTameable an IMob) — no row; the nearbyOnly path check (:117-127) is the construction's
+  `mustReach = false` (ENT-S-124's form) and stays with the ledger; the Mothra's own missing `Enemy` (ENT-S-117 /
+  ENT-S-124) is untouched — the companions name her; the King's and Queen's ledger rows list Mothra among the lost
+  prey, but she is refused at their ignore screen (:947 / :910) in both trees; WaterDragon.java:412-417 and
+  EntityLeon.java:790-802 now describe a superseded membership (files outside the batch, housekeeping), and
+  EntityLeon's ENT-S-110 inline copy is identical to the helper; the unused `entity/MyEntityAITarget.java` copy stays
+  (T9 / housekeeping). Pins: new `PreyListParityTests` (own batch `preyListParity`, TEST-003; a
+  `@GameTestGenerator` over a 161-row table, `preylistparitytests.s128_NN_<hunter>_<species>`), the
+  PitchBlackAllyTests shape: the species frozen 8 blocks off the frozen hunter (18 off the royal pair in empty_tall,
+  home written and facing east — the IgnoreScreenParityTests idiom), the private `isSuitableTarget` by reflection,
+  refused or granted as orig says, then a vanilla pig and a vanilla Zombie on the same spot with orig's own verdict
+  for that hunter (both refused by the Lizard and the Dragonfly; the Zombie taken by the Triffid — the row the blanket
+  failed; the pig refused by every helper caller). The helper: 16 direct rows (its thirteen members through
+  `MyUtils.isAttackableNonMob` on a spawned instance, a Kraken kept through the Monster term, a Godzilla Head and an
+  Ender Dragon refused) and 72 rows through the six HEAD callers — only the (caller, member) pairs the caller's own
+  chain leaves to the helper (a pair the caller decides earlier in both trees would hold with the helper reverted:
+  the Crab's own Villager / Girlfriend / Boyfriend grants, the Mantis's Mothra / WaterDragon refusals, the royals'
+  royalty / ignore-screen refusals and pre-granted EntityDragon, the Water Dragon's self-kind refusal, every Monster).
+  The Dragonfly's 9 rows drive the goal's private `findPrey` (the horse taken with the toggle off and refused with
+  it on — the flag set and restored in a finally — a Chicken and a Bat refused); the companions' 8 rows spawn the
+  hunter with its goals, read the `NearestAttackableTargetGoal<Mob>` off the target selector and ask `canUse()` under
+  the ForcedRoll seam, the pick read back (a Zombified Piglin and an Enderman refused, a Mothra and a Creeper taken);
+  the Purple Power's 5 rows set the orb type and tame a vanilla Wolf. Synchronous; no mock players; spawns discarded
+  in a finally; the batch this class alone; no documenting-only row. Compiled (javac, §5); the gametest run is the
+  gate's. Refuted once, upheld: every list, order, polarity and call-site position matches 1.7.10 and the 161 rows are
+  sound; three records corrections applied — the Mothra grant that orig placed AHEAD of the companion goal's sight
+  step (orig MyEntityAITarget.java:105 before :108) cannot be reproduced under the ENT-S-124 construction's mustSee,
+  so only a Mothra in sight is taken and the placement is DEFERRED beside the Ghast and nearbyOnly halves (the four
+  site comments corrected); the "every row fails with its line reverted" claim narrowed to the outcome-changing
+  steps (about 45 of the 161 rows pin steps HEAD already had, by the ledger's one-row-per-pair design); the kind
+  counts corrected. Observations for the ledger: the King and Queen map orig EntityHorse to vanilla Horse where the
+  Dragonfly uses AbstractHorse; the port-only BabyDragon rides under every Dragon term; orig Lizard.java:328-330's
+  buddy adoption inside the filter has no port counterpart; the frozen Ender Dragon and Godzilla Head spawns are
+  new to the suite.
+
 ### TEST-003 — Config-flipping gametests in the concurrent default batch
 
 - **Impact:** MEDIUM (suite reliability) — boss005/boss012 flip a global

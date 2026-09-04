@@ -5252,3 +5252,19 @@ and the target-in-a-selection-box blindness disclosed above.
 REFUTERS: ENT-S-121: two refuters (a mixin into vanilla) — both upheld the mixin, the five helpers and the eleven rows; both found the Ender Reaper's player-receiver site, fixed by hand; A's mapping residuals (fire, moving piston, the 200-step cap wording) recorded.
 
 GATE: gate c121a green: build legs (asset audit 0 errors, G1 PARITY 2 + 11 models, referenceGeometry, referenceRenderers, queenPartPlacementProbe) and runGameTestServer 'All 731 required tests passed' (720 + 11 LineOfSightConventionTests = 731).
+
+## TARGETING WAVE 2, T6 (2026-09-04) — exclusion and prey lists, the shared isAttackableNonMob membership
+
+T6 → ENT-S-128 (exclusion and prey lists, M, one refuter): the shared `MyUtils.isAttackableNonMob` rewritten to orig's
+thirteen terms in orig order (Monster for EntityMob; the port-only GodzillaHead and EnderDragon grants removed; Crab,
+Mantis, Molenoid, TheKing, TheQueen and WaterDragon inherit it at their orig positions), the Dragonfly's whitelist with
+the horse-friendly option read live, the Lizard's AttackSquid grant, the Purple Power's tamed-pet and royalty steps, the
+Rat's five refusals, the Terrible Terror's nineteen spared kinds, the Triffid's seven spared kinds with orig's Monster
+fallthrough, and the Boyfriend / Girlfriend goal predicate (tamed target, PigZombie, Enderman, Mothra, Creeper, Ghast in
+orig order, composed with the ENT-S-124 form; the Valentine rule stays MOD-036's); the three ENT-S-108 residual lists
+were present at HEAD and are pinned. `PreyListParityTests` (own batch, 161 generated). Refuted once, upheld; three records corrections (the Mothra-before-sight deferral, the revert claim narrowed, the kind
+counts) and four observations for the ledger.
+
+REFUTERS: T6: one refuter — upheld; three records corrections applied, four ledger observations.
+
+GATE: gate t6a green: build legs (asset audit 0 errors, G1 PARITY 2 + 11 models, referenceGeometry, referenceRenderers, queenPartPlacementProbe) and runGameTestServer 'All 892 required tests passed' (731 + the PreyListParityTests rows).
