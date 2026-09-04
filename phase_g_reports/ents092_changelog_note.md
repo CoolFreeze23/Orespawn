@@ -204,3 +204,13 @@ Boyfriend and Girlfriend prefer creepers the same way in their monster hunt (the
 as their own 1.7.10 task did; their Valentine's Day hunts still take the nearest. Two equally distant players facing a
 Brutalfly's or Mothra's strafe are settled the 1.7.10 way (the last one scanned) — unchanged since the last batch, now covered
 by tests. Nothing else about who they hunt, how far they look or when they look changes.
+
+Targeting parity, T10 (the last of wave 3). The Ender Knight and Ender Reaper have their enderman reflexes back: stare at one from
+close by and it blinks away, keep your distance from one that has marked you and after a second and a half it blinks to your side,
+and it screams and hisses its stare sound at you as it locks on, exactly as in 1.7.10 — looking for you every tick again, not every
+other. The Hammerhead and the Irukandji bite on the original two dice (about one time in two and two in five, instead of one in
+three and one in four). Lizards pair up again: a Lizard that notices another now and then adopts it as a buddy and tags along. And
+one Luna Moth in four — those carrying the butterfly's hidden vampire type (`butterfly_type == 1`, set by the inherited
+constructor), whatever its moth skin — hunts players and horses in the Islands the way the butterfly it descends from does, while
+still chasing torches under cover. With that, wave 3 of the targeting parity work is complete: creative-player handling, where the
+hunters look, how far they look, whom they pick first, and the odds and ends above are all the original's again.

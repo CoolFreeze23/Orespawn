@@ -611,7 +611,9 @@ root-order slice with the GeckoLib per-entity cache eviction, then Slice 4c). Th
   spawn / effect sites; class (a) and the §3.1 accidents not reproduced, PN entries; the evening set's
   ENT-S-120 items superseded), then wave 3 (T8 with the Ender Knight's stare ray, T3b, T3c, T4, T10). The
   Phase G chain keeps gate priority throughout. Harness: F1 applied with one refuter, F5 open, the mock
-  player's spawn shield cleared only in the row that pins the hit (F0.6).
+  player's spawn shield cleared only in the row that pins the hit (F0.6). The ENT-S-120 premise was
+  then verified against Mojang's 1.7.10 jar (2026-09-05): the server player's posY was the feet, so
+  the ruled OrigPos sweep is held for the owner's amendment (`phase_g_reports/ents120_premise_2026-09-05.md`).
 - Before any Tier-2 slice: the spawn-100 benchmark, classic versus candidate, with a proposed
   regression threshold; its baseline also measures MHLib's bone capture per frame and sync per tick
   and on the wire. Proof rule: geometry-only changes take one refuter; motion transcriptions,

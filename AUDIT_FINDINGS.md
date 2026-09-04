@@ -9273,6 +9273,244 @@ keeps BUG-036. Commit 4ea395c's message retains the old number.)*
   pair, `pick == crouching`, 23.15 against 24.08) beside ENT-S-139's two controls; the ledger's Irukandji cell (:515, status and
   note) and the ENT-S-135 (c) record corrected.
 
+### ENT-S-141 — The Ender Knight and Reaper never teleported at a starer or toward a far target and their pick set no scream or stare sound, the Hammerhead and Irukandji bit on one die where 1.7.10 rolled two, the Lizard's filter no longer adopted a Lizard buddy, and the Luna Moth lost the Islands hunt it inherited (targeting ledger batch T10, wave 3 — the last; FIXED 2026-09-05)
+
+- **Evidence:** targeting ledger batch T10 (`phase_g_reports/targeting_survey_2026-09-04.md` §T10: 5 rows, 5 hunters, plus the
+  ENT-S-117 refuters' Luna Moth observation; the §2 rows at :363 (EnderKnight), :377 (EnderReaper), :489 (Hammerhead), :517
+  (Irukandji), :592 (Lizard)), with ENT-S-135's disclosed residual (i) — the Ender pair's pick on the engine's every-other-tick
+  goal pass for orig's every tick, "a T10 row candidate" — and ENT-D-020's resolution text, which called the Reaper's stare
+  teleports (:126-130) "all ported" at a port :96-113 that carried the stare test alone. Per row, orig → port at HEAD (6e35fbf)
+  before this fix:
+
+  | # | species | aspect | orig (1.7.10) | port before the fix |
+  |---|---|---|---|---|
+  | 1 | EnderKnight | other | EnderKnight.java:124-138 — at the head of `onLivingUpdate`, server-side and alive (:124), off the target the legacy loop had left: a player target that stares (:126, `shouldAttackPlayer`) within distSq 16 (:127) → `teleportRandomly` (:128), `teleportDelay` 0 (:130); any other target beyond distSq 256 (:131) → `teleportDelay++ >= 30` → `teleportToEntity` (:149-157: the unit vector from the target to the knight's mid-height, 16 blocks along it, x / z jittered ±4, y by `nextInt(16) − 8`, the landing through :159-206's `teleportTo`), the counter 0 on a landing (:132); no target → screaming off, the counter 0 (:134-137). The pick (:61-81) played "mob.endermen.stare" at the player while `stareTimer` read 0, counted it and reset past 5 (:68-73) — once at the pick; the :68-73 six-tick cadence recurs only while the pick is re-asked on target-less ticks (a starer picked and dropped each tick — a creative starer under td.bq's same-tick drop), since orig's findPlayerToAttack ran only while entityToAttack was null — and set screaming on for a starer (:74) and off with the timer reset for a nearest non-starer (:77-78); the fields :31-32, never saved (:53-59) | EnderKnight.java:183-219 (aiStep: the daylight and fire teleports alone, :200-217), :221-226 (`teleportRandomly`; no `teleportToEntity`), :85-119 (the goal — `findTarget` :92-102 the pick with no side effect; screaming set by `hurt` :231 only); the pick asked on the engine's every-other-tick goal pass (ENT-S-135 (i)) |
+  | 2 | EnderReaper | other | EnderReaper.java:124-138, :149-157, :61-81 (:68-78), :31-32 — the same within 81 | EnderReaper.java:180-219, :221-226, :81-115 — the same; ENT-D-020 ("all ported", port :96-113) did not hold at HEAD for :126-131 |
+  | 3 | Hammerhead | other | Hammerhead.java:213 — `nextInt(3) == 1 \|\| nextInt(4) == 1` inside the melee branch (:211-215): the second die drawn only when the first misses (one bite in two) | Hammerhead.java:154 — `nextInt(3) == 1` alone (one in three) |
+  | 4 | Irukandji | other | Irukandji.java:258 — `nextInt(4) == 0 \|\| nextInt(5) == 1` inside the bite branch (:256-260) (two bites in five) | Irukandji.java:196 — `nextInt(4) == 0` alone (one in four) |
+  | 5 | Lizard | other | Lizard.java:328-330 — inside `isSuitableTarget`, after the Chicken step (:325) and ahead of the final false (:331): `instanceof Lizard && nextInt(10) == 1 && follow_time <= 0` → `buddy = it` | Lizard.java:134-143 — the ladder ends at the Chicken step, no adoption; `buddy` (:62) written by the cod interaction alone (:125); its consumers (:229-231 the buddy walk when no prey is found, orig :283-285; :236-238 the follow-time walk, orig :289-291) present |
+  | 6 | EntityLunaMoth (observation) | inherited hunt | EntityLunaMoth.java:117-122 — `updateAITasks` called `super.updateAITasks()` first (:122): the butterfly's flight with the Islands vampire hunt in its retarget's else branch (EntityButterfly.java:161-169 — 1-in-10, DimensionID4, `butterfly_type` 1, not Peaceful; the 8/5/8 scan :217-230, the bite :183-192) ran on the moth beside its own loop (:123-155) | EntityLunaMoth.java:48-51 — `registerGoals` registered `LunaMothFlightGoal` (an `AmbientFlightGoal` with the torch retarget, entity/ai/LunaMothFlightGoal.java:24-47) in the flight slot and nothing else: no hunt |
+
+  What a player saw: the Ender Knight and Reaper stood still when stared at from close by and never blinked toward a target that
+  kept its distance, and stayed silent (no stare sound, no scream) until hit; the Hammerhead bit one time in three and the
+  Irukandji one in four where 1.7.10 bit one in two (1 − 2/3 · 3/4) and two in five (1 − 3/4 · 4/5); Lizards never paired up; a
+  Luna Moth carrying the hidden vampire type (butterfly_type == 1) never hunted in the Islands. No MOD record covers any of it (MODERNIZATION_NOTES.md carries no
+  Luna Moth or moth record; the flight-goal extraction is AmbientFlightGoal's own javadoc, no MOD number), so the observation was
+  coded, not split. The §T10 IrukandjiArrow observation (lane M O5; count :88-90, ding :100-103): closed by ENT-S-111 (2026-09-04)
+  — port IrukandjiArrow.java:89-106 gates count, push and ding on `hit instanceof Mob` — no T10 action.
+- **Resolution:** FIXED (2026-09-05, wave 3 — ruled 2026-09-04: "wave 3 = T8, T3b, T3c, T4, T10"; the wave's last batch). Nine port
+  files, every site at the orig position with the orig polarity, dice order and short-circuit; T8's / T3b's Ender goals, T3b's
+  Hammerhead / Irukandji passes, T2's / T6's / T4's Lizard ladder and sorter and T3a's butterfly goal untouched but for the lines
+  below.
+  (a) Rows 1-2 — EnderKnight.java / EnderReaper.java: the fields `teleportDelay` / `stareTimer` (:43-46 / :42-45, orig :31-32;
+  never saved, as orig :53-59). The pick's side effects inside the goal's `findTarget` (:107-125 / :104-122): the nearest player
+  found (:65), the conditions' stare test (:67) → the stare sound at the player's spot while the timer reads 0 —
+  `level.playSound(null, x, y, z, ENDERMAN_STARE, HOSTILE, 1, 1)` for orig :69's `playSoundAtEntity`, every player near the spot,
+  the starer included — the timer counted and reset past 5 (:71-73) — once at the pick; the :68-73 six-tick cadence recurs only
+  while the pick is re-asked on target-less ticks (a starer picked and dropped each tick — a creative starer under td.bq's
+  same-tick drop), since orig's findPlayerToAttack ran only while entityToAttack was null — screaming on (:74), the pick (:75);
+  else the timer and the scream off (:77-78); no player → nothing (:80) — set even for the creative starer `canUse` nulls the same
+  tick, as td.bq left it
+  (ENT-S-132's drop is after the pick). The teleport block at the head of `aiStep`, ahead of `super.aiStep()` (:262-284 /
+  :263-285 — orig's `onLivingUpdate` ran ahead of super's legacy loop and the port's aiStep runs ahead of super's goal pass, so the
+  block reads the target the previous tick's pick or hold left, as orig read it): `!isClientSide && isAlive()` (:124), a staring
+  player target inside distSq 16 → `teleportRandomly()` and the counter 0 (:126-130), else `distanceToSqr > 256 &&
+  teleportDelay++ >= 30 && teleportToEntity(target)` → the counter 0 (:131-132 — the same short-circuit: no count inside 256, no
+  reset short of a landing), no target → screaming off and the counter 0 (:134-137). `teleportToEntity(Entity)` (:302-312 /
+  :303-313 — orig :149-157 line for line: the y term `bb.minY + height / 2 − target.getY() + target.getEyeHeight()` in the
+  expression's own sign order with `posY` read as the port's `getY()` — the convention every Ender site follows (ENT-S-132's :89
+  mapping) — the 16-block reach, the ±4 jitter, `nextInt(16) − 8`, landed through `randomTeleport`, the port's existing mapping
+  of orig :159-206's `teleportTo` as `teleportRandomly` uses it). Orig :120-123 between (`isJumping = false`, `faceEntity` 100 /
+  100) are the legacy loop's steering — the port's look and melee controls — and are not this row. The pick's cadence (ENT-S-135's
+  disclosed residual (i), the T3b refuter's Q2): a `customServerAiStep` override (:157-163 / :154-160) runs
+  `targetSelector.tick()` on the tick `Mob.serverAiStep` only ticks the running goals (`(tickCount + id) % 2 != 0 && tickCount >
+  1`, the engine's own test) — after the engine's pass slot and the navigation, as the engine's pass sits ahead of
+  `customServerAiStep` — so the pick, the creative drop and the hold are asked once every server tick as orig's legacy loop asked
+  them; the goals themselves (T8's selector and same-tick drop, T3b's `findTarget`, ENT-S-129's hold, the revenge goal's
+  `canAttack`) are untouched, and a recorded attacker is taken on the next target pass — now at most one tick after the hit (a
+  player's hit lands in the connection phase after the entity tick), where the engine's cadence could leave two (orig's
+  `attackEntityFrom` stored it at once). The ENT-S-135 comment lines (:86-89 / :83-86) name the closure.
+  (b) Row 3 — Hammerhead.java:154: `nextInt(3) == 1 || nextInt(4) == 1` (orig :213); the pass gate (:131), the range test and the
+  attacking flag as T3b / T5 left them.
+  (c) Row 4 — Irukandji.java:196: `nextInt(4) == 0 || nextInt(5) == 1` (orig :258); the pass and its ENT-S-129 mark untouched.
+  (d) Row 5 — Lizard.java:142-144: `if (target instanceof Lizard && this.random.nextInt(10) == 1 && this.followTime <= 0)
+  this.buddy = target;` ahead of the ladder's final false — orig :328-330's three terms in orig's order (the roll drawn for
+  Lizard candidates alone, ahead of the `follow_time` guard), the world random read as the entity's (the ENT-S-093 stream
+  convention the file already follows at :216); the port's `buddy` consumers were present and read it.
+  (e) Row 6 — entity/ai/ButterflyIslandsHuntGoal.java:57-61: a protected `(EntityButterfly, Params)` constructor the public one
+  delegates to (:48-50); entity/ai/LunaMothFlightGoal.java:27 `extends ButterflyIslandsHuntGoal`, its constructor
+  `(EntityLunaMoth)` over `Params.lunaMoth()` (:34-36), its torch-seeking `pickRetarget` override unchanged — the T3a shape: the
+  moth's flight goal IS the butterfly hunt goal (the hunt in the retarget's else branch — the 1-in-10, the Islands, the type-1
+  skin, not Peaceful, the 8/5/8 scan sorted by GenericTargetSorter, the flight target onto the prey, the bite inside distSq 6)
+  with the moth's own retarget on top, as orig :122's `super.updateAITasks()` ran the hunt on the moth; EntityLunaMoth.java:53-56
+  registers it unchanged (the javadoc :46-51 says so), EntityButterfly.java:72-73 the comment. `Params.lunaMoth()` and the torch
+  retarget are not this row (below, (v)).
+  Pins: new `MiscTargetingParityTests` (own batch `miscTargetingParity`, TEST-003; a `@GameTestGenerator` over 21 rows
+  `misctargetingparitytests.s141_NN_<row>` — the Ender pair's five each, 01-05 the Knight and 06-10 the Reaper, the Hammerhead's
+  three (11-13), the Irukandji's three (14-16), the Lizard's three (17-19), the Luna Moth's two (20-21)). Tick-driven:
+  `s141_01 / 06_<ender>_126_staring_target_within_4_teleports_randomly` — the mob spawned LIVE at rel (20,1,24) of the empty_large
+  floor (its goals and AI on, MOVEMENT_SPEED zeroed so nothing but a teleport moves it, `Entity.random` swapped for
+  `TeleportRolls`: nextFloat 1.0 quiets the daylight dice, nextDouble 0.5625 and nextInt(64) → 32 fix the random teleport at
+  +4 x / +4 z / level) with a survival starer 3 blocks east (distSq 9; the stare and the ray asserted): after 20 ticks the mob
+  holds the starer, stands 4 east and 4 south of its spawn (the pick on the first tick, the teleport on the next; the stale stare
+  no longer lines up after the move, so distSq 17 runs the far branch quiet — one teleport), the counter reads 0, the scream is on;
+  `s141_02 / 07_<ender>_131_far_target_held_30_ticks_teleports_toward_it` — the live mob and a frozen Zombie 17 blocks east
+  (distSq 289) primed through `setLastHurtByMob` with `tickCount` raised past the goal's initial stamp (the TargetReleaseParityTests
+  idiom): the revenge goal takes it on the first pass and holds it (the legacy hold), the counter climbs one per tick, and after
+  45 ticks the mob stands at the transcribed landing (the test recomputes orig :150-155 from the live entities under the pinned
+  jitter 0.5 → 0 and nextInt(16) → 11: 15.7 blocks east, the pre-search spot 0.05 above the floor and asserted so, gravity setting
+  the live mob down), the counter 0, the Zombie held. Synchronous (frozen mobs, direct calls): `s141_03 / 08_<ender>_74_pick_sets_
+  screaming_and_stare_cadence` — the player goal asked `canUse()` seven times with a survival starer 8 blocks east and a
+  `PlayLevelSoundEvent` ear at the player's spot (the StinkyIdleParityTests BurpEar seam, ENDERMAN_STARE within 2 blocks): the
+  first call picks, screams and sounds once with the timer 1; calls 2-5 count the timer 2..5 silent; the sixth resets it to 0
+  silent; the seventh sounds again with the timer 1 (the :68-73 six-tick cadence as it recurs while the pick is re-asked — the
+  pin's seven direct `canUse()` calls are that re-asked case); the player looking away → no pick, the
+  scream and the timer off, no sound; `s141_04 / 09_<ender>_124_far_counter_and_no_target_reset` — a direct `aiStep()` on the frozen
+  mob (the ENT-S-129 daylight row's idiom; noAi means no travel, so a landing is read exactly; the random re-pinned ahead of each
+  teleport step — the toward jitter 0.5 → 0, then the random teleport's 0.5625 → +4 / +4 — since both draw `nextDouble()`): no
+  target → a written counter 7
+  and the scream cleared and nothing moves; a non-staring survival target 8 blocks off → the counter holds at 7 and the scream
+  stands (distSq 64 inside 256); the same target moved 17 blocks off → three ticks count 7 → 10 with no teleport; the counter
+  written 30 → the next tick lands the mob at the transcribed toward-spot (16 blocks along the line, +3 on y ahead of the y term,
+  within 1e-3) and the counter reads 0; the player then 3 blocks east staring → the next tick lands the mob 4 east / 4 south (the
+  random teleport) with the counter 0; `s141_05 / 10_<ender>_61_pick_every_tick_off_tick_pass` — `customServerAiStep` by
+  reflection on the frozen mob with a survival starer 8 blocks east: with `tickCount + id` even (the engine's own pass parity)
+  nothing is picked and the goal is not running; with it odd the goal is started on the starer. The dice, one `customServerAiStep`
+  by reflection on the frozen hunter under CreativeGateParityTests' `ScriptedRolls` (the pass gate, then the dice in draw order)
+  with a survival player inside the bite reach, its spawn shield cleared (the row's signal is the bite), 1000 HP, the attacking
+  flag 1 asserted as the branch's precondition: `s141_11_hammerhead_213_second_die_alone_bites` (3 → 1 the gate, 3 → 0, 4 → 1: the
+  bite lands, both dice drawn), `s141_12_hammerhead_213_first_die_fires_second_undrawn` (3 → 1, 3 → 1, 4 → 1 scripted: the bite
+  lands and the script's remainder is exactly `[4->1]`), `s141_13_hammerhead_213_both_dice_miss_no_bite` (3 → 0, 4 → 0: no bite,
+  both drawn) — the player 5 blocks east, inside 7 + w/2; `s141_14..16_irukandji_258_*` the same with the water scan's 10 → 1 and
+  the gate 8 → 1 scripted ahead and the player 1.2 blocks east (distSq 1.44 inside 3): (4 → 1, 5 → 1) bites, (4 → 0, 5 → 1) bites
+  with `[5->1]` undrawn, (4 → 1, 5 → 0) no bite. The Lizard's private filter by reflection with a frozen Lizard 5 blocks east in
+  sight: `s141_17_lizard_328_lizard_candidate_adopted_on_1` (nextInt(10) → 1: false, `buddy` reads the Lizard, the roll drawn),
+  `s141_18_lizard_328_not_adopted_on_0_roll_for_lizards_alone` (a Zombie 5 blocks west leaves the script untouched — no roll for
+  a non-Lizard; the Lizard on 0 is neither prey nor adopted, the roll drawn), `s141_19_lizard_328_follow_time_guard_refuses_
+  adoption` (`followTime` written 50: the roll 1 drawn and the adoption refused — orig's term order). The Luna Moth:
+  `s141_20_lunamoth_122_hunt_goal_registered_in_flight_slot` (the goal selector carries exactly one `ButterflyIslandsHuntGoal` at
+  priority 8 — its own `LunaMothFlightGoal` — and no plain `AmbientFlightGoal`), `s141_21_lunamoth_122_hunt_picks_as_the_
+  butterfly_does` (the moth's and a butterfly's goal scans — `findSomethingToAttack` by reflection — both take a survival player 5
+  blocks east and both refuse him in creative, the moth goal's filter agreeing). Survival players are plain ServerPlayers on the
+  player list (the framework mock's `isCreative()` is hardcoded true); the spawn shield is cleared in the six dice rows alone;
+  frozen mobs are set on the ground; PlayNicely and the difficulty asserted, never flipped; every spawn discarded, every player
+  removed and the ear closed in a finally (the tick-driven rows in their delayed step's). javac rc 0 (the nine sources and the
+  test class; no gradle in this lane; the two `getLightLevelDependentMagicValue` deprecation notes are the ENT-S-129 daylight
+  lines, pre-existing); the gametest run is the gate's (expected `All 1194 required tests passed`: 1173 + T10's 21).
+  Disclosed: (i) the stare sound is 1.7.10's `playSoundAtEntity(player, …)` — a server broadcast to every player near the
+  starer's spot, the starer included, on orig's cadence (once at the pick; the :68-73 six-tick cadence recurs only while the pick
+  is re-asked on target-less ticks — a starer picked and dropped each tick, a creative starer under td.bq's same-tick drop — since
+  orig's findPlayerToAttack ran only while entityToAttack was null) — mapped to
+  `Level.playSound(null, x, y, z, …)`; vanilla 1.21.1's Enderman plays its stare sound client-side for the stared-at player
+  alone on a 400-tick throttle (`EnderMan.playStareSound`) — orig's audience and cadence are kept, not vanilla's; (ii)
+  `teleportToEntity`'s y term keeps orig :150's `− posY + eyeHeight` sign order (the 1.7.10 vanilla Enderman's expression; vanilla
+  1.21.1's `teleportTowards` subtracts the target's eye y): the pre-search spot leans up by the target's eye height, the landing
+  search walks down to solid ground either way, and the port's `getY()` stands for orig's `posY` as at the :89 stare vector — the
+  test's `towardLanding` recomputes the same expression, so a ruling that maps it otherwise moves the production line and the
+  helper together; (iii) the counter and the timer are not saved (orig saved neither, :53-59) — a reload resets both, as
+  1.7.10; (iv) the Knight's wet teleport: orig EnderKnight.java:116 teleported when wet OR burning; the port's Knight fires on
+  `isOnFire()` alone (EnderKnight.java:257-260) while the Reaper carries both (EnderReaper.java:258-261) — a teleport trigger
+  outside the ledger's text, filed as ENT-S-142 (REPORT), not moved here; (v) the Luna Moth's own loop (orig
+  EntityLunaMoth.java:123-155) is not this row: `Params.lunaMoth()` carries the butterfly's numbers (AmbientFlightGoal.java:69-71
+  — xz range 7, y steer 0.7, forward 0.5 for orig :129's `nextInt(10) − nextInt(10)`, :150's 0.68 and :154's 0.75) and the port
+  runs the torch scan inside the retarget under `!canSeeSky` (LunaMothFlightGoal.java:38-46) where orig ran it in the retarget's
+  ELSE branch at night on a 1-in-10 (:133-145) — flight / wander rows outside the targeting ledger, filed as ENT-S-143 (REPORT);
+  the hunt now runs on the moth's single flight target under the moth goal's own retarget roll, where orig's hunt drove the
+  butterfly loop's private target under that loop's roll beside the moth loop's own (two targets, two steering passes a tick) —
+  the port's single-target flight goal is the pre-existing extraction (AmbientFlightGoal's javadoc), disclosed; (vi) the extra
+  target-selector pass on the off tick also asks the revenge goal's `canUse` and both goals' hold every tick — orig's loop did
+  both every tick; a recorded attacker is taken on the next target pass — now at most one tick after the hit (a player's hit lands
+  in the connection phase after the entity tick), where the engine's cadence could leave two — and ticks no goal twice that has a
+  `tick()` body (neither target goal overrides it); the goalSelector's
+  (melee, stroll, look) cadence is untouched and outside the ledger; (vii) the second dice keep orig's answers (`nextInt(4) ==
+  1`, `nextInt(5) == 1`), not normalised to 0; (viii) records notes for the orchestrator — ENT-D-020's "all ported (port
+  EnderReaper.java:96-113)" is stale — the current block `:263-285`, `teleportToEntity` `:303-313`, the pick side effects
+  `:104-122` under ENT-S-141; ENT-S-135's disclosure (i) closes with "ENT-S-141: customServerAiStep :157-163 / :154-160; pinned
+  s141_05 / s141_10"; (ix) the Ender pair's teleports land silent through the pre-existing `randomTeleport` mapping (orig
+  `teleportTo` :203-204 played "mob.endermen.portal" at the origin and the landing) and their +6.2 attacking speed boost (orig
+  :29-30, :100-107) is absent — a sound and a movement modifier outside the ledger, filed by the T10 refuter as ENT-S-144 /
+  ENT-S-145 (REPORT). Refuters: (the orchestrator's).
+
+### ENT-S-142 — The Ender Knight's wet teleport dropped: 1.7.10 teleported the Knight when wet OR burning, the port's Knight teleports on fire alone while the Reaper keeps both (REPORT, 2026-09-05; raised by the T10 lane)
+
+- **Evidence:** orig EnderKnight.java:116-119 — `if (this.func_70026_G() || this.func_70027_ad()) { this.setScreaming(false);
+  this.teleportRandomly(); }` (`isWet() || isBurning()`), the Reaper's :116-119 the same. Port EnderKnight.java:257-260 — `if
+  (this.isOnFire()) { … }` alone (the drown line :228-230 reads `isInWaterRainOrBubble()` for orig :97-99's water damage; the
+  teleport does not); port EnderReaper.java:258-261 — `this.isInWaterRainOrBubble() || this.isOnFire()` with the :116-119 cite. What
+  a player sees: an Ender Knight in rain or water takes the drown damage every tick (:97-99, ported) and stands in it, where 1.7.10's
+  blinked away (and the Reaper does). Noticed while ENT-S-141 placed the stare-driven teleports beneath this block; not a
+  targeting-ledger row (a teleport trigger), so not moved there.
+- **Resolution:** REPORT — for the owner's ruling. A one-term edit (`if (this.isInWaterRainOrBubble() || this.isOnFire())`, the
+  Reaper's line, with the :116-119 cite) and one pin in the ENT-S-129 daylight row's shape (a frozen Knight with its feet in a
+  water block, `aiStep()` driven once under a pinned random, the position changed and the scream off).
+
+### ENT-S-143 — The Luna Moth's own flight loop differs from 1.7.10 in its numbers and its torch gate: the port flies the moth on the butterfly's preset (range 7, y-steer 0.7, forward 0.5 for orig's 10 / 0.68 / 0.75) and seeks torches inside the retarget under a covered sky where 1.7.10 sought them in the retarget's else branch at night (REPORT, 2026-09-05; raised by the T10 lane)
+
+- **Evidence:** orig EntityLunaMoth.java:123-155 — the moth's own loop after `super.updateAITasks()` (:122): the retarget
+  `nextInt(100) == 0 || target near (< 4)` (:126) re-rolls the target inside `nextInt(10) − nextInt(10)` on x and z and `nextInt(6) −
+  2` on y over 25 tries (:128-132); ELSE at night (`!isDaytime`) on a 1-in-10 (:133) scans torches (`Blocks.torch` or
+  `OreSpawnMain.ExtremeTorch`, :63 / :70 / :81 / :88 / :99 / :106) in growing shells 2..14 with the step doubled past 6 (:138-141)
+  and sets the target above the nearest (:143); the steering :146-155 uses 0.5 / 0.68 / 0.5 with the blend 0.1 and moveForward
+  0.75. Port entity/ai/AmbientFlightGoal.java:69-71 — `Params.lunaMoth()` = (7, 6, 2, 0.5, 0.7, 0.1, 0.5f, 1.0f, 100, 4.0, 25), the
+  butterfly's row (:60-62) verbatim; entity/ai/LunaMothFlightGoal.java:38-46 runs the torch scan inside `pickRetarget` (a retarget
+  tick only), gated by `!canSeeSky` and the 1-in-10, never by the time of day, TORCH and WALL_TORCH only. What a player sees: a
+  moth that wanders a 7-block box instead of 10, climbs a little faster and flies slower, looks for a torch only when it is
+  re-picking a flight target (about once in 100 ticks) rather than on nine ticks in ten at night, and looks for one by day under
+  cover while ignoring the night sky in the open. Noticed while ENT-S-141 restored the moth's inherited Islands hunt (the T3a
+  shape); flight / wander rows outside the targeting ledger, so not moved there.
+- **Resolution:** REPORT — for the owner's ruling. `Params.lunaMoth()` of (10, 6, 2, 0.5, 0.68, 0.1, 0.75f, 1.0f, 100, 4.0, 25) and
+  the torch scan moved to an `onRetargetSkipped` override (the ENT-S-135 Dragonfly hook) under `!level.isDay() && nextInt(10) == 0`
+  (with the ExtremeTorch, if the port carries the block); the ENT-S-141 hunt shares that else branch, and orig ran the butterfly
+  loop's hunt (its own retarget roll) ahead of the moth loop's torch scan (its own roll) with two flight targets — the order and the
+  single target need the ruling too.
+
+### ENT-S-144 — The Ender pair's teleports are silent: 1.7.10's teleportTo played "mob.endermen.portal" at the origin and at the landing; the port's randomTeleport mapping broadcasts the particles only (REPORT, 2026-09-05; raised by the T10 refuter)
+
+- **Evidence:** orig EnderKnight.java:203-204 — the tail of `teleportTo` (:159-206), after the landing search (:169-191) and the
+  128 portal particles along the line (:192-202): `this.worldObj.playSoundEffect(d3, d4, d5, "mob.endermen.portal", 1.0f, 1.0f)`
+  at the origin (d3 / d4 / d5, the position read at :162-164 ahead of the move) and `this.playSound("mob.endermen.portal", 1.0f,
+  1.0f)` at the entity, now at the landing; a refused landing returned at :188-191 ahead of both. EnderReaper.java:203-204 the
+  same (:142-206 identical in the two files). Every orig teleport ran through it: the daylight escape (:114), the wet / burning
+  escape (:118), the staring branch (:128), the far branch (:131 → `teleportToEntity` :156) and `attackEntityFrom`'s
+  indirect-damage loop. Port EnderKnight.java:288-293 `teleportRandomly` and :302-312 `teleportToEntity` land through
+  `LivingEntity.randomTeleport(x, y, z, true)` (:292 / :311; EnderReaper.java:293 / :312), which broadcasts entity event 46 (the
+  client's portal-particle trail) and plays nothing — so every call site is silent (the Knight's :253 daylight, :259 fire, :274
+  staring, :277 far, :320 the `hurt` loop; the Reaper's :252, :260, :275, :278, :321). Vanilla 1.21.1's own `EnderMan.teleport`
+  wraps `randomTeleport` with the ENDERMAN_TELEPORT pair (at the origin and at the landing), so the gap is the pre-existing
+  `teleportRandomly` mapping's — inherited by ENT-S-141's `teleportToEntity`, which lands through the same call — not the engine's.
+  Orig's `teleportTo` posted no Forge event (:159-168 — the search begins straight from the argument coordinates), so the port's
+  no-event through `randomTeleport` is a MATCH. What a player hears: an Ender Knight or Reaper blinks away from a stare, toward a
+  far target, out of the sun or off a hit with the particle trail and no portal sound, where 1.7.10's played it at both ends.
+  Noticed by the T10 refuter reading ENT-S-141's landing; a sound, not a targeting-ledger row.
+- **Resolution:** REPORT — for the owner's ruling. Play the pair as orig at both points: a `teleportTo(x, y, z)` over
+  `randomTeleport` shared by `teleportRandomly` and `teleportToEntity` that reads the origin ahead of the move and, on a true
+  return, plays `SoundEvents.ENDERMAN_TELEPORT` (1.0f, 1.0f) at the origin through `level.playSound(null, x0, y0, z0, …, HOSTILE,
+  …)` and at the entity through `playSound(…)` — nothing on a refused landing, as orig :188-191 — with one pin in the ENT-S-141
+  s141_04 shape (a frozen mob under `TeleportRolls`, a `PlayLevelSoundEvent` ear — the StareEar seam widened to ENDERMAN_TELEPORT
+  — hearing the sound at the origin and at the landing on a landed teleport, and nothing on a refused one).
+
+### ENT-S-145 — The Ender pair's attacking speed boost dropped: 1.7.10 applied a +6.2 movement modifier while a target was held (EnderKnight.java:100-107 / EnderReaper.java:100-107, the modifier :29-30); the port applies none (REPORT, 2026-09-05; raised by the T10 refuter)
+
+- **Evidence:** orig EnderKnight.java:29-30 — `attackingSpeedBoostModifier`: UUID 020E0DFB-87AE-4653-9556-831010E291A0, "Attacking
+  speed boost", `(double)6.2f`, operation 0 (additive), `setSaved(false)` (the 1.7.10 vanilla Enderman's own, copied); :100-107 at
+  the head of `onLivingUpdate`, between the drown line (:97-99) and the portal particles (:108-110): when `lastEntityToAttack !=
+  entityToAttack` (:100) the modifier is removed from the movement-speed attribute (:101-102) and re-applied if a target is held
+  (:103-105), `lastEntityToAttack` updated (:107) — the boost on from the tick a target is taken and off from the tick it is lost
+  or swapped, on the field :33. EnderReaper.java:29-30 / :33 / :100-107 the same. Port EnderKnight.java / EnderReaper.java carry no
+  such modifier (no `AttributeModifier` and no `lastEntityToAttack` in either file; `createAttributes` :202-210 / :199-208 set
+  MOVEMENT_SPEED 0.32 / 0.37 flat; the aiStep head — the Knight's :227-241, the Reaper's twin — runs the drown line and the
+  particles and goes straight to the daylight block), so a marked Knight or Reaper chases at its base speed. What a player sees:
+  an Ender Knight or Reaper that has locked on walks at its idle pace where 1.7.10's rushed (0.32 + 6.2 / 0.37 + 6.2 on the
+  attribute — the 1.7.10 Enderman's sprint). Movement, not selection — outside the targeting ledger; noticed by the T10 refuter
+  reading ENT-S-141's aiStep block (orig :100-107 sits above the block ENT-S-141 transcribed, :124-138).
+- **Resolution:** REPORT — for the owner's ruling. Transcribe the modifier at orig's position: a static `AttributeModifier` (a mod
+  ResourceLocation id, 6.2, `ADD_VALUE`) and a `lastEntityToAttack` field, the :100-107 swap at the head of `aiStep` ahead of the
+  daylight block — `getAttribute(Attributes.MOVEMENT_SPEED).removeModifier(id)` then `addTransientModifier` while `getTarget() !=
+  null` (transient for orig's `setSaved(false)`) — with one pin in the ENT-S-141 s141_04 shape (a frozen mob: `setTarget` then
+  `aiStep()` reads the attribute at the base + 6.2, `setTarget(null)` then `aiStep()` reads the base again). The number is the
+  ruling's: orig's 6.2 as written, or the value vanilla 1.21.1's own EnderMan carries for the same modifier (not read in this
+  lane — the Gradle cache is outside its bounds).
+
 ### TEST-003 — Config-flipping gametests in the concurrent default batch
 
 - **Impact:** MEDIUM (suite reliability) — boss005/boss012 flip a global
