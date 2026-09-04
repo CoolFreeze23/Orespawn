@@ -182,11 +182,23 @@ public class EntityLeon extends TamableAnimal
         final Predicate<LivingEntity> huntSelector = petsDefendOwner
                 ? e -> OrigTargets.vanillaTaskPrey(e) && (!this.isTame() || this.getTarget() == null)
                 : OrigTargets::vanillaTaskPrey;
-        this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, Mob.class, 10, true, false, huntSelector) {
+        // orig Leon.java:93's scan geometry was the follow-range attribute's: EntityAINearestAttackableTarget.shouldExecute scanned
+        // boundingBox.expand(d, 4, d) with d = EntityAITarget.getTargetDistance() — EntityLiving's base 16, Leon.java:112-118 sets
+        // none — and EntityAITarget.continueExecuting released beyond the same d. The port's goal read FOLLOW_RANGE 40
+        // (createAttributes), which also sizes the navigator's path search (getNavigation().moveTo in the combat step,
+        // FollowOwnerGoal, the stroll), so the goal carries orig's 16 itself through getFollowDistance — vanilla's
+        // getTargetSearchArea inflates (d, 4, d), orig's shape, and the conditions' range and the hold read the same d — and
+        // the attribute stays 40 (ENT-S-136; the Dragon's ENT-S-117 idiom). The true / false stay ENT-S-124's; the interval is 0 — orig :93's targetChance 0, no roll in either (ENT-S-117's mapping of the same argument at the Dragon; vanilla's every-other-tick goal pass against EntityAITasks' every third is that record's residual) (ENT-S-136).
+        this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, Mob.class, 0, true, false, huntSelector) { // interval 0 = orig Leon.java:93's targetChance 0 (ENT-S-136)
             @Override
             public boolean canUse() {
                 if (OreSpawnConfig.PLAY_NICELY.get()) return false; // orig Leon.java:92-94 (ENT-S-115)
                 return super.canUse();
+            }
+
+            @Override
+            protected double getFollowDistance() {
+                return 16.0; // orig EntityAITarget.getTargetDistance() = the follow-range attribute, EntityLiving's base 16 (Leon.java:112-118 sets none): the :93 task's box expand(16, 4, 16), its range and its hold; FOLLOW_RANGE stays 40 for pathing (ENT-S-136)
             }
         });
     }
