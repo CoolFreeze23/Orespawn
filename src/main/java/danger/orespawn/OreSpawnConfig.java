@@ -547,13 +547,16 @@ public class OreSpawnConfig {
                 "MOD-033: tamed companions carry the vanilla owner-defence target goals (OwnerHurtByTargetGoal, " +
                         "OwnerHurtTargetGoal -- and, where the port added them too, HurtByTargetGoal and a tame-gated " +
                         "NearestAttackableTargetGoal<Monster>) on Leon, the Gamma Metroid, Spyro, Stinky, the Prince, " +
-                        "the Princess, the Prince Teen and the Prince Adult. Only takes effect while modern.enabled is " +
+                        "the Princess, the Prince Teen, the Prince Adult, the Hydrolisc, the Velocity Raptor, the " +
+                        "Boyfriend and the Girlfriend, and a tamed Leon's monster hunt leaves a target it already holds " +
+                        "alone. Only takes effect while modern.enabled is " +
                         "true; classic mode registers none of them (1.7.10 registered no owner goals on these pets -- " +
                         "a tamed pet fought only what its own scan or its revenge memory picked). Live today on Leon, " +
-                        "the Prince Teen and the Prince Adult, whose flight combat reads the target slot; registered " +
-                        "but unconsumed on the Gamma Metroid, Spyro, Stinky, the Prince and the Princess (their combat " +
-                        "reads only their own scan). Goals register at construction, so a change applies to newly " +
-                        "spawned or loaded pets, not live ones."
+                        "the Prince Teen and the Prince Adult, whose flight combat reads the target slot, and on the " +
+                        "Boyfriend and the Girlfriend, whose held-weapon melee and ranged attack read it; registered " +
+                        "but unconsumed on the Gamma Metroid, Spyro, Stinky, the Prince, the Princess, the Hydrolisc " +
+                        "and the Velocity Raptor (their combat, where they have one, reads only their own scan). Goals " +
+                        "register at construction, so a change applies to newly spawned or loaded pets, not live ones."
         ).define("petsDefendOwner", true);
         MODERN_POINTYSAURUS_STARE_AGGRO = BUILDER.comment(
                 "MOD-034: the Pointysaurus locks on to any survival player within 32 blocks who looks straight at it " +
@@ -621,7 +624,9 @@ public class OreSpawnConfig {
      * goals, the 1.7.10 shape (orig Leon.java:92-95, GammaMetroid.java:67,
      * Spyro.java:73-81, Stinky.java:67-77, ThePrince.java:86-92,
      * ThePrincess.java:86-92, ThePrinceTeen.java:116-119,
-     * ThePrinceAdult.java:112-115).
+     * ThePrinceAdult.java:112-115; extended 2026-09-05 to Hydrolisc.java:51-60,
+     * VelocityRaptor.java:53-62, Boyfriend.java:138-147, Girlfriend.java:161-174
+     * and the tame rule on Leon's hunt selector, which orig Leon.java:93 never had).
      */
     public static boolean petsDefendOwner() {
         return MODERN_ENABLED.get() && MODERN_PETS_DEFEND_OWNER.get();
