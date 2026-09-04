@@ -688,6 +688,7 @@ public class AntRobot extends Mob implements ICustomHitboxProfileSupplier, IMode
         if (target instanceof AntRobot) return false;
         if (target == this.getFirstPassenger()) return false;
         if (MyUtils.isIgnoreable(target)) return false; // orig AntRobot.java:971-973 — the shared ignore screen (ENT-S-106)
+        if (!this.getSensing().hasLineOfSight(target)) return false; // orig AntRobot.java:974-976 — canSee, after the ignore screen and ahead of the 6..9 ring (:977-986) (ENT-S-118)
         double dist = this.distanceTo(target);
         if (dist > 9.0f || dist < 6.0f) return false;
         if (target instanceof Player player && player.getAbilities().instabuild) return false;
@@ -709,6 +710,7 @@ public class AntRobot extends Mob implements ICustomHitboxProfileSupplier, IMode
         if (target instanceof AntRobot) return false;
         if (target == this.getFirstPassenger()) return false;
         if (MyUtils.isIgnoreable(target)) return false; // orig AntRobot.java:1044-1046 — the shared ignore screen (ENT-S-106)
+        if (!this.getSensing().hasLineOfSight(target)) return false; // orig AntRobot.java:1047-1049 — canSee, after the ignore screen and ahead of the dircheck branch (:1050-1065, T8) and the creative check (:1066-1069) (ENT-S-118)
         if (target instanceof Player player && player.getAbilities().instabuild) return false;
         return true;
     }

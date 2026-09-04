@@ -205,6 +205,7 @@ public class PurplePower extends Mob {
         if (this.level().getDifficulty() == Difficulty.PEACEFUL) return false; // orig PurplePower.java:236-238 — PEACEFUL → false ahead of every other check (ENT-S-114)
         if (target == null || target == this || !target.isAlive()) return false;
         if (MyUtils.isIgnoreable(target)) return false; // orig PurplePower.java:248-250 — the shared ignore screen (ENT-S-106)
+        if (!this.getSensing().hasLineOfSight(target)) return false; // orig PurplePower.java:251-253 — canSee, after the ignore screen and ahead of the player branch (:254-260) (ENT-S-118)
         if (target instanceof Player p && p.getAbilities().instabuild) return false;
         int type = this.getPurpleType();
         if (target instanceof Player) {

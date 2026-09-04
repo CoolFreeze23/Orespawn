@@ -151,6 +151,7 @@ public class Robot1 extends Monster {
     private boolean isSuitableTarget(LivingEntity target) {
         if (target == null || target == this || !target.isAlive()) return false;
         if (MyUtils.isIgnoreable(target)) return false; // orig Robot1.java:186-188 — the shared ignore screen (ENT-S-106)
+        if (!this.getSensing().hasLineOfSight(target)) return false; // orig Robot1.java:189-191 — canSee, after the ignore screen and ahead of the EntityMob refusal (:192) (ENT-S-118)
         if (target instanceof Monster) return false;
         if (target instanceof Player p && p.getAbilities().instabuild) return false;
         return true;
