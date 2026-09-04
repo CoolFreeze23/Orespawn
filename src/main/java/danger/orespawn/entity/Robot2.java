@@ -270,6 +270,7 @@ public class Robot2 extends Monster implements Robot2Pose {
     private boolean isSuitableTarget(LivingEntity target) {
         if (target == null || target == this || !target.isAlive()) return false;
         if (MyUtils.isIgnoreable(target)) return false; // orig Robot2.java:363-365 — the shared ignore screen (ENT-S-106)
+        if (!this.getSensing().hasLineOfSight(target)) return false; // orig Robot2.java:366-368 — canSee, after the ignore screen and ahead of the EntityMob refusal (:369) (ENT-S-118)
         if (target instanceof Monster) return false;
         if (target instanceof Player p && p.getAbilities().instabuild) return false;
         return true;

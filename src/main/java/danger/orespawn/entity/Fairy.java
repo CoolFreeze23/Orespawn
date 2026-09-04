@@ -146,6 +146,7 @@ public class Fairy extends AmbientCreature {
     private boolean isSuitableTarget(LivingEntity target) {
         if (this.level().getDifficulty() == Difficulty.PEACEFUL) return false;
         if (target == null || target == this || !target.isAlive()) return false;
+        if (!this.getSensing().hasLineOfSight(target)) return false; // orig Fairy.java:232-234 — canSee, after the dead check and ahead of the EntityMob test (:235) (ENT-S-118)
         return target instanceof Monster;
     }
 

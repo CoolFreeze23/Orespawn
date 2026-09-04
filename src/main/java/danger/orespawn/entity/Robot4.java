@@ -285,6 +285,7 @@ public class Robot4 extends Monster implements Robot4Pose {
     private boolean isSuitableTarget(LivingEntity target) {
         if (target == null || target == this || !target.isAlive()) return false;
         if (MyUtils.isIgnoreable(target)) return false; // orig Robot4.java:367-369 — the shared ignore screen (ENT-S-106)
+        if (!this.getSensing().hasLineOfSight(target)) return false; // orig Robot4.java:370-372 — canSee, after the ignore screen and ahead of the EntityMob refusal (:373) (ENT-S-118)
         if (target instanceof Monster) return false;
         if (target instanceof Player p && p.getAbilities().instabuild) return false;
         return true;

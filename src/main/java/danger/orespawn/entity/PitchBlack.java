@@ -528,6 +528,7 @@ public class PitchBlack extends Monster implements PitchBlackPose {
     private boolean isSuitableTarget(LivingEntity target) {
         if (target == null || target == this || !target.isAlive()) return false;
         if (MyUtils.isIgnoreable(target)) return false; // orig PitchBlack.java:498-500 — the shared ignore screen (ENT-S-106)
+        if (!this.getSensing().hasLineOfSight(target)) return false; // orig PitchBlack.java:501-503 — canSee, after the ignore screen and ahead of the self-kind refusal (:504-506) (ENT-S-118)
         if (target instanceof PitchBlack) return false; // orig PitchBlack.java:504-506
         if (target instanceof EnderReaper) return false; // orig PitchBlack.java:507-509 (ENT-S-112)
         if (target instanceof EntityLeafMonster) return false; // orig PitchBlack.java:510-512 LeafMonster (ENT-S-112)

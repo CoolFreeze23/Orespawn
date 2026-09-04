@@ -161,6 +161,7 @@ public class SpiderDriver extends Spider {
         if (MyUtils.isIgnoreable(target)) return false; // orig SpiderDriver.java:134-136 — the shared ignore screen (ENT-S-106)
         if (target instanceof SpiderRobot || target instanceof SpiderDriver) return false;
         if (target instanceof Spider || target instanceof CaveSpider) return false;
+        if (!this.getSensing().hasLineOfSight(target)) return false; // orig SpiderDriver.java:149-151 — canSee, after the four kind refusals (:137-148) and ahead of the player branch (:152-155) (ENT-S-118)
         if (target instanceof Player p) return !p.getAbilities().instabuild;
         return !(this.distanceToSqr(target) < 36.0);
     }

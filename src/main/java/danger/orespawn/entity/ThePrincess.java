@@ -596,7 +596,25 @@ public class ThePrincess extends TamableAnimal {
         List<LivingEntity> targets = this.level().getEntitiesOfClass(LivingEntity.class, box);
         // OPT-021: nearest-first pick without the full list sort; TargetSelection
         // preserves the removed sort's order and stable-tie semantics exactly.
-        return TargetSelection.firstMatch(targets, this.targetSorter, this::isSuitableTarget);
+        // orig ThePrincess.java:857 — the loop takes the first candidate that passes isSuitableTarget AND the feet ray canSeeTarget(posX, posY, posZ) (ENT-S-118)
+        return TargetSelection.firstMatch(targets, this.targetSorter,
+                candidate -> this.isSuitableTarget(candidate) && this.canSeeTarget(candidate.getX(), candidate.getY(), candidate.getZ()));
+    }
+
+    /**
+     * orig ThePrincess.java:404-406 ({@code canSeeTarget}): {@code worldObj.rayTraceBlocks(Vec3(posX, posY + 0.75, posZ),
+     * Vec3(pX, pY, pZ), false) == null} — a block-only ray from 0.75 above the feet to a point; the scan (:857) aims it
+     * at the candidate's own position, its feet. 1.7.10's {@code rayTraceBlocks(start, end, stopOnLiquid = false)} is
+     * {@code func_147447_a(start, end, false, false, false)}: liquids never stop the ray ({@code Fluid.NONE}); blocks
+     * without a collision box are NOT skipped ({@code ignoreBlockWithoutBoundingBox = false}) — every block that passes
+     * {@code canCollideCheck} is tested on its selection bounds ({@code Block.collisionRayTrace}), the {@code OUTLINE}
+     * shape, the mapping ENT-S-089 recorded for the same helper on the Vortex; a null result is a MISS (ENT-S-118).
+     */
+    private boolean canSeeTarget(double x, double y, double z) {
+        Vec3 from = new Vec3(this.getX(), this.getY() + 0.75, this.getZ());
+        return this.level().clip(new net.minecraft.world.level.ClipContext(from, new Vec3(x, y, z),
+                net.minecraft.world.level.ClipContext.Block.OUTLINE, net.minecraft.world.level.ClipContext.Fluid.NONE, this))
+                .getType() == net.minecraft.world.phys.HitResult.Type.MISS;
     }
 
     /**

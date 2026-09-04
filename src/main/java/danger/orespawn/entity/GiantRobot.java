@@ -234,6 +234,7 @@ public class GiantRobot extends Monster {
     private boolean isSuitableTarget(LivingEntity target) {
         if (target == null || target == this || !target.isAlive()) return false;
         if (MyUtils.isIgnoreable(target)) return false; // orig GiantRobot.java:324-326 — the shared ignore screen (ENT-S-106)
+        if (!this.getSensing().hasLineOfSight(target)) return false; // orig GiantRobot.java:327-329 — canSee, after the ignore screen and ahead of the EntityMob refusal (:330) (ENT-S-118)
         if (target instanceof Monster) return false;
         if (target instanceof Player player && player.getAbilities().instabuild) return false;
         return true;

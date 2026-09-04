@@ -138,7 +138,8 @@ public class Irukandji extends Monster {
             LivingEntity target = playNicely ? null : this.getTarget();
             if (target == null && !playNicely) {
                 Player nearest = this.level().getNearestPlayer(this, 6.0);
-                if (nearest != null && !nearest.getAbilities().instabuild) {
+                // orig Irukandji.java:280-282 — canSee, the eye-to-eye block ray, ahead of the creative check (:283-286) (ENT-S-118)
+                if (nearest != null && this.getSensing().hasLineOfSight(nearest) && !nearest.getAbilities().instabuild) {
                     target = nearest;
                     this.setTarget(target);
                 }

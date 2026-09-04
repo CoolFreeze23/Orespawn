@@ -126,7 +126,8 @@ public class Skate extends Monster {
             LivingEntity target = playNicely ? null : this.getTarget();
             if (target == null && !playNicely) {
                 Player nearest = this.level().getNearestPlayer(this, 10.0);
-                if (nearest != null && !nearest.getAbilities().instabuild) {
+                // orig Skate.java:272-274 — canSee, the eye-to-eye block ray, ahead of the creative check (:275-278) (ENT-S-118)
+                if (nearest != null && this.getSensing().hasLineOfSight(nearest) && !nearest.getAbilities().instabuild) {
                     target = nearest;
                     this.setTarget(target);
                 }
