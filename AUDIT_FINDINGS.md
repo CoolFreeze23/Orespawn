@@ -6153,7 +6153,7 @@ keeps BUG-036. Commit 4ea395c's message retains the old number.)*
 - **Population question (owner):** answered in FIX_LOG "REFERENCE-GEOMETRY
   SURVEY" once the whole-population run completes.
 
-### BUG-041 — 82 port models mirror their cubes; the 1.7.10 originals set `mirror` after `addBox`, where it is inert (REPORT, 2026-09-02)
+### BUG-041 — 82 port models mirror their cubes; the 1.7.10 originals set `mirror` after `addBox`, where it is inert (REPORT, 2026-09-02; stage 1 landed 2026-09-02; counts reconciled 2026-09-05 — 89 models / 3,122 calls remain)
 
 - **Impact:** MEDIUM-visual, PORT-WIDE — every affected face samples its
   texture flipped horizontally relative to 1.7.10. Invisible on symmetric
@@ -6184,14 +6184,17 @@ keeps BUG-036. Commit 4ea395c's message retains the old number.)*
 - **A/B model for the owner (before the mass change lands):** EnderReaper,
   the most asymmetric texture among the mirror-only models (mean texel
   difference against its own horizontal mirror 0.297 over 2,243 face texel
-  pairs; next Fairy 0.180, Bee 0.137). Its port `ModelEnderReaper` carries
-  66 `.mirror()` calls; the single-model drop lands in its own commit with
-  the reference leg as proof; the owner compares the release jar (mirrored)
-  against the new build in-game.
-- **Resolution:** OPEN — report only. Proposed: one commit dropping
+  pairs; next Fairy 0.180, Bee 0.137). Its port `ModelEnderReaper` carried
+  66 `.mirror()` calls, dropped in 5354420 (stage 1; 0 remain, the reference
+  leg exact); the owner compares the release jar (mirrored) against the new
+  build in-game.
+- **Resolution:** OPEN — stage 1 landed (EnderReaper, 5354420); counts reconciled 2026-09-05 (FIX_LOG
+  "BUG-041 COUNTS RECONCILED"): 89 models / 3,122 `.mirror()` calls pinned in `tools/reference_model_proofs.json`
+  remain (12 exact); `ButterflyModel` (10 calls) and the seven `client/model` item models (102) carry the same
+  defect outside the manifest — the owner's scope call. Proposed: one commit dropping
   `.mirror()` on every cube whose reference box was unmirrored (mechanical,
-  from the survey JSON), the Phase G proofs regenerated (every proven species
-  changes), and `reference_source` declared for all 78 so the leg pins them.
+  from the manifest's pins), the Phase G proofs regenerated (every proven species
+  changes); `reference_source` is declared for all 101 and the 89 pins clear in the same commit.
   Alternatively an owner MOD ruling that the port keeps the flipped mapping,
   recorded per model in the manifest. Owner's call.
 

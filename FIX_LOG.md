@@ -5306,3 +5306,39 @@ green on the rerun.
 REFUTERS: T5: two refuters (over twenty files) — A upheld (ten notes, five applied); B found three test defects, fixed, and the production code sound.
 
 GATE: gate t5b green: build legs (asset audit 0 errors, G1 PARITY 2 + 11 models, referenceGeometry, referenceRenderers, queenPartPlacementProbe) and runGameTestServer 'All 945 required tests passed' (892 + 53 TargetReleaseParityTests); the first run was red on seven rows (six harness assumptions in the rows, one Chipmunk transcription miss the row caught), green on the rerun.
+
+## BUG-041 COUNTS RECONCILED (2026-09-05, docs-only; the owner's housekeeping item 26)
+
+Every number in play was right for its date and population; the one to state before the drop lands is the
+manifest's. HEAD 2e21008, `tools/reference_model_proofs.json` unchanged since a3a4b62: 101 models, every one with a
+`reference_source`; 89 carry a pin, every pin is MIRROR only, and the pins sum to 3,122 — equal, model for model, to
+the live `.mirror()` call sites in those 89 sources (all the no-arg form; no `.mirror(false)` anywhere). Twelve are
+exact: cliffracer, coin, enderreaper, ghost, island, islandtoo, kyuubi, mosquito, seaviper, skate, stinkbug, tshirt.
+THE PORT-WIDE DROP TODAY IS 89 MODELS / 3,122 CALLS, NOT 81. 81 was the 5354420 count after stage 1 (77 mirror-only
+plus CaterKiller, Elevator, SeaViper and StinkBug; 3,101 calls); it became 89 / 3,122 when slice A rebuilt the
+manifest to 101 at 6b10b14 (ten newcomers pinned — ant 20, cricket 11, gammametroid 21, leafmonster 5, rat 12,
+rotator 3, rubberducky 8, terribleterror 21, vortex 1, wormsmall 3 = 105 calls) and the ENT-S-091 regenerations
+retired StinkBug (50, 6b10b14) and SeaViper (34, a3a4b62): 81 − 2 + 10 = 89; 3,101 − 50 − 34 + 105 = 3,122. The
+survey's 82 / 78 are its own 87-pair population (boxes 3,167 / 3,047); 87 was the manifest's size at 5354420 and 84
+its pins then (87 − 3 exact). Dropped so far: 150 calls in three models (EnderReaper 66 at 5354420, stage 1;
+StinkBug 50; SeaViper 34). Reference side: 3,542 `field_78809_i = true` stores in 108 of 109 reference models, none
+before its addBox — 3,124 in the 89 pinned models' references (ModelGazelle 34 vs pin 33, ModelRobot4 56 vs pin 55:
+one part each the port never mirrored, nothing to drop), the rest in the exact models, ModelButterfly, the item
+models and ModelTheQueen.
+
+OUTSIDE THE MANIFEST WITH THE SAME DEFECT — the owner's scope call: `ButterflyModel` (10 calls; skipped at 6b10b14
+as a shared parameterised model serving four renderers; its original carries 10 inert stores) and the seven item
+models under `client/model` (BattleAxe 15, Bertha 12, Chainsaw 7, Hammy 33, QueenBattleAxe 9, Slice 14,
+SquidZooka 12 = 102; never surveyed — `reference_survey_manifest.py:12` scans entity/client only; their originals
+carry 103 inert stores, Chainsaw's eighth being the `tooth` part the port lacks, a geometry note). Port-wide
+including both: 97 models / 3,234 calls. Not BUG-041: Girlfriend / Boyfriend (2 + 2 HumanoidModel arm / leg
+mirrors; 1.7.10 drew both with vanilla `ModelBiped`, ClientProxyOreSpawn.java:386-387) and the three head rigs
+(1 each, port-only; 1.7.10 registered `RenderXHead(null, 0, 0)`).
+
+Two record lines were wrong or forward-looking when written and stand corrected here, not rewritten: the
+2026-09-02 gate entry's "every port entity model that pairs with a 1.7.10 model (87)" — the survey generator's 87
+pairs; 14 more paired models joined at 6b10b14 and ButterflyModel pairs by name but is deliberately outside — and
+the AUDIT BUG-041 entry's A/B and Resolution lines (66 calls "carried", "declared for all 78"), updated in place as
+the register's status. Measured by a read-only lane (`count_mirror.py`, `ref_mirror.py`, `pair_census.py` over the
+manifest at 5354420 / 6b10b14 / 4efdfd7 / a3a4b62 and HEAD); the 3,542 / 0-live reference stores cross-checked by
+plain grep.
