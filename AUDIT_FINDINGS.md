@@ -7742,6 +7742,16 @@ keeps BUG-036. Commit 4ea395c's message retains the old number.)*
   1.7.10 now aims 1.62 lower and reaches from a slightly different geometry; horizontal cases are unchanged. No
   ruling in AUDIT_FINDINGS.md covers it (no `yOffset` / `1.62` / eye-height convention recorded); the ENT-S-093 /
   ENT-S-095 hitbox and formula rulings did not touch it.
+- **Premise verified against the artifact (2026-09-05, law 11; before any site changed) —
+  `phase_g_reports/ents120_premise_2026-09-05.md`:** the §0 convention holds on the CLIENT only. In Mojang's 1.7.10
+  client jar (sha1 e80d9b3b…): `sa` (Entity) declares `L` = yOffset and `setPosition` places the box at `posY − L`;
+  `yz.<init>` (EntityPlayer) stores 1.62 into `L`; **`mw.<init>` (EntityPlayerMP, the server player) stores 0 into
+  `L` and into `W` (stepHeight)**. On the server a player's `posY` was its feet, the port's `getY()` frame. Every
+  census site runs server-side, so for all of them there is no frame difference to adopt and the ruled `OrigPos`
+  sweep would move the port 1.62 blocks away from 1.7.10. Only client-side code with a player operand (renderers,
+  client particles / sounds, client-only item paths) saw the eye level — a separate, small census. The night ruling
+  (addendum item 22 (9)) rests on the unverified reading; nothing was coded on it; presented for amendment, the lane
+  held.
 - **Resolution:** REPORT — for the owner's ruling: (a) a port-wide mapping helper (`origPosY(entity)` = the feet for
   mobs, feet + 1.62 for players; and `origDistSq(hunter, prey)` on it) applied at every orig `posY` / distance site
   that can see a player, with a per-site pin table — a sweep lane first to list the sites; or (b) an accepted engine

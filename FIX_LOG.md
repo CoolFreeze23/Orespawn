@@ -5342,3 +5342,15 @@ the AUDIT BUG-041 entry's A/B and Resolution lines (66 calls "carried", "declare
 the register's status. Measured by a read-only lane (`count_mirror.py`, `ref_mirror.py`, `pair_census.py` over the
 manifest at 5354420 / 6b10b14 / 4efdfd7 / a3a4b62 and HEAD); the 3,542 / 0-live reference stores cross-checked by
 plain grep.
+
+## ENT-S-120 PREMISE VERIFIED (2026-09-05) — the server-side player posY was the feet; the sweep is held
+
+Before the ruled `OrigPos` sweep started, the census's convention ("a 1.7.10 player's posY was its eye level,
+yOffset 1.62") was checked against Mojang's 1.7.10 client jar (sha1 e80d9b3b…, the BUG-041 copy) under law 11:
+`EntityPlayer.<init>` stores 1.62 into Entity's yOffset, but `EntityPlayerMP.<init>` — the server player — stores
+0 into yOffset and stepHeight, and `Entity.setPosition` places the bounding box at posY − yOffset. On the server a
+player's posY was its feet, the same frame as the port's getY(); every census site runs server-side, so the sweep
+as ruled (night set items 15–22) would have moved the port 1.62 blocks away from 1.7.10. Report:
+`phase_g_reports/ents120_premise_2026-09-05.md`; the register entry carries the evidence bullet. Nothing was coded
+on the old reading (no helper, no site, no PN entry); the ENT-S-120 lane is held for the owner's amendment. What
+remains of the finding is client-side code with a player operand, if any — a separate small census.
