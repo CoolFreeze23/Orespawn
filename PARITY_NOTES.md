@@ -267,3 +267,20 @@ excludes Deep Ocean, Frozen Ocean, beaches; 1.7.10 had no other ocean variants.
 - **Port:** biome filter `minecraft:ocean` only. Modern lukewarm/cold/warm
 variants (no 1.7.10 counterpart) are excluded — the narrow faithful reading;
 the deep/frozen exclusions carry over exactly. Set 42/21 ≈ the 1/6 × 1/300 odds.
+
+## PN-020 — The companions' target goals acquire inside vanilla's sphere, not 1.7.10's box (ENT-S-129 refuter A; ruled 2026-09-04 night: deliberately not reproduced)
+
+- **Original:** `EntityAINearestAttackableTarget` on the Boyfriend and Girlfriend (orig Boyfriend.java:138-147,
+Girlfriend.java:161-174, `targetDistance` 15 on the IMob task) scanned `boundingBox.expand(d, 4, d)` — a box — with
+no distance test at acquisition; `EntityAITarget.continueExecuting` then released a target farther than `d` from the
+mob (`getDistanceSqToEntity > d²`). A target whose centre lies inside the box but beyond `d` from the mob — the ring
+between the sphere of radius `d` and the box's edges, up to `d` plus both half-widths along an axis — was acquired at
+the end of one target pass and released by the next.
+- **Port:** vanilla `NearestAttackableTargetGoal` scans the same inflated box and then `TargetingConditions.range(d)`
+refuses anything beyond `d` at acquisition (the hold's release distance is the same `d`; ENT-S-129 restored the 15).
+The ring is never acquired.
+- **Why not reproduced (owner, 2026-09-04 night):** no player-visible signature — in 1.7.10 the ring target was
+dropped before any attack step could act on it (no swing, sound or motion carried the difference; the T5 hold rows
+measure from the mob's centre, the prey at 15.8, for this reason). Under the 2026-09-04 doctrine an engine-frame
+difference without a player-visible signature is recorded, not coded.
+- **Player-visible:** no.

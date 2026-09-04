@@ -3,7 +3,9 @@
 **Companion to:** `AUDIT_INVENTORY.md` (full checklist). Detailed audit evidence in `audit_sections/01–10`.
 **Scope:** every MISSING / PARTIAL / DIVERGENT / UNVERIFIED item, every bug, every optimization opportunity — each with file/line refs in both codebases and a concrete fix.
 **Original:** `reference_1_7_10_source/sources/danger/orespawn/` · **Port:** `src/main/java/danger/orespawn/` + `src/main/resources/`
-**Status: REPORT ONLY — nothing has been fixed. Awaiting go-ahead.**
+**Status: a living register.** An entry is REPORT until the owner rules on its batch; the heading then carries
+FIXED / RECORDED (a MOD record) / RULED with the date, and the entry's Resolution says what landed, where, and
+under which gate. Remediation runs in owner-ruled batches (`FIX_LOG.md`, `phase_g_reports/phase_g_scope_addendum_2026-09-03.md`).
 
 ---
 
@@ -7905,13 +7907,13 @@ keeps BUG-036. Commit 4ea395c's message retains the old number.)*
   nextInt(9) → 5; the 300 → 0, the 7 / 6 attack pass quiet); a stone at the flyer's block + (3, 0, 3) on the ray from
   (x + 0.5, y + 0.75, z + 0.5) to the candidate's corner, `canSeeTarget` asserted false with it and true without it (the
   control): with the wall the flight target must stay where it was, with the wall razed it must be the candidate. Both
-  rows fail with the port line reverted (the walled drive accepts). javac rc 0. Refuted once, upheld: `scanIt` a probe-for-probe transcription, the shell sequence 1, 2, 3, 4, 6, 8 traced, the
-  eat block, the gate's position and term order, the idle pass and the roll ledger exact in every state, the two flight
-  rays exact; one pin added from its test gap (the eat radius measured from the scan origin: coal at origin + (3, 1, 1),
-  distSq 11 from the origin and 14 from the Stinky's block — 19 pins); noted for the owner: `isCoalOre` accepts
-  `COAL_ORE` only under the port's one-block mapping, so a deep-cave Stinky never finds deepslate coal where 1.7.10's
-  single ore was everywhere (a `BlockTags.COAL_ORES` ruling); the flight-target rows 17/18 discriminate through the
-  port's write-after-test order, filed as ENT-S-126 with the boxed-in retarget cost; helper cites corrected.
+  rows fail with the port line reverted (the walled drive accepts). javac rc 0. Refuted once, upheld: the restored acceptance at EntityStinky :467-468 / EntitySpyro :440-441 reads
+  `air ∧ ray` with block-corner operands and the air test first, as orig :640 / :647; rows 17 / 18 discriminate
+  their port line (the walled drive accepts with it reverted); two harness sensitivities noted — the feet ray ends
+  exactly on the floor block's top face and misses only through `clipPoint`'s strict `<`, so the `getY() == floorY`
+  precondition must stay exact, and the `Fluid.NONE` leg carries no pin; the stale helper cites (Stinky :568-573,
+  Spyro :507-512) corrected; the rows discriminate through the port's write-after-test order, filed as ENT-S-126
+  with the boxed-in retarget cost.
 
 ### ENT-S-124 — IMob mapped to Monster at 6 sites; the ruled convention Mob + Enemy applied port-wide (FIXED 2026-09-04)
 
@@ -8278,7 +8280,6 @@ keeps BUG-036. Commit 4ea395c's message retains the old number.)*
   running-only tick parity with the revenge goal asserted running, the Knight's daylight dice pinned before noon — plus
   the tier-1 Nightmare so its scan stays inside the cell and the probe-leg wording.
 
-The ENT-S-122 **Resolution** replacement paragraph is in `waves/res_122.txt`.
   Gate: the first run was red on seven of the 53 rows with every other test green — six were the rows' own harness
   assumptions (a frozen robot's head never turns so its bite bearing needed facing; the framework mock player's 60-tick
   spawn shield swallowed the pinned bites and the Irukandji's counter-damage; a hurt-timer overlap on the Robot2 row; the
@@ -8322,6 +8323,12 @@ The ENT-S-122 **Resolution** replacement paragraph is in `waves/res_122.txt`.
   unrestored LESS_ORE), the failure-path player leaks (boyfriend_tempt_panic_door, leon_ducky) and the
   TrooperBug's own Spit Bug summon behind i127's acid; the i165 chunk-wait geometry (ticket centre at +8 vs
   the checked cell at +10) is the one fix applied, owner-approved.
+
+- **Observation (2026-09-04, T5 gate; ruled 2026-09-04 night):** a fresh framework mock player carries the 60-tick
+  spawn shield (`ServerPlayer.spawnInvulnerableTime`), which swallowed the pinned bites and the Irukandji's
+  counter-damage on T5's first run; the shield is never cleared helper-wide — rows that pin a hit on a fresh mock
+  player clear it in the row (the `TargetReleaseParityTests.clearSpawnInvulnerability` shape), the pattern recorded
+  once in `phase_g_reports/harness_slice_2026-09-04.md` F0.6.
 
 ### TEST-004 — Default-batch isolation fixes from the harness slice (FIXED 2026-09-04)
 

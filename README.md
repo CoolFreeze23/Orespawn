@@ -122,8 +122,8 @@ travel with it as listed here.
   `src/main/java/de/dertoaster/multihitboxlib/LICENSE-MultiHitboxLib.txt`.
   Upstream's build metadata declared `All Rights Reserved` and its README
   added terms of use; the upstream repository and mod pages have since been
-  deleted, the author has been asked which license he considers governing,
-  and the LICENSE text governs until he or the owner says otherwise.
+  deleted; no contact with the author was made (the owner's decision, 2026-09-04),
+  and the LICENSE text governs.
 - **Databuddy** by Commoble — MIT License, as stated by its upstream
   repository https://github.com/Commoble/databuddy ("Copyright (c) 2020 Joseph
   Bettendorff aka Commoble"; the nested jar and its POM carry no license text

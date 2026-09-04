@@ -121,6 +121,84 @@ that slice, not a task for now.
     player-visible signature, otherwise recorded as deliberately not reproduced with the rationale**; (6) next:
     T5 and T6.
 
+22. **The night set (owner, 2026-09-04 night, through the advisor; the complete set — nothing earlier pending):**
+    (1) **Doctrine, restated for the records:** the port is also a modernization to the 1.21.1 engine. The law is
+    1.7.10 behaviour unless a record says otherwise: OreSpawn's own contribution stays exact and the engine's part
+    is the modern engine's (PARITY_NOTES PN-012 villages, PN-016 ore tags). An engine-frame difference is
+    reproduced only when it has a player-visible signature (the ENT-S-122 test); otherwise it is recorded as a PN
+    entry, not coded. Old-engine accidents are PN entries in both modes, no key. Gameplay improvements live behind
+    `[modern]` keys as MOD records. (2) **Push:** the 15 wave-2 commits after e35329a pushed first (origin/master
+    2e21008); nothing else landed before the push confirmed. (3) **T9 / ENT-S-125 ratified:** the Mantis's inert
+    goals removed from both modes; MOD-032..035 default ON; the five engine PEACEFUL rows MATCH (engine, P6); the
+    commit-message reading of Phase 4E stands. (4) **MOD-033 extended, one batch:** the same owner / tame goals on
+    Hydrolisc, VelocityRaptor, Boyfriend, Girlfriend — and Camarasaurus if it carries them — gated under
+    `petsDefendOwner` (registered only in modern; classic = orig's target tasks), and Leon's tame predicate under the
+    same key now that ENT-S-124's refutation has closed; pins per site where the pattern allows; refuters by files
+    touched; MOD-033, KNOWN_ISSUES and the changelog note updated. (5) **Harness:** F1 approved as presented — the
+    i127 rework (structural no-ranged-goal pin on the trooper, the acid negative scoped to the trooper's own acid,
+    per-tick minion cull, the cow kept alive for the window), one refuter, before/after in the record; F5 (the
+    `buildNow` RandomSource seam) stays open. (6) **The mock player's 60-tick spawn shield** is never cleared
+    helper-wide: rows that pin a hit on a fresh mock player clear it in the row, as T5 did; the pattern recorded once
+    in the harness notes (`phase_g_reports/harness_slice_2026-09-04.md` F0.6) and the observation under AUDIT
+    TEST-003. (7) **ENT-S-092, the Queen:** no amendment to the re-tune; the hittable air is judged at the F3+B look.
+    (8) **Wave-2 follow-ups:** the re-assert rows (Robot3 :127, Robot4 :175, Robot5 :114, EntityLeon :515, the Water
+    Dragon's forget) re-rated DIVERGES and fixed with the `RevengeGoal.release()` shape as one follow-up batch, T5b,
+    generated pins, refuters by files touched; ENT-S-126 a parity bug in classic — orig's write-before-test retarget
+    order in Spyro and Stinky with the boxed-in pin — rides with T5b; ENT-S-127 reproduced — the refusal has a
+    player-visible signature (a tamed Dragon, Leon or Prince attacking a creeper): `Enemy && !Creeper` on the four
+    vanilla-task goals through one helper, one pin per site, rides with T5b; the Ender Knight's dropped stare ray
+    (orig EnderKnight.java:92) a parity bug in classic, carried by its scan-set / filter rows, fixed with wave 3's
+    T8; Chainsaw.java:137 (the air-only MyCanSee voxel walk mapped to the vanilla ray) filed as a finding with the
+    two rays' answers compared on the felling cases, ruled when presented; the companion goals' engine ring (targets
+    whose centres lie inside the box inflation but beyond the range test) has no player-visible signature — a PN
+    entry (PN-020), deliberately not reproduced, no code; deepslate coal: the Stinky's `isCoalOre` accepts
+    `BlockTags.COAL_ORES` in BOTH modes — the modern engine split one ore into two blocks, the mapping the ore
+    generator uses — a PN entry of the PN-016 shape, pinned with a deepslate row beside the coal row (rides with T5b,
+    the batch that holds the Stinky). (9) **ENT-S-120 — the scope ruling on the census** (the census's narrower
+    recommendation superseded): ONE helper (`OrigPos`: y / blockY / distSq / dist / dy as proposed) applied wherever
+    the old frame carries OreSpawn's intent toward another entity — class (b) entire (flight targets, owner hover,
+    projectile aims, the up/down, ring, hold and band tests, the four feet-ray endpoints) and class (c) §3.2 (spawns
+    and effects at another entity's posY); never per site. Not reproduced — one PN entry of the PN-012 shape citing
+    the census's §0 table: class (a) entire; hunt reach and range, right-click interact ranges, owner distances,
+    sorters and the misc rows keep the modern engine's frame (feet) in BOTH modes with OreSpawn's numbers exact; no
+    modern key for reach in either direction. Old-engine accidents — PN entries in both modes, no keys: the class (c)
+    §3.1 reverse list entire (the player's own posY as an origin): Bertha/Slice, ItemRayGun, ItemThunderStaff and
+    ItemSquidZooka keep today's eye-level launch; Robot2 :142 and ItemNetherLost :36 keep the port's working
+    behaviour; InstantShelter and InstantGarden keep the ground-level floor; vanilla-owned code (FollowOwnerGoal /
+    OwnerFollowAnyNavGoal, the vanilla NearestAttackableTargetGoal picks, getNearestPlayer, the fishing hook,
+    container reach) is the engine's — the same PN entry. Two gated slices: (a) helper + generated pins + class (b)
+    with the ray endpoints; (d) the §3.2 spawn / effect sites, including the two EmperorScorpion / TrooperBug spawn
+    lines the census could not locate; refuters by files touched; one changelog paragraph for the lane; no other
+    lane edits the same hunter files while a slice is open. Effect, for the record: flyers hover and target one
+    block higher over players; projectiles aim at the head (+0.25 / +0.55 / +0.75) or, at the h/2 sites, above it, as
+    in 1.7.10; the Molenoid tunnels UP toward a level player; the Kraken holds a player 16.62 below itself; the
+    follow band, the feet-ray endpoints and the effect centres move with the player's eyes; reach against a level
+    player stays 0.2–0.5 blocks longer than 1.7.10's (the Irukandji 1.73 vs 0.61) and right-click reach stays 4
+    rather than 3.66 — recorded, not coded. The Robot3 / Robot5 `+ h*0.5` aim drift and FairySword `+1.0` / RatSword
+    are separate formula divergences — filed as findings, fixed in classic inside their slice, never silently;
+    `blockY` keeps the `(int)` cast as orig, the negative-y edge documented, no floor; pins as proposed for the
+    reproduced classes — one generated class per shape, a survival mock player as prey, a pig control, every flip
+    restored in a finally. **Supersession (owner, the same night, follow-up):** these ENT-S-120 items (the night
+    set's 15–22) supersede the evening set's items 5–10 (2026-09-04 evening, through the advisor, recorded in
+    `phase_g_reports/ADVISOR_HANDOFF.md` under "Owner rulings of 2026-09-04, evening": the port-wide scope with four
+    gated slices (a)–(d) at two refuters each, reach against players faithful to 1.7.10 in both modes, the effect
+    statement, MOD records for Robot2 :142 and ItemNetherLost :36, and a `projectilesFromEyes` modern key for the
+    four above-the-head launch sites). The evening ruling stays in the record as written and is superseded, not
+    rewritten — the way Amendment 1 superseded the motion-policy ruling; one ruling stands, this one. (10) **Order of
+    the remediation lane after the push:** the MOD-033 extension → T5b with the three follow-ups of (8) → ENT-S-120
+    (a), then (d) → wave 3 (T8 with the Ender Knight, T3b, T3c, T4, T10); the Phase G chain keeps gate priority
+    throughout. (11) **Blockbench** (ruled earlier, never sent): no general integration; a round-trip check (import →
+    export → semantic diff, bone order preserved) goes in the artist-package slice if it fits under a quarter slice;
+    the owner hand-checks the first `.bbmodel`. (12) **Records and housekeeping, docs-only, before the mirror drop:**
+    the ENT-S-129 entry's scripting line removed; (6) and the ring entry recorded where they belong; the mirror-drop
+    counts reconciled in FIX_LOG before the drop lands (89 models / 3,122 calls reported against 82 mirrored of 87,
+    78 mirror-only, EnderReaper's 66 landed, 81 remaining recorded); README.md:125 (no contact was made; the LICENSE
+    text governs), FIX_LOG's literal-N wave-2 gate line (661), ENT-S-123's copied refutation paragraph, KNOWN_ISSUES'
+    "192-test" line, the AUDIT_FINDINGS "REPORT ONLY" and MODERNIZATION_NOTES "nothing here is implemented" headers
+    and the targeting ledger rows :611 / :704 / :710 / :1196 fixed; `phase_g_reports/ADVISOR_HANDOFF.md` is the
+    advisor's — tracked and committed unchanged whenever it changes, never edited; `Claude outputs/` at the root is
+    the desktop app's mirror, excluded via `.git/info/exclude`, deleted by the owner.
+
 ## D. Rulings executed the same day (for cross-reference)
 
 - ENT-S-098 fixed (shot BetterFireballs carry the mod's own type; save/load round-trip pinned) and its

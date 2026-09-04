@@ -602,6 +602,16 @@ root-order slice with the GeckoLib per-entity cache eviction, then Slice 4c). Th
   line-of-sight ray) are adopted port-wide through one helper, never per site; an engine quirk without a
   player-visible signature is recorded as deliberately not reproduced, with rationale. Harness slice: only pure
   isolation fixes (finally restoration, batch separation, spacing) are applied without a further ruling.
+- The night set (owner, 2026-09-04 night; addendum item 22): the doctrine — 1.7.10 behaviour unless a
+  record says otherwise, OreSpawn's contribution exact and the engine's part the modern engine's, an
+  engine-frame difference reproduced only with a player-visible signature (else a PN entry), old-engine
+  accidents PN entries in both modes, gameplay improvements behind `[modern]` keys as MOD records. Order
+  after the push: the MOD-033 extension, T5b (the re-assert rows, ENT-S-126, ENT-S-127, deepslate coal),
+  ENT-S-120 slices (a) then (d) under the ruled scope (one `OrigPos` helper for class (b) and the §3.2
+  spawn / effect sites; class (a) and the §3.1 accidents not reproduced, PN entries; the evening set's
+  ENT-S-120 items superseded), then wave 3 (T8 with the Ender Knight's stare ray, T3b, T3c, T4, T10). The
+  Phase G chain keeps gate priority throughout. Harness: F1 applied with one refuter, F5 open, the mock
+  player's spawn shield cleared only in the row that pins the hit (F0.6).
 - Before any Tier-2 slice: the spawn-100 benchmark, classic versus candidate, with a proposed
   regression threshold; its baseline also measures MHLib's bone capture per frame and sync per tick
   and on the wire. Proof rule: geometry-only changes take one refuter; motion transcriptions,

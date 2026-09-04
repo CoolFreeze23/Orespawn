@@ -35,6 +35,12 @@ lane over the working tree at 7021b5a (+ the uncommitted i165 fix, + the untrack
   air (:171-181). Nothing crosses between templates above minY; entities up to one block tall (Acid 0.25, items, orbs)
   could pass under the walls at the structure-block layer (not implicated here).
 
+- **F0.6 Mock-player spawn shield (ruled 2026-09-04 night).** A fresh framework `ServerPlayer` carries the 60-tick
+  spawn shield (`ServerPlayer.spawnInvulnerableTime`, initialised to 60 and counted down in `tick`; `ServerPlayer.hurt`
+  returns false while it runs), which swallowed the pinned bites and the Irukandji's counter-damage on T5's first gate.
+  It is never cleared helper-wide: a row that pins a hit on a fresh mock player clears it in the row
+  (`TargetReleaseParityTests.clearSpawnInvulnerability`, reflection on the field) and says so in its message.
+
 ## 1. `i050_vortex_no_launch_drag_pull` — "was 0.0" (wave1e only)
 
 **Proven:** the exact 0.0 means the push never ran: `golem.setDeltaMovement(0,0,0)`
