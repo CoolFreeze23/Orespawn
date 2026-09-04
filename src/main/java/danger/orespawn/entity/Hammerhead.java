@@ -3,6 +3,7 @@ package danger.orespawn.entity;
 import danger.orespawn.MobStats;
 
 import danger.orespawn.OreSpawnMod;
+import danger.orespawn.OreSpawnConfig;
 import javax.annotation.Nullable;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -115,17 +116,19 @@ public class Hammerhead extends Monster {
         super.customServerAiStep();
 
         if (this.random.nextInt(3) == 1) {
+            boolean playNicely = OreSpawnConfig.PLAY_NICELY.get();
             LivingEntity currentTarget = this.revengeTarget;
+            if (playNicely) currentTarget = null; // orig Hammerhead.java:194-196 — `e = null`: the pass's copy of the revenge target is blanked, `rt` itself kept (ENT-S-115)
             if (currentTarget != null) {
                 if (!currentTarget.isAlive() || this.random.nextInt(250) == 1) {
                     currentTarget = null;
                     this.revengeTarget = null;
                 }
             }
-            if (currentTarget == null) {
+            if (currentTarget == null && !playNicely) { // port-only read of the slot (HurtByTargetGoal's channel): under the flag orig's pass consulted nothing (:194-209) and set attacking 0 (:219-221), so the read is gated with the pass; the slot itself is untouched (ENT-S-115, refuter B2)
                 currentTarget = this.getTarget();
             }
-            if (currentTarget == null) {
+            if (currentTarget == null && !playNicely) { // orig Hammerhead.java:252-254 — the scan answers null under PlayNicely (ENT-S-115)
                 Player nearest = this.level().getNearestPlayer(this, 18.0);
                 if (nearest != null && !nearest.getAbilities().instabuild) {
                     currentTarget = nearest;

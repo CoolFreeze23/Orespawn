@@ -214,6 +214,7 @@ public class EntityRat extends Monster {
     }
 
     private LivingEntity findSomethingToAttack() {
+        if (OreSpawnConfig.PLAY_NICELY.get()) return null; // orig Rat.java:252-254 — PlayNicely != 0 returns null ahead of the scan (ENT-S-115)
         AABB searchBox = this.getBoundingBox().inflate(9.0, 2.0, 9.0);
         List<LivingEntity> targets = this.level().getEntitiesOfClass(LivingEntity.class, searchBox);
         // OPT-021: nearest-first pick without the full list sort; TargetSelection

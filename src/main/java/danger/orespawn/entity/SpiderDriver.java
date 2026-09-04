@@ -25,6 +25,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import danger.orespawn.OreSpawnMod;
+import danger.orespawn.OreSpawnConfig;
 import danger.orespawn.entity.ai.TargetSelection;
 import danger.orespawn.util.MyUtils;
 
@@ -146,6 +147,7 @@ public class SpiderDriver extends Spider {
     }
 
     private LivingEntity findSpiderRobot() {
+        if (OreSpawnConfig.PLAY_NICELY.get()) return null; // orig SpiderDriver.java:104-106 — PlayNicely != 0 returns null ahead of the mount scan (ENT-S-115)
         List<SpiderRobot> robots = this.level().getEntitiesOfClass(SpiderRobot.class,
                 this.getBoundingBox().inflate(25.0, 15.0, 25.0));
         // OPT-021: nearest-first pick without the full list sort; TargetSelection
@@ -164,6 +166,7 @@ public class SpiderDriver extends Spider {
     }
 
     private LivingEntity findSomethingToAttack() {
+        if (OreSpawnConfig.PLAY_NICELY.get()) return null; // orig SpiderDriver.java:160-162 — PlayNicely != 0 returns null ahead of the combat scan (ENT-S-115)
         List<LivingEntity> entities = this.level().getEntitiesOfClass(LivingEntity.class,
                 this.getBoundingBox().inflate(35.0, 15.0, 35.0));
         // OPT-021: nearest-first pick without the full list sort (see above).

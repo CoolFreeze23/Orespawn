@@ -104,13 +104,20 @@ public class TRex extends Monster {
      * time (:210-212, setAttacking(0)). The port's single target slot feeds the melee goal,
      * so the scan's own pick is re-derived on every cadence tick (replaced, or cleared when
      * the scan comes back empty), a dead target is dropped (:189), and a target set by any
-     * other path is kept, as the original kept {@code rt}. The 1-in-200 drop, the PlayNicely
-     * blanking and the out-of-sight skip of the revenge target have no place in a single
-     * slot and are the revenge path's own concern (the scan itself is PlayNicely-gated,
-     * :251-253). ENT-S-108.
+     * other path is kept, as the original kept {@code rt}. The 1-in-200 drop and the
+     * out-of-sight skip of the revenge target have no place in a single slot and are the
+     * revenge path's own concern (the scan itself is PlayNicely-gated, :251-253). ENT-S-108.
+     * ENT-S-115: the PlayNicely blanking of :185-187 is transcribed on the pass's copy of a
+     * foreign occupant only — orig's {@code rt} was never the scan's pick — so a revenge
+     * target's dead-drop is skipped, the (gated) scan runs, the slot is left as orig left
+     * {@code rt} and the scan's bookkeeping claims nothing it did not set; the scan's own pick
+     * is not blanked, runs on to the gated scan and is cleared, as it was at HEAD and as orig
+     * stood down (:210-212). The melee goal still reads a stored revenge target every tick (the
+     * ledger's release-rule row), which a pass-local blanking cannot reach.
      */
     private void selectTarget() {
         LivingEntity current = this.getTarget();                   // orig :184
+        if (OreSpawnConfig.PLAY_NICELY.get() && current != this.scanPick) current = null; // orig :185-187 — `e = rt; e = null`: only a foreign occupant (orig rt, never the scan's pick) is blanked for the pass, the slot untouched; the scan's own pick runs on to the gated scan and is cleared as at HEAD (ENT-S-115, refuter B1)
         if (current != null && !current.isAlive()) {               // orig :189 isDead
             this.setTarget(null);                                  // orig :190-191
             current = null;
@@ -120,8 +127,10 @@ public class TRex extends Monster {
         if (pick != current) super.setTarget(pick);                // super: the scan's own set keeps its ownership
         // Re-read the slot rather than trusting `pick`: a LivingChangeTargetEvent handler may
         // have substituted or cancelled the set, and a stale scanPick would stall the scan
-        // (ENT-S-108 refuter hardening, 2026-09-04).
-        this.scanPick = this.getTarget();
+        // (ENT-S-108 refuter hardening, 2026-09-04). A pass that set nothing — both null, the
+        // PlayNicely-blanked pass of orig :185-187 — claims nothing: the slot may still hold the
+        // revenge target the pass never touched (ENT-S-115).
+        if (pick != null || current != null) this.scanPick = this.getTarget();
     }
 
     /** A target set by any other path ends the scan's ownership of the slot; see {@link #selectTarget}. ENT-S-108. */

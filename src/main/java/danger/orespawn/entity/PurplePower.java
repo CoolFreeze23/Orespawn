@@ -24,6 +24,7 @@ import net.minecraft.world.entity.projectile.Arrow;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import danger.orespawn.OreSpawnConfig;
 import danger.orespawn.entity.ai.TargetSelection;
 import danger.orespawn.util.MyUtils;
 
@@ -192,6 +193,7 @@ public class PurplePower extends Mob {
     }
 
     private LivingEntity findSomethingToAttack() {
+        if (OreSpawnConfig.PLAY_NICELY.get()) return null; // orig PurplePower.java:268-270 — PlayNicely != 0 returns null ahead of the scan (ENT-S-115)
         AABB searchBox = this.getBoundingBox().inflate(32.0, 24.0, 32.0);
         List<LivingEntity> entities = this.level().getEntitiesOfClass(LivingEntity.class, searchBox);
         // OPT-021: nearest-first pick without the full list sort; TargetSelection

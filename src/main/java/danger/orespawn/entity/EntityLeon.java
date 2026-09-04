@@ -157,7 +157,17 @@ public class EntityLeon extends TamableAnimal
         this.targetSelector.addGoal(1, new OwnerHurtByTargetGoal(this));
         this.targetSelector.addGoal(2, new OwnerHurtTargetGoal(this));
         this.targetSelector.addGoal(3, new HurtByTargetGoal(this));
-        this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, Monster.class, 10, true, false, e -> !this.isTame() || this.getTarget() == null));
+        // orig Leon.java:92-94 — the EntityAINearestAttackableTarget task (EntityLiving.class, IMob selector) is
+        // registered only when PlayNicely == 0 at construction; the port registers the goal always and reads the
+        // flag live in its canUse, so it never starts while PlayNicely is on (ENT-S-115; the :391 filter gate is
+        // ENT-S-110's, at isSuitableTarget).
+        this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, Monster.class, 10, true, false, e -> !this.isTame() || this.getTarget() == null) {
+            @Override
+            public boolean canUse() {
+                if (OreSpawnConfig.PLAY_NICELY.get()) return false; // orig Leon.java:92-94 (ENT-S-115)
+                return super.canUse();
+            }
+        });
     }
 
     public static AttributeSupplier.Builder createAttributes() {

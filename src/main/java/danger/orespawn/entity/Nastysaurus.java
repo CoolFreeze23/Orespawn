@@ -123,12 +123,19 @@ public class Nastysaurus extends Monster {
      * so the scan's own pick is re-derived on every cadence tick (replaced, or cleared when
      * the scan comes back empty), a dead target is dropped (:219), and a target set by any
      * other path is kept, as the original kept {@code rt}. The 1-in-250 drop is the melee
-     * goal's {@code forgetTargetRoll}; the PlayNicely blanking and the out-of-sight skip of
-     * the revenge target have no place in a single slot and are the revenge path's own
-     * concern (the scan itself is PlayNicely-gated, :279-281). ENT-S-108.
+     * goal's {@code forgetTargetRoll}; the out-of-sight skip of the revenge target has no
+     * place in a single slot and is the revenge path's own concern (the scan itself is
+     * PlayNicely-gated, :279-281). ENT-S-108. ENT-S-115: the PlayNicely blanking of :215-217
+     * is transcribed on the pass's copy of a foreign occupant only — orig's {@code rt} was never
+     * the scan's pick — so a revenge target's dead-drop is skipped, the (gated) scan runs, the
+     * slot is left as orig left {@code rt} and the scan's bookkeeping claims nothing it did not
+     * set; the scan's own pick is not blanked, runs on to the gated scan and is cleared, as it
+     * was at HEAD and as orig stood down (:240-242). The melee goal still reads a stored revenge
+     * target every tick (the ledger's release-rule row), which a pass-local blanking cannot reach.
      */
     private void selectTarget() {
         LivingEntity current = this.getTarget();                   // orig :214
+        if (OreSpawnConfig.PLAY_NICELY.get() && current != this.scanPick) current = null; // orig :215-217 — `e = rt; e = null`: only a foreign occupant (orig rt, never the scan's pick) is blanked for the pass, the slot untouched; the scan's own pick runs on to the gated scan and is cleared as at HEAD (ENT-S-115, refuter B1)
         if (current != null && !current.isAlive()) {               // orig :219 isDead
             this.setTarget(null);                                  // orig :220-221
             current = null;
@@ -138,8 +145,10 @@ public class Nastysaurus extends Monster {
         if (pick != current) super.setTarget(pick);                // super: the scan's own set keeps its ownership
         // Re-read the slot rather than trusting `pick`: a LivingChangeTargetEvent handler may
         // have substituted or cancelled the set, and a stale scanPick would stall the scan
-        // (ENT-S-108 refuter hardening, 2026-09-04).
-        this.scanPick = this.getTarget();
+        // (ENT-S-108 refuter hardening, 2026-09-04). A pass that set nothing — both null, the
+        // PlayNicely-blanked pass of orig :215-217 — claims nothing: the slot may still hold the
+        // revenge target the pass never touched (ENT-S-115).
+        if (pick != null || current != null) this.scanPick = this.getTarget();
     }
 
     /** A target set by any other path ends the scan's ownership of the slot; see {@link #selectTarget}. ENT-S-108. */

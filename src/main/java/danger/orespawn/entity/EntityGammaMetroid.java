@@ -46,6 +46,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import danger.orespawn.ModEntities;
 import danger.orespawn.OreSpawnMod;
+import danger.orespawn.OreSpawnConfig;
 import danger.orespawn.entity.ai.TargetSelection;
 import danger.orespawn.util.MyUtils;
 
@@ -199,6 +200,7 @@ public class EntityGammaMetroid extends TamableAnimal {
 
     @Nullable
     private LivingEntity findSomethingToAttack() {
+        if (OreSpawnConfig.PLAY_NICELY.get()) return null; // orig GammaMetroid.java:291-293 — PlayNicely != 0 returns null ahead of the child check (:294-296) and the scan (ENT-S-115)
         if (this.isBaby()) return null;
         if (this.isTame()) return null;
         List<LivingEntity> entities = this.level().getEntitiesOfClass(LivingEntity.class,

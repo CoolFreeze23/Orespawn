@@ -1,6 +1,7 @@
 package danger.orespawn.entity;
 
 import danger.orespawn.MobStats;
+import danger.orespawn.OreSpawnConfig;
 
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -47,8 +48,17 @@ public class EnderReaper extends Monster {
         this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
         // orig EnderReaper.java:67 — unprovoked player targeting runs through the
         // pumpkin-stare test (shouldAttackPlayer), never proximity alone.
+        // orig EnderReaper.java:62-64 — findPlayerToAttack (func_70782_k) answers null under PlayNicely (PlayNicely
+        // != 0), ahead of the nearest-player pick and the stare test; the port's pick is this goal, so the flag is
+        // read live in its canUse: the goal never starts while PlayNicely is on (ENT-S-115).
         this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, 10, true, false,
-                e -> e instanceof Player p && this.shouldAttackPlayer(p)));
+                e -> e instanceof Player p && this.shouldAttackPlayer(p)) {
+            @Override
+            public boolean canUse() {
+                if (OreSpawnConfig.PLAY_NICELY.get()) return false; // orig EnderReaper.java:62-64 (ENT-S-115)
+                return super.canUse();
+            }
+        });
     }
 
     // orig EnderReaper.java:83-93 — pumpkin-stare gate. A pumpkin on the head

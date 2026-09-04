@@ -1,6 +1,7 @@
 package danger.orespawn.entity;
 
 import danger.orespawn.MobStats;
+import danger.orespawn.OreSpawnConfig;
 
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -44,7 +45,16 @@ public class EnderKnight extends Monster {
         this.goalSelector.addGoal(3, new LookAtPlayerGoal(this, Player.class, 8.0f));
         this.goalSelector.addGoal(4, new RandomLookAroundGoal(this));
         this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
-        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
+        // orig EnderKnight.java:62-64 — findPlayerToAttack (func_70782_k) answers null under PlayNicely (PlayNicely
+        // != 0), ahead of the nearest-player pick; the port's pick is this goal, so the flag is read live in its
+        // canUse: the goal never starts while PlayNicely is on (ENT-S-115).
+        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true) {
+            @Override
+            public boolean canUse() {
+                if (OreSpawnConfig.PLAY_NICELY.get()) return false; // orig EnderKnight.java:62-64 (ENT-S-115)
+                return super.canUse();
+            }
+        });
     }
 
     public static AttributeSupplier.Builder createAttributes() {

@@ -664,6 +664,7 @@ public class AntRobot extends Mob implements ICustomHitboxProfileSupplier, IMode
     }
 
     private void feetFindSomethingToHit() {
+        if (OreSpawnConfig.PLAY_NICELY.get()) return; // orig AntRobot.java:940-942 — PlayNicely != 0 returns ahead of the stomp scan (ENT-S-115)
         AABB searchBox = this.getBoundingBox().inflate(10.0, 8.0, 10.0);
         List<LivingEntity> entities = this.level().getEntitiesOfClass(LivingEntity.class, searchBox);
         for (LivingEntity stompTarget : entities) {
@@ -694,6 +695,7 @@ public class AntRobot extends Mob implements ICustomHitboxProfileSupplier, IMode
     }
 
     private LivingEntity findSomethingToAttack() {
+        if (OreSpawnConfig.PLAY_NICELY.get()) return null; // orig AntRobot.java:1012-1014 — PlayNicely != 0 returns null ahead of the hunt scan (ENT-S-115)
         AABB searchBox = this.getBoundingBox().inflate(12.0, 12.0, 12.0);
         List<LivingEntity> entities = this.level().getEntitiesOfClass(LivingEntity.class, searchBox);
         for (LivingEntity candidate : entities) {

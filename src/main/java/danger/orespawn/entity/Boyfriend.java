@@ -141,7 +141,17 @@ public class Boyfriend extends TamableAnimal implements RangedAttackMob {
 
         this.targetSelector.addGoal(1, new OwnerHurtByTargetGoal(this));
         this.targetSelector.addGoal(2, new OwnerHurtTargetGoal(this));
-        this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, Monster.class, true));
+        // orig Boyfriend.java:140-142 — the MyEntityAINearestAttackableTarget(EntityLiving.class, 15.0f, IMob selector)
+        // task is registered only when PlayNicely == 0 at construction (the :137-139 EntityCreeper task has no port
+        // counterpart); the port registers this goal always and reads the flag live in its canUse, as the Jealousy
+        // goals below do — it never starts while PlayNicely is on (ENT-S-115).
+        this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, Monster.class, true) {
+            @Override
+            public boolean canUse() {
+                if (OreSpawnConfig.PLAY_NICELY.get()) return false; // orig Boyfriend.java:140-142 (ENT-S-115)
+                return super.canUse();
+            }
+        });
         // orig :146-147 — Jealousy(Boyfriend.class, 6.0f, 5, true) @4 and
         // (3.0f, 15, true) @5; a tamed rival is never targeted; PlayNicely
         // gates dynamically inside the goal (ENT-A-054).

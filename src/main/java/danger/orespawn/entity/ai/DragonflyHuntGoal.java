@@ -33,6 +33,9 @@ import net.minecraft.world.entity.player.Player;
  * onto the prey and the bite at :147-148 — on {@code difficulty != PEACEFUL}, and :198 answers
  * false at the head of the filter; both are transcribed below. An Animal does not despawn on
  * Peaceful, so without them the port hunted there (ENT-S-114).
+ *
+ * <p>PlayNicely: orig Dragonfly.java:232-234 answers null at the head of {@code findSomethingToAttack};
+ * read live at the head of {@link #findPrey}, the port's shape of that scan (ENT-S-115).</p>
  */
 public class DragonflyHuntGoal extends AmbientFlightGoal {
     private static final double HUNT_HURT_DIST_SQ = 6.0;
@@ -78,6 +81,7 @@ public class DragonflyHuntGoal extends AmbientFlightGoal {
     }
 
     private LivingEntity findPrey() {
+        if (OreSpawnConfig.PLAY_NICELY.get()) return null; // orig Dragonfly.java:232-234 — PlayNicely != 0 returns null ahead of the scan (ENT-S-115)
         List<LivingEntity> candidates = this.mob.level().getEntitiesOfClass(LivingEntity.class,
                 this.mob.getBoundingBox().inflate(SCAN_X, SCAN_Y, SCAN_Z));
         // OPT-021: nearest-first pick without the full list sort; TargetSelection

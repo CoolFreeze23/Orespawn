@@ -43,6 +43,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import danger.orespawn.ModEntities;
 import danger.orespawn.OreSpawnMod;
+import danger.orespawn.OreSpawnConfig;
 import danger.orespawn.entity.ai.TargetSelection;
 
 public class Lizard extends TamableAnimal {
@@ -139,6 +140,7 @@ public class Lizard extends TamableAnimal {
     }
 
     private LivingEntity findSomethingToAttack() {
+        if (OreSpawnConfig.PLAY_NICELY.get()) return null; // orig Lizard.java:336-338 — PlayNicely != 0 returns null ahead of the revenge-first block (:344-350) and the scan (ENT-S-115)
         LivingEntity revenge = this.getLastHurtByMob();
         if (this.random.nextInt(100) == 0) this.setLastHurtByMob(null);
         if (revenge != null && revenge.isAlive()) return revenge;

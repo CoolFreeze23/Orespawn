@@ -507,6 +507,7 @@ public class PitchBlack extends Monster implements PitchBlackPose {
     }
 
     private LivingEntity findSomethingToAttack() {
+        if (OreSpawnConfig.PLAY_NICELY.get()) return null; // orig PitchBlack.java:541-543 — PlayNicely != 0 returns null ahead of the scan (ENT-S-115)
         float scale = this.getPitchBlackScale();
         double horizontalReach = 16.0 + scale * 6.0;
         double verticalReach = 10.0 + scale * 4.0;
