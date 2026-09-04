@@ -33,6 +33,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import danger.orespawn.OreSpawnMod;
 import danger.orespawn.OreSpawnConfig;
+import danger.orespawn.entity.ai.GenericTargetSorter;
 import danger.orespawn.entity.ai.TargetSelection;
 
 /**
@@ -88,7 +89,7 @@ public class Fairy extends AmbientCreature {
     public Fairy(EntityType<? extends Fairy> type, Level level) {
         super(type, level);
         this.setFairyType(this.random.nextInt(9));
-        this.targetSorter = Comparator.comparingDouble(this::distanceToSqr);
+        this.targetSorter = new GenericTargetSorter(this); // orig Fairy.java:63 — GenericTargetSorter, the sort at :243 (ENT-S-139)
     }
 
     @Override

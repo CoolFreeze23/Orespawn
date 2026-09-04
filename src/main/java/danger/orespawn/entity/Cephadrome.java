@@ -35,6 +35,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import danger.orespawn.OreSpawnMod;
+import danger.orespawn.entity.ai.GenericTargetSorter;
 import danger.orespawn.entity.ai.TargetSelection;
 
 public class Cephadrome extends PathfinderMob
@@ -116,7 +117,7 @@ public class Cephadrome extends PathfinderMob
         // of re-writing it every tick (same value the removed per-tick call set).
         this.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(this.moveSpeed);
         this.xpReward = 200;
-        this.targetSorter = Comparator.comparingDouble(this::distanceToSqr);
+        this.targetSorter = new GenericTargetSorter(this); // orig Cephadrome.java:84 — GenericTargetSorter (the field :61; a creeper's distance² halved, a silhouette over 1 divides), the sort at :580; plain distance was the TF-035 remainder (ENT-S-139)
     }
 
     /** Mirrors orig Cephadrome.java:156-158 {@code getRenderInfo()} (ENT-S-093). */

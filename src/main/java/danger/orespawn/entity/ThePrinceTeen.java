@@ -47,6 +47,7 @@ import danger.orespawn.OreSpawnConfig;
 import danger.orespawn.OreSpawnMod;
 import danger.orespawn.util.MyUtils;
 import danger.orespawn.util.OrigTargets;
+import danger.orespawn.entity.ai.GenericTargetSorter;
 import danger.orespawn.entity.ai.TargetSelection;
 
 public class ThePrinceTeen extends TamableAnimal
@@ -140,7 +141,7 @@ public class ThePrinceTeen extends TamableAnimal
         this.xpReward = 300;
         this.noPhysics = false;
         this.setOrderedToSit(false);
-        this.targetSorter = Comparator.comparingDouble(this::distanceToSqr);
+        this.targetSorter = new GenericTargetSorter(this); // orig ThePrinceTeen.java:121 — GenericTargetSorter (:79), the sort at :544 (ENT-S-139)
     }
 
     @Override
@@ -906,7 +907,7 @@ public class ThePrinceTeen extends TamableAnimal
         return false;
     }
 
-    /** orig ThePrinceTeen.java:539-555 — nearest suitable prey in a 25/20/25 box. */
+    /** orig ThePrinceTeen.java:539-555 — the first suitable prey, in GenericTargetSorter order (:79 / :121 / :544), in a 25/20/25 box. */
     private LivingEntity findSomethingToAttack() {
         if (OreSpawnConfig.PLAY_NICELY.get()) return null;
         AABB box = this.getBoundingBox().inflate(25.0, 20.0, 25.0);

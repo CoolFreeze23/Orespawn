@@ -54,6 +54,7 @@ import danger.orespawn.OreSpawnConfig;
 import danger.orespawn.OreSpawnMod;
 import danger.orespawn.entity.ai.MyEntityAINearestAttackableTargetGoal;
 import danger.orespawn.util.SeasonalDates;
+import java.util.Comparator;
 import java.util.function.Predicate;
 
 public class Girlfriend extends TamableAnimal implements RangedAttackMob {
@@ -319,6 +320,17 @@ public class Girlfriend extends TamableAnimal implements RangedAttackMob {
         @Override
         public boolean canUse() {
             return this.girlfriend.isValentineAngry() && super.canUse();
+        }
+
+        /**
+         * orig MyValentineTarget.java:41 / :61 — the Valentine tasks sorted their scan with {@code MyValentineTargetSorter}
+         * (MyValentineTargetSorter.java:20-24: plain distance², no creeper term), not the hunt tasks' creeper-halving sorter the
+         * class carries (orig MyEntityAINearestAttackableTarget.java:38 / :57). Unobservable on a Player / Boyfriend scan — no
+         * creeper is either — and transcribed for the ledger's MyValentineTarget tie-break row (MATCH). ENT-S-139.
+         */
+        @Override
+        protected Comparator<? super T> targetOrder() {
+            return Comparator.<T>comparingDouble(this.mob::distanceToSqr);
         }
     }
 

@@ -1,6 +1,5 @@
 package danger.orespawn.entity;
 
-import java.util.Comparator;
 import java.util.List;
 import java.util.function.Predicate;
 import javax.annotation.Nullable;
@@ -50,6 +49,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import danger.orespawn.OreSpawnConfig;
 import danger.orespawn.OreSpawnMod;
+import danger.orespawn.entity.ai.GenericTargetSorter;
 import danger.orespawn.entity.ai.TargetSelection;
 import danger.orespawn.util.MyUtils;
 import danger.orespawn.util.OrigTargets;
@@ -797,7 +797,7 @@ public class EntityLeon extends TamableAnimal
                 this.getBoundingBox().inflate(20.0, 20.0, 20.0));
         // OPT-021: nearest-first pick without the full list sort; TargetSelection
         // preserves the removed sort's order and stable-tie semantics exactly.
-        return TargetSelection.firstMatch(entities, Comparator.comparingDouble(this::distanceToSqr), this::isSuitableTarget);
+        return TargetSelection.firstMatch(entities, new GenericTargetSorter(this), this::isSuitableTarget); // orig Leon.java:435 Collections.sort(var5, this.TargetSorter) — GenericTargetSorter (:63 / :97) on the custom scan; the vanilla goal's own plain-distance sorter stays vanilla's (ENT-S-139)
     }
 
     /**

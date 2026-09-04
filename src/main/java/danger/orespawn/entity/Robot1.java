@@ -26,6 +26,7 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.resources.ResourceLocation;
 import danger.orespawn.OreSpawnMod;
 import danger.orespawn.OreSpawnConfig;
+import danger.orespawn.entity.ai.GenericTargetSorter;
 import danger.orespawn.entity.ai.TargetSelection;
 import danger.orespawn.util.MyUtils;
 
@@ -59,7 +60,7 @@ public class Robot1 extends Monster {
     public Robot1(EntityType<? extends Robot1> type, Level level) {
         super(type, level);
         this.xpReward = 5;
-        this.targetSorter = Comparator.comparingDouble(this::distanceToSqr);
+        this.targetSorter = new GenericTargetSorter(this); // orig Robot1.java:44 — GenericTargetSorter (:33), the sort at :209 (ENT-S-139)
     }
 
     @Override

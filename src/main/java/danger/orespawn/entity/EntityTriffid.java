@@ -4,7 +4,6 @@ import danger.orespawn.MobStats;
 
 import danger.orespawn.OreSpawnMod;
 import danger.orespawn.OreSpawnConfig;
-import java.util.Comparator;
 import java.util.List;
 import javax.annotation.Nullable;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -27,6 +26,7 @@ import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
+import danger.orespawn.entity.ai.GenericTargetSorter;
 import danger.orespawn.entity.ai.TargetSelection;
 import danger.orespawn.util.MyUtils;
 
@@ -245,7 +245,7 @@ public class EntityTriffid extends Monster {
                 this.getBoundingBox().inflate(10.0, 8.0, 10.0));
         // OPT-021: nearest-first pick without the full list sort; TargetSelection
         // preserves the removed sort's order and stable-tie semantics exactly.
-        return TargetSelection.firstMatch(entities, Comparator.comparingDouble(this::distanceToSqr), this::isSuitableTarget);
+        return TargetSelection.firstMatch(entities, new GenericTargetSorter(this), this::isSuitableTarget); // orig Triffid.java:326 Collections.sort(var5, this.TargetSorter) — GenericTargetSorter (:42 / :54) (ENT-S-139)
     }
 
     /**

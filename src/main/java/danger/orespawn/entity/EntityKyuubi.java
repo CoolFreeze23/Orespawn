@@ -2,7 +2,6 @@ package danger.orespawn.entity;
 
 import danger.orespawn.MobStats;
 
-import java.util.Comparator;
 import java.util.List;
 import javax.annotation.Nullable;
 
@@ -30,6 +29,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import danger.orespawn.OreSpawnMod;
 import danger.orespawn.OreSpawnConfig;
+import danger.orespawn.entity.ai.GenericTargetSorter;
 import danger.orespawn.entity.ai.TargetSelection;
 import danger.orespawn.util.MyUtils;
 
@@ -134,7 +134,7 @@ public class EntityKyuubi extends Monster {
                 this.getBoundingBox().inflate(12.0, 4.0, 12.0));
         // OPT-021: nearest-first pick without the full list sort; TargetSelection
         // preserves the removed sort's order and stable-tie semantics exactly.
-        return TargetSelection.firstMatch(entities, Comparator.comparingDouble(this::distanceToSqr), this::isSuitableTarget);
+        return TargetSelection.firstMatch(entities, new GenericTargetSorter(this), this::isSuitableTarget); // orig Kyuubi.java:209 Collections.sort(var5, this.TargetSorter) — GenericTargetSorter (:56) (ENT-S-139)
     }
 
     /**

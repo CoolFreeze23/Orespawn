@@ -41,13 +41,16 @@ import net.minecraft.world.entity.player.Player;
  * test (orig MyEntityAITarget.java:131-144; the path search range is the FOLLOW_RANGE attribute in both trees) behind a
  * {@code reducedTickDelay(10 + nextInt(5))} cache — 5-7 goal passes: the same in ticks for one candidate as orig's
  * {@code 10 + nextInt(5)} ticks, halved in candidate evaluations ({@code --reachCacheTime} runs per candidate). The order
- * is plain distance from the owner's position; orig's {@code MyEntityAINearestAttackableTargetSorter} halved a creeper's
- * distance — the ledger's T4 row, not this class's.
+ * is orig's {@link MyEntityAINearestAttackableTargetSorter} (orig :38, :57 — a creeper's distance² halved, no silhouette
+ * term; {@link #targetOrder}); the Girlfriend's Valentine subclass sorts plain, as orig MyValentineTarget.java:41 / :61
+ * did with {@code MyValentineTargetSorter} (ENT-S-139, the ledger's T4 §(v) row).
  */
 public class MyEntityAINearestAttackableTargetGoal<T extends LivingEntity> extends NearestAttackableTargetGoal<T> {
 
     /** orig MyEntityAINearestAttackableTarget.java:36 {@code targetDistance} — the box's half-width and the hold's reach. */
     private final double targetDistance;
+    /** orig MyEntityAINearestAttackableTarget.java:23 / :38 {@code theNearestAttackableTargetSorter} — the task's own sorter, held as orig held it (ENT-S-139). */
+    private final MyEntityAINearestAttackableTargetSorter targetSorter;
 
     /**
      * @param targetDistance orig's {@code par3} (:36): 20 for the Creeper hunt, 15 for the IMob hunt, 16 for the Valentine tasks
@@ -59,6 +62,7 @@ public class MyEntityAINearestAttackableTargetGoal<T extends LivingEntity> exten
                                                  boolean nearbyOnly, @Nullable Predicate<LivingEntity> selector) {
         super(owner, targetClass, 0, mustSee, nearbyOnly, selector); // orig :36 targetChance 0: no roll (:53 gates only a chance > 0) — every pass
         this.targetDistance = targetDistance;
+        this.targetSorter = new MyEntityAINearestAttackableTargetSorter(owner); // orig :38 — new MyEntityAINearestAttackableTargetSorter(this, par1) (ENT-S-139)
         // orig :56 — the box is the task's only bound: vanilla's ctor adds a range(getFollowDistance()) sphere, scaled by the
         // target's visibility percent, that the original never had; rebuilt without it, the selector and forCombat's screens kept
         TargetingConditions conditions = TargetingConditions.forCombat().selector(selector);
@@ -96,6 +100,18 @@ public class MyEntityAINearestAttackableTargetGoal<T extends LivingEntity> exten
     }
 
     /**
+     * orig MyEntityAINearestAttackableTarget.java:57 {@code Collections.sort(var5, this.theNearestAttackableTargetSorter)} — the
+     * order the box scan is walked in: {@link MyEntityAINearestAttackableTargetSorter}, a creeper's distance² halved and no
+     * silhouette term (orig MyEntityAINearestAttackableTargetSorter.java:21-31 — not GenericTargetSorter's :24-26 division).
+     * {@code MyValentineTarget.java:61} sorted its copy of the scan with {@code MyValentineTargetSorter} (plain distance², :20-24):
+     * the Girlfriend's Valentine subclass overrides this. Stable in both trees — {@code TargetSelection.firstMatch} keeps the
+     * list's order on ties as {@code Collections.sort} did. ENT-S-139 (the targeting ledger's T4 §(v) row).
+     */
+    protected Comparator<? super T> targetOrder() {
+        return this.targetSorter;
+    }
+
+    /**
      * orig MyEntityAINearestAttackableTarget.java:56-64 (and MyValentineTarget.java:60-68): the box scan, sorted, the first
      * candidate {@code isSuitableTarget} accepts — here {@link #canAttack} with the goal's conditions, which carries the
      * selector, {@code forCombat}'s screens and the line of sight, then orig's pre-reach grants and the {@code nearbyOnly}
@@ -107,7 +123,7 @@ public class MyEntityAINearestAttackableTargetGoal<T extends LivingEntity> exten
     protected void findTarget() {
         List<T> candidates = this.mob.level().getEntitiesOfClass(this.targetType,
                 this.getTargetSearchArea(this.targetDistance), e -> true);          // orig :56 — expand(targetDistance, 4, targetDistance)
-        this.target = TargetSelection.firstMatch(candidates, Comparator.<T>comparingDouble(this.mob::distanceToSqr),
-                candidate -> this.canAttack(candidate, this.targetConditions));    // orig :57-63 — sorted, the first suitable (OPT-021)
+        this.target = TargetSelection.firstMatch(candidates, this.targetOrder(),
+                candidate -> this.canAttack(candidate, this.targetConditions));    // orig :57-63 — sorted (:57, the task's sorter — targetOrder), the first suitable (OPT-021)
     }
 }

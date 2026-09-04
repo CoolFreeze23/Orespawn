@@ -2,7 +2,6 @@ package danger.orespawn.entity;
 
 import danger.orespawn.MobStats;
 
-import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 import javax.annotation.Nullable;
@@ -47,6 +46,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import danger.orespawn.ModEntities;
 import danger.orespawn.OreSpawnMod;
 import danger.orespawn.OreSpawnConfig;
+import danger.orespawn.entity.ai.GenericTargetSorter;
 import danger.orespawn.entity.ai.TargetSelection;
 import danger.orespawn.util.MyUtils;
 
@@ -220,7 +220,7 @@ public class EntityGammaMetroid extends TamableAnimal {
                 this.getBoundingBox().inflate(10.0, 3.0, 10.0));
         // OPT-021: nearest-first pick without the full list sort; TargetSelection
         // preserves the removed sort's order and stable-tie semantics exactly.
-        return TargetSelection.firstMatch(entities, Comparator.comparingDouble(this::distanceToSqr), this::isSuitableTarget);
+        return TargetSelection.firstMatch(entities, new GenericTargetSorter(this), this::isSuitableTarget); // orig GammaMetroid.java:298 Collections.sort(var5, this.TargetSorter) — GenericTargetSorter (:59) (ENT-S-139)
     }
 
     /**

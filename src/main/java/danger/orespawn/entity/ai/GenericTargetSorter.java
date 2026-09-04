@@ -15,10 +15,8 @@ import net.minecraft.world.entity.monster.Creeper;
  *
  * <p>TF-035: the port had replaced this with plain distance sorting at every
  * call site. The class is restored here with the Vortex as the reference
- * migration; the remaining call sites migrate as their Phase E4 category
- * batches verify each entity (swapping a plain
- * {@code Comparator.comparingDouble(this::distanceToSqr)} for
- * {@code new GenericTargetSorter(this)}).</p>
+ * migration; every custom scan of the targeting ledger now carries it (the
+ * TF-035 remainders closed by ENT-S-139).</p>
  */
 public class GenericTargetSorter implements Comparator<Entity> {
 

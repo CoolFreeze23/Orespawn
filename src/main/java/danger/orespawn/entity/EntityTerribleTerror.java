@@ -2,7 +2,6 @@ package danger.orespawn.entity;
 
 import danger.orespawn.MobStats;
 
-import java.util.Comparator;
 import java.util.List;
 
 import javax.annotation.Nullable;
@@ -25,6 +24,7 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import danger.orespawn.OreSpawnMod;
 import danger.orespawn.OreSpawnConfig;
+import danger.orespawn.entity.ai.GenericTargetSorter;
 import danger.orespawn.entity.ai.TargetSelection;
 
 public class EntityTerribleTerror extends Monster {
@@ -194,7 +194,7 @@ public class EntityTerribleTerror extends Monster {
         List<LivingEntity> targets = this.level().getEntitiesOfClass(LivingEntity.class, searchBox);
         // OPT-021: nearest-first pick without the full list sort; TargetSelection
         // preserves the removed sort's order and stable-tie semantics exactly.
-        return TargetSelection.firstMatch(targets, Comparator.comparingDouble(this::distanceToSqr), this::isSuitableTarget);
+        return TargetSelection.firstMatch(targets, new GenericTargetSorter(this), this::isSuitableTarget); // orig TerribleTerror.java:300 Collections.sort(var5, this.TargetSorter) — GenericTargetSorter (:47 / :56) (ENT-S-139)
     }
 
     @Nullable
