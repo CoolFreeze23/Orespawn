@@ -4,9 +4,14 @@ import danger.orespawn.MobStats;
 
 import danger.orespawn.ModEntities;
 import danger.orespawn.ModItems;
+import danger.orespawn.OreSpawnConfig;
 import danger.orespawn.OreSpawnMod;
 import danger.orespawn.entity.ai.DinosaurMeleeAttackGoal;
+import danger.orespawn.entity.ai.GenericTargetSorter;
 import danger.orespawn.entity.ai.OwnerFollowAnyNavGoal;
+import danger.orespawn.entity.ai.TargetSelection;
+import danger.orespawn.util.MyUtils;
+import java.util.List;
 import java.util.UUID;
 import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
@@ -18,6 +23,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
+import net.minecraft.world.Difficulty;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
@@ -42,6 +48,7 @@ import net.minecraft.world.entity.ai.goal.RandomSwimmingGoal;
 import net.minecraft.world.entity.ai.goal.TemptGoal;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.ai.navigation.WaterBoundPathNavigation;
+import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.SmallFireball;
 import net.minecraft.world.item.ItemStack;
@@ -70,6 +77,25 @@ public class WaterDragon extends TamableAnimal {
     private int hurtTimer = 0;
     private int closestWaterDistance = 99999;
     private int targetX = 0, targetY = 0, targetZ = 0;
+
+    /**
+     * orig WaterDragon.java:50 {@code TargetSorter}, :67 {@code new GenericTargetSorter(this)} — the shared
+     * weighted-distance order (creepers halved, big silhouettes first) the hunt sorts its candidates by
+     * (:690). ENT-S-117.
+     */
+    private final GenericTargetSorter targetSorter = new GenericTargetSorter(this);
+
+    /**
+     * The last pick {@link #selectTarget} handed to the target slot. 1.7.10 stored the hunt's pick nowhere: the
+     * pass acted on it for that tick (:598-609) and re-derived it on the next; only a target stored by
+     * {@link #hurt} (:490) or the revenge task (:76) persisted, answered ahead of the loop while alive
+     * (:694-697). The port's slot feeds {@code WaterCanonAttackGoal} every tick, so the hunt's own pick lives in
+     * the slot between passes under this ownership mark — re-derived on every pass (replaced, or cleared when the
+     * hunt comes back empty), never sticky — while a target set by any other path is left alone (the ENT-S-108
+     * slot rule; see {@link #setTarget}). ENT-S-117.
+     */
+    @Nullable
+    private LivingEntity scanPick;
 
     /**
      * OPT-009: the speed genuinely varies (water/land), so the per-tick write
@@ -263,6 +289,16 @@ public class WaterDragon extends TamableAnimal {
             ret = super.hurt(source, amount);
             this.hurtTimer = 10;
         }
+        // orig WaterDragon.java:483-493 stores an EntityLiving attacker itself; the revenge task (orig :76, the
+        // port's HurtByTargetGoal) stores any other living attacker on its next pass: from this hurt on the
+        // attacker is the STORED target, sticky while alive (:694-697), so the hunt's ownership of a pick that
+        // turned on the dragon ends here — but only when the hit was stored: a hit the 10-tick hurt_timer
+        // swallowed (orig :479-482) reached neither orig's revenge timer nor its :483-493 store, and the pick
+        // stayed transient, so the mark stays too (a Mob attacker is stored at :297-300 regardless; any other
+        // living attacker only when super.hurt processed it, which is what lastHurtByMob records — ENT-S-117
+        // refuter B, B1).
+        if (attacker != null && attacker == this.scanPick
+                && (attacker instanceof Mob || this.getLastHurtByMob() == attacker)) this.scanPick = null;
         if (attacker instanceof Mob mob) {
             this.setTarget(mob);
             this.getNavigation().moveTo(mob, 1.2);
@@ -302,10 +338,109 @@ public class WaterDragon extends TamableAnimal {
             }
         }
 
+        // orig WaterDragon.java:594-596 — the 1-in-200 release of the stored target is the melee goal's
+        // forgetTargetRoll (DinosaurMeleeAttackGoal.Presets.waterDragon, rolled while engaged; ledger: MATCH).
+        if (this.level().getDifficulty() != Difficulty.PEACEFUL && this.random.nextInt(5) == 1) { // orig :597 — the difficulty first, so the roll is not spent on Peaceful (ENT-S-114's term-order convention)
+            this.selectTarget();                                                                  // orig :598-612 (ENT-S-117)
+        }
+
         if (this.random.nextInt(100) == 1 && this.isInWater() && this.getHealth() < this.getMaxHealth()) {
             this.playSound(SoundEvents.GENERIC_SPLASH, 1.5f, this.random.nextFloat() * 0.2f + 0.9f);
             this.heal(1.0f);
         }
+    }
+
+    /**
+     * orig WaterDragon.java:597-612 — the hunt pass: {@code e = findSomethingToAttack()} (:598); with a target,
+     * face it and bite inside (4 + w/2)² on the nextInt(4)==0 || nextInt(5)==1 dice, or walk at 1.0 and fire the
+     * watercanon (:600-609) — that half is {@code WaterCanonAttackGoal} ({@code DinosaurMeleeAttackGoal.Presets
+     * .waterDragon}, ENT-S-074), fed through the target slot; with none, {@code setAttacking(0)} (:611), which the
+     * goal's own stop does. This method is the hand-off of the pass's target to the slot: the sticky stored target
+     * of :694-697 comes back as the occupant it already is and stands; a fresh pick takes the slot and is marked
+     * the hunt's own; an empty answer clears the hunt's own pick — orig re-derived it every pass, so prey that had
+     * left the 14/4/14 box or line of sight was simply not found again (:611 stood down); for the found-nothing case
+     * {@code findSomethingToAttack} has already cleared the own pick before scanning, so the clear below is reached
+     * only through the PlayNicely / baby returns (refuter B, G6) — and leaves any foreign
+     * occupant alone: a dead one was dropped at :698, and under the PlayNicely / baby gates (:683-688) orig
+     * consulted nothing. ENT-S-117.
+     */
+    private void selectTarget() {
+        LivingEntity pick = this.findSomethingToAttack();                          // orig :598
+        LivingEntity slot = this.getTarget();                                       // :698 may just have cleared it
+        if (pick == null) {                                                         // orig :610-611
+            if (slot != null && slot == this.scanPick) this.setTarget(null);        // the hunt's own pick, not found again this pass
+            return;
+        }
+        if (pick != slot) {                                                         // a fresh pick: the slot was cleared at :698 (or held a superseded pick)
+            this.setTarget(pick);
+            // Re-read the slot rather than trusting `pick`: a LivingChangeTargetEvent handler may have
+            // substituted or cancelled the set (the ENT-S-108 refuter hardening).
+            this.scanPick = this.getTarget();
+        }
+        // pick == slot: the sticky stored target of :694-697 — never the hunt's own (findSomethingToAttack) — stands.
+    }
+
+    /**
+     * orig WaterDragon.java:682-706 {@code findSomethingToAttack}: nothing under PlayNicely (:683-685, read live
+     * as {@code OreSpawnConfig.PLAY_NICELY}) or as a baby (:686-688); every {@code EntityLivingBase} whose box
+     * meets the dragon's box grown by 14/4/14 (:689 — players and the dragon itself included), sorted by the
+     * {@link GenericTargetSorter} (:690); a live stored target — the attacker {@link #hurt} stored (:490) or the
+     * revenge task's (:76) — is answered ahead of the loop (:694-697), a dead or empty slot cleared (:698); else
+     * the first candidate the filter accepts (:699-704), else null (:705). The hunt's own pick, which orig never
+     * stored, is not sticky: it is re-derived on every pass (the slot it sits in is cleared as :698 cleared an
+     * empty one, and refilled by {@link #selectTarget} when it is found again). {@link TargetSelection#firstMatch}
+     * is the sort-and-loop, stable ties and the filter's call sequence preserved (OPT-021); orig sorted before
+     * reading the slot (:690, :694), a side-effect-free reorder. ENT-S-117.
+     */
+    @Nullable
+    private LivingEntity findSomethingToAttack() {
+        if (OreSpawnConfig.PLAY_NICELY.get()) return null;                                   // orig :683-685
+        if (this.isBaby()) return null;                                                       // orig :686-688
+        List<LivingEntity> candidates = this.level().getEntitiesOfClass(LivingEntity.class,
+                this.getBoundingBox().inflate(14.0, 4.0, 14.0));                             // orig :689
+        LivingEntity current = this.getTarget();                                              // orig :694
+        if (current != null && current.isAlive() && current != this.scanPick) return current; // orig :695-697 — a stored target stands while alive; the hunt's own pick is re-derived
+        this.setTarget(null);                                                                 // orig :698
+        return TargetSelection.firstMatch(candidates, this.targetSorter, this::isSuitableTarget); // orig :690, :699-705
+    }
+
+    /**
+     * orig WaterDragon.java:650-680 {@code isSuitableTarget}, in the original's order: Peaceful → false
+     * (:651-653), null / self / dead (:654-662), line of sight (:663-665), another Water Dragon refused (:666-668),
+     * any {@code EntityMob} — the port's {@code Monster} — taken (:669-671), a tamed dragon takes nothing else
+     * (:672-674), a player when not creative (:675-678 — {@code isCreativeMode}, the port's {@code instabuild},
+     * ENT-S-107), and the rest through the shared {@code isAttackableNonMob} (:679). That fallthrough is the
+     * port's helper as it stands ({@code util/MyUtils.java:54-63}: EnderDragon, Kraken, Godzilla, GodzillaHead,
+     * Basilisk, Cephadrome, TheKing, TheQueen); orig's list (orig MyUtils.java:77-115) was EntityMob, Mothra,
+     * Leon, Dragon, Spyro, the royalty, GammaMetroid, Cephadrome, WaterDragon, Girlfriend, Boyfriend,
+     * EntityVillager, Stinky — the membership is the targeting ledger's batch T6, and this filter inherits
+     * whatever T6 rules for the helper. ENT-S-117.
+     */
+    private boolean isSuitableTarget(LivingEntity target) {
+        if (this.level().getDifficulty() == Difficulty.PEACEFUL) return false;                // orig :651-653
+        if (target == null || target == this || !target.isAlive()) return false;             // orig :654-662
+        if (!this.getSensing().hasLineOfSight(target)) return false;                          // orig :663-665
+        if (target instanceof WaterDragon) return false;                                      // orig :666-668
+        if (target instanceof Monster) return true;                                           // orig :669-671
+        if (this.isTame()) return false;                                                      // orig :672-674
+        if (target instanceof Player player) return !player.getAbilities().instabuild;        // orig :675-678
+        return MyUtils.isAttackableNonMob(target);                                            // orig :679
+    }
+
+    /**
+     * A change of occupant by any other path — {@link #hurt} (orig :490), the revenge goal's start or stop, the
+     * melee goal's 1-in-200 release — ends the hunt's ownership of the slot; {@link #selectTarget} marks its own
+     * set right after. A re-assert of the occupant already there keeps it: {@code TargetGoal.canContinueToUse}
+     * re-sets the mob's CURRENT target on every pass while {@code HurtByTargetGoal} runs, and that re-assert would
+     * otherwise turn the hunt's own pick — placed on the pass that dropped a dead revenge target — into a sticky
+     * one (the ENT-S-108 hunters' unconditional mark carries that exposure; disclosed in the ENT-S-117 record).
+     * ENT-S-117.
+     */
+    @Override
+    public void setTarget(@Nullable LivingEntity target) {
+        LivingEntity before = this.getTarget();
+        super.setTarget(target);
+        if (this.getTarget() != before) this.scanPick = null;
     }
 
     private boolean scanForWater(int x, int y, int z, int dx, int dy, int dz) {
