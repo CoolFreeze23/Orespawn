@@ -127,8 +127,10 @@ public class EntityGammaMetroid extends TamableAnimal {
             }
         }
 
+        // orig GammaMetroid.java:435 — the stone-eat is off under PlayNicely; the flag sits between the roll pair and the sitting test, orig's term order (ENT-S-116)
         if ((this.random.nextInt(20) == 0 && this.getHealth() < this.getMaxHealth()
                 || this.random.nextInt(100) == 0)
+                && !OreSpawnConfig.PLAY_NICELY.get()
                 && !this.isOrderedToSit()) {
             scanForStone();
         }
