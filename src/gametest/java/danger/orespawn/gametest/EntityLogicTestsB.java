@@ -376,9 +376,15 @@ public class EntityLogicTestsB {
         Vec3 v = golem.getDeltaMovement();
         // expected: pullStrength = (10-5)*0.1 = 0.5 toward the vortex (−x);
         // vertical = (10-5)*0.05 = 0.25 (non-player multiplier 1.0).
-        check(v.x < -0.45 && v.x > -0.55, "drag pull x should be ~-0.5 toward the Vortex, was " + v.x);
-        check(v.y > 0.20 && v.y < 0.30, "drag pull y should be ~+0.25, was " + v.y);
-        check(Math.abs(v.z) < 0.05, "drag pull z should be ~0, was " + v.z);
+        // Harness slice (2026-09-04): an exact 0.0 pull means findSomethingToAttack
+        // returned null, whose only unexcluded exit is PLAY_NICELY=true — a GLOBAL
+        // flag another test may hold across ticks. Report it and the tick with every
+        // failure (the bug003 idiom, CrashReproTests); nothing pins the flag here.
+        String diag = " playNicely=" + OreSpawnConfig.PLAY_NICELY.get()
+                + " gameTime=" + helper.getLevel().getGameTime();
+        check(v.x < -0.45 && v.x > -0.55, "drag pull x should be ~-0.5 toward the Vortex, was " + v.x + diag);
+        check(v.y > 0.20 && v.y < 0.30, "drag pull y should be ~+0.25, was " + v.y + diag);
+        check(Math.abs(v.z) < 0.05, "drag pull z should be ~0, was " + v.z + diag);
 
         golem.discard();
         vortex.discard();

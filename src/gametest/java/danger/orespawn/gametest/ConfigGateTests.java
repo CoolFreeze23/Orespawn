@@ -144,7 +144,8 @@ public class ConfigGateTests {
     /**
      * Samples the feature's {@code orespawn:vein_count} modifier with LESS_ORE
      * off then on and asserts the emitted-position ratio sits in [lo, hi].
-     * Fixed seeds make the sampling fully deterministic.
+     * Fixed seeds make the sampling fully deterministic. LESS_ORE is restored to
+     * its entry value on every exit of this helper (harness slice, 2026-09-04).
      */
     private static void checkVeinRatio(GameTestHelper helper, Registry<PlacedFeature> reg,
                                        PlacementContext ctx, BlockPos origin,
@@ -156,17 +157,24 @@ public class ConfigGateTests {
         helper.assertTrue(vein != null, name + " lacks the orespawn:vein_count modifier (ITEM-064)");
 
         int rolls = 2000;
-        OreSpawnConfig.LESS_ORE.set(false);
-        RandomSource random = new XoroshiroRandomSource(0xC0FFEE);
         long base = 0;
-        for (int i = 0; i < rolls; i++) {
-            base += vein.getPositions(ctx, random, origin).count();
-        }
-        OreSpawnConfig.LESS_ORE.set(true);
-        random = new XoroshiroRandomSource(0xBEEF00);
         long cut = 0;
-        for (int i = 0; i < rolls; i++) {
-            cut += vein.getPositions(ctx, random, origin).count();
+        // The flag is GLOBAL: this helper used to return — and throw — with it
+        // left TRUE, relying on its caller's finally (harness slice, 2026-09-04).
+        final boolean lessOrePrior = OreSpawnConfig.LESS_ORE.get();
+        try {
+            OreSpawnConfig.LESS_ORE.set(false);
+            RandomSource random = new XoroshiroRandomSource(0xC0FFEE);
+            for (int i = 0; i < rolls; i++) {
+                base += vein.getPositions(ctx, random, origin).count();
+            }
+            OreSpawnConfig.LESS_ORE.set(true);
+            random = new XoroshiroRandomSource(0xBEEF00);
+            for (int i = 0; i < rolls; i++) {
+                cut += vein.getPositions(ctx, random, origin).count();
+            }
+        } finally {
+            OreSpawnConfig.LESS_ORE.set(lessOrePrior);
         }
         helper.assertTrue(base > 0, name + " emitted no positions with lessOre=false");
         double ratio = (double) cut / (double) base;
