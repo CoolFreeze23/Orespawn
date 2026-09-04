@@ -8703,6 +8703,382 @@ keeps BUG-036. Commit 4ea395c's message retains the old number.)*
 - **Resolution:** REPORT — for the owner's ruling as a parity bug in classic (a flight / wander row outside the targeting
   ledger): orig :617-631 transcribed into `EntityStinky.doMovement` with a tame-owner pin; the roll order noted, not changed.
 
+### ENT-S-135 — Twenty-two scan sets drifted from 1.7.10: four players-only hunters searched spheres where orig scanned every living thing in a box (the Cater Killer, Hammerhead, Sea Monster and Sea Viper, with their ladders, own-kind refusals and the Cater Killer's `MyCanSee` walk), five box searches had become spheres (the Brutalfly strafe, Mothra's stage 1, the Irukandji, the Skate, the Girlfriend's Valentine player task), the Dragonfly hunted inside its flight retarget instead of outside it, the Ender pair picked the nearest ELIGIBLE player on a 1-in-5 roll where the legacy loop tested the single nearest player every tick, the Boyfriend / Girlfriend task lost its box-only every-pass scan, its Creeper task and its nearbyOnly test, and the unridden Ant Robot's hunt box was a quarter of orig's (targeting ledger batch T3b, wave 3; FIXED 2026-09-05)
+
+- **Evidence:** targeting ledger batch T3b (`phase_g_reports/targeting_survey_2026-09-04.md`, §T3b: 22 rows, 16 blocks; §2
+  blocks cited per row). 1.7.10's custom scans were `getEntitiesWithinAABB(EntityLivingBase.class, boundingBox.expand(x, y, z))`
+  sorted by `GenericTargetSorter` and filtered in a fixed order (V1); its player searches `findNearestEntityWithinAABB(EntityPlayer
+  .class, box, this)` (V9, `<=` last wins); its legacy loop's `getClosestPlayerToEntity(this, N)` a plain sphere of any mode
+  (V10); its companion task `selectEntitiesWithinAABB(cls, expand(d, 4, d), selector)` on a chance of 0 (every tick) with a
+  per-task `targetDistance` and a `nearbyOnly` path test (MyEntityAINearestAttackableTarget.java:36, :53, :56;
+  MyEntityAITarget.java:117-127, :131-144). Per row, orig → port at HEAD (28c2f74) before this fix:
+
+  | # | species | aspect | orig (1.7.10) | port before the fix |
+  |---|---|---|---|---|
+  | 1 | AntRobot | scan set | AntRobot.java:1015 — the hunt box `(12·distmul) x 12 x (12·distmul)`; distmul 2.0 unridden (:117, :133), 1.0 ridden (:622) | AntRobot.java:689 (HEAD :727-733) — `inflate(12, 12, 12)` for every call |
+  | 2 | Brutalfly | scan set | Brutalfly.java:215 — `findNearestEntityWithinAABB(EntityPlayer.class, box 30/20/30, this)` | EntityBrutalfly.java:204 (HEAD :206) — `getNearestPlayer(this, 30.0)`, a sphere |
+  | 3 | CaterKiller | scan set | CaterKiller.java:462 (`nextInt(4) == 0`), :471-473 the scan, :563 box 20/8/20, :564 sort | EntityCaterKiller.java:100 (HEAD :117-128) — vanilla `NearestAttackableTargetGoal<Player>`, FOLLOW_RANGE 40 sphere, ≈ 1-in-10, vanilla hold |
+  | 4 | CaterKiller | filter order | CaterKiller.java:533-557 — null / self / dead, `MyCanSee` (:543; :626-676), player `!isCreativeMode` (:546-549), CaterKiller (:550-552), EntityMob (:553-555), `isAttackableNonMob` (:556) | the goal's `TargetingConditions` (ENT-S-132's non-combat rebuild): vanilla's eye ray, no species branch |
+  | 5 | CaterKiller | allies / species exclusions | CaterKiller.java:550-552 — a Cater Killer refused, after the player branch | absent (players only) |
+  | 6 | Dragonfly | scan set | Dragonfly.java:124 the retarget (`nextInt(300) == 0 \|\| dist < 2.1`), :142 ELSE `nextInt(12) == 0 && != PEACEFUL` → the hunt (:144-148) | entity/ai/DragonflyHuntGoal.java:58-67 — the 1-in-12 inside `pickRetarget`, i.e. only when the retarget fired (`AmbientFlightGoal` :109-113) |
+  | 7 | EnderKnight | scan set | EnderKnight.java:61-81 — `findPlayerToAttack` every target-less tick of the legacy loop (td.bq); :65 `getClosestPlayerToEntity(this, 64)`: the one nearest player of ANY mode, a plain sphere, strict `<`; :67 `shouldAttackPlayer` on that player | EnderKnight.java:47 (HEAD :85-113) — the 3-arg goal: `nextInt(5)` per goal pass, `getNearestPlayer(conditions, …)` = the nearest player the stare conditions ADMIT, `range(64)` scaled by visibility |
+  | 8 | EnderReaper | scan set | EnderReaper.java:61-81 — the same within 81 | EnderReaper.java:50-51 (HEAD :81-109) — the same goal shape |
+  | 9 | Hammerhead | scan set | Hammerhead.java:191 (`nextInt(3) == 1`), :207-209 the scan, :255 box 18/9/18, :256 sort | Hammerhead.java:129 (HEAD :141-145) — `getNearestPlayer(this, 18.0)` + `!instabuild` |
+  | 10 | Hammerhead | filter order | Hammerhead.java:225-249 — null / self / dead, sight (:235), Hammerhead (:238), player `!isCreativeMode` (:241-244), EntityMob (:245), `isAttackableNonMob` (:248) | `!instabuild` only |
+  | 11 | Hammerhead | allies / species exclusions | :238 Hammerhead spared; :245 EntityMob; :248 `isAttackableNonMob` | absent (players only) |
+  | 12 | Irukandji | scan set | Irukandji.java:294 box 6/4/6, :295 sort; the filter :270-288 (players only) | Irukandji.java:136 (HEAD :182-186) — `getNearestPlayer(this, 6.0)`, a sphere |
+  | 13 | Mothra | scan set (stage 1) | Mothra.java:224 — `findNearestEntityWithinAABB(EntityPlayer.class, box 25/20/25, this)` | Mothra.java:392 (HEAD :393) — `getNearestPlayer(this, 25.0)`, a sphere |
+  | 14 | PitchBlack | scan set | PitchBlack.java:259-275 — the server 1-in-250 heal branch: 1-in-5 & solid ground within 10 → scan, null → activity 0 | present at HEAD since ENT-S-129 (PitchBlack.java:415-441) — verified, no edit |
+  | 15 | SeaMonster | scan set | SeaMonster.java:465 (`nextInt(5) == 1`), :517 box 16/4/16, :518 sort, :527-532 the loop | SeaMonster.java:172-174 (HEAD :222-226) — `getNearestPlayer(this, 16.0)` + `!instabuild` |
+  | 16 | SeaMonster | filter order | SeaMonster.java:487-511 — null / self / dead, sight (:497), player `!isCreativeMode` (:500-503), SeaMonster (:504), EntityMob (:507), `isAttackableNonMob` (:510) | `!instabuild` only |
+  | 17 | SeaViper | scan set | SeaViper.java:482 (`nextInt(5) == 1`), :534 box 18/4/18, :535 sort, :544-550 the loop | SeaViper.java:96 (HEAD :113-127) — vanilla `NearestAttackableTargetGoal<Player>`, FOLLOW_RANGE 32 sphere, ≈ 1-in-10, vanilla hold |
+  | 18 | SeaViper | filter order | SeaViper.java:504-528 — null / self / dead, sight (:514), player `!isCreativeMode` (:517-520), SeaViper (:521), EntityMob (:524), `isAttackableNonMob` (:527) | the goal's `TargetingConditions` (ENT-S-132's rebuild): no species branch |
+  | 19 | Skate | scan set | Skate.java:286 box 10/4/10, :287 sort; the filter :262-280 (players only) | Skate.java:124 (HEAD :169-173) — `getNearestPlayer(this, 10.0)`, a sphere |
+  | 20 | Stinky | scan set | Stinky.java:568 — the combat roll BEFORE the `activity == 1` return (:582-607) | present at HEAD since ENT-S-119 (EntityStinky.java:436-459) — verified, no edit |
+  | 21 | MyEntityAINearestAttackableTarget (Boyfriend / Girlfriend) | scan set | MyEntityAINearestAttackableTarget.java:56 — `expand(targetDistance, 4, targetDistance)`; :53 chance 0 = every tick; Boyfriend.java:138 / Girlfriend.java:164 the EntityCreeper task at 20 (priority 2), :141 / :167 the IMob task at 15 (priority 3); `nearbyOnly` true on all four (MyEntityAITarget.java:117-127) | Boyfriend.java:144 / Girlfriend.java:208 (HEAD :150-166 / :215-233) — vanilla `NearestAttackableTargetGoal<Mob>`: the box ∩ a `range(15)` sphere scaled by visibility, `nextInt(5)` per pass, `mustReach` false; no Creeper task |
+  | 22 | MyValentineTarget (Girlfriend) | scan set (Player goal) | MyValentineTarget.java:60 — `expand(16, 4, 16)` (:39 targetDistance 16) | Girlfriend.java:226-248 (HEAD :276-302) `ValentineTargetGoal` — vanilla `getNearestPlayer(conditions, …)` over ALL the level's players within a 16-sphere scaled by visibility, no box; the Boyfriend task's box intersected with the same sphere |
+
+  What a player saw: the ledger's paragraph — the Cater Killer, Hammerhead, Sea Monster and Sea Viper ignoring the villagers,
+  animals and monsters 1.7.10 sent them after; the Brutalfly, Mothra, Irukandji and Skate reaching a player 30 / 25 / 6 / 10
+  blocks straight up that a box would not, and missing one at a box corner; the Dragonfly almost never hunting (every ≈ 3600
+  ticks for ≈ 12); the Ender Knight and Reaper acquiring on a 10-tick cadence, hunting the nearest STARING player (a friend
+  standing closer no longer shielded the starer) and losing a sneaking player at 80 % of their reach; the Boyfriend and
+  Girlfriend hunting on a 1-in-10 roll inside a 15-sphere with no creeper hunt and chasing unreachable prey; the unridden Ant
+  Robot's hunt box a quarter of the orig area. No MOD record covers any of it.
+- **Resolution:** FIXED (2026-09-05, wave 3 — ruled 2026-09-04: "wave 3 = T8, T3b, T3c, T4, T10"). Fifteen port files and one
+  new class, every site at the orig position with the orig polarity, box, cadence and term order; T5 / T6 / T7 / T8 rows
+  untouched; T3c's four files untouched. Two refuters (A, B) read the lane's draft the same day; their six code findings (the
+  companion class's pre-reach grants and the Valentine Player task's sight, the Cater Killer's pass-local `e`, the Dragonfly's
+  near-retarget threshold, the dropped `!mustSee` line, the line-ending reading) are applied below and pinned (rows 41-43,
+  s129_13 extended); the record corrections they listed are folded in.
+  (a) Rows 3-5, 17-18 — the Cater Killer's and Sea Viper's vanilla player goals are REMOVED (no goal could be kept: orig ranked
+  by `GenericTargetSorter` over a box of every living thing, ENT-S-108's reasoning) and orig's pass runs the box scan in the
+  ENT-S-108 shape: a private `findSomethingToAttack()` (PlayNicely gate at orig's head, `getEntitiesOfClass(LivingEntity.class,
+  getBoundingBox().inflate(20, 8, 20))` / `(18, 4, 18)`, `TargetSelection.firstMatch` over a `GenericTargetSorter` field) over a
+  private `isSuitableTarget(LivingEntity)` in orig's order (the Cater Killer: null / self / dead, `myCanSee`, the player branch
+  `instabuild` — ENT-S-132's term back at its orig position :548 — CaterKiller refused, `Monster` for EntityMob, `MyUtils
+  .isAttackableNonMob` with ENT-S-128's membership; the Sea Viper: sight, the player branch (:519), SeaViper, Monster,
+  `isAttackableNonMob`) — EntityCaterKiller.java:327-343 (the 1-in-4 pass: T5's stored read and 1-in-200 first, then orig
+  :471-473's `if (e == null)` scan on the pass-local `e` — nulled by the dead drop alone (:330, orig :466) and NOT re-read after
+  the 1-in-200 (:336), so the clearing pass runs no scan and a cleared attacker is re-picked only on the next pass; T3b refuter
+  B, D1 — the draft re-read the slot), :389-393, :404-410, :425-468 (`myCanSee`, orig :626-676: ten samples from 2.5 blocks ahead
+  along the yaw at y + 3 to the target's mid-height, the per-axis normalisation, `(int)` casts as BUG-027 ruled faithful,
+  passed through air / COBWEB / SHORT_GRASS + FERN (tallgrass, the Molenoid precedent) / the four 1.7.10 `leaves` variants —
+  disclosed below); SeaViper.java:298-318 (the 1-in-5 `== 1` pass, the SeaMonster's ENT-S-115 / ENT-S-129 slot half), :336-340,
+  :350-356. Target slot: the ENT-S-108 convention — the scan's pick handed to the slot under the ENT-S-129 change-only mark
+  (`scanPick` EntityCaterKiller.java:101 / SeaViper.java:92, the `setTarget` override :225-229 / :261-265, the hurt hand-off
+  :208-209 / :243-244), re-derived every pass and cleared when the scan comes back empty (orig's transient pick), a stored
+  attacker (the `hurt` Mob store, the revenge goal — the Cater Killer's `RevengeGoal` with T5's 1-in-200, the Sea Viper's plain
+  `HurtByTargetGoal`) read first and left alone; the melee goals (`Params.caterKiller`, `Presets.seaViper` with its stand-down)
+  consume the slot at their own cadence. The vanilla HOLD ENT-S-129 and ENT-S-132 disclosed on these two goals (invulnerable /
+  team) is gone with the goals.
+  (b) Rows 9-11, 15-16 — the Hammerhead's and Sea Monster's inline passes keep their T5 / ENT-S-115 structure and swap the
+  `getNearestPlayer` step for the same scan / filter pair at the orig position: Hammerhead.java:146 (the pass's `if (e == null)`,
+  orig :207-209), :175-179 (the 18/9/18 box over the `GenericTargetSorter` field :57 — orig :38 / :48 / :256), :189-195 (sight,
+  Hammerhead, the player branch, Monster, `isAttackableNonMob`), the pick transient per pass as orig (:207-218) and as HEAD;
+  SeaMonster.java:227 (inside the ENT-S-129 mark's block), :265-269 (the sorter :72 — orig :39 / :55 / :518), :279-285.
+  (c) Rows 12, 19 — Irukandji.java:187 / :218-222 / :230-234 and Skate.java:174 / :205-209 / :217-221: the 6/4/6 and 10/4/10
+  living boxes (orig's filters take players only, so the class is unobservable; the geometry is not), sorted by
+  `GenericTargetSorter` (Irukandji.java:61 — orig :32 / :47 / :295; Skate.java:55), inside the ENT-S-129 mark's block, the
+  pass's stored read untouched.
+  (d) Rows 2, 13 — the strafe searches are boxes again: `findNearestPlayerInStrafeBox()` (EntityBrutalfly.java:348-360,
+  Mothra.java:293-305) = `getEntitiesOfClass(Player.class, getBoundingBox().inflate(30, 20, 30))` / `(25, 20, 25)` with the
+  nearest by `distanceToSqr` replacing on `<=` (orig `func_72857_a`, bytecode-verified under ENT-S-105 — the Kraken's
+  `findNearestPlayer` idiom), called at EntityBrutalfly.java:206 / Mothra.java:416; the creative test stays the caller's
+  (ENT-S-132's nesting untouched); Mothra's root box MOD-029's in modern mode, as for stage 2.
+  (e) Row 6 — `AmbientFlightGoal.tick` gains an else branch, `onRetargetSkipped()` (AmbientFlightGoal.java:114-116; :142 the
+  no-op default, so every other flyer is untouched), and `DragonflyHuntGoal.onRetargetSkipped` (DragonflyHuntGoal.java:85-95)
+  rolls orig :142's 1-in-12 there (the roll first, then the difficulty — ENT-S-114), scans, hands the prey to the slot for
+  the tick (ENT-S-129's one-bite hand-off, read back by `tick` as before) and moves the flight target onto it (:145); the
+  `pickRetarget` override is gone (the flight retarget of :124-141 is super's alone). `Params.dragonfly`'s near-retarget
+  distance is orig :124's 2.1 (AmbientFlightGoal.java:73 — `< 2.1f` on the INTEGER cell distSq, which `tick` :108 compares:
+  cells 0, 1, 2 retarget, 3 hunts; HEAD's 4.5 retargeted at 3 and 4 too and so skipped the else-branch hunt on those ticks —
+  refuters A-D4 / B-Q4; the Params javadoc :48-52 corrected, the other presets untouched).
+  (f) Rows 7-8 — the Ender pair's player goal keeps T8's stare selector, same-tick creative drop and hold; its registration is
+  the 6-arg form with interval 0 (EnderKnight.java:85, EnderReaper.java:81 — every goal pass; the goal pass itself is the
+  engine's every-other-tick harness for orig's every tick, disclosed), its conditions carry no range term (:87-88 / :83-84 —
+  orig's bound is the search's), and `findTarget` is overridden (:92-101 / :88-97): `getNearestPlayer(x, y, z,
+  getFollowDistance(), EntitySelector.NO_SPECTATORS)` — the ONE nearest player of any mode within 64 / 81 of the position,
+  a plain sphere, strict `<`, no visibility scaling — then the conditions (the stare, alive / non-spectator, the mob-side ray)
+  on that player alone: a nearer non-staring player shadows a farther starer as in orig (nearest-then-filter); spectators are
+  skipped by the search, the port's convention for a state 1.7.10 lacked (ENT-S-132 iv).
+  (g) Rows 21-22 — new `entity/ai/MyEntityAINearestAttackableTargetGoal<T>` (the port of the orig class, on vanilla's
+  `NearestAttackableTargetGoal` for its start and T5's hold): interval 0 (:60), the conditions rebuilt `forCombat().selector(sel)`
+  without vanilla's range sphere (:64-67 — orig :56's box is the only bound) with vanilla's own `!mustSee → ignoreLineOfSight`
+  kept (:65 — dropped by the draft's rebuild, refuter B-D2; inert today, every registration passes true) and, for a
+  `Player.class` task, no line of sight at all (:66 — orig MyEntityAITarget.java:96 answers a player ahead of the sight step
+  :108; refuter A-D2), `getFollowDistance()` = the per-task `targetDistance` (:70-72), `canAttack` overridden (:88-96) and
+  `findTarget` (:106-112) = the box `getTargetSearchArea(targetDistance)` over the target class, ordered by plain distance from
+  the owner, the first candidate `canAttack` accepts — the conditions (the selector, the `forCombat` screens kept as at HEAD:
+  the owner through `TamableAnimal.canAttack`, the engine's Ghast refusal, MOD-036's Valentine gates; the goal's line of
+  sight), then orig's grants AHEAD of the nearbyOnly reach block — a Player (:96), Mothra (:105), a Creeper (:111), a Ghast
+  (:114); vanilla's `canAttack` reach-tested every candidate, so the draft refused a fence-ringed creeper orig :111 took
+  (refuter A-D1) — and, for everything else with `nearbyOnly`, vanilla's reach cache: `TargetGoal.canReach`'s 1.5-block
+  end-node test (orig MyEntityAITarget.java:131-144) behind a `reducedTickDelay(10 + nextInt(5))` cache — 5-7 goal passes,
+  the same in ticks for one candidate as orig's `10 + nextInt(5)` ticks, halved in candidate evaluations (`--reachCacheTime`
+  runs per candidate); the path search bounded by the FOLLOW_RANGE attribute in both trees. Registrations:
+  Boyfriend.java:164-187 / Girlfriend.java:229-253 — the Creeper task restored at orig's priority 2 (`Creeper.class`, 20,
+  sight, nearbyOnly, the ENT-S-124 / ENT-S-128 predicate, the ENT-S-115 live gate) and the IMob task on the same class
+  (`Mob.class`, 15; the Girlfriend's port priority 5 is ENT-S-130's, untouched); Girlfriend.java:304-323 — `ValentineTargetGoal`
+  extends the new class (16, sight, nearbyOnly, the MOD-036 selector), so both Valentine tasks scan the 16/4/16 box alone (the
+  Boyfriend task's box had been intersected with the sphere too); the Player task takes a player it cannot see or reach, as
+  orig :96 did (HEAD's goal applied the line of sight; the draft the reach cache too), the Boyfriend task keeps both (a
+  Boyfriend reaches orig :108 / :117). The ledger's MyValentineTarget filter-order row (:1194, "MATCH (structure)") read the
+  sight and nearbyOnly steps onto the Player goal — orig :96 returned first; corrected by this fix. The order is plain
+  distance: orig's `MyEntityAINearestAttackableTargetSorter` halved a creeper's — the ledger's T4 row, left to T4.
+  (h) Row 1 — `AntRobot.findSomethingToAttack(float distmul)` (AntRobot.java:734-742): `inflate(12 * distmul, 12, 12 * distmul)`,
+  2.0f from the unridden pass (:251, orig :117) and 1.0f from the ridden hunt (:315, orig :622); the melee re-pick of orig :133
+  stays structural (ENT-S-129 recorded) and the dircheck argument the T2 / T8 cross-reference.
+  (i) Rows 14, 20 — present at HEAD: PitchBlack.java:415-441 (ENT-S-129's orig :259-280 branch) and EntityStinky.java:436-459
+  (ENT-S-119's pass ahead of the activity-1 return) — verified against orig, no edit, pinned.
+  Sorters per site: `GenericTargetSorter` where orig sorted with it (rows 3, 9, 12, 15, 17, 19 — the T4 rows for the Cater
+  Killer, Hammerhead, Irukandji, Sea Monster and Sea Viper close by the ledger's own T4 §(ii) clause; the Skate's T4 MATCH
+  kept); `<=` last-wins on the Brutalfly strafe (T4 §(iii), the ENT-S-105 shape); nearest-then-filter on the Ender pair (T4
+  §(iv)); plain distance on the companions (T4 §(v) stays); unsorted on the Ant Robot (orig).
+  Pins: new `ScanSetParityTests` (own batch `scanSetParity`, TEST-003; a `@GameTestGenerator` over 43 rows — 40 of the lane, 3
+  of its refuters — `scansetparitytests.s135_NN_<species>_<site>`): the Ant Robot's pig 20 blocks off taken by distmul 2.0 and refused by 1.0
+  (01); the Brutalfly / Mothra strafe under pinned rolls with the flight target parked — a survival player at the box corner
+  (45 / 39 blocks off, beyond the sphere) marked, one straight above (inside the sphere, past the box's +y) not marked and
+  marked once inside the box's top (02-03, 31-32; the tall cell); the Cater Killer's and Sea Viper's Zombie taken with no
+  `NearestAttackableTargetGoal` left (04, 25), their own kind refused with a Zombie control (05, 26), the ladder — a pig
+  refused, a villager taken through `isAttackableNonMob`, a Zombie taken (06, 17, 22, 26), the sight step behind the
+  SightStepParityTests wall then the own kind (18, 23, 27), the Cater Killer's walk both ways — a stone on the walk's fifth
+  sample off the eye line refuses while `hasLineOfSight` sees, a stone on the eye line off the walk is walked past (07), the
+  1-in-4 / 1-in-5 passes pinned to miss and to fire with the pick read back under the mark (08, 29), the boxes pinned against
+  the wider spheres on +x and +y with a survival player (09, 28) and box corner / above / inside-the-top for the Hammerhead,
+  Irukandji, Skate and Sea Monster (19-21, 24); the Dragonfly's hunt on a non-retarget tick and its silence on a retarget tick
+  and on a missed 1-in-12 (10); the Ender pair's nearer non-starer shadowing a farther starer with the starer taken alone (11,
+  14), the pass with vanilla's 1-in-5 pinned to miss (12, 15), a sneaking starer at 14 blocks taken with FOLLOW_RANGE lowered
+  to 16 (13, 16); the grounded Stinky's pass and the sitting gate (30); the companions' corner Zombie taken through the box
+  alone (33, 37), the Creeper task at priority 2 taking a creeper 18 blocks off the IMob task refuses (34, 38), the pass with
+  the 1-in-5 pinned to miss (35), a fence-ringed Zombie refused by nearbyOnly and taken once the ring is razed and the reach
+  cache expired (36); the Valentine player task's box corner taken and its straight-above refused through `findTarget` (39-40);
+  the refuters' rows — a fence-ringed Creeper granted ahead of the reach test by the Boyfriend's Creeper task and its IMob task,
+  the goal's own `canReach` false and its conditions true as the preconditions, row 36's ringed Zombie the reach-refused
+  control (41); under the `SeasonalDates` Feb-14 clock seam (the MOD-036 rows' idiom) the valentine-angry Girlfriend's Player
+  task taking a survival player behind the SightStepParityTests wall — the conditions admit him with no line of sight, `canUse`
+  picks him — and her Boyfriend task refusing a Boyfriend behind the same wall, taking him once it is razed (42); the
+  Dragonfly's flight target at cell distSq 2 retargeting (no hunt with the 1-in-12 pinned to fire) and at 3 hunting — the bite
+  lands (43). Survival players are plain ServerPlayers (the mock's `isCreative()` is hardcoded true); companions are set on the
+  ground with FOLLOW_RANGE 40 for the path search behind the reach test; every occluder razed, flag asserted not flipped, spawn
+  discarded and player removed in a finally, the clock reset; no hit is pinned on a mock player (no spawn shield cleared).
+  Existing pins re-based to the new shapes, none loosened: `PlayNicelyGateParityTests` sites 4 and 40 become scan probes
+  (`caterkiller_560_scan`, `seaviper_531_scan`), site 2 invokes `findSomethingToAttack(2.0f)`, its GoalProbe sets the hunter on
+  the ground; `CreativeGateParityTests` rows 25-30 are the Cater Killer's and Sea Viper's filter triples (`_filter_`; the
+  Pointysaurus goal rows 31-33; 60 rows unchanged); `TargetReleaseParityTests` s129_41's control parks the flight target and
+  pins the retarget quiet (the hunt is the else branch), `helperHoldDistance` sets the companion on the ground, and s129_13
+  (`caterKillerForget`) is extended — a Zombie attacker held by the RevengeGoal, the 1-in-200 clearing pass leaves the slot and
+  the mark empty (no scan on the pass-local `e`; the draft re-picked it there), the next pass re-picks it under the mark;
+  `PeacefulGateParityTests` site 5 invokes `onRetargetSkipped`; `IMobConventionTests` and `PreyListParityTests` set the
+  companion on the ground; `PortOnlyTargetingTests`' MOD-033 selector lists carry the Creeper task at 2 and the new class name;
+  the MOD-036 rows (`mod036_*`, the Player task's conditions asked directly) hold — a creative player and a Peaceful player are
+  still refused, the line of sight was never what they tested. javac rc 0 (15 production sources, the new class, the eight
+  test classes; no gradle in this lane); the gametest run is the gate's (expected `All 1066 required tests passed`: 1023 +
+  T3b's 43).
+  Disclosed: (i) the Ender pair's pick runs on the engine's every-other-tick goal pass where orig's legacy loop ran every
+  tick — no roll gates it any more; this batch's own harness residual, a T10 row candidate (exact parity needs the pick in
+  `customServerAiStep`; refuter B-Q2); (ii) spectators are skipped by the Ender pair's nearest search (NO_SPECTATORS) and by
+  the hunters' 2-arg `getEntitiesOfClass` box scans; the companion class scans with the 3-arg `getEntitiesOfClass(type, area,
+  e -> true)`, where a spectator is refused by `TargetingConditions.test`'s `canBeSeenByAnyone` (refuter B-R5) — the port's
+  convention for a state 1.7.10 lacked; (iii) the Cater Killer's walk passes the four 1.7.10 `Blocks.leaves` variants only —
+  `leaves2` (acacia, dark oak) and every modern leaf type occlude it, a literal transcription the owner may prefer mapped to
+  `#minecraft:leaves`; (iv) `Params.dragonfly`'s near-retarget distance, 4.5 at HEAD for orig :124's `< 2.1f`, is 2.1 since the
+  refutation pass (A-D4 / B-Q4; pinned s135_43) — no longer a residual; (v) the companions' `nearbyOnly` path search is bounded
+  by FOLLOW_RANGE (16) in both trees — a candidate the reach test governs (the IMob task's Zombie) beyond 16 is unreachable in
+  both, and the rows raise the attribute to isolate the box; the draft's "a creeper 16-20 blocks off inside the Creeper task's
+  box is unreachable in both" was FALSE — orig :111 returned true before :117, only the port refused it (fixed by the
+  `canAttack` override, pinned s135_41); the `mustReach` flag on the Valentine goal was inert at HEAD (vanilla's `findTarget`
+  never consulted it) and is live through the class's `findTarget` for the Boyfriend task — the draft's "orig MyValentineTarget
+  passed nearbyOnly true, so this is parity" was FALSE for the Player task: orig :96 answered a player ahead of :108 / :117
+  (fixed: the Player task's conditions carry no line of sight, its candidates are granted ahead of the reach test; pinned
+  s135_42); (vi) the companion task's own gates of orig MyEntityAINearestAttackableTarget.java:44-52 (a tameable must be tamed,
+  the Girlfriend not sitting) are the companion block's residual, filed as ENT-S-137 (not T3c's — T3c's four files do not touch
+  the companions); (vii) the T4 rows closed as side effects (the five sorters, the Brutalfly `<=`, the Ender pair's
+  nearest-then-filter) are named for T4's lane so it does not re-touch these loops; their status texts are in the lane's
+  ledger_rows draft, with the Mothra stage-1 tie-break row corrected (both trees `<=` last-wins; refuter B-R4).
+
+### ENT-S-137 — The companions' untamed / sitting hunt gates dropped: 1.7.10's MyEntityAINearestAttackableTarget.shouldExecute (:44-52) refused to hunt while the Boyfriend / Girlfriend was untamed or sitting; the port's registrations have no such gate (REPORT, 2026-09-05; raised by the T3b refuters)
+
+- **Evidence:** orig `MyEntityAINearestAttackableTarget.java:44-52` (`func_75250_a`, shouldExecute) opens with three refusals
+  ahead of the chance roll (:53) and the box scan (:56): `taskOwner instanceof EntityTameable && !isTamed()` → false (:44-46),
+  `taskOwner instanceof Girlfriend && !isTamed()` → false (:47-49 — redundant with the first, a Girlfriend is an EntityTameable)
+  and `taskOwner instanceof Girlfriend && isSitting()` → false (:50-52 — the Girlfriend alone; the Boyfriend has no sitting
+  refusal). Every registration of the class is a companion's — orig Boyfriend.java:138 (EntityCreeper, 20) / :141 (IMob, 15)
+  and Girlfriend.java:164 / :167 — so in 1.7.10 an UNTAMED Boyfriend or Girlfriend never hunted a creeper or a monster, and a
+  SITTING Girlfriend did not either. The port's registrations — Boyfriend.java:164-187 (the Creeper task @2 :169-175, the IMob
+  task @3 :181-187) and Girlfriend.java:229-253 (@2 :234-240, @5 :247-253), both on `entity/ai/MyEntityAINearestAttackableTargetGoal`
+  (ENT-S-135) — gate on PlayNicely alone (`canUse`: `PLAY_NICELY.get()` → false, then `super.canUse()`), and the class carries
+  no owner-state gate (its javadoc transcribes orig :36 / :53 / :56 and MyEntityAITarget.java's filter, not :44-52): an untamed
+  companion hunts from spawn, and a Girlfriend ordered to sit (the port's `isOrderedToSit`, toggled by her interact — Girlfriend.java:577 —
+  and read, of her target goals, by the Jealousy goals alone) still acquires a target. The targeting ledger (`phase_g_reports/targeting_survey_2026-09-04.md`) rated the companion
+  block's "other" row (:1172 — "Girlfriend sitting gate :50-52; tameable-must-be-tamed :44-49 | JealousyTargetGoal :42-43
+  (tame, not sitting, has owner) | MATCH") on `JealousyTargetGoal.canUse` (`ai/JealousyTargetGoal.java:42-43`: `!isTame() ||
+  isOrderedToSit()` → false) — the port of orig `MyEntityAIJealousy`, not of the class these gates belong to; the Creeper and
+  IMob tasks have no such line, so the MATCH covers the wrong goal. The gap stood through ENT-S-124 (whose refuter filed the
+  gates as "the T3c residual"), ENT-S-128, ENT-S-129 and ENT-S-135's own records; T3c's four files (EntityLeon, Pointysaurus,
+  ThePrinceAdult, ThePrinceTeen) do not touch the companions, so nothing closes it there — it is the companion block's residual.
+  `MyValentineTarget.java:47-59` has none of these refusals (its shouldExecute is `valentines_day` :48, the Girlfriend's
+  `feelingBetter` :51-56 and the chance :57), so the two Valentine tasks are NOT affected: the gates belong on the two hunt
+  registrations' `canUse` (or on the class behind a flag the Valentine subclass clears), not on `ValentineTargetGoal`.
+  What a player saw: in 1.7.10 a wild (untamed) Boyfriend or Girlfriend ignored creepers and monsters until tamed, and a
+  Girlfriend told to sit did not hunt; in the port a wild companion hunts from spawn (its RangedAttackGoal @4 and held-weapon
+  melee read the slot the hunt fills) and a sitting Girlfriend acquires targets. Pins that would re-base once the gate is in:
+  every row that runs the Creeper / IMob goal's `canUse` off a freshly spawned, never-tamed companion — `IMobConventionTests`
+  (the Boyfriend / Girlfriend hunter rows), `PreyListParityTests` (the companion prey rows), `PlayNicelyGateParityTests` (the
+  companion GoalProbe sites), `TargetReleaseParityTests` s129_39 / s129_40 (`helperHoldDistance`) and `ScanSetParityTests`
+  s135_33 – s135_38 and s135_41 — each would tame the companion first (`setTame(true, false)`, the PreyListParityTests `TAMED`
+  idiom), plus one new row per gate (an untamed companion's goal refusing a Zombie in its box; a sitting Girlfriend's refusing;
+  the tamed, standing control). ScanSetParityTests s135_39 / s135_40 / s135_42 (the Valentine tasks) are unaffected.
+- **Resolution:** REPORT (2026-09-05) for the owner's ruling as a parity bug in classic: the port drops a state gate 1.7.10
+  had on all four companion hunts — a removal by the letter of the T9 ruling, with no MOD record covering it (the MOD-033
+  owner-defence pair is modern-only and separate). Proposed shape if ruled a fix: the three refusals of orig :44-52 transcribed
+  at the head of the two registrations' `canUse` in Boyfriend.java:169-175 / :181-187 and Girlfriend.java:234-240 / :247-253,
+  ahead of the PlayNicely read (orig ran them before :53), citing `MyEntityAINearestAttackableTarget.java:44-52`; the Valentine
+  tasks untouched; the ledger :1172 row re-rated from MATCH; the pins above re-based (tamed before `canUse`) and the gate rows
+  added. Effort S; refuters 1 (a gate transcription). Raised by the T3b refuters; the ENT-S-135 records now say "the companion
+  block's residual, filed as ENT-S-137" where they said "the T3c residual".
+
+### ENT-S-138 — Four more flight-mark / cell sites floor where 1.7.10 cast `(int)`: the Brutalfly's and Mothra's self cell, the Dragonfly's flight-target cells (REPORT, 2026-09-05; raised by the T3b gate diagnosis)
+
+- **Evidence:** the `t3b_t3c` gate's two Brutalfly reds exposed a pre-existing miss of the BUG-027 / MOD-024 class — the
+  strafe marks at EntityBrutalfly.java:210 / :225 / :305 were written with `blockPosition().above(n)` (`Mth.floor` per
+  axis) where orig Brutalfly.java:219 / :232 / :277 cast `(int)` (truncation toward zero); truncation and floor differ
+  by one on every fractional negative axis, so the port marked a cell short of 1.7.10's below zero. Those three sites
+  were fixed with ENT-S-135 (the twin Mothra sites already carried the cast). The same lens finds four sites left as
+  they were, presented here, not applied: `EntityBrutalfly.java:145 / :148` and `Mothra.java:394 / :397` — the hunter's
+  own cell (orig Brutalfly.java:172 / :174, Mothra's twins) floored where orig cast; `entity/ai/AmbientFlightGoal.java:105 /
+  :108` — the flight-target cell and the near-retarget distance read through `blockPosition()` where orig Dragonfly.java:124
+  cast `(int)` (applying the cast flips the floor-derived cells the ScanSetParityTests row `s135_43` and the
+  TargetReleaseParityTests row `s129_41` compute at negative origins — those rows re-derive with the cast when the code
+  does); `entity/ai/DragonflyHuntGoal.java:91` — the prey's cell `blockPosition().above()` where orig :145-146 cast
+  (unpinned). Player-visible only below zero on an axis (the modern world's y goes to −64; x / z beyond the origin), one
+  block at most, in the flyers' marks and the Dragonfly's retarget geometry. The ENT-S-109 entry's wording "the strafe
+  mark `player.blockPosition().above(4)`" (AUDIT_FINDINGS.md ~:7220) describes HEAD as it was — now the cast.
+- **Resolution:** REPORT — for the owner's ruling as parity bugs in classic (the BUG-027 rule: the cast is the original's
+  behaviour, MOD-024's floor a modern opt-in): the four sites cast as orig, the two rows re-derived, a negative-origin
+  pin per site; rides with T10 or a wave-3 tail batch.
+
+### ENT-S-136 — Four vanilla-goal hunters scanned the FOLLOW_RANGE attribute's range where 1.7.10 scanned the follow-range base 16 or its own 12x5x12 box: a wild Leonopteryx and both Princes took monsters 40 / 64 / 32 blocks off and held that far, the Pointysaurus saw a player at 24 and through a sphere where 1.7.10 scanned a box (targeting ledger batch T3c, wave 3; FIXED 2026-09-05 — the Pointysaurus's cadence 1-in-6 restored in the Q2 follow-up the same day)
+
+- **Evidence:** targeting ledger batch T3c (`phase_g_reports/targeting_survey_2026-09-04.md` §T3c: 4 rows, 4 hunters; the §2
+  rows at :569 (Leon), :695 (Pointysaurus), :1008 (ThePrinceAdult), :1036 (ThePrinceTeen)). 1.7.10's
+  `EntityAINearestAttackableTarget.shouldExecute` listed `EntityLiving` candidates from `boundingBox.expand(d, 4, d)` with
+  `d = EntityAITarget.getTargetDistance()` — the follow-range attribute, `EntityLiving.applyEntityAttributes`' base 16, which
+  Leon.java:112-118, ThePrinceAdult.java:132-138 and ThePrinceTeen.java:136-142 leave untouched (max health, speed and attack
+  damage only) — took the nearest suitable one with no further distance test (`selectEntitiesWithinAABB`: a bounding-box
+  intersection, so a 0.6-wide candidate whose centre sat d + the hunter's half-width + 0.3 out along an axis still met it),
+  rolled nothing (targetChance 0) on `EntityAITasks`' every-third-tick pass, and `EntityAITarget.continueExecuting` released a
+  held target beyond the same d (`getDistanceSqToEntity > d²`); the Pointysaurus's own scan (Pointysaurus.java:253,
+  `findSomethingToAttack`) listed `EntityLivingBase` from `boundingBox.expand(12, 5, 12)` on the 1-in-6 pass (:183), sorted it
+  by `GenericTargetSorter` (:254; the field :39, :49 — creepers halved, silhouettes over 1 divide), took the first
+  `isSuitableTarget` accepts (:258-262) and stored nothing (:201-213 act on the pick directly — `faceEntity`,
+  `tryMoveToEntityLiving(e, 1.25)` or the bite). The port's four goals were vanilla `NearestAttackableTargetGoal`s, whose box
+  (`getTargetSearchArea`: `inflate(d, 4, d)`), whose `TargetingConditions.range(d)` (a sphere, snapshotted at construction) and
+  whose hold (`TargetGoal.canContinueToUse`) all read `TargetGoal.getFollowDistance()` = the FOLLOW_RANGE attribute — 40 / 24 /
+  64 / 32 at these four `createAttributes` — an attribute that at every one of these sites also sizes the navigator's path
+  search (`PathNavigation.createPath` reads it: EntityLeon.java's `getNavigation().moveTo` in the combat step, FollowOwnerGoal
+  and the stroll; both Princes the same; the Pointysaurus's melee chase and MyEntityAIWanderALot), so a smaller attribute was
+  never the fix — the goals needed their own distance; and the Pointysaurus's Player goal had no box at all (vanilla's
+  `getNearestPlayer` under the sphere). Per row, orig → port at the survey's snapshot and at HEAD (28c2f74) before this fix:
+
+  | # | species | aspect | orig (1.7.10) | port before the fix |
+  |---|---|---|---|---|
+  | 1 | Leon | scan set (vanilla goal) | Leon.java:92-93 — `EntityAINearestAttackableTarget(this, EntityLiving.class, 0, true, false, IMob.mobSelector)`: box `expand(16, 4, 16)`, d the follow-range base 16 (:112-118 sets none); hold beyond 16; no roll, every 3rd tick | EntityLeon.java:185-191 (survey: :158) — `NearestAttackableTargetGoal<>(this, Mob.class, 10, true, false, huntSelector)` on FOLLOW_RANGE 40 (:223): box 40x4x40, sphere 40, hold 40; 1-in-5 on the every-other-tick pass |
+  | 2 | Pointysaurus | scan set | Pointysaurus.java:253 — `findSomethingToAttack`'s `expand(12, 5, 12)` on the 1-in-6 pass (:183), sorted (:254), the first suitable (:258-262), nothing stored | Pointysaurus.java:103-115 (survey: :72-73) — `NearestAttackableTargetGoal<>(this, Player.class, true)` with the T8 conditions' `range(this.getFollowDistance())` on FOLLOW_RANGE 24 (:190): a sphere of 24 (`getNearestPlayer`, no box), hold 24; 1-in-5 on the every-other-tick pass |
+  | 3 | ThePrinceAdult | scan set (vanilla goal) | ThePrinceAdult.java:112-114 — the same task: box 16x4x16, hold 16 (:132-138 sets no follow range); no roll, every 3rd tick | ThePrinceAdult.java:159-165 (survey: :145) — the same goal shape on FOLLOW_RANGE 64 (:175): box 64x4x64, sphere 64, hold 64; 1-in-5 |
+  | 4 | ThePrinceTeen | scan set (vanilla goal) | ThePrinceTeen.java:116-118 — the same: 16x4x16, hold 16 (:136-142 sets none); no roll, every 3rd tick | ThePrinceTeen.java:170-176 (survey: :156) — on FOLLOW_RANGE 32 (:186): 32x4x32, sphere 32, hold 32; 1-in-5 |
+
+  What a player saw: a wild Leonopteryx or a Prince went after monsters 40 / 64 / 32 blocks away and kept chasing that far,
+  where 1.7.10 held to 16, and looked for one on one pass in five where 1.7.10's task rolled nothing; the Pointysaurus picked a
+  player 24 blocks away where 1.7.10 needed the player inside its 12x5x12 — and, through a sphere, ignored a player at the
+  box's corner (~19 off) and took one 12 straight up, where 1.7.10's box (acted on in the same pass: turned to and walked at)
+  took the corner and stopped at +5. No MOD record covers any of it (MOD-033 / MOD-034 gate the owner goals and the stare goal,
+  not these ranges).
+- **Resolution:** FIXED (2026-09-05, wave 3 — ruled 2026-09-04: "wave 3 = T8, T3b, T3c, T4, T10"); the Pointysaurus row: the
+  sphere 24 dropped for orig's 12x5x12 box (no range term); the hold 24 → 12; the cadence 1-in-6 restored (the Q2 follow-up,
+  the same day — below). Four port files.
+  The three IMob goals: one `getFollowDistance()` override per goal instance (the Dragon's ENT-S-117 idiom — the existing
+  ENT-S-115 anonymous subclass at each site gains the override; nothing else in the registration moves but the interval):
+  EntityLeon.java:199-202 → 16.0, ThePrinceAdult.java:173-176 → 16.0, ThePrinceTeen.java:184-187 → 16.0 — through the one
+  method vanilla reads for all three, their box is `inflate(16, 4, 16)` (orig's `expand(16, 4, 16)` shape), their conditions'
+  sphere 16 and their hold 16 — and their `randomInterval` 10 → 0 (EntityLeon.java:192, ThePrinceAdult.java:166,
+  ThePrinceTeen.java:177; the ENT-S-124 comment clauses at :191 / :157 + :165 / :168 + :176 say so): orig's `targetChance` 0
+  rolled nothing, and the port's pinned mapping of that argument is interval 0 (Dragon.java:158, ENT-S-117;
+  ProactiveHuntParityTests asserts `randomInterval == 0` there) — no roll in either. Vanilla's GoalSelector evaluates target
+  goals on `Mob.serverAiStep`'s every-other-tick pass where 1.7.10's `EntityAITasks` ran `shouldExecute` every third tick —
+  ENT-S-117's own residual, not this batch's. The Pointysaurus: orig :183-211 scanned its box and acted on the pick in the SAME
+  pass (`faceEntity` :202, `tryMoveToEntityLiving(e, 1.25)` :209 or the bite branch) with no stored target and no hold, so a
+  player inside the box but outside a 12 sphere (12 to 13.75 out along an axis for a 0.6-wide player, ~19.4 at a corner, the
+  ±5 band) was turned to and walked at — player-visible, which PN-020 (the companions' ring, dropped before any attack step)
+  does not cover — so the goal's `findTarget()` is overridden (Pointysaurus.java:139-146): `getEntitiesOfClass(Player.class,
+  getBoundingBox().inflate(12, 5, 12))` — orig :253's `expand(12, 5, 12)`, a bounding-box intersection in both trees — sorted
+  by the port's `GenericTargetSorter` (orig :39 / :49 / :254; held in the goal as orig held it, :124-125) through
+  `TargetSelection.firstMatch`, the first candidate `canAttack(candidate, targetConditions)` admits (orig :258-262's first
+  `isSuitableTarget`; the port's screen: alive / non-spectator, the ENT-S-106 ignore screen, the T8 `instabuild` selector,
+  sight), with the T8 conditions rebuilt WITHOUT `.range(...)` (:127-131 — the selector exactly as T8 wrote it); the
+  `getFollowDistance() → 12.0` override (:148-151) stays for the hold alone — orig held nothing and re-scanned each pass; the
+  T5 row's hold rule stands. Its cadence (the Q2 follow-up, 2026-09-05): orig :183 rolled `nextInt(6) == 0` every tick; the goal
+  passes interval 6 through the 6-arg constructor (:123 — `new NearestAttackableTargetGoal<>(this, Player.class, 6, true, false,
+  null)`, the initializer and overrides unchanged) — `reducedTickDelay(6)` = `Mth.positiveCeilDiv(6, 2)` = 3, `nextInt(3) == 0`
+  on vanilla's every-other-tick goal pass = 1-in-6 per tick, exact, where the 3-arg constructor's 10 → 5 gave the ledger's
+  1-in-10. Orig's pick order is the sorter's, not plain distance: a standing player's silhouette (1.8 × 0.6 =
+  1.08) divides its distance², a sneaking one's (0.9) does not — transcribed, not simplified. The FOLLOW_RANGE attributes stay
+  40 / 24 / 64 / 32 (EntityLeon.java:235, Pointysaurus.java:227, ThePrinceAdult.java:187, ThePrinceTeen.java:198 — they size
+  the navigator; every site's chase goes through `getNavigation().moveTo` or the melee goal). Class / sight / selector
+  arguments untouched: Mob + Enemy (ENT-S-124), the Creeper refusal (ENT-S-127), the Pointysaurus's rebuilt selector
+  (ENT-S-132), the ENT-S-115 gates, the MOD-033 key gate and tame rule on the Leon, MOD-034's stare goal (the survey's port
+  cites :158 / :72-73 / :145 / :156 name earlier lines; the goals sit at :192 / :123 / :166 / :177 now). Comment cites at every
+  site; the T8 comment's "the goal's class, box and cadence are T3c's" clause (Pointysaurus.java:105-108) brought to the state.
+  PN-020 (the ring between orig's box and vanilla's sphere) is deliberately not reproduced at the three IMob goals, per the
+  2026-09-04 ruling: no box-only acquisition was added there, the vanilla range test stays.
+  Pins: new `VanillaGoalRangeParityTests` (own batch `vanillaGoalRangeParity`, TEST-003; a `@GameTestGenerator` over 18 rows,
+  `vanillagoalrangeparitytests.s136_NN_<species>_<row>`: three per site in orig file order (01-12), `cadence_no_roll` at each
+  IMob site (13-15), `box_corner_taken` and `vertical_band_refused` at the Pointysaurus (16-17), `cadence_1_in_6` there (18)):
+  the goal read off the hunter's target selector by its target type (the IMobConventionTests idiom) and asked `canUse()` under
+  the forced acquisition roll (the Pointysaurus goal's bound 3 — interval 6's reducedTickDelay — with the 3-arg constructor's
+  bound 5 chained, `rolls(GOAL_ROLL_BOUND, 0, POINTYSAURUS_ROLL_BOUND, 0)`; the IMob goals draw nothing) with a candidate of the
+  goal's class — a Zombie for
+  the three IMob goals, a plain survival `ServerPlayer` for the Pointysaurus (PlayNicelyGateParityTests' `survivalServerPlayerAt`,
+  since the framework mock's `isCreative()` is hardcoded true) — on the same floor: `edge_inside` at orig's edge minus 0.05
+  along +x (15.95 / 11.95: taken, the pick read back; the candidate's box asserted to meet the goal's scan box),
+  `edge_outside` at d + the hunter's half-width + the candidate's half-width + 0.05 along +x (18.10 / 13.80 / 19.475 / 17.975
+  — widths 3.5 / 2.9 / 6.25 / 3.25, ModEntities.java:543 / :126 / :579 / :588, the candidates 0.6: orig's
+  `selectEntitiesWithinAABB` was a box intersection, so a candidate at d + 0.05 still met the box; the spot is outside orig's
+  box and vanilla's sphere alike — the candidate's box asserted NOT to meet the goal's search area, `getTargetSearchArea(d)`
+  by reflection at the Mob goals and `getBoundingBox().inflate(12, 5, 12)` at the Pointysaurus — and asserted inside the
+  attribute's range, so HEAD's goal took it: refused, the discriminating row; d + 0.05 itself is PN-020's ring, left unpinned),
+  `follow_range_kept` — the attribute asserted 40 / 24 / 64 / 32 in every row and, in this one, the goal's own
+  `getFollowDistance()` (by reflection, dispatched to the override), its conditions' `range` snapshot (16 at the Mob goals; NONE
+  at the Pointysaurus — the field at vanilla's -1 default) and, for the Mob goals, `getTargetSearchArea(d)` equal to the
+  hunter's box inflated (16, 4, 16); `cadence_no_roll` — `randomInterval` 0 by reflection and the inside Zombie taken with no
+  roll forced, the hunter's `Entity.random` a seeded draw counter that must record no `nextInt(5)`; `box_corner_taken` — the
+  survival player at (11.9, 0, 11.9): its box inside orig's box, 16.83 off, beyond any 12 sphere — taken; `vertical_band_refused`
+  — the player 7.95 straight up (the hunter's 2.9 + the box's 5 + 0.05: boxes are feet-anchored, so its feet clear the box's
+  top by 0.05; 7.95 off, inside any 12 sphere) — refused; `cadence_1_in_6` (the Q2 follow-up) — `randomInterval` 3 by reflection
+  (reducedTickDelay(6), not the 3-arg constructor's 5) and the inside player driven twice, the bound-3 roll forced to 1 (canUse
+  false, nothing picked — orig :183's `nextInt(6) != 0` scanned nothing) then to 0 (taken, the pick read back). Hunters with
+  goals and no AI at rel (20,1,24) on the empty_large
+  floor, candidates frozen (`setOnGround(true)`), line of sight and the feet-to-feet distance asserted as preconditions;
+  PlayNicely set false and restored in a finally on every path, players removed and every spawn discarded there. javac rc 0
+  (four entity files, the test class; the Q2 follow-up's over Pointysaurus.java and the three probe classes; no gradle in this
+  lane); the reflection names verified against neoforge-21.1.223.jar
+  (`TargetingConditions.range`, `TargetGoal.getFollowDistance`, `NearestAttackableTargetGoal.getTargetSearchArea` / `target` /
+  `targetType` / `targetConditions` / `randomInterval`); the gametest run is the gate's.
+  Disclosed: (i) cadence — orig's `EntityAINearestAttackableTarget(…, 0, …)` rolled nothing (targetChance 0) and ran on
+  `EntityAITasks`' every-third-tick pass at the Leon and both Princes (the ledger's Leon row says "every tick": the same task,
+  the same `tickRate` 3 — corrected to "every 3rd tick"); the port's three goals now pass interval 0 (the ENT-S-117 mapping) and
+  roll nothing — the every-other-tick goal pass against orig's every third is ENT-S-117's residual; the Pointysaurus's pass was
+  `nextInt(6) == 0` every tick (:183) where its goal had the constructor's `randomInterval` 10 (`reducedTickDelay` 5 on the
+  every-other-tick pass, the ledger's "1-in-10") — restored in the Q2 follow-up (2026-09-05): the 6-arg constructor with
+  interval 6 (`reducedTickDelay(6)` = 3 on the every-other-tick pass = 1-in-6 per tick, exact), the bound-5 forcings that
+  serve this goal's roll chained with bound 3 (`rolls(GOAL_ROLL_BOUND, 0, 3, 0)`: PlayNicelyGateParityTests:652 — HEAD :619,
+  CreativeGateParityTests:302 — HEAD :296, VanillaGoalRangeParityTests:263), the `cadence_1_in_6` pin; (ii) the Pointysaurus's
+  hold — orig
+  stored no scan pick (each pass re-scanned the box and acted on the pick directly, :201-213); the port's vanilla hold releases
+  beyond `getFollowDistance`'s 12 (was 24) or after 60 unseen ticks (the ENT-S-129 record's "sight skip" residual) — the T5
+  row's hold rule; the T8 disclosure (the hold reads `invulnerable`) stands; (iii) ENT-S-130 (the Leon's hunt @4 behind its
+  revenge @3 against orig's @1 / @2) stays a REPORT — priorities untouched here. Refuters: (the orchestrator's).
+
 ### TEST-003 — Config-flipping gametests in the concurrent default batch
 
 - **Impact:** MEDIUM (suite reliability) — boss005/boss012 flip a global
