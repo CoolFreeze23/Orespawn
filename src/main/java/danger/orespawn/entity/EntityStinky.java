@@ -14,6 +14,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.InteractionHand;
@@ -400,17 +401,23 @@ public class EntityStinky extends TamableAnimal {
         return found != 0;
     }
 
-    /** orig Stinky.java:443-444 etc. — {@code getBlock(x, y, z) == Blocks.field_150365_q}: coal ore, the mapping BeehiveFeature.java:38-39 records (ENT-S-119). */
+    /**
+     * orig Stinky.java:443-444 etc. — {@code getBlock(x, y, z) == Blocks.field_150365_q}: coal ore, the mapping BeehiveFeature.java:38-39
+     * records (ENT-S-119), read through {@code #minecraft:coal_ores}: the modern engine split 1.7.10's one coal ore into
+     * {@code coal_ore} and {@code deepslate_coal_ore} — the ore features place one or the other by the stone they replace
+     * (vanilla's ore_coal and the port's ore_boost_*.json pairs alike) — so the tag is the one block of 1.7.10 (PN-021, both modes).
+     */
     private boolean isCoalOre(int x, int y, int z) {
-        return this.level().getBlockState(new BlockPos(x, y, z)).is(Blocks.COAL_ORE);
+        return this.level().getBlockState(new BlockPos(x, y, z)).is(BlockTags.COAL_ORES);
     }
 
     private void doMovement() {
-        if (this.currentFlightTarget == null) {
+        boolean doNew = false;
+        if (this.currentFlightTarget == null) { // orig Stinky.java:548-551 — a null flight target is initialised AND retargeted this tick (ENT-S-126)
+            doNew = true;
             this.currentFlightTarget = this.blockPosition();
         }
 
-        boolean doNew = false;
         boolean hasOwner = false;
         double ox = 0, oy = 0, oz = 0;
         LivingEntity owner = null;
@@ -470,10 +477,13 @@ public class EntityStinky extends TamableAnimal {
                 BlockPos newTarget = BlockPos.containing(gox + xdir,
                         goy + this.random.nextInt(6 + this.ownerFlying * 2) - 2,
                         goz + zdir);
+                // orig Stinky.java:638 — the candidate is written to the flight target BEFORE the air-and-ray test (:639-641 only
+                // re-arm the loop): a refused candidate is the one steered toward once the tries run out, and a boxed-in flyer
+                // pays the fifty rays once per retarget, not every tick (ENT-S-126)
+                this.currentFlightTarget = newTarget;
                 // orig Stinky.java:640 — an air candidate the feet ray (posY + 0.75 → the candidate's block corner) cannot reach is refused as stone (ENT-S-123)
                 if (this.level().getBlockState(newTarget).isAir()
                         && canSeeTarget(newTarget.getX(), newTarget.getY(), newTarget.getZ())) {
-                    this.currentFlightTarget = newTarget;
                     found = true;
                 }
                 --keepTrying;

@@ -364,13 +364,14 @@ public class EntitySpyro extends TamableAnimal {
     }
 
     private void doMovement() {
-        if (this.currentFlightTarget == null) {
+        boolean doNew = false;
+        if (this.currentFlightTarget == null) { // orig Spyro.java:562-565 — a null flight target is initialised AND retargeted this tick (ENT-S-126)
+            doNew = true;
             this.currentFlightTarget = this.blockPosition();
         }
         if (this.isOrderedToSit()) return;
         if (this.activity == 1) return;
 
-        boolean doNew = false;
         boolean hasOwner = false;
         double ox = 0, oy = 0, oz = 0;
         LivingEntity owner = null;
@@ -443,10 +444,13 @@ public class EntitySpyro extends TamableAnimal {
                 BlockPos newTarget = BlockPos.containing(gox + xdir,
                         goy + this.random.nextInt(9 + this.ownerFlying * 2) - 4,
                         goz + zdir);
+                // orig Spyro.java:645 — the candidate is written to the flight target BEFORE the air-and-ray test (:646-648 only
+                // re-arm the loop): a refused candidate is the one steered toward once the tries run out, and a boxed-in flyer
+                // pays the fifty rays once per retarget, not every tick (ENT-S-126)
+                this.currentFlightTarget = newTarget;
                 // orig Spyro.java:647 — an air candidate the feet ray (posY + 0.75 → the candidate's block corner) cannot reach is refused as stone (ENT-S-123)
                 if (this.level().getBlockState(newTarget).isAir()
                         && canSeeTarget(newTarget.getX(), newTarget.getY(), newTarget.getZ())) {
-                    this.currentFlightTarget = newTarget;
                     found = true;
                 }
                 --keepTrying;

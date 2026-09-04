@@ -7,11 +7,15 @@ import danger.orespawn.entity.Crab;
 import danger.orespawn.entity.EnderKnight;
 import danger.orespawn.entity.EntityDragonfly;
 import danger.orespawn.entity.EntityEmperorScorpion;
+import danger.orespawn.entity.EntityLeon;
 import danger.orespawn.entity.Hammerhead;
 import danger.orespawn.entity.Irukandji;
 import danger.orespawn.entity.Nastysaurus;
 import danger.orespawn.entity.PitchBlack;
 import danger.orespawn.entity.Pointysaurus;
+import danger.orespawn.entity.Robot3;
+import danger.orespawn.entity.Robot4;
+import danger.orespawn.entity.Robot5;
 import danger.orespawn.entity.TRex;
 import danger.orespawn.entity.WaterDragon;
 import danger.orespawn.entity.ai.BugMeleeAttackGoal;
@@ -75,6 +79,10 @@ import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
  *       Robot2's alert and exemption, the revenge-memory clears on {@code lastHurtByMob}, the helper goal's 15-block
  *       hold, the Dragonfly's one bite per pass, the melee goal's PlayNicely stand-down, the Water Dragon's hand-off
  *       pinned to this hit;</li>
+ *   <li>the T5b re-assert rows (ENT-S-131, {@code s131_NN_*}): the five forgets the ENT-S-129 refuter found still undone by
+ *       vanilla's {@code TargetGoal} re-assert — Robot3 / Robot4 / Robot5's 1-in-50 inside the pass, Leon's and the Water
+ *       Dragon's 1-in-200 every AI tick — each final against the revenge goal's memory, with a control where the forget does
+ *       not roll, and for the Water Dragon the melee goal's old every-tick forget pinned to fire (200 → 0), the slot kept;</li>
  *   <li>the ENT-S-122 memo: seen kept through a wall, unseen kept after exposure, the state boundary clearing it, for
  *       the Ant Robot and the Nightmare, and the Nightmare's orig :259-280 branch (the heal, the null-scan
  *       deactivation, the spontaneous activation).</li>
@@ -101,6 +109,7 @@ public class TargetReleaseParityTests {
     private static final int TIMEOUT_TICKS = 100;
     private static final String FINDING = "ENT-S-129";
     private static final String MEMO = "ENT-S-122";
+    private static final String FINDING_T5B = "ENT-S-131";
 
     private static final BlockPos HUNTER_POS = new BlockPos(20, 1, 24);
     /** 8 blocks east: inside every box of this batch, inside the Ant Robot's 6..9 stomp ring. */
@@ -184,6 +193,12 @@ public class TargetReleaseParityTests {
         s.add(new Site("s129_41_dragonfly_146_one_bite_per_pass_nothing_retained", TargetReleaseParityTests::dragonflyOneBite));
         s.add(new Site("s129_42_seaviper_539_melee_goal_stands_down_under_playnicely", TargetReleaseParityTests::standDown));
         s.add(new Site("s129_43_waterdragon_490_handoff_pinned_to_this_hit", TargetReleaseParityTests::waterDragonHandOff));
+        // ENT-S-131 (T5b) — the re-assert rows: the pass's forget final against the revenge goal's memory
+        s.add(new Site("s131_01_robot3_242_forget_in_pass_final", h -> robotForget(h, ModEntities.ROBOT_3.get(), Robot3.class, new int[] {50, 0}, new int[] {50, 1}, "Robot3.java:242-244")));
+        s.add(new Site("s131_02_robot4_282_forget_in_pass_final", h -> robotForget(h, ModEntities.ROBOT_4.get(), Robot4.class, new int[] {8, 1, 50, 0}, new int[] {8, 1, 50, 1}, "Robot4.java:282-284")));
+        s.add(new Site("s131_03_robot5_214_forget_in_pass_final", h -> robotForget(h, ModEntities.ROBOT_5.get(), Robot5.class, new int[] {50, 0}, new int[] {50, 1}, "Robot5.java:214-216")));
+        s.add(new Site("s131_04_leon_340_forget_final", TargetReleaseParityTests::leonForget));
+        s.add(new Site("s131_05_waterdragon_594_forget_in_step_not_goal_tick", TargetReleaseParityTests::waterDragonForget));
         // ENT-S-122 — the sight memo
         s.add(new Site("s122_01_antrobot_974_stomp_seen_kept_through_wall", h -> memoSeenKept(h, ModEntities.ANT_ROBOT.get(), "feetIsSuitableTarget", "AntRobot.java:974-976")));
         s.add(new Site("s122_02_antrobot_974_stomp_unseen_kept_after_exposure", h -> memoUnseenKept(h, ModEntities.ANT_ROBOT.get(), "feetIsSuitableTarget", "AntRobot.java:974-976")));
@@ -198,7 +213,7 @@ public class TargetReleaseParityTests {
         return s;
     }
 
-    /** One test per row: 53 TestFunctions in the {@code targetReleaseParity} batch. */
+    /** One test per row: 58 TestFunctions in the {@code targetReleaseParity} batch (53 of ENT-S-129 / ENT-S-122, 5 of ENT-S-131). */
     @GameTestGenerator
     public Collection<TestFunction> targetReleaseSites() {
         List<TestFunction> functions = new ArrayList<>();
@@ -1378,6 +1393,154 @@ public class TargetReleaseParityTests {
                             + describe(scanPick(dragon, WaterDragon.class)));
         } finally {
             removePlayer(helper, player);
+            discardQuietly(dragon);
+        }
+        helper.succeed();
+    }
+
+    // ------------------------------------------------------------------
+    // ENT-S-131 (T5b) — the re-assert rows
+    // ------------------------------------------------------------------
+
+    /**
+     * The robots' 1-in-50 (Robot3 / Robot4 / Robot5): rolled inside the pass on the attack target as orig did, and final
+     * against the revenge goal's memory — 1.7.10's {@code EntityAIHurtByTarget} ended on the nulled attack target where
+     * vanilla's {@code TargetGoal.canContinueToUse} (the next serverAiStep's goalCleanup) would re-set its own memory into the
+     * emptied slot. The attacker is a Zombie, a Monster the robots' own scan refuses (orig Robot3.java:309 / Robot4.java:373 /
+     * Robot5.java:283), so only the revenge goal can put it in the slot; it stands behind the wall so the pass fires no laser
+     * (Robot3's and Robot5's shots need line of sight; Robot4's cannon reads its head yaw, held at 0 — due east of it the
+     * bearing error is π/2, outside the 0.5 cone) while the revenge goal, which ignores sight, holds it through the wall.
+     */
+    private static void robotForget(GameTestHelper helper, EntityType<? extends Mob> type, Class<?> cls, int[] quiet, int[] fire, String cite) {
+        Mob robot = null;
+        Mob zombie = null;
+        try {
+            robot = spawnWithGoals(helper, type, HUNTER_POS);
+            robot.tickCount = TICKS_ALIVE;
+            robot.setYHeadRot(0.0f);
+            zombie = spawnPrey(helper, EntityType.ZOMBIE, PREY_POS);
+            setWall(helper, true);
+            robot.getSensing().tick();
+            helper.assertTrue(!robot.getSensing().hasLineOfSight(zombie), "precondition: the wall hides the Zombie from the robot's shot gate"
+                    + " (" + FINDING_T5B + " test geometry)");
+            Goal goal = revengeGoal(robot, cls);
+            robot.hurt(robot.damageSources().mobAttack(zombie), 1.0f);
+            helper.assertTrue(robot.getLastHurtByMob() == zombie, "precondition: the hit is recorded as lastHurtByMob (" + FINDING_T5B + " test setup)");
+            helper.assertTrue(goal.canUse(), "precondition: the revenge goal takes the Zombie through the wall (HURT_BY_TARGETING ignores sight)"
+                    + " (" + FINDING_T5B + " test setup)");
+            goal.start();
+            helper.assertTrue(robot.getTarget() == zombie, "precondition: the revenge occupant (" + FINDING_T5B + " test setup)");
+            // control: the pass with the 1-in-50 pinned quiet keeps the target and the goal keeps holding it
+            writeField(robot, cls, "reloadTicker", 0);
+            replaceRandom(robot, rolls(quiet));
+            invokeCustomServerAiStep(robot);
+            helper.assertTrue(robot.getTarget() == zombie && goal.canContinueToUse() && robot.getTarget() == zombie,
+                    "control: with nextInt(50) pinned to 0 the pass keeps the stored target and the goal keeps holding it (orig " + cite
+                            + " rolls `== 1`) (" + FINDING_T5B + "); slot " + describe(robot.getTarget()));
+            // the pass with the 1-in-50 pinned to fire clears the slot — finally
+            writeField(robot, cls, "reloadTicker", 0);
+            replaceRandom(robot, rolls(fire));
+            invokeCustomServerAiStep(robot);
+            helper.assertTrue(robot.getTarget() == null, "orig " + cite + " — `nextInt(50) == 1` inside the pass clears the attack target"
+                    + " (" + FINDING_T5B + "); slot " + describe(robot.getTarget()));
+            helper.assertTrue(!goal.canContinueToUse() && robot.getTarget() == null,
+                    "orig " + cite + " — the nulled target is final: 1.7.10's task ended on it, so the revenge goal's memory went with the slot"
+                            + " and its cleanup (TargetGoal.canContinueToUse on the next tick) does not re-assert the Zombie — vanilla's"
+                            + " HurtByTargetGoal would (" + FINDING_T5B + "); slot " + describe(robot.getTarget()));
+        } finally {
+            setWall(helper, false);
+            discardQuietly(zombie);
+            discardQuietly(robot);
+        }
+        helper.succeed();
+    }
+
+    /**
+     * Leon: the 1-in-200 of orig Leon.java:340-342, rolled every AI tick (`== 1`) on the attack target, final against the
+     * revenge goal's memory; the hunt goal (orig :93) holds no memory of its own and ends on the nulled slot as it did.
+     */
+    private static void leonForget(GameTestHelper helper) {
+        Mob leon = null;
+        Mob zombie = null;
+        try {
+            leon = spawnWithGoals(helper, ModEntities.ENTITY_LEON.get(), HUNTER_POS);
+            leon.tickCount = TICKS_ALIVE;
+            zombie = spawnPrey(helper, EntityType.ZOMBIE, PREY_POS);
+            Goal goal = revengeGoal(leon, EntityLeon.class);
+            leon.hurt(leon.damageSources().mobAttack(zombie), 1.0f);
+            helper.assertTrue(leon.getLastHurtByMob() == zombie && leon.getTarget() == zombie,
+                    "precondition: orig Leon.java:327 stores a living attacker outright and the hit is recorded as lastHurtByMob (" + FINDING_T5B
+                            + " test setup); slot " + describe(leon.getTarget()));
+            helper.assertTrue(goal.canUse(), "precondition: the revenge goal takes the Zombie (" + FINDING_T5B + " test setup)");
+            goal.start();
+            helper.assertTrue(leon.getTarget() == zombie, "precondition: the revenge occupant (" + FINDING_T5B + " test setup)");
+            replaceRandom(leon, rolls(200, 0));
+            invokeCustomServerAiStep(leon);
+            helper.assertTrue(leon.getTarget() == zombie && goal.canContinueToUse() && leon.getTarget() == zombie,
+                    "control: with nextInt(200) pinned to 0 the tick keeps the stored target and the goal keeps holding it (orig Leon.java:340"
+                            + " rolls `== 1`) (" + FINDING_T5B + "); slot " + describe(leon.getTarget()));
+            replaceRandom(leon, rolls(200, 1));
+            invokeCustomServerAiStep(leon);
+            helper.assertTrue(leon.getTarget() == null, "orig Leon.java:340-342 — `nextInt(200) == 1` in updateAITasks clears the attack target"
+                    + " (" + FINDING_T5B + "); slot " + describe(leon.getTarget()));
+            helper.assertTrue(!goal.canContinueToUse() && leon.getTarget() == null,
+                    "orig Leon.java:340-342 — the nulled target is final: 1.7.10's revenge task (:95) ended on it, so the revenge goal's memory"
+                            + " went with the slot and its cleanup does not re-assert the Zombie — vanilla's HurtByTargetGoal would (" + FINDING_T5B
+                            + "); slot " + describe(leon.getTarget()));
+        } finally {
+            discardQuietly(zombie);
+            discardQuietly(leon);
+        }
+        helper.succeed();
+    }
+
+    /**
+     * Water Dragon: the 1-in-200 of orig WaterDragon.java:594-596, rolled every AI tick (`== 0`) ahead of the hunt pass on the
+     * attack target, final against the revenge goal's memory; no longer the melee goal's every-tick forget (Presets.waterDragon
+     * forget 0). The attacker is a pig — no prey of the dragon's own hunt (orig :669-679: a Monster, an untamed dragon's
+     * non-creative player or the shared non-mob list), so only the hurt store and the revenge goal can put it in the slot —
+     * and the hunt pass is pinned quiet so the drive measures the forget alone.
+     */
+    private static void waterDragonForget(GameTestHelper helper) {
+        Mob dragon = null;
+        Mob pig = null;
+        try {
+            dragon = spawnWithGoals(helper, ModEntities.WATER_DRAGON.get(), HUNTER_POS);
+            dragon.tickCount = TICKS_ALIVE;
+            pig = spawnPrey(helper, EntityType.PIG, PREY_POS);
+            Goal goal = revengeGoal(dragon, WaterDragon.class);
+            dragon.hurt(dragon.damageSources().mobAttack(pig), 1.0f);
+            helper.assertTrue(dragon.getLastHurtByMob() == pig && dragon.getTarget() == pig,
+                    "precondition: orig WaterDragon.java:490-492 stores a living attacker outright and the hit is recorded as lastHurtByMob ("
+                            + FINDING_T5B + " test setup); slot " + describe(dragon.getTarget()));
+            helper.assertTrue(goal.canUse(), "precondition: the revenge goal takes the pig (" + FINDING_T5B + " test setup)");
+            goal.start();
+            helper.assertTrue(dragon.getTarget() == pig, "precondition: the revenge occupant (" + FINDING_T5B + " test setup)");
+            // the melee goal, ticked with the old every-tick forget pinned to fire: the slot must be kept (its cadence die 5 -> 1 quiet)
+            Goal melee = goalOf(dragon.goalSelector, DinosaurMeleeAttackGoal.class);
+            replaceRandom(dragon, rolls(200, 0, 5, 1));
+            helper.assertTrue(melee.canUse(), "precondition: the melee goal engages the stored target (" + FINDING_T5B + " test setup)");
+            melee.start();
+            melee.tick();
+            helper.assertTrue(dragon.getTarget() == pig, "the melee goal no longer rolls the 1-in-200 every tick (Presets.waterDragon forget 0): the"
+                    + " stored target is kept through a goal tick with nextInt(200) pinned to 0 (" + FINDING_T5B + "); slot " + describe(dragon.getTarget()));
+            // the AI tick: 25 -> 1 keeps the water scan quiet (a dragon on the dry floor), 200 -> 1 quiet / 0 fires (orig :594 rolls `== 0`),
+            // 5 -> 0 keeps the hunt pass quiet (orig :597 fires on 1), 100 -> 0 keeps the heal roll quiet
+            replaceRandom(dragon, rolls(25, 1, 200, 1, 5, 0, 100, 0));
+            invokeCustomServerAiStep(dragon);
+            helper.assertTrue(dragon.getTarget() == pig && goal.canContinueToUse() && dragon.getTarget() == pig,
+                    "control: with nextInt(200) pinned to 1 the tick keeps the stored target and the goal keeps holding it (orig WaterDragon.java:594"
+                            + " rolls `== 0`) (" + FINDING_T5B + "); slot " + describe(dragon.getTarget()));
+            replaceRandom(dragon, rolls(25, 1, 200, 0, 5, 0, 100, 0));
+            invokeCustomServerAiStep(dragon);
+            helper.assertTrue(dragon.getTarget() == null, "orig WaterDragon.java:594-596 — `nextInt(200) == 0` every AI tick clears the attack target"
+                    + " (" + FINDING_T5B + "); slot " + describe(dragon.getTarget()));
+            helper.assertTrue(!goal.canContinueToUse() && dragon.getTarget() == null,
+                    "orig WaterDragon.java:594-596 — the nulled target is final: 1.7.10's revenge task (:76) ended on it, so the revenge goal's"
+                            + " memory went with the slot and its cleanup does not re-assert the pig — vanilla's HurtByTargetGoal would ("
+                            + FINDING_T5B + "); slot " + describe(dragon.getTarget()));
+        } finally {
+            discardQuietly(pig);
             discardQuietly(dragon);
         }
         helper.succeed();

@@ -34,6 +34,7 @@ import danger.orespawn.ModEntities;
 import danger.orespawn.OreSpawnMod;
 import danger.orespawn.OreSpawnConfig;
 import danger.orespawn.util.MyUtils;
+import danger.orespawn.util.OrigTargets;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
 import net.minecraft.world.entity.ai.goal.FollowOwnerGoal;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
@@ -43,7 +44,6 @@ import net.minecraft.world.entity.ai.goal.TemptGoal;
 import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
-import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -153,8 +153,9 @@ public class Dragon extends TamableAnimal implements danger.orespawn.network.Rid
         // randomInterval 0 is orig's targetChance 0 (no roll in either); the port's FOLLOW_RANGE attribute is 40, so the
         // goal keeps orig's 16 through getFollowDistance (the JealousyTargetGoal idiom) for its box, its range and its
         // hold. ENT-S-117.
-        // orig Dragon.java:116 IMob.mobSelector → Mob.class + instanceof Enemy; a Ghast still falls to vanilla Mob.canAttackType, as to 1.7.10's EntityAITarget (ENT-S-124, IMob convention)
-        this.targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, Mob.class, 0, true, false, e -> e instanceof Enemy) {
+        // orig Dragon.java:116 IMob.mobSelector → Mob.class + instanceof Enemy; a Ghast still falls to vanilla Mob.canAttackType, as to 1.7.10's EntityAITarget (ENT-S-124, IMob convention);
+        // the Creeper refused as 1.7.10's EntityLiving.canAttackClass refused it for every vanilla target task (OrigTargets.vanillaTaskPrey, ENT-S-127)
+        this.targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, Mob.class, 0, true, false, OrigTargets::vanillaTaskPrey) {
             @Override
             public boolean canUse() {
                 if (OreSpawnConfig.PLAY_NICELY.get()) return false; // orig Dragon.java:115 (ENT-S-115 idiom; ENT-S-117)

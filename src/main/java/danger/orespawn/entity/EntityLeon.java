@@ -38,7 +38,6 @@ import net.minecraft.world.entity.ai.goal.target.OwnerHurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.OwnerHurtTargetGoal;
 import net.minecraft.world.entity.boss.EnderDragonPart;
 import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
-import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.npc.Villager;
 import net.minecraft.world.entity.player.Player;
@@ -53,6 +52,7 @@ import danger.orespawn.OreSpawnConfig;
 import danger.orespawn.OreSpawnMod;
 import danger.orespawn.entity.ai.TargetSelection;
 import danger.orespawn.util.MyUtils;
+import danger.orespawn.util.OrigTargets;
 
 /**
  * The consolidated Leon/Leonopteryx (TF-030). 1.7.10 has a single class
@@ -167,18 +167,21 @@ public class EntityLeon extends TamableAnimal
             this.targetSelector.addGoal(1, new OwnerHurtByTargetGoal(this));
             this.targetSelector.addGoal(2, new OwnerHurtTargetGoal(this));
         }
-        this.targetSelector.addGoal(3, new HurtByTargetGoal(this)); // orig Leon.java:95 — both modes
+        this.revengeGoal = new RevengeGoal();
+        this.targetSelector.addGoal(3, this.revengeGoal); // orig Leon.java:95 — both modes; released by the AI tick's 1-in-200 (:340-342), as orig's task ended on the nulled attack target (ENT-S-131)
         // orig Leon.java:92-94 — the EntityAINearestAttackableTarget task (EntityLiving.class, IMob selector) is
         // registered only when PlayNicely == 0 at construction; the port registers the goal always and reads the
         // flag live in its canUse, so it never starts while PlayNicely is on (ENT-S-115; the :391 filter gate is
         // ENT-S-110's, at isSuitableTarget).
-        // orig Leon.java:93 IMob.mobSelector → Mob.class + instanceof Enemy (ENT-S-124, IMob convention), and'ed ahead
-        // of the port's tame rule in modern only (a tamed Leon holding a target refuses every candidate — MOD-033, gated
-        // here since the ENT-S-124 refutation closed 2026-09-04); classic is the bare Enemy test, exactly what orig :93's
-        // task tested (an EntityLiving.class list through IMob.mobSelector, no further selector, no tame term).
+        // orig Leon.java:93 IMob.mobSelector → Mob.class + instanceof Enemy (ENT-S-124, IMob convention) less the Creeper
+        // that 1.7.10's EntityLiving.canAttackClass refused for every vanilla target task (OrigTargets.vanillaTaskPrey,
+        // ENT-S-127), and'ed ahead of the port's tame rule in modern only (a tamed Leon holding a target refuses every
+        // candidate — MOD-033, gated here since the ENT-S-124 refutation closed 2026-09-04); classic is the bare vanilla-task
+        // prey test, exactly what orig :93's task tested (an EntityLiving.class list through IMob.mobSelector behind
+        // canAttackClass, no further selector, no tame term).
         final Predicate<LivingEntity> huntSelector = petsDefendOwner
-                ? e -> e instanceof Enemy && (!this.isTame() || this.getTarget() == null)
-                : e -> e instanceof Enemy;
+                ? e -> OrigTargets.vanillaTaskPrey(e) && (!this.isTame() || this.getTarget() == null)
+                : OrigTargets::vanillaTaskPrey;
         this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, Mob.class, 10, true, false, huntSelector) {
             @Override
             public boolean canUse() {
@@ -186,6 +189,26 @@ public class EntityLeon extends TamableAnimal
                 return super.canUse();
             }
         });
+    }
+
+    /** orig Leon.java:95 {@code EntityAIHurtByTarget(this, false)} — the revenge task the AI tick's 1-in-200 (:340-342) ended by nulling the attack target. ENT-S-131. */
+    private RevengeGoal revengeGoal;
+
+    /**
+     * 1.7.10's {@code EntityAIHurtByTarget} ended when the attack target was nulled ({@code EntityAITarget.continueExecuting});
+     * vanilla's {@code TargetGoal} re-asserts its own memory into an emptied slot, so the tick's release also drops that
+     * memory ({@link #release}). The hold itself stays vanilla's; the hunt goal above holds no memory of its own
+     * ({@code NearestAttackableTargetGoal} never sets {@code targetMob}), so it ends on the nulled slot as orig :93's task did.
+     * ENT-S-131 (the Robot2 shape of ENT-S-129).
+     */
+    private final class RevengeGoal extends HurtByTargetGoal {
+        RevengeGoal() {
+            super(EntityLeon.this);
+        }
+
+        void release() {
+            this.targetMob = null;
+        }
     }
 
     public static AttributeSupplier.Builder createAttributes() {
@@ -542,8 +565,9 @@ public class EntityLeon extends TamableAnimal
         if (this.level().isClientSide) return;
         super.customServerAiStep();
 
-        if (this.random.nextInt(200) == 1) {
+        if (this.random.nextInt(200) == 1) { // orig Leon.java:340-342
             this.setTarget(null);
+            this.revengeGoal.release(); // the task ended on the nulled target; vanilla's TargetGoal would re-assert its memory (ENT-S-131)
         }
     }
 

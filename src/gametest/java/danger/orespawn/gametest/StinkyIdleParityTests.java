@@ -11,6 +11,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -85,6 +86,12 @@ import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
  * refused with the wall and accepted with it razed (the ENT-S-118 shape). Every row fails with its port line reverted.
  * {@code PLAY_NICELY} is set false for the drive (the eat and the scan are off under it, ENT-S-116 / ENT-S-115) and
  * restored in a finally; blocks razed, spawns discarded and the listener unregistered there. Own batch (TEST-003).</p>
+ *
+ * <p>T5b (2026-09-05): ENT-S-126 re-based rows 17 / 18 on the ray-refusal count (the y roll of the pick counted through a
+ * {@link RollLog}: fifty with the wall, one without) with the flight target asserted ON the refused candidate — orig
+ * Stinky.java:638 / Spyro.java:645 wrote the candidate before the air-and-ray test — and added the boxed-in rows 20 / 21
+ * ({@code s126_NN_*}): after fifty refusals the next drive runs no pick until the retarget clock (zero tries, no rays), then the
+ * clock re-runs the fifty; PN-021 added row 22 ({@code pn021_22_*}): a deepslate coal ore eaten as 1.7.10's one coal ore.</p>
  */
 @GameTestHolder(OreSpawnMod.MOD_ID)
 @PrefixGameTestTemplate(false)
@@ -97,6 +104,8 @@ public class StinkyIdleParityTests {
     private static final int TIMEOUT_TICKS = 100;
     private static final String FINDING = "ENT-S-119";
     private static final String FINDING_RAY = "ENT-S-123";
+    private static final String FINDING_WRITE = "ENT-S-126";
+    private static final String FINDING_DEEPSLATE = "PN-021";
 
     /** The Stinky's spot, rel to the structure block (PlayNicelyGriefingGateTests.HUNTER_POS); the scan origin is one above its block. */
     private static final BlockPos HUNTER_POS = new BlockPos(20, 1, 24);
@@ -128,10 +137,6 @@ public class StinkyIdleParityTests {
     private static final BlockPos PICK_OFFSET = new BlockPos(6, 1, 6);
     /** The one-block wall: the flyer's block + (3, 0, 3), which the ray from (x + 0.5, y + 0.75, z + 0.5) to the candidate's corner (x + 6, y + 1, z + 6) crosses at 0.86..0.91 of that block's height. */
     private static final BlockPos WALL_OFFSET = new BlockPos(3, 0, 3);
-    /** The Stinky's flight pick: 300 → 0 (retarget), 7 → 0 (the pass quiet), 5 → 0, 2 → 1, 6 → 3 (nextInt(6) - 2 = +1). */
-    private static final int[] STINKY_PICK_ROLLS = {300, 0, 7, 0, 5, 0, 2, 1, 6, 3};
-    /** The Spyro's flight pick: 300 → 0, 6 → 0 (its 1-in-6 pass quiet), 5 → 0, 2 → 1, 9 → 5 (nextInt(9) - 4 = +1). */
-    private static final int[] SPYRO_PICK_ROLLS = {300, 0, 6, 0, 5, 0, 2, 1, 9, 5};
 
     // ------------------------------------------------------------------
     // The site table, in orig file order
@@ -147,7 +152,13 @@ public class StinkyIdleParityTests {
     /** One orig site and the port site that carries it. */
     private record Site(int index, String tag, String finding, String orig, String port, String effect, Supplier<Probe> probe) {
         String testName() {
-            return TEST_PREFIX + String.format("%s_%02d_%s", this.finding.equals(FINDING_RAY) ? "s123" : "s119", this.index, this.tag);
+            String series = switch (this.finding) {
+                case FINDING_RAY -> "s123";
+                case FINDING_WRITE -> "s126";
+                case FINDING_DEEPSLATE -> "pn021";
+                default -> "s119";
+            };
+            return TEST_PREFIX + String.format("%s_%02d_%s", series, this.index, this.tag);
         }
 
         String where() {
@@ -161,6 +172,11 @@ public class StinkyIdleParityTests {
 
     private static Placed coal(int dx, int dy, int dz) {
         return new Placed(new BlockPos(dx, dy, dz), Blocks.COAL_ORE);
+    }
+
+    /** PN-021 — the modern engine's second coal block; 1.7.10 had the one. */
+    private static Placed deepslateCoal(int dx, int dy, int dz) {
+        return new Placed(new BlockPos(dx, dy, dz), Blocks.DEEPSLATE_COAL_ORE);
     }
 
     private static List<Site> sites() {
@@ -218,18 +234,29 @@ public class StinkyIdleParityTests {
                 () -> new IdlePassProbe(IdlePass.MISSED)));
         // ENT-S-123 — the flight-target ray (orig Stinky.java:640, Spyro.java:647)
         sites.add(new Site(17, "stinky_640_flight_ray_wall", FINDING_RAY, "Stinky.java:640 with :317-319", "EntityStinky.doMovement (the flight-target pick's canSeeTarget)",
-                "the pinned air candidate (x + 6, y + 1, z + 6) refused behind a one-block wall, the flight target left where it was; accepted with the wall razed",
-                () -> new FlightRayProbe(false)));
+                "the pinned air candidate (x + 6, y + 1, z + 6) refused behind a one-block wall on all 50 tries (the y roll counted 50 times), the flight target written to it as orig :638 wrote it; accepted on the first try with the wall razed",
+                () -> new FlightRayProbe(false, FlightRayProbe.Mode.RAY_WALL)));
         sites.add(new Site(18, "spyro_647_flight_ray_wall", FINDING_RAY, "Spyro.java:647 with :436-438", "EntitySpyro.doMovement (the flight-target pick's canSeeTarget)",
-                "the pinned air candidate (x + 6, y + 1, z + 6) refused behind a one-block wall, the flight target left where it was; accepted with the wall razed",
-                () -> new FlightRayProbe(true)));
+                "the pinned air candidate (x + 6, y + 1, z + 6) refused behind a one-block wall on all 50 tries (the y roll counted 50 times), the flight target written to it as orig :645 wrote it; accepted on the first try with the wall razed",
+                () -> new FlightRayProbe(true, FlightRayProbe.Mode.RAY_WALL)));
         sites.add(new Site(19, "stinky_599_eat_radius_from_scan_origin", FINDING, "Stinky.java:599 (closest < 12, from the scan origin)", "EntityStinky.eatCoalOre (the eat radius base)",
                 "the coal ore at origin + (3, 1, 1), distSq 11 from the scan origin (shell 3's +x face at dy = 2) — eaten, healed and burped; from the Stinky's own block it is 14, so a radius measured from the entity block (HEAD's base) would leave it standing (refuter T1)",
                 () -> EatProbe.eaten(11, new BlockPos(3, 1, 1), coal(3, 1, 1))));
+        // ENT-S-126 — the candidate written before the air-and-ray test (orig Stinky.java:638, Spyro.java:645): the boxed-in flyer
+        sites.add(new Site(20, "stinky_638_boxed_in_last_candidate_no_repick", FINDING_WRITE, "Stinky.java:638-641 with :608-610 and :552", "EntityStinky.doMovement (the flight-target write ahead of the test)",
+                "fifty refused tries leave the flight target on the last candidate; with it beyond 2.1 and the 1-in-300 quiet the next drive runs no pick (no try, no ray); the clock pinned to fire re-runs the fifty",
+                () -> new FlightRayProbe(false, FlightRayProbe.Mode.BOXED_IN)));
+        sites.add(new Site(21, "spyro_645_boxed_in_last_candidate_no_repick", FINDING_WRITE, "Spyro.java:645-648 with :615-617 and :572", "EntitySpyro.doMovement (the flight-target write ahead of the test)",
+                "fifty refused tries leave the flight target on the last candidate; with it beyond 2.1 and the 1-in-300 quiet the next drive runs no pick (no try, no ray); the clock pinned to fire re-runs the fifty",
+                () -> new FlightRayProbe(true, FlightRayProbe.Mode.BOXED_IN)));
+        // PN-021 — the modern engine's deepslate coal ore reads as 1.7.10's one coal ore (both modes)
+        sites.add(new Site(22, "stinky_443_deepslate_coal_ore_eat", FINDING_DEEPSLATE, "Stinky.java:443 (== Blocks.field_150365_q, the one coal ore of 1.7.10)", "EntityStinky.isCoalOre (#minecraft:coal_ores)",
+                "the deepslate coal ore at origin + (1, 0, 0), distSq 1, found and eaten (healed, burped) — the engine's second coal block reads as 1.7.10's one, in both modes",
+                () -> EatProbe.eaten(1, new BlockPos(1, 0, 0), deepslateCoal(1, 0, 0))));
         return sites;
     }
 
-    /** One test per row: 19 TestFunctions in the {@code stinkyIdleParity} batch. */
+    /** One test per row: 22 TestFunctions in the {@code stinkyIdleParity} batch (19 of ENT-S-119 / ENT-S-123, 2 of ENT-S-126, 1 of PN-021). */
     @GameTestGenerator
     public Collection<TestFunction> stinkyIdleSites() {
         List<TestFunction> functions = new ArrayList<>();
@@ -319,32 +346,32 @@ public class StinkyIdleParityTests {
             this.stinky = spawnFrozen(helper, ModEntities.ENTITY_STINKY.get(), HUNTER_POS);
             this.stinky.setActivity(1);
             helper.assertTrue(this.stinky.activity == 1 && this.stinky.getActivity() == 1,
-                    "precondition: activity 1 — orig Stinky.java:582 runs the eat inside activity == 1 only (" + FINDING + " test setup)");
+                    "precondition: activity 1 — orig Stinky.java:582 runs the eat inside activity == 1 only (" + site.finding() + " test setup)");
             helper.assertTrue(!this.stinky.isTame(),
-                    "precondition: a fresh Stinky is untamed — no owner-flying or far-owner flip to 2 (" + FINDING + " test setup)");
+                    "precondition: a fresh Stinky is untamed — no owner-flying or far-owner flip to 2 (" + site.finding() + " test setup)");
             this.stinky.setOrderedToSit(this.sitting);
             helper.assertTrue(this.stinky.isOrderedToSit() == this.sitting,
                     "precondition: setOrderedToSit(" + this.sitting + ") must read back — orig :511 runs do_movement, and the eat inside it,"
-                            + " only while not sitting (" + FINDING + " test setup)");
+                            + " only while not sitting (" + site.finding() + " test setup)");
             float max = this.stinky.getMaxHealth();
             this.healthBefore = max - HEALTH_DEFICIT;
             this.stinky.setHealth(this.healthBefore);
             helper.assertTrue(this.stinky.getHealth() == this.healthBefore && this.healthBefore < max,
                     "precondition: the Stinky starts " + HEALTH_DEFICIT + " below its max " + max + ", so the eat's heal(1.0f) (orig :601)"
-                            + " reads as +1 — got " + this.stinky.getHealth() + " (" + FINDING + " test setup)");
+                            + " reads as +1 — got " + this.stinky.getHealth() + " (" + site.finding() + " test setup)");
             writeField(this.stinky, EntityStinky.class, "closest", CLOSEST_SENTINEL);
             this.navigation = installRecordingNavigation(this.stinky);
             this.origin = scanOrigin(this.stinky);
             for (Placed one : this.placed) {
                 BlockPos abs = this.origin.offset(one.offset());
                 helper.assertTrue(helper.getBounds().contains(Vec3.atCenterOf(abs)), "precondition: origin + " + one.offset().toShortString()
-                        + " = rel " + rel(helper, abs).toShortString() + " lies inside the structure (" + FINDING + " test geometry)");
+                        + " = rel " + rel(helper, abs).toShortString() + " lies inside the structure (" + site.finding() + " test geometry)");
                 helper.assertTrue(helper.getLevel().getBlockState(abs).isAir(), "precondition: origin + " + one.offset().toShortString()
-                        + " (rel " + rel(helper, abs).toShortString() + ") is air before the row places its block (" + FINDING + " test geometry)");
+                        + " (rel " + rel(helper, abs).toShortString() + ") is air before the row places its block (" + site.finding() + " test geometry)");
                 helper.getLevel().setBlock(abs, one.block().defaultBlockState(), 3);
                 this.placedAbs.add(abs);
                 helper.assertTrue(helper.getLevel().getBlockState(abs).is(one.block()), "precondition: " + name(one.block()) + " must stand at origin + "
-                        + one.offset().toShortString() + " (rel " + rel(helper, abs).toShortString() + ") before the drive (" + FINDING + " test setup)");
+                        + one.offset().toShortString() + " (rel " + rel(helper, abs).toShortString() + ") before the drive (" + site.finding() + " test setup)");
             }
             this.log = new RollLog(rolls(200, 0, 100, 0, 7, 0, 50, 0));
             replaceRandom(this.stinky, this.log);
@@ -358,16 +385,16 @@ public class StinkyIdleParityTests {
             int closest = readInt(this.stinky, "closest");
             String trace = trace(helper, closest);
             helper.assertTrue(closest == this.expectClosest, site.where() + ": closest must read " + describeClosest(this.expectClosest)
-                    + " — orig " + site.orig() + ": " + site.effect() + " — saw " + trace + " (" + FINDING + ")");
+                    + " — orig " + site.orig() + ": " + site.effect() + " — saw " + trace + " (" + site.finding() + ")");
             if (this.expectPick == null) {
                 helper.assertTrue(this.navigation.calls == 0, site.where() + ": nothing found (or the eat never run), so orig :597-598 never points"
-                        + " the navigation — saw " + trace + " (" + FINDING + ")");
+                        + " the navigation — saw " + trace + " (" + site.finding() + ")");
             } else {
                 BlockPos pick = this.origin.offset(this.expectPick);
                 helper.assertTrue(this.navigation.calls == 1 && Vec3.atLowerCornerOf(pick).equals(this.navigation.target)
                                 && this.navigation.speed == EAT_SPEED,
                         site.where() + ": orig :598 points the navigation at the pick " + pick.toShortString() + " (rel " + rel(helper, pick).toShortString()
-                                + ", origin + " + this.expectPick.toShortString() + ") at " + EAT_SPEED + ", once — saw " + trace + " (" + FINDING + ")");
+                                + ", origin + " + this.expectPick.toShortString() + ") at " + EAT_SPEED + ", once — saw " + trace + " (" + site.finding() + ")");
             }
             for (int i = 0; i < this.placed.size(); i++) {
                 Placed one = this.placed.get(i);
@@ -376,26 +403,26 @@ public class StinkyIdleParityTests {
                 boolean eatenOne = this.expectEaten && one.offset().equals(this.expectPick);
                 if (eatenOne) {
                     helper.assertTrue(state.isAir(), site.where() + ": the pick at origin + " + one.offset().toShortString() + " (rel "
-                            + rel(helper, abs).toShortString() + ") is inside the eat radius, so orig :600 sets it to air — saw " + trace + " (" + FINDING + ")");
+                            + rel(helper, abs).toShortString() + ") is inside the eat radius, so orig :600 sets it to air — saw " + trace + " (" + site.finding() + ")");
                 } else {
                     helper.assertTrue(state.is(one.block()), site.where() + ": " + name(one.block()) + " at origin + " + one.offset().toShortString() + " (rel "
                             + rel(helper, abs).toShortString() + ") must still stand — " + (this.expectEaten ? "only the nearest pick is eaten"
-                            : this.expectPick != null ? "a pick at distSq 12 or more is walked to, not eaten (orig :599)" : "nothing is eaten") + " — saw " + trace + " (" + FINDING + ")");
+                            : this.expectPick != null ? "a pick at distSq 12 or more is walked to, not eaten (orig :599)" : "nothing is eaten") + " — saw " + trace + " (" + site.finding() + ")");
                 }
             }
             float expectedHealth = this.expectEaten ? this.healthBefore + HEAL_AMOUNT : this.healthBefore;
             helper.assertTrue(Math.abs(this.stinky.getHealth() - expectedHealth) < HEALTH_EPSILON, site.where() + ": the health must be "
-                    + expectedHealth + " (" + (this.expectEaten ? "orig :601 heals 1.0 with the eat" : "no eat, no heal") + ") — saw " + trace + " (" + FINDING + ")");
+                    + expectedHealth + " (" + (this.expectEaten ? "orig :601 heals 1.0 with the eat" : "no eat, no heal") + ") — saw " + trace + " (" + site.finding() + ")");
             if (this.expectEaten) {
                 helper.assertTrue(this.ear.count == 1 && this.ear.volume == BURP_VOLUME && this.ear.pitch >= BURP_PITCH_MIN && this.ear.pitch < BURP_PITCH_MAX,
                         site.where() + ": orig :602 plays random.burp once with the eat at " + BURP_VOLUME + ", pitch " + BURP_PITCH_MIN + ".." + BURP_PITCH_MAX
-                                + " (the port's PLAYER_BURP through PlayLevelSoundEvent.AtPosition) — saw " + trace + " (" + FINDING + ")");
+                                + " (the port's PLAYER_BURP through PlayLevelSoundEvent.AtPosition) — saw " + trace + " (" + site.finding() + ")");
             } else {
-                helper.assertTrue(this.ear.count == 0, site.where() + ": no eat, so no burp (orig :602 sits inside the :599 radius test) — saw " + trace + " (" + FINDING + ")");
+                helper.assertTrue(this.ear.count == 0, site.where() + ": no eat, so no burp (orig :602 sits inside the :599 radius test) — saw " + trace + " (" + site.finding() + ")");
             }
             List<Integer> expectedRolls = this.sitting ? SITTING_ROLLS : IDLE_ROLLS;
             helper.assertTrue(this.log.bounds.equals(expectedRolls), site.where() + ": the tick's roll bounds must be " + expectedRolls + " in that order — orig "
-                    + (this.sitting ? ":501-510 before the :511 sitting gate" : ":501-508, then do_movement's :568 pass, then the :583 eat roll") + " — saw " + trace + " (" + FINDING + ")");
+                    + (this.sitting ? ":501-510 before the :511 sitting gate" : ":501-508, then do_movement's :568 pass, then the :583 eat roll") + " — saw " + trace + " (" + site.finding() + ")");
         }
 
         private String trace(GameTestHelper helper, int closest) {
@@ -540,21 +567,54 @@ public class StinkyIdleParityTests {
     // ------------------------------------------------------------------
 
     /**
-     * orig Stinky.java:640 / Spyro.java:647 — the flyer in activity 2, untamed, its flight target set to its own block
-     * (so the pick runs: the target is within 2.1 of it), the pick's rolls pinned to the one candidate
+     * orig Stinky.java:638-641 / Spyro.java:645-648 — the flyer in activity 2, untamed, its flight target set to its own
+     * block (so the pick runs: the target is within 2.1 of it), the pick's rolls pinned to the one candidate
      * {@code ((int) x + 6, (int) y + 1, (int) z + 6)} for all 50 tries; a stone at the flyer's block + (3, 0, 3) sits on
      * the ray from {@code (x, y + 0.75, z)} to the candidate's corner ({@code canSeeTarget} asserted false with it and true
-     * without it — the control that only the ray decides). With the wall the private {@code doMovement} must leave the
-     * flight target where it was (every try refused); with the wall razed it must take the candidate.
+     * without it — the control that only the ray decides). The tries are counted through the y roll's bound in a
+     * {@link RollLog} (the Stinky's nextInt(6), the Spyro's nextInt(9): one per try, rolled by nothing else in the drive).
+     *
+     * <p>{@link Mode#RAY_WALL} (ENT-S-123, rows 17 / 18, re-based by ENT-S-126 on the ray-refusal count): with the wall the
+     * private {@code doMovement} must run all 50 tries — the ray refused every one — and, as orig :638 / :645 wrote the
+     * candidate to the flight target before the air-and-ray test, leave the flight target ON the refused candidate; with the
+     * wall razed the first try is accepted (one try, the same candidate). {@link Mode#BOXED_IN} (ENT-S-126, rows 20 / 21):
+     * the walled drive, then a second walled drive with the retarget clock quiet — the flight target now beyond 2.1, so no
+     * pick runs (zero tries, no rays, the target kept), where HEAD's assign-on-acceptance left the target within 2.1 and
+     * re-ran the fifty tries every tick — then a third with the clock pinned to fire, the fifty refused tries again.</p>
      */
     private static final class FlightRayProbe implements Probe {
+        enum Mode { RAY_WALL, BOXED_IN }
+
+        /** One drive of {@code doMovement}: the tries the pick ran (the y roll's count), the flight target after it, the bounds rolled. */
+        private record Drive(int tries, BlockPos target, List<Integer> bounds) {
+        }
+
         private final boolean spyro;
+        private final Mode mode;
         private TamableAnimal flyer;
         private BlockPos wall;
         private String trace = "(not driven)";
 
-        FlightRayProbe(boolean spyro) {
+        FlightRayProbe(boolean spyro, Mode mode) {
             this.spyro = spyro;
+            this.mode = mode;
+        }
+
+        /**
+         * The pick pinned to the one candidate, the retarget clock (orig Stinky.java:552 / Spyro.java:572, the 1-in-300) answering
+         * {@code clock}: the Stinky's 7 → 0 (its 1-in-7 pass quiet), 5 → 0, 2 → 1, 6 → 3 (nextInt(6) - 2 = +1); the Spyro's 6 → 0
+         * (its 1-in-6 pass quiet), 5 → 0, 2 → 1, 9 → 5 (nextInt(9) - 4 = +1).
+         */
+        private int[] pickRolls(int clock) {
+            return this.spyro ? new int[] {300, clock, 6, 0, 5, 0, 2, 1, 9, 5} : new int[] {300, clock, 7, 0, 5, 0, 2, 1, 6, 3};
+        }
+
+        private Drive drive(int clock) {
+            RollLog log = new RollLog(rolls(pickRolls(clock)));
+            replaceRandom(this.flyer, log);
+            invoke(this.flyer, this.flyer.getClass(), "doMovement");
+            BlockPos after = (BlockPos) readField(this.flyer, this.flyer.getClass(), "currentFlightTarget");
+            return new Drive(Collections.frequency(log.bounds, this.spyro ? 9 : 6), after, log.bounds);
         }
 
         @Override
@@ -581,30 +641,47 @@ public class StinkyIdleParityTests {
                     "precondition: the candidate and the wall's spot are air before the row starts — the candidate must be air, so only the ray can refuse it (" + FINDING_RAY + " test geometry)");
             BlockPos sentinel = this.flyer.blockPosition();
             writeField(this.flyer, this.flyer.getClass(), "currentFlightTarget", sentinel);
-            int[] pins = this.spyro ? SPYRO_PICK_ROLLS : STINKY_PICK_ROLLS;
             String name = this.flyer.getClass().getSimpleName();
+            String yRoll = this.spyro ? "nextInt(9)" : "nextInt(6)";
+            String writeSite = this.spyro ? "Spyro.java:645" : "Stinky.java:638";
 
             helper.getLevel().setBlock(this.wall, Blocks.STONE.defaultBlockState(), 3);
             helper.assertTrue(helper.getLevel().getBlockState(this.wall).is(Blocks.STONE), "precondition: the stone wall stands at rel " + rel(helper, this.wall).toShortString() + " (" + FINDING_RAY + " test setup)");
             helper.assertTrue(!canSee(this.flyer, candidate), "precondition: " + name + ".canSeeTarget refuses the candidate's corner " + candidate.toShortString()
                     + " through the wall at rel " + rel(helper, this.wall).toShortString() + " (" + FINDING_RAY + " test geometry)");
-            replaceRandom(this.flyer, rolls(pins));
-            invoke(this.flyer, this.flyer.getClass(), "doMovement");
-            BlockPos afterWalled = (BlockPos) readField(this.flyer, this.flyer.getClass(), "currentFlightTarget");
-            this.trace = "currentFlightTarget " + sentinel.toShortString() + " -> " + afterWalled.toShortString() + " with the wall at rel "
-                    + rel(helper, this.wall).toShortString() + " (candidate " + candidate.toShortString() + ", rel " + rel(helper, candidate).toShortString() + ")";
-            helper.assertTrue(afterWalled.equals(sentinel), site.where() + " with the wall: orig " + site.orig() + " turns an air candidate the ray cannot reach"
-                    + " into stone, so all 50 tries at the pinned candidate are refused and the flight target stays — saw " + this.trace + " (" + FINDING_RAY + ")");
+            Drive walled = drive(0);
+            this.trace = "currentFlightTarget " + sentinel.toShortString() + " -> " + walled.target().toShortString() + " after " + walled.tries() + " tries (the " + yRoll
+                    + " count) with the wall at rel " + rel(helper, this.wall).toShortString() + " (candidate " + candidate.toShortString() + ", rel "
+                    + rel(helper, candidate).toShortString() + "), bounds " + walled.bounds();
+            helper.assertTrue(walled.tries() == 50, site.where() + " with the wall: orig " + site.orig() + " turns an air candidate the ray cannot reach"
+                    + " into stone, so all 50 tries at the pinned candidate are refused — the y roll " + yRoll + " must be rolled 50 times — saw " + this.trace + " (" + FINDING_RAY + ")");
+            helper.assertTrue(walled.target().equals(candidate), site.where() + " with the wall: orig " + writeSite + " writes the candidate to the flight target"
+                    + " BEFORE the air-and-ray test, so the fiftieth refused candidate is the one steered toward — the flight target must be the candidate, not the"
+                    + " sentinel it started on — saw " + this.trace + " (" + FINDING_WRITE + ")");
 
-            helper.getLevel().setBlock(this.wall, Blocks.AIR.defaultBlockState(), 3);
-            helper.assertTrue(canSee(this.flyer, candidate), "control: " + name + ".canSeeTarget accepts the candidate's corner once the wall is razed (" + FINDING_RAY + " test geometry)");
-            replaceRandom(this.flyer, rolls(pins));
-            invoke(this.flyer, this.flyer.getClass(), "doMovement");
-            BlockPos afterOpen = (BlockPos) readField(this.flyer, this.flyer.getClass(), "currentFlightTarget");
-            this.trace = "currentFlightTarget " + sentinel.toShortString() + " -> " + afterOpen.toShortString() + " with the wall razed (candidate "
-                    + candidate.toShortString() + ")";
-            helper.assertTrue(afterOpen.equals(candidate), "control: with the wall razed " + site.where() + " must take the same candidate on the first try"
-                    + " — the ray, not the pins or the air test, refused it — saw " + this.trace + " (" + FINDING_RAY + ")");
+            if (this.mode == Mode.RAY_WALL) {
+                helper.getLevel().setBlock(this.wall, Blocks.AIR.defaultBlockState(), 3);
+                helper.assertTrue(canSee(this.flyer, candidate), "control: " + name + ".canSeeTarget accepts the candidate's corner once the wall is razed (" + FINDING_RAY + " test geometry)");
+                Drive open = drive(0);
+                this.trace = "currentFlightTarget " + walled.target().toShortString() + " -> " + open.target().toShortString() + " after " + open.tries() + " tries with the"
+                        + " wall razed (candidate " + candidate.toShortString() + "), bounds " + open.bounds();
+                helper.assertTrue(open.tries() == 1 && open.target().equals(candidate), "control: with the wall razed " + site.where() + " must take the same"
+                        + " candidate on the first try — one " + yRoll + " — the ray, not the pins or the air test, refused it — saw " + this.trace + " (" + FINDING_RAY + ")");
+            } else {
+                Drive quiet = drive(1);
+                this.trace = "currentFlightTarget " + walled.target().toShortString() + " -> " + quiet.target().toShortString() + " after " + quiet.tries()
+                        + " tries with the wall kept and the 1-in-300 quiet (candidate " + candidate.toShortString() + "), bounds " + quiet.bounds();
+                helper.assertTrue(quiet.tries() == 0 && quiet.target().equals(candidate), site.where() + " boxed in: the flight target sits on the refused"
+                        + " candidate, beyond 2.1 of the flyer, and the retarget clock is quiet — orig " + (this.spyro ? "Spyro.java:615-617" : "Stinky.java:608-610")
+                        + " runs no pick, so no try and no ray until the clock; HEAD's assign-on-acceptance left the target within 2.1 and re-ran the fifty"
+                        + " tries (fifty rays) every tick — saw " + this.trace + " (" + FINDING_WRITE + ")");
+                Drive clocked = drive(0);
+                this.trace = "currentFlightTarget " + quiet.target().toShortString() + " -> " + clocked.target().toShortString() + " after " + clocked.tries()
+                        + " tries with the wall kept and the 1-in-300 pinned to fire (candidate " + candidate.toShortString() + "), bounds " + clocked.bounds();
+                helper.assertTrue(clocked.tries() == 50 && clocked.target().equals(candidate), site.where() + " boxed in: the retarget clock (orig "
+                        + (this.spyro ? "Spyro.java:572" : "Stinky.java:552") + ", the 1-in-300 pinned to fire) re-runs the pick — fifty refused tries again,"
+                        + " the flight target the refused candidate — saw " + this.trace + " (" + FINDING_WRITE + ")");
+            }
         }
 
         @Override

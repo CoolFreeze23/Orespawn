@@ -40,7 +40,7 @@ public class DinosaurMeleeAttackGoal extends BugMeleeAttackGoal {
         // nextInt(0) on the first in-reach attack once TF-001 made the
         // entity spawnable — orig WaterDragon.java:597/603 is cadence
         // nextInt(5)==1, then nextInt(4)==0 || nextInt(5)==1.
-        public static Params waterDragon()      { return new Params(1.0,  4.0, 5, 4, 5, 200, 14.0, 5.0); }
+        public static Params waterDragon()      { return new Params(1.0,  4.0, 5, 4, 5,   0, 14.0, 5.0); } // ENT-S-131: the 1-in-200 of orig WaterDragon.java:594-596 is rolled every AI tick in WaterDragon.customServerAiStep (final through its RevengeGoal.release), not here while engaged
         public static Params seaViper()         { return new Params(1.5,  4.5, 5, 2, 4,   0, 18.0, 4.0, true); } // ENT-S-129: stands down under PlayNicely (orig SeaViper.java:531-543 — the stored-target read sat inside the gated scan)
     }
 }
