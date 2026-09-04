@@ -81,10 +81,21 @@ public class EntityGammaMetroid extends TamableAnimal {
         this.goalSelector.addGoal(5, new LookAtPlayerGoal(this, Player.class, 8.0f));
         this.goalSelector.addGoal(6, new RandomLookAroundGoal(this));
 
-        this.targetSelector.addGoal(1, new OwnerHurtByTargetGoal(this));
-        this.targetSelector.addGoal(2, new OwnerHurtTargetGoal(this));
-        this.targetSelector.addGoal(3, new HurtByTargetGoal(this));
-        this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, Monster.class, 10, true, false, e -> this.isTame()));
+        // MOD-033 (T9 A2, petsDefendOwner): the owner pair and the tame-gated monster hunt are modern
+        // only, a construction snapshot (the helper read once here; goals register in the Mob ctor, the
+        // BOSS-017 shape — a config change applies to newly spawned metroids); orig GammaMetroid.java:67
+        // registered EntityAIHurtByTarget only. Registered but unconsumed at HEAD: nothing here reads the
+        // target slot (customServerAiStep bites its own findSomethingToAttack pick), so these goals wait
+        // for a consumer.
+        boolean petsDefendOwner = OreSpawnConfig.petsDefendOwner();
+        if (petsDefendOwner) {
+            this.targetSelector.addGoal(1, new OwnerHurtByTargetGoal(this));
+            this.targetSelector.addGoal(2, new OwnerHurtTargetGoal(this));
+        }
+        this.targetSelector.addGoal(3, new HurtByTargetGoal(this)); // orig GammaMetroid.java:67 — both modes
+        if (petsDefendOwner) {
+            this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, Monster.class, 10, true, false, e -> this.isTame()));
+        }
     }
 
     public static AttributeSupplier.Builder createAttributes() {

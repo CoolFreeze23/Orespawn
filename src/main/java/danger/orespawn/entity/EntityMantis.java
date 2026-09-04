@@ -21,8 +21,6 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
-import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.animal.Squid;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
@@ -57,15 +55,14 @@ public class EntityMantis extends Monster {
 
     @Override
     protected void registerGoals() {
-        // Mantis retains its bespoke flight AI inside customServerAiStep (it's
-        // the only flying hostile in Phase 4B and its aerial pathing doesn't
-        // map cleanly onto the BugMeleeAttackGoal framework). We still wire
-        // up modern target acquisition here so vanilla "hurt-by" retaliation
-        // and proximity aggression use getTarget() — the legacy
-        // retaliationTarget field can now be backed by the proper target
-        // slot, letting it appear correctly in the boss pathfinding HUD.
-        this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
-        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
+        // orig Mantis.java registers no tasks and no targetTasks: the Mantis keeps its bespoke flight AI
+        // inside customServerAiStep (aerial pathing that does not map onto the BugMeleeAttackGoal
+        // framework) and picks its prey there — retaliationTarget first (set by hurt), then its own
+        // findSomethingToAttack scan. The two vanilla target goals the port had registered here
+        // (HurtByTargetGoal @1, NearestAttackableTargetGoal<Player> @2) were removed 2026-09-04 (ENT-S-125,
+        // targeting ledger T9 B2): nothing in this class ever read the target slot they filled, and the
+        // "boss pathfinding HUD" their comment said they fed does not exist — an inert addition in both
+        // modes, so there is no modern record for it. Both selectors stay empty, as in 1.7.10.
     }
 
     public static AttributeSupplier.Builder createAttributes() {

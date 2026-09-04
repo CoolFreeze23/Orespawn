@@ -66,13 +66,20 @@ public class Pointysaurus extends Monster {
         // orig Pointysaurus.java:250-252 — findSomethingToAttack answers null under PlayNicely (PlayNicely != 0);
         // the port's proactive pick is this pair of goals, so the flag is read live in their canUse: neither
         // starts while PlayNicely is on (ENT-S-115).
-        this.targetSelector.addGoal(2, new PointysaurusStareGoal(this) {
-            @Override
-            public boolean canUse() {
-                if (OreSpawnConfig.PLAY_NICELY.get()) return false; // orig Pointysaurus.java:250-252 (ENT-S-115)
-                return super.canUse();
-            }
-        });
+        // MOD-034 (T9 A3): modern only, a construction snapshot (OreSpawnConfig.pointysaurusStareAggro(),
+        // read once here; goals register in the Mob ctor, the BOSS-017 shape — a config change applies
+        // to newly spawned Pointysaurs); classic registers no stare goal (orig Pointysaurus.java:50-55 —
+        // aggression only from the proximity scan below and from being hit). The ENT-S-115 canUse gate
+        // stays on the goal.
+        if (OreSpawnConfig.pointysaurusStareAggro()) {
+            this.targetSelector.addGoal(2, new PointysaurusStareGoal(this) {
+                @Override
+                public boolean canUse() {
+                    if (OreSpawnConfig.PLAY_NICELY.get()) return false; // orig Pointysaurus.java:250-252 (ENT-S-115)
+                    return super.canUse();
+                }
+            });
+        }
         // Pointysaurus only targets players — it will not attack other mobs.
         // This preserves the 1.7.10 isSuitableTarget filter (rejects all
         // Monster instances) which would otherwise make it pacifist without
