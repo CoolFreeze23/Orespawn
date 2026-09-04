@@ -129,7 +129,7 @@ public class Cockateil extends Animal {
     public boolean canSeeTarget(double px, double py, double pz) {
         return this.level().clip(new ClipContext(
                 new Vec3(this.getX(), this.getY() + 0.75, this.getZ()), new Vec3(px, py, pz),
-                ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, this)).getType()
+                ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE, this)).getType() // selection bounds, no liquid stop, as orig rayTraceBlocks(start, end, false) — the ENT-S-089 mapping (ENT-S-121)
                 == HitResult.Type.MISS;
     }
 

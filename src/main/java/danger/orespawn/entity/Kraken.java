@@ -555,7 +555,7 @@ public class Kraken extends Monster {
         Vec3 from = new Vec3(this.getX(), this.getY() + 0.75, this.getZ());
         Vec3 to = new Vec3(targetX, targetY, targetZ);
         HitResult result = this.level().clip(new ClipContext(
-                from, to, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, this));
+                from, to, ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE, this)); // selection bounds, no liquid stop, as orig rayTraceBlocks(start, end, false) — the ENT-S-089 mapping (ENT-S-121)
         return result.getType() == HitResult.Type.MISS;
     }
 

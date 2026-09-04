@@ -660,7 +660,7 @@ public class ThePrinceAdult extends TamableAnimal
     private boolean canSeeSpot(double px, double py, double pz) {
         return this.level().clip(new net.minecraft.world.level.ClipContext(
                 new Vec3(this.getX(), this.getY() + 0.75, this.getZ()), new Vec3(px, py, pz),
-                net.minecraft.world.level.ClipContext.Block.COLLIDER,
+                net.minecraft.world.level.ClipContext.Block.OUTLINE, // selection bounds, no liquid stop, as orig rayTraceBlocks(start, end, false) — the ENT-S-089 mapping (ENT-S-121)
                 net.minecraft.world.level.ClipContext.Fluid.NONE, this)).getType()
                 == net.minecraft.world.phys.HitResult.Type.MISS;
     }
