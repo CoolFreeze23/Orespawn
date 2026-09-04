@@ -32,11 +32,10 @@ import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
  * the port's convention since ENT-S-110 / BOSS-017 / ENT-S-115):
  * <ul>
  *   <li>orig Stinky.java:583 — {@code if (nextInt(50) == 0 && PlayNicely == 0)} heads the flying Stinky's
- *       idle block-eat inside {@code activity == 1} (:582) — the gate only: the port's {@code eatFlowers} eats
- *       flowers where orig's {@code scan_it} hunted coal ore (a pre-existing divergence, ENT-S-119), so this
- *       pin follows the port's routine and fails loudly when that routine changes; port
- *       {@code EntityStinky.customServerAiStep}, the roll
- *       spent ahead of the flag as in orig;</li>
+ *       idle block-eat inside {@code activity == 1} (:582) — the coal-ore hunt of {@code scan_it} (:435-496,
+ *       :593), the port's {@code EntityStinky.eatCoalOre} since ENT-S-119; port
+ *       {@code EntityStinky.customServerAiStep}, the call inside the not-sitting block after
+ *       {@code doMovement()}, the roll spent ahead of the flag as in orig;</li>
  *   <li>orig GammaMetroid.java:435 — {@code (nextInt(20) == 0 && health < max || nextInt(100) == 0) &&
  *       PlayNicely == 0 && !isSitting()} heads the Gamma Metroid's stone-eat; port
  *       {@code EntityGammaMetroid.customServerAiStep}, the flag between the roll pair and the sitting test as in
@@ -53,15 +52,16 @@ import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
  * nothing ticks between the flip and the restore; the flag is global, so the batch is this class alone
  * (TEST-003). With either port line reverted the flag-on drive eats the block and heals, and the test fails.</p>
  *
- * <p>What one call does, read from the port: {@code EntityStinky.eatFlowers} scans east of the Stinky
- * ({@code x + i}, i = 1..8, a slab of {@code y + 1 ± j}, {@code z ± j}, j = min(i, 2)) for a dandelion or poppy,
- * points the navigation at the first hit and, when that hit is within distSq 12 of the Stinky's block, sets it to
- * air and heals 1.0 — so a dandelion at {@code (x + 1, y, z)}, distSq 1, is eaten in the very call.
+ * <p>What one call does, read from the port: {@code EntityStinky.eatCoalOre} scans the six-face shells i = 1, 2,
+ * 3, 4, 6, 8 around {@code ((int) x, (int) y + 1, (int) z)} for the nearest coal ore, points the navigation at it
+ * and, when it is within distSq 12 of that origin, sets it to air, heals 1.0 and burps — so a coal ore one east of
+ * that origin, distSq 1, is eaten in the very call.
  * {@code EntityGammaMetroid.scanForStone} scans the shells i = 1..5 around {@code ((int) x, (int) y + 1, (int) z)}
  * for the nearest stone, points the navigation at it and, when it is within distSq 12, removes it under
  * {@code mobGriefing}, heals 1.0 and burps — so a stone one east of that origin, distSq 1, is eaten in the very
- * call. Rolls pinned through the VortexParityTests.ForcedRoll seam: the Stinky's 1-in-200 target drop and both
- * 1-in-100 rolls (the self-heal, the activity flip) quiet, the 1-in-50 flower roll firing; the Metroid's 1-in-5
+ * call. Rolls pinned through the VortexParityTests.ForcedRoll seam: the Stinky's 1-in-200 target drop, both
+ * 1-in-100 rolls (the self-heal, the activity flip) and the 1-in-7 idle attack pass (ENT-S-119) quiet, the 1-in-50
+ * eat roll firing; the Metroid's 1-in-5
  * prey pass quiet (no scan, no walk), the 1-in-20 hurt roll firing with the health below max (the 1-in-100 pinned
  * quiet, never reached — the pair short-circuits). Geometry as PlayNicelyGateParityTests: the hunter frozen at
  * rel (20,1,24) of the 48x16x48 empty_large; {@code mobGriefing} is set on for the Metroid's test and restored
@@ -87,14 +87,14 @@ public class PlayNicelyGriefingGateTests {
     private static final BlockPos HUNTER_POS = new BlockPos(20, 1, 24);
     /** How far below max the hunter starts, so the site's heal(1.0f) reads as +1 and the Metroid's hurt roll applies. */
     private static final float HEALTH_DEFICIT = 10.0f;
-    /** What one call heals (orig Stinky.java:601 / GammaMetroid.java:455 heal(1.0f); the port's eatFlowers / scanForStone). */
+    /** What one call heals (orig Stinky.java:601 / GammaMetroid.java:455 heal(1.0f); the port's eatCoalOre / scanForStone). */
     private static final float HEAL_AMOUNT = 1.0f;
     private static final float HEALTH_EPSILON = 1.0e-3f;
 
-    /** orig Stinky.java:583 (port EntityStinky.customServerAiStep): the flower-eat runs with the flag off, not with it on. */
+    /** orig Stinky.java:583 (port EntityStinky.customServerAiStep): the coal-ore eat runs with the flag off, not with it on. */
     @GameTest(template = "empty_large", batch = BATCH)
-    public static void s116_stinky_583_flower_eat(GameTestHelper helper) {
-        run(helper, new StinkyFlowerProbe());
+    public static void s116_stinky_583_coal_ore_eat(GameTestHelper helper) {
+        run(helper, new StinkyCoalOreProbe());
     }
 
     /** orig GammaMetroid.java:435 (port EntityGammaMetroid.customServerAiStep): the stone-eat runs with the flag off, not with it on. */
@@ -224,19 +224,20 @@ public class PlayNicelyGriefingGateTests {
     }
 
     /**
-     * orig Stinky.java:583 (port EntityStinky.customServerAiStep, the flower-eat): activity 1 — the idle state orig
-     * :582 runs the eat inside — set through the setter (field and synched value), the 1-in-200 target drop and both
-     * 1-in-100 rolls (the self-heal, the activity flip) pinned quiet, the 1-in-50 flower roll pinned to fire; a
-     * dandelion one block east of the Stinky's block at its feet level — the first ring's {@code (x + 1, y + 1 - 1, z)}
-     * probe, distSq 1 of the Stinky's block — gone and the Stinky healed by 1 with the flag off, standing and the
-     * health unmoved with it on.
+     * orig Stinky.java:583 (port EntityStinky.customServerAiStep, the coal-ore eat): activity 1 — the idle state orig
+     * :582 runs the eat inside — set through the setter (field and synched value), the 1-in-200 target drop, both
+     * 1-in-100 rolls (the self-heal, the activity flip) and the 1-in-7 idle attack pass (orig :568, ENT-S-119) pinned
+     * quiet, the 1-in-50 eat roll pinned to fire; a coal ore one block east of the scan origin
+     * {@code ((int) x, (int) y + 1, (int) z)} — shell 1's +x face, orig :443's {@code (x + 1, y + 1, z)} probe, distSq 1
+     * of the origin (orig :599 measures from the origin, not the Stinky's block) — gone and the Stinky healed by 1 with
+     * the flag off, standing and the health unmoved with it on.
      */
-    private static final class StinkyFlowerProbe extends GriefProbe {
+    private static final class StinkyCoalOreProbe extends GriefProbe {
         private EntityStinky stinky;
 
         @Override
         String where() {
-            return "EntityStinky.customServerAiStep (the flower-eat)";
+            return "EntityStinky.customServerAiStep (the coal-ore eat)";
         }
 
         @Override
@@ -246,17 +247,17 @@ public class PlayNicelyGriefingGateTests {
 
         @Override
         String effect() {
-            return "the dandelion one block east eaten (air) and the Stinky healed by " + HEAL_AMOUNT;
+            return "the coal ore one block east of the scan origin eaten (air) and the Stinky healed by " + HEAL_AMOUNT;
         }
 
         @Override
         Block eaten() {
-            return Blocks.DANDELION;
+            return Blocks.COAL_ORE;
         }
 
         @Override
         String more() {
-            return ", activity " + this.stinky.activity;
+            return ", activity " + this.stinky.activity + ", closest " + readField(this.stinky, EntityStinky.class, "closest");
         }
 
         @Override
@@ -265,21 +266,18 @@ public class PlayNicelyGriefingGateTests {
             this.hunter = this.stinky;
             this.stinky.setActivity(1);
             helper.assertTrue(this.stinky.activity == 1 && this.stinky.getActivity() == 1,
-                    "precondition: activity 1 — orig Stinky.java:582 runs the flower-eat inside activity == 1 only (" + FINDING + ")");
+                    "precondition: activity 1 — orig Stinky.java:582 runs the coal-ore eat inside activity == 1 only (" + FINDING + ")");
             helper.assertTrue(!this.stinky.isOrderedToSit() && !this.stinky.isTame(),
                     "precondition: a fresh Stinky is untamed and not sitting, so the step reaches the site with activity 1 kept"
-                            + " — no owner-flying or far-owner flip to 2 (" + FINDING + ")");
+                            + " — the call sits inside the not-sitting block (orig :511, ENT-S-119) and no owner-flying or far-owner flip to 2 (" + FINDING + ")");
             startBelowMax(helper);
-            replaceRandom(this.stinky, rolls(200, 0, 100, 0, 50, 0));
-            this.block = BlockPos.containing(this.stinky.getX() + 1, this.stinky.getY(), this.stinky.getZ());
-            helper.assertTrue(this.block.equals(this.stinky.blockPosition().east())
-                            && rel(helper, this.block).equals(HUNTER_POS.east()),
-                    "precondition: the dandelion's spot is one block east of the Stinky's block at its feet level, rel "
-                            + HUNTER_POS.east().toShortString() + " — the port's first-ring probe (x + 1, y + 1 - 1, z) — got rel "
-                            + rel(helper, this.block).toShortString() + " (" + FINDING + ")");
-            helper.assertTrue(this.stinky.blockPosition().distSqr(this.block) < 12.0,
-                    "precondition: the dandelion is inside the eat radius, distSq < 12 of the Stinky's block (orig Stinky.java:599)"
-                            + " — distSq " + this.stinky.blockPosition().distSqr(this.block) + " (" + FINDING + ")");
+            replaceRandom(this.stinky, rolls(200, 0, 100, 0, 7, 0, 50, 0));
+            BlockPos origin = new BlockPos((int) this.stinky.getX(), (int) this.stinky.getY() + 1, (int) this.stinky.getZ());
+            this.block = origin.east();
+            helper.assertTrue(helper.getBounds().contains(Vec3.atCenterOf(this.block)),
+                    "precondition: the coal ore's spot, one block east of the scan origin " + origin.toShortString() + " (rel "
+                            + rel(helper, origin).toShortString() + "), lies inside the structure — shell 1's +x face, distSq 1,"
+                            + " inside the eat radius distSq < 12 (orig Stinky.java:599) (" + FINDING + ")");
             place(helper);
         }
     }
