@@ -5712,3 +5712,240 @@ GATE: (ga2, 2026-09-06 02:28-02:31, after R0 and both refuters' items; a provisi
 Refuted twice (MHLib and renderer plumbing touched; 7 files): A — seven non-blocking items, all applied or disclosed: D1 the `Minecraft.clearClientLevel` level drop posts no `LevelEvent.Unload` (from `handleConfigurationStart` 55) → a third hook, `ClientPlayerNetworkEvent.LoggingIn` → `evictAll()`; D2 the production registration is unpinned after R0 (a client class), disclosed — the owner's counters line proves it; D3 the cache choice comes from `SingletonGeoAnimatable.animatableCacheOverride()`, not the instanceof branch — javadocs and records corrected; D4 the `$1` descriptors do invoke `PoseStack.scale` (never executed on the server) — records corrected; D5 stale line numbers regenerated; D6 `orespawn.geo.evictions` unpinnable in the suite (`ENABLED` false there), disclosed; D7 the `getManagerForId` caller list completed (none used by a replacement). The leak, the fix, the hooks, the thread argument, replace-on-reload, the counters and the pins upheld; the dedicated-server class load SAFE. B — four non-blocking items: B1 = D1; B2 twelve replaced species (not fourteen) and the chunk-drop reading (the eviction rides the server's remove packet; a client chunk drop removes no entity) — corrected; B3 an entity drawn outside a level posts no leave event (a GUI preview; pre-existing GeckoLib property), disclosed; B4 the rows' dist safety rests on javac folding `SHADOW` — noted in the test. Every client removal path, same-dimension respawn, dimension change and disconnect traced to the hooks; a fresh manager shown observationally identical to a never-evicted one; per-class SAFE verdict, then settled by the run.
 
 R0 (orchestrator, before the refuters): registering the cache from the replacement constructor evaluated the descriptor's entity-type supplier, and the headless s4 geo probe run directly on the compiled classes died with `Not bootstrapped (… minecraft:game_event)` from `ModEntities.<clinit>` — it would have failed `s4Parity` inside the gate's build; moved to `OreSpawnGeoReplacedEntityRenderer`'s constructor (a bootstrapped client); the probe re-run passes with all twelve captures byte-identical to the last gradle run's.
+
+## PHASE G SLICE 4c — PurplePower and Rotator through the seam: render-instance expansion, clone-aware geometry leg (2026-09-06)
+
+SCOPE. Rotator and PurplePower land as GeckoLib candidates behind
+`-Dorespawn.dev.geckolibRenderers` (species ids rotator, purple_power), the
+chain's (b) slice (owner ruling 2026-09-05, scope addendum item 23 (8)(b)).
+Both were deferred at 4a because their classic models draw each part N times
+per frame under a per-draw pose-stack transform (Rotator: 3 blades x 8 = 24
+draws, PurplePower: 3 spokes x 6 = 18) and the landed converter emitted one
+bone per part. The classic renderers stay the default; nothing player-visible
+changes. The suite count is unchanged (1199): no gametest leg (the 4b finding
+stands - the dedicated gametest server strips client model classes); the proof
+is the headless s4 harness. PurplePower is built against the classic model AS
+IT STANDS: ENT-S-146 (REPORT, 2026-09-05) records that model as a re-authoring
+of the 1.7.10 one; the harness law is candidate == classic, so the candidate
+reproduces the deterministic three-rate spin, opaque and world-lit, and is
+re-based when the fix lands (see "ENT-S-146" below).
+
+RENDER-INSTANCE EXPANSION (converter + manifest). A manifest entry may declare
+`render_instances: {<part>: {count, axis, step_scope, step_radians |
+step_degrees, step_arithmetic, note}}`. The converter then emits, instead of the
+part's single bone, one bone per classic DRAW:
+- `step_scope: part` (Rotator, `RotatorModel.renderFan`: `blade.zRot =
+  bladeAngle; bladeAngle += FAN_STEP` eight times inside ONE
+  `mulPose(axis, rf1)`): a fan group bone `<part>__fan` (pivot at the model
+  origin, the pose-stack frame the classic rotates in; bind identity - the hook
+  spins it) over clones `<part>__i0..7` (the part's cubes and pivot; the step
+  as the clone's bind rotation on the loop's axis, replacing the part's channel
+  exactly as the loop's assignment does).
+- `step_scope: stack` (PurplePower, `renderToBuffer` :59-78: `mulPose(Z,
+  i * 1.0471976F)` on the stack OUTSIDE the spoke's own animated rotation): one
+  parent per draw `<part>__fan<k>` (pivot at the origin, bind Z rotation the
+  step) over the clone `<part>__i<k>` (the part's pivot, no bind rotation) that
+  the hook animates with the classic `setupAnim` channels.
+- The step is the classic model's own literal in its own arithmetic:
+  `step_radians` 0.7853982 accumulated in float32 (`float32_accumulate`, the
+  Rotator's `bladeAngle += FAN_STEP`), 1.0471976 multiplied in float32
+  (`float32_multiply`, PurplePower's `i * 1.0471976F`); the JSON carries the
+  exact float the classic draws with (design said `step_degrees`; kept as an
+  accepted spelling, `step_radians` is what the two models declare).
+- `<model>.conversion.json` records the mapping (`render_instances.bones`:
+  bone -> role, source part, draw index, group bone, static rotation, the
+  loop-assigned channel; `.parts`: count, axis, scope, step, per-draw angles).
+  The bone-name drift check expects the expanded names (compiled parts minus
+  the expanded ones, plus the groups and clones); `mirrored_cube_count` now
+  counts emitted cubes (same number for every landed model). Rotator: 27
+  bones / 24 cubes; PurplePower: 36 / 18. Expanded parts must be top-level
+  and childless (asserted); nothing changes for a model without the key.
+
+CLONE-AWARE GEOMETRY LEG (probe + parity tool). `root.visit` sees three parts;
+the classic model draws 24 / 18 cubes. For a model with `render_instances` the
+probe captures `renderToBuffer` itself: an instrumented `PoseStack` (a public,
+non-final class; `pushPose` overridden) numbers every push, and a capturing
+`VertexConsumer` opens a new group whenever a vertex arrives under a new push -
+one group per `ModelPart.render` call (1.21.1 bytecode: render = pushPose,
+translateAndRotate, compile, children, popPose). Each group is attributed to
+its part by its UV multiset (pose-invariant; identical UV sets on two parts
+would be refused, none here), the draw ordinal `k` of that part within the
+sample is the group's key `<part>__i<k>` (cube index as before), and the counts
+are asserted against the declaration (an undeclared part drawn twice, or a
+declared one drawn any other number of times, fails). Every draw also records
+the pose stack it ran under: `instance_pose` (the matrix at the part's own
+push - the model's per-draw transform, i.e. the fan spin / the stack step) and
+`draw_pose` (the matrix its cubes compiled with). The geo side already captures
+per clone bone; for an expanded rig it also records every bone's cumulative
+transform conjugated into classic space (`bone_poses_classic` = stack * M^-1,
+M the probe's translate(0,1.5,0)*scale(1,-1,1) normalization). `cube_map` /
+`assert_same_cube_set` / `geometry_parity` / `surface_mapping_parity` pair by
+the same keys, unchanged in semantics. `transforms` stays per PART. The
+animation leg for an expanded model: (1) the non-expanded bones as before; (2)
+each clone's channels against its source part's `transforms` with the
+loop-assigned channel replaced by the clone's static step (scope part) or
+exactly (scope stack), positions in the parent's frame; (3) a static group
+against its bind step; (4) COMPOSITION, measured on both sides: for every draw,
+`instance_pose == bone_pose(group of clone k)` and `draw_pose == bone_pose(clone
+k) * T(part pivot/16)` (GeckoLib corners are absolute, ModelPart corners local
+to the pivot), linear entries at `animation_epsilon_radians` (2e-6; sines and
+cosines of the channel angles, |d cos| <= |d theta|), translations at
+`position_epsilon_model_units` (1e-4). A hook-animated group (the Rotator's
+fans) has no part channel and is proven by (4) alone - no formula is restated
+in the tool. Hidden-bone sets compare by source part. `subject_after` gains
+`rf1` only when the state declares one. Every new field is gated on
+`render_instances`: the landed dumps, generated files, geo-render dumps,
+report entries and PNGs are byte-identical (12 entries, 73 text files, 171
+PNGs, verified against `build/s4` and the checked-in proof, which agree).
+
+THE TWO CANDIDATES.
+- Rotator (`entity_state`): new `entity/pose/RotatorPose` (`getRenderInfo`);
+  `EntityRotator implements RotatorPose`; `RotatorModel.setupAnim` delegates to
+  `poseFrom(RotatorPose, six floats)` (the former body: capture the per-entity
+  `RenderInfo`); the draw loop is untouched. The advance (`rf1 += 2`, wrap
+  past 359) moved verbatim into `RotatorModel.advanceFanSpin(RenderInfo)`,
+  called by the classic `renderToBuffer` where it always was and by the hook;
+  `RotatorModel.fanSpinRadians` is `Axis.rotationDegrees`' own conversion
+  (1.21.1 bytecode `ldc 0.017453292f; fmul`) so both sides feed the same float.
+  `RotatorGeoReplacement`: lambda entity-type supplier, `EntityRotator.class`,
+  `RotatorRenderer.SHADOW`, no controllers; the hook reads
+  `inputs.subject(RotatorPose.class).getRenderInfo()`, spins `shape1__fan` /
+  `shape2__fan` / `shape3__fan` about X / Y / Z through `rotateX/Y/Z` (the
+  basis helpers conjugate: internal = (-x, y, -z)), then advances. Once per
+  rendered frame: GeckoLib 4.8.4 `GeoReplacedEntityRenderer.actuallyRender`
+  builds the AnimationState and calls `GeoModel.handleAnimations` (offsets
+  579-718) only when `isReRender` is false (`iload 7; ifne 721`), and
+  `handleAnimations` ends in `setCustomAnimations` (287-292, unconditional);
+  `GeoRenderer.reRender` passes `iconst_1` (offsets 12, 36) and `render` calls
+  `defaultRender` once. Disclosed edge: GeckoLib runs the hook for an
+  invisible entity too (only the draw is skipped, offset 748-773), vanilla's
+  LivingEntityRenderer skips `renderToBuffer` and so the classic advance; the
+  angle is unobservable accumulated state - recorded, not reproduced.
+  Manifest: rf1 presets 0, 2, 90, 180.5, 358, 359 x ages 0 / 10 (the pose
+  ignores age); `subject_after.rf1` pins the advance and the wrap (358 -> 360
+  > 359 -> 0; 359 -> 0) on both sides; visuals bind, rf1 2, 90 (the
+  gyroscope), 180.5, 358.
+- PurplePower (`code_driven`): `PurplePowerGeoReplacement` (lambda supplier,
+  `PurplePower.class`, `PurplePowerRenderer.SHADOW`), texture by
+  `getPurpleType()` through the descriptor's `texture(E)` hook and the new
+  `PurplePowerRenderer.textureFor(int)` (the one per-type table, the classic
+  `getTextureLocation` now reads it - behaviour unchanged); the hook writes the
+  classic `setupAnim` angles verbatim (7.3 / 5.1 / 3.7 degrees per tick) onto
+  the six clones of each spoke. Manifest period 3600 ticks (the exact common
+  period: t*7.3, t*5.1, t*3.7 are all multiples of 360 iff 3600 | t, since 73,
+  51, 37 are pairwise coprime); fractions sample ages 0, 4.5, 18, 45, 108, 900,
+  1800 (all three rings at 180 degrees) and 3600 (the loop closes).
+- `PhaseGDevRenderers.purplePowerRenderer()` / `rotatorRenderer()`;
+  `OreSpawnClient` :87 / :165 switched to them. Both constructors stay
+  registry-free (OPT-029 R0): the probe instantiates them in an un-bootstrapped
+  JVM. The generated geo / animation JSON is shipped byte-identical to the
+  converter's output as `geo/entity/{rotator,purplepower}.geo.json` and
+  `animations/entity/{rotator,purplepower}.animation.json` (empty clips).
+
+HARNESS CHANGES (tools/, src/g1tool; G1AnimationRuntime, S4CandidateRuntime
+and build.gradle untouched): as described above - `G1ModelProbe`
+(`renderInstanceContext`, `RenderInstanceContext.capture`,
+`InstrumentedPoseStack`, `DrawCapturingVertexConsumer`, `bone_poses_classic`,
+optional `source_part` / `draw_index` on cube groups), `ProbeSubject`
+(`RotatorPose`, `rf1`), `layer_definition_to_geo.py`
+(`expand_render_instances`, `render_instance_angles`, `float32`),
+`g1_render_parity.py` (`candidate_bone_names`, expansion-aware
+`animation_parity`, `render_instance_pose_parity`, one README line for
+expanded models). No threshold, epsilon or pin of a landed model changed; the
+harness law holds: byte-identical results for every landed entry.
+
+EVIDENCE (scratch run of the full s4 pipeline; the orchestrator regenerates
+phase_g_reports/s4_proof):
+  model_elevator   static        geometry 0 blocks; surface 720 vertex-samples, 0 zero-area ignored; animation 0 rad; visual changed 0, MAE 0, contested 0
+  model_vortex     static        geometry 0 blocks; surface 48 vertex-samples, 24 zero-area ignored; animation 0 rad; visual changed 0.000137, MAE 0.00423, contested 0
+  model_coin       code_driven   geometry 0 blocks; surface 168 vertex-samples, 0 zero-area ignored; animation 0 rad; pos max 0 units; hidden checks 6; visual changed 0, MAE 0, contested 0
+  model_island     code_driven   geometry 2.03e-07 blocks; surface 576 vertex-samples, 0 zero-area ignored; animation 0 rad; pos max 0 units; hidden checks 7; visual changed 0, MAE 0, contested 0.464
+  model_islandtoo  code_driven   geometry 2.03e-07 blocks; surface 576 vertex-samples, 0 zero-area ignored; animation 0 rad; pos max 0 units; hidden checks 7; visual changed 0, MAE 0, contested 0.464
+  model_robot1     code_driven   geometry 3e-07 blocks; surface 7128 vertex-samples, 0 zero-area ignored; animation 0 rad; pos max 0 units; hidden checks 10; visual changed 0, MAE 0, contested 0.000549
+  model_robot5     code_driven   geometry 2e-07 blocks; surface 1320 vertex-samples, 0 zero-area ignored; animation 0 rad; pos max 0 units; hidden checks 4; visual changed 0, MAE 0, contested 0.0116
+  model_robot2     entity_state  geometry 1e-06 blocks; surface 7560 vertex-samples, 0 zero-area ignored; animation 0 rad; pos max 0 units; states 5; hidden checks 20; visual changed 0, MAE 0, contested 0
+  model_robot3     entity_state  geometry 1e-06 blocks; surface 5928 vertex-samples, 0 zero-area ignored; animation 0 rad; pos max 0 units; states 3; hidden checks 12; visual changed 0, MAE 0, contested 0.0025
+  model_robot4     entity_state  geometry 3.7e-07 blocks; surface 17472 vertex-samples, 0 zero-area ignored; animation 0 rad; pos max 0 units; states 2; hidden checks 12; visual changed 0, MAE 0, contested 0.000412
+  model_rockbase   entity_state  geometry 2e-07 blocks; surface 2064 vertex-samples, 0 zero-area ignored; animation 0 rad; pos max 0 units; states 14; hidden checks 14; visual changed 0, MAE 0, contested 0
+  model_rotator    entity_state  geometry 1.57e-07 blocks; surface 7488 vertex-samples, 0 zero-area ignored; animation 4.1e-08 rad; pos max 0 units; states 6; hidden checks 12; visual changed 0, MAE 0, contested 0; composition 312 draws over 13 captures: instance pose linear 0 / translation 0 units, draw pose linear 0 / translation 2.4e-08 units
+  model_purplepower code_driven  geometry 1.74e-07 blocks; surface 3888 vertex-samples, 0 zero-area ignored; animation 4.1e-08 rad; pos max 0 units; hidden checks 8; visual changed 0, MAE 0, contested 0.106; composition 162 draws over 9 captures: instance pose linear 0 / translation 0 units, draw pose linear 1.5e-07 / translation 0 units
+  fixture_runtime_basis_yz fixture       geometry 2.77e-07 blocks; surface 336 posed vertex-samples exact; animation 0 rad; pos max 0 units over 42 channels
+  (the 12 landed entries are byte-identical to the checked-in proof: every
+  compiled dump, generated file, geo-render dump, reference leg, report entry
+  and PNG; 73 -> 85 text files, 171 -> 201 PNGs are the two new models)
+
+CONTESTED FRACTIONS (ruling 2, pinned per species): Rotator 0 on all five
+captures (the blades of a fan overlap with coplanar faces, but rotator.png is
+the same colour on the coplanar-overlapping ±z faces of adjacent blades — shape2's east end cap is (255,0,0) against
+(251,0,0) elsewhere but never coplanar-overlaps another blade (refuter A's per-face scan) — so the contested rule, which
+flags same-depth fragments of a DIFFERENT colour, finds nothing);
+PurplePower 0.1058502197265625 at bind (age 0: all three rings lie in the same
+one-pixel slab through the origin) and 0.0306 at t_quarter, 0 at the three
+small ages - pinned at the maximum; above 0.5%, so PurplePower joins Island,
+IslandToo and Robot5 in needing the owner's in-game acceptance (PENDING_OWNER).
+
+ENT-S-146. Still REPORT when this landed, so the candidate proves the classic
+as it stands. Re-basing after the fix touches: the classic model (the seeded
+per-frame rolls through a `PurplePowerPose.getRandom()`, the 60-degree step as
+the spoke's own zRot), the manifest entry (`entity_state`, seeds; `step_scope`
+becomes `part` with the same expansion), the hook (three group spins from the
+rolls, the accumulating X / Y reproduced), and the render state (translucent /
+fullbright is a renderer change with the visual leg's cutout-only rasteriser
+presented before its gate). The expansion and the composition leg are the same
+either way.
+
+OWNER LOOK: `-Dorespawn.dev.geckolibRenderers=rotator,purple_power` (or
+`candidate`). Property values to check in-game: the Rotator's three rings turn
+about X, Y, Z at 2 degrees per frame and the ball stays centred; PurplePower's
+three spoke rings turn at their three rates; the purple type textures (0, 1, 2,
+3, 10) follow `getPurpleType()`. Not pushed.
+
+GATE: (filled by the orchestrator)
+
+REFUTER A NOTES (2026-09-06, all non-blocking, applied or disclosed): (A1) the 4.1e-8 rad animation-leg maxima on both
+models are a serialisation artefact — Python's exact binary32 value of float32 π in `conversion.json`
+(3.1415927410125732) against Java's `Float.toString` shortest repr in the geo dump (3.1415927) — not the float32-accumulated
+step against the JSON round trip (every emitted angle round-trips to the identical float32); the clone / static-group
+comparisons therefore carry a noise floor of up to half a float32 ulp of the angle (≤ 2.4e-7 rad below 2π), inside 2e-6.
+(A2) PurplePower's manifest entry gained `in_game_acceptance: PENDING_OWNER …` in Island's shape. (A3) latent, no model
+affected: a HIDDEN expanded part would trip the composition leg (`sorted(seen) != clone_bones`) while the animation leg
+collapses hidden clone names lossily — neither Rotator nor PurplePower hides anything; recorded as a limitation. (A4) the
+animation leg's clone / static-group check compares the manifest's step (through the converter and the GeckoLib round
+trip) against itself — it proves the round trip; the classic-vs-candidate content for the step lives in the geometry,
+surface and composition legs (a wrong step or axis fails there); the float32 emulation's fidelity (≤ 2.98e-7 rad at k = 7)
+sits below every epsilon and is verified by computation, not by the harness. (A5) the composition leg's docstring bound
+corrected (entry error → angle error only up to √3; effective angular tolerance ≤ ~3.5e-6 rad; no threshold changed).
+(A6) above. (A7) the converter's expanded-name drift check is at `tools/layer_definition_to_geo.py` :391-399.
+(A8) 3600 ticks is the exact common period in integer arithmetic (3600 × 7.3 / 5.1 / 3.7 = 73 / 51 / 37 × 360); in the
+float32 pipeline the loop closes ~1.2e-5 rad short of 73·2π at t_end (nothing asserts closure; both sides compute the same
+float); t_half / t_end map the 6-fold rings onto themselves, so the informative samples are the small ages and t_quarter.
+(A9) pre-existing, outside this slice: `minimum_observed_foreground_fraction` in `g1_render_parity.py` is always 1.0 — the
+`min_foreground = min(...)` update at :1400 is dead code after the raise at :1396-1399; the threshold check itself works.
+
+REFUTER B NOTES (2026-09-06, no blocking defect): (B1 = A2) the manifest's PENDING_OWNER field added. (B2, FILED as
+ENT-S-147, REPORT) the candidate's fan advance rides GeckoLib's per-frame animation dedup (`handleAnimations` returns at 170
+before `setCustomAnimations` when `tickCount + partialTick == lastUpdateTime` for the same instance): with one Rotator in
+view and the game paused the candidate's gyroscope freezes behind the pause menu where the classic and 1.7.10 spin 2° per
+rendered frame (two or more in view keep spinning — instance-count-dependent); duplicate partial ticks above ~1000 FPS and a
+same-frame shadow pass are skipped the same way; the lane's invisible-entity edge (the candidate advances where vanilla's
+`LivingEntityRenderer.render` skips the draw and so the classic advance) joins the same record. Fix shape in the entry
+(a per-render-pass descriptor hook for the advance, the pose kept pure, the pose re-applied when the pass is deduped);
+not changed here — renderer plumbing, two refuters, the owner's ruling; the candidate is behind the dev switch and its
+javadoc cites the entry. (B3) `tools/reference_renderer_pins.json` named no candidate for the two species — now
+`RotatorGeoReplacement.java` / `PurplePowerGeoReplacement.java`, so the reference renderer gate pins their shadow / scale
+like every landed candidate. (B4) the ENT-S-146 re-basing note completed (ProbeSubject's interface, the face-order item
+under translucency, the reference leg's re-measurement, the pins entry). (B5 = A6.) (B6) the period reasoning: 3600 holds
+because 73 and 37 are coprime with 3600 (gcd(51, 3600) = 3: the 5.1 rate alone closes at 1200) — the manifest's
+`period_note` corrected. (B7) one record for both edges: ENT-S-147. (B8) two line references corrected in records.md.
+Upheld: the classic Rotator unchanged statement by statement (`Axis.rotationDegrees` = `fmul 0.017453292f` then
+`rotation(F)` — `fanSpinRadians` feeds the identical float; orig :76's `(double) rf1 > 359.0` identical); the hook's
+composition and basis (proven numerically: instance-pose 0 / 0, draw-pose 0 / 2.4e-8 over 312 draws); MHLib's collector
+layer triggers no second `handleAnimations`; the PurplePower hook's angles / axes / rotation order (vanilla
+`rotationZYX` = GeckoLib Z·Y·X; conjugation through S = diag(1, −1, 1) gives the helpers' (−x, y, −z)); texture by type
+(the five textures, orig RenderPurplePower.java:46-62); the wiring (species ids, lambda suppliers, registry-free
+constructors, the renderer-constructor cache registration, living render mode, shadows 0.1 / 0.825 against the pins);
+the shipped resources byte-identical to the converter output with the float32 clone angles; the pins the maxima.
+
+GATE: (4c, 2026-09-06 03:40-03:44, after both refuters' items): proofs regenerated by hand under the proof rule — s4 `G1 PARITY PASS: 13 models; checked-in proof updated` (model_rotator and model_purplepower added; every landed entry byte-identical, verified by the lane and refuter A), g1 `G1 PARITY PASS: 2 models; checked-in proof verified` (no drift), the benchmark proof rewritten for the g1tool class-directory pin (`G1 BENCHMARK EVIDENCE VERIFIED: SMOKE_ONLY / COMPONENT_PROXY_ONLY / PENDING_LIVE_PRECUTOVER; checked-in proof updated`); then the gate: drift check clean; `build` exit 0 — asset audit `RESULT: 0 error(s), 0 advisory(ies), 4 acknowledged -> exit 0` (the four new resources staged), referenceRenderers `PASS 120, PENDING 0, MOD 0, NOT_APPLICABLE 13, DIVERGES 0` with both candidates named, referenceGeometry `G1 PARITY PASS: 2 models`, s4Parity `G1 PARITY PASS: 13 models; checked-in proof verified`; `runGameTestServer` exit 0 — literal `All 1199 required tests passed` (no new gametests: the harness is the proof).
+
+Refuted twice (harness + renderer, 18 files): A (the harness) — no blocking defect; nine non-blocking items applied or disclosed (the 4.1e-8 rad maxima a Python-double-vs-Java-float serialisation artefact; the PENDING_OWNER manifest field; hidden expanded parts unsupported by the composition leg, latent; the clone / static-group step check self-referential, the other legs carry the content; the composition docstring bound corrected; the rotator.png faces; a line reference; the period wording; a pre-existing dead line in the visual leg's foreground minimum); byte identity of all 12 landed entries re-run and upheld. B (the candidates and the classic) — no blocking defect; eight items: the PENDING_OWNER field; the candidate's fan advance rides GeckoLib's per-frame animation dedup (the gyroscope freezes behind the pause screen with one Rotator in view; duplicate partial ticks and shadow passes skipped) with the lane's invisible-entity edge — FILED as ENT-S-147 (REPORT, a fix shape, the owner's ruling); the renderer pins now name both candidates; the ENT-S-146 re-basing note completed; the faces; the period reasoning; two line references. Upheld: the classic Rotator unchanged statement by statement, the hook's composition and basis, the PurplePower hook's angles / axes / rotation order, texture by type, the wiring, the shipped resources byte-identical to the converter output.

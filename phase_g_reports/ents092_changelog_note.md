@@ -246,3 +246,5 @@ you, and cleared entirely when you leave a world, change dimension or are transf
 starts fresh, exactly like one you had never seen. Nothing visible changes. For the curious, `-Dmhlib.counters=true`
 now also prints how many of these states are held (`orespawn.geo.managers_held`) and how many were dropped in the
 last 100 ticks (`orespawn.geo.evictions`) on the existing counters line.
+
+Nothing player-visible changes in the classic renderers: the Rotator and PurplePower draw exactly as before. For reviewers, the Phase G developer switch (`-Dorespawn.dev.geckolibRenderers=…`) gains two more species — `rotator` and `purple_power` — whose GeckoLib candidates reproduce the classic gyroscope fans and spoke rings through the parity harness's new render-instance expansion (one bone per classic draw).

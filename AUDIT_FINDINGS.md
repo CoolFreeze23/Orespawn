@@ -9736,6 +9736,42 @@ keeps BUG-036. Commit 4ea395c's message retains the old number.)*
   renderer constructor. Gate 2026-09-06: `All 1199 required tests passed` (FIX_LOG "PHASE G SLICE (a)"). Owner look:
   the counters line, as above.
 
+### ENT-S-147 — The Rotator candidate's fan advance rides GeckoLib's per-frame animation dedup: the gyroscope freezes behind the single-player pause screen (and skips duplicate partial ticks and shadow passes) where the classic and 1.7.10 advance 2° per rendered frame; an invisible Rotator advances where the classic stops (REPORT, 2026-09-06; raised by the Slice 4c refuter B and the lane)
+
+- **Evidence:** the classic `RotatorModel.renderToBuffer` (:98-106) draws the three fans and then `advanceFanSpin(ri)` —
+  `rf1 += 2; if (rf1 > 359) rf1 = 0` — once per `renderToBuffer` call, i.e. per rendered frame of the entity, as orig
+  ModelRotator.java:75-78 did (`GL11` render, the advance after the draws). The candidate `RotatorGeoReplacement` does the
+  advance inside `applyCustomAnimations`, which GeckoLib 4.8.4 reaches only through `GeoModel.handleAnimations`
+  (`actuallyRender` 718, gated on `!isReRender`) — and `handleAnimations` RETURNS at offset 170, before
+  `setCustomAnimations` (287-292), when `!manager.isFirstTick() && tickCount + partialTick == manager.getLastUpdateTime()
+  && instanceId == lastRenderedInstance` (130-170; `lastUpdateTime` written by `updatedAt` at 188-192 while unpaused).
+  With the game paused (`Minecraft.runTick` → `timer.updatePauseState` at 744; `DeltaTracker$Timer.pause` 7-12 freezes
+  `pausedDeltaTickResidual`, `getGameTimeDeltaPartialTick(false)` 13-24 returns it; `Minecraft.tick` 458-468 skips
+  `tickEntities`, so `tickCount` is frozen) every frame satisfies the dedup with one Rotator in view: the hook and the
+  advance do not run and the candidate's gyroscope FREEZES behind the pause menu, while the classic keeps spinning at 2° per
+  frame (the world renders behind the pause screen; 1.7.10 did the same). Two or more Rotators in view alternate
+  `lastRenderedInstance` and keep spinning — an instance-count-dependent quirk. The same early return skips the advance
+  whenever consecutive frames share a partial tick (`advanceGameTime` divides millisecond deltas — above ~1000 FPS) and
+  dedups a second same-frame render of the entity (a shader shadow pass), where the classic advances per `renderToBuffer`
+  call. `shouldPlayAnimsWhileGamePaused` cannot help: the return precedes that branch. The mirror edge, disclosed by the
+  lane: vanilla `LivingEntityRenderer.render` skips `renderToBuffer` (and so the classic advance) for an entity that is
+  invisible AND invisible to the viewer (520 `isBodyVisible`, 536 `isInvisibleTo`, 565 `getRenderType` → `ifnull 624`), while
+  `GeoReplacedEntityRenderer.actuallyRender` runs `handleAnimations` (718) before its own draw gate (`ifnull 776` at 748):
+  an invisible candidate keeps advancing, the classic freezes — visible only as an arbitrary phase of an 8-fold-symmetric
+  wheel once the invisibility ends (a splash potion on a Rotator). Both edges are the candidate's alone (behind the dev
+  switch; classic is the default); the parity harness cannot see either (headless, one `pose()` per capture).
+- **Resolution:** REPORT — for the owner's ruling. Fix shape (renderer plumbing, two refuters): separate the pure pose
+  from the per-render side effect — a descriptor hook `onRenderPass(E entity, float partialTick)` called from
+  `OreSpawnGeoReplacedEntityRenderer.preRender` when `!isReRender` (once per render pass, exactly the classic's cadence:
+  a shadow pass renders again, a paused frame renders again) carrying `RotatorModel.advanceFanSpin`, and the hook only
+  READING `rf1`; then, because GeckoLib's dedup also skips the pose refresh while paused, `OreSpawnGeoReplacementModel`
+  re-applies the (pure) code-driven pose after `super.handleAnimations` whenever the pass was deduped (the group bones'
+  rotations are absolute writes, so a repeated application is idempotent) — presented with before/after on the pause
+  screen (the owner's look) since no leg measures it. The invisible edge follows from the same hook: skip the advance when
+  the entity `isInvisible()` and `isInvisibleTo(the viewer)`, mirroring `LivingEntityRenderer.render`'s gate — or leave it
+  as a recorded, unreproduced engine difference (an arbitrary phase of a symmetric wheel: no reliable signature). Until
+  ruled, the candidate ships behind the dev switch with this entry cited in its javadoc.
+
 ### TEST-003 — Config-flipping gametests in the concurrent default batch
 
 - **Impact:** MEDIUM (suite reliability) — boss005/boss012 flip a global
