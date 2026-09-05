@@ -9726,7 +9726,15 @@ keeps BUG-036. Commit 4ea395c's message retains the old number.)*
   suite (refuter A, D2) — the owner's look proves it: `managers_held` rises as replaced mobs are drawn. The rows'
   real replacements loaded and ran on the dedicated game-test server (the gate's 1199; the class-load question
   settled by the run, not by inspection — the `$1` descriptors do invoke `PoseStack.scale` in `applyScale`, never
-  executed there; refuter A, D4). Refuters: (filled by the orchestrator). Owner look: the counters line, as above.
+  executed there; refuter A, D4). Refuters: two (MHLib and renderer plumbing touched) — A: seven non-blocking
+  items, all applied or disclosed (the `clearClientLevel` level drop without an unload → the `LoggingIn` hook; the
+  cache-choice mechanism; the `$1` descriptors' `PoseStack` call; the production registration and the evictions counter
+  unpinnable in the suite, disclosed); B: four (the same gap; twelve species; the chunk-drop mechanism; entities drawn
+  outside a level; the constant-folding dependence); the design, hooks, thread argument, reload, counters and pins
+  upheld by both, the dedicated-server class load SAFE per class and settled by the run. R0 (orchestrator, before the
+  refuters): the replacement-constructor registration tripped the headless s4 probe's bootstrap check → moved to the
+  renderer constructor. Gate 2026-09-06: `All 1199 required tests passed` (FIX_LOG "PHASE G SLICE (a)"). Owner look:
+  the counters line, as above.
 
 ### TEST-003 — Config-flipping gametests in the concurrent default batch
 
