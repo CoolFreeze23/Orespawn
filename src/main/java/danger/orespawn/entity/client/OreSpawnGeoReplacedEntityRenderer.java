@@ -39,6 +39,12 @@ public abstract class OreSpawnGeoReplacedEntityRenderer<E extends Entity, A exte
         this.descriptor = replacement.descriptor();
         this.nonLiving = replacement.nonLivingRender();
         this.shadowRadius = this.descriptor.shadowRadius();
+        // OPT-029: the replacement's per-entity animation cache is registered here, at renderer
+        // construction on the client main thread (a bootstrapped game: the descriptor's entity-type
+        // supplier resolves), never in the replacement's constructor, which the headless s4 probe
+        // runs without a bootstrapped registry. A resource reload rebuilds this renderer
+        // (EntityRenderDispatcher.onResourceManagerReload) and the new registration replaces the old.
+        GeoReplacementCaches.register(this.descriptor.entityType(), replacement.animatableCache());
     }
 
     @Override
