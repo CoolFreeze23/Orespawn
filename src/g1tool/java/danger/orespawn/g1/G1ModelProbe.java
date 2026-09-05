@@ -44,6 +44,7 @@ import net.minecraft.client.model.geom.builders.UVPair;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.Direction;
+import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import software.bernie.geckolib.animatable.GeoAnimatable;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
@@ -178,6 +179,12 @@ public final class G1ModelProbe {
         JsonArray boneNames = new JsonArray();
         namesToPaths.keySet().forEach(boneNames::add);
         out.add("bone_names", boneNames);
+        RenderInstanceContext instances = renderInstanceContext(spec, bakedRoot, namesToPaths);
+        if (instances != null) {
+            // Slice 4c: the declaration travels with the dump so the converter and the parity tool
+            // can check they expand exactly what the probe attributed the draws to.
+            out.add("render_instances", spec.getAsJsonObject("render_instances").deepCopy());
+        }
 
         Constructor<?> constructor = modelClass.getDeclaredConstructor(ModelPart.class);
         constructor.setAccessible(true);
@@ -188,7 +195,7 @@ public final class G1ModelProbe {
         resetBakedTree(bakedRoot);
         samples.add(captureVanillaSample(
                 new SampleRequest("bind", 0.0F, 0.0F, true, false),
-                model, bakedRoot, namesToPaths, Set.of()));
+                model, bakedRoot, namesToPaths, Set.of(), instances));
 
         float limbSwing = spec.get("limb_swing").getAsFloat();
         float netHeadYaw = optionalFloat(spec, "net_head_yaw");
@@ -213,7 +220,7 @@ public final class G1ModelProbe {
                             request.ageTicks(), netHeadYaw, headPitch);
                     Set<String> hidden = hiddenParts(bakedRoot, namesToPaths);
                     JsonObject sample = captureVanillaSample(stateRequest(state, request), model, bakedRoot,
-                            namesToPaths, hidden);
+                            namesToPaths, hidden, instances);
                     sample.add("entity_state", state.deepCopy());
                     sample.add("subject_after", subject.after());
                     sample.add("hidden_bones", names(hidden));
@@ -227,7 +234,7 @@ public final class G1ModelProbe {
                 setupAnim.invoke(model, null, limbSwing, request.limbSwingAmount(),
                         request.ageTicks(), netHeadYaw, headPitch);
                 Set<String> hidden = productionHook ? hiddenParts(bakedRoot, namesToPaths) : Set.of();
-                JsonObject sample = captureVanillaSample(request, model, bakedRoot, namesToPaths, hidden);
+                JsonObject sample = captureVanillaSample(request, model, bakedRoot, namesToPaths, hidden, instances);
                 if (productionHook) {
                     sample.add("hidden_bones", names(hidden));
                 }
@@ -376,7 +383,8 @@ public final class G1ModelProbe {
 
     private static JsonObject captureVanillaSample(SampleRequest request, Object model, ModelPart root,
                                                     Map<String, String> namesToPaths,
-                                                    Set<String> hiddenBones) throws Exception {
+                                                    Set<String> hiddenBones,
+                                                    RenderInstanceContext instances) throws Exception {
         JsonObject sample = new JsonObject();
         sample.addProperty("id", request.id());
         sample.addProperty("capture_kind", request.fullCapture() ? "full" : "transform_only");
@@ -386,6 +394,13 @@ public final class G1ModelProbe {
         sample.add("transforms", captureModelPartTransforms(root, namesToPaths));
 
         if (!request.fullCapture()) {
+            return sample;
+        }
+        if (instances != null) {
+            // Slice 4c: the classic model draws some parts N times per frame under a per-draw
+            // transform, so root.visit (one group per part) cannot stand for what it draws.
+            // Capture renderToBuffer itself, one cube group per ModelPart.render call.
+            instances.capture(sample, model, hiddenBones);
             return sample;
         }
         FlatCapturingVertexConsumer renderConsumer = new FlatCapturingVertexConsumer();
@@ -571,6 +586,292 @@ public final class G1ModelProbe {
         root.getAllParts().forEach(ModelPart::resetPose);
     }
 
+    /**
+     * Slice 4c render-instance expansion. A manifest entry may declare
+     * {@code render_instances}: the parts its classic {@code renderToBuffer}
+     * draws {@code count} times per frame under a per-draw transform (the
+     * Rotator's blade fans, PurplePower's spoke rings). For such a model the
+     * compiled side is captured PER DRAW: every {@code ModelPart.render} call
+     * becomes its own cube group keyed {@code <part>__i<k>} ({@code k} the
+     * draw ordinal of that part within the sample), and each draw records the
+     * pose stack it ran under — {@code instance_pose}, the matrix at the part's
+     * own {@code pushPose} (the model's per-draw transform), and
+     * {@code draw_pose}, the matrix the cubes were compiled with. Draws are
+     * attributed to parts by their UV multiset, which a pose cannot change;
+     * counts are asserted against the declaration.
+     */
+    private static RenderInstanceContext renderInstanceContext(JsonObject spec, ModelPart bakedRoot,
+                                                               Map<String, String> namesToPaths) throws Exception {
+        if (!spec.has("render_instances")) {
+            return null;
+        }
+        String id = spec.get("id").getAsString();
+        Map<String, Integer> counts = new TreeMap<>();
+        for (Map.Entry<String, JsonElement> entry : spec.getAsJsonObject("render_instances").entrySet()) {
+            String part = entry.getKey();
+            JsonObject declaration = entry.getValue().getAsJsonObject();
+            String path = namesToPaths.get(part);
+            if (path == null) {
+                throw new IllegalStateException(id + ": render_instances names unknown part " + part);
+            }
+            if (!path.equals("/" + part)) {
+                throw new IllegalStateException(id + ": render_instances part " + part
+                        + " must be a top-level part (path " + path + ")");
+            }
+            int count = declaration.get("count").getAsInt();
+            if (count < 2) {
+                throw new IllegalStateException(id + ": render_instances." + part + ".count must be at least 2");
+            }
+            String scope = declaration.get("step_scope").getAsString();
+            if (!scope.equals("part") && !scope.equals("stack")) {
+                throw new IllegalStateException(id + ": render_instances." + part + ".step_scope must be part or stack");
+            }
+            counts.put(part, count);
+        }
+        Map<String, ModelPart> byName = new TreeMap<>();
+        collectBakedParts(bakedRoot, "", byName, namesToPaths);
+        Map<String, PartSignature> signatures = new TreeMap<>();
+        Map<String, String> partsByUvKey = new java.util.HashMap<>();
+        for (Map.Entry<String, ModelPart> entry : byName.entrySet()) {
+            String part = entry.getKey();
+            List<ModelPart.Cube> cubes = bakedCubes(entry.getValue());
+            if (cubes.isEmpty()) {
+                if (counts.containsKey(part)) {
+                    throw new IllegalStateException(id + ": render_instances part " + part + " has no cubes");
+                }
+                continue;
+            }
+            if (counts.containsKey(part) && !bakedChildren(entry.getValue()).isEmpty()) {
+                throw new IllegalStateException(id + ": render_instances part " + part + " must not have children");
+            }
+            int[] vertexCounts = new int[cubes.size()];
+            List<String> uvTokens = new ArrayList<>();
+            PoseStack identity = new PoseStack();
+            for (int index = 0; index < cubes.size(); index++) {
+                FlatCapturingVertexConsumer reference = new FlatCapturingVertexConsumer();
+                cubes.get(index).compile(identity.last(), reference, 0, 0, -1);
+                vertexCounts[index] = reference.vertices.size();
+                reference.vertices.forEach(vertex -> uvTokens.add(uvToken(vertex)));
+            }
+            String uvKey = uvKey(uvTokens);
+            String clash = partsByUvKey.put(uvKey, part);
+            if (clash != null) {
+                throw new IllegalStateException(id + ": parts " + clash + " and " + part
+                        + " emit identical UV sets; a draw could not be attributed to one of them");
+            }
+            signatures.put(part, new PartSignature(part, namesToPaths.get(part), uvKey, vertexCounts));
+        }
+        return new RenderInstanceContext(counts, signatures, partsByUvKey);
+    }
+
+    private static String uvToken(CapturedVertex vertex) {
+        return Float.toString(vertex.u()) + "," + Float.toString(vertex.v());
+    }
+
+    private static String uvKey(List<String> tokens) {
+        List<String> sorted = new ArrayList<>(tokens);
+        sorted.sort(Comparator.naturalOrder());
+        return String.join(";", sorted);
+    }
+
+    /** Row-major 4x4 (row r = [m0r, m1r, m2r, m3r] in JOML column-row naming): translation is column 3. */
+    private static JsonArray matrixRows(Matrix4f matrix) {
+        JsonArray rows = new JsonArray();
+        rows.add(floats(matrix.m00(), matrix.m10(), matrix.m20(), matrix.m30()));
+        rows.add(floats(matrix.m01(), matrix.m11(), matrix.m21(), matrix.m31()));
+        rows.add(floats(matrix.m02(), matrix.m12(), matrix.m22(), matrix.m32()));
+        rows.add(floats(matrix.m03(), matrix.m13(), matrix.m23(), matrix.m33()));
+        return rows;
+    }
+
+    private record PartSignature(String part, String path, String uvKey, int[] cubeVertexCounts) {
+    }
+
+    private static final class RenderInstanceContext {
+        private final Map<String, Integer> declaredCounts;
+        private final Map<String, PartSignature> signatures;
+        private final Map<String, String> partsByUvKey;
+
+        private RenderInstanceContext(Map<String, Integer> declaredCounts, Map<String, PartSignature> signatures,
+                                      Map<String, String> partsByUvKey) {
+            this.declaredCounts = declaredCounts;
+            this.signatures = signatures;
+            this.partsByUvKey = partsByUvKey;
+        }
+
+        void capture(JsonObject sample, Object model, Set<String> hiddenBones) {
+            InstrumentedPoseStack stack = new InstrumentedPoseStack();
+            DrawCapturingVertexConsumer consumer = new DrawCapturingVertexConsumer(stack);
+            ((EntityModel<?>) model).renderToBuffer(stack, consumer, 0, 0, -1);
+            if (stack.depth != 0) {
+                throw new IllegalStateException("renderToBuffer left the pose stack unbalanced (depth " + stack.depth + ")");
+            }
+            CapturingVertexConsumer groups = new CapturingVertexConsumer();
+            JsonArray draws = new JsonArray();
+            Map<String, Integer> drawn = new TreeMap<>();
+            for (DrawGroup group : consumer.draws) {
+                List<String> uvTokens = new ArrayList<>();
+                group.vertices.forEach(vertex -> uvTokens.add(uvToken(vertex)));
+                String part = this.partsByUvKey.get(uvKey(uvTokens));
+                if (part == null) {
+                    throw new IllegalStateException("a draw of " + group.vertices.size()
+                            + " vertices matches no part's UV set");
+                }
+                PartSignature signature = this.signatures.get(part);
+                int ordinal = drawn.merge(part, 1, Integer::sum) - 1;
+                Integer declared = this.declaredCounts.get(part);
+                String bone;
+                if (declared != null) {
+                    if (ordinal >= declared) {
+                        throw new IllegalStateException(part + " drawn more than its declared " + declared + " times");
+                    }
+                    bone = part + "__i" + ordinal;
+                } else {
+                    if (ordinal > 0) {
+                        throw new IllegalStateException(part + " drawn twice but declares no render_instances");
+                    }
+                    bone = part;
+                }
+                int offset = 0;
+                for (int cube = 0; cube < signature.cubeVertexCounts().length; cube++) {
+                    int count = signature.cubeVertexCounts()[cube];
+                    groups.begin(bone, signature.path(), cube,
+                            declared != null ? part : null, declared != null ? ordinal : null);
+                    for (CapturedVertex vertex : group.vertices.subList(offset, offset + count)) {
+                        groups.addVertex(vertex.x(), vertex.y(), vertex.z(), 0, vertex.u(), vertex.v(), 0, 0,
+                                vertex.normalX(), vertex.normalY(), vertex.normalZ());
+                    }
+                    groups.end();
+                    offset += count;
+                }
+                if (offset != group.vertices.size()) {
+                    throw new IllegalStateException(part + " draw emitted " + group.vertices.size()
+                            + " vertices; its cubes compile to " + offset);
+                }
+                if (declared != null) {
+                    JsonObject draw = new JsonObject();
+                    draw.addProperty("part", part);
+                    draw.addProperty("draw_index", ordinal);
+                    draw.addProperty("bone", bone);
+                    draw.addProperty("vertex_count", group.vertices.size());
+                    draw.add("instance_pose", matrixRows(group.instancePose));
+                    draw.add("draw_pose", matrixRows(group.drawPose));
+                    draws.add(draw);
+                }
+            }
+            for (Map.Entry<String, PartSignature> entry : this.signatures.entrySet()) {
+                String part = entry.getKey();
+                int observed = drawn.getOrDefault(part, 0);
+                int expected = hiddenByPath(entry.getValue().path(), hiddenBones)
+                        ? 0 : this.declaredCounts.getOrDefault(part, 1);
+                if (observed != expected) {
+                    throw new IllegalStateException(part + " drawn " + observed + " times; expected " + expected
+                            + (this.declaredCounts.containsKey(part) ? " (declared render_instances count)" : ""));
+                }
+            }
+            sample.add("render_vertices", consumer.verticesJson());
+            sample.add("cubes", groups.groupsJson());
+            sample.add("draws", draws);
+        }
+    }
+
+    /** Records the matrix at every push: the innermost push before a draw is the model's per-draw transform. */
+    private static final class InstrumentedPoseStack extends PoseStack {
+        private int depth;
+        private int pushSerial;
+        private Matrix4f lastPushPose = new Matrix4f();
+
+        @Override
+        public void pushPose() {
+            super.pushPose();
+            this.depth++;
+            this.pushSerial++;
+            this.lastPushPose = new Matrix4f(last().pose());
+        }
+
+        @Override
+        public void popPose() {
+            this.depth--;
+            super.popPose();
+        }
+    }
+
+    private static final class DrawGroup {
+        private final Matrix4f instancePose;
+        private final Matrix4f drawPose;
+        private final List<CapturedVertex> vertices = new ArrayList<>();
+
+        private DrawGroup(Matrix4f instancePose, Matrix4f drawPose) {
+            this.instancePose = instancePose;
+            this.drawPose = drawPose;
+        }
+    }
+
+    /** One group per ModelPart.render call: a new push serial at a vertex opens the next draw. */
+    private static final class DrawCapturingVertexConsumer implements VertexConsumer {
+        private final InstrumentedPoseStack stack;
+        private final List<CapturedVertex> vertices = new ArrayList<>();
+        private final List<DrawGroup> draws = new ArrayList<>();
+        private DrawGroup current;
+        private int currentSerial = -1;
+
+        private DrawCapturingVertexConsumer(InstrumentedPoseStack stack) {
+            this.stack = stack;
+        }
+
+        JsonArray verticesJson() {
+            JsonArray array = new JsonArray();
+            this.vertices.forEach(vertex -> array.add(vertex.toJson()));
+            return array;
+        }
+
+        @Override
+        public void addVertex(float x, float y, float z, int color, float u, float v,
+                              int packedOverlay, int packedLight,
+                              float normalX, float normalY, float normalZ) {
+            int serial = this.stack.pushSerial;
+            if (this.current == null || serial != this.currentSerial) {
+                this.current = new DrawGroup(new Matrix4f(this.stack.lastPushPose),
+                        new Matrix4f(this.stack.last().pose()));
+                this.draws.add(this.current);
+                this.currentSerial = serial;
+            }
+            CapturedVertex vertex = new CapturedVertex(x, y, z, u, v, normalX, normalY, normalZ);
+            this.current.vertices.add(vertex);
+            this.vertices.add(vertex);
+        }
+
+        @Override
+        public VertexConsumer addVertex(float x, float y, float z) {
+            throw new IllegalStateException("G1 capture requires the atomic VertexConsumer.addVertex overload");
+        }
+
+        @Override
+        public VertexConsumer setColor(int red, int green, int blue, int alpha) {
+            return this;
+        }
+
+        @Override
+        public VertexConsumer setUv(float u, float v) {
+            return this;
+        }
+
+        @Override
+        public VertexConsumer setUv1(int u, int v) {
+            return this;
+        }
+
+        @Override
+        public VertexConsumer setUv2(int u, int v) {
+            return this;
+        }
+
+        @Override
+        public VertexConsumer setNormal(float normalX, float normalY, float normalZ) {
+            return this;
+        }
+    }
+
     private static void dumpGeo(JsonObject manifest, Path generatedDir, Path outputDir) throws Exception {
         Files.createDirectories(outputDir);
         clearGeneratedJson(outputDir, ".geo-render.json");
@@ -647,10 +948,14 @@ public final class G1ModelProbe {
         JsonArray boneNames = new JsonArray();
         bind.bones().keySet().forEach(boneNames::add);
         out.add("bone_names", boneNames);
+        // Slice 4c: for an expanded rig every bone's cumulative transform is recorded in classic
+        // terms so the parity tool can compare the group/clone composition with the classic
+        // model's measured per-draw pose stack.
+        boolean recordBonePoses = spec.has("render_instances");
 
         JsonArray samples = new JsonArray();
         SampleRequest bindRequest = new SampleRequest("bind", 0.0F, 0.0F, true, false);
-        samples.add(captureGeoSample(bindRequest, bind, productionHook));
+        samples.add(captureGeoSample(bindRequest, bind, productionHook, recordBonePoses));
 
         float limbSwing = spec.get("limb_swing").getAsFloat();
         float netHeadYaw = optionalFloat(spec, "net_head_yaw");
@@ -666,7 +971,8 @@ public final class G1ModelProbe {
                             new S4CandidateRuntime.Inputs(request.ageTicks(), limbSwing,
                                     request.limbSwingAmount(), netHeadYaw, headPitch),
                             subject);
-                    JsonObject sample = captureGeoSample(stateRequest(state, request), candidate, true);
+                    JsonObject sample = captureGeoSample(stateRequest(state, request), candidate, true,
+                            recordBonePoses);
                     sample.add("entity_state", state.deepCopy());
                     sample.add("subject_after", subject.after());
                     samples.add(sample);
@@ -687,7 +993,7 @@ public final class G1ModelProbe {
                 } else {
                     throw new IllegalStateException("Unsupported G1 candidate animation path " + candidatePath);
                 }
-                samples.add(captureGeoSample(request, candidate, productionHook));
+                samples.add(captureGeoSample(request, candidate, productionHook, recordBonePoses));
             }
         }
         out.add("samples", samples);
@@ -703,11 +1009,12 @@ public final class G1ModelProbe {
 
     private static JsonObject captureGeoSample(
             SampleRequest request, G1AnimationRuntime.EvaluatedModel evaluated) {
-        return captureGeoSample(request, evaluated, false);
+        return captureGeoSample(request, evaluated, false, false);
     }
 
     private static JsonObject captureGeoSample(
-            SampleRequest request, G1AnimationRuntime.EvaluatedModel evaluated, boolean productionHook) {
+            SampleRequest request, G1AnimationRuntime.EvaluatedModel evaluated, boolean productionHook,
+            boolean recordBonePoses) {
         JsonObject sample = new JsonObject();
         sample.addProperty("id", request.id());
         sample.addProperty("capture_kind", request.fullCapture() ? "full" : "transform_only");
@@ -730,7 +1037,7 @@ public final class G1ModelProbe {
         }
 
         CapturingVertexConsumer consumer = new CapturingVertexConsumer();
-        CapturingGeoRenderer renderer = new CapturingGeoRenderer(consumer);
+        CapturingGeoRenderer renderer = new CapturingGeoRenderer(consumer, recordBonePoses);
         PoseStack poseStack = new PoseStack();
         // Bedrock geometry is Y-up around the 24px baseline. This fixed,
         // bytecode-derived normalization maps it into ModelPart's Y-down space.
@@ -741,6 +1048,9 @@ public final class G1ModelProbe {
 
         sample.add("cubes", consumer.groupsJson());
         sample.add("render_vertices", consumer.verticesJson());
+        if (recordBonePoses) {
+            sample.add("bone_poses_classic", renderer.bonePosesJson());
+        }
         return sample;
     }
 
@@ -964,10 +1274,25 @@ public final class G1ModelProbe {
     }
 
     private static final class CapturingGeoRenderer implements GeoRenderer<GeoAnimatable> {
+        /**
+         * Inverse of the probe's Bedrock -> ModelPart normalization (translate (0, 1.5, 0) then
+         * scale (1, -1, 1)); right-multiplied onto the pose stack it yields the bone's cumulative
+         * transform as a classic-space affine map: classic = M * internal * M^-1.
+         */
+        private static final Matrix4f GEO_TO_CLASSIC_INVERSE =
+                new Matrix4f().scale(1.0F, -1.0F, 1.0F).translate(0.0F, -1.5F, 0.0F);
         private final CapturingVertexConsumer consumer;
+        private final Map<String, JsonArray> bonePoses;
 
-        private CapturingGeoRenderer(CapturingVertexConsumer consumer) {
+        private CapturingGeoRenderer(CapturingVertexConsumer consumer, boolean recordBonePoses) {
             this.consumer = consumer;
+            this.bonePoses = recordBonePoses ? new TreeMap<>() : null;
+        }
+
+        JsonObject bonePosesJson() {
+            JsonObject out = new JsonObject();
+            this.bonePoses.forEach(out::add);
+            return out;
         }
 
         @Override
@@ -983,6 +1308,13 @@ public final class G1ModelProbe {
         @Override
         public void renderCubesOfBone(PoseStack poseStack, GeoBone bone, VertexConsumer buffer,
                                       int packedLight, int packedOverlay, int color) {
+            if (this.bonePoses != null) {
+                // renderRecursively has run RenderUtil.prepMatrixForBone: the stack holds M * (bone's cumulative transform).
+                if (this.bonePoses.put(bone.getName(),
+                        matrixRows(new Matrix4f(poseStack.last().pose()).mul(GEO_TO_CLASSIC_INVERSE))) != null) {
+                    throw new IllegalStateException("bone " + bone.getName() + " rendered twice");
+                }
+            }
             if (bone.isHidden()) {
                 return;
             }
@@ -1023,10 +1355,14 @@ public final class G1ModelProbe {
         private CubeVertices current;
 
         void begin(String boneName, String path, int cubeIndex) {
+            begin(boneName, path, cubeIndex, null, null);
+        }
+
+        void begin(String boneName, String path, int cubeIndex, String sourcePart, Integer drawIndex) {
             if (this.current != null) {
                 throw new IllegalStateException("Nested vertex capture groups");
             }
-            this.current = new CubeVertices(boneName, path, cubeIndex);
+            this.current = new CubeVertices(boneName, path, cubeIndex, sourcePart, drawIndex);
         }
 
         void end() {
@@ -1152,12 +1488,16 @@ public final class G1ModelProbe {
         private final String boneName;
         private final String path;
         private final int cubeIndex;
+        private final String sourcePart;
+        private final Integer drawIndex;
         private final List<CapturedVertex> vertices = new ArrayList<>();
 
-        private CubeVertices(String boneName, String path, int cubeIndex) {
+        private CubeVertices(String boneName, String path, int cubeIndex, String sourcePart, Integer drawIndex) {
             this.boneName = boneName;
             this.path = path;
             this.cubeIndex = cubeIndex;
+            this.sourcePart = sourcePart;
+            this.drawIndex = drawIndex;
         }
 
         JsonObject toJson() {
@@ -1165,6 +1505,11 @@ public final class G1ModelProbe {
             out.addProperty("bone", this.boneName);
             out.addProperty("path", this.path);
             out.addProperty("cube_index", this.cubeIndex);
+            if (this.sourcePart != null) {
+                // Slice 4c render-instance clone: which part's draw this group is.
+                out.addProperty("source_part", this.sourcePart);
+                out.addProperty("draw_index", this.drawIndex);
+            }
             JsonArray vertexArray = new JsonArray();
             this.vertices.forEach(vertex -> vertexArray.add(vertex.toJson()));
             out.add("vertices", vertexArray);

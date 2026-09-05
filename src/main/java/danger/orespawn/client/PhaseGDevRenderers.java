@@ -4,9 +4,11 @@ import danger.orespawn.OreSpawnMod;
 import danger.orespawn.entity.Beaver;
 import danger.orespawn.entity.Coin;
 import danger.orespawn.entity.Elevator;
+import danger.orespawn.entity.EntityRotator;
 import danger.orespawn.entity.EntityVortex;
 import danger.orespawn.entity.Island;
 import danger.orespawn.entity.IslandToo;
+import danger.orespawn.entity.PurplePower;
 import danger.orespawn.entity.Robot1;
 import danger.orespawn.entity.Robot2;
 import danger.orespawn.entity.Robot3;
@@ -23,6 +25,8 @@ import danger.orespawn.entity.client.IslandGeoReplacement;
 import danger.orespawn.entity.client.IslandRenderer;
 import danger.orespawn.entity.client.IslandTooGeoReplacement;
 import danger.orespawn.entity.client.IslandTooRenderer;
+import danger.orespawn.entity.client.PurplePowerGeoReplacement;
+import danger.orespawn.entity.client.PurplePowerRenderer;
 import danger.orespawn.entity.client.Robot1GeoReplacement;
 import danger.orespawn.entity.client.Robot1Renderer;
 import danger.orespawn.entity.client.Robot2GeoReplacement;
@@ -35,6 +39,8 @@ import danger.orespawn.entity.client.Robot5GeoReplacement;
 import danger.orespawn.entity.client.Robot5Renderer;
 import danger.orespawn.entity.client.RockBaseGeoReplacement;
 import danger.orespawn.entity.client.RockBaseRenderer;
+import danger.orespawn.entity.client.RotatorGeoReplacement;
+import danger.orespawn.entity.client.RotatorRenderer;
 import danger.orespawn.entity.client.VortexGeoReplacement;
 import danger.orespawn.entity.client.VortexRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
@@ -91,6 +97,15 @@ public final class PhaseGDevRenderers {
 
     public static EntityRendererProvider<RockBase> rockBaseRenderer() {
         return select("rock_base", RockBaseRenderer::new, RockBaseGeoReplacement.Renderer::new);
+    }
+
+    /** Slice 4c: the render-instance-expanded rigs. */
+    public static EntityRendererProvider<PurplePower> purplePowerRenderer() {
+        return select("purple_power", PurplePowerRenderer::new, PurplePowerGeoReplacement.Renderer::new);
+    }
+
+    public static EntityRendererProvider<EntityRotator> rotatorRenderer() {
+        return select("rotator", RotatorRenderer::new, RotatorGeoReplacement.Renderer::new);
     }
 
     private static <E extends Entity> EntityRendererProvider<E> select(String species,

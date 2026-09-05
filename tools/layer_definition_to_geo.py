@@ -12,9 +12,11 @@ Beaver clip is reference-only and is never runtime-acceptance input.
 from __future__ import annotations
 
 import argparse
+import copy
 import hashlib
 import json
 import math
+import struct
 from pathlib import Path
 from typing import Any, Iterable
 
@@ -156,17 +158,207 @@ def convert_cube(cube: dict[str, Any], absolute_pivot: list[float]) -> dict[str,
     return converted
 
 
-def convert_geometry(compiled: dict[str, Any]) -> tuple[dict[str, Any], dict[str, Any]]:
+AXIS_INDEX = {"x": 0, "y": 1, "z": 2}
+
+
+def float32(value: float) -> float:
+    """Round to IEEE binary32, the arithmetic the classic draw loops run in."""
+    return struct.unpack("<f", struct.pack("<f", float(value)))[0]
+
+
+def json_rotation(classic_radians: list[float]) -> list[float | int]:
+    """ModelPart (x, y, z) radians -> Bedrock degrees; see the bind-rotation note in convert_geometry."""
+    return clean_vector(
+        [
+            math.degrees(classic_radians[0]),
+            -math.degrees(classic_radians[1]),
+            -math.degrees(classic_radians[2]),
+        ]
+    )
+
+
+def render_instance_angles(part_name: str, declaration: dict[str, Any]) -> tuple[float, list[float]]:
+    """The per-draw step angles of a render-instance loop, in the loop's own arithmetic.
+
+    ``step_radians`` (or ``step_degrees``) is the classic model's literal;
+    ``step_arithmetic`` says how the loop reaches draw k from it:
+    ``float32_accumulate`` (``angle += STEP`` per draw, Rotator),
+    ``float32_multiply`` (``k * STEP`` per draw, PurplePower) or ``exact``.
+    """
+    count = int(declaration["count"])
+    if count < 2:
+        raise ValueError(f"render_instances.{part_name}.count must be at least 2")
+    if "step_radians" in declaration:
+        step = float(declaration["step_radians"])
+    elif "step_degrees" in declaration:
+        step = math.radians(float(declaration["step_degrees"]))
+    else:
+        raise ValueError(f"render_instances.{part_name} declares neither step_radians nor step_degrees")
+    arithmetic = declaration.get("step_arithmetic", "exact")
+    angles: list[float] = []
+    if arithmetic == "float32_accumulate":
+        step32 = float32(step)
+        angle = 0.0
+        for _ in range(count):
+            angles.append(angle)
+            angle = float32(angle + step32)
+    elif arithmetic == "float32_multiply":
+        step32 = float32(step)
+        angles = [float32(k * step32) for k in range(count)]
+    elif arithmetic == "exact":
+        angles = [k * step for k in range(count)]
+    else:
+        raise ValueError(f"render_instances.{part_name}.step_arithmetic {arithmetic!r} is not supported")
+    return step, angles
+
+
+def expand_render_instances(name: str, part: dict[str, Any], parent: str | None,
+                            absolute_pivot: list[float], initial_rotation: list[float],
+                            declaration: dict[str, Any]) -> dict[str, Any]:
+    """Slice 4c: one bone per DRAW of a part the classic model renders N times per frame.
+
+    ``step_scope: part`` (Rotator): the loop assigns the part's own ``<axis>Rot`` to
+    draw k's step inside ONE pose-stack rotation the hook animates. Emitted as a
+    fan group bone ``<part>__fan`` (pivot at the model origin, bind identity: the
+    hook spins it) whose children ``<part>__i<k>`` carry the part's cubes at the
+    part's pivot with the step as their bind rotation on that axis.
+
+    ``step_scope: stack`` (PurplePower): the loop pushes draw k's step onto the
+    pose stack OUTSIDE the part's own animated rotation. Emitted as one parent per
+    draw, ``<part>__fan<k>`` (pivot at the model origin, bind rotation the step),
+    with the clone ``<part>__i<k>`` under it carrying the part's cubes, pivot and
+    bind rotation; the hook writes the part's animated channels onto the clones.
+    """
+    if parent is not None:
+        raise ValueError(f"render_instances part {name} must be a top-level part")
+    if part["children"]:
+        raise ValueError(f"render_instances part {name} must not have children")
+    if not part["cubes"]:
+        raise ValueError(f"render_instances part {name} has no cubes")
+    axis = declaration["axis"]
+    if axis not in AXIS_INDEX:
+        raise ValueError(f"render_instances.{name}.axis {axis!r} is not x, y or z")
+    scope = declaration["step_scope"]
+    if scope not in ("part", "stack"):
+        raise ValueError(f"render_instances.{name}.step_scope {scope!r} is not part or stack")
+    step, angles = render_instance_angles(name, declaration)
+    axis_index = AXIS_INDEX[axis]
+    pivot_json = clean_vector([-absolute_pivot[0], 24.0 - absolute_pivot[1], absolute_pivot[2]])
+    # The classic loop rotates the pose stack about the model origin: classic (0, 0, 0).
+    origin_json = clean_vector([0.0, 24.0, 0.0])
+    cubes = [convert_cube(cube, absolute_pivot) for cube in part["cubes"]]
+
+    bones: list[dict[str, Any]] = []
+    mapping: dict[str, dict[str, Any]] = {}
+    group_bones: list[str] = []
+    clone_bones: list[str] = []
+    if scope == "part":
+        group = f"{name}__fan"
+        bones.append({"name": group, "pivot": origin_json})
+        group_bones.append(group)
+        mapping[group] = {
+            "role": "group",
+            "source_part": name,
+            "draw_index": None,
+            "animated_by_hook": True,
+            "static_rotation_radians": None,
+            "clones": [f"{name}__i{k}" for k in range(len(angles))],
+        }
+        for k, angle in enumerate(angles):
+            rotation = list(initial_rotation)
+            rotation[axis_index] = angle
+            clone_name = f"{name}__i{k}"
+            bone: dict[str, Any] = {"name": clone_name, "parent": group, "pivot": pivot_json}
+            if nonzero(rotation):
+                bone["rotation"] = json_rotation(rotation)
+            bone["cubes"] = copy.deepcopy(cubes)
+            bones.append(bone)
+            clone_bones.append(clone_name)
+            mapping[clone_name] = {
+                "role": "clone",
+                "source_part": name,
+                "draw_index": k,
+                "group_bone": group,
+                "static_rotation_radians": rotation,
+                "static_channel": axis,
+            }
+    else:
+        for k, angle in enumerate(angles):
+            fan = f"{name}__fan{k}"
+            static = [0.0, 0.0, 0.0]
+            static[axis_index] = angle
+            fan_bone: dict[str, Any] = {"name": fan, "pivot": origin_json}
+            if nonzero(static):
+                fan_bone["rotation"] = json_rotation(static)
+            bones.append(fan_bone)
+            group_bones.append(fan)
+            clone_name = f"{name}__i{k}"
+            mapping[fan] = {
+                "role": "group",
+                "source_part": name,
+                "draw_index": k,
+                "animated_by_hook": False,
+                "static_rotation_radians": static,
+                "clones": [clone_name],
+            }
+            clone: dict[str, Any] = {"name": clone_name, "parent": fan, "pivot": pivot_json}
+            if nonzero(initial_rotation):
+                clone["rotation"] = json_rotation(initial_rotation)
+            clone["cubes"] = copy.deepcopy(cubes)
+            bones.append(clone)
+            clone_bones.append(clone_name)
+            mapping[clone_name] = {
+                "role": "clone",
+                "source_part": name,
+                "draw_index": k,
+                "group_bone": fan,
+                "static_rotation_radians": list(initial_rotation),
+                "static_channel": None,
+            }
+    summary = {
+        "count": len(angles),
+        "axis": axis,
+        "step_scope": scope,
+        "step_radians": step,
+        "step_arithmetic": declaration.get("step_arithmetic", "exact"),
+        "angles_radians": angles,
+        "group_bones": group_bones,
+        "clone_bones": clone_bones,
+        "cubes_per_draw": len(cubes),
+    }
+    if "note" in declaration:
+        summary["note"] = declaration["note"]
+    return {
+        "bones": bones,
+        "mapping": mapping,
+        "summary": summary,
+        "cube_count": len(cubes) * len(angles),
+    }
+
+
+def convert_geometry(compiled: dict[str, Any],
+                     render_instances: dict[str, Any] | None = None) -> tuple[dict[str, Any], dict[str, Any]]:
     root = compiled["definition"]
     if root["cubes"]:
         raise ValueError("unnamed MeshDefinition root contains cubes")
 
     bones: list[dict[str, Any]] = []
     cube_count = 0
+    expansion_parts: dict[str, Any] = {}
+    expansion_bones: dict[str, Any] = {}
     for part, parent in iter_parts(root):
         name = part["name"]
         absolute_pivot = [float(value) for value in part["absolute_pivot"]]
         initial_rotation = [float(value) for value in part["initial_rotation_radians"]]
+        if render_instances and name in render_instances:
+            expanded = expand_render_instances(
+                name, part, parent, absolute_pivot, initial_rotation, render_instances[name]
+            )
+            bones.extend(expanded["bones"])
+            cube_count += expanded["cube_count"]
+            expansion_parts[name] = expanded["summary"]
+            expansion_bones.update(expanded["mapping"])
+            continue
         bone: dict[str, Any] = {
             "name": name,
             "pivot": clean_vector(
@@ -196,8 +388,16 @@ def convert_geometry(compiled: dict[str, Any]) -> tuple[dict[str, Any], dict[str
 
     input_names = sorted(compiled["bone_names"])
     output_names = sorted(bone["name"] for bone in bones)
-    if output_names != input_names:
-        raise ValueError(f"bone-name drift: input {input_names} != output {output_names}")
+    if render_instances:
+        missing = sorted(set(render_instances) - set(input_names))
+        if missing:
+            raise ValueError(f"render_instances names parts the compiled model lacks: {missing}")
+        # Expanded parts leave the rig; their group and clone bones join it.
+        expected_names = sorted((set(input_names) - set(render_instances)) | set(expansion_bones))
+    else:
+        expected_names = input_names
+    if output_names != expected_names:
+        raise ValueError(f"bone-name drift: expected {expected_names} != output {output_names}")
     if len(output_names) != len(set(output_names)):
         raise ValueError("duplicate bone names cannot be preserved by GeckoLib")
 
@@ -220,9 +420,9 @@ def convert_geometry(compiled: dict[str, Any]) -> tuple[dict[str, Any], dict[str
         "cube_count": cube_count,
         "mirrored_cube_count": sum(
             1
-            for part, _parent in iter_parts(root)
-            for cube in part["cubes"]
-            if cube["mirror"]
+            for bone in bones
+            for cube in bone.get("cubes", [])
+            if cube.get("modelpart_mirror")
         ),
         "mirrored_uv_strategy": (
             "source flag retained as modelpart_mirror; semantics baked into explicit faces; "
@@ -230,6 +430,19 @@ def convert_geometry(compiled: dict[str, Any]) -> tuple[dict[str, Any], dict[str
         ),
         "exact_bone_names": output_names,
     }
+    if render_instances:
+        summary["render_instances"] = {
+            "declared": render_instances,
+            "parts": expansion_parts,
+            "bones": expansion_bones,
+            "semantics": (
+                "one bone per classic draw: <part>__i<k> is draw k of <part> (its cubes and pivot); "
+                "step_scope part = the loop assigns the part's own axis channel, so the step is the clone's "
+                "bind rotation under one hook-animated group <part>__fan; step_scope stack = the loop rotates "
+                "the pose stack outside the part, so the step is the bind rotation of a per-draw parent "
+                "<part>__fan<k> and the clone carries the part's animated channels"
+            ),
+        }
     return geometry, summary
 
 
@@ -549,7 +762,13 @@ def convert_model(manifest: dict[str, Any], spec: dict[str, Any],
             f"{model_id} dump class {compiled['source_class']} != manifest {spec['class']}"
         )
 
-    geometry, geometry_summary = convert_geometry(compiled)
+    render_instances = spec.get("render_instances")
+    if compiled.get("render_instances") != render_instances:
+        raise ValueError(
+            f"{model_id} render_instances drift between the probe dump and the manifest: "
+            f"{compiled.get('render_instances')} != {render_instances}"
+        )
+    geometry, geometry_summary = convert_geometry(compiled, render_instances)
     animation, animation_contract = convert_animation(
         spec, compiled, float(manifest["ticks_per_second"])
     )
@@ -580,6 +799,8 @@ def convert_model(manifest: dict[str, Any], spec: dict[str, Any],
         "mirrored_cube_count": geometry_summary["mirrored_cube_count"],
         "mirrored_uv_strategy": geometry_summary["mirrored_uv_strategy"],
         "exact_bone_names": geometry_summary["exact_bone_names"],
+        **({"render_instances": geometry_summary["render_instances"]}
+           if "render_instances" in geometry_summary else {}),
         "animation_contract": animation_contract,
         "reference_animation_schema": reference_schema,
         "accepted_animation_evidence": ACCEPTED_ANIMATION_EVIDENCE[spec["animation_kind"]],

@@ -1,0 +1,1781 @@
+{
+  "format_version": "1.12.0",
+  "minecraft:geometry": [
+    {
+      "description": {
+        "identifier": "geometry.orespawn.g1.model_purplepower",
+        "texture_width": 64,
+        "texture_height": 32
+      },
+      "bones": [
+        {
+          "name": "Shape1__fan0",
+          "pivot": [
+            0,
+            24,
+            0
+          ]
+        },
+        {
+          "name": "Shape1__i0",
+          "parent": "Shape1__fan0",
+          "pivot": [
+            0,
+            24,
+            0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -2,
+                23.5,
+                -0.5
+              ],
+              "size": [
+                4,
+                1,
+                1
+              ],
+              "uv": {
+                "west": {
+                  "uv": [
+                    5,
+                    13
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "east": {
+                  "uv": [
+                    0,
+                    13
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "north": {
+                  "uv": [
+                    1,
+                    13
+                  ],
+                  "uv_size": [
+                    4,
+                    1
+                  ]
+                },
+                "south": {
+                  "uv": [
+                    6,
+                    13
+                  ],
+                  "uv_size": [
+                    4,
+                    1
+                  ]
+                },
+                "up": {
+                  "uv": [
+                    1,
+                    12
+                  ],
+                  "uv_size": [
+                    4,
+                    1
+                  ]
+                },
+                "down": {
+                  "uv": [
+                    5,
+                    13
+                  ],
+                  "uv_size": [
+                    4,
+                    -1
+                  ]
+                }
+              },
+              "modelpart_mirror": true
+            }
+          ]
+        },
+        {
+          "name": "Shape1__fan1",
+          "pivot": [
+            0,
+            24,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            -60.0000016697
+          ]
+        },
+        {
+          "name": "Shape1__i1",
+          "parent": "Shape1__fan1",
+          "pivot": [
+            0,
+            24,
+            0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -2,
+                23.5,
+                -0.5
+              ],
+              "size": [
+                4,
+                1,
+                1
+              ],
+              "uv": {
+                "west": {
+                  "uv": [
+                    5,
+                    13
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "east": {
+                  "uv": [
+                    0,
+                    13
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "north": {
+                  "uv": [
+                    1,
+                    13
+                  ],
+                  "uv_size": [
+                    4,
+                    1
+                  ]
+                },
+                "south": {
+                  "uv": [
+                    6,
+                    13
+                  ],
+                  "uv_size": [
+                    4,
+                    1
+                  ]
+                },
+                "up": {
+                  "uv": [
+                    1,
+                    12
+                  ],
+                  "uv_size": [
+                    4,
+                    1
+                  ]
+                },
+                "down": {
+                  "uv": [
+                    5,
+                    13
+                  ],
+                  "uv_size": [
+                    4,
+                    -1
+                  ]
+                }
+              },
+              "modelpart_mirror": true
+            }
+          ]
+        },
+        {
+          "name": "Shape1__fan2",
+          "pivot": [
+            0,
+            24,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            -120.0000033393
+          ]
+        },
+        {
+          "name": "Shape1__i2",
+          "parent": "Shape1__fan2",
+          "pivot": [
+            0,
+            24,
+            0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -2,
+                23.5,
+                -0.5
+              ],
+              "size": [
+                4,
+                1,
+                1
+              ],
+              "uv": {
+                "west": {
+                  "uv": [
+                    5,
+                    13
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "east": {
+                  "uv": [
+                    0,
+                    13
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "north": {
+                  "uv": [
+                    1,
+                    13
+                  ],
+                  "uv_size": [
+                    4,
+                    1
+                  ]
+                },
+                "south": {
+                  "uv": [
+                    6,
+                    13
+                  ],
+                  "uv_size": [
+                    4,
+                    1
+                  ]
+                },
+                "up": {
+                  "uv": [
+                    1,
+                    12
+                  ],
+                  "uv_size": [
+                    4,
+                    1
+                  ]
+                },
+                "down": {
+                  "uv": [
+                    5,
+                    13
+                  ],
+                  "uv_size": [
+                    4,
+                    -1
+                  ]
+                }
+              },
+              "modelpart_mirror": true
+            }
+          ]
+        },
+        {
+          "name": "Shape1__fan3",
+          "pivot": [
+            0,
+            24,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            -180.000005009
+          ]
+        },
+        {
+          "name": "Shape1__i3",
+          "parent": "Shape1__fan3",
+          "pivot": [
+            0,
+            24,
+            0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -2,
+                23.5,
+                -0.5
+              ],
+              "size": [
+                4,
+                1,
+                1
+              ],
+              "uv": {
+                "west": {
+                  "uv": [
+                    5,
+                    13
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "east": {
+                  "uv": [
+                    0,
+                    13
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "north": {
+                  "uv": [
+                    1,
+                    13
+                  ],
+                  "uv_size": [
+                    4,
+                    1
+                  ]
+                },
+                "south": {
+                  "uv": [
+                    6,
+                    13
+                  ],
+                  "uv_size": [
+                    4,
+                    1
+                  ]
+                },
+                "up": {
+                  "uv": [
+                    1,
+                    12
+                  ],
+                  "uv_size": [
+                    4,
+                    1
+                  ]
+                },
+                "down": {
+                  "uv": [
+                    5,
+                    13
+                  ],
+                  "uv_size": [
+                    4,
+                    -1
+                  ]
+                }
+              },
+              "modelpart_mirror": true
+            }
+          ]
+        },
+        {
+          "name": "Shape1__fan4",
+          "pivot": [
+            0,
+            24,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            -240.0000066786
+          ]
+        },
+        {
+          "name": "Shape1__i4",
+          "parent": "Shape1__fan4",
+          "pivot": [
+            0,
+            24,
+            0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -2,
+                23.5,
+                -0.5
+              ],
+              "size": [
+                4,
+                1,
+                1
+              ],
+              "uv": {
+                "west": {
+                  "uv": [
+                    5,
+                    13
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "east": {
+                  "uv": [
+                    0,
+                    13
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "north": {
+                  "uv": [
+                    1,
+                    13
+                  ],
+                  "uv_size": [
+                    4,
+                    1
+                  ]
+                },
+                "south": {
+                  "uv": [
+                    6,
+                    13
+                  ],
+                  "uv_size": [
+                    4,
+                    1
+                  ]
+                },
+                "up": {
+                  "uv": [
+                    1,
+                    12
+                  ],
+                  "uv_size": [
+                    4,
+                    1
+                  ]
+                },
+                "down": {
+                  "uv": [
+                    5,
+                    13
+                  ],
+                  "uv_size": [
+                    4,
+                    -1
+                  ]
+                }
+              },
+              "modelpart_mirror": true
+            }
+          ]
+        },
+        {
+          "name": "Shape1__fan5",
+          "pivot": [
+            0,
+            24,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            -299.9999946879
+          ]
+        },
+        {
+          "name": "Shape1__i5",
+          "parent": "Shape1__fan5",
+          "pivot": [
+            0,
+            24,
+            0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -2,
+                23.5,
+                -0.5
+              ],
+              "size": [
+                4,
+                1,
+                1
+              ],
+              "uv": {
+                "west": {
+                  "uv": [
+                    5,
+                    13
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "east": {
+                  "uv": [
+                    0,
+                    13
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "north": {
+                  "uv": [
+                    1,
+                    13
+                  ],
+                  "uv_size": [
+                    4,
+                    1
+                  ]
+                },
+                "south": {
+                  "uv": [
+                    6,
+                    13
+                  ],
+                  "uv_size": [
+                    4,
+                    1
+                  ]
+                },
+                "up": {
+                  "uv": [
+                    1,
+                    12
+                  ],
+                  "uv_size": [
+                    4,
+                    1
+                  ]
+                },
+                "down": {
+                  "uv": [
+                    5,
+                    13
+                  ],
+                  "uv_size": [
+                    4,
+                    -1
+                  ]
+                }
+              },
+              "modelpart_mirror": true
+            }
+          ]
+        },
+        {
+          "name": "Shape2__fan0",
+          "pivot": [
+            0,
+            24,
+            0
+          ]
+        },
+        {
+          "name": "Shape2__i0",
+          "parent": "Shape2__fan0",
+          "pivot": [
+            0,
+            24,
+            0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -4,
+                23.5,
+                -0.5
+              ],
+              "size": [
+                8,
+                1,
+                1
+              ],
+              "uv": {
+                "west": {
+                  "uv": [
+                    9,
+                    8
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "east": {
+                  "uv": [
+                    0,
+                    8
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "north": {
+                  "uv": [
+                    1,
+                    8
+                  ],
+                  "uv_size": [
+                    8,
+                    1
+                  ]
+                },
+                "south": {
+                  "uv": [
+                    10,
+                    8
+                  ],
+                  "uv_size": [
+                    8,
+                    1
+                  ]
+                },
+                "up": {
+                  "uv": [
+                    1,
+                    7
+                  ],
+                  "uv_size": [
+                    8,
+                    1
+                  ]
+                },
+                "down": {
+                  "uv": [
+                    9,
+                    8
+                  ],
+                  "uv_size": [
+                    8,
+                    -1
+                  ]
+                }
+              },
+              "modelpart_mirror": true
+            }
+          ]
+        },
+        {
+          "name": "Shape2__fan1",
+          "pivot": [
+            0,
+            24,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            -60.0000016697
+          ]
+        },
+        {
+          "name": "Shape2__i1",
+          "parent": "Shape2__fan1",
+          "pivot": [
+            0,
+            24,
+            0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -4,
+                23.5,
+                -0.5
+              ],
+              "size": [
+                8,
+                1,
+                1
+              ],
+              "uv": {
+                "west": {
+                  "uv": [
+                    9,
+                    8
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "east": {
+                  "uv": [
+                    0,
+                    8
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "north": {
+                  "uv": [
+                    1,
+                    8
+                  ],
+                  "uv_size": [
+                    8,
+                    1
+                  ]
+                },
+                "south": {
+                  "uv": [
+                    10,
+                    8
+                  ],
+                  "uv_size": [
+                    8,
+                    1
+                  ]
+                },
+                "up": {
+                  "uv": [
+                    1,
+                    7
+                  ],
+                  "uv_size": [
+                    8,
+                    1
+                  ]
+                },
+                "down": {
+                  "uv": [
+                    9,
+                    8
+                  ],
+                  "uv_size": [
+                    8,
+                    -1
+                  ]
+                }
+              },
+              "modelpart_mirror": true
+            }
+          ]
+        },
+        {
+          "name": "Shape2__fan2",
+          "pivot": [
+            0,
+            24,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            -120.0000033393
+          ]
+        },
+        {
+          "name": "Shape2__i2",
+          "parent": "Shape2__fan2",
+          "pivot": [
+            0,
+            24,
+            0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -4,
+                23.5,
+                -0.5
+              ],
+              "size": [
+                8,
+                1,
+                1
+              ],
+              "uv": {
+                "west": {
+                  "uv": [
+                    9,
+                    8
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "east": {
+                  "uv": [
+                    0,
+                    8
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "north": {
+                  "uv": [
+                    1,
+                    8
+                  ],
+                  "uv_size": [
+                    8,
+                    1
+                  ]
+                },
+                "south": {
+                  "uv": [
+                    10,
+                    8
+                  ],
+                  "uv_size": [
+                    8,
+                    1
+                  ]
+                },
+                "up": {
+                  "uv": [
+                    1,
+                    7
+                  ],
+                  "uv_size": [
+                    8,
+                    1
+                  ]
+                },
+                "down": {
+                  "uv": [
+                    9,
+                    8
+                  ],
+                  "uv_size": [
+                    8,
+                    -1
+                  ]
+                }
+              },
+              "modelpart_mirror": true
+            }
+          ]
+        },
+        {
+          "name": "Shape2__fan3",
+          "pivot": [
+            0,
+            24,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            -180.000005009
+          ]
+        },
+        {
+          "name": "Shape2__i3",
+          "parent": "Shape2__fan3",
+          "pivot": [
+            0,
+            24,
+            0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -4,
+                23.5,
+                -0.5
+              ],
+              "size": [
+                8,
+                1,
+                1
+              ],
+              "uv": {
+                "west": {
+                  "uv": [
+                    9,
+                    8
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "east": {
+                  "uv": [
+                    0,
+                    8
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "north": {
+                  "uv": [
+                    1,
+                    8
+                  ],
+                  "uv_size": [
+                    8,
+                    1
+                  ]
+                },
+                "south": {
+                  "uv": [
+                    10,
+                    8
+                  ],
+                  "uv_size": [
+                    8,
+                    1
+                  ]
+                },
+                "up": {
+                  "uv": [
+                    1,
+                    7
+                  ],
+                  "uv_size": [
+                    8,
+                    1
+                  ]
+                },
+                "down": {
+                  "uv": [
+                    9,
+                    8
+                  ],
+                  "uv_size": [
+                    8,
+                    -1
+                  ]
+                }
+              },
+              "modelpart_mirror": true
+            }
+          ]
+        },
+        {
+          "name": "Shape2__fan4",
+          "pivot": [
+            0,
+            24,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            -240.0000066786
+          ]
+        },
+        {
+          "name": "Shape2__i4",
+          "parent": "Shape2__fan4",
+          "pivot": [
+            0,
+            24,
+            0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -4,
+                23.5,
+                -0.5
+              ],
+              "size": [
+                8,
+                1,
+                1
+              ],
+              "uv": {
+                "west": {
+                  "uv": [
+                    9,
+                    8
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "east": {
+                  "uv": [
+                    0,
+                    8
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "north": {
+                  "uv": [
+                    1,
+                    8
+                  ],
+                  "uv_size": [
+                    8,
+                    1
+                  ]
+                },
+                "south": {
+                  "uv": [
+                    10,
+                    8
+                  ],
+                  "uv_size": [
+                    8,
+                    1
+                  ]
+                },
+                "up": {
+                  "uv": [
+                    1,
+                    7
+                  ],
+                  "uv_size": [
+                    8,
+                    1
+                  ]
+                },
+                "down": {
+                  "uv": [
+                    9,
+                    8
+                  ],
+                  "uv_size": [
+                    8,
+                    -1
+                  ]
+                }
+              },
+              "modelpart_mirror": true
+            }
+          ]
+        },
+        {
+          "name": "Shape2__fan5",
+          "pivot": [
+            0,
+            24,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            -299.9999946879
+          ]
+        },
+        {
+          "name": "Shape2__i5",
+          "parent": "Shape2__fan5",
+          "pivot": [
+            0,
+            24,
+            0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -4,
+                23.5,
+                -0.5
+              ],
+              "size": [
+                8,
+                1,
+                1
+              ],
+              "uv": {
+                "west": {
+                  "uv": [
+                    9,
+                    8
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "east": {
+                  "uv": [
+                    0,
+                    8
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "north": {
+                  "uv": [
+                    1,
+                    8
+                  ],
+                  "uv_size": [
+                    8,
+                    1
+                  ]
+                },
+                "south": {
+                  "uv": [
+                    10,
+                    8
+                  ],
+                  "uv_size": [
+                    8,
+                    1
+                  ]
+                },
+                "up": {
+                  "uv": [
+                    1,
+                    7
+                  ],
+                  "uv_size": [
+                    8,
+                    1
+                  ]
+                },
+                "down": {
+                  "uv": [
+                    9,
+                    8
+                  ],
+                  "uv_size": [
+                    8,
+                    -1
+                  ]
+                }
+              },
+              "modelpart_mirror": true
+            }
+          ]
+        },
+        {
+          "name": "Shape3__fan0",
+          "pivot": [
+            0,
+            24,
+            0
+          ]
+        },
+        {
+          "name": "Shape3__i0",
+          "parent": "Shape3__fan0",
+          "pivot": [
+            0,
+            24,
+            0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -7,
+                23.5,
+                -0.5
+              ],
+              "size": [
+                14,
+                1,
+                1
+              ],
+              "uv": {
+                "west": {
+                  "uv": [
+                    15,
+                    1
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "east": {
+                  "uv": [
+                    0,
+                    1
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "north": {
+                  "uv": [
+                    1,
+                    1
+                  ],
+                  "uv_size": [
+                    14,
+                    1
+                  ]
+                },
+                "south": {
+                  "uv": [
+                    16,
+                    1
+                  ],
+                  "uv_size": [
+                    14,
+                    1
+                  ]
+                },
+                "up": {
+                  "uv": [
+                    1,
+                    0
+                  ],
+                  "uv_size": [
+                    14,
+                    1
+                  ]
+                },
+                "down": {
+                  "uv": [
+                    15,
+                    1
+                  ],
+                  "uv_size": [
+                    14,
+                    -1
+                  ]
+                }
+              },
+              "modelpart_mirror": true
+            }
+          ]
+        },
+        {
+          "name": "Shape3__fan1",
+          "pivot": [
+            0,
+            24,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            -60.0000016697
+          ]
+        },
+        {
+          "name": "Shape3__i1",
+          "parent": "Shape3__fan1",
+          "pivot": [
+            0,
+            24,
+            0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -7,
+                23.5,
+                -0.5
+              ],
+              "size": [
+                14,
+                1,
+                1
+              ],
+              "uv": {
+                "west": {
+                  "uv": [
+                    15,
+                    1
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "east": {
+                  "uv": [
+                    0,
+                    1
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "north": {
+                  "uv": [
+                    1,
+                    1
+                  ],
+                  "uv_size": [
+                    14,
+                    1
+                  ]
+                },
+                "south": {
+                  "uv": [
+                    16,
+                    1
+                  ],
+                  "uv_size": [
+                    14,
+                    1
+                  ]
+                },
+                "up": {
+                  "uv": [
+                    1,
+                    0
+                  ],
+                  "uv_size": [
+                    14,
+                    1
+                  ]
+                },
+                "down": {
+                  "uv": [
+                    15,
+                    1
+                  ],
+                  "uv_size": [
+                    14,
+                    -1
+                  ]
+                }
+              },
+              "modelpart_mirror": true
+            }
+          ]
+        },
+        {
+          "name": "Shape3__fan2",
+          "pivot": [
+            0,
+            24,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            -120.0000033393
+          ]
+        },
+        {
+          "name": "Shape3__i2",
+          "parent": "Shape3__fan2",
+          "pivot": [
+            0,
+            24,
+            0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -7,
+                23.5,
+                -0.5
+              ],
+              "size": [
+                14,
+                1,
+                1
+              ],
+              "uv": {
+                "west": {
+                  "uv": [
+                    15,
+                    1
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "east": {
+                  "uv": [
+                    0,
+                    1
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "north": {
+                  "uv": [
+                    1,
+                    1
+                  ],
+                  "uv_size": [
+                    14,
+                    1
+                  ]
+                },
+                "south": {
+                  "uv": [
+                    16,
+                    1
+                  ],
+                  "uv_size": [
+                    14,
+                    1
+                  ]
+                },
+                "up": {
+                  "uv": [
+                    1,
+                    0
+                  ],
+                  "uv_size": [
+                    14,
+                    1
+                  ]
+                },
+                "down": {
+                  "uv": [
+                    15,
+                    1
+                  ],
+                  "uv_size": [
+                    14,
+                    -1
+                  ]
+                }
+              },
+              "modelpart_mirror": true
+            }
+          ]
+        },
+        {
+          "name": "Shape3__fan3",
+          "pivot": [
+            0,
+            24,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            -180.000005009
+          ]
+        },
+        {
+          "name": "Shape3__i3",
+          "parent": "Shape3__fan3",
+          "pivot": [
+            0,
+            24,
+            0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -7,
+                23.5,
+                -0.5
+              ],
+              "size": [
+                14,
+                1,
+                1
+              ],
+              "uv": {
+                "west": {
+                  "uv": [
+                    15,
+                    1
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "east": {
+                  "uv": [
+                    0,
+                    1
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "north": {
+                  "uv": [
+                    1,
+                    1
+                  ],
+                  "uv_size": [
+                    14,
+                    1
+                  ]
+                },
+                "south": {
+                  "uv": [
+                    16,
+                    1
+                  ],
+                  "uv_size": [
+                    14,
+                    1
+                  ]
+                },
+                "up": {
+                  "uv": [
+                    1,
+                    0
+                  ],
+                  "uv_size": [
+                    14,
+                    1
+                  ]
+                },
+                "down": {
+                  "uv": [
+                    15,
+                    1
+                  ],
+                  "uv_size": [
+                    14,
+                    -1
+                  ]
+                }
+              },
+              "modelpart_mirror": true
+            }
+          ]
+        },
+        {
+          "name": "Shape3__fan4",
+          "pivot": [
+            0,
+            24,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            -240.0000066786
+          ]
+        },
+        {
+          "name": "Shape3__i4",
+          "parent": "Shape3__fan4",
+          "pivot": [
+            0,
+            24,
+            0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -7,
+                23.5,
+                -0.5
+              ],
+              "size": [
+                14,
+                1,
+                1
+              ],
+              "uv": {
+                "west": {
+                  "uv": [
+                    15,
+                    1
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "east": {
+                  "uv": [
+                    0,
+                    1
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "north": {
+                  "uv": [
+                    1,
+                    1
+                  ],
+                  "uv_size": [
+                    14,
+                    1
+                  ]
+                },
+                "south": {
+                  "uv": [
+                    16,
+                    1
+                  ],
+                  "uv_size": [
+                    14,
+                    1
+                  ]
+                },
+                "up": {
+                  "uv": [
+                    1,
+                    0
+                  ],
+                  "uv_size": [
+                    14,
+                    1
+                  ]
+                },
+                "down": {
+                  "uv": [
+                    15,
+                    1
+                  ],
+                  "uv_size": [
+                    14,
+                    -1
+                  ]
+                }
+              },
+              "modelpart_mirror": true
+            }
+          ]
+        },
+        {
+          "name": "Shape3__fan5",
+          "pivot": [
+            0,
+            24,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            -299.9999946879
+          ]
+        },
+        {
+          "name": "Shape3__i5",
+          "parent": "Shape3__fan5",
+          "pivot": [
+            0,
+            24,
+            0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -7,
+                23.5,
+                -0.5
+              ],
+              "size": [
+                14,
+                1,
+                1
+              ],
+              "uv": {
+                "west": {
+                  "uv": [
+                    15,
+                    1
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "east": {
+                  "uv": [
+                    0,
+                    1
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "north": {
+                  "uv": [
+                    1,
+                    1
+                  ],
+                  "uv_size": [
+                    14,
+                    1
+                  ]
+                },
+                "south": {
+                  "uv": [
+                    16,
+                    1
+                  ],
+                  "uv_size": [
+                    14,
+                    1
+                  ]
+                },
+                "up": {
+                  "uv": [
+                    1,
+                    0
+                  ],
+                  "uv_size": [
+                    14,
+                    1
+                  ]
+                },
+                "down": {
+                  "uv": [
+                    15,
+                    1
+                  ],
+                  "uv_size": [
+                    14,
+                    -1
+                  ]
+                }
+              },
+              "modelpart_mirror": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
