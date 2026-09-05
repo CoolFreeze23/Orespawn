@@ -1884,6 +1884,455 @@
           }
         ]
       }
+    },
+    {
+      "model_id": "model_rotator",
+      "tier": 3,
+      "proof_scope": "production_proof_model",
+      "source_class": "danger.orespawn.entity.client.RotatorModel",
+      "source_class_sha256": "5408c872ae4514c7f3c4f034265aea5926b705f103df41a88b2adb4a567a83a4",
+      "compiled_dump_sha256": "7f68335093ddefade1ec3a98aa1637fad3a5bd6878a2e0318fae2f1002f5978f",
+      "bone_count": 27,
+      "cube_count": 24,
+      "geometry_sha256": "66e8b57d72c9bd28c758efe8fab7eae70cb054beab5addd24355dd37b9205935",
+      "animation_sha256": "7882082857fdb11e02f158ebc3a6d3f970e2ac60d54813f0e903ee97b2293749",
+      "animation_contract_sha256": "965e9bddec9af87f7c93f8b9a5eb11c771e42bc9e8b340bddba0a676d84adc35",
+      "geometry": {
+        "status": "PASS",
+        "epsilon_blocks": 1e-05,
+        "max_corner_delta_blocks": 1.5652475844189892e-07,
+        "worst_case": "s_rf1_359_t0:shape3__i3#0",
+        "sample_count": 13,
+        "cube_sample_count": 312
+      },
+      "surface_mapping": {
+        "status": "PASS",
+        "position_epsilon_blocks": 1e-05,
+        "normal_epsilon": 1e-06,
+        "uv_epsilon_normalized": 1e-07,
+        "max_position_delta_blocks": 1.5652475844189892e-07,
+        "max_normal_delta": 0.0,
+        "max_uv_delta_normalized": 0.0,
+        "vertex_samples": 7488,
+        "ignored_zero_area_faces": 0,
+        "worst_case": "s_rf1_359_t0:shape3__i3#0",
+        "evidence": "position/normal/UV tuples from baked ModelPart.Cube.compile versus pinned GeckoLib BakedModelFactory rendered through GeoRenderer; faces of exactly zero area are excluded (ruling 2026-09-02)"
+      },
+      "animation": {
+        "status": "PASS",
+        "epsilon_radians": 2e-06,
+        "accepted_pose_comparison": "compiled setupAnim versus actual fresh-baked GeckoLib candidate",
+        "reference_animation_used_for_acceptance": false,
+        "sample_count": 13,
+        "max_rotation_delta_radians": 4.101257333744002e-08,
+        "max_dense_rotation_delta_radians": 0.0,
+        "max_unexpected_position_or_scale_delta": 0.0,
+        "worst_case": "bind:shape1__i4",
+        "dense_worst_case": "exact",
+        "rotation_channel_samples": 936,
+        "dense_rotation_channel_samples": 0,
+        "contract": {
+          "kind": "entity_state",
+          "accepted_runtime_path": "production OreSpawnGeoReplacement.applyCustomAnimations posed from declared entity states through the entity's pose interface; compiled poseFrom on the same states",
+          "candidate_class": "danger.orespawn.entity.client.RotatorGeoReplacement",
+          "entity_states": [
+            {
+              "name": "rf1_0",
+              "rf1": 0.0
+            },
+            {
+              "name": "rf1_2",
+              "rf1": 2.0
+            },
+            {
+              "name": "rf1_90",
+              "rf1": 90.0
+            },
+            {
+              "name": "rf1_180_5",
+              "rf1": 180.5
+            },
+            {
+              "name": "rf1_358",
+              "rf1": 358.0
+            },
+            {
+              "name": "rf1_359",
+              "rf1": 359.0
+            }
+          ],
+          "inputs": {
+            "limb_swing": 0.0,
+            "limb_swing_amounts": [
+              0.0
+            ],
+            "net_head_yaw_degrees": 0.0,
+            "head_pitch_degrees": 0.0
+          },
+          "max_position_delta_model_units": 0.0,
+          "position_epsilon_model_units": 0.0001,
+          "position_worst_case": "exact",
+          "position_channel_samples": 1053,
+          "hidden_bone_checks": 12,
+          "render_instances": {
+            "parts": {
+              "shape1": {
+                "count": 8,
+                "axis": "z",
+                "step_scope": "part",
+                "step_radians": 0.7853982,
+                "step_arithmetic": "float32_accumulate",
+                "group_bones": [
+                  "shape1__fan"
+                ]
+              },
+              "shape2": {
+                "count": 8,
+                "axis": "z",
+                "step_scope": "part",
+                "step_radians": 0.7853982,
+                "step_arithmetic": "float32_accumulate",
+                "group_bones": [
+                  "shape2__fan"
+                ]
+              },
+              "shape3": {
+                "count": 8,
+                "axis": "z",
+                "step_scope": "part",
+                "step_radians": 0.7853982,
+                "step_arithmetic": "float32_accumulate",
+                "group_bones": [
+                  "shape3__fan"
+                ]
+              }
+            },
+            "group_bones": 3,
+            "clone_bones": 24,
+            "samples_checked": 13,
+            "draws_checked": 312,
+            "instance_pose_epsilon_linear": 2e-06,
+            "instance_pose_epsilon_model_units": 0.0001,
+            "max_instance_pose_linear_delta": 0.0,
+            "max_instance_pose_translation_delta_model_units": 0.0,
+            "max_draw_pose_linear_delta": 0.0,
+            "max_draw_pose_translation_delta_model_units": 2.399999998736746e-08,
+            "worst_case": "s_rf1_2_t0:shape2__i2 (draw vs clone)",
+            "evidence": "measured classic per-draw pose stack (instance_pose at the part's pushPose, draw_pose at cube compile) versus measured GeckoLib bone transforms conjugated into classic space (bone_poses_classic): instance == group bone, draw == clone bone * T(pivot)"
+          }
+        }
+      },
+      "reference_animation": {
+        "status": "SCHEMA_VALID_REFERENCE_ONLY",
+        "role": "NOT_APPLICABLE_CODE_DRIVEN_MODEL",
+        "clip_count": 0,
+        "constant_vector_count": 0,
+        "runtime_acceptance": false
+      },
+      "visual": {
+        "status": "PASS",
+        "image_size": [
+          256,
+          256
+        ],
+        "camera": {
+          "yaw_degrees": 34.0,
+          "pitch_degrees": -28.0
+        },
+        "channel_tolerance": 2,
+        "changed_fraction_threshold": 0.001,
+        "mean_absolute_error_threshold": 0.25,
+        "minimum_foreground_fraction_threshold": 0.001,
+        "max_changed_fraction": 0.0,
+        "max_mean_absolute_error": 0.0,
+        "z_fight_policy": "pixels where two different quads meet the front within 1e-06 depth with different texels are draw-order z-fights, excluded from the comparison and painted in the diff (ruling 2, 2026-09-02)",
+        "max_contested_fraction": 0.0,
+        "contested_fraction_pin": 0.0,
+        "requires_in_game_acceptance": false,
+        "cutout_alpha_threshold": 0.1,
+        "minimum_observed_foreground_fraction": 1.0,
+        "samples": [
+          {
+            "sample": "bind",
+            "camera": null,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "contested_fraction": 0.0,
+            "vanilla_foreground_fraction": 0.3525848388671875,
+            "geo_foreground_fraction": 0.3525848388671875,
+            "vanilla_capture": "visual/model_rotator/bind.vanilla.png",
+            "geo_capture": "visual/model_rotator/bind.geo.png",
+            "diff_capture": "visual/model_rotator/bind.diff.png"
+          },
+          {
+            "sample": "s_rf1_2_t0",
+            "camera": null,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "contested_fraction": 0.0,
+            "vanilla_foreground_fraction": 0.35321044921875,
+            "geo_foreground_fraction": 0.35321044921875,
+            "vanilla_capture": "visual/model_rotator/s_rf1_2_t0.vanilla.png",
+            "geo_capture": "visual/model_rotator/s_rf1_2_t0.geo.png",
+            "diff_capture": "visual/model_rotator/s_rf1_2_t0.diff.png"
+          },
+          {
+            "sample": "s_rf1_90_t0",
+            "camera": null,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "contested_fraction": 0.0,
+            "vanilla_foreground_fraction": 0.3334197998046875,
+            "geo_foreground_fraction": 0.3334197998046875,
+            "vanilla_capture": "visual/model_rotator/s_rf1_90_t0.vanilla.png",
+            "geo_capture": "visual/model_rotator/s_rf1_90_t0.geo.png",
+            "diff_capture": "visual/model_rotator/s_rf1_90_t0.diff.png"
+          },
+          {
+            "sample": "s_rf1_180_5_t_half",
+            "camera": null,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "contested_fraction": 0.0,
+            "vanilla_foreground_fraction": 0.3528594970703125,
+            "geo_foreground_fraction": 0.3528594970703125,
+            "vanilla_capture": "visual/model_rotator/s_rf1_180_5_t_half.vanilla.png",
+            "geo_capture": "visual/model_rotator/s_rf1_180_5_t_half.geo.png",
+            "diff_capture": "visual/model_rotator/s_rf1_180_5_t_half.diff.png"
+          },
+          {
+            "sample": "s_rf1_358_t0",
+            "camera": null,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "contested_fraction": 0.0,
+            "vanilla_foreground_fraction": 0.35418701171875,
+            "geo_foreground_fraction": 0.35418701171875,
+            "vanilla_capture": "visual/model_rotator/s_rf1_358_t0.vanilla.png",
+            "geo_capture": "visual/model_rotator/s_rf1_358_t0.geo.png",
+            "diff_capture": "visual/model_rotator/s_rf1_358_t0.diff.png"
+          }
+        ]
+      }
+    },
+    {
+      "model_id": "model_purplepower",
+      "tier": 3,
+      "proof_scope": "production_proof_model",
+      "source_class": "danger.orespawn.entity.client.ModelPurplePower",
+      "source_class_sha256": "d633bac419fbff3df34821355426cfe6c6524c017e0dbdcc9a6c5105f1d1f3fb",
+      "compiled_dump_sha256": "6327068124b43b5318d626018275180ac6bdeb5352bd43e6eaa33dbd5aaff25b",
+      "bone_count": 36,
+      "cube_count": 18,
+      "geometry_sha256": "761e7a19d4ed9500449b43c64e4e15c0d146763d3820fa6ea6ba8bbd6a0a8f5c",
+      "animation_sha256": "7882082857fdb11e02f158ebc3a6d3f970e2ac60d54813f0e903ee97b2293749",
+      "animation_contract_sha256": "2d3af6d863da88fc24cf224bbdf6f91be6d8e613b714118d4749991a651e7a4c",
+      "geometry": {
+        "status": "PASS",
+        "epsilon_blocks": 1e-05,
+        "max_corner_delta_blocks": 1.741751991436651e-07,
+        "worst_case": "t_0_012500:Shape3__i2#0",
+        "sample_count": 9,
+        "cube_sample_count": 162
+      },
+      "surface_mapping": {
+        "status": "PASS",
+        "position_epsilon_blocks": 1e-05,
+        "normal_epsilon": 1e-06,
+        "uv_epsilon_normalized": 1e-07,
+        "max_position_delta_blocks": 1.741751991436651e-07,
+        "max_normal_delta": 1.6224069955492823e-07,
+        "max_uv_delta_normalized": 0.0,
+        "vertex_samples": 3888,
+        "ignored_zero_area_faces": 0,
+        "worst_case": "t_0_012500:Shape3__i2#0",
+        "evidence": "position/normal/UV tuples from baked ModelPart.Cube.compile versus pinned GeckoLib BakedModelFactory rendered through GeoRenderer; faces of exactly zero area are excluded (ruling 2026-09-02)"
+      },
+      "animation": {
+        "status": "PASS",
+        "epsilon_radians": 2e-06,
+        "accepted_pose_comparison": "compiled setupAnim versus actual fresh-baked GeckoLib candidate",
+        "reference_animation_used_for_acceptance": false,
+        "sample_count": 9,
+        "max_rotation_delta_radians": 4.101257333744002e-08,
+        "max_dense_rotation_delta_radians": 0.0,
+        "max_unexpected_position_or_scale_delta": 0.0,
+        "worst_case": "bind:Shape1__fan3",
+        "dense_worst_case": "exact",
+        "rotation_channel_samples": 972,
+        "dense_rotation_channel_samples": 0,
+        "contract": {
+          "kind": "code_driven",
+          "accepted_runtime_path": "production OreSpawnGeoReplacement.applyCustomAnimations through OreSpawnGeoReplacementModel.setCustomAnimations",
+          "candidate_class": "danger.orespawn.entity.client.PurplePowerGeoReplacement",
+          "inputs": {
+            "limb_swing": 0.0,
+            "limb_swing_amounts": [
+              0.0
+            ],
+            "net_head_yaw_degrees": 0.0,
+            "head_pitch_degrees": 0.0
+          },
+          "max_position_delta_model_units": 0.0,
+          "position_epsilon_model_units": 0.0001,
+          "position_worst_case": "exact",
+          "position_channel_samples": 972,
+          "hidden_bone_checks": 8,
+          "render_instances": {
+            "parts": {
+              "Shape1": {
+                "count": 6,
+                "axis": "z",
+                "step_scope": "stack",
+                "step_radians": 1.0471976,
+                "step_arithmetic": "float32_multiply",
+                "group_bones": [
+                  "Shape1__fan0",
+                  "Shape1__fan1",
+                  "Shape1__fan2",
+                  "Shape1__fan3",
+                  "Shape1__fan4",
+                  "Shape1__fan5"
+                ]
+              },
+              "Shape2": {
+                "count": 6,
+                "axis": "z",
+                "step_scope": "stack",
+                "step_radians": 1.0471976,
+                "step_arithmetic": "float32_multiply",
+                "group_bones": [
+                  "Shape2__fan0",
+                  "Shape2__fan1",
+                  "Shape2__fan2",
+                  "Shape2__fan3",
+                  "Shape2__fan4",
+                  "Shape2__fan5"
+                ]
+              },
+              "Shape3": {
+                "count": 6,
+                "axis": "z",
+                "step_scope": "stack",
+                "step_radians": 1.0471976,
+                "step_arithmetic": "float32_multiply",
+                "group_bones": [
+                  "Shape3__fan0",
+                  "Shape3__fan1",
+                  "Shape3__fan2",
+                  "Shape3__fan3",
+                  "Shape3__fan4",
+                  "Shape3__fan5"
+                ]
+              }
+            },
+            "group_bones": 18,
+            "clone_bones": 18,
+            "samples_checked": 9,
+            "draws_checked": 162,
+            "instance_pose_epsilon_linear": 2e-06,
+            "instance_pose_epsilon_model_units": 0.0001,
+            "max_instance_pose_linear_delta": 0.0,
+            "max_instance_pose_translation_delta_model_units": 0.0,
+            "max_draw_pose_linear_delta": 1.4999999997655777e-07,
+            "max_draw_pose_translation_delta_model_units": 0.0,
+            "worst_case": "t_0_012500:Shape1__i2 (draw vs clone)",
+            "evidence": "measured classic per-draw pose stack (instance_pose at the part's pushPose, draw_pose at cube compile) versus measured GeckoLib bone transforms conjugated into classic space (bone_poses_classic): instance == group bone, draw == clone bone * T(pivot)"
+          }
+        }
+      },
+      "reference_animation": {
+        "status": "SCHEMA_VALID_REFERENCE_ONLY",
+        "role": "NOT_APPLICABLE_CODE_DRIVEN_MODEL",
+        "clip_count": 0,
+        "constant_vector_count": 0,
+        "runtime_acceptance": false
+      },
+      "visual": {
+        "status": "PASS",
+        "image_size": [
+          256,
+          256
+        ],
+        "camera": {
+          "yaw_degrees": 34.0,
+          "pitch_degrees": -28.0
+        },
+        "channel_tolerance": 2,
+        "changed_fraction_threshold": 0.001,
+        "mean_absolute_error_threshold": 0.25,
+        "minimum_foreground_fraction_threshold": 0.001,
+        "max_changed_fraction": 0.0,
+        "max_mean_absolute_error": 0.0,
+        "z_fight_policy": "pixels where two different quads meet the front within 1e-06 depth with different texels are draw-order z-fights, excluded from the comparison and painted in the diff (ruling 2, 2026-09-02)",
+        "max_contested_fraction": 0.1058502197265625,
+        "contested_fraction_pin": 0.1058502197265625,
+        "requires_in_game_acceptance": true,
+        "cutout_alpha_threshold": 0.1,
+        "minimum_observed_foreground_fraction": 1.0,
+        "samples": [
+          {
+            "sample": "bind",
+            "camera": null,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "contested_fraction": 0.1058502197265625,
+            "vanilla_foreground_fraction": 0.2080078125,
+            "geo_foreground_fraction": 0.2080078125,
+            "vanilla_capture": "visual/model_purplepower/bind.vanilla.png",
+            "geo_capture": "visual/model_purplepower/bind.geo.png",
+            "diff_capture": "visual/model_purplepower/bind.diff.png"
+          },
+          {
+            "sample": "t_0_001250",
+            "camera": null,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "contested_fraction": 0.0,
+            "vanilla_foreground_fraction": 0.24688720703125,
+            "geo_foreground_fraction": 0.24688720703125,
+            "vanilla_capture": "visual/model_purplepower/t_0_001250.vanilla.png",
+            "geo_capture": "visual/model_purplepower/t_0_001250.geo.png",
+            "diff_capture": "visual/model_purplepower/t_0_001250.diff.png"
+          },
+          {
+            "sample": "t_0_005000",
+            "camera": null,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "contested_fraction": 0.0,
+            "vanilla_foreground_fraction": 0.236480712890625,
+            "geo_foreground_fraction": 0.236480712890625,
+            "vanilla_capture": "visual/model_purplepower/t_0_005000.vanilla.png",
+            "geo_capture": "visual/model_purplepower/t_0_005000.geo.png",
+            "diff_capture": "visual/model_purplepower/t_0_005000.diff.png"
+          },
+          {
+            "sample": "t_0_030000",
+            "camera": null,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "contested_fraction": 0.0,
+            "vanilla_foreground_fraction": 0.2563629150390625,
+            "geo_foreground_fraction": 0.2563629150390625,
+            "vanilla_capture": "visual/model_purplepower/t_0_030000.vanilla.png",
+            "geo_capture": "visual/model_purplepower/t_0_030000.geo.png",
+            "diff_capture": "visual/model_purplepower/t_0_030000.diff.png"
+          },
+          {
+            "sample": "t_quarter",
+            "camera": null,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "contested_fraction": 0.0305938720703125,
+            "vanilla_foreground_fraction": 0.221038818359375,
+            "geo_foreground_fraction": 0.221038818359375,
+            "vanilla_capture": "visual/model_purplepower/t_quarter.vanilla.png",
+            "geo_capture": "visual/model_purplepower/t_quarter.geo.png",
+            "diff_capture": "visual/model_purplepower/t_quarter.diff.png"
+          }
+        ]
+      }
     }
   ],
   "fixtures": [
@@ -1986,7 +2435,7 @@
   "deterministic_text_outputs": {
     "status": "PASS",
     "line_ending": "LF",
-    "file_count": 73,
+    "file_count": 85,
     "files": [
       "model_elevator.compiled.json",
       "model_elevator.geo-render.json",
@@ -2055,6 +2504,18 @@
       "model_rockbase.animation.json",
       "model_rockbase.animation-contract.json",
       "model_rockbase.conversion.json",
+      "model_rotator.compiled.json",
+      "model_rotator.geo-render.json",
+      "model_rotator.geo.json",
+      "model_rotator.animation.json",
+      "model_rotator.animation-contract.json",
+      "model_rotator.conversion.json",
+      "model_purplepower.compiled.json",
+      "model_purplepower.geo-render.json",
+      "model_purplepower.geo.json",
+      "model_purplepower.animation.json",
+      "model_purplepower.animation-contract.json",
+      "model_purplepower.conversion.json",
       "fixture_runtime_basis_yz.compiled.json",
       "fixture_runtime_basis_yz.geo-render.json",
       "fixture_runtime_basis_yz.geo.json",
@@ -2063,6 +2524,6 @@
       "fixture_runtime_basis_yz.conversion.json"
     ]
   },
-  "visual_artifact_count": 171,
+  "visual_artifact_count": 201,
   "visual_artifact_policy": "output cleared first; exact report-referenced PNG set only"
 }

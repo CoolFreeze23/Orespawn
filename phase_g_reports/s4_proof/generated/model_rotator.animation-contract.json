@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "kind": "entity_state",
+  "controller_required": false,
+  "candidate_animation_path": "production_replacement_hook",
+  "candidate_class": "danger.orespawn.entity.client.RotatorGeoReplacement",
+  "candidate_acceptance_path": "production OreSpawnGeoReplacementModel.setCustomAnimations (Amendment 1 Tier-3 code-driven)",
+  "sample_ids": [
+    "bind",
+    "s_rf1_0_t0",
+    "s_rf1_0_t_half",
+    "s_rf1_2_t0",
+    "s_rf1_2_t_half",
+    "s_rf1_90_t0",
+    "s_rf1_90_t_half",
+    "s_rf1_180_5_t0",
+    "s_rf1_180_5_t_half",
+    "s_rf1_358_t0",
+    "s_rf1_358_t_half",
+    "s_rf1_359_t0",
+    "s_rf1_359_t_half"
+  ],
+  "entity_states": [
+    "rf1_0",
+    "rf1_2",
+    "rf1_90",
+    "rf1_180_5",
+    "rf1_358",
+    "rf1_359"
+  ]
+}

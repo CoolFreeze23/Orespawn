@@ -50,7 +50,11 @@ public class PurplePowerRenderer extends MobRenderer<PurplePower, ModelPurplePow
 
     @Override
     public ResourceLocation getTextureLocation(PurplePower entity) {
-        int type = entity.getPurpleType();
+        return textureFor(entity.getPurpleType());
+    }
+
+    /** The per-type texture table (orig RenderPurplePower.java:46 by getPurpleType), shared with the GeckoLib candidate so both renderers read one source. */
+    public static ResourceLocation textureFor(int type) {
         return switch (type) {
             case 1 -> TEXTURE_2;
             case 2 -> TEXTURE_3;

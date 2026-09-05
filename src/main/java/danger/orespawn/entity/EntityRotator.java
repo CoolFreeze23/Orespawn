@@ -26,8 +26,9 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import danger.orespawn.OreSpawnMod;
 import danger.orespawn.entity.ai.TargetSelection;
+import danger.orespawn.entity.pose.RotatorPose;
 
-public class EntityRotator extends Monster {
+public class EntityRotator extends Monster implements RotatorPose {
     // OPT-011: cached SoundEvents — identical createVariableRangeEvent ids,
     // allocated once per class instead of on every sound query.
     private static final SoundEvent SND_VORTEXLIVE = SoundEvent.createVariableRangeEvent(

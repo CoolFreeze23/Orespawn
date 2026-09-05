@@ -143,6 +143,32 @@ The independent gates are:
 - Entity states: ['type_0', 'type_1', 'type_2', 'type_3', 'type_4', 'type_5', 'type_6', 'type_7', 'type_8', 'type_9', 'type_10', 'type_11', 'type_12', 'type_13']; rotation maximum delta 0 radians; position maximum delta 0 model units; hidden-bone checks 14.
 - Visual z-fight pixels excluded (ruling 2): maximum contested fraction 0.
 
+## model_rotator (Tier 3)
+
+- Exact bones: 27; cubes: 24.
+- Geometry maximum corner delta: 1.56524758442e-07 blocks (epsilon 1e-05).
+- Surface maximum UV delta: 0; normal delta: 0.
+- Animation maximum rotation delta: 4.10125733374e-08 radians (epsilon 2e-06).
+- Visual maximum changed fraction: 0; maximum mean absolute error: 0.
+
+- Accepted path: production OreSpawnGeoReplacement.applyCustomAnimations posed from declared entity states through the entity's pose interface; compiled poseFrom on the same states (`danger.orespawn.entity.client.RotatorGeoReplacement`).
+- Entity states: ['rf1_0', 'rf1_2', 'rf1_90', 'rf1_180_5', 'rf1_358', 'rf1_359']; rotation maximum delta 4.10125733374e-08 radians; position maximum delta 0 model units; hidden-bone checks 12.
+- Visual z-fight pixels excluded (ruling 2): maximum contested fraction 0.
+- Render instances: shape1 x8 (part, z), shape2 x8 (part, z), shape3 x8 (part, z); 24 clone and 3 group bones; 312 measured draws over 13 captures: instance pose linear delta 0, translation 0 model units; draw pose linear delta 0, translation 2.39999999874e-08 model units.
+
+## model_purplepower (Tier 3)
+
+- Exact bones: 36; cubes: 18.
+- Geometry maximum corner delta: 1.74175199144e-07 blocks (epsilon 1e-05).
+- Surface maximum UV delta: 0; normal delta: 1.62240699555e-07.
+- Animation maximum rotation delta: 4.10125733374e-08 radians (epsilon 2e-06).
+- Visual maximum changed fraction: 0; maximum mean absolute error: 0.
+
+- Accepted path: production OreSpawnGeoReplacement.applyCustomAnimations through OreSpawnGeoReplacementModel.setCustomAnimations (`danger.orespawn.entity.client.PurplePowerGeoReplacement`).
+- Rotation maximum delta 4.10125733374e-08 radians; position maximum delta 0 model units over 972 position channels; inputs {'limb_swing': 0.0, 'limb_swing_amounts': [0.0], 'net_head_yaw_degrees': 0.0, 'head_pitch_degrees': 0.0}.
+- Visual z-fight pixels excluded (ruling 2): maximum contested fraction 0.105850219727.
+- Render instances: Shape1 x6 (stack, z), Shape2 x6 (stack, z), Shape3 x6 (stack, z); 18 clone and 18 group bones; 162 measured draws over 9 captures: instance pose linear delta 0, translation 0 model units; draw pose linear delta 1.49999999977e-07, translation 0 model units.
+
 ## fixture_runtime_basis_yz (non-production fixture)
 
 - Coverage: nested_parent_bone, non_mirrored_uv, nonzero_bind_rotation, uniform_inflate.

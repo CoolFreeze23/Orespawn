@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import danger.orespawn.entity.EntityRotator;
+import danger.orespawn.entity.pose.RotatorPose;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
@@ -21,6 +22,10 @@ import net.minecraft.client.model.geom.builders.*;
 public class RotatorModel<T extends EntityRotator> extends EntityModel<T> {
     /** orig ModelRotator.java:56 — 45° fan step between successive blades. */
     private static final float FAN_STEP = 0.7853982f;
+    /** orig ModelRotator.java:75 — degrees added to {@code rf1} per rendered frame. */
+    public static final float FAN_ADVANCE_DEGREES = 2.0f;
+    /** orig ModelRotator.java:76 — {@code rf1} wraps to 0 once it exceeds this. */
+    public static final float FAN_WRAP_DEGREES = 359.0f;
 
     private final ModelPart shape1;
     private final ModelPart shape2;
@@ -47,7 +52,41 @@ public class RotatorModel<T extends EntityRotator> extends EntityModel<T> {
 
     @Override
     public void setupAnim(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
+        poseFrom(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
+    }
+
+    /**
+     * The former {@link #setupAnim} body, entity-free: captures the per-entity
+     * fan angle holder that {@link #renderToBuffer} spins by and advances. The
+     * GeckoLib candidate ({@code RotatorGeoReplacement}) poses from the same
+     * {@link RotatorPose}, which is what lets the Slice 4c parity harness drive
+     * both sides from a declared {@code rf1} preset.
+     */
+    public void poseFrom(RotatorPose entity, float limbSwing, float limbSwingAmount, float ageInTicks,
+                         float netHeadYaw, float headPitch) {
         this.renderInfo = entity.getRenderInfo();
+    }
+
+    /**
+     * The degrees-to-radians conversion {@code Axis.rotationDegrees} applies to
+     * the fan spin in {@link #renderFan} (1.21.1 bytecode: {@code ldc 0.017453292f;
+     * fmul}; the constant is {@code (float) (Math.PI / 180.0)}), so the GeckoLib
+     * hook feeds its fan group bones the identical float.
+     */
+    public static float fanSpinRadians(float degrees) {
+        return degrees * ((float) (Math.PI / 180.0));
+    }
+
+    /**
+     * orig ModelRotator.java:75-78 — advance the fan 2° per rendered frame, wrap
+     * at 359°. Shared by the classic draw loop and the GeckoLib hook, so the two
+     * renderers step the per-entity angle identically.
+     */
+    public static void advanceFanSpin(RenderInfo ri) {
+        ri.rf1 += FAN_ADVANCE_DEGREES;
+        if (ri.rf1 > FAN_WRAP_DEGREES) {
+            ri.rf1 = 0.0f;
+        }
     }
 
     @Override
@@ -64,10 +103,7 @@ public class RotatorModel<T extends EntityRotator> extends EntityModel<T> {
 
         if (ri != null) {
             // orig ModelRotator.java:75-78 — advance 2° per rendered frame, wrap at 359°.
-            ri.rf1 += 2.0f;
-            if (ri.rf1 > 359.0f) {
-                ri.rf1 = 0.0f;
-            }
+            advanceFanSpin(ri);
         }
     }
 
@@ -75,6 +111,13 @@ public class RotatorModel<T extends EntityRotator> extends EntityModel<T> {
      * Renders {@code blade} 8 times at 45° Z-rotation increments inside a pose
      * rotated {@code spinDegrees} about {@code axis}, reproducing the original
      * glRotatef + 8-iteration render loop (orig ModelRotator.java:52-57).
+     *
+     * <p>Slice 4c: the GeckoLib rig reproduces this loop statically — draw
+     * {@code k} of a blade is the clone bone {@code <blade>__i<k>} (its own
+     * Z rotation {@code k * FAN_STEP}) under the fan group bone
+     * {@code <blade>__fan} that the hook spins about {@code axis}; the
+     * converter's render-instance expansion ({@code tools/s4_model_proofs.json},
+     * {@code render_instances}) is what emits them.</p>
      */
     private static void renderFan(ModelPart blade, PoseStack ps, VertexConsumer vc,
                                   int light, int overlay, int color, Axis axis, float spinDegrees) {

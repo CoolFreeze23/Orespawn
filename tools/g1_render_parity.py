@@ -301,13 +301,226 @@ def vector_delta(left: Iterable[float], right: Iterable[float]) -> float:
     return max(abs(float(a) - float(b)) for a, b in zip(left, right))
 
 
+AXIS_INDEX = {"x": 0, "y": 1, "z": 2}
+
+
+def render_instance_expansion(conversion: dict[str, Any] | None) -> dict[str, Any] | None:
+    """Slice 4c: the converter's clone/group mapping for a model with render_instances, else None."""
+    if not conversion:
+        return None
+    return conversion.get("render_instances")
+
+
+def candidate_bone_names(model_id: str, spec: dict[str, Any], compiled: dict[str, Any],
+                         conversion: dict[str, Any]) -> list[str]:
+    """The bone set the generated rig must carry: the compiled parts, with every render-instance
+    part replaced by the converter's group and clone bones (Slice 4c)."""
+    names = set(compiled["bone_names"])
+    expansion = render_instance_expansion(conversion)
+    declared = spec.get("render_instances")
+    if compiled.get("render_instances") != declared:
+        raise AssertionError(f"{model_id} render_instances drift between the manifest and the compiled dump")
+    if expansion is None:
+        if declared:
+            raise AssertionError(f"{model_id} declares render_instances but the converter recorded no expansion")
+        return sorted(names)
+    if expansion.get("declared") != declared:
+        raise AssertionError(f"{model_id} render_instances drift between the manifest and the converter")
+    parts = expansion["parts"]
+    if set(parts) != set(declared):
+        raise AssertionError(f"{model_id} converter expanded {sorted(parts)} != declared {sorted(declared)}")
+    missing = sorted(set(parts) - names)
+    if missing:
+        raise AssertionError(f"{model_id} render_instances names parts the compiled model lacks: {missing}")
+    for bone, entry in expansion["bones"].items():
+        if entry["source_part"] not in parts:
+            raise AssertionError(f"{model_id} expansion bone {bone} maps to an undeclared part")
+        if entry["role"] == "clone" and entry["group_bone"] not in expansion["bones"]:
+            raise AssertionError(f"{model_id} clone {bone} names an unknown group bone")
+    return sorted((names - set(parts)) | set(expansion["bones"]))
+
+
+def definition_parts(root: dict[str, Any]) -> dict[str, dict[str, Any]]:
+    parts: dict[str, dict[str, Any]] = {}
+
+    def visit(part: dict[str, Any]) -> None:
+        for child in part["children"]:
+            parts[child["name"]] = child
+            visit(child)
+
+    visit(root)
+    return parts
+
+
+def matrix_rows(value: Any, what: str) -> list[list[float]]:
+    rows = [[float(entry) for entry in row] for row in value]
+    if len(rows) != 4 or any(len(row) != 4 for row in rows):
+        raise AssertionError(f"{what}: not a 4x4 matrix")
+    if vector_delta(rows[3], [0.0, 0.0, 0.0, 1.0]) > 1.0e-6:
+        raise AssertionError(f"{what}: not an affine matrix (bottom row {rows[3]})")
+    return rows
+
+
+def matrix_translate(matrix: list[list[float]], offset: list[float]) -> list[list[float]]:
+    """matrix * T(offset): the same linear part, the translation moved by the rotated offset."""
+    result = [list(row) for row in matrix]
+    for r in range(3):
+        result[r][3] = matrix[r][3] + sum(matrix[r][c] * offset[c] for c in range(3))
+    return result
+
+
+def matrix_delta(left: list[list[float]], right: list[list[float]]) -> tuple[float, float]:
+    """(max |delta| over the 3x3 linear block, max |delta| over the translation column, blocks)."""
+    linear = max(abs(left[r][c] - right[r][c]) for r in range(3) for c in range(3))
+    translation = max(abs(left[r][3] - right[r][3]) for r in range(3))
+    return linear, translation
+
+
+def render_instance_pose_parity(model_id: str, compiled: dict[str, Any],
+                                vanilla_samples: dict[str, dict[str, Any]],
+                                candidate_samples: dict[str, dict[str, Any]],
+                                expansion: dict[str, Any], rotation_epsilon: float,
+                                position_epsilon: float) -> dict[str, Any]:
+    """Slice 4c composition leg: the classic model's MEASURED per-draw pose stack against the
+    candidate's MEASURED bone transforms.
+
+    The compiled probe records, for every draw k of an expanded part, the pose-stack matrix at
+    the part's own pushPose (``instance_pose``: the model's per-draw transform, e.g. the fan spin
+    or the stack step) and the matrix its cubes were compiled with (``draw_pose`` = instance *
+    T(pivot) * R(part)). The geo probe records every bone's cumulative transform conjugated into
+    classic space (``bone_poses_classic``). The two must agree:
+
+      instance_pose(part, k)  ==  bone_pose(group bone of clone k)
+      draw_pose(part, k)      ==  bone_pose(clone k) * T(part pivot / 16)
+
+    (the second holds because GeckoLib cube corners are absolute, ModelPart corners local to the
+    pivot). Linear entries are sines/cosines of the channel angles and are held to the animation
+    epsilon in radians. An entry error bounds the angle error only up to a factor of sqrt(3) for a
+    rotation about an arbitrary axis (the largest entry delta is at least |d theta| / sqrt(3)), so
+    the leg's effective angular tolerance is at most ~sqrt(3) x epsilon (~3.5e-6 rad at 2e-6) — stated,
+    no threshold changed (refuter A, 2026-09-06); the translation column is held to the position
+    epsilon in model units (x16 from blocks).
+    """
+    mapping = expansion["bones"]
+    pivots = {
+        name: [float(value) / 16.0 for value in part["absolute_pivot"]]
+        for name, part in definition_parts(compiled["definition"]).items()
+    }
+    clone_bones = sorted(name for name, entry in mapping.items() if entry["role"] == "clone")
+    max_instance_linear = max_instance_translation = 0.0
+    max_draw_linear = max_draw_translation = 0.0
+    worst = "exact"
+    draws_checked = 0
+    samples_checked = 0
+    for sample_id, vanilla_sample in vanilla_samples.items():
+        if vanilla_sample.get("capture_kind") != "full":
+            continue
+        candidate_sample = candidate_samples[sample_id]
+        poses = candidate_sample.get("bone_poses_classic")
+        if poses is None:
+            raise AssertionError(f"{model_id}/{sample_id} geo probe recorded no bone_poses_classic")
+        draws = vanilla_sample.get("draws")
+        if draws is None:
+            raise AssertionError(f"{model_id}/{sample_id} compiled probe recorded no per-draw poses")
+        seen: list[str] = []
+        for draw in draws:
+            clone = draw["bone"]
+            entry = mapping.get(clone)
+            if entry is None or entry["role"] != "clone":
+                raise AssertionError(f"{model_id}/{sample_id} draw names no clone bone: {clone}")
+            if entry["source_part"] != draw["part"] or entry["draw_index"] != draw["draw_index"]:
+                raise AssertionError(f"{model_id}/{sample_id} draw {clone} disagrees with the converter mapping")
+            seen.append(clone)
+            group = entry["group_bone"]
+            instance = matrix_rows(draw["instance_pose"], f"{model_id}/{sample_id}/{clone} instance_pose")
+            group_pose = matrix_rows(poses[group], f"{model_id}/{sample_id}/{group} bone pose")
+            linear, translation = matrix_delta(instance, group_pose)
+            if linear > max(max_instance_linear, max_draw_linear) or translation > max(
+                    max_instance_translation, max_draw_translation):
+                worst = f"{sample_id}:{clone} (instance vs {group})"
+            max_instance_linear = max(max_instance_linear, linear)
+            max_instance_translation = max(max_instance_translation, translation)
+            if linear > rotation_epsilon or translation * 16.0 > position_epsilon:
+                raise AssertionError(
+                    f"RENDER INSTANCE MISMATCH {model_id}/{sample_id}/{clone}: the classic per-draw "
+                    f"transform differs from group bone {group} (linear {linear:.12g}, translation "
+                    f"{translation * 16.0:.12g} model units)"
+                )
+            draw_pose = matrix_rows(draw["draw_pose"], f"{model_id}/{sample_id}/{clone} draw_pose")
+            clone_pose = matrix_translate(
+                matrix_rows(poses[clone], f"{model_id}/{sample_id}/{clone} bone pose"),
+                pivots[entry["source_part"]],
+            )
+            linear, translation = matrix_delta(draw_pose, clone_pose)
+            if linear > max(max_instance_linear, max_draw_linear) or translation > max(
+                    max_instance_translation, max_draw_translation):
+                worst = f"{sample_id}:{clone} (draw vs clone)"
+            max_draw_linear = max(max_draw_linear, linear)
+            max_draw_translation = max(max_draw_translation, translation)
+            if linear > rotation_epsilon or translation * 16.0 > position_epsilon:
+                raise AssertionError(
+                    f"RENDER INSTANCE MISMATCH {model_id}/{sample_id}/{clone}: the classic draw pose "
+                    f"differs from the clone bone's transform (linear {linear:.12g}, translation "
+                    f"{translation * 16.0:.12g} model units)"
+                )
+            draws_checked += 1
+        if sorted(seen) != clone_bones:
+            raise AssertionError(
+                f"{model_id}/{sample_id} draws {sorted(seen)} != clone bones {clone_bones}"
+            )
+        samples_checked += 1
+    if draws_checked == 0:
+        raise AssertionError(f"{model_id} render-instance composition leg compared no draws")
+    return {
+        "parts": {
+            name: {
+                "count": part["count"],
+                "axis": part["axis"],
+                "step_scope": part["step_scope"],
+                "step_radians": part["step_radians"],
+                "step_arithmetic": part["step_arithmetic"],
+                "group_bones": part["group_bones"],
+            }
+            for name, part in expansion["parts"].items()
+        },
+        "group_bones": sum(1 for entry in mapping.values() if entry["role"] == "group"),
+        "clone_bones": len(clone_bones),
+        "samples_checked": samples_checked,
+        "draws_checked": draws_checked,
+        "instance_pose_epsilon_linear": rotation_epsilon,
+        "instance_pose_epsilon_model_units": position_epsilon,
+        "max_instance_pose_linear_delta": max_instance_linear,
+        "max_instance_pose_translation_delta_model_units": max_instance_translation * 16.0,
+        "max_draw_pose_linear_delta": max_draw_linear,
+        "max_draw_pose_translation_delta_model_units": max_draw_translation * 16.0,
+        "worst_case": worst,
+        "evidence": (
+            "measured classic per-draw pose stack (instance_pose at the part's pushPose, draw_pose at "
+            "cube compile) versus measured GeckoLib bone transforms conjugated into classic space "
+            "(bone_poses_classic): instance == group bone, draw == clone bone * T(pivot)"
+        ),
+    }
+
+
 def animation_parity(model_id: str, spec: dict[str, Any], compiled: dict[str, Any],
                      geo_render: dict[str, Any], contract: dict[str, Any],
                      epsilon: float, position_epsilon: float = 1.0e-4,
-                     repository_root: Path | None = None) -> dict[str, Any]:
-    """Compare independent compiled setupAnim output with the actual candidate hook."""
+                     repository_root: Path | None = None,
+                     conversion: dict[str, Any] | None = None) -> dict[str, Any]:
+    """Compare independent compiled setupAnim output with the actual candidate hook.
+
+    Slice 4c: for a model with render_instances the compiled ``transforms`` stay per PART (the
+    channels its pose wrote), while the candidate carries the converter's group and clone bones.
+    A clone's expected channels are its source part's, with the loop-assigned channel replaced by
+    the clone's static step (``step_scope: part``); a static group's are its bind step; a
+    hook-animated group's rotation has no part channel and is proven by the composition leg
+    (``render_instance_pose_parity``) against the classic model's measured per-draw pose stack.
+    """
     vanilla_samples = sample_map(compiled)
     candidate_samples = sample_map(geo_render)
+    expansion = render_instance_expansion(conversion)
+    mapping: dict[str, Any] = expansion["bones"] if expansion else {}
+    expanded_parts = set(expansion["parts"]) if expansion else set()
     if vanilla_samples.keys() != candidate_samples.keys():
         raise AssertionError(
             f"{model_id} animation sample IDs differ: "
@@ -345,9 +558,17 @@ def animation_parity(model_id: str, spec: dict[str, Any], compiled: dict[str, An
                 raise AssertionError(f"{model_id}/{current_id} candidate metadata drift for {field}")
         candidate_rotations = candidate_sample["java_rotations"]
         transforms = vanilla_sample["transforms"]
-        if transforms.keys() != candidate_rotations.keys():
+        expected_bones = (set(transforms) - expanded_parts) | set(mapping)
+        if set(candidate_rotations) != expected_bones:
             raise AssertionError(f"{model_id}/{current_id} candidate bone set differs from compiled model")
         for bone, transform in transforms.items():
+            if bone in expanded_parts:
+                # Slice 4c: compared through its clones below; the part itself never scales.
+                max_static_delta = max(
+                    max_static_delta,
+                    vector_delta(transform["scale"], bind_transforms[bone]["scale"]),
+                )
+                continue
             delta = vector_delta(transform["rotation"], candidate_rotations[bone])
             if delta > max_rotation_delta:
                 max_rotation_delta = delta
@@ -388,6 +609,44 @@ def animation_parity(model_id: str, spec: dict[str, Any], compiled: dict[str, An
             channel_count += 3
             if vanilla_sample.get("dense_transform_sample"):
                 dense_channel_count += 3
+        for bone, entry in mapping.items():
+            # Slice 4c expansion bones (see the docstring); positions are in the parent's frame,
+            # so a clone under a group at the origin expects the part's own x/y/z.
+            source = transforms[entry["source_part"]]
+            if entry["role"] == "clone":
+                expected_rotation = [float(value) for value in source["rotation"]]
+                channel = entry.get("static_channel")
+                if channel is not None:
+                    expected_rotation[AXIS_INDEX[channel]] = float(entry["static_rotation_radians"][AXIS_INDEX[channel]])
+                expected_position = source["position"]
+            elif entry.get("animated_by_hook"):
+                expected_rotation = None  # proven by render_instance_pose_parity
+                expected_position = candidate_samples["bind"]["java_positions"][bone]
+            else:
+                expected_rotation = entry["static_rotation_radians"]
+                expected_position = candidate_samples["bind"]["java_positions"][bone]
+            if expected_rotation is not None:
+                delta = vector_delta(expected_rotation, candidate_rotations[bone])
+                if delta > max_rotation_delta:
+                    max_rotation_delta = delta
+                    worst = f"{current_id}:{bone}"
+                if delta > epsilon:
+                    raise AssertionError(
+                        f"ANIMATION MISMATCH {model_id}/{current_id}/{bone}: actual custom runtime "
+                        f"delta {delta:.12g} > epsilon {epsilon:.12g} (render-instance "
+                        f"{entry['role']} of {entry['source_part']})"
+                    )
+                channel_count += 3
+            position_delta = vector_delta(expected_position, candidate_sample["java_positions"][bone])
+            if position_delta > max_position_delta:
+                max_position_delta = position_delta
+                position_worst = f"{current_id}:{bone}"
+            if position_delta > position_epsilon:
+                raise AssertionError(
+                    f"POSITION MISMATCH {model_id}/{current_id}/{bone}: actual custom runtime "
+                    f"position delta {position_delta:.12g} > epsilon {position_epsilon:.12g}"
+                )
+            position_channel_samples += 3
     if max_static_delta > epsilon:
         raise AssertionError(
             f"ANIMATION MISMATCH {model_id}: candidate handles rotation only but compiled "
@@ -400,6 +659,11 @@ def animation_parity(model_id: str, spec: dict[str, Any], compiled: dict[str, An
             candidate_sample = candidate_samples[current_id]
             expected_hidden = sorted(vanilla_sample["hidden_bones"])
             actual_hidden = sorted(candidate_sample["hidden_bones"])
+            if mapping:
+                # Slice 4c: a hidden expanded part hides all its clones and groups; compare by source part.
+                actual_hidden = sorted({
+                    mapping[bone]["source_part"] if bone in mapping else bone for bone in actual_hidden
+                })
             if actual_hidden != expected_hidden:
                 raise AssertionError(
                     f"VISIBILITY MISMATCH {model_id}/{current_id}: GeckoLib hid {actual_hidden}, "
@@ -651,6 +915,12 @@ def animation_parity(model_id: str, spec: dict[str, Any], compiled: dict[str, An
             "position_channel_samples": position_channel_samples,
             "hidden_bone_checks": hidden_checks,
         })
+    if expansion:
+        if kind not in ("code_driven", "entity_state"):
+            raise AssertionError(f"{model_id} render_instances need a production-hook animation kind")
+        contract_metrics["render_instances"] = render_instance_pose_parity(
+            model_id, compiled, vanilla_samples, candidate_samples, expansion, epsilon, position_epsilon
+        )
 
     return {
         "status": "PASS",
@@ -1156,6 +1426,25 @@ def visual_parity(model_id: str, spec: dict[str, Any], compiled: dict[str, Any],
     }
 
 
+def render_instance_lines(contract: dict[str, Any]) -> list[str]:
+    """Slice 4c: the composition-leg line for a render-instance-expanded model; nothing otherwise."""
+    expansion = contract.get("render_instances")
+    if not expansion:
+        return []
+    parts = ", ".join(
+        f"{name} x{part['count']} ({part['step_scope']}, {part['axis']})"
+        for name, part in expansion["parts"].items()
+    )
+    return [
+        f"- Render instances: {parts}; {expansion['clone_bones']} clone and {expansion['group_bones']} group bones; "
+        f"{expansion['draws_checked']} measured draws over {expansion['samples_checked']} captures: instance pose "
+        f"linear delta {expansion['max_instance_pose_linear_delta']:.12g}, translation "
+        f"{expansion['max_instance_pose_translation_delta_model_units']:.12g} model units; draw pose linear "
+        f"delta {expansion['max_draw_pose_linear_delta']:.12g}, translation "
+        f"{expansion['max_draw_pose_translation_delta_model_units']:.12g} model units."
+    ]
+
+
 def markdown_report(report: dict[str, Any]) -> str:
     lines = [
         "# Phase G1 proof — compiled LayerDefinition to GeckoLib geo",
@@ -1223,6 +1512,7 @@ def markdown_report(report: dict[str, Any]) -> str:
                     f"{contract['inputs']}.",
                     f"- Visual z-fight pixels excluded (ruling 2): maximum contested fraction "
                     f"{model['visual']['max_contested_fraction']:.12g}.",
+                    *render_instance_lines(contract),
                     "",
                 ]
             )
@@ -1237,6 +1527,7 @@ def markdown_report(report: dict[str, Any]) -> str:
                     f"hidden-bone checks {contract['hidden_bone_checks']}.",
                     f"- Visual z-fight pixels excluded (ruling 2): maximum contested fraction "
                     f"{model['visual']['max_contested_fraction']:.12g}.",
+                    *render_instance_lines(contract),
                     "",
                 ]
             )
@@ -1390,7 +1681,7 @@ def main() -> int:
             if conversion[field] != sha256(path):
                 raise AssertionError(f"{model_id} conversion provenance hash drift for {field}")
 
-        expected_names = sorted(compiled["bone_names"])
+        expected_names = candidate_bone_names(model_id, spec, compiled, conversion)
         if sorted(conversion["exact_bone_names"]) != expected_names:
             raise AssertionError(f"{model_id} converter changed exact bone names")
         if sorted(geo_render["bone_names"]) != expected_names:
@@ -1422,6 +1713,7 @@ def main() -> int:
             float(thresholds["animation_epsilon_radians"]),
             position_epsilon=float(thresholds.get("position_epsilon_model_units", 1.0e-4)),
             repository_root=repository_root,
+            conversion=conversion,
         )
         print(
             f"G1 ANIMATION PASS: {model_id} max delta "

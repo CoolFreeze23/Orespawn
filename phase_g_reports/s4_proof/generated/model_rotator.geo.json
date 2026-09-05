@@ -1,0 +1,2207 @@
+{
+  "format_version": "1.12.0",
+  "minecraft:geometry": [
+    {
+      "description": {
+        "identifier": "geometry.orespawn.g1.model_rotator",
+        "texture_width": 64,
+        "texture_height": 32
+      },
+      "bones": [
+        {
+          "name": "shape1__fan",
+          "pivot": [
+            0,
+            24,
+            0
+          ]
+        },
+        {
+          "name": "shape1__i0",
+          "parent": "shape1__fan",
+          "pivot": [
+            0,
+            24,
+            0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -2,
+                19.1,
+                0
+              ],
+              "size": [
+                4,
+                1,
+                1
+              ],
+              "uv": {
+                "west": {
+                  "uv": [
+                    5,
+                    13
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "east": {
+                  "uv": [
+                    0,
+                    13
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "north": {
+                  "uv": [
+                    1,
+                    13
+                  ],
+                  "uv_size": [
+                    4,
+                    1
+                  ]
+                },
+                "south": {
+                  "uv": [
+                    6,
+                    13
+                  ],
+                  "uv_size": [
+                    4,
+                    1
+                  ]
+                },
+                "up": {
+                  "uv": [
+                    1,
+                    12
+                  ],
+                  "uv_size": [
+                    4,
+                    1
+                  ]
+                },
+                "down": {
+                  "uv": [
+                    5,
+                    13
+                  ],
+                  "uv_size": [
+                    4,
+                    -1
+                  ]
+                }
+              },
+              "modelpart_mirror": true
+            }
+          ]
+        },
+        {
+          "name": "shape1__i1",
+          "parent": "shape1__fan",
+          "pivot": [
+            0,
+            24,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            -45.0000012522
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -2,
+                19.1,
+                0
+              ],
+              "size": [
+                4,
+                1,
+                1
+              ],
+              "uv": {
+                "west": {
+                  "uv": [
+                    5,
+                    13
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "east": {
+                  "uv": [
+                    0,
+                    13
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "north": {
+                  "uv": [
+                    1,
+                    13
+                  ],
+                  "uv_size": [
+                    4,
+                    1
+                  ]
+                },
+                "south": {
+                  "uv": [
+                    6,
+                    13
+                  ],
+                  "uv_size": [
+                    4,
+                    1
+                  ]
+                },
+                "up": {
+                  "uv": [
+                    1,
+                    12
+                  ],
+                  "uv_size": [
+                    4,
+                    1
+                  ]
+                },
+                "down": {
+                  "uv": [
+                    5,
+                    13
+                  ],
+                  "uv_size": [
+                    4,
+                    -1
+                  ]
+                }
+              },
+              "modelpart_mirror": true
+            }
+          ]
+        },
+        {
+          "name": "shape1__i2",
+          "parent": "shape1__fan",
+          "pivot": [
+            0,
+            24,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            -90.0000025045
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -2,
+                19.1,
+                0
+              ],
+              "size": [
+                4,
+                1,
+                1
+              ],
+              "uv": {
+                "west": {
+                  "uv": [
+                    5,
+                    13
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "east": {
+                  "uv": [
+                    0,
+                    13
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "north": {
+                  "uv": [
+                    1,
+                    13
+                  ],
+                  "uv_size": [
+                    4,
+                    1
+                  ]
+                },
+                "south": {
+                  "uv": [
+                    6,
+                    13
+                  ],
+                  "uv_size": [
+                    4,
+                    1
+                  ]
+                },
+                "up": {
+                  "uv": [
+                    1,
+                    12
+                  ],
+                  "uv_size": [
+                    4,
+                    1
+                  ]
+                },
+                "down": {
+                  "uv": [
+                    5,
+                    13
+                  ],
+                  "uv_size": [
+                    4,
+                    -1
+                  ]
+                }
+              },
+              "modelpart_mirror": true
+            }
+          ]
+        },
+        {
+          "name": "shape1__i3",
+          "parent": "shape1__fan",
+          "pivot": [
+            0,
+            24,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            -135.0000003416
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -2,
+                19.1,
+                0
+              ],
+              "size": [
+                4,
+                1,
+                1
+              ],
+              "uv": {
+                "west": {
+                  "uv": [
+                    5,
+                    13
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "east": {
+                  "uv": [
+                    0,
+                    13
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "north": {
+                  "uv": [
+                    1,
+                    13
+                  ],
+                  "uv_size": [
+                    4,
+                    1
+                  ]
+                },
+                "south": {
+                  "uv": [
+                    6,
+                    13
+                  ],
+                  "uv_size": [
+                    4,
+                    1
+                  ]
+                },
+                "up": {
+                  "uv": [
+                    1,
+                    12
+                  ],
+                  "uv_size": [
+                    4,
+                    1
+                  ]
+                },
+                "down": {
+                  "uv": [
+                    5,
+                    13
+                  ],
+                  "uv_size": [
+                    4,
+                    -1
+                  ]
+                }
+              },
+              "modelpart_mirror": true
+            }
+          ]
+        },
+        {
+          "name": "shape1__i4",
+          "parent": "shape1__fan",
+          "pivot": [
+            0,
+            24,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            -180.000005009
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -2,
+                19.1,
+                0
+              ],
+              "size": [
+                4,
+                1,
+                1
+              ],
+              "uv": {
+                "west": {
+                  "uv": [
+                    5,
+                    13
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "east": {
+                  "uv": [
+                    0,
+                    13
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "north": {
+                  "uv": [
+                    1,
+                    13
+                  ],
+                  "uv_size": [
+                    4,
+                    1
+                  ]
+                },
+                "south": {
+                  "uv": [
+                    6,
+                    13
+                  ],
+                  "uv_size": [
+                    4,
+                    1
+                  ]
+                },
+                "up": {
+                  "uv": [
+                    1,
+                    12
+                  ],
+                  "uv_size": [
+                    4,
+                    1
+                  ]
+                },
+                "down": {
+                  "uv": [
+                    5,
+                    13
+                  ],
+                  "uv_size": [
+                    4,
+                    -1
+                  ]
+                }
+              },
+              "modelpart_mirror": true
+            }
+          ]
+        },
+        {
+          "name": "shape1__i5",
+          "parent": "shape1__fan",
+          "pivot": [
+            0,
+            24,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            -225.0000096763
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -2,
+                19.1,
+                0
+              ],
+              "size": [
+                4,
+                1,
+                1
+              ],
+              "uv": {
+                "west": {
+                  "uv": [
+                    5,
+                    13
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "east": {
+                  "uv": [
+                    0,
+                    13
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "north": {
+                  "uv": [
+                    1,
+                    13
+                  ],
+                  "uv_size": [
+                    4,
+                    1
+                  ]
+                },
+                "south": {
+                  "uv": [
+                    6,
+                    13
+                  ],
+                  "uv_size": [
+                    4,
+                    1
+                  ]
+                },
+                "up": {
+                  "uv": [
+                    1,
+                    12
+                  ],
+                  "uv_size": [
+                    4,
+                    1
+                  ]
+                },
+                "down": {
+                  "uv": [
+                    5,
+                    13
+                  ],
+                  "uv_size": [
+                    4,
+                    -1
+                  ]
+                }
+              },
+              "modelpart_mirror": true
+            }
+          ]
+        },
+        {
+          "name": "shape1__i6",
+          "parent": "shape1__fan",
+          "pivot": [
+            0,
+            24,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            -270.0000006832
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -2,
+                19.1,
+                0
+              ],
+              "size": [
+                4,
+                1,
+                1
+              ],
+              "uv": {
+                "west": {
+                  "uv": [
+                    5,
+                    13
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "east": {
+                  "uv": [
+                    0,
+                    13
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "north": {
+                  "uv": [
+                    1,
+                    13
+                  ],
+                  "uv_size": [
+                    4,
+                    1
+                  ]
+                },
+                "south": {
+                  "uv": [
+                    6,
+                    13
+                  ],
+                  "uv_size": [
+                    4,
+                    1
+                  ]
+                },
+                "up": {
+                  "uv": [
+                    1,
+                    12
+                  ],
+                  "uv_size": [
+                    4,
+                    1
+                  ]
+                },
+                "down": {
+                  "uv": [
+                    5,
+                    13
+                  ],
+                  "uv_size": [
+                    4,
+                    -1
+                  ]
+                }
+              },
+              "modelpart_mirror": true
+            }
+          ]
+        },
+        {
+          "name": "shape1__i7",
+          "parent": "shape1__fan",
+          "pivot": [
+            0,
+            24,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            -314.9999916902
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -2,
+                19.1,
+                0
+              ],
+              "size": [
+                4,
+                1,
+                1
+              ],
+              "uv": {
+                "west": {
+                  "uv": [
+                    5,
+                    13
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "east": {
+                  "uv": [
+                    0,
+                    13
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "north": {
+                  "uv": [
+                    1,
+                    13
+                  ],
+                  "uv_size": [
+                    4,
+                    1
+                  ]
+                },
+                "south": {
+                  "uv": [
+                    6,
+                    13
+                  ],
+                  "uv_size": [
+                    4,
+                    1
+                  ]
+                },
+                "up": {
+                  "uv": [
+                    1,
+                    12
+                  ],
+                  "uv_size": [
+                    4,
+                    1
+                  ]
+                },
+                "down": {
+                  "uv": [
+                    5,
+                    13
+                  ],
+                  "uv_size": [
+                    4,
+                    -1
+                  ]
+                }
+              },
+              "modelpart_mirror": true
+            }
+          ]
+        },
+        {
+          "name": "shape2__fan",
+          "pivot": [
+            0,
+            24,
+            0
+          ]
+        },
+        {
+          "name": "shape2__i0",
+          "parent": "shape2__fan",
+          "pivot": [
+            0,
+            24,
+            -0.5
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -4,
+                14.4,
+                -0.5
+              ],
+              "size": [
+                8,
+                2,
+                2
+              ],
+              "uv": {
+                "west": {
+                  "uv": [
+                    10,
+                    9
+                  ],
+                  "uv_size": [
+                    2,
+                    2
+                  ]
+                },
+                "east": {
+                  "uv": [
+                    0,
+                    9
+                  ],
+                  "uv_size": [
+                    2,
+                    2
+                  ]
+                },
+                "north": {
+                  "uv": [
+                    2,
+                    9
+                  ],
+                  "uv_size": [
+                    8,
+                    2
+                  ]
+                },
+                "south": {
+                  "uv": [
+                    12,
+                    9
+                  ],
+                  "uv_size": [
+                    8,
+                    2
+                  ]
+                },
+                "up": {
+                  "uv": [
+                    2,
+                    7
+                  ],
+                  "uv_size": [
+                    8,
+                    2
+                  ]
+                },
+                "down": {
+                  "uv": [
+                    10,
+                    9
+                  ],
+                  "uv_size": [
+                    8,
+                    -2
+                  ]
+                }
+              },
+              "modelpart_mirror": true
+            }
+          ]
+        },
+        {
+          "name": "shape2__i1",
+          "parent": "shape2__fan",
+          "pivot": [
+            0,
+            24,
+            -0.5
+          ],
+          "rotation": [
+            0,
+            0,
+            -45.0000012522
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -4,
+                14.4,
+                -0.5
+              ],
+              "size": [
+                8,
+                2,
+                2
+              ],
+              "uv": {
+                "west": {
+                  "uv": [
+                    10,
+                    9
+                  ],
+                  "uv_size": [
+                    2,
+                    2
+                  ]
+                },
+                "east": {
+                  "uv": [
+                    0,
+                    9
+                  ],
+                  "uv_size": [
+                    2,
+                    2
+                  ]
+                },
+                "north": {
+                  "uv": [
+                    2,
+                    9
+                  ],
+                  "uv_size": [
+                    8,
+                    2
+                  ]
+                },
+                "south": {
+                  "uv": [
+                    12,
+                    9
+                  ],
+                  "uv_size": [
+                    8,
+                    2
+                  ]
+                },
+                "up": {
+                  "uv": [
+                    2,
+                    7
+                  ],
+                  "uv_size": [
+                    8,
+                    2
+                  ]
+                },
+                "down": {
+                  "uv": [
+                    10,
+                    9
+                  ],
+                  "uv_size": [
+                    8,
+                    -2
+                  ]
+                }
+              },
+              "modelpart_mirror": true
+            }
+          ]
+        },
+        {
+          "name": "shape2__i2",
+          "parent": "shape2__fan",
+          "pivot": [
+            0,
+            24,
+            -0.5
+          ],
+          "rotation": [
+            0,
+            0,
+            -90.0000025045
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -4,
+                14.4,
+                -0.5
+              ],
+              "size": [
+                8,
+                2,
+                2
+              ],
+              "uv": {
+                "west": {
+                  "uv": [
+                    10,
+                    9
+                  ],
+                  "uv_size": [
+                    2,
+                    2
+                  ]
+                },
+                "east": {
+                  "uv": [
+                    0,
+                    9
+                  ],
+                  "uv_size": [
+                    2,
+                    2
+                  ]
+                },
+                "north": {
+                  "uv": [
+                    2,
+                    9
+                  ],
+                  "uv_size": [
+                    8,
+                    2
+                  ]
+                },
+                "south": {
+                  "uv": [
+                    12,
+                    9
+                  ],
+                  "uv_size": [
+                    8,
+                    2
+                  ]
+                },
+                "up": {
+                  "uv": [
+                    2,
+                    7
+                  ],
+                  "uv_size": [
+                    8,
+                    2
+                  ]
+                },
+                "down": {
+                  "uv": [
+                    10,
+                    9
+                  ],
+                  "uv_size": [
+                    8,
+                    -2
+                  ]
+                }
+              },
+              "modelpart_mirror": true
+            }
+          ]
+        },
+        {
+          "name": "shape2__i3",
+          "parent": "shape2__fan",
+          "pivot": [
+            0,
+            24,
+            -0.5
+          ],
+          "rotation": [
+            0,
+            0,
+            -135.0000003416
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -4,
+                14.4,
+                -0.5
+              ],
+              "size": [
+                8,
+                2,
+                2
+              ],
+              "uv": {
+                "west": {
+                  "uv": [
+                    10,
+                    9
+                  ],
+                  "uv_size": [
+                    2,
+                    2
+                  ]
+                },
+                "east": {
+                  "uv": [
+                    0,
+                    9
+                  ],
+                  "uv_size": [
+                    2,
+                    2
+                  ]
+                },
+                "north": {
+                  "uv": [
+                    2,
+                    9
+                  ],
+                  "uv_size": [
+                    8,
+                    2
+                  ]
+                },
+                "south": {
+                  "uv": [
+                    12,
+                    9
+                  ],
+                  "uv_size": [
+                    8,
+                    2
+                  ]
+                },
+                "up": {
+                  "uv": [
+                    2,
+                    7
+                  ],
+                  "uv_size": [
+                    8,
+                    2
+                  ]
+                },
+                "down": {
+                  "uv": [
+                    10,
+                    9
+                  ],
+                  "uv_size": [
+                    8,
+                    -2
+                  ]
+                }
+              },
+              "modelpart_mirror": true
+            }
+          ]
+        },
+        {
+          "name": "shape2__i4",
+          "parent": "shape2__fan",
+          "pivot": [
+            0,
+            24,
+            -0.5
+          ],
+          "rotation": [
+            0,
+            0,
+            -180.000005009
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -4,
+                14.4,
+                -0.5
+              ],
+              "size": [
+                8,
+                2,
+                2
+              ],
+              "uv": {
+                "west": {
+                  "uv": [
+                    10,
+                    9
+                  ],
+                  "uv_size": [
+                    2,
+                    2
+                  ]
+                },
+                "east": {
+                  "uv": [
+                    0,
+                    9
+                  ],
+                  "uv_size": [
+                    2,
+                    2
+                  ]
+                },
+                "north": {
+                  "uv": [
+                    2,
+                    9
+                  ],
+                  "uv_size": [
+                    8,
+                    2
+                  ]
+                },
+                "south": {
+                  "uv": [
+                    12,
+                    9
+                  ],
+                  "uv_size": [
+                    8,
+                    2
+                  ]
+                },
+                "up": {
+                  "uv": [
+                    2,
+                    7
+                  ],
+                  "uv_size": [
+                    8,
+                    2
+                  ]
+                },
+                "down": {
+                  "uv": [
+                    10,
+                    9
+                  ],
+                  "uv_size": [
+                    8,
+                    -2
+                  ]
+                }
+              },
+              "modelpart_mirror": true
+            }
+          ]
+        },
+        {
+          "name": "shape2__i5",
+          "parent": "shape2__fan",
+          "pivot": [
+            0,
+            24,
+            -0.5
+          ],
+          "rotation": [
+            0,
+            0,
+            -225.0000096763
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -4,
+                14.4,
+                -0.5
+              ],
+              "size": [
+                8,
+                2,
+                2
+              ],
+              "uv": {
+                "west": {
+                  "uv": [
+                    10,
+                    9
+                  ],
+                  "uv_size": [
+                    2,
+                    2
+                  ]
+                },
+                "east": {
+                  "uv": [
+                    0,
+                    9
+                  ],
+                  "uv_size": [
+                    2,
+                    2
+                  ]
+                },
+                "north": {
+                  "uv": [
+                    2,
+                    9
+                  ],
+                  "uv_size": [
+                    8,
+                    2
+                  ]
+                },
+                "south": {
+                  "uv": [
+                    12,
+                    9
+                  ],
+                  "uv_size": [
+                    8,
+                    2
+                  ]
+                },
+                "up": {
+                  "uv": [
+                    2,
+                    7
+                  ],
+                  "uv_size": [
+                    8,
+                    2
+                  ]
+                },
+                "down": {
+                  "uv": [
+                    10,
+                    9
+                  ],
+                  "uv_size": [
+                    8,
+                    -2
+                  ]
+                }
+              },
+              "modelpart_mirror": true
+            }
+          ]
+        },
+        {
+          "name": "shape2__i6",
+          "parent": "shape2__fan",
+          "pivot": [
+            0,
+            24,
+            -0.5
+          ],
+          "rotation": [
+            0,
+            0,
+            -270.0000006832
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -4,
+                14.4,
+                -0.5
+              ],
+              "size": [
+                8,
+                2,
+                2
+              ],
+              "uv": {
+                "west": {
+                  "uv": [
+                    10,
+                    9
+                  ],
+                  "uv_size": [
+                    2,
+                    2
+                  ]
+                },
+                "east": {
+                  "uv": [
+                    0,
+                    9
+                  ],
+                  "uv_size": [
+                    2,
+                    2
+                  ]
+                },
+                "north": {
+                  "uv": [
+                    2,
+                    9
+                  ],
+                  "uv_size": [
+                    8,
+                    2
+                  ]
+                },
+                "south": {
+                  "uv": [
+                    12,
+                    9
+                  ],
+                  "uv_size": [
+                    8,
+                    2
+                  ]
+                },
+                "up": {
+                  "uv": [
+                    2,
+                    7
+                  ],
+                  "uv_size": [
+                    8,
+                    2
+                  ]
+                },
+                "down": {
+                  "uv": [
+                    10,
+                    9
+                  ],
+                  "uv_size": [
+                    8,
+                    -2
+                  ]
+                }
+              },
+              "modelpart_mirror": true
+            }
+          ]
+        },
+        {
+          "name": "shape2__i7",
+          "parent": "shape2__fan",
+          "pivot": [
+            0,
+            24,
+            -0.5
+          ],
+          "rotation": [
+            0,
+            0,
+            -314.9999916902
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -4,
+                14.4,
+                -0.5
+              ],
+              "size": [
+                8,
+                2,
+                2
+              ],
+              "uv": {
+                "west": {
+                  "uv": [
+                    10,
+                    9
+                  ],
+                  "uv_size": [
+                    2,
+                    2
+                  ]
+                },
+                "east": {
+                  "uv": [
+                    0,
+                    9
+                  ],
+                  "uv_size": [
+                    2,
+                    2
+                  ]
+                },
+                "north": {
+                  "uv": [
+                    2,
+                    9
+                  ],
+                  "uv_size": [
+                    8,
+                    2
+                  ]
+                },
+                "south": {
+                  "uv": [
+                    12,
+                    9
+                  ],
+                  "uv_size": [
+                    8,
+                    2
+                  ]
+                },
+                "up": {
+                  "uv": [
+                    2,
+                    7
+                  ],
+                  "uv_size": [
+                    8,
+                    2
+                  ]
+                },
+                "down": {
+                  "uv": [
+                    10,
+                    9
+                  ],
+                  "uv_size": [
+                    8,
+                    -2
+                  ]
+                }
+              },
+              "modelpart_mirror": true
+            }
+          ]
+        },
+        {
+          "name": "shape3__fan",
+          "pivot": [
+            0,
+            24,
+            0
+          ]
+        },
+        {
+          "name": "shape3__i0",
+          "parent": "shape3__fan",
+          "pivot": [
+            0,
+            24,
+            -1
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -7,
+                7.3,
+                -1
+              ],
+              "size": [
+                14,
+                3,
+                3
+              ],
+              "uv": {
+                "west": {
+                  "uv": [
+                    17,
+                    3
+                  ],
+                  "uv_size": [
+                    3,
+                    3
+                  ]
+                },
+                "east": {
+                  "uv": [
+                    0,
+                    3
+                  ],
+                  "uv_size": [
+                    3,
+                    3
+                  ]
+                },
+                "north": {
+                  "uv": [
+                    3,
+                    3
+                  ],
+                  "uv_size": [
+                    14,
+                    3
+                  ]
+                },
+                "south": {
+                  "uv": [
+                    20,
+                    3
+                  ],
+                  "uv_size": [
+                    14,
+                    3
+                  ]
+                },
+                "up": {
+                  "uv": [
+                    3,
+                    0
+                  ],
+                  "uv_size": [
+                    14,
+                    3
+                  ]
+                },
+                "down": {
+                  "uv": [
+                    17,
+                    3
+                  ],
+                  "uv_size": [
+                    14,
+                    -3
+                  ]
+                }
+              },
+              "modelpart_mirror": true
+            }
+          ]
+        },
+        {
+          "name": "shape3__i1",
+          "parent": "shape3__fan",
+          "pivot": [
+            0,
+            24,
+            -1
+          ],
+          "rotation": [
+            0,
+            0,
+            -45.0000012522
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -7,
+                7.3,
+                -1
+              ],
+              "size": [
+                14,
+                3,
+                3
+              ],
+              "uv": {
+                "west": {
+                  "uv": [
+                    17,
+                    3
+                  ],
+                  "uv_size": [
+                    3,
+                    3
+                  ]
+                },
+                "east": {
+                  "uv": [
+                    0,
+                    3
+                  ],
+                  "uv_size": [
+                    3,
+                    3
+                  ]
+                },
+                "north": {
+                  "uv": [
+                    3,
+                    3
+                  ],
+                  "uv_size": [
+                    14,
+                    3
+                  ]
+                },
+                "south": {
+                  "uv": [
+                    20,
+                    3
+                  ],
+                  "uv_size": [
+                    14,
+                    3
+                  ]
+                },
+                "up": {
+                  "uv": [
+                    3,
+                    0
+                  ],
+                  "uv_size": [
+                    14,
+                    3
+                  ]
+                },
+                "down": {
+                  "uv": [
+                    17,
+                    3
+                  ],
+                  "uv_size": [
+                    14,
+                    -3
+                  ]
+                }
+              },
+              "modelpart_mirror": true
+            }
+          ]
+        },
+        {
+          "name": "shape3__i2",
+          "parent": "shape3__fan",
+          "pivot": [
+            0,
+            24,
+            -1
+          ],
+          "rotation": [
+            0,
+            0,
+            -90.0000025045
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -7,
+                7.3,
+                -1
+              ],
+              "size": [
+                14,
+                3,
+                3
+              ],
+              "uv": {
+                "west": {
+                  "uv": [
+                    17,
+                    3
+                  ],
+                  "uv_size": [
+                    3,
+                    3
+                  ]
+                },
+                "east": {
+                  "uv": [
+                    0,
+                    3
+                  ],
+                  "uv_size": [
+                    3,
+                    3
+                  ]
+                },
+                "north": {
+                  "uv": [
+                    3,
+                    3
+                  ],
+                  "uv_size": [
+                    14,
+                    3
+                  ]
+                },
+                "south": {
+                  "uv": [
+                    20,
+                    3
+                  ],
+                  "uv_size": [
+                    14,
+                    3
+                  ]
+                },
+                "up": {
+                  "uv": [
+                    3,
+                    0
+                  ],
+                  "uv_size": [
+                    14,
+                    3
+                  ]
+                },
+                "down": {
+                  "uv": [
+                    17,
+                    3
+                  ],
+                  "uv_size": [
+                    14,
+                    -3
+                  ]
+                }
+              },
+              "modelpart_mirror": true
+            }
+          ]
+        },
+        {
+          "name": "shape3__i3",
+          "parent": "shape3__fan",
+          "pivot": [
+            0,
+            24,
+            -1
+          ],
+          "rotation": [
+            0,
+            0,
+            -135.0000003416
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -7,
+                7.3,
+                -1
+              ],
+              "size": [
+                14,
+                3,
+                3
+              ],
+              "uv": {
+                "west": {
+                  "uv": [
+                    17,
+                    3
+                  ],
+                  "uv_size": [
+                    3,
+                    3
+                  ]
+                },
+                "east": {
+                  "uv": [
+                    0,
+                    3
+                  ],
+                  "uv_size": [
+                    3,
+                    3
+                  ]
+                },
+                "north": {
+                  "uv": [
+                    3,
+                    3
+                  ],
+                  "uv_size": [
+                    14,
+                    3
+                  ]
+                },
+                "south": {
+                  "uv": [
+                    20,
+                    3
+                  ],
+                  "uv_size": [
+                    14,
+                    3
+                  ]
+                },
+                "up": {
+                  "uv": [
+                    3,
+                    0
+                  ],
+                  "uv_size": [
+                    14,
+                    3
+                  ]
+                },
+                "down": {
+                  "uv": [
+                    17,
+                    3
+                  ],
+                  "uv_size": [
+                    14,
+                    -3
+                  ]
+                }
+              },
+              "modelpart_mirror": true
+            }
+          ]
+        },
+        {
+          "name": "shape3__i4",
+          "parent": "shape3__fan",
+          "pivot": [
+            0,
+            24,
+            -1
+          ],
+          "rotation": [
+            0,
+            0,
+            -180.000005009
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -7,
+                7.3,
+                -1
+              ],
+              "size": [
+                14,
+                3,
+                3
+              ],
+              "uv": {
+                "west": {
+                  "uv": [
+                    17,
+                    3
+                  ],
+                  "uv_size": [
+                    3,
+                    3
+                  ]
+                },
+                "east": {
+                  "uv": [
+                    0,
+                    3
+                  ],
+                  "uv_size": [
+                    3,
+                    3
+                  ]
+                },
+                "north": {
+                  "uv": [
+                    3,
+                    3
+                  ],
+                  "uv_size": [
+                    14,
+                    3
+                  ]
+                },
+                "south": {
+                  "uv": [
+                    20,
+                    3
+                  ],
+                  "uv_size": [
+                    14,
+                    3
+                  ]
+                },
+                "up": {
+                  "uv": [
+                    3,
+                    0
+                  ],
+                  "uv_size": [
+                    14,
+                    3
+                  ]
+                },
+                "down": {
+                  "uv": [
+                    17,
+                    3
+                  ],
+                  "uv_size": [
+                    14,
+                    -3
+                  ]
+                }
+              },
+              "modelpart_mirror": true
+            }
+          ]
+        },
+        {
+          "name": "shape3__i5",
+          "parent": "shape3__fan",
+          "pivot": [
+            0,
+            24,
+            -1
+          ],
+          "rotation": [
+            0,
+            0,
+            -225.0000096763
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -7,
+                7.3,
+                -1
+              ],
+              "size": [
+                14,
+                3,
+                3
+              ],
+              "uv": {
+                "west": {
+                  "uv": [
+                    17,
+                    3
+                  ],
+                  "uv_size": [
+                    3,
+                    3
+                  ]
+                },
+                "east": {
+                  "uv": [
+                    0,
+                    3
+                  ],
+                  "uv_size": [
+                    3,
+                    3
+                  ]
+                },
+                "north": {
+                  "uv": [
+                    3,
+                    3
+                  ],
+                  "uv_size": [
+                    14,
+                    3
+                  ]
+                },
+                "south": {
+                  "uv": [
+                    20,
+                    3
+                  ],
+                  "uv_size": [
+                    14,
+                    3
+                  ]
+                },
+                "up": {
+                  "uv": [
+                    3,
+                    0
+                  ],
+                  "uv_size": [
+                    14,
+                    3
+                  ]
+                },
+                "down": {
+                  "uv": [
+                    17,
+                    3
+                  ],
+                  "uv_size": [
+                    14,
+                    -3
+                  ]
+                }
+              },
+              "modelpart_mirror": true
+            }
+          ]
+        },
+        {
+          "name": "shape3__i6",
+          "parent": "shape3__fan",
+          "pivot": [
+            0,
+            24,
+            -1
+          ],
+          "rotation": [
+            0,
+            0,
+            -270.0000006832
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -7,
+                7.3,
+                -1
+              ],
+              "size": [
+                14,
+                3,
+                3
+              ],
+              "uv": {
+                "west": {
+                  "uv": [
+                    17,
+                    3
+                  ],
+                  "uv_size": [
+                    3,
+                    3
+                  ]
+                },
+                "east": {
+                  "uv": [
+                    0,
+                    3
+                  ],
+                  "uv_size": [
+                    3,
+                    3
+                  ]
+                },
+                "north": {
+                  "uv": [
+                    3,
+                    3
+                  ],
+                  "uv_size": [
+                    14,
+                    3
+                  ]
+                },
+                "south": {
+                  "uv": [
+                    20,
+                    3
+                  ],
+                  "uv_size": [
+                    14,
+                    3
+                  ]
+                },
+                "up": {
+                  "uv": [
+                    3,
+                    0
+                  ],
+                  "uv_size": [
+                    14,
+                    3
+                  ]
+                },
+                "down": {
+                  "uv": [
+                    17,
+                    3
+                  ],
+                  "uv_size": [
+                    14,
+                    -3
+                  ]
+                }
+              },
+              "modelpart_mirror": true
+            }
+          ]
+        },
+        {
+          "name": "shape3__i7",
+          "parent": "shape3__fan",
+          "pivot": [
+            0,
+            24,
+            -1
+          ],
+          "rotation": [
+            0,
+            0,
+            -314.9999916902
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -7,
+                7.3,
+                -1
+              ],
+              "size": [
+                14,
+                3,
+                3
+              ],
+              "uv": {
+                "west": {
+                  "uv": [
+                    17,
+                    3
+                  ],
+                  "uv_size": [
+                    3,
+                    3
+                  ]
+                },
+                "east": {
+                  "uv": [
+                    0,
+                    3
+                  ],
+                  "uv_size": [
+                    3,
+                    3
+                  ]
+                },
+                "north": {
+                  "uv": [
+                    3,
+                    3
+                  ],
+                  "uv_size": [
+                    14,
+                    3
+                  ]
+                },
+                "south": {
+                  "uv": [
+                    20,
+                    3
+                  ],
+                  "uv_size": [
+                    14,
+                    3
+                  ]
+                },
+                "up": {
+                  "uv": [
+                    3,
+                    0
+                  ],
+                  "uv_size": [
+                    14,
+                    3
+                  ]
+                },
+                "down": {
+                  "uv": [
+                    17,
+                    3
+                  ],
+                  "uv_size": [
+                    14,
+                    -3
+                  ]
+                }
+              },
+              "modelpart_mirror": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

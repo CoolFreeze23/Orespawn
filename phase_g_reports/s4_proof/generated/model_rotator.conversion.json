@@ -1,0 +1,556 @@
+{
+  "schema_version": 1,
+  "model_id": "model_rotator",
+  "tier": 3,
+  "proof_scope": "production_proof_model",
+  "ground_truth": "executed compiled LayerDefinition and baked ModelPart",
+  "source_class": "danger.orespawn.entity.client.RotatorModel",
+  "source_class_sha256": "5408c872ae4514c7f3c4f034265aea5926b705f103df41a88b2adb4a567a83a4",
+  "compiled_dump_sha256": "7f68335093ddefade1ec3a98aa1637fad3a5bd6878a2e0318fae2f1002f5978f",
+  "geometry_sha256": "66e8b57d72c9bd28c758efe8fab7eae70cb054beab5addd24355dd37b9205935",
+  "animation_sha256": "7882082857fdb11e02f158ebc3a6d3f970e2ac60d54813f0e903ee97b2293749",
+  "animation_contract_sha256": "965e9bddec9af87f7c93f8b9a5eb11c771e42bc9e8b340bddba0a676d84adc35",
+  "bone_count": 27,
+  "cube_count": 24,
+  "mirrored_cube_count": 24,
+  "mirrored_uv_strategy": "source flag retained as modelpart_mirror; semantics baked into explicit faces; incompatible GeckoLib native mirror disabled",
+  "exact_bone_names": [
+    "shape1__fan",
+    "shape1__i0",
+    "shape1__i1",
+    "shape1__i2",
+    "shape1__i3",
+    "shape1__i4",
+    "shape1__i5",
+    "shape1__i6",
+    "shape1__i7",
+    "shape2__fan",
+    "shape2__i0",
+    "shape2__i1",
+    "shape2__i2",
+    "shape2__i3",
+    "shape2__i4",
+    "shape2__i5",
+    "shape2__i6",
+    "shape2__i7",
+    "shape3__fan",
+    "shape3__i0",
+    "shape3__i1",
+    "shape3__i2",
+    "shape3__i3",
+    "shape3__i4",
+    "shape3__i5",
+    "shape3__i6",
+    "shape3__i7"
+  ],
+  "render_instances": {
+    "declared": {
+      "shape1": {
+        "count": 8,
+        "axis": "z",
+        "step_scope": "part",
+        "step_radians": 0.7853982,
+        "step_arithmetic": "float32_accumulate",
+        "note": "RotatorModel.renderFan: blade.zRot = bladeAngle, bladeAngle += FAN_STEP (0.7853982f), 8 draws inside mulPose(X, rf1) (orig ModelRotator.java:52-57)"
+      },
+      "shape2": {
+        "count": 8,
+        "axis": "z",
+        "step_scope": "part",
+        "step_radians": 0.7853982,
+        "step_arithmetic": "float32_accumulate",
+        "note": "the same loop inside mulPose(Y, rf1) (orig ModelRotator.java:60-65)"
+      },
+      "shape3": {
+        "count": 8,
+        "axis": "z",
+        "step_scope": "part",
+        "step_radians": 0.7853982,
+        "step_arithmetic": "float32_accumulate",
+        "note": "the same loop inside mulPose(Z, rf1) (orig ModelRotator.java:68-73)"
+      }
+    },
+    "parts": {
+      "shape1": {
+        "count": 8,
+        "axis": "z",
+        "step_scope": "part",
+        "step_radians": 0.7853982,
+        "step_arithmetic": "float32_accumulate",
+        "angles_radians": [
+          0.0,
+          0.7853981852531433,
+          1.5707963705062866,
+          2.356194496154785,
+          3.1415927410125732,
+          3.9269909858703613,
+          4.71238899230957,
+          5.497786998748779
+        ],
+        "group_bones": [
+          "shape1__fan"
+        ],
+        "clone_bones": [
+          "shape1__i0",
+          "shape1__i1",
+          "shape1__i2",
+          "shape1__i3",
+          "shape1__i4",
+          "shape1__i5",
+          "shape1__i6",
+          "shape1__i7"
+        ],
+        "cubes_per_draw": 1,
+        "note": "RotatorModel.renderFan: blade.zRot = bladeAngle, bladeAngle += FAN_STEP (0.7853982f), 8 draws inside mulPose(X, rf1) (orig ModelRotator.java:52-57)"
+      },
+      "shape2": {
+        "count": 8,
+        "axis": "z",
+        "step_scope": "part",
+        "step_radians": 0.7853982,
+        "step_arithmetic": "float32_accumulate",
+        "angles_radians": [
+          0.0,
+          0.7853981852531433,
+          1.5707963705062866,
+          2.356194496154785,
+          3.1415927410125732,
+          3.9269909858703613,
+          4.71238899230957,
+          5.497786998748779
+        ],
+        "group_bones": [
+          "shape2__fan"
+        ],
+        "clone_bones": [
+          "shape2__i0",
+          "shape2__i1",
+          "shape2__i2",
+          "shape2__i3",
+          "shape2__i4",
+          "shape2__i5",
+          "shape2__i6",
+          "shape2__i7"
+        ],
+        "cubes_per_draw": 1,
+        "note": "the same loop inside mulPose(Y, rf1) (orig ModelRotator.java:60-65)"
+      },
+      "shape3": {
+        "count": 8,
+        "axis": "z",
+        "step_scope": "part",
+        "step_radians": 0.7853982,
+        "step_arithmetic": "float32_accumulate",
+        "angles_radians": [
+          0.0,
+          0.7853981852531433,
+          1.5707963705062866,
+          2.356194496154785,
+          3.1415927410125732,
+          3.9269909858703613,
+          4.71238899230957,
+          5.497786998748779
+        ],
+        "group_bones": [
+          "shape3__fan"
+        ],
+        "clone_bones": [
+          "shape3__i0",
+          "shape3__i1",
+          "shape3__i2",
+          "shape3__i3",
+          "shape3__i4",
+          "shape3__i5",
+          "shape3__i6",
+          "shape3__i7"
+        ],
+        "cubes_per_draw": 1,
+        "note": "the same loop inside mulPose(Z, rf1) (orig ModelRotator.java:68-73)"
+      }
+    },
+    "bones": {
+      "shape1__fan": {
+        "role": "group",
+        "source_part": "shape1",
+        "draw_index": null,
+        "animated_by_hook": true,
+        "static_rotation_radians": null,
+        "clones": [
+          "shape1__i0",
+          "shape1__i1",
+          "shape1__i2",
+          "shape1__i3",
+          "shape1__i4",
+          "shape1__i5",
+          "shape1__i6",
+          "shape1__i7"
+        ]
+      },
+      "shape1__i0": {
+        "role": "clone",
+        "source_part": "shape1",
+        "draw_index": 0,
+        "group_bone": "shape1__fan",
+        "static_rotation_radians": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "static_channel": "z"
+      },
+      "shape1__i1": {
+        "role": "clone",
+        "source_part": "shape1",
+        "draw_index": 1,
+        "group_bone": "shape1__fan",
+        "static_rotation_radians": [
+          0.0,
+          0.0,
+          0.7853981852531433
+        ],
+        "static_channel": "z"
+      },
+      "shape1__i2": {
+        "role": "clone",
+        "source_part": "shape1",
+        "draw_index": 2,
+        "group_bone": "shape1__fan",
+        "static_rotation_radians": [
+          0.0,
+          0.0,
+          1.5707963705062866
+        ],
+        "static_channel": "z"
+      },
+      "shape1__i3": {
+        "role": "clone",
+        "source_part": "shape1",
+        "draw_index": 3,
+        "group_bone": "shape1__fan",
+        "static_rotation_radians": [
+          0.0,
+          0.0,
+          2.356194496154785
+        ],
+        "static_channel": "z"
+      },
+      "shape1__i4": {
+        "role": "clone",
+        "source_part": "shape1",
+        "draw_index": 4,
+        "group_bone": "shape1__fan",
+        "static_rotation_radians": [
+          0.0,
+          0.0,
+          3.1415927410125732
+        ],
+        "static_channel": "z"
+      },
+      "shape1__i5": {
+        "role": "clone",
+        "source_part": "shape1",
+        "draw_index": 5,
+        "group_bone": "shape1__fan",
+        "static_rotation_radians": [
+          0.0,
+          0.0,
+          3.9269909858703613
+        ],
+        "static_channel": "z"
+      },
+      "shape1__i6": {
+        "role": "clone",
+        "source_part": "shape1",
+        "draw_index": 6,
+        "group_bone": "shape1__fan",
+        "static_rotation_radians": [
+          0.0,
+          0.0,
+          4.71238899230957
+        ],
+        "static_channel": "z"
+      },
+      "shape1__i7": {
+        "role": "clone",
+        "source_part": "shape1",
+        "draw_index": 7,
+        "group_bone": "shape1__fan",
+        "static_rotation_radians": [
+          0.0,
+          0.0,
+          5.497786998748779
+        ],
+        "static_channel": "z"
+      },
+      "shape2__fan": {
+        "role": "group",
+        "source_part": "shape2",
+        "draw_index": null,
+        "animated_by_hook": true,
+        "static_rotation_radians": null,
+        "clones": [
+          "shape2__i0",
+          "shape2__i1",
+          "shape2__i2",
+          "shape2__i3",
+          "shape2__i4",
+          "shape2__i5",
+          "shape2__i6",
+          "shape2__i7"
+        ]
+      },
+      "shape2__i0": {
+        "role": "clone",
+        "source_part": "shape2",
+        "draw_index": 0,
+        "group_bone": "shape2__fan",
+        "static_rotation_radians": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "static_channel": "z"
+      },
+      "shape2__i1": {
+        "role": "clone",
+        "source_part": "shape2",
+        "draw_index": 1,
+        "group_bone": "shape2__fan",
+        "static_rotation_radians": [
+          0.0,
+          0.0,
+          0.7853981852531433
+        ],
+        "static_channel": "z"
+      },
+      "shape2__i2": {
+        "role": "clone",
+        "source_part": "shape2",
+        "draw_index": 2,
+        "group_bone": "shape2__fan",
+        "static_rotation_radians": [
+          0.0,
+          0.0,
+          1.5707963705062866
+        ],
+        "static_channel": "z"
+      },
+      "shape2__i3": {
+        "role": "clone",
+        "source_part": "shape2",
+        "draw_index": 3,
+        "group_bone": "shape2__fan",
+        "static_rotation_radians": [
+          0.0,
+          0.0,
+          2.356194496154785
+        ],
+        "static_channel": "z"
+      },
+      "shape2__i4": {
+        "role": "clone",
+        "source_part": "shape2",
+        "draw_index": 4,
+        "group_bone": "shape2__fan",
+        "static_rotation_radians": [
+          0.0,
+          0.0,
+          3.1415927410125732
+        ],
+        "static_channel": "z"
+      },
+      "shape2__i5": {
+        "role": "clone",
+        "source_part": "shape2",
+        "draw_index": 5,
+        "group_bone": "shape2__fan",
+        "static_rotation_radians": [
+          0.0,
+          0.0,
+          3.9269909858703613
+        ],
+        "static_channel": "z"
+      },
+      "shape2__i6": {
+        "role": "clone",
+        "source_part": "shape2",
+        "draw_index": 6,
+        "group_bone": "shape2__fan",
+        "static_rotation_radians": [
+          0.0,
+          0.0,
+          4.71238899230957
+        ],
+        "static_channel": "z"
+      },
+      "shape2__i7": {
+        "role": "clone",
+        "source_part": "shape2",
+        "draw_index": 7,
+        "group_bone": "shape2__fan",
+        "static_rotation_radians": [
+          0.0,
+          0.0,
+          5.497786998748779
+        ],
+        "static_channel": "z"
+      },
+      "shape3__fan": {
+        "role": "group",
+        "source_part": "shape3",
+        "draw_index": null,
+        "animated_by_hook": true,
+        "static_rotation_radians": null,
+        "clones": [
+          "shape3__i0",
+          "shape3__i1",
+          "shape3__i2",
+          "shape3__i3",
+          "shape3__i4",
+          "shape3__i5",
+          "shape3__i6",
+          "shape3__i7"
+        ]
+      },
+      "shape3__i0": {
+        "role": "clone",
+        "source_part": "shape3",
+        "draw_index": 0,
+        "group_bone": "shape3__fan",
+        "static_rotation_radians": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "static_channel": "z"
+      },
+      "shape3__i1": {
+        "role": "clone",
+        "source_part": "shape3",
+        "draw_index": 1,
+        "group_bone": "shape3__fan",
+        "static_rotation_radians": [
+          0.0,
+          0.0,
+          0.7853981852531433
+        ],
+        "static_channel": "z"
+      },
+      "shape3__i2": {
+        "role": "clone",
+        "source_part": "shape3",
+        "draw_index": 2,
+        "group_bone": "shape3__fan",
+        "static_rotation_radians": [
+          0.0,
+          0.0,
+          1.5707963705062866
+        ],
+        "static_channel": "z"
+      },
+      "shape3__i3": {
+        "role": "clone",
+        "source_part": "shape3",
+        "draw_index": 3,
+        "group_bone": "shape3__fan",
+        "static_rotation_radians": [
+          0.0,
+          0.0,
+          2.356194496154785
+        ],
+        "static_channel": "z"
+      },
+      "shape3__i4": {
+        "role": "clone",
+        "source_part": "shape3",
+        "draw_index": 4,
+        "group_bone": "shape3__fan",
+        "static_rotation_radians": [
+          0.0,
+          0.0,
+          3.1415927410125732
+        ],
+        "static_channel": "z"
+      },
+      "shape3__i5": {
+        "role": "clone",
+        "source_part": "shape3",
+        "draw_index": 5,
+        "group_bone": "shape3__fan",
+        "static_rotation_radians": [
+          0.0,
+          0.0,
+          3.9269909858703613
+        ],
+        "static_channel": "z"
+      },
+      "shape3__i6": {
+        "role": "clone",
+        "source_part": "shape3",
+        "draw_index": 6,
+        "group_bone": "shape3__fan",
+        "static_rotation_radians": [
+          0.0,
+          0.0,
+          4.71238899230957
+        ],
+        "static_channel": "z"
+      },
+      "shape3__i7": {
+        "role": "clone",
+        "source_part": "shape3",
+        "draw_index": 7,
+        "group_bone": "shape3__fan",
+        "static_rotation_radians": [
+          0.0,
+          0.0,
+          5.497786998748779
+        ],
+        "static_channel": "z"
+      }
+    },
+    "semantics": "one bone per classic draw: <part>__i<k> is draw k of <part> (its cubes and pivot); step_scope part = the loop assigns the part's own axis channel, so the step is the clone's bind rotation under one hook-animated group <part>__fan; step_scope stack = the loop rotates the pose stack outside the part, so the step is the bind rotation of a per-draw parent <part>__fan<k> and the clone carries the part's animated channels"
+  },
+  "animation_contract": {
+    "schema_version": 1,
+    "kind": "entity_state",
+    "controller_required": false,
+    "candidate_animation_path": "production_replacement_hook",
+    "candidate_class": "danger.orespawn.entity.client.RotatorGeoReplacement",
+    "candidate_acceptance_path": "production OreSpawnGeoReplacementModel.setCustomAnimations (Amendment 1 Tier-3 code-driven)",
+    "sample_ids": [
+      "bind",
+      "s_rf1_0_t0",
+      "s_rf1_0_t_half",
+      "s_rf1_2_t0",
+      "s_rf1_2_t_half",
+      "s_rf1_90_t0",
+      "s_rf1_90_t_half",
+      "s_rf1_180_5_t0",
+      "s_rf1_180_5_t_half",
+      "s_rf1_358_t0",
+      "s_rf1_358_t_half",
+      "s_rf1_359_t0",
+      "s_rf1_359_t_half"
+    ],
+    "entity_states": [
+      "rf1_0",
+      "rf1_2",
+      "rf1_90",
+      "rf1_180_5",
+      "rf1_358",
+      "rf1_359"
+    ]
+  },
+  "reference_animation_schema": {
+    "status": "SCHEMA_VALID_REFERENCE_ONLY",
+    "clip_count": 0,
+    "constant_vector_count": 0,
+    "runtime_acceptance": false
+  },
+  "accepted_animation_evidence": "production OreSpawnGeoReplacement hook posed from declared entity states through the entity's pose interface (Amendment 1 Tier-3 code-driven)",
+  "artist_editable_math_to_keyframes_status": "NOT_APPLICABLE_TIER3_CODE_DRIVEN",
+  "compiled_animation_bake_sample_count": 0,
+  "reference_clip_keys_source": "compiled setupAnim output; no Python formula evaluation",
+  "source_animation_channel_inventory": []
+}

@@ -101,7 +101,7 @@
       },
       "channels": [],
       "max_contested_fraction_pin": 0.0,
-      "period_note": "cos(age * 0.05 * 0.22) has period 2*pi/0.011 = 571.2 ticks; the samples cover a full oscillation"
+      "period_note": "the three spoke rates 7.3, 5.1 and 3.7 degrees per tick (ModelPurplePower.setupAnim:45-56) share the common period 3600 ticks: t*7.3, t*5.1 and t*3.7 are all multiples of 360 iff 73t, 51t and 37t are multiples of 3600, and since 73 and 37 are coprime with 3600 that needs t a multiple of 3600 (gcd(51, 3600) = 3, so the 5.1 rate alone closes at 1200); the samples cover the small ages (the visual ones), t_quarter, t_half and t_end — in float32 the loop closes ~1.2e-5 rad short of 73*2pi at t_end and nothing asserts closure (refuter B, D6 / refuter A, A8)"
     },
     {
       "id": "model_island",
@@ -501,6 +501,158 @@
       "channels": [],
       "visual_note": "types 0 and 13 draw nothing (classic early return) and are proven by the hidden-bone check, not the visual leg; bind (all 22 parts superimposed) is excluded under ruling 2",
       "max_contested_fraction_pin": 0.0
+    },
+    {
+      "id": "model_rotator",
+      "tier": 3,
+      "class": "danger.orespawn.entity.client.RotatorModel",
+      "texture": "src/main/resources/assets/orespawn/textures/entity/rotator.png",
+      "animation_kind": "entity_state",
+      "candidate_animation_path": "production_replacement_hook",
+      "candidate_class": "danger.orespawn.entity.client.RotatorGeoReplacement",
+      "loop_period_age_ticks": 20.0,
+      "sample_fractions": [
+        0.0,
+        0.5
+      ],
+      "limb_swing": 0.0,
+      "limb_swing_amount": 0.0,
+      "net_head_yaw": 0.0,
+      "head_pitch": 0.0,
+      "entity_states": [
+        {
+          "name": "rf1_0",
+          "rf1": 0.0
+        },
+        {
+          "name": "rf1_2",
+          "rf1": 2.0
+        },
+        {
+          "name": "rf1_90",
+          "rf1": 90.0
+        },
+        {
+          "name": "rf1_180_5",
+          "rf1": 180.5
+        },
+        {
+          "name": "rf1_358",
+          "rf1": 358.0
+        },
+        {
+          "name": "rf1_359",
+          "rf1": 359.0
+        }
+      ],
+      "render_instances": {
+        "shape1": {
+          "count": 8,
+          "axis": "z",
+          "step_scope": "part",
+          "step_radians": 0.7853982,
+          "step_arithmetic": "float32_accumulate",
+          "note": "RotatorModel.renderFan: blade.zRot = bladeAngle, bladeAngle += FAN_STEP (0.7853982f), 8 draws inside mulPose(X, rf1) (orig ModelRotator.java:52-57)"
+        },
+        "shape2": {
+          "count": 8,
+          "axis": "z",
+          "step_scope": "part",
+          "step_radians": 0.7853982,
+          "step_arithmetic": "float32_accumulate",
+          "note": "the same loop inside mulPose(Y, rf1) (orig ModelRotator.java:60-65)"
+        },
+        "shape3": {
+          "count": 8,
+          "axis": "z",
+          "step_scope": "part",
+          "step_radians": 0.7853982,
+          "step_arithmetic": "float32_accumulate",
+          "note": "the same loop inside mulPose(Z, rf1) (orig ModelRotator.java:68-73)"
+        }
+      },
+      "visual_sample_ids": [
+        "bind",
+        "s_rf1_2_t0",
+        "s_rf1_90_t0",
+        "s_rf1_180_5_t_half",
+        "s_rf1_358_t0"
+      ],
+      "camera": {
+        "yaw_degrees": 34.0,
+        "pitch_degrees": -28.0
+      },
+      "channels": [],
+      "max_contested_fraction_pin": 0.0,
+      "state_note": "the pose reads only RenderInfo.rf1 (orig ModelRotator.java:51-52), never age or gait: rf1 presets 0 (bind-like: three flat fans at distinct radii), 2, 90 (the gyroscope: fans in three planes), 180.5, 358 (advances to 360 > 359: wraps to 0) and 359 (wraps); subject_after.rf1 pins the advance and the wrap on both sides; the two ages only prove the pose ignores age",
+      "render_instances_note": "Slice 4c render-instance expansion: each blade part is drawn 8x with its own zRot stepped by the float literal 0.7853982f (accumulated in float32), inside one pose-stack rotation of rf1 degrees about X / Y / Z per part, so the converter emits <part>__fan (group, hook-spun) over <part>__i0..7 (clones, static step); the blades of one fan overlap (bar half-width 2 > arc spacing at radius 4.4) with coplanar faces, so z-fight contests are expected and pinned"
+    },
+    {
+      "id": "model_purplepower",
+      "tier": 3,
+      "class": "danger.orespawn.entity.client.ModelPurplePower",
+      "texture": "src/main/resources/assets/orespawn/textures/entity/purplepowertexture.png",
+      "animation_kind": "code_driven",
+      "candidate_animation_path": "production_replacement_hook",
+      "candidate_class": "danger.orespawn.entity.client.PurplePowerGeoReplacement",
+      "loop_period_age_ticks": 3600.0,
+      "sample_fractions": [
+        0.0,
+        0.00125,
+        0.005,
+        0.0125,
+        0.03,
+        0.25,
+        0.5,
+        1.0
+      ],
+      "limb_swing": 0.0,
+      "limb_swing_amount": 0.0,
+      "net_head_yaw": 0.0,
+      "head_pitch": 0.0,
+      "render_instances": {
+        "Shape1": {
+          "count": 6,
+          "axis": "z",
+          "step_scope": "stack",
+          "step_radians": 1.0471976,
+          "step_arithmetic": "float32_multiply",
+          "note": "ModelPurplePower.renderToBuffer:59-64: mulPose(Axis.ZP.rotation(i * 1.0471976F)) on the pose stack, then innerSpoke.render, 6 draws"
+        },
+        "Shape2": {
+          "count": 6,
+          "axis": "z",
+          "step_scope": "stack",
+          "step_radians": 1.0471976,
+          "step_arithmetic": "float32_multiply",
+          "note": "ModelPurplePower.renderToBuffer:65-70, middleSpoke"
+        },
+        "Shape3": {
+          "count": 6,
+          "axis": "z",
+          "step_scope": "stack",
+          "step_radians": 1.0471976,
+          "step_arithmetic": "float32_multiply",
+          "note": "ModelPurplePower.renderToBuffer:71-76, outerSpoke"
+        }
+      },
+      "visual_sample_ids": [
+        "bind",
+        "t_0_001250",
+        "t_0_005000",
+        "t_0_030000",
+        "t_quarter"
+      ],
+      "camera": {
+        "yaw_degrees": 34.0,
+        "pitch_degrees": -28.0
+      },
+      "channels": [],
+      "max_contested_fraction_pin": 0.1058502197265625,
+      "in_game_acceptance": "PENDING_OWNER: at bind (age 0) the three spoke rings lie in one coplanar slab through the origin, so 10.6% of that capture is coplanar z-fight excluded under ruling 2 (3.1% at t_quarter, 0 elsewhere); above 0.5% (ruling 2026-09-02)",
+      "period_note": "the three spoke rates 7.3, 5.1 and 3.7 degrees per tick (ModelPurplePower.setupAnim:45-56) share the common period 3600 ticks (t*7.3, t*5.1, t*3.7 are all multiples of 360 iff t is a multiple of 3600: 73, 51 and 37 are pairwise coprime); the fractions sample ages 0, 4.5, 18, 45, 108, 900, 1800 and 3600 ticks - small ages where the three rings visibly separate, the half period (all three at 180 degrees) and the full period (the loop closes)",
+      "render_instances_note": "Slice 4c render-instance expansion: each spoke is drawn 6x under mulPose(Z, i * 1.0471976F) on the pose stack OUTSIDE the spoke's own animated rotation, so the converter emits a static parent <part>__fan<k> (Z step k * 60 degrees, float32 product) over the clone <part>__i<k> that the hook animates with the classic setupAnim angles; the six spokes of a ring pass through the origin with coplanar faces, so z-fight contests are expected and pinned",
+      "classic_note": "ENT-S-146 (REPORT when this landed): the classic model is a re-authoring of the 1.7.10 one; the candidate reproduces the classic as it stands (harness law); re-base when the fix lands"
     }
   ],
   "fixtures": [
