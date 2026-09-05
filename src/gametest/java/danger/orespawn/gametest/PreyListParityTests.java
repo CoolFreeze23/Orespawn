@@ -635,6 +635,7 @@ public class PreyListParityTests {
         GoalDriver(GameTestHelper helper, Hunter kind) {
             this.hunter = spawnWithGoals(helper, kind.type().get(), kind.hunterPos());
             this.hunter.setOnGround(true); // a frozen mob never lands; the companions' nearbyOnly reach cache (ENT-S-135, TargetGoal.canReach) paths through GroundPathNavigation.canUpdatePath, which needs the ground (the T5 refuter B1 precedent)
+            if (this.hunter instanceof TamableAnimal companion) companion.setTame(true, false); // ENT-S-137 (wave 4): orig MyEntityAINearestAttackableTarget.java:44-49 refuses an untamed companion's hunt — the rows read the tamed, standing companion
             replaceRandom(this.hunter, rolls(GOAL_ROLL_BOUND, 0));
             NearestAttackableTargetGoal<?> found = null;
             int matching = 0;

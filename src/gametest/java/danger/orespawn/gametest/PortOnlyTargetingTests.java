@@ -348,8 +348,8 @@ public class PortOnlyTargetingTests {
                     + " and IMob hunts when PlayNicely == 0 — MyEntityAINearestAttackableTargetGoal since ENT-S-135 — and the two Jealousy"
                     + " tasks; no owner task, no EntityAIHurtByTarget)",
                     List.of("1:ValentineTargetGoal<Player>", "2:ValentineTargetGoal<Boyfriend>", "2:MyEntityAINearestAttackableTargetGoal<Creeper>",
-                            "5:MyEntityAINearestAttackableTargetGoal<Mob>", "4:JealousyTargetGoal<Girlfriend>", "5:JealousyTargetGoal<Girlfriend>"),
-                    List.of("3:OwnerHurtByTargetGoal", "4:OwnerHurtTargetGoal")));
+                            "3:MyEntityAINearestAttackableTargetGoal<Mob>", "4:JealousyTargetGoal<Girlfriend>", "5:JealousyTargetGoal<Girlfriend>"), // the IMob hunt @3 as orig :167 (ENT-S-130, wave 4)
+                    List.of("1:OwnerHurtByTargetGoal", "2:OwnerHurtTargetGoal"))); // the modern pair @3 / @4 -> @1 / @2 with wave 4: the Leon's and the Boyfriend's slots, strictly ahead of the hunt it tied with at @3 (MOD-033's promise; the wave-4 refuter A)
 
     /** Modern on: each companion's selector is its 1.7.10 goals plus the owner pair (plus HurtByTargetGoal on the Hydrolisc and the Raptor). */
     @GameTest(template = "empty_large", batch = BATCH)

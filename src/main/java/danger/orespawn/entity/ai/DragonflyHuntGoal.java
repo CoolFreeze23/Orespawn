@@ -2,6 +2,7 @@ package danger.orespawn.entity.ai;
 
 import java.util.List;
 import danger.orespawn.OreSpawnConfig;
+import net.minecraft.core.BlockPos;
 import danger.orespawn.entity.Cockateil;
 import danger.orespawn.entity.EntityAnt;
 import danger.orespawn.entity.EntityButterfly;
@@ -87,7 +88,7 @@ public class DragonflyHuntGoal extends AmbientFlightGoal {
             LivingEntity prey = findPrey();                                   // orig :144
             if (prey != null) {
                 this.dragonfly.setTarget(prey);                                // the pass's hand-off for this tick's bite (tick reads it back and drops it) — never retained (ENT-S-129)
-                this.flightTarget = prey.blockPosition().above();             // orig :145 — the flight target moved onto the prey; the steering below follows it this tick
+                this.flightTarget = new BlockPos((int) prey.getX(), (int) (prey.getY() + 1.0), (int) prey.getZ()); // orig :145-146 — set((int) posX, (int) (posY + 1.0), (int) posZ): the (int) casts, truncation toward zero (BUG-027 faithful; blockPosition().above() floored a cell short on a negative axis — ENT-S-138); the flight target moved onto the prey, the steering below follows it this tick
             }
         }
     }

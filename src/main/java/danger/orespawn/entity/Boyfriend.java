@@ -166,9 +166,13 @@ public class Boyfriend extends TamableAnimal implements RangedAttackMob {
         // IMob.mobSelector) at priority 2, registered only when PlayNicely == 0 at construction: the Creeper hunt, a 20/4/20 box,
         // ahead of the IMob hunt; it had no port counterpart (ENT-A-054) — restored, the flag read live in canUse as the IMob
         // goal's is (ENT-S-115). ENT-S-135.
+        // orig MyEntityAINearestAttackableTarget.java:44-52 (shouldExecute) — the refusals ahead of the chance roll (:53) and the
+        // box scan (:56), on both hunts: an untamed EntityTameable hunts nothing (:44-46; the Girlfriend-only tests :47-52 do not
+        // reach a Boyfriend — no sitting refusal here, as orig); the Valentine tasks are the Girlfriend's alone (ENT-S-137).
         this.targetSelector.addGoal(2, new MyEntityAINearestAttackableTargetGoal<>(this, Creeper.class, 20.0, true, true, imobPrey) {
             @Override
             public boolean canUse() {
+                if (!Boyfriend.this.isTame()) return false;         // orig MyEntityAINearestAttackableTarget.java:44-46 (ENT-S-137)
                 if (OreSpawnConfig.PLAY_NICELY.get()) return false; // orig Boyfriend.java:137-139 (ENT-S-115)
                 return super.canUse();
             }
@@ -181,6 +185,7 @@ public class Boyfriend extends TamableAnimal implements RangedAttackMob {
         this.targetSelector.addGoal(3, new MyEntityAINearestAttackableTargetGoal<>(this, Mob.class, 15.0, true, true, imobPrey) {
             @Override
             public boolean canUse() {
+                if (!Boyfriend.this.isTame()) return false;         // orig MyEntityAINearestAttackableTarget.java:44-46 (ENT-S-137)
                 if (OreSpawnConfig.PLAY_NICELY.get()) return false; // orig Boyfriend.java:140-142 (ENT-S-115)
                 return super.canUse();
             }

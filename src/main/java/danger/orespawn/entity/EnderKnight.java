@@ -254,7 +254,9 @@ public class EnderKnight extends Monster {
             }
         }
 
-        if (this.isOnFire()) {
+        // orig EnderKnight.java:116-119 — wet (func_70026_G, isWet) OR burning (func_70027_ad) → stop screaming and
+        // teleport; the Reaper's :116-119 line — the port's Knight had teleported on fire alone (ENT-S-142)
+        if (this.isInWaterRainOrBubble() || this.isOnFire()) {
             this.setScreaming(false);
             teleportRandomly();
         }
@@ -289,7 +291,30 @@ public class EnderKnight extends Monster {
         double x = this.getX() + (this.random.nextDouble() - 0.5) * 64.0;
         double y = this.getY() + (this.random.nextInt(64) - 32);
         double z = this.getZ() + (this.random.nextDouble() - 0.5) * 64.0;
-        return this.randomTeleport(x, y, z, true);
+        return this.enderTeleportTo(x, y, z); // orig :146 teleportTo
+    }
+
+    /**
+     * orig EnderKnight.java:159-206 {@code teleportTo} — the landing search (:169-191, the port's {@code LivingEntity.randomTeleport}:
+     * the same walk down to the first motion-blocking block, the box clear of blocks and liquid, the origin restored on a refusal),
+     * the 128 portal particles along the line (:192-202 — the client's entity-event-46 trail) and, on a landing, "mob.endermen.portal"
+     * at 1.0 / 1.0 TWICE: {@code worldObj.playSoundEffect(d3, d4, d5, …)} at the ORIGIN read ahead of the move (:162-164, :203) and
+     * {@code this.playSound(…)} at the entity, now at the landing (:204); a refused landing returned at :188-191 ahead of both. Every
+     * teleport runs through it — the daylight escape (:114), the wet / burning escape (:118), the staring branch (:128), the far
+     * branch (:131 → teleportToEntity :156) and the hurt loop. The port's {@code randomTeleport} mapping had played nothing
+     * (ENT-S-144). Named apart from {@code Entity.teleportTo(double, double, double)}, which the engine owns. The sound is
+     * {@code SoundEvents.ENDERMAN_TELEPORT} ("entity.enderman.teleport"), the modern event of 1.7.10's "mob.endermen.portal".
+     */
+    protected boolean enderTeleportTo(double x, double y, double z) {
+        double d3 = this.getX(); // orig :162-164 — the origin, read ahead of the move
+        double d4 = this.getY();
+        double d5 = this.getZ();
+        if (!this.randomTeleport(x, y, z, true)) { // orig :165-191 — the landing search; refused: the origin restored, nothing played
+            return false;
+        }
+        this.level().playSound(null, d3, d4, d5, SoundEvents.ENDERMAN_TELEPORT, SoundSource.HOSTILE, 1.0f, 1.0f); // orig :203 — playSoundEffect at the origin
+        this.playSound(SoundEvents.ENDERMAN_TELEPORT, 1.0f, 1.0f);                                                // orig :204 — playSound at the entity (the landing)
+        return true;
     }
 
     /**
@@ -308,7 +333,7 @@ public class EnderKnight extends Monster {
         double d1 = this.getX() + (this.random.nextDouble() - 0.5) * 8.0 - vec.x * d0; // orig :153
         double d2 = this.getY() + (this.random.nextInt(16) - 8) - vec.y * d0; // orig :154
         double d3 = this.getZ() + (this.random.nextDouble() - 0.5) * 8.0 - vec.z * d0; // orig :155
-        return this.randomTeleport(d1, d2, d3, true); // orig :156 teleportTo — the port's mapping, as teleportRandomly's
+        return this.enderTeleportTo(d1, d2, d3); // orig :156 teleportTo — the landing and the portal sound pair, as teleportRandomly's (ENT-S-144)
     }
 
     @Override

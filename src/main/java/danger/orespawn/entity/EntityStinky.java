@@ -469,8 +469,21 @@ public class EntityStinky extends TamableAnimal {
                 int gox = (int)(hasOwner ? ox : this.getX());
                 int goy = (int)(hasOwner ? oy : this.getY());
                 int goz = (int)(hasOwner ? oz : this.getZ());
-                int xdir = this.random.nextInt(5) + 6;
-                int zdir = this.random.nextInt(5) + 6;
+                // orig Stinky.java:617-631 — the flight box around an owner: the owner on the ground rolls nextInt(4) + 6
+                // (:621-623), the owner flying nextInt(8) (:624-626), the ownerless Stinky nextInt(5) + 6 (:628-631); the port
+                // had rolled the ownerless box for every Stinky (ENT-S-134). Dice order as EntitySpyro's (xdir ahead of zdir,
+                // orig rolled zdir first — every branch draws the same bound twice; noted in the entry, not changed).
+                int xdir, zdir;
+                if (hasOwner && this.ownerFlying == 0) {
+                    xdir = this.random.nextInt(4) + 6; // orig :621-623
+                    zdir = this.random.nextInt(4) + 6;
+                } else if (hasOwner) {
+                    xdir = this.random.nextInt(8);     // orig :624-626
+                    zdir = this.random.nextInt(8);
+                } else {
+                    xdir = this.random.nextInt(5) + 6; // orig :628-631
+                    zdir = this.random.nextInt(5) + 6;
+                }
                 if (this.random.nextInt(2) == 0) zdir = -zdir;
                 if (this.random.nextInt(2) == 0) xdir = -xdir;
 

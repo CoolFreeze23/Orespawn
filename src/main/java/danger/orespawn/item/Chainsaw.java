@@ -17,6 +17,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import danger.orespawn.ModBlocks;
 import danger.orespawn.ModSounds;
+import danger.orespawn.OreSpawnConfig;
 import danger.orespawn.WeaponStats;
 
 import java.util.List;
@@ -128,13 +129,81 @@ public class Chainsaw extends UltimateSword {
     /**
      * orig UltimateSword.java:176-196 — skips self, dead entities and (with
      * pvp off, via the shared onLeftClickEntity guard) players/companions/
-     * tamed pets; requires line of sight (orig :198-247 MyCanSee voxel walk,
-     * mapped to the vanilla line-of-sight test).
+     * tamed pets; then the sight test (:195): in classic 1.7.10's own
+     * {@link #myCanSee} walk (:198-247); in modern, under {@code [modern]
+     * chainsawSweepVanillaSight} (MOD-037, default on, read live per swing),
+     * vanilla's collision ray {@code Player.hasLineOfSight} (eye to eye, the
+     * COLLIDER clip — fluids and collision-less blocks never stop it) — the
+     * mapping the port had carried unrecorded (ITEM-070, ruled B2 2026-09-05).
      */
     private boolean isSuitableTarget(LivingEntity target, Player player) {
         if (target == player || !target.isAlive()) return false;
         if (super.onLeftClickEntity(ItemStack.EMPTY, player, target)) return false;
-        return player.hasLineOfSight(target);
+        if (OreSpawnConfig.chainsawSweepVanillaSight()) return player.hasLineOfSight(target); // MOD-037 — modern: the vanilla ray
+        return myCanSee(player, target);                                                     // orig :195 — MyCanSee(e, player), the 1.7.10 walk (classic; ITEM-070)
+    }
+
+    /**
+     * orig UltimateSword.java:198-247 {@code MyCanSee(e, player)} — the chainsaw's own sight test, a hand-rolled block march
+     * in floats (the Cater Killer's / King's / Queen's / Molenoid's class of walk): from the SERVER player's position at
+     * {@code posY + 1.4f} (:200-203 — {@code EntityPlayerMP.posY} is the feet, the ENT-S-120 premise check of 2026-09-05:
+     * 1.4 above the feet, 0.22 below the eyes) toward the target's MID-BODY, {@code posY + height / 2} (:205-207), in ten
+     * steps of a tenth of the offset each (:199, :205-207); should any axis step exceed one block, the other two are
+     * divided by it, the sample count scaled by it with an {@code (int)} count (:208-240 — cumulative over x, y, z, each
+     * component then clamped to ±1; inside the 5-block sweep box no axis reaches 1 for a target narrower than about 9.4
+     * blocks, so the walk is exactly ten samples with the tenth ON the mid-body point); each sample pre-incremented and read
+     * with {@code (int)} casts (:242 — truncation toward zero, BUG-027 VERIFIED-CORRECT faithful / MOD-024's floor a modern
+     * opt-in: at x &lt; 0 or z &lt; 0 the column one block toward the origin is read; at y &lt; 0 — the modern world reaches
+     * −64, 1.7.10's floor was 0 — the cell above the true cell on a fractional negative y, the same rule; below the world's
+     * minimum build height {@code getBlockState} answers void air, as 1.7.10's {@code getBlock} answered air outside 0..255
+     * (recalled, ITEM-070's caveat iii) — both {@code isAir()}), and passed only through AIR (:243-244 — {@code bid ==
+     * Blocks.air} by identity; {@code state.isAir()} here, the TheQueen shape: cave air and void air fold in, no 1.7.10
+     * counterpart): every other block — collision-less plants, crops, saplings, torches, snow layers, carpets, cobwebs, fire,
+     * signs, water, lava — stops it, and a block the segment enters BETWEEN two samples (a trunk or canopy corner) is never
+     * examined. The player standing in a 2-block plant, a cobweb or water reads its own head cell at the first sample and
+     * sweeps nothing (ITEM-070's row 10, kept as ruled). The argument order is the port's ({@code (player, e)}); orig's was
+     * {@code (e, player)}. ITEM-070 (B2, 2026-09-05): the classic sight; modern keeps the vanilla ray under MOD-037.
+     */
+    static boolean myCanSee(Player player, LivingEntity e) {
+        int nblks = 10;                                                      // orig :199
+        double cx = player.getX();                                           // orig :200
+        double cz = player.getZ();                                           // orig :201
+        float startx = (float) cx;                                           // orig :202
+        float starty = (float) (player.getY() + (double) 1.4f);              // orig :203 — the server player's posY (the feet) + 1.4f
+        float startz = (float) cz;                                           // orig :204
+        float dx = (float) ((e.getX() - (double) startx) / 10.0);            // orig :205
+        float dy = (float) ((e.getY() + (double) (e.getBbHeight() / 2.0f) - (double) starty) / 10.0); // orig :206 — the target's mid-body
+        float dz = (float) ((e.getZ() - (double) startz) / 10.0);            // orig :207
+        if ((double) Math.abs(dx) > 1.0) {                                   // orig :208-218
+            dy /= Math.abs(dx);
+            dz /= Math.abs(dx);
+            nblks = (int) ((float) nblks * Math.abs(dx));
+            if (dx > 1.0f) dx = 1.0f;
+            if (dx < -1.0f) dx = -1.0f;
+        }
+        if ((double) Math.abs(dy) > 1.0) {                                   // orig :219-229
+            dx /= Math.abs(dy);
+            dz /= Math.abs(dy);
+            nblks = (int) ((float) nblks * Math.abs(dy));
+            if (dy > 1.0f) dy = 1.0f;
+            if (dy < -1.0f) dy = -1.0f;
+        }
+        if ((double) Math.abs(dz) > 1.0) {                                   // orig :230-240
+            dy /= Math.abs(dz);
+            dx /= Math.abs(dz);
+            nblks = (int) ((float) nblks * Math.abs(dz));
+            if (dz > 1.0f) dz = 1.0f;
+            if (dz < -1.0f) dz = -1.0f;
+        }
+        for (int i = 0; i < nblks; ++i) {                                    // orig :241-245
+            startx += dx;
+            starty += dy;
+            startz += dz;
+            BlockState state = player.level().getBlockState(new BlockPos((int) startx, (int) starty, (int) startz)); // orig :242 — pre-increment, then the (int) casts (BUG-027)
+            if (state.isAir()) continue;                                     // orig :243 — Blocks.air alone passes
+            return false;                                                    // orig :244
+        }
+        return true;                                                         // orig :246
     }
 
     /** orig UltimateSword.java:351-371 — crush wood/leaves in an 11x16x11 box. */

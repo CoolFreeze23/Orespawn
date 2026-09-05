@@ -211,8 +211,8 @@ public class Robot2 extends Monster implements Robot2Pose {
         super.customServerAiStep();
         // orig :279 — think-tick runs on a 1-in-6 roll, PlayNicely off only.
         if (this.getRandom().nextInt(6) == 1 && !OreSpawnConfig.PLAY_NICELY.get()) {
-            LivingEntity target = this.getTarget();
-            if (this.getRandom().nextInt(50) == 1) { this.setTarget(null); this.revengeGoal.release(); } // orig :281-283 — the task ended on the nulled target; vanilla's TargetGoal would re-assert its memory (ENT-S-129 refuter A)
+            if (this.getRandom().nextInt(50) == 1) { this.setTarget(null); this.revengeGoal.release(); } // orig :281-283 — rolled BEFORE the read (:284): a forgotten attacker is not engaged in the forgetting pass (ENT-S-133); the task ended on the nulled target; vanilla's TargetGoal would re-assert its memory (ENT-S-129 refuter A)
+            LivingEntity target = this.getTarget(); // orig :284 — e = getAttackTarget(), after the 1-in-50 (ENT-S-133)
             if (target != null && !target.isAlive()) { this.setTarget(null); target = null; }
             if (target == null) target = findSomethingToAttack();
             if (target != null) {

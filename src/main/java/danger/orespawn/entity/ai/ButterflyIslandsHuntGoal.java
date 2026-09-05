@@ -64,24 +64,31 @@ public class ButterflyIslandsHuntGoal extends AmbientFlightGoal {
     @Override
     public void tick() {
         if (this.mob.isRemoved()) return;                                                        // orig :147-149; base :104
-        if (this.flightTarget == null) this.flightTarget = this.mob.blockPosition();               // orig :151-153; base :105
+        if (this.flightTarget == null) this.flightTarget = castCell(this.mob);                      // orig :151-153 — the (int) casts (BUG-027; ENT-S-138, the base's :105 re-stated); base :105
 
-        double distSq = this.flightTarget.distSqr(this.mob.blockPosition());                       // base :108
+        double distSq = this.flightTarget.distSqr(castCell(this.mob));                              // orig :154 — getDistanceSquared((int) posX, (int) posY, (int) posZ) (ENT-S-138); base :108
         if (this.mob.getRandom().nextInt(this.params.retargetChance()) == 0                        // orig :154; base :109-110
                 || distSq < this.params.nearTargetDistSq()) {
             BlockPos chosen = this.pickRetarget();                                                 // orig :155-160; base :112-113
             if (chosen != null) this.flightTarget = chosen;
-        } else if (this.mob.getRandom().nextInt(HUNT_ROLL_BOUND) == 0                              // orig :161 — the roll first,
-                && this.mob.level().dimension() == ModDimensionKeys.ISLANDS                        //   then DimensionID4,
-                && this.butterfly.getButterflyType() == VAMPIRE_TYPE                               //   the vampire skin,
-                && this.mob.level().getDifficulty() != Difficulty.PEACEFUL) {                      //   and not Peaceful
-            LivingEntity prey = this.findSomethingToAttack();                                      // orig :162-163
-            if (prey != null) {                                                                    // orig :164
-                this.flightTarget = new BlockPos((int) prey.getX(), (int) (prey.getY() + 1.0), (int) prey.getZ()); // orig :165
-                if (this.mob.distanceToSqr(prey) < BITE_DIST_SQ) {                                 // orig :166
-                    this.mob.doHurtTarget(prey);                                                   // orig :167
+        } else {
+            if (this.mob.getRandom().nextInt(HUNT_ROLL_BOUND) == 0                                 // orig :161 — the roll first,
+                    && this.mob.level().dimension() == ModDimensionKeys.ISLANDS                    //   then DimensionID4,
+                    && this.butterfly.getButterflyType() == VAMPIRE_TYPE                           //   the vampire skin,
+                    && this.mob.level().getDifficulty() != Difficulty.PEACEFUL) {                  //   and not Peaceful
+                LivingEntity prey = this.findSomethingToAttack();                                  // orig :162-163
+                if (prey != null) {                                                                // orig :164
+                    this.flightTarget = new BlockPos((int) prey.getX(), (int) (prey.getY() + 1.0), (int) prey.getZ()); // orig :165
+                    if (this.mob.distanceToSqr(prey) < BITE_DIST_SQ) {                             // orig :166
+                        this.mob.doHurtTarget(prey);                                               // orig :167
+                    }
                 }
             }
+            // orig EntityLunaMoth.java:122 with :133-145 — the moth's own loop ran AFTER super.updateAITasks() (the hunt above,
+            // :161-169) and hung its torch scan on its own retarget's else branch: the base hook (a no-op here and for the
+            // Mothra), the Luna Moth's torch scan (LunaMothFlightGoal.onRetargetSkipped), after the hunt as orig ordered the two
+            // loops (ENT-S-143).
+            this.onRetargetSkipped();
         }
 
         // orig :171-180 — the steering; the base's :116-131 unchanged.

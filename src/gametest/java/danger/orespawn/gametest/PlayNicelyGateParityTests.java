@@ -45,6 +45,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.ai.goal.WrappedGoal;
@@ -649,6 +650,9 @@ public class PlayNicelyGateParityTests {
         public void setUp(GameTestHelper helper) {
             this.hunter = spawnWithGoals(helper, this.hunterType.get(), HUNTER_POS);
             this.hunter.setOnGround(true); // a frozen mob never lands (LivingEntity.travel is gated on isEffectiveAi); the companions' nearbyOnly reach cache (ENT-S-135, TargetGoal.canReach) paths through GroundPathNavigation.canUpdatePath, which needs the ground (the T5 refuter B1 precedent)
+            if (this.hunterType == ModEntities.BOYFRIEND || this.hunterType == ModEntities.GIRLFRIEND) {
+                ((TamableAnimal) this.hunter).setTame(true, false); // ENT-S-137 (wave 4): orig MyEntityAINearestAttackableTarget.java:44-49 refuses an untamed companion's hunts — the sites read the tamed, standing companion under the PlayNicely flag alone
+            }
             replaceRandom(this.hunter, rolls(GOAL_ROLL_BOUND, 0, 3, 0)); // bound 5 (the 3-arg constructor's reducedTickDelay(10)) and bound 3 (the Pointysaurus goal's interval 6, ENT-S-136) both answer 0: the acquisition roll fires whichever the goal draws
             if (this.preyKind == PreyKind.ZOMBIE) {
                 this.prey = spawnPrey(helper, EntityType.ZOMBIE, PREY_POS);

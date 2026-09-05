@@ -168,7 +168,12 @@ public class EntityLeon extends TamableAnimal
             this.targetSelector.addGoal(2, new OwnerHurtTargetGoal(this));
         }
         this.revengeGoal = new RevengeGoal();
-        this.targetSelector.addGoal(3, this.revengeGoal); // orig Leon.java:95 — both modes; released by the AI tick's 1-in-200 (:340-342), as orig's task ended on the nulled attack target (ENT-S-131)
+        // orig Leon.java:92-95 — the IMob hunt @1 AHEAD of EntityAIHurtByTarget @2: a monster in sight displaces the revenge
+        // target (both engines let a strictly lower-numbered target goal pre-empt a running higher one — 1.7.10's mutex 1 on
+        // every EntityAITarget, 1.21.1's WrappedGoal.canBeReplacedBy on the TARGET flag). The port had inverted them (HurtBy @3,
+        // the hunt @4, since commit 27b66a39); the hunt is @3 and the revenge goal @4 in both modes, orig's order under the
+        // modern-only owner pair @1 / @2 (ENT-S-130).
+        this.targetSelector.addGoal(4, this.revengeGoal); // orig Leon.java:95 — @2 behind the hunt (ENT-S-130); both modes; released by the AI tick's 1-in-200 (:340-342), as orig's task ended on the nulled attack target (ENT-S-131)
         // orig Leon.java:92-94 — the EntityAINearestAttackableTarget task (EntityLiving.class, IMob selector) is
         // registered only when PlayNicely == 0 at construction; the port registers the goal always and reads the
         // flag live in its canUse, so it never starts while PlayNicely is on (ENT-S-115; the :391 filter gate is
@@ -189,7 +194,7 @@ public class EntityLeon extends TamableAnimal
         // FollowOwnerGoal, the stroll), so the goal carries orig's 16 itself through getFollowDistance — vanilla's
         // getTargetSearchArea inflates (d, 4, d), orig's shape, and the conditions' range and the hold read the same d — and
         // the attribute stays 40 (ENT-S-136; the Dragon's ENT-S-117 idiom). The true / false stay ENT-S-124's; the interval is 0 — orig :93's targetChance 0, no roll in either (ENT-S-117's mapping of the same argument at the Dragon; vanilla's every-other-tick goal pass against EntityAITasks' every third is that record's residual) (ENT-S-136).
-        this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, Mob.class, 0, true, false, huntSelector) { // interval 0 = orig Leon.java:93's targetChance 0 (ENT-S-136)
+        this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, Mob.class, 0, true, false, huntSelector) { // @3, ahead of the revenge goal @4 — orig Leon.java:93's @1 over :95's @2 (ENT-S-130); interval 0 = orig Leon.java:93's targetChance 0 (ENT-S-136)
             @Override
             public boolean canUse() {
                 if (OreSpawnConfig.PLAY_NICELY.get()) return false; // orig Leon.java:92-94 (ENT-S-115)

@@ -43,6 +43,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.ai.goal.WrappedGoal;
@@ -1268,6 +1269,7 @@ public class TargetReleaseParityTests {
         try {
             mob = spawnWithGoals(helper, type, HUNTER_POS);
             mob.setOnGround(true); // a frozen mob never lands; the goal's nearbyOnly reach cache (ENT-S-135, TargetGoal.canReach) paths through GroundPathNavigation.canUpdatePath, which needs the ground (refuter B1's precedent)
+            ((TamableAnimal) mob).setTame(true, false); // ENT-S-137 (wave 4): orig MyEntityAINearestAttackableTarget.java:44-49 refuses an untamed companion's hunt — the row reads the tamed, standing companion
             helper.assertTrue(mob.getAttributeValue(Attributes.FOLLOW_RANGE) == 16.0, "precondition: the FOLLOW_RANGE attribute is vanilla's 16 (" + FINDING + " test setup)");
             NearestAttackableTargetGoal<?> goal = null;
             for (WrappedGoal wrapped : mob.targetSelector.getAvailableGoals()) {
@@ -1327,7 +1329,7 @@ public class TargetReleaseParityTests {
             helper.assertTrue(fly.distanceToSqr(butterfly) < 6.0, "precondition: the butterfly stands inside the bite reach distSq < 6 (orig :146) (" + FINDING + " test geometry)");
             assertSees(helper, fly, butterfly, "a butterfly 2 blocks east");
             float health = butterfly.getHealth();
-            goal.setFlightTarget(fly.blockPosition().above(10)); // parked past the near-retarget distance: the hunt is the retarget's ELSE branch (orig :142, ENT-S-135), so the pass needs a quiet retarget
+            goal.setFlightTarget(new BlockPos((int) fly.getX(), (int) fly.getY() + 10, (int) fly.getZ())); // parked past the near-retarget distance off the cell orig Dragonfly.java:124's (int) casts read (ENT-S-138, wave 4): the hunt is the retarget's ELSE branch (orig :142, ENT-S-135), so the pass needs a quiet retarget
             replaceRandom(fly, rolls(300, 1, 12, 0));
             goal.tick();
             helper.assertTrue(butterfly.getHealth() < health, "control: the hunt pass (the 1-in-300 retarget pinned quiet, the 1-in-12 hunt pinned to fire — orig :142's else branch, ENT-S-135) bites the butterfly ("
@@ -1335,7 +1337,7 @@ public class TargetReleaseParityTests {
             helper.assertTrue(fly.getTarget() == null, "orig Dragonfly.java:144-148 — the prey is never stored: nothing is retained after the pass ("
                     + FINDING + "); slot " + describe(fly.getTarget()));
             float bitten = butterfly.getHealth();
-            goal.setFlightTarget(fly.blockPosition().above(10));
+            goal.setFlightTarget(new BlockPos((int) fly.getX(), (int) fly.getY() + 10, (int) fly.getZ())); // the cast cell again (ENT-S-138)
             replaceRandom(fly, rolls(300, 1, 12, 1));
             goal.tick();
             goal.tick();

@@ -218,9 +218,16 @@ public class Girlfriend extends TamableAnimal implements RangedAttackMob {
         // 2026-09-04 ruling). Live here: the held-weapon melee in
         // customServerAiStep and the RangedAttackGoal @4 read the target slot, so a tamed modern Girlfriend avenges and
         // defends its owner; classic fights only what the Valentine, hunt or Jealousy goals pick, as in 1.7.10.
+        // The pair's slots are @1 / @2 — the Leon's and the Boyfriend's (the Leon precedent, applied with wave 4): with the IMob
+        // hunt back at orig's @3 (ENT-S-130) a pair at @3 / @4 tied with it, and WrappedGoal.canBeReplacedBy needs a strictly
+        // lower priority — a running hunt was never pre-empted by OwnerHurtByTargetGoal, so a hunting Girlfriend ignored her
+        // owner being hit for the hunt's duration, a regression of MOD-033's recorded behaviour (the wave-4 refuter A). At
+        // @1 / @2 the pair sits strictly ahead of both hunts and the Jealousy tasks; it ties with the two Valentine tasks
+        // (orig :161-162 @1 / @2), which run only on a valentine-angry Girlfriend and, registered first, start first on a
+        // same-pass tie — equal priority never pre-empts either way. The owner may still move the pair.
         if (OreSpawnConfig.petsDefendOwner()) {
-            this.targetSelector.addGoal(3, new OwnerHurtByTargetGoal(this));
-            this.targetSelector.addGoal(4, new OwnerHurtTargetGoal(this));
+            this.targetSelector.addGoal(1, new OwnerHurtByTargetGoal(this));
+            this.targetSelector.addGoal(2, new OwnerHurtTargetGoal(this));
         }
         // orig Girlfriend.java:164 / :167 IMob.mobSelector → Mob.class + instanceof Enemy (ENT-S-124, IMob convention) — and orig's
         // Mothra by name: an IMob in 1.7.10 (orig Mothra.java:52), an EntityButterfly with no Enemy here; the task's own rules
@@ -232,9 +239,15 @@ public class Girlfriend extends TamableAnimal implements RangedAttackMob {
         // IMob.mobSelector) at priority 2, registered only when PlayNicely == 0 at construction: the Creeper hunt, a 20/4/20 box,
         // ahead of the IMob hunt; it had no port counterpart (ENT-A-054) — restored, the flag read live in canUse as the IMob
         // goal's is (ENT-S-115). ENT-S-135.
+        // orig MyEntityAINearestAttackableTarget.java:44-52 (shouldExecute) — three refusals ahead of the chance roll (:53) and the
+        // box scan (:56), on both hunts: an untamed EntityTameable (:44-46), an untamed Girlfriend (:47-49, redundant with the
+        // first) and a SITTING Girlfriend (:50-52 — isSitting, the port's isOrderedToSit as the Jealousy goals read it) hunt
+        // nothing; the Valentine tasks (MyValentineTarget.java:47-59) carry none of them and are untouched (ENT-S-137).
         this.targetSelector.addGoal(2, new MyEntityAINearestAttackableTargetGoal<>(this, Creeper.class, 20.0, true, true, imobPrey) {
             @Override
             public boolean canUse() {
+                if (!Girlfriend.this.isTame()) return false;        // orig MyEntityAINearestAttackableTarget.java:44-49 (ENT-S-137)
+                if (Girlfriend.this.isOrderedToSit()) return false; // orig :50-52 — a sitting Girlfriend (ENT-S-137)
                 if (OreSpawnConfig.PLAY_NICELY.get()) return false; // orig Girlfriend.java:163-165 (ENT-S-115)
                 return super.canUse();
             }
@@ -242,12 +255,17 @@ public class Girlfriend extends TamableAnimal implements RangedAttackMob {
         // orig Girlfriend.java:166-168 — the MyEntityAINearestAttackableTarget(EntityLiving.class, 15.0f, IMob selector)
         // task is registered only when PlayNicely == 0 at construction (the :161-162 MyValentineTarget tasks above are
         // ungated in orig); the port registers this goal always and reads the flag live in its canUse, as the Jealousy
-        // goals below do — it never starts while PlayNicely is on (ENT-S-115). Its port priority (5, orig 3) is ENT-S-130's.
+        // goals below do — it never starts while PlayNicely is on (ENT-S-115). Priority 3 as orig :167 — AHEAD of the
+        // Jealousy tasks @4 / @5 (a monster within reach beats an untamed rival near the owner; the port had it @5 since
+        // commit d65b9b1, pre-empted by Jealousy @4 and tied with @5) in both modes; the modern-only owner pair sits @1 / @2
+        // above — strictly ahead of this hunt, so an owner hit still pre-empts a running hunt, MOD-033's promise (ENT-S-130).
         // targetDistance 15.0f (:167) — MyEntityAINearestAttackableTarget.java:36/:56 the box (15/4/15) and
         // MyEntityAITarget.java:52 the hold beyond 15², where vanilla reads the FOLLOW_RANGE attribute (16) (ENT-S-129).
-        this.targetSelector.addGoal(5, new MyEntityAINearestAttackableTargetGoal<>(this, Mob.class, 15.0, true, true, imobPrey) {
+        this.targetSelector.addGoal(3, new MyEntityAINearestAttackableTargetGoal<>(this, Mob.class, 15.0, true, true, imobPrey) {
             @Override
             public boolean canUse() {
+                if (!Girlfriend.this.isTame()) return false;        // orig MyEntityAINearestAttackableTarget.java:44-49 (ENT-S-137)
+                if (Girlfriend.this.isOrderedToSit()) return false; // orig :50-52 — a sitting Girlfriend (ENT-S-137)
                 if (OreSpawnConfig.PLAY_NICELY.get()) return false; // orig Girlfriend.java:166-168 (ENT-S-115)
                 return super.canUse();
             }

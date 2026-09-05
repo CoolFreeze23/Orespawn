@@ -144,10 +144,10 @@ public class IMobConventionTests {
                         "Dragon's target-priority-1 NearestAttackableTargetGoal<Mob> + Enemy (Dragon.registerGoals, ENT-S-117's channel)"),
                 new Hunter("girlfriend", ModEntities.GIRLFRIEND,
                         "Girlfriend.java:167 — MyEntityAINearestAttackableTarget(this, EntityLiving.class, 15.0f, 0, true, true, IMob.mobSelector)",
-                        "Girlfriend's target-priority-5 NearestAttackableTargetGoal<Mob> + Enemy (Girlfriend.registerGoals)"),
+                        "Girlfriend's target-priority-3 NearestAttackableTargetGoal<Mob> + Enemy (Girlfriend.registerGoals; orig :167's @3 — ENT-S-130)"),
                 new Hunter("leon", ModEntities.ENTITY_LEON,
                         "Leon.java:93 — EntityAINearestAttackableTarget(this, EntityLiving.class, 0, true, false, IMob.mobSelector)",
-                        "EntityLeon's target-priority-4 NearestAttackableTargetGoal<Mob> + Enemy, and'ed with its tame rule (EntityLeon.registerGoals)"),
+                        "EntityLeon's target-priority-3 NearestAttackableTargetGoal<Mob> + Enemy, and'ed with its tame rule (EntityLeon.registerGoals; orig :93's @1 ahead of :95's @2 — ENT-S-130)"),
                 new Hunter("theprinceadult", ModEntities.THE_PRINCE_ADULT,
                         "ThePrinceAdult.java:113 — EntityAINearestAttackableTarget(this, EntityLiving.class, 0, true, false, IMob.mobSelector)",
                         "ThePrinceAdult's target-priority-4 NearestAttackableTargetGoal<Mob> + Enemy (ThePrinceAdult.registerGoals)"),
@@ -208,6 +208,9 @@ public class IMobConventionTests {
                     "precondition: PLAY_NICELY.set(false) must read back false (" + FINDING + " test setup)");
             hunter = spawnWithGoals(helper, row.hunter().type().get(), HUNTER_POS);
             hunter.setOnGround(true); // a frozen mob never lands; the companions' nearbyOnly reach cache (ENT-S-135, TargetGoal.canReach) paths through GroundPathNavigation.canUpdatePath, which needs the ground (the T5 refuter B1 precedent)
+            if (row.hunter().species().equals("boyfriend") || row.hunter().species().equals("girlfriend")) {
+                ((TamableAnimal) hunter).setTame(true, false); // ENT-S-137 (wave 4): orig MyEntityAINearestAttackableTarget.java:44-49 refuses an untamed companion's hunt — the rows read the tamed, standing companion; the Leon's tame rule row tames the Leon itself
+            }
             replaceRandom(hunter, rolls(GOAL_ROLL_BOUND, 0));
             NearestAttackableTargetGoal<?> goal = imobGoal(helper, hunter, row.hunter());
             prey = spawnPrey(helper, row.prey().type.get(), PREY_POS);

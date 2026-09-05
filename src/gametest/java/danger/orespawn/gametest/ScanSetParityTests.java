@@ -41,6 +41,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.ai.goal.WrappedGoal;
@@ -765,15 +766,16 @@ public class ScanSetParityTests {
             helper.assertTrue(fly.distanceToSqr(butterfly) < 6.0, "precondition: the butterfly stands inside the bite reach distSq < 6 (orig :146) (" + FINDING + " test geometry)");
             assertSees(helper, fly, butterfly, "a butterfly 2 blocks east");
             float health = butterfly.getHealth();
-            BlockPos two = fly.blockPosition().offset(1, 0, 1);
-            helper.assertTrue(two.distSqr(fly.blockPosition()) == 2.0, "precondition: a flight target at cell distSq 2 (" + FINDING + " test geometry)");
+            BlockPos flyCell = new BlockPos((int) fly.getX(), (int) fly.getY(), (int) fly.getZ()); // orig Dragonfly.java:124's (int) casts — the cell the goal reads (ENT-S-138, wave 4); at this row's integer y it is blockPosition() too
+            BlockPos two = flyCell.offset(1, 0, 1);
+            helper.assertTrue(two.distSqr(flyCell) == 2.0, "precondition: a flight target at cell distSq 2 (" + FINDING + " test geometry)");
             goal.setFlightTarget(two);
             replaceRandom(fly, rolls(300, 1, 12, 0));
             goal.tick();
             helper.assertTrue(butterfly.getHealth() == health && fly.getTarget() == null, "orig Dragonfly.java:124 — a flight target at cell distSq 2 is near (2 < 2.1f):"
                     + " the retarget branch, no hunt though the 1-in-12 is pinned to fire (" + FINDING + "); health " + butterfly.getHealth() + ", slot " + describe(fly.getTarget()));
-            BlockPos three = fly.blockPosition().offset(1, 1, 1);
-            helper.assertTrue(three.distSqr(fly.blockPosition()) == 3.0, "precondition: a flight target at cell distSq 3 (" + FINDING + " test geometry)");
+            BlockPos three = flyCell.offset(1, 1, 1);
+            helper.assertTrue(three.distSqr(flyCell) == 3.0, "precondition: a flight target at cell distSq 3 (" + FINDING + " test geometry)");
             goal.setFlightTarget(three);
             replaceRandom(fly, rolls(300, 1, 12, 0));
             goal.tick();
@@ -1273,6 +1275,7 @@ public class ScanSetParityTests {
     private static Mob spawnCompanion(GameTestHelper helper, EntityType<? extends Mob> type, BlockPos pos) {
         Mob mob = spawnWithGoals(helper, type, pos);
         mob.setOnGround(true);
+        if (mob instanceof TamableAnimal tamable) tamable.setTame(true, false); // ENT-S-137 (wave 4): orig MyEntityAINearestAttackableTarget.java:44-49 refuses an untamed companion's hunts — the rows read the tamed, standing companion (the Valentine tasks carry no such gate)
         mob.getAttribute(Attributes.FOLLOW_RANGE).setBaseValue(40.0);
         return mob;
     }

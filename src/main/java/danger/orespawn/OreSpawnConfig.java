@@ -186,9 +186,9 @@ public class OreSpawnConfig {
     // the bottom of this class (spiderMovement(), mountCamera(),
     // phase14ContentEnable(), mothraWideRootHitbox(),
     // fireRespectsMobGriefing(), godzillaSparesBossPeers(), petsDefendOwner(),
-    // pointysaurusStareAggro(), cryolophosaurusRevengeChase()), never through
-    // the keys directly. The MOD-024 items are unimplemented proposals, not
-    // keys.
+    // pointysaurusStareAggro(), cryolophosaurusRevengeChase(),
+    // chainsawSweepVanillaSight()), never through the keys directly. The
+    // MOD-024 items are unimplemented proposals, not keys.
     /**
      * Master modern-mode switch -- master override; defaults to true and
      * defers to the per-feature keys; set false to force every modern feature
@@ -201,7 +201,8 @@ public class OreSpawnConfig {
      * {@link #phase14ContentEnable()}, {@link #mothraWideRootHitbox()},
      * {@link #fireRespectsMobGriefing()}, {@link #godzillaSparesBossPeers()},
      * {@link #petsDefendOwner()}, {@link #pointysaurusStareAggro()},
-     * {@link #cryolophosaurusRevengeChase()} -- a feature's key is never
+     * {@link #cryolophosaurusRevengeChase()},
+     * {@link #chainsawSweepVanillaSight()} -- a feature's key is never
      * consulted without this master. Phase G artist
      * animations will hang off this same master ("artist animations are a
      * 2.0 feature behind the modern config; classic stays code-driven
@@ -294,6 +295,18 @@ public class OreSpawnConfig {
      * (BOSS-017 pattern): a flip applies to newly spawned or loaded Cryolophosaurs.
      */
     public static final ModConfigSpec.BooleanValue MODERN_CRYOLOPHOSAURUS_REVENGE_CHASE;
+    /**
+     * MOD-037 (ITEM-070, owner ruling 2026-09-05 -- B2): the Chainsaw's left-click
+     * sweep tests its sight on vanilla's collision ray ({@code Player.hasLineOfSight},
+     * eye to eye, the COLLIDER clip that ignores fluids and collision-less blocks)
+     * instead of 1.7.10's air-only ten-sample walk from the player's feet + 1.4 to
+     * the target's mid-body (orig UltimateSword.java:198-247 {@code MyCanSee},
+     * {@code Chainsaw.myCanSee}). Takes effect only while {@link #MODERN_ENABLED}
+     * is on -- read through {@link #chainsawSweepVanillaSight()}, never directly,
+     * live at every swing (the MOD-031 read shape; no BOSS-017 concern); false is
+     * the exact 1.7.10 walk, the classic behaviour.
+     */
+    public static final ModConfigSpec.BooleanValue MODERN_CHAINSAW_SWEEP_VANILLA_SIGHT;
 
     static {
         BUILDER.push("mobs");
@@ -504,7 +517,7 @@ public class OreSpawnConfig {
                         "tweaks.phase14ContentEnable, modern.mothraWideRootHitbox, " +
                         "modern.fireRespectsMobGriefing, modern.godzillaSparesBossPeers, " +
                         "modern.petsDefendOwner, modern.pointysaurusStareAggro, " +
-                        "modern.cryolophosaurusRevengeChase); false = classic 1.7.10 " +
+                        "modern.cryolophosaurusRevengeChase, modern.chainsawSweepVanillaSight); false = classic 1.7.10 " +
                         "parity everywhere, whatever the per-feature keys say. Phase G artist animations will " +
                         "hang off this same switch (classic stays code-driven parity). Snapshotted features " +
                         "(the robot gait mode, hitbox sub-keys, the goal keys petsDefendOwner / " +
@@ -574,6 +587,21 @@ public class OreSpawnConfig {
                         "both modes). Registered at construction, so a change applies to newly spawned or loaded " +
                         "Cryolophosaurs, not live ones."
         ).define("cryolophosaurusRevengeChase", true);
+        // MOD-037 (ITEM-070, owner ruling 2026-09-05: "B2 -- the 1.7.10 air-walk
+        // transcribed in classic; the vanilla ray kept in modern under [modern]
+        // chainsawSweepVanillaSight, default ON, the MOD-029 / MOD-031 shape, read
+        // live per swing"). Read at every swing, never snapshotted.
+        MODERN_CHAINSAW_SWEEP_VANILLA_SIGHT = BUILDER.comment(
+                "MOD-037: the Chainsaw's left-click sweep (every living thing within 5 blocks, 56 damage) tests its " +
+                        "sight on vanilla's collision ray -- eye to eye, through fluids, grass, torches, crops, snow layers, " +
+                        "carpets and slabs, stopped by any block with a collision box -- instead of the 1.7.10 walk: ten " +
+                        "samples from the player's feet + 1.4 to the target's mid-body, every non-air block a wall (a mob " +
+                        "standing in grass, crops or water, or behind a torch, a slab step or one-layer snow, was never swept " +
+                        "in 1.7.10; a mob past a trunk corner or a fence band was). Only takes effect while modern.enabled " +
+                        "is true; classic mode always runs the 1.7.10 walk (orig UltimateSword.java:198-247). On by default " +
+                        "(owner ruling 2026-09-05); set false to keep the 1.7.10 walk in modern mode too. Read at every " +
+                        "swing, so a change applies to the next left-click."
+        ).define("chainsawSweepVanillaSight", true);
         BUILDER.pop();
 
         SPEC = BUILDER.build();
@@ -652,6 +680,18 @@ public class OreSpawnConfig {
      */
     public static boolean cryolophosaurusRevengeChase() {
         return MODERN_ENABLED.get() && MODERN_CRYOLOPHOSAURUS_REVENGE_CHASE.get();
+    }
+
+    /**
+     * MOD-037 (ITEM-070 B2, 2026-09-05): the single {@code master && key} evaluation
+     * for the Chainsaw sweep's sight -- true only while {@link #MODERN_ENABLED} AND
+     * {@link #MODERN_CHAINSAW_SWEEP_VANILLA_SIGHT} are both on. Read by
+     * {@code Chainsaw.isSuitableTarget} live at every swing (the MOD-031 read
+     * shape; no BOSS-017 concern); false is the exact 1.7.10 walk
+     * ({@code Chainsaw.myCanSee}, orig UltimateSword.java:198-247).
+     */
+    public static boolean chainsawSweepVanillaSight() {
+        return MODERN_ENABLED.get() && MODERN_CHAINSAW_SWEEP_VANILLA_SIGHT.get();
     }
 
     /**

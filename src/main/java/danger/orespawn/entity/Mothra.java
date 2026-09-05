@@ -391,10 +391,10 @@ public class Mothra extends EntityButterfly implements OreSpawnPartEntity.Multip
         int shoot = this.level().getDifficulty() == Difficulty.HARD ? 2 : 3;
 
         if (this.currentFlightTarget == null) {
-            this.currentFlightTarget = this.blockPosition();
+            this.currentFlightTarget = new BlockPos((int) this.getX(), (int) this.getY(), (int) this.getZ()); // orig Mothra.java:182 — (int) casts, truncation toward zero (BUG-027 faithful; blockPosition() floored a cell short on a negative axis — ENT-S-138)
         }
 
-        double distSq = this.currentFlightTarget.distSqr(this.blockPosition());
+        double distSq = this.currentFlightTarget.distSqr(new BlockPos((int) this.getX(), (int) this.getY(), (int) this.getZ())); // orig Mothra.java:184 — getDistanceSquared((int) posX, (int) posY, (int) posZ), the same casts (ENT-S-138)
         if (this.stuckCount > 50 || this.random.nextInt(300) == 0 || distSq < 9.0) {
             for (int tries = 50; tries > 0; tries--) {
                 int xdir = this.random.nextInt(2) == 0 ? 1 : -1;
