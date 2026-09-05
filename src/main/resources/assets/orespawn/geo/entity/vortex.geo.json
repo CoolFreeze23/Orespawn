@@ -5,7 +5,10 @@
       "description": {
         "identifier": "geometry.orespawn.g1.model_vortex",
         "texture_width": 256,
-        "texture_height": 128
+        "texture_height": 128,
+        "orespawn:bone_draw_order": [
+          "Shape1"
+        ]
       },
       "bones": [
         {

@@ -1,8 +1,10 @@
 package danger.orespawn.g1;
 
+import danger.orespawn.entity.client.DrawOrder;
 import danger.orespawn.entity.client.OreSpawnGeoReplacement;
 import danger.orespawn.entity.client.OreSpawnGeoReplacementModel;
 import danger.orespawn.entity.client.PoseInputs;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import net.minecraft.world.entity.Entity;
@@ -39,16 +41,24 @@ final class S4CandidateRuntime {
     record Inputs(float ageTicks, float limbSwing, float limbSwingAmount, float netHeadYaw, float headPitch) {
     }
 
-    static G1AnimationRuntime.EvaluatedModel evaluateProductionHook(Model rawModel, String candidateClass,
-                                                                    Inputs inputs, Object subject) throws Exception {
-        BakedGeoModel baked = freshBaked(rawModel);
+    static G1AnimationRuntime.EvaluatedModel evaluateProductionHook(Model rawModel, List<String> drawOrder,
+                                                                    String candidateClass, Inputs inputs,
+                                                                    Object subject) throws Exception {
+        BakedGeoModel baked = freshBaked(rawModel, drawOrder);
         OreSpawnGeoReplacement<?> replacement = instantiate(candidateClass);
         pose(baked, replacement, inputs, subject);
         return snapshot(baked);
     }
 
-    private static BakedGeoModel freshBaked(Model rawModel) {
-        return BakedModelFactory.DEFAULT_FACTORY.constructGeoModel(GeometryTree.fromModel(rawModel));
+    /**
+     * A fresh bake through GeckoLib's own factory, then the G2 root-order contract through the
+     * PRODUCTION {@link DrawOrder#apply} - the static the shipped {@code OreSpawnGeoReplacementModel
+     * .getBakedModel} calls on the cached bake - so the harness draws in the shipped order.
+     */
+    private static BakedGeoModel freshBaked(Model rawModel, List<String> drawOrder) {
+        BakedGeoModel baked = BakedModelFactory.DEFAULT_FACTORY.constructGeoModel(GeometryTree.fromModel(rawModel));
+        DrawOrder.apply(baked, drawOrder);
+        return baked;
     }
 
     private static OreSpawnGeoReplacement<?> instantiate(String className) throws Exception {

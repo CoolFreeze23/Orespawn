@@ -1,5 +1,7 @@
 package danger.orespawn.g1;
 
+import danger.orespawn.entity.client.DrawOrder;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import net.minecraft.resources.ResourceLocation;
@@ -21,15 +23,17 @@ final class G1AnimationRuntime {
     private G1AnimationRuntime() {
     }
 
-    static Evaluator evaluator(Model rawModel) {
-        return new Evaluator(GeometryTree.fromModel(rawModel));
+    static Evaluator evaluator(Model rawModel, List<String> drawOrder) {
+        return new Evaluator(GeometryTree.fromModel(rawModel), drawOrder);
     }
 
     static final class Evaluator {
         private final GeometryTree geometryTree;
+        private final List<String> drawOrder;
 
-        private Evaluator(GeometryTree geometryTree) {
+        private Evaluator(GeometryTree geometryTree, List<String> drawOrder) {
             this.geometryTree = geometryTree;
+            this.drawOrder = drawOrder;
         }
 
         EvaluatedModel bindPose() {
@@ -48,8 +52,11 @@ final class G1AnimationRuntime {
             return snapshot(baked);
         }
 
+        /** GeckoLib's own bake, then the production G2 reorder ({@link DrawOrder#apply}), as in S4CandidateRuntime. */
         private BakedGeoModel freshBaked() {
-            return BakedModelFactory.DEFAULT_FACTORY.constructGeoModel(this.geometryTree);
+            BakedGeoModel baked = BakedModelFactory.DEFAULT_FACTORY.constructGeoModel(this.geometryTree);
+            DrawOrder.apply(baked, this.drawOrder);
+            return baked;
         }
     }
 

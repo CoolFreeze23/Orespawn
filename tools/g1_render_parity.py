@@ -25,6 +25,8 @@ CONTEST_DEPTH_EPSILON = 1.0e-6
 # specific in-game acceptance from the owner (Robot5 is the first).
 IN_GAME_ACCEPTANCE_CONTESTED_FRACTION = 0.005
 CONTESTED_MARKER = (40, 90, 255, 255)
+# G2 root-order contract: the geo description key the converter writes and the shipped model applies.
+DRAW_ORDER_KEY = "orespawn:bone_draw_order"
 DEFAULT_VISUAL_SAMPLE_IDS = ("bind", "t0", "t_quarter", "t_half", "t_three_quarter")
 
 
@@ -302,6 +304,75 @@ def vector_delta(left: Iterable[float], right: Iterable[float]) -> float:
 
 
 AXIS_INDEX = {"x": 0, "y": 1, "z": 2}
+
+
+def draw_order_parity(model_id: str, compiled: dict[str, Any], geo_render: dict[str, Any],
+                      generated_geometry: dict[str, Any], conversion: dict[str, Any]) -> dict[str, Any]:
+    """G2 root-order contract: GeckoLib draws the bones in the classic part order.
+
+    Three things must agree: the order the converter derived from the classic captures
+    (``conversion.json``), the order shipped inside the geo (``description[DRAW_ORDER_KEY]``,
+    what production reads), and the traversal a fresh GeckoLib bake actually has after the
+    production ``DrawOrder.apply`` (``baked_bone_order``). Then, capture by capture, the
+    sequence of parts the classic ``renderToBuffer`` drew (``draw_order``, attributed by
+    skipDraw elimination in the probe) must equal the sequence of bones ``GeoRenderer``
+    emitted cubes for.
+    """
+    description = generated_geometry["minecraft:geometry"][0]["description"]
+    order = description.get(DRAW_ORDER_KEY)
+    if not isinstance(order, list) or not order:
+        raise AssertionError(f"{model_id} generated geo carries no {DRAW_ORDER_KEY}")
+    if order != conversion.get("bone_draw_order"):
+        raise AssertionError(f"{model_id} converter report and geo disagree on {DRAW_ORDER_KEY}")
+    if sorted(order) != sorted(conversion["exact_bone_names"]):
+        raise AssertionError(f"{model_id} {DRAW_ORDER_KEY} is not a permutation of the exact bone names")
+    if geo_render.get("bone_draw_order") != order:
+        raise AssertionError(f"{model_id} GeckoLib probe applied a different draw order than the geo carries")
+    baked = geo_render.get("baked_bone_order")
+    if baked != order:
+        raise AssertionError(
+            f"DRAW ORDER MISMATCH {model_id}: a fresh GeckoLib bake traverses {baked} after DrawOrder.apply, "
+            f"not the contracted {order}"
+        )
+    vanilla_samples = full_sample_map(compiled)
+    geo_samples = full_sample_map(geo_render)
+    if vanilla_samples.keys() != geo_samples.keys():
+        raise AssertionError(f"{model_id} full capture sets differ between the probes")
+    draws_checked = 0
+    for sample_id, vanilla_sample in vanilla_samples.items():
+        classic = vanilla_sample.get("draw_order")
+        gecko = geo_samples[sample_id].get("draw_order")
+        if classic is None or gecko is None:
+            raise AssertionError(f"{model_id}/{sample_id} capture carries no draw_order")
+        if classic != gecko:
+            raise AssertionError(
+                f"DRAW ORDER MISMATCH {model_id}/{sample_id}: classic renderToBuffer drew {classic}; "
+                f"GeoRenderer drew {gecko}"
+            )
+        draws_checked += len(classic)
+    evidence = conversion.get("draw_order_evidence", {})
+    # Refuter B (2026-09-06): the leg must not pass vacuously — a rig with no full capture, or with units no capture
+    # ever drew, would ship an order resting on the converter's emission tie-break instead of evidence.
+    if not vanilla_samples:
+        raise AssertionError(f"DRAW ORDER UNEVIDENCED {model_id}: no full capture observed the classic draw order")
+    unobserved_units = evidence.get("unobserved_units") or []
+    if unobserved_units:
+        raise AssertionError(
+            f"DRAW ORDER UNEVIDENCED {model_id}: units never drawn by any capture: {sorted(unobserved_units)}"
+        )
+    return {
+        "status": "PASS",
+        "bone_draw_order": order,
+        "captures_checked": len(vanilla_samples),
+        "draws_checked": draws_checked,
+        "classic_source": compiled.get("draw_order_source"),
+        "unobserved_units": evidence.get("unobserved_units"),
+        "policy": (
+            "the shipped model sorts GeckoLib's topLevelBones / childBones lists into the classic "
+            "renderToBuffer order (DrawOrder.apply); both renderers traverse in pre-order, so equal "
+            "sibling orders are equal draw orders"
+        ),
+    }
 
 
 def render_instance_expansion(conversion: dict[str, Any] | None) -> dict[str, Any] | None:
@@ -1309,7 +1380,10 @@ def foreground_fraction(image: Image.Image) -> float:
 
 def visual_parity(model_id: str, spec: dict[str, Any], compiled: dict[str, Any],
                   geo_render: dict[str, Any], repository_root: Path,
-                  output_dir: Path, thresholds: dict[str, Any]) -> dict[str, Any]:
+                  output_dir: Path, thresholds: dict[str, Any],
+                  exclude_contested: bool = True) -> dict[str, Any]:
+    """The visual leg; ``exclude_contested`` False (``--no-contested-exclusion``) compares every
+    pixel, contested ones included, and keeps the contested fraction as a diagnostic only."""
     vanilla_samples = sample_map(compiled)
     geo_samples = sample_map(geo_render)
     visual_sample_ids = tuple(spec.get("visual_sample_ids", DEFAULT_VISUAL_SAMPLE_IDS))
@@ -1345,7 +1419,8 @@ def visual_parity(model_id: str, spec: dict[str, Any], compiled: dict[str, Any],
         contested = [left or right for left, right in zip(vanilla_contested, geo_contested)]
         contested_fraction = sum(contested) / (IMAGE_SIZE * IMAGE_SIZE)
         changed, mae, diff_image = pixel_diff(
-            vanilla_image, geo_image, int(thresholds["pixel_channel_tolerance"]), contested
+            vanilla_image, geo_image, int(thresholds["pixel_channel_tolerance"]),
+            contested if exclude_contested else None,
         )
         vanilla_foreground = foreground_fraction(vanilla_image)
         geo_foreground = foreground_fraction(geo_image)
@@ -1380,6 +1455,7 @@ def visual_parity(model_id: str, spec: dict[str, Any], compiled: dict[str, Any],
                 "changed_fraction": changed,
                 "mean_absolute_error": mae,
                 "contested_fraction": contested_fraction,
+                "contested_excluded": exclude_contested,
                 "vanilla_foreground_fraction": vanilla_foreground,
                 "geo_foreground_fraction": geo_foreground,
                 "vanilla_capture": vanilla_path.as_posix(),
@@ -1392,15 +1468,21 @@ def visual_parity(model_id: str, spec: dict[str, Any], compiled: dict[str, Any],
         max_contested = max(max_contested, contested_fraction)
     # Owner condition (2026-09-02): the excluded fraction is PINNED per species in the
     # manifest; growth fails the leg until the pin is raised explicitly, like a tolerance.
+    # With the exclusion off (G2 root-order contract) nothing is excluded: a pin, if the
+    # manifest still carries one, is checked as a diagnostic and is otherwise optional.
     if "max_contested_fraction_pin" not in spec:
-        raise AssertionError(f"{model_id} manifest declares no max_contested_fraction_pin")
-    contested_pin = float(spec["max_contested_fraction_pin"])
-    if max_contested > contested_pin:
-        raise AssertionError(
-            f"CONTESTED PIN EXCEEDED {model_id}: excluded z-fight fraction {max_contested:.12g} > "
-            f"pinned {contested_pin:.12g}; raising the pin is an owner ruling"
-        )
-        min_foreground = min(min_foreground, vanilla_foreground, geo_foreground)
+        if exclude_contested:
+            raise AssertionError(f"{model_id} manifest declares no max_contested_fraction_pin")
+        contested_pin = None
+    else:
+        contested_pin = float(spec["max_contested_fraction_pin"])
+        if max_contested > contested_pin:
+            raise AssertionError(
+                f"CONTESTED PIN EXCEEDED {model_id}: {'excluded ' if exclude_contested else 'diagnostic '}"
+                f"z-fight fraction {max_contested:.12g} > pinned {contested_pin:.12g}; "
+                "raising the pin is an owner ruling"
+            )
+            min_foreground = min(min_foreground, vanilla_foreground, geo_foreground)
 
     return {
         "status": "PASS",
@@ -1416,10 +1498,18 @@ def visual_parity(model_id: str, spec: dict[str, Any], compiled: dict[str, Any],
             "pixels where two different quads meet the front within "
             f"{CONTEST_DEPTH_EPSILON:g} depth with different texels are draw-order z-fights, "
             "excluded from the comparison and painted in the diff (ruling 2, 2026-09-02)"
+        ) if exclude_contested else (
+            "pixels where two different quads meet the front within "
+            f"{CONTEST_DEPTH_EPSILON:g} depth with different texels are counted as a diagnostic only; "
+            "every pixel is compared, the draw order being contracted equal on both sides "
+            "(G2 root-order contract)"
         ),
+        "contested_exclusion_applied": exclude_contested,
         "max_contested_fraction": max_contested,
         "contested_fraction_pin": contested_pin,
-        "requires_in_game_acceptance": contested_pin > IN_GAME_ACCEPTANCE_CONTESTED_FRACTION,
+        "requires_in_game_acceptance": (
+            contested_pin is not None and contested_pin > IN_GAME_ACCEPTANCE_CONTESTED_FRACTION
+        ),
         "cutout_alpha_threshold": CUTOUT_ALPHA_THRESHOLD / 255.0,
         "minimum_observed_foreground_fraction": min_foreground,
         "samples": rows,
@@ -1443,6 +1533,14 @@ def render_instance_lines(contract: dict[str, Any]) -> list[str]:
         f"delta {expansion['max_draw_pose_linear_delta']:.12g}, translation "
         f"{expansion['max_draw_pose_translation_delta_model_units']:.12g} model units."
     ]
+
+
+def contested_line(visual: dict[str, Any]) -> str:
+    if visual.get("contested_exclusion_applied", True):
+        return (f"- Visual z-fight pixels excluded (ruling 2): maximum contested fraction "
+                f"{visual['max_contested_fraction']:.12g}.")
+    return (f"- Visual z-fight pixels compared, none excluded (G2 root-order contract): maximum contested "
+            f"fraction {visual['max_contested_fraction']:.12g}, a diagnostic.")
 
 
 def markdown_report(report: dict[str, Any]) -> str:
@@ -1479,6 +1577,8 @@ def markdown_report(report: dict[str, Any]) -> str:
                 f"(epsilon {model['animation']['epsilon_radians']:.12g}).",
                 f"- Visual maximum changed fraction: {model['visual']['max_changed_fraction']:.12g}; "
                 f"maximum mean absolute error: {model['visual']['max_mean_absolute_error']:.12g}.",
+                f"- Draw order: GeckoLib bone order equals the classic draw order over "
+                f"{model['draw_order']['captures_checked']} captures ({model['draw_order']['draws_checked']} draws).",
                 "",
             ]
         )
@@ -1510,8 +1610,7 @@ def markdown_report(report: dict[str, Any]) -> str:
                     f"position maximum delta {contract['max_position_delta_model_units']:.12g} model units "
                     f"over {contract['position_channel_samples']} position channels; inputs "
                     f"{contract['inputs']}.",
-                    f"- Visual z-fight pixels excluded (ruling 2): maximum contested fraction "
-                    f"{model['visual']['max_contested_fraction']:.12g}.",
+                    contested_line(model["visual"]),
                     *render_instance_lines(contract),
                     "",
                 ]
@@ -1525,8 +1624,7 @@ def markdown_report(report: dict[str, Any]) -> str:
                     f"rotation maximum delta {model['animation']['max_rotation_delta_radians']:.12g} radians; "
                     f"position maximum delta {contract['max_position_delta_model_units']:.12g} model units; "
                     f"hidden-bone checks {contract['hidden_bone_checks']}.",
-                    f"- Visual z-fight pixels excluded (ruling 2): maximum contested fraction "
-                    f"{model['visual']['max_contested_fraction']:.12g}.",
+                    contested_line(model["visual"]),
                     *render_instance_lines(contract),
                     "",
                 ]
@@ -1546,6 +1644,8 @@ def markdown_report(report: dict[str, Any]) -> str:
             f"- Coverage: {', '.join(fixture['fixture_coverage']['required_coverage'])}.",
             f"- Geometry maximum corner delta: {fixture['geometry']['max_corner_delta_blocks']:.12g} blocks; "
             f"surface UV maximum {fixture['surface_mapping']['max_uv_delta_normalized']:.12g}.",
+            f"- Draw order: GeckoLib bone order equals the classic draw order over "
+            f"{fixture['draw_order']['captures_checked']} captures ({fixture['draw_order']['draws_checked']} draws).",
         ])
         fixture_contract = fixture["animation"]["contract"]
         if fixture_contract["kind"] == "code_driven":
@@ -1637,6 +1737,10 @@ def main() -> int:
                         help="reference_geometry_leg.py output; required for manifests declaring reference_source")
     parser.add_argument("--write-proof", action="store_true")
     parser.add_argument("--validate-only", action="store_true")
+    parser.add_argument("--no-contested-exclusion", action="store_true",
+                        help="G2 root-order contract: compare every pixel of the visual leg; the z-fight "
+                             "contested fraction is reported (and pinned, if the manifest still pins it) "
+                             "as a diagnostic only")
     args = parser.parse_args()
     if args.write_proof and args.validate_only:
         parser.error("--write-proof and --validate-only are mutually exclusive")
@@ -1723,6 +1827,11 @@ def main() -> int:
             model_id, spec, compiled, reference_animation, animation_contract,
             conversion, float(manifest["ticks_per_second"]),
         )
+        draw_order = draw_order_parity(model_id, compiled, geo_render, generated_geometry, conversion)
+        print(
+            f"G1 DRAW ORDER PASS: {model_id} {draw_order['captures_checked']} captures, "
+            f"{draw_order['draws_checked']} draws in the classic order"
+        )
         common_report = {
             "model_id": model_id,
             "tier": spec["tier"],
@@ -1739,6 +1848,7 @@ def main() -> int:
             "surface_mapping": surface_mapping,
             "animation": animation,
             "reference_animation": reference_schema,
+            "draw_order": draw_order,
         }
         if "reference_source" in spec:
             if args.reference_dir is None:
@@ -1771,13 +1881,16 @@ def main() -> int:
             print(f"G1 FIXTURE PASS: {model_id} all declared converter cases observed")
         else:
             visual = visual_parity(
-                model_id, spec, compiled, geo_render, repository_root, args.output_dir, thresholds
+                model_id, spec, compiled, geo_render, repository_root, args.output_dir, thresholds,
+                exclude_contested=not args.no_contested_exclusion,
             )
+            pin = visual["contested_fraction_pin"]
             print(
                 f"G1 VISUAL PASS: {model_id} max changed {visual['max_changed_fraction']:.12g}, "
                 f"max MAE {visual['max_mean_absolute_error']:.12g}, "
                 f"max contested {visual['max_contested_fraction']:.12g} "
-                f"(pin {visual['contested_fraction_pin']:.12g}"
+                f"({'excluded' if visual['contested_exclusion_applied'] else 'compared, not excluded'}; "
+                f"pin {'none' if pin is None else f'{pin:.12g}'}"
                 f"{', IN-GAME ACCEPTANCE REQUIRED' if visual['requires_in_game_acceptance'] else ''})"
             )
             common_report["visual"] = visual
@@ -1806,6 +1919,7 @@ def main() -> int:
         "ground_truth": "executed compiled LayerDefinition + baked ModelPart trees",
         "geckolib_version": manifest["geckolib_version"],
         "thresholds": thresholds,
+        "contested_exclusion_applied": not args.no_contested_exclusion,
         "models": model_reports,
         "fixtures": fixture_reports,
         "deterministic_text_outputs": line_endings,

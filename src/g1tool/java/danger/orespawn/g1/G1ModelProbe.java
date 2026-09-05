@@ -8,6 +8,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import danger.orespawn.entity.client.DrawOrder;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
@@ -23,6 +24,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -186,16 +188,28 @@ public final class G1ModelProbe {
             out.add("render_instances", spec.getAsJsonObject("render_instances").deepCopy());
         }
 
+        out.addProperty("draw_order_source", DrawOrderObserver.SOURCE);
+
         Constructor<?> constructor = modelClass.getDeclaredConstructor(ModelPart.class);
         constructor.setAccessible(true);
         Object model = constructor.newInstance(bakedRoot);
         Method setupAnim = findSetupAnim(modelClass);
+        // G2 root-order contract: the classic draw order of every full capture is observed on a
+        // SECOND bake of the same LayerDefinition, posed exactly as the captured one, so the
+        // observation's extra renderToBuffer calls (one per cube-bearing part) never touch the
+        // captured model's state (the Rotator advances its fan angle inside renderToBuffer and
+        // subject_after pins that advance).
+        ModelPart shadowRoot = layer.bakeRoot();
+        DrawOrderObserver drawOrder = new DrawOrderObserver(constructor.newInstance(shadowRoot), shadowRoot,
+                namesToPaths, instances == null ? Map.of() : instances.declaredCounts);
 
         JsonArray samples = new JsonArray();
         resetBakedTree(bakedRoot);
-        samples.add(captureVanillaSample(
+        JsonObject bindSample = captureVanillaSample(
                 new SampleRequest("bind", 0.0F, 0.0F, true, false),
-                model, bakedRoot, namesToPaths, Set.of(), instances));
+                model, bakedRoot, namesToPaths, Set.of(), instances);
+        drawOrder.observe(bindSample, (shadowModel, root) -> resetBakedTree(root));
+        samples.add(bindSample);
 
         float limbSwing = spec.get("limb_swing").getAsFloat();
         float netHeadYaw = optionalFloat(spec, "net_head_yaw");
@@ -224,6 +238,13 @@ public final class G1ModelProbe {
                     sample.add("entity_state", state.deepCopy());
                     sample.add("subject_after", subject.after());
                     sample.add("hidden_bones", names(hidden));
+                    drawOrder.observe(sample, (shadowModel, root) -> {
+                        // The same declared state on a fresh subject: a seeded roll evolves identically.
+                        resetBakedTree(root);
+                        showAllParts(root);
+                        poseFrom.invoke(shadowModel, new ProbeSubject(state), limbSwing, request.limbSwingAmount(),
+                                request.ageTicks(), netHeadYaw, headPitch);
+                    });
                     samples.add(sample);
                 }
             }
@@ -238,6 +259,11 @@ public final class G1ModelProbe {
                 if (productionHook) {
                     sample.add("hidden_bones", names(hidden));
                 }
+                drawOrder.observe(sample, (shadowModel, root) -> {
+                    resetBakedTree(root);
+                    setupAnim.invoke(shadowModel, null, limbSwing, request.limbSwingAmount(),
+                            request.ageTicks(), netHeadYaw, headPitch);
+                });
                 samples.add(sample);
             }
         }
@@ -362,7 +388,7 @@ public final class G1ModelProbe {
         return positions;
     }
 
-    private static JsonArray names(Set<String> names) {
+    private static JsonArray names(Collection<String> names) {
         JsonArray out = new JsonArray();
         names.forEach(out::add);
         return out;
@@ -872,6 +898,182 @@ public final class G1ModelProbe {
         }
     }
 
+    /** Poses the observation bake exactly as the captured bake was posed for one sample. */
+    @FunctionalInterface
+    private interface ShadowPose {
+        void apply(Object model, ModelPart root) throws Exception;
+    }
+
+    /**
+     * G2 root-order contract: observes the ACTUAL classic draw order of every full capture.
+     *
+     * <p>{@code ModelPart.render} (1.21.1 bytecode: {@code visible} test at offsets 1-4,
+     * {@code pushPose} 32, {@code translateAndRotate} 37, the {@code skipDraw} test 41-44
+     * gating {@code compile} at 58, {@code children.values()} 62-70 each drawn through
+     * {@code render} at 108, {@code popPose} 115) pushes the pose stack once per drawn
+     * part, so every draw is a distinct push serial of the instrumented stack. Draws are
+     * attributed to parts by elimination: one {@code renderToBuffer} per cube-bearing part
+     * with every OTHER part's public {@code skipDraw} set, so only that part compiles
+     * cubes while the push structure - and so the serials - stays identical. No UV or
+     * geometry uniqueness is assumed: superimposed or identical parts are attributed
+     * exactly. A part drawn {@code n > 1} times in one capture (the Slice 4c
+     * render-instance loops) is named {@code <part>__i<k>} per draw, {@code k} the draw
+     * ordinal - the names the 4c capture attributes by UV set, cross-checked here.</p>
+     */
+    private static final class DrawOrderObserver {
+        static final String SOURCE = "classic EntityModel.renderToBuffer on a second bake posed identically; "
+                + "every ModelPart.render is one pose-stack push, attributed to its part by ModelPart.skipDraw "
+                + "elimination (one run per cube-bearing part with every other part's skipDraw set); a part "
+                + "drawn n > 1 times is named <part>__i<k> by draw ordinal";
+        private final Object model;
+        private final ModelPart root;
+        private final Map<String, ModelPart> cubeParts;
+        private final Map<String, Integer> declaredCounts;
+
+        DrawOrderObserver(Object model, ModelPart root, Map<String, String> namesToPaths,
+                          Map<String, Integer> declaredCounts) throws Exception {
+            this.model = model;
+            this.root = root;
+            Map<String, ModelPart> byName = new TreeMap<>();
+            collectBakedParts(root, "", byName, namesToPaths);
+            this.cubeParts = new TreeMap<>();
+            for (Map.Entry<String, ModelPart> entry : byName.entrySet()) {
+                if (!bakedCubes(entry.getValue()).isEmpty()) {
+                    this.cubeParts.put(entry.getKey(), entry.getValue());
+                }
+            }
+            this.declaredCounts = declaredCounts;
+        }
+
+        /** Adds {@code draw_order} to a full capture: the drawn parts (clones per draw) in the classic order. */
+        void observe(JsonObject sample, ShadowPose pose) throws Exception {
+            if (!sample.has("render_vertices")) {
+                return;
+            }
+            String id = sample.get("id").getAsString();
+            pose.apply(this.model, this.root);
+            Map<Integer, Integer> draws = run();
+            Map<Integer, String> owners = new TreeMap<>();
+            try {
+                for (String name : this.cubeParts.keySet()) {
+                    this.cubeParts.values().forEach(part -> part.skipDraw = true);
+                    this.cubeParts.get(name).skipDraw = false;
+                    for (Map.Entry<Integer, Integer> draw : run().entrySet()) {
+                        Integer expected = draws.get(draw.getKey());
+                        if (expected == null || !expected.equals(draw.getValue())) {
+                            throw new IllegalStateException(id + ": " + name + " drew " + draw.getValue()
+                                    + " vertices at push " + draw.getKey() + " alone but " + expected
+                                    + " with every part drawing");
+                        }
+                        String previous = owners.put(draw.getKey(), name);
+                        if (previous != null) {
+                            throw new IllegalStateException(id + ": push " + draw.getKey() + " drew both "
+                                    + previous + " and " + name);
+                        }
+                    }
+                }
+            } finally {
+                this.cubeParts.values().forEach(part -> part.skipDraw = false);
+            }
+            List<String> parts = new ArrayList<>();
+            Map<String, Integer> counts = new TreeMap<>();
+            for (Map.Entry<Integer, Integer> draw : draws.entrySet()) {
+                String part = owners.get(draw.getKey());
+                if (part == null) {
+                    throw new IllegalStateException(id + ": the draw at push " + draw.getKey() + " ("
+                            + draw.getValue() + " vertices) belongs to no part");
+                }
+                parts.add(part);
+                counts.merge(part, 1, Integer::sum);
+            }
+            JsonArray order = new JsonArray();
+            Map<String, Integer> ordinals = new TreeMap<>();
+            for (String part : parts) {
+                int ordinal = ordinals.merge(part, 1, Integer::sum) - 1;
+                order.add(this.declaredCounts.containsKey(part) || counts.get(part) > 1
+                        ? part + "__i" + ordinal : part);
+            }
+            if (sample.has("draws")) {
+                // Slice 4c attributed the declared parts' draws by UV set; the two attributions must agree.
+                List<String> byUv = new ArrayList<>();
+                for (JsonElement draw : sample.getAsJsonArray("draws")) {
+                    byUv.add(draw.getAsJsonObject().get("bone").getAsString());
+                }
+                List<String> declaredDraws = new ArrayList<>();
+                for (JsonElement bone : order) {
+                    String name = bone.getAsString();
+                    int marker = name.lastIndexOf("__i");
+                    if (marker > 0 && this.declaredCounts.containsKey(name.substring(0, marker))) {
+                        declaredDraws.add(name);
+                    }
+                }
+                if (!declaredDraws.equals(byUv)) {
+                    throw new IllegalStateException(id + ": skipDraw elimination attributes the render-instance "
+                            + "draws as " + declaredDraws + " but the UV attribution recorded " + byUv);
+                }
+            }
+            sample.add("draw_order", order);
+        }
+
+        /** One renderToBuffer: vertex count per pose-stack push serial, in draw order. */
+        private Map<Integer, Integer> run() {
+            InstrumentedPoseStack stack = new InstrumentedPoseStack();
+            SerialCountingVertexConsumer consumer = new SerialCountingVertexConsumer(stack);
+            ((EntityModel<?>) this.model).renderToBuffer(stack, consumer, 0, 0, -1);
+            if (stack.depth != 0) {
+                throw new IllegalStateException("renderToBuffer left the pose stack unbalanced (depth " + stack.depth + ")");
+            }
+            return consumer.countsBySerial;
+        }
+    }
+
+    /** Counts vertices per pose-stack push serial; a serial with vertices is one ModelPart.render draw. */
+    private static final class SerialCountingVertexConsumer implements VertexConsumer {
+        private final InstrumentedPoseStack stack;
+        private final Map<Integer, Integer> countsBySerial = new LinkedHashMap<>();
+
+        private SerialCountingVertexConsumer(InstrumentedPoseStack stack) {
+            this.stack = stack;
+        }
+
+        @Override
+        public void addVertex(float x, float y, float z, int color, float u, float v,
+                              int packedOverlay, int packedLight,
+                              float normalX, float normalY, float normalZ) {
+            this.countsBySerial.merge(this.stack.pushSerial, 1, Integer::sum);
+        }
+
+        @Override
+        public VertexConsumer addVertex(float x, float y, float z) {
+            throw new IllegalStateException("G1 capture requires the atomic VertexConsumer.addVertex overload");
+        }
+
+        @Override
+        public VertexConsumer setColor(int red, int green, int blue, int alpha) {
+            return this;
+        }
+
+        @Override
+        public VertexConsumer setUv(float u, float v) {
+            return this;
+        }
+
+        @Override
+        public VertexConsumer setUv1(int u, int v) {
+            return this;
+        }
+
+        @Override
+        public VertexConsumer setUv2(int u, int v) {
+            return this;
+        }
+
+        @Override
+        public VertexConsumer setNormal(float normalX, float normalY, float normalZ) {
+            return this;
+        }
+    }
+
     private static void dumpGeo(JsonObject manifest, Path generatedDir, Path outputDir) throws Exception {
         Files.createDirectories(outputDir);
         clearGeneratedJson(outputDir, ".geo-render.json");
@@ -887,7 +1089,11 @@ public final class G1ModelProbe {
     private static JsonObject dumpGeoModel(JsonObject manifest, JsonObject spec,
                                            Path geoPath, Path animationPath) throws Exception {
         Model rawModel = KeyFramesAdapter.GEO_GSON.fromJson(Files.readString(geoPath), Model.class);
-        G1AnimationRuntime.Evaluator evaluator = G1AnimationRuntime.evaluator(rawModel);
+        // G2 root-order contract: the generated geo carries the classic draw order under DrawOrder.KEY;
+        // every fresh bake below is sorted into it through the production DrawOrder.apply, the static
+        // the shipped OreSpawnGeoReplacementModel.getBakedModel calls on the cached bake.
+        List<String> drawOrder = DrawOrder.read(readJson(geoPath));
+        G1AnimationRuntime.Evaluator evaluator = G1AnimationRuntime.evaluator(rawModel, drawOrder);
         G1AnimationRuntime.EvaluatedModel bind = evaluator.bindPose();
         String modelId = spec.get("id").getAsString();
         String animationKind = spec.get("animation_kind").getAsString();
@@ -948,6 +1154,9 @@ public final class G1ModelProbe {
         JsonArray boneNames = new JsonArray();
         bind.bones().keySet().forEach(boneNames::add);
         out.add("bone_names", boneNames);
+        // G2: the order read from the geo, and the traversal a fresh bake actually has after DrawOrder.apply.
+        out.add("bone_draw_order", names(drawOrder));
+        out.add("baked_bone_order", names(DrawOrder.traversal(bind.model())));
         // Slice 4c: for an expanded rig every bone's cumulative transform is recorded in classic
         // terms so the parity tool can compare the group/clone composition with the classic
         // model's measured per-draw pose stack.
@@ -967,7 +1176,7 @@ public final class G1ModelProbe {
                 for (SampleRequest request : requests) {
                     ProbeSubject subject = new ProbeSubject(state);
                     G1AnimationRuntime.EvaluatedModel candidate = S4CandidateRuntime.evaluateProductionHook(
-                            rawModel, candidateClass,
+                            rawModel, drawOrder, candidateClass,
                             new S4CandidateRuntime.Inputs(request.ageTicks(), limbSwing,
                                     request.limbSwingAmount(), netHeadYaw, headPitch),
                             subject);
@@ -987,7 +1196,7 @@ public final class G1ModelProbe {
                     candidate = evaluator.evaluateBeaverCodeDriven(
                             request.ageTicks(), request.limbSwingAmount());
                 } else if (productionHook) {
-                    candidate = S4CandidateRuntime.evaluateProductionHook(rawModel, candidateClass,
+                    candidate = S4CandidateRuntime.evaluateProductionHook(rawModel, drawOrder, candidateClass,
                             new S4CandidateRuntime.Inputs(request.ageTicks(), limbSwing,
                                     request.limbSwingAmount(), netHeadYaw, headPitch), null);
                 } else {
@@ -1048,6 +1257,8 @@ public final class G1ModelProbe {
 
         sample.add("cubes", consumer.groupsJson());
         sample.add("render_vertices", consumer.verticesJson());
+        // G2: the bones whose cubes GeoRenderer emitted, in the order it emitted them.
+        sample.add("draw_order", renderer.drawOrderJson());
         if (recordBonePoses) {
             sample.add("bone_poses_classic", renderer.bonePosesJson());
         }
@@ -1283,10 +1494,15 @@ public final class G1ModelProbe {
                 new Matrix4f().scale(1.0F, -1.0F, 1.0F).translate(0.0F, -1.5F, 0.0F);
         private final CapturingVertexConsumer consumer;
         private final Map<String, JsonArray> bonePoses;
+        private final List<String> drawOrder = new ArrayList<>();
 
         private CapturingGeoRenderer(CapturingVertexConsumer consumer, boolean recordBonePoses) {
             this.consumer = consumer;
             this.bonePoses = recordBonePoses ? new TreeMap<>() : null;
+        }
+
+        JsonArray drawOrderJson() {
+            return names(this.drawOrder);
         }
 
         JsonObject bonePosesJson() {
@@ -1319,6 +1535,9 @@ public final class G1ModelProbe {
                 return;
             }
             List<GeoCube> cubes = bone.getCubes();
+            if (!cubes.isEmpty()) {
+                this.drawOrder.add(bone.getName());
+            }
             for (int index = 0; index < cubes.size(); index++) {
                 poseStack.pushPose();
                 consumer.begin(bone.getName(), bone.getName(), index);
