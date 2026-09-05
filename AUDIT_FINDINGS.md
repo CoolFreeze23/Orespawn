@@ -5064,7 +5064,7 @@ Entries: **79 total** — ANIM 20 (DIVERGENT 8 · PARTIAL 10 · MISSING 2) · BU
 
 
 
-### ITEM-070 — Chainsaw sweep sight: the port's `player.hasLineOfSight(target)` (vanilla collision ray, eye to eye) stands in for orig UltimateSword's air-only `MyCanSee` sample walk (feet + 1.4 to the target's mid-body); the two rays answer differently on the felling-site cases and no MOD record covers it (REPORT, 2026-09-05; raised by the ENT-S-121 refuter 2026-09-04)
+### ITEM-070 — Chainsaw sweep sight: the port's `player.hasLineOfSight(target)` (vanilla collision ray, eye to eye) stands in for orig UltimateSword's air-only `MyCanSee` sample walk (feet + 1.4 to the target's mid-body); the two rays answer differently on the felling-site cases and no MOD record covers it (REPORT, 2026-09-05; raised by the ENT-S-121 refuter 2026-09-04; RULED 2026-09-05 — B2, lands with wave 4)
 
 - **Status:** DIVERGENT — REPORT for the owner's ruling (read-only lane; nothing applied)
 - **Scope correction (what the ray gates):** the SWEEP, not felling. Orig `MyCanSee(e, player)` (UltimateSword.java:198-247)
@@ -5199,6 +5199,19 @@ Entries: **79 total** — ANIM 20 (DIVERGENT 8 · PARTIAL 10 · MISSING 2) · BU
   "server answer only" statement stands on `EntityLivingBase.attackEntityFrom`'s client short-circuit (still recalled).
 - **Resolution:** REPORT — for the owner's ruling between A and B (B1 / B2), with the posY reading (feet + 1.4 vs feet + 3.02)
   named in the ruling; nothing applied; targeting_survey :1107 and census :402 / :454 to be re-rated with it.
+- **Ruled (owner, 2026-09-05): B2** — the 1.7.10 air-walk transcribed in classic (shape A: the item's own code,
+  `Chainsaw.myCanSee`, orig UltimateSword.java:198-247 step for step, the in-grass and in-water quirk of row 10
+  included, the `(int)` casts kept, `state.isAir()` for `== Blocks.air`); the vanilla ray kept in modern under
+  `[modern] chainsawSweepVanillaSight`, default ON (the MOD-029 / MOD-031 shape, read live per swing), one MOD record
+  written when it lands; the pins as proposed under A plus a two-mode pin. Lands with wave 4 (addendum item 23 (6)–(7)),
+  held behind the chain's no-look slices. **The ‡ rows re-read under the server frame (a note, addendum item 23 (3)):**
+  the premise check found the server player's posY at the feet, so every ‡ alternative (the feet + 3.02 origin, the
+  k ≥ 8 samples, the cell above the head) is withdrawn and each row's answer is the feet + 1.4 reading as written —
+  the table stands with the ‡ text as history; the ledger's Chainsaw filter-order cell (targeting_survey :1107) is
+  re-rated DIVERGES with this ruling, and the census cells :402 / :454 ("the 1.7.10 origin sat 3.02 above the feet")
+  are read under the census's head note (the origin was feet + 1.4). The two engine facts still marked recalled
+  (`EntityLivingBase.attackEntityFrom`'s client short-circuit, `World.getBlock` outside y 0..255) carry no ruling until
+  a law-11 check — neither bears on B2.
 
 ### ANIM-001 — Systemic: `wingspeed` → `limbSwingAmount` frequency mistranslation (39 model files)
 
@@ -6333,7 +6346,12 @@ keeps BUG-036. Commit 4ea395c's message retains the old number.)*
   changes); `reference_source` is declared for all 101 and the 89 pins clear in the same commit.
   Alternatively an owner MOD ruling that the port keeps the flipped mapping,
   recorded per model in the manifest. Owner's call.
-
+- **Scope ruled (owner, 2026-09-05):** the 112 calls outside the manifest — `ButterflyModel` (10) and the seven
+  `client/model` item models (BattleAxe 15, Bertha 12, Chainsaw 7, Hammy 33, QueenBattleAxe 9, Slice 14, SquidZooka 12)
+  — join the drop: pinned by the reference leg where a 1.7.10 pair exists (all eight pair by name — the manifest and
+  its generator extend to them), before/after captures in the proof set where none does; one refuter, geometry-only;
+  the same commit as the 89-model drop. Port-wide the drop is then 97 models / 3,234 calls. The go is still the
+  Section B EnderReaper A/B; nothing lands before it.
 
 ### BUG-042 — GeckoLib bone matrix tracking was never enabled: MHLib received the world origin for every synced Queen bone (FIXED, 2026-09-03)
 
@@ -7863,7 +7881,7 @@ keeps BUG-036. Commit 4ea395c's message retains the old number.)*
   single ore was everywhere (a `BlockTags.COAL_ORES` ruling); the flight-target rows 17/18 discriminate through the
   port's write-after-test order, filed as ENT-S-126 with the boxed-in retarget cost; helper cites corrected.
 
-### ENT-S-120 — Engine convention without a ruling: a 1.7.10 player's `posY` was its eye level (yOffset 1.62), so every orig distance or height comparison against a player measured from the eyes where the port's `getY()` / `distanceToSqr` measures from the feet (REPORT, 2026-09-04; raised by the ENT-S-117 refuter A)
+### ENT-S-120 — Engine convention without a ruling: a 1.7.10 player's `posY` was its eye level (yOffset 1.62), so every orig distance or height comparison against a player measured from the eyes where the port's `getY()` / `distanceToSqr` measures from the feet (REPORT, 2026-09-04; raised by the ENT-S-117 refuter A; CLOSED 2026-09-05 on the premise — the server-side posY was the feet, no listed site diverges)
 
 - **Evidence:** in 1.7.10 `EntityPlayer.yOffset = 1.62` and `posY` of a player entity was the eye position (the
   bounding box hung 1.62 below `posY`); every other entity's `posY` was its feet. Orig code that reads `e.posY` or
@@ -7894,6 +7912,19 @@ keeps BUG-036. Commit 4ea395c's message retains the old number.)*
   mapping recorded once as a MOD note ("the port measures players from the feet"), with the two batch T3a sites and
   the reach comparisons left as they are. Not part of the targeting waves' rows; the T3a code is transcribed under
   the current convention and is not changed by this entry.
+- **Closed on the premise (owner, 2026-09-05):** under law 11 the 1.7.10 server-side player's posY was the feet
+  (`EntityPlayerMP.<init>` zeroes yOffset; `phase_g_reports/ents120_premise_2026-09-05.md`), so no listed site diverges:
+  the night set's items 15–22 and the evening set's 5–10 are withdrawn by the closure (addendum item 22, the closure
+  line under its supersession; item 23 (2)); `OrigPos` is never written; the census stays in the record with the
+  premise note at its head; PN-020 and PN-021 stand — neither rests on the premise. No client-side census now: a
+  client-only OreSpawn site reading a player's posY is filed if it turns up in renderer or package work. **The T3a
+  refuter's observation re-read under the server frame (a note, addendum item 23 (3)):** the sites it named — orig
+  EntityButterfly.java:165-166 against port ButterflyIslandsHuntGoal.java:68-69 (feet + 1.0, distSq < 6.0 to the feet),
+  orig AttackSquid.java:505 against port AttackSquid.java:196 (distSq < 9.0), orig WaterDragon.java:601 against the
+  port's melee reach — each measures on the server what 1.7.10's server measured: the feet frame on both sides, the
+  offsets OreSpawn's own; MATCH, nothing to change. Standing rule from this closure: an engine-behaviour claim about
+  1.7.10 becomes a finding only after a law-11 check against the jar; a premise marked "recalled" is presented as
+  unverified and receives no ruling until verified.
 
 ### ENT-S-121 — Line-of-sight ray mode: the port's eye-to-eye `hasLineOfSight` clips collision shapes where 1.7.10's `canEntityBeSeen` tested selection bounds, and five ports of the feet-level helper clip COLLIDER against the recorded OUTLINE mapping (raised by the ENT-S-118 refuter; FIXED 2026-09-04)
 
@@ -8491,6 +8522,10 @@ keeps BUG-036. Commit 4ea395c's message retains the old number.)*
   order (hunt @3, HurtBy @4 in classic; the modern pair's place the owner's choice); the Girlfriend's hunt @3 in both
   modes, the modern pair repositioned at the owner's choice; the `mod033_companions_defend_owner_*` expected selectors
   and the IMob pins updated with it. Rides with a targeting follow-up (T5b or wave 3).
+- **Ruled (owner, 2026-09-05): parity, classic — wave 4**, one batch with ENT-S-130 / 133 / 134 / 137 / 138 / 142 /
+  143 / 144 / 145 and ITEM-070's classic transcription; generated pins; refuters by files touched; one changelog
+  paragraph. HELD behind the Phase G chain's no-look slices (addendum item 23 (8)): the batch gates only when a chain
+  slice is waiting on the owner.
 
 ### ENT-S-131 — Five more forgets undone by vanilla's `TargetGoal` re-assert: the three robots' 1-in-50, Leon's 1-in-200 and the Water Dragon's 1-in-200 nulled the attack target where 1.7.10's `EntityAIHurtByTarget` ended, and the port's plain revenge goal put it back (the ENT-S-129 refuter A's re-rated MATCH rows, targeting ledger batch T5b; FIXED 2026-09-05)
 
@@ -8691,6 +8726,10 @@ keeps BUG-036. Commit 4ea395c's message retains the old number.)*
   No MOD record.
 - **Resolution:** REPORT — for the owner's ruling as parity bugs in classic (wave 3): the roll moved ahead of the read at
   the four sites, four pins (the forgetting pass fires nothing), the four `target set / release` rows re-rated.
+- **Ruled (owner, 2026-09-05): parity, classic — wave 4**, one batch with ENT-S-130 / 133 / 134 / 137 / 138 / 142 /
+  143 / 144 / 145 and ITEM-070's classic transcription; generated pins; refuters by files touched; one changelog
+  paragraph. HELD behind the Phase G chain's no-look slices (addendum item 23 (8)): the batch gates only when a chain
+  slice is waiting on the owner.
 
 ### ENT-S-134 — The Stinky's flight pick lacks 1.7.10's owner branches: a tame Stinky rolls the ownerless flight box (REPORT, 2026-09-05; raised by the T5b refuter)
 
@@ -8702,6 +8741,10 @@ keeps BUG-036. Commit 4ea395c's message retains the old number.)*
   bound twice). No MOD record.
 - **Resolution:** REPORT — for the owner's ruling as a parity bug in classic (a flight / wander row outside the targeting
   ledger): orig :617-631 transcribed into `EntityStinky.doMovement` with a tame-owner pin; the roll order noted, not changed.
+- **Ruled (owner, 2026-09-05): parity, classic — wave 4**, one batch with ENT-S-130 / 133 / 134 / 137 / 138 / 142 /
+  143 / 144 / 145 and ITEM-070's classic transcription; generated pins; refuters by files touched; one changelog
+  paragraph. HELD behind the Phase G chain's no-look slices (addendum item 23 (8)): the batch gates only when a chain
+  slice is waiting on the owner.
 
 ### ENT-S-135 — Twenty-two scan sets drifted from 1.7.10: four players-only hunters searched spheres where orig scanned every living thing in a box (the Cater Killer, Hammerhead, Sea Monster and Sea Viper, with their ladders, own-kind refusals and the Cater Killer's `MyCanSee` walk), five box searches had become spheres (the Brutalfly strafe, Mothra's stage 1, the Irukandji, the Skate, the Girlfriend's Valentine player task), the Dragonfly hunted inside its flight retarget instead of outside it, the Ender pair picked the nearest ELIGIBLE player on a 1-in-5 roll where the legacy loop tested the single nearest player every tick, the Boyfriend / Girlfriend task lost its box-only every-pass scan, its Creeper task and its nearbyOnly test, and the unridden Ant Robot's hunt box was a quarter of orig's (targeting ledger batch T3b, wave 3; FIXED 2026-09-05)
 
@@ -8937,6 +8980,10 @@ keeps BUG-036. Commit 4ea395c's message retains the old number.)*
   tasks untouched; the ledger :1172 row re-rated from MATCH; the pins above re-based (tamed before `canUse`) and the gate rows
   added. Effort S; refuters 1 (a gate transcription). Raised by the T3b refuters; the ENT-S-135 records now say "the companion
   block's residual, filed as ENT-S-137" where they said "the T3c residual".
+- **Ruled (owner, 2026-09-05): parity, classic — wave 4**, one batch with ENT-S-130 / 133 / 134 / 137 / 138 / 142 /
+  143 / 144 / 145 and ITEM-070's classic transcription; generated pins; refuters by files touched; one changelog
+  paragraph. HELD behind the Phase G chain's no-look slices (addendum item 23 (8)): the batch gates only when a chain
+  slice is waiting on the owner.
 
 ### ENT-S-138 — Four more flight-mark / cell sites floor where 1.7.10 cast `(int)`: the Brutalfly's and Mothra's self cell, the Dragonfly's flight-target cells (REPORT, 2026-09-05; raised by the T3b gate diagnosis)
 
@@ -8957,6 +9004,10 @@ keeps BUG-036. Commit 4ea395c's message retains the old number.)*
 - **Resolution:** REPORT — for the owner's ruling as parity bugs in classic (the BUG-027 rule: the cast is the original's
   behaviour, MOD-024's floor a modern opt-in): the four sites cast as orig, the two rows re-derived, a negative-origin
   pin per site; rides with T10 or a wave-3 tail batch.
+- **Ruled (owner, 2026-09-05): parity, classic — wave 4**, one batch with ENT-S-130 / 133 / 134 / 137 / 138 / 142 /
+  143 / 144 / 145 and ITEM-070's classic transcription; generated pins; refuters by files touched; one changelog
+  paragraph. HELD behind the Phase G chain's no-look slices (addendum item 23 (8)): the batch gates only when a chain
+  slice is waiting on the owner.
 
 ### ENT-S-136 — Four vanilla-goal hunters scanned the FOLLOW_RANGE attribute's range where 1.7.10 scanned the follow-range base 16 or its own 12x5x12 box: a wild Leonopteryx and both Princes took monsters 40 / 64 / 32 blocks off and held that far, the Pointysaurus saw a player at 24 and through a sphere where 1.7.10 scanned a box (targeting ledger batch T3c, wave 3; FIXED 2026-09-05 — the Pointysaurus's cadence 1-in-6 restored in the Q2 follow-up the same day)
 
@@ -9242,7 +9293,7 @@ keeps BUG-036. Commit 4ea395c's message retains the old number.)*
   crouching pin), A-D2 / A-D3 (the orig comparator's cite :18-35 and the TF-035 / V2 verification attribution), B-D1 (the
   filter-admits-the-nearer precondition on the 50 weighted rows) applied 2026-09-05 by the fix lane.
 
-### ENT-S-140 — The port's GenericTargetSorter weighs a player's silhouette by the modern pose-sized hitbox where 1.7.10's player was 0.6 × 1.8 in every pose: a crouching, swimming or gliding player ranks behind where 1.7.10 ranked them at every sorter site (REPORT, 2026-09-05; raised by the T4 refuter A)
+### ENT-S-140 — The port's GenericTargetSorter weighs a player's silhouette by the modern pose-sized hitbox where 1.7.10's player was 0.6 × 1.8 in every pose: a crouching, swimming or gliding player ranks behind where 1.7.10 ranked them at every sorter site (REPORT, 2026-09-05; raised by the T4 refuter A; RULED 2026-09-05 — PN-022, the engine's pose-sized hitbox, deliberately not reproduced)
 
 - **Evidence:** orig GenericTargetSorter.java:24 — `height * width > 1` divides the operand's distance² (:24-26 on the first
   operand; the second operand's terms :27-33 mirror :20-26). 1.7.10's `EntityPlayer` size was the constant 0.6 × 1.8 in every
@@ -9272,6 +9323,12 @@ keeps BUG-036. Commit 4ea395c's message retains the old number.)*
   refuters) — ruled before it moves. On the ruling: the sorter edit; an inverted Irukandji pin (the crouching-against-standing
   pair, `pick == crouching`, 23.15 against 24.08) beside ENT-S-139's two controls; the ledger's Irukandji cell (:515, status and
   note) and the ENT-S-135 (c) record corrected.
+- **Ruled (owner, 2026-09-05): PN-022, deliberately not reproduced** — the pose-sized player hitbox is the modern
+  engine's (1.21.1 resizes the player for crouch, swim and elytra flight; 1.7.10 could not) and OreSpawn's sorter
+  formula is transcribed exactly, so under the 2026-09-04 doctrine the difference is the engine's part: a PARITY_NOTES
+  entry (PN-022), no code, no refuters. The ENT-S-139 controls (`s139_61` / `s139_62`, two standing players) stand; the
+  ledger's Irukandji cell (:515) and the ENT-S-135 (c) record read under PN-022. The sleeping-player case needs no
+  ruling: nothing changes.
 
 ### ENT-S-141 — The Ender Knight and Reaper never teleported at a starer or toward a far target and their pick set no scream or stare sound, the Hammerhead and Irukandji bit on one die where 1.7.10 rolled two, the Lizard's filter no longer adopted a Lizard buddy, and the Luna Moth lost the Islands hunt it inherited (targeting ledger batch T10, wave 3 — the last; FIXED 2026-09-05)
 
@@ -9443,6 +9500,10 @@ keeps BUG-036. Commit 4ea395c's message retains the old number.)*
 - **Resolution:** REPORT — for the owner's ruling. A one-term edit (`if (this.isInWaterRainOrBubble() || this.isOnFire())`, the
   Reaper's line, with the :116-119 cite) and one pin in the ENT-S-129 daylight row's shape (a frozen Knight with its feet in a
   water block, `aiStep()` driven once under a pinned random, the position changed and the scream off).
+- **Ruled (owner, 2026-09-05): parity, classic — wave 4**, one batch with ENT-S-130 / 133 / 134 / 137 / 138 / 142 /
+  143 / 144 / 145 and ITEM-070's classic transcription; generated pins; refuters by files touched; one changelog
+  paragraph. HELD behind the Phase G chain's no-look slices (addendum item 23 (8)): the batch gates only when a chain
+  slice is waiting on the owner.
 
 ### ENT-S-143 — The Luna Moth's own flight loop differs from 1.7.10 in its numbers and its torch gate: the port flies the moth on the butterfly's preset (range 7, y-steer 0.7, forward 0.5 for orig's 10 / 0.68 / 0.75) and seeks torches inside the retarget under a covered sky where 1.7.10 sought them in the retarget's else branch at night (REPORT, 2026-09-05; raised by the T10 lane)
 
@@ -9463,6 +9524,10 @@ keeps BUG-036. Commit 4ea395c's message retains the old number.)*
   (with the ExtremeTorch, if the port carries the block); the ENT-S-141 hunt shares that else branch, and orig ran the butterfly
   loop's hunt (its own retarget roll) ahead of the moth loop's torch scan (its own roll) with two flight targets — the order and the
   single target need the ruling too.
+- **Ruled (owner, 2026-09-05): parity, classic — wave 4**, one batch with ENT-S-130 / 133 / 134 / 137 / 138 / 142 /
+  143 / 144 / 145 and ITEM-070's classic transcription; generated pins; refuters by files touched; one changelog
+  paragraph. HELD behind the Phase G chain's no-look slices (addendum item 23 (8)): the batch gates only when a chain
+  slice is waiting on the owner.
 
 ### ENT-S-144 — The Ender pair's teleports are silent: 1.7.10's teleportTo played "mob.endermen.portal" at the origin and at the landing; the port's randomTeleport mapping broadcasts the particles only (REPORT, 2026-09-05; raised by the T10 refuter)
 
@@ -9488,6 +9553,10 @@ keeps BUG-036. Commit 4ea395c's message retains the old number.)*
   …)` and at the entity through `playSound(…)` — nothing on a refused landing, as orig :188-191 — with one pin in the ENT-S-141
   s141_04 shape (a frozen mob under `TeleportRolls`, a `PlayLevelSoundEvent` ear — the StareEar seam widened to ENDERMAN_TELEPORT
   — hearing the sound at the origin and at the landing on a landed teleport, and nothing on a refused one).
+- **Ruled (owner, 2026-09-05): parity, classic — wave 4**, one batch with ENT-S-130 / 133 / 134 / 137 / 138 / 142 /
+  143 / 144 / 145 and ITEM-070's classic transcription; generated pins; refuters by files touched; one changelog
+  paragraph. HELD behind the Phase G chain's no-look slices (addendum item 23 (8)): the batch gates only when a chain
+  slice is waiting on the owner.
 
 ### ENT-S-145 — The Ender pair's attacking speed boost dropped: 1.7.10 applied a +6.2 movement modifier while a target was held (EnderKnight.java:100-107 / EnderReaper.java:100-107, the modifier :29-30); the port applies none (REPORT, 2026-09-05; raised by the T10 refuter)
 
@@ -9510,6 +9579,10 @@ keeps BUG-036. Commit 4ea395c's message retains the old number.)*
   `aiStep()` reads the attribute at the base + 6.2, `setTarget(null)` then `aiStep()` reads the base again). The number is the
   ruling's: orig's 6.2 as written, or the value vanilla 1.21.1's own EnderMan carries for the same modifier (not read in this
   lane — the Gradle cache is outside its bounds).
+- **Ruled (owner, 2026-09-05): parity, classic — wave 4**, one batch with ENT-S-130 / 133 / 134 / 137 / 138 / 142 /
+  143 / 144 / 145 and ITEM-070's classic transcription; generated pins; refuters by files touched; one changelog
+  paragraph. HELD behind the Phase G chain's no-look slices (addendum item 23 (8)): the batch gates only when a chain
+  slice is waiting on the owner.
 
 ### TEST-003 — Config-flipping gametests in the concurrent default batch
 

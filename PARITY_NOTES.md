@@ -301,3 +301,20 @@ eat under distSq 12, the heal and the burp are ENT-S-119's transcription. No con
 deepslate layers behaves as one at the surface.
 - **Pin:** `StinkyIdleParityTests` row `pn021_22_stinky_443_deepslate_coal_ore_eat` — the row-1 probe with a deepslate coal ore
 at origin + (1, 0, 0): found at distSq 1, walked to at 1.25, eaten to air, the heal of 1 and the burp at 0.5 / 1.5..1.7.
+
+## PN-022 — The shared target sorter weighs a player's silhouette by the modern pose-sized hitbox (ENT-S-140; ruled 2026-09-05: the engine's, deliberately not reproduced; both modes)
+
+- **Original:** orig GenericTargetSorter.java:20-33 divides an operand's distance² by `height * width` when the product
+exceeds 1. 1.7.10's `EntityPlayer` was 0.6 × 1.8 in every pose but sleeping (0.2 × 0.2): sneaking set the flag and the
+client camera drop only — `setSize` never ran for a crouch — so a player's silhouette was 1.08 in every pose and the
+sorter divided its distance² by 1.08 whether the player stood, crouched or swam.
+- **Port:** `entity/ai/GenericTargetSorter.java:42-45` evaluates the same formula on `getBbHeight() * getBbWidth()` — the
+modern engine's live pose dimensions: standing 0.6 × 1.8 = 1.08 (divided), crouching 0.6 × 1.5 = 0.9 and swimming or
+gliding 0.6 × 0.6 = 0.36 (undivided); sleeping 0.2 × 0.2 in both trees.
+- **Why not reproduced (owner, 2026-09-05):** the pose-sized hitbox is the modern engine's — 1.21.1 resizes the player for
+crouch, swim and elytra flight, which 1.7.10 could not — and OreSpawn's own contribution, the sorter formula, is
+transcribed exactly. Under the 2026-09-04 doctrine the difference is the engine's part: recorded, not coded; no key.
+- **Player-visible:** narrowly — a hunter with a standing player and a nearer crouching, swimming or gliding one in reach
+may take the standing one where 1.7.10 took the nearer (the crouching-against-standing pair from the T4 refutation:
+1.7.10 23.15 against 24.08, the port 25 against 24.08). The ENT-S-139 controls `s139_61` / `s139_62` (two standing players)
+pin the formula on players; the ledger's Irukandji cell (:515) and the ENT-S-135 (c) record read under this entry.

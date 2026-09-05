@@ -188,29 +188,52 @@ Companions defend their owner, extended (MOD-033). The `petsDefendOwner` switch 
 
 Targeting parity, T5b. Five more hunters let a grudge go for good: the Robo-Gunner, Robo-Warrior and Robo-Sniper forget whoever hit them on their 1-in-50 as they did in 1.7.10 and no longer pick the same grudge straight back up a tick later, and a Leonopteryx or a Water Dragon on its 1-in-200 likewise (the Water Dragon rolls it every tick again, target or none, instead of only while it is fighting). A Dragon, Leonopteryx or Prince no longer goes after creepers through its vanilla hunt — 1.7.10's engine refused creepers, as it still refuses ghasts, for every vanilla target task — while its own eyes still take them, as they did; the Boyfriend and Girlfriend keep hunting creepers, as 1.7.10's own task let them. A boxed-in Stinky or Spyro flies at the last spot it tried instead of re-rolling fifty flight targets, and casting fifty block rays, every tick, exactly as 1.7.10 did. And the Stinky tunnels toward deepslate coal ore as well as coal ore — the modern game's two blocks for 1.7.10's one (PN-021).
 
-Targeting parity, wave 3 (creative players). Every hunter on this batch's list now tells a creative player apart the 1.7.10 way — by creative mode itself, never by "cannot be hurt": the Ender Knight and Ender Reaper again hunt a survival player who is invulnerable for some other reason and never a creative one, and keep hold of such a player as they did; the CaterKiller, Sea Viper and Pointysaurus again pick such a player (their hold follows with a later batch). The Brutalfly and Mothra go back to hunting nearby mobs while a creative player stands close (1.7.10 set the creative player aside and went for the mobs; the port had frozen on the player), and Mothra only strafes a player she can actually see. The Ender Knight and Ender Reaper once more let the nearest player decide: a creative player standing nearer than you and staring too shields you from their stare, as in 1.7.10 (the nearest-of-any-mode shadowing follows with the scan-set batch). And the Ender Knight has its enderman rules back — it attacks only a player who looks it in the body with a clear line of sight, and a carved pumpkin on your head hides you from it entirely, as it already did from the Reaper.
-
-Targeting parity, wave 3 (where the hunters look). Fourteen more hunters search exactly the space 1.7.10 gave them. The Cater Killer, Hammerhead, Sea Monster and Sea Viper hunt every living thing in their original boxes again — monsters, villagers and the original's short list of attackable non-mobs, not players alone — through their original checks (the Cater Killer's own block-walk sight test, each one's refusal of its own kind, creative players never), on their original dice (the Cater Killer every 1-in-4 tick, the Sea Viper 1-in-5), and let a pick go the moment the next pass no longer finds it. The Brutalfly and Mothra strafe a player anywhere in their original box (a corner 42 / 35 blocks out) and no longer one 30 / 25 blocks straight overhead; the Irukandji and Skate the same for their small boxes. The Dragonfly hunts on the ticks it is NOT re-picking a flight target, so it hunts about every 12 ticks again instead of once in some three minutes (and it counts that target as reached at the original's distance — about a block and a half, not two). The Ender Knight and Ender Reaper look at the single nearest player every pass, of any mode, and attack only if THAT player is staring at them — a friend standing closer shields you, as in 1.7.10 — and their 64 / 81 blocks are plain distance (sneaking no longer shrinks it). The Boyfriend and Girlfriend scan their original 15-block box every pass (not a 15-block sphere on a 1-in-10 roll), have their creeper hunt back (20 blocks, ahead of the monster hunt), and leave prey they cannot path to alone, as the original's nearbyOnly did — except creepers, ghasts, Mothra and Valentine players, which the original granted before the reach test; the Girlfriend's Valentine's Day hunt is the original 16x4x16 box and, as in the original, takes a player she cannot see. The unridden Ant Robot's hunt box is 24x12x24 again (a quarter of that when ridden). The Nightmare's heal-branch reset and the grounded Stinky's hunt, restored earlier, are confirmed and pinned.
-
-Targeting parity, T3c (hunting ranges). A wild Leonopteryx and the Prince, adult or teen, only go after monsters within 16 blocks again and give up the chase past 16, as in 1.7.10 — the port had them picking fights, and keeping them up, 40, 64 and 32 blocks out — and they look for one on every pass again instead of one pass in five; the Pointysaurus notices a player inside its original 12-block box (5 blocks up or down) instead of anywhere within 24 — a player on a ledge well above it is ignored again, one at the box's corner is not — and looks for one at its original rate (one tick in six, not one in ten). How far they walk, fly or follow their owner is unchanged; only what they will pick a fight with on their own, and how far they keep it up, is back to the original. A tamed pet's defence of its owner (`petsDefendOwner`) and the Pointysaurus's stare (`pointysaurusStareAggro`) are not affected.
-
-Targeting parity, T4 (who gets picked first). Seventeen more hunters rank their prey the 1.7.10 way again — the Cephadrome,
-Cryolophosaurus, Dragonfly, Fairy, Frog, Gamma Metroid, Kyuubi, a wild Leonopteryx's own eyes, the Lizard, Purple Power, Rat,
-Robot 1, the Spider Driver (both the robot it climbs onto and the prey it fights), Stinky, Terrible Terror, the teen Prince and
-the Triffid. With several candidates in reach, 1.7.10 halved a creeper's squared distance (a creeper 7 blocks off ranks as one
-4.95 off) and let a big creature outrank a smaller one standing closer (its size divides the squared distance), so a creeper
-draws these hunters first and a large mob nearby beats a small one closer in; the port had simply taken the nearest. The
-Boyfriend and Girlfriend prefer creepers the same way in their monster hunt (the squared distance halved, no size term), exactly
-as their own 1.7.10 task did; their Valentine's Day hunts still take the nearest. Two equally distant players facing a
-Brutalfly's or Mothra's strafe are settled the 1.7.10 way (the last one scanned) — unchanged since the last batch, now covered
-by tests. Nothing else about who they hunt, how far they look or when they look changes.
-
-Targeting parity, T10 (the last of wave 3). The Ender Knight and Ender Reaper have their enderman reflexes back: stare at one from
-close by and it blinks away, keep your distance from one that has marked you and after a second and a half it blinks to your side,
-and it screams and hisses its stare sound at you as it locks on, exactly as in 1.7.10 — looking for you every tick again, not every
-other. The Hammerhead and the Irukandji bite on the original two dice (about one time in two and two in five, instead of one in
-three and one in four). Lizards pair up again: a Lizard that notices another now and then adopts it as a buddy and tags along. And
-one Luna Moth in four — those carrying the butterfly's hidden vampire type (`butterfly_type == 1`, set by the inherited
-constructor), whatever its moth skin — hunts players and horses in the Islands the way the butterfly it descends from does, while
-still chasing torches under cover. With that, wave 3 of the targeting parity work is complete: creative-player handling, where the
-hunters look, how far they look, whom they pick first, and the odds and ends above are all the original's again.
+Targeting parity, wave 3. Every hunter on the wave's list now tells a creative player apart the 1.7.10 way — by creative
+mode itself, never by "cannot be hurt": the Ender Knight and Ender Reaper again hunt a survival player who is invulnerable
+for some other reason and never a creative one, and keep hold of such a player as they did; the CaterKiller, Sea Viper and
+Pointysaurus again pick such a player; the Brutalfly and Mothra go back to hunting nearby mobs while a creative player
+stands close (1.7.10 set the creative player aside and went for the mobs; the port had frozen on the player), and Mothra
+only strafes a player she can actually see. Fourteen hunters search exactly the space 1.7.10 gave them: the Cater Killer,
+Hammerhead, Sea Monster and Sea Viper hunt every living thing in their original boxes again — monsters, villagers and the
+original's short list of attackable non-mobs, not players alone — through their original checks (the Cater Killer's own
+block-walk sight test, each one's refusal of its own kind, creative players never), on their original dice (the Cater
+Killer every 1-in-4 tick, the Sea Viper 1-in-5), and let a pick go the moment the next pass no longer finds it; the
+Brutalfly and Mothra strafe a player anywhere in their original box (a corner 42 / 35 blocks out) and no longer one 30 / 25
+blocks straight overhead, the Irukandji and Skate the same for their small boxes; the Dragonfly hunts on the ticks it is
+NOT re-picking a flight target, so it hunts about every 12 ticks again instead of once in some three minutes (and counts
+that target as reached at the original's distance — about a block and a half, not two); the Ender Knight and Ender Reaper
+look at the single nearest player every pass, of any mode, and attack only if THAT player is staring at them — a friend
+standing closer shields you, as in 1.7.10 — and their 64 / 81 blocks are plain distance (sneaking no longer shrinks it);
+the Boyfriend and Girlfriend scan their original 15-block box every pass (not a 15-block sphere on a 1-in-10 roll), have
+their creeper hunt back (20 blocks, ahead of the monster hunt), and leave prey they cannot path to alone, as the original's
+nearbyOnly did — except creepers, ghasts, Mothra and Valentine players, which the original granted before the reach test;
+the Girlfriend's Valentine's Day hunt is the original 16x4x16 box and, as in the original, takes a player she cannot see;
+the unridden Ant Robot's hunt box is 24x12x24 again (a quarter of that when ridden); the Nightmare's heal-branch reset and
+the grounded Stinky's hunt, restored earlier, are confirmed and pinned. Hunting ranges: a wild Leonopteryx and the Prince,
+adult or teen, only go after monsters within 16 blocks again and give up the chase past 16 — the port had them picking
+fights, and keeping them up, 40, 64 and 32 blocks out — and they look for one on every pass again instead of one pass in
+five; the Pointysaurus notices a player inside its original 12-block box (5 blocks up or down) instead of anywhere within
+24 — a player on a ledge well above it is ignored again, one at the box's corner is not — and looks for one at its
+original rate (one tick in six, not one in ten); how far they walk, fly or follow their owner is unchanged, and a tamed
+pet's defence of its owner (`petsDefendOwner`) and the Pointysaurus's stare (`pointysaurusStareAggro`) are not affected.
+Who gets picked first: seventeen more hunters rank their prey the 1.7.10 way again — the Cephadrome, Cryolophosaurus,
+Dragonfly, Fairy, Frog, Gamma Metroid, Kyuubi, a wild Leonopteryx's own eyes, the Lizard, Purple Power, Rat, Robot 1, the
+Spider Driver (both the robot it climbs onto and the prey it fights), Stinky, Terrible Terror, the teen Prince and the
+Triffid. With several candidates in reach, 1.7.10 halved a creeper's squared distance (a creeper 7 blocks off ranks as one
+4.95 off) and let a big creature outrank a smaller one standing closer (its size divides the squared distance), so a
+creeper draws these hunters first and a large mob nearby beats a small one closer in; the port had simply taken the
+nearest. The Boyfriend and Girlfriend prefer creepers the same way in their monster hunt (the squared distance halved, no
+size term), exactly as their own 1.7.10 task did; their Valentine's Day hunts still take the nearest. Two equally distant
+players facing a Brutalfly's or Mothra's strafe are settled the 1.7.10 way (the last one scanned) — unchanged since the
+last batch, now covered by tests. And the odds and ends: the Ender Knight and Ender Reaper have their enderman reflexes
+back — stare at one from close by and it blinks away, keep your distance from one that has marked you and after a second
+and a half it blinks to your side, and it screams and hisses its stare sound at you as it locks on, exactly as in 1.7.10 —
+looking for you every tick again, not every other; the Ender Knight has its enderman rules back too — it attacks only a
+player who looks it in the body with a clear line of sight, and a carved pumpkin on your head hides you from it entirely,
+as it already did from the Reaper. The Hammerhead and the Irukandji bite on the original two dice (about one time in two
+and two in five, instead of one in three and one in four). Lizards pair up again: a Lizard that notices another now and
+then adopts it as a buddy and tags along. And one Luna Moth in four — those carrying the butterfly's hidden vampire type
+(`butterfly_type == 1`, set by the inherited constructor), whatever its moth skin — hunts players and horses in the
+Islands the way the butterfly it descends from does, while still chasing torches under cover. With that, wave 3 of the
+targeting parity work is complete: creative-player handling, where the hunters look, how far they look, whom they pick
+first, and the odds and ends above are all the original's again.

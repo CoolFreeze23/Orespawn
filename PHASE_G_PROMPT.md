@@ -614,6 +614,24 @@ root-order slice with the GeckoLib per-entity cache eviction, then Slice 4c). Th
   player's spawn shield cleared only in the row that pins the hit (F0.6). The ENT-S-120 premise was
   then verified against Mojang's 1.7.10 jar (2026-09-05): the server player's posY was the feet, so
   the ruled OrigPos sweep is held for the owner's amendment (`phase_g_reports/ents120_premise_2026-09-05.md`).
+- Rulings of 2026-09-05 (addendum item 23): ENT-S-120 closed on the premise — no listed site diverges, `OrigPos`
+  never written, the night set's ENT-S-120 items and the evening set's withdrawn by the closure, the census kept with
+  the premise note at its head. Standing rule: an engine-behaviour claim about 1.7.10 becomes a finding only after a
+  law-11 check against the jar; a "recalled" premise gets no ruling until verified. The 112 `.mirror()` calls in
+  ButterflyModel and the seven item models join the mirror drop (same commit, one geometry-only refuter; the go is
+  still the Section B EnderReaper A/B). ENT-S-140 is PN-022 (the engine's pose-sized hitbox, not reproduced). Wave 4
+  (ENT-S-130 / 133 / 134 / 137 / 138 / 142 / 143 / 144 / 145 and ITEM-070's classic transcription under B2 — the
+  vanilla ray in modern under `[modern] chainsawSweepVanillaSight`, default on) is one batch HELD behind the chain's
+  no-look slices, which proceed now in this order, each its own gated slice: (a) the per-entity GeckoLib cache eviction,
+  measured with the MHLib counters; (b) Slice 4c (PurplePower, Rotator, the render-instance expansion, the clone-aware
+  geometry leg); (c) the G2 root-order contract (bone draw order = vanilla part order from the 4.8.4 bytecode, the
+  z-fight exclusion retired, before/after per species before its gate; the proofs regenerate once more after the drop);
+  (d) the spawn-100 benchmark harness (MHLib counters in the baseline; threshold proposed, not adopted); (e) the
+  animation contract and the keyframe controller's return, designed and presented before wiring; (f) the package
+  generator (SPEC, bone glossary, trigger inventory, TEXTURE_MAP, INVENTORY.csv) dry-run on the landed species, nothing
+  under `artist_handoff/` committed until the drop lands. Wave 4 gates only when a slice is waiting on the owner; the
+  mirror drop lands on the Section B go. Changelog: one paragraph per wave (wave 3's five folded). Harness: the sibling
+  classes' floating frozen mobs stay (F0.7).
 - Before any Tier-2 slice: the spawn-100 benchmark, classic versus candidate, with a proposed
   regression threshold; its baseline also measures MHLib's bone capture per frame and sync per tick
   and on the wire. Proof rule: geometry-only changes take one refuter; motion transcriptions,

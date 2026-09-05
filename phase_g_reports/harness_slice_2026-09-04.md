@@ -40,6 +40,16 @@ lane over the working tree at 7021b5a (+ the uncommitted i165 fix, + the untrack
   returns false while it runs), which swallowed the pinned bites and the Irukandji's counter-damage on T5's first gate.
   It is never cleared helper-wide: a row that pins a hit on a fresh mock player clears it in the row
   (`TargetReleaseParityTests.clearSpawnInvulnerability`, reflection on the field) and says so in its message.
+- **F0.7 Frozen mobs a block above the floor in the sibling classes (owner, 2026-09-05: left as they are).** The generated
+  targeting classes place their hunter at `HUNTER_POS` rel (20, 1, 24) (24 classes; `CORNER_HUNTER_POS` (4, 1, 4) and
+  `ROYAL_HUNTER_POS` (16, 1, 24) likewise). The template `empty_large` is all air and the floor's top is the structure block's
+  layer at rel y 0 (the framework's stone under the template — `MiscTargetingParityTests`' class note), so a mob at rel y 1
+  stands a block above the floor; frozen (movement zeroed, or gravity off) it stays there. Harmless for a frozen mob — the
+  rows measure from the spawn point they set — and wrong for a teleport landing or a live mob under gravity: `randomTeleport`'s
+  landing search walks down to the first motion-blocking block, as orig `teleportTo` did (the T10 gate's six reds), and a live
+  mob falls the block before the row's first tick. The convention: a row whose mob moves, teleports or falls spawns it ON the
+  floor (rel y 0, `setNoGravity(true)` for a live mob), as `MiscTargetingParityTests` does; the sibling classes keep rel y 1
+  while their rows pass — no cross-class change (owner, 2026-09-05; addendum item 23 (10)).
 
 ## 1. `i050_vortex_no_launch_drag_pull` — "was 0.0" (wave1e only)
 

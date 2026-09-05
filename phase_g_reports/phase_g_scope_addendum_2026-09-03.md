@@ -184,7 +184,10 @@ that slice, not a task for now.
     gated slices (a)–(d) at two refuters each, reach against players faithful to 1.7.10 in both modes, the effect
     statement, MOD records for Robot2 :142 and ItemNetherLost :36, and a `projectilesFromEyes` modern key for the
     four above-the-head launch sites). The evening ruling stays in the record as written and is superseded, not
-    rewritten — the way Amendment 1 superseded the motion-policy ruling; one ruling stands, this one. (10) **Order of
+    rewritten — the way Amendment 1 superseded the motion-policy ruling; one ruling stands, this one. **Closure (owner, 2026-09-05):** under law 11 the 1.7.10 server-side player's posY was the feet
+    (`EntityPlayerMP.<init>` zeroes yOffset — `phase_g_reports/ents120_premise_2026-09-05.md`), so no listed site
+    diverges; the night set's 15–22 and the evening set's 5–10 are withdrawn by this closure; `OrigPos` is never
+    written; the census stays in the record with the premise note at its head; PN-020 and PN-021 stand. (10) **Order of
     the remediation lane after the push:** the MOD-033 extension → T5b with the three follow-ups of (8) → ENT-S-120
     (a), then (d) → wave 3 (T8 with the Ender Knight, T3b, T3c, T4, T10); the Phase G chain keeps gate priority
     throughout. (11) **Blockbench** (ruled earlier, never sent): no general integration; a round-trip check (import →
@@ -198,6 +201,37 @@ that slice, not a task for now.
     and the targeting ledger rows :611 / :704 / :710 / :1196 fixed; `phase_g_reports/ADVISOR_HANDOFF.md` is the
     advisor's — tracked and committed unchanged whenever it changes, never edited; `Claude outputs/` at the root is
     the desktop app's mirror, excluded via `.git/info/exclude`, deleted by the owner.
+
+23. **Rulings of 2026-09-05 (owner, through the advisor):** (1) **Push:** the 17 commits after 2e21008 pushed
+    (origin/master 814d151) before anything else landed. (2) **ENT-S-120 closed on the premise** — the closure line under
+    item 22's supersession; `OrigPos` is never written; the census stays in the record with the premise note at its head;
+    PN-020 and PN-021 stand (neither rests on the premise); no client-side census now — a client-only OreSpawn site that
+    reads a player's posY is filed if it turns up in renderer or package work. (3) **Standing rule — law 11 for engine
+    claims:** an engine-behaviour claim about 1.7.10 becomes a finding only after a law-11 check against the jar; a census
+    or refuter observation whose premise is marked "recalled" is presented as unverified and receives no ruling until it
+    is verified. The T3a refuter's ENT-S-120 observation and ITEM-070's ‡ rows are re-read under the server frame, a note
+    each (AUDIT ENT-S-120 / ITEM-070). (4) **Mirror drop, scope:** the 112 calls in `ButterflyModel` (10) and the seven
+    `client/model` item models (102) join the drop — pinned by the reference leg where a 1.7.10 pair exists, before/after
+    captures in the proof set where none does; one refuter, geometry-only; the same commit. The go is still the Section B
+    EnderReaper A/B. (5) **ENT-S-140:** the pose-sized player hitbox is the modern engine's and OreSpawn's sorter formula
+    is exact — PN-022, deliberately not reproduced, no code, no refuters. (6) **Wave 4, one batch, HELD behind (8):**
+    ENT-S-130, 133, 134, 137, 138, 142, 143, 144, 145 and ITEM-070's classic transcription — parity, classic; generated
+    pins; refuters by files touched; one changelog paragraph. (7) **ITEM-070: B2** — the 1.7.10 air-walk transcribed in
+    classic (shape A, the item's own code, its in-grass and in-water quirk included); the vanilla ray kept in modern under
+    `[modern] chainsawSweepVanillaSight`, default ON, one MOD record; lands with wave 4. (8) **Sequencing while the look
+    session is pending:** the chain's work that needs no look proceeds now, in this order, each its own gated slice:
+    (a) per-entity GeckoLib cache eviction, measured with the MHLib counters; (b) Slice 4c — PurplePower and Rotator, the
+    render-instance expansion and the clone-aware geometry leg; (c) the G2 root-order contract — bone draw order =
+    vanilla part order from the 4.8.4 bytecode, the z-fight exclusion retired, before/after per species presented before
+    its gate; the proofs regenerate once more after the drop, an accepted cost; (d) the spawn-100 benchmark harness,
+    MHLib counters in the baseline, threshold proposed, not adopted; (e) the animation contract and the keyframe
+    controller's return, designed and presented before anything is wired; (f) the package generator — SPEC, bone
+    glossary, generated trigger inventory, TEXTURE_MAP, INVENTORY.csv — built and dry-run on the landed species; nothing
+    under `artist_handoff/` is committed until the drop lands. Wave 4 gates only when a slice above is waiting on the
+    owner. The mirror drop lands on the owner's Section B go. Item 8 above (the eviction inside the G2 root-order slice)
+    is superseded by (a): the eviction is its own slice, ahead of the root-order contract. (9) **Changelog note:** one
+    paragraph per wave — wave 3's five folded into one. (10) **Harness:** the sibling test classes' floating frozen mobs
+    stay; the convention is recorded in the harness notes (F0.7); no cross-class change while the rows pass.
 
 ## D. Rulings executed the same day (for cross-reference)
 

@@ -5355,6 +5355,11 @@ as ruled (night set items 15–22) would have moved the port 1.62 blocks away fr
 on the old reading (no helper, no site, no PN entry); the ENT-S-120 lane is held for the owner's amendment. What
 remains of the finding is client-side code with a player operand, if any — a separate small census.
 
+Closed (owner, 2026-09-05): under law 11 the server-side player's posY was the feet, so no listed site diverges — the
+night set's items 15–22 and the evening set's 5–10 are withdrawn by the closure (addendum item 22's supersession, the
+closure line; item 23 (2)); OrigPos is never written; the census stays in the record with the premise note at its head;
+PN-020 and PN-021 stand; no client-side census now.
+
 ## ITEM-070 (2026-09-05) — REPORT: the Chainsaw sweep's sight ray (no code change)
 
 ITEM-070 → REPORT: the ENT-S-121 refuter's note filed. Chainsaw.java:137 gates the LEFT-CLICK SWEEP (orig UltimateSword.java:163-174 → :195 → :198-247; the felling box :351-371 tests no sight in either tree) with vanilla `LivingEntity.hasLineOfSight` — an exact eye-to-eye COLLIDER clip, fluids ignored, the Player receiver untouched by the ENT-S-121 mixin's namespace gate — where 1.7.10 walked ten samples from the player's feet + 1.4 (the server's `EntityPlayerMP.posY`; the ENT-S-120 census's client reading puts it at 3.02) to the target's mid-body and passed only `Blocks.air`. Compared on thirteen felling-site cases: the same on a clear line, leaves, logs, glass, fences and a target on open ground; different — the port sweeps what 1.7.10 spared — for a mob standing in grass / flowers / crops / a cobweb / snow / water (the tenth sample reads the target's own cell), a wall torch or 2-block plant between (any target), low mobs behind ground plants / one-layer snow / carpet / a bottom slab, and the player standing in tall ferns or swimming (1.7.10's sweep dead, the port's live); different the other way for trunk and canopy corner grazes and the 1.0-1.5 fence band (1.7.10 more permissive), and quadrant-dependent through the `(int)` column shift (BUG-027's ruled-faithful quirk). No MOD record (MOD-016 is the felling box; ITEM-037 closed the sweep without its ray; targeting_survey :1107's MATCH and the census's :402 AC read the geometry only): a classic parity bug on a signature weapon's combat reach, present in both modes. Two shapes for the owner: A — transcribe the walk as a helper (float steps, `(int)` casts per BUG-027 / MOD-024, `isAir()`, origin feet + 1.4 or eye + 1.4 per the owner's posY reading) with an eight-row pin batch, ≈45 lines, no engine hook; B — keep the vanilla ray under a MOD record, unconditional (B1, a record and a KNOWN_ISSUES line) or as a `[modern]` key with A behind classic (B2). Awaiting the ruling; nothing applied.
@@ -5519,3 +5524,41 @@ GATE (t10): (the orchestrator's).
 GATE (t10): gate t10 red on the six Ender teleport rows of MiscTargetingParityTests' 21 with every other test green (1188): the rows' own floor assumption — every mob spawned at rel y 1, a block above the template's stone, so LivingEntity.randomTeleport's walk down to the first motion-blocking block (identical to orig teleportTo :169-186 — the port's mapping is faithful) landed every teleport one block low, and the two live rows also fell under gravity before the counter fired (the toward vector turned by 0.143 on x); fixed in the rows — the mobs and players on the floor, the live mobs without gravity, the landings asserted exact on all three axes (the 0.01 y slack removed), the code untouched; the other 15 rows moved with the shared constants, none affected. Re-gate t10b green (08:07-08:09): build legs (asset audit 0 errors / 0 advisories / 4 acknowledged, G1 PARITY 2 + 11 models with the checked-in proofs verified, drift check exit 0) and runGameTestServer 'All 1194 required tests passed' (1173 + T10's 21)
 
 Refuted once (10 files touched, label S): the nine transcriptions upheld — the Ender pair's teleport block at orig's position (branches, polarity, the 16 / 256 / 30 thresholds, the resets), teleportToEntity term for term with orig's draw order, the pick's stare sound as orig's server broadcast (not vanilla's client-local throttle — a transcription), the every-tick target pass through customServerAiStep ticking nothing twice (the running-only pass identical to Mob.serverAiStep's), the two-dice bites at orig's position with the short-circuit, the Lizard buddy adoption in orig's term order, the Luna Moth's inherited hunt over its own flight; the neighbouring-cell exposure of the 64 / 81 search judged safe by construction (the own player nearest, the revenge goal holding TARGET first); one gate-failing test defect fixed as proposed (the counter rows' toward step re-pinned with the jitter draw it consumes — 0.5, not the random teleport's 0.5625); six record corrections applied (the stare cadence recurs only while the pick is re-asked; the Lizard consumer cites; the §T10 IrukandjiArrow observation closed by ENT-S-111; the Luna Moth's one-in-four vampire type; the hit-to-pick latency wording; ENT-D-020's and ENT-S-135 (i)'s notes); two findings filed from the refuter's observations — ENT-S-144 (the silent teleports: orig played mob.endermen.portal at both ends, the port's randomTeleport mapping plays nothing) and ENT-S-145 (the pair's +6.2 attacking speed modifier dropped).
+
+## RULINGS 2026-09-05 RECORDED (docs-only) — ENT-S-120 closed on the premise; the law-11 rule for engine claims; the mirror drop's scope; ENT-S-140 → PN-022; wave 4 held; ITEM-070 B2; the chain's no-look sequencing; the changelog fold; the floating-mob convention
+
+The owner's rulings of 2026-09-05 (through the advisor), recorded in `phase_g_reports/phase_g_scope_addendum_2026-09-03.md`
+item 23 (and the closure line under item 22's supersession); executed here, docs-only:
+
+- PUSH: the 17 commits after 2e21008 pushed first — origin/master 814d151 confirmed before anything else landed.
+- ENT-S-120 CLOSED on the premise (`phase_g_reports/ents120_premise_2026-09-05.md`): no listed site diverges; the night
+  set's 15–22 and the evening set's 5–10 withdrawn by the closure; OrigPos never written; the census kept with the premise
+  note at its head; PN-020 / PN-021 stand. The T3a refuter's observation and ITEM-070's ‡ rows re-read under the server
+  frame — a note under each register entry. STANDING RULE: an engine-behaviour claim about 1.7.10 becomes a finding only
+  after a law-11 check against the jar; a "recalled" premise is presented as unverified and receives no ruling until verified.
+- MIRROR DROP, SCOPE: ButterflyModel (10) and the seven client/model item models (102) join the drop — pinned by the
+  reference leg where a 1.7.10 pair exists, before/after captures in the proof set where none does; one refuter,
+  geometry-only; the same commit. The go is still the Section B EnderReaper A/B.
+- ENT-S-140 → PN-022 (the engine's pose-sized player hitbox; OreSpawn's sorter formula exact): deliberately not reproduced,
+  no code, no refuters.
+- WAVE 4, one batch, HELD: ENT-S-130 / 133 / 134 / 137 / 138 / 142 / 143 / 144 / 145 and ITEM-070's classic transcription —
+  parity, classic; generated pins; refuters by files touched; one changelog paragraph. ITEM-070 ruled B2: the 1.7.10
+  air-walk in classic (shape A, the item's own code, the in-grass / in-water quirk included), the vanilla ray in modern
+  under `[modern] chainsawSweepVanillaSight` (default ON, one MOD record when it lands). The ledger's Chainsaw filter-order
+  cell (:1107) re-rated DIVERGES with the ruling.
+- SEQUENCING while the look session is pending — the chain's no-look work proceeds now, each its own gated slice, in
+  this order: (a) per-entity GeckoLib cache eviction, measured with the MHLib counters; (b) Slice 4c (PurplePower, Rotator,
+  the render-instance expansion, the clone-aware geometry leg); (c) the G2 root-order contract (bone draw order = vanilla
+  part order from the 4.8.4 bytecode, the z-fight exclusion retired, before/after per species before its gate; the proofs
+  regenerate once more after the drop); (d) the spawn-100 benchmark harness (MHLib counters in the baseline; threshold
+  proposed, not adopted); (e) the animation contract and the keyframe controller's return, designed and presented before
+  wiring; (f) the package generator (SPEC, bone glossary, generated trigger inventory, TEXTURE_MAP, INVENTORY.csv) built and
+  dry-run on the landed species, nothing under artist_handoff/ committed until the drop lands. Wave 4 gates only when a
+  slice is waiting on the owner; the mirror drop lands on the Section B go. Addendum C.8 (eviction inside the G2 slice) is
+  superseded by (a).
+- CHANGELOG NOTE: one paragraph per wave — wave 3's five paragraphs (creative players, scan sets, T3c, T4, T10) folded into
+  one, nothing dropped from them.
+- HARNESS: the sibling test classes' frozen mobs at rel y 1 (a block above the floor) stay; the convention recorded as
+  F0.7 in `phase_g_reports/harness_slice_2026-09-04.md`; no cross-class change while the rows pass.
+
+Tests unchanged (1194); no code.
