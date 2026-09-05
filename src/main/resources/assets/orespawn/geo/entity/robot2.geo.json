@@ -5,7 +5,24 @@
       "description": {
         "identifier": "geometry.orespawn.g1.model_robot2",
         "texture_width": 256,
-        "texture_height": 512
+        "texture_height": 512,
+        "orespawn:bone_draw_order": [
+          "rleg1",
+          "rleg2",
+          "Shape3",
+          "lleg2",
+          "lleg1",
+          "Shape6",
+          "Shape7",
+          "Shape8",
+          "rarm3",
+          "rarm2",
+          "rarm1",
+          "larm3",
+          "larm2",
+          "larm1",
+          "head"
+        ]
       },
       "bones": [
         {

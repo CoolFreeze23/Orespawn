@@ -5,7 +5,31 @@
       "description": {
         "identifier": "geometry.orespawn.g1.model_rockbase",
         "texture_width": 64,
-        "texture_height": 64
+        "texture_height": 64,
+        "orespawn:bone_draw_order": [
+          "RockShape1",
+          "RockShape2",
+          "RockShape3",
+          "RockSmallShape1",
+          "RockSmallShape2",
+          "RockTNTShape1",
+          "RockTNTShape2",
+          "RockTNTShape3",
+          "RockTNTShape4",
+          "RockSpikeyShape1",
+          "RockSpikeyShape2",
+          "RockSpikeyShape3",
+          "CrystalShape1",
+          "CrystalShape2",
+          "CrystalShape3a",
+          "CrystalShape3b",
+          "CrystalShape3c",
+          "CrystalShape3d",
+          "CrystalShape4a",
+          "CrystalShape4b",
+          "CrystalShape4c",
+          "CrystalShape4d"
+        ]
       },
       "bones": [
         {

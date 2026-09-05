@@ -6,6 +6,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import danger.orespawn.entity.client.DrawOrder;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import java.io.IOException;
@@ -731,7 +732,10 @@ public final class G1PerformanceBenchmark {
 
             Path geoPath = generatedDir.resolve(id + ".geo.json");
             Model raw = KeyFramesAdapter.GEO_GSON.fromJson(Files.readString(geoPath), Model.class);
-            G1AnimationRuntime.Evaluator evaluator = G1AnimationRuntime.evaluator(raw);
+            // G2 root-order contract: the bake measured here is sorted into the geo's classic draw order
+            // through the production DrawOrder.apply, exactly as the probe's and the shipped model's bakes.
+            G1AnimationRuntime.Evaluator evaluator = G1AnimationRuntime.evaluator(raw,
+                    DrawOrder.read(readJson(geoPath)));
             G1AnimationRuntime.EvaluatedModel initial = evaluator.bindPose();
             Map<String, BenchmarkSample> samples = new TreeMap<>();
             JsonObject compiled = readJson(compiledDir.resolve(id + ".compiled.json"));

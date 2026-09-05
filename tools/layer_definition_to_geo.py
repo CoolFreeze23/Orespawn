@@ -22,6 +22,10 @@ from typing import Any, Iterable
 
 
 ALL_FACES = {"down", "up", "west", "north", "east", "south"}
+# G2 root-order contract: the geo description key carrying the classic draw order as geo bone
+# names in pre-order; GeckoLib 4.8.4's MinecraftGeometry / ModelProperties deserializers ignore
+# it, and the shipped OreSpawnGeoReplacementModel sorts every bake into it (DrawOrder.apply).
+DRAW_ORDER_KEY = "orespawn:bone_draw_order"
 
 
 def load_json(path: Path) -> dict[str, Any]:
@@ -336,6 +340,122 @@ def expand_render_instances(name: str, part: dict[str, Any], parent: str | None,
     }
 
 
+def derive_bone_draw_order(compiled: dict[str, Any],
+                           bones: list[dict[str, Any]]) -> tuple[list[str], dict[str, Any]]:
+    """G2 root-order contract: the geo bones in the order the classic renderer draws the parts.
+
+    The probe records, for every full capture, the classic ``renderToBuffer`` draw
+    sequence (``draw_order``: cube-bearing parts, a render-instance draw as its
+    clone ``<part>__i<k>``). Every capture is a constraint; they are merged into
+    one total order over the cube-bearing geo bones (a cycle is a FINDING: the
+    classic order depends on the state and one static order cannot express it),
+    then lifted to the geo bone tree as a pre-order listing - GeckoLib and
+    ``ModelPart`` both draw a parent's cubes and then each child's subtree - with
+    siblings ordered by their subtree's first draw. A subtree whose draws are
+    interleaved with another's, or a bone drawn after one of its descendants, is
+    a FINDING too: the tree cannot express it. Pairs never drawn together in any
+    capture are ordered by the converter's emission order (the deterministic
+    tie-break); such pairs are invisible to a player in every proven state.
+    """
+    full_samples = [sample for sample in compiled["samples"] if sample.get("capture_kind") == "full"]
+    sequences: list[list[str]] = []
+    for sample in full_samples:
+        if "draw_order" not in sample:
+            raise ValueError(
+                f"{compiled['model_id']} capture {sample['id']} carries no draw_order; "
+                "the compiled dump predates the G2 root-order contract"
+            )
+        sequences.append([str(token) for token in sample["draw_order"]])
+    emission_rank = {bone["name"]: index for index, bone in enumerate(bones)}
+    units = [bone["name"] for bone in bones if bone.get("cubes")]
+    unit_set = set(units)
+    for sample, sequence in zip(full_samples, sequences):
+        unknown = [token for token in sequence if token not in unit_set]
+        if unknown:
+            raise ValueError(
+                f"{compiled['model_id']} capture {sample['id']} draws {unknown}, which are not cube-bearing "
+                "geo bones (a part drawn more than once without render_instances, or a part the rig lacks)"
+            )
+        if len(sequence) != len(set(sequence)):
+            raise ValueError(f"{compiled['model_id']} capture {sample['id']} draws a unit twice")
+    successors: dict[str, set[str]] = {unit: set() for unit in units}
+    for sequence in sequences:
+        for index, unit in enumerate(sequence):
+            successors[unit].update(sequence[index + 1:])
+    indegree = {unit: 0 for unit in units}
+    for unit in units:
+        for later in successors[unit]:
+            indegree[later] += 1
+    ready = sorted((unit for unit in units if indegree[unit] == 0), key=lambda unit: emission_rank[unit])
+    total: list[str] = []
+    while ready:
+        unit = ready.pop(0)
+        total.append(unit)
+        for later in sorted(successors[unit], key=lambda name: emission_rank[name]):
+            indegree[later] -= 1
+            if indegree[later] == 0:
+                ready.append(later)
+        ready.sort(key=lambda name: emission_rank[name])
+    if len(total) != len(units):
+        stuck = sorted(unit for unit in units if unit not in total)
+        raise ValueError(
+            f"FINDING {compiled['model_id']}: the captures disagree on the classic draw order of {stuck}; "
+            "a state-dependent order cannot be expressed as one static bone order"
+        )
+    observed = set().union(*sequences) if sequences else set()
+    unobserved = [unit for unit in units if unit not in observed]
+    rank = {unit: index for index, unit in enumerate(total) if unit in observed}
+
+    children_of: dict[str | None, list[str]] = {}
+    for bone in bones:
+        children_of.setdefault(bone.get("parent"), []).append(bone["name"])
+
+    def subtree_ranks(name: str) -> list[int]:
+        ranks = [rank[name]] if name in rank else []
+        for child in children_of.get(name, []):
+            ranks.extend(subtree_ranks(child))
+        return ranks
+
+    def first_rank(name: str) -> float:
+        ranks = subtree_ranks(name)
+        return min(ranks) if ranks else math.inf
+
+    ordered: list[str] = []
+
+    def emit(level: list[str]) -> None:
+        for name in sorted(level, key=lambda bone: (first_rank(bone), emission_rank[bone])):
+            ranks = sorted(subtree_ranks(name))
+            if name in rank and any(value < rank[name] for value in ranks):
+                raise ValueError(
+                    f"FINDING {compiled['model_id']}: {name} is drawn after one of its descendants; "
+                    "a pre-order bone traversal cannot express that"
+                )
+            if ranks and ranks[-1] - ranks[0] + 1 != len(ranks):
+                raise ValueError(
+                    f"FINDING {compiled['model_id']}: the draws of {name}'s subtree are interleaved with "
+                    "another bone's; the bone tree cannot express that order"
+                )
+            ordered.append(name)
+            emit(children_of.get(name, []))
+
+    emit(children_of.get(None, []))
+    if [name for name in ordered if name in rank] != [unit for unit in total if unit in rank]:
+        raise ValueError(f"{compiled['model_id']}: pre-order lifting changed the merged draw order")
+    if sorted(ordered) != sorted(emission_rank):
+        raise ValueError(f"{compiled['model_id']}: the draw order does not cover every geo bone exactly once")
+    evidence = {
+        "source": compiled.get("draw_order_source"),
+        "captures": [sample["id"] for sample in full_samples],
+        "cube_bearing_units": len(units),
+        "observed_units": len(observed),
+        "unobserved_units": unobserved,
+        "ordered_pairs": sum(len(later) for later in successors.values()),
+        "tie_break": "converter emission order for pairs never drawn together in any capture",
+        "lifting": "pre-order over the geo bone tree, siblings by their subtree's first classic draw",
+    }
+    return ordered, evidence
+
+
 def convert_geometry(compiled: dict[str, Any],
                      render_instances: dict[str, Any] | None = None) -> tuple[dict[str, Any], dict[str, Any]]:
     root = compiled["definition"]
@@ -402,6 +522,7 @@ def convert_geometry(compiled: dict[str, Any],
         raise ValueError("duplicate bone names cannot be preserved by GeckoLib")
 
     model_id = compiled["model_id"]
+    bone_draw_order, draw_order_evidence = derive_bone_draw_order(compiled, bones)
     geometry = {
         "format_version": "1.12.0",
         "minecraft:geometry": [
@@ -410,6 +531,7 @@ def convert_geometry(compiled: dict[str, Any],
                     "identifier": f"geometry.orespawn.g1.{model_id}",
                     "texture_width": compiled["texture_width"],
                     "texture_height": compiled["texture_height"],
+                    DRAW_ORDER_KEY: bone_draw_order,
                 },
                 "bones": bones,
             }
@@ -429,6 +551,8 @@ def convert_geometry(compiled: dict[str, Any],
             "incompatible GeckoLib native mirror disabled"
         ),
         "exact_bone_names": output_names,
+        "bone_draw_order": bone_draw_order,
+        "draw_order_evidence": draw_order_evidence,
     }
     if render_instances:
         summary["render_instances"] = {
@@ -799,6 +923,8 @@ def convert_model(manifest: dict[str, Any], spec: dict[str, Any],
         "mirrored_cube_count": geometry_summary["mirrored_cube_count"],
         "mirrored_uv_strategy": geometry_summary["mirrored_uv_strategy"],
         "exact_bone_names": geometry_summary["exact_bone_names"],
+        "bone_draw_order": geometry_summary["bone_draw_order"],
+        "draw_order_evidence": geometry_summary["draw_order_evidence"],
         **({"render_instances": geometry_summary["render_instances"]}
            if "render_instances" in geometry_summary else {}),
         "animation_contract": animation_contract,
