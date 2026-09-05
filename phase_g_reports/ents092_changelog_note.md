@@ -237,3 +237,12 @@ then adopts it as a buddy and tags along. And one Luna Moth in four — those ca
 Islands the way the butterfly it descends from does, while still chasing torches under cover. With that, wave 3 of the
 targeting parity work is complete: creative-player handling, where the hunters look, how far they look, whom they pick
 first, and the odds and ends above are all the original's again.
+
+Memory no longer grows for the whole session with every GeckoLib-drawn OreSpawn mob that has ever been in view.
+The animation state the new-style renderers keep per mob (the Beaver, Coin, Elevator, Islands, the five robots,
+the Rock Base and the Vortex, when the developer switch draws them through GeckoLib) used to stay in memory for
+every mob ever drawn until the game was closed; it is now dropped the moment a mob leaves the loaded world around
+you, and cleared entirely when you leave a world, change dimension or are transferred to another server. A mob that comes back into view simply
+starts fresh, exactly like one you had never seen. Nothing visible changes. For the curious, `-Dmhlib.counters=true`
+now also prints how many of these states are held (`orespawn.geo.managers_held`) and how many were dropped in the
+last 100 ticks (`orespawn.geo.evictions`) on the existing counters line.

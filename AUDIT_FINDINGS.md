@@ -9624,6 +9624,110 @@ keeps BUG-036. Commit 4ea395c's message retains the old number.)*
   so the random rolls are deterministic under proof. Hitbox: ENT-S-095's `purple_power` row (0.75 × 0.75 vs 0.5 × 0.5)
   is a separate, already-filed item.
 
+### OPT-029 — GeckoLib's `SingletonAnimatableInstanceCache` never evicts: every entity id ever drawn by a replaced renderer keeps an `AnimatableManager` for the client session (FIXED 2026-09-05; Phase G slice (a); raised at Slice 2, FIX_LOG.md:3761-3764)
+
+- **Evidence:** GeckoLib 4.8.4 bytecode (javap over the pinned jar). A replacement is a `GeoReplacedEntity`, i.e. a
+  `SingletonGeoAnimatable`, whose `animatableCacheOverride()` returns `new SingletonAnimatableInstanceCache(this)`
+  (0-8); `GeckoLibUtil.createInstanceCache(GeoAnimatable)` hands that override back at offsets 1-12, so its
+  Entity / BlockEntity branch (15-35: singleton when neither, instanced otherwise) is never reached for a
+  replacement (refuter A, D3 — the same class either way). So every replaced species renderer held a singleton cache:
+  `protected final Long2ObjectMap<AnimatableManager<?>> managers` (a `Long2ObjectOpenHashMap`, constructor 6-13) with
+  `getManagerForId(long)` = `if (!managers.containsKey(id)) managers.put(id, new AnimatableManager(animatable));
+  return managers.get(id);` (0-48). No GeckoLib code path removes an entry. The key is the entity id
+  (`GeoReplacedEntityRenderer.getInstanceId` = `currentEntity.getId()`, 0-8; the draw-time lookup is
+  `GeoModel.handleAnimations`, `getAnimatableInstanceCache()` at 6 and `getManagerForId` at 12). An `AnimatableManager`
+  holds `boneSnapshotCollection` (`Map<String, BoneSnapshot>`, one per animated bone — nine for the Beaver),
+  `animationControllers`, `extraData` and three timing fields (constructor 0-58 runs `registerControllers`). So on a
+  client, every entity id ever drawn by any of the twelve replaced renderers (Beaver, Coin, Elevator, Island,
+  IslandToo, Robot1-5, RockBase, Vortex — `PhaseGDevRenderers`, dev switch) kept its manager until the JVM exited;
+  the Slice 2 review recorded it as a cost multiplier before the pattern reaches 100+ species. `TheQueen` is not
+  affected (an Entity animatable on an `InstancedAnimatableInstanceCache`: one manager per entity instance,
+  collected with the entity).
+- **Resolution:** FIXED (2026-09-05, Phase G slice (a); owner's sequencing ruling, scope addendum item 23 (8)(a),
+  superseding addendum C.8). Four pieces, no draw-path change, no mixin change, `TheQueen` untouched:
+  (1) `entity/client/OreSpawnAnimatableInstanceCache` extends `SingletonAnimatableInstanceCache` — the class GeckoLib
+  would pick, made explicit — with `evict(long)` (`managers.remove(id) != null`), `evictAll()` (count, then clear) and
+  `size()`; eviction is safe because the next draw of that id re-creates a manager through `getManagerForId` and pays
+  one first-tick snapshot, exactly what a never-seen entity pays. (2) `OreSpawnGeoReplacement` builds that cache
+  explicitly and exposes it (`animatableCache()`); `OreSpawnGeoReplacedEntityRenderer`'s constructor registers it —
+  at renderer construction on a bootstrapped client, never in the replacement's constructor, which the headless s4
+  probe (`S4CandidateRuntime.instantiate`) runs without a bootstrapped registry (R0 below) — with
+  (3) `entity/client/GeoReplacementCaches`, a registry keyed by `EntityType` (register replaces — renderers are
+  rebuilt on every resource reload and the old renderer, singleton and cache drop together; the previous cache is
+  returned; `unregister`, `cacheFor`, `evict(Entity)` by `getType()` + `getId()`, `evictAll()`, `managersHeld()`);
+  it loads on the game-test server (no client class referenced). (4) `client/GeoReplacementCacheEvictor`, an
+  `@EventBusSubscriber(modid, value = Dist.CLIENT)` on the game bus (the `KeybindHandler` idiom; no `bus =`):
+  `EntityLeaveLevelEvent` → `evictIfClient(event.getLevel(), event.getEntity())`; `LevelEvent.Unload` →
+  `evictAll()` when the level `isClientSide()`; `ClientPlayerNetworkEvent.LoggingIn` → `evictAll()` (refuter A, D1:
+  `Minecraft.clearClientLevel(Screen)` — reached from `ClientPacketListener.handleConfigurationStart` at 55, a
+  server-driven transfer / reconfigure — nulls the level (67) and calls `updateLevelInEngines(null)` (72) without a
+  bus post, and the next `setLevel` then posts nothing; `ClientHooks.firePlayerLogin` (0-13) posts `LoggingIn` from
+  `handleLogin` at 316, after `setLevel` at 181, so the dropped level's managers go before the new level's first
+  draw; a no-op after an ordinary login). The static core `evictIfClient(Level, Entity)` returns false without
+  touching anything unless `level.isClientSide()`.
+- **Hook sites (NeoForge 21.1.223 bytecode; a correction to the slice brief):** the client-side removal hook is
+  `ClientLevel$EntityCallbacks.onTrackingEnd(Entity)` — `Entity.unRide` (1), `players.remove` (12),
+  `Entity.onRemovedFromLevel()` (19), then `new EntityLeaveLevelEvent(entity, level)` posted on `NeoForge.EVENT_BUS`
+  (22-37), then the part-entity map cleanup (43-97); `onDestroyed(Entity)` is a bare `return` (0) in this build and
+  posts nothing. The level hook has two sites in `Minecraft`: `setLevel(ClientLevel, ReceivingLevelScreen$Reason)`
+  posts `new LevelEvent$Unload(this.level)` for the level being replaced (7-26, guarded `ifnull 27`, ahead of
+  `updateLevelInEngines` at 57) and `disconnect(Screen, boolean)` posts it for the level being dropped (130-149,
+  guarded `ifnull 204`, ahead of `updateLevelInEngines(null)` at 211).
+- **Thread argument:** the cache map is a non-concurrent `Long2ObjectOpenHashMap` and every touch is on the client main
+  thread. The draw: `GeoModel.handleAnimations` (6 / 12) runs inside the entity render pass, which
+  `Minecraft.runTick(boolean)` drives through `GameRenderer.render` (offset 422) on the same thread as `tick()` (171)
+  and `runAllTasks()` (120). The per-entity eviction: `ClientPacketListener.handleRemoveEntities` first calls
+  `PacketUtils.ensureRunningOnSameThread(packet, this, minecraft)` (6), then `ClientLevel.removeEntity(int,
+  RemovalReason)` (`Entity.setRemoved` at 20 → `TransientEntitySectionManager$Callback.onRemove` → the callbacks'
+  `onTrackingEnd`). The level eviction: `Minecraft.setLevel` / `disconnect` are `Minecraft` methods on its own thread.
+  The one foreign thread that sees the same events is an integrated server: it posts `EntityLeaveLevelEvent` for its
+  server entities (same entity ids) and `LevelEvent.Unload` per server level on the SERVER thread; the evictor's
+  `isClientSide()` guard returns before touching anything. The registry's own map is a `ConcurrentHashMap`
+  (registration at renderer construction, on the client main thread during a resource reload; reads at eviction).
+- **Measurement:** two names in the MHLib counters dump (`-Dmhlib.counters=true`, one INFO line per 100 client ticks,
+  `MHLibClient.onClientTick`), registered by `GeoReplacementCaches` through two new `MHLibCounters` factories —
+  `counter(String)` (the constructor stays private) and `gauge(String, LongSupplier)`; `sumAndResetAll()` appends every
+  gauge's current value after the counters, in registration order, without resetting it; `formatDump` unchanged; the
+  nine existing names and their order unchanged (pinned). `orespawn.geo.evictions`: managers evicted in the interval
+  (one per replaced-renderer entity that left the client level, plus every manager dropped by a level unload;
+  increments guarded by `ENABLED`). `orespawn.geo.managers_held`: the gauge, managers currently held by every
+  registered replacement cache. Expected reading: with N replaced-renderer mobs in view `managers_held = N` (the
+  number drawn and still in the level); walk them out of tracking range or kill them and the next dump shows
+  `evictions = N`, `managers_held = 0`; disconnect and `managers_held` reads 0 on the title screen (a server transfer
+  reads 0 once the new login completes). `orespawn.geo.evictions`' increments are unpinnable in the suite
+  (`ENABLED` is false there; refuter A, D6) — the owner's look reads them. Before this slice
+  the gauge (had it existed) could only ever rise: one manager per entity id ever drawn, for the session. The client
+  evictor's static initialiser forces the registration, so both names print from mod construction on, even with every
+  species on its classic renderer.
+- **Pins:** new `GeoCacheEvictionTests` (own batch `geoCacheEviction`, TEST-003; a `@GameTestGenerator` over five
+  synchronous rows `geocacheevictiontests.opt029_NN_<row>`, `orespawn:empty_large` named in full, 100 ticks; every
+  registration a row makes restored in a finally, every spawn discarded there; frozen mobs on the floor at rel y 0,
+  F0.7): 01 the cache on a real `BeaverGeoReplacement` — the same manager instance for a repeated id, 100 ids → size
+  100, `evict(37)` true → 99, again false, the evicted id re-created as a new instance on the next draw (→ 100, evicted
+  again → 99), `evictAll()` 99 → 0, then 0; 02 the registry — twenty frozen Beavers "drawn" through
+  `getManagerForId(getId())`, `managersHeld()` 20 above the base and the value `sumAndResetAll()` prints for
+  `orespawn.geo.managers_held` equal to it, the dump's key order (the nine MHLib names first in declaration order,
+  `orespawn.geo.evictions` after them, the gauge after every counter), `evict(beaver)` true for each → held back to
+  base and the gauge following, once more → false; 03 a pig (no cache) — `evict` false, nothing thrown, held
+  unchanged; 04 Beaver + Coin replacements registered, five managers each — `evictAll()` returns base + 10, held 0,
+  both caches empty; 05 the guard — a Beaver with a manager, `GeoReplacementCacheEvictor.evictIfClient(serverLevel,
+  beaver)` false with nothing touched, then `GeoReplacementCaches.evict(beaver)` true. Assertion messages carry the
+  finding id, the expected and the actual values. Compile proof: javac of the whole main tree and the gametest tree
+  rc 0 (no gradle in this lane); the gametest run is the gate's (expected `All 1199 required tests passed`:
+  1194 + these 5).
+- **R0 (orchestrator's probe run, before the refuters):** the lane's first shape registered the cache from the
+  replacement's constructor through `descriptor.entityType()`; the headless s4 geo probe run directly on the compiled
+  classes died with `IllegalArgumentException: Not bootstrapped (… minecraft:game_event)` from `ModEntities.<clinit>` via
+  `CoinGeoReplacement.lambda$static$0` ← `GeoReplacementDescriptor.entityType` ← `OreSpawnGeoReplacement.<init>` — the
+  4b record's reason for the lambda suppliers. Moved to the renderer constructor; the probe re-run passes.
+- **Not done / disclosed:** no in-game capture (client rendering is outside the suite's reach by construction); the
+  three client listeners are pinned by their bytecode cites and the static core, not by a `ClientLevel`; the
+  production registration (`OreSpawnGeoReplacedEntityRenderer`'s constructor, a client class) is unpinned in the
+  suite (refuter A, D2) — the owner's look proves it: `managers_held` rises as replaced mobs are drawn. The rows'
+  real replacements loaded and ran on the dedicated game-test server (the gate's 1199; the class-load question
+  settled by the run, not by inspection — the `$1` descriptors do invoke `PoseStack.scale` in `applyScale`, never
+  executed there; refuter A, D4). Refuters: (filled by the orchestrator). Owner look: the counters line, as above.
+
 ### TEST-003 — Config-flipping gametests in the concurrent default batch
 
 - **Impact:** MEDIUM (suite reliability) — boss005/boss012 flip a global
