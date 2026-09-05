@@ -8,12 +8,15 @@ import software.bernie.geckolib.animation.AnimationProcessor;
 import software.bernie.geckolib.animation.AnimationState;
 import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.constant.DataTickets;
-import software.bernie.geckolib.util.GeckoLibUtil;
 
 /**
  * One replaced animatable per registry entry. GeckoLib keys its per-entity
  * animation state by entity id through this singleton, so the entity class
- * carries no cache, controllers, or GeckoLib interface.
+ * carries no cache, controllers, or GeckoLib interface. That per-entity state
+ * lives in {@link OreSpawnAnimatableInstanceCache} and is registered with
+ * {@link GeoReplacementCaches}, so it can be dropped when the entity leaves
+ * the client level (OPT-029; before that, every entity id ever drawn kept its
+ * manager for the session).
  *
  * <p>The static helpers below let a code-driven pose be written in the
  * classic {@code ModelPart} vocabulary (vanilla sign conventions, pivot
@@ -35,7 +38,21 @@ import software.bernie.geckolib.util.GeckoLibUtil;
  */
 public abstract class OreSpawnGeoReplacement<E extends Entity> implements GeoReplacedEntity {
     private final GeoReplacementDescriptor<E> descriptor;
-    private final AnimatableInstanceCache animCache = GeckoLibUtil.createInstanceCache(this);
+    /**
+     * OPT-029: the cache GeckoLib would pick for this animatable anyway — a
+     * {@code GeoReplacedEntity} is a {@code SingletonGeoAnimatable}, whose
+     * {@code animatableCacheOverride()} returns {@code new SingletonAnimatableInstanceCache(this)}
+     * (4.8.4 bytecode, offsets 0-8), which {@code GeckoLibUtil.createInstanceCache} hands back
+     * at offsets 1-12 before its Entity / BlockEntity test — made explicit as the evictable
+     * subclass so the client evictor can drop a manager when its entity leaves
+     * the level. NOT registered here: the headless s4 probe constructs the shipped
+     * replacements in an un-bootstrapped JVM ({@code S4CandidateRuntime.instantiate}),
+     * where the descriptor's entity-type supplier cannot be evaluated (it trips
+     * {@code Bootstrap.checkBootstrapCalled} through {@code ModEntities}). The renderer
+     * that owns this replacement registers it ({@link OreSpawnGeoReplacedEntityRenderer}),
+     * on a bootstrapped client, through {@link #animatableCache()}.
+     */
+    private final OreSpawnAnimatableInstanceCache animCache = new OreSpawnAnimatableInstanceCache(this);
 
     protected OreSpawnGeoReplacement(GeoReplacementDescriptor<E> descriptor) {
         this.descriptor = descriptor;
@@ -43,6 +60,11 @@ public abstract class OreSpawnGeoReplacement<E extends Entity> implements GeoRep
 
     public final GeoReplacementDescriptor<E> descriptor() {
         return this.descriptor;
+    }
+
+    /** OPT-029: the evictable cache, for the renderer that registers it with {@link GeoReplacementCaches}. */
+    public final OreSpawnAnimatableInstanceCache animatableCache() {
+        return this.animCache;
     }
 
     @Override

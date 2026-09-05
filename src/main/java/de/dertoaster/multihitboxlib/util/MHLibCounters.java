@@ -1,11 +1,12 @@
 package de.dertoaster.multihitboxlib.util;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.LongAdder;
+import java.util.function.LongSupplier;
 
 /**
  * OPT-028 / BUG-044 (2026-09-04): instrumentation counters for the client bone-collection path,
@@ -21,6 +22,19 @@ import java.util.concurrent.atomic.LongAdder;
  * {@code client.recursive_start / client.frames} = 220 with the bare-name {@code renderRecursively}
  * selectors (the typed method AND GeckoLib's synthetic bridge hooked, OPT-028) and 110 with the
  * descriptor-exact selectors; {@code client.bones_visited / client.frames} = 110 either way.</p>
+ *
+ * <p>OPT-029 (2026-09-05): two OreSpawn names registered by
+ * {@code danger.orespawn.entity.client.GeoReplacementCaches} through the {@link #counter} and
+ * {@link #gauge} factories, so the same dump line measures the GeckoLib cache eviction of the
+ * replaced renderers. {@code orespawn.geo.evictions} is a counter: the AnimatableManagers evicted in
+ * the interval (one per replaced-renderer entity that left the client level, plus every manager
+ * dropped by a client level unload); its increments are guarded by {@link #ENABLED} like every other
+ * counter. {@code orespawn.geo.managers_held} is a gauge, appended AFTER the counters and never reset:
+ * the managers currently held by every registered replacement cache. Expected reading: with N
+ * replaced-renderer mobs in view {@code managers_held} equals the number that have been drawn and are
+ * still in the client level, and it falls as they leave; before this slice it only ever rose (one
+ * manager per entity id ever drawn, kept for the session). Gauges follow the counters in registration
+ * order; the nine names above keep their names and their order.</p>
  */
 public final class MHLibCounters {
 
@@ -28,7 +42,9 @@ public final class MHLibCounters {
 	public static final boolean ENABLED = Boolean.getBoolean(PROPERTY);
 	public static final int DUMP_INTERVAL_TICKS = 100;
 
-	private static final List<Counter> ALL = new ArrayList<>();
+	private static final List<Counter> ALL = new CopyOnWriteArrayList<>();
+	/** OPT-029: gauges in registration order; read at each dump, never reset. */
+	private static final List<Gauge> GAUGES = new CopyOnWriteArrayList<>();
 
 	/** Collector pre-render passes: one per multipart entity rendered per frame (= rendered frames with one Queen in view). */
 	public static final Counter CLIENT_FRAMES = new Counter("client.frames");
@@ -52,16 +68,40 @@ public final class MHLibCounters {
 	private MHLibCounters() {
 	}
 
+	/**
+	 * OPT-029: a counter declared outside this class (the OreSpawn GeckoLib cache eviction), registered
+	 * into the dump after the built-in ones, in call order. The constructor stays private.
+	 */
+	public static Counter counter(String name) {
+		return new Counter(name);
+	}
+
+	/**
+	 * OPT-029: a gauge -- a value read at each dump and never reset -- appended to the dump after every
+	 * counter, in registration order.
+	 */
+	public static void gauge(String name, LongSupplier supplier) {
+		GAUGES.add(new Gauge(name, supplier));
+	}
+
 	/** Every counter in declaration order. */
 	public static List<Counter> all() {
 		return Collections.unmodifiableList(ALL);
 	}
 
-	/** Reads and zeroes every counter, in declaration order. */
+	/** Every gauge in registration order (OPT-029). */
+	public static List<Gauge> gauges() {
+		return Collections.unmodifiableList(GAUGES);
+	}
+
+	/** Reads and zeroes every counter, in declaration order; then reads every gauge, in registration order, resetting nothing. */
 	public static Map<String, Long> sumAndResetAll() {
 		final Map<String, Long> out = new LinkedHashMap<>();
 		for (Counter counter : ALL) {
 			out.put(counter.name(), counter.sumThenReset());
+		}
+		for (Gauge gauge : GAUGES) {
+			out.put(gauge.name(), gauge.value());
 		}
 		return out;
 	}
@@ -104,6 +144,26 @@ public final class MHLibCounters {
 
 		public long sumThenReset() {
 			return this.adder.sumThenReset();
+		}
+	}
+
+	/** OPT-029: a named value read at each dump; registered through {@link MHLibCounters#gauge}. */
+	public static final class Gauge {
+		private final String name;
+		private final LongSupplier supplier;
+
+		private Gauge(String name, LongSupplier supplier) {
+			this.name = name;
+			this.supplier = supplier;
+		}
+
+		public String name() {
+			return this.name;
+		}
+
+		/** The current value; nothing is reset. */
+		public long value() {
+			return this.supplier.getAsLong();
 		}
 	}
 }
