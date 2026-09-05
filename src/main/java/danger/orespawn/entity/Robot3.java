@@ -144,8 +144,8 @@ public class Robot3 extends Monster implements Robot3Pose {
             if (this.reloadTicker < 25) this.setAttacking(0);
         }
         if (this.reloadTicker == 0) {
-            LivingEntity target = this.getTarget();
-            if (this.getRandom().nextInt(50) == 1) { this.setTarget(null); this.revengeGoal.release(); } // orig :242-244 — the task ended on the nulled target; vanilla's TargetGoal would re-assert its memory (ENT-S-131)
+            if (this.getRandom().nextInt(50) == 1) { this.setTarget(null); this.revengeGoal.release(); } // orig :242-244 — rolled BEFORE the read (:245): a forgotten attacker is not engaged in the forgetting pass (ENT-S-133); the task ended on the nulled target; vanilla's TargetGoal would re-assert its memory (ENT-S-131)
+            LivingEntity target = this.getTarget(); // orig :245 — e = getAttackTarget(), after the 1-in-50 (ENT-S-133)
             if (target != null && !target.isAlive()) { this.setTarget(null); target = null; }
             if (target == null) target = findSomethingToAttack();
             this.reloadTicker = 35;

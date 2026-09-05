@@ -192,8 +192,8 @@ public class Robot4 extends Monster implements Robot4Pose {
         if (this.wasAttackedTicker > 0) --this.wasAttackedTicker;
         // orig :280 — think-tick gated on reload done + a 1-in-8 roll.
         if (this.reloadTicker == 0 && this.getRandom().nextInt(8) == 1) {
-            LivingEntity target = this.getTarget();
-            if (this.getRandom().nextInt(50) == 1) { this.setTarget(null); this.revengeGoal.release(); } // orig :282-284 — the task ended on the nulled target; vanilla's TargetGoal would re-assert its memory (ENT-S-131)
+            if (this.getRandom().nextInt(50) == 1) { this.setTarget(null); this.revengeGoal.release(); } // orig :282-284 — rolled BEFORE the read (:285): a forgotten attacker is not engaged in the forgetting pass (ENT-S-133); the task ended on the nulled target; vanilla's TargetGoal would re-assert its memory (ENT-S-131)
+            LivingEntity target = this.getTarget(); // orig :285 — e = getAttackTarget(), after the 1-in-50 (ENT-S-133)
             if (target != null && !target.isAlive()) { this.setTarget(null); target = null; }
             if (target == null) target = findSomethingToAttack();
             if (target != null) {

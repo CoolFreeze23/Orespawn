@@ -67,7 +67,11 @@ public class AmbientFlightGoal extends Goal {
             return new Params(7, 6, 2, 0.4, 0.7, 0.1, 0.5f, 1.0f, 100, 4.0, 25);
         }
         public static Params lunaMoth() {
-            return new Params(7, 6, 2, 0.5, 0.7, 0.1, 0.5f, 1.0f, 100, 4.0, 25);
+            // orig EntityLunaMoth.java:126-155 — the moth's own loop: the wander inside nextInt(10) - nextInt(10) on x and z (:129),
+            // nextInt(6) - 2 on y, 25 tries (:118), the retarget nextInt(100) == 0 || cell distSq < 4.0f (:126); the steering
+            // 0.5 / 0.68 / 0.5 with the blend 0.1f (:149-151) and moveForward 0.75f (:154). HEAD carried the butterfly's row
+            // (7, 0.7, 0.5f) here (ENT-S-143).
+            return new Params(10, 6, 2, 0.5, 0.68, 0.1, 0.75f, 1.0f, 100, 4.0, 25);
         }
         public static Params dragonfly() {
             return new Params(10, 5, 2, 0.5, 0.7, 0.3, 1.0f, 4.0f, 300, 2.1, 50); // orig Dragonfly.java:124 — nextInt(300) == 0 || cell distSq < 2.1f (ENT-S-135)
@@ -102,10 +106,10 @@ public class AmbientFlightGoal extends Goal {
     @Override
     public void tick() {
         if (this.mob.isRemoved()) return;
-        if (this.flightTarget == null) this.flightTarget = this.mob.blockPosition();
+        if (this.flightTarget == null) this.flightTarget = castCell(this.mob); // orig Dragonfly.java:122 (EntityButterfly.java:152, EntityLunaMoth.java:124, Firefly.java:125, EntityMosquito.java:94) — new ChunkCoordinates((int) posX, (int) posY, (int) posZ): the (int) casts, truncation toward zero (BUG-027 faithful; blockPosition() floored a cell short on a negative axis — ENT-S-138)
 
         // Retarget branch — mob-specific behaviour hooks in here.
-        double distSq = this.flightTarget.distSqr(this.mob.blockPosition());
+        double distSq = this.flightTarget.distSqr(castCell(this.mob)); // orig Dragonfly.java:124 (and the twins above) — getDistanceSquared((int) posX, (int) posY, (int) posZ), the same casts (ENT-S-138)
         boolean needNewTarget = this.mob.getRandom().nextInt(this.params.retargetChance()) == 0
                 || distSq < this.params.nearTargetDistSq();
         if (needNewTarget) {
@@ -166,5 +170,14 @@ public class AmbientFlightGoal extends Goal {
     /** Exposed so the host mob can seed the target after hurt() etc. */
     public void setFlightTarget(BlockPos pos) {
         this.flightTarget = pos;
+    }
+
+    /**
+     * The flyer's own cell as 1.7.10 read it — {@code ((int) posX, (int) posY, (int) posZ)}, truncation toward zero (BUG-027
+     * VERIFIED-CORRECT faithful; MOD-024 lists the floor as a modern opt-in): one cell toward the origin from {@code blockPosition()}
+     * on every negative fractional axis (the modern world's y reaches -64; x / z beyond the origin). ENT-S-138.
+     */
+    public static BlockPos castCell(Mob mob) {
+        return new BlockPos((int) mob.getX(), (int) mob.getY(), (int) mob.getZ());
     }
 }

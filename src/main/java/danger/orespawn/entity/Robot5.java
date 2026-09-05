@@ -131,8 +131,8 @@ public class Robot5 extends Monster {
             if (this.reloadTicker < 15) this.setAttacking(0);
         }
         if (this.reloadTicker == 0) {
-            LivingEntity target = this.getTarget();
-            if (this.getRandom().nextInt(50) == 1) { this.setTarget(null); this.revengeGoal.release(); } // orig :214-216 — the task ended on the nulled target; vanilla's TargetGoal would re-assert its memory (ENT-S-131)
+            if (this.getRandom().nextInt(50) == 1) { this.setTarget(null); this.revengeGoal.release(); } // orig :214-216 — rolled BEFORE the read (:217): a forgotten attacker is not engaged in the forgetting pass (ENT-S-133); the task ended on the nulled target; vanilla's TargetGoal would re-assert its memory (ENT-S-131)
+            LivingEntity target = this.getTarget(); // orig :217 — e = getAttackTarget(), after the 1-in-50 (ENT-S-133)
             if (target != null && !target.isAlive()) { this.setTarget(null); target = null; }
             if (target == null) target = findSomethingToAttack();
             this.reloadTicker = 20;
