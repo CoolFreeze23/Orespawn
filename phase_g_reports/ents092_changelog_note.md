@@ -248,3 +248,26 @@ now also prints how many of these states are held (`orespawn.geo.managers_held`)
 last 100 ticks (`orespawn.geo.evictions`) on the existing counters line.
 
 Nothing player-visible changes in the classic renderers: the Rotator and PurplePower draw exactly as before. For reviewers, the Phase G developer switch (`-Dorespawn.dev.geckolibRenderers=…`) gains two more species — `rotator` and `purple_power` — whose GeckoLib candidates reproduce the classic gyroscope fans and spoke rings through the parity harness's new render-instance expansion (one bone per classic draw).
+
+Targeting parity, wave 4. The last of the targeting follow-ups, and one weapon. The Leonopteryx and the Girlfriend
+weigh their fights the 1.7.10 way again: a Leonopteryx that sees a monster goes for it even while it is nursing a
+grudge against whoever hit it (the port had let the grudge block its hunt), and a Girlfriend goes for a monster within
+reach ahead of an untamed rival near her owner (the port had it the other way round). The Boyfriend and the
+Girlfriend hunt only once tamed, as in 1.7.10 — a wild one ignores creepers and monsters until you tame it — and a
+Girlfriend told to sit stops hunting (a sitting Boyfriend still does, as in the original); their Valentine's Day
+tempers are unchanged. The Pounder, Gunner, Warrior and Sniper robots that forget a grudge on their 1-in-50 do it
+before they act, so the pass that forgets an attacker no longer turns, walks or shoots at it once more. A tamed
+Stinky flies the 1.7.10 box around its owner (a tighter box near an owner on the ground, a small one around an owner
+in flight) instead of the wide box a wild one wanders. Four flyers read their own cell and their flight target the
+1.7.10 way below zero and beyond the origin (the Brutalfly, Mothra, the Dragonfly and the butterflies — one block at
+most, in where they turn and where the Dragonfly aims at prey). An Ender Knight caught in rain or water blinks away
+as its Reaper cousin already did, and both Ender mobs play the enderman's portal sound at both ends of every teleport,
+as they did in 1.7.10. The Luna Moth flies its own 1.7.10 pattern again — a wider wander, a slightly slower climb and
+a faster flight — and looks for a torch to settle over the way it used to: at night, on most ticks, whether or not the
+sky is open, in every direction (the port had looked only under cover, only when re-picking a flight target, and only
+east or west). And the Chainsaw's sweep — every living thing within five blocks on a left-click — tells whom it can
+see the 1.7.10 way in classic: a walk from the player's waist to the target's middle that any non-air block stops, so
+a mob standing in grass, crops or water, or behind a torch, a step or a snow layer, is spared as it was, while one
+past a trunk corner is caught. Modern mode keeps the port's line of sight (the vanilla collision ray, which sweeps
+through grass, fluids and torches and is stopped by solid corners) under a new `[modern]` switch,
+`chainsawSweepVanillaSight`, on by default (MOD-037); `false`, or `modern.enabled = false`, is the 1.7.10 walk.

@@ -978,3 +978,73 @@ _pin) so alignment drift is caught regardless.
   PEACEFUL inside the test — with the master off (classic) and on (modern); difficulty, master and clock restored in
   a finally, players removed, spawns discarded.
 - **Status:** RECORDED 2026-09-04 (a parity exception; nothing to implement, pinned in both modes).
+
+## MOD-037 — Chainsaw sweep sight on the vanilla collision ray (ITEM-070 B2; ruled 2026-09-05, implemented 2026-09-06 with wave 4, default ON; classic runs the 1.7.10 walk)
+
+- **Origin:** ITEM-070 (REPORT 2026-09-05; raised by the ENT-S-121 refuter 2026-09-04): the port's `Chainsaw.isSuitableTarget`
+  tested the sweep's sight with `player.hasLineOfSight(target)` — vanilla's eye-to-eye COLLIDER clip, exact over every voxel,
+  fluids and collision-less blocks never stopping it — where orig UltimateSword.java:198-247 `MyCanSee` walked ten samples from
+  the server player's feet + 1.4 to the target's mid-body and passed only `Blocks.air`. The two rays answer differently on the
+  felling-site cases (ITEM-070's table: rows 4a, 4c, 5b, 6, 8c, 9b, 10 the port sweeps what 1.7.10 spared; 2b, 8d, 12 the port
+  spares what 1.7.10 swept; 13 quadrant-dependent), and no MOD record covered the mapping.
+- **Ruling (owner, 2026-09-05):** "B2 — the 1.7.10 air-walk transcribed in classic (shape A: the item's own code,
+  `Chainsaw.myCanSee`, orig UltimateSword.java:198-247 step for step, the in-grass and in-water quirk of row 10 included, the
+  `(int)` casts kept, `state.isAir()` for `== Blocks.air`); the vanilla ray kept in modern under `[modern]
+  chainsawSweepVanillaSight`, default ON (the MOD-029 / MOD-031 shape, read live per swing), one MOD record written when it
+  lands; the pins as proposed under A plus a two-mode pin." Lands with wave 4 (addendum item 23 (6)-(7)).
+- **Classic (implemented; the behaviour while the master or the key is off):** `Chainsaw.myCanSee(Player, LivingEntity)`
+  (item/Chainsaw.java:167-207) — orig :198-246 in floats: `nblks = 10`; the start at the player's x / z and `getY() + 1.4f`
+  (the SERVER player's `posY`, the feet — `phase_g_reports/ents120_premise_2026-09-05.md`: 1.4 above the feet, 0.22 below the
+  eyes); the tenth-part steps to `e.getY() + e.getBbHeight() / 2` (the mid-body, not the eyes); should any axis step exceed one
+  block, the other two are divided by it and the count scaled with `(int)` (cumulative over x, y, z, each component then
+  clamped to ±1 — inside the 5-block sweep box no axis reaches 1 for a target narrower than about 9.4 blocks, so exactly ten
+  samples, the tenth ON the mid-body point); each sample pre-incremented and read with `(int)` casts (truncation toward zero —
+  BUG-027 VERIFIED-CORRECT faithful, MOD-024's floor a modern opt-in: at x or z < 0 the column one block toward the origin; at
+  y < 0, which the modern world reaches down to −64, the cell above the true cell on a fractional negative y, and void air —
+  `isAir()` true — below the world's bottom, as 1.7.10's `getBlock` answered air outside 0..255); `state.isAir()` alone passes
+  (cave and void air fold in, the TheQueen shape); a block the segment enters BETWEEN two samples is never examined. So in
+  classic a mob standing in grass, flowers, crops, a cobweb, a snow layer, a carpet (low mobs) or water is never swept, nor one
+  behind a torch, a 2-block plant, a slab step, one-layer snow or a fluid cell, and the sweep is dead while the player stands in
+  a 2-block plant, a cobweb or water; a mob past a trunk or canopy corner, or across a 1.0-1.5 fence band, is swept — 1.7.10's
+  exact behaviour, and what the port does with `modern.enabled = false` or `chainsawSweepVanillaSight = false`.
+- **Switch (implemented 2026-09-06):** the `[modern]` key `chainsawSweepVanillaSight` (`OreSpawnConfig
+  .MODERN_CHAINSAW_SWEEP_VANILLA_SIGHT`, `BooleanValue`, default **true** per the ruling; OreSpawnConfig.java:298-309 the field,
+  :590-604 the define), read only through the effective-value helper `OreSpawnConfig.chainsawSweepVanillaSight()` =
+  `MODERN_ENABLED && key` (:685-695), next to `cryolophosaurusRevengeChase()` (master-override ruling 2026-09-04: new features
+  register under [modern]; the master off forces classic). One gated site, reading the helper live at every swing (not
+  snapshotted; no BOSS-017 concern): `Chainsaw.isSuitableTarget` (:140-144) — after orig's null / self / dead and pvp
+  exclusions, `chainsawSweepVanillaSight() ? player.hasLineOfSight(target) : myCanSee(player, target)`. Key comment: "MOD-037:
+  the Chainsaw's left-click sweep (every living thing within 5 blocks, 56 damage) tests its sight on vanilla's collision ray --
+  eye to eye, through fluids, grass, torches, crops, snow layers, carpets and slabs, stopped by any block with a collision box --
+  instead of the 1.7.10 walk: ten samples from the player's feet + 1.4 to the target's mid-body, every non-air block a wall (a
+  mob standing in grass, crops or water, or behind a torch, a slab step or one-layer snow, was never swept in 1.7.10; a mob past
+  a trunk corner or a fence band was). Only takes effect while modern.enabled is true; classic mode always runs the 1.7.10 walk
+  (orig UltimateSword.java:198-247). On by default (owner ruling 2026-09-05); set false to keep the 1.7.10 walk in modern mode
+  too. Read at every swing, so a change applies to the next left-click." The `[modern] enabled` comment and javadoc list the key
+  and the helper with the nine other keys / helpers (spiderMovement, mountCamera, phase14ContentEnable, mothraWideRootHitbox,
+  fireRespectsMobGriefing, godzillaSparesBossPeers, petsDefendOwner, pointysaurusStareAggro, cryolophosaurusRevengeChase).
+- **Effect when effective (a default config):** the sweep's sight is vanilla's `Player.hasLineOfSight` — the ENT-S-121 census's
+  mapping, disclosed there "for the ledger": ITEM-070's rows 4a / 4c / 5b / 6 / 8c / 9b / 10 are swept (accepted broadenings) and
+  2b / 8d / 12 / 13 spared (accepted losses); the sweep's existence, box, damage and exclusions (ITEM-037, MOD-016 for the felling
+  box) are unchanged in both modes. With the key off, identical to classic.
+- **Not covered:** the felling box (MOD-016) tests no sight in either tree; the Ultimate Sword, the Battle Axe and the Queen
+  Battle Axe have no sweep; the King's / Queen's / Molenoid's / Cater Killer's own walks are theirs (BUG-027, ENT-S-135).
+- **Pin:** `ChainsawSweepSightTests` (own batch `chainsawSweepSight`, TEST-003; `@GameTestGenerator`, 9 rows
+  `chainsawsweepsighttests.i070_NN_<row>_<what>`): a survival ServerPlayer on the floor, a frozen 1000-HP target 5 blocks south,
+  the occluder placed on the cell a float-for-float replay of orig :198-246 reads at the layout's actual origin, the sweep driven
+  through the private `findSomethingToHit` on the registered Chainsaw and its damage the signal, the key flipped off for the
+  walk half and restored in the finally: rows 9b (short grass on the tenth sample — the target's own cell), 4a (a cobweb on the
+  fifth — the head cell between), 4c / 8c / 6 (grass, a bottom slab, water on the seventh — the ground cell before the Pig's /
+  Cow's), 10 (a cobweb on the first sampled cell — with the target five blocks along z the first sample lands at z + 0.5, the
+  head-height cell just ahead of the player, never the player's own cell; the walk dies on its first read and the sweep with it —
+  the table's row-10 picture, the player standing in the cobweb, is this same first-sample read for a target nearer than five
+  blocks): spared by the walk, swept by the ray; 12 (the player three blocks up, an oak log at the corner cell the segment enters
+  between two samples and the eye line crosses): swept by the walk, spared by the ray; 13 (a stone on the replayed sixth cell
+  stops the walk; a stone on the sample point's true cell stops it only where the cast reads that cell, and is skipped where the
+  cast reads the neighbour toward the origin — the frame reported); the master off with the key on forcing the walk, the master
+  back on the ray (the two-mode pin). The rows place their occluders on replayed sample cells: the table's pictures are the
+  positive-origin readings, the gate's negative y shifts the cells one up through the `(int)` truncation, and the facts pinned are
+  the walk's own — a non-air block on a sampled cell stops the walk, the vanilla ray passes collision-less and fluid blocks. The
+  pins hold at any origin: the cells are derived, never assumed.
+- **Harness consequence:** none beyond the batch — no existing pin read the sweep's sight.
+- **Status:** IMPLEMENTED 2026-09-06 (the key, the helper, the gated site, the transcription, the pin); the classic branch is orig.
