@@ -9584,6 +9584,46 @@ keeps BUG-036. Commit 4ea395c's message retains the old number.)*
   paragraph. HELD behind the Phase G chain's no-look slices (addendum item 23 (8)): the batch gates only when a chain
   slice is waiting on the owner.
 
+### ENT-S-146 — The classic PurplePower model is a re-authoring, not the 1.7.10 model: 1.7.10 drew the orb translucent and fullbright with three spoke-fans thrown into a fresh random orientation every frame (accumulating GL rotations), the port draws it opaque, world-lit, spinning smoothly at fixed rates (REPORT, 2026-09-05; found while scoping Slice 4c; sampled unfiled by ENT-S-093 as "PurplePower rebuilt")
+
+- **Original:** orig ModelPurplePower.java:44-84 (`render`): `setRotationAngles` (:50) writes nothing; the body pushes a
+  matrix, enables GL_NORMALIZE and GL_BLEND with SRC_ALPHA / ONE_MINUS_SRC_ALPHA (:52-54), sets the colour to
+  (0.75, 0.75, 0.75, 0.55) (:55) and the lightmap to 240 / 240 — fullbright (:56); then three fans: `rf1 =
+  world.rand.nextFloat() * 360` (:57, the WORLD RNG, a fresh roll every rendered frame), `glRotatef(rf1, 1, 0, 0)` (:58),
+  Shape1 drawn 6 times with its own `rotateAngleZ` stepping 0, 60°, … 300° (:59-63), then `glRotatef(rf1, 1, 0, 0)`
+  AGAIN (:64 — not negated: the X rotation doubles and persists into the next fans); :66-73 the same on Y for Shape2
+  with a fresh roll, :75-82 on Z for Shape3 with a fresh roll; colour reset, blend off, pop (:83-85). Net per frame:
+  Shape1's fan under X(r1), Shape2's under X(2·r1)·Y(r2), Shape3's under X(2·r1)·Y(2·r2)·Z(r3), r1..r3 independent
+  uniform rolls — the orb shimmers, a new orientation every frame. RenderPurplePower.java is a plain RenderLiving
+  (the GL state lives in the model); ClientProxyOreSpawn.java:506 registers it with `new ModelPurplePower(1.0f)`.
+- **Port:** `entity/client/ModelPurplePower.java:45-56` (`setupAnim`) writes deterministic angles from `ageInTicks`
+  (7.3°, 5.1°, 3.7° per tick — no counterpart in 1.7.10) onto the spokes' zRot / xRot / yRot (inner z = a1, x = a2;
+  middle z = a2, y = a3; outer z = a3, x = a1); :59-78 (`renderToBuffer`) draws each spoke 6 times under
+  `mulPose(Z, i·60°)` on the pose stack — the 60° step applied outside the part on top of its animated rotation, where
+  1.7.10's step WAS the part's own Z angle with the random axis rotation outside. No blend, no 0.55 alpha, no 0.75
+  dimming, no fullbright: `PurplePowerRenderer` (a plain `MobRenderer`, entity cutout, world light). The model has not
+  changed since the initial port (git: dd5e73a → d46c4fc deobfuscation only). No MOD record covers it;
+  `phase_g_reports/geckolib_migration_design.md:109` lists the model as a Tier-3 rig; ENT-S-093 sampled it ("Mosquito
+  and PurplePower rebuilt") without filing.
+- **What a player saw:** in 1.7.10 a translucent, glowing purple ball whose three rings of spokes jump to a new random
+  orientation every frame (a shimmering, unstable sphere); in the port an opaque, normally lit ball turning smoothly
+  at three fixed rates.
+- **Resolution:** REPORT — for the owner's ruling, presented as a split: (1) the model — a parity bug under the
+  2026-09-02 rule (any divergence without a MOD record): transcribe orig :44-84 in classic — the per-frame rolls from
+  the level RNG (`entity.level().getRandom()`, the ENT-S-093 convention allows the entity RNG; the ORIGINAL used the
+  world's), the accumulating (doubled) X / Y rotations reproduced bug-for-bug and disclosed, the 60° step as the
+  spoke's own zRot, the `setupAnim` angles removed; the SeaViper standard (two refuters) as a formula transcription.
+  (2) the render state — translucent 0.55 alpha at 0.75 colour, fullbright: the renderer draws through
+  `RenderType.entityTranslucent` with the colour packed and `LightTexture.FULL_BRIGHT` — a renderer change (two
+  refuters); the s4 visual leg rasterises cutout only and would pin geometry with the colour ignored (a
+  harness-semantics note, presented before its gate if the leg is extended). Slice 4c dependency: the GeckoLib
+  candidate reproduces the classic; the owner decides whether 4c builds on HEAD's classic (re-based after the fix) or
+  the fix lands first inside 4c. Recommended: the fix first, inside 4c — the render-instance expansion is the same
+  either way, and a candidate proven against the re-authored model would be redone with new proofs. A pose interface
+  (`PurplePowerPose`: `getRandom()`) drives both sides from a seeded `ProbeSubject` in the entity_state harness kind,
+  so the random rolls are deterministic under proof. Hitbox: ENT-S-095's `purple_power` row (0.75 × 0.75 vs 0.5 × 0.5)
+  is a separate, already-filed item.
+
 ### TEST-003 — Config-flipping gametests in the concurrent default batch
 
 - **Impact:** MEDIUM (suite reliability) — boss005/boss012 flip a global

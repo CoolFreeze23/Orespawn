@@ -5562,3 +5562,12 @@ item 23 (and the closure line under item 22's supersession); executed here, docs
   F0.7 in `phase_g_reports/harness_slice_2026-09-04.md`; no cross-class change while the rows pass.
 
 Tests unchanged (1194); no code.
+
+## FINDING FILED 2026-09-05 (docs-only) — ENT-S-146, the classic PurplePower model is a re-authoring
+
+Found while scoping Slice 4c (the chain's (b) slice): the port's `ModelPurplePower` spins its spokes at fixed rates,
+opaque and world-lit, where 1.7.10 (orig ModelPurplePower.java:44-84) drew the orb translucent (0.55 alpha, 0.75
+colour), fullbright, with each spoke-fan thrown into a fresh random orientation every frame under accumulating GL
+rotations. No MOD record; ENT-S-093 had sampled it unfiled. REPORT for the owner's split ruling (model transcription
+under the SeaViper standard; render state as a renderer change); the 4c candidate depends on it — recommended: the fix
+first, inside 4c. Register entry ENT-S-146. No code.
