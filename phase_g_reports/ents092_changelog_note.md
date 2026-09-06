@@ -271,3 +271,5 @@ a mob standing in grass, crops or water, or behind a torch, a step or a snow lay
 past a trunk corner is caught. Modern mode keeps the port's line of sight (the vanilla collision ray, which sweeps
 through grass, fluids and torches and is stopped by solid corners) under a new `[modern]` switch,
 `chainsawSweepVanillaSight`, on by default (MOD-037); `false`, or `modern.enabled = false`, is the 1.7.10 walk.
+
+Dev-only (Phase G slice (d), 2026-09-06): under -Dorespawn.dev.bench=true a /orespawn bench command (op level 2) spawns the six spawn-100 isolation scenes (a wedge inside the camera's field of view, every mob under 180 blocks), samples frame time, CPU, allocation, GC, server MSPT, the MHLib counters and packet bytes for a run, and writes paired classic/candidate reports (with a coverage object and a working-tree reading) to phase_g_reports/benchmark/live/; -Dmhlib.counters=true now also dumps eleven more MHLib counters (four client, seven server, one INFO line per 100 server ticks); no player-facing change.

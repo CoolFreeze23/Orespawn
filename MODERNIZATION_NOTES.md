@@ -1033,18 +1033,25 @@ _pin) so alignment drift is caught regardless.
   `chainsawsweepsighttests.i070_NN_<row>_<what>`): a survival ServerPlayer on the floor, a frozen 1000-HP target 5 blocks south,
   the occluder placed on the cell a float-for-float replay of orig :198-246 reads at the layout's actual origin, the sweep driven
   through the private `findSomethingToHit` on the registered Chainsaw and its damage the signal, the key flipped off for the
-  walk half and restored in the finally: rows 9b (short grass on the tenth sample — the target's own cell), 4a (a cobweb on the
-  fifth — the head cell between), 4c / 8c / 6 (grass, a bottom slab, water on the seventh — the ground cell before the Pig's /
-  Cow's), 10 (a cobweb on the first sampled cell — with the target five blocks along z the first sample lands at z + 0.5, the
+  walk half and restored in the finally: rows 9b (short grass on the tenth sample — the Zombie's chest cell), 4a (a cobweb on the
+  sixth — the head cell between), 4c / 8c / 6 (grass, a bottom slab, water on the eighth — the cell before the Pig's /
+  Cow's, one above the ground in the gate's frame), 10 (a cobweb on the first sampled cell — with the target five blocks along z the first sample lands at z + 0.5, the
   head-height cell just ahead of the player, never the player's own cell; the walk dies on its first read and the sweep with it —
   the table's row-10 picture, the player standing in the cobweb, is this same first-sample read for a target nearer than five
   blocks): spared by the walk, swept by the ray; 12 (the player three blocks up, an oak log at the corner cell the segment enters
-  between two samples and the eye line crosses): swept by the walk, spared by the ray; 13 (a stone on the replayed sixth cell
+  between two samples and the eye line crosses): swept by the walk, spared by the ray; 13 (a stone on the replayed seventh cell
   stops the walk; a stone on the sample point's true cell stops it only where the cast reads that cell, and is skipped where the
   cast reads the neighbour toward the origin — the frame reported); the master off with the key on forcing the walk, the master
   back on the ray (the two-mode pin). The rows place their occluders on replayed sample cells: the table's pictures are the
   positive-origin readings, the gate's negative y shifts the cells one up through the `(int)` truncation, and the facts pinned are
   the walk's own — a non-air block on a sampled cell stops the walk, the vanilla ray passes collision-less and fluid blocks. The
-  pins hold at any origin: the cells are derived, never assumed.
+  pins were claimed to hold at any origin — FALSIFIED by the slice (d) gate at a positive twelve-million-block origin
+  (2026-09-06): the half-block layout let the origin's sign, and beyond 2^23 (a float's ulp of 1) its parity, decide which
+  column the walk read, so the ray's answers were vacuous at the earlier negative origins. Corrected the same day: the class
+  lays the player, the target and the elevated player on the INTEGER x / z lattice (an exact integer casts and floors alike
+  on either sign; dx exactly 0; the even samples on whole z), every row re-derived in the y −60 frame and hand-replayed float
+  for float at a positive and a negative origin — the sample indices above are the corrected ones (4a the sixth sample,
+  4c / 8c / 6 the eighth, 13 the seventh; 9b's tenth sample is the Zombie's chest cell); the facts pinned are the same on
+  both signs (FIX_LOG "PHASE G SLICE (d)", fix lane 2, F1).
 - **Harness consequence:** none beyond the batch — no existing pin read the sweep's sight.
 - **Status:** IMPLEMENTED 2026-09-06 (the key, the helper, the gated site, the transcription, the pin); the classic branch is orig.

@@ -6227,6 +6227,13 @@ Refuted twice (24 files + 2 new test classes): A (the entities and the sibling r
 
 B (the moth, the Ender pair, the Chainsaw) — one BLOCKING finding, HELD out of the batch: ENT-S-145's +6.2 is transcribed exactly but 1.7.10's legacy mover clamped the input and moved at a fixed 0.1f AI speed, so the boost saturated to a ≈3.1× sprint (≈1.4 → ≈4.4 blocks/s), while the modern mover scales speed by the unclamped attribute (≈6.52 blocks/tick) — and HEAD's un-boosted Knight already moves at 1.7.10's boosted pace; the entry's resolution had reserved the value; the code, its two rows and the MiscTargetingParityTests re-base it forced are withdrawn, ENT-S-150 filed with the analysis and the options for the owner's ruling. Non-blocking: the Chainsaw rows' descriptions (row 10's cobweb lands on the first sampled cell, the one ahead of the player; the gate's negative y shifts every cell — the rows pin the walk's own facts on replayed sample cells, the table's pictures are the positive-origin readings) corrected; cites (the Dragonfly y-blend orig :155-157, `scanIt` :97-155, `enderTeleportTo`) corrected; observations recorded (the presets' double literals for orig's float casts; the origin sound is not gated by `isSilent`; `isDay()`'s fixed-time clause; two files' LF endings). Upheld: ENT-S-143 line by line against orig EntityLunaMoth.java:54-145 (the hunt-then-scan order, the six-face scan, the torch set), ENT-S-144 against orig :159-206 with the modern sound event, ITEM-070's `myCanSee` token by token against orig UltimateSword.java:198-247 with the key read live and the master forcing the walk, rows 12 / 13 pinning the table's answers.
 
+CORRECTED 2026-09-06 (the slice (d) gate at a positive origin, fix lane 2, F1): the pins line's and (vi)'s claim that
+the ChainsawSweepSightTests rows hold at any origin was FALSE — the half-block PLAYER / TARGET positions let the origin's
+sign (and beyond 2^23, a float's ulp of 1, its parity) decide which column the walk read; at the earlier negative origins
+the walk ran one column beside the eye line, so every "the ray admits" assertion was vacuous. The class now uses the integer
+x / z lattice and is hand-replayed on both signs; the sample indices moved (4a 4 → 5, 4c / 8c / 6 6 → 7, 13 5 → 6); the
+walk itself (`Chainsaw.myCanSee`) is unchanged. Details under "PHASE G SLICE (d)" (fix lane 2).
+
 ## PHASE G SLICE (e) — the animation contract and the keyframe controller's return: DESIGNED AND PRESENTED, nothing wired (2026-09-06)
 
 The owner's sequencing ruling (addendum item 23 (8)(e)): designed and presented before anything is wired. A read-only
@@ -6285,3 +6292,399 @@ repaired) · 11 the attack transport · 12 the aggro flag for species without `D
 the sign-inverted salvaged clip's disposition.
 
 GATE: none — a design, presented; nothing in `src/` changed (the lane's stray-process check clean).
+
+## PHASE G SLICE (d) — the spawn-100 benchmark harness: live scenes A–F, MHLib counters in the baseline, the headless collector companion, a threshold proposed (2026-09-06)
+
+WHAT: the G1 smoke harness cannot see MHLib (its "candidate" is a bare GeoRenderer outside the mod loader:
+"MHLib parts: 0" in every scene), and the protocol lists frame time, MSPT, MHLib packets and the synced part
+count as live-only metrics. This slice builds the harness that measures them with MHLib's own cost in the
+baseline (morehitboxes_evaluation.md §5 "Item 13 baseline fold"; owner 2026-09-05, scope addendum item 23
+(8)(d); addendum C.7): eleven more MHLib counters at §5's sites; a dev command that spawns §5's six isolation
+scenes and samples a run on both halves into paired classic/candidate reports; the headless companion that
+times the real collector over the baked Queen rig and the MHLib-free Beaver rig; a threshold PROPOSED for the
+owner, adopted nowhere. The OWNER runs the live scenes (a client is outside this lane's reach); what runs
+headlessly ran here. ~3,400 lines: sixteen new main/gametest files, thirteen edits. No gate threshold changed.
+
+COUNTERS (A). `de.dertoaster.multihitboxlib.util.MHLibCounters` (rewritten, 329 lines): four CLIENT names as
+static fields after the nine (client.collector_ns, client.collector_alloc_bytes, net.c2s_bone_packets,
+net.c2s_bone_bytes — indices 9–12 of the client dump; `orespawn.geo.evictions` still follows the nine and the
+gauge still follows every counter, so GeoCacheEvictionTests.assertDumpOrder holds as read: nine at the head,
+evictions >= 9, gauge >= all()); a SERVER list through `serverCounter(String)` (net.s2c_update_packets,
+net.s2c_update_bytes, net.set_master_packets, server.align_sub_parts_parts, server.align_synched_parts,
+server.part_setpos, server.placement_ns) with `sumAndResetServer` / `formatServerDump` ("MHLib counters
+(server, per 100 ticks): server_tick=N ..."), dumped and reset by a new `MHLibMod.onServerTick`
+(ServerTickEvent.Post, registered only under -Dmhlib.counters=true, MHLibMod.java:38-43, :87-103) — one list
+per side because an integrated server shares the JVM with its client; a `DumpListener` both dump handlers
+publish to (MHLibClient.java:62-66, MHLibMod.java:96-103) so the harness sums a run's intervals instead of
+resetting under the dump; the test seam `enabledForTests` (package-private field :95; `serverEnabled()` :191 =
+ENABLED || seam; `enableForTests` :201 / `enabledForTests()` :206, public because the game tests live in
+another package). Sites, every increment guarded (client: MHLibCounters.ENABLED; server: serverEnabled()):
+- client.collector_ns / collector_alloc_bytes: `MHLibCollectorProbe` (new, util, 102 lines) begin/end around
+  MHLib's Pre → Post hooks, both paths, keyed on the entity
+  (GeckolibEntityRenderEventHandler.java:43-46 Pre, :33-36 Post; replaced :56-59 / :76-79): the span is
+  GeckoLib's render of the multipart entity WITH the collector's per-bone work inside it — §5's "per-frame
+  capture cost"; the headless companion isolates the collector. One slot, no nesting (a foreign Post accounts
+  nothing). Bytes from com.sun.management.ThreadMXBean.getCurrentThreadAllocatedBytes on the render thread.
+- net.c2s_bone_packets / c2s_bone_bytes: CPacketBoneInformation.send (:57-65) with `encodedLength()` (:67-79):
+  STREAM_CODEC.encode into a scratch FriendlyByteBuf, readableBytes — the payload, no packet header, no
+  compression; encoded once more only under the property.
+- net.s2c_update_packets / s2c_update_bytes: MixinServerEntity both send sites (:111-114 the linger resend,
+  :119-122 the fresh compile) through `mhlib$countUpdateBroadcast` (:126-138): one per broadcast call whatever
+  the tracker count (the protocol's scenes have one tracker); bytes = SPacketUpdateMultipart.encodedLength
+  (RegistryAccess) (new, :69-83: write() into a RegistryFriendlyByteBuf, readableBytes).
+- net.set_master_packets: IMultipartEntity.setMasterUUID before the SPacketSetMaster broadcast (:115-118).
+- server.align_sub_parts_parts: the alignSubParts loop after the part's setPos (IMultipartEntity.java:318-321);
+  server.align_synched_parts: the alignSynchedSubParts loop after applyInformation (:388-391); both also check
+  !entity.level().isClientSide() inside the guard.
+- server.part_setpos: MHLibPartEntity.setPos (:257-266), server side only (level non-null and not client).
+- server.placement_ns: mhlibAiStep's whole server path (IMultipartEntity.java:411-414 start, :450-452 add; the
+  client path returns before the add) and ModernSpiderGait.feedParts wrapped around a renamed body
+  (ModernSpiderGait.java:1381-1412: feedParts :1381-1393 times, feedPartsBody :1395-1412 does the work).
+
+DERIVED EXPECTATION (corrected by the slice (d) gate, 2026-09-06 — FIX LANE 2 (F3 / F4) below) vs §5's derived
+table: server.part_setpos counts 20 per Queen tick and 24 per modern spider tick in the STEADY STATE, not 10 / 16 —
+`MHLibPartEntity.tick` → `updateLastPos` (:250-255) calls setPos once per part per tick (a full setPos: a fresh
+AABB and two getDimensions, a real cost) at the TICK tail, after the alignment's call at the aiStep tail
+(`MixinLivingEntity.java:151-174`; and the gait feed's for the spider) — and ONE MORE per part on a part's FIRST
+tick: 30 / 32 on the spawn tick (the lerp snap to the zero interp target, MHLibPartEntity.tick :109 — OPT-030; the
+gate measured it, the lane's reading had missed it). §5 counted the position writes only. Pinned by BenchHarnessTests
+rows 11–12: the mhlibAiStep-only figures (10 / 8), the spawn tick (30 / 32, the parts' transient), the second tick
+(20 / 24). The remaining derived values hold: Queen 0 / 10 synched; spider 8 / 0.
+
+THE HARNESS (B). Common (`danger.orespawn.bench`, no client import — the game tests reference only this half):
+BenchScene (the six scenes: species, default 100, pitch, base distance, behind-player for B, what each fixes;
+A/B at a 12-block pitch from 40 blocks out — refuter B), BenchState (idle = no AI, the protocol's fixed state;
+wander = AI on, looks only), BenchSceneSpawner (LAYOUT, refuter B: a WEDGE — rows along the look axis from the
+base distance at the pitch, each row's columns at multiples of the pitch within d·tan(35°) of the axis (half
+the default 70° FOV), every slot under 180 blocks (the default simulation distance is 12 chunks = 192, the
+entity-ticking range; the Queen's tracking range 256), rows in order and each row centre-out, so the first
+slot stands on the axis at the base distance; `capacity(scene)` = the slots the wedge holds (A/B 132, C/D 551,
+E/F 4,947), `layout` throws past it and an `IllegalStateException` guard asserts every slot < 180;
+`maxDistanceBlocks`; `countTicking` (`ServerLevel.isPositionEntityTicking`); MC yaw → forward (-sin, cos),
+right (-cos, -sin); spawn on the heightmap top, facing the origin, persistent, tagged `orespawn_bench`, no-AI
+when idle — a no-AI mob keeps its placed position: `travel` is called but its body sits behind
+`isControlledByLocalInstance()` = `Mob.isEffectiveAi()`, false for no-AI, so no gravity; discardTagged;
+partCount), BenchStats (median, nearest-rank percentile, 1 % low = 1000 / p99), BenchSession (the scene and the
+run: MSPT per tick from MinecraftServer.getTickTimesNanos()[getTickCount() % 100] at ServerTickEvent.Post — in
+the 21.1.223 bytecode tickServer increments tickCount at offsets 6-11, fires Pre at 16, tickChildren at 28,
+writes tickTimesNanos[tickCount % 100] at 153-204, fires Post at 246; the server counters summed from the dumps
+inside the run plus the end partial minus the start partial; players online, dimension, part count; the
+farthest slot distance from the layout and, at the END of the run, the spawned mobs in entity-ticking chunks),
+BenchClientBridge (the volatile controller slot the client installs; every call a no-op without one),
+BenchClientSnapshot (a record), BenchServerResult (a record; + countTicking, maxDistanceBlocks), BenchGit
+(repository root by walking up from user.dir to `.git`; HEAD through symbolic, worktree, commondir and packed
+refs; `workingTree` by index stat — refuter B — mtime seconds and size of every regular-file entry of a v2/v3
+index against the file, what git status does before hashing, never running git; "unknown" / "unknown — head
+only (reason)" on any failure), BenchReport (JSON schema 1 + Markdown; variant = the dev switch's state for the
+species when it is one of the fourteen landed ones, classic otherwise; a `coverage` object — spawned, ticking,
+in_client_level, max_distance_blocks, warning, note — and per-entity figures that divide the server counters by
+`ticking` and the client counters by `in_client_level`; `working_tree`; every undefined metric written as JSON
+null — never a bare NaN — with `serializeNulls` so the keys stay; pairing with the newest report of the other
+label in the live dir: frame median regression %, p95 delta ms, 1 % low delta, allocation ratio, MSPT p95
+delta, the per-entity collector_ns / c2s_bone_bytes deltas, S2C bytes delta, both working trees — information
+only, a null input makes that delta null), BenchCommand (`/orespawn bench scene <A-F> [count] [idle|wander] |
+start <seconds> | stop | report [label] | status`, `bench` requires op level 2; a count past the wedge's
+capacity is refused with the numbers; the report reply warns when ticking < spawned and names a DIRTY working
+tree; `register(CommandDispatcher)` for the tests), BenchHarness (init from the OreSpawnMod constructor,
+OreSpawnMod.java:87-89: only under -Dorespawn.dev.bench=true adds the RegisterCommandsEvent and
+ServerTickEvent.Post listeners). Client (`danger.orespawn.client.bench.BenchClientSampler`, 328 lines, installed
+from OreSpawnClient.ClientEvents.clientSetup under the same property, OreSpawnClient.java:35-43): the frame
+timer on RenderFrameEvent.Pre — Pre to the next Pre; in Minecraft.runTick(boolean) ClientHooks.fireRenderFramePre
+is at offset 398, GameRenderer.render at 422, fireRenderFramePost at 438, and the blit, the swap and the next
+iteration's ticks lie between one Pre and the next, so the interval is the frame the player sees; render-thread
+CPU (ThreadMXBean.getCurrentThreadCpuTime) and process CPU (OperatingSystemMXBean.getProcessCpuLoad per client
+tick); render-thread and JVM-wide allocation (getCurrentThreadAllocatedBytes / JDK 21
+getTotalThreadAllocatedBytes); GC count and time deltas; the client counters summed like the server's; the
+controls the client can report (launched version, resolution and gui scale, render/simulation distance,
+graphics mode, vsync, framerate limit, FOV, entity distance scaling, entity shadows, particles, clouds, AO,
+biome blend, FPS at start, GPU vendor/renderer/GL, CPU) with the owner's fields left blank in the report; the
+dev switch per landed species; the level renderer's entity statistics and the benchmark-tagged entities in the
+client level at the end. The server thread's requests (refuter B) are one latest-wins AtomicInteger slot (a
+stop, or the seconds of a start) taken with getAndSet on the render thread's next frame: the run in flight ends
+first (stopped early), then a start begins the new run — `scene` (abort → stop) then `start` in one frame
+starts the new run, `start` then `stop` leaves nothing running. The sample buffer is appended and read under one
+lock.
+
+Reports: phase_g_reports/benchmark/live/<scene>_<classic|candidate>_<yyyyMMddTHHmmssZ>.json + .md (the live
+dir is created on first write; nothing was written there in this lane).
+
+THE HEADLESS COMPANION (C). QueenPartPlacementProbe `--bench <runs> <the_queen.geo.json> <the_queen.json>
+<beaver.geo.json> <outDir>` (QueenPartPlacementProbe.java:144-152 dispatch, :692-1060 the section): the real
+vendored layer over the baked rigs; the HEAD/TAIL hooks reach it through the REAL `MixinGeoRenderer.
+_mhlib_callLayers` (`BenchGeoRenderer extends HeadlessGeoRenderer implements MixinGeoRenderer` :1040 — the mixin
+interface's default method run as written over a layer list the rig fills: getRenderLayers(), the iterator,
+the instanceof, the Consumer; the injector methods are never called); an adaptive warm-up (at least 20 runs,
+then until three consecutive runs stay within 10 % of the median of the three before them, at most 60; every
+warm-up run's ns reported), then `runs` measured runs of 1,000 walks; the median run, the median of the last
+five and the per-bone figures; nanoTime + MHLibCollectorProbe.currentThreadAllocatedBytes (the live counter's
+source). Rigs: `queen_collect_yawpi` (THE BASELINE ROW: the layer's private `bodyYawRotationTerm` set by
+reflection to bodyYawRotationTerm(180°) = −π — a Queen facing the camera as the scenes spawn them — so
+getRotationVector's foldBodyYaw builds its matrices as in-game, seven 3×3 double[][] per synched bone; per
+bone HEAD hook, getBoneWorldPosition, calcScales, calcRotations, the synched bones' getScaleVector +
+getRotationVector, TAIL hook; setScales/setRotations; onPostRender), `queen_collect_yaw0` (the same walk at
+yaw 0: the fold's early-out, no matrices — the first lane's baseline, kept), `beaver_tax_inactive` (a FLOOR of
+the hook tax: isBoneCollectionActive() is a constant false — the real chain, renderer instanceof
+GeoReplacedEntityRenderer / getCurrentEntity() / shouldCollectModelBones(entity), needs a client renderer and
+a live entity; the hooks return after the counter guard and that call), `beaver_tax_active` (the default
+layer: the GeoEntity-path upper bound). NOT measured, both needing a live entity: tryAddBoneInformation and
+the trust-client apply per synched bone (getPartByName + MHLibPartEntity.applyInformation, common logic
+:132-137; the_queen.json :76-77 is sync-with-model: true, trust-client: true) — the companion measures the
+collector's walk and fold only (the JSON's `not_measured`, the walk descriptions, the proposal). Children
+walked by index so the walk allocates nothing of its own, and every per-bone result is stored into a static
+sink (`BENCH_ESCAPE`) so it ESCAPES as in-game: without that, after a 33-run warm-up, C2's escape analysis
+eliminated the yaw-0 walk's 110 world-position Vec3s and 20 vector Vec3s (16,904 → 11,704 B/walk in one
+invocation — the probe's artefact, not the collector's cost). `working_tree` in the JSON beside git_head. The
+existing modes and walkLayer are untouched; the normal mode still reports OVERALL: PASS.
+
+HEADLESS NUMBERS (HEAD a03c0c5, JDK 21.0.7 Microsoft, this laptop). Three invocations of `--bench 10` after the
+fixes (out_fix1 / out_fix2 / out_fix3; median of ten runs, then the median of the last five; bytes identical
+in all 30 runs of each rig):
+queen_collect_yawpi 110 bones / 10 synched: 11,003.3 / 11,800.5 / 12,002.1 ns per walk (last five 11,027.5 /
+11,702.7 / 12,076.4); 32,864.0 B per walk (298.8 B per bone; 100.0 / 107.3 / 109.1 ns per bone); the fold at −π
+costs 15,960 B per walk over the yaw-0 walk = 1,596 B per synched bone (by reading the seven 3×3 double[][]
+are 1,064 B and the shipped Vec3 40 — the remaining ≈ 490 B per synched bone are not accounted for by reading;
+the measurement stands).
+queen_collect_yaw0: 6,563.4 / 6,725.9 / 6,829.2 ns (last five 5,992.6 / 6,795.2 / 7,375.1); 16,904.0 B (153.7 B
+per bone) — the same 16,904 as the first lane (9,181.3 / 7,403.3 ns) and refuter B (7,542.4 / 6,434.8 / 7,116.0).
+beaver_tax_inactive (FLOOR) 9 bones: 403.2 / 322.4 / 309.1 ns (last five 358.2 / 313.1 / 318.5), 0.0 B — a flat
+steady state (the warm-up lists show the fall from ≈ 3,000-4,000 ns in the first run to the plateau within
+8-20 runs; refuter B's 395 / 608 / 275 with the old three-run warm-up were mid-fall).
+beaver_tax_active: 485.2 / 393.3 / 389.8 ns (last five 377.7 / 384.9 / 404.8), 1,120.0 B (124.4 B per bone).
+THE NS BAND: eight yaw-0 invocations on record span 6,435-9,181 ns (max/min ≈ 1.43) — ≈ ±40 %, the JIT; the
+yaw-π variant's three span 11,003-12,002 (max/min 1.09) but are too few to narrow it. The bytes are the signal:
+bit-stable within and across invocations once the probe's results escape as in-game (the proposal, §1 / §3).
+Earlier invocations of this lane's own code, superseded: the first three (08:00:29: 20,456 / 320 / 1,440 B —
+the walk's for-each iterator per bone, the probe's own allocation, discarded with the walk-by-index fix;
+08:01:48 and 08:01:49: 9,181.3 and 7,403.3 ns, 16,904 B — the first lane's reported pair); then in the fix
+lane, before the escape sink, yaw-π 9,915 / 12,882 / 9,489 / 9,111 ns at 30,208 B and yaw-0 7,231 / 6,975 /
+4,058 (11,704 B — the escape-analysis artefact) / 6,074 ns.
+
+THRESHOLD (D): proposed, not adopted — bench\threshold_proposal.md (§5's shape: no rise in collector_ns or
+c2s_bone_bytes per Queen — R1 read primarily on the companion's bytes per walk, the ns informational within a
+≈ ±40 % band; scene E's allocation rate at or below classic's; the protocol's 10 % mixed-scene median
+regression, 2.0 ms p95, 50 ms server p95, no sustained packet growth; today's yaw-π headless row as the first
+baseline with the yaw-0 row kept; the fields the live runs fill; seven open points for the ruling). Nothing is
+wired into any gate.
+
+PINS (E): BenchHarnessTests (new, 989 lines, own batch `benchHarness`, 18 rows, `benchharnesstests.
+sliced_NN_<row>`): 01 the wedge (every scene at its default count: each slot ahead — behind for B — at least the
+base distance out, inside |x| ≤ d·tan 35°, under 180 blocks, its nearest neighbour EXACTLY one pitch away (no
+duplicate, no gap — the real neighbour check, refuter B), the capacity ≥ the count, maxDistanceBlocks = an
+independent farthest; the Queen: pitch 12 from 40, ten rows 40..148 with seven in the tenth, the farthest
+hypot(136, 84) = 159.8, the fill order 0, ±12, ±24 in the first row, capacity 132 and 133 refused, B mirrors A
+behind, yaw 90 → −x inside the wedge, facing yaws, token parsing); 02 scene A one Queen at the base distance on
+the axis, no-AI, persistent, tagged, on the heightmap top with air at the feet and ground below, facing the
+origin, ten parts, in an entity-ticking chunk (countTicking = 1); 03 scene B behind; 04/05 scenes C/D two robots,
+modern ↔ eight parts, neighbours one pitch apart (along the axis: the near row is one slot wide); 06 scenes E/F
+Beavers and Frogs, no parts, the Beaver landed and the Frog not, same size class; 07 wander keeps AI, the sweep
+discards the tagged and only them; 08 the report JSON shape (every top-level key incl. working_tree and
+coverage; counters.server_per_second and server_totals keyed by the seven names in order; per second = total /
+wall seconds; per entity = per second / TICKING (80 of 100 spawned), null when nothing ticks; the coverage
+warning present for 80 < 100 and null for 100; S2C packets sum update and set-master; C2S null without a
+client; the on-disk text carries no NaN / Infinity token and re-parses with a non-lenient JsonReader — which is
+pinned to reject a bare NaN; client.available=false with a reason; controls incl. the owner's blank fields;
+fourteen dev-switch lines; the threshold marked PROPOSED; the markdown head; with a client: the client section,
+the client counters keyed by the thirteen client names, the client per-entity figures / in_client_level (90),
+the coverage line in the markdown); 09 pairing (10 % regression candidate over classic whichever is newer, p95
+delta, allocation ratio, both heads, no counterpart → null, a null input → a null delta), counterpart labels,
+base name, write to a temp dir (two files), newest, the paired md; 10 command gating (the live dispatcher has no
+`orespawn` literal and the harness is not installed without the property — or has it with; a fresh dispatcher
+gets orespawn/bench/{scene id count state, start seconds, stop, report label, status}; op 0 and 1 refused, 2
+passes); 11 the Queen under the seam (mhlibAiStep: 0 / 10 / 10 / placement_ns > 0 / no broadcast; the SPAWN tick: 10
+synched, 30 setPos and the parts at the world origin (OPT-030); the second tick: 20 and the parts back on the Queen; the
+seam off counts nothing when it was off before); 12 the modern spider under the seam (8 / 0 / 8; the spawn tick: 8, 32,
+the legs re-fed in-tick, placement_ns > 0; the second tick: 8, 24); 13 both packets' encodedLength against a manual encode (and the
+S2C floor of ten fixed records); 14 the collector probe (accounts on the open key, nothing on a foreign or
+replaced key, bytes ≥ a 128 KiB array); 15 the dump order (nine, then the four, evictions after them, the gauge
+after every counter, no server name on the client side, the server dump exactly the seven, both INFO line
+heads, the listener publish/remove); 16 the statistics (nearest-rank: one 50 ms frame in a hundred is p100, the 1 % low
+100 FPS; two in two hundred: p99 10 ms, p99.5 50 ms, max 50 ms); 17 asynchronous: S2C broadcasts counted with bytes ≥
+packets × the non-dirty payload length, the election broadcast counted, the level ticked the Queen — the seam
+is turned on inside the first delayed step after every synchronous row restored it; that step's try/finally
+restores the PRIOR value only if the step fails, the second step's finally restores the prior value; 18 git HEAD
+through a loose ref and through packed-refs on a synthetic .git, the working tree: no index → head only, one
+entry matching by mtime seconds and size → clean, a changed size → DIRTY naming the file, a deleted file →
+DIRTY with 1 missing, index version 4 → head only, garbage → head only, no repository → unknown / head only,
+and the live repository reads as one of the three shapes.
+
+GATE: (filled by the orchestrator)
+
+REFUTER A NOTES (2026-09-06, the MHLib instrumentation; no blocking defect): (A1) the S2C cadence expectation for the
+protocol's no-AI scenes is ≈6.7 per Queen per second, not 20 × trackers (`ServerEntity.sendChanges` 201-232: every
+`updateInterval` ticks — the Queen's builder default 3 — or on impulse or dirty data; a standing Queen has no impulse) —
+the runbook and the §5 table's line corrected here; the report measures actuals. (A2) under the property the byte
+accounting's second encode runs on the sampled threads (C2S on the client tick inside the measured frame, S2C on the
+server thread inside MSPT; the real encode is netty's) — disclosed in the report note and the runbook; identical under
+both labels, outside collector_ns / placement_ns; bytes exact (the codec's own encode into a counting buffer, no header,
+no compression; the second encode only under the property). (A3) the 20 / 24 setPos figures are derived by reading (the
+rows pin them; unexecuted in the lane — the gate runs them). [The gate ran them 2026-09-06: 30 / 32 on the spawn tick, 20 / 24
+from the second tick — FIX LANE 2 (F3 / F4) below.] (A4) the S2C count is per broadcast call for every
+TrackedEntity whether tracked or not — an upper bound; the snapshot's `benchEntitiesInClientLevel` is the honest count;
+the 10×10 Queen grid's far corners (≈260-269 blocks) exceed the 256-block tracking cap at render distance 16 — the
+runbook says so (render distance 17+). [Superseded by refuter B's B1: the wedge keeps every mob under 180 blocks.]
+(A5) `collector_ns` spans MHLib's Pre listener to its Post listener — after `preRender`, before `popPose` /
+`renderFinal` / `doPostRenderCleanup` in 4.8.4's `defaultRender` (129 / 235 / 260 / 266) — the counter's javadoc
+corrected. (A6) "1 % low" is 1000 / p99 (the p99-percentile FPS), not CapFrameX's average of the slowest 1 % —
+labelled. (A7) line references corrected. (A8) `MHLibCollectorProbe`'s slot is three unsynchronised statics touched
+from the render thread in production and from the game-test server thread in row 14 — no race exists.
+Upheld: every §5 site once with the right thing counted (the Pre / Post pair once per `render`, `reRender` inside the
+span, a cancelled Pre orphaned and accounted nothing; the C2S sender unique; both S2C sites; set_master elections only;
+the align loops per part per tick; `part_setpos` server-only; `placement_ns` behaviour-preserving); the client guards
+static-final, the server sites' `serverEnabled()` a plain static read (≈31 per Queen per tick, microseconds at 100 —
+the seam acceptable as presented; the alternative is `systemProperty 'mhlib.counters', 'true'` on the gameTestServer run,
+the owner's call); the server dump under the property on every dist, the two reset sets disjoint, the samplers reading
+`sum()` without resetting, the lock order acyclic; the dump-order pins hold (the four names at 9-12, evictions 13, the
+gauge 14); the frame timer Pre→Pre = the whole frame incl. tick, swap and the cap (vsync off / unlimited mandated); MSPT
+from this tick's slot at Post.
+
+REFUTER B NOTES (2026-09-06, the harness and the companion; one blocking item, all eleven applied by the fix lane):
+(B1, blocking) the 10×10 Queen grid at a 24-block pitch (rows 30..246, far corners 260-269 blocks) lay past the
+256-block tracking cap and the 192-block simulation distance, and the per-entity figures divided by count_spawned →
+every scene is a WEDGE (rows from the base distance at the pitch, columns within d·tan 35° of the look axis, every slot
+under 180 blocks, rows in order, each row centre-out); the Queen's pitch dropped to 12 (noPhysics; overlapping draws are
+full draws — the javadoc says so); the robots keep 6 and E/F 2; B is the same fill behind the camera; the spawner asserts
+every slot < 180 and reports max_distance_blocks; BenchServerResult gained countTicking (ServerLevel.
+isPositionEntityTicking at the END of the run — not at report time, when `stop` may already have despawned the scene)
+and maxDistanceBlocks; the report's `coverage` object (spawned, ticking, in_client_level, max_distance_blocks, warning,
+note) and per-entity divisors (server / ticking, client / in_client_level); the runbook's controls gain the simulation
+distance ≥ 12 beside the render distance ≥ 12 and the coverage object is explained; rows 1-3 re-derived (row 1's vacuous
+`|Δx| − 24 < EPS` replaced by the nearest-neighbour-exactly-one-pitch check over every scene — B6). (B2) the companion's
+Queen walk ran with the fold's yawTerm == 0 early-out → the layer's private bodyYawRotationTerm is set (reflection) to
+bodyYawRotationTerm(180°) = −π before the walks (`queen_collect_yawpi`, the baseline row), the yaw-0 walk kept as
+`queen_collect_yaw0`; the trust-client apply per synched bone and tryAddBoneInformation need a live entity and are NOT
+measured — stated in the JSON (`not_measured`), the proposal and here: the companion measures the collector's walk and
+fold only. (B3) `beaver_tax_inactive` was measured mid-JIT (837 → 113 ns across the measured runs) → an adaptive warm-up
+(≥ 20 runs, then a plateau: three consecutive runs within 10 % of the median of the previous three, ≤ 60; every warm-up
+run's value reported) and the median of the last five; the HEAD/TAIL hooks now run through the REAL
+MixinGeoRenderer._mhlib_callLayers loop (BenchGeoRenderer implements the mixin interface headlessly); the
+isBoneCollectionActive() chain cannot run headlessly (GeoReplacedEntityRenderer + entity) so the rig is labelled a
+FLOOR of the hook tax in the JSON, the proposal and the records. (B4) the ns band stated as ≈ ±40 % (max/min ≈ 1.43 over
+eight yaw-0 invocations), the bytes the primary signal of R1 and the ns informational, in the proposal's wording, the
+records' deviation 12 and here. (B5) a NaN metric wrote a bare `NaN` — Gson's tree writer emits it whatever the builder
+says (verified against gson 2.10.1) → NaN / infinity mapped to JSON null where the report is built, `serializeNulls` so
+the keys stay, the option dropped, the pairing reader tolerant; row 8 re-parses the on-disk text with a non-lenient
+JsonReader (pinned to reject `NaN`) and asserts no NaN / Infinity token. (B7) the javadoc's "a no-AI mob never travels
+and therefore never falls" reworded from the bytecode: `travel` IS called every tick, but its body is gated by
+isControlledByLocalInstance() = Mob.isEffectiveAi() (false for no-AI), so no gravity is ever applied — the heightmap-top
+spawn is what puts the mob on the ground (the brief's "no-AI mobs still fall" is the one fact the bytecode contradicts;
+presented in the records, deviation 17). (B8) the sampler processed a pending start before a pending stop → one
+latest-wins AtomicInteger request slot: the run in flight ends first, then a start begins the new run (stop-then-start
+starts it, start-then-stop leaves nothing running). (B9) row 17's first delayed step gained a try/finally that restores
+the seam's PRIOR value when the step fails, and every finally restores the prior value, not `false`. (B10) `working_tree`
+beside git_head: the index stat reading (mtime seconds and size; 10,651 files in ≈ 660 ms here; exactly the 13 modified
+files), "unknown — head only (…)" when the index cannot be read; the runbook says to commit before a run; row 18 pins it
+on a synthetic .git. (B11) the records' anchors fixed by hand (the handler's imports :8-9; MHLibMod :7, :16, :22;
+ModernSpiderGait :1381-1412), this fixlog's `encodedLength()` :67-79 and ModernSpiderGait :1381-1412, the three headless
+invocations noted above (the 08:00:29 run with 20,456 / 320 / 1,440 B — the for-each iterator — discarded), the
+runbook's "render distance 16 covers it" sentence replaced by the wedge. Also found while applying B2/B3: after a long
+warm-up C2's escape analysis eliminated the probe's per-bone Vec3s (16,904 → 11,704 B in one invocation) because the
+probe dropped them where the game keeps them → every per-bone result now escapes through a static sink; the proposal
+carries the caveat (a future JIT can only make the bytes DROP, which "must not rise" tolerates).
+
+FIX LANE 2 (2026-09-06, after the slice (d) gate at the POSITIVE origin (12505408, −60, 3896280) — five red rows; each
+diagnosed, none retried or widened; javac main + gametest rc 0 into fresh scratch class dirs; the suite NOT run here, the
+orchestrator gates):
+
+(F1) chainsawsweepsighttests.i070_04_8c_pig_behind_bottom_slab_not_swept — the ROW's geometry (a wave-4 row, not slice (d)'s;
+Chainsaw.myCanSee untouched, it is orig :198-247 as ruled). Cause: PLAYER_POS / TARGET_POS were half-blocks (x 20.5, z 24.5 /
+29.5). Beyond 2^23 a float's ulp is 1: the start x 12505428.5 rounds half-to-even to 12505428.0, dx = 0.05 never moves it (each
+float sum re-rounds to the same integer), every sample casts to column 20 — the eye line's own column — and the seventh
+replayed cell, rel (20, 2, 28) (y 2, not the table's ground cell 1: the gate's y −60 grid makes every sample y a negative
+fraction and orig :242's (int) cast reads the cell ABOVE the true one), took the bottom slab; the eye-to-eye line (2.62 above
+the feet down to the Pig's 1.765 — EntityType.PIG has no eyeHeight call, javap over the 21.1.223 jar: sized(0.9f, 0.9f) then
+passengerAttachments(0.86875f), so EntityDimensions.scalable's h × 0.85) enters that cell's [2, 2.5] collision by 0.0215 at
+z 28 → hasLineOfSight false → the row's "the ray admits" failed. At the earlier NEGATIVE origins the SAME half-block x read
+column 21 (|x| < 2^23: the cast's step toward the origin on −N.5; beyond 2^23 the rounding's parity — the scratch replay
+shows (−12505409, −3896281) → column 21 and (−12505408, −3896280) → column 20, which would have failed exactly as this run
+did), one block beside the eye line, so every "the ray admits" pin was vacuous, 9b's tenth sample read rel z 30 (the cell
+PAST the Zombie) and 12's "no sample in the corner cell" was true only because the whole walk lay in another column. The
+wave-4 records' claim that the pins "hold at any origin: the cells are derived, never assumed" (FIX_LOG.md:6221 (vi) "the
+assertions holding at any origin through the replay"; MODERNIZATION_NOTES.md:1048; the class's sweepWalkCells javadoc) is
+FALSIFIED by this run: the replay makes the WALK's pins follow the walk anywhere, but the RAY's answer depends on where the
+occluder physically sits against the eye line, which the half-block layout let the origin's sign (and, beyond 2^23, its
+parity) decide.
+Fix (ChainsawSweepSightTests.java only): the layout on the INTEGER x / z lattice (the ENT-S-138 rows' fix) — PLAYER_POS (20,
+1, 24), TARGET_POS (20, 1, 29), ELEVATED_PLAYER_POS (20, 4, 24) (:102-105): an exact integer casts and floors alike on either
+sign, dx is exactly 0 → column 20 at any |x| < 2^24; along z the samples sit at z + 0.5·i — the EVEN samples (i = 2, 4, 6, 8,
+10) on whole z's, the same cell on both signs, the ODD ones on half-blocks, where the cast reads the cell toward the origin at
+a negative z (|z| < 2^23 keeps them exact). Every row re-derived in the y −60 frame at a positive AND a negative origin — the
+scratch replay `bench\replay\WalkReplay.java` → `replay.out` (the walk float for float incl. the (int) casts; the eye line
+analytic with the javap eye heights; five origins: ±(12505408, 3896280), (−12505409, −3896281), ±100):
+  - 9b (Zombie, index 9 = the tenth sample, z + 5.0): (20, 2, 29) on both signs — the Zombie's chest cell (the cast's cell
+    above the mid-body point's rel y 1); grass: the walk stops, the ray is clear (no collision). Index unchanged; the message
+    re-derived (it had called the cell the feet cell).
+  - 4a (Zombie, index 4 → 5, z + 3.0): (20, 3, 27) both signs — cobweb: walk stops, ray clear.
+  - 4c (Pig, index 6 → 7, z + 4.0): (20, 2, 28) both signs — grass: walk stops, ray clear.
+  - 8c (Pig, index 6 → 7): (20, 2, 28) both signs — bottom slab [2, 2.5]: the eye line is 1.936 at z 28 and 1.765 at 29, under
+    the cell entirely (margin −0.064) → ray clear; walk stops. (Index 6 would be (20, 2, 27) at a positive z — entered by
+    0.107 — and (20, 2, 28) at a negative one: the sign would decide the answer.) The table's ground-cell picture (20, 1, 28)
+    also clears, by 0.265, but the walk never reads that cell in this frame — the message says both.
+  - 6 (Cow, index 6 → 7): (20, 2, 28) both signs — water: walk stops, the ray's Fluid.NONE clip clear.
+  - 10 (Zombie, index 0, z + 0.5): (20, 3, 24) at a positive z (the player's own column, above the head cell), (20, 3, 25) at a
+    negative one — a cobweb above the eye line (max y 2.62 < 3) either way: the walk dies on its first read, the ray is clear.
+    The cell differs by sign, the fact does not; the message names both cells.
+  - 12 (the elevated Pig, CORNER_LOG (20, 2, 27) kept): the replayed cells are rel y 6,5,5,4,4,4,3,3,2,2 at z 24|25, 25, 25|26,
+    26, 26|27, 27, 27|28, 28, 28|29, 29 (positive|negative) — (20, 2, 27) is sampled on neither sign; the eye line (5.62 → 1.765)
+    crosses it for z in [27.4, 28) (margin +0.464) → ray blocked, walk passes. Unchanged; the javadoc re-derived, and it says a
+    POSITIVE y would land the seventh sample in the corner cell (the row's first precondition would then fail, loudly).
+  - 13 (Zombie, index 5 → 6, z + 3.5): the replayed cell (20, 3, 27) at a positive z / (20, 3, 28) at a negative one; the point's
+    true cell (20, 2, 27) on both; `coincide` is false in every frame the gate produces (the y shift alone at a positive z; y
+    and z at a negative one). The row now pins the per-axis shifts (:322-327: x 0 on either sign; y +1 iff the point's y is a
+    negative fraction; z +1 iff a negative half-block) and reports them; a stone on the true cell blocks the ray (margin
+    +0.308) and is skipped by the walk on both signs, as before. The old frame message attributed every "differ" to the
+    negative quadrant — wrong at this gate, where the shift was y's.
+  - a float-envelope precondition in every row (assertFloatEnvelope :466-469: |x| < 2^24, |z| < 2^23), so an origin outside
+    the derivation's lattice fails loudly instead of pinning an underived fact; the ray assertion names the replayed cell (:220).
+  The class javadoc (:41-85) states the lattice, the y −60 frame's cells per species, which rows depend on the eye line, and
+  the history; the sweepWalkCells javadoc (:410-419) replaces "the pins hold at any origin" with what actually holds.
+  RECORDS (the orchestrator's; no record file edited here): FIX_LOG.md:6221 (vi) "the assertions holding at any origin through
+  the replay" and MODERNIZATION_NOTES.md:1048 "The pins hold at any origin: the cells are derived, never assumed" → "the walk's
+  pins follow the replay at any origin; the ray's pins (8c, 12, 13) hold on both x / z signs through the integer lattice and
+  the even-sample cells, inside |x| < 2^24, |z| < 2^23 — the wave-4 claim was falsified at the slice (d) gate's positive
+  origin (row 8c: a slab on the eye line at head height) and re-derived 2026-09-06"; MODERNIZATION_NOTES.md:1036-1046's cells
+  (the sixth sample for 4a, the eighth for 4c / 8c / 6, the seventh for 13) as above.
+
+(F2) benchharnesstests.sliced_05_scene_d_ant_robots — the ROW's expectation: sceneRobots asserted 8 parts for every modern
+robot; ant_robot.json lists SIX legs (leg0..leg5 — "0.4-cubes on the ant's 49px segments", the file's own comment),
+spider_robot.json eight. Fix: sceneRobots takes the species' leg count (8 / 6, :291-306) and pins BOTH the live profile's
+partConfigs().size() (through IMultipartEntity.getHitboxProfile — the robots' ICustomHitboxProfileSupplier, empty for a
+classic robot) and the parts array against it (:313-321). Row 4 (SpiderRobot) checked the same way: its 8 matches its JSON.
+
+(F3 / F4) sliced_11 / sliced_12 — the ROWS' derivation (no MHLib change; the counter counts every server-side setPos, as its
+comment says). The rows hand-tick a FRESHLY SPAWNED entity once: that is each part's FIRST tick, and MHLibPartEntity.tick
+(:95-117) carries a client-lerp state machine — `newPosRotationIncrements` (:36) is an int the server never seeds
+(setPositionAndRotationDirect :85 is called from readData :241, the client packet path, and from IMultipartEntity :728, the
+trust-client apply — both client-side), so on the first tick it is 0 and the `== 0` branch (:109) calls
+setPos(interpTargetX/Y/Z) = setPos(0, 0, 0), then −1 for good (:114-116). The TRUE per-tick derivation, server side:
+  Queen — aiStep TAIL (MixinLivingEntity :151-160) → mhlibAiStep → alignSynchedSubParts → applyInformation → setPos: 10; tick
+  TAIL (:163-174) → tickParts → part.tick → updateLastPos → setPos: 10; the first tick only → the snap: 10 → 30 on the spawn
+  tick (measured 30; align_synched_parts 10; placement_ns 39,600), 20 from the second tick on.
+  Spider — alignSubParts → setPos: 8; updateLastPos: 8; the snap: 8; then SpiderRobot.tick after super.tick() (:356) →
+  ModernSpiderGait.serverTick → feedParts → positionLegPart → setPos: 8 → 32 on the spawn tick (measured 32;
+  align_sub_parts_parts 8; placement_ns 54,000), 24 after.
+The counting window is exactly the hand tick: the row body runs synchronously inside one game-test tick, so the level's own
+tick of the entity lies outside both sumAndResetServer calls — no double-counted tick, no window wider than one tick. Fix:
+rows 11 / 12 pin the spawn tick (30 / 32, :641-643 / :691-693), the transient (the Queen's parts at the world origin after the
+spawn tick, :644-646; the spider's legs re-fed in the same tick — no window — :694-696), then a second tick at the steady 20 /
+24 (:647-653 / :697-702). The steady-state figures the runbook quotes (400 / 480 per second) stand; a scene's first tick adds
+10 (Queen) / 8 (robot) per spawned entity once. The snap is a real MHLib defect — a one-tick transient (the Queen's parts sit at
+(0, 0, 0) from the spawn tick's tail to the next tick's alignment; the spider's are re-fed in-tick), not a per-tick cost —
+drafted as `audit_OPT-030.txt` in the OPT shape; NOT fixed here.
+
+(F5) sliced_16_order_statistics — the ROW's convention. BenchStats.percentile is nearest-rank, sorted[ceil(p·N) − 1]: p99 of
+100 samples is the 99th smallest (10 ms), and the row's own 1..100 pin (percentile(·, 0.99) == 99) already said so; the 1 % low
+line assumed the 100th (the "exclusive" sorted[floor(p·N)] reading) and expected 1000 / 50 = 20 FPS where the code, the
+javadoc and the neighbouring pin give 100. Decision: KEEP nearest-rank (the standard; refuter A's A6 already labels 1 % low =
+1000 / p99); the row (:836-851) now pins one 50 ms frame in a hundred as p100, not p99 (1 % low 100 FPS; max 50), and with 200
+samples and two 50 ms frames p99 = the 198th smallest = 10 ms (100 FPS), p99.5 = the 199th = 50 ms (20 FPS), max 50 ms;
+BenchStats' class javadoc (:5-16) and percentile's (:32-35) state the convention, the exclusive alternative and that it is not
+used; the double product p·N lands on the exact integer at every rank the rows pin (99 of 100; 198 / 199 / 200 of 200).
+
+Processes: javac ×3 (the replay, main, gametest) and java ×1 (the replay), each under `timeout`, all exited; the tasklist check
+before the report found none of this lane's (the Gradle daemon's java.exe predates it).
+
+GATE: (bench2, 2026-09-06 10:01-10:03, after both refuters, two fix lanes and the five-row fix): the benchmark proof rewritten by hand under the proof rule for the g1tool class-directory pin the probe's --bench mode moved (`G1 BENCHMARK EVIDENCE VERIFIED: SMOKE_ONLY / COMPONENT_PROXY_ONLY / PENDING_LIVE_PRECUTOVER; checked-in proof updated`); drift check clean; `build` exit 0 — asset audit `RESULT: 0 error(s), 0 advisory(ies), 4 acknowledged -> exit 0`, referenceGeometry `G1 PARITY PASS: 2 models; checked-in proof verified`, s4Parity `G1 PARITY PASS: 13 models; checked-in proof verified`; `runGameTestServer` exit 0 — literal `All 1254 required tests passed` (1236 + the 18 BenchHarnessTests rows). One red run before it (bench, 09:24, at the POSITIVE origin (12505408, −60, 3896280) — the first positive-x/z origin on record): five rows, each diagnosed by the fix lane, none retried — four in the new class (the AntRobot's six legs against an assumed eight; the Queen's and spider's parts writing one more position per part on their FIRST tick, the lerp snap to the zero interp target — OPT-030 filed; the p99 convention of a 100-sample set) and ONE landed wave-4 row, `i070_04_8c_pig_behind_bottom_slab_not_swept`: the ChainsawSweepSightTests half-block layout let the origin's sign, and beyond 2^23 (a float's ulp of 1) its parity, decide the walk's column — every "the ray admits" assertion had been vacuous at the earlier negative origins; the class now lies on the integer x / z lattice, re-derived and hand-replayed on both signs (the wave-4 records corrected in place, dated).
+
+Refuted twice (MHLib and the client sampler touched; 13 files + 15 new): A (the instrumentation) — no blocking defect; eight items applied or disclosed: the S2C cadence expectation (≈6.7 / Queen / s for no-AI Queens, the builder's updateInterval 3), the second-encode caveat (under the property the byte accounting re-encodes on the sampled threads; identical under both labels, outside collector_ns / placement_ns), derived-not-measured wording, the broadcast count an upper bound with the snapshot's in-level count the honest figure, the collector span's exact bounds in 4.8.4's defaultRender (after preRender, before popPose / renderFinal), the 1 % low label (1000 / p99), line references, the probe slot's statics (no race); upheld: every §5 site once with the right thing counted, the client guards static-final and the server sites' plain read (≈31 per Queen per tick), the dump under the property on every dist with disjoint reset sets, the dump-order pins (the four names at 9-12, evictions 13, the gauge 14), the frame timer Pre→Pre and the MSPT slot. B (the harness) — one BLOCKING: the Queen grid (24-block pitch, rows to 246, columns ±108) reached 269 blocks — past the Queen's 256-block tracking cap and the default 12-chunk simulation distance — while the report normalised by count_spawned (≈96 tracked, ≈76 ticking); fixed by a wedge fill inside 180 blocks and the 70° FOV (Queen pitch 12 — no physics; 100 Queens within 160 blocks) with a coverage object and per-entity figures over the ticking / in-level counts; non-blocking: the headless walk's yaw-0 early-out (a yaw-π variant added — 32,864 B per walk, the baseline), the inactive tax's warm-up (a plateau detector; labelled a floor), the ns band (±40 %; bytes the primary signal), NaN in the JSON (null), a vacuous pitch assertion, a wrong no-AI rationale, a same-frame stop-then-start, the seam's restore, a working-tree reading beside git_head, records nits.
+
+Fix lane 2 (the five red rows, each a harness assumption, no code fix): F1 the Chainsaw class's integer lattice (above); F2 the AntRobot's six legs pinned against the live profile; F3 / F4 the parts' first-tick snap (30 / 32 on the spawn tick, 20 / 24 after — OPT-030 filed, a real MHLib transient not fixed here); F5 nearest-rank p99 stated and pinned. Presented for the owner: the seam versus a mhlib.counters system property on the gameTestServer run; the brief's 'no-AI mobs fall' was wrong — travel's body sits behind isEffectiveAi, so they keep their placed position; scene B is not a culling control for the Queen (noCulling, shouldRenderAtSqrDistance → true) — it measures off-screen Queens drawn anyway; the ticking count is sampled at the end of the run; git_head cannot see a dirty tree beyond the index stat. The threshold is PROPOSED, not adopted: `phase_g_reports/benchmark/threshold_proposal_2026-09-06.md`; the owner's runbook `phase_g_reports/benchmark/owner_runbook.md`.

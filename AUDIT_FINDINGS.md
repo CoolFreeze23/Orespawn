@@ -9798,6 +9798,50 @@ keeps BUG-036. Commit 4ea395c's message retains the old number.)*
 - **Evidence:** port EntityStinky.java:461 `if (this.currentFlightTarget.closerToCenterThan(this.position(), 2.1))` and EntitySpyro.java:419 `if (this.currentFlightTarget.closerToCenterThan(this.position(), 2.1) && this.getActivity() != 3)` — `Vec3i.closerToCenterThan(Position, double)` is `distToCenterSqr(x, y, z) < distance * distance`: the EXACT entity position against the target cell's centre (+0.5 on each axis) with the threshold squared, 4.41. Orig Stinky.java:608 `if (this.currentFlightTarget.func_71569_e((int) this.field_70165_t, (int) this.field_70163_u, (int) this.field_70161_v) < 2.1f)` and Spyro.java:615 the same with `&& this.getActivity() != 3` — `ChunkCoordinates.getDistanceSquared(int, int, int)`: the mob's TRUNCATED cell against the target cell on the integer lattice, the squared distance compared with 2.1 as it stands (cells at distance² 0, 1, 2 retarget; 3 and beyond do not — the same measure ENT-S-135 restored for the Dragonfly's 2.1 and ENT-S-138 cast for the flyers). A different measure, not a different number: a mob at its cell's bottom centre reads the (1, 1, 1) diagonal cell's centre at 1² + 1.5² + 1² = 4.25 < 4.41 — near, a retarget — where the lattice reads that cell at 3 — not near, as orig; the (2, 0, 0) cell likewise (2² + 0.5² + 0 = 4.25 against the lattice's 4); the reverse holds for a mob near its cell's far corner (a lattice-2 cell such as (−1, 0, −1) from (0.99, 0, 0.99) reads 4.69 — not near — where orig retargeted); and the `(int)` truncation's own shift on a negative axis (BUG-027 / ENT-S-138's class) is absent from the port's read as well. Player-visible in when a tamed Stinky (activity 2's flight, ENT-S-134's boxes) and a Spyro pick a new flight target — a block early or late, the diagonal cells the clearest.
 - **Resolution:** REPORT — `this.currentFlightTarget.distSqr(new BlockPos((int) this.getX(), (int) this.getY(), (int) this.getZ())) < 2.1` at both sites (the ENT-S-135 / ENT-S-138 idiom — `AmbientFlightGoal.castCell`'s shape on a non-goal mob), one pin per species at the (1, 1, 1) diagonal (near by the port's read, not near on the lattice) and at a fractional negative y. Effort XS. Outside the ledger (the Stinky block :949 and the Spyro block :930 carry no flight-reach cell).
 
+### OPT-030 — `MHLibPartEntity.tick`'s client-lerp state machine snaps every part to the ZERO interp target on its first server tick: one extra `setPos(0, 0, 0)` per part on the spawn tick, and the parts of a species without an in-tick re-feed sit at the world origin until the next tick's alignment (REPORT, 2026-09-06; found by the Phase G slice (d) gate through `server.part_setpos`; not fixed)
+
+- **Evidence:** `src/main/java/de/dertoaster/multihitboxlib/entity/MHLibPartEntity.java`. The fields `protected int
+  newPosRotationIncrements;` and `protected double interpTargetX / Y / Z / Yaw / Pitch;` (:36-41) have no initialiser: Java's 0.
+  The only writer of the target and the count is `setPositionAndRotationDirect` (:85-92), reached from `readData` (:241 — the
+  S2C `SPacketUpdateMultipart` apply, client-side) and from `IMultipartEntity.tryAddBoneInformation` (:728 — the trust-client
+  apply, client-side); nothing on the server ever calls it. `tick()` (:95-117): `updateLastPos()` (:249-255 — a full `setPos`
+  at the current position), `super.tick()`, then `if (newPosRotationIncrements > 0) { … setPos(lerped) } else if
+  (newPosRotationIncrements == 0) { setPos(interpTargetX, interpTargetY, interpTargetZ); setYRot(interpTargetYaw); … }` (:98-113)
+  and `if (newPosRotationIncrements == 0) newPosRotationIncrements = -1;` (:114-116). So on a server part's FIRST tick the count
+  is 0, the `== 0` branch fires once with the never-set target — `setPos(0, 0, 0)`, yaw and pitch 0 — and the count goes to −1
+  for the rest of the part's life. The pattern is the 1.12-era `EntityDragonPart` lerp, where 0 meant "a target is pending";
+  here 0 is also the unset value.
+  Measured: `BenchHarnessTests` rows 11 / 12 (slice (d) gate, 2026-09-06, `server.part_setpos` under the test seam) — a freshly
+  spawned Queen's first `tick()` counted 30 for ten parts (the aiStep-tail `alignSynchedSubParts` → `applyInformation` →
+  `setPos` 10; the tick-tail `tickParts` → `updateLastPos` 10; the snap 10) where the reading had derived 20; a modern spider's
+  32 for eight (the static `alignSubParts` 8, `updateLastPos` 8, the snap 8, the gait feed 8) where 24 was derived. The second
+  tick counts 20 / 24. The rows now pin the spawn tick, the transient and the second tick.
+- **Effect:** (i) Every multipart entity pays one extra `setPos` per part once (a fresh AABB and two `getDimensions`; the
+  counter's own comment lists what a `setPos` does): negligible as a cost — 10 per Queen / 8 per robot on the spawn tick against
+  20 / 24 per tick thereafter. (ii) The transient is the finding: the mixin's tick-tail part tick runs AFTER the aiStep-tail
+  alignment (`MixinLivingEntity.java:151-174`), so a species aligned only by MHLib (TheQueen: `alignSynchedSubParts`; every
+  synched-bone species) has its parts at (0, 0, 0) — position, bounding box, `xo/yo/zo` (setPos → `setOldPosAndRot`) — from the
+  spawn tick's tail until its next `aiStep`: for the remainder of that server tick (every entity ticked after it, projectiles
+  included, sees the parts at the origin through NeoForge's `getPartEntities()` lookup) and for the packet processing before the
+  next tick (a melee hit processed on the main thread between ticks finds no part where the part should be; the main hitbox is
+  unaffected). A `MixinServerEntity` broadcast falling in that window sends the origin position to clients (the client lerps the
+  invisible hitbox part toward the origin for a tick, then back). The modern robots are re-fed in the same tick (`SpiderRobot`
+  / `AntRobot.tick` → `ModernSpiderGait.serverTick` → `feedParts` after `super.tick()`), so they show no window — row 12 pins
+  that. A one-tick, spawn-only transient; no steady-state cost.
+- **Resolution:** PROPOSED (not applied; a fix touches MHLib and every multipart species' spawn tick, so it belongs to a lane with
+  the suite behind it). Either (a) initialise `newPosRotationIncrements = -1` (:36) so the unset state is "no target", the
+  client's `readData` still arming the lerp with `Math.max(updateSteps, 0)`; or (b) fence the lerp block on
+  `this.level().isClientSide()` — the server has no interp target by construction. (a) is the smaller change and also removes
+  the same first-tick snap on the client when a part ticks before its first S2C packet. Either flips `BenchHarnessTests` rows
+  11 / 12's spawn-tick pins (30 → 20, 32 → 24; the origin-transient pin) — presented, not silently loosened — and the runbook's
+  spawn-tick note. Verification: the two rows, plus a row that ticks a synched-bone species once and reads a part's position
+  (the transient pin inverted).
+- **Harness consequence:** the live scenes' `server.part_setpos` carries 10 × Queens / 8 × robots once on the tick after the
+  spawn (≈ 0.1 % of a 30-second run's total) — invisible in the reports; the runbook's steady-state figures (400 / 480 per
+  entity per second) stand.
+- **Status:** REPORT (2026-09-06). Raised by the slice (d) gate's red rows 11 / 12; the rows re-derived and re-pinned (fix lane 2);
+  MHLib untouched.
+
 ### TEST-003 — Config-flipping gametests in the concurrent default batch
 
 - **Impact:** MEDIUM (suite reliability) — boss005/boss012 flip a global
