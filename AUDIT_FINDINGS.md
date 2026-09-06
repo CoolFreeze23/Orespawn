@@ -9637,6 +9637,68 @@ keeps BUG-036. Commit 4ea395c's message retains the old number.)*
   so the random rolls are deterministic under proof. Hitbox: ENT-S-095's `purple_power` row (0.75 × 0.75 vs 0.5 × 0.5)
   is a separate, already-filed item.
 - **Ruled (owner, 2026-09-06, item 20):** a parity bug — both halves fixed in classic first, inside Slice 4c: the per-frame rolls from the level RNG through a `PurplePowerPose` seeded in the entity_state kind, the accumulating rotations bug-for-bug and disclosed, the translucent fullbright render state through `entityTranslucent`; the visual leg extended for translucency as a harness-semantics change (before/after presented before its gate); the PurplePower candidate re-proven against the fixed classic; two refuters. The port's opaque steady spin is undocumented: no key.
+- **FIXED (2026-09-06, inside Slice 4c; two refuters' items applied by the fix lane):** both halves in classic first.
+  (1) The model: `entity/client/ModelPurplePower.java` transcribes orig ModelPurplePower.java:44-86 statement
+  for statement — three fans, each a fresh roll of the LEVEL's random (`p.worldObj.rand.nextFloat() * 360`,
+  :57 / :66 / :75, read through the new `entity/pose/PurplePowerPose.getLevelRandom()` that `PurplePower`
+  implements as `level().getRandom()` and that the classic `poseFrom` captures), the pose stack rotated by it
+  about X / Y / Z (:58 / :67 / :76), six draws of the spoke at its own `zRot` stepping `newangle += 1.0471976f`
+  in float32 (:59-63 / :68-72 / :77-81 — the step ON the part), then the SAME rotation applied again (:64 / :73 /
+  :82 — not negated: the X and Y rotations double and carry into the next fans; the pop at :85 ends the frame) —
+  disclosed and reproduced bug-for-bug; the deterministic 7.3 / 5.1 / 3.7-degree spin is gone (it had no key and
+  no MOD record). (2) The render state: orig :53-54's blend is the model's render type (`EntityModel(Function)`
+  with `RenderType::entityTranslucent`, the `SlimeModel` idiom; `LivingEntityRenderer.getRenderType`'s
+  visible-body branch, offsets 17-30, returns it), orig :55's colour is the packed `colorFromFloat(0.55, 0.75,
+  0.75, 0.75)` = bytes (191, 191, 191, 140) every part is drawn with (absolute, as `glColor4f` was), and orig :56's
+  lightmap 240 / 240 is `LightTexture.pack(15, 15)` = `FULL_BRIGHT` through `PurplePowerRenderer`'s
+  `getBlockLightLevel` / `getSkyLightLevel` = 15 (the `MagmaCubeRenderer` idiom; `EntityRenderer
+  .getPackedLightCoords` 0-24). The GeckoLib candidate draws the identical state through three new
+  `GeoReplacementDescriptor` hooks (`renderType`, `renderColor`, `fullBright`) applied by
+  `OreSpawnGeoReplacedEntityRenderer` at GeckoLib's own decision points (`getRenderType` 47-61 for a visible body,
+  `defaultRender`'s colour int 4-18, the light-level getters), all reading the classic model's constants; and the
+  within-cube face order — invisible for a cutout rig, load-bearing under blending (a spoke's back face shows
+  through its front face, or is depth-rejected, by emission order) — is settled for a translucent rig by the new
+  `entity/client/FaceOrder` (`orespawn:cube_face_order`, written by the converter from the `ModelPart.Cube` order,
+  applied by the seam under the draw-order policy, checked by the asset audit — a present key exactly as `FaceOrder.apply`
+  accepts it, and an absent one an ERROR for a descriptor that requires it — and proven per face by the harness, which
+  refuses a required-but-absent key on both bake paths and fails, not skips, a blending mode without it). That order is
+  the 1.21.1 classic's, NOT 1.7.10's: the original `ModelBox` drew +X, -X, -Y, +Y, -Z, +Z (verified against the 1.7.10
+  jar, `bis.<init>` 365-772) — under blending a different pair of a spoke's own faces shows through at its tips; the
+  port follows vanilla's own `ModelPart.Cube`, disclosed (`pn_cube_order.md`). The hurt / death flash is likewise
+  disclosed (`pn_hurt_flash.md`, verified: 1.7.10's second `GL_EQUAL` pass had its red overridden by the model's own
+  `glColor4f` — no red; 1.21.1 tints the one draw red through the overlay on both renderers).
+  The candidate's hook rolls nine group bones (`Shape1__fan`; `Shape2__carry_x1/x2` over `Shape2__fan`;
+  `Shape3__carry_x1/x2/y1/y2` over `Shape3__fan` — one nested group per classic `glRotatef`, because a doubled
+  angle rounds differently from two multiplies and left Shape3's normals 1.5e-6 off) from the same
+  `PurplePowerPose.roll`, three per frame in X, Y, Z order. Harness: the `entity_state` kind with four seeds; the
+  visual leg gains the per-model `visual_mode` (`entity_translucent`: SRC_ALPHA / ONE_MINUS_SRC_ALPHA blending over
+  the background in emission order, LEQUAL with the depth written, fragments within the geometry epsilon one plane,
+  the texel alpha < 0.1 discard, the vertex colour bytes) — a harness-semantics change presented before its gate
+  (`before_after.md`: every cutout capture byte-identical, 186 s4 + 30 g1 PNGs); the render state OBSERVED on both sides,
+  not asserted — the probe records beside each dump the render-type function each side holds (named from its owner's
+  constant pool: `RenderType` cannot be initialised registry-free), the colour and light every captured vertex carried
+  (the classic renderer's light-level overrides evaluated registry-free), and the parity tool requires both sides equal
+  to each other and to the mode for every model (PurplePower `entity_translucent` / (191, 191, 191, 140) / 15728880, the
+  same function object on both sides; every cutout rig `entity_cutout_no_cull` / white / the probe's light); proof:
+  geometry 1.87e-7 blocks,
+  surface normals exact, animation 4.1e-8 rad, composition 0 / 0 over 162 draws, face order 972 faces, visual
+  changed 3.05e-5 / MAE 4.6e-4 (two pixels of one capture, an edge-on face's unstable depth). Pins: new
+  `PurplePowerPoseTests` (batch `purplePowerPose`, four rows: the pose random IS the level's and not the
+  entity's; one roll = one `nextFloat() * 360`, the sources kept in step; `FaceOrder.apply` on a GeckoLib bake with
+  the seam's fallback policy; the descriptor's `renderColor` == `ModelPurplePower.COLOR` == `colorFromFloat(0.55, 0.75,
+  0.75, 0.75)`, `fullBright`, `cubeFaceOrderRequired`, the light level == the seam's `FULL_BRIGHT_LEVEL`) — the model, the
+  rolls' effect and the render type are the harness's. Deviations
+  disclosed: the interface method is `getLevelRandom` (a `getRandom()` would be satisfied by `Entity.getRandom()`,
+  the entity's own source); the invisible-to-viewer 0.15 alpha of vanilla is overridden to 0.55 exactly as 1.7.10
+  overrode it; the face-order contract is scoped to rigs that declare it (the cutout rigs' proofs untouched — the
+  owner's call whether to extend it, the Vortex's flat cubes being the first to move); the blended rasteriser's
+  depth-tie window is its OWN named tolerance, `coplanar_depth_epsilon_blocks` = 1e-5 (an owner ruling presented with
+  its number and the sweep: the classic side's coplanar spokes tie to <= 1e-9, the cross-side noise is ~1e-7 genuine
+  plus up to ~1e-6 from the harness projector's 6-decimal rounding, so 1e-6 flipped 94 / 158 / 35 pixels on three
+  captures and 1e-5 leaves two, an edge-on face's depth gradient; the alternative — 1e-6 with the rounding removed — is
+  a harness-semantics change for every species, presented, not taken); no lightmap, directional light, fog or hurt
+  overlay is emulated on either side.
+  ENT-S-147's dedup applies to the rolls as it did to the Rotator's advance.
 
 ### OPT-029 — GeckoLib's `SingletonAnimatableInstanceCache` never evicts: every entity id ever drawn by a replaced renderer keeps an `AnimatableManager` for the client session (FIXED 2026-09-05; Phase G slice (a); raised at Slice 2, FIX_LOG.md:3761-3764)
 
@@ -9869,6 +9931,60 @@ keeps BUG-036. Commit 4ea395c's message retains the old number.)*
   before/after as a report-field change with no verdict effect.
 - **Status:** REPORT (2026-09-06). Filed from the slice (c) landing's refuter B; not fixed in the landing (a report-field
   change with no verdict effect does not justify a proof regeneration of its own).
+
+### ENT-S-152 — Both renderers emit a box's six faces in 1.21.1's `ModelPart.Cube` order (DOWN, UP, WEST, NORTH, EAST, SOUTH) where 1.7.10's `ModelBox` drew +X, −X, −Y, +Y, −Z, +Z: invisible for a cutout rig, a shimmer difference at the PurplePower spokes' tips under translucency
+
+- **Evidence:** refuter A on ENT-S-146 (2026-09-06, D2), the premise VERIFIED against the 1.7.10 client jar by the fix lane
+  (law-11 check): `ModelBox` is the class `bis` (located by the ten-argument constructor shape `<init>(bix, int, int, float,
+  float, float, int, int, int, float)`, `bix` = `ModelRenderer`; fields `h [Lbii;` eight vertices, `i [Lbhv;` six quads);
+  its constructor stores the quads at offsets 365 / 439 / 500 / 561 / 628 / 695 as the x2 (+X), x1 (−X), y1 (−Y), y2 (+Y),
+  z1 (−Z), z2 (+Z) faces, `render` (`a(bmh, float)`, 0-28) walks them in that order, a mirrored box swaps x1 / x2 before the
+  corners (136-153) and reverses each quad's vertices (`bhv.a()V` = `flipFace`, 774-806). NeoForge 21.1.223
+  `ModelPart.Cube.<init>` stores DOWN 365, UP 436, WEST 507, NORTH 578, EAST 649, SOUTH 720-785 and `compile` emits them
+  in order; the GeckoLib candidate is permuted into that order at bake (`FaceOrder`, `orespawn:cube_face_order`) and the
+  harness proves the two renderers' per-face sequences equal (972 faces over 9 captures). The two orders agree on nothing
+  but the two Z faces coming last, −Z before +Z. Full derivation, the corner table and the evidence files:
+  `phase_g_reports/ent_s_152_cube_face_order_2026-09-06.md`.
+- **Effect:** none for a cutout rig (the depth test decides whatever the emission order). For the PurplePower orb, drawn
+  blended with the depth mask on, the order decides which of a spoke's OWN faces show through the others where an end
+  face and a side face overlap at a spoke's tip seen obliquely: 1.7.10 drew the two end faces first, so an end face
+  behind a ±Y side showed through it; 1.21.1 draws the ±Y sides first, so the outcome flips at exactly those pixels
+  (against the ±Z sides the relative order is 1.7.10's). One 0.55-alpha layer of the 0.75-grey texel on or off a few
+  pixels per spoke tip — a slightly different shimmer; the rings' look is unchanged.
+- **Resolution:** PROPOSED — a parity note (PN) on the owner's ruling. The classic renderer of the port IS vanilla's
+  `ModelPart.Cube`; reproducing 1.7.10's order means forking vanilla's cube for one species (the `LayerDefinition` /
+  `CubeListBuilder` bake path is closed around it) and permuting the candidate into that order instead — out of
+  proportion for a rim shimmer. The face-order contract already matches the two renderers to each other exactly.
+- **Status:** REPORT (2026-09-06). Filed from ENT-S-146's refuters; disclosed in `FaceOrder`, `ModelPurplePower` and the
+  converter's evidence rule; a disclosure, not a choice, unless the owner wants the vanilla cube forked.
+
+### ENT-S-153 — The hurt / death flash on the PurplePower orb: 1.7.10 drew no red (its second, untextured `GL_EQUAL` pass had the model's own `glColor4f` clobber the renderer's red), 1.21.1 tints the single draw ~30 % red on both renderers
+
+- **Evidence:** refuter A on ENT-S-146 (2026-09-06, D3), the premise VERIFIED against the 1.7.10 client jar by the fix lane
+  (law-11 check): `RendererLivingEntity.doRender` is `boh.a(sv, double, double, double, float, float)`; after the normal
+  `renderModel` pass (725) it disables the lightmap unit and `GL_TEXTURE_2D` (826-841, 870-873), disables the alpha test
+  (876-879), enables `GL_BLEND` SRC_ALPHA / ONE_MINUS_SRC_ALPHA (882-894), sets `glDepthFunc(514 = GL_EQUAL)` (897-900),
+  and in the hurt / death branch (903-914) calls `glColor4f(brightness, 0, 0, 0.4f)` (917-923) BEFORE a SECOND
+  `mainModel.render` (926-946), restoring LEQUAL / blend / alpha test / texturing at 1172-1193. The orb's own model (orig
+  `ModelPurplePower.java:55`) calls `glColor4f(0.75f, 0.75f, 0.75f, 0.55f)` at the top of `render`, inside that second
+  pass, after the red: the red never reaches a vertex; the pass re-blends only the front-most layer of each pixel, once,
+  with flat untextured grey at 0.55. NeoForge 21.1.223 has one draw with a per-vertex overlay coordinate
+  (`LivingEntityRenderer.getOverlayCoords` 430-444, the call at 593; `OverlayTexture.v(hurt)` = 3 when hurt or dying,
+  the overlay rows 0-7 the constant red at alpha 178/255) that `rendertype_entity_translucent.fsh` line 26 mixes into
+  every fragment; GeckoLib 4.8.4's `GeoReplacedEntityRenderer.getPackedOverlay` (0-59) packs the same for a
+  `LivingEntity` (the ENT-S-094 record). Full derivation and the evidence files:
+  `phase_g_reports/ent_s_153_hurt_flash_2026-09-06.md`.
+- **Effect:** in 1.7.10 the orb never flashed red; on being hit or while dying its front-most surfaces brightened toward
+  the flat 0.75 grey (one more 0.55-alpha untextured layer over the front layer, no lightmap on it). In the port the orb
+  flashes red when hit and while dying, on both renderers alike.
+- **Resolution:** PROPOSED — three readings for the owner, none chosen: (1) keep 1.21.1's red flash on both renderers
+  (the port's default for every living species; disclosed as a PN); (2) `NO_OVERLAY` for the orb on both renderers (no
+  flash at all — a per-species hook in the ENT-S-094 shape, one line each side, harness-neutral; closer to 1.7.10 than
+  the red, but not it); (3) the 1.7.10 grey second pass (a mod-defined equal-depth render type and an untextured shader;
+  out of proportion for a hurt frame of one species). The harness emulates no overlay on either side, so neither the red
+  nor a grey pass is in the proof.
+- **Status:** REPORT (2026-09-06). Filed from ENT-S-146's refuters; nothing in code changed; `getPackedOverlay` keeps
+  GeckoLib's living behaviour for the orb pending the ruling.
 
 ### TEST-003 — Config-flipping gametests in the concurrent default batch
 

@@ -7481,3 +7481,376 @@ guard is the site's first statement; the flat seed-0 world is deterministic and 
 GATE: (g2land2, 2026-09-06 15:02-15:05, after the refuter's items): drift verified, build successful, "All 1255 required tests passed" - the batch chainsawSweepSight:0 (9 tests) ran at the fixed sites and passed at a grid origin the old rows would have accepted or refused alike; the red g2land run (13:42-13:45, all nine rows on the origin precondition) is the diagnosis above.
 
 REFUTER (2026-09-06, one refuter, harness rows only): no blocker; the geometry at the sites equal to HEAD's cell for cell by a standalone float replay, the ticket/poll design sound on the bytecode, the teardown complete; its items applied (REFUTER NOTES above).
+
+## ENT-S-146 — the classic PurplePower model transcribed from 1.7.10 (2026-09-06, inside Slice 4c): the per-frame rolls of the level RNG, the accumulating rotations bug-for-bug, the translucent fullbright render state on both renderers, the visual leg's translucent mode, the within-cube face order
+
+RULING. Owner 2026-09-06, item 20: a parity bug, both halves fixed in classic first, inside
+Slice 4c — the per-frame rolls from the level RNG through a `PurplePowerPose` seeded in the
+entity_state harness kind, the accumulating rotations bug-for-bug and disclosed, the
+translucent fullbright render state through `entityTranslucent` on BOTH renderers; the visual
+leg extended for translucency as a harness-semantics change (before/after presented before
+its gate); the PurplePower candidate re-proven against the fixed classic; two refuters. The
+port's opaque steady spin (7.3 / 5.1 / 3.7 degrees per tick) had no key and no MOD record and
+is gone. Nothing outside PurplePower changes for a player; the candidate stays behind
+`-Dorespawn.dev.geckolibRenderers=purple_power`.
+
+THE MODEL (`entity/client/ModelPurplePower.java`, rewritten; orig ModelPurplePower.java:44-86,
+statement for statement, line-cited in the source). `setupAnim` writes no angle (orig :50) and
+delegates to `poseFrom(PurplePowerPose, six floats)`, which captures the LEVEL's random — orig
+:57 `p.worldObj.rand` — through the new `entity/pose/PurplePowerPose.getLevelRandom()`
+(`PurplePower implements` it as `level().getRandom()`; the ENT-S-093 convention would have
+allowed the entity's, the ORIGINAL used the world's, the world's is transcribed). The name is
+`getLevelRandom`, not the brief's `getRandom`: `Entity.getRandom()` is public in 1.21.1 and
+returns the entity's OWN source (orig PurplePower.java:155-163 `this.rand`, the flight targets),
+so a `getRandom()` on the interface would have been satisfied by the inherited method and handed
+the model the wrong source without a compile error. `renderToBuffer` (:154-174): push (:51);
+`rf1 = roll(random)` (:57, `PurplePowerPose.roll` = `nextFloat() * 360.0f`, the ONE static both
+renderers read); `mulPose(Axis.XP.rotationDegrees(rf1))` (:58); `renderFan(innerSpoke)` = six
+draws with `spoke.zRot = newangle; newangle += 1.0471976f` accumulated in float32 (:59-63 — the
+step ON the part); `mulPose(XP, rf1)` AGAIN (:64 — not negated: the X rotation doubles and
+carries into the next fans); a fresh roll, `mulPose(YP)`, the middle fan, `mulPose(YP)` again
+(:66-73); a fresh roll, `mulPose(ZP)`, the outer fan, `mulPose(ZP)` again (:75-82); pop (:85).
+Net per frame, as the register said: Shape1 under X(r1), Shape2 under X(r1)·X(r1)·Y(r2), Shape3
+under X(r1)·X(r1)·Y(r2)·Y(r2)·Z(r3); nothing persists past the pop. `rollRadians` is
+`Axis.rotationDegrees`' own conversion (`ldc 0.017453292f; fmul`) so the hook feeds the identical
+float. A null random (never in the game: `LivingEntityRenderer.render` calls `setupAnim` at 510
+before `renderToBuffer` at 621; only the harness's static / reference-geometry captures) rolls 0.
+The three boxes and texOffs (:24-41) are unchanged; the standing reference leg re-measured
+`reference_purplepower` PASS with the pinned MIRROR 3 (101 checked-in reports verified, no drift).
+
+THE RENDER STATE. orig :52 `GL_NORMALIZE`: no counterpart (unit normals). :53-54 blend: the
+model's render type — `EntityModel(Function)` with `RenderType::entityTranslucent` (the
+`SlimeModel` idiom); `LivingEntityRenderer.getRenderType` (21.1.223 bytecode: 7-16 the
+invisible-to-viewer `itemEntityTranslucentCull`, 17-30 the visible body → `model.renderType
+(texture)`, 31-44 the outline) returns it to `render`, which draws through
+`bufferSource.getBuffer(renderType)` (579). `RenderType.lambda$static$7` builds
+`entityTranslucent` with `TRANSLUCENT_TRANSPARENCY` (22-25), `NO_CULL` (28-31), `LIGHTMAP`,
+`OVERLAY` and the builder defaults `LEQUAL_DEPTH_TEST` / `COLOR_DEPTH_WRITE`
+(`CompositeStateBuilder.<init>` 26-29 / 75-78; `COLOR_DEPTH_WRITE = new WriteMaskStateShard
+(true, true)`, `RenderStateShard.<clinit>` 1179-1188; `LEQUAL_DEPTH_TEST = ("<=", 515)`,
+1147-1160); `RenderStateShard.lambda$static$10` (bootstrap #10) = `enableBlend;
+blendFuncSeparate(SRC_ALPHA, ONE_MINUS_SRC_ALPHA, ONE, ONE_MINUS_SRC_ALPHA)`. :55 colour:
+`ModelPurplePower.COLOR` = `0x8CBFBFBF`, what `FastColor.ARGB32.colorFromFloat(0.55f, 0.75f, 0.75f,
+0.75f)` returns (`as8BitChannel` is `Mth.floor(f * 255)`; a compile-time constant, pinned equal by the
+game-test row and checked in the probe JVM), so the vertex carries (191, 191, 191, 140); every part is
+drawn with it (`ModelPart.Cube.compile` hands its colour argument to every `addVertex`, 176; the
+shader multiplies the texel by it and the blend uses its alpha), ABSOLUTELY as `glColor4f` was:
+the colour the renderer passes (white, or the 0.15-alpha `654311423` for a mob invisible to the
+viewer, `render` 610-621) is disregarded exactly as 1.7.10's `RendererLivingEntity` 0.15 was
+overridden by the model's :55. :56 lightmap 240 / 240: the fullbright texel — the light is the
+RENDERER's in 1.21.1 (`EntityRenderer.getPackedLightCoords` 0-24 = `LightTexture.pack
+(getBlockLightLevel, getSkyLightLevel)`; `pack` = `block << 4 | sky << 20`), so
+`PurplePowerRenderer.getBlockLightLevel` / `getSkyLightLevel` answer `ModelPurplePower
+.LIGHT_LEVEL` = 15 (the `MagmaCubeRenderer` idiom, bytecode 0-2): `pack(15, 15)` = 15728880 =
+`LightTexture.FULL_BRIGHT`, whose texel is (240, 240) — orig's exact coordinates. :83-84 colour
+reset / blend off: a per-call argument and a render-type-scoped state, nothing to reset. Shadow /
+scale untouched (`referenceRenderers`: PASS 120, DIVERGES 0, the PurplePower entry pinned as before).
+
+THE CANDIDATE (`PurplePowerGeoReplacement.java`, rewritten; `entity_state`). Three new hooks on
+`GeoReplacementDescriptor` — `renderType(E)` (the render-type FUNCTION, a `Function<ResourceLocation,
+RenderType>`, the shape the classic model holds it in (`Model.renderType`); null = GeckoLib's own),
+`renderColor(E, partialTick)` (`WHITE` = -1 = GeckoLib's own, `Color.<clinit>` `iconst_m1`),
+`fullBright(E)` — plus `cubeFaceOrderRequired()`; `OreSpawnGeoReplacedEntityRenderer` applies them
+at GeckoLib's own decision points: `getRenderType` (4.8.4 `GeoReplacedEntityRenderer.getRenderType`:
+an invisible entity the viewer sees → `itemEntityTranslucentCull` 24-46; a visible one → `GeoRenderer
+.getRenderType` 52-61 → `GeoModel.getRenderType` = `entityCutoutNoCull`; invisible glowing → outline
+62-89 — the override fills exactly the visible-body branch, the one the classic model's function
+fills, and leaves the others to GeckoLib), `getRenderColor` (`GeoRenderer.defaultRender` takes
+`getRenderColor(...).argbInt()` once, 4-18, and passes the int to `preRender`, `actuallyRender`
+(176; the replaced renderer's override hands it to `GeoRenderer.actuallyRender` at 773 →
+`renderRecursively` → `renderCubesOfBone` → `renderCube` → `createVerticesOfQuad`, whose
+`addVertex` takes it at 81)), and the two light-level getters (the dispatcher's
+`getPackedLightCoords` → `GeoReplacedEntityRenderer.render` → `defaultRender` at 18), which answer
+`GeoReplacementDescriptor.FULL_BRIGHT_LEVEL` = 15 for a `fullBright` species — the seam's own constant;
+the shared base names no species model (refuter A, D4). PurplePower's descriptor returns the classic
+model's own constants (`RENDER_TYPE` itself — the SAME function object the classic renderer applies,
+so the harness proves the two by identity — `COLOR`, true),
+so the two renderers cannot drift apart. The hook rolls the same `PurplePowerPose.roll` three times
+in X, Y, Z order from `inputs.subject(PurplePowerPose.class).getLevelRandom()` and turns nine GROUP
+bones: `Shape1__fan` X(r1); `Shape2__carry_x1`, `Shape2__carry_x2` (X(r1) each: orig :58, :64) over
+`Shape2__fan` Y(r2); `Shape3__carry_x1/x2`, `Shape3__carry_y1/y2` (orig :58, :64, :67, :73) over
+`Shape3__fan` Z(r3) — the clones (the 60-degree step, `step_scope: part`) never touched. Nested,
+because a pose stack rotated about X then Y is parent X over child Y, and one GeckoLib bone rotates
+Z, then Y, then X (`RenderUtil.rotateMatrixAroundBone`: `mulPose(ZP)` 10-22, `mulPose(YP)` 35-47,
+`mulPose(XP)` 60-72) and cannot express X-then-Y; and ONE GROUP PER `glRotatef` rather than one per
+doubled angle because a single X(2 r1) rounds differently from X(r1)·X(r1): the doubled form left
+Shape2's normals 4.4e-7 and Shape3's 1.5e-6 off the classic's, over the surface leg's 1e-6 (measured;
+the tolerance stands, the rig became more literal; with the literal chains the normals are exact).
+The converter gained `group_chain` (outermost first, the last the fan; default `["<part>__fan"]`,
+recorded in the mapping only when declared — the Rotator's `conversion.json` is byte-identical).
+
+THE FACE ORDER (new `entity/client/FaceOrder.java`; the G2 open item settled for a translucent
+rig). NeoForge 21.1.223 `ModelPart.Cube.<init>` fills its polygons DOWN, UP, WEST, NORTH, EAST,
+SOUTH (offsets 365-785: DOWN 365, UP 436, WEST 507, NORTH 578, EAST 649, SOUTH 720, each slot ending
+in its `Polygon.<init>` and `aastore`; `Polygon.<init>` negates a mirrored cube's X normals) and
+`compile` emits them so; GeckoLib 4.8.4 `BakedModelFactory.buildQuads` builds WEST, EAST, NORTH,
+SOUTH, UP, DOWN (20-130, one `buildQuad` per direction) and `renderCube` emits the array. The order
+the candidate is matched to is the 1.21.1 CLASSIC'S, which is not 1.7.10's: the original `ModelBox`
+(the 1.7.10 client jar, class `bis`, located by its ten-argument constructor shape, VERIFIED by
+javap) stored its six quads at 365 / 439 / 500 / 561 / 628 / 695 as the x2, x1, y1, y2, z1, z2 faces
+(+X, -X, -Y, +Y, -Z, +Z; a mirrored box swaps x1 / x2 first at 136-153, as `Cube.<init>` does at
+121-135, and reverses each quad at 774-806) and drew them in that order (`render` 0-28). Under
+blending that decides, at a spoke's tips, which of its own end / side faces show through the others
+- the port follows vanilla's own `ModelPart.Cube` and cannot follow 1.7.10 here; the PN draft
+`pp146\pn_cube_order.md` presents it (refuter A, D2). Invisible for a cutout rig
+(the depth test decides; only a zero-thickness box ties), decisive under blending with the depth
+written: a back face emitted before its front face shows through the front face's alpha, one
+emitted after it is depth-rejected — the candidate would have blended a different orb. The contract
+travels like the draw order: the converter writes, for a rig whose manifest declares
+`cube_face_order: "classic"`, `orespawn:cube_face_order` in the geo description (bone → one array
+per cube of GeckoLib direction names; derived from the bytecode rule per cube's mirror flag since the
+captures are posed, self-checked against the three cubes unrotated at bind whose captured normals
+must be the rule's in order, and proven by the parity tool's new per-face check: the per-quad
+normal sequences of both renderers equal on every capture, 972 faces over 9 captures);
+`FaceOrder.read` / `apply` (strict: every check before the in-place permutation of each
+`GeoCube.quads()` array) / `applyOrFallback` (`OreSpawnGeoReplacementModel.getBakedModel`, beside
+the draw order, once per bake: a present-and-wrong key ERROR-logged once per resource and the bake
+left as found; an absent key silent unless the descriptor requires it — a translucent rig —
+then WARN once; the pack author's fix named). The harness applies a present key through the strict
+static (`S4CandidateRuntime.freshBaked`, `G1AnimationRuntime.evaluator`) and records `cube_face_order`
+/ `baked_cube_face_order` in the geo dump. Scoped to rigs that declare it: no cutout rig's geo, proof
+or capture changes (every one byte-identical); the asset audit's new `GECKO_GEO_FACE_ORDER_INVALID`
+(never acknowledgeable) fails a seam rig whose key is present and malformed. Whether the contract
+should extend to every rig is the owner's call — the Vortex's flat cubes would be the first to move.
+
+THE HARNESS MODE (`tools/g1_render_parity.py`; the harness-semantics change, presented in
+`before_after.md` BEFORE the gate). A per-model `visual_mode` in the manifest: `render_type`
+(`entity_cutout_no_cull`, the verbatim `render_capture` path every landed model runs, or
+`entity_translucent`), `vertex_color` (the RGBA bytes), `light` (documentary: no lightmap is
+applied on either side). `render_capture_blended` emulates the GPU for one model's quads in emission
+order: the texture-alpha discard (< 0.1, the same line in both entity shaders, before `color *=
+vertexColor`), the texel times the vertex colour, LEQUAL with the depth WRITTEN, SRC_ALPHA /
+ONE_MINUS_SRC_ALPHA over the background, 8-bit quantisation after every fragment. "Same plane" is
+held to a window that is its OWN named tolerance — the manifest's `thresholds
+.coplanar_depth_epsilon_blocks`, 1e-5 blocks, an owner ruling presented with its number in
+`before_after.md` (the sweep 0 / 1e-7 / 1e-6 / 3e-6 / 1e-5 / 3e-5 verbatim, the two residual pixels,
+the options), no default in the tool (refuter B, D2). What the data shows: on the classic side the
+six spokes' coplanar depths agree to <= 1e-9 at most contested pixels (genuine ties); the cross-side
+same-fragment noise is ~1e-7 genuine (vertex deltas <= 1.8e-7) plus up to ~1e-6 from the harness's
+own `Camera.project` rounding every vertex to 6 decimals — a pre-existing quirk of BOTH modes — so a
+window below that flips passes between the two sides (94 / 158 / 35 pixels on three captures at
+1e-6; 0 / 2 / 0 / 0 at 1e-5, the two an edge-on face's depth gradient, present at every window and
+flagged by the contested diagnostic); the test is against the LAST written depth (max walk-back
+9.9e-6 measured, chained passes 0); faces 1/16 block apart are decided exactly as the GPU decides.
+The blend-mode contested diagnostic counts any other-quad fragment passing within that window,
+whatever its texel, never cleared. Not emulated on either side, either mode: lightmap, directional
+shading, fog, the hurt overlay, the top-left fill rule. The report carries `visual_mode` (the mode,
+the vertex colour, the emulated states, the coplanar epsilon), a blend-mode `z_fight_policy` and the
+observed `render_state` only for a model that declares a mode; the README gains "Render mode" /
+"Render state observed" lines for it. THE MODE IS OBSERVED, NOT ASSERTED (refuter B, D3): the probe
+records beside every dump, both modes, `<id>.render-state.json` — the render type as the FUNCTION
+object each side holds (`RenderType` itself cannot be initialised in the probe JVM: `RenderType
+.<clinit>` reaches `Items.<clinit>` through `ItemRenderer.<clinit>`, "Not bootstrapped", measured
+2026-09-06, OPT-029 R0), named by the one `RenderType` factory its owner class's constant pool
+references (`ModelPurplePower` → `entityTranslucent` → `entity_translucent`; the `EntityModel`
+default → `entityCutoutNoCull`; GeckoLib's `GeoModel.getRenderType` → `entityCutoutNoCull`), the
+colour and the packed light every captured vertex carried after each side was handed what its
+renderer would hand it (the classic renderer's light-level overrides evaluated registry-free through
+a null-filled `EntityRendererProvider.Context` when the manifest names `classic_renderer`; the
+descriptor's `renderColor` / `fullBright` on the candidate) — and the parity tool requires both
+sides equal to each other and to the visual mode for EVERY model (`G1 RENDER STATE PASS` × 13 + 2:
+PurplePower `entity_translucent` / (191, 191, 191, 140) / 15728880 over 3888 + 3888 vertices, the same
+function object on both sides; every cutout rig `entity_cutout_no_cull` / white / the probe's light,
+a loud failure otherwise). The existing dumps are byte-identical (the compiled dump's sha256 is the
+conversion's provenance): every cutout model's compiled dump, conversion and report entry unchanged. Manifest: `entity_state`, four seeds (1, 12345, 2026,
+777) × ages 0 / 10 (the pose ignores age), `render_instances` `step_scope: part` /
+`float32_accumulate` with the chains, `cube_face_order: "classic"`, `visual_mode` (191, 191, 191, 140 /
+full_bright), the four seeded `t0` / `t_half` captures as the visual samples (bind — the unrolled flat
+rings — is not a rendered frame). `subject_after` unchanged; the rolls are proven through the pose
+(the negative run — the hook consuming the Y roll before the X roll — fails the geometry leg at
+Shape1__i0 with a 0.032-block corner delta).
+
+EVIDENCE (scratch `pp146\`, every process under `timeout`; exit codes). javac main 800 sources rc 0
+(16 pre-existing warnings), g1tool 10 rc 0 (`RenderStateProbe.java` new), gametest 68 rc 0 (2
+pre-existing warnings), `--release 21 -g`, scratch class dirs first (the fix lane re-ran everything
+below from `pp146\fix\`; the implementation lane's numbers held). `G1ModelProbe vanilla` s4 / g1 / reference: 0 / 0 / 0 (14 / 3 / 101
+dumps); `layer_definition_to_geo.py` s4 / g1: 0 / 0 (14 + 3 CONVERT GREEN); `reference_geometry_leg.py`
+s4 (coin): 0; the standing reference leg against `phase_g_reports/reference_proof` (verify mode): 0,
+`REFERENCE GEOMETRY PROOF: 101 checked-in reports verified`, `reference_purplepower` PASS pinned
+MIRROR 3; `G1ModelProbe geo` s4 / g1: 0 / 0; `g1_render_parity.py --write-proof` into scratch proof
+dirs s4 / g1: 0 / 0 — `G1 PARITY PASS: 13 models` / `2 models`. PurplePower: geometry 1.87e-7 blocks
+(162 cube-samples), surface 3888 vertex-samples UV 0 / normal 0, animation 4.1e-8 rad, positions 0,
+hidden checks 8, states 4, draw order 9 captures / 162 draws, face order 972 faces, composition 162
+draws: instance pose 0 / 0, draw pose 0 / 0; visual changed 3.05e-5 (two pixels of `s_seed_12345_t0`,
+an edge-on face's unstable depth interpolation: 1.6e-5 blocks of depth from 2e-7 of position; the
+Vortex's accepted residual is the same class), MAE 4.6e-4, contested 0.127-0.161 (a diagnostic).
+Byte identity (`compare_proofs.py`): s4 240 files identical — all 186 PNGs of the twelve cutout
+models and the fixture, every other model's generated files and report entry; changed only
+`evidence/report.json`, `evidence/README.md`, `generated/model_purplepower.{geo,conversion,
+animation-contract}.json`; 15 PurplePower PNGs removed, 12 added; top level only
+`visual_artifact_count` 201 → 198. g1 44 of 44 identical. `referenceRenderers`: PASS 120, PENDING 0,
+MOD 0, NOT_APPLICABLE 13, DIVERGES 0. Asset audit, read-only on the tree as it stands: `RESULT: 1
+error(s), 0 advisory(ies), 4 acknowledged` — the one is `GECKO_GEO_PROOF_DRIFT` on purplepower (the
+shipped rig against the not-yet-regenerated proof; clears on regeneration); on a scratch copy with the
+scratch proof substituted: `RESULT: 0 error(s), 1 advisory(ies), 4 acknowledged; draw order: 15 shipped
+geo: 14 seam + 1 outside-seam -> exit 0` (the advisory is INDEX_CASE_UNCHECKED, the copy is outside
+git); with a duplicated direction planted in the shipped key (and its proof copy): `RESULT: 1
+error(s)` — `GECKO_GEO_FACE_ORDER_INVALID: purplepower.geo ... Shape1__i0 cube 0 is not a permutation`.
+A headless `FaceOrder` smoke on a GeckoLib bake (the game-test row replicated, un-bootstrapped JVM):
+fresh order [west, east, north, south, up, down], the classic mirrored order applied and idempotent,
+absent silent / required WARN once, five wrong shapes WRONG_KEY_FALLBACK with the quads untouched and
+ERROR once each, the strict `apply` throws — `SMOKE OK` (re-run against the fix's classes: the same).
+Shipped `purplepower.geo.json` regenerated (LF, 27 bones, both keys, byte-identical to the scratch
+proof copy and to the fix lane's regeneration); `purplepower.animation.json` byte-identical to before.
+The refuters' items, evidenced (fix lane): `g1_render_parity.py --validate-only` s4 / g1: 0 / 0 —
+`G1 PARITY STAGING PASS: 13 models; no proof written` / `2 models`, a `G1 RENDER STATE PASS` line per
+model; a scratch `--write-proof` s4 / g1: 0 / 0 (`G1 PARITY PASS: 13 models; checked-in proof updated`
+into the SCRATCH proof dir), byte identity against the checked-in proofs unchanged from the lane's
+(s4 240 identical incl. all 186 cutout PNGs, 5 changed / 12 added / 15 removed; g1 44 / 44) and against
+the lane's own run s4 254 / 257 (every PNG, the four PurplePower captures included) / g1 44 / 44. The
+asset audit on the tree: rc 1, `GECKO_GEO_PROOF_DRIFT` only; on a scratch copy with the regenerated
+proof: rc 0 for the shipped rig, rc 1 with the reason named for each planted key — two arrays for the
+one-cube `Shape1__i0` ("lists 2 cube(s) for Shape1__i0 but the rig bone has 1"), `Shape1__i0` removed
+("lacks the cube-bearing rig bone(s) Shape1__i0"), the cube-less `Shape1__fan` named ("names
+Shape1__fan, which is not a cube-bearing bone of the rig"), the key removed entirely ("is absent, but
+the descriptor requires it (cubeFaceOrderRequired: a translucent rig)"), the duplicated direction
+("Shape1__i0 cube 0 is not a permutation"). Negatives: the geo probe over a generated dir whose
+PurplePower geo lacks the key: rc 1, "harness failure: the generated geo ships without
+orespawn:cube_face_order, which the shipped descriptor requires (cubeFaceOrderRequired: a translucent
+rig); the harness proves shipped rigs and takes no fallback" (the bind bake, the G1 evaluator path);
+the parity tool over a staged copy with the key stripped from geo / dump / conversion: rc 1, `FACE
+ORDER REQUIRED model_purplepower`; a manifest without `coplanar_depth_epsilon_blocks`: rc 1, "carry no
+coplanar_depth_epsilon_blocks ... has no default". `FastColor.ARGB32.colorFromFloat(0.55, 0.75, 0.75,
+0.75)` == `ModelPurplePower.COLOR` == 0x8cbfbfbf == -1933590593, bytes 140 / 191 / 191 / 191 (the probe
+JVM). The gametest run is the gate's (expected `All 1259 required tests passed`: 1255 + the four rows).
+
+PINS. New `PurplePowerPoseTests` (own batch `purplePowerPose`, TEST-003; a `@GameTestGenerator` over
+four synchronous rows `purplepowerposetests.ent_s_146_NN_<row>`, `orespawn:empty_large` named in
+full, 100 ticks; the spawned orb discarded in a finally; row 03's synthetic resources carry a per-run
+stamp): 01 `pose_random_is_the_level_random` — a frozen PurplePower's `getLevelRandom()` IS the
+ServerLevel's `RandomSource` instance and is NOT `Entity.getRandom()` (the two are distinct); 02
+`roll_is_one_float_times_360` — for seeds 1, 12345, 2026, 777 three rolls equal three `nextFloat() *
+360.0f` of an equally seeded source, lie in [0, 360), and both sources' next int agrees (exactly one
+float per roll); 03 `face_order_permutes_a_bake_into_the_classic_order` — the smoke's assertions on the
+dedicated server through the production statics; 04 `descriptor_hooks_are_the_classic_constants`
+(refuter B, D3) — on a live orb the descriptor's `renderColor` == `ModelPurplePower.COLOR`
+(0x8CBFBFBF, a compile-time constant now, pinned == `FastColor.ARGB32.colorFromFloat(0.55, 0.75, 0.75,
+0.75)` with the bytes (191, 191, 191, 140)), `fullBright` true, `cubeFaceOrderRequired` true,
+`ModelPurplePower.LIGHT_LEVEL` == `GeoReplacementDescriptor.FULL_BRIGHT_LEVEL` == 15; `renderType` is
+NOT called there (a client `Function<ResourceLocation, RenderType>` held by the client-only model
+class — the 4b finding; the harness proves it: the same function object on both sides). Client-side
+and the harness's: the rolls' effect (the geometry / composition legs), the render state (the visual
+mode; the observed sidecars), the face order (the per-face check). Compile proof: javac of the whole
+gametest tree rc 0; the class references no `net/minecraft/client` type (javap; the
+`ModelPurplePower` Class constant javac records beside the inlined `COLOR` / `LIGHT_LEVEL` is
+referenced by no instruction and is never resolved — `renderColor` on the descriptor is an `ldc`,
+`fullBright` an `iconst_1`); `FaceOrder.class` and `PurplePowerPose.class` reference no client
+or mod class (javap, the DrawOrder discipline).
+
+FILES THAT CHANGE ON THE ORCHESTRATOR'S REGENERATION. `phase_g_reports/s4_proof`:
+`generated/model_purplepower.geo.json`, `.conversion.json`, `.animation-contract.json`,
+`evidence/report.json`, `evidence/README.md`, `evidence/visual/model_purplepower/*` (the 15 old PNGs go,
+12 new: `s_seed_1_t0`, `s_seed_12345_t0`, `s_seed_2026_t_half`, `s_seed_777_t0` × vanilla / geo / diff) —
+nothing else in s4_proof; `phase_g_reports/g1_proof`: nothing under `generated/` or `evidence/`; the
+benchmark proof (`g1_proof/benchmark/report.json` and whatever the gate rewrites) re-pins —
+`G1AnimationRuntime.java` is one of its source pins and the g1tool class directory changed
+(`G1ModelProbe`, `ProbeSubject`, `S4CandidateRuntime`); `phase_g_reports/reference_proof`: nothing
+(verified). Shipped: `src/main/resources/assets/orespawn/geo/entity/purplepower.geo.json` (already
+regenerated, in the working tree).
+
+DISCLOSED. (1) `getLevelRandom` for the brief's `getRandom` (above). (2) The invisible-to-viewer case:
+vanilla draws such a mob through `itemEntityTranslucentCull` at 0.15 alpha; the model overrides the
+colour to 0.55 as 1.7.10's model overrode `RendererLivingEntity`'s 0.15 — bug-for-bug, an edge no
+player meets without an invisibility potion on the orb. (3) The carries: one group per `glRotatef`
+after the doubled form measured 1.5e-6 (above); the rig has 27 bones, 18 cubes. (4) The blended
+rasteriser's depth-tie window is its OWN named tolerance, `coplanar_depth_epsilon_blocks` = 1e-5 (an
+owner ruling, presented with its number and the sweep in `before_after.md`; the option of 1e-6 with
+the projector's rounding removed is presented, not taken — a harness-semantics change for every
+species); the two-pixel residual is an edge-on face's depth gradient. (5) The face-order contract's scope (above).
+(6) ENT-S-147's per-frame dedup applies to the rolls as it applied to the Rotator's advance: behind the
+pause screen with one orb in view the candidate holds its last frame where the classic rolls again.
+(7) Not emulated on either side: lightmap, directional shading, fog, the overlay, the fill rule.
+(8) `GeoReplacementDescriptor.class` names `RenderType` only in the `Signature` attribute of
+`renderType(E)` (the erased descriptor is `(Entity)Function`, javap; never resolved); the descriptor
+loads on the game-test server (`GeoCacheEvictionTests`) and row 04 invokes its `renderColor` /
+`fullBright` there — the gate run settles it, as it did for the `$1` descriptors. (9) The within-cube
+face order both renderers emit is the 1.21.1 classic's, not 1.7.10's (`ModelBox` drew +X, -X, -Y, +Y,
+-Z, +Z; VERIFIED against the 1.7.10 jar, `bis.<init>` 365-772, `render` 0-28; the PN draft
+`pn_cube_order.md`): the port cannot follow it with vanilla's own `ModelPart.Cube`. (10) The hurt /
+death flash: 1.7.10 drew a SECOND untextured `mainModel.render` under `GL_EQUAL` with
+`glColor4f(brightness, 0, 0, 0.4)` set BEFORE the model's own `glColor4f(0.75, 0.75, 0.75, 0.55)` overrode
+it (VERIFIED, `RendererLivingEntity.doRender` = `boh.a(sv, DDDFF)` 870-946), so the orb never flashed
+red but re-blended its front layer flat grey; 1.21.1 tints the one draw ~30% red through the overlay
+on BOTH renderers (`getOverlayCoords` 430-444, `OverlayTexture.v` = 3, the shader's `mix`); the PN
+draft `pn_hurt_flash.md` presents three readings; the record lists the overlay as "not emulated".
+(11) `ModelPurplePower.COLOR` is the literal `0x8CBFBFBF` now (was the `colorFromFloat` call), so the
+descriptor and the game-test row read it inlined without loading the client model class; pinned equal
+to `colorFromFloat` by row 04 and checked in the probe JVM. (12) The probe writes a new per-model
+sidecar beside every dump, both modes (`<id>.render-state.json`); no existing dump field changed.
+(13) The manifest gains `classic_renderer` (PurplePower only) for the light observation, and the named
+`coplanar_depth_epsilon_blocks` threshold. (14) The seam parses the geo resource once per bake and
+hands the document to both keys (`DrawOrder.geoJson`, the `JsonObject` overloads, `unreadable`;
+refuter A, D5); both `load`s kept for their callers. (15) The descriptor's render-type hook returns
+the function, not the `RenderType` (`renderType(E)`), the only form the un-bootstrapped harness can
+observe; the shipped renderer applies it to the texture on the same condition as before.
+
+REFUTERS' FOCUS. (a) The RNG consumption order on both sides — three `PurplePowerPose.roll` per frame,
+X, Y, Z, one `nextFloat` each (`ModelPurplePower.renderToBuffer` :157-169 vs
+`PurplePowerGeoReplacement.applyCustomAnimations` :124-135); the negative run's failure mode. (b) The
+composition: the classic's `X(r1)·X(r1)·Y(r2)·Y(r2)·Z(r3)` pose stack against the chains' cumulative
+transforms (the composition leg 0 / 0; the basis conjugation of `rotateX/Y/Z`). (c) The render-type /
+light / colour path on both renderers against the cited bytecode; the descriptor hooks' default
+branches (GeckoLib's invisible / outline branches untouched). (d) The rasteriser's blend / depth
+emulation against the RenderType states (the plane tolerance, the write, the quantisation, the
+discard); the mode illustration numbers. (e) The cutout captures' byte identity (`compare_proofs.py`)
+and that no report field was added for an undeclared model. (f) The regenerated rig's draw-order key (a
+permutation of the 27 bones in pre-order) and face-order key (18 bones × one cube × six names); the
+converter's mirror rule against `ModelPart.Cube.<init>`; the self-check's three cubes. (g) The OPT-029
+R0 constraint: both constructors registry-free (the probe instantiated the replacement in the
+un-bootstrapped JVM: rc 0); the `RenderType::entityTranslucent` method reference does not initialise
+`RenderType`. (h) The seam's fallback policy for the face order (`applyOrFallback`: absent / required /
+wrong, once per resource, the bake untouched) and the audit rule's content check.
+
+REFUTER A NOTES (2026-09-06, applied by the fix lane). D1 (MUST-FIX, harness strictness): found —
+`S4CandidateRuntime.freshBaked` and the `G1AnimationRuntime` evaluator applied a present key and took
+an absent one silently even for a rig whose descriptor requires it; done — the replacement is
+instantiated first and `descriptor().cubeFaceOrderRequired()` threads into `freshBaked` (a throw
+"harness failure ... which the descriptor of <class> requires ... takes no fallback", beside the
+draw-order one), the evaluator gains the four-argument form the probe uses for every bind bake
+(`S4CandidateRuntime.cubeFaceOrderRequired(candidateClass)`), the two-argument form is documented
+as the benchmark's opaque-only path (no translucent rig reaches it), and the parity tool FAILS
+(`FACE ORDER REQUIRED`) rather than skips when a model declares a blending mode and the geo carries
+no key — all three negatives run (rc 1 each, above). D2 (disclosure): the premise VERIFIED against
+the 1.7.10 jar (`bis` located by shape; offsets quoted in `FaceOrder`, `ModelPurplePower`, the
+converter's evidence string and `pn_cube_order.md`); the status line and this log say the cube order
+is the 1.21.1 classic's. D3 (disclosure): the premise VERIFIED against the 1.7.10 jar (`boh.doRender`,
+offsets quoted; `pn_hurt_flash.md`); the record keeps the overlay as "not emulated". D4: found — the
+shared base read `ModelPurplePower.LIGHT_LEVEL`; done — `GeoReplacementDescriptor.FULL_BRIGHT_LEVEL`
+(15) on the descriptor, the base reads it, row 04 pins it equal to the classic renderer's constant.
+D5: found — two parses of the geo resource per bake; done — one parse (`DrawOrder.geoJson`) handed to
+both keys through new `JsonObject` overloads, the unreadable case answered by both seams' logged
+fallback (`unreadable`), both `load`s kept. D6 / D7 / D8: sentences in the records (the CRLF facts
+corrected; `roll(null) → 0` as a harness-only path a future caller could silently take; the
+`group_chain` check shape-only).
+
+REFUTER B NOTES (2026-09-06, applied by the fix lane). D1 (audit): found — the audit checked a
+present key against the bone NAME set only (a cube-less bone named, a cube-bearing bone missing, a
+wrong cube count passed); done — `_geo_bones` returns `{name: cube_count}`, `_face_order_problem`
+mirrors `FaceOrder.read` + `apply` exactly (the key's bones == the rig's cube-bearing bones, one array
+per cube, six-name permutations) and, for a descriptor whose source overrides
+`cubeFaceOrderRequired()` to true (detected in the java file `seam_rigs` already attributes the rig
+to; a file with more than one descriptor is SKIPPED), an absent key is the same ERROR — the three
+planted shapes, the key removed entirely and the lane's negative each rc 1 with the reason named,
+the shipped rig rc 0 (above); D9 — `/tools/asset_audit.py text eol=lf` in `.gitattributes`. D2
+(the window, presented not tuned): (a) done — `thresholds.coplanar_depth_epsilon_blocks` (1e-5) read
+by `render_capture_blended`'s caller, reported as before, a blended model without it a loud failure
+(no default; negative run rc 1); (b) done — the causal paragraph rewritten to the data here, in
+`before_after.md` (the sweep table verbatim, the residual, the two options, the unrounded-projector
+row), `status_line.md` and `records.md`. D3 (the mode observed): done — the render-state sidecars on
+both sides, the classic renderer's light evaluated registry-free, the descriptor hooks' results as
+the renderer applies them, the colour / light observed at every vertex, the render type by the
+function object's owner (RenderType cannot be initialised there: measured); the parity tool
+requires both sides equal and equal to the mode for every model; the dumps byte-identical (a sidecar
+is the new file, not a new field; the report field only for a declared mode); the gametest row 04
+pins `renderColor` / `fullBright` / `cubeFaceOrderRequired` on the server and does not touch
+`renderType`. D4 / D5 / D6: the reversed vertex cycle (a `VISUAL_MODES` comment + a records
+sentence), the last-written-depth test (walk-back 9.9e-6, chained 0) and the channel tolerance under
+a 0.55 layer (~1.8×, pre-existing, not changed) — sentences in `before_after.md` and the records.
+D7: the evidence string's offsets → DOWN 365, UP 436, WEST 507, NORTH 578, EAST 649, SOUTH 720-785
+(`FaceOrder`, the converter's rule and comment, this log; verified in `NF_ModelPart_Cube.txt`). D8:
+the records' parity line is the `--validate-only` `G1 PARITY STAGING PASS: 13 models; no proof
+written` (the scratch `--write-proof` line kept beside it, named as scratch).
+
+GATE: (pp146, 2026-09-06 17:51-17:56, after both refuters and the fix lane; the before/after presented in phase_g_reports/ent_s_146_before_after_2026-09-06.md BEFORE this gate, as ruled): the proofs regenerated by hand under the proof rule - s4 "G1 PARITY PASS: 13 models; checked-in proof updated" (PurplePower re-proven seeded and translucent under the entity_translucent mode; the twelve cutout models, the fixture and every reference-leg file byte-identical), g1 "G1 PARITY PASS: 2 models; checked-in proof verified" (no drift), the benchmark "G1 BENCHMARK EVIDENCE VERIFIED ...; checked-in proof updated" (re-pinned: G1AnimationRuntime.java and the g1tool class directory); the regenerated purplepower.geo.json staged with the proofs. Gate: drift verified ("checked-in proof verified"), build successful, "All 1259 required tests passed" (1255 + PurplePowerPoseTests' four rows; the batch purplePowerPose:0 ran; the chainsawSweepSight:0 batch passed at a second random origin).
+
+REFUTERS (2026-09-06): A (the Java: transcription, RNG, render state, FaceOrder, OPT-029 R0, the rows) and B (the harness: the blend emulation vs the RenderType states, the depth-tie window, the face-order derivation, byte identity, the records) - no blocker; their items applied by the fix lane (REFUTER A NOTES / REFUTER B NOTES above): the harness strict on a required face-order key, the audit rule matching FaceOrder.apply, the render state OBSERVED on both sides, the depth-tie window a named tolerance presented with the sweep table, two verified 1.7.10 divergences filed as ENT-S-152 / ENT-S-153.
